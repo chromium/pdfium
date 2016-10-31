@@ -12,30 +12,31 @@
 #include "xfa/fwl/core/ifwl_datetimepicker.h"
 #include "xfa/fwl/core/ifwl_widget.h"
 
+CFWL_DateTimePicker::CFWL_DateTimePicker(const IFWL_App* app)
+    : CFWL_Widget(app) {}
+
+CFWL_DateTimePicker::~CFWL_DateTimePicker() {}
+
+void CFWL_DateTimePicker::Initialize(const CFWL_WidgetProperties* pProperties) {
+  ASSERT(!m_pIface);
+
+  if (pProperties)
+    *m_pProperties = *pProperties;
+
+  std::unique_ptr<IFWL_DateTimePicker> pDateTimePicker(new IFWL_DateTimePicker(
+      m_pApp, m_pProperties->MakeWidgetImpProperties(&m_DateTimePickerDP)));
+  pDateTimePicker->Initialize();
+
+  m_pIface = std::move(pDateTimePicker);
+  CFWL_Widget::Initialize(pProperties);
+}
+
 IFWL_DateTimePicker* CFWL_DateTimePicker::GetWidget() {
   return static_cast<IFWL_DateTimePicker*>(m_pIface.get());
 }
 
 const IFWL_DateTimePicker* CFWL_DateTimePicker::GetWidget() const {
   return static_cast<IFWL_DateTimePicker*>(m_pIface.get());
-}
-
-FWL_Error CFWL_DateTimePicker::Initialize(
-    const CFWL_WidgetProperties* pProperties) {
-  if (m_pIface)
-    return FWL_Error::Indefinite;
-  if (pProperties) {
-    *m_pProperties = *pProperties;
-  }
-  std::unique_ptr<IFWL_DateTimePicker> pDateTimePicker(new IFWL_DateTimePicker(
-      m_pProperties->MakeWidgetImpProperties(&m_DateTimePickerDP)));
-  FWL_Error ret = pDateTimePicker->Initialize();
-  if (ret != FWL_Error::Succeeded) {
-    return ret;
-  }
-  m_pIface = std::move(pDateTimePicker);
-  CFWL_Widget::Initialize();
-  return FWL_Error::Succeeded;
 }
 
 FWL_Error CFWL_DateTimePicker::SetToday(int32_t iYear,
@@ -74,10 +75,6 @@ FWL_Error CFWL_DateTimePicker::SetCurSel(int32_t iYear,
                                          int32_t iDay) {
   return GetWidget()->SetCurSel(iYear, iMonth, iDay);
 }
-
-CFWL_DateTimePicker::CFWL_DateTimePicker() {}
-
-CFWL_DateTimePicker::~CFWL_DateTimePicker() {}
 
 CFWL_DateTimePicker::CFWL_DateTimePickerDP::CFWL_DateTimePickerDP() {
   m_iYear = 2011;

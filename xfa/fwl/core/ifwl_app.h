@@ -32,8 +32,8 @@ class IFWL_App {
   explicit IFWL_App(CXFA_FFApp* pAdapter);
   ~IFWL_App();
 
-  CXFA_FFApp* GetAdapterNative();
-  CFWL_WidgetMgr* GetWidgetMgr();
+  CXFA_FFApp* GetAdapterNative() const { return m_pAdapterNative; }
+  CFWL_WidgetMgr* GetWidgetMgr() const { return m_pWidgetMgr.get(); }
   CFWL_NoteDriver* GetNoteDriver() const { return m_pNoteDriver.get(); }
 
  private:
@@ -41,11 +41,5 @@ class IFWL_App {
   std::unique_ptr<CFWL_WidgetMgr> m_pWidgetMgr;
   std::unique_ptr<CFWL_NoteDriver> m_pNoteDriver;
 };
-
-IFWL_App* FWL_GetApp();
-void FWL_SetApp(IFWL_App* pApp);
-
-CXFA_FFApp* FWL_GetAdapterNative();
-CXFA_FWLAdapterWidgetMgr* FWL_GetAdapterWidgetMgr();
 
 #endif  // XFA_FWL_CORE_IFWL_APP_H_

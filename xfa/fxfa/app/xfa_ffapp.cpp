@@ -10,6 +10,7 @@
 #include <utility>
 
 #include "xfa/fgas/font/fgas_stdfontmgr.h"
+#include "xfa/fwl/core/fwl_noteimp.h"
 #include "xfa/fwl/core/cfwl_widgetmgr.h"
 #include "xfa/fxfa/app/xfa_fwladapter.h"
 #include "xfa/fxfa/app/xfa_fwltheme.h"
@@ -73,7 +74,6 @@ CXFA_FFApp::CXFA_FFApp(IXFA_AppProvider* pProvider)
     : m_pProvider(pProvider),
       m_pWidgetMgrDelegate(nullptr),
       m_pFWLApp(new IFWL_App(this)) {
-  FWL_SetApp(m_pFWLApp.get());
   CXFA_TimeZoneProvider::Create();
 }
 
@@ -146,4 +146,8 @@ CXFA_FWLAdapterWidgetMgr* CXFA_FFApp::GetWidgetMgr(
 
 IFWL_AdapterTimerMgr* CXFA_FFApp::GetTimerMgr() const {
   return m_pProvider->GetTimerMgr();
+}
+
+void CXFA_FFApp::ClearEventTargets() {
+  m_pFWLApp->GetNoteDriver()->ClearEventTargets(FALSE);
 }

@@ -34,12 +34,6 @@ FX_BOOL FWL_UseOffscreen(IFWL_Widget* pWidget) {
 #endif
 }
 
-// static
-CFWL_WidgetMgr* CFWL_WidgetMgr::GetInstance() {
-  IFWL_App* pApp = FWL_GetApp();
-  return pApp ? pApp->GetWidgetMgr() : nullptr;
-}
-
 CFWL_WidgetMgr::CFWL_WidgetMgr(CXFA_FFApp* pAdapterNative)
     : m_dwCapability(0),
       m_pDelegate(new CFWL_WidgetMgrDelegate(this)),
@@ -392,7 +386,7 @@ void CFWL_WidgetMgr::NotifySizeChanged(IFWL_Widget* pForm,
 IFWL_Widget* CFWL_WidgetMgr::nextTab(IFWL_Widget* parent,
                                      IFWL_Widget* focus,
                                      FX_BOOL& bFind) {
-  CFWL_WidgetMgr* pMgr = CFWL_WidgetMgr::GetInstance();
+  CFWL_WidgetMgr* pMgr = parent->GetOwnerApp()->GetWidgetMgr();
   IFWL_Widget* child = pMgr->GetFirstChildWidget(parent);
   while (child) {
     if (focus == child)
@@ -470,7 +464,7 @@ IFWL_Widget* CFWL_WidgetMgr::GetDefaultButton(IFWL_Widget* pParent) {
     return pParent;
   }
   IFWL_Widget* child =
-      CFWL_WidgetMgr::GetInstance()->GetFirstChildWidget(pParent);
+      pParent->GetOwnerApp()->GetWidgetMgr()->GetFirstChildWidget(pParent);
   while (child) {
     if ((child->GetClassID() == FWL_Type::PushButton) &&
         (child->GetStates() & (1 << (FWL_WGTSTATE_MAX + 2)))) {
@@ -480,7 +474,7 @@ IFWL_Widget* CFWL_WidgetMgr::GetDefaultButton(IFWL_Widget* pParent) {
     if (find) {
       return find;
     }
-    child = CFWL_WidgetMgr::GetInstance()->GetNextSiblingWidget(child);
+    child = child->GetOwnerApp()->GetWidgetMgr()->GetNextSiblingWidget(child);
   }
   return nullptr;
 }
@@ -573,7 +567,7 @@ void CFWL_WidgetMgrDelegate::OnProcessMessageToForm(CFWL_Message* pMessage) {
     return;
 
   IFWL_Widget* pDstWidget = pMessage->m_pDstTarget;
-  IFWL_App* pApp = pDstWidget->GetOwnerApp();
+  const IFWL_App* pApp = pDstWidget->GetOwnerApp();
   if (!pApp)
     return;
 
@@ -755,7 +749,7 @@ FX_BOOL CFWL_WidgetMgrDelegate::IsNeedRepaint(IFWL_Widget* pWidget,
     return FALSE;
 
   IFWL_Widget* pChild =
-      CFWL_WidgetMgr::GetInstance()->GetFirstChildWidget(pWidget);
+      pWidget->GetOwnerApp()->GetWidgetMgr()->GetFirstChildWidget(pWidget);
   if (!pChild)
     return TRUE;
 
@@ -813,7 +807,8 @@ FX_BOOL CFWL_WidgetMgrDelegate::IsNeedRepaint(IFWL_Widget* pWidget,
       if (r.Contains(hitPoint[i].hitPoint))
         hitPoint[i].bNotNeedRepaint = true;
     }
-    pChild = CFWL_WidgetMgr::GetInstance()->GetNextSiblingWidget(pChild);
+    pChild =
+        pChild->GetOwnerApp()->GetWidgetMgr()->GetNextSiblingWidget(pChild);
   } while (pChild);
 
   if (!bChildIntersectWithDirty)

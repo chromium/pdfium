@@ -20,13 +20,14 @@ class CFWL_ComboBoxItem;
 
 class CFWL_ComboBox : public CFWL_Widget {
  public:
-  CFWL_ComboBox();
+  CFWL_ComboBox(const IFWL_App*);
   ~CFWL_ComboBox() override;
 
   IFWL_ComboBox* GetWidget() override;
   const IFWL_ComboBox* GetWidget() const override;
 
-  FWL_Error Initialize(const CFWL_WidgetProperties* pProperties = nullptr);
+  void Initialize(const CFWL_WidgetProperties* pProperties);
+
   int32_t AddString(const CFX_WideStringC& wsText);
   int32_t AddString(const CFX_WideStringC& wsText, CFX_DIBitmap* pIcon);
   bool RemoveAt(int32_t iIndex);  // Returns false iff |iIndex| out of range.

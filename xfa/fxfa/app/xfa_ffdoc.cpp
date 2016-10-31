@@ -359,8 +359,7 @@ FX_BOOL CXFA_FFDoc::CloseDoc() {
     delete pair.second.pDibSource;
 
   m_HashToDibDpiMap.clear();
-
-  FWL_GetApp()->GetNoteDriver()->ClearEventTargets(FALSE);
+  m_pApp->ClearEventTargets();
   return TRUE;
 }
 void CXFA_FFDoc::SetDocType(uint32_t dwType) {

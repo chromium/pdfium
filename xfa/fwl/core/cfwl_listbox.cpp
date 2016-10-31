@@ -10,29 +10,30 @@
 
 #include "third_party/base/stl_util.h"
 
+CFWL_ListBox::CFWL_ListBox(const IFWL_App* app) : CFWL_Widget(app) {}
+
+CFWL_ListBox::~CFWL_ListBox() {}
+
+void CFWL_ListBox::Initialize(const CFWL_WidgetProperties* pProperties) {
+  ASSERT(!m_pIface);
+
+  if (pProperties)
+    *m_pProperties = *pProperties;
+
+  std::unique_ptr<IFWL_ListBox> pListBox(new IFWL_ListBox(
+      m_pApp, m_pProperties->MakeWidgetImpProperties(&m_ListBoxDP), nullptr));
+  pListBox->Initialize();
+
+  m_pIface = std::move(pListBox);
+  CFWL_Widget::Initialize(pProperties);
+}
+
 IFWL_ListBox* CFWL_ListBox::GetWidget() {
   return static_cast<IFWL_ListBox*>(m_pIface.get());
 }
 
 const IFWL_ListBox* CFWL_ListBox::GetWidget() const {
   return static_cast<IFWL_ListBox*>(m_pIface.get());
-}
-
-FWL_Error CFWL_ListBox::Initialize(const CFWL_WidgetProperties* pProperties) {
-  if (m_pIface)
-    return FWL_Error::Indefinite;
-  if (pProperties) {
-    *m_pProperties = *pProperties;
-  }
-  std::unique_ptr<IFWL_ListBox> pListBox(new IFWL_ListBox(
-      m_pProperties->MakeWidgetImpProperties(&m_ListBoxDP), nullptr));
-  FWL_Error ret = pListBox->Initialize();
-  if (ret != FWL_Error::Succeeded) {
-    return ret;
-  }
-  m_pIface = std::move(pListBox);
-  CFWL_Widget::Initialize();
-  return FWL_Error::Succeeded;
 }
 
 FWL_Error CFWL_ListBox::AddDIBitmap(CFX_DIBitmap* pDIB, IFWL_ListItem* pItem) {
@@ -202,10 +203,6 @@ uint32_t CFWL_ListBox::GetItemStates(IFWL_ListItem* pItem) {
   CFWL_ListItem* pListItem = static_cast<CFWL_ListItem*>(pItem);
   return pListItem->m_dwStates | pListItem->m_dwCheckState;
 }
-
-CFWL_ListBox::CFWL_ListBox() {}
-
-CFWL_ListBox::~CFWL_ListBox() {}
 
 CFWL_ListBox::CFWL_ListBoxDP::CFWL_ListBoxDP() {}
 

@@ -17,13 +17,14 @@ class IFDE_TxtEdtDoRecord;
 
 class CFWL_Edit : public CFWL_Widget {
  public:
-  CFWL_Edit();
+  CFWL_Edit(const IFWL_App*);
   ~CFWL_Edit() override;
 
   IFWL_Edit* GetWidget() override;
   const IFWL_Edit* GetWidget() const override;
 
-  FWL_Error Initialize(const CFWL_WidgetProperties* pProperties = nullptr);
+  void Initialize(const CFWL_WidgetProperties* pProperties);
+
   FWL_Error SetText(const CFX_WideString& wsText);
   int32_t GetTextLength() const;
   FWL_Error GetText(CFX_WideString& wsText,

@@ -20,8 +20,9 @@
 #include "xfa/fwl/core/ifwl_formproxy.h"
 #include "xfa/fwl/core/ifwl_themeprovider.h"
 
-IFWL_ComboBox::IFWL_ComboBox(const CFWL_WidgetImpProperties& properties)
-    : IFWL_Widget(properties, nullptr),
+IFWL_ComboBox::IFWL_ComboBox(const IFWL_App* app,
+                             const CFWL_WidgetImpProperties& properties)
+    : IFWL_Widget(app, properties, nullptr),
       m_pForm(nullptr),
       m_bLButtonDown(FALSE),
       m_iCurSel(-1),
@@ -35,18 +36,16 @@ IFWL_ComboBox::IFWL_ComboBox(const CFWL_WidgetImpProperties& properties)
 
 IFWL_ComboBox::~IFWL_ComboBox() {}
 
-FWL_Type IFWL_ComboBox::GetClassID() const {
-  return FWL_Type::ComboBox;
-}
-
-FWL_Error IFWL_ComboBox::Initialize() {
-  if (m_pWidgetMgr->IsFormDisabled())
-    return DisForm_Initialize();
-
-  if (IFWL_Widget::Initialize() != FWL_Error::Succeeded)
-    return FWL_Error::Indefinite;
-
+void IFWL_ComboBox::Initialize() {
+  IFWL_Widget::Initialize();
   m_pDelegate = new CFWL_ComboBoxImpDelegate(this);
+
+  if (m_pWidgetMgr->IsFormDisabled()) {
+    DisForm_InitComboList();
+    DisForm_InitComboEdit();
+    return;
+  }
+
   CFWL_WidgetImpProperties prop;
   prop.m_pThemeProvider = m_pProperties->m_pThemeProvider;
   prop.m_dwStyles |= FWL_WGTSTYLE_Border | FWL_WGTSTYLE_VScroll;
@@ -54,11 +53,11 @@ FWL_Error IFWL_ComboBox::Initialize() {
     prop.m_dwStyleExes |= FWL_STYLEEXT_LTB_Icon;
 
   prop.m_pDataProvider = m_pProperties->m_pDataProvider;
-  m_pListBox.reset(new IFWL_ComboList(prop, this));
+  m_pListBox.reset(new IFWL_ComboList(m_pOwnerApp, prop, this));
   m_pListBox->Initialize();
   if ((m_pProperties->m_dwStyleExes & FWL_STYLEEXT_CMB_DropDown) && !m_pEdit) {
     CFWL_WidgetImpProperties prop2;
-    m_pEdit.reset(new IFWL_ComboEdit(prop2, this));
+    m_pEdit.reset(new IFWL_ComboEdit(m_pOwnerApp, prop2, this));
     m_pEdit->Initialize();
     m_pEdit->SetOuter(this);
   }
@@ -66,7 +65,6 @@ FWL_Error IFWL_ComboBox::Initialize() {
     m_pEdit->SetParent(this);
 
   SetStates(m_pProperties->m_dwStates);
-  return FWL_Error::Succeeded;
 }
 
 void IFWL_ComboBox::Finalize() {
@@ -77,6 +75,10 @@ void IFWL_ComboBox::Finalize() {
   delete m_pDelegate;
   m_pDelegate = nullptr;
   IFWL_Widget::Finalize();
+}
+
+FWL_Type IFWL_ComboBox::GetClassID() const {
+  return FWL_Type::ComboBox;
 }
 
 FWL_Error IFWL_ComboBox::GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize) {
@@ -113,7 +115,7 @@ FWL_Error IFWL_ComboBox::ModifyStylesEx(uint32_t dwStylesExAdded,
   bool bRemoveDropDown = !!(dwStylesExRemoved & FWL_STYLEEXT_CMB_DropDown);
   if (bAddDropDown && !m_pEdit) {
     CFWL_WidgetImpProperties prop;
-    m_pEdit.reset(new IFWL_ComboEdit(prop, nullptr));
+    m_pEdit.reset(new IFWL_ComboEdit(m_pOwnerApp, prop, nullptr));
     m_pEdit->Initialize();
     m_pEdit->SetOuter(this);
     m_pEdit->SetParent(this);
@@ -712,21 +714,11 @@ void IFWL_ComboBox::InitProxyForm() {
   propForm.m_dwStyles = FWL_WGTSTYLE_Popup;
   propForm.m_dwStates = FWL_WGTSTATE_Invisible;
 
-  m_pForm = new IFWL_FormProxy(propForm, m_pListBox.get());
+  m_pForm = new IFWL_FormProxy(m_pOwnerApp, propForm, m_pListBox.get());
   m_pForm->Initialize();
   m_pListBox->SetParent(m_pForm);
   m_pListProxyDelegate = new CFWL_ComboProxyImpDelegate(m_pForm, this);
   m_pForm->SetDelegate(m_pListProxyDelegate);
-}
-
-FWL_Error IFWL_ComboBox::DisForm_Initialize() {
-  if (IFWL_Widget::Initialize() != FWL_Error::Succeeded)
-    return FWL_Error::Indefinite;
-
-  m_pDelegate = new CFWL_ComboBoxImpDelegate(this);
-  DisForm_InitComboList();
-  DisForm_InitComboEdit();
-  return FWL_Error::Succeeded;
 }
 
 void IFWL_ComboBox::DisForm_InitComboList() {
@@ -739,18 +731,18 @@ void IFWL_ComboBox::DisForm_InitComboList() {
   prop.m_dwStates = FWL_WGTSTATE_Invisible;
   prop.m_pDataProvider = m_pProperties->m_pDataProvider;
   prop.m_pThemeProvider = m_pProperties->m_pThemeProvider;
-  m_pListBox.reset(new IFWL_ComboList(prop, this));
+  m_pListBox.reset(new IFWL_ComboList(m_pOwnerApp, prop, this));
   m_pListBox->Initialize();
 }
 
 void IFWL_ComboBox::DisForm_InitComboEdit() {
-  if (m_pEdit) {
+  if (m_pEdit)
     return;
-  }
+
   CFWL_WidgetImpProperties prop;
   prop.m_pParent = this;
   prop.m_pThemeProvider = m_pProperties->m_pThemeProvider;
-  m_pEdit.reset(new IFWL_ComboEdit(prop, this));
+  m_pEdit.reset(new IFWL_ComboEdit(m_pOwnerApp, prop, this));
   m_pEdit->Initialize();
   m_pEdit->SetOuter(this);
 }
@@ -807,9 +799,9 @@ FX_BOOL IFWL_ComboBox::DisForm_IsDropListShowed() {
 
 FWL_Error IFWL_ComboBox::DisForm_ModifyStylesEx(uint32_t dwStylesExAdded,
                                                 uint32_t dwStylesExRemoved) {
-  if (!m_pEdit) {
+  if (!m_pEdit)
     DisForm_InitComboEdit();
-  }
+
   bool bAddDropDown = !!(dwStylesExAdded & FWL_STYLEEXT_CMB_DropDown);
   bool bDelDropDown = !!(dwStylesExRemoved & FWL_STYLEEXT_CMB_DropDown);
   dwStylesExRemoved &= ~FWL_STYLEEXT_CMB_DropDown;
@@ -1376,7 +1368,7 @@ void CFWL_ComboProxyImpDelegate::OnDrawWidget(CFX_Graphics* pGraphics,
 }
 
 void CFWL_ComboProxyImpDelegate::OnLButtonDown(CFWL_MsgMouse* pMsg) {
-  IFWL_App* pApp = m_pForm->GetOwnerApp();
+  const IFWL_App* pApp = m_pForm->GetOwnerApp();
   if (!pApp)
     return;
 
@@ -1397,7 +1389,7 @@ void CFWL_ComboProxyImpDelegate::OnLButtonDown(CFWL_MsgMouse* pMsg) {
 
 void CFWL_ComboProxyImpDelegate::OnLButtonUp(CFWL_MsgMouse* pMsg) {
   m_bLButtonDown = FALSE;
-  IFWL_App* pApp = m_pForm->GetOwnerApp();
+  const IFWL_App* pApp = m_pForm->GetOwnerApp();
   if (!pApp)
     return;
 

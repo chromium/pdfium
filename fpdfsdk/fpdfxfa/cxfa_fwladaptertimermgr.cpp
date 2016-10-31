@@ -24,7 +24,7 @@ FWL_Error CXFA_FWLAdapterTimerMgr::Start(IFWL_Timer* pTimer,
   if (!s_TimerArray)
     s_TimerArray = new std::vector<CFWL_TimerInfo*>;
 
-  s_TimerArray->push_back(new CFWL_TimerInfo(id_event, pTimer));
+  s_TimerArray->push_back(new CFWL_TimerInfo(this, id_event, pTimer));
   *pTimerInfo = s_TimerArray->back();
   return FWL_Error::Succeeded;
 }

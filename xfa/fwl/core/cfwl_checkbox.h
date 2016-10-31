@@ -12,13 +12,14 @@
 
 class CFWL_CheckBox : public CFWL_Widget {
  public:
-  CFWL_CheckBox();
+  CFWL_CheckBox(const IFWL_App*);
   ~CFWL_CheckBox() override;
 
   IFWL_CheckBox* GetWidget() override;
   const IFWL_CheckBox* GetWidget() const override;
 
-  FWL_Error Initialize(const CFWL_WidgetProperties* pProperties = nullptr);
+  void Initialize(const CFWL_WidgetProperties* pProperties);
+
   FWL_Error SetCaption(const CFX_WideStringC& wsCaption);
   FWL_Error SetBoxSize(FX_FLOAT fHeight);
   int32_t GetCheckState();

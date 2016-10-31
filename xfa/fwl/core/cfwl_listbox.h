@@ -19,13 +19,14 @@ class CFWL_ListItem;
 
 class CFWL_ListBox : public CFWL_Widget {
  public:
-  CFWL_ListBox();
+  CFWL_ListBox(const IFWL_App*);
   ~CFWL_ListBox() override;
 
   IFWL_ListBox* GetWidget() override;
   const IFWL_ListBox* GetWidget() const override;
 
-  FWL_Error Initialize(const CFWL_WidgetProperties* pProperties = nullptr);
+  void Initialize(const CFWL_WidgetProperties* pProperties);
+
   FWL_Error AddDIBitmap(CFX_DIBitmap* pDIB, IFWL_ListItem* pItem);
   IFWL_ListItem* AddString(const CFX_WideStringC& wsAdd,
                            FX_BOOL bSelect = FALSE);

@@ -9,29 +9,30 @@
 #include <memory>
 #include <vector>
 
+CFWL_Edit::CFWL_Edit(const IFWL_App* app) : CFWL_Widget(app) {}
+
+CFWL_Edit::~CFWL_Edit() {}
+
+void CFWL_Edit::Initialize(const CFWL_WidgetProperties* pProperties) {
+  ASSERT(!m_pIface);
+
+  if (pProperties)
+    *m_pProperties = *pProperties;
+
+  std::unique_ptr<IFWL_Edit> pEdit(new IFWL_Edit(
+      m_pApp, m_pProperties->MakeWidgetImpProperties(nullptr), nullptr));
+  pEdit->Initialize();
+
+  m_pIface = std::move(pEdit);
+  CFWL_Widget::Initialize(pProperties);
+}
+
 IFWL_Edit* CFWL_Edit::GetWidget() {
   return static_cast<IFWL_Edit*>(m_pIface.get());
 }
 
 const IFWL_Edit* CFWL_Edit::GetWidget() const {
   return static_cast<IFWL_Edit*>(m_pIface.get());
-}
-
-FWL_Error CFWL_Edit::Initialize(const CFWL_WidgetProperties* pProperties) {
-  if (m_pIface)
-    return FWL_Error::Indefinite;
-  if (pProperties) {
-    *m_pProperties = *pProperties;
-  }
-  std::unique_ptr<IFWL_Edit> pEdit(
-      new IFWL_Edit(m_pProperties->MakeWidgetImpProperties(nullptr), nullptr));
-  FWL_Error ret = pEdit->Initialize();
-  if (ret != FWL_Error::Succeeded) {
-    return ret;
-  }
-  m_pIface = std::move(pEdit);
-  CFWL_Widget::Initialize();
-  return FWL_Error::Succeeded;
 }
 
 FWL_Error CFWL_Edit::SetText(const CFX_WideString& wsText) {
@@ -234,7 +235,3 @@ FX_BOOL CFWL_Edit::ReplaceSpellCheckWord(CFX_PointF pointf,
                                          const CFX_ByteStringC& bsReplace) {
   return GetWidget()->ReplaceSpellCheckWord(pointf, bsReplace);
 }
-
-CFWL_Edit::CFWL_Edit() {}
-
-CFWL_Edit::~CFWL_Edit() {}

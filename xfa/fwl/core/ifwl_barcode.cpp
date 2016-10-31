@@ -12,8 +12,9 @@
 #include "xfa/fwl/core/fwl_noteimp.h"
 #include "xfa/fwl/core/ifwl_themeprovider.h"
 
-IFWL_Barcode::IFWL_Barcode(const CFWL_WidgetImpProperties& properties)
-    : IFWL_Edit(properties, nullptr), m_dwStatus(0), m_type(BC_UNKNOWN) {}
+IFWL_Barcode::IFWL_Barcode(const IFWL_App* app,
+                           const CFWL_WidgetImpProperties& properties)
+    : IFWL_Edit(app, properties, nullptr), m_dwStatus(0), m_type(BC_UNKNOWN) {}
 
 IFWL_Barcode::~IFWL_Barcode() {}
 
@@ -21,13 +22,11 @@ FWL_Type IFWL_Barcode::GetClassID() const {
   return FWL_Type::Barcode;
 }
 
-FWL_Error IFWL_Barcode::Initialize() {
-  if (!m_pDelegate) {
+void IFWL_Barcode::Initialize() {
+  if (!m_pDelegate)
     m_pDelegate = new CFWL_BarcodeImpDelegate(this);
-  }
-  if (IFWL_Edit::Initialize() != FWL_Error::Succeeded)
-    return FWL_Error::Indefinite;
-  return FWL_Error::Succeeded;
+
+  IFWL_Edit::Initialize();
 }
 
 void IFWL_Barcode::Finalize() {

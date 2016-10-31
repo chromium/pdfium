@@ -13,13 +13,14 @@
 
 class CFWL_PictureBox : public CFWL_Widget {
  public:
-  CFWL_PictureBox();
+  CFWL_PictureBox(const IFWL_App*);
   ~CFWL_PictureBox() override;
 
   IFWL_PictureBox* GetWidget() override;
   const IFWL_PictureBox* GetWidget() const override;
 
-  FWL_Error Initialize(const CFWL_WidgetProperties* pProperties = nullptr);
+  void Initialize(const CFWL_WidgetProperties* pProperties);
+
   CFX_DIBitmap* GetPicture();
   FWL_Error SetPicture(CFX_DIBitmap* pBitmap);
   FX_FLOAT GetRotation();

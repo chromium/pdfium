@@ -11,16 +11,17 @@
 #include "xfa/fwl/core/ifwl_formproxy.h"
 
 IFWL_DateTimeCalendar::IFWL_DateTimeCalendar(
+    const IFWL_App* app,
     const CFWL_WidgetImpProperties& properties,
     IFWL_Widget* pOuter)
-    : IFWL_MonthCalendar(properties, pOuter) {}
+    : IFWL_MonthCalendar(app, properties, pOuter) {}
 
-FWL_Error IFWL_DateTimeCalendar::Initialize() {
-  if (IFWL_MonthCalendar::Initialize() != FWL_Error::Succeeded)
-    return FWL_Error::Indefinite;
+void IFWL_DateTimeCalendar::Initialize() {
+  IFWL_MonthCalendar::Initialize();
+
+  // Delete delegated set by IFWL_MonthCalendar::Initialize.
   delete m_pDelegate;
   m_pDelegate = new CFWL_DateTimeCalendarImpDelegate(this);
-  return FWL_Error::Succeeded;
 }
 
 void IFWL_DateTimeCalendar::Finalize() {

@@ -84,13 +84,14 @@ class IFWL_ComboBoxDP : public IFWL_ListBoxDP {
 
 class IFWL_ComboBox : public IFWL_Widget {
  public:
-  explicit IFWL_ComboBox(const CFWL_WidgetImpProperties& properties);
+  explicit IFWL_ComboBox(const IFWL_App* app,
+                         const CFWL_WidgetImpProperties& properties);
   ~IFWL_ComboBox() override;
 
   // IFWL_Widget
-  FWL_Type GetClassID() const override;
-  FWL_Error Initialize() override;
+  void Initialize() override;
   void Finalize() override;
+  FWL_Type GetClassID() const override;
   FWL_Error GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize = FALSE) override;
   FWL_Error ModifyStylesEx(uint32_t dwStylesExAdded,
                            uint32_t dwStylesExRemoved) override;
@@ -156,7 +157,6 @@ class IFWL_ComboBox : public IFWL_Widget {
   void ReSetListItemAlignment();
   void ProcessSelChanged(FX_BOOL bLButtonUp);
   void InitProxyForm();
-  FWL_Error DisForm_Initialize();
   void DisForm_InitComboList();
   void DisForm_InitComboEdit();
   void DisForm_ShowDropList(FX_BOOL bActivate);

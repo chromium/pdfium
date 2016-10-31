@@ -61,7 +61,6 @@ class CFWL_NoteDriver {
                                 uint32_t dwFilter = FWL_EVENT_ALL_MASK);
   FWL_Error UnregisterEventTarget(IFWL_Widget* pListener);
   void ClearEventTargets(FX_BOOL bRemoveAll);
-  IFWL_App* GetOwnerApp() const;
   FWL_Error PushNoteLoop(CFWL_NoteLoop* pNoteLoop);
   CFWL_NoteLoop* PopNoteLoop();
   IFWL_Widget* GetFocus();

@@ -8,30 +8,30 @@
 
 #include <memory>
 
+CFWL_PushButton::CFWL_PushButton(const IFWL_App* app) : CFWL_Widget(app) {}
+
+CFWL_PushButton::~CFWL_PushButton() {}
+
+void CFWL_PushButton::Initialize(const CFWL_WidgetProperties* pProperties) {
+  ASSERT(!m_pIface);
+
+  if (pProperties)
+    *m_pProperties = *pProperties;
+
+  std::unique_ptr<IFWL_PushButton> pPushButton(new IFWL_PushButton(
+      m_pApp, m_pProperties->MakeWidgetImpProperties(&m_buttonData)));
+  pPushButton->Initialize();
+
+  m_pIface = std::move(pPushButton);
+  CFWL_Widget::Initialize(pProperties);
+}
+
 IFWL_PushButton* CFWL_PushButton::GetWidget() {
   return static_cast<IFWL_PushButton*>(m_pIface.get());
 }
 
 const IFWL_PushButton* CFWL_PushButton::GetWidget() const {
   return static_cast<IFWL_PushButton*>(m_pIface.get());
-}
-
-FWL_Error CFWL_PushButton::Initialize(
-    const CFWL_WidgetProperties* pProperties) {
-  if (m_pIface)
-    return FWL_Error::Indefinite;
-  if (pProperties) {
-    *m_pProperties = *pProperties;
-  }
-  std::unique_ptr<IFWL_PushButton> pPushButton(new IFWL_PushButton(
-      m_pProperties->MakeWidgetImpProperties(&m_buttonData)));
-  FWL_Error ret = pPushButton->Initialize();
-  if (ret != FWL_Error::Succeeded) {
-    return ret;
-  }
-  m_pIface = std::move(pPushButton);
-  CFWL_Widget::Initialize();
-  return FWL_Error::Succeeded;
 }
 
 FWL_Error CFWL_PushButton::GetCaption(CFX_WideString& wsCaption) {
@@ -52,10 +52,6 @@ FWL_Error CFWL_PushButton::SetPicture(CFX_DIBitmap* pBitmap) {
   m_buttonData.m_pBitmap = pBitmap;
   return FWL_Error::Succeeded;
 }
-
-CFWL_PushButton::CFWL_PushButton() {}
-
-CFWL_PushButton::~CFWL_PushButton() {}
 
 FWL_Error CFWL_PushButton::CFWL_PushButtonDP::GetCaption(
     IFWL_Widget* pWidget,

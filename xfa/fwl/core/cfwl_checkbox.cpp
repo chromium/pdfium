@@ -10,29 +10,30 @@
 
 #include "xfa/fwl/core/fwl_error.h"
 
+CFWL_CheckBox::CFWL_CheckBox(const IFWL_App* app) : CFWL_Widget(app) {}
+
+CFWL_CheckBox::~CFWL_CheckBox() {}
+
+void CFWL_CheckBox::Initialize(const CFWL_WidgetProperties* pProperties) {
+  ASSERT(!m_pIface);
+
+  if (pProperties)
+    *m_pProperties = *pProperties;
+
+  std::unique_ptr<IFWL_CheckBox> pCheckBox(new IFWL_CheckBox(
+      m_pApp, m_pProperties->MakeWidgetImpProperties(&m_checkboxData)));
+  pCheckBox->Initialize();
+
+  m_pIface = std::move(pCheckBox);
+  CFWL_Widget::Initialize(pProperties);
+}
+
 IFWL_CheckBox* CFWL_CheckBox::GetWidget() {
   return static_cast<IFWL_CheckBox*>(m_pIface.get());
 }
 
 const IFWL_CheckBox* CFWL_CheckBox::GetWidget() const {
   return static_cast<IFWL_CheckBox*>(m_pIface.get());
-}
-
-FWL_Error CFWL_CheckBox::Initialize(const CFWL_WidgetProperties* pProperties) {
-  if (m_pIface)
-    return FWL_Error::Indefinite;
-  if (pProperties) {
-    *m_pProperties = *pProperties;
-  }
-  std::unique_ptr<IFWL_CheckBox> pCheckBox(new IFWL_CheckBox(
-      m_pProperties->MakeWidgetImpProperties(&m_checkboxData)));
-  FWL_Error ret = pCheckBox->Initialize();
-  if (ret != FWL_Error::Succeeded) {
-    return ret;
-  }
-  m_pIface = std::move(pCheckBox);
-  CFWL_Widget::Initialize();
-  return FWL_Error::Succeeded;
 }
 
 FWL_Error CFWL_CheckBox::SetCaption(const CFX_WideStringC& wsCaption) {
@@ -52,10 +53,6 @@ int32_t CFWL_CheckBox::GetCheckState() {
 FWL_Error CFWL_CheckBox::SetCheckState(int32_t iCheck) {
   return GetWidget()->SetCheckState(iCheck);
 }
-
-CFWL_CheckBox::CFWL_CheckBox() {}
-
-CFWL_CheckBox::~CFWL_CheckBox() {}
 
 CFWL_CheckBox::CFWL_CheckBoxDP::CFWL_CheckBoxDP()
     : m_fBoxHeight(16.0f), m_wsCaption(L"Check box") {}

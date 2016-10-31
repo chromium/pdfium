@@ -52,14 +52,14 @@ void CXFA_FFPushButton::RenderWidget(CFX_Graphics* pGS,
 }
 FX_BOOL CXFA_FFPushButton::LoadWidget() {
   ASSERT(!m_pNormalWidget);
-  CFWL_PushButton* pPushButton = new CFWL_PushButton;
-  pPushButton->Initialize();
+  CFWL_PushButton* pPushButton = new CFWL_PushButton(GetFWLApp());
+  pPushButton->Initialize(nullptr);
 
   m_pOldDelegate = pPushButton->SetDelegate(this);
   m_pNormalWidget = pPushButton;
   m_pNormalWidget->SetLayoutItem(this);
   IFWL_Widget* pWidget = m_pNormalWidget->GetWidget();
-  CFWL_NoteDriver* pNoteDriver = FWL_GetApp()->GetNoteDriver();
+  CFWL_NoteDriver* pNoteDriver = pWidget->GetOwnerApp()->GetNoteDriver();
   pNoteDriver->RegisterEventTarget(pWidget, pWidget);
   m_pNormalWidget->LockUpdate();
   UpdateWidgetProperty();

@@ -15,6 +15,7 @@ class IFWL_Widget;
 class IFWL_DataProvider {
  public:
   virtual ~IFWL_DataProvider() {}
+
   virtual FWL_Error GetCaption(IFWL_Widget* pWidget,
                                CFX_WideString& wsCaption) = 0;
 };

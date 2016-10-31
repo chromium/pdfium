@@ -13,11 +13,12 @@
 
 class IFWL_ComboList : public IFWL_ListBox {
  public:
-  IFWL_ComboList(const CFWL_WidgetImpProperties& properties,
+  IFWL_ComboList(const IFWL_App* app,
+                 const CFWL_WidgetImpProperties& properties,
                  IFWL_Widget* pOuter);
 
   // IFWL_Widget
-  FWL_Error Initialize() override;
+  void Initialize() override;
   void Finalize() override;
 
   int32_t MatchItem(const CFX_WideString& wsMatch);

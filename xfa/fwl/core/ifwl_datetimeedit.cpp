@@ -9,15 +9,17 @@
 #include "xfa/fwl/core/cfwl_widgetmgr.h"
 #include "xfa/fwl/core/ifwl_datetimepicker.h"
 
-IFWL_DateTimeEdit::IFWL_DateTimeEdit(const CFWL_WidgetImpProperties& properties,
+IFWL_DateTimeEdit::IFWL_DateTimeEdit(const IFWL_App* app,
+                                     const CFWL_WidgetImpProperties& properties,
                                      IFWL_Widget* pOuter)
-    : IFWL_Edit(properties, pOuter) {}
+    : IFWL_Edit(app, properties, pOuter) {}
 
-FWL_Error IFWL_DateTimeEdit::Initialize() {
+void IFWL_DateTimeEdit::Initialize() {
+  IFWL_Edit::Initialize();
+
+  // Delete delegate set by IFWL_Edit::Initialize.
+  delete m_pDelegate;
   m_pDelegate = new CFWL_DateTimeEditImpDelegate(this);
-  if (IFWL_Edit::Initialize() != FWL_Error::Succeeded)
-    return FWL_Error::Indefinite;
-  return FWL_Error::Succeeded;
 }
 
 void IFWL_DateTimeEdit::Finalize() {

@@ -20,29 +20,36 @@ class CFWL_WidgetImpProperties;
 
 FWL_EVENT_DEF(CFWL_EvtSpbClick, CFWL_EventType::Click, FX_BOOL m_bUp;)
 
-class IFWL_SpinButton : public IFWL_Widget, public IFWL_Timer {
+class IFWL_SpinButton : public IFWL_Widget {
  public:
-  explicit IFWL_SpinButton(const CFWL_WidgetImpProperties& properties);
+  explicit IFWL_SpinButton(const IFWL_App* app,
+                           const CFWL_WidgetImpProperties& properties);
   ~IFWL_SpinButton() override;
 
   // IFWL_Widget
-  FWL_Type GetClassID() const override;
-  FWL_Error Initialize() override;
+  void Initialize() override;
   void Finalize() override;
+  FWL_Type GetClassID() const override;
   FWL_Error GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize = FALSE) override;
   FWL_Error Update() override;
   FWL_WidgetHit HitTest(FX_FLOAT fx, FX_FLOAT fy) override;
   FWL_Error DrawWidget(CFX_Graphics* pGraphics,
                        const CFX_Matrix* pMatrix = nullptr) override;
 
-  // IFWL_Timer
-  void Run(IFWL_TimerInfo* pTimerInfo) override;
-
   FWL_Error EnableButton(FX_BOOL bEnable, FX_BOOL bUp = TRUE);
   FX_BOOL IsButtonEnable(FX_BOOL bUp = TRUE);
 
  protected:
   friend class CFWL_SpinButtonImpDelegate;
+
+  class Timer : public IFWL_Timer {
+   public:
+    explicit Timer(IFWL_SpinButton* pToolTip);
+    ~Timer() override {}
+
+    void Run(IFWL_TimerInfo* pTimerInfo) override;
+  };
+  friend class IFWL_SpinButton::Timer;
 
   void DrawUpButton(CFX_Graphics* pGraphics,
                     IFWL_ThemeProvider* pTheme,
@@ -59,6 +66,7 @@ class IFWL_SpinButton : public IFWL_Widget, public IFWL_Timer {
   int32_t m_iButtonIndex;
   FX_BOOL m_bLButtonDwn;
   IFWL_TimerInfo* m_pTimerInfo;
+  IFWL_SpinButton::Timer m_Timer;
 };
 
 class CFWL_SpinButtonImpDelegate : public CFWL_WidgetImpDelegate {

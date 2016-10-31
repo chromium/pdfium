@@ -12,39 +12,13 @@
 #include "xfa/fwl/core/ifwl_widget.h"
 #include "xfa/fxfa/app/xfa_fwladapter.h"
 
-CXFA_FWLAdapterWidgetMgr* FWL_GetAdapterWidgetMgr() {
-  return CFWL_WidgetMgr::GetInstance()->GetAdapterWidgetMgr();
-}
-
-CXFA_FFApp* FWL_GetAdapterNative() {
-  IFWL_App* pApp = FWL_GetApp();
-  if (!pApp)
-    return nullptr;
-  return pApp->GetAdapterNative();
-}
-
-static IFWL_App* g_theApp = nullptr;
-IFWL_App* FWL_GetApp() {
-  return g_theApp;
-}
-
-void FWL_SetApp(IFWL_App* pApp) {
-  g_theApp = pApp;
-}
-
 IFWL_App::IFWL_App(CXFA_FFApp* pAdapter)
     : m_pAdapterNative(pAdapter),
       m_pWidgetMgr(pdfium::MakeUnique<CFWL_WidgetMgr>(pAdapter)),
-      m_pNoteDriver(pdfium::MakeUnique<CFWL_NoteDriver>()) {}
+      m_pNoteDriver(pdfium::MakeUnique<CFWL_NoteDriver>()) {
+  ASSERT(m_pAdapterNative);
+}
 
 IFWL_App::~IFWL_App() {
   CFWL_ToolTipContainer::DeleteInstance();
-}
-
-CXFA_FFApp* IFWL_App::GetAdapterNative() {
-  return m_pAdapterNative;
-}
-
-CFWL_WidgetMgr* IFWL_App::GetWidgetMgr() {
-  return m_pWidgetMgr.get();
 }

@@ -85,15 +85,16 @@ class IFWL_FormDP : public IFWL_DataProvider {
 
 class IFWL_Form : public IFWL_Widget {
  public:
-  IFWL_Form(const CFWL_WidgetImpProperties& properties, IFWL_Widget* pOuter);
+  IFWL_Form(const IFWL_App* app,
+            const CFWL_WidgetImpProperties& properties,
+            IFWL_Widget* pOuter);
   ~IFWL_Form() override;
 
   // IFWL_Widget
+  void Initialize() override;
+  void Finalize() override;
   FWL_Type GetClassID() const override;
   FX_BOOL IsInstance(const CFX_WideStringC& wsClass) const override;
-  FWL_Error Initialize() override;
-  void Finalize() override;
-
   FWL_Error GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize = FALSE) override;
   FWL_Error GetClientRect(CFX_RectF& rect) override;
   FWL_Error Update() override;

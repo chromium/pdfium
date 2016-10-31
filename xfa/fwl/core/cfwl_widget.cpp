@@ -18,9 +18,10 @@
 #define FWL_WGT_CalcWidth 2048
 #define FWL_WGT_CalcMultiLineDefWidth 120.0f
 
-CFWL_Widget::CFWL_Widget()
-    : m_pDelegate(nullptr),
-      m_pWidgetMgr(CFWL_WidgetMgr::GetInstance()),
+CFWL_Widget::CFWL_Widget(const IFWL_App* app)
+    : m_pApp(app),
+      m_pDelegate(nullptr),
+      m_pWidgetMgr(app->GetWidgetMgr()),
       m_pProperties(new CFWL_WidgetProperties) {
   ASSERT(m_pWidgetMgr);
 }
@@ -30,19 +31,17 @@ CFWL_Widget::~CFWL_Widget() {
     m_pIface->Finalize();
 }
 
+void CFWL_Widget::Initialize(const CFWL_WidgetProperties* pProperties) {
+  ASSERT(m_pIface);
+  m_pIface->SetAssociateWidget(this);
+}
+
 IFWL_Widget* CFWL_Widget::GetWidget() {
   return m_pIface.get();
 }
 
 const IFWL_Widget* CFWL_Widget::GetWidget() const {
   return m_pIface.get();
-}
-
-FWL_Error CFWL_Widget::Initialize(const CFWL_WidgetProperties* pProperties) {
-  if (!m_pIface)
-    return FWL_Error::Indefinite;
-  m_pIface->SetAssociateWidget(this);
-  return FWL_Error::Succeeded;
 }
 
 FWL_Error CFWL_Widget::GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize) {

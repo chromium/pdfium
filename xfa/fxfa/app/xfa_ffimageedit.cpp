@@ -23,14 +23,13 @@ CXFA_FFImageEdit::~CXFA_FFImageEdit() {
   CXFA_FFImageEdit::UnloadWidget();
 }
 FX_BOOL CXFA_FFImageEdit::LoadWidget() {
-  CFWL_PictureBox* pPictureBox = new CFWL_PictureBox;
-  if (pPictureBox) {
-    pPictureBox->Initialize();
-  }
+  CFWL_PictureBox* pPictureBox = new CFWL_PictureBox(GetFWLApp());
+  pPictureBox->Initialize(nullptr);
   m_pNormalWidget = pPictureBox;
   m_pNormalWidget->SetLayoutItem(this);
+
   IFWL_Widget* pWidget = m_pNormalWidget->GetWidget();
-  CFWL_NoteDriver* pNoteDriver = FWL_GetApp()->GetNoteDriver();
+  CFWL_NoteDriver* pNoteDriver = pWidget->GetOwnerApp()->GetNoteDriver();
   pNoteDriver->RegisterEventTarget(pWidget, pWidget);
   m_pOldDelegate = pPictureBox->SetDelegate(this);
   CXFA_FFField::LoadWidget();

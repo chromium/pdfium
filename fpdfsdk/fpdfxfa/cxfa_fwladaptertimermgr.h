@@ -33,9 +33,8 @@ class CXFA_FWLAdapterTimerMgr : public IFWL_AdapterTimerMgr {
 };
 
 struct CFWL_TimerInfo : public IFWL_TimerInfo {
-  CFWL_TimerInfo() : pTimer(nullptr) {}
-  CFWL_TimerInfo(int32_t event, IFWL_Timer* timer)
-      : idEvent(event), pTimer(timer) {}
+  CFWL_TimerInfo(IFWL_AdapterTimerMgr* mgr, int32_t event, IFWL_Timer* timer)
+      : IFWL_TimerInfo(mgr), idEvent(event), pTimer(timer) {}
 
   int32_t idEvent;
   IFWL_Timer* pTimer;

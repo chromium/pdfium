@@ -62,13 +62,14 @@ class IFWL_DateTimePickerDP : public IFWL_DataProvider {
 
 class IFWL_DateTimePicker : public IFWL_Widget {
  public:
-  explicit IFWL_DateTimePicker(const CFWL_WidgetImpProperties& properties);
+  explicit IFWL_DateTimePicker(const IFWL_App* app,
+                               const CFWL_WidgetImpProperties& properties);
   ~IFWL_DateTimePicker() override;
 
   // IFWL_Widget
-  FWL_Type GetClassID() const override;
-  FWL_Error Initialize() override;
+  void Initialize() override;
   void Finalize() override;
+  FWL_Type GetClassID() const override;
   FWL_Error GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize = FALSE) override;
   FWL_Error Update() override;
   FWL_WidgetHit HitTest(FX_FLOAT fx, FX_FLOAT fy) override;

@@ -14,15 +14,16 @@ class CFWL_FormProxyImpDelegate;
 
 class IFWL_FormProxy : public IFWL_Form {
  public:
-  IFWL_FormProxy(const CFWL_WidgetImpProperties& properties,
+  IFWL_FormProxy(const IFWL_App* app,
+                 const CFWL_WidgetImpProperties& properties,
                  IFWL_Widget* pOuter);
   ~IFWL_FormProxy() override;
 
   // IFWL_Widget
+  void Initialize() override;
+  void Finalize() override;
   FWL_Type GetClassID() const override;
   FX_BOOL IsInstance(const CFX_WideStringC& wsClass) const override;
-  FWL_Error Initialize() override;
-  void Finalize() override;
   FWL_Error Update() override;
   FWL_Error DrawWidget(CFX_Graphics* pGraphics,
                        const CFX_Matrix* pMatrix = nullptr) override;

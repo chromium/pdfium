@@ -22,22 +22,25 @@
 CXFA_FFListBox::CXFA_FFListBox(CXFA_FFPageView* pPageView,
                                CXFA_WidgetAcc* pDataAcc)
     : CXFA_FFField(pPageView, pDataAcc), m_pOldDelegate(nullptr) {}
+
 CXFA_FFListBox::~CXFA_FFListBox() {
   if (m_pNormalWidget) {
     IFWL_Widget* pWidget = m_pNormalWidget->GetWidget();
-    CFWL_NoteDriver* pNoteDriver = FWL_GetApp()->GetNoteDriver();
+    CFWL_NoteDriver* pNoteDriver = pWidget->GetOwnerApp()->GetNoteDriver();
     pNoteDriver->UnregisterEventTarget(pWidget);
   }
 }
+
 FX_BOOL CXFA_FFListBox::LoadWidget() {
-  CFWL_ListBox* pListBox = new CFWL_ListBox;
-  pListBox->Initialize();
+  CFWL_ListBox* pListBox = new CFWL_ListBox(GetFWLApp());
+  pListBox->Initialize(nullptr);
   pListBox->ModifyStyles(FWL_WGTSTYLE_VScroll | FWL_WGTSTYLE_NoBackground,
                          0xFFFFFFFF);
   m_pNormalWidget = (CFWL_Widget*)pListBox;
   m_pNormalWidget->SetLayoutItem(this);
+
   IFWL_Widget* pWidget = m_pNormalWidget->GetWidget();
-  CFWL_NoteDriver* pNoteDriver = FWL_GetApp()->GetNoteDriver();
+  CFWL_NoteDriver* pNoteDriver = pWidget->GetOwnerApp()->GetNoteDriver();
   pNoteDriver->RegisterEventTarget(pWidget, pWidget);
   m_pOldDelegate = m_pNormalWidget->SetDelegate(this);
   m_pNormalWidget->LockUpdate();
@@ -227,12 +230,13 @@ FX_BOOL CXFA_FFComboBox::PtInActiveRect(FX_FLOAT fx, FX_FLOAT fy) {
   return FALSE;
 }
 FX_BOOL CXFA_FFComboBox::LoadWidget() {
-  CFWL_ComboBox* pComboBox = new CFWL_ComboBox;
-  pComboBox->Initialize();
+  CFWL_ComboBox* pComboBox = new CFWL_ComboBox(GetFWLApp());
+  pComboBox->Initialize(nullptr);
   m_pNormalWidget = (CFWL_Widget*)pComboBox;
   m_pNormalWidget->SetLayoutItem(this);
+
   IFWL_Widget* pWidget = m_pNormalWidget->GetWidget();
-  CFWL_NoteDriver* pNoteDriver = FWL_GetApp()->GetNoteDriver();
+  CFWL_NoteDriver* pNoteDriver = pWidget->GetOwnerApp()->GetNoteDriver();
   pNoteDriver->RegisterEventTarget(pWidget, pWidget);
   m_pOldDelegate = m_pNormalWidget->SetDelegate(this);
   m_pNormalWidget->LockUpdate();

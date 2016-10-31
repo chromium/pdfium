@@ -20,9 +20,10 @@ const int kItemTextMargin = 2;
 
 }  // namespace
 
-IFWL_ListBox::IFWL_ListBox(const CFWL_WidgetImpProperties& properties,
+IFWL_ListBox::IFWL_ListBox(const IFWL_App* app,
+                           const CFWL_WidgetImpProperties& properties,
                            IFWL_Widget* pOuter)
-    : IFWL_Widget(properties, pOuter),
+    : IFWL_Widget(app, properties, pOuter),
       m_dwTTOStyles(0),
       m_iTTOAligns(0),
       m_hAnchor(nullptr),
@@ -36,16 +37,9 @@ IFWL_ListBox::IFWL_ListBox(const CFWL_WidgetImpProperties& properties,
 
 IFWL_ListBox::~IFWL_ListBox() {}
 
-FWL_Type IFWL_ListBox::GetClassID() const {
-  return FWL_Type::ListBox;
-}
-
-FWL_Error IFWL_ListBox::Initialize() {
-  if (IFWL_Widget::Initialize() != FWL_Error::Succeeded)
-    return FWL_Error::Indefinite;
-
+void IFWL_ListBox::Initialize() {
+  IFWL_Widget::Initialize();
   m_pDelegate = new CFWL_ListBoxImpDelegate(this);
-  return FWL_Error::Succeeded;
 }
 
 void IFWL_ListBox::Finalize() {
@@ -57,6 +51,10 @@ void IFWL_ListBox::Finalize() {
   delete m_pDelegate;
   m_pDelegate = nullptr;
   IFWL_Widget::Finalize();
+}
+
+FWL_Type IFWL_ListBox::GetClassID() const {
+  return FWL_Type::ListBox;
 }
 
 FWL_Error IFWL_ListBox::GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize) {
@@ -898,7 +896,7 @@ void IFWL_ListBox::InitScrollBar(FX_BOOL bVert) {
   prop.m_dwStates = FWL_WGTSTATE_Invisible;
   prop.m_pParent = this;
   prop.m_pThemeProvider = m_pScrollBarTP;
-  IFWL_ScrollBar* pScrollBar = new IFWL_ScrollBar(prop, this);
+  IFWL_ScrollBar* pScrollBar = new IFWL_ScrollBar(m_pOwnerApp, prop, this);
   pScrollBar->Initialize();
   (bVert ? &m_pVertScrollBar : &m_pHorzScrollBar)->reset(pScrollBar);
 }

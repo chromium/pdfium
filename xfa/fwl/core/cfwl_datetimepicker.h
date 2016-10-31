@@ -12,13 +12,14 @@
 
 class CFWL_DateTimePicker : public CFWL_Widget {
  public:
-  CFWL_DateTimePicker();
+  CFWL_DateTimePicker(const IFWL_App*);
   ~CFWL_DateTimePicker() override;
 
   IFWL_DateTimePicker* GetWidget() override;
   const IFWL_DateTimePicker* GetWidget() const override;
 
-  FWL_Error Initialize(const CFWL_WidgetProperties* pProperties = nullptr);
+  void Initialize(const CFWL_WidgetProperties* pProperties);
+
   FWL_Error SetToday(int32_t iYear, int32_t iMonth, int32_t iDay);
   FWL_Error GetEditText(CFX_WideString& wsText);
   FWL_Error SetEditText(const CFX_WideString& wsText);

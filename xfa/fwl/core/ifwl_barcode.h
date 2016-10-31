@@ -58,13 +58,14 @@ class IFWL_BarcodeDP : public IFWL_EditDP {
 
 class IFWL_Barcode : public IFWL_Edit {
  public:
-  explicit IFWL_Barcode(const CFWL_WidgetImpProperties& properties);
+  explicit IFWL_Barcode(const IFWL_App* app,
+                        const CFWL_WidgetImpProperties& properties);
   ~IFWL_Barcode() override;
 
   // IFWL_Widget
-  FWL_Type GetClassID() const override;
-  FWL_Error Initialize() override;
+  void Initialize() override;
   void Finalize() override;
+  FWL_Type GetClassID() const override;
   FWL_Error Update() override;
   FWL_Error DrawWidget(CFX_Graphics* pGraphics,
                        const CFX_Matrix* pMatrix = nullptr) override;

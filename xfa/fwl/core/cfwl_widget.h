@@ -21,7 +21,7 @@ class CFWL_WidgetMgr;
 
 class CFWL_Widget {
  public:
-  CFWL_Widget();
+  CFWL_Widget(const IFWL_App*);
   virtual ~CFWL_Widget();
 
   virtual IFWL_Widget* GetWidget();
@@ -54,8 +54,9 @@ class CFWL_Widget {
   IFWL_WidgetDelegate* SetDelegate(IFWL_WidgetDelegate* pDelegate);
 
  protected:
-  FWL_Error Initialize(const CFWL_WidgetProperties* pProperties = nullptr);
+  void Initialize(const CFWL_WidgetProperties* pProperties);
 
+  const IFWL_App* m_pApp;
   std::unique_ptr<IFWL_Widget> m_pIface;
   IFWL_WidgetDelegate* m_pDelegate;
   CFWL_WidgetMgr* const m_pWidgetMgr;

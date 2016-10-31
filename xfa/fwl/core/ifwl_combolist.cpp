@@ -9,18 +9,19 @@
 #include "xfa/fwl/core/ifwl_combobox.h"
 #include "xfa/fwl/core/ifwl_comboedit.h"
 
-IFWL_ComboList::IFWL_ComboList(const CFWL_WidgetImpProperties& properties,
+IFWL_ComboList::IFWL_ComboList(const IFWL_App* app,
+                               const CFWL_WidgetImpProperties& properties,
                                IFWL_Widget* pOuter)
-    : IFWL_ListBox(properties, pOuter), m_bNotifyOwner(TRUE) {
+    : IFWL_ListBox(app, properties, pOuter), m_bNotifyOwner(TRUE) {
   ASSERT(pOuter);
 }
 
-FWL_Error IFWL_ComboList::Initialize() {
-  if (IFWL_ListBox::Initialize() != FWL_Error::Succeeded)
-    return FWL_Error::Indefinite;
+void IFWL_ComboList::Initialize() {
+  IFWL_ListBox::Initialize();
+
+  // Delete the delegate that was created by IFWL_ListBox::Initialize ...
   delete m_pDelegate;
   m_pDelegate = new CFWL_ComboListImpDelegate(this);
-  return FWL_Error::Succeeded;
 }
 
 void IFWL_ComboList::Finalize() {

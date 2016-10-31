@@ -36,23 +36,21 @@ enum FWL_SCBCODE {
 
 class IFWL_ScrollBarDP : public IFWL_DataProvider {};
 
-class IFWL_ScrollBar : public IFWL_Widget, public IFWL_Timer {
+class IFWL_ScrollBar : public IFWL_Widget {
  public:
-  IFWL_ScrollBar(const CFWL_WidgetImpProperties& properties,
+  IFWL_ScrollBar(const IFWL_App* app,
+                 const CFWL_WidgetImpProperties& properties,
                  IFWL_Widget* pOuter);
   ~IFWL_ScrollBar() override;
 
   // IFWL_Widget
-  FWL_Type GetClassID() const override;
-  FWL_Error Initialize() override;
+  void Initialize() override;
   void Finalize() override;
+  FWL_Type GetClassID() const override;
   FWL_Error GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize = FALSE) override;
   FWL_Error Update() override;
   FWL_Error DrawWidget(CFX_Graphics* pGraphics,
                        const CFX_Matrix* pMatrix = nullptr) override;
-
-  // IFWL_Timer
-  void Run(IFWL_TimerInfo* pTimerInfo) override;
 
   FX_BOOL IsVertical();
   FWL_Error GetRange(FX_FLOAT& fMin, FX_FLOAT& fMax);
@@ -71,6 +69,16 @@ class IFWL_ScrollBar : public IFWL_Widget, public IFWL_Timer {
  protected:
   friend class CFWL_ScrollBarImpDelegate;
 
+  class Timer : public IFWL_Timer {
+   public:
+    explicit Timer(IFWL_ScrollBar* pToolTip);
+    ~Timer() override {}
+
+    void Run(IFWL_TimerInfo* pTimerInfo) override;
+  };
+  friend class IFWL_ScrollBar::Timer;
+
+  IFWL_ScrollBar();
   void DrawTrack(CFX_Graphics* pGraphics,
                  IFWL_ThemeProvider* pTheme,
                  FX_BOOL bLower = TRUE,
@@ -124,9 +132,7 @@ class IFWL_ScrollBar : public IFWL_Widget, public IFWL_Timer {
   CFX_RectF m_rtMaxTrack;
   bool m_bCustomLayout;
   FX_FLOAT m_fMinThumb;
-
- protected:
-  IFWL_ScrollBar();
+  IFWL_ScrollBar::Timer m_Timer;
 };
 
 class CFWL_ScrollBarImpDelegate : public CFWL_WidgetImpDelegate {

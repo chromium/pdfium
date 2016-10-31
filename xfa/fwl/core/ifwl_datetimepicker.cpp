@@ -24,8 +24,9 @@ const int kDateTimePickerHeight = 20;
 }  // namespace
 
 IFWL_DateTimePicker::IFWL_DateTimePicker(
+    const IFWL_App* app,
     const CFWL_WidgetImpProperties& properties)
-    : IFWL_Widget(properties, nullptr),
+    : IFWL_Widget(app, properties, nullptr),
       m_iBtnState(1),
       m_iYear(-1),
       m_iMonth(-1),
@@ -36,15 +37,11 @@ IFWL_DateTimePicker::IFWL_DateTimePicker(
 
 IFWL_DateTimePicker::~IFWL_DateTimePicker() {}
 
-FWL_Type IFWL_DateTimePicker::GetClassID() const {
-  return FWL_Type::DateTimePicker;
-}
-
-FWL_Error IFWL_DateTimePicker::Initialize() {
-  if (IFWL_Widget::Initialize() != FWL_Error::Succeeded)
-    return FWL_Error::Indefinite;
+void IFWL_DateTimePicker::Initialize() {
+  IFWL_Widget::Initialize();
 
   m_pDelegate = new CFWL_DateTimePickerImpDelegate(this);
+
   m_pProperties->m_dwStyleExes = FWL_STYLEEXT_DTP_ShortDateFormat;
   CFWL_WidgetImpProperties propMonth;
   propMonth.m_dwStyles = FWL_WGTSTYLE_Popup | FWL_WGTSTYLE_Border;
@@ -53,7 +50,7 @@ FWL_Error IFWL_DateTimePicker::Initialize() {
   propMonth.m_pParent = this;
   propMonth.m_pThemeProvider = m_pProperties->m_pThemeProvider;
 
-  m_pMonthCal.reset(new IFWL_DateTimeCalendar(propMonth, this));
+  m_pMonthCal.reset(new IFWL_DateTimeCalendar(m_pOwnerApp, propMonth, this));
   m_pMonthCal->Initialize();
   CFX_RectF rtMonthCal;
   m_pMonthCal->GetWidgetRect(rtMonthCal, TRUE);
@@ -63,11 +60,10 @@ FWL_Error IFWL_DateTimePicker::Initialize() {
   propEdit.m_pParent = this;
   propEdit.m_pThemeProvider = m_pProperties->m_pThemeProvider;
 
-  m_pEdit.reset(new IFWL_DateTimeEdit(propEdit, this));
+  m_pEdit.reset(new IFWL_DateTimeEdit(m_pOwnerApp, propEdit, this));
   m_pEdit->Initialize();
   RegisterEventTarget(m_pMonthCal.get());
   RegisterEventTarget(m_pEdit.get());
-  return FWL_Error::Succeeded;
 }
 
 void IFWL_DateTimePicker::Finalize() {
@@ -82,6 +78,10 @@ void IFWL_DateTimePicker::Finalize() {
   delete m_pDelegate;
   m_pDelegate = nullptr;
   IFWL_Widget::Finalize();
+}
+
+FWL_Type IFWL_DateTimePicker::GetClassID() const {
+  return FWL_Type::DateTimePicker;
 }
 
 FWL_Error IFWL_DateTimePicker::GetWidgetRect(CFX_RectF& rect,
@@ -328,7 +328,7 @@ void IFWL_DateTimePicker::DrawDropDownButton(CFX_Graphics* pGraphics,
     prop.m_dwStyleExes |= FWL_STYLEEXE_SPB_Vert;
     prop.m_pParent = this;
     prop.m_rtWidget = m_rtBtn;
-    IFWL_SpinButton* pSpin = new IFWL_SpinButton(prop);
+    IFWL_SpinButton* pSpin = new IFWL_SpinButton(m_pOwnerApp, prop);
     pSpin->Initialize();
   } else {
     CFWL_ThemeBackground param;
@@ -463,7 +463,7 @@ void IFWL_DateTimePicker::InitProxyForm() {
   propForm.m_dwStates = FWL_WGTSTATE_Invisible;
   propForm.m_pOwner = this;
 
-  m_pForm.reset(new IFWL_FormProxy(propForm, m_pMonthCal.get()));
+  m_pForm.reset(new IFWL_FormProxy(m_pOwnerApp, propForm, m_pMonthCal.get()));
   m_pForm->Initialize();
   m_pMonthCal->SetParent(m_pForm.get());
 }
@@ -493,7 +493,7 @@ void IFWL_DateTimePicker::DisForm_InitDateTimeCalendar() {
   propMonth.m_pDataProvider = &m_MonthCalendarDP;
   propMonth.m_pThemeProvider = m_pProperties->m_pThemeProvider;
 
-  m_pMonthCal.reset(new IFWL_DateTimeCalendar(propMonth, this));
+  m_pMonthCal.reset(new IFWL_DateTimeCalendar(m_pOwnerApp, propMonth, this));
   m_pMonthCal->Initialize();
   CFX_RectF rtMonthCal;
   m_pMonthCal->GetWidgetRect(rtMonthCal, TRUE);
@@ -509,7 +509,7 @@ void IFWL_DateTimePicker::DisForm_InitDateTimeEdit() {
   propEdit.m_pParent = this;
   propEdit.m_pThemeProvider = m_pProperties->m_pThemeProvider;
 
-  m_pEdit.reset(new IFWL_DateTimeEdit(propEdit, this));
+  m_pEdit.reset(new IFWL_DateTimeEdit(m_pOwnerApp, propEdit, this));
   m_pEdit->Initialize();
 }
 

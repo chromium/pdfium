@@ -119,15 +119,17 @@ XFA_LPCBARCODETYPEENUMINFO XFA_GetBarcodeTypeByName(
 CXFA_FFBarcode::CXFA_FFBarcode(CXFA_FFPageView* pPageView,
                                CXFA_WidgetAcc* pDataAcc)
     : CXFA_FFTextEdit(pPageView, pDataAcc) {}
+
 CXFA_FFBarcode::~CXFA_FFBarcode() {}
+
 FX_BOOL CXFA_FFBarcode::LoadWidget() {
-  CFWL_Barcode* pFWLBarcode = new CFWL_Barcode;
-  pFWLBarcode->Initialize();
+  CFWL_Barcode* pFWLBarcode = new CFWL_Barcode(GetFWLApp());
+  pFWLBarcode->Initialize(nullptr);
 
   m_pNormalWidget = pFWLBarcode;
   m_pNormalWidget->SetLayoutItem(this);
   IFWL_Widget* pWidget = m_pNormalWidget->GetWidget();
-  CFWL_NoteDriver* pNoteDriver = FWL_GetApp()->GetNoteDriver();
+  CFWL_NoteDriver* pNoteDriver = pWidget->GetOwnerApp()->GetNoteDriver();
   pNoteDriver->RegisterEventTarget(pWidget, pWidget);
   m_pOldDelegate = m_pNormalWidget->SetDelegate(this);
   m_pNormalWidget->LockUpdate();

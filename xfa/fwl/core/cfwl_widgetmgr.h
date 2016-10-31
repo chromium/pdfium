@@ -46,8 +46,6 @@ class CFWL_WidgetMgrItem {
 
 class CFWL_WidgetMgr {
  public:
-  static CFWL_WidgetMgr* GetInstance();
-
   explicit CFWL_WidgetMgr(CXFA_FFApp* pAdapterNative);
   ~CFWL_WidgetMgr();
 
@@ -97,6 +95,8 @@ class CFWL_WidgetMgr {
                              CFX_RectF& rtPopup);
 
  protected:
+  friend class CFWL_WidgetMgrDelegate;
+
   int32_t TravelWidgetMgr(CFWL_WidgetMgrItem* pParent,
                           int32_t* pIndex,
                           CFWL_WidgetMgrItem* pItem,
@@ -110,7 +110,6 @@ class CFWL_WidgetMgr {
 #if (_FX_OS_ == _FX_WIN32_DESKTOP_) || (_FX_OS_ == _FX_WIN64_)
   CFX_RectF m_rtScreen;
 #endif
-  friend class CFWL_WidgetMgrDelegate;
 };
 
 class CFWL_WidgetMgrDelegate {

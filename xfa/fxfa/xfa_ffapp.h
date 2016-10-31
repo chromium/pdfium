@@ -56,11 +56,14 @@ class CXFA_FFApp {
   CXFA_FWLTheme* GetFWLTheme();
 
   IXFA_AppProvider* GetAppProvider() const { return m_pProvider; }
+  const IFWL_App* GetFWLApp() const { return m_pFWLApp.get(); }
   IFWL_AdapterTimerMgr* GetTimerMgr() const;
   CXFA_FontMgr* GetXFAFontMgr() const;
   CFWL_WidgetMgrDelegate* GetWidgetMgrDelegate() const {
     return m_pWidgetMgrDelegate;
   }
+
+  void ClearEventTargets();
 
  protected:
   std::unique_ptr<CXFA_FFDocHandler> m_pDocHandler;

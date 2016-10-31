@@ -13,6 +13,7 @@
 #include "xfa/fwl/core/cfwl_themebackground.h"
 #include "xfa/fwl/core/cfwl_themetext.h"
 #include "xfa/fwl/core/cfwl_widgetmgr.h"
+#include "xfa/fwl/core/ifwl_app.h"
 #include "xfa/fwl/core/fwl_noteimp.h"
 #include "xfa/fwl/core/ifwl_checkbox.h"
 #include "xfa/fwl/core/ifwl_themeprovider.h"
@@ -23,8 +24,9 @@ const int kCaptionMargin = 5;
 
 }  // namespace
 
-IFWL_CheckBox::IFWL_CheckBox(const CFWL_WidgetImpProperties& properties)
-    : IFWL_Widget(properties, nullptr),
+IFWL_CheckBox::IFWL_CheckBox(const IFWL_App* app,
+                             const CFWL_WidgetImpProperties& properties)
+    : IFWL_Widget(app, properties, nullptr),
       m_dwTTOStyles(FDE_TTOSTYLE_SingleLine),
       m_iTTOAlign(FDE_TTOALIGNMENT_Center),
       m_bBtnDown(FALSE) {
@@ -36,22 +38,19 @@ IFWL_CheckBox::IFWL_CheckBox(const CFWL_WidgetImpProperties& properties)
 
 IFWL_CheckBox::~IFWL_CheckBox() {}
 
-FWL_Type IFWL_CheckBox::GetClassID() const {
-  return FWL_Type::CheckBox;
-}
-
-FWL_Error IFWL_CheckBox::Initialize() {
-  if (IFWL_Widget::Initialize() != FWL_Error::Succeeded)
-    return FWL_Error::Indefinite;
-
+void IFWL_CheckBox::Initialize() {
+  IFWL_Widget::Initialize();
   m_pDelegate = new CFWL_CheckBoxImpDelegate(this);
-  return FWL_Error::Succeeded;
 }
 
 void IFWL_CheckBox::Finalize() {
   delete m_pDelegate;
   m_pDelegate = nullptr;
   IFWL_Widget::Finalize();
+}
+
+FWL_Type IFWL_CheckBox::GetClassID() const {
+  return FWL_Type::CheckBox;
 }
 
 FWL_Error IFWL_CheckBox::GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize) {
@@ -353,7 +352,7 @@ void IFWL_CheckBox::NextStates() {
   if (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_CKB_RadioButton) {
     if ((m_pProperties->m_dwStates & FWL_STATE_CKB_CheckMask) ==
         FWL_STATE_CKB_Unchecked) {
-      CFWL_WidgetMgr* pWidgetMgr = CFWL_WidgetMgr::GetInstance();
+      CFWL_WidgetMgr* pWidgetMgr = GetOwnerApp()->GetWidgetMgr();
       if (!pWidgetMgr->IsFormDisabled()) {
         CFX_ArrayTemplate<IFWL_Widget*> radioarr;
         pWidgetMgr->GetSameGroupRadioButton(this, radioarr);

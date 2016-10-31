@@ -8,6 +8,24 @@
 
 #include <memory>
 
+CFWL_Barcode::CFWL_Barcode(const IFWL_App* app) : CFWL_Edit(app) {}
+
+CFWL_Barcode::~CFWL_Barcode() {}
+
+void CFWL_Barcode::Initialize(const CFWL_WidgetProperties* pProperties) {
+  ASSERT(!m_pIface);
+
+  if (pProperties)
+    *m_pProperties = *pProperties;
+
+  std::unique_ptr<IFWL_Barcode> pBarcode(new IFWL_Barcode(
+      m_pApp, m_pProperties->MakeWidgetImpProperties(&m_barcodeData)));
+  pBarcode->Initialize();
+
+  m_pIface = std::move(pBarcode);
+  CFWL_Widget::Initialize(pProperties);
+}
+
 IFWL_Barcode* CFWL_Barcode::GetWidget() {
   return static_cast<IFWL_Barcode*>(m_pIface.get());
 }
@@ -15,27 +33,6 @@ IFWL_Barcode* CFWL_Barcode::GetWidget() {
 const IFWL_Barcode* CFWL_Barcode::GetWidget() const {
   return static_cast<IFWL_Barcode*>(m_pIface.get());
 }
-
-FWL_Error CFWL_Barcode::Initialize(const CFWL_WidgetProperties* pProperties) {
-  if (m_pIface)
-    return FWL_Error::Indefinite;
-  if (pProperties) {
-    *m_pProperties = *pProperties;
-  }
-  std::unique_ptr<IFWL_Barcode> pBarcode(
-      new IFWL_Barcode(m_pProperties->MakeWidgetImpProperties(&m_barcodeData)));
-  FWL_Error ret = pBarcode->Initialize();
-  if (ret != FWL_Error::Succeeded) {
-    return ret;
-  }
-  m_pIface = std::move(pBarcode);
-  CFWL_Widget::Initialize();
-  return FWL_Error::Succeeded;
-}
-
-CFWL_Barcode::CFWL_Barcode() {}
-
-CFWL_Barcode::~CFWL_Barcode() {}
 
 void CFWL_Barcode::SetType(BC_TYPE type) {
   if (GetWidget())

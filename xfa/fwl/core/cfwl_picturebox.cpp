@@ -8,30 +8,30 @@
 
 #include <memory>
 
+CFWL_PictureBox::CFWL_PictureBox(const IFWL_App* app) : CFWL_Widget(app) {}
+
+CFWL_PictureBox::~CFWL_PictureBox() {}
+
+void CFWL_PictureBox::Initialize(const CFWL_WidgetProperties* pProperties) {
+  ASSERT(!m_pIface);
+
+  if (pProperties)
+    *m_pProperties = *pProperties;
+
+  std::unique_ptr<IFWL_PictureBox> pPictureBox(new IFWL_PictureBox(
+      m_pApp, m_pProperties->MakeWidgetImpProperties(&m_PictureBoxDP)));
+  pPictureBox->Initialize();
+
+  m_pIface = std::move(pPictureBox);
+  CFWL_Widget::Initialize(pProperties);
+}
+
 IFWL_PictureBox* CFWL_PictureBox::GetWidget() {
   return static_cast<IFWL_PictureBox*>(m_pIface.get());
 }
 
 const IFWL_PictureBox* CFWL_PictureBox::GetWidget() const {
   return static_cast<IFWL_PictureBox*>(m_pIface.get());
-}
-
-FWL_Error CFWL_PictureBox::Initialize(
-    const CFWL_WidgetProperties* pProperties) {
-  if (m_pIface)
-    return FWL_Error::Indefinite;
-  if (pProperties) {
-    *m_pProperties = *pProperties;
-  }
-  std::unique_ptr<IFWL_PictureBox> pPictureBox(new IFWL_PictureBox(
-      m_pProperties->MakeWidgetImpProperties(&m_PictureBoxDP)));
-  FWL_Error ret = pPictureBox->Initialize();
-  if (ret != FWL_Error::Succeeded) {
-    return ret;
-  }
-  m_pIface = std::move(pPictureBox);
-  CFWL_Widget::Initialize();
-  return FWL_Error::Succeeded;
 }
 
 CFX_DIBitmap* CFWL_PictureBox::GetPicture() {
@@ -96,10 +96,6 @@ FWL_Error CFWL_PictureBox::SetOffset(FX_FLOAT fx, FX_FLOAT fy) {
   m_PictureBoxDP.m_fOffSetY = fy;
   return FWL_Error::Succeeded;
 }
-
-CFWL_PictureBox::CFWL_PictureBox() {}
-
-CFWL_PictureBox::~CFWL_PictureBox() {}
 
 CFWL_PictureBox::CFWL_PictureBoxDP::CFWL_PictureBoxDP()
     : m_pBitmap(nullptr),

@@ -102,13 +102,15 @@ class IFWL_ListBoxCompare {
 
 class IFWL_ListBox : public IFWL_Widget {
  public:
-  IFWL_ListBox(const CFWL_WidgetImpProperties& properties, IFWL_Widget* pOuter);
+  IFWL_ListBox(const IFWL_App* app,
+               const CFWL_WidgetImpProperties& properties,
+               IFWL_Widget* pOuter);
   ~IFWL_ListBox() override;
 
   // IFWL_Widget
-  FWL_Type GetClassID() const override;
-  FWL_Error Initialize() override;
+  void Initialize() override;
   void Finalize() override;
+  FWL_Type GetClassID() const override;
   FWL_Error GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize = FALSE) override;
   FWL_Error Update() override;
   FWL_WidgetHit HitTest(FX_FLOAT fx, FX_FLOAT fy) override;

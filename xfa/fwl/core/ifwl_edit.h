@@ -106,13 +106,15 @@ class IFWL_EditDP : public IFWL_DataProvider {};
 
 class IFWL_Edit : public IFWL_Widget {
  public:
-  IFWL_Edit(const CFWL_WidgetImpProperties& properties, IFWL_Widget* pOuter);
+  IFWL_Edit(const IFWL_App* app,
+            const CFWL_WidgetImpProperties& properties,
+            IFWL_Widget* pOuter);
   ~IFWL_Edit() override;
 
   // IFWL_Widget:
-  FWL_Type GetClassID() const override;
-  FWL_Error Initialize() override;
+  void Initialize() override;
   void Finalize() override;
+  FWL_Type GetClassID() const override;
   FWL_Error GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize = FALSE) override;
   FWL_Error SetWidgetRect(const CFX_RectF& rect) override;
   FWL_Error Update() override;

@@ -34,13 +34,15 @@ class IFWL_ToolTipDP : public IFWL_DataProvider {
 
 class IFWL_ToolTip : public IFWL_Form {
  public:
-  IFWL_ToolTip(const CFWL_WidgetImpProperties& properties, IFWL_Widget* pOuter);
+  IFWL_ToolTip(const IFWL_App* app,
+               const CFWL_WidgetImpProperties& properties,
+               IFWL_Widget* pOuter);
   ~IFWL_ToolTip() override;
 
   // IFWL_Widget
-  FWL_Type GetClassID() const override;
-  FWL_Error Initialize() override;
+  void Initialize() override;
   void Finalize() override;
+  FWL_Type GetClassID() const override;
   FWL_Error GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize = FALSE) override;
   FWL_Error Update() override;
   FWL_Error DrawWidget(CFX_Graphics* pGraphics,
@@ -54,18 +56,15 @@ class IFWL_ToolTip : public IFWL_Form {
 
  protected:
   friend class CFWL_ToolTipImpDelegate;
-  friend class CFWL_ToolTipTimer;
 
-  class CFWL_ToolTipTimer : public IFWL_Timer {
+  class Timer : public IFWL_Timer {
    public:
-    CFWL_ToolTipTimer() {}
-    explicit CFWL_ToolTipTimer(IFWL_ToolTip* pToolTip);
-    ~CFWL_ToolTipTimer() override {}
+    explicit Timer(IFWL_ToolTip* pToolTip);
+    ~Timer() override {}
 
     void Run(IFWL_TimerInfo* pTimerInfo) override;
-
-    IFWL_ToolTip* m_pToolTip;
   };
+  friend class IFWL_ToolTip::Timer;
 
   void DrawBkground(CFX_Graphics* pGraphics,
                     IFWL_ThemeProvider* pTheme,
@@ -84,8 +83,8 @@ class IFWL_ToolTip : public IFWL_Form {
   CFX_RectF m_rtAnchor;
   IFWL_TimerInfo* m_pTimerInfoShow;
   IFWL_TimerInfo* m_pTimerInfoHide;
-  CFWL_ToolTipTimer m_TimerShow;
-  CFWL_ToolTipTimer m_TimerHide;
+  IFWL_ToolTip::Timer m_TimerShow;
+  IFWL_ToolTip::Timer m_TimerHide;
 };
 
 class CFWL_ToolTipImpDelegate : public CFWL_WidgetImpDelegate {

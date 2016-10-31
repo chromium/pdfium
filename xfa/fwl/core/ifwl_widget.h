@@ -66,7 +66,7 @@ class IFWL_Widget {
  public:
   virtual ~IFWL_Widget();
 
-  virtual FWL_Error Initialize();
+  virtual void Initialize();
   virtual void Finalize();
   virtual FWL_Type GetClassID() const = 0;
   virtual FX_BOOL IsInstance(const CFX_WideStringC& wsClass) const;
@@ -114,9 +114,9 @@ class IFWL_Widget {
   virtual IFWL_ThemeProvider* GetThemeProvider();
   virtual FWL_Error SetThemeProvider(IFWL_ThemeProvider* pThemeProvider);
   virtual IFWL_WidgetDelegate* SetDelegate(IFWL_WidgetDelegate* pDelegate);
-  virtual IFWL_App* GetOwnerApp() const;
 
-  FWL_Error SetOwnerApp(IFWL_App* pOwnerApp);
+  const IFWL_App* GetOwnerApp() const;
+
   CFX_SizeF GetOffsetFromParent(IFWL_Widget* pParent);
 
   uint32_t GetEventKey() const;
@@ -130,7 +130,9 @@ class IFWL_Widget {
  protected:
   friend class CFWL_WidgetImpDelegate;
 
-  IFWL_Widget(const CFWL_WidgetImpProperties& properties, IFWL_Widget* pOuter);
+  IFWL_Widget(const IFWL_App* app,
+              const CFWL_WidgetImpProperties& properties,
+              IFWL_Widget* pOuter);
 
   FX_BOOL IsEnabled() const;
   FX_BOOL IsVisible() const;
@@ -199,8 +201,8 @@ class IFWL_Widget {
 
   FX_BOOL IsParent(IFWL_Widget* pParent);
 
+  const IFWL_App* const m_pOwnerApp;
   CFWL_WidgetMgr* const m_pWidgetMgr;
-  IFWL_App* m_pOwnerApp;
   std::unique_ptr<CFWL_WidgetImpProperties> m_pProperties;
   IFWL_WidgetDelegate* m_pDelegate;
   IFWL_WidgetDelegate* m_pCurDelegate;

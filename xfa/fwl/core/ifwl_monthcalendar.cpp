@@ -118,9 +118,10 @@ CFX_WideString* GetCapacityForMonth(IFWL_ThemeProvider* pTheme,
 }  // namespace
 
 IFWL_MonthCalendar::IFWL_MonthCalendar(
+    const IFWL_App* app,
     const CFWL_WidgetImpProperties& properties,
     IFWL_Widget* pOuter)
-    : IFWL_Widget(properties, pOuter),
+    : IFWL_Widget(app, properties, pOuter),
       m_bInit(FALSE),
       m_pDateTime(new CFX_DateTime),
       m_iCurYear(2011),
@@ -151,22 +152,19 @@ IFWL_MonthCalendar::~IFWL_MonthCalendar() {
   m_arrSelDays.RemoveAll();
 }
 
-FWL_Type IFWL_MonthCalendar::GetClassID() const {
-  return FWL_Type::MonthCalendar;
-}
-
-FWL_Error IFWL_MonthCalendar::Initialize() {
-  if (IFWL_Widget::Initialize() != FWL_Error::Succeeded)
-    return FWL_Error::Indefinite;
-
+void IFWL_MonthCalendar::Initialize() {
+  IFWL_Widget::Initialize();
   m_pDelegate = new CFWL_MonthCalendarImpDelegate(this);
-  return FWL_Error::Succeeded;
 }
 
 void IFWL_MonthCalendar::Finalize() {
   delete m_pDelegate;
   m_pDelegate = nullptr;
   IFWL_Widget::Finalize();
+}
+
+FWL_Type IFWL_MonthCalendar::GetClassID() const {
+  return FWL_Type::MonthCalendar;
 }
 
 FWL_Error IFWL_MonthCalendar::GetWidgetRect(CFX_RectF& rect,

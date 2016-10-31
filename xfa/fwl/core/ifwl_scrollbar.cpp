@@ -16,9 +16,10 @@
 #define FWL_SCROLLBAR_Elapse 500
 #define FWL_SCROLLBAR_MinThumb 5
 
-IFWL_ScrollBar::IFWL_ScrollBar(const CFWL_WidgetImpProperties& properties,
+IFWL_ScrollBar::IFWL_ScrollBar(const IFWL_App* app,
+                               const CFWL_WidgetImpProperties& properties,
                                IFWL_Widget* pOuter)
-    : IFWL_Widget(properties, pOuter),
+    : IFWL_Widget(app, properties, pOuter),
       m_pTimerInfo(nullptr),
       m_fRangeMin(0),
       m_fRangeMax(-1),
@@ -42,7 +43,8 @@ IFWL_ScrollBar::IFWL_ScrollBar(const CFWL_WidgetImpProperties& properties,
       m_fButtonLen(0),
       m_bMinSize(FALSE),
       m_bCustomLayout(false),
-      m_fMinThumb(FWL_SCROLLBAR_MinThumb) {
+      m_fMinThumb(FWL_SCROLLBAR_MinThumb),
+      m_Timer(this) {
   m_rtClient.Reset();
   m_rtThumb.Reset();
   m_rtMinBtn.Reset();
@@ -53,22 +55,19 @@ IFWL_ScrollBar::IFWL_ScrollBar(const CFWL_WidgetImpProperties& properties,
 
 IFWL_ScrollBar::~IFWL_ScrollBar() {}
 
-FWL_Type IFWL_ScrollBar::GetClassID() const {
-  return FWL_Type::ScrollBar;
-}
-
-FWL_Error IFWL_ScrollBar::Initialize() {
-  if (IFWL_Widget::Initialize() != FWL_Error::Succeeded)
-    return FWL_Error::Indefinite;
-
+void IFWL_ScrollBar::Initialize() {
+  IFWL_Widget::Initialize();
   m_pDelegate = new CFWL_ScrollBarImpDelegate(this);
-  return FWL_Error::Succeeded;
 }
 
 void IFWL_ScrollBar::Finalize() {
   delete m_pDelegate;
   m_pDelegate = nullptr;
   IFWL_Widget::Finalize();
+}
+
+FWL_Type IFWL_ScrollBar::GetClassID() const {
+  return FWL_Type::ScrollBar;
 }
 
 FWL_Error IFWL_ScrollBar::GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize) {
@@ -194,14 +193,6 @@ FX_BOOL IFWL_ScrollBar::DoScroll(uint32_t dwCode, FX_FLOAT fPos) {
     default: { return FALSE; }
   }
   return OnScroll(dwCode, fPos);
-}
-
-void IFWL_ScrollBar::Run(IFWL_TimerInfo* pTimerInfo) {
-  if (m_pTimerInfo)
-    m_pTimerInfo->StopTimer();
-
-  if (!SendEvent())
-    m_pTimerInfo = StartTimer(0, true);
 }
 
 FWL_Error IFWL_ScrollBar::SetOuter(IFWL_Widget* pOuter) {
@@ -660,7 +651,8 @@ void CFWL_ScrollBarImpDelegate::OnLButtonDown(uint32_t dwFlags,
     }
   }
   if (!m_pOwner->SendEvent())
-    m_pOwner->m_pTimerInfo = m_pOwner->StartTimer(FWL_SCROLLBAR_Elapse, true);
+    m_pOwner->m_pTimerInfo =
+        m_pOwner->m_Timer.StartTimer(FWL_SCROLLBAR_Elapse, true);
 }
 
 void CFWL_ScrollBarImpDelegate::OnLButtonUp(uint32_t dwFlags,
@@ -773,4 +765,16 @@ void CFWL_ScrollBarImpDelegate::DoMouseHover(int32_t iItem,
   }
   iState = CFWL_PartState_Hovered;
   m_pOwner->Repaint(&rtItem);
+}
+
+IFWL_ScrollBar::Timer::Timer(IFWL_ScrollBar* pToolTip) : IFWL_Timer(pToolTip) {}
+
+void IFWL_ScrollBar::Timer::Run(IFWL_TimerInfo* pTimerInfo) {
+  IFWL_ScrollBar* pButton = static_cast<IFWL_ScrollBar*>(m_pWidget);
+
+  if (pButton->m_pTimerInfo)
+    pButton->m_pTimerInfo->StopTimer();
+
+  if (!pButton->SendEvent())
+    pButton->m_pTimerInfo = StartTimer(0, true);
 }

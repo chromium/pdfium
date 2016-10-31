@@ -9,8 +9,9 @@
 #include "xfa/fwl/core/cfwl_picturebox.h"
 #include "xfa/fwl/core/fwl_noteimp.h"
 
-IFWL_PictureBox::IFWL_PictureBox(const CFWL_WidgetImpProperties& properties)
-    : IFWL_Widget(properties, nullptr),
+IFWL_PictureBox::IFWL_PictureBox(const IFWL_App* app,
+                                 const CFWL_WidgetImpProperties& properties)
+    : IFWL_Widget(app, properties, nullptr),
       m_bTop(FALSE),
       m_bVCenter(FALSE),
       m_bButton(FALSE) {
@@ -21,22 +22,19 @@ IFWL_PictureBox::IFWL_PictureBox(const CFWL_WidgetImpProperties& properties)
 
 IFWL_PictureBox::~IFWL_PictureBox() {}
 
-FWL_Type IFWL_PictureBox::GetClassID() const {
-  return FWL_Type::PictureBox;
-}
-
-FWL_Error IFWL_PictureBox::Initialize() {
-  if (IFWL_Widget::Initialize() != FWL_Error::Succeeded)
-    return FWL_Error::Indefinite;
-
+void IFWL_PictureBox::Initialize() {
+  IFWL_Widget::Initialize();
   m_pDelegate = new CFWL_PictureBoxImpDelegate(this);
-  return FWL_Error::Succeeded;
 }
 
 void IFWL_PictureBox::Finalize() {
   delete m_pDelegate;
   m_pDelegate = nullptr;
   IFWL_Widget::Finalize();
+}
+
+FWL_Type IFWL_PictureBox::GetClassID() const {
+  return FWL_Type::PictureBox;
 }
 
 FWL_Error IFWL_PictureBox::GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize) {

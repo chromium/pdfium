@@ -11,29 +11,30 @@
 #include "xfa/fwl/core/fwl_error.h"
 #include "xfa/fwl/core/ifwl_widget.h"
 
+CFWL_ComboBox::CFWL_ComboBox(const IFWL_App* app) : CFWL_Widget(app) {}
+
+CFWL_ComboBox::~CFWL_ComboBox() {}
+
+void CFWL_ComboBox::Initialize(const CFWL_WidgetProperties* pProperties) {
+  ASSERT(!m_pIface);
+
+  if (pProperties)
+    *m_pProperties = *pProperties;
+
+  std::unique_ptr<IFWL_ComboBox> pComboBox(new IFWL_ComboBox(
+      m_pApp, m_pProperties->MakeWidgetImpProperties(&m_comboBoxData)));
+  pComboBox->Initialize();
+
+  m_pIface = std::move(pComboBox);
+  CFWL_Widget::Initialize(pProperties);
+}
+
 IFWL_ComboBox* CFWL_ComboBox::GetWidget() {
   return static_cast<IFWL_ComboBox*>(m_pIface.get());
 }
 
 const IFWL_ComboBox* CFWL_ComboBox::GetWidget() const {
   return static_cast<IFWL_ComboBox*>(m_pIface.get());
-}
-
-FWL_Error CFWL_ComboBox::Initialize(const CFWL_WidgetProperties* pProperties) {
-  if (m_pIface)
-    return FWL_Error::Indefinite;
-  if (pProperties) {
-    *m_pProperties = *pProperties;
-  }
-  std::unique_ptr<IFWL_ComboBox> pComboBox(new IFWL_ComboBox(
-      m_pProperties->MakeWidgetImpProperties(&m_comboBoxData)));
-  FWL_Error ret = pComboBox->Initialize();
-  if (ret != FWL_Error::Succeeded) {
-    return ret;
-  }
-  m_pIface = std::move(pComboBox);
-  CFWL_Widget::Initialize();
-  return FWL_Error::Succeeded;
 }
 
 int32_t CFWL_ComboBox::AddString(const CFX_WideStringC& wsText) {
@@ -230,10 +231,6 @@ FWL_Error CFWL_ComboBox::EditModifyStylesEx(uint32_t dwStylesExAdded,
                                                dwStylesExRemoved)
              : FWL_Error::Indefinite;
 }
-
-CFWL_ComboBox::CFWL_ComboBox() {}
-
-CFWL_ComboBox::~CFWL_ComboBox() {}
 
 CFWL_ComboBox::CFWL_ComboBoxDP::CFWL_ComboBoxDP() {
   m_fItemHeight = 0;

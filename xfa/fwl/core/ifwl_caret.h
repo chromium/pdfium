@@ -21,13 +21,15 @@ class CFWL_CaretImpDelegate;
 
 class IFWL_Caret : public IFWL_Widget {
  public:
-  IFWL_Caret(const CFWL_WidgetImpProperties& properties, IFWL_Widget* pOuter);
+  IFWL_Caret(const IFWL_App* app,
+             const CFWL_WidgetImpProperties& properties,
+             IFWL_Widget* pOuter);
   ~IFWL_Caret() override;
 
   // IFWL_Widget
-  FWL_Type GetClassID() const override;
-  FWL_Error Initialize() override;
+  void Initialize() override;
   void Finalize() override;
+  FWL_Type GetClassID() const override;
   FWL_Error DrawWidget(CFX_Graphics* pGraphics,
                        const CFX_Matrix* pMatrix = nullptr) override;
 
@@ -38,21 +40,21 @@ class IFWL_Caret : public IFWL_Widget {
 
  protected:
   friend class CFWL_CaretImpDelegate;
-  friend class CFWL_CaretTimer;
 
-  class CFWL_CaretTimer : public IFWL_Timer {
+  class Timer : public IFWL_Timer {
    public:
-    explicit CFWL_CaretTimer(IFWL_Caret* pCaret);
-    ~CFWL_CaretTimer() override {}
+    explicit Timer(IFWL_Caret* pCaret);
+    ~Timer() override {}
+
     void Run(IFWL_TimerInfo* hTimer) override;
-    IFWL_Caret* const m_pCaret;
   };
+  friend class IFWL_Caret::Timer;
 
   void DrawCaretBK(CFX_Graphics* pGraphics,
                    IFWL_ThemeProvider* pTheme,
                    const CFX_Matrix* pMatrix);
 
-  std::unique_ptr<CFWL_CaretTimer> m_pTimer;
+  std::unique_ptr<IFWL_Caret::Timer> m_pTimer;
   IFWL_TimerInfo* m_pTimerInfo;  // not owned.
   uint32_t m_dwElapse;
   CFX_Color m_crFill;

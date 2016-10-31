@@ -44,6 +44,11 @@ CXFA_FFPageView* CXFA_FFWidget::GetPageView() {
 void CXFA_FFWidget::SetPageView(CXFA_FFPageView* pPageView) {
   m_pPageView = pPageView;
 }
+
+const IFWL_App* CXFA_FFWidget::GetFWLApp() {
+  return GetPageView()->GetDocView()->GetDoc()->GetApp()->GetFWLApp();
+}
+
 void CXFA_FFWidget::GetWidgetRect(CFX_RectF& rtWidget) {
   if ((m_dwStatus & XFA_WidgetStatus_RectCached) == 0) {
     m_dwStatus |= XFA_WidgetStatus_RectCached;

@@ -23,13 +23,15 @@ const int kElapseTime = 200;
 
 }  // namespace
 
-IFWL_SpinButton::IFWL_SpinButton(const CFWL_WidgetImpProperties& properties)
-    : IFWL_Widget(properties, nullptr),
+IFWL_SpinButton::IFWL_SpinButton(const IFWL_App* app,
+                                 const CFWL_WidgetImpProperties& properties)
+    : IFWL_Widget(app, properties, nullptr),
       m_dwUpState(CFWL_PartState_Normal),
       m_dwDnState(CFWL_PartState_Normal),
       m_iButtonIndex(0),
       m_bLButtonDwn(FALSE),
-      m_pTimerInfo(nullptr) {
+      m_pTimerInfo(nullptr),
+      m_Timer(this) {
   m_rtClient.Reset();
   m_rtUpButton.Reset();
   m_rtDnButton.Reset();
@@ -38,22 +40,19 @@ IFWL_SpinButton::IFWL_SpinButton(const CFWL_WidgetImpProperties& properties)
 
 IFWL_SpinButton::~IFWL_SpinButton() {}
 
-FWL_Type IFWL_SpinButton::GetClassID() const {
-  return FWL_Type::SpinButton;
-}
-
-FWL_Error IFWL_SpinButton::Initialize() {
-  if (IFWL_Widget::Initialize() != FWL_Error::Succeeded)
-    return FWL_Error::Indefinite;
-
+void IFWL_SpinButton::Initialize() {
+  IFWL_Widget::Initialize();
   m_pDelegate = new CFWL_SpinButtonImpDelegate(this);
-  return FWL_Error::Succeeded;
 }
 
 void IFWL_SpinButton::Finalize() {
   delete m_pDelegate;
   m_pDelegate = nullptr;
   IFWL_Widget::Finalize();
+}
+
+FWL_Type IFWL_SpinButton::GetClassID() const {
+  return FWL_Type::SpinButton;
 }
 
 FWL_Error IFWL_SpinButton::GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize) {
@@ -121,16 +120,6 @@ FWL_Error IFWL_SpinButton::DrawWidget(CFX_Graphics* pGraphics,
   DrawUpButton(pGraphics, pTheme, pMatrix);
   DrawDownButton(pGraphics, pTheme, pMatrix);
   return FWL_Error::Succeeded;
-}
-
-void IFWL_SpinButton::Run(IFWL_TimerInfo* pTimerInfo) {
-  if (!m_pTimerInfo)
-    return;
-
-  CFWL_EvtSpbClick wmPosChanged;
-  wmPosChanged.m_pSrcTarget = this;
-  wmPosChanged.m_bUp = m_iButtonIndex == 0;
-  DispatchEvent(&wmPosChanged);
 }
 
 FWL_Error IFWL_SpinButton::EnableButton(FX_BOOL bEnable, FX_BOOL bUp) {
@@ -283,7 +272,7 @@ void CFWL_SpinButtonImpDelegate::OnLButtonDown(CFWL_MsgMouse* pMsg) {
   m_pOwner->DispatchEvent(&wmPosChanged);
   m_pOwner->Repaint(bUpPress ? &m_pOwner->m_rtUpButton
                              : &m_pOwner->m_rtDnButton);
-  m_pOwner->m_pTimerInfo = m_pOwner->StartTimer(kElapseTime, true);
+  m_pOwner->m_pTimerInfo = m_pOwner->m_Timer.StartTimer(kElapseTime, true);
 }
 
 void CFWL_SpinButtonImpDelegate::OnLButtonUp(CFWL_MsgMouse* pMsg) {
@@ -420,4 +409,19 @@ void CFWL_SpinButtonImpDelegate::OnKeyDown(CFWL_MsgKey* pMsg) {
   m_pOwner->DispatchEvent(&wmPosChanged);
   m_pOwner->Repaint(bUpEnable ? &m_pOwner->m_rtUpButton
                               : &m_pOwner->m_rtDnButton);
+}
+
+IFWL_SpinButton::Timer::Timer(IFWL_SpinButton* pToolTip)
+    : IFWL_Timer(pToolTip) {}
+
+void IFWL_SpinButton::Timer::Run(IFWL_TimerInfo* pTimerInfo) {
+  IFWL_SpinButton* pButton = static_cast<IFWL_SpinButton*>(m_pWidget);
+
+  if (!pButton->m_pTimerInfo)
+    return;
+
+  CFWL_EvtSpbClick wmPosChanged;
+  wmPosChanged.m_pSrcTarget = pButton;
+  wmPosChanged.m_bUp = pButton->m_iButtonIndex == 0;
+  pButton->DispatchEvent(&wmPosChanged);
 }

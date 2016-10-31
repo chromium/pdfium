@@ -52,14 +52,15 @@ class IFWL_MonthCalendarDP : public IFWL_DataProvider {
 
 class IFWL_MonthCalendar : public IFWL_Widget {
  public:
-  IFWL_MonthCalendar(const CFWL_WidgetImpProperties& properties,
+  IFWL_MonthCalendar(const IFWL_App* app,
+                     const CFWL_WidgetImpProperties& properties,
                      IFWL_Widget* pOuter);
   ~IFWL_MonthCalendar() override;
 
   // FWL_WidgetImp
-  FWL_Type GetClassID() const override;
-  FWL_Error Initialize() override;
+  void Initialize() override;
   void Finalize() override;
+  FWL_Type GetClassID() const override;
   FWL_Error GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize = FALSE) override;
   FWL_Error Update() override;
   FWL_Error DrawWidget(CFX_Graphics* pGraphics,

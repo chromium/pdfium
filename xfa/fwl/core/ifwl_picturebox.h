@@ -44,13 +44,14 @@ class IFWL_PictureBoxDP : public IFWL_DataProvider {
 
 class IFWL_PictureBox : public IFWL_Widget {
  public:
-  explicit IFWL_PictureBox(const CFWL_WidgetImpProperties& properties);
+  explicit IFWL_PictureBox(const IFWL_App* app,
+                           const CFWL_WidgetImpProperties& properties);
   ~IFWL_PictureBox() override;
 
   // IFWL_Widget
-  FWL_Type GetClassID() const override;
-  FWL_Error Initialize() override;
+  void Initialize() override;
   void Finalize() override;
+  FWL_Type GetClassID() const override;
   FWL_Error GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize = FALSE) override;
   FWL_Error Update() override;
   FWL_Error DrawWidget(CFX_Graphics* pGraphics,

@@ -36,9 +36,10 @@ RestoreInfo::RestoreInfo() {}
 
 RestoreInfo::~RestoreInfo() {}
 
-IFWL_Form::IFWL_Form(const CFWL_WidgetImpProperties& properties,
+IFWL_Form::IFWL_Form(const IFWL_App* app,
+                     const CFWL_WidgetImpProperties& properties,
                      IFWL_Widget* pOuter)
-    : IFWL_Widget(properties, pOuter),
+    : IFWL_Widget(app, properties, pOuter),
       m_pCloseBox(nullptr),
       m_pMinBox(nullptr),
       m_pMaxBox(nullptr),
@@ -69,23 +70,12 @@ IFWL_Form::~IFWL_Form() {
   RemoveSysButtons();
 }
 
-FWL_Type IFWL_Form::GetClassID() const {
-  return FWL_Type::Form;
-}
+void IFWL_Form::Initialize() {
+  IFWL_Widget::Initialize();
 
-FX_BOOL IFWL_Form::IsInstance(const CFX_WideStringC& wsClass) const {
-  if (wsClass == CFX_WideStringC(FWL_CLASS_Form))
-    return TRUE;
-  return IFWL_Widget::IsInstance(wsClass);
-}
-
-FWL_Error IFWL_Form::Initialize() {
-  if (IFWL_Widget::Initialize() != FWL_Error::Succeeded)
-    return FWL_Error::Indefinite;
   RegisterForm();
   RegisterEventTarget();
   m_pDelegate = new CFWL_FormImpDelegate(this);
-  return FWL_Error::Succeeded;
 }
 
 void IFWL_Form::Finalize() {
@@ -94,6 +84,16 @@ void IFWL_Form::Finalize() {
   UnregisterEventTarget();
   UnRegisterForm();
   IFWL_Widget::Finalize();
+}
+
+FWL_Type IFWL_Form::GetClassID() const {
+  return FWL_Type::Form;
+}
+
+FX_BOOL IFWL_Form::IsInstance(const CFX_WideStringC& wsClass) const {
+  if (wsClass == CFX_WideStringC(FWL_CLASS_Form))
+    return TRUE;
+  return IFWL_Widget::IsInstance(wsClass);
 }
 
 FWL_Error IFWL_Form::GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize) {
@@ -118,7 +118,7 @@ FWL_Error IFWL_Form::GetClientRect(CFX_RectF& rect) {
   }
 #ifdef FWL_UseMacSystemBorder
   rect = m_rtRelative;
-  CFWL_WidgetMgr* pWidgetMgr = CFWL_WidgetMgr::GetInstance();
+  CFWL_WidgetMgr* pWidgetMgr = GetOwnerApp()->GetWidgetMgr();
   if (!pWidgetMgr)
     return FWL_Error::Indefinite;
 
@@ -345,7 +345,7 @@ FWL_Error IFWL_Form::SetFormSize(FWL_FORMSIZE eFormSize) {
 }
 
 IFWL_Widget* IFWL_Form::DoModal() {
-  IFWL_App* pApp = GetOwnerApp();
+  const IFWL_App* pApp = GetOwnerApp();
   if (!pApp)
     return nullptr;
 
@@ -376,7 +376,7 @@ FWL_Error IFWL_Form::EndDoModal() {
   m_bDoModalFlag = FALSE;
 #if (_FX_OS_ == _FX_MACOSX_)
   m_pNoteLoop->EndModalLoop();
-  IFWL_App* pApp = GetOwnerApp();
+  const IFWL_App* pApp = GetOwnerApp();
   if (!pApp)
     return FWL_Error::Indefinite;
 
@@ -416,7 +416,7 @@ void IFWL_Form::SetSubFocus(IFWL_Widget* pWidget) {
 }
 
 void IFWL_Form::ShowChildWidget(IFWL_Widget* pParent) {
-  IFWL_App* pApp = FWL_GetApp();
+  const IFWL_App* pApp = pParent->GetOwnerApp();
   if (!pApp)
     return;
 
@@ -588,7 +588,7 @@ void IFWL_Form::GetEdgeRect(CFX_RectF& rtEdge) {
 }
 void IFWL_Form::SetWorkAreaRect() {
   m_rtRestore = m_pProperties->m_rtWidget;
-  CFWL_WidgetMgr* pWidgetMgr = CFWL_WidgetMgr::GetInstance();
+  CFWL_WidgetMgr* pWidgetMgr = GetOwnerApp()->GetWidgetMgr();
   if (!pWidgetMgr)
     return;
   m_bSetMaximize = TRUE;
@@ -669,7 +669,7 @@ void IFWL_Form::ReSetSysBtn() {
   }
 }
 void IFWL_Form::RegisterForm() {
-  IFWL_App* pApp = GetOwnerApp();
+  const IFWL_App* pApp = GetOwnerApp();
   if (!pApp)
     return;
 
@@ -681,7 +681,7 @@ void IFWL_Form::RegisterForm() {
   pDriver->RegisterForm(this);
 }
 void IFWL_Form::UnRegisterForm() {
-  IFWL_App* pApp = GetOwnerApp();
+  const IFWL_App* pApp = GetOwnerApp();
   if (!pApp)
     return;
 
@@ -707,7 +707,7 @@ FX_BOOL IFWL_Form::HasIcon() {
   return !!pData->GetIcon(this, FALSE);
 }
 void IFWL_Form::UpdateIcon() {
-  CFWL_WidgetMgr* pWidgetMgr = CFWL_WidgetMgr::GetInstance();
+  CFWL_WidgetMgr* pWidgetMgr = GetOwnerApp()->GetWidgetMgr();
   if (!pWidgetMgr)
     return;
   IFWL_FormDP* pData =
@@ -720,7 +720,7 @@ void IFWL_Form::UpdateIcon() {
     m_pSmallIcon = pSmallIcon;
 }
 void IFWL_Form::UpdateCaption() {
-  CFWL_WidgetMgr* pWidgetMgr = CFWL_WidgetMgr::GetInstance();
+  CFWL_WidgetMgr* pWidgetMgr = GetOwnerApp()->GetWidgetMgr();
   if (!pWidgetMgr)
     return;
   IFWL_DataProvider* pData = m_pProperties->m_pDataProvider;
@@ -810,7 +810,7 @@ void CFWL_FormImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
   switch (pMessage->GetClassID()) {
     case CFWL_MessageType::Activate: {
       m_pOwner->m_pProperties->m_dwStates &= ~FWL_WGTSTATE_Deactivated;
-      IFWL_App* pApp = m_pOwner->GetOwnerApp();
+      const IFWL_App* pApp = m_pOwner->GetOwnerApp();
       CFWL_NoteDriver* pDriver =
           static_cast<CFWL_NoteDriver*>(pApp->GetNoteDriver());
       IFWL_Widget* pSubFocus = m_pOwner->GetSubFocus();
@@ -822,7 +822,7 @@ void CFWL_FormImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
     }
     case CFWL_MessageType::Deactivate: {
       m_pOwner->m_pProperties->m_dwStates |= FWL_WGTSTATE_Deactivated;
-      IFWL_App* pApp = m_pOwner->GetOwnerApp();
+      const IFWL_App* pApp = m_pOwner->GetOwnerApp();
       CFWL_NoteDriver* pDriver =
           static_cast<CFWL_NoteDriver*>(pApp->GetNoteDriver());
       IFWL_Widget* pSubFocus = m_pOwner->GetSubFocus();
@@ -872,7 +872,7 @@ void CFWL_FormImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
       break;
     }
     case CFWL_MessageType::Size: {
-      CFWL_WidgetMgr* pWidgetMgr = CFWL_WidgetMgr::GetInstance();
+      CFWL_WidgetMgr* pWidgetMgr = m_pOwner->GetOwnerApp()->GetWidgetMgr();
       if (!pWidgetMgr)
         return;
 

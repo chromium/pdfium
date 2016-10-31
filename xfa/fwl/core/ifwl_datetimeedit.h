@@ -15,11 +15,12 @@
 
 class IFWL_DateTimeEdit : public IFWL_Edit {
  public:
-  IFWL_DateTimeEdit(const CFWL_WidgetImpProperties& properties,
+  IFWL_DateTimeEdit(const IFWL_App* app,
+                    const CFWL_WidgetImpProperties& properties,
                     IFWL_Widget* pOuter);
 
   // IFWL_Edit
-  FWL_Error Initialize() override;
+  void Initialize() override;
   void Finalize() override;
 
  protected:

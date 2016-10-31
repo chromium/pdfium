@@ -14,8 +14,9 @@
 #include "xfa/fwl/core/ifwl_pushbutton.h"
 #include "xfa/fwl/core/ifwl_themeprovider.h"
 
-IFWL_PushButton::IFWL_PushButton(const CFWL_WidgetImpProperties& properties)
-    : IFWL_Widget(properties, nullptr),
+IFWL_PushButton::IFWL_PushButton(const IFWL_App* app,
+                                 const CFWL_WidgetImpProperties& properties)
+    : IFWL_Widget(app, properties, nullptr),
       m_bBtnDown(FALSE),
       m_dwTTOStyles(FDE_TTOSTYLE_SingleLine),
       m_iTTOAlign(FDE_TTOALIGNMENT_Center) {
@@ -25,22 +26,19 @@ IFWL_PushButton::IFWL_PushButton(const CFWL_WidgetImpProperties& properties)
 
 IFWL_PushButton::~IFWL_PushButton() {}
 
-FWL_Type IFWL_PushButton::GetClassID() const {
-  return FWL_Type::PushButton;
-}
-
-FWL_Error IFWL_PushButton::Initialize() {
-  if (IFWL_Widget::Initialize() != FWL_Error::Succeeded)
-    return FWL_Error::Indefinite;
-
+void IFWL_PushButton::Initialize() {
+  IFWL_Widget::Initialize();
   m_pDelegate = new CFWL_PushButtonImpDelegate(this);
-  return FWL_Error::Succeeded;
 }
 
 void IFWL_PushButton::Finalize() {
   delete m_pDelegate;
   m_pDelegate = nullptr;
   IFWL_Widget::Finalize();
+}
+
+FWL_Type IFWL_PushButton::GetClassID() const {
+  return FWL_Type::PushButton;
 }
 
 FWL_Error IFWL_PushButton::GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize) {

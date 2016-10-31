@@ -8,11 +8,23 @@
 
 #include "xfa/fwl/core/fwl_noteimp.h"
 
-IFWL_FormProxy::IFWL_FormProxy(const CFWL_WidgetImpProperties& properties,
+IFWL_FormProxy::IFWL_FormProxy(const IFWL_App* app,
+                               const CFWL_WidgetImpProperties& properties,
                                IFWL_Widget* pOuter)
-    : IFWL_Form(properties, pOuter) {}
+    : IFWL_Form(app, properties, pOuter) {}
 
 IFWL_FormProxy::~IFWL_FormProxy() {}
+
+void IFWL_FormProxy::Initialize() {
+  IFWL_Widget::Initialize();
+  m_pDelegate = new CFWL_FormProxyImpDelegate(this);
+}
+
+void IFWL_FormProxy::Finalize() {
+  delete m_pDelegate;
+  m_pDelegate = nullptr;
+  IFWL_Widget::Finalize();
+}
 
 FWL_Type IFWL_FormProxy::GetClassID() const {
   return FWL_Type::FormProxy;
@@ -23,19 +35,6 @@ FX_BOOL IFWL_FormProxy::IsInstance(const CFX_WideStringC& wsClass) const {
     return TRUE;
   }
   return IFWL_Form::IsInstance(wsClass);
-}
-
-FWL_Error IFWL_FormProxy::Initialize() {
-  if (IFWL_Widget::Initialize() != FWL_Error::Succeeded)
-    return FWL_Error::Indefinite;
-  m_pDelegate = new CFWL_FormProxyImpDelegate(this);
-  return FWL_Error::Succeeded;
-}
-
-void IFWL_FormProxy::Finalize() {
-  delete m_pDelegate;
-  m_pDelegate = nullptr;
-  IFWL_Widget::Finalize();
 }
 
 FWL_Error IFWL_FormProxy::Update() {

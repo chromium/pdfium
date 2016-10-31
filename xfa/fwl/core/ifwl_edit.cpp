@@ -51,9 +51,10 @@ void AddSquigglyPath(CFX_Path* pPathData,
 
 }  // namespace
 
-IFWL_Edit::IFWL_Edit(const CFWL_WidgetImpProperties& properties,
+IFWL_Edit::IFWL_Edit(const IFWL_App* app,
+                     const CFWL_WidgetImpProperties& properties,
                      IFWL_Widget* pOuter)
-    : IFWL_Widget(properties, pOuter),
+    : IFWL_Widget(app, properties, pOuter),
       m_fVAlignOffset(0.0f),
       m_fScrollOffsetX(0.0f),
       m_fScrollOffsetY(0.0f),
@@ -79,21 +80,14 @@ IFWL_Edit::~IFWL_Edit() {
   ClearRecord();
 }
 
-FWL_Type IFWL_Edit::GetClassID() const {
-  return FWL_Type::Edit;
-}
-
-FWL_Error IFWL_Edit::Initialize() {
-  if (IFWL_Widget::Initialize() != FWL_Error::Succeeded)
-    return FWL_Error::Indefinite;
+void IFWL_Edit::Initialize() {
+  IFWL_Widget::Initialize();
   if (!m_pDelegate)
     m_pDelegate = new CFWL_EditImpDelegate(this);
 
   InitCaret();
   if (!m_pEdtEngine)
     InitEngine();
-
-  return FWL_Error::Succeeded;
 }
 
 void IFWL_Edit::Finalize() {
@@ -107,6 +101,10 @@ void IFWL_Edit::Finalize() {
   delete m_pDelegate;
   m_pDelegate = nullptr;
   IFWL_Widget::Finalize();
+}
+
+FWL_Type IFWL_Edit::GetClassID() const {
+  return FWL_Type::Edit;
 }
 
 FWL_Error IFWL_Edit::GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize) {
@@ -1474,7 +1472,7 @@ void IFWL_Edit::InitScrollBar(FX_BOOL bVert) {
   prop.m_dwStates = FWL_WGTSTATE_Disabled | FWL_WGTSTATE_Invisible;
   prop.m_pParent = this;
   prop.m_pThemeProvider = m_pProperties->m_pThemeProvider;
-  IFWL_ScrollBar* pScrollBar = new IFWL_ScrollBar(prop, this);
+  IFWL_ScrollBar* pScrollBar = new IFWL_ScrollBar(m_pOwnerApp, prop, this);
   pScrollBar->Initialize();
   (bVert ? &m_pVertScrollBar : &m_pHorzScrollBar)->reset(pScrollBar);
 }
@@ -1572,7 +1570,7 @@ void IFWL_Edit::InitCaret() {
   if (!m_pCaret) {
     if ((m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_InnerCaret)) {
       CFWL_WidgetImpProperties prop;
-      m_pCaret.reset(new IFWL_Caret(prop, this));
+      m_pCaret.reset(new IFWL_Caret(m_pOwnerApp, prop, this));
       m_pCaret->Initialize();
       m_pCaret->SetParent(this);
       m_pCaret->SetStates(m_pProperties->m_dwStates);

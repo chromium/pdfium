@@ -12,10 +12,11 @@
 #include "xfa/fwl/core/ifwl_caret.h"
 #include "xfa/fwl/core/ifwl_themeprovider.h"
 
-IFWL_Caret::IFWL_Caret(const CFWL_WidgetImpProperties& properties,
+IFWL_Caret::IFWL_Caret(const IFWL_App* app,
+                       const CFWL_WidgetImpProperties& properties,
                        IFWL_Widget* pOuter)
-    : IFWL_Widget(properties, pOuter),
-      m_pTimer(new CFWL_CaretTimer(this)),
+    : IFWL_Widget(app, properties, pOuter),
+      m_pTimer(new IFWL_Caret::Timer(this)),
       m_pTimerInfo(nullptr),
       m_dwElapse(400),
       m_bSetColor(FALSE) {
@@ -28,12 +29,9 @@ FWL_Type IFWL_Caret::GetClassID() const {
   return FWL_Type::Caret;
 }
 
-FWL_Error IFWL_Caret::Initialize() {
-  if (IFWL_Widget::Initialize() != FWL_Error::Succeeded)
-    return FWL_Error::Indefinite;
-
+void IFWL_Caret::Initialize() {
+  IFWL_Widget::Initialize();
   m_pDelegate = new CFWL_CaretImpDelegate(this);
-  return FWL_Error::Succeeded;
 }
 
 void IFWL_Caret::Finalize() {
@@ -109,17 +107,17 @@ void IFWL_Caret::DrawCaretBK(CFX_Graphics* pGraphics,
   pTheme->DrawBackground(&param);
 }
 
-IFWL_Caret::CFWL_CaretTimer::CFWL_CaretTimer(IFWL_Caret* pCaret)
-    : m_pCaret(pCaret) {}
+IFWL_Caret::Timer::Timer(IFWL_Caret* pCaret) : IFWL_Timer(pCaret) {}
 
-void IFWL_Caret::CFWL_CaretTimer::Run(IFWL_TimerInfo* pTimerInfo) {
-  bool toggle = !(m_pCaret->GetStates() & FWL_STATE_CAT_HightLight);
-  m_pCaret->SetStates(FWL_STATE_CAT_HightLight, toggle);
+void IFWL_Caret::Timer::Run(IFWL_TimerInfo* pTimerInfo) {
+  IFWL_Caret* pCaret = static_cast<IFWL_Caret*>(m_pWidget);
+  bool toggle = !(pCaret->GetStates() & FWL_STATE_CAT_HightLight);
+  pCaret->SetStates(FWL_STATE_CAT_HightLight, toggle);
 
   CFX_RectF rt;
-  m_pCaret->GetWidgetRect(rt);
+  pCaret->GetWidgetRect(rt);
   rt.Set(0, 0, rt.width + 1, rt.height);
-  m_pCaret->Repaint(&rt);
+  pCaret->Repaint(&rt);
 }
 
 CFWL_CaretImpDelegate::CFWL_CaretImpDelegate(IFWL_Caret* pOwner)

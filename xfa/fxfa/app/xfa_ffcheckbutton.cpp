@@ -23,14 +23,17 @@ CXFA_FFCheckButton::CXFA_FFCheckButton(CXFA_FFPageView* pPageView,
     : CXFA_FFField(pPageView, pDataAcc), m_pOldDelegate(nullptr) {
   m_rtCheckBox.Set(0, 0, 0, 0);
 }
+
 CXFA_FFCheckButton::~CXFA_FFCheckButton() {}
+
 FX_BOOL CXFA_FFCheckButton::LoadWidget() {
-  CFWL_CheckBox* pCheckBox = new CFWL_CheckBox;
-  pCheckBox->Initialize();
+  CFWL_CheckBox* pCheckBox = new CFWL_CheckBox(GetFWLApp());
+  pCheckBox->Initialize(nullptr);
   m_pNormalWidget = pCheckBox;
   m_pNormalWidget->SetLayoutItem(this);
+
   IFWL_Widget* pWidget = m_pNormalWidget->GetWidget();
-  CFWL_NoteDriver* pNoteDriver = FWL_GetApp()->GetNoteDriver();
+  CFWL_NoteDriver* pNoteDriver = pWidget->GetOwnerApp()->GetNoteDriver();
   pNoteDriver->RegisterEventTarget(pWidget, pWidget);
   m_pOldDelegate = m_pNormalWidget->SetDelegate(this);
   if (m_pDataAcc->IsRadioButton()) {

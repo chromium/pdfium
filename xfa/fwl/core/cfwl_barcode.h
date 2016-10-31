@@ -16,13 +16,14 @@ class CFWL_WidgetProperties;
 
 class CFWL_Barcode : public CFWL_Edit {
  public:
-  CFWL_Barcode();
+  CFWL_Barcode(const IFWL_App*);
   ~CFWL_Barcode() override;
 
   IFWL_Barcode* GetWidget() override;
   const IFWL_Barcode* GetWidget() const override;
 
-  FWL_Error Initialize(const CFWL_WidgetProperties* pProperties = nullptr);
+  void Initialize(const CFWL_WidgetProperties* pProperties);
+
   void SetType(BC_TYPE type);
   FX_BOOL IsProtectedType();
 

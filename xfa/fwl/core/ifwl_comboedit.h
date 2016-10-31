@@ -15,7 +15,8 @@ class IFWL_ComboBox;
 
 class IFWL_ComboEdit : public IFWL_Edit {
  public:
-  IFWL_ComboEdit(const CFWL_WidgetImpProperties& properties,
+  IFWL_ComboEdit(const IFWL_App* app,
+                 const CFWL_WidgetImpProperties& properties,
                  IFWL_Widget* pOuter);
 
   void ClearSelected();
