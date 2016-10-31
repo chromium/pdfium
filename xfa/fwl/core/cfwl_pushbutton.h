@@ -15,9 +15,6 @@ class CFWL_PushButton : public CFWL_Widget {
   CFWL_PushButton(const IFWL_App*);
   ~CFWL_PushButton() override;
 
-  IFWL_PushButton* GetWidget() override;
-  const IFWL_PushButton* GetWidget() const override;
-
   void Initialize();
 
   FWL_Error GetCaption(CFX_WideString& wsCaption);

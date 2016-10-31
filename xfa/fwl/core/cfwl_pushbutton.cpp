@@ -23,14 +23,6 @@ void CFWL_PushButton::Initialize() {
   CFWL_Widget::Initialize();
 }
 
-IFWL_PushButton* CFWL_PushButton::GetWidget() {
-  return static_cast<IFWL_PushButton*>(m_pIface.get());
-}
-
-const IFWL_PushButton* CFWL_PushButton::GetWidget() const {
-  return static_cast<IFWL_PushButton*>(m_pIface.get());
-}
-
 FWL_Error CFWL_PushButton::GetCaption(CFX_WideString& wsCaption) {
   wsCaption = m_buttonData.m_wsCaption;
   return FWL_Error::Succeeded;

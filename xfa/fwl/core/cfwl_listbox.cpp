@@ -10,6 +10,14 @@
 
 #include "third_party/base/stl_util.h"
 
+namespace {
+
+IFWL_ListBox* ToListBox(IFWL_Widget* widget) {
+  return static_cast<IFWL_ListBox*>(widget);
+}
+
+}  // namespace
+
 CFWL_ListBox::CFWL_ListBox(const IFWL_App* app) : CFWL_Widget(app) {}
 
 CFWL_ListBox::~CFWL_ListBox() {}
@@ -23,14 +31,6 @@ void CFWL_ListBox::Initialize() {
 
   m_pIface = std::move(pListBox);
   CFWL_Widget::Initialize();
-}
-
-IFWL_ListBox* CFWL_ListBox::GetWidget() {
-  return static_cast<IFWL_ListBox*>(m_pIface.get());
-}
-
-const IFWL_ListBox* CFWL_ListBox::GetWidget() const {
-  return static_cast<IFWL_ListBox*>(m_pIface.get());
 }
 
 FWL_Error CFWL_ListBox::AddDIBitmap(CFX_DIBitmap* pDIB, IFWL_ListItem* pItem) {
@@ -78,38 +78,38 @@ void CFWL_ListBox::DeleteAll() {
 int32_t CFWL_ListBox::CountSelItems() {
   if (!GetWidget())
     return 0;
-  return GetWidget()->CountSelItems();
+  return ToListBox(GetWidget())->CountSelItems();
 }
 
 IFWL_ListItem* CFWL_ListBox::GetSelItem(int32_t nIndexSel) {
   if (!GetWidget())
     return nullptr;
-  return GetWidget()->GetSelItem(nIndexSel);
+  return ToListBox(GetWidget())->GetSelItem(nIndexSel);
 }
 
 int32_t CFWL_ListBox::GetSelIndex(int32_t nIndex) {
   if (!GetWidget())
     return 0;
-  return GetWidget()->GetSelIndex(nIndex);
+  return ToListBox(GetWidget())->GetSelIndex(nIndex);
 }
 
 FWL_Error CFWL_ListBox::SetSelItem(IFWL_ListItem* pItem, FX_BOOL bSelect) {
   if (!GetWidget())
     return FWL_Error::Indefinite;
-  return GetWidget()->SetSelItem(pItem, bSelect);
+  return ToListBox(GetWidget())->SetSelItem(pItem, bSelect);
 }
 
 FWL_Error CFWL_ListBox::GetItemText(IFWL_ListItem* pItem,
                                     CFX_WideString& wsText) {
   if (!GetWidget())
     return FWL_Error::Indefinite;
-  return GetWidget()->GetItemText(pItem, wsText);
+  return ToListBox(GetWidget())->GetItemText(pItem, wsText);
 }
 
 FWL_Error CFWL_ListBox::GetScrollPos(FX_FLOAT& fPos, FX_BOOL bVert) {
   if (!GetWidget())
     return FWL_Error::Indefinite;
-  return GetWidget()->GetScrollPos(fPos, bVert);
+  return ToListBox(GetWidget())->GetScrollPos(fPos, bVert);
 }
 
 FWL_Error CFWL_ListBox::SetItemHeight(FX_FLOAT fItemHeight) {
@@ -176,8 +176,8 @@ IFWL_ListItem* CFWL_ListBox::GetItemAtPoint(FX_FLOAT fx, FX_FLOAT fy) {
   fy -= rtClient.top;
   FX_FLOAT fPosX = 0;
   FX_FLOAT fPosY = 0;
-  GetWidget()->GetScrollPos(fx);
-  GetWidget()->GetScrollPos(fy, FALSE);
+  ToListBox(GetWidget())->GetScrollPos(fx);
+  ToListBox(GetWidget())->GetScrollPos(fy, FALSE);
   int32_t nCount = m_ListBoxDP.CountItems(nullptr);
   for (int32_t i = 0; i < nCount; i++) {
     IFWL_ListItem* pItem = m_ListBoxDP.GetItem(nullptr, i);

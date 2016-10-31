@@ -20,9 +20,6 @@ class CFWL_Edit : public CFWL_Widget {
   CFWL_Edit(const IFWL_App*);
   ~CFWL_Edit() override;
 
-  IFWL_Edit* GetWidget() override;
-  const IFWL_Edit* GetWidget() const override;
-
   void Initialize();
 
   FWL_Error SetText(const CFX_WideString& wsText);

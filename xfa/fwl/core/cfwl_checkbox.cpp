@@ -10,6 +10,14 @@
 
 #include "xfa/fwl/core/fwl_error.h"
 
+namespace {
+
+IFWL_CheckBox* ToCheckBox(IFWL_Widget* widget) {
+  return static_cast<IFWL_CheckBox*>(widget);
+}
+
+}  // namespace
+
 CFWL_CheckBox::CFWL_CheckBox(const IFWL_App* app) : CFWL_Widget(app) {}
 
 CFWL_CheckBox::~CFWL_CheckBox() {}
@@ -25,14 +33,6 @@ void CFWL_CheckBox::Initialize() {
   CFWL_Widget::Initialize();
 }
 
-IFWL_CheckBox* CFWL_CheckBox::GetWidget() {
-  return static_cast<IFWL_CheckBox*>(m_pIface.get());
-}
-
-const IFWL_CheckBox* CFWL_CheckBox::GetWidget() const {
-  return static_cast<IFWL_CheckBox*>(m_pIface.get());
-}
-
 FWL_Error CFWL_CheckBox::SetCaption(const CFX_WideStringC& wsCaption) {
   m_checkboxData.m_wsCaption = wsCaption;
   return FWL_Error::Succeeded;
@@ -44,11 +44,11 @@ FWL_Error CFWL_CheckBox::SetBoxSize(FX_FLOAT fHeight) {
 }
 
 int32_t CFWL_CheckBox::GetCheckState() {
-  return GetWidget()->GetCheckState();
+  return ToCheckBox(GetWidget())->GetCheckState();
 }
 
 FWL_Error CFWL_CheckBox::SetCheckState(int32_t iCheck) {
-  return GetWidget()->SetCheckState(iCheck);
+  return ToCheckBox(GetWidget())->SetCheckState(iCheck);
 }
 
 CFWL_CheckBox::CFWL_CheckBoxDP::CFWL_CheckBoxDP()

@@ -16,9 +16,6 @@ class CFWL_PictureBox : public CFWL_Widget {
   CFWL_PictureBox(const IFWL_App*);
   ~CFWL_PictureBox() override;
 
-  IFWL_PictureBox* GetWidget() override;
-  const IFWL_PictureBox* GetWidget() const override;
-
   void Initialize();
 
   CFX_DIBitmap* GetPicture();

@@ -12,6 +12,14 @@
 #include "xfa/fwl/core/ifwl_datetimepicker.h"
 #include "xfa/fwl/core/ifwl_widget.h"
 
+namespace {
+
+IFWL_DateTimePicker* ToDateTimePicker(IFWL_Widget* widget) {
+  return static_cast<IFWL_DateTimePicker*>(widget);
+}
+
+}  // namespace
+
 CFWL_DateTimePicker::CFWL_DateTimePicker(const IFWL_App* app)
     : CFWL_Widget(app) {}
 
@@ -28,14 +36,6 @@ void CFWL_DateTimePicker::Initialize() {
   CFWL_Widget::Initialize();
 }
 
-IFWL_DateTimePicker* CFWL_DateTimePicker::GetWidget() {
-  return static_cast<IFWL_DateTimePicker*>(m_pIface.get());
-}
-
-const IFWL_DateTimePicker* CFWL_DateTimePicker::GetWidget() const {
-  return static_cast<IFWL_DateTimePicker*>(m_pIface.get());
-}
-
 FWL_Error CFWL_DateTimePicker::SetToday(int32_t iYear,
                                         int32_t iMonth,
                                         int32_t iDay) {
@@ -46,31 +46,31 @@ FWL_Error CFWL_DateTimePicker::SetToday(int32_t iYear,
 }
 
 int32_t CFWL_DateTimePicker::CountSelRanges() {
-  return GetWidget()->CountSelRanges();
+  return ToDateTimePicker(GetWidget())->CountSelRanges();
 }
 
 int32_t CFWL_DateTimePicker::GetSelRange(int32_t nIndex, int32_t& nStart) {
-  return GetWidget()->GetSelRange(nIndex, nStart);
+  return ToDateTimePicker(GetWidget())->GetSelRange(nIndex, nStart);
 }
 
 FWL_Error CFWL_DateTimePicker::GetEditText(CFX_WideString& wsText) {
-  return GetWidget()->GetEditText(wsText);
+  return ToDateTimePicker(GetWidget())->GetEditText(wsText);
 }
 
 FWL_Error CFWL_DateTimePicker::SetEditText(const CFX_WideString& wsText) {
-  return GetWidget()->SetEditText(wsText);
+  return ToDateTimePicker(GetWidget())->SetEditText(wsText);
 }
 
 FWL_Error CFWL_DateTimePicker::GetCurSel(int32_t& iYear,
                                          int32_t& iMonth,
                                          int32_t& iDay) {
-  return GetWidget()->GetCurSel(iYear, iMonth, iDay);
+  return ToDateTimePicker(GetWidget())->GetCurSel(iYear, iMonth, iDay);
 }
 
 FWL_Error CFWL_DateTimePicker::SetCurSel(int32_t iYear,
                                          int32_t iMonth,
                                          int32_t iDay) {
-  return GetWidget()->SetCurSel(iYear, iMonth, iDay);
+  return ToDateTimePicker(GetWidget())->SetCurSel(iYear, iMonth, iDay);
 }
 
 CFWL_DateTimePicker::CFWL_DateTimePickerDP::CFWL_DateTimePickerDP() {
@@ -98,66 +98,67 @@ FWL_Error CFWL_DateTimePicker::CFWL_DateTimePickerDP::GetToday(
 }
 
 FX_BOOL CFWL_DateTimePicker::CanUndo() {
-  return GetWidget()->CanUndo();
+  return ToDateTimePicker(GetWidget())->CanUndo();
 }
 
 FX_BOOL CFWL_DateTimePicker::CanRedo() {
-  return GetWidget()->CanRedo();
+  return ToDateTimePicker(GetWidget())->CanRedo();
 }
 
 FX_BOOL CFWL_DateTimePicker::Undo() {
-  return GetWidget()->Undo();
+  return ToDateTimePicker(GetWidget())->Undo();
 }
 
 FX_BOOL CFWL_DateTimePicker::Redo() {
-  return GetWidget()->Redo();
+  return ToDateTimePicker(GetWidget())->Redo();
 }
 
 FX_BOOL CFWL_DateTimePicker::CanCopy() {
-  return GetWidget()->CanCopy();
+  return ToDateTimePicker(GetWidget())->CanCopy();
 }
 
 FX_BOOL CFWL_DateTimePicker::CanCut() {
-  return GetWidget()->CanCut();
+  return ToDateTimePicker(GetWidget())->CanCut();
 }
 
 FX_BOOL CFWL_DateTimePicker::CanSelectAll() {
-  return GetWidget()->CanSelectAll();
+  return ToDateTimePicker(GetWidget())->CanSelectAll();
 }
 
 FX_BOOL CFWL_DateTimePicker::Copy(CFX_WideString& wsCopy) {
-  return GetWidget()->Copy(wsCopy);
+  return ToDateTimePicker(GetWidget())->Copy(wsCopy);
 }
 
 FX_BOOL CFWL_DateTimePicker::Cut(CFX_WideString& wsCut) {
-  return GetWidget()->Copy(wsCut);
+  return ToDateTimePicker(GetWidget())->Copy(wsCut);
 }
 
 FX_BOOL CFWL_DateTimePicker::Paste(const CFX_WideString& wsPaste) {
-  return GetWidget()->Paste(wsPaste);
+  return ToDateTimePicker(GetWidget())->Paste(wsPaste);
 }
 
 FX_BOOL CFWL_DateTimePicker::SelectAll() {
-  return GetWidget()->SelectAll();
+  return ToDateTimePicker(GetWidget())->SelectAll();
 }
 
 FX_BOOL CFWL_DateTimePicker::Delete() {
-  return GetWidget()->Delete();
+  return ToDateTimePicker(GetWidget())->Delete();
 }
 
 FX_BOOL CFWL_DateTimePicker::DeSelect() {
-  return GetWidget()->DeSelect();
+  return ToDateTimePicker(GetWidget())->DeSelect();
 }
 
 FWL_Error CFWL_DateTimePicker::GetBBox(CFX_RectF& rect) {
-  return GetWidget()->GetBBox(rect);
+  return ToDateTimePicker(GetWidget())->GetBBox(rect);
 }
 
 FWL_Error CFWL_DateTimePicker::SetEditLimit(int32_t nLimit) {
-  return GetWidget()->SetEditLimit(nLimit);
+  return ToDateTimePicker(GetWidget())->SetEditLimit(nLimit);
 }
 
 FWL_Error CFWL_DateTimePicker::ModifyEditStylesEx(uint32_t dwStylesExAdded,
                                                   uint32_t dwStylesExRemoved) {
-  return GetWidget()->ModifyEditStylesEx(dwStylesExAdded, dwStylesExRemoved);
+  return ToDateTimePicker(GetWidget())
+      ->ModifyEditStylesEx(dwStylesExAdded, dwStylesExRemoved);
 }

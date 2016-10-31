@@ -24,8 +24,8 @@ class CFWL_Widget {
   CFWL_Widget(const IFWL_App*);
   virtual ~CFWL_Widget();
 
-  virtual IFWL_Widget* GetWidget();
-  virtual const IFWL_Widget* GetWidget() const;
+  IFWL_Widget* GetWidget();
+  const IFWL_Widget* GetWidget() const;
 
   FWL_Error GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize = FALSE);
   FWL_Error SetWidgetRect(const CFX_RectF& rect);

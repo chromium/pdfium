@@ -19,70 +19,25 @@ class CFWL_Barcode : public CFWL_Edit {
   CFWL_Barcode(const IFWL_App*);
   ~CFWL_Barcode() override;
 
-  IFWL_Barcode* GetWidget() override;
-  const IFWL_Barcode* GetWidget() const override;
-
   void Initialize();
 
   void SetType(BC_TYPE type);
   FX_BOOL IsProtectedType();
 
-  void SetCharEncoding(BC_CHAR_ENCODING encoding) {
-    m_barcodeData.m_dwAttributeMask |= FWL_BCDATTRIBUTE_CHARENCODING;
-    m_barcodeData.m_eCharEncoding = encoding;
-  }
-  void SetModuleHeight(int32_t height) {
-    m_barcodeData.m_dwAttributeMask |= FWL_BCDATTRIBUTE_MODULEHEIGHT;
-    m_barcodeData.m_nModuleHeight = height;
-  }
-  void SetModuleWidth(int32_t width) {
-    m_barcodeData.m_dwAttributeMask |= FWL_BCDATTRIBUTE_MODULEWIDTH;
-    m_barcodeData.m_nModuleWidth = width;
-  }
-  void SetDataLength(int32_t dataLength) {
-    m_barcodeData.m_dwAttributeMask |= FWL_BCDATTRIBUTE_DATALENGTH;
-    m_barcodeData.m_nDataLength = dataLength;
-    GetWidget()->SetLimit(dataLength);
-  }
-  void SetCalChecksum(FX_BOOL calChecksum) {
-    m_barcodeData.m_dwAttributeMask |= FWL_BCDATTRIBUTE_CALCHECKSUM;
-    m_barcodeData.m_bCalChecksum = calChecksum;
-  }
-  void SetPrintChecksum(FX_BOOL printChecksum) {
-    m_barcodeData.m_dwAttributeMask |= FWL_BCDATTRIBUTE_PRINTCHECKSUM;
-    m_barcodeData.m_bPrintChecksum = printChecksum;
-  }
-  void SetTextLocation(BC_TEXT_LOC location) {
-    m_barcodeData.m_dwAttributeMask |= FWL_BCDATTRIBUTE_TEXTLOCATION;
-    m_barcodeData.m_eTextLocation = location;
-  }
-  void SetWideNarrowRatio(int32_t ratio) {
-    m_barcodeData.m_dwAttributeMask |= FWL_BCDATTRIBUTE_WIDENARROWRATIO;
-    m_barcodeData.m_nWideNarrowRatio = ratio;
-  }
-  void SetStartChar(FX_CHAR startChar) {
-    m_barcodeData.m_dwAttributeMask |= FWL_BCDATTRIBUTE_STARTCHAR;
-    m_barcodeData.m_cStartChar = startChar;
-  }
-  void SetEndChar(FX_CHAR endChar) {
-    m_barcodeData.m_dwAttributeMask |= FWL_BCDATTRIBUTE_ENDCHAR;
-    m_barcodeData.m_cEndChar = endChar;
-  }
-  void SetVersion(int32_t version) {
-    m_barcodeData.m_dwAttributeMask |= FWL_BCDATTRIBUTE_VERSION;
-    m_barcodeData.m_nVersion = version;
-  }
-  void SetErrorCorrectionLevel(int32_t ecLevel) {
-    m_barcodeData.m_dwAttributeMask |= FWL_BCDATTRIBUTE_ECLEVEL;
-    m_barcodeData.m_nECLevel = ecLevel;
-  }
-  void SetTruncated(FX_BOOL truncated) {
-    m_barcodeData.m_dwAttributeMask |= FWL_BCDATTRIBUTE_TRUNCATED;
-    m_barcodeData.m_bTruncated = truncated;
-  }
-  void ResetBarcodeAttributes() {
-    m_barcodeData.m_dwAttributeMask = FWL_BCDATTRIBUTE_NONE;
-  }
+  void SetCharEncoding(BC_CHAR_ENCODING encoding);
+  void SetModuleHeight(int32_t height);
+  void SetModuleWidth(int32_t width);
+  void SetDataLength(int32_t dataLength);
+  void SetCalChecksum(FX_BOOL calChecksum);
+  void SetPrintChecksum(FX_BOOL printChecksum);
+  void SetTextLocation(BC_TEXT_LOC location);
+  void SetWideNarrowRatio(int32_t ratio);
+  void SetStartChar(FX_CHAR startChar);
+  void SetEndChar(FX_CHAR endChar);
+  void SetVersion(int32_t version);
+  void SetErrorCorrectionLevel(int32_t ecLevel);
+  void SetTruncated(FX_BOOL truncated);
+  void ResetBarcodeAttributes();
 
  protected:
   class CFWL_BarcodeDP : public IFWL_BarcodeDP {

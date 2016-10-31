@@ -8,6 +8,14 @@
 
 #include <memory>
 
+namespace {
+
+IFWL_Barcode* ToBarcode(IFWL_Widget* widget) {
+  return static_cast<IFWL_Barcode*>(widget);
+}
+
+}  // namespace
+
 CFWL_Barcode::CFWL_Barcode(const IFWL_App* app) : CFWL_Edit(app) {}
 
 CFWL_Barcode::~CFWL_Barcode() {}
@@ -22,21 +30,70 @@ void CFWL_Barcode::Initialize() {
   CFWL_Widget::Initialize();
 }
 
-IFWL_Barcode* CFWL_Barcode::GetWidget() {
-  return static_cast<IFWL_Barcode*>(m_pIface.get());
+void CFWL_Barcode::SetCharEncoding(BC_CHAR_ENCODING encoding) {
+  m_barcodeData.m_dwAttributeMask |= FWL_BCDATTRIBUTE_CHARENCODING;
+  m_barcodeData.m_eCharEncoding = encoding;
 }
-
-const IFWL_Barcode* CFWL_Barcode::GetWidget() const {
-  return static_cast<IFWL_Barcode*>(m_pIface.get());
+void CFWL_Barcode::SetModuleHeight(int32_t height) {
+  m_barcodeData.m_dwAttributeMask |= FWL_BCDATTRIBUTE_MODULEHEIGHT;
+  m_barcodeData.m_nModuleHeight = height;
+}
+void CFWL_Barcode::SetModuleWidth(int32_t width) {
+  m_barcodeData.m_dwAttributeMask |= FWL_BCDATTRIBUTE_MODULEWIDTH;
+  m_barcodeData.m_nModuleWidth = width;
+}
+void CFWL_Barcode::SetDataLength(int32_t dataLength) {
+  m_barcodeData.m_dwAttributeMask |= FWL_BCDATTRIBUTE_DATALENGTH;
+  m_barcodeData.m_nDataLength = dataLength;
+  ToBarcode(GetWidget())->SetLimit(dataLength);
+}
+void CFWL_Barcode::SetCalChecksum(FX_BOOL calChecksum) {
+  m_barcodeData.m_dwAttributeMask |= FWL_BCDATTRIBUTE_CALCHECKSUM;
+  m_barcodeData.m_bCalChecksum = calChecksum;
+}
+void CFWL_Barcode::SetPrintChecksum(FX_BOOL printChecksum) {
+  m_barcodeData.m_dwAttributeMask |= FWL_BCDATTRIBUTE_PRINTCHECKSUM;
+  m_barcodeData.m_bPrintChecksum = printChecksum;
+}
+void CFWL_Barcode::SetTextLocation(BC_TEXT_LOC location) {
+  m_barcodeData.m_dwAttributeMask |= FWL_BCDATTRIBUTE_TEXTLOCATION;
+  m_barcodeData.m_eTextLocation = location;
+}
+void CFWL_Barcode::SetWideNarrowRatio(int32_t ratio) {
+  m_barcodeData.m_dwAttributeMask |= FWL_BCDATTRIBUTE_WIDENARROWRATIO;
+  m_barcodeData.m_nWideNarrowRatio = ratio;
+}
+void CFWL_Barcode::SetStartChar(FX_CHAR startChar) {
+  m_barcodeData.m_dwAttributeMask |= FWL_BCDATTRIBUTE_STARTCHAR;
+  m_barcodeData.m_cStartChar = startChar;
+}
+void CFWL_Barcode::SetEndChar(FX_CHAR endChar) {
+  m_barcodeData.m_dwAttributeMask |= FWL_BCDATTRIBUTE_ENDCHAR;
+  m_barcodeData.m_cEndChar = endChar;
+}
+void CFWL_Barcode::SetVersion(int32_t version) {
+  m_barcodeData.m_dwAttributeMask |= FWL_BCDATTRIBUTE_VERSION;
+  m_barcodeData.m_nVersion = version;
+}
+void CFWL_Barcode::SetErrorCorrectionLevel(int32_t ecLevel) {
+  m_barcodeData.m_dwAttributeMask |= FWL_BCDATTRIBUTE_ECLEVEL;
+  m_barcodeData.m_nECLevel = ecLevel;
+}
+void CFWL_Barcode::SetTruncated(FX_BOOL truncated) {
+  m_barcodeData.m_dwAttributeMask |= FWL_BCDATTRIBUTE_TRUNCATED;
+  m_barcodeData.m_bTruncated = truncated;
+}
+void CFWL_Barcode::ResetBarcodeAttributes() {
+  m_barcodeData.m_dwAttributeMask = FWL_BCDATTRIBUTE_NONE;
 }
 
 void CFWL_Barcode::SetType(BC_TYPE type) {
   if (GetWidget())
-    GetWidget()->SetType(type);
+    ToBarcode(GetWidget())->SetType(type);
 }
 
 FX_BOOL CFWL_Barcode::IsProtectedType() {
-  return GetWidget() ? GetWidget()->IsProtectedType() : FALSE;
+  return GetWidget() ? ToBarcode(GetWidget())->IsProtectedType() : FALSE;
 }
 
 CFWL_Barcode::CFWL_BarcodeDP::CFWL_BarcodeDP()

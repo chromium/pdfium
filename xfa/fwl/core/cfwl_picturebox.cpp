@@ -23,14 +23,6 @@ void CFWL_PictureBox::Initialize() {
   CFWL_Widget::Initialize();
 }
 
-IFWL_PictureBox* CFWL_PictureBox::GetWidget() {
-  return static_cast<IFWL_PictureBox*>(m_pIface.get());
-}
-
-const IFWL_PictureBox* CFWL_PictureBox::GetWidget() const {
-  return static_cast<IFWL_PictureBox*>(m_pIface.get());
-}
-
 CFX_DIBitmap* CFWL_PictureBox::GetPicture() {
   return m_PictureBoxDP.m_pBitmap;
 }
