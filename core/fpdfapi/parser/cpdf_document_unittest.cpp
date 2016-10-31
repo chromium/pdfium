@@ -15,6 +15,9 @@
 
 namespace {
 
+using ScopedDictionary =
+    std::unique_ptr<CPDF_Dictionary, ReleaseDeleter<CPDF_Dictionary>>;
+
 CPDF_Dictionary* CreatePageTreeNode(CPDF_Array* kids,
                                     CPDF_Document* pDoc,
                                     int count) {
@@ -35,13 +38,9 @@ CPDF_Dictionary* CreateNumberedPage(size_t number) {
   return page;
 }
 
-}  // namespace
-
 class CPDF_TestDocumentForPages : public CPDF_Document {
  public:
   CPDF_TestDocumentForPages() : CPDF_Document(nullptr) {
-    CPDF_ModuleMgr* module_mgr = CPDF_ModuleMgr::Get();
-    module_mgr->InitPageModule();
     // Set up test
     CPDF_Array* zeroToTwo = new CPDF_Array();
     zeroToTwo->AddReference(this, AddIndirectObject(CreateNumberedPage(0)));
@@ -80,8 +79,18 @@ class CPDF_TestDocumentForPages : public CPDF_Document {
   std::unique_ptr<CPDF_Dictionary, ReleaseDeleter<CPDF_Dictionary>>
       m_pOwnedRootDict;
 };
+}  // namespace
 
-TEST(cpdf_document, GetPages) {
+class cpdf_document_test : public testing::Test {
+ public:
+  void SetUp() override {
+    CPDF_ModuleMgr* module_mgr = CPDF_ModuleMgr::Get();
+    module_mgr->InitPageModule();
+  }
+  void TearDown() override {}
+};
+
+TEST_F(cpdf_document_test, GetPages) {
   std::unique_ptr<CPDF_TestDocumentForPages> document =
       pdfium::MakeUnique<CPDF_TestDocumentForPages>();
   for (int i = 0; i < 7; i++) {
@@ -94,7 +103,7 @@ TEST(cpdf_document, GetPages) {
   EXPECT_FALSE(page);
 }
 
-TEST(cpdf_document, GetPagesReverseOrder) {
+TEST_F(cpdf_document_test, GetPagesReverseOrder) {
   std::unique_ptr<CPDF_TestDocumentForPages> document =
       pdfium::MakeUnique<CPDF_TestDocumentForPages>();
   for (int i = 6; i >= 0; i--) {
@@ -105,4 +114,27 @@ TEST(cpdf_document, GetPagesReverseOrder) {
   }
   CPDF_Dictionary* page = document->GetPage(7);
   EXPECT_FALSE(page);
+}
+
+TEST_F(cpdf_document_test, UseCachedPageObjNumIfHaveNotPagesDict) {
+  // ObjNum can be added in CPDF_DataAvail::IsPageAvail, and PagesDict
+  // can be not exists in this case.
+  // (case, when hint table is used to page check in CPDF_DataAvail).
+  CPDF_Document document(pdfium::MakeUnique<CPDF_Parser>());
+  ScopedDictionary dict(new CPDF_Dictionary());
+  const int page_count = 100;
+  dict->SetIntegerFor("N", page_count);
+  document.LoadLinearizedDoc(dict.get());
+  ASSERT_EQ(page_count, document.GetPageCount());
+  CPDF_Object* page_stub = new CPDF_Dictionary();
+  const uint32_t obj_num = document.AddIndirectObject(page_stub);
+  const int test_page_num = 33;
+
+  EXPECT_FALSE(document.IsPageLoaded(test_page_num));
+  EXPECT_EQ(nullptr, document.GetPage(test_page_num));
+
+  document.SetPageObjNum(test_page_num, obj_num);
+
+  EXPECT_TRUE(document.IsPageLoaded(test_page_num));
+  EXPECT_EQ(page_stub, document.GetPage(test_page_num));
 }

@@ -1626,7 +1626,7 @@ CPDF_DataAvail::DocAvailStatus CPDF_DataAvail::IsPageAvail(
       if (nResult != DataAvailable)
         return nResult;
       m_pagesLoadState.insert(dwPage);
-      return DataAvailable;
+      return GetPage(dwPage) ? DataAvailable : DataError;
     }
 
     if (m_bMainXRefLoadedOK) {
@@ -1751,31 +1751,33 @@ int CPDF_DataAvail::GetPageCount() const {
 CPDF_Dictionary* CPDF_DataAvail::GetPage(int index) {
   if (!m_pDocument || index < 0 || index >= GetPageCount())
     return nullptr;
+  CPDF_Dictionary* page = m_pDocument->GetPage(index);
+  if (page)
+    return page;
+  if (!m_pLinearized || !m_pHintTables)
+    return nullptr;
 
-  if (m_pLinearized) {
-    CPDF_Dictionary* pDict = m_pLinearized->GetDict();
-    CPDF_Object* pObj = pDict ? pDict->GetDirectObjectFor("P") : nullptr;
-
-    int pageNum = pObj ? pObj->GetInteger() : 0;
-    if (m_pHintTables && index != pageNum) {
-      FX_FILESIZE szPageStartPos = 0;
-      FX_FILESIZE szPageLength = 0;
-      uint32_t dwObjNum = 0;
-      bool bPagePosGot = m_pHintTables->GetPagePos(index, &szPageStartPos,
-                                                   &szPageLength, &dwObjNum);
-      if (!bPagePosGot)
-        return nullptr;
-
-      m_syntaxParser.InitParser(m_pFileRead, (uint32_t)szPageStartPos);
-      CPDF_Object* pPageDict = ParseIndirectObjectAt(0, dwObjNum, m_pDocument);
-      if (!pPageDict)
-        return nullptr;
-
-      if (!m_pDocument->ReplaceIndirectObjectIfHigherGeneration(dwObjNum,
-                                                                pPageDict)) {
-        return nullptr;
-      }
-      return pPageDict->GetDict();
+  CPDF_Dictionary* pDict = m_pLinearized->GetDict();
+  CPDF_Object* pObj = pDict ? pDict->GetDirectObjectFor("P") : nullptr;
+  int firstPageNum = pObj ? pObj->GetInteger() : 0;
+  if (index == firstPageNum)
+    return nullptr;
+  FX_FILESIZE szPageStartPos = 0;
+  FX_FILESIZE szPageLength = 0;
+  uint32_t dwObjNum = 0;
+  const bool bPagePosGot = m_pHintTables->GetPagePos(index, &szPageStartPos,
+                                                     &szPageLength, &dwObjNum);
+  if (!bPagePosGot || !dwObjNum)
+    return nullptr;
+  // We should say to the document, which object is the page.
+  m_pDocument->SetPageObjNum(index, dwObjNum);
+  // Page object already can be parsed in document.
+  CPDF_Object* pPageDict = m_pDocument->GetIndirectObject(dwObjNum);
+  if (!pPageDict) {
+    m_syntaxParser.InitParser(m_pFileRead, (uint32_t)szPageStartPos);
+    pPageDict = ParseIndirectObjectAt(0, dwObjNum, m_pDocument);
+    if (pPageDict) {
+      m_pDocument->ReplaceIndirectObjectIfHigherGeneration(dwObjNum, pPageDict);
     }
   }
   return m_pDocument->GetPage(index);
