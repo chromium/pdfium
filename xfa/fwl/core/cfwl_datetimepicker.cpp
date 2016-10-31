@@ -17,18 +17,15 @@ CFWL_DateTimePicker::CFWL_DateTimePicker(const IFWL_App* app)
 
 CFWL_DateTimePicker::~CFWL_DateTimePicker() {}
 
-void CFWL_DateTimePicker::Initialize(const CFWL_WidgetProperties* pProperties) {
+void CFWL_DateTimePicker::Initialize() {
   ASSERT(!m_pIface);
-
-  if (pProperties)
-    *m_pProperties = *pProperties;
 
   std::unique_ptr<IFWL_DateTimePicker> pDateTimePicker(new IFWL_DateTimePicker(
       m_pApp, m_pProperties->MakeWidgetImpProperties(&m_DateTimePickerDP)));
   pDateTimePicker->Initialize();
 
   m_pIface = std::move(pDateTimePicker);
-  CFWL_Widget::Initialize(pProperties);
+  CFWL_Widget::Initialize();
 }
 
 IFWL_DateTimePicker* CFWL_DateTimePicker::GetWidget() {

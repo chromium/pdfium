@@ -26,7 +26,7 @@ class CFWL_ComboBox : public CFWL_Widget {
   IFWL_ComboBox* GetWidget() override;
   const IFWL_ComboBox* GetWidget() const override;
 
-  void Initialize(const CFWL_WidgetProperties* pProperties);
+  void Initialize();
 
   int32_t AddString(const CFX_WideStringC& wsText);
   int32_t AddString(const CFX_WideStringC& wsText, CFX_DIBitmap* pIcon);

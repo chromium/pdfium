@@ -12,18 +12,15 @@ CFWL_PictureBox::CFWL_PictureBox(const IFWL_App* app) : CFWL_Widget(app) {}
 
 CFWL_PictureBox::~CFWL_PictureBox() {}
 
-void CFWL_PictureBox::Initialize(const CFWL_WidgetProperties* pProperties) {
+void CFWL_PictureBox::Initialize() {
   ASSERT(!m_pIface);
-
-  if (pProperties)
-    *m_pProperties = *pProperties;
 
   std::unique_ptr<IFWL_PictureBox> pPictureBox(new IFWL_PictureBox(
       m_pApp, m_pProperties->MakeWidgetImpProperties(&m_PictureBoxDP)));
   pPictureBox->Initialize();
 
   m_pIface = std::move(pPictureBox);
-  CFWL_Widget::Initialize(pProperties);
+  CFWL_Widget::Initialize();
 }
 
 IFWL_PictureBox* CFWL_PictureBox::GetWidget() {

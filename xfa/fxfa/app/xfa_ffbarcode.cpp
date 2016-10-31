@@ -124,7 +124,7 @@ CXFA_FFBarcode::~CXFA_FFBarcode() {}
 
 FX_BOOL CXFA_FFBarcode::LoadWidget() {
   CFWL_Barcode* pFWLBarcode = new CFWL_Barcode(GetFWLApp());
-  pFWLBarcode->Initialize(nullptr);
+  pFWLBarcode->Initialize();
 
   m_pNormalWidget = pFWLBarcode;
   m_pNormalWidget->SetLayoutItem(this);

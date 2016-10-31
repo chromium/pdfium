@@ -24,7 +24,7 @@ CXFA_FFImageEdit::~CXFA_FFImageEdit() {
 }
 FX_BOOL CXFA_FFImageEdit::LoadWidget() {
   CFWL_PictureBox* pPictureBox = new CFWL_PictureBox(GetFWLApp());
-  pPictureBox->Initialize(nullptr);
+  pPictureBox->Initialize();
   m_pNormalWidget = pPictureBox;
   m_pNormalWidget->SetLayoutItem(this);
 

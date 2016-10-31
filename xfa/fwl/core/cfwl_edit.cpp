@@ -13,18 +13,15 @@ CFWL_Edit::CFWL_Edit(const IFWL_App* app) : CFWL_Widget(app) {}
 
 CFWL_Edit::~CFWL_Edit() {}
 
-void CFWL_Edit::Initialize(const CFWL_WidgetProperties* pProperties) {
+void CFWL_Edit::Initialize() {
   ASSERT(!m_pIface);
-
-  if (pProperties)
-    *m_pProperties = *pProperties;
 
   std::unique_ptr<IFWL_Edit> pEdit(new IFWL_Edit(
       m_pApp, m_pProperties->MakeWidgetImpProperties(nullptr), nullptr));
   pEdit->Initialize();
 
   m_pIface = std::move(pEdit);
-  CFWL_Widget::Initialize(pProperties);
+  CFWL_Widget::Initialize();
 }
 
 IFWL_Edit* CFWL_Edit::GetWidget() {

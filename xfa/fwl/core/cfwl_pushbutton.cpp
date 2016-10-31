@@ -12,18 +12,15 @@ CFWL_PushButton::CFWL_PushButton(const IFWL_App* app) : CFWL_Widget(app) {}
 
 CFWL_PushButton::~CFWL_PushButton() {}
 
-void CFWL_PushButton::Initialize(const CFWL_WidgetProperties* pProperties) {
+void CFWL_PushButton::Initialize() {
   ASSERT(!m_pIface);
-
-  if (pProperties)
-    *m_pProperties = *pProperties;
 
   std::unique_ptr<IFWL_PushButton> pPushButton(new IFWL_PushButton(
       m_pApp, m_pProperties->MakeWidgetImpProperties(&m_buttonData)));
   pPushButton->Initialize();
 
   m_pIface = std::move(pPushButton);
-  CFWL_Widget::Initialize(pProperties);
+  CFWL_Widget::Initialize();
 }
 
 IFWL_PushButton* CFWL_PushButton::GetWidget() {

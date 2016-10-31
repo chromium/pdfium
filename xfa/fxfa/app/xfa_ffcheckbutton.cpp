@@ -28,7 +28,7 @@ CXFA_FFCheckButton::~CXFA_FFCheckButton() {}
 
 FX_BOOL CXFA_FFCheckButton::LoadWidget() {
   CFWL_CheckBox* pCheckBox = new CFWL_CheckBox(GetFWLApp());
-  pCheckBox->Initialize(nullptr);
+  pCheckBox->Initialize();
   m_pNormalWidget = pCheckBox;
   m_pNormalWidget->SetLayoutItem(this);
 

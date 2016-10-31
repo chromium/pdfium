@@ -14,18 +14,15 @@ CFWL_CheckBox::CFWL_CheckBox(const IFWL_App* app) : CFWL_Widget(app) {}
 
 CFWL_CheckBox::~CFWL_CheckBox() {}
 
-void CFWL_CheckBox::Initialize(const CFWL_WidgetProperties* pProperties) {
+void CFWL_CheckBox::Initialize() {
   ASSERT(!m_pIface);
-
-  if (pProperties)
-    *m_pProperties = *pProperties;
 
   std::unique_ptr<IFWL_CheckBox> pCheckBox(new IFWL_CheckBox(
       m_pApp, m_pProperties->MakeWidgetImpProperties(&m_checkboxData)));
   pCheckBox->Initialize();
 
   m_pIface = std::move(pCheckBox);
-  CFWL_Widget::Initialize(pProperties);
+  CFWL_Widget::Initialize();
 }
 
 IFWL_CheckBox* CFWL_CheckBox::GetWidget() {

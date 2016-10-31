@@ -31,7 +31,7 @@ CFWL_Widget::~CFWL_Widget() {
     m_pIface->Finalize();
 }
 
-void CFWL_Widget::Initialize(const CFWL_WidgetProperties* pProperties) {
+void CFWL_Widget::Initialize() {
   ASSERT(m_pIface);
   m_pIface->SetAssociateWidget(this);
 }

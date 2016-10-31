@@ -14,18 +14,15 @@ CFWL_ListBox::CFWL_ListBox(const IFWL_App* app) : CFWL_Widget(app) {}
 
 CFWL_ListBox::~CFWL_ListBox() {}
 
-void CFWL_ListBox::Initialize(const CFWL_WidgetProperties* pProperties) {
+void CFWL_ListBox::Initialize() {
   ASSERT(!m_pIface);
-
-  if (pProperties)
-    *m_pProperties = *pProperties;
 
   std::unique_ptr<IFWL_ListBox> pListBox(new IFWL_ListBox(
       m_pApp, m_pProperties->MakeWidgetImpProperties(&m_ListBoxDP), nullptr));
   pListBox->Initialize();
 
   m_pIface = std::move(pListBox);
-  CFWL_Widget::Initialize(pProperties);
+  CFWL_Widget::Initialize();
 }
 
 IFWL_ListBox* CFWL_ListBox::GetWidget() {

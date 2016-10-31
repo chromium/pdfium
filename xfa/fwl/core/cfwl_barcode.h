@@ -22,7 +22,7 @@ class CFWL_Barcode : public CFWL_Edit {
   IFWL_Barcode* GetWidget() override;
   const IFWL_Barcode* GetWidget() const override;
 
-  void Initialize(const CFWL_WidgetProperties* pProperties);
+  void Initialize();
 
   void SetType(BC_TYPE type);
   FX_BOOL IsProtectedType();

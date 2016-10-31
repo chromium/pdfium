@@ -12,18 +12,14 @@ CFWL_Barcode::CFWL_Barcode(const IFWL_App* app) : CFWL_Edit(app) {}
 
 CFWL_Barcode::~CFWL_Barcode() {}
 
-void CFWL_Barcode::Initialize(const CFWL_WidgetProperties* pProperties) {
+void CFWL_Barcode::Initialize() {
   ASSERT(!m_pIface);
-
-  if (pProperties)
-    *m_pProperties = *pProperties;
-
   std::unique_ptr<IFWL_Barcode> pBarcode(new IFWL_Barcode(
       m_pApp, m_pProperties->MakeWidgetImpProperties(&m_barcodeData)));
   pBarcode->Initialize();
 
   m_pIface = std::move(pBarcode);
-  CFWL_Widget::Initialize(pProperties);
+  CFWL_Widget::Initialize();
 }
 
 IFWL_Barcode* CFWL_Barcode::GetWidget() {

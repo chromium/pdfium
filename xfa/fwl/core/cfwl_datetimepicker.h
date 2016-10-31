@@ -18,7 +18,7 @@ class CFWL_DateTimePicker : public CFWL_Widget {
   IFWL_DateTimePicker* GetWidget() override;
   const IFWL_DateTimePicker* GetWidget() const override;
 
-  void Initialize(const CFWL_WidgetProperties* pProperties);
+  void Initialize();
 
   FWL_Error SetToday(int32_t iYear, int32_t iMonth, int32_t iDay);
   FWL_Error GetEditText(CFX_WideString& wsText);

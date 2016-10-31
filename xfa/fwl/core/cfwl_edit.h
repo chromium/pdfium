@@ -23,7 +23,7 @@ class CFWL_Edit : public CFWL_Widget {
   IFWL_Edit* GetWidget() override;
   const IFWL_Edit* GetWidget() const override;
 
-  void Initialize(const CFWL_WidgetProperties* pProperties);
+  void Initialize();
 
   FWL_Error SetText(const CFX_WideString& wsText);
   int32_t GetTextLength() const;

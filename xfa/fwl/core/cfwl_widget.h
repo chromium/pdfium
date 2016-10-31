@@ -54,7 +54,7 @@ class CFWL_Widget {
   IFWL_WidgetDelegate* SetDelegate(IFWL_WidgetDelegate* pDelegate);
 
  protected:
-  void Initialize(const CFWL_WidgetProperties* pProperties);
+  void Initialize();
 
   const IFWL_App* m_pApp;
   std::unique_ptr<IFWL_Widget> m_pIface;

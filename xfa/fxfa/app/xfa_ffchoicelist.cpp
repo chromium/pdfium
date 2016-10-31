@@ -33,7 +33,7 @@ CXFA_FFListBox::~CXFA_FFListBox() {
 
 FX_BOOL CXFA_FFListBox::LoadWidget() {
   CFWL_ListBox* pListBox = new CFWL_ListBox(GetFWLApp());
-  pListBox->Initialize(nullptr);
+  pListBox->Initialize();
   pListBox->ModifyStyles(FWL_WGTSTYLE_VScroll | FWL_WGTSTYLE_NoBackground,
                          0xFFFFFFFF);
   m_pNormalWidget = (CFWL_Widget*)pListBox;
@@ -231,7 +231,7 @@ FX_BOOL CXFA_FFComboBox::PtInActiveRect(FX_FLOAT fx, FX_FLOAT fy) {
 }
 FX_BOOL CXFA_FFComboBox::LoadWidget() {
   CFWL_ComboBox* pComboBox = new CFWL_ComboBox(GetFWLApp());
-  pComboBox->Initialize(nullptr);
+  pComboBox->Initialize();
   m_pNormalWidget = (CFWL_Widget*)pComboBox;
   m_pNormalWidget->SetLayoutItem(this);
 

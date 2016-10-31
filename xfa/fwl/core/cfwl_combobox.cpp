@@ -15,18 +15,15 @@ CFWL_ComboBox::CFWL_ComboBox(const IFWL_App* app) : CFWL_Widget(app) {}
 
 CFWL_ComboBox::~CFWL_ComboBox() {}
 
-void CFWL_ComboBox::Initialize(const CFWL_WidgetProperties* pProperties) {
+void CFWL_ComboBox::Initialize() {
   ASSERT(!m_pIface);
-
-  if (pProperties)
-    *m_pProperties = *pProperties;
 
   std::unique_ptr<IFWL_ComboBox> pComboBox(new IFWL_ComboBox(
       m_pApp, m_pProperties->MakeWidgetImpProperties(&m_comboBoxData)));
   pComboBox->Initialize();
 
   m_pIface = std::move(pComboBox);
-  CFWL_Widget::Initialize(pProperties);
+  CFWL_Widget::Initialize();
 }
 
 IFWL_ComboBox* CFWL_ComboBox::GetWidget() {
