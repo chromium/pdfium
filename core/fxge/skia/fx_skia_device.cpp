@@ -386,7 +386,7 @@ void SetBitmapPaint(bool isAlphaMask,
   paint->setAntiAlias(true);
   if (isAlphaMask) {
     paint->setColorFilter(
-        SkColorFilter::MakeModeFilter(argb, SkXfermode::kSrc_Mode));
+        SkColorFilter::MakeModeFilter(argb, SkBlendMode::kSrc));
   }
   // paint->setFilterQuality(kHigh_SkFilterQuality);
   paint->setBlendMode(GetSkiaBlendMode(blend_type));
@@ -1532,9 +1532,8 @@ bool CFX_SkiaDeviceDriver::DrawBitsWithMask(const CFX_DIBSource* pSource,
   sk_sp<SkImage> skMaskImage = SkImage::MakeFromBitmap(skMask);
   sk_sp<SkShader> skMaskShader = skMaskImage->makeShader(
       SkShader::kClamp_TileMode, SkShader::kClamp_TileMode);
-  sk_sp<SkXfermode> dstInMode = SkXfermode::Make(SkXfermode::kSrcIn_Mode);
-  paint.setShader(
-      SkShader::MakeComposeShader(skMaskShader, skSrcShader, dstInMode));
+  paint.setShader(SkShader::MakeComposeShader(skMaskShader, skSrcShader,
+                                              SkBlendMode::kSrcIn));
   SkRect r = {0, 0, SkIntToScalar(srcWidth), SkIntToScalar(srcHeight)};
   m_pCanvas->drawRect(r, paint);
   m_pCanvas->restore();
