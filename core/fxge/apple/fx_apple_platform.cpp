@@ -73,6 +73,7 @@ FX_BOOL CGDrawGlyphRun(CGContextRef pContext,
   }
   if (bNegSize) {
     new_matrix.a = -new_matrix.a;
+    new_matrix.c = -new_matrix.c;
   } else {
     new_matrix.b = -new_matrix.b;
     new_matrix.d = -new_matrix.d;
