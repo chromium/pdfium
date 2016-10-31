@@ -349,41 +349,37 @@ FX_BOOL CPDF_SecurityHandler::AES256_CheckPassword(const uint8_t* password,
   CFX_ByteString ekey = m_pEncryptDict
                             ? m_pEncryptDict->GetStringFor(bOwner ? "OE" : "UE")
                             : CFX_ByteString();
-  if (ekey.GetLength() < 32) {
+  if (ekey.GetLength() < 32)
     return FALSE;
-  }
-  uint8_t* aes = FX_Alloc(uint8_t, 2048);
-  CRYPT_AESSetKey(aes, 16, digest, 32, FALSE);
+
+  std::vector<uint8_t> aes(2048);
+  CRYPT_AESSetKey(aes.data(), 16, digest, 32, FALSE);
   uint8_t iv[16];
   FXSYS_memset(iv, 0, 16);
-  CRYPT_AESSetIV(aes, iv);
-  CRYPT_AESDecrypt(aes, key, ekey.raw_str(), 32);
-  CRYPT_AESSetKey(aes, 16, key, 32, FALSE);
-  CRYPT_AESSetIV(aes, iv);
+  CRYPT_AESSetIV(aes.data(), iv);
+  CRYPT_AESDecrypt(aes.data(), key, ekey.raw_str(), 32);
+  CRYPT_AESSetKey(aes.data(), 16, key, 32, FALSE);
+  CRYPT_AESSetIV(aes.data(), iv);
   CFX_ByteString perms = m_pEncryptDict->GetStringFor("Perms");
-  if (perms.IsEmpty()) {
+  if (perms.IsEmpty())
     return FALSE;
-  }
+
   uint8_t perms_buf[16];
   FXSYS_memset(perms_buf, 0, sizeof(perms_buf));
-  uint32_t copy_len = sizeof(perms_buf);
-  if (copy_len > (uint32_t)perms.GetLength()) {
-    copy_len = perms.GetLength();
-  }
+  size_t copy_len =
+      std::min(sizeof(perms_buf), static_cast<size_t>(perms.GetLength()));
   FXSYS_memcpy(perms_buf, perms.raw_str(), copy_len);
   uint8_t buf[16];
-  CRYPT_AESDecrypt(aes, buf, perms_buf, 16);
-  FX_Free(aes);
-  if (buf[9] != 'a' || buf[10] != 'd' || buf[11] != 'b') {
+  CRYPT_AESDecrypt(aes.data(), buf, perms_buf, 16);
+  if (buf[9] != 'a' || buf[10] != 'd' || buf[11] != 'b')
     return FALSE;
-  }
-  if (FXDWORD_GET_LSBFIRST(buf) != m_Permissions) {
+
+  if (FXDWORD_GET_LSBFIRST(buf) != m_Permissions)
     return FALSE;
-  }
-  if ((buf[8] == 'T' && !IsMetadataEncrypted()) ||
-      (buf[8] == 'F' && IsMetadataEncrypted())) {
+
+  bool encrypted = IsMetadataEncrypted();
+  if ((buf[8] == 'T' && !encrypted) || (buf[8] == 'F' && encrypted))
     return FALSE;
-  }
   return TRUE;
 }
 
