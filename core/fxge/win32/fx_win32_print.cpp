@@ -320,8 +320,8 @@ FX_BOOL CGdiPrinterDriver::DrawDeviceText(int nChars,
 
   // Try to get the font and draw again.
   g_pdfium_typeface_accessible_func(&lf, wsText.c_str(), nChars);
-  return ExtTextOutW(m_hDC, 0, 0, ETO_GLYPH_INDEX, nullptr, wsText.c_str(),
-                     nChars, nChars > 1 ? &spacing[1] : nullptr);
+  return !!ExtTextOutW(m_hDC, 0, 0, ETO_GLYPH_INDEX, nullptr, wsText.c_str(),
+                       nChars, nChars > 1 ? &spacing[1] : nullptr);
 #else
   return FALSE;
 #endif
