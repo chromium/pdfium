@@ -1,17 +1,5 @@
 # PDFium
 
-## News
-
-As of 2016-05-04, GN is used to generate build files replacing GYP. GYP
-support will remain until it is disabled in Chromium and then will be removed
-from PDFium.
-
-As of 2016-04-28, the Visual Studio toolchain from depot_tools is used as the
-default Windows toolchain for Googlers. Please set DEPOT_TOOLS_WIN_TOOLCHAIN=0
-if you need to use the system toolchain. See
-[Windows development subsection](#WinDev) for details.
-
-
 ## Prerequisites
 
 Get the chromium depot tools via the instructions at
@@ -21,7 +9,7 @@ the gclient utility needed below).
 Also install Python, Subversion, and Git and make sure they're in your path.
 
 
-###<a name="WinDev"></a> Windows development
+### Windows development
 
 PDFium uses a similar Windows toolchain as Chromium:
 
@@ -32,6 +20,13 @@ Run `set DEPOT_TOOLS_WIN_TOOLCHAIN=0`, or set that variable in your global
 environment.
 
 Compilation is done through ninja, **not** Visual Studio.
+
+### CPU Architectures supported
+
+The default architecture for Windows, Linux, and Mac is "`x64`". On Windows,
+"`x86`" is also supported. GN parameter "`target_cpu = "x86"`" can be used to
+override the default value. If you specify Android build, the default CPU
+architecture will be "`arm`".
 
 
 #### Google employees
@@ -74,11 +69,7 @@ checkout) to execute the build files.
 gn gen <directory>
 ```
 
-If you want to set <directory> to `out/Debug` or `out/Release` you'll need to
-export `GYP_PDFIUM_NO_ACTION=1` to stop `gclient sync` from executing GYP
-and overwriting your build files.
-
-###<a name="BuildConfig"></a> Selecting build configuration
+### Selecting build configuration
 
 PDFium may be built either with or without JavaScript support, and with
 or without XFA forms support.  Both of these features are enabled by
