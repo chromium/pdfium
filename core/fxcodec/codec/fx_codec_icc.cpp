@@ -1663,17 +1663,17 @@ void AdobeCMYK_to_sRGB(FX_FLOAT c,
   // Convert to uint8_t with round-to-nearest. Avoid using FXSYS_round because
   // it is incredibly expensive with VC++ (tested on VC++ 2015) because round()
   // is very expensive.
-  // Adding 0.5f and truncating can round the wrong direction in some edge
-  // cases but these do not matter in this context. For instance, the float that
-  // is one ULP (unit in the last place) before 0.5 should round to zero but
-  // this will round it to one. These edge cases are never hit in this function
-  // due to the very limited precision of the input integers.
-  // This method also doesn't handle negative or extremely large numbers, but
-  // those are not needed here.
-  uint8_t c1 = int(c * 255.f + 0.5f);
-  uint8_t m1 = int(m * 255.f + 0.5f);
-  uint8_t y1 = int(y * 255.f + 0.5f);
-  uint8_t k1 = int(k * 255.f + 0.5f);
+  // The 'magic' value of 0.49999997f, the float that precedes 0.5f, was chosen
+  // because it gives identical results to FXSYS_round(). Using the constant
+  // 0.5f gives different results (1 instead of 0) for one value, 0.0019607842.
+  // That value is close to the cusp but zero is the correct answer, and
+  // getting the same answer as before is desirable.
+  // All floats from 0.0 to 1.0 were tested and now give the same results.
+  const float rounding_offset = 0.49999997f;
+  uint8_t c1 = int(c * 255.f + rounding_offset);
+  uint8_t m1 = int(m * 255.f + rounding_offset);
+  uint8_t y1 = int(y * 255.f + rounding_offset);
+  uint8_t k1 = int(k * 255.f + rounding_offset);
 
   ASSERT(c1 == FXSYS_round(c * 255));
   ASSERT(m1 == FXSYS_round(m * 255));
