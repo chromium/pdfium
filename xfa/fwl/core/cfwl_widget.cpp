@@ -20,7 +20,6 @@
 
 CFWL_Widget::CFWL_Widget(const IFWL_App* app)
     : m_pApp(app),
-      m_pDelegate(nullptr),
       m_pWidgetMgr(app->GetWidgetMgr()),
       m_pProperties(new CFWL_WidgetProperties) {
   ASSERT(m_pWidgetMgr);
@@ -131,10 +130,11 @@ FWL_Error CFWL_Widget::DrawWidget(CFX_Graphics* pGraphics,
   return m_pIface->DrawWidget(pGraphics, pMatrix);
 }
 
-IFWL_WidgetDelegate* CFWL_Widget::SetDelegate(IFWL_WidgetDelegate* pDelegate) {
-  if (!m_pIface)
-    return nullptr;
+IFWL_WidgetDelegate* CFWL_Widget::GetCurrentDelegate() {
+  return m_pIface ? m_pIface->GetCurrentDelegate() : nullptr;
+}
 
-  m_pDelegate = m_pIface->SetDelegate(pDelegate);
-  return m_pDelegate;
+void CFWL_Widget::SetCurrentDelegate(IFWL_WidgetDelegate* pDelegate) {
+  if (m_pIface)
+    m_pIface->SetCurrentDelegate(pDelegate);
 }

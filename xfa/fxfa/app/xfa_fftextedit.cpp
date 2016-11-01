@@ -45,8 +45,11 @@ FX_BOOL CXFA_FFTextEdit::LoadWidget() {
   IFWL_Widget* pWidget = m_pNormalWidget->GetWidget();
   CFWL_NoteDriver* pNoteDriver = pWidget->GetOwnerApp()->GetNoteDriver();
   pNoteDriver->RegisterEventTarget(pWidget, pWidget);
-  m_pOldDelegate = m_pNormalWidget->SetDelegate(this);
+
+  m_pOldDelegate = m_pNormalWidget->GetCurrentDelegate();
+  m_pNormalWidget->SetCurrentDelegate(this);
   m_pNormalWidget->LockUpdate();
+
   UpdateWidgetProperty();
   CFX_WideString wsText;
   m_pDataAcc->GetValue(wsText, XFA_VALUEPICTURE_Display);
@@ -447,8 +450,11 @@ FX_BOOL CXFA_FFNumericEdit::LoadWidget() {
   m_pNormalWidget->SetLayoutItem(this);
   CFWL_NoteDriver* pNoteDriver = pIWidget->GetOwnerApp()->GetNoteDriver();
   pNoteDriver->RegisterEventTarget(pIWidget, pIWidget);
-  m_pOldDelegate = m_pNormalWidget->SetDelegate(this);
+
+  m_pOldDelegate = m_pNormalWidget->GetCurrentDelegate();
+  m_pNormalWidget->SetCurrentDelegate(this);
   m_pNormalWidget->LockUpdate();
+
   CFX_WideString wsText;
   m_pDataAcc->GetValue(wsText, XFA_VALUEPICTURE_Display);
   pWidget->SetText(wsText);
@@ -524,8 +530,11 @@ FX_BOOL CXFA_FFPasswordEdit::LoadWidget() {
   IFWL_Widget* pIWidget = m_pNormalWidget->GetWidget();
   CFWL_NoteDriver* pNoteDriver = pIWidget->GetOwnerApp()->GetNoteDriver();
   pNoteDriver->RegisterEventTarget(pIWidget, pIWidget);
-  m_pOldDelegate = m_pNormalWidget->SetDelegate(this);
+
+  m_pOldDelegate = m_pNormalWidget->GetCurrentDelegate();
+  m_pNormalWidget->SetCurrentDelegate(this);
   m_pNormalWidget->LockUpdate();
+
   CFX_WideString wsText;
   m_pDataAcc->GetValue(wsText, XFA_VALUEPICTURE_Display);
   pWidget->SetText(wsText);
@@ -590,8 +599,11 @@ FX_BOOL CXFA_FFDateTimeEdit::LoadWidget() {
   IFWL_Widget* pIWidget = m_pNormalWidget->GetWidget();
   CFWL_NoteDriver* pNoteDriver = pIWidget->GetOwnerApp()->GetNoteDriver();
   pNoteDriver->RegisterEventTarget(pIWidget, pIWidget);
-  m_pOldDelegate = m_pNormalWidget->SetDelegate(this);
+
+  m_pOldDelegate = m_pNormalWidget->GetCurrentDelegate();
+  m_pNormalWidget->SetCurrentDelegate(this);
   m_pNormalWidget->LockUpdate();
+
   CFX_WideString wsText;
   m_pDataAcc->GetValue(wsText, XFA_VALUEPICTURE_Display);
   pWidget->SetEditText(wsText);

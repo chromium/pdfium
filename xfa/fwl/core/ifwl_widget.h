@@ -113,7 +113,9 @@ class IFWL_Widget {
 
   virtual IFWL_ThemeProvider* GetThemeProvider();
   virtual FWL_Error SetThemeProvider(IFWL_ThemeProvider* pThemeProvider);
-  virtual IFWL_WidgetDelegate* SetDelegate(IFWL_WidgetDelegate* pDelegate);
+
+  IFWL_WidgetDelegate* GetCurrentDelegate();
+  void SetCurrentDelegate(IFWL_WidgetDelegate* pDelegate);
 
   const IFWL_App* GetOwnerApp() const;
 

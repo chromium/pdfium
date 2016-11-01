@@ -42,8 +42,7 @@ void CFWL_DateTimeEditImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
   if (dwHashCode == CFWL_MessageType::SetFocus ||
       dwHashCode == CFWL_MessageType::KillFocus) {
     IFWL_Widget* pOuter = m_pOwner->GetOuter();
-    IFWL_WidgetDelegate* pDelegate = pOuter->SetDelegate(nullptr);
-    pDelegate->OnProcessMessage(pMessage);
+    pOuter->GetCurrentDelegate()->OnProcessMessage(pMessage);
   }
 }
 

@@ -718,7 +718,7 @@ void IFWL_ComboBox::InitProxyForm() {
   m_pForm->Initialize();
   m_pListBox->SetParent(m_pForm);
   m_pListProxyDelegate = new CFWL_ComboProxyImpDelegate(m_pForm, this);
-  m_pForm->SetDelegate(m_pListProxyDelegate);
+  m_pForm->SetCurrentDelegate(m_pListProxyDelegate);
 }
 
 void IFWL_ComboBox::DisForm_InitComboList() {
@@ -1158,10 +1158,8 @@ void CFWL_ComboBoxImpDelegate::DoSubCtrlKey(CFWL_MsgKey* pMsg) {
     return;
   }
   FX_BOOL bDropDown = m_pOwner->IsDropDownStyle();
-  if (bDropDown) {
-    IFWL_WidgetDelegate* pDelegate = m_pOwner->m_pEdit->SetDelegate(nullptr);
-    pDelegate->OnProcessMessage(pMsg);
-  }
+  if (bDropDown)
+    m_pOwner->m_pEdit->GetCurrentDelegate()->OnProcessMessage(pMsg);
 }
 
 void CFWL_ComboBoxImpDelegate::DisForm_OnProcessMessage(
@@ -1210,9 +1208,8 @@ void CFWL_ComboBoxImpDelegate::DisForm_OnProcessMessage(
                            pKey->m_dwKeyCode == FWL_VKEY_Return ||
                            pKey->m_dwKeyCode == FWL_VKEY_Escape;
         if (bListKey) {
-          IFWL_WidgetDelegate* pDelegate =
-              m_pOwner->m_pListBox->SetDelegate(nullptr);
-          pDelegate->OnProcessMessage(pMessage);
+          m_pOwner->m_pListBox->GetCurrentDelegate()->OnProcessMessage(
+              pMessage);
           break;
         }
       }
@@ -1252,8 +1249,7 @@ void CFWL_ComboBoxImpDelegate::DisForm_OnFocusChanged(CFWL_Message* pMsg,
       CFWL_MsgSetFocus msg;
       msg.m_pDstTarget = m_pOwner->m_pEdit.get();
       msg.m_pSrcTarget = nullptr;
-      IFWL_WidgetDelegate* pDelegate = m_pOwner->m_pEdit->SetDelegate(nullptr);
-      pDelegate->OnProcessMessage(&msg);
+      m_pOwner->m_pEdit->GetCurrentDelegate()->OnProcessMessage(&msg);
     }
   } else {
     m_pOwner->m_pProperties->m_dwStates &= ~FWL_WGTSTATE_Focused;
@@ -1261,8 +1257,7 @@ void CFWL_ComboBoxImpDelegate::DisForm_OnFocusChanged(CFWL_Message* pMsg,
     CFWL_MsgKillFocus msg;
     msg.m_pDstTarget = nullptr;
     msg.m_pSrcTarget = m_pOwner->m_pEdit.get();
-    IFWL_WidgetDelegate* pDelegate = m_pOwner->m_pEdit->SetDelegate(nullptr);
-    pDelegate->OnProcessMessage(&msg);
+    m_pOwner->m_pEdit->GetCurrentDelegate()->OnProcessMessage(&msg);
   }
 }
 
@@ -1305,10 +1300,8 @@ void CFWL_ComboBoxImpDelegate::DisForm_OnKey(CFWL_MsgKey* pMsg) {
     m_pOwner->SynchrEditText(m_pOwner->m_iCurSel);
     return;
   }
-  if (m_pOwner->m_pEdit) {
-    IFWL_WidgetDelegate* pDelegate = m_pOwner->m_pEdit->SetDelegate(nullptr);
-    pDelegate->OnProcessMessage(pMsg);
-  }
+  if (m_pOwner->m_pEdit)
+    m_pOwner->m_pEdit->GetCurrentDelegate()->OnProcessMessage(pMsg);
 }
 
 CFWL_ComboProxyImpDelegate::CFWL_ComboProxyImpDelegate(IFWL_Form* pForm,

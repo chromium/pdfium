@@ -131,8 +131,11 @@ FX_BOOL CXFA_FFBarcode::LoadWidget() {
   IFWL_Widget* pWidget = m_pNormalWidget->GetWidget();
   CFWL_NoteDriver* pNoteDriver = pWidget->GetOwnerApp()->GetNoteDriver();
   pNoteDriver->RegisterEventTarget(pWidget, pWidget);
-  m_pOldDelegate = m_pNormalWidget->SetDelegate(this);
+
+  m_pOldDelegate = m_pNormalWidget->GetCurrentDelegate();
+  m_pNormalWidget->SetCurrentDelegate(this);
   m_pNormalWidget->LockUpdate();
+
   CFX_WideString wsText;
   m_pDataAcc->GetValue(wsText, XFA_VALUEPICTURE_Display);
   pFWLBarcode->SetText(wsText);

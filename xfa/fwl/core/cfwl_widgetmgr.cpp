@@ -613,21 +613,18 @@ void CFWL_WidgetMgrDelegate::OnDrawWidget(IFWL_Widget* pWidget,
 
 #if _FX_OS_ == _FX_WIN32_DESKTOP_ || _FX_OS_ == _FX_WIN64_ || \
     _FX_OS_ == _FX_LINUX_DESKTOP_ || _FX_OS_ == _FX_ANDROID_
-  IFWL_WidgetDelegate* pDelegate = pWidget->SetDelegate(nullptr);
-  pDelegate->OnDrawWidget(pTemp, pMatrix);
+  pWidget->GetCurrentDelegate()->OnDrawWidget(pTemp, pMatrix);
   pGraphics->GetClipRect(clipBounds);
   clipCopy = clipBounds;
 #elif _FX_OS_ == _FX_MACOSX_
   if (m_pWidgetMgr->IsFormDisabled()) {
-    IFWL_WidgetDelegate* pDelegate = pWidget->SetDelegate(nullptr);
-    pDelegate->OnDrawWidget(pTemp, pMatrix);
+    pWidget->GetCurrentDelegate()->OnDrawWidget(pTemp, pMatrix);
     pGraphics->GetClipRect(clipBounds);
     clipCopy = clipBounds;
   } else {
     clipBounds.Set(pMatrix->a, pMatrix->b, pMatrix->c, pMatrix->d);
     const_cast<CFX_Matrix*>(pMatrix)->SetIdentity();  // FIXME: const cast.
-    IFWL_WidgetDelegate* pDelegate = pWidget->SetDelegate(nullptr);
-    pDelegate->OnDrawWidget(pTemp, pMatrix);
+    pWidget->GetCurrentDelegate()->OnDrawWidget(pTemp, pMatrix);
   }
 #endif  // _FX_OS_ == _FX_MACOSX_
 
@@ -680,8 +677,8 @@ void CFWL_WidgetMgrDelegate::DrawChild(IFWL_Widget* parent,
       pGraphics->SetClipRect(clipBounds);
     }
     widgetMatrix.Translate(rtWidget.left, rtWidget.top, TRUE);
-    IFWL_WidgetDelegate* pDelegate = child->SetDelegate(nullptr);
-    if (pDelegate) {
+
+    if (IFWL_WidgetDelegate* pDelegate = child->GetCurrentDelegate()) {
       if (m_pWidgetMgr->IsFormDisabled() ||
           IsNeedRepaint(child, &widgetMatrix, rtClip)) {
         pDelegate->OnDrawWidget(pGraphics, &widgetMatrix);

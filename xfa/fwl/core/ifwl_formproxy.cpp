@@ -50,6 +50,5 @@ CFWL_FormProxyImpDelegate::CFWL_FormProxyImpDelegate(IFWL_FormProxy* pOwner)
     : m_pOwner(pOwner) {}
 
 void CFWL_FormProxyImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
-  IFWL_WidgetDelegate* pDelegate = m_pOwner->m_pOuter->SetDelegate(nullptr);
-  pDelegate->OnProcessMessage(pMessage);
+  m_pOwner->m_pOuter->GetCurrentDelegate()->OnProcessMessage(pMessage);
 }

@@ -42,8 +42,11 @@ FX_BOOL CXFA_FFListBox::LoadWidget() {
   IFWL_Widget* pWidget = m_pNormalWidget->GetWidget();
   CFWL_NoteDriver* pNoteDriver = pWidget->GetOwnerApp()->GetNoteDriver();
   pNoteDriver->RegisterEventTarget(pWidget, pWidget);
-  m_pOldDelegate = m_pNormalWidget->SetDelegate(this);
+
+  m_pOldDelegate = m_pNormalWidget->GetCurrentDelegate();
+  m_pNormalWidget->SetCurrentDelegate(this);
   m_pNormalWidget->LockUpdate();
+
   CFX_WideStringArray wsLabelArray;
   m_pDataAcc->GetChoiceListItems(wsLabelArray, FALSE);
   int32_t iItems = wsLabelArray.GetSize();
@@ -238,8 +241,11 @@ FX_BOOL CXFA_FFComboBox::LoadWidget() {
   IFWL_Widget* pWidget = m_pNormalWidget->GetWidget();
   CFWL_NoteDriver* pNoteDriver = pWidget->GetOwnerApp()->GetNoteDriver();
   pNoteDriver->RegisterEventTarget(pWidget, pWidget);
-  m_pOldDelegate = m_pNormalWidget->SetDelegate(this);
+
+  m_pOldDelegate = m_pNormalWidget->GetCurrentDelegate();
+  m_pNormalWidget->SetCurrentDelegate(this);
   m_pNormalWidget->LockUpdate();
+
   CFX_WideStringArray wsLabelArray;
   m_pDataAcc->GetChoiceListItems(wsLabelArray, FALSE);
   int32_t iItems = wsLabelArray.GetSize();

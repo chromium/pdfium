@@ -42,8 +42,7 @@ void CFWL_DateTimeCalendarImpDelegate::OnProcessMessage(
   if (dwCode == CFWL_MessageType::SetFocus ||
       dwCode == CFWL_MessageType::KillFocus) {
     IFWL_Widget* pOuter = m_pOwner->GetOuter();
-    IFWL_WidgetDelegate* pDelegate = pOuter->SetDelegate(nullptr);
-    pDelegate->OnProcessMessage(pMessage);
+    pOuter->GetCurrentDelegate()->OnProcessMessage(pMessage);
     return;
   }
   if (dwCode == CFWL_MessageType::Mouse) {

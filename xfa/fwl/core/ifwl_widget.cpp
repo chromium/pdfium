@@ -100,10 +100,9 @@ FWL_Error IFWL_Widget::SetWidgetRect(const CFX_RectF& rect) {
       ev.m_pSrcTarget = this;
       ev.m_rtOld = rtOld;
       ev.m_rtNew = rect;
-      IFWL_WidgetDelegate* pDelegate = SetDelegate(nullptr);
-      if (pDelegate) {
+
+      if (IFWL_WidgetDelegate* pDelegate = GetCurrentDelegate())
         pDelegate->OnProcessEvent(&ev);
-      }
     }
     return FWL_Error::Succeeded;
   }
@@ -353,16 +352,14 @@ FWL_Error IFWL_Widget::SetThemeProvider(IFWL_ThemeProvider* pThemeProvider) {
   return FWL_Error::Succeeded;
 }
 
-IFWL_WidgetDelegate* IFWL_Widget::SetDelegate(IFWL_WidgetDelegate* pDelegate) {
-  if (!m_pCurDelegate) {
+IFWL_WidgetDelegate* IFWL_Widget::GetCurrentDelegate() {
+  if (!m_pCurDelegate)
     m_pCurDelegate = m_pDelegate;
-  }
-  if (!pDelegate) {
-    return m_pCurDelegate;
-  }
-  IFWL_WidgetDelegate* pOldDelegate = m_pCurDelegate;
+  return m_pCurDelegate;
+}
+
+void IFWL_Widget::SetCurrentDelegate(IFWL_WidgetDelegate* pDelegate) {
   m_pCurDelegate = pDelegate;
-  return pOldDelegate;
 }
 
 const IFWL_App* IFWL_Widget::GetOwnerApp() const {
@@ -727,8 +724,7 @@ void IFWL_Widget::DispatchKeyEvent(CFWL_MsgKey* pNote) {
 
 void IFWL_Widget::DispatchEvent(CFWL_Event* pEvent) {
   if (m_pOuter) {
-    IFWL_WidgetDelegate* pDelegate = m_pOuter->SetDelegate(nullptr);
-    pDelegate->OnProcessEvent(pEvent);
+    m_pOuter->GetCurrentDelegate()->OnProcessEvent(pEvent);
     return;
   }
   const IFWL_App* pApp = GetOwnerApp();

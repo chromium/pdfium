@@ -35,10 +35,13 @@ FX_BOOL CXFA_FFCheckButton::LoadWidget() {
   IFWL_Widget* pWidget = m_pNormalWidget->GetWidget();
   CFWL_NoteDriver* pNoteDriver = pWidget->GetOwnerApp()->GetNoteDriver();
   pNoteDriver->RegisterEventTarget(pWidget, pWidget);
-  m_pOldDelegate = m_pNormalWidget->SetDelegate(this);
-  if (m_pDataAcc->IsRadioButton()) {
+
+  m_pOldDelegate = m_pNormalWidget->GetCurrentDelegate();
+  m_pNormalWidget->SetCurrentDelegate(this);
+
+  if (m_pDataAcc->IsRadioButton())
     pCheckBox->ModifyStylesEx(FWL_STYLEEXT_CKB_RadioButton, 0xFFFFFFFF);
-  }
+
   m_pNormalWidget->LockUpdate();
   UpdateWidgetProperty();
   SetFWLCheckState(m_pDataAcc->GetCheckState());

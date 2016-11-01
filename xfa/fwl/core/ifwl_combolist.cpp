@@ -124,9 +124,8 @@ void CFWL_ComboListImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
       if (rect.Contains(pMsg->m_fx, pMsg->m_fy)) {
         pMsg->m_fx -= rect.left;
         pMsg->m_fy -= rect.top;
-        IFWL_WidgetDelegate* pDelegate =
-            m_pOwner->m_pVertScrollBar->SetDelegate(nullptr);
-        pDelegate->OnProcessMessage(pMsg);
+        m_pOwner->m_pVertScrollBar->GetCurrentDelegate()->OnProcessMessage(
+            pMsg);
         return;
       }
     }
@@ -246,7 +245,6 @@ int32_t CFWL_ComboListImpDelegate::OnDropListKey(CFWL_MsgKey* pKey) {
       case FWL_VKEY_Up:
       case FWL_VKEY_Down: {
         OnDropListKeyDown(pKey);
-        pOuter->SetDelegate(nullptr);
         pOuter->ProcessSelChanged(FALSE);
         return 1;
       }

@@ -51,14 +51,14 @@ class CFWL_Widget {
   FWL_Error DrawWidget(CFX_Graphics* pGraphics,
                        const CFX_Matrix* pMatrix = nullptr);
 
-  IFWL_WidgetDelegate* SetDelegate(IFWL_WidgetDelegate* pDelegate);
+  IFWL_WidgetDelegate* GetCurrentDelegate();
+  void SetCurrentDelegate(IFWL_WidgetDelegate*);
 
  protected:
   void Initialize();
 
   const IFWL_App* m_pApp;
   std::unique_ptr<IFWL_Widget> m_pIface;
-  IFWL_WidgetDelegate* m_pDelegate;
   CFWL_WidgetMgr* const m_pWidgetMgr;
   std::unique_ptr<CFWL_WidgetProperties> m_pProperties;
 };

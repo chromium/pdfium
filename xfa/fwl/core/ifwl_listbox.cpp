@@ -1075,12 +1075,8 @@ void CFWL_ListBoxImpDelegate::OnLButtonUp(CFWL_MsgMouse* pMsg) {
 }
 
 void CFWL_ListBoxImpDelegate::OnMouseWheel(CFWL_MsgMouseWheel* pMsg) {
-  if (!m_pOwner->IsShowScrollBar(TRUE)) {
-    return;
-  }
-  IFWL_WidgetDelegate* pDelegate =
-      m_pOwner->m_pVertScrollBar->SetDelegate(nullptr);
-  pDelegate->OnProcessMessage(pMsg);
+  if (m_pOwner->IsShowScrollBar(TRUE))
+    m_pOwner->m_pVertScrollBar->GetCurrentDelegate()->OnProcessMessage(pMsg);
 }
 
 void CFWL_ListBoxImpDelegate::OnKeyDown(CFWL_MsgKey* pMsg) {

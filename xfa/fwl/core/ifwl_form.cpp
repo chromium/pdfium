@@ -830,10 +830,11 @@ void CFWL_FormImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
         if (pSubFocus == pDriver->GetFocus()) {
           pDriver->SetFocus(nullptr);
         } else if (pSubFocus->GetStates() & FWL_WGTSTATE_Focused) {
-          CFWL_MsgKillFocus ms;
-          IFWL_WidgetDelegate* pDelegate = pSubFocus->SetDelegate(nullptr);
-          if (pDelegate)
+          if (IFWL_WidgetDelegate* pDelegate =
+                  pSubFocus->GetCurrentDelegate()) {
+            CFWL_MsgKillFocus ms;
             pDelegate->OnProcessMessage(&ms);
+          }
         }
       }
       m_pOwner->Repaint(&m_pOwner->m_rtRelative);
