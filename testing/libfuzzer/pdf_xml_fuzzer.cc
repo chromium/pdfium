@@ -32,7 +32,7 @@ CFDE_XMLNode* XFA_FDEExtension_GetDocumentNode(
              pNextNode;
              pNextNode = pNextNode->GetNodeItem(CFDE_XMLNode::NextSibling)) {
           if (pNextNode->GetType() == FDE_XMLNODE_Element) {
-            return FALSE;
+            return nullptr;
           }
         }
       }
