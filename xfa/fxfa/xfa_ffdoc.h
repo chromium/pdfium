@@ -29,16 +29,21 @@ class CXFA_FFDoc {
  public:
   CXFA_FFDoc(CXFA_FFApp* pApp, IXFA_DocEnvironment* pDocEnvironment);
   ~CXFA_FFDoc();
+
   IXFA_DocEnvironment* GetDocEnvironment() const { return m_pDocEnvironment; }
   uint32_t GetDocType();
+  void SetDocType(uint32_t dwType);
+
   int32_t StartLoad();
   int32_t DoLoad(IFX_Pause* pPause = nullptr);
   void StopLoad();
+
   CXFA_FFDocView* CreateDocView(uint32_t dwView = 0);
+
   FX_BOOL OpenDoc(IFX_SeekableReadStream* pStream, FX_BOOL bTakeOverFile);
   FX_BOOL OpenDoc(CPDF_Document* pPDFDoc);
   FX_BOOL CloseDoc();
-  void SetDocType(uint32_t dwType);
+
   CXFA_Document* GetXFADoc() { return m_pDocumentParser->GetDocument(); }
   CXFA_FFApp* GetApp() { return m_pApp; }
   CXFA_FFDocView* GetDocView(CXFA_LayoutProcessor* pLayout);

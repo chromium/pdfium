@@ -85,9 +85,6 @@ bool SaveXFADocumentData(CPDFXFA_Document* pDocument,
       pDocument->GetDocType() != DOCTYPE_STATIC_XFA)
     return true;
 
-  if (!CPDFXFA_App::GetInstance()->GetXFAApp())
-    return true;
-
   CXFA_FFDocView* pXFADocView = pDocument->GetXFADocView();
   if (!pXFADocView)
     return true;

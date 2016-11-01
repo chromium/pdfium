@@ -135,6 +135,7 @@ CXFA_ScriptContext::~CXFA_ScriptContext() {
 
   m_upObjectArray.RemoveAll();
 }
+
 void CXFA_ScriptContext::Initialize(v8::Isolate* pIsolate) {
   m_pIsolate = pIsolate;
   DefineJsContext();

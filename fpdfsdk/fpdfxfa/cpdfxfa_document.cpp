@@ -16,6 +16,7 @@
 #include "fpdfsdk/fsdk_define.h"
 #include "fpdfsdk/javascript/ijs_runtime.h"
 #include "public/fpdf_formfill.h"
+#include "third_party/base/ptr_util.h"
 #include "xfa/fxfa/cxfa_eventparam.h"
 #include "xfa/fxfa/xfa_ffapp.h"
 #include "xfa/fxfa/xfa_ffdoc.h"
@@ -28,19 +29,23 @@ extern void SetLastError(int err);
 extern int GetLastError();
 #endif
 
-CPDFXFA_Document::CPDFXFA_Document(std::unique_ptr<CPDF_Document> pPDFDoc,
-                                   CPDFXFA_App* pProvider)
+CPDFXFA_Document::CPDFXFA_Document(std::unique_ptr<CPDF_Document> pPDFDoc)
     : m_iDocType(DOCTYPE_PDF),
       m_pPDFDoc(std::move(pPDFDoc)),
       m_pFormFillEnv(nullptr),
       m_pXFADocView(nullptr),
-      m_pApp(pProvider),
       m_nLoadStatus(FXFA_LOADSTATUS_PRELOAD),
       m_nPageCount(0),
       m_DocEnv(this) {}
 
 CPDFXFA_Document::~CPDFXFA_Document() {
   m_nLoadStatus = FXFA_LOADSTATUS_CLOSING;
+
+  // Must happen before we remove the form fill environment.
+  if (m_pXFADoc) {
+    if (CXFA_FFApp* pApp = GetApp()->GetXFAApp())
+      CloseXFADoc(pApp->GetDocHandler());
+  }
 
   if (m_pFormFillEnv) {
     m_pFormFillEnv->ClearAllFocusedAnnots();
@@ -50,17 +55,33 @@ CPDFXFA_Document::~CPDFXFA_Document() {
     m_pFormFillEnv = nullptr;
   }
 
-  if (m_pXFADoc) {
-    CXFA_FFApp* pApp = m_pApp->GetXFAApp();
-    if (pApp) {
-      CXFA_FFDocHandler* pDocHandler = pApp->GetDocHandler();
-      if (pDocHandler)
-        CloseXFADoc(pDocHandler);
-    }
-    m_pXFADoc.reset();
-  }
-
   m_nLoadStatus = FXFA_LOADSTATUS_CLOSED;
+}
+
+void CPDFXFA_Document::CloseXFADoc(CXFA_FFDocHandler* pDoc) {
+  if (!pDoc)
+    return;
+  m_pXFADoc->CloseDoc();
+  m_pXFADoc.reset();
+  m_pXFADocView = nullptr;
+}
+
+CPDFXFA_App* CPDFXFA_Document::GetApp() {
+  if (!m_pApp)
+    m_pApp = pdfium::MakeUnique<CPDFXFA_App>();
+  return m_pApp.get();
+}
+
+void CPDFXFA_Document::SetFormFillEnv(
+    CPDFSDK_FormFillEnvironment* pFormFillEnv) {
+  // The layout data can have pointers back into the script context. That
+  // context will be different if the form fill environment closes, so, force
+  // the layout data to clear.
+  if (m_pXFADoc && m_pXFADoc->GetXFADoc())
+    m_pXFADoc->GetXFADoc()->ClearLayoutData();
+
+  GetApp()->SetFormFillEnv(pFormFillEnv);
+  m_pFormFillEnv = pFormFillEnv;
 }
 
 FX_BOOL CPDFXFA_Document::LoadXFADoc() {
@@ -71,7 +92,7 @@ FX_BOOL CPDFXFA_Document::LoadXFADoc() {
 
   m_XFAPageList.RemoveAll();
 
-  CXFA_FFApp* pApp = m_pApp->GetXFAApp();
+  CXFA_FFApp* pApp = GetApp()->GetXFAApp();
   if (!pApp)
     return FALSE;
 
@@ -95,7 +116,7 @@ FX_BOOL CPDFXFA_Document::LoadXFADoc() {
     return FALSE;
   }
   m_pXFADoc->StopLoad();
-  m_pXFADoc->GetXFADoc()->InitScriptContext(m_pApp->GetJSERuntime());
+  m_pXFADoc->GetXFADoc()->InitScriptContext(GetApp()->GetJSERuntime());
 
   if (m_pXFADoc->GetDocType() == XFA_DOCTYPE_Dynamic)
     m_iDocType = DOCTYPE_DYNAMIC_XFA;
