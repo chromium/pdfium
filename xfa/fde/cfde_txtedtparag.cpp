@@ -44,7 +44,7 @@ void CFDE_TxtEdtParag::LoadParag() {
   pIter->SetAt(m_nCharStart);
   int32_t nEndIndex = m_nCharStart + m_nCharCount;
   CFX_ArrayTemplate<int32_t> LineBaseArr;
-  FX_BOOL bReload = FALSE;
+  bool bReload = false;
   uint32_t dwBreakStatus = FX_TXTBREAK_None;
   do {
     if (bReload) {
@@ -69,10 +69,10 @@ void CFDE_TxtEdtParag::LoadParag() {
     }
     if ((pIter->GetAt() + 1 == nEndIndex) &&
         (dwBreakStatus == FX_TXTBREAK_LineBreak)) {
-      bReload = TRUE;
-      pIter->Next(TRUE);
+      bReload = true;
+      pIter->Next(true);
     }
-  } while (pIter->Next(FALSE) && (pIter->GetAt() < nEndIndex));
+  } while (pIter->Next(false) && (pIter->GetAt() < nEndIndex));
   pTxtBreak->EndBreak(FX_TXTBREAK_ParagraphBreak);
   pTxtBreak->ClearBreakPieces();
   int32_t nLineCount = LineBaseArr.GetSize();
@@ -110,7 +110,7 @@ void CFDE_TxtEdtParag::CalcLines() {
   std::unique_ptr<IFX_CharIter> pIter(
       new CFDE_TxtEdtBufIter(static_cast<CFDE_TxtEdtBuf*>(pTxtBuf)));
   pIter->SetAt(m_nCharStart);
-  FX_BOOL bReload = FALSE;
+  bool bReload = false;
   do {
     if (bReload) {
       dwBreakStatus = pTxtBreak->EndBreak(FX_TXTBREAK_ParagraphBreak);
@@ -128,10 +128,10 @@ void CFDE_TxtEdtParag::CalcLines() {
     }
     if ((pIter->GetAt() + 1 == nEndIndex) &&
         (dwBreakStatus == FX_TXTBREAK_LineBreak)) {
-      bReload = TRUE;
-      pIter->Next(TRUE);
+      bReload = true;
+      pIter->Next(true);
     }
-  } while (pIter->Next(FALSE) && (pIter->GetAt() < nEndIndex));
+  } while (pIter->Next(false) && (pIter->GetAt() < nEndIndex));
   pTxtBreak->EndBreak(FX_TXTBREAK_ParagraphBreak);
   pTxtBreak->ClearBreakPieces();
   m_nLineCount = nCount;

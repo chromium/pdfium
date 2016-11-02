@@ -377,8 +377,8 @@ void AlternateDateTimeSymbols(CFX_WideString& wsPattern,
                               const CFX_WideString& wsAltSymbols,
                               const uint8_t* pAltTable) {
   int32_t nLength = wsPattern.GetLength();
-  FX_BOOL bInConstRange = FALSE;
-  FX_BOOL bEscape = FALSE;
+  bool bInConstRange = false;
+  bool bEscape = false;
   int32_t i = 0;
   while (i < nLength) {
     FX_WCHAR wc = wsPattern[i];
@@ -399,7 +399,7 @@ void AlternateDateTimeSymbols(CFX_WideString& wsPattern,
         wsPattern.SetAt(i, wsAltSymbols[nAlt]);
     }
     i++;
-    bEscape = FALSE;
+    bEscape = false;
   }
 }
 
@@ -442,7 +442,7 @@ bool PatternStringType(const CFX_ByteStringC& szPattern,
   const FX_WCHAR* pData = wsPattern.c_str();
   int32_t iLength = wsPattern.GetLength();
   int32_t iIndex = 0;
-  FX_BOOL bSingleQuotation = FALSE;
+  bool bSingleQuotation = false;
   FX_WCHAR patternChar;
   while (iIndex < iLength) {
     patternChar = pData[iIndex];
@@ -1233,7 +1233,7 @@ void CXFA_FM2JSContext::LocalDateFmt(CFXJSE_Value* pThis,
   }
 
   CFX_ByteString formatStr;
-  GetLocalDateFormat(pThis, iStyle, szLocal.AsStringC(), formatStr, FALSE);
+  GetLocalDateFormat(pThis, iStyle, szLocal.AsStringC(), formatStr, false);
   args.GetReturnValue()->SetString(formatStr.AsStringC());
 }
 
@@ -1271,7 +1271,7 @@ void CXFA_FM2JSContext::LocalTimeFmt(CFXJSE_Value* pThis,
   }
 
   CFX_ByteString formatStr;
-  GetLocalTimeFormat(pThis, iStyle, szLocal.AsStringC(), formatStr, FALSE);
+  GetLocalTimeFormat(pThis, iStyle, szLocal.AsStringC(), formatStr, false);
   args.GetReturnValue()->SetString(formatStr.AsStringC());
 }
 
@@ -1461,7 +1461,7 @@ void CXFA_FM2JSContext::Num2GMTime(CFXJSE_Value* pThis,
 
   CFX_ByteString szGMTTimeString;
   Num2AllTime(pThis, iTime, formatString.AsStringC(), localString.AsStringC(),
-              TRUE, szGMTTimeString);
+              true, szGMTTimeString);
   args.GetReturnValue()->SetString(szGMTTimeString.AsStringC());
 }
 
@@ -1509,7 +1509,7 @@ void CXFA_FM2JSContext::Num2Time(CFXJSE_Value* pThis,
 
   CFX_ByteString szLocalTimeString;
   Num2AllTime(pThis, (int32_t)fTime, formatString.AsStringC(),
-              localString.AsStringC(), FALSE, szLocalTimeString);
+              localString.AsStringC(), false, szLocalTimeString);
   args.GetReturnValue()->SetString(szLocalTimeString.AsStringC());
 }
 
@@ -1661,31 +1661,31 @@ void CXFA_FM2JSContext::TimeFmt(CFXJSE_Value* pThis,
 }
 
 // static
-FX_BOOL CXFA_FM2JSContext::IsIsoDateFormat(const FX_CHAR* pData,
-                                           int32_t iLength,
-                                           int32_t& iStyle,
-                                           int32_t& iYear,
-                                           int32_t& iMonth,
-                                           int32_t& iDay) {
+bool CXFA_FM2JSContext::IsIsoDateFormat(const FX_CHAR* pData,
+                                        int32_t iLength,
+                                        int32_t& iStyle,
+                                        int32_t& iYear,
+                                        int32_t& iMonth,
+                                        int32_t& iDay) {
   iYear = 0;
   iMonth = 1;
   iDay = 1;
 
   if (iLength < 4)
-    return FALSE;
+    return false;
 
   FX_CHAR strYear[5];
   strYear[4] = '\0';
   for (int32_t i = 0; i < 4; ++i) {
     if (pData[i] > '9' || pData[i] < '0')
-      return FALSE;
+      return false;
 
     strYear[i] = pData[i];
   }
   iYear = FXSYS_atoi(strYear);
   iStyle = 0;
   if (iLength == 4)
-    return TRUE;
+    return true;
 
   iStyle = pData[4] == '-' ? 1 : 0;
 
@@ -1694,60 +1694,60 @@ FX_BOOL CXFA_FM2JSContext::IsIsoDateFormat(const FX_CHAR* pData,
   int32_t iPosOff = iStyle == 0 ? 4 : 5;
   if ((pData[iPosOff] > '9' || pData[iPosOff] < '0') ||
       (pData[iPosOff + 1] > '9' || pData[iPosOff + 1] < '0'))
-    return FALSE;
+    return false;
 
   strTemp[0] = pData[iPosOff];
   strTemp[1] = pData[iPosOff + 1];
   iMonth = FXSYS_atoi(strTemp);
   if (iMonth > 12 || iMonth < 1)
-    return FALSE;
+    return false;
 
   if (iStyle == 0) {
     iPosOff += 2;
     if (iLength == 6)
-      return TRUE;
+      return true;
   } else {
     iPosOff += 3;
     if (iLength == 7)
-      return TRUE;
+      return true;
   }
   if ((pData[iPosOff] > '9' || pData[iPosOff] < '0') ||
       (pData[iPosOff + 1] > '9' || pData[iPosOff + 1] < '0'))
-    return FALSE;
+    return false;
 
   strTemp[0] = pData[iPosOff];
   strTemp[1] = pData[iPosOff + 1];
   iDay = FXSYS_atoi(strTemp);
   if (iPosOff + 2 < iLength)
-    return FALSE;
+    return false;
 
   if ((!(iYear % 4) && (iYear % 100)) || !(iYear % 400)) {
     if (iMonth == 2 && iDay > 29)
-      return FALSE;
+      return false;
   } else {
     if (iMonth == 2 && iDay > 28)
-      return FALSE;
+      return false;
   }
   if (iMonth != 2) {
     if (iMonth < 8) {
       if (iDay > (iMonth % 2 == 0 ? 30 : 31))
-        return FALSE;
+        return false;
     } else if (iDay > (iMonth % 2 == 0 ? 31 : 30)) {
-      return FALSE;
+      return false;
     }
   }
-  return TRUE;
+  return true;
 }
 
 // static
-FX_BOOL CXFA_FM2JSContext::IsIsoTimeFormat(const FX_CHAR* pData,
-                                           int32_t iLength,
-                                           int32_t& iHour,
-                                           int32_t& iMinute,
-                                           int32_t& iSecond,
-                                           int32_t& iMilliSecond,
-                                           int32_t& iZoneHour,
-                                           int32_t& iZoneMinute) {
+bool CXFA_FM2JSContext::IsIsoTimeFormat(const FX_CHAR* pData,
+                                        int32_t iLength,
+                                        int32_t& iHour,
+                                        int32_t& iMinute,
+                                        int32_t& iSecond,
+                                        int32_t& iMilliSecond,
+                                        int32_t& iZoneHour,
+                                        int32_t& iZoneMinute) {
   iHour = 0;
   iMinute = 0;
   iSecond = 0;
@@ -1755,7 +1755,7 @@ FX_BOOL CXFA_FM2JSContext::IsIsoTimeFormat(const FX_CHAR* pData,
   iZoneHour = 0;
   iZoneMinute = 0;
   if (!pData)
-    return FALSE;
+    return false;
 
   FX_CHAR strTemp[3];
   strTemp[2] = '\0';
@@ -1778,15 +1778,15 @@ FX_BOOL CXFA_FM2JSContext::IsIsoTimeFormat(const FX_CHAR* pData,
       break;
 
     if (pData[iIndex] > '9' || pData[iIndex] < '0')
-      return FALSE;
+      return false;
 
     strTemp[0] = pData[iIndex];
     if (pData[iIndex + 1] > '9' || pData[iIndex + 1] < '0')
-      return FALSE;
+      return false;
 
     strTemp[1] = pData[iIndex + 1];
     if (FXSYS_atoi(strTemp) > 60)
-      return FALSE;
+      return false;
 
     if (pData[2] == ':') {
       if (iPos == 0) {
@@ -1818,26 +1818,26 @@ FX_BOOL CXFA_FM2JSContext::IsIsoTimeFormat(const FX_CHAR* pData,
     FX_CHAR strSec[4];
     strSec[3] = '\0';
     if (pData[iIndex] > '9' || pData[iIndex] < '0')
-      return FALSE;
+      return false;
 
     strSec[0] = pData[iIndex];
     if (pData[iIndex + 1] > '9' || pData[iIndex + 1] < '0')
-      return FALSE;
+      return false;
 
     strSec[1] = pData[iIndex + 1];
     if (pData[iIndex + 2] > '9' || pData[iIndex + 2] < '0')
-      return FALSE;
+      return false;
 
     strSec[2] = pData[iIndex + 2];
     iMilliSecond = FXSYS_atoi(strSec);
     if (iMilliSecond > 100) {
       iMilliSecond = 0;
-      return FALSE;
+      return false;
     }
     iIndex += 3;
   }
   if (pData[iIndex] == 'z' || pData[iIndex] == 'Z')
-    return TRUE;
+    return true;
 
   int32_t iSign = 1;
   if (pData[iIndex] == '+') {
@@ -1849,17 +1849,17 @@ FX_BOOL CXFA_FM2JSContext::IsIsoTimeFormat(const FX_CHAR* pData,
   iPos = 0;
   while (iIndex < iLength) {
     if (iIndex >= iLength)
-      return FALSE;
+      return false;
     if (pData[iIndex] > '9' || pData[iIndex] < '0')
-      return FALSE;
+      return false;
 
     strTemp[0] = pData[iIndex];
     if (pData[iIndex + 1] > '9' || pData[iIndex + 1] < '0')
-      return FALSE;
+      return false;
 
     strTemp[1] = pData[iIndex + 1];
     if (FXSYS_atoi(strTemp) > 60)
-      return FALSE;
+      return false;
 
     if (pData[2] == ':') {
       if (iPos == 0) {
@@ -1880,24 +1880,24 @@ FX_BOOL CXFA_FM2JSContext::IsIsoTimeFormat(const FX_CHAR* pData,
     }
   }
   if (iIndex < iLength)
-    return FALSE;
+    return false;
 
   iZoneHour *= iSign;
-  return TRUE;
+  return true;
 }
 
 // static
-FX_BOOL CXFA_FM2JSContext::IsIsoDateTimeFormat(const FX_CHAR* pData,
-                                               int32_t iLength,
-                                               int32_t& iYear,
-                                               int32_t& iMonth,
-                                               int32_t& iDay,
-                                               int32_t& iHour,
-                                               int32_t& iMinute,
-                                               int32_t& iSecond,
-                                               int32_t& iMillionSecond,
-                                               int32_t& iZoneHour,
-                                               int32_t& iZoneMinute) {
+bool CXFA_FM2JSContext::IsIsoDateTimeFormat(const FX_CHAR* pData,
+                                            int32_t iLength,
+                                            int32_t& iYear,
+                                            int32_t& iMonth,
+                                            int32_t& iDay,
+                                            int32_t& iHour,
+                                            int32_t& iMinute,
+                                            int32_t& iSecond,
+                                            int32_t& iMillionSecond,
+                                            int32_t& iZoneHour,
+                                            int32_t& iZoneMinute) {
   iYear = 0;
   iMonth = 0;
   iDay = 0;
@@ -1905,45 +1905,45 @@ FX_BOOL CXFA_FM2JSContext::IsIsoDateTimeFormat(const FX_CHAR* pData,
   iMinute = 0;
   iSecond = 0;
   if (!pData)
-    return FALSE;
+    return false;
 
   int32_t iIndex = 0;
   while (pData[iIndex] != 'T' && pData[iIndex] != 't') {
     if (iIndex >= iLength)
-      return FALSE;
+      return false;
     ++iIndex;
   }
   if (iIndex != 8 && iIndex != 10)
-    return FALSE;
+    return false;
 
   int32_t iStyle = -1;
   if (!IsIsoDateFormat(pData, iIndex, iStyle, iYear, iMonth, iDay))
-    return FALSE;
+    return false;
   if (pData[iIndex] != 'T' && pData[iIndex] != 't')
-    return TRUE;
+    return true;
 
   ++iIndex;
   if (((iLength - iIndex > 13) && (iLength - iIndex < 6)) &&
       (iLength - iIndex != 15)) {
-    return TRUE;
+    return true;
   }
   if (!IsIsoTimeFormat(pData + iIndex, iLength - iIndex, iHour, iMinute,
                        iSecond, iMillionSecond, iZoneHour, iZoneMinute)) {
-    return FALSE;
+    return false;
   }
 
-  return TRUE;
+  return true;
 }
 
 // static
-FX_BOOL CXFA_FM2JSContext::Local2IsoDate(CFXJSE_Value* pThis,
-                                         const CFX_ByteStringC& szDate,
-                                         const CFX_ByteStringC& szFormat,
-                                         const CFX_ByteStringC& szLocale,
-                                         CFX_ByteString& strIsoDate) {
+bool CXFA_FM2JSContext::Local2IsoDate(CFXJSE_Value* pThis,
+                                      const CFX_ByteStringC& szDate,
+                                      const CFX_ByteStringC& szFormat,
+                                      const CFX_ByteStringC& szLocale,
+                                      CFX_ByteString& strIsoDate) {
   CXFA_Document* pDoc = ToJSContext(pThis, nullptr)->GetDocument();
   if (!pDoc)
-    return FALSE;
+    return false;
 
   CXFA_LocaleMgr* pMgr = pDoc->GetLocalMgr();
   IFX_Locale* pLocale = nullptr;
@@ -1957,7 +1957,7 @@ FX_BOOL CXFA_FM2JSContext::Local2IsoDate(CFXJSE_Value* pThis,
     pLocale = pMgr->GetLocaleByName(CFX_WideString::FromUTF8(szLocale));
   }
   if (!pLocale)
-    return FALSE;
+    return false;
 
   CFX_WideString wsFormat;
   if (szFormat.IsEmpty())
@@ -1969,18 +1969,18 @@ FX_BOOL CXFA_FM2JSContext::Local2IsoDate(CFXJSE_Value* pThis,
                                wsFormat, pLocale, pMgr);
   CFX_Unitime dt = widgetValue.GetDate();
   strIsoDate.Format("%4d-%02d-%02d", dt.GetYear(), dt.GetMonth(), dt.GetDay());
-  return TRUE;
+  return true;
 }
 
 // static
-FX_BOOL CXFA_FM2JSContext::Local2IsoTime(CFXJSE_Value* pThis,
-                                         const CFX_ByteStringC& szTime,
-                                         const CFX_ByteStringC& szFormat,
-                                         const CFX_ByteStringC& szLocale,
-                                         CFX_ByteString& strIsoTime) {
+bool CXFA_FM2JSContext::Local2IsoTime(CFXJSE_Value* pThis,
+                                      const CFX_ByteStringC& szTime,
+                                      const CFX_ByteStringC& szFormat,
+                                      const CFX_ByteStringC& szLocale,
+                                      CFX_ByteString& strIsoTime) {
   CXFA_Document* pDoc = ToJSContext(pThis, nullptr)->GetDocument();
   if (!pDoc)
-    return FALSE;
+    return false;
 
   CXFA_LocaleMgr* pMgr = pDoc->GetLocalMgr();
   IFX_Locale* pLocale = nullptr;
@@ -1994,7 +1994,7 @@ FX_BOOL CXFA_FM2JSContext::Local2IsoTime(CFXJSE_Value* pThis,
     pLocale = pMgr->GetLocaleByName(CFX_WideString::FromUTF8(szLocale));
   }
   if (!pLocale)
-    return FALSE;
+    return false;
 
   CFX_WideString wsFormat;
   if (szFormat.IsEmpty())
@@ -2008,18 +2008,18 @@ FX_BOOL CXFA_FM2JSContext::Local2IsoTime(CFXJSE_Value* pThis,
   CFX_Unitime utime = widgetValue.GetTime();
   strIsoTime.Format("%02d:%02d:%02d.%03d", utime.GetHour(), utime.GetMinute(),
                     utime.GetSecond(), utime.GetMillisecond());
-  return TRUE;
+  return true;
 }
 
 // static
-FX_BOOL CXFA_FM2JSContext::IsoDate2Local(CFXJSE_Value* pThis,
-                                         const CFX_ByteStringC& szDate,
-                                         const CFX_ByteStringC& szFormat,
-                                         const CFX_ByteStringC& szLocale,
-                                         CFX_ByteString& strLocalDate) {
+bool CXFA_FM2JSContext::IsoDate2Local(CFXJSE_Value* pThis,
+                                      const CFX_ByteStringC& szDate,
+                                      const CFX_ByteStringC& szFormat,
+                                      const CFX_ByteStringC& szLocale,
+                                      CFX_ByteString& strLocalDate) {
   CXFA_Document* pDoc = ToJSContext(pThis, nullptr)->GetDocument();
   if (!pDoc)
-    return FALSE;
+    return false;
 
   CXFA_LocaleMgr* pMgr = pDoc->GetLocalMgr();
   IFX_Locale* pLocale = nullptr;
@@ -2032,7 +2032,7 @@ FX_BOOL CXFA_FM2JSContext::IsoDate2Local(CFXJSE_Value* pThis,
     pLocale = pMgr->GetLocaleByName(CFX_WideString::FromUTF8(szLocale));
   }
   if (!pLocale)
-    return FALSE;
+    return false;
 
   CFX_WideString wsFormat;
   if (szFormat.IsEmpty())
@@ -2046,18 +2046,18 @@ FX_BOOL CXFA_FM2JSContext::IsoDate2Local(CFXJSE_Value* pThis,
   widgetValue.FormatPatterns(wsRet, wsFormat, pLocale,
                              XFA_VALUEPICTURE_Display);
   strLocalDate = FX_UTF8Encode(wsRet.c_str(), wsRet.GetLength());
-  return TRUE;
+  return true;
 }
 
 // static
-FX_BOOL CXFA_FM2JSContext::IsoTime2Local(CFXJSE_Value* pThis,
-                                         const CFX_ByteStringC& szTime,
-                                         const CFX_ByteStringC& szFormat,
-                                         const CFX_ByteStringC& szLocale,
-                                         CFX_ByteString& strLocalTime) {
+bool CXFA_FM2JSContext::IsoTime2Local(CFXJSE_Value* pThis,
+                                      const CFX_ByteStringC& szTime,
+                                      const CFX_ByteStringC& szFormat,
+                                      const CFX_ByteStringC& szLocale,
+                                      CFX_ByteString& strLocalTime) {
   CXFA_Document* pDoc = ToJSContext(pThis, nullptr)->GetDocument();
   if (!pDoc)
-    return FALSE;
+    return false;
 
   CXFA_LocaleMgr* pMgr = pDoc->GetLocalMgr();
   IFX_Locale* pLocale = nullptr;
@@ -2070,7 +2070,7 @@ FX_BOOL CXFA_FM2JSContext::IsoTime2Local(CFXJSE_Value* pThis,
     pLocale = pMgr->GetLocaleByName(CFX_WideString::FromUTF8(szLocale));
   }
   if (!pLocale)
-    return FALSE;
+    return false;
 
   CFX_WideString wsFormat;
   if (szFormat.IsEmpty())
@@ -2085,18 +2085,18 @@ FX_BOOL CXFA_FM2JSContext::IsoTime2Local(CFXJSE_Value* pThis,
   widgetValue.FormatPatterns(wsRet, wsFormat, pLocale,
                              XFA_VALUEPICTURE_Display);
   strLocalTime = FX_UTF8Encode(wsRet.c_str(), wsRet.GetLength());
-  return TRUE;
+  return true;
 }
 
 // static
-FX_BOOL CXFA_FM2JSContext::GetGMTTime(CFXJSE_Value* pThis,
-                                      const CFX_ByteStringC& szTime,
-                                      const CFX_ByteStringC& szFormat,
-                                      const CFX_ByteStringC& szLocale,
-                                      CFX_ByteString& strGMTTime) {
+bool CXFA_FM2JSContext::GetGMTTime(CFXJSE_Value* pThis,
+                                   const CFX_ByteStringC& szTime,
+                                   const CFX_ByteStringC& szFormat,
+                                   const CFX_ByteStringC& szLocale,
+                                   CFX_ByteString& strGMTTime) {
   CXFA_Document* pDoc = ToJSContext(pThis, nullptr)->GetDocument();
   if (!pDoc)
-    return FALSE;
+    return false;
 
   CXFA_LocaleMgr* pMgr = pDoc->GetLocalMgr();
   IFX_Locale* pLocale = nullptr;
@@ -2109,7 +2109,7 @@ FX_BOOL CXFA_FM2JSContext::GetGMTTime(CFXJSE_Value* pThis,
     pLocale = pMgr->GetLocaleByName(CFX_WideString::FromUTF8(szLocale));
   }
   if (!pLocale)
-    return FALSE;
+    return false;
 
   CFX_WideString wsFormat;
   if (szFormat.IsEmpty())
@@ -2124,7 +2124,7 @@ FX_BOOL CXFA_FM2JSContext::GetGMTTime(CFXJSE_Value* pThis,
   widgetValue.FormatPatterns(wsRet, wsFormat, pLocale,
                              XFA_VALUEPICTURE_Display);
   strGMTTime = FX_UTF8Encode(wsRet.c_str(), wsRet.GetLength());
-  return TRUE;
+  return true;
 }
 
 // static
@@ -2189,7 +2189,7 @@ void CXFA_FM2JSContext::GetLocalDateFormat(CFXJSE_Value* pThis,
                                            int32_t iStyle,
                                            const CFX_ByteStringC& szLocalStr,
                                            CFX_ByteString& strFormat,
-                                           FX_BOOL bStandard) {
+                                           bool bStandard) {
   FX_LOCALEDATETIMESUBCATEGORY strStyle;
   switch (iStyle) {
     case 1:
@@ -2240,7 +2240,7 @@ void CXFA_FM2JSContext::GetLocalTimeFormat(CFXJSE_Value* pThis,
                                            int32_t iStyle,
                                            const CFX_ByteStringC& szLocalStr,
                                            CFX_ByteString& strFormat,
-                                           FX_BOOL bStandard) {
+                                           bool bStandard) {
   FX_LOCALEDATETIMESUBCATEGORY strStyle;
   switch (iStyle) {
     case 1:
@@ -2291,7 +2291,7 @@ void CXFA_FM2JSContext::GetStandardDateFormat(CFXJSE_Value* pThis,
                                               int32_t iStyle,
                                               const CFX_ByteStringC& szLocalStr,
                                               CFX_ByteString& strFormat) {
-  GetLocalDateFormat(pThis, iStyle, szLocalStr, strFormat, TRUE);
+  GetLocalDateFormat(pThis, iStyle, szLocalStr, strFormat, true);
 }
 
 // static
@@ -2299,7 +2299,7 @@ void CXFA_FM2JSContext::GetStandardTimeFormat(CFXJSE_Value* pThis,
                                               int32_t iStyle,
                                               const CFX_ByteStringC& szLocalStr,
                                               CFX_ByteString& strFormat) {
-  GetLocalTimeFormat(pThis, iStyle, szLocalStr, strFormat, TRUE);
+  GetLocalTimeFormat(pThis, iStyle, szLocalStr, strFormat, true);
 }
 
 // static
@@ -2307,7 +2307,7 @@ void CXFA_FM2JSContext::Num2AllTime(CFXJSE_Value* pThis,
                                     int32_t iTime,
                                     const CFX_ByteStringC& szFormat,
                                     const CFX_ByteStringC& szLocale,
-                                    FX_BOOL bGM,
+                                    bool bGM,
                                     CFX_ByteString& strTime) {
   int32_t iHour = 0;
   int32_t iMin = 0;
@@ -2326,7 +2326,7 @@ void CXFA_FM2JSContext::Num2AllTime(CFXJSE_Value* pThis,
     iSec += iZoneSec;
   }
 
-  FX_BOOL iRet = FALSE;
+  bool iRet = false;
   CFX_ByteString strIsoTime;
   strIsoTime.Format("%02d:%02d:%02d", iHour, iMin, iSec);
   if (bGM) {
@@ -2796,8 +2796,8 @@ void CXFA_FM2JSContext::Choose(CFXJSE_Value* pThis,
     return;
   }
 
-  FX_BOOL bFound = FALSE;
-  FX_BOOL bStopCounterFlags = FALSE;
+  bool bFound = false;
+  bool bStopCounterFlags = false;
   int32_t iArgIndex = 1;
   int32_t iValueIndex = 0;
   v8::Isolate* pIsolate = pContext->GetScriptRuntime();
@@ -2808,7 +2808,7 @@ void CXFA_FM2JSContext::Choose(CFXJSE_Value* pThis,
       argIndexValue->GetObjectProperty("length", lengthValue.get());
       int32_t iLength = lengthValue->ToInteger();
       if (iLength > 3)
-        bStopCounterFlags = TRUE;
+        bStopCounterFlags = true;
 
       iValueIndex += (iLength - 2);
       if (iValueIndex >= iIndex) {
@@ -2828,7 +2828,7 @@ void CXFA_FM2JSContext::Choose(CFXJSE_Value* pThis,
         CFX_ByteString bsChoosed;
         ValueToUTF8String(newPropertyValue.get(), bsChoosed);
         args.GetReturnValue()->SetString(bsChoosed.AsStringC());
-        bFound = TRUE;
+        bFound = true;
       }
     } else {
       iValueIndex++;
@@ -2836,7 +2836,7 @@ void CXFA_FM2JSContext::Choose(CFXJSE_Value* pThis,
         CFX_ByteString bsChoosed;
         ValueToUTF8String(argIndexValue.get(), bsChoosed);
         args.GetReturnValue()->SetString(bsChoosed.AsStringC());
-        bFound = TRUE;
+        bFound = true;
       }
     }
     iArgIndex++;
@@ -2889,14 +2889,14 @@ void CXFA_FM2JSContext::Oneof(CFXJSE_Value* pThis,
     return;
   }
 
-  FX_BOOL bFlags = FALSE;
+  bool bFlags = false;
   std::unique_ptr<CFXJSE_Value> argOne = GetSimpleValue(pThis, args, 0);
   CFXJSE_Value** parametersValue = nullptr;
   int32_t iCount = 0;
   unfoldArgs(pThis, args, parametersValue, iCount, 1);
   for (int32_t i = 0; i < iCount; i++) {
     if (simpleValueCompare(pThis, argOne.get(), parametersValue[i])) {
-      bFlags = TRUE;
+      bFlags = true;
       break;
     }
   }
@@ -3360,13 +3360,13 @@ void CXFA_FM2JSContext::Concat(CFXJSE_Value* pThis,
   }
 
   CFX_ByteString resultString;
-  FX_BOOL bAllNull = TRUE;
+  bool bAllNull = true;
   for (int32_t i = 0; i < argc; i++) {
     std::unique_ptr<CFXJSE_Value> value = GetSimpleValue(pThis, args, i);
     if (ValueIsNull(pThis, value.get()))
       continue;
 
-    bAllNull = FALSE;
+    bAllNull = false;
 
     CFX_ByteString valueStr;
     ValueToUTF8String(value.get(), valueStr);
@@ -3933,8 +3933,8 @@ void CXFA_FM2JSContext::EncodeXML(const CFX_ByteStringC& szXMLString,
 }
 
 // static
-FX_BOOL CXFA_FM2JSContext::HTMLSTR2Code(const CFX_WideStringC& pData,
-                                        uint32_t& iCode) {
+bool CXFA_FM2JSContext::HTMLSTR2Code(const CFX_WideStringC& pData,
+                                     uint32_t& iCode) {
   uint32_t uHash = FX_HashCode_GetW(pData, false);
   int32_t iStart = 0;
   int32_t iEnd = FX_ArraySize(reservesForDecode) - 1;
@@ -3943,7 +3943,7 @@ FX_BOOL CXFA_FM2JSContext::HTMLSTR2Code(const CFX_WideStringC& pData,
     XFA_FMHtmlHashedReserveCode htmlhashedreservecode = reservesForDecode[iMid];
     if (uHash == htmlhashedreservecode.m_uHash) {
       iCode = htmlhashedreservecode.m_uCode;
-      return TRUE;
+      return true;
     }
 
     if (uHash < htmlhashedreservecode.m_uHash)
@@ -3951,12 +3951,12 @@ FX_BOOL CXFA_FM2JSContext::HTMLSTR2Code(const CFX_WideStringC& pData,
     else
       iStart = iMid + 1;
   } while (iStart <= iEnd);
-  return FALSE;
+  return false;
 }
 
 // static
-FX_BOOL CXFA_FM2JSContext::HTMLCode2STR(uint32_t iCode,
-                                        CFX_WideString& wsHTMLReserve) {
+bool CXFA_FM2JSContext::HTMLCode2STR(uint32_t iCode,
+                                     CFX_WideString& wsHTMLReserve) {
   int32_t iStart = 0;
   int32_t iEnd = FX_ArraySize(reservesForEncode) - 1;
   do {
@@ -3964,7 +3964,7 @@ FX_BOOL CXFA_FM2JSContext::HTMLCode2STR(uint32_t iCode,
     XFA_FMHtmlReserveCode htmlreservecode = reservesForEncode[iMid];
     if (iCode == htmlreservecode.m_uCode) {
       wsHTMLReserve = htmlreservecode.m_htmlReserve;
-      return TRUE;
+      return true;
     }
 
     if (iCode < htmlreservecode.m_uCode)
@@ -3972,7 +3972,7 @@ FX_BOOL CXFA_FM2JSContext::HTMLCode2STR(uint32_t iCode,
     else
       iStart = iMid + 1;
   } while (iStart <= iEnd);
-  return FALSE;
+  return false;
 }
 
 // static
@@ -5190,12 +5190,12 @@ void CXFA_FM2JSContext::notequality_operator(CFXJSE_Value* pThis,
 }
 
 // static
-FX_BOOL CXFA_FM2JSContext::fm_ref_equal(CFXJSE_Value* pThis,
-                                        CFXJSE_Arguments& args) {
+bool CXFA_FM2JSContext::fm_ref_equal(CFXJSE_Value* pThis,
+                                     CFXJSE_Arguments& args) {
   std::unique_ptr<CFXJSE_Value> argFirst = args.GetValue(0);
   std::unique_ptr<CFXJSE_Value> argSecond = args.GetValue(1);
   if (!argFirst->IsArray() || !argSecond->IsArray())
-    return FALSE;
+    return false;
 
   v8::Isolate* pIsolate = ToJSContext(pThis, nullptr)->GetScriptRuntime();
   std::unique_ptr<CFXJSE_Value> firstFlagValue(new CFXJSE_Value(pIsolate));
@@ -5203,14 +5203,14 @@ FX_BOOL CXFA_FM2JSContext::fm_ref_equal(CFXJSE_Value* pThis,
   argFirst->GetObjectPropertyByIdx(0, firstFlagValue.get());
   argSecond->GetObjectPropertyByIdx(0, secondFlagValue.get());
   if (firstFlagValue->ToInteger() != 3 || secondFlagValue->ToInteger() != 3)
-    return FALSE;
+    return false;
 
   std::unique_ptr<CFXJSE_Value> firstJSObject(new CFXJSE_Value(pIsolate));
   std::unique_ptr<CFXJSE_Value> secondJSObject(new CFXJSE_Value(pIsolate));
   argFirst->GetObjectPropertyByIdx(2, firstJSObject.get());
   argSecond->GetObjectPropertyByIdx(2, secondJSObject.get());
   if (firstJSObject->IsNull() || secondJSObject->IsNull())
-    return FALSE;
+    return false;
 
   return (firstJSObject->ToHostObject(nullptr) ==
           secondJSObject->ToHostObject(nullptr));
@@ -5505,14 +5505,14 @@ void CXFA_FM2JSContext::dot_accessor(CFXJSE_Value* pThis,
       iSizes[i] = 0;
 
     std::unique_ptr<CFXJSE_Value> hJSObjValue(new CFXJSE_Value(pIsolate));
-    FX_BOOL bAttribute = FALSE;
+    bool bAttribute = false;
     int32_t iCounter = 0;
     for (int32_t i = 2; i < iLength; i++) {
       argAccessor->GetObjectPropertyByIdx(i, hJSObjValue.get());
 
       XFA_RESOLVENODE_RS resoveNodeRS;
       if (ResolveObjects(pThis, hJSObjValue.get(), szSomExp.AsStringC(),
-                         resoveNodeRS, TRUE, szName.IsEmpty()) > 0) {
+                         resoveNodeRS, true, szName.IsEmpty()) > 0) {
         ParseResolveResult(pThis, resoveNodeRS, hJSObjValue.get(),
                            hResolveValues[i - 2], iSizes[i - 2], bAttribute);
         iCounter += iSizes[i - 2];
@@ -5570,12 +5570,12 @@ void CXFA_FM2JSContext::dot_accessor(CFXJSE_Value* pThis,
   if (argAccessor->IsObject() ||
       (argAccessor->IsNull() && bsAccessorName.IsEmpty())) {
     iRet = ResolveObjects(pThis, argAccessor.get(), szSomExp.AsStringC(),
-                          resoveNodeRS, TRUE, szName.IsEmpty());
+                          resoveNodeRS, true, szName.IsEmpty());
   } else if (!argAccessor->IsObject() && !bsAccessorName.IsEmpty() &&
              GetObjectForName(pThis, argAccessor.get(),
                               bsAccessorName.AsStringC())) {
     iRet = ResolveObjects(pThis, argAccessor.get(), szSomExp.AsStringC(),
-                          resoveNodeRS, TRUE, szName.IsEmpty());
+                          resoveNodeRS, true, szName.IsEmpty());
   }
   if (iRet < 1) {
     CFX_WideString wsPropertyName =
@@ -5589,7 +5589,7 @@ void CXFA_FM2JSContext::dot_accessor(CFXJSE_Value* pThis,
 
   CFXJSE_Value** hResolveValues;
   int32_t iSize = 0;
-  FX_BOOL bAttribute = FALSE;
+  bool bAttribute = false;
   ParseResolveResult(pThis, resoveNodeRS, argAccessor.get(), hResolveValues,
                      iSize, bAttribute);
   CFXJSE_Value** rgValues = FX_Alloc(CFXJSE_Value*, iSize + 2);
@@ -5649,12 +5649,12 @@ void CXFA_FM2JSContext::dotdot_accessor(CFXJSE_Value* pThis,
     CFXJSE_Value*** hResolveValues = FX_Alloc(CFXJSE_Value**, iLength - 2);
     int32_t* iSizes = FX_Alloc(int32_t, iLength - 2);
     std::unique_ptr<CFXJSE_Value> hJSObjValue(new CFXJSE_Value(pIsolate));
-    FX_BOOL bAttribute = FALSE;
+    bool bAttribute = false;
     for (int32_t i = 2; i < iLength; i++) {
       argAccessor->GetObjectPropertyByIdx(i, hJSObjValue.get());
       XFA_RESOLVENODE_RS resoveNodeRS;
       if (ResolveObjects(pThis, hJSObjValue.get(), szSomExp.AsStringC(),
-                         resoveNodeRS, FALSE) > 0) {
+                         resoveNodeRS, false) > 0) {
         ParseResolveResult(pThis, resoveNodeRS, hJSObjValue.get(),
                            hResolveValues[i - 2], iSizes[i - 2], bAttribute);
         iCounter += iSizes[i - 2];
@@ -5708,12 +5708,12 @@ void CXFA_FM2JSContext::dotdot_accessor(CFXJSE_Value* pThis,
   if (argAccessor->IsObject() ||
       (argAccessor->IsNull() && bsAccessorName.IsEmpty())) {
     iRet = ResolveObjects(pThis, argAccessor.get(), szSomExp.AsStringC(),
-                          resoveNodeRS, FALSE);
+                          resoveNodeRS, false);
   } else if (!argAccessor->IsObject() && !bsAccessorName.IsEmpty() &&
              GetObjectForName(pThis, argAccessor.get(),
                               bsAccessorName.AsStringC())) {
     iRet = ResolveObjects(pThis, argAccessor.get(), szSomExp.AsStringC(),
-                          resoveNodeRS, FALSE);
+                          resoveNodeRS, false);
   }
   if (iRet < 1) {
     CFX_WideString wsPropertyName =
@@ -5727,7 +5727,7 @@ void CXFA_FM2JSContext::dotdot_accessor(CFXJSE_Value* pThis,
 
   CFXJSE_Value** hResolveValues;
   int32_t iSize = 0;
-  FX_BOOL bAttribute = FALSE;
+  bool bAttribute = false;
   ParseResolveResult(pThis, resoveNodeRS, argAccessor.get(), hResolveValues,
                      iSize, bAttribute);
   CFXJSE_Value** rgValues = FX_Alloc(CFXJSE_Value*, iSize + 2);
@@ -5792,7 +5792,7 @@ void CXFA_FM2JSContext::is_fm_object(CFXJSE_Value* pThis,
                                      const CFX_ByteStringC& szFuncName,
                                      CFXJSE_Arguments& args) {
   if (args.GetLength() != 1) {
-    args.GetReturnValue()->SetBoolean(FALSE);
+    args.GetReturnValue()->SetBoolean(false);
     return;
   }
 
@@ -5805,7 +5805,7 @@ void CXFA_FM2JSContext::is_fm_array(CFXJSE_Value* pThis,
                                     const CFX_ByteStringC& szFuncName,
                                     CFXJSE_Arguments& args) {
   if (args.GetLength() != 1) {
-    args.GetReturnValue()->SetBoolean(FALSE);
+    args.GetReturnValue()->SetBoolean(false);
     return;
   }
 
@@ -6017,18 +6017,18 @@ std::unique_ptr<CFXJSE_Value> CXFA_FM2JSContext::GetSimpleValue(
 }
 
 // static
-FX_BOOL CXFA_FM2JSContext::ValueIsNull(CFXJSE_Value* pThis, CFXJSE_Value* arg) {
+bool CXFA_FM2JSContext::ValueIsNull(CFXJSE_Value* pThis, CFXJSE_Value* arg) {
   if (!arg || arg->IsNull())
-    return TRUE;
+    return true;
 
   if (!arg->IsArray() && !arg->IsObject())
-    return FALSE;
+    return false;
 
   v8::Isolate* pIsolate = ToJSContext(pThis, nullptr)->GetScriptRuntime();
   if (arg->IsArray()) {
     int32_t iLength = hvalue_get_array_length(pThis, arg);
     if (iLength < 3)
-      return TRUE;
+      return true;
 
     std::unique_ptr<CFXJSE_Value> propertyValue(new CFXJSE_Value(pIsolate));
     std::unique_ptr<CFXJSE_Value> jsObjectValue(new CFXJSE_Value(pIsolate));
@@ -6064,11 +6064,11 @@ int32_t CXFA_FM2JSContext::hvalue_get_array_length(CFXJSE_Value* pThis,
 }
 
 // static
-FX_BOOL CXFA_FM2JSContext::simpleValueCompare(CFXJSE_Value* pThis,
-                                              CFXJSE_Value* firstValue,
-                                              CFXJSE_Value* secondValue) {
+bool CXFA_FM2JSContext::simpleValueCompare(CFXJSE_Value* pThis,
+                                           CFXJSE_Value* firstValue,
+                                           CFXJSE_Value* secondValue) {
   if (!firstValue)
-    return FALSE;
+    return false;
 
   if (firstValue->IsString()) {
     CFX_ByteString firstString, secondString;
@@ -6157,18 +6157,18 @@ void CXFA_FM2JSContext::GetObjectDefaultValue(CFXJSE_Value* pValue,
     pDefaultValue->SetNull();
     return;
   }
-  pNode->Script_Som_DefaultValue(pDefaultValue, FALSE, (XFA_ATTRIBUTE)-1);
+  pNode->Script_Som_DefaultValue(pDefaultValue, false, (XFA_ATTRIBUTE)-1);
 }
 
 // static
-FX_BOOL CXFA_FM2JSContext::SetObjectDefaultValue(CFXJSE_Value* pValue,
-                                                 CFXJSE_Value* hNewValue) {
+bool CXFA_FM2JSContext::SetObjectDefaultValue(CFXJSE_Value* pValue,
+                                              CFXJSE_Value* hNewValue) {
   CXFA_Node* pNode = ToNode(CXFA_ScriptContext::ToObject(pValue, nullptr));
   if (!pNode)
-    return FALSE;
+    return false;
 
-  pNode->Script_Som_DefaultValue(hNewValue, TRUE, (XFA_ATTRIBUTE)-1);
-  return TRUE;
+  pNode->Script_Som_DefaultValue(hNewValue, true, (XFA_ATTRIBUTE)-1);
+  return true;
 }
 
 // static
@@ -6203,13 +6203,13 @@ void CXFA_FM2JSContext::GenerateSomExpression(const CFX_ByteStringC& szName,
 }
 
 // static
-FX_BOOL CXFA_FM2JSContext::GetObjectForName(
+bool CXFA_FM2JSContext::GetObjectForName(
     CFXJSE_Value* pThis,
     CFXJSE_Value* accessorValue,
     const CFX_ByteStringC& szAccessorName) {
   CXFA_Document* pDoc = ToJSContext(pThis, nullptr)->GetDocument();
   if (!pDoc)
-    return FALSE;
+    return false;
 
   CXFA_ScriptContext* pScriptContext = pDoc->GetScriptContext();
   XFA_RESOLVENODE_RS resoveNodeRS;
@@ -6222,9 +6222,9 @@ FX_BOOL CXFA_FM2JSContext::GetObjectForName(
   if (iRet >= 1 && resoveNodeRS.dwFlags == XFA_RESOVENODE_RSTYPE_Nodes) {
     accessorValue->Assign(
         pScriptContext->GetJSValueFromMap(resoveNodeRS.nodes.GetAt(0)));
-    return TRUE;
+    return true;
   }
-  return FALSE;
+  return false;
 }
 
 // static
@@ -6232,8 +6232,8 @@ int32_t CXFA_FM2JSContext::ResolveObjects(CFXJSE_Value* pThis,
                                           CFXJSE_Value* pRefValue,
                                           const CFX_ByteStringC& bsSomExp,
                                           XFA_RESOLVENODE_RS& resoveNodeRS,
-                                          FX_BOOL bdotAccessor,
-                                          FX_BOOL bHasNoResolveName) {
+                                          bool bdotAccessor,
+                                          bool bHasNoResolveName) {
   CXFA_Document* pDoc = ToJSContext(pThis, nullptr)->GetDocument();
   if (!pDoc)
     return -1;
@@ -6252,7 +6252,7 @@ int32_t CXFA_FM2JSContext::ResolveObjects(CFXJSE_Value* pThis,
       if (bHasNoResolveName) {
         CFX_WideString wsName;
         if (CXFA_Node* pXFANode = pNode->AsNode())
-          pXFANode->GetAttribute(XFA_ATTRIBUTE_Name, wsName, FALSE);
+          pXFANode->GetAttribute(XFA_ATTRIBUTE_Name, wsName, false);
         if (wsName.IsEmpty())
           wsName = FX_WSTRC(L"#") + pNode->GetClassName();
 
@@ -6280,14 +6280,14 @@ void CXFA_FM2JSContext::ParseResolveResult(
     CFXJSE_Value* pParentValue,
     CFXJSE_Value**& resultValues,
     int32_t& iSize,
-    FX_BOOL& bAttribute) {
+    bool& bAttribute) {
   iSize = 0;
   resultValues = nullptr;
 
   CXFA_FM2JSContext* pContext = ToJSContext(pThis, nullptr);
   v8::Isolate* pIsolate = pContext->GetScriptRuntime();
   if (resoveNodeRS.dwFlags == XFA_RESOVENODE_RSTYPE_Nodes) {
-    bAttribute = FALSE;
+    bAttribute = false;
     iSize = resoveNodeRS.nodes.GetSize();
     resultValues = FX_Alloc(CFXJSE_Value*, iSize);
     for (int32_t i = 0; i < iSize; i++) {

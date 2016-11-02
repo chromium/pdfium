@@ -122,7 +122,7 @@ class CXFA_FMLexer {
   const FX_WCHAR* SavePos() { return m_ptr; }
   void RestorePos(const FX_WCHAR* pPos) { m_ptr = pPos; }
   void Error(const FX_WCHAR* msg, ...);
-  FX_BOOL HasError() const;
+  bool HasError() const;
 
  protected:
   CXFA_FMToken* Scan();

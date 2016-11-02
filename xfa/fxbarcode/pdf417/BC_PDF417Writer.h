@@ -22,13 +22,13 @@ class CBC_PDF417Writer : public CBC_TwoDimWriter {
                   int32_t& e);
 
   // CBC_TwoDimWriter
-  FX_BOOL SetErrorCorrectionLevel(int32_t level) override;
+  bool SetErrorCorrectionLevel(int32_t level) override;
 
-  void SetTruncated(FX_BOOL truncated);
+  void SetTruncated(bool truncated);
 
  private:
   void rotateArray(CFX_ByteArray& bitarray, int32_t width, int32_t height);
-  FX_BOOL m_bTruncated;
+  bool m_bTruncated;
 };
 
 #endif  // XFA_FXBARCODE_PDF417_BC_PDF417WRITER_H_

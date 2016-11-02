@@ -45,23 +45,22 @@ CBC_OnedEAN8Writer::~CBC_OnedEAN8Writer() {}
 void CBC_OnedEAN8Writer::SetDataLength(int32_t length) {
   m_iDataLenth = 8;
 }
-FX_BOOL CBC_OnedEAN8Writer::SetTextLocation(BC_TEXT_LOC location) {
+bool CBC_OnedEAN8Writer::SetTextLocation(BC_TEXT_LOC location) {
   if (location == BC_TEXT_LOC_BELOWEMBED) {
     m_locTextLoc = location;
-    return TRUE;
+    return true;
   }
-  return FALSE;
+  return false;
 }
-FX_BOOL CBC_OnedEAN8Writer::CheckContentValidity(
-    const CFX_WideStringC& contents) {
+bool CBC_OnedEAN8Writer::CheckContentValidity(const CFX_WideStringC& contents) {
   for (int32_t i = 0; i < contents.GetLength(); i++) {
     if (contents.GetAt(i) >= '0' && contents.GetAt(i) <= '9') {
       continue;
     } else {
-      return FALSE;
+      return false;
     }
   }
-  return TRUE;
+  return true;
 }
 CFX_WideString CBC_OnedEAN8Writer::FilterContents(
     const CFX_WideStringC& contents) {
@@ -262,7 +261,7 @@ void CBC_OnedEAN8Writer::ShowChars(const CFX_WideStringC& contents,
 void CBC_OnedEAN8Writer::RenderResult(const CFX_WideStringC& contents,
                                       uint8_t* code,
                                       int32_t codeLength,
-                                      FX_BOOL isDevice,
+                                      bool isDevice,
                                       int32_t& e) {
   CBC_OneDimWriter::RenderResult(contents, code, codeLength, isDevice, e);
 }

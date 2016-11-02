@@ -62,15 +62,14 @@ class IFX_Locale {
   virtual void GetDateTimeSymbols(CFX_WideString& wsDtSymbol) const = 0;
   virtual void GetMonthName(int32_t nMonth,
                             CFX_WideString& wsMonthName,
-                            FX_BOOL bAbbr = TRUE) const = 0;
+                            bool bAbbr = true) const = 0;
   virtual void GetDayName(int32_t nWeek,
                           CFX_WideString& wsDayName,
-                          FX_BOOL bAbbr = TRUE) const = 0;
+                          bool bAbbr = true) const = 0;
   virtual void GetMeridiemName(CFX_WideString& wsMeridiemName,
-                               FX_BOOL bAM = TRUE) const = 0;
+                               bool bAM = true) const = 0;
   virtual void GetTimeZone(FX_TIMEZONE& tz) const = 0;
-  virtual void GetEraName(CFX_WideString& wsEraName,
-                          FX_BOOL bAD = TRUE) const = 0;
+  virtual void GetEraName(CFX_WideString& wsEraName, bool bAD = true) const = 0;
   virtual void GetDatePattern(FX_LOCALEDATETIMESUBCATEGORY eType,
                               CFX_WideString& wsPattern) const = 0;
   virtual void GetTimePattern(FX_LOCALEDATETIMESUBCATEGORY eType,
@@ -91,11 +90,10 @@ class IFX_LocaleMgr {
   virtual std::unique_ptr<IFX_Locale> GetLocale(uint16_t lcid) = 0;
 };
 
-FX_BOOL FX_DateFromCanonical(const CFX_WideString& wsDate,
-                             CFX_Unitime& datetime);
-FX_BOOL FX_TimeFromCanonical(const CFX_WideStringC& wsTime,
-                             CFX_Unitime& datetime,
-                             IFX_Locale* pLocale);
+bool FX_DateFromCanonical(const CFX_WideString& wsDate, CFX_Unitime& datetime);
+bool FX_TimeFromCanonical(const CFX_WideStringC& wsTime,
+                          CFX_Unitime& datetime,
+                          IFX_Locale* pLocale);
 class CFX_Decimal {
  public:
   CFX_Decimal();
@@ -128,16 +126,12 @@ class CFX_Decimal {
   void SetTruncate();
 
  protected:
-  CFX_Decimal(uint32_t hi,
-              uint32_t mid,
-              uint32_t lo,
-              FX_BOOL neg,
-              uint8_t scale);
-  inline FX_BOOL IsNotZero() const { return m_uHi || m_uMid || m_uLo; }
+  CFX_Decimal(uint32_t hi, uint32_t mid, uint32_t lo, bool neg, uint8_t scale);
+  inline bool IsNotZero() const { return m_uHi || m_uMid || m_uLo; }
   inline int8_t Compare(const CFX_Decimal& val) const;
   inline void Swap(CFX_Decimal& val);
-  inline void FloorOrCeil(FX_BOOL bFloor);
-  CFX_Decimal AddOrMinus(const CFX_Decimal& val, FX_BOOL isAdding) const;
+  inline void FloorOrCeil(bool bFloor);
+  CFX_Decimal AddOrMinus(const CFX_Decimal& val, bool isAdding) const;
   CFX_Decimal Multiply(const CFX_Decimal& val) const;
   CFX_Decimal Divide(const CFX_Decimal& val) const;
   CFX_Decimal Modulus(const CFX_Decimal& val) const;

@@ -57,7 +57,7 @@ class CXFA_FFDocView {
       XFA_WIDGETORDER eOrder = XFA_WIDGETORDER_PreOrder);
   CXFA_FFWidget* GetFocusWidget();
   void KillFocus();
-  FX_BOOL SetFocus(CXFA_FFWidget* hWidget);
+  bool SetFocus(CXFA_FFWidget* hWidget);
   CXFA_FFWidget* GetWidgetByName(const CFX_WideString& wsName,
                                  CXFA_FFWidget* pRefWidget);
   CXFA_WidgetAcc* GetWidgetAccByName(const CFX_WideString& wsName,
@@ -66,7 +66,7 @@ class CXFA_FFDocView {
   void OnPageEvent(CXFA_ContainerLayoutItem* pSender, uint32_t dwEvent);
   void LockUpdate();
   void UnlockUpdate();
-  FX_BOOL IsUpdateLocked();
+  bool IsUpdateLocked();
   void ClearInvalidateList();
   void AddInvalidateRect(CXFA_FFWidget* pWidget, const CFX_RectF& rtInvalidate);
   void AddInvalidateRect(CXFA_FFPageView* pPageView,
@@ -75,8 +75,8 @@ class CXFA_FFDocView {
   void RunDocClose();
   void DestroyDocView();
 
-  FX_BOOL InitValidate(CXFA_Node* pNode);
-  FX_BOOL RunValidate();
+  bool InitValidate(CXFA_Node* pNode);
+  bool RunValidate();
 
   void SetChangeMark();
 
@@ -84,8 +84,8 @@ class CXFA_FFDocView {
   void AddCalculateNodeNotify(CXFA_Node* pNodeChange);
   void AddCalculateWidgetAcc(CXFA_WidgetAcc* pWidgetAcc);
   int32_t RunCalculateWidgets();
-  FX_BOOL IsStaticNotify();
-  FX_BOOL RunLayout();
+  bool IsStaticNotify();
+  bool RunLayout();
   void RunSubformIndexChange();
   void AddNewFormNode(CXFA_Node* pNode);
   void AddIndexChangedSubform(CXFA_Node* pNode);
@@ -94,22 +94,22 @@ class CXFA_FFDocView {
   void DeleteLayoutItem(CXFA_FFWidget* pWidget);
   int32_t ExecEventActivityByDeepFirst(CXFA_Node* pFormNode,
                                        XFA_EVENTTYPE eEventType,
-                                       FX_BOOL bIsFormReady,
-                                       FX_BOOL bRecursive,
+                                       bool bIsFormReady,
+                                       bool bRecursive,
                                        CXFA_Node* pExclude);
-  FX_BOOL m_bLayoutEvent;
+  bool m_bLayoutEvent;
   CFX_WideStringArray m_arrNullTestMsg;
   CXFA_FFWidget* m_pListFocusWidget;
-  FX_BOOL m_bInLayoutStatus;
+  bool m_bInLayoutStatus;
 
  protected:
-  FX_BOOL RunEventLayoutReady();
+  bool RunEventLayoutReady();
   void RunBindItems();
-  FX_BOOL InitCalculate(CXFA_Node* pNode);
+  bool InitCalculate(CXFA_Node* pNode);
   void InitLayout(CXFA_Node* pNode);
   void RunCalculateRecursive(int32_t& iIndex);
   void ShowNullTestMsg();
-  FX_BOOL ResetSingleWidgetAccData(CXFA_WidgetAcc* pWidgetAcc);
+  bool ResetSingleWidgetAccData(CXFA_WidgetAcc* pWidgetAcc);
   CXFA_Node* GetRootSubform();
 
   CXFA_FFDoc* const m_pDoc;
@@ -140,7 +140,7 @@ class CXFA_WidgetAccIterator {
   CXFA_WidgetAcc* MoveToNext();
   CXFA_WidgetAcc* MoveToPrevious();
   CXFA_WidgetAcc* GetCurrentWidgetAcc();
-  FX_BOOL SetCurrentWidgetAcc(CXFA_WidgetAcc* hWidget);
+  bool SetCurrentWidgetAcc(CXFA_WidgetAcc* hWidget);
   void SkipTree();
 
  protected:

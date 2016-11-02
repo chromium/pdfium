@@ -58,7 +58,7 @@ class IFWL_MonthCalendar : public IFWL_Widget {
 
   // FWL_WidgetImp
   FWL_Type GetClassID() const override;
-  FWL_Error GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize = FALSE) override;
+  FWL_Error GetWidgetRect(CFX_RectF& rect, bool bAutoSize = false) override;
   FWL_Error Update() override;
   FWL_Error DrawWidget(CFX_Graphics* pGraphics,
                        const CFX_Matrix* pMatrix = nullptr) override;
@@ -67,40 +67,40 @@ class IFWL_MonthCalendar : public IFWL_Widget {
                     const CFX_Matrix* pMatrix) override;
 
   int32_t CountSelect();
-  FX_BOOL GetSelect(int32_t& iYear,
-                    int32_t& iMonth,
-                    int32_t& iDay,
-                    int32_t nIndex = 0);
-  FX_BOOL SetSelect(int32_t iYear, int32_t iMonth, int32_t iDay);
+  bool GetSelect(int32_t& iYear,
+                 int32_t& iMonth,
+                 int32_t& iDay,
+                 int32_t nIndex = 0);
+  bool SetSelect(int32_t iYear, int32_t iMonth, int32_t iDay);
 
  protected:
   struct DATE {
     DATE() : iYear(0), iMonth(0), iDay(0) {}
     DATE(int32_t year, int32_t month, int32_t day)
         : iYear(year), iMonth(month), iDay(day) {}
-    FX_BOOL operator<(const DATE& right) {
+    bool operator<(const DATE& right) {
       if (iYear < right.iYear) {
-        return TRUE;
+        return true;
       } else if (iYear == right.iYear) {
         if (iMonth < right.iMonth) {
-          return TRUE;
+          return true;
         } else if (iMonth == right.iMonth) {
           return iDay < right.iDay;
         }
       }
-      return FALSE;
+      return false;
     }
-    FX_BOOL operator>(const DATE& right) {
+    bool operator>(const DATE& right) {
       if (iYear > right.iYear) {
-        return TRUE;
+        return true;
       } else if (iYear == right.iYear) {
         if (iMonth > right.iMonth) {
-          return TRUE;
+          return true;
         } else if (iMonth == right.iMonth) {
           return iDay > right.iDay;
         }
       }
-      return FALSE;
+      return false;
     }
     int32_t iYear;
     int32_t iMonth;
@@ -152,35 +152,35 @@ class IFWL_MonthCalendar : public IFWL_Widget {
   void DrawTodayCircle(CFX_Graphics* pGraphics,
                        IFWL_ThemeProvider* pTheme,
                        const CFX_Matrix* pMatrix);
-  CFX_SizeF CalcSize(FX_BOOL bAutoSize = FALSE);
+  CFX_SizeF CalcSize(bool bAutoSize = false);
   void LayOut();
   void CalcHeadSize();
   void CalcTodaySize();
   void CalDateItem();
   void GetCapValue();
   int32_t CalWeekNumber(int32_t iYear, int32_t iMonth, int32_t iDay);
-  FX_BOOL GetMinDate(int32_t& iYear, int32_t& iMonth, int32_t& iDay);
-  FX_BOOL SetMinDate(int32_t iYear, int32_t iMonth, int32_t iDay);
-  FX_BOOL GetMaxDate(int32_t& iYear, int32_t& iMonth, int32_t& iDay);
-  FX_BOOL SetMaxDate(int32_t iYear, int32_t iMonth, int32_t iDay);
-  FX_BOOL InitDate();
+  bool GetMinDate(int32_t& iYear, int32_t& iMonth, int32_t& iDay);
+  bool SetMinDate(int32_t iYear, int32_t iMonth, int32_t iDay);
+  bool GetMaxDate(int32_t& iYear, int32_t& iMonth, int32_t& iDay);
+  bool SetMaxDate(int32_t iYear, int32_t iMonth, int32_t iDay);
+  bool InitDate();
   void ClearDateItem();
   void ReSetDateItem();
-  FX_BOOL NextMonth();
-  FX_BOOL PrevMonth();
+  bool NextMonth();
+  bool PrevMonth();
   void ChangeToMonth(int32_t iYear, int32_t iMonth);
-  FX_BOOL RemoveSelDay(int32_t iDay, FX_BOOL bAll = FALSE);
-  FX_BOOL AddSelDay(int32_t iDay);
-  FX_BOOL JumpToToday();
+  bool RemoveSelDay(int32_t iDay, bool bAll = false);
+  bool AddSelDay(int32_t iDay);
+  bool JumpToToday();
   void GetHeadText(int32_t iYear, int32_t iMonth, CFX_WideString& wsHead);
   void GetTodayText(int32_t iYear,
                     int32_t iMonth,
                     int32_t iDay,
                     CFX_WideString& wsToday);
   int32_t GetDayAtPoint(FX_FLOAT x, FX_FLOAT y);
-  FX_BOOL GetDayRect(int32_t iDay, CFX_RectF& rtDay);
+  bool GetDayRect(int32_t iDay, CFX_RectF& rtDay);
 
-  FX_BOOL m_bInit;
+  bool m_bInit;
   CFX_RectF m_rtHead;
   CFX_RectF m_rtWeek;
   CFX_RectF m_rtLBtn;
@@ -241,7 +241,7 @@ class IFWL_MonthCalendar : public IFWL_Widget {
   FX_FLOAT m_fMCHei;
 
  private:
-  void OnFocusChanged(CFWL_Message* pMsg, FX_BOOL bSet);
+  void OnFocusChanged(CFWL_Message* pMsg, bool bSet);
   void OnLButtonDown(CFWL_MsgMouse* pMsg);
   void OnLButtonUp(CFWL_MsgMouse* pMsg);
   void OnMouseMove(CFWL_MsgMouse* pMsg);

@@ -22,7 +22,7 @@ CXFA_FFImageEdit::CXFA_FFImageEdit(CXFA_FFPageView* pPageView,
 CXFA_FFImageEdit::~CXFA_FFImageEdit() {
   CXFA_FFImageEdit::UnloadWidget();
 }
-FX_BOOL CXFA_FFImageEdit::LoadWidget() {
+bool CXFA_FFImageEdit::LoadWidget() {
   CFWL_PictureBox* pPictureBox = new CFWL_PictureBox(GetFWLApp());
   pPictureBox->Initialize();
   m_pNormalWidget = pPictureBox;
@@ -37,10 +37,10 @@ FX_BOOL CXFA_FFImageEdit::LoadWidget() {
 
   CXFA_FFField::LoadWidget();
   if (m_pDataAcc->GetImageEditImage()) {
-    return TRUE;
+    return true;
   }
   UpdateFWLData();
-  return TRUE;
+  return true;
 }
 void CXFA_FFImageEdit::UnloadWidget() {
   m_pDataAcc->SetImageEditImage(nullptr);
@@ -84,16 +84,16 @@ void CXFA_FFImageEdit::RenderWidget(CFX_Graphics* pGS,
   }
 }
 
-FX_BOOL CXFA_FFImageEdit::OnLButtonDown(uint32_t dwFlags,
-                                        FX_FLOAT fx,
-                                        FX_FLOAT fy) {
+bool CXFA_FFImageEdit::OnLButtonDown(uint32_t dwFlags,
+                                     FX_FLOAT fx,
+                                     FX_FLOAT fy) {
   if (m_pDataAcc->GetAccess() != XFA_ATTRIBUTEENUM_Open)
-    return FALSE;
+    return false;
 
   if (!PtInActiveRect(fx, fy))
-    return FALSE;
+    return false;
 
-  SetButtonDown(TRUE);
+  SetButtonDown(true);
   CFWL_MsgMouse ms;
   ms.m_dwCmd = FWL_MouseCommand::LeftButtonDown;
   ms.m_dwFlags = dwFlags;
@@ -102,7 +102,7 @@ FX_BOOL CXFA_FFImageEdit::OnLButtonDown(uint32_t dwFlags,
   ms.m_pDstTarget = m_pNormalWidget->GetWidget();
   FWLToClient(ms.m_fx, ms.m_fy);
   TranslateFWLMessage(&ms);
-  return TRUE;
+  return true;
 }
 
 void CXFA_FFImageEdit::SetFWLRect() {
@@ -116,13 +116,13 @@ void CXFA_FFImageEdit::SetFWLRect() {
                   rtUIMargin.height);
   m_pNormalWidget->SetWidgetRect(rtImage);
 }
-FX_BOOL CXFA_FFImageEdit::CommitData() {
-  return TRUE;
+bool CXFA_FFImageEdit::CommitData() {
+  return true;
 }
-FX_BOOL CXFA_FFImageEdit::UpdateFWLData() {
+bool CXFA_FFImageEdit::UpdateFWLData() {
   m_pDataAcc->SetImageEditImage(nullptr);
   m_pDataAcc->LoadImageEditImage();
-  return TRUE;
+  return true;
 }
 
 void CXFA_FFImageEdit::OnProcessMessage(CFWL_Message* pMessage) {

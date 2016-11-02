@@ -25,54 +25,52 @@ class CXFA_FFWidgetHandler {
                               XFA_WIDGETTYPE eType,
                               CXFA_FFWidget* hBefore = nullptr);
 
-  FX_BOOL OnMouseEnter(CXFA_FFWidget* hWidget);
-  FX_BOOL OnMouseExit(CXFA_FFWidget* hWidget);
-  FX_BOOL OnLButtonDown(CXFA_FFWidget* hWidget,
-                        uint32_t dwFlags,
-                        FX_FLOAT fx,
-                        FX_FLOAT fy);
-  FX_BOOL OnLButtonUp(CXFA_FFWidget* hWidget,
-                      uint32_t dwFlags,
-                      FX_FLOAT fx,
-                      FX_FLOAT fy);
-  FX_BOOL OnLButtonDblClk(CXFA_FFWidget* hWidget,
-                          uint32_t dwFlags,
-                          FX_FLOAT fx,
-                          FX_FLOAT fy);
-  FX_BOOL OnMouseMove(CXFA_FFWidget* hWidget,
-                      uint32_t dwFlags,
-                      FX_FLOAT fx,
-                      FX_FLOAT fy);
-  FX_BOOL OnMouseWheel(CXFA_FFWidget* hWidget,
+  bool OnMouseEnter(CXFA_FFWidget* hWidget);
+  bool OnMouseExit(CXFA_FFWidget* hWidget);
+  bool OnLButtonDown(CXFA_FFWidget* hWidget,
+                     uint32_t dwFlags,
+                     FX_FLOAT fx,
+                     FX_FLOAT fy);
+  bool OnLButtonUp(CXFA_FFWidget* hWidget,
+                   uint32_t dwFlags,
+                   FX_FLOAT fx,
+                   FX_FLOAT fy);
+  bool OnLButtonDblClk(CXFA_FFWidget* hWidget,
                        uint32_t dwFlags,
-                       int16_t zDelta,
                        FX_FLOAT fx,
                        FX_FLOAT fy);
-  FX_BOOL OnRButtonDown(CXFA_FFWidget* hWidget,
-                        uint32_t dwFlags,
-                        FX_FLOAT fx,
-                        FX_FLOAT fy);
-  FX_BOOL OnRButtonUp(CXFA_FFWidget* hWidget,
-                      uint32_t dwFlags,
-                      FX_FLOAT fx,
-                      FX_FLOAT fy);
-  FX_BOOL OnRButtonDblClk(CXFA_FFWidget* hWidget,
-                          uint32_t dwFlags,
-                          FX_FLOAT fx,
-                          FX_FLOAT fy);
+  bool OnMouseMove(CXFA_FFWidget* hWidget,
+                   uint32_t dwFlags,
+                   FX_FLOAT fx,
+                   FX_FLOAT fy);
+  bool OnMouseWheel(CXFA_FFWidget* hWidget,
+                    uint32_t dwFlags,
+                    int16_t zDelta,
+                    FX_FLOAT fx,
+                    FX_FLOAT fy);
+  bool OnRButtonDown(CXFA_FFWidget* hWidget,
+                     uint32_t dwFlags,
+                     FX_FLOAT fx,
+                     FX_FLOAT fy);
+  bool OnRButtonUp(CXFA_FFWidget* hWidget,
+                   uint32_t dwFlags,
+                   FX_FLOAT fx,
+                   FX_FLOAT fy);
+  bool OnRButtonDblClk(CXFA_FFWidget* hWidget,
+                       uint32_t dwFlags,
+                       FX_FLOAT fx,
+                       FX_FLOAT fy);
 
-  FX_BOOL OnKeyDown(CXFA_FFWidget* hWidget,
-                    uint32_t dwKeyCode,
-                    uint32_t dwFlags);
-  FX_BOOL OnKeyUp(CXFA_FFWidget* hWidget, uint32_t dwKeyCode, uint32_t dwFlags);
-  FX_BOOL OnChar(CXFA_FFWidget* hWidget, uint32_t dwChar, uint32_t dwFlags);
+  bool OnKeyDown(CXFA_FFWidget* hWidget, uint32_t dwKeyCode, uint32_t dwFlags);
+  bool OnKeyUp(CXFA_FFWidget* hWidget, uint32_t dwKeyCode, uint32_t dwFlags);
+  bool OnChar(CXFA_FFWidget* hWidget, uint32_t dwChar, uint32_t dwFlags);
   FWL_WidgetHit OnHitTest(CXFA_FFWidget* hWidget, FX_FLOAT fx, FX_FLOAT fy);
-  FX_BOOL OnSetCursor(CXFA_FFWidget* hWidget, FX_FLOAT fx, FX_FLOAT fy);
+  bool OnSetCursor(CXFA_FFWidget* hWidget, FX_FLOAT fx, FX_FLOAT fy);
   void RenderWidget(CXFA_FFWidget* hWidget,
                     CFX_Graphics* pGS,
                     CFX_Matrix* pMatrix,
-                    FX_BOOL bHighlight);
-  FX_BOOL HasEvent(CXFA_WidgetAcc* pWidgetAcc, XFA_EVENTTYPE eEventType);
+                    bool bHighlight);
+  bool HasEvent(CXFA_WidgetAcc* pWidgetAcc, XFA_EVENTTYPE eEventType);
   int32_t ProcessEvent(CXFA_WidgetAcc* pWidgetAcc, CXFA_EventParam* pParam);
 
  protected:

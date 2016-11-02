@@ -14,7 +14,7 @@
 #include "xfa/fxbarcode/BC_Writer.h"
 #include "xfa/fxbarcode/common/BC_CommonBitMatrix.h"
 
-CBC_TwoDimWriter::CBC_TwoDimWriter() : m_iCorrectLevel(1), m_bFixedSize(TRUE) {}
+CBC_TwoDimWriter::CBC_TwoDimWriter() : m_iCorrectLevel(1), m_bFixedSize(true) {}
 
 CBC_TwoDimWriter::~CBC_TwoDimWriter() {}
 

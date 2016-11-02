@@ -20,17 +20,15 @@ class CScript_DataWindow : public CXFA_Object {
   void GotoRecord(CFXJSE_Arguments* pArguments);
   void IsRecordGroup(CFXJSE_Arguments* pArguments);
   void RecordsBefore(CFXJSE_Value* pValue,
-                     FX_BOOL bSetting,
+                     bool bSetting,
                      XFA_ATTRIBUTE eAttribute);
   void CurrentRecordNumber(CFXJSE_Value* pValue,
-                           FX_BOOL bSetting,
+                           bool bSetting,
                            XFA_ATTRIBUTE eAttribute);
   void RecordsAfter(CFXJSE_Value* pValue,
-                    FX_BOOL bSetting,
+                    bool bSetting,
                     XFA_ATTRIBUTE eAttribute);
-  void IsDefined(CFXJSE_Value* pValue,
-                 FX_BOOL bSetting,
-                 XFA_ATTRIBUTE eAttribute);
+  void IsDefined(CFXJSE_Value* pValue, bool bSetting, XFA_ATTRIBUTE eAttribute);
 };
 
 #endif  // XFA_FXFA_PARSER_CSCRIPT_DATAWINDOW_H_

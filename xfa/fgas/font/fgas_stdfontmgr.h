@@ -52,7 +52,7 @@ class CFGAS_StdFontMgrImp : public IFGAS_FontMgr {
                          const FX_WCHAR* pszFontAlias = nullptr,
                          uint32_t dwFontStyles = 0,
                          uint16_t wCodePage = 0,
-                         FX_BOOL bSaveStream = FALSE) override;
+                         bool bSaveStream = false) override;
   CFGAS_GEFont* LoadFont(CFGAS_GEFont* pSrcFont,
                          uint32_t dwFontStyles,
                          uint16_t wCodePage = 0xFFFF) override;
@@ -178,9 +178,9 @@ class CFGAS_FontMgrImp : public IFGAS_FontMgr {
   CFGAS_GEFont* LoadFont(const CFX_WideString& wsFaceName,
                          int32_t iFaceIndex,
                          int32_t* pFaceCount);
-  FX_BOOL EnumFonts();
-  FX_BOOL EnumFontsFromFontMapper();
-  FX_BOOL EnumFontsFromFiles();
+  bool EnumFonts();
+  bool EnumFontsFromFontMapper();
+  bool EnumFontsFromFiles();
 
  protected:
   void RegisterFace(FXFT_Face pFace,
@@ -191,8 +191,8 @@ class CFGAS_FontMgrImp : public IFGAS_FontMgr {
   std::vector<uint16_t> GetCharsets(FXFT_Face pFace) const;
   void GetUSBCSB(FXFT_Face pFace, uint32_t* USB, uint32_t* CSB);
   uint32_t GetFlags(FXFT_Face pFace);
-  FX_BOOL VerifyUnicode(CFX_FontDescriptor* pDesc, FX_WCHAR wcUnicode);
-  FX_BOOL VerifyUnicode(CFGAS_GEFont* pFont, FX_WCHAR wcUnicode);
+  bool VerifyUnicode(CFX_FontDescriptor* pDesc, FX_WCHAR wcUnicode);
+  bool VerifyUnicode(CFGAS_GEFont* pFont, FX_WCHAR wcUnicode);
   int32_t IsPartName(const CFX_WideString& Name1, const CFX_WideString& Name2);
   int32_t MatchFonts(CFX_FontDescriptorInfos& MatchedFonts,
                      uint16_t wCodePage,

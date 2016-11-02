@@ -20,13 +20,13 @@ class CBC_OneCode : public CBC_CodeBase {
   explicit CBC_OneCode(CBC_Writer* pWriter);
   ~CBC_OneCode() override;
 
-  virtual FX_BOOL CheckContentValidity(const CFX_WideStringC& contents);
+  virtual bool CheckContentValidity(const CFX_WideStringC& contents);
   virtual CFX_WideString FilterContents(const CFX_WideStringC& contents);
 
-  virtual void SetPrintChecksum(FX_BOOL checksum);
+  virtual void SetPrintChecksum(bool checksum);
   virtual void SetDataLength(int32_t length);
-  virtual void SetCalChecksum(FX_BOOL calc);
-  virtual FX_BOOL SetFont(CFX_Font* cFont);
+  virtual void SetCalChecksum(bool calc);
+  virtual bool SetFont(CFX_Font* cFont);
   virtual void SetFontSize(FX_FLOAT size);
   virtual void SetFontStyle(int32_t style);
   virtual void SetFontColor(FX_ARGB color);

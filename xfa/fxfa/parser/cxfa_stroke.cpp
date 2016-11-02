@@ -76,8 +76,8 @@ int32_t CXFA_Stroke::GetJoinType() const {
                  : XFA_ATTRIBUTEENUM_Square;
 }
 
-FX_BOOL CXFA_Stroke::IsInverted() const {
-  return m_pNode ? m_pNode->GetBoolean(XFA_ATTRIBUTE_Inverted) : FALSE;
+bool CXFA_Stroke::IsInverted() const {
+  return m_pNode ? m_pNode->GetBoolean(XFA_ATTRIBUTE_Inverted) : false;
 }
 
 FX_FLOAT CXFA_Stroke::GetRadius() const {
@@ -85,22 +85,22 @@ FX_FLOAT CXFA_Stroke::GetRadius() const {
                  : 0;
 }
 
-FX_BOOL CXFA_Stroke::SameStyles(CXFA_Stroke stroke, uint32_t dwFlags) const {
+bool CXFA_Stroke::SameStyles(CXFA_Stroke stroke, uint32_t dwFlags) const {
   if (m_pNode == stroke.GetNode())
-    return TRUE;
+    return true;
   if (FXSYS_fabs(GetThickness() - stroke.GetThickness()) >= 0.01f)
-    return FALSE;
+    return false;
   if ((dwFlags & XFA_STROKE_SAMESTYLE_NoPresence) == 0 &&
       IsVisible() != stroke.IsVisible()) {
-    return FALSE;
+    return false;
   }
   if (GetStrokeType() != stroke.GetStrokeType())
-    return FALSE;
+    return false;
   if (GetColor() != stroke.GetColor())
-    return FALSE;
+    return false;
   if ((dwFlags & XFA_STROKE_SAMESTYLE_Corner) != 0 &&
       FXSYS_fabs(GetRadius() - stroke.GetRadius()) >= 0.01f) {
-    return FALSE;
+    return false;
   }
-  return TRUE;
+  return true;
 }

@@ -44,7 +44,7 @@ void IFWL_DateTimeEdit::DisForm_OnProcessMessage(CFWL_Message* pMessage) {
         if (pDateTime->IsMonthCalendarShowed()) {
           CFX_RectF rtInvalidate;
           pDateTime->GetWidgetRect(rtInvalidate);
-          pDateTime->ShowMonthCalendar(FALSE);
+          pDateTime->ShowMonthCalendar(false);
           rtInvalidate.Offset(-rtInvalidate.left, -rtInvalidate.top);
           pDateTime->Repaint(&rtInvalidate);
         }

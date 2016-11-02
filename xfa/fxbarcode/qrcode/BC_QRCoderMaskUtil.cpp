@@ -30,8 +30,8 @@ CBC_QRCoderMaskUtil::CBC_QRCoderMaskUtil() {}
 CBC_QRCoderMaskUtil::~CBC_QRCoderMaskUtil() {}
 int32_t CBC_QRCoderMaskUtil::ApplyMaskPenaltyRule1(
     CBC_CommonByteMatrix* matrix) {
-  return ApplyMaskPenaltyRule1Internal(matrix, TRUE) +
-         ApplyMaskPenaltyRule1Internal(matrix, FALSE);
+  return ApplyMaskPenaltyRule1Internal(matrix, true) +
+         ApplyMaskPenaltyRule1Internal(matrix, false);
 }
 
 int32_t CBC_QRCoderMaskUtil::ApplyMaskPenaltyRule2(
@@ -122,13 +122,13 @@ int32_t CBC_QRCoderMaskUtil::ApplyMaskPenaltyRule4(
   double darkRatio = (double)numDarkCells / numTotalCells;
   return abs((int32_t)(darkRatio * 100 - 50) / 5) * 5 * 10;
 }
-FX_BOOL CBC_QRCoderMaskUtil::GetDataMaskBit(int32_t maskPattern,
-                                            int32_t x,
-                                            int32_t y,
-                                            int32_t& e) {
+bool CBC_QRCoderMaskUtil::GetDataMaskBit(int32_t maskPattern,
+                                         int32_t x,
+                                         int32_t y,
+                                         int32_t& e) {
   if (!CBC_QRCoder::IsValidMaskPattern(maskPattern)) {
     e = (BCExceptionInvalidateMaskPattern);
-    BC_EXCEPTION_CHECK_ReturnValue(e, FALSE);
+    BC_EXCEPTION_CHECK_ReturnValue(e, false);
   }
   int32_t intermediate = 0, temp = 0;
   switch (maskPattern) {
@@ -161,14 +161,14 @@ FX_BOOL CBC_QRCoderMaskUtil::GetDataMaskBit(int32_t maskPattern,
       break;
     default: {
       e = BCExceptionInvalidateMaskPattern;
-      BC_EXCEPTION_CHECK_ReturnValue(e, FALSE);
+      BC_EXCEPTION_CHECK_ReturnValue(e, false);
     }
   }
   return intermediate == 0;
 }
 int32_t CBC_QRCoderMaskUtil::ApplyMaskPenaltyRule1Internal(
     CBC_CommonByteMatrix* matrix,
-    FX_BOOL isHorizontal) {
+    bool isHorizontal) {
   int32_t penalty = 0;
   int32_t numSameBitCells = 0;
   int32_t prevBit = -1;

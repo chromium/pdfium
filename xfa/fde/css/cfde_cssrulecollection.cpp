@@ -92,7 +92,7 @@ void CFDE_CSSRuleCollection::AddRulesFrom(IFDE_CSSStyleSheet* pStyleSheet,
             AddRuleTo(m_pUniversalRules, NewRuleData(pSelector, pDeclaration));
             break;
           default:
-            ASSERT(FALSE);
+            ASSERT(false);
             break;
         }
       }
@@ -126,16 +126,16 @@ void CFDE_CSSRuleCollection::AddRuleTo(CFX_MapPtrToPtr& map,
   }
 }
 
-FX_BOOL CFDE_CSSRuleCollection::AddRuleTo(FDE_CSSRuleData*& pList,
-                                          FDE_CSSRuleData* pData) {
+bool CFDE_CSSRuleCollection::AddRuleTo(FDE_CSSRuleData*& pList,
+                                       FDE_CSSRuleData* pData) {
   if (pList) {
     pData->pNext = pList->pNext;
     pList->pNext = pData;
-    return FALSE;
+    return false;
   }
 
   pList = pData;
-  return TRUE;
+  return true;
 }
 
 FDE_CSSRuleData* CFDE_CSSRuleCollection::NewRuleData(

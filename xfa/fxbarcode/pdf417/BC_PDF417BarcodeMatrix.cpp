@@ -44,7 +44,7 @@ CBC_BarcodeMatrix::~CBC_BarcodeMatrix() {
 void CBC_BarcodeMatrix::set(int32_t x, int32_t y, uint8_t value) {
   m_matrix[y]->set(x, value);
 }
-void CBC_BarcodeMatrix::setMatrix(int32_t x, int32_t y, FX_BOOL black) {
+void CBC_BarcodeMatrix::setMatrix(int32_t x, int32_t y, bool black) {
   set(x, y, (uint8_t)(black ? 1 : 0));
 }
 void CBC_BarcodeMatrix::startRow() {

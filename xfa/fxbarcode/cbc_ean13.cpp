@@ -48,12 +48,12 @@ CFX_WideString CBC_EAN13::Preprocess(const CFX_WideStringC& contents) {
   return encodeContents;
 }
 
-FX_BOOL CBC_EAN13::Encode(const CFX_WideStringC& contents,
-                          FX_BOOL isDevice,
-                          int32_t& e) {
+bool CBC_EAN13::Encode(const CFX_WideStringC& contents,
+                       bool isDevice,
+                       int32_t& e) {
   if (contents.IsEmpty()) {
     e = BCExceptionNoContents;
-    return FALSE;
+    return false;
   }
   BCFORMAT format = BCFORMAT_EAN_13;
   int32_t outWidth = 0;
@@ -63,28 +63,28 @@ FX_BOOL CBC_EAN13::Encode(const CFX_WideStringC& contents,
   m_renderContents = encodeContents;
   uint8_t* data = static_cast<CBC_OnedEAN13Writer*>(m_pBCWriter.get())
                       ->Encode(byteString, format, outWidth, outHeight, e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, FALSE);
+  BC_EXCEPTION_CHECK_ReturnValue(e, false);
   static_cast<CBC_OneDimWriter*>(m_pBCWriter.get())
       ->RenderResult(encodeContents.AsStringC(), data, outWidth, isDevice, e);
   FX_Free(data);
-  BC_EXCEPTION_CHECK_ReturnValue(e, FALSE);
-  return TRUE;
+  BC_EXCEPTION_CHECK_ReturnValue(e, false);
+  return true;
 }
 
-FX_BOOL CBC_EAN13::RenderDevice(CFX_RenderDevice* device,
-                                const CFX_Matrix* matrix,
-                                int32_t& e) {
+bool CBC_EAN13::RenderDevice(CFX_RenderDevice* device,
+                             const CFX_Matrix* matrix,
+                             int32_t& e) {
   static_cast<CBC_OneDimWriter*>(m_pBCWriter.get())
       ->RenderDeviceResult(device, matrix, m_renderContents.AsStringC(), e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, FALSE);
-  return TRUE;
+  BC_EXCEPTION_CHECK_ReturnValue(e, false);
+  return true;
 }
 
-FX_BOOL CBC_EAN13::RenderBitmap(CFX_DIBitmap*& pOutBitmap, int32_t& e) {
+bool CBC_EAN13::RenderBitmap(CFX_DIBitmap*& pOutBitmap, int32_t& e) {
   static_cast<CBC_OneDimWriter*>(m_pBCWriter.get())
       ->RenderBitmapResult(pOutBitmap, m_renderContents.AsStringC(), e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, FALSE);
-  return TRUE;
+  BC_EXCEPTION_CHECK_ReturnValue(e, false);
+  return true;
 }
 
 BC_TYPE CBC_EAN13::GetType() {

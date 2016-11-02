@@ -23,7 +23,7 @@ CFDE_TxtEdtDoRecord_Insert::CFDE_TxtEdtDoRecord_Insert(
 
 CFDE_TxtEdtDoRecord_Insert::~CFDE_TxtEdtDoRecord_Insert() {}
 
-FX_BOOL CFDE_TxtEdtDoRecord_Insert::Undo() const {
+bool CFDE_TxtEdtDoRecord_Insert::Undo() const {
   if (m_pEngine->IsSelect())
     m_pEngine->ClearSelection();
 
@@ -32,16 +32,16 @@ FX_BOOL CFDE_TxtEdtDoRecord_Insert::Undo() const {
   m_pEngine->m_ChangeInfo.nChangeType = FDE_TXTEDT_TEXTCHANGE_TYPE_Delete;
   m_pEngine->m_ChangeInfo.wsDelete = m_wsInsert;
   Param.pEventSink->On_TextChanged(m_pEngine, m_pEngine->m_ChangeInfo);
-  m_pEngine->SetCaretPos(m_nCaret, TRUE);
-  return TRUE;
+  m_pEngine->SetCaretPos(m_nCaret, true);
+  return true;
 }
 
-FX_BOOL CFDE_TxtEdtDoRecord_Insert::Redo() const {
+bool CFDE_TxtEdtDoRecord_Insert::Redo() const {
   m_pEngine->Inner_Insert(m_nCaret, m_wsInsert.c_str(), m_wsInsert.GetLength());
   FDE_TXTEDTPARAMS& Param = m_pEngine->m_Param;
   m_pEngine->m_ChangeInfo.nChangeType = FDE_TXTEDT_TEXTCHANGE_TYPE_Insert;
   m_pEngine->m_ChangeInfo.wsDelete = m_wsInsert;
   Param.pEventSink->On_TextChanged(m_pEngine, m_pEngine->m_ChangeInfo);
-  m_pEngine->SetCaretPos(m_nCaret, FALSE);
-  return TRUE;
+  m_pEngine->SetCaretPos(m_nCaret, false);
+  return true;
 }

@@ -46,7 +46,7 @@ FX_ARGB CFDE_TxtEdtTextSet::GetFontColor() {
 
 int32_t CFDE_TxtEdtTextSet::GetDisplayPos(FDE_TEXTEDITPIECE* pPiece,
                                           FXTEXT_CHARPOS* pCharPos,
-                                          FX_BOOL bCharCode,
+                                          bool bCharCode,
                                           CFX_WideString* pWSForms) {
   if (!pPiece)
     return 0;
@@ -76,7 +76,7 @@ int32_t CFDE_TxtEdtTextSet::GetDisplayPos(FDE_TEXTEDITPIECE* pPiece,
 
 int32_t CFDE_TxtEdtTextSet::GetCharRects(const FDE_TEXTEDITPIECE* pPiece,
                                          CFX_RectFArray& rtArray,
-                                         FX_BOOL bBBox) {
+                                         bool bBBox) {
   if (!pPiece)
     return 0;
 

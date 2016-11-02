@@ -32,7 +32,7 @@ void XFA_ReleaseLayoutItem(CXFA_LayoutItem* pLayoutItem) {
   delete pLayoutItem;
 }
 
-CXFA_LayoutItem::CXFA_LayoutItem(CXFA_Node* pNode, FX_BOOL bIsContentLayoutItem)
+CXFA_LayoutItem::CXFA_LayoutItem(CXFA_Node* pNode, bool bIsContentLayoutItem)
     : m_pFormNode(pNode),
       m_pParent(nullptr),
       m_pNextSibling(nullptr),

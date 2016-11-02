@@ -31,7 +31,7 @@
 #include "xfa/fxbarcode/qrcode/BC_QRCoderVersion.h"
 
 CBC_QRCodeWriter::CBC_QRCodeWriter() {
-  m_bFixedSize = TRUE;
+  m_bFixedSize = true;
   m_iCorrectLevel = 1;
   m_iVersion = 0;
 }
@@ -48,20 +48,20 @@ void CBC_QRCodeWriter::ReleaseAll() {
   CBC_QRCoderVersion::Destroy();
 }
 
-FX_BOOL CBC_QRCodeWriter::SetVersion(int32_t version) {
+bool CBC_QRCodeWriter::SetVersion(int32_t version) {
   if (version < 0 || version > 40) {
-    return FALSE;
+    return false;
   }
   m_iVersion = version;
-  return TRUE;
+  return true;
 }
 
-FX_BOOL CBC_QRCodeWriter::SetErrorCorrectionLevel(int32_t level) {
+bool CBC_QRCodeWriter::SetErrorCorrectionLevel(int32_t level) {
   if (level < 0 || level > 3) {
-    return FALSE;
+    return false;
   }
   m_iCorrectLevel = level;
-  return TRUE;
+  return true;
 }
 
 uint8_t* CBC_QRCodeWriter::Encode(const CFX_WideString& contents,

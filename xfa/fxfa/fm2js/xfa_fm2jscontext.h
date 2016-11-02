@@ -88,67 +88,67 @@ class CXFA_FM2JSContext : public CFXJSE_HostObject {
                       const CFX_ByteStringC& szFuncName,
                       CFXJSE_Arguments& args);
 
-  static FX_BOOL IsIsoDateFormat(const FX_CHAR* pData,
-                                 int32_t iLength,
-                                 int32_t& iStyle,
-                                 int32_t& iYear,
-                                 int32_t& iMonth,
-                                 int32_t& iDay);
-  static FX_BOOL IsIsoTimeFormat(const FX_CHAR* pData,
-                                 int32_t iLength,
-                                 int32_t& iHour,
-                                 int32_t& iMinute,
-                                 int32_t& iSecond,
-                                 int32_t& iMilliSecond,
-                                 int32_t& iZoneHour,
-                                 int32_t& iZoneMinute);
-  static FX_BOOL IsIsoDateTimeFormat(const FX_CHAR* pData,
-                                     int32_t iLength,
-                                     int32_t& iYear,
-                                     int32_t& iMonth,
-                                     int32_t& iDay,
-                                     int32_t& iHour,
-                                     int32_t& iMinute,
-                                     int32_t& iSecond,
-                                     int32_t& iMillionSecond,
-                                     int32_t& iZoneHour,
-                                     int32_t& iZoneMinute);
-  static FX_BOOL Local2IsoDate(CFXJSE_Value* pThis,
-                               const CFX_ByteStringC& szDate,
-                               const CFX_ByteStringC& szFormat,
-                               const CFX_ByteStringC& szLocale,
-                               CFX_ByteString& strIsoDate);
-  static FX_BOOL Local2IsoTime(CFXJSE_Value* pThis,
-                               const CFX_ByteStringC& szTime,
-                               const CFX_ByteStringC& szFormat,
-                               const CFX_ByteStringC& szLocale,
-                               CFX_ByteString& strIsoTime);
-  static FX_BOOL IsoDate2Local(CFXJSE_Value* pThis,
-                               const CFX_ByteStringC& szDate,
-                               const CFX_ByteStringC& szFormat,
-                               const CFX_ByteStringC& szLocale,
-                               CFX_ByteString& strLocalDate);
-  static FX_BOOL IsoTime2Local(CFXJSE_Value* pThis,
-                               const CFX_ByteStringC& szTime,
-                               const CFX_ByteStringC& szFormat,
-                               const CFX_ByteStringC& szLocale,
-                               CFX_ByteString& strLocalTime);
-  static FX_BOOL GetGMTTime(CFXJSE_Value* pThis,
+  static bool IsIsoDateFormat(const FX_CHAR* pData,
+                              int32_t iLength,
+                              int32_t& iStyle,
+                              int32_t& iYear,
+                              int32_t& iMonth,
+                              int32_t& iDay);
+  static bool IsIsoTimeFormat(const FX_CHAR* pData,
+                              int32_t iLength,
+                              int32_t& iHour,
+                              int32_t& iMinute,
+                              int32_t& iSecond,
+                              int32_t& iMilliSecond,
+                              int32_t& iZoneHour,
+                              int32_t& iZoneMinute);
+  static bool IsIsoDateTimeFormat(const FX_CHAR* pData,
+                                  int32_t iLength,
+                                  int32_t& iYear,
+                                  int32_t& iMonth,
+                                  int32_t& iDay,
+                                  int32_t& iHour,
+                                  int32_t& iMinute,
+                                  int32_t& iSecond,
+                                  int32_t& iMillionSecond,
+                                  int32_t& iZoneHour,
+                                  int32_t& iZoneMinute);
+  static bool Local2IsoDate(CFXJSE_Value* pThis,
+                            const CFX_ByteStringC& szDate,
+                            const CFX_ByteStringC& szFormat,
+                            const CFX_ByteStringC& szLocale,
+                            CFX_ByteString& strIsoDate);
+  static bool Local2IsoTime(CFXJSE_Value* pThis,
                             const CFX_ByteStringC& szTime,
                             const CFX_ByteStringC& szFormat,
                             const CFX_ByteStringC& szLocale,
-                            CFX_ByteString& strGMTTime);
+                            CFX_ByteString& strIsoTime);
+  static bool IsoDate2Local(CFXJSE_Value* pThis,
+                            const CFX_ByteStringC& szDate,
+                            const CFX_ByteStringC& szFormat,
+                            const CFX_ByteStringC& szLocale,
+                            CFX_ByteString& strLocalDate);
+  static bool IsoTime2Local(CFXJSE_Value* pThis,
+                            const CFX_ByteStringC& szTime,
+                            const CFX_ByteStringC& szFormat,
+                            const CFX_ByteStringC& szLocale,
+                            CFX_ByteString& strLocalTime);
+  static bool GetGMTTime(CFXJSE_Value* pThis,
+                         const CFX_ByteStringC& szTime,
+                         const CFX_ByteStringC& szFormat,
+                         const CFX_ByteStringC& szLocale,
+                         CFX_ByteString& strGMTTime);
   static int32_t DateString2Num(const CFX_ByteStringC& szDateString);
   static void GetLocalDateFormat(CFXJSE_Value* pThis,
                                  int32_t iStyle,
                                  const CFX_ByteStringC& szLocalStr,
                                  CFX_ByteString& strFormat,
-                                 FX_BOOL bStandard);
+                                 bool bStandard);
   static void GetLocalTimeFormat(CFXJSE_Value* pThis,
                                  int32_t iStyle,
                                  const CFX_ByteStringC& szLocalStr,
                                  CFX_ByteString& strFormat,
-                                 FX_BOOL bStandard);
+                                 bool bStandard);
   static void GetStandardDateFormat(CFXJSE_Value* pThis,
                                     int32_t iStyle,
                                     const CFX_ByteStringC& szLocalStr,
@@ -162,7 +162,7 @@ class CXFA_FM2JSContext : public CFXJSE_HostObject {
                           int32_t iTime,
                           const CFX_ByteStringC& szFormat,
                           const CFX_ByteStringC& szLocale,
-                          FX_BOOL bGM,
+                          bool bGM,
                           CFX_ByteString& strTime);
   static void GetLocalTimeZone(int32_t& iHour, int32_t& iMin, int32_t& iSec);
 
@@ -251,8 +251,8 @@ class CXFA_FM2JSContext : public CFXJSE_HostObject {
                          CFX_ByteTextBuf& szResultBuf);
   static void EncodeXML(const CFX_ByteStringC& szXMLString,
                         CFX_ByteTextBuf& szResultBuf);
-  static FX_BOOL HTMLSTR2Code(const CFX_WideStringC& pData, uint32_t& iCode);
-  static FX_BOOL HTMLCode2STR(uint32_t iCode, CFX_WideString& wsHTMLReserve);
+  static bool HTMLSTR2Code(const CFX_WideStringC& pData, uint32_t& iCode);
+  static bool HTMLCode2STR(uint32_t iCode, CFX_WideString& wsHTMLReserve);
   static void Format(CFXJSE_Value* pThis,
                      const CFX_ByteStringC& szFuncName,
                      CFXJSE_Arguments& args);
@@ -331,7 +331,7 @@ class CXFA_FM2JSContext : public CFXJSE_HostObject {
   static void notequality_operator(CFXJSE_Value* pThis,
                                    const CFX_ByteStringC& szFuncName,
                                    CFXJSE_Arguments& args);
-  static FX_BOOL fm_ref_equal(CFXJSE_Value* pThis, CFXJSE_Arguments& args);
+  static bool fm_ref_equal(CFXJSE_Value* pThis, CFXJSE_Arguments& args);
   static void less_operator(CFXJSE_Value* pThis,
                             const CFX_ByteStringC& szFuncName,
                             CFXJSE_Arguments& args);
@@ -395,9 +395,9 @@ class CXFA_FM2JSContext : public CFXJSE_HostObject {
 
   static int32_t hvalue_get_array_length(CFXJSE_Value* pThis,
                                          CFXJSE_Value* arg);
-  static FX_BOOL simpleValueCompare(CFXJSE_Value* pThis,
-                                    CFXJSE_Value* firstValue,
-                                    CFXJSE_Value* secondValue);
+  static bool simpleValueCompare(CFXJSE_Value* pThis,
+                                 CFXJSE_Value* firstValue,
+                                 CFXJSE_Value* secondValue);
   static void unfoldArgs(CFXJSE_Value* pThis,
                          CFXJSE_Arguments& args,
                          CFXJSE_Value**& resultValues,
@@ -405,33 +405,33 @@ class CXFA_FM2JSContext : public CFXJSE_HostObject {
                          int32_t iStart = 0);
   static void GetObjectDefaultValue(CFXJSE_Value* pObjectValue,
                                     CFXJSE_Value* pDefaultValue);
-  static FX_BOOL SetObjectDefaultValue(CFXJSE_Value* pObjectValue,
-                                       CFXJSE_Value* pNewValue);
+  static bool SetObjectDefaultValue(CFXJSE_Value* pObjectValue,
+                                    CFXJSE_Value* pNewValue);
   static void GenerateSomExpression(const CFX_ByteStringC& szName,
                                     int32_t iIndexFlags,
                                     int32_t iIndexValue,
                                     bool bIsStar,
                                     CFX_ByteString& szSomExp);
-  static FX_BOOL GetObjectForName(CFXJSE_Value* pThis,
-                                  CFXJSE_Value* accessorValue,
-                                  const CFX_ByteStringC& szAccessorName);
+  static bool GetObjectForName(CFXJSE_Value* pThis,
+                               CFXJSE_Value* accessorValue,
+                               const CFX_ByteStringC& szAccessorName);
   static int32_t ResolveObjects(CFXJSE_Value* pThis,
                                 CFXJSE_Value* pParentValue,
                                 const CFX_ByteStringC& bsSomExp,
                                 XFA_RESOLVENODE_RS& resoveNodeRS,
-                                FX_BOOL bdotAccessor = TRUE,
-                                FX_BOOL bHasNoResolveName = FALSE);
+                                bool bdotAccessor = true,
+                                bool bHasNoResolveName = false);
   static void ParseResolveResult(CFXJSE_Value* pThis,
                                  const XFA_RESOLVENODE_RS& resoveNodeRS,
                                  CFXJSE_Value* pParentValue,
                                  CFXJSE_Value**& resultValues,
                                  int32_t& iSize,
-                                 FX_BOOL& bAttribute);
+                                 bool& bAttribute);
 
   static std::unique_ptr<CFXJSE_Value> GetSimpleValue(CFXJSE_Value* pThis,
                                                       CFXJSE_Arguments& args,
                                                       uint32_t index);
-  static FX_BOOL ValueIsNull(CFXJSE_Value* pThis, CFXJSE_Value* pValue);
+  static bool ValueIsNull(CFXJSE_Value* pThis, CFXJSE_Value* pValue);
   static int32_t ValueToInteger(CFXJSE_Value* pThis, CFXJSE_Value* pValue);
   static FX_FLOAT ValueToFloat(CFXJSE_Value* pThis, CFXJSE_Value* pValue);
   static FX_DOUBLE ValueToDouble(CFXJSE_Value* pThis, CFXJSE_Value* pValue);

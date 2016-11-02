@@ -44,9 +44,9 @@
 
 CBC_DataMatrixWriter::CBC_DataMatrixWriter() {}
 CBC_DataMatrixWriter::~CBC_DataMatrixWriter() {}
-FX_BOOL CBC_DataMatrixWriter::SetErrorCorrectionLevel(int32_t level) {
+bool CBC_DataMatrixWriter::SetErrorCorrectionLevel(int32_t level) {
   m_iCorrectLevel = level;
-  return TRUE;
+  return true;
 }
 uint8_t* CBC_DataMatrixWriter::Encode(const CFX_WideString& contents,
                                       int32_t& outWidth,
@@ -65,7 +65,7 @@ uint8_t* CBC_DataMatrixWriter::Encode(const CFX_WideString& contents,
       contents, ecLevel, shape, minSize, maxSize, e);
   BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
   CBC_SymbolInfo* symbolInfo = CBC_SymbolInfo::lookup(
-      encoded.GetLength(), shape, minSize, maxSize, TRUE, e);
+      encoded.GetLength(), shape, minSize, maxSize, true, e);
   BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
   CFX_WideString codewords =
       CBC_ErrorCorrection::encodeECC200(encoded, symbolInfo, e);
@@ -111,7 +111,7 @@ CBC_CommonByteMatrix* CBC_DataMatrixWriter::encodeLowLevel(
     matrixX = 0;
     for (int32_t x = 0; x < symbolWidth; x++) {
       if ((x % symbolInfo->m_matrixWidth) == 0) {
-        matrix->Set(matrixX, matrixY, TRUE);
+        matrix->Set(matrixX, matrixY, true);
         matrixX++;
       }
       matrix->Set(matrixX, matrixY, placement->getBit(x, y));
@@ -125,7 +125,7 @@ CBC_CommonByteMatrix* CBC_DataMatrixWriter::encodeLowLevel(
     if ((y % symbolInfo->m_matrixHeight) == symbolInfo->m_matrixHeight - 1) {
       matrixX = 0;
       for (int32_t x = 0; x < symbolInfo->getSymbolWidth(e); x++) {
-        matrix->Set(matrixX, matrixY, TRUE);
+        matrix->Set(matrixX, matrixY, true);
         matrixX++;
       }
       matrixY++;

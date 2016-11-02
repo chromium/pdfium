@@ -13,17 +13,17 @@ CFX_CharIter::CFX_CharIter(const CFX_WideString& wsText)
 
 CFX_CharIter::~CFX_CharIter() {}
 
-FX_BOOL CFX_CharIter::Next(FX_BOOL bPrev) {
+bool CFX_CharIter::Next(bool bPrev) {
   if (bPrev) {
     if (m_nIndex <= 0)
-      return FALSE;
+      return false;
     m_nIndex--;
   } else {
     if (m_nIndex + 1 >= m_wsText.GetLength())
-      return FALSE;
+      return false;
     m_nIndex++;
   }
-  return TRUE;
+  return true;
 }
 
 FX_WCHAR CFX_CharIter::GetChar() {
@@ -40,7 +40,7 @@ int32_t CFX_CharIter::GetAt() const {
   return m_nIndex;
 }
 
-FX_BOOL CFX_CharIter::IsEOF(FX_BOOL bTail) const {
+bool CFX_CharIter::IsEOF(bool bTail) const {
   return bTail ? (m_nIndex + 1 == m_wsText.GetLength()) : (m_nIndex == 0);
 }
 

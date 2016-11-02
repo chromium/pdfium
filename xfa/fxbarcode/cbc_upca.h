@@ -18,13 +18,13 @@ class CBC_UPCA : public CBC_OneCode {
   ~CBC_UPCA() override;
 
   // CBC_CodeBase
-  FX_BOOL Encode(const CFX_WideStringC& contents,
-                 FX_BOOL isDevice,
-                 int32_t& e) override;
-  FX_BOOL RenderDevice(CFX_RenderDevice* device,
-                       const CFX_Matrix* matrix,
-                       int32_t& e) override;
-  FX_BOOL RenderBitmap(CFX_DIBitmap*& pOutBitmap, int32_t& e) override;
+  bool Encode(const CFX_WideStringC& contents,
+              bool isDevice,
+              int32_t& e) override;
+  bool RenderDevice(CFX_RenderDevice* device,
+                    const CFX_Matrix* matrix,
+                    int32_t& e) override;
+  bool RenderBitmap(CFX_DIBitmap*& pOutBitmap, int32_t& e) override;
   BC_TYPE GetType() override;
 
  private:

@@ -16,12 +16,12 @@ const int kDefaultChunkCount = 2;
 }  // namespace
 
 CFDE_TxtEdtBuf::CFDE_TxtEdtBuf()
-    : m_nChunkSize(kDefaultChunkSize), m_nTotal(0), m_bChanged(FALSE) {
+    : m_nChunkSize(kDefaultChunkSize), m_nTotal(0), m_bChanged(false) {
   ResetChunkBuffer(kDefaultChunkCount, m_nChunkSize);
 }
 
 CFDE_TxtEdtBuf::~CFDE_TxtEdtBuf() {
-  Clear(TRUE);
+  Clear(true);
   m_Chunks.RemoveAll();
 }
 
@@ -35,7 +35,7 @@ int32_t CFDE_TxtEdtBuf::GetTextLength() const {
 
 void CFDE_TxtEdtBuf::SetText(const CFX_WideString& wsText) {
   ASSERT(!wsText.IsEmpty());
-  Clear(FALSE);
+  Clear(false);
   int32_t nTextLength = wsText.GetLength();
   int32_t nNeedCount =
       ((nTextLength - 1) / m_nChunkSize + 1) - m_Chunks.GetSize();
@@ -62,7 +62,7 @@ void CFDE_TxtEdtBuf::SetText(const CFX_WideString& wsText) {
     lpChunk->nUsed = nCopyedLength;
   }
   m_nTotal = nTextLength;
-  m_bChanged = TRUE;
+  m_bChanged = true;
 }
 
 void CFDE_TxtEdtBuf::GetText(CFX_WideString& wsText) const {
@@ -165,7 +165,7 @@ void CFDE_TxtEdtBuf::Insert(int32_t nPos,
     cp.nChunkIndex++;
   }
   m_nTotal += nLength;
-  m_bChanged = TRUE;
+  m_bChanged = true;
 }
 
 void CFDE_TxtEdtBuf::Delete(int32_t nIndex, int32_t nLength) {
@@ -196,10 +196,10 @@ void CFDE_TxtEdtBuf::Delete(int32_t nIndex, int32_t nLength) {
     nLength -= nDeleted;
     cpEnd.nChunkIndex--;
   }
-  m_bChanged = TRUE;
+  m_bChanged = true;
 }
 
-void CFDE_TxtEdtBuf::Clear(FX_BOOL bRelease) {
+void CFDE_TxtEdtBuf::Clear(bool bRelease) {
   int32_t i = 0;
   int32_t nCount = m_Chunks.GetSize();
   if (bRelease) {
@@ -213,19 +213,19 @@ void CFDE_TxtEdtBuf::Clear(FX_BOOL bRelease) {
     }
   }
   m_nTotal = 0;
-  m_bChanged = TRUE;
+  m_bChanged = true;
 }
 
-FX_BOOL CFDE_TxtEdtBuf::Optimize(IFX_Pause* pPause) {
-  if (m_bChanged == FALSE) {
-    return TRUE;
+bool CFDE_TxtEdtBuf::Optimize(IFX_Pause* pPause) {
+  if (m_bChanged == false) {
+    return true;
   }
   if (m_nTotal == 0) {
-    return TRUE;
+    return true;
   }
   int32_t nCount = m_Chunks.GetSize();
   if (nCount == 0) {
-    return TRUE;
+    return true;
   }
   int32_t i = 0;
   for (; i < nCount; i++) {
@@ -238,7 +238,7 @@ FX_BOOL CFDE_TxtEdtBuf::Optimize(IFX_Pause* pPause) {
     }
   }
   if (pPause && pPause->NeedToPauseNow())
-    return FALSE;
+    return false;
 
   FDE_CHUNKHEADER* lpPreChunk = m_Chunks[0];
   FDE_CHUNKHEADER* lpCurChunk = nullptr;
@@ -256,10 +256,10 @@ FX_BOOL CFDE_TxtEdtBuf::Optimize(IFX_Pause* pPause) {
       lpPreChunk = lpCurChunk;
     }
     if (pPause && pPause->NeedToPauseNow())
-      return FALSE;
+      return false;
   }
-  m_bChanged = FALSE;
-  return TRUE;
+  m_bChanged = false;
+  return true;
 }
 
 void CFDE_TxtEdtBuf::ResetChunkBuffer(int32_t nDefChunkCount,

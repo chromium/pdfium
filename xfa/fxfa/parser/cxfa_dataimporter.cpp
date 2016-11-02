@@ -21,24 +21,24 @@ CXFA_DataImporter::CXFA_DataImporter(CXFA_Document* pDocument)
   ASSERT(m_pDocument);
 }
 
-FX_BOOL CXFA_DataImporter::ImportData(IFX_SeekableReadStream* pDataDocument) {
+bool CXFA_DataImporter::ImportData(IFX_SeekableReadStream* pDataDocument) {
   std::unique_ptr<CXFA_SimpleParser> pDataDocumentParser(
       new CXFA_SimpleParser(m_pDocument, false));
   if (pDataDocumentParser->StartParse(pDataDocument, XFA_XDPPACKET_Datasets) !=
       XFA_PARSESTATUS_Ready) {
-    return FALSE;
+    return false;
   }
   if (pDataDocumentParser->DoParse(nullptr) < XFA_PARSESTATUS_Done)
-    return FALSE;
+    return false;
 
   CXFA_Node* pImportDataRoot = pDataDocumentParser->GetRootNode();
   if (!pImportDataRoot)
-    return FALSE;
+    return false;
 
   CXFA_Node* pDataModel =
       ToNode(m_pDocument->GetXFAObject(XFA_HASHCODE_Datasets));
   if (!pDataModel)
-    return FALSE;
+    return false;
 
   CXFA_Node* pDataNode = ToNode(m_pDocument->GetXFAObject(XFA_HASHCODE_Data));
   if (pDataNode)
@@ -57,6 +57,6 @@ FX_BOOL CXFA_DataImporter::ImportData(IFX_SeekableReadStream* pDataDocument) {
       pParentXMLNode->RemoveChildNode(pXMLNode);
     pDataModel->InsertChild(pImportDataRoot);
   }
-  m_pDocument->DoDataRemerge(FALSE);
-  return TRUE;
+  m_pDocument->DoDataRemerge(false);
+  return true;
 }

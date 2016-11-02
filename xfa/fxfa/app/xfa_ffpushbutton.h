@@ -25,9 +25,9 @@ class CXFA_FFPushButton : public CXFA_FFField {
   void RenderWidget(CFX_Graphics* pGS,
                     CFX_Matrix* pMatrix,
                     uint32_t dwStatus) override;
-  FX_BOOL LoadWidget() override;
+  bool LoadWidget() override;
   void UnloadWidget() override;
-  FX_BOOL PerformLayout() override;
+  bool PerformLayout() override;
   void UpdateWidgetProperty() override;
   void OnProcessMessage(CFWL_Message* pMessage) override;
   void OnProcessEvent(CFWL_Event* pEvent) override;

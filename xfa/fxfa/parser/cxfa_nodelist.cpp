@@ -108,7 +108,7 @@ void CXFA_NodeList::Script_TreelistClass_NamedItem(
 }
 
 void CXFA_NodeList::Script_ListClass_Length(CFXJSE_Value* pValue,
-                                            FX_BOOL bSetting,
+                                            bool bSetting,
                                             XFA_ATTRIBUTE eAttribute) {
   if (!bSetting) {
     pValue->SetInteger(GetLength());

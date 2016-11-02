@@ -11,15 +11,15 @@
 CXFA_EventParam::CXFA_EventParam()
     : m_pTarget(nullptr),
       m_eType(XFA_EVENT_Unknown),
-      m_bCancelAction(FALSE),
+      m_bCancelAction(false),
       m_iCommitKey(0),
-      m_bKeyDown(FALSE),
-      m_bModifier(FALSE),
-      m_bReenter(FALSE),
+      m_bKeyDown(false),
+      m_bModifier(false),
+      m_bReenter(false),
       m_iSelEnd(0),
       m_iSelStart(0),
-      m_bShift(FALSE),
-      m_bIsFormReady(FALSE),
+      m_bShift(false),
+      m_bIsFormReady(false),
       m_iValidateActivities(XFA_VALIDATE_preSubmit) {}
 
 CXFA_EventParam::~CXFA_EventParam() {}
@@ -28,21 +28,21 @@ CXFA_EventParam::CXFA_EventParam(const CXFA_EventParam& other) = default;
 
 void CXFA_EventParam::Reset() {
   m_wsChange.clear();
-  m_bCancelAction = FALSE;
+  m_bCancelAction = false;
   m_iCommitKey = 0;
   m_wsFullText.clear();
-  m_bKeyDown = FALSE;
-  m_bModifier = FALSE;
+  m_bKeyDown = false;
+  m_bModifier = false;
   m_wsNewContentType.clear();
   m_wsNewText.clear();
   m_wsPrevContentType.clear();
   m_wsPrevText.clear();
-  m_bReenter = FALSE;
+  m_bReenter = false;
   m_iSelEnd = 0;
   m_iSelStart = 0;
-  m_bShift = FALSE;
+  m_bShift = false;
   m_wsSoapFaultCode.clear();
   m_wsSoapFaultString.clear();
-  m_bIsFormReady = FALSE;
+  m_bIsFormReady = false;
   m_iValidateActivities = XFA_VALIDATE_preSubmit;
 }

@@ -19,9 +19,9 @@ class CBC_DefaultPlacement {
   int32_t getNumrows();
   int32_t getNumcols();
   CFX_ByteArray& getBits();
-  FX_BOOL getBit(int32_t col, int32_t row);
-  void setBit(int32_t col, int32_t row, FX_BOOL bit);
-  FX_BOOL hasBit(int32_t col, int32_t row);
+  bool getBit(int32_t col, int32_t row);
+  void setBit(int32_t col, int32_t row, bool bit);
+  bool hasBit(int32_t col, int32_t row);
   void place();
 
  private:

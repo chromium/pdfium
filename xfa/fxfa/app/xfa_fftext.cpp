@@ -62,23 +62,23 @@ void CXFA_FFText::RenderWidget(CFX_Graphics* pGS,
     }
   }
 }
-FX_BOOL CXFA_FFText::IsLoaded() {
+bool CXFA_FFText::IsLoaded() {
   CXFA_TextLayout* pTextLayout = m_pDataAcc->GetTextLayout();
   return pTextLayout && !pTextLayout->m_bHasBlock;
 }
-FX_BOOL CXFA_FFText::PerformLayout() {
+bool CXFA_FFText::PerformLayout() {
   CXFA_FFDraw::PerformLayout();
   CXFA_TextLayout* pTextLayout = m_pDataAcc->GetTextLayout();
   if (!pTextLayout) {
-    return FALSE;
+    return false;
   }
   if (!pTextLayout->m_bHasBlock) {
-    return TRUE;
+    return true;
   }
   pTextLayout->m_Blocks.RemoveAll();
   CXFA_LayoutItem* pItem = this;
   if (!pItem->GetPrev() && !pItem->GetNext()) {
-    return TRUE;
+    return true;
   }
   pItem = pItem->GetFirst();
   while (pItem) {
@@ -98,46 +98,46 @@ FX_BOOL CXFA_FFText::PerformLayout() {
     pTextLayout->ItemBlocks(rtText, pItem->GetIndex());
     pItem = pItem->GetNext();
   }
-  pTextLayout->m_bHasBlock = FALSE;
-  return TRUE;
+  pTextLayout->m_bHasBlock = false;
+  return true;
 }
-FX_BOOL CXFA_FFText::OnLButtonDown(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) {
+bool CXFA_FFText::OnLButtonDown(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) {
   CFX_RectF rtBox;
   GetRectWithoutRotate(rtBox);
   if (!rtBox.Contains(fx, fy)) {
-    return FALSE;
+    return false;
   }
   const FX_WCHAR* wsURLContent = GetLinkURLAtPoint(fx, fy);
   if (!wsURLContent) {
-    return FALSE;
+    return false;
   }
-  SetButtonDown(TRUE);
-  return TRUE;
+  SetButtonDown(true);
+  return true;
 }
-FX_BOOL CXFA_FFText::OnMouseMove(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) {
+bool CXFA_FFText::OnMouseMove(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) {
   CFX_RectF rtBox;
   GetRectWithoutRotate(rtBox);
   if (!rtBox.Contains(fx, fy)) {
-    return FALSE;
+    return false;
   }
   const FX_WCHAR* wsURLContent = GetLinkURLAtPoint(fx, fy);
   if (!wsURLContent) {
-    return FALSE;
+    return false;
   }
-  return TRUE;
+  return true;
 }
-FX_BOOL CXFA_FFText::OnLButtonUp(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) {
+bool CXFA_FFText::OnLButtonUp(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) {
   if (!IsButtonDown()) {
-    return FALSE;
+    return false;
   }
-  SetButtonDown(FALSE);
+  SetButtonDown(false);
   const FX_WCHAR* wsURLContent = GetLinkURLAtPoint(fx, fy);
   if (!wsURLContent) {
-    return FALSE;
+    return false;
   }
   CXFA_FFDoc* pDoc = GetDoc();
   pDoc->GetDocEnvironment()->GotoURL(pDoc, wsURLContent);
-  return TRUE;
+  return true;
 }
 FWL_WidgetHit CXFA_FFText::OnHitTest(FX_FLOAT fx, FX_FLOAT fy) {
   CFX_RectF rtBox;

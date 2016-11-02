@@ -16,7 +16,7 @@ class CXFA_ToolTip : public CXFA_Data {
  public:
   explicit CXFA_ToolTip(CXFA_Node* pNode);
 
-  FX_BOOL GetTip(CFX_WideString& wsTip);
+  bool GetTip(CFX_WideString& wsTip);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_TOOLTIP_H_

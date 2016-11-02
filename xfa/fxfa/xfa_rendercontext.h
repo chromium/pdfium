@@ -13,10 +13,10 @@
 
 class CXFA_RenderOptions {
  public:
-  CXFA_RenderOptions() : m_bPrint(FALSE), m_bHighlight(TRUE) {}
+  CXFA_RenderOptions() : m_bPrint(false), m_bHighlight(true) {}
 
-  FX_BOOL m_bPrint;
-  FX_BOOL m_bHighlight;
+  bool m_bPrint;
+  bool m_bHighlight;
 };
 
 class CXFA_RenderContext {

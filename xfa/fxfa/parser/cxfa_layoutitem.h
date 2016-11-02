@@ -19,14 +19,14 @@ class CXFA_LayoutItem {
  public:
   virtual ~CXFA_LayoutItem();
 
-  FX_BOOL IsContainerLayoutItem() const { return !m_bIsContentLayoutItem; }
-  FX_BOOL IsContentLayoutItem() const { return m_bIsContentLayoutItem; }
+  bool IsContainerLayoutItem() const { return !m_bIsContentLayoutItem; }
+  bool IsContentLayoutItem() const { return m_bIsContentLayoutItem; }
   CXFA_ContainerLayoutItem* AsContainerLayoutItem();
   CXFA_ContentLayoutItem* AsContentLayoutItem();
 
   CXFA_ContainerLayoutItem* GetPage() const;
   CXFA_Node* GetFormNode() const;
-  void GetRect(CFX_RectF& rtLayout, FX_BOOL bRelative = FALSE) const;
+  void GetRect(CFX_RectF& rtLayout, bool bRelative = false) const;
   int32_t GetIndex() const;
   int32_t GetCount() const;
   CXFA_LayoutItem* GetParent() const;
@@ -48,9 +48,9 @@ class CXFA_LayoutItem {
   CXFA_LayoutItem* m_pFirstChild;
 
  protected:
-  CXFA_LayoutItem(CXFA_Node* pNode, FX_BOOL bIsContentLayoutItem);
+  CXFA_LayoutItem(CXFA_Node* pNode, bool bIsContentLayoutItem);
 
-  FX_BOOL m_bIsContentLayoutItem;
+  bool m_bIsContentLayoutItem;
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_LAYOUTITEM_H_

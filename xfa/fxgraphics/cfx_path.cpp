@@ -162,12 +162,12 @@ FWL_Error CFX_Path::Clear() {
   return FWL_Error::Succeeded;
 }
 
-FX_BOOL CFX_Path::IsEmpty() const {
+bool CFX_Path::IsEmpty() const {
   if (!m_generator)
-    return FALSE;
+    return false;
   if (m_generator->GetPathData()->GetPointCount() == 0)
-    return TRUE;
-  return FALSE;
+    return true;
+  return false;
 }
 
 CFX_PathData* CFX_Path::GetPathData() const {

@@ -62,7 +62,7 @@ class IFWL_CheckBox : public IFWL_Widget {
 
   // IFWL_Widget
   FWL_Type GetClassID() const override;
-  FWL_Error GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize = FALSE) override;
+  FWL_Error GetWidgetRect(CFX_RectF& rect, bool bAutoSize = false) override;
   FWL_Error Update() override;
   FWL_Error DrawWidget(CFX_Graphics* pGraphics,
                        const CFX_Matrix* pMatrix = nullptr) override;
@@ -86,11 +86,11 @@ class IFWL_CheckBox : public IFWL_Widget {
   CFX_RectF m_rtFocus;
   uint32_t m_dwTTOStyles;
   int32_t m_iTTOAlign;
-  FX_BOOL m_bBtnDown;
+  bool m_bBtnDown;
 
  private:
   void OnActivate(CFWL_Message* pMsg);
-  void OnFocusChanged(CFWL_Message* pMsg, FX_BOOL bSet);
+  void OnFocusChanged(CFWL_Message* pMsg, bool bSet);
   void OnLButtonDown(CFWL_MsgMouse* pMsg);
   void OnLButtonUp(CFWL_MsgMouse* pMsg);
   void OnMouseMove(CFWL_MsgMouse* pMsg);

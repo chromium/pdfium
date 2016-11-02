@@ -223,7 +223,7 @@ class IXFA_AppProvider {
   virtual CFX_WideString Response(const CFX_WideString& wsQuestion,
                                   const CFX_WideString& wsTitle = L"",
                                   const CFX_WideString& wsDefaultAnswer = L"",
-                                  FX_BOOL bMask = TRUE) = 0;
+                                  bool bMask = true) = 0;
 
   /**
    * Download something from somewhere.
@@ -245,14 +245,14 @@ class IXFA_AppProvider {
    * @param[in] wsHeader      any additional HTTP headers to be included in the
    * post.
    * @param[out] wsResponse   decoded response from server.
-   * @return TRUE Server permitted the post request, FALSE otherwise.
+   * @return true Server permitted the post request, false otherwise.
    */
-  virtual FX_BOOL PostRequestURL(const CFX_WideString& wsURL,
-                                 const CFX_WideString& wsData,
-                                 const CFX_WideString& wsContentType,
-                                 const CFX_WideString& wsEncode,
-                                 const CFX_WideString& wsHeader,
-                                 CFX_WideString& wsResponse) = 0;
+  virtual bool PostRequestURL(const CFX_WideString& wsURL,
+                              const CFX_WideString& wsData,
+                              const CFX_WideString& wsContentType,
+                              const CFX_WideString& wsEncode,
+                              const CFX_WideString& wsHeader,
+                              CFX_WideString& wsResponse) = 0;
 
   /**
    * PUT data to the given url.
@@ -260,11 +260,11 @@ class IXFA_AppProvider {
    * @param[in] wsData            the data being uploaded.
    * @param[in] wsEncode      the encode of data including UTF-8, UTF-16,
    * ISO8859-1, any recognized [IANA]character encoding
-   * @return TRUE Server permitted the post request, FALSE otherwise.
+   * @return true Server permitted the post request, false otherwise.
    */
-  virtual FX_BOOL PutRequestURL(const CFX_WideString& wsURL,
-                                const CFX_WideString& wsData,
-                                const CFX_WideString& wsEncode) = 0;
+  virtual bool PutRequestURL(const CFX_WideString& wsURL,
+                             const CFX_WideString& wsData,
+                             const CFX_WideString& wsEncode) = 0;
 
   virtual void LoadString(int32_t iStringID, CFX_WideString& wsString) = 0;
   virtual IFWL_AdapterTimerMgr* GetTimerMgr() = 0;
@@ -279,14 +279,14 @@ class IXFA_DocEnvironment {
                               const CFX_RectF& rt,
                               uint32_t dwFlags) = 0;
   virtual void DisplayCaret(CXFA_FFWidget* hWidget,
-                            FX_BOOL bVisible,
+                            bool bVisible,
                             const CFX_RectF* pRtAnchor) = 0;
-  virtual FX_BOOL GetPopupPos(CXFA_FFWidget* hWidget,
-                              FX_FLOAT fMinPopup,
-                              FX_FLOAT fMaxPopup,
-                              const CFX_RectF& rtAnchor,
-                              CFX_RectF& rtPopup) = 0;
-  virtual FX_BOOL PopupMenu(CXFA_FFWidget* hWidget, CFX_PointF ptPopup) = 0;
+  virtual bool GetPopupPos(CXFA_FFWidget* hWidget,
+                           FX_FLOAT fMinPopup,
+                           FX_FLOAT fMaxPopup,
+                           const CFX_RectF& rtAnchor,
+                           CFX_RectF& rtPopup) = 0;
+  virtual bool PopupMenu(CXFA_FFWidget* hWidget, CFX_PointF ptPopup) = 0;
   virtual void PageViewEvent(CXFA_FFPageView* pPageView, uint32_t dwFlags) = 0;
   virtual void WidgetPostAdd(CXFA_FFWidget* hWidget,
                              CXFA_WidgetAcc* pWidgetData) = 0;
@@ -296,16 +296,16 @@ class IXFA_DocEnvironment {
   virtual int32_t CountPages(CXFA_FFDoc* hDoc) = 0;
   virtual int32_t GetCurrentPage(CXFA_FFDoc* hDoc) = 0;
   virtual void SetCurrentPage(CXFA_FFDoc* hDoc, int32_t iCurPage) = 0;
-  virtual FX_BOOL IsCalculationsEnabled(CXFA_FFDoc* hDoc) = 0;
-  virtual void SetCalculationsEnabled(CXFA_FFDoc* hDoc, FX_BOOL bEnabled) = 0;
+  virtual bool IsCalculationsEnabled(CXFA_FFDoc* hDoc) = 0;
+  virtual void SetCalculationsEnabled(CXFA_FFDoc* hDoc, bool bEnabled) = 0;
   virtual void GetTitle(CXFA_FFDoc* hDoc, CFX_WideString& wsTitle) = 0;
   virtual void SetTitle(CXFA_FFDoc* hDoc, const CFX_WideString& wsTitle) = 0;
   virtual void ExportData(CXFA_FFDoc* hDoc,
                           const CFX_WideString& wsFilePath,
-                          FX_BOOL bXDP) = 0;
+                          bool bXDP) = 0;
   virtual void GotoURL(CXFA_FFDoc* hDoc, const CFX_WideString& bsURL) = 0;
-  virtual FX_BOOL IsValidationsEnabled(CXFA_FFDoc* hDoc) = 0;
-  virtual void SetValidationsEnabled(CXFA_FFDoc* hDoc, FX_BOOL bEnabled) = 0;
+  virtual bool IsValidationsEnabled(CXFA_FFDoc* hDoc) = 0;
+  virtual void SetValidationsEnabled(CXFA_FFDoc* hDoc, bool bEnabled) = 0;
   virtual void SetFocusWidget(CXFA_FFDoc* hDoc, CXFA_FFWidget* hWidget) = 0;
   virtual void Print(CXFA_FFDoc* hDoc,
                      int32_t nStartPage,
@@ -313,13 +313,13 @@ class IXFA_DocEnvironment {
                      uint32_t dwOptions) = 0;
   virtual FX_ARGB GetHighlightColor(CXFA_FFDoc* hDoc) = 0;
 
-  virtual FX_BOOL SubmitData(CXFA_FFDoc* hDoc, CXFA_Submit submit) = 0;
-  virtual FX_BOOL GetGlobalProperty(CXFA_FFDoc* hDoc,
-                                    const CFX_ByteStringC& szPropName,
-                                    CFXJSE_Value* pValue) = 0;
-  virtual FX_BOOL SetGlobalProperty(CXFA_FFDoc* hDoc,
-                                    const CFX_ByteStringC& szPropName,
-                                    CFXJSE_Value* pValue) = 0;
+  virtual bool SubmitData(CXFA_FFDoc* hDoc, CXFA_Submit submit) = 0;
+  virtual bool GetGlobalProperty(CXFA_FFDoc* hDoc,
+                                 const CFX_ByteStringC& szPropName,
+                                 CFXJSE_Value* pValue) = 0;
+  virtual bool SetGlobalProperty(CXFA_FFDoc* hDoc,
+                                 const CFX_ByteStringC& szPropName,
+                                 CFXJSE_Value* pValue) = 0;
   virtual IFX_SeekableReadStream* OpenLinkedFile(
       CXFA_FFDoc* hDoc,
       const CFX_WideString& wsLink) = 0;
@@ -335,7 +335,7 @@ class IXFA_WidgetIterator {
   virtual CXFA_FFWidget* MoveToNext() = 0;
   virtual CXFA_FFWidget* MoveToPrevious() = 0;
   virtual CXFA_FFWidget* GetCurrentWidget() = 0;
-  virtual FX_BOOL SetCurrentWidget(CXFA_FFWidget* hWidget) = 0;
+  virtual bool SetCurrentWidget(CXFA_FFWidget* hWidget) = 0;
 };
 
 #endif  // XFA_FXFA_FXFA_H_

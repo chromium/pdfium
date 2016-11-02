@@ -51,15 +51,15 @@ IFWL_Form::IFWL_Form(const IFWL_App* app,
       m_iCaptureBtn(-1),
       m_iSysBox(0),
       m_eResizeType(FORM_RESIZETYPE_None),
-      m_bLButtonDown(FALSE),
+      m_bLButtonDown(false),
       m_bMaximized(false),
-      m_bSetMaximize(FALSE),
+      m_bSetMaximize(false),
       m_bCustomizeLayout(false),
       m_eFormSize(FWL_FORMSIZE_Manual),
-      m_bDoModalFlag(FALSE),
+      m_bDoModalFlag(false),
       m_pBigIcon(nullptr),
       m_pSmallIcon(nullptr),
-      m_bMouseIn(FALSE) {
+      m_bMouseIn(false) {
   m_rtRelative.Reset();
   m_rtCaption.Reset();
   m_rtRestore.Reset();
@@ -80,18 +80,18 @@ FWL_Type IFWL_Form::GetClassID() const {
   return FWL_Type::Form;
 }
 
-FX_BOOL IFWL_Form::IsInstance(const CFX_WideStringC& wsClass) const {
+bool IFWL_Form::IsInstance(const CFX_WideStringC& wsClass) const {
   if (wsClass == CFX_WideStringC(FWL_CLASS_Form))
-    return TRUE;
+    return true;
   return IFWL_Widget::IsInstance(wsClass);
 }
 
-FWL_Error IFWL_Form::GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize) {
+FWL_Error IFWL_Form::GetWidgetRect(CFX_RectF& rect, bool bAutoSize) {
   if (bAutoSize) {
     rect.Reset();
     FX_FLOAT fCapHeight = GetCaptionHeight();
-    FX_FLOAT fCXBorder = GetBorderSize(TRUE);
-    FX_FLOAT fCYBorder = GetBorderSize(FALSE);
+    FX_FLOAT fCXBorder = GetBorderSize(true);
+    FX_FLOAT fCYBorder = GetBorderSize(false);
     FX_FLOAT fEdge = GetEdgeWidth();
     rect.height += fCapHeight + fCYBorder + fEdge + fEdge;
     rect.width += fCXBorder + fCXBorder + fEdge + fEdge;
@@ -213,7 +213,7 @@ FWL_Error IFWL_Form::DrawWidget(CFX_Graphics* pGraphics,
   if (!m_pProperties->m_pThemeProvider)
     return FWL_Error::Indefinite;
   IFWL_ThemeProvider* pTheme = m_pProperties->m_pThemeProvider;
-  FX_BOOL bInactive = !IsActive();
+  bool bInactive = !IsActive();
   int32_t iState = bInactive ? CFWL_PartState_Inactive : CFWL_PartState_Normal;
   if ((m_pProperties->m_dwStyleExes & FWL_STYLEEXT_FRM_NoDrawClient) == 0) {
     DrawBackground(pGraphics, pTheme);
@@ -297,7 +297,7 @@ FWL_Error IFWL_Form::DrawWidget(CFX_Graphics* pGraphics,
       param.m_rtPart = m_pMinBox->m_rtBtn;
       pTheme->DrawBackground(&param);
     }
-    m_bMouseIn = FALSE;
+    m_bMouseIn = false;
   }
 #else
   {
@@ -345,8 +345,8 @@ IFWL_Widget* IFWL_Form::DoModal() {
 
   m_pNoteLoop.reset(new CFWL_NoteLoop(this));
   pDriver->PushNoteLoop(m_pNoteLoop.get());
-  m_bDoModalFlag = TRUE;
-  SetStates(FWL_WGTSTATE_Invisible, FALSE);
+  m_bDoModalFlag = true;
+  SetStates(FWL_WGTSTATE_Invisible, false);
   pDriver->Run();
 #if (_FX_OS_ == _FX_MACOSX_)
 #else
@@ -363,7 +363,7 @@ IFWL_Widget* IFWL_Form::DoModal(uint32_t& dwCommandID) {
 FWL_Error IFWL_Form::EndDoModal() {
   if (!m_pNoteLoop)
     return FWL_Error::Indefinite;
-  m_bDoModalFlag = FALSE;
+  m_bDoModalFlag = false;
 #if (_FX_OS_ == _FX_MACOSX_)
   m_pNoteLoop->EndModalLoop();
   const IFWL_App* pApp = GetOwnerApp();
@@ -376,10 +376,10 @@ FWL_Error IFWL_Form::EndDoModal() {
     return FWL_Error::Indefinite;
 
   pDriver->PopNoteLoop();
-  SetStates(FWL_WGTSTATE_Invisible, TRUE);
+  SetStates(FWL_WGTSTATE_Invisible, true);
   return FWL_Error::Succeeded;
 #else
-  SetStates(FWL_WGTSTATE_Invisible, TRUE);
+  SetStates(FWL_WGTSTATE_Invisible, true);
   return m_pNoteLoop->EndModalLoop();
 #endif
 }
@@ -561,7 +561,7 @@ void IFWL_Form::DrawIconImage(CFX_Graphics* pGs,
   param.m_pWidget = this;
   param.m_iPart = CFWL_Part::Icon;
   param.m_pGraphics = pGs;
-  param.m_pImage = pData->GetIcon(this, FALSE);
+  param.m_pImage = pData->GetIcon(this, false);
   param.m_rtPart = m_rtIcon;
   if (pMatrix) {
     param.m_matrix.Concat(*pMatrix);
@@ -572,7 +572,7 @@ void IFWL_Form::GetEdgeRect(CFX_RectF& rtEdge) {
   rtEdge = m_rtRelative;
   if (m_pProperties->m_dwStyles & FWL_WGTSTYLE_Border) {
     FX_FLOAT fCX = GetBorderSize();
-    FX_FLOAT fCY = GetBorderSize(FALSE);
+    FX_FLOAT fCY = GetBorderSize(false);
     rtEdge.Deflate(fCX, m_rtCaption.Height(), fCX, fCY);
   }
 }
@@ -581,7 +581,7 @@ void IFWL_Form::SetWorkAreaRect() {
   CFWL_WidgetMgr* pWidgetMgr = GetOwnerApp()->GetWidgetMgr();
   if (!pWidgetMgr)
     return;
-  m_bSetMaximize = TRUE;
+  m_bSetMaximize = true;
   Repaint(&m_rtRelative);
 }
 void IFWL_Form::SetCursor(FX_FLOAT fx, FX_FLOAT fy) {}
@@ -651,7 +651,7 @@ void IFWL_Form::ReSetSysBtn() {
   IFWL_FormDP* pData =
       static_cast<IFWL_FormDP*>(m_pProperties->m_pDataProvider);
   if (m_pProperties->m_dwStyles & FWL_WGTSTYLE_Icon &&
-      pData->GetIcon(this, FALSE)) {
+      pData->GetIcon(this, false)) {
     if (!m_bCustomizeLayout) {
       m_rtIcon.Set(5, (m_rtCaption.height - m_fSmallIconSz) / 2, m_fSmallIconSz,
                    m_fSmallIconSz);
@@ -682,7 +682,7 @@ void IFWL_Form::UnRegisterForm() {
 
   pDriver->UnRegisterForm(this);
 }
-FX_BOOL IFWL_Form::IsDoModal() {
+bool IFWL_Form::IsDoModal() {
   return m_bDoModalFlag;
 }
 void IFWL_Form::SetThemeData() {
@@ -691,10 +691,10 @@ void IFWL_Form::SetThemeData() {
   m_fBigIconSz =
       *static_cast<FX_FLOAT*>(GetThemeCapacity(CFWL_WidgetCapacity::BigIcon));
 }
-FX_BOOL IFWL_Form::HasIcon() {
+bool IFWL_Form::HasIcon() {
   IFWL_FormDP* pData =
       static_cast<IFWL_FormDP*>(m_pProperties->m_pDataProvider);
-  return !!pData->GetIcon(this, FALSE);
+  return !!pData->GetIcon(this, false);
 }
 void IFWL_Form::UpdateIcon() {
   CFWL_WidgetMgr* pWidgetMgr = GetOwnerApp()->GetWidgetMgr();
@@ -702,8 +702,8 @@ void IFWL_Form::UpdateIcon() {
     return;
   IFWL_FormDP* pData =
       static_cast<IFWL_FormDP*>(m_pProperties->m_pDataProvider);
-  CFX_DIBitmap* pBigIcon = pData->GetIcon(this, TRUE);
-  CFX_DIBitmap* pSmallIcon = pData->GetIcon(this, FALSE);
+  CFX_DIBitmap* pBigIcon = pData->GetIcon(this, true);
+  CFX_DIBitmap* pSmallIcon = pData->GetIcon(this, false);
   if (pBigIcon)
     m_pBigIcon = pBigIcon;
   if (pSmallIcon)
@@ -725,7 +725,7 @@ void IFWL_Form::DoWidthLimit(FX_FLOAT& fLeft,
                              FX_FLOAT fSpace,
                              FX_FLOAT fLimitMin,
                              FX_FLOAT fLimitMax,
-                             FX_BOOL bLeft) {
+                             bool bLeft) {
   FX_FLOAT fx = fCurX;
   FX_FLOAT fy = 0;
   TransformTo(nullptr, fx, fy);
@@ -750,7 +750,7 @@ void IFWL_Form::DoHeightLimit(FX_FLOAT& fTop,
                               FX_FLOAT fSpace,
                               FX_FLOAT fLimitMin,
                               FX_FLOAT fLimitMax,
-                              FX_BOOL bTop) {
+                              bool bTop) {
   FX_FLOAT fx = 0;
   FX_FLOAT fy = fCurY;
   TransformTo(nullptr, fx, fy);
@@ -861,7 +861,7 @@ void IFWL_Form::OnProcessMessage(CFWL_Message* pMessage) {
       if (!m_bSetMaximize)
         break;
 
-      m_bSetMaximize = FALSE;
+      m_bSetMaximize = false;
       CFWL_MsgSize* pMsg = static_cast<CFWL_MsgSize*>(pMessage);
       m_pProperties->m_rtWidget.left = 0;
       m_pProperties->m_rtWidget.top = 0;
@@ -888,8 +888,8 @@ void IFWL_Form::OnDrawWidget(CFX_Graphics* pGraphics,
 }
 
 void IFWL_Form::OnLButtonDown(CFWL_MsgMouse* pMsg) {
-  SetGrab(TRUE);
-  m_bLButtonDown = TRUE;
+  SetGrab(true);
+  m_bLButtonDown = true;
   m_eResizeType = FORM_RESIZETYPE_None;
   CFWL_SysBtn* pPressBtn = GetSysBtnAtPoint(pMsg->m_fx, pMsg->m_fy);
   m_iCaptureBtn = GetSysBtnIndex(pPressBtn);
@@ -914,8 +914,8 @@ void IFWL_Form::OnLButtonDown(CFWL_MsgMouse* pMsg) {
 }
 
 void IFWL_Form::OnLButtonUp(CFWL_MsgMouse* pMsg) {
-  SetGrab(FALSE);
-  m_bLButtonDown = FALSE;
+  SetGrab(false);
+  m_bLButtonDown = false;
   CFWL_SysBtn* pPointBtn = GetSysBtnAtPoint(pMsg->m_fx, pMsg->m_fy);
   CFWL_SysBtn* pPressedBtn = GetSysBtnByIndex(m_iCaptureBtn);
   if (!pPressedBtn || pPointBtn != pPressedBtn)
@@ -974,7 +974,7 @@ void IFWL_Form::OnMouseMove(CFWL_MsgMouse* pMsg) {
     }
     if (!rtInvalidate.IsEmpty() &&
         rtInvalidate.Contains(pMsg->m_fx, pMsg->m_fy)) {
-      m_bMouseIn = TRUE;
+      m_bMouseIn = true;
     }
   }
 #else
@@ -1057,7 +1057,7 @@ void CFWL_SysBtn::SetHover() {
   m_dwState |= FWL_SYSBUTTONSTATE_Hover;
 }
 
-void CFWL_SysBtn::SetDisabled(FX_BOOL bDisabled) {
+void CFWL_SysBtn::SetDisabled(bool bDisabled) {
   bDisabled ? m_dwState |= FWL_SYSBUTTONSTATE_Disabled
             : m_dwState &= ~FWL_SYSBUTTONSTATE_Disabled;
 }

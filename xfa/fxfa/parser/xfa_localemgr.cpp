@@ -1048,7 +1048,7 @@ static std::unique_ptr<IFX_Locale> XFA_GetLocaleFromBuffer(const uint8_t* pBuf,
   std::unique_ptr<CXML_Element> pLocale;
   uint8_t* pOut = nullptr;
   uint32_t dwSize;
-  pCodecMgr->GetFlateModule()->FlateOrLZWDecode(FALSE, pBuf, nBufLen, TRUE, 0,
+  pCodecMgr->GetFlateModule()->FlateOrLZWDecode(false, pBuf, nBufLen, true, 0,
                                                 0, 0, 0, 0, pOut, dwSize);
   if (pOut) {
     pLocale.reset(CXML_Element::Parse(pOut, dwSize));
@@ -1237,7 +1237,7 @@ CFX_WideStringC CXFA_LocaleMgr::GetConfigLocaleName(CXFA_Node* pConfig) {
           pCommon ? pCommon->GetFirstChildByClass(XFA_Element::Locale)
                   : nullptr;
       if (pLocale) {
-        pLocale->TryCData(XFA_ATTRIBUTE_Value, m_wsConfigLocale, FALSE);
+        pLocale->TryCData(XFA_ATTRIBUTE_Value, m_wsConfigLocale, false);
       }
     }
     m_dwLocaleFlags |= 0x01;

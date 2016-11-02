@@ -196,7 +196,7 @@ class CFWL_WidgetTP {
                  const CFX_RectF* pRect,
                  FWLTHEME_DIRECTION eDict,
                  FX_ARGB argbFill,
-                 FX_BOOL bPressed,
+                 bool bPressed,
                  CFX_Matrix* pMatrix = nullptr);
   void DrawArrow(CFX_Graphics* pGraphics,
                  const CFX_RectF* pRect,
@@ -230,12 +230,12 @@ class CFWL_FontData {
   CFWL_FontData();
   virtual ~CFWL_FontData();
 
-  FX_BOOL Equal(const CFX_WideStringC& wsFontFamily,
+  bool Equal(const CFX_WideStringC& wsFontFamily,
+             uint32_t dwFontStyles,
+             uint16_t wCodePage);
+  bool LoadFont(const CFX_WideStringC& wsFontFamily,
                 uint32_t dwFontStyles,
                 uint16_t wCodePage);
-  FX_BOOL LoadFont(const CFX_WideStringC& wsFontFamily,
-                   uint32_t dwFontStyles,
-                   uint16_t wCodePage);
   CFGAS_GEFont* GetFont() const { return m_pFont.get(); }
 
  protected:

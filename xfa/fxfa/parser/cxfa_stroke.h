@@ -35,9 +35,9 @@ class CXFA_Stroke : public CXFA_Data {
   FX_ARGB GetColor() const;
   void SetColor(FX_ARGB argb);
   int32_t GetJoinType() const;
-  FX_BOOL IsInverted() const;
+  bool IsInverted() const;
   FX_FLOAT GetRadius() const;
-  FX_BOOL SameStyles(CXFA_Stroke stroke, uint32_t dwFlags = 0) const;
+  bool SameStyles(CXFA_Stroke stroke, uint32_t dwFlags = 0) const;
 };
 
 typedef CFX_ArrayTemplate<CXFA_Stroke> CXFA_StrokeArray;

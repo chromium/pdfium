@@ -132,12 +132,12 @@ FWL_Error CFWL_ComboBox::EditDoClipboard(int32_t iCmd) {
                      : FWL_Error::Indefinite;
 }
 
-FX_BOOL CFWL_ComboBox::EditRedo(const IFDE_TxtEdtDoRecord* pRecord) {
-  return GetWidget() ? ToComboBox(GetWidget())->EditRedo(pRecord) : FALSE;
+bool CFWL_ComboBox::EditRedo(const IFDE_TxtEdtDoRecord* pRecord) {
+  return GetWidget() ? ToComboBox(GetWidget())->EditRedo(pRecord) : false;
 }
 
-FX_BOOL CFWL_ComboBox::EditUndo(const IFDE_TxtEdtDoRecord* pRecord) {
-  return GetWidget() ? ToComboBox(GetWidget())->EditUndo(pRecord) : FALSE;
+bool CFWL_ComboBox::EditUndo(const IFDE_TxtEdtDoRecord* pRecord) {
+  return GetWidget() ? ToComboBox(GetWidget())->EditUndo(pRecord) : false;
 }
 
 FWL_Error CFWL_ComboBox::SetMaxListHeight(FX_FLOAT fMaxHeight) {
@@ -164,64 +164,64 @@ FWL_Error CFWL_ComboBox::SetListTheme(IFWL_ThemeProvider* pTheme) {
   return ToComboBox(GetWidget())->GetListBoxt()->SetThemeProvider(pTheme);
 }
 
-FX_BOOL CFWL_ComboBox::AfterFocusShowDropList() {
+bool CFWL_ComboBox::AfterFocusShowDropList() {
   return ToComboBox(GetWidget())->AfterFocusShowDropList();
 }
 
-FWL_Error CFWL_ComboBox::OpenDropDownList(FX_BOOL bActivate) {
+FWL_Error CFWL_ComboBox::OpenDropDownList(bool bActivate) {
   return ToComboBox(GetWidget())->OpenDropDownList(bActivate);
 }
 
-FX_BOOL CFWL_ComboBox::EditCanUndo() {
-  return GetWidget() ? ToComboBox(GetWidget())->EditCanUndo() : FALSE;
+bool CFWL_ComboBox::EditCanUndo() {
+  return GetWidget() ? ToComboBox(GetWidget())->EditCanUndo() : false;
 }
 
-FX_BOOL CFWL_ComboBox::EditCanRedo() {
-  return GetWidget() ? ToComboBox(GetWidget())->EditCanRedo() : FALSE;
+bool CFWL_ComboBox::EditCanRedo() {
+  return GetWidget() ? ToComboBox(GetWidget())->EditCanRedo() : false;
 }
 
-FX_BOOL CFWL_ComboBox::EditUndo() {
-  return GetWidget() ? ToComboBox(GetWidget())->EditUndo() : FALSE;
+bool CFWL_ComboBox::EditUndo() {
+  return GetWidget() ? ToComboBox(GetWidget())->EditUndo() : false;
 }
 
-FX_BOOL CFWL_ComboBox::EditRedo() {
-  return GetWidget() ? ToComboBox(GetWidget())->EditRedo() : FALSE;
+bool CFWL_ComboBox::EditRedo() {
+  return GetWidget() ? ToComboBox(GetWidget())->EditRedo() : false;
 }
 
-FX_BOOL CFWL_ComboBox::EditCanCopy() {
-  return GetWidget() ? ToComboBox(GetWidget())->EditCanCopy() : FALSE;
+bool CFWL_ComboBox::EditCanCopy() {
+  return GetWidget() ? ToComboBox(GetWidget())->EditCanCopy() : false;
 }
 
-FX_BOOL CFWL_ComboBox::EditCanCut() {
-  return GetWidget() ? ToComboBox(GetWidget())->EditCanCut() : FALSE;
+bool CFWL_ComboBox::EditCanCut() {
+  return GetWidget() ? ToComboBox(GetWidget())->EditCanCut() : false;
 }
 
-FX_BOOL CFWL_ComboBox::EditCanSelectAll() {
-  return GetWidget() ? ToComboBox(GetWidget())->EditCanSelectAll() : FALSE;
+bool CFWL_ComboBox::EditCanSelectAll() {
+  return GetWidget() ? ToComboBox(GetWidget())->EditCanSelectAll() : false;
 }
 
-FX_BOOL CFWL_ComboBox::EditCopy(CFX_WideString& wsCopy) {
-  return GetWidget() ? ToComboBox(GetWidget())->EditCopy(wsCopy) : FALSE;
+bool CFWL_ComboBox::EditCopy(CFX_WideString& wsCopy) {
+  return GetWidget() ? ToComboBox(GetWidget())->EditCopy(wsCopy) : false;
 }
 
-FX_BOOL CFWL_ComboBox::EditCut(CFX_WideString& wsCut) {
-  return GetWidget() ? ToComboBox(GetWidget())->EditCut(wsCut) : FALSE;
+bool CFWL_ComboBox::EditCut(CFX_WideString& wsCut) {
+  return GetWidget() ? ToComboBox(GetWidget())->EditCut(wsCut) : false;
 }
 
-FX_BOOL CFWL_ComboBox::EditPaste(const CFX_WideString& wsPaste) {
-  return GetWidget() ? ToComboBox(GetWidget())->EditPaste(wsPaste) : FALSE;
+bool CFWL_ComboBox::EditPaste(const CFX_WideString& wsPaste) {
+  return GetWidget() ? ToComboBox(GetWidget())->EditPaste(wsPaste) : false;
 }
 
-FX_BOOL CFWL_ComboBox::EditSelectAll() {
-  return GetWidget() ? ToComboBox(GetWidget())->EditSelectAll() : FALSE;
+bool CFWL_ComboBox::EditSelectAll() {
+  return GetWidget() ? ToComboBox(GetWidget())->EditSelectAll() : false;
 }
 
-FX_BOOL CFWL_ComboBox::EditDelete() {
-  return GetWidget() ? ToComboBox(GetWidget())->EditDelete() : FALSE;
+bool CFWL_ComboBox::EditDelete() {
+  return GetWidget() ? ToComboBox(GetWidget())->EditDelete() : false;
 }
 
-FX_BOOL CFWL_ComboBox::EditDeSelect() {
-  return GetWidget() ? ToComboBox(GetWidget())->EditDeSelect() : FALSE;
+bool CFWL_ComboBox::EditDeSelect() {
+  return GetWidget() ? ToComboBox(GetWidget())->EditDeSelect() : false;
 }
 
 FWL_Error CFWL_ComboBox::GetBBox(CFX_RectF& rect) {
@@ -273,14 +273,14 @@ int32_t CFWL_ComboBox::CFWL_ComboBoxDP::GetItemIndex(IFWL_Widget* pWidget,
   return it != m_ItemArray.end() ? it - m_ItemArray.begin() : -1;
 }
 
-FX_BOOL CFWL_ComboBox::CFWL_ComboBoxDP::SetItemIndex(IFWL_Widget* pWidget,
-                                                     IFWL_ListItem* pItem,
-                                                     int32_t nIndex) {
+bool CFWL_ComboBox::CFWL_ComboBoxDP::SetItemIndex(IFWL_Widget* pWidget,
+                                                  IFWL_ListItem* pItem,
+                                                  int32_t nIndex) {
   if (nIndex < 0 || static_cast<size_t>(nIndex) >= m_ItemArray.size())
-    return FALSE;
+    return false;
 
   m_ItemArray[nIndex].reset(static_cast<CFWL_ComboBoxItem*>(pItem));
-  return TRUE;
+  return true;
 }
 
 uint32_t CFWL_ComboBox::CFWL_ComboBoxDP::GetItemStyles(IFWL_Widget* pWidget,

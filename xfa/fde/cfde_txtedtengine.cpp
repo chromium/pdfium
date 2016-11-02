@@ -36,7 +36,7 @@ FDE_TXTEDTPARAMS::FDE_TXTEDTPARAMS()
       dwFontColor(0xff000000),
       fLineSpace(10.0f),
       fTabWidth(36),
-      bTabEquidistant(FALSE),
+      bTabEquidistant(false),
       wDefChar(0xFEFF),
       wLineBreakChar('\n'),
       nCharRotation(0),
@@ -57,14 +57,14 @@ CFDE_TxtEdtEngine::CFDE_TxtEdtEngine()
       m_nLayoutPos(0),
       m_fCaretPosReserve(0.0),
       m_nCaret(0),
-      m_bBefore(TRUE),
+      m_bBefore(true),
       m_nCaretPage(0),
       m_dwFindFlags(0),
-      m_bLock(FALSE),
+      m_bLock(false),
       m_nLimit(0),
       m_wcAliasChar(L'*'),
       m_nFirstLineEnd(FDE_TXTEDIT_LINEEND_Auto),
-      m_bAutoLineEnd(TRUE),
+      m_bAutoLineEnd(true),
       m_wLineEnd(kUnicodeParagraphSeparator) {
   FXSYS_memset(&m_rtCaret, 0, sizeof(CFX_RectF));
   m_bAutoLineEnd = (m_Param.nLineEnd == FDE_TXTEDIT_LINEEND_Auto);
@@ -110,18 +110,18 @@ void CFDE_TxtEdtEngine::SetTextByStream(IFX_Stream* pStream) {
   int32_t nIndex = 0;
   if (pStream && pStream->GetLength()) {
     int32_t nStreamLength = pStream->GetLength();
-    FX_BOOL bValid = TRUE;
+    bool bValid = true;
     if (m_nLimit > 0 && nStreamLength > m_nLimit) {
-      bValid = FALSE;
+      bValid = false;
     }
-    FX_BOOL bPreIsCR = FALSE;
+    bool bPreIsCR = false;
     if (bValid) {
       uint8_t bom[4];
       int32_t nPos = pStream->GetBOM(bom);
       pStream->Seek(FX_STREAMSEEK_Begin, nPos);
       int32_t nPlateSize = std::min(nStreamLength, m_pTxtBuf->GetChunkSize());
       FX_WCHAR* lpwstr = FX_Alloc(FX_WCHAR, nPlateSize);
-      FX_BOOL bEos = false;
+      bool bEos = false;
       while (!bEos) {
         int32_t nRead = pStream->ReadString(lpwstr, nPlateSize, bEos);
         bPreIsCR = ReplaceParagEnd(lpwstr, nRead, bPreIsCR);
@@ -142,7 +142,7 @@ void CFDE_TxtEdtEngine::SetText(const CFX_WideString& wsText) {
     CFX_WideString wsTemp;
     FX_WCHAR* lpBuffer = wsTemp.GetBuffer(nLength);
     FXSYS_memcpy(lpBuffer, wsText.c_str(), nLength * sizeof(FX_WCHAR));
-    ReplaceParagEnd(lpBuffer, nLength, FALSE);
+    ReplaceParagEnd(lpBuffer, nLength, false);
     wsTemp.ReleaseBuffer(nLength);
     if (m_nLimit > 0 && nLength > m_nLimit) {
       wsTemp.Delete(m_nLimit, nLength - m_nLimit);
@@ -185,7 +185,7 @@ int32_t CFDE_TxtEdtEngine::GetCaretPos() const {
   return m_nCaret + (m_bBefore ? 0 : 1);
 }
 
-int32_t CFDE_TxtEdtEngine::SetCaretPos(int32_t nIndex, FX_BOOL bBefore) {
+int32_t CFDE_TxtEdtEngine::SetCaretPos(int32_t nIndex, bool bBefore) {
   if (IsLocked()) {
     return 0;
   }
@@ -199,7 +199,7 @@ int32_t CFDE_TxtEdtEngine::SetCaretPos(int32_t nIndex, FX_BOOL bBefore) {
   GetCaretRect(m_rtCaret, m_nCaretPage, m_nCaret, m_bBefore);
   if (!m_bBefore) {
     m_nCaret++;
-    m_bBefore = TRUE;
+    m_bBefore = true;
   }
   m_fCaretPosReserve = (m_Param.dwLayoutStyles & FDE_TEXTEDITLAYOUT_DocVertical)
                            ? m_rtCaret.top
@@ -210,18 +210,18 @@ int32_t CFDE_TxtEdtEngine::SetCaretPos(int32_t nIndex, FX_BOOL bBefore) {
 }
 
 int32_t CFDE_TxtEdtEngine::MoveCaretPos(FDE_TXTEDTMOVECARET eMoveCaret,
-                                        FX_BOOL bShift,
-                                        FX_BOOL bCtrl) {
+                                        bool bShift,
+                                        bool bCtrl) {
   if (IsLocked()) {
     return 0;
   }
   if (m_PagePtrArray.GetSize() <= m_nCaretPage) {
     return 0;
   }
-  FX_BOOL bSelChange = FALSE;
+  bool bSelChange = false;
   if (IsSelect()) {
     ClearSelection();
-    bSelChange = TRUE;
+    bSelChange = true;
   }
   if (bShift) {
     if (m_nAnchorPos == -1) {
@@ -230,7 +230,7 @@ int32_t CFDE_TxtEdtEngine::MoveCaretPos(FDE_TXTEDTMOVECARET eMoveCaret,
   } else {
     m_nAnchorPos = -1;
   }
-  FX_BOOL bVertical = m_Param.dwLayoutStyles & FDE_TEXTEDITLAYOUT_DocVertical;
+  bool bVertical = m_Param.dwLayoutStyles & FDE_TEXTEDITLAYOUT_DocVertical;
   switch (eMoveCaret) {
     case MC_Left: {
       if (bVertical) {
@@ -239,7 +239,7 @@ int32_t CFDE_TxtEdtEngine::MoveCaretPos(FDE_TXTEDTMOVECARET eMoveCaret,
           UpdateCaretIndex(ptCaret);
         }
       } else {
-        FX_BOOL bBefore = TRUE;
+        bool bBefore = true;
         int32_t nIndex = MoveBackward(bBefore);
         if (nIndex >= 0) {
           UpdateCaretRect(nIndex, bBefore);
@@ -253,7 +253,7 @@ int32_t CFDE_TxtEdtEngine::MoveCaretPos(FDE_TXTEDTMOVECARET eMoveCaret,
           UpdateCaretIndex(ptCaret);
         }
       } else {
-        FX_BOOL bBefore = TRUE;
+        bool bBefore = true;
         int32_t nIndex = MoveForward(bBefore);
         if (nIndex >= 0) {
           UpdateCaretRect(nIndex, bBefore);
@@ -262,7 +262,7 @@ int32_t CFDE_TxtEdtEngine::MoveCaretPos(FDE_TXTEDTMOVECARET eMoveCaret,
     } break;
     case MC_Up: {
       if (bVertical) {
-        FX_BOOL bBefore = TRUE;
+        bool bBefore = true;
         int32_t nIndex = MoveBackward(bBefore);
         if (nIndex >= 0) {
           UpdateCaretRect(nIndex, bBefore);
@@ -276,7 +276,7 @@ int32_t CFDE_TxtEdtEngine::MoveCaretPos(FDE_TXTEDTMOVECARET eMoveCaret,
     } break;
     case MC_Down: {
       if (bVertical) {
-        FX_BOOL bBefore = TRUE;
+        bool bBefore = true;
         int32_t nIndex = MoveForward(bBefore);
         if (nIndex >= 0) {
           UpdateCaretRect(nIndex, bBefore);
@@ -329,14 +329,14 @@ int32_t CFDE_TxtEdtEngine::MoveCaretPos(FDE_TXTEDTMOVECARET eMoveCaret,
 }
 
 void CFDE_TxtEdtEngine::Lock() {
-  m_bLock = TRUE;
+  m_bLock = true;
 }
 
 void CFDE_TxtEdtEngine::Unlock() {
-  m_bLock = FALSE;
+  m_bLock = false;
 }
 
-FX_BOOL CFDE_TxtEdtEngine::IsLocked() const {
+bool CFDE_TxtEdtEngine::IsLocked() const {
   return m_bLock;
 }
 
@@ -349,9 +349,9 @@ int32_t CFDE_TxtEdtEngine::Insert(int32_t nStart,
   CFX_WideString wsTemp;
   FX_WCHAR* lpBuffer = wsTemp.GetBuffer(nLength);
   FXSYS_memcpy(lpBuffer, lpText, nLength * sizeof(FX_WCHAR));
-  ReplaceParagEnd(lpBuffer, nLength, FALSE);
+  ReplaceParagEnd(lpBuffer, nLength, false);
   wsTemp.ReleaseBuffer(nLength);
-  FX_BOOL bPart = FALSE;
+  bool bPart = false;
   if (m_nLimit > 0) {
     int32_t nTotalLength = GetTextBufLength();
     int32_t nCount = m_SelRangePtrArr.GetSize();
@@ -365,7 +365,7 @@ int32_t CFDE_TxtEdtEngine::Insert(int32_t nStart,
     }
     if (nExpectLength > m_nLimit) {
       nLength -= (nExpectLength - m_nLimit);
-      bPart = TRUE;
+      bPart = true;
     }
   }
   if ((m_Param.dwMode & FDE_TEXTEDITMODE_LimitArea_Vert) ||
@@ -400,7 +400,7 @@ int32_t CFDE_TxtEdtEngine::Insert(int32_t nStart,
       return FDE_TXTEDT_MODIFY_RET_F_Full;
     }
     if (nLength < nTemp) {
-      bPart = TRUE;
+      bPart = true;
     }
   }
   if (m_Param.dwMode & FDE_TEXTEDITMODE_Validate) {
@@ -425,17 +425,17 @@ int32_t CFDE_TxtEdtEngine::Insert(int32_t nStart,
   nStart = m_nCaret;
   nStart += nLength;
   FX_WCHAR wChar = m_pTxtBuf->GetCharByIndex(nStart - 1);
-  FX_BOOL bBefore = TRUE;
+  bool bBefore = true;
   if (wChar != L'\n' && wChar != L'\r') {
     nStart--;
-    bBefore = FALSE;
+    bBefore = false;
   }
   SetCaretPos(nStart, bBefore);
   m_Param.pEventSink->On_TextChanged(this, m_ChangeInfo);
   return bPart ? FDE_TXTEDT_MODIFY_RET_S_Part : FDE_TXTEDT_MODIFY_RET_S_Normal;
 }
 
-int32_t CFDE_TxtEdtEngine::Delete(int32_t nStart, FX_BOOL bBackspace) {
+int32_t CFDE_TxtEdtEngine::Delete(int32_t nStart, bool bBackspace) {
   if (IsLocked()) {
     return FDE_TXTEDT_MODIFY_RET_F_Locked;
   }
@@ -507,7 +507,7 @@ int32_t CFDE_TxtEdtEngine::DeleteRange(int32_t nStart, int32_t nCount) {
   }
   DeleteRange_DoRecord(nStart, nCount);
   m_Param.pEventSink->On_TextChanged(this, m_ChangeInfo);
-  SetCaretPos(nStart, TRUE);
+  SetCaretPos(nStart, true);
   return FDE_TXTEDT_MODIFY_RET_S_Normal;
 }
 
@@ -543,10 +543,10 @@ int32_t CFDE_TxtEdtEngine::Replace(int32_t nStart,
   m_ChangeInfo.wsInsert = CFX_WideString(wsReplace.c_str(), nTextLength);
   nStart += nTextLength;
   FX_WCHAR wChar = m_pTxtBuf->GetCharByIndex(nStart - 1);
-  FX_BOOL bBefore = TRUE;
+  bool bBefore = true;
   if (wChar != L'\n' && wChar != L'\r') {
     nStart--;
-    bBefore = FALSE;
+    bBefore = false;
   }
   SetCaretPos(nStart, bBefore);
   m_Param.pEventSink->On_PageUnload(this, m_nCaretPage, 0);
@@ -601,7 +601,7 @@ void CFDE_TxtEdtEngine::AddSelRange(int32_t nStart, int32_t nCount) {
     return;
   }
   int32_t nEnd = nStart + nCount - 1;
-  FX_BOOL bBegin = FALSE;
+  bool bBegin = false;
   int32_t nRangeBgn = 0;
   int32_t nRangeCnt = 0;
   for (int32_t i = 0; i < nSize; i++) {
@@ -623,7 +623,7 @@ void CFDE_TxtEdtEngine::AddSelRange(int32_t nStart, int32_t nCount) {
           break;
         }
         nRangeCnt = 1;
-        bBegin = TRUE;
+        bBegin = true;
       }
     }
   }
@@ -664,19 +664,19 @@ void CFDE_TxtEdtEngine::ClearSelection() {
     m_Param.pEventSink->On_SelChanged(this);
 }
 
-FX_BOOL CFDE_TxtEdtEngine::Redo(const IFDE_TxtEdtDoRecord* pDoRecord) {
+bool CFDE_TxtEdtEngine::Redo(const IFDE_TxtEdtDoRecord* pDoRecord) {
   if (IsLocked())
-    return FALSE;
+    return false;
   if (m_Param.dwMode & FDE_TEXTEDITMODE_NoRedoUndo)
-    return FALSE;
+    return false;
   return pDoRecord->Redo();
 }
 
-FX_BOOL CFDE_TxtEdtEngine::Undo(const IFDE_TxtEdtDoRecord* pDoRecord) {
+bool CFDE_TxtEdtEngine::Undo(const IFDE_TxtEdtDoRecord* pDoRecord) {
   if (IsLocked())
-    return FALSE;
+    return false;
   if (m_Param.dwMode & FDE_TEXTEDITMODE_NoRedoUndo)
-    return FALSE;
+    return false;
   return pDoRecord->Undo();
 }
 
@@ -719,7 +719,7 @@ void CFDE_TxtEdtEngine::EndLayout() {
   Unlock();
 }
 
-FX_BOOL CFDE_TxtEdtEngine::Optimize(IFX_Pause* pPause) {
+bool CFDE_TxtEdtEngine::Optimize(IFX_Pause* pPause) {
   return m_pTxtBuf->Optimize(pPause);
 }
 
@@ -848,7 +848,7 @@ void CFDE_TxtEdtEngine::Inner_Insert(int32_t nStart,
   int32_t nTextStart = 0;
   FX_WCHAR wCurChar = L' ';
   const FX_WCHAR* lpPos = lpText;
-  FX_BOOL bFirst = TRUE;
+  bool bFirst = true;
   int32_t nParagIndex = ParagPos.nParagIndex;
   for (i = 0; i < nLength; i++, lpPos++) {
     wCurChar = *lpPos;
@@ -857,7 +857,7 @@ void CFDE_TxtEdtEngine::Inner_Insert(int32_t nStart,
         pParag->SetTextLength(nLeavePart + (i - nTextStart + 1));
         pParag->SetLineCount(-1);
         nReserveCharStart += pParag->GetTextLength();
-        bFirst = FALSE;
+        bFirst = false;
       } else {
         pParag = new CFDE_TxtEdtParag(this);
         pParag->SetLineCount(-1);
@@ -872,7 +872,7 @@ void CFDE_TxtEdtEngine::Inner_Insert(int32_t nStart,
   if (bFirst) {
     pParag->IncrementTextLength(nLength);
     pParag->SetLineCount(-1);
-    bFirst = FALSE;
+    bFirst = false;
   } else {
     pParag = new CFDE_TxtEdtParag(this);
     pParag->SetLineCount(-1);
@@ -903,12 +903,12 @@ void CFDE_TxtEdtEngine::Inner_DeleteRange(int32_t nStart, int32_t nCount) {
   TextPos2ParagPos(nStart, ParagPosBgn);
   TextPos2ParagPos(nEnd, ParagPosEnd);
   CFDE_TxtEdtParag* pParag = m_ParagPtrArray[ParagPosEnd.nParagIndex];
-  FX_BOOL bLastParag = FALSE;
+  bool bLastParag = false;
   if (ParagPosEnd.nCharIndex == pParag->GetTextLength() - 1) {
     if (ParagPosEnd.nParagIndex < m_ParagPtrArray.GetSize() - 1) {
       ParagPosEnd.nParagIndex++;
     } else {
-      bLastParag = TRUE;
+      bLastParag = true;
     }
   }
   int32_t nTotalLineCount = 0;
@@ -949,7 +949,7 @@ void CFDE_TxtEdtEngine::Inner_DeleteRange(int32_t nStart, int32_t nCount) {
 
 void CFDE_TxtEdtEngine::DeleteRange_DoRecord(int32_t nStart,
                                              int32_t nCount,
-                                             FX_BOOL bSel) {
+                                             bool bSel) {
   ASSERT(nStart >= 0);
   if (nCount == -1) {
     nCount = GetTextLength() - nStart;
@@ -973,7 +973,7 @@ void CFDE_TxtEdtEngine::ResetEngine() {
   RemoveAllParags();
   ClearSelection();
   m_nCaret = 0;
-  m_pTxtBuf->Clear(FALSE);
+  m_pTxtBuf->Clear(false);
   m_nCaret = 0;
 }
 
@@ -1146,18 +1146,18 @@ void CFDE_TxtEdtEngine::UpdateTxtBreak() {
   m_pTextBreak->SetCharSpace(m_Param.fCharSpace);
 }
 
-FX_BOOL CFDE_TxtEdtEngine::ReplaceParagEnd(FX_WCHAR*& lpText,
-                                           int32_t& nLength,
-                                           FX_BOOL bPreIsCR) {
+bool CFDE_TxtEdtEngine::ReplaceParagEnd(FX_WCHAR*& lpText,
+                                        int32_t& nLength,
+                                        bool bPreIsCR) {
   for (int32_t i = 0; i < nLength; i++) {
     FX_WCHAR wc = lpText[i];
     switch (wc) {
       case L'\r': {
         lpText[i] = m_wLineEnd;
-        bPreIsCR = TRUE;
+        bPreIsCR = true;
       } break;
       case L'\n': {
-        if (bPreIsCR == TRUE) {
+        if (bPreIsCR == true) {
           int32_t nNext = i + 1;
           if (nNext < nLength) {
             FXSYS_memmove(lpText + i, lpText + nNext,
@@ -1165,25 +1165,25 @@ FX_BOOL CFDE_TxtEdtEngine::ReplaceParagEnd(FX_WCHAR*& lpText,
           }
           i--;
           nLength--;
-          bPreIsCR = FALSE;
+          bPreIsCR = false;
           if (m_bAutoLineEnd) {
             m_nFirstLineEnd = FDE_TXTEDIT_LINEEND_CRLF;
-            m_bAutoLineEnd = FALSE;
+            m_bAutoLineEnd = false;
           }
         } else {
           lpText[i] = m_wLineEnd;
           if (m_bAutoLineEnd) {
             m_nFirstLineEnd = FDE_TXTEDIT_LINEEND_LF;
-            m_bAutoLineEnd = FALSE;
+            m_bAutoLineEnd = false;
           }
         }
       } break;
       default: {
         if (bPreIsCR && m_bAutoLineEnd) {
           m_nFirstLineEnd = FDE_TXTEDIT_LINEEND_CR;
-          m_bAutoLineEnd = FALSE;
+          m_bAutoLineEnd = false;
         }
-        bPreIsCR = FALSE;
+        bPreIsCR = false;
       } break;
     }
   }
@@ -1303,7 +1303,7 @@ void CFDE_TxtEdtEngine::TextPos2ParagPos(int32_t nIndex,
   ParagPos.nCharIndex = nIndex - m_ParagPtrArray[nMid]->GetStartIndex();
 }
 
-int32_t CFDE_TxtEdtEngine::MoveForward(FX_BOOL& bBefore) {
+int32_t CFDE_TxtEdtEngine::MoveForward(bool& bBefore) {
   if (m_nCaret == m_pTxtBuf->GetTextLength() - 1)
     return -1;
 
@@ -1314,13 +1314,13 @@ int32_t CFDE_TxtEdtEngine::MoveForward(FX_BOOL& bBefore) {
     nCaret++;
   }
   nCaret++;
-  bBefore = TRUE;
+  bBefore = true;
   return nCaret;
 }
 
-int32_t CFDE_TxtEdtEngine::MoveBackward(FX_BOOL& bBefore) {
+int32_t CFDE_TxtEdtEngine::MoveBackward(bool& bBefore) {
   if (m_nCaret == 0)
-    return FALSE;
+    return false;
 
   int32_t nCaret = m_nCaret;
   if (nCaret > 2 && m_pTxtBuf->GetCharByIndex(nCaret - 1) == L'\n' &&
@@ -1328,26 +1328,26 @@ int32_t CFDE_TxtEdtEngine::MoveBackward(FX_BOOL& bBefore) {
     nCaret--;
   }
   nCaret--;
-  bBefore = TRUE;
+  bBefore = true;
   return nCaret;
 }
 
-FX_BOOL CFDE_TxtEdtEngine::MoveUp(CFX_PointF& ptCaret) {
+bool CFDE_TxtEdtEngine::MoveUp(CFX_PointF& ptCaret) {
   IFDE_TxtEdtPage* pPage = GetPage(m_nCaretPage);
   const CFX_RectF& rtContent = pPage->GetContentsBox();
   if (m_Param.dwLayoutStyles & FDE_TEXTEDITLAYOUT_DocVertical) {
     ptCaret.x = m_rtCaret.left + m_rtCaret.width / 2 - m_Param.fLineSpace;
     ptCaret.y = m_fCaretPosReserve;
-    FX_BOOL bLineReserve =
+    bool bLineReserve =
         !!(m_Param.dwLayoutStyles & FDE_TEXTEDITLAYOUT_LineReserve);
     if (ptCaret.x < rtContent.left) {
       if (bLineReserve) {
         if (m_nCaretPage == CountPages() - 1) {
-          return FALSE;
+          return false;
         }
       } else {
         if (m_nCaretPage == 0) {
-          return FALSE;
+          return false;
         }
       }
       if (bLineReserve) {
@@ -1364,7 +1364,7 @@ FX_BOOL CFDE_TxtEdtEngine::MoveUp(CFX_PointF& ptCaret) {
     ptCaret.y = m_rtCaret.top + m_rtCaret.height / 2 - m_Param.fLineSpace;
     if (ptCaret.y < rtContent.top) {
       if (m_nCaretPage == 0) {
-        return FALSE;
+        return false;
       }
       ptCaret.y -= rtContent.top;
       m_nCaretPage--;
@@ -1372,25 +1372,25 @@ FX_BOOL CFDE_TxtEdtEngine::MoveUp(CFX_PointF& ptCaret) {
       ptCaret.y += pCurPage->GetContentsBox().bottom();
     }
   }
-  return TRUE;
+  return true;
 }
 
-FX_BOOL CFDE_TxtEdtEngine::MoveDown(CFX_PointF& ptCaret) {
+bool CFDE_TxtEdtEngine::MoveDown(CFX_PointF& ptCaret) {
   IFDE_TxtEdtPage* pPage = GetPage(m_nCaretPage);
   const CFX_RectF& rtContent = pPage->GetContentsBox();
   if (m_Param.dwLayoutStyles & FDE_TEXTEDITLAYOUT_DocVertical) {
     ptCaret.x = m_rtCaret.left + m_rtCaret.width / 2 + m_Param.fLineSpace;
     ptCaret.y = m_fCaretPosReserve;
     if (ptCaret.x >= rtContent.right()) {
-      FX_BOOL bLineReserve =
+      bool bLineReserve =
           !!(m_Param.dwLayoutStyles & FDE_TEXTEDITLAYOUT_LineReserve);
       if (bLineReserve) {
         if (m_nCaretPage == 0) {
-          return FALSE;
+          return false;
         }
       } else {
         if (m_nCaretPage == CountPages() - 1) {
-          return FALSE;
+          return false;
         }
       }
       if (bLineReserve) {
@@ -1407,7 +1407,7 @@ FX_BOOL CFDE_TxtEdtEngine::MoveDown(CFX_PointF& ptCaret) {
     ptCaret.y = m_rtCaret.top + m_rtCaret.height / 2 + m_Param.fLineSpace;
     if (ptCaret.y >= rtContent.bottom()) {
       if (m_nCaretPage == CountPages() - 1) {
-        return FALSE;
+        return false;
       }
       ptCaret.y -= rtContent.bottom();
       m_nCaretPage++;
@@ -1415,10 +1415,10 @@ FX_BOOL CFDE_TxtEdtEngine::MoveDown(CFX_PointF& ptCaret) {
       ptCaret.y += pCurPage->GetContentsBox().top;
     }
   }
-  return TRUE;
+  return true;
 }
 
-FX_BOOL CFDE_TxtEdtEngine::MoveLineStart() {
+bool CFDE_TxtEdtEngine::MoveLineStart() {
   int32_t nIndex = m_bBefore ? m_nCaret : m_nCaret - 1;
   FDE_TXTEDTPARAGPOS ParagPos;
   TextPos2ParagPos(nIndex, ParagPos);
@@ -1434,12 +1434,12 @@ FX_BOOL CFDE_TxtEdtEngine::MoveLineStart() {
       break;
     }
   }
-  UpdateCaretRect(nStart, TRUE);
+  UpdateCaretRect(nStart, true);
   pParag->UnloadParag();
-  return TRUE;
+  return true;
 }
 
-FX_BOOL CFDE_TxtEdtEngine::MoveLineEnd() {
+bool CFDE_TxtEdtEngine::MoveLineEnd() {
   int32_t nIndex = m_bBefore ? m_nCaret : m_nCaret - 1;
   FDE_TXTEDTPARAGPOS ParagPos;
   TextPos2ParagPos(nIndex, ParagPos);
@@ -1458,12 +1458,12 @@ FX_BOOL CFDE_TxtEdtEngine::MoveLineEnd() {
   nIndex = nStart + nCount - 1;
   ASSERT(nIndex <= GetTextBufLength());
   FX_WCHAR wChar = m_pTxtBuf->GetCharByIndex(nIndex);
-  FX_BOOL bBefore = FALSE;
+  bool bBefore = false;
   if (nIndex <= GetTextBufLength()) {
     if (wChar == L'\r') {
-      bBefore = TRUE;
+      bBefore = true;
     } else if (wChar == L'\n' && nIndex > nStart) {
-      bBefore = TRUE;
+      bBefore = true;
       nIndex--;
       wChar = m_pTxtBuf->GetCharByIndex(nIndex);
       if (wChar != L'\r') {
@@ -1473,19 +1473,19 @@ FX_BOOL CFDE_TxtEdtEngine::MoveLineEnd() {
   }
   UpdateCaretRect(nIndex, bBefore);
   pParag->UnloadParag();
-  return TRUE;
+  return true;
 }
 
-FX_BOOL CFDE_TxtEdtEngine::MoveParagStart() {
+bool CFDE_TxtEdtEngine::MoveParagStart() {
   int32_t nIndex = m_bBefore ? m_nCaret : m_nCaret - 1;
   FDE_TXTEDTPARAGPOS ParagPos;
   TextPos2ParagPos(nIndex, ParagPos);
   CFDE_TxtEdtParag* pParag = m_ParagPtrArray[ParagPos.nParagIndex];
-  UpdateCaretRect(pParag->GetStartIndex(), TRUE);
-  return TRUE;
+  UpdateCaretRect(pParag->GetStartIndex(), true);
+  return true;
 }
 
-FX_BOOL CFDE_TxtEdtEngine::MoveParagEnd() {
+bool CFDE_TxtEdtEngine::MoveParagEnd() {
   int32_t nIndex = m_bBefore ? m_nCaret : m_nCaret - 1;
   FDE_TXTEDTPARAGPOS ParagPos;
   TextPos2ParagPos(nIndex, ParagPos);
@@ -1499,21 +1499,21 @@ FX_BOOL CFDE_TxtEdtEngine::MoveParagEnd() {
       nIndex++;
     }
   }
-  UpdateCaretRect(nIndex, TRUE);
-  return TRUE;
+  UpdateCaretRect(nIndex, true);
+  return true;
 }
 
-FX_BOOL CFDE_TxtEdtEngine::MoveHome() {
-  UpdateCaretRect(0, TRUE);
-  return TRUE;
+bool CFDE_TxtEdtEngine::MoveHome() {
+  UpdateCaretRect(0, true);
+  return true;
 }
 
-FX_BOOL CFDE_TxtEdtEngine::MoveEnd() {
-  UpdateCaretRect(GetTextBufLength(), TRUE);
-  return TRUE;
+bool CFDE_TxtEdtEngine::MoveEnd() {
+  UpdateCaretRect(GetTextBufLength(), true);
+  return true;
 }
 
-FX_BOOL CFDE_TxtEdtEngine::IsFitArea(CFX_WideString& wsText) {
+bool CFDE_TxtEdtEngine::IsFitArea(CFX_WideString& wsText) {
   std::unique_ptr<CFDE_TextOut> pTextOut(new CFDE_TextOut);
   pTextOut->SetLineSpace(m_Param.fLineSpace);
   pTextOut->SetFont(m_Param.pFont);
@@ -1536,23 +1536,23 @@ FX_BOOL CFDE_TxtEdtEngine::IsFitArea(CFX_WideString& wsText) {
   wsText.Delete(wsText.GetLength() - 1);
   if ((m_Param.dwMode & FDE_TEXTEDITMODE_LimitArea_Horz) &&
       (rcText.width > m_Param.fPlateWidth)) {
-    return FALSE;
+    return false;
   }
   if ((m_Param.dwMode & FDE_TEXTEDITMODE_LimitArea_Vert) &&
       (rcText.height > m_Param.fLineSpace * m_Param.nLineCount)) {
-    return FALSE;
+    return false;
   }
-  return TRUE;
+  return true;
 }
 
-void CFDE_TxtEdtEngine::UpdateCaretRect(int32_t nIndex, FX_BOOL bBefore) {
+void CFDE_TxtEdtEngine::UpdateCaretRect(int32_t nIndex, bool bBefore) {
   MovePage2Char(nIndex);
   GetCaretRect(m_rtCaret, m_nCaretPage, nIndex, bBefore);
   m_nCaret = nIndex;
   m_bBefore = bBefore;
   if (!m_bBefore) {
     m_nCaret++;
-    m_bBefore = TRUE;
+    m_bBefore = true;
   }
   m_fCaretPosReserve = (m_Param.dwLayoutStyles & FDE_TEXTEDITLAYOUT_DocVertical)
                            ? m_rtCaret.top
@@ -1563,14 +1563,14 @@ void CFDE_TxtEdtEngine::UpdateCaretRect(int32_t nIndex, FX_BOOL bBefore) {
 void CFDE_TxtEdtEngine::GetCaretRect(CFX_RectF& rtCaret,
                                      int32_t nPageIndex,
                                      int32_t nCaret,
-                                     FX_BOOL bBefore) {
+                                     bool bBefore) {
   IFDE_TxtEdtPage* pPage = m_PagePtrArray[m_nCaretPage];
   m_Param.pEventSink->On_PageLoad(this, m_nCaretPage, 0);
-  FX_BOOL bCombText = !!(m_Param.dwLayoutStyles & FDE_TEXTEDITLAYOUT_CombText);
+  bool bCombText = !!(m_Param.dwLayoutStyles & FDE_TEXTEDITLAYOUT_CombText);
   int32_t nIndexInpage = nCaret - pPage->GetCharStart();
   if (bBefore && bCombText && nIndexInpage > 0) {
     nIndexInpage--;
-    bBefore = FALSE;
+    bBefore = false;
   }
   int32_t nBIDILevel = pPage->GetCharRect(nIndexInpage, rtCaret, bCombText);
   if (m_Param.dwLayoutStyles & FDE_TEXTEDITLAYOUT_DocVertical) {
@@ -1602,13 +1602,13 @@ void CFDE_TxtEdtEngine::UpdateCaretIndex(const CFX_PointF& ptCaret) {
   GetCaretRect(m_rtCaret, m_nCaretPage, m_nCaret, m_bBefore);
   if (!m_bBefore) {
     m_nCaret++;
-    m_bBefore = TRUE;
+    m_bBefore = true;
   }
   m_Param.pEventSink->On_CaretChanged(this, m_nCaretPage);
   m_Param.pEventSink->On_PageUnload(this, m_nCaretPage, 0);
 }
 
-FX_BOOL CFDE_TxtEdtEngine::IsSelect() {
+bool CFDE_TxtEdtEngine::IsSelect() {
   return m_SelRangePtrArr.GetSize() > 0;
 }
 
@@ -1620,12 +1620,12 @@ void CFDE_TxtEdtEngine::DeleteSelect() {
       int32_t nSelCount = GetSelRange(--nCountRange, nSelStart);
       delete m_SelRangePtrArr[nCountRange];
       m_SelRangePtrArr.RemoveAt(nCountRange);
-      DeleteRange_DoRecord(nSelStart, nSelCount, TRUE);
+      DeleteRange_DoRecord(nSelStart, nSelCount, true);
     }
     ClearSelection();
     m_Param.pEventSink->On_TextChanged(this, m_ChangeInfo);
     m_Param.pEventSink->On_SelChanged(this);
-    SetCaretPos(nSelStart, TRUE);
+    SetCaretPos(nSelStart, true);
     return;
   }
 }

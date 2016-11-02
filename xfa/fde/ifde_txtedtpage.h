@@ -20,8 +20,8 @@ class IFDE_TxtEdtPage : public IFDE_CanvasSet, public IFX_TxtAccess {
   virtual CFDE_TxtEdtEngine* GetEngine() const = 0;
   virtual int32_t GetCharRect(int32_t nIndex,
                               CFX_RectF& rect,
-                              FX_BOOL bBBox = FALSE) const = 0;
-  virtual int32_t GetCharIndex(const CFX_PointF& fPoint, FX_BOOL& bBefore) = 0;
+                              bool bBBox = false) const = 0;
+  virtual int32_t GetCharIndex(const CFX_PointF& fPoint, bool& bBefore) = 0;
   virtual void CalcRangeRectArray(int32_t nStart,
                                   int32_t nCount,
                                   CFX_RectFArray& RectFArr) const = 0;
@@ -32,7 +32,7 @@ class IFDE_TxtEdtPage : public IFDE_CanvasSet, public IFX_TxtAccess {
   virtual int32_t GetDisplayPos(const CFX_RectF& rtClip,
                                 FXTEXT_CHARPOS*& pCharPos,
                                 CFX_RectF* pBBox) const = 0;
-  virtual FX_BOOL IsLoaded(const CFX_RectF* pClipBox) = 0;
+  virtual bool IsLoaded(const CFX_RectF* pClipBox) = 0;
   virtual int32_t LoadPage(const CFX_RectF* pClipBox, IFX_Pause* pPause) = 0;
   virtual void UnloadPage(const CFX_RectF* pClipBox) = 0;
   virtual const CFX_RectF& GetContentsBox() = 0;

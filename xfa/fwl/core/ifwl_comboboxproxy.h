@@ -24,16 +24,16 @@ class IFWL_ComboBoxProxy : public IFWL_FormProxy {
   void OnDrawWidget(CFX_Graphics* pGraphics,
                     const CFX_Matrix* pMatrix) override;
 
-  void Reset() { m_bLButtonUpSelf = FALSE; }
+  void Reset() { m_bLButtonUpSelf = false; }
 
  private:
   void OnLButtonDown(CFWL_MsgMouse* pMsg);
   void OnLButtonUp(CFWL_MsgMouse* pMsg);
   void OnDeactive(CFWL_MsgDeactivate* pMsg);
-  void OnFocusChanged(CFWL_MsgKillFocus* pMsg, FX_BOOL bSet);
+  void OnFocusChanged(CFWL_MsgKillFocus* pMsg, bool bSet);
 
-  FX_BOOL m_bLButtonDown;
-  FX_BOOL m_bLButtonUpSelf;
+  bool m_bLButtonDown;
+  bool m_bLButtonUpSelf;
 
   IFWL_ComboBox* m_pComboBox;
 };

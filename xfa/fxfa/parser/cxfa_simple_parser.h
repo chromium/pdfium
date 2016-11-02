@@ -57,10 +57,10 @@ class CXFA_SimpleParser {
   CXFA_Node* NormalLoader(CXFA_Node* pXFANode,
                           CFDE_XMLNode* pXMLDoc,
                           XFA_XDPPACKET ePacketID,
-                          FX_BOOL bUseAttribute);
+                          bool bUseAttribute);
   CXFA_Node* DataLoader(CXFA_Node* pXFANode,
                         CFDE_XMLNode* pXMLDoc,
-                        FX_BOOL bDoTransform);
+                        bool bDoTransform);
   CXFA_Node* UserPacketLoader(CXFA_Node* pXFANode, CFDE_XMLNode* pXMLDoc);
   void ParseContentNode(CXFA_Node* pXFANode,
                         CFDE_XMLNode* pXMLNode,
@@ -82,7 +82,7 @@ class CXFA_SimpleParser {
   CXFA_Document* m_pFactory;
   CXFA_Node* m_pRootNode;
   XFA_XDPPACKET m_ePacketID;
-  FX_BOOL m_bDocumentParser;
+  bool m_bDocumentParser;
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_SIMPLE_PARSER_H_

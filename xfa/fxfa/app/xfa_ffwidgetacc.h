@@ -27,15 +27,15 @@ class CXFA_TextProvider {
   }
   ~CXFA_TextProvider() {}
 
-  CXFA_Node* GetTextNode(FX_BOOL& bRichText);
+  CXFA_Node* GetTextNode(bool& bRichText);
   CXFA_Para GetParaNode();
   CXFA_Font GetFontNode();
-  FX_BOOL IsCheckButtonAndAutoWidth();
+  bool IsCheckButtonAndAutoWidth();
   CXFA_FFDoc* GetDocNode() { return m_pWidgetAcc->GetDoc(); }
-  FX_BOOL GetEmbbedObj(FX_BOOL bURI,
-                       FX_BOOL bRaw,
-                       const CFX_WideString& wsAttr,
-                       CFX_WideString& wsValue);
+  bool GetEmbbedObj(bool bURI,
+                    bool bRaw,
+                    const CFX_WideString& wsAttr,
+                    CFX_WideString& wsValue);
 
  protected:
   CXFA_WidgetAcc* m_pWidgetAcc;

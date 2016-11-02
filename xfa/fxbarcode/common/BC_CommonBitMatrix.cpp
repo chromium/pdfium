@@ -49,7 +49,7 @@ void CBC_CommonBitMatrix::Init(int32_t width, int32_t height) {
 CBC_CommonBitMatrix::~CBC_CommonBitMatrix() {
   FX_Free(m_bits);
 }
-FX_BOOL CBC_CommonBitMatrix::Get(int32_t x, int32_t y) {
+bool CBC_CommonBitMatrix::Get(int32_t x, int32_t y) {
   int32_t offset = y * m_rowSize + (x >> 5);
   if (offset >= m_rowSize * m_height || offset < 0) {
     return false;

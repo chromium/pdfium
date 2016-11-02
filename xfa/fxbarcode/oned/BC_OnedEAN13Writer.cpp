@@ -44,20 +44,20 @@ const int32_t L_AND_G_PATTERNS[20][4] = {
 }  // namespace
 
 CBC_OnedEAN13Writer::CBC_OnedEAN13Writer() {
-  m_bLeftPadding = TRUE;
+  m_bLeftPadding = true;
   m_codeWidth = 3 + (7 * 6) + 5 + (7 * 6) + 3;
 }
 CBC_OnedEAN13Writer::~CBC_OnedEAN13Writer() {}
-FX_BOOL CBC_OnedEAN13Writer::CheckContentValidity(
+bool CBC_OnedEAN13Writer::CheckContentValidity(
     const CFX_WideStringC& contents) {
   for (int32_t i = 0; i < contents.GetLength(); i++) {
     if (contents.GetAt(i) >= '0' && contents.GetAt(i) <= '9') {
       continue;
     } else {
-      return FALSE;
+      return false;
     }
   }
-  return TRUE;
+  return true;
 }
 CFX_WideString CBC_OnedEAN13Writer::FilterContents(
     const CFX_WideStringC& contents) {
@@ -296,7 +296,7 @@ void CBC_OnedEAN13Writer::ShowChars(const CFX_WideStringC& contents,
 void CBC_OnedEAN13Writer::RenderResult(const CFX_WideStringC& contents,
                                        uint8_t* code,
                                        int32_t codeLength,
-                                       FX_BOOL isDevice,
+                                       bool isDevice,
                                        int32_t& e) {
   CBC_OneDimWriter::RenderResult(contents, code, codeLength, isDevice, e);
 }

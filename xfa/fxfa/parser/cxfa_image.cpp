@@ -8,18 +8,18 @@
 
 #include "xfa/fxfa/parser/xfa_object.h"
 
-CXFA_Image::CXFA_Image(CXFA_Node* pNode, FX_BOOL bDefValue)
+CXFA_Image::CXFA_Image(CXFA_Node* pNode, bool bDefValue)
     : CXFA_Data(pNode), m_bDefValue(bDefValue) {}
 
 int32_t CXFA_Image::GetAspect() {
   return m_pNode->GetEnum(XFA_ATTRIBUTE_Aspect);
 }
 
-FX_BOOL CXFA_Image::GetContentType(CFX_WideString& wsContentType) {
+bool CXFA_Image::GetContentType(CFX_WideString& wsContentType) {
   return m_pNode->TryCData(XFA_ATTRIBUTE_ContentType, wsContentType);
 }
 
-FX_BOOL CXFA_Image::GetHref(CFX_WideString& wsHref) {
+bool CXFA_Image::GetHref(CFX_WideString& wsHref) {
   if (m_bDefValue)
     return m_pNode->TryCData(XFA_ATTRIBUTE_Href, wsHref);
   return m_pNode->GetAttribute(FX_WSTRC(L"href"), wsHref);
@@ -31,24 +31,24 @@ int32_t CXFA_Image::GetTransferEncoding() {
   return XFA_ATTRIBUTEENUM_Base64;
 }
 
-FX_BOOL CXFA_Image::GetContent(CFX_WideString& wsText) {
+bool CXFA_Image::GetContent(CFX_WideString& wsText) {
   return m_pNode->TryContent(wsText);
 }
 
-FX_BOOL CXFA_Image::SetContentType(const CFX_WideString& wsContentType) {
+bool CXFA_Image::SetContentType(const CFX_WideString& wsContentType) {
   return m_pNode->SetCData(XFA_ATTRIBUTE_ContentType, wsContentType);
 }
 
-FX_BOOL CXFA_Image::SetHref(const CFX_WideString& wsHref) {
+bool CXFA_Image::SetHref(const CFX_WideString& wsHref) {
   if (m_bDefValue)
     return m_pNode->SetCData(XFA_ATTRIBUTE_Href, wsHref);
   return m_pNode->SetAttribute(XFA_ATTRIBUTE_Href, wsHref.AsStringC());
 }
 
-FX_BOOL CXFA_Image::SetTransferEncoding(int32_t iTransferEncoding) {
+bool CXFA_Image::SetTransferEncoding(int32_t iTransferEncoding) {
   if (m_bDefValue) {
     return m_pNode->SetEnum(XFA_ATTRIBUTE_TransferEncoding,
                             (XFA_ATTRIBUTEENUM)iTransferEncoding);
   }
-  return TRUE;
+  return true;
 }

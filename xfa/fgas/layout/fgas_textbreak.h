@@ -102,7 +102,7 @@ struct FX_TXTRUN {
   uint32_t dwCharStyles;
   const CFX_RectF* pRect;
   FX_WCHAR wLineBreakChar;
-  FX_BOOL bSkipSpace;
+  bool bSkipSpace;
 };
 
 class CFX_TxtPiece : public CFX_Target {
@@ -183,7 +183,7 @@ class CFX_TxtLine {
     }
     wsStr.ReleaseBuffer(iCount);
   }
-  void RemoveAll(FX_BOOL bLeaveMemory = FALSE) {
+  void RemoveAll(bool bLeaveMemory = false) {
     m_pLineChars->RemoveAll();
     m_pLinePieces->RemoveAll(bLeaveMemory);
     m_iWidth = 0;
@@ -208,7 +208,7 @@ class CFX_TxtBreak {
   void SetLayoutStyles(uint32_t dwLayoutStyles);
   void SetFont(CFGAS_GEFont* pFont);
   void SetFontSize(FX_FLOAT fFontSize);
-  void SetTabWidth(FX_FLOAT fTabWidth, FX_BOOL bEquidistant);
+  void SetTabWidth(FX_FLOAT fTabWidth, bool bEquidistant);
   void SetDefaultChar(FX_WCHAR wch);
   void SetParagraphBreakChar(FX_WCHAR wch);
   void SetLineBreakTolerance(FX_FLOAT fTolerance);
@@ -230,12 +230,12 @@ class CFX_TxtBreak {
   void Reset();
   int32_t GetDisplayPos(const FX_TXTRUN* pTxtRun,
                         FXTEXT_CHARPOS* pCharPos,
-                        FX_BOOL bCharCode = FALSE,
+                        bool bCharCode = false,
                         CFX_WideString* pWSForms = nullptr,
                         FX_AdjustCharDisplayPos pAdjustPos = nullptr) const;
   int32_t GetCharRects(const FX_TXTRUN* pTxtRun,
                        CFX_RectFArray& rtArray,
-                       FX_BOOL bCharBBox = FALSE) const;
+                       bool bCharBBox = false) const;
   void AppendChar_PageLoad(CFX_TxtChar* pCurChar, uint32_t dwProps);
   uint32_t AppendChar_Combination(CFX_TxtChar* pCurChar, int32_t iRotation);
   uint32_t AppendChar_Tab(CFX_TxtChar* pCurChar, int32_t iRotation);
@@ -246,43 +246,43 @@ class CFX_TxtBreak {
  private:
   void SetBreakStatus();
   int32_t GetLineRotation(uint32_t dwStyles) const;
-  CFX_TxtChar* GetLastChar(int32_t index, FX_BOOL bOmitChar = TRUE) const;
-  CFX_TxtLine* GetTxtLine(FX_BOOL bReady) const;
-  CFX_TxtPieceArray* GetTxtPieces(FX_BOOL bReady) const;
+  CFX_TxtChar* GetLastChar(int32_t index, bool bOmitChar = true) const;
+  CFX_TxtLine* GetTxtLine(bool bReady) const;
+  CFX_TxtPieceArray* GetTxtPieces(bool bReady) const;
   FX_CHARTYPE GetUnifiedCharType(FX_CHARTYPE dwType) const;
   void ResetArabicContext();
   void ResetContextCharStyles();
   void EndBreak_UpdateArabicShapes();
-  FX_BOOL EndBreak_SplitLine(CFX_TxtLine* pNextLine,
-                             FX_BOOL bAllChars,
-                             uint32_t dwStatus);
+  bool EndBreak_SplitLine(CFX_TxtLine* pNextLine,
+                          bool bAllChars,
+                          uint32_t dwStatus);
   void EndBreak_BidiLine(CFX_TPOArray& tpos, uint32_t dwStatus);
   void EndBreak_Alignment(CFX_TPOArray& tpos,
-                          FX_BOOL bAllChars,
+                          bool bAllChars,
                           uint32_t dwStatus);
   int32_t GetBreakPos(CFX_TxtCharArray& ca,
                       int32_t& iEndPos,
-                      FX_BOOL bAllChars = FALSE,
-                      FX_BOOL bOnlyBrk = FALSE);
+                      bool bAllChars = false,
+                      bool bOnlyBrk = false);
   void SplitTextLine(CFX_TxtLine* pCurLine,
                      CFX_TxtLine* pNextLine,
-                     FX_BOOL bAllChars = FALSE);
+                     bool bAllChars = false);
 
   uint32_t m_dwPolicies;
-  FX_BOOL m_bPagination;
+  bool m_bPagination;
   int32_t m_iLineWidth;
   uint32_t m_dwLayoutStyles;
-  FX_BOOL m_bVertical;
-  FX_BOOL m_bArabicContext;
-  FX_BOOL m_bArabicShapes;
-  FX_BOOL m_bRTL;
-  FX_BOOL m_bSingleLine;
-  FX_BOOL m_bCombText;
+  bool m_bVertical;
+  bool m_bArabicContext;
+  bool m_bArabicShapes;
+  bool m_bRTL;
+  bool m_bSingleLine;
+  bool m_bCombText;
   int32_t m_iArabicContext;
   int32_t m_iCurArabicContext;
   CFGAS_GEFont* m_pFont;
   int32_t m_iFontSize;
-  FX_BOOL m_bEquidistant;
+  bool m_bEquidistant;
   int32_t m_iTabWidth;
   FX_WCHAR m_wDefChar;
   FX_WCHAR m_wParagBreakChar;
@@ -295,10 +295,10 @@ class CFX_TxtBreak {
   int32_t m_iCombWidth;
   void* m_pUserData;
   FX_CHARTYPE m_eCharType;
-  FX_BOOL m_bCurRTL;
+  bool m_bCurRTL;
   int32_t m_iCurAlignment;
-  FX_BOOL m_bArabicNumber;
-  FX_BOOL m_bArabicComma;
+  bool m_bArabicNumber;
+  bool m_bArabicComma;
   std::unique_ptr<CFX_TxtLine> m_pTxtLine1;
   std::unique_ptr<CFX_TxtLine> m_pTxtLine2;
   CFX_TxtLine* m_pCurLine;

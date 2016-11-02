@@ -20,7 +20,7 @@ IFWL_Caret::IFWL_Caret(const IFWL_App* app,
       m_pTimer(new IFWL_Caret::Timer(this)),
       m_pTimerInfo(nullptr),
       m_dwElapse(400),
-      m_bSetColor(FALSE) {
+      m_bSetColor(false) {
   SetStates(FWL_STATE_CAT_HightLight);
 }
 
@@ -48,7 +48,7 @@ FWL_Error IFWL_Caret::DrawWidget(CFX_Graphics* pGraphics,
   return FWL_Error::Succeeded;
 }
 
-void IFWL_Caret::ShowCaret(FX_BOOL bFlag) {
+void IFWL_Caret::ShowCaret(bool bFlag) {
   if (m_pTimerInfo) {
     m_pTimerInfo->StopTimer();
     m_pTimerInfo = nullptr;
@@ -70,7 +70,7 @@ FWL_Error IFWL_Caret::SetFrequency(uint32_t elapse) {
 }
 
 FWL_Error IFWL_Caret::SetColor(CFX_Color crFill) {
-  m_bSetColor = TRUE;
+  m_bSetColor = true;
   m_crFill = crFill;
   return FWL_Error::Succeeded;
 }

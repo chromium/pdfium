@@ -15,7 +15,7 @@ IFWL_DateTimeCalendar::IFWL_DateTimeCalendar(
     const IFWL_App* app,
     const CFWL_WidgetImpProperties& properties,
     IFWL_Widget* pOuter)
-    : IFWL_MonthCalendar(app, properties, pOuter), m_bFlag(FALSE) {}
+    : IFWL_MonthCalendar(app, properties, pOuter), m_bFlag(false) {}
 
 void IFWL_DateTimeCalendar::OnProcessMessage(CFWL_Message* pMessage) {
   CFWL_MessageType dwCode = pMessage->GetClassID();
@@ -94,9 +94,9 @@ void IFWL_DateTimeCalendar::OnLButtonUpEx(CFWL_MsgMouse* pMsg) {
       return;
 
     pIPicker->ProcessSelChanged(m_iCurYear, m_iCurMonth, iCurSel);
-    pIPicker->ShowMonthCalendar(FALSE);
+    pIPicker->ShowMonthCalendar(false);
   } else if (m_bFlag && (!rt.Contains(pMsg->m_fx, pMsg->m_fy))) {
-    pIPicker->ShowMonthCalendar(FALSE);
+    pIPicker->ShowMonthCalendar(false);
   }
   m_bFlag = 0;
 }
@@ -105,7 +105,7 @@ void IFWL_DateTimeCalendar::OnMouseMoveEx(CFWL_MsgMouse* pMsg) {
   if (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_MCD_MultiSelect)
     return;
 
-  FX_BOOL bRepaint = FALSE;
+  bool bRepaint = false;
   CFX_RectF rtInvalidate;
   rtInvalidate.Set(0, 0, 0, 0);
   if (m_rtDates.Contains(pMsg->m_fx, pMsg->m_fy)) {
@@ -179,6 +179,6 @@ void IFWL_DateTimeCalendar::DisForm_OnLButtonUpEx(CFWL_MsgMouse* pMsg) {
     IFWL_DateTimePicker* pDateTime =
         static_cast<IFWL_DateTimePicker*>(m_pOuter);
     pDateTime->ProcessSelChanged(m_iCurYear, m_iCurMonth, iCurSel);
-    pDateTime->ShowMonthCalendar(FALSE);
+    pDateTime->ShowMonthCalendar(false);
   }
 }

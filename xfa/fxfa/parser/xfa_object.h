@@ -88,7 +88,7 @@ class CXFA_Object : public CFXJSE_HostObject {
   CFX_WideStringC GetClassName() const;
   uint32_t GetClassHashCode() const;
   void Script_ObjectClass_ClassName(CFXJSE_Value* pValue,
-                                    FX_BOOL bSetting,
+                                    bool bSetting,
                                     XFA_ATTRIBUTE eAttribute);
   void ThrowException(int32_t iStringID, ...);
 
@@ -168,137 +168,131 @@ class CXFA_Node : public CXFA_Object {
   }
   bool NeedsInitApp() const { return HasFlag(XFA_NodeFlag_NeedsInitApp); }
 
-  FX_BOOL IsAttributeInXML();
+  bool IsAttributeInXML();
   bool IsFormContainer() const {
     return m_ePacket == XFA_XDPPACKET_Form && IsContainerNode();
   }
   void SetXMLMappingNode(CFDE_XMLNode* pXMLNode) { m_pXMLNode = pXMLNode; }
   CFDE_XMLNode* GetXMLMappingNode() const { return m_pXMLNode; }
   CFDE_XMLNode* CreateXMLMappingNode();
-  FX_BOOL IsNeedSavingXMLNode();
+  bool IsNeedSavingXMLNode();
   uint32_t GetNameHash() const { return m_dwNameHash; }
   bool IsUnnamed() const { return m_dwNameHash == 0; }
   CXFA_Node* GetModelNode();
   void UpdateNameHash();
-  FX_BOOL HasAttribute(XFA_ATTRIBUTE eAttr, FX_BOOL bCanInherit = FALSE);
-  FX_BOOL SetAttribute(XFA_ATTRIBUTE eAttr,
-                       const CFX_WideStringC& wsValue,
-                       bool bNotify = false);
-  FX_BOOL GetAttribute(XFA_ATTRIBUTE eAttr,
-                       CFX_WideString& wsValue,
-                       FX_BOOL bUseDefault = TRUE);
-  FX_BOOL SetAttribute(const CFX_WideStringC& wsAttr,
-                       const CFX_WideStringC& wsValue,
-                       bool bNotify = false);
-  FX_BOOL GetAttribute(const CFX_WideStringC& wsAttr,
-                       CFX_WideString& wsValue,
-                       FX_BOOL bUseDefault = TRUE);
-  FX_BOOL RemoveAttribute(const CFX_WideStringC& wsAttr);
-  FX_BOOL SetContent(const CFX_WideString& wsContent,
-                     const CFX_WideString& wsXMLValue,
-                     bool bNotify = false,
-                     FX_BOOL bScriptModify = FALSE,
-                     FX_BOOL bSyncData = TRUE);
-  FX_BOOL TryContent(CFX_WideString& wsContent,
-                     FX_BOOL bScriptModify = FALSE,
-                     FX_BOOL bProto = TRUE);
+  bool HasAttribute(XFA_ATTRIBUTE eAttr, bool bCanInherit = false);
+  bool SetAttribute(XFA_ATTRIBUTE eAttr,
+                    const CFX_WideStringC& wsValue,
+                    bool bNotify = false);
+  bool GetAttribute(XFA_ATTRIBUTE eAttr,
+                    CFX_WideString& wsValue,
+                    bool bUseDefault = true);
+  bool SetAttribute(const CFX_WideStringC& wsAttr,
+                    const CFX_WideStringC& wsValue,
+                    bool bNotify = false);
+  bool GetAttribute(const CFX_WideStringC& wsAttr,
+                    CFX_WideString& wsValue,
+                    bool bUseDefault = true);
+  bool RemoveAttribute(const CFX_WideStringC& wsAttr);
+  bool SetContent(const CFX_WideString& wsContent,
+                  const CFX_WideString& wsXMLValue,
+                  bool bNotify = false,
+                  bool bScriptModify = false,
+                  bool bSyncData = true);
+  bool TryContent(CFX_WideString& wsContent,
+                  bool bScriptModify = false,
+                  bool bProto = true);
   CFX_WideString GetContent();
 
-  FX_BOOL TryNamespace(CFX_WideString& wsNamespace);
+  bool TryNamespace(CFX_WideString& wsNamespace);
 
-  FX_BOOL SetBoolean(XFA_ATTRIBUTE eAttr,
-                     FX_BOOL bValue,
-                     bool bNotify = false) {
+  bool SetBoolean(XFA_ATTRIBUTE eAttr, bool bValue, bool bNotify = false) {
     return SetValue(eAttr, XFA_ATTRIBUTETYPE_Boolean, (void*)(uintptr_t)bValue,
                     bNotify);
   }
-  FX_BOOL TryBoolean(XFA_ATTRIBUTE eAttr,
-                     FX_BOOL& bValue,
-                     FX_BOOL bUseDefault = TRUE);
-  FX_BOOL GetBoolean(XFA_ATTRIBUTE eAttr) {
-    FX_BOOL bValue;
-    return TryBoolean(eAttr, bValue, TRUE) ? bValue : FALSE;
+  bool TryBoolean(XFA_ATTRIBUTE eAttr, bool& bValue, bool bUseDefault = true);
+  bool GetBoolean(XFA_ATTRIBUTE eAttr) {
+    bool bValue;
+    return TryBoolean(eAttr, bValue, true) ? bValue : false;
   }
-  FX_BOOL SetInteger(XFA_ATTRIBUTE eAttr,
-                     int32_t iValue,
-                     bool bNotify = false) {
+  bool SetInteger(XFA_ATTRIBUTE eAttr, int32_t iValue, bool bNotify = false) {
     return SetValue(eAttr, XFA_ATTRIBUTETYPE_Integer, (void*)(uintptr_t)iValue,
                     bNotify);
   }
-  FX_BOOL TryInteger(XFA_ATTRIBUTE eAttr,
-                     int32_t& iValue,
-                     FX_BOOL bUseDefault = TRUE);
+  bool TryInteger(XFA_ATTRIBUTE eAttr,
+                  int32_t& iValue,
+                  bool bUseDefault = true);
   int32_t GetInteger(XFA_ATTRIBUTE eAttr) {
     int32_t iValue;
-    return TryInteger(eAttr, iValue, TRUE) ? iValue : 0;
+    return TryInteger(eAttr, iValue, true) ? iValue : 0;
   }
-  FX_BOOL SetEnum(XFA_ATTRIBUTE eAttr,
-                  XFA_ATTRIBUTEENUM eValue,
-                  bool bNotify = false) {
+  bool SetEnum(XFA_ATTRIBUTE eAttr,
+               XFA_ATTRIBUTEENUM eValue,
+               bool bNotify = false) {
     return SetValue(eAttr, XFA_ATTRIBUTETYPE_Enum, (void*)(uintptr_t)eValue,
                     bNotify);
   }
-  FX_BOOL TryEnum(XFA_ATTRIBUTE eAttr,
-                  XFA_ATTRIBUTEENUM& eValue,
-                  FX_BOOL bUseDefault = TRUE);
+  bool TryEnum(XFA_ATTRIBUTE eAttr,
+               XFA_ATTRIBUTEENUM& eValue,
+               bool bUseDefault = true);
   XFA_ATTRIBUTEENUM GetEnum(XFA_ATTRIBUTE eAttr) {
     XFA_ATTRIBUTEENUM eValue;
-    return TryEnum(eAttr, eValue, TRUE) ? eValue : XFA_ATTRIBUTEENUM_Unknown;
+    return TryEnum(eAttr, eValue, true) ? eValue : XFA_ATTRIBUTEENUM_Unknown;
   }
-  FX_BOOL SetCData(XFA_ATTRIBUTE eAttr,
-                   const CFX_WideString& wsValue,
-                   bool bNotify = false,
-                   FX_BOOL bScriptModify = FALSE);
-  FX_BOOL SetAttributeValue(const CFX_WideString& wsValue,
-                            const CFX_WideString& wsXMLValue,
-                            bool bNotify = false,
-                            FX_BOOL bScriptModify = FALSE);
-  FX_BOOL TryCData(XFA_ATTRIBUTE eAttr,
-                   CFX_WideString& wsValue,
-                   FX_BOOL bUseDefault = TRUE,
-                   FX_BOOL bProto = TRUE);
-  FX_BOOL TryCData(XFA_ATTRIBUTE eAttr,
-                   CFX_WideStringC& wsValue,
-                   FX_BOOL bUseDefault = TRUE,
-                   FX_BOOL bProto = TRUE);
+  bool SetCData(XFA_ATTRIBUTE eAttr,
+                const CFX_WideString& wsValue,
+                bool bNotify = false,
+                bool bScriptModify = false);
+  bool SetAttributeValue(const CFX_WideString& wsValue,
+                         const CFX_WideString& wsXMLValue,
+                         bool bNotify = false,
+                         bool bScriptModify = false);
+  bool TryCData(XFA_ATTRIBUTE eAttr,
+                CFX_WideString& wsValue,
+                bool bUseDefault = true,
+                bool bProto = true);
+  bool TryCData(XFA_ATTRIBUTE eAttr,
+                CFX_WideStringC& wsValue,
+                bool bUseDefault = true,
+                bool bProto = true);
   CFX_WideStringC GetCData(XFA_ATTRIBUTE eAttr) {
     CFX_WideStringC wsValue;
     return TryCData(eAttr, wsValue) ? wsValue : CFX_WideStringC();
   }
-  FX_BOOL SetMeasure(XFA_ATTRIBUTE eAttr,
-                     CXFA_Measurement mValue,
-                     bool bNotify = false);
-  FX_BOOL TryMeasure(XFA_ATTRIBUTE eAttr,
-                     CXFA_Measurement& mValue,
-                     FX_BOOL bUseDefault = TRUE) const;
+  bool SetMeasure(XFA_ATTRIBUTE eAttr,
+                  CXFA_Measurement mValue,
+                  bool bNotify = false);
+  bool TryMeasure(XFA_ATTRIBUTE eAttr,
+                  CXFA_Measurement& mValue,
+                  bool bUseDefault = true) const;
   CXFA_Measurement GetMeasure(XFA_ATTRIBUTE eAttr) const;
-  FX_BOOL SetObject(XFA_ATTRIBUTE eAttr,
-                    void* pData,
-                    XFA_MAPDATABLOCKCALLBACKINFO* pCallbackInfo = nullptr);
-  FX_BOOL TryObject(XFA_ATTRIBUTE eAttr, void*& pData);
+  bool SetObject(XFA_ATTRIBUTE eAttr,
+                 void* pData,
+                 XFA_MAPDATABLOCKCALLBACKINFO* pCallbackInfo = nullptr);
+  bool TryObject(XFA_ATTRIBUTE eAttr, void*& pData);
   void* GetObject(XFA_ATTRIBUTE eAttr) {
     void* pData;
     return TryObject(eAttr, pData) ? pData : nullptr;
   }
-  FX_BOOL SetUserData(void* pKey,
-                      void* pData,
-                      XFA_MAPDATABLOCKCALLBACKINFO* pCallbackInfo = nullptr);
-  FX_BOOL TryUserData(void* pKey, void*& pData, FX_BOOL bProtoAlso = FALSE);
-  void* GetUserData(void* pKey, FX_BOOL bProtoAlso = FALSE) {
+  bool SetUserData(void* pKey,
+                   void* pData,
+                   XFA_MAPDATABLOCKCALLBACKINFO* pCallbackInfo = nullptr);
+  bool TryUserData(void* pKey, void*& pData, bool bProtoAlso = false);
+  void* GetUserData(void* pKey, bool bProtoAlso = false) {
     void* pData;
     return TryUserData(pKey, pData, bProtoAlso) ? pData : nullptr;
   }
   CXFA_Node* GetProperty(int32_t index,
                          XFA_Element eType,
-                         FX_BOOL bCreateProperty = TRUE);
-  int32_t CountChildren(XFA_Element eType, FX_BOOL bOnlyChild = FALSE);
+                         bool bCreateProperty = true);
+  int32_t CountChildren(XFA_Element eType, bool bOnlyChild = false);
   CXFA_Node* GetChild(int32_t index,
                       XFA_Element eType,
-                      FX_BOOL bOnlyChild = FALSE);
+                      bool bOnlyChild = false);
   int32_t InsertChild(int32_t index, CXFA_Node* pNode);
-  FX_BOOL InsertChild(CXFA_Node* pNode, CXFA_Node* pBeforeNode = nullptr);
-  FX_BOOL RemoveChild(CXFA_Node* pNode, bool bNotify = true);
-  CXFA_Node* Clone(FX_BOOL bRecursive);
+  bool InsertChild(CXFA_Node* pNode, CXFA_Node* pBeforeNode = nullptr);
+  bool RemoveChild(CXFA_Node* pNode, bool bNotify = true);
+  CXFA_Node* Clone(bool bRecursive);
   CXFA_Node* GetNodeItem(XFA_NODEITEM eItem) const;
   CXFA_Node* GetNodeItem(XFA_NODEITEM eItem, XFA_ObjectType eType) const;
   int32_t GetNodeList(CXFA_NodeArray& nodes,
@@ -308,7 +302,7 @@ class CXFA_Node : public CXFA_Object {
                       int32_t iLevel = 1);
   CXFA_Node* CreateSamePacketNode(XFA_Element eType,
                                   uint32_t dwFlags = XFA_NodeFlag_Initialized);
-  CXFA_Node* CloneTemplateToForm(FX_BOOL bRecursive);
+  CXFA_Node* CloneTemplateToForm(bool bRecursive);
   CXFA_Node* GetTemplateNode() const;
   void SetTemplateNode(CXFA_Node* pTemplateNode);
   CXFA_Node* GetDataDescriptionNode();
@@ -317,10 +311,10 @@ class CXFA_Node : public CXFA_Object {
   int32_t GetBindItems(CXFA_NodeArray& formItems);
   int32_t AddBindItem(CXFA_Node* pFormNode);
   int32_t RemoveBindItem(CXFA_Node* pFormNode);
-  FX_BOOL HasBindItem();
+  bool HasBindItem();
   CXFA_WidgetData* GetWidgetData();
   CXFA_WidgetData* GetContainerWidgetData();
-  FX_BOOL GetLocaleName(CFX_WideString& wsLocaleName);
+  bool GetLocaleName(CFX_WideString& wsLocaleName);
   XFA_ATTRIBUTEENUM GetIntact();
   CXFA_Node* GetFirstChildByName(const CFX_WideStringC& wsNodeName) const;
   CXFA_Node* GetFirstChildByName(uint32_t dwNodeNameHash) const;
@@ -341,25 +335,25 @@ class CXFA_Node : public CXFA_Object {
                                   uint32_t dwFlag,
                                   CXFA_Node* refNode = nullptr);
   void Script_TreeClass_All(CFXJSE_Value* pValue,
-                            FX_BOOL bSetting,
+                            bool bSetting,
                             XFA_ATTRIBUTE eAttribute);
   void Script_TreeClass_Nodes(CFXJSE_Value* pValue,
-                              FX_BOOL bSetting,
+                              bool bSetting,
                               XFA_ATTRIBUTE eAttribute);
   void Script_TreeClass_ClassAll(CFXJSE_Value* pValue,
-                                 FX_BOOL bSetting,
+                                 bool bSetting,
                                  XFA_ATTRIBUTE eAttribute);
   void Script_TreeClass_Parent(CFXJSE_Value* pValue,
-                               FX_BOOL bSetting,
+                               bool bSetting,
                                XFA_ATTRIBUTE eAttribute);
   void Script_TreeClass_Index(CFXJSE_Value* pValue,
-                              FX_BOOL bSetting,
+                              bool bSetting,
                               XFA_ATTRIBUTE eAttribute);
   void Script_TreeClass_ClassIndex(CFXJSE_Value* pValue,
-                                   FX_BOOL bSetting,
+                                   bool bSetting,
                                    XFA_ATTRIBUTE eAttribute);
   void Script_TreeClass_SomExpression(CFXJSE_Value* pValue,
-                                      FX_BOOL bSetting,
+                                      bool bSetting,
                                       XFA_ATTRIBUTE eAttribute);
   void Script_NodeClass_ApplyXSL(CFXJSE_Arguments* pArguments);
   void Script_NodeClass_AssignNode(CFXJSE_Arguments* pArguments);
@@ -373,19 +367,19 @@ class CXFA_Node : public CXFA_Object {
   void Script_NodeClass_SetAttribute(CFXJSE_Arguments* pArguments);
   void Script_NodeClass_SetElement(CFXJSE_Arguments* pArguments);
   void Script_NodeClass_Ns(CFXJSE_Value* pValue,
-                           FX_BOOL bSetting,
+                           bool bSetting,
                            XFA_ATTRIBUTE eAttribute);
   void Script_NodeClass_Model(CFXJSE_Value* pValue,
-                              FX_BOOL bSetting,
+                              bool bSetting,
                               XFA_ATTRIBUTE eAttribute);
   void Script_NodeClass_IsContainer(CFXJSE_Value* pValue,
-                                    FX_BOOL bSetting,
+                                    bool bSetting,
                                     XFA_ATTRIBUTE eAttribute);
   void Script_NodeClass_IsNull(CFXJSE_Value* pValue,
-                               FX_BOOL bSetting,
+                               bool bSetting,
                                XFA_ATTRIBUTE eAttribute);
   void Script_NodeClass_OneOfChild(CFXJSE_Value* pValue,
-                                   FX_BOOL bSetting,
+                                   bool bSetting,
                                    XFA_ATTRIBUTE eAttribute);
   void Script_ContainerClass_GetDelta(CFXJSE_Arguments* pArguments);
   void Script_ContainerClass_GetDeltas(CFXJSE_Arguments* pArguments);
@@ -393,104 +387,104 @@ class CXFA_Node : public CXFA_Object {
   void Script_ModelClass_CreateNode(CFXJSE_Arguments* pArguments);
   void Script_ModelClass_IsCompatibleNS(CFXJSE_Arguments* pArguments);
   void Script_ModelClass_Context(CFXJSE_Value* pValue,
-                                 FX_BOOL bSetting,
+                                 bool bSetting,
                                  XFA_ATTRIBUTE eAttribute);
   void Script_ModelClass_AliasNode(CFXJSE_Value* pValue,
-                                   FX_BOOL bSetting,
+                                   bool bSetting,
                                    XFA_ATTRIBUTE eAttribute);
   void Script_WsdlConnection_Execute(CFXJSE_Arguments* pArguments);
   void Script_Delta_Restore(CFXJSE_Arguments* pArguments);
   void Script_Delta_CurrentValue(CFXJSE_Value* pValue,
-                                 FX_BOOL bSetting,
+                                 bool bSetting,
                                  XFA_ATTRIBUTE eAttribute);
   void Script_Delta_SavedValue(CFXJSE_Value* pValue,
-                               FX_BOOL bSetting,
+                               bool bSetting,
                                XFA_ATTRIBUTE eAttribute);
   void Script_Delta_Target(CFXJSE_Value* pValue,
-                           FX_BOOL bSetting,
+                           bool bSetting,
                            XFA_ATTRIBUTE eAttribute);
   void Script_Attribute_SendAttributeChangeMessage(XFA_ATTRIBUTE eAttribute,
-                                                   FX_BOOL bScriptModify);
+                                                   bool bScriptModify);
   void Script_Attribute_Integer(CFXJSE_Value* pValue,
-                                FX_BOOL bSetting,
+                                bool bSetting,
                                 XFA_ATTRIBUTE eAttribute);
   void Script_Attribute_IntegerRead(CFXJSE_Value* pValue,
-                                    FX_BOOL bSetting,
+                                    bool bSetting,
                                     XFA_ATTRIBUTE eAttribute);
   void Script_Attribute_BOOL(CFXJSE_Value* pValue,
-                             FX_BOOL bSetting,
+                             bool bSetting,
                              XFA_ATTRIBUTE eAttribute);
   void Script_Attribute_BOOLRead(CFXJSE_Value* pValue,
-                                 FX_BOOL bSetting,
+                                 bool bSetting,
                                  XFA_ATTRIBUTE eAttribute);
   void Script_Attribute_String(CFXJSE_Value* pValue,
-                               FX_BOOL bSetting,
+                               bool bSetting,
                                XFA_ATTRIBUTE eAttribute);
   void Script_Attribute_StringRead(CFXJSE_Value* pValue,
-                                   FX_BOOL bSetting,
+                                   bool bSetting,
                                    XFA_ATTRIBUTE eAttribute);
   void Script_Som_ValidationMessage(CFXJSE_Value* pValue,
-                                    FX_BOOL bSetting,
+                                    bool bSetting,
                                     XFA_ATTRIBUTE eAttribute);
   void Script_Field_Length(CFXJSE_Value* pValue,
-                           FX_BOOL bSetting,
+                           bool bSetting,
                            XFA_ATTRIBUTE eAttribute);
   void Script_Som_DefaultValue(CFXJSE_Value* pValue,
-                               FX_BOOL bSetting,
+                               bool bSetting,
                                XFA_ATTRIBUTE eAttribute);
   void Script_Som_DefaultValue_Read(CFXJSE_Value* pValue,
-                                    FX_BOOL bSetting,
+                                    bool bSetting,
                                     XFA_ATTRIBUTE eAttribute);
   void Script_Boolean_Value(CFXJSE_Value* pValue,
-                            FX_BOOL bSetting,
+                            bool bSetting,
                             XFA_ATTRIBUTE eAttribute);
   void Script_Som_Message(CFXJSE_Value* pValue,
-                          FX_BOOL bSetting,
+                          bool bSetting,
                           XFA_SOM_MESSAGETYPE iMessageType);
   void Script_Som_BorderColor(CFXJSE_Value* pValue,
-                              FX_BOOL bSetting,
+                              bool bSetting,
                               XFA_ATTRIBUTE eAttribute);
   void Script_Som_BorderWidth(CFXJSE_Value* pValue,
-                              FX_BOOL bSetting,
+                              bool bSetting,
                               XFA_ATTRIBUTE eAttribute);
   void Script_Som_FillColor(CFXJSE_Value* pValue,
-                            FX_BOOL bSetting,
+                            bool bSetting,
                             XFA_ATTRIBUTE eAttribute);
   void Script_Som_DataNode(CFXJSE_Value* pValue,
-                           FX_BOOL bSetting,
+                           bool bSetting,
                            XFA_ATTRIBUTE eAttribute);
   void Script_Som_FontColor(CFXJSE_Value* pValue,
-                            FX_BOOL bSetting,
+                            bool bSetting,
                             XFA_ATTRIBUTE eAttribute);
   void Script_Som_Mandatory(CFXJSE_Value* pValue,
-                            FX_BOOL bSetting,
+                            bool bSetting,
                             XFA_ATTRIBUTE eAttribute);
   void Script_Som_MandatoryMessage(CFXJSE_Value* pValue,
-                                   FX_BOOL bSetting,
+                                   bool bSetting,
                                    XFA_ATTRIBUTE eAttribute);
   void Script_Som_InstanceIndex(CFXJSE_Value* pValue,
-                                FX_BOOL bSetting,
+                                bool bSetting,
                                 XFA_ATTRIBUTE eAttribute);
   void Script_Draw_DefaultValue(CFXJSE_Value* pValue,
-                                FX_BOOL bSetting,
+                                bool bSetting,
                                 XFA_ATTRIBUTE eAttribute);
   void Script_Field_DefaultValue(CFXJSE_Value* pValue,
-                                 FX_BOOL bSetting,
+                                 bool bSetting,
                                  XFA_ATTRIBUTE eAttribute);
   void Script_Field_EditValue(CFXJSE_Value* pValue,
-                              FX_BOOL bSetting,
+                              bool bSetting,
                               XFA_ATTRIBUTE eAttribute);
   void Script_Field_FormatMessage(CFXJSE_Value* pValue,
-                                  FX_BOOL bSetting,
+                                  bool bSetting,
                                   XFA_ATTRIBUTE eAttribute);
   void Script_Field_FormattedValue(CFXJSE_Value* pValue,
-                                   FX_BOOL bSetting,
+                                   bool bSetting,
                                    XFA_ATTRIBUTE eAttribute);
   void Script_Field_ParentSubform(CFXJSE_Value* pValue,
-                                  FX_BOOL bSetting,
+                                  bool bSetting,
                                   XFA_ATTRIBUTE eAttribute);
   void Script_Field_SelectedIndex(CFXJSE_Value* pValue,
-                                  FX_BOOL bSetting,
+                                  bool bSetting,
                                   XFA_ATTRIBUTE eAttribute);
   void Script_Field_ClearItems(CFXJSE_Arguments* pArguments);
   void Script_Field_ExecEvent(CFXJSE_Arguments* pArguments);
@@ -506,13 +500,13 @@ class CXFA_Node : public CXFA_Object {
   void Script_Field_AddItem(CFXJSE_Arguments* pArguments);
   void Script_Field_ExecValidate(CFXJSE_Arguments* pArguments);
   void Script_ExclGroup_DefaultAndRawValue(CFXJSE_Value* pValue,
-                                           FX_BOOL bSetting,
+                                           bool bSetting,
                                            XFA_ATTRIBUTE eAttribute);
   void Script_ExclGroup_ErrorText(CFXJSE_Value* pValue,
-                                  FX_BOOL bSetting,
+                                  bool bSetting,
                                   XFA_ATTRIBUTE eAttribute);
   void Script_ExclGroup_Transient(CFXJSE_Value* pValue,
-                                  FX_BOOL bSetting,
+                                  bool bSetting,
                                   XFA_ATTRIBUTE eAttribute);
   void Script_ExclGroup_ExecEvent(CFXJSE_Arguments* pArguments);
   void Script_ExclGroup_SelectedMember(CFXJSE_Arguments* pArguments);
@@ -520,10 +514,10 @@ class CXFA_Node : public CXFA_Object {
   void Script_ExclGroup_ExecCalculate(CFXJSE_Arguments* pArguments);
   void Script_ExclGroup_ExecValidate(CFXJSE_Arguments* pArguments);
   void Script_Subform_InstanceManager(CFXJSE_Value* pValue,
-                                      FX_BOOL bSetting,
+                                      bool bSetting,
                                       XFA_ATTRIBUTE eAttribute);
   void Script_Subform_Locale(CFXJSE_Value* pValue,
-                             FX_BOOL bSetting,
+                             bool bSetting,
                              XFA_ATTRIBUTE eAttribute);
   void Script_Subform_ExecEvent(CFXJSE_Arguments* pArguments);
   void Script_Subform_ExecInitialize(CFXJSE_Arguments* pArguments);
@@ -541,13 +535,13 @@ class CXFA_Node : public CXFA_Object {
   void Script_Template_ExecValidate(CFXJSE_Arguments* pArguments);
   void Script_Manifest_Evaluate(CFXJSE_Arguments* pArguments);
   void Script_InstanceManager_Count(CFXJSE_Value* pValue,
-                                    FX_BOOL bSetting,
+                                    bool bSetting,
                                     XFA_ATTRIBUTE eAttribute);
   void Script_InstanceManager_Max(CFXJSE_Value* pValue,
-                                  FX_BOOL bSetting,
+                                  bool bSetting,
                                   XFA_ATTRIBUTE eAttribute);
   void Script_InstanceManager_Min(CFXJSE_Value* pValue,
-                                  FX_BOOL bSetting,
+                                  bool bSetting,
                                   XFA_ATTRIBUTE eAttribute);
   void Script_InstanceManager_MoveInstance(CFXJSE_Arguments* pArguments);
   void Script_InstanceManager_RemoveInstance(CFXJSE_Arguments* pArguments);
@@ -557,10 +551,10 @@ class CXFA_Node : public CXFA_Object {
   int32_t InstanceManager_SetInstances(int32_t iCount);
   int32_t InstanceManager_MoveInstance(int32_t iTo, int32_t iFrom);
   void Script_Occur_Max(CFXJSE_Value* pValue,
-                        FX_BOOL bSetting,
+                        bool bSetting,
                         XFA_ATTRIBUTE eAttribute);
   void Script_Occur_Min(CFXJSE_Value* pValue,
-                        FX_BOOL bSetting,
+                        bool bSetting,
                         XFA_ATTRIBUTE eAttribute);
   void Script_Desc_Metadata(CFXJSE_Arguments* pArguments);
   void Script_Form_FormNodes(CFXJSE_Arguments* pArguments);
@@ -570,13 +564,13 @@ class CXFA_Node : public CXFA_Object {
   void Script_Form_ExecCalculate(CFXJSE_Arguments* pArguments);
   void Script_Form_ExecValidate(CFXJSE_Arguments* pArguments);
   void Script_Form_Checksum(CFXJSE_Value* pValue,
-                            FX_BOOL bSetting,
+                            bool bSetting,
                             XFA_ATTRIBUTE eAttribute);
   void Script_Packet_GetAttribute(CFXJSE_Arguments* pArguments);
   void Script_Packet_SetAttribute(CFXJSE_Arguments* pArguments);
   void Script_Packet_RemoveAttribute(CFXJSE_Arguments* pArguments);
   void Script_Packet_Content(CFXJSE_Value* pValue,
-                             FX_BOOL bSetting,
+                             bool bSetting,
                              XFA_ATTRIBUTE eAttribute);
   void Script_Source_Next(CFXJSE_Arguments* pArguments);
   void Script_Source_CancelBatch(CFXJSE_Arguments* pArguments);
@@ -596,25 +590,25 @@ class CXFA_Node : public CXFA_Object {
   void Script_Source_Last(CFXJSE_Arguments* pArguments);
   void Script_Source_HasDataChanged(CFXJSE_Arguments* pArguments);
   void Script_Source_Db(CFXJSE_Value* pValue,
-                        FX_BOOL bSetting,
+                        bool bSetting,
                         XFA_ATTRIBUTE eAttribute);
   void Script_Xfa_This(CFXJSE_Value* pValue,
-                       FX_BOOL bSetting,
+                       bool bSetting,
                        XFA_ATTRIBUTE eAttribute);
   void Script_Handler_Version(CFXJSE_Value* pValue,
-                              FX_BOOL bSetting,
+                              bool bSetting,
                               XFA_ATTRIBUTE eAttribute);
   void Script_SubmitFormat_Mode(CFXJSE_Value* pValue,
-                                FX_BOOL bSetting,
+                                bool bSetting,
                                 XFA_ATTRIBUTE eAttribute);
   void Script_Extras_Type(CFXJSE_Value* pValue,
-                          FX_BOOL bSetting,
+                          bool bSetting,
                           XFA_ATTRIBUTE eAttribute);
   void Script_Encrypt_Format(CFXJSE_Value* pValue,
-                             FX_BOOL bSetting,
+                             bool bSetting,
                              XFA_ATTRIBUTE eAttribute);
   void Script_Script_Stateless(CFXJSE_Value* pValue,
-                               FX_BOOL bSetting,
+                               bool bSetting,
                                XFA_ATTRIBUTE eAttribute);
 
  protected:
@@ -629,48 +623,48 @@ class CXFA_Node : public CXFA_Object {
 
   bool HasFlag(XFA_NodeFlag dwFlag) const;
   CXFA_Node* Deprecated_GetPrevSibling();
-  FX_BOOL SetValue(XFA_ATTRIBUTE eAttr,
-                   XFA_ATTRIBUTETYPE eType,
-                   void* pValue,
-                   bool bNotify);
-  FX_BOOL GetValue(XFA_ATTRIBUTE eAttr,
-                   XFA_ATTRIBUTETYPE eType,
-                   FX_BOOL bUseDefault,
-                   void*& pValue);
+  bool SetValue(XFA_ATTRIBUTE eAttr,
+                XFA_ATTRIBUTETYPE eType,
+                void* pValue,
+                bool bNotify);
+  bool GetValue(XFA_ATTRIBUTE eAttr,
+                XFA_ATTRIBUTETYPE eType,
+                bool bUseDefault,
+                void*& pValue);
   void OnRemoved(bool bNotify);
   void OnChanging(XFA_ATTRIBUTE eAttr, bool bNotify);
-  void OnChanged(XFA_ATTRIBUTE eAttr, bool bNotify, FX_BOOL bScriptModify);
+  void OnChanged(XFA_ATTRIBUTE eAttr, bool bNotify, bool bScriptModify);
   int32_t execSingleEventByName(const CFX_WideStringC& wsEventName,
                                 XFA_Element eType);
-  FX_BOOL SetScriptContent(const CFX_WideString& wsContent,
-                           const CFX_WideString& wsXMLValue,
-                           bool bNotify = true,
-                           FX_BOOL bScriptModify = FALSE,
-                           FX_BOOL bSyncData = TRUE);
-  CFX_WideString GetScriptContent(FX_BOOL bScriptModify = FALSE);
+  bool SetScriptContent(const CFX_WideString& wsContent,
+                        const CFX_WideString& wsXMLValue,
+                        bool bNotify = true,
+                        bool bScriptModify = false,
+                        bool bSyncData = true);
+  CFX_WideString GetScriptContent(bool bScriptModify = false);
   XFA_MAPMODULEDATA* CreateMapModuleData();
   XFA_MAPMODULEDATA* GetMapModuleData() const;
   void SetMapModuleValue(void* pKey, void* pValue);
-  FX_BOOL GetMapModuleValue(void* pKey, void*& pValue);
+  bool GetMapModuleValue(void* pKey, void*& pValue);
   void SetMapModuleString(void* pKey, const CFX_WideStringC& wsValue);
-  FX_BOOL GetMapModuleString(void* pKey, CFX_WideStringC& wsValue);
+  bool GetMapModuleString(void* pKey, CFX_WideStringC& wsValue);
   void SetMapModuleBuffer(
       void* pKey,
       void* pValue,
       int32_t iBytes,
       XFA_MAPDATABLOCKCALLBACKINFO* pCallbackInfo = nullptr);
-  FX_BOOL GetMapModuleBuffer(void* pKey,
-                             void*& pValue,
-                             int32_t& iBytes,
-                             FX_BOOL bProtoAlso = TRUE) const;
-  FX_BOOL HasMapModuleKey(void* pKey, FX_BOOL bProtoAlso = FALSE);
+  bool GetMapModuleBuffer(void* pKey,
+                          void*& pValue,
+                          int32_t& iBytes,
+                          bool bProtoAlso = true) const;
+  bool HasMapModuleKey(void* pKey, bool bProtoAlso = false);
   void RemoveMapModuleKey(void* pKey = nullptr);
-  void MergeAllData(void* pDstModule, FX_BOOL bUseSrcAttr = TRUE);
+  void MergeAllData(void* pDstModule, bool bUseSrcAttr = true);
   void MoveBufferMapData(CXFA_Node* pDstModule, void* pKey);
   void MoveBufferMapData(CXFA_Node* pSrcModule,
                          CXFA_Node* pDstModule,
                          void* pKey,
-                         FX_BOOL bRecursive = FALSE);
+                         bool bRecursive = false);
 
   CXFA_Node* m_pNext;
   CXFA_Node* m_pChild;
@@ -704,9 +698,9 @@ class CXFA_NodeList : public CXFA_Object {
 
   CXFA_Node* NamedItem(const CFX_WideStringC& wsName);
   virtual int32_t GetLength() = 0;
-  virtual FX_BOOL Append(CXFA_Node* pNode) = 0;
-  virtual FX_BOOL Insert(CXFA_Node* pNewNode, CXFA_Node* pBeforeNode) = 0;
-  virtual FX_BOOL Remove(CXFA_Node* pNode) = 0;
+  virtual bool Append(CXFA_Node* pNode) = 0;
+  virtual bool Insert(CXFA_Node* pNewNode, CXFA_Node* pBeforeNode) = 0;
+  virtual bool Remove(CXFA_Node* pNode) = 0;
   virtual CXFA_Node* Item(int32_t iIndex) = 0;
 
   void Script_ListClass_Append(CFXJSE_Arguments* pArguments);
@@ -716,7 +710,7 @@ class CXFA_NodeList : public CXFA_Object {
 
   void Script_TreelistClass_NamedItem(CFXJSE_Arguments* pArguments);
   void Script_ListClass_Length(CFXJSE_Value* pValue,
-                               FX_BOOL bSetting,
+                               bool bSetting,
                                XFA_ATTRIBUTE eAttribute);
 };
 
@@ -727,9 +721,9 @@ class CXFA_ArrayNodeList : public CXFA_NodeList {
 
   // From CXFA_NodeList.
   int32_t GetLength() override;
-  FX_BOOL Append(CXFA_Node* pNode) override;
-  FX_BOOL Insert(CXFA_Node* pNewNode, CXFA_Node* pBeforeNode) override;
-  FX_BOOL Remove(CXFA_Node* pNode) override;
+  bool Append(CXFA_Node* pNode) override;
+  bool Insert(CXFA_Node* pNewNode, CXFA_Node* pBeforeNode) override;
+  bool Remove(CXFA_Node* pNode) override;
   CXFA_Node* Item(int32_t iIndex) override;
 
   void SetArrayNodeList(const CXFA_NodeArray& srcArray);
@@ -744,9 +738,9 @@ class CXFA_AttachNodeList : public CXFA_NodeList {
 
   // From CXFA_NodeList.
   int32_t GetLength() override;
-  FX_BOOL Append(CXFA_Node* pNode) override;
-  FX_BOOL Insert(CXFA_Node* pNewNode, CXFA_Node* pBeforeNode) override;
-  FX_BOOL Remove(CXFA_Node* pNode) override;
+  bool Append(CXFA_Node* pNode) override;
+  bool Insert(CXFA_Node* pNewNode, CXFA_Node* pBeforeNode) override;
+  bool Remove(CXFA_Node* pNode) override;
   CXFA_Node* Item(int32_t iIndex) override;
 
  protected:

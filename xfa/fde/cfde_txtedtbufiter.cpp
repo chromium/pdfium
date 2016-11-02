@@ -19,10 +19,10 @@ CFDE_TxtEdtBufIter::CFDE_TxtEdtBufIter(CFDE_TxtEdtBuf* pBuf, FX_WCHAR wcAlias)
 
 CFDE_TxtEdtBufIter::~CFDE_TxtEdtBufIter() {}
 
-FX_BOOL CFDE_TxtEdtBufIter::Next(FX_BOOL bPrev) {
+bool CFDE_TxtEdtBufIter::Next(bool bPrev) {
   if (bPrev) {
     if (m_nIndex == 0) {
-      return FALSE;
+      return false;
     }
     ASSERT(m_nCurChunk < m_pBuf->m_Chunks.GetSize());
     CFDE_TxtEdtBuf::FDE_CHUNKHEADER* lpChunk = nullptr;
@@ -40,10 +40,10 @@ FX_BOOL CFDE_TxtEdtBufIter::Next(FX_BOOL bPrev) {
     }
     ASSERT(m_nCurChunk >= 0);
     m_nIndex--;
-    return TRUE;
+    return true;
   } else {
     if (m_nIndex >= (m_pBuf->m_nTotal - 1)) {
-      return FALSE;
+      return false;
     }
     ASSERT(m_nCurChunk < m_pBuf->m_Chunks.GetSize());
     CFDE_TxtEdtBuf::FDE_CHUNKHEADER* lpChunk = m_pBuf->m_Chunks[m_nCurChunk];
@@ -62,7 +62,7 @@ FX_BOOL CFDE_TxtEdtBufIter::Next(FX_BOOL bPrev) {
       }
     }
     m_nIndex++;
-    return TRUE;
+    return true;
   }
 }
 
@@ -86,7 +86,7 @@ FX_WCHAR CFDE_TxtEdtBufIter::GetChar() {
   return m_Alias;
 }
 
-FX_BOOL CFDE_TxtEdtBufIter::IsEOF(FX_BOOL bTail) const {
+bool CFDE_TxtEdtBufIter::IsEOF(bool bTail) const {
   return bTail ? m_nIndex == (m_pBuf->GetTextLength() - 2) : m_nIndex == 0;
 }
 

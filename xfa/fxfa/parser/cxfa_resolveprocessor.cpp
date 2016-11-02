@@ -81,9 +81,9 @@ int32_t CXFA_ResolveProcessor::ResolveAnyChild(CXFA_ResolveNodesData& rnd) {
   CFX_WideString wsCondition = rnd.m_wsCondition;
   CXFA_Node* findNode = nullptr;
   CXFA_NodeArray siblings;
-  FX_BOOL bClassName = FALSE;
+  bool bClassName = false;
   if (wsName.GetAt(0) == '#') {
-    bClassName = TRUE;
+    bClassName = true;
     wsName = wsName.Right(wsName.GetLength() - 1);
   }
   findNode = m_pNodeHelper->ResolveNodes_GetOneChild(
@@ -266,7 +266,7 @@ int32_t CXFA_ResolveProcessor::ResolveNormal(CXFA_ResolveNodesData& rnd) {
     }
   }
   if (dwStyles & XFA_RESOLVENODE_Children) {
-    FX_BOOL bSetFlag = FALSE;
+    bool bSetFlag = false;
     if (pPageSetNode && (dwStyles & XFA_RESOLVENODE_Properties)) {
       children.Add(pPageSetNode);
     }
@@ -283,7 +283,7 @@ int32_t CXFA_ResolveProcessor::ResolveNormal(CXFA_ResolveNodesData& rnd) {
           child->GetElementType() != XFA_Element::PageSet) {
         if (!bSetFlag) {
           SetStylesForChild(dwStyles, rndFind);
-          bSetFlag = TRUE;
+          bSetFlag = true;
         }
         rndFind.m_CurNode = child;
         CFX_WideString wsSaveCondition = rndFind.m_wsCondition;
@@ -350,7 +350,7 @@ int32_t CXFA_ResolveProcessor::ResolveNormal(CXFA_ResolveNodesData& rnd) {
       CXFA_Node* pInstanceManager =
           curNode->AsNode()->GetInstanceMgrOfSubform();
       if (pInstanceManager) {
-        pProp = pInstanceManager->GetProperty(0, XFA_Element::Occur, TRUE);
+        pProp = pInstanceManager->GetProperty(0, XFA_Element::Occur, true);
       }
     } else {
       XFA_Element eType = XFA_GetElementTypeForName(wsName.AsStringC());
@@ -417,15 +417,15 @@ int32_t CXFA_ResolveProcessor::ResolveNormal(CXFA_ResolveNodesData& rnd) {
       const XFA_PROPERTY* pPropert = XFA_GetPropertyOfElement(
           parentNode->GetElementType(), child->GetElementType(),
           XFA_XDPPACKET_UNKNOWN);
-      FX_BOOL bInnerSearch = FALSE;
+      bool bInnerSearch = false;
       if (pPropert) {
         if ((child->GetElementType() == XFA_Element::Variables ||
              child->GetElementType() == XFA_Element::PageSet)) {
-          bInnerSearch = TRUE;
+          bInnerSearch = true;
         }
       } else {
         if (m_pNodeHelper->NodeIsTransparent(child)) {
-          bInnerSearch = TRUE;
+          bInnerSearch = true;
         }
       }
       if (bInnerSearch) {
@@ -524,7 +524,7 @@ int32_t CXFA_ResolveProcessor::GetFilter(const CFX_WideStringC& wsExpression,
   int32_t nType = -1;
   const FX_WCHAR* pSrc = wsExpression.c_str();
   FX_WCHAR wPrev = 0, wCur;
-  FX_BOOL bIsCondition = FALSE;
+  bool bIsCondition = false;
   while (nStart < iLength) {
     wCur = pSrc[nStart++];
     if (wCur == '.') {
@@ -544,34 +544,34 @@ int32_t CXFA_ResolveProcessor::GetFilter(const CFX_WideStringC& wsExpression,
       }
     }
     if (wCur == '[' || wCur == '(') {
-      bIsCondition = TRUE;
+      bIsCondition = true;
     } else if (wCur == '.' && nStart < iLength &&
                (pSrc[nStart] == '[' || pSrc[nStart] == '(')) {
-      bIsCondition = TRUE;
+      bIsCondition = true;
     }
     if (bIsCondition) {
       pConditionBuf[nConditionCount++] = wCur;
     } else {
       pNameBuf[nNameCount++] = wCur;
     }
-    FX_BOOL bRecursive = TRUE;
+    bool bRecursive = true;
     switch (nType) {
       case 0:
         if (wCur == ']') {
           nType = ResolvePopStack(stack);
-          bRecursive = FALSE;
+          bRecursive = false;
         }
         break;
       case 1:
         if (wCur == ')') {
           nType = ResolvePopStack(stack);
-          bRecursive = FALSE;
+          bRecursive = false;
         }
         break;
       case 2:
         if (wCur == '"') {
           nType = ResolvePopStack(stack);
-          bRecursive = FALSE;
+          bRecursive = false;
         }
         break;
     }
@@ -612,8 +612,8 @@ void CXFA_ResolveProcessor::ConditionArray(int32_t iCurIndex,
                                            CXFA_ResolveNodesData& rnd) {
   CXFA_NodeArray& findNodes = (CXFA_NodeArray&)rnd.m_Nodes;
   int32_t iLen = wsCondition.GetLength();
-  FX_BOOL bRelative = FALSE;
-  FX_BOOL bAll = FALSE;
+  bool bRelative = false;
+  bool bAll = false;
   int32_t i = 1;
   for (; i < iLen; ++i) {
     FX_WCHAR ch = wsCondition[i];
@@ -621,10 +621,10 @@ void CXFA_ResolveProcessor::ConditionArray(int32_t iCurIndex,
       continue;
     }
     if (ch == '+' || ch == '-') {
-      bRelative = TRUE;
+      bRelative = true;
       break;
     } else if (ch == '*') {
-      bAll = TRUE;
+      bAll = true;
       break;
     } else {
       break;
@@ -694,7 +694,7 @@ void CXFA_ResolveProcessor::DoPredicateFilter(int32_t iCurIndex,
   wsExpression = wsCondition.Mid(2, wsCondition.GetLength() - 3);
   for (int32_t i = iFoundCount - 1; i >= 0; i--) {
     CXFA_Object* node = findNodes[i];
-    FX_BOOL bRet = FALSE;
+    bool bRet = false;
     std::unique_ptr<CFXJSE_Value> pRetValue(
         new CFXJSE_Value(rnd.m_pSC->GetRuntime()));
     bRet = pContext->RunScript(eLangType, wsExpression.AsStringC(),
@@ -712,14 +712,14 @@ void CXFA_ResolveProcessor::FilterCondition(CXFA_ResolveNodesData& rnd,
   int32_t iSize = array.GetSize();
   if (iSize) {
     CXFA_Node* curNode = array[iSize - 1];
-    FX_BOOL bIsProperty = m_pNodeHelper->NodeIsProperty(curNode);
+    bool bIsProperty = m_pNodeHelper->NodeIsProperty(curNode);
     if (curNode->IsUnnamed() ||
         (bIsProperty && curNode->GetElementType() != XFA_Element::PageSet)) {
       iCurrIndex = m_pNodeHelper->GetIndex(curNode, XFA_LOGIC_Transparent,
-                                           bIsProperty, TRUE);
+                                           bIsProperty, true);
     } else {
       iCurrIndex = m_pNodeHelper->GetIndex(curNode, XFA_LOGIC_Transparent,
-                                           bIsProperty, FALSE);
+                                           bIsProperty, false);
     }
   }
   int32_t iFoundCount = findNodes.GetSize();

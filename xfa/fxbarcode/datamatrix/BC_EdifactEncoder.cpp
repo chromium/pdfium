@@ -89,8 +89,8 @@ void CBC_EdifactEncoder::handleEOD(CBC_EncoderContext& context,
   if (e != BCExceptionNO) {
     return;
   }
-  FX_BOOL endOfSymbolReached = !context.hasMoreCharacters();
-  FX_BOOL restInAscii = endOfSymbolReached && restChars <= 2;
+  bool endOfSymbolReached = !context.hasMoreCharacters();
+  bool restInAscii = endOfSymbolReached && restChars <= 2;
   if (restChars <= 2) {
     context.updateSymbolInfo(context.getCodewordCount() + restChars, e);
     if (e != BCExceptionNO) {
@@ -99,7 +99,7 @@ void CBC_EdifactEncoder::handleEOD(CBC_EncoderContext& context,
     int32_t available =
         context.m_symbolInfo->m_dataCapacity - context.getCodewordCount();
     if (available >= 3) {
-      restInAscii = FALSE;
+      restInAscii = false;
       context.updateSymbolInfo(context.getCodewordCount() + encoded.GetLength(),
                                e);
       if (e != BCExceptionNO) {

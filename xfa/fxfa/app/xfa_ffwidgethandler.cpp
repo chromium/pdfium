@@ -22,29 +22,29 @@ CXFA_FFWidgetHandler::CXFA_FFWidgetHandler(CXFA_FFDocView* pDocView)
 
 CXFA_FFWidgetHandler::~CXFA_FFWidgetHandler() {}
 
-FX_BOOL CXFA_FFWidgetHandler::OnMouseEnter(CXFA_FFWidget* hWidget) {
+bool CXFA_FFWidgetHandler::OnMouseEnter(CXFA_FFWidget* hWidget) {
   m_pDocView->LockUpdate();
-  FX_BOOL bRet = hWidget->OnMouseEnter();
+  bool bRet = hWidget->OnMouseEnter();
   m_pDocView->UnlockUpdate();
   m_pDocView->UpdateDocView();
   return bRet;
 }
 
-FX_BOOL CXFA_FFWidgetHandler::OnMouseExit(CXFA_FFWidget* hWidget) {
+bool CXFA_FFWidgetHandler::OnMouseExit(CXFA_FFWidget* hWidget) {
   m_pDocView->LockUpdate();
-  FX_BOOL bRet = hWidget->OnMouseExit();
+  bool bRet = hWidget->OnMouseExit();
   m_pDocView->UnlockUpdate();
   m_pDocView->UpdateDocView();
   return bRet;
 }
 
-FX_BOOL CXFA_FFWidgetHandler::OnLButtonDown(CXFA_FFWidget* hWidget,
-                                            uint32_t dwFlags,
-                                            FX_FLOAT fx,
-                                            FX_FLOAT fy) {
+bool CXFA_FFWidgetHandler::OnLButtonDown(CXFA_FFWidget* hWidget,
+                                         uint32_t dwFlags,
+                                         FX_FLOAT fx,
+                                         FX_FLOAT fy) {
   m_pDocView->LockUpdate();
   hWidget->Rotate2Normal(fx, fy);
-  FX_BOOL bRet = hWidget->OnLButtonDown(dwFlags, fx, fy);
+  bool bRet = hWidget->OnLButtonDown(dwFlags, fx, fy);
   if (bRet && m_pDocView->SetFocus(hWidget)) {
     m_pDocView->GetDoc()->GetDocEnvironment()->SetFocusWidget(
         m_pDocView->GetDoc(), hWidget);
@@ -54,56 +54,56 @@ FX_BOOL CXFA_FFWidgetHandler::OnLButtonDown(CXFA_FFWidget* hWidget,
   return bRet;
 }
 
-FX_BOOL CXFA_FFWidgetHandler::OnLButtonUp(CXFA_FFWidget* hWidget,
-                                          uint32_t dwFlags,
-                                          FX_FLOAT fx,
-                                          FX_FLOAT fy) {
+bool CXFA_FFWidgetHandler::OnLButtonUp(CXFA_FFWidget* hWidget,
+                                       uint32_t dwFlags,
+                                       FX_FLOAT fx,
+                                       FX_FLOAT fy) {
   m_pDocView->LockUpdate();
   hWidget->Rotate2Normal(fx, fy);
-  m_pDocView->m_bLayoutEvent = TRUE;
-  FX_BOOL bRet = hWidget->OnLButtonUp(dwFlags, fx, fy);
+  m_pDocView->m_bLayoutEvent = true;
+  bool bRet = hWidget->OnLButtonUp(dwFlags, fx, fy);
   m_pDocView->UnlockUpdate();
   m_pDocView->UpdateDocView();
   return bRet;
 }
 
-FX_BOOL CXFA_FFWidgetHandler::OnLButtonDblClk(CXFA_FFWidget* hWidget,
-                                              uint32_t dwFlags,
-                                              FX_FLOAT fx,
-                                              FX_FLOAT fy) {
-  hWidget->Rotate2Normal(fx, fy);
-  FX_BOOL bRet = hWidget->OnLButtonDblClk(dwFlags, fx, fy);
-  m_pDocView->RunInvalidate();
-  return bRet;
-}
-
-FX_BOOL CXFA_FFWidgetHandler::OnMouseMove(CXFA_FFWidget* hWidget,
-                                          uint32_t dwFlags,
-                                          FX_FLOAT fx,
-                                          FX_FLOAT fy) {
-  hWidget->Rotate2Normal(fx, fy);
-  FX_BOOL bRet = hWidget->OnMouseMove(dwFlags, fx, fy);
-  m_pDocView->RunInvalidate();
-  return bRet;
-}
-
-FX_BOOL CXFA_FFWidgetHandler::OnMouseWheel(CXFA_FFWidget* hWidget,
+bool CXFA_FFWidgetHandler::OnLButtonDblClk(CXFA_FFWidget* hWidget,
                                            uint32_t dwFlags,
-                                           int16_t zDelta,
                                            FX_FLOAT fx,
                                            FX_FLOAT fy) {
   hWidget->Rotate2Normal(fx, fy);
-  FX_BOOL bRet = hWidget->OnMouseWheel(dwFlags, zDelta, fx, fy);
+  bool bRet = hWidget->OnLButtonDblClk(dwFlags, fx, fy);
   m_pDocView->RunInvalidate();
   return bRet;
 }
 
-FX_BOOL CXFA_FFWidgetHandler::OnRButtonDown(CXFA_FFWidget* hWidget,
-                                            uint32_t dwFlags,
-                                            FX_FLOAT fx,
-                                            FX_FLOAT fy) {
+bool CXFA_FFWidgetHandler::OnMouseMove(CXFA_FFWidget* hWidget,
+                                       uint32_t dwFlags,
+                                       FX_FLOAT fx,
+                                       FX_FLOAT fy) {
   hWidget->Rotate2Normal(fx, fy);
-  FX_BOOL bRet = hWidget->OnRButtonDown(dwFlags, fx, fy);
+  bool bRet = hWidget->OnMouseMove(dwFlags, fx, fy);
+  m_pDocView->RunInvalidate();
+  return bRet;
+}
+
+bool CXFA_FFWidgetHandler::OnMouseWheel(CXFA_FFWidget* hWidget,
+                                        uint32_t dwFlags,
+                                        int16_t zDelta,
+                                        FX_FLOAT fx,
+                                        FX_FLOAT fy) {
+  hWidget->Rotate2Normal(fx, fy);
+  bool bRet = hWidget->OnMouseWheel(dwFlags, zDelta, fx, fy);
+  m_pDocView->RunInvalidate();
+  return bRet;
+}
+
+bool CXFA_FFWidgetHandler::OnRButtonDown(CXFA_FFWidget* hWidget,
+                                         uint32_t dwFlags,
+                                         FX_FLOAT fx,
+                                         FX_FLOAT fy) {
+  hWidget->Rotate2Normal(fx, fy);
+  bool bRet = hWidget->OnRButtonDown(dwFlags, fx, fy);
   if (bRet && m_pDocView->SetFocus(hWidget)) {
     m_pDocView->GetDoc()->GetDocEnvironment()->SetFocusWidget(
         m_pDocView->GetDoc(), hWidget);
@@ -112,47 +112,47 @@ FX_BOOL CXFA_FFWidgetHandler::OnRButtonDown(CXFA_FFWidget* hWidget,
   return bRet;
 }
 
-FX_BOOL CXFA_FFWidgetHandler::OnRButtonUp(CXFA_FFWidget* hWidget,
-                                          uint32_t dwFlags,
-                                          FX_FLOAT fx,
-                                          FX_FLOAT fy) {
+bool CXFA_FFWidgetHandler::OnRButtonUp(CXFA_FFWidget* hWidget,
+                                       uint32_t dwFlags,
+                                       FX_FLOAT fx,
+                                       FX_FLOAT fy) {
   hWidget->Rotate2Normal(fx, fy);
-  FX_BOOL bRet = hWidget->OnRButtonUp(dwFlags, fx, fy);
+  bool bRet = hWidget->OnRButtonUp(dwFlags, fx, fy);
   m_pDocView->RunInvalidate();
   return bRet;
 }
 
-FX_BOOL CXFA_FFWidgetHandler::OnRButtonDblClk(CXFA_FFWidget* hWidget,
-                                              uint32_t dwFlags,
-                                              FX_FLOAT fx,
-                                              FX_FLOAT fy) {
+bool CXFA_FFWidgetHandler::OnRButtonDblClk(CXFA_FFWidget* hWidget,
+                                           uint32_t dwFlags,
+                                           FX_FLOAT fx,
+                                           FX_FLOAT fy) {
   hWidget->Rotate2Normal(fx, fy);
-  FX_BOOL bRet = hWidget->OnRButtonDblClk(dwFlags, fx, fy);
+  bool bRet = hWidget->OnRButtonDblClk(dwFlags, fx, fy);
   m_pDocView->RunInvalidate();
   return bRet;
 }
 
-FX_BOOL CXFA_FFWidgetHandler::OnKeyDown(CXFA_FFWidget* hWidget,
-                                        uint32_t dwKeyCode,
-                                        uint32_t dwFlags) {
-  FX_BOOL bRet = hWidget->OnKeyDown(dwKeyCode, dwFlags);
+bool CXFA_FFWidgetHandler::OnKeyDown(CXFA_FFWidget* hWidget,
+                                     uint32_t dwKeyCode,
+                                     uint32_t dwFlags) {
+  bool bRet = hWidget->OnKeyDown(dwKeyCode, dwFlags);
   m_pDocView->RunInvalidate();
   m_pDocView->UpdateDocView();
   return bRet;
 }
 
-FX_BOOL CXFA_FFWidgetHandler::OnKeyUp(CXFA_FFWidget* hWidget,
-                                      uint32_t dwKeyCode,
-                                      uint32_t dwFlags) {
-  FX_BOOL bRet = hWidget->OnKeyUp(dwKeyCode, dwFlags);
+bool CXFA_FFWidgetHandler::OnKeyUp(CXFA_FFWidget* hWidget,
+                                   uint32_t dwKeyCode,
+                                   uint32_t dwFlags) {
+  bool bRet = hWidget->OnKeyUp(dwKeyCode, dwFlags);
   m_pDocView->RunInvalidate();
   return bRet;
 }
 
-FX_BOOL CXFA_FFWidgetHandler::OnChar(CXFA_FFWidget* hWidget,
-                                     uint32_t dwChar,
-                                     uint32_t dwFlags) {
-  FX_BOOL bRet = hWidget->OnChar(dwChar, dwFlags);
+bool CXFA_FFWidgetHandler::OnChar(CXFA_FFWidget* hWidget,
+                                  uint32_t dwChar,
+                                  uint32_t dwFlags) {
+  bool bRet = hWidget->OnChar(dwChar, dwFlags);
   m_pDocView->RunInvalidate();
   return bRet;
 }
@@ -167,9 +167,9 @@ FWL_WidgetHit CXFA_FFWidgetHandler::OnHitTest(CXFA_FFWidget* hWidget,
   return hWidget->OnHitTest(fx, fy);
 }
 
-FX_BOOL CXFA_FFWidgetHandler::OnSetCursor(CXFA_FFWidget* hWidget,
-                                          FX_FLOAT fx,
-                                          FX_FLOAT fy) {
+bool CXFA_FFWidgetHandler::OnSetCursor(CXFA_FFWidget* hWidget,
+                                       FX_FLOAT fx,
+                                       FX_FLOAT fy) {
   hWidget->Rotate2Normal(fx, fy);
   return hWidget->OnSetCursor(fx, fy);
 }
@@ -177,34 +177,34 @@ FX_BOOL CXFA_FFWidgetHandler::OnSetCursor(CXFA_FFWidget* hWidget,
 void CXFA_FFWidgetHandler::RenderWidget(CXFA_FFWidget* hWidget,
                                         CFX_Graphics* pGS,
                                         CFX_Matrix* pMatrix,
-                                        FX_BOOL bHighlight) {
+                                        bool bHighlight) {
   hWidget->RenderWidget(pGS, pMatrix,
                         bHighlight ? XFA_WidgetStatus_Highlight : 0);
 }
 
-FX_BOOL CXFA_FFWidgetHandler::HasEvent(CXFA_WidgetAcc* pWidgetAcc,
-                                       XFA_EVENTTYPE eEventType) {
+bool CXFA_FFWidgetHandler::HasEvent(CXFA_WidgetAcc* pWidgetAcc,
+                                    XFA_EVENTTYPE eEventType) {
   if (!pWidgetAcc || eEventType == XFA_EVENT_Unknown)
-    return FALSE;
+    return false;
   if (pWidgetAcc->GetElementType() == XFA_Element::Draw)
-    return FALSE;
+    return false;
 
   switch (eEventType) {
     case XFA_EVENT_Calculate: {
       CXFA_Calculate calc = pWidgetAcc->GetCalculate();
       if (!calc)
-        return FALSE;
+        return false;
       if (calc.GetScript())
-        return TRUE;
-      return FALSE;
+        return true;
+      return false;
     }
     case XFA_EVENT_Validate: {
       CXFA_Validate val = pWidgetAcc->GetValidate();
       if (!val)
-        return FALSE;
+        return false;
       if (val.GetScript())
-        return TRUE;
-      return FALSE;
+        return true;
+      return false;
     }
     default:
       break;
@@ -324,22 +324,22 @@ CXFA_Node* CXFA_FFWidgetHandler::CreatePushButton(CXFA_Node* pParent,
   CXFA_Node* pCaption = CreateCopyNode(XFA_Element::Caption, pField);
   CXFA_Node* pValue = CreateCopyNode(XFA_Element::Value, pCaption);
   CXFA_Node* pText = CreateCopyNode(XFA_Element::Text, pValue);
-  pText->SetContent(L"Button", L"Button", FALSE);
+  pText->SetContent(L"Button", L"Button", false);
 
   CXFA_Node* pPara = CreateCopyNode(XFA_Element::Para, pCaption);
-  pPara->SetEnum(XFA_ATTRIBUTE_VAlign, XFA_ATTRIBUTEENUM_Middle, FALSE);
-  pPara->SetEnum(XFA_ATTRIBUTE_HAlign, XFA_ATTRIBUTEENUM_Center, FALSE);
+  pPara->SetEnum(XFA_ATTRIBUTE_VAlign, XFA_ATTRIBUTEENUM_Middle, false);
+  pPara->SetEnum(XFA_ATTRIBUTE_HAlign, XFA_ATTRIBUTEENUM_Center, false);
   CreateFontNode(pCaption);
 
   CXFA_Node* pBorder = CreateCopyNode(XFA_Element::Border, pField);
-  pBorder->SetEnum(XFA_ATTRIBUTE_Hand, XFA_ATTRIBUTEENUM_Right, FALSE);
+  pBorder->SetEnum(XFA_ATTRIBUTE_Hand, XFA_ATTRIBUTEENUM_Right, false);
 
   CXFA_Node* pEdge = CreateCopyNode(XFA_Element::Edge, pBorder);
-  pEdge->SetEnum(XFA_ATTRIBUTE_Stroke, XFA_ATTRIBUTEENUM_Raised, FALSE);
+  pEdge->SetEnum(XFA_ATTRIBUTE_Stroke, XFA_ATTRIBUTEENUM_Raised, false);
 
   CXFA_Node* pFill = CreateCopyNode(XFA_Element::Fill, pBorder);
   CXFA_Node* pColor = CreateCopyNode(XFA_Element::Color, pFill);
-  pColor->SetCData(XFA_ATTRIBUTE_Value, L"212, 208, 200", FALSE);
+  pColor->SetCData(XFA_ATTRIBUTE_Value, L"212, 208, 200", false);
 
   CXFA_Node* pBind = CreateCopyNode(XFA_Element::Bind, pField);
   pBind->SetEnum(XFA_ATTRIBUTE_Match, XFA_ATTRIBUTEENUM_None);
@@ -419,7 +419,7 @@ CXFA_Node* CXFA_FFWidgetHandler::CreatePasswordEdit(CXFA_Node* pParent,
                                                     CXFA_Node* pBefore) const {
   CXFA_Node* pField = CreateField(XFA_Element::PasswordEdit, pParent, pBefore);
   CXFA_Node* pBind = CreateCopyNode(XFA_Element::Bind, pField);
-  pBind->SetEnum(XFA_ATTRIBUTE_Match, XFA_ATTRIBUTEENUM_None, FALSE);
+  pBind->SetEnum(XFA_ATTRIBUTE_Match, XFA_ATTRIBUTEENUM_None, false);
   return pField;
 }
 
@@ -481,7 +481,7 @@ CXFA_Node* CXFA_FFWidgetHandler::CreateFormItem(XFA_Element eElement,
                                                 CXFA_Node* pParent,
                                                 CXFA_Node* pBefore) const {
   CXFA_Node* pTemplateParent = pParent ? pParent->GetTemplateNode() : nullptr;
-  CXFA_Node* pNewFormItem = pTemplateParent->CloneTemplateToForm(FALSE);
+  CXFA_Node* pNewFormItem = pTemplateParent->CloneTemplateToForm(false);
   if (pParent)
     pParent->InsertChild(pNewFormItem, pBefore);
   return pNewFormItem;
@@ -494,7 +494,7 @@ CXFA_Node* CXFA_FFWidgetHandler::CreateCopyNode(XFA_Element eElement,
   CXFA_Node* pNewNode =
       CreateTemplateNode(eElement, pTemplateParent,
                          pBefore ? pBefore->GetTemplateNode() : nullptr)
-          ->Clone(FALSE);
+          ->Clone(false);
   if (pParent)
     pParent->InsertChild(pNewNode, pBefore);
   return pNewNode;
@@ -513,7 +513,7 @@ CXFA_Node* CXFA_FFWidgetHandler::CreateTemplateNode(XFA_Element eElement,
 
 CXFA_Node* CXFA_FFWidgetHandler::CreateFontNode(CXFA_Node* pParent) const {
   CXFA_Node* pFont = CreateCopyNode(XFA_Element::Font, pParent);
-  pFont->SetCData(XFA_ATTRIBUTE_Typeface, L"Myriad Pro", FALSE);
+  pFont->SetCData(XFA_ATTRIBUTE_Typeface, L"Myriad Pro", false);
   return pFont;
 }
 
@@ -523,16 +523,16 @@ CXFA_Node* CXFA_FFWidgetHandler::CreateMarginNode(CXFA_Node* pParent,
   CXFA_Node* pMargin = CreateCopyNode(XFA_Element::Margin, pParent);
   if (dwFlags & 0x01)
     pMargin->SetMeasure(XFA_ATTRIBUTE_LeftInset,
-                        CXFA_Measurement(fInsets[0], XFA_UNIT_Pt), FALSE);
+                        CXFA_Measurement(fInsets[0], XFA_UNIT_Pt), false);
   if (dwFlags & 0x02)
     pMargin->SetMeasure(XFA_ATTRIBUTE_TopInset,
-                        CXFA_Measurement(fInsets[1], XFA_UNIT_Pt), FALSE);
+                        CXFA_Measurement(fInsets[1], XFA_UNIT_Pt), false);
   if (dwFlags & 0x04)
     pMargin->SetMeasure(XFA_ATTRIBUTE_RightInset,
-                        CXFA_Measurement(fInsets[2], XFA_UNIT_Pt), FALSE);
+                        CXFA_Measurement(fInsets[2], XFA_UNIT_Pt), false);
   if (dwFlags & 0x08)
     pMargin->SetMeasure(XFA_ATTRIBUTE_BottomInset,
-                        CXFA_Measurement(fInsets[3], XFA_UNIT_Pt), FALSE);
+                        CXFA_Measurement(fInsets[3], XFA_UNIT_Pt), false);
   return pMargin;
 }
 

@@ -20,7 +20,7 @@ IFWL_ToolTip::IFWL_ToolTip(const IFWL_App* app,
                            const CFWL_WidgetImpProperties& properties,
                            IFWL_Widget* pOuter)
     : IFWL_Form(app, properties, pOuter),
-      m_bBtnDown(FALSE),
+      m_bBtnDown(false),
       m_dwTTOStyles(FDE_TTOSTYLE_SingleLine),
       m_iTTOAlign(FDE_TTOALIGNMENT_Center),
       m_pTimerInfoShow(nullptr),
@@ -40,7 +40,7 @@ FWL_Type IFWL_ToolTip::GetClassID() const {
   return FWL_Type::ToolTip;
 }
 
-FWL_Error IFWL_ToolTip::GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize) {
+FWL_Error IFWL_ToolTip::GetWidgetRect(CFX_RectF& rect, bool bAutoSize) {
   if (bAutoSize) {
     rect.Set(0, 0, 0, 0);
     if (!m_pProperties->m_pThemeProvider) {
@@ -59,7 +59,7 @@ FWL_Error IFWL_ToolTip::GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize) {
       rect.width += 25;
       rect.height += 16;
     }
-    IFWL_Widget::GetWidgetRect(rect, TRUE);
+    IFWL_Widget::GetWidgetRect(rect, true);
   } else {
     rect = m_pProperties->m_rtWidget;
   }
@@ -176,7 +176,7 @@ void IFWL_ToolTip::Show() {
 }
 
 void IFWL_ToolTip::Hide() {
-  SetStates(FWL_WGTSTATE_Invisible, TRUE);
+  SetStates(FWL_WGTSTATE_Invisible, true);
   if (m_pTimerInfoHide) {
     m_pTimerInfoHide->StopTimer();
     m_pTimerInfoHide = nullptr;
@@ -187,7 +187,7 @@ void IFWL_ToolTip::Hide() {
   }
 }
 
-void IFWL_ToolTip::SetStates(uint32_t dwStates, FX_BOOL bSet) {
+void IFWL_ToolTip::SetStates(uint32_t dwStates, bool bSet) {
   if ((dwStates & FWL_WGTSTATE_Invisible) && !bSet) {
     IFWL_ToolTipDP* pData =
         static_cast<IFWL_ToolTipDP*>(m_pProperties->m_pDataProvider);
@@ -238,7 +238,7 @@ void IFWL_ToolTip::Timer::Run(IFWL_TimerInfo* pTimerInfo) {
 
   if (pToolTip->m_pTimerInfoShow == pTimerInfo && pToolTip->m_pTimerInfoShow) {
     if (pToolTip->GetStates() & FWL_WGTSTATE_Invisible) {
-      pToolTip->SetStates(FWL_WGTSTATE_Invisible, FALSE);
+      pToolTip->SetStates(FWL_WGTSTATE_Invisible, false);
       pToolTip->RefreshToolTipPos();
       pToolTip->m_pTimerInfoShow->StopTimer();
       pToolTip->m_pTimerInfoShow = nullptr;
@@ -246,7 +246,7 @@ void IFWL_ToolTip::Timer::Run(IFWL_TimerInfo* pTimerInfo) {
     }
   }
   if (pToolTip->m_pTimerInfoHide == pTimerInfo && pToolTip->m_pTimerInfoHide) {
-    pToolTip->SetStates(FWL_WGTSTATE_Invisible, TRUE);
+    pToolTip->SetStates(FWL_WGTSTATE_Invisible, true);
     pToolTip->m_pTimerInfoHide->StopTimer();
     pToolTip->m_pTimerInfoHide = nullptr;
   }

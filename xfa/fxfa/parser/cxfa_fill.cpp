@@ -25,10 +25,10 @@ void CXFA_Fill::SetColor(FX_ARGB color) {
   pNode->SetCData(XFA_ATTRIBUTE_Value, wsColor);
 }
 
-FX_ARGB CXFA_Fill::GetColor(FX_BOOL bText) {
+FX_ARGB CXFA_Fill::GetColor(bool bText) {
   if (CXFA_Node* pNode = m_pNode->GetChild(0, XFA_Element::Color)) {
     CFX_WideStringC wsColor;
-    if (pNode->TryCData(XFA_ATTRIBUTE_Value, wsColor, FALSE))
+    if (pNode->TryCData(XFA_ATTRIBUTE_Value, wsColor, false))
       return CXFA_Data::ToColor(wsColor);
   }
   if (bText)
@@ -52,7 +52,7 @@ int32_t CXFA_Fill::GetPattern(FX_ARGB& foreColor) {
   CXFA_Node* pNode = m_pNode->GetProperty(0, XFA_Element::Pattern);
   if (CXFA_Node* pColor = pNode->GetChild(0, XFA_Element::Color)) {
     CFX_WideStringC wsColor;
-    pColor->TryCData(XFA_ATTRIBUTE_Value, wsColor, FALSE);
+    pColor->TryCData(XFA_ATTRIBUTE_Value, wsColor, false);
     foreColor = CXFA_Data::ToColor(wsColor);
   } else {
     foreColor = 0xFF000000;
@@ -66,7 +66,7 @@ int32_t CXFA_Fill::GetStipple(FX_ARGB& stippleColor) {
   pNode->TryInteger(XFA_ATTRIBUTE_Rate, eAttr);
   if (CXFA_Node* pColor = pNode->GetChild(0, XFA_Element::Color)) {
     CFX_WideStringC wsColor;
-    pColor->TryCData(XFA_ATTRIBUTE_Value, wsColor, FALSE);
+    pColor->TryCData(XFA_ATTRIBUTE_Value, wsColor, false);
     stippleColor = CXFA_Data::ToColor(wsColor);
   } else {
     stippleColor = 0xFF000000;
@@ -80,7 +80,7 @@ int32_t CXFA_Fill::GetLinear(FX_ARGB& endColor) {
   pNode->TryEnum(XFA_ATTRIBUTE_Type, eAttr);
   if (CXFA_Node* pColor = pNode->GetChild(0, XFA_Element::Color)) {
     CFX_WideStringC wsColor;
-    pColor->TryCData(XFA_ATTRIBUTE_Value, wsColor, FALSE);
+    pColor->TryCData(XFA_ATTRIBUTE_Value, wsColor, false);
     endColor = CXFA_Data::ToColor(wsColor);
   } else {
     endColor = 0xFF000000;
@@ -94,7 +94,7 @@ int32_t CXFA_Fill::GetRadial(FX_ARGB& endColor) {
   pNode->TryEnum(XFA_ATTRIBUTE_Type, eAttr);
   if (CXFA_Node* pColor = pNode->GetChild(0, XFA_Element::Color)) {
     CFX_WideStringC wsColor;
-    pColor->TryCData(XFA_ATTRIBUTE_Value, wsColor, FALSE);
+    pColor->TryCData(XFA_ATTRIBUTE_Value, wsColor, false);
     endColor = CXFA_Data::ToColor(wsColor);
   } else {
     endColor = 0xFF000000;

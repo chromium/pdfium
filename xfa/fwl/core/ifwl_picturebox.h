@@ -49,7 +49,7 @@ class IFWL_PictureBox : public IFWL_Widget {
 
   // IFWL_Widget
   FWL_Type GetClassID() const override;
-  FWL_Error GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize = FALSE) override;
+  FWL_Error GetWidgetRect(CFX_RectF& rect, bool bAutoSize = false) override;
   FWL_Error Update() override;
   FWL_Error DrawWidget(CFX_Graphics* pGraphics,
                        const CFX_Matrix* pMatrix = nullptr) override;
@@ -65,9 +65,9 @@ class IFWL_PictureBox : public IFWL_Widget {
   CFX_RectF m_rtClient;
   CFX_RectF m_rtImage;
   CFX_Matrix m_matrix;
-  FX_BOOL m_bTop;
-  FX_BOOL m_bVCenter;
-  FX_BOOL m_bButton;
+  bool m_bTop;
+  bool m_bVCenter;
+  bool m_bButton;
 };
 
 #endif  // XFA_FWL_CORE_IFWL_PICTUREBOX_H_

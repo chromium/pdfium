@@ -155,7 +155,7 @@ int32_t CBC_PDF417HighLevelEncoder::encodeText(CFX_WideString msg,
   CFX_WideString tmp;
   int32_t submode = initialSubmode;
   int32_t idx = 0;
-  while (TRUE) {
+  while (true) {
     FX_WCHAR ch = msg.GetAt(startpos + idx);
     switch (submode) {
       case SUBMODE_ALPHA:
@@ -247,7 +247,7 @@ int32_t CBC_PDF417HighLevelEncoder::encodeText(CFX_WideString msg,
   FX_WCHAR h = 0;
   int32_t len = tmp.GetLength();
   for (int32_t i = 0; i < len; i++) {
-    FX_BOOL odd = (i % 2) != 0;
+    bool odd = (i % 2) != 0;
     if (odd) {
       h = (FX_WCHAR)((h * 30) + tmp.GetAt(i));
       sb += h;
@@ -320,22 +320,22 @@ void CBC_PDF417HighLevelEncoder::encodeNumeric(CFX_WideString msg,
     idx += len;
   }
 }
-FX_BOOL CBC_PDF417HighLevelEncoder::isDigit(FX_WCHAR ch) {
+bool CBC_PDF417HighLevelEncoder::isDigit(FX_WCHAR ch) {
   return ch >= '0' && ch <= '9';
 }
-FX_BOOL CBC_PDF417HighLevelEncoder::isAlphaUpper(FX_WCHAR ch) {
+bool CBC_PDF417HighLevelEncoder::isAlphaUpper(FX_WCHAR ch) {
   return ch == ' ' || (ch >= 'A' && ch <= 'Z');
 }
-FX_BOOL CBC_PDF417HighLevelEncoder::isAlphaLower(FX_WCHAR ch) {
+bool CBC_PDF417HighLevelEncoder::isAlphaLower(FX_WCHAR ch) {
   return ch == ' ' || (ch >= 'a' && ch <= 'z');
 }
-FX_BOOL CBC_PDF417HighLevelEncoder::isMixed(FX_WCHAR ch) {
+bool CBC_PDF417HighLevelEncoder::isMixed(FX_WCHAR ch) {
   return MIXED[ch] != -1;
 }
-FX_BOOL CBC_PDF417HighLevelEncoder::isPunctuation(FX_WCHAR ch) {
+bool CBC_PDF417HighLevelEncoder::isPunctuation(FX_WCHAR ch) {
   return PUNCTUATION[ch] != -1;
 }
-FX_BOOL CBC_PDF417HighLevelEncoder::isText(FX_WCHAR ch) {
+bool CBC_PDF417HighLevelEncoder::isText(FX_WCHAR ch) {
   return ch == '\t' || ch == '\n' || ch == '\r' || (ch >= 32 && ch <= 126);
 }
 int32_t CBC_PDF417HighLevelEncoder::determineConsecutiveDigitCount(

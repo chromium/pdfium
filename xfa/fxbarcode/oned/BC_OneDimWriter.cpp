@@ -36,21 +36,21 @@
 
 CBC_OneDimWriter::CBC_OneDimWriter() {
   m_locTextLoc = BC_TEXT_LOC_BELOWEMBED;
-  m_bPrintChecksum = TRUE;
+  m_bPrintChecksum = true;
   m_iDataLenth = 0;
-  m_bCalcChecksum = FALSE;
+  m_bCalcChecksum = false;
   m_pFont = nullptr;
   m_fFontSize = 10;
   m_iFontStyle = 0;
   m_fontColor = 0xff000000;
   m_iContentLen = 0;
-  m_bLeftPadding = FALSE;
-  m_bRightPadding = FALSE;
+  m_bLeftPadding = false;
+  m_bRightPadding = false;
 }
 
 CBC_OneDimWriter::~CBC_OneDimWriter() {}
 
-void CBC_OneDimWriter::SetPrintChecksum(FX_BOOL checksum) {
+void CBC_OneDimWriter::SetPrintChecksum(bool checksum) {
   m_bPrintChecksum = checksum;
 }
 
@@ -58,16 +58,16 @@ void CBC_OneDimWriter::SetDataLength(int32_t length) {
   m_iDataLenth = length;
 }
 
-void CBC_OneDimWriter::SetCalcChecksum(FX_BOOL state) {
+void CBC_OneDimWriter::SetCalcChecksum(bool state) {
   m_bCalcChecksum = state;
 }
 
-FX_BOOL CBC_OneDimWriter::SetFont(CFX_Font* cFont) {
+bool CBC_OneDimWriter::SetFont(CFX_Font* cFont) {
   if (!cFont)
-    return FALSE;
+    return false;
 
   m_pFont = cFont;
-  return TRUE;
+  return true;
 }
 
 void CBC_OneDimWriter::SetFontSize(FX_FLOAT size) {
@@ -387,7 +387,7 @@ void CBC_OneDimWriter::RenderDeviceResult(CFX_RenderDevice* device,
 void CBC_OneDimWriter::RenderResult(const CFX_WideStringC& contents,
                                     uint8_t* code,
                                     int32_t codeLength,
-                                    FX_BOOL isDevice,
+                                    bool isDevice,
                                     int32_t& e) {
   if (codeLength < 1) {
     BC_EXCEPTION_CHECK_ReturnVoid(e);
@@ -460,9 +460,8 @@ void CBC_OneDimWriter::RenderResult(const CFX_WideStringC& contents,
   }
 }
 
-FX_BOOL CBC_OneDimWriter::CheckContentValidity(
-    const CFX_WideStringC& contents) {
-  return TRUE;
+bool CBC_OneDimWriter::CheckContentValidity(const CFX_WideStringC& contents) {
+  return true;
 }
 
 CFX_WideString CBC_OneDimWriter::FilterContents(

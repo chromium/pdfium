@@ -12,7 +12,7 @@
 CXFA_Node* XFA_NodeMerge_CloneOrMergeContainer(CXFA_Document* pDocument,
                                                CXFA_Node* pFormParent,
                                                CXFA_Node* pTemplateNode,
-                                               FX_BOOL bRecursive,
+                                               bool bRecursive,
                                                CXFA_NodeArray* pSubformArray);
 CXFA_Node* XFA_DataMerge_FindDataScope(CXFA_Node* pParentFormNode);
 CXFA_Node* XFA_DataMerge_FindFormDOMInstance(CXFA_Document* pDocument,

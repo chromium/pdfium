@@ -10,6 +10,6 @@
 
 CXFA_ExData::CXFA_ExData(CXFA_Node* pNode) : CXFA_Data(pNode) {}
 
-FX_BOOL CXFA_ExData::SetContentType(const CFX_WideString& wsContentType) {
+bool CXFA_ExData::SetContentType(const CFX_WideString& wsContentType) {
   return m_pNode->SetCData(XFA_ATTRIBUTE_ContentType, wsContentType);
 }

@@ -50,7 +50,7 @@ void CXFA_FFPushButton::RenderWidget(CFX_Graphics* pGS,
   GetApp()->GetWidgetMgrDelegate()->OnDrawWidget(m_pNormalWidget->GetWidget(),
                                                  pGS, &mt);
 }
-FX_BOOL CXFA_FFPushButton::LoadWidget() {
+bool CXFA_FFPushButton::LoadWidget() {
   ASSERT(!m_pNormalWidget);
   CFWL_PushButton* pPushButton = new CFWL_PushButton(GetFWLApp());
   pPushButton->Initialize();
@@ -99,7 +99,7 @@ void CXFA_FFPushButton::UnloadWidget() {
   CXFA_FFField::UnloadWidget();
 }
 
-FX_BOOL CXFA_FFPushButton::PerformLayout() {
+bool CXFA_FFPushButton::PerformLayout() {
   CXFA_FFWidget::PerformLayout();
   CFX_RectF rtWidget;
   GetRectWithoutRotate(rtWidget);
@@ -117,7 +117,7 @@ FX_BOOL CXFA_FFPushButton::PerformLayout() {
   if (m_pNormalWidget) {
     m_pNormalWidget->Update();
   }
-  return TRUE;
+  return true;
 }
 FX_FLOAT CXFA_FFPushButton::GetLineWidth() {
   CXFA_Border border = m_pDataAcc->GetBorder();
@@ -138,7 +138,7 @@ void CXFA_FFPushButton::LoadHighlightCaption() {
   if (caption && caption.GetPresence() != XFA_ATTRIBUTEENUM_Hidden) {
     {
       CFX_WideString wsRollover;
-      FX_BOOL bRichText;
+      bool bRichText;
       if (m_pDataAcc->GetButtonRollover(wsRollover, bRichText)) {
         if (!m_pRollProvider) {
           m_pRollProvider =

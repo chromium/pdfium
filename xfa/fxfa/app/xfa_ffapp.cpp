@@ -89,9 +89,9 @@ CXFA_FFDocHandler* CXFA_FFApp::GetDocHandler() {
 
 CXFA_FFDoc* CXFA_FFApp::CreateDoc(IXFA_DocEnvironment* pDocEnvironment,
                                   IFX_SeekableReadStream* pStream,
-                                  FX_BOOL bTakeOverFile) {
+                                  bool bTakeOverFile) {
   std::unique_ptr<CXFA_FFDoc> pDoc(new CXFA_FFDoc(this, pDocEnvironment));
-  FX_BOOL bSuccess = pDoc->OpenDoc(pStream, bTakeOverFile);
+  bool bSuccess = pDoc->OpenDoc(pStream, bTakeOverFile);
   return bSuccess ? pDoc.release() : nullptr;
 }
 
@@ -101,7 +101,7 @@ CXFA_FFDoc* CXFA_FFApp::CreateDoc(IXFA_DocEnvironment* pDocEnvironment,
     return nullptr;
 
   std::unique_ptr<CXFA_FFDoc> pDoc(new CXFA_FFDoc(this, pDocEnvironment));
-  FX_BOOL bSuccess = pDoc->OpenDoc(pPDFDoc);
+  bool bSuccess = pDoc->OpenDoc(pPDFDoc);
   return bSuccess ? pDoc.release() : nullptr;
 }
 
@@ -149,5 +149,5 @@ IFWL_AdapterTimerMgr* CXFA_FFApp::GetTimerMgr() const {
 }
 
 void CXFA_FFApp::ClearEventTargets() {
-  m_pFWLApp->GetNoteDriver()->ClearEventTargets(FALSE);
+  m_pFWLApp->GetNoteDriver()->ClearEventTargets(false);
 }

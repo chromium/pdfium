@@ -30,7 +30,7 @@ const int64_t g_FXMillisecondsPerSecond = 1000;
 const int64_t g_FXMillisecondsPerMinute = 60000;
 const int64_t g_FXMillisecondsPerHour = 3600000;
 const int64_t g_FXMillisecondsPerDay = 86400000;
-FX_BOOL FX_IsLeapYear(int32_t iYear) {
+bool FX_IsLeapYear(int32_t iYear) {
   ASSERT(iYear != 0);
   return ((iYear % 4) == 0 && (iYear % 100) != 0) || (iYear % 400) == 0;
 }
@@ -55,7 +55,7 @@ static int32_t FX_DaysBeforeMonthInYear(int32_t iYear, uint8_t iMonth) {
 static int64_t FX_DateToDays(int32_t iYear,
                              uint8_t iMonth,
                              uint8_t iDay,
-                             FX_BOOL bIncludeThisDay = FALSE) {
+                             bool bIncludeThisDay = false) {
   ASSERT(iYear != 0);
   ASSERT(iMonth >= 1 && iMonth <= 12);
   ASSERT(iDay >= 1 && iDay <= FX_DaysInMonth(iYear, iMonth));
@@ -76,7 +76,7 @@ static void FX_DaysToDate(int64_t iDays,
                           int32_t& iYear,
                           uint8_t& iMonth,
                           uint8_t& iDay) {
-  FX_BOOL bBC = iDays < 0;
+  bool bBC = iDays < 0;
   if (bBC) {
     iDays = -iDays;
   }
@@ -100,7 +100,7 @@ static void FX_DaysToDate(int64_t iDays,
     iYear += (int32_t)(iDays / g_FXDaysPer4Years * 4);
     iDays %= g_FXDaysPer4Years;
   }
-  while (TRUE) {
+  while (true) {
     int32_t iYearDays = FX_DaysInYear(iYear);
     if (iDays < iYearDays) {
       if (bBC) {
@@ -112,7 +112,7 @@ static void FX_DaysToDate(int64_t iDays,
     iYear++;
     iDays -= iYearDays;
   }
-  while (TRUE) {
+  while (true) {
     int32_t iMonthDays = FX_DaysInMonth(iYear, iMonth);
     if (iDays < iMonthDays) {
       break;
@@ -207,7 +207,7 @@ void CFX_Unitime::Set(int32_t year,
   if (year > 0) {
     m_iUnitime =
         m_iUnitime +
-        FX_DateToDays(year, month, day, FALSE) * g_FXMillisecondsPerDay;
+        FX_DateToDays(year, month, day, false) * g_FXMillisecondsPerDay;
   }
 }
 void CFX_Unitime::Set(FX_UNITIME t) {
@@ -245,7 +245,7 @@ uint16_t CFX_Unitime::GetDayOfYear() const {
   return FX_DaysBeforeMonthInYear(iYear, iMonth) + iDay;
 }
 int64_t CFX_Unitime::GetDayOfAD() const {
-  FX_BOOL bBC = m_iUnitime < 0;
+  bool bBC = m_iUnitime < 0;
   int64_t iDays = m_iUnitime / g_FXMillisecondsPerDay;
   iDays += bBC ? -1 : 0;
   if (bBC && (m_iUnitime % g_FXMillisecondsPerDay) == 0) {
@@ -281,7 +281,7 @@ uint16_t CFX_Unitime::GetMillisecond() const {
   }
   return (uint16_t)v;
 }
-FX_BOOL CFX_Unitime::AddYears(int32_t iYears) {
+bool CFX_Unitime::AddYears(int32_t iYears) {
   FX_UNITIME ut = m_iUnitime;
   if (ut < 0) {
     ut = -ut;
@@ -295,12 +295,12 @@ FX_BOOL CFX_Unitime::AddYears(int32_t iYears) {
     iYear = iYears > 0 ? 1 : -1;
   }
   m_iUnitime =
-      FX_DateToDays(iYear, iMonth, iDay, FALSE) * g_FXMillisecondsPerDay;
+      FX_DateToDays(iYear, iMonth, iDay, false) * g_FXMillisecondsPerDay;
   m_iUnitime += (iYear < 0) ? -r : r;
-  return TRUE;
+  return true;
 }
-FX_BOOL CFX_Unitime::AddMonths(int32_t iMonths) {
-  FX_BOOL b = iMonths > 0;
+bool CFX_Unitime::AddMonths(int32_t iMonths) {
+  bool b = iMonths > 0;
   FX_UNITIME ut = m_iUnitime;
   if (ut < 0) {
     ut = -ut;
@@ -319,38 +319,38 @@ FX_BOOL CFX_Unitime::AddMonths(int32_t iMonths) {
   if (iYear == 0) {
     iYear = b ? 1 : -1;
   }
-  m_iUnitime = FX_DateToDays(iYear, (uint8_t)iMonths, iDay, FALSE) *
+  m_iUnitime = FX_DateToDays(iYear, (uint8_t)iMonths, iDay, false) *
                g_FXMillisecondsPerDay;
   m_iUnitime += (iYear < 0) ? -r : r;
-  return TRUE;
+  return true;
 }
-FX_BOOL CFX_Unitime::AddDays(int32_t iDays) {
+bool CFX_Unitime::AddDays(int32_t iDays) {
   m_iUnitime += (int64_t)iDays * g_FXMillisecondsPerDay;
-  return TRUE;
+  return true;
 }
-FX_BOOL CFX_Unitime::AddHours(int32_t iHours) {
+bool CFX_Unitime::AddHours(int32_t iHours) {
   m_iUnitime += (int64_t)iHours * g_FXMillisecondsPerHour;
-  return TRUE;
+  return true;
 }
-FX_BOOL CFX_Unitime::AddMinutes(int32_t iMinutes) {
+bool CFX_Unitime::AddMinutes(int32_t iMinutes) {
   m_iUnitime += (int64_t)iMinutes * g_FXMillisecondsPerMinute;
-  return TRUE;
+  return true;
 }
-FX_BOOL CFX_Unitime::AddSeconds(int32_t iSeconds) {
+bool CFX_Unitime::AddSeconds(int32_t iSeconds) {
   m_iUnitime += ((int64_t)iSeconds) * g_FXMillisecondsPerSecond;
-  return TRUE;
+  return true;
 }
-FX_BOOL CFX_Unitime::AddMilliseconds(int32_t iMilliseconds) {
+bool CFX_Unitime::AddMilliseconds(int32_t iMilliseconds) {
   m_iUnitime += iMilliseconds;
-  return TRUE;
+  return true;
 }
-FX_BOOL CFX_DateTime::Set(int32_t year,
-                          uint8_t month,
-                          uint8_t day,
-                          uint8_t hour,
-                          uint8_t minute,
-                          uint8_t second,
-                          uint16_t millisecond) {
+bool CFX_DateTime::Set(int32_t year,
+                       uint8_t month,
+                       uint8_t day,
+                       uint8_t hour,
+                       uint8_t minute,
+                       uint8_t second,
+                       uint16_t millisecond) {
   ASSERT(year != 0);
   ASSERT(month >= 1 && month <= 12);
   ASSERT(day >= 1 && day <= FX_DaysInMonth(year, month));
@@ -365,9 +365,9 @@ FX_BOOL CFX_DateTime::Set(int32_t year,
   m_DateTime.Time.sTime.minute = minute;
   m_DateTime.Time.sTime.second = second;
   m_DateTime.Time.sTime.millisecond = millisecond;
-  return TRUE;
+  return true;
 }
-FX_BOOL CFX_DateTime::FromUnitime(FX_UNITIME t) {
+bool CFX_DateTime::FromUnitime(FX_UNITIME t) {
   CFX_Unitime ut(t);
   FX_DaysToDate(ut.GetDayOfAD(), m_DateTime.Date.sDate.year,
                 m_DateTime.Date.sDate.month, m_DateTime.Date.sDate.day);
@@ -375,7 +375,7 @@ FX_BOOL CFX_DateTime::FromUnitime(FX_UNITIME t) {
   m_DateTime.Time.sTime.minute = ut.GetMinute();
   m_DateTime.Time.sTime.second = ut.GetSecond();
   m_DateTime.Time.sTime.millisecond = ut.GetMillisecond();
-  return TRUE;
+  return true;
 }
 FX_UNITIME CFX_DateTime::ToUnitime() const {
   FX_UNITIME v =
@@ -384,7 +384,7 @@ FX_UNITIME CFX_DateTime::ToUnitime() const {
       (int64_t)m_DateTime.Time.sTime.second * g_FXMillisecondsPerSecond +
       m_DateTime.Time.sTime.millisecond;
   v += FX_DateToDays(m_DateTime.Date.sDate.year, m_DateTime.Date.sDate.month,
-                     m_DateTime.Date.sDate.day, FALSE) *
+                     m_DateTime.Date.sDate.day, false) *
        g_FXMillisecondsPerDay;
   return v;
 }
@@ -400,7 +400,7 @@ uint8_t CFX_DateTime::GetDay() const {
 FX_WEEKDAY CFX_DateTime::GetDayOfWeek() const {
   int32_t v = (int32_t)(FX_DateToDays(m_DateTime.Date.sDate.year,
                                       m_DateTime.Date.sDate.month,
-                                      m_DateTime.Date.sDate.day, TRUE) %
+                                      m_DateTime.Date.sDate.day, true) %
                         7);
   if (v < 0) {
     v += 7;
@@ -414,7 +414,7 @@ uint16_t CFX_DateTime::GetDayOfYear() const {
 }
 int64_t CFX_DateTime::GetDayOfAD() const {
   return FX_DateToDays(m_DateTime.Date.sDate.year, m_DateTime.Date.sDate.month,
-                       m_DateTime.Date.sDate.day, TRUE);
+                       m_DateTime.Date.sDate.day, true);
 }
 uint8_t CFX_DateTime::GetHour() const {
   return m_DateTime.Date.sDate.day;
@@ -428,9 +428,9 @@ uint8_t CFX_DateTime::GetSecond() const {
 uint16_t CFX_DateTime::GetMillisecond() const {
   return m_DateTime.Time.sTime.millisecond;
 }
-FX_BOOL CFX_DateTime::AddYears(int32_t iYears) {
+bool CFX_DateTime::AddYears(int32_t iYears) {
   if (iYears == 0) {
-    return FALSE;
+    return false;
   }
   int32_t v = m_DateTime.Date.sDate.year + iYears;
   if (v >= 0 && m_DateTime.Date.sDate.year < 0) {
@@ -439,13 +439,13 @@ FX_BOOL CFX_DateTime::AddYears(int32_t iYears) {
     v--;
   }
   m_DateTime.Date.sDate.year = v;
-  return TRUE;
+  return true;
 }
-FX_BOOL CFX_DateTime::AddMonths(int32_t iMonths) {
+bool CFX_DateTime::AddMonths(int32_t iMonths) {
   if (iMonths == 0) {
-    return FALSE;
+    return false;
   }
-  FX_BOOL b = iMonths > 0;
+  bool b = iMonths > 0;
   iMonths += m_DateTime.Date.sDate.month;
   while (iMonths < 1) {
     m_DateTime.Date.sDate.year--;
@@ -465,15 +465,15 @@ FX_BOOL CFX_DateTime::AddMonths(int32_t iMonths) {
     m_DateTime.Date.sDate.year = b ? 1 : -1;
   }
   m_DateTime.Date.sDate.month = (uint8_t)iMonths;
-  return TRUE;
+  return true;
 }
-FX_BOOL CFX_DateTime::AddDays(int32_t iDays) {
+bool CFX_DateTime::AddDays(int32_t iDays) {
   if (iDays == 0) {
-    return FALSE;
+    return false;
   }
   int64_t v1 =
       FX_DateToDays(m_DateTime.Date.sDate.year, m_DateTime.Date.sDate.month,
-                    m_DateTime.Date.sDate.day, TRUE);
+                    m_DateTime.Date.sDate.day, true);
   int64_t v2 = v1 + iDays;
   if (v2 <= 0 && v1 > 0) {
     v2--;
@@ -482,11 +482,11 @@ FX_BOOL CFX_DateTime::AddDays(int32_t iDays) {
   }
   FX_DaysToDate(v2, m_DateTime.Date.sDate.year, m_DateTime.Date.sDate.month,
                 m_DateTime.Date.sDate.day);
-  return TRUE;
+  return true;
 }
-FX_BOOL CFX_DateTime::AddHours(int32_t iHours) {
+bool CFX_DateTime::AddHours(int32_t iHours) {
   if (iHours == 0) {
-    return FALSE;
+    return false;
   }
   iHours += m_DateTime.Date.sDate.day;
   int32_t iDays = iHours / 24;
@@ -498,11 +498,11 @@ FX_BOOL CFX_DateTime::AddHours(int32_t iHours) {
   if (iDays != 0) {
     AddDays(iDays);
   }
-  return TRUE;
+  return true;
 }
-FX_BOOL CFX_DateTime::AddMinutes(int32_t iMinutes) {
+bool CFX_DateTime::AddMinutes(int32_t iMinutes) {
   if (iMinutes == 0) {
-    return FALSE;
+    return false;
   }
   iMinutes += m_DateTime.Time.sTime.minute;
   int32_t iHours = iMinutes / 60;
@@ -514,11 +514,11 @@ FX_BOOL CFX_DateTime::AddMinutes(int32_t iMinutes) {
   if (iHours != 0) {
     AddHours(iHours);
   }
-  return TRUE;
+  return true;
 }
-FX_BOOL CFX_DateTime::AddSeconds(int32_t iSeconds) {
+bool CFX_DateTime::AddSeconds(int32_t iSeconds) {
   if (iSeconds == 0) {
-    return FALSE;
+    return false;
   }
   iSeconds += m_DateTime.Time.sTime.second;
   int32_t iMinutes = iSeconds / 60;
@@ -530,11 +530,11 @@ FX_BOOL CFX_DateTime::AddSeconds(int32_t iSeconds) {
   if (iMinutes != 0) {
     AddMinutes(iMinutes);
   }
-  return TRUE;
+  return true;
 }
-FX_BOOL CFX_DateTime::AddMilliseconds(int32_t iMilliseconds) {
+bool CFX_DateTime::AddMilliseconds(int32_t iMilliseconds) {
   if (iMilliseconds == 0) {
-    return FALSE;
+    return false;
   }
   iMilliseconds += m_DateTime.Time.sTime.millisecond;
   int32_t iSeconds = (int32_t)(iMilliseconds / g_FXMillisecondsPerSecond);
@@ -546,5 +546,5 @@ FX_BOOL CFX_DateTime::AddMilliseconds(int32_t iMilliseconds) {
   if (iSeconds != 0) {
     AddSeconds(iSeconds);
   }
-  return TRUE;
+  return true;
 }

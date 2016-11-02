@@ -103,17 +103,16 @@ class CFX_Graphics {
   CFX_Graphics();
   virtual ~CFX_Graphics();
 
-  FWL_Error Create(CFX_RenderDevice* renderDevice,
-                   FX_BOOL isAntialiasing = TRUE);
+  FWL_Error Create(CFX_RenderDevice* renderDevice, bool isAntialiasing = true);
   FWL_Error Create(int32_t width,
                    int32_t height,
                    FXDIB_Format format,
-                   FX_BOOL isNative = TRUE,
-                   FX_BOOL isAntialiasing = TRUE);
+                   bool isNative = true,
+                   bool isAntialiasing = true);
 
   FWL_Error GetDeviceCap(const int32_t capID, FX_DeviceCap& capVal);
-  FWL_Error IsPrinterDevice(FX_BOOL& isPrinter);
-  FWL_Error EnableAntialiasing(FX_BOOL isAntialiasing);
+  FWL_Error IsPrinterDevice(bool& isPrinter);
+  FWL_Error EnableAntialiasing(bool isAntialiasing);
 
   FWL_Error SaveGraphState();
   FWL_Error RestoreGraphState();
@@ -136,7 +135,7 @@ class CFX_Graphics {
   FWL_Error SetLineDash(FX_DashStyle dashStyle);
   FWL_Error SetLineJoin(CFX_GraphStateData::LineJoin lineJoin);
   FWL_Error SetMiterLimit(FX_FLOAT miterLimit);
-  FWL_Error SetLineWidth(FX_FLOAT lineWidth, FX_BOOL isActOnDash = FALSE);
+  FWL_Error SetLineWidth(FX_FLOAT lineWidth, bool isActOnDash = false);
   FWL_Error SetStrokeAlignment(FX_StrokeAlignment strokeAlignment);
   FWL_Error SetStrokeColor(CFX_Color* color);
   FWL_Error SetFillColor(CFX_Color* color);
@@ -167,7 +166,7 @@ class CFX_Graphics {
                      CFX_Matrix* matrix = nullptr);
   void CalcTextRect(CFX_RectF& rect,
                     const CFX_WideString& text,
-                    FX_BOOL isMultiline = FALSE,
+                    bool isMultiline = false,
                     CFX_Matrix* matrix = nullptr);
   FWL_Error Transfer(CFX_Graphics* graphics, const CFX_Matrix* matrix);
   FWL_Error Transfer(CFX_Graphics* graphics,
@@ -190,10 +189,10 @@ class CFX_Graphics {
     TInfo& operator=(const TInfo& other);
 
     CFX_GraphStateData graphState;
-    FX_BOOL isAntialiasing;
+    bool isAntialiasing;
     FX_StrokeAlignment strokeAlignment;
     CFX_Matrix CTM;
-    FX_BOOL isActOnDash;
+    bool isActOnDash;
     CFX_Color* strokeColor;
     CFX_Color* fillColor;
     CFX_Font* font;

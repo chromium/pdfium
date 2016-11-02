@@ -41,11 +41,11 @@ class IFWL_ToolTip : public IFWL_Form {
 
   // IFWL_Widget
   FWL_Type GetClassID() const override;
-  FWL_Error GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize = FALSE) override;
+  FWL_Error GetWidgetRect(CFX_RectF& rect, bool bAutoSize = false) override;
   FWL_Error Update() override;
   FWL_Error DrawWidget(CFX_Graphics* pGraphics,
                        const CFX_Matrix* pMatrix = nullptr) override;
-  void SetStates(uint32_t dwStates, FX_BOOL bSet) override;
+  void SetStates(uint32_t dwStates, bool bSet) override;
   FWL_Error GetClientRect(CFX_RectF& rect) override;
   void OnDrawWidget(CFX_Graphics* pGraphics,
                     const CFX_Matrix* pMatrix) override;
@@ -75,7 +75,7 @@ class IFWL_ToolTip : public IFWL_Form {
 
   CFX_RectF m_rtClient;
   CFX_RectF m_rtCaption;
-  FX_BOOL m_bBtnDown;
+  bool m_bBtnDown;
   uint32_t m_dwTTOStyles;
   int32_t m_iTTOAlign;
   CFX_RectF m_rtAnchor;
@@ -85,7 +85,7 @@ class IFWL_ToolTip : public IFWL_Form {
   IFWL_ToolTip::Timer m_TimerHide;
 
  private:
-  void OnFocusChanged(CFWL_Message* pMsg, FX_BOOL bSet);
+  void OnFocusChanged(CFWL_Message* pMsg, bool bSet);
   void OnLButtonDown(CFWL_MsgMouse* pMsg);
   void OnLButtonUp(CFWL_MsgMouse* pMsg);
   void OnMouseMove(CFWL_MsgMouse* pMsg);

@@ -18,9 +18,9 @@ class CXFA_FFImageEdit : public CXFA_FFField {
   void RenderWidget(CFX_Graphics* pGS,
                     CFX_Matrix* pMatrix,
                     uint32_t dwStatus) override;
-  FX_BOOL LoadWidget() override;
+  bool LoadWidget() override;
   void UnloadWidget() override;
-  FX_BOOL OnLButtonDown(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) override;
+  bool OnLButtonDown(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) override;
   void OnProcessMessage(CFWL_Message* pMessage) override;
   void OnProcessEvent(CFWL_Event* pEvent) override;
   void OnDrawWidget(CFX_Graphics* pGraphics,
@@ -28,8 +28,8 @@ class CXFA_FFImageEdit : public CXFA_FFField {
 
  protected:
   void SetFWLRect() override;
-  FX_BOOL UpdateFWLData() override;
-  FX_BOOL CommitData() override;
+  bool UpdateFWLData() override;
+  bool CommitData() override;
 
   IFWL_WidgetDelegate* m_pOldDelegate;
 };

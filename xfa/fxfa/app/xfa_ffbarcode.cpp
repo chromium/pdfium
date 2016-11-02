@@ -122,7 +122,7 @@ CXFA_FFBarcode::CXFA_FFBarcode(CXFA_FFPageView* pPageView,
 
 CXFA_FFBarcode::~CXFA_FFBarcode() {}
 
-FX_BOOL CXFA_FFBarcode::LoadWidget() {
+bool CXFA_FFBarcode::LoadWidget() {
   CFWL_Barcode* pFWLBarcode = new CFWL_Barcode(GetFWLApp());
   pFWLBarcode->Initialize();
 
@@ -179,7 +179,7 @@ void CXFA_FFBarcode::UpdateWidgetProperty() {
   CXFA_WidgetAcc* pAcc = GetDataAcc();
   int32_t intVal;
   FX_CHAR charVal;
-  FX_BOOL boolVal;
+  bool boolVal;
   FX_FLOAT floatVal;
   if (pAcc->GetBarcodeAttribute_CharEncoding(intVal)) {
     pBarCodeWidget->SetCharEncoding((BC_CHAR_ENCODING)intVal);
@@ -221,28 +221,24 @@ void CXFA_FFBarcode::UpdateWidgetProperty() {
       pBarcodeTypeInfo->eName == XFA_BARCODETYPE_ean8 ||
       pBarcodeTypeInfo->eName == XFA_BARCODETYPE_ean13 ||
       pBarcodeTypeInfo->eName == XFA_BARCODETYPE_upcA) {
-    pBarCodeWidget->SetPrintChecksum(TRUE);
+    pBarCodeWidget->SetPrintChecksum(true);
   }
 }
 
-FX_BOOL CXFA_FFBarcode::OnLButtonDown(uint32_t dwFlags,
-                                      FX_FLOAT fx,
-                                      FX_FLOAT fy) {
+bool CXFA_FFBarcode::OnLButtonDown(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) {
   CFWL_Barcode* pBarCodeWidget = (CFWL_Barcode*)m_pNormalWidget;
   if (!pBarCodeWidget || pBarCodeWidget->IsProtectedType()) {
-    return FALSE;
+    return false;
   }
   if (m_pDataAcc->GetAccess() != XFA_ATTRIBUTEENUM_Open) {
-    return FALSE;
+    return false;
   }
   return CXFA_FFTextEdit::OnLButtonDown(dwFlags, fx, fy);
 }
-FX_BOOL CXFA_FFBarcode::OnRButtonDown(uint32_t dwFlags,
-                                      FX_FLOAT fx,
-                                      FX_FLOAT fy) {
+bool CXFA_FFBarcode::OnRButtonDown(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) {
   CFWL_Barcode* pBarCodeWidget = (CFWL_Barcode*)m_pNormalWidget;
   if (!pBarCodeWidget || pBarCodeWidget->IsProtectedType()) {
-    return FALSE;
+    return false;
   }
   return CXFA_FFTextEdit::OnRButtonDown(dwFlags, fx, fy);
 }

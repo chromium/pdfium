@@ -29,10 +29,10 @@ class CXFA_ScriptContext {
   void Initialize(v8::Isolate* pIsolate);
   void SetEventParam(CXFA_EventParam param) { m_eventParam = param; }
   CXFA_EventParam* GetEventParam() { return &m_eventParam; }
-  FX_BOOL RunScript(XFA_SCRIPTLANGTYPE eScriptType,
-                    const CFX_WideStringC& wsScript,
-                    CFXJSE_Value* pRetValue,
-                    CXFA_Object* pThisObject = nullptr);
+  bool RunScript(XFA_SCRIPTLANGTYPE eScriptType,
+                 const CFX_WideStringC& wsScript,
+                 CFXJSE_Value* pRetValue,
+                 CXFA_Object* pThisObject = nullptr);
 
   int32_t ResolveObjects(CXFA_Object* refNode,
                          const CFX_WideStringC& wsExpression,
@@ -54,18 +54,18 @@ class CXFA_ScriptContext {
   CFXJSE_Class* GetJseNormalClass();
 
   void SetRunAtType(XFA_ATTRIBUTEENUM eRunAt) { m_eRunAtType = eRunAt; }
-  FX_BOOL IsRunAtClient() { return m_eRunAtType != XFA_ATTRIBUTEENUM_Server; }
-  FX_BOOL QueryNodeByFlag(CXFA_Node* refNode,
-                          const CFX_WideStringC& propname,
+  bool IsRunAtClient() { return m_eRunAtType != XFA_ATTRIBUTEENUM_Server; }
+  bool QueryNodeByFlag(CXFA_Node* refNode,
+                       const CFX_WideStringC& propname,
+                       CFXJSE_Value* pValue,
+                       uint32_t dwFlag,
+                       bool bSetting);
+  bool QueryVariableValue(CXFA_Node* pScriptNode,
+                          const CFX_ByteStringC& szPropName,
                           CFXJSE_Value* pValue,
-                          uint32_t dwFlag,
-                          FX_BOOL bSetting);
-  FX_BOOL QueryVariableValue(CXFA_Node* pScriptNode,
-                             const CFX_ByteStringC& szPropName,
-                             CFXJSE_Value* pValue,
-                             FX_BOOL bGetter);
-  FX_BOOL QueryBuiltinValue(const CFX_ByteStringC& szPropName,
-                            CFXJSE_Value* pValue);
+                          bool bGetter);
+  bool QueryBuiltinValue(const CFX_ByteStringC& szPropName,
+                         CFXJSE_Value* pValue);
   static void GlobalPropertyGetter(CFXJSE_Value* pObject,
                                    const CFX_ByteStringC& szPropName,
                                    CFXJSE_Value* pValue);
@@ -83,14 +83,13 @@ class CXFA_ScriptContext {
                                CFXJSE_Arguments& args);
   static int32_t NormalPropTypeGetter(CFXJSE_Value* pObject,
                                       const CFX_ByteStringC& szPropName,
-                                      FX_BOOL bQueryIn);
+                                      bool bQueryIn);
   static int32_t GlobalPropTypeGetter(CFXJSE_Value* pObject,
                                       const CFX_ByteStringC& szPropName,
-                                      FX_BOOL bQueryIn);
-  FX_BOOL RunVariablesScript(CXFA_Node* pScriptNode);
-  CXFA_Object* GetVariablesThis(CXFA_Object* pObject,
-                                FX_BOOL bScriptNode = FALSE);
-  FX_BOOL IsStrictScopeInJavaScript();
+                                      bool bQueryIn);
+  bool RunVariablesScript(CXFA_Node* pScriptNode);
+  CXFA_Object* GetVariablesThis(CXFA_Object* pObject, bool bScriptNode = false);
+  bool IsStrictScopeInJavaScript();
   XFA_SCRIPTLANGTYPE GetType();
   CXFA_NodeArray& GetUpObjectArray() { return m_upObjectArray; }
   CXFA_Document* GetDocument() const { return m_pDocument; }

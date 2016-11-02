@@ -18,7 +18,7 @@ class CBC_BarcodeMatrix {
   virtual ~CBC_BarcodeMatrix();
 
   void set(int32_t x, int32_t y, uint8_t value);
-  void setMatrix(int32_t x, int32_t y, FX_BOOL black);
+  void setMatrix(int32_t x, int32_t y, bool black);
   void startRow();
   CBC_BarcodeRow* getCurrentRow();
   CFX_ByteArray& getMatrix();

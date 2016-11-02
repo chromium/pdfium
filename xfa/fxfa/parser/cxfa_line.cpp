@@ -12,7 +12,7 @@ int32_t CXFA_Line::GetHand() {
   return m_pNode->GetEnum(XFA_ATTRIBUTE_Hand);
 }
 
-FX_BOOL CXFA_Line::GetSlop() {
+bool CXFA_Line::GetSlop() {
   XFA_ATTRIBUTEENUM eSlop = m_pNode->GetEnum(XFA_ATTRIBUTE_Slope);
   return eSlop == XFA_ATTRIBUTEENUM_Slash;
 }

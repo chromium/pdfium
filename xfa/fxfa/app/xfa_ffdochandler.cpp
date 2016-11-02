@@ -41,18 +41,18 @@ XFA_ATTRIBUTEENUM CXFA_FFDocHandler::GetRestoreState(CXFA_FFDoc* hDoc) {
   return pSubForm->GetEnum(XFA_ATTRIBUTE_RestoreState);
 }
 
-FX_BOOL CXFA_FFDocHandler::RunDocScript(CXFA_FFDoc* hDoc,
-                                        XFA_SCRIPTTYPE eScriptType,
-                                        const CFX_WideStringC& wsScript,
-                                        CFXJSE_Value* pRetValue,
-                                        CFXJSE_Value* pThisValue) {
+bool CXFA_FFDocHandler::RunDocScript(CXFA_FFDoc* hDoc,
+                                     XFA_SCRIPTTYPE eScriptType,
+                                     const CFX_WideStringC& wsScript,
+                                     CFXJSE_Value* pRetValue,
+                                     CFXJSE_Value* pThisValue) {
   CXFA_Document* pXFADoc = hDoc->GetXFADoc();
   if (!pXFADoc)
-    return FALSE;
+    return false;
 
   CXFA_ScriptContext* pScriptContext = pXFADoc->GetScriptContext();
   if (!pScriptContext)
-    return FALSE;
+    return false;
 
   return pScriptContext->RunScript(
       (XFA_SCRIPTLANGTYPE)eScriptType, wsScript, pRetValue,

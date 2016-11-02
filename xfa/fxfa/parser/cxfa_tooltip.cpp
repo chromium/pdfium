@@ -10,6 +10,6 @@
 
 CXFA_ToolTip::CXFA_ToolTip(CXFA_Node* pNode) : CXFA_Data(pNode) {}
 
-FX_BOOL CXFA_ToolTip::GetTip(CFX_WideString& wsTip) {
+bool CXFA_ToolTip::GetTip(CFX_WideString& wsTip) {
   return m_pNode->TryContent(wsTip);
 }

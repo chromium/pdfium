@@ -23,7 +23,7 @@ enum FX_WEEKDAY {
   FX_Saturday,
 };
 
-FX_BOOL FX_IsLeapYear(int32_t iYear);
+bool FX_IsLeapYear(int32_t iYear);
 int32_t FX_DaysInYear(int32_t iYear);
 uint8_t FX_DaysInMonth(int32_t iYear, uint8_t iMonth);
 
@@ -80,13 +80,13 @@ class CFX_Unitime {
   uint8_t GetMinute() const;
   uint8_t GetSecond() const;
   uint16_t GetMillisecond() const;
-  FX_BOOL AddYears(int32_t iYears);
-  FX_BOOL AddMonths(int32_t iMonths);
-  FX_BOOL AddDays(int32_t iDays);
-  FX_BOOL AddHours(int32_t iHours);
-  FX_BOOL AddMinutes(int32_t iMinutes);
-  FX_BOOL AddSeconds(int32_t iSeconds);
-  FX_BOOL AddMilliseconds(int32_t iMilliseconds);
+  bool AddYears(int32_t iYears);
+  bool AddMonths(int32_t iMonths);
+  bool AddDays(int32_t iDays);
+  bool AddHours(int32_t iHours);
+  bool AddMinutes(int32_t iMinutes);
+  bool AddSeconds(int32_t iSeconds);
+  bool AddMilliseconds(int32_t iMilliseconds);
   friend CFX_Unitime operator+(const CFX_Unitime& t1, const CFX_Unitime& t2) {
     return CFX_Unitime(t1.m_iUnitime + t2.m_iUnitime);
   }
@@ -243,14 +243,14 @@ class CFX_DateTime {
     FromUnitime(ToUnitime() - ((const CFX_DateTime&)dt).ToUnitime());
     return *this;
   }
-  virtual FX_BOOL Set(int32_t year,
-                      uint8_t month,
-                      uint8_t day,
-                      uint8_t hour = 0,
-                      uint8_t minute = 0,
-                      uint8_t second = 0,
-                      uint16_t millisecond = 0);
-  virtual FX_BOOL FromUnitime(FX_UNITIME t);
+  virtual bool Set(int32_t year,
+                   uint8_t month,
+                   uint8_t day,
+                   uint8_t hour = 0,
+                   uint8_t minute = 0,
+                   uint8_t second = 0,
+                   uint16_t millisecond = 0);
+  virtual bool FromUnitime(FX_UNITIME t);
   virtual FX_UNITIME ToUnitime() const;
   virtual int32_t GetYear() const;
   virtual uint8_t GetMonth() const;
@@ -262,13 +262,13 @@ class CFX_DateTime {
   virtual uint8_t GetMinute() const;
   virtual uint8_t GetSecond() const;
   virtual uint16_t GetMillisecond() const;
-  virtual FX_BOOL AddYears(int32_t iYears);
-  virtual FX_BOOL AddMonths(int32_t iMonths);
-  virtual FX_BOOL AddDays(int32_t iDays);
-  virtual FX_BOOL AddHours(int32_t iHours);
-  virtual FX_BOOL AddMinutes(int32_t iMinutes);
-  virtual FX_BOOL AddSeconds(int32_t iSeconds);
-  virtual FX_BOOL AddMilliseconds(int32_t iMilliseconds);
+  virtual bool AddYears(int32_t iYears);
+  virtual bool AddMonths(int32_t iMonths);
+  virtual bool AddDays(int32_t iDays);
+  virtual bool AddHours(int32_t iHours);
+  virtual bool AddMinutes(int32_t iMinutes);
+  virtual bool AddSeconds(int32_t iSeconds);
+  virtual bool AddMilliseconds(int32_t iMilliseconds);
   friend CFX_DateTime operator+(const CFX_DateTime& dt1,
                                 const CFX_DateTime& dt2) {
     CFX_DateTime dt;
@@ -305,66 +305,66 @@ class CFX_DateTime {
     dt.FromUnitime(((const CFX_DateTime&)dt1).ToUnitime() - dt2.ToUnitime());
     return dt;
   }
-  friend FX_BOOL operator==(const CFX_DateTime& dt1, const CFX_DateTime& dt2) {
+  friend bool operator==(const CFX_DateTime& dt1, const CFX_DateTime& dt2) {
     return FXSYS_memcmp(static_cast<const FX_DATETIME*>(dt1),
                         static_cast<const FX_DATETIME*>(dt2),
                         sizeof(FX_DATETIME)) == 0;
   }
-  friend FX_BOOL operator==(const CFX_DateTime& dt1, const FX_DATETIME& dt2) {
+  friend bool operator==(const CFX_DateTime& dt1, const FX_DATETIME& dt2) {
     return FXSYS_memcmp(static_cast<const FX_DATETIME*>(dt1), &dt2,
                         sizeof(FX_DATETIME)) == 0;
   }
-  friend FX_BOOL operator==(const FX_DATETIME& dt1, const CFX_DateTime& dt2) {
+  friend bool operator==(const FX_DATETIME& dt1, const CFX_DateTime& dt2) {
     return FXSYS_memcmp(&dt1, static_cast<const FX_DATETIME*>(dt2),
                         sizeof(FX_DATETIME)) == 0;
   }
-  friend FX_BOOL operator!=(const CFX_DateTime& dt1, const CFX_DateTime& dt2) {
+  friend bool operator!=(const CFX_DateTime& dt1, const CFX_DateTime& dt2) {
     return FXSYS_memcmp(static_cast<const FX_DATETIME*>(dt1),
                         static_cast<const FX_DATETIME*>(dt2),
                         sizeof(FX_DATETIME)) != 0;
   }
-  friend FX_BOOL operator!=(const CFX_DateTime& dt1, const FX_DATETIME& dt2) {
+  friend bool operator!=(const CFX_DateTime& dt1, const FX_DATETIME& dt2) {
     return FXSYS_memcmp(static_cast<const FX_DATETIME*>(dt1), &dt2,
                         sizeof(FX_DATETIME)) != 0;
   }
-  friend FX_BOOL operator!=(const FX_DATETIME& dt1, const CFX_DateTime& dt2) {
+  friend bool operator!=(const FX_DATETIME& dt1, const CFX_DateTime& dt2) {
     return FXSYS_memcmp(&dt1, static_cast<const FX_DATETIME*>(dt2),
                         sizeof(FX_DATETIME)) != 0;
   }
-  friend FX_BOOL operator>(const CFX_DateTime& dt1, const CFX_DateTime& dt2) {
+  friend bool operator>(const CFX_DateTime& dt1, const CFX_DateTime& dt2) {
     return dt1.ToUnitime() > dt2.ToUnitime();
   }
-  friend FX_BOOL operator>(const CFX_DateTime& dt1, const FX_DATETIME& dt2) {
+  friend bool operator>(const CFX_DateTime& dt1, const FX_DATETIME& dt2) {
     return dt1.ToUnitime() > ((const CFX_DateTime&)dt2).ToUnitime();
   }
-  friend FX_BOOL operator>(const FX_DATETIME& dt1, const CFX_DateTime& dt2) {
+  friend bool operator>(const FX_DATETIME& dt1, const CFX_DateTime& dt2) {
     return ((const CFX_DateTime&)dt1).ToUnitime() > dt2.ToUnitime();
   }
-  friend FX_BOOL operator>=(const CFX_DateTime& dt1, const CFX_DateTime& dt2) {
+  friend bool operator>=(const CFX_DateTime& dt1, const CFX_DateTime& dt2) {
     return dt1.ToUnitime() >= dt2.ToUnitime();
   }
-  friend FX_BOOL operator>=(const CFX_DateTime& dt1, const FX_DATETIME& dt2) {
+  friend bool operator>=(const CFX_DateTime& dt1, const FX_DATETIME& dt2) {
     return dt1.ToUnitime() >= ((const CFX_DateTime&)dt2).ToUnitime();
   }
-  friend FX_BOOL operator>=(const FX_DATETIME& dt1, const CFX_DateTime& dt2) {
+  friend bool operator>=(const FX_DATETIME& dt1, const CFX_DateTime& dt2) {
     return ((const CFX_DateTime&)dt1).ToUnitime() >= dt2.ToUnitime();
   }
-  friend FX_BOOL operator<(const CFX_DateTime& dt1, const CFX_DateTime& dt2) {
+  friend bool operator<(const CFX_DateTime& dt1, const CFX_DateTime& dt2) {
     return dt1.ToUnitime() < dt2.ToUnitime();
   }
-  friend FX_BOOL operator<(const CFX_DateTime& dt1, const FX_DATETIME& dt2) {
+  friend bool operator<(const CFX_DateTime& dt1, const FX_DATETIME& dt2) {
     return dt1.ToUnitime() < ((const CFX_DateTime&)dt2).ToUnitime();
   }
-  friend FX_BOOL operator<(const FX_DATETIME& dt1, const CFX_DateTime& dt2) {
+  friend bool operator<(const FX_DATETIME& dt1, const CFX_DateTime& dt2) {
     return ((const CFX_DateTime&)dt1).ToUnitime() < dt2.ToUnitime();
   }
-  friend FX_BOOL operator<=(const CFX_DateTime& dt1, const CFX_DateTime& dt2) {
+  friend bool operator<=(const CFX_DateTime& dt1, const CFX_DateTime& dt2) {
     return dt1.ToUnitime() <= dt2.ToUnitime();
   }
-  friend FX_BOOL operator<=(const CFX_DateTime& dt1, const FX_DATETIME& dt2) {
+  friend bool operator<=(const CFX_DateTime& dt1, const FX_DATETIME& dt2) {
     return dt1.ToUnitime() <= ((const CFX_DateTime&)dt2).ToUnitime();
   }
-  friend FX_BOOL operator<=(const FX_DATETIME& dt1, const CFX_DateTime& dt2) {
+  friend bool operator<=(const FX_DATETIME& dt1, const CFX_DateTime& dt2) {
     return ((const CFX_DateTime&)dt1).ToUnitime() <= dt2.ToUnitime();
   }
 

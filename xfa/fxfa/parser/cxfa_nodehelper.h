@@ -24,7 +24,7 @@ class CXFA_NodeHelper {
 
   CXFA_Node* ResolveNodes_GetOneChild(CXFA_Node* parent,
                                       const FX_WCHAR* pwsName,
-                                      FX_BOOL bIsClassName = FALSE);
+                                      bool bIsClassName = false);
   CXFA_Node* ResolveNodes_GetParent(
       CXFA_Node* pNode,
       XFA_LOGIC_TYPE eLogicType = XFA_LOGIC_NoTransparent);
@@ -33,32 +33,32 @@ class CXFA_NodeHelper {
                                    uint32_t dNameHash,
                                    CXFA_NodeArray* pSiblings,
                                    XFA_LOGIC_TYPE eLogicType,
-                                   FX_BOOL bIsClassName = FALSE,
-                                   FX_BOOL bIsFindProperty = TRUE);
+                                   bool bIsClassName = false,
+                                   bool bIsFindProperty = true);
   int32_t NodeAcc_TraverseAnySiblings(CXFA_Node* parent,
                                       uint32_t dNameHash,
                                       CXFA_NodeArray* pSiblings,
-                                      FX_BOOL bIsClassName = FALSE);
+                                      bool bIsClassName = false);
   int32_t CountSiblings(CXFA_Node* pNode,
                         XFA_LOGIC_TYPE eLogicType,
                         CXFA_NodeArray* pSiblings,
-                        FX_BOOL bIsClassName = FALSE);
+                        bool bIsClassName = false);
   int32_t GetIndex(CXFA_Node* pNode,
                    XFA_LOGIC_TYPE eLogicType = XFA_LOGIC_NoTransparent,
-                   FX_BOOL bIsProperty = FALSE,
-                   FX_BOOL bIsClassIndex = FALSE);
+                   bool bIsProperty = false,
+                   bool bIsClassIndex = false);
   void GetNameExpression(CXFA_Node* refNode,
                          CFX_WideString& wsName,
-                         FX_BOOL bIsAllPath,
+                         bool bIsAllPath,
                          XFA_LOGIC_TYPE eLogicType = XFA_LOGIC_NoTransparent);
-  FX_BOOL NodeIsTransparent(CXFA_Node* refNode);
-  FX_BOOL ResolveNodes_CreateNode(CFX_WideString wsName,
-                                  CFX_WideString wsCondition,
-                                  FX_BOOL bLastNode,
-                                  CXFA_ScriptContext* pScriptContext);
-  FX_BOOL CreateNode_ForCondition(CFX_WideString& wsCondition);
+  bool NodeIsTransparent(CXFA_Node* refNode);
+  bool ResolveNodes_CreateNode(CFX_WideString wsName,
+                               CFX_WideString wsCondition,
+                               bool bLastNode,
+                               CXFA_ScriptContext* pScriptContext);
+  bool CreateNode_ForCondition(CFX_WideString& wsCondition);
   void SetCreateNodeType(CXFA_Node* refNode);
-  FX_BOOL NodeIsProperty(CXFA_Node* refNode);
+  bool NodeIsProperty(CXFA_Node* refNode);
 
  public:
   XFA_Element m_eLastCreateType;

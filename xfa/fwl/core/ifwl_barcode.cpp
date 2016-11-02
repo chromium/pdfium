@@ -135,7 +135,7 @@ void IFWL_Barcode::GenerateBarcodeImageCache() {
     m_pBarcodeEngine->SetTruncated(pData->GetTruncated());
   }
   int32_t errorCode = 0;
-  m_dwStatus = m_pBarcodeEngine->Encode(wsText.AsStringC(), TRUE, errorCode)
+  m_dwStatus = m_pBarcodeEngine->Encode(wsText.AsStringC(), true, errorCode)
                    ? XFA_BCS_EncodeSuccess
                    : 0;
 }
@@ -162,16 +162,16 @@ FWL_Error IFWL_Barcode::SetText(const CFX_WideString& wsText) {
   m_dwStatus = XFA_BCS_NeedUpdate;
   return IFWL_Edit::SetText(wsText);
 }
-FX_BOOL IFWL_Barcode::IsProtectedType() {
+bool IFWL_Barcode::IsProtectedType() {
   if (!m_pBarcodeEngine) {
-    return TRUE;
+    return true;
   }
   BC_TYPE tEngineType = m_pBarcodeEngine->GetType();
   if (tEngineType == BC_QR_CODE || tEngineType == BC_PDF417 ||
       tEngineType == BC_DATAMATRIX) {
-    return TRUE;
+    return true;
   }
-  return FALSE;
+  return false;
 }
 
 void IFWL_Barcode::OnProcessEvent(CFWL_Event* pEvent) {

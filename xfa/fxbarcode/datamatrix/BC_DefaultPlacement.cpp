@@ -46,13 +46,13 @@ int32_t CBC_DefaultPlacement::getNumcols() {
 CFX_ByteArray& CBC_DefaultPlacement::getBits() {
   return m_bits;
 }
-FX_BOOL CBC_DefaultPlacement::getBit(int32_t col, int32_t row) {
+bool CBC_DefaultPlacement::getBit(int32_t col, int32_t row) {
   return m_bits[row * m_numcols + col] == 1;
 }
-void CBC_DefaultPlacement::setBit(int32_t col, int32_t row, FX_BOOL bit) {
+void CBC_DefaultPlacement::setBit(int32_t col, int32_t row, bool bit) {
   m_bits[row * m_numcols + col] = bit ? (uint8_t)1 : (uint8_t)0;
 }
-FX_BOOL CBC_DefaultPlacement::hasBit(int32_t col, int32_t row) {
+bool CBC_DefaultPlacement::hasBit(int32_t col, int32_t row) {
   return m_bits[row * m_numcols + col] != 2;
 }
 void CBC_DefaultPlacement::place() {
@@ -92,8 +92,8 @@ void CBC_DefaultPlacement::place() {
     col++;
   } while ((row < m_numrows) || (col < m_numcols));
   if (!hasBit(m_numcols - 1, m_numrows - 1)) {
-    setBit(m_numcols - 1, m_numrows - 1, TRUE);
-    setBit(m_numcols - 2, m_numrows - 2, TRUE);
+    setBit(m_numcols - 1, m_numrows - 1, true);
+    setBit(m_numcols - 2, m_numrows - 2, true);
   }
 }
 void CBC_DefaultPlacement::module(int32_t row,

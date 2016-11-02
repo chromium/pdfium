@@ -12,7 +12,7 @@ CXFA_Script::CXFA_Script(CXFA_Node* pNode) : CXFA_Data(pNode) {}
 
 XFA_SCRIPTTYPE CXFA_Script::GetContentType() {
   CFX_WideStringC cData;
-  if (m_pNode->TryCData(XFA_ATTRIBUTE_ContentType, cData, FALSE)) {
+  if (m_pNode->TryCData(XFA_ATTRIBUTE_ContentType, cData, false)) {
     if (cData == FX_WSTRC(L"application/x-javascript"))
       return XFA_SCRIPTTYPE_Javascript;
     if (cData == FX_WSTRC(L"application/x-formcalc"))

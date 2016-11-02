@@ -18,7 +18,7 @@ class CBC_BarcodeMatrix;
 class CBC_PDF417 {
  public:
   CBC_PDF417();
-  explicit CBC_PDF417(FX_BOOL compact);
+  explicit CBC_PDF417(bool compact);
   virtual ~CBC_PDF417();
 
   CBC_BarcodeMatrix* getBarcodeMatrix();
@@ -30,7 +30,7 @@ class CBC_PDF417 {
                      int32_t maxRows,
                      int32_t minRows);
   void setCompaction(Compaction compaction);
-  void setCompact(FX_BOOL compact);
+  void setCompact(bool compact);
 
  private:
   static const int32_t START_PATTERN = 0x1fea8;
@@ -56,7 +56,7 @@ class CBC_PDF417 {
                                       int32_t& e);
 
   std::unique_ptr<CBC_BarcodeMatrix> m_barcodeMatrix;
-  FX_BOOL m_compact;
+  bool m_compact;
   Compaction m_compaction;
   int32_t m_minCols;
   int32_t m_maxCols;

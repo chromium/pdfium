@@ -26,8 +26,8 @@ class CXFA_Font : public CXFA_Data {
   FX_FLOAT GetFontSize();
   void GetTypeface(CFX_WideStringC& wsTypeFace);
 
-  FX_BOOL IsBold();
-  FX_BOOL IsItalic();
+  bool IsBold();
+  bool IsItalic();
 
   FX_ARGB GetColor();
   void SetColor(FX_ARGB color);

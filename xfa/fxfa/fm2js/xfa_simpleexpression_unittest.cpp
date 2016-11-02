@@ -19,7 +19,7 @@ TEST(FMCallExpression, more_than_32_arguments) {
   for (size_t i = 0; i < 50; i++)
     args->Add(new CXFA_FMSimpleExpression(0, TOKnan));
 
-  CXFA_FMCallExpression callExp(0, exp.release(), args.release(), TRUE);
+  CXFA_FMCallExpression callExp(0, exp.release(), args.release(), true);
   CFX_WideTextBuf js;
   callExp.ToJavaScript(js);
 

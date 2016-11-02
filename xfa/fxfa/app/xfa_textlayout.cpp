@@ -23,7 +23,7 @@
 #include "xfa/fxfa/xfa_fontmgr.h"
 
 CXFA_CSSTagProvider::CXFA_CSSTagProvider()
-    : m_bTagAvailable(FALSE), m_bContent(FALSE) {}
+    : m_bTagAvailable(false), m_bContent(false) {}
 
 CXFA_CSSTagProvider::~CXFA_CSSTagProvider() {}
 
@@ -112,7 +112,7 @@ void CXFA_TextParser::InitCSSData(CXFA_TextProvider* pTextProvider) {
 }
 
 CXFA_LoaderContext::CXFA_LoaderContext()
-    : m_bSaveLineHeight(FALSE),
+    : m_bSaveLineHeight(false),
       m_fWidth(0),
       m_fHeight(0),
       m_fLastPos(0),
@@ -341,8 +341,8 @@ void CXFA_TextParser::ParseTagInfo(CFDE_XMLNode* pXMLNode,
       tagProvider.SetAttribute(L"style", wsValue);
     }
   } else if (pXMLNode->GetType() == FDE_XMLNODE_Text) {
-    tagProvider.m_bTagAvailable = TRUE;
-    tagProvider.m_bContent = TRUE;
+    tagProvider.m_bTagAvailable = true;
+    tagProvider.m_bContent = true;
   }
 }
 
@@ -365,13 +365,13 @@ int32_t CXFA_TextParser::CountTabs(IFDE_CSSComputedStyle* pStyle) const {
   return 0;
 }
 
-FX_BOOL CXFA_TextParser::IsSpaceRun(IFDE_CSSComputedStyle* pStyle) const {
+bool CXFA_TextParser::IsSpaceRun(IFDE_CSSComputedStyle* pStyle) const {
   CFX_WideString wsValue;
   if (pStyle && pStyle->GetCustomStyle(FX_WSTRC(L"xfa-spacerun"), wsValue)) {
     wsValue.MakeLower();
     return wsValue == FX_WSTRC(L"yes");
   }
-  return FALSE;
+  return false;
 }
 CFGAS_GEFont* CXFA_TextParser::GetFont(CXFA_TextProvider* pTextProvider,
                                        IFDE_CSSComputedStyle* pStyle) const {
@@ -520,7 +520,7 @@ FX_FLOAT CXFA_TextParser::GetBaseline(CXFA_TextProvider* pTextProvider,
 }
 FX_FLOAT CXFA_TextParser::GetLineHeight(CXFA_TextProvider* pTextProvider,
                                         IFDE_CSSComputedStyle* pStyle,
-                                        FX_BOOL bFirst,
+                                        bool bFirst,
                                         FX_FLOAT fVerScale) const {
   FX_FLOAT fLineHeight = 0;
   if (pStyle) {
@@ -541,20 +541,20 @@ FX_FLOAT CXFA_TextParser::GetLineHeight(CXFA_TextProvider* pTextProvider,
   fLineHeight *= fVerScale;
   return fLineHeight;
 }
-FX_BOOL CXFA_TextParser::GetEmbbedObj(CXFA_TextProvider* pTextProvider,
-                                      CFDE_XMLNode* pXMLNode,
-                                      CFX_WideString& wsValue) {
+bool CXFA_TextParser::GetEmbbedObj(CXFA_TextProvider* pTextProvider,
+                                   CFDE_XMLNode* pXMLNode,
+                                   CFX_WideString& wsValue) {
   wsValue.clear();
   if (!pXMLNode) {
-    return FALSE;
+    return false;
   }
-  FX_BOOL bRet = FALSE;
+  bool bRet = false;
   if (pXMLNode->GetType() == FDE_XMLNODE_Element) {
     CFDE_XMLElement* pElement = static_cast<CFDE_XMLElement*>(pXMLNode);
     CFX_WideString wsAttr;
     pElement->GetString(L"xfa:embed", wsAttr);
     if (wsAttr.IsEmpty()) {
-      return FALSE;
+      return false;
     }
     if (wsAttr.GetAt(0) == L'#') {
       wsAttr.Delete(0);
@@ -566,9 +566,9 @@ FX_BOOL CXFA_TextParser::GetEmbbedObj(CXFA_TextProvider* pTextProvider,
     } else {
       ws.MakeLower();
     }
-    FX_BOOL bURI = (ws == FX_WSTRC(L"uri"));
+    bool bURI = (ws == FX_WSTRC(L"uri"));
     if (!bURI && ws != FX_WSTRC(L"som")) {
-      return FALSE;
+      return false;
     }
     ws.clear();
     pElement->GetString(L"xfa:embedMode", ws);
@@ -577,9 +577,9 @@ FX_BOOL CXFA_TextParser::GetEmbbedObj(CXFA_TextProvider* pTextProvider,
     } else {
       ws.MakeLower();
     }
-    FX_BOOL bRaw = (ws == FX_WSTRC(L"raw"));
+    bool bRaw = (ws == FX_WSTRC(L"raw"));
     if (!bRaw && ws != FX_WSTRC(L"formatted")) {
-      return FALSE;
+      return false;
     }
     bRet = pTextProvider->GetEmbbedObj(bURI, bRaw, wsAttr, wsValue);
   }
@@ -599,16 +599,15 @@ enum XFA_TABSTOPSSTATUS {
   XFA_TABSTOPSSTATUS_Leader,
   XFA_TABSTOPSSTATUS_Location,
 };
-FX_BOOL CXFA_TextParser::GetTabstops(
-    IFDE_CSSComputedStyle* pStyle,
-    CXFA_TextTabstopsContext* pTabstopContext) {
+bool CXFA_TextParser::GetTabstops(IFDE_CSSComputedStyle* pStyle,
+                                  CXFA_TextTabstopsContext* pTabstopContext) {
   if (!pStyle || !pTabstopContext) {
-    return FALSE;
+    return false;
   }
   CFX_WideString wsValue;
   if (!pStyle->GetCustomStyle(FX_WSTRC(L"xfa-tab-stops"), wsValue) &&
       !pStyle->GetCustomStyle(FX_WSTRC(L"tab-stops"), wsValue)) {
-    return FALSE;
+    return false;
   }
   int32_t iLength = wsValue.GetLength();
   const FX_WCHAR* pTabStops = wsValue.c_str();
@@ -686,17 +685,17 @@ FX_BOOL CXFA_TextParser::GetTabstops(
     FX_FLOAT fPos = ms.ToUnit(XFA_UNIT_Pt);
     pTabstopContext->Append(dwHashCode, fPos);
   }
-  return TRUE;
+  return true;
 }
 
 CXFA_TextLayout::CXFA_TextLayout(CXFA_TextProvider* pTextProvider)
-    : m_bHasBlock(FALSE),
+    : m_bHasBlock(false),
       m_pTextProvider(pTextProvider),
       m_pTextDataNode(nullptr),
-      m_bRichText(FALSE),
+      m_bRichText(false),
       m_iLines(0),
       m_fMaxWidth(0),
-      m_bBlockContinue(TRUE) {
+      m_bBlockContinue(true) {
   ASSERT(m_pTextProvider);
 }
 
@@ -763,7 +762,7 @@ CFDE_XMLNode* CXFA_TextLayout::GetXMLContainerNode() {
   }
   return pXMLContainer;
 }
-CFX_RTFBreak* CXFA_TextLayout::CreateBreak(FX_BOOL bDefault) {
+CFX_RTFBreak* CXFA_TextLayout::CreateBreak(bool bDefault) {
   uint32_t dwStyle = FX_RTFLAYOUTSTYLE_ExpandTab;
   if (!bDefault) {
     dwStyle |= FX_RTFLAYOUTSTYLE_Pagination;
@@ -929,10 +928,10 @@ FX_FLOAT CXFA_TextLayout::GetLayoutHeight() {
   if (iCount == 0 && m_pLoader->m_fWidth > 0) {
     CFX_SizeF szMax(m_pLoader->m_fWidth, m_pLoader->m_fHeight);
     CFX_SizeF szDef;
-    m_pLoader->m_bSaveLineHeight = TRUE;
+    m_pLoader->m_bSaveLineHeight = true;
     m_pLoader->m_fLastPos = 0;
     CalcSize(szMax, szMax, szDef);
-    m_pLoader->m_bSaveLineHeight = FALSE;
+    m_pLoader->m_bSaveLineHeight = false;
     return szDef.y;
   }
   FX_FLOAT fHeight = m_pLoader->m_fHeight;
@@ -959,20 +958,20 @@ FX_FLOAT CXFA_TextLayout::StartLayout(FX_FLOAT fWidth) {
   if (fWidth < 0) {
     CFX_SizeF szMax;
     CFX_SizeF szDef;
-    m_pLoader->m_bSaveLineHeight = TRUE;
+    m_pLoader->m_bSaveLineHeight = true;
     m_pLoader->m_fLastPos = 0;
     CalcSize(szMax, szMax, szDef);
-    m_pLoader->m_bSaveLineHeight = FALSE;
+    m_pLoader->m_bSaveLineHeight = false;
     fWidth = szDef.x;
   }
   return fWidth;
 }
-FX_BOOL CXFA_TextLayout::DoLayout(int32_t iBlockIndex,
-                                  FX_FLOAT& fCalcHeight,
-                                  FX_FLOAT fContentAreaHeight,
-                                  FX_FLOAT fTextHeight) {
+bool CXFA_TextLayout::DoLayout(int32_t iBlockIndex,
+                               FX_FLOAT& fCalcHeight,
+                               FX_FLOAT fContentAreaHeight,
+                               FX_FLOAT fTextHeight) {
   if (!m_pLoader) {
-    return FALSE;
+    return false;
   }
   int32_t iBlockCount = m_Blocks.GetSize();
   FX_FLOAT fHeight = fTextHeight;
@@ -981,9 +980,9 @@ FX_BOOL CXFA_TextLayout::DoLayout(int32_t iBlockIndex,
   }
   m_pLoader->m_fHeight = fHeight;
   if (fContentAreaHeight < 0) {
-    return FALSE;
+    return false;
   }
-  m_bHasBlock = TRUE;
+  m_bHasBlock = true;
   if (iBlockCount == 0 && fHeight > 0) {
     fHeight = fTextHeight - GetLayoutHeight();
     if (fHeight > 0) {
@@ -1017,7 +1016,7 @@ FX_BOOL CXFA_TextLayout::DoLayout(int32_t iBlockIndex,
     FX_FLOAT fLineHeight = m_pLoader->m_lineHeights.ElementAt(i);
     if ((i == iLineIndex) && (fLineHeight - fContentAreaHeight > 0.001)) {
       fCalcHeight = 0;
-      return TRUE;
+      return true;
     }
     if (fLinePos + fLineHeight - fContentAreaHeight > 0.001) {
       if (iBlockCount >= (iBlockIndex + 1) * 2) {
@@ -1038,65 +1037,65 @@ FX_BOOL CXFA_TextLayout::DoLayout(int32_t iBlockIndex,
             m_pLoader->m_BlocksHeight.Add(fCalcHeight);
           }
         }
-        return TRUE;
+        return true;
       }
       fCalcHeight = fLinePos;
-      return TRUE;
+      return true;
     }
     fLinePos += fLineHeight;
   }
-  return FALSE;
+  return false;
 }
 int32_t CXFA_TextLayout::CountBlocks() const {
   int32_t iCount = m_Blocks.GetSize() / 2;
   return iCount > 0 ? iCount : 1;
 }
 
-FX_BOOL CXFA_TextLayout::CalcSize(const CFX_SizeF& minSize,
-                                  const CFX_SizeF& maxSize,
-                                  CFX_SizeF& defaultSize) {
+bool CXFA_TextLayout::CalcSize(const CFX_SizeF& minSize,
+                               const CFX_SizeF& maxSize,
+                               CFX_SizeF& defaultSize) {
   defaultSize.x = maxSize.x;
   if (defaultSize.x < 1)
     defaultSize.x = 0xFFFF;
 
-  m_pBreak.reset(CreateBreak(FALSE));
+  m_pBreak.reset(CreateBreak(false));
   FX_FLOAT fLinePos = 0;
   m_iLines = 0;
   m_fMaxWidth = 0;
-  Loader(defaultSize, fLinePos, FALSE);
+  Loader(defaultSize, fLinePos, false);
   if (fLinePos < 0.1f)
     fLinePos = m_textParser.GetFontSize(m_pTextProvider, nullptr);
 
   m_pTabstopContext.reset();
   defaultSize = CFX_SizeF(m_fMaxWidth, fLinePos);
-  return TRUE;
+  return true;
 }
 
-FX_BOOL CXFA_TextLayout::Layout(const CFX_SizeF& size, FX_FLOAT* fHeight) {
+bool CXFA_TextLayout::Layout(const CFX_SizeF& size, FX_FLOAT* fHeight) {
   if (size.x < 1)
-    return FALSE;
+    return false;
 
   Unload();
-  m_pBreak.reset(CreateBreak(TRUE));
+  m_pBreak.reset(CreateBreak(true));
   if (m_pLoader) {
     m_pLoader->m_iTotalLines = -1;
     m_pLoader->m_iChar = 0;
   }
   m_iLines = 0;
   FX_FLOAT fLinePos = 0;
-  Loader(size, fLinePos, TRUE);
+  Loader(size, fLinePos, true);
   UpdateAlign(size.y, fLinePos);
   m_pTabstopContext.reset();
   if (fHeight)
     *fHeight = fLinePos;
-  return TRUE;
+  return true;
 }
 
-FX_BOOL CXFA_TextLayout::Layout(int32_t iBlock) {
+bool CXFA_TextLayout::Layout(int32_t iBlock) {
   if (!m_pLoader || iBlock < 0 || iBlock >= CountBlocks())
-    return FALSE;
+    return false;
   if (m_pLoader->m_fWidth < 1)
-    return FALSE;
+    return false;
 
   m_pLoader->m_iTotalLines = -1;
   m_iLines = 0;
@@ -1107,10 +1106,10 @@ FX_BOOL CXFA_TextLayout::Layout(int32_t iBlock) {
   int32_t iBlocksHeightCount = m_pLoader->m_BlocksHeight.GetSize();
   iBlocksHeightCount /= 2;
   if (iBlock < iBlocksHeightCount)
-    return TRUE;
+    return true;
   if (iBlock == iBlocksHeightCount) {
     Unload();
-    m_pBreak.reset(CreateBreak(TRUE));
+    m_pBreak.reset(CreateBreak(true));
     fLinePos = m_pLoader->m_fStartLineOffset;
     for (int32_t i = 0; i < iBlocksHeightCount; i++) {
       fLinePos -= m_pLoader->m_BlocksHeight.ElementAt(i * 2 + 1);
@@ -1118,7 +1117,7 @@ FX_BOOL CXFA_TextLayout::Layout(int32_t iBlock) {
     m_pLoader->m_iChar = 0;
     if (iCount > 1)
       m_pLoader->m_iTotalLines = m_Blocks.ElementAt(iBlock * 2 + 1);
-    Loader(szText, fLinePos, TRUE);
+    Loader(szText, fLinePos, true);
     if (iCount == 0 && m_pLoader->m_fStartLineOffset < 0.1f)
       UpdateAlign(szText.y, fLinePos);
   } else if (m_pTextDataNode) {
@@ -1129,16 +1128,16 @@ FX_BOOL CXFA_TextLayout::Layout(int32_t iBlock) {
     if (m_bRichText) {
       CFDE_XMLNode* pContainerNode = GetXMLContainerNode();
       if (!pContainerNode) {
-        return TRUE;
+        return true;
       }
       CFDE_XMLNode* pXMLNode = m_pLoader->m_pXMLNode;
       if (!pXMLNode)
-        return TRUE;
+        return true;
       CFDE_XMLNode* pSaveXMLNode = m_pLoader->m_pXMLNode;
       for (; pXMLNode;
            pXMLNode = pXMLNode->GetNodeItem(CFDE_XMLNode::NextSibling)) {
         if (!LoadRichText(pXMLNode, szText, fLinePos, m_pLoader->m_pParentStyle,
-                          TRUE)) {
+                          true)) {
           break;
         }
       }
@@ -1147,7 +1146,7 @@ FX_BOOL CXFA_TextLayout::Layout(int32_t iBlock) {
         if (pXMLNode == pContainerNode)
           break;
         if (!LoadRichText(pXMLNode, szText, fLinePos, m_pLoader->m_pParentStyle,
-                          TRUE, nullptr, FALSE)) {
+                          true, nullptr, false)) {
           break;
         }
         pSaveXMLNode = pXMLNode;
@@ -1157,7 +1156,7 @@ FX_BOOL CXFA_TextLayout::Layout(int32_t iBlock) {
         for (; pXMLNode;
              pXMLNode = pXMLNode->GetNodeItem(CFDE_XMLNode::NextSibling)) {
           if (!LoadRichText(pXMLNode, szText, fLinePos,
-                            m_pLoader->m_pParentStyle, TRUE)) {
+                            m_pLoader->m_pParentStyle, true)) {
             break;
           }
         }
@@ -1165,15 +1164,15 @@ FX_BOOL CXFA_TextLayout::Layout(int32_t iBlock) {
     } else {
       pNode = m_pLoader->m_pNode;
       if (!pNode)
-        return TRUE;
-      LoadText(pNode, szText, fLinePos, TRUE);
+        return true;
+      LoadText(pNode, szText, fLinePos, true);
     }
   }
   if (iBlock == iCount) {
     m_pTabstopContext.reset();
     m_pLoader.reset();
   }
-  return TRUE;
+  return true;
 }
 void CXFA_TextLayout::ItemBlocks(const CFX_RectF& rtText, int32_t iBlockIndex) {
   if (!m_pLoader) {
@@ -1183,7 +1182,7 @@ void CXFA_TextLayout::ItemBlocks(const CFX_RectF& rtText, int32_t iBlockIndex) {
   if (iCountHeight == 0) {
     return;
   }
-  FX_BOOL bEndItem = TRUE;
+  bool bEndItem = true;
   int32_t iBlockCount = m_Blocks.GetSize();
   FX_FLOAT fLinePos = m_pLoader->m_fStartLineOffset;
   int32_t iLineIndex = 0;
@@ -1206,7 +1205,7 @@ void CXFA_TextLayout::ItemBlocks(const CFX_RectF& rtText, int32_t iBlockIndex) {
     if (fLinePos + fLineHeight - rtText.height > 0.001) {
       m_Blocks.Add(iLineIndex);
       m_Blocks.Add(i - iLineIndex);
-      bEndItem = FALSE;
+      bEndItem = false;
       break;
     }
     fLinePos += fLineHeight;
@@ -1216,15 +1215,15 @@ void CXFA_TextLayout::ItemBlocks(const CFX_RectF& rtText, int32_t iBlockIndex) {
     m_Blocks.Add(i - iLineIndex);
   }
 }
-FX_BOOL CXFA_TextLayout::DrawString(CFX_RenderDevice* pFxDevice,
-                                    const CFX_Matrix& tmDoc2Device,
-                                    const CFX_RectF& rtClip,
-                                    int32_t iBlock) {
+bool CXFA_TextLayout::DrawString(CFX_RenderDevice* pFxDevice,
+                                 const CFX_Matrix& tmDoc2Device,
+                                 const CFX_RectF& rtClip,
+                                 int32_t iBlock) {
   if (!pFxDevice)
-    return FALSE;
+    return false;
 
   std::unique_ptr<CFDE_RenderDevice> pDevice(
-      new CFDE_RenderDevice(pFxDevice, FALSE));
+      new CFDE_RenderDevice(pFxDevice, false));
   pDevice->SaveState();
   pDevice->SetClipRect(rtClip);
 
@@ -1303,15 +1302,15 @@ void CXFA_TextLayout::UpdateAlign(FX_FLOAT fHeight, FX_FLOAT fBottom) {
     }
   }
 }
-FX_BOOL CXFA_TextLayout::Loader(const CFX_SizeF& szText,
-                                FX_FLOAT& fLinePos,
-                                FX_BOOL bSavePieces) {
+bool CXFA_TextLayout::Loader(const CFX_SizeF& szText,
+                             FX_FLOAT& fLinePos,
+                             bool bSavePieces) {
   if (!m_pAllocator) {
     m_pAllocator = IFX_MemoryAllocator::Create(FX_ALLOCTYPE_Static, 256, 0);
   }
   GetTextDataNode();
   if (!m_pTextDataNode)
-    return TRUE;
+    return true;
 
   if (m_bRichText) {
     CFDE_XMLNode* pXMLContainer = GetXMLContainerNode();
@@ -1327,12 +1326,12 @@ FX_BOOL CXFA_TextLayout::Loader(const CFX_SizeF& szText,
   } else {
     LoadText(m_pTextDataNode, szText, fLinePos, bSavePieces);
   }
-  return TRUE;
+  return true;
 }
 void CXFA_TextLayout::LoadText(CXFA_Node* pNode,
                                const CFX_SizeF& szText,
                                FX_FLOAT& fLinePos,
-                               FX_BOOL bSavePieces) {
+                               bool bSavePieces) {
   InitBreak(szText.x);
   CXFA_Para para = m_pTextProvider->GetParaNode();
   FX_FLOAT fSpaceAbove = 0;
@@ -1353,57 +1352,57 @@ void CXFA_TextLayout::LoadText(CXFA_Node* pNode,
   }
   CFX_WideString wsText = pNode->GetContent();
   wsText.TrimRight(L" ");
-  FX_BOOL bRet = AppendChar(wsText, fLinePos, fSpaceAbove, bSavePieces);
+  bool bRet = AppendChar(wsText, fLinePos, fSpaceAbove, bSavePieces);
   if (bRet && m_pLoader) {
     m_pLoader->m_pNode = pNode;
   } else {
     EndBreak(FX_RTFBREAK_ParagraphBreak, fLinePos, bSavePieces);
   }
 }
-FX_BOOL CXFA_TextLayout::LoadRichText(CFDE_XMLNode* pXMLNode,
-                                      const CFX_SizeF& szText,
-                                      FX_FLOAT& fLinePos,
-                                      IFDE_CSSComputedStyle* pParentStyle,
-                                      FX_BOOL bSavePieces,
-                                      CXFA_LinkUserData* pLinkData,
-                                      FX_BOOL bEndBreak,
-                                      FX_BOOL bIsOl,
-                                      int32_t iLiCount) {
+bool CXFA_TextLayout::LoadRichText(CFDE_XMLNode* pXMLNode,
+                                   const CFX_SizeF& szText,
+                                   FX_FLOAT& fLinePos,
+                                   IFDE_CSSComputedStyle* pParentStyle,
+                                   bool bSavePieces,
+                                   CXFA_LinkUserData* pLinkData,
+                                   bool bEndBreak,
+                                   bool bIsOl,
+                                   int32_t iLiCount) {
   if (!pXMLNode) {
-    return FALSE;
+    return false;
   }
   CXFA_TextParseContext* pContext =
       m_textParser.GetParseContextFromMap(pXMLNode);
   FDE_CSSDISPLAY eDisplay = FDE_CSSDISPLAY_None;
-  FX_BOOL bContentNode = FALSE;
+  bool bContentNode = false;
   FX_FLOAT fSpaceBelow = 0;
   IFDE_CSSComputedStyle* pStyle = nullptr;
   CFX_WideString wsName;
   if (bEndBreak) {
-    FX_BOOL bCurOl = FALSE;
-    FX_BOOL bCurLi = FALSE;
+    bool bCurOl = false;
+    bool bCurLi = false;
     CFDE_XMLElement* pElement = nullptr;
     if (pContext) {
       if (m_bBlockContinue ||
           (m_pLoader && pXMLNode == m_pLoader->m_pXMLNode)) {
-        m_bBlockContinue = TRUE;
+        m_bBlockContinue = true;
       }
       if (pXMLNode->GetType() == FDE_XMLNODE_Text) {
-        bContentNode = TRUE;
+        bContentNode = true;
       } else if (pXMLNode->GetType() == FDE_XMLNODE_Element) {
         pElement = static_cast<CFDE_XMLElement*>(pXMLNode);
         pElement->GetLocalTagName(wsName);
       }
       if (wsName == FX_WSTRC(L"ol")) {
-        bIsOl = TRUE;
-        bCurOl = TRUE;
+        bIsOl = true;
+        bCurOl = true;
       }
-      if (m_bBlockContinue || bContentNode == FALSE) {
+      if (m_bBlockContinue || bContentNode == false) {
         eDisplay = pContext->GetDisplay();
         if (eDisplay != FDE_CSSDISPLAY_Block &&
             eDisplay != FDE_CSSDISPLAY_Inline &&
             eDisplay != FDE_CSSDISPLAY_ListItem) {
-          return TRUE;
+          return true;
         }
         pStyle = m_textParser.ComputeStyle(pXMLNode, pParentStyle);
         InitBreak(bContentNode ? pParentStyle : pStyle, eDisplay, szText.x,
@@ -1434,7 +1433,7 @@ FX_BOOL CXFA_TextLayout::LoadRichText(CFDE_XMLNode* pXMLNode,
         }
         int32_t iTabCount =
             m_textParser.CountTabs(bContentNode ? pParentStyle : pStyle);
-        FX_BOOL bSpaceRun =
+        bool bSpaceRun =
             m_textParser.IsSpaceRun(bContentNode ? pParentStyle : pStyle);
         CFX_WideString wsText;
         if (bContentNode && iTabCount == 0) {
@@ -1442,7 +1441,7 @@ FX_BOOL CXFA_TextLayout::LoadRichText(CFDE_XMLNode* pXMLNode,
         } else if (wsName == FX_WSTRC(L"br")) {
           wsText = L'\n';
         } else if (wsName == FX_WSTRC(L"li")) {
-          bCurLi = TRUE;
+          bCurLi = true;
           if (bIsOl) {
             wsText.Format(L"%d.  ", iLiCount);
           } else {
@@ -1499,14 +1498,14 @@ FX_BOOL CXFA_TextLayout::LoadRichText(CFDE_XMLNode* pXMLNode,
               }
               if (pStyle)
                 pStyle->Release();
-              return FALSE;
+              return false;
             }
-            return TRUE;
+            return true;
           }
         }
       }
     }
-    FX_BOOL ret = TRUE;
+    bool ret = true;
     for (CFDE_XMLNode* pChildNode =
              pXMLNode->GetNodeItem(CFDE_XMLNode::FirstChild);
          pChildNode;
@@ -1516,9 +1515,9 @@ FX_BOOL CXFA_TextLayout::LoadRichText(CFDE_XMLNode* pXMLNode,
       }
       ret = LoadRichText(pChildNode, szText, fLinePos,
                          pContext ? pStyle : pParentStyle, bSavePieces,
-                         pLinkData, TRUE, bIsOl, iLiCount);
-      if (ret == FALSE) {
-        return FALSE;
+                         pLinkData, true, bIsOl, iLiCount);
+      if (ret == false) {
+        return false;
       }
     }
     if (m_pLoader) {
@@ -1561,18 +1560,18 @@ FX_BOOL CXFA_TextLayout::LoadRichText(CFDE_XMLNode* pXMLNode,
               pXMLNode->GetNodeItem(CFDE_XMLNode::NextSibling);
           m_pLoader->m_pParentStyle = pParentStyle;
         }
-        return FALSE;
+        return false;
       }
     }
   }
   if (pStyle)
     pStyle->Release();
-  return TRUE;
+  return true;
 }
-FX_BOOL CXFA_TextLayout::AppendChar(const CFX_WideString& wsText,
-                                    FX_FLOAT& fLinePos,
-                                    FX_FLOAT fSpaceAbove,
-                                    FX_BOOL bSavePieces) {
+bool CXFA_TextLayout::AppendChar(const CFX_WideString& wsText,
+                                 FX_FLOAT& fLinePos,
+                                 FX_FLOAT fSpaceAbove,
+                                 bool bSavePieces) {
   uint32_t dwStatus = 0;
   int32_t iChar = 0;
   if (m_pLoader) {
@@ -1589,7 +1588,7 @@ FX_BOOL CXFA_TextLayout::AppendChar(const CFX_WideString& wsText,
       if (IsEnd(bSavePieces)) {
         if (m_pLoader)
           m_pLoader->m_iChar = i;
-        return TRUE;
+        return true;
       }
       if (dwStatus == FX_RTFBREAK_ParagraphBreak && m_bRichText) {
         fLinePos += fSpaceAbove;
@@ -1599,16 +1598,16 @@ FX_BOOL CXFA_TextLayout::AppendChar(const CFX_WideString& wsText,
   if (m_pLoader) {
     m_pLoader->m_iChar = 0;
   }
-  return FALSE;
+  return false;
 }
-FX_BOOL CXFA_TextLayout::IsEnd(FX_BOOL bSavePieces) {
+bool CXFA_TextLayout::IsEnd(bool bSavePieces) {
   if (!bSavePieces) {
-    return FALSE;
+    return false;
   }
   if (m_pLoader && m_pLoader->m_iTotalLines > 0) {
     return m_iLines >= m_pLoader->m_iTotalLines;
   }
-  return FALSE;
+  return false;
 }
 void CXFA_TextLayout::ProcessText(CFX_WideString& wsText) {
   int32_t iLen = wsText.GetLength();
@@ -1634,10 +1633,10 @@ void CXFA_TextLayout::ProcessText(CFX_WideString& wsText) {
 }
 void CXFA_TextLayout::EndBreak(uint32_t dwStatus,
                                FX_FLOAT& fLinePos,
-                               FX_BOOL bSavePieces) {
+                               bool bSavePieces) {
   dwStatus = m_pBreak->EndBreak(dwStatus);
   if (dwStatus > FX_RTFBREAK_PieceBreak) {
-    AppendTextLine(dwStatus, fLinePos, bSavePieces, TRUE);
+    AppendTextLine(dwStatus, fLinePos, bSavePieces, true);
   }
 }
 void CXFA_TextLayout::DoTabstops(IFDE_CSSComputedStyle* pStyle,
@@ -1660,7 +1659,7 @@ void CXFA_TextLayout::DoTabstops(IFDE_CSSComputedStyle* pStyle,
   }
   if (iCount > 0) {
     iTabstopsIndex++;
-    m_pTabstopContext->m_bTabstops = TRUE;
+    m_pTabstopContext->m_bTabstops = true;
     FX_FLOAT fRight = 0;
     if (iPieces > 1) {
       XFA_TextPiece* p = pPieceLine->m_textPieces.GetAt(iPieces - 2);
@@ -1690,7 +1689,7 @@ void CXFA_TextLayout::DoTabstops(IFDE_CSSComputedStyle* pStyle,
       }
       m_pTabstopContext->m_fLeft =
           std::min(fLeft, m_pTabstopContext->m_fTabWidth);
-      m_pTabstopContext->m_bTabstops = FALSE;
+      m_pTabstopContext->m_bTabstops = false;
       m_pTabstopContext->m_fTabWidth = 0;
     }
     pPiece->rtPiece.left -= m_pTabstopContext->m_fLeft;
@@ -1698,8 +1697,8 @@ void CXFA_TextLayout::DoTabstops(IFDE_CSSComputedStyle* pStyle,
 }
 void CXFA_TextLayout::AppendTextLine(uint32_t dwStatus,
                                      FX_FLOAT& fLinePos,
-                                     FX_BOOL bSavePieces,
-                                     FX_BOOL bEndBreak) {
+                                     bool bSavePieces,
+                                     bool bEndBreak) {
   int32_t iPieces = m_pBreak->CountBreakPieces();
   if (iPieces < 1) {
     return;
@@ -1865,8 +1864,8 @@ void CXFA_TextLayout::RenderPath(CFDE_RenderDevice* pDevice,
                                  FXTEXT_CHARPOS* pCharPos,
                                  const CFX_Matrix& tmDoc2Device) {
   XFA_TextPiece* pPiece = pPieceLine->m_textPieces.GetAt(iPiece);
-  FX_BOOL bNoUnderline = pPiece->iUnderline < 1 || pPiece->iUnderline > 2;
-  FX_BOOL bNoLineThrough = pPiece->iLineThrough < 1 || pPiece->iLineThrough > 2;
+  bool bNoUnderline = pPiece->iUnderline < 1 || pPiece->iUnderline > 2;
+  bool bNoLineThrough = pPiece->iLineThrough < 1 || pPiece->iLineThrough > 2;
   if (bNoUnderline && bNoLineThrough) {
     return;
   }
@@ -1970,7 +1969,7 @@ void CXFA_TextLayout::RenderPath(CFDE_RenderDevice* pDevice,
 
 int32_t CXFA_TextLayout::GetDisplayPos(const XFA_TextPiece* pPiece,
                                        FXTEXT_CHARPOS* pCharPos,
-                                       FX_BOOL bCharCode) {
+                                       bool bCharCode) {
   if (!pPiece) {
     return 0;
   }
@@ -1980,10 +1979,10 @@ int32_t CXFA_TextLayout::GetDisplayPos(const XFA_TextPiece* pPiece,
   }
   return m_pBreak->GetDisplayPos(&tr, pCharPos, bCharCode);
 }
-FX_BOOL CXFA_TextLayout::ToRun(const XFA_TextPiece* pPiece, FX_RTFTEXTOBJ& tr) {
+bool CXFA_TextLayout::ToRun(const XFA_TextPiece* pPiece, FX_RTFTEXTOBJ& tr) {
   int32_t iLength = pPiece->iChars;
   if (iLength < 1) {
-    return FALSE;
+    return false;
   }
   tr.pStr = pPiece->pszText;
   tr.pFont = pPiece->pFont;
@@ -1997,7 +1996,7 @@ FX_BOOL CXFA_TextLayout::ToRun(const XFA_TextPiece* pPiece, FX_RTFTEXTOBJ& tr) {
   tr.iVerticalScale = pPiece->iVerScale;
   tr.dwLayoutStyles = FX_RTFLAYOUTSTYLE_ExpandTab;
   tr.iHorizontalScale = pPiece->iHorScale;
-  return TRUE;
+  return true;
 }
 
 CXFA_LinkUserData::CXFA_LinkUserData(IFX_MemoryAllocator* pAllocator,
@@ -2069,7 +2068,7 @@ CXFA_PieceLine::~CXFA_PieceLine() {}
 CXFA_TextTabstopsContext::CXFA_TextTabstopsContext()
     : m_iTabCount(0),
       m_iTabIndex(-1),
-      m_bTabstops(FALSE),
+      m_bTabstops(false),
       m_fTabWidth(0),
       m_fLeft(0) {}
 
@@ -2098,7 +2097,7 @@ void CXFA_TextTabstopsContext::RemoveAll() {
 
 void CXFA_TextTabstopsContext::Reset() {
   m_iTabIndex = -1;
-  m_bTabstops = FALSE;
+  m_bTabstops = false;
   m_fTabWidth = 0;
   m_fLeft = 0;
 }

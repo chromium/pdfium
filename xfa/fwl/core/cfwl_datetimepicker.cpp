@@ -96,55 +96,55 @@ FWL_Error CFWL_DateTimePicker::CFWL_DateTimePickerDP::GetToday(
   return FWL_Error::Succeeded;
 }
 
-FX_BOOL CFWL_DateTimePicker::CanUndo() {
+bool CFWL_DateTimePicker::CanUndo() {
   return ToDateTimePicker(GetWidget())->CanUndo();
 }
 
-FX_BOOL CFWL_DateTimePicker::CanRedo() {
+bool CFWL_DateTimePicker::CanRedo() {
   return ToDateTimePicker(GetWidget())->CanRedo();
 }
 
-FX_BOOL CFWL_DateTimePicker::Undo() {
+bool CFWL_DateTimePicker::Undo() {
   return ToDateTimePicker(GetWidget())->Undo();
 }
 
-FX_BOOL CFWL_DateTimePicker::Redo() {
+bool CFWL_DateTimePicker::Redo() {
   return ToDateTimePicker(GetWidget())->Redo();
 }
 
-FX_BOOL CFWL_DateTimePicker::CanCopy() {
+bool CFWL_DateTimePicker::CanCopy() {
   return ToDateTimePicker(GetWidget())->CanCopy();
 }
 
-FX_BOOL CFWL_DateTimePicker::CanCut() {
+bool CFWL_DateTimePicker::CanCut() {
   return ToDateTimePicker(GetWidget())->CanCut();
 }
 
-FX_BOOL CFWL_DateTimePicker::CanSelectAll() {
+bool CFWL_DateTimePicker::CanSelectAll() {
   return ToDateTimePicker(GetWidget())->CanSelectAll();
 }
 
-FX_BOOL CFWL_DateTimePicker::Copy(CFX_WideString& wsCopy) {
+bool CFWL_DateTimePicker::Copy(CFX_WideString& wsCopy) {
   return ToDateTimePicker(GetWidget())->Copy(wsCopy);
 }
 
-FX_BOOL CFWL_DateTimePicker::Cut(CFX_WideString& wsCut) {
+bool CFWL_DateTimePicker::Cut(CFX_WideString& wsCut) {
   return ToDateTimePicker(GetWidget())->Copy(wsCut);
 }
 
-FX_BOOL CFWL_DateTimePicker::Paste(const CFX_WideString& wsPaste) {
+bool CFWL_DateTimePicker::Paste(const CFX_WideString& wsPaste) {
   return ToDateTimePicker(GetWidget())->Paste(wsPaste);
 }
 
-FX_BOOL CFWL_DateTimePicker::SelectAll() {
+bool CFWL_DateTimePicker::SelectAll() {
   return ToDateTimePicker(GetWidget())->SelectAll();
 }
 
-FX_BOOL CFWL_DateTimePicker::Delete() {
+bool CFWL_DateTimePicker::Delete() {
   return ToDateTimePicker(GetWidget())->Delete();
 }
 
-FX_BOOL CFWL_DateTimePicker::DeSelect() {
+bool CFWL_DateTimePicker::DeSelect() {
   return ToDateTimePicker(GetWidget())->DeSelect();
 }
 

@@ -573,7 +573,7 @@ CXFA_FMSimpleExpression* CXFA_FMParse::ParsePostExpression(
           }
         }
         if (m_pErrorInfo->message.IsEmpty()) {
-          e = new CXFA_FMCallExpression(line, e, pArray.release(), FALSE);
+          e = new CXFA_FMCallExpression(line, e, pArray.release(), false);
           NextToken();
           if (m_pToken->m_type != TOKlbracket) {
             continue;
@@ -629,7 +629,7 @@ CXFA_FMSimpleExpression* CXFA_FMParse::ParsePostExpression(
               CXFA_FMSimpleExpression* pIdentifier =
                   new CXFA_FMIdentifierExpression(tempLine, tempStr);
               pExpCall = new CXFA_FMCallExpression(line, pIdentifier,
-                                                   pArray.release(), TRUE);
+                                                   pArray.release(), true);
               e = new CXFA_FMMethodCallExpression(line, pExpAccessor, pExpCall);
               NextToken();
               if (m_pToken->m_type != TOKlbracket) {
@@ -661,7 +661,7 @@ CXFA_FMSimpleExpression* CXFA_FMParse::ParsePostExpression(
                                                  s.release());
           } else {
             CXFA_FMSimpleExpression* s = new CXFA_FMIndexExpression(
-                tempLine, ACCESSOR_NO_INDEX, nullptr, FALSE);
+                tempLine, ACCESSOR_NO_INDEX, nullptr, false);
             e = new CXFA_FMDotAccessorExpression(line, e, TOKdot, tempStr, s);
             continue;
           }
@@ -688,7 +688,7 @@ CXFA_FMSimpleExpression* CXFA_FMParse::ParsePostExpression(
                                                     tempStr, s.release());
           } else {
             CXFA_FMSimpleExpression* s = new CXFA_FMIndexExpression(
-                tempLine, ACCESSOR_NO_INDEX, nullptr, FALSE);
+                tempLine, ACCESSOR_NO_INDEX, nullptr, false);
             e = new CXFA_FMDotDotAccessorExpression(line, e, TOKdotdot, tempStr,
                                                     s);
             continue;
@@ -716,7 +716,7 @@ CXFA_FMSimpleExpression* CXFA_FMParse::ParsePostExpression(
                                                  tempStr, s.release());
           } else {
             CXFA_FMSimpleExpression* s = new CXFA_FMIndexExpression(
-                tempLine, ACCESSOR_NO_INDEX, nullptr, FALSE);
+                tempLine, ACCESSOR_NO_INDEX, nullptr, false);
             e = new CXFA_FMDotAccessorExpression(line, e, TOKdotscream, tempStr,
                                                  s);
             continue;
@@ -730,7 +730,7 @@ CXFA_FMSimpleExpression* CXFA_FMParse::ParsePostExpression(
         break;
       case TOKdotstar: {
         CXFA_FMSimpleExpression* s =
-            new CXFA_FMIndexExpression(line, ACCESSOR_NO_INDEX, nullptr, FALSE);
+            new CXFA_FMIndexExpression(line, ACCESSOR_NO_INDEX, nullptr, false);
         e = new CXFA_FMDotAccessorExpression(line, e, TOKdotstar,
                                              FX_WSTRC(L"*"), s);
       } break;
@@ -750,7 +750,7 @@ CXFA_FMSimpleExpression* CXFA_FMParse::ParseIndexExpression() {
   XFA_FM_AccessorIndex accessorIndex = ACCESSOR_NO_RELATIVEINDEX;
   if (m_pToken->m_type == TOKmul) {
     pExp.reset(
-        new CXFA_FMIndexExpression(line, accessorIndex, s.release(), TRUE));
+        new CXFA_FMIndexExpression(line, accessorIndex, s.release(), true));
     NextToken();
     if (m_pToken->m_type != TOKrbracket) {
       CFX_WideString ws_TempString(m_pToken->m_wstring);
@@ -774,7 +774,7 @@ CXFA_FMSimpleExpression* CXFA_FMParse::ParseIndexExpression() {
           XFA_FM_KeywordToString(TOKrparen), ws_TempString.c_str());
   } else {
     pExp.reset(
-        new CXFA_FMIndexExpression(line, accessorIndex, s.release(), FALSE));
+        new CXFA_FMIndexExpression(line, accessorIndex, s.release(), false));
   }
   return pExp.release();
 }

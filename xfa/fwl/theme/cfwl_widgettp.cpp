@@ -37,7 +37,7 @@ const float kCYBorder = 1.0f;
 }  // namespace
 
 bool CFWL_WidgetTP::IsValidWidget(IFWL_Widget* pWidget) {
-  return FALSE;
+  return false;
 }
 
 uint32_t CFWL_WidgetTP::GetThemeID(IFWL_Widget* pWidget) {
@@ -418,7 +418,7 @@ void CFWL_WidgetTP::DrawAxialShading(CFX_Graphics* pGraphics,
 
   CFX_PointF begPoint(fx1, fy1);
   CFX_PointF endPoint(fx2, fy2);
-  CFX_Shading shading(begPoint, endPoint, FALSE, FALSE, beginColor, endColor);
+  CFX_Shading shading(begPoint, endPoint, false, false, beginColor, endColor);
   pGraphics->SaveGraphState();
   CFX_Color color1(&shading);
   pGraphics->SetFillColor(&color1);
@@ -496,7 +496,7 @@ void CFWL_WidgetTP::DrawArrow(CFX_Graphics* pGraphics,
                               const CFX_RectF* pRect,
                               FWLTHEME_DIRECTION eDict,
                               FX_ARGB argbFill,
-                              FX_BOOL bPressed,
+                              bool bPressed,
                               CFX_Matrix* pMatrix) {
   CFX_RectF rtArrow(*pRect);
   CFX_Path path;
@@ -552,7 +552,7 @@ void CFWL_WidgetTP::DrawArrow(CFX_Graphics* pGraphics,
                               FWLTHEME_DIRECTION eDict,
                               FX_ARGB argSign,
                               CFX_Matrix* pMatrix) {
-  FX_BOOL bVert =
+  bool bVert =
       (eDict == FWLTHEME_DIRECTION_Up || eDict == FWLTHEME_DIRECTION_Down);
   FX_FLOAT fLeft =
       (FX_FLOAT)(((pRect->width - (bVert ? 9 : 6)) / 2 + pRect->left) + 0.5);
@@ -649,16 +649,16 @@ CFWL_FontData::CFWL_FontData() : m_dwStyles(0), m_dwCodePage(0) {}
 
 CFWL_FontData::~CFWL_FontData() {}
 
-FX_BOOL CFWL_FontData::Equal(const CFX_WideStringC& wsFontFamily,
-                             uint32_t dwFontStyles,
-                             uint16_t wCodePage) {
+bool CFWL_FontData::Equal(const CFX_WideStringC& wsFontFamily,
+                          uint32_t dwFontStyles,
+                          uint16_t wCodePage) {
   return m_wsFamily == wsFontFamily && m_dwStyles == dwFontStyles &&
          m_dwCodePage == wCodePage;
 }
 
-FX_BOOL CFWL_FontData::LoadFont(const CFX_WideStringC& wsFontFamily,
-                                uint32_t dwFontStyles,
-                                uint16_t dwCodePage) {
+bool CFWL_FontData::LoadFont(const CFX_WideStringC& wsFontFamily,
+                             uint32_t dwFontStyles,
+                             uint16_t dwCodePage) {
   m_wsFamily = wsFontFamily;
   m_dwStyles = dwFontStyles;
   m_dwCodePage = dwCodePage;

@@ -25,7 +25,7 @@ class CFX_BaseArray : public CFX_Target {
   int32_t Append(const CFX_BaseArray& src, int32_t iStart, int32_t iCount);
   int32_t Copy(const CFX_BaseArray& src, int32_t iStart, int32_t iCount);
   int32_t RemoveLast(int32_t iCount);
-  void RemoveAll(FX_BOOL bLeaveMemory);
+  void RemoveAll(bool bLeaveMemory);
 
   FX_BASEARRAYDATA* m_pData;
 };
@@ -74,9 +74,7 @@ class CFX_BaseArrayTemplate : public CFX_BaseArray {
   int32_t RemoveLast(int32_t iCount) {
     return CFX_BaseArray::RemoveLast(iCount);
   }
-  void RemoveAll(FX_BOOL bLeaveMemory) {
-    CFX_BaseArray::RemoveAll(bLeaveMemory);
-  }
+  void RemoveAll(bool bLeaveMemory) { CFX_BaseArray::RemoveAll(bLeaveMemory); }
 };
 
 class CFX_BaseMassArrayImp : public CFX_Target {
@@ -92,7 +90,7 @@ class CFX_BaseMassArrayImp : public CFX_Target {
                  int32_t iCount);
   int32_t Copy(const CFX_BaseMassArrayImp& src, int32_t iStart, int32_t iCount);
   int32_t RemoveLast(int32_t iCount);
-  void RemoveAll(FX_BOOL bLeaveMemory);
+  void RemoveAll(bool bLeaveMemory);
 
   int32_t m_iChunkSize;
   int32_t m_iBlockSize;
@@ -118,7 +116,7 @@ class CFX_BaseMassArray : public CFX_Target {
   int32_t Append(const CFX_BaseMassArray& src, int32_t iStart, int32_t iCount);
   int32_t Copy(const CFX_BaseMassArray& src, int32_t iStart, int32_t iCount);
   int32_t RemoveLast(int32_t iCount);
-  void RemoveAll(FX_BOOL bLeaveMemory);
+  void RemoveAll(bool bLeaveMemory);
   CFX_BaseMassArrayImp* m_pData;
 };
 
@@ -165,7 +163,7 @@ class CFX_MassArrayTemplate : public CFX_BaseMassArray {
   int32_t RemoveLast(int32_t iCount) {
     return CFX_BaseMassArray::RemoveLast(iCount);
   }
-  void RemoveAll(FX_BOOL bLeaveMemory) {
+  void RemoveAll(bool bLeaveMemory) {
     CFX_BaseMassArray::RemoveAll(bLeaveMemory);
   }
 };
@@ -175,7 +173,7 @@ class CFX_ObjectMassArrayTemplate : public CFX_BaseMassArray {
  public:
   CFX_ObjectMassArrayTemplate(int32_t iChunkSize)
       : CFX_BaseMassArray(iChunkSize, sizeof(baseType)) {}
-  ~CFX_ObjectMassArrayTemplate() { RemoveAll(FALSE); }
+  ~CFX_ObjectMassArrayTemplate() { RemoveAll(false); }
 
   int32_t GetSize() const { return CFX_BaseMassArray::GetSize(); }
   int32_t Add(const baseType& element) {
@@ -225,7 +223,7 @@ class CFX_ObjectMassArrayTemplate : public CFX_BaseMassArray {
     if (iEnd > iSize) {
       iEnd = iSize;
     }
-    RemoveAll(TRUE);
+    RemoveAll(true);
     for (int32_t i = iStart; i < iEnd; i++) {
       Add(src.GetAt(i));
     }
@@ -244,7 +242,7 @@ class CFX_ObjectMassArrayTemplate : public CFX_BaseMassArray {
     }
     return CFX_BaseMassArray::RemoveLast(iCount);
   }
-  void RemoveAll(FX_BOOL bLeaveMemory) {
+  void RemoveAll(bool bLeaveMemory) {
     int32_t iSize = CFX_BaseMassArray::GetSize();
     for (int32_t i = 0; i < iSize; i++) {
       ((baseType*)GetPtrAt(i))->~baseType();
@@ -293,7 +291,7 @@ class CFX_BaseStack : public CFX_Target {
   uint8_t* GetTopElement() const;
   int32_t GetSize() const;
   uint8_t* GetAt(int32_t index) const;
-  void RemoveAll(FX_BOOL bLeaveMemory);
+  void RemoveAll(bool bLeaveMemory);
   CFX_BaseMassArrayImp* m_pData;
 };
 
@@ -316,9 +314,7 @@ class CFX_StackTemplate : public CFX_BaseStack {
   baseType* GetAt(int32_t index) const {
     return (baseType*)CFX_BaseStack::GetAt(index);
   }
-  void RemoveAll(FX_BOOL bLeaveMemory) {
-    CFX_BaseStack::RemoveAll(bLeaveMemory);
-  }
+  void RemoveAll(bool bLeaveMemory) { CFX_BaseStack::RemoveAll(bLeaveMemory); }
 };
 
 template <class baseType>
@@ -326,7 +322,7 @@ class CFX_ObjectStackTemplate : public CFX_BaseStack {
  public:
   CFX_ObjectStackTemplate(int32_t iChunkSize)
       : CFX_BaseStack(iChunkSize, sizeof(baseType)) {}
-  ~CFX_ObjectStackTemplate() { RemoveAll(FALSE); }
+  ~CFX_ObjectStackTemplate() { RemoveAll(false); }
 
   int32_t Push(const baseType& element) {
     int32_t index = CFX_BaseStack::GetSize();
@@ -348,7 +344,7 @@ class CFX_ObjectStackTemplate : public CFX_BaseStack {
   baseType* GetAt(int32_t index) const {
     return (baseType*)CFX_BaseStack::GetAt(index);
   }
-  void RemoveAll(FX_BOOL bLeaveMemory) {
+  void RemoveAll(bool bLeaveMemory) {
     int32_t iSize = CFX_BaseStack::GetSize();
     for (int32_t i = 0; i < iSize; i++) {
       ((baseType*)CFX_BaseStack::GetAt(i))->~baseType();
@@ -370,7 +366,7 @@ class CFX_ObjectStackTemplate : public CFX_BaseStack {
     if (iEnd > iSize) {
       iEnd = iSize;
     }
-    RemoveAll(TRUE);
+    RemoveAll(true);
     for (int32_t i = iStart; i < iEnd; i++) {
       Push(*src.GetAt(i));
     }

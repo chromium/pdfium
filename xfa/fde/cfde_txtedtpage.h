@@ -26,8 +26,8 @@ class CFDE_TxtEdtPage : public IFDE_TxtEdtPage {
   CFDE_TxtEdtEngine* GetEngine() const override;
   int32_t GetCharRect(int32_t nIndex,
                       CFX_RectF& rect,
-                      FX_BOOL bBBox = FALSE) const override;
-  int32_t GetCharIndex(const CFX_PointF& fPoint, FX_BOOL& bBefore) override;
+                      bool bBBox = false) const override;
+  int32_t GetCharIndex(const CFX_PointF& fPoint, bool& bBefore) override;
   void CalcRangeRectArray(int32_t nStart,
                           int32_t nCount,
                           CFX_RectFArray& RectFArr) const override;
@@ -37,7 +37,7 @@ class CFDE_TxtEdtPage : public IFDE_TxtEdtPage {
   int32_t GetDisplayPos(const CFX_RectF& rtClip,
                         FXTEXT_CHARPOS*& pCharPos,
                         CFX_RectF* pBBox) const override;
-  FX_BOOL IsLoaded(const CFX_RectF* pClipBox) override;
+  bool IsLoaded(const CFX_RectF* pClipBox) override;
   int32_t LoadPage(const CFX_RectF* pClipBox, IFX_Pause* pPause) override;
   void UnloadPage(const CFX_RectF* pClipBox) override;
   const CFX_RectF& GetContentsBox() override;
@@ -72,7 +72,7 @@ class CFDE_TxtEdtPage : public IFDE_TxtEdtPage {
   int32_t m_nPageStart;
   int32_t m_nCharCount;
   int32_t m_nPageIndex;
-  FX_BOOL m_bLoaded;
+  bool m_bLoaded;
   CFX_RectF m_rtPage;
   CFX_RectF m_rtPageMargin;
   CFX_RectF m_rtPageContents;

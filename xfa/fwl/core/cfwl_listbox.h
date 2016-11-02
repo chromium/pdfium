@@ -25,16 +25,15 @@ class CFWL_ListBox : public CFWL_Widget {
   void Initialize();
 
   FWL_Error AddDIBitmap(CFX_DIBitmap* pDIB, IFWL_ListItem* pItem);
-  IFWL_ListItem* AddString(const CFX_WideStringC& wsAdd,
-                           FX_BOOL bSelect = FALSE);
-  FX_BOOL DeleteString(IFWL_ListItem* pItem);
+  IFWL_ListItem* AddString(const CFX_WideStringC& wsAdd, bool bSelect = false);
+  bool DeleteString(IFWL_ListItem* pItem);
   void DeleteAll();
   int32_t CountSelItems();
   IFWL_ListItem* GetSelItem(int32_t nIndexSel);
   int32_t GetSelIndex(int32_t nIndex);
-  FWL_Error SetSelItem(IFWL_ListItem* pItem, FX_BOOL bSelect = TRUE);
+  FWL_Error SetSelItem(IFWL_ListItem* pItem, bool bSelect = true);
   FWL_Error GetItemText(IFWL_ListItem* pItem, CFX_WideString& wsText);
-  FWL_Error GetScrollPos(FX_FLOAT& fPos, FX_BOOL bVert = TRUE);
+  FWL_Error GetScrollPos(FX_FLOAT& fPos, bool bVert = true);
   FWL_Error SetItemHeight(FX_FLOAT fItemHeight);
   IFWL_ListItem* GetFocusItem();
   FWL_Error SetFocusItem(IFWL_ListItem* pItem);
@@ -61,9 +60,9 @@ class CFWL_ListBox : public CFWL_Widget {
     int32_t CountItems(const IFWL_Widget* pWidget) override;
     IFWL_ListItem* GetItem(const IFWL_Widget* pWidget, int32_t nIndex) override;
     int32_t GetItemIndex(IFWL_Widget* pWidget, IFWL_ListItem* pItem) override;
-    FX_BOOL SetItemIndex(IFWL_Widget* pWidget,
-                         IFWL_ListItem* pItem,
-                         int32_t nIndex) override;
+    bool SetItemIndex(IFWL_Widget* pWidget,
+                      IFWL_ListItem* pItem,
+                      int32_t nIndex) override;
     uint32_t GetItemStyles(IFWL_Widget* pWidget, IFWL_ListItem* pItem) override;
     FWL_Error GetItemText(IFWL_Widget* pWidget,
                           IFWL_ListItem* pItem,

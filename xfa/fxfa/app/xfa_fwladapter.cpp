@@ -27,11 +27,11 @@ FWL_Error CXFA_FWLAdapterWidgetMgr::RepaintWidget(IFWL_Widget* pWidget,
   return FWL_Error::Succeeded;
 }
 
-FX_BOOL CXFA_FWLAdapterWidgetMgr::GetPopupPos(IFWL_Widget* pWidget,
-                                              FX_FLOAT fMinHeight,
-                                              FX_FLOAT fMaxHeight,
-                                              const CFX_RectF& rtAnchor,
-                                              CFX_RectF& rtPopup) {
+bool CXFA_FWLAdapterWidgetMgr::GetPopupPos(IFWL_Widget* pWidget,
+                                           FX_FLOAT fMinHeight,
+                                           FX_FLOAT fMaxHeight,
+                                           const CFX_RectF& rtAnchor,
+                                           CFX_RectF& rtPopup) {
   CXFA_FFWidget* pFFWidget =
       static_cast<CXFA_FFWidget*>(pWidget->GetLayoutItem());
   CFX_Matrix mt;
@@ -40,5 +40,5 @@ FX_BOOL CXFA_FWLAdapterWidgetMgr::GetPopupPos(IFWL_Widget* pWidget,
   mt.TransformRect(rtRotateAnchor);
   pFFWidget->GetDoc()->GetDocEnvironment()->GetPopupPos(
       pFFWidget, fMinHeight, fMaxHeight, rtRotateAnchor, rtPopup);
-  return TRUE;
+  return true;
 }

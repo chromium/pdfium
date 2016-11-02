@@ -20,15 +20,13 @@ class CXFA_WideTextRead : public IFX_Stream {
   int32_t GetLength() const override;
   int32_t Seek(FX_STREAMSEEK eSeek, int32_t iOffset) override;
   int32_t GetPosition() override;
-  FX_BOOL IsEOF() const override;
+  bool IsEOF() const override;
   int32_t ReadData(uint8_t* pBuffer, int32_t iBufferSize) override;
-  int32_t ReadString(FX_WCHAR* pStr,
-                     int32_t iMaxLength,
-                     FX_BOOL& bEOS) override;
+  int32_t ReadString(FX_WCHAR* pStr, int32_t iMaxLength, bool& bEOS) override;
   int32_t WriteData(const uint8_t* pBuffer, int32_t iBufferSize) override;
   int32_t WriteString(const FX_WCHAR* pStr, int32_t iLength) override;
   void Flush() override {}
-  FX_BOOL SetLength(int32_t iLength) override;
+  bool SetLength(int32_t iLength) override;
   int32_t GetBOM(uint8_t bom[4]) const override;
   uint16_t GetCodePage() const override;
   uint16_t SetCodePage(uint16_t wCodePage) override;

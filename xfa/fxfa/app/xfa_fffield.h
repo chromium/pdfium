@@ -21,37 +21,37 @@ class CXFA_FFField : public CXFA_FFWidget, public IFWL_WidgetDelegate {
   ~CXFA_FFField() override;
 
   // CXFA_FFWidget
-  FX_BOOL GetBBox(CFX_RectF& rtBox,
-                  uint32_t dwStatus,
-                  FX_BOOL bDrawFocus = FALSE) override;
+  bool GetBBox(CFX_RectF& rtBox,
+               uint32_t dwStatus,
+               bool bDrawFocus = false) override;
   void RenderWidget(CFX_Graphics* pGS,
                     CFX_Matrix* pMatrix,
                     uint32_t dwStatus) override;
-  FX_BOOL IsLoaded() override;
-  FX_BOOL LoadWidget() override;
+  bool IsLoaded() override;
+  bool LoadWidget() override;
   void UnloadWidget() override;
-  FX_BOOL PerformLayout() override;
-  FX_BOOL OnMouseEnter() override;
-  FX_BOOL OnMouseExit() override;
-  FX_BOOL OnLButtonDown(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) override;
-  FX_BOOL OnLButtonUp(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) override;
-  FX_BOOL OnLButtonDblClk(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) override;
-  FX_BOOL OnMouseMove(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) override;
-  FX_BOOL OnMouseWheel(uint32_t dwFlags,
-                       int16_t zDelta,
-                       FX_FLOAT fx,
-                       FX_FLOAT fy) override;
-  FX_BOOL OnRButtonDown(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) override;
-  FX_BOOL OnRButtonUp(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) override;
-  FX_BOOL OnRButtonDblClk(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) override;
+  bool PerformLayout() override;
+  bool OnMouseEnter() override;
+  bool OnMouseExit() override;
+  bool OnLButtonDown(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) override;
+  bool OnLButtonUp(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) override;
+  bool OnLButtonDblClk(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) override;
+  bool OnMouseMove(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) override;
+  bool OnMouseWheel(uint32_t dwFlags,
+                    int16_t zDelta,
+                    FX_FLOAT fx,
+                    FX_FLOAT fy) override;
+  bool OnRButtonDown(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) override;
+  bool OnRButtonUp(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) override;
+  bool OnRButtonDblClk(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) override;
 
-  FX_BOOL OnSetFocus(CXFA_FFWidget* pOldWidget) override;
-  FX_BOOL OnKillFocus(CXFA_FFWidget* pNewWidget) override;
-  FX_BOOL OnKeyDown(uint32_t dwKeyCode, uint32_t dwFlags) override;
-  FX_BOOL OnKeyUp(uint32_t dwKeyCode, uint32_t dwFlags) override;
-  FX_BOOL OnChar(uint32_t dwChar, uint32_t dwFlags) override;
+  bool OnSetFocus(CXFA_FFWidget* pOldWidget) override;
+  bool OnKillFocus(CXFA_FFWidget* pNewWidget) override;
+  bool OnKeyDown(uint32_t dwKeyCode, uint32_t dwFlags) override;
+  bool OnKeyUp(uint32_t dwKeyCode, uint32_t dwFlags) override;
+  bool OnChar(uint32_t dwChar, uint32_t dwFlags) override;
   FWL_WidgetHit OnHitTest(FX_FLOAT fx, FX_FLOAT fy) override;
-  FX_BOOL OnSetCursor(FX_FLOAT fx, FX_FLOAT fy) override;
+  bool OnSetCursor(FX_FLOAT fx, FX_FLOAT fy) override;
 
   // IFWL_WidgetDelegate
   void OnProcessMessage(CFWL_Message* pMessage) override;
@@ -63,7 +63,7 @@ class CXFA_FFField : public CXFA_FFWidget, public IFWL_WidgetDelegate {
   uint32_t UpdateUIProperty();
 
  protected:
-  FX_BOOL PtInActiveRect(FX_FLOAT fx, FX_FLOAT fy) override;
+  bool PtInActiveRect(FX_FLOAT fx, FX_FLOAT fy) override;
 
   virtual void SetFWLRect();
   void SetFWLThemeProvider();
@@ -74,13 +74,13 @@ class CXFA_FFField : public CXFA_FFWidget, public IFWL_WidgetDelegate {
 
   int32_t CalculateOverride();
   int32_t CalculateWidgetAcc(CXFA_WidgetAcc* pAcc);
-  FX_BOOL ProcessCommittedData();
-  virtual FX_BOOL CommitData();
-  virtual FX_BOOL IsDataChanged();
+  bool ProcessCommittedData();
+  virtual bool CommitData();
+  virtual bool IsDataChanged();
   void DrawHighlight(CFX_Graphics* pGS,
                      CFX_Matrix* pMatrix,
                      uint32_t dwStatus,
-                     FX_BOOL bEllipse = FALSE);
+                     bool bEllipse = false);
   void DrawFocus(CFX_Graphics* pGS, CFX_Matrix* pMatrix);
   void TranslateFWLMessage(CFWL_Message* pMessage);
   void CapPlacement();

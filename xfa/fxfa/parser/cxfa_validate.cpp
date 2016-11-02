@@ -14,19 +14,19 @@ int32_t CXFA_Validate::GetFormatTest() {
   return m_pNode->GetEnum(XFA_ATTRIBUTE_FormatTest);
 }
 
-FX_BOOL CXFA_Validate::SetTestValue(int32_t iType,
-                                    CFX_WideString& wsValue,
-                                    XFA_ATTRIBUTEENUM eName) {
+bool CXFA_Validate::SetTestValue(int32_t iType,
+                                 CFX_WideString& wsValue,
+                                 XFA_ATTRIBUTEENUM eName) {
   const XFA_ATTRIBUTEENUMINFO* pInfo =
       XFA_GetAttributeEnumByName(wsValue.AsStringC());
   if (pInfo)
     eName = pInfo->eName;
 
-  m_pNode->SetEnum((XFA_ATTRIBUTE)iType, eName, FALSE);
-  return TRUE;
+  m_pNode->SetEnum((XFA_ATTRIBUTE)iType, eName, false);
+  return true;
 }
 
-FX_BOOL CXFA_Validate::SetNullTest(CFX_WideString wsValue) {
+bool CXFA_Validate::SetNullTest(CFX_WideString wsValue) {
   return SetTestValue(XFA_ATTRIBUTE_NullTest, wsValue,
                       XFA_ATTRIBUTEENUM_Disabled);
 }
@@ -41,7 +41,7 @@ int32_t CXFA_Validate::GetScriptTest() {
 
 void CXFA_Validate::GetMessageText(CFX_WideString& wsMessage,
                                    const CFX_WideString& wsMessageType) {
-  CXFA_Node* pNode = m_pNode->GetProperty(0, XFA_Element::Message, FALSE);
+  CXFA_Node* pNode = m_pNode->GetProperty(0, XFA_Element::Message, false);
   if (!pNode)
     return;
 
@@ -78,7 +78,7 @@ void CXFA_Validate::GetNullMessageText(CFX_WideString& wsMessage) {
 
 void CXFA_Validate::SetMessageText(CFX_WideString& wsMessage,
                                    const CFX_WideString& wsMessageType) {
-  CXFA_Node* pNode = m_pNode->GetProperty(0, XFA_Element::Message, TRUE);
+  CXFA_Node* pNode = m_pNode->GetProperty(0, XFA_Element::Message, true);
   if (!pNode)
     return;
 
@@ -91,14 +91,14 @@ void CXFA_Validate::SetMessageText(CFX_WideString& wsMessage,
     CFX_WideStringC wsName;
     pItemNode->TryCData(XFA_ATTRIBUTE_Name, wsName);
     if (wsName.IsEmpty() || wsName == wsMessageType) {
-      pItemNode->SetContent(wsMessage, wsMessage, FALSE);
+      pItemNode->SetContent(wsMessage, wsMessage, false);
       return;
     }
   }
   CXFA_Node* pTextNode = pNode->CreateSamePacketNode(XFA_Element::Text);
   pNode->InsertChild(pTextNode);
-  pTextNode->SetCData(XFA_ATTRIBUTE_Name, wsMessageType, FALSE);
-  pTextNode->SetContent(wsMessage, wsMessage, FALSE);
+  pTextNode->SetCData(XFA_ATTRIBUTE_Name, wsMessageType, false);
+  pTextNode->SetContent(wsMessage, wsMessage, false);
 }
 
 void CXFA_Validate::GetScriptMessageText(CFX_WideString& wsMessage) {

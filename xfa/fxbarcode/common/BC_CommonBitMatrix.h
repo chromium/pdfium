@@ -19,7 +19,7 @@ class CBC_CommonBitMatrix {
   virtual void Init(int32_t dimension);
   virtual void Init(int32_t width, int32_t height);
 
-  FX_BOOL Get(int32_t x, int32_t y);
+  bool Get(int32_t x, int32_t y);
   void Set(int32_t x, int32_t y);
   void Flip(int32_t x, int32_t y);
   void Clear();

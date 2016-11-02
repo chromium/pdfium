@@ -15,15 +15,15 @@ class CXFA_FFText : public CXFA_FFDraw {
   ~CXFA_FFText() override;
 
   // CXFA_FFWidget
-  FX_BOOL OnLButtonDown(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) override;
-  FX_BOOL OnLButtonUp(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) override;
-  FX_BOOL OnMouseMove(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) override;
+  bool OnLButtonDown(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) override;
+  bool OnLButtonUp(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) override;
+  bool OnMouseMove(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) override;
   FWL_WidgetHit OnHitTest(FX_FLOAT fx, FX_FLOAT fy) override;
   void RenderWidget(CFX_Graphics* pGS,
                     CFX_Matrix* pMatrix,
                     uint32_t dwStatus) override;
-  FX_BOOL IsLoaded() override;
-  FX_BOOL PerformLayout() override;
+  bool IsLoaded() override;
+  bool PerformLayout() override;
 
  private:
   const FX_WCHAR* GetLinkURLAtPoint(FX_FLOAT fx, FX_FLOAT fy);

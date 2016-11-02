@@ -760,7 +760,7 @@ class IFDE_CSSStyleSheet : public IFX_Retainable {
       int32_t iBufSize,
       uint16_t wCodePage,
       uint32_t dwMediaList = FDE_CSSMEDIATYPE_ALL);
-  virtual FX_BOOL GetUrl(CFX_WideString& szUrl) = 0;
+  virtual bool GetUrl(CFX_WideString& szUrl) = 0;
   virtual uint32_t GetMediaList() const = 0;
   virtual uint16_t GetCodePage() const = 0;
 
@@ -783,7 +783,7 @@ struct FDE_CSSLENGTH {
     return (FDE_CSSLENGTHUNIT)(m_iData & FDE_CSSUNITMASK);
   }
   FX_FLOAT GetValue() const { return (m_iData >> FDE_CSSUNITBITS) / 1024.0f; }
-  FX_BOOL NonZero() const { return (m_iData >> FDE_CSSUNITBITS) != 0; }
+  bool NonZero() const { return (m_iData >> FDE_CSSUNITBITS) != 0; }
 
  private:
   intptr_t m_iData;
@@ -897,8 +897,8 @@ class IFDE_CSSComputedStyle : public IFX_Retainable {
   virtual IFDE_CSSBoundaryStyle* GetBoundaryStyles() = 0;
   virtual IFDE_CSSPositionStyle* GetPositionStyles() = 0;
   virtual IFDE_CSSParagraphStyle* GetParagraphStyles() = 0;
-  virtual FX_BOOL GetCustomStyle(const CFX_WideStringC& wsName,
-                                 CFX_WideString& wsValue) const = 0;
+  virtual bool GetCustomStyle(const CFX_WideStringC& wsName,
+                              CFX_WideString& wsValue) const = 0;
 };
 
 #endif  // XFA_FDE_CSS_FDE_CSS_H_

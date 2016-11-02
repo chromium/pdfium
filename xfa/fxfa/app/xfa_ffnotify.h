@@ -46,14 +46,14 @@ class CXFA_FFNotify {
   void StartFieldDrawLayout(CXFA_Node* pItem,
                             FX_FLOAT& fCalcWidth,
                             FX_FLOAT& fCalcHeight);
-  FX_BOOL FindSplitPos(CXFA_Node* pItem,
-                       int32_t iBlockIndex,
-                       FX_FLOAT& fCalcHeightPos);
-  FX_BOOL RunScript(CXFA_Node* pScript, CXFA_Node* pFormItem);
+  bool FindSplitPos(CXFA_Node* pItem,
+                    int32_t iBlockIndex,
+                    FX_FLOAT& fCalcHeightPos);
+  bool RunScript(CXFA_Node* pScript, CXFA_Node* pFormItem);
   int32_t ExecEventByDeepFirst(CXFA_Node* pFormNode,
                                XFA_EVENTTYPE eEventType,
-                               FX_BOOL bIsFormReady = FALSE,
-                               FX_BOOL bRecursive = TRUE,
+                               bool bIsFormReady = false,
+                               bool bRecursive = true,
                                CXFA_WidgetAcc* pExclude = nullptr);
   void AddCalcValidate(CXFA_Node* pNode);
   CXFA_FFDoc* GetHDOC();

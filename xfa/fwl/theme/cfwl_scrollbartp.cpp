@@ -75,15 +75,15 @@ void CFWL_ScrollBarTP::DrawBackground(CFWL_ThemeBackground* pParams) {
       break;
     }
     case CFWL_Part::Thumb: {
-      DrawThumbBtn(pGraphics, pRect, bVert, eState, TRUE, &pParams->m_matrix);
+      DrawThumbBtn(pGraphics, pRect, bVert, eState, true, &pParams->m_matrix);
       break;
     }
     case CFWL_Part::LowerTrack: {
-      DrawTrack(pGraphics, pRect, bVert, eState, TRUE, &pParams->m_matrix);
+      DrawTrack(pGraphics, pRect, bVert, eState, true, &pParams->m_matrix);
       break;
     }
     case CFWL_Part::UpperTrack: {
-      DrawTrack(pGraphics, pRect, bVert, eState, FALSE, &pParams->m_matrix);
+      DrawTrack(pGraphics, pRect, bVert, eState, false, &pParams->m_matrix);
       break;
     }
     default:
@@ -93,9 +93,9 @@ void CFWL_ScrollBarTP::DrawBackground(CFWL_ThemeBackground* pParams) {
 
 void CFWL_ScrollBarTP::DrawThumbBtn(CFX_Graphics* pGraphics,
                                     const CFX_RectF* pRect,
-                                    FX_BOOL bVert,
+                                    bool bVert,
                                     FWLTHEME_STATE eState,
-                                    FX_BOOL bPawButton,
+                                    bool bPawButton,
                                     CFX_Matrix* pMatrix) {
   if (eState < FWLTHEME_STATE_Normal || eState > FWLTHEME_STATE_Disable)
     return;
@@ -140,7 +140,7 @@ void CFWL_ScrollBarTP::DrawThumbBtn(CFX_Graphics* pGraphics,
 
 void CFWL_ScrollBarTP::DrawPaw(CFX_Graphics* pGraphics,
                                const CFX_RectF* pRect,
-                               FX_BOOL bVert,
+                               bool bVert,
                                FWLTHEME_STATE eState,
                                CFX_Matrix* pMatrix) {
   CFX_Path path;
@@ -216,9 +216,9 @@ void CFWL_ScrollBarTP::DrawPaw(CFX_Graphics* pGraphics,
 
 void CFWL_ScrollBarTP::DrawTrack(CFX_Graphics* pGraphics,
                                  const CFX_RectF* pRect,
-                                 FX_BOOL bVert,
+                                 bool bVert,
                                  FWLTHEME_STATE eState,
-                                 FX_BOOL bLowerTrack,
+                                 bool bLowerTrack,
                                  CFX_Matrix* pMatrix) {
   if (eState < FWLTHEME_STATE_Normal || eState > FWLTHEME_STATE_Disable)
     return;
@@ -257,7 +257,7 @@ void CFWL_ScrollBarTP::DrawMaxMinBtn(CFX_Graphics* pGraphics,
                                      CFX_Matrix* pMatrix) {
   DrawTrack(pGraphics, pRect,
             eDict == FWLTHEME_DIRECTION_Up || eDict == FWLTHEME_DIRECTION_Down,
-            eState, TRUE, pMatrix);
+            eState, true, pMatrix);
   CFX_RectF rtArrowBtn(*pRect);
   rtArrowBtn.Deflate(1, 1, 1, 1);
   DrawArrowBtn(pGraphics, &rtArrowBtn, eDict, eState, pMatrix);

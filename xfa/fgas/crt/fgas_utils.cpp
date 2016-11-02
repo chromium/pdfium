@@ -38,7 +38,7 @@ CFX_BaseArray::CFX_BaseArray(int32_t iGrowSize, int32_t iBlockSize) {
   m_pData = new FX_BASEARRAYDATA(iGrowSize, iBlockSize);
 }
 CFX_BaseArray::~CFX_BaseArray() {
-  RemoveAll(FALSE);
+  RemoveAll(false);
   delete m_pData;
 }
 int32_t CFX_BaseArray::GetSize() const {
@@ -114,7 +114,7 @@ int32_t CFX_BaseArray::Copy(const CFX_BaseArray& src,
   if (iCount < 1) {
     return 0;
   }
-  RemoveAll(TRUE);
+  RemoveAll(true);
   AddSpaceTo(iCount - 1);
   FXSYS_memcpy(m_pData->pBuffer, src.m_pData->pBuffer + iStart * iBlockSize,
                iCount * iBlockSize);
@@ -130,7 +130,7 @@ int32_t CFX_BaseArray::RemoveLast(int32_t iCount) {
   }
   return iCount;
 }
-void CFX_BaseArray::RemoveAll(FX_BOOL bLeaveMemory) {
+void CFX_BaseArray::RemoveAll(bool bLeaveMemory) {
   if (!bLeaveMemory) {
     uint8_t*& pBuffer = m_pData->pBuffer;
     if (pBuffer) {
@@ -153,7 +153,7 @@ CFX_BaseMassArrayImp::CFX_BaseMassArrayImp(int32_t iChunkSize,
   m_pData->SetSize(16);
 }
 CFX_BaseMassArrayImp::~CFX_BaseMassArrayImp() {
-  RemoveAll(FALSE);
+  RemoveAll(false);
   delete m_pData;
 }
 uint8_t* CFX_BaseMassArrayImp::AddSpaceTo(int32_t index) {
@@ -163,7 +163,7 @@ uint8_t* CFX_BaseMassArrayImp::AddSpaceTo(int32_t index) {
     pChunk = (uint8_t*)m_pData->GetAt(index / m_iChunkSize);
   } else {
     int32_t iMemSize = m_iChunkSize * m_iBlockSize;
-    while (TRUE) {
+    while (true) {
       if (index < m_iChunkCount * m_iChunkSize) {
         pChunk = (uint8_t*)m_pData->GetAt(index / m_iChunkSize);
         break;
@@ -218,7 +218,7 @@ int32_t CFX_BaseMassArrayImp::Copy(const CFX_BaseMassArrayImp& src,
   if (iStart >= iCopied) {
     return 0;
   }
-  RemoveAll(TRUE);
+  RemoveAll(true);
   if (iCount < 0) {
     iCount = iCopied;
   }
@@ -289,7 +289,7 @@ int32_t CFX_BaseMassArrayImp::RemoveLast(int32_t iCount) {
   }
   return m_iBlockCount;
 }
-void CFX_BaseMassArrayImp::RemoveAll(FX_BOOL bLeaveMemory) {
+void CFX_BaseMassArrayImp::RemoveAll(bool bLeaveMemory) {
   if (bLeaveMemory) {
     m_iBlockCount = 0;
     return;
@@ -329,7 +329,7 @@ int32_t CFX_BaseMassArray::Copy(const CFX_BaseMassArray& src,
 int32_t CFX_BaseMassArray::RemoveLast(int32_t iCount) {
   return m_pData->RemoveLast(iCount);
 }
-void CFX_BaseMassArray::RemoveAll(FX_BOOL bLeaveMemory) {
+void CFX_BaseMassArray::RemoveAll(bool bLeaveMemory) {
   m_pData->RemoveAll(bLeaveMemory);
 }
 
@@ -427,6 +427,6 @@ int32_t CFX_BaseStack::GetSize() const {
 uint8_t* CFX_BaseStack::GetAt(int32_t index) const {
   return m_pData->GetAt(index);
 }
-void CFX_BaseStack::RemoveAll(FX_BOOL bLeaveMemory) {
+void CFX_BaseStack::RemoveAll(bool bLeaveMemory) {
   m_pData->RemoveAll(bLeaveMemory);
 }

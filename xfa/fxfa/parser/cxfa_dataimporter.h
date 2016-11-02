@@ -16,7 +16,7 @@ class CXFA_DataImporter {
  public:
   explicit CXFA_DataImporter(CXFA_Document* pDocument);
 
-  FX_BOOL ImportData(IFX_SeekableReadStream* pDataDocument);
+  bool ImportData(IFX_SeekableReadStream* pDataDocument);
 
  protected:
   CXFA_Document* const m_pDocument;

@@ -18,7 +18,7 @@ class CXFA_LocaleValue;
 class CXFA_Node;
 class CXFA_WidgetData;
 
-FX_BOOL XFA_FDEExtension_ResolveNamespaceQualifier(
+bool XFA_FDEExtension_ResolveNamespaceQualifier(
     CFDE_XMLElement* pNode,
     const CFX_WideStringC& wsQualifier,
     CFX_WideString& wsNamespaceURI);
@@ -32,24 +32,24 @@ class CXFA_NodeIteratorTemplate {
       m_NodeStack.Push(pRootNode);
     }
   }
-  FX_BOOL Init(NodeType* pRootNode) {
+  bool Init(NodeType* pRootNode) {
     if (!pRootNode) {
-      return FALSE;
+      return false;
     }
     m_pRoot = pRootNode;
-    m_NodeStack.RemoveAll(FALSE);
+    m_NodeStack.RemoveAll(false);
     m_NodeStack.Push(pRootNode);
-    return TRUE;
+    return true;
   }
-  void Clear() { m_NodeStack.RemoveAll(FALSE); }
+  void Clear() { m_NodeStack.RemoveAll(false); }
   void Reset() {
     Clear();
     if (m_pRoot) {
       m_NodeStack.Push(m_pRoot);
     }
   }
-  FX_BOOL SetCurrent(NodeType* pCurNode) {
-    m_NodeStack.RemoveAll(FALSE);
+  bool SetCurrent(NodeType* pCurNode) {
+    m_NodeStack.RemoveAll(false);
     if (pCurNode) {
       CFX_StackTemplate<NodeType*> revStack(100);
       NodeType* pNode;
@@ -58,7 +58,7 @@ class CXFA_NodeIteratorTemplate {
         revStack.Push(pNode);
       }
       if (!pNode) {
-        return FALSE;
+        return false;
       }
       revStack.Push(m_pRoot);
       while (revStack.GetSize()) {
@@ -66,7 +66,7 @@ class CXFA_NodeIteratorTemplate {
         revStack.Pop();
       }
     }
-    return TRUE;
+    return true;
   }
   NodeType* GetCurrent() const {
     return m_NodeStack.GetSize() ? *m_NodeStack.GetTopElement() : nullptr;
@@ -94,7 +94,7 @@ class CXFA_NodeIteratorTemplate {
       }
       m_NodeStack.Push(pPrevItem);
     } else {
-      m_NodeStack.RemoveAll(FALSE);
+      m_NodeStack.RemoveAll(false);
       if (m_pRoot) {
         m_NodeStack.Push(m_pRoot);
       }
@@ -166,16 +166,16 @@ CXFA_LocaleValue XFA_GetLocaleValue(CXFA_WidgetData* pWidgetData);
 FX_DOUBLE XFA_ByteStringToDouble(const CFX_ByteStringC& szStringVal);
 int32_t XFA_MapRotation(int32_t nRotation);
 
-FX_BOOL XFA_RecognizeRichText(CFDE_XMLElement* pRichTextXMLNode);
+bool XFA_RecognizeRichText(CFDE_XMLElement* pRichTextXMLNode);
 void XFA_GetPlainTextFromRichText(CFDE_XMLNode* pXMLNode,
                                   CFX_WideString& wsPlainText);
-FX_BOOL XFA_FieldIsMultiListBox(CXFA_Node* pFieldNode);
+bool XFA_FieldIsMultiListBox(CXFA_Node* pFieldNode);
 
 void XFA_DataExporter_DealWithDataGroupNode(CXFA_Node* pDataNode);
 void XFA_DataExporter_RegenerateFormFile(CXFA_Node* pNode,
                                          IFX_Stream* pStream,
                                          const FX_CHAR* pChecksum = nullptr,
-                                         FX_BOOL bSaveXML = FALSE);
+                                         bool bSaveXML = false);
 
 const XFA_NOTSUREATTRIBUTE* XFA_GetNotsureAttribute(
     XFA_Element eElement,
@@ -197,11 +197,11 @@ XFA_Element XFA_GetElementTypeForName(const CFX_WideStringC& wsName);
 CXFA_Measurement XFA_GetAttributeDefaultValue_Measure(XFA_Element eElement,
                                                       XFA_ATTRIBUTE eAttribute,
                                                       uint32_t dwPacket);
-FX_BOOL XFA_GetAttributeDefaultValue(void*& pValue,
-                                     XFA_Element eElement,
-                                     XFA_ATTRIBUTE eAttribute,
-                                     XFA_ATTRIBUTETYPE eType,
-                                     uint32_t dwPacket);
+bool XFA_GetAttributeDefaultValue(void*& pValue,
+                                  XFA_Element eElement,
+                                  XFA_ATTRIBUTE eAttribute,
+                                  XFA_ATTRIBUTETYPE eType,
+                                  uint32_t dwPacket);
 const XFA_ATTRIBUTEINFO* XFA_GetAttributeByName(const CFX_WideStringC& wsName);
 const XFA_ATTRIBUTEINFO* XFA_GetAttributeByID(XFA_ATTRIBUTE eName);
 const XFA_ATTRIBUTEENUMINFO* XFA_GetAttributeEnumByName(

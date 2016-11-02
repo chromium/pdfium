@@ -11,7 +11,7 @@
 #include "xfa/fxfa/parser/cxfa_measurement.h"
 
 CXFA_ContainerLayoutItem::CXFA_ContainerLayoutItem(CXFA_Node* pNode)
-    : CXFA_LayoutItem(pNode, FALSE), m_pOldSubform(nullptr) {}
+    : CXFA_LayoutItem(pNode, false), m_pOldSubform(nullptr) {}
 
 CXFA_LayoutProcessor* CXFA_ContainerLayoutItem::GetLayout() const {
   return m_pFormNode->GetDocument()->GetLayoutProcessor();

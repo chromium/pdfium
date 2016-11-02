@@ -87,7 +87,7 @@ void CBC_EncoderContext::signalEncoderChange(int32_t encoding) {
 void CBC_EncoderContext::resetEncoderSignal() {
   m_newEncoding = -1;
 }
-FX_BOOL CBC_EncoderContext::hasMoreCharacters() {
+bool CBC_EncoderContext::hasMoreCharacters() {
   return m_pos < getTotalMessageCharCount();
 }
 int32_t CBC_EncoderContext::getRemainingCharacters() {

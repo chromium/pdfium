@@ -30,7 +30,7 @@ void CXFA_FMExpression::ToImpliedReturnJS(CFX_WideTextBuf& javascript) {}
 
 CXFA_FMFunctionDefinition::CXFA_FMFunctionDefinition(
     uint32_t line,
-    FX_BOOL isGlobal,
+    bool isGlobal,
     const CFX_WideStringC& wsName,
     std::unique_ptr<CFX_WideStringCArray> pArguments,
     CFX_ArrayTemplate<CXFA_FMExpression*>* pExpressions)

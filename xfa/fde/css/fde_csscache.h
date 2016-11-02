@@ -58,7 +58,7 @@ class CFDE_CSSAccelerator : public CFX_Target {
   void OnEnterTag(CXFA_CSSTagProvider* pTag);
   void OnLeaveTag(CXFA_CSSTagProvider* pTag);
 
-  void Clear() { m_Stack.RemoveAll(FALSE); }
+  void Clear() { m_Stack.RemoveAll(false); }
 
   FDE_CSSTagCache* GetTopElement() const { return m_Stack.GetTopElement(); }
 

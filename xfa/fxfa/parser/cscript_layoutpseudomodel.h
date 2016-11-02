@@ -24,14 +24,14 @@ class CScript_LayoutPseudoModel : public CXFA_Object {
   explicit CScript_LayoutPseudoModel(CXFA_Document* pDocument);
   ~CScript_LayoutPseudoModel() override;
 
-  void Ready(CFXJSE_Value* pValue, FX_BOOL bSetting, XFA_ATTRIBUTE eAttribute);
+  void Ready(CFXJSE_Value* pValue, bool bSetting, XFA_ATTRIBUTE eAttribute);
 
   void HWXY(CFXJSE_Arguments* pArguments, XFA_LAYOUTMODEL_HWXY layoutModel);
   void H(CFXJSE_Arguments* pArguments);
   void W(CFXJSE_Arguments* pArguments);
   void X(CFXJSE_Arguments* pArguments);
   void Y(CFXJSE_Arguments* pArguments);
-  void NumberedPageCount(CFXJSE_Arguments* pArguments, FX_BOOL bNumbered);
+  void NumberedPageCount(CFXJSE_Arguments* pArguments, bool bNumbered);
   void PageCount(CFXJSE_Arguments* pArguments);
   void PageSpan(CFXJSE_Arguments* pArguments);
   void Page(CFXJSE_Arguments* pArguments);
@@ -52,9 +52,9 @@ class CScript_LayoutPseudoModel : public CXFA_Object {
   void GetObjArray(CXFA_LayoutProcessor* pDocLayout,
                    int32_t iPageNo,
                    const CFX_WideString& wsType,
-                   FX_BOOL bOnPageArea,
+                   bool bOnPageArea,
                    CXFA_NodeArray& retArray);
-  void PageImp(CFXJSE_Arguments* pArguments, FX_BOOL bAbsPage);
+  void PageImp(CFXJSE_Arguments* pArguments, bool bAbsPage);
 };
 
 #endif  // XFA_FXFA_PARSER_CSCRIPT_LAYOUTPSEUDOMODEL_H_

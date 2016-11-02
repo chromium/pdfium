@@ -36,7 +36,7 @@ XFA_Element CXFA_Object::GetElementType() const {
 }
 
 void CXFA_Object::Script_ObjectClass_ClassName(CFXJSE_Value* pValue,
-                                               FX_BOOL bSetting,
+                                               bool bSetting,
                                                XFA_ATTRIBUTE eAttribute) {
   if (bSetting) {
     ThrowException(XFA_IDS_INVAlID_PROP_SET);

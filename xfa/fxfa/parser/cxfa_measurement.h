@@ -27,8 +27,8 @@ class CXFA_Measurement {
   XFA_UNIT GetUnit() const { return m_eUnit; }
   FX_FLOAT GetValue() const { return m_fValue; }
 
-  FX_BOOL ToString(CFX_WideString& wsMeasure) const;
-  FX_BOOL ToUnit(XFA_UNIT eUnit, FX_FLOAT& fValue) const;
+  bool ToString(CFX_WideString& wsMeasure) const;
+  bool ToUnit(XFA_UNIT eUnit, FX_FLOAT& fValue) const;
   FX_FLOAT ToUnit(XFA_UNIT eUnit) const {
     FX_FLOAT f;
     return ToUnit(eUnit, f) ? f : 0;

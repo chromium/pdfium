@@ -33,7 +33,7 @@ class IFWL_Caret : public IFWL_Widget {
   void OnDrawWidget(CFX_Graphics* pGraphics,
                     const CFX_Matrix* pMatrix) override;
 
-  void ShowCaret(FX_BOOL bFlag = TRUE);
+  void ShowCaret(bool bFlag = true);
   FWL_Error GetFrequency(uint32_t& elapse);
   FWL_Error SetFrequency(uint32_t elapse);
   FWL_Error SetColor(CFX_Color crFill);
@@ -56,7 +56,7 @@ class IFWL_Caret : public IFWL_Widget {
   IFWL_TimerInfo* m_pTimerInfo;  // not owned.
   uint32_t m_dwElapse;
   CFX_Color m_crFill;
-  FX_BOOL m_bSetColor;
+  bool m_bSetColor;
 };
 
 #endif  // XFA_FWL_CORE_IFWL_CARET_H_

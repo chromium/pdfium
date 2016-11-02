@@ -573,7 +573,7 @@ CFX_Graphics::CFX_Graphics()
     : m_type(FX_CONTEXT_None), m_renderDevice(nullptr) {}
 
 FWL_Error CFX_Graphics::Create(CFX_RenderDevice* renderDevice,
-                               FX_BOOL isAntialiasing) {
+                               bool isAntialiasing) {
   if (!renderDevice)
     return FWL_Error::ParameterInvalid;
   if (m_type != FX_CONTEXT_None)
@@ -590,8 +590,8 @@ FWL_Error CFX_Graphics::Create(CFX_RenderDevice* renderDevice,
 FWL_Error CFX_Graphics::Create(int32_t width,
                                int32_t height,
                                FXDIB_Format format,
-                               FX_BOOL isNative,
-                               FX_BOOL isAntialiasing) {
+                               bool isNative,
+                               bool isAntialiasing) {
   if (m_type != FX_CONTEXT_None)
     return FWL_Error::PropertyInvalid;
 
@@ -612,7 +612,7 @@ FWL_Error CFX_Graphics::GetDeviceCap(const int32_t capID,
   return FWL_Error::PropertyInvalid;
 }
 
-FWL_Error CFX_Graphics::IsPrinterDevice(FX_BOOL& isPrinter) {
+FWL_Error CFX_Graphics::IsPrinterDevice(bool& isPrinter) {
   if (m_type == FX_CONTEXT_Device && m_renderDevice) {
     isPrinter = m_renderDevice->GetDeviceClass() == FXDC_PRINTER;
     return FWL_Error::Succeeded;
@@ -620,7 +620,7 @@ FWL_Error CFX_Graphics::IsPrinterDevice(FX_BOOL& isPrinter) {
   return FWL_Error::PropertyInvalid;
 }
 
-FWL_Error CFX_Graphics::EnableAntialiasing(FX_BOOL isAntialiasing) {
+FWL_Error CFX_Graphics::EnableAntialiasing(bool isAntialiasing) {
   if (m_type == FX_CONTEXT_Device && m_renderDevice) {
     m_info.isAntialiasing = isAntialiasing;
     return FWL_Error::Succeeded;
@@ -761,7 +761,7 @@ FWL_Error CFX_Graphics::GetLineWidth(FX_FLOAT& lineWidth) const {
   return FWL_Error::PropertyInvalid;
 }
 
-FWL_Error CFX_Graphics::SetLineWidth(FX_FLOAT lineWidth, FX_BOOL isActOnDash) {
+FWL_Error CFX_Graphics::SetLineWidth(FX_FLOAT lineWidth, bool isActOnDash) {
   if (m_type == FX_CONTEXT_Device && m_renderDevice) {
     m_info.graphState.m_LineWidth = lineWidth;
     m_info.isActOnDash = isActOnDash;
@@ -831,7 +831,7 @@ FWL_Error CFX_Graphics::ClipPath(CFX_Path* path,
   if (!path)
     return FWL_Error::ParameterInvalid;
   if (m_type == FX_CONTEXT_Device && m_renderDevice) {
-    FX_BOOL result =
+    bool result =
         m_renderDevice->SetClip_PathFill(path->GetPathData(), matrix, fillMode);
     if (!result)
       return FWL_Error::Indefinite;
@@ -956,7 +956,7 @@ FWL_Error CFX_Graphics::ShowText(const CFX_PointF& point,
 
 void CFX_Graphics::CalcTextRect(CFX_RectF& rect,
                                 const CFX_WideString& text,
-                                FX_BOOL isMultiline,
+                                bool isMultiline,
                                 CFX_Matrix* matrix) {
   if (m_type != FX_CONTEXT_Device || !m_renderDevice)
     return;
@@ -981,7 +981,7 @@ FWL_Error CFX_Graphics::Transfer(CFX_Graphics* graphics,
   }
   if (m_type == FX_CONTEXT_Device && m_renderDevice) {
     CFX_DIBitmap* bitmap = graphics->m_renderDevice->GetBitmap();
-    FX_BOOL result = m_renderDevice->SetDIBits(bitmap, 0, 0);
+    bool result = m_renderDevice->SetDIBits(bitmap, 0, 0);
     if (!result)
       return FWL_Error::MethodNotSupported;
     return FWL_Error::Succeeded;
@@ -1004,7 +1004,7 @@ FWL_Error CFX_Graphics::Transfer(CFX_Graphics* graphics,
   }
   if (m_type == FX_CONTEXT_Device && m_renderDevice) {
     CFX_DIBitmap bmp;
-    FX_BOOL result =
+    bool result =
         bmp.Create((int32_t)dstRect.width, (int32_t)dstRect.height,
                    graphics->m_renderDevice->GetBitmap()->GetFormat());
     if (!result)
@@ -1170,7 +1170,7 @@ FWL_Error CFX_Graphics::RenderDeviceStrokePath(CFX_Path* path,
   }
   switch (m_info.strokeColor->m_type) {
     case FX_COLOR_Solid: {
-      FX_BOOL result =
+      bool result =
           m_renderDevice->DrawPath(path->GetPathData(), &m, &m_info.graphState,
                                    0x0, m_info.strokeColor->m_info.argb, 0);
       if (!result)
@@ -1199,7 +1199,7 @@ FWL_Error CFX_Graphics::RenderDeviceFillPath(CFX_Path* path,
   }
   switch (m_info.fillColor->m_type) {
     case FX_COLOR_Solid: {
-      FX_BOOL result = m_renderDevice->DrawPath(
+      bool result = m_renderDevice->DrawPath(
           path->GetPathData(), &m, &m_info.graphState,
           m_info.fillColor->m_info.argb, 0x0, fillMode);
       if (!result)
@@ -1229,7 +1229,7 @@ FWL_Error CFX_Graphics::RenderDeviceDrawImage(CFX_DIBSource* source,
          point.x, point.y);
   m2.Concat(m1);
   int32_t left, top;
-  std::unique_ptr<CFX_DIBitmap> bmp1(source->FlipImage(FALSE, TRUE));
+  std::unique_ptr<CFX_DIBitmap> bmp1(source->FlipImage(false, true));
   std::unique_ptr<CFX_DIBitmap> bmp2(bmp1->TransformTo(&m2, left, top));
   CFX_RectF r;
   GetClipRect(r);
@@ -1262,7 +1262,7 @@ FWL_Error CFX_Graphics::RenderDeviceStretchImage(CFX_DIBSource* source,
   m2.Set(rect.Width(), 0.0, 0.0, rect.Height(), rect.left, rect.top);
   m2.Concat(m1);
   int32_t left, top;
-  std::unique_ptr<CFX_DIBitmap> bmp2(bmp1->FlipImage(FALSE, TRUE));
+  std::unique_ptr<CFX_DIBitmap> bmp2(bmp1->FlipImage(false, true));
   std::unique_ptr<CFX_DIBitmap> bmp3(bmp2->TransformTo(&m2, left, top));
   CFX_RectF r;
   GetClipRect(r);
@@ -1292,7 +1292,7 @@ FWL_Error CFX_Graphics::RenderDeviceShowText(const CFX_PointF& point,
   if (matrix) {
     m.Concat(*matrix);
   }
-  FX_BOOL result = m_renderDevice->DrawNormalText(
+  bool result = m_renderDevice->DrawNormalText(
       length, charPos, m_info.font, -m_info.fontSize * m_info.fontHScale, &m,
       m_info.fillColor->m_info.argb, FXTEXT_CLEARTYPE);
   if (!result)
@@ -1486,7 +1486,7 @@ FWL_Error CFX_Graphics::SetDIBitsWithMatrix(CFX_DIBSource* source,
           0);
     m.Concat(*matrix);
     int32_t left, top;
-    std::unique_ptr<CFX_DIBitmap> bmp1(source->FlipImage(FALSE, TRUE));
+    std::unique_ptr<CFX_DIBitmap> bmp1(source->FlipImage(false, true));
     std::unique_ptr<CFX_DIBitmap> bmp2(bmp1->TransformTo(&m, left, top));
     m_renderDevice->SetDIBits(bmp2.get(), left, top);
   }
@@ -1510,7 +1510,7 @@ FWL_Error CFX_Graphics::CalcTextInfo(const CFX_WideString& text,
   charPos[0].m_GlyphIndex = encoding->GlyphFromCharCode(charCodes[0]);
   charPos[0].m_FontCharWidth = FXSYS_round(
       m_info.font->GetGlyphWidth(charPos[0].m_GlyphIndex) * m_info.fontHScale);
-  charPos[0].m_bGlyphAdjust = TRUE;
+  charPos[0].m_bGlyphAdjust = true;
   charPos[0].m_AdjustMatrix[0] = -1;
   charPos[0].m_AdjustMatrix[1] = 0;
   charPos[0].m_AdjustMatrix[2] = 0;
@@ -1525,7 +1525,7 @@ FWL_Error CFX_Graphics::CalcTextInfo(const CFX_WideString& text,
     charPos[i].m_FontCharWidth =
         FXSYS_round(m_info.font->GetGlyphWidth(charPos[i].m_GlyphIndex) *
                     m_info.fontHScale);
-    charPos[i].m_bGlyphAdjust = TRUE;
+    charPos[i].m_bGlyphAdjust = true;
     charPos[i].m_AdjustMatrix[0] = -1;
     charPos[i].m_AdjustMatrix[1] = 0;
     charPos[i].m_AdjustMatrix[2] = 0;
@@ -1539,9 +1539,9 @@ FWL_Error CFX_Graphics::CalcTextInfo(const CFX_WideString& text,
 }
 
 CFX_Graphics::TInfo::TInfo()
-    : isAntialiasing(TRUE),
+    : isAntialiasing(true),
       strokeAlignment(FX_STROKEALIGNMENT_Center),
-      isActOnDash(FALSE),
+      isActOnDash(false),
       strokeColor(nullptr),
       fillColor(nullptr),
       font(nullptr),

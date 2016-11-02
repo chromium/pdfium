@@ -104,23 +104,23 @@ class CFDE_CSSStyleSheet : public IFDE_CSSStyleSheet, public CFX_Target {
   uint32_t Release() override;
 
   // IFDE_CSSStyleSheet:
-  FX_BOOL GetUrl(CFX_WideString& szUrl) override;
+  bool GetUrl(CFX_WideString& szUrl) override;
   uint32_t GetMediaList() const override;
   uint16_t GetCodePage() const override;
   int32_t CountRules() const override;
   IFDE_CSSRule* GetRule(int32_t index) override;
 
-  FX_BOOL LoadFromStream(const CFX_WideString& szUrl,
-                         IFX_Stream* pStream,
-                         uint16_t wCodePage);
-  FX_BOOL LoadFromBuffer(const CFX_WideString& szUrl,
-                         const FX_WCHAR* pBuffer,
-                         int32_t iBufSize,
-                         uint16_t wCodePage);
+  bool LoadFromStream(const CFX_WideString& szUrl,
+                      IFX_Stream* pStream,
+                      uint16_t wCodePage);
+  bool LoadFromBuffer(const CFX_WideString& szUrl,
+                      const FX_WCHAR* pBuffer,
+                      int32_t iBufSize,
+                      uint16_t wCodePage);
 
  protected:
   void Reset();
-  FX_BOOL LoadFromSyntax(CFDE_CSSSyntaxParser* pSyntax);
+  bool LoadFromSyntax(CFDE_CSSSyntaxParser* pSyntax);
   FDE_CSSSYNTAXSTATUS LoadStyleRule(
       CFDE_CSSSyntaxParser* pSyntax,
       CFX_MassArrayTemplate<IFDE_CSSRule*>& ruleArray);

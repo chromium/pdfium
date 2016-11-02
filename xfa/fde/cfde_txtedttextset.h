@@ -27,11 +27,11 @@ class CFDE_TxtEdtTextSet : public IFDE_TextSet {
   FX_ARGB GetFontColor() override;
   int32_t GetDisplayPos(FDE_TEXTEDITPIECE* pPiece,
                         FXTEXT_CHARPOS* pCharPos,
-                        FX_BOOL bCharCode = FALSE,
+                        bool bCharCode = false,
                         CFX_WideString* pWSForms = nullptr) override;
   int32_t GetCharRects(const FDE_TEXTEDITPIECE* pPiece,
                        CFX_RectFArray& rtArray,
-                       FX_BOOL bBBox) override;
+                       bool bBBox) override;
 
  private:
   CFDE_TxtEdtPage* const m_pPage;

@@ -40,7 +40,7 @@ const IFWL_Widget* CFWL_Widget::GetWidget() const {
   return m_pIface.get();
 }
 
-FWL_Error CFWL_Widget::GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize) {
+FWL_Error CFWL_Widget::GetWidgetRect(CFX_RectF& rect, bool bAutoSize) {
   if (!m_pIface)
     return FWL_Error::Indefinite;
   return m_pIface->GetWidgetRect(rect, bAutoSize);
@@ -86,7 +86,7 @@ uint32_t CFWL_Widget::GetStates() {
   return m_pIface ? m_pIface->GetStates() : 0;
 }
 
-void CFWL_Widget::SetStates(uint32_t dwStates, FX_BOOL bSet) {
+void CFWL_Widget::SetStates(uint32_t dwStates, bool bSet) {
   if (m_pIface)
     m_pIface->SetStates(dwStates, bSet);
 }

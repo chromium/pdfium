@@ -17,12 +17,12 @@ CXFA_FFImage::CXFA_FFImage(CXFA_FFPageView* pPageView, CXFA_WidgetAcc* pDataAcc)
 CXFA_FFImage::~CXFA_FFImage() {
   CXFA_FFImage::UnloadWidget();
 }
-FX_BOOL CXFA_FFImage::IsLoaded() {
+bool CXFA_FFImage::IsLoaded() {
   return !!GetDataAcc()->GetImageImage();
 }
-FX_BOOL CXFA_FFImage::LoadWidget() {
+bool CXFA_FFImage::LoadWidget() {
   if (GetDataAcc()->GetImageImage()) {
-    return TRUE;
+    return true;
   }
   GetDataAcc()->LoadImageImage();
   return CXFA_FFDraw::LoadWidget();

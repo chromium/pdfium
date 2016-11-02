@@ -44,7 +44,7 @@ class IFWL_ScrollBar : public IFWL_Widget {
 
   // IFWL_Widget
   FWL_Type GetClassID() const override;
-  FWL_Error GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize = FALSE) override;
+  FWL_Error GetWidgetRect(CFX_RectF& rect, bool bAutoSize = false) override;
   FWL_Error Update() override;
   FWL_Error DrawWidget(CFX_Graphics* pGraphics,
                        const CFX_Matrix* pMatrix = nullptr) override;
@@ -52,7 +52,7 @@ class IFWL_ScrollBar : public IFWL_Widget {
   void OnDrawWidget(CFX_Graphics* pGraphics,
                     const CFX_Matrix* pMatrix) override;
 
-  FX_BOOL IsVertical();
+  bool IsVertical();
   FWL_Error GetRange(FX_FLOAT& fMin, FX_FLOAT& fMax);
   FWL_Error SetRange(FX_FLOAT fMin, FX_FLOAT fMax);
   FX_FLOAT GetPageSize();
@@ -63,7 +63,7 @@ class IFWL_ScrollBar : public IFWL_Widget {
   FWL_Error SetPos(FX_FLOAT fPos);
   FX_FLOAT GetTrackPos();
   FWL_Error SetTrackPos(FX_FLOAT fTrackPos);
-  FX_BOOL DoScroll(uint32_t dwCode, FX_FLOAT fPos = 0.0f);
+  bool DoScroll(uint32_t dwCode, FX_FLOAT fPos = 0.0f);
   FWL_Error SetOuter(IFWL_Widget* pOuter);
 
  protected:
@@ -79,11 +79,11 @@ class IFWL_ScrollBar : public IFWL_Widget {
   IFWL_ScrollBar();
   void DrawTrack(CFX_Graphics* pGraphics,
                  IFWL_ThemeProvider* pTheme,
-                 FX_BOOL bLower = TRUE,
+                 bool bLower = true,
                  const CFX_Matrix* pMatrix = nullptr);
   void DrawArrowBtn(CFX_Graphics* pGraphics,
                     IFWL_ThemeProvider* pTheme,
-                    FX_BOOL bMinBtn = TRUE,
+                    bool bMinBtn = true,
                     const CFX_Matrix* pMatrix = nullptr);
   void DrawThumb(CFX_Graphics* pGraphics,
                  IFWL_ThemeProvider* pTheme,
@@ -96,9 +96,9 @@ class IFWL_ScrollBar : public IFWL_Widget {
   void CalcMinTrackRect(CFX_RectF& rect);
   void CalcMaxTrackRect(CFX_RectF& rect);
   FX_FLOAT GetTrackPointPos(FX_FLOAT fx, FX_FLOAT fy);
-  void GetTrackRect(CFX_RectF& rect, FX_BOOL bLower = TRUE);
-  FX_BOOL SendEvent();
-  FX_BOOL OnScroll(uint32_t dwCode, FX_FLOAT fPos);
+  void GetTrackRect(CFX_RectF& rect, bool bLower = true);
+  bool SendEvent();
+  bool OnScroll(uint32_t dwCode, FX_FLOAT fPos);
 
   IFWL_TimerInfo* m_pTimerInfo;
   FX_FLOAT m_fRangeMin;
@@ -116,12 +116,12 @@ class IFWL_ScrollBar : public IFWL_Widget {
   FX_FLOAT m_cpTrackPointX;
   FX_FLOAT m_cpTrackPointY;
   int32_t m_iMouseWheel;
-  FX_BOOL m_bTrackMouseLeave;
-  FX_BOOL m_bMouseHover;
-  FX_BOOL m_bMouseDown;
-  FX_BOOL m_bRepaintThumb;
+  bool m_bTrackMouseLeave;
+  bool m_bMouseHover;
+  bool m_bMouseDown;
+  bool m_bRepaintThumb;
   FX_FLOAT m_fButtonLen;
-  FX_BOOL m_bMinSize;
+  bool m_bMinSize;
   CFX_RectF m_rtClient;
   CFX_RectF m_rtThumb;
   CFX_RectF m_rtMinBtn;

@@ -29,17 +29,17 @@ void CScript_DataWindow::GotoRecord(CFXJSE_Arguments* pArguments) {}
 void CScript_DataWindow::IsRecordGroup(CFXJSE_Arguments* pArguments) {}
 
 void CScript_DataWindow::RecordsBefore(CFXJSE_Value* pValue,
-                                       FX_BOOL bSetting,
+                                       bool bSetting,
                                        XFA_ATTRIBUTE eAttribute) {}
 
 void CScript_DataWindow::CurrentRecordNumber(CFXJSE_Value* pValue,
-                                             FX_BOOL bSetting,
+                                             bool bSetting,
                                              XFA_ATTRIBUTE eAttribute) {}
 
 void CScript_DataWindow::RecordsAfter(CFXJSE_Value* pValue,
-                                      FX_BOOL bSetting,
+                                      bool bSetting,
                                       XFA_ATTRIBUTE eAttribute) {}
 
 void CScript_DataWindow::IsDefined(CFXJSE_Value* pValue,
-                                   FX_BOOL bSetting,
+                                   bool bSetting,
                                    XFA_ATTRIBUTE eAttribute) {}

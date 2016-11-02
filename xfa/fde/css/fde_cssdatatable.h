@@ -81,15 +81,15 @@ class CFDE_CSSValueListParser : public CFX_Target {
       : m_Separator(separator), m_pCur(psz), m_pEnd(psz + iLen) {
     ASSERT(psz && iLen > 0);
   }
-  FX_BOOL NextValue(FDE_CSSPRIMITIVETYPE& eType,
-                    const FX_WCHAR*& pStart,
-                    int32_t& iLength);
+  bool NextValue(FDE_CSSPRIMITIVETYPE& eType,
+                 const FX_WCHAR*& pStart,
+                 int32_t& iLength);
   FX_WCHAR m_Separator;
 
  protected:
   int32_t SkipTo(FX_WCHAR wch,
-                 FX_BOOL bWSSeparator = FALSE,
-                 FX_BOOL bBrContinue = FALSE);
+                 bool bWSSeparator = false,
+                 bool bBrContinue = false);
 
   const FX_WCHAR* m_pCur;
   const FX_WCHAR* m_pEnd;
@@ -155,20 +155,20 @@ struct FDE_CSSPERSUDOTABLE {
 typedef FDE_CSSPERSUDOTABLE const* FDE_LPCCSSPERSUDOTABLE;
 
 FDE_LPCCSSPERSUDOTABLE FDE_GetCSSPersudoByEnum(FDE_CSSPERSUDO ePersudo);
-FX_BOOL FDE_ParseCSSNumber(const FX_WCHAR* pszValue,
-                           int32_t iValueLen,
-                           FX_FLOAT& fValue,
-                           FDE_CSSPRIMITIVETYPE& eUnit);
-FX_BOOL FDE_ParseCSSString(const FX_WCHAR* pszValue,
-                           int32_t iValueLen,
-                           int32_t& iOffset,
-                           int32_t& iLength);
-FX_BOOL FDE_ParseCSSColor(const FX_WCHAR* pszValue,
-                          int32_t iValueLen,
-                          FX_ARGB& dwColor);
-FX_BOOL FDE_ParseCSSURI(const FX_WCHAR* pszValue,
+bool FDE_ParseCSSNumber(const FX_WCHAR* pszValue,
+                        int32_t iValueLen,
+                        FX_FLOAT& fValue,
+                        FDE_CSSPRIMITIVETYPE& eUnit);
+bool FDE_ParseCSSString(const FX_WCHAR* pszValue,
                         int32_t iValueLen,
                         int32_t& iOffset,
                         int32_t& iLength);
+bool FDE_ParseCSSColor(const FX_WCHAR* pszValue,
+                       int32_t iValueLen,
+                       FX_ARGB& dwColor);
+bool FDE_ParseCSSURI(const FX_WCHAR* pszValue,
+                     int32_t iValueLen,
+                     int32_t& iOffset,
+                     int32_t& iLength);
 
 #endif  // XFA_FDE_CSS_FDE_CSSDATATABLE_H_

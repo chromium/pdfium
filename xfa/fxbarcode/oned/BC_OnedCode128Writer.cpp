@@ -80,22 +80,22 @@ CBC_OnedCode128Writer::~CBC_OnedCode128Writer() {}
 BC_TYPE CBC_OnedCode128Writer::GetType() {
   return m_codeFormat;
 }
-FX_BOOL CBC_OnedCode128Writer::CheckContentValidity(
+bool CBC_OnedCode128Writer::CheckContentValidity(
     const CFX_WideStringC& contents) {
-  FX_BOOL ret = TRUE;
+  bool ret = true;
   int32_t position = 0;
   int32_t patternIndex = -1;
   if (m_codeFormat == BC_CODE128_B || m_codeFormat == BC_CODE128_C) {
     while (position < contents.GetLength()) {
       patternIndex = (int32_t)contents.GetAt(position);
       if (patternIndex < 32 || patternIndex > 126 || patternIndex == 34) {
-        ret = FALSE;
+        ret = false;
         break;
       }
       position++;
     }
   } else {
-    ret = FALSE;
+    ret = false;
   }
   return ret;
 }
@@ -135,12 +135,12 @@ CFX_WideString CBC_OnedCode128Writer::FilterContents(
   }
   return filtercontents;
 }
-FX_BOOL CBC_OnedCode128Writer::SetTextLocation(BC_TEXT_LOC location) {
+bool CBC_OnedCode128Writer::SetTextLocation(BC_TEXT_LOC location) {
   if (location < BC_TEXT_LOC_NONE || location > BC_TEXT_LOC_BELOWEMBED) {
-    return FALSE;
+    return false;
   }
   m_locTextLoc = location;
-  return TRUE;
+  return true;
 }
 uint8_t* CBC_OnedCode128Writer::Encode(const CFX_ByteString& contents,
                                        BCFORMAT format,
@@ -166,16 +166,16 @@ uint8_t* CBC_OnedCode128Writer::Encode(const CFX_ByteString& contents,
   BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
   return ret;
 }
-FX_BOOL CBC_OnedCode128Writer::IsDigits(const CFX_ByteString& contents,
-                                        int32_t start,
-                                        int32_t length) {
+bool CBC_OnedCode128Writer::IsDigits(const CFX_ByteString& contents,
+                                     int32_t start,
+                                     int32_t length) {
   int32_t end = start + length;
   for (int32_t i = start; i < end; i++) {
     if (contents[i] < '0' || contents[i] > '9') {
-      return FALSE;
+      return false;
     }
   }
-  return TRUE;
+  return true;
 }
 
 uint8_t* CBC_OnedCode128Writer::Encode(const CFX_ByteString& contents,

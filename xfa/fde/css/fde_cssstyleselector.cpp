@@ -34,10 +34,10 @@ void CFDE_CSSCounterStyle::DoUpdateIndex(IFDE_CSSValueList* pList) {
 
   int32_t iCount = pList->CountValues();
   FX_FLOAT fDefValue = 1.0;
-  FX_BOOL bDefIncrement = TRUE;
+  bool bDefIncrement = true;
   if (pList == m_pCounterReset) {
     fDefValue = 0.0;
-    bDefIncrement = FALSE;
+    bDefIncrement = false;
   }
   for (int32_t i = 0; i < iCount; i++) {
     IFDE_CSSValueList* pCounter =
@@ -56,20 +56,20 @@ void CFDE_CSSCounterStyle::DoUpdateIndex(IFDE_CSSValueList* pList) {
       FDE_CSSCOUNTERDATA data;
       data.m_pszIdent = pszIdentifier;
       if (bDefIncrement) {
-        data.m_bIncrement = TRUE;
+        data.m_bIncrement = true;
         data.m_iIncVal = (int32_t)fValue;
       } else {
         data.m_iResetVal = (int32_t)fValue;
-        data.m_bReset = TRUE;
+        data.m_bReset = true;
       }
       m_arrCounterData.Add(data);
     } else {
       FDE_CSSCOUNTERDATA& data = m_arrCounterData.ElementAt(iIndex);
       if (bDefIncrement) {
-        data.m_bIncrement = TRUE;
+        data.m_bIncrement = true;
         data.m_iIncVal += (int32_t)fValue;
       } else {
-        data.m_bReset = TRUE;
+        data.m_bReset = true;
         data.m_iResetVal = (int32_t)fValue;
       }
     }
@@ -77,7 +77,7 @@ void CFDE_CSSCounterStyle::DoUpdateIndex(IFDE_CSSValueList* pList) {
 }
 
 CFDE_CSSCounterStyle::CFDE_CSSCounterStyle()
-    : m_pCounterInc(nullptr), m_pCounterReset(nullptr), m_bIndexDirty(FALSE) {}
+    : m_pCounterInc(nullptr), m_pCounterReset(nullptr), m_bIndexDirty(false) {}
 
 CFDE_CSSCounterStyle::~CFDE_CSSCounterStyle() {}
 
@@ -88,7 +88,7 @@ void CFDE_CSSCounterStyle::UpdateIndex() {
   m_arrCounterData.RemoveAll();
   DoUpdateIndex(m_pCounterInc);
   DoUpdateIndex(m_pCounterReset);
-  m_bIndexDirty = FALSE;
+  m_bIndexDirty = false;
 }
 
 FDE_CSSRuleData::FDE_CSSRuleData(CFDE_CSSSelector* pSel,
@@ -148,17 +148,17 @@ IFDE_CSSComputedStyle* CFDE_CSSStyleSelector::CreateComputedStyle(
   return pStyle;
 }
 
-FX_BOOL CFDE_CSSStyleSelector::SetStyleSheet(FDE_CSSSTYLESHEETGROUP eType,
-                                             IFDE_CSSStyleSheet* pSheet) {
+bool CFDE_CSSStyleSelector::SetStyleSheet(FDE_CSSSTYLESHEETGROUP eType,
+                                          IFDE_CSSStyleSheet* pSheet) {
   ASSERT(eType < FDE_CSSSTYLESHEETGROUP_MAX);
   CFDE_CSSStyleSheetArray& dest = m_SheetGroups[eType];
   dest.RemoveAt(0, dest.GetSize());
   if (pSheet)
     dest.Add(pSheet);
-  return TRUE;
+  return true;
 }
 
-FX_BOOL CFDE_CSSStyleSelector::SetStyleSheets(
+bool CFDE_CSSStyleSelector::SetStyleSheets(
     FDE_CSSSTYLESHEETGROUP eType,
     const CFDE_CSSStyleSheetArray* pArray) {
   ASSERT(eType < FDE_CSSSTYLESHEETGROUP_MAX);
@@ -167,7 +167,7 @@ FX_BOOL CFDE_CSSStyleSelector::SetStyleSheets(
     dest.Copy(*pArray);
   else
     dest.RemoveAt(0, dest.GetSize());
-  return TRUE;
+  return true;
 }
 
 void CFDE_CSSStyleSelector::SetStylePriority(
@@ -247,9 +247,9 @@ void CFDE_CSSStyleSelector::MatchRules(FDE_CSSTagCache* pCache,
   }
 }
 
-FX_BOOL CFDE_CSSStyleSelector::MatchSelector(FDE_CSSTagCache* pCache,
-                                             CFDE_CSSSelector* pSel,
-                                             FDE_CSSPERSUDO ePersudoType) {
+bool CFDE_CSSStyleSelector::MatchSelector(FDE_CSSTagCache* pCache,
+                                          CFDE_CSSSelector* pSel,
+                                          FDE_CSSPERSUDO ePersudoType) {
   uint32_t dwHash;
   while (pSel && pCache) {
     switch (pSel->GetType()) {
@@ -260,36 +260,36 @@ FX_BOOL CFDE_CSSStyleSelector::MatchSelector(FDE_CSSTagCache* pCache,
             continue;
           }
           if (MatchSelector(pCache, pSel->GetNextSelector(), ePersudoType)) {
-            return TRUE;
+            return true;
           }
         }
-        return FALSE;
+        return false;
       case FDE_CSSSELECTORTYPE_ID:
         dwHash = pCache->HashID();
         if (dwHash != pSel->GetNameHash()) {
-          return FALSE;
+          return false;
         }
         break;
       case FDE_CSSSELECTORTYPE_Class:
         dwHash = pCache->HashClass();
         if (dwHash != pSel->GetNameHash()) {
-          return FALSE;
+          return false;
         }
         break;
       case FDE_CSSSELECTORTYPE_Element:
         dwHash = pSel->GetNameHash();
         if (dwHash != FDE_CSSUNIVERSALHASH && dwHash != pCache->HashTag()) {
-          return FALSE;
+          return false;
         }
         break;
       case FDE_CSSSELECTORTYPE_Persudo:
         dwHash = FDE_GetCSSPersudoByEnum(ePersudoType)->dwHash;
         if (dwHash != pSel->GetNameHash()) {
-          return FALSE;
+          return false;
         }
         break;
       default:
-        ASSERT(FALSE);
+        ASSERT(false);
         break;
     }
     pSel = pSel->GetNextSelector();
@@ -344,9 +344,9 @@ void CFDE_CSSStyleSelector::ComputeStyle(
       FXSYS_memcpy(ppInline, ppDeclArray,
                    iDeclCount * sizeof(CFDE_CSSDeclaration*));
       ppInline[iDeclCount++] = pDecl;
-      ApplyDeclarations(TRUE, const_cast<const CFDE_CSSDeclaration**>(ppInline),
+      ApplyDeclarations(true, const_cast<const CFDE_CSSDeclaration**>(ppInline),
                         iDeclCount, pDestStyle);
-      ApplyDeclarations(FALSE,
+      ApplyDeclarations(false,
                         const_cast<const CFDE_CSSDeclaration**>(ppInline),
                         iDeclCount, pDestStyle);
       return;
@@ -356,20 +356,20 @@ void CFDE_CSSStyleSelector::ComputeStyle(
   if (iDeclCount > 0) {
     ASSERT(ppDeclArray);
 
-    ApplyDeclarations(TRUE, ppDeclArray, iDeclCount, pDestStyle);
-    ApplyDeclarations(FALSE, ppDeclArray, iDeclCount, pDestStyle);
+    ApplyDeclarations(true, ppDeclArray, iDeclCount, pDestStyle);
+    ApplyDeclarations(false, ppDeclArray, iDeclCount, pDestStyle);
   }
 }
 
 void CFDE_CSSStyleSelector::ApplyDeclarations(
-    FX_BOOL bPriority,
+    bool bPriority,
     const CFDE_CSSDeclaration** ppDeclArray,
     int32_t iDeclCount,
     IFDE_CSSComputedStyle* pDestStyle) {
   CFDE_CSSComputedStyle* pComputedStyle =
       static_cast<CFDE_CSSComputedStyle*>(pDestStyle);
   IFDE_CSSValue* pVal;
-  FX_BOOL bImportant;
+  bool bImportant;
   int32_t i;
   if (bPriority) {
     IFDE_CSSValue* pLastest = nullptr;
@@ -434,7 +434,7 @@ void CFDE_CSSStyleSelector::AppendInlineStyle(CFDE_CSSDeclaration* pDecl,
                                               int32_t iLen) {
   ASSERT(pDecl && psz && iLen > 0);
   std::unique_ptr<CFDE_CSSSyntaxParser> pSyntax(new CFDE_CSSSyntaxParser);
-  if (!pSyntax->Init(psz, iLen, 32, TRUE))
+  if (!pSyntax->Init(psz, iLen, 32, true))
     return;
 
   int32_t iLen2 = 0;
@@ -770,17 +770,17 @@ void CFDE_CSSStyleSelector::ApplyProperty(
           switch (pPrimitive->GetEnum()) {
             case FDE_CSSPROPERTYVALUE_Transparent:
               FDE_CSSINHERITS.m_dwTextEmphasisColor = 0;
-              FDE_CSSINHERITS.m_bTextEmphasisColorCurrent = FALSE;
+              FDE_CSSINHERITS.m_bTextEmphasisColorCurrent = false;
               break;
             case FDE_CSSPROPERTYVALUE_Currentcolor:
-              FDE_CSSINHERITS.m_bTextEmphasisColorCurrent = TRUE;
+              FDE_CSSINHERITS.m_bTextEmphasisColorCurrent = true;
               break;
             default:
               break;
           }
         } else if (eType == FDE_CSSPRIMITIVETYPE_RGB) {
           FDE_CSSINHERITS.m_dwTextEmphasisColor = pPrimitive->GetRGBColor();
-          FDE_CSSINHERITS.m_bTextEmphasisColorCurrent = FALSE;
+          FDE_CSSINHERITS.m_bTextEmphasisColorCurrent = false;
         }
         break;
       case FDE_CSSPROPERTY_PageBreakBefore:
@@ -831,7 +831,7 @@ void CFDE_CSSStyleSelector::ApplyProperty(
       case FDE_CSSPROPERTY_ColumnRuleColor:
         if (eType == FDE_CSSPRIMITIVETYPE_RGB) {
           FDE_CSSNONINHERITS.m_dwColumnRuleColor = pPrimitive->GetRGBColor();
-          FDE_CSSNONINHERITS.m_bColumnRuleColorSame = FALSE;
+          FDE_CSSNONINHERITS.m_bColumnRuleColorSame = false;
         }
         break;
       case FDE_CSSPROPERTY_ColumnRuleStyle:
@@ -960,12 +960,12 @@ void CFDE_CSSStyleSelector::ApplyProperty(
                 switch (pVal->GetEnum()) {
                   case FDE_CSSPROPERTYVALUE_None: {
                     FDE_CSSNONINHERITS.m_eTextCombine = FDE_CSSTEXTCOMBINE_None;
-                    FDE_CSSNONINHERITS.m_bHasTextCombineNumber = FALSE;
+                    FDE_CSSNONINHERITS.m_bHasTextCombineNumber = false;
                   } break;
                   case FDE_CSSPROPERTYVALUE_Horizontal: {
                     FDE_CSSNONINHERITS.m_eTextCombine =
                         FDE_CSSTEXTCOMBINE_Horizontal;
-                    FDE_CSSNONINHERITS.m_bHasTextCombineNumber = FALSE;
+                    FDE_CSSNONINHERITS.m_bHasTextCombineNumber = false;
                   } break;
                   default:
                     break;
@@ -1011,7 +1011,7 @@ void CFDE_CSSStyleSelector::ApplyProperty(
       }
     }
   } else {
-    ASSERT(FALSE);
+    ASSERT(false);
   }
 }
 
@@ -1107,45 +1107,43 @@ FDE_CSSRUBYALIGN CFDE_CSSStyleSelector::ToRubyAlign(
   }
 }
 
-FX_BOOL CFDE_CSSStyleSelector::ToTextEmphasisMark(
-    FDE_CSSPROPERTYVALUE eValue,
-    FDE_CSSTEXTEMPHASISMARK& eMark) {
+bool CFDE_CSSStyleSelector::ToTextEmphasisMark(FDE_CSSPROPERTYVALUE eValue,
+                                               FDE_CSSTEXTEMPHASISMARK& eMark) {
   switch (eValue) {
     case FDE_CSSPROPERTYVALUE_None:
       eMark = FDE_CSSTEXTEMPHASISMARK_None;
-      return TRUE;
+      return true;
     case FDE_CSSPROPERTYVALUE_Dot:
       eMark = FDE_CSSTEXTEMPHASISMARK_Dot;
-      return TRUE;
+      return true;
     case FDE_CSSPROPERTYVALUE_Circle:
       eMark = FDE_CSSTEXTEMPHASISMARK_Circle;
-      return TRUE;
+      return true;
     case FDE_CSSPROPERTYVALUE_DoubleCircle:
       eMark = FDE_CSSTEXTEMPHASISMARK_DoubleCircle;
-      return TRUE;
+      return true;
     case FDE_CSSPROPERTYVALUE_Triangle:
       eMark = FDE_CSSTEXTEMPHASISMARK_Triangle;
-      return TRUE;
+      return true;
     case FDE_CSSPROPERTYVALUE_Sesame:
       eMark = FDE_CSSTEXTEMPHASISMARK_Sesame;
-      return TRUE;
+      return true;
     default:
-      return FALSE;
+      return false;
   }
 }
 
-FX_BOOL CFDE_CSSStyleSelector::ToTextEmphasisFill(
-    FDE_CSSPROPERTYVALUE eValue,
-    FDE_CSSTEXTEMPHASISFILL& eFill) {
+bool CFDE_CSSStyleSelector::ToTextEmphasisFill(FDE_CSSPROPERTYVALUE eValue,
+                                               FDE_CSSTEXTEMPHASISFILL& eFill) {
   switch (eValue) {
     case FDE_CSSPROPERTYVALUE_Filled:
       eFill = FDE_CSSTEXTEMPHASISFILL_Filled;
-      return TRUE;
+      return true;
     case FDE_CSSPROPERTYVALUE_Open:
       eFill = FDE_CSSTEXTEMPHASISFILL_Open;
-      return TRUE;
+      return true;
     default:
-      return FALSE;
+      return false;
   }
 }
 
@@ -1482,7 +1480,7 @@ FDE_CSSBORDERSTYLE CFDE_CSSStyleSelector::ToBorderStyle(
   }
 }
 
-FX_BOOL CFDE_CSSStyleSelector::SetLengthWithPercent(
+bool CFDE_CSSStyleSelector::SetLengthWithPercent(
     FDE_CSSLENGTH& width,
     FDE_CSSPRIMITIVETYPE eType,
     IFDE_CSSPrimitiveValue* pPrimitive,
@@ -1499,24 +1497,24 @@ FX_BOOL CFDE_CSSStyleSelector::SetLengthWithPercent(
     switch (pPrimitive->GetEnum()) {
       case FDE_CSSPROPERTYVALUE_Auto:
         width.Set(FDE_CSSLENGTHUNIT_Auto);
-        return TRUE;
+        return true;
       case FDE_CSSPROPERTYVALUE_None:
         width.Set(FDE_CSSLENGTHUNIT_None);
-        return TRUE;
+        return true;
       case FDE_CSSPROPERTYVALUE_Thin:
         width.Set(FDE_CSSLENGTHUNIT_Point, 2);
-        return TRUE;
+        return true;
       case FDE_CSSPROPERTYVALUE_Medium:
         width.Set(FDE_CSSLENGTHUNIT_Point, 3);
-        return TRUE;
+        return true;
       case FDE_CSSPROPERTYVALUE_Thick:
         width.Set(FDE_CSSLENGTHUNIT_Point, 4);
-        return TRUE;
+        return true;
       default:
-        return FALSE;
+        return false;
     }
   }
-  return FALSE;
+  return false;
 }
 
 FX_FLOAT CFDE_CSSStyleSelector::ToFontSize(FDE_CSSPROPERTYVALUE eValue,
@@ -1749,15 +1747,15 @@ IFDE_CSSParagraphStyle* CFDE_CSSComputedStyle::GetParagraphStyles() {
   return static_cast<IFDE_CSSParagraphStyle*>(this);
 }
 
-FX_BOOL CFDE_CSSComputedStyle::GetCustomStyle(const CFX_WideStringC& wsName,
-                                              CFX_WideString& wsValue) const {
+bool CFDE_CSSComputedStyle::GetCustomStyle(const CFX_WideStringC& wsName,
+                                           CFX_WideString& wsValue) const {
   for (int32_t i = m_CustomProperties.GetSize() - 2; i > -1; i -= 2) {
     if (wsName == m_CustomProperties[i]) {
       wsValue = m_CustomProperties[i + 1];
-      return TRUE;
+      return true;
     }
   }
-  return FALSE;
+  return false;
 }
 
 int32_t CFDE_CSSComputedStyle::CountFontFamilies() const {
@@ -1829,12 +1827,12 @@ const FDE_CSSRECT* CFDE_CSSComputedStyle::GetPaddingWidth() const {
 
 void CFDE_CSSComputedStyle::SetMarginWidth(const FDE_CSSRECT& rect) {
   m_NonInheritedData.m_MarginWidth = rect;
-  m_NonInheritedData.m_bHasMargin = TRUE;
+  m_NonInheritedData.m_bHasMargin = true;
 }
 
 void CFDE_CSSComputedStyle::SetPaddingWidth(const FDE_CSSRECT& rect) {
   m_NonInheritedData.m_PaddingWidth = rect;
-  m_NonInheritedData.m_bHasPadding = TRUE;
+  m_NonInheritedData.m_bHasPadding = true;
 }
 
 FDE_CSSDISPLAY CFDE_CSSComputedStyle::GetDisplay() const {
@@ -1915,7 +1913,7 @@ void CFDE_CSSInheritedData::Reset() {
   m_wFontWeight = 400;
   m_dwFontColor = 0xFF000000;
   m_iWidows = 2;
-  m_bTextEmphasisColorCurrent = TRUE;
+  m_bTextEmphasisColorCurrent = true;
   m_iOrphans = 2;
 }
 
@@ -1934,7 +1932,7 @@ void CFDE_CSSNonInheritedData::Reset() {
   m_fVerticalAlign = 0.0f;
   m_ColumnCount.Set(FDE_CSSLENGTHUNIT_Auto);
   m_ColumnGap.Set(FDE_CSSLENGTHUNIT_Normal);
-  m_bColumnRuleColorSame = TRUE;
+  m_bColumnRuleColorSame = true;
   m_ColumnWidth.Set(FDE_CSSLENGTHUNIT_Auto);
   m_ColumnRuleWidth.Set(FDE_CSSLENGTHUNIT_Auto);
   m_eTextCombine = FDE_CSSTEXTCOMBINE_None;

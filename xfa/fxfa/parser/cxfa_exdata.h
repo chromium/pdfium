@@ -16,7 +16,7 @@ class CXFA_ExData : public CXFA_Data {
  public:
   explicit CXFA_ExData(CXFA_Node* pNode);
 
-  FX_BOOL SetContentType(const CFX_WideString& wsContentType);
+  bool SetContentType(const CFX_WideString& wsContentType);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_EXDATA_H_

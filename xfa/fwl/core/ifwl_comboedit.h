@@ -25,10 +25,10 @@ class IFWL_ComboEdit : public IFWL_Edit {
   void ClearSelected();
   void SetSelected();
   void EndCaret();
-  void FlagFocus(FX_BOOL bSet);
+  void FlagFocus(bool bSet);
 
  protected:
-  void SetComboBoxFocus(FX_BOOL bSet);
+  void SetComboBoxFocus(bool bSet);
   IFWL_ComboBox* m_pOuter;
 };
 

@@ -180,15 +180,15 @@ void CXFA_FFNotify::StartFieldDrawLayout(CXFA_Node* pItem,
   pAcc->StartWidgetLayout(fCalcWidth, fCalcHeight);
 }
 
-FX_BOOL CXFA_FFNotify::FindSplitPos(CXFA_Node* pItem,
-                                    int32_t iBlockIndex,
-                                    FX_FLOAT& fCalcHeightPos) {
+bool CXFA_FFNotify::FindSplitPos(CXFA_Node* pItem,
+                                 int32_t iBlockIndex,
+                                 FX_FLOAT& fCalcHeightPos) {
   CXFA_WidgetAcc* pAcc = static_cast<CXFA_WidgetAcc*>(pItem->GetWidgetData());
   return pAcc && pAcc->FindSplitPos(iBlockIndex, fCalcHeightPos);
 }
 
-FX_BOOL CXFA_FFNotify::RunScript(CXFA_Node* pScript, CXFA_Node* pFormItem) {
-  FX_BOOL bRet = FALSE;
+bool CXFA_FFNotify::RunScript(CXFA_Node* pScript, CXFA_Node* pFormItem) {
+  bool bRet = false;
   CXFA_FFDocView* pDocView = m_pDoc->GetDocView();
   if (!pDocView) {
     return bRet;
@@ -211,8 +211,8 @@ FX_BOOL CXFA_FFNotify::RunScript(CXFA_Node* pScript, CXFA_Node* pFormItem) {
 }
 int32_t CXFA_FFNotify::ExecEventByDeepFirst(CXFA_Node* pFormNode,
                                             XFA_EVENTTYPE eEventType,
-                                            FX_BOOL bIsFormReady,
-                                            FX_BOOL bRecursive,
+                                            bool bIsFormReady,
+                                            bool bRecursive,
                                             CXFA_WidgetAcc* pExclude) {
   CXFA_FFDocView* pDocView = m_pDoc->GetDocView();
   if (!pDocView) {
@@ -380,7 +380,7 @@ void CXFA_FFNotify::OnValueChanged(CXFA_Node* pSender,
   }
 
   XFA_Element eType = pParentNode->GetElementType();
-  FX_BOOL bIsContainerNode = pParentNode->IsContainerNode();
+  bool bIsContainerNode = pParentNode->IsContainerNode();
   CXFA_WidgetAcc* pWidgetAcc =
       static_cast<CXFA_WidgetAcc*>(pWidgetNode->GetWidgetData());
   if (!pWidgetAcc)
@@ -440,7 +440,7 @@ void CXFA_FFNotify::OnChildAdded(CXFA_Node* pSender) {
   if (!pDocView) {
     return;
   }
-  FX_BOOL bLayoutReady =
+  bool bLayoutReady =
       !(pDocView->m_bInLayoutStatus) &&
       (pDocView->GetLayoutStatus() == XFA_DOCVIEW_LAYOUTSTATUS_End);
   if (bLayoutReady)

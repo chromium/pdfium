@@ -25,14 +25,14 @@ class CXFA_XMLLocale : public IFX_Locale {
   void GetDateTimeSymbols(CFX_WideString& wsDtSymbol) const override;
   void GetMonthName(int32_t nMonth,
                     CFX_WideString& wsMonthName,
-                    FX_BOOL bAbbr = TRUE) const override;
+                    bool bAbbr = true) const override;
   void GetDayName(int32_t nWeek,
                   CFX_WideString& wsDayName,
-                  FX_BOOL bAbbr = TRUE) const override;
+                  bool bAbbr = true) const override;
   void GetMeridiemName(CFX_WideString& wsMeridiemName,
-                       FX_BOOL bAM = TRUE) const override;
+                       bool bAM = true) const override;
   void GetTimeZone(FX_TIMEZONE& tz) const override;
-  void GetEraName(CFX_WideString& wsEraName, FX_BOOL bAD = TRUE) const override;
+  void GetEraName(CFX_WideString& wsEraName, bool bAD = true) const override;
 
   void GetDatePattern(FX_LOCALEDATETIMESUBCATEGORY eType,
                       CFX_WideString& wsPattern) const override;
@@ -48,7 +48,7 @@ class CXFA_XMLLocale : public IFX_Locale {
                   CFX_WideString& wsPattern) const;
   CFX_WideString GetCalendarSymbol(const CFX_ByteStringC& symbol,
                                    int index,
-                                   FX_BOOL bAbbr) const;
+                                   bool bAbbr) const;
 
  private:
   std::unique_ptr<CXML_Element> m_pLocaleData;
@@ -67,14 +67,14 @@ class CXFA_NodeLocale : public IFX_Locale {
   void GetDateTimeSymbols(CFX_WideString& wsDtSymbol) const override;
   void GetMonthName(int32_t nMonth,
                     CFX_WideString& wsMonthName,
-                    FX_BOOL bAbbr = TRUE) const override;
+                    bool bAbbr = true) const override;
   void GetDayName(int32_t nWeek,
                   CFX_WideString& wsDayName,
-                  FX_BOOL bAbbr = TRUE) const override;
+                  bool bAbbr = true) const override;
   void GetMeridiemName(CFX_WideString& wsMeridiemName,
-                       FX_BOOL bAM = TRUE) const override;
+                       bool bAM = true) const override;
   void GetTimeZone(FX_TIMEZONE& tz) const override;
-  void GetEraName(CFX_WideString& wsEraName, FX_BOOL bAD = TRUE) const override;
+  void GetEraName(CFX_WideString& wsEraName, bool bAD = true) const override;
 
   void GetDatePattern(FX_LOCALEDATETIMESUBCATEGORY eType,
                       CFX_WideString& wsPattern) const override;
@@ -90,7 +90,7 @@ class CXFA_NodeLocale : public IFX_Locale {
                            const CFX_WideStringC& symbol_type) const;
   CFX_WideString GetCalendarSymbol(XFA_Element eElement,
                                    int index,
-                                   FX_BOOL bAbbr) const;
+                                   bool bAbbr) const;
 
   CXFA_Node* const m_pLocale;
 };

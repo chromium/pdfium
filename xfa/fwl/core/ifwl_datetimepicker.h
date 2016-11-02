@@ -68,7 +68,7 @@ class IFWL_DateTimePicker : public IFWL_Widget {
 
   // IFWL_Widget
   FWL_Type GetClassID() const override;
-  FWL_Error GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize = FALSE) override;
+  FWL_Error GetWidgetRect(CFX_RectF& rect, bool bAutoSize = false) override;
   FWL_Error Update() override;
   FWL_WidgetHit HitTest(FX_FLOAT fx, FX_FLOAT fy) override;
   FWL_Error DrawWidget(CFX_Graphics* pGraphics,
@@ -87,27 +87,27 @@ class IFWL_DateTimePicker : public IFWL_Widget {
   int32_t CountSelRanges();
   int32_t GetSelRange(int32_t nIndex, int32_t& nStart);
 
-  FX_BOOL CanUndo();
-  FX_BOOL CanRedo();
-  FX_BOOL Undo();
-  FX_BOOL Redo();
-  FX_BOOL CanCopy();
-  FX_BOOL CanCut();
-  FX_BOOL CanSelectAll();
-  FX_BOOL Copy(CFX_WideString& wsCopy);
-  FX_BOOL Cut(CFX_WideString& wsCut);
-  FX_BOOL Paste(const CFX_WideString& wsPaste);
-  FX_BOOL SelectAll();
-  FX_BOOL Delete();
-  FX_BOOL DeSelect();
+  bool CanUndo();
+  bool CanRedo();
+  bool Undo();
+  bool Redo();
+  bool CanCopy();
+  bool CanCut();
+  bool CanSelectAll();
+  bool Copy(CFX_WideString& wsCopy);
+  bool Cut(CFX_WideString& wsCut);
+  bool Paste(const CFX_WideString& wsPaste);
+  bool SelectAll();
+  bool Delete();
+  bool DeSelect();
   FWL_Error GetBBox(CFX_RectF& rect);
   FWL_Error SetEditLimit(int32_t nLimit);
   FWL_Error ModifyEditStylesEx(uint32_t dwStylesExAdded,
                                uint32_t dwStylesExRemoved);
   IFWL_DateTimeEdit* GetDataTimeEdit();
 
-  FX_BOOL IsMonthCalendarShowed();
-  void ShowMonthCalendar(FX_BOOL bActivate);
+  bool IsMonthCalendarShowed();
+  void ShowMonthCalendar(bool bActivate);
   void ProcessSelChanged(int32_t iYear, int32_t iMonth, int32_t iDay);
 
   IFWL_FormProxy* GetFormProxy() const { return m_pForm.get(); }
@@ -147,7 +147,7 @@ class IFWL_DateTimePicker : public IFWL_Widget {
   int32_t m_iYear;
   int32_t m_iMonth;
   int32_t m_iDay;
-  FX_BOOL m_bLBtnDown;
+  bool m_bLBtnDown;
   std::unique_ptr<IFWL_DateTimeEdit> m_pEdit;
   std::unique_ptr<IFWL_DateTimeCalendar> m_pMonthCal;
   std::unique_ptr<IFWL_FormProxy> m_pForm;
@@ -158,22 +158,22 @@ class IFWL_DateTimePicker : public IFWL_Widget {
   FWL_Error DisForm_Initialize();
   void DisForm_InitDateTimeCalendar();
   void DisForm_InitDateTimeEdit();
-  FX_BOOL DisForm_IsMonthCalendarShowed();
-  void DisForm_ShowMonthCalendar(FX_BOOL bActivate);
+  bool DisForm_IsMonthCalendarShowed();
+  void DisForm_ShowMonthCalendar(bool bActivate);
   FWL_WidgetHit DisForm_HitTest(FX_FLOAT fx, FX_FLOAT fy);
-  FX_BOOL DisForm_IsNeedShowButton();
+  bool DisForm_IsNeedShowButton();
   FWL_Error DisForm_Update();
-  FWL_Error DisForm_GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize = FALSE);
+  FWL_Error DisForm_GetWidgetRect(CFX_RectF& rect, bool bAutoSize = false);
   FWL_Error DisForm_GetBBox(CFX_RectF& rect);
   FWL_Error DisForm_DrawWidget(CFX_Graphics* pGraphics,
                                const CFX_Matrix* pMatrix = nullptr);
 
-  void OnFocusChanged(CFWL_Message* pMsg, FX_BOOL bSet);
+  void OnFocusChanged(CFWL_Message* pMsg, bool bSet);
   void OnLButtonDown(CFWL_MsgMouse* pMsg);
   void OnLButtonUp(CFWL_MsgMouse* pMsg);
   void OnMouseMove(CFWL_MsgMouse* pMsg);
   void OnMouseLeave(CFWL_MsgMouse* pMsg);
-  void DisForm_OnFocusChanged(CFWL_Message* pMsg, FX_BOOL bSet);
+  void DisForm_OnFocusChanged(CFWL_Message* pMsg, bool bSet);
 };
 
 #endif  // XFA_FWL_CORE_IFWL_DATETIMEPICKER_H_

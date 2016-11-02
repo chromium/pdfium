@@ -12,26 +12,26 @@ CFDE_VisualSetIterator::CFDE_VisualSetIterator()
     : m_dwFilter(0), m_CanvasStack(100) {}
 
 CFDE_VisualSetIterator::~CFDE_VisualSetIterator() {
-  m_CanvasStack.RemoveAll(FALSE);
+  m_CanvasStack.RemoveAll(false);
 }
 
-FX_BOOL CFDE_VisualSetIterator::AttachCanvas(IFDE_CanvasSet* pCanvas) {
+bool CFDE_VisualSetIterator::AttachCanvas(IFDE_CanvasSet* pCanvas) {
   ASSERT(pCanvas);
 
-  m_CanvasStack.RemoveAll(FALSE);
+  m_CanvasStack.RemoveAll(false);
   FDE_CANVASITEM canvas;
   canvas.hCanvas = nullptr;
   canvas.pCanvas = pCanvas;
   canvas.hPos = pCanvas->GetFirstPosition();
   if (!canvas.hPos)
-    return FALSE;
+    return false;
 
   return m_CanvasStack.Push(canvas) == 0;
 }
 
-FX_BOOL CFDE_VisualSetIterator::FilterObjects(uint32_t dwObjects) {
+bool CFDE_VisualSetIterator::FilterObjects(uint32_t dwObjects) {
   if (m_CanvasStack.GetSize() == 0)
-    return FALSE;
+    return false;
 
   while (m_CanvasStack.GetSize() > 1)
     m_CanvasStack.Pop();

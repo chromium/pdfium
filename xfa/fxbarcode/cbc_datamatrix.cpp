@@ -27,35 +27,35 @@ CBC_DataMatrix::CBC_DataMatrix() : CBC_CodeBase(new CBC_DataMatrixWriter) {}
 
 CBC_DataMatrix::~CBC_DataMatrix() {}
 
-FX_BOOL CBC_DataMatrix::Encode(const CFX_WideStringC& contents,
-                               FX_BOOL isDevice,
-                               int32_t& e) {
+bool CBC_DataMatrix::Encode(const CFX_WideStringC& contents,
+                            bool isDevice,
+                            int32_t& e) {
   int32_t outWidth = 0;
   int32_t outHeight = 0;
   uint8_t* data =
       static_cast<CBC_DataMatrixWriter*>(m_pBCWriter.get())
           ->Encode(CFX_WideString(contents), outWidth, outHeight, e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, FALSE);
+  BC_EXCEPTION_CHECK_ReturnValue(e, false);
   static_cast<CBC_TwoDimWriter*>(m_pBCWriter.get())
       ->RenderResult(data, outWidth, outHeight, e);
   FX_Free(data);
-  BC_EXCEPTION_CHECK_ReturnValue(e, FALSE);
-  return TRUE;
+  BC_EXCEPTION_CHECK_ReturnValue(e, false);
+  return true;
 }
 
-FX_BOOL CBC_DataMatrix::RenderDevice(CFX_RenderDevice* device,
-                                     const CFX_Matrix* matrix,
-                                     int32_t& e) {
+bool CBC_DataMatrix::RenderDevice(CFX_RenderDevice* device,
+                                  const CFX_Matrix* matrix,
+                                  int32_t& e) {
   static_cast<CBC_TwoDimWriter*>(m_pBCWriter.get())
       ->RenderDeviceResult(device, matrix);
-  return TRUE;
+  return true;
 }
 
-FX_BOOL CBC_DataMatrix::RenderBitmap(CFX_DIBitmap*& pOutBitmap, int32_t& e) {
+bool CBC_DataMatrix::RenderBitmap(CFX_DIBitmap*& pOutBitmap, int32_t& e) {
   static_cast<CBC_TwoDimWriter*>(m_pBCWriter.get())
       ->RenderBitmapResult(pOutBitmap, e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, FALSE);
-  return TRUE;
+  BC_EXCEPTION_CHECK_ReturnValue(e, false);
+  return true;
 }
 
 BC_TYPE CBC_DataMatrix::GetType() {

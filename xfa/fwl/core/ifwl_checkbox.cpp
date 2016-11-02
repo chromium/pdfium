@@ -30,7 +30,7 @@ IFWL_CheckBox::IFWL_CheckBox(const IFWL_App* app,
     : IFWL_Widget(app, properties, nullptr),
       m_dwTTOStyles(FDE_TTOSTYLE_SingleLine),
       m_iTTOAlign(FDE_TTOALIGNMENT_Center),
-      m_bBtnDown(FALSE) {
+      m_bBtnDown(false) {
   m_rtClient.Reset();
   m_rtBox.Reset();
   m_rtCaption.Reset();
@@ -43,7 +43,7 @@ FWL_Type IFWL_CheckBox::GetClassID() const {
   return FWL_Type::CheckBox;
 }
 
-FWL_Error IFWL_CheckBox::GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize) {
+FWL_Error IFWL_CheckBox::GetWidgetRect(CFX_RectF& rect, bool bAutoSize) {
   if (bAutoSize) {
     rect.Set(0, 0, 0, 0);
     if (!m_pProperties->m_pThemeProvider)
@@ -68,7 +68,7 @@ FWL_Error IFWL_CheckBox::GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize) {
     if (rect.height < fCheckBox) {
       rect.height = fCheckBox;
     }
-    IFWL_Widget::GetWidgetRect(rect, TRUE);
+    IFWL_Widget::GetWidgetRect(rect, true);
   } else {
     rect = m_pProperties->m_rtWidget;
   }
@@ -399,10 +399,10 @@ void IFWL_CheckBox::OnProcessMessage(CFWL_Message* pMessage) {
       OnActivate(pMessage);
       break;
     case CFWL_MessageType::SetFocus:
-      OnFocusChanged(pMessage, TRUE);
+      OnFocusChanged(pMessage, true);
       break;
     case CFWL_MessageType::KillFocus:
-      OnFocusChanged(pMessage, FALSE);
+      OnFocusChanged(pMessage, false);
       break;
     case CFWL_MessageType::Mouse: {
       CFWL_MsgMouse* pMsg = static_cast<CFWL_MsgMouse*>(pMessage);
@@ -447,7 +447,7 @@ void IFWL_CheckBox::OnActivate(CFWL_Message* pMsg) {
   Repaint(&(m_rtClient));
 }
 
-void IFWL_CheckBox::OnFocusChanged(CFWL_Message* pMsg, FX_BOOL bSet) {
+void IFWL_CheckBox::OnFocusChanged(CFWL_Message* pMsg, bool bSet) {
   if (bSet)
     m_pProperties->m_dwStates |= FWL_WGTSTATE_Focused;
   else
@@ -460,9 +460,9 @@ void IFWL_CheckBox::OnLButtonDown(CFWL_MsgMouse* pMsg) {
   if (m_pProperties->m_dwStates & FWL_WGTSTATE_Disabled)
     return;
   if ((m_pProperties->m_dwStates & FWL_WGTSTATE_Focused) == 0)
-    SetFocus(TRUE);
+    SetFocus(true);
 
-  m_bBtnDown = TRUE;
+  m_bBtnDown = true;
   m_pProperties->m_dwStates &= ~FWL_STATE_CKB_Hovered;
   m_pProperties->m_dwStates |= FWL_STATE_CKB_Pressed;
   Repaint(&(m_rtClient));
@@ -472,7 +472,7 @@ void IFWL_CheckBox::OnLButtonUp(CFWL_MsgMouse* pMsg) {
   if (!m_bBtnDown)
     return;
 
-  m_bBtnDown = FALSE;
+  m_bBtnDown = false;
   if (!m_rtClient.Contains(pMsg->m_fx, pMsg->m_fy))
     return;
 
@@ -485,31 +485,31 @@ void IFWL_CheckBox::OnMouseMove(CFWL_MsgMouse* pMsg) {
   if (m_pProperties->m_dwStates & FWL_WGTSTATE_Disabled)
     return;
 
-  FX_BOOL bRepaint = FALSE;
+  bool bRepaint = false;
   if (m_bBtnDown) {
     if (m_rtClient.Contains(pMsg->m_fx, pMsg->m_fy)) {
       if ((m_pProperties->m_dwStates & FWL_STATE_CKB_Pressed) == 0) {
-        bRepaint = TRUE;
+        bRepaint = true;
         m_pProperties->m_dwStates |= FWL_STATE_CKB_Pressed;
       }
       if ((m_pProperties->m_dwStates & FWL_STATE_CKB_Hovered)) {
-        bRepaint = TRUE;
+        bRepaint = true;
         m_pProperties->m_dwStates &= ~FWL_STATE_CKB_Hovered;
       }
     } else {
       if (m_pProperties->m_dwStates & FWL_STATE_CKB_Pressed) {
-        bRepaint = TRUE;
+        bRepaint = true;
         m_pProperties->m_dwStates &= ~FWL_STATE_CKB_Pressed;
       }
       if ((m_pProperties->m_dwStates & FWL_STATE_CKB_Hovered) == 0) {
-        bRepaint = TRUE;
+        bRepaint = true;
         m_pProperties->m_dwStates |= FWL_STATE_CKB_Hovered;
       }
     }
   } else {
     if (m_rtClient.Contains(pMsg->m_fx, pMsg->m_fy)) {
       if ((m_pProperties->m_dwStates & FWL_STATE_CKB_Hovered) == 0) {
-        bRepaint = TRUE;
+        bRepaint = true;
         m_pProperties->m_dwStates |= FWL_STATE_CKB_Hovered;
       }
     }

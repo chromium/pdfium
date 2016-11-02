@@ -8,15 +8,15 @@
 
 #include "xfa/fde/fde_object.h"
 
-FX_BOOL CFDE_Path::StartFigure() {
+bool CFDE_Path::StartFigure() {
   return CloseFigure();
 }
 
-FX_BOOL CFDE_Path::CloseFigure() {
+bool CFDE_Path::CloseFigure() {
   FX_PATHPOINT* pPoint = GetLastPoint();
   if (pPoint)
     pPoint->m_Flag |= FXPT_CLOSEFIGURE;
-  return TRUE;
+  return true;
 }
 
 FX_PATHPOINT* CFDE_Path::GetLastPoint(int32_t iCount) const {
@@ -29,9 +29,9 @@ FX_PATHPOINT* CFDE_Path::GetLastPoint(int32_t iCount) const {
   return m_Path.GetPoints() + iPoints - iCount;
 }
 
-FX_BOOL CFDE_Path::FigureClosed() const {
+bool CFDE_Path::FigureClosed() const {
   FX_PATHPOINT* pPoint = GetLastPoint();
-  return pPoint ? (pPoint->m_Flag & FXPT_CLOSEFIGURE) : TRUE;
+  return pPoint ? (pPoint->m_Flag & FXPT_CLOSEFIGURE) : true;
 }
 
 FX_PATHPOINT* CFDE_Path::AddPoints(int32_t iCount) {
@@ -72,7 +72,7 @@ void CFDE_Path::BezierTo(const CFX_PointF& p1,
   p[2].m_Flag = FXPT_BEZIERTO;
 }
 
-void CFDE_Path::ArcTo(FX_BOOL bStart,
+void CFDE_Path::ArcTo(bool bStart,
                       const CFX_RectF& rect,
                       FX_FLOAT startAngle,
                       FX_FLOAT endAngle) {
@@ -129,7 +129,7 @@ void CFDE_Path::AddBeziers(const CFX_PointsF& points) {
 
 void CFDE_Path::GetCurveTangents(const CFX_PointsF& points,
                                  CFX_PointsF& tangents,
-                                 FX_BOOL bClosed,
+                                 bool bClosed,
                                  FX_FLOAT fTension) const {
   int32_t iCount = points.GetSize();
   tangents.SetSize(iCount);
@@ -153,7 +153,7 @@ void CFDE_Path::GetCurveTangents(const CFX_PointsF& points,
 }
 
 void CFDE_Path::AddCurve(const CFX_PointsF& points,
-                         FX_BOOL bClosed,
+                         bool bClosed,
                          FX_FLOAT fTension) {
   int32_t iLast = points.GetUpperBound();
   if (iLast < 1)
@@ -201,7 +201,7 @@ void CFDE_Path::AddLine(const CFX_PointF& pt1, const CFX_PointF& pt2) {
   LineTo(pt2);
 }
 
-void CFDE_Path::AddPath(const CFDE_Path* pSrc, FX_BOOL bConnect) {
+void CFDE_Path::AddPath(const CFDE_Path* pSrc, bool bConnect) {
   if (!pSrc)
     return;
 

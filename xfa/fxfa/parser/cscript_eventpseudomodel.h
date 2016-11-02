@@ -35,52 +35,36 @@ class CScript_EventPseudoModel : public CXFA_Object {
   explicit CScript_EventPseudoModel(CXFA_Document* pDocument);
   ~CScript_EventPseudoModel() override;
 
-  void Change(CFXJSE_Value* pValue, FX_BOOL bSetting, XFA_ATTRIBUTE eAttribute);
-  void CommitKey(CFXJSE_Value* pValue,
-                 FX_BOOL bSetting,
-                 XFA_ATTRIBUTE eAttribute);
-  void FullText(CFXJSE_Value* pValue,
-                FX_BOOL bSetting,
-                XFA_ATTRIBUTE eAttribute);
-  void KeyDown(CFXJSE_Value* pValue,
-               FX_BOOL bSetting,
-               XFA_ATTRIBUTE eAttribute);
-  void Modifier(CFXJSE_Value* pValue,
-                FX_BOOL bSetting,
-                XFA_ATTRIBUTE eAttribute);
+  void Change(CFXJSE_Value* pValue, bool bSetting, XFA_ATTRIBUTE eAttribute);
+  void CommitKey(CFXJSE_Value* pValue, bool bSetting, XFA_ATTRIBUTE eAttribute);
+  void FullText(CFXJSE_Value* pValue, bool bSetting, XFA_ATTRIBUTE eAttribute);
+  void KeyDown(CFXJSE_Value* pValue, bool bSetting, XFA_ATTRIBUTE eAttribute);
+  void Modifier(CFXJSE_Value* pValue, bool bSetting, XFA_ATTRIBUTE eAttribute);
   void NewContentType(CFXJSE_Value* pValue,
-                      FX_BOOL bSetting,
+                      bool bSetting,
                       XFA_ATTRIBUTE eAttribute);
-  void NewText(CFXJSE_Value* pValue,
-               FX_BOOL bSetting,
-               XFA_ATTRIBUTE eAttribute);
+  void NewText(CFXJSE_Value* pValue, bool bSetting, XFA_ATTRIBUTE eAttribute);
   void PrevContentType(CFXJSE_Value* pValue,
-                       FX_BOOL bSetting,
+                       bool bSetting,
                        XFA_ATTRIBUTE eAttribute);
-  void PrevText(CFXJSE_Value* pValue,
-                FX_BOOL bSetting,
-                XFA_ATTRIBUTE eAttribute);
-  void Reenter(CFXJSE_Value* pValue,
-               FX_BOOL bSetting,
-               XFA_ATTRIBUTE eAttribute);
-  void SelEnd(CFXJSE_Value* pValue, FX_BOOL bSetting, XFA_ATTRIBUTE eAttribute);
-  void SelStart(CFXJSE_Value* pValue,
-                FX_BOOL bSetting,
-                XFA_ATTRIBUTE eAttribute);
-  void Shift(CFXJSE_Value* pValue, FX_BOOL bSetting, XFA_ATTRIBUTE eAttribute);
+  void PrevText(CFXJSE_Value* pValue, bool bSetting, XFA_ATTRIBUTE eAttribute);
+  void Reenter(CFXJSE_Value* pValue, bool bSetting, XFA_ATTRIBUTE eAttribute);
+  void SelEnd(CFXJSE_Value* pValue, bool bSetting, XFA_ATTRIBUTE eAttribute);
+  void SelStart(CFXJSE_Value* pValue, bool bSetting, XFA_ATTRIBUTE eAttribute);
+  void Shift(CFXJSE_Value* pValue, bool bSetting, XFA_ATTRIBUTE eAttribute);
   void SoapFaultCode(CFXJSE_Value* pValue,
-                     FX_BOOL bSetting,
+                     bool bSetting,
                      XFA_ATTRIBUTE eAttribute);
   void SoapFaultString(CFXJSE_Value* pValue,
-                       FX_BOOL bSetting,
+                       bool bSetting,
                        XFA_ATTRIBUTE eAttribute);
-  void Target(CFXJSE_Value* pValue, FX_BOOL bSetting, XFA_ATTRIBUTE eAttribute);
+  void Target(CFXJSE_Value* pValue, bool bSetting, XFA_ATTRIBUTE eAttribute);
 
   void Emit(CFXJSE_Arguments* pArguments);
   void Reset(CFXJSE_Arguments* pArguments);
 
  protected:
-  void Property(CFXJSE_Value* pValue, XFA_Event dwFlag, FX_BOOL bSetting);
+  void Property(CFXJSE_Value* pValue, XFA_Event dwFlag, bool bSetting);
 };
 
 #endif  // XFA_FXFA_PARSER_CSCRIPT_EVENTPSEUDOMODEL_H_

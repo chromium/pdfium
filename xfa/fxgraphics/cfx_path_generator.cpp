@@ -161,7 +161,7 @@ void CFX_PathGenerator::AddArc(FX_FLOAT x,
                         x + (width * FXSYS_cos(start_angle)),
                         y + (height * FXSYS_sin(start_angle)), FXPT_MOVETO);
   FX_FLOAT total_sweep = 0, local_sweep = 0, prev_sweep = 0;
-  FX_BOOL done = FALSE;
+  bool done = false;
   do {
     if (sweep_angle < 0) {
       prev_sweep = total_sweep;
@@ -169,7 +169,7 @@ void CFX_PathGenerator::AddArc(FX_FLOAT x,
       total_sweep -= FX_PI / 2;
       if (total_sweep <= sweep_angle + bezier_arc_angle_epsilon) {
         local_sweep = sweep_angle - prev_sweep;
-        done = TRUE;
+        done = true;
       }
     } else {
       prev_sweep = total_sweep;
@@ -177,7 +177,7 @@ void CFX_PathGenerator::AddArc(FX_FLOAT x,
       total_sweep += FX_PI / 2;
       if (total_sweep >= sweep_angle - bezier_arc_angle_epsilon) {
         local_sweep = sweep_angle - prev_sweep;
-        done = TRUE;
+        done = true;
       }
     }
     ArcTo(x, y, width, height, start_angle, local_sweep);

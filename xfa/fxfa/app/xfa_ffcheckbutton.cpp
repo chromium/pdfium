@@ -26,7 +26,7 @@ CXFA_FFCheckButton::CXFA_FFCheckButton(CXFA_FFPageView* pPageView,
 
 CXFA_FFCheckButton::~CXFA_FFCheckButton() {}
 
-FX_BOOL CXFA_FFCheckButton::LoadWidget() {
+bool CXFA_FFCheckButton::LoadWidget() {
   CFWL_CheckBox* pCheckBox = new CFWL_CheckBox(GetFWLApp());
   pCheckBox->Initialize();
   m_pNormalWidget = pCheckBox;
@@ -88,7 +88,7 @@ void CXFA_FFCheckButton::UpdateWidgetProperty() {
   pCheckBox->ModifyStylesEx(
       dwStyleEx, FWL_STYLEEXT_CKB_SignShapeMask | FWL_STYLEEXT_CKB_3State);
 }
-FX_BOOL CXFA_FFCheckButton::PerformLayout() {
+bool CXFA_FFCheckButton::PerformLayout() {
   CXFA_FFWidget::PerformLayout();
   FX_FLOAT fCheckSize = m_pDataAcc->GetCheckButtonSize();
   CXFA_Margin mgWidget = m_pDataAcc->GetMargin();
@@ -180,7 +180,7 @@ FX_BOOL CXFA_FFCheckButton::PerformLayout() {
   if (m_pNormalWidget) {
     m_pNormalWidget->Update();
   }
-  return TRUE;
+  return true;
 }
 void CXFA_FFCheckButton::CapLeftRightPlacement(CXFA_Margin mgCap) {
   XFA_RectWidthoutMargin(m_rtCaption, mgCap);
@@ -241,13 +241,13 @@ void CXFA_FFCheckButton::RenderWidget(CFX_Graphics* pGS,
   GetApp()->GetWidgetMgrDelegate()->OnDrawWidget(m_pNormalWidget->GetWidget(),
                                                  pGS, &mt);
 }
-FX_BOOL CXFA_FFCheckButton::OnLButtonUp(uint32_t dwFlags,
-                                        FX_FLOAT fx,
-                                        FX_FLOAT fy) {
+bool CXFA_FFCheckButton::OnLButtonUp(uint32_t dwFlags,
+                                     FX_FLOAT fx,
+                                     FX_FLOAT fy) {
   if (!m_pNormalWidget || !IsButtonDown())
-    return FALSE;
+    return false;
 
-  SetButtonDown(FALSE);
+  SetButtonDown(false);
   CFWL_MsgMouse ms;
   ms.m_dwCmd = FWL_MouseCommand::LeftButtonUp;
   ms.m_dwFlags = dwFlags;
@@ -256,7 +256,7 @@ FX_BOOL CXFA_FFCheckButton::OnLButtonUp(uint32_t dwFlags,
   FWLToClient(ms.m_fx, ms.m_fy);
   ms.m_pDstTarget = m_pNormalWidget->GetWidget();
   TranslateFWLMessage(&ms);
-  return TRUE;
+  return true;
 }
 
 XFA_CHECKSTATE CXFA_FFCheckButton::FWLState2XFAState() {
@@ -268,32 +268,32 @@ XFA_CHECKSTATE CXFA_FFCheckButton::FWLState2XFAState() {
   return XFA_CHECKSTATE_Off;
 }
 
-FX_BOOL CXFA_FFCheckButton::CommitData() {
+bool CXFA_FFCheckButton::CommitData() {
   XFA_CHECKSTATE eCheckState = FWLState2XFAState();
   m_pDataAcc->SetCheckState(eCheckState, true);
-  return TRUE;
+  return true;
 }
 
-FX_BOOL CXFA_FFCheckButton::IsDataChanged() {
+bool CXFA_FFCheckButton::IsDataChanged() {
   XFA_CHECKSTATE eCheckState = FWLState2XFAState();
   return m_pDataAcc->GetCheckState() != eCheckState;
 }
 void CXFA_FFCheckButton::SetFWLCheckState(XFA_CHECKSTATE eCheckState) {
   if (eCheckState == XFA_CHECKSTATE_Neutral) {
-    m_pNormalWidget->SetStates(FWL_STATE_CKB_Neutral, TRUE);
+    m_pNormalWidget->SetStates(FWL_STATE_CKB_Neutral, true);
   } else {
     m_pNormalWidget->SetStates(FWL_STATE_CKB_Checked,
                                eCheckState == XFA_CHECKSTATE_On);
   }
 }
-FX_BOOL CXFA_FFCheckButton::UpdateFWLData() {
+bool CXFA_FFCheckButton::UpdateFWLData() {
   if (!m_pNormalWidget) {
-    return FALSE;
+    return false;
   }
   XFA_CHECKSTATE eState = m_pDataAcc->GetCheckState();
   SetFWLCheckState(eState);
   m_pNormalWidget->Update();
-  return TRUE;
+  return true;
 }
 
 void CXFA_FFCheckButton::OnProcessMessage(CFWL_Message* pMessage) {

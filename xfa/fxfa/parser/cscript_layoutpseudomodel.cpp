@@ -32,7 +32,7 @@ CScript_LayoutPseudoModel::CScript_LayoutPseudoModel(CXFA_Document* pDocument)
 CScript_LayoutPseudoModel::~CScript_LayoutPseudoModel() {}
 
 void CScript_LayoutPseudoModel::Ready(CFXJSE_Value* pValue,
-                                      FX_BOOL bSetting,
+                                      bool bSetting,
                                       XFA_ATTRIBUTE eAttribute) {
   CXFA_FFNotify* pNotify = m_pDocument->GetNotify();
   if (!pNotify) {
@@ -105,7 +105,7 @@ void CScript_LayoutPseudoModel::HWXY(CFXJSE_Arguments* pArguments,
     pValue->SetFloat(0);
     return;
   }
-  pLayoutItem->GetRect(rtRect, TRUE);
+  pLayoutItem->GetRect(rtRect, true);
   switch (layoutModel) {
     case XFA_LAYOUTMODEL_H:
       measure.Set(rtRect.height, XFA_UNIT_Pt);
@@ -144,7 +144,7 @@ void CScript_LayoutPseudoModel::Y(CFXJSE_Arguments* pArguments) {
 }
 
 void CScript_LayoutPseudoModel::NumberedPageCount(CFXJSE_Arguments* pArguments,
-                                                  FX_BOOL bNumbered) {
+                                                  bool bNumbered) {
   CXFA_LayoutProcessor* pDocLayout = m_pDocument->GetDocLayout();
   if (!pDocLayout) {
     return;
@@ -171,7 +171,7 @@ void CScript_LayoutPseudoModel::NumberedPageCount(CFXJSE_Arguments* pArguments,
 }
 
 void CScript_LayoutPseudoModel::PageCount(CFXJSE_Arguments* pArguments) {
-  NumberedPageCount(pArguments, TRUE);
+  NumberedPageCount(pArguments, true);
 }
 
 void CScript_LayoutPseudoModel::PageSpan(CFXJSE_Arguments* pArguments) {
@@ -205,13 +205,13 @@ void CScript_LayoutPseudoModel::PageSpan(CFXJSE_Arguments* pArguments) {
 }
 
 void CScript_LayoutPseudoModel::Page(CFXJSE_Arguments* pArguments) {
-  PageImp(pArguments, FALSE);
+  PageImp(pArguments, false);
 }
 
 void CScript_LayoutPseudoModel::GetObjArray(CXFA_LayoutProcessor* pDocLayout,
                                             int32_t iPageNo,
                                             const CFX_WideString& wsType,
-                                            FX_BOOL bOnPageArea,
+                                            bool bOnPageArea,
                                             CXFA_NodeArray& retArray) {
   CXFA_ContainerLayoutItem* pLayoutPage = pDocLayout->GetPage(iPageNo);
   if (!pLayoutPage) {
@@ -348,7 +348,7 @@ void CScript_LayoutPseudoModel::PageContent(CFXJSE_Arguments* pArguments) {
   }
   int32_t iIndex = 0;
   CFX_WideString wsType;
-  FX_BOOL bOnPageArea = FALSE;
+  bool bOnPageArea = false;
   if (iLength >= 1) {
     iIndex = pArguments->GetInt32(0);
   }
@@ -357,7 +357,7 @@ void CScript_LayoutPseudoModel::PageContent(CFXJSE_Arguments* pArguments) {
     wsType = CFX_WideString::FromUTF8(bsType.AsStringC());
   }
   if (iLength >= 3) {
-    bOnPageArea = pArguments->GetInt32(2) == 0 ? FALSE : TRUE;
+    bOnPageArea = pArguments->GetInt32(2) == 0 ? false : true;
   }
   CXFA_FFNotify* pNotify = m_pDocument->GetNotify();
   if (!pNotify) {
@@ -376,7 +376,7 @@ void CScript_LayoutPseudoModel::PageContent(CFXJSE_Arguments* pArguments) {
 }
 
 void CScript_LayoutPseudoModel::AbsPageCount(CFXJSE_Arguments* pArguments) {
-  NumberedPageCount(pArguments, FALSE);
+  NumberedPageCount(pArguments, false);
 }
 
 void CScript_LayoutPseudoModel::AbsPageCountInBatch(
@@ -402,7 +402,7 @@ void CScript_LayoutPseudoModel::Relayout(CFXJSE_Arguments* pArguments) {
   if (pContentRootNode) {
     pLayoutProcessor->AddChangedContainer(pContentRootNode);
   }
-  pLayoutProcessor->SetForceReLayout(TRUE);
+  pLayoutProcessor->SetForceReLayout(true);
 }
 
 void CScript_LayoutPseudoModel::AbsPageSpan(CFXJSE_Arguments* pArguments) {
@@ -432,22 +432,22 @@ void CScript_LayoutPseudoModel::SheetInBatch(CFXJSE_Arguments* pArguments) {
 }
 
 void CScript_LayoutPseudoModel::Sheet(CFXJSE_Arguments* pArguments) {
-  PageImp(pArguments, TRUE);
+  PageImp(pArguments, true);
 }
 
 void CScript_LayoutPseudoModel::RelayoutPageArea(CFXJSE_Arguments* pArguments) {
 }
 
 void CScript_LayoutPseudoModel::SheetCount(CFXJSE_Arguments* pArguments) {
-  NumberedPageCount(pArguments, FALSE);
+  NumberedPageCount(pArguments, false);
 }
 
 void CScript_LayoutPseudoModel::AbsPage(CFXJSE_Arguments* pArguments) {
-  PageImp(pArguments, TRUE);
+  PageImp(pArguments, true);
 }
 
 void CScript_LayoutPseudoModel::PageImp(CFXJSE_Arguments* pArguments,
-                                        FX_BOOL bAbsPage) {
+                                        bool bAbsPage) {
   int32_t iLength = pArguments->GetLength();
   if (iLength != 1) {
     const FX_WCHAR* methodName;

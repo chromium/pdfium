@@ -27,21 +27,21 @@ class CFX_SAXItem {
   };
 
   explicit CFX_SAXItem(uint32_t id)
-      : m_pNode(nullptr), m_eNode(Type::Unknown), m_dwID(id), m_bSkip(FALSE) {}
+      : m_pNode(nullptr), m_eNode(Type::Unknown), m_dwID(id), m_bSkip(false) {}
 
   CXFA_SAXContext* m_pNode;
   Type m_eNode;
   const uint32_t m_dwID;
-  FX_BOOL m_bSkip;
+  bool m_bSkip;
 };
 
 class CFX_SAXFile {
  public:
   CFX_SAXFile();
-  FX_BOOL StartFile(IFX_SeekableReadStream* pFile,
-                    uint32_t dwStart,
-                    uint32_t dwLen);
-  FX_BOOL ReadNextBlock();
+  bool StartFile(IFX_SeekableReadStream* pFile,
+                 uint32_t dwStart,
+                 uint32_t dwLen);
+  bool ReadNextBlock();
   void Reset();
   IFX_SeekableReadStream* m_pFile;
   uint32_t m_dwStart;
@@ -102,7 +102,7 @@ class CFX_SAXReader {
   void Push();
   void Pop();
   CFX_SAXItem* GetCurrentItem() const;
-  FX_BOOL SkipSpace(uint8_t ch);
+  bool SkipSpace(uint8_t ch);
   void SkipNode();
   void NotifyData();
   void NotifyEnter();
@@ -122,7 +122,7 @@ class CFX_SAXReader {
   uint32_t m_dwItemID;
   CFX_SaxMode m_eMode;
   CFX_SaxMode m_ePrevMode;
-  FX_BOOL m_bCharData;
+  bool m_bCharData;
   uint8_t m_CurByte;
   uint32_t m_dwDataOffset;
   CFX_ByteArray m_SkipStack;

@@ -17,31 +17,31 @@ CBC_Writer::CBC_Writer() {
   m_backgroundColor = 0xffffffff;
 }
 CBC_Writer::~CBC_Writer() {}
-FX_BOOL CBC_Writer::SetCharEncoding(int32_t encoding) {
+bool CBC_Writer::SetCharEncoding(int32_t encoding) {
   m_CharEncoding = encoding;
-  return TRUE;
+  return true;
 }
-FX_BOOL CBC_Writer::SetModuleHeight(int32_t moduleHeight) {
+bool CBC_Writer::SetModuleHeight(int32_t moduleHeight) {
   if (moduleHeight > 10 || moduleHeight < 1) {
-    return FALSE;
+    return false;
   }
   m_ModuleHeight = moduleHeight;
-  return TRUE;
+  return true;
 }
-FX_BOOL CBC_Writer::SetModuleWidth(int32_t moduleWidth) {
+bool CBC_Writer::SetModuleWidth(int32_t moduleWidth) {
   if (moduleWidth > 10 || moduleWidth < 1) {
-    return FALSE;
+    return false;
   }
   m_ModuleWidth = moduleWidth;
-  return TRUE;
+  return true;
 }
-FX_BOOL CBC_Writer::SetHeight(int32_t height) {
+bool CBC_Writer::SetHeight(int32_t height) {
   m_Height = height;
-  return TRUE;
+  return true;
 }
-FX_BOOL CBC_Writer::SetWidth(int32_t width) {
+bool CBC_Writer::SetWidth(int32_t width) {
   m_Width = width;
-  return TRUE;
+  return true;
 }
 void CBC_Writer::SetBackgroundColor(FX_ARGB backgroundColor) {
   m_backgroundColor = backgroundColor;

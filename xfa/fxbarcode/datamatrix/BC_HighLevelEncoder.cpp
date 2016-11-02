@@ -156,7 +156,7 @@ int32_t CBC_HighLevelEncoder::lookAheadTest(CFX_WideString msg,
     charCounts[currentMode] = 0;
   }
   int32_t charsProcessed = 0;
-  while (TRUE) {
+  while (true) {
     if ((startpos + charsProcessed) == msg.GetLength()) {
       int32_t min = std::numeric_limits<int32_t>::max();
       CFX_ByteArray mins;
@@ -284,10 +284,10 @@ int32_t CBC_HighLevelEncoder::lookAheadTest(CFX_WideString msg,
     }
   }
 }
-FX_BOOL CBC_HighLevelEncoder::isDigit(FX_WCHAR ch) {
+bool CBC_HighLevelEncoder::isDigit(FX_WCHAR ch) {
   return ch >= '0' && ch <= '9';
 }
-FX_BOOL CBC_HighLevelEncoder::isExtendedASCII(FX_WCHAR ch) {
+bool CBC_HighLevelEncoder::isExtendedASCII(FX_WCHAR ch) {
   return ch >= 128 && ch <= 255;
 }
 int32_t CBC_HighLevelEncoder::determineConsecutiveDigitCount(CFX_WideString msg,
@@ -346,22 +346,22 @@ int32_t CBC_HighLevelEncoder::getMinimumCount(CFX_ByteArray& mins) {
   }
   return minCount;
 }
-FX_BOOL CBC_HighLevelEncoder::isNativeC40(FX_WCHAR ch) {
+bool CBC_HighLevelEncoder::isNativeC40(FX_WCHAR ch) {
   return (ch == ' ') || (ch >= '0' && ch <= '9') || (ch >= 'A' && ch <= 'Z');
 }
-FX_BOOL CBC_HighLevelEncoder::isNativeText(FX_WCHAR ch) {
+bool CBC_HighLevelEncoder::isNativeText(FX_WCHAR ch) {
   return (ch == ' ') || (ch >= '0' && ch <= '9') || (ch >= 'a' && ch <= 'z');
 }
-FX_BOOL CBC_HighLevelEncoder::isNativeX12(FX_WCHAR ch) {
+bool CBC_HighLevelEncoder::isNativeX12(FX_WCHAR ch) {
   return isX12TermSep(ch) || (ch == ' ') || (ch >= '0' && ch <= '9') ||
          (ch >= 'A' && ch <= 'Z');
 }
-FX_BOOL CBC_HighLevelEncoder::isX12TermSep(FX_WCHAR ch) {
+bool CBC_HighLevelEncoder::isX12TermSep(FX_WCHAR ch) {
   return (ch == '\r') || (ch == '*') || (ch == '>');
 }
-FX_BOOL CBC_HighLevelEncoder::isNativeEDIFACT(FX_WCHAR ch) {
+bool CBC_HighLevelEncoder::isNativeEDIFACT(FX_WCHAR ch) {
   return ch >= ' ' && ch <= '^';
 }
-FX_BOOL CBC_HighLevelEncoder::isSpecialB256(FX_WCHAR ch) {
-  return FALSE;
+bool CBC_HighLevelEncoder::isSpecialB256(FX_WCHAR ch) {
+  return false;
 }

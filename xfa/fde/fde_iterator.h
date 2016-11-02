@@ -22,8 +22,8 @@ class CFDE_VisualSetIterator : public CFX_Target {
   CFDE_VisualSetIterator();
   ~CFDE_VisualSetIterator() override;
 
-  FX_BOOL AttachCanvas(IFDE_CanvasSet* pCanvas);
-  FX_BOOL FilterObjects(uint32_t dwObjects = 0xFFFFFFFF);
+  bool AttachCanvas(IFDE_CanvasSet* pCanvas);
+  bool FilterObjects(uint32_t dwObjects = 0xFFFFFFFF);
 
   void Reset();
   FDE_TEXTEDITPIECE* GetNext(IFDE_VisualSet*& pVisualSet,

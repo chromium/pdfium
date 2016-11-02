@@ -20,7 +20,7 @@ class CBC_CommonByteArray {
 
   int32_t At(int32_t index) const;
   int32_t Size() const;
-  FX_BOOL IsEmpty() const;
+  bool IsEmpty() const;
   void Set(int32_t index, int32_t value);
   void AppendByte(int32_t value);
   void Reserve(int32_t capacity);

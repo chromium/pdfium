@@ -34,7 +34,7 @@ class CFGAS_GEFont {
                                 IFGAS_FontMgr* pFontMgr);
   static CFGAS_GEFont* LoadFont(IFX_Stream* pFontStream,
                                 IFGAS_FontMgr* pFontMgr,
-                                FX_BOOL bSaveStream);
+                                bool bSaveStream);
 #endif
 
   ~CFGAS_GEFont();
@@ -44,14 +44,12 @@ class CFGAS_GEFont {
   CFGAS_GEFont* Derive(uint32_t dwFontStyles, uint16_t wCodePage = 0);
   void GetFamilyName(CFX_WideString& wsFamily) const;
   uint32_t GetFontStyles() const;
-  FX_BOOL GetCharWidth(FX_WCHAR wUnicode, int32_t& iWidth, bool bCharCode);
-  int32_t GetGlyphIndex(FX_WCHAR wUnicode, FX_BOOL bCharCode = FALSE);
+  bool GetCharWidth(FX_WCHAR wUnicode, int32_t& iWidth, bool bCharCode);
+  int32_t GetGlyphIndex(FX_WCHAR wUnicode, bool bCharCode = false);
   int32_t GetAscent() const;
   int32_t GetDescent() const;
-  FX_BOOL GetCharBBox(FX_WCHAR wUnicode,
-                      CFX_Rect& bbox,
-                      FX_BOOL bCharCode = FALSE);
-  FX_BOOL GetBBox(CFX_Rect& bbox);
+  bool GetCharBBox(FX_WCHAR wUnicode, CFX_Rect& bbox, bool bCharCode = false);
+  bool GetBBox(CFX_Rect& bbox);
   int32_t GetItalicAngle() const;
   void Reset();
   CFGAS_GEFont* GetSubstFont(int32_t iGlyphIndex) const;
@@ -59,7 +57,7 @@ class CFGAS_GEFont {
   void SetFontProvider(CXFA_PDFFontMgr* pProvider) { m_pProvider = pProvider; }
 #if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
   void SetLogicalFontStyle(uint32_t dwLogFontStyle) {
-    m_bUseLogFontStyle = TRUE;
+    m_bUseLogFontStyle = true;
     m_dwLogFontStyle = dwLogFontStyle;
   }
 #endif
@@ -69,30 +67,30 @@ class CFGAS_GEFont {
   CFGAS_GEFont(CFGAS_GEFont* src, uint32_t dwFontStyles);
 
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
-  FX_BOOL LoadFontInternal(const FX_WCHAR* pszFontFamily,
-                           uint32_t dwFontStyles,
-                           uint16_t wCodePage);
-  FX_BOOL LoadFontInternal(const uint8_t* pBuffer, int32_t length);
-  FX_BOOL LoadFontInternal(IFX_Stream* pFontStream, FX_BOOL bSaveStream);
+  bool LoadFontInternal(const FX_WCHAR* pszFontFamily,
+                        uint32_t dwFontStyles,
+                        uint16_t wCodePage);
+  bool LoadFontInternal(const uint8_t* pBuffer, int32_t length);
+  bool LoadFontInternal(IFX_Stream* pFontStream, bool bSaveStream);
 #endif
-  FX_BOOL LoadFontInternal(CFX_Font* pExternalFont);
-  FX_BOOL LoadFontInternal(std::unique_ptr<CFX_Font> pInternalFont);
-  FX_BOOL InitFont();
-  FX_BOOL GetCharBBoxInternal(FX_WCHAR wUnicode,
-                              CFX_Rect& bbox,
-                              FX_BOOL bRecursive,
-                              FX_BOOL bCharCode = FALSE);
-  FX_BOOL GetCharWidthInternal(FX_WCHAR wUnicode,
-                               int32_t& iWidth,
-                               bool bRecursive,
-                               bool bCharCode);
+  bool LoadFontInternal(CFX_Font* pExternalFont);
+  bool LoadFontInternal(std::unique_ptr<CFX_Font> pInternalFont);
+  bool InitFont();
+  bool GetCharBBoxInternal(FX_WCHAR wUnicode,
+                           CFX_Rect& bbox,
+                           bool bRecursive,
+                           bool bCharCode = false);
+  bool GetCharWidthInternal(FX_WCHAR wUnicode,
+                            int32_t& iWidth,
+                            bool bRecursive,
+                            bool bCharCode);
   int32_t GetGlyphIndex(FX_WCHAR wUnicode,
-                        FX_BOOL bRecursive,
+                        bool bRecursive,
                         CFGAS_GEFont** ppFont,
-                        FX_BOOL bCharCode = FALSE);
+                        bool bCharCode = false);
 
 #if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
-  FX_BOOL m_bUseLogFontStyle;
+  bool m_bUseLogFontStyle;
   uint32_t m_dwLogFontStyle;
 #endif
   CFX_Font* m_pFont;

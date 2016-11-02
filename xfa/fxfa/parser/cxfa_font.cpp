@@ -70,13 +70,13 @@ void CXFA_Font::GetTypeface(CFX_WideStringC& wsTypeFace) {
   m_pNode->TryCData(XFA_ATTRIBUTE_Typeface, wsTypeFace);
 }
 
-FX_BOOL CXFA_Font::IsBold() {
+bool CXFA_Font::IsBold() {
   XFA_ATTRIBUTEENUM eAttr = XFA_ATTRIBUTEENUM_Normal;
   m_pNode->TryEnum(XFA_ATTRIBUTE_Weight, eAttr);
   return eAttr == XFA_ATTRIBUTEENUM_Bold;
 }
 
-FX_BOOL CXFA_Font::IsItalic() {
+bool CXFA_Font::IsItalic() {
   XFA_ATTRIBUTEENUM eAttr = XFA_ATTRIBUTEENUM_Normal;
   m_pNode->TryEnum(XFA_ATTRIBUTE_Posture, eAttr);
   return eAttr == XFA_ATTRIBUTEENUM_Italic;
@@ -89,5 +89,5 @@ void CXFA_Font::SetColor(FX_ARGB color) {
 
 FX_ARGB CXFA_Font::GetColor() {
   CXFA_Fill fill(m_pNode->GetChild(0, XFA_Element::Fill));
-  return fill ? fill.GetColor(TRUE) : 0xFF000000;
+  return fill ? fill.GetColor(true) : 0xFF000000;
 }

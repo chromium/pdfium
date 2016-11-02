@@ -99,21 +99,21 @@ class CFX_LCNumeric {
   FX_FLOAT GetFloat() const;
   double GetDouble() const;
   CFX_WideString ToString() const;
-  CFX_WideString ToString(int32_t nTreading, FX_BOOL bTrimTailZeros) const;
+  CFX_WideString ToString(int32_t nTreading, bool bTrimTailZeros) const;
 
   int64_t m_Integral;
   uint32_t m_Fractional;
   int32_t m_Exponent;
 };
 
-static FX_BOOL FX_WStringToNumeric(const CFX_WideString& wsValue,
-                                   CFX_LCNumeric& lcnum) {
+static bool FX_WStringToNumeric(const CFX_WideString& wsValue,
+                                CFX_LCNumeric& lcnum) {
   lcnum.m_Integral = 0;
   lcnum.m_Fractional = 0;
   lcnum.m_Exponent = 0;
 
   if (wsValue.IsEmpty())
-    return FALSE;
+    return false;
 
   const int32_t nIntegralMaxLen = 17;
   int32_t cc = 0;
@@ -125,7 +125,7 @@ static FX_BOOL FX_WStringToNumeric(const CFX_WideString& wsValue,
     cc++;
 
   if (cc >= len)
-    return FALSE;
+    return false;
 
   if (str[cc] == '+') {
     cc++;
@@ -141,7 +141,7 @@ static FX_BOOL FX_WStringToNumeric(const CFX_WideString& wsValue,
     if (!FXSYS_isDecimalDigit(str[cc])) {
       if ((str[cc] == 'E' || str[cc] == 'e'))
         break;
-      return FALSE;
+      return false;
     }
     if (nIntegralLen < nIntegralMaxLen) {
       lcnum.m_Integral = lcnum.m_Integral * 10 + str[cc] - '0';
@@ -166,7 +166,7 @@ static FX_BOOL FX_WStringToNumeric(const CFX_WideString& wsValue,
       if (!FXSYS_isDecimalDigit(str[cc])) {
         if ((str[cc] == 'E' || str[cc] == 'e'))
           break;
-        return FALSE;
+        return false;
       }
       fraction += FXSYS_FractionalScale(scale, FXSYS_toDecimalDigit(str[cc]));
       scale++;
@@ -186,13 +186,13 @@ static FX_BOOL FX_WStringToNumeric(const CFX_WideString& wsValue,
     }
     while (cc < len) {
       if (FXSYS_isDecimalDigit(str[cc]))
-        return FALSE;
+        return false;
       lcnum.m_Exponent = lcnum.m_Exponent * 10 + str[cc] - '0';
       cc++;
     }
     lcnum.m_Exponent = bExpSign ? -lcnum.m_Exponent : lcnum.m_Exponent;
   }
-  return TRUE;
+  return true;
 }
 
 CFX_LCNumeric::CFX_LCNumeric() {
@@ -242,11 +242,11 @@ double CFX_LCNumeric::GetDouble() const {
 }
 
 CFX_WideString CFX_LCNumeric::ToString() const {
-  return ToString(8, TRUE);
+  return ToString(8, true);
 }
 
 CFX_WideString CFX_LCNumeric::ToString(int32_t nTreading,
-                                       FX_BOOL bTrimTailZeros) const {
+                                       bool bTrimTailZeros) const {
   CFX_WideString wsFormat;
   wsFormat.Format(L"%%.%df", nTreading);
   CFX_WideString wsResult;
@@ -258,7 +258,7 @@ CFX_WideString CFX_LCNumeric::ToString(int32_t nTreading,
   return wsResult;
 }
 
-CFX_FormatString::CFX_FormatString(IFX_LocaleMgr* pLocaleMgr, FX_BOOL bUseLCID)
+CFX_FormatString::CFX_FormatString(IFX_LocaleMgr* pLocaleMgr, bool bUseLCID)
     : m_pLocaleMgr(pLocaleMgr), m_bUseLCID(bUseLCID) {}
 CFX_FormatString::~CFX_FormatString() {}
 void CFX_FormatString::SplitFormatString(const CFX_WideString& wsFormatString,
@@ -267,8 +267,8 @@ void CFX_FormatString::SplitFormatString(const CFX_WideString& wsFormatString,
   const FX_WCHAR* pStr = wsFormatString.c_str();
   const FX_WCHAR* pToken = pStr;
   const FX_WCHAR* pEnd = pStr + iStrLen;
-  FX_BOOL iQuote = FALSE;
-  while (TRUE) {
+  bool iQuote = false;
+  while (true) {
     if (pStr >= pEnd) {
       CFX_WideString sub(pToken, pStr - pToken);
       wsPatterns.Add(sub);
@@ -376,7 +376,7 @@ FX_LOCALECATEGORY CFX_FormatString::GetCategory(
   int32_t ccf = 0;
   int32_t iLenf = wsPattern.GetLength();
   const FX_WCHAR* pStr = wsPattern.c_str();
-  FX_BOOL bBraceOpen = FALSE;
+  bool bBraceOpen = false;
   CFX_WideStringC wsConstChars(gs_wsConstChars);
   while (ccf < iLenf) {
     if (pStr[ccf] == '\'') {
@@ -384,7 +384,7 @@ FX_LOCALECATEGORY CFX_FormatString::GetCategory(
     } else if (!bBraceOpen && wsConstChars.Find(pStr[ccf]) == -1) {
       CFX_WideString wsCategory(pStr[ccf]);
       ccf++;
-      while (TRUE) {
+      while (true) {
         if (ccf == iLenf) {
           return eCategory;
         }
@@ -392,7 +392,7 @@ FX_LOCALECATEGORY CFX_FormatString::GetCategory(
           break;
         }
         if (pStr[ccf] == '{') {
-          bBraceOpen = TRUE;
+          bBraceOpen = true;
           break;
         }
         wsCategory += pStr[ccf];
@@ -421,7 +421,7 @@ FX_LOCALECATEGORY CFX_FormatString::GetCategory(
         return FX_LOCALECATEGORY_Null;
       }
     } else if (pStr[ccf] == '}') {
-      bBraceOpen = FALSE;
+      bBraceOpen = false;
     }
     ccf++;
   }
@@ -464,7 +464,7 @@ IFX_Locale* CFX_FormatString::GetTextFormat(const CFX_WideString& wsPattern,
   int32_t ccf = 0;
   int32_t iLenf = wsPattern.GetLength();
   const FX_WCHAR* pStr = wsPattern.c_str();
-  FX_BOOL bBrackOpen = FALSE;
+  bool bBrackOpen = false;
   CFX_WideStringC wsConstChars(gs_wsConstChars);
   while (ccf < iLenf) {
     if (pStr[ccf] == '\'') {
@@ -491,7 +491,7 @@ IFX_Locale* CFX_FormatString::GetTextFormat(const CFX_WideString& wsPattern,
           }
           pLocale = GetPatternLocale(wsLCID);
         } else if (pStr[ccf] == '{') {
-          bBrackOpen = TRUE;
+          bBrackOpen = true;
           break;
         }
         ccf++;
@@ -521,8 +521,8 @@ IFX_Locale* CFX_FormatString::GetNumericFormat(const CFX_WideString& wsPattern,
   int32_t ccf = 0;
   int32_t iLenf = wsPattern.GetLength();
   const FX_WCHAR* pStr = wsPattern.c_str();
-  FX_BOOL bFindDot = FALSE;
-  FX_BOOL bBrackOpen = FALSE;
+  bool bFindDot = false;
+  bool bBrackOpen = false;
   CFX_WideStringC wsConstChars(gs_wsConstChars);
   while (ccf < iLenf) {
     if (pStr[ccf] == '\'') {
@@ -538,7 +538,7 @@ IFX_Locale* CFX_FormatString::GetNumericFormat(const CFX_WideString& wsPattern,
         ccf++;
       }
       if (wsCategory != FX_WSTRC(L"num")) {
-        bBrackOpen = TRUE;
+        bBrackOpen = true;
         ccf = 0;
         continue;
       }
@@ -551,7 +551,7 @@ IFX_Locale* CFX_FormatString::GetNumericFormat(const CFX_WideString& wsPattern,
           }
           pLocale = GetPatternLocale(wsLCID);
         } else if (pStr[ccf] == '{') {
-          bBrackOpen = TRUE;
+          bBrackOpen = true;
           break;
         } else if (pStr[ccf] == '.') {
           CFX_WideString wsSubCategory;
@@ -578,7 +578,7 @@ IFX_Locale* CFX_FormatString::GetNumericFormat(const CFX_WideString& wsPattern,
           iDotIndex = wsSubCategory.Find('.');
           if (iDotIndex > 0) {
             iDotIndex += wsPurgePattern.GetLength();
-            bFindDot = TRUE;
+            bFindDot = true;
             dwStyle |= FX_NUMSTYLE_DotVorv;
           }
           wsPurgePattern += wsSubCategory;
@@ -600,7 +600,7 @@ IFX_Locale* CFX_FormatString::GetNumericFormat(const CFX_WideString& wsPattern,
     }
     if (!bFindDot) {
       if (pStr[ccf] == '.' || pStr[ccf] == 'V' || pStr[ccf] == 'v') {
-        bFindDot = TRUE;
+        bFindDot = true;
         iDotIndex = wsPurgePattern.GetLength() - 1;
         dwStyle |= FX_NUMSTYLE_DotVorv;
       }
@@ -615,9 +615,9 @@ IFX_Locale* CFX_FormatString::GetNumericFormat(const CFX_WideString& wsPattern,
   }
   return pLocale;
 }
-static FX_BOOL FX_GetNumericDotIndex(const CFX_WideString& wsNum,
-                                     const CFX_WideString& wsDotSymbol,
-                                     int32_t& iDotIndex) {
+static bool FX_GetNumericDotIndex(const CFX_WideString& wsNum,
+                                  const CFX_WideString& wsDotSymbol,
+                                  int32_t& iDotIndex) {
   int32_t ccf = 0;
   int32_t iLenf = wsNum.GetLength();
   const FX_WCHAR* pStr = wsNum.c_str();
@@ -628,28 +628,28 @@ static FX_BOOL FX_GetNumericDotIndex(const CFX_WideString& wsNum,
     } else if (ccf + iLenDot <= iLenf &&
                !FXSYS_wcsncmp(pStr + ccf, wsDotSymbol.c_str(), iLenDot)) {
       iDotIndex = ccf;
-      return TRUE;
+      return true;
     }
     ccf++;
   }
   iDotIndex = wsNum.Find('.');
   if (iDotIndex < 0) {
     iDotIndex = iLenf;
-    return FALSE;
+    return false;
   }
-  return TRUE;
+  return true;
 }
-FX_BOOL CFX_FormatString::ParseText(const CFX_WideString& wsSrcText,
-                                    const CFX_WideString& wsPattern,
-                                    CFX_WideString& wsValue) {
+bool CFX_FormatString::ParseText(const CFX_WideString& wsSrcText,
+                                 const CFX_WideString& wsPattern,
+                                 CFX_WideString& wsValue) {
   wsValue.clear();
   if (wsSrcText.IsEmpty() || wsPattern.IsEmpty()) {
-    return FALSE;
+    return false;
   }
   CFX_WideString wsTextFormat;
   GetTextFormat(wsPattern, FX_WSTRC(L"text"), wsTextFormat);
   if (wsTextFormat.IsEmpty()) {
-    return FALSE;
+    return false;
   }
   int32_t iText = 0, iPattern = 0;
   const FX_WCHAR* pStrText = wsSrcText.c_str();
@@ -665,7 +665,7 @@ FX_BOOL CFX_FormatString::ParseText(const CFX_WideString& wsSrcText,
         if (iText + iLiteralLen > iLenText ||
             FXSYS_wcsncmp(pStrText + iText, wsLiteral.c_str(), iLiteralLen)) {
           wsValue = wsSrcText;
-          return FALSE;
+          return false;
         }
         iText += iLiteralLen;
         iPattern++;
@@ -702,7 +702,7 @@ FX_BOOL CFX_FormatString::ParseText(const CFX_WideString& wsSrcText,
       default:
         if (pStrPattern[iPattern] != pStrText[iText]) {
           wsValue = wsSrcText;
-          return FALSE;
+          return false;
         }
         iPattern++;
         iText++;
@@ -711,12 +711,12 @@ FX_BOOL CFX_FormatString::ParseText(const CFX_WideString& wsSrcText,
   }
   return iPattern == iLenPattern && iText == iLenText;
 }
-FX_BOOL CFX_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
-                                   const CFX_WideString& wsPattern,
-                                   FX_FLOAT& fValue) {
+bool CFX_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
+                                const CFX_WideString& wsPattern,
+                                FX_FLOAT& fValue) {
   fValue = 0.0f;
   if (wsSrcNum.IsEmpty() || wsPattern.IsEmpty()) {
-    return FALSE;
+    return false;
   }
   int32_t dot_index_f = -1;
   uint32_t dwFormatStyle = 0;
@@ -724,7 +724,7 @@ FX_BOOL CFX_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
   IFX_Locale* pLocale =
       GetNumericFormat(wsPattern, dot_index_f, dwFormatStyle, wsNumFormat);
   if (!pLocale || wsNumFormat.IsEmpty()) {
-    return FALSE;
+    return false;
   }
   int32_t iExponent = 0;
   CFX_WideString wsDotSymbol;
@@ -742,15 +742,15 @@ FX_BOOL CFX_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
   int lenf = wsNumFormat.GetLength();
   double dbRetValue = 0;
   double coeff = 1;
-  FX_BOOL bHavePercentSymbol = FALSE;
-  FX_BOOL bNeg = FALSE;
-  FX_BOOL bReverseParse = FALSE;
+  bool bHavePercentSymbol = false;
+  bool bNeg = false;
+  bool bReverseParse = false;
   int32_t dot_index = 0;
   if (!FX_GetNumericDotIndex(wsSrcNum, wsDotSymbol, dot_index) &&
       (dwFormatStyle & FX_NUMSTYLE_DotVorv)) {
-    bReverseParse = TRUE;
+    bReverseParse = true;
   }
-  bReverseParse = FALSE;
+  bReverseParse = false;
   if (bReverseParse) {
     ccf = lenf - 1;
     cc = len - 1;
@@ -762,7 +762,7 @@ FX_BOOL CFX_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
           cc -= iLiteralLen - 1;
           if (cc < 0 ||
               FXSYS_wcsncmp(str + cc, wsLiteral.c_str(), iLiteralLen)) {
-            return FALSE;
+            return false;
           }
           cc--;
           ccf--;
@@ -770,7 +770,7 @@ FX_BOOL CFX_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
         }
         case '9':
           if (!FXSYS_isDecimalDigit(str[cc])) {
-            return FALSE;
+            return false;
           }
           dbRetValue = dbRetValue * coeff + (str[cc] - '0') * 0.1;
           coeff *= 0.1;
@@ -799,10 +799,10 @@ FX_BOOL CFX_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
           } else {
             cc -= iMinusLen - 1;
             if (cc < 0 || FXSYS_wcsncmp(str + cc, wsMinus.c_str(), iMinusLen)) {
-              return FALSE;
+              return false;
             }
             cc--;
-            bNeg = TRUE;
+            bNeg = true;
           }
           ccf--;
           break;
@@ -812,18 +812,18 @@ FX_BOOL CFX_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
           } else {
             cc -= iMinusLen - 1;
             if (cc < 0 || FXSYS_wcsncmp(str + cc, wsMinus.c_str(), iMinusLen)) {
-              return FALSE;
+              return false;
             }
             cc--;
-            bNeg = TRUE;
+            bNeg = true;
           }
           ccf--;
           break;
         case 'E': {
           if (cc >= dot_index) {
-            return FALSE;
+            return false;
           }
-          FX_BOOL bExpSign = FALSE;
+          bool bExpSign = false;
           while (cc >= 0) {
             if (str[cc] == 'E' || str[cc] == 'e') {
               break;
@@ -838,10 +838,10 @@ FX_BOOL CFX_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
             } else if (cc - iMinusLen + 1 > 0 &&
                        !FXSYS_wcsncmp(str + (cc - iMinusLen + 1),
                                       wsMinus.c_str(), iMinusLen)) {
-              bExpSign = TRUE;
+              bExpSign = true;
               cc -= iMinusLen;
             } else {
-              return FALSE;
+              return false;
             }
           }
           cc--;
@@ -855,7 +855,7 @@ FX_BOOL CFX_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
           int32_t iSymbolLen = wsSymbol.GetLength();
           cc -= iSymbolLen - 1;
           if (cc < 0 || FXSYS_wcsncmp(str + cc, wsSymbol.c_str(), iSymbolLen)) {
-            return FALSE;
+            return false;
           }
           cc--;
           ccf--;
@@ -863,7 +863,7 @@ FX_BOOL CFX_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
         case 'r':
           if (ccf - 1 >= 0 && strf[ccf - 1] == 'c') {
             if (str[cc] == 'R' && cc - 1 >= 0 && str[cc - 1] == 'C') {
-              bNeg = TRUE;
+              bNeg = true;
               cc -= 2;
             }
             ccf -= 2;
@@ -876,7 +876,7 @@ FX_BOOL CFX_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
             if (str[cc] == ' ') {
               cc++;
             } else if (str[cc] == 'R' && cc - 1 >= 0 && str[cc - 1] == 'C') {
-              bNeg = TRUE;
+              bNeg = true;
               cc -= 2;
             }
             ccf -= 2;
@@ -887,7 +887,7 @@ FX_BOOL CFX_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
         case 'b':
           if (ccf - 1 >= 0 && strf[ccf - 1] == 'd') {
             if (str[cc] == 'B' && cc - 1 >= 0 && str[cc - 1] == 'D') {
-              bNeg = TRUE;
+              bNeg = true;
               cc -= 2;
             }
             ccf -= 2;
@@ -900,7 +900,7 @@ FX_BOOL CFX_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
             if (str[cc] == ' ') {
               cc++;
             } else if (str[cc] == 'B' && cc - 1 >= 0 && str[cc - 1] == 'D') {
-              bNeg = TRUE;
+              bNeg = true;
               cc -= 2;
             }
             ccf -= 2;
@@ -911,7 +911,7 @@ FX_BOOL CFX_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
         case '.':
         case 'V':
         case 'v':
-          return FALSE;
+          return false;
         case '%': {
           CFX_WideString wsSymbol;
           pLocale->GetNumbericSymbol(FX_LOCALENUMSYMBOL_Percent, wsSymbol);
@@ -919,11 +919,11 @@ FX_BOOL CFX_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
           cc -= iSysmbolLen - 1;
           if (cc < 0 ||
               FXSYS_wcsncmp(str + cc, wsSymbol.c_str(), iSysmbolLen)) {
-            return FALSE;
+            return false;
           }
           cc--;
           ccf--;
-          bHavePercentSymbol = TRUE;
+          bHavePercentSymbol = true;
         } break;
         case '8':
           while (ccf < lenf && strf[ccf] == '8') {
@@ -950,25 +950,25 @@ FX_BOOL CFX_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
         } break;
         case '(':
           if (str[cc] == L'(') {
-            bNeg = TRUE;
+            bNeg = true;
           } else if (str[cc] != L' ') {
-            return FALSE;
+            return false;
           }
           cc--;
           ccf--;
           break;
         case ')':
           if (str[cc] == L')') {
-            bNeg = TRUE;
+            bNeg = true;
           } else if (str[cc] != L' ') {
-            return FALSE;
+            return false;
           }
           cc--;
           ccf--;
           break;
         default:
           if (strf[ccf] != str[cc]) {
-            return FALSE;
+            return false;
           }
           cc--;
           ccf--;
@@ -986,7 +986,7 @@ FX_BOOL CFX_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
         int32_t iLiteralLen = wsLiteral.GetLength();
         cc -= iLiteralLen - 1;
         if (cc < 0 || FXSYS_wcsncmp(str + cc, wsLiteral.c_str(), iLiteralLen)) {
-          return FALSE;
+          return false;
         }
         cc--;
         ccf--;
@@ -994,7 +994,7 @@ FX_BOOL CFX_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
       }
       case '9':
         if (!FXSYS_isDecimalDigit(str[cc])) {
-          return FALSE;
+          return false;
         }
         dbRetValue = dbRetValue + (str[cc] - '0') * coeff;
         coeff *= 10;
@@ -1027,10 +1027,10 @@ FX_BOOL CFX_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
         } else {
           cc -= iMinusLen - 1;
           if (cc < 0 || FXSYS_wcsncmp(str + cc, wsMinus.c_str(), iMinusLen)) {
-            return FALSE;
+            return false;
           }
           cc--;
-          bNeg = TRUE;
+          bNeg = true;
         }
         ccf--;
         break;
@@ -1040,18 +1040,18 @@ FX_BOOL CFX_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
         } else {
           cc -= iMinusLen - 1;
           if (cc < 0 || FXSYS_wcsncmp(str + cc, wsMinus.c_str(), iMinusLen)) {
-            return FALSE;
+            return false;
           }
           cc--;
-          bNeg = TRUE;
+          bNeg = true;
         }
         ccf--;
         break;
       case 'E': {
         if (cc >= dot_index) {
-          return FALSE;
+          return false;
         }
-        FX_BOOL bExpSign = FALSE;
+        bool bExpSign = false;
         while (cc >= 0) {
           if (str[cc] == 'E' || str[cc] == 'e') {
             break;
@@ -1066,10 +1066,10 @@ FX_BOOL CFX_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
           } else if (cc - iMinusLen + 1 > 0 &&
                      !FXSYS_wcsncmp(str + (cc - iMinusLen + 1), wsMinus.c_str(),
                                     iMinusLen)) {
-            bExpSign = TRUE;
+            bExpSign = true;
             cc -= iMinusLen;
           } else {
-            return FALSE;
+            return false;
           }
         }
         cc--;
@@ -1082,7 +1082,7 @@ FX_BOOL CFX_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
         int32_t iSymbolLen = wsSymbol.GetLength();
         cc -= iSymbolLen - 1;
         if (cc < 0 || FXSYS_wcsncmp(str + cc, wsSymbol.c_str(), iSymbolLen)) {
-          return FALSE;
+          return false;
         }
         cc--;
         ccf--;
@@ -1090,7 +1090,7 @@ FX_BOOL CFX_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
       case 'r':
         if (ccf - 1 >= 0 && strf[ccf - 1] == 'c') {
           if (str[cc] == 'R' && cc - 1 >= 0 && str[cc - 1] == 'C') {
-            bNeg = TRUE;
+            bNeg = true;
             cc -= 2;
           }
           ccf -= 2;
@@ -1103,7 +1103,7 @@ FX_BOOL CFX_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
           if (str[cc] == ' ') {
             cc++;
           } else if (str[cc] == 'R' && cc - 1 >= 0 && str[cc - 1] == 'C') {
-            bNeg = TRUE;
+            bNeg = true;
             cc -= 2;
           }
           ccf -= 2;
@@ -1114,7 +1114,7 @@ FX_BOOL CFX_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
       case 'b':
         if (ccf - 1 >= 0 && strf[ccf - 1] == 'd') {
           if (str[cc] == 'B' && cc - 1 >= 0 && str[cc - 1] == 'D') {
-            bNeg = TRUE;
+            bNeg = true;
             cc -= 2;
           }
           ccf -= 2;
@@ -1127,7 +1127,7 @@ FX_BOOL CFX_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
           if (str[cc] == ' ') {
             cc++;
           } else if (str[cc] == 'B' && cc - 1 >= 0 && str[cc - 1] == 'D') {
-            bNeg = TRUE;
+            bNeg = true;
             cc -= 2;
           }
           ccf -= 2;
@@ -1138,21 +1138,21 @@ FX_BOOL CFX_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
       case '.':
       case 'V':
       case 'v':
-        return FALSE;
+        return false;
       case '%': {
         CFX_WideString wsSymbol;
         pLocale->GetNumbericSymbol(FX_LOCALENUMSYMBOL_Percent, wsSymbol);
         int32_t iSysmbolLen = wsSymbol.GetLength();
         cc -= iSysmbolLen - 1;
         if (cc < 0 || FXSYS_wcsncmp(str + cc, wsSymbol.c_str(), iSysmbolLen)) {
-          return FALSE;
+          return false;
         }
         cc--;
         ccf--;
-        bHavePercentSymbol = TRUE;
+        bHavePercentSymbol = true;
       } break;
       case '8':
-        return FALSE;
+        return false;
       case ',': {
         if (cc >= 0) {
           cc -= iGroupLen - 1;
@@ -1167,32 +1167,32 @@ FX_BOOL CFX_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
       } break;
       case '(':
         if (str[cc] == L'(') {
-          bNeg = TRUE;
+          bNeg = true;
         } else if (str[cc] != L' ') {
-          return FALSE;
+          return false;
         }
         cc--;
         ccf--;
         break;
       case ')':
         if (str[cc] == L')') {
-          bNeg = TRUE;
+          bNeg = true;
         } else if (str[cc] != L' ') {
-          return FALSE;
+          return false;
         }
         cc--;
         ccf--;
         break;
       default:
         if (strf[ccf] != str[cc]) {
-          return FALSE;
+          return false;
         }
         cc--;
         ccf--;
     }
   }
   if (cc >= 0) {
-    return FALSE;
+    return false;
   }
   if (!bReverseParse) {
     ccf = dot_index_f + 1;
@@ -1205,7 +1205,7 @@ FX_BOOL CFX_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
           int32_t iLiteralLen = wsLiteral.GetLength();
           if (cc + iLiteralLen > len ||
               FXSYS_wcsncmp(str + cc, wsLiteral.c_str(), iLiteralLen)) {
-            return FALSE;
+            return false;
           }
           cc += iLiteralLen;
           ccf++;
@@ -1213,7 +1213,7 @@ FX_BOOL CFX_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
         }
         case '9':
           if (!FXSYS_isDecimalDigit(str[cc])) {
-            return FALSE;
+            return false;
           }
           {
             dbRetValue = dbRetValue + (str[cc] - '0') * coeff;
@@ -1248,9 +1248,9 @@ FX_BOOL CFX_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
           } else {
             if (cc + iMinusLen > len ||
                 FXSYS_wcsncmp(str + cc, wsMinus.c_str(), iMinusLen)) {
-              return FALSE;
+              return false;
             }
-            bNeg = TRUE;
+            bNeg = true;
             cc += iMinusLen;
           }
           ccf++;
@@ -1261,24 +1261,24 @@ FX_BOOL CFX_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
           } else {
             if (cc + iMinusLen > len ||
                 FXSYS_wcsncmp(str + cc, wsMinus.c_str(), iMinusLen)) {
-              return FALSE;
+              return false;
             }
-            bNeg = TRUE;
+            bNeg = true;
             cc += iMinusLen;
           }
           ccf++;
           break;
         case 'E': {
           if (cc >= len || (str[cc] != 'E' && str[cc] != 'e')) {
-            return FALSE;
+            return false;
           }
-          FX_BOOL bExpSign = FALSE;
+          bool bExpSign = false;
           cc++;
           if (cc < len) {
             if (str[cc] == '+') {
               cc++;
             } else if (str[cc] == '-') {
-              bExpSign = TRUE;
+              bExpSign = true;
               cc++;
             }
           }
@@ -1299,7 +1299,7 @@ FX_BOOL CFX_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
           int32_t iSymbolLen = wsSymbol.GetLength();
           if (cc + iSymbolLen > len ||
               FXSYS_wcsncmp(str + cc, wsSymbol.c_str(), iSymbolLen)) {
-            return FALSE;
+            return false;
           }
           cc += iSymbolLen;
           ccf++;
@@ -1307,7 +1307,7 @@ FX_BOOL CFX_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
         case 'c':
           if (ccf + 1 < lenf && strf[ccf + 1] == 'r') {
             if (str[cc] == 'C' && cc + 1 < len && str[cc + 1] == 'R') {
-              bNeg = TRUE;
+              bNeg = true;
               cc += 2;
             }
             ccf += 2;
@@ -1318,7 +1318,7 @@ FX_BOOL CFX_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
             if (str[cc] == ' ') {
               cc++;
             } else if (str[cc] == 'C' && cc + 1 < len && str[cc + 1] == 'R') {
-              bNeg = TRUE;
+              bNeg = true;
               cc += 2;
             }
             ccf += 2;
@@ -1327,7 +1327,7 @@ FX_BOOL CFX_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
         case 'd':
           if (ccf + 1 < lenf && strf[ccf + 1] == 'b') {
             if (str[cc] == 'D' && cc + 1 < len && str[cc + 1] == 'B') {
-              bNeg = TRUE;
+              bNeg = true;
               cc += 2;
             }
             ccf += 2;
@@ -1338,7 +1338,7 @@ FX_BOOL CFX_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
             if (str[cc] == ' ') {
               cc++;
             } else if (str[cc] == 'D' && cc + 1 < len && str[cc + 1] == 'B') {
-              bNeg = TRUE;
+              bNeg = true;
               cc += 2;
             }
             ccf += 2;
@@ -1347,7 +1347,7 @@ FX_BOOL CFX_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
         case '.':
         case 'V':
         case 'v':
-          return FALSE;
+          return false;
         case '%': {
           CFX_WideString wsSymbol;
           pLocale->GetNumbericSymbol(FX_LOCALENUMSYMBOL_Percent, wsSymbol);
@@ -1357,7 +1357,7 @@ FX_BOOL CFX_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
             cc += iSysmbolLen;
           }
           ccf++;
-          bHavePercentSymbol = TRUE;
+          bHavePercentSymbol = true;
         } break;
         case '8': {
           while (ccf < lenf && strf[ccf] == '8') {
@@ -1378,32 +1378,32 @@ FX_BOOL CFX_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
         } break;
         case '(':
           if (str[cc] == L'(') {
-            bNeg = TRUE;
+            bNeg = true;
           } else if (str[cc] != L' ') {
-            return FALSE;
+            return false;
           }
           cc++;
           ccf++;
           break;
         case ')':
           if (str[cc] == L')') {
-            bNeg = TRUE;
+            bNeg = true;
           } else if (str[cc] != L' ') {
-            return FALSE;
+            return false;
           }
           cc++;
           ccf++;
           break;
         default:
           if (strf[ccf] != str[cc]) {
-            return FALSE;
+            return false;
           }
           cc++;
           ccf++;
       }
     }
     if (cc != len) {
-      return FALSE;
+      return false;
     }
   }
   if (iExponent) {
@@ -1416,15 +1416,15 @@ FX_BOOL CFX_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
     dbRetValue = -dbRetValue;
   }
   fValue = (FX_FLOAT)dbRetValue;
-  return TRUE;
+  return true;
 }
 
-FX_BOOL CFX_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
-                                   const CFX_WideString& wsPattern,
-                                   CFX_WideString& wsValue) {
+bool CFX_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
+                                const CFX_WideString& wsPattern,
+                                CFX_WideString& wsValue) {
   wsValue.clear();
   if (wsSrcNum.IsEmpty() || wsPattern.IsEmpty()) {
-    return FALSE;
+    return false;
   }
   int32_t dot_index_f = -1;
   uint32_t dwFormatStyle = 0;
@@ -1432,7 +1432,7 @@ FX_BOOL CFX_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
   IFX_Locale* pLocale =
       GetNumericFormat(wsPattern, dot_index_f, dwFormatStyle, wsNumFormat);
   if (!pLocale || wsNumFormat.IsEmpty()) {
-    return FALSE;
+    return false;
   }
   int32_t iExponent = 0;
   CFX_WideString wsDotSymbol;
@@ -1448,15 +1448,15 @@ FX_BOOL CFX_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
   int len = wsSrcNum.GetLength();
   const FX_WCHAR* strf = wsNumFormat.c_str();
   int lenf = wsNumFormat.GetLength();
-  FX_BOOL bHavePercentSymbol = FALSE;
-  FX_BOOL bNeg = FALSE;
-  FX_BOOL bReverseParse = FALSE;
+  bool bHavePercentSymbol = false;
+  bool bNeg = false;
+  bool bReverseParse = false;
   int32_t dot_index = 0;
   if (!FX_GetNumericDotIndex(wsSrcNum, wsDotSymbol, dot_index) &&
       (dwFormatStyle & FX_NUMSTYLE_DotVorv)) {
-    bReverseParse = TRUE;
+    bReverseParse = true;
   }
-  bReverseParse = FALSE;
+  bReverseParse = false;
   ccf = dot_index_f - 1;
   cc = dot_index - 1;
   while (ccf >= 0 && cc >= 0) {
@@ -1466,7 +1466,7 @@ FX_BOOL CFX_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
         int32_t iLiteralLen = wsLiteral.GetLength();
         cc -= iLiteralLen - 1;
         if (cc < 0 || FXSYS_wcsncmp(str + cc, wsLiteral.c_str(), iLiteralLen)) {
-          return FALSE;
+          return false;
         }
         cc--;
         ccf--;
@@ -1474,7 +1474,7 @@ FX_BOOL CFX_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
       }
       case '9':
         if (!FXSYS_isDecimalDigit(str[cc])) {
-          return FALSE;
+          return false;
         }
         wsValue = str[cc] + wsValue;
         cc--;
@@ -1504,10 +1504,10 @@ FX_BOOL CFX_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
         } else {
           cc -= iMinusLen - 1;
           if (cc < 0 || FXSYS_wcsncmp(str + cc, wsMinus.c_str(), iMinusLen)) {
-            return FALSE;
+            return false;
           }
           cc--;
-          bNeg = TRUE;
+          bNeg = true;
         }
         ccf--;
         break;
@@ -1517,18 +1517,18 @@ FX_BOOL CFX_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
         } else {
           cc -= iMinusLen - 1;
           if (cc < 0 || FXSYS_wcsncmp(str + cc, wsMinus.c_str(), iMinusLen)) {
-            return FALSE;
+            return false;
           }
           cc--;
-          bNeg = TRUE;
+          bNeg = true;
         }
         ccf--;
         break;
       case 'E': {
         if (cc >= dot_index) {
-          return FALSE;
+          return false;
         }
-        FX_BOOL bExpSign = FALSE;
+        bool bExpSign = false;
         while (cc >= 0) {
           if (str[cc] == 'E' || str[cc] == 'e') {
             break;
@@ -1543,10 +1543,10 @@ FX_BOOL CFX_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
           } else if (cc - iMinusLen + 1 > 0 &&
                      !FXSYS_wcsncmp(str + (cc - iMinusLen + 1), wsMinus.c_str(),
                                     iMinusLen)) {
-            bExpSign = TRUE;
+            bExpSign = true;
             cc -= iMinusLen;
           } else {
-            return FALSE;
+            return false;
           }
         }
         cc--;
@@ -1559,7 +1559,7 @@ FX_BOOL CFX_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
         int32_t iSymbolLen = wsSymbol.GetLength();
         cc -= iSymbolLen - 1;
         if (cc < 0 || FXSYS_wcsncmp(str + cc, wsSymbol.c_str(), iSymbolLen)) {
-          return FALSE;
+          return false;
         }
         cc--;
         ccf--;
@@ -1567,7 +1567,7 @@ FX_BOOL CFX_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
       case 'r':
         if (ccf - 1 >= 0 && strf[ccf - 1] == 'c') {
           if (str[cc] == 'R' && cc - 1 >= 0 && str[cc - 1] == 'C') {
-            bNeg = TRUE;
+            bNeg = true;
             cc -= 2;
           }
           ccf -= 2;
@@ -1580,7 +1580,7 @@ FX_BOOL CFX_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
           if (str[cc] == ' ') {
             cc++;
           } else if (str[cc] == 'R' && cc - 1 >= 0 && str[cc - 1] == 'C') {
-            bNeg = TRUE;
+            bNeg = true;
             cc -= 2;
           }
           ccf -= 2;
@@ -1591,7 +1591,7 @@ FX_BOOL CFX_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
       case 'b':
         if (ccf - 1 >= 0 && strf[ccf - 1] == 'd') {
           if (str[cc] == 'B' && cc - 1 >= 0 && str[cc - 1] == 'D') {
-            bNeg = TRUE;
+            bNeg = true;
             cc -= 2;
           }
           ccf -= 2;
@@ -1604,7 +1604,7 @@ FX_BOOL CFX_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
           if (str[cc] == ' ') {
             cc++;
           } else if (str[cc] == 'B' && cc - 1 >= 0 && str[cc - 1] == 'D') {
-            bNeg = TRUE;
+            bNeg = true;
             cc -= 2;
           }
           ccf -= 2;
@@ -1615,21 +1615,21 @@ FX_BOOL CFX_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
       case '.':
       case 'V':
       case 'v':
-        return FALSE;
+        return false;
       case '%': {
         CFX_WideString wsSymbol;
         pLocale->GetNumbericSymbol(FX_LOCALENUMSYMBOL_Percent, wsSymbol);
         int32_t iSysmbolLen = wsSymbol.GetLength();
         cc -= iSysmbolLen - 1;
         if (cc < 0 || FXSYS_wcsncmp(str + cc, wsSymbol.c_str(), iSysmbolLen)) {
-          return FALSE;
+          return false;
         }
         cc--;
         ccf--;
-        bHavePercentSymbol = TRUE;
+        bHavePercentSymbol = true;
       } break;
       case '8':
-        return FALSE;
+        return false;
       case ',': {
         if (cc >= 0) {
           cc -= iGroupLen - 1;
@@ -1644,25 +1644,25 @@ FX_BOOL CFX_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
       } break;
       case '(':
         if (str[cc] == L'(') {
-          bNeg = TRUE;
+          bNeg = true;
         } else if (str[cc] != L' ') {
-          return FALSE;
+          return false;
         }
         cc--;
         ccf--;
         break;
       case ')':
         if (str[cc] == L')') {
-          bNeg = TRUE;
+          bNeg = true;
         } else if (str[cc] != L' ') {
-          return FALSE;
+          return false;
         }
         cc--;
         ccf--;
         break;
       default:
         if (strf[ccf] != str[cc]) {
-          return FALSE;
+          return false;
         }
         cc--;
         ccf--;
@@ -1670,11 +1670,11 @@ FX_BOOL CFX_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
   }
   if (cc >= 0) {
     if (str[cc] == '-') {
-      bNeg = TRUE;
+      bNeg = true;
       cc--;
     }
     if (cc >= 0) {
-      return FALSE;
+      return false;
     }
   }
   if (dot_index < len && (dwFormatStyle & FX_NUMSTYLE_DotVorv)) {
@@ -1690,7 +1690,7 @@ FX_BOOL CFX_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
           int32_t iLiteralLen = wsLiteral.GetLength();
           if (cc + iLiteralLen > len ||
               FXSYS_wcsncmp(str + cc, wsLiteral.c_str(), iLiteralLen)) {
-            return FALSE;
+            return false;
           }
           cc += iLiteralLen;
           ccf++;
@@ -1698,7 +1698,7 @@ FX_BOOL CFX_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
         }
         case '9':
           if (!FXSYS_isDecimalDigit(str[cc])) {
-            return FALSE;
+            return false;
           }
           { wsValue += str[cc]; }
           cc++;
@@ -1728,9 +1728,9 @@ FX_BOOL CFX_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
           } else {
             if (cc + iMinusLen > len ||
                 FXSYS_wcsncmp(str + cc, wsMinus.c_str(), iMinusLen)) {
-              return FALSE;
+              return false;
             }
-            bNeg = TRUE;
+            bNeg = true;
             cc += iMinusLen;
           }
           ccf++;
@@ -1741,24 +1741,24 @@ FX_BOOL CFX_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
           } else {
             if (cc + iMinusLen > len ||
                 FXSYS_wcsncmp(str + cc, wsMinus.c_str(), iMinusLen)) {
-              return FALSE;
+              return false;
             }
-            bNeg = TRUE;
+            bNeg = true;
             cc += iMinusLen;
           }
           ccf++;
           break;
         case 'E': {
           if (cc >= len || (str[cc] != 'E' && str[cc] != 'e')) {
-            return FALSE;
+            return false;
           }
-          FX_BOOL bExpSign = FALSE;
+          bool bExpSign = false;
           cc++;
           if (cc < len) {
             if (str[cc] == '+') {
               cc++;
             } else if (str[cc] == '-') {
-              bExpSign = TRUE;
+              bExpSign = true;
               cc++;
             }
           }
@@ -1779,7 +1779,7 @@ FX_BOOL CFX_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
           int32_t iSymbolLen = wsSymbol.GetLength();
           if (cc + iSymbolLen > len ||
               FXSYS_wcsncmp(str + cc, wsSymbol.c_str(), iSymbolLen)) {
-            return FALSE;
+            return false;
           }
           cc += iSymbolLen;
           ccf++;
@@ -1787,7 +1787,7 @@ FX_BOOL CFX_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
         case 'c':
           if (ccf + 1 < lenf && strf[ccf + 1] == 'r') {
             if (str[cc] == 'C' && cc + 1 < len && str[cc + 1] == 'R') {
-              bNeg = TRUE;
+              bNeg = true;
               cc += 2;
             }
             ccf += 2;
@@ -1798,7 +1798,7 @@ FX_BOOL CFX_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
             if (str[cc] == ' ') {
               cc++;
             } else if (str[cc] == 'C' && cc + 1 < len && str[cc + 1] == 'R') {
-              bNeg = TRUE;
+              bNeg = true;
               cc += 2;
             }
             ccf += 2;
@@ -1807,7 +1807,7 @@ FX_BOOL CFX_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
         case 'd':
           if (ccf + 1 < lenf && strf[ccf + 1] == 'b') {
             if (str[cc] == 'D' && cc + 1 < len && str[cc + 1] == 'B') {
-              bNeg = TRUE;
+              bNeg = true;
               cc += 2;
             }
             ccf += 2;
@@ -1818,7 +1818,7 @@ FX_BOOL CFX_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
             if (str[cc] == ' ') {
               cc++;
             } else if (str[cc] == 'D' && cc + 1 < len && str[cc + 1] == 'B') {
-              bNeg = TRUE;
+              bNeg = true;
               cc += 2;
             }
             ccf += 2;
@@ -1827,7 +1827,7 @@ FX_BOOL CFX_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
         case '.':
         case 'V':
         case 'v':
-          return FALSE;
+          return false;
         case '%': {
           CFX_WideString wsSymbol;
           pLocale->GetNumbericSymbol(FX_LOCALENUMSYMBOL_Percent, wsSymbol);
@@ -1837,7 +1837,7 @@ FX_BOOL CFX_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
             cc += iSysmbolLen;
           }
           ccf++;
-          bHavePercentSymbol = TRUE;
+          bHavePercentSymbol = true;
         } break;
         case '8': {
           while (ccf < lenf && strf[ccf] == '8') {
@@ -1857,32 +1857,32 @@ FX_BOOL CFX_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
         } break;
         case '(':
           if (str[cc] == L'(') {
-            bNeg = TRUE;
+            bNeg = true;
           } else if (str[cc] != L' ') {
-            return FALSE;
+            return false;
           }
           cc++;
           ccf++;
           break;
         case ')':
           if (str[cc] == L')') {
-            bNeg = TRUE;
+            bNeg = true;
           } else if (str[cc] != L' ') {
-            return FALSE;
+            return false;
           }
           cc++;
           ccf++;
           break;
         default:
           if (strf[ccf] != str[cc]) {
-            return FALSE;
+            return false;
           }
           cc++;
           ccf++;
       }
     }
     if (cc != len) {
-      return FALSE;
+      return false;
     }
   }
   if (iExponent || bHavePercentSymbol) {
@@ -1898,7 +1898,7 @@ FX_BOOL CFX_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
   if (bNeg) {
     wsValue = L'-' + wsValue;
   }
-  return TRUE;
+  return true;
 }
 FX_DATETIMETYPE CFX_FormatString::GetDateTimeFormat(
     const CFX_WideString& wsPattern,
@@ -1912,7 +1912,7 @@ FX_DATETIMETYPE CFX_FormatString::GetDateTimeFormat(
   int32_t iLenf = wsPattern.GetLength();
   const FX_WCHAR* pStr = wsPattern.c_str();
   int32_t iFindCategory = 0;
-  FX_BOOL bBraceOpen = FALSE;
+  bool bBraceOpen = false;
   CFX_WideStringC wsConstChars(gs_wsConstChars);
   while (ccf < iLenf) {
     if (pStr[ccf] == '\'') {
@@ -1961,7 +1961,7 @@ FX_DATETIMETYPE CFX_FormatString::GetDateTimeFormat(
           }
           pLocale = GetPatternLocale(wsLCID);
         } else if (pStr[ccf] == '{') {
-          bBraceOpen = TRUE;
+          bBraceOpen = true;
           break;
         } else if (pStr[ccf] == '.') {
           CFX_WideString wsSubCategory;
@@ -2008,7 +2008,7 @@ FX_DATETIMETYPE CFX_FormatString::GetDateTimeFormat(
         ccf++;
       }
     } else if (pStr[ccf] == '}') {
-      bBraceOpen = FALSE;
+      bBraceOpen = false;
       if (!wsTempPattern.IsEmpty()) {
         if (eCategory == FX_LOCALECATEGORY_Time) {
           wsTimePattern = wsTempPattern;
@@ -2038,11 +2038,11 @@ FX_DATETIMETYPE CFX_FormatString::GetDateTimeFormat(
   }
   return (FX_DATETIMETYPE)iFindCategory;
 }
-static FX_BOOL FX_ParseLocaleDate(const CFX_WideString& wsDate,
-                                  const CFX_WideString& wsDatePattern,
-                                  IFX_Locale* pLocale,
-                                  CFX_Unitime& datetime,
-                                  int32_t& cc) {
+static bool FX_ParseLocaleDate(const CFX_WideString& wsDate,
+                               const CFX_WideString& wsDatePattern,
+                               IFX_Locale* pLocale,
+                               CFX_Unitime& datetime,
+                               int32_t& cc) {
   int32_t year = 1900;
   int32_t month = 1;
   int32_t day = 1;
@@ -2058,14 +2058,14 @@ static FX_BOOL FX_ParseLocaleDate(const CFX_WideString& wsDate,
       int32_t iLiteralLen = wsLiteral.GetLength();
       if (cc + iLiteralLen > len ||
           FXSYS_wcsncmp(str + cc, wsLiteral.c_str(), iLiteralLen)) {
-        return FALSE;
+        return false;
       }
       cc += iLiteralLen;
       ccf++;
       continue;
     } else if (wsDateSymbols.Find(strf[ccf]) == -1) {
       if (strf[ccf] != str[cc])
-        return FALSE;
+        return false;
       cc++;
       ccf++;
       continue;
@@ -2079,7 +2079,7 @@ static FX_BOOL FX_ParseLocaleDate(const CFX_WideString& wsDate,
     uint32_t dwSymbol = (dwCharSymbol << 8) | (dwSymbolNum + '0');
     if (dwSymbol == FXBSTR_ID(0, 0, 'D', '1')) {
       if (!FXSYS_isDecimalDigit(str[cc])) {
-        return FALSE;
+        return false;
       }
       day = str[cc++] - '0';
       if (cc < len && FXSYS_isDecimalDigit(str[cc])) {
@@ -2087,7 +2087,7 @@ static FX_BOOL FX_ParseLocaleDate(const CFX_WideString& wsDate,
       }
     } else if (dwSymbol == FXBSTR_ID(0, 0, 'D', '2')) {
       if (!FXSYS_isDecimalDigit(str[cc])) {
-        return FALSE;
+        return false;
       }
       day = str[cc++] - '0';
       if (cc < len) {
@@ -2103,7 +2103,7 @@ static FX_BOOL FX_ParseLocaleDate(const CFX_WideString& wsDate,
       cc += 3;
     } else if (dwSymbol == FXBSTR_ID(0, 0, 'M', '1')) {
       if (!FXSYS_isDecimalDigit(str[cc])) {
-        return FALSE;
+        return false;
       }
       month = str[cc++] - '0';
       if (cc < len && FXSYS_isDecimalDigit(str[cc])) {
@@ -2111,7 +2111,7 @@ static FX_BOOL FX_ParseLocaleDate(const CFX_WideString& wsDate,
       }
     } else if (dwSymbol == FXBSTR_ID(0, 0, 'M', '2')) {
       if (!FXSYS_isDecimalDigit(str[cc])) {
-        return FALSE;
+        return false;
       }
       month = str[cc++] - '0';
       if (cc < len) {
@@ -2121,7 +2121,7 @@ static FX_BOOL FX_ParseLocaleDate(const CFX_WideString& wsDate,
       CFX_WideString wsMonthNameAbbr;
       uint16_t i = 0;
       for (; i < 12; i++) {
-        pLocale->GetMonthName(i, wsMonthNameAbbr, TRUE);
+        pLocale->GetMonthName(i, wsMonthNameAbbr, true);
         if (wsMonthNameAbbr.IsEmpty()) {
           continue;
         }
@@ -2138,7 +2138,7 @@ static FX_BOOL FX_ParseLocaleDate(const CFX_WideString& wsDate,
       CFX_WideString wsMonthName;
       uint16_t i = 0;
       for (; i < 12; i++) {
-        pLocale->GetMonthName(i, wsMonthName, FALSE);
+        pLocale->GetMonthName(i, wsMonthName, false);
         if (wsMonthName.IsEmpty()) {
           continue;
         }
@@ -2157,7 +2157,7 @@ static FX_BOOL FX_ParseLocaleDate(const CFX_WideString& wsDate,
       CFX_WideString wsDayNameAbbr;
       uint16_t i = 0;
       for (; i < 7; i++) {
-        pLocale->GetDayName(i, wsDayNameAbbr, TRUE);
+        pLocale->GetDayName(i, wsDayNameAbbr, true);
         if (wsDayNameAbbr.IsEmpty()) {
           continue;
         }
@@ -2173,7 +2173,7 @@ static FX_BOOL FX_ParseLocaleDate(const CFX_WideString& wsDate,
       CFX_WideString wsDayName;
       int32_t i = 0;
       for (; i < 7; i++) {
-        pLocale->GetDayName(i, wsDayName, FALSE);
+        pLocale->GetDayName(i, wsDayName, false);
         if (wsDayName == L"") {
           continue;
         }
@@ -2191,14 +2191,14 @@ static FX_BOOL FX_ParseLocaleDate(const CFX_WideString& wsDate,
       cc += 2;
     } else if (dwSymbol == FXBSTR_ID(0, 0, 'Y', '2')) {
       if (cc + 2 > len) {
-        return FALSE;
+        return false;
       }
       if (!FXSYS_isDecimalDigit(str[cc])) {
-        return FALSE;
+        return false;
       }
       year = str[cc++] - '0';
       if (cc >= len || !FXSYS_isDecimalDigit(str[cc])) {
-        return FALSE;
+        return false;
       }
       year = year * 10 + str[cc++] - '0';
       if (year <= 29) {
@@ -2210,11 +2210,11 @@ static FX_BOOL FX_ParseLocaleDate(const CFX_WideString& wsDate,
       int i = 0;
       year = 0;
       if (cc + 4 > len) {
-        return FALSE;
+        return false;
       }
       while (i < 4) {
         if (!FXSYS_isDecimalDigit(str[cc])) {
-          return FALSE;
+          return false;
         }
         year = year * 10 + str[cc] - '0';
         cc++;
@@ -2227,7 +2227,7 @@ static FX_BOOL FX_ParseLocaleDate(const CFX_WideString& wsDate,
     }
   }
   if (cc < len) {
-    return FALSE;
+    return false;
   }
   CFX_Unitime ut;
   ut.Set(year, month, day);
@@ -2255,11 +2255,11 @@ static void FX_ResolveZone(uint8_t& wHour,
   wHour = iMinuteDiff / 60;
   wMinute = iMinuteDiff % 60;
 }
-static FX_BOOL FX_ParseLocaleTime(const CFX_WideString& wsTime,
-                                  const CFX_WideString& wsTimePattern,
-                                  IFX_Locale* pLocale,
-                                  CFX_Unitime& datetime,
-                                  int32_t& cc) {
+static bool FX_ParseLocaleTime(const CFX_WideString& wsTime,
+                               const CFX_WideString& wsTimePattern,
+                               IFX_Locale* pLocale,
+                               CFX_Unitime& datetime,
+                               int32_t& cc) {
   uint8_t hour = 0;
   uint8_t minute = 0;
   uint8_t second = 0;
@@ -2269,8 +2269,8 @@ static FX_BOOL FX_ParseLocaleTime(const CFX_WideString& wsTime,
   int len = wsTime.GetLength();
   const FX_WCHAR* strf = wsTimePattern.c_str();
   int lenf = wsTimePattern.GetLength();
-  FX_BOOL bHasA = FALSE;
-  FX_BOOL bPM = FALSE;
+  bool bHasA = false;
+  bool bPM = false;
   CFX_WideStringC wsTimeSymbols(gs_wsTimeSymbols);
   while (cc < len && ccf < lenf) {
     if (strf[ccf] == '\'') {
@@ -2278,14 +2278,14 @@ static FX_BOOL FX_ParseLocaleTime(const CFX_WideString& wsTime,
       int32_t iLiteralLen = wsLiteral.GetLength();
       if (cc + iLiteralLen > len ||
           FXSYS_wcsncmp(str + cc, wsLiteral.c_str(), iLiteralLen)) {
-        return FALSE;
+        return false;
       }
       cc += iLiteralLen;
       ccf++;
       continue;
     } else if (wsTimeSymbols.Find(strf[ccf]) == -1) {
       if (strf[ccf] != str[cc])
-        return FALSE;
+        return false;
       cc++;
       ccf++;
       continue;
@@ -2302,7 +2302,7 @@ static FX_BOOL FX_ParseLocaleTime(const CFX_WideString& wsTime,
         dwSymbol == FXBSTR_ID(0, 0, 'h', '1') ||
         dwSymbol == FXBSTR_ID(0, 0, 'K', '1')) {
       if (!FXSYS_isDecimalDigit(str[cc])) {
-        return FALSE;
+        return false;
       }
       hour = str[cc++] - '0';
       if (cc < len && FXSYS_isDecimalDigit(str[cc])) {
@@ -2316,14 +2316,14 @@ static FX_BOOL FX_ParseLocaleTime(const CFX_WideString& wsTime,
                dwSymbol == FXBSTR_ID(0, 0, 'h', '2') ||
                dwSymbol == FXBSTR_ID(0, 0, 'K', '2')) {
       if (!FXSYS_isDecimalDigit(str[cc])) {
-        return FALSE;
+        return false;
       }
       hour = str[cc++] - '0';
       if (cc >= len) {
-        return FALSE;
+        return false;
       }
       if (!FXSYS_isDecimalDigit(str[cc])) {
-        return FALSE;
+        return false;
       }
       hour = hour * 10 + str[cc++] - '0';
       if (dwSymbol == FXBSTR_ID(0, 0, 'K', '2') && hour == 24) {
@@ -2331,7 +2331,7 @@ static FX_BOOL FX_ParseLocaleTime(const CFX_WideString& wsTime,
       }
     } else if (dwSymbol == FXBSTR_ID(0, 0, 'M', '1')) {
       if (!FXSYS_isDecimalDigit(str[cc])) {
-        return FALSE;
+        return false;
       }
       minute = str[cc++] - '0';
       if (cc < len && FXSYS_isDecimalDigit(str[cc])) {
@@ -2339,19 +2339,19 @@ static FX_BOOL FX_ParseLocaleTime(const CFX_WideString& wsTime,
       }
     } else if (dwSymbol == FXBSTR_ID(0, 0, 'M', '2')) {
       if (!FXSYS_isDecimalDigit(str[cc])) {
-        return FALSE;
+        return false;
       }
       minute = str[cc++] - '0';
       if (cc >= len) {
-        return FALSE;
+        return false;
       }
       if (!FXSYS_isDecimalDigit(str[cc])) {
-        return FALSE;
+        return false;
       }
       minute = minute * 10 + str[cc++] - '0';
     } else if (dwSymbol == FXBSTR_ID(0, 0, 'S', '1')) {
       if (!FXSYS_isDecimalDigit(str[cc])) {
-        return FALSE;
+        return false;
       }
       second = str[cc++] - '0';
       if (cc < len && FXSYS_isDecimalDigit(str[cc])) {
@@ -2359,42 +2359,42 @@ static FX_BOOL FX_ParseLocaleTime(const CFX_WideString& wsTime,
       }
     } else if (dwSymbol == FXBSTR_ID(0, 0, 'S', '2')) {
       if (!FXSYS_isDecimalDigit(str[cc])) {
-        return FALSE;
+        return false;
       }
       second = str[cc++] - '0';
       if (cc >= len) {
-        return FALSE;
+        return false;
       }
       if (!FXSYS_isDecimalDigit(str[cc])) {
-        return FALSE;
+        return false;
       }
       second = second * 10 + str[cc++] - '0';
     } else if (dwSymbol == FXBSTR_ID(0, 0, 'F', '3')) {
       if (cc + 3 >= len) {
-        return FALSE;
+        return false;
       }
       int i = 0;
       while (i < 3) {
         if (!FXSYS_isDecimalDigit(str[cc])) {
-          return FALSE;
+          return false;
         }
         millisecond = millisecond * 10 + str[cc++] - '0';
         i++;
       }
     } else if (dwSymbol == FXBSTR_ID(0, 0, 'A', '1')) {
       CFX_WideString wsAM;
-      pLocale->GetMeridiemName(wsAM, TRUE);
+      pLocale->GetMeridiemName(wsAM, true);
       CFX_WideString wsPM;
-      pLocale->GetMeridiemName(wsPM, FALSE);
+      pLocale->GetMeridiemName(wsPM, false);
       if ((cc + wsAM.GetLength() <= len) &&
           (CFX_WideStringC(str + cc, wsAM.GetLength()) == wsAM)) {
         cc += wsAM.GetLength();
-        bHasA = TRUE;
+        bHasA = true;
       } else if ((cc + wsPM.GetLength() <= len) &&
                  (CFX_WideStringC(str + cc, wsPM.GetLength()) == wsPM)) {
         cc += wsPM.GetLength();
-        bHasA = TRUE;
-        bPM = TRUE;
+        bHasA = true;
+        bPM = true;
       }
     } else if (dwSymbol == FXBSTR_ID(0, 0, 'Z', '1')) {
       if (cc + 3 > len) {
@@ -2452,54 +2452,54 @@ static FX_BOOL FX_ParseLocaleTime(const CFX_WideString& wsTime,
   return !!cc;
 }
 
-FX_BOOL CFX_FormatString::ParseDateTime(const CFX_WideString& wsSrcDateTime,
-                                        const CFX_WideString& wsPattern,
-                                        FX_DATETIMETYPE eDateTimeType,
-                                        CFX_Unitime& dtValue) {
+bool CFX_FormatString::ParseDateTime(const CFX_WideString& wsSrcDateTime,
+                                     const CFX_WideString& wsPattern,
+                                     FX_DATETIMETYPE eDateTimeType,
+                                     CFX_Unitime& dtValue) {
   dtValue.Set(0);
   if (wsSrcDateTime.IsEmpty() || wsPattern.IsEmpty()) {
-    return FALSE;
+    return false;
   }
   CFX_WideString wsDatePattern, wsTimePattern;
   IFX_Locale* pLocale = nullptr;
   FX_DATETIMETYPE eCategory =
       GetDateTimeFormat(wsPattern, pLocale, wsDatePattern, wsTimePattern);
   if (!pLocale) {
-    return FALSE;
+    return false;
   }
   if (eCategory == FX_DATETIMETYPE_Unknown) {
     eCategory = eDateTimeType;
   }
   if (eCategory == FX_DATETIMETYPE_Unknown) {
-    return FALSE;
+    return false;
   }
   if (eCategory == FX_DATETIMETYPE_TimeDate) {
     int32_t iStart = 0;
     if (!FX_ParseLocaleTime(wsSrcDateTime, wsTimePattern, pLocale, dtValue,
                             iStart)) {
-      return FALSE;
+      return false;
     }
     if (!FX_ParseLocaleDate(wsSrcDateTime, wsDatePattern, pLocale, dtValue,
                             iStart)) {
-      return FALSE;
+      return false;
     }
   } else {
     int32_t iStart = 0;
     if ((eCategory & FX_DATETIMETYPE_Date) &&
         !FX_ParseLocaleDate(wsSrcDateTime, wsDatePattern, pLocale, dtValue,
                             iStart)) {
-      return FALSE;
+      return false;
     }
     if ((eCategory & FX_DATETIMETYPE_Time) &&
         !FX_ParseLocaleTime(wsSrcDateTime, wsTimePattern, pLocale, dtValue,
                             iStart)) {
-      return FALSE;
+      return false;
     }
   }
-  return TRUE;
+  return true;
 }
-FX_BOOL CFX_FormatString::ParseZero(const CFX_WideString& wsSrcText,
-                                    const CFX_WideString& wsPattern) {
+bool CFX_FormatString::ParseZero(const CFX_WideString& wsSrcText,
+                                 const CFX_WideString& wsPattern) {
   CFX_WideString wsTextFormat;
   GetTextFormat(wsPattern, FX_WSTRC(L"zero"), wsTextFormat);
   int32_t iText = 0, iPattern = 0;
@@ -2514,13 +2514,13 @@ FX_BOOL CFX_FormatString::ParseZero(const CFX_WideString& wsSrcText,
       int32_t iLiteralLen = wsLiteral.GetLength();
       if (iText + iLiteralLen > iLenText ||
           FXSYS_wcsncmp(pStrText + iText, wsLiteral.c_str(), iLiteralLen)) {
-        return FALSE;
+        return false;
       }
       iText += iLiteralLen;
       iPattern++;
       continue;
     } else if (pStrPattern[iPattern] != pStrText[iText]) {
-      return FALSE;
+      return false;
     } else {
       iText++;
       iPattern++;
@@ -2528,8 +2528,8 @@ FX_BOOL CFX_FormatString::ParseZero(const CFX_WideString& wsSrcText,
   }
   return iPattern == iLenPattern && iText == iLenText;
 }
-FX_BOOL CFX_FormatString::ParseNull(const CFX_WideString& wsSrcText,
-                                    const CFX_WideString& wsPattern) {
+bool CFX_FormatString::ParseNull(const CFX_WideString& wsSrcText,
+                                 const CFX_WideString& wsPattern) {
   CFX_WideString wsTextFormat;
   GetTextFormat(wsPattern, FX_WSTRC(L"null"), wsTextFormat);
   int32_t iText = 0, iPattern = 0;
@@ -2544,13 +2544,13 @@ FX_BOOL CFX_FormatString::ParseNull(const CFX_WideString& wsSrcText,
       int32_t iLiteralLen = wsLiteral.GetLength();
       if (iText + iLiteralLen > iLenText ||
           FXSYS_wcsncmp(pStrText + iText, wsLiteral.c_str(), iLiteralLen)) {
-        return FALSE;
+        return false;
       }
       iText += iLiteralLen;
       iPattern++;
       continue;
     } else if (pStrPattern[iPattern] != pStrText[iText]) {
-      return FALSE;
+      return false;
     } else {
       iText++;
       iPattern++;
@@ -2558,15 +2558,15 @@ FX_BOOL CFX_FormatString::ParseNull(const CFX_WideString& wsSrcText,
   }
   return iPattern == iLenPattern && iText == iLenText;
 }
-FX_BOOL CFX_FormatString::FormatText(const CFX_WideString& wsSrcText,
-                                     const CFX_WideString& wsPattern,
-                                     CFX_WideString& wsOutput) {
+bool CFX_FormatString::FormatText(const CFX_WideString& wsSrcText,
+                                  const CFX_WideString& wsPattern,
+                                  CFX_WideString& wsOutput) {
   if (wsPattern.IsEmpty()) {
-    return FALSE;
+    return false;
   }
   int32_t iLenText = wsSrcText.GetLength();
   if (iLenText == 0) {
-    return FALSE;
+    return false;
   }
   CFX_WideString wsTextFormat;
   GetTextFormat(wsPattern, FX_WSTRC(L"text"), wsTextFormat);
@@ -2583,14 +2583,14 @@ FX_BOOL CFX_FormatString::FormatText(const CFX_WideString& wsSrcText,
       }
       case 'A':
         if (iText >= iLenText || !FXSYS_iswalpha(pStrText[iText])) {
-          return FALSE;
+          return false;
         }
         wsOutput += pStrText[iText++];
         iPattern++;
         break;
       case 'X':
         if (iText >= iLenText) {
-          return FALSE;
+          return false;
         }
         wsOutput += pStrText[iText++];
         iPattern++;
@@ -2599,14 +2599,14 @@ FX_BOOL CFX_FormatString::FormatText(const CFX_WideString& wsSrcText,
       case '0':
         if (iText >= iLenText || (!FXSYS_isDecimalDigit(pStrText[iText]) &&
                                   !FXSYS_iswalpha(pStrText[iText]))) {
-          return FALSE;
+          return false;
         }
         wsOutput += pStrText[iText++];
         iPattern++;
         break;
       case '9':
         if (iText >= iLenText || !FXSYS_isDecimalDigit(pStrText[iText])) {
-          return FALSE;
+          return false;
         }
         wsOutput += pStrText[iText++];
         iPattern++;
@@ -2620,7 +2620,7 @@ FX_BOOL CFX_FormatString::FormatText(const CFX_WideString& wsSrcText,
 }
 static int32_t FX_GetNumTrailingLimit(const CFX_WideString& wsFormat,
                                       int iDotPos,
-                                      FX_BOOL& bTrimTailZeros) {
+                                      bool& bTrimTailZeros) {
   if (iDotPos < 0) {
     return 0;
   }
@@ -2630,16 +2630,16 @@ static int32_t FX_GetNumTrailingLimit(const CFX_WideString& wsFormat,
     FX_WCHAR wc = wsFormat[iDotPos];
     if (wc == L'z' || wc == L'9' || wc == 'Z') {
       iTreading++;
-      bTrimTailZeros = (wc == L'9' ? FALSE : TRUE);
+      bTrimTailZeros = (wc == L'9' ? false : true);
     }
   }
   return iTreading;
 }
-FX_BOOL CFX_FormatString::FormatStrNum(const CFX_WideStringC& wsInputNum,
-                                       const CFX_WideString& wsPattern,
-                                       CFX_WideString& wsOutput) {
+bool CFX_FormatString::FormatStrNum(const CFX_WideStringC& wsInputNum,
+                                    const CFX_WideString& wsPattern,
+                                    CFX_WideString& wsOutput) {
   if (wsInputNum.IsEmpty() || wsPattern.IsEmpty()) {
-    return FALSE;
+    return false;
   }
   int32_t dot_index_f = -1;
   uint32_t dwNumStyle = 0;
@@ -2647,7 +2647,7 @@ FX_BOOL CFX_FormatString::FormatStrNum(const CFX_WideStringC& wsInputNum,
   IFX_Locale* pLocale =
       GetNumericFormat(wsPattern, dot_index_f, dwNumStyle, wsNumFormat);
   if (!pLocale || wsNumFormat.IsEmpty()) {
-    return FALSE;
+    return false;
   }
   int32_t cc = 0, ccf = 0;
   const FX_WCHAR* strf = wsNumFormat.c_str();
@@ -2700,7 +2700,7 @@ FX_BOOL CFX_FormatString::FormatStrNum(const CFX_WideStringC& wsInputNum,
       }
     }
   }
-  FX_BOOL bTrimTailZeros = FALSE;
+  bool bTrimTailZeros = false;
   int32_t iTreading =
       FX_GetNumTrailingLimit(wsNumFormat, dot_index_f, bTrimTailZeros);
   int32_t scale = decimal.GetScale();
@@ -2714,12 +2714,12 @@ FX_BOOL CFX_FormatString::FormatStrNum(const CFX_WideStringC& wsInputNum,
   }
   CFX_WideString wsGroupSymbol;
   pLocale->GetNumbericSymbol(FX_LOCALENUMSYMBOL_Grouping, wsGroupSymbol);
-  FX_BOOL bNeg = FALSE;
+  bool bNeg = false;
   if (wsSrcNum[0] == '-') {
-    bNeg = TRUE;
+    bNeg = true;
     wsSrcNum.Delete(0, 1);
   }
-  FX_BOOL bAddNeg = FALSE;
+  bool bAddNeg = false;
   const FX_WCHAR* str = wsSrcNum.c_str();
   int len = wsSrcNum.GetLength();
   int dot_index = wsSrcNum.Find('.');
@@ -2733,7 +2733,7 @@ FX_BOOL CFX_FormatString::FormatStrNum(const CFX_WideStringC& wsInputNum,
       case '9':
         if (cc >= 0) {
           if (!FXSYS_isDecimalDigit(str[cc])) {
-            return FALSE;
+            return false;
           }
           wsOutput = str[cc] + wsOutput;
           cc--;
@@ -2745,7 +2745,7 @@ FX_BOOL CFX_FormatString::FormatStrNum(const CFX_WideStringC& wsInputNum,
       case 'z':
         if (cc >= 0) {
           if (!FXSYS_isDecimalDigit(str[cc])) {
-            return FALSE;
+            return false;
           }
           if (str[0] != '0') {
             wsOutput = str[cc] + wsOutput;
@@ -2757,7 +2757,7 @@ FX_BOOL CFX_FormatString::FormatStrNum(const CFX_WideStringC& wsInputNum,
       case 'Z':
         if (cc >= 0) {
           if (!FXSYS_isDecimalDigit(str[cc])) {
-            return FALSE;
+            return false;
           }
           if (str[0] == '0') {
             wsOutput = L' ' + wsOutput;
@@ -2775,7 +2775,7 @@ FX_BOOL CFX_FormatString::FormatStrNum(const CFX_WideStringC& wsInputNum,
           CFX_WideString wsMinusSymbol;
           pLocale->GetNumbericSymbol(FX_LOCALENUMSYMBOL_Minus, wsMinusSymbol);
           wsOutput = wsMinusSymbol + wsOutput;
-          bAddNeg = TRUE;
+          bAddNeg = true;
         } else {
           wsOutput = L' ' + wsOutput;
         }
@@ -2786,7 +2786,7 @@ FX_BOOL CFX_FormatString::FormatStrNum(const CFX_WideStringC& wsInputNum,
           CFX_WideString wsMinusSymbol;
           pLocale->GetNumbericSymbol(FX_LOCALENUMSYMBOL_Minus, wsMinusSymbol);
           wsOutput = wsMinusSymbol + wsOutput;
-          bAddNeg = TRUE;
+          bAddNeg = true;
         }
         ccf--;
         break;
@@ -2810,7 +2810,7 @@ FX_BOOL CFX_FormatString::FormatStrNum(const CFX_WideStringC& wsInputNum,
             wsOutput = L"CR" + wsOutput;
           }
           ccf -= 2;
-          bAddNeg = TRUE;
+          bAddNeg = true;
         }
         break;
       case 'R':
@@ -2821,7 +2821,7 @@ FX_BOOL CFX_FormatString::FormatStrNum(const CFX_WideStringC& wsInputNum,
             wsOutput = L"  " + wsOutput;
           }
           ccf -= 2;
-          bAddNeg = TRUE;
+          bAddNeg = true;
         }
         break;
       case 'b':
@@ -2830,7 +2830,7 @@ FX_BOOL CFX_FormatString::FormatStrNum(const CFX_WideStringC& wsInputNum,
             wsOutput = L"db" + wsOutput;
           }
           ccf -= 2;
-          bAddNeg = TRUE;
+          bAddNeg = true;
         }
         break;
       case 'B':
@@ -2841,7 +2841,7 @@ FX_BOOL CFX_FormatString::FormatStrNum(const CFX_WideStringC& wsInputNum,
             wsOutput = L"  " + wsOutput;
           }
           ccf -= 2;
-          bAddNeg = TRUE;
+          bAddNeg = true;
         }
         break;
       case '%': {
@@ -2863,7 +2863,7 @@ FX_BOOL CFX_FormatString::FormatStrNum(const CFX_WideStringC& wsInputNum,
         } else {
           wsOutput = L" " + wsOutput;
         }
-        bAddNeg = TRUE;
+        bAddNeg = true;
         ccf--;
         break;
       case ')':
@@ -2903,7 +2903,7 @@ FX_BOOL CFX_FormatString::FormatStrNum(const CFX_WideStringC& wsInputNum,
       pLocale->GetNumbericSymbol(FX_LOCALENUMSYMBOL_Minus, wsMinusymbol);
       wsOutput = wsMinusymbol + wsOutput;
     }
-    return FALSE;
+    return false;
   }
   if (dot_index_f == wsNumFormat.GetLength()) {
     if (!bAddNeg && bNeg) {
@@ -2911,7 +2911,7 @@ FX_BOOL CFX_FormatString::FormatStrNum(const CFX_WideStringC& wsInputNum,
       pLocale->GetNumbericSymbol(FX_LOCALENUMSYMBOL_Minus, wsMinusymbol);
       wsOutput = wsMinusymbol + wsOutput;
     }
-    return TRUE;
+    return true;
   }
   CFX_WideString wsDotSymbol;
   pLocale->GetNumbericSymbol(FX_LOCALENUMSYMBOL_Decimal, wsDotSymbol);
@@ -2937,7 +2937,7 @@ FX_BOOL CFX_FormatString::FormatStrNum(const CFX_WideStringC& wsInputNum,
       case '9':
         if (cc < len) {
           if (!FXSYS_isDecimalDigit(str[cc])) {
-            return FALSE;
+            return false;
           }
           wsOutput += str[cc];
           cc++;
@@ -2949,7 +2949,7 @@ FX_BOOL CFX_FormatString::FormatStrNum(const CFX_WideStringC& wsInputNum,
       case 'z':
         if (cc < len) {
           if (!FXSYS_isDecimalDigit(str[cc])) {
-            return FALSE;
+            return false;
           }
           wsOutput += str[cc];
           cc++;
@@ -2959,7 +2959,7 @@ FX_BOOL CFX_FormatString::FormatStrNum(const CFX_WideStringC& wsInputNum,
       case 'Z':
         if (cc < len) {
           if (!FXSYS_isDecimalDigit(str[cc])) {
-            return FALSE;
+            return false;
           }
           wsOutput += str[cc];
           cc++;
@@ -2988,7 +2988,7 @@ FX_BOOL CFX_FormatString::FormatStrNum(const CFX_WideStringC& wsInputNum,
             wsOutput += L"CR";
           }
           ccf += 2;
-          bAddNeg = TRUE;
+          bAddNeg = true;
         }
         break;
       case 'C':
@@ -2999,7 +2999,7 @@ FX_BOOL CFX_FormatString::FormatStrNum(const CFX_WideStringC& wsInputNum,
             wsOutput += L"  ";
           }
           ccf += 2;
-          bAddNeg = TRUE;
+          bAddNeg = true;
         }
         break;
       case 'd':
@@ -3008,7 +3008,7 @@ FX_BOOL CFX_FormatString::FormatStrNum(const CFX_WideStringC& wsInputNum,
             wsOutput += L"db";
           }
           ccf += 2;
-          bAddNeg = TRUE;
+          bAddNeg = true;
         }
         break;
       case 'D':
@@ -3019,7 +3019,7 @@ FX_BOOL CFX_FormatString::FormatStrNum(const CFX_WideStringC& wsInputNum,
             wsOutput += L"  ";
           }
           ccf += 2;
-          bAddNeg = TRUE;
+          bAddNeg = true;
         }
         break;
       case '%': {
@@ -3048,7 +3048,7 @@ FX_BOOL CFX_FormatString::FormatStrNum(const CFX_WideStringC& wsInputNum,
         } else {
           wsOutput += ' ';
         }
-        bAddNeg = TRUE;
+        bAddNeg = true;
         ccf++;
         break;
       case ')':
@@ -3069,18 +3069,18 @@ FX_BOOL CFX_FormatString::FormatStrNum(const CFX_WideStringC& wsInputNum,
     wsOutput =
         wsMinusymbol + wsOutput[0] + wsOutput.Mid(1, wsOutput.GetLength() - 1);
   }
-  return TRUE;
+  return true;
 }
-FX_BOOL CFX_FormatString::FormatLCNumeric(CFX_LCNumeric& lcNum,
-                                          const CFX_WideString& wsPattern,
-                                          CFX_WideString& wsOutput) {
+bool CFX_FormatString::FormatLCNumeric(CFX_LCNumeric& lcNum,
+                                       const CFX_WideString& wsPattern,
+                                       CFX_WideString& wsOutput) {
   int32_t dot_index_f = -1;
   uint32_t dwNumStyle = 0;
   CFX_WideString wsNumFormat;
   IFX_Locale* pLocale =
       GetNumericFormat(wsPattern, dot_index_f, dwNumStyle, wsNumFormat);
   if (!pLocale || wsNumFormat.IsEmpty()) {
-    return FALSE;
+    return false;
   }
   int32_t cc = 0, ccf = 0;
   const FX_WCHAR* strf = wsNumFormat.c_str();
@@ -3131,21 +3131,21 @@ FX_BOOL CFX_FormatString::FormatLCNumeric(CFX_LCNumeric& lcNum,
   if (dwNumStyle & (FX_NUMSTYLE_Percent | FX_NUMSTYLE_Exponent)) {
     lcNum = CFX_LCNumeric(dbRetValue);
   }
-  FX_BOOL bTrimTailZeros = FALSE;
+  bool bTrimTailZeros = false;
   int32_t iTreading =
       FX_GetNumTrailingLimit(wsNumFormat, dot_index_f, bTrimTailZeros);
   CFX_WideString wsNumeric = lcNum.ToString(iTreading, bTrimTailZeros);
   if (wsNumeric.IsEmpty()) {
-    return FALSE;
+    return false;
   }
   CFX_WideString wsGroupSymbol;
   pLocale->GetNumbericSymbol(FX_LOCALENUMSYMBOL_Grouping, wsGroupSymbol);
-  FX_BOOL bNeg = FALSE;
+  bool bNeg = false;
   if (wsNumeric[0] == '-') {
-    bNeg = TRUE;
+    bNeg = true;
     wsNumeric.Delete(0, 1);
   }
-  FX_BOOL bAddNeg = FALSE;
+  bool bAddNeg = false;
   const FX_WCHAR* str = wsNumeric.c_str();
   int len = wsNumeric.GetLength();
   int dot_index = wsNumeric.Find('.');
@@ -3192,7 +3192,7 @@ FX_BOOL CFX_FormatString::FormatLCNumeric(CFX_LCNumeric& lcNum,
           CFX_WideString wsMinusSymbol;
           pLocale->GetNumbericSymbol(FX_LOCALENUMSYMBOL_Minus, wsMinusSymbol);
           wsOutput = wsMinusSymbol + wsOutput;
-          bAddNeg = TRUE;
+          bAddNeg = true;
         } else {
           wsOutput = L' ' + wsOutput;
         }
@@ -3203,7 +3203,7 @@ FX_BOOL CFX_FormatString::FormatLCNumeric(CFX_LCNumeric& lcNum,
           CFX_WideString wsMinusSymbol;
           pLocale->GetNumbericSymbol(FX_LOCALENUMSYMBOL_Minus, wsMinusSymbol);
           wsOutput = wsMinusSymbol + wsOutput;
-          bAddNeg = TRUE;
+          bAddNeg = true;
         }
         ccf--;
         break;
@@ -3227,7 +3227,7 @@ FX_BOOL CFX_FormatString::FormatLCNumeric(CFX_LCNumeric& lcNum,
             wsOutput = L"CR" + wsOutput;
           }
           ccf -= 2;
-          bAddNeg = TRUE;
+          bAddNeg = true;
         }
         break;
       case 'R':
@@ -3238,7 +3238,7 @@ FX_BOOL CFX_FormatString::FormatLCNumeric(CFX_LCNumeric& lcNum,
             wsOutput = L"  " + wsOutput;
           }
           ccf -= 2;
-          bAddNeg = TRUE;
+          bAddNeg = true;
         }
         break;
       case 'b':
@@ -3247,7 +3247,7 @@ FX_BOOL CFX_FormatString::FormatLCNumeric(CFX_LCNumeric& lcNum,
             wsOutput = L"db" + wsOutput;
           }
           ccf -= 2;
-          bAddNeg = TRUE;
+          bAddNeg = true;
         }
         break;
       case 'B':
@@ -3258,7 +3258,7 @@ FX_BOOL CFX_FormatString::FormatLCNumeric(CFX_LCNumeric& lcNum,
             wsOutput = L"  " + wsOutput;
           }
           ccf -= 2;
-          bAddNeg = TRUE;
+          bAddNeg = true;
         }
         break;
       case '%': {
@@ -3280,7 +3280,7 @@ FX_BOOL CFX_FormatString::FormatLCNumeric(CFX_LCNumeric& lcNum,
         } else {
           wsOutput = L" " + wsOutput;
         }
-        bAddNeg = TRUE;
+        bAddNeg = true;
         ccf--;
         break;
       case ')':
@@ -3320,7 +3320,7 @@ FX_BOOL CFX_FormatString::FormatLCNumeric(CFX_LCNumeric& lcNum,
       pLocale->GetNumbericSymbol(FX_LOCALENUMSYMBOL_Minus, wsMinusymbol);
       wsOutput = wsMinusymbol + wsOutput;
     }
-    return FALSE;
+    return false;
   }
   if (dot_index_f == wsNumFormat.GetLength()) {
     if (!bAddNeg && bNeg) {
@@ -3328,7 +3328,7 @@ FX_BOOL CFX_FormatString::FormatLCNumeric(CFX_LCNumeric& lcNum,
       pLocale->GetNumbericSymbol(FX_LOCALENUMSYMBOL_Minus, wsMinusymbol);
       wsOutput = wsMinusymbol + wsOutput;
     }
-    return TRUE;
+    return true;
   }
   CFX_WideString wsDotSymbol;
   pLocale->GetNumbericSymbol(FX_LOCALENUMSYMBOL_Decimal, wsDotSymbol);
@@ -3396,7 +3396,7 @@ FX_BOOL CFX_FormatString::FormatLCNumeric(CFX_LCNumeric& lcNum,
             wsOutput += L"CR";
           }
           ccf += 2;
-          bAddNeg = TRUE;
+          bAddNeg = true;
         }
         break;
       case 'C':
@@ -3407,7 +3407,7 @@ FX_BOOL CFX_FormatString::FormatLCNumeric(CFX_LCNumeric& lcNum,
             wsOutput += L"  ";
           }
           ccf += 2;
-          bAddNeg = TRUE;
+          bAddNeg = true;
         }
         break;
       case 'd':
@@ -3416,7 +3416,7 @@ FX_BOOL CFX_FormatString::FormatLCNumeric(CFX_LCNumeric& lcNum,
             wsOutput += L"db";
           }
           ccf += 2;
-          bAddNeg = TRUE;
+          bAddNeg = true;
         }
         break;
       case 'D':
@@ -3427,7 +3427,7 @@ FX_BOOL CFX_FormatString::FormatLCNumeric(CFX_LCNumeric& lcNum,
             wsOutput += L"  ";
           }
           ccf += 2;
-          bAddNeg = TRUE;
+          bAddNeg = true;
         }
         break;
       case '%': {
@@ -3456,7 +3456,7 @@ FX_BOOL CFX_FormatString::FormatLCNumeric(CFX_LCNumeric& lcNum,
         } else {
           wsOutput += ' ';
         }
-        bAddNeg = TRUE;
+        bAddNeg = true;
         ccf++;
         break;
       case ')':
@@ -3477,27 +3477,26 @@ FX_BOOL CFX_FormatString::FormatLCNumeric(CFX_LCNumeric& lcNum,
     wsOutput =
         wsOutput[0] + wsMinusymbol + wsOutput.Mid(1, wsOutput.GetLength() - 1);
   }
-  return TRUE;
+  return true;
 }
-FX_BOOL CFX_FormatString::FormatNum(const CFX_WideString& wsSrcNum,
-                                    const CFX_WideString& wsPattern,
-                                    CFX_WideString& wsOutput) {
+bool CFX_FormatString::FormatNum(const CFX_WideString& wsSrcNum,
+                                 const CFX_WideString& wsPattern,
+                                 CFX_WideString& wsOutput) {
   if (wsSrcNum.IsEmpty() || wsPattern.IsEmpty()) {
-    return FALSE;
+    return false;
   }
   return FormatStrNum(wsSrcNum.AsStringC(), wsPattern, wsOutput);
 }
-FX_BOOL CFX_FormatString::FormatNum(FX_FLOAT fNum,
-                                    const CFX_WideString& wsPattern,
-                                    CFX_WideString& wsOutput) {
+bool CFX_FormatString::FormatNum(FX_FLOAT fNum,
+                                 const CFX_WideString& wsPattern,
+                                 CFX_WideString& wsOutput) {
   if (wsPattern.IsEmpty()) {
-    return FALSE;
+    return false;
   }
   CFX_LCNumeric lcNum(fNum);
   return FormatLCNumeric(lcNum, wsPattern, wsOutput);
 }
-FX_BOOL FX_DateFromCanonical(const CFX_WideString& wsDate,
-                             CFX_Unitime& datetime) {
+bool FX_DateFromCanonical(const CFX_WideString& wsDate, CFX_Unitime& datetime) {
   int32_t year = 1900;
   int32_t month = 1;
   int32_t day = 1;
@@ -3506,17 +3505,17 @@ FX_BOOL FX_DateFromCanonical(const CFX_WideString& wsDate,
   const FX_WCHAR* str = wsDate.c_str();
   int len = wsDate.GetLength();
   if (len > 10) {
-    return FALSE;
+    return false;
   }
   while (cc < len && cc < 4) {
     if (!FXSYS_isDecimalDigit(str[cc])) {
-      return FALSE;
+      return false;
     }
     wYear = wYear * 10 + str[cc++] - '0';
   }
   year = wYear;
   if (cc < 4 || wYear < 1900) {
-    return FALSE;
+    return false;
   }
   if (cc < len) {
     if (str[cc] == '-') {
@@ -3526,13 +3525,13 @@ FX_BOOL FX_DateFromCanonical(const CFX_WideString& wsDate,
     uint8_t tmpM = 0;
     while (cc < len && cc < cc_start + 2) {
       if (!FXSYS_isDecimalDigit(str[cc])) {
-        return FALSE;
+        return false;
       }
       tmpM = tmpM * 10 + str[cc++] - '0';
     }
     month = tmpM;
     if (cc == cc_start + 1 || tmpM > 12 || tmpM < 1) {
-      return FALSE;
+      return false;
     }
     if (cc < len) {
       if (str[cc] == '-') {
@@ -3542,44 +3541,44 @@ FX_BOOL FX_DateFromCanonical(const CFX_WideString& wsDate,
       cc_start = cc;
       while (cc < len && cc < cc_start + 2) {
         if (!FXSYS_isDecimalDigit(str[cc])) {
-          return FALSE;
+          return false;
         }
         tmpD = tmpD * 10 + str[cc++] - '0';
       }
       day = tmpD;
       if (tmpD < 1) {
-        return FALSE;
+        return false;
       }
       if ((tmpM == 1 || tmpM == 3 || tmpM == 5 || tmpM == 7 || tmpM == 8 ||
            tmpM == 10 || tmpM == 12) &&
           tmpD > 31) {
-        return FALSE;
+        return false;
       }
       if ((tmpM == 4 || tmpM == 6 || tmpM == 9 || tmpM == 11) && tmpD > 30) {
-        return FALSE;
+        return false;
       }
-      FX_BOOL iLeapYear;
+      bool iLeapYear;
       if ((wYear % 4 == 0 && wYear % 100 != 0) || wYear % 400 == 0) {
-        iLeapYear = TRUE;
+        iLeapYear = true;
       } else {
-        iLeapYear = FALSE;
+        iLeapYear = false;
       }
       if ((iLeapYear && tmpM == 2 && tmpD > 29) ||
           (!iLeapYear && tmpM == 2 && tmpD > 28)) {
-        return FALSE;
+        return false;
       }
     }
   }
   CFX_Unitime ut;
   ut.Set(year, month, day);
   datetime = datetime + ut;
-  return TRUE;
+  return true;
 }
-FX_BOOL FX_TimeFromCanonical(const CFX_WideStringC& wsTime,
-                             CFX_Unitime& datetime,
-                             IFX_Locale* pLocale) {
+bool FX_TimeFromCanonical(const CFX_WideStringC& wsTime,
+                          CFX_Unitime& datetime,
+                          IFX_Locale* pLocale) {
   if (wsTime.GetLength() == 0) {
-    return FALSE;
+    return false;
   }
   uint8_t hour = 0;
   uint8_t minute = 0;
@@ -3590,12 +3589,12 @@ FX_BOOL FX_TimeFromCanonical(const CFX_WideStringC& wsTime,
   int len = wsTime.GetLength();
   while (cc < len && cc < 2) {
     if (!FXSYS_isDecimalDigit(str[cc])) {
-      return FALSE;
+      return false;
     }
     hour = hour * 10 + str[cc++] - '0';
   }
   if (cc < 2 || hour >= 24) {
-    return FALSE;
+    return false;
   }
   if (cc < len) {
     if (str[cc] == ':') {
@@ -3604,12 +3603,12 @@ FX_BOOL FX_TimeFromCanonical(const CFX_WideStringC& wsTime,
     cc_start = cc;
     while (cc < len && cc < cc_start + 2) {
       if (!FXSYS_isDecimalDigit(str[cc])) {
-        return FALSE;
+        return false;
       }
       minute = minute * 10 + str[cc++] - '0';
     }
     if (cc == cc_start + 1 || minute >= 60) {
-      return FALSE;
+      return false;
     }
     if (cc < len) {
       if (str[cc] == ':') {
@@ -3618,12 +3617,12 @@ FX_BOOL FX_TimeFromCanonical(const CFX_WideStringC& wsTime,
       cc_start = cc;
       while (cc < len && cc < cc_start + 2) {
         if (!FXSYS_isDecimalDigit(str[cc])) {
-          return FALSE;
+          return false;
         }
         second = second * 10 + str[cc++] - '0';
       }
       if (cc == cc_start + 1 || second >= 60) {
-        return FALSE;
+        return false;
       }
       if (cc < len) {
         if (str[cc] == '.') {
@@ -3631,12 +3630,12 @@ FX_BOOL FX_TimeFromCanonical(const CFX_WideStringC& wsTime,
           cc_start = cc;
           while (cc < len && cc < cc_start + 3) {
             if (!FXSYS_isDecimalDigit(str[cc])) {
-              return FALSE;
+              return false;
             }
             millisecond = millisecond * 10 + str[cc++] - '0';
           }
           if (cc < cc_start + 3)
-            return FALSE;
+            return false;
         }
         if (cc < len) {
           FX_TIMEZONE tzDiff;
@@ -3653,7 +3652,7 @@ FX_BOOL FX_TimeFromCanonical(const CFX_WideStringC& wsTime,
   CFX_Unitime ut;
   ut.Set(0, 0, 0, hour, minute, second, millisecond);
   datetime = datetime + ut;
-  return TRUE;
+  return true;
 }
 static uint16_t FX_GetSolarMonthDays(uint16_t year, uint16_t month) {
   if (month % 2) {
@@ -3698,11 +3697,11 @@ static uint16_t FX_GetWeekOfYear(uint16_t year, uint16_t month, uint16_t day) {
   }
   return week_index;
 }
-static FX_BOOL FX_DateFormat(const CFX_WideString& wsDatePattern,
-                             IFX_Locale* pLocale,
-                             const CFX_Unitime& datetime,
-                             CFX_WideString& wsResult) {
-  FX_BOOL bRet = TRUE;
+static bool FX_DateFormat(const CFX_WideString& wsDatePattern,
+                          IFX_Locale* pLocale,
+                          const CFX_Unitime& datetime,
+                          CFX_WideString& wsResult) {
+  bool bRet = true;
   int32_t year = datetime.GetYear();
   uint8_t month = datetime.GetMonth();
   uint8_t day = datetime.GetDay();
@@ -3762,11 +3761,11 @@ static FX_BOOL FX_DateFormat(const CFX_WideString& wsDatePattern,
       wsResult += wsMonth;
     } else if (dwSymbol == FXBSTR_ID(0, 0, 'M', '3')) {
       CFX_WideString wsTemp;
-      pLocale->GetMonthName(month - 1, wsTemp, TRUE);
+      pLocale->GetMonthName(month - 1, wsTemp, true);
       wsResult += wsTemp;
     } else if (dwSymbol == FXBSTR_ID(0, 0, 'M', '4')) {
       CFX_WideString wsTemp;
-      pLocale->GetMonthName(month - 1, wsTemp, FALSE);
+      pLocale->GetMonthName(month - 1, wsTemp, false);
       wsResult += wsTemp;
     } else if (dwSymbol == FXBSTR_ID(0, 0, 'E', '1')) {
       uint16_t wWeekDay = FX_GetWeekDay(year, month, day);
@@ -3776,13 +3775,13 @@ static FX_BOOL FX_DateFormat(const CFX_WideString& wsDatePattern,
     } else if (dwSymbol == FXBSTR_ID(0, 0, 'E', '3')) {
       uint16_t wWeekDay = FX_GetWeekDay(year, month, day);
       CFX_WideString wsTemp;
-      pLocale->GetDayName(wWeekDay, wsTemp, TRUE);
+      pLocale->GetDayName(wWeekDay, wsTemp, true);
       wsResult += wsTemp;
     } else if (dwSymbol == FXBSTR_ID(0, 0, 'E', '4')) {
       uint16_t wWeekDay = FX_GetWeekDay(year, month, day);
       if (pLocale) {
         CFX_WideString wsTemp;
-        pLocale->GetDayName(wWeekDay, wsTemp, FALSE);
+        pLocale->GetDayName(wWeekDay, wsTemp, false);
         wsResult += wsTemp;
       }
     } else if (dwSymbol == FXBSTR_ID(0, 0, 'e', '1')) {
@@ -3816,12 +3815,12 @@ static FX_BOOL FX_DateFormat(const CFX_WideString& wsDatePattern,
   }
   return bRet;
 }
-static FX_BOOL FX_TimeFormat(const CFX_WideString& wsTimePattern,
-                             IFX_Locale* pLocale,
-                             const CFX_Unitime& datetime,
-                             CFX_WideString& wsResult) {
-  FX_BOOL bGMT = FALSE;
-  FX_BOOL bRet = TRUE;
+static bool FX_TimeFormat(const CFX_WideString& wsTimePattern,
+                          IFX_Locale* pLocale,
+                          const CFX_Unitime& datetime,
+                          CFX_WideString& wsResult) {
+  bool bGMT = false;
+  bool bRet = true;
   uint8_t hour = datetime.GetHour();
   uint8_t minute = datetime.GetMinute();
   uint8_t second = datetime.GetSecond();
@@ -3830,10 +3829,10 @@ static FX_BOOL FX_TimeFormat(const CFX_WideString& wsTimePattern,
   const FX_WCHAR* strf = wsTimePattern.c_str();
   int32_t lenf = wsTimePattern.GetLength();
   uint16_t wHour = hour;
-  FX_BOOL bPM = FALSE;
+  bool bPM = false;
   if (wsTimePattern.Find('A') != -1) {
     if (wHour >= 12) {
-      bPM = TRUE;
+      bPM = true;
     }
   }
   CFX_WideStringC wsTimeSymbols(gs_wsTimeSymbols);
@@ -3952,13 +3951,13 @@ static FX_BOOL FX_TimeFormat(const CFX_WideString& wsTimePattern,
   }
   return bRet;
 }
-static FX_BOOL FX_FormatDateTime(const CFX_Unitime& dt,
-                                 const CFX_WideString& wsDatePattern,
-                                 const CFX_WideString& wsTimePattern,
-                                 FX_BOOL bDateFirst,
-                                 IFX_Locale* pLocale,
-                                 CFX_WideString& wsOutput) {
-  FX_BOOL bRet = TRUE;
+static bool FX_FormatDateTime(const CFX_Unitime& dt,
+                              const CFX_WideString& wsDatePattern,
+                              const CFX_WideString& wsTimePattern,
+                              bool bDateFirst,
+                              IFX_Locale* pLocale,
+                              CFX_WideString& wsOutput) {
+  bool bRet = true;
   CFX_WideString wsDateOut, wsTimeOut;
   if (!wsDatePattern.IsEmpty()) {
     bRet &= FX_DateFormat(wsDatePattern, pLocale, dt, wsDateOut);
@@ -3969,18 +3968,18 @@ static FX_BOOL FX_FormatDateTime(const CFX_Unitime& dt,
   wsOutput = bDateFirst ? wsDateOut + wsTimeOut : wsTimeOut + wsDateOut;
   return bRet;
 }
-FX_BOOL CFX_FormatString::FormatDateTime(const CFX_WideString& wsSrcDateTime,
-                                         const CFX_WideString& wsPattern,
-                                         CFX_WideString& wsOutput) {
+bool CFX_FormatString::FormatDateTime(const CFX_WideString& wsSrcDateTime,
+                                      const CFX_WideString& wsPattern,
+                                      CFX_WideString& wsOutput) {
   if (wsSrcDateTime.IsEmpty() || wsPattern.IsEmpty()) {
-    return FALSE;
+    return false;
   }
   CFX_WideString wsDatePattern, wsTimePattern;
   IFX_Locale* pLocale = nullptr;
   FX_DATETIMETYPE eCategory =
       GetDateTimeFormat(wsPattern, pLocale, wsDatePattern, wsTimePattern);
   if (!pLocale || eCategory == FX_DATETIMETYPE_Unknown) {
-    return FALSE;
+    return false;
   }
   CFX_Unitime dt(0);
   int32_t iT = wsSrcDateTime.Find(L"T");
@@ -4000,19 +3999,19 @@ FX_BOOL CFX_FormatString::FormatDateTime(const CFX_WideString& wsSrcDateTime,
                            eCategory != FX_DATETIMETYPE_TimeDate, pLocale,
                            wsOutput);
 }
-FX_BOOL CFX_FormatString::FormatDateTime(const CFX_WideString& wsSrcDateTime,
-                                         const CFX_WideString& wsPattern,
-                                         CFX_WideString& wsOutput,
-                                         FX_DATETIMETYPE eDateTimeType) {
+bool CFX_FormatString::FormatDateTime(const CFX_WideString& wsSrcDateTime,
+                                      const CFX_WideString& wsPattern,
+                                      CFX_WideString& wsOutput,
+                                      FX_DATETIMETYPE eDateTimeType) {
   if (wsSrcDateTime.IsEmpty() || wsPattern.IsEmpty()) {
-    return FALSE;
+    return false;
   }
   CFX_WideString wsDatePattern, wsTimePattern;
   IFX_Locale* pLocale = nullptr;
   FX_DATETIMETYPE eCategory =
       GetDateTimeFormat(wsPattern, pLocale, wsDatePattern, wsTimePattern);
   if (!pLocale) {
-    return FALSE;
+    return false;
   }
   if (eCategory == FX_DATETIMETYPE_Unknown) {
     if (eDateTimeType == FX_DATETIMETYPE_Time) {
@@ -4022,18 +4021,18 @@ FX_BOOL CFX_FormatString::FormatDateTime(const CFX_WideString& wsSrcDateTime,
     eCategory = eDateTimeType;
   }
   if (eCategory == FX_DATETIMETYPE_Unknown) {
-    return FALSE;
+    return false;
   }
   CFX_Unitime dt(0);
   int32_t iT = wsSrcDateTime.Find(L"T");
   if (iT < 0) {
     if (eCategory == FX_DATETIMETYPE_Date &&
         FX_DateFromCanonical(wsSrcDateTime, dt)) {
-      return FX_FormatDateTime(dt, wsDatePattern, wsTimePattern, TRUE, pLocale,
+      return FX_FormatDateTime(dt, wsDatePattern, wsTimePattern, true, pLocale,
                                wsOutput);
     } else if (eCategory == FX_DATETIMETYPE_Time &&
                FX_TimeFromCanonical(wsSrcDateTime.AsStringC(), dt, pLocale)) {
-      return FX_FormatDateTime(dt, wsDatePattern, wsTimePattern, TRUE, pLocale,
+      return FX_FormatDateTime(dt, wsDatePattern, wsTimePattern, true, pLocale,
                                wsOutput);
     }
   } else {
@@ -4041,7 +4040,7 @@ FX_BOOL CFX_FormatString::FormatDateTime(const CFX_WideString& wsSrcDateTime,
     CFX_WideStringC wsSrcTime(wsSrcDateTime.c_str() + iT + 1,
                               wsSrcDateTime.GetLength() - iT - 1);
     if (wsSrcDate.IsEmpty() || wsSrcTime.IsEmpty()) {
-      return FALSE;
+      return false;
     }
     if (FX_DateFromCanonical(wsSrcDate, dt) &&
         FX_TimeFromCanonical(wsSrcTime, dt, pLocale)) {
@@ -4050,29 +4049,29 @@ FX_BOOL CFX_FormatString::FormatDateTime(const CFX_WideString& wsSrcDateTime,
                                wsOutput);
     }
   }
-  return FALSE;
+  return false;
 }
-FX_BOOL CFX_FormatString::FormatDateTime(const CFX_Unitime& dt,
-                                         const CFX_WideString& wsPattern,
-                                         CFX_WideString& wsOutput) {
+bool CFX_FormatString::FormatDateTime(const CFX_Unitime& dt,
+                                      const CFX_WideString& wsPattern,
+                                      CFX_WideString& wsOutput) {
   if (wsPattern.IsEmpty()) {
-    return FALSE;
+    return false;
   }
   CFX_WideString wsDatePattern, wsTimePattern;
   IFX_Locale* pLocale = nullptr;
   FX_DATETIMETYPE eCategory =
       GetDateTimeFormat(wsPattern, pLocale, wsDatePattern, wsTimePattern);
   if (!pLocale) {
-    return FALSE;
+    return false;
   }
   return FX_FormatDateTime(dt, wsPattern, wsTimePattern,
                            eCategory != FX_DATETIMETYPE_TimeDate, pLocale,
                            wsOutput);
 }
-FX_BOOL CFX_FormatString::FormatZero(const CFX_WideString& wsPattern,
-                                     CFX_WideString& wsOutput) {
+bool CFX_FormatString::FormatZero(const CFX_WideString& wsPattern,
+                                  CFX_WideString& wsOutput) {
   if (wsPattern.IsEmpty()) {
-    return FALSE;
+    return false;
   }
   CFX_WideString wsTextFormat;
   GetTextFormat(wsPattern, FX_WSTRC(L"zero"), wsTextFormat);
@@ -4089,12 +4088,12 @@ FX_BOOL CFX_FormatString::FormatZero(const CFX_WideString& wsPattern,
       continue;
     }
   }
-  return TRUE;
+  return true;
 }
-FX_BOOL CFX_FormatString::FormatNull(const CFX_WideString& wsPattern,
-                                     CFX_WideString& wsOutput) {
+bool CFX_FormatString::FormatNull(const CFX_WideString& wsPattern,
+                                  CFX_WideString& wsOutput) {
   if (wsPattern.IsEmpty()) {
-    return FALSE;
+    return false;
   }
   CFX_WideString wsTextFormat;
   GetTextFormat(wsPattern, FX_WSTRC(L"null"), wsTextFormat);
@@ -4111,7 +4110,7 @@ FX_BOOL CFX_FormatString::FormatNull(const CFX_WideString& wsPattern,
       continue;
     }
   }
-  return TRUE;
+  return true;
 }
 IFX_Locale* CFX_FormatString::GetPatternLocale(const CFX_WideString& wsLocale) {
   return m_pLocaleMgr->GetLocaleByName(wsLocale);
@@ -4328,21 +4327,21 @@ static inline void fxmath_decimal_helper_raw_div(uint64_t a[],
     c[i] = left[i];
   }
 }
-static inline FX_BOOL fxmath_decimal_helper_outofrange(uint64_t a[],
-                                                       uint8_t al,
-                                                       uint8_t goal) {
+static inline bool fxmath_decimal_helper_outofrange(uint64_t a[],
+                                                    uint8_t al,
+                                                    uint8_t goal) {
   for (int i = goal; i < al; i++) {
     if (a[i]) {
-      return TRUE;
+      return true;
     }
   }
-  return FALSE;
+  return false;
 }
 static inline void fxmath_decimal_helper_shrinkintorange(uint64_t a[],
                                                          uint8_t al,
                                                          uint8_t goal,
                                                          uint8_t& scale) {
-  FX_BOOL bRoundUp = FALSE;
+  bool bRoundUp = false;
   while (scale != 0 && (scale > FXMATH_DECIMAL_SCALELIMIT ||
                         fxmath_decimal_helper_outofrange(a, al, goal))) {
     bRoundUp = fxmath_decimal_helper_div10_any(a, al) >= 5;
@@ -4384,7 +4383,7 @@ CFX_Decimal::CFX_Decimal(uint32_t val) {
 CFX_Decimal::CFX_Decimal(uint32_t lo,
                          uint32_t mid,
                          uint32_t hi,
-                         FX_BOOL neg,
+                         bool neg,
                          uint8_t scale) {
   scale = (scale > FXMATH_DECIMAL_SCALELIMIT ? 0 : scale);
   m_uLo = lo;
@@ -4431,8 +4430,8 @@ CFX_Decimal::CFX_Decimal(FX_FLOAT val, uint8_t scale) {
 CFX_Decimal::CFX_Decimal(const CFX_WideStringC& strObj) {
   const FX_WCHAR* str = strObj.c_str();
   const FX_WCHAR* strBound = str + strObj.GetLength();
-  FX_BOOL pointmet = 0;
-  FX_BOOL negmet = 0;
+  bool pointmet = 0;
+  bool negmet = 0;
   uint8_t scale = 0;
   m_uHi = m_uMid = m_uLo = 0;
   while (str != strBound && *str == ' ') {
@@ -4498,7 +4497,7 @@ CFX_Decimal::operator double() const {
   double base =
       ((double)m_uHi) * pow * pow + ((double)m_uMid) * pow + ((double)m_uLo);
   int8_t scale = FXMATH_DECIMAL_FLAGS2SCALE(m_uFlags);
-  FX_BOOL bNeg = FXMATH_DECIMAL_FLAGS2NEG(m_uFlags);
+  bool bNeg = FXMATH_DECIMAL_FLAGS2NEG(m_uFlags);
   return (bNeg ? -1 : 1) * base * ::pow(10.0, -scale);
 }
 void CFX_Decimal::SetScale(uint8_t newscale) {
@@ -4549,9 +4548,9 @@ void CFX_Decimal::SetNegate() {
     m_uFlags ^= FXMATH_DECIMAL_NEGMASK;
   }
 }
-void CFX_Decimal::FloorOrCeil(FX_BOOL bFloor) {
+void CFX_Decimal::FloorOrCeil(bool bFloor) {
   uint64_t nums[3] = {m_uLo, m_uMid, m_uHi};
-  FX_BOOL bDataLoss = FALSE;
+  bool bDataLoss = false;
   for (int i = FXMATH_DECIMAL_FLAGS2SCALE(m_uFlags); i > 0; i--) {
     bDataLoss = fxmath_decimal_helper_div10_any(nums, 3) || bDataLoss;
   }
@@ -4566,10 +4565,10 @@ void CFX_Decimal::FloorOrCeil(FX_BOOL bFloor) {
       FXMATH_DECIMAL_FLAGS2NEG(m_uFlags) && IsNotZero(), 0);
 }
 void CFX_Decimal::SetFloor() {
-  FloorOrCeil(TRUE);
+  FloorOrCeil(true);
 }
 void CFX_Decimal::SetCeiling() {
-  FloorOrCeil(FALSE);
+  FloorOrCeil(false);
 }
 void CFX_Decimal::SetTruncate() {
   FloorOrCeil(!FXMATH_DECIMAL_FLAGS2NEG(m_uFlags));
@@ -4609,7 +4608,7 @@ int8_t CFX_Decimal::Compare(const CFX_Decimal& val) const {
   return (FXMATH_DECIMAL_FLAGS2NEG(lhs.m_uFlags) ? -retVal : retVal);
 }
 CFX_Decimal CFX_Decimal::AddOrMinus(const CFX_Decimal& val,
-                                    FX_BOOL isAdding) const {
+                                    bool isAdding) const {
   CFX_Decimal lhs = *this, rhs = val;
   if (FXMATH_DECIMAL_FLAGS2SCALE(lhs.m_uFlags) !=
       FXMATH_DECIMAL_FLAGS2SCALE(rhs.m_uFlags)) {
@@ -4665,8 +4664,8 @@ CFX_Decimal CFX_Decimal::Multiply(const CFX_Decimal& val) const {
            b[3] = {val.m_uLo, val.m_uMid, val.m_uHi};
   uint64_t c[6];
   fxmath_decimal_helper_raw_mul(a, 3, b, 3, c, 6);
-  FX_BOOL neg = FXMATH_DECIMAL_FLAGS2NEG(m_uFlags) ^
-                FXMATH_DECIMAL_FLAGS2NEG(val.m_uFlags);
+  bool neg = FXMATH_DECIMAL_FLAGS2NEG(m_uFlags) ^
+             FXMATH_DECIMAL_FLAGS2NEG(val.m_uFlags);
   uint8_t scale = FXMATH_DECIMAL_FLAGS2SCALE(m_uFlags) +
                   FXMATH_DECIMAL_FLAGS2SCALE(val.m_uFlags);
   fxmath_decimal_helper_shrinkintorange(c, 6, 3, scale);
@@ -4677,8 +4676,8 @@ CFX_Decimal CFX_Decimal::Divide(const CFX_Decimal& val) const {
   if (!val.IsNotZero()) {
     return CFX_Decimal();
   }
-  FX_BOOL neg = FXMATH_DECIMAL_FLAGS2NEG(m_uFlags) ^
-                FXMATH_DECIMAL_FLAGS2NEG(val.m_uFlags);
+  bool neg = FXMATH_DECIMAL_FLAGS2NEG(m_uFlags) ^
+             FXMATH_DECIMAL_FLAGS2NEG(val.m_uFlags);
   uint64_t a[7] = {m_uLo, m_uMid, m_uHi},
            b[3] = {val.m_uLo, val.m_uMid, val.m_uHi}, c[7] = {0};
   uint8_t scale = 0;
@@ -4715,7 +4714,7 @@ CFX_Decimal CFX_Decimal::Modulus(const CFX_Decimal& val) const {
   if (!rhs_abs.IsNotZero()) {
     return *this;
   }
-  while (TRUE) {
+  while (true) {
     CFX_Decimal lhs_abs = lhs;
     lhs_abs.SetAbs();
     if (lhs_abs < rhs_abs) {
@@ -4746,10 +4745,10 @@ bool CFX_Decimal::operator>(const CFX_Decimal& val) const {
   return Compare(val) > 0;
 }
 CFX_Decimal CFX_Decimal::operator+(const CFX_Decimal& val) const {
-  return AddOrMinus(val, TRUE);
+  return AddOrMinus(val, true);
 }
 CFX_Decimal CFX_Decimal::operator-(const CFX_Decimal& val) const {
-  return AddOrMinus(val, FALSE);
+  return AddOrMinus(val, false);
 }
 CFX_Decimal CFX_Decimal::operator*(const CFX_Decimal& val) const {
   return Multiply(val);

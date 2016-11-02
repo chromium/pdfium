@@ -59,7 +59,7 @@ FWL_EVENT_DEF(CFWL_EvtCmbEditChanged,
 FWL_EVENT_DEF(CFWL_EvtCmbSelChanged,
               CFWL_EventType::SelectChanged,
               CFX_Int32Array iArraySels;
-              FX_BOOL bLButtonUp;)
+              bool bLButtonUp;)
 
 FWL_EVENT_DEF(CFWL_EvtCmbHoverChanged,
               CFWL_EventType::HoverChanged,
@@ -85,10 +85,10 @@ class IFWL_ComboBox : public IFWL_Widget {
 
   // IFWL_Widget
   FWL_Type GetClassID() const override;
-  FWL_Error GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize = FALSE) override;
+  FWL_Error GetWidgetRect(CFX_RectF& rect, bool bAutoSize = false) override;
   FWL_Error ModifyStylesEx(uint32_t dwStylesExAdded,
                            uint32_t dwStylesExRemoved) override;
-  void SetStates(uint32_t dwStates, FX_BOOL bSet = TRUE) override;
+  void SetStates(uint32_t dwStates, bool bSet = true) override;
   FWL_Error Update() override;
   FWL_WidgetHit HitTest(FX_FLOAT fx, FX_FLOAT fy) override;
   FWL_Error DrawWidget(CFX_Graphics* pGraphics,
@@ -111,39 +111,39 @@ class IFWL_ComboBox : public IFWL_Widget {
   int32_t GetEditLimit();
   FWL_Error SetEditLimit(int32_t nLimit);
   FWL_Error EditDoClipboard(int32_t iCmd);
-  FX_BOOL EditRedo(const IFDE_TxtEdtDoRecord* pRecord);
-  FX_BOOL EditUndo(const IFDE_TxtEdtDoRecord* pRecord);
+  bool EditRedo(const IFDE_TxtEdtDoRecord* pRecord);
+  bool EditUndo(const IFDE_TxtEdtDoRecord* pRecord);
   IFWL_ListBox* GetListBoxt();
-  FX_BOOL AfterFocusShowDropList();
-  FWL_Error OpenDropDownList(FX_BOOL bActivate);
-  FX_BOOL EditCanUndo();
-  FX_BOOL EditCanRedo();
-  FX_BOOL EditUndo();
-  FX_BOOL EditRedo();
-  FX_BOOL EditCanCopy();
-  FX_BOOL EditCanCut();
-  FX_BOOL EditCanSelectAll();
-  FX_BOOL EditCopy(CFX_WideString& wsCopy);
-  FX_BOOL EditCut(CFX_WideString& wsCut);
-  FX_BOOL EditPaste(const CFX_WideString& wsPaste);
-  FX_BOOL EditSelectAll();
-  FX_BOOL EditDelete();
-  FX_BOOL EditDeSelect();
+  bool AfterFocusShowDropList();
+  FWL_Error OpenDropDownList(bool bActivate);
+  bool EditCanUndo();
+  bool EditCanRedo();
+  bool EditUndo();
+  bool EditRedo();
+  bool EditCanCopy();
+  bool EditCanCut();
+  bool EditCanSelectAll();
+  bool EditCopy(CFX_WideString& wsCopy);
+  bool EditCut(CFX_WideString& wsCut);
+  bool EditPaste(const CFX_WideString& wsPaste);
+  bool EditSelectAll();
+  bool EditDelete();
+  bool EditDeSelect();
   FWL_Error GetBBox(CFX_RectF& rect);
   FWL_Error EditModifyStylesEx(uint32_t dwStylesExAdded,
                                uint32_t dwStylesExRemoved);
 
   void DrawStretchHandler(CFX_Graphics* pGraphics, const CFX_Matrix* pMatrix);
-  FX_BOOL IsDropListShowed();
-  void ShowDropList(FX_BOOL bActivate);
+  bool IsDropListShowed();
+  void ShowDropList(bool bActivate);
 
   IFWL_ComboEdit* GetComboEdit() const { return m_pEdit.get(); }
-  void ProcessSelChanged(FX_BOOL bLButtonUp);
+  void ProcessSelChanged(bool bLButtonUp);
   int32_t GetCurrentSelection() const { return m_iCurSel; }
 
  protected:
   FX_FLOAT GetListHeight();
-  FX_BOOL IsDropDownStyle() const;
+  bool IsDropDownStyle() const;
   void MatchEditText();
   void SynchrEditText(int32_t iListItem);
   void Layout();
@@ -153,8 +153,8 @@ class IFWL_ComboBox : public IFWL_Widget {
   void InitProxyForm();
   void DisForm_InitComboList();
   void DisForm_InitComboEdit();
-  void DisForm_ShowDropList(FX_BOOL bActivate);
-  FX_BOOL DisForm_IsDropListShowed();
+  void DisForm_ShowDropList(bool bActivate);
+  bool DisForm_IsDropListShowed();
   FWL_Error DisForm_ModifyStylesEx(uint32_t dwStylesExAdded,
                                    uint32_t dwStylesExRemoved);
   FWL_Error DisForm_Update();
@@ -173,16 +173,16 @@ class IFWL_ComboBox : public IFWL_Widget {
   std::unique_ptr<IFWL_ComboEdit> m_pEdit;
   std::unique_ptr<IFWL_ComboList> m_pListBox;
   IFWL_ComboBoxProxy* m_pComboBoxProxy;
-  FX_BOOL m_bLButtonDown;
-  FX_BOOL m_bUpFormHandler;
+  bool m_bLButtonDown;
+  bool m_bUpFormHandler;
   int32_t m_iCurSel;
   int32_t m_iBtnState;
   FX_FLOAT m_fComboFormHandler;
   FX_FLOAT m_fItemHeight;
-  FX_BOOL m_bNeedShowList;
+  bool m_bNeedShowList;
 
  private:
-  void OnFocusChanged(CFWL_Message* pMsg, FX_BOOL bSet = TRUE);
+  void OnFocusChanged(CFWL_Message* pMsg, bool bSet = true);
   void OnLButtonDown(CFWL_MsgMouse* pMsg);
   void OnLButtonUp(CFWL_MsgMouse* pMsg);
   void OnMouseMove(CFWL_MsgMouse* pMsg);
@@ -191,7 +191,7 @@ class IFWL_ComboBox : public IFWL_Widget {
   void DoSubCtrlKey(CFWL_MsgKey* pMsg);
   void DisForm_OnProcessMessage(CFWL_Message* pMessage);
   void DisForm_OnLButtonDown(CFWL_MsgMouse* pMsg);
-  void DisForm_OnFocusChanged(CFWL_Message* pMsg, FX_BOOL bSet = TRUE);
+  void DisForm_OnFocusChanged(CFWL_Message* pMsg, bool bSet = true);
   void DisForm_OnKey(CFWL_MsgKey* pMsg);
 
 };

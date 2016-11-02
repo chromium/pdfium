@@ -635,13 +635,13 @@ CBC_QRCoderMode* CBC_QRCoderEncoder::ChooseMode(const CFX_ByteString& content,
   if (encoding.Compare("SHIFT_JIS") == 0) {
     return CBC_QRCoderMode::sKANJI;
   }
-  FX_BOOL hasNumeric = FALSE;
-  FX_BOOL hasAlphaNumeric = FALSE;
+  bool hasNumeric = false;
+  bool hasAlphaNumeric = false;
   for (int32_t i = 0; i < content.GetLength(); i++) {
     if (isdigit((uint8_t)content[i])) {
-      hasNumeric = TRUE;
+      hasNumeric = true;
     } else if (GetAlphaNumericCode((uint8_t)content[i]) != -1) {
-      hasAlphaNumeric = TRUE;
+      hasAlphaNumeric = true;
     } else {
       return CBC_QRCoderMode::sBYTE;
     }

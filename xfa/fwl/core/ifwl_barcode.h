@@ -43,15 +43,15 @@ class IFWL_BarcodeDP : public IFWL_EditDP {
   virtual int32_t GetModuleHeight() const = 0;
   virtual int32_t GetModuleWidth() const = 0;
   virtual int32_t GetDataLength() const = 0;
-  virtual FX_BOOL GetCalChecksum() const = 0;
-  virtual FX_BOOL GetPrintChecksum() const = 0;
+  virtual bool GetCalChecksum() const = 0;
+  virtual bool GetPrintChecksum() const = 0;
   virtual BC_TEXT_LOC GetTextLocation() const = 0;
   virtual int32_t GetWideNarrowRatio() const = 0;
   virtual FX_CHAR GetStartChar() const = 0;
   virtual FX_CHAR GetEndChar() const = 0;
   virtual int32_t GetVersion() const = 0;
   virtual int32_t GetErrorCorrectionLevel() const = 0;
-  virtual FX_BOOL GetTruncated() const = 0;
+  virtual bool GetTruncated() const = 0;
   virtual uint32_t GetBarcodeAttributeMask() const = 0;
 };
 
@@ -70,7 +70,7 @@ class IFWL_Barcode : public IFWL_Edit {
   void OnProcessEvent(CFWL_Event* pEvent) override;
 
   void SetType(BC_TYPE type);
-  FX_BOOL IsProtectedType();
+  bool IsProtectedType();
 
  protected:
   void GenerateBarcodeImageCache();

@@ -70,7 +70,7 @@ CFX_Int32Array* CBC_ReedSolomonGF256Poly::GetCoefficients() {
 int32_t CBC_ReedSolomonGF256Poly::GetDegree() {
   return m_coefficients.GetSize() - 1;
 }
-FX_BOOL CBC_ReedSolomonGF256Poly::IsZero() {
+bool CBC_ReedSolomonGF256Poly::IsZero() {
   return m_coefficients[0] == 0;
 }
 int32_t CBC_ReedSolomonGF256Poly::GetCoefficients(int32_t degree) {

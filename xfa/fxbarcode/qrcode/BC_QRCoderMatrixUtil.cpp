@@ -211,8 +211,7 @@ void CBC_QRCoderMatrixUtil::EmbedDataBits(CBC_QRCoderBitVector* dataBits,
           bit = 0;
         }
         if (maskPattern != -1) {
-          FX_BOOL bol =
-              CBC_QRCoderMaskUtil::GetDataMaskBit(maskPattern, xx, y, e);
+          bool bol = CBC_QRCoderMaskUtil::GetDataMaskBit(maskPattern, xx, y, e);
           BC_EXCEPTION_CHECK_ReturnVoid(e);
           if (bol) {
             bit ^= 0x01;
@@ -285,10 +284,10 @@ void CBC_QRCoderMatrixUtil::MakeVersionInfoBits(int32_t version,
     BC_EXCEPTION_CHECK_ReturnVoid(e);
   }
 }
-FX_BOOL CBC_QRCoderMatrixUtil::IsEmpty(int32_t value) {
+bool CBC_QRCoderMatrixUtil::IsEmpty(int32_t value) {
   return (uint8_t)value == 0xff;
 }
-FX_BOOL CBC_QRCoderMatrixUtil::IsValidValue(int32_t value) {
+bool CBC_QRCoderMatrixUtil::IsValidValue(int32_t value) {
   return ((uint8_t)value == 0xff || (uint8_t)value == 0x00 ||
           (uint8_t)value == 0x01);
 }

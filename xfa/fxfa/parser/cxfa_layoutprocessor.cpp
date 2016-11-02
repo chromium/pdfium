@@ -33,7 +33,7 @@ CXFA_LayoutProcessor::CXFA_LayoutProcessor(CXFA_Document* pDocument)
       m_pRootItemLayoutProcessor(nullptr),
       m_pLayoutPageMgr(nullptr),
       m_nProgressCounter(0),
-      m_bNeeLayout(TRUE) {}
+      m_bNeeLayout(true) {}
 
 CXFA_LayoutProcessor::~CXFA_LayoutProcessor() {
   ClearLayoutData();
@@ -43,7 +43,7 @@ CXFA_Document* CXFA_LayoutProcessor::GetDocument() const {
   return m_pDocument;
 }
 
-int32_t CXFA_LayoutProcessor::StartLayout(FX_BOOL bForceRestart) {
+int32_t CXFA_LayoutProcessor::StartLayout(bool bForceRestart) {
   if (!bForceRestart && !IsNeedLayout())
     return 100;
 
@@ -82,7 +82,7 @@ int32_t CXFA_LayoutProcessor::DoLayout(IFX_Pause* pPause) {
   do {
     FX_FLOAT fAvailHeight = m_pLayoutPageMgr->GetAvailHeight();
     eStatus =
-        m_pRootItemLayoutProcessor->DoLayout(TRUE, fAvailHeight, fAvailHeight);
+        m_pRootItemLayoutProcessor->DoLayout(true, fAvailHeight, fAvailHeight);
     if (eStatus != XFA_ItemLayoutProcessorResult_Done)
       m_nProgressCounter++;
 
@@ -98,7 +98,7 @@ int32_t CXFA_LayoutProcessor::DoLayout(IFX_Pause* pPause) {
   if (eStatus == XFA_ItemLayoutProcessorResult_Done) {
     m_pLayoutPageMgr->FinishPaginatedPageSets();
     m_pLayoutPageMgr->SyncLayoutData();
-    m_bNeeLayout = FALSE;
+    m_bNeeLayout = false;
     m_rgChangedContainers.RemoveAll();
   }
   return 100 * (eStatus == XFA_ItemLayoutProcessorResult_Done
@@ -107,9 +107,9 @@ int32_t CXFA_LayoutProcessor::DoLayout(IFX_Pause* pPause) {
          m_nProgressCounter;
 }
 
-FX_BOOL CXFA_LayoutProcessor::IncrementLayout() {
+bool CXFA_LayoutProcessor::IncrementLayout() {
   if (m_bNeeLayout) {
-    StartLayout(TRUE);
+    StartLayout(true);
     return DoLayout(nullptr) == 100;
   }
 
@@ -118,14 +118,14 @@ FX_BOOL CXFA_LayoutProcessor::IncrementLayout() {
     CXFA_Node* pParentNode =
         pNode->GetNodeItem(XFA_NODEITEM_Parent, XFA_ObjectType::ContainerNode);
     if (!pParentNode)
-      return FALSE;
+      return false;
     if (!CXFA_ItemLayoutProcessor::IncrementRelayoutNode(this, pNode,
                                                          pParentNode)) {
-      return FALSE;
+      return false;
     }
   }
   m_rgChangedContainers.RemoveAll();
-  return TRUE;
+  return true;
 }
 
 int32_t CXFA_LayoutProcessor::CountPages() const {
@@ -158,6 +158,6 @@ void CXFA_LayoutProcessor::ClearLayoutData() {
   m_nProgressCounter = 0;
 }
 
-FX_BOOL CXFA_LayoutProcessor::IsNeedLayout() {
+bool CXFA_LayoutProcessor::IsNeedLayout() {
   return m_bNeeLayout || m_rgChangedContainers.GetSize() > 0;
 }

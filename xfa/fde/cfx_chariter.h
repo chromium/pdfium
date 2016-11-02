@@ -16,11 +16,11 @@ class CFX_CharIter : public IFX_CharIter {
   explicit CFX_CharIter(const CFX_WideString& wsText);
   ~CFX_CharIter() override;
 
-  FX_BOOL Next(FX_BOOL bPrev = FALSE) override;
+  bool Next(bool bPrev = false) override;
   FX_WCHAR GetChar() override;
   void SetAt(int32_t nIndex) override;
   int32_t GetAt() const override;
-  FX_BOOL IsEOF(FX_BOOL bTail = TRUE) const override;
+  bool IsEOF(bool bTail = true) const override;
   IFX_CharIter* Clone() override;
 
  private:

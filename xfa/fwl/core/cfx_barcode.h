@@ -25,33 +25,33 @@ class CFX_Barcode {
   CFX_Barcode();
   ~CFX_Barcode();
 
-  FX_BOOL Create(BC_TYPE type);
+  bool Create(BC_TYPE type);
   BC_TYPE GetType();
-  FX_BOOL Encode(const CFX_WideStringC& contents, FX_BOOL isDevice, int32_t& e);
-  FX_BOOL RenderDevice(CFX_RenderDevice* device,
-                       const CFX_Matrix* matrix,
-                       int32_t& e);
-  FX_BOOL RenderBitmap(CFX_DIBitmap*& pOutBitmap, int32_t& e);
-  FX_BOOL SetCharEncoding(BC_CHAR_ENCODING encoding);
-  FX_BOOL SetModuleHeight(int32_t moduleHeight);
-  FX_BOOL SetModuleWidth(int32_t moduleWidth);
-  FX_BOOL SetHeight(int32_t height);
-  FX_BOOL SetWidth(int32_t width);
-  FX_BOOL CheckContentValidity(const CFX_WideStringC& contents);
-  FX_BOOL SetPrintChecksum(FX_BOOL checksum);
-  FX_BOOL SetDataLength(int32_t length);
-  FX_BOOL SetCalChecksum(FX_BOOL state);
-  FX_BOOL SetFont(CFX_Font* pFont);
-  FX_BOOL SetFontSize(FX_FLOAT size);
-  FX_BOOL SetFontStyle(int32_t style);
-  FX_BOOL SetFontColor(FX_ARGB color);
-  FX_BOOL SetTextLocation(BC_TEXT_LOC location);
-  FX_BOOL SetWideNarrowRatio(int32_t ratio);
-  FX_BOOL SetStartChar(FX_CHAR start);
-  FX_BOOL SetEndChar(FX_CHAR end);
-  FX_BOOL SetVersion(int32_t version);
-  FX_BOOL SetErrorCorrectionLevel(int32_t level);
-  FX_BOOL SetTruncated(FX_BOOL truncated);
+  bool Encode(const CFX_WideStringC& contents, bool isDevice, int32_t& e);
+  bool RenderDevice(CFX_RenderDevice* device,
+                    const CFX_Matrix* matrix,
+                    int32_t& e);
+  bool RenderBitmap(CFX_DIBitmap*& pOutBitmap, int32_t& e);
+  bool SetCharEncoding(BC_CHAR_ENCODING encoding);
+  bool SetModuleHeight(int32_t moduleHeight);
+  bool SetModuleWidth(int32_t moduleWidth);
+  bool SetHeight(int32_t height);
+  bool SetWidth(int32_t width);
+  bool CheckContentValidity(const CFX_WideStringC& contents);
+  bool SetPrintChecksum(bool checksum);
+  bool SetDataLength(int32_t length);
+  bool SetCalChecksum(bool state);
+  bool SetFont(CFX_Font* pFont);
+  bool SetFontSize(FX_FLOAT size);
+  bool SetFontStyle(int32_t style);
+  bool SetFontColor(FX_ARGB color);
+  bool SetTextLocation(BC_TEXT_LOC location);
+  bool SetWideNarrowRatio(int32_t ratio);
+  bool SetStartChar(FX_CHAR start);
+  bool SetEndChar(FX_CHAR end);
+  bool SetVersion(int32_t version);
+  bool SetErrorCorrectionLevel(int32_t level);
+  bool SetTruncated(bool truncated);
 
  protected:
   std::unique_ptr<CBC_CodeBase> m_pBCEngine;

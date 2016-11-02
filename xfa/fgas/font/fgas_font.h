@@ -111,7 +111,7 @@ class IFGAS_FontMgr {
                                  const FX_WCHAR* pszFontAlias = nullptr,
                                  uint32_t dwFontStyles = 0,
                                  uint16_t wCodePage = 0,
-                                 FX_BOOL bSaveStream = FALSE) = 0;
+                                 bool bSaveStream = false) = 0;
   virtual CFGAS_GEFont* LoadFont(CFGAS_GEFont* pSrcFont,
                                  uint32_t dwFontStyles,
                                  uint16_t wCodePage = 0xFFFF) = 0;

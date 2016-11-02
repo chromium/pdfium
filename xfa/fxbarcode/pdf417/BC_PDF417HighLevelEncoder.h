@@ -48,12 +48,12 @@ class CBC_PDF417HighLevelEncoder {
                             int32_t startpos,
                             int32_t count,
                             CFX_WideString& sb);
-  static FX_BOOL isDigit(FX_WCHAR ch);
-  static FX_BOOL isAlphaUpper(FX_WCHAR ch);
-  static FX_BOOL isAlphaLower(FX_WCHAR ch);
-  static FX_BOOL isMixed(FX_WCHAR ch);
-  static FX_BOOL isPunctuation(FX_WCHAR ch);
-  static FX_BOOL isText(FX_WCHAR ch);
+  static bool isDigit(FX_WCHAR ch);
+  static bool isAlphaUpper(FX_WCHAR ch);
+  static bool isAlphaLower(FX_WCHAR ch);
+  static bool isMixed(FX_WCHAR ch);
+  static bool isPunctuation(FX_WCHAR ch);
+  static bool isText(FX_WCHAR ch);
   static int32_t determineConsecutiveDigitCount(CFX_WideString msg,
                                                 int32_t startpos);
   static int32_t determineConsecutiveTextCount(CFX_WideString msg,

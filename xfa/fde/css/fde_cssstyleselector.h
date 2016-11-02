@@ -75,7 +75,7 @@ class CFDE_CSSRuleCollection : public CFX_Target {
                  uint32_t dwKey,
                  CFDE_CSSSelector* pSel,
                  CFDE_CSSDeclaration* pDecl);
-  FX_BOOL AddRuleTo(FDE_CSSRuleData*& pList, FDE_CSSRuleData* pData);
+  bool AddRuleTo(FDE_CSSRuleData*& pList, FDE_CSSRuleData* pData);
   FDE_CSSRuleData* NewRuleData(CFDE_CSSSelector* pSel,
                                CFDE_CSSDeclaration* pDecl);
   CFX_MapPtrToPtr m_IDRules;
@@ -93,10 +93,9 @@ class CFDE_CSSStyleSelector : public CFX_Target {
 
   void SetDefFontSize(FX_FLOAT fFontSize);
 
-  FX_BOOL SetStyleSheet(FDE_CSSSTYLESHEETGROUP eType,
-                        IFDE_CSSStyleSheet* pSheet);
-  FX_BOOL SetStyleSheets(FDE_CSSSTYLESHEETGROUP eType,
-                         const CFDE_CSSStyleSheetArray* pArray);
+  bool SetStyleSheet(FDE_CSSSTYLESHEETGROUP eType, IFDE_CSSStyleSheet* pSheet);
+  bool SetStyleSheets(FDE_CSSSTYLESHEETGROUP eType,
+                      const CFDE_CSSStyleSheetArray* pArray);
   void SetStylePriority(FDE_CSSSTYLESHEETGROUP eType,
                         FDE_CSSSTYLESHEETPRIORITY ePriority);
   void UpdateStyleIndex(uint32_t dwMediaList);
@@ -116,13 +115,13 @@ class CFDE_CSSStyleSelector : public CFX_Target {
   void MatchRules(FDE_CSSTagCache* pCache,
                   FDE_CSSRuleData* pList,
                   FDE_CSSPERSUDO ePersudoType);
-  FX_BOOL MatchSelector(FDE_CSSTagCache* pCache,
-                        CFDE_CSSSelector* pSel,
-                        FDE_CSSPERSUDO ePersudoType);
+  bool MatchSelector(FDE_CSSTagCache* pCache,
+                     CFDE_CSSSelector* pSel,
+                     FDE_CSSPERSUDO ePersudoType);
   void AppendInlineStyle(CFDE_CSSDeclaration* pDecl,
                          const FX_WCHAR* psz,
                          int32_t iLen);
-  void ApplyDeclarations(FX_BOOL bPriority,
+  void ApplyDeclarations(bool bPriority,
                          const CFDE_CSSDeclaration** ppDeclArray,
                          int32_t iDeclCount,
                          IFDE_CSSComputedStyle* pDestStyle);
@@ -133,10 +132,10 @@ class CFDE_CSSStyleSelector : public CFX_Target {
   FX_FLOAT ApplyNumber(FDE_CSSPRIMITIVETYPE eUnit,
                        FX_FLOAT fValue,
                        FX_FLOAT fPercentBase);
-  FX_BOOL SetLengthWithPercent(FDE_CSSLENGTH& width,
-                               FDE_CSSPRIMITIVETYPE eType,
-                               IFDE_CSSPrimitiveValue* pPrimitive,
-                               FX_FLOAT fFontSize);
+  bool SetLengthWithPercent(FDE_CSSLENGTH& width,
+                            FDE_CSSPRIMITIVETYPE eType,
+                            IFDE_CSSPrimitiveValue* pPrimitive,
+                            FX_FLOAT fFontSize);
   FX_FLOAT ToFontSize(FDE_CSSPROPERTYVALUE eValue, FX_FLOAT fCurFontSize);
   FDE_CSSDISPLAY ToDisplay(FDE_CSSPROPERTYVALUE eValue);
   FDE_CSSTEXTALIGN ToTextAlign(FDE_CSSPROPERTYVALUE eValue);
@@ -159,10 +158,10 @@ class CFDE_CSSStyleSelector : public CFX_Target {
   FDE_CSSOVERFLOW ToOverflow(FDE_CSSPROPERTYVALUE eValue);
   FDE_CSSLINEBREAK ToLineBreak(FDE_CSSPROPERTYVALUE eValue);
   FDE_CSSTEXTCOMBINE ToTextCombine(FDE_CSSPROPERTYVALUE eValue);
-  FX_BOOL ToTextEmphasisMark(FDE_CSSPROPERTYVALUE eValue,
-                             FDE_CSSTEXTEMPHASISMARK& eMark);
-  FX_BOOL ToTextEmphasisFill(FDE_CSSPROPERTYVALUE eValue,
-                             FDE_CSSTEXTEMPHASISFILL& eFill);
+  bool ToTextEmphasisMark(FDE_CSSPROPERTYVALUE eValue,
+                          FDE_CSSTEXTEMPHASISMARK& eMark);
+  bool ToTextEmphasisFill(FDE_CSSPROPERTYVALUE eValue,
+                          FDE_CSSTEXTEMPHASISFILL& eFill);
   FDE_CSSCURSOR ToCursor(FDE_CSSPROPERTYVALUE eValue);
   FDE_CSSPOSITION ToPosition(FDE_CSSPROPERTYVALUE eValue);
   FDE_CSSCAPTIONSIDE ToCaptionSide(FDE_CSSPROPERTYVALUE eValue);
@@ -188,18 +187,18 @@ class CFDE_CSSStyleSelector : public CFX_Target {
 struct FDE_CSSCOUNTERDATA {
  public:
   FDE_CSSCOUNTERDATA() { FXSYS_memset(this, 0, sizeof(FDE_CSSCOUNTERDATA)); }
-  FX_BOOL GetCounterIncrement(int32_t& iValue) {
+  bool GetCounterIncrement(int32_t& iValue) {
     iValue = m_iIncVal;
     return m_bIncrement;
   }
-  FX_BOOL GetCounterReset(int32_t& iValue) {
+  bool GetCounterReset(int32_t& iValue) {
     iValue = m_iResetVal;
     return m_bReset;
   }
 
   const FX_WCHAR* m_pszIdent;
-  FX_BOOL m_bIncrement;
-  FX_BOOL m_bReset;
+  bool m_bIncrement;
+  bool m_bReset;
   int32_t m_iIncVal;
   int32_t m_iResetVal;
 };
@@ -211,21 +210,21 @@ class CFDE_CSSCounterStyle {
 
   void SetCounterIncrementList(IFDE_CSSValueList* pList) {
     m_pCounterInc = pList;
-    m_bIndexDirty = TRUE;
+    m_bIndexDirty = true;
   }
   void SetCounterResetList(IFDE_CSSValueList* pList) {
     m_pCounterReset = pList;
-    m_bIndexDirty = TRUE;
+    m_bIndexDirty = true;
   }
   int32_t CountCounters() {
     UpdateIndex();
     return m_arrCounterData.GetSize();
   }
-  FX_BOOL GetCounterIncrement(int32_t index, int32_t& iValue) {
+  bool GetCounterIncrement(int32_t index, int32_t& iValue) {
     UpdateIndex();
     return m_arrCounterData.ElementAt(index).GetCounterIncrement(iValue);
   }
-  FX_BOOL GetCounterReset(int32_t index, int32_t& iValue) {
+  bool GetCounterReset(int32_t index, int32_t& iValue) {
     UpdateIndex();
     return m_arrCounterData.ElementAt(index).GetCounterReset(iValue);
   }
@@ -242,7 +241,7 @@ class CFDE_CSSCounterStyle {
   IFDE_CSSValueList* m_pCounterInc;
   IFDE_CSSValueList* m_pCounterReset;
   CFX_ArrayTemplate<FDE_CSSCOUNTERDATA> m_arrCounterData;
-  FX_BOOL m_bIndexDirty;
+  bool m_bIndexDirty;
 };
 
 class CFDE_CSSInheritedData {
@@ -367,8 +366,8 @@ class CFDE_CSSComputedStyle : public IFDE_CSSComputedStyle,
   IFDE_CSSBoundaryStyle* GetBoundaryStyles() override;
   IFDE_CSSPositionStyle* GetPositionStyles() override;
   IFDE_CSSParagraphStyle* GetParagraphStyles() override;
-  FX_BOOL GetCustomStyle(const CFX_WideStringC& wsName,
-                         CFX_WideString& wsValue) const override;
+  bool GetCustomStyle(const CFX_WideStringC& wsName,
+                      CFX_WideString& wsValue) const override;
 
   // IFDE_CSSFontStyle:
   int32_t CountFontFamilies() const override;

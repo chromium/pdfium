@@ -47,12 +47,12 @@ CFX_WideString CBC_UPCA::Preprocess(const CFX_WideStringC& contents) {
   return encodeContents;
 }
 
-FX_BOOL CBC_UPCA::Encode(const CFX_WideStringC& contents,
-                         FX_BOOL isDevice,
-                         int32_t& e) {
+bool CBC_UPCA::Encode(const CFX_WideStringC& contents,
+                      bool isDevice,
+                      int32_t& e) {
   if (contents.IsEmpty()) {
     e = BCExceptionNoContents;
-    return FALSE;
+    return false;
   }
   BCFORMAT format = BCFORMAT_UPC_A;
   int32_t outWidth = 0;
@@ -66,28 +66,28 @@ FX_BOOL CBC_UPCA::Encode(const CFX_WideStringC& contents,
 
   pWriter->Init();
   uint8_t* data = pWriter->Encode(byteString, format, outWidth, outHeight, e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, FALSE);
+  BC_EXCEPTION_CHECK_ReturnValue(e, false);
   pWriter->RenderResult(encodeContents.AsStringC(), data, outWidth, isDevice,
                         e);
   FX_Free(data);
-  BC_EXCEPTION_CHECK_ReturnValue(e, FALSE);
-  return TRUE;
+  BC_EXCEPTION_CHECK_ReturnValue(e, false);
+  return true;
 }
 
-FX_BOOL CBC_UPCA::RenderDevice(CFX_RenderDevice* device,
-                               const CFX_Matrix* matrix,
-                               int32_t& e) {
+bool CBC_UPCA::RenderDevice(CFX_RenderDevice* device,
+                            const CFX_Matrix* matrix,
+                            int32_t& e) {
   static_cast<CBC_OneDimWriter*>(m_pBCWriter.get())
       ->RenderDeviceResult(device, matrix, m_renderContents.AsStringC(), e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, FALSE);
-  return TRUE;
+  BC_EXCEPTION_CHECK_ReturnValue(e, false);
+  return true;
 }
 
-FX_BOOL CBC_UPCA::RenderBitmap(CFX_DIBitmap*& pOutBitmap, int32_t& e) {
+bool CBC_UPCA::RenderBitmap(CFX_DIBitmap*& pOutBitmap, int32_t& e) {
   static_cast<CBC_OneDimWriter*>(m_pBCWriter.get())
       ->RenderBitmapResult(pOutBitmap, m_renderContents.AsStringC(), e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, FALSE);
-  return TRUE;
+  BC_EXCEPTION_CHECK_ReturnValue(e, false);
+  return true;
 }
 
 BC_TYPE CBC_UPCA::GetType() {

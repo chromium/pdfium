@@ -45,7 +45,7 @@ CBC_OnedCode39Writer::CBC_OnedCode39Writer() {
   m_iWideNarrRatio = 3;
 }
 CBC_OnedCode39Writer::~CBC_OnedCode39Writer() {}
-FX_BOOL CBC_OnedCode39Writer::CheckContentValidity(
+bool CBC_OnedCode39Writer::CheckContentValidity(
     const CFX_WideStringC& contents) {
   for (int32_t i = 0; i < contents.GetLength(); i++) {
     FX_WCHAR ch = contents.GetAt(i);
@@ -56,9 +56,9 @@ FX_BOOL CBC_OnedCode39Writer::CheckContentValidity(
         ch == (FX_WCHAR)'%') {
       continue;
     }
-    return FALSE;
+    return false;
   }
-  return TRUE;
+  return true;
 }
 
 CFX_WideString CBC_OnedCode39Writer::FilterContents(
@@ -110,19 +110,19 @@ CFX_WideString CBC_OnedCode39Writer::RenderTextContents(
   return renderContents;
 }
 
-FX_BOOL CBC_OnedCode39Writer::SetTextLocation(BC_TEXT_LOC location) {
+bool CBC_OnedCode39Writer::SetTextLocation(BC_TEXT_LOC location) {
   if (location < BC_TEXT_LOC_NONE || location > BC_TEXT_LOC_BELOWEMBED) {
-    return FALSE;
+    return false;
   }
   m_locTextLoc = location;
-  return TRUE;
+  return true;
 }
-FX_BOOL CBC_OnedCode39Writer::SetWideNarrowRatio(int32_t ratio) {
+bool CBC_OnedCode39Writer::SetWideNarrowRatio(int32_t ratio) {
   if (ratio < 2 || ratio > 3) {
-    return FALSE;
+    return false;
   }
   m_iWideNarrRatio = ratio;
-  return TRUE;
+  return true;
 }
 uint8_t* CBC_OnedCode39Writer::Encode(const CFX_ByteString& contents,
                                       BCFORMAT format,
@@ -272,7 +272,7 @@ CFX_WideString CBC_OnedCode39Writer::encodedContents(
 void CBC_OnedCode39Writer::RenderResult(const CFX_WideStringC& contents,
                                         uint8_t* code,
                                         int32_t codeLength,
-                                        FX_BOOL isDevice,
+                                        bool isDevice,
                                         int32_t& e) {
   CFX_WideString encodedCon = encodedContents(contents, e);
   BC_EXCEPTION_CHECK_ReturnVoid(e);

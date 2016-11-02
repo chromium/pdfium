@@ -29,7 +29,7 @@ class CFWL_Edit : public CFWL_Widget {
                     int32_t nCount = -1) const;
   FWL_Error ClearText();
   int32_t GetCaretPos() const;
-  int32_t SetCaretPos(int32_t nIndex, FX_BOOL bBefore = TRUE);
+  int32_t SetCaretPos(int32_t nIndex, bool bBefore = true);
   int32_t AddSelRange(int32_t nStart, int32_t nCount = -1);
   int32_t CountSelRanges();
   int32_t GetSelRange(int32_t nIndex, int32_t& nStart);
@@ -45,25 +45,25 @@ class CFWL_Edit : public CFWL_Widget {
                     int32_t nLen,
                     const CFX_WideStringC& wsReplace);
   FWL_Error DoClipboard(int32_t iCmd);
-  FX_BOOL Redo(const IFDE_TxtEdtDoRecord* pRecord);
-  FX_BOOL Undo(const IFDE_TxtEdtDoRecord* pRecord);
-  FWL_Error SetTabWidth(FX_FLOAT fTabWidth, FX_BOOL bEquidistant);
+  bool Redo(const IFDE_TxtEdtDoRecord* pRecord);
+  bool Undo(const IFDE_TxtEdtDoRecord* pRecord);
+  FWL_Error SetTabWidth(FX_FLOAT fTabWidth, bool bEquidistant);
   FWL_Error SetNumberRange(int32_t iMin, int32_t iMax);
   FWL_Error SetBackColor(uint32_t dwColor);
   FWL_Error SetFont(const CFX_WideString& wsFont, FX_FLOAT fSize);
-  FX_BOOL CanUndo();
-  FX_BOOL CanRedo();
-  FX_BOOL Undo();
-  FX_BOOL Redo();
-  FX_BOOL Copy(CFX_WideString& wsCopy);
-  FX_BOOL Cut(CFX_WideString& wsCut);
-  FX_BOOL Paste(const CFX_WideString& wsPaste);
-  FX_BOOL Delete();
+  bool CanUndo();
+  bool CanRedo();
+  bool Undo();
+  bool Redo();
+  bool Copy(CFX_WideString& wsCopy);
+  bool Cut(CFX_WideString& wsCut);
+  bool Paste(const CFX_WideString& wsPaste);
+  bool Delete();
   void SetScrollOffset(FX_FLOAT fScrollOffset);
-  FX_BOOL GetSuggestWords(CFX_PointF pointf,
-                          std::vector<CFX_ByteString>& sSuggest);
-  FX_BOOL ReplaceSpellCheckWord(CFX_PointF pointf,
-                                const CFX_ByteStringC& bsReplace);
+  bool GetSuggestWords(CFX_PointF pointf,
+                       std::vector<CFX_ByteString>& sSuggest);
+  bool ReplaceSpellCheckWord(CFX_PointF pointf,
+                             const CFX_ByteStringC& bsReplace);
 };
 
 #endif  // XFA_FWL_CORE_CFWL_EDIT_H_

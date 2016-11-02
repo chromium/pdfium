@@ -17,7 +17,7 @@
 class CFWL_MsgMouse;
 class CFWL_WidgetImpProperties;
 
-FWL_EVENT_DEF(CFWL_EvtSpbClick, CFWL_EventType::Click, FX_BOOL m_bUp;)
+FWL_EVENT_DEF(CFWL_EvtSpbClick, CFWL_EventType::Click, bool m_bUp;)
 
 class IFWL_SpinButton : public IFWL_Widget {
  public:
@@ -27,7 +27,7 @@ class IFWL_SpinButton : public IFWL_Widget {
 
   // IFWL_Widget
   FWL_Type GetClassID() const override;
-  FWL_Error GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize = FALSE) override;
+  FWL_Error GetWidgetRect(CFX_RectF& rect, bool bAutoSize = false) override;
   FWL_Error Update() override;
   FWL_WidgetHit HitTest(FX_FLOAT fx, FX_FLOAT fy) override;
   FWL_Error DrawWidget(CFX_Graphics* pGraphics,
@@ -37,8 +37,8 @@ class IFWL_SpinButton : public IFWL_Widget {
   void OnDrawWidget(CFX_Graphics* pGraphics,
                     const CFX_Matrix* pMatrix) override;
 
-  FWL_Error EnableButton(FX_BOOL bEnable, FX_BOOL bUp = TRUE);
-  FX_BOOL IsButtonEnable(FX_BOOL bUp = TRUE);
+  FWL_Error EnableButton(bool bEnable, bool bUp = true);
+  bool IsButtonEnable(bool bUp = true);
 
  protected:
   class Timer : public IFWL_Timer {
@@ -63,12 +63,12 @@ class IFWL_SpinButton : public IFWL_Widget {
   uint32_t m_dwUpState;
   uint32_t m_dwDnState;
   int32_t m_iButtonIndex;
-  FX_BOOL m_bLButtonDwn;
+  bool m_bLButtonDwn;
   IFWL_TimerInfo* m_pTimerInfo;
   IFWL_SpinButton::Timer m_Timer;
 
  private:
-  void OnFocusChanged(CFWL_Message* pMsg, FX_BOOL bSet);
+  void OnFocusChanged(CFWL_Message* pMsg, bool bSet);
   void OnLButtonDown(CFWL_MsgMouse* pMsg);
   void OnLButtonUp(CFWL_MsgMouse* pMsg);
   void OnMouseMove(CFWL_MsgMouse* pMsg);

@@ -28,8 +28,8 @@
 #include "xfa/fxbarcode/oned/BC_OnedUPCAWriter.h"
 
 CBC_OnedUPCAWriter::CBC_OnedUPCAWriter() {
-  m_bLeftPadding = TRUE;
-  m_bRightPadding = TRUE;
+  m_bLeftPadding = true;
+  m_bRightPadding = true;
 }
 
 void CBC_OnedUPCAWriter::Init() {
@@ -38,13 +38,12 @@ void CBC_OnedUPCAWriter::Init() {
 
 CBC_OnedUPCAWriter::~CBC_OnedUPCAWriter() {}
 
-FX_BOOL CBC_OnedUPCAWriter::CheckContentValidity(
-    const CFX_WideStringC& contents) {
+bool CBC_OnedUPCAWriter::CheckContentValidity(const CFX_WideStringC& contents) {
   for (FX_STRSIZE i = 0; i < contents.GetLength(); ++i) {
     if (contents.GetAt(i) < '0' || contents.GetAt(i) > '9')
-      return FALSE;
+      return false;
   }
-  return TRUE;
+  return true;
 }
 
 CFX_WideString CBC_OnedUPCAWriter::FilterContents(
@@ -275,7 +274,7 @@ void CBC_OnedUPCAWriter::ShowChars(const CFX_WideStringC& contents,
 void CBC_OnedUPCAWriter::RenderResult(const CFX_WideStringC& contents,
                                       uint8_t* code,
                                       int32_t codeLength,
-                                      FX_BOOL isDevice,
+                                      bool isDevice,
                                       int32_t& e) {
   CBC_OneDimWriter::RenderResult(contents, code, codeLength, isDevice, e);
 }

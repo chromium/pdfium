@@ -44,7 +44,7 @@ void CScript_SignaturePseudoModel::Sign(CFXJSE_Arguments* pArguments) {
 
   CFXJSE_Value* pValue = pArguments->GetReturnValue();
   if (pValue)
-    pValue->SetBoolean(FALSE);
+    pValue->SetBoolean(false);
 }
 
 void CScript_SignaturePseudoModel::Enumerate(CFXJSE_Arguments* pArguments) {
@@ -64,5 +64,5 @@ void CScript_SignaturePseudoModel::Clear(CFXJSE_Arguments* pArguments) {
 
   CFXJSE_Value* pValue = pArguments->GetReturnValue();
   if (pValue)
-    pValue->SetBoolean(FALSE);
+    pValue->SetBoolean(false);
 }

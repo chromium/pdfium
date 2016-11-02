@@ -144,7 +144,7 @@ int32_t FX_DecodeString(uint16_t wCodePage,
                         int32_t* pSrcLen,
                         FX_WCHAR* pDst,
                         int32_t* pDstLen,
-                        FX_BOOL bErrBreak);
+                        bool bErrBreak);
 int32_t FX_UTF8Decode(const FX_CHAR* pSrc,
                       int32_t* pSrcLen,
                       FX_WCHAR* pDst,

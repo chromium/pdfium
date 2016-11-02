@@ -14,7 +14,7 @@ CFDE_TxtEdtDoRecord_DeleteRange::CFDE_TxtEdtDoRecord_DeleteRange(
     int32_t nIndex,
     int32_t nCaret,
     const CFX_WideString& wsRange,
-    FX_BOOL bSel)
+    bool bSel)
     : m_pEngine(pEngine),
       m_bSel(bSel),
       m_nIndex(nIndex),
@@ -25,7 +25,7 @@ CFDE_TxtEdtDoRecord_DeleteRange::CFDE_TxtEdtDoRecord_DeleteRange(
 
 CFDE_TxtEdtDoRecord_DeleteRange::~CFDE_TxtEdtDoRecord_DeleteRange() {}
 
-FX_BOOL CFDE_TxtEdtDoRecord_DeleteRange::Undo() const {
+bool CFDE_TxtEdtDoRecord_DeleteRange::Undo() const {
   if (m_pEngine->IsSelect())
     m_pEngine->ClearSelection();
 
@@ -37,11 +37,11 @@ FX_BOOL CFDE_TxtEdtDoRecord_DeleteRange::Undo() const {
   m_pEngine->m_ChangeInfo.nChangeType = FDE_TXTEDT_TEXTCHANGE_TYPE_Insert;
   m_pEngine->m_ChangeInfo.wsDelete = m_wsRange;
   Param.pEventSink->On_TextChanged(m_pEngine, m_pEngine->m_ChangeInfo);
-  m_pEngine->SetCaretPos(m_nCaret, TRUE);
-  return TRUE;
+  m_pEngine->SetCaretPos(m_nCaret, true);
+  return true;
 }
 
-FX_BOOL CFDE_TxtEdtDoRecord_DeleteRange::Redo() const {
+bool CFDE_TxtEdtDoRecord_DeleteRange::Redo() const {
   m_pEngine->Inner_DeleteRange(m_nIndex, m_wsRange.GetLength());
   if (m_bSel)
     m_pEngine->RemoveSelRange(m_nIndex, m_wsRange.GetLength());
@@ -50,6 +50,6 @@ FX_BOOL CFDE_TxtEdtDoRecord_DeleteRange::Redo() const {
   m_pEngine->m_ChangeInfo.nChangeType = FDE_TXTEDT_TEXTCHANGE_TYPE_Insert;
   m_pEngine->m_ChangeInfo.wsDelete = m_wsRange;
   Param.pEventSink->On_TextChanged(m_pEngine, m_pEngine->m_ChangeInfo);
-  m_pEngine->SetCaretPos(m_nIndex, TRUE);
-  return TRUE;
+  m_pEngine->SetCaretPos(m_nIndex, true);
+  return true;
 }

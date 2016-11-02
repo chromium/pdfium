@@ -204,8 +204,8 @@ void XFA_GetPlainTextFromRichText(CFDE_XMLNode* pXMLNode,
   }
 }
 
-FX_BOOL XFA_FieldIsMultiListBox(CXFA_Node* pFieldNode) {
-  FX_BOOL bRet = FALSE;
+bool XFA_FieldIsMultiListBox(CXFA_Node* pFieldNode) {
+  bool bRet = false;
   if (!pFieldNode)
     return bRet;
 
@@ -395,29 +395,29 @@ CXFA_Measurement XFA_GetAttributeDefaultValue_Measure(XFA_Element eElement,
   return CXFA_Measurement();
 }
 
-FX_BOOL XFA_GetAttributeDefaultValue(void*& pValue,
-                                     XFA_Element eElement,
-                                     XFA_ATTRIBUTE eAttribute,
-                                     XFA_ATTRIBUTETYPE eType,
-                                     uint32_t dwPacket) {
+bool XFA_GetAttributeDefaultValue(void*& pValue,
+                                  XFA_Element eElement,
+                                  XFA_ATTRIBUTE eAttribute,
+                                  XFA_ATTRIBUTETYPE eType,
+                                  uint32_t dwPacket) {
   const XFA_ATTRIBUTEINFO* pInfo = XFA_GetAttributeByID(eAttribute);
   if (!pInfo)
-    return FALSE;
+    return false;
   if (dwPacket && (dwPacket & pInfo->dwPackets) == 0)
-    return FALSE;
+    return false;
   if (pInfo->eType == eType) {
     pValue = pInfo->pDefValue;
-    return TRUE;
+    return true;
   }
   if (pInfo->eType == XFA_ATTRIBUTETYPE_NOTSURE) {
     const XFA_NOTSUREATTRIBUTE* pAttr =
         XFA_GetNotsureAttribute(eElement, eAttribute, eType);
     if (pAttr) {
       pValue = pAttr->pValue;
-      return TRUE;
+      return true;
     }
   }
-  return FALSE;
+  return false;
 }
 
 const XFA_ATTRIBUTEINFO* XFA_GetAttributeByName(const CFX_WideStringC& wsName) {

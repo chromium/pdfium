@@ -24,7 +24,7 @@ class CBC_DataMatrixWriter : public CBC_TwoDimWriter {
                           int32_t& e);
 
   // CBC_TwoDimWriter
-  FX_BOOL SetErrorCorrectionLevel(int32_t level) override;
+  bool SetErrorCorrectionLevel(int32_t level) override;
 
  private:
   static CBC_CommonByteMatrix* encodeLowLevel(CBC_DefaultPlacement* placement,

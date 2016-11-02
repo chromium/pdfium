@@ -27,7 +27,7 @@ class CFWL_Widget {
   IFWL_Widget* GetWidget();
   const IFWL_Widget* GetWidget() const;
 
-  FWL_Error GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize = FALSE);
+  FWL_Error GetWidgetRect(CFX_RectF& rect, bool bAutoSize = false);
   FWL_Error SetWidgetRect(const CFX_RectF& rect);
   FWL_Error GetGlobalRect(CFX_RectF& rect);
   FWL_Error GetClientRect(CFX_RectF& rtClient);
@@ -38,7 +38,7 @@ class CFWL_Widget {
                            uint32_t dwStylesExRemoved);
 
   uint32_t GetStates();
-  void SetStates(uint32_t dwStates, FX_BOOL bSet = TRUE);
+  void SetStates(uint32_t dwStates, bool bSet = true);
 
   void SetLayoutItem(void* pItem);
 

@@ -31,9 +31,9 @@ class CFDE_TxtEdtBuf {
 
   void Insert(int32_t nPos, const FX_WCHAR* lpText, int32_t nLength = 1);
   void Delete(int32_t nIndex, int32_t nLength = 1);
-  void Clear(FX_BOOL bRelease = TRUE);
+  void Clear(bool bRelease = true);
 
-  FX_BOOL Optimize(IFX_Pause* pPause = nullptr);
+  bool Optimize(IFX_Pause* pPause = nullptr);
 
  private:
   friend class CFDE_TxtEdtBufIter;
@@ -55,7 +55,7 @@ class CFDE_TxtEdtBuf {
   int32_t m_nChunkSize;
 
   int32_t m_nTotal;
-  FX_BOOL m_bChanged;
+  bool m_bChanged;
   CFX_ArrayTemplate<FDE_CHUNKHEADER*> m_Chunks;
   std::unique_ptr<IFX_MemoryAllocator> m_pAllocator;
 };

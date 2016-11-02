@@ -16,12 +16,12 @@ class CFDE_CSSTextBuf : public CFX_Target {
   CFDE_CSSTextBuf();
   ~CFDE_CSSTextBuf() override;
 
-  FX_BOOL AttachBuffer(const FX_WCHAR* pBuffer, int32_t iBufLen);
-  FX_BOOL EstimateSize(int32_t iAllocSize);
+  bool AttachBuffer(const FX_WCHAR* pBuffer, int32_t iBufLen);
+  bool EstimateSize(int32_t iAllocSize);
   int32_t LoadFromStream(IFX_Stream* pTxtStream,
                          int32_t iStreamOffset,
                          int32_t iMaxChars,
-                         FX_BOOL& bEOS);
+                         bool& bEOS);
   bool AppendChar(FX_WCHAR wch) {
     if (m_iDatLen >= m_iBufLen && !ExpandBuf(m_iBufLen * 2))
       return false;
@@ -38,7 +38,7 @@ class CFDE_CSSTextBuf : public CFX_Target {
     return --m_iDatLen;
   }
   void Subtract(int32_t iStart, int32_t iLength);
-  FX_BOOL IsEOF() const { return m_iDatPos >= m_iDatLen; }
+  bool IsEOF() const { return m_iDatPos >= m_iDatLen; }
   FX_WCHAR GetAt(int32_t index) const { return m_pBuffer[index]; }
   FX_WCHAR GetChar() const { return m_pBuffer[m_iDatPos]; }
   FX_WCHAR GetNextChar() const {
@@ -49,8 +49,8 @@ class CFDE_CSSTextBuf : public CFX_Target {
   const FX_WCHAR* GetBuffer() const { return m_pBuffer; }
 
  protected:
-  FX_BOOL ExpandBuf(int32_t iDesiredSize);
-  FX_BOOL m_bExtBuf;
+  bool ExpandBuf(int32_t iDesiredSize);
+  bool m_bExtBuf;
   FX_WCHAR* m_pBuffer;
   int32_t m_iBufLen;
   int32_t m_iDatLen;
@@ -80,30 +80,30 @@ class CFDE_CSSSyntaxParser : public CFX_Target {
   CFDE_CSSSyntaxParser();
   ~CFDE_CSSSyntaxParser() override;
 
-  FX_BOOL Init(IFX_Stream* pStream,
-               int32_t iCSSPlaneSize,
-               int32_t iTextDataSize = 32,
-               FX_BOOL bOnlyDeclaration = FALSE);
-  FX_BOOL Init(const FX_WCHAR* pBuffer,
-               int32_t iBufferSize,
-               int32_t iTextDatSize = 32,
-               FX_BOOL bOnlyDeclaration = FALSE);
+  bool Init(IFX_Stream* pStream,
+            int32_t iCSSPlaneSize,
+            int32_t iTextDataSize = 32,
+            bool bOnlyDeclaration = false);
+  bool Init(const FX_WCHAR* pBuffer,
+            int32_t iBufferSize,
+            int32_t iTextDatSize = 32,
+            bool bOnlyDeclaration = false);
   FDE_CSSSYNTAXSTATUS DoSyntaxParse();
   const FX_WCHAR* GetCurrentString(int32_t& iLength) const;
 
  protected:
-  void Reset(FX_BOOL bOnlyDeclaration);
+  void Reset(bool bOnlyDeclaration);
   void SwitchMode(FDE_CSSSYNTAXMODE eMode);
   int32_t SwitchToComment();
 
-  FX_BOOL RestoreMode();
-  FX_BOOL AppendChar(FX_WCHAR wch);
+  bool RestoreMode();
+  bool AppendChar(FX_WCHAR wch);
   int32_t SaveTextData();
-  FX_BOOL IsCharsetEnabled() const {
+  bool IsCharsetEnabled() const {
     return (m_dwCheck & FDE_CSSSYNTAXCHECK_AllowCharset) != 0;
   }
   void DisableCharset() { m_dwCheck = FDE_CSSSYNTAXCHECK_AllowImport; }
-  FX_BOOL IsImportEnabled() const;
+  bool IsImportEnabled() const;
   void DisableImport() { m_dwCheck = 0; }
 
   IFX_Stream* m_pStream;

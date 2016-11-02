@@ -67,9 +67,9 @@ class IFWL_Widget : public IFWL_WidgetDelegate {
   ~IFWL_Widget() override;
 
   virtual FWL_Type GetClassID() const = 0;
-  virtual FX_BOOL IsInstance(const CFX_WideStringC& wsClass) const;
+  virtual bool IsInstance(const CFX_WideStringC& wsClass) const;
 
-  virtual FWL_Error GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize = FALSE);
+  virtual FWL_Error GetWidgetRect(CFX_RectF& rect, bool bAutoSize = false);
   virtual FWL_Error GetGlobalRect(CFX_RectF& rect);
   virtual FWL_Error SetWidgetRect(const CFX_RectF& rect);
   virtual FWL_Error GetClientRect(CFX_RectF& rect);
@@ -90,7 +90,7 @@ class IFWL_Widget : public IFWL_WidgetDelegate {
                                    uint32_t dwStylesExRemoved);
 
   virtual uint32_t GetStates();
-  virtual void SetStates(uint32_t dwStates, FX_BOOL bSet = TRUE);
+  virtual void SetStates(uint32_t dwStates, bool bSet = true);
 
   virtual FWL_Error Update();
   virtual FWL_Error LockUpdate();
@@ -103,7 +103,7 @@ class IFWL_Widget : public IFWL_WidgetDelegate {
                                 FX_FLOAT& fy);
   virtual FWL_Error TransformTo(IFWL_Widget* pWidget, CFX_RectF& rt);
 
-  virtual FWL_Error GetMatrix(CFX_Matrix& matrix, FX_BOOL bGlobal = FALSE);
+  virtual FWL_Error GetMatrix(CFX_Matrix& matrix, bool bGlobal = false);
   virtual FWL_Error SetMatrix(const CFX_Matrix& matrix);
 
   virtual FWL_Error DrawWidget(CFX_Graphics* pGraphics,
@@ -138,7 +138,7 @@ class IFWL_Widget : public IFWL_WidgetDelegate {
 
   void SetAssociateWidget(CFWL_Widget* pAssociate);
 
-  void SetFocus(FX_BOOL bFocus);
+  void SetFocus(bool bFocus);
   void Repaint(const CFX_RectF* pRect = nullptr);
 
  protected:
@@ -148,18 +148,18 @@ class IFWL_Widget : public IFWL_WidgetDelegate {
               const CFWL_WidgetImpProperties& properties,
               IFWL_Widget* pOuter);
 
-  FX_BOOL IsEnabled() const;
-  FX_BOOL IsVisible() const;
-  FX_BOOL IsActive() const;
-  FX_BOOL IsOverLapper() const;
-  FX_BOOL IsPopup() const;
-  FX_BOOL IsChild() const;
-  FX_BOOL IsLocked() const;
-  FX_BOOL IsOffscreen() const;
-  FX_BOOL HasBorder() const;
-  FX_BOOL HasEdge() const;
+  bool IsEnabled() const;
+  bool IsVisible() const;
+  bool IsActive() const;
+  bool IsOverLapper() const;
+  bool IsPopup() const;
+  bool IsChild() const;
+  bool IsLocked() const;
+  bool IsOffscreen() const;
+  bool HasBorder() const;
+  bool HasEdge() const;
   void GetEdgeRect(CFX_RectF& rtEdge);
-  FX_FLOAT GetBorderSize(FX_BOOL bCX = TRUE);
+  FX_FLOAT GetBorderSize(bool bCX = true);
   FX_FLOAT GetEdgeWidth();
   void GetRelativeRect(CFX_RectF& rect);
   void* GetThemeCapacity(CFWL_WidgetCapacity dwCapacity);
@@ -167,31 +167,31 @@ class IFWL_Widget : public IFWL_WidgetDelegate {
   IFWL_Widget* GetRootOuter();
   CFX_SizeF CalcTextSize(const CFX_WideString& wsText,
                          IFWL_ThemeProvider* pTheme,
-                         FX_BOOL bMultiLine = FALSE,
+                         bool bMultiLine = false,
                          int32_t iLineWidth = -1);
   void CalcTextRect(const CFX_WideString& wsText,
                     IFWL_ThemeProvider* pTheme,
                     uint32_t dwTTOStyles,
                     int32_t iTTOAlign,
                     CFX_RectF& rect);
-  void SetGrab(FX_BOOL bSet);
-  FX_BOOL GetPopupPos(FX_FLOAT fMinHeight,
-                      FX_FLOAT fMaxHeight,
-                      const CFX_RectF& rtAnchor,
-                      CFX_RectF& rtPopup);
-  FX_BOOL GetPopupPosMenu(FX_FLOAT fMinHeight,
+  void SetGrab(bool bSet);
+  bool GetPopupPos(FX_FLOAT fMinHeight,
+                   FX_FLOAT fMaxHeight,
+                   const CFX_RectF& rtAnchor,
+                   CFX_RectF& rtPopup);
+  bool GetPopupPosMenu(FX_FLOAT fMinHeight,
+                       FX_FLOAT fMaxHeight,
+                       const CFX_RectF& rtAnchor,
+                       CFX_RectF& rtPopup);
+  bool GetPopupPosComboBox(FX_FLOAT fMinHeight,
+                           FX_FLOAT fMaxHeight,
+                           const CFX_RectF& rtAnchor,
+                           CFX_RectF& rtPopup);
+  bool GetPopupPosGeneral(FX_FLOAT fMinHeight,
                           FX_FLOAT fMaxHeight,
                           const CFX_RectF& rtAnchor,
                           CFX_RectF& rtPopup);
-  FX_BOOL GetPopupPosComboBox(FX_FLOAT fMinHeight,
-                              FX_FLOAT fMaxHeight,
-                              const CFX_RectF& rtAnchor,
-                              CFX_RectF& rtPopup);
-  FX_BOOL GetPopupPosGeneral(FX_FLOAT fMinHeight,
-                             FX_FLOAT fMaxHeight,
-                             const CFX_RectF& rtAnchor,
-                             CFX_RectF& rtPopup);
-  FX_BOOL GetScreenSize(FX_FLOAT& fx, FX_FLOAT& fy);
+  bool GetScreenSize(FX_FLOAT& fx, FX_FLOAT& fy);
   void RegisterEventTarget(IFWL_Widget* pEventSource = nullptr,
                            uint32_t dwFilter = FWL_EVENT_ALL_MASK);
   void UnregisterEventTarget();
@@ -211,7 +211,7 @@ class IFWL_Widget : public IFWL_WidgetDelegate {
                 const CFX_Matrix* pMatrix = nullptr);
   void NotifyDriver();
 
-  FX_BOOL IsParent(IFWL_Widget* pParent);
+  bool IsParent(IFWL_Widget* pParent);
 
   const IFWL_App* const m_pOwnerApp;
   CFWL_WidgetMgr* const m_pWidgetMgr;

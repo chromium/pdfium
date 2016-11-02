@@ -24,15 +24,15 @@ CFDE_RenderContext::~CFDE_RenderContext() {
   StopRender();
 }
 
-FX_BOOL CFDE_RenderContext::StartRender(CFDE_RenderDevice* pRenderDevice,
-                                        IFDE_CanvasSet* pCanvasSet,
-                                        const CFX_Matrix& tmDoc2Device) {
+bool CFDE_RenderContext::StartRender(CFDE_RenderDevice* pRenderDevice,
+                                     IFDE_CanvasSet* pCanvasSet,
+                                     const CFX_Matrix& tmDoc2Device) {
   if (m_pRenderDevice)
-    return FALSE;
+    return false;
   if (!pRenderDevice)
-    return FALSE;
+    return false;
   if (!pCanvasSet)
-    return FALSE;
+    return false;
 
   m_eStatus = FDE_RENDERSTATUS_Paused;
   m_pRenderDevice = pRenderDevice;
@@ -63,7 +63,7 @@ FDE_RENDERSTATUS CFDE_RenderContext::DoRender(IFX_Pause* pPause) {
   FDE_TEXTEDITPIECE* pPiece;
   CFX_RectF rtObj;
   int32_t iCount = 0;
-  while (TRUE) {
+  while (true) {
     pPiece = m_pIterator->GetNext(pVisualSet);
     if (!pPiece || !pVisualSet) {
       eStatus = FDE_RENDERSTATUS_Done;
@@ -80,7 +80,7 @@ FDE_RENDERSTATUS CFDE_RenderContext::DoRender(IFX_Pause* pPause) {
         iCount += 5;
         break;
       case FDE_VISUALOBJ_Canvas:
-        ASSERT(FALSE);
+        ASSERT(false);
         break;
       default:
         break;
@@ -111,7 +111,7 @@ void CFDE_RenderContext::RenderText(IFDE_TextSet* pTextSet,
   if (!pFont)
     return;
 
-  int32_t iCount = pTextSet->GetDisplayPos(pText, nullptr, FALSE);
+  int32_t iCount = pTextSet->GetDisplayPos(pText, nullptr, false);
   if (iCount < 1)
     return;
 
@@ -121,7 +121,7 @@ void CFDE_RenderContext::RenderText(IFDE_TextSet* pTextSet,
   if (m_CharPos.size() < static_cast<size_t>(iCount))
     m_CharPos.resize(iCount, FXTEXT_CHARPOS());
 
-  iCount = pTextSet->GetDisplayPos(pText, m_CharPos.data(), FALSE);
+  iCount = pTextSet->GetDisplayPos(pText, m_CharPos.data(), false);
   FX_FLOAT fFontSize = pTextSet->GetFontSize();
   FX_ARGB dwColor = pTextSet->GetFontColor();
   m_pBrush->SetColor(dwColor);

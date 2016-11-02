@@ -18,7 +18,7 @@ int32_t CXFA_AttachNodeList::GetLength() {
       m_pAttachNode->GetElementType() == XFA_Element::Subform);
 }
 
-FX_BOOL CXFA_AttachNodeList::Append(CXFA_Node* pNode) {
+bool CXFA_AttachNodeList::Append(CXFA_Node* pNode) {
   CXFA_Node* pParent = pNode->GetNodeItem(XFA_NODEITEM_Parent);
   if (pParent) {
     pParent->RemoveChild(pNode);
@@ -26,8 +26,7 @@ FX_BOOL CXFA_AttachNodeList::Append(CXFA_Node* pNode) {
   return m_pAttachNode->InsertChild(pNode);
 }
 
-FX_BOOL CXFA_AttachNodeList::Insert(CXFA_Node* pNewNode,
-                                    CXFA_Node* pBeforeNode) {
+bool CXFA_AttachNodeList::Insert(CXFA_Node* pNewNode, CXFA_Node* pBeforeNode) {
   CXFA_Node* pParent = pNewNode->GetNodeItem(XFA_NODEITEM_Parent);
   if (pParent) {
     pParent->RemoveChild(pNewNode);
@@ -35,7 +34,7 @@ FX_BOOL CXFA_AttachNodeList::Insert(CXFA_Node* pNewNode,
   return m_pAttachNode->InsertChild(pNewNode, pBeforeNode);
 }
 
-FX_BOOL CXFA_AttachNodeList::Remove(CXFA_Node* pNode) {
+bool CXFA_AttachNodeList::Remove(CXFA_Node* pNode) {
   return m_pAttachNode->RemoveChild(pNode);
 }
 

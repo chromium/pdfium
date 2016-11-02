@@ -20,11 +20,11 @@ class CXFA_FFCheckButton : public CXFA_FFField {
                     CFX_Matrix* pMatrix,
                     uint32_t dwStatus) override;
 
-  FX_BOOL LoadWidget() override;
-  FX_BOOL PerformLayout() override;
-  FX_BOOL UpdateFWLData() override;
+  bool LoadWidget() override;
+  bool PerformLayout() override;
+  bool UpdateFWLData() override;
   void UpdateWidgetProperty() override;
-  FX_BOOL OnLButtonUp(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) override;
+  bool OnLButtonUp(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) override;
   void OnProcessMessage(CFWL_Message* pMessage) override;
   void OnProcessEvent(CFWL_Event* pEvent) override;
   void OnDrawWidget(CFX_Graphics* pGraphics,
@@ -33,8 +33,8 @@ class CXFA_FFCheckButton : public CXFA_FFField {
   void SetFWLCheckState(XFA_CHECKSTATE eCheckState);
 
  protected:
-  FX_BOOL CommitData() override;
-  FX_BOOL IsDataChanged() override;
+  bool CommitData() override;
+  bool IsDataChanged() override;
 
   void CapLeftRightPlacement(CXFA_Margin mgCap);
   void AddUIMargin(int32_t iCapPlacement);

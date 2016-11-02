@@ -22,21 +22,21 @@ class CFWL_Barcode : public CFWL_Edit {
   void Initialize();
 
   void SetType(BC_TYPE type);
-  FX_BOOL IsProtectedType();
+  bool IsProtectedType();
 
   void SetCharEncoding(BC_CHAR_ENCODING encoding);
   void SetModuleHeight(int32_t height);
   void SetModuleWidth(int32_t width);
   void SetDataLength(int32_t dataLength);
-  void SetCalChecksum(FX_BOOL calChecksum);
-  void SetPrintChecksum(FX_BOOL printChecksum);
+  void SetCalChecksum(bool calChecksum);
+  void SetPrintChecksum(bool printChecksum);
   void SetTextLocation(BC_TEXT_LOC location);
   void SetWideNarrowRatio(int32_t ratio);
   void SetStartChar(FX_CHAR startChar);
   void SetEndChar(FX_CHAR endChar);
   void SetVersion(int32_t version);
   void SetErrorCorrectionLevel(int32_t ecLevel);
-  void SetTruncated(FX_BOOL truncated);
+  void SetTruncated(bool truncated);
   void ResetBarcodeAttributes();
 
  protected:
@@ -53,30 +53,30 @@ class CFWL_Barcode : public CFWL_Edit {
     int32_t GetModuleHeight() const override;
     int32_t GetModuleWidth() const override;
     int32_t GetDataLength() const override;
-    FX_BOOL GetCalChecksum() const override;
-    FX_BOOL GetPrintChecksum() const override;
+    bool GetCalChecksum() const override;
+    bool GetPrintChecksum() const override;
     BC_TEXT_LOC GetTextLocation() const override;
     int32_t GetWideNarrowRatio() const override;
     FX_CHAR GetStartChar() const override;
     FX_CHAR GetEndChar() const override;
     int32_t GetVersion() const override;
     int32_t GetErrorCorrectionLevel() const override;
-    FX_BOOL GetTruncated() const override;
+    bool GetTruncated() const override;
     uint32_t GetBarcodeAttributeMask() const override;
 
     BC_CHAR_ENCODING m_eCharEncoding;
     int32_t m_nModuleHeight;
     int32_t m_nModuleWidth;
     int32_t m_nDataLength;
-    FX_BOOL m_bCalChecksum;
-    FX_BOOL m_bPrintChecksum;
+    bool m_bCalChecksum;
+    bool m_bPrintChecksum;
     BC_TEXT_LOC m_eTextLocation;
     int32_t m_nWideNarrowRatio;
     FX_CHAR m_cStartChar;
     FX_CHAR m_cEndChar;
     int32_t m_nVersion;
     int32_t m_nECLevel;
-    FX_BOOL m_bTruncated;
+    bool m_bTruncated;
     uint32_t m_dwAttributeMask;
   };
 

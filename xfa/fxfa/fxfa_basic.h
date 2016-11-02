@@ -1009,7 +1009,7 @@ struct XFA_METHODINFO {
 };
 
 typedef void (CXFA_Object::*XFA_ATTRIBUTE_CALLBACK)(CFXJSE_Value* pValue,
-                                                    FX_BOOL bSetting,
+                                                    bool bSetting,
                                                     XFA_ATTRIBUTE eAttribute);
 enum XFA_SCRIPT_TYPE {
   XFA_SCRIPT_Basic,

@@ -21,17 +21,15 @@ class CFX_WordBreak {
 
   void Attach(IFX_CharIter* pIter);
   void Attach(const CFX_WideString& wsText);
-  FX_BOOL Next(FX_BOOL bPrev);
+  bool Next(bool bPrev);
   void SetAt(int32_t nIndex);
   int32_t GetWordPos() const;
   int32_t GetWordLength() const;
   void GetWord(CFX_WideString& wsWord) const;
-  FX_BOOL IsEOF(FX_BOOL bTail) const;
+  bool IsEOF(bool bTail) const;
 
  protected:
-  FX_BOOL FindNextBreakPos(IFX_CharIter* pIter,
-                           FX_BOOL bPrev,
-                           FX_BOOL bFromNext = TRUE);
+  bool FindNextBreakPos(IFX_CharIter* pIter, bool bPrev, bool bFromNext = true);
 
  private:
   std::unique_ptr<IFX_CharIter> m_pPreIter;

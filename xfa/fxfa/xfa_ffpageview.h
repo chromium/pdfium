@@ -48,7 +48,7 @@ class CXFA_FFPageWidgetIterator : public IXFA_WidgetIterator {
   CXFA_FFWidget* MoveToNext() override;
   CXFA_FFWidget* MoveToPrevious() override;
   CXFA_FFWidget* GetCurrentWidget() override;
-  FX_BOOL SetCurrentWidget(CXFA_FFWidget* hWidget) override;
+  bool SetCurrentWidget(CXFA_FFWidget* hWidget) override;
 
  protected:
   CXFA_FFWidget* GetWidget(CXFA_LayoutItem* pLayoutItem);
@@ -56,7 +56,7 @@ class CXFA_FFPageWidgetIterator : public IXFA_WidgetIterator {
   CXFA_FFPageView* m_pPageView;
   CXFA_FFWidget* m_hCurWidget;
   uint32_t m_dwFilter;
-  FX_BOOL m_bIgnorerelevant;
+  bool m_bIgnorerelevant;
   CXFA_LayoutItemIterator m_sIterator;
 };
 typedef CFX_ArrayTemplate<CXFA_FFWidget*> CXFA_WidgetArray;
@@ -82,7 +82,7 @@ class CXFA_FFTabOrderPageWidgetIterator : public IXFA_WidgetIterator {
   CXFA_FFWidget* MoveToNext() override;
   CXFA_FFWidget* MoveToPrevious() override;
   CXFA_FFWidget* GetCurrentWidget() override;
-  FX_BOOL SetCurrentWidget(CXFA_FFWidget* hWidget) override;
+  bool SetCurrentWidget(CXFA_FFWidget* hWidget) override;
 
  protected:
   CXFA_FFWidget* GetTraverseWidget(CXFA_FFWidget* pWidget);
@@ -94,15 +94,15 @@ class CXFA_FFTabOrderPageWidgetIterator : public IXFA_WidgetIterator {
   void OrderContainer(CXFA_LayoutItemIterator* sIterator,
                       CXFA_LayoutItem* pContainerItem,
                       CXFA_TabParam* pContainer,
-                      FX_BOOL& bCurrentItem,
-                      FX_BOOL& bContentArea,
-                      FX_BOOL bMarsterPage = FALSE);
+                      bool& bCurrentItem,
+                      bool& bContentArea,
+                      bool bMarsterPage = false);
 
   CXFA_WidgetArray m_TabOrderWidgetArray;
   CXFA_FFPageView* m_pPageView;
   uint32_t m_dwFilter;
   int32_t m_iCurWidget;
-  FX_BOOL m_bIgnorerelevant;
+  bool m_bIgnorerelevant;
 };
 
 #endif  // XFA_FXFA_XFA_FFPAGEVIEW_H_

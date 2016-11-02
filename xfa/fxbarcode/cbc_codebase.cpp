@@ -27,23 +27,23 @@ CBC_CodeBase::CBC_CodeBase(CBC_Writer* pWriter) : m_pBCWriter(pWriter) {}
 
 CBC_CodeBase::~CBC_CodeBase() {}
 
-FX_BOOL CBC_CodeBase::SetCharEncoding(int32_t encoding) {
+bool CBC_CodeBase::SetCharEncoding(int32_t encoding) {
   return m_pBCWriter && m_pBCWriter->SetCharEncoding(encoding);
 }
 
-FX_BOOL CBC_CodeBase::SetModuleHeight(int32_t moduleHeight) {
+bool CBC_CodeBase::SetModuleHeight(int32_t moduleHeight) {
   return m_pBCWriter && m_pBCWriter->SetModuleHeight(moduleHeight);
 }
 
-FX_BOOL CBC_CodeBase::SetModuleWidth(int32_t moduleWidth) {
+bool CBC_CodeBase::SetModuleWidth(int32_t moduleWidth) {
   return m_pBCWriter && m_pBCWriter->SetModuleWidth(moduleWidth);
 }
 
-FX_BOOL CBC_CodeBase::SetHeight(int32_t height) {
+bool CBC_CodeBase::SetHeight(int32_t height) {
   return m_pBCWriter && m_pBCWriter->SetHeight(height);
 }
 
-FX_BOOL CBC_CodeBase::SetWidth(int32_t width) {
+bool CBC_CodeBase::SetWidth(int32_t width) {
   return m_pBCWriter && m_pBCWriter->SetWidth(width);
 }
 

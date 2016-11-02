@@ -55,8 +55,8 @@ class CBC_QRCoderMatrixUtil {
   static void MakeVersionInfoBits(int32_t version,
                                   CBC_QRCoderBitVector* bits,
                                   int32_t& e);
-  static FX_BOOL IsEmpty(int32_t value);
-  static FX_BOOL IsValidValue(int32_t value);
+  static bool IsEmpty(int32_t value);
+  static bool IsValidValue(int32_t value);
   static void EmbedTimingPatterns(CBC_CommonByteMatrix* matrix, int32_t& e);
   static void EmbedDarkDotAtLeftBottomCorner(CBC_CommonByteMatrix* matrix,
                                              int32_t& e);

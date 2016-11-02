@@ -34,7 +34,7 @@ class CBC_QRCoder {
   CBC_CommonByteMatrix* GetMatrix() const;
 
   int32_t At(int32_t x, int32_t y, int32_t& e);
-  FX_BOOL IsValid();
+  bool IsValid();
 
   void SetMode(CBC_QRCoderMode* value);
   void SetECLevel(CBC_QRCoderErrorCorrectionLevel* ecLevel);

@@ -23,7 +23,7 @@ class CXFA_Value : public CXFA_Data {
   explicit CXFA_Value(CXFA_Node* pNode) : CXFA_Data(pNode) {}
 
   XFA_Element GetChildValueClassID();
-  FX_BOOL GetChildValueContent(CFX_WideString& wsContent);
+  bool GetChildValueContent(CFX_WideString& wsContent);
   CXFA_Arc GetArc();
   CXFA_Line GetLine();
   CXFA_Rectangle GetRectangle();

@@ -26,9 +26,9 @@ struct FWL_NEEDREPAINTHITDATA {
 
 }  // namespace
 
-FX_BOOL FWL_UseOffscreen(IFWL_Widget* pWidget) {
+bool FWL_UseOffscreen(IFWL_Widget* pWidget) {
 #if (_FX_OS_ == _FX_MACOSX_)
-  return FALSE;
+  return false;
 #else
   return !!(pWidget->GetStyles() & FWL_WGTSTYLE_Offscreen);
 #endif
@@ -109,18 +109,18 @@ IFWL_Widget* CFWL_WidgetMgr::GetSystemFormWidget(IFWL_Widget* pWidget) const {
   return nullptr;
 }
 
-FX_BOOL CFWL_WidgetMgr::SetWidgetIndex(IFWL_Widget* pWidget, int32_t nIndex) {
+bool CFWL_WidgetMgr::SetWidgetIndex(IFWL_Widget* pWidget, int32_t nIndex) {
   CFWL_WidgetMgrItem* pItem = GetWidgetMgrItem(pWidget);
   if (!pItem)
-    return FALSE;
+    return false;
   if (!pItem->pParent)
-    return FALSE;
+    return false;
   CFWL_WidgetMgrItem* pChild = pItem->pParent->pChild;
   int32_t i = 0;
   while (pChild) {
     if (pChild == pItem) {
       if (i == nIndex) {
-        return TRUE;
+        return true;
       }
       if (pChild->pPrevious) {
         pChild->pPrevious->pNext = pChild->pNext;
@@ -150,7 +150,7 @@ FX_BOOL CFWL_WidgetMgr::SetWidgetIndex(IFWL_Widget* pWidget, int32_t nIndex) {
       pChild->pNext = pItem;
       pItem->pPrevious = pChild;
       pItem->pNext = nullptr;
-      return TRUE;
+      return true;
     }
     i = 0;
     while (i < nIndex && pChild->pNext) {
@@ -161,7 +161,7 @@ FX_BOOL CFWL_WidgetMgr::SetWidgetIndex(IFWL_Widget* pWidget, int32_t nIndex) {
       pChild->pNext = pItem;
       pItem->pPrevious = pChild;
       pItem->pNext = nullptr;
-      return TRUE;
+      return true;
     }
     if (pChild->pPrevious) {
       pItem->pPrevious = pChild->pPrevious;
@@ -177,7 +177,7 @@ FX_BOOL CFWL_WidgetMgr::SetWidgetIndex(IFWL_Widget* pWidget, int32_t nIndex) {
     pItem->pPrevious = nullptr;
     pItem->pNext = nullptr;
   }
-  return TRUE;
+  return true;
 }
 FWL_Error CFWL_WidgetMgr::RepaintWidget(IFWL_Widget* pWidget,
                                         const CFX_RectF* pRect) {
@@ -313,14 +313,14 @@ void CFWL_WidgetMgr::SetParent(IFWL_Widget* pParent, IFWL_Widget* pChild) {
   SetWidgetIndex(pChild, -1);
 }
 
-FX_BOOL CFWL_WidgetMgr::IsChild(IFWL_Widget* pChild, IFWL_Widget* pParent) {
+bool CFWL_WidgetMgr::IsChild(IFWL_Widget* pChild, IFWL_Widget* pParent) {
   IFWL_Widget* pTemp = pChild;
   do {
     if (pTemp == pParent)
-      return TRUE;
+      return true;
     pTemp = GetParentWidget(pTemp);
   } while (pTemp);
-  return FALSE;
+  return false;
 }
 
 FWL_Error CFWL_WidgetMgr::SetWidgetRect_Native(IFWL_Widget* pWidget,
@@ -385,12 +385,12 @@ void CFWL_WidgetMgr::NotifySizeChanged(IFWL_Widget* pForm,
 
 IFWL_Widget* CFWL_WidgetMgr::nextTab(IFWL_Widget* parent,
                                      IFWL_Widget* focus,
-                                     FX_BOOL& bFind) {
+                                     bool& bFind) {
   CFWL_WidgetMgr* pMgr = parent->GetOwnerApp()->GetWidgetMgr();
   IFWL_Widget* child = pMgr->GetFirstChildWidget(parent);
   while (child) {
     if (focus == child)
-      bFind = TRUE;
+      bFind = true;
 
     if ((child->GetStyles() & FWL_WGTSTYLE_TabStop) &&
         (!focus || (focus != child && bFind))) {
@@ -415,7 +415,7 @@ int32_t CFWL_WidgetMgr::CountRadioButtonGroup(IFWL_Widget* pFirst) {
   return iRet;
 }
 IFWL_Widget* CFWL_WidgetMgr::GetSiblingRadioButton(IFWL_Widget* pWidget,
-                                                   FX_BOOL bNext) {
+                                                   bool bNext) {
   return nullptr;
 }
 IFWL_Widget* CFWL_WidgetMgr::GetRadioButtonGroupHeader(
@@ -424,16 +424,16 @@ IFWL_Widget* CFWL_WidgetMgr::GetRadioButtonGroupHeader(
   while (pNext) {
     if (pNext->GetStyles() & FWL_WGTSTYLE_Group)
       return pNext;
-    pNext = GetSiblingRadioButton(pNext, FALSE);
+    pNext = GetSiblingRadioButton(pNext, false);
   }
   pNext = GetLastSiblingWidget(pRadioButton);
-  while ((pNext = GetSiblingRadioButton(pNext, FALSE)) != nullptr &&
+  while ((pNext = GetSiblingRadioButton(pNext, false)) != nullptr &&
          pNext != pRadioButton) {
     if (pNext->GetStyles() & FWL_WGTSTYLE_Group)
       return pNext;
   }
   pNext = GetFirstSiblingWidget(pRadioButton);
-  return GetSiblingRadioButton(pNext, TRUE);
+  return GetSiblingRadioButton(pNext, true);
 }
 void CFWL_WidgetMgr::GetSameGroupRadioButton(
     IFWL_Widget* pRadioButton,
@@ -445,7 +445,7 @@ void CFWL_WidgetMgr::GetSameGroupRadioButton(
   int32_t iGroup = CountRadioButtonGroup(pFirst);
   if (iGroup < 2) {
     IFWL_Widget* pNext = pFirst;
-    while ((pNext = GetSiblingRadioButton(pNext, TRUE)) != nullptr) {
+    while ((pNext = GetSiblingRadioButton(pNext, true)) != nullptr) {
       group.Add(pNext);
     }
     return;
@@ -453,9 +453,9 @@ void CFWL_WidgetMgr::GetSameGroupRadioButton(
   IFWL_Widget* pNext = GetRadioButtonGroupHeader(pRadioButton);
   do {
     group.Add(pNext);
-    pNext = GetSiblingRadioButton(pNext, TRUE);
+    pNext = GetSiblingRadioButton(pNext, true);
     if (!pNext)
-      pNext = GetSiblingRadioButton(pFirst, TRUE);
+      pNext = GetSiblingRadioButton(pFirst, true);
   } while (pNext && ((pNext->GetStyles() & FWL_WGTSTYLE_Group) == 0));
 }
 IFWL_Widget* CFWL_WidgetMgr::GetDefaultButton(IFWL_Widget* pParent) {
@@ -524,11 +524,11 @@ int32_t CFWL_WidgetMgr::TravelWidgetMgr(CFWL_WidgetMgrItem* pParent,
   return iCount - 1;
 }
 
-FX_BOOL CFWL_WidgetMgr::IsAbleNative(IFWL_Widget* pWidget) const {
+bool CFWL_WidgetMgr::IsAbleNative(IFWL_Widget* pWidget) const {
   if (!pWidget)
-    return FALSE;
+    return false;
   if (!pWidget->IsInstance(FX_WSTRC(FWL_CLASS_Form))) {
-    return FALSE;
+    return false;
   }
   uint32_t dwStyles = pWidget->GetStyles();
   return ((dwStyles & FWL_WGTSTYLE_WindowTypeMask) ==
@@ -544,11 +544,11 @@ bool CFWL_WidgetMgr::IsFormDisabled() {
   return !!(m_dwCapability & FWL_WGTMGR_DisableForm);
 }
 
-FX_BOOL CFWL_WidgetMgr::GetAdapterPopupPos(IFWL_Widget* pWidget,
-                                           FX_FLOAT fMinHeight,
-                                           FX_FLOAT fMaxHeight,
-                                           const CFX_RectF& rtAnchor,
-                                           CFX_RectF& rtPopup) {
+bool CFWL_WidgetMgr::GetAdapterPopupPos(IFWL_Widget* pWidget,
+                                        FX_FLOAT fMinHeight,
+                                        FX_FLOAT fMaxHeight,
+                                        const CFX_RectF& rtAnchor,
+                                        CFX_RectF& rtPopup) {
   CXFA_FWLAdapterWidgetMgr* pSDApapter = GetAdapterWidgetMgr();
   return pSDApapter->GetPopupPos(pWidget, fMinHeight, fMaxHeight, rtAnchor,
                                  rtPopup);
@@ -647,7 +647,7 @@ void CFWL_WidgetMgrDelegate::DrawChild(IFWL_Widget* parent,
   if (!parent)
     return;
 
-  FX_BOOL bFormDisable = m_pWidgetMgr->IsFormDisabled();
+  bool bFormDisable = m_pWidgetMgr->IsFormDisabled();
   IFWL_Widget* pNextChild = m_pWidgetMgr->GetFirstChildWidget(parent);
   while (pNextChild) {
     IFWL_Widget* child = pNextChild;
@@ -663,7 +663,7 @@ void CFWL_WidgetMgrDelegate::DrawChild(IFWL_Widget* parent,
     CFX_Matrix widgetMatrix;
     CFX_RectF clipBounds(rtWidget);
     if (!bFormDisable)
-      child->GetMatrix(widgetMatrix, TRUE);
+      child->GetMatrix(widgetMatrix, true);
     if (pMatrix)
       widgetMatrix.Concat(*pMatrix);
 
@@ -676,7 +676,7 @@ void CFWL_WidgetMgrDelegate::DrawChild(IFWL_Widget* parent,
       pGraphics->SaveGraphState();
       pGraphics->SetClipRect(clipBounds);
     }
-    widgetMatrix.Translate(rtWidget.left, rtWidget.top, TRUE);
+    widgetMatrix.Translate(rtWidget.left, rtWidget.top, true);
 
     if (IFWL_WidgetDelegate* pDelegate = child->GetDelegate()) {
       if (m_pWidgetMgr->IsFormDisabled() ||
@@ -730,31 +730,31 @@ void CFWL_WidgetMgrDelegate::DrawWidgetAfter(IFWL_Widget* pWidget,
   pItem->iRedrawCounter = 0;
 }
 
-FX_BOOL CFWL_WidgetMgrDelegate::IsNeedRepaint(IFWL_Widget* pWidget,
-                                              CFX_Matrix* pMatrix,
-                                              const CFX_RectF& rtDirty) {
+bool CFWL_WidgetMgrDelegate::IsNeedRepaint(IFWL_Widget* pWidget,
+                                           CFX_Matrix* pMatrix,
+                                           const CFX_RectF& rtDirty) {
   CFWL_WidgetMgrItem* pItem = m_pWidgetMgr->GetWidgetMgrItem(pWidget);
   if (pItem && pItem->iRedrawCounter > 0) {
     pItem->iRedrawCounter = 0;
-    return TRUE;
+    return true;
   }
   CFX_RectF rtWidget;
   pWidget->GetWidgetRect(rtWidget);
   rtWidget.left = rtWidget.top = 0;
   pMatrix->TransformRect(rtWidget);
   if (!rtWidget.IntersectWith(rtDirty))
-    return FALSE;
+    return false;
 
   IFWL_Widget* pChild =
       pWidget->GetOwnerApp()->GetWidgetMgr()->GetFirstChildWidget(pWidget);
   if (!pChild)
-    return TRUE;
+    return true;
 
   CFX_RectF rtChilds;
   rtChilds.Empty();
-  FX_BOOL bChildIntersectWithDirty = FALSE;
-  FX_BOOL bOrginPtIntersectWidthChild = FALSE;
-  FX_BOOL bOrginPtIntersectWidthDirty =
+  bool bChildIntersectWithDirty = false;
+  bool bOrginPtIntersectWidthChild = false;
+  bool bOrginPtIntersectWidthDirty =
       rtDirty.Contains(rtWidget.left, rtWidget.top);
   static FWL_NEEDREPAINTHITDATA hitPoint[kNeedRepaintHitPoints];
   FXSYS_memset(hitPoint, 0, sizeof(hitPoint));
@@ -783,9 +783,9 @@ FX_BOOL CFWL_WidgetMgrDelegate::IsNeedRepaint(IFWL_Widget* pWidget,
     if (r.IsEmpty())
       continue;
     if (r.Contains(rtDirty))
-      return FALSE;
+      return false;
     if (!bChildIntersectWithDirty && r.IntersectWith(rtDirty))
-      bChildIntersectWithDirty = TRUE;
+      bChildIntersectWithDirty = true;
     if (bOrginPtIntersectWidthDirty && !bOrginPtIntersectWidthChild)
       bOrginPtIntersectWidthChild = rect.Contains(0, 0);
 
@@ -809,11 +809,11 @@ FX_BOOL CFWL_WidgetMgrDelegate::IsNeedRepaint(IFWL_Widget* pWidget,
   } while (pChild);
 
   if (!bChildIntersectWithDirty)
-    return TRUE;
+    return true;
   if (bOrginPtIntersectWidthDirty && !bOrginPtIntersectWidthChild)
-    return TRUE;
+    return true;
   if (rtChilds.IsEmpty())
-    return TRUE;
+    return true;
 
   int32_t repaintPoint = kNeedRepaintHitPoints;
   for (int32_t i = 0; i < kNeedRepaintHitPoints; i++) {
@@ -821,18 +821,18 @@ FX_BOOL CFWL_WidgetMgrDelegate::IsNeedRepaint(IFWL_Widget* pWidget,
       repaintPoint--;
   }
   if (repaintPoint > 0)
-    return TRUE;
+    return true;
 
   pMatrix->TransformRect(rtChilds);
   if (rtChilds.Contains(rtDirty) || rtChilds.Contains(rtWidget))
-    return FALSE;
-  return TRUE;
+    return false;
+  return true;
 }
 
-FX_BOOL CFWL_WidgetMgrDelegate::bUseOffscreenDirect(IFWL_Widget* pWidget) {
+bool CFWL_WidgetMgrDelegate::bUseOffscreenDirect(IFWL_Widget* pWidget) {
   CFWL_WidgetMgrItem* pItem = m_pWidgetMgr->GetWidgetMgrItem(pWidget);
   if (!FWL_UseOffscreen(pWidget) || !(pItem->pOffscreen))
-    return FALSE;
+    return false;
 
 #if (_FX_OS_ == _FX_WIN32_DESKTOP_) || (_FX_OS_ == _FX_WIN64_)
   if (pItem->bOutsideChanged) {
@@ -841,9 +841,9 @@ FX_BOOL CFWL_WidgetMgrDelegate::bUseOffscreenDirect(IFWL_Widget* pWidget) {
     CFX_RectF temp(m_pWidgetMgr->m_rtScreen);
     temp.Deflate(50, 50);
     if (!temp.Contains(r))
-      return FALSE;
+      return false;
 
-    pItem->bOutsideChanged = FALSE;
+    pItem->bOutsideChanged = false;
   }
 #endif
 
@@ -862,7 +862,7 @@ CFWL_WidgetMgrItem::CFWL_WidgetMgrItem(IFWL_Widget* widget)
       iRedrawCounter(0)
 #if (_FX_OS_ == _FX_WIN32_DESKTOP_) || (_FX_OS_ == _FX_WIN64_)
       ,
-      bOutsideChanged(FALSE)
+      bOutsideChanged(false)
 #endif
 {
 }

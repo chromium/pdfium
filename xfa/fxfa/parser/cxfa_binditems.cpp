@@ -22,6 +22,6 @@ void CXFA_BindItems::GetRef(CFX_WideStringC& wsRef) {
   m_pNode->TryCData(XFA_ATTRIBUTE_Ref, wsRef);
 }
 
-FX_BOOL CXFA_BindItems::SetConnection(const CFX_WideString& wsConnection) {
+bool CXFA_BindItems::SetConnection(const CFX_WideString& wsConnection) {
   return m_pNode->SetCData(XFA_ATTRIBUTE_Connection, wsConnection);
 }

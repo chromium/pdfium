@@ -20,7 +20,7 @@ class CXFA_Validate : public CXFA_Data {
 
   int32_t GetFormatTest();
   int32_t GetNullTest();
-  FX_BOOL SetNullTest(CFX_WideString wsValue);
+  bool SetNullTest(CFX_WideString wsValue);
   int32_t GetScriptTest();
   void GetFormatMessageText(CFX_WideString& wsMessage);
   void SetFormatMessageText(CFX_WideString wsMessage);
@@ -36,9 +36,9 @@ class CXFA_Validate : public CXFA_Data {
                       const CFX_WideString& wsMessageType);
   void SetMessageText(CFX_WideString& wsMessage,
                       const CFX_WideString& wsMessageType);
-  FX_BOOL SetTestValue(int32_t iType,
-                       CFX_WideString& wsValue,
-                       XFA_ATTRIBUTEENUM eName);
+  bool SetTestValue(int32_t iType,
+                    CFX_WideString& wsValue,
+                    XFA_ATTRIBUTEENUM eName);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_VALIDATE_H_

@@ -43,28 +43,28 @@ class CFWL_ComboBox : public CFWL_Widget {
   int32_t GetEditLimit();
   FWL_Error SetEditLimit(int32_t nLimit);
   FWL_Error EditDoClipboard(int32_t iCmd);
-  FX_BOOL EditRedo(const IFDE_TxtEdtDoRecord* pRecord);
-  FX_BOOL EditUndo(const IFDE_TxtEdtDoRecord* pRecord);
+  bool EditRedo(const IFDE_TxtEdtDoRecord* pRecord);
+  bool EditUndo(const IFDE_TxtEdtDoRecord* pRecord);
   FWL_Error SetMaxListHeight(FX_FLOAT fMaxHeight);
   FWL_Error SetItemData(int32_t iIndex, void* pData);
   void* GetItemData(int32_t iIndex);
   FWL_Error SetListTheme(IFWL_ThemeProvider* pTheme);
-  FX_BOOL AfterFocusShowDropList();
-  FWL_Error OpenDropDownList(FX_BOOL bActivate);
+  bool AfterFocusShowDropList();
+  FWL_Error OpenDropDownList(bool bActivate);
 
-  FX_BOOL EditCanUndo();
-  FX_BOOL EditCanRedo();
-  FX_BOOL EditUndo();
-  FX_BOOL EditRedo();
-  FX_BOOL EditCanCopy();
-  FX_BOOL EditCanCut();
-  FX_BOOL EditCanSelectAll();
-  FX_BOOL EditCopy(CFX_WideString& wsCopy);
-  FX_BOOL EditCut(CFX_WideString& wsCut);
-  FX_BOOL EditPaste(const CFX_WideString& wsPaste);
-  FX_BOOL EditSelectAll();
-  FX_BOOL EditDelete();
-  FX_BOOL EditDeSelect();
+  bool EditCanUndo();
+  bool EditCanRedo();
+  bool EditUndo();
+  bool EditRedo();
+  bool EditCanCopy();
+  bool EditCanCut();
+  bool EditCanSelectAll();
+  bool EditCopy(CFX_WideString& wsCopy);
+  bool EditCut(CFX_WideString& wsCut);
+  bool EditPaste(const CFX_WideString& wsPaste);
+  bool EditSelectAll();
+  bool EditDelete();
+  bool EditDeSelect();
   FWL_Error GetBBox(CFX_RectF& rect);
   FWL_Error EditModifyStylesEx(uint32_t dwStylesExAdded,
                                uint32_t dwStylesExRemoved);
@@ -83,9 +83,9 @@ class CFWL_ComboBox : public CFWL_Widget {
     int32_t CountItems(const IFWL_Widget* pWidget) override;
     IFWL_ListItem* GetItem(const IFWL_Widget* pWidget, int32_t nIndex) override;
     int32_t GetItemIndex(IFWL_Widget* pWidget, IFWL_ListItem* pItem) override;
-    FX_BOOL SetItemIndex(IFWL_Widget* pWidget,
-                         IFWL_ListItem* pItem,
-                         int32_t nIndex) override;
+    bool SetItemIndex(IFWL_Widget* pWidget,
+                      IFWL_ListItem* pItem,
+                      int32_t nIndex) override;
 
     uint32_t GetItemStyles(IFWL_Widget* pWidget, IFWL_ListItem* pItem) override;
     FWL_Error GetItemText(IFWL_Widget* pWidget,

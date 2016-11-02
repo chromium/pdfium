@@ -100,11 +100,11 @@ void CFDE_CSSStyleSheet::Reset() {
         static_cast<CFDE_CSSFontFaceRule*>(pRule)->~CFDE_CSSFontFaceRule();
         break;
       default:
-        ASSERT(FALSE);
+        ASSERT(false);
         break;
     }
   }
-  m_RuleArray.RemoveAll(FALSE);
+  m_RuleArray.RemoveAll(false);
   m_Selectors.RemoveAll();
   m_StringCache.clear();
   m_pAllocator.reset();
@@ -122,7 +122,7 @@ uint32_t CFDE_CSSStyleSheet::Release() {
   return dwRefCount;
 }
 
-FX_BOOL CFDE_CSSStyleSheet::GetUrl(CFX_WideString& szUrl) {
+bool CFDE_CSSStyleSheet::GetUrl(CFX_WideString& szUrl) {
   szUrl = m_szUrl;
   return szUrl.GetLength() > 0;
 }
@@ -143,33 +143,32 @@ IFDE_CSSRule* CFDE_CSSStyleSheet::GetRule(int32_t index) {
   return m_RuleArray.GetAt(index);
 }
 
-FX_BOOL CFDE_CSSStyleSheet::LoadFromStream(const CFX_WideString& szUrl,
-                                           IFX_Stream* pStream,
-                                           uint16_t wCodePage) {
+bool CFDE_CSSStyleSheet::LoadFromStream(const CFX_WideString& szUrl,
+                                        IFX_Stream* pStream,
+                                        uint16_t wCodePage) {
   std::unique_ptr<CFDE_CSSSyntaxParser> pSyntax(new CFDE_CSSSyntaxParser);
   if (pStream->GetCodePage() != wCodePage)
     pStream->SetCodePage(wCodePage);
 
-  FX_BOOL bRet = pSyntax->Init(pStream, 4096) && LoadFromSyntax(pSyntax.get());
+  bool bRet = pSyntax->Init(pStream, 4096) && LoadFromSyntax(pSyntax.get());
   m_wCodePage = wCodePage;
   m_szUrl = szUrl;
   return bRet;
 }
 
-FX_BOOL CFDE_CSSStyleSheet::LoadFromBuffer(const CFX_WideString& szUrl,
-                                           const FX_WCHAR* pBuffer,
-                                           int32_t iBufSize,
-                                           uint16_t wCodePage) {
+bool CFDE_CSSStyleSheet::LoadFromBuffer(const CFX_WideString& szUrl,
+                                        const FX_WCHAR* pBuffer,
+                                        int32_t iBufSize,
+                                        uint16_t wCodePage) {
   ASSERT(pBuffer && iBufSize > 0);
   std::unique_ptr<CFDE_CSSSyntaxParser> pSyntax(new CFDE_CSSSyntaxParser);
-  FX_BOOL bRet =
-      pSyntax->Init(pBuffer, iBufSize) && LoadFromSyntax(pSyntax.get());
+  bool bRet = pSyntax->Init(pBuffer, iBufSize) && LoadFromSyntax(pSyntax.get());
   m_wCodePage = wCodePage;
   m_szUrl = szUrl;
   return bRet;
 }
 
-FX_BOOL CFDE_CSSStyleSheet::LoadFromSyntax(CFDE_CSSSyntaxParser* pSyntax) {
+bool CFDE_CSSStyleSheet::LoadFromSyntax(CFDE_CSSSyntaxParser* pSyntax) {
   Reset();
   m_pAllocator = IFX_MemoryAllocator::Create(FX_ALLOCTYPE_Static, 1024, 0);
   FDE_CSSSYNTAXSTATUS eStatus;
@@ -415,7 +414,7 @@ CFDE_CSSMediaRule::~CFDE_CSSMediaRule() {
         ((CFDE_CSSStyleRule*)pRule)->~CFDE_CSSStyleRule();
         break;
       default:
-        ASSERT(FALSE);
+        ASSERT(false);
         break;
     }
   }
@@ -433,7 +432,7 @@ IFDE_CSSRule* CFDE_CSSMediaRule::GetRule(int32_t index) {
   return m_RuleArray.GetAt(index);
 }
 
-FX_BOOL FDE_IsCSSChar(FX_WCHAR wch) {
+bool FDE_IsCSSChar(FX_WCHAR wch) {
   return (wch >= 'a' && wch <= 'z') || (wch >= 'A' && wch <= 'Z');
 }
 

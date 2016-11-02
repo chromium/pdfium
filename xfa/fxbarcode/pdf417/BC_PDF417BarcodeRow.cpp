@@ -33,10 +33,10 @@ CBC_BarcodeRow::~CBC_BarcodeRow() {
 void CBC_BarcodeRow::set(int32_t x, uint8_t value) {
   m_row.SetAt(x, value);
 }
-void CBC_BarcodeRow::set(int32_t x, FX_BOOL black) {
+void CBC_BarcodeRow::set(int32_t x, bool black) {
   m_row.SetAt(x, (uint8_t)(black ? 1 : 0));
 }
-void CBC_BarcodeRow::addBar(FX_BOOL black, int32_t width) {
+void CBC_BarcodeRow::addBar(bool black, int32_t width) {
   for (int32_t ii = 0; ii < width; ii++) {
     set(m_currentLocation++, black);
   }

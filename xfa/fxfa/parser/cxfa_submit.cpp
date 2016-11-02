@@ -10,7 +10,7 @@
 
 CXFA_Submit::CXFA_Submit(CXFA_Node* pNode) : CXFA_Data(pNode) {}
 
-FX_BOOL CXFA_Submit::IsSubmitEmbedPDF() {
+bool CXFA_Submit::IsSubmitEmbedPDF() {
   return m_pNode->GetBoolean(XFA_ATTRIBUTE_EmbedPDF);
 }
 

@@ -36,7 +36,7 @@ class IFX_Stream {
                                   int32_t length,
                                   uint32_t dwAccess);
   static IFX_Stream* CreateTextStream(IFX_Stream* pBaseStream,
-                                      FX_BOOL bDeleteOnRelease);
+                                      bool bDeleteOnRelease);
   virtual ~IFX_Stream() {}
   virtual void Release() = 0;
   virtual IFX_Stream* Retain() = 0;
@@ -49,15 +49,15 @@ class IFX_Stream {
   virtual int32_t GetLength() const = 0;
   virtual int32_t Seek(FX_STREAMSEEK eSeek, int32_t iOffset) = 0;
   virtual int32_t GetPosition() = 0;
-  virtual FX_BOOL IsEOF() const = 0;
+  virtual bool IsEOF() const = 0;
   virtual int32_t ReadData(uint8_t* pBuffer, int32_t iBufferSize) = 0;
   virtual int32_t ReadString(FX_WCHAR* pStr,
                              int32_t iMaxLength,
-                             FX_BOOL& bEOS) = 0;
+                             bool& bEOS) = 0;
   virtual int32_t WriteData(const uint8_t* pBuffer, int32_t iBufferSize) = 0;
   virtual int32_t WriteString(const FX_WCHAR* pStr, int32_t iLength) = 0;
   virtual void Flush() = 0;
-  virtual FX_BOOL SetLength(int32_t iLength) = 0;
+  virtual bool SetLength(int32_t iLength) = 0;
   virtual int32_t GetBOM(uint8_t bom[4]) const = 0;
   virtual uint16_t GetCodePage() const = 0;
   virtual uint16_t SetCodePage(uint16_t wCodePage) = 0;

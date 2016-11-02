@@ -19,7 +19,7 @@ class CXFA_BindItems : public CXFA_Data {
   void GetLabelRef(CFX_WideStringC& wsLabelRef);
   void GetValueRef(CFX_WideStringC& wsValueRef);
   void GetRef(CFX_WideStringC& wsRef);
-  FX_BOOL SetConnection(const CFX_WideString& wsConnection);
+  bool SetConnection(const CFX_WideString& wsConnection);
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_BINDITEMS_H_

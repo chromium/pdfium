@@ -13,11 +13,11 @@ class IFX_CharIter {
  public:
   virtual ~IFX_CharIter() {}
 
-  virtual FX_BOOL Next(FX_BOOL bPrev = FALSE) = 0;
+  virtual bool Next(bool bPrev = false) = 0;
   virtual FX_WCHAR GetChar() = 0;
   virtual void SetAt(int32_t nIndex) = 0;
   virtual int32_t GetAt() const = 0;
-  virtual FX_BOOL IsEOF(FX_BOOL bTail = TRUE) const = 0;
+  virtual bool IsEOF(bool bTail = true) const = 0;
   virtual IFX_CharIter* Clone() = 0;
 };
 

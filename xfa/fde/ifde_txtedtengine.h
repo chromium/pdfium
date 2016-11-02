@@ -95,7 +95,7 @@ struct FDE_TXTEDTPARAMS {
   FX_ARGB dwFontColor;
   FX_FLOAT fLineSpace;
   FX_FLOAT fTabWidth;
-  FX_BOOL bTabEquidistant;
+  bool bTabEquidistant;
   FX_WCHAR wDefChar;
   FX_WCHAR wLineBreakChar;
   int32_t nCharRotation;

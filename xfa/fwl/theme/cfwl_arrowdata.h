@@ -22,7 +22,7 @@ class CFWL_ArrowData {
   };
 
   static CFWL_ArrowData* GetInstance();
-  static FX_BOOL HasInstance();
+  static bool HasInstance();
   static void DestroyInstance();
   void SetColorData(uint32_t dwID);
 

@@ -27,51 +27,51 @@ CBC_QRCode::CBC_QRCode() : CBC_CodeBase(new CBC_QRCodeWriter) {}
 
 CBC_QRCode::~CBC_QRCode() {}
 
-FX_BOOL CBC_QRCode::SetVersion(int32_t version) {
+bool CBC_QRCode::SetVersion(int32_t version) {
   if (version < 0 || version > 40)
-    return FALSE;
+    return false;
   return m_pBCWriter &&
          static_cast<CBC_QRCodeWriter*>(m_pBCWriter.get())->SetVersion(version);
 }
 
-FX_BOOL CBC_QRCode::SetErrorCorrectionLevel(int32_t level) {
+bool CBC_QRCode::SetErrorCorrectionLevel(int32_t level) {
   if (level < 0 || level > 3)
-    return FALSE;
+    return false;
 
   return m_pBCWriter &&
          static_cast<CBC_TwoDimWriter*>(m_pBCWriter.get())
              ->SetErrorCorrectionLevel(level);
 }
 
-FX_BOOL CBC_QRCode::Encode(const CFX_WideStringC& contents,
-                           FX_BOOL isDevice,
-                           int32_t& e) {
+bool CBC_QRCode::Encode(const CFX_WideStringC& contents,
+                        bool isDevice,
+                        int32_t& e) {
   int32_t outWidth = 0;
   int32_t outHeight = 0;
   CBC_QRCodeWriter* pWriter = static_cast<CBC_QRCodeWriter*>(m_pBCWriter.get());
   uint8_t* data = pWriter->Encode(CFX_WideString(contents),
                                   pWriter->GetErrorCorrectionLevel(), outWidth,
                                   outHeight, e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, FALSE);
+  BC_EXCEPTION_CHECK_ReturnValue(e, false);
   pWriter->RenderResult(data, outWidth, outHeight, e);
   FX_Free(data);
-  BC_EXCEPTION_CHECK_ReturnValue(e, FALSE);
-  return TRUE;
+  BC_EXCEPTION_CHECK_ReturnValue(e, false);
+  return true;
 }
 
-FX_BOOL CBC_QRCode::RenderDevice(CFX_RenderDevice* device,
-                                 const CFX_Matrix* matrix,
-                                 int32_t& e) {
+bool CBC_QRCode::RenderDevice(CFX_RenderDevice* device,
+                              const CFX_Matrix* matrix,
+                              int32_t& e) {
   static_cast<CBC_TwoDimWriter*>(m_pBCWriter.get())
       ->RenderDeviceResult(device, matrix);
-  return TRUE;
+  return true;
 }
 
-FX_BOOL CBC_QRCode::RenderBitmap(CFX_DIBitmap*& pOutBitmap, int32_t& e) {
+bool CBC_QRCode::RenderBitmap(CFX_DIBitmap*& pOutBitmap, int32_t& e) {
   static_cast<CBC_TwoDimWriter*>(m_pBCWriter.get())
       ->RenderBitmapResult(pOutBitmap, e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, FALSE);
-  return TRUE;
+  BC_EXCEPTION_CHECK_ReturnValue(e, false);
+  return true;
 }
 
 BC_TYPE CBC_QRCode::GetType() {

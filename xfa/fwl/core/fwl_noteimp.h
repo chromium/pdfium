@@ -39,7 +39,7 @@ class CFWL_NoteLoop {
 
   FWL_Error Idle(int32_t count);
   IFWL_Widget* GetForm();
-  FX_BOOL ContinueModal();
+  bool ContinueModal();
   FWL_Error EndModalLoop();
   FWL_Error SetMainForm(IFWL_Widget* pForm);
 
@@ -47,7 +47,7 @@ class CFWL_NoteLoop {
   void GenerateCommondEvent(uint32_t dwCommand);
 
   IFWL_Widget* m_pForm;
-  FX_BOOL m_bContinueModal;
+  bool m_bContinueModal;
 };
 
 class CFWL_NoteDriver {
@@ -60,12 +60,12 @@ class CFWL_NoteDriver {
                                 IFWL_Widget* pEventSource = nullptr,
                                 uint32_t dwFilter = FWL_EVENT_ALL_MASK);
   FWL_Error UnregisterEventTarget(IFWL_Widget* pListener);
-  void ClearEventTargets(FX_BOOL bRemoveAll);
+  void ClearEventTargets(bool bRemoveAll);
   FWL_Error PushNoteLoop(CFWL_NoteLoop* pNoteLoop);
   CFWL_NoteLoop* PopNoteLoop();
   IFWL_Widget* GetFocus();
-  FX_BOOL SetFocus(IFWL_Widget* pFocus, FX_BOOL bNotify = FALSE);
-  void SetGrab(IFWL_Widget* pGrab, FX_BOOL bSet);
+  bool SetFocus(IFWL_Widget* pFocus, bool bNotify = false);
+  void SetGrab(IFWL_Widget* pGrab, bool bSet);
   FWL_Error Run();
 
   IFWL_Widget* GetHover();
@@ -74,29 +74,29 @@ class CFWL_NoteDriver {
   void NotifyTargetDestroy(IFWL_Widget* pNoteTarget);
   FWL_Error RegisterForm(IFWL_Widget* pForm);
   FWL_Error UnRegisterForm(IFWL_Widget* pForm);
-  FX_BOOL QueueMessage(CFWL_Message* pMessage);
-  FX_BOOL UnqueueMessage(CFWL_NoteLoop* pNoteLoop);
+  bool QueueMessage(CFWL_Message* pMessage);
+  bool UnqueueMessage(CFWL_NoteLoop* pNoteLoop);
   CFWL_NoteLoop* GetTopLoop();
   int32_t CountLoop();
-  FX_BOOL ProcessMessage(CFWL_Message* pMessage);
+  bool ProcessMessage(CFWL_Message* pMessage);
 
  protected:
-  FX_BOOL DispatchMessage(CFWL_Message* pMessage, IFWL_Widget* pMessageForm);
-  FX_BOOL DoActivate(CFWL_MsgActivate* pMsg, IFWL_Widget* pMessageForm);
-  FX_BOOL DoDeactivate(CFWL_MsgDeactivate* pMsg, IFWL_Widget* pMessageForm);
-  FX_BOOL DoSetFocus(CFWL_MsgSetFocus* pMsg, IFWL_Widget* pMessageForm);
-  FX_BOOL DoKillFocus(CFWL_MsgKillFocus* pMsg, IFWL_Widget* pMessageForm);
-  FX_BOOL DoKey(CFWL_MsgKey* pMsg, IFWL_Widget* pMessageForm);
-  FX_BOOL DoMouse(CFWL_MsgMouse* pMsg, IFWL_Widget* pMessageForm);
-  FX_BOOL DoWheel(CFWL_MsgMouseWheel* pMsg, IFWL_Widget* pMessageForm);
-  FX_BOOL DoSize(CFWL_MsgSize* pMsg);
-  FX_BOOL DoWindowMove(CFWL_MsgWindowMove* pMsg, IFWL_Widget* pMessageForm);
-  FX_BOOL DoDragFiles(CFWL_MsgDropFiles* pMsg, IFWL_Widget* pMessageForm);
-  FX_BOOL DoMouseEx(CFWL_MsgMouse* pMsg, IFWL_Widget* pMessageForm);
+  bool DispatchMessage(CFWL_Message* pMessage, IFWL_Widget* pMessageForm);
+  bool DoActivate(CFWL_MsgActivate* pMsg, IFWL_Widget* pMessageForm);
+  bool DoDeactivate(CFWL_MsgDeactivate* pMsg, IFWL_Widget* pMessageForm);
+  bool DoSetFocus(CFWL_MsgSetFocus* pMsg, IFWL_Widget* pMessageForm);
+  bool DoKillFocus(CFWL_MsgKillFocus* pMsg, IFWL_Widget* pMessageForm);
+  bool DoKey(CFWL_MsgKey* pMsg, IFWL_Widget* pMessageForm);
+  bool DoMouse(CFWL_MsgMouse* pMsg, IFWL_Widget* pMessageForm);
+  bool DoWheel(CFWL_MsgMouseWheel* pMsg, IFWL_Widget* pMessageForm);
+  bool DoSize(CFWL_MsgSize* pMsg);
+  bool DoWindowMove(CFWL_MsgWindowMove* pMsg, IFWL_Widget* pMessageForm);
+  bool DoDragFiles(CFWL_MsgDropFiles* pMsg, IFWL_Widget* pMessageForm);
+  bool DoMouseEx(CFWL_MsgMouse* pMsg, IFWL_Widget* pMessageForm);
   void MouseSecondary(CFWL_MsgMouse* pMsg);
-  FX_BOOL IsValidMessage(CFWL_Message* pMessage);
+  bool IsValidMessage(CFWL_Message* pMessage);
   IFWL_Widget* GetMessageForm(IFWL_Widget* pDstTarget);
-  void ClearInvalidEventTargets(FX_BOOL bRemoveAll);
+  void ClearInvalidEventTargets(bool bRemoveAll);
 
   CFX_ArrayTemplate<IFWL_Widget*> m_forms;
   CFX_ArrayTemplate<CFWL_Message*> m_noteQueue;
@@ -115,16 +115,16 @@ class CFWL_EventTarget {
 
   int32_t SetEventSource(IFWL_Widget* pSource,
                          uint32_t dwFilter = FWL_EVENT_ALL_MASK);
-  FX_BOOL ProcessEvent(CFWL_Event* pEvent);
-  FX_BOOL IsFilterEvent(CFWL_Event* pEvent, uint32_t dwFilter);
-  FX_BOOL IsInvalid() { return m_bInvalid; }
-  void FlagInvalid() { m_bInvalid = TRUE; }
+  bool ProcessEvent(CFWL_Event* pEvent);
+  bool IsFilterEvent(CFWL_Event* pEvent, uint32_t dwFilter);
+  bool IsInvalid() { return m_bInvalid; }
+  void FlagInvalid() { m_bInvalid = true; }
 
  protected:
   CFX_MapPtrTemplate<void*, uint32_t> m_eventSources;
   IFWL_Widget* m_pListener;
   CFWL_NoteDriver* m_pNoteDriver;
-  FX_BOOL m_bInvalid;
+  bool m_bInvalid;
 };
 
 class CFWL_ToolTipContainer final {

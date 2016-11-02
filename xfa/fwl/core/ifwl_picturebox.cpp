@@ -13,9 +13,9 @@
 IFWL_PictureBox::IFWL_PictureBox(const IFWL_App* app,
                                  const CFWL_WidgetImpProperties& properties)
     : IFWL_Widget(app, properties, nullptr),
-      m_bTop(FALSE),
-      m_bVCenter(FALSE),
-      m_bButton(FALSE) {
+      m_bTop(false),
+      m_bVCenter(false),
+      m_bButton(false) {
   m_rtClient.Reset();
   m_rtImage.Reset();
   m_matrix.SetIdentity();
@@ -27,7 +27,7 @@ FWL_Type IFWL_PictureBox::GetClassID() const {
   return FWL_Type::PictureBox;
 }
 
-FWL_Error IFWL_PictureBox::GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize) {
+FWL_Error IFWL_PictureBox::GetWidgetRect(CFX_RectF& rect, bool bAutoSize) {
   if (bAutoSize) {
     rect.Set(0, 0, 0, 0);
     if (!m_pProperties->m_pDataProvider)
@@ -39,7 +39,7 @@ FWL_Error IFWL_PictureBox::GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize) {
       rect.Set(0, 0, (FX_FLOAT)pBitmap->GetWidth(),
                (FX_FLOAT)pBitmap->GetHeight());
     }
-    IFWL_Widget::GetWidgetRect(rect, TRUE);
+    IFWL_Widget::GetWidgetRect(rect, true);
   } else {
     rect = m_pProperties->m_rtWidget;
   }
@@ -105,13 +105,13 @@ void IFWL_PictureBox::DrawBkground(CFX_Graphics* pGraphics,
 bool IFWL_PictureBox::VStyle(uint32_t dwStyle) {
   switch (dwStyle & FWL_STYLEEXT_PTB_VAlignMask) {
     case FWL_STYLEEXT_PTB_Top:
-      m_bTop = TRUE;
+      m_bTop = true;
       return true;
     case FWL_STYLEEXT_PTB_Vcenter:
-      m_bVCenter = TRUE;
+      m_bVCenter = true;
       return true;
     case FWL_STYLEEXT_PTB_Bottom:
-      m_bButton = TRUE;
+      m_bButton = true;
       return true;
   }
   return false;

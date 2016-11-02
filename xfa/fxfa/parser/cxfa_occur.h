@@ -18,7 +18,7 @@ class CXFA_Occur : public CXFA_Data {
 
   int32_t GetMax();
   int32_t GetMin();
-  FX_BOOL GetOccurInfo(int32_t& iMin, int32_t& iMax, int32_t& iInit);
+  bool GetOccurInfo(int32_t& iMin, int32_t& iMax, int32_t& iInit);
   void SetMax(int32_t iMax);
   void SetMin(int32_t iMin);
 };

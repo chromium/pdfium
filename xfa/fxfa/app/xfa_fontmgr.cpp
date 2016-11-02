@@ -2017,7 +2017,7 @@ CFGAS_GEFont* CXFA_FontMgr::GetFont(CXFA_FFDoc* hDoc,
   CFGAS_GEFont* pFont = nullptr;
   if (pMgr) {
     pFont =
-        pMgr->GetFont(wsEnglishName.AsStringC(), dwFontStyles, &pPDFFont, TRUE);
+        pMgr->GetFont(wsEnglishName.AsStringC(), dwFontStyles, &pPDFFont, true);
     if (pFont)
       return pFont;
   }
@@ -2027,7 +2027,7 @@ CFGAS_GEFont* CXFA_FontMgr::GetFont(CXFA_FFDoc* hDoc,
   if (!pFont && pMgr) {
     pPDFFont = nullptr;
     pFont = pMgr->GetFont(wsEnglishName.AsStringC(), dwFontStyles, &pPDFFont,
-                          FALSE);
+                          false);
     if (pFont)
       return pFont;
   }

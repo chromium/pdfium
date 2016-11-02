@@ -21,13 +21,12 @@ int32_t CXFA_ArrayNodeList::GetLength() {
   return m_array.GetSize();
 }
 
-FX_BOOL CXFA_ArrayNodeList::Append(CXFA_Node* pNode) {
+bool CXFA_ArrayNodeList::Append(CXFA_Node* pNode) {
   m_array.Add(pNode);
-  return TRUE;
+  return true;
 }
 
-FX_BOOL CXFA_ArrayNodeList::Insert(CXFA_Node* pNewNode,
-                                   CXFA_Node* pBeforeNode) {
+bool CXFA_ArrayNodeList::Insert(CXFA_Node* pNewNode, CXFA_Node* pBeforeNode) {
   if (!pBeforeNode) {
     m_array.Add(pNewNode);
   } else {
@@ -39,10 +38,10 @@ FX_BOOL CXFA_ArrayNodeList::Insert(CXFA_Node* pNewNode,
       }
     }
   }
-  return TRUE;
+  return true;
 }
 
-FX_BOOL CXFA_ArrayNodeList::Remove(CXFA_Node* pNode) {
+bool CXFA_ArrayNodeList::Remove(CXFA_Node* pNode) {
   int32_t iSize = m_array.GetSize();
   for (int32_t i = 0; i < iSize; ++i) {
     if (m_array[i] == pNode) {
@@ -50,7 +49,7 @@ FX_BOOL CXFA_ArrayNodeList::Remove(CXFA_Node* pNode) {
       break;
     }
   }
-  return TRUE;
+  return true;
 }
 
 CXFA_Node* CXFA_ArrayNodeList::Item(int32_t iIndex) {

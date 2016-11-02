@@ -16,8 +16,8 @@ IFWL_ComboBoxProxy::IFWL_ComboBoxProxy(
     const CFWL_WidgetImpProperties& properties,
     IFWL_Widget* pOuter)
     : IFWL_FormProxy(app, properties, pOuter),
-      m_bLButtonDown(FALSE),
-      m_bLButtonUpSelf(FALSE),
+      m_bLButtonDown(false),
+      m_bLButtonUpSelf(false),
       m_pComboBox(pComboBox) {}
 
 IFWL_ComboBoxProxy::~IFWL_ComboBoxProxy() {}
@@ -47,10 +47,10 @@ void IFWL_ComboBoxProxy::OnProcessMessage(CFWL_Message* pMessage) {
       OnDeactive(static_cast<CFWL_MsgDeactivate*>(pMessage));
       break;
     case CFWL_MessageType::KillFocus:
-      OnFocusChanged(static_cast<CFWL_MsgKillFocus*>(pMessage), FALSE);
+      OnFocusChanged(static_cast<CFWL_MsgKillFocus*>(pMessage), false);
       break;
     case CFWL_MessageType::SetFocus:
-      OnFocusChanged(static_cast<CFWL_MsgKillFocus*>(pMessage), TRUE);
+      OnFocusChanged(static_cast<CFWL_MsgKillFocus*>(pMessage), true);
       break;
     default:
       break;
@@ -74,45 +74,45 @@ void IFWL_ComboBoxProxy::OnLButtonDown(CFWL_MsgMouse* pMsg) {
   GetWidgetRect(rtWidget);
   rtWidget.left = rtWidget.top = 0;
   if (rtWidget.Contains(pMsg->m_fx, pMsg->m_fy)) {
-    m_bLButtonDown = TRUE;
-    pDriver->SetGrab(this, TRUE);
+    m_bLButtonDown = true;
+    pDriver->SetGrab(this, true);
   } else {
-    m_bLButtonDown = FALSE;
-    pDriver->SetGrab(this, FALSE);
-    m_pComboBox->ShowDropList(FALSE);
+    m_bLButtonDown = false;
+    pDriver->SetGrab(this, false);
+    m_pComboBox->ShowDropList(false);
   }
 }
 
 void IFWL_ComboBoxProxy::OnLButtonUp(CFWL_MsgMouse* pMsg) {
-  m_bLButtonDown = FALSE;
+  m_bLButtonDown = false;
   const IFWL_App* pApp = GetOwnerApp();
   if (!pApp)
     return;
 
   CFWL_NoteDriver* pDriver =
       static_cast<CFWL_NoteDriver*>(pApp->GetNoteDriver());
-  pDriver->SetGrab(this, FALSE);
+  pDriver->SetGrab(this, false);
   if (m_bLButtonUpSelf) {
     CFX_RectF rect;
     GetWidgetRect(rect);
     rect.left = rect.top = 0;
     if (!rect.Contains(pMsg->m_fx, pMsg->m_fy) &&
         m_pComboBox->IsDropListShowed()) {
-      m_pComboBox->ShowDropList(FALSE);
+      m_pComboBox->ShowDropList(false);
     }
   } else {
-    m_bLButtonUpSelf = TRUE;
+    m_bLButtonUpSelf = true;
   }
 }
 
 void IFWL_ComboBoxProxy::OnDeactive(CFWL_MsgDeactivate* pMsg) {
-  m_pComboBox->ShowDropList(FALSE);
+  m_pComboBox->ShowDropList(false);
 }
 
-void IFWL_ComboBoxProxy::OnFocusChanged(CFWL_MsgKillFocus* pMsg, FX_BOOL bSet) {
+void IFWL_ComboBoxProxy::OnFocusChanged(CFWL_MsgKillFocus* pMsg, bool bSet) {
   if (bSet)
     return;
 
   if (!pMsg->m_pSetFocus)
-    m_pComboBox->ShowDropList(FALSE);
+    m_pComboBox->ShowDropList(false);
 }

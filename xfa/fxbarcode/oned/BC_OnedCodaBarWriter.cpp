@@ -48,77 +48,77 @@ CBC_OnedCodaBarWriter::CBC_OnedCodaBarWriter() {
   m_iWideNarrRatio = 2;
 }
 CBC_OnedCodaBarWriter::~CBC_OnedCodaBarWriter() {}
-FX_BOOL CBC_OnedCodaBarWriter::SetStartChar(FX_CHAR start) {
+bool CBC_OnedCodaBarWriter::SetStartChar(FX_CHAR start) {
   for (size_t i = 0; i < FX_ArraySize(START_END_CHARS); ++i) {
     if (START_END_CHARS[i] == start) {
       m_chStart = start;
-      return TRUE;
+      return true;
     }
   }
-  return FALSE;
+  return false;
 }
 
-FX_BOOL CBC_OnedCodaBarWriter::SetEndChar(FX_CHAR end) {
+bool CBC_OnedCodaBarWriter::SetEndChar(FX_CHAR end) {
   for (size_t i = 0; i < FX_ArraySize(START_END_CHARS); ++i) {
     if (START_END_CHARS[i] == end) {
       m_chEnd = end;
-      return TRUE;
+      return true;
     }
   }
-  return FALSE;
+  return false;
 }
 void CBC_OnedCodaBarWriter::SetDataLength(int32_t length) {
   m_iDataLenth = length + 2;
 }
-FX_BOOL CBC_OnedCodaBarWriter::SetTextLocation(BC_TEXT_LOC location) {
+bool CBC_OnedCodaBarWriter::SetTextLocation(BC_TEXT_LOC location) {
   if (location < BC_TEXT_LOC_NONE || location > BC_TEXT_LOC_BELOWEMBED) {
-    return FALSE;
+    return false;
   }
   m_locTextLoc = location;
-  return TRUE;
+  return true;
 }
-FX_BOOL CBC_OnedCodaBarWriter::SetWideNarrowRatio(int32_t ratio) {
+bool CBC_OnedCodaBarWriter::SetWideNarrowRatio(int32_t ratio) {
   if (ratio < 2 || ratio > 3) {
-    return FALSE;
+    return false;
   }
   m_iWideNarrRatio = ratio;
-  return TRUE;
+  return true;
 }
-FX_BOOL CBC_OnedCodaBarWriter::FindChar(FX_WCHAR ch, FX_BOOL isContent) {
+bool CBC_OnedCodaBarWriter::FindChar(FX_WCHAR ch, bool isContent) {
   if (isContent) {
     for (size_t i = 0; i < FX_ArraySize(CONTENT_CHARS); ++i) {
       if (ch == (FX_WCHAR)CONTENT_CHARS[i]) {
-        return TRUE;
+        return true;
       }
     }
     for (size_t j = 0; j < FX_ArraySize(START_END_CHARS); ++j) {
       if (ch == (FX_WCHAR)START_END_CHARS[j]) {
-        return TRUE;
+        return true;
       }
     }
-    return FALSE;
+    return false;
   } else {
     for (size_t i = 0; i < FX_ArraySize(CONTENT_CHARS); ++i) {
       if (ch == (FX_WCHAR)CONTENT_CHARS[i]) {
-        return TRUE;
+        return true;
       }
     }
-    return FALSE;
+    return false;
   }
 }
-FX_BOOL CBC_OnedCodaBarWriter::CheckContentValidity(
+bool CBC_OnedCodaBarWriter::CheckContentValidity(
     const CFX_WideStringC& contents) {
   FX_WCHAR ch;
   int32_t index = 0;
   for (index = 0; index < contents.GetLength(); index++) {
     ch = contents.GetAt(index);
-    if (FindChar(ch, FALSE)) {
+    if (FindChar(ch, false)) {
       continue;
     } else {
-      return FALSE;
+      return false;
     }
   }
-  return TRUE;
+  return true;
 }
 CFX_WideString CBC_OnedCodaBarWriter::FilterContents(
     const CFX_WideStringC& contents) {
@@ -130,7 +130,7 @@ CFX_WideString CBC_OnedCodaBarWriter::FilterContents(
       index++;
       continue;
     }
-    if (FindChar(ch, TRUE)) {
+    if (FindChar(ch, true)) {
       filtercontents += ch;
     } else {
       continue;
@@ -230,7 +230,7 @@ CFX_WideString CBC_OnedCodaBarWriter::encodedContents(
 void CBC_OnedCodaBarWriter::RenderResult(const CFX_WideStringC& contents,
                                          uint8_t* code,
                                          int32_t codeLength,
-                                         FX_BOOL isDevice,
+                                         bool isDevice,
                                          int32_t& e) {
   CBC_OneDimWriter::RenderResult(encodedContents(contents).AsStringC(), code,
                                  codeLength, isDevice, e);

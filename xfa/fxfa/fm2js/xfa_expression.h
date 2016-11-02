@@ -42,7 +42,7 @@ class CXFA_FMFunctionDefinition : public CXFA_FMExpression {
   // Takes ownership of |pExpressions|.
   CXFA_FMFunctionDefinition(
       uint32_t line,
-      FX_BOOL isGlobal,
+      bool isGlobal,
       const CFX_WideStringC& wsName,
       std::unique_ptr<CFX_WideStringCArray> pArguments,
       CFX_ArrayTemplate<CXFA_FMExpression*>* pExpressions);
@@ -55,7 +55,7 @@ class CXFA_FMFunctionDefinition : public CXFA_FMExpression {
   CFX_WideStringC m_wsName;
   std::unique_ptr<CFX_WideStringCArray> m_pArguments;
   CFX_ArrayTemplate<CXFA_FMExpression*>* m_pExpressions;
-  FX_BOOL m_isGlobal;
+  bool m_isGlobal;
 };
 
 class CXFA_FMVarExpression : public CXFA_FMExpression {

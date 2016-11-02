@@ -14,7 +14,7 @@ namespace {
 
 void GetStrokesInternal(CXFA_Node* pNode,
                         CXFA_StrokeArray& strokes,
-                        FX_BOOL bNull) {
+                        bool bNull) {
   strokes.RemoveAll();
   if (!pNode)
     return;
@@ -106,42 +106,42 @@ CXFA_Edge CXFA_Box::GetEdge(int32_t nIndex) const {
 }
 
 void CXFA_Box::GetStrokes(CXFA_StrokeArray& strokes) const {
-  GetStrokesInternal(m_pNode, strokes, FALSE);
+  GetStrokesInternal(m_pNode, strokes, false);
 }
 
-FX_BOOL CXFA_Box::IsCircular() const {
+bool CXFA_Box::IsCircular() const {
   if (!m_pNode)
-    return FALSE;
+    return false;
   return m_pNode->GetBoolean(XFA_ATTRIBUTE_Circular);
 }
 
-FX_BOOL CXFA_Box::GetStartAngle(FX_FLOAT& fStartAngle) const {
+bool CXFA_Box::GetStartAngle(FX_FLOAT& fStartAngle) const {
   fStartAngle = 0;
   if (!m_pNode)
-    return FALSE;
+    return false;
 
   CXFA_Measurement ms;
-  FX_BOOL bRet = m_pNode->TryMeasure(XFA_ATTRIBUTE_StartAngle, ms, FALSE);
+  bool bRet = m_pNode->TryMeasure(XFA_ATTRIBUTE_StartAngle, ms, false);
   if (bRet)
     fStartAngle = ms.GetValue();
 
   return bRet;
 }
 
-FX_BOOL CXFA_Box::GetSweepAngle(FX_FLOAT& fSweepAngle) const {
+bool CXFA_Box::GetSweepAngle(FX_FLOAT& fSweepAngle) const {
   fSweepAngle = 360;
   if (!m_pNode)
-    return FALSE;
+    return false;
 
   CXFA_Measurement ms;
-  FX_BOOL bRet = m_pNode->TryMeasure(XFA_ATTRIBUTE_SweepAngle, ms, FALSE);
+  bool bRet = m_pNode->TryMeasure(XFA_ATTRIBUTE_SweepAngle, ms, false);
   if (bRet)
     fSweepAngle = ms.GetValue();
 
   return bRet;
 }
 
-CXFA_Fill CXFA_Box::GetFill(FX_BOOL bModified) const {
+CXFA_Fill CXFA_Box::GetFill(bool bModified) const {
   if (!m_pNode)
     return CXFA_Fill(nullptr);
 
@@ -154,12 +154,12 @@ CXFA_Margin CXFA_Box::GetMargin() const {
                              : nullptr);
 }
 
-int32_t CXFA_Box::Get3DStyle(FX_BOOL& bVisible, FX_FLOAT& fThickness) const {
+int32_t CXFA_Box::Get3DStyle(bool& bVisible, FX_FLOAT& fThickness) const {
   if (IsArc())
     return 0;
 
   CXFA_StrokeArray strokes;
-  GetStrokesInternal(m_pNode, strokes, TRUE);
+  GetStrokesInternal(m_pNode, strokes, true);
   CXFA_Stroke stroke(nullptr);
   int32_t iType = Style3D(strokes, stroke);
   if (iType) {

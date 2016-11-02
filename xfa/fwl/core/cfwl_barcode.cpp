@@ -48,11 +48,11 @@ void CFWL_Barcode::SetDataLength(int32_t dataLength) {
   m_barcodeData.m_nDataLength = dataLength;
   ToBarcode(GetWidget())->SetLimit(dataLength);
 }
-void CFWL_Barcode::SetCalChecksum(FX_BOOL calChecksum) {
+void CFWL_Barcode::SetCalChecksum(bool calChecksum) {
   m_barcodeData.m_dwAttributeMask |= FWL_BCDATTRIBUTE_CALCHECKSUM;
   m_barcodeData.m_bCalChecksum = calChecksum;
 }
-void CFWL_Barcode::SetPrintChecksum(FX_BOOL printChecksum) {
+void CFWL_Barcode::SetPrintChecksum(bool printChecksum) {
   m_barcodeData.m_dwAttributeMask |= FWL_BCDATTRIBUTE_PRINTCHECKSUM;
   m_barcodeData.m_bPrintChecksum = printChecksum;
 }
@@ -80,7 +80,7 @@ void CFWL_Barcode::SetErrorCorrectionLevel(int32_t ecLevel) {
   m_barcodeData.m_dwAttributeMask |= FWL_BCDATTRIBUTE_ECLEVEL;
   m_barcodeData.m_nECLevel = ecLevel;
 }
-void CFWL_Barcode::SetTruncated(FX_BOOL truncated) {
+void CFWL_Barcode::SetTruncated(bool truncated) {
   m_barcodeData.m_dwAttributeMask |= FWL_BCDATTRIBUTE_TRUNCATED;
   m_barcodeData.m_bTruncated = truncated;
 }
@@ -93,8 +93,8 @@ void CFWL_Barcode::SetType(BC_TYPE type) {
     ToBarcode(GetWidget())->SetType(type);
 }
 
-FX_BOOL CFWL_Barcode::IsProtectedType() {
-  return GetWidget() ? ToBarcode(GetWidget())->IsProtectedType() : FALSE;
+bool CFWL_Barcode::IsProtectedType() {
+  return GetWidget() ? ToBarcode(GetWidget())->IsProtectedType() : false;
 }
 
 CFWL_Barcode::CFWL_BarcodeDP::CFWL_BarcodeDP()
@@ -121,11 +121,11 @@ int32_t CFWL_Barcode::CFWL_BarcodeDP::GetDataLength() const {
   return m_nDataLength;
 }
 
-FX_BOOL CFWL_Barcode::CFWL_BarcodeDP::GetCalChecksum() const {
+bool CFWL_Barcode::CFWL_BarcodeDP::GetCalChecksum() const {
   return m_bCalChecksum;
 }
 
-FX_BOOL CFWL_Barcode::CFWL_BarcodeDP::GetPrintChecksum() const {
+bool CFWL_Barcode::CFWL_BarcodeDP::GetPrintChecksum() const {
   return m_bPrintChecksum;
 }
 
@@ -153,7 +153,7 @@ int32_t CFWL_Barcode::CFWL_BarcodeDP::GetErrorCorrectionLevel() const {
   return m_nECLevel;
 }
 
-FX_BOOL CFWL_Barcode::CFWL_BarcodeDP::GetTruncated() const {
+bool CFWL_Barcode::CFWL_BarcodeDP::GetTruncated() const {
   return m_bTruncated;
 }
 

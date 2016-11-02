@@ -47,7 +47,7 @@ CFX_Int32Array& CBC_CommonBitArray::GetBits() {
 int32_t CBC_CommonBitArray::GetSizeInBytes() {
   return (m_size + 7) >> 3;
 }
-FX_BOOL CBC_CommonBitArray::Get(int32_t i) {
+bool CBC_CommonBitArray::Get(int32_t i) {
   return (m_bits[i >> 5] & (1 << (i & 0x1f))) != 0;
 }
 void CBC_CommonBitArray::Set(int32_t i) {
@@ -62,16 +62,16 @@ void CBC_CommonBitArray::SetBulk(int32_t i, int32_t newBits) {
 void CBC_CommonBitArray::Clear() {
   FXSYS_memset(&m_bits[0], 0x00, m_bits.GetSize() * sizeof(int32_t));
 }
-FX_BOOL CBC_CommonBitArray::IsRange(int32_t start,
-                                    int32_t end,
-                                    FX_BOOL value,
-                                    int32_t& e) {
+bool CBC_CommonBitArray::IsRange(int32_t start,
+                                 int32_t end,
+                                 bool value,
+                                 int32_t& e) {
   if (end < start) {
     e = BCExceptionEndLessThanStart;
-    return FALSE;
+    return false;
   }
   if (end == start) {
-    return TRUE;
+    return true;
   }
   end--;
   int32_t firstInt = start >> 5;
@@ -90,10 +90,10 @@ FX_BOOL CBC_CommonBitArray::IsRange(int32_t start,
       }
     }
     if ((m_bits[i] & mask) != (value ? mask : 0)) {
-      return FALSE;
+      return false;
     }
   }
-  return TRUE;
+  return true;
 }
 int32_t* CBC_CommonBitArray::GetBitArray() {
   return &m_bits[0];

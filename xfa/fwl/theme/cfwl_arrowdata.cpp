@@ -20,7 +20,7 @@ CFWL_ArrowData* CFWL_ArrowData::GetInstance() {
   return g_pInstance;
 }
 
-FX_BOOL CFWL_ArrowData::HasInstance() {
+bool CFWL_ArrowData::HasInstance() {
   return !!g_pInstance;
 }
 

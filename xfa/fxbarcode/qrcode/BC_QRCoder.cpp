@@ -90,7 +90,7 @@ int32_t CBC_QRCoder::At(int32_t x, int32_t y, int32_t& e) {
   return value;
 }
 
-FX_BOOL CBC_QRCoder::IsValid() {
+bool CBC_QRCoder::IsValid() {
   return m_mode && m_ecLevel && m_version != -1 && m_matrixWidth != -1 &&
          m_maskPattern != -1 && m_numTotalBytes != -1 && m_numDataBytes != -1 &&
          m_numECBytes != -1 && m_numRSBlocks != -1 &&

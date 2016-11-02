@@ -68,7 +68,7 @@ int32_t CFWL_Edit::GetCaretPos() const {
   return ToEdit(GetWidget())->GetCaretPos();
 }
 
-int32_t CFWL_Edit::SetCaretPos(int32_t nIndex, FX_BOOL bBefore) {
+int32_t CFWL_Edit::SetCaretPos(int32_t nIndex, bool bBefore) {
   if (!GetWidget())
     return -1;
   return ToEdit(GetWidget())->SetCaretPos(nIndex, bBefore);
@@ -158,15 +158,15 @@ FWL_Error CFWL_Edit::DoClipboard(int32_t iCmd) {
   return ToEdit(GetWidget())->DoClipboard(iCmd);
 }
 
-FX_BOOL CFWL_Edit::Redo(const IFDE_TxtEdtDoRecord* pRecord) {
+bool CFWL_Edit::Redo(const IFDE_TxtEdtDoRecord* pRecord) {
   return GetWidget() && ToEdit(GetWidget())->Redo(pRecord);
 }
 
-FX_BOOL CFWL_Edit::Undo(const IFDE_TxtEdtDoRecord* pRecord) {
+bool CFWL_Edit::Undo(const IFDE_TxtEdtDoRecord* pRecord) {
   return GetWidget() && ToEdit(GetWidget())->Undo(pRecord);
 }
 
-FWL_Error CFWL_Edit::SetTabWidth(FX_FLOAT fTabWidth, FX_BOOL bEquidistant) {
+FWL_Error CFWL_Edit::SetTabWidth(FX_FLOAT fTabWidth, bool bEquidistant) {
   if (!GetWidget())
     return FWL_Error::Indefinite;
   return ToEdit(GetWidget())->SetTabWidth(fTabWidth, bEquidistant);
@@ -190,35 +190,35 @@ FWL_Error CFWL_Edit::SetFont(const CFX_WideString& wsFont, FX_FLOAT fSize) {
   return ToEdit(GetWidget())->SetFont(wsFont, fSize);
 }
 
-FX_BOOL CFWL_Edit::CanUndo() {
+bool CFWL_Edit::CanUndo() {
   return ToEdit(GetWidget())->CanUndo();
 }
 
-FX_BOOL CFWL_Edit::CanRedo() {
+bool CFWL_Edit::CanRedo() {
   return ToEdit(GetWidget())->CanRedo();
 }
 
-FX_BOOL CFWL_Edit::Undo() {
+bool CFWL_Edit::Undo() {
   return ToEdit(GetWidget())->Undo();
 }
 
-FX_BOOL CFWL_Edit::Redo() {
+bool CFWL_Edit::Redo() {
   return ToEdit(GetWidget())->Undo();
 }
 
-FX_BOOL CFWL_Edit::Copy(CFX_WideString& wsCopy) {
+bool CFWL_Edit::Copy(CFX_WideString& wsCopy) {
   return ToEdit(GetWidget())->Copy(wsCopy);
 }
 
-FX_BOOL CFWL_Edit::Cut(CFX_WideString& wsCut) {
+bool CFWL_Edit::Cut(CFX_WideString& wsCut) {
   return ToEdit(GetWidget())->Cut(wsCut);
 }
 
-FX_BOOL CFWL_Edit::Paste(const CFX_WideString& wsPaste) {
+bool CFWL_Edit::Paste(const CFX_WideString& wsPaste) {
   return ToEdit(GetWidget())->Paste(wsPaste);
 }
 
-FX_BOOL CFWL_Edit::Delete() {
+bool CFWL_Edit::Delete() {
   return ToEdit(GetWidget())->Delete();
 }
 
@@ -226,12 +226,12 @@ void CFWL_Edit::SetScrollOffset(FX_FLOAT fScrollOffset) {
   return ToEdit(GetWidget())->SetScrollOffset(fScrollOffset);
 }
 
-FX_BOOL CFWL_Edit::GetSuggestWords(CFX_PointF pointf,
-                                   std::vector<CFX_ByteString>& sSuggest) {
+bool CFWL_Edit::GetSuggestWords(CFX_PointF pointf,
+                                std::vector<CFX_ByteString>& sSuggest) {
   return ToEdit(GetWidget())->GetSuggestWords(pointf, sSuggest);
 }
 
-FX_BOOL CFWL_Edit::ReplaceSpellCheckWord(CFX_PointF pointf,
-                                         const CFX_ByteStringC& bsReplace) {
+bool CFWL_Edit::ReplaceSpellCheckWord(CFX_PointF pointf,
+                                      const CFX_ByteStringC& bsReplace) {
   return ToEdit(GetWidget())->ReplaceSpellCheckWord(pointf, bsReplace);
 }

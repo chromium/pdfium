@@ -29,9 +29,9 @@ class CFDE_RenderContext : public CFX_Target {
   CFDE_RenderContext();
   ~CFDE_RenderContext() override;
 
-  FX_BOOL StartRender(CFDE_RenderDevice* pRenderDevice,
-                      IFDE_CanvasSet* pCanvasSet,
-                      const CFX_Matrix& tmDoc2Device);
+  bool StartRender(CFDE_RenderDevice* pRenderDevice,
+                   IFDE_CanvasSet* pCanvasSet,
+                   const CFX_Matrix& tmDoc2Device);
   FDE_RENDERSTATUS GetStatus() const { return m_eStatus; }
   FDE_RENDERSTATUS DoRender(IFX_Pause* pPause = nullptr);
   void StopRender();

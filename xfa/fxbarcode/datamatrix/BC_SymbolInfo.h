@@ -15,7 +15,7 @@ class CBC_Dimension;
 
 class CBC_SymbolInfo : public CBC_SymbolShapeHint {
  public:
-  CBC_SymbolInfo(FX_BOOL rectangular,
+  CBC_SymbolInfo(bool rectangular,
                  int32_t dataCapacity,
                  int32_t errorCodewords,
                  int32_t matrixWidth,
@@ -31,18 +31,18 @@ class CBC_SymbolInfo : public CBC_SymbolShapeHint {
                                 SymbolShapeHint shape,
                                 int32_t& e);
   static CBC_SymbolInfo* lookup(int32_t dataCodewords,
-                                FX_BOOL allowRectangular,
-                                FX_BOOL fail,
+                                bool allowRectangular,
+                                bool fail,
                                 int32_t& e);
   static CBC_SymbolInfo* lookup(int32_t dataCodewords,
                                 SymbolShapeHint shape,
-                                FX_BOOL fail,
+                                bool fail,
                                 int32_t& e);
   static CBC_SymbolInfo* lookup(int32_t dataCodewords,
                                 SymbolShapeHint shape,
                                 CBC_Dimension* minSize,
                                 CBC_Dimension* maxSize,
-                                FX_BOOL fail,
+                                bool fail,
                                 int32_t& e);
   int32_t getHorizontalDataRegions(int32_t& e);
   int32_t getVerticalDataRegions(int32_t& e);
@@ -63,7 +63,7 @@ class CBC_SymbolInfo : public CBC_SymbolShapeHint {
   int32_t m_rsBlockError;
 
  private:
-  CBC_SymbolInfo(FX_BOOL rectangular,
+  CBC_SymbolInfo(bool rectangular,
                  int32_t dataCapacity,
                  int32_t errorCodewords,
                  int32_t matrixWidth,
@@ -72,7 +72,7 @@ class CBC_SymbolInfo : public CBC_SymbolShapeHint {
                  int32_t rsBlockData,
                  int32_t rsBlockError);
 
-  FX_BOOL m_rectangular;
+  bool m_rectangular;
   int32_t m_dataRegions;
 };
 

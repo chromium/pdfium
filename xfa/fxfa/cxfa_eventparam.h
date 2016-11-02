@@ -56,14 +56,14 @@ class CXFA_EventParam {
   CXFA_WidgetAcc* m_pTarget;
   XFA_EVENTTYPE m_eType;
   CFX_WideString m_wsResult;
-  FX_BOOL m_bCancelAction;
+  bool m_bCancelAction;
   int32_t m_iCommitKey;
-  FX_BOOL m_bKeyDown;
-  FX_BOOL m_bModifier;
-  FX_BOOL m_bReenter;
+  bool m_bKeyDown;
+  bool m_bModifier;
+  bool m_bReenter;
   int32_t m_iSelEnd;
   int32_t m_iSelStart;
-  FX_BOOL m_bShift;
+  bool m_bShift;
   CFX_WideString m_wsChange;
   CFX_WideString m_wsFullText;
   CFX_WideString m_wsNewContentType;
@@ -72,7 +72,7 @@ class CXFA_EventParam {
   CFX_WideString m_wsPrevText;
   CFX_WideString m_wsSoapFaultCode;
   CFX_WideString m_wsSoapFaultString;
-  FX_BOOL m_bIsFormReady;
+  bool m_bIsFormReady;
   int32_t m_iValidateActivities;
 };
 

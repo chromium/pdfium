@@ -25,7 +25,7 @@ class IFWL_DateTimeCalendar : public IFWL_MonthCalendar {
   void DisForm_OnProcessMessage(CFWL_Message* pMessage);
   void DisForm_OnLButtonUpEx(CFWL_MsgMouse* pMsg);
 
-  FX_BOOL m_bFlag;
+  bool m_bFlag;
 };
 
 #endif  // XFA_FWL_CORE_IFWL_DATETIMECALENDAR_H_

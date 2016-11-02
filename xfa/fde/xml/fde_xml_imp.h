@@ -44,7 +44,7 @@ class CFDE_XMLNode : public CFX_Target {
 
   virtual void Release();
   virtual FDE_XMLNODETYPE GetType() const;
-  virtual CFDE_XMLNode* Clone(FX_BOOL bRecursive);
+  virtual CFDE_XMLNode* Clone(bool bRecursive);
 
   int32_t CountChildNodes() const;
   CFDE_XMLNode* GetChildNode(int32_t index) const;
@@ -56,11 +56,11 @@ class CFDE_XMLNode : public CFX_Target {
 
   CFDE_XMLNode* GetPath(const FX_WCHAR* pPath,
                         int32_t iLength = -1,
-                        FX_BOOL bQualifiedName = TRUE) const;
+                        bool bQualifiedName = true) const;
 
   int32_t GetNodeLevel() const;
   CFDE_XMLNode* GetNodeItem(CFDE_XMLNode::NodeItem eItem) const;
-  FX_BOOL InsertNodeItem(CFDE_XMLNode::NodeItem eItem, CFDE_XMLNode* pNode);
+  bool InsertNodeItem(CFDE_XMLNode::NodeItem eItem, CFDE_XMLNode* pNode);
   CFDE_XMLNode* RemoveNodeItem(CFDE_XMLNode::NodeItem eItem);
 
   void SaveXMLNode(IFX_Stream* pXMLStream);
@@ -79,14 +79,14 @@ class CFDE_XMLInstruction : public CFDE_XMLNode {
   // CFDE_XMLNode
   void Release() override;
   FDE_XMLNODETYPE GetType() const override;
-  CFDE_XMLNode* Clone(FX_BOOL bRecursive) override;
+  CFDE_XMLNode* Clone(bool bRecursive) override;
 
   void GetTargetName(CFX_WideString& wsTarget) const { wsTarget = m_wsTarget; }
   int32_t CountAttributes() const;
-  FX_BOOL GetAttribute(int32_t index,
-                       CFX_WideString& wsAttriName,
-                       CFX_WideString& wsAttriValue) const;
-  FX_BOOL HasAttribute(const FX_WCHAR* pwsAttriName) const;
+  bool GetAttribute(int32_t index,
+                    CFX_WideString& wsAttriName,
+                    CFX_WideString& wsAttriValue) const;
+  bool HasAttribute(const FX_WCHAR* pwsAttriName) const;
   void GetString(const FX_WCHAR* pwsAttriName,
                  CFX_WideString& wsAttriValue,
                  const FX_WCHAR* pwsDefValue = nullptr) const;
@@ -98,7 +98,7 @@ class CFDE_XMLInstruction : public CFDE_XMLNode {
   void SetFloat(const FX_WCHAR* pwsAttriName, FX_FLOAT fAttriValue);
   void RemoveAttribute(const FX_WCHAR* pwsAttriName);
   int32_t CountData() const;
-  FX_BOOL GetData(int32_t index, CFX_WideString& wsData) const;
+  bool GetData(int32_t index, CFX_WideString& wsData) const;
   void AppendData(const CFX_WideString& wsData);
   void RemoveData(int32_t index);
 
@@ -115,7 +115,7 @@ class CFDE_XMLElement : public CFDE_XMLNode {
   // CFDE_XMLNode
   void Release() override;
   FDE_XMLNODETYPE GetType() const override;
-  CFDE_XMLNode* Clone(FX_BOOL bRecursive) override;
+  CFDE_XMLNode* Clone(bool bRecursive) override;
 
   void GetTagName(CFX_WideString& wsTag) const;
   void GetLocalTagName(CFX_WideString& wsTag) const;
@@ -124,10 +124,10 @@ class CFDE_XMLElement : public CFDE_XMLNode {
   void GetNamespaceURI(CFX_WideString& wsNamespace) const;
 
   int32_t CountAttributes() const;
-  FX_BOOL GetAttribute(int32_t index,
-                       CFX_WideString& wsAttriName,
-                       CFX_WideString& wsAttriValue) const;
-  FX_BOOL HasAttribute(const FX_WCHAR* pwsAttriName) const;
+  bool GetAttribute(int32_t index,
+                    CFX_WideString& wsAttriName,
+                    CFX_WideString& wsAttriValue) const;
+  bool HasAttribute(const FX_WCHAR* pwsAttriName) const;
   void RemoveAttribute(const FX_WCHAR* pwsAttriName);
 
   void GetString(const FX_WCHAR* pwsAttriName,
@@ -157,7 +157,7 @@ class CFDE_XMLText : public CFDE_XMLNode {
   // CFDE_XMLNode
   void Release() override;
   FDE_XMLNODETYPE GetType() const override;
-  CFDE_XMLNode* Clone(FX_BOOL bRecursive) override;
+  CFDE_XMLNode* Clone(bool bRecursive) override;
 
   void GetText(CFX_WideString& wsText) const { wsText = m_wsText; }
   void SetText(const CFX_WideString& wsText) { m_wsText = wsText; }
@@ -178,7 +178,7 @@ class CFDE_XMLCharData : public CFDE_XMLDeclaration {
 
   void Release() override;
   FDE_XMLNODETYPE GetType() const override;
-  CFDE_XMLNode* Clone(FX_BOOL bRecursive) override;
+  CFDE_XMLNode* Clone(bool bRecursive) override;
 
   void GetCharData(CFX_WideString& wsCharData) const {
     wsCharData = m_wsCharData;
@@ -193,15 +193,15 @@ class CFDE_XMLDoc : public CFX_Target {
   CFDE_XMLDoc();
   ~CFDE_XMLDoc() override;
 
-  FX_BOOL LoadXML(CFDE_XMLParser* pXMLParser);
+  bool LoadXML(CFDE_XMLParser* pXMLParser);
   int32_t DoLoad(IFX_Pause* pPause = nullptr);
   void CloseXML();
   CFDE_XMLNode* GetRoot() const { return m_pRoot; }
-  void SaveXML(IFX_Stream* pXMLStream = nullptr, FX_BOOL bSaveBOM = TRUE);
+  void SaveXML(IFX_Stream* pXMLStream = nullptr, bool bSaveBOM = true);
   void SaveXMLNode(IFX_Stream* pXMLStream, CFDE_XMLNode* pNode);
 
  protected:
-  void Reset(FX_BOOL bInitRoot);
+  void Reset(bool bInitRoot);
   void ReleaseParser();
 
   IFX_Stream* m_pStream;
@@ -224,20 +224,20 @@ class CFDE_BlockBuffer : public CFX_Target {
   explicit CFDE_BlockBuffer(int32_t iAllocStep = 1024 * 1024);
   ~CFDE_BlockBuffer() override;
 
-  FX_BOOL InitBuffer(int32_t iBufferSize = 1024 * 1024);
-  FX_BOOL IsInitialized() { return m_iBufferSize / m_iAllocStep >= 1; }
+  bool InitBuffer(int32_t iBufferSize = 1024 * 1024);
+  bool IsInitialized() { return m_iBufferSize / m_iAllocStep >= 1; }
   void ReleaseBuffer() { delete this; }
   FX_WCHAR* GetAvailableBlock(int32_t& iIndexInBlock);
   inline int32_t GetAllocStep() const { return m_iAllocStep; }
   inline int32_t& GetDataLengthRef() { return m_iDataLength; }
-  inline void Reset(FX_BOOL bReserveData = TRUE) {
+  inline void Reset(bool bReserveData = true) {
     if (!bReserveData) {
       m_iStartPosition = 0;
     }
     m_iDataLength = 0;
   }
   void SetTextChar(int32_t iIndex, FX_WCHAR ch);
-  int32_t DeleteTextChars(int32_t iCount, FX_BOOL bDirection = TRUE);
+  int32_t DeleteTextChars(int32_t iCount, bool bDirection = true);
   void GetTextData(CFX_WideString& wsTextData,
                    int32_t iStart = 0,
                    int32_t iLength = -1) const;
@@ -329,7 +329,7 @@ class CFDE_XMLSyntaxParser : public CFX_Target {
   int32_t m_iParsedBytes;
   FX_WCHAR* m_pBuffer;
   int32_t m_iBufferChars;
-  FX_BOOL m_bEOS;
+  bool m_bEOS;
   FX_WCHAR* m_pStart;
   FX_WCHAR* m_pEnd;
   FDE_XMLNODE m_CurNode;

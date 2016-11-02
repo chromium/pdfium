@@ -70,24 +70,24 @@ FWL_EVENT_DEF(CFWL_EvtEdtTextFull, CFWL_EventType::TextFull)
 
 FWL_EVENT_DEF(CFWL_EvtEdtPreSelfAdaption,
               CFWL_EventType::PreSelfAdaption,
-              FX_BOOL bHSelfAdaption;
-              FX_BOOL bVSelfAdaption;
+              bool bHSelfAdaption;
+              bool bVSelfAdaption;
               CFX_RectF rtAfterChange;)
 
 FWL_EVENT_DEF(CFWL_EvtEdtValidate,
               CFWL_EventType::Validate,
               IFWL_Widget* pDstWidget;
               CFX_WideString wsInsert;
-              FX_BOOL bValidate;)
+              bool bValidate;)
 
 FWL_EVENT_DEF(CFWL_EvtEdtCheckWord,
               CFWL_EventType::CheckWord,
               CFX_ByteString bsWord;
-              FX_BOOL bCheckWord;)
+              bool bCheckWord;)
 
 FWL_EVENT_DEF(CFWL_EvtEdtGetSuggestWords,
               CFWL_EventType::GetSuggestedWords,
-              FX_BOOL bSuggestWords;
+              bool bSuggestWords;
               CFX_ByteString bsWord;
               std::vector<CFX_ByteString> bsArraySuggestWords;)
 
@@ -111,11 +111,11 @@ class IFWL_Edit : public IFWL_Widget {
 
   // IFWL_Widget:
   FWL_Type GetClassID() const override;
-  FWL_Error GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize = FALSE) override;
+  FWL_Error GetWidgetRect(CFX_RectF& rect, bool bAutoSize = false) override;
   FWL_Error SetWidgetRect(const CFX_RectF& rect) override;
   FWL_Error Update() override;
   FWL_WidgetHit HitTest(FX_FLOAT fx, FX_FLOAT fy) override;
-  void SetStates(uint32_t dwStates, FX_BOOL bSet = TRUE) override;
+  void SetStates(uint32_t dwStates, bool bSet = true) override;
   FWL_Error DrawWidget(CFX_Graphics* pGraphics,
                        const CFX_Matrix* pMatrix = nullptr) override;
   FWL_Error SetThemeProvider(IFWL_ThemeProvider* pThemeProvider) override;
@@ -131,7 +131,7 @@ class IFWL_Edit : public IFWL_Widget {
                             int32_t nCount = -1) const;
   virtual FWL_Error ClearText();
   virtual int32_t GetCaretPos() const;
-  virtual int32_t SetCaretPos(int32_t nIndex, FX_BOOL bBefore = TRUE);
+  virtual int32_t SetCaretPos(int32_t nIndex, bool bBefore = true);
   virtual FWL_Error AddSelRange(int32_t nStart, int32_t nCount = -1);
   virtual int32_t CountSelRanges();
   virtual int32_t GetSelRange(int32_t nIndex, int32_t& nStart);
@@ -148,17 +148,17 @@ class IFWL_Edit : public IFWL_Widget {
                             int32_t nLen,
                             const CFX_WideStringC& wsReplace);
   virtual FWL_Error DoClipboard(int32_t iCmd);
-  virtual FX_BOOL Copy(CFX_WideString& wsCopy);
-  virtual FX_BOOL Cut(CFX_WideString& wsCut);
-  virtual FX_BOOL Paste(const CFX_WideString& wsPaste);
-  virtual FX_BOOL Delete();
-  virtual FX_BOOL Redo(const IFDE_TxtEdtDoRecord* pRecord);
-  virtual FX_BOOL Undo(const IFDE_TxtEdtDoRecord* pRecord);
-  virtual FX_BOOL Undo();
-  virtual FX_BOOL Redo();
-  virtual FX_BOOL CanUndo();
-  virtual FX_BOOL CanRedo();
-  virtual FWL_Error SetTabWidth(FX_FLOAT fTabWidth, FX_BOOL bEquidistant);
+  virtual bool Copy(CFX_WideString& wsCopy);
+  virtual bool Cut(CFX_WideString& wsCut);
+  virtual bool Paste(const CFX_WideString& wsPaste);
+  virtual bool Delete();
+  virtual bool Redo(const IFDE_TxtEdtDoRecord* pRecord);
+  virtual bool Undo(const IFDE_TxtEdtDoRecord* pRecord);
+  virtual bool Undo();
+  virtual bool Redo();
+  virtual bool CanUndo();
+  virtual bool CanRedo();
+  virtual FWL_Error SetTabWidth(FX_FLOAT fTabWidth, bool bEquidistant);
   virtual FWL_Error SetOuter(IFWL_Widget* pOuter);
   virtual FWL_Error SetNumberRange(int32_t iMin, int32_t iMax);
   virtual FWL_Error SetBackgroundColor(uint32_t color);
@@ -166,23 +166,23 @@ class IFWL_Edit : public IFWL_Widget {
 
   void On_CaretChanged(CFDE_TxtEdtEngine* pEdit,
                        int32_t nPage,
-                       FX_BOOL bVisible = true);
+                       bool bVisible = true);
   void On_TextChanged(CFDE_TxtEdtEngine* pEdit,
                       FDE_TXTEDT_TEXTCHANGE_INFO& ChangeInfo);
   void On_SelChanged(CFDE_TxtEdtEngine* pEdit);
-  FX_BOOL On_PageLoad(CFDE_TxtEdtEngine* pEdit,
-                      int32_t nPageIndex,
-                      int32_t nPurpose);
-  FX_BOOL On_PageUnload(CFDE_TxtEdtEngine* pEdit,
-                        int32_t nPageIndex,
-                        int32_t nPurpose);
+  bool On_PageLoad(CFDE_TxtEdtEngine* pEdit,
+                   int32_t nPageIndex,
+                   int32_t nPurpose);
+  bool On_PageUnload(CFDE_TxtEdtEngine* pEdit,
+                     int32_t nPageIndex,
+                     int32_t nPurpose);
   void On_AddDoRecord(CFDE_TxtEdtEngine* pEdit, IFDE_TxtEdtDoRecord* pRecord);
-  FX_BOOL On_Validate(CFDE_TxtEdtEngine* pEdit, CFX_WideString& wsText);
+  bool On_Validate(CFDE_TxtEdtEngine* pEdit, CFX_WideString& wsText);
   void SetScrollOffset(FX_FLOAT fScrollOffset);
-  FX_BOOL GetSuggestWords(CFX_PointF pointf,
-                          std::vector<CFX_ByteString>& sSuggest);
-  FX_BOOL ReplaceSpellCheckWord(CFX_PointF pointf,
-                                const CFX_ByteStringC& bsReplace);
+  bool GetSuggestWords(CFX_PointF pointf,
+                       std::vector<CFX_ByteString>& sSuggest);
+  bool ReplaceSpellCheckWord(CFX_PointF pointf,
+                             const CFX_ByteStringC& bsReplace);
 
  protected:
   friend class CFWL_TxtEdtEventSink;
@@ -196,22 +196,22 @@ class IFWL_Edit : public IFWL_Widget {
   void UpdateEditEngine();
   void UpdateEditParams();
   void UpdateEditLayout();
-  FX_BOOL UpdateOffset();
-  FX_BOOL UpdateOffset(IFWL_ScrollBar* pScrollBar, FX_FLOAT fPosChanged);
+  bool UpdateOffset();
+  bool UpdateOffset(IFWL_ScrollBar* pScrollBar, FX_FLOAT fPosChanged);
   void UpdateVAlignment();
   void UpdateCaret();
   IFWL_ScrollBar* UpdateScroll();
   void Layout();
   void LayoutScrollBar();
   void DeviceToEngine(CFX_PointF& pt);
-  void InitScrollBar(FX_BOOL bVert = TRUE);
+  void InitScrollBar(bool bVert = true);
   void InitEngine();
-  virtual void ShowCaret(FX_BOOL bVisible, CFX_RectF* pRect = nullptr);
-  FX_BOOL ValidateNumberChar(FX_WCHAR cNum);
+  virtual void ShowCaret(bool bVisible, CFX_RectF* pRect = nullptr);
+  bool ValidateNumberChar(FX_WCHAR cNum);
   void InitCaret();
   void ClearRecord();
-  FX_BOOL IsShowScrollBar(FX_BOOL bVert);
-  FX_BOOL IsContentHeightOverflow();
+  bool IsShowScrollBar(bool bVert);
+  bool IsContentHeightOverflow();
   int32_t AddDoRecord(IFDE_TxtEdtDoRecord* pRecord);
   void ProcessInsertError(int32_t iError);
 
@@ -231,14 +231,14 @@ class IFWL_Edit : public IFWL_Widget {
   FX_FLOAT m_fScrollOffsetX;
   FX_FLOAT m_fScrollOffsetY;
   std::unique_ptr<CFDE_TxtEdtEngine> m_pEdtEngine;
-  FX_BOOL m_bLButtonDown;
+  bool m_bLButtonDown;
   int32_t m_nSelStart;
   int32_t m_nLimit;
   FX_FLOAT m_fSpaceAbove;
   FX_FLOAT m_fSpaceBelow;
   FX_FLOAT m_fFontSize;
   FX_ARGB m_argbSel;
-  FX_BOOL m_bSetRange;
+  bool m_bSetRange;
   int32_t m_iMin;
   int32_t m_iMax;
   std::unique_ptr<IFWL_ScrollBar> m_pVertScrollBar;
@@ -246,7 +246,7 @@ class IFWL_Edit : public IFWL_Widget {
   std::unique_ptr<IFWL_Caret> m_pCaret;
   CFX_WideString m_wsCache;
   uint32_t m_backColor;
-  FX_BOOL m_updateBackColor;
+  bool m_updateBackColor;
   CFX_WideString m_wsFont;
   std::deque<std::unique_ptr<IFDE_TxtEdtDoRecord>> m_DoRecords;
   int32_t m_iCurRecord;
@@ -256,14 +256,14 @@ class IFWL_Edit : public IFWL_Widget {
   void DoActivate(CFWL_MsgActivate* pMsg);
   void DoDeactivate(CFWL_MsgDeactivate* pMsg);
   void DoButtonDown(CFWL_MsgMouse* pMsg);
-  void OnFocusChanged(CFWL_Message* pMsg, FX_BOOL bSet);
+  void OnFocusChanged(CFWL_Message* pMsg, bool bSet);
   void OnLButtonDown(CFWL_MsgMouse* pMsg);
   void OnLButtonUp(CFWL_MsgMouse* pMsg);
   void OnButtonDblClk(CFWL_MsgMouse* pMsg);
   void OnMouseMove(CFWL_MsgMouse* pMsg);
   void OnKeyDown(CFWL_MsgKey* pMsg);
   void OnChar(CFWL_MsgKey* pMsg);
-  FX_BOOL OnScroll(IFWL_ScrollBar* pScrollBar, uint32_t dwCode, FX_FLOAT fPos);
+  bool OnScroll(IFWL_ScrollBar* pScrollBar, uint32_t dwCode, FX_FLOAT fPos);
 };
 
 #endif  // XFA_FWL_CORE_IFWL_EDIT_H_

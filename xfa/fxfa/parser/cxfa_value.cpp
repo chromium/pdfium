@@ -16,12 +16,12 @@ XFA_Element CXFA_Value::GetChildValueClassID() {
   return XFA_Element::Unknown;
 }
 
-FX_BOOL CXFA_Value::GetChildValueContent(CFX_WideString& wsContent) {
+bool CXFA_Value::GetChildValueContent(CFX_WideString& wsContent) {
   if (!m_pNode)
-    return FALSE;
+    return false;
   if (CXFA_Node* pNode = m_pNode->GetNodeItem(XFA_NODEITEM_FirstChild))
     return pNode->TryContent(wsContent);
-  return FALSE;
+  return false;
 }
 
 CXFA_Arc CXFA_Value::GetArc() {
@@ -52,5 +52,5 @@ CXFA_ExData CXFA_Value::GetExData() {
 CXFA_Image CXFA_Value::GetImage() {
   return CXFA_Image(
       m_pNode ? (m_pNode->GetNodeItem(XFA_NODEITEM_FirstChild)) : nullptr,
-      TRUE);
+      true);
 }

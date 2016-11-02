@@ -53,7 +53,7 @@ void CBC_CommonByteArray::Set(int32_t index, int32_t value) {
 int32_t CBC_CommonByteArray::Size() const {
   return m_size;
 }
-FX_BOOL CBC_CommonByteArray::IsEmpty() const {
+bool CBC_CommonByteArray::IsEmpty() const {
   return m_size == 0;
 }
 void CBC_CommonByteArray::AppendByte(int32_t value) {

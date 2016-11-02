@@ -20,8 +20,8 @@ class CFX_Shading {
   // Axial shading.
   CFX_Shading(const CFX_PointF& beginPoint,
               const CFX_PointF& endPoint,
-              FX_BOOL isExtendedBegin,
-              FX_BOOL isExtendedEnd,
+              bool isExtendedBegin,
+              bool isExtendedEnd,
               const FX_ARGB beginArgb,
               const FX_ARGB endArgb);
 
@@ -30,8 +30,8 @@ class CFX_Shading {
               const CFX_PointF& endPoint,
               const FX_FLOAT beginRadius,
               const FX_FLOAT endRadius,
-              FX_BOOL isExtendedBegin,
-              FX_BOOL isExtendedEnd,
+              bool isExtendedBegin,
+              bool isExtendedEnd,
               const FX_ARGB beginArgb,
               const FX_ARGB endArgb);
   virtual ~CFX_Shading();
@@ -46,8 +46,8 @@ class CFX_Shading {
   const CFX_PointF m_endPoint;
   const FX_FLOAT m_beginRadius;
   const FX_FLOAT m_endRadius;
-  const FX_BOOL m_isExtendedBegin;
-  const FX_BOOL m_isExtendedEnd;
+  const bool m_isExtendedBegin;
+  const bool m_isExtendedEnd;
   const FX_ARGB m_beginArgb;
   const FX_ARGB m_endArgb;
   FX_ARGB m_argbArray[FX_SHADING_Steps];

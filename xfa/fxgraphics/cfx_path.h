@@ -70,7 +70,7 @@ class CFX_Path final {
   FWL_Error AddSubpath(CFX_Path* path);
   FWL_Error Clear();
 
-  FX_BOOL IsEmpty() const;
+  bool IsEmpty() const;
   CFX_PathData* GetPathData() const;
 
  private:

@@ -144,8 +144,8 @@ void CFWL_MonthCalendarTP::DrawText(CFWL_ThemeText* pParams) {
 
 void* CFWL_MonthCalendarTP::GetCapacity(CFWL_ThemePart* pThemePart,
                                         CFWL_WidgetCapacity dwCapacity) {
-  FX_BOOL bDefPro = FALSE;
-  FX_BOOL bDwordVal = FALSE;
+  bool bDefPro = false;
+  bool bDwordVal = false;
   switch (dwCapacity) {
     case CFWL_WidgetCapacity::HeaderWidth: {
       m_fValue = kHeaderWidth;
@@ -164,7 +164,7 @@ void* CFWL_MonthCalendarTP::GetCapacity(CFWL_ThemePart* pThemePart,
       break;
     }
     case CFWL_WidgetCapacity::HeaderBtnHMargin: {
-      bDwordVal = TRUE;
+      bDwordVal = true;
       m_dwValue = kButtonHorizontalMargin;
       break;
     }
@@ -341,7 +341,7 @@ void* CFWL_MonthCalendarTP::GetCapacity(CFWL_ThemePart* pThemePart,
       return &wsResource;
     }
     default:
-      bDefPro = TRUE;
+      bDefPro = true;
       break;
   }
   if (!bDefPro) {

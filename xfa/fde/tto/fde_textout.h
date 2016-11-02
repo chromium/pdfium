@@ -65,9 +65,9 @@ class CFDE_TTOLine : public CFX_Target {
   int32_t GetSize() const;
   FDE_TTOPIECE* GetPtrAt(int32_t index);
   void RemoveLast(int32_t iCount);
-  void RemoveAll(FX_BOOL bLeaveMemory);
+  void RemoveAll(bool bLeaveMemory);
 
-  FX_BOOL m_bNewReload;
+  bool m_bNewReload;
   CFDE_TTOPieceArray m_pieces;
 
  protected:
@@ -122,10 +122,10 @@ class CFDE_TextOut : public CFX_Target {
 
  protected:
   void CalcTextSize(const FX_WCHAR* pwsStr, int32_t iLength, CFX_RectF& rect);
-  FX_BOOL RetrieveLineWidth(uint32_t dwBreakStatus,
-                            FX_FLOAT& fStartPos,
-                            FX_FLOAT& fWidth,
-                            FX_FLOAT& fHeight);
+  bool RetrieveLineWidth(uint32_t dwBreakStatus,
+                         FX_FLOAT& fStartPos,
+                         FX_FLOAT& fWidth,
+                         FX_FLOAT& fHeight);
   void SetLineWidth(CFX_RectF& rect);
   void DrawText(const FX_WCHAR* pwsStr,
                 int32_t iLength,
@@ -138,14 +138,12 @@ class CFDE_TextOut : public CFX_Target {
 
   void Reload(const CFX_RectF& rect);
   void ReloadLinePiece(CFDE_TTOLine* pLine, const CFX_RectF& rect);
-  FX_BOOL RetriecePieces(uint32_t dwBreakStatus,
-                         int32_t& iStartChar,
-                         int32_t& iPieceWidths,
-                         FX_BOOL bReload,
-                         const CFX_RectF& rect);
-  void AppendPiece(const FDE_TTOPIECE& ttoPiece,
-                   FX_BOOL bNeedReload,
-                   FX_BOOL bEnd);
+  bool RetriecePieces(uint32_t dwBreakStatus,
+                      int32_t& iStartChar,
+                      int32_t& iPieceWidths,
+                      bool bReload,
+                      const CFX_RectF& rect);
+  void AppendPiece(const FDE_TTOPIECE& ttoPiece, bool bNeedReload, bool bEnd);
   void ReplaceWidthEllipsis();
   void DoAlignment(const CFX_RectF& rect);
   void OnDraw(const CFX_RectF& rtClip);
@@ -170,7 +168,7 @@ class CFDE_TextOut : public CFX_Target {
   uint32_t m_dwStyles;
   uint32_t m_dwTxtBkStyles;
   CFX_WideString m_wsEllipsis;
-  FX_BOOL m_bElliChanged;
+  bool m_bElliChanged;
   int32_t m_iEllipsisWidth;
   CFX_WideString m_wsText;
   CFX_RectF m_rtClip;

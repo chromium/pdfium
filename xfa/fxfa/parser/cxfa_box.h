@@ -29,24 +29,24 @@ class CXFA_Box : public CXFA_Data {
   int32_t CountEdges() const;
   CXFA_Edge GetEdge(int32_t nIndex = 0) const;
   void GetStrokes(CXFA_StrokeArray& strokes) const;
-  FX_BOOL IsCircular() const;
-  FX_BOOL GetStartAngle(FX_FLOAT& fStartAngle) const;
+  bool IsCircular() const;
+  bool GetStartAngle(FX_FLOAT& fStartAngle) const;
   FX_FLOAT GetStartAngle() const {
     FX_FLOAT fStartAngle;
     GetStartAngle(fStartAngle);
     return fStartAngle;
   }
 
-  FX_BOOL GetSweepAngle(FX_FLOAT& fSweepAngle) const;
+  bool GetSweepAngle(FX_FLOAT& fSweepAngle) const;
   FX_FLOAT GetSweepAngle() const {
     FX_FLOAT fSweepAngle;
     GetSweepAngle(fSweepAngle);
     return fSweepAngle;
   }
 
-  CXFA_Fill GetFill(FX_BOOL bModified = FALSE) const;
+  CXFA_Fill GetFill(bool bModified = false) const;
   CXFA_Margin GetMargin() const;
-  int32_t Get3DStyle(FX_BOOL& bVisible, FX_FLOAT& fThickness) const;
+  int32_t Get3DStyle(bool& bVisible, FX_FLOAT& fThickness) const;
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_BOX_H_

@@ -53,11 +53,11 @@ class IFDE_TextSet : public IFDE_VisualSet {
   virtual FX_ARGB GetFontColor() = 0;
   virtual int32_t GetDisplayPos(FDE_TEXTEDITPIECE* hText,
                                 FXTEXT_CHARPOS* pCharPos,
-                                FX_BOOL bCharCode = FALSE,
+                                bool bCharCode = false,
                                 CFX_WideString* pWSForms = nullptr) = 0;
   virtual int32_t GetCharRects(const FDE_TEXTEDITPIECE* hText,
                                CFX_RectFArray& rtArray,
-                               FX_BOOL bbox) = 0;
+                               bool bbox) = 0;
 };
 
 #endif  // XFA_FDE_FDE_VISUALSET_H_

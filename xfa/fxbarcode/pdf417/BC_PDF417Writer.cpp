@@ -29,19 +29,19 @@
 #include "xfa/fxbarcode/pdf417/BC_PDF417Writer.h"
 
 CBC_PDF417Writer::CBC_PDF417Writer() {
-  m_bFixedSize = FALSE;
+  m_bFixedSize = false;
 }
 CBC_PDF417Writer::~CBC_PDF417Writer() {
-  m_bTruncated = TRUE;
+  m_bTruncated = true;
 }
-FX_BOOL CBC_PDF417Writer::SetErrorCorrectionLevel(int32_t level) {
+bool CBC_PDF417Writer::SetErrorCorrectionLevel(int32_t level) {
   if (level < 0 || level > 8) {
-    return FALSE;
+    return false;
   }
   m_iCorrectLevel = level;
-  return TRUE;
+  return true;
 }
-void CBC_PDF417Writer::SetTruncated(FX_BOOL truncated) {
+void CBC_PDF417Writer::SetTruncated(bool truncated) {
   m_bTruncated = truncated;
 }
 uint8_t* CBC_PDF417Writer::Encode(const CFX_WideString& contents,
@@ -70,10 +70,10 @@ uint8_t* CBC_PDF417Writer::Encode(const CFX_WideString& contents,
   int32_t height = outHeight;
   outWidth = barcodeMatrix->getWidth();
   outHeight = barcodeMatrix->getHeight();
-  FX_BOOL rotated = FALSE;
+  bool rotated = false;
   if ((height > width) ^ (outWidth < outHeight)) {
     rotateArray(originalScale, outHeight, outWidth);
-    rotated = TRUE;
+    rotated = true;
     int32_t temp = outHeight;
     outHeight = outWidth;
     outWidth = temp;

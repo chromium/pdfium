@@ -65,18 +65,18 @@ XFA_Element CXFA_Data::GetElementType() const {
   return m_pNode ? m_pNode->GetElementType() : XFA_Element::Unknown;
 }
 
-FX_BOOL CXFA_Data::TryMeasure(XFA_ATTRIBUTE eAttr,
-                              FX_FLOAT& fValue,
-                              FX_BOOL bUseDefault) const {
+bool CXFA_Data::TryMeasure(XFA_ATTRIBUTE eAttr,
+                           FX_FLOAT& fValue,
+                           bool bUseDefault) const {
   CXFA_Measurement ms;
   if (m_pNode->TryMeasure(eAttr, ms, bUseDefault)) {
     fValue = ms.ToUnit(XFA_UNIT_Pt);
-    return TRUE;
+    return true;
   }
-  return FALSE;
+  return false;
 }
 
-FX_BOOL CXFA_Data::SetMeasure(XFA_ATTRIBUTE eAttr, FX_FLOAT fValue) {
+bool CXFA_Data::SetMeasure(XFA_ATTRIBUTE eAttr, FX_FLOAT fValue) {
   CXFA_Measurement ms(fValue, XFA_UNIT_Pt);
   return m_pNode->SetMeasure(eAttr, ms);
 }

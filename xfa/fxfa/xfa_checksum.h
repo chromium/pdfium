@@ -49,7 +49,7 @@ class CXFA_SAXReaderHandler {
                     uint32_t dwStartPos);
 
  protected:
-  void UpdateChecksum(FX_BOOL bCheckSpace);
+  void UpdateChecksum(bool bCheckSpace);
 
   CXFA_ChecksumContext* m_pContext;
   CXFA_SAXContext m_SAXContext;
@@ -62,9 +62,9 @@ class CXFA_ChecksumContext {
 
   void StartChecksum();
   void Update(const CFX_ByteStringC& bsText);
-  FX_BOOL UpdateChecksum(IFX_SeekableReadStream* pSrcFile,
-                         FX_FILESIZE offset = 0,
-                         size_t size = 0);
+  bool UpdateChecksum(IFX_SeekableReadStream* pSrcFile,
+                      FX_FILESIZE offset = 0,
+                      size_t size = 0);
   void FinishChecksum();
   CFX_ByteString GetChecksum() const;
 

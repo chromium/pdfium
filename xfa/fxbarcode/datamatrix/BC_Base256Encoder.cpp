@@ -58,7 +58,7 @@ void CBC_Base256Encoder::Encode(CBC_EncoderContext& context, int32_t& e) {
   if (e != BCExceptionNO) {
     return;
   }
-  FX_BOOL mustPad = (context.m_symbolInfo->m_dataCapacity - currentSize) > 0;
+  bool mustPad = (context.m_symbolInfo->m_dataCapacity - currentSize) > 0;
   if (context.hasMoreCharacters() || mustPad) {
     if (dataCount <= 249) {
       buffer.SetAt(0, (FX_WCHAR)dataCount);

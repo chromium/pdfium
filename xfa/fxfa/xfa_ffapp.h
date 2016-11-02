@@ -45,7 +45,7 @@ class CXFA_FFApp {
 
   CXFA_FFDoc* CreateDoc(IXFA_DocEnvironment* pDocEnvironment,
                         IFX_SeekableReadStream* pStream,
-                        FX_BOOL bTakeOverFile);
+                        bool bTakeOverFile);
   CXFA_FFDoc* CreateDoc(IXFA_DocEnvironment* pDocEnvironment,
                         CPDF_Document* pPDFDoc);
   void SetDefaultFontMgr(std::unique_ptr<CXFA_DefFontMgr> pFontMgr);

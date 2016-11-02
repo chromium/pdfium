@@ -342,7 +342,7 @@ void CXFA_FMEqualityExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
       javascript << gs_lpStrExpFuncName[NOTEQUALITY];
       break;
     default:
-      ASSERT(FALSE);
+      ASSERT(false);
       break;
   }
   javascript << FX_WSTRC(L"(");
@@ -378,7 +378,7 @@ void CXFA_FMRelationalExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
       javascript << gs_lpStrExpFuncName[GREATEREQUAL];
       break;
     default:
-      ASSERT(FALSE);
+      ASSERT(false);
       break;
   }
   javascript << FX_WSTRC(L"(");
@@ -404,7 +404,7 @@ void CXFA_FMAdditiveExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
       javascript << gs_lpStrExpFuncName[MINUS];
       break;
     default:
-      ASSERT(FALSE);
+      ASSERT(false);
       break;
   }
   javascript << FX_WSTRC(L"(");
@@ -431,7 +431,7 @@ void CXFA_FMMultiplicativeExpression::ToJavaScript(
       javascript << gs_lpStrExpFuncName[DIVIDE];
       break;
     default:
-      ASSERT(FALSE);
+      ASSERT(false);
       break;
   }
   javascript << FX_WSTRC(L"(");
@@ -478,7 +478,7 @@ CXFA_FMCallExpression::CXFA_FMCallExpression(
     uint32_t line,
     CXFA_FMSimpleExpression* pExp,
     CFX_ArrayTemplate<CXFA_FMSimpleExpression*>* pArguments,
-    FX_BOOL bIsSomMethod)
+    bool bIsSomMethod)
     : CXFA_FMUnaryExpression(line, TOKcall, pExp),
       m_bIsSomMethod(bIsSomMethod),
       m_pArguments(pArguments) {}
@@ -666,7 +666,7 @@ CXFA_FMIndexExpression::CXFA_FMIndexExpression(
     uint32_t line,
     XFA_FM_AccessorIndex accessorIndex,
     CXFA_FMSimpleExpression* pIndexExp,
-    FX_BOOL bIsStarIndex)
+    bool bIsStarIndex)
     : CXFA_FMUnaryExpression(line, TOKlbracket, pIndexExp),
       m_accessorIndex(accessorIndex),
       m_bIsStarIndex(bIsStarIndex) {}

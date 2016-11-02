@@ -139,7 +139,7 @@ FWL_EVENT_DEF(CFWL_EvtClick, CFWL_EventType::Click)
 
 FWL_EVENT_DEF(CFWL_EvtScroll, CFWL_EventType::Scroll, uint32_t m_iScrollCode;
               FX_FLOAT m_fPos;
-              FX_BOOL * m_pRet;)
+              bool* m_pRet;)
 
 FWL_EVENT_DEF(CFWL_EvtClose, CFWL_EventType::Close)
 

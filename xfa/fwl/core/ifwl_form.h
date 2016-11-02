@@ -49,7 +49,7 @@ class CFWL_SysBtn {
   void SetNormal();
   void SetPressed();
   void SetHover();
-  void SetDisabled(FX_BOOL bDisabled);
+  void SetDisabled(bool bDisabled);
 
   CFX_RectF m_rtBtn;
   uint32_t m_dwState;
@@ -79,7 +79,7 @@ class CFWL_SysBtn;
 
 class IFWL_FormDP : public IFWL_DataProvider {
  public:
-  virtual CFX_DIBitmap* GetIcon(IFWL_Widget* pWidget, FX_BOOL bBig) = 0;
+  virtual CFX_DIBitmap* GetIcon(IFWL_Widget* pWidget, bool bBig) = 0;
 };
 
 class IFWL_Form : public IFWL_Widget {
@@ -91,8 +91,8 @@ class IFWL_Form : public IFWL_Widget {
 
   // IFWL_Widget
   FWL_Type GetClassID() const override;
-  FX_BOOL IsInstance(const CFX_WideStringC& wsClass) const override;
-  FWL_Error GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize = FALSE) override;
+  bool IsInstance(const CFX_WideStringC& wsClass) const override;
+  FWL_Error GetWidgetRect(CFX_RectF& rect, bool bAutoSize = false) override;
   FWL_Error GetClientRect(CFX_RectF& rect) override;
   FWL_Error Update() override;
   FWL_WidgetHit HitTest(FX_FLOAT fx, FX_FLOAT fy) override;
@@ -136,9 +136,9 @@ class IFWL_Form : public IFWL_Widget {
   void ReSetSysBtn();
   void RegisterForm();
   void UnRegisterForm();
-  FX_BOOL IsDoModal();
+  bool IsDoModal();
   void SetThemeData();
-  FX_BOOL HasIcon();
+  bool HasIcon();
   void UpdateIcon();
   void UpdateCaption();
   void DoWidthLimit(FX_FLOAT& fLeft,
@@ -147,14 +147,14 @@ class IFWL_Form : public IFWL_Widget {
                     FX_FLOAT fSpace,
                     FX_FLOAT fLimitMin,
                     FX_FLOAT fLimitMax,
-                    FX_BOOL bLeft);
+                    bool bLeft);
   void DoHeightLimit(FX_FLOAT& fTop,
                      FX_FLOAT& fHeight,
                      FX_FLOAT fCurY,
                      FX_FLOAT fSpace,
                      FX_FLOAT fLimitMin,
                      FX_FLOAT fLimitMax,
-                     FX_BOOL bTop);
+                     bool bTop);
 
   CFX_RectF m_rtRestore;
   CFX_RectF m_rtCaptionText;
@@ -173,17 +173,17 @@ class IFWL_Form : public IFWL_Widget {
   int32_t m_iCaptureBtn;
   int32_t m_iSysBox;
   int32_t m_eResizeType;
-  FX_BOOL m_bLButtonDown;
+  bool m_bLButtonDown;
   bool m_bMaximized;
-  FX_BOOL m_bSetMaximize;
+  bool m_bSetMaximize;
   bool m_bCustomizeLayout;
   FWL_FORMSIZE m_eFormSize;
-  FX_BOOL m_bDoModalFlag;
+  bool m_bDoModalFlag;
   FX_FLOAT m_fSmallIconSz;
   FX_FLOAT m_fBigIconSz;
   CFX_DIBitmap* m_pBigIcon;
   CFX_DIBitmap* m_pSmallIcon;
-  FX_BOOL m_bMouseIn;
+  bool m_bMouseIn;
 
  private:
   void OnLButtonDown(CFWL_MsgMouse* pMsg);

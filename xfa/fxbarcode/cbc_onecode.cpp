@@ -27,7 +27,7 @@ CBC_OneCode::CBC_OneCode(CBC_Writer* pWriter) : CBC_CodeBase(pWriter) {}
 
 CBC_OneCode::~CBC_OneCode() {}
 
-FX_BOOL CBC_OneCode::CheckContentValidity(const CFX_WideStringC& contents) {
+bool CBC_OneCode::CheckContentValidity(const CFX_WideStringC& contents) {
   return m_pBCWriter &&
          static_cast<CBC_OneDimWriter*>(m_pBCWriter.get())
              ->CheckContentValidity(contents);
@@ -40,7 +40,7 @@ CFX_WideString CBC_OneCode::FilterContents(const CFX_WideStringC& contents) {
       ->FilterContents(contents);
 }
 
-void CBC_OneCode::SetPrintChecksum(FX_BOOL checksum) {
+void CBC_OneCode::SetPrintChecksum(bool checksum) {
   if (m_pBCWriter)
     static_cast<CBC_OneDimWriter*>(m_pBCWriter.get())
         ->SetPrintChecksum(checksum);
@@ -51,15 +51,15 @@ void CBC_OneCode::SetDataLength(int32_t length) {
     static_cast<CBC_OneDimWriter*>(m_pBCWriter.get())->SetDataLength(length);
 }
 
-void CBC_OneCode::SetCalChecksum(FX_BOOL calc) {
+void CBC_OneCode::SetCalChecksum(bool calc) {
   if (m_pBCWriter)
     static_cast<CBC_OneDimWriter*>(m_pBCWriter.get())->SetCalcChecksum(calc);
 }
 
-FX_BOOL CBC_OneCode::SetFont(CFX_Font* cFont) {
+bool CBC_OneCode::SetFont(CFX_Font* cFont) {
   if (m_pBCWriter)
     return static_cast<CBC_OneDimWriter*>(m_pBCWriter.get())->SetFont(cFont);
-  return FALSE;
+  return false;
 }
 
 void CBC_OneCode::SetFontSize(FX_FLOAT size) {

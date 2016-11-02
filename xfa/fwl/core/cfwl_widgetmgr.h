@@ -40,7 +40,7 @@ class CFWL_WidgetMgrItem {
   std::unique_ptr<CFX_Graphics> pOffscreen;
   int32_t iRedrawCounter;
 #if (_FX_OS_ == _FX_WIN32_DESKTOP_) || (_FX_OS_ == _FX_WIN64_)
-  FX_BOOL bOutsideChanged;
+  bool bOutsideChanged;
 #endif
 };
 
@@ -59,7 +59,7 @@ class CFWL_WidgetMgr {
   IFWL_Widget* GetLastChildWidget(IFWL_Widget* pWidget) const;
   IFWL_Widget* GetSystemFormWidget(IFWL_Widget* pWidget) const;
 
-  FX_BOOL SetWidgetIndex(IFWL_Widget* pWidget, int32_t nIndex);
+  bool SetWidgetIndex(IFWL_Widget* pWidget, int32_t nIndex);
   FWL_Error RepaintWidget(IFWL_Widget* pWidget,
                           const CFX_RectF* pRect = nullptr);
 
@@ -70,13 +70,13 @@ class CFWL_WidgetMgr {
   void RemoveWidget(IFWL_Widget* pWidget);
   void SetOwner(IFWL_Widget* pOwner, IFWL_Widget* pOwned);
   void SetParent(IFWL_Widget* pParent, IFWL_Widget* pChild);
-  FX_BOOL IsChild(IFWL_Widget* pChild, IFWL_Widget* pParent);
+  bool IsChild(IFWL_Widget* pChild, IFWL_Widget* pParent);
   FWL_Error SetWidgetRect_Native(IFWL_Widget* pWidget, const CFX_RectF& rect);
   IFWL_Widget* GetWidgetAtPoint(IFWL_Widget* pParent, FX_FLOAT fx, FX_FLOAT fy);
   void NotifySizeChanged(IFWL_Widget* pForm, FX_FLOAT fx, FX_FLOAT fy);
-  IFWL_Widget* nextTab(IFWL_Widget* parent, IFWL_Widget* focus, FX_BOOL& bFind);
+  IFWL_Widget* nextTab(IFWL_Widget* parent, IFWL_Widget* focus, bool& bFind);
   int32_t CountRadioButtonGroup(IFWL_Widget* pFirst);
-  IFWL_Widget* GetSiblingRadioButton(IFWL_Widget* pWidget, FX_BOOL bNext);
+  IFWL_Widget* GetSiblingRadioButton(IFWL_Widget* pWidget, bool bNext);
   IFWL_Widget* GetRadioButtonGroupHeader(IFWL_Widget* pRadioButton);
   void GetSameGroupRadioButton(IFWL_Widget* pRadioButton,
                                CFX_ArrayTemplate<IFWL_Widget*>& group);
@@ -88,11 +88,11 @@ class CFWL_WidgetMgr {
   CFWL_WidgetMgrItem* GetWidgetMgrItem(IFWL_Widget* pWidget) const;
   bool IsThreadEnabled();
   bool IsFormDisabled();
-  FX_BOOL GetAdapterPopupPos(IFWL_Widget* pWidget,
-                             FX_FLOAT fMinHeight,
-                             FX_FLOAT fMaxHeight,
-                             const CFX_RectF& rtAnchor,
-                             CFX_RectF& rtPopup);
+  bool GetAdapterPopupPos(IFWL_Widget* pWidget,
+                          FX_FLOAT fMinHeight,
+                          FX_FLOAT fMaxHeight,
+                          const CFX_RectF& rtAnchor,
+                          CFX_RectF& rtPopup);
 
  protected:
   friend class CFWL_WidgetMgrDelegate;
@@ -101,7 +101,7 @@ class CFWL_WidgetMgr {
                           int32_t* pIndex,
                           CFWL_WidgetMgrItem* pItem,
                           IFWL_Widget** pWidget = nullptr);
-  FX_BOOL IsAbleNative(IFWL_Widget* pWidget) const;
+  bool IsAbleNative(IFWL_Widget* pWidget) const;
 
   uint32_t m_dwCapability;
   std::unique_ptr<CFWL_WidgetMgrDelegate> m_pDelegate;
@@ -135,10 +135,10 @@ class CFWL_WidgetMgrDelegate {
                        CFX_Graphics* pGraphics,
                        CFX_RectF& rtClip,
                        const CFX_Matrix* pMatrix);
-  FX_BOOL IsNeedRepaint(IFWL_Widget* pWidget,
-                        CFX_Matrix* pMatrix,
-                        const CFX_RectF& rtDirty);
-  FX_BOOL bUseOffscreenDirect(IFWL_Widget* pWidget);
+  bool IsNeedRepaint(IFWL_Widget* pWidget,
+                     CFX_Matrix* pMatrix,
+                     const CFX_RectF& rtDirty);
+  bool bUseOffscreenDirect(IFWL_Widget* pWidget);
 
   CFWL_WidgetMgr* m_pWidgetMgr;
 };

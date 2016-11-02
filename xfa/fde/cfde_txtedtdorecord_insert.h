@@ -21,8 +21,8 @@ class CFDE_TxtEdtDoRecord_Insert : public IFDE_TxtEdtDoRecord {
                              int32_t nLength);
   ~CFDE_TxtEdtDoRecord_Insert() override;
 
-  FX_BOOL Undo() const override;
-  FX_BOOL Redo() const override;
+  bool Undo() const override;
+  bool Redo() const override;
 
  private:
   CFDE_TxtEdtEngine* m_pEngine;

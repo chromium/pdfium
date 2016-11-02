@@ -33,8 +33,8 @@ class CXFA_WidgetAcc : public CXFA_WidgetData {
   CXFA_WidgetAcc(CXFA_FFDocView* pDocView, CXFA_Node* pNode);
   ~CXFA_WidgetAcc();
 
-  FX_BOOL GetName(CFX_WideString& wsName, int32_t iNameType = 0);
-  FX_BOOL ProcessValueChanged();
+  bool GetName(CFX_WideString& wsName, int32_t iNameType = 0);
+  bool ProcessValueChanged();
   void ResetData();
 
   void SetImageEdit(const CFX_WideString& wsContentType,
@@ -57,11 +57,11 @@ class CXFA_WidgetAcc : public CXFA_WidgetData {
 
   CXFA_FFWidget* GetNextWidget(CXFA_FFWidget* pWidget);
   void StartWidgetLayout(FX_FLOAT& fCalcWidth, FX_FLOAT& fCalcHeight);
-  FX_BOOL FindSplitPos(int32_t iBlockIndex, FX_FLOAT& fCalcHeight);
-  FX_BOOL LoadCaption();
+  bool FindSplitPos(int32_t iBlockIndex, FX_FLOAT& fCalcHeight);
+  bool LoadCaption();
   void LoadText();
-  FX_BOOL LoadImageImage();
-  FX_BOOL LoadImageEditImage();
+  bool LoadImageImage();
+  bool LoadImageEditImage();
   void GetImageDpi(int32_t& iImageXDpi, int32_t& iImageYDpi);
   void GetImageEditDpi(int32_t& iImageXDpi, int32_t& iImageYDpi);
   CXFA_TextLayout* GetCaptionTextLayout();
@@ -83,27 +83,25 @@ class CXFA_WidgetAcc : public CXFA_WidgetData {
   void ProcessScriptTestValidate(CXFA_Validate validate,
                                  int32_t iRet,
                                  CFXJSE_Value* pRetValue,
-                                 FX_BOOL bVersionFlag);
-  int32_t ProcessFormatTestValidate(CXFA_Validate validate,
-                                    FX_BOOL bVersionFlag);
+                                 bool bVersionFlag);
+  int32_t ProcessFormatTestValidate(CXFA_Validate validate, bool bVersionFlag);
   int32_t ProcessNullTestValidate(CXFA_Validate validate,
                                   int32_t iFlags,
-                                  FX_BOOL bVersionFlag);
-  void GetValidateCaptionName(CFX_WideString& wsCaptionName,
-                              FX_BOOL bVersionFlag);
+                                  bool bVersionFlag);
+  void GetValidateCaptionName(CFX_WideString& wsCaptionName, bool bVersionFlag);
   void GetValidateMessage(IXFA_AppProvider* pAppProvider,
                           CFX_WideString& wsMessage,
-                          FX_BOOL bError,
-                          FX_BOOL bVersionFlag);
+                          bool bError,
+                          bool bVersionFlag);
   void CalcCaptionSize(CFX_SizeF& szCap);
-  FX_BOOL CalculateFieldAutoSize(CFX_SizeF& size);
-  FX_BOOL CalculateWidgetAutoSize(CFX_SizeF& size);
-  FX_BOOL CalculateTextEditAutoSize(CFX_SizeF& size);
-  FX_BOOL CalculateCheckButtonAutoSize(CFX_SizeF& size);
-  FX_BOOL CalculatePushButtonAutoSize(CFX_SizeF& size);
-  FX_BOOL CalculateImageEditAutoSize(CFX_SizeF& size);
-  FX_BOOL CalculateImageAutoSize(CFX_SizeF& size);
-  FX_BOOL CalculateTextAutoSize(CFX_SizeF& size);
+  bool CalculateFieldAutoSize(CFX_SizeF& size);
+  bool CalculateWidgetAutoSize(CFX_SizeF& size);
+  bool CalculateTextEditAutoSize(CFX_SizeF& size);
+  bool CalculateCheckButtonAutoSize(CFX_SizeF& size);
+  bool CalculatePushButtonAutoSize(CFX_SizeF& size);
+  bool CalculateImageEditAutoSize(CFX_SizeF& size);
+  bool CalculateImageAutoSize(CFX_SizeF& size);
+  bool CalculateTextAutoSize(CFX_SizeF& size);
   FX_FLOAT CalculateWidgetAutoHeight(FX_FLOAT fHeightCalc);
   FX_FLOAT CalculateWidgetAutoWidth(FX_FLOAT fWidthCalc);
   FX_FLOAT GetWidthWithoutMargin(FX_FLOAT fWidthCalc);

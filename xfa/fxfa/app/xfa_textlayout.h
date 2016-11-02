@@ -44,8 +44,8 @@ class CXFA_CSSTagProvider {
     m_Attributes.insert({wsAttr, wsValue});
   }
 
-  FX_BOOL m_bTagAvailable;
-  FX_BOOL m_bContent;
+  bool m_bTagAvailable;
+  bool m_bContent;
 
  protected:
   CFX_WideString m_wsTagName;
@@ -83,14 +83,14 @@ class CXFA_TextParser {
   IFDE_CSSComputedStyle* CreateRootStyle(CXFA_TextProvider* pTextProvider);
   IFDE_CSSComputedStyle* ComputeStyle(CFDE_XMLNode* pXMLNode,
                                       IFDE_CSSComputedStyle* pParentStyle);
-  FX_BOOL IsParsed() const { return !!m_pAllocator; }
+  bool IsParsed() const { return !!m_pAllocator; }
 
   int32_t GetVAlign(CXFA_TextProvider* pTextProvider) const;
   FX_FLOAT GetTabInterval(IFDE_CSSComputedStyle* pStyle) const;
   int32_t CountTabs(IFDE_CSSComputedStyle* pStyle) const;
-  FX_BOOL IsSpaceRun(IFDE_CSSComputedStyle* pStyle) const;
-  FX_BOOL GetTabstops(IFDE_CSSComputedStyle* pStyle,
-                      CXFA_TextTabstopsContext* pTabstopContext);
+  bool IsSpaceRun(IFDE_CSSComputedStyle* pStyle) const;
+  bool GetTabstops(IFDE_CSSComputedStyle* pStyle,
+                   CXFA_TextTabstopsContext* pTabstopContext);
   CFGAS_GEFont* GetFont(CXFA_TextProvider* pTextProvider,
                         IFDE_CSSComputedStyle* pStyle) const;
   FX_FLOAT GetFontSize(CXFA_TextProvider* pTextProvider,
@@ -113,11 +113,11 @@ class CXFA_TextParser {
                        IFDE_CSSComputedStyle* pStyle) const;
   FX_FLOAT GetLineHeight(CXFA_TextProvider* pTextProvider,
                          IFDE_CSSComputedStyle* pStyle,
-                         FX_BOOL bFirst,
+                         bool bFirst,
                          FX_FLOAT fVerScale) const;
-  FX_BOOL GetEmbbedObj(CXFA_TextProvider* pTextProvider,
-                       CFDE_XMLNode* pXMLNode,
-                       CFX_WideString& wsValue);
+  bool GetEmbbedObj(CXFA_TextProvider* pTextProvider,
+                    CFDE_XMLNode* pXMLNode,
+                    CFX_WideString& wsValue);
   CXFA_TextParseContext* GetParseContextFromMap(CFDE_XMLNode* pXMLNode);
 
  protected:
@@ -142,7 +142,7 @@ class CXFA_LoaderContext {
   CXFA_LoaderContext();
   ~CXFA_LoaderContext();
 
-  FX_BOOL m_bSaveLineHeight;
+  bool m_bSaveLineHeight;
   FX_FLOAT m_fWidth;
   FX_FLOAT m_fHeight;
   FX_FLOAT m_fLastPos;
@@ -245,7 +245,7 @@ class CXFA_TextTabstopsContext {
   CFX_ArrayTemplate<XFA_TABSTOPS> m_tabstops;
   int32_t m_iTabCount;
   int32_t m_iTabIndex;
-  FX_BOOL m_bTabstops;
+  bool m_bTabstops;
   FX_FLOAT m_fTabWidth;
   FX_FLOAT m_fLeft;
 };
@@ -258,63 +258,63 @@ class CXFA_TextLayout {
   int32_t GetText(CFX_WideString& wsText);
   FX_FLOAT GetLayoutHeight();
   FX_FLOAT StartLayout(FX_FLOAT fWidth = -1);
-  FX_BOOL DoLayout(int32_t iBlockIndex,
-                   FX_FLOAT& fCalcHeight,
-                   FX_FLOAT fContentAreaHeight = -1,
-                   FX_FLOAT fTextHeight = -1);
+  bool DoLayout(int32_t iBlockIndex,
+                FX_FLOAT& fCalcHeight,
+                FX_FLOAT fContentAreaHeight = -1,
+                FX_FLOAT fTextHeight = -1);
 
-  FX_BOOL CalcSize(const CFX_SizeF& minSize,
-                   const CFX_SizeF& maxSize,
-                   CFX_SizeF& defaultSize);
-  FX_BOOL Layout(const CFX_SizeF& size, FX_FLOAT* fHeight = nullptr);
+  bool CalcSize(const CFX_SizeF& minSize,
+                const CFX_SizeF& maxSize,
+                CFX_SizeF& defaultSize);
+  bool Layout(const CFX_SizeF& size, FX_FLOAT* fHeight = nullptr);
   void ItemBlocks(const CFX_RectF& rtText, int32_t iBlockIndex);
-  FX_BOOL DrawString(CFX_RenderDevice* pFxDevice,
-                     const CFX_Matrix& tmDoc2Device,
-                     const CFX_RectF& rtClip,
-                     int32_t iBlock = 0);
-  FX_BOOL IsLoaded() const { return m_pieceLines.GetSize() > 0; }
+  bool DrawString(CFX_RenderDevice* pFxDevice,
+                  const CFX_Matrix& tmDoc2Device,
+                  const CFX_RectF& rtClip,
+                  int32_t iBlock = 0);
+  bool IsLoaded() const { return m_pieceLines.GetSize() > 0; }
   void Unload();
   const CXFA_PieceLineArray* GetPieceLines();
 
-  FX_BOOL m_bHasBlock;
+  bool m_bHasBlock;
   CFX_Int32Array m_Blocks;
 
  private:
   void GetTextDataNode();
   CFDE_XMLNode* GetXMLContainerNode();
-  CFX_RTFBreak* CreateBreak(FX_BOOL bDefault);
+  CFX_RTFBreak* CreateBreak(bool bDefault);
   void InitBreak(FX_FLOAT fLineWidth);
   void InitBreak(IFDE_CSSComputedStyle* pStyle,
                  FDE_CSSDISPLAY eDisplay,
                  FX_FLOAT fLineWidth,
                  CFDE_XMLNode* pXMLNode,
                  IFDE_CSSComputedStyle* pParentStyle = nullptr);
-  FX_BOOL Loader(const CFX_SizeF& szText,
-                 FX_FLOAT& fLinePos,
-                 FX_BOOL bSavePieces = TRUE);
+  bool Loader(const CFX_SizeF& szText,
+              FX_FLOAT& fLinePos,
+              bool bSavePieces = true);
   void LoadText(CXFA_Node* pNode,
                 const CFX_SizeF& szText,
                 FX_FLOAT& fLinePos,
-                FX_BOOL bSavePieces);
-  FX_BOOL LoadRichText(CFDE_XMLNode* pXMLNode,
-                       const CFX_SizeF& szText,
-                       FX_FLOAT& fLinePos,
-                       IFDE_CSSComputedStyle* pParentStyle,
-                       FX_BOOL bSavePieces,
-                       CXFA_LinkUserData* pLinkData = nullptr,
-                       FX_BOOL bEndBreak = TRUE,
-                       FX_BOOL bIsOl = FALSE,
-                       int32_t iLiCount = 0);
-  FX_BOOL AppendChar(const CFX_WideString& wsText,
-                     FX_FLOAT& fLinePos,
-                     FX_FLOAT fSpaceAbove,
-                     FX_BOOL bSavePieces);
+                bool bSavePieces);
+  bool LoadRichText(CFDE_XMLNode* pXMLNode,
+                    const CFX_SizeF& szText,
+                    FX_FLOAT& fLinePos,
+                    IFDE_CSSComputedStyle* pParentStyle,
+                    bool bSavePieces,
+                    CXFA_LinkUserData* pLinkData = nullptr,
+                    bool bEndBreak = true,
+                    bool bIsOl = false,
+                    int32_t iLiCount = 0);
+  bool AppendChar(const CFX_WideString& wsText,
+                  FX_FLOAT& fLinePos,
+                  FX_FLOAT fSpaceAbove,
+                  bool bSavePieces);
   void AppendTextLine(uint32_t dwStatus,
                       FX_FLOAT& fLinePos,
-                      FX_BOOL bSavePieces,
-                      FX_BOOL bEndBreak = FALSE);
-  void EndBreak(uint32_t dwStatus, FX_FLOAT& fLinePos, FX_BOOL bDefault);
-  FX_BOOL IsEnd(FX_BOOL bSavePieces);
+                      bool bSavePieces,
+                      bool bEndBreak = false);
+  void EndBreak(uint32_t dwStatus, FX_FLOAT& fLinePos, bool bDefault);
+  bool IsEnd(bool bSavePieces);
   void ProcessText(CFX_WideString& wsText);
   void UpdateAlign(FX_FLOAT fHeight, FX_FLOAT fBottom);
   void RenderString(CFDE_RenderDevice* pDevice,
@@ -331,15 +331,15 @@ class CXFA_TextLayout {
                   const CFX_Matrix& tmDoc2Device);
   int32_t GetDisplayPos(const XFA_TextPiece* pPiece,
                         FXTEXT_CHARPOS* pCharPos,
-                        FX_BOOL bCharCode = FALSE);
-  FX_BOOL ToRun(const XFA_TextPiece* pPiece, FX_RTFTEXTOBJ& tr);
+                        bool bCharCode = false);
+  bool ToRun(const XFA_TextPiece* pPiece, FX_RTFTEXTOBJ& tr);
   void DoTabstops(IFDE_CSSComputedStyle* pStyle, CXFA_PieceLine* pPieceLine);
-  FX_BOOL Layout(int32_t iBlock);
+  bool Layout(int32_t iBlock);
   int32_t CountBlocks() const;
 
   CXFA_TextProvider* m_pTextProvider;
   CXFA_Node* m_pTextDataNode;
-  FX_BOOL m_bRichText;
+  bool m_bRichText;
   std::unique_ptr<IFX_MemoryAllocator> m_pAllocator;
   std::unique_ptr<CFX_RTFBreak> m_pBreak;
   std::unique_ptr<CXFA_LoaderContext> m_pLoader;
@@ -348,7 +348,7 @@ class CXFA_TextLayout {
   CXFA_TextParser m_textParser;
   CXFA_PieceLineArray m_pieceLines;
   std::unique_ptr<CXFA_TextTabstopsContext> m_pTabstopContext;
-  FX_BOOL m_bBlockContinue;
+  bool m_bBlockContinue;
 };
 
 #endif  // XFA_FXFA_APP_XFA_TEXTLAYOUT_H_

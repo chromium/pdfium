@@ -16,35 +16,23 @@ class CScript_HostPseudoModel : public CXFA_Object {
   explicit CScript_HostPseudoModel(CXFA_Document* pDocument);
   ~CScript_HostPseudoModel() override;
 
-  void AppType(CFXJSE_Value* pValue,
-               FX_BOOL bSetting,
-               XFA_ATTRIBUTE eAttribute);
+  void AppType(CFXJSE_Value* pValue, bool bSetting, XFA_ATTRIBUTE eAttribute);
   void CalculationsEnabled(CFXJSE_Value* pValue,
-                           FX_BOOL bSetting,
+                           bool bSetting,
                            XFA_ATTRIBUTE eAttribute);
   void CurrentPage(CFXJSE_Value* pValue,
-                   FX_BOOL bSetting,
+                   bool bSetting,
                    XFA_ATTRIBUTE eAttribute);
-  void Language(CFXJSE_Value* pValue,
-                FX_BOOL bSetting,
-                XFA_ATTRIBUTE eAttribute);
-  void NumPages(CFXJSE_Value* pValue,
-                FX_BOOL bSetting,
-                XFA_ATTRIBUTE eAttribute);
-  void Platform(CFXJSE_Value* pValue,
-                FX_BOOL bSetting,
-                XFA_ATTRIBUTE eAttribute);
-  void Title(CFXJSE_Value* pValue, FX_BOOL bSetting, XFA_ATTRIBUTE eAttribute);
+  void Language(CFXJSE_Value* pValue, bool bSetting, XFA_ATTRIBUTE eAttribute);
+  void NumPages(CFXJSE_Value* pValue, bool bSetting, XFA_ATTRIBUTE eAttribute);
+  void Platform(CFXJSE_Value* pValue, bool bSetting, XFA_ATTRIBUTE eAttribute);
+  void Title(CFXJSE_Value* pValue, bool bSetting, XFA_ATTRIBUTE eAttribute);
   void ValidationsEnabled(CFXJSE_Value* pValue,
-                          FX_BOOL bSetting,
+                          bool bSetting,
                           XFA_ATTRIBUTE eAttribute);
-  void Variation(CFXJSE_Value* pValue,
-                 FX_BOOL bSetting,
-                 XFA_ATTRIBUTE eAttribute);
-  void Version(CFXJSE_Value* pValue,
-               FX_BOOL bSetting,
-               XFA_ATTRIBUTE eAttribute);
-  void Name(CFXJSE_Value* pValue, FX_BOOL bSetting, XFA_ATTRIBUTE eAttribute);
+  void Variation(CFXJSE_Value* pValue, bool bSetting, XFA_ATTRIBUTE eAttribute);
+  void Version(CFXJSE_Value* pValue, bool bSetting, XFA_ATTRIBUTE eAttribute);
+  void Name(CFXJSE_Value* pValue, bool bSetting, XFA_ATTRIBUTE eAttribute);
   void GotoURL(CFXJSE_Arguments* pArguments);
   void OpenList(CFXJSE_Arguments* pArguments);
   void Response(CFXJSE_Arguments* pArguments);
@@ -66,9 +54,9 @@ class CScript_HostPseudoModel : public CXFA_Object {
   void LoadString(CFXJSE_Value* pValue,
                   CXFA_FFNotify* pNotify,
                   uint32_t dwFlag);
-  FX_BOOL ValidateArgsForMsg(CFXJSE_Arguments* pArguments,
-                             int32_t iArgIndex,
-                             CFX_WideString& wsValue);
+  bool ValidateArgsForMsg(CFXJSE_Arguments* pArguments,
+                          int32_t iArgIndex,
+                          CFX_WideString& wsValue);
 };
 
 #endif  // XFA_FXFA_PARSER_CSCRIPT_HOSTPSEUDOMODEL_H_

@@ -20,36 +20,32 @@ struct XFA_FMDChar {
     return p;
   }
   static uint16_t get(const FX_WCHAR* p) { return *p; }
-  static FX_BOOL isWhiteSpace(const FX_WCHAR* p) {
+  static bool isWhiteSpace(const FX_WCHAR* p) {
     return (*p) == 0x09 || (*p) == 0x0b || (*p) == 0x0c || (*p) == 0x20;
   }
-  static FX_BOOL isLineTerminator(const FX_WCHAR* p) {
+  static bool isLineTerminator(const FX_WCHAR* p) {
     return *p == 0x0A || *p == 0x0D;
   }
-  static FX_BOOL isBinary(const FX_WCHAR* p) {
-    return (*p) >= '0' && (*p) <= '1';
-  }
-  static FX_BOOL isOctal(const FX_WCHAR* p) {
-    return (*p) >= '0' && (*p) <= '7';
-  }
-  static FX_BOOL isDigital(const FX_WCHAR* p) {
+  static bool isBinary(const FX_WCHAR* p) { return (*p) >= '0' && (*p) <= '1'; }
+  static bool isOctal(const FX_WCHAR* p) { return (*p) >= '0' && (*p) <= '7'; }
+  static bool isDigital(const FX_WCHAR* p) {
     return (*p) >= '0' && (*p) <= '9';
   }
-  static FX_BOOL isHex(const FX_WCHAR* p) {
+  static bool isHex(const FX_WCHAR* p) {
     return isDigital(p) || ((*p) >= 'a' && (*p) <= 'f') ||
            ((*p) >= 'A' && (*p) <= 'F');
   }
-  static FX_BOOL isAlpha(const FX_WCHAR* p) {
+  static bool isAlpha(const FX_WCHAR* p) {
     return ((*p) <= 'z' && (*p) >= 'a') || ((*p) <= 'Z' && (*p) >= 'A');
   }
-  static FX_BOOL isAvalid(const FX_WCHAR* p, FX_BOOL flag = 0);
-  static FX_BOOL string2number(const FX_WCHAR* s,
-                               FX_DOUBLE* pValue,
-                               const FX_WCHAR*& pEnd);
-  static FX_BOOL isUnicodeAlpha(uint16_t ch);
+  static bool isAvalid(const FX_WCHAR* p, bool flag = 0);
+  static bool string2number(const FX_WCHAR* s,
+                            FX_DOUBLE* pValue,
+                            const FX_WCHAR*& pEnd);
+  static bool isUnicodeAlpha(uint16_t ch);
 };
 
-inline FX_BOOL XFA_FMDChar::isAvalid(const FX_WCHAR* p, FX_BOOL flag) {
+inline bool XFA_FMDChar::isAvalid(const FX_WCHAR* p, bool flag) {
   if (*p == 0) {
     return 1;
   }
@@ -65,24 +61,24 @@ inline FX_BOOL XFA_FMDChar::isAvalid(const FX_WCHAR* p, FX_BOOL flag) {
   return 0;
 }
 
-inline FX_BOOL XFA_FMDChar::string2number(const FX_WCHAR* s,
-                                          FX_DOUBLE* pValue,
-                                          const FX_WCHAR*& pEnd) {
+inline bool XFA_FMDChar::string2number(const FX_WCHAR* s,
+                                       FX_DOUBLE* pValue,
+                                       const FX_WCHAR*& pEnd) {
   if (s) {
     *pValue = wcstod((wchar_t*)s, (wchar_t**)&pEnd);
   }
   return 0;
 }
 
-inline FX_BOOL XFA_FMDChar::isUnicodeAlpha(uint16_t ch) {
+inline bool XFA_FMDChar::isUnicodeAlpha(uint16_t ch) {
   if (ch == 0 || ch == 0x0A || ch == 0x0D || ch == 0x09 || ch == 0x0B ||
       ch == 0x0C || ch == 0x20 || ch == '.' || ch == ';' || ch == '"' ||
       ch == '=' || ch == '<' || ch == '>' || ch == ',' || ch == '(' ||
       ch == ')' || ch == ']' || ch == '[' || ch == '&' || ch == '|' ||
       ch == '+' || ch == '-' || ch == '*' || ch == '/') {
-    return FALSE;
+    return false;
   }
-  return TRUE;
+  return true;
 }
 
 const XFA_FMKeyword keyWords[] = {
@@ -542,9 +538,9 @@ void CXFA_FMLexer::Error(const FX_WCHAR* msg, ...) {
   va_end(ap);
 }
 
-FX_BOOL CXFA_FMLexer::HasError() const {
+bool CXFA_FMLexer::HasError() const {
   if (m_pErrorInfo->message.IsEmpty()) {
-    return FALSE;
+    return false;
   }
-  return TRUE;
+  return true;
 }

@@ -45,8 +45,8 @@ class IFWL_PushButton : public IFWL_Widget {
 
   // IFWL_Widget
   FWL_Type GetClassID() const override;
-  FWL_Error GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize = FALSE) override;
-  void SetStates(uint32_t dwStates, FX_BOOL bSet = TRUE) override;
+  FWL_Error GetWidgetRect(CFX_RectF& rect, bool bAutoSize = false) override;
+  void SetStates(uint32_t dwStates, bool bSet = true) override;
   FWL_Error Update() override;
   FWL_Error DrawWidget(CFX_Graphics* pGraphics,
                        const CFX_Matrix* pMatrix = nullptr) override;
@@ -66,12 +66,12 @@ class IFWL_PushButton : public IFWL_Widget {
 
   CFX_RectF m_rtClient;
   CFX_RectF m_rtCaption;
-  FX_BOOL m_bBtnDown;
+  bool m_bBtnDown;
   uint32_t m_dwTTOStyles;
   int32_t m_iTTOAlign;
 
  private:
-  void OnFocusChanged(CFWL_Message* pMsg, FX_BOOL bSet);
+  void OnFocusChanged(CFWL_Message* pMsg, bool bSet);
   void OnLButtonDown(CFWL_MsgMouse* pMsg);
   void OnLButtonUp(CFWL_MsgMouse* pMsg);
   void OnMouseMove(CFWL_MsgMouse* pMsg);

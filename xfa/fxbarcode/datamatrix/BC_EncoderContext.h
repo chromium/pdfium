@@ -30,7 +30,7 @@ class CBC_EncoderContext : public CBC_SymbolShapeHint {
   int32_t getCodewordCount();
   void signalEncoderChange(int32_t encoding);
   void resetEncoderSignal();
-  FX_BOOL hasMoreCharacters();
+  bool hasMoreCharacters();
   int32_t getRemainingCharacters();
   void updateSymbolInfo(int32_t& e);
   void updateSymbolInfo(int32_t len, int32_t& e);

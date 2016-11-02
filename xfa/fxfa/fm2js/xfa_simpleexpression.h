@@ -231,7 +231,7 @@ class CXFA_FMCallExpression : public CXFA_FMUnaryExpression {
   CXFA_FMCallExpression(uint32_t line,
                         CXFA_FMSimpleExpression* pExp,
                         CFX_ArrayTemplate<CXFA_FMSimpleExpression*>* pArguments,
-                        FX_BOOL bIsSomMethod);
+                        bool bIsSomMethod);
   ~CXFA_FMCallExpression() override;
 
   bool IsBuildInFunc(CFX_WideTextBuf* funcName);
@@ -239,7 +239,7 @@ class CXFA_FMCallExpression : public CXFA_FMUnaryExpression {
   void ToJavaScript(CFX_WideTextBuf& javascript) override;
 
  private:
-  FX_BOOL m_bIsSomMethod;
+  bool m_bIsSomMethod;
   CFX_ArrayTemplate<CXFA_FMSimpleExpression*>* m_pArguments;
 };
 
@@ -262,13 +262,13 @@ class CXFA_FMIndexExpression : public CXFA_FMUnaryExpression {
   CXFA_FMIndexExpression(uint32_t line,
                          XFA_FM_AccessorIndex accessorIndex,
                          CXFA_FMSimpleExpression* pIndexExp,
-                         FX_BOOL bIsStarIndex);
+                         bool bIsStarIndex);
   ~CXFA_FMIndexExpression() override {}
   void ToJavaScript(CFX_WideTextBuf& javascript) override;
 
  private:
   XFA_FM_AccessorIndex m_accessorIndex;
-  FX_BOOL m_bIsStarIndex;
+  bool m_bIsStarIndex;
 };
 
 class CXFA_FMDotDotAccessorExpression : public CXFA_FMBinExpression {

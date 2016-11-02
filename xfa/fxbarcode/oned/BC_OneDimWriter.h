@@ -40,7 +40,7 @@ class CBC_OneDimWriter : public CBC_Writer {
   virtual void RenderResult(const CFX_WideStringC& contents,
                             uint8_t* code,
                             int32_t codeLength,
-                            FX_BOOL isDevice,
+                            bool isDevice,
                             int32_t& e);
   virtual void RenderBitmapResult(CFX_DIBitmap*& pOutBitmap,
                                   const CFX_WideStringC& contents,
@@ -49,16 +49,16 @@ class CBC_OneDimWriter : public CBC_Writer {
                                   const CFX_Matrix* matrix,
                                   const CFX_WideStringC& contents,
                                   int32_t& e);
-  virtual FX_BOOL CheckContentValidity(const CFX_WideStringC& contents);
+  virtual bool CheckContentValidity(const CFX_WideStringC& contents);
   virtual CFX_WideString FilterContents(const CFX_WideStringC& contents);
   virtual CFX_WideString RenderTextContents(const CFX_WideStringC& contents);
-  virtual void SetPrintChecksum(FX_BOOL checksum);
+  virtual void SetPrintChecksum(bool checksum);
   virtual void SetDataLength(int32_t length);
-  virtual void SetCalcChecksum(FX_BOOL state);
+  virtual void SetCalcChecksum(bool state);
   virtual void SetFontSize(FX_FLOAT size);
   virtual void SetFontStyle(int32_t style);
   virtual void SetFontColor(FX_ARGB color);
-  FX_BOOL SetFont(CFX_Font* cFont);
+  bool SetFont(CFX_Font* cFont);
 
  protected:
   virtual void CalcTextInfo(const CFX_ByteString& text,
@@ -98,17 +98,17 @@ class CBC_OneDimWriter : public CBC_Writer {
 
   FX_WCHAR Upper(FX_WCHAR ch);
 
-  FX_BOOL m_bPrintChecksum;
+  bool m_bPrintChecksum;
   int32_t m_iDataLenth;
-  FX_BOOL m_bCalcChecksum;
+  bool m_bCalcChecksum;
   CFX_Font* m_pFont;
   FX_FLOAT m_fFontSize;
   int32_t m_iFontStyle;
   uint32_t m_fontColor;
   BC_TEXT_LOC m_locTextLoc;
   int32_t m_iContentLen;
-  FX_BOOL m_bLeftPadding;
-  FX_BOOL m_bRightPadding;
+  bool m_bLeftPadding;
+  bool m_bRightPadding;
   std::unique_ptr<CBC_CommonBitMatrix> m_output;
   int32_t m_barWidth;
   int32_t m_multiple;
