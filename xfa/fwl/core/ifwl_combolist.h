@@ -17,10 +17,6 @@ class IFWL_ComboList : public IFWL_ListBox {
                  const CFWL_WidgetImpProperties& properties,
                  IFWL_Widget* pOuter);
 
-  // IFWL_Widget
-  void Initialize() override;
-  void Finalize() override;
-
   int32_t MatchItem(const CFX_WideString& wsMatch);
   void ChangeSelected(int32_t iSel);
   int32_t CountItems();

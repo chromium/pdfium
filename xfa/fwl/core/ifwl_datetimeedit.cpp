@@ -6,26 +6,15 @@
 
 #include "xfa/fwl/core/ifwl_datetimeedit.h"
 
+#include "third_party/base/ptr_util.h"
 #include "xfa/fwl/core/cfwl_widgetmgr.h"
 #include "xfa/fwl/core/ifwl_datetimepicker.h"
 
 IFWL_DateTimeEdit::IFWL_DateTimeEdit(const IFWL_App* app,
                                      const CFWL_WidgetImpProperties& properties,
                                      IFWL_Widget* pOuter)
-    : IFWL_Edit(app, properties, pOuter) {}
-
-void IFWL_DateTimeEdit::Initialize() {
-  IFWL_Edit::Initialize();
-
-  // Delete delegate set by IFWL_Edit::Initialize.
-  delete m_pDelegate;
-  m_pDelegate = new CFWL_DateTimeEditImpDelegate(this);
-}
-
-void IFWL_DateTimeEdit::Finalize() {
-  delete m_pDelegate;
-  m_pDelegate = nullptr;
-  IFWL_Edit::Finalize();
+    : IFWL_Edit(app, properties, pOuter) {
+  SetDelegate(pdfium::MakeUnique<CFWL_DateTimeEditImpDelegate>(this));
 }
 
 CFWL_DateTimeEditImpDelegate::CFWL_DateTimeEditImpDelegate(

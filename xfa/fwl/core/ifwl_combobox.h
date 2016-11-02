@@ -89,8 +89,6 @@ class IFWL_ComboBox : public IFWL_Widget {
   ~IFWL_ComboBox() override;
 
   // IFWL_Widget
-  void Initialize() override;
-  void Finalize() override;
   FWL_Type GetClassID() const override;
   FWL_Error GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize = FALSE) override;
   FWL_Error ModifyStylesEx(uint32_t dwStylesExAdded,

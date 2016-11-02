@@ -6,6 +6,7 @@
 
 #include "xfa/fwl/core/ifwl_caret.h"
 
+#include "third_party/base/ptr_util.h"
 #include "xfa/fwl/core/cfwl_themebackground.h"
 #include "xfa/fwl/core/cfwl_widgetimpproperties.h"
 #include "xfa/fwl/core/fwl_noteimp.h"
@@ -21,27 +22,18 @@ IFWL_Caret::IFWL_Caret(const IFWL_App* app,
       m_dwElapse(400),
       m_bSetColor(FALSE) {
   SetStates(FWL_STATE_CAT_HightLight);
+  SetDelegate(pdfium::MakeUnique<CFWL_CaretImpDelegate>(this));
 }
 
-IFWL_Caret::~IFWL_Caret() {}
-
-FWL_Type IFWL_Caret::GetClassID() const {
-  return FWL_Type::Caret;
-}
-
-void IFWL_Caret::Initialize() {
-  IFWL_Widget::Initialize();
-  m_pDelegate = new CFWL_CaretImpDelegate(this);
-}
-
-void IFWL_Caret::Finalize() {
+IFWL_Caret::~IFWL_Caret() {
   if (m_pTimerInfo) {
     m_pTimerInfo->StopTimer();
     m_pTimerInfo = nullptr;
   }
-  delete m_pDelegate;
-  m_pDelegate = nullptr;
-  IFWL_Widget::Finalize();
+}
+
+FWL_Type IFWL_Caret::GetClassID() const {
+  return FWL_Type::Caret;
 }
 
 FWL_Error IFWL_Caret::DrawWidget(CFX_Graphics* pGraphics,

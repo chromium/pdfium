@@ -8,6 +8,8 @@
 
 #include <memory>
 
+#include "third_party/base/ptr_util.h"
+
 CFWL_PushButton::CFWL_PushButton(const IFWL_App* app) : CFWL_Widget(app) {}
 
 CFWL_PushButton::~CFWL_PushButton() {}
@@ -15,11 +17,9 @@ CFWL_PushButton::~CFWL_PushButton() {}
 void CFWL_PushButton::Initialize() {
   ASSERT(!m_pIface);
 
-  std::unique_ptr<IFWL_PushButton> pPushButton(new IFWL_PushButton(
-      m_pApp, m_pProperties->MakeWidgetImpProperties(&m_buttonData)));
-  pPushButton->Initialize();
+  m_pIface = pdfium::MakeUnique<IFWL_PushButton>(
+      m_pApp, m_pProperties->MakeWidgetImpProperties(&m_buttonData));
 
-  m_pIface = std::move(pPushButton);
   CFWL_Widget::Initialize();
 }
 

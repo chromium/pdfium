@@ -8,6 +8,7 @@
 
 #include <memory>
 
+#include "third_party/base/ptr_util.h"
 #include "xfa/fwl/core/fwl_error.h"
 #include "xfa/fwl/core/ifwl_datetimepicker.h"
 #include "xfa/fwl/core/ifwl_widget.h"
@@ -28,11 +29,9 @@ CFWL_DateTimePicker::~CFWL_DateTimePicker() {}
 void CFWL_DateTimePicker::Initialize() {
   ASSERT(!m_pIface);
 
-  std::unique_ptr<IFWL_DateTimePicker> pDateTimePicker(new IFWL_DateTimePicker(
-      m_pApp, m_pProperties->MakeWidgetImpProperties(&m_DateTimePickerDP)));
-  pDateTimePicker->Initialize();
+  m_pIface = pdfium::MakeUnique<IFWL_DateTimePicker>(
+      m_pApp, m_pProperties->MakeWidgetImpProperties(&m_DateTimePickerDP));
 
-  m_pIface = std::move(pDateTimePicker);
   CFWL_Widget::Initialize();
 }
 

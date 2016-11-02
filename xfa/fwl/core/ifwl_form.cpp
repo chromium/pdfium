@@ -6,6 +6,7 @@
 
 #include "xfa/fwl/core/ifwl_form.h"
 
+#include "third_party/base/ptr_util.h"
 #include "xfa/fde/tto/fde_textout.h"
 #include "xfa/fwl/core/cfwl_message.h"
 #include "xfa/fwl/core/cfwl_themebackground.h"
@@ -64,26 +65,16 @@ IFWL_Form::IFWL_Form(const IFWL_App* app,
   m_rtRestore.Reset();
   m_rtCaptionText.Reset();
   m_rtIcon.Reset();
-}
-
-IFWL_Form::~IFWL_Form() {
-  RemoveSysButtons();
-}
-
-void IFWL_Form::Initialize() {
-  IFWL_Widget::Initialize();
 
   RegisterForm();
   RegisterEventTarget();
-  m_pDelegate = new CFWL_FormImpDelegate(this);
+  SetDelegate(pdfium::MakeUnique<CFWL_FormImpDelegate>(this));
 }
 
-void IFWL_Form::Finalize() {
-  delete m_pDelegate;
-  m_pDelegate = nullptr;
+IFWL_Form::~IFWL_Form() {
   UnregisterEventTarget();
   UnRegisterForm();
-  IFWL_Widget::Finalize();
+  RemoveSysButtons();
 }
 
 FWL_Type IFWL_Form::GetClassID() const {

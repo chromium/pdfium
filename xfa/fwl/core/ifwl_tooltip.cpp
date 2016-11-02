@@ -6,6 +6,7 @@
 
 #include "xfa/fwl/core/ifwl_tooltip.h"
 
+#include "third_party/base/ptr_util.h"
 #include "xfa/fde/tto/fde_textout.h"
 #include "xfa/fwl/core/cfwl_themebackground.h"
 #include "xfa/fwl/core/cfwl_themepart.h"
@@ -29,24 +30,13 @@ IFWL_ToolTip::IFWL_ToolTip(const IFWL_App* app,
   m_rtClient.Set(0, 0, 0, 0);
   m_rtCaption.Set(0, 0, 0, 0);
   m_rtAnchor.Set(0, 0, 0, 0);
+  m_pProperties->m_dwStyles &= ~FWL_WGTSTYLE_Child;
+  m_pProperties->m_dwStyles |= FWL_WGTSTYLE_Popup;
+
+  SetDelegate(pdfium::MakeUnique<CFWL_ToolTipImpDelegate>(this));
 }
 
 IFWL_ToolTip::~IFWL_ToolTip() {}
-
-void IFWL_ToolTip::Initialize() {
-  IFWL_Widget::Initialize();
-
-  m_pProperties->m_dwStyles |= FWL_WGTSTYLE_Popup;
-  m_pProperties->m_dwStyles &= ~FWL_WGTSTYLE_Child;
-
-  m_pDelegate = new CFWL_ToolTipImpDelegate(this);
-}
-
-void IFWL_ToolTip::Finalize() {
-  delete m_pDelegate;
-  m_pDelegate = nullptr;
-  IFWL_Widget::Finalize();
-}
 
 FWL_Type IFWL_ToolTip::GetClassID() const {
   return FWL_Type::ToolTip;

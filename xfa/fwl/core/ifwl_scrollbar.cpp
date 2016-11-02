@@ -6,6 +6,7 @@
 
 #include "xfa/fwl/core/ifwl_scrollbar.h"
 
+#include "third_party/base/ptr_util.h"
 #include "xfa/fwl/core/cfwl_message.h"
 #include "xfa/fwl/core/cfwl_themebackground.h"
 #include "xfa/fwl/core/cfwl_themepart.h"
@@ -51,20 +52,11 @@ IFWL_ScrollBar::IFWL_ScrollBar(const IFWL_App* app,
   m_rtMaxBtn.Reset();
   m_rtMinTrack.Reset();
   m_rtMaxTrack.Reset();
+
+  SetDelegate(pdfium::MakeUnique<CFWL_ScrollBarImpDelegate>(this));
 }
 
 IFWL_ScrollBar::~IFWL_ScrollBar() {}
-
-void IFWL_ScrollBar::Initialize() {
-  IFWL_Widget::Initialize();
-  m_pDelegate = new CFWL_ScrollBarImpDelegate(this);
-}
-
-void IFWL_ScrollBar::Finalize() {
-  delete m_pDelegate;
-  m_pDelegate = nullptr;
-  IFWL_Widget::Finalize();
-}
 
 FWL_Type IFWL_ScrollBar::GetClassID() const {
   return FWL_Type::ScrollBar;

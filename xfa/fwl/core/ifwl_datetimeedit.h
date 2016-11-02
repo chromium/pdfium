@@ -19,10 +19,6 @@ class IFWL_DateTimeEdit : public IFWL_Edit {
                     const CFWL_WidgetImpProperties& properties,
                     IFWL_Widget* pOuter);
 
-  // IFWL_Edit
-  void Initialize() override;
-  void Finalize() override;
-
  protected:
   friend class CFWL_DateTimeEditImpDelegate;
 };

@@ -30,7 +30,6 @@ IFWL_Widget::IFWL_Widget(const IFWL_App* app,
     : m_pOwnerApp(app),
       m_pWidgetMgr(app->GetWidgetMgr()),
       m_pProperties(new CFWL_WidgetImpProperties(properties)),
-      m_pDelegate(nullptr),
       m_pCurDelegate(nullptr),
       m_pOuter(pOuter),
       m_pLayoutItem(nullptr),
@@ -38,21 +37,18 @@ IFWL_Widget::IFWL_Widget(const IFWL_App* app,
       m_iLock(0),
       m_nEventKey(0) {
   ASSERT(m_pWidgetMgr);
-}
 
-IFWL_Widget::~IFWL_Widget() {}
-
-void IFWL_Widget::Initialize() {
   IFWL_Widget* pParent = m_pProperties->m_pParent;
   m_pWidgetMgr->InsertWidget(pParent, this);
-  if (!IsChild()) {
-    IFWL_Widget* pOwner = m_pProperties->m_pOwner;
-    if (pOwner)
-      m_pWidgetMgr->SetOwner(pOwner, this);
-  }
+  if (IsChild())
+    return;
+
+  IFWL_Widget* pOwner = m_pProperties->m_pOwner;
+  if (pOwner)
+    m_pWidgetMgr->SetOwner(pOwner, this);
 }
 
-void IFWL_Widget::Finalize() {
+IFWL_Widget::~IFWL_Widget() {
   NotifyDriver();
   m_pWidgetMgr->RemoveWidget(this);
 }
@@ -354,7 +350,7 @@ FWL_Error IFWL_Widget::SetThemeProvider(IFWL_ThemeProvider* pThemeProvider) {
 
 IFWL_WidgetDelegate* IFWL_Widget::GetCurrentDelegate() {
   if (!m_pCurDelegate)
-    m_pCurDelegate = m_pDelegate;
+    m_pCurDelegate = m_pDelegate.get();
   return m_pCurDelegate;
 }
 

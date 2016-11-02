@@ -63,8 +63,6 @@ class IFWL_Barcode : public IFWL_Edit {
   ~IFWL_Barcode() override;
 
   // IFWL_Widget
-  void Initialize() override;
-  void Finalize() override;
   FWL_Type GetClassID() const override;
   FWL_Error Update() override;
   FWL_Error DrawWidget(CFX_Graphics* pGraphics,

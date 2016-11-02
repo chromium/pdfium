@@ -6,6 +6,7 @@
 
 #include "xfa/fwl/core/ifwl_spinbutton.h"
 
+#include "third_party/base/ptr_util.h"
 #include "xfa/fwl/core/cfwl_message.h"
 #include "xfa/fwl/core/cfwl_themebackground.h"
 #include "xfa/fwl/core/cfwl_widgetimpproperties.h"
@@ -36,20 +37,11 @@ IFWL_SpinButton::IFWL_SpinButton(const IFWL_App* app,
   m_rtUpButton.Reset();
   m_rtDnButton.Reset();
   m_pProperties->m_dwStyleExes |= FWL_STYLEEXE_SPB_Vert;
+
+  SetDelegate(pdfium::MakeUnique<CFWL_SpinButtonImpDelegate>(this));
 }
 
 IFWL_SpinButton::~IFWL_SpinButton() {}
-
-void IFWL_SpinButton::Initialize() {
-  IFWL_Widget::Initialize();
-  m_pDelegate = new CFWL_SpinButtonImpDelegate(this);
-}
-
-void IFWL_SpinButton::Finalize() {
-  delete m_pDelegate;
-  m_pDelegate = nullptr;
-  IFWL_Widget::Finalize();
-}
 
 FWL_Type IFWL_SpinButton::GetClassID() const {
   return FWL_Type::SpinButton;

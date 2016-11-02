@@ -15,10 +15,6 @@ class IFWL_DateTimeCalendar : public IFWL_MonthCalendar {
                         const CFWL_WidgetImpProperties& properties,
                         IFWL_Widget* pOuter);
 
-  // IFWL_MonthCalendar
-  void Initialize() override;
-  void Finalize() override;
-
  protected:
   friend class CFWL_DateTimeCalendarImpDelegate;
 };

@@ -760,15 +760,9 @@ FX_BOOL CFWL_EventTarget::IsFilterEvent(CFWL_Event* pEvent, uint32_t dwFilter) {
 CFWL_ToolTipContainer* CFWL_ToolTipContainer::s_pInstance = nullptr;
 
 CFWL_ToolTipContainer::CFWL_ToolTipContainer()
-    : m_pToolTipImp(nullptr), m_pToolTipDp(new CFWL_CoreToolTipDP(0, 2000)) {}
+    : m_pToolTipDp(new CFWL_CoreToolTipDP(0, 2000)) {}
 
-CFWL_ToolTipContainer::~CFWL_ToolTipContainer() {
-  if (m_pToolTipImp) {
-    IFWL_ToolTip* pToolTip = static_cast<IFWL_ToolTip*>(m_pToolTipImp);
-    pToolTip->Finalize();
-    delete pToolTip;
-  }
-}
+CFWL_ToolTipContainer::~CFWL_ToolTipContainer() {}
 
 // static
 CFWL_ToolTipContainer* CFWL_ToolTipContainer::getInstance() {

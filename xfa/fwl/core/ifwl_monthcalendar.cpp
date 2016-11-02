@@ -8,6 +8,7 @@
 
 #include <algorithm>
 
+#include "third_party/base/ptr_util.h"
 #include "xfa/fde/tto/fde_textout.h"
 #include "xfa/fwl/core/cfwl_message.h"
 #include "xfa/fwl/core/cfwl_themebackground.h"
@@ -145,22 +146,13 @@ IFWL_MonthCalendar::IFWL_MonthCalendar(
   m_rtClient.Reset();
   m_rtWeekNum.Reset();
   m_rtWeekNumSep.Reset();
+
+  SetDelegate(pdfium::MakeUnique<CFWL_MonthCalendarImpDelegate>(this));
 }
 
 IFWL_MonthCalendar::~IFWL_MonthCalendar() {
   ClearDateItem();
   m_arrSelDays.RemoveAll();
-}
-
-void IFWL_MonthCalendar::Initialize() {
-  IFWL_Widget::Initialize();
-  m_pDelegate = new CFWL_MonthCalendarImpDelegate(this);
-}
-
-void IFWL_MonthCalendar::Finalize() {
-  delete m_pDelegate;
-  m_pDelegate = nullptr;
-  IFWL_Widget::Finalize();
 }
 
 FWL_Type IFWL_MonthCalendar::GetClassID() const {

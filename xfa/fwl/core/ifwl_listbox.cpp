@@ -6,6 +6,7 @@
 
 #include "xfa/fwl/core/ifwl_listbox.h"
 
+#include "third_party/base/ptr_util.h"
 #include "xfa/fde/tto/fde_textout.h"
 #include "xfa/fwl/core/cfwl_message.h"
 #include "xfa/fwl/core/cfwl_themebackground.h"
@@ -33,25 +34,11 @@ IFWL_ListBox::IFWL_ListBox(const IFWL_App* app,
   m_rtClient.Reset();
   m_rtConent.Reset();
   m_rtStatic.Reset();
+
+  SetDelegate(pdfium::MakeUnique<CFWL_ListBoxImpDelegate>(this));
 }
 
 IFWL_ListBox::~IFWL_ListBox() {}
-
-void IFWL_ListBox::Initialize() {
-  IFWL_Widget::Initialize();
-  m_pDelegate = new CFWL_ListBoxImpDelegate(this);
-}
-
-void IFWL_ListBox::Finalize() {
-  if (m_pVertScrollBar)
-    m_pVertScrollBar->Finalize();
-  if (m_pHorzScrollBar)
-    m_pHorzScrollBar->Finalize();
-
-  delete m_pDelegate;
-  m_pDelegate = nullptr;
-  IFWL_Widget::Finalize();
-}
 
 FWL_Type IFWL_ListBox::GetClassID() const {
   return FWL_Type::ListBox;
@@ -896,9 +883,8 @@ void IFWL_ListBox::InitScrollBar(FX_BOOL bVert) {
   prop.m_dwStates = FWL_WGTSTATE_Invisible;
   prop.m_pParent = this;
   prop.m_pThemeProvider = m_pScrollBarTP;
-  IFWL_ScrollBar* pScrollBar = new IFWL_ScrollBar(m_pOwnerApp, prop, this);
-  pScrollBar->Initialize();
-  (bVert ? &m_pVertScrollBar : &m_pHorzScrollBar)->reset(pScrollBar);
+  (bVert ? &m_pVertScrollBar : &m_pHorzScrollBar)
+      ->reset(new IFWL_ScrollBar(m_pOwnerApp, prop, this));
 }
 
 FX_BOOL IFWL_ListBox::IsShowScrollBar(FX_BOOL bVert) {

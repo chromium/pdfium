@@ -8,6 +8,8 @@
 
 #include <memory>
 
+#include "third_party/base/ptr_util.h"
+
 namespace {
 
 IFWL_Barcode* ToBarcode(IFWL_Widget* widget) {
@@ -22,11 +24,10 @@ CFWL_Barcode::~CFWL_Barcode() {}
 
 void CFWL_Barcode::Initialize() {
   ASSERT(!m_pIface);
-  std::unique_ptr<IFWL_Barcode> pBarcode(new IFWL_Barcode(
-      m_pApp, m_pProperties->MakeWidgetImpProperties(&m_barcodeData)));
-  pBarcode->Initialize();
 
-  m_pIface = std::move(pBarcode);
+  m_pIface = pdfium::MakeUnique<IFWL_Barcode>(
+      m_pApp, m_pProperties->MakeWidgetImpProperties(&m_barcodeData));
+
   CFWL_Widget::Initialize();
 }
 

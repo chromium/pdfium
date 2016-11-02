@@ -10,6 +10,7 @@
 #include <memory>
 #include <vector>
 
+#include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fde/cfde_txtedtengine.h"
 #include "xfa/fde/fde_gedevice.h"
@@ -74,33 +75,18 @@ IFWL_Edit::IFWL_Edit(const IFWL_App* app,
   m_rtClient.Reset();
   m_rtEngine.Reset();
   m_rtStatic.Reset();
-}
 
-IFWL_Edit::~IFWL_Edit() {
-  ClearRecord();
-}
-
-void IFWL_Edit::Initialize() {
-  IFWL_Widget::Initialize();
-  if (!m_pDelegate)
-    m_pDelegate = new CFWL_EditImpDelegate(this);
-
+  SetDelegate(pdfium::MakeUnique<CFWL_EditImpDelegate>(this));
   InitCaret();
   if (!m_pEdtEngine)
     InitEngine();
 }
 
-void IFWL_Edit::Finalize() {
+IFWL_Edit::~IFWL_Edit() {
   if (m_pProperties->m_dwStates & FWL_WGTSTATE_Focused)
     ShowCaret(FALSE);
-  if (m_pHorzScrollBar)
-    m_pHorzScrollBar->Finalize();
-  if (m_pVertScrollBar)
-    m_pVertScrollBar->Finalize();
 
-  delete m_pDelegate;
-  m_pDelegate = nullptr;
-  IFWL_Widget::Finalize();
+  ClearRecord();
 }
 
 FWL_Type IFWL_Edit::GetClassID() const {
@@ -1472,9 +1458,12 @@ void IFWL_Edit::InitScrollBar(FX_BOOL bVert) {
   prop.m_dwStates = FWL_WGTSTATE_Disabled | FWL_WGTSTATE_Invisible;
   prop.m_pParent = this;
   prop.m_pThemeProvider = m_pProperties->m_pThemeProvider;
-  IFWL_ScrollBar* pScrollBar = new IFWL_ScrollBar(m_pOwnerApp, prop, this);
-  pScrollBar->Initialize();
-  (bVert ? &m_pVertScrollBar : &m_pHorzScrollBar)->reset(pScrollBar);
+
+  IFWL_ScrollBar* sb = new IFWL_ScrollBar(m_pOwnerApp, prop, this);
+  if (bVert)
+    m_pVertScrollBar.reset(sb);
+  else
+    m_pHorzScrollBar.reset(sb);
 }
 
 void IFWL_Edit::InitEngine() {
@@ -1571,7 +1560,6 @@ void IFWL_Edit::InitCaret() {
     if ((m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_InnerCaret)) {
       CFWL_WidgetImpProperties prop;
       m_pCaret.reset(new IFWL_Caret(m_pOwnerApp, prop, this));
-      m_pCaret->Initialize();
       m_pCaret->SetParent(this);
       m_pCaret->SetStates(m_pProperties->m_dwStates);
     }

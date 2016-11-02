@@ -66,8 +66,6 @@ class IFWL_Widget {
  public:
   virtual ~IFWL_Widget();
 
-  virtual void Initialize();
-  virtual void Finalize();
   virtual FWL_Type GetClassID() const = 0;
   virtual FX_BOOL IsInstance(const CFX_WideStringC& wsClass) const;
 
@@ -203,16 +201,23 @@ class IFWL_Widget {
 
   FX_BOOL IsParent(IFWL_Widget* pParent);
 
+  void SetDelegate(std::unique_ptr<IFWL_WidgetDelegate> delegate) {
+    m_pDelegate = std::move(delegate);
+  }
+  IFWL_WidgetDelegate* GetDelegate() const { return m_pDelegate.get(); }
+
   const IFWL_App* const m_pOwnerApp;
   CFWL_WidgetMgr* const m_pWidgetMgr;
   std::unique_ptr<CFWL_WidgetImpProperties> m_pProperties;
-  IFWL_WidgetDelegate* m_pDelegate;
-  IFWL_WidgetDelegate* m_pCurDelegate;
+  IFWL_WidgetDelegate* m_pCurDelegate;  // Not owned.
   IFWL_Widget* m_pOuter;
   void* m_pLayoutItem;
   CFWL_Widget* m_pAssociate;
   int32_t m_iLock;
   uint32_t m_nEventKey;
+
+ private:
+  std::unique_ptr<IFWL_WidgetDelegate> m_pDelegate;
 };
 
 class CFWL_WidgetImpDelegate : public IFWL_WidgetDelegate {

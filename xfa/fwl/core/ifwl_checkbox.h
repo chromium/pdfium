@@ -62,8 +62,6 @@ class IFWL_CheckBox : public IFWL_Widget {
   ~IFWL_CheckBox() override;
 
   // IFWL_Widget
-  void Initialize() override;
-  void Finalize() override;
   FWL_Type GetClassID() const override;
   FWL_Error GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize = FALSE) override;
   FWL_Error Update() override;

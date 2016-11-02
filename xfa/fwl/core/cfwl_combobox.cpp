@@ -8,6 +8,7 @@
 
 #include <utility>
 
+#include "third_party/base/ptr_util.h"
 #include "xfa/fwl/core/fwl_error.h"
 #include "xfa/fwl/core/ifwl_widget.h"
 
@@ -30,11 +31,9 @@ CFWL_ComboBox::~CFWL_ComboBox() {}
 void CFWL_ComboBox::Initialize() {
   ASSERT(!m_pIface);
 
-  std::unique_ptr<IFWL_ComboBox> pComboBox(new IFWL_ComboBox(
-      m_pApp, m_pProperties->MakeWidgetImpProperties(&m_comboBoxData)));
-  pComboBox->Initialize();
+  m_pIface = pdfium::MakeUnique<IFWL_ComboBox>(
+      m_pApp, m_pProperties->MakeWidgetImpProperties(&m_comboBoxData));
 
-  m_pIface = std::move(pComboBox);
   CFWL_Widget::Initialize();
 }
 

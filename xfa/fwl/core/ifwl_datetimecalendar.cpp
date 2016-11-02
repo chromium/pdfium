@@ -6,6 +6,7 @@
 
 #include "xfa/fwl/core/ifwl_datetimecalendar.h"
 
+#include "third_party/base/ptr_util.h"
 #include "xfa/fwl/core/cfwl_widgetmgr.h"
 #include "xfa/fwl/core/ifwl_datetimepicker.h"
 #include "xfa/fwl/core/ifwl_formproxy.h"
@@ -14,20 +15,8 @@ IFWL_DateTimeCalendar::IFWL_DateTimeCalendar(
     const IFWL_App* app,
     const CFWL_WidgetImpProperties& properties,
     IFWL_Widget* pOuter)
-    : IFWL_MonthCalendar(app, properties, pOuter) {}
-
-void IFWL_DateTimeCalendar::Initialize() {
-  IFWL_MonthCalendar::Initialize();
-
-  // Delete delegated set by IFWL_MonthCalendar::Initialize.
-  delete m_pDelegate;
-  m_pDelegate = new CFWL_DateTimeCalendarImpDelegate(this);
-}
-
-void IFWL_DateTimeCalendar::Finalize() {
-  delete m_pDelegate;
-  m_pDelegate = nullptr;
-  IFWL_MonthCalendar::Finalize();
+    : IFWL_MonthCalendar(app, properties, pOuter) {
+  SetDelegate(pdfium::MakeUnique<CFWL_DateTimeCalendarImpDelegate>(this));
 }
 
 CFWL_DateTimeCalendarImpDelegate::CFWL_DateTimeCalendarImpDelegate(

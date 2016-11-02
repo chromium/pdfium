@@ -136,7 +136,6 @@ class CFWL_ToolTipContainer final {
   CFWL_ToolTipContainer();
   ~CFWL_ToolTipContainer();
 
-  IFWL_ToolTip* m_pToolTipImp;
   std::unique_ptr<CFWL_CoreToolTipDP> m_pToolTipDp;
 
  private:

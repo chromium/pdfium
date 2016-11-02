@@ -6,6 +6,7 @@
 
 #include "xfa/fwl/core/ifwl_picturebox.h"
 
+#include "third_party/base/ptr_util.h"
 #include "xfa/fwl/core/cfwl_picturebox.h"
 #include "xfa/fwl/core/fwl_noteimp.h"
 
@@ -18,20 +19,11 @@ IFWL_PictureBox::IFWL_PictureBox(const IFWL_App* app,
   m_rtClient.Reset();
   m_rtImage.Reset();
   m_matrix.SetIdentity();
+
+  SetDelegate(pdfium::MakeUnique<CFWL_PictureBoxImpDelegate>(this));
 }
 
 IFWL_PictureBox::~IFWL_PictureBox() {}
-
-void IFWL_PictureBox::Initialize() {
-  IFWL_Widget::Initialize();
-  m_pDelegate = new CFWL_PictureBoxImpDelegate(this);
-}
-
-void IFWL_PictureBox::Finalize() {
-  delete m_pDelegate;
-  m_pDelegate = nullptr;
-  IFWL_Widget::Finalize();
-}
 
 FWL_Type IFWL_PictureBox::GetClassID() const {
   return FWL_Type::PictureBox;

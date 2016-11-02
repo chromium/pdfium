@@ -25,10 +25,7 @@ CFWL_Widget::CFWL_Widget(const IFWL_App* app)
   ASSERT(m_pWidgetMgr);
 }
 
-CFWL_Widget::~CFWL_Widget() {
-  if (m_pIface)
-    m_pIface->Finalize();
-}
+CFWL_Widget::~CFWL_Widget() {}
 
 void CFWL_Widget::Initialize() {
   ASSERT(m_pIface);

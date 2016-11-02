@@ -45,8 +45,6 @@ class IFWL_PushButton : public IFWL_Widget {
   ~IFWL_PushButton() override;
 
   // IFWL_Widget
-  void Initialize() override;
-  void Finalize() override;
   FWL_Type GetClassID() const override;
   FWL_Error GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize = FALSE) override;
   void SetStates(uint32_t dwStates, FX_BOOL bSet = TRUE) override;

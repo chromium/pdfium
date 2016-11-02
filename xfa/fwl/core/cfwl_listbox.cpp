@@ -8,6 +8,7 @@
 
 #include <memory>
 
+#include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 
 namespace {
@@ -25,11 +26,9 @@ CFWL_ListBox::~CFWL_ListBox() {}
 void CFWL_ListBox::Initialize() {
   ASSERT(!m_pIface);
 
-  std::unique_ptr<IFWL_ListBox> pListBox(new IFWL_ListBox(
-      m_pApp, m_pProperties->MakeWidgetImpProperties(&m_ListBoxDP), nullptr));
-  pListBox->Initialize();
+  m_pIface = pdfium::MakeUnique<IFWL_ListBox>(
+      m_pApp, m_pProperties->MakeWidgetImpProperties(&m_ListBoxDP), nullptr);
 
-  m_pIface = std::move(pListBox);
   CFWL_Widget::Initialize();
 }
 

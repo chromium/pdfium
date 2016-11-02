@@ -8,6 +8,8 @@
 
 #include <memory>
 
+#include "third_party/base/ptr_util.h"
+
 CFWL_PictureBox::CFWL_PictureBox(const IFWL_App* app) : CFWL_Widget(app) {}
 
 CFWL_PictureBox::~CFWL_PictureBox() {}
@@ -15,11 +17,9 @@ CFWL_PictureBox::~CFWL_PictureBox() {}
 void CFWL_PictureBox::Initialize() {
   ASSERT(!m_pIface);
 
-  std::unique_ptr<IFWL_PictureBox> pPictureBox(new IFWL_PictureBox(
-      m_pApp, m_pProperties->MakeWidgetImpProperties(&m_PictureBoxDP)));
-  pPictureBox->Initialize();
+  m_pIface = pdfium::MakeUnique<IFWL_PictureBox>(
+      m_pApp, m_pProperties->MakeWidgetImpProperties(&m_PictureBoxDP));
 
-  m_pIface = std::move(pPictureBox);
   CFWL_Widget::Initialize();
 }
 

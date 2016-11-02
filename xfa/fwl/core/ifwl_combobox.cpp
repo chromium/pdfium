@@ -6,6 +6,7 @@
 
 #include "xfa/fwl/core/ifwl_combobox.h"
 
+#include "third_party/base/ptr_util.h"
 #include "xfa/fde/cfde_txtedtengine.h"
 #include "xfa/fde/tto/fde_textout.h"
 #include "xfa/fwl/core/cfwl_message.h"
@@ -32,13 +33,8 @@ IFWL_ComboBox::IFWL_ComboBox(const IFWL_App* app,
   m_rtClient.Reset();
   m_rtBtn.Reset();
   m_rtHandler.Reset();
-}
 
-IFWL_ComboBox::~IFWL_ComboBox() {}
-
-void IFWL_ComboBox::Initialize() {
-  IFWL_Widget::Initialize();
-  m_pDelegate = new CFWL_ComboBoxImpDelegate(this);
+  SetDelegate(pdfium::MakeUnique<CFWL_ComboBoxImpDelegate>(this));
 
   if (m_pWidgetMgr->IsFormDisabled()) {
     DisForm_InitComboList();
@@ -54,11 +50,9 @@ void IFWL_ComboBox::Initialize() {
 
   prop.m_pDataProvider = m_pProperties->m_pDataProvider;
   m_pListBox.reset(new IFWL_ComboList(m_pOwnerApp, prop, this));
-  m_pListBox->Initialize();
   if ((m_pProperties->m_dwStyleExes & FWL_STYLEEXT_CMB_DropDown) && !m_pEdit) {
     CFWL_WidgetImpProperties prop2;
     m_pEdit.reset(new IFWL_ComboEdit(m_pOwnerApp, prop2, this));
-    m_pEdit->Initialize();
     m_pEdit->SetOuter(this);
   }
   if (m_pEdit)
@@ -67,15 +61,7 @@ void IFWL_ComboBox::Initialize() {
   SetStates(m_pProperties->m_dwStates);
 }
 
-void IFWL_ComboBox::Finalize() {
-  if (m_pEdit)
-    m_pEdit->Finalize();
-
-  m_pListBox->Finalize();
-  delete m_pDelegate;
-  m_pDelegate = nullptr;
-  IFWL_Widget::Finalize();
-}
+IFWL_ComboBox::~IFWL_ComboBox() {}
 
 FWL_Type IFWL_ComboBox::GetClassID() const {
   return FWL_Type::ComboBox;
@@ -116,7 +102,6 @@ FWL_Error IFWL_ComboBox::ModifyStylesEx(uint32_t dwStylesExAdded,
   if (bAddDropDown && !m_pEdit) {
     CFWL_WidgetImpProperties prop;
     m_pEdit.reset(new IFWL_ComboEdit(m_pOwnerApp, prop, nullptr));
-    m_pEdit->Initialize();
     m_pEdit->SetOuter(this);
     m_pEdit->SetParent(this);
   } else if (bRemoveDropDown && m_pEdit) {
@@ -715,7 +700,6 @@ void IFWL_ComboBox::InitProxyForm() {
   propForm.m_dwStates = FWL_WGTSTATE_Invisible;
 
   m_pForm = new IFWL_FormProxy(m_pOwnerApp, propForm, m_pListBox.get());
-  m_pForm->Initialize();
   m_pListBox->SetParent(m_pForm);
   m_pListProxyDelegate = new CFWL_ComboProxyImpDelegate(m_pForm, this);
   m_pForm->SetCurrentDelegate(m_pListProxyDelegate);
@@ -732,7 +716,6 @@ void IFWL_ComboBox::DisForm_InitComboList() {
   prop.m_pDataProvider = m_pProperties->m_pDataProvider;
   prop.m_pThemeProvider = m_pProperties->m_pThemeProvider;
   m_pListBox.reset(new IFWL_ComboList(m_pOwnerApp, prop, this));
-  m_pListBox->Initialize();
 }
 
 void IFWL_ComboBox::DisForm_InitComboEdit() {
@@ -743,7 +726,6 @@ void IFWL_ComboBox::DisForm_InitComboEdit() {
   prop.m_pParent = this;
   prop.m_pThemeProvider = m_pProperties->m_pThemeProvider;
   m_pEdit.reset(new IFWL_ComboEdit(m_pOwnerApp, prop, this));
-  m_pEdit->Initialize();
   m_pEdit->SetOuter(this);
 }
 

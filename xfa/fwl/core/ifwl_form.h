@@ -91,8 +91,6 @@ class IFWL_Form : public IFWL_Widget {
   ~IFWL_Form() override;
 
   // IFWL_Widget
-  void Initialize() override;
-  void Finalize() override;
   FWL_Type GetClassID() const override;
   FX_BOOL IsInstance(const CFX_WideStringC& wsClass) const override;
   FWL_Error GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize = FALSE) override;

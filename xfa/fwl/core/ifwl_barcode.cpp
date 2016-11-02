@@ -6,6 +6,7 @@
 
 #include "xfa/fwl/core/ifwl_barcode.h"
 
+#include "third_party/base/ptr_util.h"
 #include "xfa/fgas/font/fgas_gefont.h"
 #include "xfa/fwl/core/cfwl_themepart.h"
 #include "xfa/fwl/core/cfx_barcode.h"
@@ -14,26 +15,14 @@
 
 IFWL_Barcode::IFWL_Barcode(const IFWL_App* app,
                            const CFWL_WidgetImpProperties& properties)
-    : IFWL_Edit(app, properties, nullptr), m_dwStatus(0), m_type(BC_UNKNOWN) {}
+    : IFWL_Edit(app, properties, nullptr), m_dwStatus(0), m_type(BC_UNKNOWN) {
+  SetDelegate(pdfium::MakeUnique<CFWL_BarcodeImpDelegate>(this));
+}
 
 IFWL_Barcode::~IFWL_Barcode() {}
 
 FWL_Type IFWL_Barcode::GetClassID() const {
   return FWL_Type::Barcode;
-}
-
-void IFWL_Barcode::Initialize() {
-  if (!m_pDelegate)
-    m_pDelegate = new CFWL_BarcodeImpDelegate(this);
-
-  IFWL_Edit::Initialize();
-}
-
-void IFWL_Barcode::Finalize() {
-  delete m_pDelegate;
-  m_pDelegate = nullptr;
-  m_pBarcodeEngine.reset();
-  IFWL_Edit::Finalize();
 }
 
 FWL_Error IFWL_Barcode::Update() {

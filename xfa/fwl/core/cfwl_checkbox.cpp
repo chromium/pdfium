@@ -8,6 +8,7 @@
 
 #include <memory>
 
+#include "third_party/base/ptr_util.h"
 #include "xfa/fwl/core/fwl_error.h"
 
 namespace {
@@ -25,11 +26,9 @@ CFWL_CheckBox::~CFWL_CheckBox() {}
 void CFWL_CheckBox::Initialize() {
   ASSERT(!m_pIface);
 
-  std::unique_ptr<IFWL_CheckBox> pCheckBox(new IFWL_CheckBox(
-      m_pApp, m_pProperties->MakeWidgetImpProperties(&m_checkboxData)));
-  pCheckBox->Initialize();
+  m_pIface = pdfium::MakeUnique<IFWL_CheckBox>(
+      m_pApp, m_pProperties->MakeWidgetImpProperties(&m_checkboxData));
 
-  m_pIface = std::move(pCheckBox);
   CFWL_Widget::Initialize();
 }
 

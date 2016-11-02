@@ -20,8 +20,6 @@ class IFWL_FormProxy : public IFWL_Form {
   ~IFWL_FormProxy() override;
 
   // IFWL_Widget
-  void Initialize() override;
-  void Finalize() override;
   FWL_Type GetClassID() const override;
   FX_BOOL IsInstance(const CFX_WideStringC& wsClass) const override;
   FWL_Error Update() override;

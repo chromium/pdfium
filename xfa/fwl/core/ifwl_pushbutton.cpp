@@ -6,6 +6,7 @@
 
 #include "xfa/fwl/core/ifwl_pushbutton.h"
 
+#include "third_party/base/ptr_util.h"
 #include "xfa/fde/tto/fde_textout.h"
 #include "xfa/fwl/core/cfwl_message.h"
 #include "xfa/fwl/core/cfwl_themebackground.h"
@@ -22,20 +23,11 @@ IFWL_PushButton::IFWL_PushButton(const IFWL_App* app,
       m_iTTOAlign(FDE_TTOALIGNMENT_Center) {
   m_rtClient.Set(0, 0, 0, 0);
   m_rtCaption.Set(0, 0, 0, 0);
+
+  SetDelegate(pdfium::MakeUnique<CFWL_PushButtonImpDelegate>(this));
 }
 
 IFWL_PushButton::~IFWL_PushButton() {}
-
-void IFWL_PushButton::Initialize() {
-  IFWL_Widget::Initialize();
-  m_pDelegate = new CFWL_PushButtonImpDelegate(this);
-}
-
-void IFWL_PushButton::Finalize() {
-  delete m_pDelegate;
-  m_pDelegate = nullptr;
-  IFWL_Widget::Finalize();
-}
 
 FWL_Type IFWL_PushButton::GetClassID() const {
   return FWL_Type::PushButton;

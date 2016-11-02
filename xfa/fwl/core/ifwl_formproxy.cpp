@@ -6,25 +6,17 @@
 
 #include "xfa/fwl/core/ifwl_formproxy.h"
 
+#include "third_party/base/ptr_util.h"
 #include "xfa/fwl/core/fwl_noteimp.h"
 
 IFWL_FormProxy::IFWL_FormProxy(const IFWL_App* app,
                                const CFWL_WidgetImpProperties& properties,
                                IFWL_Widget* pOuter)
-    : IFWL_Form(app, properties, pOuter) {}
+    : IFWL_Form(app, properties, pOuter) {
+  SetDelegate(pdfium::MakeUnique<CFWL_FormProxyImpDelegate>(this));
+}
 
 IFWL_FormProxy::~IFWL_FormProxy() {}
-
-void IFWL_FormProxy::Initialize() {
-  IFWL_Widget::Initialize();
-  m_pDelegate = new CFWL_FormProxyImpDelegate(this);
-}
-
-void IFWL_FormProxy::Finalize() {
-  delete m_pDelegate;
-  m_pDelegate = nullptr;
-  IFWL_Widget::Finalize();
-}
 
 FWL_Type IFWL_FormProxy::GetClassID() const {
   return FWL_Type::FormProxy;

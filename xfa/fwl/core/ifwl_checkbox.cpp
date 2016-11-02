@@ -8,6 +8,7 @@
 
 #include <algorithm>
 
+#include "third_party/base/ptr_util.h"
 #include "xfa/fde/tto/fde_textout.h"
 #include "xfa/fwl/core/cfwl_message.h"
 #include "xfa/fwl/core/cfwl_themebackground.h"
@@ -34,20 +35,11 @@ IFWL_CheckBox::IFWL_CheckBox(const IFWL_App* app,
   m_rtBox.Reset();
   m_rtCaption.Reset();
   m_rtFocus.Reset();
+
+  SetDelegate(pdfium::MakeUnique<CFWL_CheckBoxImpDelegate>(this));
 }
 
 IFWL_CheckBox::~IFWL_CheckBox() {}
-
-void IFWL_CheckBox::Initialize() {
-  IFWL_Widget::Initialize();
-  m_pDelegate = new CFWL_CheckBoxImpDelegate(this);
-}
-
-void IFWL_CheckBox::Finalize() {
-  delete m_pDelegate;
-  m_pDelegate = nullptr;
-  IFWL_Widget::Finalize();
-}
 
 FWL_Type IFWL_CheckBox::GetClassID() const {
   return FWL_Type::CheckBox;

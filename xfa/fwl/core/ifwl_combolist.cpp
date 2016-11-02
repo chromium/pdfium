@@ -6,6 +6,7 @@
 
 #include "xfa/fwl/core/ifwl_combolist.h"
 
+#include "third_party/base/ptr_util.h"
 #include "xfa/fwl/core/ifwl_combobox.h"
 #include "xfa/fwl/core/ifwl_comboedit.h"
 
@@ -14,20 +15,7 @@ IFWL_ComboList::IFWL_ComboList(const IFWL_App* app,
                                IFWL_Widget* pOuter)
     : IFWL_ListBox(app, properties, pOuter), m_bNotifyOwner(TRUE) {
   ASSERT(pOuter);
-}
-
-void IFWL_ComboList::Initialize() {
-  IFWL_ListBox::Initialize();
-
-  // Delete the delegate that was created by IFWL_ListBox::Initialize ...
-  delete m_pDelegate;
-  m_pDelegate = new CFWL_ComboListImpDelegate(this);
-}
-
-void IFWL_ComboList::Finalize() {
-  delete m_pDelegate;
-  m_pDelegate = nullptr;
-  IFWL_ListBox::Finalize();
+  SetDelegate(pdfium::MakeUnique<CFWL_ComboListImpDelegate>(this));
 }
 
 int32_t IFWL_ComboList::MatchItem(const CFX_WideString& wsMatch) {
@@ -195,7 +183,7 @@ int32_t CFWL_ComboListImpDelegate::OnDropListMouseMove(CFWL_MsgMouse* pMsg) {
   } else if (m_pOwner->m_bNotifyOwner) {
     m_pOwner->ClientToOuter(pMsg->m_fx, pMsg->m_fy);
     IFWL_ComboBox* pOuter = static_cast<IFWL_ComboBox*>(m_pOwner->m_pOuter);
-    pOuter->m_pDelegate->OnProcessMessage(pMsg);
+    pOuter->GetDelegate()->OnProcessMessage(pMsg);
   }
   return 1;
 }
@@ -213,7 +201,7 @@ int32_t CFWL_ComboListImpDelegate::OnDropListLButtonUp(CFWL_MsgMouse* pMsg) {
   IFWL_ComboBox* pOuter = static_cast<IFWL_ComboBox*>(m_pOwner->m_pOuter);
   if (m_pOwner->m_bNotifyOwner) {
     m_pOwner->ClientToOuter(pMsg->m_fx, pMsg->m_fy);
-    pOuter->m_pDelegate->OnProcessMessage(pMsg);
+    pOuter->GetDelegate()->OnProcessMessage(pMsg);
   } else {
     if (m_pOwner->IsShowScrollBar(TRUE) && m_pOwner->m_pVertScrollBar) {
       CFX_RectF rect;
@@ -255,7 +243,7 @@ int32_t CFWL_ComboListImpDelegate::OnDropListKey(CFWL_MsgKey* pKey) {
   }
   if (bPropagate) {
     pKey->m_pDstTarget = m_pOwner->m_pOuter;
-    pOuter->m_pDelegate->OnProcessMessage(pKey);
+    pOuter->GetDelegate()->OnProcessMessage(pKey);
     return 1;
   }
   return 0;

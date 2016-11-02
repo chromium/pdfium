@@ -9,6 +9,8 @@
 #include <memory>
 #include <vector>
 
+#include "third_party/base/ptr_util.h"
+
 namespace {
 
 IFWL_Edit* ToEdit(IFWL_Widget* widget) {
@@ -28,11 +30,9 @@ CFWL_Edit::~CFWL_Edit() {}
 void CFWL_Edit::Initialize() {
   ASSERT(!m_pIface);
 
-  std::unique_ptr<IFWL_Edit> pEdit(new IFWL_Edit(
-      m_pApp, m_pProperties->MakeWidgetImpProperties(nullptr), nullptr));
-  pEdit->Initialize();
+  m_pIface = pdfium::MakeUnique<IFWL_Edit>(
+      m_pApp, m_pProperties->MakeWidgetImpProperties(nullptr), nullptr);
 
-  m_pIface = std::move(pEdit);
   CFWL_Widget::Initialize();
 }
 

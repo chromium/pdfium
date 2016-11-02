@@ -27,8 +27,6 @@ class IFWL_Caret : public IFWL_Widget {
   ~IFWL_Caret() override;
 
   // IFWL_Widget
-  void Initialize() override;
-  void Finalize() override;
   FWL_Type GetClassID() const override;
   FWL_Error DrawWidget(CFX_Graphics* pGraphics,
                        const CFX_Matrix* pMatrix = nullptr) override;
