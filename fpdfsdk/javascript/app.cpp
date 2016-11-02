@@ -291,9 +291,9 @@ FX_BOOL app::viewerVersion(IJS_Context* cc,
   if (!vp.IsGetting())
     return FALSE;
 #ifdef PDF_ENABLE_XFA
-  CJS_Context* pContext = (CJS_Context*)cc;
-  CPDFXFA_Document* pDoc = pContext->GetFormFillEnv()->GetXFADocument();
-  if (pDoc->GetDocType() == 1 || pDoc->GetDocType() == 2) {
+  CJS_Context* pJSContext = static_cast<CJS_Context*>(cc);
+  CPDFXFA_Context* pXFAContext = pJSContext->GetFormFillEnv()->GetXFAContext();
+  if (pXFAContext->GetDocType() == 1 || pXFAContext->GetDocType() == 2) {
     vp << JS_NUM_VIEWERVERSION_XFA;
     return TRUE;
   }

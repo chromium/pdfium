@@ -109,7 +109,7 @@ class CPDFSDK_FormFillEnvironment
     return m_pUnderlyingDoc ? m_pUnderlyingDoc->GetPDFDoc() : nullptr;
   }
 
-  CPDFXFA_Document* GetXFADocument() const { return m_pUnderlyingDoc; }
+  CPDFXFA_Context* GetXFAContext() const { return m_pUnderlyingDoc; }
   void ResetXFADocument() { m_pUnderlyingDoc = nullptr; }
 
   int GetPageViewCount() const { return m_pageMap.size(); }

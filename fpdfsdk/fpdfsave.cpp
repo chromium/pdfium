@@ -19,7 +19,7 @@
 #include "public/fpdf_edit.h"
 
 #ifdef PDF_ENABLE_XFA
-#include "fpdfsdk/fpdfxfa/cpdfxfa_document.h"
+#include "fpdfsdk/fpdfxfa/cpdfxfa_context.h"
 #include "fpdfsdk/fpdfxfa/cxfa_fwladaptertimermgr.h"
 #include "public/fpdf_formfill.h"
 #include "xfa/fxfa/cxfa_eventparam.h"
@@ -75,21 +75,21 @@ void CFX_IFileWrite::Release() {
 namespace {
 
 #ifdef PDF_ENABLE_XFA
-bool SaveXFADocumentData(CPDFXFA_Document* pDocument,
+bool SaveXFADocumentData(CPDFXFA_Context* pContext,
                          std::vector<ScopedFileStream>* fileList) {
-  if (!pDocument)
+  if (!pContext)
     return false;
 
-  if (pDocument->GetDocType() != DOCTYPE_DYNAMIC_XFA &&
-      pDocument->GetDocType() != DOCTYPE_STATIC_XFA)
+  if (pContext->GetDocType() != DOCTYPE_DYNAMIC_XFA &&
+      pContext->GetDocType() != DOCTYPE_STATIC_XFA)
     return true;
 
-  CXFA_FFDocView* pXFADocView = pDocument->GetXFADocView();
+  CXFA_FFDocView* pXFADocView = pContext->GetXFADocView();
   if (!pXFADocView)
     return true;
 
-  CPDF_Document* pPDFDocument = pDocument->GetPDFDoc();
-  if (!pDocument)
+  CPDF_Document* pPDFDocument = pContext->GetPDFDoc();
+  if (!pPDFDocument)
     return false;
 
   CPDF_Dictionary* pRoot = pPDFDocument->GetRoot();
@@ -124,8 +124,8 @@ bool SaveXFADocumentData(CPDFXFA_Document* pDocument,
     else if (pPDFObj->GetString() == "template")
       iTemplate = i + 1;
   }
-  std::unique_ptr<CXFA_ChecksumContext> pContext(new CXFA_ChecksumContext);
-  pContext->StartChecksum();
+  std::unique_ptr<CXFA_ChecksumContext> pChecksum(new CXFA_ChecksumContext);
+  pChecksum->StartChecksum();
 
   // template
   if (iTemplate > -1) {
@@ -135,7 +135,7 @@ bool SaveXFADocumentData(CPDFXFA_Document* pDocument,
     uint8_t* pData = (uint8_t*)streamAcc.GetData();
     uint32_t dwSize2 = streamAcc.GetSize();
     ScopedFileStream pTemplate(FX_CreateMemoryStream(pData, dwSize2));
-    pContext->UpdateChecksum(pTemplate.get());
+    pChecksum->UpdateChecksum(pTemplate.get());
   }
   CPDF_Stream* pFormStream = nullptr;
   CPDF_Stream* pDataSetsStream = nullptr;
@@ -172,8 +172,8 @@ bool SaveXFADocumentData(CPDFXFA_Document* pDocument,
                                            pDsfileWrite.get(), nullptr) &&
         pDsfileWrite->GetSize() > 0) {
       // Datasets
-      pContext->UpdateChecksum(pDsfileWrite.get());
-      pContext->FinishChecksum();
+      pChecksum->UpdateChecksum(pDsfileWrite.get());
+      pChecksum->FinishChecksum();
       CPDF_Dictionary* pDataDict =
           new CPDF_Dictionary(pPDFDocument->GetByteStringPool());
       if (iDataSetsIndex != -1) {
@@ -196,7 +196,7 @@ bool SaveXFADocumentData(CPDFXFA_Document* pDocument,
   {
     ScopedFileStream pfileWrite(FX_CreateMemoryStream());
     if (pXFADocView->GetDoc()->SavePackage(XFA_HASHCODE_Form, pfileWrite.get(),
-                                           pContext.get()) &&
+                                           pChecksum.get()) &&
         pfileWrite->GetSize() > 0) {
       CPDF_Dictionary* pDataDict =
           new CPDF_Dictionary(pPDFDocument->GetByteStringPool());
@@ -219,15 +219,15 @@ bool SaveXFADocumentData(CPDFXFA_Document* pDocument,
   return true;
 }
 
-bool SendPostSaveToXFADoc(CPDFXFA_Document* pDocument) {
-  if (!pDocument)
+bool SendPostSaveToXFADoc(CPDFXFA_Context* pContext) {
+  if (!pContext)
     return false;
 
-  if (pDocument->GetDocType() != DOCTYPE_DYNAMIC_XFA &&
-      pDocument->GetDocType() != DOCTYPE_STATIC_XFA)
+  if (pContext->GetDocType() != DOCTYPE_DYNAMIC_XFA &&
+      pContext->GetDocType() != DOCTYPE_STATIC_XFA)
     return true;
 
-  CXFA_FFDocView* pXFADocView = pDocument->GetXFADocView();
+  CXFA_FFDocView* pXFADocView = pContext->GetXFADocView();
   if (!pXFADocView)
     return false;
 
@@ -240,17 +240,17 @@ bool SendPostSaveToXFADoc(CPDFXFA_Document* pDocument) {
     pWidgetHander->ProcessEvent(pWidgetAcc, &preParam);
   }
   pXFADocView->UpdateDocView();
-  pDocument->ClearChangeMark();
+  pContext->ClearChangeMark();
   return true;
 }
 
-bool SendPreSaveToXFADoc(CPDFXFA_Document* pDocument,
+bool SendPreSaveToXFADoc(CPDFXFA_Context* pContext,
                          std::vector<ScopedFileStream>* fileList) {
-  if (pDocument->GetDocType() != DOCTYPE_DYNAMIC_XFA &&
-      pDocument->GetDocType() != DOCTYPE_STATIC_XFA)
+  if (pContext->GetDocType() != DOCTYPE_DYNAMIC_XFA &&
+      pContext->GetDocType() != DOCTYPE_STATIC_XFA)
     return true;
 
-  CXFA_FFDocView* pXFADocView = pDocument->GetXFADocView();
+  CXFA_FFDocView* pXFADocView = pContext->GetXFADocView();
   if (!pXFADocView)
     return true;
 
@@ -263,7 +263,7 @@ bool SendPreSaveToXFADoc(CPDFXFA_Document* pDocument,
     pWidgetHander->ProcessEvent(pWidgetAcc, &preParam);
   }
   pXFADocView->UpdateDocView();
-  return SaveXFADocumentData(pDocument, fileList);
+  return SaveXFADocumentData(pContext, fileList);
 }
 #endif  // PDF_ENABLE_XFA
 
@@ -277,9 +277,9 @@ bool FPDF_Doc_Save(FPDF_DOCUMENT document,
     return 0;
 
 #ifdef PDF_ENABLE_XFA
-  CPDFXFA_Document* pDoc = static_cast<CPDFXFA_Document*>(document);
+  CPDFXFA_Context* pContext = static_cast<CPDFXFA_Context*>(document);
   std::vector<ScopedFileStream> fileList;
-  SendPreSaveToXFADoc(pDoc, &fileList);
+  SendPreSaveToXFADoc(pContext, &fileList);
 #endif  // PDF_ENABLE_XFA
 
   if (flags < FPDF_INCREMENTAL || flags > FPDF_REMOVE_SECURITY)
@@ -297,7 +297,7 @@ bool FPDF_Doc_Save(FPDF_DOCUMENT document,
   pStreamWrite->Init(pFileWrite);
   bool bRet = FileMaker.Create(pStreamWrite, flags);
 #ifdef PDF_ENABLE_XFA
-  SendPostSaveToXFADoc(pDoc);
+  SendPostSaveToXFADoc(pContext);
 #endif  // PDF_ENABLE_XFA
   pStreamWrite->Release();
   return bRet;

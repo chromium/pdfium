@@ -10,8 +10,8 @@
 #include <utility>
 
 #include "xfa/fgas/font/fgas_stdfontmgr.h"
-#include "xfa/fwl/core/fwl_noteimp.h"
 #include "xfa/fwl/core/cfwl_widgetmgr.h"
+#include "xfa/fwl/core/fwl_noteimp.h"
 #include "xfa/fxfa/app/xfa_fwladapter.h"
 #include "xfa/fxfa/app/xfa_fwltheme.h"
 #include "xfa/fxfa/xfa_ffdoc.h"

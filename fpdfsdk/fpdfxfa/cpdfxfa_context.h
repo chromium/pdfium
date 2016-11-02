@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FPDFSDK_FPDFXFA_CPDFXFA_DOCUMENT_H_
-#define FPDFSDK_FPDFXFA_CPDFXFA_DOCUMENT_H_
+#ifndef FPDFSDK_FPDFXFA_CPDFXFA_CONTEXT_H_
+#define FPDFSDK_FPDFXFA_CPDFXFA_CONTEXT_H_
 
 #include <memory>
 
@@ -27,10 +27,10 @@ enum LoadStatus {
   FXFA_LOADSTATUS_CLOSED
 };
 
-class CPDFXFA_Document : public IXFA_AppProvider {
+class CPDFXFA_Context : public IXFA_AppProvider {
  public:
-  CPDFXFA_Document(std::unique_ptr<CPDF_Document> pPDFDoc);
-  ~CPDFXFA_Document() override;
+  CPDFXFA_Context(std::unique_ptr<CPDF_Document> pPDFDoc);
+  ~CPDFXFA_Context() override;
 
   FX_BOOL LoadXFADoc();
   CPDF_Document* GetPDFDoc() { return m_pPDFDoc.get(); }
@@ -102,7 +102,7 @@ class CPDFXFA_Document : public IXFA_AppProvider {
   std::unique_ptr<CPDF_Document> m_pPDFDoc;
   std::unique_ptr<CXFA_FFDoc> m_pXFADoc;
   CPDFSDK_FormFillEnvironment* m_pFormFillEnv;  // not owned.
-  CXFA_FFDocView* m_pXFADocView;  // not owned.
+  CXFA_FFDocView* m_pXFADocView;                // not owned.
   std::unique_ptr<CXFA_FFApp> m_pXFAApp;
   std::unique_ptr<CJS_Runtime> m_pRuntime;
   CFX_ArrayTemplate<CPDFXFA_Page*> m_XFAPageList;
@@ -113,4 +113,4 @@ class CPDFXFA_Document : public IXFA_AppProvider {
   CPDFXFA_DocEnvironment m_DocEnv;
 };
 
-#endif  // FPDFSDK_FPDFXFA_CPDFXFA_DOCUMENT_H_
+#endif  // FPDFSDK_FPDFXFA_CPDFXFA_CONTEXT_H_

@@ -29,7 +29,7 @@
 #include "third_party/base/stl_util.h"
 
 #ifdef PDF_ENABLE_XFA
-#include "fpdfsdk/fpdfxfa/cpdfxfa_document.h"
+#include "fpdfsdk/fpdfxfa/cpdfxfa_context.h"
 #include "fpdfsdk/fpdfxfa/cpdfxfa_page.h"
 #endif  // PDF_ENABLE_XFA
 
@@ -121,7 +121,7 @@ DLLEXPORT FPDF_PAGE STDCALL FPDFPage_New(FPDF_DOCUMENT document,
 
 #ifdef PDF_ENABLE_XFA
   CPDFXFA_Page* pPage =
-      new CPDFXFA_Page((CPDFXFA_Document*)document, page_index);
+      new CPDFXFA_Page(static_cast<CPDFXFA_Context*>(document), page_index);
   pPage->LoadPDFPage(pPageDict);
 #else   // PDF_ENABLE_XFA
   CPDF_Page* pPage = new CPDF_Page(pDoc, pPageDict, true);

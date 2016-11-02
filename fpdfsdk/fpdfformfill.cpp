@@ -27,7 +27,7 @@
 #include "third_party/base/stl_util.h"
 
 #ifdef PDF_ENABLE_XFA
-#include "fpdfsdk/fpdfxfa/cpdfxfa_document.h"
+#include "fpdfsdk/fpdfxfa/cpdfxfa_context.h"
 #include "fpdfsdk/fpdfxfa/cpdfxfa_page.h"
 #include "xfa/fxfa/xfa_ffdocview.h"
 #include "xfa/fxfa/xfa_ffpageview.h"
@@ -86,10 +86,10 @@ void FFLCommon(FPDF_FORMHANDLE hHandle,
     return;
 
 #ifdef PDF_ENABLE_XFA
-  CPDFXFA_Document* pDocument = pPage->GetDocument();
-  if (!pDocument)
+  CPDFXFA_Context* pContext = pPage->GetContext();
+  if (!pContext)
     return;
-  CPDF_Document* pPDFDoc = pDocument->GetPDFDoc();
+  CPDF_Document* pPDFDoc = pContext->GetPDFDoc();
   if (!pPDFDoc)
     return;
   CPDFSDK_FormFillEnvironment* pFormFillEnv =
@@ -245,7 +245,7 @@ FPDFDOC_InitFormFillEnvironment(FPDF_DOCUMENT document,
     return nullptr;
 
 #ifdef PDF_ENABLE_XFA
-  // If the CPDFXFA_Document has a FormFillEnvironment already then we've done
+  // If the CPDFXFA_Context has a FormFillEnvironment already then we've done
   // this and can just return the old Env. Otherwise, we'll end up setting a new
   // environment into the XFADocument and, that could get weird.
   if (pDocument->GetFormFillEnv())
@@ -276,8 +276,8 @@ FPDFDOC_ExitFormFillEnvironment(FPDF_FORMHANDLE hHandle) {
   pFormFillEnv->ClearAllFocusedAnnots();
   // If the document was closed first, it's possible the XFA document
   // is now a nullptr.
-  if (pFormFillEnv->GetXFADocument())
-    pFormFillEnv->GetXFADocument()->SetFormFillEnv(nullptr);
+  if (pFormFillEnv->GetXFAContext())
+    pFormFillEnv->GetXFAContext()->SetFormFillEnv(nullptr);
 #endif  // PDF_ENABLE_XFA
 
   delete pFormFillEnv;
@@ -425,21 +425,22 @@ DLLEXPORT void STDCALL FPDF_Widget_Undo(FPDF_DOCUMENT document,
   if (!hWidget || !document)
     return;
 
-  CPDFXFA_Document* pDocument = (CPDFXFA_Document*)document;
-  if (pDocument->GetDocType() != XFA_DOCTYPE_Dynamic &&
-      pDocument->GetDocType() != XFA_DOCTYPE_Static)
+  CPDFXFA_Context* pContext = static_cast<CPDFXFA_Context*>(document);
+  if (pContext->GetDocType() != XFA_DOCTYPE_Dynamic &&
+      pContext->GetDocType() != XFA_DOCTYPE_Static)
     return;
 
   static_cast<CXFA_FFWidget*>(hWidget)->Undo();
 }
+
 DLLEXPORT void STDCALL FPDF_Widget_Redo(FPDF_DOCUMENT document,
                                         FPDF_WIDGET hWidget) {
   if (!hWidget || !document)
     return;
 
-  CPDFXFA_Document* pDocument = (CPDFXFA_Document*)document;
-  if (pDocument->GetDocType() != XFA_DOCTYPE_Dynamic &&
-      pDocument->GetDocType() != XFA_DOCTYPE_Static)
+  CPDFXFA_Context* pContext = static_cast<CPDFXFA_Context*>(document);
+  if (pContext->GetDocType() != XFA_DOCTYPE_Dynamic &&
+      pContext->GetDocType() != XFA_DOCTYPE_Static)
     return;
 
   static_cast<CXFA_FFWidget*>(hWidget)->Redo();
@@ -450,13 +451,14 @@ DLLEXPORT void STDCALL FPDF_Widget_SelectAll(FPDF_DOCUMENT document,
   if (!hWidget || !document)
     return;
 
-  CPDFXFA_Document* pDocument = (CPDFXFA_Document*)document;
-  if (pDocument->GetDocType() != XFA_DOCTYPE_Dynamic &&
-      pDocument->GetDocType() != XFA_DOCTYPE_Static)
+  CPDFXFA_Context* pContext = static_cast<CPDFXFA_Context*>(document);
+  if (pContext->GetDocType() != XFA_DOCTYPE_Dynamic &&
+      pContext->GetDocType() != XFA_DOCTYPE_Static)
     return;
 
   static_cast<CXFA_FFWidget*>(hWidget)->SelectAll();
 }
+
 DLLEXPORT void STDCALL FPDF_Widget_Copy(FPDF_DOCUMENT document,
                                         FPDF_WIDGET hWidget,
                                         FPDF_WIDESTRING wsText,
@@ -464,9 +466,9 @@ DLLEXPORT void STDCALL FPDF_Widget_Copy(FPDF_DOCUMENT document,
   if (!hWidget || !document)
     return;
 
-  CPDFXFA_Document* pDocument = (CPDFXFA_Document*)document;
-  if (pDocument->GetDocType() != XFA_DOCTYPE_Dynamic &&
-      pDocument->GetDocType() != XFA_DOCTYPE_Static)
+  CPDFXFA_Context* pContext = static_cast<CPDFXFA_Context*>(document);
+  if (pContext->GetDocType() != XFA_DOCTYPE_Dynamic &&
+      pContext->GetDocType() != XFA_DOCTYPE_Static)
     return;
 
   CFX_WideString wsCpText;
@@ -496,9 +498,9 @@ DLLEXPORT void STDCALL FPDF_Widget_Cut(FPDF_DOCUMENT document,
   if (!hWidget || !document)
     return;
 
-  CPDFXFA_Document* pDocument = (CPDFXFA_Document*)document;
-  if (pDocument->GetDocType() != XFA_DOCTYPE_Dynamic &&
-      pDocument->GetDocType() != XFA_DOCTYPE_Static)
+  CPDFXFA_Context* pContext = static_cast<CPDFXFA_Context*>(document);
+  if (pContext->GetDocType() != XFA_DOCTYPE_Dynamic &&
+      pContext->GetDocType() != XFA_DOCTYPE_Static)
     return;
 
   CFX_WideString wsCpText;
@@ -528,9 +530,9 @@ DLLEXPORT void STDCALL FPDF_Widget_Paste(FPDF_DOCUMENT document,
   if (!hWidget || !document)
     return;
 
-  CPDFXFA_Document* pDocument = (CPDFXFA_Document*)document;
-  if (pDocument->GetDocType() != XFA_DOCTYPE_Dynamic &&
-      pDocument->GetDocType() != XFA_DOCTYPE_Static)
+  CPDFXFA_Context* pContext = static_cast<CPDFXFA_Context*>(document);
+  if (pContext->GetDocType() != XFA_DOCTYPE_Dynamic &&
+      pContext->GetDocType() != XFA_DOCTYPE_Static)
     return;
 
   CFX_WideString wstr = CFX_WideString::FromUTF16LE(wsText, size);
@@ -546,9 +548,9 @@ FPDF_Widget_ReplaceSpellCheckWord(FPDF_DOCUMENT document,
   if (!hWidget || !document)
     return;
 
-  CPDFXFA_Document* pDocument = (CPDFXFA_Document*)document;
-  if (pDocument->GetDocType() != XFA_DOCTYPE_Dynamic &&
-      pDocument->GetDocType() != XFA_DOCTYPE_Static)
+  CPDFXFA_Context* pContext = static_cast<CPDFXFA_Context*>(document);
+  if (pContext->GetDocType() != XFA_DOCTYPE_Dynamic &&
+      pContext->GetDocType() != XFA_DOCTYPE_Static)
     return;
 
   CFX_PointF ptPopup;
@@ -567,9 +569,9 @@ FPDF_Widget_GetSpellCheckWords(FPDF_DOCUMENT document,
   if (!hWidget || !document)
     return;
 
-  CPDFXFA_Document* pDocument = (CPDFXFA_Document*)document;
-  if (pDocument->GetDocType() != XFA_DOCTYPE_Dynamic &&
-      pDocument->GetDocType() != XFA_DOCTYPE_Static)
+  CPDFXFA_Context* pContext = static_cast<CPDFXFA_Context*>(document);
+  if (pContext->GetDocType() != XFA_DOCTYPE_Dynamic &&
+      pContext->GetDocType() != XFA_DOCTYPE_Static)
     return;
 
   std::vector<CFX_ByteString>* sSuggestWords = new std::vector<CFX_ByteString>;

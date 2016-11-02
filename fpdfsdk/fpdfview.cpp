@@ -37,7 +37,7 @@
 #include "third_party/base/ptr_util.h"
 
 #ifdef PDF_ENABLE_XFA
-#include "fpdfsdk/fpdfxfa/cpdfxfa_document.h"
+#include "fpdfsdk/fpdfxfa/cpdfxfa_context.h"
 #include "fpdfsdk/fpdfxfa/cpdfxfa_page.h"
 #include "fpdfsdk/fpdfxfa/cxfa_fwladaptertimermgr.h"
 #include "public/fpdf_formfill.h"
@@ -71,7 +71,7 @@ CPDF_Document* CPDFDocumentFromFPDFDocument(FPDF_DOCUMENT doc) {
 FPDF_DOCUMENT FPDFDocumentFromCPDFDocument(CPDF_Document* doc) {
 #ifdef PDF_ENABLE_XFA
   return doc ? FPDFDocumentFromUnderlying(
-                   new CPDFXFA_Document(pdfium::WrapUnique(doc)))
+                   new CPDFXFA_Context(pdfium::WrapUnique(doc)))
              : nullptr;
 #else   // PDF_ENABLE_XFA
   return FPDFDocumentFromUnderlying(doc);
@@ -352,7 +352,7 @@ DLLEXPORT FPDF_BOOL STDCALL FPDF_HasXFAField(FPDF_DOCUMENT document,
     return FALSE;
 
   CPDF_Document* pdfDoc =
-      (static_cast<CPDFXFA_Document*>(document))->GetPDFDoc();
+      (static_cast<CPDFXFA_Context*>(document))->GetPDFDoc();
   if (!pdfDoc)
     return FALSE;
 
@@ -374,7 +374,7 @@ DLLEXPORT FPDF_BOOL STDCALL FPDF_HasXFAField(FPDF_DOCUMENT document,
 }
 
 DLLEXPORT FPDF_BOOL STDCALL FPDF_LoadXFA(FPDF_DOCUMENT document) {
-  return document && (static_cast<CPDFXFA_Document*>(document))->LoadXFADoc();
+  return document && (static_cast<CPDFXFA_Context*>(document))->LoadXFADoc();
 }
 #endif  // PDF_ENABLE_XFA
 

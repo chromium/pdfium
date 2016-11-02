@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "fpdfsdk/fpdfxfa/cpdfxfa_document.h"
+#include "fpdfsdk/fpdfxfa/cpdfxfa_context.h"
 
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
@@ -30,7 +30,7 @@ extern void SetLastError(int err);
 extern int GetLastError();
 #endif
 
-CPDFXFA_Document::CPDFXFA_Document(std::unique_ptr<CPDF_Document> pPDFDoc)
+CPDFXFA_Context::CPDFXFA_Context(std::unique_ptr<CPDF_Document> pPDFDoc)
     : m_iDocType(DOCTYPE_PDF),
       m_pPDFDoc(std::move(pPDFDoc)),
       m_pFormFillEnv(nullptr),
@@ -42,7 +42,7 @@ CPDFXFA_Document::CPDFXFA_Document(std::unique_ptr<CPDF_Document> pPDFDoc)
   m_pXFAApp->SetDefaultFontMgr(pdfium::MakeUnique<CXFA_DefFontMgr>());
 }
 
-CPDFXFA_Document::~CPDFXFA_Document() {
+CPDFXFA_Context::~CPDFXFA_Context() {
   m_nLoadStatus = FXFA_LOADSTATUS_CLOSING;
 
   // Must happen before we remove the form fill environment.
@@ -59,7 +59,7 @@ CPDFXFA_Document::~CPDFXFA_Document() {
   m_nLoadStatus = FXFA_LOADSTATUS_CLOSED;
 }
 
-void CPDFXFA_Document::CloseXFADoc() {
+void CPDFXFA_Context::CloseXFADoc() {
   if (!m_pXFADoc)
     return;
   m_pXFADoc->CloseDoc();
@@ -67,7 +67,7 @@ void CPDFXFA_Document::CloseXFADoc() {
   m_pXFADocView = nullptr;
 }
 
-void CPDFXFA_Document::SetFormFillEnv(
+void CPDFXFA_Context::SetFormFillEnv(
     CPDFSDK_FormFillEnvironment* pFormFillEnv) {
   // The layout data can have pointers back into the script context. That
   // context will be different if the form fill environment closes, so, force
@@ -78,7 +78,7 @@ void CPDFXFA_Document::SetFormFillEnv(
   m_pFormFillEnv = pFormFillEnv;
 }
 
-FX_BOOL CPDFXFA_Document::LoadXFADoc() {
+FX_BOOL CPDFXFA_Context::LoadXFADoc() {
   m_nLoadStatus = FXFA_LOADSTATUS_LOADING;
 
   if (!m_pPDFDoc)
@@ -131,7 +131,7 @@ FX_BOOL CPDFXFA_Document::LoadXFADoc() {
   return TRUE;
 }
 
-int CPDFXFA_Document::GetPageCount() const {
+int CPDFXFA_Context::GetPageCount() const {
   if (!m_pPDFDoc && !m_pXFADoc)
     return 0;
 
@@ -148,7 +148,7 @@ int CPDFXFA_Document::GetPageCount() const {
   }
 }
 
-CPDFXFA_Page* CPDFXFA_Document::GetXFAPage(int page_index) {
+CPDFXFA_Page* CPDFXFA_Context::GetXFAPage(int page_index) {
   if (page_index < 0)
     return nullptr;
 
@@ -174,7 +174,7 @@ CPDFXFA_Page* CPDFXFA_Document::GetXFAPage(int page_index) {
   return pPage;
 }
 
-CPDFXFA_Page* CPDFXFA_Document::GetXFAPage(CXFA_FFPageView* pPage) const {
+CPDFXFA_Page* CPDFXFA_Context::GetXFAPage(CXFA_FFPageView* pPage) const {
   if (!pPage)
     return nullptr;
 
@@ -196,7 +196,7 @@ CPDFXFA_Page* CPDFXFA_Document::GetXFAPage(CXFA_FFPageView* pPage) const {
   return nullptr;
 }
 
-void CPDFXFA_Document::DeletePage(int page_index) {
+void CPDFXFA_Context::DeletePage(int page_index) {
   // Delete from the document first because, if GetPage was never called for
   // this |page_index| then |m_XFAPageList| may have size < |page_index| even
   // if it's a valid page in the document.
@@ -210,16 +210,16 @@ void CPDFXFA_Document::DeletePage(int page_index) {
     pPage->Release();
 }
 
-void CPDFXFA_Document::RemovePage(CPDFXFA_Page* page) {
+void CPDFXFA_Context::RemovePage(CPDFXFA_Page* page) {
   m_XFAPageList.SetAt(page->GetPageIndex(), nullptr);
 }
 
-void CPDFXFA_Document::ClearChangeMark() {
+void CPDFXFA_Context::ClearChangeMark() {
   if (m_pFormFillEnv)
     m_pFormFillEnv->ClearChangeMark();
 }
 
-v8::Isolate* CPDFXFA_Document::GetJSERuntime() const {
+v8::Isolate* CPDFXFA_Context::GetJSERuntime() const {
   if (!m_pFormFillEnv)
     return nullptr;
 
@@ -229,30 +229,30 @@ v8::Isolate* CPDFXFA_Document::GetJSERuntime() const {
   return runtime->GetIsolate();
 }
 
-void CPDFXFA_Document::GetAppName(CFX_WideString& wsName) {
+void CPDFXFA_Context::GetAppName(CFX_WideString& wsName) {
   if (m_pFormFillEnv)
     wsName = m_pFormFillEnv->FFI_GetAppName();
 }
 
-void CPDFXFA_Document::GetLanguage(CFX_WideString& wsLanguage) {
+void CPDFXFA_Context::GetLanguage(CFX_WideString& wsLanguage) {
   if (m_pFormFillEnv)
     wsLanguage = m_pFormFillEnv->GetLanguage();
 }
 
-void CPDFXFA_Document::GetPlatform(CFX_WideString& wsPlatform) {
+void CPDFXFA_Context::GetPlatform(CFX_WideString& wsPlatform) {
   if (m_pFormFillEnv)
     wsPlatform = m_pFormFillEnv->GetPlatform();
 }
 
-void CPDFXFA_Document::Beep(uint32_t dwType) {
+void CPDFXFA_Context::Beep(uint32_t dwType) {
   if (m_pFormFillEnv)
     m_pFormFillEnv->JS_appBeep(dwType);
 }
 
-int32_t CPDFXFA_Document::MsgBox(const CFX_WideString& wsMessage,
-                                 const CFX_WideString& wsTitle,
-                                 uint32_t dwIconType,
-                                 uint32_t dwButtonType) {
+int32_t CPDFXFA_Context::MsgBox(const CFX_WideString& wsMessage,
+                                const CFX_WideString& wsTitle,
+                                uint32_t dwIconType,
+                                uint32_t dwButtonType) {
   if (!m_pFormFillEnv)
     return -1;
 
@@ -301,10 +301,10 @@ int32_t CPDFXFA_Document::MsgBox(const CFX_WideString& wsMessage,
   return XFA_IDYes;
 }
 
-CFX_WideString CPDFXFA_Document::Response(const CFX_WideString& wsQuestion,
-                                          const CFX_WideString& wsTitle,
-                                          const CFX_WideString& wsDefaultAnswer,
-                                          FX_BOOL bMark) {
+CFX_WideString CPDFXFA_Context::Response(const CFX_WideString& wsQuestion,
+                                         const CFX_WideString& wsTitle,
+                                         const CFX_WideString& wsDefaultAnswer,
+                                         FX_BOOL bMark) {
   CFX_WideString wsAnswer;
   if (!m_pFormFillEnv)
     return wsAnswer;
@@ -326,18 +326,18 @@ CFX_WideString CPDFXFA_Document::Response(const CFX_WideString& wsQuestion,
   return wsAnswer;
 }
 
-IFX_SeekableReadStream* CPDFXFA_Document::DownloadURL(
+IFX_SeekableReadStream* CPDFXFA_Context::DownloadURL(
     const CFX_WideString& wsURL) {
   return m_pFormFillEnv ? m_pFormFillEnv->DownloadFromURL(wsURL.c_str())
                         : nullptr;
 }
 
-FX_BOOL CPDFXFA_Document::PostRequestURL(const CFX_WideString& wsURL,
-                                         const CFX_WideString& wsData,
-                                         const CFX_WideString& wsContentType,
-                                         const CFX_WideString& wsEncode,
-                                         const CFX_WideString& wsHeader,
-                                         CFX_WideString& wsResponse) {
+FX_BOOL CPDFXFA_Context::PostRequestURL(const CFX_WideString& wsURL,
+                                        const CFX_WideString& wsData,
+                                        const CFX_WideString& wsContentType,
+                                        const CFX_WideString& wsEncode,
+                                        const CFX_WideString& wsHeader,
+                                        CFX_WideString& wsResponse) {
   if (!m_pFormFillEnv)
     return FALSE;
 
@@ -347,15 +347,15 @@ FX_BOOL CPDFXFA_Document::PostRequestURL(const CFX_WideString& wsURL,
   return TRUE;
 }
 
-FX_BOOL CPDFXFA_Document::PutRequestURL(const CFX_WideString& wsURL,
-                                        const CFX_WideString& wsData,
-                                        const CFX_WideString& wsEncode) {
+FX_BOOL CPDFXFA_Context::PutRequestURL(const CFX_WideString& wsURL,
+                                       const CFX_WideString& wsData,
+                                       const CFX_WideString& wsEncode) {
   return m_pFormFillEnv &&
          m_pFormFillEnv->PutRequestURL(wsURL.c_str(), wsData.c_str(),
                                        wsEncode.c_str());
 }
 
-void CPDFXFA_Document::LoadString(int32_t iStringID, CFX_WideString& wsString) {
+void CPDFXFA_Context::LoadString(int32_t iStringID, CFX_WideString& wsString) {
   switch (iStringID) {
     case XFA_IDS_ValidateFailed:
       wsString = L"%s validation failed";
@@ -452,7 +452,7 @@ void CPDFXFA_Document::LoadString(int32_t iStringID, CFX_WideString& wsString) {
   }
 }
 
-IFWL_AdapterTimerMgr* CPDFXFA_Document::GetTimerMgr() {
+IFWL_AdapterTimerMgr* CPDFXFA_Context::GetTimerMgr() {
   CXFA_FWLAdapterTimerMgr* pAdapter = nullptr;
   if (m_pFormFillEnv)
     pAdapter = new CXFA_FWLAdapterTimerMgr(m_pFormFillEnv);

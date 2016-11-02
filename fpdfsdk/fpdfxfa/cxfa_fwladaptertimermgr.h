@@ -9,7 +9,7 @@
 
 #include <vector>
 
-#include "fpdfsdk/fpdfxfa/cpdfxfa_document.h"
+#include "fpdfsdk/fpdfxfa/cpdfxfa_context.h"
 #include "xfa/fwl/core/ifwl_adaptertimermgr.h"
 
 struct CFWL_TimerInfo;

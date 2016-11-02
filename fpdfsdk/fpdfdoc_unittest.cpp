@@ -19,7 +19,7 @@
 #include "third_party/base/ptr_util.h"
 
 #ifdef PDF_ENABLE_XFA
-#include "fpdfsdk/fpdfxfa/cpdfxfa_document.h"
+#include "fpdfsdk/fpdfxfa/cpdfxfa_context.h"
 #endif  // PDF_ENABLE_XFA
 
 class CPDF_TestDocument : public CPDF_Document {
@@ -31,10 +31,10 @@ class CPDF_TestDocument : public CPDF_Document {
 };
 
 #ifdef PDF_ENABLE_XFA
-class CPDF_TestXFADocument : public CPDFXFA_Document {
+class CPDF_TestXFAContext : public CPDFXFA_Context {
  public:
-  CPDF_TestXFADocument()
-      : CPDFXFA_Document(pdfium::MakeUnique<CPDF_TestDocument>()) {}
+  CPDF_TestXFAContext()
+      : CPDFXFA_Context(pdfium::MakeUnique<CPDF_TestDocument>()) {}
 
   void SetRoot(CPDF_Dictionary* root) {
     reinterpret_cast<CPDF_TestDocument*>(GetPDFDoc())->SetRoot(root);
@@ -42,7 +42,7 @@ class CPDF_TestXFADocument : public CPDFXFA_Document {
 
   CPDF_IndirectObjectHolder* GetHolder() { return GetPDFDoc(); }
 };
-using CPDF_TestPdfDocument = CPDF_TestXFADocument;
+using CPDF_TestPdfDocument = CPDF_TestXFAContext;
 #else   // PDF_ENABLE_XFA
 using CPDF_TestPdfDocument = CPDF_TestDocument;
 #endif  // PDF_ENABLE_XFA

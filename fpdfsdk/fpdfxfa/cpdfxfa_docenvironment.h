@@ -10,12 +10,12 @@
 #include "public/fpdfview.h"
 #include "xfa/fxfa/fxfa.h"
 
-class CPDFXFA_Document;
+class CPDFXFA_Context;
 class IJS_Context;
 
 class CPDFXFA_DocEnvironment : public IXFA_DocEnvironment {
  public:
-  CPDFXFA_DocEnvironment(CPDFXFA_Document*);
+  CPDFXFA_DocEnvironment(CPDFXFA_Context*);
   ~CPDFXFA_DocEnvironment() override;
 
   // IXFA_DocEnvironment
@@ -105,7 +105,7 @@ class CPDFXFA_DocEnvironment : public IXFA_DocEnvironment {
                            FPDF_DWORD flag);
   void ToXFAContentFlags(CFX_WideString csSrcContent, FPDF_DWORD& flag);
 
-  CPDFXFA_Document* const m_pDocument;  // Not owned;
+  CPDFXFA_Context* const m_pContext;  // Not owned;
   IJS_Context* m_pJSContext;
 };
 

@@ -8,7 +8,7 @@
 
 #include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
-#include "fpdfsdk/fpdfxfa/cpdfxfa_document.h"
+#include "fpdfsdk/fpdfxfa/cpdfxfa_context.h"
 #include "fpdfsdk/fpdfxfa/cxfa_fwladaptertimermgr.h"
 #include "fpdfsdk/fsdk_define.h"
 #include "public/fpdf_formfill.h"
@@ -16,22 +16,22 @@
 #include "xfa/fxfa/xfa_ffdocview.h"
 #include "xfa/fxfa/xfa_ffpageview.h"
 
-CPDFXFA_Page::CPDFXFA_Page(CPDFXFA_Document* pDoc, int page_index)
+CPDFXFA_Page::CPDFXFA_Page(CPDFXFA_Context* pContext, int page_index)
     : m_pXFAPageView(nullptr),
-      m_pDocument(pDoc),
+      m_pContext(pContext),
       m_iPageIndex(page_index),
       m_iRef(1) {}
 
 CPDFXFA_Page::~CPDFXFA_Page() {
-  if (m_pDocument)
-    m_pDocument->RemovePage(this);
+  if (m_pContext)
+    m_pContext->RemovePage(this);
 }
 
 FX_BOOL CPDFXFA_Page::LoadPDFPage() {
-  if (!m_pDocument)
+  if (!m_pContext)
     return FALSE;
 
-  CPDF_Document* pPDFDoc = m_pDocument->GetPDFDoc();
+  CPDF_Document* pPDFDoc = m_pContext->GetPDFDoc();
   if (!pPDFDoc)
     return FALSE;
 
@@ -47,14 +47,14 @@ FX_BOOL CPDFXFA_Page::LoadPDFPage() {
 }
 
 FX_BOOL CPDFXFA_Page::LoadXFAPageView() {
-  if (!m_pDocument)
+  if (!m_pContext)
     return FALSE;
 
-  CXFA_FFDoc* pXFADoc = m_pDocument->GetXFADoc();
+  CXFA_FFDoc* pXFADoc = m_pContext->GetXFADoc();
   if (!pXFADoc)
     return FALSE;
 
-  CXFA_FFDocView* pXFADocView = m_pDocument->GetXFADocView();
+  CXFA_FFDocView* pXFADocView = m_pContext->GetXFADocView();
   if (!pXFADocView)
     return FALSE;
 
@@ -67,10 +67,10 @@ FX_BOOL CPDFXFA_Page::LoadXFAPageView() {
 }
 
 FX_BOOL CPDFXFA_Page::LoadPage() {
-  if (!m_pDocument || m_iPageIndex < 0)
+  if (!m_pContext || m_iPageIndex < 0)
     return FALSE;
 
-  int iDocType = m_pDocument->GetDocType();
+  int iDocType = m_pContext->GetDocType();
   switch (iDocType) {
     case DOCTYPE_PDF:
     case DOCTYPE_STATIC_XFA: {
@@ -85,11 +85,11 @@ FX_BOOL CPDFXFA_Page::LoadPage() {
 }
 
 FX_BOOL CPDFXFA_Page::LoadPDFPage(CPDF_Dictionary* pageDict) {
-  if (!m_pDocument || m_iPageIndex < 0 || !pageDict)
+  if (!m_pContext || m_iPageIndex < 0 || !pageDict)
     return FALSE;
 
   m_pPDFPage =
-      pdfium::MakeUnique<CPDF_Page>(m_pDocument->GetPDFDoc(), pageDict, true);
+      pdfium::MakeUnique<CPDF_Page>(m_pContext->GetPDFDoc(), pageDict, true);
   m_pPDFPage->ParseContent();
   return TRUE;
 }
@@ -98,7 +98,7 @@ FX_FLOAT CPDFXFA_Page::GetPageWidth() const {
   if (!m_pPDFPage && !m_pXFAPageView)
     return 0.0f;
 
-  int nDocType = m_pDocument->GetDocType();
+  int nDocType = m_pContext->GetDocType();
   switch (nDocType) {
     case DOCTYPE_DYNAMIC_XFA: {
       if (m_pXFAPageView) {
@@ -123,7 +123,7 @@ FX_FLOAT CPDFXFA_Page::GetPageHeight() const {
   if (!m_pPDFPage && !m_pXFAPageView)
     return 0.0f;
 
-  int nDocType = m_pDocument->GetDocType();
+  int nDocType = m_pContext->GetDocType();
   switch (nDocType) {
     case DOCTYPE_PDF:
     case DOCTYPE_STATIC_XFA: {
@@ -203,7 +203,7 @@ void CPDFXFA_Page::GetDisplayMatrix(CFX_Matrix& matrix,
   if (!m_pPDFPage && !m_pXFAPageView)
     return;
 
-  int nDocType = m_pDocument->GetDocType();
+  int nDocType = m_pContext->GetDocType();
   switch (nDocType) {
     case DOCTYPE_DYNAMIC_XFA: {
       if (m_pXFAPageView) {

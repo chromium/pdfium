@@ -12,7 +12,7 @@
 #include "public/fpdfview.h"
 
 #ifdef PDF_ENABLE_XFA
-#include "fpdfsdk/fpdfxfa/cpdfxfa_document.h"
+#include "fpdfsdk/fpdfxfa/cpdfxfa_context.h"
 #endif  // PDF_ENABLE_XFA
 
 #ifdef _WIN32
@@ -71,7 +71,7 @@ class CFPDF_FileStream : public IFX_SeekableStream {
 using UnderlyingDocumentType = CPDF_Document;
 using UnderlyingPageType = CPDF_Page;
 #else   // PDF_ENABLE_XFA
-using UnderlyingDocumentType = CPDFXFA_Document;
+using UnderlyingDocumentType = CPDFXFA_Context;
 using UnderlyingPageType = CPDFXFA_Page;
 #endif  // PDF_ENABLE_XFA
 

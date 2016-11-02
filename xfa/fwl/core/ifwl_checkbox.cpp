@@ -14,8 +14,8 @@
 #include "xfa/fwl/core/cfwl_themebackground.h"
 #include "xfa/fwl/core/cfwl_themetext.h"
 #include "xfa/fwl/core/cfwl_widgetmgr.h"
-#include "xfa/fwl/core/ifwl_app.h"
 #include "xfa/fwl/core/fwl_noteimp.h"
+#include "xfa/fwl/core/ifwl_app.h"
 #include "xfa/fwl/core/ifwl_checkbox.h"
 #include "xfa/fwl/core/ifwl_themeprovider.h"
 
