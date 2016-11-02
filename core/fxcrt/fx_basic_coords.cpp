@@ -42,18 +42,18 @@ void FX_RECT::Union(const FX_RECT& other_rect) {
   bottom = bottom > other.bottom ? bottom : other.bottom;
   top = top < other.top ? top : other.top;
 }
-FX_BOOL GetIntersection(FX_FLOAT low1,
-                        FX_FLOAT high1,
-                        FX_FLOAT low2,
-                        FX_FLOAT high2,
-                        FX_FLOAT& interlow,
-                        FX_FLOAT& interhigh) {
+bool GetIntersection(FX_FLOAT low1,
+                     FX_FLOAT high1,
+                     FX_FLOAT low2,
+                     FX_FLOAT high2,
+                     FX_FLOAT& interlow,
+                     FX_FLOAT& interhigh) {
   if (low1 >= high2 || low2 >= high1) {
-    return FALSE;
+    return false;
   }
   interlow = low1 > low2 ? low1 : low2;
   interhigh = high1 > high2 ? high2 : high1;
-  return TRUE;
+  return true;
 }
 extern "C" int FXSYS_round(FX_FLOAT d) {
   if (d < (FX_FLOAT)INT_MIN) {
@@ -290,35 +290,35 @@ void CFX_Matrix::Concat(FX_FLOAT a_in,
                         FX_FLOAT d_in,
                         FX_FLOAT e_in,
                         FX_FLOAT f_in,
-                        FX_BOOL bPrepended) {
+                        bool bPrepended) {
   CFX_Matrix m;
   m.Set(a_in, b_in, c_in, d_in, e_in, f_in);
   Concat(m, bPrepended);
 }
-void CFX_Matrix::Concat(const CFX_Matrix& m, FX_BOOL bPrepended) {
+void CFX_Matrix::Concat(const CFX_Matrix& m, bool bPrepended) {
   if (bPrepended) {
     FXCRT_Matrix_Concat(*this, m, *this);
   } else {
     FXCRT_Matrix_Concat(*this, *this, m);
   }
 }
-void CFX_Matrix::ConcatInverse(const CFX_Matrix& src, FX_BOOL bPrepended) {
+void CFX_Matrix::ConcatInverse(const CFX_Matrix& src, bool bPrepended) {
   CFX_Matrix m;
   m.SetReverse(src);
   Concat(m, bPrepended);
 }
-FX_BOOL CFX_Matrix::IsInvertible() const {
+bool CFX_Matrix::IsInvertible() const {
   return FXSYS_fabs(a * d - b * c) >= 0.0001f;
 }
-FX_BOOL CFX_Matrix::Is90Rotated() const {
+bool CFX_Matrix::Is90Rotated() const {
   return FXSYS_fabs(a * 1000) < FXSYS_fabs(b) &&
          FXSYS_fabs(d * 1000) < FXSYS_fabs(c);
 }
-FX_BOOL CFX_Matrix::IsScaled() const {
+bool CFX_Matrix::IsScaled() const {
   return FXSYS_fabs(b * 1000) < FXSYS_fabs(a) &&
          FXSYS_fabs(c * 1000) < FXSYS_fabs(d);
 }
-void CFX_Matrix::Translate(FX_FLOAT x, FX_FLOAT y, FX_BOOL bPrepended) {
+void CFX_Matrix::Translate(FX_FLOAT x, FX_FLOAT y, bool bPrepended) {
   if (bPrepended) {
     e += x * a + y * c;
     f += y * d + x * b;
@@ -326,7 +326,7 @@ void CFX_Matrix::Translate(FX_FLOAT x, FX_FLOAT y, FX_BOOL bPrepended) {
     e += x, f += y;
   }
 }
-void CFX_Matrix::Scale(FX_FLOAT sx, FX_FLOAT sy, FX_BOOL bPrepended) {
+void CFX_Matrix::Scale(FX_FLOAT sx, FX_FLOAT sy, bool bPrepended) {
   a *= sx, d *= sy;
   if (bPrepended) {
     b *= sx;
@@ -338,7 +338,7 @@ void CFX_Matrix::Scale(FX_FLOAT sx, FX_FLOAT sy, FX_BOOL bPrepended) {
     f *= sy;
   }
 }
-void CFX_Matrix::Rotate(FX_FLOAT fRadian, FX_BOOL bPrepended) {
+void CFX_Matrix::Rotate(FX_FLOAT fRadian, bool bPrepended) {
   FX_FLOAT cosValue = FXSYS_cos(fRadian);
   FX_FLOAT sinValue = FXSYS_sin(fRadian);
   CFX_Matrix m;
@@ -352,14 +352,14 @@ void CFX_Matrix::Rotate(FX_FLOAT fRadian, FX_BOOL bPrepended) {
 void CFX_Matrix::RotateAt(FX_FLOAT fRadian,
                           FX_FLOAT dx,
                           FX_FLOAT dy,
-                          FX_BOOL bPrepended) {
+                          bool bPrepended) {
   Translate(dx, dy, bPrepended);
   Rotate(fRadian, bPrepended);
   Translate(-dx, -dy, bPrepended);
 }
 void CFX_Matrix::Shear(FX_FLOAT fAlphaRadian,
                        FX_FLOAT fBetaRadian,
-                       FX_BOOL bPrepended) {
+                       bool bPrepended) {
   CFX_Matrix m;
   m.Set(1, FXSYS_tan(fAlphaRadian), FXSYS_tan(fBetaRadian), 1, 0, 0);
   if (bPrepended) {

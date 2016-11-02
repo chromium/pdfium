@@ -208,7 +208,7 @@ uint32_t CPDF_ToUnicodeMap::GetUnicode() {
 void CPDF_ToUnicodeMap::Load(CPDF_Stream* pStream) {
   CIDSet cid_set = CIDSET_UNKNOWN;
   CPDF_StreamAcc stream;
-  stream.LoadAllData(pStream, FALSE);
+  stream.LoadAllData(pStream, false);
   CPDF_SimpleParser parser(stream.GetData(), stream.GetSize());
   while (1) {
     CFX_ByteStringC word = parser.GetWord();
@@ -307,7 +307,7 @@ void CPDF_ToUnicodeMap::Load(CPDF_Stream* pStream) {
     m_pBaseMap = CPDF_ModuleMgr::Get()
                      ->GetPageModule()
                      ->GetFontGlobals()
-                     ->m_CMapManager.GetCID2UnicodeMap(cid_set, FALSE);
+                     ->m_CMapManager.GetCID2UnicodeMap(cid_set, false);
   } else {
     m_pBaseMap = nullptr;
   }

@@ -75,10 +75,10 @@ class CStretchEngine {
                  int flags);
   ~CStretchEngine();
 
-  FX_BOOL Continue(IFX_Pause* pPause);
+  bool Continue(IFX_Pause* pPause);
 
-  FX_BOOL StartStretchHorz();
-  FX_BOOL ContinueStretchHorz(IFX_Pause* pPause);
+  bool StartStretchHorz();
+  bool ContinueStretchHorz(IFX_Pause* pPause);
   void StretchVert();
 
   FXDIB_Format m_DestFormat;
@@ -110,7 +110,7 @@ class CStretchEngine {
 FX_RECT FXDIB_SwapClipBox(FX_RECT& clip,
                           int width,
                           int height,
-                          FX_BOOL bFlipX,
-                          FX_BOOL bFlipY);
+                          bool bFlipX,
+                          bool bFlipY);
 
 #endif  // CORE_FXGE_DIB_DIB_INT_H_

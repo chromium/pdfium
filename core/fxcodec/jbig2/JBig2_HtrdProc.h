@@ -26,13 +26,13 @@ class CJBig2_HTRDProc {
  public:
   uint32_t HBW;
   uint32_t HBH;
-  FX_BOOL HMMR;
+  bool HMMR;
   uint8_t HTEMPLATE;
   uint32_t HNUMPATS;
   CJBig2_Image** HPATS;
-  FX_BOOL HDEFPIXEL;
+  bool HDEFPIXEL;
   JBig2ComposeOp HCOMBOP;
-  FX_BOOL HENABLESKIP;
+  bool HENABLESKIP;
   uint32_t HGW;
   uint32_t HGH;
   int32_t HGX;

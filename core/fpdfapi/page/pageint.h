@@ -133,10 +133,10 @@ class CPDF_Function {
   static Type IntegerToFunctionType(int iType);
 
   virtual ~CPDF_Function();
-  FX_BOOL Call(FX_FLOAT* inputs,
-               uint32_t ninputs,
-               FX_FLOAT* results,
-               int& nresults) const;
+  bool Call(FX_FLOAT* inputs,
+            uint32_t ninputs,
+            FX_FLOAT* results,
+            int& nresults) const;
   uint32_t CountInputs() const { return m_nInputs; }
   uint32_t CountOutputs() const { return m_nOutputs; }
   FX_FLOAT GetDomain(int i) const { return m_pDomains[i]; }
@@ -149,9 +149,9 @@ class CPDF_Function {
  protected:
   explicit CPDF_Function(Type type);
 
-  FX_BOOL Init(CPDF_Object* pObj);
-  virtual FX_BOOL v_Init(CPDF_Object* pObj) = 0;
-  virtual FX_BOOL v_Call(FX_FLOAT* inputs, FX_FLOAT* results) const = 0;
+  bool Init(CPDF_Object* pObj);
+  virtual bool v_Init(CPDF_Object* pObj) = 0;
+  virtual bool v_Call(FX_FLOAT* inputs, FX_FLOAT* results) const = 0;
 
   uint32_t m_nInputs;
   uint32_t m_nOutputs;
@@ -166,8 +166,8 @@ class CPDF_ExpIntFunc : public CPDF_Function {
   ~CPDF_ExpIntFunc() override;
 
   // CPDF_Function
-  FX_BOOL v_Init(CPDF_Object* pObj) override;
-  FX_BOOL v_Call(FX_FLOAT* inputs, FX_FLOAT* results) const override;
+  bool v_Init(CPDF_Object* pObj) override;
+  bool v_Call(FX_FLOAT* inputs, FX_FLOAT* results) const override;
 
   uint32_t m_nOrigOutputs;
   FX_FLOAT m_Exponent;
@@ -192,8 +192,8 @@ class CPDF_SampledFunc : public CPDF_Function {
   ~CPDF_SampledFunc() override;
 
   // CPDF_Function
-  FX_BOOL v_Init(CPDF_Object* pObj) override;
-  FX_BOOL v_Call(FX_FLOAT* inputs, FX_FLOAT* results) const override;
+  bool v_Init(CPDF_Object* pObj) override;
+  bool v_Call(FX_FLOAT* inputs, FX_FLOAT* results) const override;
 
   const std::vector<SampleEncodeInfo>& GetEncodeInfo() const {
     return m_EncodeInfo;
@@ -217,8 +217,8 @@ class CPDF_StitchFunc : public CPDF_Function {
   ~CPDF_StitchFunc() override;
 
   // CPDF_Function
-  FX_BOOL v_Init(CPDF_Object* pObj) override;
-  FX_BOOL v_Call(FX_FLOAT* inputs, FX_FLOAT* results) const override;
+  bool v_Init(CPDF_Object* pObj) override;
+  bool v_Call(FX_FLOAT* inputs, FX_FLOAT* results) const override;
 
   const std::vector<std::unique_ptr<CPDF_Function>>& GetSubFunctions() const {
     return m_pSubFunctions;
@@ -249,41 +249,41 @@ class CPDF_DeviceCS : public CPDF_ColorSpace {
  public:
   CPDF_DeviceCS(CPDF_Document* pDoc, int family);
 
-  FX_BOOL GetRGB(FX_FLOAT* pBuf,
-                 FX_FLOAT& R,
-                 FX_FLOAT& G,
-                 FX_FLOAT& B) const override;
-  FX_BOOL SetRGB(FX_FLOAT* pBuf,
-                 FX_FLOAT R,
-                 FX_FLOAT G,
-                 FX_FLOAT B) const override;
-  FX_BOOL v_GetCMYK(FX_FLOAT* pBuf,
-                    FX_FLOAT& c,
-                    FX_FLOAT& m,
-                    FX_FLOAT& y,
-                    FX_FLOAT& k) const override;
-  FX_BOOL v_SetCMYK(FX_FLOAT* pBuf,
-                    FX_FLOAT c,
-                    FX_FLOAT m,
-                    FX_FLOAT y,
-                    FX_FLOAT k) const override;
+  bool GetRGB(FX_FLOAT* pBuf,
+              FX_FLOAT& R,
+              FX_FLOAT& G,
+              FX_FLOAT& B) const override;
+  bool SetRGB(FX_FLOAT* pBuf,
+              FX_FLOAT R,
+              FX_FLOAT G,
+              FX_FLOAT B) const override;
+  bool v_GetCMYK(FX_FLOAT* pBuf,
+                 FX_FLOAT& c,
+                 FX_FLOAT& m,
+                 FX_FLOAT& y,
+                 FX_FLOAT& k) const override;
+  bool v_SetCMYK(FX_FLOAT* pBuf,
+                 FX_FLOAT c,
+                 FX_FLOAT m,
+                 FX_FLOAT y,
+                 FX_FLOAT k) const override;
   void TranslateImageLine(uint8_t* pDestBuf,
                           const uint8_t* pSrcBuf,
                           int pixels,
                           int image_width,
                           int image_height,
-                          FX_BOOL bTransMask = FALSE) const override;
+                          bool bTransMask = false) const override;
 };
 
 class CPDF_PatternCS : public CPDF_ColorSpace {
  public:
   explicit CPDF_PatternCS(CPDF_Document* pDoc);
   ~CPDF_PatternCS() override;
-  FX_BOOL v_Load(CPDF_Document* pDoc, CPDF_Array* pArray) override;
-  FX_BOOL GetRGB(FX_FLOAT* pBuf,
-                 FX_FLOAT& R,
-                 FX_FLOAT& G,
-                 FX_FLOAT& B) const override;
+  bool v_Load(CPDF_Document* pDoc, CPDF_Array* pArray) override;
+  bool GetRGB(FX_FLOAT* pBuf,
+              FX_FLOAT& R,
+              FX_FLOAT& G,
+              FX_FLOAT& B) const override;
   CPDF_ColorSpace* GetBaseCS() const override;
 
  private:

@@ -69,7 +69,7 @@ int32_t CPDF_VariableText::Provider::GetWordFontIndex(uint16_t word,
   return -1;
 }
 
-FX_BOOL CPDF_VariableText::Provider::IsLatinWord(uint16_t word) {
+bool CPDF_VariableText::Provider::IsLatinWord(uint16_t word) {
   return (word >= 0x61 && word <= 0x7A) || (word >= 0x41 && word <= 0x5A) ||
          word == 0x2D || word == 0x27;
 }
@@ -92,74 +92,74 @@ void CPDF_VariableText::Iterator::SetAt(const CPVT_WordPlace& place) {
   m_CurPos = place;
 }
 
-FX_BOOL CPDF_VariableText::Iterator::NextWord() {
+bool CPDF_VariableText::Iterator::NextWord() {
   if (m_CurPos == m_pVT->GetEndWordPlace())
-    return FALSE;
+    return false;
 
   m_CurPos = m_pVT->GetNextWordPlace(m_CurPos);
-  return TRUE;
+  return true;
 }
 
-FX_BOOL CPDF_VariableText::Iterator::PrevWord() {
+bool CPDF_VariableText::Iterator::PrevWord() {
   if (m_CurPos == m_pVT->GetBeginWordPlace())
-    return FALSE;
+    return false;
 
   m_CurPos = m_pVT->GetPrevWordPlace(m_CurPos);
-  return TRUE;
+  return true;
 }
 
-FX_BOOL CPDF_VariableText::Iterator::NextLine() {
+bool CPDF_VariableText::Iterator::NextLine() {
   if (CSection* pSection = m_pVT->m_SectionArray.GetAt(m_CurPos.nSecIndex)) {
     if (m_CurPos.nLineIndex < pSection->m_LineArray.GetSize() - 1) {
       m_CurPos =
           CPVT_WordPlace(m_CurPos.nSecIndex, m_CurPos.nLineIndex + 1, -1);
-      return TRUE;
+      return true;
     }
     if (m_CurPos.nSecIndex < m_pVT->m_SectionArray.GetSize() - 1) {
       m_CurPos = CPVT_WordPlace(m_CurPos.nSecIndex + 1, 0, -1);
-      return TRUE;
+      return true;
     }
   }
-  return FALSE;
+  return false;
 }
 
-FX_BOOL CPDF_VariableText::Iterator::PrevLine() {
+bool CPDF_VariableText::Iterator::PrevLine() {
   if (m_pVT->m_SectionArray.GetAt(m_CurPos.nSecIndex)) {
     if (m_CurPos.nLineIndex > 0) {
       m_CurPos =
           CPVT_WordPlace(m_CurPos.nSecIndex, m_CurPos.nLineIndex - 1, -1);
-      return TRUE;
+      return true;
     }
     if (m_CurPos.nSecIndex > 0) {
       if (CSection* pLastSection =
               m_pVT->m_SectionArray.GetAt(m_CurPos.nSecIndex - 1)) {
         m_CurPos = CPVT_WordPlace(m_CurPos.nSecIndex - 1,
                                   pLastSection->m_LineArray.GetSize() - 1, -1);
-        return TRUE;
+        return true;
       }
     }
   }
-  return FALSE;
+  return false;
 }
 
-FX_BOOL CPDF_VariableText::Iterator::NextSection() {
+bool CPDF_VariableText::Iterator::NextSection() {
   if (m_CurPos.nSecIndex < m_pVT->m_SectionArray.GetSize() - 1) {
     m_CurPos = CPVT_WordPlace(m_CurPos.nSecIndex + 1, 0, -1);
-    return TRUE;
+    return true;
   }
-  return FALSE;
+  return false;
 }
 
-FX_BOOL CPDF_VariableText::Iterator::PrevSection() {
+bool CPDF_VariableText::Iterator::PrevSection() {
   ASSERT(m_pVT);
   if (m_CurPos.nSecIndex > 0) {
     m_CurPos = CPVT_WordPlace(m_CurPos.nSecIndex - 1, 0, -1);
-    return TRUE;
+    return true;
   }
-  return FALSE;
+  return false;
 }
 
-FX_BOOL CPDF_VariableText::Iterator::GetWord(CPVT_Word& word) const {
+bool CPDF_VariableText::Iterator::GetWord(CPVT_Word& word) const {
   word.WordPlace = m_CurPos;
   if (CSection* pSection = m_pVT->m_SectionArray.GetAt(m_CurPos.nSecIndex)) {
     if (pSection->m_LineArray.GetAt(m_CurPos.nLineIndex)) {
@@ -178,26 +178,26 @@ FX_BOOL CPDF_VariableText::Iterator::GetWord(CPVT_Word& word) const {
 
         word.nFontIndex = m_pVT->GetWordFontIndex(*pWord);
         word.fFontSize = m_pVT->GetWordFontSize(*pWord);
-        return TRUE;
+        return true;
       }
     }
   }
-  return FALSE;
+  return false;
 }
 
-FX_BOOL CPDF_VariableText::Iterator::SetWord(const CPVT_Word& word) {
+bool CPDF_VariableText::Iterator::SetWord(const CPVT_Word& word) {
   if (CSection* pSection = m_pVT->m_SectionArray.GetAt(m_CurPos.nSecIndex)) {
     if (CPVT_WordInfo* pWord =
             pSection->m_WordArray.GetAt(m_CurPos.nWordIndex)) {
       if (pWord->pWordProps)
         *pWord->pWordProps = word.WordProps;
-      return TRUE;
+      return true;
     }
   }
-  return FALSE;
+  return false;
 }
 
-FX_BOOL CPDF_VariableText::Iterator::GetLine(CPVT_Line& line) const {
+bool CPDF_VariableText::Iterator::GetLine(CPVT_Line& line) const {
   ASSERT(m_pVT);
   line.lineplace = CPVT_WordPlace(m_CurPos.nSecIndex, m_CurPos.nLineIndex, -1);
   if (CSection* pSection = m_pVT->m_SectionArray.GetAt(m_CurPos.nSecIndex)) {
@@ -209,13 +209,13 @@ FX_BOOL CPDF_VariableText::Iterator::GetLine(CPVT_Line& line) const {
       line.fLineAscent = pLine->m_LineInfo.fLineAscent;
       line.fLineDescent = pLine->m_LineInfo.fLineDescent;
       line.lineEnd = pLine->GetEndWordPlace();
-      return TRUE;
+      return true;
     }
   }
-  return FALSE;
+  return false;
 }
 
-FX_BOOL CPDF_VariableText::Iterator::GetSection(CPVT_Section& section) const {
+bool CPDF_VariableText::Iterator::GetSection(CPVT_Section& section) const {
   section.secplace = CPVT_WordPlace(m_CurPos.nSecIndex, 0, -1);
   if (CSection* pSection = m_pVT->m_SectionArray.GetAt(m_CurPos.nSecIndex)) {
     section.rcSection = m_pVT->InToOut(pSection->m_SecInfo.rcSection);
@@ -223,35 +223,35 @@ FX_BOOL CPDF_VariableText::Iterator::GetSection(CPVT_Section& section) const {
       section.SecProps = *pSection->m_SecInfo.pSecProps;
     if (pSection->m_SecInfo.pWordProps)
       section.WordProps = *pSection->m_SecInfo.pWordProps;
-    return TRUE;
+    return true;
   }
-  return FALSE;
+  return false;
 }
 
-FX_BOOL CPDF_VariableText::Iterator::SetSection(const CPVT_Section& section) {
+bool CPDF_VariableText::Iterator::SetSection(const CPVT_Section& section) {
   if (CSection* pSection = m_pVT->m_SectionArray.GetAt(m_CurPos.nSecIndex)) {
     if (pSection->m_SecInfo.pSecProps)
       *pSection->m_SecInfo.pSecProps = section.SecProps;
     if (pSection->m_SecInfo.pWordProps)
       *pSection->m_SecInfo.pWordProps = section.WordProps;
-    return TRUE;
+    return true;
   }
-  return FALSE;
+  return false;
 }
 
 CPDF_VariableText::CPDF_VariableText()
     : m_nLimitChar(0),
       m_nCharArray(0),
-      m_bMultiLine(FALSE),
-      m_bLimitWidth(FALSE),
-      m_bAutoFontSize(FALSE),
+      m_bMultiLine(false),
+      m_bLimitWidth(false),
+      m_bAutoFontSize(false),
       m_nAlignment(0),
       m_fLineLeading(0.0f),
       m_fCharSpace(0.0f),
       m_nHorzScale(100),
       m_wSubWord(0),
       m_fFontSize(0.0f),
-      m_bInitial(FALSE),
+      m_bInitial(false),
       m_pVTProvider(nullptr) {}
 
 CPDF_VariableText::~CPDF_VariableText() {
@@ -272,12 +272,12 @@ void CPDF_VariableText::Initialize() {
     if (CSection* pSection = m_SectionArray.GetAt(0))
       pSection->ResetLinePlace();
 
-    m_bInitial = TRUE;
+    m_bInitial = true;
   }
 }
 
 void CPDF_VariableText::ResetAll() {
-  m_bInitial = FALSE;
+  m_bInitial = false;
   ResetSectionArray();
 }
 
@@ -372,7 +372,7 @@ CPVT_WordPlace CPDF_VariableText::InsertText(const CPVT_WordPlace& place,
 
 CPVT_WordPlace CPDF_VariableText::DeleteWords(
     const CPVT_WordRange& PlaceRange) {
-  FX_BOOL bLastSecPos = FALSE;
+  bool bLastSecPos = false;
   if (CSection* pSection = m_SectionArray.GetAt(PlaceRange.EndPos.nSecIndex))
     bLastSecPos = (PlaceRange.EndPos == pSection->GetEndWordPlace());
 
@@ -386,11 +386,11 @@ CPVT_WordPlace CPDF_VariableText::DeleteWords(
 }
 
 CPVT_WordPlace CPDF_VariableText::DeleteWord(const CPVT_WordPlace& place) {
-  return ClearRightWord(AdjustLineHeader(place, TRUE));
+  return ClearRightWord(AdjustLineHeader(place, true));
 }
 
 CPVT_WordPlace CPDF_VariableText::BackSpaceWord(const CPVT_WordPlace& place) {
-  return ClearLeftWord(AdjustLineHeader(place, TRUE));
+  return ClearLeftWord(AdjustLineHeader(place, true));
 }
 
 void CPDF_VariableText::SetText(const CFX_WideString& swText) {
@@ -447,7 +447,7 @@ void CPDF_VariableText::UpdateWordPlace(CPVT_WordPlace& place) const {
   if (place.nSecIndex >= m_SectionArray.GetSize())
     place = GetEndWordPlace();
 
-  place = AdjustLineHeader(place, TRUE);
+  place = AdjustLineHeader(place, true);
   if (CSection* pSection = m_SectionArray.GetAt(place.nSecIndex))
     pSection->UpdateWordPlace(place);
 }
@@ -475,19 +475,19 @@ int32_t CPDF_VariableText::WordPlaceToWordIndex(
 CPVT_WordPlace CPDF_VariableText::WordIndexToWordPlace(int32_t index) const {
   CPVT_WordPlace place = GetBeginWordPlace();
   int32_t nOldIndex = 0, nIndex = 0;
-  FX_BOOL bFind = FALSE;
+  bool bFind = false;
   for (int32_t i = 0, sz = m_SectionArray.GetSize(); i < sz; i++) {
     if (CSection* pSection = m_SectionArray.GetAt(i)) {
       nIndex += pSection->m_WordArray.GetSize();
       if (nIndex == index) {
         place = pSection->GetEndWordPlace();
-        bFind = TRUE;
+        bFind = true;
         break;
       } else if (nIndex > index) {
         place.nSecIndex = i;
         place.nWordIndex = index - nOldIndex - 1;
         pSection->UpdateWordPlace(place);
-        bFind = TRUE;
+        bFind = true;
         break;
       }
       if (i != m_SectionArray.GetSize() - 1)
@@ -551,15 +551,15 @@ CPVT_WordPlace CPDF_VariableText::SearchWordPlace(
   int32_t nLeft = 0;
   int32_t nRight = m_SectionArray.GetSize() - 1;
   int32_t nMid = m_SectionArray.GetSize() / 2;
-  FX_BOOL bUp = TRUE;
-  FX_BOOL bDown = TRUE;
+  bool bUp = true;
+  bool bDown = true;
   while (nLeft <= nRight) {
     if (CSection* pSection = m_SectionArray.GetAt(nMid)) {
       if (IsFloatBigger(pt.y, pSection->m_SecInfo.rcSection.top)) {
-        bUp = FALSE;
+        bUp = false;
       }
       if (IsFloatBigger(pSection->m_SecInfo.rcSection.bottom, pt.y)) {
-        bDown = FALSE;
+        bDown = false;
       }
       if (IsFloatSmaller(pt.y, pSection->m_SecInfo.rcSection.top)) {
         nRight = nMid - 1;
@@ -712,46 +712,46 @@ CPVT_WordPlace CPDF_VariableText::AddWord(const CPVT_WordPlace& place,
   return place;
 }
 
-FX_BOOL CPDF_VariableText::GetWordInfo(const CPVT_WordPlace& place,
-                                       CPVT_WordInfo& wordinfo) {
+bool CPDF_VariableText::GetWordInfo(const CPVT_WordPlace& place,
+                                    CPVT_WordInfo& wordinfo) {
   if (CSection* pSection = m_SectionArray.GetAt(place.nSecIndex)) {
     if (CPVT_WordInfo* pWord = pSection->m_WordArray.GetAt(place.nWordIndex)) {
       wordinfo = *pWord;
-      return TRUE;
+      return true;
     }
   }
-  return FALSE;
+  return false;
 }
 
-FX_BOOL CPDF_VariableText::SetWordInfo(const CPVT_WordPlace& place,
-                                       const CPVT_WordInfo& wordinfo) {
+bool CPDF_VariableText::SetWordInfo(const CPVT_WordPlace& place,
+                                    const CPVT_WordInfo& wordinfo) {
   if (CSection* pSection = m_SectionArray.GetAt(place.nSecIndex)) {
     if (CPVT_WordInfo* pWord = pSection->m_WordArray.GetAt(place.nWordIndex)) {
       *pWord = wordinfo;
-      return TRUE;
+      return true;
     }
   }
-  return FALSE;
+  return false;
 }
 
-FX_BOOL CPDF_VariableText::GetLineInfo(const CPVT_WordPlace& place,
-                                       CPVT_LineInfo& lineinfo) {
+bool CPDF_VariableText::GetLineInfo(const CPVT_WordPlace& place,
+                                    CPVT_LineInfo& lineinfo) {
   if (CSection* pSection = m_SectionArray.GetAt(place.nSecIndex)) {
     if (CLine* pLine = pSection->m_LineArray.GetAt(place.nLineIndex)) {
       lineinfo = pLine->m_LineInfo;
-      return TRUE;
+      return true;
     }
   }
-  return FALSE;
+  return false;
 }
 
-FX_BOOL CPDF_VariableText::GetSectionInfo(const CPVT_WordPlace& place,
-                                          CPVT_SectionInfo& secinfo) {
+bool CPDF_VariableText::GetSectionInfo(const CPVT_WordPlace& place,
+                                       CPVT_SectionInfo& secinfo) {
   if (CSection* pSection = m_SectionArray.GetAt(place.nSecIndex)) {
     secinfo = pSection->m_SecInfo;
-    return TRUE;
+    return true;
   }
-  return FALSE;
+  return false;
 }
 
 void CPDF_VariableText::SetPlateRect(const CFX_FloatRect& rect) {
@@ -854,7 +854,7 @@ int32_t CPDF_VariableText::GetHorzScale(const CPVT_WordInfo& WordInfo) {
 }
 
 void CPDF_VariableText::ClearSectionRightWords(const CPVT_WordPlace& place) {
-  CPVT_WordPlace wordplace = AdjustLineHeader(place, TRUE);
+  CPVT_WordPlace wordplace = AdjustLineHeader(place, true);
   if (CSection* pSection = m_SectionArray.GetAt(place.nSecIndex)) {
     for (int32_t w = pSection->m_WordArray.GetSize() - 1;
          w > wordplace.nWordIndex; w--) {
@@ -865,23 +865,23 @@ void CPDF_VariableText::ClearSectionRightWords(const CPVT_WordPlace& place) {
 }
 
 CPVT_WordPlace CPDF_VariableText::AdjustLineHeader(const CPVT_WordPlace& place,
-                                                   FX_BOOL bPrevOrNext) const {
+                                                   bool bPrevOrNext) const {
   if (place.nWordIndex < 0 && place.nLineIndex > 0)
     return bPrevOrNext ? GetPrevWordPlace(place) : GetNextWordPlace(place);
   return place;
 }
 
-FX_BOOL CPDF_VariableText::ClearEmptySection(const CPVT_WordPlace& place) {
+bool CPDF_VariableText::ClearEmptySection(const CPVT_WordPlace& place) {
   if (place.nSecIndex == 0 && m_SectionArray.GetSize() == 1)
-    return FALSE;
+    return false;
   if (CSection* pSection = m_SectionArray.GetAt(place.nSecIndex)) {
     if (pSection->m_WordArray.GetSize() == 0) {
       delete pSection;
       m_SectionArray.RemoveAt(place.nSecIndex);
-      return TRUE;
+      return true;
     }
   }
-  return FALSE;
+  return false;
 }
 
 void CPDF_VariableText::ClearEmptySections(const CPVT_WordRange& PlaceRange) {
@@ -894,7 +894,7 @@ void CPDF_VariableText::ClearEmptySections(const CPVT_WordRange& PlaceRange) {
 }
 
 void CPDF_VariableText::LinkLatterSection(const CPVT_WordPlace& place) {
-  CPVT_WordPlace oldplace = AdjustLineHeader(place, TRUE);
+  CPVT_WordPlace oldplace = AdjustLineHeader(place, true);
   if (CSection* pNextSection = m_SectionArray.GetAt(place.nSecIndex + 1)) {
     if (CSection* pSection = m_SectionArray.GetAt(oldplace.nSecIndex)) {
       for (int32_t w = 0, sz = pNextSection->m_WordArray.GetSize(); w < sz;
@@ -912,8 +912,8 @@ void CPDF_VariableText::LinkLatterSection(const CPVT_WordPlace& place) {
 
 void CPDF_VariableText::ClearWords(const CPVT_WordRange& PlaceRange) {
   CPVT_WordRange NewRange;
-  NewRange.BeginPos = AdjustLineHeader(PlaceRange.BeginPos, TRUE);
-  NewRange.EndPos = AdjustLineHeader(PlaceRange.EndPos, TRUE);
+  NewRange.BeginPos = AdjustLineHeader(PlaceRange.BeginPos, true);
+  NewRange.EndPos = AdjustLineHeader(PlaceRange.EndPos, true);
   for (int32_t s = NewRange.EndPos.nSecIndex; s >= NewRange.BeginPos.nSecIndex;
        s--) {
     if (CSection* pSection = m_SectionArray.GetAt(s))
@@ -942,7 +942,7 @@ CPVT_WordPlace CPDF_VariableText::ClearLeftWord(const CPVT_WordPlace& place) {
 CPVT_WordPlace CPDF_VariableText::ClearRightWord(const CPVT_WordPlace& place) {
   if (CSection* pSection = m_SectionArray.GetAt(place.nSecIndex)) {
     CPVT_WordPlace rightplace =
-        AdjustLineHeader(GetNextWordPlace(place), FALSE);
+        AdjustLineHeader(GetNextWordPlace(place), false);
     if (rightplace != place) {
       if (rightplace.nSecIndex != place.nSecIndex)
         LinkLatterSection(place);
@@ -1088,8 +1088,8 @@ int32_t CPDF_VariableText::GetDefaultFontIndex() {
   return m_pVTProvider ? m_pVTProvider->GetDefaultFontIndex() : -1;
 }
 
-FX_BOOL CPDF_VariableText::IsLatinWord(uint16_t word) {
-  return m_pVTProvider ? m_pVTProvider->IsLatinWord(word) : FALSE;
+bool CPDF_VariableText::IsLatinWord(uint16_t word) {
+  return m_pVTProvider ? m_pVTProvider->IsLatinWord(word) : false;
 }
 
 CPDF_VariableText::Iterator* CPDF_VariableText::GetIterator() {

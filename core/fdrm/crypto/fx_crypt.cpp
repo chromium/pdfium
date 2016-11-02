@@ -245,14 +245,14 @@ void CRYPT_MD5Generate(const uint8_t* input,
   CRYPT_MD5Update(&ctx, input, length);
   CRYPT_MD5Finish(&ctx, digest);
 }
-static FX_BOOL (*g_PubKeyDecryptor)(const uint8_t* pData,
-                                    uint32_t size,
-                                    uint8_t* data_buf,
-                                    uint32_t& data_len) = nullptr;
-void CRYPT_SetPubKeyDecryptor(FX_BOOL (*func)(const uint8_t* pData,
-                                              uint32_t size,
-                                              uint8_t* data_buf,
-                                              uint32_t& data_len)) {
+static bool (*g_PubKeyDecryptor)(const uint8_t* pData,
+                                 uint32_t size,
+                                 uint8_t* data_buf,
+                                 uint32_t& data_len) = nullptr;
+void CRYPT_SetPubKeyDecryptor(bool (*func)(const uint8_t* pData,
+                                           uint32_t size,
+                                           uint8_t* data_buf,
+                                           uint32_t& data_len)) {
   g_PubKeyDecryptor = func;
 }
 #ifdef __cplusplus

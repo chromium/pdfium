@@ -11,15 +11,15 @@
 CPDF_StreamAcc::CPDF_StreamAcc()
     : m_pData(nullptr),
       m_dwSize(0),
-      m_bNewBuf(FALSE),
+      m_bNewBuf(false),
       m_pImageParam(nullptr),
       m_pStream(nullptr),
       m_pSrcData(nullptr) {}
 
 void CPDF_StreamAcc::LoadAllData(const CPDF_Stream* pStream,
-                                 FX_BOOL bRawAccess,
+                                 bool bRawAccess,
                                  uint32_t estimated_size,
-                                 FX_BOOL bImageAcc) {
+                                 bool bImageAcc) {
   if (!pStream)
     return;
 
@@ -46,9 +46,9 @@ void CPDF_StreamAcc::LoadAllData(const CPDF_Stream* pStream,
     m_pData = pSrcData;
     m_dwSize = dwSrcSize;
   } else {
-    FX_BOOL bRet = PDF_DataDecode(pSrcData, dwSrcSize, m_pStream->GetDict(),
-                                  m_pData, m_dwSize, m_ImageDecoder,
-                                  m_pImageParam, estimated_size, bImageAcc);
+    bool bRet = PDF_DataDecode(pSrcData, dwSrcSize, m_pStream->GetDict(),
+                               m_pData, m_dwSize, m_ImageDecoder, m_pImageParam,
+                               estimated_size, bImageAcc);
     if (!bRet) {
       m_pData = pSrcData;
       m_dwSize = dwSrcSize;

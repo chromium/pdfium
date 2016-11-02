@@ -61,8 +61,8 @@ void DrawAxialShading(CFX_DIBitmap* pBitmap,
     t_min = pArray->GetNumberAt(0);
     t_max = pArray->GetNumberAt(1);
   }
-  FX_BOOL bStartExtend = FALSE;
-  FX_BOOL bEndExtend = FALSE;
+  bool bStartExtend = false;
+  bool bEndExtend = false;
   pArray = pDict->GetArrayFor("Extend");
   if (pArray) {
     bStartExtend = !!pArray->GetIntegerAt(0);
@@ -148,8 +148,8 @@ void DrawRadialShading(CFX_DIBitmap* pBitmap,
     t_min = pArray->GetNumberAt(0);
     t_max = pArray->GetNumberAt(1);
   }
-  FX_BOOL bStartExtend = FALSE;
-  FX_BOOL bEndExtend = FALSE;
+  bool bStartExtend = false;
+  bool bEndExtend = false;
   pArray = pDict->GetArrayFor("Extend");
   if (pArray) {
     bStartExtend = !!pArray->GetIntegerAt(0);
@@ -183,12 +183,12 @@ void DrawRadialShading(CFX_DIBitmap* pBitmap,
   int width = pBitmap->GetWidth();
   int height = pBitmap->GetHeight();
   int pitch = pBitmap->GetPitch();
-  FX_BOOL bDecreasing = FALSE;
+  bool bDecreasing = false;
   if (start_r > end_r) {
     int length = (int)FXSYS_sqrt((((start_x - end_x) * (start_x - end_x)) +
                                   ((start_y - end_y) * (start_y - end_y))));
     if (length < start_r - end_r) {
-      bDecreasing = TRUE;
+      bDecreasing = true;
     }
   }
   for (int row = 0; row < height; row++) {
@@ -315,17 +315,17 @@ bool GetScanlineIntersect(int y,
                           FX_FLOAT y2,
                           FX_FLOAT* x) {
   if (y1 == y2)
-    return FALSE;
+    return false;
 
   if (y1 < y2) {
     if (y < y1 || y > y2)
-      return FALSE;
+      return false;
   } else {
     if (y < y2 || y > y1)
-      return FALSE;
+      return false;
   }
   *x = x1 + ((x2 - x1) * (y - y1) / (y2 - y1));
-  return TRUE;
+  return true;
 }
 
 void DrawGouraud(CFX_DIBitmap* pBitmap,
@@ -650,8 +650,8 @@ struct CPDF_PatchDrawer {
             Coon_Bezier C2,
             Coon_Bezier D1,
             Coon_Bezier D2) {
-    FX_BOOL bSmall = C1.Distance() < 2 && C2.Distance() < 2 &&
-                     D1.Distance() < 2 && D2.Distance() < 2;
+    bool bSmall = C1.Distance() < 2 && C2.Distance() < 2 && D1.Distance() < 2 &&
+                  D2.Distance() < 2;
     Coon_Color div_colors[4];
     int d_bottom = 0;
     int d_left = 0;
@@ -850,7 +850,7 @@ void CPDF_RenderStatus::DrawShading(CPDF_ShadingPattern* pPattern,
                                     CFX_Matrix* pMatrix,
                                     FX_RECT& clip_rect,
                                     int alpha,
-                                    FX_BOOL bAlphaMode) {
+                                    bool bAlphaMode) {
   const auto& funcs = pPattern->GetFuncs();
   CPDF_Dictionary* pDict = pPattern->GetShadingObject()->GetDict();
   CPDF_ColorSpace* pColorSpace = pPattern->GetCS();
@@ -942,7 +942,7 @@ void CPDF_RenderStatus::DrawShading(CPDF_ShadingPattern* pPattern,
 void CPDF_RenderStatus::DrawShadingPattern(CPDF_ShadingPattern* pattern,
                                            const CPDF_PageObject* pPageObj,
                                            const CFX_Matrix* pObj2Device,
-                                           FX_BOOL bStroke) {
+                                           bool bStroke) {
   if (!pattern->Load())
     return;
 
@@ -958,7 +958,7 @@ void CPDF_RenderStatus::DrawShadingPattern(CPDF_ShadingPattern* pattern,
     return;
   }
   FX_RECT rect;
-  if (GetObjectClippedRect(pPageObj, pObj2Device, FALSE, rect)) {
+  if (GetObjectClippedRect(pPageObj, pObj2Device, false, rect)) {
     m_pDevice->RestoreState(false);
     return;
   }
@@ -991,7 +991,7 @@ void CPDF_RenderStatus::ProcessShading(const CPDF_ShadingObject* pShadingObj,
 void CPDF_RenderStatus::DrawTilingPattern(CPDF_TilingPattern* pPattern,
                                           CPDF_PageObject* pPageObj,
                                           const CFX_Matrix* pObj2Device,
-                                          FX_BOOL bStroke) {
+                                          bool bStroke) {
   if (!pPattern->Load()) {
     return;
   }
@@ -1019,12 +1019,12 @@ void CPDF_RenderStatus::DrawTilingPattern(CPDF_TilingPattern* pPattern,
   CFX_Matrix mtPattern2Device = *pPattern->pattern_to_form();
   mtPattern2Device.Concat(*pObj2Device);
   GetScaledMatrix(mtPattern2Device);
-  FX_BOOL bAligned = FALSE;
+  bool bAligned = false;
   if (pPattern->bbox().left == 0 && pPattern->bbox().bottom == 0 &&
       pPattern->bbox().right == pPattern->x_step() &&
       pPattern->bbox().top == pPattern->y_step() &&
       (mtPattern2Device.IsScaled() || mtPattern2Device.Is90Rotated())) {
-    bAligned = TRUE;
+    bAligned = true;
   }
   CFX_FloatRect cell_bbox = pPattern->bbox();
   mtPattern2Device.TransformRect(cell_bbox);
@@ -1180,14 +1180,14 @@ void CPDF_RenderStatus::DrawTilingPattern(CPDF_TilingPattern* pPattern,
     }
   }
   CompositeDIBitmap(&screen, clip_box.left, clip_box.top, 0, 255,
-                    FXDIB_BLEND_NORMAL, FALSE);
+                    FXDIB_BLEND_NORMAL, false);
   m_pDevice->RestoreState(false);
 }
 
 void CPDF_RenderStatus::DrawPathWithPattern(CPDF_PathObject* pPathObj,
                                             const CFX_Matrix* pObj2Device,
                                             const CPDF_Color* pColor,
-                                            FX_BOOL bStroke) {
+                                            bool bStroke) {
   CPDF_Pattern* pattern = pColor->GetPattern();
   if (!pattern)
     return;
@@ -1201,19 +1201,19 @@ void CPDF_RenderStatus::DrawPathWithPattern(CPDF_PathObject* pPathObj,
 void CPDF_RenderStatus::ProcessPathPattern(CPDF_PathObject* pPathObj,
                                            const CFX_Matrix* pObj2Device,
                                            int& filltype,
-                                           FX_BOOL& bStroke) {
+                                           bool& bStroke) {
   if (filltype) {
     const CPDF_Color& FillColor = *pPathObj->m_ColorState.GetFillColor();
     if (FillColor.IsPattern()) {
-      DrawPathWithPattern(pPathObj, pObj2Device, &FillColor, FALSE);
+      DrawPathWithPattern(pPathObj, pObj2Device, &FillColor, false);
       filltype = 0;
     }
   }
   if (bStroke) {
     const CPDF_Color& StrokeColor = *pPathObj->m_ColorState.GetStrokeColor();
     if (StrokeColor.IsPattern()) {
-      DrawPathWithPattern(pPathObj, pObj2Device, &StrokeColor, TRUE);
-      bStroke = FALSE;
+      DrawPathWithPattern(pPathObj, pObj2Device, &StrokeColor, true);
+      bStroke = false;
     }
   }
 }

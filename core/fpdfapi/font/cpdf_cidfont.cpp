@@ -362,7 +362,7 @@ bool CPDF_CIDFont::Load() {
     m_pCMap = new CPDF_CMap;
     m_pAllocatedCMap.reset(m_pCMap);
     CPDF_StreamAcc acc;
-    acc.LoadAllData(pStream, FALSE);
+    acc.LoadAllData(pStream, false);
     m_pCMap->LoadEmbedded(acc.GetData(), acc.GetSize());
   } else {
     return false;
@@ -399,7 +399,7 @@ bool CPDF_CIDFont::Load() {
     if (pmap) {
       if (CPDF_Stream* pStream = pmap->AsStream()) {
         m_pStreamAcc.reset(new CPDF_StreamAcc);
-        m_pStreamAcc->LoadAllData(pStream, FALSE);
+        m_pStreamAcc->LoadAllData(pStream, false);
       } else if (pmap->GetString() == "Identity") {
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
         if (m_pFontFile)
@@ -600,7 +600,7 @@ int CPDF_CIDFont::GetVerticalGlyph(int index, bool* pVertGlyph) {
 
 int CPDF_CIDFont::GlyphFromCharCode(uint32_t charcode, bool* pVertGlyph) {
   if (pVertGlyph)
-    *pVertGlyph = FALSE;
+    *pVertGlyph = false;
 
   if (!m_pFontFile && !m_pStreamAcc) {
     uint16_t cid = CIDFromCharCode(charcode);

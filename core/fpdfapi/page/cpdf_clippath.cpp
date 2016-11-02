@@ -42,7 +42,7 @@ CPDF_TextObject* CPDF_ClipPath::GetText(size_t i) const {
 
 CFX_FloatRect CPDF_ClipPath::GetClipBox() const {
   CFX_FloatRect rect;
-  FX_BOOL bStarted = FALSE;
+  bool bStarted = false;
   int count = GetPathCount();
   if (count) {
     rect = GetPath(0).GetBoundingBox();
@@ -50,26 +50,26 @@ CFX_FloatRect CPDF_ClipPath::GetClipBox() const {
       CFX_FloatRect path_rect = GetPath(i).GetBoundingBox();
       rect.Intersect(path_rect);
     }
-    bStarted = TRUE;
+    bStarted = true;
   }
   count = GetTextCount();
   if (count) {
     CFX_FloatRect layer_rect;
-    FX_BOOL bLayerStarted = FALSE;
+    bool bLayerStarted = false;
     for (int i = 0; i < count; i++) {
       CPDF_TextObject* pTextObj = GetText(i);
       if (!pTextObj) {
         if (!bStarted) {
           rect = layer_rect;
-          bStarted = TRUE;
+          bStarted = true;
         } else {
           rect.Intersect(layer_rect);
         }
-        bLayerStarted = FALSE;
+        bLayerStarted = false;
       } else {
         if (!bLayerStarted) {
           layer_rect = CFX_FloatRect(pTextObj->GetBBox(nullptr));
-          bLayerStarted = TRUE;
+          bLayerStarted = true;
         } else {
           layer_rect.Union(CFX_FloatRect(pTextObj->GetBBox(nullptr)));
         }

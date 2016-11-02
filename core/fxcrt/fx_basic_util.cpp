@@ -97,7 +97,7 @@ FX_FLOAT FX_atof(const CFX_ByteStringC& strc) {
   if (strc[0] == '+') {
     cc++;
   } else if (strc[0] == '-') {
-    bNegative = TRUE;
+    bNegative = true;
     cc++;
   }
   while (cc < len) {

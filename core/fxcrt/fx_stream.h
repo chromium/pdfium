@@ -143,14 +143,14 @@ class IFX_MemoryStream : public IFX_SeekableStream {
   virtual uint8_t* GetBuffer() const = 0;
   virtual void AttachBuffer(uint8_t* pBuffer,
                             size_t nSize,
-                            bool bTakeOver = FALSE) = 0;
+                            bool bTakeOver = false) = 0;
   virtual void DetachBuffer() = 0;
 };
 
 IFX_MemoryStream* FX_CreateMemoryStream(uint8_t* pBuffer,
                                         size_t nSize,
-                                        bool bTakeOver = FALSE);
-IFX_MemoryStream* FX_CreateMemoryStream(bool bConsecutive = FALSE);
+                                        bool bTakeOver = false);
+IFX_MemoryStream* FX_CreateMemoryStream(bool bConsecutive = false);
 
 class IFX_BufferRead : public IFX_ReadStream {
  public:
@@ -160,7 +160,7 @@ class IFX_BufferRead : public IFX_ReadStream {
   FX_FILESIZE GetPosition() override = 0;
   size_t ReadBlock(void* buffer, size_t size) override = 0;
 
-  virtual bool ReadNextBlock(bool bRestart = FALSE) = 0;
+  virtual bool ReadNextBlock(bool bRestart = false) = 0;
   virtual const uint8_t* GetBlockBuffer() = 0;
   virtual size_t GetBlockSize() = 0;
   virtual FX_FILESIZE GetBlockOffset() = 0;

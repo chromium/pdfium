@@ -38,9 +38,9 @@ struct CPVT_WordRange {
     SwapWordPlace();
   }
 
-  FX_BOOL IsExist() const { return BeginPos != EndPos; }
+  bool IsExist() const { return BeginPos != EndPos; }
 
-  FX_BOOL operator!=(const CPVT_WordRange& wr) const {
+  bool operator!=(const CPVT_WordRange& wr) const {
     return wr.BeginPos != BeginPos || wr.EndPos != EndPos;
   }
 

@@ -99,5 +99,5 @@ void CFX_ClipRgn::IntersectMaskF(int left, int top, CFX_DIBitmapRef Mask) {
     m_Mask = new_mask;
     return;
   }
-  ASSERT(FALSE);
+  ASSERT(false);
 }

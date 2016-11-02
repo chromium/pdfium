@@ -115,7 +115,7 @@ class CPDF_FormControl {
 
   CFX_ByteString GetOnStateName() const;
   void SetOnStateName(const CFX_ByteString& csOn);
-  void CheckControl(FX_BOOL bChecked);
+  void CheckControl(bool bChecked);
   FX_ARGB GetColor(int& iColorType, const CFX_ByteString& csEntry);
   FX_FLOAT GetOriginalColor(int index, const CFX_ByteString& csEntry);
   void GetOriginalColor(int& iColorType,

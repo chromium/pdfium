@@ -40,9 +40,9 @@ class CPDF_Stream : public CPDF_Object {
   void InitStreamFromFile(IFX_SeekableReadStream* pFile,
                           CPDF_Dictionary* pDict);
 
-  FX_BOOL ReadRawData(FX_FILESIZE start_pos,
-                      uint8_t* pBuf,
-                      uint32_t buf_size) const;
+  bool ReadRawData(FX_FILESIZE start_pos,
+                   uint8_t* pBuf,
+                   uint32_t buf_size) const;
 
   bool IsMemoryBased() const { return m_bMemoryBased; }
 

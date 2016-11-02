@@ -17,8 +17,8 @@ CPDF_PageObjectHolder::CPDF_PageObjectHolder()
       m_pPageResources(nullptr),
       m_pResources(nullptr),
       m_Transparency(0),
-      m_bBackgroundAlphaNeeded(FALSE),
-      m_bHasImageMask(FALSE),
+      m_bBackgroundAlphaNeeded(false),
+      m_bHasImageMask(false),
       m_ParseState(CONTENT_NOT_PARSED) {}
 
 CPDF_PageObjectHolder::~CPDF_PageObjectHolder() {}

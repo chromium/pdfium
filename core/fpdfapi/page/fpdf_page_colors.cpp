@@ -71,10 +71,10 @@ void ReverseRGB(uint8_t* pDestBuf, const uint8_t* pSrcBuf, int pixels) {
 CPDF_DeviceCS::CPDF_DeviceCS(CPDF_Document* pDoc, int family)
     : CPDF_ColorSpace(pDoc, family, ComponentsForFamily(family)) {}
 
-FX_BOOL CPDF_DeviceCS::GetRGB(FX_FLOAT* pBuf,
-                              FX_FLOAT& R,
-                              FX_FLOAT& G,
-                              FX_FLOAT& B) const {
+bool CPDF_DeviceCS::GetRGB(FX_FLOAT* pBuf,
+                           FX_FLOAT& R,
+                           FX_FLOAT& G,
+                           FX_FLOAT& B) const {
   if (m_Family == PDFCS_DEVICERGB) {
     R = pBuf[0];
     if (R < 0) {
@@ -114,64 +114,64 @@ FX_BOOL CPDF_DeviceCS::GetRGB(FX_FLOAT* pBuf,
   } else {
     ASSERT(m_Family == PDFCS_PATTERN);
     R = G = B = 0;
-    return FALSE;
+    return false;
   }
-  return TRUE;
+  return true;
 }
-FX_BOOL CPDF_DeviceCS::v_GetCMYK(FX_FLOAT* pBuf,
-                                 FX_FLOAT& c,
-                                 FX_FLOAT& m,
-                                 FX_FLOAT& y,
-                                 FX_FLOAT& k) const {
+bool CPDF_DeviceCS::v_GetCMYK(FX_FLOAT* pBuf,
+                              FX_FLOAT& c,
+                              FX_FLOAT& m,
+                              FX_FLOAT& y,
+                              FX_FLOAT& k) const {
   if (m_Family != PDFCS_DEVICECMYK) {
-    return FALSE;
+    return false;
   }
   c = pBuf[0];
   m = pBuf[1];
   y = pBuf[2];
   k = pBuf[3];
-  return TRUE;
+  return true;
 }
-FX_BOOL CPDF_DeviceCS::SetRGB(FX_FLOAT* pBuf,
-                              FX_FLOAT R,
-                              FX_FLOAT G,
-                              FX_FLOAT B) const {
+bool CPDF_DeviceCS::SetRGB(FX_FLOAT* pBuf,
+                           FX_FLOAT R,
+                           FX_FLOAT G,
+                           FX_FLOAT B) const {
   if (m_Family == PDFCS_DEVICERGB) {
     pBuf[0] = R;
     pBuf[1] = G;
     pBuf[2] = B;
-    return TRUE;
+    return true;
   }
   if (m_Family == PDFCS_DEVICEGRAY) {
     if (R == G && R == B) {
       *pBuf = R;
-      return TRUE;
+      return true;
     }
-    return FALSE;
+    return false;
   }
   if (m_Family == PDFCS_DEVICECMYK) {
     sRGB_to_AdobeCMYK(R, G, B, pBuf[0], pBuf[1], pBuf[2], pBuf[3]);
-    return TRUE;
+    return true;
   }
-  return FALSE;
+  return false;
 }
-FX_BOOL CPDF_DeviceCS::v_SetCMYK(FX_FLOAT* pBuf,
-                                 FX_FLOAT c,
-                                 FX_FLOAT m,
-                                 FX_FLOAT y,
-                                 FX_FLOAT k) const {
+bool CPDF_DeviceCS::v_SetCMYK(FX_FLOAT* pBuf,
+                              FX_FLOAT c,
+                              FX_FLOAT m,
+                              FX_FLOAT y,
+                              FX_FLOAT k) const {
   if (m_Family == PDFCS_DEVICERGB) {
     AdobeCMYK_to_sRGB(c, m, y, k, pBuf[0], pBuf[1], pBuf[2]);
-    return TRUE;
+    return true;
   }
   if (m_Family == PDFCS_DEVICECMYK) {
     pBuf[0] = c;
     pBuf[1] = m;
     pBuf[2] = y;
     pBuf[3] = k;
-    return TRUE;
+    return true;
   }
-  return FALSE;
+  return false;
 }
 
 void CPDF_DeviceCS::TranslateImageLine(uint8_t* pDestBuf,
@@ -179,7 +179,7 @@ void CPDF_DeviceCS::TranslateImageLine(uint8_t* pDestBuf,
                                        int pixels,
                                        int image_width,
                                        int image_height,
-                                       FX_BOOL bTransMask) const {
+                                       bool bTransMask) const {
   if (bTransMask && m_Family == PDFCS_DEVICECMYK) {
     for (int i = 0; i < pixels; i++) {
       int k = 255 - pSrcBuf[3];
@@ -217,10 +217,10 @@ void CPDF_DeviceCS::TranslateImageLine(uint8_t* pDestBuf,
 }
 
 CPDF_IccProfile::CPDF_IccProfile(const uint8_t* pData, uint32_t dwSize)
-    : m_bsRGB(FALSE), m_pTransform(nullptr), m_nSrcComponents(0) {
+    : m_bsRGB(false), m_pTransform(nullptr), m_nSrcComponents(0) {
   if (dwSize == 3144 &&
       FXSYS_memcmp(pData + 0x190, "sRGB IEC61966-2.1", 17) == 0) {
-    m_bsRGB = TRUE;
+    m_bsRGB = true;
     m_nSrcComponents = 3;
   } else if (CPDF_ModuleMgr::Get()->GetIccModule()) {
     m_pTransform = CPDF_ModuleMgr::Get()->GetIccModule()->CreateTransform_sRGB(

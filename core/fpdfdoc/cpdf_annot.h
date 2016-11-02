@@ -83,15 +83,15 @@ class CPDF_Annot {
   CPDF_Dictionary* GetAnnotDict() { return m_pAnnotDict; }
   CPDF_Document* GetDocument() const { return m_pDocument; }
 
-  FX_BOOL DrawAppearance(CPDF_Page* pPage,
-                         CFX_RenderDevice* pDevice,
-                         const CFX_Matrix* pUser2Device,
-                         AppearanceMode mode,
-                         const CPDF_RenderOptions* pOptions);
-  FX_BOOL DrawInContext(const CPDF_Page* pPage,
-                        CPDF_RenderContext* pContext,
-                        const CFX_Matrix* pUser2Device,
-                        AppearanceMode mode);
+  bool DrawAppearance(CPDF_Page* pPage,
+                      CFX_RenderDevice* pDevice,
+                      const CFX_Matrix* pUser2Device,
+                      AppearanceMode mode,
+                      const CPDF_RenderOptions* pOptions);
+  bool DrawInContext(const CPDF_Page* pPage,
+                     CPDF_RenderContext* pContext,
+                     const CFX_Matrix* pUser2Device,
+                     AppearanceMode mode);
 
   void ClearCachedAP();
   void DrawBorder(CFX_RenderDevice* pDevice,

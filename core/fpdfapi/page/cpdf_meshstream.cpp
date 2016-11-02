@@ -201,17 +201,17 @@ uint32_t CPDF_MeshStream::GetVertex(CPDF_MeshVertex& vertex,
   return flag;
 }
 
-FX_BOOL CPDF_MeshStream::GetVertexRow(CPDF_MeshVertex* vertex,
-                                      int count,
-                                      CFX_Matrix* pObject2Bitmap) {
+bool CPDF_MeshStream::GetVertexRow(CPDF_MeshVertex* vertex,
+                                   int count,
+                                   CFX_Matrix* pObject2Bitmap) {
   for (int i = 0; i < count; i++) {
     if (m_BitStream.IsEOF())
-      return FALSE;
+      return false;
 
     GetCoords(vertex[i].x, vertex[i].y);
     pObject2Bitmap->Transform(vertex[i].x, vertex[i].y);
     GetColor(vertex[i].r, vertex[i].g, vertex[i].b);
     m_BitStream.ByteAlign();
   }
-  return TRUE;
+  return true;
 }

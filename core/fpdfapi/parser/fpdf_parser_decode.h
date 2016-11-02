@@ -17,8 +17,7 @@ extern const uint16_t PDFDocEncoding[256];
 CFX_ByteString PDF_NameDecode(const CFX_ByteStringC& orig);
 CFX_ByteString PDF_NameDecode(const CFX_ByteString& orig);
 CFX_ByteString PDF_NameEncode(const CFX_ByteString& orig);
-CFX_ByteString PDF_EncodeString(const CFX_ByteString& src,
-                                FX_BOOL bHex = FALSE);
+CFX_ByteString PDF_EncodeString(const CFX_ByteString& src, bool bHex = false);
 CFX_WideString PDF_DecodeText(const uint8_t* pData, uint32_t size);
 CFX_WideString PDF_DecodeText(const CFX_ByteString& bstr);
 CFX_ByteString PDF_EncodeText(const FX_WCHAR* pString, int len = -1);
@@ -57,21 +56,21 @@ uint32_t HexDecode(const uint8_t* src_buf,
                    uint8_t*& dest_buf,
                    uint32_t& dest_size);
 // Public for testing.
-uint32_t FPDFAPI_FlateOrLZWDecode(FX_BOOL bLZW,
+uint32_t FPDFAPI_FlateOrLZWDecode(bool bLZW,
                                   const uint8_t* src_buf,
                                   uint32_t src_size,
                                   CPDF_Dictionary* pParams,
                                   uint32_t estimated_size,
                                   uint8_t*& dest_buf,
                                   uint32_t& dest_size);
-FX_BOOL PDF_DataDecode(const uint8_t* src_buf,
-                       uint32_t src_size,
-                       const CPDF_Dictionary* pDict,
-                       uint8_t*& dest_buf,
-                       uint32_t& dest_size,
-                       CFX_ByteString& ImageEncoding,
-                       CPDF_Dictionary*& pImageParms,
-                       uint32_t estimated_size,
-                       FX_BOOL bImageAcc);
+bool PDF_DataDecode(const uint8_t* src_buf,
+                    uint32_t src_size,
+                    const CPDF_Dictionary* pDict,
+                    uint8_t*& dest_buf,
+                    uint32_t& dest_size,
+                    CFX_ByteString& ImageEncoding,
+                    CPDF_Dictionary*& pImageParms,
+                    uint32_t estimated_size,
+                    bool bImageAcc);
 
 #endif  // CORE_FPDFAPI_PARSER_FPDF_PARSER_DECODE_H_

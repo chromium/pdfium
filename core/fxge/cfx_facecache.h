@@ -18,7 +18,7 @@ class CFX_FaceCache {
   ~CFX_FaceCache();
   const CFX_GlyphBitmap* LoadGlyphBitmap(const CFX_Font* pFont,
                                          uint32_t glyph_index,
-                                         FX_BOOL bFontStyle,
+                                         bool bFontStyle,
                                          const CFX_Matrix* pMatrix,
                                          int dest_width,
                                          int anti_alias,
@@ -34,7 +34,7 @@ class CFX_FaceCache {
  private:
   CFX_GlyphBitmap* RenderGlyph(const CFX_Font* pFont,
                                uint32_t glyph_index,
-                               FX_BOOL bFontStyle,
+                               bool bFontStyle,
                                const CFX_Matrix* pMatrix,
                                int dest_width,
                                int anti_alias);
@@ -47,7 +47,7 @@ class CFX_FaceCache {
                                      const CFX_Matrix* pMatrix,
                                      const CFX_ByteString& FaceGlyphsKey,
                                      uint32_t glyph_index,
-                                     FX_BOOL bFontStyle,
+                                     bool bFontStyle,
                                      int dest_width,
                                      int anti_alias);
   void InitPlatform();

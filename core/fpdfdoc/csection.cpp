@@ -149,8 +149,8 @@ void CSection::UpdateWordPlace(CPVT_WordPlace& place) const {
 CPVT_WordPlace CSection::SearchWordPlace(const CFX_FloatPoint& point) const {
   ASSERT(m_pVT);
   CPVT_WordPlace place = GetBeginWordPlace();
-  FX_BOOL bUp = TRUE;
-  FX_BOOL bDown = TRUE;
+  bool bUp = true;
+  bool bDown = true;
   int32_t nLeft = 0;
   int32_t nRight = m_LineArray.GetSize() - 1;
   int32_t nMid = m_LineArray.GetSize() / 2;
@@ -162,10 +162,10 @@ CPVT_WordPlace CSection::SearchWordPlace(const CFX_FloatPoint& point) const {
              m_pVT->GetLineLeading(m_SecInfo);
       fBottom = pLine->m_LineInfo.fLineY - pLine->m_LineInfo.fLineDescent;
       if (IsFloatBigger(point.y, fTop)) {
-        bUp = FALSE;
+        bUp = false;
       }
       if (IsFloatSmaller(point.y, fBottom)) {
-        bDown = FALSE;
+        bDown = false;
       }
       if (IsFloatSmaller(point.y, fTop)) {
         nRight = nMid - 1;

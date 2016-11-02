@@ -83,7 +83,7 @@ class CPDF_DataAvail final {
   class FileAvail {
    public:
     virtual ~FileAvail();
-    virtual FX_BOOL IsDataAvail(FX_FILESIZE offset, uint32_t size) = 0;
+    virtual bool IsDataAvail(FX_FILESIZE offset, uint32_t size) = 0;
   };
 
   class DownloadHints {
@@ -94,7 +94,7 @@ class CPDF_DataAvail final {
 
   CPDF_DataAvail(FileAvail* pFileAvail,
                  IFX_SeekableReadStream* pFileRead,
-                 FX_BOOL bSupportHintTable);
+                 bool bSupportHintTable);
   ~CPDF_DataAvail();
 
   DocAvailStatus IsDocAvail(DownloadHints* pHints);
@@ -102,7 +102,7 @@ class CPDF_DataAvail final {
   DocAvailStatus IsPageAvail(uint32_t dwPage, DownloadHints* pHints);
   DocFormStatus IsFormAvail(DownloadHints* pHints);
   DocLinearizationStatus IsLinearizedPDF();
-  FX_BOOL IsLinearized();
+  bool IsLinearized();
   void GetLinearizedMainXRefInfo(FX_FILESIZE* pPos, uint32_t* pSize);
   IFX_SeekableReadStream* GetFileRead() const { return m_pFileRead; }
   int GetPageCount() const;
@@ -126,71 +126,71 @@ class CPDF_DataAvail final {
   static const int kMaxPageRecursionDepth = 1024;
 
   uint32_t GetObjectSize(uint32_t objnum, FX_FILESIZE& offset);
-  FX_BOOL AreObjectsAvailable(std::vector<CPDF_Object*>& obj_array,
-                              FX_BOOL bParsePage,
-                              DownloadHints* pHints,
-                              std::vector<CPDF_Object*>& ret_array);
-  FX_BOOL CheckDocStatus(DownloadHints* pHints);
-  FX_BOOL CheckHeader(DownloadHints* pHints);
-  FX_BOOL CheckFirstPage(DownloadHints* pHints);
-  FX_BOOL CheckHintTables(DownloadHints* pHints);
-  FX_BOOL CheckEnd(DownloadHints* pHints);
-  FX_BOOL CheckCrossRef(DownloadHints* pHints);
-  FX_BOOL CheckCrossRefItem(DownloadHints* pHints);
-  FX_BOOL CheckTrailer(DownloadHints* pHints);
-  FX_BOOL CheckRoot(DownloadHints* pHints);
-  FX_BOOL CheckInfo(DownloadHints* pHints);
-  FX_BOOL CheckPages(DownloadHints* pHints);
-  FX_BOOL CheckPage(DownloadHints* pHints);
-  FX_BOOL CheckResources(DownloadHints* pHints);
-  FX_BOOL CheckAnnots(DownloadHints* pHints);
-  FX_BOOL CheckAcroForm(DownloadHints* pHints);
-  FX_BOOL CheckAcroFormSubObject(DownloadHints* pHints);
-  FX_BOOL CheckTrailerAppend(DownloadHints* pHints);
-  FX_BOOL CheckPageStatus(DownloadHints* pHints);
-  FX_BOOL CheckAllCrossRefStream(DownloadHints* pHints);
+  bool AreObjectsAvailable(std::vector<CPDF_Object*>& obj_array,
+                           bool bParsePage,
+                           DownloadHints* pHints,
+                           std::vector<CPDF_Object*>& ret_array);
+  bool CheckDocStatus(DownloadHints* pHints);
+  bool CheckHeader(DownloadHints* pHints);
+  bool CheckFirstPage(DownloadHints* pHints);
+  bool CheckHintTables(DownloadHints* pHints);
+  bool CheckEnd(DownloadHints* pHints);
+  bool CheckCrossRef(DownloadHints* pHints);
+  bool CheckCrossRefItem(DownloadHints* pHints);
+  bool CheckTrailer(DownloadHints* pHints);
+  bool CheckRoot(DownloadHints* pHints);
+  bool CheckInfo(DownloadHints* pHints);
+  bool CheckPages(DownloadHints* pHints);
+  bool CheckPage(DownloadHints* pHints);
+  bool CheckResources(DownloadHints* pHints);
+  bool CheckAnnots(DownloadHints* pHints);
+  bool CheckAcroForm(DownloadHints* pHints);
+  bool CheckAcroFormSubObject(DownloadHints* pHints);
+  bool CheckTrailerAppend(DownloadHints* pHints);
+  bool CheckPageStatus(DownloadHints* pHints);
+  bool CheckAllCrossRefStream(DownloadHints* pHints);
 
   int32_t CheckCrossRefStream(DownloadHints* pHints, FX_FILESIZE& xref_offset);
-  FX_BOOL IsLinearizedFile(uint8_t* pData, uint32_t dwLen);
+  bool IsLinearizedFile(uint8_t* pData, uint32_t dwLen);
   void SetStartOffset(FX_FILESIZE dwOffset);
-  FX_BOOL GetNextToken(CFX_ByteString& token);
-  FX_BOOL GetNextChar(uint8_t& ch);
+  bool GetNextToken(CFX_ByteString& token);
+  bool GetNextChar(uint8_t& ch);
   CPDF_Object* ParseIndirectObjectAt(
       FX_FILESIZE pos,
       uint32_t objnum,
       CPDF_IndirectObjectHolder* pObjList = nullptr);
   CPDF_Object* GetObject(uint32_t objnum,
                          DownloadHints* pHints,
-                         FX_BOOL* pExistInFile);
-  FX_BOOL GetPageKids(CPDF_Parser* pParser, CPDF_Object* pPages);
-  FX_BOOL PreparePageItem();
-  FX_BOOL LoadPages(DownloadHints* pHints);
-  FX_BOOL LoadAllXref(DownloadHints* pHints);
-  FX_BOOL LoadAllFile(DownloadHints* pHints);
+                         bool* pExistInFile);
+  bool GetPageKids(CPDF_Parser* pParser, CPDF_Object* pPages);
+  bool PreparePageItem();
+  bool LoadPages(DownloadHints* pHints);
+  bool LoadAllXref(DownloadHints* pHints);
+  bool LoadAllFile(DownloadHints* pHints);
   DocAvailStatus CheckLinearizedData(DownloadHints* pHints);
-  FX_BOOL CheckPageAnnots(uint32_t dwPage, DownloadHints* pHints);
+  bool CheckPageAnnots(uint32_t dwPage, DownloadHints* pHints);
 
   DocAvailStatus CheckLinearizedFirstPage(uint32_t dwPage,
                                           DownloadHints* pHints);
-  FX_BOOL HaveResourceAncestor(CPDF_Dictionary* pDict);
-  FX_BOOL CheckPage(uint32_t dwPage, DownloadHints* pHints);
-  FX_BOOL LoadDocPages(DownloadHints* pHints);
-  FX_BOOL LoadDocPage(uint32_t dwPage, DownloadHints* pHints);
-  FX_BOOL CheckPageNode(PageNode& pageNodes,
-                        int32_t iPage,
-                        int32_t& iCount,
-                        DownloadHints* pHints,
-                        int level);
-  FX_BOOL CheckUnkownPageNode(uint32_t dwPageNo,
-                              PageNode* pPageNode,
-                              DownloadHints* pHints);
-  FX_BOOL CheckArrayPageNode(uint32_t dwPageNo,
-                             PageNode* pPageNode,
-                             DownloadHints* pHints);
-  FX_BOOL CheckPageCount(DownloadHints* pHints);
+  bool HaveResourceAncestor(CPDF_Dictionary* pDict);
+  bool CheckPage(uint32_t dwPage, DownloadHints* pHints);
+  bool LoadDocPages(DownloadHints* pHints);
+  bool LoadDocPage(uint32_t dwPage, DownloadHints* pHints);
+  bool CheckPageNode(PageNode& pageNodes,
+                     int32_t iPage,
+                     int32_t& iCount,
+                     DownloadHints* pHints,
+                     int level);
+  bool CheckUnkownPageNode(uint32_t dwPageNo,
+                           PageNode* pPageNode,
+                           DownloadHints* pHints);
+  bool CheckArrayPageNode(uint32_t dwPageNo,
+                          PageNode* pPageNode,
+                          DownloadHints* pHints);
+  bool CheckPageCount(DownloadHints* pHints);
   bool IsFirstCheck(uint32_t dwPage);
   void ResetFirstCheck(uint32_t dwPage);
-  FX_BOOL IsDataAvail(FX_FILESIZE offset, uint32_t size, DownloadHints* pHints);
+  bool IsDataAvail(FX_FILESIZE offset, uint32_t size, DownloadHints* pHints);
 
   FileAvail* const m_pFileAvail;
   IFX_SeekableReadStream* const m_pFileRead;
@@ -201,7 +201,7 @@ class CPDF_DataAvail final {
   uint32_t m_dwInfoObjNum;
   CPDF_Object* m_pLinearized;
   CPDF_Object* m_pTrailer;
-  FX_BOOL m_bDocAvail;
+  bool m_bDocAvail;
   FX_FILESIZE m_dwHeaderOffset;
   FX_FILESIZE m_dwLastXRefOffset;
   FX_FILESIZE m_dwXRefOffset;
@@ -220,36 +220,36 @@ class CPDF_DataAvail final {
   CFX_ArrayTemplate<uint32_t> m_XRefStreamList;
   CFX_ArrayTemplate<uint32_t> m_PageObjList;
   uint32_t m_PagesObjNum;
-  FX_BOOL m_bLinearized;
+  bool m_bLinearized;
   uint32_t m_dwFirstPageNo;
-  FX_BOOL m_bLinearedDataOK;
-  FX_BOOL m_bMainXRefLoadTried;
-  FX_BOOL m_bMainXRefLoadedOK;
-  FX_BOOL m_bPagesTreeLoad;
-  FX_BOOL m_bPagesLoad;
+  bool m_bLinearedDataOK;
+  bool m_bMainXRefLoadTried;
+  bool m_bMainXRefLoadedOK;
+  bool m_bPagesTreeLoad;
+  bool m_bPagesLoad;
   CPDF_Parser* m_pCurrentParser;
   FX_FILESIZE m_dwCurrentXRefSteam;
-  FX_BOOL m_bAnnotsLoad;
-  FX_BOOL m_bHaveAcroForm;
+  bool m_bAnnotsLoad;
+  bool m_bHaveAcroForm;
   uint32_t m_dwAcroFormObjNum;
-  FX_BOOL m_bAcroFormLoad;
+  bool m_bAcroFormLoad;
   CPDF_Object* m_pAcroForm;
   std::vector<CPDF_Object*> m_arrayAcroforms;
   CPDF_Dictionary* m_pPageDict;
   CPDF_Object* m_pPageResource;
-  FX_BOOL m_bNeedDownLoadResource;
-  FX_BOOL m_bPageLoadedOK;
-  FX_BOOL m_bLinearizedFormParamLoad;
+  bool m_bNeedDownLoadResource;
+  bool m_bPageLoadedOK;
+  bool m_bLinearizedFormParamLoad;
   std::vector<CPDF_Object*> m_PagesArray;
   uint32_t m_dwEncryptObjNum;
   FX_FILESIZE m_dwPrevXRefOffset;
-  FX_BOOL m_bTotalLoadPageTree;
-  FX_BOOL m_bCurPageDictLoadOK;
+  bool m_bTotalLoadPageTree;
+  bool m_bCurPageDictLoadOK;
   PageNode m_pageNodes;
   std::set<uint32_t> m_pageMapCheckState;
   std::set<uint32_t> m_pagesLoadState;
   std::unique_ptr<CPDF_HintTables> m_pHintTables;
-  FX_BOOL m_bSupportHintTable;
+  bool m_bSupportHintTable;
 };
 
 #endif  // CORE_FPDFAPI_PARSER_CPDF_DATA_AVAIL_H_

@@ -45,7 +45,7 @@ extern const uint16_t kFXTextLayoutBidiMirror[];
 extern const size_t kFXTextLayoutBidiMirrorSize;
 
 uint32_t FX_GetUnicodeProperties(FX_WCHAR wch);
-FX_WCHAR FX_GetMirrorChar(FX_WCHAR wch, FX_BOOL bRTL, FX_BOOL bVertical);
+FX_WCHAR FX_GetMirrorChar(FX_WCHAR wch, bool bRTL, bool bVertical);
 
 #ifdef PDF_ENABLE_XFA
 enum FX_CHARBREAKPROP {
@@ -111,11 +111,11 @@ inline FX_CHARTYPE GetCharTypeFromProp(uint32_t prop) {
   return static_cast<FX_CHARTYPE>(prop & FX_CHARTYPEBITSMASK);
 }
 
-FX_BOOL FX_IsCtrlCode(FX_WCHAR ch);
+bool FX_IsCtrlCode(FX_WCHAR ch);
 FX_WCHAR FX_GetMirrorChar(FX_WCHAR wch,
                           uint32_t dwProps,
-                          FX_BOOL bRTL,
-                          FX_BOOL bVertical);
+                          bool bRTL,
+                          bool bVertical);
 class CFX_Char {
  public:
   CFX_Char()

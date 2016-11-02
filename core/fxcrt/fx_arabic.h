@@ -36,7 +36,7 @@ void FX_BidiSetDeferredRun(CFX_Int32Array& values,
                            int32_t iValue);
 void FX_BidiClassify(const CFX_WideString& wsText,
                      CFX_Int32Array& classes,
-                     FX_BOOL bWS = FALSE);
+                     bool bWS = false);
 int32_t FX_BidiResolveExplicit(int32_t iBaseLevel,
                                int32_t iDirection,
                                CFX_Int32Array& classes,
@@ -180,7 +180,7 @@ int32_t FX_BidiReorderLevel(int32_t iBaseLevel,
                             CFX_WideString& wsText,
                             const CFX_Int32Array& levels,
                             int32_t iStart,
-                            FX_BOOL bReverse = FALSE);
+                            bool bReverse = false);
 void FX_BidiReorder(int32_t iBaseLevel,
                     CFX_WideString& wsText,
                     const CFX_Int32Array& levels);

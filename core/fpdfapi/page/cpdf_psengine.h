@@ -70,8 +70,8 @@ class CPDF_PSProc {
   CPDF_PSProc();
   ~CPDF_PSProc();
 
-  FX_BOOL Parse(CPDF_SimpleParser* parser, int depth);
-  FX_BOOL Execute(CPDF_PSEngine* pEngine);
+  bool Parse(CPDF_SimpleParser* parser, int depth);
+  bool Execute(CPDF_PSEngine* pEngine);
 
  private:
   static const int kMaxDepth = 128;
@@ -83,9 +83,9 @@ class CPDF_PSEngine {
   CPDF_PSEngine();
   ~CPDF_PSEngine();
 
-  FX_BOOL Parse(const FX_CHAR* str, int size);
-  FX_BOOL Execute();
-  FX_BOOL DoOperator(PDF_PSOP op);
+  bool Parse(const FX_CHAR* str, int size);
+  bool Execute();
+  bool DoOperator(PDF_PSOP op);
   void Reset() { m_StackCount = 0; }
   void Push(FX_FLOAT value);
   void Push(int value) { Push((FX_FLOAT)value); }

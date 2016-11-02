@@ -50,7 +50,7 @@ CFXCRT_FileAccess_Win64::~CFXCRT_FileAccess_Win64() {
 bool CFXCRT_FileAccess_Win64::Open(const CFX_ByteStringC& fileName,
                                    uint32_t dwMode) {
   if (m_hFile)
-    return FALSE;
+    return false;
 
   uint32_t dwAccess, dwShare, dwCreation;
   FXCRT_Windows_GetFileMode(dwMode, dwAccess, dwShare, dwCreation);
@@ -65,7 +65,7 @@ bool CFXCRT_FileAccess_Win64::Open(const CFX_ByteStringC& fileName,
 bool CFXCRT_FileAccess_Win64::Open(const CFX_WideStringC& fileName,
                                    uint32_t dwMode) {
   if (m_hFile)
-    return FALSE;
+    return false;
 
   uint32_t dwAccess, dwShare, dwCreation;
   FXCRT_Windows_GetFileMode(dwMode, dwAccess, dwShare, dwCreation);

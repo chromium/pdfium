@@ -105,7 +105,7 @@ int32_t bmp_read_header(bmp_decompress_struct_p bmp_ptr) {
         bmp_ptr->bitCounts =
             GetWord_LSBFirst((uint8_t*)&bmp_core_header_ptr->bcBitCount);
         bmp_ptr->compress_flag = BMP_RGB;
-        bmp_ptr->imgTB_flag = FALSE;
+        bmp_ptr->imgTB_flag = false;
       } break;
       case kBmpInfoHeaderSize: {
         BmpInfoHeaderPtr bmp_info_header_ptr = nullptr;
@@ -130,7 +130,7 @@ int32_t bmp_read_header(bmp_decompress_struct_p bmp_ptr) {
             (uint8_t*)&bmp_info_header_ptr->biYPelsPerMeter);
         if (bmp_ptr->height < 0) {
           bmp_ptr->height = -bmp_ptr->height;
-          bmp_ptr->imgTB_flag = TRUE;
+          bmp_ptr->imgTB_flag = true;
         }
       } break;
       default: {
@@ -160,7 +160,7 @@ int32_t bmp_read_header(bmp_decompress_struct_p bmp_ptr) {
               (uint8_t*)&bmp_info_header_ptr->biYPelsPerMeter);
           if (bmp_ptr->height < 0) {
             bmp_ptr->height = -bmp_ptr->height;
-            bmp_ptr->imgTB_flag = TRUE;
+            bmp_ptr->imgTB_flag = true;
           }
           if (bmp_ptr->compress_flag == BMP_RGB && biPlanes == 1 &&
               bmp_ptr->color_used == 0) {
@@ -390,7 +390,7 @@ int32_t bmp_decode_rle8(bmp_decompress_struct_p bmp_ptr) {
   uint8_t* first_byte_ptr = nullptr;
   uint8_t* second_byte_ptr = nullptr;
   bmp_ptr->col_num = 0;
-  while (TRUE) {
+  while (true) {
     uint32_t skip_size_org = bmp_ptr->skip_size;
     if (!bmp_read_data(bmp_ptr, &first_byte_ptr, 1))
       return 2;
@@ -492,7 +492,7 @@ int32_t bmp_decode_rle4(bmp_decompress_struct_p bmp_ptr) {
   uint8_t* first_byte_ptr = nullptr;
   uint8_t* second_byte_ptr = nullptr;
   bmp_ptr->col_num = 0;
-  while (TRUE) {
+  while (true) {
     uint32_t skip_size_org = bmp_ptr->skip_size;
     if (!bmp_read_data(bmp_ptr, &first_byte_ptr, 1))
       return 2;
@@ -896,9 +896,9 @@ static void bmp_encode_rle4(bmp_compress_struct_p bmp_ptr,
   dst_buf[dst_pos++] = RLE_EOI;
   dst_size = dst_pos;
 }
-FX_BOOL bmp_encode_image(bmp_compress_struct_p bmp_ptr,
-                         uint8_t*& dst_buf,
-                         uint32_t& dst_size) {
+bool bmp_encode_image(bmp_compress_struct_p bmp_ptr,
+                      uint8_t*& dst_buf,
+                      uint32_t& dst_size) {
   uint32_t head_size = sizeof(BmpFileHeader) + sizeof(BmpInfoHeader);
   uint32_t pal_size = sizeof(uint32_t) * bmp_ptr->pal_num;
   if (bmp_ptr->info_header.biClrUsed > 0 &&
@@ -908,7 +908,7 @@ FX_BOOL bmp_encode_image(bmp_compress_struct_p bmp_ptr,
   dst_size = head_size + sizeof(uint32_t) * bmp_ptr->pal_num;
   dst_buf = FX_TryAlloc(uint8_t, dst_size);
   if (!dst_buf)
-    return FALSE;
+    return false;
 
   FXSYS_memset(dst_buf, 0, dst_size);
   bmp_ptr->file_header.bfOffBits = head_size;
@@ -935,5 +935,5 @@ FX_BOOL bmp_encode_image(bmp_compress_struct_p bmp_ptr,
   }
   bmp_ptr->file_header.bfSize = dst_size;
   WriteFileHeader(&bmp_ptr->file_header, dst_buf);
-  return TRUE;
+  return true;
 }

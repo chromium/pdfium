@@ -691,7 +691,7 @@ class CJPX_Decoder {
  public:
   explicit CJPX_Decoder(CPDF_ColorSpace* cs);
   ~CJPX_Decoder();
-  FX_BOOL Init(const unsigned char* src_data, uint32_t src_size);
+  bool Init(const unsigned char* src_data, uint32_t src_size);
   void GetInfo(uint32_t* width, uint32_t* height, uint32_t* components);
   bool Decode(uint8_t* dest_buf,
               int pitch,
@@ -721,11 +721,11 @@ CJPX_Decoder::~CJPX_Decoder() {
   }
 }
 
-FX_BOOL CJPX_Decoder::Init(const unsigned char* src_data, uint32_t src_size) {
+bool CJPX_Decoder::Init(const unsigned char* src_data, uint32_t src_size) {
   static const unsigned char szJP2Header[] = {
       0x00, 0x00, 0x00, 0x0c, 0x6a, 0x50, 0x20, 0x20, 0x0d, 0x0a, 0x87, 0x0a};
   if (!src_data || src_size < sizeof(szJP2Header))
-    return FALSE;
+    return false;
 
   image = nullptr;
   m_SrcData = src_data;
@@ -734,7 +734,7 @@ FX_BOOL CJPX_Decoder::Init(const unsigned char* src_data, uint32_t src_size) {
   l_stream = fx_opj_stream_create_memory_stream(&srcData,
                                                 OPJ_J2K_STREAM_CHUNK_SIZE, 1);
   if (!l_stream) {
-    return FALSE;
+    return false;
   }
   opj_dparameters_t parameters;
   opj_set_default_decoder_parameters(&parameters);
@@ -747,7 +747,7 @@ FX_BOOL CJPX_Decoder::Init(const unsigned char* src_data, uint32_t src_size) {
     l_codec = opj_create_decompress(OPJ_CODEC_J2K);
   }
   if (!l_codec) {
-    return FALSE;
+    return false;
   }
   if (m_ColorSpace && m_ColorSpace->GetFamily() == PDFCS_INDEXED)
     parameters.flags |= OPJ_DPARAMETERS_IGNORE_PCLR_CMAP_CDEF_FLAG;
@@ -755,11 +755,11 @@ FX_BOOL CJPX_Decoder::Init(const unsigned char* src_data, uint32_t src_size) {
   opj_set_warning_handler(l_codec, fx_warning_callback, 00);
   opj_set_error_handler(l_codec, fx_error_callback, 00);
   if (!opj_setup_decoder(l_codec, &parameters)) {
-    return FALSE;
+    return false;
   }
   if (!opj_read_header(l_stream, l_codec, &image)) {
     image = nullptr;
-    return FALSE;
+    return false;
   }
   image->pdfium_use_colorspace = !!m_ColorSpace;
 
@@ -768,18 +768,18 @@ FX_BOOL CJPX_Decoder::Init(const unsigned char* src_data, uint32_t src_size) {
                              parameters.DA_x1, parameters.DA_y1)) {
       opj_image_destroy(image);
       image = nullptr;
-      return FALSE;
+      return false;
     }
     if (!(opj_decode(l_codec, l_stream, image) &&
           opj_end_decompress(l_codec, l_stream))) {
       opj_image_destroy(image);
       image = nullptr;
-      return FALSE;
+      return false;
     }
   } else {
     if (!opj_get_decoded_tile(l_codec, l_stream, image,
                               parameters.tile_index)) {
-      return FALSE;
+      return false;
     }
   }
   opj_stream_destroy(l_stream);
@@ -799,9 +799,9 @@ FX_BOOL CJPX_Decoder::Init(const unsigned char* src_data, uint32_t src_size) {
     image->icc_profile_len = 0;
   }
   if (!image) {
-    return FALSE;
+    return false;
   }
-  return TRUE;
+  return true;
 }
 
 void CJPX_Decoder::GetInfo(uint32_t* width,

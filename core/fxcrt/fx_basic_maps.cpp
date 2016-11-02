@@ -58,14 +58,14 @@ void CFX_MapPtrToPtr::GetNextAssoc(FX_POSITION& rNextPosition,
   rKey = pAssocRet->key;
   rValue = pAssocRet->value;
 }
-FX_BOOL CFX_MapPtrToPtr::Lookup(void* key, void*& rValue) const {
+bool CFX_MapPtrToPtr::Lookup(void* key, void*& rValue) const {
   uint32_t nHash;
   CAssoc* pAssoc = GetAssocAt(key, nHash);
   if (!pAssoc) {
-    return FALSE;
+    return false;
   }
   rValue = pAssoc->value;
-  return TRUE;
+  return true;
 }
 
 void* CFX_MapPtrToPtr::GetValueAt(void* key) const {
@@ -120,7 +120,7 @@ CFX_MapPtrToPtr::CAssoc* CFX_MapPtrToPtr::NewAssoc() {
   pAssoc->value = 0;
   return pAssoc;
 }
-void CFX_MapPtrToPtr::InitHashTable(uint32_t nHashSize, FX_BOOL bAllocNow) {
+void CFX_MapPtrToPtr::InitHashTable(uint32_t nHashSize, bool bAllocNow) {
   ASSERT(m_nCount == 0);
   ASSERT(nHashSize > 0);
   FX_Free(m_pHashTable);
@@ -130,9 +130,9 @@ void CFX_MapPtrToPtr::InitHashTable(uint32_t nHashSize, FX_BOOL bAllocNow) {
   }
   m_nHashTableSize = nHashSize;
 }
-FX_BOOL CFX_MapPtrToPtr::RemoveKey(void* key) {
+bool CFX_MapPtrToPtr::RemoveKey(void* key) {
   if (!m_pHashTable) {
-    return FALSE;
+    return false;
   }
   CAssoc** ppAssocPrev;
   ppAssocPrev = &m_pHashTable[HashKey(key) % m_nHashTableSize];
@@ -141,11 +141,11 @@ FX_BOOL CFX_MapPtrToPtr::RemoveKey(void* key) {
     if (pAssoc->key == key) {
       *ppAssocPrev = pAssoc->pNext;
       FreeAssoc(pAssoc);
-      return TRUE;
+      return true;
     }
     ppAssocPrev = &pAssoc->pNext;
   }
-  return FALSE;
+  return false;
 }
 void CFX_MapPtrToPtr::FreeAssoc(CFX_MapPtrToPtr::CAssoc* pAssoc) {
   pAssoc->pNext = m_pFreeList;

@@ -34,7 +34,7 @@ class CPDF_Creator {
   void RemoveSecurity();
   bool Create(IFX_WriteStream* pFile, uint32_t flags = 0);
   int32_t Continue(IFX_Pause* pPause = nullptr);
-  FX_BOOL SetFileVersion(int32_t fileVersion = 17);
+  bool SetFileVersion(int32_t fileVersion = 17);
 
  private:
   friend class CPDF_ObjectStream;
@@ -46,7 +46,7 @@ class CPDF_Creator {
 
   void InitOldObjNumOffsets();
   void InitNewObjNumOffsets();
-  void InitID(FX_BOOL bDefault = TRUE);
+  void InitID(bool bDefault = true);
 
   void AppendNewObjNum(uint32_t objbum);
   int32_t AppendObjectNumberToXRef(uint32_t objnum);
@@ -58,11 +58,11 @@ class CPDF_Creator {
 
   int32_t WriteOldIndirectObject(uint32_t objnum);
   int32_t WriteOldObjs(IFX_Pause* pPause);
-  int32_t WriteNewObjs(FX_BOOL bIncremental, IFX_Pause* pPause);
+  int32_t WriteNewObjs(bool bIncremental, IFX_Pause* pPause);
   int32_t WriteIndirectObj(const CPDF_Object* pObj);
   int32_t WriteDirectObj(uint32_t objnum,
                          const CPDF_Object* pObj,
-                         FX_BOOL bEncrypt = TRUE);
+                         bool bEncrypt = true);
   int32_t WriteIndirectObjectToStream(const CPDF_Object* pObj);
   int32_t WriteIndirectObj(uint32_t objnum, const CPDF_Object* pObj);
   int32_t WriteIndirectObjectToStream(uint32_t objnum,
@@ -75,13 +75,13 @@ class CPDF_Creator {
 
   CPDF_Document* const m_pDocument;
   CPDF_Parser* const m_pParser;
-  FX_BOOL m_bSecurityChanged;
+  bool m_bSecurityChanged;
   CPDF_Dictionary* m_pEncryptDict;
   uint32_t m_dwEncryptObjNum;
-  FX_BOOL m_bEncryptCloned;
+  bool m_bEncryptCloned;
   CPDF_CryptoHandler* m_pCryptoHandler;
   // Whether this owns the crypto handler |m_pCryptoHandler|.
-  FX_BOOL m_bLocalCryptoHandler;
+  bool m_bLocalCryptoHandler;
   CPDF_Object* m_pMetadata;
   std::unique_ptr<CPDF_XRefStream> m_pXRefStream;
   int32_t m_ObjectStreamSize;

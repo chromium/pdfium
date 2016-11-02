@@ -49,7 +49,7 @@ CFX_FloatRect CPDF_Path::GetBoundingBox(FX_FLOAT line_width,
   return m_Ref.GetObject()->GetBoundingBox(line_width, miter_limit);
 }
 
-FX_BOOL CPDF_Path::IsRect() const {
+bool CPDF_Path::IsRect() const {
   return m_Ref.GetObject()->IsRect();
 }
 

@@ -20,23 +20,21 @@ class CPDF_TextPageFind {
   explicit CPDF_TextPageFind(const CPDF_TextPage* pTextPage);
   ~CPDF_TextPageFind();
 
-  FX_BOOL FindFirst(const CFX_WideString& findwhat,
-                    int flags,
-                    int startPos = 0);
-  FX_BOOL FindNext();
-  FX_BOOL FindPrev();
+  bool FindFirst(const CFX_WideString& findwhat, int flags, int startPos = 0);
+  bool FindNext();
+  bool FindPrev();
   int GetCurOrder() const;
   int GetMatchedCount() const;
 
  protected:
   void ExtractFindWhat(const CFX_WideString& findwhat);
-  FX_BOOL IsMatchWholeWord(const CFX_WideString& csPageText,
-                           int startPos,
-                           int endPos);
-  FX_BOOL ExtractSubString(CFX_WideString& rString,
-                           const FX_WCHAR* lpszFullString,
-                           int iSubString,
-                           FX_WCHAR chSep);
+  bool IsMatchWholeWord(const CFX_WideString& csPageText,
+                        int startPos,
+                        int endPos);
+  bool ExtractSubString(CFX_WideString& rString,
+                        const FX_WCHAR* lpszFullString,
+                        int iSubString,
+                        FX_WCHAR chSep);
   CFX_WideString MakeReverse(const CFX_WideString& str);
   int GetCharIndex(int index) const;
 
@@ -49,12 +47,12 @@ class CPDF_TextPageFind {
   std::vector<CFX_WideString> m_csFindWhatArray;
   int m_findNextStart;
   int m_findPreStart;
-  FX_BOOL m_bMatchCase;
-  FX_BOOL m_bMatchWholeWord;
+  bool m_bMatchCase;
+  bool m_bMatchWholeWord;
   int m_resStart;
   int m_resEnd;
   std::vector<CFX_FloatRect> m_resArray;
-  FX_BOOL m_IsFind;
+  bool m_IsFind;
 };
 
 #endif  // CORE_FPDFTEXT_CPDF_TEXTPAGEFIND_H_

@@ -77,7 +77,7 @@ CPDF_Object* CPDF_Stream::CloneNonCyclic(
     std::set<const CPDF_Object*>* pVisited) const {
   pVisited->insert(this);
   CPDF_StreamAcc acc;
-  acc.LoadAllData(this, TRUE);
+  acc.LoadAllData(this, true);
   uint32_t streamSize = acc.GetSize();
   CPDF_Dictionary* pDict = GetDict();
   if (pDict && !pdfium::ContainsKey(*pVisited, pDict)) {
@@ -101,20 +101,20 @@ void CPDF_Stream::SetData(const uint8_t* pData, uint32_t size) {
   m_pDict->RemoveFor("DecodeParms");
 }
 
-FX_BOOL CPDF_Stream::ReadRawData(FX_FILESIZE offset,
-                                 uint8_t* buf,
-                                 uint32_t size) const {
+bool CPDF_Stream::ReadRawData(FX_FILESIZE offset,
+                              uint8_t* buf,
+                              uint32_t size) const {
   if (m_bMemoryBased && m_pFile)
     return m_pFile->ReadBlock(buf, offset, size);
 
   if (m_pDataBuf)
     FXSYS_memcpy(buf, m_pDataBuf.get() + offset, size);
 
-  return TRUE;
+  return true;
 }
 
 CFX_WideString CPDF_Stream::GetUnicodeText() const {
   CPDF_StreamAcc stream;
-  stream.LoadAllData(this, FALSE);
+  stream.LoadAllData(this, false);
   return PDF_DecodeText(stream.GetData(), stream.GetSize());
 }

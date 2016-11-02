@@ -47,38 +47,35 @@ class CPDF_ColorSpace {
                                FX_FLOAT& min,
                                FX_FLOAT& max) const;
 
-  FX_BOOL sRGB() const;
-  virtual FX_BOOL GetRGB(FX_FLOAT* pBuf,
-                         FX_FLOAT& R,
-                         FX_FLOAT& G,
-                         FX_FLOAT& B) const = 0;
-  virtual FX_BOOL SetRGB(FX_FLOAT* pBuf,
-                         FX_FLOAT R,
-                         FX_FLOAT G,
-                         FX_FLOAT B) const;
+  bool sRGB() const;
+  virtual bool GetRGB(FX_FLOAT* pBuf,
+                      FX_FLOAT& R,
+                      FX_FLOAT& G,
+                      FX_FLOAT& B) const = 0;
+  virtual bool SetRGB(FX_FLOAT* pBuf, FX_FLOAT R, FX_FLOAT G, FX_FLOAT B) const;
 
-  FX_BOOL GetCMYK(FX_FLOAT* pBuf,
-                  FX_FLOAT& c,
-                  FX_FLOAT& m,
-                  FX_FLOAT& y,
-                  FX_FLOAT& k) const;
-  FX_BOOL SetCMYK(FX_FLOAT* pBuf,
-                  FX_FLOAT c,
-                  FX_FLOAT m,
-                  FX_FLOAT y,
-                  FX_FLOAT k) const;
+  bool GetCMYK(FX_FLOAT* pBuf,
+               FX_FLOAT& c,
+               FX_FLOAT& m,
+               FX_FLOAT& y,
+               FX_FLOAT& k) const;
+  bool SetCMYK(FX_FLOAT* pBuf,
+               FX_FLOAT c,
+               FX_FLOAT m,
+               FX_FLOAT y,
+               FX_FLOAT k) const;
 
   virtual void TranslateImageLine(uint8_t* dest_buf,
                                   const uint8_t* src_buf,
                                   int pixels,
                                   int image_width,
                                   int image_height,
-                                  FX_BOOL bTransMask = FALSE) const;
+                                  bool bTransMask = false) const;
 
   CPDF_Array*& GetArray() { return m_pArray; }
   virtual CPDF_ColorSpace* GetBaseCS() const;
 
-  virtual void EnableStdConversion(FX_BOOL bEnabled);
+  virtual void EnableStdConversion(bool bEnabled);
 
   CPDF_Document* const m_pDocument;
 
@@ -86,17 +83,17 @@ class CPDF_ColorSpace {
   CPDF_ColorSpace(CPDF_Document* pDoc, int family, uint32_t nComponents);
   virtual ~CPDF_ColorSpace();
 
-  virtual FX_BOOL v_Load(CPDF_Document* pDoc, CPDF_Array* pArray);
-  virtual FX_BOOL v_GetCMYK(FX_FLOAT* pBuf,
-                            FX_FLOAT& c,
-                            FX_FLOAT& m,
-                            FX_FLOAT& y,
-                            FX_FLOAT& k) const;
-  virtual FX_BOOL v_SetCMYK(FX_FLOAT* pBuf,
-                            FX_FLOAT c,
-                            FX_FLOAT m,
-                            FX_FLOAT y,
-                            FX_FLOAT k) const;
+  virtual bool v_Load(CPDF_Document* pDoc, CPDF_Array* pArray);
+  virtual bool v_GetCMYK(FX_FLOAT* pBuf,
+                         FX_FLOAT& c,
+                         FX_FLOAT& m,
+                         FX_FLOAT& y,
+                         FX_FLOAT& k) const;
+  virtual bool v_SetCMYK(FX_FLOAT* pBuf,
+                         FX_FLOAT c,
+                         FX_FLOAT m,
+                         FX_FLOAT y,
+                         FX_FLOAT k) const;
 
   int m_Family;
   uint32_t m_nComponents;

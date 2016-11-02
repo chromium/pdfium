@@ -14,7 +14,7 @@
 class CPDF_String : public CPDF_Object {
  public:
   CPDF_String();
-  CPDF_String(const CFX_ByteString& str, FX_BOOL bHex);
+  CPDF_String(const CFX_ByteString& str, bool bHex);
   explicit CPDF_String(const CFX_WideString& str);
 
   // CPDF_Object.
@@ -27,13 +27,13 @@ class CPDF_String : public CPDF_Object {
   CPDF_String* AsString() override;
   const CPDF_String* AsString() const override;
 
-  FX_BOOL IsHex() const { return m_bHex; }
+  bool IsHex() const { return m_bHex; }
 
  protected:
   ~CPDF_String() override;
 
   CFX_ByteString m_String;
-  FX_BOOL m_bHex;
+  bool m_bHex;
 };
 
 inline CPDF_String* ToString(CPDF_Object* obj) {

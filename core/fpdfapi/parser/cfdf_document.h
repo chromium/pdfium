@@ -19,11 +19,11 @@ class CFDF_Document : public CPDF_IndirectObjectHolder {
  public:
   static CFDF_Document* CreateNewDoc();
   static CFDF_Document* ParseFile(IFX_SeekableReadStream* pFile,
-                                  FX_BOOL bOwnFile = FALSE);
+                                  bool bOwnFile = false);
   static CFDF_Document* ParseMemory(const uint8_t* pData, uint32_t size);
   ~CFDF_Document() override;
 
-  FX_BOOL WriteBuf(CFX_ByteTextBuf& buf) const;
+  bool WriteBuf(CFX_ByteTextBuf& buf) const;
   CPDF_Dictionary* GetRoot() const { return m_pRootDict; }
   CFX_WeakPtr<CFX_ByteStringPool> GetByteStringPool() const {
     return m_pByteStringPool;
@@ -31,11 +31,11 @@ class CFDF_Document : public CPDF_IndirectObjectHolder {
 
  protected:
   CFDF_Document();
-  void ParseStream(IFX_SeekableReadStream* pFile, FX_BOOL bOwnFile);
+  void ParseStream(IFX_SeekableReadStream* pFile, bool bOwnFile);
 
   CPDF_Dictionary* m_pRootDict;
   IFX_SeekableReadStream* m_pFile;
-  FX_BOOL m_bOwnFile;
+  bool m_bOwnFile;
   CFX_WeakPtr<CFX_ByteStringPool> m_pByteStringPool;
 };
 

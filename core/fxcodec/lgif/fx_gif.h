@@ -168,18 +168,16 @@ class CGifLZWEncoder {
              const uint8_t* src_buf,
              uint8_t*& dst_buf,
              uint32_t& offset);
-  FX_BOOL Encode(const uint8_t* src_buf,
-                 uint32_t src_len,
-                 uint8_t*& dst_buf,
-                 uint32_t& dst_len,
-                 uint32_t& offset);
+  bool Encode(const uint8_t* src_buf,
+              uint32_t src_len,
+              uint8_t*& dst_buf,
+              uint32_t& dst_len,
+              uint32_t& offset);
   void Finish(uint8_t*& dst_buf, uint32_t& dst_len, uint32_t& offset);
 
  private:
   void ClearTable();
-  FX_BOOL LookUpInTable(const uint8_t* buf,
-                        uint32_t& offset,
-                        uint8_t& bit_offset);
+  bool LookUpInTable(const uint8_t* buf, uint32_t& offset, uint8_t& bit_offset);
   void EncodeString(uint32_t index,
                     uint8_t*& dst_buf,
                     uint32_t& dst_len,
@@ -237,12 +235,19 @@ struct tag_gif_decompress_struct {
   void (*gif_get_row_fn)(gif_decompress_struct_p gif_ptr,
                          int32_t row_num,
                          uint8_t* row_buf);
-  FX_BOOL (*gif_get_record_position_fn)(gif_decompress_struct_p gif_ptr,
-            uint32_t cur_pos,
-            int32_t left, int32_t top, int32_t width, int32_t height,
-            int32_t pal_num, void* pal_ptr,
-            int32_t delay_time, FX_BOOL user_input,
-            int32_t trans_index, int32_t disposal_method, FX_BOOL interlace);
+  bool (*gif_get_record_position_fn)(gif_decompress_struct_p gif_ptr,
+                                     uint32_t cur_pos,
+                                     int32_t left,
+                                     int32_t top,
+                                     int32_t width,
+                                     int32_t height,
+                                     int32_t pal_num,
+                                     void* pal_ptr,
+                                     int32_t delay_time,
+                                     bool user_input,
+                                     int32_t trans_index,
+                                     int32_t disposal_method,
+                                     bool interlace);
   CFX_ByteString* cmt_data_ptr;
   GifGCE* gce_ptr;
   CFX_ArrayTemplate<GifPlainText*>* pt_ptr_arr_ptr;
@@ -300,8 +305,8 @@ void gif_input_buffer(gif_decompress_struct_p gif_ptr,
 uint32_t gif_get_avail_input(gif_decompress_struct_p gif_ptr,
                              uint8_t** avail_buf_ptr);
 void interlace_buf(const uint8_t* buf, uint32_t width, uint32_t height);
-FX_BOOL gif_encode(gif_compress_struct_p gif_ptr,
-                   uint8_t*& dst_buf,
-                   uint32_t& dst_len);
+bool gif_encode(gif_compress_struct_p gif_ptr,
+                uint8_t*& dst_buf,
+                uint32_t& dst_len);
 
 #endif  // CORE_FXCODEC_LGIF_FX_GIF_H_

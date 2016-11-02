@@ -11,7 +11,7 @@ bool IFX_SeekableWriteStream::WriteBlock(const void* pData, size_t size) {
 }
 
 bool IFX_SeekableReadStream::IsEOF() {
-  return FALSE;
+  return false;
 }
 
 FX_FILESIZE IFX_SeekableReadStream::GetPosition() {

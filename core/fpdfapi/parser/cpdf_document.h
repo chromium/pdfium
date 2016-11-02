@@ -92,14 +92,14 @@ class CPDF_Document : public CPDF_IndirectObjectHolder {
   CPDF_Dictionary* CreateNewPage(int iPage);
 
   CPDF_Font* AddStandardFont(const FX_CHAR* font, CPDF_FontEncoding* pEncoding);
-  CPDF_Font* AddFont(CFX_Font* pFont, int charset, FX_BOOL bVert);
+  CPDF_Font* AddFont(CFX_Font* pFont, int charset, bool bVert);
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
   CPDF_Font* AddWindowsFont(LOGFONTA* pLogFont,
-                            FX_BOOL bVert,
-                            FX_BOOL bTranslateName = FALSE);
+                            bool bVert,
+                            bool bTranslateName = false);
   CPDF_Font* AddWindowsFont(LOGFONTW* pLogFont,
-                            FX_BOOL bVert,
-                            FX_BOOL bTranslateName = FALSE);
+                            bool bVert,
+                            bool bTranslateName = false);
 #endif
 
  protected:
@@ -121,7 +121,7 @@ class CPDF_Document : public CPDF_IndirectObjectHolder {
   CPDF_Dictionary* ProcessbCJK(
       CPDF_Dictionary* pBaseDict,
       int charset,
-      FX_BOOL bVert,
+      bool bVert,
       CFX_ByteString basefont,
       std::function<void(FX_WCHAR, FX_WCHAR, CPDF_Array*)> Insert);
 

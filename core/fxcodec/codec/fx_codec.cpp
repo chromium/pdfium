@@ -73,9 +73,9 @@ const uint8_t* CCodec_ScanlineDecoder::GetScanline(int line) {
   return m_pLastScanline;
 }
 
-FX_BOOL CCodec_ScanlineDecoder::SkipToScanline(int line, IFX_Pause* pPause) {
+bool CCodec_ScanlineDecoder::SkipToScanline(int line, IFX_Pause* pPause) {
   if (m_NextLine == line || m_NextLine == line + 1)
-    return FALSE;
+    return false;
 
   if (m_NextLine < 0 || m_NextLine > line) {
     v_Rewind();
@@ -86,10 +86,10 @@ FX_BOOL CCodec_ScanlineDecoder::SkipToScanline(int line, IFX_Pause* pPause) {
     m_pLastScanline = ReadNextLine();
     m_NextLine++;
     if (pPause && pPause->NeedToPauseNow()) {
-      return TRUE;
+      return true;
     }
   }
-  return FALSE;
+  return false;
 }
 
 uint8_t* CCodec_ScanlineDecoder::ReadNextLine() {
@@ -120,20 +120,20 @@ class CCodec_RLScanlineDecoder : public CCodec_ScanlineDecoder {
   CCodec_RLScanlineDecoder();
   ~CCodec_RLScanlineDecoder() override;
 
-  FX_BOOL Create(const uint8_t* src_buf,
-                 uint32_t src_size,
-                 int width,
-                 int height,
-                 int nComps,
-                 int bpc);
+  bool Create(const uint8_t* src_buf,
+              uint32_t src_size,
+              int width,
+              int height,
+              int nComps,
+              int bpc);
 
   // CCodec_ScanlineDecoder
-  FX_BOOL v_Rewind() override;
+  bool v_Rewind() override;
   uint8_t* v_GetNextLine() override;
   uint32_t GetSrcOffset() override { return m_SrcOffset; }
 
  protected:
-  FX_BOOL CheckDestSize();
+  bool CheckDestSize();
   void GetNextOperator();
   void UpdateOperator(uint8_t used_bytes);
 
@@ -142,7 +142,7 @@ class CCodec_RLScanlineDecoder : public CCodec_ScanlineDecoder {
   uint32_t m_SrcSize;
   uint32_t m_dwLineBytes;
   uint32_t m_SrcOffset;
-  FX_BOOL m_bEOD;
+  bool m_bEOD;
   uint8_t m_Operator;
 };
 CCodec_RLScanlineDecoder::CCodec_RLScanlineDecoder()
@@ -151,12 +151,12 @@ CCodec_RLScanlineDecoder::CCodec_RLScanlineDecoder()
       m_SrcSize(0),
       m_dwLineBytes(0),
       m_SrcOffset(0),
-      m_bEOD(FALSE),
+      m_bEOD(false),
       m_Operator(0) {}
 CCodec_RLScanlineDecoder::~CCodec_RLScanlineDecoder() {
   FX_Free(m_pScanline);
 }
-FX_BOOL CCodec_RLScanlineDecoder::CheckDestSize() {
+bool CCodec_RLScanlineDecoder::CheckDestSize() {
   uint32_t i = 0;
   uint32_t old_size = 0;
   uint32_t dest_size = 0;
@@ -165,14 +165,14 @@ FX_BOOL CCodec_RLScanlineDecoder::CheckDestSize() {
       old_size = dest_size;
       dest_size += m_pSrcBuf[i] + 1;
       if (dest_size < old_size) {
-        return FALSE;
+        return false;
       }
       i += m_pSrcBuf[i] + 2;
     } else if (m_pSrcBuf[i] > 128) {
       old_size = dest_size;
       dest_size += 257 - m_pSrcBuf[i];
       if (dest_size < old_size) {
-        return FALSE;
+        return false;
       }
       i += 2;
     } else {
@@ -181,16 +181,16 @@ FX_BOOL CCodec_RLScanlineDecoder::CheckDestSize() {
   }
   if (((uint32_t)m_OrigWidth * m_nComps * m_bpc * m_OrigHeight + 7) / 8 >
       dest_size) {
-    return FALSE;
+    return false;
   }
-  return TRUE;
+  return true;
 }
-FX_BOOL CCodec_RLScanlineDecoder::Create(const uint8_t* src_buf,
-                                         uint32_t src_size,
-                                         int width,
-                                         int height,
-                                         int nComps,
-                                         int bpc) {
+bool CCodec_RLScanlineDecoder::Create(const uint8_t* src_buf,
+                                      uint32_t src_size,
+                                      int width,
+                                      int height,
+                                      int nComps,
+                                      int bpc) {
   m_pSrcBuf = src_buf;
   m_SrcSize = src_size;
   m_OutputWidth = m_OrigWidth = width;
@@ -205,7 +205,7 @@ FX_BOOL CCodec_RLScanlineDecoder::Create(const uint8_t* src_buf,
   pitch /= 32;
   pitch *= 4;
   if (!pitch.IsValid()) {
-    return FALSE;
+    return false;
   }
   m_Pitch = pitch.ValueOrDie();
   // Overflow should already have been checked before this is called.
@@ -213,12 +213,12 @@ FX_BOOL CCodec_RLScanlineDecoder::Create(const uint8_t* src_buf,
   m_pScanline = FX_Alloc(uint8_t, m_Pitch);
   return CheckDestSize();
 }
-FX_BOOL CCodec_RLScanlineDecoder::v_Rewind() {
+bool CCodec_RLScanlineDecoder::v_Rewind() {
   FXSYS_memset(m_pScanline, 0, m_Pitch);
   m_SrcOffset = 0;
-  m_bEOD = FALSE;
+  m_bEOD = false;
   m_Operator = 0;
-  return TRUE;
+  return true;
 }
 uint8_t* CCodec_RLScanlineDecoder::v_GetNextLine() {
   if (m_SrcOffset == 0) {
@@ -230,17 +230,17 @@ uint8_t* CCodec_RLScanlineDecoder::v_GetNextLine() {
   }
   FXSYS_memset(m_pScanline, 0, m_Pitch);
   uint32_t col_pos = 0;
-  FX_BOOL eol = FALSE;
+  bool eol = false;
   while (m_SrcOffset < m_SrcSize && !eol) {
     if (m_Operator < 128) {
       uint32_t copy_len = m_Operator + 1;
       if (col_pos + copy_len >= m_dwLineBytes) {
         copy_len = m_dwLineBytes - col_pos;
-        eol = TRUE;
+        eol = true;
       }
       if (copy_len >= m_SrcSize - m_SrcOffset) {
         copy_len = m_SrcSize - m_SrcOffset;
-        m_bEOD = TRUE;
+        m_bEOD = true;
       }
       FXSYS_memcpy(m_pScanline + col_pos, m_pSrcBuf + m_SrcOffset, copy_len);
       col_pos += copy_len;
@@ -253,13 +253,13 @@ uint8_t* CCodec_RLScanlineDecoder::v_GetNextLine() {
       uint32_t duplicate_len = 257 - m_Operator;
       if (col_pos + duplicate_len >= m_dwLineBytes) {
         duplicate_len = m_dwLineBytes - col_pos;
-        eol = TRUE;
+        eol = true;
       }
       FXSYS_memset(m_pScanline + col_pos, fill, duplicate_len);
       col_pos += duplicate_len;
       UpdateOperator((uint8_t)duplicate_len);
     } else {
-      m_bEOD = TRUE;
+      m_bEOD = true;
       break;
     }
   }

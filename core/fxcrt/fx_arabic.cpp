@@ -376,7 +376,7 @@ int32_t FX_BidiReorderLevel(int32_t iBaseLevel,
                             CFX_WideString& wsText,
                             const CFX_Int32Array& levels,
                             int32_t iStart,
-                            FX_BOOL bReverse) {
+                            bool bReverse) {
   ASSERT(iBaseLevel >= 0 && iBaseLevel <= FX_BIDIMAXLEVEL);
   ASSERT(wsText.GetLength() == levels.GetSize());
   ASSERT(iStart >= 0 && iStart < wsText.GetLength());
@@ -412,7 +412,7 @@ void FX_BidiReorder(int32_t iBaseLevel,
   }
   int32_t i = 0;
   while (i < iSize) {
-    i += FX_BidiReorderLevel(iBaseLevel, wsText, levels, i, FALSE);
+    i += FX_BidiReorderLevel(iBaseLevel, wsText, levels, i, false);
   }
 }
 
@@ -435,7 +435,7 @@ class CFX_BidiLineTemplate {
     }
   }
   void FX_BidiSetDeferredRun(CFX_ArrayTemplate<baseType>& chars,
-                             FX_BOOL bClass,
+                             bool bClass,
                              int32_t iStart,
                              int32_t iCount,
                              int32_t iValue) {
@@ -457,7 +457,7 @@ class CFX_BidiLineTemplate {
   }
   void FX_BidiClassify(CFX_ArrayTemplate<baseType>& chars,
                        int32_t iCount,
-                       FX_BOOL bWS) {
+                       bool bWS) {
     ASSERT(iCount > -1 && iCount <= chars.GetSize());
     baseType* pTC;
     if (bWS) {
@@ -541,7 +541,7 @@ class CFX_BidiLineTemplate {
       iAction = gc_FX_BidiWeakActions[iState][iClsCur];
       iClsRun = FX_BidiGetDeferredType(iAction);
       if (iClsRun != FX_BIDIWEAKACTION_XX && iNum > 0) {
-        FX_BidiSetDeferredRun(chars, TRUE, i, iNum, iClsRun);
+        FX_BidiSetDeferredRun(chars, true, i, iNum, iClsRun);
         iNum = 0;
       }
       iClsNew = FX_BidiGetResolvedType(iAction);
@@ -557,7 +557,7 @@ class CFX_BidiLineTemplate {
       iClsCur = FX_BidiDirection(iBaseLevel);
       iClsRun = FX_BidiGetDeferredType(gc_FX_BidiWeakActions[iState][iClsCur]);
       if (iClsRun != FX_BIDIWEAKACTION_XX) {
-        FX_BidiSetDeferredRun(chars, TRUE, i, iNum, iClsRun);
+        FX_BidiSetDeferredRun(chars, true, i, iNum, iClsRun);
       }
     }
   }
@@ -587,7 +587,7 @@ class CFX_BidiLineTemplate {
       iAction = gc_FX_BidiNeutralActions[iState][iClsCur];
       iClsRun = FX_BidiGetDeferredNeutrals(iAction, iLevel);
       if (iClsRun != FX_BIDICLASS_N && iNum > 0) {
-        FX_BidiSetDeferredRun(chars, TRUE, i, iNum, iClsRun);
+        FX_BidiSetDeferredRun(chars, true, i, iNum, iClsRun);
         iNum = 0;
       }
       iClsNew = FX_BidiGetResolvedNeutrals(iAction);
@@ -605,7 +605,7 @@ class CFX_BidiLineTemplate {
       iClsRun = FX_BidiGetDeferredNeutrals(
           gc_FX_BidiNeutralActions[iState][iClsCur], iLevel);
       if (iClsRun != FX_BIDICLASS_N) {
-        FX_BidiSetDeferredRun(chars, TRUE, i, iNum, iClsRun);
+        FX_BidiSetDeferredRun(chars, true, i, iNum, iClsRun);
       }
     }
   }
@@ -656,7 +656,7 @@ class CFX_BidiLineTemplate {
         case FX_BIDICLASS_S:
         case FX_BIDICLASS_B:
           if (iNum > 0) {
-            FX_BidiSetDeferredRun(chars, FALSE, i, iNum, iBaseLevel);
+            FX_BidiSetDeferredRun(chars, false, i, iNum, iBaseLevel);
           }
           pTC->m_iBidiLevel = (int16_t)iBaseLevel;
           iNum = 0;
@@ -668,14 +668,14 @@ class CFX_BidiLineTemplate {
       iLevel = pTC->m_iBidiLevel;
     }
     if (iNum > 0) {
-      FX_BidiSetDeferredRun(chars, FALSE, i, iNum, iBaseLevel);
+      FX_BidiSetDeferredRun(chars, false, i, iNum, iBaseLevel);
     }
   }
   int32_t FX_BidiReorderLevel(CFX_ArrayTemplate<baseType>& chars,
                               int32_t iCount,
                               int32_t iBaseLevel,
                               int32_t iStart,
-                              FX_BOOL bReverse) {
+                              bool bReverse) {
     ASSERT(iCount > -1 && iCount <= chars.GetSize());
     ASSERT(iBaseLevel >= 0 && iBaseLevel <= FX_BIDIMAXLEVEL);
     ASSERT(iStart >= 0 && iStart < iCount);
@@ -708,7 +708,7 @@ class CFX_BidiLineTemplate {
     ASSERT(iBaseLevel >= 0 && iBaseLevel <= FX_BIDIMAXLEVEL);
     int32_t i = 0;
     while (i < iCount) {
-      i += FX_BidiReorderLevel(chars, iCount, iBaseLevel, i, FALSE);
+      i += FX_BidiReorderLevel(chars, iCount, iBaseLevel, i, false);
     }
   }
   void FX_BidiPosition(CFX_ArrayTemplate<baseType>& chars, int32_t iCount) {
@@ -729,12 +729,12 @@ class CFX_BidiLineTemplate {
     if (iCount < 2) {
       return;
     }
-    FX_BidiClassify(chars, iCount, FALSE);
+    FX_BidiClassify(chars, iCount, false);
     FX_BidiResolveExplicit(chars, iCount, iBaseLevel);
     FX_BidiResolveWeak(chars, iCount, iBaseLevel);
     FX_BidiResolveNeutrals(chars, iCount, iBaseLevel);
     FX_BidiResolveImplicit(chars, iCount);
-    FX_BidiClassify(chars, iCount, TRUE);
+    FX_BidiClassify(chars, iCount, true);
     FX_BidiResolveWhitespace(chars, iCount, iBaseLevel);
     FX_BidiReorder(chars, iCount, iBaseLevel);
     FX_BidiPosition(chars, iCount);

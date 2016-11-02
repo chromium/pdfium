@@ -63,7 +63,7 @@ CPDF_Dictionary* CPDF_Object::GetDict() const {
 }
 
 void CPDF_Object::SetString(const CFX_ByteString& str) {
-  ASSERT(FALSE);
+  ASSERT(false);
 }
 
 bool CPDF_Object::IsArray() const {

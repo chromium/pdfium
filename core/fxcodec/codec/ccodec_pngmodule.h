@@ -20,19 +20,19 @@ class CCodec_PngModule {
 
   FXPNG_Context* Start(void* pModule);
   void Finish(FXPNG_Context* pContext);
-  FX_BOOL Input(FXPNG_Context* pContext,
-                const uint8_t* src_buf,
-                uint32_t src_size,
-                CFX_DIBAttribute* pAttribute);
+  bool Input(FXPNG_Context* pContext,
+             const uint8_t* src_buf,
+             uint32_t src_size,
+             CFX_DIBAttribute* pAttribute);
 
-  FX_BOOL (*ReadHeaderCallback)(void* pModule,
-                                int width,
-                                int height,
-                                int bpc,
-                                int pass,
-                                int* color_type,
-                                double* gamma);
-  FX_BOOL (*AskScanlineBufCallback)(void* pModule, int line, uint8_t*& src_buf);
+  bool (*ReadHeaderCallback)(void* pModule,
+                             int width,
+                             int height,
+                             int bpc,
+                             int pass,
+                             int* color_type,
+                             double* gamma);
+  bool (*AskScanlineBufCallback)(void* pModule, int line, uint8_t*& src_buf);
   void (*FillScanlineBufCompletedCallback)(void* pModule, int pass, int line);
 
  protected:

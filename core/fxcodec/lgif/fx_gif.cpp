@@ -58,7 +58,7 @@ void CGifLZWDecoder::ClearTable() {
 }
 void CGifLZWDecoder::DecodeString(uint16_t code) {
   stack_size = 0;
-  while (TRUE) {
+  while (true) {
     ASSERT(code <= code_next);
     if (code < code_clear || code > code_next) {
       break;
@@ -163,9 +163,7 @@ int32_t CGifLZWDecoder::Decode(uint8_t* des_buf, uint32_t& des_size) {
   }
   return 0;
 }
-static FX_BOOL gif_grow_buf(uint8_t*& dst_buf,
-                            uint32_t& dst_len,
-                            uint32_t size) {
+static bool gif_grow_buf(uint8_t*& dst_buf, uint32_t& dst_len, uint32_t size) {
   if (dst_len < size) {
     uint32_t len_org = dst_len;
     while (dst_buf && dst_len < size) {
@@ -180,7 +178,7 @@ static FX_BOOL gif_grow_buf(uint8_t*& dst_buf,
     FXSYS_memset(dst_buf + len_org, 0, dst_len - len_org);
     return !!dst_buf;
   }
-  return TRUE;
+  return true;
 }
 static inline void gif_cut_index(uint8_t& val,
                                  uint32_t index,
@@ -318,14 +316,14 @@ void CGifLZWEncoder::EncodeString(uint32_t index,
     index_bit_cur++;
   }
 }
-FX_BOOL CGifLZWEncoder::Encode(const uint8_t* src_buf,
-                               uint32_t src_len,
-                               uint8_t*& dst_buf,
-                               uint32_t& dst_len,
-                               uint32_t& offset) {
+bool CGifLZWEncoder::Encode(const uint8_t* src_buf,
+                            uint32_t src_len,
+                            uint8_t*& dst_buf,
+                            uint32_t& dst_len,
+                            uint32_t& offset) {
   uint8_t suffix;
   if (setjmp(jmp)) {
-    return FALSE;
+    return false;
   }
   while (src_bit_num < src_len) {
     if (!LookUpInTable(src_buf, src_offset, src_bit_offset)) {
@@ -347,11 +345,11 @@ FX_BOOL CGifLZWEncoder::Encode(const uint8_t* src_buf,
   src_offset = 0;
   src_bit_offset = 0;
   src_bit_num = 0;
-  return TRUE;
+  return true;
 }
-FX_BOOL CGifLZWEncoder::LookUpInTable(const uint8_t* buf,
-                                      uint32_t& offset,
-                                      uint8_t& out_bit_offset) {
+bool CGifLZWEncoder::LookUpInTable(const uint8_t* buf,
+                                   uint32_t& offset,
+                                   uint8_t& out_bit_offset) {
   for (uint16_t i = table_cur; i < index_num; i++) {
     if (code_table[i].prefix == code_table[index_num].prefix &&
         code_table[i].suffix == code_table[index_num].suffix) {
@@ -359,11 +357,11 @@ FX_BOOL CGifLZWEncoder::LookUpInTable(const uint8_t* buf,
       code_table[index_num].suffix =
           gif_cut_buf(buf, offset, src_bit_cut, out_bit_offset, src_bit_num);
       table_cur = i;
-      return TRUE;
+      return true;
     }
   }
   table_cur = code_end + 1;
-  return FALSE;
+  return false;
 }
 void CGifLZWEncoder::Finish(uint8_t*& dst_buf,
                             uint32_t& dst_len,
@@ -554,7 +552,7 @@ int32_t gif_get_frame(gif_decompress_struct_p gif_ptr) {
     return 0;
 
   int32_t ret = 1;
-  while (TRUE) {
+  while (true) {
     switch (gif_ptr->decode_status) {
       case GIF_D_STATUS_TAIL:
         return 1;
@@ -859,14 +857,14 @@ int32_t gif_load_frame(gif_decompress_struct_p gif_ptr, int32_t frame_num) {
             : 0;
     gif_ptr->avail_in = 0;
     if (!gif_img_gce_ptr) {
-      FX_BOOL bRes = gif_ptr->gif_get_record_position_fn(
+      bool bRes = gif_ptr->gif_get_record_position_fn(
           gif_ptr, gif_image_ptr->image_data_pos,
           gif_image_ptr->image_info_ptr->left,
           gif_image_ptr->image_info_ptr->top,
           gif_image_ptr->image_info_ptr->width,
           gif_image_ptr->image_info_ptr->height, loc_pal_num,
           gif_image_ptr->local_pal_ptr, 0, 0, -1, 0,
-          (FX_BOOL)((GifLF*)&gif_image_ptr->image_info_ptr->local_flag)
+          (bool)((GifLF*)&gif_image_ptr->image_info_ptr->local_flag)
               ->interlace);
       if (!bRes) {
         FX_Free(gif_image_ptr->image_row_buf);
@@ -875,7 +873,7 @@ int32_t gif_load_frame(gif_decompress_struct_p gif_ptr, int32_t frame_num) {
         return 0;
       }
     } else {
-      FX_BOOL bRes = gif_ptr->gif_get_record_position_fn(
+      bool bRes = gif_ptr->gif_get_record_position_fn(
           gif_ptr, gif_image_ptr->image_data_pos,
           gif_image_ptr->image_info_ptr->left,
           gif_image_ptr->image_info_ptr->top,
@@ -883,14 +881,13 @@ int32_t gif_load_frame(gif_decompress_struct_p gif_ptr, int32_t frame_num) {
           gif_image_ptr->image_info_ptr->height, loc_pal_num,
           gif_image_ptr->local_pal_ptr,
           (int32_t)gif_image_ptr->image_gce_ptr->delay_time,
-          (FX_BOOL)((GifCEF*)&gif_image_ptr->image_gce_ptr->gce_flag)
-              ->user_input,
+          (bool)((GifCEF*)&gif_image_ptr->image_gce_ptr->gce_flag)->user_input,
           ((GifCEF*)&gif_image_ptr->image_gce_ptr->gce_flag)->transparency
               ? (int32_t)gif_image_ptr->image_gce_ptr->trans_index
               : -1,
           (int32_t)((GifCEF*)&gif_image_ptr->image_gce_ptr->gce_flag)
               ->disposal_method,
-          (FX_BOOL)((GifLF*)&gif_image_ptr->image_info_ptr->local_flag)
+          (bool)((GifLF*)&gif_image_ptr->image_info_ptr->local_flag)
               ->interlace);
       if (!bRes) {
         FX_Free(gif_image_ptr->image_row_buf);
@@ -1039,16 +1036,16 @@ uint32_t gif_get_avail_input(gif_decompress_struct_p gif_ptr,
 int32_t gif_get_frame_num(gif_decompress_struct_p gif_ptr) {
   return gif_ptr->img_ptr_arr_ptr->GetSize();
 }
-static FX_BOOL gif_write_header(gif_compress_struct_p gif_ptr,
-                                uint8_t*& dst_buf,
-                                uint32_t& dst_len) {
+static bool gif_write_header(gif_compress_struct_p gif_ptr,
+                             uint8_t*& dst_buf,
+                             uint32_t& dst_len) {
   if (gif_ptr->cur_offset) {
-    return TRUE;
+    return true;
   }
   dst_len = sizeof(GifHeader) + sizeof(GifLSD) + sizeof(GifGF);
   dst_buf = FX_TryAlloc(uint8_t, dst_len);
   if (!dst_buf)
-    return FALSE;
+    return false;
 
   FXSYS_memset(dst_buf, 0, dst_len);
   FXSYS_memcpy(dst_buf, gif_ptr->header_ptr, sizeof(GifHeader));
@@ -1063,12 +1060,12 @@ static FX_BOOL gif_write_header(gif_compress_struct_p gif_ptr,
   if (gif_ptr->global_pal) {
     uint16_t size = sizeof(GifPalette) * gif_ptr->gpal_num;
     if (!gif_grow_buf(dst_buf, dst_len, gif_ptr->cur_offset + size)) {
-      return FALSE;
+      return false;
     }
     FXSYS_memcpy(&dst_buf[gif_ptr->cur_offset], gif_ptr->global_pal, size);
     gif_ptr->cur_offset += size;
   }
-  return TRUE;
+  return true;
 }
 void interlace_buf(const uint8_t* buf, uint32_t pitch, uint32_t height) {
   CFX_ArrayTemplate<uint8_t*> pass[4];
@@ -1115,11 +1112,11 @@ static void gif_write_block_data(const uint8_t* src_buf,
   FXSYS_memcpy(&dst_buf[dst_offset], &src_buf[src_offset], src_len);
   dst_offset += src_len;
 }
-static FX_BOOL gif_write_data(gif_compress_struct_p gif_ptr,
-                              uint8_t*& dst_buf,
-                              uint32_t& dst_len) {
+static bool gif_write_data(gif_compress_struct_p gif_ptr,
+                           uint8_t*& dst_buf,
+                           uint32_t& dst_len) {
   if (!gif_grow_buf(dst_buf, dst_len, gif_ptr->cur_offset + GIF_DATA_BLOCK)) {
-    return FALSE;
+    return false;
   }
   if (FXSYS_memcmp(gif_ptr->header_ptr->version, "89a", 3) == 0) {
     dst_buf[gif_ptr->cur_offset++] = GIF_SIG_EXTENSION;
@@ -1153,7 +1150,7 @@ static FX_BOOL gif_write_data(gif_compress_struct_p gif_ptr,
   if (gif_ptr->local_pal) {
     uint32_t pal_size = sizeof(GifPalette) * gif_ptr->lpal_num;
     if (!gif_grow_buf(dst_buf, dst_len, pal_size + gif_ptr->cur_offset)) {
-      return FALSE;
+      return false;
     }
     FXSYS_memcpy(&dst_buf[gif_ptr->cur_offset], gif_ptr->local_pal, pal_size);
     gif_ptr->cur_offset += pal_size;
@@ -1175,7 +1172,7 @@ static FX_BOOL gif_write_data(gif_compress_struct_p gif_ptr,
             &gif_ptr->src_buf[i * gif_ptr->src_pitch],
             gif_ptr->src_width * (code_bit + 1), dst_buf, dst_len,
             gif_ptr->cur_offset)) {
-      return FALSE;
+      return false;
     }
   }
   gif_ptr->img_encoder_ptr->Finish(dst_buf, dst_len, gif_ptr->cur_offset);
@@ -1220,22 +1217,22 @@ static FX_BOOL gif_write_data(gif_compress_struct_p gif_ptr,
     dst_buf[gif_ptr->cur_offset++] = 0;
   }
   dst_buf[gif_ptr->cur_offset++] = GIF_SIG_TRAILER;
-  return TRUE;
+  return true;
 }
-FX_BOOL gif_encode(gif_compress_struct_p gif_ptr,
-                   uint8_t*& dst_buf,
-                   uint32_t& dst_len) {
+bool gif_encode(gif_compress_struct_p gif_ptr,
+                uint8_t*& dst_buf,
+                uint32_t& dst_len) {
   if (!gif_write_header(gif_ptr, dst_buf, dst_len)) {
-    return FALSE;
+    return false;
   }
   uint32_t cur_offset = gif_ptr->cur_offset;
-  FX_BOOL res = TRUE;
+  bool res = true;
   if (gif_ptr->frames) {
     gif_ptr->cur_offset--;
   }
   if (!gif_write_data(gif_ptr, dst_buf, dst_len)) {
     gif_ptr->cur_offset = cur_offset;
-    res = FALSE;
+    res = false;
   }
   dst_len = gif_ptr->cur_offset;
   dst_buf[dst_len - 1] = GIF_SIG_TRAILER;

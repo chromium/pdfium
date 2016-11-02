@@ -31,13 +31,13 @@ CPDF_ShadingPattern* CPDF_TilingPattern::AsShadingPattern() {
   return nullptr;
 }
 
-FX_BOOL CPDF_TilingPattern::Load() {
+bool CPDF_TilingPattern::Load() {
   if (m_pForm)
-    return TRUE;
+    return true;
 
   CPDF_Dictionary* pDict = m_pPatternObj->GetDict();
   if (!pDict)
-    return FALSE;
+    return false;
 
   m_bColored = pDict->GetIntegerFor("PaintType") == 1;
   m_XStep = (FX_FLOAT)FXSYS_fabs(pDict->GetNumberFor("XStep"));
@@ -45,10 +45,10 @@ FX_BOOL CPDF_TilingPattern::Load() {
 
   CPDF_Stream* pStream = m_pPatternObj->AsStream();
   if (!pStream)
-    return FALSE;
+    return false;
 
   m_pForm.reset(new CPDF_Form(m_pDocument, nullptr, pStream));
   m_pForm->ParseContent(nullptr, &m_ParentMatrix, nullptr);
   m_BBox = pDict->GetRectFor("BBox");
-  return TRUE;
+  return true;
 }

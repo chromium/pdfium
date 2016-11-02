@@ -182,12 +182,12 @@ class CFX_BasicArray {
   CFX_BasicArray(const CFX_BasicArray&) = delete;
   ~CFX_BasicArray();
 
-  FX_BOOL SetSize(int nNewSize);
-  FX_BOOL Append(const CFX_BasicArray& src);
-  FX_BOOL Copy(const CFX_BasicArray& src);
+  bool SetSize(int nNewSize);
+  bool Append(const CFX_BasicArray& src);
+  bool Copy(const CFX_BasicArray& src);
   uint8_t* InsertSpaceAt(int nIndex, int nCount);
-  FX_BOOL RemoveAt(int nIndex, int nCount);
-  FX_BOOL InsertAt(int nStartIndex, const CFX_BasicArray* pNewArray);
+  bool RemoveAt(int nIndex, int nCount);
+  bool InsertAt(int nStartIndex, const CFX_BasicArray* pNewArray);
   const void* GetDataPtr(int index) const;
 
  protected:
@@ -206,7 +206,7 @@ class CFX_ArrayTemplate : public CFX_BasicArray {
 
   int GetUpperBound() const { return m_nSize - 1; }
 
-  FX_BOOL SetSize(int nNewSize) { return CFX_BasicArray::SetSize(nNewSize); }
+  bool SetSize(int nNewSize) { return CFX_BasicArray::SetSize(nNewSize); }
 
   void RemoveAll() { SetSize(0); }
 
@@ -217,12 +217,12 @@ class CFX_ArrayTemplate : public CFX_BasicArray {
     return ((const TYPE*)m_pData)[nIndex];
   }
 
-  FX_BOOL SetAt(int nIndex, TYPE newElement) {
+  bool SetAt(int nIndex, TYPE newElement) {
     if (nIndex < 0 || nIndex >= m_nSize) {
-      return FALSE;
+      return false;
     }
     ((TYPE*)m_pData)[nIndex] = newElement;
-    return TRUE;
+    return true;
   }
 
   TYPE& ElementAt(int nIndex) {
@@ -236,34 +236,32 @@ class CFX_ArrayTemplate : public CFX_BasicArray {
 
   TYPE* GetData() { return (TYPE*)m_pData; }
 
-  FX_BOOL SetAtGrow(int nIndex, TYPE newElement) {
+  bool SetAtGrow(int nIndex, TYPE newElement) {
     if (nIndex < 0)
-      return FALSE;
+      return false;
 
     if (nIndex >= m_nSize && !SetSize(nIndex + 1))
-      return FALSE;
+      return false;
 
     ((TYPE*)m_pData)[nIndex] = newElement;
-    return TRUE;
+    return true;
   }
 
-  FX_BOOL Add(TYPE newElement) {
+  bool Add(TYPE newElement) {
     if (m_nSize < m_nMaxSize) {
       m_nSize++;
     } else if (!SetSize(m_nSize + 1)) {
-      return FALSE;
+      return false;
     }
     ((TYPE*)m_pData)[m_nSize - 1] = newElement;
-    return TRUE;
+    return true;
   }
 
-  FX_BOOL Append(const CFX_ArrayTemplate& src) {
+  bool Append(const CFX_ArrayTemplate& src) {
     return CFX_BasicArray::Append(src);
   }
 
-  FX_BOOL Copy(const CFX_ArrayTemplate& src) {
-    return CFX_BasicArray::Copy(src);
-  }
+  bool Copy(const CFX_ArrayTemplate& src) { return CFX_BasicArray::Copy(src); }
 
   TYPE* GetDataPtr(int index) {
     return (TYPE*)CFX_BasicArray::GetDataPtr(index);
@@ -289,21 +287,21 @@ class CFX_ArrayTemplate : public CFX_BasicArray {
     return ((TYPE*)m_pData)[nIndex];
   }
 
-  FX_BOOL InsertAt(int nIndex, TYPE newElement, int nCount = 1) {
+  bool InsertAt(int nIndex, TYPE newElement, int nCount = 1) {
     if (!InsertSpaceAt(nIndex, nCount)) {
-      return FALSE;
+      return false;
     }
     while (nCount--) {
       ((TYPE*)m_pData)[nIndex++] = newElement;
     }
-    return TRUE;
+    return true;
   }
 
-  FX_BOOL RemoveAt(int nIndex, int nCount = 1) {
+  bool RemoveAt(int nIndex, int nCount = 1) {
     return CFX_BasicArray::RemoveAt(nIndex, nCount);
   }
 
-  FX_BOOL InsertAt(int nStartIndex, const CFX_BasicArray* pNewArray) {
+  bool InsertAt(int nStartIndex, const CFX_BasicArray* pNewArray) {
     return CFX_BasicArray::InsertAt(nStartIndex, pNewArray);
   }
 
@@ -463,7 +461,7 @@ class CFX_MapPtrToPtr {
   int GetCount() const { return m_nCount; }
   bool IsEmpty() const { return m_nCount == 0; }
 
-  FX_BOOL Lookup(void* key, void*& rValue) const;
+  bool Lookup(void* key, void*& rValue) const;
 
   void* GetValueAt(void* key) const;
 
@@ -471,7 +469,7 @@ class CFX_MapPtrToPtr {
 
   void SetAt(void* key, void* newValue) { (*this)[key] = newValue; }
 
-  FX_BOOL RemoveKey(void* key);
+  bool RemoveKey(void* key);
 
   void RemoveAll();
 
@@ -485,7 +483,7 @@ class CFX_MapPtrToPtr {
 
   uint32_t GetHashTableSize() const { return m_nHashTableSize; }
 
-  void InitHashTable(uint32_t hashSize, FX_BOOL bAllocNow = TRUE);
+  void InitHashTable(uint32_t hashSize, bool bAllocNow = true);
 
  protected:
   CAssoc** m_pHashTable;
@@ -514,13 +512,13 @@ class CFX_MapPtrTemplate : public CFX_MapPtrToPtr {
  public:
   CFX_MapPtrTemplate() : CFX_MapPtrToPtr(10) {}
 
-  FX_BOOL Lookup(KeyType key, ValueType& rValue) const {
+  bool Lookup(KeyType key, ValueType& rValue) const {
     void* pValue = nullptr;
     if (!CFX_MapPtrToPtr::Lookup((void*)(uintptr_t)key, pValue)) {
-      return FALSE;
+      return false;
     }
     rValue = (ValueType)(uintptr_t)pValue;
-    return TRUE;
+    return true;
   }
 
   ValueType& operator[](KeyType key) {
@@ -531,7 +529,7 @@ class CFX_MapPtrTemplate : public CFX_MapPtrToPtr {
     CFX_MapPtrToPtr::SetAt((void*)(uintptr_t)key, (void*)(uintptr_t)newValue);
   }
 
-  FX_BOOL RemoveKey(KeyType key) {
+  bool RemoveKey(KeyType key) {
     return CFX_MapPtrToPtr::RemoveKey((void*)(uintptr_t)key);
   }
 
@@ -629,7 +627,7 @@ class CFX_BitStream {
 
   void ByteAlign();
 
-  FX_BOOL IsEOF() { return m_BitPos >= m_BitSize; }
+  bool IsEOF() { return m_BitPos >= m_BitSize; }
 
   void SkipBits(uint32_t nBits) { m_BitPos += nBits; }
 
@@ -652,7 +650,7 @@ class CFX_BitStream {
 class IFX_Pause {
  public:
   virtual ~IFX_Pause() {}
-  virtual FX_BOOL NeedToPauseNow() = 0;
+  virtual bool NeedToPauseNow() = 0;
 };
 
 template <typename T>

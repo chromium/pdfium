@@ -300,8 +300,8 @@ class CFX_RTemplate {
   void Deflate(const FXT_RECT& rt) {
     Deflate(rt.left, rt.top, rt.top + rt.width, rt.top + rt.height);
   }
-  FX_BOOL IsEmpty() const { return width <= 0 || height <= 0; }
-  FX_BOOL IsEmpty(FX_FLOAT fEpsilon) const {
+  bool IsEmpty() const { return width <= 0 || height <= 0; }
+  bool IsEmpty(FX_FLOAT fEpsilon) const {
     return width <= fEpsilon || height <= fEpsilon;
   }
   void Empty() { width = height = 0; }
@@ -410,12 +410,12 @@ class CFX_RTemplate {
     width = r - left;
     height = b - top;
   }
-  FX_BOOL IntersectWith(const FXT_RECT& rt) const {
+  bool IntersectWith(const FXT_RECT& rt) const {
     FXT_RECT rect = rt;
     rect.Intersect(*this);
     return !rect.IsEmpty();
   }
-  FX_BOOL IntersectWith(const FXT_RECT& rt, FX_FLOAT fEpsilon) const {
+  bool IntersectWith(const FXT_RECT& rt, FX_FLOAT fEpsilon) const {
     FXT_RECT rect = rt;
     rect.Intersect(*this);
     return !rect.IsEmpty(fEpsilon);
@@ -588,33 +588,33 @@ class CFX_Matrix {
               FX_FLOAT d,
               FX_FLOAT e,
               FX_FLOAT f,
-              FX_BOOL bPrepended = FALSE);
-  void Concat(const CFX_Matrix& m, FX_BOOL bPrepended = FALSE);
-  void ConcatInverse(const CFX_Matrix& m, FX_BOOL bPrepended = FALSE);
+              bool bPrepended = false);
+  void Concat(const CFX_Matrix& m, bool bPrepended = false);
+  void ConcatInverse(const CFX_Matrix& m, bool bPrepended = false);
 
-  FX_BOOL IsIdentity() const {
+  bool IsIdentity() const {
     return a == 1 && b == 0 && c == 0 && d == 1 && e == 0 && f == 0;
   }
 
-  FX_BOOL IsInvertible() const;
-  FX_BOOL Is90Rotated() const;
-  FX_BOOL IsScaled() const;
+  bool IsInvertible() const;
+  bool Is90Rotated() const;
+  bool IsScaled() const;
 
-  void Translate(FX_FLOAT x, FX_FLOAT y, FX_BOOL bPrepended = FALSE);
-  void TranslateI(int32_t x, int32_t y, FX_BOOL bPrepended = FALSE) {
+  void Translate(FX_FLOAT x, FX_FLOAT y, bool bPrepended = false);
+  void TranslateI(int32_t x, int32_t y, bool bPrepended = false) {
     Translate((FX_FLOAT)x, (FX_FLOAT)y, bPrepended);
   }
 
-  void Scale(FX_FLOAT sx, FX_FLOAT sy, FX_BOOL bPrepended = FALSE);
-  void Rotate(FX_FLOAT fRadian, FX_BOOL bPrepended = FALSE);
+  void Scale(FX_FLOAT sx, FX_FLOAT sy, bool bPrepended = false);
+  void Rotate(FX_FLOAT fRadian, bool bPrepended = false);
   void RotateAt(FX_FLOAT fRadian,
                 FX_FLOAT x,
                 FX_FLOAT y,
-                FX_BOOL bPrepended = FALSE);
+                bool bPrepended = false);
 
   void Shear(FX_FLOAT fAlphaRadian,
              FX_FLOAT fBetaRadian,
-             FX_BOOL bPrepended = FALSE);
+             bool bPrepended = false);
 
   void MatchRect(const CFX_FloatRect& dest, const CFX_FloatRect& src);
   FX_FLOAT GetXUnit() const;

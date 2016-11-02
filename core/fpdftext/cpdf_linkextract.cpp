@@ -108,7 +108,7 @@ bool CPDF_LinkExtract::CheckMailLink(CFX_WideString& str) {
     if (ch != L'.' || i == pPos - 1 || i == 0) {
       if (i == aPos - 1) {
         // There is '.' or invalid char before '@'.
-        return FALSE;
+        return false;
       }
       // End extracting for other invalid chars, '.' at the beginning, or
       // consecutive '.'.

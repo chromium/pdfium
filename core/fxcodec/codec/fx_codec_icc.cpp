@@ -18,45 +18,43 @@ struct CLcmsCmm {
   cmsHTRANSFORM m_hTransform;
   int m_nSrcComponents;
   int m_nDstComponents;
-  FX_BOOL m_bLab;
+  bool m_bLab;
 };
-FX_BOOL CheckComponents(cmsColorSpaceSignature cs,
-                        int nComponents,
-                        FX_BOOL bDst) {
+bool CheckComponents(cmsColorSpaceSignature cs, int nComponents, bool bDst) {
   if (nComponents <= 0 || nComponents > 15) {
-    return FALSE;
+    return false;
   }
   switch (cs) {
     case cmsSigLabData:
       if (nComponents < 3) {
-        return FALSE;
+        return false;
       }
       break;
     case cmsSigGrayData:
       if (bDst && nComponents != 1) {
-        return FALSE;
+        return false;
       }
       if (!bDst && nComponents > 2) {
-        return FALSE;
+        return false;
       }
       break;
     case cmsSigRgbData:
       if (bDst && nComponents != 3) {
-        return FALSE;
+        return false;
       }
       break;
     case cmsSigCmykData:
       if (bDst && nComponents != 4) {
-        return FALSE;
+        return false;
       }
       break;
     default:
       if (nComponents != 3) {
-        return FALSE;
+        return false;
       }
       break;
   }
-  return TRUE;
+  return true;
 }
 
 uint32_t GetCSComponents(cmsColorSpaceSignature cs) {
@@ -108,13 +106,13 @@ void* IccLib_CreateTransform(const unsigned char* pSrcProfileData,
     return nullptr;
   }
   int srcFormat;
-  FX_BOOL bLab = FALSE;
+  bool bLab = false;
   cmsColorSpaceSignature srcCS = cmsGetColorSpace(srcProfile);
   nSrcComponents = GetCSComponents(srcCS);
   if (srcCS == cmsSigLabData) {
     srcFormat =
         COLORSPACE_SH(PT_Lab) | CHANNELS_SH(nSrcComponents) | BYTES_SH(0);
-    bLab = TRUE;
+    bLab = true;
   } else {
     srcFormat =
         COLORSPACE_SH(PT_ANY) | CHANNELS_SH(nSrcComponents) | BYTES_SH(1);
@@ -123,7 +121,7 @@ void* IccLib_CreateTransform(const unsigned char* pSrcProfileData,
     }
   }
   cmsColorSpaceSignature dstCS = cmsGetColorSpace(dstProfile);
-  if (!CheckComponents(dstCS, nDstComponents, TRUE)) {
+  if (!CheckComponents(dstCS, nDstComponents, true)) {
     cmsCloseProfile(srcProfile);
     cmsCloseProfile(dstProfile);
     return nullptr;

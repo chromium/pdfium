@@ -41,17 +41,17 @@ class CPDF_VariableText {
     explicit Iterator(CPDF_VariableText* pVT);
     ~Iterator();
 
-    FX_BOOL NextWord();
-    FX_BOOL PrevWord();
-    FX_BOOL NextLine();
-    FX_BOOL PrevLine();
-    FX_BOOL NextSection();
-    FX_BOOL PrevSection();
-    FX_BOOL SetWord(const CPVT_Word& word);
-    FX_BOOL GetWord(CPVT_Word& word) const;
-    FX_BOOL GetLine(CPVT_Line& line) const;
-    FX_BOOL GetSection(CPVT_Section& section) const;
-    FX_BOOL SetSection(const CPVT_Section& section);
+    bool NextWord();
+    bool PrevWord();
+    bool NextLine();
+    bool PrevLine();
+    bool NextSection();
+    bool PrevSection();
+    bool SetWord(const CPVT_Word& word);
+    bool GetWord(CPVT_Word& word) const;
+    bool GetLine(CPVT_Line& line) const;
+    bool GetSection(CPVT_Section& section) const;
+    bool SetSection(const CPVT_Section& section);
     void SetAt(int32_t nWordIndex);
     void SetAt(const CPVT_WordPlace& place);
     const CPVT_WordPlace& GetAt() const { return m_CurPos; }
@@ -72,7 +72,7 @@ class CPDF_VariableText {
     virtual int32_t GetWordFontIndex(uint16_t word,
                                      int32_t charset,
                                      int32_t nFontIndex);
-    virtual FX_BOOL IsLatinWord(uint16_t word);
+    virtual bool IsLatinWord(uint16_t word);
     virtual int32_t GetDefaultFontIndex();
 
    private:
@@ -94,14 +94,14 @@ class CPDF_VariableText {
   void SetPasswordChar(uint16_t wSubWord) { m_wSubWord = wSubWord; }
   void SetLimitChar(int32_t nLimitChar) { m_nLimitChar = nLimitChar; }
   void SetCharSpace(FX_FLOAT fCharSpace) { m_fCharSpace = fCharSpace; }
-  void SetMultiLine(FX_BOOL bMultiLine) { m_bMultiLine = bMultiLine; }
-  void SetAutoReturn(FX_BOOL bAuto) { m_bLimitWidth = bAuto; }
+  void SetMultiLine(bool bMultiLine) { m_bMultiLine = bMultiLine; }
+  void SetAutoReturn(bool bAuto) { m_bLimitWidth = bAuto; }
   void SetFontSize(FX_FLOAT fFontSize) { m_fFontSize = fFontSize; }
   void SetCharArray(int32_t nCharArray) { m_nCharArray = nCharArray; }
-  void SetAutoFontSize(FX_BOOL bAuto) { m_bAutoFontSize = bAuto; }
+  void SetAutoFontSize(bool bAuto) { m_bAutoFontSize = bAuto; }
   void Initialize();
 
-  FX_BOOL IsValid() const { return m_bInitial; }
+  bool IsValid() const { return m_bInitial; }
 
   void RearrangeAll();
   void RearrangePart(const CPVT_WordRange& PlaceRange);
@@ -125,7 +125,7 @@ class CPDF_VariableText {
   uint16_t GetPasswordChar() const { return GetSubWord(); }
   int32_t GetCharArray() const { return m_nCharArray; }
   int32_t GetLimitChar() const { return m_nLimitChar; }
-  FX_BOOL IsMultiLine() const { return m_bMultiLine; }
+  bool IsMultiLine() const { return m_bMultiLine; }
   int32_t GetHorzScale() const { return m_nHorzScale; }
   FX_FLOAT GetCharSpace() const { return m_fCharSpace; }
   CPVT_WordPlace GetBeginWordPlace() const;
@@ -143,7 +143,7 @@ class CPDF_VariableText {
   CPVT_WordPlace GetSectionEndPlace(const CPVT_WordPlace& place) const;
   void UpdateWordPlace(CPVT_WordPlace& place) const;
   CPVT_WordPlace AdjustLineHeader(const CPVT_WordPlace& place,
-                                  FX_BOOL bPrevOrNext) const;
+                                  bool bPrevOrNext) const;
   int32_t WordPlaceToWordIndex(const CPVT_WordPlace& place) const;
   CPVT_WordPlace WordIndexToWordPlace(int32_t index) const;
 
@@ -169,7 +169,7 @@ class CPDF_VariableText {
   int32_t GetTypeDescent(int32_t nFontIndex);
   int32_t GetWordFontIndex(uint16_t word, int32_t charset, int32_t nFontIndex);
   int32_t GetDefaultFontIndex();
-  FX_BOOL IsLatinWord(uint16_t word);
+  bool IsLatinWord(uint16_t word);
 
   CPVT_WordPlace AddSection(const CPVT_WordPlace& place,
                             const CPVT_SectionInfo& secinfo);
@@ -177,12 +177,10 @@ class CPDF_VariableText {
                          const CPVT_LineInfo& lineinfo);
   CPVT_WordPlace AddWord(const CPVT_WordPlace& place,
                          const CPVT_WordInfo& wordinfo);
-  FX_BOOL GetWordInfo(const CPVT_WordPlace& place, CPVT_WordInfo& wordinfo);
-  FX_BOOL SetWordInfo(const CPVT_WordPlace& place,
-                      const CPVT_WordInfo& wordinfo);
-  FX_BOOL GetLineInfo(const CPVT_WordPlace& place, CPVT_LineInfo& lineinfo);
-  FX_BOOL GetSectionInfo(const CPVT_WordPlace& place,
-                         CPVT_SectionInfo& secinfo);
+  bool GetWordInfo(const CPVT_WordPlace& place, CPVT_WordInfo& wordinfo);
+  bool SetWordInfo(const CPVT_WordPlace& place, const CPVT_WordInfo& wordinfo);
+  bool GetLineInfo(const CPVT_WordPlace& place, CPVT_LineInfo& lineinfo);
+  bool GetSectionInfo(const CPVT_WordPlace& place, CPVT_SectionInfo& secinfo);
   FX_FLOAT GetWordFontSize(const CPVT_WordInfo& WordInfo);
   FX_FLOAT GetWordWidth(int32_t nFontIndex,
                         uint16_t Word,
@@ -209,7 +207,7 @@ class CPDF_VariableText {
 
   void ClearSectionRightWords(const CPVT_WordPlace& place);
 
-  FX_BOOL ClearEmptySection(const CPVT_WordPlace& place);
+  bool ClearEmptySection(const CPVT_WordPlace& place);
   void ClearEmptySections(const CPVT_WordRange& PlaceRange);
   void LinkLatterSection(const CPVT_WordPlace& place);
   void ClearWords(const CPVT_WordRange& PlaceRange);
@@ -226,16 +224,16 @@ class CPDF_VariableText {
   CPVT_ArrayTemplate<CSection*> m_SectionArray;
   int32_t m_nLimitChar;
   int32_t m_nCharArray;
-  FX_BOOL m_bMultiLine;
-  FX_BOOL m_bLimitWidth;
-  FX_BOOL m_bAutoFontSize;
+  bool m_bMultiLine;
+  bool m_bLimitWidth;
+  bool m_bAutoFontSize;
   int32_t m_nAlignment;
   FX_FLOAT m_fLineLeading;
   FX_FLOAT m_fCharSpace;
   int32_t m_nHorzScale;
   uint16_t m_wSubWord;
   FX_FLOAT m_fFontSize;
-  FX_BOOL m_bInitial;
+  bool m_bInitial;
   CPDF_VariableText::Provider* m_pVTProvider;
   std::unique_ptr<CPDF_VariableText::Iterator> m_pVTIterator;
   CFX_FloatRect m_rcPlate;

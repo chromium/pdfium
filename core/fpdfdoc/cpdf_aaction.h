@@ -40,7 +40,7 @@ class CPDF_AAction {
   CPDF_AAction() : m_pDict(nullptr) {}
   explicit CPDF_AAction(CPDF_Dictionary* pDict) : m_pDict(pDict) {}
 
-  FX_BOOL ActionExist(AActionType eType) const;
+  bool ActionExist(AActionType eType) const;
   CPDF_Action GetAction(AActionType eType) const;
   CPDF_Dictionary* GetDict() const { return m_pDict; }
 

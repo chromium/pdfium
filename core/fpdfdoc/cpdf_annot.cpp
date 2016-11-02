@@ -349,13 +349,13 @@ CFX_ByteString CPDF_Annot::AnnotSubtypeToString(CPDF_Annot::Subtype nSubtype) {
   return "";
 }
 
-FX_BOOL CPDF_Annot::DrawAppearance(CPDF_Page* pPage,
-                                   CFX_RenderDevice* pDevice,
-                                   const CFX_Matrix* pUser2Device,
-                                   AppearanceMode mode,
-                                   const CPDF_RenderOptions* pOptions) {
+bool CPDF_Annot::DrawAppearance(CPDF_Page* pPage,
+                                CFX_RenderDevice* pDevice,
+                                const CFX_Matrix* pUser2Device,
+                                AppearanceMode mode,
+                                const CPDF_RenderOptions* pOptions) {
   if (!ShouldDrawAnnotation())
-    return FALSE;
+    return false;
 
   // It might happen that by the time this annotation instance was created,
   // it was flagged as "hidden" (e.g. /F 2), and hence CPVT_GenerateAP decided
@@ -368,19 +368,19 @@ FX_BOOL CPDF_Annot::DrawAppearance(CPDF_Page* pPage,
   CPDF_Form* pForm =
       FPDFDOC_Annot_GetMatrix(pPage, this, mode, pUser2Device, matrix);
   if (!pForm) {
-    return FALSE;
+    return false;
   }
   CPDF_RenderContext context(pPage);
   context.AppendLayer(pForm, &matrix);
   context.Render(pDevice, pOptions, nullptr);
-  return TRUE;
+  return true;
 }
-FX_BOOL CPDF_Annot::DrawInContext(const CPDF_Page* pPage,
-                                  CPDF_RenderContext* pContext,
-                                  const CFX_Matrix* pUser2Device,
-                                  AppearanceMode mode) {
+bool CPDF_Annot::DrawInContext(const CPDF_Page* pPage,
+                               CPDF_RenderContext* pContext,
+                               const CFX_Matrix* pUser2Device,
+                               AppearanceMode mode) {
   if (!ShouldDrawAnnotation())
-    return FALSE;
+    return false;
 
   // It might happen that by the time this annotation instance was created,
   // it was flagged as "hidden" (e.g. /F 2), and hence CPVT_GenerateAP decided
@@ -393,10 +393,10 @@ FX_BOOL CPDF_Annot::DrawInContext(const CPDF_Page* pPage,
   CPDF_Form* pForm =
       FPDFDOC_Annot_GetMatrix(pPage, this, mode, pUser2Device, matrix);
   if (!pForm) {
-    return FALSE;
+    return false;
   }
   pContext->AppendLayer(pForm, &matrix);
-  return TRUE;
+  return true;
 }
 void CPDF_Annot::DrawBorder(CFX_RenderDevice* pDevice,
                             const CFX_Matrix* pUser2Device,

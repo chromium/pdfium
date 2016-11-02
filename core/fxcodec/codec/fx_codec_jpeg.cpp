@@ -126,7 +126,7 @@ static bool JpegLoadInfo(const uint8_t* src_buf,
     jpeg_destroy_decompress(&cinfo);
     return false;
   }
-  int ret = jpeg_read_header(&cinfo, TRUE);
+  int ret = jpeg_read_header(&cinfo, true);
   if (ret != JPEG_HEADER_OK) {
     jpeg_destroy_decompress(&cinfo);
     return false;
@@ -146,19 +146,19 @@ class CCodec_JpegDecoder : public CCodec_ScanlineDecoder {
   CCodec_JpegDecoder();
   ~CCodec_JpegDecoder() override;
 
-  FX_BOOL Create(const uint8_t* src_buf,
-                 uint32_t src_size,
-                 int width,
-                 int height,
-                 int nComps,
-                 FX_BOOL ColorTransform);
+  bool Create(const uint8_t* src_buf,
+              uint32_t src_size,
+              int width,
+              int height,
+              int nComps,
+              bool ColorTransform);
 
   // CCodec_ScanlineDecoder
-  FX_BOOL v_Rewind() override;
+  bool v_Rewind() override;
   uint8_t* v_GetNextLine() override;
   uint32_t GetSrcOffset() override;
 
-  FX_BOOL InitDecode();
+  bool InitDecode();
 
   jmp_buf m_JmpBuf;
   struct jpeg_decompress_struct cinfo;
@@ -168,9 +168,9 @@ class CCodec_JpegDecoder : public CCodec_ScanlineDecoder {
   uint32_t m_SrcSize;
   uint8_t* m_pScanlineBuf;
 
-  FX_BOOL m_bInited;
-  FX_BOOL m_bStarted;
-  FX_BOOL m_bJpegTransform;
+  bool m_bInited;
+  bool m_bStarted;
+  bool m_bJpegTransform;
 
  protected:
   uint32_t m_nDefaultScaleDenom;
@@ -178,8 +178,8 @@ class CCodec_JpegDecoder : public CCodec_ScanlineDecoder {
 
 CCodec_JpegDecoder::CCodec_JpegDecoder() {
   m_pScanlineBuf = nullptr;
-  m_bStarted = FALSE;
-  m_bInited = FALSE;
+  m_bStarted = false;
+  m_bInited = false;
   FXSYS_memset(&cinfo, 0, sizeof(cinfo));
   FXSYS_memset(&jerr, 0, sizeof(jerr));
   FXSYS_memset(&src, 0, sizeof(src));
@@ -192,30 +192,30 @@ CCodec_JpegDecoder::~CCodec_JpegDecoder() {
     jpeg_destroy_decompress(&cinfo);
 }
 
-FX_BOOL CCodec_JpegDecoder::InitDecode() {
+bool CCodec_JpegDecoder::InitDecode() {
   cinfo.err = &jerr;
   cinfo.client_data = &m_JmpBuf;
   if (setjmp(m_JmpBuf) == -1)
-    return FALSE;
+    return false;
 
   jpeg_create_decompress(&cinfo);
-  m_bInited = TRUE;
+  m_bInited = true;
   cinfo.src = &src;
   src.bytes_in_buffer = m_SrcSize;
   src.next_input_byte = m_SrcBuf;
   if (setjmp(m_JmpBuf) == -1) {
     jpeg_destroy_decompress(&cinfo);
-    m_bInited = FALSE;
-    return FALSE;
+    m_bInited = false;
+    return false;
   }
   cinfo.image_width = m_OrigWidth;
   cinfo.image_height = m_OrigHeight;
-  int ret = jpeg_read_header(&cinfo, TRUE);
+  int ret = jpeg_read_header(&cinfo, true);
   if (ret != JPEG_HEADER_OK)
-    return FALSE;
+    return false;
 
   if (cinfo.saw_Adobe_marker)
-    m_bJpegTransform = TRUE;
+    m_bJpegTransform = true;
 
   if (cinfo.num_components == 3 && !m_bJpegTransform)
     cinfo.out_color_space = cinfo.jpeg_color_space;
@@ -225,15 +225,15 @@ FX_BOOL CCodec_JpegDecoder::InitDecode() {
   m_OutputWidth = m_OrigWidth;
   m_OutputHeight = m_OrigHeight;
   m_nDefaultScaleDenom = cinfo.scale_denom;
-  return TRUE;
+  return true;
 }
 
-FX_BOOL CCodec_JpegDecoder::Create(const uint8_t* src_buf,
-                                   uint32_t src_size,
-                                   int width,
-                                   int height,
-                                   int nComps,
-                                   FX_BOOL ColorTransform) {
+bool CCodec_JpegDecoder::Create(const uint8_t* src_buf,
+                                uint32_t src_size,
+                                int width,
+                                int height,
+                                int nComps,
+                                bool ColorTransform) {
   JpegScanSOI(&src_buf, &src_size);
   m_SrcBuf = src_buf;
   m_SrcSize = src_size;
@@ -256,13 +256,13 @@ FX_BOOL CCodec_JpegDecoder::Create(const uint8_t* src_buf,
   m_OutputWidth = m_OrigWidth = width;
   m_OutputHeight = m_OrigHeight = height;
   if (!InitDecode())
-    return FALSE;
+    return false;
 
   if (cinfo.num_components < nComps)
-    return FALSE;
+    return false;
 
   if ((int)cinfo.image_width < width)
-    return FALSE;
+    return false;
 
   m_Pitch =
       (static_cast<uint32_t>(cinfo.image_width) * cinfo.num_components + 3) /
@@ -270,33 +270,33 @@ FX_BOOL CCodec_JpegDecoder::Create(const uint8_t* src_buf,
   m_pScanlineBuf = FX_Alloc(uint8_t, m_Pitch);
   m_nComps = cinfo.num_components;
   m_bpc = 8;
-  m_bStarted = FALSE;
-  return TRUE;
+  m_bStarted = false;
+  return true;
 }
 
-FX_BOOL CCodec_JpegDecoder::v_Rewind() {
+bool CCodec_JpegDecoder::v_Rewind() {
   if (m_bStarted) {
     jpeg_destroy_decompress(&cinfo);
     if (!InitDecode()) {
-      return FALSE;
+      return false;
     }
   }
   if (setjmp(m_JmpBuf) == -1) {
-    return FALSE;
+    return false;
   }
   cinfo.scale_denom = m_nDefaultScaleDenom;
   m_OutputWidth = m_OrigWidth;
   m_OutputHeight = m_OrigHeight;
   if (!jpeg_start_decompress(&cinfo)) {
     jpeg_destroy_decompress(&cinfo);
-    return FALSE;
+    return false;
   }
   if ((int)cinfo.output_width > m_OrigWidth) {
-    ASSERT(FALSE);
-    return FALSE;
+    ASSERT(false);
+    return false;
   }
-  m_bStarted = TRUE;
-  return TRUE;
+  m_bStarted = true;
+  return true;
 }
 
 uint8_t* CCodec_JpegDecoder::v_GetNextLine() {
@@ -311,13 +311,12 @@ uint32_t CCodec_JpegDecoder::GetSrcOffset() {
   return (uint32_t)(m_SrcSize - src.bytes_in_buffer);
 }
 
-CCodec_ScanlineDecoder* CCodec_JpegModule::CreateDecoder(
-    const uint8_t* src_buf,
-    uint32_t src_size,
-    int width,
-    int height,
-    int nComps,
-    FX_BOOL ColorTransform) {
+CCodec_ScanlineDecoder* CCodec_JpegModule::CreateDecoder(const uint8_t* src_buf,
+                                                         uint32_t src_size,
+                                                         int width,
+                                                         int height,
+                                                         int nComps,
+                                                         bool ColorTransform) {
   if (!src_buf || src_size == 0)
     return nullptr;
 
@@ -449,18 +448,18 @@ int CCodec_JpegModule::ReadHeader(FXJPEG_Context* ctx,
   return 0;
 }
 
-FX_BOOL CCodec_JpegModule::StartScanline(FXJPEG_Context* ctx, int down_scale) {
+bool CCodec_JpegModule::StartScanline(FXJPEG_Context* ctx, int down_scale) {
   if (setjmp(ctx->m_JumpMark) == -1)
-    return FALSE;
+    return false;
 
   ctx->m_Info.scale_denom = down_scale;
   return !!jpeg_start_decompress(&ctx->m_Info);
 }
 
-FX_BOOL CCodec_JpegModule::ReadScanline(FXJPEG_Context* ctx,
-                                        unsigned char* dest_buf) {
+bool CCodec_JpegModule::ReadScanline(FXJPEG_Context* ctx,
+                                     unsigned char* dest_buf) {
   if (setjmp(ctx->m_JumpMark) == -1)
-    return FALSE;
+    return false;
 
   int nlines = jpeg_read_scanlines(&ctx->m_Info, &dest_buf, 1);
   return nlines == 1;

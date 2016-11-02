@@ -34,26 +34,26 @@ class CDWriteExt {
   void Load();
   void Unload();
 
-  FX_BOOL IsAvailable() { return !!m_pDWriteFactory; }
+  bool IsAvailable() { return !!m_pDWriteFactory; }
 
   void* DwCreateFontFaceFromStream(uint8_t* pData,
                                    uint32_t size,
                                    int simulation_style);
-  FX_BOOL DwCreateRenderingTarget(CFX_DIBitmap* pSrc, void** renderTarget);
+  bool DwCreateRenderingTarget(CFX_DIBitmap* pSrc, void** renderTarget);
   void DwDeleteRenderingTarget(void* renderTarget);
-  FX_BOOL DwRendingString(void* renderTarget,
-                          CFX_ClipRgn* pClipRgn,
-                          FX_RECT& stringRect,
-                          CFX_Matrix* pMatrix,
-                          void* font,
-                          FX_FLOAT font_size,
-                          FX_ARGB text_color,
-                          int glyph_count,
-                          unsigned short* glyph_indices,
-                          FX_FLOAT baselineOriginX,
-                          FX_FLOAT baselineOriginY,
-                          void* glyph_offsets,
-                          FX_FLOAT* glyph_advances);
+  bool DwRendingString(void* renderTarget,
+                       CFX_ClipRgn* pClipRgn,
+                       FX_RECT& stringRect,
+                       CFX_Matrix* pMatrix,
+                       void* font,
+                       FX_FLOAT font_size,
+                       FX_ARGB text_color,
+                       int glyph_count,
+                       unsigned short* glyph_indices,
+                       FX_FLOAT baselineOriginX,
+                       FX_FLOAT baselineOriginY,
+                       void* glyph_offsets,
+                       FX_FLOAT* glyph_advances);
   void DwDeleteFont(void* pFont);
 
  protected:

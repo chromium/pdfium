@@ -30,8 +30,8 @@ class CJBig2_SDDProc {
                                     IFX_Pause* pPause);
 
  public:
-  FX_BOOL SDHUFF;
-  FX_BOOL SDREFAGG;
+  bool SDHUFF;
+  bool SDREFAGG;
   uint32_t SDNUMINSYMS;
   CJBig2_Image** SDINSYMS;
   uint32_t SDNUMNEWSYMS;

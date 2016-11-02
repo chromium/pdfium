@@ -20,7 +20,7 @@ class CJBig2_BitStream {
   int32_t readNBits(uint32_t nBits, uint32_t* dwResult);
   int32_t readNBits(uint32_t nBits, int32_t* nResult);
   int32_t read1Bit(uint32_t* dwResult);
-  int32_t read1Bit(FX_BOOL* bResult);
+  int32_t read1Bit(bool* bResult);
   int32_t read1Byte(uint8_t* cResult);
   int32_t readInteger(uint32_t* dwResult);
   int32_t readShortInteger(uint16_t* wResult);

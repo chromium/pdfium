@@ -285,7 +285,7 @@ CPDF_Object* CPDF_StreamContentParser::GetObject(uint32_t index) {
   if (param.m_Type == ContentParam::OBJECT) {
     return param.m_pObject;
   }
-  ASSERT(FALSE);
+  ASSERT(false);
   return nullptr;
 }
 
@@ -587,7 +587,7 @@ void CPDF_StreamContentParser::Handle_BeginImage() {
 }
 
 void CPDF_StreamContentParser::Handle_BeginMarkedContent() {
-  m_CurContentMark.AddMark(GetString(0), nullptr, FALSE);
+  m_CurContentMark.AddMark(GetString(0), nullptr, false);
 }
 
 void CPDF_StreamContentParser::Handle_BeginText() {
@@ -697,7 +697,7 @@ void CPDF_StreamContentParser::AddForm(CPDF_Stream* pStream) {
   pFormObj->m_pForm->ParseContent(&status, nullptr, nullptr, m_Level + 1);
   if (!m_pObjectHolder->BackgroundAlphaNeeded() &&
       pFormObj->m_pForm->BackgroundAlphaNeeded()) {
-    m_pObjectHolder->SetBackgroundAlphaNeeded(TRUE);
+    m_pObjectHolder->SetBackgroundAlphaNeeded(true);
   }
   pFormObj->CalcBoundingBox();
   SetGraphicStates(pFormObj.get(), true, true, true);
@@ -1410,7 +1410,7 @@ void CPDF_StreamContentParser::AddPathObject(int FillType, bool bStroke) {
     if (PathPointCount && PathClipType) {
       CPDF_Path path;
       path.AppendRect(0, 0, 0, 0);
-      m_pCurStates->m_ClipPath.AppendPath(path, FXFILL_WINDING, TRUE);
+      m_pCurStates->m_ClipPath.AppendPath(path, FXFILL_WINDING, true);
     }
     return;
   }
@@ -1439,7 +1439,7 @@ void CPDF_StreamContentParser::AddPathObject(int FillType, bool bStroke) {
       Path.Transform(&matrix);
       matrix.SetIdentity();
     }
-    m_pCurStates->m_ClipPath.AppendPath(Path, PathClipType, TRUE);
+    m_pCurStates->m_ClipPath.AppendPath(Path, PathClipType, true);
   }
 }
 
@@ -1484,7 +1484,7 @@ void CPDF_StreamContentParser::ParsePathObject() {
   int last_pos = m_pSyntax->GetPos();
   while (1) {
     CPDF_StreamParser::SyntaxType type = m_pSyntax->ParseNextElement();
-    FX_BOOL bProcessed = TRUE;
+    bool bProcessed = true;
     switch (type) {
       case CPDF_StreamParser::EndOfData:
         return;
@@ -1523,7 +1523,7 @@ void CPDF_StreamContentParser::ParsePathObject() {
               nParams = 0;
               break;
             default:
-              bProcessed = FALSE;
+              bProcessed = false;
               break;
           }
         } else if (len == 2) {
@@ -1532,10 +1532,10 @@ void CPDF_StreamContentParser::ParsePathObject() {
             AddPathRect(params[0], params[1], params[2], params[3]);
             nParams = 0;
           } else {
-            bProcessed = FALSE;
+            bProcessed = false;
           }
         } else {
-          bProcessed = FALSE;
+          bProcessed = false;
         }
         if (bProcessed) {
           last_pos = m_pSyntax->GetPos();
@@ -1554,7 +1554,7 @@ void CPDF_StreamContentParser::ParsePathObject() {
         break;
       }
       default:
-        bProcessed = FALSE;
+        bProcessed = false;
     }
     if (!bProcessed) {
       m_pSyntax->SetPos(last_pos);

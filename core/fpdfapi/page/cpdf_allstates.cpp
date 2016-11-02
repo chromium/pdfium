@@ -109,7 +109,7 @@ void CPDF_AllStates::ProcessExtGS(CPDF_Dictionary* pGS,
         m_GeneralState.SetBlendMode(pArray ? pArray->GetStringAt(0)
                                            : pObject->GetString());
         if (m_GeneralState.GetBlendType() > FXDIB_BLEND_MULTIPLY)
-          pParser->GetPageObjectHolder()->SetBackgroundAlphaNeeded(TRUE);
+          pParser->GetPageObjectHolder()->SetBackgroundAlphaNeeded(true);
         break;
       }
       case FXBSTR_ID('S', 'M', 'a', 's'):

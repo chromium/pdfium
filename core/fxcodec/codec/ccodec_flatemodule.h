@@ -23,10 +23,10 @@ class CCodec_FlateModule {
                                         int Colors,
                                         int BitsPerComponent,
                                         int Columns);
-  uint32_t FlateOrLZWDecode(FX_BOOL bLZW,
+  uint32_t FlateOrLZWDecode(bool bLZW,
                             const uint8_t* src_buf,
                             uint32_t src_size,
-                            FX_BOOL bEarlyChange,
+                            bool bEarlyChange,
                             int predictor,
                             int Colors,
                             int BitsPerComponent,

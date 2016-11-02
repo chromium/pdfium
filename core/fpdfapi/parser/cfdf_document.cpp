@@ -15,7 +15,7 @@ CFDF_Document::CFDF_Document()
     : CPDF_IndirectObjectHolder(),
       m_pRootDict(nullptr),
       m_pFile(nullptr),
-      m_bOwnFile(FALSE),
+      m_bOwnFile(false),
       m_pByteStringPool(pdfium::MakeUnique<CFX_ByteStringPool>()) {}
 
 CFDF_Document::~CFDF_Document() {
@@ -34,7 +34,7 @@ CFDF_Document* CFDF_Document::CreateNewDoc() {
 }
 
 CFDF_Document* CFDF_Document::ParseFile(IFX_SeekableReadStream* pFile,
-                                        FX_BOOL bOwnFile) {
+                                        bool bOwnFile) {
   if (!pFile)
     return nullptr;
 
@@ -45,11 +45,10 @@ CFDF_Document* CFDF_Document::ParseFile(IFX_SeekableReadStream* pFile,
 
 CFDF_Document* CFDF_Document::ParseMemory(const uint8_t* pData, uint32_t size) {
   return CFDF_Document::ParseFile(FX_CreateMemoryStream((uint8_t*)pData, size),
-                                  TRUE);
+                                  true);
 }
 
-void CFDF_Document::ParseStream(IFX_SeekableReadStream* pFile,
-                                FX_BOOL bOwnFile) {
+void CFDF_Document::ParseStream(IFX_SeekableReadStream* pFile, bool bOwnFile) {
   m_pFile = pFile;
   m_bOwnFile = bOwnFile;
   CPDF_SyntaxParser parser;
@@ -89,9 +88,9 @@ void CFDF_Document::ParseStream(IFX_SeekableReadStream* pFile,
   }
 }
 
-FX_BOOL CFDF_Document::WriteBuf(CFX_ByteTextBuf& buf) const {
+bool CFDF_Document::WriteBuf(CFX_ByteTextBuf& buf) const {
   if (!m_pRootDict)
-    return FALSE;
+    return false;
 
   buf << "%FDF-1.2\r\n";
   for (const auto& pair : *this)
@@ -100,5 +99,5 @@ FX_BOOL CFDF_Document::WriteBuf(CFX_ByteTextBuf& buf) const {
 
   buf << "trailer\r\n<</Root " << m_pRootDict->GetObjNum()
       << " 0 R>>\r\n%%EOF\r\n";
-  return TRUE;
+  return true;
 }

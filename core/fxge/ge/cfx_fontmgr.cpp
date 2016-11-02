@@ -45,7 +45,7 @@ const BuiltinFont g_MMFonts[2] = {
 
 CFX_ByteString KeyNameFromFace(const CFX_ByteString& face_name,
                                int weight,
-                               FX_BOOL bItalic) {
+                               bool bItalic) {
   CFX_ByteString key(face_name);
   key += ',';
   key += CFX_ByteString::FormatInteger(weight);
@@ -110,7 +110,7 @@ void CFX_FontMgr::SetSystemFontInfo(
 }
 
 FXFT_Face CFX_FontMgr::FindSubstFont(const CFX_ByteString& face_name,
-                                     FX_BOOL bTrueType,
+                                     bool bTrueType,
                                      uint32_t flags,
                                      int weight,
                                      int italic_angle,
@@ -123,7 +123,7 @@ FXFT_Face CFX_FontMgr::FindSubstFont(const CFX_ByteString& face_name,
 
 FXFT_Face CFX_FontMgr::GetCachedFace(const CFX_ByteString& face_name,
                                      int weight,
-                                     FX_BOOL bItalic,
+                                     bool bItalic,
                                      uint8_t*& pFontData) {
   auto it = m_FaceMap.find(KeyNameFromFace(face_name, weight, bItalic));
   if (it == m_FaceMap.end())
@@ -137,7 +137,7 @@ FXFT_Face CFX_FontMgr::GetCachedFace(const CFX_ByteString& face_name,
 
 FXFT_Face CFX_FontMgr::AddCachedFace(const CFX_ByteString& face_name,
                                      int weight,
-                                     FX_BOOL bItalic,
+                                     bool bItalic,
                                      uint8_t* pData,
                                      uint32_t size,
                                      int face_index) {
@@ -224,14 +224,14 @@ FXFT_Face CFX_FontMgr::GetFileFace(const FX_CHAR* filename, int face_index) {
 void CFX_FontMgr::ReleaseFace(FXFT_Face face) {
   if (!face)
     return;
-  FX_BOOL bNeedFaceDone = TRUE;
+  bool bNeedFaceDone = true;
   auto it = m_FaceMap.begin();
   while (it != m_FaceMap.end()) {
     auto temp = it++;
     int nRet = temp->second->ReleaseFace(face);
     if (nRet == -1)
       continue;
-    bNeedFaceDone = FALSE;
+    bNeedFaceDone = false;
     if (nRet == 0)
       m_FaceMap.erase(temp);
     break;

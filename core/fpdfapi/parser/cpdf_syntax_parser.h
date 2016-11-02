@@ -34,7 +34,7 @@ class CPDF_SyntaxParser {
   CPDF_Object* GetObject(CPDF_IndirectObjectHolder* pObjList,
                          uint32_t objnum,
                          uint32_t gennum,
-                         FX_BOOL bDecrypt);
+                         bool bDecrypt);
   CPDF_Object* GetObjectForStrict(CPDF_IndirectObjectHolder* pObjList,
                                   uint32_t objnum,
                                   uint32_t gennum);
@@ -43,19 +43,19 @@ class CPDF_SyntaxParser {
   void ToNextLine();
   void ToNextWord();
 
-  FX_BOOL SearchWord(const CFX_ByteStringC& word,
-                     FX_BOOL bWholeWord,
-                     FX_BOOL bForward,
-                     FX_FILESIZE limit);
+  bool SearchWord(const CFX_ByteStringC& word,
+                  bool bWholeWord,
+                  bool bForward,
+                  FX_FILESIZE limit);
   int SearchMultiWord(const CFX_ByteStringC& words,
-                      FX_BOOL bWholeWord,
+                      bool bWholeWord,
                       FX_FILESIZE limit);
   FX_FILESIZE FindTag(const CFX_ByteStringC& tag, FX_FILESIZE limit);
 
   void SetEncrypt(std::unique_ptr<CPDF_CryptoHandler> pCryptoHandler);
 
-  FX_BOOL ReadBlock(uint8_t* pBuf, uint32_t size);
-  FX_BOOL GetCharAt(FX_FILESIZE pos, uint8_t& ch);
+  bool ReadBlock(uint8_t* pBuf, uint32_t size);
+  bool GetCharAt(FX_FILESIZE pos, uint8_t& ch);
   CFX_ByteString GetNextWord(bool* bIsNumber);
 
  private:
@@ -67,13 +67,13 @@ class CPDF_SyntaxParser {
   static int s_CurrentRecursionDepth;
 
   uint32_t GetDirectNum();
-  FX_BOOL GetNextChar(uint8_t& ch);
-  FX_BOOL GetCharAtBackward(FX_FILESIZE pos, uint8_t& ch);
+  bool GetNextChar(uint8_t& ch);
+  bool GetCharAtBackward(FX_FILESIZE pos, uint8_t& ch);
   void GetNextWordInternal(bool* bIsNumber);
   bool IsWholeWord(FX_FILESIZE startpos,
                    FX_FILESIZE limit,
                    const CFX_ByteStringC& tag,
-                   FX_BOOL checkKeyword);
+                   bool checkKeyword);
 
   CFX_ByteString ReadString();
   CFX_ByteString ReadHexString();

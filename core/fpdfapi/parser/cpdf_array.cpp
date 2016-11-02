@@ -196,7 +196,7 @@ void CPDF_Array::AddName(const CFX_ByteString& str) {
 }
 
 void CPDF_Array::AddString(const CFX_ByteString& str) {
-  Add(new CPDF_String(str, FALSE));
+  Add(new CPDF_String(str, false));
 }
 
 void CPDF_Array::AddInteger(int i) {

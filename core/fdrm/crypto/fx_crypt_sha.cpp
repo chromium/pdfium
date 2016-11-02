@@ -384,7 +384,7 @@ uint64_t FX_ato64i(const FX_CHAR* str) {
     } else if (str[i] >= 'A' && str[i] <= 'F') {
       ret |= (str[i] - 'A' + 10) & 0xFF;
     } else {
-      ASSERT(FALSE);
+      ASSERT(false);
     }
   }
   return ret;

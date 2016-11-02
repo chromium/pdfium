@@ -14,13 +14,13 @@ uint32_t FX_GetUnicodeProperties(FX_WCHAR wch) {
 }
 
 #ifdef PDF_ENABLE_XFA
-FX_BOOL FX_IsCtrlCode(FX_WCHAR ch) {
+bool FX_IsCtrlCode(FX_WCHAR ch) {
   uint32_t dwRet = (FX_GetUnicodeProperties(ch) & FX_CHARTYPEBITSMASK);
   return dwRet == FX_CHARTYPE_Tab || dwRet == FX_CHARTYPE_Control;
 }
 #endif  // PDF_ENABLE_XFA
 
-FX_WCHAR FX_GetMirrorChar(FX_WCHAR wch, FX_BOOL bRTL, FX_BOOL bVertical) {
+FX_WCHAR FX_GetMirrorChar(FX_WCHAR wch, bool bRTL, bool bVertical) {
   uint32_t dwProps = FX_GetUnicodeProperties(wch);
   uint32_t dwTemp = (dwProps & 0xFF800000);
   if (bRTL && dwTemp < 0xFF800000) {
@@ -44,8 +44,8 @@ FX_WCHAR FX_GetMirrorChar(FX_WCHAR wch, FX_BOOL bRTL, FX_BOOL bVertical) {
 #ifdef PDF_ENABLE_XFA
 FX_WCHAR FX_GetMirrorChar(FX_WCHAR wch,
                           uint32_t dwProps,
-                          FX_BOOL bRTL,
-                          FX_BOOL bVertical) {
+                          bool bRTL,
+                          bool bVertical) {
   uint32_t dwTemp = (dwProps & 0xFF800000);
   if (bRTL && dwTemp < 0xFF800000) {
     size_t idx = dwTemp >> 23;

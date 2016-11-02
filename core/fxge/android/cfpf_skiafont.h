@@ -29,17 +29,17 @@ class CFPF_SkiaFont {
   int32_t GetGlyphWidth(int32_t iGlyphIndex);
   int32_t GetAscent() const;
   int32_t GetDescent() const;
-  FX_BOOL GetGlyphBBox(int32_t iGlyphIndex, FX_RECT& rtBBox);
-  FX_BOOL GetBBox(FX_RECT& rtBBox);
+  bool GetGlyphBBox(int32_t iGlyphIndex, FX_RECT& rtBBox);
+  bool GetBBox(FX_RECT& rtBBox);
   int32_t GetHeight() const;
   int32_t GetItalicAngle() const;
   uint32_t GetFontData(uint32_t dwTable, uint8_t* pBuffer, uint32_t dwSize);
 
-  FX_BOOL InitFont(CFPF_SkiaFontMgr* pFontMgr,
-                   CFPF_SkiaFontDescriptor* pFontDes,
-                   const CFX_ByteStringC& bsFamily,
-                   uint32_t dwStyle,
-                   uint8_t uCharset);
+  bool InitFont(CFPF_SkiaFontMgr* pFontMgr,
+                CFPF_SkiaFontDescriptor* pFontDes,
+                const CFX_ByteStringC& bsFamily,
+                uint32_t dwStyle,
+                uint8_t uCharset);
 
  private:
   CFPF_SkiaFontMgr* m_pFontMgr;

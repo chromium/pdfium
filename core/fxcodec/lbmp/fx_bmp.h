@@ -84,7 +84,7 @@ struct tag_bmp_decompress_struct {
   uint8_t* out_row_buffer;
   uint16_t bitCounts;
   uint32_t color_used;
-  FX_BOOL imgTB_flag;
+  bool imgTB_flag;
   int32_t pal_num;
   int32_t pal_type;
   uint32_t* pal_ptr;
@@ -99,8 +99,8 @@ struct tag_bmp_decompress_struct {
   uint32_t mask_green;
   uint32_t mask_blue;
 
-  FX_BOOL (*bmp_get_data_position_fn)(bmp_decompress_struct_p bmp_ptr,
-                                       uint32_t cur_pos);
+  bool (*bmp_get_data_position_fn)(bmp_decompress_struct_p bmp_ptr,
+                                   uint32_t cur_pos);
   void (*bmp_get_row_fn)(bmp_decompress_struct_p bmp_ptr,
                          int32_t row_num,
                          uint8_t* row_buf);
@@ -137,7 +137,7 @@ struct tag_bmp_compress_struct {
   uint32_t src_row;
   uint8_t src_bpp;
   uint32_t src_width;
-  FX_BOOL src_free;
+  bool src_free;
   uint32_t* pal_ptr;
   uint16_t pal_num;
   uint8_t bit_type;
@@ -145,9 +145,9 @@ struct tag_bmp_compress_struct {
 
 bmp_compress_struct_p bmp_create_compress();
 void bmp_destroy_compress(bmp_compress_struct_p bmp_ptr);
-FX_BOOL bmp_encode_image(bmp_compress_struct_p bmp_ptr,
-                         uint8_t*& dst_buf,
-                         uint32_t& dst_size);
+bool bmp_encode_image(bmp_compress_struct_p bmp_ptr,
+                      uint8_t*& dst_buf,
+                      uint32_t& dst_size);
 
 uint16_t GetWord_LSBFirst(uint8_t* p);
 void SetWord_LSBFirst(uint8_t* p, uint16_t v);

@@ -24,7 +24,7 @@ class CJBig2_PDDProc {
   CJBig2_PatternDict* decode_MMR(CJBig2_BitStream* pStream, IFX_Pause* pPause);
 
  public:
-  FX_BOOL HDMMR;
+  bool HDMMR;
   uint8_t HDPW;
   uint8_t HDPH;
   uint32_t GRAYMAX;

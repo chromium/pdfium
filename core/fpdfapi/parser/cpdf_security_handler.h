@@ -27,9 +27,9 @@ class CPDF_SecurityHandler {
   CPDF_SecurityHandler();
   ~CPDF_SecurityHandler();
 
-  FX_BOOL OnInit(CPDF_Parser* pParser, CPDF_Dictionary* pEncryptDict);
+  bool OnInit(CPDF_Parser* pParser, CPDF_Dictionary* pEncryptDict);
   uint32_t GetPermissions();
-  FX_BOOL GetCryptInfo(int& cipher, const uint8_t*& buffer, int& keylen);
+  bool GetCryptInfo(int& cipher, const uint8_t*& buffer, int& keylen);
   bool IsMetadataEncrypted() const;
   CPDF_CryptoHandler* CreateCryptoHandler();
 
@@ -50,41 +50,41 @@ class CPDF_SecurityHandler {
   CFX_ByteString GetUserPassword(const uint8_t* owner_pass,
                                  uint32_t pass_size,
                                  int32_t key_len);
-  FX_BOOL CheckPassword(const uint8_t* password,
-                        uint32_t pass_size,
-                        FX_BOOL bOwner,
-                        uint8_t* key,
-                        int key_len);
+  bool CheckPassword(const uint8_t* password,
+                     uint32_t pass_size,
+                     bool bOwner,
+                     uint8_t* key,
+                     int key_len);
 
  private:
-  FX_BOOL LoadDict(CPDF_Dictionary* pEncryptDict);
-  FX_BOOL LoadDict(CPDF_Dictionary* pEncryptDict,
-                   uint32_t type,
-                   int& cipher,
-                   int& key_len);
+  bool LoadDict(CPDF_Dictionary* pEncryptDict);
+  bool LoadDict(CPDF_Dictionary* pEncryptDict,
+                uint32_t type,
+                int& cipher,
+                int& key_len);
 
-  FX_BOOL CheckUserPassword(const uint8_t* password,
-                            uint32_t pass_size,
-                            FX_BOOL bIgnoreEncryptMeta,
-                            uint8_t* key,
-                            int32_t key_len);
+  bool CheckUserPassword(const uint8_t* password,
+                         uint32_t pass_size,
+                         bool bIgnoreEncryptMeta,
+                         uint8_t* key,
+                         int32_t key_len);
 
-  FX_BOOL CheckOwnerPassword(const uint8_t* password,
-                             uint32_t pass_size,
-                             uint8_t* key,
-                             int32_t key_len);
-  FX_BOOL AES256_CheckPassword(const uint8_t* password,
-                               uint32_t size,
-                               FX_BOOL bOwner,
-                               uint8_t* key);
+  bool CheckOwnerPassword(const uint8_t* password,
+                          uint32_t pass_size,
+                          uint8_t* key,
+                          int32_t key_len);
+  bool AES256_CheckPassword(const uint8_t* password,
+                            uint32_t size,
+                            bool bOwner,
+                            uint8_t* key);
   void AES256_SetPassword(CPDF_Dictionary* pEncryptDict,
                           const uint8_t* password,
                           uint32_t size,
-                          FX_BOOL bOwner,
+                          bool bOwner,
                           const uint8_t* key);
   void AES256_SetPerms(CPDF_Dictionary* pEncryptDict,
                        uint32_t permission,
-                       FX_BOOL bEncryptMetadata,
+                       bool bEncryptMetadata,
                        const uint8_t* key);
   void OnCreate(CPDF_Dictionary* pEncryptDict,
                 CPDF_Array* pIdArray,
@@ -92,9 +92,9 @@ class CPDF_SecurityHandler {
                 uint32_t user_size,
                 const uint8_t* owner_pass,
                 uint32_t owner_size,
-                FX_BOOL bDefault,
+                bool bDefault,
                 uint32_t type);
-  FX_BOOL CheckSecurity(int32_t key_len);
+  bool CheckSecurity(int32_t key_len);
 
   int m_Version;
   int m_Revision;

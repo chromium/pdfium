@@ -73,7 +73,7 @@ int32_t CJBig2_BitStream::read1Bit(uint32_t* dwResult) {
   return 0;
 }
 
-int32_t CJBig2_BitStream::read1Bit(FX_BOOL* bResult) {
+int32_t CJBig2_BitStream::read1Bit(bool* bResult) {
   if (!IsInBound())
     return -1;
 

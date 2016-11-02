@@ -36,7 +36,7 @@ class CJBig2_GRRDProc {
   CJBig2_Image* GRREFERENCE;
   int32_t GRREFERENCEDX;
   int32_t GRREFERENCEDY;
-  FX_BOOL TPGRON;
+  bool TPGRON;
   int8_t GRAT[4];
 };
 

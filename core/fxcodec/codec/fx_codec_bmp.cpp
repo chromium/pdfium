@@ -36,8 +36,8 @@ static void bmp_read_scanline(bmp_decompress_struct_p bmp_ptr,
   CCodec_BmpModule* pModule = (CCodec_BmpModule*)p->parent_ptr;
   pModule->ReadScanlineCallback(p->child_ptr, row_num, row_buf);
 }
-static FX_BOOL bmp_get_data_position(bmp_decompress_struct_p bmp_ptr,
-                                     uint32_t rcd_pos) {
+static bool bmp_get_data_position(bmp_decompress_struct_p bmp_ptr,
+                                  uint32_t rcd_pos) {
   FXBMP_Context* p = (FXBMP_Context*)bmp_ptr->context_ptr;
   CCodec_BmpModule* pModule = (CCodec_BmpModule*)p->parent_ptr;
   return pModule->InputImagePositionBufCallback(p->child_ptr, rcd_pos);
@@ -79,7 +79,7 @@ void CCodec_BmpModule::Finish(FXBMP_Context* ctx) {
 int32_t CCodec_BmpModule::ReadHeader(FXBMP_Context* ctx,
                                      int32_t* width,
                                      int32_t* height,
-                                     FX_BOOL* tb_flag,
+                                     bool* tb_flag,
                                      int32_t* components,
                                      int32_t* pal_num,
                                      uint32_t** pal_pp,

@@ -24,8 +24,8 @@ class CJBig2_GSIDProc {
   uint32_t* decode_MMR(CJBig2_BitStream* pStream, IFX_Pause* pPause);
 
  public:
-  FX_BOOL GSMMR;
-  FX_BOOL GSUSESKIP;
+  bool GSMMR;
+  bool GSUSESKIP;
   uint8_t GSBPP;
   uint32_t GSW;
   uint32_t GSH;

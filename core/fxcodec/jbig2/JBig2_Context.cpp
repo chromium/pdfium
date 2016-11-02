@@ -377,8 +377,8 @@ int32_t CJBig2_Context::ProcessingParseSegmentData(CJBig2_Segment* pSegment,
       pPageInfo->m_bIsStriped = !!(wTemp & 0x8000);
       pPageInfo->m_wMaxStripeSize = wTemp & 0x7fff;
       bool bMaxHeight = (pPageInfo->m_dwHeight == 0xffffffff);
-      if (bMaxHeight && pPageInfo->m_bIsStriped != TRUE)
-        pPageInfo->m_bIsStriped = TRUE;
+      if (bMaxHeight && pPageInfo->m_bIsStriped != true)
+        pPageInfo->m_bIsStriped = true;
 
       if (!m_bBufSpecified) {
         uint32_t height =
@@ -582,7 +582,7 @@ int32_t CJBig2_Context::parseSymbolDict(CJBig2_Segment* pSegment,
 
   CJBig2_CacheKey key =
       CJBig2_CacheKey(pSegment->m_dwObjNum, pSegment->m_dwDataOffset);
-  FX_BOOL cache_hit = false;
+  bool cache_hit = false;
   pSegment->m_nResultType = JBIG2_SYMBOL_DICT_POINTER;
   if (m_bIsGlobal && key.first != 0) {
     for (auto it = m_pSymbolDictCache->begin(); it != m_pSymbolDictCache->end();

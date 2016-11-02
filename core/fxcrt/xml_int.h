@@ -24,7 +24,7 @@ class CXML_DataBufAcc : public IFX_BufferRead {
   bool IsEOF() override;
   FX_FILESIZE GetPosition() override;
   size_t ReadBlock(void* buffer, size_t size) override;
-  bool ReadNextBlock(bool bRestart = FALSE) override;
+  bool ReadNextBlock(bool bRestart = false) override;
   const uint8_t* GetBlockBuffer() override;
   size_t GetBlockSize() override;
   FX_FILESIZE GetBlockOffset() override;
@@ -45,7 +45,7 @@ class CXML_DataStmAcc : public IFX_BufferRead {
   bool IsEOF() override;
   FX_FILESIZE GetPosition() override;
   size_t ReadBlock(void* buffer, size_t size) override;
-  bool ReadNextBlock(bool bRestart = FALSE) override;
+  bool ReadNextBlock(bool bRestart = false) override;
   const uint8_t* GetBlockBuffer() override;
   size_t GetBlockSize() override;
   FX_FILESIZE GetBlockOffset() override;
@@ -75,11 +75,11 @@ class CXML_Parser {
   uint32_t GetCharRef();
   void GetTagName(CFX_ByteString& space,
                   CFX_ByteString& name,
-                  FX_BOOL& bEndTag,
-                  FX_BOOL bStartTag = FALSE);
+                  bool& bEndTag,
+                  bool bStartTag = false);
   void SkipLiterals(const CFX_ByteStringC& str);
-  CXML_Element* ParseElement(CXML_Element* pParent, FX_BOOL bStartTag = FALSE);
-  void InsertContentSegment(FX_BOOL bCDATA,
+  CXML_Element* ParseElement(CXML_Element* pParent, bool bStartTag = false);
+  void InsertContentSegment(bool bCDATA,
                             const CFX_WideStringC& content,
                             CXML_Element* pElement);
   void InsertCDATASegment(CFX_UTF8Decoder& decoder, CXML_Element* pElement);
@@ -87,7 +87,7 @@ class CXML_Parser {
   IFX_BufferRead* m_pDataAcc;
   bool m_bOwnedStream;
   FX_FILESIZE m_nOffset;
-  FX_BOOL m_bSaveSpaceChars;
+  bool m_bSaveSpaceChars;
   const uint8_t* m_pBuffer;
   size_t m_dwBufferSize;
   FX_FILESIZE m_nBufferOffset;

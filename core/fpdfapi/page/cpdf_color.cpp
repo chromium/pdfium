@@ -132,18 +132,18 @@ void CPDF_Color::Copy(const CPDF_Color* pSrc) {
   }
 }
 
-FX_BOOL CPDF_Color::GetRGB(int& R, int& G, int& B) const {
+bool CPDF_Color::GetRGB(int& R, int& G, int& B) const {
   if (!m_pCS || !m_pBuffer)
-    return FALSE;
+    return false;
 
   FX_FLOAT r = 0.0f, g = 0.0f, b = 0.0f;
   if (!m_pCS->GetRGB(m_pBuffer, r, g, b))
-    return FALSE;
+    return false;
 
   R = (int32_t)(r * 255 + 0.5f);
   G = (int32_t)(g * 255 + 0.5f);
   B = (int32_t)(b * 255 + 0.5f);
-  return TRUE;
+  return true;
 }
 
 CPDF_Pattern* CPDF_Color::GetPattern() const {

@@ -242,7 +242,7 @@ void CPDF_Dictionary::SetNameFor(const CFX_ByteString& key,
 
 void CPDF_Dictionary::SetStringFor(const CFX_ByteString& key,
                                    const CFX_ByteString& str) {
-  SetFor(key, new CPDF_String(MaybeIntern(str), FALSE));
+  SetFor(key, new CPDF_String(MaybeIntern(str), false));
 }
 
 void CPDF_Dictionary::SetReferenceFor(const CFX_ByteString& key,

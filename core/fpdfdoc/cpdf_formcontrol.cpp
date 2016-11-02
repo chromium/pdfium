@@ -138,14 +138,14 @@ bool CPDF_FormControl::IsDefaultChecked() const {
          GetType() == CPDF_FormField::RadioButton);
   CPDF_Object* pDV = FPDF_GetFieldAttr(m_pField->m_pDict, "DV");
   if (!pDV)
-    return FALSE;
+    return false;
 
   CFX_ByteString csDV = pDV->GetString();
   CFX_ByteString csOn = GetOnStateName();
   return (csDV == csOn);
 }
 
-void CPDF_FormControl::CheckControl(FX_BOOL bChecked) {
+void CPDF_FormControl::CheckControl(bool bChecked) {
   ASSERT(GetType() == CPDF_FormField::CheckBox ||
          GetType() == CPDF_FormField::RadioButton);
   CFX_ByteString csOn = GetOnStateName();

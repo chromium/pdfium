@@ -101,7 +101,7 @@ typedef FX_GUID const* FX_LPCGUID;
 void FX_GUID_CreateV4(FX_LPGUID pGUID);
 void FX_GUID_ToString(FX_LPCGUID pGUID,
                       CFX_ByteString& bsStr,
-                      FX_BOOL bSeparator = TRUE);
+                      bool bSeparator = true);
 #endif  // PDF_ENABLE_XFA
 
 template <class baseType>

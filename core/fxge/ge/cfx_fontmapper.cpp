@@ -258,12 +258,12 @@ int32_t GetStyleType(const CFX_ByteString& bsStyle, bool bReverse) {
   return -1;
 }
 
-FX_BOOL CheckSupportThirdPartFont(CFX_ByteString name, int& PitchFamily) {
+bool CheckSupportThirdPartFont(CFX_ByteString name, int& PitchFamily) {
   if (name == "MyriadPro") {
     PitchFamily &= ~FXFONT_FF_ROMAN;
-    return TRUE;
+    return true;
   }
-  return FALSE;
+  return false;
 }
 
 void UpdatePitchFamily(uint32_t flags, int& PitchFamily) {
@@ -278,7 +278,7 @@ void UpdatePitchFamily(uint32_t flags, int& PitchFamily) {
 }  // namespace
 
 CFX_FontMapper::CFX_FontMapper(CFX_FontMgr* mgr)
-    : m_bListLoaded(FALSE), m_pFontMgr(mgr) {
+    : m_bListLoaded(false), m_pFontMgr(mgr) {
   m_MMFaces[0] = nullptr;
   m_MMFaces[1] = nullptr;
   FXSYS_memset(m_FoxitFaces, 0, sizeof(m_FoxitFaces));
@@ -328,10 +328,10 @@ void CFX_FontMapper::AddInstalledFont(const CFX_ByteString& name, int charset) {
     return;
 
   const uint8_t* ptr = name.raw_str();
-  FX_BOOL bLocalized = FALSE;
+  bool bLocalized = false;
   for (int i = 0; i < name.GetLength(); i++) {
     if (ptr[i] > 0x80) {
-      bLocalized = TRUE;
+      bLocalized = true;
       break;
     }
   }
@@ -360,7 +360,7 @@ void CFX_FontMapper::LoadInstalledFonts() {
     return;
 
   m_pFontInfo->EnumFontList(this);
-  m_bListLoaded = TRUE;
+  m_bListLoaded = true;
 }
 
 CFX_ByteString CFX_FontMapper::MatchInstalledFonts(
@@ -422,7 +422,7 @@ FXFT_Face CFX_FontMapper::UseInternalSubst(CFX_SubstFont* pSubstFont,
 }
 
 FXFT_Face CFX_FontMapper::FindSubstFont(const CFX_ByteString& name,
-                                        FX_BOOL bTrueType,
+                                        bool bTrueType,
                                         uint32_t flags,
                                         int weight,
                                         int italic_angle,
@@ -714,7 +714,7 @@ FXFT_Face CFX_FontMapper::FindSubstFontByUnicode(uint32_t dwUnicode,
   if (!m_pFontInfo)
     return nullptr;
 
-  FX_BOOL bItalic = (flags & FXFONT_ITALIC) != 0;
+  bool bItalic = (flags & FXFONT_ITALIC) != 0;
   int PitchFamily = 0;
   UpdatePitchFamily(flags, PitchFamily);
   void* hFont =
@@ -745,16 +745,16 @@ int CFX_FontMapper::GetFaceSize() const {
   return pdfium::CollectionSize<int>(m_FaceArray);
 }
 
-FX_BOOL CFX_FontMapper::IsBuiltinFace(const FXFT_Face face) const {
+bool CFX_FontMapper::IsBuiltinFace(const FXFT_Face face) const {
   for (size_t i = 0; i < MM_FACE_COUNT; ++i) {
     if (m_MMFaces[i] == face)
-      return TRUE;
+      return true;
   }
   for (size_t i = 0; i < FOXIT_FACE_COUNT; ++i) {
     if (m_FoxitFaces[i] == face)
-      return TRUE;
+      return true;
   }
-  return FALSE;
+  return false;
 }
 
 FXFT_Face CFX_FontMapper::GetCachedTTCFace(void* hFont,
@@ -783,7 +783,7 @@ FXFT_Face CFX_FontMapper::GetCachedTTCFace(void* hFont,
 FXFT_Face CFX_FontMapper::GetCachedFace(void* hFont,
                                         CFX_ByteString SubstName,
                                         int weight,
-                                        FX_BOOL bItalic,
+                                        bool bItalic,
                                         uint32_t font_size) {
   FXFT_Face face;
   uint8_t* pFontData;

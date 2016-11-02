@@ -14,7 +14,7 @@ const FX_CHAR* g_sAATypes[] = {"E",  "X",  "D",  "U",  "Fo", "Bl", "PO", "PC",
 
 }  // namespace
 
-FX_BOOL CPDF_AAction::ActionExist(AActionType eType) const {
+bool CPDF_AAction::ActionExist(AActionType eType) const {
   return m_pDict && m_pDict->KeyExist(g_sAATypes[eType]);
 }
 

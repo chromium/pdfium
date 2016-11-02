@@ -62,31 +62,31 @@ class IPDF_StructElement {
 
   virtual CPDF_Object* GetAttr(const CFX_ByteStringC& owner,
                                const CFX_ByteStringC& name,
-                               FX_BOOL bInheritable = FALSE,
+                               bool bInheritable = false,
                                FX_FLOAT fLevel = 0.0F) = 0;
 
   virtual CFX_ByteString GetName(const CFX_ByteStringC& owner,
                                  const CFX_ByteStringC& name,
                                  const CFX_ByteStringC& default_value,
-                                 FX_BOOL bInheritable = FALSE,
+                                 bool bInheritable = false,
                                  int subindex = -1) = 0;
 
   virtual FX_ARGB GetColor(const CFX_ByteStringC& owner,
                            const CFX_ByteStringC& name,
                            FX_ARGB default_value,
-                           FX_BOOL bInheritable = FALSE,
+                           bool bInheritable = false,
                            int subindex = -1) = 0;
 
   virtual FX_FLOAT GetNumber(const CFX_ByteStringC& owner,
                              const CFX_ByteStringC& name,
                              FX_FLOAT default_value,
-                             FX_BOOL bInheritable = FALSE,
+                             bool bInheritable = false,
                              int subindex = -1) = 0;
 
   virtual int GetInteger(const CFX_ByteStringC& owner,
                          const CFX_ByteStringC& name,
                          int default_value,
-                         FX_BOOL bInheritable = FALSE,
+                         bool bInheritable = false,
                          int subindex = -1) = 0;
 };
 

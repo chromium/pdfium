@@ -46,7 +46,7 @@ class CFX_CRTFileAccess : public IFX_FileAccess {
   void GetPath(CFX_WideString& wsPath) override;
   IFX_SeekableStream* CreateFileStream(uint32_t dwModes) override;
 
-  FX_BOOL Init(const CFX_WideStringC& wsPath);
+  bool Init(const CFX_WideStringC& wsPath);
 
  protected:
   CFX_WideString m_path;
@@ -81,8 +81,8 @@ class CFX_CRTFileStream final : public IFX_SeekableStream {
 
 class CFX_MemoryStream final : public IFX_MemoryStream {
  public:
-  explicit CFX_MemoryStream(FX_BOOL bConsecutive);
-  CFX_MemoryStream(uint8_t* pBuffer, size_t nSize, FX_BOOL bTakeOver);
+  explicit CFX_MemoryStream(bool bConsecutive);
+  CFX_MemoryStream(uint8_t* pBuffer, size_t nSize, bool bTakeOver);
   ~CFX_MemoryStream() override;
 
   // IFX_MemoryStream
@@ -100,7 +100,7 @@ class CFX_MemoryStream final : public IFX_MemoryStream {
   uint8_t* GetBuffer() const override;
   void AttachBuffer(uint8_t* pBuffer,
                     size_t nSize,
-                    bool bTakeOver = FALSE) override;
+                    bool bTakeOver = false) override;
   void DetachBuffer() override;
 
  protected:
@@ -111,7 +111,7 @@ class CFX_MemoryStream final : public IFX_MemoryStream {
   size_t m_nCurPos;
   size_t m_nGrowSize;
   uint32_t m_dwFlags;
-  FX_BOOL ExpandBlocks(size_t size);
+  bool ExpandBlocks(size_t size);
 };
 
 #ifdef __cplusplus
@@ -125,14 +125,14 @@ extern "C" {
 struct FX_MTRANDOMCONTEXT {
   FX_MTRANDOMCONTEXT() {
     mti = MT_N + 1;
-    bHaveSeed = FALSE;
+    bHaveSeed = false;
   }
   uint32_t mti;
-  FX_BOOL bHaveSeed;
+  bool bHaveSeed;
   uint32_t mt[MT_N];
 };
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
-FX_BOOL FX_GenerateCryptoRandom(uint32_t* pBuffer, int32_t iCount);
+bool FX_GenerateCryptoRandom(uint32_t* pBuffer, int32_t iCount);
 #endif
 #ifdef __cplusplus
 }

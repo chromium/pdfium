@@ -115,7 +115,7 @@ CPDF_Dictionary* CPDF_Image::InitJPEG(uint8_t* pData, uint32_t size) {
     pDict->SetFor("DecodeParms", pParms);
     pParms->SetIntegerFor("ColorTransform", 0);
   }
-  m_bIsMask = FALSE;
+  m_bIsMask = false;
   m_Width = width;
   m_Height = height;
   if (!m_pStream)
@@ -170,7 +170,7 @@ void CPDF_Image::SetImage(const CFX_DIBitmap* pBitmap, int32_t iCompress) {
       ArgbDecode(pBitmap->GetPaletteArgb(1), set_a, set_r, set_g, set_b);
     }
     if (set_a == 0 || reset_a == 0) {
-      pDict->SetFor("ImageMask", new CPDF_Boolean(TRUE));
+      pDict->SetFor("ImageMask", new CPDF_Boolean(true));
       if (reset_a == 0) {
         CPDF_Array* pArray = new CPDF_Array;
         pArray->AddInteger(1);
@@ -191,7 +191,7 @@ void CPDF_Image::SetImage(const CFX_DIBitmap* pBitmap, int32_t iCompress) {
       pBuf[4] = (FX_CHAR)set_g;
       pBuf[5] = (FX_CHAR)set_b;
       ct.ReleaseBuffer(6);
-      pCS->Add(new CPDF_String(ct, TRUE));
+      pCS->Add(new CPDF_String(ct, true));
       pDict->SetFor("ColorSpace", pCS);
     }
     pDict->SetIntegerFor("BitsPerComponent", 1);
@@ -244,10 +244,10 @@ void CPDF_Image::SetImage(const CFX_DIBitmap* pBitmap, int32_t iCompress) {
     }
   }
   const CFX_DIBitmap* pMaskBitmap = nullptr;
-  FX_BOOL bDeleteMask = FALSE;
+  bool bDeleteMask = false;
   if (pBitmap->HasAlpha()) {
     pMaskBitmap = pBitmap->GetAlphaMask();
-    bDeleteMask = TRUE;
+    bDeleteMask = true;
   }
   if (pMaskBitmap) {
     int32_t maskWidth = pMaskBitmap->GetWidth();
@@ -348,9 +348,9 @@ void CPDF_Image::ResetCache(CPDF_Page* pPage, const CFX_DIBitmap* pBitmap) {
 
 CFX_DIBSource* CPDF_Image::LoadDIBSource(CFX_DIBSource** ppMask,
                                          uint32_t* pMatteColor,
-                                         FX_BOOL bStdCS,
+                                         bool bStdCS,
                                          uint32_t GroupFamily,
-                                         FX_BOOL bLoadMask) const {
+                                         bool bLoadMask) const {
   std::unique_ptr<CPDF_DIBSource> source(new CPDF_DIBSource);
   if (source->Load(m_pDocument, m_pStream,
                    reinterpret_cast<CPDF_DIBSource**>(ppMask), pMatteColor,
@@ -372,41 +372,41 @@ CFX_DIBSource* CPDF_Image::DetachMask() {
   return pBitmap;
 }
 
-FX_BOOL CPDF_Image::StartLoadDIBSource(CPDF_Dictionary* pFormResource,
-                                       CPDF_Dictionary* pPageResource,
-                                       FX_BOOL bStdCS,
-                                       uint32_t GroupFamily,
-                                       FX_BOOL bLoadMask) {
+bool CPDF_Image::StartLoadDIBSource(CPDF_Dictionary* pFormResource,
+                                    CPDF_Dictionary* pPageResource,
+                                    bool bStdCS,
+                                    uint32_t GroupFamily,
+                                    bool bLoadMask) {
   std::unique_ptr<CPDF_DIBSource> source(new CPDF_DIBSource);
   int ret =
-      source->StartLoadDIBSource(m_pDocument, m_pStream, TRUE, pFormResource,
+      source->StartLoadDIBSource(m_pDocument, m_pStream, true, pFormResource,
                                  pPageResource, bStdCS, GroupFamily, bLoadMask);
   if (ret == 2) {
     m_pDIBSource = source.release();
-    return TRUE;
+    return true;
   }
   if (!ret) {
     m_pDIBSource = nullptr;
-    return FALSE;
+    return false;
   }
   m_pMask = source->DetachMask();
   m_MatteColor = source->GetMatteColor();
   m_pDIBSource = source.release();
-  return FALSE;
+  return false;
 }
 
-FX_BOOL CPDF_Image::Continue(IFX_Pause* pPause) {
+bool CPDF_Image::Continue(IFX_Pause* pPause) {
   CPDF_DIBSource* pSource = static_cast<CPDF_DIBSource*>(m_pDIBSource);
   int ret = pSource->ContinueLoadDIBSource(pPause);
   if (ret == 2) {
-    return TRUE;
+    return true;
   }
   if (!ret) {
     delete m_pDIBSource;
     m_pDIBSource = nullptr;
-    return FALSE;
+    return false;
   }
   m_pMask = pSource->DetachMask();
   m_MatteColor = pSource->GetMatteColor();
-  return FALSE;
+  return false;
 }

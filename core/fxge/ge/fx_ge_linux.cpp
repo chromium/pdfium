@@ -21,12 +21,12 @@ namespace {
 class CFX_LinuxFontInfo : public CFX_FolderFontInfo {
  public:
   void* MapFont(int weight,
-                FX_BOOL bItalic,
+                bool bItalic,
                 int charset,
                 int pitch_family,
                 const FX_CHAR* family,
                 int& iExact) override;
-  FX_BOOL ParseFontCfg(const char** pUserPaths);
+  bool ParseFontCfg(const char** pUserPaths);
 };
 
 const size_t kLinuxGpNameSize = 6;
@@ -82,7 +82,7 @@ size_t GetJapanesePreference(const FX_CHAR* facearr,
 }  // namespace
 
 void* CFX_LinuxFontInfo::MapFont(int weight,
-                                 FX_BOOL bItalic,
+                                 bool bItalic,
                                  int charset,
                                  int pitch_family,
                                  const FX_CHAR* cstr_face,
@@ -92,7 +92,7 @@ void* CFX_LinuxFontInfo::MapFont(int weight,
     iExact = 1;
     return font;
   }
-  FX_BOOL bCJK = TRUE;
+  bool bCJK = true;
   switch (charset) {
     case FXFONT_SHIFTJIS_CHARSET: {
       size_t index = GetJapanesePreference(cstr_face, weight, pitch_family);
@@ -133,7 +133,7 @@ void* CFX_LinuxFontInfo::MapFont(int weight,
       break;
     }
     default:
-      bCJK = FALSE;
+      bCJK = false;
       break;
   }
   return FindFont(weight, bItalic, charset, pitch_family, cstr_face, !bCJK);
@@ -151,13 +151,13 @@ std::unique_ptr<IFX_SystemFontInfo> IFX_SystemFontInfo::CreateDefault(
   return std::unique_ptr<IFX_SystemFontInfo>(pInfo);
 }
 
-FX_BOOL CFX_LinuxFontInfo::ParseFontCfg(const char** pUserPaths) {
+bool CFX_LinuxFontInfo::ParseFontCfg(const char** pUserPaths) {
   if (!pUserPaths)
-    return FALSE;
+    return false;
 
   for (const char** pPath = pUserPaths; *pPath; ++pPath)
     AddPath(*pPath);
-  return TRUE;
+  return true;
 }
 
 void CFX_GEModule::InitPlatform() {

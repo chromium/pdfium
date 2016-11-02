@@ -15,7 +15,7 @@ struct JBig2PageInfo {
   uint32_t m_dwResolutionX;
   uint32_t m_dwResolutionY;
   uint8_t m_cFlags;
-  FX_BOOL m_bIsStriped;
+  bool m_bIsStriped;
   uint16_t m_wMaxStripeSize;
 };
 

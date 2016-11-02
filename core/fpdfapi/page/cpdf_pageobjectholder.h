@@ -34,13 +34,13 @@ class CPDF_PageObjectHolder {
     return &m_PageObjectList;
   }
 
-  FX_BOOL BackgroundAlphaNeeded() const { return m_bBackgroundAlphaNeeded; }
-  void SetBackgroundAlphaNeeded(FX_BOOL needed) {
+  bool BackgroundAlphaNeeded() const { return m_bBackgroundAlphaNeeded; }
+  void SetBackgroundAlphaNeeded(bool needed) {
     m_bBackgroundAlphaNeeded = needed;
   }
 
-  FX_BOOL HasImageMask() const { return m_bHasImageMask; }
-  void SetHasImageMask(FX_BOOL value) { m_bHasImageMask = value; }
+  bool HasImageMask() const { return m_bHasImageMask; }
+  void SetHasImageMask(bool value) { m_bHasImageMask = value; }
 
   void Transform(const CFX_Matrix& matrix);
   CFX_FloatRect CalcBoundingBox() const;
@@ -58,8 +58,8 @@ class CPDF_PageObjectHolder {
 
   void LoadTransInfo();
 
-  FX_BOOL m_bBackgroundAlphaNeeded;
-  FX_BOOL m_bHasImageMask;
+  bool m_bBackgroundAlphaNeeded;
+  bool m_bHasImageMask;
   ParseState m_ParseState;
   std::unique_ptr<CPDF_ContentParser> m_pParser;
   CPDF_PageObjectList m_PageObjectList;

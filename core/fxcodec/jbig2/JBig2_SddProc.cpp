@@ -30,9 +30,9 @@ CJBig2_SymbolDict* CJBig2_SDDProc::decode_Arith(
   int32_t DW;
   CJBig2_Image* BS;
   uint32_t I, J, REFAGGNINST;
-  FX_BOOL* EXFLAGS;
+  bool* EXFLAGS;
   uint32_t EXINDEX;
-  FX_BOOL CUREXFLAG;
+  bool CUREXFLAG;
   uint32_t EXRUNLENGTH;
   uint32_t nTmp;
   uint32_t SBNUMSYMS;
@@ -235,7 +235,7 @@ CJBig2_SymbolDict* CJBig2_SDDProc::decode_Arith(
   }
   EXINDEX = 0;
   CUREXFLAG = 0;
-  EXFLAGS = FX_Alloc(FX_BOOL, SDNUMINSYMS + SDNUMNEWSYMS);
+  EXFLAGS = FX_Alloc(bool, SDNUMINSYMS + SDNUMNEWSYMS);
   num_ex_syms = 0;
   while (EXINDEX < SDNUMINSYMS + SDNUMNEWSYMS) {
     IAEX->decode(pArithDecoder, (int*)&EXRUNLENGTH);
@@ -299,9 +299,9 @@ CJBig2_SymbolDict* CJBig2_SDDProc::decode_Huffman(
   int32_t DW;
   CJBig2_Image *BS, *BHC;
   uint32_t I, J, REFAGGNINST;
-  FX_BOOL* EXFLAGS;
+  bool* EXFLAGS;
   uint32_t EXINDEX;
-  FX_BOOL CUREXFLAG;
+  bool CUREXFLAG;
   uint32_t EXRUNLENGTH;
   int32_t nVal, nBits;
   uint32_t nTmp;
@@ -564,7 +564,7 @@ CJBig2_SymbolDict* CJBig2_SDDProc::decode_Huffman(
   CUREXFLAG = 0;
   pTable.reset(new CJBig2_HuffmanTable(HuffmanTable_B1, HuffmanTable_B1_Size,
                                        HuffmanTable_HTOOB_B1));
-  EXFLAGS = FX_Alloc(FX_BOOL, SDNUMINSYMS + SDNUMNEWSYMS);
+  EXFLAGS = FX_Alloc(bool, SDNUMINSYMS + SDNUMNEWSYMS);
   num_ex_syms = 0;
   while (EXINDEX < SDNUMINSYMS + SDNUMNEWSYMS) {
     if (pHuffmanDecoder->decodeAValue(pTable.get(), (int*)&EXRUNLENGTH) != 0) {

@@ -952,11 +952,11 @@ FX_FLOAT FX_wtof(const FX_WCHAR* str, int len) {
     return 0.0;
   }
   int cc = 0;
-  FX_BOOL bNegative = FALSE;
+  bool bNegative = false;
   if (str[0] == '+') {
     cc++;
   } else if (str[0] == '-') {
-    bNegative = TRUE;
+    bNegative = true;
     cc++;
   }
   int integer = 0;

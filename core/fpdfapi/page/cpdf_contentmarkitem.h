@@ -28,7 +28,7 @@ class CPDF_ContentMarkItem {
   CFX_ByteString GetName() const { return m_MarkName; }
   ParamType GetParamType() const { return m_ParamType; }
   CPDF_Dictionary* GetParam() const;
-  FX_BOOL HasMCID() const;
+  bool HasMCID() const;
 
   void SetName(const CFX_ByteString& name) { m_MarkName = name; }
   void SetDirectDict(

@@ -32,29 +32,29 @@ class CPDF_TextRenderer {
                              const CFX_GraphStateData* pGraphState,
                              const CPDF_RenderOptions* pOptions);
 
-  static FX_BOOL DrawTextPath(CFX_RenderDevice* pDevice,
-                              int nChars,
-                              uint32_t* pCharCodes,
-                              FX_FLOAT* pCharPos,
-                              CPDF_Font* pFont,
-                              FX_FLOAT font_size,
-                              const CFX_Matrix* pText2User,
-                              const CFX_Matrix* pUser2Device,
-                              const CFX_GraphStateData* pGraphState,
-                              FX_ARGB fill_argb,
-                              FX_ARGB stroke_argb,
-                              CFX_PathData* pClippingPath,
-                              int nFlag);
+  static bool DrawTextPath(CFX_RenderDevice* pDevice,
+                           int nChars,
+                           uint32_t* pCharCodes,
+                           FX_FLOAT* pCharPos,
+                           CPDF_Font* pFont,
+                           FX_FLOAT font_size,
+                           const CFX_Matrix* pText2User,
+                           const CFX_Matrix* pUser2Device,
+                           const CFX_GraphStateData* pGraphState,
+                           FX_ARGB fill_argb,
+                           FX_ARGB stroke_argb,
+                           CFX_PathData* pClippingPath,
+                           int nFlag);
 
-  static FX_BOOL DrawNormalText(CFX_RenderDevice* pDevice,
-                                int nChars,
-                                uint32_t* pCharCodes,
-                                FX_FLOAT* pCharPos,
-                                CPDF_Font* pFont,
-                                FX_FLOAT font_size,
-                                const CFX_Matrix* pText2Device,
-                                FX_ARGB fill_argb,
-                                const CPDF_RenderOptions* pOptions);
+  static bool DrawNormalText(CFX_RenderDevice* pDevice,
+                             int nChars,
+                             uint32_t* pCharCodes,
+                             FX_FLOAT* pCharPos,
+                             CPDF_Font* pFont,
+                             FX_FLOAT font_size,
+                             const CFX_Matrix* pText2Device,
+                             FX_ARGB fill_argb,
+                             const CPDF_RenderOptions* pOptions);
 };
 
 #endif  // CORE_FPDFAPI_RENDER_CPDF_TEXTRENDERER_H_

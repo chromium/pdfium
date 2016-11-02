@@ -32,7 +32,7 @@ class CPDF_ContentMark {
   bool LookupMark(const CFX_ByteStringC& mark, CPDF_Dictionary*& pDict) const;
   void AddMark(const CFX_ByteString& name,
                CPDF_Dictionary* pDict,
-               FX_BOOL bDirect);
+               bool bDirect);
   void DeleteLastMark();
 
   explicit operator bool() const { return !!m_Ref; }
@@ -51,7 +51,7 @@ class CPDF_ContentMark {
     int GetMCID() const;
     void AddMark(const CFX_ByteString& name,
                  CPDF_Dictionary* pDict,
-                 FX_BOOL bDictNeedClone);
+                 bool bDictNeedClone);
     void DeleteLastMark();
 
    private:

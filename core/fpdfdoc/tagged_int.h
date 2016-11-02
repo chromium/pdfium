@@ -32,8 +32,8 @@ class CPDF_StructTreeImpl final : public IPDF_StructTree {
       CPDF_Dictionary* pElement,
       std::map<CPDF_Dictionary*, CPDF_StructElementImpl*>& map,
       int nLevel = 0);
-  FX_BOOL AddTopLevelNode(CPDF_Dictionary* pDict,
-                          CPDF_StructElementImpl* pElement);
+  bool AddTopLevelNode(CPDF_Dictionary* pDict,
+                       CPDF_StructElementImpl* pElement);
 
  protected:
   const CPDF_Dictionary* const m_pTreeRoot;
@@ -59,34 +59,34 @@ class CPDF_StructElementImpl final : public IPDF_StructElement {
   const CPDF_StructKid& GetKid(int index) const override;
   CPDF_Object* GetAttr(const CFX_ByteStringC& owner,
                        const CFX_ByteStringC& name,
-                       FX_BOOL bInheritable = FALSE,
+                       bool bInheritable = false,
                        FX_FLOAT fLevel = 0.0F) override;
   CFX_ByteString GetName(const CFX_ByteStringC& owner,
                          const CFX_ByteStringC& name,
                          const CFX_ByteStringC& default_value,
-                         FX_BOOL bInheritable = FALSE,
+                         bool bInheritable = false,
                          int subindex = -1) override;
   FX_ARGB GetColor(const CFX_ByteStringC& owner,
                    const CFX_ByteStringC& name,
                    FX_ARGB default_value,
-                   FX_BOOL bInheritable = FALSE,
+                   bool bInheritable = false,
                    int subindex = -1) override;
   FX_FLOAT GetNumber(const CFX_ByteStringC& owner,
                      const CFX_ByteStringC& name,
                      FX_FLOAT default_value,
-                     FX_BOOL bInheritable = FALSE,
+                     bool bInheritable = false,
                      int subindex = -1) override;
   int GetInteger(const CFX_ByteStringC& owner,
                  const CFX_ByteStringC& name,
                  int default_value,
-                 FX_BOOL bInheritable = FALSE,
+                 bool bInheritable = false,
                  int subindex = -1) override;
 
   void LoadKids(CPDF_Dictionary* pDict);
   void LoadKid(uint32_t PageObjNum, CPDF_Object* pObj, CPDF_StructKid* pKid);
   CPDF_Object* GetAttr(const CFX_ByteStringC& owner,
                        const CFX_ByteStringC& name,
-                       FX_BOOL bInheritable,
+                       bool bInheritable,
                        int subindex);
   CPDF_StructElementImpl* Retain();
   void Release();

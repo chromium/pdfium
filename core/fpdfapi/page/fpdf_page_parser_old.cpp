@@ -96,11 +96,11 @@ uint32_t PDF_DecodeInlineStream(const uint8_t* src_buf,
     return HexDecode(src_buf, limit, dest_buf, dest_size);
   }
   if (decoder == "FlateDecode" || decoder == "Fl") {
-    return FPDFAPI_FlateOrLZWDecode(FALSE, src_buf, limit, pParam, dest_size,
+    return FPDFAPI_FlateOrLZWDecode(false, src_buf, limit, pParam, dest_size,
                                     dest_buf, dest_size);
   }
   if (decoder == "LZWDecode" || decoder == "LZW") {
-    return FPDFAPI_FlateOrLZWDecode(TRUE, src_buf, limit, pParam, 0, dest_buf,
+    return FPDFAPI_FlateOrLZWDecode(true, src_buf, limit, pParam, 0, dest_buf,
                                     dest_size);
   }
   if (decoder == "DCTDecode" || decoder == "DCT") {
@@ -317,7 +317,7 @@ CPDF_StreamParser::SyntaxType CPDF_StreamParser::ParseNextElement() {
 
   if (m_WordSize == 4) {
     if (memcmp(m_WordBuffer, "true", 4) == 0) {
-      m_pLastObj = new CPDF_Boolean(TRUE);
+      m_pLastObj = new CPDF_Boolean(true);
       return Others;
     }
     if (memcmp(m_WordBuffer, "null", 4) == 0) {
@@ -326,7 +326,7 @@ CPDF_StreamParser::SyntaxType CPDF_StreamParser::ParseNextElement() {
     }
   } else if (m_WordSize == 5) {
     if (memcmp(m_WordBuffer, "false", 5) == 0) {
-      m_pLastObj = new CPDF_Boolean(FALSE);
+      m_pLastObj = new CPDF_Boolean(false);
       return Others;
     }
   }
@@ -360,12 +360,12 @@ CPDF_Object* CPDF_StreamParser::ReadNextObject(bool bAllowNestedArray,
 
   if (first_char == '(') {
     CFX_ByteString str = ReadString();
-    return new CPDF_String(m_pPool ? m_pPool->Intern(str) : str, FALSE);
+    return new CPDF_String(m_pPool ? m_pPool->Intern(str) : str, false);
   }
 
   if (first_char == '<') {
     if (m_WordSize == 1)
-      return new CPDF_String(ReadHexString(), TRUE);
+      return new CPDF_String(ReadHexString(), true);
 
     CPDF_Dictionary* pDict = new CPDF_Dictionary(m_pPool);
     while (1) {
@@ -415,11 +415,11 @@ CPDF_Object* CPDF_StreamParser::ReadNextObject(bool bAllowNestedArray,
   }
 
   if (m_WordSize == 5 && !memcmp(m_WordBuffer, "false", 5))
-    return new CPDF_Boolean(FALSE);
+    return new CPDF_Boolean(false);
 
   if (m_WordSize == 4) {
     if (memcmp(m_WordBuffer, "true", 4) == 0)
-      return new CPDF_Boolean(TRUE);
+      return new CPDF_Boolean(true);
 
     if (memcmp(m_WordBuffer, "null", 4) == 0)
       return new CPDF_Null;
@@ -679,7 +679,7 @@ void CPDF_ContentParser::Start(CPDF_Page* pPage) {
   if (CPDF_Stream* pStream = pContent->AsStream()) {
     m_nStreams = 0;
     m_pSingleStream.reset(new CPDF_StreamAcc);
-    m_pSingleStream->LoadAllData(pStream, FALSE);
+    m_pSingleStream->LoadAllData(pStream, false);
   } else if (CPDF_Array* pArray = pContent->AsArray()) {
     m_nStreams = pArray->GetCount();
     if (m_nStreams)
@@ -728,7 +728,7 @@ void CPDF_ContentParser::Start(CPDF_Form* pForm,
   m_pParser->GetCurStates()->m_ParentMatrix = form_matrix;
   if (ClipPath) {
     m_pParser->GetCurStates()->m_ClipPath.AppendPath(ClipPath, FXFILL_WINDING,
-                                                     TRUE);
+                                                     true);
   }
   if (pForm->m_Transparency & PDFTRANS_GROUP) {
     CPDF_GeneralState* pState = &m_pParser->GetCurStates()->m_GeneralState;
@@ -739,7 +739,7 @@ void CPDF_ContentParser::Start(CPDF_Form* pForm,
   }
   m_nStreams = 0;
   m_pSingleStream.reset(new CPDF_StreamAcc);
-  m_pSingleStream->LoadAllData(pForm->m_pFormStream, FALSE);
+  m_pSingleStream->LoadAllData(pForm->m_pFormStream, false);
   m_pData = (uint8_t*)m_pSingleStream->GetData();
   m_Size = m_pSingleStream->GetSize();
   m_Status = ToBeContinued;
@@ -783,7 +783,7 @@ void CPDF_ContentParser::Continue(IFX_Pause* pPause) {
         m_StreamArray[m_CurrentOffset].reset(new CPDF_StreamAcc);
         CPDF_Stream* pStreamObj = ToStream(
             pContent ? pContent->GetDirectObjectAt(m_CurrentOffset) : nullptr);
-        m_StreamArray[m_CurrentOffset]->LoadAllData(pStreamObj, FALSE);
+        m_StreamArray[m_CurrentOffset]->LoadAllData(pStreamObj, false);
         m_CurrentOffset++;
       }
     }

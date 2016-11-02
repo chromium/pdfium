@@ -29,7 +29,7 @@ class CPDF_DocPageData {
   explicit CPDF_DocPageData(CPDF_Document* pPDFDoc);
   ~CPDF_DocPageData();
 
-  void Clear(bool bRelease = FALSE);
+  void Clear(bool bRelease = false);
   CPDF_Font* GetFont(CPDF_Dictionary* pFontDict);
   CPDF_Font* GetStandardFont(const CFX_ByteString& fontName,
                              CPDF_FontEncoding* pEncoding);

@@ -49,19 +49,19 @@ static void gif_read_scanline(gif_decompress_struct_p gif_ptr,
   CCodec_GifModule* pModule = (CCodec_GifModule*)p->parent_ptr;
   pModule->ReadScanlineCallback(p->child_ptr, row_num, row_buf);
 }
-static FX_BOOL gif_get_record_position(gif_decompress_struct_p gif_ptr,
-                                       uint32_t cur_pos,
-                                       int32_t left,
-                                       int32_t top,
-                                       int32_t width,
-                                       int32_t height,
-                                       int32_t pal_num,
-                                       void* pal_ptr,
-                                       int32_t delay_time,
-                                       FX_BOOL user_input,
-                                       int32_t trans_index,
-                                       int32_t disposal_method,
-                                       FX_BOOL interlace) {
+static bool gif_get_record_position(gif_decompress_struct_p gif_ptr,
+                                    uint32_t cur_pos,
+                                    int32_t left,
+                                    int32_t top,
+                                    int32_t width,
+                                    int32_t height,
+                                    int32_t pal_num,
+                                    void* pal_ptr,
+                                    int32_t delay_time,
+                                    bool user_input,
+                                    int32_t trans_index,
+                                    int32_t disposal_method,
+                                    bool interlace) {
   FXGIF_Context* p = (FXGIF_Context*)gif_ptr->context_ptr;
   CCodec_GifModule* pModule = (CCodec_GifModule*)p->parent_ptr;
   return pModule->InputRecordPositionBufCallback(

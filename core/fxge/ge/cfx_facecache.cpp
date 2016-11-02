@@ -91,7 +91,7 @@ CFX_FaceCache::~CFX_FaceCache() {
 
 CFX_GlyphBitmap* CFX_FaceCache::RenderGlyph(const CFX_Font* pFont,
                                             uint32_t glyph_index,
-                                            FX_BOOL bFontStyle,
+                                            bool bFontStyle,
                                             const CFX_Matrix* pMatrix,
                                             int dest_width,
                                             int anti_alias) {
@@ -254,7 +254,7 @@ const CFX_PathData* CFX_FaceCache::LoadGlyphPath(const CFX_Font* pFont,
 
 const CFX_GlyphBitmap* CFX_FaceCache::LoadGlyphBitmap(const CFX_Font* pFont,
                                                       uint32_t glyph_index,
-                                                      FX_BOOL bFontStyle,
+                                                      bool bFontStyle,
                                                       const CFX_Matrix* pMatrix,
                                                       int dest_width,
                                                       int anti_alias,
@@ -369,7 +369,7 @@ CFX_GlyphBitmap* CFX_FaceCache::LookUpGlyphBitmap(
     const CFX_Matrix* pMatrix,
     const CFX_ByteString& FaceGlyphsKey,
     uint32_t glyph_index,
-    FX_BOOL bFontStyle,
+    bool bFontStyle,
     int dest_width,
     int anti_alias) {
   CFX_SizeGlyphCache* pSizeCache;

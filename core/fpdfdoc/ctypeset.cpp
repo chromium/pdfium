@@ -258,20 +258,20 @@ CPVT_FloatRect CTypeset::CharArray() {
 CFX_SizeF CTypeset::GetEditSize(FX_FLOAT fFontSize) {
   ASSERT(m_pSection);
   ASSERT(m_pVT);
-  SplitLines(FALSE, fFontSize);
+  SplitLines(false, fFontSize);
   return CFX_SizeF(m_rcRet.Width(), m_rcRet.Height());
 }
 
 CPVT_FloatRect CTypeset::Typeset() {
   ASSERT(m_pVT);
   m_pSection->m_LineArray.Empty();
-  SplitLines(TRUE, 0.0f);
+  SplitLines(true, 0.0f);
   m_pSection->m_LineArray.Clear();
   OutputLines();
   return m_rcRet;
 }
 
-void CTypeset::SplitLines(FX_BOOL bTypeset, FX_FLOAT fFontSize) {
+void CTypeset::SplitLines(bool bTypeset, FX_FLOAT fFontSize) {
   ASSERT(m_pVT);
   ASSERT(m_pSection);
   int32_t nLineHead = 0;
@@ -281,7 +281,7 @@ void CTypeset::SplitLines(FX_BOOL bTypeset, FX_FLOAT fFontSize) {
   FX_FLOAT fLineAscent = 0.0f, fBackupLineAscent = 0.0f;
   FX_FLOAT fLineDescent = 0.0f, fBackupLineDescent = 0.0f;
   int32_t nWordStartPos = 0;
-  FX_BOOL bFullWord = FALSE;
+  bool bFullWord = false;
   int32_t nLineFullWordIndex = 0;
   int32_t nCharIndex = 0;
   CPVT_LineInfo line;
@@ -290,7 +290,7 @@ void CTypeset::SplitLines(FX_BOOL bTypeset, FX_FLOAT fFontSize) {
       m_pVT->GetPlateWidth() - m_pVT->GetLineIndent(m_pSection->m_SecInfo),
       0.0f);
   int32_t nTotalWords = m_pSection->m_WordArray.GetSize();
-  FX_BOOL bOpened = FALSE;
+  bool bOpened = false;
   if (nTotalWords > 0) {
     int32_t i = 0;
     while (i < nTotalWords) {
@@ -316,20 +316,20 @@ void CTypeset::SplitLines(FX_BOOL bTypeset, FX_FLOAT fFontSize) {
         }
         if (!bOpened) {
           if (IsOpenStylePunctuation(pWord->Word)) {
-            bOpened = TRUE;
-            bFullWord = TRUE;
+            bOpened = true;
+            bFullWord = true;
           } else if (pOldWord) {
             if (NeedDivision(pOldWord->Word, pWord->Word)) {
-              bFullWord = TRUE;
+              bFullWord = true;
             }
           }
         } else {
           if (!IsSpace(pWord->Word) && !IsOpenStylePunctuation(pWord->Word)) {
-            bOpened = FALSE;
+            bOpened = false;
           }
         }
         if (bFullWord) {
-          bFullWord = FALSE;
+          bFullWord = false;
           if (nCharIndex > 0) {
             nLineFullWordIndex++;
           }
@@ -371,7 +371,7 @@ void CTypeset::SplitLines(FX_BOOL bTypeset, FX_FLOAT fFontSize) {
         fLineDescent = 0.0f;
         nCharIndex = 0;
         nLineFullWordIndex = 0;
-        bFullWord = FALSE;
+        bFullWord = false;
       } else {
         fLineWidth += fWordWidth;
         i++;

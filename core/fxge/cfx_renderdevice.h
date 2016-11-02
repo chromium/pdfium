@@ -102,126 +102,122 @@ class CFX_RenderDevice {
   CFX_Matrix GetCTM() const;
   CFX_DIBitmap* GetBitmap() const { return m_pBitmap; }
   void SetBitmap(CFX_DIBitmap* pBitmap) { m_pBitmap = pBitmap; }
-  FX_BOOL CreateCompatibleBitmap(CFX_DIBitmap* pDIB,
-                                 int width,
-                                 int height) const;
+  bool CreateCompatibleBitmap(CFX_DIBitmap* pDIB, int width, int height) const;
   const FX_RECT& GetClipBox() const { return m_ClipBox; }
-  FX_BOOL SetClip_PathFill(const CFX_PathData* pPathData,
-                           const CFX_Matrix* pObject2Device,
-                           int fill_mode);
-  FX_BOOL SetClip_Rect(const FX_RECT& pRect);
-  FX_BOOL SetClip_PathStroke(const CFX_PathData* pPathData,
-                             const CFX_Matrix* pObject2Device,
-                             const CFX_GraphStateData* pGraphState);
-  FX_BOOL DrawPath(const CFX_PathData* pPathData,
-                   const CFX_Matrix* pObject2Device,
-                   const CFX_GraphStateData* pGraphState,
-                   uint32_t fill_color,
-                   uint32_t stroke_color,
-                   int fill_mode) {
+  bool SetClip_PathFill(const CFX_PathData* pPathData,
+                        const CFX_Matrix* pObject2Device,
+                        int fill_mode);
+  bool SetClip_Rect(const FX_RECT& pRect);
+  bool SetClip_PathStroke(const CFX_PathData* pPathData,
+                          const CFX_Matrix* pObject2Device,
+                          const CFX_GraphStateData* pGraphState);
+  bool DrawPath(const CFX_PathData* pPathData,
+                const CFX_Matrix* pObject2Device,
+                const CFX_GraphStateData* pGraphState,
+                uint32_t fill_color,
+                uint32_t stroke_color,
+                int fill_mode) {
     return DrawPathWithBlend(pPathData, pObject2Device, pGraphState, fill_color,
                              stroke_color, fill_mode, FXDIB_BLEND_NORMAL);
   }
-  FX_BOOL DrawPathWithBlend(const CFX_PathData* pPathData,
-                            const CFX_Matrix* pObject2Device,
-                            const CFX_GraphStateData* pGraphState,
-                            uint32_t fill_color,
-                            uint32_t stroke_color,
-                            int fill_mode,
-                            int blend_type);
-  FX_BOOL SetPixel(int x, int y, uint32_t color);
-  FX_BOOL FillRect(const FX_RECT* pRect, uint32_t color) {
+  bool DrawPathWithBlend(const CFX_PathData* pPathData,
+                         const CFX_Matrix* pObject2Device,
+                         const CFX_GraphStateData* pGraphState,
+                         uint32_t fill_color,
+                         uint32_t stroke_color,
+                         int fill_mode,
+                         int blend_type);
+  bool SetPixel(int x, int y, uint32_t color);
+  bool FillRect(const FX_RECT* pRect, uint32_t color) {
     return FillRectWithBlend(pRect, color, FXDIB_BLEND_NORMAL);
   }
-  FX_BOOL FillRectWithBlend(const FX_RECT* pRect,
-                            uint32_t color,
-                            int blend_type);
-  FX_BOOL DrawCosmeticLine(FX_FLOAT x1,
-                           FX_FLOAT y1,
-                           FX_FLOAT x2,
-                           FX_FLOAT y2,
-                           uint32_t color,
-                           int fill_mode,
-                           int blend_type);
+  bool FillRectWithBlend(const FX_RECT* pRect, uint32_t color, int blend_type);
+  bool DrawCosmeticLine(FX_FLOAT x1,
+                        FX_FLOAT y1,
+                        FX_FLOAT x2,
+                        FX_FLOAT y2,
+                        uint32_t color,
+                        int fill_mode,
+                        int blend_type);
 
-  FX_BOOL GetDIBits(CFX_DIBitmap* pBitmap, int left, int top);
+  bool GetDIBits(CFX_DIBitmap* pBitmap, int left, int top);
   CFX_DIBitmap* GetBackDrop();
-  FX_BOOL SetDIBits(const CFX_DIBSource* pBitmap, int left, int top) {
+  bool SetDIBits(const CFX_DIBSource* pBitmap, int left, int top) {
     return SetDIBitsWithBlend(pBitmap, left, top, FXDIB_BLEND_NORMAL);
   }
-  FX_BOOL SetDIBitsWithBlend(const CFX_DIBSource* pBitmap,
-                             int left,
-                             int top,
-                             int blend_type);
-  FX_BOOL StretchDIBits(const CFX_DIBSource* pBitmap,
-                        int left,
-                        int top,
-                        int dest_width,
-                        int dest_height) {
+  bool SetDIBitsWithBlend(const CFX_DIBSource* pBitmap,
+                          int left,
+                          int top,
+                          int blend_type);
+  bool StretchDIBits(const CFX_DIBSource* pBitmap,
+                     int left,
+                     int top,
+                     int dest_width,
+                     int dest_height) {
     return StretchDIBitsWithFlagsAndBlend(pBitmap, left, top, dest_width,
                                           dest_height, 0, FXDIB_BLEND_NORMAL);
   }
-  FX_BOOL StretchDIBitsWithFlagsAndBlend(const CFX_DIBSource* pBitmap,
-                                         int left,
-                                         int top,
-                                         int dest_width,
-                                         int dest_height,
-                                         uint32_t flags,
-                                         int blend_type);
-  FX_BOOL SetBitMask(const CFX_DIBSource* pBitmap,
-                     int left,
-                     int top,
-                     uint32_t color);
-  FX_BOOL StretchBitMask(const CFX_DIBSource* pBitmap,
-                         int left,
-                         int top,
-                         int dest_width,
-                         int dest_height,
-                         uint32_t color);
-  FX_BOOL StretchBitMaskWithFlags(const CFX_DIBSource* pBitmap,
-                                  int left,
-                                  int top,
-                                  int dest_width,
-                                  int dest_height,
-                                  uint32_t color,
-                                  uint32_t flags);
-  FX_BOOL StartDIBits(const CFX_DIBSource* pBitmap,
-                      int bitmap_alpha,
-                      uint32_t color,
-                      const CFX_Matrix* pMatrix,
-                      uint32_t flags,
-                      void*& handle) {
+  bool StretchDIBitsWithFlagsAndBlend(const CFX_DIBSource* pBitmap,
+                                      int left,
+                                      int top,
+                                      int dest_width,
+                                      int dest_height,
+                                      uint32_t flags,
+                                      int blend_type);
+  bool SetBitMask(const CFX_DIBSource* pBitmap,
+                  int left,
+                  int top,
+                  uint32_t color);
+  bool StretchBitMask(const CFX_DIBSource* pBitmap,
+                      int left,
+                      int top,
+                      int dest_width,
+                      int dest_height,
+                      uint32_t color);
+  bool StretchBitMaskWithFlags(const CFX_DIBSource* pBitmap,
+                               int left,
+                               int top,
+                               int dest_width,
+                               int dest_height,
+                               uint32_t color,
+                               uint32_t flags);
+  bool StartDIBits(const CFX_DIBSource* pBitmap,
+                   int bitmap_alpha,
+                   uint32_t color,
+                   const CFX_Matrix* pMatrix,
+                   uint32_t flags,
+                   void*& handle) {
     return StartDIBitsWithBlend(pBitmap, bitmap_alpha, color, pMatrix, flags,
                                 handle, FXDIB_BLEND_NORMAL);
   }
-  FX_BOOL StartDIBitsWithBlend(const CFX_DIBSource* pBitmap,
-                               int bitmap_alpha,
-                               uint32_t color,
-                               const CFX_Matrix* pMatrix,
-                               uint32_t flags,
-                               void*& handle,
-                               int blend_type);
-  FX_BOOL ContinueDIBits(void* handle, IFX_Pause* pPause);
+  bool StartDIBitsWithBlend(const CFX_DIBSource* pBitmap,
+                            int bitmap_alpha,
+                            uint32_t color,
+                            const CFX_Matrix* pMatrix,
+                            uint32_t flags,
+                            void*& handle,
+                            int blend_type);
+  bool ContinueDIBits(void* handle, IFX_Pause* pPause);
   void CancelDIBits(void* handle);
 
-  FX_BOOL DrawNormalText(int nChars,
-                         const FXTEXT_CHARPOS* pCharPos,
-                         CFX_Font* pFont,
-                         FX_FLOAT font_size,
-                         const CFX_Matrix* pText2Device,
-                         uint32_t fill_color,
-                         uint32_t text_flags);
-  FX_BOOL DrawTextPath(int nChars,
-                       const FXTEXT_CHARPOS* pCharPos,
-                       CFX_Font* pFont,
-                       FX_FLOAT font_size,
-                       const CFX_Matrix* pText2User,
-                       const CFX_Matrix* pUser2Device,
-                       const CFX_GraphStateData* pGraphState,
-                       uint32_t fill_color,
-                       uint32_t stroke_color,
-                       CFX_PathData* pClippingPath,
-                       int nFlag);
+  bool DrawNormalText(int nChars,
+                      const FXTEXT_CHARPOS* pCharPos,
+                      CFX_Font* pFont,
+                      FX_FLOAT font_size,
+                      const CFX_Matrix* pText2Device,
+                      uint32_t fill_color,
+                      uint32_t text_flags);
+  bool DrawTextPath(int nChars,
+                    const FXTEXT_CHARPOS* pCharPos,
+                    CFX_Font* pFont,
+                    FX_FLOAT font_size,
+                    const CFX_Matrix* pText2User,
+                    const CFX_Matrix* pUser2Device,
+                    const CFX_GraphStateData* pGraphState,
+                    uint32_t fill_color,
+                    uint32_t stroke_color,
+                    CFX_PathData* pClippingPath,
+                    int nFlag);
 
 #ifdef _SKIA_SUPPORT_
   virtual void DebugVerifyBitmapIsPreMultiplied() const;
@@ -237,13 +233,13 @@ class CFX_RenderDevice {
  private:
   void InitDeviceInfo();
   void UpdateClipBox();
-  FX_BOOL DrawFillStrokePath(const CFX_PathData* pPathData,
-                             const CFX_Matrix* pObject2Device,
-                             const CFX_GraphStateData* pGraphState,
-                             uint32_t fill_color,
-                             uint32_t stroke_color,
-                             int fill_mode,
-                             int blend_type);
+  bool DrawFillStrokePath(const CFX_PathData* pPathData,
+                          const CFX_Matrix* pObject2Device,
+                          const CFX_GraphStateData* pGraphState,
+                          uint32_t fill_color,
+                          uint32_t stroke_color,
+                          int fill_mode,
+                          int blend_type);
 
   CFX_DIBitmap* m_pBitmap;
   int m_Width;

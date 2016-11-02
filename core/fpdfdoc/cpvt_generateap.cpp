@@ -215,21 +215,21 @@ bool GenerateWidgetAP(CPDF_Document* pDoc,
       vt.SetPlateRect(rcBody);
       vt.SetAlignment(nAlign);
       if (IsFloatZero(fFontSize))
-        vt.SetAutoFontSize(TRUE);
+        vt.SetAutoFontSize(true);
       else
         vt.SetFontSize(fFontSize);
 
-      FX_BOOL bMultiLine = (dwFlags >> 12) & 1;
+      bool bMultiLine = (dwFlags >> 12) & 1;
       if (bMultiLine) {
-        vt.SetMultiLine(TRUE);
-        vt.SetAutoReturn(TRUE);
+        vt.SetMultiLine(true);
+        vt.SetAutoReturn(true);
       }
       uint16_t subWord = 0;
       if ((dwFlags >> 13) & 1) {
         subWord = '*';
         vt.SetPasswordChar(subWord);
       }
-      FX_BOOL bCharArray = (dwFlags >> 24) & 1;
+      bool bCharArray = (dwFlags >> 24) & 1;
       if (bCharArray)
         vt.SetCharArray(dwMaxLen);
       else
@@ -281,7 +281,7 @@ bool GenerateWidgetAP(CPDF_Document* pDoc,
       rcEdit.Normalize();
       vt.SetPlateRect(rcEdit);
       if (IsFloatZero(fFontSize))
-        vt.SetAutoFontSize(TRUE);
+        vt.SetAutoFontSize(true);
       else
         vt.SetFontSize(fFontSize);
 
@@ -292,7 +292,7 @@ bool GenerateWidgetAP(CPDF_Document* pDoc,
       CFX_FloatPoint ptOffset =
           CFX_FloatPoint(0.0f, (rcContent.Height() - rcEdit.Height()) / 2.0f);
       CFX_ByteString sEdit = CPVT_GenerateAP::GenerateEditAP(
-          &map, vt.GetIterator(), ptOffset, TRUE, 0);
+          &map, vt.GetIterator(), ptOffset, true, 0);
       if (sEdit.GetLength() > 0) {
         sAppStream << "/Tx BMC\n"
                    << "q\n";
@@ -359,12 +359,12 @@ bool GenerateWidgetAP(CPDF_Document* pDoc,
             else if (CPDF_Array* pArray = pOpt->AsArray())
               swItem = pArray->GetDirectObjectAt(1)->GetUnicodeText();
 
-            FX_BOOL bSelected = FALSE;
+            bool bSelected = false;
             if (pSels) {
               for (size_t s = 0, ssz = pSels->GetCount(); s < ssz; s++) {
                 int value = pSels->GetIntegerAt(s);
                 if (value >= 0 && i == static_cast<size_t>(value)) {
-                  bSelected = TRUE;
+                  bSelected = true;
                   break;
                 }
               }
@@ -396,7 +396,7 @@ bool GenerateWidgetAP(CPDF_Document* pDoc,
                            PaintOperation::FILL)
                     << CPVT_GenerateAP::GenerateEditAP(&map, vt.GetIterator(),
                                                        CFX_FloatPoint(0.0f, fy),
-                                                       TRUE, 0)
+                                                       true, 0)
                     << "ET\n";
             } else {
               sBody << "BT\n"
@@ -404,7 +404,7 @@ bool GenerateWidgetAP(CPDF_Document* pDoc,
                                                         PaintOperation::FILL)
                     << CPVT_GenerateAP::GenerateEditAP(&map, vt.GetIterator(),
                                                        CFX_FloatPoint(0.0f, fy),
-                                                       TRUE, 0)
+                                                       true, 0)
                     << "ET\n";
             }
             fy -= fItemHeight;
@@ -515,15 +515,15 @@ CFX_ByteString GetPopupContentsString(CPDF_Document* pDoc,
   vt.SetProvider(&prd);
   vt.SetPlateRect(pAnnotDict.GetRectFor("Rect"));
   vt.SetFontSize(12);
-  vt.SetAutoReturn(TRUE);
-  vt.SetMultiLine(TRUE);
+  vt.SetAutoReturn(true);
+  vt.SetMultiLine(true);
 
   vt.Initialize();
   vt.SetText(swValue);
   vt.RearrangeAll();
   CFX_FloatPoint ptOffset(3.0f, -3.0f);
   CFX_ByteString sContent = CPVT_GenerateAP::GenerateEditAP(
-      &map, vt.GetIterator(), ptOffset, FALSE, 0);
+      &map, vt.GetIterator(), ptOffset, false, 0);
 
   if (sContent.IsEmpty())
     return CFX_ByteString();
@@ -1098,7 +1098,7 @@ CFX_ByteString CPVT_GenerateAP::GenerateEditAP(
     IPVT_FontMap* pFontMap,
     CPDF_VariableText::Iterator* pIterator,
     const CFX_FloatPoint& ptOffset,
-    FX_BOOL bContinuous,
+    bool bContinuous,
     uint16_t SubWord) {
   CFX_ByteTextBuf sEditStream;
   CFX_ByteTextBuf sLineStream;

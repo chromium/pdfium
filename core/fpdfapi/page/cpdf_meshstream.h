@@ -42,9 +42,9 @@ class CPDF_MeshStream {
   void GetColor(FX_FLOAT& r, FX_FLOAT& g, FX_FLOAT& b);
 
   uint32_t GetVertex(CPDF_MeshVertex& vertex, CFX_Matrix* pObject2Bitmap);
-  FX_BOOL GetVertexRow(CPDF_MeshVertex* vertex,
-                       int count,
-                       CFX_Matrix* pObject2Bitmap);
+  bool GetVertexRow(CPDF_MeshVertex* vertex,
+                    int count,
+                    CFX_Matrix* pObject2Bitmap);
 
   CFX_BitStream* BitStream() { return &m_BitStream; }
   uint32_t ComponentBits() const { return m_nComponentBits; }

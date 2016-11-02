@@ -89,7 +89,7 @@ CJBig2_Image* CJBig2_TRDProc::decode_Huffman(CJBig2_BitStream* pStream,
           break;
         }
       }
-      FX_BOOL RI = 0;
+      bool RI = 0;
       if (SBREFINE != 0 && pStream->read1Bit(&RI) != 0) {
         return nullptr;
       }

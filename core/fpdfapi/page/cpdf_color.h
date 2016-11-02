@@ -26,7 +26,7 @@ class CPDF_Color {
   void SetValue(FX_FLOAT* comp);
   void SetValue(CPDF_Pattern* pPattern, FX_FLOAT* comp, int ncomps);
 
-  FX_BOOL GetRGB(int& R, int& G, int& B) const;
+  bool GetRGB(int& R, int& G, int& B) const;
   CPDF_Pattern* GetPattern() const;
   const CPDF_ColorSpace* GetColorSpace() const { return m_pCS; }
 

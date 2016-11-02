@@ -60,7 +60,7 @@ class CPDF_InterForm {
                                       int* z_order) const;
   CPDF_FormControl* GetControlByDict(const CPDF_Dictionary* pWidgetDict) const;
 
-  FX_BOOL NeedConstructAP() const;
+  bool NeedConstructAP() const;
   int CountFieldsInCalculationOrder();
   CPDF_FormField* GetFieldInCalculationOrder(int index);
   int FindFieldInCalculationOrder(const CPDF_FormField* pField);
@@ -86,7 +86,7 @@ class CPDF_InterForm {
   bool ResetForm(bool bNotify);
 
   void SetFormNotify(IPDF_FormNotify* pNotify);
-  FX_BOOL HasXFAForm() const;
+  bool HasXFAForm() const;
   void FixPageFields(const CPDF_Page* pPage);
 
  private:
@@ -99,7 +99,7 @@ class CPDF_InterForm {
                                CPDF_Dictionary* pWidgetDict);
   void FDF_ImportField(CPDF_Dictionary* pField,
                        const CFX_WideString& parent_name,
-                       FX_BOOL bNotify = FALSE,
+                       bool bNotify = false,
                        int nLevel = 0);
   bool ValidateFieldName(CFX_WideString& csNewFieldName,
                          int iType,

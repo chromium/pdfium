@@ -244,7 +244,7 @@ int InsertDeletePDFPage(CPDF_Document* pDoc,
                         CPDF_Dictionary* pPages,
                         int nPagesToGo,
                         CPDF_Dictionary* pPage,
-                        FX_BOOL bInsert,
+                        bool bInsert,
                         std::set<CPDF_Dictionary*>* pVisited) {
   CPDF_Array* pKidList = pPages->GetArrayFor("Kids");
   if (!pKidList)
@@ -310,7 +310,7 @@ int InsertNewPage(CPDF_Document* pDoc,
     pPageDict->SetReferenceFor("Parent", pDoc, pPages->GetObjNum());
   } else {
     std::set<CPDF_Dictionary*> stack = {pPages};
-    if (InsertDeletePDFPage(pDoc, pPages, iPage, pPageDict, TRUE, &stack) < 0)
+    if (InsertDeletePDFPage(pDoc, pPages, iPage, pPageDict, true, &stack) < 0)
       return -1;
   }
   pageList.InsertAt(iPage, pPageDict->GetObjNum());
@@ -727,7 +727,7 @@ void CPDF_Document::DeletePage(int iPage) {
     return;
 
   std::set<CPDF_Dictionary*> stack = {pPages};
-  if (InsertDeletePDFPage(this, pPages, iPage, nullptr, FALSE, &stack) < 0)
+  if (InsertDeletePDFPage(this, pPages, iPage, nullptr, false, &stack) < 0)
     return;
 
   m_PageList.RemoveAt(iPage);
@@ -769,7 +769,7 @@ size_t CPDF_Document::CalculateEncodingDict(int charset,
 CPDF_Dictionary* CPDF_Document::ProcessbCJK(
     CPDF_Dictionary* pBaseDict,
     int charset,
-    FX_BOOL bVert,
+    bool bVert,
     CFX_ByteString basefont,
     std::function<void(FX_WCHAR, FX_WCHAR, CPDF_Array*)> Insert) {
   CPDF_Dictionary* pFontDict = new CPDF_Dictionary(m_pByteStringPool);
@@ -833,7 +833,7 @@ CPDF_Dictionary* CPDF_Document::ProcessbCJK(
   return pFontDict;
 }
 
-CPDF_Font* CPDF_Document::AddFont(CFX_Font* pFont, int charset, FX_BOOL bVert) {
+CPDF_Font* CPDF_Document::AddFont(CFX_Font* pFont, int charset, bool bVert) {
   if (!pFont)
     return nullptr;
 
@@ -923,8 +923,8 @@ CPDF_Font* CPDF_Document::AddFont(CFX_Font* pFont, int charset, FX_BOOL bVert) {
 
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
 CPDF_Font* CPDF_Document::AddWindowsFont(LOGFONTW* pLogFont,
-                                         FX_BOOL bVert,
-                                         FX_BOOL bTranslateName) {
+                                         bool bVert,
+                                         bool bTranslateName) {
   LOGFONTA lfa;
   FXSYS_memcpy(&lfa, pLogFont, (char*)lfa.lfFaceName - (char*)&lfa);
   CFX_ByteString face = CFX_ByteString::FromUnicode(pLogFont->lfFaceName);
@@ -936,8 +936,8 @@ CPDF_Font* CPDF_Document::AddWindowsFont(LOGFONTW* pLogFont,
 }
 
 CPDF_Font* CPDF_Document::AddWindowsFont(LOGFONTA* pLogFont,
-                                         FX_BOOL bVert,
-                                         FX_BOOL bTranslateName) {
+                                         bool bVert,
+                                         bool bTranslateName) {
   pLogFont->lfHeight = -1000;
   pLogFont->lfWidth = 0;
   HGDIOBJ hFont = CreateFontIndirectA(pLogFont);

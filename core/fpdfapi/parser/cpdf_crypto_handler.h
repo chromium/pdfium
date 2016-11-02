@@ -19,44 +19,44 @@ class CPDF_CryptoHandler {
   CPDF_CryptoHandler();
   ~CPDF_CryptoHandler();
 
-  FX_BOOL Init(CPDF_Dictionary* pEncryptDict,
-               CPDF_SecurityHandler* pSecurityHandler);
+  bool Init(CPDF_Dictionary* pEncryptDict,
+            CPDF_SecurityHandler* pSecurityHandler);
   uint32_t DecryptGetSize(uint32_t src_size);
   void* DecryptStart(uint32_t objnum, uint32_t gennum);
   void Decrypt(uint32_t objnum, uint32_t gennum, CFX_ByteString& str);
-  FX_BOOL DecryptStream(void* context,
-                        const uint8_t* src_buf,
-                        uint32_t src_size,
-                        CFX_BinaryBuf& dest_buf);
-  FX_BOOL DecryptFinish(void* context, CFX_BinaryBuf& dest_buf);
+  bool DecryptStream(void* context,
+                     const uint8_t* src_buf,
+                     uint32_t src_size,
+                     CFX_BinaryBuf& dest_buf);
+  bool DecryptFinish(void* context, CFX_BinaryBuf& dest_buf);
   uint32_t EncryptGetSize(uint32_t objnum,
                           uint32_t version,
                           const uint8_t* src_buf,
                           uint32_t src_size);
-  FX_BOOL EncryptContent(uint32_t objnum,
-                         uint32_t version,
-                         const uint8_t* src_buf,
-                         uint32_t src_size,
-                         uint8_t* dest_buf,
-                         uint32_t& dest_size);
+  bool EncryptContent(uint32_t objnum,
+                      uint32_t version,
+                      const uint8_t* src_buf,
+                      uint32_t src_size,
+                      uint8_t* dest_buf,
+                      uint32_t& dest_size);
 
-  FX_BOOL Init(int cipher, const uint8_t* key, int keylen);
+  bool Init(int cipher, const uint8_t* key, int keylen);
 
  protected:
-  void CryptBlock(FX_BOOL bEncrypt,
+  void CryptBlock(bool bEncrypt,
                   uint32_t objnum,
                   uint32_t gennum,
                   const uint8_t* src_buf,
                   uint32_t src_size,
                   uint8_t* dest_buf,
                   uint32_t& dest_size);
-  void* CryptStart(uint32_t objnum, uint32_t gennum, FX_BOOL bEncrypt);
-  FX_BOOL CryptStream(void* context,
-                      const uint8_t* src_buf,
-                      uint32_t src_size,
-                      CFX_BinaryBuf& dest_buf,
-                      FX_BOOL bEncrypt);
-  FX_BOOL CryptFinish(void* context, CFX_BinaryBuf& dest_buf, FX_BOOL bEncrypt);
+  void* CryptStart(uint32_t objnum, uint32_t gennum, bool bEncrypt);
+  bool CryptStream(void* context,
+                   const uint8_t* src_buf,
+                   uint32_t src_size,
+                   CFX_BinaryBuf& dest_buf,
+                   bool bEncrypt);
+  bool CryptFinish(void* context, CFX_BinaryBuf& dest_buf, bool bEncrypt);
 
   uint8_t m_EncryptKey[32];
   int m_KeyLen;

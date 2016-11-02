@@ -10,9 +10,9 @@
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
 #include "core/fpdfdoc/cpdf_formcontrol.h"
 
-FX_BOOL CPDF_DefaultAppearance::HasFont() {
+bool CPDF_DefaultAppearance::HasFont() {
   if (m_csDA.IsEmpty())
-    return FALSE;
+    return false;
 
   CPDF_SimpleParser syntax(m_csDA.AsStringC());
   return syntax.FindTagParamFromStart("Tf", 2);
@@ -50,18 +50,18 @@ void CPDF_DefaultAppearance::GetFont(CFX_ByteString& csFontNameTag,
   csFontNameTag = PDF_NameDecode(csFontNameTag);
 }
 
-FX_BOOL CPDF_DefaultAppearance::HasColor(PaintOperation nOperation) {
+bool CPDF_DefaultAppearance::HasColor(PaintOperation nOperation) {
   if (m_csDA.IsEmpty())
-    return FALSE;
+    return false;
 
   CPDF_SimpleParser syntax(m_csDA.AsStringC());
   if (syntax.FindTagParamFromStart(
           (nOperation == PaintOperation::STROKE ? "G" : "g"), 1)) {
-    return TRUE;
+    return true;
   }
   if (syntax.FindTagParamFromStart(
           (nOperation == PaintOperation::STROKE ? "RG" : "rg"), 3)) {
-    return TRUE;
+    return true;
   }
   return syntax.FindTagParamFromStart(
       (nOperation == PaintOperation::STROKE ? "K" : "k"), 4);
@@ -182,9 +182,9 @@ void CPDF_DefaultAppearance::GetColor(FX_ARGB& color,
   }
 }
 
-FX_BOOL CPDF_DefaultAppearance::HasTextMatrix() {
+bool CPDF_DefaultAppearance::HasTextMatrix() {
   if (m_csDA.IsEmpty())
-    return FALSE;
+    return false;
 
   CPDF_SimpleParser syntax(m_csDA.AsStringC());
   return syntax.FindTagParamFromStart("Tm", 6);

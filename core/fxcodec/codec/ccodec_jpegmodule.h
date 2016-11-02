@@ -26,7 +26,7 @@ class CCodec_JpegModule {
                                         int width,
                                         int height,
                                         int nComps,
-                                        FX_BOOL ColorTransform);
+                                        bool ColorTransform);
   bool LoadInfo(const uint8_t* src_buf,
                 uint32_t src_size,
                 int* width,
@@ -53,8 +53,8 @@ class CCodec_JpegModule {
                  CFX_DIBAttribute* pAttribute);
 #endif  // PDF_ENABLE_XFA
 
-  FX_BOOL StartScanline(FXJPEG_Context* pContext, int down_scale);
-  FX_BOOL ReadScanline(FXJPEG_Context* pContext, uint8_t* dest_buf);
+  bool StartScanline(FXJPEG_Context* pContext, int down_scale);
+  bool ReadScanline(FXJPEG_Context* pContext, uint8_t* dest_buf);
   uint32_t GetAvailInput(FXJPEG_Context* pContext, uint8_t** avail_buf_ptr);
 };
 

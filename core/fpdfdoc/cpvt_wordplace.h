@@ -27,7 +27,7 @@ struct CPVT_WordPlace {
            wp.nWordIndex == nWordIndex;
   }
 
-  FX_BOOL operator!=(const CPVT_WordPlace& wp) const { return !(*this == wp); }
+  bool operator!=(const CPVT_WordPlace& wp) const { return !(*this == wp); }
 
   inline int32_t WordCmp(const CPVT_WordPlace& wp) const {
     if (nSecIndex > wp.nSecIndex)

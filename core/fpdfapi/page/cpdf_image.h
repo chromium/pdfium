@@ -51,21 +51,21 @@ class CPDF_Image {
 
   CFX_DIBSource* LoadDIBSource(CFX_DIBSource** ppMask = nullptr,
                                uint32_t* pMatteColor = nullptr,
-                               FX_BOOL bStdCS = FALSE,
+                               bool bStdCS = false,
                                uint32_t GroupFamily = 0,
-                               FX_BOOL bLoadMask = FALSE) const;
+                               bool bLoadMask = false) const;
 
   void SetImage(const CFX_DIBitmap* pDIBitmap, int32_t iCompress);
   void SetJpegImage(IFX_SeekableReadStream* pFile);
 
   void ResetCache(CPDF_Page* pPage, const CFX_DIBitmap* pDIBitmap);
 
-  FX_BOOL StartLoadDIBSource(CPDF_Dictionary* pFormResource,
-                             CPDF_Dictionary* pPageResource,
-                             FX_BOOL bStdCS = FALSE,
-                             uint32_t GroupFamily = 0,
-                             FX_BOOL bLoadMask = FALSE);
-  FX_BOOL Continue(IFX_Pause* pPause);
+  bool StartLoadDIBSource(CPDF_Dictionary* pFormResource,
+                          CPDF_Dictionary* pPageResource,
+                          bool bStdCS = false,
+                          uint32_t GroupFamily = 0,
+                          bool bLoadMask = false);
+  bool Continue(IFX_Pause* pPause);
   CFX_DIBSource* DetachBitmap();
   CFX_DIBSource* DetachMask();
 

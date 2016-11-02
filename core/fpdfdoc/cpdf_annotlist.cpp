@@ -101,9 +101,9 @@ CPDF_AnnotList::~CPDF_AnnotList() {}
 void CPDF_AnnotList::DisplayPass(CPDF_Page* pPage,
                                  CFX_RenderDevice* pDevice,
                                  CPDF_RenderContext* pContext,
-                                 FX_BOOL bPrinting,
+                                 bool bPrinting,
                                  CFX_Matrix* pMatrix,
-                                 FX_BOOL bWidgetPass,
+                                 bool bWidgetPass,
                                  CPDF_RenderOptions* pOptions,
                                  FX_RECT* clip_rect) {
   for (const auto& pAnnot : m_AnnotList) {
@@ -151,26 +151,26 @@ void CPDF_AnnotList::DisplayPass(CPDF_Page* pPage,
 void CPDF_AnnotList::DisplayAnnots(CPDF_Page* pPage,
                                    CFX_RenderDevice* pDevice,
                                    CPDF_RenderContext* pContext,
-                                   FX_BOOL bPrinting,
+                                   bool bPrinting,
                                    CFX_Matrix* pUser2Device,
                                    uint32_t dwAnnotFlags,
                                    CPDF_RenderOptions* pOptions,
                                    FX_RECT* pClipRect) {
   if (dwAnnotFlags & ANNOTFLAG_INVISIBLE) {
-    DisplayPass(pPage, pDevice, pContext, bPrinting, pUser2Device, FALSE,
+    DisplayPass(pPage, pDevice, pContext, bPrinting, pUser2Device, false,
                 pOptions, pClipRect);
   }
   if (dwAnnotFlags & ANNOTFLAG_HIDDEN) {
-    DisplayPass(pPage, pDevice, pContext, bPrinting, pUser2Device, TRUE,
+    DisplayPass(pPage, pDevice, pContext, bPrinting, pUser2Device, true,
                 pOptions, pClipRect);
   }
 }
 
 void CPDF_AnnotList::DisplayAnnots(CPDF_Page* pPage,
                                    CPDF_RenderContext* pContext,
-                                   FX_BOOL bPrinting,
+                                   bool bPrinting,
                                    CFX_Matrix* pMatrix,
-                                   FX_BOOL bShowWidget,
+                                   bool bShowWidget,
                                    CPDF_RenderOptions* pOptions) {
   uint32_t dwAnnotFlags = bShowWidget ? ANNOTFLAG_INVISIBLE | ANNOTFLAG_HIDDEN
                                       : ANNOTFLAG_INVISIBLE;

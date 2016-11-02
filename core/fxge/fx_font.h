@@ -98,23 +98,23 @@ class CFX_Font {
   ~CFX_Font();
 
   void LoadSubst(const CFX_ByteString& face_name,
-                 FX_BOOL bTrueType,
+                 bool bTrueType,
                  uint32_t flags,
                  int weight,
                  int italic_angle,
                  int CharsetCP,
                  bool bVertical);
 
-  FX_BOOL LoadEmbedded(const uint8_t* data, uint32_t size);
+  bool LoadEmbedded(const uint8_t* data, uint32_t size);
   FXFT_Face GetFace() const { return m_Face; }
   CFX_SubstFont* GetSubstFont() const { return m_pSubstFont.get(); }
 
 #ifdef PDF_ENABLE_XFA
-  FX_BOOL LoadFile(IFX_SeekableReadStream* pFile,
-                   int nFaceIndex = 0,
-                   int* pFaceCount = nullptr);
+  bool LoadFile(IFX_SeekableReadStream* pFile,
+                int nFaceIndex = 0,
+                int* pFaceCount = nullptr);
 
-  FX_BOOL LoadClone(const CFX_Font* pFont);
+  bool LoadClone(const CFX_Font* pFont);
   void SetFace(FXFT_Face face);
   void SetSubstFont(std::unique_ptr<CFX_SubstFont> subst) {
     m_pSubstFont = std::move(subst);
@@ -122,7 +122,7 @@ class CFX_Font {
 #endif  // PDF_ENABLE_XFA
 
   const CFX_GlyphBitmap* LoadGlyphBitmap(uint32_t glyph_index,
-                                         FX_BOOL bFontStyle,
+                                         bool bFontStyle,
                                          const CFX_Matrix* pMatrix,
                                          int dest_width,
                                          int anti_alias,
@@ -136,7 +136,7 @@ class CFX_Font {
   int GetGlyphWidth(uint32_t glyph_index);
   int GetAscent() const;
   int GetDescent() const;
-  FX_BOOL GetGlyphBBox(uint32_t glyph_index, FX_RECT& bbox);
+  bool GetGlyphBBox(uint32_t glyph_index, FX_RECT& bbox);
   bool IsItalic() const;
   bool IsBold() const;
   bool IsFixedWidth() const;
@@ -145,12 +145,12 @@ class CFX_Font {
   CFX_ByteString GetFamilyName() const;
   CFX_ByteString GetFaceName() const;
   bool IsTTFont() const;
-  FX_BOOL GetBBox(FX_RECT& bbox);
+  bool GetBBox(FX_RECT& bbox);
   int GetHeight() const;
   int GetULPos() const;
   int GetULthickness() const;
   int GetMaxAdvanceWidth() const;
-  FX_BOOL IsEmbedded() const { return m_bEmbedded; }
+  bool IsEmbedded() const { return m_bEmbedded; }
   uint8_t* GetSubData() const { return m_pGsubData; }
   void SetSubData(uint8_t* data) { m_pGsubData = data; }
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_

@@ -208,13 +208,13 @@ CFX_ByteTextBuf& operator<<(CFX_ByteTextBuf& buf, const CPDF_Object* pObj) {
       const CPDF_Stream* p = pObj->AsStream();
       buf << p->GetDict() << "stream\r\n";
       CPDF_StreamAcc acc;
-      acc.LoadAllData(p, TRUE);
+      acc.LoadAllData(p, true);
       buf.AppendBlock(acc.GetData(), acc.GetSize());
       buf << "\r\nendstream";
       break;
     }
     default:
-      ASSERT(FALSE);
+      ASSERT(false);
       break;
   }
   return buf;

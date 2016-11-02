@@ -42,16 +42,16 @@ class CCodec_GifModule {
   uint8_t* (*AskLocalPaletteBufCallback)(void* pModule,
                                          int32_t frame_num,
                                          int32_t pal_size);
-  FX_BOOL (*InputRecordPositionBufCallback)(void* pModule,
-                                            uint32_t rcd_pos,
-                                            const FX_RECT& img_rc,
-                                            int32_t pal_num,
-                                            void* pal_ptr,
-                                            int32_t delay_time,
-                                            FX_BOOL user_input,
-                                            int32_t trans_index,
-                                            int32_t disposal_method,
-                                            FX_BOOL interlace);
+  bool (*InputRecordPositionBufCallback)(void* pModule,
+                                         uint32_t rcd_pos,
+                                         const FX_RECT& img_rc,
+                                         int32_t pal_num,
+                                         void* pal_ptr,
+                                         int32_t delay_time,
+                                         bool user_input,
+                                         int32_t trans_index,
+                                         int32_t disposal_method,
+                                         bool interlace);
   void (*ReadScanlineCallback)(void* pModule,
                                int32_t row_num,
                                uint8_t* row_buf);

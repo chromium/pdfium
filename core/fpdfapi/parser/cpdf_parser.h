@@ -76,7 +76,7 @@ class CPDF_Parser {
 
   void GetIndirectBinary(uint32_t objnum, uint8_t*& pBuffer, uint32_t& size);
   int GetFileVersion() const { return m_FileVersion; }
-  FX_BOOL IsXRefStream() const { return m_bXRefStream; }
+  bool IsXRefStream() const { return m_bXRefStream; }
 
   CPDF_Object* ParseIndirectObjectAt(CPDF_IndirectObjectHolder* pObjList,
                                      FX_FILESIZE pos,
@@ -102,8 +102,8 @@ class CPDF_Parser {
   std::unique_ptr<CPDF_SyntaxParser> m_pSyntax;
   std::map<uint32_t, ObjectInfo> m_ObjectInfo;
 
-  bool LoadCrossRefV4(FX_FILESIZE pos, FX_FILESIZE streampos, FX_BOOL bSkip);
-  FX_BOOL RebuildCrossRef();
+  bool LoadCrossRefV4(FX_FILESIZE pos, FX_FILESIZE streampos, bool bSkip);
+  bool RebuildCrossRef();
 
  private:
   friend class CPDF_DataAvail;
@@ -126,19 +126,18 @@ class CPDF_Parser {
   };
 
   CPDF_Object* ParseDirect(CPDF_Object* pObj);
-  FX_BOOL LoadAllCrossRefV4(FX_FILESIZE pos);
-  FX_BOOL LoadAllCrossRefV5(FX_FILESIZE pos);
-  FX_BOOL LoadCrossRefV5(FX_FILESIZE* pos, FX_BOOL bMainXRef);
+  bool LoadAllCrossRefV4(FX_FILESIZE pos);
+  bool LoadAllCrossRefV5(FX_FILESIZE pos);
+  bool LoadCrossRefV5(FX_FILESIZE* pos, bool bMainXRef);
   CPDF_Dictionary* LoadTrailerV4();
   Error SetEncryptHandler();
   void ReleaseEncryptHandler();
-  FX_BOOL LoadLinearizedAllCrossRefV4(FX_FILESIZE pos, uint32_t dwObjCount);
-  FX_BOOL LoadLinearizedCrossRefV4(FX_FILESIZE pos, uint32_t dwObjCount);
-  FX_BOOL LoadLinearizedAllCrossRefV5(FX_FILESIZE pos);
+  bool LoadLinearizedAllCrossRefV4(FX_FILESIZE pos, uint32_t dwObjCount);
+  bool LoadLinearizedCrossRefV4(FX_FILESIZE pos, uint32_t dwObjCount);
+  bool LoadLinearizedAllCrossRefV5(FX_FILESIZE pos);
   Error LoadLinearizedMainXRefTable();
   CPDF_StreamAcc* GetObjectStream(uint32_t number);
-  FX_BOOL IsLinearizedFile(IFX_SeekableReadStream* pFileAccess,
-                           uint32_t offset);
+  bool IsLinearizedFile(IFX_SeekableReadStream* pFileAccess, uint32_t offset);
   void SetEncryptDictionary(CPDF_Dictionary* pDict);
   void ShrinkObjectMap(uint32_t size);
   // A simple check whether the cross reference table matches with
@@ -152,7 +151,7 @@ class CPDF_Parser {
   CPDF_Dictionary* m_pTrailer;
   CPDF_Dictionary* m_pEncryptDict;
   FX_FILESIZE m_LastXRefOffset;
-  FX_BOOL m_bXRefStream;
+  bool m_bXRefStream;
   std::unique_ptr<CPDF_SecurityHandler> m_pSecurityHandler;
   CFX_ByteString m_Password;
   std::set<FX_FILESIZE> m_SortedOffset;

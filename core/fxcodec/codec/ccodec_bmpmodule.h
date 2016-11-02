@@ -27,14 +27,14 @@ class CCodec_BmpModule {
   int32_t ReadHeader(FXBMP_Context* pContext,
                      int32_t* width,
                      int32_t* height,
-                     FX_BOOL* tb_flag,
+                     bool* tb_flag,
                      int32_t* components,
                      int32_t* pal_num,
                      uint32_t** pal_pp,
                      CFX_DIBAttribute* pAttribute);
   int32_t LoadImage(FXBMP_Context* pContext);
 
-  FX_BOOL (*InputImagePositionBufCallback)(void* pModule, uint32_t rcd_pos);
+  bool (*InputImagePositionBufCallback)(void* pModule, uint32_t rcd_pos);
   void (*ReadScanlineCallback)(void* pModule,
                                int32_t row_num,
                                uint8_t* row_buf);

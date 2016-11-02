@@ -94,7 +94,7 @@ class CLZWDecoder {
              uint32_t& outlen,
              const uint8_t* input,
              uint32_t& size,
-             FX_BOOL bEarlyChange);
+             bool bEarlyChange);
 
  private:
   void AddCode(uint32_t prefix_code, uint8_t append_char);
@@ -104,7 +104,7 @@ class CLZWDecoder {
   uint32_t m_OutPos;
   uint8_t* m_pOutput;
   const uint8_t* m_pInput;
-  FX_BOOL m_Early;
+  bool m_Early;
   uint32_t m_CodeArray[5021];
   uint32_t m_nCodes;
   uint8_t m_DecodeStack[4000];
@@ -147,7 +147,7 @@ int CLZWDecoder::Decode(uint8_t* dest_buf,
                         uint32_t& dest_size,
                         const uint8_t* src_buf,
                         uint32_t& src_size,
-                        FX_BOOL bEarlyChange) {
+                        bool bEarlyChange) {
   m_CodeLen = 9;
   m_InPos = 0;
   m_OutPos = 0;
@@ -342,18 +342,18 @@ void PNG_PredictLine(uint8_t* pDestData,
   }
 }
 
-FX_BOOL PNG_Predictor(uint8_t*& data_buf,
-                      uint32_t& data_size,
-                      int Colors,
-                      int BitsPerComponent,
-                      int Columns) {
+bool PNG_Predictor(uint8_t*& data_buf,
+                   uint32_t& data_size,
+                   int Colors,
+                   int BitsPerComponent,
+                   int Columns) {
   const int BytesPerPixel = (Colors * BitsPerComponent + 7) / 8;
   const int row_size = (Colors * BitsPerComponent * Columns + 7) / 8;
   if (row_size <= 0)
-    return FALSE;
+    return false;
   const int row_count = (data_size + row_size) / (row_size + 1);
   if (row_count <= 0)
-    return FALSE;
+    return false;
   const int last_row_size = data_size % (row_size + 1);
   uint8_t* dest_buf = FX_Alloc2D(uint8_t, row_size, row_count);
   int byte_cnt = 0;
@@ -433,7 +433,7 @@ FX_BOOL PNG_Predictor(uint8_t*& data_buf,
   data_buf = dest_buf;
   data_size = row_size * row_count -
               (last_row_size > 0 ? (row_size + 1 - last_row_size) : 0);
-  return TRUE;
+  return true;
 }
 
 void TIFF_PredictLine(uint8_t* dest_buf,
@@ -476,14 +476,14 @@ void TIFF_PredictLine(uint8_t* dest_buf,
   }
 }
 
-FX_BOOL TIFF_Predictor(uint8_t*& data_buf,
-                       uint32_t& data_size,
-                       int Colors,
-                       int BitsPerComponent,
-                       int Columns) {
+bool TIFF_Predictor(uint8_t*& data_buf,
+                    uint32_t& data_size,
+                    int Colors,
+                    int BitsPerComponent,
+                    int Columns) {
   int row_size = (Colors * BitsPerComponent * Columns + 7) / 8;
   if (row_size == 0)
-    return FALSE;
+    return false;
   const int row_count = (data_size + row_size - 1) / row_size;
   const int last_row_size = data_size % row_size;
   for (int row = 0; row < row_count; row++) {
@@ -493,7 +493,7 @@ FX_BOOL TIFF_Predictor(uint8_t*& data_buf,
     }
     TIFF_PredictLine(scan_line, row_size, BitsPerComponent, Colors, Columns);
   }
-  return TRUE;
+  return true;
 }
 
 void FlateUncompress(const uint8_t* src_buf,
@@ -627,7 +627,7 @@ class CCodec_FlateScanlineDecoder : public CCodec_ScanlineDecoder {
               int Columns);
 
   // CCodec_ScanlineDecoder
-  FX_BOOL v_Rewind() override;
+  bool v_Rewind() override;
   uint8_t* v_GetNextLine() override;
   uint32_t GetSrcOffset() override;
 
@@ -707,17 +707,17 @@ void CCodec_FlateScanlineDecoder::Create(const uint8_t* src_buf,
     }
   }
 }
-FX_BOOL CCodec_FlateScanlineDecoder::v_Rewind() {
+bool CCodec_FlateScanlineDecoder::v_Rewind() {
   if (m_pFlate) {
     FPDFAPI_FlateEnd(m_pFlate);
   }
   m_pFlate = FPDFAPI_FlateInit(my_alloc_func, my_free_func);
   if (!m_pFlate) {
-    return FALSE;
+    return false;
   }
   FPDFAPI_FlateInput(m_pFlate, m_SrcBuf, m_SrcSize);
   m_LeftOver = 0;
-  return TRUE;
+  return true;
 }
 uint8_t* CCodec_FlateScanlineDecoder::v_GetNextLine() {
   if (m_Predictor) {
@@ -787,10 +787,10 @@ CCodec_ScanlineDecoder* CCodec_FlateModule::CreateDecoder(
                    Colors, BitsPerComponent, Columns);
   return pDecoder;
 }
-uint32_t CCodec_FlateModule::FlateOrLZWDecode(FX_BOOL bLZW,
+uint32_t CCodec_FlateModule::FlateOrLZWDecode(bool bLZW,
                                               const uint8_t* src_buf,
                                               uint32_t src_size,
-                                              FX_BOOL bEarlyChange,
+                                              bool bEarlyChange,
                                               int predictor,
                                               int Colors,
                                               int BitsPerComponent,
@@ -832,7 +832,7 @@ uint32_t CCodec_FlateModule::FlateOrLZWDecode(FX_BOOL bLZW,
   if (predictor_type == 0) {
     return offset;
   }
-  FX_BOOL ret = TRUE;
+  bool ret = true;
   if (predictor_type == 2) {
     ret = PNG_Predictor(dest_buf, dest_size, Colors, BitsPerComponent, Columns);
   } else if (predictor_type == 1) {

@@ -308,8 +308,7 @@ CStretchEngine::CStretchEngine(IFX_ScanlineComposer* pDestBitmap,
   m_SrcHeight = pSrcBitmap->GetHeight();
   m_SrcPitch = (m_SrcWidth * m_SrcBpp + 31) / 32 * 4;
   if ((flags & FXDIB_NOSMOOTH) == 0) {
-    FX_BOOL bInterpol =
-        flags & FXDIB_INTERPOL || flags & FXDIB_BICUBIC_INTERPOL;
+    bool bInterpol = flags & FXDIB_INTERPOL || flags & FXDIB_BICUBIC_INTERPOL;
     if (!bInterpol && FXSYS_abs(dest_width) != 0 &&
         FXSYS_abs(dest_height) / 8 < static_cast<long long>(m_SrcWidth) *
                                          m_SrcHeight / FXSYS_abs(dest_width)) {
@@ -382,29 +381,29 @@ CStretchEngine::~CStretchEngine() {
   FX_Free(m_pDestMaskScanline);
 }
 
-FX_BOOL CStretchEngine::Continue(IFX_Pause* pPause) {
+bool CStretchEngine::Continue(IFX_Pause* pPause) {
   while (m_State == 1) {
     if (ContinueStretchHorz(pPause)) {
-      return TRUE;
+      return true;
     }
     m_State = 2;
     StretchVert();
   }
-  return FALSE;
+  return false;
 }
 
-FX_BOOL CStretchEngine::StartStretchHorz() {
+bool CStretchEngine::StartStretchHorz() {
   if (m_DestWidth == 0 || m_InterPitch == 0 || !m_pDestScanline)
-    return FALSE;
+    return false;
 
   if (m_SrcClip.Height() == 0 ||
       m_SrcClip.Height() > (1 << 29) / m_InterPitch) {
-    return FALSE;
+    return false;
   }
 
   m_pInterBuf = FX_TryAlloc(unsigned char, m_SrcClip.Height() * m_InterPitch);
   if (!m_pInterBuf)
-    return FALSE;
+    return false;
 
   if (m_pSource && m_bHasAlpha && m_pSource->m_pAlphaMask) {
     m_pExtraAlphaBuf =
@@ -412,25 +411,25 @@ FX_BOOL CStretchEngine::StartStretchHorz() {
     uint32_t size = (m_DestClip.Width() * 8 + 31) / 32 * 4;
     m_pDestMaskScanline = FX_TryAlloc(unsigned char, size);
     if (!m_pDestMaskScanline)
-      return FALSE;
+      return false;
   }
   bool ret =
       m_WeightTable.Calc(m_DestWidth, m_DestClip.left, m_DestClip.right,
                          m_SrcWidth, m_SrcClip.left, m_SrcClip.right, m_Flags);
   if (!ret)
-    return FALSE;
+    return false;
 
   m_CurRow = m_SrcClip.top;
   m_State = 1;
-  return TRUE;
+  return true;
 }
 
-FX_BOOL CStretchEngine::ContinueStretchHorz(IFX_Pause* pPause) {
+bool CStretchEngine::ContinueStretchHorz(IFX_Pause* pPause) {
   if (!m_DestWidth)
-    return FALSE;
+    return false;
 
   if (m_pSource->SkipToScanline(m_CurRow, pPause))
-    return TRUE;
+    return true;
 
   int Bpp = m_DestBpp / 8;
   static const int kStrechPauseRows = 10;
@@ -438,7 +437,7 @@ FX_BOOL CStretchEngine::ContinueStretchHorz(IFX_Pause* pPause) {
   for (; m_CurRow < m_SrcClip.bottom; m_CurRow++) {
     if (rows_to_go == 0) {
       if (pPause && pPause->NeedToPauseNow())
-        return TRUE;
+        return true;
 
       rows_to_go = kStrechPauseRows;
     }
@@ -464,7 +463,7 @@ FX_BOOL CStretchEngine::ContinueStretchHorz(IFX_Pause* pPause) {
             int* pWeight =
                 m_WeightTable.GetValueFromPixelWeight(pPixelWeights, j);
             if (!pWeight)
-              return FALSE;
+              return false;
 
             int pixel_weight = *pWeight;
             if (src_scan[j / 8] & (1 << (7 - j % 8))) {
@@ -487,7 +486,7 @@ FX_BOOL CStretchEngine::ContinueStretchHorz(IFX_Pause* pPause) {
             int* pWeight =
                 m_WeightTable.GetValueFromPixelWeight(pPixelWeights, j);
             if (!pWeight)
-              return FALSE;
+              return false;
 
             int pixel_weight = *pWeight;
             dest_a += pixel_weight * src_scan[j];
@@ -508,7 +507,7 @@ FX_BOOL CStretchEngine::ContinueStretchHorz(IFX_Pause* pPause) {
             int* pWeight =
                 m_WeightTable.GetValueFromPixelWeight(pPixelWeights, j);
             if (!pWeight)
-              return FALSE;
+              return false;
 
             int pixel_weight = *pWeight;
             pixel_weight = pixel_weight * src_scan_mask[j] / 255;
@@ -533,7 +532,7 @@ FX_BOOL CStretchEngine::ContinueStretchHorz(IFX_Pause* pPause) {
             int* pWeight =
                 m_WeightTable.GetValueFromPixelWeight(pPixelWeights, j);
             if (!pWeight)
-              return FALSE;
+              return false;
 
             int pixel_weight = *pWeight;
             unsigned long argb_cmyk = m_pSrcPalette[src_scan[j]];
@@ -570,7 +569,7 @@ FX_BOOL CStretchEngine::ContinueStretchHorz(IFX_Pause* pPause) {
             int* pWeight =
                 m_WeightTable.GetValueFromPixelWeight(pPixelWeights, j);
             if (!pWeight)
-              return FALSE;
+              return false;
 
             int pixel_weight = *pWeight;
             pixel_weight = pixel_weight * src_scan_mask[j] / 255;
@@ -611,7 +610,7 @@ FX_BOOL CStretchEngine::ContinueStretchHorz(IFX_Pause* pPause) {
             int* pWeight =
                 m_WeightTable.GetValueFromPixelWeight(pPixelWeights, j);
             if (!pWeight)
-              return FALSE;
+              return false;
 
             int pixel_weight = *pWeight;
             const uint8_t* src_pixel = src_scan + j * Bpp;
@@ -643,7 +642,7 @@ FX_BOOL CStretchEngine::ContinueStretchHorz(IFX_Pause* pPause) {
             int* pWeight =
                 m_WeightTable.GetValueFromPixelWeight(pPixelWeights, j);
             if (!pWeight)
-              return FALSE;
+              return false;
 
             int pixel_weight = *pWeight;
             const uint8_t* src_pixel = src_scan + j * Bpp;
@@ -682,7 +681,7 @@ FX_BOOL CStretchEngine::ContinueStretchHorz(IFX_Pause* pPause) {
     }
     rows_to_go--;
   }
-  return FALSE;
+  return false;
 }
 
 void CStretchEngine::StretchVert() {
@@ -865,8 +864,8 @@ CFX_ImageStretcher::CFX_ImageStretcher(IFX_ScanlineComposer* pDest,
     : m_pDest(pDest),
       m_pSource(pSource),
       m_Flags(flags),
-      m_bFlipX(FALSE),
-      m_bFlipY(FALSE),
+      m_bFlipX(false),
+      m_bFlipY(false),
       m_DestWidth(dest_width),
       m_DestHeight(dest_height),
       m_ClipRect(bitmap_rect),
@@ -877,9 +876,9 @@ CFX_ImageStretcher::CFX_ImageStretcher(IFX_ScanlineComposer* pDest,
 CFX_ImageStretcher::~CFX_ImageStretcher() {
 }
 
-FX_BOOL CFX_ImageStretcher::Start() {
+bool CFX_ImageStretcher::Start() {
   if (m_DestWidth == 0 || m_DestHeight == 0)
-    return FALSE;
+    return false;
 
   if (m_pSource->GetFormat() == FXDIB_1bppRgb && m_pSource->GetPalette()) {
     FX_ARGB pal[256];
@@ -895,7 +894,7 @@ FX_BOOL CFX_ImageStretcher::Start() {
     }
     if (!m_pDest->SetInfo(m_ClipRect.Width(), m_ClipRect.Height(), m_DestFormat,
                           pal)) {
-      return FALSE;
+      return false;
     }
   } else if (m_pSource->GetFormat() == FXDIB_1bppCmyk &&
              m_pSource->GetPalette()) {
@@ -912,11 +911,11 @@ FX_BOOL CFX_ImageStretcher::Start() {
     }
     if (!m_pDest->SetInfo(m_ClipRect.Width(), m_ClipRect.Height(), m_DestFormat,
                           pal)) {
-      return FALSE;
+      return false;
     }
   } else if (!m_pDest->SetInfo(m_ClipRect.Width(), m_ClipRect.Height(),
                                m_DestFormat, nullptr)) {
-    return FALSE;
+    return false;
   }
 
   if (m_Flags & FXDIB_DOWNSAMPLE)
@@ -924,40 +923,40 @@ FX_BOOL CFX_ImageStretcher::Start() {
   return StartStretch();
 }
 
-FX_BOOL CFX_ImageStretcher::Continue(IFX_Pause* pPause) {
+bool CFX_ImageStretcher::Continue(IFX_Pause* pPause) {
   if (m_Flags & FXDIB_DOWNSAMPLE)
     return ContinueQuickStretch(pPause);
   return ContinueStretch(pPause);
 }
 
-FX_BOOL CFX_ImageStretcher::StartStretch() {
+bool CFX_ImageStretcher::StartStretch() {
   m_pStretchEngine = pdfium::MakeUnique<CStretchEngine>(
       m_pDest, m_DestFormat, m_DestWidth, m_DestHeight, m_ClipRect, m_pSource,
       m_Flags);
   m_pStretchEngine->StartStretchHorz();
   if (SourceSizeWithinLimit(m_pSource->GetWidth(), m_pSource->GetHeight())) {
     m_pStretchEngine->Continue(nullptr);
-    return FALSE;
+    return false;
   }
-  return TRUE;
+  return true;
 }
 
-FX_BOOL CFX_ImageStretcher::ContinueStretch(IFX_Pause* pPause) {
+bool CFX_ImageStretcher::ContinueStretch(IFX_Pause* pPause) {
   return m_pStretchEngine && m_pStretchEngine->Continue(pPause);
 }
 
-FX_BOOL CFX_ImageStretcher::StartQuickStretch() {
+bool CFX_ImageStretcher::StartQuickStretch() {
   if (m_DestWidth < 0) {
-    m_bFlipX = TRUE;
+    m_bFlipX = true;
     m_DestWidth = -m_DestWidth;
   }
   if (m_DestHeight < 0) {
-    m_bFlipY = TRUE;
+    m_bFlipY = true;
     m_DestHeight = -m_DestHeight;
   }
   uint32_t size = m_ClipRect.Width();
   if (size && m_DestBPP > (int)(INT_MAX / size)) {
-    return FALSE;
+    return false;
   }
   size *= m_DestBPP;
   m_pScanline.reset(FX_Alloc(uint8_t, (size / 8 + 3) / 4 * 4));
@@ -966,14 +965,14 @@ FX_BOOL CFX_ImageStretcher::StartQuickStretch() {
 
   if (SourceSizeWithinLimit(m_pSource->GetWidth(), m_pSource->GetHeight())) {
     ContinueQuickStretch(nullptr);
-    return FALSE;
+    return false;
   }
-  return TRUE;
+  return true;
 }
 
-FX_BOOL CFX_ImageStretcher::ContinueQuickStretch(IFX_Pause* pPause) {
+bool CFX_ImageStretcher::ContinueQuickStretch(IFX_Pause* pPause) {
   if (!m_pScanline)
-    return FALSE;
+    return false;
 
   int result_width = m_ClipRect.Width();
   int result_height = m_ClipRect.Height();
@@ -992,7 +991,7 @@ FX_BOOL CFX_ImageStretcher::ContinueQuickStretch(IFX_Pause* pPause) {
     src_y = std::max(std::min(src_y, src_height - 1), 0);
 
     if (m_pSource->SkipToScanline(src_y, pPause))
-      return TRUE;
+      return true;
 
     m_pSource->DownSampleScanline(src_y, m_pScanline.get(), m_DestBPP,
                                   m_DestWidth, m_bFlipX, m_ClipRect.left,
@@ -1004,5 +1003,5 @@ FX_BOOL CFX_ImageStretcher::ContinueQuickStretch(IFX_Pause* pPause) {
     }
     m_pDest->ComposeScanline(dest_y, m_pScanline.get(), m_pMaskScanline.get());
   }
-  return FALSE;
+  return false;
 }

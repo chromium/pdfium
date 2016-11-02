@@ -35,7 +35,7 @@ int CPDF_ContentMark::GetMCID() const {
 
 void CPDF_ContentMark::AddMark(const CFX_ByteString& name,
                                CPDF_Dictionary* pDict,
-                               FX_BOOL bDirect) {
+                               bool bDirect) {
   m_Ref.GetPrivateCopy()->AddMark(name, pDict, bDirect);
 }
 
@@ -104,7 +104,7 @@ int CPDF_ContentMark::MarkData::GetMCID() const {
 
 void CPDF_ContentMark::MarkData::AddMark(const CFX_ByteString& name,
                                          CPDF_Dictionary* pDict,
-                                         FX_BOOL bDirect) {
+                                         bool bDirect) {
   CPDF_ContentMarkItem item;
   item.SetName(name);
   if (pDict) {

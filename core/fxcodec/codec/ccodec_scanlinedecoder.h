@@ -24,7 +24,7 @@ class CCodec_ScanlineDecoder {
   virtual ~CCodec_ScanlineDecoder();
 
   const uint8_t* GetScanline(int line);
-  FX_BOOL SkipToScanline(int line, IFX_Pause* pPause);
+  bool SkipToScanline(int line, IFX_Pause* pPause);
 
   int GetWidth() { return m_OutputWidth; }
   int GetHeight() { return m_OutputHeight; }
@@ -34,7 +34,7 @@ class CCodec_ScanlineDecoder {
   virtual uint32_t GetSrcOffset() = 0;
 
  protected:
-  virtual FX_BOOL v_Rewind() = 0;
+  virtual bool v_Rewind() = 0;
   virtual uint8_t* v_GetNextLine() = 0;
 
   uint8_t* ReadNextLine();

@@ -445,7 +445,7 @@ CPDF_IccProfile* CPDF_DocPageData::GetIccProfile(
     return it->second->AddRef();
 
   CPDF_StreamAcc stream;
-  stream.LoadAllData(pIccProfileStream, FALSE);
+  stream.LoadAllData(pIccProfileStream, false);
   uint8_t digest[20];
   CRYPT_SHA1Generate(stream.GetData(), stream.GetSize(), digest);
   CFX_ByteString bsDigest(digest, 20);
@@ -497,7 +497,7 @@ CPDF_StreamAcc* CPDF_DocPageData::GetFontFileStreamAcc(
   org_size = std::max(org_size, 0);
 
   CPDF_StreamAcc* pFontFile = new CPDF_StreamAcc;
-  pFontFile->LoadAllData(pFontStream, FALSE, org_size);
+  pFontFile->LoadAllData(pFontStream, false, org_size);
 
   CPDF_CountedStreamAcc* pCountedFont = new CPDF_CountedStreamAcc(pFontFile);
   m_FontFileMap[pFontStream] = pCountedFont;

@@ -47,8 +47,8 @@ class CJBig2_TRDProc {
                              JBig2ArithCtx* grContext,
                              JBig2IntDecoderState* pIDS);
 
-  FX_BOOL SBHUFF;
-  FX_BOOL SBREFINE;
+  bool SBHUFF;
+  bool SBREFINE;
   uint32_t SBW;
   uint32_t SBH;
   uint32_t SBNUMINSTANCES;
@@ -59,10 +59,10 @@ class CJBig2_TRDProc {
   uint8_t SBSYMCODELEN;
 
   CJBig2_Image** SBSYMS;
-  FX_BOOL SBDEFPIXEL;
+  bool SBDEFPIXEL;
 
   JBig2ComposeOp SBCOMBOP;
-  FX_BOOL TRANSPOSED;
+  bool TRANSPOSED;
 
   JBig2Corner REFCORNER;
   int8_t SBDSOFFSET;

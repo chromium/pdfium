@@ -33,9 +33,9 @@ class CPDF_PageRenderCache {
                        CFX_DIBSource*& pBitmap,
                        CFX_DIBSource*& pMask,
                        uint32_t& MatteColor,
-                       FX_BOOL bStdCS = FALSE,
+                       bool bStdCS = false,
                        uint32_t GroupFamily = 0,
-                       FX_BOOL bLoadMask = FALSE,
+                       bool bLoadMask = false,
                        CPDF_RenderStatus* pRenderStatus = nullptr,
                        int32_t downsampleWidth = 0,
                        int32_t downsampleHeight = 0);
@@ -47,15 +47,15 @@ class CPDF_PageRenderCache {
     return m_pCurImageCacheEntry;
   }
 
-  FX_BOOL StartGetCachedBitmap(CPDF_Stream* pStream,
-                               FX_BOOL bStdCS = FALSE,
-                               uint32_t GroupFamily = 0,
-                               FX_BOOL bLoadMask = FALSE,
-                               CPDF_RenderStatus* pRenderStatus = nullptr,
-                               int32_t downsampleWidth = 0,
-                               int32_t downsampleHeight = 0);
+  bool StartGetCachedBitmap(CPDF_Stream* pStream,
+                            bool bStdCS = false,
+                            uint32_t GroupFamily = 0,
+                            bool bLoadMask = false,
+                            CPDF_RenderStatus* pRenderStatus = nullptr,
+                            int32_t downsampleWidth = 0,
+                            int32_t downsampleHeight = 0);
 
-  FX_BOOL Continue(IFX_Pause* pPause);
+  bool Continue(IFX_Pause* pPause);
 
  protected:
   friend class CPDF_Page;
@@ -65,7 +65,7 @@ class CPDF_PageRenderCache {
   std::map<CPDF_Stream*, CPDF_ImageCacheEntry*> m_ImageCache;
   uint32_t m_nTimeCount;
   uint32_t m_nCacheSize;
-  FX_BOOL m_bCurFindCache;
+  bool m_bCurFindCache;
 };
 
 #endif  // CORE_FPDFAPI_RENDER_CPDF_PAGERENDERCACHE_H_

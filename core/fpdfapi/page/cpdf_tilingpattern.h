@@ -27,7 +27,7 @@ class CPDF_TilingPattern : public CPDF_Pattern {
   CPDF_TilingPattern* AsTilingPattern() override;
   CPDF_ShadingPattern* AsShadingPattern() override;
 
-  FX_BOOL Load();
+  bool Load();
 
   bool colored() const { return m_bColored; }
   const CFX_FloatRect& bbox() const { return m_BBox; }

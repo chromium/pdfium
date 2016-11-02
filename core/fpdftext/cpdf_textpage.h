@@ -107,8 +107,8 @@ class CPDF_TextPage {
                FX_FLOAT& right,
                FX_FLOAT& bottom) const;
 
-  static FX_BOOL IsRectIntersect(const CFX_FloatRect& rect1,
-                                 const CFX_FloatRect& rect2);
+  static bool IsRectIntersect(const CFX_FloatRect& rect1,
+                              const CFX_FloatRect& rect2);
 
  private:
   enum class TextOrientation {
@@ -124,7 +124,7 @@ class CPDF_TextPage {
     Hyphen,
   };
 
-  FX_BOOL IsHyphen(FX_WCHAR curChar);
+  bool IsHyphen(FX_WCHAR curChar);
   bool IsControlChar(const PAGECHAR_INFO& charInfo);
   void ProcessObject();
   void ProcessFormObject(CPDF_FormObject* pFormObj,
@@ -136,12 +136,11 @@ class CPDF_TextPage {
                          CPDF_PageObjectList::const_iterator ObjPos);
   GenerateCharacter ProcessInsertObject(const CPDF_TextObject* pObj,
                                         const CFX_Matrix& formMatrix);
-  FX_BOOL GenerateCharInfo(FX_WCHAR unicode, PAGECHAR_INFO& info);
-  FX_BOOL IsSameAsPreTextObject(CPDF_TextObject* pTextObj,
-                                const CPDF_PageObjectList* pObjList,
-                                CPDF_PageObjectList::const_iterator ObjPos);
-  FX_BOOL IsSameTextObject(CPDF_TextObject* pTextObj1,
-                           CPDF_TextObject* pTextObj2);
+  bool GenerateCharInfo(FX_WCHAR unicode, PAGECHAR_INFO& info);
+  bool IsSameAsPreTextObject(CPDF_TextObject* pTextObj,
+                             const CPDF_PageObjectList* pObjList,
+                             CPDF_PageObjectList::const_iterator ObjPos);
+  bool IsSameTextObject(CPDF_TextObject* pTextObj1, CPDF_TextObject* pTextObj2);
   int GetCharWidth(uint32_t charCode, CPDF_Font* pFont) const;
   void CloseTempLine();
   FPDFText_MarkedContent PreMarkedContent(PDFTEXT_Obj pObj);
@@ -156,9 +155,9 @@ class CPDF_TextPage {
   void AppendGeneratedCharacter(FX_WCHAR unicode, const CFX_Matrix& formMatrix);
 
   void SwapTempTextBuf(int32_t iCharListStartAppend, int32_t iBufStartAppend);
-  FX_BOOL IsRightToLeft(const CPDF_TextObject* pTextObj,
-                        const CPDF_Font* pFont,
-                        int nItems) const;
+  bool IsRightToLeft(const CPDF_TextObject* pTextObj,
+                     const CPDF_Font* pFont,
+                     int nItems) const;
 
   const CPDF_Page* const m_pPage;
   std::vector<uint16_t> m_CharIndex;

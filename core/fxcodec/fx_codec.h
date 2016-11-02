@@ -117,7 +117,7 @@ void AdobeCMYK_to_sRGB1(uint8_t c,
                         uint8_t& R,
                         uint8_t& G,
                         uint8_t& B);
-FX_BOOL MD5ComputeID(const void* buf, uint32_t dwSize, uint8_t ID[16]);
+bool MD5ComputeID(const void* buf, uint32_t dwSize, uint8_t ID[16]);
 void FaxG4Decode(const uint8_t* src_buf,
                  uint32_t src_size,
                  int* pbitpos,

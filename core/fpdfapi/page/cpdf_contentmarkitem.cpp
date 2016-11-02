@@ -33,7 +33,7 @@ CPDF_Dictionary* CPDF_ContentMarkItem::GetParam() const {
   }
 }
 
-FX_BOOL CPDF_ContentMarkItem::HasMCID() const {
+bool CPDF_ContentMarkItem::HasMCID() const {
   CPDF_Dictionary* pDict = GetParam();
   return pDict && pDict->KeyExist("MCID");
 }

@@ -26,11 +26,11 @@ class CFX_FontMgr {
 
   FXFT_Face GetCachedFace(const CFX_ByteString& face_name,
                           int weight,
-                          FX_BOOL bItalic,
+                          bool bItalic,
                           uint8_t*& pFontData);
   FXFT_Face AddCachedFace(const CFX_ByteString& face_name,
                           int weight,
-                          FX_BOOL bItalic,
+                          bool bItalic,
                           uint8_t* pData,
                           uint32_t size,
                           int face_index);
@@ -48,7 +48,7 @@ class CFX_FontMgr {
   void ReleaseFace(FXFT_Face face);
   void SetSystemFontInfo(std::unique_ptr<IFX_SystemFontInfo> pFontInfo);
   FXFT_Face FindSubstFont(const CFX_ByteString& face_name,
-                          FX_BOOL bTrueType,
+                          bool bTrueType,
                           uint32_t flags,
                           int weight,
                           int italic_angle,

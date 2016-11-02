@@ -13,21 +13,21 @@
 
 CFX_AndroidFontInfo::CFX_AndroidFontInfo() : m_pFontMgr(nullptr) {}
 CFX_AndroidFontInfo::~CFX_AndroidFontInfo() {}
-FX_BOOL CFX_AndroidFontInfo::Init(CFPF_SkiaFontMgr* pFontMgr) {
+bool CFX_AndroidFontInfo::Init(CFPF_SkiaFontMgr* pFontMgr) {
   if (!pFontMgr)
-    return FALSE;
+    return false;
 
   pFontMgr->LoadSystemFonts();
   m_pFontMgr = pFontMgr;
-  return TRUE;
+  return true;
 }
 
-FX_BOOL CFX_AndroidFontInfo::EnumFontList(CFX_FontMapper* pMapper) {
-  return FALSE;
+bool CFX_AndroidFontInfo::EnumFontList(CFX_FontMapper* pMapper) {
+  return false;
 }
 
 void* CFX_AndroidFontInfo::MapFont(int weight,
-                                   FX_BOOL bItalic,
+                                   bool bItalic,
                                    int charset,
                                    int pitch_family,
                                    const FX_CHAR* face,
@@ -63,20 +63,20 @@ uint32_t CFX_AndroidFontInfo::GetFontData(void* hFont,
   return static_cast<CFPF_SkiaFont*>(hFont)->GetFontData(table, buffer, size);
 }
 
-FX_BOOL CFX_AndroidFontInfo::GetFaceName(void* hFont, CFX_ByteString& name) {
+bool CFX_AndroidFontInfo::GetFaceName(void* hFont, CFX_ByteString& name) {
   if (!hFont)
-    return FALSE;
+    return false;
 
   name = static_cast<CFPF_SkiaFont*>(hFont)->GetFamilyName();
-  return TRUE;
+  return true;
 }
 
-FX_BOOL CFX_AndroidFontInfo::GetFontCharset(void* hFont, int& charset) {
+bool CFX_AndroidFontInfo::GetFontCharset(void* hFont, int& charset) {
   if (!hFont)
-    return FALSE;
+    return false;
 
   charset = static_cast<CFPF_SkiaFont*>(hFont)->GetCharset();
-  return FALSE;
+  return false;
 }
 
 void CFX_AndroidFontInfo::DeleteFont(void* hFont) {

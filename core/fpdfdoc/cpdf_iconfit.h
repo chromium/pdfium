@@ -18,7 +18,7 @@ class CPDF_IconFit {
   explicit CPDF_IconFit(const CPDF_Dictionary* pDict) : m_pDict(pDict) {}
 
   ScaleMethod GetScaleMethod();
-  FX_BOOL IsProportionalScale();
+  bool IsProportionalScale();
   void GetIconPosition(FX_FLOAT& fLeft, FX_FLOAT& fBottom);
   bool GetFittingBounds();
   const CPDF_Dictionary* GetDict() const { return m_pDict; }

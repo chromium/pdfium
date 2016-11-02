@@ -8,12 +8,12 @@
 
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
 
-CPDF_String::CPDF_String() : m_bHex(FALSE) {}
+CPDF_String::CPDF_String() : m_bHex(false) {}
 
-CPDF_String::CPDF_String(const CFX_ByteString& str, FX_BOOL bHex)
+CPDF_String::CPDF_String(const CFX_ByteString& str, bool bHex)
     : m_String(str), m_bHex(bHex) {}
 
-CPDF_String::CPDF_String(const CFX_WideString& str) : m_bHex(FALSE) {
+CPDF_String::CPDF_String(const CFX_WideString& str) : m_bHex(false) {
   m_String = PDF_EncodeText(str);
 }
 

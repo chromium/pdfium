@@ -16,62 +16,61 @@ CFX_Matrix IFX_RenderDeviceDriver::GetCTM() const {
   return CFX_Matrix();
 }
 
-FX_BOOL IFX_RenderDeviceDriver::StartRendering() {
-  return TRUE;
+bool IFX_RenderDeviceDriver::StartRendering() {
+  return true;
 }
 
 void IFX_RenderDeviceDriver::EndRendering() {}
 
-FX_BOOL IFX_RenderDeviceDriver::SetClip_PathStroke(
+bool IFX_RenderDeviceDriver::SetClip_PathStroke(
     const CFX_PathData* pPathData,
     const CFX_Matrix* pObject2Device,
     const CFX_GraphStateData* pGraphState) {
-  return FALSE;
+  return false;
 }
 
-FX_BOOL IFX_RenderDeviceDriver::SetPixel(int x, int y, uint32_t color) {
-  return FALSE;
+bool IFX_RenderDeviceDriver::SetPixel(int x, int y, uint32_t color) {
+  return false;
 }
 
-FX_BOOL IFX_RenderDeviceDriver::FillRectWithBlend(const FX_RECT* pRect,
-                                                  uint32_t fill_color,
-                                                  int blend_type) {
-  return FALSE;
+bool IFX_RenderDeviceDriver::FillRectWithBlend(const FX_RECT* pRect,
+                                               uint32_t fill_color,
+                                               int blend_type) {
+  return false;
 }
 
-FX_BOOL IFX_RenderDeviceDriver::DrawCosmeticLine(FX_FLOAT x1,
-                                                 FX_FLOAT y1,
-                                                 FX_FLOAT x2,
-                                                 FX_FLOAT y2,
-                                                 uint32_t color,
-                                                 int blend_type) {
-  return FALSE;
+bool IFX_RenderDeviceDriver::DrawCosmeticLine(FX_FLOAT x1,
+                                              FX_FLOAT y1,
+                                              FX_FLOAT x2,
+                                              FX_FLOAT y2,
+                                              uint32_t color,
+                                              int blend_type) {
+  return false;
 }
 
-FX_BOOL IFX_RenderDeviceDriver::GetDIBits(CFX_DIBitmap* pBitmap,
-                                          int left,
-                                          int top) {
-  return FALSE;
+bool IFX_RenderDeviceDriver::GetDIBits(CFX_DIBitmap* pBitmap,
+                                       int left,
+                                       int top) {
+  return false;
 }
 
 CFX_DIBitmap* IFX_RenderDeviceDriver::GetBackDrop() {
   return nullptr;
 }
 
-FX_BOOL IFX_RenderDeviceDriver::ContinueDIBits(void* handle,
-                                               IFX_Pause* pPause) {
-  return FALSE;
+bool IFX_RenderDeviceDriver::ContinueDIBits(void* handle, IFX_Pause* pPause) {
+  return false;
 }
 
 void IFX_RenderDeviceDriver::CancelDIBits(void* handle) {}
 
-FX_BOOL IFX_RenderDeviceDriver::DrawDeviceText(int nChars,
-                                               const FXTEXT_CHARPOS* pCharPos,
-                                               CFX_Font* pFont,
-                                               const CFX_Matrix* pObject2Device,
-                                               FX_FLOAT font_size,
-                                               uint32_t color) {
-  return FALSE;
+bool IFX_RenderDeviceDriver::DrawDeviceText(int nChars,
+                                            const FXTEXT_CHARPOS* pCharPos,
+                                            CFX_Font* pFont,
+                                            const CFX_Matrix* pObject2Device,
+                                            FX_FLOAT font_size,
+                                            uint32_t color) {
+  return false;
 }
 
 void* IFX_RenderDeviceDriver::GetPlatformSurface() const {
@@ -84,11 +83,11 @@ int IFX_RenderDeviceDriver::GetDriverType() const {
 
 void IFX_RenderDeviceDriver::ClearDriver() {}
 
-FX_BOOL IFX_RenderDeviceDriver::DrawShading(const CPDF_ShadingPattern* pPattern,
-                                            const CFX_Matrix* pMatrix,
-                                            const FX_RECT& clip_rect,
-                                            int alpha,
-                                            FX_BOOL bAlphaMode) {
+bool IFX_RenderDeviceDriver::DrawShading(const CPDF_ShadingPattern* pPattern,
+                                         const CFX_Matrix* pMatrix,
+                                         const FX_RECT& clip_rect,
+                                         int alpha,
+                                         bool bAlphaMode) {
   return false;
 }
 

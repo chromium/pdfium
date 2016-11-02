@@ -19,12 +19,12 @@ class CFX_AndroidFontInfo : public IFX_SystemFontInfo {
   CFX_AndroidFontInfo();
   ~CFX_AndroidFontInfo() override;
 
-  FX_BOOL Init(CFPF_SkiaFontMgr* pFontMgr);
+  bool Init(CFPF_SkiaFontMgr* pFontMgr);
 
   // IFX_SystemFontInfo:
-  FX_BOOL EnumFontList(CFX_FontMapper* pMapper) override;
+  bool EnumFontList(CFX_FontMapper* pMapper) override;
   void* MapFont(int weight,
-                FX_BOOL bItalic,
+                bool bItalic,
                 int charset,
                 int pitch_family,
                 const FX_CHAR* face,
@@ -34,8 +34,8 @@ class CFX_AndroidFontInfo : public IFX_SystemFontInfo {
                        uint32_t table,
                        uint8_t* buffer,
                        uint32_t size) override;
-  FX_BOOL GetFaceName(void* hFont, CFX_ByteString& name) override;
-  FX_BOOL GetFontCharset(void* hFont, int& charset) override;
+  bool GetFaceName(void* hFont, CFX_ByteString& name) override;
+  bool GetFontCharset(void* hFont, int& charset) override;
   void DeleteFont(void* hFont) override;
 
  protected:

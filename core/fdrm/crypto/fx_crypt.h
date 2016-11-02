@@ -23,7 +23,7 @@ void CRYPT_AESSetKey(void* context,
                      uint32_t blocklen,
                      const uint8_t* key,
                      uint32_t keylen,
-                     FX_BOOL bEncrypt);
+                     bool bEncrypt);
 void CRYPT_AESSetIV(void* context, const uint8_t* iv);
 void CRYPT_AESDecrypt(void* context,
                       uint8_t* dest,
@@ -59,10 +59,10 @@ void CRYPT_SHA512Finish(void* context, uint8_t digest[64]);
 void CRYPT_SHA512Generate(const uint8_t* data,
                           uint32_t size,
                           uint8_t digest[64]);
-void CRYPT_SetPubKeyDecryptor(FX_BOOL (*func)(const uint8_t* pData,
-                                              uint32_t size,
-                                              uint8_t* data_buf,
-                                              uint32_t& data_len));
+void CRYPT_SetPubKeyDecryptor(bool (*func)(const uint8_t* pData,
+                                           uint32_t size,
+                                           uint8_t* data_buf,
+                                           uint32_t& data_len));
 
 #ifdef __cplusplus
 };

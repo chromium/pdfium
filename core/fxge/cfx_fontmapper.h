@@ -26,7 +26,7 @@ class CFX_FontMapper {
   void LoadInstalledFonts();
 
   FXFT_Face FindSubstFont(const CFX_ByteString& face_name,
-                          FX_BOOL bTrueType,
+                          bool bTrueType,
                           uint32_t flags,
                           int weight,
                           int italic_angle,
@@ -38,7 +38,7 @@ class CFX_FontMapper {
                                    int weight,
                                    int italic_angle);
 #endif  // PDF_ENABLE_XFA
-  FX_BOOL IsBuiltinFace(const FXFT_Face face) const;
+  bool IsBuiltinFace(const FXFT_Face face) const;
   int GetFaceSize() const;
   CFX_ByteString GetFaceName(int index) const {
     return m_FaceArray[index].name;
@@ -65,7 +65,7 @@ class CFX_FontMapper {
   FXFT_Face GetCachedFace(void* hFont,
                           CFX_ByteString SubstName,
                           int weight,
-                          FX_BOOL bItalic,
+                          bool bItalic,
                           uint32_t font_size);
 
   struct FaceData {
@@ -73,7 +73,7 @@ class CFX_FontMapper {
     uint32_t charset;
   };
 
-  FX_BOOL m_bListLoaded;
+  bool m_bListLoaded;
   FXFT_Face m_MMFaces[MM_FACE_COUNT];
   CFX_ByteString m_LastFamily;
   std::vector<FaceData> m_FaceArray;

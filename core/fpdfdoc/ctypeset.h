@@ -23,7 +23,7 @@ class CTypeset final {
   CPVT_FloatRect CharArray();
 
  private:
-  void SplitLines(FX_BOOL bTypeset, FX_FLOAT fFontSize);
+  void SplitLines(bool bTypeset, FX_FLOAT fFontSize);
   void OutputLines();
 
   CPVT_FloatRect m_rcRet;

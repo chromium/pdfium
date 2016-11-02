@@ -66,12 +66,12 @@ int CGdiPrinterDriver::GetDeviceCaps(int caps_id) const {
   return CGdiDeviceDriver::GetDeviceCaps(caps_id);
 }
 
-FX_BOOL CGdiPrinterDriver::SetDIBits(const CFX_DIBSource* pSource,
-                                     uint32_t color,
-                                     const FX_RECT* pSrcRect,
-                                     int left,
-                                     int top,
-                                     int blend_type) {
+bool CGdiPrinterDriver::SetDIBits(const CFX_DIBSource* pSource,
+                                  uint32_t color,
+                                  const FX_RECT* pSrcRect,
+                                  int left,
+                                  int top,
+                                  int blend_type) {
   if (pSource->IsAlphaMask()) {
     FX_RECT clip_rect(left, top, left + pSrcRect->Width(),
                       top + pSrcRect->Height());
@@ -83,35 +83,35 @@ FX_BOOL CGdiPrinterDriver::SetDIBits(const CFX_DIBSource* pSource,
   ASSERT(pSource && !pSource->IsAlphaMask() && pSrcRect);
   ASSERT(blend_type == FXDIB_BLEND_NORMAL);
   if (pSource->HasAlpha())
-    return FALSE;
+    return false;
 
   CFX_DIBExtractor temp(pSource);
   CFX_DIBitmap* pBitmap = temp.GetBitmap();
   if (!pBitmap)
-    return FALSE;
+    return false;
 
   return GDI_SetDIBits(pBitmap, pSrcRect, left, top);
 }
 
-FX_BOOL CGdiPrinterDriver::StretchDIBits(const CFX_DIBSource* pSource,
-                                         uint32_t color,
-                                         int dest_left,
-                                         int dest_top,
-                                         int dest_width,
-                                         int dest_height,
-                                         const FX_RECT* pClipRect,
-                                         uint32_t flags,
-                                         int blend_type) {
+bool CGdiPrinterDriver::StretchDIBits(const CFX_DIBSource* pSource,
+                                      uint32_t color,
+                                      int dest_left,
+                                      int dest_top,
+                                      int dest_width,
+                                      int dest_height,
+                                      const FX_RECT* pClipRect,
+                                      uint32_t flags,
+                                      int blend_type) {
   if (pSource->IsAlphaMask()) {
     int alpha = FXARGB_A(color);
     if (pSource->GetBPP() != 1 || alpha != 255)
-      return FALSE;
+      return false;
 
     if (dest_width < 0 || dest_height < 0) {
       std::unique_ptr<CFX_DIBitmap> pFlipped(
           pSource->FlipImage(dest_width < 0, dest_height < 0));
       if (!pFlipped)
-        return FALSE;
+        return false;
 
       if (dest_width < 0)
         dest_left += dest_width;
@@ -126,19 +126,19 @@ FX_BOOL CGdiPrinterDriver::StretchDIBits(const CFX_DIBSource* pSource,
     CFX_DIBExtractor temp(pSource);
     CFX_DIBitmap* pBitmap = temp.GetBitmap();
     if (!pBitmap)
-      return FALSE;
+      return false;
     return GDI_StretchBitMask(pBitmap, dest_left, dest_top, dest_width,
                               dest_height, color, flags);
   }
 
   if (pSource->HasAlpha())
-    return FALSE;
+    return false;
 
   if (dest_width < 0 || dest_height < 0) {
     std::unique_ptr<CFX_DIBitmap> pFlipped(
         pSource->FlipImage(dest_width < 0, dest_height < 0));
     if (!pFlipped)
-      return FALSE;
+      return false;
 
     if (dest_width < 0)
       dest_left += dest_width;
@@ -152,28 +152,28 @@ FX_BOOL CGdiPrinterDriver::StretchDIBits(const CFX_DIBSource* pSource,
   CFX_DIBExtractor temp(pSource);
   CFX_DIBitmap* pBitmap = temp.GetBitmap();
   if (!pBitmap)
-    return FALSE;
+    return false;
   return GDI_StretchDIBits(pBitmap, dest_left, dest_top, dest_width,
                            dest_height, flags);
 }
 
-FX_BOOL CGdiPrinterDriver::StartDIBits(const CFX_DIBSource* pSource,
-                                       int bitmap_alpha,
-                                       uint32_t color,
-                                       const CFX_Matrix* pMatrix,
-                                       uint32_t render_flags,
-                                       void*& handle,
-                                       int blend_type) {
+bool CGdiPrinterDriver::StartDIBits(const CFX_DIBSource* pSource,
+                                    int bitmap_alpha,
+                                    uint32_t color,
+                                    const CFX_Matrix* pMatrix,
+                                    uint32_t render_flags,
+                                    void*& handle,
+                                    int blend_type) {
   if (bitmap_alpha < 255 || pSource->HasAlpha() ||
       (pSource->IsAlphaMask() && (pSource->GetBPP() != 1))) {
-    return FALSE;
+    return false;
   }
   CFX_FloatRect unit_rect = pMatrix->GetUnitRect();
   FX_RECT full_rect = unit_rect.GetOuterRect();
   if (FXSYS_fabs(pMatrix->b) < 0.5f && pMatrix->a != 0 &&
       FXSYS_fabs(pMatrix->c) < 0.5f && pMatrix->d != 0) {
-    FX_BOOL bFlipX = pMatrix->a < 0;
-    FX_BOOL bFlipY = pMatrix->d > 0;
+    bool bFlipX = pMatrix->a < 0;
+    bool bFlipY = pMatrix->d > 0;
     return StretchDIBits(pSource, color,
                          bFlipX ? full_rect.right : full_rect.left,
                          bFlipY ? full_rect.bottom : full_rect.top,
@@ -182,30 +182,30 @@ FX_BOOL CGdiPrinterDriver::StartDIBits(const CFX_DIBSource* pSource,
                          nullptr, 0, blend_type);
   }
   if (FXSYS_fabs(pMatrix->a) >= 0.5f || FXSYS_fabs(pMatrix->d) >= 0.5f)
-    return FALSE;
+    return false;
 
   std::unique_ptr<CFX_DIBitmap> pTransformed(
       pSource->SwapXY(pMatrix->c > 0, pMatrix->b < 0));
   if (!pTransformed)
-    return FALSE;
+    return false;
 
   return StretchDIBits(pTransformed.get(), color, full_rect.left, full_rect.top,
                        full_rect.Width(), full_rect.Height(), nullptr, 0,
                        blend_type);
 }
 
-FX_BOOL CGdiPrinterDriver::DrawDeviceText(int nChars,
-                                          const FXTEXT_CHARPOS* pCharPos,
-                                          CFX_Font* pFont,
-                                          const CFX_Matrix* pObject2Device,
-                                          FX_FLOAT font_size,
-                                          uint32_t color) {
+bool CGdiPrinterDriver::DrawDeviceText(int nChars,
+                                       const FXTEXT_CHARPOS* pCharPos,
+                                       CFX_Font* pFont,
+                                       const CFX_Matrix* pObject2Device,
+                                       FX_FLOAT font_size,
+                                       uint32_t color) {
 #if defined(PDFIUM_PRINT_TEXT_WITH_GDI)
   if (!g_pdfium_print_text_with_gdi)
-    return FALSE;
+    return false;
 
   if (nChars < 1 || !pFont || !pFont->IsEmbedded() || !pFont->IsTTFont())
-    return FALSE;
+    return false;
 
   // Scale factor used to minimize the kerning problems caused by rounding
   // errors below. Value choosen based on the title of https://crbug.com/18383
@@ -236,34 +236,34 @@ FX_BOOL CGdiPrinterDriver::DrawDeviceText(int nChars,
 
   HFONT hFont = CreateFontIndirect(&lf);
   if (!hFont)
-    return FALSE;
+    return false;
 
   ScopedState state(m_hDC, hFont);
   size_t nTextMetricSize = GetOutlineTextMetrics(m_hDC, 0, nullptr);
   if (nTextMetricSize == 0) {
     // Give up and fail if there is no way to get the font to try again.
     if (!g_pdfium_typeface_accessible_func)
-      return FALSE;
+      return false;
 
     // Try to get the font. Any letter will do.
     g_pdfium_typeface_accessible_func(&lf, L"A", 1);
     nTextMetricSize = GetOutlineTextMetrics(m_hDC, 0, nullptr);
     if (nTextMetricSize == 0)
-      return FALSE;
+      return false;
   }
 
   std::vector<BYTE> buf(nTextMetricSize);
   OUTLINETEXTMETRIC* pTextMetric =
       reinterpret_cast<OUTLINETEXTMETRIC*>(buf.data());
   if (GetOutlineTextMetrics(m_hDC, nTextMetricSize, pTextMetric) == 0)
-    return FALSE;
+    return false;
 
   // If the selected font is not the requested font, then bail out. This can
   // happen with web fonts, for example.
   wchar_t* wsSelectedName = reinterpret_cast<wchar_t*>(
       buf.data() + reinterpret_cast<size_t>(pTextMetric->otmpFaceName));
   if (wsName != wsSelectedName)
-    return FALSE;
+    return false;
 
   // Transforms
   SetGraphicsMode(m_hDC, GM_ADVANCED);
@@ -311,18 +311,18 @@ FX_BOOL CGdiPrinterDriver::DrawDeviceText(int nChars,
   SetTextAlign(m_hDC, TA_LEFT | TA_BASELINE);
   if (ExtTextOutW(m_hDC, 0, 0, ETO_GLYPH_INDEX, nullptr, wsText.c_str(), nChars,
                   nChars > 1 ? &spacing[1] : nullptr)) {
-    return TRUE;
+    return true;
   }
 
   // Give up and fail if there is no way to get the font to try again.
   if (!g_pdfium_typeface_accessible_func)
-    return FALSE;
+    return false;
 
   // Try to get the font and draw again.
   g_pdfium_typeface_accessible_func(&lf, wsText.c_str(), nChars);
   return !!ExtTextOutW(m_hDC, 0, 0, ETO_GLYPH_INDEX, nullptr, wsText.c_str(),
                        nChars, nChars > 1 ? &spacing[1] : nullptr);
 #else
-  return FALSE;
+  return false;
 #endif
 }
