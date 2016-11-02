@@ -9,10 +9,10 @@
 
 #include <memory>
 
-#include "fpdfsdk/fpdfxfa/cpdfxfa_app.h"
 #include "fpdfsdk/fpdfxfa/cpdfxfa_docenvironment.h"
 #include "xfa/fxfa/xfa_ffdoc.h"
 
+class CJS_Runtime;
 class CPDFSDK_FormFillEnvironment;
 class CPDFXFA_Page;
 class CXFA_FFDocHandler;
@@ -27,17 +27,18 @@ enum LoadStatus {
   FXFA_LOADSTATUS_CLOSED
 };
 
-class CPDFXFA_Document {
+class CPDFXFA_Document : public IXFA_AppProvider {
  public:
   CPDFXFA_Document(std::unique_ptr<CPDF_Document> pPDFDoc);
-  ~CPDFXFA_Document();
+  ~CPDFXFA_Document() override;
 
   FX_BOOL LoadXFADoc();
   CPDF_Document* GetPDFDoc() { return m_pPDFDoc.get(); }
   CXFA_FFDoc* GetXFADoc() { return m_pXFADoc.get(); }
   CXFA_FFDocView* GetXFADocView() { return m_pXFADocView; }
   int GetDocType() const { return m_iDocType; }
-  CPDFXFA_App* GetApp();  // Creates if needed.
+  v8::Isolate* GetJSERuntime() const;
+  CXFA_FFApp* GetXFAApp() { return m_pXFAApp.get(); }
 
   CPDFSDK_FormFillEnvironment* GetFormFillEnv() const { return m_pFormFillEnv; }
   void SetFormFillEnv(CPDFSDK_FormFillEnvironment* pFormFillEnv);
@@ -51,6 +52,34 @@ class CPDFXFA_Document {
   void RemovePage(CPDFXFA_Page* page);
 
   void ClearChangeMark();
+
+  // IFXA_AppProvider:
+  void GetLanguage(CFX_WideString& wsLanguage) override;
+  void GetPlatform(CFX_WideString& wsPlatform) override;
+  void GetAppName(CFX_WideString& wsName) override;
+
+  void Beep(uint32_t dwType) override;
+  int32_t MsgBox(const CFX_WideString& wsMessage,
+                 const CFX_WideString& wsTitle,
+                 uint32_t dwIconType,
+                 uint32_t dwButtonType) override;
+  CFX_WideString Response(const CFX_WideString& wsQuestion,
+                          const CFX_WideString& wsTitle,
+                          const CFX_WideString& wsDefaultAnswer,
+                          FX_BOOL bMark) override;
+  IFX_SeekableReadStream* DownloadURL(const CFX_WideString& wsURL) override;
+  FX_BOOL PostRequestURL(const CFX_WideString& wsURL,
+                         const CFX_WideString& wsData,
+                         const CFX_WideString& wsContentType,
+                         const CFX_WideString& wsEncode,
+                         const CFX_WideString& wsHeader,
+                         CFX_WideString& wsResponse) override;
+  FX_BOOL PutRequestURL(const CFX_WideString& wsURL,
+                        const CFX_WideString& wsData,
+                        const CFX_WideString& wsEncode) override;
+
+  void LoadString(int32_t iStringID, CFX_WideString& wsString) override;
+  IFWL_AdapterTimerMgr* GetTimerMgr() override;
 
  protected:
   friend class CPDFXFA_DocEnvironment;
@@ -66,7 +95,7 @@ class CPDFXFA_Document {
   CFX_ArrayTemplate<CPDFXFA_Page*>* GetXFAPageList() { return &m_XFAPageList; }
 
  private:
-  void CloseXFADoc(CXFA_FFDocHandler* pDoc);
+  void CloseXFADoc();
 
   int m_iDocType;
 
@@ -74,7 +103,8 @@ class CPDFXFA_Document {
   std::unique_ptr<CXFA_FFDoc> m_pXFADoc;
   CPDFSDK_FormFillEnvironment* m_pFormFillEnv;  // not owned.
   CXFA_FFDocView* m_pXFADocView;  // not owned.
-  std::unique_ptr<CPDFXFA_App> m_pApp;
+  std::unique_ptr<CXFA_FFApp> m_pXFAApp;
+  std::unique_ptr<CJS_Runtime> m_pRuntime;
   CFX_ArrayTemplate<CPDFXFA_Page*> m_XFAPageList;
   LoadStatus m_nLoadStatus;
   int m_nPageCount;

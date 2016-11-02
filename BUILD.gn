@@ -1054,8 +1054,6 @@ if (pdf_enable_v8) {
 if (pdf_enable_xfa) {
   static_library("fpdfxfa") {
     sources = [
-      "fpdfsdk/fpdfxfa/cpdfxfa_app.cpp",
-      "fpdfsdk/fpdfxfa/cpdfxfa_app.h",
       "fpdfsdk/fpdfxfa/cpdfxfa_docenvironment.cpp",
       "fpdfsdk/fpdfxfa/cpdfxfa_docenvironment.h",
       "fpdfsdk/fpdfxfa/cpdfxfa_document.cpp",

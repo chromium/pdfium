@@ -19,10 +19,6 @@
 #include "fpdfsdk/javascript/ijs_runtime.h"
 #include "third_party/base/ptr_util.h"
 
-#ifdef PDF_ENABLE_XFA
-#include "fpdfsdk/fpdfxfa/cpdfxfa_app.h"
-#endif  // PDF_ENABLE_XFA
-
 namespace {
 
 // NOTE: |bsUTF16LE| must outlive the use of the result. Care must be taken
