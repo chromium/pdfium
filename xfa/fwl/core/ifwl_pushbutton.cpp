@@ -23,8 +23,6 @@ IFWL_PushButton::IFWL_PushButton(const IFWL_App* app,
       m_iTTOAlign(FDE_TTOALIGNMENT_Center) {
   m_rtClient.Set(0, 0, 0, 0);
   m_rtCaption.Set(0, 0, 0, 0);
-
-  SetDelegate(pdfium::MakeUnique<CFWL_PushButtonImpDelegate>(this));
 }
 
 IFWL_PushButton::~IFWL_PushButton() {}
@@ -381,44 +379,35 @@ void IFWL_PushButton::UpdateTextOutStyles() {
   }
 }
 
-CFWL_PushButtonImpDelegate::CFWL_PushButtonImpDelegate(IFWL_PushButton* pOwner)
-    : m_pOwner(pOwner) {}
-
-void CFWL_PushButtonImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
+void IFWL_PushButton::OnProcessMessage(CFWL_Message* pMessage) {
   if (!pMessage)
     return;
-  if (!m_pOwner->IsEnabled())
+  if (!IsEnabled())
     return;
 
   CFWL_MessageType dwMsgCode = pMessage->GetClassID();
   switch (dwMsgCode) {
-    case CFWL_MessageType::SetFocus: {
+    case CFWL_MessageType::SetFocus:
       OnFocusChanged(pMessage, TRUE);
       break;
-    }
-    case CFWL_MessageType::KillFocus: {
+    case CFWL_MessageType::KillFocus:
       OnFocusChanged(pMessage, FALSE);
       break;
-    }
     case CFWL_MessageType::Mouse: {
       CFWL_MsgMouse* pMsg = static_cast<CFWL_MsgMouse*>(pMessage);
       switch (pMsg->m_dwCmd) {
-        case FWL_MouseCommand::LeftButtonDown: {
+        case FWL_MouseCommand::LeftButtonDown:
           OnLButtonDown(pMsg);
           break;
-        }
-        case FWL_MouseCommand::LeftButtonUp: {
+        case FWL_MouseCommand::LeftButtonUp:
           OnLButtonUp(pMsg);
           break;
-        }
-        case FWL_MouseCommand::Move: {
+        case FWL_MouseCommand::Move:
           OnMouseMove(pMsg);
           break;
-        }
-        case FWL_MouseCommand::Leave: {
+        case FWL_MouseCommand::Leave:
           OnMouseLeave(pMsg);
           break;
-        }
         default:
           break;
       }
@@ -430,111 +419,107 @@ void CFWL_PushButtonImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
         OnKeyDown(pKey);
       break;
     }
-    default: { break; }
+    default:
+      break;
   }
-  CFWL_WidgetImpDelegate::OnProcessMessage(pMessage);
+  IFWL_Widget::OnProcessMessage(pMessage);
 }
 
-void CFWL_PushButtonImpDelegate::OnProcessEvent(CFWL_Event* pEvent) {}
-
-void CFWL_PushButtonImpDelegate::OnDrawWidget(CFX_Graphics* pGraphics,
-                                              const CFX_Matrix* pMatrix) {
-  m_pOwner->DrawWidget(pGraphics, pMatrix);
+void IFWL_PushButton::OnDrawWidget(CFX_Graphics* pGraphics,
+                                   const CFX_Matrix* pMatrix) {
+  DrawWidget(pGraphics, pMatrix);
 }
 
-void CFWL_PushButtonImpDelegate::OnFocusChanged(CFWL_Message* pMsg,
-                                                FX_BOOL bSet) {
-  if (bSet) {
-    m_pOwner->m_pProperties->m_dwStates |= FWL_WGTSTATE_Focused;
+void IFWL_PushButton::OnFocusChanged(CFWL_Message* pMsg, FX_BOOL bSet) {
+  if (bSet)
+    m_pProperties->m_dwStates |= FWL_WGTSTATE_Focused;
+  else
+    m_pProperties->m_dwStates &= ~FWL_WGTSTATE_Focused;
+
+  Repaint(&m_rtClient);
+}
+
+void IFWL_PushButton::OnLButtonDown(CFWL_MsgMouse* pMsg) {
+  if ((m_pProperties->m_dwStates & FWL_WGTSTATE_Focused) == 0)
+    SetFocus(TRUE);
+
+  m_bBtnDown = TRUE;
+  m_pProperties->m_dwStates |= FWL_STATE_PSB_Hovered;
+  m_pProperties->m_dwStates |= FWL_STATE_PSB_Pressed;
+  Repaint(&m_rtClient);
+}
+
+void IFWL_PushButton::OnLButtonUp(CFWL_MsgMouse* pMsg) {
+  m_bBtnDown = FALSE;
+  if (m_rtClient.Contains(pMsg->m_fx, pMsg->m_fy)) {
+    m_pProperties->m_dwStates &= ~FWL_STATE_PSB_Pressed;
+    m_pProperties->m_dwStates |= FWL_STATE_PSB_Hovered;
   } else {
-    m_pOwner->m_pProperties->m_dwStates &= ~FWL_WGTSTATE_Focused;
+    m_pProperties->m_dwStates &= ~FWL_STATE_PSB_Hovered;
+    m_pProperties->m_dwStates &= ~FWL_STATE_PSB_Pressed;
   }
-  m_pOwner->Repaint(&m_pOwner->m_rtClient);
-}
-
-void CFWL_PushButtonImpDelegate::OnLButtonDown(CFWL_MsgMouse* pMsg) {
-  if ((m_pOwner->m_pProperties->m_dwStates & FWL_WGTSTATE_Focused) == 0) {
-    m_pOwner->SetFocus(TRUE);
-  }
-  m_pOwner->m_bBtnDown = TRUE;
-  m_pOwner->m_pProperties->m_dwStates |= FWL_STATE_PSB_Hovered;
-  m_pOwner->m_pProperties->m_dwStates |= FWL_STATE_PSB_Pressed;
-  m_pOwner->Repaint(&m_pOwner->m_rtClient);
-}
-
-void CFWL_PushButtonImpDelegate::OnLButtonUp(CFWL_MsgMouse* pMsg) {
-  m_pOwner->m_bBtnDown = FALSE;
-  if (m_pOwner->m_rtClient.Contains(pMsg->m_fx, pMsg->m_fy)) {
-    m_pOwner->m_pProperties->m_dwStates &= ~FWL_STATE_PSB_Pressed;
-    m_pOwner->m_pProperties->m_dwStates |= FWL_STATE_PSB_Hovered;
-  } else {
-    m_pOwner->m_pProperties->m_dwStates &= ~FWL_STATE_PSB_Hovered;
-    m_pOwner->m_pProperties->m_dwStates &= ~FWL_STATE_PSB_Pressed;
-  }
-  if (m_pOwner->m_rtClient.Contains(pMsg->m_fx, pMsg->m_fy)) {
+  if (m_rtClient.Contains(pMsg->m_fx, pMsg->m_fy)) {
     CFWL_EvtClick wmClick;
-    wmClick.m_pSrcTarget = m_pOwner;
-    m_pOwner->DispatchEvent(&wmClick);
+    wmClick.m_pSrcTarget = this;
+    DispatchEvent(&wmClick);
   }
-  m_pOwner->Repaint(&m_pOwner->m_rtClient);
+  Repaint(&m_rtClient);
 }
 
-void CFWL_PushButtonImpDelegate::OnMouseMove(CFWL_MsgMouse* pMsg) {
+void IFWL_PushButton::OnMouseMove(CFWL_MsgMouse* pMsg) {
   FX_BOOL bRepaint = FALSE;
-  if (m_pOwner->m_bBtnDown) {
-    if (m_pOwner->m_rtClient.Contains(pMsg->m_fx, pMsg->m_fy)) {
-      if ((m_pOwner->m_pProperties->m_dwStates & FWL_STATE_PSB_Pressed) == 0) {
-        m_pOwner->m_pProperties->m_dwStates |= FWL_STATE_PSB_Pressed;
+  if (m_bBtnDown) {
+    if (m_rtClient.Contains(pMsg->m_fx, pMsg->m_fy)) {
+      if ((m_pProperties->m_dwStates & FWL_STATE_PSB_Pressed) == 0) {
+        m_pProperties->m_dwStates |= FWL_STATE_PSB_Pressed;
         bRepaint = TRUE;
       }
-      if (m_pOwner->m_pProperties->m_dwStates & FWL_STATE_PSB_Hovered) {
-        m_pOwner->m_pProperties->m_dwStates &= ~FWL_STATE_PSB_Hovered;
+      if (m_pProperties->m_dwStates & FWL_STATE_PSB_Hovered) {
+        m_pProperties->m_dwStates &= ~FWL_STATE_PSB_Hovered;
         bRepaint = TRUE;
       }
     } else {
-      if (m_pOwner->m_pProperties->m_dwStates & FWL_STATE_PSB_Pressed) {
-        m_pOwner->m_pProperties->m_dwStates &= ~FWL_STATE_PSB_Pressed;
+      if (m_pProperties->m_dwStates & FWL_STATE_PSB_Pressed) {
+        m_pProperties->m_dwStates &= ~FWL_STATE_PSB_Pressed;
         bRepaint = TRUE;
       }
-      if ((m_pOwner->m_pProperties->m_dwStates & FWL_STATE_PSB_Hovered) == 0) {
-        m_pOwner->m_pProperties->m_dwStates |= FWL_STATE_PSB_Hovered;
+      if ((m_pProperties->m_dwStates & FWL_STATE_PSB_Hovered) == 0) {
+        m_pProperties->m_dwStates |= FWL_STATE_PSB_Hovered;
         bRepaint = TRUE;
       }
     }
   } else {
-    if (!m_pOwner->m_rtClient.Contains(pMsg->m_fx, pMsg->m_fy)) {
+    if (!m_rtClient.Contains(pMsg->m_fx, pMsg->m_fy))
       return;
-    }
-    if ((m_pOwner->m_pProperties->m_dwStates & FWL_STATE_PSB_Hovered) == 0) {
-      m_pOwner->m_pProperties->m_dwStates |= FWL_STATE_PSB_Hovered;
+    if ((m_pProperties->m_dwStates & FWL_STATE_PSB_Hovered) == 0) {
+      m_pProperties->m_dwStates |= FWL_STATE_PSB_Hovered;
       bRepaint = TRUE;
     }
   }
-  if (bRepaint) {
-    m_pOwner->Repaint(&m_pOwner->m_rtClient);
-  }
+  if (bRepaint)
+    Repaint(&m_rtClient);
 }
 
-void CFWL_PushButtonImpDelegate::OnMouseLeave(CFWL_MsgMouse* pMsg) {
-  m_pOwner->m_bBtnDown = FALSE;
-  m_pOwner->m_pProperties->m_dwStates &= ~FWL_STATE_PSB_Hovered;
-  m_pOwner->m_pProperties->m_dwStates &= ~FWL_STATE_PSB_Pressed;
-  m_pOwner->Repaint(&m_pOwner->m_rtClient);
+void IFWL_PushButton::OnMouseLeave(CFWL_MsgMouse* pMsg) {
+  m_bBtnDown = FALSE;
+  m_pProperties->m_dwStates &= ~FWL_STATE_PSB_Hovered;
+  m_pProperties->m_dwStates &= ~FWL_STATE_PSB_Pressed;
+  Repaint(&m_rtClient);
 }
 
-void CFWL_PushButtonImpDelegate::OnKeyDown(CFWL_MsgKey* pMsg) {
+void IFWL_PushButton::OnKeyDown(CFWL_MsgKey* pMsg) {
   if (pMsg->m_dwKeyCode == FWL_VKEY_Return) {
     CFWL_EvtMouse wmMouse;
-    wmMouse.m_pSrcTarget = m_pOwner;
+    wmMouse.m_pSrcTarget = this;
     wmMouse.m_dwCmd = FWL_MouseCommand::LeftButtonUp;
-    m_pOwner->DispatchEvent(&wmMouse);
+    DispatchEvent(&wmMouse);
     CFWL_EvtClick wmClick;
-    wmClick.m_pSrcTarget = m_pOwner;
-    m_pOwner->DispatchEvent(&wmClick);
+    wmClick.m_pSrcTarget = this;
+    DispatchEvent(&wmClick);
     return;
   }
-  if (pMsg->m_dwKeyCode != FWL_VKEY_Tab) {
+  if (pMsg->m_dwKeyCode != FWL_VKEY_Tab)
     return;
-  }
-  m_pOwner->DispatchKeyEvent(pMsg);
+
+  DispatchKeyEvent(pMsg);
 }

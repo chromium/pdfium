@@ -37,8 +37,6 @@ IFWL_SpinButton::IFWL_SpinButton(const IFWL_App* app,
   m_rtUpButton.Reset();
   m_rtDnButton.Reset();
   m_pProperties->m_dwStyleExes |= FWL_STYLEEXE_SPB_Vert;
-
-  SetDelegate(pdfium::MakeUnique<CFWL_SpinButtonImpDelegate>(this));
 }
 
 IFWL_SpinButton::~IFWL_SpinButton() {}
@@ -98,43 +96,34 @@ FWL_Error IFWL_SpinButton::DrawWidget(CFX_Graphics* pGraphics,
                                       const CFX_Matrix* pMatrix) {
   if (!pGraphics)
     return FWL_Error::Indefinite;
+
   CFX_RectF rtClip(m_rtClient);
-  if (pMatrix) {
+  if (pMatrix)
     pMatrix->TransformRect(rtClip);
-  }
+
   IFWL_ThemeProvider* pTheme = GetAvailableTheme();
-  if (HasBorder()) {
+  if (HasBorder())
     DrawBorder(pGraphics, CFWL_Part::Border, pTheme, pMatrix);
-  }
-  if (HasEdge()) {
+  if (HasEdge())
     DrawEdge(pGraphics, CFWL_Part::Edge, pTheme, pMatrix);
-  }
+
   DrawUpButton(pGraphics, pTheme, pMatrix);
   DrawDownButton(pGraphics, pTheme, pMatrix);
   return FWL_Error::Succeeded;
 }
 
 FWL_Error IFWL_SpinButton::EnableButton(FX_BOOL bEnable, FX_BOOL bUp) {
-  if (bUp) {
-    if (bEnable) {
-      m_dwUpState = CFWL_PartState_Normal;
-    } else {
-      m_dwUpState = CFWL_PartState_Disabled;
-    }
-  } else {
-    if (bEnable) {
-      m_dwDnState = CFWL_PartState_Normal;
-    } else {
-      m_dwDnState = CFWL_PartState_Disabled;
-    }
-  }
+  if (bUp)
+    m_dwUpState = bEnable ? CFWL_PartState_Normal : CFWL_PartState_Disabled;
+  else
+    m_dwDnState = bEnable ? CFWL_PartState_Normal : CFWL_PartState_Disabled;
+
   return FWL_Error::Succeeded;
 }
 
 FX_BOOL IFWL_SpinButton::IsButtonEnable(FX_BOOL bUp) {
-  if (bUp) {
+  if (bUp)
     return (m_dwUpState != CFWL_PartState_Disabled);
-  }
   return (m_dwDnState != CFWL_PartState_Disabled);
 }
 
@@ -146,9 +135,9 @@ void IFWL_SpinButton::DrawUpButton(CFX_Graphics* pGraphics,
   params.m_iPart = CFWL_Part::UpButton;
   params.m_pGraphics = pGraphics;
   params.m_dwStates = m_dwUpState + 1;
-  if (pMatrix) {
+  if (pMatrix)
     params.m_matrix.Concat(*pMatrix);
-  }
+
   params.m_rtPart = m_rtUpButton;
   pTheme->DrawBackground(&params);
 }
@@ -161,17 +150,14 @@ void IFWL_SpinButton::DrawDownButton(CFX_Graphics* pGraphics,
   params.m_iPart = CFWL_Part::DownButton;
   params.m_pGraphics = pGraphics;
   params.m_dwStates = m_dwDnState + 1;
-  if (pMatrix) {
+  if (pMatrix)
     params.m_matrix.Concat(*pMatrix);
-  }
+
   params.m_rtPart = m_rtDnButton;
   pTheme->DrawBackground(&params);
 }
 
-CFWL_SpinButtonImpDelegate::CFWL_SpinButtonImpDelegate(IFWL_SpinButton* pOwner)
-    : m_pOwner(pOwner) {}
-
-void CFWL_SpinButtonImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
+void IFWL_SpinButton::OnProcessMessage(CFWL_Message* pMessage) {
   if (!pMessage)
     return;
 
@@ -188,22 +174,18 @@ void CFWL_SpinButtonImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
     case CFWL_MessageType::Mouse: {
       CFWL_MsgMouse* pMsg = static_cast<CFWL_MsgMouse*>(pMessage);
       switch (pMsg->m_dwCmd) {
-        case FWL_MouseCommand::LeftButtonDown: {
+        case FWL_MouseCommand::LeftButtonDown:
           OnLButtonDown(pMsg);
           break;
-        }
-        case FWL_MouseCommand::LeftButtonUp: {
+        case FWL_MouseCommand::LeftButtonUp:
           OnLButtonUp(pMsg);
           break;
-        }
-        case FWL_MouseCommand::Move: {
+        case FWL_MouseCommand::Move:
           OnMouseMove(pMsg);
           break;
-        }
-        case FWL_MouseCommand::Leave: {
+        case FWL_MouseCommand::Leave:
           OnMouseLeave(pMsg);
           break;
-        }
         default:
           break;
       }
@@ -215,192 +197,179 @@ void CFWL_SpinButtonImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
         OnKeyDown(pKey);
       break;
     }
-    default: { break; }
+    default:
+      break;
   }
-  CFWL_WidgetImpDelegate::OnProcessMessage(pMessage);
+  IFWL_Widget::OnProcessMessage(pMessage);
 }
 
-void CFWL_SpinButtonImpDelegate::OnProcessEvent(CFWL_Event* pEvent) {}
-
-void CFWL_SpinButtonImpDelegate::OnDrawWidget(CFX_Graphics* pGraphics,
-                                              const CFX_Matrix* pMatrix) {
-  m_pOwner->DrawWidget(pGraphics, pMatrix);
+void IFWL_SpinButton::OnDrawWidget(CFX_Graphics* pGraphics,
+                                   const CFX_Matrix* pMatrix) {
+  DrawWidget(pGraphics, pMatrix);
 }
 
-void CFWL_SpinButtonImpDelegate::OnFocusChanged(CFWL_Message* pMsg,
-                                                FX_BOOL bSet) {
-  if (bSet) {
-    m_pOwner->m_pProperties->m_dwStates |= (FWL_WGTSTATE_Focused);
-  } else {
-    m_pOwner->m_pProperties->m_dwStates &= ~(FWL_WGTSTATE_Focused);
-  }
-  m_pOwner->Repaint(&m_pOwner->m_rtClient);
+void IFWL_SpinButton::OnFocusChanged(CFWL_Message* pMsg, FX_BOOL bSet) {
+  if (bSet)
+    m_pProperties->m_dwStates |= (FWL_WGTSTATE_Focused);
+  else
+    m_pProperties->m_dwStates &= ~(FWL_WGTSTATE_Focused);
+
+  Repaint(&m_rtClient);
 }
 
-void CFWL_SpinButtonImpDelegate::OnLButtonDown(CFWL_MsgMouse* pMsg) {
-  m_pOwner->m_bLButtonDwn = TRUE;
-  m_pOwner->SetGrab(TRUE);
-  m_pOwner->SetFocus(TRUE);
-  if (!m_pOwner->m_pProperties->m_pDataProvider)
+void IFWL_SpinButton::OnLButtonDown(CFWL_MsgMouse* pMsg) {
+  m_bLButtonDwn = TRUE;
+  SetGrab(TRUE);
+  SetFocus(TRUE);
+  if (!m_pProperties->m_pDataProvider)
     return;
-  FX_BOOL bUpPress = (m_pOwner->m_rtUpButton.Contains(pMsg->m_fx, pMsg->m_fy) &&
-                      m_pOwner->IsButtonEnable(TRUE));
-  FX_BOOL bDnPress = (m_pOwner->m_rtDnButton.Contains(pMsg->m_fx, pMsg->m_fy) &&
-                      m_pOwner->IsButtonEnable(FALSE));
-  if (!bUpPress && !bDnPress) {
+
+  FX_BOOL bUpPress =
+      (m_rtUpButton.Contains(pMsg->m_fx, pMsg->m_fy) && IsButtonEnable(TRUE));
+  FX_BOOL bDnPress =
+      (m_rtDnButton.Contains(pMsg->m_fx, pMsg->m_fy) && IsButtonEnable(FALSE));
+  if (!bUpPress && !bDnPress)
     return;
-  }
   if (bUpPress) {
-    m_pOwner->m_iButtonIndex = 0;
-    m_pOwner->m_dwUpState = CFWL_PartState_Pressed;
+    m_iButtonIndex = 0;
+    m_dwUpState = CFWL_PartState_Pressed;
   }
   if (bDnPress) {
-    m_pOwner->m_iButtonIndex = 1;
-    m_pOwner->m_dwDnState = CFWL_PartState_Pressed;
+    m_iButtonIndex = 1;
+    m_dwDnState = CFWL_PartState_Pressed;
   }
   CFWL_EvtSpbClick wmPosChanged;
-  wmPosChanged.m_pSrcTarget = m_pOwner;
+  wmPosChanged.m_pSrcTarget = this;
   wmPosChanged.m_bUp = bUpPress;
-  m_pOwner->DispatchEvent(&wmPosChanged);
-  m_pOwner->Repaint(bUpPress ? &m_pOwner->m_rtUpButton
-                             : &m_pOwner->m_rtDnButton);
-  m_pOwner->m_pTimerInfo = m_pOwner->m_Timer.StartTimer(kElapseTime, true);
+  DispatchEvent(&wmPosChanged);
+  Repaint(bUpPress ? &m_rtUpButton : &m_rtDnButton);
+  m_pTimerInfo = m_Timer.StartTimer(kElapseTime, true);
 }
 
-void CFWL_SpinButtonImpDelegate::OnLButtonUp(CFWL_MsgMouse* pMsg) {
-  if (m_pOwner->m_pProperties->m_dwStates & CFWL_PartState_Disabled) {
+void IFWL_SpinButton::OnLButtonUp(CFWL_MsgMouse* pMsg) {
+  if (m_pProperties->m_dwStates & CFWL_PartState_Disabled)
     return;
-  }
-  m_pOwner->m_bLButtonDwn = FALSE;
-  m_pOwner->SetGrab(FALSE);
-  m_pOwner->SetFocus(FALSE);
-  if (m_pOwner->m_pTimerInfo) {
-    m_pOwner->m_pTimerInfo->StopTimer();
-    m_pOwner->m_pTimerInfo = nullptr;
+
+  m_bLButtonDwn = FALSE;
+  SetGrab(FALSE);
+  SetFocus(FALSE);
+  if (m_pTimerInfo) {
+    m_pTimerInfo->StopTimer();
+    m_pTimerInfo = nullptr;
   }
   FX_BOOL bRepaint = FALSE;
   CFX_RectF rtInvalidate;
-  if (m_pOwner->m_dwUpState == CFWL_PartState_Pressed &&
-      m_pOwner->IsButtonEnable(TRUE)) {
-    m_pOwner->m_dwUpState = CFWL_PartState_Normal;
+  if (m_dwUpState == CFWL_PartState_Pressed && IsButtonEnable(TRUE)) {
+    m_dwUpState = CFWL_PartState_Normal;
     bRepaint = TRUE;
-    rtInvalidate = m_pOwner->m_rtUpButton;
-  } else if (m_pOwner->m_dwDnState == CFWL_PartState_Pressed &&
-             m_pOwner->IsButtonEnable(FALSE)) {
-    m_pOwner->m_dwDnState = CFWL_PartState_Normal;
+    rtInvalidate = m_rtUpButton;
+  } else if (m_dwDnState == CFWL_PartState_Pressed && IsButtonEnable(FALSE)) {
+    m_dwDnState = CFWL_PartState_Normal;
     bRepaint = TRUE;
-    rtInvalidate = m_pOwner->m_rtDnButton;
+    rtInvalidate = m_rtDnButton;
   }
-  if (bRepaint) {
-    m_pOwner->Repaint(&rtInvalidate);
-  }
+  if (bRepaint)
+    Repaint(&rtInvalidate);
 }
 
-void CFWL_SpinButtonImpDelegate::OnMouseMove(CFWL_MsgMouse* pMsg) {
-  if (!m_pOwner->m_pProperties->m_pDataProvider)
+void IFWL_SpinButton::OnMouseMove(CFWL_MsgMouse* pMsg) {
+  if (!m_pProperties->m_pDataProvider)
     return;
-  if (m_pOwner->m_bLButtonDwn) {
+  if (m_bLButtonDwn)
     return;
-  }
+
   FX_BOOL bRepaint = FALSE;
   CFX_RectF rtInvlidate;
   rtInvlidate.Reset();
-  if (m_pOwner->m_rtUpButton.Contains(pMsg->m_fx, pMsg->m_fy)) {
-    if (m_pOwner->IsButtonEnable(TRUE)) {
-      if (m_pOwner->m_dwUpState == CFWL_PartState_Hovered) {
-        m_pOwner->m_dwUpState = CFWL_PartState_Hovered;
+  if (m_rtUpButton.Contains(pMsg->m_fx, pMsg->m_fy)) {
+    if (IsButtonEnable(TRUE)) {
+      if (m_dwUpState == CFWL_PartState_Hovered) {
+        m_dwUpState = CFWL_PartState_Hovered;
         bRepaint = TRUE;
-        rtInvlidate = m_pOwner->m_rtUpButton;
+        rtInvlidate = m_rtUpButton;
       }
-      if (m_pOwner->m_dwDnState != CFWL_PartState_Normal &&
-          m_pOwner->IsButtonEnable(FALSE)) {
-        m_pOwner->m_dwDnState = CFWL_PartState_Normal;
-        if (bRepaint) {
-          rtInvlidate.Union(m_pOwner->m_rtDnButton);
-        } else {
-          rtInvlidate = m_pOwner->m_rtDnButton;
-        }
-        bRepaint = TRUE;
-      }
-    }
-    if (!m_pOwner->IsButtonEnable(FALSE)) {
-      m_pOwner->EnableButton(FALSE, FALSE);
-    }
-  } else if (m_pOwner->m_rtDnButton.Contains(pMsg->m_fx, pMsg->m_fy)) {
-    if (m_pOwner->IsButtonEnable(FALSE)) {
-      if (m_pOwner->m_dwDnState != CFWL_PartState_Hovered) {
-        m_pOwner->m_dwDnState = CFWL_PartState_Hovered;
-        bRepaint = TRUE;
-        rtInvlidate = m_pOwner->m_rtDnButton;
-      }
-      if (m_pOwner->m_dwUpState != CFWL_PartState_Normal &&
-          m_pOwner->IsButtonEnable(TRUE)) {
-        m_pOwner->m_dwUpState = CFWL_PartState_Normal;
-        if (bRepaint) {
-          rtInvlidate.Union(m_pOwner->m_rtUpButton);
-        } else {
-          rtInvlidate = m_pOwner->m_rtUpButton;
-        }
+      if (m_dwDnState != CFWL_PartState_Normal && IsButtonEnable(FALSE)) {
+        m_dwDnState = CFWL_PartState_Normal;
+        if (bRepaint)
+          rtInvlidate.Union(m_rtDnButton);
+        else
+          rtInvlidate = m_rtDnButton;
+
         bRepaint = TRUE;
       }
     }
-  } else if (m_pOwner->m_dwUpState != CFWL_PartState_Normal ||
-             m_pOwner->m_dwDnState != CFWL_PartState_Normal) {
-    if (m_pOwner->m_dwUpState != CFWL_PartState_Normal) {
-      m_pOwner->m_dwUpState = CFWL_PartState_Normal;
+    if (!IsButtonEnable(FALSE))
+      EnableButton(FALSE, FALSE);
+
+  } else if (m_rtDnButton.Contains(pMsg->m_fx, pMsg->m_fy)) {
+    if (IsButtonEnable(FALSE)) {
+      if (m_dwDnState != CFWL_PartState_Hovered) {
+        m_dwDnState = CFWL_PartState_Hovered;
+        bRepaint = TRUE;
+        rtInvlidate = m_rtDnButton;
+      }
+      if (m_dwUpState != CFWL_PartState_Normal && IsButtonEnable(TRUE)) {
+        m_dwUpState = CFWL_PartState_Normal;
+        if (bRepaint)
+          rtInvlidate.Union(m_rtUpButton);
+        else
+          rtInvlidate = m_rtUpButton;
+        bRepaint = TRUE;
+      }
+    }
+  } else if (m_dwUpState != CFWL_PartState_Normal ||
+             m_dwDnState != CFWL_PartState_Normal) {
+    if (m_dwUpState != CFWL_PartState_Normal) {
+      m_dwUpState = CFWL_PartState_Normal;
       bRepaint = TRUE;
-      rtInvlidate = m_pOwner->m_rtUpButton;
+      rtInvlidate = m_rtUpButton;
     }
-    if (m_pOwner->m_dwDnState != CFWL_PartState_Normal) {
-      m_pOwner->m_dwDnState = CFWL_PartState_Normal;
-      if (bRepaint) {
-        rtInvlidate.Union(m_pOwner->m_rtDnButton);
-      } else {
-        rtInvlidate = m_pOwner->m_rtDnButton;
-      }
+    if (m_dwDnState != CFWL_PartState_Normal) {
+      m_dwDnState = CFWL_PartState_Normal;
+      if (bRepaint)
+        rtInvlidate.Union(m_rtDnButton);
+      else
+        rtInvlidate = m_rtDnButton;
+
       bRepaint = TRUE;
     }
   }
-  if (bRepaint) {
-    m_pOwner->Repaint(&rtInvlidate);
-  }
+  if (bRepaint)
+    Repaint(&rtInvlidate);
 }
 
-void CFWL_SpinButtonImpDelegate::OnMouseLeave(CFWL_MsgMouse* pMsg) {
+void IFWL_SpinButton::OnMouseLeave(CFWL_MsgMouse* pMsg) {
   if (!pMsg)
     return;
-  if (m_pOwner->m_dwUpState != CFWL_PartState_Normal &&
-      m_pOwner->IsButtonEnable(TRUE)) {
-    m_pOwner->m_dwUpState = CFWL_PartState_Normal;
-  }
-  if (m_pOwner->m_dwDnState != CFWL_PartState_Normal &&
-      m_pOwner->IsButtonEnable(FALSE)) {
-    m_pOwner->m_dwDnState = CFWL_PartState_Normal;
-  }
-  m_pOwner->Repaint(&m_pOwner->m_rtClient);
+  if (m_dwUpState != CFWL_PartState_Normal && IsButtonEnable(TRUE))
+    m_dwUpState = CFWL_PartState_Normal;
+  if (m_dwDnState != CFWL_PartState_Normal && IsButtonEnable(FALSE))
+    m_dwDnState = CFWL_PartState_Normal;
+
+  Repaint(&m_rtClient);
 }
 
-void CFWL_SpinButtonImpDelegate::OnKeyDown(CFWL_MsgKey* pMsg) {
-  if (!m_pOwner->m_pProperties->m_pDataProvider)
+void IFWL_SpinButton::OnKeyDown(CFWL_MsgKey* pMsg) {
+  if (!m_pProperties->m_pDataProvider)
     return;
+
   FX_BOOL bUp =
       pMsg->m_dwKeyCode == FWL_VKEY_Up || pMsg->m_dwKeyCode == FWL_VKEY_Left;
   FX_BOOL bDown =
       pMsg->m_dwKeyCode == FWL_VKEY_Down || pMsg->m_dwKeyCode == FWL_VKEY_Right;
-  if (!bUp && !bDown) {
+  if (!bUp && !bDown)
     return;
-  }
-  FX_BOOL bUpEnable = m_pOwner->IsButtonEnable(TRUE);
-  FX_BOOL bDownEnable = m_pOwner->IsButtonEnable(FALSE);
-  if (!bUpEnable && !bDownEnable) {
+
+  FX_BOOL bUpEnable = IsButtonEnable(TRUE);
+  FX_BOOL bDownEnable = IsButtonEnable(FALSE);
+  if (!bUpEnable && !bDownEnable)
     return;
-  }
+
   CFWL_EvtSpbClick wmPosChanged;
-  wmPosChanged.m_pSrcTarget = m_pOwner;
+  wmPosChanged.m_pSrcTarget = this;
   wmPosChanged.m_bUp = bUpEnable;
-  m_pOwner->DispatchEvent(&wmPosChanged);
-  m_pOwner->Repaint(bUpEnable ? &m_pOwner->m_rtUpButton
-                              : &m_pOwner->m_rtDnButton);
+  DispatchEvent(&wmPosChanged);
+  Repaint(bUpEnable ? &m_rtUpButton : &m_rtDnButton);
 }
 
 IFWL_SpinButton::Timer::Timer(IFWL_SpinButton* pToolTip)

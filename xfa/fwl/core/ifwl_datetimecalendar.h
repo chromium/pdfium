@@ -15,26 +15,17 @@ class IFWL_DateTimeCalendar : public IFWL_MonthCalendar {
                         const CFWL_WidgetImpProperties& properties,
                         IFWL_Widget* pOuter);
 
- protected:
-  friend class CFWL_DateTimeCalendarImpDelegate;
-};
-
-class CFWL_DateTimeCalendarImpDelegate : public CFWL_MonthCalendarImpDelegate {
- public:
-  CFWL_DateTimeCalendarImpDelegate(IFWL_DateTimeCalendar* pOwner);
+  // IFWL_MonthCalendar
   void OnProcessMessage(CFWL_Message* pMessage) override;
 
+ private:
   void OnLButtonDownEx(CFWL_MsgMouse* pMsg);
   void OnLButtonUpEx(CFWL_MsgMouse* pMsg);
   void OnMouseMoveEx(CFWL_MsgMouse* pMsg);
-
- protected:
-  IFWL_DateTimeCalendar* m_pOwner;
-  FX_BOOL m_bFlag;
-
- private:
   void DisForm_OnProcessMessage(CFWL_Message* pMessage);
   void DisForm_OnLButtonUpEx(CFWL_MsgMouse* pMsg);
+
+  FX_BOOL m_bFlag;
 };
 
 #endif  // XFA_FWL_CORE_IFWL_DATETIMECALENDAR_H_

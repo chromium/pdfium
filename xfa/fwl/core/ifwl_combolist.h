@@ -17,6 +17,9 @@ class IFWL_ComboList : public IFWL_ListBox {
                  const CFWL_WidgetImpProperties& properties,
                  IFWL_Widget* pOuter);
 
+  // IFWL_ListBox.
+  void OnProcessMessage(CFWL_Message* pMessage) override;
+
   int32_t MatchItem(const CFX_WideString& wsMatch);
   void ChangeSelected(int32_t iSel);
   int32_t CountItems();
@@ -26,23 +29,15 @@ class IFWL_ComboList : public IFWL_ListBox {
 
   FX_BOOL m_bNotifyOwner;
 
-  friend class CFWL_ComboListImpDelegate;
   friend class IFWL_ComboBox;
-};
 
-class CFWL_ComboListImpDelegate : public CFWL_ListBoxImpDelegate {
- public:
-  CFWL_ComboListImpDelegate(IFWL_ComboList* pOwner);
-  void OnProcessMessage(CFWL_Message* pMessage) override;
-
- protected:
-  void OnDropListFocusChanged(CFWL_Message* pMsg, FX_BOOL bSet = TRUE);
+ private:
+  void OnDropListFocusChanged(CFWL_Message* pMsg, FX_BOOL bSet);
   int32_t OnDropListMouseMove(CFWL_MsgMouse* pMsg);
   int32_t OnDropListLButtonDown(CFWL_MsgMouse* pMsg);
   int32_t OnDropListLButtonUp(CFWL_MsgMouse* pMsg);
   int32_t OnDropListKey(CFWL_MsgKey* pKey);
   void OnDropListKeyDown(CFWL_MsgKey* pKey);
-  IFWL_ComboList* m_pOwner;
 };
 
 #endif  // XFA_FWL_CORE_IFWL_COMBOLIST_H_

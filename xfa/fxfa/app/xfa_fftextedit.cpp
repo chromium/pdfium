@@ -46,8 +46,8 @@ FX_BOOL CXFA_FFTextEdit::LoadWidget() {
   CFWL_NoteDriver* pNoteDriver = pWidget->GetOwnerApp()->GetNoteDriver();
   pNoteDriver->RegisterEventTarget(pWidget, pWidget);
 
-  m_pOldDelegate = m_pNormalWidget->GetCurrentDelegate();
-  m_pNormalWidget->SetCurrentDelegate(this);
+  m_pOldDelegate = m_pNormalWidget->GetDelegate();
+  m_pNormalWidget->SetDelegate(this);
   m_pNormalWidget->LockUpdate();
 
   UpdateWidgetProperty();
@@ -451,8 +451,8 @@ FX_BOOL CXFA_FFNumericEdit::LoadWidget() {
   CFWL_NoteDriver* pNoteDriver = pIWidget->GetOwnerApp()->GetNoteDriver();
   pNoteDriver->RegisterEventTarget(pIWidget, pIWidget);
 
-  m_pOldDelegate = m_pNormalWidget->GetCurrentDelegate();
-  m_pNormalWidget->SetCurrentDelegate(this);
+  m_pOldDelegate = m_pNormalWidget->GetDelegate();
+  m_pNormalWidget->SetDelegate(this);
   m_pNormalWidget->LockUpdate();
 
   CFX_WideString wsText;
@@ -531,8 +531,8 @@ FX_BOOL CXFA_FFPasswordEdit::LoadWidget() {
   CFWL_NoteDriver* pNoteDriver = pIWidget->GetOwnerApp()->GetNoteDriver();
   pNoteDriver->RegisterEventTarget(pIWidget, pIWidget);
 
-  m_pOldDelegate = m_pNormalWidget->GetCurrentDelegate();
-  m_pNormalWidget->SetCurrentDelegate(this);
+  m_pOldDelegate = m_pNormalWidget->GetDelegate();
+  m_pNormalWidget->SetDelegate(this);
   m_pNormalWidget->LockUpdate();
 
   CFX_WideString wsText;
@@ -600,8 +600,8 @@ FX_BOOL CXFA_FFDateTimeEdit::LoadWidget() {
   CFWL_NoteDriver* pNoteDriver = pIWidget->GetOwnerApp()->GetNoteDriver();
   pNoteDriver->RegisterEventTarget(pIWidget, pIWidget);
 
-  m_pOldDelegate = m_pNormalWidget->GetCurrentDelegate();
-  m_pNormalWidget->SetCurrentDelegate(this);
+  m_pOldDelegate = m_pNormalWidget->GetDelegate();
+  m_pNormalWidget->SetDelegate(this);
   m_pNormalWidget->LockUpdate();
 
   CFX_WideString wsText;

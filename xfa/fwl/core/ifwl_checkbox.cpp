@@ -35,8 +35,6 @@ IFWL_CheckBox::IFWL_CheckBox(const IFWL_App* app,
   m_rtBox.Reset();
   m_rtCaption.Reset();
   m_rtFocus.Reset();
-
-  SetDelegate(pdfium::MakeUnique<CFWL_CheckBoxImpDelegate>(this));
 }
 
 IFWL_CheckBox::~IFWL_CheckBox() {}
@@ -392,45 +390,35 @@ void IFWL_CheckBox::NextStates() {
   }
 }
 
-CFWL_CheckBoxImpDelegate::CFWL_CheckBoxImpDelegate(IFWL_CheckBox* pOwner)
-    : m_pOwner(pOwner) {}
-
-void CFWL_CheckBoxImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
+void IFWL_CheckBox::OnProcessMessage(CFWL_Message* pMessage) {
   if (!pMessage)
     return;
 
   switch (pMessage->GetClassID()) {
-    case CFWL_MessageType::Activate: {
+    case CFWL_MessageType::Activate:
       OnActivate(pMessage);
       break;
-    }
-    case CFWL_MessageType::SetFocus: {
+    case CFWL_MessageType::SetFocus:
       OnFocusChanged(pMessage, TRUE);
       break;
-    }
-    case CFWL_MessageType::KillFocus: {
+    case CFWL_MessageType::KillFocus:
       OnFocusChanged(pMessage, FALSE);
       break;
-    }
     case CFWL_MessageType::Mouse: {
       CFWL_MsgMouse* pMsg = static_cast<CFWL_MsgMouse*>(pMessage);
       switch (pMsg->m_dwCmd) {
-        case FWL_MouseCommand::LeftButtonDown: {
+        case FWL_MouseCommand::LeftButtonDown:
           OnLButtonDown(pMsg);
           break;
-        }
-        case FWL_MouseCommand::LeftButtonUp: {
+        case FWL_MouseCommand::LeftButtonUp:
           OnLButtonUp(pMsg);
           break;
-        }
-        case FWL_MouseCommand::Move: {
+        case FWL_MouseCommand::Move:
           OnMouseMove(pMsg);
           break;
-        }
-        case FWL_MouseCommand::Leave: {
+        case FWL_MouseCommand::Leave:
           OnMouseLeave(pMsg);
           break;
-        }
         default:
           break;
       }
@@ -442,112 +430,111 @@ void CFWL_CheckBoxImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
         OnKeyDown(pKey);
       break;
     }
-    default: { break; }
+    default:
+      break;
   }
 
-  CFWL_WidgetImpDelegate::OnProcessMessage(pMessage);
+  IFWL_Widget::OnProcessMessage(pMessage);
 }
 
-void CFWL_CheckBoxImpDelegate::OnDrawWidget(CFX_Graphics* pGraphics,
-                                            const CFX_Matrix* pMatrix) {
-  m_pOwner->DrawWidget(pGraphics, pMatrix);
+void IFWL_CheckBox::OnDrawWidget(CFX_Graphics* pGraphics,
+                                 const CFX_Matrix* pMatrix) {
+  DrawWidget(pGraphics, pMatrix);
 }
 
-void CFWL_CheckBoxImpDelegate::OnActivate(CFWL_Message* pMsg) {
-  m_pOwner->m_pProperties->m_dwStates &= ~FWL_WGTSTATE_Deactivated;
-  m_pOwner->Repaint(&(m_pOwner->m_rtClient));
+void IFWL_CheckBox::OnActivate(CFWL_Message* pMsg) {
+  m_pProperties->m_dwStates &= ~FWL_WGTSTATE_Deactivated;
+  Repaint(&(m_rtClient));
 }
 
-void CFWL_CheckBoxImpDelegate::OnFocusChanged(CFWL_Message* pMsg,
-                                              FX_BOOL bSet) {
-  if (bSet) {
-    m_pOwner->m_pProperties->m_dwStates |= FWL_WGTSTATE_Focused;
-  } else {
-    m_pOwner->m_pProperties->m_dwStates &= ~FWL_WGTSTATE_Focused;
-  }
-  m_pOwner->Repaint(&(m_pOwner->m_rtClient));
+void IFWL_CheckBox::OnFocusChanged(CFWL_Message* pMsg, FX_BOOL bSet) {
+  if (bSet)
+    m_pProperties->m_dwStates |= FWL_WGTSTATE_Focused;
+  else
+    m_pProperties->m_dwStates &= ~FWL_WGTSTATE_Focused;
+
+  Repaint(&(m_rtClient));
 }
 
-void CFWL_CheckBoxImpDelegate::OnLButtonDown(CFWL_MsgMouse* pMsg) {
-  if (m_pOwner->m_pProperties->m_dwStates & FWL_WGTSTATE_Disabled) {
+void IFWL_CheckBox::OnLButtonDown(CFWL_MsgMouse* pMsg) {
+  if (m_pProperties->m_dwStates & FWL_WGTSTATE_Disabled)
     return;
-  }
-  if ((m_pOwner->m_pProperties->m_dwStates & FWL_WGTSTATE_Focused) == 0) {
-    m_pOwner->SetFocus(TRUE);
-  }
-  m_pOwner->m_bBtnDown = TRUE;
-  m_pOwner->m_pProperties->m_dwStates &= ~FWL_STATE_CKB_Hovered;
-  m_pOwner->m_pProperties->m_dwStates |= FWL_STATE_CKB_Pressed;
-  m_pOwner->Repaint(&(m_pOwner->m_rtClient));
+  if ((m_pProperties->m_dwStates & FWL_WGTSTATE_Focused) == 0)
+    SetFocus(TRUE);
+
+  m_bBtnDown = TRUE;
+  m_pProperties->m_dwStates &= ~FWL_STATE_CKB_Hovered;
+  m_pProperties->m_dwStates |= FWL_STATE_CKB_Pressed;
+  Repaint(&(m_rtClient));
 }
 
-void CFWL_CheckBoxImpDelegate::OnLButtonUp(CFWL_MsgMouse* pMsg) {
-  if (!m_pOwner->m_bBtnDown) {
+void IFWL_CheckBox::OnLButtonUp(CFWL_MsgMouse* pMsg) {
+  if (!m_bBtnDown)
     return;
-  }
-  m_pOwner->m_bBtnDown = FALSE;
-  if (!m_pOwner->m_rtClient.Contains(pMsg->m_fx, pMsg->m_fy)) {
+
+  m_bBtnDown = FALSE;
+  if (!m_rtClient.Contains(pMsg->m_fx, pMsg->m_fy))
     return;
-  }
-  m_pOwner->m_pProperties->m_dwStates |= FWL_STATE_CKB_Hovered;
-  m_pOwner->m_pProperties->m_dwStates &= ~FWL_STATE_CKB_Pressed;
-  m_pOwner->NextStates();
+
+  m_pProperties->m_dwStates |= FWL_STATE_CKB_Hovered;
+  m_pProperties->m_dwStates &= ~FWL_STATE_CKB_Pressed;
+  NextStates();
 }
 
-void CFWL_CheckBoxImpDelegate::OnMouseMove(CFWL_MsgMouse* pMsg) {
-  if (m_pOwner->m_pProperties->m_dwStates & FWL_WGTSTATE_Disabled) {
+void IFWL_CheckBox::OnMouseMove(CFWL_MsgMouse* pMsg) {
+  if (m_pProperties->m_dwStates & FWL_WGTSTATE_Disabled)
     return;
-  }
+
   FX_BOOL bRepaint = FALSE;
-  if (m_pOwner->m_bBtnDown) {
-    if (m_pOwner->m_rtClient.Contains(pMsg->m_fx, pMsg->m_fy)) {
-      if ((m_pOwner->m_pProperties->m_dwStates & FWL_STATE_CKB_Pressed) == 0) {
+  if (m_bBtnDown) {
+    if (m_rtClient.Contains(pMsg->m_fx, pMsg->m_fy)) {
+      if ((m_pProperties->m_dwStates & FWL_STATE_CKB_Pressed) == 0) {
         bRepaint = TRUE;
-        m_pOwner->m_pProperties->m_dwStates |= FWL_STATE_CKB_Pressed;
+        m_pProperties->m_dwStates |= FWL_STATE_CKB_Pressed;
       }
-      if ((m_pOwner->m_pProperties->m_dwStates & FWL_STATE_CKB_Hovered)) {
+      if ((m_pProperties->m_dwStates & FWL_STATE_CKB_Hovered)) {
         bRepaint = TRUE;
-        m_pOwner->m_pProperties->m_dwStates &= ~FWL_STATE_CKB_Hovered;
+        m_pProperties->m_dwStates &= ~FWL_STATE_CKB_Hovered;
       }
     } else {
-      if (m_pOwner->m_pProperties->m_dwStates & FWL_STATE_CKB_Pressed) {
+      if (m_pProperties->m_dwStates & FWL_STATE_CKB_Pressed) {
         bRepaint = TRUE;
-        m_pOwner->m_pProperties->m_dwStates &= ~FWL_STATE_CKB_Pressed;
+        m_pProperties->m_dwStates &= ~FWL_STATE_CKB_Pressed;
       }
-      if ((m_pOwner->m_pProperties->m_dwStates & FWL_STATE_CKB_Hovered) == 0) {
+      if ((m_pProperties->m_dwStates & FWL_STATE_CKB_Hovered) == 0) {
         bRepaint = TRUE;
-        m_pOwner->m_pProperties->m_dwStates |= FWL_STATE_CKB_Hovered;
+        m_pProperties->m_dwStates |= FWL_STATE_CKB_Hovered;
       }
     }
   } else {
-    if (m_pOwner->m_rtClient.Contains(pMsg->m_fx, pMsg->m_fy)) {
-      if ((m_pOwner->m_pProperties->m_dwStates & FWL_STATE_CKB_Hovered) == 0) {
+    if (m_rtClient.Contains(pMsg->m_fx, pMsg->m_fy)) {
+      if ((m_pProperties->m_dwStates & FWL_STATE_CKB_Hovered) == 0) {
         bRepaint = TRUE;
-        m_pOwner->m_pProperties->m_dwStates |= FWL_STATE_CKB_Hovered;
+        m_pProperties->m_dwStates |= FWL_STATE_CKB_Hovered;
       }
     }
   }
   if (bRepaint) {
-    m_pOwner->Repaint(&(m_pOwner->m_rtBox));
+    Repaint(&(m_rtBox));
   }
 }
 
-void CFWL_CheckBoxImpDelegate::OnMouseLeave(CFWL_MsgMouse* pMsg) {
-  if (m_pOwner->m_bBtnDown) {
-    m_pOwner->m_pProperties->m_dwStates |= FWL_STATE_CKB_Hovered;
-  } else {
-    m_pOwner->m_pProperties->m_dwStates &= ~FWL_STATE_CKB_Hovered;
-  }
-  m_pOwner->Repaint(&(m_pOwner->m_rtBox));
+void IFWL_CheckBox::OnMouseLeave(CFWL_MsgMouse* pMsg) {
+  if (m_bBtnDown)
+    m_pProperties->m_dwStates |= FWL_STATE_CKB_Hovered;
+  else
+    m_pProperties->m_dwStates &= ~FWL_STATE_CKB_Hovered;
+
+  Repaint(&(m_rtBox));
 }
 
-void CFWL_CheckBoxImpDelegate::OnKeyDown(CFWL_MsgKey* pMsg) {
+void IFWL_CheckBox::OnKeyDown(CFWL_MsgKey* pMsg) {
   if (pMsg->m_dwKeyCode == FWL_VKEY_Tab) {
-    m_pOwner->DispatchKeyEvent(pMsg);
+    DispatchKeyEvent(pMsg);
     return;
   }
   if (pMsg->m_dwKeyCode == FWL_VKEY_Return ||
       pMsg->m_dwKeyCode == FWL_VKEY_Space) {
-    m_pOwner->NextStates();
+    NextStates();
   }
 }

@@ -94,11 +94,9 @@ FWL_EVENT_DEF(CFWL_EvtEdtGetSuggestWords,
 class CFWL_WidgetImpProperties;
 class IFDE_TxtEdtDoRecord;
 class IFWL_Edit;
-class CFWL_EditImpDelegate;
 class CFWL_MsgActivate;
 class CFWL_MsgDeactivate;
 class CFWL_MsgMouse;
-class CFWL_WidgetImpDelegate;
 class CFWL_WidgetImpProperties;
 class IFWL_Caret;
 
@@ -121,6 +119,10 @@ class IFWL_Edit : public IFWL_Widget {
   FWL_Error DrawWidget(CFX_Graphics* pGraphics,
                        const CFX_Matrix* pMatrix = nullptr) override;
   FWL_Error SetThemeProvider(IFWL_ThemeProvider* pThemeProvider) override;
+  void OnProcessMessage(CFWL_Message* pMessage) override;
+  void OnProcessEvent(CFWL_Event* pEvent) override;
+  void OnDrawWidget(CFX_Graphics* pGraphics,
+                    const CFX_Matrix* pMatrix) override;
 
   virtual FWL_Error SetText(const CFX_WideString& wsText);
   virtual int32_t GetTextLength() const;
@@ -184,7 +186,6 @@ class IFWL_Edit : public IFWL_Widget {
 
  protected:
   friend class CFWL_TxtEdtEventSink;
-  friend class CFWL_EditImpDelegate;
 
   void DrawTextBk(CFX_Graphics* pGraphics,
                   IFWL_ThemeProvider* pTheme,
@@ -250,21 +251,12 @@ class IFWL_Edit : public IFWL_Widget {
   std::deque<std::unique_ptr<IFDE_TxtEdtDoRecord>> m_DoRecords;
   int32_t m_iCurRecord;
   int32_t m_iMaxRecord;
-};
 
-class CFWL_EditImpDelegate : public CFWL_WidgetImpDelegate {
- public:
-  CFWL_EditImpDelegate(IFWL_Edit* pOwner);
-  void OnProcessMessage(CFWL_Message* pMessage) override;
-  void OnProcessEvent(CFWL_Event* pEvent) override;
-  void OnDrawWidget(CFX_Graphics* pGraphics,
-                    const CFX_Matrix* pMatrix = nullptr) override;
-
- protected:
+ private:
   void DoActivate(CFWL_MsgActivate* pMsg);
   void DoDeactivate(CFWL_MsgDeactivate* pMsg);
   void DoButtonDown(CFWL_MsgMouse* pMsg);
-  void OnFocusChanged(CFWL_Message* pMsg, FX_BOOL bSet = TRUE);
+  void OnFocusChanged(CFWL_Message* pMsg, FX_BOOL bSet);
   void OnLButtonDown(CFWL_MsgMouse* pMsg);
   void OnLButtonUp(CFWL_MsgMouse* pMsg);
   void OnButtonDblClk(CFWL_MsgMouse* pMsg);
@@ -272,8 +264,6 @@ class CFWL_EditImpDelegate : public CFWL_WidgetImpDelegate {
   void OnKeyDown(CFWL_MsgKey* pMsg);
   void OnChar(CFWL_MsgKey* pMsg);
   FX_BOOL OnScroll(IFWL_ScrollBar* pScrollBar, uint32_t dwCode, FX_FLOAT fPos);
-  void DoCursor(CFWL_MsgMouse* pMsg);
-  IFWL_Edit* m_pOwner;
 };
 
 #endif  // XFA_FWL_CORE_IFWL_EDIT_H_

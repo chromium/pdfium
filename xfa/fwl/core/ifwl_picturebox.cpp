@@ -19,8 +19,6 @@ IFWL_PictureBox::IFWL_PictureBox(const IFWL_App* app,
   m_rtClient.Reset();
   m_rtImage.Reset();
   m_matrix.SetIdentity();
-
-  SetDelegate(pdfium::MakeUnique<CFWL_PictureBoxImpDelegate>(this));
 }
 
 IFWL_PictureBox::~IFWL_PictureBox() {}
@@ -119,10 +117,7 @@ bool IFWL_PictureBox::VStyle(uint32_t dwStyle) {
   return false;
 }
 
-CFWL_PictureBoxImpDelegate::CFWL_PictureBoxImpDelegate(IFWL_PictureBox* pOwner)
-    : m_pOwner(pOwner) {}
-
-void CFWL_PictureBoxImpDelegate::OnDrawWidget(CFX_Graphics* pGraphics,
-                                              const CFX_Matrix* pMatrix) {
-  m_pOwner->DrawWidget(pGraphics, pMatrix);
+void IFWL_PictureBox::OnDrawWidget(CFX_Graphics* pGraphics,
+                                   const CFX_Matrix* pMatrix) {
+  DrawWidget(pGraphics, pMatrix);
 }

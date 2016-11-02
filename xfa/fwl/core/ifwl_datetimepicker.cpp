@@ -35,8 +35,6 @@ IFWL_DateTimePicker::IFWL_DateTimePicker(
       m_bLBtnDown(FALSE) {
   m_rtBtn.Set(0, 0, 0, 0);
 
-  SetDelegate(pdfium::MakeUnique<CFWL_DateTimePickerImpDelegate>(this));
-
   m_pProperties->m_dwStyleExes = FWL_STYLEEXT_DTP_ShortDateFormat;
   CFWL_WidgetImpProperties propMonth;
   propMonth.m_dwStyles = FWL_WGTSTYLE_Popup | FWL_WGTSTYLE_Border;
@@ -520,7 +518,7 @@ void IFWL_DateTimePicker::DisForm_ShowMonthCalendar(FX_BOOL bActivate) {
     CFWL_MsgSetFocus msg;
     msg.m_pDstTarget = m_pMonthCal.get();
     msg.m_pSrcTarget = m_pEdit.get();
-    m_pEdit->GetCurrentDelegate()->OnProcessMessage(&msg);
+    m_pEdit->GetDelegate()->OnProcessMessage(&msg);
   }
   CFX_RectF rtInvalidate, rtCal;
   rtInvalidate.Set(0, 0, m_pProperties->m_rtWidget.width,
@@ -643,50 +641,40 @@ FWL_Error IFWL_DateTimePicker::DisForm_DrawWidget(CFX_Graphics* pGraphics,
   return FWL_Error::Succeeded;
 }
 
-CFWL_DateTimePickerImpDelegate::CFWL_DateTimePickerImpDelegate(
-    IFWL_DateTimePicker* pOwner)
-    : m_pOwner(pOwner) {}
-
-void CFWL_DateTimePickerImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
+void IFWL_DateTimePicker::OnProcessMessage(CFWL_Message* pMessage) {
   if (!pMessage)
     return;
 
   switch (pMessage->GetClassID()) {
-    case CFWL_MessageType::SetFocus: {
+    case CFWL_MessageType::SetFocus:
       OnFocusChanged(pMessage, TRUE);
       break;
-    }
-    case CFWL_MessageType::KillFocus: {
+    case CFWL_MessageType::KillFocus:
       OnFocusChanged(pMessage, FALSE);
       break;
-    }
     case CFWL_MessageType::Mouse: {
       CFWL_MsgMouse* pMouse = static_cast<CFWL_MsgMouse*>(pMessage);
       switch (pMouse->m_dwCmd) {
-        case FWL_MouseCommand::LeftButtonDown: {
+        case FWL_MouseCommand::LeftButtonDown:
           OnLButtonDown(pMouse);
           break;
-        }
-        case FWL_MouseCommand::LeftButtonUp: {
+        case FWL_MouseCommand::LeftButtonUp:
           OnLButtonUp(pMouse);
           break;
-        }
-        case FWL_MouseCommand::Move: {
+        case FWL_MouseCommand::Move:
           OnMouseMove(pMouse);
           break;
-        }
-        case FWL_MouseCommand::Leave: {
+        case FWL_MouseCommand::Leave:
           OnMouseLeave(pMouse);
           break;
-        }
         default:
           break;
       }
       break;
     }
     case CFWL_MessageType::Key: {
-      if (m_pOwner->m_pEdit->GetStates() & FWL_WGTSTATE_Focused) {
-        m_pOwner->m_pEdit->GetCurrentDelegate()->OnProcessMessage(pMessage);
+      if (m_pEdit->GetStates() & FWL_WGTSTATE_Focused) {
+        m_pEdit->GetDelegate()->OnProcessMessage(pMessage);
         return;
       }
       break;
@@ -695,114 +683,105 @@ void CFWL_DateTimePickerImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
       break;
   }
 
-  CFWL_WidgetImpDelegate::OnProcessMessage(pMessage);
+  IFWL_Widget::OnProcessMessage(pMessage);
 }
 
-void CFWL_DateTimePickerImpDelegate::OnDrawWidget(CFX_Graphics* pGraphics,
-                                                  const CFX_Matrix* pMatrix) {
-  m_pOwner->DrawWidget(pGraphics, pMatrix);
+void IFWL_DateTimePicker::OnDrawWidget(CFX_Graphics* pGraphics,
+                                       const CFX_Matrix* pMatrix) {
+  DrawWidget(pGraphics, pMatrix);
 }
 
-void CFWL_DateTimePickerImpDelegate::OnFocusChanged(CFWL_Message* pMsg,
-                                                    FX_BOOL bSet) {
+void IFWL_DateTimePicker::OnFocusChanged(CFWL_Message* pMsg, FX_BOOL bSet) {
   if (!pMsg)
     return;
-  if (m_pOwner->m_pWidgetMgr->IsFormDisabled()) {
+  if (m_pWidgetMgr->IsFormDisabled())
     return DisForm_OnFocusChanged(pMsg, bSet);
-  }
+
   if (bSet) {
-    m_pOwner->m_pProperties->m_dwStates |= (FWL_WGTSTATE_Focused);
-    m_pOwner->Repaint(&m_pOwner->m_rtClient);
+    m_pProperties->m_dwStates |= (FWL_WGTSTATE_Focused);
+    Repaint(&m_rtClient);
   } else {
-    m_pOwner->m_pProperties->m_dwStates &= ~(FWL_WGTSTATE_Focused);
-    m_pOwner->Repaint(&m_pOwner->m_rtClient);
+    m_pProperties->m_dwStates &= ~(FWL_WGTSTATE_Focused);
+    Repaint(&m_rtClient);
   }
-  if (pMsg->m_pSrcTarget == m_pOwner->m_pMonthCal.get() &&
-      m_pOwner->IsMonthCalendarShowed()) {
-    m_pOwner->ShowMonthCalendar(FALSE);
+  if (pMsg->m_pSrcTarget == m_pMonthCal.get() && IsMonthCalendarShowed()) {
+    ShowMonthCalendar(FALSE);
   }
-  m_pOwner->Repaint(&m_pOwner->m_rtClient);
+  Repaint(&m_rtClient);
 }
 
-void CFWL_DateTimePickerImpDelegate::OnLButtonDown(CFWL_MsgMouse* pMsg) {
+void IFWL_DateTimePicker::OnLButtonDown(CFWL_MsgMouse* pMsg) {
   if (!pMsg)
     return;
-  if ((m_pOwner->m_pProperties->m_dwStates & FWL_WGTSTATE_Focused) == 0) {
-    m_pOwner->SetFocus(TRUE);
-  }
-  if (m_pOwner->m_rtBtn.Contains(pMsg->m_fx, pMsg->m_fy)) {
-    if (m_pOwner->IsMonthCalendarShowed()) {
-      m_pOwner->ShowMonthCalendar(FALSE);
+  if ((m_pProperties->m_dwStates & FWL_WGTSTATE_Focused) == 0)
+    SetFocus(TRUE);
+  if (m_rtBtn.Contains(pMsg->m_fx, pMsg->m_fy)) {
+    if (IsMonthCalendarShowed()) {
+      ShowMonthCalendar(FALSE);
       CFWL_Event_DtpCloseUp ev;
-      m_pOwner->DispatchEvent(&ev);
+      DispatchEvent(&ev);
     } else {
-      if (!(m_pOwner->m_pProperties->m_dwStyleExes &
-            FWL_STYLEEXT_DTP_TimeFormat)) {
-        m_pOwner->ShowMonthCalendar(TRUE);
+      if (!(m_pProperties->m_dwStyleExes & FWL_STYLEEXT_DTP_TimeFormat)) {
+        ShowMonthCalendar(TRUE);
         CFWL_Event_DtpDropDown ev;
-        m_pOwner->DispatchEvent(&ev);
-      } else {
+        DispatchEvent(&ev);
       }
-      m_pOwner->m_bLBtnDown = TRUE;
-      m_pOwner->Repaint(&m_pOwner->m_rtClient);
+      m_bLBtnDown = TRUE;
+      Repaint(&m_rtClient);
     }
   }
 }
 
-void CFWL_DateTimePickerImpDelegate::OnLButtonUp(CFWL_MsgMouse* pMsg) {
+void IFWL_DateTimePicker::OnLButtonUp(CFWL_MsgMouse* pMsg) {
   if (!pMsg)
     return;
-  m_pOwner->m_bLBtnDown = FALSE;
-  if (m_pOwner->m_rtBtn.Contains(pMsg->m_fx, pMsg->m_fy)) {
-    m_pOwner->m_iBtnState = CFWL_PartState_Hovered;
-  } else {
-    m_pOwner->m_iBtnState = CFWL_PartState_Normal;
-  }
-  m_pOwner->Repaint(&m_pOwner->m_rtBtn);
+
+  m_bLBtnDown = FALSE;
+  if (m_rtBtn.Contains(pMsg->m_fx, pMsg->m_fy))
+    m_iBtnState = CFWL_PartState_Hovered;
+  else
+    m_iBtnState = CFWL_PartState_Normal;
+  Repaint(&m_rtBtn);
 }
 
-void CFWL_DateTimePickerImpDelegate::OnMouseMove(CFWL_MsgMouse* pMsg) {
-  if (m_pOwner->m_rtBtn.Contains(pMsg->m_fx, pMsg->m_fy)) {
-  } else {
-    m_pOwner->m_iBtnState = CFWL_PartState_Normal;
-  }
-  m_pOwner->Repaint(&m_pOwner->m_rtBtn);
+void IFWL_DateTimePicker::OnMouseMove(CFWL_MsgMouse* pMsg) {
+  if (!m_rtBtn.Contains(pMsg->m_fx, pMsg->m_fy))
+    m_iBtnState = CFWL_PartState_Normal;
+
+  Repaint(&m_rtBtn);
 }
 
-void CFWL_DateTimePickerImpDelegate::OnMouseLeave(CFWL_MsgMouse* pMsg) {
+void IFWL_DateTimePicker::OnMouseLeave(CFWL_MsgMouse* pMsg) {
   if (!pMsg)
     return;
-  m_pOwner->m_iBtnState = CFWL_PartState_Normal;
-  m_pOwner->Repaint(&m_pOwner->m_rtBtn);
+  m_iBtnState = CFWL_PartState_Normal;
+  Repaint(&m_rtBtn);
 }
 
-void CFWL_DateTimePickerImpDelegate::DisForm_OnFocusChanged(CFWL_Message* pMsg,
-                                                            FX_BOOL bSet) {
-  CFX_RectF rtInvalidate(m_pOwner->m_rtBtn);
+void IFWL_DateTimePicker::DisForm_OnFocusChanged(CFWL_Message* pMsg,
+                                                 FX_BOOL bSet) {
+  CFX_RectF rtInvalidate(m_rtBtn);
   if (bSet) {
-    m_pOwner->m_pProperties->m_dwStates |= FWL_WGTSTATE_Focused;
-    if (m_pOwner->m_pEdit &&
-        !(m_pOwner->m_pEdit->GetStylesEx() & FWL_STYLEEXT_EDT_ReadOnly)) {
-      m_pOwner->m_rtBtn.Set(m_pOwner->m_pProperties->m_rtWidget.width, 0,
-                            m_pOwner->m_fBtn,
-                            m_pOwner->m_pProperties->m_rtWidget.height - 1);
+    m_pProperties->m_dwStates |= FWL_WGTSTATE_Focused;
+    if (m_pEdit && !(m_pEdit->GetStylesEx() & FWL_STYLEEXT_EDT_ReadOnly)) {
+      m_rtBtn.Set(m_pProperties->m_rtWidget.width, 0, m_fBtn,
+                  m_pProperties->m_rtWidget.height - 1);
     }
-    rtInvalidate = m_pOwner->m_rtBtn;
-    pMsg->m_pDstTarget = m_pOwner->m_pEdit.get();
-    m_pOwner->m_pEdit->GetCurrentDelegate()->OnProcessMessage(pMsg);
+    rtInvalidate = m_rtBtn;
+    pMsg->m_pDstTarget = m_pEdit.get();
+    m_pEdit->GetDelegate()->OnProcessMessage(pMsg);
   } else {
-    m_pOwner->m_pProperties->m_dwStates &= ~FWL_WGTSTATE_Focused;
-    m_pOwner->m_rtBtn.Set(0, 0, 0, 0);
-    if (m_pOwner->DisForm_IsMonthCalendarShowed()) {
-      m_pOwner->ShowMonthCalendar(FALSE);
-    }
-    if (m_pOwner->m_pEdit->GetStates() & FWL_WGTSTATE_Focused) {
-      pMsg->m_pSrcTarget = m_pOwner->m_pEdit.get();
-      m_pOwner->m_pEdit->GetCurrentDelegate()->OnProcessMessage(pMsg);
+    m_pProperties->m_dwStates &= ~FWL_WGTSTATE_Focused;
+    m_rtBtn.Set(0, 0, 0, 0);
+    if (DisForm_IsMonthCalendarShowed())
+      ShowMonthCalendar(FALSE);
+    if (m_pEdit->GetStates() & FWL_WGTSTATE_Focused) {
+      pMsg->m_pSrcTarget = m_pEdit.get();
+      m_pEdit->GetDelegate()->OnProcessMessage(pMsg);
     }
   }
   rtInvalidate.Inflate(2, 2);
-  m_pOwner->Repaint(&rtInvalidate);
+  Repaint(&rtInvalidate);
 }
 
 IFWL_DateTimePicker::CFWL_MonthCalendarImpDP::CFWL_MonthCalendarImpDP() {

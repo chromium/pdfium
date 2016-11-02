@@ -62,9 +62,9 @@ class IFWL_ThemeProvider;
 class IFWL_Widget;
 enum class FWL_Type;
 
-class IFWL_Widget {
+class IFWL_Widget : public IFWL_WidgetDelegate {
  public:
-  virtual ~IFWL_Widget();
+  ~IFWL_Widget() override;
 
   virtual FWL_Type GetClassID() const = 0;
   virtual FX_BOOL IsInstance(const CFX_WideStringC& wsClass) const;
@@ -112,8 +112,19 @@ class IFWL_Widget {
   virtual IFWL_ThemeProvider* GetThemeProvider();
   virtual FWL_Error SetThemeProvider(IFWL_ThemeProvider* pThemeProvider);
 
-  IFWL_WidgetDelegate* GetCurrentDelegate();
-  void SetCurrentDelegate(IFWL_WidgetDelegate* pDelegate);
+  void SetDelegate(IFWL_WidgetDelegate* delegate) { m_pDelegate = delegate; }
+  IFWL_WidgetDelegate* GetDelegate() {
+    return m_pDelegate ? m_pDelegate : this;
+  }
+  const IFWL_WidgetDelegate* GetDelegate() const {
+    return m_pDelegate ? m_pDelegate : this;
+  }
+
+  // IFWL_WidgetDelegate.
+  void OnProcessMessage(CFWL_Message* pMessage) override;
+  void OnProcessEvent(CFWL_Event* pEvent) override;
+  void OnDrawWidget(CFX_Graphics* pGraphics,
+                    const CFX_Matrix* pMatrix = nullptr) override;
 
   const IFWL_App* GetOwnerApp() const;
 
@@ -126,6 +137,9 @@ class IFWL_Widget {
   void SetLayoutItem(void* pItem);
 
   void SetAssociateWidget(CFWL_Widget* pAssociate);
+
+  void SetFocus(FX_BOOL bFocus);
+  void Repaint(const CFX_RectF* pRect = nullptr);
 
  protected:
   friend class CFWL_WidgetImpDelegate;
@@ -160,7 +174,6 @@ class IFWL_Widget {
                     uint32_t dwTTOStyles,
                     int32_t iTTOAlign,
                     CFX_RectF& rect);
-  void SetFocus(FX_BOOL bFocus);
   void SetGrab(FX_BOOL bSet);
   FX_BOOL GetPopupPos(FX_FLOAT fMinHeight,
                       FX_FLOAT fMaxHeight,
@@ -184,7 +197,6 @@ class IFWL_Widget {
   void UnregisterEventTarget();
   void DispatchKeyEvent(CFWL_MsgKey* pNote);
   void DispatchEvent(CFWL_Event* pEvent);
-  void Repaint(const CFX_RectF* pRect = nullptr);
   void DrawBackground(CFX_Graphics* pGraphics,
                       CFWL_Part iPartBk,
                       IFWL_ThemeProvider* pTheme,
@@ -201,15 +213,9 @@ class IFWL_Widget {
 
   FX_BOOL IsParent(IFWL_Widget* pParent);
 
-  void SetDelegate(std::unique_ptr<IFWL_WidgetDelegate> delegate) {
-    m_pDelegate = std::move(delegate);
-  }
-  IFWL_WidgetDelegate* GetDelegate() const { return m_pDelegate.get(); }
-
   const IFWL_App* const m_pOwnerApp;
   CFWL_WidgetMgr* const m_pWidgetMgr;
   std::unique_ptr<CFWL_WidgetImpProperties> m_pProperties;
-  IFWL_WidgetDelegate* m_pCurDelegate;  // Not owned.
   IFWL_Widget* m_pOuter;
   void* m_pLayoutItem;
   CFWL_Widget* m_pAssociate;
@@ -217,17 +223,7 @@ class IFWL_Widget {
   uint32_t m_nEventKey;
 
  private:
-  std::unique_ptr<IFWL_WidgetDelegate> m_pDelegate;
-};
-
-class CFWL_WidgetImpDelegate : public IFWL_WidgetDelegate {
- public:
-  CFWL_WidgetImpDelegate();
-  ~CFWL_WidgetImpDelegate() override {}
-  void OnProcessMessage(CFWL_Message* pMessage) override;
-  void OnProcessEvent(CFWL_Event* pEvent) override;
-  void OnDrawWidget(CFX_Graphics* pGraphics,
-                    const CFX_Matrix* pMatrix = nullptr) override;
+  IFWL_WidgetDelegate* m_pDelegate;  // Not owned.
 };
 
 #endif  // XFA_FWL_CORE_IFWL_WIDGET_H_

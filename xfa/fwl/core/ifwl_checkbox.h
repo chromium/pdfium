@@ -43,7 +43,6 @@
 #define FWL_STATE_CKB_Neutral (2 << (FWL_WGTSTATE_MAX + 2))
 #define FWL_STATE_CKB_CheckMask (3L << (FWL_WGTSTATE_MAX + 2))
 
-class CFWL_CheckBoxImpDelegate;
 class CFWL_MsgMouse;
 class CFWL_WidgetImpProperties;
 class IFWL_Widget;
@@ -67,12 +66,15 @@ class IFWL_CheckBox : public IFWL_Widget {
   FWL_Error Update() override;
   FWL_Error DrawWidget(CFX_Graphics* pGraphics,
                        const CFX_Matrix* pMatrix = nullptr) override;
+
+  void OnProcessMessage(CFWL_Message* pMessage) override;
+  void OnDrawWidget(CFX_Graphics* pGraphics,
+                    const CFX_Matrix* pMatrix) override;
+
   int32_t GetCheckState();
   FWL_Error SetCheckState(int32_t iCheck);
 
  protected:
-  friend class CFWL_CheckBoxImpDelegate;
-
   void Layout();
   uint32_t GetPartStates();
   void UpdateTextOutStyles();
@@ -85,26 +87,15 @@ class IFWL_CheckBox : public IFWL_Widget {
   uint32_t m_dwTTOStyles;
   int32_t m_iTTOAlign;
   FX_BOOL m_bBtnDown;
-};
 
-class CFWL_CheckBoxImpDelegate : public CFWL_WidgetImpDelegate {
- public:
-  CFWL_CheckBoxImpDelegate(IFWL_CheckBox* pOwner);
-
-  void OnProcessMessage(CFWL_Message* pMessage) override;
-  void OnDrawWidget(CFX_Graphics* pGraphics,
-                    const CFX_Matrix* pMatrix = nullptr) override;
-
- protected:
+ private:
   void OnActivate(CFWL_Message* pMsg);
-  void OnFocusChanged(CFWL_Message* pMsg, FX_BOOL bSet = TRUE);
+  void OnFocusChanged(CFWL_Message* pMsg, FX_BOOL bSet);
   void OnLButtonDown(CFWL_MsgMouse* pMsg);
   void OnLButtonUp(CFWL_MsgMouse* pMsg);
   void OnMouseMove(CFWL_MsgMouse* pMsg);
   void OnMouseLeave(CFWL_MsgMouse* pMsg);
   void OnKeyDown(CFWL_MsgKey* pMsg);
-
-  IFWL_CheckBox* m_pOwner;
 };
 
 #endif  // XFA_FWL_CORE_IFWL_CHECKBOX_H_

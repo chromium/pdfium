@@ -30,12 +30,12 @@ IFWL_Widget::IFWL_Widget(const IFWL_App* app,
     : m_pOwnerApp(app),
       m_pWidgetMgr(app->GetWidgetMgr()),
       m_pProperties(new CFWL_WidgetImpProperties(properties)),
-      m_pCurDelegate(nullptr),
       m_pOuter(pOuter),
       m_pLayoutItem(nullptr),
       m_pAssociate(nullptr),
       m_iLock(0),
-      m_nEventKey(0) {
+      m_nEventKey(0),
+      m_pDelegate(nullptr) {
   ASSERT(m_pWidgetMgr);
 
   IFWL_Widget* pParent = m_pProperties->m_pParent;
@@ -97,7 +97,7 @@ FWL_Error IFWL_Widget::SetWidgetRect(const CFX_RectF& rect) {
       ev.m_rtOld = rtOld;
       ev.m_rtNew = rect;
 
-      if (IFWL_WidgetDelegate* pDelegate = GetCurrentDelegate())
+      if (IFWL_WidgetDelegate* pDelegate = GetDelegate())
         pDelegate->OnProcessEvent(&ev);
     }
     return FWL_Error::Succeeded;
@@ -346,16 +346,6 @@ IFWL_ThemeProvider* IFWL_Widget::GetThemeProvider() {
 FWL_Error IFWL_Widget::SetThemeProvider(IFWL_ThemeProvider* pThemeProvider) {
   m_pProperties->m_pThemeProvider = pThemeProvider;
   return FWL_Error::Succeeded;
-}
-
-IFWL_WidgetDelegate* IFWL_Widget::GetCurrentDelegate() {
-  if (!m_pCurDelegate)
-    m_pCurDelegate = m_pDelegate.get();
-  return m_pCurDelegate;
-}
-
-void IFWL_Widget::SetCurrentDelegate(IFWL_WidgetDelegate* pDelegate) {
-  m_pCurDelegate = pDelegate;
 }
 
 const IFWL_App* IFWL_Widget::GetOwnerApp() const {
@@ -720,7 +710,7 @@ void IFWL_Widget::DispatchKeyEvent(CFWL_MsgKey* pNote) {
 
 void IFWL_Widget::DispatchEvent(CFWL_Event* pEvent) {
   if (m_pOuter) {
-    m_pOuter->GetCurrentDelegate()->OnProcessEvent(pEvent);
+    m_pOuter->GetDelegate()->OnProcessEvent(pEvent);
     return;
   }
   const IFWL_App* pApp = GetOwnerApp();
@@ -838,9 +828,7 @@ FX_BOOL IFWL_Widget::IsParent(IFWL_Widget* pParent) {
   return FALSE;
 }
 
-CFWL_WidgetImpDelegate::CFWL_WidgetImpDelegate() {}
-
-void CFWL_WidgetImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
+void IFWL_Widget::OnProcessMessage(CFWL_Message* pMessage) {
   if (!pMessage->m_pDstTarget)
     return;
 
@@ -908,10 +896,7 @@ void CFWL_WidgetImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
   }
 }
 
-void CFWL_WidgetImpDelegate::OnProcessEvent(CFWL_Event* pEvent) {}
+void IFWL_Widget::OnProcessEvent(CFWL_Event* pEvent) {}
 
-void CFWL_WidgetImpDelegate::OnDrawWidget(CFX_Graphics* pGraphics,
-                                          const CFX_Matrix* pMatrix) {
-  CFWL_EvtDraw evt;
-  evt.m_pGraphics = pGraphics;
-}
+void IFWL_Widget::OnDrawWidget(CFX_Graphics* pGraphics,
+                               const CFX_Matrix* pMatrix) {}

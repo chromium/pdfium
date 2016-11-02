@@ -51,8 +51,8 @@ class CFWL_Widget {
   FWL_Error DrawWidget(CFX_Graphics* pGraphics,
                        const CFX_Matrix* pMatrix = nullptr);
 
-  IFWL_WidgetDelegate* GetCurrentDelegate();
-  void SetCurrentDelegate(IFWL_WidgetDelegate*);
+  IFWL_WidgetDelegate* GetDelegate() const;
+  void SetDelegate(IFWL_WidgetDelegate*);
 
  protected:
   void Initialize();

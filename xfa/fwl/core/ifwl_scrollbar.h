@@ -14,7 +14,6 @@
 #include "xfa/fwl/core/ifwl_timer.h"
 #include "xfa/fwl/core/ifwl_widget.h"
 
-class CFWL_ScrollBarImpDelegate;
 class CFWL_WidgetImpProperties;
 class IFWL_Widget;
 
@@ -49,6 +48,9 @@ class IFWL_ScrollBar : public IFWL_Widget {
   FWL_Error Update() override;
   FWL_Error DrawWidget(CFX_Graphics* pGraphics,
                        const CFX_Matrix* pMatrix = nullptr) override;
+  void OnProcessMessage(CFWL_Message* pMessage) override;
+  void OnDrawWidget(CFX_Graphics* pGraphics,
+                    const CFX_Matrix* pMatrix) override;
 
   FX_BOOL IsVertical();
   FWL_Error GetRange(FX_FLOAT& fMin, FX_FLOAT& fMax);
@@ -65,8 +67,6 @@ class IFWL_ScrollBar : public IFWL_Widget {
   FWL_Error SetOuter(IFWL_Widget* pOuter);
 
  protected:
-  friend class CFWL_ScrollBarImpDelegate;
-
   class Timer : public IFWL_Timer {
    public:
     explicit Timer(IFWL_ScrollBar* pToolTip);
@@ -131,16 +131,8 @@ class IFWL_ScrollBar : public IFWL_Widget {
   bool m_bCustomLayout;
   FX_FLOAT m_fMinThumb;
   IFWL_ScrollBar::Timer m_Timer;
-};
 
-class CFWL_ScrollBarImpDelegate : public CFWL_WidgetImpDelegate {
- public:
-  CFWL_ScrollBarImpDelegate(IFWL_ScrollBar* pOwner);
-  void OnProcessMessage(CFWL_Message* pMessage) override;
-  void OnDrawWidget(CFX_Graphics* pGraphics,
-                    const CFX_Matrix* pMatrix = nullptr) override;
-
- protected:
+ private:
   void OnLButtonDown(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy);
   void OnLButtonUp(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy);
   void OnMouseMove(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy);
@@ -167,8 +159,6 @@ class CFWL_ScrollBarImpDelegate : public CFWL_WidgetImpDelegate {
                    FX_FLOAT fy);
   void DoMouseLeave(int32_t iItem, const CFX_RectF& rtItem, int32_t& iState);
   void DoMouseHover(int32_t iItem, const CFX_RectF& rtItem, int32_t& iState);
-
-  IFWL_ScrollBar* m_pOwner;
 };
 
 #endif  // XFA_FWL_CORE_IFWL_SCROLLBAR_H_

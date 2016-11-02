@@ -15,7 +15,6 @@
 #define FWL_STYLEEXE_SPB_Vert (1L << 0)
 
 class CFWL_MsgMouse;
-class CFWL_SpinButtonImpDelegate;
 class CFWL_WidgetImpProperties;
 
 FWL_EVENT_DEF(CFWL_EvtSpbClick, CFWL_EventType::Click, FX_BOOL m_bUp;)
@@ -33,13 +32,15 @@ class IFWL_SpinButton : public IFWL_Widget {
   FWL_WidgetHit HitTest(FX_FLOAT fx, FX_FLOAT fy) override;
   FWL_Error DrawWidget(CFX_Graphics* pGraphics,
                        const CFX_Matrix* pMatrix = nullptr) override;
+  void OnProcessMessage(CFWL_Message* pMessage) override;
+  void OnProcessEvent(CFWL_Event* pEvent) override;
+  void OnDrawWidget(CFX_Graphics* pGraphics,
+                    const CFX_Matrix* pMatrix) override;
 
   FWL_Error EnableButton(FX_BOOL bEnable, FX_BOOL bUp = TRUE);
   FX_BOOL IsButtonEnable(FX_BOOL bUp = TRUE);
 
  protected:
-  friend class CFWL_SpinButtonImpDelegate;
-
   class Timer : public IFWL_Timer {
    public:
     explicit Timer(IFWL_SpinButton* pToolTip);
@@ -65,24 +66,14 @@ class IFWL_SpinButton : public IFWL_Widget {
   FX_BOOL m_bLButtonDwn;
   IFWL_TimerInfo* m_pTimerInfo;
   IFWL_SpinButton::Timer m_Timer;
-};
 
-class CFWL_SpinButtonImpDelegate : public CFWL_WidgetImpDelegate {
- public:
-  CFWL_SpinButtonImpDelegate(IFWL_SpinButton* pOwner);
-  void OnProcessMessage(CFWL_Message* pMessage) override;
-  void OnProcessEvent(CFWL_Event* pEvent) override;
-  void OnDrawWidget(CFX_Graphics* pGraphics,
-                    const CFX_Matrix* pMatrix = nullptr) override;
-
- protected:
-  void OnFocusChanged(CFWL_Message* pMsg, FX_BOOL bSet = TRUE);
+ private:
+  void OnFocusChanged(CFWL_Message* pMsg, FX_BOOL bSet);
   void OnLButtonDown(CFWL_MsgMouse* pMsg);
   void OnLButtonUp(CFWL_MsgMouse* pMsg);
   void OnMouseMove(CFWL_MsgMouse* pMsg);
   void OnMouseLeave(CFWL_MsgMouse* pMsg);
   void OnKeyDown(CFWL_MsgKey* pMsg);
-  IFWL_SpinButton* m_pOwner;
 };
 
 #endif  // XFA_FWL_CORE_IFWL_SPINBUTTON_H_

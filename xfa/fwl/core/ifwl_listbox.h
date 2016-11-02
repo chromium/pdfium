@@ -32,7 +32,6 @@
 #define FWL_ITEMSTATE_LTB_Focused (1L << 1)
 #define FWL_ITEMSTATE_LTB_Checked (1L << 2)
 
-class CFWL_ListBoxImpDelegate;
 class CFWL_MsgKillFocus;
 class CFWL_MsgMouse;
 class CFWL_MsgMouseWheel;
@@ -115,6 +114,10 @@ class IFWL_ListBox : public IFWL_Widget {
   FWL_Error DrawWidget(CFX_Graphics* pGraphics,
                        const CFX_Matrix* pMatrix = nullptr) override;
   FWL_Error SetThemeProvider(IFWL_ThemeProvider* pThemeProvider) override;
+  void OnProcessMessage(CFWL_Message* pMessage) override;
+  void OnProcessEvent(CFWL_Event* pEvent) override;
+  void OnDrawWidget(CFX_Graphics* pGraphics,
+                    const CFX_Matrix* pMatrix) override;
 
   int32_t CountSelItems();
   IFWL_ListItem* GetSelItem(int32_t nIndexSel);
@@ -180,17 +183,8 @@ class IFWL_ListBox : public IFWL_Widget {
   FX_FLOAT m_fScorllBarWidth;
   FX_BOOL m_bLButtonDown;
   IFWL_ThemeProvider* m_pScrollBarTP;
-};
 
-class CFWL_ListBoxImpDelegate : public CFWL_WidgetImpDelegate {
- public:
-  CFWL_ListBoxImpDelegate(IFWL_ListBox* pOwner);
-  void OnProcessMessage(CFWL_Message* pMessage) override;
-  void OnProcessEvent(CFWL_Event* pEvent) override;
-  void OnDrawWidget(CFX_Graphics* pGraphics,
-                    const CFX_Matrix* pMatrix = nullptr) override;
-
- protected:
+ private:
   void OnFocusChanged(CFWL_Message* pMsg, FX_BOOL bSet = TRUE);
   void OnLButtonDown(CFWL_MsgMouse* pMsg);
   void OnLButtonUp(CFWL_MsgMouse* pMsg);
@@ -199,7 +193,6 @@ class CFWL_ListBoxImpDelegate : public CFWL_WidgetImpDelegate {
   void OnVK(IFWL_ListItem* hItem, FX_BOOL bShift, FX_BOOL bCtrl);
   FX_BOOL OnScroll(IFWL_ScrollBar* pScrollBar, uint32_t dwCode, FX_FLOAT fPos);
   void DispatchSelChangedEv();
-  IFWL_ListBox* m_pOwner;
 };
 
 #endif  // XFA_FWL_CORE_IFWL_LISTBOX_H_

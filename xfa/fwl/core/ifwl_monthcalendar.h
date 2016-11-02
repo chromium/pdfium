@@ -34,7 +34,6 @@ FWL_EVENT_DEF(CFWL_EventMcdDateChanged,
               int32_t m_iStartDay;
               int32_t m_iEndDay;)
 
-class CFWL_MonthCalendarImpDelegate;
 class CFWL_MsgMouse;
 class CFWL_WidgetImpProperties;
 class IFWL_Widget;
@@ -63,6 +62,10 @@ class IFWL_MonthCalendar : public IFWL_Widget {
   FWL_Error Update() override;
   FWL_Error DrawWidget(CFX_Graphics* pGraphics,
                        const CFX_Matrix* pMatrix = nullptr) override;
+  void OnProcessMessage(CFWL_Message* pMessage) override;
+  void OnDrawWidget(CFX_Graphics* pGraphics,
+                    const CFX_Matrix* pMatrix) override;
+
   int32_t CountSelect();
   FX_BOOL GetSelect(int32_t& iYear,
                     int32_t& iMonth,
@@ -236,7 +239,13 @@ class IFWL_MonthCalendar : public IFWL_Widget {
   FX_FLOAT m_fTodayFlagWid;
   FX_FLOAT m_fMCWid;
   FX_FLOAT m_fMCHei;
-  friend class CFWL_MonthCalendarImpDelegate;
+
+ private:
+  void OnFocusChanged(CFWL_Message* pMsg, FX_BOOL bSet);
+  void OnLButtonDown(CFWL_MsgMouse* pMsg);
+  void OnLButtonUp(CFWL_MsgMouse* pMsg);
+  void OnMouseMove(CFWL_MsgMouse* pMsg);
+  void OnMouseLeave(CFWL_MsgMouse* pMsg);
 };
 
 struct FWL_DATEINFO {
@@ -252,23 +261,6 @@ struct FWL_DATEINFO {
   uint32_t dwStates;
   CFX_RectF rect;
   CFX_WideString wsDay;
-};
-
-class CFWL_MonthCalendarImpDelegate : public CFWL_WidgetImpDelegate {
- public:
-  CFWL_MonthCalendarImpDelegate(IFWL_MonthCalendar* pOwner);
-  void OnProcessMessage(CFWL_Message* pMessage) override;
-  void OnDrawWidget(CFX_Graphics* pGraphics,
-                    const CFX_Matrix* pMatrix = nullptr) override;
-
- protected:
-  void OnActivate(CFWL_Message* pMsg);
-  void OnFocusChanged(CFWL_Message* pMsg, FX_BOOL bSet = TRUE);
-  void OnLButtonDown(CFWL_MsgMouse* pMsg);
-  void OnLButtonUp(CFWL_MsgMouse* pMsg);
-  void OnMouseMove(CFWL_MsgMouse* pMsg);
-  void OnMouseLeave(CFWL_MsgMouse* pMsg);
-  IFWL_MonthCalendar* m_pOwner;
 };
 
 #endif  // XFA_FWL_CORE_IFWL_MONTHCALENDAR_H_

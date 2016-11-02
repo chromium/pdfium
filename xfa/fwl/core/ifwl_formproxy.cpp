@@ -13,7 +13,6 @@ IFWL_FormProxy::IFWL_FormProxy(const IFWL_App* app,
                                const CFWL_WidgetImpProperties& properties,
                                IFWL_Widget* pOuter)
     : IFWL_Form(app, properties, pOuter) {
-  SetDelegate(pdfium::MakeUnique<CFWL_FormProxyImpDelegate>(this));
 }
 
 IFWL_FormProxy::~IFWL_FormProxy() {}
@@ -38,9 +37,6 @@ FWL_Error IFWL_FormProxy::DrawWidget(CFX_Graphics* pGraphics,
   return FWL_Error::Succeeded;
 }
 
-CFWL_FormProxyImpDelegate::CFWL_FormProxyImpDelegate(IFWL_FormProxy* pOwner)
-    : m_pOwner(pOwner) {}
-
-void CFWL_FormProxyImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
-  m_pOwner->m_pOuter->GetCurrentDelegate()->OnProcessMessage(pMessage);
+void IFWL_FormProxy::OnProcessMessage(CFWL_Message* pMessage) {
+  m_pOuter->GetDelegate()->OnProcessMessage(pMessage);
 }

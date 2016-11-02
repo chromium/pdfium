@@ -10,7 +10,6 @@
 #include "xfa/fwl/core/ifwl_form.h"
 
 class CFWL_WidgetImpProperties;
-class CFWL_FormProxyImpDelegate;
 
 class IFWL_FormProxy : public IFWL_Form {
  public:
@@ -25,18 +24,10 @@ class IFWL_FormProxy : public IFWL_Form {
   FWL_Error Update() override;
   FWL_Error DrawWidget(CFX_Graphics* pGraphics,
                        const CFX_Matrix* pMatrix = nullptr) override;
-
- protected:
-  friend class CFWL_FormProxyImpDelegate;
-};
-
-class CFWL_FormProxyImpDelegate : public CFWL_WidgetImpDelegate {
- public:
-  CFWL_FormProxyImpDelegate(IFWL_FormProxy* pOwner);
   void OnProcessMessage(CFWL_Message* pMessage) override;
 
  protected:
-  IFWL_FormProxy* m_pOwner;
+  friend class CFWL_FormProxyImpDelegate;
 };
 
 #endif  // XFA_FWL_CORE_IFWL_FORMPROXY_H_

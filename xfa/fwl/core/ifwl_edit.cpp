@@ -76,7 +76,6 @@ IFWL_Edit::IFWL_Edit(const IFWL_App* app,
   m_rtEngine.Reset();
   m_rtStatic.Reset();
 
-  SetDelegate(pdfium::MakeUnique<CFWL_EditImpDelegate>(this));
   InitCaret();
   if (!m_pEdtEngine)
     InitEngine();
@@ -1586,51 +1585,40 @@ void IFWL_Edit::ProcessInsertError(int32_t iError) {
   }
 }
 
-CFWL_EditImpDelegate::CFWL_EditImpDelegate(IFWL_Edit* pOwner)
-    : m_pOwner(pOwner) {}
-
-void CFWL_EditImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
+void IFWL_Edit::OnProcessMessage(CFWL_Message* pMessage) {
   if (!pMessage)
     return;
 
   CFWL_MessageType dwMsgCode = pMessage->GetClassID();
   switch (dwMsgCode) {
-    case CFWL_MessageType::Activate: {
+    case CFWL_MessageType::Activate:
       DoActivate(static_cast<CFWL_MsgActivate*>(pMessage));
       break;
-    }
-    case CFWL_MessageType::Deactivate: {
+    case CFWL_MessageType::Deactivate:
       DoDeactivate(static_cast<CFWL_MsgDeactivate*>(pMessage));
       break;
-    }
     case CFWL_MessageType::SetFocus:
-    case CFWL_MessageType::KillFocus: {
+    case CFWL_MessageType::KillFocus:
       OnFocusChanged(pMessage, dwMsgCode == CFWL_MessageType::SetFocus);
       break;
-    }
     case CFWL_MessageType::Mouse: {
       CFWL_MsgMouse* pMsg = static_cast<CFWL_MsgMouse*>(pMessage);
       switch (pMsg->m_dwCmd) {
-        case FWL_MouseCommand::LeftButtonDown: {
+        case FWL_MouseCommand::LeftButtonDown:
           OnLButtonDown(pMsg);
           break;
-        }
-        case FWL_MouseCommand::LeftButtonUp: {
+        case FWL_MouseCommand::LeftButtonUp:
           OnLButtonUp(pMsg);
           break;
-        }
-        case FWL_MouseCommand::LeftButtonDblClk: {
+        case FWL_MouseCommand::LeftButtonDblClk:
           OnButtonDblClk(pMsg);
           break;
-        }
-        case FWL_MouseCommand::Move: {
+        case FWL_MouseCommand::Move:
           OnMouseMove(pMsg);
           break;
-        }
-        case FWL_MouseCommand::RightButtonDown: {
+        case FWL_MouseCommand::RightButtonDown:
           DoButtonDown(pMsg);
           break;
-        }
         default:
           break;
       }
@@ -1644,175 +1632,179 @@ void CFWL_EditImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
         OnChar(pKey);
       break;
     }
-    default: { break; }
+    default:
+      break;
   }
-  CFWL_WidgetImpDelegate::OnProcessMessage(pMessage);
+  IFWL_Widget::OnProcessMessage(pMessage);
 }
 
-void CFWL_EditImpDelegate::OnProcessEvent(CFWL_Event* pEvent) {
+void IFWL_Edit::OnProcessEvent(CFWL_Event* pEvent) {
   if (!pEvent)
     return;
   if (pEvent->GetClassID() != CFWL_EventType::Scroll)
     return;
 
   IFWL_Widget* pSrcTarget = pEvent->m_pSrcTarget;
-  if ((pSrcTarget == m_pOwner->m_pVertScrollBar.get() &&
-       m_pOwner->m_pVertScrollBar) ||
-      (pSrcTarget == m_pOwner->m_pHorzScrollBar.get() &&
-       m_pOwner->m_pHorzScrollBar)) {
+  if ((pSrcTarget == m_pVertScrollBar.get() && m_pVertScrollBar) ||
+      (pSrcTarget == m_pHorzScrollBar.get() && m_pHorzScrollBar)) {
     CFWL_EvtScroll* pScrollEvent = static_cast<CFWL_EvtScroll*>(pEvent);
     OnScroll(static_cast<IFWL_ScrollBar*>(pSrcTarget),
              pScrollEvent->m_iScrollCode, pScrollEvent->m_fPos);
   }
 }
 
-void CFWL_EditImpDelegate::OnDrawWidget(CFX_Graphics* pGraphics,
-                                        const CFX_Matrix* pMatrix) {
-  m_pOwner->DrawWidget(pGraphics, pMatrix);
+void IFWL_Edit::OnDrawWidget(CFX_Graphics* pGraphics,
+                             const CFX_Matrix* pMatrix) {
+  DrawWidget(pGraphics, pMatrix);
 }
 
-void CFWL_EditImpDelegate::DoActivate(CFWL_MsgActivate* pMsg) {
-  m_pOwner->m_pProperties->m_dwStates |= ~FWL_WGTSTATE_Deactivated;
-  m_pOwner->Repaint(&m_pOwner->m_rtClient);
+void IFWL_Edit::DoActivate(CFWL_MsgActivate* pMsg) {
+  m_pProperties->m_dwStates |= ~FWL_WGTSTATE_Deactivated;
+  Repaint(&m_rtClient);
 }
-void CFWL_EditImpDelegate::DoDeactivate(CFWL_MsgDeactivate* pMsg) {
-  m_pOwner->m_pProperties->m_dwStates &= FWL_WGTSTATE_Deactivated;
-  m_pOwner->Repaint(&m_pOwner->m_rtClient);
+
+void IFWL_Edit::DoDeactivate(CFWL_MsgDeactivate* pMsg) {
+  m_pProperties->m_dwStates &= FWL_WGTSTATE_Deactivated;
+  Repaint(&m_rtClient);
 }
-void CFWL_EditImpDelegate::DoButtonDown(CFWL_MsgMouse* pMsg) {
-  if ((m_pOwner->m_pProperties->m_dwStates & FWL_WGTSTATE_Focused) == 0) {
-    m_pOwner->SetFocus(TRUE);
-  }
-  if (!m_pOwner->m_pEdtEngine) {
-    m_pOwner->UpdateEditEngine();
-  }
-  IFDE_TxtEdtPage* pPage = m_pOwner->m_pEdtEngine->GetPage(0);
+
+void IFWL_Edit::DoButtonDown(CFWL_MsgMouse* pMsg) {
+  if ((m_pProperties->m_dwStates & FWL_WGTSTATE_Focused) == 0)
+    SetFocus(TRUE);
+  if (!m_pEdtEngine)
+    UpdateEditEngine();
+
+  IFDE_TxtEdtPage* pPage = m_pEdtEngine->GetPage(0);
   if (!pPage)
     return;
   CFX_PointF pt(pMsg->m_fx, pMsg->m_fy);
-  m_pOwner->DeviceToEngine(pt);
+  DeviceToEngine(pt);
   FX_BOOL bBefore = TRUE;
   int32_t nIndex = pPage->GetCharIndex(pt, bBefore);
-  if (nIndex < 0) {
+  if (nIndex < 0)
     nIndex = 0;
-  }
-  m_pOwner->m_pEdtEngine->SetCaretPos(nIndex, bBefore);
+
+  m_pEdtEngine->SetCaretPos(nIndex, bBefore);
 }
-void CFWL_EditImpDelegate::OnFocusChanged(CFWL_Message* pMsg, FX_BOOL bSet) {
-  uint32_t dwStyleEx = m_pOwner->GetStylesEx();
+
+void IFWL_Edit::OnFocusChanged(CFWL_Message* pMsg, FX_BOOL bSet) {
+  uint32_t dwStyleEx = GetStylesEx();
   bool bRepaint = !!(dwStyleEx & FWL_STYLEEXT_EDT_InnerCaret);
   if (bSet) {
-    m_pOwner->m_pProperties->m_dwStates |= FWL_WGTSTATE_Focused;
-    if (!m_pOwner->m_pEdtEngine) {
-      m_pOwner->UpdateEditEngine();
-    }
-    m_pOwner->UpdateVAlignment();
-    m_pOwner->UpdateOffset();
-    m_pOwner->UpdateCaret();
-  } else if (m_pOwner->m_pProperties->m_dwStates & FWL_WGTSTATE_Focused) {
-    m_pOwner->m_pProperties->m_dwStates &= ~FWL_WGTSTATE_Focused;
-    m_pOwner->ShowCaret(FALSE);
-    if (m_pOwner->m_pEdtEngine &&
-        (dwStyleEx & FWL_STYLEEXT_EDT_NoHideSel) == 0) {
-      int32_t nSel = m_pOwner->CountSelRanges();
+    m_pProperties->m_dwStates |= FWL_WGTSTATE_Focused;
+    if (!m_pEdtEngine)
+      UpdateEditEngine();
+
+    UpdateVAlignment();
+    UpdateOffset();
+    UpdateCaret();
+  } else if (m_pProperties->m_dwStates & FWL_WGTSTATE_Focused) {
+    m_pProperties->m_dwStates &= ~FWL_WGTSTATE_Focused;
+    ShowCaret(FALSE);
+    if (m_pEdtEngine && (dwStyleEx & FWL_STYLEEXT_EDT_NoHideSel) == 0) {
+      int32_t nSel = CountSelRanges();
       if (nSel > 0) {
-        m_pOwner->ClearSelections();
+        ClearSelections();
         bRepaint = TRUE;
       }
-      m_pOwner->SetCaretPos(0);
-      m_pOwner->UpdateOffset();
+      SetCaretPos(0);
+      UpdateOffset();
     }
-    m_pOwner->ClearRecord();
+    ClearRecord();
   }
-  m_pOwner->LayoutScrollBar();
+  LayoutScrollBar();
   if (bRepaint) {
     CFX_RectF rtInvalidate;
-    rtInvalidate.Set(0, 0, m_pOwner->m_pProperties->m_rtWidget.width,
-                     m_pOwner->m_pProperties->m_rtWidget.height);
-    m_pOwner->Repaint(&rtInvalidate);
+    rtInvalidate.Set(0, 0, m_pProperties->m_rtWidget.width,
+                     m_pProperties->m_rtWidget.height);
+    Repaint(&rtInvalidate);
   }
 }
-void CFWL_EditImpDelegate::OnLButtonDown(CFWL_MsgMouse* pMsg) {
-  DoCursor(pMsg);
-  if (m_pOwner->m_pProperties->m_dwStates & FWL_WGTSTATE_Disabled) {
+
+void IFWL_Edit::OnLButtonDown(CFWL_MsgMouse* pMsg) {
+  if (m_pProperties->m_dwStates & FWL_WGTSTATE_Disabled)
     return;
-  }
-  m_pOwner->m_bLButtonDown = TRUE;
-  m_pOwner->SetGrab(TRUE);
+
+  m_bLButtonDown = TRUE;
+  SetGrab(TRUE);
   DoButtonDown(pMsg);
-  int32_t nIndex = m_pOwner->m_pEdtEngine->GetCaretPos();
+  int32_t nIndex = m_pEdtEngine->GetCaretPos();
   FX_BOOL bRepaint = FALSE;
-  int32_t iCount = m_pOwner->m_pEdtEngine->CountSelRanges();
+  int32_t iCount = m_pEdtEngine->CountSelRanges();
   if (iCount > 0) {
-    m_pOwner->m_pEdtEngine->ClearSelection();
+    m_pEdtEngine->ClearSelection();
     bRepaint = TRUE;
   }
+
   bool bShift = !!(pMsg->m_dwFlags & FWL_KEYFLAG_Shift);
-  if (bShift && m_pOwner->m_nSelStart != nIndex) {
-    int32_t iStart = std::min(m_pOwner->m_nSelStart, nIndex);
-    int32_t iEnd = std::max(m_pOwner->m_nSelStart, nIndex);
-    m_pOwner->m_pEdtEngine->AddSelRange(iStart, iEnd - iStart);
+  if (bShift && m_nSelStart != nIndex) {
+    int32_t iStart = std::min(m_nSelStart, nIndex);
+    int32_t iEnd = std::max(m_nSelStart, nIndex);
+    m_pEdtEngine->AddSelRange(iStart, iEnd - iStart);
     bRepaint = TRUE;
   } else {
-    m_pOwner->m_nSelStart = nIndex;
+    m_nSelStart = nIndex;
   }
-  if (bRepaint) {
-    m_pOwner->Repaint(&m_pOwner->m_rtEngine);
-  }
+  if (bRepaint)
+    Repaint(&m_rtEngine);
 }
-void CFWL_EditImpDelegate::OnLButtonUp(CFWL_MsgMouse* pMsg) {
-  DoCursor(pMsg);
-  m_pOwner->m_bLButtonDown = FALSE;
-  m_pOwner->SetGrab(FALSE);
+
+void IFWL_Edit::OnLButtonUp(CFWL_MsgMouse* pMsg) {
+  m_bLButtonDown = FALSE;
+  SetGrab(FALSE);
 }
-void CFWL_EditImpDelegate::OnButtonDblClk(CFWL_MsgMouse* pMsg) {
-  if (!m_pOwner->m_pEdtEngine)
+
+void IFWL_Edit::OnButtonDblClk(CFWL_MsgMouse* pMsg) {
+  if (!m_pEdtEngine)
     return;
-  DoCursor(pMsg);
-  IFDE_TxtEdtPage* pPage = m_pOwner->m_pEdtEngine->GetPage(0);
+
+  IFDE_TxtEdtPage* pPage = m_pEdtEngine->GetPage(0);
   if (!pPage)
     return;
+
   CFX_PointF pt(pMsg->m_fx, pMsg->m_fy);
-  m_pOwner->DeviceToEngine(pt);
+  DeviceToEngine(pt);
   int32_t nCount = 0;
   int32_t nIndex = pPage->SelectWord(pt, nCount);
-  if (nIndex < 0) {
+  if (nIndex < 0)
     return;
-  }
-  m_pOwner->m_pEdtEngine->AddSelRange(nIndex, nCount);
-  m_pOwner->m_pEdtEngine->SetCaretPos(nIndex + nCount - 1, FALSE);
-  m_pOwner->Repaint(&m_pOwner->m_rtEngine);
+
+  m_pEdtEngine->AddSelRange(nIndex, nCount);
+  m_pEdtEngine->SetCaretPos(nIndex + nCount - 1, FALSE);
+  Repaint(&m_rtEngine);
 }
-void CFWL_EditImpDelegate::OnMouseMove(CFWL_MsgMouse* pMsg) {
-  if (!m_pOwner->m_pEdtEngine)
+
+void IFWL_Edit::OnMouseMove(CFWL_MsgMouse* pMsg) {
+  if (!m_pEdtEngine)
     return;
-  DoCursor(pMsg);
-  if (m_pOwner->m_nSelStart == -1 || !m_pOwner->m_bLButtonDown) {
+  if (m_nSelStart == -1 || !m_bLButtonDown)
     return;
-  }
-  IFDE_TxtEdtPage* pPage = m_pOwner->m_pEdtEngine->GetPage(0);
+
+  IFDE_TxtEdtPage* pPage = m_pEdtEngine->GetPage(0);
   if (!pPage)
     return;
+
   CFX_PointF pt(pMsg->m_fx, pMsg->m_fy);
-  m_pOwner->DeviceToEngine(pt);
+  DeviceToEngine(pt);
   FX_BOOL bBefore = TRUE;
   int32_t nIndex = pPage->GetCharIndex(pt, bBefore);
-  m_pOwner->m_pEdtEngine->SetCaretPos(nIndex, bBefore);
-  nIndex = m_pOwner->m_pEdtEngine->GetCaretPos();
-  m_pOwner->m_pEdtEngine->ClearSelection();
-  if (nIndex != m_pOwner->m_nSelStart) {
-    int32_t nLen = m_pOwner->m_pEdtEngine->GetTextLength();
-    if (m_pOwner->m_nSelStart >= nLen) {
-      m_pOwner->m_nSelStart = nLen;
-    }
-    m_pOwner->m_pEdtEngine->AddSelRange(
-        std::min(m_pOwner->m_nSelStart, nIndex),
-        FXSYS_abs(nIndex - m_pOwner->m_nSelStart));
+  m_pEdtEngine->SetCaretPos(nIndex, bBefore);
+  nIndex = m_pEdtEngine->GetCaretPos();
+  m_pEdtEngine->ClearSelection();
+  if (nIndex != m_nSelStart) {
+    int32_t nLen = m_pEdtEngine->GetTextLength();
+    if (m_nSelStart >= nLen)
+      m_nSelStart = nLen;
+
+    m_pEdtEngine->AddSelRange(std::min(m_nSelStart, nIndex),
+                              FXSYS_abs(nIndex - m_nSelStart));
   }
 }
-void CFWL_EditImpDelegate::OnKeyDown(CFWL_MsgKey* pMsg) {
-  if (!m_pOwner->m_pEdtEngine)
+
+void IFWL_Edit::OnKeyDown(CFWL_MsgKey* pMsg) {
+  if (!m_pEdtEngine)
     return;
+
   FDE_TXTEDTMOVECARET MoveCaret = MC_MoveNone;
   bool bShift = !!(pMsg->m_dwFlags & FWL_KEYFLAG_Shift);
   bool bCtrl = !!(pMsg->m_dwFlags & FWL_KEYFLAG_Ctrl);
@@ -1835,43 +1827,32 @@ void CFWL_EditImpDelegate::OnKeyDown(CFWL_MsgKey* pMsg) {
       break;
     }
     case FWL_VKEY_Home: {
-      if (bCtrl) {
-        MoveCaret = MC_Home;
-      } else {
-        MoveCaret = MC_LineStart;
-      }
+      MoveCaret = bCtrl ? MC_Home : MC_LineStart;
       break;
     }
     case FWL_VKEY_End: {
-      if (bCtrl) {
-        MoveCaret = MC_End;
-      } else {
-        MoveCaret = MC_LineEnd;
-      }
+      MoveCaret = bCtrl ? MC_End : MC_LineEnd;
       break;
     }
-    case FWL_VKEY_Insert: {
+    case FWL_VKEY_Insert:
       break;
-    }
     case FWL_VKEY_Delete: {
-      if ((m_pOwner->m_pProperties->m_dwStyleExes &
-           FWL_STYLEEXT_EDT_ReadOnly) ||
-          (m_pOwner->m_pProperties->m_dwStates & FWL_WGTSTATE_Disabled)) {
+      if ((m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_ReadOnly) ||
+          (m_pProperties->m_dwStates & FWL_WGTSTATE_Disabled)) {
         break;
       }
-      int32_t nCaret = m_pOwner->m_pEdtEngine->GetCaretPos();
+      int32_t nCaret = m_pEdtEngine->GetCaretPos();
 #if (_FX_OS_ == _FX_MACOSX_)
-      m_pOwner->m_pEdtEngine->Delete(nCaret, TRUE);
+      m_pEdtEngine->Delete(nCaret, TRUE);
 #else
-      m_pOwner->m_pEdtEngine->Delete(nCaret);
+      m_pEdtEngine->Delete(nCaret);
 #endif
       break;
     }
-    case FWL_VKEY_F2: {
+    case FWL_VKEY_F2:
       break;
-    }
     case FWL_VKEY_Tab: {
-      m_pOwner->DispatchKeyEvent(pMsg);
+      DispatchKeyEvent(pMsg);
       break;
     }
     default: {
@@ -1881,67 +1862,63 @@ void CFWL_EditImpDelegate::OnKeyDown(CFWL_MsgKey* pMsg) {
       if (pMsg->m_dwFlags & FWL_KEYFLAG_Ctrl) {
 #endif
         if (dwKeyCode == 0x43 || dwKeyCode == 0x63) {
-          m_pOwner->DoClipboard(1);
+          DoClipboard(1);
           return;
         }
         if (dwKeyCode == 0x58 || dwKeyCode == 0x78) {
-          m_pOwner->DoClipboard(2);
+          DoClipboard(2);
           return;
         }
         if (dwKeyCode == 0x56 || dwKeyCode == 0x76) {
-          m_pOwner->DoClipboard(3);
+          DoClipboard(3);
           return;
         }
       }
     }
   }
-  if (MoveCaret != MC_MoveNone) {
-    m_pOwner->m_pEdtEngine->MoveCaretPos(MoveCaret, bShift, bCtrl);
-  }
+  if (MoveCaret != MC_MoveNone)
+    m_pEdtEngine->MoveCaretPos(MoveCaret, bShift, bCtrl);
 }
-void CFWL_EditImpDelegate::OnChar(CFWL_MsgKey* pMsg) {
-  if ((m_pOwner->m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_ReadOnly) ||
-      (m_pOwner->m_pProperties->m_dwStates & FWL_WGTSTATE_Disabled)) {
+
+void IFWL_Edit::OnChar(CFWL_MsgKey* pMsg) {
+  if ((m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_ReadOnly) ||
+      (m_pProperties->m_dwStates & FWL_WGTSTATE_Disabled)) {
     return;
   }
-  if (!m_pOwner->m_pEdtEngine)
+  if (!m_pEdtEngine)
     return;
+
   int32_t iError = 0;
   FX_WCHAR c = (FX_WCHAR)pMsg->m_dwKeyCode;
-  int32_t nCaret = m_pOwner->m_pEdtEngine->GetCaretPos();
+  int32_t nCaret = m_pEdtEngine->GetCaretPos();
   switch (c) {
-    case FWL_VKEY_Back: {
-      m_pOwner->m_pEdtEngine->Delete(nCaret, TRUE);
+    case FWL_VKEY_Back:
+      m_pEdtEngine->Delete(nCaret, TRUE);
       break;
-    }
-    case 0x0A: {
+    case 0x0A:
       break;
-    }
-    case FWL_VKEY_Escape: {
+    case FWL_VKEY_Escape:
       break;
-    }
     case FWL_VKEY_Tab: {
-      iError = m_pOwner->m_pEdtEngine->Insert(nCaret, L"\t", 1);
+      iError = m_pEdtEngine->Insert(nCaret, L"\t", 1);
       break;
     }
     case FWL_VKEY_Return: {
-      if (m_pOwner->m_pProperties->m_dwStyleExes &
-          FWL_STYLEEXT_EDT_WantReturn) {
-        iError = m_pOwner->m_pEdtEngine->Insert(nCaret, L"\n", 1);
+      if (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_WantReturn) {
+        iError = m_pEdtEngine->Insert(nCaret, L"\n", 1);
       }
       break;
     }
     default: {
-      if (!m_pOwner->m_pWidgetMgr->IsFormDisabled()) {
-        if (m_pOwner->m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_Number) {
+      if (!m_pWidgetMgr->IsFormDisabled()) {
+        if (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_Number) {
           if (((pMsg->m_dwKeyCode < FWL_VKEY_0) &&
                (pMsg->m_dwKeyCode != 0x2E && pMsg->m_dwKeyCode != 0x2D)) ||
               pMsg->m_dwKeyCode > FWL_VKEY_9) {
             break;
           }
-          if (!m_pOwner->ValidateNumberChar(c)) {
+          if (!ValidateNumberChar(c))
             break;
-          }
         }
       }
 #if (_FX_OS_ == _FX_MACOSX_)
@@ -1952,17 +1929,17 @@ void CFWL_EditImpDelegate::OnChar(CFWL_MsgKey* pMsg) {
       {
         break;
       }
-      iError = m_pOwner->m_pEdtEngine->Insert(nCaret, &c, 1);
+      iError = m_pEdtEngine->Insert(nCaret, &c, 1);
       break;
     }
   }
-  if (iError < 0) {
-    m_pOwner->ProcessInsertError(iError);
-  }
+  if (iError < 0)
+    ProcessInsertError(iError);
 }
-FX_BOOL CFWL_EditImpDelegate::OnScroll(IFWL_ScrollBar* pScrollBar,
-                                       uint32_t dwCode,
-                                       FX_FLOAT fPos) {
+
+FX_BOOL IFWL_Edit::OnScroll(IFWL_ScrollBar* pScrollBar,
+                            uint32_t dwCode,
+                            FX_FLOAT fPos) {
   CFX_SizeF fs;
   pScrollBar->GetRange(fs.x, fs.y);
   FX_FLOAT iCurPos = pScrollBar->GetPos();
@@ -2005,27 +1982,25 @@ FX_BOOL CFWL_EditImpDelegate::OnScroll(IFWL_ScrollBar* pScrollBar,
       break;
     }
     case FWL_SCBCODE_Pos:
-    case FWL_SCBCODE_TrackPos: {
+    case FWL_SCBCODE_TrackPos:
       break;
-    }
-    case FWL_SCBCODE_EndScroll: {
+    case FWL_SCBCODE_EndScroll:
       return FALSE;
-    }
-    default: {}
+    default:
+      break;
   }
   if (iCurPos != fPos) {
     pScrollBar->SetPos(fPos);
     pScrollBar->SetTrackPos(fPos);
-    m_pOwner->UpdateOffset(pScrollBar, fPos - iCurPos);
-    if (m_pOwner->m_pEdtEngine) {
-      m_pOwner->UpdateCaret();
+    UpdateOffset(pScrollBar, fPos - iCurPos);
+    if (m_pEdtEngine) {
+      UpdateCaret();
     }
     CFX_RectF rect;
-    m_pOwner->GetWidgetRect(rect);
+    GetWidgetRect(rect);
     CFX_RectF rtInvalidate;
     rtInvalidate.Set(0, 0, rect.width + 2, rect.height + 2);
-    m_pOwner->Repaint(&rtInvalidate);
+    Repaint(&rtInvalidate);
   }
   return TRUE;
 }
-void CFWL_EditImpDelegate::DoCursor(CFWL_MsgMouse* pMsg) {}

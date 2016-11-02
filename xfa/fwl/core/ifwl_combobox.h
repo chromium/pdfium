@@ -11,14 +11,9 @@
 #include "xfa/fwl/core/ifwl_listbox.h"
 #include "xfa/fxgraphics/cfx_graphics.h"
 
-class CFWL_ComboBoxImpDelegate;
-class CFWL_ComboEditImpDelegate;
-class CFWL_ComboListImpDelegate;
-class CFWL_ComboProxyImpDelegate;
-class CFWL_ListBoxImpDelegate;
 class CFWL_WidgetImpProperties;
-class CFWL_WidgetImpDelegate;
 class IFWL_ComboBox;
+class IFWL_ComboBoxProxy;
 class IFWL_ComboEdit;
 class IFWL_ComboList;
 class IFWL_FormProxy;
@@ -99,6 +94,10 @@ class IFWL_ComboBox : public IFWL_Widget {
   FWL_Error DrawWidget(CFX_Graphics* pGraphics,
                        const CFX_Matrix* pMatrix = nullptr) override;
   FWL_Error SetThemeProvider(IFWL_ThemeProvider* pThemeProvider) override;
+  void OnProcessMessage(CFWL_Message* pMessage) override;
+  void OnProcessEvent(CFWL_Event* pEvent) override;
+  void OnDrawWidget(CFX_Graphics* pGraphics,
+                    const CFX_Matrix* pMatrix) override;
 
   int32_t GetCurSel();
   FWL_Error SetCurSel(int32_t iSel);
@@ -134,18 +133,16 @@ class IFWL_ComboBox : public IFWL_Widget {
   FWL_Error EditModifyStylesEx(uint32_t dwStylesExAdded,
                                uint32_t dwStylesExRemoved);
 
- protected:
-  friend class CFWL_ComboBoxImpDelegate;
-  friend class CFWL_ComboEditImpDelegate;
-  friend class CFWL_ComboListImpDelegate;
-  friend class CFWL_ComboProxyImpDelegate;
-  friend class IFWL_ComboEdit;
-  friend class IFWL_ComboList;
-
   void DrawStretchHandler(CFX_Graphics* pGraphics, const CFX_Matrix* pMatrix);
-  FX_FLOAT GetListHeight();
-  void ShowDropList(FX_BOOL bActivate);
   FX_BOOL IsDropListShowed();
+  void ShowDropList(FX_BOOL bActivate);
+
+  IFWL_ComboEdit* GetComboEdit() const { return m_pEdit.get(); }
+  void ProcessSelChanged(FX_BOOL bLButtonUp);
+  int32_t GetCurrentSelection() const { return m_iCurSel; }
+
+ protected:
+  FX_FLOAT GetListHeight();
   FX_BOOL IsDropDownStyle() const;
   void MatchEditText();
   void SynchrEditText(int32_t iListItem);
@@ -153,7 +150,6 @@ class IFWL_ComboBox : public IFWL_Widget {
   void ReSetTheme();
   void ReSetEditAlignment();
   void ReSetListItemAlignment();
-  void ProcessSelChanged(FX_BOOL bLButtonUp);
   void InitProxyForm();
   void DisForm_InitComboList();
   void DisForm_InitComboEdit();
@@ -176,7 +172,7 @@ class IFWL_ComboBox : public IFWL_Widget {
   CFX_RectF m_rtHandler;
   std::unique_ptr<IFWL_ComboEdit> m_pEdit;
   std::unique_ptr<IFWL_ComboList> m_pListBox;
-  IFWL_FormProxy* m_pForm;
+  IFWL_ComboBoxProxy* m_pComboBoxProxy;
   FX_BOOL m_bLButtonDown;
   FX_BOOL m_bUpFormHandler;
   int32_t m_iCurSel;
@@ -184,18 +180,8 @@ class IFWL_ComboBox : public IFWL_Widget {
   FX_FLOAT m_fComboFormHandler;
   FX_FLOAT m_fItemHeight;
   FX_BOOL m_bNeedShowList;
-  CFWL_ComboProxyImpDelegate* m_pListProxyDelegate;
-};
 
-class CFWL_ComboBoxImpDelegate : public CFWL_WidgetImpDelegate {
- public:
-  CFWL_ComboBoxImpDelegate(IFWL_ComboBox* pOwner);
-  void OnProcessMessage(CFWL_Message* pMessage) override;
-  void OnProcessEvent(CFWL_Event* pEvent) override;
-  void OnDrawWidget(CFX_Graphics* pGraphics,
-                    const CFX_Matrix* pMatrix = nullptr) override;
-
- protected:
+ private:
   void OnFocusChanged(CFWL_Message* pMsg, FX_BOOL bSet = TRUE);
   void OnLButtonDown(CFWL_MsgMouse* pMsg);
   void OnLButtonUp(CFWL_MsgMouse* pMsg);
@@ -208,30 +194,6 @@ class CFWL_ComboBoxImpDelegate : public CFWL_WidgetImpDelegate {
   void DisForm_OnFocusChanged(CFWL_Message* pMsg, FX_BOOL bSet = TRUE);
   void DisForm_OnKey(CFWL_MsgKey* pMsg);
 
-  IFWL_ComboBox* m_pOwner;
-  friend class CFWL_ComboEditImpDelegate;
-  friend class CFWL_ComboListImpDelegate;
-};
-
-class CFWL_ComboProxyImpDelegate : public CFWL_WidgetImpDelegate {
- public:
-  CFWL_ComboProxyImpDelegate(IFWL_Form* pForm, IFWL_ComboBox* pComboBox);
-  void OnProcessMessage(CFWL_Message* pMessage) override;
-  void OnDrawWidget(CFX_Graphics* pGraphics,
-                    const CFX_Matrix* pMatrix = nullptr) override;
-  void Reset() { m_bLButtonUpSelf = FALSE; }
-
- protected:
-  void OnLButtonDown(CFWL_MsgMouse* pMsg);
-  void OnLButtonUp(CFWL_MsgMouse* pMsg);
-  void OnMouseMove(CFWL_MsgMouse* pMsg);
-  void OnDeactive(CFWL_MsgDeactivate* pMsg);
-  void OnFocusChanged(CFWL_MsgKillFocus* pMsg, FX_BOOL bSet);
-  FX_BOOL m_bLButtonDown;
-  FX_BOOL m_bLButtonUpSelf;
-  FX_FLOAT m_fStartPos;
-  IFWL_Form* m_pForm;
-  IFWL_ComboBox* m_pComboBox;
 };
 
 #endif  // XFA_FWL_CORE_IFWL_COMBOBOX_H_

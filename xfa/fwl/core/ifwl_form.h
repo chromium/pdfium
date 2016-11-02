@@ -76,7 +76,6 @@ class CFWL_WidgetImpProperties;
 class IFWL_Widget;
 class IFWL_ThemeProvider;
 class CFWL_SysBtn;
-class CFWL_FormImpDelegate;
 
 class IFWL_FormDP : public IFWL_DataProvider {
  public:
@@ -99,6 +98,9 @@ class IFWL_Form : public IFWL_Widget {
   FWL_WidgetHit HitTest(FX_FLOAT fx, FX_FLOAT fy) override;
   FWL_Error DrawWidget(CFX_Graphics* pGraphics,
                        const CFX_Matrix* pMatrix = nullptr) override;
+  void OnProcessMessage(CFWL_Message* pMessage) override;
+  void OnDrawWidget(CFX_Graphics* pGraphics,
+                    const CFX_Matrix* pMatrix) override;
 
   FWL_FORMSIZE GetFormSize();
   FWL_Error SetFormSize(FWL_FORMSIZE eFormSize);
@@ -182,17 +184,8 @@ class IFWL_Form : public IFWL_Widget {
   CFX_DIBitmap* m_pBigIcon;
   CFX_DIBitmap* m_pSmallIcon;
   FX_BOOL m_bMouseIn;
-};
 
-class CFWL_FormImpDelegate : public CFWL_WidgetImpDelegate {
- public:
-  CFWL_FormImpDelegate(IFWL_Form* pOwner);
-  void OnProcessMessage(CFWL_Message* pMessage) override;
-  void OnProcessEvent(CFWL_Event* pEvent) override;
-  void OnDrawWidget(CFX_Graphics* pGraphics,
-                    const CFX_Matrix* pMatrix = nullptr) override;
-
- protected:
+ private:
   void OnLButtonDown(CFWL_MsgMouse* pMsg);
   void OnLButtonUp(CFWL_MsgMouse* pMsg);
   void OnMouseMove(CFWL_MsgMouse* pMsg);
@@ -201,7 +194,6 @@ class CFWL_FormImpDelegate : public CFWL_WidgetImpDelegate {
   void OnLButtonDblClk(CFWL_MsgMouse* pMsg);
   void OnWindowMove(CFWL_MsgWindowMove* pMsg);
   void OnClose(CFWL_MsgClose* pMsg);
-  IFWL_Form* m_pOwner;
 };
 
 #endif  // XFA_FWL_CORE_IFWL_FORM_H_

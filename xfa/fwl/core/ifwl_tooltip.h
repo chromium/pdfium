@@ -47,14 +47,14 @@ class IFWL_ToolTip : public IFWL_Form {
                        const CFX_Matrix* pMatrix = nullptr) override;
   void SetStates(uint32_t dwStates, FX_BOOL bSet) override;
   FWL_Error GetClientRect(CFX_RectF& rect) override;
+  void OnDrawWidget(CFX_Graphics* pGraphics,
+                    const CFX_Matrix* pMatrix) override;
 
   void SetAnchor(const CFX_RectF& rtAnchor);
   void Show();
   void Hide();
 
  protected:
-  friend class CFWL_ToolTipImpDelegate;
-
   class Timer : public IFWL_Timer {
    public:
     explicit Timer(IFWL_ToolTip* pToolTip);
@@ -83,24 +83,14 @@ class IFWL_ToolTip : public IFWL_Form {
   IFWL_TimerInfo* m_pTimerInfoHide;
   IFWL_ToolTip::Timer m_TimerShow;
   IFWL_ToolTip::Timer m_TimerHide;
-};
 
-class CFWL_ToolTipImpDelegate : public CFWL_WidgetImpDelegate {
- public:
-  CFWL_ToolTipImpDelegate(IFWL_ToolTip* pOwner);
-  void OnProcessMessage(CFWL_Message* pMessage) override;
-  void OnProcessEvent(CFWL_Event* pEvent) override;
-  void OnDrawWidget(CFX_Graphics* pGraphics,
-                    const CFX_Matrix* pMatrix = nullptr) override;
-
- protected:
-  void OnFocusChanged(CFWL_Message* pMsg, FX_BOOL bSet = TRUE);
+ private:
+  void OnFocusChanged(CFWL_Message* pMsg, FX_BOOL bSet);
   void OnLButtonDown(CFWL_MsgMouse* pMsg);
   void OnLButtonUp(CFWL_MsgMouse* pMsg);
   void OnMouseMove(CFWL_MsgMouse* pMsg);
   void OnMouseLeave(CFWL_MsgMouse* pMsg);
   void OnKeyDown(CFWL_MsgKey* pMsg);
-  IFWL_ToolTip* m_pOwner;
 };
 
 #endif  // XFA_FWL_CORE_IFWL_TOOLTIP_H_

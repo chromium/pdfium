@@ -32,8 +32,8 @@ FX_BOOL CXFA_FFImageEdit::LoadWidget() {
   CFWL_NoteDriver* pNoteDriver = pWidget->GetOwnerApp()->GetNoteDriver();
   pNoteDriver->RegisterEventTarget(pWidget, pWidget);
 
-  m_pOldDelegate = pPictureBox->GetCurrentDelegate();
-  pPictureBox->SetCurrentDelegate(this);
+  m_pOldDelegate = pPictureBox->GetDelegate();
+  pPictureBox->SetDelegate(this);
 
   CXFA_FFField::LoadWidget();
   if (m_pDataAcc->GetImageEditImage()) {

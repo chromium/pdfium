@@ -1202,6 +1202,8 @@ if (pdf_enable_xfa) {
       "xfa/fwl/core/ifwl_checkbox.h",
       "xfa/fwl/core/ifwl_combobox.cpp",
       "xfa/fwl/core/ifwl_combobox.h",
+      "xfa/fwl/core/ifwl_comboboxproxy.cpp",
+      "xfa/fwl/core/ifwl_comboboxproxy.h",
       "xfa/fwl/core/ifwl_comboedit.cpp",
       "xfa/fwl/core/ifwl_comboedit.h",
       "xfa/fwl/core/ifwl_combolist.cpp",

@@ -146,8 +146,6 @@ IFWL_MonthCalendar::IFWL_MonthCalendar(
   m_rtClient.Reset();
   m_rtWeekNum.Reset();
   m_rtWeekNumSep.Reset();
-
-  SetDelegate(pdfium::MakeUnique<CFWL_MonthCalendarImpDelegate>(this));
 }
 
 IFWL_MonthCalendar::~IFWL_MonthCalendar() {
@@ -1015,185 +1013,165 @@ FX_BOOL IFWL_MonthCalendar::GetDayRect(int32_t iDay, CFX_RectF& rtDay) {
   return TRUE;
 }
 
-CFWL_MonthCalendarImpDelegate::CFWL_MonthCalendarImpDelegate(
-    IFWL_MonthCalendar* pOwner)
-    : m_pOwner(pOwner) {}
-
-void CFWL_MonthCalendarImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
+void IFWL_MonthCalendar::OnProcessMessage(CFWL_Message* pMessage) {
   if (!pMessage)
     return;
 
   CFWL_MessageType dwMsgCode = pMessage->GetClassID();
   switch (dwMsgCode) {
-    case CFWL_MessageType::SetFocus: {
+    case CFWL_MessageType::SetFocus:
       OnFocusChanged(pMessage, TRUE);
       break;
-    }
-    case CFWL_MessageType::KillFocus: {
+    case CFWL_MessageType::KillFocus:
       OnFocusChanged(pMessage, FALSE);
       break;
-    }
-    case CFWL_MessageType::Key: {
+    case CFWL_MessageType::Key:
       break;
-    }
     case CFWL_MessageType::Mouse: {
       CFWL_MsgMouse* pMouse = static_cast<CFWL_MsgMouse*>(pMessage);
       switch (pMouse->m_dwCmd) {
-        case FWL_MouseCommand::LeftButtonDown: {
+        case FWL_MouseCommand::LeftButtonDown:
           OnLButtonDown(pMouse);
           break;
-        }
-        case FWL_MouseCommand::LeftButtonUp: {
+        case FWL_MouseCommand::LeftButtonUp:
           OnLButtonUp(pMouse);
           break;
-        }
-        case FWL_MouseCommand::Move: {
+        case FWL_MouseCommand::Move:
           OnMouseMove(pMouse);
           break;
-        }
-        case FWL_MouseCommand::Leave: {
+        case FWL_MouseCommand::Leave:
           OnMouseLeave(pMouse);
           break;
-        }
         default:
           break;
       }
       break;
     }
-    default: { break; }
+    default:
+      break;
   }
-  CFWL_WidgetImpDelegate::OnProcessMessage(pMessage);
+  IFWL_Widget::OnProcessMessage(pMessage);
 }
 
-void CFWL_MonthCalendarImpDelegate::OnDrawWidget(CFX_Graphics* pGraphics,
-                                                 const CFX_Matrix* pMatrix) {
-  m_pOwner->DrawWidget(pGraphics, pMatrix);
+void IFWL_MonthCalendar::OnDrawWidget(CFX_Graphics* pGraphics,
+                                      const CFX_Matrix* pMatrix) {
+  DrawWidget(pGraphics, pMatrix);
 }
 
-void CFWL_MonthCalendarImpDelegate::OnActivate(CFWL_Message* pMsg) {}
+void IFWL_MonthCalendar::OnFocusChanged(CFWL_Message* pMsg, FX_BOOL bSet) {
+  if (bSet)
+    m_pProperties->m_dwStates |= FWL_WGTSTATE_Focused;
+  else
+    m_pProperties->m_dwStates &= ~FWL_WGTSTATE_Focused;
 
-void CFWL_MonthCalendarImpDelegate::OnFocusChanged(CFWL_Message* pMsg,
-                                                   FX_BOOL bSet) {
-  if (bSet) {
-    m_pOwner->m_pProperties->m_dwStates |= FWL_WGTSTATE_Focused;
-  } else {
-    m_pOwner->m_pProperties->m_dwStates &= ~FWL_WGTSTATE_Focused;
-  }
-  m_pOwner->Repaint(&m_pOwner->m_rtClient);
+  Repaint(&m_rtClient);
 }
 
-void CFWL_MonthCalendarImpDelegate::OnLButtonDown(CFWL_MsgMouse* pMsg) {
-  if (m_pOwner->m_rtLBtn.Contains(pMsg->m_fx, pMsg->m_fy)) {
-    m_pOwner->m_iLBtnPartStates = CFWL_PartState_Pressed;
-    m_pOwner->PrevMonth();
-    m_pOwner->Repaint(&m_pOwner->m_rtClient);
-  } else if (m_pOwner->m_rtRBtn.Contains(pMsg->m_fx, pMsg->m_fy)) {
-    m_pOwner->m_iRBtnPartStates |= CFWL_PartState_Pressed;
-    m_pOwner->NextMonth();
-    m_pOwner->Repaint(&m_pOwner->m_rtClient);
-  } else if (m_pOwner->m_rtToday.Contains(pMsg->m_fx, pMsg->m_fy)) {
-    if ((m_pOwner->m_pProperties->m_dwStyleExes & FWL_STYLEEXT_MCD_NoToday) ==
-        0) {
-      m_pOwner->JumpToToday();
-      m_pOwner->Repaint(&m_pOwner->m_rtClient);
+void IFWL_MonthCalendar::OnLButtonDown(CFWL_MsgMouse* pMsg) {
+  if (m_rtLBtn.Contains(pMsg->m_fx, pMsg->m_fy)) {
+    m_iLBtnPartStates = CFWL_PartState_Pressed;
+    PrevMonth();
+    Repaint(&m_rtClient);
+  } else if (m_rtRBtn.Contains(pMsg->m_fx, pMsg->m_fy)) {
+    m_iRBtnPartStates |= CFWL_PartState_Pressed;
+    NextMonth();
+    Repaint(&m_rtClient);
+  } else if (m_rtToday.Contains(pMsg->m_fx, pMsg->m_fy)) {
+    if ((m_pProperties->m_dwStyleExes & FWL_STYLEEXT_MCD_NoToday) == 0) {
+      JumpToToday();
+      Repaint(&m_rtClient);
     }
   } else {
-    if (m_pOwner->m_pProperties->m_dwStyleExes & FWL_STYLEEXT_MCD_MultiSelect) {
-    } else {
+    if (!(m_pProperties->m_dwStyleExes & FWL_STYLEEXT_MCD_MultiSelect)) {
       int32_t iOldSel = 0;
-      if (m_pOwner->m_arrSelDays.GetSize() > 0) {
-        iOldSel = m_pOwner->m_arrSelDays[0];
-      } else {
+      if (m_arrSelDays.GetSize() <= 0)
         return;
-      }
-      int32_t iCurSel = m_pOwner->GetDayAtPoint(pMsg->m_fx, pMsg->m_fy);
+      iOldSel = m_arrSelDays[0];
+
+      int32_t iCurSel = GetDayAtPoint(pMsg->m_fx, pMsg->m_fy);
       FX_BOOL bSelChanged = iCurSel > 0 && iCurSel != iOldSel;
       if (bSelChanged) {
-        FWL_DATEINFO* lpDatesInfo = m_pOwner->m_arrDates.GetAt(iCurSel - 1);
+        FWL_DATEINFO* lpDatesInfo = m_arrDates.GetAt(iCurSel - 1);
         CFX_RectF rtInvalidate(lpDatesInfo->rect);
         if (iOldSel > 0) {
-          lpDatesInfo = m_pOwner->m_arrDates.GetAt(iOldSel - 1);
+          lpDatesInfo = m_arrDates.GetAt(iOldSel - 1);
           rtInvalidate.Union(lpDatesInfo->rect);
         }
-        m_pOwner->AddSelDay(iCurSel);
+        AddSelDay(iCurSel);
         CFWL_EvtClick wmClick;
-        wmClick.m_pSrcTarget = m_pOwner;
-        m_pOwner->DispatchEvent(&wmClick);
+        wmClick.m_pSrcTarget = this;
+        DispatchEvent(&wmClick);
         CFWL_EventMcdDateChanged wmDateSelected;
         wmDateSelected.m_iStartDay = iCurSel;
         wmDateSelected.m_iEndDay = iCurSel;
-        wmDateSelected.m_iOldMonth = m_pOwner->m_iCurMonth;
-        wmDateSelected.m_iOldYear = m_pOwner->m_iCurYear;
-        wmDateSelected.m_pSrcTarget = m_pOwner;
-        m_pOwner->DispatchEvent(&wmDateSelected);
-        m_pOwner->Repaint(&rtInvalidate);
+        wmDateSelected.m_iOldMonth = m_iCurMonth;
+        wmDateSelected.m_iOldYear = m_iCurYear;
+        wmDateSelected.m_pSrcTarget = this;
+        DispatchEvent(&wmDateSelected);
+        Repaint(&rtInvalidate);
       }
     }
   }
 }
 
-void CFWL_MonthCalendarImpDelegate::OnLButtonUp(CFWL_MsgMouse* pMsg) {
-  if (m_pOwner->m_rtLBtn.Contains(pMsg->m_fx, pMsg->m_fy)) {
-    m_pOwner->m_iLBtnPartStates = 0;
-    m_pOwner->Repaint(&m_pOwner->m_rtLBtn);
-  } else if (m_pOwner->m_rtRBtn.Contains(pMsg->m_fx, pMsg->m_fy)) {
-    m_pOwner->m_iRBtnPartStates = 0;
-    m_pOwner->Repaint(&m_pOwner->m_rtRBtn);
-  } else if (m_pOwner->m_rtDates.Contains(pMsg->m_fx, pMsg->m_fy)) {
-    int32_t iDay = m_pOwner->GetDayAtPoint(pMsg->m_fx, pMsg->m_fy);
-    if (iDay != -1) {
-      m_pOwner->AddSelDay(iDay);
-    }
+void IFWL_MonthCalendar::OnLButtonUp(CFWL_MsgMouse* pMsg) {
+  if (m_rtLBtn.Contains(pMsg->m_fx, pMsg->m_fy)) {
+    m_iLBtnPartStates = 0;
+    Repaint(&m_rtLBtn);
+  } else if (m_rtRBtn.Contains(pMsg->m_fx, pMsg->m_fy)) {
+    m_iRBtnPartStates = 0;
+    Repaint(&m_rtRBtn);
+  } else if (m_rtDates.Contains(pMsg->m_fx, pMsg->m_fy)) {
+    int32_t iDay = GetDayAtPoint(pMsg->m_fx, pMsg->m_fy);
+    if (iDay != -1)
+      AddSelDay(iDay);
   }
 }
 
-void CFWL_MonthCalendarImpDelegate::OnMouseMove(CFWL_MsgMouse* pMsg) {
-  if (m_pOwner->m_pProperties->m_dwStyleExes & FWL_STYLEEXT_MCD_MultiSelect) {
+void IFWL_MonthCalendar::OnMouseMove(CFWL_MsgMouse* pMsg) {
+  if (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_MCD_MultiSelect)
     return;
-  }
+
   FX_BOOL bRepaint = FALSE;
   CFX_RectF rtInvalidate;
   rtInvalidate.Set(0, 0, 0, 0);
-  if (m_pOwner->m_rtDates.Contains(pMsg->m_fx, pMsg->m_fy)) {
-    int32_t iHover = m_pOwner->GetDayAtPoint(pMsg->m_fx, pMsg->m_fy);
-    bRepaint = m_pOwner->m_iHovered != iHover;
+  if (m_rtDates.Contains(pMsg->m_fx, pMsg->m_fy)) {
+    int32_t iHover = GetDayAtPoint(pMsg->m_fx, pMsg->m_fy);
+    bRepaint = m_iHovered != iHover;
     if (bRepaint) {
-      if (m_pOwner->m_iHovered > 0) {
-        m_pOwner->GetDayRect(m_pOwner->m_iHovered, rtInvalidate);
-      }
+      if (m_iHovered > 0)
+        GetDayRect(m_iHovered, rtInvalidate);
       if (iHover > 0) {
         CFX_RectF rtDay;
-        m_pOwner->GetDayRect(iHover, rtDay);
-        if (rtInvalidate.IsEmpty()) {
+        GetDayRect(iHover, rtDay);
+        if (rtInvalidate.IsEmpty())
           rtInvalidate = rtDay;
-        } else {
+        else
           rtInvalidate.Union(rtDay);
-        }
       }
     }
-    m_pOwner->m_iHovered = iHover;
+    m_iHovered = iHover;
   } else {
-    bRepaint = m_pOwner->m_iHovered > 0;
-    if (bRepaint) {
-      m_pOwner->GetDayRect(m_pOwner->m_iHovered, rtInvalidate);
-    }
-    m_pOwner->m_iHovered = -1;
+    bRepaint = m_iHovered > 0;
+    if (bRepaint)
+      GetDayRect(m_iHovered, rtInvalidate);
+
+    m_iHovered = -1;
   }
-  if (bRepaint && !rtInvalidate.IsEmpty()) {
-    m_pOwner->Repaint(&rtInvalidate);
-  }
+  if (bRepaint && !rtInvalidate.IsEmpty())
+    Repaint(&rtInvalidate);
 }
 
-void CFWL_MonthCalendarImpDelegate::OnMouseLeave(CFWL_MsgMouse* pMsg) {
-  if (m_pOwner->m_iHovered > 0) {
-    CFX_RectF rtInvalidate;
-    rtInvalidate.Set(0, 0, 0, 0);
-    m_pOwner->GetDayRect(m_pOwner->m_iHovered, rtInvalidate);
-    m_pOwner->m_iHovered = -1;
-    if (!rtInvalidate.IsEmpty()) {
-      m_pOwner->Repaint(&rtInvalidate);
-    }
-  }
+void IFWL_MonthCalendar::OnMouseLeave(CFWL_MsgMouse* pMsg) {
+  if (m_iHovered <= 0)
+    return;
+
+  CFX_RectF rtInvalidate;
+  rtInvalidate.Set(0, 0, 0, 0);
+  GetDayRect(m_iHovered, rtInvalidate);
+  m_iHovered = -1;
+  if (!rtInvalidate.IsEmpty())
+    Repaint(&rtInvalidate);
 }
 
 FWL_DATEINFO::FWL_DATEINFO(int32_t day,

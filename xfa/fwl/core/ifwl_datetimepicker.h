@@ -74,6 +74,9 @@ class IFWL_DateTimePicker : public IFWL_Widget {
   FWL_Error DrawWidget(CFX_Graphics* pGraphics,
                        const CFX_Matrix* pMatrix = nullptr) override;
   FWL_Error SetThemeProvider(IFWL_ThemeProvider* pTP) override;
+  void OnProcessMessage(CFWL_Message* pMessage) override;
+  void OnDrawWidget(CFX_Graphics* pGraphics,
+                    const CFX_Matrix* pMatrix) override;
 
   FWL_Error GetCurSel(int32_t& iYear, int32_t& iMonth, int32_t& iDay);
   FWL_Error SetCurSel(int32_t iYear, int32_t iMonth, int32_t iDay);
@@ -103,12 +106,13 @@ class IFWL_DateTimePicker : public IFWL_Widget {
                                uint32_t dwStylesExRemoved);
   IFWL_DateTimeEdit* GetDataTimeEdit();
 
- protected:
-  friend class CFWL_DateTimeEditImpDelegate;
-  friend class IFWL_DateTimeCalendar;
-  friend class CFWL_DateTimeCalendarImpDelegate;
-  friend class CFWL_DateTimePickerImpDelegate;
+  FX_BOOL IsMonthCalendarShowed();
+  void ShowMonthCalendar(FX_BOOL bActivate);
+  void ProcessSelChanged(int32_t iYear, int32_t iMonth, int32_t iDay);
 
+  IFWL_FormProxy* GetFormProxy() const { return m_pForm.get(); }
+
+ protected:
   class CFWL_MonthCalendarImpDP : public IFWL_MonthCalendarDP {
    public:
     CFWL_MonthCalendarImpDP();
@@ -134,11 +138,8 @@ class IFWL_DateTimePicker : public IFWL_Widget {
                         int32_t iMonth,
                         int32_t iDay,
                         CFX_WideString& wsText);
-  void ShowMonthCalendar(FX_BOOL bActivate);
-  FX_BOOL IsMonthCalendarShowed();
   void ReSetEditAlignment();
   void InitProxyForm();
-  void ProcessSelChanged(int32_t iYear, int32_t iMonth, int32_t iDay);
 
   CFX_RectF m_rtBtn;
   CFX_RectF m_rtClient;
@@ -166,28 +167,13 @@ class IFWL_DateTimePicker : public IFWL_Widget {
   FWL_Error DisForm_GetBBox(CFX_RectF& rect);
   FWL_Error DisForm_DrawWidget(CFX_Graphics* pGraphics,
                                const CFX_Matrix* pMatrix = nullptr);
-};
 
-class CFWL_DateTimePickerImpDelegate : public CFWL_WidgetImpDelegate {
- public:
-  CFWL_DateTimePickerImpDelegate(IFWL_DateTimePicker* pOwner);
-
-  // CFWL_WidgetImpDelegate
-  void OnProcessMessage(CFWL_Message* pMessage) override;
-  void OnDrawWidget(CFX_Graphics* pGraphics,
-                    const CFX_Matrix* pMatrix = nullptr) override;
-
- protected:
-  void OnFocusChanged(CFWL_Message* pMsg, FX_BOOL bSet = TRUE);
+  void OnFocusChanged(CFWL_Message* pMsg, FX_BOOL bSet);
   void OnLButtonDown(CFWL_MsgMouse* pMsg);
   void OnLButtonUp(CFWL_MsgMouse* pMsg);
   void OnMouseMove(CFWL_MsgMouse* pMsg);
   void OnMouseLeave(CFWL_MsgMouse* pMsg);
-
-  IFWL_DateTimePicker* m_pOwner;
-
- private:
-  void DisForm_OnFocusChanged(CFWL_Message* pMsg, FX_BOOL bSet = TRUE);
+  void DisForm_OnFocusChanged(CFWL_Message* pMsg, FX_BOOL bSet);
 };
 
 #endif  // XFA_FWL_CORE_IFWL_DATETIMEPICKER_H_

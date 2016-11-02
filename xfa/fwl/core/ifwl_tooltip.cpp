@@ -32,8 +32,6 @@ IFWL_ToolTip::IFWL_ToolTip(const IFWL_App* app,
   m_rtAnchor.Set(0, 0, 0, 0);
   m_pProperties->m_dwStyles &= ~FWL_WGTSTYLE_Child;
   m_pProperties->m_dwStyles |= FWL_WGTSTYLE_Popup;
-
-  SetDelegate(pdfium::MakeUnique<CFWL_ToolTipImpDelegate>(this));
 }
 
 IFWL_ToolTip::~IFWL_ToolTip() {}
@@ -228,6 +226,11 @@ void IFWL_ToolTip::RefreshToolTipPos() {
   }
 }
 
+void IFWL_ToolTip::OnDrawWidget(CFX_Graphics* pGraphics,
+                                const CFX_Matrix* pMatrix) {
+  DrawWidget(pGraphics, pMatrix);
+}
+
 IFWL_ToolTip::Timer::Timer(IFWL_ToolTip* pToolTip) : IFWL_Timer(pToolTip) {}
 
 void IFWL_ToolTip::Timer::Run(IFWL_TimerInfo* pTimerInfo) {
@@ -247,18 +250,4 @@ void IFWL_ToolTip::Timer::Run(IFWL_TimerInfo* pTimerInfo) {
     pToolTip->m_pTimerInfoHide->StopTimer();
     pToolTip->m_pTimerInfoHide = nullptr;
   }
-}
-
-CFWL_ToolTipImpDelegate::CFWL_ToolTipImpDelegate(IFWL_ToolTip* pOwner)
-    : m_pOwner(pOwner) {}
-
-void CFWL_ToolTipImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
-  CFWL_WidgetImpDelegate::OnProcessMessage(pMessage);
-}
-
-void CFWL_ToolTipImpDelegate::OnProcessEvent(CFWL_Event* pEvent) {}
-
-void CFWL_ToolTipImpDelegate::OnDrawWidget(CFX_Graphics* pGraphics,
-                                           const CFX_Matrix* pMatrix) {
-  m_pOwner->DrawWidget(pGraphics, pMatrix);
 }

@@ -68,7 +68,6 @@ IFWL_Form::IFWL_Form(const IFWL_App* app,
 
   RegisterForm();
   RegisterEventTarget();
-  SetDelegate(pdfium::MakeUnique<CFWL_FormImpDelegate>(this));
 }
 
 IFWL_Form::~IFWL_Form() {
@@ -770,23 +769,20 @@ void IFWL_Form::DoHeightLimit(FX_FLOAT& fTop,
   }
 }
 
-CFWL_FormImpDelegate::CFWL_FormImpDelegate(IFWL_Form* pOwner)
-    : m_pOwner(pOwner) {}
-
 #ifdef FWL_UseMacSystemBorder
-void CFWL_FormImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
+void IFWL_Form::OnProcessMessage(CFWL_Message* pMessage) {
   if (!pMessage)
     return;
 
   switch (pMessage->GetClassID()) {
     case CFWL_MessageType::Activate: {
-      m_pOwner->m_pProperties->m_dwStates &= ~FWL_WGTSTATE_Deactivated;
-      m_pOwner->Repaint(&m_pOwner->m_rtRelative);
+      m_pProperties->m_dwStates &= ~FWL_WGTSTATE_Deactivated;
+      Repaint(&m_rtRelative);
       break;
     }
     case CFWL_MessageType::Deactivate: {
-      m_pOwner->m_pProperties->m_dwStates |= FWL_WGTSTATE_Deactivated;
-      m_pOwner->Repaint(&m_pOwner->m_rtRelative);
+      m_pProperties->m_dwStates |= FWL_WGTSTATE_Deactivated;
+      Repaint(&m_rtRelative);
       break;
     }
     default:
@@ -794,211 +790,191 @@ void CFWL_FormImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
   }
 }
 #else
-void CFWL_FormImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
+void IFWL_Form::OnProcessMessage(CFWL_Message* pMessage) {
   if (!pMessage)
     return;
 
   switch (pMessage->GetClassID()) {
     case CFWL_MessageType::Activate: {
-      m_pOwner->m_pProperties->m_dwStates &= ~FWL_WGTSTATE_Deactivated;
-      const IFWL_App* pApp = m_pOwner->GetOwnerApp();
+      m_pProperties->m_dwStates &= ~FWL_WGTSTATE_Deactivated;
+      const IFWL_App* pApp = GetOwnerApp();
       CFWL_NoteDriver* pDriver =
           static_cast<CFWL_NoteDriver*>(pApp->GetNoteDriver());
-      IFWL_Widget* pSubFocus = m_pOwner->GetSubFocus();
+      IFWL_Widget* pSubFocus = GetSubFocus();
       if (pSubFocus && pSubFocus != pDriver->GetFocus())
         pDriver->SetFocus(pSubFocus);
 
-      m_pOwner->Repaint(&m_pOwner->m_rtRelative);
+      Repaint(&m_rtRelative);
       break;
     }
     case CFWL_MessageType::Deactivate: {
-      m_pOwner->m_pProperties->m_dwStates |= FWL_WGTSTATE_Deactivated;
-      const IFWL_App* pApp = m_pOwner->GetOwnerApp();
+      m_pProperties->m_dwStates |= FWL_WGTSTATE_Deactivated;
+      const IFWL_App* pApp = GetOwnerApp();
       CFWL_NoteDriver* pDriver =
           static_cast<CFWL_NoteDriver*>(pApp->GetNoteDriver());
-      IFWL_Widget* pSubFocus = m_pOwner->GetSubFocus();
+      IFWL_Widget* pSubFocus = GetSubFocus();
       if (pSubFocus) {
         if (pSubFocus == pDriver->GetFocus()) {
           pDriver->SetFocus(nullptr);
         } else if (pSubFocus->GetStates() & FWL_WGTSTATE_Focused) {
-          if (IFWL_WidgetDelegate* pDelegate =
-                  pSubFocus->GetCurrentDelegate()) {
+          if (IFWL_WidgetDelegate* pDelegate = pSubFocus->GetDelegate()) {
             CFWL_MsgKillFocus ms;
             pDelegate->OnProcessMessage(&ms);
           }
         }
       }
-      m_pOwner->Repaint(&m_pOwner->m_rtRelative);
+      Repaint(&m_rtRelative);
       break;
     }
     case CFWL_MessageType::Mouse: {
       CFWL_MsgMouse* pMsg = static_cast<CFWL_MsgMouse*>(pMessage);
       switch (pMsg->m_dwCmd) {
-        case FWL_MouseCommand::LeftButtonDown: {
+        case FWL_MouseCommand::LeftButtonDown:
           OnLButtonDown(pMsg);
           break;
-        }
-        case FWL_MouseCommand::LeftButtonUp: {
+        case FWL_MouseCommand::LeftButtonUp:
           OnLButtonUp(pMsg);
           break;
-        }
-        case FWL_MouseCommand::Move: {
+        case FWL_MouseCommand::Move:
           OnMouseMove(pMsg);
           break;
-        }
-        case FWL_MouseCommand::Hover: {
+        case FWL_MouseCommand::Hover:
           OnMouseHover(pMsg);
           break;
-        }
-        case FWL_MouseCommand::Leave: {
+        case FWL_MouseCommand::Leave:
           OnMouseLeave(pMsg);
           break;
-        }
-        case FWL_MouseCommand::LeftButtonDblClk: {
+        case FWL_MouseCommand::LeftButtonDblClk:
           OnLButtonDblClk(pMsg);
           break;
-        }
         default:
           break;
       }
       break;
     }
     case CFWL_MessageType::Size: {
-      CFWL_WidgetMgr* pWidgetMgr = m_pOwner->GetOwnerApp()->GetWidgetMgr();
+      CFWL_WidgetMgr* pWidgetMgr = GetOwnerApp()->GetWidgetMgr();
       if (!pWidgetMgr)
         return;
 
-      pWidgetMgr->AddRedrawCounts(m_pOwner);
-      if (!m_pOwner->m_bSetMaximize)
+      pWidgetMgr->AddRedrawCounts(this);
+      if (!m_bSetMaximize)
         break;
 
-      m_pOwner->m_bSetMaximize = FALSE;
+      m_bSetMaximize = FALSE;
       CFWL_MsgSize* pMsg = static_cast<CFWL_MsgSize*>(pMessage);
-      m_pOwner->m_pProperties->m_rtWidget.left = 0;
-      m_pOwner->m_pProperties->m_rtWidget.top = 0;
-      m_pOwner->m_pProperties->m_rtWidget.width = (FX_FLOAT)pMsg->m_iWidth;
-      m_pOwner->m_pProperties->m_rtWidget.height = (FX_FLOAT)pMsg->m_iHeight;
-      m_pOwner->Update();
+      m_pProperties->m_rtWidget.left = 0;
+      m_pProperties->m_rtWidget.top = 0;
+      m_pProperties->m_rtWidget.width = (FX_FLOAT)pMsg->m_iWidth;
+      m_pProperties->m_rtWidget.height = (FX_FLOAT)pMsg->m_iHeight;
+      Update();
       break;
     }
-    case CFWL_MessageType::WindowMove: {
+    case CFWL_MessageType::WindowMove:
       OnWindowMove(static_cast<CFWL_MsgWindowMove*>(pMessage));
       break;
-    }
-    case CFWL_MessageType::Close: {
+    case CFWL_MessageType::Close:
       OnClose(static_cast<CFWL_MsgClose*>(pMessage));
       break;
-    }
-    default: { break; }
+    default:
+      break;
   }
 }
 #endif  // FWL_UseMacSystemBorder
 
-void CFWL_FormImpDelegate::OnProcessEvent(CFWL_Event* pEvent) {}
-
-void CFWL_FormImpDelegate::OnDrawWidget(CFX_Graphics* pGraphics,
-                                        const CFX_Matrix* pMatrix) {
-  m_pOwner->DrawWidget(pGraphics, pMatrix);
+void IFWL_Form::OnDrawWidget(CFX_Graphics* pGraphics,
+                             const CFX_Matrix* pMatrix) {
+  DrawWidget(pGraphics, pMatrix);
 }
 
-void CFWL_FormImpDelegate::OnLButtonDown(CFWL_MsgMouse* pMsg) {
-  m_pOwner->SetGrab(TRUE);
-  m_pOwner->m_bLButtonDown = TRUE;
-  m_pOwner->m_eResizeType = FORM_RESIZETYPE_None;
-  CFWL_SysBtn* pPressBtn = m_pOwner->GetSysBtnAtPoint(pMsg->m_fx, pMsg->m_fy);
-  m_pOwner->m_iCaptureBtn = m_pOwner->GetSysBtnIndex(pPressBtn);
+void IFWL_Form::OnLButtonDown(CFWL_MsgMouse* pMsg) {
+  SetGrab(TRUE);
+  m_bLButtonDown = TRUE;
+  m_eResizeType = FORM_RESIZETYPE_None;
+  CFWL_SysBtn* pPressBtn = GetSysBtnAtPoint(pMsg->m_fx, pMsg->m_fy);
+  m_iCaptureBtn = GetSysBtnIndex(pPressBtn);
   CFX_RectF rtCap;
-  rtCap.Set(m_pOwner->m_rtCaption.left + m_pOwner->m_fCYBorder,
-            m_pOwner->m_rtCaption.top + m_pOwner->m_fCXBorder,
-            m_pOwner->m_rtCaption.width -
-                kSystemButtonSize * m_pOwner->m_iSysBox -
-                2 * m_pOwner->m_fCYBorder,
-            m_pOwner->m_rtCaption.height - m_pOwner->m_fCXBorder);
+  rtCap.Set(m_rtCaption.left + m_fCYBorder, m_rtCaption.top + m_fCXBorder,
+            m_rtCaption.width - kSystemButtonSize * m_iSysBox - 2 * m_fCYBorder,
+            m_rtCaption.height - m_fCXBorder);
+
   if (pPressBtn) {
     pPressBtn->SetPressed();
-    m_pOwner->Repaint(&pPressBtn->m_rtBtn);
+    Repaint(&pPressBtn->m_rtBtn);
   } else if (rtCap.Contains(pMsg->m_fx, pMsg->m_fy)) {
-    m_pOwner->m_eResizeType = FORM_RESIZETYPE_Cap;
-  } else if ((m_pOwner->m_pProperties->m_dwStyles & FWL_WGTSTYLE_Border) &&
-             (m_pOwner->m_pProperties->m_dwStyleExes &
-              FWL_STYLEEXT_FRM_Resize) &&
-             !m_pOwner->m_bMaximized) {
-    m_pOwner->SetCursor(pMsg->m_fx, pMsg->m_fy);
+    m_eResizeType = FORM_RESIZETYPE_Cap;
+  } else if ((m_pProperties->m_dwStyles & FWL_WGTSTYLE_Border) &&
+             (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_FRM_Resize) &&
+             !m_bMaximized) {
+    SetCursor(pMsg->m_fx, pMsg->m_fy);
   }
-  m_pOwner->m_InfoStart.m_ptStart = CFX_PointF(pMsg->m_fx, pMsg->m_fy);
-  m_pOwner->m_InfoStart.m_szStart =
-      CFX_SizeF(m_pOwner->m_pProperties->m_rtWidget.width,
-                m_pOwner->m_pProperties->m_rtWidget.height);
+  m_InfoStart.m_ptStart = CFX_PointF(pMsg->m_fx, pMsg->m_fy);
+  m_InfoStart.m_szStart = CFX_SizeF(m_pProperties->m_rtWidget.width,
+                                    m_pProperties->m_rtWidget.height);
 }
-void CFWL_FormImpDelegate::OnLButtonUp(CFWL_MsgMouse* pMsg) {
-  m_pOwner->SetGrab(FALSE);
-  m_pOwner->m_bLButtonDown = FALSE;
-  CFWL_SysBtn* pPointBtn = m_pOwner->GetSysBtnAtPoint(pMsg->m_fx, pMsg->m_fy);
-  CFWL_SysBtn* pPressedBtn =
-      m_pOwner->GetSysBtnByIndex(m_pOwner->m_iCaptureBtn);
-  if (!pPressedBtn || pPointBtn != pPressedBtn) {
+
+void IFWL_Form::OnLButtonUp(CFWL_MsgMouse* pMsg) {
+  SetGrab(FALSE);
+  m_bLButtonDown = FALSE;
+  CFWL_SysBtn* pPointBtn = GetSysBtnAtPoint(pMsg->m_fx, pMsg->m_fy);
+  CFWL_SysBtn* pPressedBtn = GetSysBtnByIndex(m_iCaptureBtn);
+  if (!pPressedBtn || pPointBtn != pPressedBtn)
     return;
-  }
-  if (pPressedBtn == m_pOwner->GetSysBtnByState(FWL_SYSBUTTONSTATE_Pressed)) {
+  if (pPressedBtn == GetSysBtnByState(FWL_SYSBUTTONSTATE_Pressed))
     pPressedBtn->SetNormal();
-  }
-  if (pPressedBtn == m_pOwner->m_pMaxBox) {
-    if (m_pOwner->m_bMaximized) {
-      m_pOwner->SetWidgetRect(m_pOwner->m_rtRestore);
-      m_pOwner->Update();
-      m_pOwner->Repaint();
+  if (pPressedBtn == m_pMaxBox) {
+    if (m_bMaximized) {
+      SetWidgetRect(m_rtRestore);
+      Update();
+      Repaint();
     } else {
-      m_pOwner->SetWorkAreaRect();
-      m_pOwner->Update();
+      SetWorkAreaRect();
+      Update();
     }
-    m_pOwner->m_bMaximized = !m_pOwner->m_bMaximized;
-  } else if (pPressedBtn != m_pOwner->m_pMinBox) {
+    m_bMaximized = !m_bMaximized;
+  } else if (pPressedBtn != m_pMinBox) {
     CFWL_EvtClose eClose;
-    eClose.m_pSrcTarget = m_pOwner;
-    m_pOwner->DispatchEvent(&eClose);
+    eClose.m_pSrcTarget = this;
+    DispatchEvent(&eClose);
   }
 }
-void CFWL_FormImpDelegate::OnMouseMove(CFWL_MsgMouse* pMsg) {
-  if (m_pOwner->m_bLButtonDown) {
+
+void IFWL_Form::OnMouseMove(CFWL_MsgMouse* pMsg) {
+  if (m_bLButtonDown)
     return;
-  }
-  if ((m_pOwner->m_pProperties->m_dwStyles & FWL_WGTSTYLE_Border) &&
-      (m_pOwner->m_pProperties->m_dwStyleExes & FWL_STYLEEXT_FRM_Resize) &&
-      !m_pOwner->m_bMaximized) {
-    m_pOwner->SetCursor(pMsg->m_fx, pMsg->m_fy);
+
+  if ((m_pProperties->m_dwStyles & FWL_WGTSTYLE_Border) &&
+      (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_FRM_Resize) &&
+      !m_bMaximized) {
+    SetCursor(pMsg->m_fx, pMsg->m_fy);
   }
   CFX_RectF rtInvalidate;
   rtInvalidate.Reset();
-  CFWL_SysBtn* pPointBtn = m_pOwner->GetSysBtnAtPoint(pMsg->m_fx, pMsg->m_fy);
-  CFWL_SysBtn* pOldHover = m_pOwner->GetSysBtnByState(FWL_SYSBUTTONSTATE_Hover);
+  CFWL_SysBtn* pPointBtn = GetSysBtnAtPoint(pMsg->m_fx, pMsg->m_fy);
+  CFWL_SysBtn* pOldHover = GetSysBtnByState(FWL_SYSBUTTONSTATE_Hover);
 #if (_FX_OS_ == _FX_MACOSX_)
   {
-    if (pOldHover && pPointBtn != pOldHover) {
+    if (pOldHover && pPointBtn != pOldHover)
       pOldHover->SetNormal();
-    }
-    if (pPointBtn && pPointBtn != pOldHover) {
+    if (pPointBtn && pPointBtn != pOldHover)
       pPointBtn->SetHover();
+    if (m_pCloseBox)
+      rtInvalidate = m_pCloseBox->m_rtBtn;
+    if (m_pMaxBox) {
+      if (rtInvalidate.IsEmpty())
+        rtInvalidate = m_pMaxBox->m_rtBtn;
+      else
+        rtInvalidate.Union(m_pMaxBox->m_rtBtn);
     }
-    if (m_pOwner->m_pCloseBox) {
-      rtInvalidate = m_pOwner->m_pCloseBox->m_rtBtn;
-    }
-    if (m_pOwner->m_pMaxBox) {
-      if (rtInvalidate.IsEmpty()) {
-        rtInvalidate = m_pOwner->m_pMaxBox->m_rtBtn;
-      } else {
-        rtInvalidate.Union(m_pOwner->m_pMaxBox->m_rtBtn);
-      }
-    }
-    if (m_pOwner->m_pMinBox) {
-      if (rtInvalidate.IsEmpty()) {
-        rtInvalidate = m_pOwner->m_pMinBox->m_rtBtn;
-      } else {
-        rtInvalidate.Union(m_pOwner->m_pMinBox->m_rtBtn);
-      }
+    if (m_pMinBox) {
+      if (rtInvalidate.IsEmpty())
+        rtInvalidate = m_pMinBox->m_rtBtn;
+      else
+        rtInvalidate.Union(m_pMinBox->m_rtBtn);
     }
     if (!rtInvalidate.IsEmpty() &&
         rtInvalidate.Contains(pMsg->m_fx, pMsg->m_fy)) {
-      m_pOwner->m_bMouseIn = TRUE;
+      m_bMouseIn = TRUE;
     }
   }
 #else
@@ -1009,51 +985,53 @@ void CFWL_FormImpDelegate::OnMouseMove(CFWL_MsgMouse* pMsg) {
     }
     if (pPointBtn && pPointBtn != pOldHover) {
       pPointBtn->SetHover();
-      if (rtInvalidate.IsEmpty()) {
+      if (rtInvalidate.IsEmpty())
         rtInvalidate = pPointBtn->m_rtBtn;
-      } else {
+      else
         rtInvalidate.Union(pPointBtn->m_rtBtn);
-      }
     }
   }
 #endif
-  if (!rtInvalidate.IsEmpty()) {
-    m_pOwner->Repaint(&rtInvalidate);
-  }
+  if (!rtInvalidate.IsEmpty())
+    Repaint(&rtInvalidate);
 }
-void CFWL_FormImpDelegate::OnMouseHover(CFWL_MsgMouse* pMsg) {
-  m_pOwner->SetCursor(pMsg->m_fx, pMsg->m_fy);
+
+void IFWL_Form::OnMouseHover(CFWL_MsgMouse* pMsg) {
+  SetCursor(pMsg->m_fx, pMsg->m_fy);
 }
-void CFWL_FormImpDelegate::OnMouseLeave(CFWL_MsgMouse* pMsg) {
-  CFWL_SysBtn* pHover = m_pOwner->GetSysBtnByState(FWL_SYSBUTTONSTATE_Hover);
+
+void IFWL_Form::OnMouseLeave(CFWL_MsgMouse* pMsg) {
+  CFWL_SysBtn* pHover = GetSysBtnByState(FWL_SYSBUTTONSTATE_Hover);
   if (pHover) {
     pHover->SetNormal();
-    m_pOwner->Repaint(&pHover->m_rtBtn);
+    Repaint(&pHover->m_rtBtn);
   }
-  if (pMsg->m_dwCmd == FWL_MouseCommand::Leave && !m_pOwner->m_bLButtonDown) {
-    m_pOwner->SetCursor(pMsg->m_fx, pMsg->m_fy);
+  if (pMsg->m_dwCmd == FWL_MouseCommand::Leave && !m_bLButtonDown)
+    SetCursor(pMsg->m_fx, pMsg->m_fy);
+}
+
+void IFWL_Form::OnLButtonDblClk(CFWL_MsgMouse* pMsg) {
+  if ((m_pProperties->m_dwStyleExes & FWL_STYLEEXT_FRM_Resize) &&
+      HitTest(pMsg->m_fx, pMsg->m_fy) == FWL_WidgetHit::Titlebar) {
+    if (m_bMaximized)
+      SetWidgetRect(m_rtRestore);
+    else
+      SetWorkAreaRect();
+
+    Update();
+    m_bMaximized = !m_bMaximized;
   }
 }
-void CFWL_FormImpDelegate::OnLButtonDblClk(CFWL_MsgMouse* pMsg) {
-  if ((m_pOwner->m_pProperties->m_dwStyleExes & FWL_STYLEEXT_FRM_Resize) &&
-      m_pOwner->HitTest(pMsg->m_fx, pMsg->m_fy) == FWL_WidgetHit::Titlebar) {
-    if (m_pOwner->m_bMaximized) {
-      m_pOwner->SetWidgetRect(m_pOwner->m_rtRestore);
-    } else {
-      m_pOwner->SetWorkAreaRect();
-    }
-    m_pOwner->Update();
-    m_pOwner->m_bMaximized = !m_pOwner->m_bMaximized;
-  }
+
+void IFWL_Form::OnWindowMove(CFWL_MsgWindowMove* pMsg) {
+  m_pProperties->m_rtWidget.left = pMsg->m_fx;
+  m_pProperties->m_rtWidget.top = pMsg->m_fy;
 }
-void CFWL_FormImpDelegate::OnWindowMove(CFWL_MsgWindowMove* pMsg) {
-  m_pOwner->m_pProperties->m_rtWidget.left = pMsg->m_fx;
-  m_pOwner->m_pProperties->m_rtWidget.top = pMsg->m_fy;
-}
-void CFWL_FormImpDelegate::OnClose(CFWL_MsgClose* pMsg) {
+
+void IFWL_Form::OnClose(CFWL_MsgClose* pMsg) {
   CFWL_EvtClose eClose;
-  eClose.m_pSrcTarget = m_pOwner;
-  m_pOwner->DispatchEvent(&eClose);
+  eClose.m_pSrcTarget = this;
+  DispatchEvent(&eClose);
 }
 
 CFWL_SysBtn::CFWL_SysBtn() {

@@ -28,7 +28,6 @@
 #define FWL_STATE_PSB_Default (1 << (FWL_WGTSTATE_MAX + 2))
 
 class CFWL_MsgMouse;
-class CFWL_PushButtonImpDelegate;
 class CFWL_WidgetImpProperties;
 class CFX_DIBitmap;
 class IFWL_Widget;
@@ -51,10 +50,11 @@ class IFWL_PushButton : public IFWL_Widget {
   FWL_Error Update() override;
   FWL_Error DrawWidget(CFX_Graphics* pGraphics,
                        const CFX_Matrix* pMatrix = nullptr) override;
+  void OnProcessMessage(CFWL_Message* pMessage) override;
+  void OnDrawWidget(CFX_Graphics* pGraphics,
+                    const CFX_Matrix* pMatrix) override;
 
  protected:
-  friend class CFWL_PushButtonImpDelegate;
-
   void DrawBkground(CFX_Graphics* pGraphics,
                     IFWL_ThemeProvider* pTheme,
                     const CFX_Matrix* pMatrix);
@@ -69,24 +69,14 @@ class IFWL_PushButton : public IFWL_Widget {
   FX_BOOL m_bBtnDown;
   uint32_t m_dwTTOStyles;
   int32_t m_iTTOAlign;
-};
 
-class CFWL_PushButtonImpDelegate : public CFWL_WidgetImpDelegate {
- public:
-  CFWL_PushButtonImpDelegate(IFWL_PushButton* pOwner);
-  void OnProcessMessage(CFWL_Message* pMessage) override;
-  void OnProcessEvent(CFWL_Event* pEvent) override;
-  void OnDrawWidget(CFX_Graphics* pGraphics,
-                    const CFX_Matrix* pMatrix = nullptr) override;
-
- protected:
-  void OnFocusChanged(CFWL_Message* pMsg, FX_BOOL bSet = TRUE);
+ private:
+  void OnFocusChanged(CFWL_Message* pMsg, FX_BOOL bSet);
   void OnLButtonDown(CFWL_MsgMouse* pMsg);
   void OnLButtonUp(CFWL_MsgMouse* pMsg);
   void OnMouseMove(CFWL_MsgMouse* pMsg);
   void OnMouseLeave(CFWL_MsgMouse* pMsg);
   void OnKeyDown(CFWL_MsgKey* pMsg);
-  IFWL_PushButton* m_pOwner;
 };
 
 #endif  // XFA_FWL_CORE_IFWL_PUSHBUTTON_H_

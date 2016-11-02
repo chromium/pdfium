@@ -127,11 +127,11 @@ FWL_Error CFWL_Widget::DrawWidget(CFX_Graphics* pGraphics,
   return m_pIface->DrawWidget(pGraphics, pMatrix);
 }
 
-IFWL_WidgetDelegate* CFWL_Widget::GetCurrentDelegate() {
-  return m_pIface ? m_pIface->GetCurrentDelegate() : nullptr;
+IFWL_WidgetDelegate* CFWL_Widget::GetDelegate() const {
+  return m_pIface ? m_pIface->GetDelegate() : nullptr;
 }
 
-void CFWL_Widget::SetCurrentDelegate(IFWL_WidgetDelegate* pDelegate) {
+void CFWL_Widget::SetDelegate(IFWL_WidgetDelegate* pDelegate) {
   if (m_pIface)
-    m_pIface->SetCurrentDelegate(pDelegate);
+    m_pIface->SetDelegate(pDelegate);
 }

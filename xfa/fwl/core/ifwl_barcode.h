@@ -13,7 +13,6 @@
 #include "xfa/fwl/core/ifwl_scrollbar.h"
 #include "xfa/fxbarcode/BC_Library.h"
 
-class CFWL_BarcodeImpDelegate;
 class CFWL_WidgetImpProperties;
 class CFX_Barcode;
 class IFWL_Widget;
@@ -68,25 +67,18 @@ class IFWL_Barcode : public IFWL_Edit {
   FWL_Error DrawWidget(CFX_Graphics* pGraphics,
                        const CFX_Matrix* pMatrix = nullptr) override;
   FWL_Error SetText(const CFX_WideString& wsText) override;
+  void OnProcessEvent(CFWL_Event* pEvent) override;
 
   void SetType(BC_TYPE type);
   FX_BOOL IsProtectedType();
 
  protected:
-  friend class CFWL_BarcodeImpDelegate;
-
   void GenerateBarcodeImageCache();
   void CreateBarcodeEngine();
 
   std::unique_ptr<CFX_Barcode> m_pBarcodeEngine;
   uint32_t m_dwStatus;
   BC_TYPE m_type;
-};
-
-class CFWL_BarcodeImpDelegate : public CFWL_EditImpDelegate {
- public:
-  explicit CFWL_BarcodeImpDelegate(IFWL_Barcode* pOwner);
-  void OnProcessEvent(CFWL_Event* pEvent) override;
 };
 
 #endif  // XFA_FWL_CORE_IFWL_BARCODE_H_

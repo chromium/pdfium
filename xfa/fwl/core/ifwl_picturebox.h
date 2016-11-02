@@ -27,7 +27,6 @@
 #define FWL_STYLEEXT_PTB_VAlignMask 3L << 2
 #define FWL_STYLEEXT_PTB_StretchAlignMask 7L << 4
 
-class CFWL_PictureBoxImpDelegate;
 class CFWL_WidgetImpProperties;
 class CFX_DIBitmap;
 class IFWL_Widget;
@@ -54,10 +53,10 @@ class IFWL_PictureBox : public IFWL_Widget {
   FWL_Error Update() override;
   FWL_Error DrawWidget(CFX_Graphics* pGraphics,
                        const CFX_Matrix* pMatrix = nullptr) override;
+  void OnDrawWidget(CFX_Graphics* pGraphics,
+                    const CFX_Matrix* pMatrix) override;
 
  protected:
-  friend class CFWL_PictureBoxImpDelegate;
-
   void DrawBkground(CFX_Graphics* pGraphics,
                     IFWL_ThemeProvider* pTheme,
                     const CFX_Matrix* pMatrix = nullptr);
@@ -69,16 +68,6 @@ class IFWL_PictureBox : public IFWL_Widget {
   FX_BOOL m_bTop;
   FX_BOOL m_bVCenter;
   FX_BOOL m_bButton;
-};
-
-class CFWL_PictureBoxImpDelegate : public CFWL_WidgetImpDelegate {
- public:
-  CFWL_PictureBoxImpDelegate(IFWL_PictureBox* pOwner);
-  void OnDrawWidget(CFX_Graphics* pGraphics,
-                    const CFX_Matrix* pMatrix = nullptr) override;
-
- protected:
-  IFWL_PictureBox* m_pOwner;
 };
 
 #endif  // XFA_FWL_CORE_IFWL_PICTUREBOX_H_

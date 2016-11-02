@@ -19,6 +19,9 @@ class IFWL_ComboEdit : public IFWL_Edit {
                  const CFWL_WidgetImpProperties& properties,
                  IFWL_Widget* pOuter);
 
+  // IFWL_Edit.
+  void OnProcessMessage(CFWL_Message* pMessage) override;
+
   void ClearSelected();
   void SetSelected();
   void EndCaret();
@@ -27,16 +30,6 @@ class IFWL_ComboEdit : public IFWL_Edit {
  protected:
   void SetComboBoxFocus(FX_BOOL bSet);
   IFWL_ComboBox* m_pOuter;
-  friend class CFWL_ComboEditImpDelegate;
-};
-
-class CFWL_ComboEditImpDelegate : public CFWL_EditImpDelegate {
- public:
-  CFWL_ComboEditImpDelegate(IFWL_ComboEdit* pOwner);
-  void OnProcessMessage(CFWL_Message* pMessage) override;
-
- protected:
-  IFWL_ComboEdit* m_pOwner;
 };
 
 #endif  // XFA_FWL_CORE_IFWL_COMBOEDIT_H_

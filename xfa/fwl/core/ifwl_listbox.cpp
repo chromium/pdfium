@@ -34,8 +34,6 @@ IFWL_ListBox::IFWL_ListBox(const IFWL_App* app,
   m_rtClient.Reset();
   m_rtConent.Reset();
   m_rtStatic.Reset();
-
-  SetDelegate(pdfium::MakeUnique<CFWL_ListBoxImpDelegate>(this));
 }
 
 IFWL_ListBox::~IFWL_ListBox() {}
@@ -913,159 +911,142 @@ void IFWL_ListBox::ProcessSelChanged() {
   DispatchEvent(&selEvent);
 }
 
-CFWL_ListBoxImpDelegate::CFWL_ListBoxImpDelegate(IFWL_ListBox* pOwner)
-    : m_pOwner(pOwner) {}
-
-void CFWL_ListBoxImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
+void IFWL_ListBox::OnProcessMessage(CFWL_Message* pMessage) {
   if (!pMessage)
     return;
-  if (!m_pOwner->IsEnabled())
+  if (!IsEnabled())
     return;
 
   CFWL_MessageType dwMsgCode = pMessage->GetClassID();
   switch (dwMsgCode) {
-    case CFWL_MessageType::SetFocus: {
+    case CFWL_MessageType::SetFocus:
       OnFocusChanged(pMessage, TRUE);
       break;
-    }
-    case CFWL_MessageType::KillFocus: {
+    case CFWL_MessageType::KillFocus:
       OnFocusChanged(pMessage, FALSE);
       break;
-    }
     case CFWL_MessageType::Mouse: {
       CFWL_MsgMouse* pMsg = static_cast<CFWL_MsgMouse*>(pMessage);
       switch (pMsg->m_dwCmd) {
-        case FWL_MouseCommand::LeftButtonDown: {
+        case FWL_MouseCommand::LeftButtonDown:
           OnLButtonDown(pMsg);
           break;
-        }
-        case FWL_MouseCommand::LeftButtonUp: {
+        case FWL_MouseCommand::LeftButtonUp:
           OnLButtonUp(pMsg);
           break;
-        }
         default:
           break;
       }
       break;
     }
-    case CFWL_MessageType::MouseWheel: {
+    case CFWL_MessageType::MouseWheel:
       OnMouseWheel(static_cast<CFWL_MsgMouseWheel*>(pMessage));
       break;
-    }
     case CFWL_MessageType::Key: {
       CFWL_MsgKey* pMsg = static_cast<CFWL_MsgKey*>(pMessage);
       if (pMsg->m_dwCmd == FWL_KeyCommand::KeyDown)
         OnKeyDown(pMsg);
       break;
     }
-    default: { break; }
+    default:
+      break;
   }
-  CFWL_WidgetImpDelegate::OnProcessMessage(pMessage);
+  IFWL_Widget::OnProcessMessage(pMessage);
 }
 
-void CFWL_ListBoxImpDelegate::OnProcessEvent(CFWL_Event* pEvent) {
+void IFWL_ListBox::OnProcessEvent(CFWL_Event* pEvent) {
   if (!pEvent)
     return;
   if (pEvent->GetClassID() != CFWL_EventType::Scroll)
     return;
 
   IFWL_Widget* pSrcTarget = pEvent->m_pSrcTarget;
-  if ((pSrcTarget == m_pOwner->m_pVertScrollBar.get() &&
-       m_pOwner->m_pVertScrollBar) ||
-      (pSrcTarget == m_pOwner->m_pHorzScrollBar.get() &&
-       m_pOwner->m_pHorzScrollBar)) {
+  if ((pSrcTarget == m_pVertScrollBar.get() && m_pVertScrollBar) ||
+      (pSrcTarget == m_pHorzScrollBar.get() && m_pHorzScrollBar)) {
     CFWL_EvtScroll* pScrollEvent = static_cast<CFWL_EvtScroll*>(pEvent);
     OnScroll(static_cast<IFWL_ScrollBar*>(pSrcTarget),
              pScrollEvent->m_iScrollCode, pScrollEvent->m_fPos);
   }
 }
 
-void CFWL_ListBoxImpDelegate::OnDrawWidget(CFX_Graphics* pGraphics,
-                                           const CFX_Matrix* pMatrix) {
-  m_pOwner->DrawWidget(pGraphics, pMatrix);
+void IFWL_ListBox::OnDrawWidget(CFX_Graphics* pGraphics,
+                                const CFX_Matrix* pMatrix) {
+  DrawWidget(pGraphics, pMatrix);
 }
 
-void CFWL_ListBoxImpDelegate::OnFocusChanged(CFWL_Message* pMsg, FX_BOOL bSet) {
-  if (m_pOwner->GetStylesEx() & FWL_STYLEEXT_LTB_ShowScrollBarFocus) {
-    if (m_pOwner->m_pVertScrollBar) {
-      m_pOwner->m_pVertScrollBar->SetStates(FWL_WGTSTATE_Invisible, !bSet);
-    }
-    if (m_pOwner->m_pHorzScrollBar) {
-      m_pOwner->m_pHorzScrollBar->SetStates(FWL_WGTSTATE_Invisible, !bSet);
-    }
+void IFWL_ListBox::OnFocusChanged(CFWL_Message* pMsg, FX_BOOL bSet) {
+  if (GetStylesEx() & FWL_STYLEEXT_LTB_ShowScrollBarFocus) {
+    if (m_pVertScrollBar)
+      m_pVertScrollBar->SetStates(FWL_WGTSTATE_Invisible, !bSet);
+    if (m_pHorzScrollBar)
+      m_pHorzScrollBar->SetStates(FWL_WGTSTATE_Invisible, !bSet);
   }
-  if (bSet) {
-    m_pOwner->m_pProperties->m_dwStates |= (FWL_WGTSTATE_Focused);
-  } else {
-    m_pOwner->m_pProperties->m_dwStates &= ~(FWL_WGTSTATE_Focused);
-  }
-  m_pOwner->Repaint(&m_pOwner->m_rtClient);
+  if (bSet)
+    m_pProperties->m_dwStates |= (FWL_WGTSTATE_Focused);
+  else
+    m_pProperties->m_dwStates &= ~(FWL_WGTSTATE_Focused);
+
+  Repaint(&m_rtClient);
 }
 
-void CFWL_ListBoxImpDelegate::OnLButtonDown(CFWL_MsgMouse* pMsg) {
-  m_pOwner->m_bLButtonDown = TRUE;
-  if ((m_pOwner->m_pProperties->m_dwStates & FWL_WGTSTATE_Focused) == 0) {
-    m_pOwner->SetFocus(TRUE);
-  }
-  IFWL_ListItem* pItem = m_pOwner->GetItemAtPoint(pMsg->m_fx, pMsg->m_fy);
-  if (!pItem) {
+void IFWL_ListBox::OnLButtonDown(CFWL_MsgMouse* pMsg) {
+  m_bLButtonDown = TRUE;
+  if ((m_pProperties->m_dwStates & FWL_WGTSTATE_Focused) == 0)
+    SetFocus(TRUE);
+
+  IFWL_ListItem* pItem = GetItemAtPoint(pMsg->m_fx, pMsg->m_fy);
+  if (!pItem)
     return;
-  }
-  if (m_pOwner->m_pProperties->m_dwStyleExes &
-      FWL_STYLEEXT_LTB_MultiSelection) {
+
+  if (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_LTB_MultiSelection) {
     if (pMsg->m_dwFlags & FWL_KEYFLAG_Ctrl) {
-      FX_BOOL bSelected = m_pOwner->IsItemSelected(pItem);
-      m_pOwner->SetSelectionDirect(pItem, !bSelected);
-      m_pOwner->m_hAnchor = pItem;
+      FX_BOOL bSelected = IsItemSelected(pItem);
+      SetSelectionDirect(pItem, !bSelected);
+      m_hAnchor = pItem;
     } else if (pMsg->m_dwFlags & FWL_KEYFLAG_Shift) {
-      if (m_pOwner->m_hAnchor) {
-        m_pOwner->SetSelection(m_pOwner->m_hAnchor, pItem, TRUE);
-      } else {
-        m_pOwner->SetSelectionDirect(pItem, TRUE);
-      }
+      if (m_hAnchor)
+        SetSelection(m_hAnchor, pItem, TRUE);
+      else
+        SetSelectionDirect(pItem, TRUE);
     } else {
-      m_pOwner->SetSelection(pItem, pItem, TRUE);
-      m_pOwner->m_hAnchor = pItem;
+      SetSelection(pItem, pItem, TRUE);
+      m_hAnchor = pItem;
     }
   } else {
-    m_pOwner->SetSelection(pItem, pItem, TRUE);
+    SetSelection(pItem, pItem, TRUE);
   }
-  if (m_pOwner->m_pProperties->m_dwStyleExes & FWL_STYLEEXT_LTB_Check) {
-    IFWL_ListItem* hSelectedItem =
-        m_pOwner->GetItemAtPoint(pMsg->m_fx, pMsg->m_fy);
+  if (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_LTB_Check) {
+    IFWL_ListItem* hSelectedItem = GetItemAtPoint(pMsg->m_fx, pMsg->m_fy);
     CFX_RectF rtCheck;
-    m_pOwner->GetItemCheckRect(hSelectedItem, rtCheck);
-    FX_BOOL bChecked = m_pOwner->GetItemChecked(pItem);
+    GetItemCheckRect(hSelectedItem, rtCheck);
+    FX_BOOL bChecked = GetItemChecked(pItem);
     if (rtCheck.Contains(pMsg->m_fx, pMsg->m_fy)) {
-      if (bChecked) {
-        m_pOwner->SetItemChecked(pItem, FALSE);
-      } else {
-        m_pOwner->SetItemChecked(pItem, TRUE);
-      }
-      m_pOwner->Update();
+      SetItemChecked(pItem, !bChecked);
+      Update();
     }
   }
-  m_pOwner->SetFocusItem(pItem);
-  m_pOwner->ScrollToVisible(pItem);
-  m_pOwner->SetGrab(TRUE);
-  m_pOwner->ProcessSelChanged();
-  m_pOwner->Repaint(&m_pOwner->m_rtClient);
+  SetFocusItem(pItem);
+  ScrollToVisible(pItem);
+  SetGrab(TRUE);
+  ProcessSelChanged();
+  Repaint(&m_rtClient);
 }
 
-void CFWL_ListBoxImpDelegate::OnLButtonUp(CFWL_MsgMouse* pMsg) {
-  if (m_pOwner->m_bLButtonDown) {
-    m_pOwner->m_bLButtonDown = FALSE;
-    m_pOwner->SetGrab(FALSE);
-    DispatchSelChangedEv();
-  }
+void IFWL_ListBox::OnLButtonUp(CFWL_MsgMouse* pMsg) {
+  if (!m_bLButtonDown)
+    return;
+
+  m_bLButtonDown = FALSE;
+  SetGrab(FALSE);
+  DispatchSelChangedEv();
 }
 
-void CFWL_ListBoxImpDelegate::OnMouseWheel(CFWL_MsgMouseWheel* pMsg) {
-  if (m_pOwner->IsShowScrollBar(TRUE))
-    m_pOwner->m_pVertScrollBar->GetCurrentDelegate()->OnProcessMessage(pMsg);
+void IFWL_ListBox::OnMouseWheel(CFWL_MsgMouseWheel* pMsg) {
+  if (IsShowScrollBar(TRUE))
+    m_pVertScrollBar->GetDelegate()->OnProcessMessage(pMsg);
 }
 
-void CFWL_ListBoxImpDelegate::OnKeyDown(CFWL_MsgKey* pMsg) {
+void IFWL_ListBox::OnKeyDown(CFWL_MsgKey* pMsg) {
   uint32_t dwKeyCode = pMsg->m_dwKeyCode;
   switch (dwKeyCode) {
     case FWL_VKEY_Tab:
@@ -1073,13 +1054,13 @@ void CFWL_ListBoxImpDelegate::OnKeyDown(CFWL_MsgKey* pMsg) {
     case FWL_VKEY_Down:
     case FWL_VKEY_Home:
     case FWL_VKEY_End: {
-      IFWL_ListItem* pItem = m_pOwner->GetFocusedItem();
-      pItem = m_pOwner->GetItem(pItem, dwKeyCode);
+      IFWL_ListItem* pItem = GetFocusedItem();
+      pItem = GetItem(pItem, dwKeyCode);
       bool bShift = !!(pMsg->m_dwFlags & FWL_KEYFLAG_Shift);
       bool bCtrl = !!(pMsg->m_dwFlags & FWL_KEYFLAG_Ctrl);
       OnVK(pItem, bShift, bCtrl);
       DispatchSelChangedEv();
-      m_pOwner->ProcessSelChanged();
+      ProcessSelChanged();
       break;
     }
     default:
@@ -1087,41 +1068,37 @@ void CFWL_ListBoxImpDelegate::OnKeyDown(CFWL_MsgKey* pMsg) {
   }
 }
 
-void CFWL_ListBoxImpDelegate::OnVK(IFWL_ListItem* pItem,
-                                   FX_BOOL bShift,
-                                   FX_BOOL bCtrl) {
-  if (!pItem) {
+void IFWL_ListBox::OnVK(IFWL_ListItem* pItem, FX_BOOL bShift, FX_BOOL bCtrl) {
+  if (!pItem)
     return;
-  }
-  if (m_pOwner->m_pProperties->m_dwStyleExes &
-      FWL_STYLEEXT_LTB_MultiSelection) {
+
+  if (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_LTB_MultiSelection) {
     if (bCtrl) {
     } else if (bShift) {
-      if (m_pOwner->m_hAnchor) {
-        m_pOwner->SetSelection(m_pOwner->m_hAnchor, pItem, TRUE);
-      } else {
-        m_pOwner->SetSelectionDirect(pItem, TRUE);
-      }
+      if (m_hAnchor)
+        SetSelection(m_hAnchor, pItem, TRUE);
+      else
+        SetSelectionDirect(pItem, TRUE);
     } else {
-      m_pOwner->SetSelection(pItem, pItem, TRUE);
-      m_pOwner->m_hAnchor = pItem;
+      SetSelection(pItem, pItem, TRUE);
+      m_hAnchor = pItem;
     }
   } else {
-    m_pOwner->SetSelection(pItem, pItem, TRUE);
+    SetSelection(pItem, pItem, TRUE);
   }
-  m_pOwner->SetFocusItem(pItem);
-  m_pOwner->ScrollToVisible(pItem);
-  {
-    CFX_RectF rtInvalidate;
-    rtInvalidate.Set(0, 0, m_pOwner->m_pProperties->m_rtWidget.width,
-                     m_pOwner->m_pProperties->m_rtWidget.height);
-    m_pOwner->Repaint(&rtInvalidate);
-  }
+
+  SetFocusItem(pItem);
+  ScrollToVisible(pItem);
+
+  CFX_RectF rtInvalidate;
+  rtInvalidate.Set(0, 0, m_pProperties->m_rtWidget.width,
+                   m_pProperties->m_rtWidget.height);
+  Repaint(&rtInvalidate);
 }
 
-FX_BOOL CFWL_ListBoxImpDelegate::OnScroll(IFWL_ScrollBar* pScrollBar,
-                                          uint32_t dwCode,
-                                          FX_FLOAT fPos) {
+FX_BOOL IFWL_ListBox::OnScroll(IFWL_ScrollBar* pScrollBar,
+                               uint32_t dwCode,
+                               FX_FLOAT fPos) {
   CFX_SizeF fs;
   pScrollBar->GetRange(fs.x, fs.y);
   FX_FLOAT iCurPos = pScrollBar->GetPos();
@@ -1137,30 +1114,26 @@ FX_BOOL CFWL_ListBoxImpDelegate::OnScroll(IFWL_ScrollBar* pScrollBar,
     }
     case FWL_SCBCODE_StepBackward: {
       fPos -= fStep;
-      if (fPos < fs.x + fStep / 2) {
+      if (fPos < fs.x + fStep / 2)
         fPos = fs.x;
-      }
       break;
     }
     case FWL_SCBCODE_StepForward: {
       fPos += fStep;
-      if (fPos > fs.y - fStep / 2) {
+      if (fPos > fs.y - fStep / 2)
         fPos = fs.y;
-      }
       break;
     }
     case FWL_SCBCODE_PageBackward: {
       fPos -= pScrollBar->GetPageSize();
-      if (fPos < fs.x) {
+      if (fPos < fs.x)
         fPos = fs.x;
-      }
       break;
     }
     case FWL_SCBCODE_PageForward: {
       fPos += pScrollBar->GetPageSize();
-      if (fPos > fs.y) {
+      if (fPos > fs.y)
         fPos = fs.y;
-      }
       break;
     }
     case FWL_SCBCODE_Pos:
@@ -1172,13 +1145,13 @@ FX_BOOL CFWL_ListBoxImpDelegate::OnScroll(IFWL_ScrollBar* pScrollBar,
   if (iCurPos != fPos) {
     pScrollBar->SetPos(fPos);
     pScrollBar->SetTrackPos(fPos);
-    m_pOwner->Repaint(&m_pOwner->m_rtClient);
+    Repaint(&m_rtClient);
   }
   return TRUE;
 }
 
-void CFWL_ListBoxImpDelegate::DispatchSelChangedEv() {
+void IFWL_ListBox::DispatchSelChangedEv() {
   CFWL_EvtLtbSelChanged ev;
-  ev.m_pSrcTarget = m_pOwner;
-  m_pOwner->DispatchEvent(&ev);
+  ev.m_pSrcTarget = this;
+  DispatchEvent(&ev);
 }

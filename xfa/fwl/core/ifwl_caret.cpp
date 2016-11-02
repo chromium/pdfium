@@ -22,7 +22,6 @@ IFWL_Caret::IFWL_Caret(const IFWL_App* app,
       m_dwElapse(400),
       m_bSetColor(FALSE) {
   SetStates(FWL_STATE_CAT_HightLight);
-  SetDelegate(pdfium::MakeUnique<CFWL_CaretImpDelegate>(this));
 }
 
 IFWL_Caret::~IFWL_Caret() {
@@ -99,6 +98,13 @@ void IFWL_Caret::DrawCaretBK(CFX_Graphics* pGraphics,
   pTheme->DrawBackground(&param);
 }
 
+void IFWL_Caret::OnProcessMessage(CFWL_Message* pMessage) {}
+
+void IFWL_Caret::OnDrawWidget(CFX_Graphics* pGraphics,
+                              const CFX_Matrix* pMatrix) {
+  DrawWidget(pGraphics, pMatrix);
+}
+
 IFWL_Caret::Timer::Timer(IFWL_Caret* pCaret) : IFWL_Timer(pCaret) {}
 
 void IFWL_Caret::Timer::Run(IFWL_TimerInfo* pTimerInfo) {
@@ -110,14 +116,4 @@ void IFWL_Caret::Timer::Run(IFWL_TimerInfo* pTimerInfo) {
   pCaret->GetWidgetRect(rt);
   rt.Set(0, 0, rt.width + 1, rt.height);
   pCaret->Repaint(&rt);
-}
-
-CFWL_CaretImpDelegate::CFWL_CaretImpDelegate(IFWL_Caret* pOwner)
-    : m_pOwner(pOwner) {}
-
-void CFWL_CaretImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {}
-
-void CFWL_CaretImpDelegate::OnDrawWidget(CFX_Graphics* pGraphics,
-                                         const CFX_Matrix* pMatrix) {
-  m_pOwner->DrawWidget(pGraphics, pMatrix);
 }

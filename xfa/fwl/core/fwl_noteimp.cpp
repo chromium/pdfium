@@ -144,7 +144,7 @@ FX_BOOL CFWL_NoteDriver::SetFocus(IFWL_Widget* pFocus, FX_BOOL bNotify) {
     if (bNotify) {
       ms.m_dwExtend = 1;
     }
-    if (IFWL_WidgetDelegate* pDelegate = pPrev->GetCurrentDelegate())
+    if (IFWL_WidgetDelegate* pDelegate = pPrev->GetDelegate())
       pDelegate->OnProcessMessage(&ms);
   }
   if (pFocus) {
@@ -160,7 +160,7 @@ FX_BOOL CFWL_NoteDriver::SetFocus(IFWL_Widget* pFocus, FX_BOOL bNotify) {
       ms.m_dwExtend = 1;
     }
 
-    if (IFWL_WidgetDelegate* pDelegate = pFocus->GetCurrentDelegate())
+    if (IFWL_WidgetDelegate* pDelegate = pFocus->GetDelegate())
       pDelegate->OnProcessMessage(&ms);
   }
   return TRUE;
@@ -361,7 +361,7 @@ FX_BOOL CFWL_NoteDriver::DispatchMessage(CFWL_Message* pMessage,
   }
   if (bRet) {
     if (IFWL_WidgetDelegate* pDelegate =
-            pMessage->m_pDstTarget->GetCurrentDelegate()) {
+            pMessage->m_pDstTarget->GetDelegate()) {
       pDelegate->OnProcessMessage(pMessage);
     }
   }
@@ -707,7 +707,7 @@ int32_t CFWL_EventTarget::SetEventSource(IFWL_Widget* pSource,
 }
 
 FX_BOOL CFWL_EventTarget::ProcessEvent(CFWL_Event* pEvent) {
-  IFWL_WidgetDelegate* pDelegate = m_pListener->GetCurrentDelegate();
+  IFWL_WidgetDelegate* pDelegate = m_pListener->GetDelegate();
   if (!pDelegate)
     return FALSE;
   if (m_eventSources.GetCount() == 0) {

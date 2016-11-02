@@ -19,17 +19,8 @@ class IFWL_DateTimeEdit : public IFWL_Edit {
                     const CFWL_WidgetImpProperties& properties,
                     IFWL_Widget* pOuter);
 
- protected:
-  friend class CFWL_DateTimeEditImpDelegate;
-};
-
-class CFWL_DateTimeEditImpDelegate : public CFWL_EditImpDelegate {
- public:
-  CFWL_DateTimeEditImpDelegate(IFWL_DateTimeEdit* pOwner);
+  // IFWL_Edit.
   void OnProcessMessage(CFWL_Message* pMessage) override;
-
- protected:
-  IFWL_DateTimeEdit* m_pOwner;
 
  private:
   void DisForm_OnProcessMessage(CFWL_Message* pMessage);

@@ -44,31 +44,28 @@ void IFWL_ComboEdit::SetComboBoxFocus(FX_BOOL bSet) {
   m_pOuter->SetFocus(bSet);
 }
 
-CFWL_ComboEditImpDelegate::CFWL_ComboEditImpDelegate(IFWL_ComboEdit* pOwner)
-    : CFWL_EditImpDelegate(pOwner), m_pOwner(pOwner) {}
-
-void CFWL_ComboEditImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
+void IFWL_ComboEdit::OnProcessMessage(CFWL_Message* pMessage) {
   if (!pMessage)
     return;
 
   FX_BOOL backDefault = TRUE;
   switch (pMessage->GetClassID()) {
     case CFWL_MessageType::SetFocus: {
-      m_pOwner->m_pProperties->m_dwStates |= FWL_WGTSTATE_Focused;
+      m_pProperties->m_dwStates |= FWL_WGTSTATE_Focused;
       backDefault = FALSE;
       break;
     }
     case CFWL_MessageType::KillFocus: {
-      m_pOwner->m_pProperties->m_dwStates &= ~FWL_WGTSTATE_Focused;
+      m_pProperties->m_dwStates &= ~FWL_WGTSTATE_Focused;
       backDefault = FALSE;
       break;
     }
     case CFWL_MessageType::Mouse: {
       CFWL_MsgMouse* pMsg = static_cast<CFWL_MsgMouse*>(pMessage);
       if ((pMsg->m_dwCmd == FWL_MouseCommand::LeftButtonDown) &&
-          ((m_pOwner->m_pProperties->m_dwStates & FWL_WGTSTATE_Focused) == 0)) {
-        m_pOwner->SetSelected();
-        m_pOwner->SetComboBoxFocus(TRUE);
+          ((m_pProperties->m_dwStates & FWL_WGTSTATE_Focused) == 0)) {
+        SetSelected();
+        SetComboBoxFocus(TRUE);
       }
       break;
     }
@@ -76,5 +73,5 @@ void CFWL_ComboEditImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
       break;
   }
   if (backDefault)
-    CFWL_EditImpDelegate::OnProcessMessage(pMessage);
+    IFWL_Edit::OnProcessMessage(pMessage);
 }

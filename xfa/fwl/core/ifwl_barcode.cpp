@@ -16,7 +16,6 @@
 IFWL_Barcode::IFWL_Barcode(const IFWL_App* app,
                            const CFWL_WidgetImpProperties& properties)
     : IFWL_Edit(app, properties, nullptr), m_dwStatus(0), m_type(BC_UNKNOWN) {
-  SetDelegate(pdfium::MakeUnique<CFWL_BarcodeImpDelegate>(this));
 }
 
 IFWL_Barcode::~IFWL_Barcode() {}
@@ -175,14 +174,10 @@ FX_BOOL IFWL_Barcode::IsProtectedType() {
   return FALSE;
 }
 
-CFWL_BarcodeImpDelegate::CFWL_BarcodeImpDelegate(IFWL_Barcode* pOwner)
-    : CFWL_EditImpDelegate(pOwner) {}
-
-void CFWL_BarcodeImpDelegate::OnProcessEvent(CFWL_Event* pEvent) {
+void IFWL_Barcode::OnProcessEvent(CFWL_Event* pEvent) {
   if (pEvent->GetClassID() == CFWL_EventType::TextChanged) {
-    IFWL_Barcode* pOwner = static_cast<IFWL_Barcode*>(m_pOwner);
-    pOwner->m_pBarcodeEngine.reset();
-    pOwner->m_dwStatus = XFA_BCS_NeedUpdate;
+    m_pBarcodeEngine.reset();
+    m_dwStatus = XFA_BCS_NeedUpdate;
   }
-  CFWL_EditImpDelegate::OnProcessEvent(pEvent);
+  IFWL_Edit::OnProcessEvent(pEvent);
 }
