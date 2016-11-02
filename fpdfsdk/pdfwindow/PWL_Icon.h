@@ -45,7 +45,7 @@ class CPWL_Icon : public CPWL_Image {
   void GetImageOffset(FX_FLOAT& x, FX_FLOAT& y) override;
 
   int32_t GetScaleMethod();
-  FX_BOOL IsProportionalScale();
+  bool IsProportionalScale();
   void GetIconPosition(FX_FLOAT& fLeft, FX_FLOAT& fBottom);
 
   void SetIconFit(CPDF_IconFit* pIconFit) { m_pIconFit = pIconFit; }

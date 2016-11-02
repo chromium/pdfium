@@ -55,14 +55,14 @@ void CPDFSDK_BAAnnot::DrawAppearance(CFX_RenderDevice* pDevice,
                            mode, pOptions);
 }
 
-FX_BOOL CPDFSDK_BAAnnot::IsAppearanceValid() {
+bool CPDFSDK_BAAnnot::IsAppearanceValid() {
   return !!m_pAnnot->GetAnnotDict()->GetDictFor("AP");
 }
 
-FX_BOOL CPDFSDK_BAAnnot::IsAppearanceValid(CPDF_Annot::AppearanceMode mode) {
+bool CPDFSDK_BAAnnot::IsAppearanceValid(CPDF_Annot::AppearanceMode mode) {
   CPDF_Dictionary* pAP = m_pAnnot->GetAnnotDict()->GetDictFor("AP");
   if (!pAP)
-    return FALSE;
+    return false;
 
   // Choose the right sub-ap
   const FX_CHAR* ap_entry = "N";
@@ -252,7 +252,7 @@ void CPDFSDK_BAAnnot::RemoveColor() {
   m_pAnnot->GetAnnotDict()->RemoveFor("C");
 }
 
-FX_BOOL CPDFSDK_BAAnnot::GetColor(FX_COLORREF& color) const {
+bool CPDFSDK_BAAnnot::GetColor(FX_COLORREF& color) const {
   if (CPDF_Array* pEntry = m_pAnnot->GetAnnotDict()->GetArrayFor("C")) {
     size_t nCount = pEntry->GetCount();
     if (nCount == 1) {
@@ -260,7 +260,7 @@ FX_BOOL CPDFSDK_BAAnnot::GetColor(FX_COLORREF& color) const {
 
       color = FXSYS_RGB((int)g, (int)g, (int)g);
 
-      return TRUE;
+      return true;
     } else if (nCount == 3) {
       FX_FLOAT r = pEntry->GetNumberAt(0) * 255;
       FX_FLOAT g = pEntry->GetNumberAt(1) * 255;
@@ -268,7 +268,7 @@ FX_BOOL CPDFSDK_BAAnnot::GetColor(FX_COLORREF& color) const {
 
       color = FXSYS_RGB((int)r, (int)g, (int)b);
 
-      return TRUE;
+      return true;
     } else if (nCount == 4) {
       FX_FLOAT c = pEntry->GetNumberAt(0);
       FX_FLOAT m = pEntry->GetNumberAt(1);
@@ -281,11 +281,11 @@ FX_BOOL CPDFSDK_BAAnnot::GetColor(FX_COLORREF& color) const {
 
       color = FXSYS_RGB((int)(r * 255), (int)(g * 255), (int)(b * 255));
 
-      return TRUE;
+      return true;
     }
   }
 
-  return FALSE;
+  return false;
 }
 
 void CPDFSDK_BAAnnot::WriteAppearance(const CFX_ByteString& sAPType,
@@ -340,7 +340,7 @@ void CPDFSDK_BAAnnot::WriteAppearance(const CFX_ByteString& sAPType,
   pStream->SetData((uint8_t*)sContents.c_str(), sContents.GetLength());
 }
 
-FX_BOOL CPDFSDK_BAAnnot::IsVisible() const {
+bool CPDFSDK_BAAnnot::IsVisible() const {
   uint32_t nFlags = GetFlags();
   return !((nFlags & ANNOTFLAG_INVISIBLE) || (nFlags & ANNOTFLAG_HIDDEN) ||
            (nFlags & ANNOTFLAG_NOVIEW));

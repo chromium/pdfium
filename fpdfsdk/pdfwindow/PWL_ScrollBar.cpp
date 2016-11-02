@@ -34,7 +34,7 @@ void PWL_FLOATRANGE::Set(FX_FLOAT min, FX_FLOAT max) {
   }
 }
 
-FX_BOOL PWL_FLOATRANGE::In(FX_FLOAT x) const {
+bool PWL_FLOATRANGE::In(FX_FLOAT x) const {
   return (IsFloatBigger(x, fMin) || IsFloatEqual(x, fMin)) &&
          (IsFloatSmaller(x, fMax) || IsFloatEqual(x, fMax));
 }
@@ -76,12 +76,12 @@ void PWL_SCROLL_PRIVATEDATA::SetBigStep(FX_FLOAT step) {
   fBigStep = step;
 }
 
-FX_BOOL PWL_SCROLL_PRIVATEDATA::SetPos(FX_FLOAT pos) {
+bool PWL_SCROLL_PRIVATEDATA::SetPos(FX_FLOAT pos) {
   if (ScrollRange.In(pos)) {
     fScrollPos = pos;
-    return TRUE;
+    return true;
   }
-  return FALSE;
+  return false;
 }
 
 void PWL_SCROLL_PRIVATEDATA::AddSmall() {
@@ -109,7 +109,7 @@ CPWL_SBButton::CPWL_SBButton(PWL_SCROLLBAR_TYPE eScrollBarType,
   m_eScrollBarType = eScrollBarType;
   m_eSBButtonType = eButtonType;
 
-  m_bMouseDown = FALSE;
+  m_bMouseDown = false;
 }
 
 CPWL_SBButton::~CPWL_SBButton() {}
@@ -323,7 +323,7 @@ void CPWL_SBButton::DrawThisAppearance(CFX_RenderDevice* pDevice,
           rcDraw = CPWL_Utils::DeflateRect(rectWnd, 1.0f);
 
           if (IsEnabled())
-            CPWL_Utils::DrawShadow(pDevice, pUser2Device, TRUE, FALSE, rcDraw,
+            CPWL_Utils::DrawShadow(pDevice, pUser2Device, true, false, rcDraw,
                                    nTransparancy, 80, 220);
           else
             CPWL_Utils::DrawFillRect(pDevice, pUser2Device, rcDraw,
@@ -368,7 +368,7 @@ void CPWL_SBButton::DrawThisAppearance(CFX_RenderDevice* pDevice,
           // draw background
           rcDraw = CPWL_Utils::DeflateRect(rectWnd, 1.0f);
           if (IsEnabled())
-            CPWL_Utils::DrawShadow(pDevice, pUser2Device, TRUE, FALSE, rcDraw,
+            CPWL_Utils::DrawShadow(pDevice, pUser2Device, true, false, rcDraw,
                                    nTransparancy, 80, 220);
           else
             CPWL_Utils::DrawFillRect(pDevice, pUser2Device, rcDraw,
@@ -536,41 +536,38 @@ void CPWL_SBButton::DrawThisAppearance(CFX_RenderDevice* pDevice,
   }
 }
 
-FX_BOOL CPWL_SBButton::OnLButtonDown(const CFX_FloatPoint& point,
-                                     uint32_t nFlag) {
+bool CPWL_SBButton::OnLButtonDown(const CFX_FloatPoint& point, uint32_t nFlag) {
   CPWL_Wnd::OnLButtonDown(point, nFlag);
 
   if (CPWL_Wnd* pParent = GetParentWindow())
     pParent->OnNotify(this, PNM_LBUTTONDOWN, 0, (intptr_t)&point);
 
-  m_bMouseDown = TRUE;
+  m_bMouseDown = true;
   SetCapture();
 
-  return TRUE;
+  return true;
 }
 
-FX_BOOL CPWL_SBButton::OnLButtonUp(const CFX_FloatPoint& point,
-                                   uint32_t nFlag) {
+bool CPWL_SBButton::OnLButtonUp(const CFX_FloatPoint& point, uint32_t nFlag) {
   CPWL_Wnd::OnLButtonUp(point, nFlag);
 
   if (CPWL_Wnd* pParent = GetParentWindow())
     pParent->OnNotify(this, PNM_LBUTTONUP, 0, (intptr_t)&point);
 
-  m_bMouseDown = FALSE;
+  m_bMouseDown = false;
   ReleaseCapture();
 
-  return TRUE;
+  return true;
 }
 
-FX_BOOL CPWL_SBButton::OnMouseMove(const CFX_FloatPoint& point,
-                                   uint32_t nFlag) {
+bool CPWL_SBButton::OnMouseMove(const CFX_FloatPoint& point, uint32_t nFlag) {
   CPWL_Wnd::OnMouseMove(point, nFlag);
 
   if (CPWL_Wnd* pParent = GetParentWindow()) {
     pParent->OnNotify(this, PNM_MOUSEMOVE, 0, (intptr_t)&point);
   }
 
-  return TRUE;
+  return true;
 }
 
 CPWL_ScrollBar::CPWL_ScrollBar(PWL_SCROLLBAR_TYPE sbType)
@@ -578,9 +575,9 @@ CPWL_ScrollBar::CPWL_ScrollBar(PWL_SCROLLBAR_TYPE sbType)
       m_pMinButton(nullptr),
       m_pMaxButton(nullptr),
       m_pPosButton(nullptr),
-      m_bMouseDown(FALSE),
-      m_bMinOrMax(FALSE),
-      m_bNotifyForever(TRUE) {}
+      m_bMouseDown(false),
+      m_bMinOrMax(false),
+      m_bNotifyForever(true) {}
 
 CPWL_ScrollBar::~CPWL_ScrollBar() {}
 
@@ -619,7 +616,7 @@ void CPWL_ScrollBar::RePosChildWnd() {
           rcMaxButton = CFX_FloatRect(rcClient.right - fBWidth, rcClient.bottom,
                                       rcClient.right, rcClient.top);
         } else {
-          SetVisible(FALSE);
+          SetVisible(false);
         }
       }
       break;
@@ -645,17 +642,17 @@ void CPWL_ScrollBar::RePosChildWnd() {
               CFX_FloatRect(rcClient.left, rcClient.bottom, rcClient.right,
                             rcClient.bottom + fBWidth);
         } else {
-          SetVisible(FALSE);
+          SetVisible(false);
         }
       }
       break;
   }
 
   if (m_pMinButton)
-    m_pMinButton->Move(rcMinButton, TRUE, FALSE);
+    m_pMinButton->Move(rcMinButton, true, false);
   if (m_pMaxButton)
-    m_pMaxButton->Move(rcMaxButton, TRUE, FALSE);
-  MovePosButton(FALSE);
+    m_pMaxButton->Move(rcMaxButton, true, false);
+  MovePosButton(false);
 }
 
 void CPWL_ScrollBar::GetThisAppearanceStream(CFX_ByteTextBuf& sAppStream) {
@@ -666,7 +663,7 @@ void CPWL_ScrollBar::GetThisAppearanceStream(CFX_ByteTextBuf& sAppStream) {
 
     sButton << "q\n";
     sButton << "0 w\n"
-            << CPWL_Utils::GetColorAppStream(GetBackgroundColor(), TRUE)
+            << CPWL_Utils::GetColorAppStream(GetBackgroundColor(), true)
                    .AsStringC();
     sButton << rectWnd.left << " " << rectWnd.bottom << " "
             << rectWnd.right - rectWnd.left << " "
@@ -698,8 +695,8 @@ void CPWL_ScrollBar::DrawThisAppearance(CFX_RenderDevice* pDevice,
   }
 }
 
-FX_BOOL CPWL_ScrollBar::OnLButtonDown(const CFX_FloatPoint& point,
-                                      uint32_t nFlag) {
+bool CPWL_ScrollBar::OnLButtonDown(const CFX_FloatPoint& point,
+                                   uint32_t nFlag) {
   CPWL_Wnd::OnLButtonDown(point, nFlag);
 
   if (HasFlag(PWS_AUTOTRANSPARENT)) {
@@ -740,22 +737,21 @@ FX_BOOL CPWL_ScrollBar::OnLButtonDown(const CFX_FloatPoint& point,
 
     if (rcMinArea.Contains(point.x, point.y)) {
       m_sData.SubBig();
-      MovePosButton(TRUE);
+      MovePosButton(true);
       NotifyScrollWindow();
     }
 
     if (rcMaxArea.Contains(point.x, point.y)) {
       m_sData.AddBig();
-      MovePosButton(TRUE);
+      MovePosButton(true);
       NotifyScrollWindow();
     }
   }
 
-  return TRUE;
+  return true;
 }
 
-FX_BOOL CPWL_ScrollBar::OnLButtonUp(const CFX_FloatPoint& point,
-                                    uint32_t nFlag) {
+bool CPWL_ScrollBar::OnLButtonUp(const CFX_FloatPoint& point, uint32_t nFlag) {
   CPWL_Wnd::OnLButtonUp(point, nFlag);
 
   if (HasFlag(PWS_AUTOTRANSPARENT)) {
@@ -766,9 +762,9 @@ FX_BOOL CPWL_ScrollBar::OnLButtonUp(const CFX_FloatPoint& point,
   }
 
   EndTimer();
-  m_bMouseDown = FALSE;
+  m_bMouseDown = false;
 
-  return TRUE;
+  return true;
 }
 
 void CPWL_ScrollBar::OnNotify(CPWL_Wnd* pWnd,
@@ -864,7 +860,7 @@ void CPWL_ScrollBar::CreateButtons(const PWL_CREATEPARAM& cp) {
 
   if (!m_pPosButton) {
     m_pPosButton = new CPWL_SBButton(m_sbType, PSBT_POS);
-    m_pPosButton->SetVisible(FALSE);
+    m_pPosButton->SetVisible(false);
     m_pPosButton->Create(scp);
   }
 }
@@ -884,10 +880,10 @@ void CPWL_ScrollBar::SetScrollRange(FX_FLOAT fMin,
     m_sData.SetClientWidth(fClientWidth);
 
     if (IsFloatSmaller(m_sData.ScrollRange.GetWidth(), 0.0f)) {
-      m_pPosButton->SetVisible(FALSE);
+      m_pPosButton->SetVisible(false);
     } else {
-      m_pPosButton->SetVisible(TRUE);
-      MovePosButton(TRUE);
+      m_pPosButton->SetVisible(true);
+      MovePosButton(true);
     }
   }
 }
@@ -898,7 +894,7 @@ void CPWL_ScrollBar::SetScrollPos(FX_FLOAT fPos) {
   m_sData.SetPos(fPos);
 
   if (!IsFloatEqual(m_sData.fScrollPos, fOldPos))
-    MovePosButton(TRUE);
+    MovePosButton(true);
 }
 
 void CPWL_ScrollBar::SetScrollStep(FX_FLOAT fBigStep, FX_FLOAT fSmallStep) {
@@ -906,7 +902,7 @@ void CPWL_ScrollBar::SetScrollStep(FX_FLOAT fBigStep, FX_FLOAT fSmallStep) {
   m_sData.SetSmallStep(fSmallStep);
 }
 
-void CPWL_ScrollBar::MovePosButton(FX_BOOL bRefresh) {
+void CPWL_ScrollBar::MovePosButton(bool bRefresh) {
   ASSERT(m_pMinButton);
   ASSERT(m_pMaxButton);
 
@@ -954,16 +950,16 @@ void CPWL_ScrollBar::MovePosButton(FX_BOOL bRefresh) {
         break;
     }
 
-    m_pPosButton->Move(rcPosButton, TRUE, bRefresh);
+    m_pPosButton->Move(rcPosButton, true, bRefresh);
   }
 }
 
 void CPWL_ScrollBar::OnMinButtonLBDown(const CFX_FloatPoint& point) {
   m_sData.SubSmall();
-  MovePosButton(TRUE);
+  MovePosButton(true);
   NotifyScrollWindow();
 
-  m_bMinOrMax = TRUE;
+  m_bMinOrMax = true;
 
   EndTimer();
   BeginTimer(100);
@@ -975,10 +971,10 @@ void CPWL_ScrollBar::OnMinButtonMouseMove(const CFX_FloatPoint& point) {}
 
 void CPWL_ScrollBar::OnMaxButtonLBDown(const CFX_FloatPoint& point) {
   m_sData.AddSmall();
-  MovePosButton(TRUE);
+  MovePosButton(true);
   NotifyScrollWindow();
 
-  m_bMinOrMax = FALSE;
+  m_bMinOrMax = false;
 
   EndTimer();
   BeginTimer(100);
@@ -989,7 +985,7 @@ void CPWL_ScrollBar::OnMaxButtonLBUp(const CFX_FloatPoint& point) {}
 void CPWL_ScrollBar::OnMaxButtonMouseMove(const CFX_FloatPoint& point) {}
 
 void CPWL_ScrollBar::OnPosButtonLBDown(const CFX_FloatPoint& point) {
-  m_bMouseDown = TRUE;
+  m_bMouseDown = true;
 
   if (m_pPosButton) {
     CFX_FloatRect rcPosButton = m_pPosButton->GetWindowRect();
@@ -1012,7 +1008,7 @@ void CPWL_ScrollBar::OnPosButtonLBUp(const CFX_FloatPoint& point) {
     if (!m_bNotifyForever)
       NotifyScrollWindow();
   }
-  m_bMouseDown = FALSE;
+  m_bMouseDown = false;
 }
 
 void CPWL_ScrollBar::OnPosButtonMouseMove(const CFX_FloatPoint& point) {
@@ -1064,7 +1060,7 @@ void CPWL_ScrollBar::OnPosButtonMouseMove(const CFX_FloatPoint& point) {
     }
 
     if (!IsFloatEqual(fOldScrollPos, m_sData.fScrollPos)) {
-      MovePosButton(TRUE);
+      MovePosButton(true);
 
       if (m_bNotifyForever)
         NotifyScrollWindow();
@@ -1188,7 +1184,7 @@ void CPWL_ScrollBar::TimerProc() {
     m_sData.AddSmall();
 
   if (sTemp != m_sData) {
-    MovePosButton(TRUE);
+    MovePosButton(true);
     NotifyScrollWindow();
   }
 }

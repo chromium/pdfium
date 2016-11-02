@@ -104,13 +104,13 @@ class CFX_ListItem final {
   CFX_Edit* GetEdit() const;
 
   void SetRect(const CLST_Rect& rect);
-  void SetSelect(FX_BOOL bSelected);
+  void SetSelect(bool bSelected);
   void SetText(const CFX_WideString& text);
   void SetFontSize(FX_FLOAT fFontSize);
   CFX_WideString GetText() const;
 
   CLST_Rect GetRect() const;
-  FX_BOOL IsSelected() const;
+  bool IsSelected() const;
   FX_FLOAT GetItemHeight() const;
   uint16_t GetFirstChar() const;
 
@@ -118,7 +118,7 @@ class CFX_ListItem final {
   CFX_Edit_Iterator* GetIterator() const;
 
   std::unique_ptr<CFX_Edit> m_pEdit;
-  FX_BOOL m_bSelected;
+  bool m_bSelected;
   CLST_Rect m_rcListItem;
 };
 
@@ -171,7 +171,7 @@ class CFX_ListContainer {
 template <class TYPE>
 class CLST_ArrayTemplate : public CFX_ArrayTemplate<TYPE> {
  public:
-  FX_BOOL IsEmpty() { return CFX_ArrayTemplate<TYPE>::GetSize() <= 0; }
+  bool IsEmpty() { return CFX_ArrayTemplate<TYPE>::GetSize() <= 0; }
   TYPE GetAt(int32_t nIndex) const {
     if (nIndex >= 0 && nIndex < CFX_ArrayTemplate<TYPE>::GetSize())
       return CFX_ArrayTemplate<TYPE>::GetAt(nIndex);
@@ -203,7 +203,7 @@ class CPLST_Select {
   void Add(int32_t nBeginIndex, int32_t nEndIndex);
   void Sub(int32_t nItemIndex);
   void Sub(int32_t nBeginIndex, int32_t nEndIndex);
-  FX_BOOL IsExist(int32_t nItemIndex) const;
+  bool IsExist(int32_t nItemIndex) const;
   int32_t Find(int32_t nItemIndex) const;
   int32_t GetCount() const;
   int32_t GetItemIndex(int32_t nIndex) const;
@@ -224,16 +224,16 @@ class CFX_ListCtrl : protected CFX_ListContainer {
   void SetPlateRect(const CFX_FloatRect& rect) override;
 
   void SetNotify(CPWL_List_Notify* pNotify);
-  void OnMouseDown(const CFX_FloatPoint& point, FX_BOOL bShift, FX_BOOL bCtrl);
-  void OnMouseMove(const CFX_FloatPoint& point, FX_BOOL bShift, FX_BOOL bCtrl);
-  void OnVK_UP(FX_BOOL bShift, FX_BOOL bCtrl);
-  void OnVK_DOWN(FX_BOOL bShift, FX_BOOL bCtrl);
-  void OnVK_LEFT(FX_BOOL bShift, FX_BOOL bCtrl);
-  void OnVK_RIGHT(FX_BOOL bShift, FX_BOOL bCtrl);
-  void OnVK_HOME(FX_BOOL bShift, FX_BOOL bCtrl);
-  void OnVK_END(FX_BOOL bShift, FX_BOOL bCtrl);
-  void OnVK(int32_t nItemIndex, FX_BOOL bShift, FX_BOOL bCtrl);
-  FX_BOOL OnChar(uint16_t nChar, FX_BOOL bShift, FX_BOOL bCtrl);
+  void OnMouseDown(const CFX_FloatPoint& point, bool bShift, bool bCtrl);
+  void OnMouseMove(const CFX_FloatPoint& point, bool bShift, bool bCtrl);
+  void OnVK_UP(bool bShift, bool bCtrl);
+  void OnVK_DOWN(bool bShift, bool bCtrl);
+  void OnVK_LEFT(bool bShift, bool bCtrl);
+  void OnVK_RIGHT(bool bShift, bool bCtrl);
+  void OnVK_HOME(bool bShift, bool bCtrl);
+  void OnVK_END(bool bShift, bool bCtrl);
+  void OnVK(int32_t nItemIndex, bool bShift, bool bCtrl);
+  bool OnChar(uint16_t nChar, bool bShift, bool bCtrl);
 
   void SetScrollPos(const CFX_FloatPoint& point);
   void ScrollToListItem(int32_t nItemIndex);
@@ -257,11 +257,11 @@ class CFX_ListCtrl : protected CFX_ListContainer {
   FX_FLOAT GetFontSize() const;
   CFX_Edit* GetItemEdit(int32_t nIndex) const;
   int32_t GetCount() const;
-  FX_BOOL IsItemSelected(int32_t nIndex) const;
+  bool IsItemSelected(int32_t nIndex) const;
   FX_FLOAT GetFirstHeight() const;
-  void SetMultipleSel(FX_BOOL bMultiple);
-  FX_BOOL IsMultipleSel() const;
-  FX_BOOL IsValid(int32_t nItemIndex) const;
+  void SetMultipleSel(bool bMultiple);
+  bool IsMultipleSel() const;
+  bool IsValid(int32_t nItemIndex) const;
   int32_t FindNext(int32_t nIndex, FX_WCHAR nChar) const;
   int32_t GetFirstSelected() const;
 
@@ -274,31 +274,31 @@ class CFX_ListCtrl : protected CFX_ListContainer {
   void ReArrange(int32_t nItemIndex);
   CFX_FloatRect GetItemRectInternal(int32_t nIndex) const;
   CFX_FloatRect GetContentRectInternal() const;
-  void SetMultipleSelect(int32_t nItemIndex, FX_BOOL bSelected);
+  void SetMultipleSelect(int32_t nItemIndex, bool bSelected);
   void SetSingleSelect(int32_t nItemIndex);
   void InvalidateItem(int32_t nItemIndex);
   void SelectItems();
-  FX_BOOL IsItemVisible(int32_t nItemIndex) const;
+  bool IsItemVisible(int32_t nItemIndex) const;
   void SetScrollInfo();
   void SetScrollPosY(FX_FLOAT fy);
   void AddItem(const CFX_WideString& str);
   CFX_WideString GetItemText(int32_t nIndex) const;
-  void SetItemSelect(int32_t nItemIndex, FX_BOOL bSelected);
+  void SetItemSelect(int32_t nItemIndex, bool bSelected);
   int32_t GetLastSelected() const;
   FX_WCHAR Toupper(FX_WCHAR c) const;
 
   CPWL_List_Notify* m_pNotify;
-  FX_BOOL m_bNotifyFlag;
+  bool m_bNotifyFlag;
   CFX_FloatPoint m_ptScrollPos;
   CPLST_Select m_aSelItems;  // for multiple
   int32_t m_nSelItem;        // for single
   int32_t m_nFootIndex;      // for multiple
-  FX_BOOL m_bCtrlSel;        // for multiple
+  bool m_bCtrlSel;           // for multiple
   int32_t m_nCaretIndex;     // for multiple
   CLST_ArrayTemplate<CFX_ListItem*> m_aListItems;
   FX_FLOAT m_fFontSize;
   IPVT_FontMap* m_pFontMap;
-  FX_BOOL m_bMultiple;
+  bool m_bMultiple;
 };
 
 #endif  // FPDFSDK_FXEDIT_FXET_LIST_H_

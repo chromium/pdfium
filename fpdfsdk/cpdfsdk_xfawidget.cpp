@@ -16,8 +16,8 @@ CPDFSDK_XFAWidget::CPDFSDK_XFAWidget(CXFA_FFWidget* pAnnot,
       m_pInterForm(pInterForm),
       m_hXFAWidget(pAnnot) {}
 
-FX_BOOL CPDFSDK_XFAWidget::IsXFAField() {
-  return TRUE;
+bool CPDFSDK_XFAWidget::IsXFAField() {
+  return true;
 }
 
 CXFA_FFWidget* CPDFSDK_XFAWidget::GetXFAWidget() const {

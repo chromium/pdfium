@@ -7,12 +7,12 @@
 #include "fpdfsdk/pdfsdk_fieldaction.h"
 
 PDFSDK_FieldAction::PDFSDK_FieldAction()
-    : bModifier(FALSE),
-      bShift(FALSE),
+    : bModifier(false),
+      bShift(false),
       nCommitKey(0),
-      bKeyDown(FALSE),
+      bKeyDown(false),
       nSelEnd(0),
       nSelStart(0),
-      bWillCommit(FALSE),
-      bFieldFull(FALSE),
-      bRC(TRUE) {}
+      bWillCommit(false),
+      bFieldFull(false),
+      bRC(true) {}

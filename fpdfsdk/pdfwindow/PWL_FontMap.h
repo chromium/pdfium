@@ -56,12 +56,12 @@ class CPWL_FontMap : public IPVT_FontMap {
                                          int32_t nCharset);
   virtual void AddedFont(CPDF_Font* pFont, const CFX_ByteString& sFontAlias);
 
-  FX_BOOL KnowWord(int32_t nFontIndex, uint16_t word);
+  bool KnowWord(int32_t nFontIndex, uint16_t word);
 
   void Empty();
   int32_t GetFontIndex(const CFX_ByteString& sFontName,
                        int32_t nCharset,
-                       FX_BOOL bFind);
+                       bool bFind);
   int32_t AddFontData(CPDF_Font* pFont,
                       const CFX_ByteString& sFontAlias,
                       int32_t nCharset = FXFONT_DEFAULT_CHARSET);
@@ -81,7 +81,7 @@ class CPWL_FontMap : public IPVT_FontMap {
   CPDF_Font* AddFontToDocument(CPDF_Document* pDoc,
                                CFX_ByteString& sFontName,
                                uint8_t nCharset);
-  FX_BOOL IsStandardFont(const CFX_ByteString& sFontName);
+  bool IsStandardFont(const CFX_ByteString& sFontName);
   CPDF_Font* AddStandardFont(CPDF_Document* pDoc, CFX_ByteString& sFontName);
   CPDF_Font* AddSystemFont(CPDF_Document* pDoc,
                            CFX_ByteString& sFontName,

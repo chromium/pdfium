@@ -29,18 +29,18 @@ Report::Report(CJS_Object* pJSObject) : CJS_EmbedObj(pJSObject) {}
 
 Report::~Report() {}
 
-FX_BOOL Report::writeText(IJS_Context* cc,
-                          const std::vector<CJS_Value>& params,
-                          CJS_Value& vRet,
-                          CFX_WideString& sError) {
+bool Report::writeText(IJS_Context* cc,
+                       const std::vector<CJS_Value>& params,
+                       CJS_Value& vRet,
+                       CFX_WideString& sError) {
   // Unsafe, not supported.
-  return TRUE;
+  return true;
 }
 
-FX_BOOL Report::save(IJS_Context* cc,
-                     const std::vector<CJS_Value>& params,
-                     CJS_Value& vRet,
-                     CFX_WideString& sError) {
+bool Report::save(IJS_Context* cc,
+                  const std::vector<CJS_Value>& params,
+                  CJS_Value& vRet,
+                  CFX_WideString& sError) {
   // Unsafe, not supported.
-  return TRUE;
+  return true;
 }

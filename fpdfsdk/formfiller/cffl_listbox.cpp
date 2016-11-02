@@ -59,12 +59,12 @@ CPWL_Wnd* CFFL_ListBox::NewPDFWindow(const PWL_CREATEPARAM& cp,
   if (pWnd->HasFlag(PLBS_MULTIPLESEL)) {
     m_OriginSelections.clear();
 
-    FX_BOOL bSetCaret = FALSE;
+    bool bSetCaret = false;
     for (int32_t i = 0, sz = m_pWidget->CountOptions(); i < sz; i++) {
       if (m_pWidget->IsOptionSelected(i)) {
         if (!bSetCaret) {
           pWnd->SetCaret(i);
-          bSetCaret = TRUE;
+          bSetCaret = true;
         }
         pWnd->Select(i);
         m_OriginSelections.insert(i);
@@ -84,23 +84,23 @@ CPWL_Wnd* CFFL_ListBox::NewPDFWindow(const PWL_CREATEPARAM& cp,
   return pWnd;
 }
 
-FX_BOOL CFFL_ListBox::OnChar(CPDFSDK_Annot* pAnnot,
-                             uint32_t nChar,
-                             uint32_t nFlags) {
+bool CFFL_ListBox::OnChar(CPDFSDK_Annot* pAnnot,
+                          uint32_t nChar,
+                          uint32_t nFlags) {
   return CFFL_FormFiller::OnChar(pAnnot, nChar, nFlags);
 }
 
-FX_BOOL CFFL_ListBox::IsDataChanged(CPDFSDK_PageView* pPageView) {
-  CPWL_ListBox* pListBox = (CPWL_ListBox*)GetPDFWindow(pPageView, FALSE);
+bool CFFL_ListBox::IsDataChanged(CPDFSDK_PageView* pPageView) {
+  CPWL_ListBox* pListBox = (CPWL_ListBox*)GetPDFWindow(pPageView, false);
   if (!pListBox)
-    return FALSE;
+    return false;
 
   if (m_pWidget->GetFieldFlags() & FIELDFLAG_MULTISELECT) {
     size_t nSelCount = 0;
     for (int32_t i = 0, sz = pListBox->GetCount(); i < sz; ++i) {
       if (pListBox->IsItemSelected(i)) {
         if (m_OriginSelections.count(i) == 0)
-          return TRUE;
+          return true;
 
         ++nSelCount;
       }
@@ -113,22 +113,22 @@ FX_BOOL CFFL_ListBox::IsDataChanged(CPDFSDK_PageView* pPageView) {
 
 void CFFL_ListBox::SaveData(CPDFSDK_PageView* pPageView) {
   CPWL_ListBox* pListBox =
-      static_cast<CPWL_ListBox*>(GetPDFWindow(pPageView, FALSE));
+      static_cast<CPWL_ListBox*>(GetPDFWindow(pPageView, false));
   if (!pListBox)
     return;
 
   int32_t nNewTopIndex = pListBox->GetTopVisibleIndex();
-  m_pWidget->ClearSelection(FALSE);
+  m_pWidget->ClearSelection(false);
   if (m_pWidget->GetFieldFlags() & FIELDFLAG_MULTISELECT) {
     for (int32_t i = 0, sz = pListBox->GetCount(); i < sz; i++) {
       if (pListBox->IsItemSelected(i))
-        m_pWidget->SetOptionSelection(i, TRUE, FALSE);
+        m_pWidget->SetOptionSelection(i, true, false);
     }
   } else {
-    m_pWidget->SetOptionSelection(pListBox->GetCurSel(), TRUE, FALSE);
+    m_pWidget->SetOptionSelection(pListBox->GetCurSel(), true, false);
   }
   m_pWidget->SetTopVisibleIndex(nNewTopIndex);
-  m_pWidget->ResetFieldAppearance(TRUE);
+  m_pWidget->ResetFieldAppearance(true);
   m_pWidget->UpdateField();
   SetChangeMark();
 }
@@ -142,7 +142,7 @@ void CFFL_ListBox::GetActionData(CPDFSDK_PageView* pPageView,
         fa.sValue = L"";
       } else {
         if (CPWL_ListBox* pListBox =
-                (CPWL_ListBox*)GetPDFWindow(pPageView, FALSE)) {
+                (CPWL_ListBox*)GetPDFWindow(pPageView, false)) {
           int32_t nCurSel = pListBox->GetCurSel();
           if (nCurSel >= 0)
             fa.sValue = m_pWidget->GetOptionLabel(nCurSel);
@@ -167,7 +167,7 @@ void CFFL_ListBox::GetActionData(CPDFSDK_PageView* pPageView,
 void CFFL_ListBox::SaveState(CPDFSDK_PageView* pPageView) {
   ASSERT(pPageView);
 
-  if (CPWL_ListBox* pListBox = (CPWL_ListBox*)GetPDFWindow(pPageView, FALSE)) {
+  if (CPWL_ListBox* pListBox = (CPWL_ListBox*)GetPDFWindow(pPageView, false)) {
     for (int32_t i = 0, sz = pListBox->GetCount(); i < sz; i++) {
       if (pListBox->IsItemSelected(i)) {
         m_State.Add(i);
@@ -177,14 +177,14 @@ void CFFL_ListBox::SaveState(CPDFSDK_PageView* pPageView) {
 }
 
 void CFFL_ListBox::RestoreState(CPDFSDK_PageView* pPageView) {
-  if (CPWL_ListBox* pListBox = (CPWL_ListBox*)GetPDFWindow(pPageView, FALSE)) {
+  if (CPWL_ListBox* pListBox = (CPWL_ListBox*)GetPDFWindow(pPageView, false)) {
     for (int i = 0, sz = m_State.GetSize(); i < sz; i++)
       pListBox->Select(m_State[i]);
   }
 }
 
 CPWL_Wnd* CFFL_ListBox::ResetPDFWindow(CPDFSDK_PageView* pPageView,
-                                       FX_BOOL bRestoreValue) {
+                                       bool bRestoreValue) {
   if (bRestoreValue)
     SaveState(pPageView);
 
@@ -194,9 +194,9 @@ CPWL_Wnd* CFFL_ListBox::ResetPDFWindow(CPDFSDK_PageView* pPageView,
 
   if (bRestoreValue) {
     RestoreState(pPageView);
-    pRet = GetPDFWindow(pPageView, FALSE);
+    pRet = GetPDFWindow(pPageView, false);
   } else {
-    pRet = GetPDFWindow(pPageView, TRUE);
+    pRet = GetPDFWindow(pPageView, true);
   }
 
   m_pWidget->UpdateField();

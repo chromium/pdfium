@@ -37,18 +37,17 @@ bool CPWL_CheckBox::IsChecked() const {
   return m_bChecked;
 }
 
-FX_BOOL CPWL_CheckBox::OnLButtonUp(const CFX_FloatPoint& point,
-                                   uint32_t nFlag) {
+bool CPWL_CheckBox::OnLButtonUp(const CFX_FloatPoint& point, uint32_t nFlag) {
   if (IsReadOnly())
-    return FALSE;
+    return false;
 
   SetCheck(!IsChecked());
-  return TRUE;
+  return true;
 }
 
-FX_BOOL CPWL_CheckBox::OnChar(uint16_t nChar, uint32_t nFlag) {
+bool CPWL_CheckBox::OnChar(uint16_t nChar, uint32_t nFlag) {
   SetCheck(!IsChecked());
-  return TRUE;
+  return true;
 }
 
 CPWL_RadioButton::CPWL_RadioButton() : m_bChecked(false) {}
@@ -59,13 +58,13 @@ CFX_ByteString CPWL_RadioButton::GetClassName() const {
   return "CPWL_RadioButton";
 }
 
-FX_BOOL CPWL_RadioButton::OnLButtonUp(const CFX_FloatPoint& point,
-                                      uint32_t nFlag) {
+bool CPWL_RadioButton::OnLButtonUp(const CFX_FloatPoint& point,
+                                   uint32_t nFlag) {
   if (IsReadOnly())
-    return FALSE;
+    return false;
 
-  SetCheck(TRUE);
-  return TRUE;
+  SetCheck(true);
+  return true;
 }
 
 void CPWL_RadioButton::SetCheck(bool bCheck) {
@@ -76,7 +75,7 @@ bool CPWL_RadioButton::IsChecked() const {
   return m_bChecked;
 }
 
-FX_BOOL CPWL_RadioButton::OnChar(uint16_t nChar, uint32_t nFlag) {
-  SetCheck(TRUE);
-  return TRUE;
+bool CPWL_RadioButton::OnChar(uint16_t nChar, uint32_t nFlag) {
+  SetCheck(true);
+  return true;
 }

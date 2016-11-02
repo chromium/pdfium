@@ -11,6 +11,6 @@ IFSDK_PAUSE_Adapter::IFSDK_PAUSE_Adapter(IFSDK_PAUSE* IPause)
 
 IFSDK_PAUSE_Adapter::~IFSDK_PAUSE_Adapter() {}
 
-FX_BOOL IFSDK_PAUSE_Adapter::NeedToPauseNow() {
+bool IFSDK_PAUSE_Adapter::NeedToPauseNow() {
   return m_IPause->NeedToPauseNow && m_IPause->NeedToPauseNow(m_IPause);
 }

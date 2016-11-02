@@ -39,10 +39,10 @@ void CJS_Global::InitInstance(IJS_Runtime* pIRuntime) {
 JSGlobalData::JSGlobalData()
     : nType(JS_GlobalDataType::NUMBER),
       dData(0),
-      bData(FALSE),
+      bData(false),
       sData(""),
-      bPersistent(FALSE),
-      bDeleted(FALSE) {}
+      bPersistent(false),
+      bDeleted(false) {}
 
 JSGlobalData::~JSGlobalData() {
   pData.Reset();
@@ -62,25 +62,25 @@ void JSGlobalAlternate::Initial(CPDFSDK_FormFillEnvironment* pFormFillEnv) {
   UpdateGlobalPersistentVariables();
 }
 
-FX_BOOL JSGlobalAlternate::QueryProperty(const FX_WCHAR* propname) {
+bool JSGlobalAlternate::QueryProperty(const FX_WCHAR* propname) {
   return CFX_WideString(propname) != L"setPersistent";
 }
 
-FX_BOOL JSGlobalAlternate::DelProperty(IJS_Context* cc,
-                                       const FX_WCHAR* propname,
-                                       CFX_WideString& sError) {
+bool JSGlobalAlternate::DelProperty(IJS_Context* cc,
+                                    const FX_WCHAR* propname,
+                                    CFX_WideString& sError) {
   auto it = m_mapGlobal.find(CFX_ByteString::FromUnicode(propname));
   if (it == m_mapGlobal.end())
-    return FALSE;
+    return false;
 
-  it->second->bDeleted = TRUE;
-  return TRUE;
+  it->second->bDeleted = true;
+  return true;
 }
 
-FX_BOOL JSGlobalAlternate::DoProperty(IJS_Context* cc,
-                                      const FX_WCHAR* propname,
-                                      CJS_PropValue& vp,
-                                      CFX_WideString& sError) {
+bool JSGlobalAlternate::DoProperty(IJS_Context* cc,
+                                   const FX_WCHAR* propname,
+                                   CJS_PropValue& vp,
+                                   CFX_WideString& sError) {
   CJS_Runtime* pRuntime = CJS_Runtime::FromContext(cc);
   if (vp.IsSetting()) {
     CFX_ByteString sPropName = CFX_ByteString::FromUnicode(propname);
@@ -89,33 +89,33 @@ FX_BOOL JSGlobalAlternate::DoProperty(IJS_Context* cc,
         double dData;
         vp >> dData;
         return SetGlobalVariables(sPropName, JS_GlobalDataType::NUMBER, dData,
-                                  false, "", v8::Local<v8::Object>(), FALSE);
+                                  false, "", v8::Local<v8::Object>(), false);
       }
       case CJS_Value::VT_boolean: {
         bool bData;
         vp >> bData;
         return SetGlobalVariables(sPropName, JS_GlobalDataType::BOOLEAN, 0,
-                                  bData, "", v8::Local<v8::Object>(), FALSE);
+                                  bData, "", v8::Local<v8::Object>(), false);
       }
       case CJS_Value::VT_string: {
         CFX_ByteString sData;
         vp >> sData;
         return SetGlobalVariables(sPropName, JS_GlobalDataType::STRING, 0,
-                                  false, sData, v8::Local<v8::Object>(), FALSE);
+                                  false, sData, v8::Local<v8::Object>(), false);
       }
       case CJS_Value::VT_object: {
         v8::Local<v8::Object> pData;
         vp >> pData;
         return SetGlobalVariables(sPropName, JS_GlobalDataType::OBJECT, 0,
-                                  false, "", pData, FALSE);
+                                  false, "", pData, false);
       }
       case CJS_Value::VT_null: {
         return SetGlobalVariables(sPropName, JS_GlobalDataType::NULLOBJ, 0,
-                                  false, "", v8::Local<v8::Object>(), FALSE);
+                                  false, "", v8::Local<v8::Object>(), false);
       }
       case CJS_Value::VT_undefined: {
         DelProperty(cc, propname, sError);
-        return TRUE;
+        return true;
       }
       default:
         break;
@@ -124,46 +124,46 @@ FX_BOOL JSGlobalAlternate::DoProperty(IJS_Context* cc,
     auto it = m_mapGlobal.find(CFX_ByteString::FromUnicode(propname));
     if (it == m_mapGlobal.end()) {
       vp.GetJSValue()->SetNull(pRuntime);
-      return TRUE;
+      return true;
     }
     JSGlobalData* pData = it->second;
     if (pData->bDeleted) {
       vp.GetJSValue()->SetNull(pRuntime);
-      return TRUE;
+      return true;
     }
     switch (pData->nType) {
       case JS_GlobalDataType::NUMBER:
         vp << pData->dData;
-        return TRUE;
+        return true;
       case JS_GlobalDataType::BOOLEAN:
         vp << pData->bData;
-        return TRUE;
+        return true;
       case JS_GlobalDataType::STRING:
         vp << pData->sData;
-        return TRUE;
+        return true;
       case JS_GlobalDataType::OBJECT: {
         v8::Local<v8::Object> obj = v8::Local<v8::Object>::New(
             vp.GetJSRuntime()->GetIsolate(), pData->pData);
         vp << obj;
-        return TRUE;
+        return true;
       }
       case JS_GlobalDataType::NULLOBJ:
         vp.GetJSValue()->SetNull(pRuntime);
-        return TRUE;
+        return true;
       default:
         break;
     }
   }
-  return FALSE;
+  return false;
 }
 
-FX_BOOL JSGlobalAlternate::setPersistent(IJS_Context* cc,
-                                         const std::vector<CJS_Value>& params,
-                                         CJS_Value& vRet,
-                                         CFX_WideString& sError) {
+bool JSGlobalAlternate::setPersistent(IJS_Context* cc,
+                                      const std::vector<CJS_Value>& params,
+                                      CJS_Value& vRet,
+                                      CFX_WideString& sError) {
   if (params.size() != 2) {
     sError = JSGetStringFromID(IDS_STRING_JSPARAMERROR);
-    return FALSE;
+    return false;
   }
 
   CJS_Runtime* pRuntime = CJS_Runtime::FromContext(cc);
@@ -172,12 +172,12 @@ FX_BOOL JSGlobalAlternate::setPersistent(IJS_Context* cc,
     JSGlobalData* pData = it->second;
     if (!pData->bDeleted) {
       pData->bPersistent = params[1].ToBool(pRuntime);
-      return TRUE;
+      return true;
     }
   }
 
   sError = JSGetStringFromID(IDS_STRING_JSNOGLOBAL);
-  return FALSE;
+  return false;
 }
 
 void JSGlobalAlternate::UpdateGlobalPersistentVariables() {
@@ -359,15 +359,15 @@ void JSGlobalAlternate::DestroyGlobalPersisitentVariables() {
   m_mapGlobal.clear();
 }
 
-FX_BOOL JSGlobalAlternate::SetGlobalVariables(const CFX_ByteString& propname,
-                                              JS_GlobalDataType nType,
-                                              double dData,
-                                              bool bData,
-                                              const CFX_ByteString& sData,
-                                              v8::Local<v8::Object> pData,
-                                              bool bDefaultPersistent) {
+bool JSGlobalAlternate::SetGlobalVariables(const CFX_ByteString& propname,
+                                           JS_GlobalDataType nType,
+                                           double dData,
+                                           bool bData,
+                                           const CFX_ByteString& sData,
+                                           v8::Local<v8::Object> pData,
+                                           bool bDefaultPersistent) {
   if (propname.IsEmpty())
-    return FALSE;
+    return false;
 
   auto it = m_mapGlobal.find(propname);
   if (it != m_mapGlobal.end()) {
@@ -379,7 +379,7 @@ FX_BOOL JSGlobalAlternate::SetGlobalVariables(const CFX_ByteString& propname,
       pTemp->nType = nType;
     }
 
-    pTemp->bDeleted = FALSE;
+    pTemp->bDeleted = false;
     switch (nType) {
       case JS_GlobalDataType::NUMBER: {
         pTemp->dData = dData;
@@ -396,9 +396,9 @@ FX_BOOL JSGlobalAlternate::SetGlobalVariables(const CFX_ByteString& propname,
       case JS_GlobalDataType::NULLOBJ:
         break;
       default:
-        return FALSE;
+        return false;
     }
-    return TRUE;
+    return true;
   }
 
   JSGlobalData* pNewData = nullptr;
@@ -434,9 +434,9 @@ FX_BOOL JSGlobalAlternate::SetGlobalVariables(const CFX_ByteString& propname,
       pNewData->bPersistent = bDefaultPersistent;
     } break;
     default:
-      return FALSE;
+      return false;
   }
 
   m_mapGlobal[propname] = pNewData;
-  return TRUE;
+  return true;
 }

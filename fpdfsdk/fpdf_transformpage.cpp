@@ -100,7 +100,7 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFPage_TransFormWithClip(FPDF_PAGE page,
                                                        FS_RECTF* clipRect) {
   CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
   if (!pPage)
-    return FALSE;
+    return false;
 
   CFX_ByteTextBuf textBuf;
   textBuf << "q ";
@@ -123,11 +123,11 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFPage_TransFormWithClip(FPDF_PAGE page,
   if (!pContentObj)
     pContentObj = pPageDic ? pPageDic->GetArrayFor("Contents") : nullptr;
   if (!pContentObj)
-    return FALSE;
+    return false;
 
   CPDF_Document* pDoc = pPage->m_pDocument;
   if (!pDoc)
-    return FALSE;
+    return false;
 
   CPDF_Dictionary* pDic = new CPDF_Dictionary(pDoc->GetByteStringPool());
   CPDF_Stream* pStream = new CPDF_Stream(nullptr, 0, pDic);
@@ -192,7 +192,7 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFPage_TransFormWithClip(FPDF_PAGE page,
     }
   }
 
-  return TRUE;
+  return true;
 }
 
 DLLEXPORT void STDCALL
@@ -224,7 +224,7 @@ DLLEXPORT FPDF_CLIPPATH STDCALL FPDF_CreateClipPath(float left,
   Path.AppendRect(left, bottom, right, top);
 
   CPDF_ClipPath* pNewClipPath = new CPDF_ClipPath();
-  pNewClipPath->AppendPath(Path, FXFILL_ALTERNATE, FALSE);
+  pNewClipPath->AppendPath(Path, FXFILL_ALTERNATE, false);
   return pNewClipPath;
 }
 

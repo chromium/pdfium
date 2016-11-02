@@ -41,21 +41,21 @@ class CPDFSDK_FormFillEnvironment
   void UpdateAllViews(CPDFSDK_PageView* pSender, CPDFSDK_Annot* pAnnot);
 
   CPDFSDK_Annot* GetFocusAnnot() { return m_pFocusAnnot.Get(); }
-  FX_BOOL SetFocusAnnot(CPDFSDK_Annot::ObservedPtr* pAnnot);
-  FX_BOOL KillFocusAnnot(uint32_t nFlag);
+  bool SetFocusAnnot(CPDFSDK_Annot::ObservedPtr* pAnnot);
+  bool KillFocusAnnot(uint32_t nFlag);
   void ClearAllFocusedAnnots();
 
-  FX_BOOL ExtractPages(const std::vector<uint16_t>& arrExtraPages,
-                       CPDF_Document* pDstDoc);
-  FX_BOOL InsertPages(int nInsertAt,
-                      const CPDF_Document* pSrcDoc,
-                      const std::vector<uint16_t>& arrSrcPages);
-  FX_BOOL ReplacePages(int nPage,
-                       const CPDF_Document* pSrcDoc,
-                       const std::vector<uint16_t>& arrSrcPages);
+  bool ExtractPages(const std::vector<uint16_t>& arrExtraPages,
+                    CPDF_Document* pDstDoc);
+  bool InsertPages(int nInsertAt,
+                   const CPDF_Document* pSrcDoc,
+                   const std::vector<uint16_t>& arrSrcPages);
+  bool ReplacePages(int nPage,
+                    const CPDF_Document* pSrcDoc,
+                    const std::vector<uint16_t>& arrSrcPages);
 
   int GetPageCount() { return m_pUnderlyingDoc->GetPageCount(); }
-  FX_BOOL GetPermissions(int nFlag);
+  bool GetPermissions(int nFlag);
 
   bool GetChangeMark() const { return m_bChangeMask; }
   void SetChangeMark() { m_bChangeMask = true; }
@@ -64,7 +64,7 @@ class CPDFSDK_FormFillEnvironment
   UnderlyingPageType* GetPage(int nIndex);
 
   void ProcJavascriptFun();
-  FX_BOOL ProcOpenAction();
+  bool ProcOpenAction();
 
   void Invalidate(FPDF_PAGE page,
                   double left,
@@ -83,9 +83,9 @@ class CPDFSDK_FormFillEnvironment
   FX_SYSTEMTIME GetLocalTime() const;
 
   void OnChange();
-  FX_BOOL IsSHIFTKeyDown(uint32_t nFlag) const;
-  FX_BOOL IsCTRLKeyDown(uint32_t nFlag) const;
-  FX_BOOL IsALTKeyDown(uint32_t nFlag) const;
+  bool IsSHIFTKeyDown(uint32_t nFlag) const;
+  bool IsCTRLKeyDown(uint32_t nFlag) const;
+  bool IsALTKeyDown(uint32_t nFlag) const;
 
   FPDF_PAGE GetPage(FPDF_DOCUMENT document, int nPageIndex);
   FPDF_PAGE GetCurrentPage(FPDF_DOCUMENT document);
@@ -93,7 +93,7 @@ class CPDFSDK_FormFillEnvironment
   void ExecuteNamedAction(const FX_CHAR* namedAction);
   void OnSetFieldInputFocus(FPDF_WIDESTRING focusText,
                             FPDF_DWORD nTextLen,
-                            FX_BOOL bFocus);
+                            bool bFocus);
   void DoURIAction(const FX_CHAR* bsURI);
   void DoGoToAction(int nPageIndex,
                     int zoomMode,
@@ -129,10 +129,10 @@ class CPDFSDK_FormFillEnvironment
   CFX_WideString GetPlatform();
   void GotoURL(FPDF_DOCUMENT document, const CFX_WideStringC& wsURL);
   void GetPageViewRect(FPDF_PAGE page, FS_RECTF& dstRect);
-  FX_BOOL PopupMenu(FPDF_PAGE page,
-                    FPDF_WIDGET hWidget,
-                    int menuFlag,
-                    CFX_PointF pt);
+  bool PopupMenu(FPDF_PAGE page,
+                 FPDF_WIDGET hWidget,
+                 int menuFlag,
+                 CFX_PointF pt);
 
   void Alert(FPDF_WIDESTRING Msg, FPDF_WIDESTRING Title, int Type, int Icon);
   void EmailTo(FPDF_FILEHANDLER* fileHandler,
@@ -196,7 +196,7 @@ class CPDFSDK_FormFillEnvironment
                    FPDF_BOOL bAnnotations);
   void JS_docgotoPage(int nPageNum);
 
-  FX_BOOL IsJSInitiated() const { return m_pInfo && m_pInfo->m_pJsPlatform; }
+  bool IsJSInitiated() const { return m_pInfo && m_pInfo->m_pJsPlatform; }
   CFX_ByteString GetAppName() const { return ""; }
   CFX_SystemHandler* GetSysHandler() const { return m_pSysHandler.get(); }
   FPDF_FORMFILLINFO* GetFormFillInfo() const { return m_pInfo; }

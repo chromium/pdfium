@@ -21,7 +21,7 @@ class CJS_GlobalData_Element {
   ~CJS_GlobalData_Element() {}
 
   CJS_KeyValue data;
-  FX_BOOL bPersistent;
+  bool bPersistent;
 };
 
 class CJS_GlobalData {
@@ -36,9 +36,9 @@ class CJS_GlobalData {
   void SetGlobalVariableObject(const CFX_ByteString& propname,
                                const CJS_GlobalVariableArray& array);
   void SetGlobalVariableNull(const CFX_ByteString& propname);
-  FX_BOOL SetGlobalVariablePersistent(const CFX_ByteString& propname,
-                                      FX_BOOL bPersistent);
-  FX_BOOL DeleteGlobalVariable(const CFX_ByteString& propname);
+  bool SetGlobalVariablePersistent(const CFX_ByteString& propname,
+                                   bool bPersistent);
+  bool DeleteGlobalVariable(const CFX_ByteString& propname);
 
   int32_t GetSize() const;
   CJS_GlobalData_Element* GetAt(int index) const;

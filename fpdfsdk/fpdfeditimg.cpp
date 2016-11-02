@@ -30,7 +30,7 @@ FPDFImageObj_LoadJpegFile(FPDF_PAGE* pages,
                           FPDF_PAGEOBJECT image_object,
                           FPDF_FILEACCESS* fileAccess) {
   if (!image_object || !fileAccess || !pages)
-    return FALSE;
+    return false;
 
   IFX_SeekableReadStream* pFile = new CPDF_CustomAccess(fileAccess);
   CPDF_ImageObject* pImgObj = reinterpret_cast<CPDF_ImageObject*>(image_object);
@@ -41,7 +41,7 @@ FPDFImageObj_LoadJpegFile(FPDF_PAGE* pages,
   }
   pImgObj->GetImage()->SetJpegImage(pFile);
 
-  return TRUE;
+  return true;
 }
 
 DLLEXPORT FPDF_BOOL STDCALL FPDFImageObj_SetMatrix(FPDF_PAGEOBJECT image_object,
@@ -52,7 +52,7 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFImageObj_SetMatrix(FPDF_PAGEOBJECT image_object,
                                                    double e,
                                                    double f) {
   if (!image_object)
-    return FALSE;
+    return false;
 
   CPDF_ImageObject* pImgObj = reinterpret_cast<CPDF_ImageObject*>(image_object);
   pImgObj->m_Matrix.a = static_cast<FX_FLOAT>(a);
@@ -62,7 +62,7 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFImageObj_SetMatrix(FPDF_PAGEOBJECT image_object,
   pImgObj->m_Matrix.e = static_cast<FX_FLOAT>(e);
   pImgObj->m_Matrix.f = static_cast<FX_FLOAT>(f);
   pImgObj->CalcBoundingBox();
-  return TRUE;
+  return true;
 }
 
 DLLEXPORT FPDF_BOOL STDCALL FPDFImageObj_SetBitmap(FPDF_PAGE* pages,
@@ -70,7 +70,7 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFImageObj_SetBitmap(FPDF_PAGE* pages,
                                                    FPDF_PAGEOBJECT image_object,
                                                    FPDF_BITMAP bitmap) {
   if (!image_object || !bitmap || !pages)
-    return FALSE;
+    return false;
 
   CPDF_ImageObject* pImgObj = reinterpret_cast<CPDF_ImageObject*>(image_object);
   for (int index = 0; index < nCount; index++) {
@@ -78,7 +78,7 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFImageObj_SetBitmap(FPDF_PAGE* pages,
     if (pPage)
       pImgObj->GetImage()->ResetCache(pPage, nullptr);
   }
-  pImgObj->GetImage()->SetImage(reinterpret_cast<CFX_DIBitmap*>(bitmap), FALSE);
+  pImgObj->GetImage()->SetImage(reinterpret_cast<CFX_DIBitmap*>(bitmap), false);
   pImgObj->CalcBoundingBox();
-  return TRUE;
+  return true;
 }

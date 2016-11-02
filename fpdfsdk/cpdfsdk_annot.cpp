@@ -23,14 +23,14 @@ const float kMinHeight = 1.0f;
 }  // namespace
 
 CPDFSDK_Annot::CPDFSDK_Annot(CPDFSDK_PageView* pPageView)
-    : m_pPageView(pPageView), m_bSelected(FALSE) {}
+    : m_pPageView(pPageView), m_bSelected(false) {}
 
 CPDFSDK_Annot::~CPDFSDK_Annot() {}
 
 #ifdef PDF_ENABLE_XFA
 
-FX_BOOL CPDFSDK_Annot::IsXFAField() {
-  return FALSE;
+bool CPDFSDK_Annot::IsXFAField() {
+  return false;
 }
 
 CXFA_FFWidget* CPDFSDK_Annot::GetXFAWidget() const {
@@ -77,11 +77,11 @@ void CPDFSDK_Annot::Annot_OnDraw(CFX_RenderDevice* pDevice,
                                  CFX_Matrix* pUser2Device,
                                  CPDF_RenderOptions* pOptions) {}
 
-FX_BOOL CPDFSDK_Annot::IsSelected() {
+bool CPDFSDK_Annot::IsSelected() {
   return m_bSelected;
 }
 
-void CPDFSDK_Annot::SetSelected(FX_BOOL bSelected) {
+void CPDFSDK_Annot::SetSelected(bool bSelected) {
   m_bSelected = bSelected;
 }
 

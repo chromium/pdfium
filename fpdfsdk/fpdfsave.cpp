@@ -183,7 +183,7 @@ bool SaveXFADocumentData(CPDFXFA_Context* pContext,
         CPDF_Stream* pData = new CPDF_Stream;
         pData->InitStreamFromFile(pDsfileWrite.get(), pDataDict);
         iLast = pArray->GetCount() - 2;
-        pArray->InsertAt(iLast, new CPDF_String("datasets", FALSE));
+        pArray->InsertAt(iLast, new CPDF_String("datasets", false));
         pArray->InsertAt(
             iLast + 1,
             new CPDF_Reference(pPDFDocument,
@@ -207,7 +207,7 @@ bool SaveXFADocumentData(CPDFXFA_Context* pContext,
         CPDF_Stream* pData = new CPDF_Stream;
         pData->InitStreamFromFile(pfileWrite.get(), pDataDict);
         iLast = pArray->GetCount() - 2;
-        pArray->InsertAt(iLast, new CPDF_String("form", FALSE));
+        pArray->InsertAt(iLast, new CPDF_String("form", false));
         pArray->InsertAt(
             iLast + 1,
             new CPDF_Reference(pPDFDocument,
@@ -308,12 +308,12 @@ bool FPDF_Doc_Save(FPDF_DOCUMENT document,
 DLLEXPORT FPDF_BOOL STDCALL FPDF_SaveAsCopy(FPDF_DOCUMENT document,
                                             FPDF_FILEWRITE* pFileWrite,
                                             FPDF_DWORD flags) {
-  return FPDF_Doc_Save(document, pFileWrite, flags, FALSE, 0);
+  return FPDF_Doc_Save(document, pFileWrite, flags, false, 0);
 }
 
 DLLEXPORT FPDF_BOOL STDCALL FPDF_SaveWithVersion(FPDF_DOCUMENT document,
                                                  FPDF_FILEWRITE* pFileWrite,
                                                  FPDF_DWORD flags,
                                                  int fileVersion) {
-  return FPDF_Doc_Save(document, pFileWrite, flags, TRUE, fileVersion);
+  return FPDF_Doc_Save(document, pFileWrite, flags, true, fileVersion);
 }

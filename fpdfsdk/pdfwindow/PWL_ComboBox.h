@@ -23,10 +23,10 @@ class CPWL_CBListBox : public CPWL_ListBox {
   ~CPWL_CBListBox() override {}
 
   // CPWL_ListBox
-  FX_BOOL OnLButtonUp(const CFX_FloatPoint& point, uint32_t nFlag) override;
+  bool OnLButtonUp(const CFX_FloatPoint& point, uint32_t nFlag) override;
 
-  FX_BOOL OnKeyDownWithExit(uint16_t nChar, FX_BOOL& bExit, uint32_t nFlag);
-  FX_BOOL OnCharWithExit(uint16_t nChar, FX_BOOL& bExit, uint32_t nFlag);
+  bool OnKeyDownWithExit(uint16_t nChar, bool& bExit, uint32_t nFlag);
+  bool OnCharWithExit(uint16_t nChar, bool& bExit, uint32_t nFlag);
 };
 
 #define PWL_COMBOBOX_BUTTON_WIDTH 13
@@ -40,8 +40,8 @@ class CPWL_CBButton : public CPWL_Wnd {
   void GetThisAppearanceStream(CFX_ByteTextBuf& sAppStream) override;
   void DrawThisAppearance(CFX_RenderDevice* pDevice,
                           CFX_Matrix* pUser2Device) override;
-  FX_BOOL OnLButtonDown(const CFX_FloatPoint& point, uint32_t nFlag) override;
-  FX_BOOL OnLButtonUp(const CFX_FloatPoint& point, uint32_t nFlag) override;
+  bool OnLButtonDown(const CFX_FloatPoint& point, uint32_t nFlag) override;
+  bool OnLButtonUp(const CFX_FloatPoint& point, uint32_t nFlag) override;
 };
 
 class CPWL_ComboBox : public CPWL_Wnd {
@@ -54,8 +54,8 @@ class CPWL_ComboBox : public CPWL_Wnd {
   // CPWL_Wnd:
   CFX_ByteString GetClassName() const override;
   void OnCreate(PWL_CREATEPARAM& cp) override;
-  FX_BOOL OnKeyDown(uint16_t nChar, uint32_t nFlag) override;
-  FX_BOOL OnChar(uint16_t nChar, uint32_t nFlag) override;
+  bool OnKeyDown(uint16_t nChar, uint32_t nFlag) override;
+  bool OnChar(uint16_t nChar, uint32_t nFlag) override;
   void OnNotify(CPWL_Wnd* pWnd,
                 uint32_t msg,
                 intptr_t wParam = 0,
@@ -78,7 +78,7 @@ class CPWL_ComboBox : public CPWL_Wnd {
   void GetEditSel(int32_t& nStartChar, int32_t& nEndChar) const;
   void Clear();
   void SelectAll();
-  FX_BOOL IsPopup() const;
+  bool IsPopup() const;
 
   void SetSelectText();
 
@@ -88,12 +88,12 @@ class CPWL_ComboBox : public CPWL_Wnd {
   void CreateEdit(const PWL_CREATEPARAM& cp);
   void CreateButton(const PWL_CREATEPARAM& cp);
   void CreateListBox(const PWL_CREATEPARAM& cp);
-  void SetPopup(FX_BOOL bPopup);
+  void SetPopup(bool bPopup);
 
   CPWL_CBEdit* m_pEdit;
   CPWL_CBButton* m_pButton;
   CPWL_CBListBox* m_pList;
-  FX_BOOL m_bPopup;
+  bool m_bPopup;
   CFX_FloatRect m_rcOldWindow;
   int32_t m_nPopupWhere;
   int32_t m_nSelectItem;

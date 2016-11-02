@@ -78,28 +78,28 @@ void CPDFXFA_Context::SetFormFillEnv(
   m_pFormFillEnv = pFormFillEnv;
 }
 
-FX_BOOL CPDFXFA_Context::LoadXFADoc() {
+bool CPDFXFA_Context::LoadXFADoc() {
   m_nLoadStatus = FXFA_LOADSTATUS_LOADING;
 
   if (!m_pPDFDoc)
-    return FALSE;
+    return false;
 
   m_XFAPageList.RemoveAll();
 
   CXFA_FFApp* pApp = GetXFAApp();
   if (!pApp)
-    return FALSE;
+    return false;
 
   m_pXFADoc.reset(pApp->CreateDoc(&m_DocEnv, m_pPDFDoc.get()));
   if (!m_pXFADoc) {
     SetLastError(FPDF_ERR_XFALOAD);
-    return FALSE;
+    return false;
   }
 
   CXFA_FFDocHandler* pDocHandler = pApp->GetDocHandler();
   if (!pDocHandler) {
     SetLastError(FPDF_ERR_XFALOAD);
-    return FALSE;
+    return false;
   }
 
   m_pXFADoc->StartLoad();
@@ -107,7 +107,7 @@ FX_BOOL CPDFXFA_Context::LoadXFADoc() {
   if (iStatus != XFA_PARSESTATUS_Done) {
     CloseXFADoc();
     SetLastError(FPDF_ERR_XFALOAD);
-    return FALSE;
+    return false;
   }
   m_pXFADoc->StopLoad();
   m_pXFADoc->GetXFADoc()->InitScriptContext(GetJSERuntime());
@@ -121,14 +121,14 @@ FX_BOOL CPDFXFA_Context::LoadXFADoc() {
   if (m_pXFADocView->StartLayout() < 0) {
     CloseXFADoc();
     SetLastError(FPDF_ERR_XFALAYOUT);
-    return FALSE;
+    return false;
   }
 
   m_pXFADocView->DoLayout(nullptr);
   m_pXFADocView->StopLayout();
   m_nLoadStatus = FXFA_LOADSTATUS_LOADED;
 
-  return TRUE;
+  return true;
 }
 
 int CPDFXFA_Context::GetPageCount() const {
@@ -304,7 +304,7 @@ int32_t CPDFXFA_Context::MsgBox(const CFX_WideString& wsMessage,
 CFX_WideString CPDFXFA_Context::Response(const CFX_WideString& wsQuestion,
                                          const CFX_WideString& wsTitle,
                                          const CFX_WideString& wsDefaultAnswer,
-                                         FX_BOOL bMark) {
+                                         bool bMark) {
   CFX_WideString wsAnswer;
   if (!m_pFormFillEnv)
     return wsAnswer;
@@ -332,24 +332,24 @@ IFX_SeekableReadStream* CPDFXFA_Context::DownloadURL(
                         : nullptr;
 }
 
-FX_BOOL CPDFXFA_Context::PostRequestURL(const CFX_WideString& wsURL,
-                                        const CFX_WideString& wsData,
-                                        const CFX_WideString& wsContentType,
-                                        const CFX_WideString& wsEncode,
-                                        const CFX_WideString& wsHeader,
-                                        CFX_WideString& wsResponse) {
+bool CPDFXFA_Context::PostRequestURL(const CFX_WideString& wsURL,
+                                     const CFX_WideString& wsData,
+                                     const CFX_WideString& wsContentType,
+                                     const CFX_WideString& wsEncode,
+                                     const CFX_WideString& wsHeader,
+                                     CFX_WideString& wsResponse) {
   if (!m_pFormFillEnv)
-    return FALSE;
+    return false;
 
   wsResponse = m_pFormFillEnv->PostRequestURL(
       wsURL.c_str(), wsData.c_str(), wsContentType.c_str(), wsEncode.c_str(),
       wsHeader.c_str());
-  return TRUE;
+  return true;
 }
 
-FX_BOOL CPDFXFA_Context::PutRequestURL(const CFX_WideString& wsURL,
-                                       const CFX_WideString& wsData,
-                                       const CFX_WideString& wsEncode) {
+bool CPDFXFA_Context::PutRequestURL(const CFX_WideString& wsURL,
+                                    const CFX_WideString& wsData,
+                                    const CFX_WideString& wsEncode) {
   return m_pFormFillEnv &&
          m_pFormFillEnv->PutRequestURL(wsURL.c_str(), wsData.c_str(),
                                        wsEncode.c_str());

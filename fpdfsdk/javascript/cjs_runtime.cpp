@@ -225,8 +225,8 @@ CFX_WideString ChangeObjName(const CFX_WideString& str) {
   sRet.Replace(L"_", L".");
   return sRet;
 }
-FX_BOOL CJS_Runtime::GetValueByName(const CFX_ByteStringC& utf8Name,
-                                    CFXJSE_Value* pValue) {
+bool CJS_Runtime::GetValueByName(const CFX_ByteStringC& utf8Name,
+                                 CFXJSE_Value* pValue) {
   const FX_CHAR* name = utf8Name.c_str();
 
   v8::Isolate::Scope isolate_scope(GetIsolate());
@@ -240,15 +240,15 @@ FX_BOOL CJS_Runtime::GetValueByName(const CFX_ByteStringC& utf8Name,
 
   if (propvalue.IsEmpty()) {
     pValue->SetUndefined();
-    return FALSE;
+    return false;
   }
   pValue->ForceSetValue(propvalue);
-  return TRUE;
+  return true;
 }
-FX_BOOL CJS_Runtime::SetValueByName(const CFX_ByteStringC& utf8Name,
-                                    CFXJSE_Value* pValue) {
+bool CJS_Runtime::SetValueByName(const CFX_ByteStringC& utf8Name,
+                                 CFXJSE_Value* pValue) {
   if (utf8Name.IsEmpty() || !pValue)
-    return FALSE;
+    return false;
   const FX_CHAR* name = utf8Name.c_str();
   v8::Isolate* pIsolate = GetIsolate();
   v8::Isolate::Scope isolate_scope(pIsolate);
@@ -264,6 +264,6 @@ FX_BOOL CJS_Runtime::SetValueByName(const CFX_ByteStringC& utf8Name,
       v8::String::NewFromUtf8(pIsolate, name, v8::String::kNormalString,
                               utf8Name.GetLength()),
       propvalue);
-  return TRUE;
+  return true;
 }
 #endif

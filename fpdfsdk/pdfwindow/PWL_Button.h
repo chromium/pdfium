@@ -17,11 +17,11 @@ class CPWL_Button : public CPWL_Wnd {
   // CPWL_Wnd
   CFX_ByteString GetClassName() const override;
   void OnCreate(PWL_CREATEPARAM& cp) override;
-  FX_BOOL OnLButtonDown(const CFX_FloatPoint& point, uint32_t nFlag) override;
-  FX_BOOL OnLButtonUp(const CFX_FloatPoint& point, uint32_t nFlag) override;
+  bool OnLButtonDown(const CFX_FloatPoint& point, uint32_t nFlag) override;
+  bool OnLButtonUp(const CFX_FloatPoint& point, uint32_t nFlag) override;
 
  protected:
-  FX_BOOL m_bMouseDown;
+  bool m_bMouseDown;
 };
 
 #endif  // FPDFSDK_PDFWINDOW_PWL_BUTTON_H_

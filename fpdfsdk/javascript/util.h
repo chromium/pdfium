@@ -17,26 +17,26 @@ class util : public CJS_EmbedObj {
   util(CJS_Object* pJSObject);
   ~util() override;
 
-  FX_BOOL printd(IJS_Context* cc,
-                 const std::vector<CJS_Value>& params,
-                 CJS_Value& vRet,
-                 CFX_WideString& sError);
-  FX_BOOL printf(IJS_Context* cc,
-                 const std::vector<CJS_Value>& params,
-                 CJS_Value& vRet,
-                 CFX_WideString& sError);
-  FX_BOOL printx(IJS_Context* cc,
-                 const std::vector<CJS_Value>& params,
-                 CJS_Value& vRet,
-                 CFX_WideString& sError);
-  FX_BOOL scand(IJS_Context* cc,
-                const std::vector<CJS_Value>& params,
-                CJS_Value& vRet,
-                CFX_WideString& sError);
-  FX_BOOL byteToChar(IJS_Context* cc,
-                     const std::vector<CJS_Value>& params,
-                     CJS_Value& vRet,
-                     CFX_WideString& sError);
+  bool printd(IJS_Context* cc,
+              const std::vector<CJS_Value>& params,
+              CJS_Value& vRet,
+              CFX_WideString& sError);
+  bool printf(IJS_Context* cc,
+              const std::vector<CJS_Value>& params,
+              CJS_Value& vRet,
+              CFX_WideString& sError);
+  bool printx(IJS_Context* cc,
+              const std::vector<CJS_Value>& params,
+              CJS_Value& vRet,
+              CFX_WideString& sError);
+  bool scand(IJS_Context* cc,
+             const std::vector<CJS_Value>& params,
+             CJS_Value& vRet,
+             CFX_WideString& sError);
+  bool byteToChar(IJS_Context* cc,
+                  const std::vector<CJS_Value>& params,
+                  CJS_Value& vRet,
+                  CFX_WideString& sError);
 
   static CFX_WideString printx(const CFX_WideString& cFormat,
                                const CFX_WideString& cSource);

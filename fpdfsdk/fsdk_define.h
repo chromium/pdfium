@@ -99,7 +99,7 @@ void FPDF_RenderPage_Retail(CPDF_PageRenderContext* pContext,
                             int size_y,
                             int rotate,
                             int flags,
-                            FX_BOOL bNeedToRestore,
+                            bool bNeedToRestore,
                             IFSDK_PAUSE_Adapter* pause);
 
 void CheckUnSupportError(CPDF_Document* pDoc, uint32_t err_code);

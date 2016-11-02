@@ -49,7 +49,7 @@ class CFPDF_FileAvailWrap : public CPDF_DataAvail::FileAvail {
   void Set(FX_FILEAVAIL* pfileAvail) { m_pfileAvail = pfileAvail; }
 
   // CPDF_DataAvail::FileAvail:
-  FX_BOOL IsDataAvail(FX_FILESIZE offset, uint32_t size) override {
+  bool IsDataAvail(FX_FILESIZE offset, uint32_t size) override {
     return !!m_pfileAvail->IsDataAvail(m_pfileAvail, offset, size);
   }
 

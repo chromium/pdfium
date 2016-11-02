@@ -22,18 +22,18 @@ struct PDFSDK_FieldAction {
   PDFSDK_FieldAction();
   PDFSDK_FieldAction(const PDFSDK_FieldAction& other) = delete;
 
-  FX_BOOL bModifier;
-  FX_BOOL bShift;
+  bool bModifier;
+  bool bShift;
   int nCommitKey;
   CFX_WideString sChange;
   CFX_WideString sChangeEx;
-  FX_BOOL bKeyDown;
+  bool bKeyDown;
   int nSelEnd;
   int nSelStart;
   CFX_WideString sValue;
-  FX_BOOL bWillCommit;
-  FX_BOOL bFieldFull;
-  FX_BOOL bRC;
+  bool bWillCommit;
+  bool bFieldFull;
+  bool bRC;
 };
 
 #endif  // FPDFSDK_PDFSDK_FIELDACTION_H_

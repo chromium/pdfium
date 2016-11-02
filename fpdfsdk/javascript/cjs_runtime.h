@@ -47,15 +47,15 @@ class CJS_Runtime : public IJS_Runtime,
   bool AddEventToSet(const FieldEvent& event);
   void RemoveEventFromSet(const FieldEvent& event);
 
-  void BeginBlock() { m_bBlocking = TRUE; }
-  void EndBlock() { m_bBlocking = FALSE; }
-  FX_BOOL IsBlocking() const { return m_bBlocking; }
+  void BeginBlock() { m_bBlocking = true; }
+  void EndBlock() { m_bBlocking = false; }
+  bool IsBlocking() const { return m_bBlocking; }
 
 #ifdef PDF_ENABLE_XFA
-  FX_BOOL GetValueByName(const CFX_ByteStringC& utf8Name,
-                         CFXJSE_Value* pValue) override;
-  FX_BOOL SetValueByName(const CFX_ByteStringC& utf8Name,
-                         CFXJSE_Value* pValue) override;
+  bool GetValueByName(const CFX_ByteStringC& utf8Name,
+                      CFXJSE_Value* pValue) override;
+  bool SetValueByName(const CFX_ByteStringC& utf8Name,
+                      CFXJSE_Value* pValue) override;
 #endif  // PDF_ENABLE_XFA
 
  private:

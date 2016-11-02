@@ -84,7 +84,7 @@ DLLEXPORT FPDF_DOCUMENT STDCALL FPDF_CreateNewDocument() {
   pInfoDict = pDoc->GetInfo();
   if (pInfoDict) {
     if (FSDK_IsSandBoxPolicyEnabled(FPDF_POLICY_MACHINETIME_ACCESS))
-      pInfoDict->SetFor("CreationDate", new CPDF_String(DateStr, FALSE));
+      pInfoDict->SetFor("CreationDate", new CPDF_String(DateStr, false));
     pInfoDict->SetFor("Creator", new CPDF_String(L"PDFium"));
   }
 
@@ -217,23 +217,23 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFPage_HasTransparency(FPDF_PAGE page) {
 DLLEXPORT FPDF_BOOL STDCALL
 FPDFPageObj_HasTransparency(FPDF_PAGEOBJECT pageObject) {
   if (!pageObject)
-    return FALSE;
+    return false;
 
   CPDF_PageObject* pPageObj = reinterpret_cast<CPDF_PageObject*>(pageObject);
   int blend_type = pPageObj->m_GeneralState.GetBlendType();
   if (blend_type != FXDIB_BLEND_NORMAL)
-    return TRUE;
+    return true;
 
   CPDF_Dictionary* pSMaskDict =
       ToDictionary(pPageObj->m_GeneralState.GetSoftMask());
   if (pSMaskDict)
-    return TRUE;
+    return true;
 
   if (pPageObj->m_GeneralState.GetFillAlpha() != 1.0f)
-    return TRUE;
+    return true;
 
   if (pPageObj->IsPath() && pPageObj->m_GeneralState.GetStrokeAlpha() != 1.0f) {
-    return TRUE;
+    return true;
   }
 
   if (pPageObj->IsForm()) {
@@ -241,21 +241,21 @@ FPDFPageObj_HasTransparency(FPDF_PAGEOBJECT pageObject) {
     if (pForm) {
       int trans = pForm->m_Transparency;
       if ((trans & PDFTRANS_ISOLATED) || (trans & PDFTRANS_GROUP))
-        return TRUE;
+        return true;
     }
   }
 
-  return FALSE;
+  return false;
 }
 
 DLLEXPORT FPDF_BOOL STDCALL FPDFPage_GenerateContent(FPDF_PAGE page) {
   CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
   if (!IsPageObject(pPage))
-    return FALSE;
+    return false;
 
   CPDF_PageContentGenerator CG(pPage);
   CG.GenerateContent();
-  return TRUE;
+  return true;
 }
 
 DLLEXPORT void STDCALL FPDFPageObj_Transform(FPDF_PAGEOBJECT page_object,

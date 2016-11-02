@@ -123,11 +123,11 @@ int32_t CPWL_Icon::GetScaleMethod() {
   return 0;
 }
 
-FX_BOOL CPWL_Icon::IsProportionalScale() {
+bool CPWL_Icon::IsProportionalScale() {
   if (m_pIconFit)
     return m_pIconFit->IsProportionalScale();
 
-  return FALSE;
+  return false;
 }
 
 void CPWL_Icon::GetIconPosition(FX_FLOAT& fLeft, FX_FLOAT& fBottom) {

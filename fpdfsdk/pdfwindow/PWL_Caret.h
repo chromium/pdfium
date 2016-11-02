@@ -11,9 +11,9 @@
 
 struct PWL_CARET_INFO {
  public:
-  PWL_CARET_INFO() : bVisible(FALSE) {}
+  PWL_CARET_INFO() : bVisible(false) {}
 
-  FX_BOOL bVisible;
+  bool bVisible;
   CFX_FloatPoint ptHead;
   CFX_FloatPoint ptFoot;
 };
@@ -29,10 +29,10 @@ class CPWL_Caret : public CPWL_Wnd {
   void DrawThisAppearance(CFX_RenderDevice* pDevice,
                           CFX_Matrix* pUser2Device) override;
   void InvalidateRect(CFX_FloatRect* pRect = nullptr) override;
-  void SetVisible(FX_BOOL bVisible) override {}
+  void SetVisible(bool bVisible) override {}
   void TimerProc() override;
 
-  void SetCaret(FX_BOOL bVisible,
+  void SetCaret(bool bVisible,
                 const CFX_FloatPoint& ptHead,
                 const CFX_FloatPoint& ptFoot);
   CFX_ByteString GetCaretAppearanceStream(const CFX_FloatPoint& ptOffset);
@@ -42,7 +42,7 @@ class CPWL_Caret : public CPWL_Wnd {
   void GetCaretApp(CFX_ByteTextBuf& sAppStream, const CFX_FloatPoint& ptOffset);
   CFX_FloatRect GetCaretRect() const;
 
-  FX_BOOL m_bFlash;
+  bool m_bFlash;
   CFX_FloatPoint m_ptHead;
   CFX_FloatPoint m_ptFoot;
   FX_FLOAT m_fWidth;

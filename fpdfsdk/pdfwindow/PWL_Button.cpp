@@ -8,7 +8,7 @@
 #include "fpdfsdk/pdfwindow/PWL_Utils.h"
 #include "fpdfsdk/pdfwindow/PWL_Wnd.h"
 
-CPWL_Button::CPWL_Button() : m_bMouseDown(FALSE) {}
+CPWL_Button::CPWL_Button() : m_bMouseDown(false) {}
 
 CPWL_Button::~CPWL_Button() {}
 
@@ -20,21 +20,20 @@ void CPWL_Button::OnCreate(PWL_CREATEPARAM& cp) {
   cp.eCursorType = FXCT_HAND;
 }
 
-FX_BOOL CPWL_Button::OnLButtonDown(const CFX_FloatPoint& point,
-                                   uint32_t nFlag) {
+bool CPWL_Button::OnLButtonDown(const CFX_FloatPoint& point, uint32_t nFlag) {
   CPWL_Wnd::OnLButtonDown(point, nFlag);
 
-  m_bMouseDown = TRUE;
+  m_bMouseDown = true;
   SetCapture();
 
-  return TRUE;
+  return true;
 }
 
-FX_BOOL CPWL_Button::OnLButtonUp(const CFX_FloatPoint& point, uint32_t nFlag) {
+bool CPWL_Button::OnLButtonUp(const CFX_FloatPoint& point, uint32_t nFlag) {
   CPWL_Wnd::OnLButtonUp(point, nFlag);
 
   ReleaseCapture();
-  m_bMouseDown = FALSE;
+  m_bMouseDown = false;
 
-  return TRUE;
+  return true;
 }

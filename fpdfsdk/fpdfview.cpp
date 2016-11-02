@@ -224,7 +224,7 @@ FPDF_BOOL FSDK_IsSandBoxPolicyEnabled(FPDF_DWORD policy) {
     case FPDF_POLICY_MACHINETIME_ACCESS:
       return !!(foxit_sandbox_policy & 0x01);
     default:
-      return FALSE;
+      return false;
   }
 }
 
@@ -349,28 +349,28 @@ DLLEXPORT FPDF_DOCUMENT STDCALL FPDF_LoadDocument(FPDF_STRING file_path,
 DLLEXPORT FPDF_BOOL STDCALL FPDF_HasXFAField(FPDF_DOCUMENT document,
                                              int* docType) {
   if (!document)
-    return FALSE;
+    return false;
 
   CPDF_Document* pdfDoc =
       (static_cast<CPDFXFA_Context*>(document))->GetPDFDoc();
   if (!pdfDoc)
-    return FALSE;
+    return false;
 
   CPDF_Dictionary* pRoot = pdfDoc->GetRoot();
   if (!pRoot)
-    return FALSE;
+    return false;
 
   CPDF_Dictionary* pAcroForm = pRoot->GetDictFor("AcroForm");
   if (!pAcroForm)
-    return FALSE;
+    return false;
 
   CPDF_Object* pXFA = pAcroForm->GetObjectFor("XFA");
   if (!pXFA)
-    return FALSE;
+    return false;
 
   bool bDynamicXFA = pRoot->GetBooleanFor("NeedsRendering", false);
   *docType = bDynamicXFA ? DOCTYPE_DYNAMIC_XFA : DOCTYPE_STATIC_XFA;
-  return TRUE;
+  return true;
 }
 
 DLLEXPORT FPDF_BOOL STDCALL FPDF_LoadXFA(FPDF_DOCUMENT document) {
@@ -446,19 +446,19 @@ FPDF_LoadCustomDocument(FPDF_FILEACCESS* pFileAccess,
 DLLEXPORT FPDF_BOOL STDCALL FPDF_GetFileVersion(FPDF_DOCUMENT doc,
                                                 int* fileVersion) {
   if (!fileVersion)
-    return FALSE;
+    return false;
 
   *fileVersion = 0;
   CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(doc);
   if (!pDoc)
-    return FALSE;
+    return false;
 
   CPDF_Parser* pParser = pDoc->GetParser();
   if (!pParser)
-    return FALSE;
+    return false;
 
   *fileVersion = pParser->GetFileVersion();
-  return TRUE;
+  return true;
 }
 
 // jabdelmalek: changed return type from uint32_t to build on Linux (and match
@@ -554,7 +554,7 @@ DLLEXPORT void STDCALL FPDF_RenderPage(HDC dc,
   }
 
   FPDF_RenderPage_Retail(pContext, page, start_x, start_y, size_x, size_y,
-                         rotate, flags, TRUE, nullptr);
+                         rotate, flags, true, nullptr);
 
   if (bNewBitmap) {
     CFX_WindowsDevice WinDC(dc);
@@ -564,7 +564,7 @@ DLLEXPORT void STDCALL FPDF_RenderPage(HDC dc,
       pDst->Create(size_x, size_y, FXDIB_Rgb32);
       FXSYS_memset(pDst->GetBuffer(), -1, pitch * size_y);
       pDst->CompositeBitmap(0, 0, size_x, size_y, pBitmap.get(), 0, 0,
-                            FXDIB_BLEND_NORMAL, nullptr, FALSE, nullptr);
+                            FXDIB_BLEND_NORMAL, nullptr, false, nullptr);
       WinDC.StretchDIBits(pDst.get(), 0, 0, size_x, size_y);
     } else {
       WinDC.SetDIBits(pBitmap.get(), 0, 0);
@@ -598,7 +598,7 @@ DLLEXPORT void STDCALL FPDF_RenderPageBitmap(FPDF_BITMAP bitmap,
   pDevice->Attach(pBitmap, !!(flags & FPDF_REVERSE_BYTE_ORDER), nullptr, false);
 
   FPDF_RenderPage_Retail(pContext, page, start_x, start_y, size_x, size_y,
-                         rotate, flags, TRUE, nullptr);
+                         rotate, flags, true, nullptr);
 
   pPage->SetRenderContext(nullptr);
 }
@@ -616,7 +616,7 @@ DLLEXPORT FPDF_RECORDER STDCALL FPDF_RenderPageSkp(FPDF_PAGE page,
   CFX_FxgeDevice* skDevice = new CFX_FxgeDevice;
   FPDF_RECORDER recorder = skDevice->CreateRecorder(size_x, size_y);
   pContext->m_pDevice.reset(skDevice);
-  FPDF_RenderPage_Retail(pContext, page, 0, 0, size_x, size_y, 0, 0, TRUE,
+  FPDF_RenderPage_Retail(pContext, page, 0, 0, size_x, size_y, 0, 0, true,
                          nullptr);
   pPage->SetRenderContext(nullptr);
   return recorder;
@@ -806,7 +806,7 @@ void FPDF_RenderPage_Retail(CPDF_PageRenderContext* pContext,
                             int size_y,
                             int rotate,
                             int flags,
-                            FX_BOOL bNeedToRestore,
+                            bool bNeedToRestore,
                             IFSDK_PAUSE_Adapter* pause) {
   CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
   if (!pPage)
@@ -857,9 +857,9 @@ void FPDF_RenderPage_Retail(CPDF_PageRenderContext* pContext,
 
   if (flags & FPDF_ANNOT) {
     pContext->m_pAnnots = pdfium::MakeUnique<CPDF_AnnotList>(pPage);
-    FX_BOOL bPrinting = pContext->m_pDevice->GetDeviceClass() != FXDC_DISPLAY;
+    bool bPrinting = pContext->m_pDevice->GetDeviceClass() != FXDC_DISPLAY;
     pContext->m_pAnnots->DisplayAnnots(pPage, pContext->m_pContext.get(),
-                                       bPrinting, &matrix, FALSE, nullptr);
+                                       bPrinting, &matrix, false, nullptr);
   }
 
   pContext->m_pRenderer = pdfium::MakeUnique<CPDF_ProgressiveRenderer>(
@@ -876,35 +876,35 @@ DLLEXPORT int STDCALL FPDF_GetPageSizeByIndex(FPDF_DOCUMENT document,
                                               double* height) {
   UnderlyingDocumentType* pDoc = UnderlyingFromFPDFDocument(document);
   if (!pDoc)
-    return FALSE;
+    return false;
 
 #ifdef PDF_ENABLE_XFA
   int count = pDoc->GetPageCount();
   if (page_index < 0 || page_index >= count)
-    return FALSE;
+    return false;
   CPDFXFA_Page* pPage = pDoc->GetXFAPage(page_index);
   if (!pPage)
-    return FALSE;
+    return false;
   *width = pPage->GetPageWidth();
   *height = pPage->GetPageHeight();
 #else   // PDF_ENABLE_XFA
   CPDF_Dictionary* pDict = pDoc->GetPage(page_index);
   if (!pDict)
-    return FALSE;
+    return false;
 
   CPDF_Page page(pDoc, pDict, true);
   *width = page.GetPageWidth();
   *height = page.GetPageHeight();
 #endif  // PDF_ENABLE_XFA
 
-  return TRUE;
+  return true;
 }
 
 DLLEXPORT FPDF_BOOL STDCALL
 FPDF_VIEWERREF_GetPrintScaling(FPDF_DOCUMENT document) {
   CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
   if (!pDoc)
-    return TRUE;
+    return true;
   CPDF_ViewerPreferences viewRef(pDoc);
   return viewRef.PrintScaling();
 }

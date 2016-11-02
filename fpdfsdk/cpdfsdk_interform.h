@@ -36,9 +36,9 @@ class CPDFSDK_InterForm : public IPDF_FormNotify {
   CPDF_InterForm* GetInterForm() const { return m_pInterForm.get(); }
   CPDFSDK_FormFillEnvironment* GetFormFillEnv() const { return m_pFormFillEnv; }
 
-  FX_BOOL HighlightWidgets();
+  bool HighlightWidgets();
 
-  CPDFSDK_Widget* GetSibling(CPDFSDK_Widget* pWidget, FX_BOOL bNext) const;
+  CPDFSDK_Widget* GetSibling(CPDFSDK_Widget* pWidget, bool bNext) const;
   CPDFSDK_Widget* GetWidget(CPDF_FormControl* pControl,
                             bool createIfNeeded) const;
   void GetWidgets(const CFX_WideString& sFieldName,
@@ -49,51 +49,51 @@ class CPDFSDK_InterForm : public IPDF_FormNotify {
   void AddMap(CPDF_FormControl* pControl, CPDFSDK_Widget* pWidget);
   void RemoveMap(CPDF_FormControl* pControl);
 
-  void EnableCalculate(FX_BOOL bEnabled);
-  FX_BOOL IsCalculateEnabled() const;
+  void EnableCalculate(bool bEnabled);
+  bool IsCalculateEnabled() const;
 
 #ifdef PDF_ENABLE_XFA
   void AddXFAMap(CXFA_FFWidget* hWidget, CPDFSDK_XFAWidget* pWidget);
   void RemoveXFAMap(CXFA_FFWidget* hWidget);
   CPDFSDK_XFAWidget* GetXFAWidget(CXFA_FFWidget* hWidget);
-  void XfaEnableCalculate(FX_BOOL bEnabled);
-  FX_BOOL IsXfaCalculateEnabled() const;
-  FX_BOOL IsXfaValidationsEnabled();
-  void XfaSetValidationsEnabled(FX_BOOL bEnabled);
-  void SynchronizeField(CPDF_FormField* pFormField, FX_BOOL bSynchronizeElse);
+  void XfaEnableCalculate(bool bEnabled);
+  bool IsXfaCalculateEnabled() const;
+  bool IsXfaValidationsEnabled();
+  void XfaSetValidationsEnabled(bool bEnabled);
+  void SynchronizeField(CPDF_FormField* pFormField, bool bSynchronizeElse);
 #endif  // PDF_ENABLE_XFA
 
-  FX_BOOL OnKeyStrokeCommit(CPDF_FormField* pFormField,
-                            const CFX_WideString& csValue);
-  FX_BOOL OnValidate(CPDF_FormField* pFormField, const CFX_WideString& csValue);
+  bool OnKeyStrokeCommit(CPDF_FormField* pFormField,
+                         const CFX_WideString& csValue);
+  bool OnValidate(CPDF_FormField* pFormField, const CFX_WideString& csValue);
   void OnCalculate(CPDF_FormField* pFormField = nullptr);
-  CFX_WideString OnFormat(CPDF_FormField* pFormField, FX_BOOL& bFormatted);
+  CFX_WideString OnFormat(CPDF_FormField* pFormField, bool& bFormatted);
 
   void ResetFieldAppearance(CPDF_FormField* pFormField,
                             const CFX_WideString* sValue,
-                            FX_BOOL bValueChanged);
+                            bool bValueChanged);
   void UpdateField(CPDF_FormField* pFormField);
 
-  FX_BOOL DoAction_Hide(const CPDF_Action& action);
-  FX_BOOL DoAction_SubmitForm(const CPDF_Action& action);
-  FX_BOOL DoAction_ResetForm(const CPDF_Action& action);
-  FX_BOOL DoAction_ImportData(const CPDF_Action& action);
+  bool DoAction_Hide(const CPDF_Action& action);
+  bool DoAction_SubmitForm(const CPDF_Action& action);
+  bool DoAction_ResetForm(const CPDF_Action& action);
+  bool DoAction_ImportData(const CPDF_Action& action);
 
   std::vector<CPDF_FormField*> GetFieldFromObjects(
       const std::vector<CPDF_Object*>& objects) const;
-  FX_BOOL IsValidField(CPDF_Dictionary* pFieldDict);
-  FX_BOOL SubmitFields(const CFX_WideString& csDestination,
-                       const std::vector<CPDF_FormField*>& fields,
-                       bool bIncludeOrExclude,
-                       bool bUrlEncoded);
-  FX_BOOL SubmitForm(const CFX_WideString& sDestination, FX_BOOL bUrlEncoded);
-  FX_BOOL ExportFormToFDFTextBuf(CFX_ByteTextBuf& textBuf);
-  FX_BOOL ExportFieldsToFDFTextBuf(const std::vector<CPDF_FormField*>& fields,
-                                   bool bIncludeOrExclude,
-                                   CFX_ByteTextBuf& textBuf);
+  bool IsValidField(CPDF_Dictionary* pFieldDict);
+  bool SubmitFields(const CFX_WideString& csDestination,
+                    const std::vector<CPDF_FormField*>& fields,
+                    bool bIncludeOrExclude,
+                    bool bUrlEncoded);
+  bool SubmitForm(const CFX_WideString& sDestination, bool bUrlEncoded);
+  bool ExportFormToFDFTextBuf(CFX_ByteTextBuf& textBuf);
+  bool ExportFieldsToFDFTextBuf(const std::vector<CPDF_FormField*>& fields,
+                                bool bIncludeOrExclude,
+                                CFX_ByteTextBuf& textBuf);
   CFX_WideString GetTemporaryFileName(const CFX_WideString& sFileExt);
 
-  FX_BOOL IsNeedHighLight(int nFieldType);
+  bool IsNeedHighLight(int nFieldType);
   void RemoveAllHighLight();
   void SetHighlightAlpha(uint8_t alpha) { m_iHighlightAlpha = alpha; }
   uint8_t GetHighlightAlpha() { return m_iHighlightAlpha; }
@@ -114,9 +114,8 @@ class CPDFSDK_InterForm : public IPDF_FormNotify {
   int BeforeFormImportData(CPDF_InterForm* pForm) override;
   void AfterFormImportData(CPDF_InterForm* pForm) override;
 
-  FX_BOOL FDFToURLEncodedData(CFX_WideString csFDFFile,
-                              CFX_WideString csTxtFile);
-  FX_BOOL FDFToURLEncodedData(uint8_t*& pBuf, FX_STRSIZE& nBufSize);
+  bool FDFToURLEncodedData(CFX_WideString csFDFFile, CFX_WideString csTxtFile);
+  bool FDFToURLEncodedData(uint8_t*& pBuf, FX_STRSIZE& nBufSize);
   int GetPageIndexByAnnotDict(CPDF_Document* pDocument,
                               CPDF_Dictionary* pAnnotDict) const;
 
@@ -127,18 +126,18 @@ class CPDFSDK_InterForm : public IPDF_FormNotify {
   CPDFSDK_WidgetMap m_Map;
 #ifdef PDF_ENABLE_XFA
   std::map<CXFA_FFWidget*, CPDFSDK_XFAWidget*> m_XFAMap;
-  FX_BOOL m_bXfaCalculate;
-  FX_BOOL m_bXfaValidationsEnabled;
+  bool m_bXfaCalculate;
+  bool m_bXfaValidationsEnabled;
   static const int kNumFieldTypes = 7;
 #else   // PDF_ENABLE_XFA
   static const int kNumFieldTypes = 6;
 #endif  // PDF_ENABLE_XFA
-  FX_BOOL m_bCalculate;
-  FX_BOOL m_bBusy;
+  bool m_bCalculate;
+  bool m_bBusy;
 
   FX_COLORREF m_aHighlightColor[kNumFieldTypes];
   uint8_t m_iHighlightAlpha;
-  FX_BOOL m_bNeedHightlight[kNumFieldTypes];
+  bool m_bNeedHightlight[kNumFieldTypes];
 };
 
 #endif  // FPDFSDK_CPDFSDK_INTERFORM_H_

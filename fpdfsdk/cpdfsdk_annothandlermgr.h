@@ -55,56 +55,56 @@ class CPDFSDK_AnnotHandlerMgr {
   void Annot_OnMouseExit(CPDFSDK_PageView* pPageView,
                          CPDFSDK_Annot::ObservedPtr* pAnnot,
                          uint32_t nFlags);
-  FX_BOOL Annot_OnLButtonDown(CPDFSDK_PageView* pPageView,
-                              CPDFSDK_Annot::ObservedPtr* pAnnot,
-                              uint32_t nFlags,
-                              const CFX_FloatPoint& point);
-  FX_BOOL Annot_OnLButtonUp(CPDFSDK_PageView* pPageView,
-                            CPDFSDK_Annot::ObservedPtr* pAnnot,
-                            uint32_t nFlags,
-                            const CFX_FloatPoint& point);
-  FX_BOOL Annot_OnLButtonDblClk(CPDFSDK_PageView* pPageView,
-                                CPDFSDK_Annot::ObservedPtr* pAnnot,
-                                uint32_t nFlags,
-                                const CFX_FloatPoint& point);
-  FX_BOOL Annot_OnMouseMove(CPDFSDK_PageView* pPageView,
-                            CPDFSDK_Annot::ObservedPtr* pAnnot,
-                            uint32_t nFlags,
-                            const CFX_FloatPoint& point);
-  FX_BOOL Annot_OnMouseWheel(CPDFSDK_PageView* pPageView,
+  bool Annot_OnLButtonDown(CPDFSDK_PageView* pPageView,
+                           CPDFSDK_Annot::ObservedPtr* pAnnot,
+                           uint32_t nFlags,
+                           const CFX_FloatPoint& point);
+  bool Annot_OnLButtonUp(CPDFSDK_PageView* pPageView,
+                         CPDFSDK_Annot::ObservedPtr* pAnnot,
+                         uint32_t nFlags,
+                         const CFX_FloatPoint& point);
+  bool Annot_OnLButtonDblClk(CPDFSDK_PageView* pPageView,
                              CPDFSDK_Annot::ObservedPtr* pAnnot,
                              uint32_t nFlags,
-                             short zDelta,
                              const CFX_FloatPoint& point);
-  FX_BOOL Annot_OnRButtonDown(CPDFSDK_PageView* pPageView,
-                              CPDFSDK_Annot::ObservedPtr* pAnnot,
-                              uint32_t nFlags,
-                              const CFX_FloatPoint& point);
-  FX_BOOL Annot_OnRButtonUp(CPDFSDK_PageView* pPageView,
-                            CPDFSDK_Annot::ObservedPtr* pAnnot,
-                            uint32_t nFlags,
-                            const CFX_FloatPoint& point);
-  FX_BOOL Annot_OnChar(CPDFSDK_Annot* pAnnot, uint32_t nChar, uint32_t nFlags);
-  FX_BOOL Annot_OnKeyDown(CPDFSDK_Annot* pAnnot, int nKeyCode, int nFlag);
-  FX_BOOL Annot_OnKeyUp(CPDFSDK_Annot* pAnnot, int nKeyCode, int nFlag);
+  bool Annot_OnMouseMove(CPDFSDK_PageView* pPageView,
+                         CPDFSDK_Annot::ObservedPtr* pAnnot,
+                         uint32_t nFlags,
+                         const CFX_FloatPoint& point);
+  bool Annot_OnMouseWheel(CPDFSDK_PageView* pPageView,
+                          CPDFSDK_Annot::ObservedPtr* pAnnot,
+                          uint32_t nFlags,
+                          short zDelta,
+                          const CFX_FloatPoint& point);
+  bool Annot_OnRButtonDown(CPDFSDK_PageView* pPageView,
+                           CPDFSDK_Annot::ObservedPtr* pAnnot,
+                           uint32_t nFlags,
+                           const CFX_FloatPoint& point);
+  bool Annot_OnRButtonUp(CPDFSDK_PageView* pPageView,
+                         CPDFSDK_Annot::ObservedPtr* pAnnot,
+                         uint32_t nFlags,
+                         const CFX_FloatPoint& point);
+  bool Annot_OnChar(CPDFSDK_Annot* pAnnot, uint32_t nChar, uint32_t nFlags);
+  bool Annot_OnKeyDown(CPDFSDK_Annot* pAnnot, int nKeyCode, int nFlag);
+  bool Annot_OnKeyUp(CPDFSDK_Annot* pAnnot, int nKeyCode, int nFlag);
 
-  FX_BOOL Annot_OnSetFocus(CPDFSDK_Annot::ObservedPtr* pAnnot, uint32_t nFlag);
-  FX_BOOL Annot_OnKillFocus(CPDFSDK_Annot::ObservedPtr* pAnnot, uint32_t nFlag);
+  bool Annot_OnSetFocus(CPDFSDK_Annot::ObservedPtr* pAnnot, uint32_t nFlag);
+  bool Annot_OnKillFocus(CPDFSDK_Annot::ObservedPtr* pAnnot, uint32_t nFlag);
 
 #ifdef PDF_ENABLE_XFA
-  FX_BOOL Annot_OnChangeFocus(CPDFSDK_Annot::ObservedPtr* pSetAnnot,
-                              CPDFSDK_Annot::ObservedPtr* pKillAnnot);
+  bool Annot_OnChangeFocus(CPDFSDK_Annot::ObservedPtr* pSetAnnot,
+                           CPDFSDK_Annot::ObservedPtr* pKillAnnot);
 #endif  // PDF_ENABLE_XFA
 
   CFX_FloatRect Annot_OnGetViewBBox(CPDFSDK_PageView* pPageView,
                                     CPDFSDK_Annot* pAnnot);
-  FX_BOOL Annot_OnHitTest(CPDFSDK_PageView* pPageView,
-                          CPDFSDK_Annot* pAnnot,
-                          const CFX_FloatPoint& point);
+  bool Annot_OnHitTest(CPDFSDK_PageView* pPageView,
+                       CPDFSDK_Annot* pAnnot,
+                       const CFX_FloatPoint& point);
 
  private:
   IPDFSDK_AnnotHandler* GetAnnotHandler(CPDF_Annot::Subtype nSubtype) const;
-  CPDFSDK_Annot* GetNextAnnot(CPDFSDK_Annot* pSDKAnnot, FX_BOOL bNext);
+  CPDFSDK_Annot* GetNextAnnot(CPDFSDK_Annot* pSDKAnnot, bool bNext);
 
   std::unique_ptr<CPDFSDK_BAAnnotHandler> m_pBAAnnotHandler;
   std::unique_ptr<CPDFSDK_WidgetHandler> m_pWidgetHandler;

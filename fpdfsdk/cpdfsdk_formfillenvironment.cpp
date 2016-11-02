@@ -287,15 +287,15 @@ void CPDFSDK_FormFillEnvironment::OnChange() {
     m_pInfo->FFI_OnChange(m_pInfo);
 }
 
-FX_BOOL CPDFSDK_FormFillEnvironment::IsSHIFTKeyDown(uint32_t nFlag) const {
+bool CPDFSDK_FormFillEnvironment::IsSHIFTKeyDown(uint32_t nFlag) const {
   return (nFlag & FWL_EVENTFLAG_ShiftKey) != 0;
 }
 
-FX_BOOL CPDFSDK_FormFillEnvironment::IsCTRLKeyDown(uint32_t nFlag) const {
+bool CPDFSDK_FormFillEnvironment::IsCTRLKeyDown(uint32_t nFlag) const {
   return (nFlag & FWL_EVENTFLAG_ControlKey) != 0;
 }
 
-FX_BOOL CPDFSDK_FormFillEnvironment::IsALTKeyDown(uint32_t nFlag) const {
+bool CPDFSDK_FormFillEnvironment::IsALTKeyDown(uint32_t nFlag) const {
   return (nFlag & FWL_EVENTFLAG_AltKey) != 0;
 }
 
@@ -321,7 +321,7 @@ void CPDFSDK_FormFillEnvironment::ExecuteNamedAction(
 void CPDFSDK_FormFillEnvironment::OnSetFieldInputFocus(
     FPDF_WIDESTRING focusText,
     FPDF_DWORD nTextLen,
-    FX_BOOL bFocus) {
+    bool bFocus) {
   if (m_pInfo && m_pInfo->FFI_SetTextFieldFocus)
     m_pInfo->FFI_SetTextFieldFocus(m_pInfo, focusText, nTextLen, bFocus);
 }
@@ -417,10 +417,10 @@ void CPDFSDK_FormFillEnvironment::GetPageViewRect(FPDF_PAGE page,
   dstRect.right = static_cast<float>(right);
 }
 
-FX_BOOL CPDFSDK_FormFillEnvironment::PopupMenu(FPDF_PAGE page,
-                                               FPDF_WIDGET hWidget,
-                                               int menuFlag,
-                                               CFX_PointF pt) {
+bool CPDFSDK_FormFillEnvironment::PopupMenu(FPDF_PAGE page,
+                                            FPDF_WIDGET hWidget,
+                                            int menuFlag,
+                                            CFX_PointF pt) {
   return m_pInfo && m_pInfo->FFI_PopupMenu &&
          m_pInfo->FFI_PopupMenu(m_pInfo, page, hWidget, menuFlag, pt.x, pt.y);
 }
@@ -517,7 +517,7 @@ FPDF_BOOL CPDFSDK_FormFillEnvironment::PutRequestURL(const FX_WCHAR* wsURL,
                                                      const FX_WCHAR* wsData,
                                                      const FX_WCHAR* wsEncode) {
   if (!m_pInfo || !m_pInfo->FFI_PutRequestURL)
-    return FALSE;
+    return false;
 
   CFX_ByteString bsURL = CFX_WideString(wsURL).UTF16LE_Encode();
   FPDF_WIDESTRING URL = (FPDF_WIDESTRING)bsURL.GetBuffer(bsURL.GetLength());
@@ -618,31 +618,31 @@ void CPDFSDK_FormFillEnvironment::ProcJavascriptFun() {
   }
 }
 
-FX_BOOL CPDFSDK_FormFillEnvironment::ProcOpenAction() {
+bool CPDFSDK_FormFillEnvironment::ProcOpenAction() {
   if (!m_pUnderlyingDoc)
-    return FALSE;
+    return false;
 
   CPDF_Dictionary* pRoot = GetPDFDocument()->GetRoot();
   if (!pRoot)
-    return FALSE;
+    return false;
 
   CPDF_Object* pOpenAction = pRoot->GetDictFor("OpenAction");
   if (!pOpenAction)
     pOpenAction = pRoot->GetArrayFor("OpenAction");
 
   if (!pOpenAction)
-    return FALSE;
+    return false;
 
   if (pOpenAction->IsArray())
-    return TRUE;
+    return true;
 
   if (CPDF_Dictionary* pDict = pOpenAction->AsDictionary()) {
     CPDF_Action action(pDict);
     if (GetActionHander())
       GetActionHander()->DoAction_DocOpen(action, this);
-    return TRUE;
+    return true;
   }
-  return FALSE;
+  return false;
 }
 
 void CPDFSDK_FormFillEnvironment::RemovePageView(
@@ -691,16 +691,16 @@ void CPDFSDK_FormFillEnvironment::UpdateAllViews(CPDFSDK_PageView* pSender,
   }
 }
 
-FX_BOOL CPDFSDK_FormFillEnvironment::SetFocusAnnot(
+bool CPDFSDK_FormFillEnvironment::SetFocusAnnot(
     CPDFSDK_Annot::ObservedPtr* pAnnot) {
   if (m_bBeingDestroyed)
-    return FALSE;
+    return false;
   if (m_pFocusAnnot == *pAnnot)
-    return TRUE;
+    return true;
   if (m_pFocusAnnot && !KillFocusAnnot(0))
-    return FALSE;
+    return false;
   if (!*pAnnot)
-    return FALSE;
+    return false;
 
 #ifdef PDF_ENABLE_XFA
   CPDFSDK_Annot::ObservedPtr pLastFocusAnnot(m_pFocusAnnot.Get());
@@ -711,20 +711,20 @@ FX_BOOL CPDFSDK_FormFillEnvironment::SetFocusAnnot(
     if (!m_pFocusAnnot) {
 #ifdef PDF_ENABLE_XFA
       if (!pAnnotHandler->Annot_OnChangeFocus(pAnnot, &pLastFocusAnnot))
-        return FALSE;
+        return false;
 #endif  // PDF_ENABLE_XFA
       if (!pAnnotHandler->Annot_OnSetFocus(pAnnot, 0))
-        return FALSE;
+        return false;
       if (!m_pFocusAnnot) {
         m_pFocusAnnot.Reset(pAnnot->Get());
-        return TRUE;
+        return true;
       }
     }
   }
-  return FALSE;
+  return false;
 }
 
-FX_BOOL CPDFSDK_FormFillEnvironment::KillFocusAnnot(uint32_t nFlag) {
+bool CPDFSDK_FormFillEnvironment::KillFocusAnnot(uint32_t nFlag) {
   if (m_pFocusAnnot) {
     CPDFSDK_AnnotHandlerMgr* pAnnotHandler = GetAnnotHandlerMgr();
     CPDFSDK_Annot::ObservedPtr pFocusAnnot(m_pFocusAnnot.Get());
@@ -733,7 +733,7 @@ FX_BOOL CPDFSDK_FormFillEnvironment::KillFocusAnnot(uint32_t nFlag) {
 #ifdef PDF_ENABLE_XFA
     CPDFSDK_Annot::ObservedPtr pNull;
     if (!pAnnotHandler->Annot_OnChangeFocus(&pNull, &pFocusAnnot))
-      return FALSE;
+      return false;
 #endif  // PDF_ENABLE_XFA
 
     if (pAnnotHandler->Annot_OnKillFocus(&pFocusAnnot, nFlag)) {
@@ -743,18 +743,18 @@ FX_BOOL CPDFSDK_FormFillEnvironment::KillFocusAnnot(uint32_t nFlag) {
         int nFieldType = pWidget->GetFieldType();
         if (FIELDTYPE_TEXTFIELD == nFieldType ||
             FIELDTYPE_COMBOBOX == nFieldType) {
-          OnSetFieldInputFocus(nullptr, 0, FALSE);
+          OnSetFieldInputFocus(nullptr, 0, false);
         }
       }
       if (!m_pFocusAnnot)
-        return TRUE;
+        return true;
     } else {
       m_pFocusAnnot.Reset(pFocusAnnot.Get());
     }
   }
-  return FALSE;
+  return false;
 }
 
-FX_BOOL CPDFSDK_FormFillEnvironment::GetPermissions(int nFlag) {
+bool CPDFSDK_FormFillEnvironment::GetPermissions(int nFlag) {
   return !!(GetPDFDocument()->GetUserPermissions() & nFlag);
 }

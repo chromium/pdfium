@@ -35,31 +35,31 @@ class JSGlobalAlternate : public CJS_EmbedObj {
   JSGlobalAlternate(CJS_Object* pJSObject);
   ~JSGlobalAlternate() override;
 
-  FX_BOOL setPersistent(IJS_Context* cc,
-                        const std::vector<CJS_Value>& params,
-                        CJS_Value& vRet,
-                        CFX_WideString& sError);
-  FX_BOOL QueryProperty(const FX_WCHAR* propname);
-  FX_BOOL DoProperty(IJS_Context* cc,
-                     const FX_WCHAR* propname,
-                     CJS_PropValue& vp,
+  bool setPersistent(IJS_Context* cc,
+                     const std::vector<CJS_Value>& params,
+                     CJS_Value& vRet,
                      CFX_WideString& sError);
-  FX_BOOL DelProperty(IJS_Context* cc,
-                      const FX_WCHAR* propname,
-                      CFX_WideString& sError);
+  bool QueryProperty(const FX_WCHAR* propname);
+  bool DoProperty(IJS_Context* cc,
+                  const FX_WCHAR* propname,
+                  CJS_PropValue& vp,
+                  CFX_WideString& sError);
+  bool DelProperty(IJS_Context* cc,
+                   const FX_WCHAR* propname,
+                   CFX_WideString& sError);
   void Initial(CPDFSDK_FormFillEnvironment* pFormFillEnv);
 
  private:
   void UpdateGlobalPersistentVariables();
   void CommitGlobalPersisitentVariables(IJS_Context* cc);
   void DestroyGlobalPersisitentVariables();
-  FX_BOOL SetGlobalVariables(const CFX_ByteString& propname,
-                             JS_GlobalDataType nType,
-                             double dData,
-                             bool bData,
-                             const CFX_ByteString& sData,
-                             v8::Local<v8::Object> pData,
-                             bool bDefaultPersistent);
+  bool SetGlobalVariables(const CFX_ByteString& propname,
+                          JS_GlobalDataType nType,
+                          double dData,
+                          bool bData,
+                          const CFX_ByteString& sData,
+                          v8::Local<v8::Object> pData,
+                          bool bDefaultPersistent);
   void ObjectToArray(IJS_Context* cc,
                      v8::Local<v8::Object> pObj,
                      CJS_GlobalVariableArray& array);

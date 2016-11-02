@@ -50,7 +50,7 @@ class CPWL_EditCtrl : public CPWL_Wnd {
 
   void Paint();
 
-  void EnableRefresh(FX_BOOL bRefresh);
+  void EnableRefresh(bool bRefresh);
   CFX_FloatPoint GetScrollPos() const;
   void SetScrollPos(const CFX_FloatPoint& point);
 
@@ -63,8 +63,8 @@ class CPWL_EditCtrl : public CPWL_Wnd {
   CPDF_Font* GetCaretFont() const;
   FX_FLOAT GetCaretFontSize() const;
 
-  FX_BOOL CanUndo() const;
-  FX_BOOL CanRedo() const;
+  bool CanUndo() const;
+  bool CanRedo() const;
   void Redo();
   void Undo();
 
@@ -73,11 +73,11 @@ class CPWL_EditCtrl : public CPWL_Wnd {
   // CPWL_Wnd
   void OnCreate(PWL_CREATEPARAM& cp) override;
   void OnCreated() override;
-  FX_BOOL OnKeyDown(uint16_t nChar, uint32_t nFlag) override;
-  FX_BOOL OnChar(uint16_t nChar, uint32_t nFlag) override;
-  FX_BOOL OnLButtonDown(const CFX_FloatPoint& point, uint32_t nFlag) override;
-  FX_BOOL OnLButtonUp(const CFX_FloatPoint& point, uint32_t nFlag) override;
-  FX_BOOL OnMouseMove(const CFX_FloatPoint& point, uint32_t nFlag) override;
+  bool OnKeyDown(uint16_t nChar, uint32_t nFlag) override;
+  bool OnChar(uint16_t nChar, uint32_t nFlag) override;
+  bool OnLButtonDown(const CFX_FloatPoint& point, uint32_t nFlag) override;
+  bool OnLButtonUp(const CFX_FloatPoint& point, uint32_t nFlag) override;
+  bool OnMouseMove(const CFX_FloatPoint& point, uint32_t nFlag) override;
   void OnNotify(CPWL_Wnd* pWnd,
                 uint32_t msg,
                 intptr_t wParam = 0,
@@ -95,7 +95,7 @@ class CPWL_EditCtrl : public CPWL_Wnd {
                          FX_FLOAT fSmallStep,
                          FX_FLOAT fBigStep);
   void IOnSetScrollPosY(FX_FLOAT fy);
-  void IOnSetCaret(FX_BOOL bVisible,
+  void IOnSetCaret(bool bVisible,
                    const CFX_FloatPoint& ptHead,
                    const CFX_FloatPoint& ptFoot,
                    const CPVT_WordPlace& place);
@@ -110,25 +110,25 @@ class CPWL_EditCtrl : public CPWL_Wnd {
   void CopyText();
   void PasteText();
   void CutText();
-  void ShowVScrollBar(FX_BOOL bShow);
+  void ShowVScrollBar(bool bShow);
   void InsertWord(uint16_t word, int32_t nCharset);
   void InsertReturn();
 
-  FX_BOOL IsWndHorV();
+  bool IsWndHorV();
 
   void Delete();
   void Backspace();
 
   void GetCaretInfo(CFX_FloatPoint& ptHead, CFX_FloatPoint& ptFoot) const;
-  void SetCaret(FX_BOOL bVisible,
+  void SetCaret(bool bVisible,
                 const CFX_FloatPoint& ptHead,
                 const CFX_FloatPoint& ptFoot);
 
-  void SetEditCaret(FX_BOOL bVisible);
+  void SetEditCaret(bool bVisible);
 
   std::unique_ptr<CFX_Edit> m_pEdit;
   CPWL_Caret* m_pEditCaret;
-  FX_BOOL m_bMouseDown;
+  bool m_bMouseDown;
 
  private:
   void CreateEditCaret(const PWL_CREATEPARAM& cp);

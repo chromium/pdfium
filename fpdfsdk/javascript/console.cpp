@@ -33,33 +33,33 @@ console::console(CJS_Object* pJSObject) : CJS_EmbedObj(pJSObject) {}
 
 console::~console() {}
 
-FX_BOOL console::clear(IJS_Context* cc,
-                       const std::vector<CJS_Value>& params,
-                       CJS_Value& vRet,
-                       CFX_WideString& sError) {
-  return TRUE;
+bool console::clear(IJS_Context* cc,
+                    const std::vector<CJS_Value>& params,
+                    CJS_Value& vRet,
+                    CFX_WideString& sError) {
+  return true;
 }
 
-FX_BOOL console::hide(IJS_Context* cc,
+bool console::hide(IJS_Context* cc,
+                   const std::vector<CJS_Value>& params,
+                   CJS_Value& vRet,
+                   CFX_WideString& sError) {
+  return true;
+}
+
+bool console::println(IJS_Context* cc,
                       const std::vector<CJS_Value>& params,
                       CJS_Value& vRet,
                       CFX_WideString& sError) {
-  return TRUE;
-}
-
-FX_BOOL console::println(IJS_Context* cc,
-                         const std::vector<CJS_Value>& params,
-                         CJS_Value& vRet,
-                         CFX_WideString& sError) {
   if (params.size() < 1) {
-    return FALSE;
+    return false;
   }
-  return TRUE;
+  return true;
 }
 
-FX_BOOL console::show(IJS_Context* cc,
-                      const std::vector<CJS_Value>& params,
-                      CJS_Value& vRet,
-                      CFX_WideString& sError) {
-  return TRUE;
+bool console::show(IJS_Context* cc,
+                   const std::vector<CJS_Value>& params,
+                   CJS_Value& vRet,
+                   CFX_WideString& sError) {
+  return true;
 }

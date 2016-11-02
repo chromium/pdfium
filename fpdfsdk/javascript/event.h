@@ -15,34 +15,26 @@ class event : public CJS_EmbedObj {
   ~event() override;
 
  public:
-  FX_BOOL change(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-  FX_BOOL changeEx(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-  FX_BOOL commitKey(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-  FX_BOOL fieldFull(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-  FX_BOOL keyDown(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-  FX_BOOL modifier(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-  FX_BOOL name(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-  FX_BOOL rc(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-  FX_BOOL richChange(IJS_Context* cc,
-                     CJS_PropValue& vp,
-                     CFX_WideString& sError);
-  FX_BOOL richChangeEx(IJS_Context* cc,
-                       CJS_PropValue& vp,
-                       CFX_WideString& sError);
-  FX_BOOL richValue(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-  FX_BOOL selEnd(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-  FX_BOOL selStart(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-  FX_BOOL shift(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-  FX_BOOL source(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-  FX_BOOL target(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-  FX_BOOL targetName(IJS_Context* cc,
-                     CJS_PropValue& vp,
-                     CFX_WideString& sError);
-  FX_BOOL type(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-  FX_BOOL value(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-  FX_BOOL willCommit(IJS_Context* cc,
-                     CJS_PropValue& vp,
-                     CFX_WideString& sError);
+  bool change(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+  bool changeEx(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+  bool commitKey(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+  bool fieldFull(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+  bool keyDown(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+  bool modifier(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+  bool name(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+  bool rc(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+  bool richChange(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+  bool richChangeEx(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+  bool richValue(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+  bool selEnd(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+  bool selStart(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+  bool shift(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+  bool source(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+  bool target(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+  bool targetName(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+  bool type(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+  bool value(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+  bool willCommit(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
 };
 
 class CJS_Event : public CJS_Object {

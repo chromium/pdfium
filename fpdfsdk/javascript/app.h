@@ -41,117 +41,109 @@ class app : public CJS_EmbedObj {
   app(CJS_Object* pJSObject);
   ~app() override;
 
-  FX_BOOL activeDocs(IJS_Context* cc,
-                     CJS_PropValue& vp,
-                     CFX_WideString& sError);
-  FX_BOOL calculate(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-  FX_BOOL formsVersion(IJS_Context* cc,
-                       CJS_PropValue& vp,
-                       CFX_WideString& sError);
-  FX_BOOL fs(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-  FX_BOOL fullscreen(IJS_Context* cc,
-                     CJS_PropValue& vp,
-                     CFX_WideString& sError);
-  FX_BOOL language(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-  FX_BOOL media(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-  FX_BOOL platform(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-  FX_BOOL runtimeHighlight(IJS_Context* cc,
-                           CJS_PropValue& vp,
-                           CFX_WideString& sError);
-  FX_BOOL viewerType(IJS_Context* cc,
-                     CJS_PropValue& vp,
-                     CFX_WideString& sError);
-  FX_BOOL viewerVariation(IJS_Context* cc,
-                          CJS_PropValue& vp,
-                          CFX_WideString& sError);
-  FX_BOOL viewerVersion(IJS_Context* cc,
+  bool activeDocs(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+  bool calculate(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+  bool formsVersion(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+  bool fs(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+  bool fullscreen(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+  bool language(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+  bool media(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+  bool platform(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+  bool runtimeHighlight(IJS_Context* cc,
                         CJS_PropValue& vp,
                         CFX_WideString& sError);
+  bool viewerType(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+  bool viewerVariation(IJS_Context* cc,
+                       CJS_PropValue& vp,
+                       CFX_WideString& sError);
+  bool viewerVersion(IJS_Context* cc,
+                     CJS_PropValue& vp,
+                     CFX_WideString& sError);
 
-  FX_BOOL alert(IJS_Context* cc,
-                const std::vector<CJS_Value>& params,
-                CJS_Value& vRet,
-                CFX_WideString& sError);
-  FX_BOOL beep(IJS_Context* cc,
+  bool alert(IJS_Context* cc,
+             const std::vector<CJS_Value>& params,
+             CJS_Value& vRet,
+             CFX_WideString& sError);
+  bool beep(IJS_Context* cc,
+            const std::vector<CJS_Value>& params,
+            CJS_Value& vRet,
+            CFX_WideString& sError);
+  bool browseForDoc(IJS_Context* cc,
+                    const std::vector<CJS_Value>& params,
+                    CJS_Value& vRet,
+                    CFX_WideString& sError);
+  bool clearInterval(IJS_Context* cc,
+                     const std::vector<CJS_Value>& params,
+                     CJS_Value& vRet,
+                     CFX_WideString& sError);
+  bool clearTimeOut(IJS_Context* cc,
+                    const std::vector<CJS_Value>& params,
+                    CJS_Value& vRet,
+                    CFX_WideString& sError);
+  bool execDialog(IJS_Context* cc,
+                  const std::vector<CJS_Value>& params,
+                  CJS_Value& vRet,
+                  CFX_WideString& sError);
+  bool execMenuItem(IJS_Context* cc,
+                    const std::vector<CJS_Value>& params,
+                    CJS_Value& vRet,
+                    CFX_WideString& sError);
+  bool findComponent(IJS_Context* cc,
+                     const std::vector<CJS_Value>& params,
+                     CJS_Value& vRet,
+                     CFX_WideString& sError);
+  bool goBack(IJS_Context* cc,
+              const std::vector<CJS_Value>& params,
+              CJS_Value& vRet,
+              CFX_WideString& sError);
+  bool goForward(IJS_Context* cc,
+                 const std::vector<CJS_Value>& params,
+                 CJS_Value& vRet,
+                 CFX_WideString& sError);
+  bool launchURL(IJS_Context* cc,
+                 const std::vector<CJS_Value>& params,
+                 CJS_Value& vRet,
+                 CFX_WideString& sError);
+  bool mailMsg(IJS_Context* cc,
                const std::vector<CJS_Value>& params,
                CJS_Value& vRet,
                CFX_WideString& sError);
-  FX_BOOL browseForDoc(IJS_Context* cc,
-                       const std::vector<CJS_Value>& params,
-                       CJS_Value& vRet,
-                       CFX_WideString& sError);
-  FX_BOOL clearInterval(IJS_Context* cc,
-                        const std::vector<CJS_Value>& params,
-                        CJS_Value& vRet,
-                        CFX_WideString& sError);
-  FX_BOOL clearTimeOut(IJS_Context* cc,
-                       const std::vector<CJS_Value>& params,
-                       CJS_Value& vRet,
-                       CFX_WideString& sError);
-  FX_BOOL execDialog(IJS_Context* cc,
-                     const std::vector<CJS_Value>& params,
-                     CJS_Value& vRet,
-                     CFX_WideString& sError);
-  FX_BOOL execMenuItem(IJS_Context* cc,
-                       const std::vector<CJS_Value>& params,
-                       CJS_Value& vRet,
-                       CFX_WideString& sError);
-  FX_BOOL findComponent(IJS_Context* cc,
-                        const std::vector<CJS_Value>& params,
-                        CJS_Value& vRet,
-                        CFX_WideString& sError);
-  FX_BOOL goBack(IJS_Context* cc,
-                 const std::vector<CJS_Value>& params,
-                 CJS_Value& vRet,
-                 CFX_WideString& sError);
-  FX_BOOL goForward(IJS_Context* cc,
-                    const std::vector<CJS_Value>& params,
-                    CJS_Value& vRet,
-                    CFX_WideString& sError);
-  FX_BOOL launchURL(IJS_Context* cc,
-                    const std::vector<CJS_Value>& params,
-                    CJS_Value& vRet,
-                    CFX_WideString& sError);
-  FX_BOOL mailMsg(IJS_Context* cc,
-                  const std::vector<CJS_Value>& params,
-                  CJS_Value& vRet,
-                  CFX_WideString& sError);
-  FX_BOOL newFDF(IJS_Context* cc,
-                 const std::vector<CJS_Value>& params,
-                 CJS_Value& vRet,
-                 CFX_WideString& sError);
-  FX_BOOL newDoc(IJS_Context* cc,
-                 const std::vector<CJS_Value>& params,
-                 CJS_Value& vRet,
-                 CFX_WideString& sError);
-  FX_BOOL openDoc(IJS_Context* cc,
-                  const std::vector<CJS_Value>& params,
-                  CJS_Value& vRet,
-                  CFX_WideString& sError);
-  FX_BOOL openFDF(IJS_Context* cc,
-                  const std::vector<CJS_Value>& params,
-                  CJS_Value& vRet,
-                  CFX_WideString& sError);
-  FX_BOOL popUpMenuEx(IJS_Context* cc,
-                      const std::vector<CJS_Value>& params,
-                      CJS_Value& vRet,
-                      CFX_WideString& sError);
-  FX_BOOL popUpMenu(IJS_Context* cc,
-                    const std::vector<CJS_Value>& params,
-                    CJS_Value& vRet,
-                    CFX_WideString& sError);
-  FX_BOOL response(IJS_Context* cc,
+  bool newFDF(IJS_Context* cc,
+              const std::vector<CJS_Value>& params,
+              CJS_Value& vRet,
+              CFX_WideString& sError);
+  bool newDoc(IJS_Context* cc,
+              const std::vector<CJS_Value>& params,
+              CJS_Value& vRet,
+              CFX_WideString& sError);
+  bool openDoc(IJS_Context* cc,
+               const std::vector<CJS_Value>& params,
+               CJS_Value& vRet,
+               CFX_WideString& sError);
+  bool openFDF(IJS_Context* cc,
+               const std::vector<CJS_Value>& params,
+               CJS_Value& vRet,
+               CFX_WideString& sError);
+  bool popUpMenuEx(IJS_Context* cc,
                    const std::vector<CJS_Value>& params,
                    CJS_Value& vRet,
                    CFX_WideString& sError);
-  FX_BOOL setInterval(IJS_Context* cc,
-                      const std::vector<CJS_Value>& params,
-                      CJS_Value& vRet,
-                      CFX_WideString& sError);
-  FX_BOOL setTimeOut(IJS_Context* cc,
-                     const std::vector<CJS_Value>& params,
-                     CJS_Value& vRet,
-                     CFX_WideString& sError);
+  bool popUpMenu(IJS_Context* cc,
+                 const std::vector<CJS_Value>& params,
+                 CJS_Value& vRet,
+                 CFX_WideString& sError);
+  bool response(IJS_Context* cc,
+                const std::vector<CJS_Value>& params,
+                CJS_Value& vRet,
+                CFX_WideString& sError);
+  bool setInterval(IJS_Context* cc,
+                   const std::vector<CJS_Value>& params,
+                   CJS_Value& vRet,
+                   CFX_WideString& sError);
+  bool setTimeOut(IJS_Context* cc,
+                  const std::vector<CJS_Value>& params,
+                  CJS_Value& vRet,
+                  CFX_WideString& sError);
 
   void TimerProc(GlobalTimer* pTimer);
   void CancelProc(GlobalTimer* pTimer);

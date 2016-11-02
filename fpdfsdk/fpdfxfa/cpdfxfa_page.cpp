@@ -27,48 +27,48 @@ CPDFXFA_Page::~CPDFXFA_Page() {
     m_pContext->RemovePage(this);
 }
 
-FX_BOOL CPDFXFA_Page::LoadPDFPage() {
+bool CPDFXFA_Page::LoadPDFPage() {
   if (!m_pContext)
-    return FALSE;
+    return false;
 
   CPDF_Document* pPDFDoc = m_pContext->GetPDFDoc();
   if (!pPDFDoc)
-    return FALSE;
+    return false;
 
   CPDF_Dictionary* pDict = pPDFDoc->GetPage(m_iPageIndex);
   if (!pDict)
-    return FALSE;
+    return false;
 
   if (!m_pPDFPage || m_pPDFPage->m_pFormDict != pDict) {
     m_pPDFPage = pdfium::MakeUnique<CPDF_Page>(pPDFDoc, pDict, true);
     m_pPDFPage->ParseContent();
   }
-  return TRUE;
+  return true;
 }
 
-FX_BOOL CPDFXFA_Page::LoadXFAPageView() {
+bool CPDFXFA_Page::LoadXFAPageView() {
   if (!m_pContext)
-    return FALSE;
+    return false;
 
   CXFA_FFDoc* pXFADoc = m_pContext->GetXFADoc();
   if (!pXFADoc)
-    return FALSE;
+    return false;
 
   CXFA_FFDocView* pXFADocView = m_pContext->GetXFADocView();
   if (!pXFADocView)
-    return FALSE;
+    return false;
 
   CXFA_FFPageView* pPageView = pXFADocView->GetPageView(m_iPageIndex);
   if (!pPageView)
-    return FALSE;
+    return false;
 
   m_pXFAPageView = pPageView;
-  return TRUE;
+  return true;
 }
 
-FX_BOOL CPDFXFA_Page::LoadPage() {
+bool CPDFXFA_Page::LoadPage() {
   if (!m_pContext || m_iPageIndex < 0)
-    return FALSE;
+    return false;
 
   int iDocType = m_pContext->GetDocType();
   switch (iDocType) {
@@ -80,18 +80,18 @@ FX_BOOL CPDFXFA_Page::LoadPage() {
       return LoadXFAPageView();
     }
     default:
-      return FALSE;
+      return false;
   }
 }
 
-FX_BOOL CPDFXFA_Page::LoadPDFPage(CPDF_Dictionary* pageDict) {
+bool CPDFXFA_Page::LoadPDFPage(CPDF_Dictionary* pageDict) {
   if (!m_pContext || m_iPageIndex < 0 || !pageDict)
-    return FALSE;
+    return false;
 
   m_pPDFPage =
       pdfium::MakeUnique<CPDF_Page>(m_pContext->GetPDFDoc(), pageDict, true);
   m_pPDFPage->ParseContent();
-  return TRUE;
+  return true;
 }
 
 FX_FLOAT CPDFXFA_Page::GetPageWidth() const {

@@ -18,8 +18,8 @@ class CPDFSDK_FormFillEnvironment;
 // Records the details of an event and triggers JS execution for it.
 class IJS_Context {
  public:
-  virtual FX_BOOL RunScript(const CFX_WideString& script,
-                            CFX_WideString* info) = 0;
+  virtual bool RunScript(const CFX_WideString& script,
+                         CFX_WideString* info) = 0;
 
   virtual void OnApp_Init() = 0;
 
@@ -36,84 +36,84 @@ class IJS_Context {
   virtual void OnPage_InView(CPDFSDK_FormFillEnvironment* pFormFillEnv) = 0;
   virtual void OnPage_OutView(CPDFSDK_FormFillEnvironment* pFormFillEnv) = 0;
 
-  virtual void OnField_MouseDown(FX_BOOL bModifier,
-                                 FX_BOOL bShift,
+  virtual void OnField_MouseDown(bool bModifier,
+                                 bool bShift,
                                  CPDF_FormField* pTarget) = 0;
-  virtual void OnField_MouseEnter(FX_BOOL bModifier,
-                                  FX_BOOL bShift,
+  virtual void OnField_MouseEnter(bool bModifier,
+                                  bool bShift,
                                   CPDF_FormField* pTarget) = 0;
-  virtual void OnField_MouseExit(FX_BOOL bModifier,
-                                 FX_BOOL bShift,
+  virtual void OnField_MouseExit(bool bModifier,
+                                 bool bShift,
                                  CPDF_FormField* pTarget) = 0;
-  virtual void OnField_MouseUp(FX_BOOL bModifier,
-                               FX_BOOL bShift,
+  virtual void OnField_MouseUp(bool bModifier,
+                               bool bShift,
                                CPDF_FormField* pTarget) = 0;
-  virtual void OnField_Focus(FX_BOOL bModifier,
-                             FX_BOOL bShift,
+  virtual void OnField_Focus(bool bModifier,
+                             bool bShift,
                              CPDF_FormField* pTarget,
                              const CFX_WideString& Value) = 0;
-  virtual void OnField_Blur(FX_BOOL bModifier,
-                            FX_BOOL bShift,
+  virtual void OnField_Blur(bool bModifier,
+                            bool bShift,
                             CPDF_FormField* pTarget,
                             const CFX_WideString& Value) = 0;
 
   virtual void OnField_Calculate(CPDF_FormField* pSource,
                                  CPDF_FormField* pTarget,
                                  CFX_WideString& Value,
-                                 FX_BOOL& bRc) = 0;
+                                 bool& bRc) = 0;
   virtual void OnField_Format(CPDF_FormField* pTarget,
                               CFX_WideString& Value,
-                              FX_BOOL bWillCommit) = 0;
+                              bool bWillCommit) = 0;
   virtual void OnField_Keystroke(CFX_WideString& strChange,
                                  const CFX_WideString& strChangeEx,
-                                 FX_BOOL KeyDown,
-                                 FX_BOOL bModifier,
+                                 bool KeyDown,
+                                 bool bModifier,
                                  int& nSelEnd,
                                  int& nSelStart,
-                                 FX_BOOL bShift,
+                                 bool bShift,
                                  CPDF_FormField* pTarget,
                                  CFX_WideString& Value,
-                                 FX_BOOL bWillCommit,
-                                 FX_BOOL bFieldFull,
-                                 FX_BOOL& bRc) = 0;
+                                 bool bWillCommit,
+                                 bool bFieldFull,
+                                 bool& bRc) = 0;
   virtual void OnField_Validate(CFX_WideString& strChange,
                                 const CFX_WideString& strChangeEx,
-                                FX_BOOL bKeyDown,
-                                FX_BOOL bModifier,
-                                FX_BOOL bShift,
+                                bool bKeyDown,
+                                bool bModifier,
+                                bool bShift,
                                 CPDF_FormField* pTarget,
                                 CFX_WideString& Value,
-                                FX_BOOL& bRc) = 0;
+                                bool& bRc) = 0;
 
-  virtual void OnScreen_Focus(FX_BOOL bModifier,
-                              FX_BOOL bShift,
+  virtual void OnScreen_Focus(bool bModifier,
+                              bool bShift,
                               CPDFSDK_Annot* pScreen) = 0;
-  virtual void OnScreen_Blur(FX_BOOL bModifier,
-                             FX_BOOL bShift,
+  virtual void OnScreen_Blur(bool bModifier,
+                             bool bShift,
                              CPDFSDK_Annot* pScreen) = 0;
-  virtual void OnScreen_Open(FX_BOOL bModifier,
-                             FX_BOOL bShift,
+  virtual void OnScreen_Open(bool bModifier,
+                             bool bShift,
                              CPDFSDK_Annot* pScreen) = 0;
-  virtual void OnScreen_Close(FX_BOOL bModifier,
-                              FX_BOOL bShift,
+  virtual void OnScreen_Close(bool bModifier,
+                              bool bShift,
                               CPDFSDK_Annot* pScreen) = 0;
-  virtual void OnScreen_MouseDown(FX_BOOL bModifier,
-                                  FX_BOOL bShift,
+  virtual void OnScreen_MouseDown(bool bModifier,
+                                  bool bShift,
                                   CPDFSDK_Annot* pScreen) = 0;
-  virtual void OnScreen_MouseUp(FX_BOOL bModifier,
-                                FX_BOOL bShift,
+  virtual void OnScreen_MouseUp(bool bModifier,
+                                bool bShift,
                                 CPDFSDK_Annot* pScreen) = 0;
-  virtual void OnScreen_MouseEnter(FX_BOOL bModifier,
-                                   FX_BOOL bShift,
+  virtual void OnScreen_MouseEnter(bool bModifier,
+                                   bool bShift,
                                    CPDFSDK_Annot* pScreen) = 0;
-  virtual void OnScreen_MouseExit(FX_BOOL bModifier,
-                                  FX_BOOL bShift,
+  virtual void OnScreen_MouseExit(bool bModifier,
+                                  bool bShift,
                                   CPDFSDK_Annot* pScreen) = 0;
-  virtual void OnScreen_InView(FX_BOOL bModifier,
-                               FX_BOOL bShift,
+  virtual void OnScreen_InView(bool bModifier,
+                               bool bShift,
                                CPDFSDK_Annot* pScreen) = 0;
-  virtual void OnScreen_OutView(FX_BOOL bModifier,
-                                FX_BOOL bShift,
+  virtual void OnScreen_OutView(bool bModifier,
+                                bool bShift,
                                 CPDFSDK_Annot* pScreen) = 0;
 
   virtual void OnBookmark_MouseUp(CPDF_Bookmark* pBookMark) = 0;

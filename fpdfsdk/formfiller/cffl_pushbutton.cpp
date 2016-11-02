@@ -23,9 +23,9 @@ CPWL_Wnd* CFFL_PushButton::NewPDFWindow(const PWL_CREATEPARAM& cp,
   return pWnd;
 }
 
-FX_BOOL CFFL_PushButton::OnChar(CPDFSDK_Annot* pAnnot,
-                                uint32_t nChar,
-                                uint32_t nFlags) {
+bool CFFL_PushButton::OnChar(CPDFSDK_Annot* pAnnot,
+                             uint32_t nChar,
+                             uint32_t nFlags) {
   return CFFL_FormFiller::OnChar(pAnnot, nChar, nFlags);
 }
 

@@ -18,14 +18,14 @@
 #include "fpdfsdk/javascript/ijs_runtime.h"
 #include "third_party/base/stl_util.h"
 
-FX_BOOL CPDFSDK_ActionHandler::DoAction_DocOpen(
+bool CPDFSDK_ActionHandler::DoAction_DocOpen(
     const CPDF_Action& action,
     CPDFSDK_FormFillEnvironment* pFormFillEnv) {
   std::set<CPDF_Dictionary*> visited;
   return ExecuteDocumentOpenAction(action, pFormFillEnv, &visited);
 }
 
-FX_BOOL CPDFSDK_ActionHandler::DoAction_JavaScript(
+bool CPDFSDK_ActionHandler::DoAction_JavaScript(
     const CPDF_Action& JsAction,
     CFX_WideString csJSName,
     CPDFSDK_FormFillEnvironment* pFormFillEnv) {
@@ -33,14 +33,14 @@ FX_BOOL CPDFSDK_ActionHandler::DoAction_JavaScript(
     CFX_WideString swJS = JsAction.GetJavaScript();
     if (!swJS.IsEmpty()) {
       RunDocumentOpenJavaScript(pFormFillEnv, csJSName, swJS);
-      return TRUE;
+      return true;
     }
   }
 
-  return FALSE;
+  return false;
 }
 
-FX_BOOL CPDFSDK_ActionHandler::DoAction_FieldJavaScript(
+bool CPDFSDK_ActionHandler::DoAction_FieldJavaScript(
     const CPDF_Action& JsAction,
     CPDF_AAction::AActionType type,
     CPDFSDK_FormFillEnvironment* pFormFillEnv,
@@ -52,13 +52,13 @@ FX_BOOL CPDFSDK_ActionHandler::DoAction_FieldJavaScript(
     CFX_WideString swJS = JsAction.GetJavaScript();
     if (!swJS.IsEmpty()) {
       RunFieldJavaScript(pFormFillEnv, pFormField, type, data, swJS);
-      return TRUE;
+      return true;
     }
   }
-  return FALSE;
+  return false;
 }
 
-FX_BOOL CPDFSDK_ActionHandler::DoAction_Page(
+bool CPDFSDK_ActionHandler::DoAction_Page(
     const CPDF_Action& action,
     enum CPDF_AAction::AActionType eType,
     CPDFSDK_FormFillEnvironment* pFormFillEnv) {
@@ -66,7 +66,7 @@ FX_BOOL CPDFSDK_ActionHandler::DoAction_Page(
   return ExecuteDocumentPageAction(action, eType, pFormFillEnv, &visited);
 }
 
-FX_BOOL CPDFSDK_ActionHandler::DoAction_Document(
+bool CPDFSDK_ActionHandler::DoAction_Document(
     const CPDF_Action& action,
     enum CPDF_AAction::AActionType eType,
     CPDFSDK_FormFillEnvironment* pFormFillEnv) {
@@ -74,7 +74,7 @@ FX_BOOL CPDFSDK_ActionHandler::DoAction_Document(
   return ExecuteDocumentPageAction(action, eType, pFormFillEnv, &visited);
 }
 
-FX_BOOL CPDFSDK_ActionHandler::DoAction_BookMark(
+bool CPDFSDK_ActionHandler::DoAction_BookMark(
     CPDF_Bookmark* pBookMark,
     const CPDF_Action& action,
     CPDF_AAction::AActionType type,
@@ -83,7 +83,7 @@ FX_BOOL CPDFSDK_ActionHandler::DoAction_BookMark(
   return ExecuteBookMark(action, pFormFillEnv, pBookMark, &visited);
 }
 
-FX_BOOL CPDFSDK_ActionHandler::DoAction_Screen(
+bool CPDFSDK_ActionHandler::DoAction_Screen(
     const CPDF_Action& action,
     CPDF_AAction::AActionType type,
     CPDFSDK_FormFillEnvironment* pFormFillEnv,
@@ -92,14 +92,14 @@ FX_BOOL CPDFSDK_ActionHandler::DoAction_Screen(
   return ExecuteScreenAction(action, type, pFormFillEnv, pScreen, &visited);
 }
 
-FX_BOOL CPDFSDK_ActionHandler::DoAction_Link(
+bool CPDFSDK_ActionHandler::DoAction_Link(
     const CPDF_Action& action,
     CPDFSDK_FormFillEnvironment* pFormFillEnv) {
   std::set<CPDF_Dictionary*> visited;
   return ExecuteLinkAction(action, pFormFillEnv, &visited);
 }
 
-FX_BOOL CPDFSDK_ActionHandler::DoAction_Field(
+bool CPDFSDK_ActionHandler::DoAction_Field(
     const CPDF_Action& action,
     CPDF_AAction::AActionType type,
     CPDFSDK_FormFillEnvironment* pFormFillEnv,
@@ -110,13 +110,13 @@ FX_BOOL CPDFSDK_ActionHandler::DoAction_Field(
                             &visited);
 }
 
-FX_BOOL CPDFSDK_ActionHandler::ExecuteDocumentOpenAction(
+bool CPDFSDK_ActionHandler::ExecuteDocumentOpenAction(
     const CPDF_Action& action,
     CPDFSDK_FormFillEnvironment* pFormFillEnv,
     std::set<CPDF_Dictionary*>* visited) {
   CPDF_Dictionary* pDict = action.GetDict();
   if (pdfium::ContainsKey(*visited, pDict))
-    return FALSE;
+    return false;
 
   visited->insert(pDict);
 
@@ -135,19 +135,19 @@ FX_BOOL CPDFSDK_ActionHandler::ExecuteDocumentOpenAction(
   for (int32_t i = 0, sz = action.GetSubActionsCount(); i < sz; i++) {
     CPDF_Action subaction = action.GetSubAction(i);
     if (!ExecuteDocumentOpenAction(subaction, pFormFillEnv, visited))
-      return FALSE;
+      return false;
   }
 
-  return TRUE;
+  return true;
 }
 
-FX_BOOL CPDFSDK_ActionHandler::ExecuteLinkAction(
+bool CPDFSDK_ActionHandler::ExecuteLinkAction(
     const CPDF_Action& action,
     CPDFSDK_FormFillEnvironment* pFormFillEnv,
     std::set<CPDF_Dictionary*>* visited) {
   CPDF_Dictionary* pDict = action.GetDict();
   if (pdfium::ContainsKey(*visited, pDict))
-    return FALSE;
+    return false;
 
   visited->insert(pDict);
 
@@ -161,7 +161,7 @@ FX_BOOL CPDFSDK_ActionHandler::ExecuteLinkAction(
         pContext->OnLink_MouseUp(pFormFillEnv);
 
         CFX_WideString csInfo;
-        FX_BOOL bRet = pContext->RunScript(swJS, &csInfo);
+        bool bRet = pContext->RunScript(swJS, &csInfo);
         if (!bRet) {
           // FIXME: return error.
         }
@@ -176,20 +176,20 @@ FX_BOOL CPDFSDK_ActionHandler::ExecuteLinkAction(
   for (int32_t i = 0, sz = action.GetSubActionsCount(); i < sz; i++) {
     CPDF_Action subaction = action.GetSubAction(i);
     if (!ExecuteLinkAction(subaction, pFormFillEnv, visited))
-      return FALSE;
+      return false;
   }
 
-  return TRUE;
+  return true;
 }
 
-FX_BOOL CPDFSDK_ActionHandler::ExecuteDocumentPageAction(
+bool CPDFSDK_ActionHandler::ExecuteDocumentPageAction(
     const CPDF_Action& action,
     CPDF_AAction::AActionType type,
     CPDFSDK_FormFillEnvironment* pFormFillEnv,
     std::set<CPDF_Dictionary*>* visited) {
   CPDF_Dictionary* pDict = action.GetDict();
   if (pdfium::ContainsKey(*visited, pDict))
-    return FALSE;
+    return false;
 
   visited->insert(pDict);
 
@@ -206,18 +206,18 @@ FX_BOOL CPDFSDK_ActionHandler::ExecuteDocumentPageAction(
   }
 
   if (!IsValidDocView(pFormFillEnv))
-    return FALSE;
+    return false;
 
   for (int32_t i = 0, sz = action.GetSubActionsCount(); i < sz; i++) {
     CPDF_Action subaction = action.GetSubAction(i);
     if (!ExecuteDocumentPageAction(subaction, type, pFormFillEnv, visited))
-      return FALSE;
+      return false;
   }
 
-  return TRUE;
+  return true;
 }
 
-FX_BOOL CPDFSDK_ActionHandler::IsValidField(
+bool CPDFSDK_ActionHandler::IsValidField(
     CPDFSDK_FormFillEnvironment* pFormFillEnv,
     CPDF_Dictionary* pFieldDict) {
   ASSERT(pFieldDict);
@@ -227,7 +227,7 @@ FX_BOOL CPDFSDK_ActionHandler::IsValidField(
   return !!pPDFInterForm->GetFieldByDict(pFieldDict);
 }
 
-FX_BOOL CPDFSDK_ActionHandler::ExecuteFieldAction(
+bool CPDFSDK_ActionHandler::ExecuteFieldAction(
     const CPDF_Action& action,
     CPDF_AAction::AActionType type,
     CPDFSDK_FormFillEnvironment* pFormFillEnv,
@@ -236,7 +236,7 @@ FX_BOOL CPDFSDK_ActionHandler::ExecuteFieldAction(
     std::set<CPDF_Dictionary*>* visited) {
   CPDF_Dictionary* pDict = action.GetDict();
   if (pdfium::ContainsKey(*visited, pDict))
-    return FALSE;
+    return false;
 
   visited->insert(pDict);
 
@@ -247,7 +247,7 @@ FX_BOOL CPDFSDK_ActionHandler::ExecuteFieldAction(
       if (!swJS.IsEmpty()) {
         RunFieldJavaScript(pFormFillEnv, pFormField, type, data, swJS);
         if (!IsValidField(pFormFillEnv, pFormField->GetFieldDict()))
-          return FALSE;
+          return false;
       }
     }
   } else {
@@ -258,13 +258,13 @@ FX_BOOL CPDFSDK_ActionHandler::ExecuteFieldAction(
     CPDF_Action subaction = action.GetSubAction(i);
     if (!ExecuteFieldAction(subaction, type, pFormFillEnv, pFormField, data,
                             visited))
-      return FALSE;
+      return false;
   }
 
-  return TRUE;
+  return true;
 }
 
-FX_BOOL CPDFSDK_ActionHandler::ExecuteScreenAction(
+bool CPDFSDK_ActionHandler::ExecuteScreenAction(
     const CPDF_Action& action,
     CPDF_AAction::AActionType type,
     CPDFSDK_FormFillEnvironment* pFormFillEnv,
@@ -272,7 +272,7 @@ FX_BOOL CPDFSDK_ActionHandler::ExecuteScreenAction(
     std::set<CPDF_Dictionary*>* visited) {
   CPDF_Dictionary* pDict = action.GetDict();
   if (pdfium::ContainsKey(*visited, pDict))
-    return FALSE;
+    return false;
 
   visited->insert(pDict);
 
@@ -284,7 +284,7 @@ FX_BOOL CPDFSDK_ActionHandler::ExecuteScreenAction(
         IJS_Runtime* pRuntime = pFormFillEnv->GetJSRuntime();
         IJS_Context* pContext = pRuntime->NewContext();
         CFX_WideString csInfo;
-        FX_BOOL bRet = pContext->RunScript(swJS, &csInfo);
+        bool bRet = pContext->RunScript(swJS, &csInfo);
         if (!bRet) {
           // FIXME: return error.
         }
@@ -299,20 +299,20 @@ FX_BOOL CPDFSDK_ActionHandler::ExecuteScreenAction(
   for (int32_t i = 0, sz = action.GetSubActionsCount(); i < sz; i++) {
     CPDF_Action subaction = action.GetSubAction(i);
     if (!ExecuteScreenAction(subaction, type, pFormFillEnv, pScreen, visited))
-      return FALSE;
+      return false;
   }
 
-  return TRUE;
+  return true;
 }
 
-FX_BOOL CPDFSDK_ActionHandler::ExecuteBookMark(
+bool CPDFSDK_ActionHandler::ExecuteBookMark(
     const CPDF_Action& action,
     CPDFSDK_FormFillEnvironment* pFormFillEnv,
     CPDF_Bookmark* pBookmark,
     std::set<CPDF_Dictionary*>* visited) {
   CPDF_Dictionary* pDict = action.GetDict();
   if (pdfium::ContainsKey(*visited, pDict))
-    return FALSE;
+    return false;
 
   visited->insert(pDict);
 
@@ -326,7 +326,7 @@ FX_BOOL CPDFSDK_ActionHandler::ExecuteBookMark(
         pContext->OnBookmark_MouseUp(pBookmark);
 
         CFX_WideString csInfo;
-        FX_BOOL bRet = pContext->RunScript(swJS, &csInfo);
+        bool bRet = pContext->RunScript(swJS, &csInfo);
         if (!bRet) {
           // FIXME: return error.
         }
@@ -341,10 +341,10 @@ FX_BOOL CPDFSDK_ActionHandler::ExecuteBookMark(
   for (int32_t i = 0, sz = action.GetSubActionsCount(); i < sz; i++) {
     CPDF_Action subaction = action.GetSubAction(i);
     if (!ExecuteBookMark(subaction, pFormFillEnv, pBookmark, visited))
-      return FALSE;
+      return false;
   }
 
-  return TRUE;
+  return true;
 }
 
 void CPDFSDK_ActionHandler::DoAction_NoJs(
@@ -389,7 +389,7 @@ void CPDFSDK_ActionHandler::DoAction_NoJs(
       DoAction_ImportData(action, pFormFillEnv);
       break;
     case CPDF_Action::JavaScript:
-      ASSERT(FALSE);
+      ASSERT(false);
       break;
     case CPDF_Action::SetOCGState:
       DoAction_SetOCGState(pFormFillEnv, action);
@@ -405,10 +405,10 @@ void CPDFSDK_ActionHandler::DoAction_NoJs(
   }
 }
 
-FX_BOOL CPDFSDK_ActionHandler::IsValidDocView(
+bool CPDFSDK_ActionHandler::IsValidDocView(
     CPDFSDK_FormFillEnvironment* pFormFillEnv) {
   ASSERT(pFormFillEnv);
-  return TRUE;
+  return true;
 }
 
 void CPDFSDK_ActionHandler::DoAction_GoTo(
@@ -512,12 +512,12 @@ void CPDFSDK_ActionHandler::RunFieldJavaScript(
                                  data.sValue, data.bRC);
       break;
     default:
-      ASSERT(FALSE);
+      ASSERT(false);
       break;
   }
 
   CFX_WideString csInfo;
-  FX_BOOL bRet = pContext->RunScript(script, &csInfo);
+  bool bRet = pContext->RunScript(script, &csInfo);
   if (!bRet) {
     // FIXME: return error.
   }
@@ -534,7 +534,7 @@ void CPDFSDK_ActionHandler::RunDocumentOpenJavaScript(
   pContext->OnDoc_Open(pFormFillEnv, sScriptName);
 
   CFX_WideString csInfo;
-  FX_BOOL bRet = pContext->RunScript(script, &csInfo);
+  bool bRet = pContext->RunScript(script, &csInfo);
   if (!bRet) {
     // FIXME: return error.
   }
@@ -577,12 +577,12 @@ void CPDFSDK_ActionHandler::RunDocumentPageJavaScript(
       pContext->OnPage_OutView(pFormFillEnv);
       break;
     default:
-      ASSERT(FALSE);
+      ASSERT(false);
       break;
   }
 
   CFX_WideString csInfo;
-  FX_BOOL bRet = pContext->RunScript(script, &csInfo);
+  bool bRet = pContext->RunScript(script, &csInfo);
   if (!bRet) {
     // FIXME: return error.
   }
@@ -590,40 +590,40 @@ void CPDFSDK_ActionHandler::RunDocumentPageJavaScript(
   pRuntime->ReleaseContext(pContext);
 }
 
-FX_BOOL CPDFSDK_ActionHandler::DoAction_Hide(
+bool CPDFSDK_ActionHandler::DoAction_Hide(
     const CPDF_Action& action,
     CPDFSDK_FormFillEnvironment* pFormFillEnv) {
   CPDFSDK_InterForm* pInterForm = pFormFillEnv->GetInterForm();
   if (pInterForm->DoAction_Hide(action)) {
     pFormFillEnv->SetChangeMark();
-    return TRUE;
+    return true;
   }
 
-  return FALSE;
+  return false;
 }
 
-FX_BOOL CPDFSDK_ActionHandler::DoAction_SubmitForm(
+bool CPDFSDK_ActionHandler::DoAction_SubmitForm(
     const CPDF_Action& action,
     CPDFSDK_FormFillEnvironment* pFormFillEnv) {
   CPDFSDK_InterForm* pInterForm = pFormFillEnv->GetInterForm();
   return pInterForm->DoAction_SubmitForm(action);
 }
 
-FX_BOOL CPDFSDK_ActionHandler::DoAction_ResetForm(
+bool CPDFSDK_ActionHandler::DoAction_ResetForm(
     const CPDF_Action& action,
     CPDFSDK_FormFillEnvironment* pFormFillEnv) {
   CPDFSDK_InterForm* pInterForm = pFormFillEnv->GetInterForm();
   return pInterForm->DoAction_ResetForm(action);
 }
 
-FX_BOOL CPDFSDK_ActionHandler::DoAction_ImportData(
+bool CPDFSDK_ActionHandler::DoAction_ImportData(
     const CPDF_Action& action,
     CPDFSDK_FormFillEnvironment* pFormFillEnv) {
   CPDFSDK_InterForm* pInterForm = pFormFillEnv->GetInterForm();
   if (pInterForm->DoAction_ImportData(action)) {
     pFormFillEnv->SetChangeMark();
-    return TRUE;
+    return true;
   }
 
-  return FALSE;
+  return false;
 }

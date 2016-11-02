@@ -17,9 +17,9 @@ class Annot : public CJS_EmbedObj {
   explicit Annot(CJS_Object* pJSObject);
   ~Annot() override;
 
-  FX_BOOL hidden(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-  FX_BOOL name(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-  FX_BOOL type(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+  bool hidden(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+  bool name(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+  bool type(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
 
   void SetSDKAnnot(CPDFSDK_BAAnnot* annot);
 

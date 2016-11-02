@@ -23,8 +23,7 @@ class CJS_Context : public IJS_Context {
   ~CJS_Context() override;
 
   // IJS_Context
-  FX_BOOL RunScript(const CFX_WideString& script,
-                    CFX_WideString* info) override;
+  bool RunScript(const CFX_WideString& script, CFX_WideString* info) override;
   void OnApp_Init() override;
   void OnDoc_Open(CPDFSDK_FormFillEnvironment* pFormFillEnv,
                   const CFX_WideString& strTargetName) override;
@@ -37,82 +36,82 @@ class CJS_Context : public IJS_Context {
   void OnPage_Close(CPDFSDK_FormFillEnvironment* pFormFillEnv) override;
   void OnPage_InView(CPDFSDK_FormFillEnvironment* pFormFillEnv) override;
   void OnPage_OutView(CPDFSDK_FormFillEnvironment* pFormFillEnv) override;
-  void OnField_MouseDown(FX_BOOL bModifier,
-                         FX_BOOL bShift,
+  void OnField_MouseDown(bool bModifier,
+                         bool bShift,
                          CPDF_FormField* pTarget) override;
-  void OnField_MouseEnter(FX_BOOL bModifier,
-                          FX_BOOL bShift,
+  void OnField_MouseEnter(bool bModifier,
+                          bool bShift,
                           CPDF_FormField* pTarget) override;
-  void OnField_MouseExit(FX_BOOL bModifier,
-                         FX_BOOL bShift,
+  void OnField_MouseExit(bool bModifier,
+                         bool bShift,
                          CPDF_FormField* pTarget) override;
-  void OnField_MouseUp(FX_BOOL bModifier,
-                       FX_BOOL bShift,
+  void OnField_MouseUp(bool bModifier,
+                       bool bShift,
                        CPDF_FormField* pTarget) override;
-  void OnField_Focus(FX_BOOL bModifier,
-                     FX_BOOL bShift,
+  void OnField_Focus(bool bModifier,
+                     bool bShift,
                      CPDF_FormField* pTarget,
                      const CFX_WideString& Value) override;
-  void OnField_Blur(FX_BOOL bModifier,
-                    FX_BOOL bShift,
+  void OnField_Blur(bool bModifier,
+                    bool bShift,
                     CPDF_FormField* pTarget,
                     const CFX_WideString& Value) override;
   void OnField_Calculate(CPDF_FormField* pSource,
                          CPDF_FormField* pTarget,
                          CFX_WideString& Value,
-                         FX_BOOL& bRc) override;
+                         bool& bRc) override;
   void OnField_Format(CPDF_FormField* pTarget,
                       CFX_WideString& Value,
-                      FX_BOOL bWillCommit) override;
+                      bool bWillCommit) override;
   void OnField_Keystroke(CFX_WideString& strChange,
                          const CFX_WideString& strChangeEx,
-                         FX_BOOL bKeyDown,
-                         FX_BOOL bModifier,
+                         bool bKeyDown,
+                         bool bModifier,
                          int& nSelEnd,
                          int& nSelStart,
-                         FX_BOOL bShift,
+                         bool bShift,
                          CPDF_FormField* pTarget,
                          CFX_WideString& Value,
-                         FX_BOOL bWillCommit,
-                         FX_BOOL bFieldFull,
-                         FX_BOOL& bRc) override;
+                         bool bWillCommit,
+                         bool bFieldFull,
+                         bool& bRc) override;
   void OnField_Validate(CFX_WideString& strChange,
                         const CFX_WideString& strChangeEx,
-                        FX_BOOL bKeyDown,
-                        FX_BOOL bModifier,
-                        FX_BOOL bShift,
+                        bool bKeyDown,
+                        bool bModifier,
+                        bool bShift,
                         CPDF_FormField* pTarget,
                         CFX_WideString& Value,
-                        FX_BOOL& bRc) override;
-  void OnScreen_Focus(FX_BOOL bModifier,
-                      FX_BOOL bShift,
+                        bool& bRc) override;
+  void OnScreen_Focus(bool bModifier,
+                      bool bShift,
                       CPDFSDK_Annot* pScreen) override;
-  void OnScreen_Blur(FX_BOOL bModifier,
-                     FX_BOOL bShift,
+  void OnScreen_Blur(bool bModifier,
+                     bool bShift,
                      CPDFSDK_Annot* pScreen) override;
-  void OnScreen_Open(FX_BOOL bModifier,
-                     FX_BOOL bShift,
+  void OnScreen_Open(bool bModifier,
+                     bool bShift,
                      CPDFSDK_Annot* pScreen) override;
-  void OnScreen_Close(FX_BOOL bModifier,
-                      FX_BOOL bShift,
+  void OnScreen_Close(bool bModifier,
+                      bool bShift,
                       CPDFSDK_Annot* pScreen) override;
-  void OnScreen_MouseDown(FX_BOOL bModifier,
-                          FX_BOOL bShift,
+  void OnScreen_MouseDown(bool bModifier,
+                          bool bShift,
                           CPDFSDK_Annot* pScreen) override;
-  void OnScreen_MouseUp(FX_BOOL bModifier,
-                        FX_BOOL bShift,
+  void OnScreen_MouseUp(bool bModifier,
+                        bool bShift,
                         CPDFSDK_Annot* pScreen) override;
-  void OnScreen_MouseEnter(FX_BOOL bModifier,
-                           FX_BOOL bShift,
+  void OnScreen_MouseEnter(bool bModifier,
+                           bool bShift,
                            CPDFSDK_Annot* pScreen) override;
-  void OnScreen_MouseExit(FX_BOOL bModifier,
-                          FX_BOOL bShift,
+  void OnScreen_MouseExit(bool bModifier,
+                          bool bShift,
                           CPDFSDK_Annot* pScreen) override;
-  void OnScreen_InView(FX_BOOL bModifier,
-                       FX_BOOL bShift,
+  void OnScreen_InView(bool bModifier,
+                       bool bShift,
                        CPDFSDK_Annot* pScreen) override;
-  void OnScreen_OutView(FX_BOOL bModifier,
-                        FX_BOOL bShift,
+  void OnScreen_OutView(bool bModifier,
+                        bool bShift,
                         CPDFSDK_Annot* pScreen) override;
   void OnBookmark_MouseUp(CPDF_Bookmark* pBookMark) override;
   void OnLink_MouseUp(CPDFSDK_FormFillEnvironment* pFormFillEnv) override;
@@ -130,7 +129,7 @@ class CJS_Context : public IJS_Context {
  private:
   CJS_Runtime* const m_pRuntime;
   std::unique_ptr<CJS_EventHandler> m_pEventHandler;
-  FX_BOOL m_bBusy;
+  bool m_bBusy;
 };
 
 #endif  // FPDFSDK_JAVASCRIPT_CJS_CONTEXT_H_

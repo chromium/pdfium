@@ -24,26 +24,26 @@
 #include "fpdfsdk/fpdfxfa/cpdfxfa_context.h"
 #endif  // PDF_ENABLE_XFA
 
-FX_BOOL FPDF_UnSupportError(int nError) {
+bool FPDF_UnSupportError(int nError) {
   CFSDK_UnsupportInfo_Adapter* pAdapter =
       CPDF_ModuleMgr::Get()->GetUnsupportInfoAdapter();
   if (!pAdapter)
-    return FALSE;
+    return false;
 
   UNSUPPORT_INFO* info = static_cast<UNSUPPORT_INFO*>(pAdapter->GetUnspInfo());
   if (info && info->FSDK_UnSupport_Handler)
     info->FSDK_UnSupport_Handler(info, nError);
-  return TRUE;
+  return true;
 }
 
 DLLEXPORT FPDF_BOOL STDCALL
 FSDK_SetUnSpObjProcessHandler(UNSUPPORT_INFO* unsp_info) {
   if (!unsp_info || unsp_info->version != 1)
-    return FALSE;
+    return false;
 
   CPDF_ModuleMgr::Get()->SetUnsupportInfoAdapter(
       pdfium::MakeUnique<CFSDK_UnsupportInfo_Adapter>(unsp_info));
-  return TRUE;
+  return true;
 }
 
 void CheckUnSupportAnnot(CPDF_Document* pDoc, const CPDF_Annot* pPDFAnnot) {
@@ -75,7 +75,7 @@ void CheckUnSupportAnnot(CPDF_Document* pDoc, const CPDF_Annot* pPDFAnnot) {
   }
 }
 
-FX_BOOL CheckSharedForm(const CXML_Element* pElement, CFX_ByteString cbName) {
+bool CheckSharedForm(const CXML_Element* pElement, CFX_ByteString cbName) {
   int count = pElement->CountAttrs();
   int i = 0;
   for (i = 0; i < count; i++) {
@@ -110,10 +110,10 @@ FX_BOOL CheckSharedForm(const CXML_Element* pElement, CFX_ByteString cbName) {
     if (childType == CXML_Element::Element) {
       CXML_Element* pChild = pElement->GetElement(i);
       if (CheckSharedForm(pChild, cbName))
-        return TRUE;
+        return true;
     }
   }
-  return FALSE;
+  return false;
 }
 
 void CheckUnSupportError(CPDF_Document* pDoc, uint32_t err_code) {

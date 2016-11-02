@@ -16,7 +16,7 @@ class IFSDK_PAUSE_Adapter : public IFX_Pause {
   explicit IFSDK_PAUSE_Adapter(IFSDK_PAUSE* IPause);
   ~IFSDK_PAUSE_Adapter() override;
 
-  FX_BOOL NeedToPauseNow() override;
+  bool NeedToPauseNow() override;
 
  private:
   IFSDK_PAUSE* const m_IPause;

@@ -27,8 +27,8 @@ class CPDFXFA_Page {
       delete this;
   }
 
-  FX_BOOL LoadPage();
-  FX_BOOL LoadPDFPage(CPDF_Dictionary* pageDict);
+  bool LoadPage();
+  bool LoadPDFPage(CPDF_Dictionary* pageDict);
   CPDFXFA_Context* GetContext() const { return m_pContext; }
   int GetPageIndex() const { return m_iPageIndex; }
   CPDF_Page* GetPDFPage() const { return m_pPDFPage.get(); }
@@ -71,8 +71,8 @@ class CPDFXFA_Page {
   // Refcounted class.
   ~CPDFXFA_Page();
 
-  FX_BOOL LoadPDFPage();
-  FX_BOOL LoadXFAPageView();
+  bool LoadPDFPage();
+  bool LoadXFAPageView();
 
  private:
   std::unique_ptr<CPDF_Page> m_pPDFPage;

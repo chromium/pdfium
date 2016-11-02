@@ -28,7 +28,7 @@ class CPDFSDK_Annot : public CFX_Observable<CPDFSDK_Annot> {
   virtual ~CPDFSDK_Annot();
 
 #ifdef PDF_ENABLE_XFA
-  virtual FX_BOOL IsXFAField();
+  virtual bool IsXFAField();
   virtual CXFA_FFWidget* GetXFAWidget() const;
 #endif  // PDF_ENABLE_XFA
 
@@ -54,12 +54,12 @@ class CPDFSDK_Annot : public CFX_Observable<CPDFSDK_Annot> {
   void SetPage(CPDFSDK_PageView* pPageView);
   CPDFSDK_PageView* GetPageView() const { return m_pPageView; }
 
-  FX_BOOL IsSelected();
-  void SetSelected(FX_BOOL bSelected);
+  bool IsSelected();
+  void SetSelected(bool bSelected);
 
  protected:
   CPDFSDK_PageView* m_pPageView;
-  FX_BOOL m_bSelected;
+  bool m_bSelected;
 };
 
 #endif  // FPDFSDK_CPDFSDK_ANNOT_H_

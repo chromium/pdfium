@@ -44,10 +44,10 @@ CFX_WideString Icon::GetIconName() {
   return m_swIconName;
 }
 
-FX_BOOL Icon::name(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError) {
+bool Icon::name(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError) {
   if (!vp.IsGetting())
-    return FALSE;
+    return false;
 
   vp << m_swIconName;
-  return TRUE;
+  return true;
 }

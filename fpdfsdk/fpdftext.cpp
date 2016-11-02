@@ -232,7 +232,7 @@ DLLEXPORT FPDF_SCHHANDLE STDCALL FPDFText_FindStart(FPDF_TEXTPAGE text_page,
 
 DLLEXPORT FPDF_BOOL STDCALL FPDFText_FindNext(FPDF_SCHHANDLE handle) {
   if (!handle)
-    return FALSE;
+    return false;
 
   CPDF_TextPageFind* textpageFind = CPDFTextPageFindFromFPDFSchHandle(handle);
   return textpageFind->FindNext();
@@ -240,7 +240,7 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFText_FindNext(FPDF_SCHHANDLE handle) {
 
 DLLEXPORT FPDF_BOOL STDCALL FPDFText_FindPrev(FPDF_SCHHANDLE handle) {
   if (!handle)
-    return FALSE;
+    return false;
 
   CPDF_TextPageFind* textpageFind = CPDFTextPageFindFromFPDFSchHandle(handle);
   return textpageFind->FindPrev();

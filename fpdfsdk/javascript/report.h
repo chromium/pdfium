@@ -17,14 +17,14 @@ class Report : public CJS_EmbedObj {
   ~Report() override;
 
  public:
-  FX_BOOL save(IJS_Context* cc,
-               const std::vector<CJS_Value>& params,
-               CJS_Value& vRet,
-               CFX_WideString& sError);
-  FX_BOOL writeText(IJS_Context* cc,
-                    const std::vector<CJS_Value>& params,
-                    CJS_Value& vRet,
-                    CFX_WideString& sError);
+  bool save(IJS_Context* cc,
+            const std::vector<CJS_Value>& params,
+            CJS_Value& vRet,
+            CFX_WideString& sError);
+  bool writeText(IJS_Context* cc,
+                 const std::vector<CJS_Value>& params,
+                 CJS_Value& vRet,
+                 CFX_WideString& sError);
 };
 
 class CJS_Report : public CJS_Object {

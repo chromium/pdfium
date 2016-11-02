@@ -21,16 +21,16 @@ class CFX_ExternalFontInfo final : public IFX_SystemFontInfo {
       m_pInfo->Release(m_pInfo);
   }
 
-  FX_BOOL EnumFontList(CFX_FontMapper* pMapper) override {
+  bool EnumFontList(CFX_FontMapper* pMapper) override {
     if (m_pInfo->EnumFonts) {
       m_pInfo->EnumFonts(m_pInfo, pMapper);
-      return TRUE;
+      return true;
     }
-    return FALSE;
+    return false;
   }
 
   void* MapFont(int weight,
-                FX_BOOL bItalic,
+                bool bItalic,
                 int charset,
                 int pitch_family,
                 const FX_CHAR* family,
@@ -56,25 +56,25 @@ class CFX_ExternalFontInfo final : public IFX_SystemFontInfo {
     return m_pInfo->GetFontData(m_pInfo, hFont, table, buffer, size);
   }
 
-  FX_BOOL GetFaceName(void* hFont, CFX_ByteString& name) override {
+  bool GetFaceName(void* hFont, CFX_ByteString& name) override {
     if (!m_pInfo->GetFaceName)
-      return FALSE;
+      return false;
     uint32_t size = m_pInfo->GetFaceName(m_pInfo, hFont, nullptr, 0);
     if (size == 0)
-      return FALSE;
+      return false;
     char* buffer = FX_Alloc(char, size);
     size = m_pInfo->GetFaceName(m_pInfo, hFont, buffer, size);
     name = CFX_ByteString(buffer, size);
     FX_Free(buffer);
-    return TRUE;
+    return true;
   }
 
-  FX_BOOL GetFontCharset(void* hFont, int& charset) override {
+  bool GetFontCharset(void* hFont, int& charset) override {
     if (!m_pInfo->GetFontCharset)
-      return FALSE;
+      return false;
 
     charset = m_pInfo->GetFontCharset(m_pInfo, hFont);
-    return TRUE;
+    return true;
   }
 
   void DeleteFont(void* hFont) override {

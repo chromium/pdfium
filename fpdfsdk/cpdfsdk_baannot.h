@@ -65,9 +65,9 @@ class CPDFSDK_BAAnnot : public CPDFSDK_Annot {
 
   void SetColor(FX_COLORREF color);
   void RemoveColor();
-  FX_BOOL GetColor(FX_COLORREF& color) const;
+  bool GetColor(FX_COLORREF& color) const;
 
-  FX_BOOL IsVisible() const;
+  bool IsVisible() const;
 
   CPDF_Action GetAction() const;
   void SetAction(const CPDF_Action& a);
@@ -78,8 +78,8 @@ class CPDFSDK_BAAnnot : public CPDFSDK_Annot {
   void RemoveAAction();
 
   virtual CPDF_Action GetAAction(CPDF_AAction::AActionType eAAT);
-  virtual FX_BOOL IsAppearanceValid();
-  virtual FX_BOOL IsAppearanceValid(CPDF_Annot::AppearanceMode mode);
+  virtual bool IsAppearanceValid();
+  virtual bool IsAppearanceValid(CPDF_Annot::AppearanceMode mode);
   virtual void DrawAppearance(CFX_RenderDevice* pDevice,
                               const CFX_Matrix* pUser2Device,
                               CPDF_Annot::AppearanceMode mode,

@@ -32,7 +32,7 @@ class CPDFXFA_Context : public IXFA_AppProvider {
   CPDFXFA_Context(std::unique_ptr<CPDF_Document> pPDFDoc);
   ~CPDFXFA_Context() override;
 
-  FX_BOOL LoadXFADoc();
+  bool LoadXFADoc();
   CPDF_Document* GetPDFDoc() { return m_pPDFDoc.get(); }
   CXFA_FFDoc* GetXFADoc() { return m_pXFADoc.get(); }
   CXFA_FFDocView* GetXFADocView() { return m_pXFADocView; }
@@ -66,17 +66,17 @@ class CPDFXFA_Context : public IXFA_AppProvider {
   CFX_WideString Response(const CFX_WideString& wsQuestion,
                           const CFX_WideString& wsTitle,
                           const CFX_WideString& wsDefaultAnswer,
-                          FX_BOOL bMark) override;
+                          bool bMark) override;
   IFX_SeekableReadStream* DownloadURL(const CFX_WideString& wsURL) override;
-  FX_BOOL PostRequestURL(const CFX_WideString& wsURL,
-                         const CFX_WideString& wsData,
-                         const CFX_WideString& wsContentType,
-                         const CFX_WideString& wsEncode,
-                         const CFX_WideString& wsHeader,
-                         CFX_WideString& wsResponse) override;
-  FX_BOOL PutRequestURL(const CFX_WideString& wsURL,
-                        const CFX_WideString& wsData,
-                        const CFX_WideString& wsEncode) override;
+  bool PostRequestURL(const CFX_WideString& wsURL,
+                      const CFX_WideString& wsData,
+                      const CFX_WideString& wsContentType,
+                      const CFX_WideString& wsEncode,
+                      const CFX_WideString& wsHeader,
+                      CFX_WideString& wsResponse) override;
+  bool PutRequestURL(const CFX_WideString& wsURL,
+                     const CFX_WideString& wsData,
+                     const CFX_WideString& wsEncode) override;
 
   void LoadString(int32_t iStringID, CFX_WideString& wsString) override;
   IFWL_AdapterTimerMgr* GetTimerMgr() override;

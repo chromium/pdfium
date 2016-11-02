@@ -14,7 +14,7 @@
 
 #define PWL_CARET_FLASHINTERVAL 500
 
-CPWL_Caret::CPWL_Caret() : m_bFlash(FALSE), m_fWidth(0.4f), m_nDelay(0) {}
+CPWL_Caret::CPWL_Caret() : m_bFlash(false), m_fWidth(0.4f), m_nDelay(0) {}
 
 CPWL_Caret::~CPWL_Caret() {}
 
@@ -105,7 +105,7 @@ CFX_FloatRect CPWL_Caret::GetCaretRect() const {
                        m_ptHead.y);
 }
 
-void CPWL_Caret::SetCaret(FX_BOOL bVisible,
+void CPWL_Caret::SetCaret(bool bVisible,
                           const CFX_FloatPoint& ptHead,
                           const CFX_FloatPoint& ptFoot) {
   if (bVisible) {
@@ -113,25 +113,25 @@ void CPWL_Caret::SetCaret(FX_BOOL bVisible,
       if (m_ptHead != ptHead || m_ptFoot != ptFoot) {
         m_ptHead = ptHead;
         m_ptFoot = ptFoot;
-        m_bFlash = TRUE;
-        Move(m_rcInvalid, FALSE, TRUE);
+        m_bFlash = true;
+        Move(m_rcInvalid, false, true);
       }
     } else {
       m_ptHead = ptHead;
       m_ptFoot = ptFoot;
       EndTimer();
       BeginTimer(PWL_CARET_FLASHINTERVAL);
-      CPWL_Wnd::SetVisible(TRUE);
-      m_bFlash = TRUE;
-      Move(m_rcInvalid, FALSE, TRUE);
+      CPWL_Wnd::SetVisible(true);
+      m_bFlash = true;
+      Move(m_rcInvalid, false, true);
     }
   } else {
     m_ptHead = CFX_FloatPoint();
     m_ptFoot = CFX_FloatPoint();
-    m_bFlash = FALSE;
+    m_bFlash = false;
     if (IsVisible()) {
       EndTimer();
-      CPWL_Wnd::SetVisible(FALSE);
+      CPWL_Wnd::SetVisible(false);
     }
   }
 }

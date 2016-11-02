@@ -104,10 +104,10 @@ class CPWL_Utils {
  public:
   static CFX_FloatRect InflateRect(const CFX_FloatRect& rcRect, FX_FLOAT fSize);
   static CFX_FloatRect DeflateRect(const CFX_FloatRect& rcRect, FX_FLOAT fSize);
-  static FX_BOOL IntersectRect(const CFX_FloatRect& rect1,
-                               const CFX_FloatRect& rect2);
-  static FX_BOOL ContainsRect(const CFX_FloatRect& rcParent,
-                              const CFX_FloatRect& rcChild);
+  static bool IntersectRect(const CFX_FloatRect& rect1,
+                            const CFX_FloatRect& rect2);
+  static bool ContainsRect(const CFX_FloatRect& rcParent,
+                           const CFX_FloatRect& rcChild);
   static CFX_FloatRect ScaleRect(const CFX_FloatRect& rcRect, FX_FLOAT fScale);
   static CPVT_WordRange OverlapWordRange(const CPVT_WordRange& wr1,
                                          const CPVT_WordRange& wr2);
@@ -126,11 +126,11 @@ class CPWL_Utils {
                                     FX_FLOAT y);
   static FX_COLORREF PWLColorToFXColor(const CPWL_Color& color,
                                        int32_t nTransparancy = 255);
-  static FX_BOOL IsBlackOrWhite(const CPWL_Color& color);
+  static bool IsBlackOrWhite(const CPWL_Color& color);
   static CPWL_Color GetReverseColor(const CPWL_Color& color);
 
   static CFX_ByteString GetColorAppStream(const CPWL_Color& color,
-                                          const FX_BOOL& bFillOrStroke = TRUE);
+                                          const bool& bFillOrStroke = true);
   static CFX_ByteString GetBorderAppStream(const CFX_FloatRect& rect,
                                            FX_FLOAT fWidth,
                                            const CPWL_Color& color,
@@ -169,7 +169,7 @@ class CPWL_Utils {
   static CFX_ByteString GetEditAppStream(CFX_Edit* pEdit,
                                          const CFX_FloatPoint& ptOffset,
                                          const CPVT_WordRange* pRange = nullptr,
-                                         FX_BOOL bContinuous = TRUE,
+                                         bool bContinuous = true,
                                          uint16_t SubWord = 0);
   static CFX_ByteString GetEditSelAppStream(
       CFX_Edit* pEdit,
@@ -181,8 +181,8 @@ class CPWL_Utils {
                                          int32_t nAlignmentH,
                                          int32_t nAlignmentV,
                                          FX_FLOAT fFontSize,
-                                         FX_BOOL bMultiLine,
-                                         FX_BOOL bAutoReturn,
+                                         bool bMultiLine,
+                                         bool bAutoReturn,
                                          const CPWL_Color& crText);
   static CFX_ByteString GetDropButtonAppStream(const CFX_FloatRect& rcBBox);
 
@@ -222,8 +222,8 @@ class CPWL_Utils {
                            const FX_COLORREF& color);
   static void DrawShadow(CFX_RenderDevice* pDevice,
                          CFX_Matrix* pUser2Device,
-                         FX_BOOL bVertical,
-                         FX_BOOL bHorizontal,
+                         bool bVertical,
+                         bool bHorizontal,
                          CFX_FloatRect rect,
                          int32_t nTransparancy,
                          int32_t nStartGray,

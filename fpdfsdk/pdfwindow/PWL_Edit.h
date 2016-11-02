@@ -30,16 +30,16 @@ class IPWL_Filler_Notify {
                                  const CFX_WideString& strChangeEx,
                                  int nSelStart,
                                  int nSelEnd,
-                                 FX_BOOL bKeyDown,
-                                 FX_BOOL& bRC,
-                                 FX_BOOL& bExit,
+                                 bool bKeyDown,
+                                 bool& bRC,
+                                 bool& bExit,
                                  uint32_t nFlag) = 0;
 #ifdef PDF_ENABLE_XFA
   virtual void OnPopupPreOpen(void* pPrivateData,
-                              FX_BOOL& bExit,
+                              bool& bExit,
                               uint32_t nFlag) = 0;
   virtual void OnPopupPostOpen(void* pPrivateData,
-                               FX_BOOL& bExit,
+                               bool& bExit,
                                uint32_t nFlag) = 0;
 #endif  // PDF_ENABLE_XFA
 };
@@ -58,30 +58,30 @@ class CPWL_Edit : public CPWL_EditCtrl {
   void GetThisAppearanceStream(CFX_ByteTextBuf& sAppStream) override;
   void DrawThisAppearance(CFX_RenderDevice* pDevice,
                           CFX_Matrix* pUser2Device) override;
-  FX_BOOL OnLButtonDown(const CFX_FloatPoint& point, uint32_t nFlag) override;
-  FX_BOOL OnLButtonDblClk(const CFX_FloatPoint& point, uint32_t nFlag) override;
-  FX_BOOL OnRButtonUp(const CFX_FloatPoint& point, uint32_t nFlag) override;
-  FX_BOOL OnMouseWheel(short zDelta,
-                       const CFX_FloatPoint& point,
-                       uint32_t nFlag) override;
-  FX_BOOL OnKeyDown(uint16_t nChar, uint32_t nFlag) override;
-  FX_BOOL OnChar(uint16_t nChar, uint32_t nFlag) override;
+  bool OnLButtonDown(const CFX_FloatPoint& point, uint32_t nFlag) override;
+  bool OnLButtonDblClk(const CFX_FloatPoint& point, uint32_t nFlag) override;
+  bool OnRButtonUp(const CFX_FloatPoint& point, uint32_t nFlag) override;
+  bool OnMouseWheel(short zDelta,
+                    const CFX_FloatPoint& point,
+                    uint32_t nFlag) override;
+  bool OnKeyDown(uint16_t nChar, uint32_t nFlag) override;
+  bool OnChar(uint16_t nChar, uint32_t nFlag) override;
   CFX_FloatRect GetFocusRect() const override;
   void OnSetFocus() override;
   void OnKillFocus() override;
 
   void SetAlignFormatV(PWL_EDIT_ALIGNFORMAT_V nFormat = PEAV_TOP,
-                       FX_BOOL bPaint = TRUE);  // 0:top 1:bottom 2:center
+                       bool bPaint = true);  // 0:top 1:bottom 2:center
 
   void SetCharArray(int32_t nCharArray);
   void SetLimitChar(int32_t nLimitChar);
 
   void SetCharSpace(FX_FLOAT fCharSpace);
 
-  FX_BOOL CanSelectAll() const;
-  FX_BOOL CanClear() const;
-  FX_BOOL CanCopy() const;
-  FX_BOOL CanCut() const;
+  bool CanSelectAll() const;
+  bool CanClear() const;
+  bool CanCopy() const;
+  bool CanCut() const;
 
   void CutText();
 
@@ -93,7 +93,7 @@ class CPWL_Edit : public CPWL_EditCtrl {
   CFX_ByteString GetSelectAppearanceStream(
       const CFX_FloatPoint& ptOffset) const;
 
-  FX_BOOL IsTextFull() const;
+  bool IsTextFull() const;
 
   static FX_FLOAT GetCharArrayAutoFontSize(CPDF_Font* pFont,
                                            const CFX_FloatRect& rcPlate,
@@ -109,7 +109,7 @@ class CPWL_Edit : public CPWL_EditCtrl {
   void GeneratePageObjects(CPDF_PageObjectHolder* pObjectHolder,
                            const CFX_FloatPoint& ptOffset);
 
-  FX_BOOL IsProceedtoOnChar(uint16_t nKeyCode, uint32_t nFlag);
+  bool IsProceedtoOnChar(uint16_t nKeyCode, uint32_t nFlag);
   void AttachFFLData(CFFL_FormFiller* pData) { m_pFormFiller = pData; }
 
   void OnInsertWord(const CPVT_WordPlace& place,
@@ -124,8 +124,8 @@ class CPWL_Edit : public CPWL_EditCtrl {
 
  private:
   CPVT_WordRange GetSelectWordRange() const;
-  virtual void ShowVScrollBar(FX_BOOL bShow);
-  FX_BOOL IsVScrollBarVisible() const;
+  virtual void ShowVScrollBar(bool bShow);
+  bool IsVScrollBarVisible() const;
   void SetParamByFlag();
 
   FX_FLOAT GetCharArrayAutoFontSize(int32_t nCharArray);
@@ -137,10 +137,10 @@ class CPWL_Edit : public CPWL_EditCtrl {
   CPVT_WordRange GetLatinWordsRange(const CPVT_WordPlace& place) const;
   CPVT_WordRange GetArabicWordsRange(const CPVT_WordPlace& place) const;
   CPVT_WordRange GetSameWordsRange(const CPVT_WordPlace& place,
-                                   FX_BOOL bLatin,
-                                   FX_BOOL bArabic) const;
+                                   bool bLatin,
+                                   bool bArabic) const;
   IPWL_Filler_Notify* m_pFillerNotify;
-  FX_BOOL m_bFocus;
+  bool m_bFocus;
   CFX_FloatRect m_rcOldWindow;
   CFFL_FormFiller* m_pFormFiller;  // Not owned.
 };

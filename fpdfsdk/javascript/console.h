@@ -17,22 +17,22 @@ class console : public CJS_EmbedObj {
   ~console() override;
 
  public:
-  FX_BOOL clear(IJS_Context* cc,
-                const std::vector<CJS_Value>& params,
-                CJS_Value& vRet,
-                CFX_WideString& sError);
-  FX_BOOL hide(IJS_Context* cc,
+  bool clear(IJS_Context* cc,
+             const std::vector<CJS_Value>& params,
+             CJS_Value& vRet,
+             CFX_WideString& sError);
+  bool hide(IJS_Context* cc,
+            const std::vector<CJS_Value>& params,
+            CJS_Value& vRet,
+            CFX_WideString& sError);
+  bool println(IJS_Context* cc,
                const std::vector<CJS_Value>& params,
                CJS_Value& vRet,
                CFX_WideString& sError);
-  FX_BOOL println(IJS_Context* cc,
-                  const std::vector<CJS_Value>& params,
-                  CJS_Value& vRet,
-                  CFX_WideString& sError);
-  FX_BOOL show(IJS_Context* cc,
-               const std::vector<CJS_Value>& params,
-               CJS_Value& vRet,
-               CFX_WideString& sError);
+  bool show(IJS_Context* cc,
+            const std::vector<CJS_Value>& params,
+            CJS_Value& vRet,
+            CFX_WideString& sError);
 };
 
 class CJS_Console : public CJS_Object {

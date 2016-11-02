@@ -26,23 +26,23 @@ enum FPDF_VALUE { TOP, LEFT, RIGHT, BOTTOM };
 
 namespace {
 
-FX_BOOL IsValiableRect(CFX_FloatRect rect, CFX_FloatRect rcPage) {
+bool IsValiableRect(CFX_FloatRect rect, CFX_FloatRect rcPage) {
   if (rect.left - rect.right > 0.000001f || rect.bottom - rect.top > 0.000001f)
-    return FALSE;
+    return false;
 
   if (rect.left == 0.0f && rect.top == 0.0f && rect.right == 0.0f &&
       rect.bottom == 0.0f)
-    return FALSE;
+    return false;
 
   if (!rcPage.IsEmpty()) {
     if (rect.left - rcPage.left < -10.000001f ||
         rect.right - rcPage.right > 10.000001f ||
         rect.top - rcPage.top > 10.000001f ||
         rect.bottom - rcPage.bottom < -10.000001f)
-      return FALSE;
+      return false;
   }
 
-  return TRUE;
+  return true;
 }
 
 void GetContentsRect(CPDF_Document* pDoc,

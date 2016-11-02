@@ -134,8 +134,8 @@ void color::ConvertArrayToPWLColor(CJS_Runtime* pRuntime,
 }
 
 #define JS_IMPLEMENT_COLORPROP(prop, var)                    \
-  FX_BOOL color::prop(IJS_Context* cc, CJS_PropValue& vp,    \
-                      CFX_WideString& sError) {              \
+  bool color::prop(IJS_Context* cc, CJS_PropValue& vp,       \
+                   CFX_WideString& sError) {                 \
     CJS_Runtime* pRuntime = CJS_Runtime::FromContext(cc);    \
     CJS_Array array;                                         \
     if (vp.IsGetting()) {                                    \
@@ -143,10 +143,10 @@ void color::ConvertArrayToPWLColor(CJS_Runtime* pRuntime,
       vp << array;                                           \
     } else {                                                 \
       if (!vp.GetJSValue()->ConvertToArray(pRuntime, array)) \
-        return FALSE;                                        \
+        return false;                                        \
       ConvertArrayToPWLColor(pRuntime, array, &var);         \
     }                                                        \
-    return TRUE;                                             \
+    return true;                                             \
   }
 
 JS_IMPLEMENT_COLORPROP(transparent, m_crTransparent)
@@ -162,18 +162,18 @@ JS_IMPLEMENT_COLORPROP(dkGray, m_crDKGray)
 JS_IMPLEMENT_COLORPROP(gray, m_crGray)
 JS_IMPLEMENT_COLORPROP(ltGray, m_crLTGray)
 
-FX_BOOL color::convert(IJS_Context* cc,
-                       const std::vector<CJS_Value>& params,
-                       CJS_Value& vRet,
-                       CFX_WideString& sError) {
+bool color::convert(IJS_Context* cc,
+                    const std::vector<CJS_Value>& params,
+                    CJS_Value& vRet,
+                    CFX_WideString& sError) {
   int iSize = params.size();
   if (iSize < 2)
-    return FALSE;
+    return false;
 
   CJS_Runtime* pRuntime = CJS_Runtime::FromContext(cc);
   CJS_Array aSource;
   if (!params[0].ConvertToArray(pRuntime, aSource))
-    return FALSE;
+    return false;
 
   CPWL_Color crSource;
   ConvertArrayToPWLColor(pRuntime, aSource, &crSource);
@@ -197,23 +197,23 @@ FX_BOOL color::convert(IJS_Context* cc,
   ConvertPWLColorToArray(pRuntime, crDest, &aDest);
   vRet = CJS_Value(pRuntime, aDest);
 
-  return TRUE;
+  return true;
 }
 
-FX_BOOL color::equal(IJS_Context* cc,
-                     const std::vector<CJS_Value>& params,
-                     CJS_Value& vRet,
-                     CFX_WideString& sError) {
+bool color::equal(IJS_Context* cc,
+                  const std::vector<CJS_Value>& params,
+                  CJS_Value& vRet,
+                  CFX_WideString& sError) {
   if (params.size() < 2)
-    return FALSE;
+    return false;
 
   CJS_Runtime* pRuntime = CJS_Runtime::FromContext(cc);
   CJS_Array array1;
   CJS_Array array2;
   if (!params[0].ConvertToArray(pRuntime, array1))
-    return FALSE;
+    return false;
   if (!params[1].ConvertToArray(pRuntime, array2))
-    return FALSE;
+    return false;
 
   CPWL_Color color1;
   CPWL_Color color2;
@@ -221,5 +221,5 @@ FX_BOOL color::equal(IJS_Context* cc,
   ConvertArrayToPWLColor(pRuntime, array2, &color2);
   color1.ConvertColorType(color2.nColorType);
   vRet = CJS_Value(pRuntime, color1 == color2);
-  return TRUE;
+  return true;
 }
