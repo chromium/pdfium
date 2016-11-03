@@ -25,11 +25,11 @@
 #define FWL_STYLEEXT_MNU_Vert (1L << 0)
 
 IFWL_Widget::IFWL_Widget(const IFWL_App* app,
-                         const CFWL_WidgetImpProperties& properties,
+                         std::unique_ptr<CFWL_WidgetProperties> properties,
                          IFWL_Widget* pOuter)
     : m_pOwnerApp(app),
       m_pWidgetMgr(app->GetWidgetMgr()),
-      m_pProperties(new CFWL_WidgetImpProperties(properties)),
+      m_pProperties(std::move(properties)),
       m_pOuter(pOuter),
       m_pLayoutItem(nullptr),
       m_pAssociate(nullptr),

@@ -13,7 +13,7 @@
 #include "xfa/fwl/core/ifwl_scrollbar.h"
 #include "xfa/fxbarcode/BC_Library.h"
 
-class CFWL_WidgetImpProperties;
+class CFWL_WidgetProperties;
 class CFX_Barcode;
 class IFWL_Widget;
 
@@ -58,7 +58,7 @@ class IFWL_BarcodeDP : public IFWL_EditDP {
 class IFWL_Barcode : public IFWL_Edit {
  public:
   explicit IFWL_Barcode(const IFWL_App* app,
-                        const CFWL_WidgetImpProperties& properties);
+                        std::unique_ptr<CFWL_WidgetProperties> properties);
   ~IFWL_Barcode() override;
 
   // IFWL_Widget

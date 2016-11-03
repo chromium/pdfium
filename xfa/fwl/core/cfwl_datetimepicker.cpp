@@ -30,7 +30,7 @@ void CFWL_DateTimePicker::Initialize() {
   ASSERT(!m_pIface);
 
   m_pIface = pdfium::MakeUnique<IFWL_DateTimePicker>(
-      m_pApp, m_pProperties->MakeWidgetImpProperties(&m_DateTimePickerDP));
+      m_pApp, pdfium::MakeUnique<CFWL_WidgetProperties>(&m_DateTimePickerDP));
 
   CFWL_Widget::Initialize();
 }

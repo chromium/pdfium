@@ -8,13 +8,12 @@
 #define XFA_FWL_CORE_IFWL_SCROLLBAR_H_
 
 #include "core/fxcrt/fx_system.h"
-#include "xfa/fwl/core/cfwl_widgetimpproperties.h"
+#include "xfa/fwl/core/cfwl_widgetproperties.h"
 #include "xfa/fwl/core/fwl_error.h"
 #include "xfa/fwl/core/ifwl_dataprovider.h"
 #include "xfa/fwl/core/ifwl_timer.h"
 #include "xfa/fwl/core/ifwl_widget.h"
 
-class CFWL_WidgetImpProperties;
 class IFWL_Widget;
 
 #define FWL_STYLEEXT_SCB_Horz (0L << 0)
@@ -38,7 +37,7 @@ class IFWL_ScrollBarDP : public IFWL_DataProvider {};
 class IFWL_ScrollBar : public IFWL_Widget {
  public:
   IFWL_ScrollBar(const IFWL_App* app,
-                 const CFWL_WidgetImpProperties& properties,
+                 std::unique_ptr<CFWL_WidgetProperties> properties,
                  IFWL_Widget* pOuter);
   ~IFWL_ScrollBar() override;
 

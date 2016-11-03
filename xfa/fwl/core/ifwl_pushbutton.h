@@ -7,7 +7,7 @@
 #ifndef XFA_FWL_CORE_IFWL_PUSHBUTTON_H_
 #define XFA_FWL_CORE_IFWL_PUSHBUTTON_H_
 
-#include "xfa/fwl/core/cfwl_widgetimpproperties.h"
+#include "xfa/fwl/core/cfwl_widgetproperties.h"
 #include "xfa/fwl/core/ifwl_dataprovider.h"
 #include "xfa/fwl/core/ifwl_widget.h"
 
@@ -28,7 +28,6 @@
 #define FWL_STATE_PSB_Default (1 << (FWL_WGTSTATE_MAX + 2))
 
 class CFWL_MsgMouse;
-class CFWL_WidgetImpProperties;
 class CFX_DIBitmap;
 class IFWL_Widget;
 
@@ -40,7 +39,7 @@ class IFWL_PushButtonDP : public IFWL_DataProvider {
 class IFWL_PushButton : public IFWL_Widget {
  public:
   IFWL_PushButton(const IFWL_App* app,
-                  const CFWL_WidgetImpProperties& properties);
+                  std::unique_ptr<CFWL_WidgetProperties> properties);
   ~IFWL_PushButton() override;
 
   // IFWL_Widget

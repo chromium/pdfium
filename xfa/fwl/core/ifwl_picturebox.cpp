@@ -10,9 +10,10 @@
 #include "xfa/fwl/core/cfwl_picturebox.h"
 #include "xfa/fwl/core/fwl_noteimp.h"
 
-IFWL_PictureBox::IFWL_PictureBox(const IFWL_App* app,
-                                 const CFWL_WidgetImpProperties& properties)
-    : IFWL_Widget(app, properties, nullptr),
+IFWL_PictureBox::IFWL_PictureBox(
+    const IFWL_App* app,
+    std::unique_ptr<CFWL_WidgetProperties> properties)
+    : IFWL_Widget(app, std::move(properties), nullptr),
       m_bTop(false),
       m_bVCenter(false),
       m_bButton(false) {

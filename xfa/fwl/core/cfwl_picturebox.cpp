@@ -18,7 +18,7 @@ void CFWL_PictureBox::Initialize() {
   ASSERT(!m_pIface);
 
   m_pIface = pdfium::MakeUnique<IFWL_PictureBox>(
-      m_pApp, m_pProperties->MakeWidgetImpProperties(&m_PictureBoxDP));
+      m_pApp, pdfium::MakeUnique<CFWL_WidgetProperties>(&m_PictureBoxDP));
 
   CFWL_Widget::Initialize();
 }

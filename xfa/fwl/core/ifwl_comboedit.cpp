@@ -9,10 +9,11 @@
 #include "xfa/fde/cfde_txtedtengine.h"
 #include "xfa/fwl/core/ifwl_combobox.h"
 
-IFWL_ComboEdit::IFWL_ComboEdit(const IFWL_App* app,
-                               const CFWL_WidgetImpProperties& properties,
-                               IFWL_Widget* pOuter)
-    : IFWL_Edit(app, properties, pOuter) {
+IFWL_ComboEdit::IFWL_ComboEdit(
+    const IFWL_App* app,
+    std::unique_ptr<CFWL_WidgetProperties> properties,
+    IFWL_Widget* pOuter)
+    : IFWL_Edit(app, std::move(properties), pOuter) {
   m_pOuter = static_cast<IFWL_ComboBox*>(pOuter);
 }
 

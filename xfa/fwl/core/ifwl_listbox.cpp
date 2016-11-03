@@ -22,9 +22,9 @@ const int kItemTextMargin = 2;
 }  // namespace
 
 IFWL_ListBox::IFWL_ListBox(const IFWL_App* app,
-                           const CFWL_WidgetImpProperties& properties,
+                           std::unique_ptr<CFWL_WidgetProperties> properties,
                            IFWL_Widget* pOuter)
-    : IFWL_Widget(app, properties, pOuter),
+    : IFWL_Widget(app, std::move(properties), pOuter),
       m_dwTTOStyles(0),
       m_iTTOAligns(0),
       m_hAnchor(nullptr),
@@ -873,13 +873,13 @@ void IFWL_ListBox::InitScrollBar(bool bVert) {
   if ((bVert && m_pVertScrollBar) || (!bVert && m_pHorzScrollBar)) {
     return;
   }
-  CFWL_WidgetImpProperties prop;
-  prop.m_dwStyleExes = bVert ? FWL_STYLEEXT_SCB_Vert : FWL_STYLEEXT_SCB_Horz;
-  prop.m_dwStates = FWL_WGTSTATE_Invisible;
-  prop.m_pParent = this;
-  prop.m_pThemeProvider = m_pScrollBarTP;
+  auto prop = pdfium::MakeUnique<CFWL_WidgetProperties>();
+  prop->m_dwStyleExes = bVert ? FWL_STYLEEXT_SCB_Vert : FWL_STYLEEXT_SCB_Horz;
+  prop->m_dwStates = FWL_WGTSTATE_Invisible;
+  prop->m_pParent = this;
+  prop->m_pThemeProvider = m_pScrollBarTP;
   (bVert ? &m_pVertScrollBar : &m_pHorzScrollBar)
-      ->reset(new IFWL_ScrollBar(m_pOwnerApp, prop, this));
+      ->reset(new IFWL_ScrollBar(m_pOwnerApp, std::move(prop), this));
 }
 
 bool IFWL_ListBox::IsShowScrollBar(bool bVert) {

@@ -10,7 +10,7 @@
 #include <memory>
 
 #include "xfa/fwl/core/cfwl_event.h"
-#include "xfa/fwl/core/cfwl_widgetimpproperties.h"
+#include "xfa/fwl/core/cfwl_widgetproperties.h"
 #include "xfa/fwl/core/ifwl_dataprovider.h"
 #include "xfa/fwl/core/ifwl_edit.h"
 #include "xfa/fwl/core/ifwl_listbox.h"
@@ -102,7 +102,7 @@ class IFWL_ListBoxCompare {
 class IFWL_ListBox : public IFWL_Widget {
  public:
   IFWL_ListBox(const IFWL_App* app,
-               const CFWL_WidgetImpProperties& properties,
+               std::unique_ptr<CFWL_WidgetProperties> properties,
                IFWL_Widget* pOuter);
   ~IFWL_ListBox() override;
 

@@ -19,9 +19,7 @@
 #define FWL_WGT_CalcMultiLineDefWidth 120.0f
 
 CFWL_Widget::CFWL_Widget(const IFWL_App* app)
-    : m_pApp(app),
-      m_pWidgetMgr(app->GetWidgetMgr()),
-      m_pProperties(new CFWL_WidgetProperties) {
+    : m_pApp(app), m_pWidgetMgr(app->GetWidgetMgr()) {
   ASSERT(m_pWidgetMgr);
 }
 

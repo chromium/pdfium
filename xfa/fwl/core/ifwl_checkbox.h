@@ -8,7 +8,7 @@
 #define XFA_FWL_CORE_IFWL_CHECKBOX_H_
 
 #include "xfa/fwl/core/cfwl_event.h"
-#include "xfa/fwl/core/cfwl_widgetimpproperties.h"
+#include "xfa/fwl/core/cfwl_widgetproperties.h"
 #include "xfa/fwl/core/ifwl_dataprovider.h"
 #include "xfa/fwl/core/ifwl_widget.h"
 
@@ -44,7 +44,7 @@
 #define FWL_STATE_CKB_CheckMask (3L << (FWL_WGTSTATE_MAX + 2))
 
 class CFWL_MsgMouse;
-class CFWL_WidgetImpProperties;
+class CFWL_WidgetProperties;
 class IFWL_Widget;
 
 FWL_EVENT_DEF(CFWL_EvtCkbCheckStateChanged, CFWL_EventType::CheckStateChanged)
@@ -57,7 +57,7 @@ class IFWL_CheckBoxDP : public IFWL_DataProvider {
 class IFWL_CheckBox : public IFWL_Widget {
  public:
   explicit IFWL_CheckBox(const IFWL_App* app,
-                         const CFWL_WidgetImpProperties& properties);
+                         std::unique_ptr<CFWL_WidgetProperties> properties);
   ~IFWL_CheckBox() override;
 
   // IFWL_Widget

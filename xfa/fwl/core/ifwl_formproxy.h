@@ -9,12 +9,12 @@
 
 #include "xfa/fwl/core/ifwl_form.h"
 
-class CFWL_WidgetImpProperties;
+class CFWL_WidgetProperties;
 
 class IFWL_FormProxy : public IFWL_Form {
  public:
   IFWL_FormProxy(const IFWL_App* app,
-                 const CFWL_WidgetImpProperties& properties,
+                 std::unique_ptr<CFWL_WidgetProperties> properties,
                  IFWL_Widget* pOuter);
   ~IFWL_FormProxy() override;
 

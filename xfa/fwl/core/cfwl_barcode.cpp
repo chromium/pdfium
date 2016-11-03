@@ -26,7 +26,7 @@ void CFWL_Barcode::Initialize() {
   ASSERT(!m_pIface);
 
   m_pIface = pdfium::MakeUnique<IFWL_Barcode>(
-      m_pApp, m_pProperties->MakeWidgetImpProperties(&m_barcodeData));
+      m_pApp, pdfium::MakeUnique<CFWL_WidgetProperties>(&m_barcodeData));
 
   CFWL_Widget::Initialize();
 }

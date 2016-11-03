@@ -7,7 +7,7 @@
 #ifndef XFA_FWL_CORE_IFWL_PICTUREBOX_H_
 #define XFA_FWL_CORE_IFWL_PICTUREBOX_H_
 
-#include "xfa/fwl/core/cfwl_widgetimpproperties.h"
+#include "xfa/fwl/core/cfwl_widgetproperties.h"
 #include "xfa/fwl/core/fwl_error.h"
 #include "xfa/fwl/core/ifwl_dataprovider.h"
 #include "xfa/fwl/core/ifwl_widget.h"
@@ -27,7 +27,6 @@
 #define FWL_STYLEEXT_PTB_VAlignMask 3L << 2
 #define FWL_STYLEEXT_PTB_StretchAlignMask 7L << 4
 
-class CFWL_WidgetImpProperties;
 class CFX_DIBitmap;
 class IFWL_Widget;
 
@@ -44,7 +43,7 @@ class IFWL_PictureBoxDP : public IFWL_DataProvider {
 class IFWL_PictureBox : public IFWL_Widget {
  public:
   explicit IFWL_PictureBox(const IFWL_App* app,
-                           const CFWL_WidgetImpProperties& properties);
+                           std::unique_ptr<CFWL_WidgetProperties> properties);
   ~IFWL_PictureBox() override;
 
   // IFWL_Widget

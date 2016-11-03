@@ -9,7 +9,7 @@
 
 #include "xfa/fgas/localization/fgas_datetime.h"
 #include "xfa/fwl/core/cfwl_event.h"
-#include "xfa/fwl/core/cfwl_widgetimpproperties.h"
+#include "xfa/fwl/core/cfwl_widgetproperties.h"
 #include "xfa/fwl/core/ifwl_dataprovider.h"
 #include "xfa/fwl/core/ifwl_widget.h"
 
@@ -35,7 +35,6 @@ FWL_EVENT_DEF(CFWL_EventMcdDateChanged,
               int32_t m_iEndDay;)
 
 class CFWL_MsgMouse;
-class CFWL_WidgetImpProperties;
 class IFWL_Widget;
 
 struct FWL_DATEINFO;
@@ -52,7 +51,7 @@ class IFWL_MonthCalendarDP : public IFWL_DataProvider {
 class IFWL_MonthCalendar : public IFWL_Widget {
  public:
   IFWL_MonthCalendar(const IFWL_App* app,
-                     const CFWL_WidgetImpProperties& properties,
+                     std::unique_ptr<CFWL_WidgetProperties> properties,
                      IFWL_Widget* pOuter);
   ~IFWL_MonthCalendar() override;
 

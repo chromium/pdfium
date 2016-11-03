@@ -23,8 +23,8 @@
 #include "xfa/fwl/core/ifwl_themeprovider.h"
 
 IFWL_ComboBox::IFWL_ComboBox(const IFWL_App* app,
-                             const CFWL_WidgetImpProperties& properties)
-    : IFWL_Widget(app, properties, nullptr),
+                             std::unique_ptr<CFWL_WidgetProperties> properties)
+    : IFWL_Widget(app, std::move(properties), nullptr),
       m_pComboBoxProxy(nullptr),
       m_bLButtonDown(false),
       m_iCurSel(-1),
@@ -41,17 +41,17 @@ IFWL_ComboBox::IFWL_ComboBox(const IFWL_App* app,
     return;
   }
 
-  CFWL_WidgetImpProperties prop;
-  prop.m_pThemeProvider = m_pProperties->m_pThemeProvider;
-  prop.m_dwStyles |= FWL_WGTSTYLE_Border | FWL_WGTSTYLE_VScroll;
+  auto prop =
+      pdfium::MakeUnique<CFWL_WidgetProperties>(m_pProperties->m_pDataProvider);
+  prop->m_pThemeProvider = m_pProperties->m_pThemeProvider;
+  prop->m_dwStyles |= FWL_WGTSTYLE_Border | FWL_WGTSTYLE_VScroll;
   if (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_CMB_ListItemIconText)
-    prop.m_dwStyleExes |= FWL_STYLEEXT_LTB_Icon;
+    prop->m_dwStyleExes |= FWL_STYLEEXT_LTB_Icon;
 
-  prop.m_pDataProvider = m_pProperties->m_pDataProvider;
-  m_pListBox.reset(new IFWL_ComboList(m_pOwnerApp, prop, this));
+  m_pListBox.reset(new IFWL_ComboList(m_pOwnerApp, std::move(prop), this));
   if ((m_pProperties->m_dwStyleExes & FWL_STYLEEXT_CMB_DropDown) && !m_pEdit) {
-    CFWL_WidgetImpProperties prop2;
-    m_pEdit.reset(new IFWL_ComboEdit(m_pOwnerApp, prop2, this));
+    m_pEdit.reset(new IFWL_ComboEdit(
+        m_pOwnerApp, pdfium::MakeUnique<CFWL_WidgetProperties>(), this));
     m_pEdit->SetOuter(this);
   }
   if (m_pEdit)
@@ -99,8 +99,8 @@ FWL_Error IFWL_ComboBox::ModifyStylesEx(uint32_t dwStylesExAdded,
   bool bAddDropDown = !!(dwStylesExAdded & FWL_STYLEEXT_CMB_DropDown);
   bool bRemoveDropDown = !!(dwStylesExRemoved & FWL_STYLEEXT_CMB_DropDown);
   if (bAddDropDown && !m_pEdit) {
-    CFWL_WidgetImpProperties prop;
-    m_pEdit.reset(new IFWL_ComboEdit(m_pOwnerApp, prop, nullptr));
+    m_pEdit.reset(new IFWL_ComboEdit(
+        m_pOwnerApp, pdfium::MakeUnique<CFWL_WidgetProperties>(), nullptr));
     m_pEdit->SetOuter(this);
     m_pEdit->SetParent(this);
   } else if (bRemoveDropDown && m_pEdit) {
@@ -693,13 +693,13 @@ void IFWL_ComboBox::InitProxyForm() {
   if (!m_pListBox)
     return;
 
-  CFWL_WidgetImpProperties propForm;
-  propForm.m_pOwner = this;
-  propForm.m_dwStyles = FWL_WGTSTYLE_Popup;
-  propForm.m_dwStates = FWL_WGTSTATE_Invisible;
+  auto prop = pdfium::MakeUnique<CFWL_WidgetProperties>();
+  prop->m_pOwner = this;
+  prop->m_dwStyles = FWL_WGTSTYLE_Popup;
+  prop->m_dwStates = FWL_WGTSTATE_Invisible;
 
-  m_pComboBoxProxy =
-      new IFWL_ComboBoxProxy(this, m_pOwnerApp, propForm, m_pListBox.get());
+  m_pComboBoxProxy = new IFWL_ComboBoxProxy(this, m_pOwnerApp, std::move(prop),
+                                            m_pListBox.get());
   m_pListBox->SetParent(m_pComboBoxProxy);
 }
 
@@ -707,23 +707,23 @@ void IFWL_ComboBox::DisForm_InitComboList() {
   if (m_pListBox)
     return;
 
-  CFWL_WidgetImpProperties prop;
-  prop.m_pParent = this;
-  prop.m_dwStyles = FWL_WGTSTYLE_Border | FWL_WGTSTYLE_VScroll;
-  prop.m_dwStates = FWL_WGTSTATE_Invisible;
-  prop.m_pDataProvider = m_pProperties->m_pDataProvider;
-  prop.m_pThemeProvider = m_pProperties->m_pThemeProvider;
-  m_pListBox.reset(new IFWL_ComboList(m_pOwnerApp, prop, this));
+  auto prop =
+      pdfium::MakeUnique<CFWL_WidgetProperties>(m_pProperties->m_pDataProvider);
+  prop->m_pParent = this;
+  prop->m_dwStyles = FWL_WGTSTYLE_Border | FWL_WGTSTYLE_VScroll;
+  prop->m_dwStates = FWL_WGTSTATE_Invisible;
+  prop->m_pThemeProvider = m_pProperties->m_pThemeProvider;
+  m_pListBox.reset(new IFWL_ComboList(m_pOwnerApp, std::move(prop), this));
 }
 
 void IFWL_ComboBox::DisForm_InitComboEdit() {
   if (m_pEdit)
     return;
 
-  CFWL_WidgetImpProperties prop;
-  prop.m_pParent = this;
-  prop.m_pThemeProvider = m_pProperties->m_pThemeProvider;
-  m_pEdit.reset(new IFWL_ComboEdit(m_pOwnerApp, prop, this));
+  auto prop = pdfium::MakeUnique<CFWL_WidgetProperties>();
+  prop->m_pParent = this;
+  prop->m_pThemeProvider = m_pProperties->m_pThemeProvider;
+  m_pEdit.reset(new IFWL_ComboEdit(m_pOwnerApp, std::move(prop), this));
   m_pEdit->SetOuter(this);
 }
 

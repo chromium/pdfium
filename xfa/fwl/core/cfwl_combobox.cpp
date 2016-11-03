@@ -32,7 +32,7 @@ void CFWL_ComboBox::Initialize() {
   ASSERT(!m_pIface);
 
   m_pIface = pdfium::MakeUnique<IFWL_ComboBox>(
-      m_pApp, m_pProperties->MakeWidgetImpProperties(&m_comboBoxData));
+      m_pApp, pdfium::MakeUnique<CFWL_WidgetProperties>(&m_comboBoxData));
 
   CFWL_Widget::Initialize();
 }

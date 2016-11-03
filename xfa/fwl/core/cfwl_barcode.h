@@ -12,7 +12,6 @@
 #include "xfa/fwl/core/ifwl_barcode.h"
 
 class CFWL_Widget;
-class CFWL_WidgetProperties;
 
 class CFWL_Barcode : public CFWL_Edit {
  public:

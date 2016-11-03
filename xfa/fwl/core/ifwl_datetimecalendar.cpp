@@ -13,9 +13,9 @@
 
 IFWL_DateTimeCalendar::IFWL_DateTimeCalendar(
     const IFWL_App* app,
-    const CFWL_WidgetImpProperties& properties,
+    std::unique_ptr<CFWL_WidgetProperties> properties,
     IFWL_Widget* pOuter)
-    : IFWL_MonthCalendar(app, properties, pOuter), m_bFlag(false) {}
+    : IFWL_MonthCalendar(app, std::move(properties), pOuter), m_bFlag(false) {}
 
 void IFWL_DateTimeCalendar::OnProcessMessage(CFWL_Message* pMessage) {
   CFWL_MessageType dwCode = pMessage->GetClassID();

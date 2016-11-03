@@ -8,7 +8,7 @@
 #define XFA_FWL_CORE_IFWL_DATETIMEEDIT_H_
 
 #include "xfa/fwl/core/cfwl_message.h"
-#include "xfa/fwl/core/cfwl_widgetimpproperties.h"
+#include "xfa/fwl/core/cfwl_widgetproperties.h"
 #include "xfa/fwl/core/fwl_error.h"
 #include "xfa/fwl/core/ifwl_edit.h"
 #include "xfa/fwl/core/ifwl_widget.h"
@@ -16,7 +16,7 @@
 class IFWL_DateTimeEdit : public IFWL_Edit {
  public:
   IFWL_DateTimeEdit(const IFWL_App* app,
-                    const CFWL_WidgetImpProperties& properties,
+                    std::unique_ptr<CFWL_WidgetProperties> properties,
                     IFWL_Widget* pOuter);
 
   // IFWL_Edit.

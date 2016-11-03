@@ -8,30 +8,46 @@
 #define XFA_FWL_CORE_CFWL_WIDGETPROPERTIES_H_
 
 #include "core/fxcrt/fx_coordinates.h"
-#include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
-#include "xfa/fwl/core/cfwl_widgetimpproperties.h"
+#include "xfa/fwl/core/fwl_widgetdef.h"
 
-class CFWL_Widget;
 class IFWL_DataProvider;
+class IFWL_ThemeProvider;
+class IFWL_Widget;
 
 class CFWL_WidgetProperties {
  public:
   CFWL_WidgetProperties();
+  CFWL_WidgetProperties(IFWL_DataProvider* dataProvider);
   ~CFWL_WidgetProperties();
-  CFWL_WidgetProperties(const CFWL_WidgetProperties& other);
 
-  CFWL_WidgetImpProperties MakeWidgetImpProperties(
-      IFWL_DataProvider* pDataProvider) const;
-
-  CFX_WideString m_wsWindowclass;
   CFX_Matrix m_ctmOnParent;
   CFX_RectF m_rtWidget;
   uint32_t m_dwStyles;
   uint32_t m_dwStyleExes;
   uint32_t m_dwStates;
-  CFWL_Widget* m_pParent;
-  CFWL_Widget* m_pOwner;
+  IFWL_ThemeProvider* m_pThemeProvider;
+  IFWL_DataProvider* m_pDataProvider;
+  IFWL_Widget* m_pParent;
+  IFWL_Widget* m_pOwner;
 };
+
+inline CFWL_WidgetProperties::CFWL_WidgetProperties()
+    : CFWL_WidgetProperties(nullptr) {}
+
+inline CFWL_WidgetProperties::CFWL_WidgetProperties(
+    IFWL_DataProvider* dataProvider)
+    : m_dwStyles(FWL_WGTSTYLE_Child),
+      m_dwStyleExes(0),
+      m_dwStates(0),
+      m_pThemeProvider(nullptr),
+      m_pDataProvider(dataProvider),
+      m_pParent(nullptr),
+      m_pOwner(nullptr) {
+  m_ctmOnParent.SetIdentity();
+  m_rtWidget.Set(0, 0, 0, 0);
+}
+
+inline CFWL_WidgetProperties::~CFWL_WidgetProperties() {}
 
 #endif  // XFA_FWL_CORE_CFWL_WIDGETPROPERTIES_H_

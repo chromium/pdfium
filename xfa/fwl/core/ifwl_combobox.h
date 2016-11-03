@@ -11,7 +11,7 @@
 #include "xfa/fwl/core/ifwl_listbox.h"
 #include "xfa/fxgraphics/cfx_graphics.h"
 
-class CFWL_WidgetImpProperties;
+class CFWL_WidgetProperties;
 class IFWL_ComboBox;
 class IFWL_ComboBoxProxy;
 class IFWL_ComboEdit;
@@ -80,7 +80,7 @@ class IFWL_ComboBoxDP : public IFWL_ListBoxDP {
 class IFWL_ComboBox : public IFWL_Widget {
  public:
   explicit IFWL_ComboBox(const IFWL_App* app,
-                         const CFWL_WidgetImpProperties& properties);
+                         std::unique_ptr<CFWL_WidgetProperties> properties);
   ~IFWL_ComboBox() override;
 
   // IFWL_Widget

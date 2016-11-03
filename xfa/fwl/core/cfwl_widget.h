@@ -10,7 +10,6 @@
 #include <memory>
 
 #include "xfa/fwl/core/cfwl_event.h"
-#include "xfa/fwl/core/cfwl_widgetproperties.h"
 #include "xfa/fwl/core/ifwl_widget.h"
 
 class CFWL_Event;
@@ -60,7 +59,6 @@ class CFWL_Widget {
   const IFWL_App* m_pApp;
   std::unique_ptr<IFWL_Widget> m_pIface;
   CFWL_WidgetMgr* const m_pWidgetMgr;
-  std::unique_ptr<CFWL_WidgetProperties> m_pProperties;
 };
 
 #endif  // XFA_FWL_CORE_CFWL_WIDGET_H_

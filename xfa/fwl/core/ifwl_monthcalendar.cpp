@@ -120,9 +120,9 @@ CFX_WideString* GetCapacityForMonth(IFWL_ThemeProvider* pTheme,
 
 IFWL_MonthCalendar::IFWL_MonthCalendar(
     const IFWL_App* app,
-    const CFWL_WidgetImpProperties& properties,
+    std::unique_ptr<CFWL_WidgetProperties> properties,
     IFWL_Widget* pOuter)
-    : IFWL_Widget(app, properties, pOuter),
+    : IFWL_Widget(app, std::move(properties), pOuter),
       m_bInit(false),
       m_pDateTime(new CFX_DateTime),
       m_iCurYear(2011),

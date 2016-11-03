@@ -7,14 +7,14 @@
 #ifndef XFA_FWL_CORE_IFWL_COMBOLIST_H_
 #define XFA_FWL_CORE_IFWL_COMBOLIST_H_
 
-#include "xfa/fwl/core/cfwl_widgetimpproperties.h"
+#include "xfa/fwl/core/cfwl_widgetproperties.h"
 #include "xfa/fwl/core/ifwl_listbox.h"
 #include "xfa/fwl/core/ifwl_widget.h"
 
 class IFWL_ComboList : public IFWL_ListBox {
  public:
   IFWL_ComboList(const IFWL_App* app,
-                 const CFWL_WidgetImpProperties& properties,
+                 std::unique_ptr<CFWL_WidgetProperties> properties,
                  IFWL_Widget* pOuter);
 
   // IFWL_ListBox.

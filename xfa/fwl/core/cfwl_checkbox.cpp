@@ -27,7 +27,7 @@ void CFWL_CheckBox::Initialize() {
   ASSERT(!m_pIface);
 
   m_pIface = pdfium::MakeUnique<IFWL_CheckBox>(
-      m_pApp, m_pProperties->MakeWidgetImpProperties(&m_checkboxData));
+      m_pApp, pdfium::MakeUnique<CFWL_WidgetProperties>(&m_checkboxData));
 
   CFWL_Widget::Initialize();
 }

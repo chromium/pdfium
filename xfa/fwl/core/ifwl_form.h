@@ -10,7 +10,7 @@
 #include <memory>
 
 #include "core/fxcrt/fx_system.h"
-#include "xfa/fwl/core/cfwl_widgetimpproperties.h"
+#include "xfa/fwl/core/cfwl_widgetproperties.h"
 #include "xfa/fwl/core/ifwl_dataprovider.h"
 #include "xfa/fwl/core/ifwl_widget.h"
 
@@ -72,7 +72,6 @@ class CFWL_MsgMouse;
 class CFWL_MsgClose;
 class CFWL_MsgWindowMove;
 class CFWL_NoteLoop;
-class CFWL_WidgetImpProperties;
 class IFWL_Widget;
 class IFWL_ThemeProvider;
 class CFWL_SysBtn;
@@ -85,7 +84,7 @@ class IFWL_FormDP : public IFWL_DataProvider {
 class IFWL_Form : public IFWL_Widget {
  public:
   IFWL_Form(const IFWL_App* app,
-            const CFWL_WidgetImpProperties& properties,
+            std::unique_ptr<CFWL_WidgetProperties> properties,
             IFWL_Widget* pOuter);
   ~IFWL_Form() override;
 

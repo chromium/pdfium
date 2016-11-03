@@ -31,7 +31,7 @@ void CFWL_Edit::Initialize() {
   ASSERT(!m_pIface);
 
   m_pIface = pdfium::MakeUnique<IFWL_Edit>(
-      m_pApp, m_pProperties->MakeWidgetImpProperties(nullptr), nullptr);
+      m_pApp, pdfium::MakeUnique<CFWL_WidgetProperties>(), nullptr);
 
   CFWL_Widget::Initialize();
 }

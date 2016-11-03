@@ -91,13 +91,12 @@ FWL_EVENT_DEF(CFWL_EvtEdtGetSuggestWords,
               CFX_ByteString bsWord;
               std::vector<CFX_ByteString> bsArraySuggestWords;)
 
-class CFWL_WidgetImpProperties;
 class IFDE_TxtEdtDoRecord;
 class IFWL_Edit;
 class CFWL_MsgActivate;
 class CFWL_MsgDeactivate;
 class CFWL_MsgMouse;
-class CFWL_WidgetImpProperties;
+class CFWL_WidgetProperties;
 class IFWL_Caret;
 
 class IFWL_EditDP : public IFWL_DataProvider {};
@@ -105,7 +104,7 @@ class IFWL_EditDP : public IFWL_DataProvider {};
 class IFWL_Edit : public IFWL_Widget {
  public:
   IFWL_Edit(const IFWL_App* app,
-            const CFWL_WidgetImpProperties& properties,
+            std::unique_ptr<CFWL_WidgetProperties> properties,
             IFWL_Widget* pOuter);
   ~IFWL_Edit() override;
 

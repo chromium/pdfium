@@ -12,7 +12,6 @@
 #include "xfa/fwl/core/cfwl_widget.h"
 #include "xfa/fwl/core/ifwl_edit.h"
 
-class CFWL_WidgetProperties;
 class IFDE_TxtEdtDoRecord;
 
 class CFWL_Edit : public CFWL_Widget {

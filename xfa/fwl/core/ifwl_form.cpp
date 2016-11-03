@@ -38,9 +38,9 @@ RestoreInfo::RestoreInfo() {}
 RestoreInfo::~RestoreInfo() {}
 
 IFWL_Form::IFWL_Form(const IFWL_App* app,
-                     const CFWL_WidgetImpProperties& properties,
+                     std::unique_ptr<CFWL_WidgetProperties> properties,
                      IFWL_Widget* pOuter)
-    : IFWL_Widget(app, properties, pOuter),
+    : IFWL_Widget(app, std::move(properties), pOuter),
       m_pCloseBox(nullptr),
       m_pMinBox(nullptr),
       m_pMaxBox(nullptr),

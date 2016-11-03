@@ -14,9 +14,10 @@
 #include "xfa/fwl/core/ifwl_themeprovider.h"
 
 IFWL_Barcode::IFWL_Barcode(const IFWL_App* app,
-                           const CFWL_WidgetImpProperties& properties)
-    : IFWL_Edit(app, properties, nullptr), m_dwStatus(0), m_type(BC_UNKNOWN) {
-}
+                           std::unique_ptr<CFWL_WidgetProperties> properties)
+    : IFWL_Edit(app, std::move(properties), nullptr),
+      m_dwStatus(0),
+      m_type(BC_UNKNOWN) {}
 
 IFWL_Barcode::~IFWL_Barcode() {}
 

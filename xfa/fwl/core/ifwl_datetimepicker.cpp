@@ -26,8 +26,8 @@ const int kDateTimePickerHeight = 20;
 
 IFWL_DateTimePicker::IFWL_DateTimePicker(
     const IFWL_App* app,
-    const CFWL_WidgetImpProperties& properties)
-    : IFWL_Widget(app, properties, nullptr),
+    std::unique_ptr<CFWL_WidgetProperties> properties)
+    : IFWL_Widget(app, std::move(properties), nullptr),
       m_iBtnState(1),
       m_iYear(-1),
       m_iMonth(-1),
@@ -36,23 +36,26 @@ IFWL_DateTimePicker::IFWL_DateTimePicker(
   m_rtBtn.Set(0, 0, 0, 0);
 
   m_pProperties->m_dwStyleExes = FWL_STYLEEXT_DTP_ShortDateFormat;
-  CFWL_WidgetImpProperties propMonth;
-  propMonth.m_dwStyles = FWL_WGTSTYLE_Popup | FWL_WGTSTYLE_Border;
-  propMonth.m_dwStates = FWL_WGTSTATE_Invisible;
-  propMonth.m_pDataProvider = &m_MonthCalendarDP;
-  propMonth.m_pParent = this;
-  propMonth.m_pThemeProvider = m_pProperties->m_pThemeProvider;
 
-  m_pMonthCal.reset(new IFWL_DateTimeCalendar(m_pOwnerApp, propMonth, this));
+  auto monthProp =
+      pdfium::MakeUnique<CFWL_WidgetProperties>(&m_MonthCalendarDP);
+  monthProp->m_dwStyles = FWL_WGTSTYLE_Popup | FWL_WGTSTYLE_Border;
+  monthProp->m_dwStates = FWL_WGTSTATE_Invisible;
+  monthProp->m_pParent = this;
+  monthProp->m_pThemeProvider = m_pProperties->m_pThemeProvider;
+  m_pMonthCal.reset(
+      new IFWL_DateTimeCalendar(m_pOwnerApp, std::move(monthProp), this));
+
   CFX_RectF rtMonthCal;
   m_pMonthCal->GetWidgetRect(rtMonthCal, true);
   rtMonthCal.Set(0, 0, rtMonthCal.width, rtMonthCal.height);
   m_pMonthCal->SetWidgetRect(rtMonthCal);
-  CFWL_WidgetImpProperties propEdit;
-  propEdit.m_pParent = this;
-  propEdit.m_pThemeProvider = m_pProperties->m_pThemeProvider;
 
-  m_pEdit.reset(new IFWL_DateTimeEdit(m_pOwnerApp, propEdit, this));
+  auto editProp = pdfium::MakeUnique<CFWL_WidgetProperties>();
+  editProp->m_pParent = this;
+  editProp->m_pThemeProvider = m_pProperties->m_pThemeProvider;
+
+  m_pEdit.reset(new IFWL_DateTimeEdit(m_pOwnerApp, std::move(editProp), this));
   RegisterEventTarget(m_pMonthCal.get());
   RegisterEventTarget(m_pEdit.get());
 }
@@ -433,12 +436,14 @@ void IFWL_DateTimePicker::InitProxyForm() {
     return;
   if (!m_pMonthCal)
     return;
-  CFWL_WidgetImpProperties propForm;
-  propForm.m_dwStyles = FWL_WGTSTYLE_Popup;
-  propForm.m_dwStates = FWL_WGTSTATE_Invisible;
-  propForm.m_pOwner = this;
 
-  m_pForm.reset(new IFWL_FormProxy(m_pOwnerApp, propForm, m_pMonthCal.get()));
+  auto prop = pdfium::MakeUnique<CFWL_WidgetProperties>();
+  prop->m_dwStyles = FWL_WGTSTYLE_Popup;
+  prop->m_dwStates = FWL_WGTSTATE_Invisible;
+  prop->m_pOwner = this;
+
+  m_pForm.reset(
+      new IFWL_FormProxy(m_pOwnerApp, std::move(prop), m_pMonthCal.get()));
   m_pMonthCal->SetParent(m_pForm.get());
 }
 
@@ -456,18 +461,18 @@ FWL_Error IFWL_DateTimePicker::DisForm_Initialize() {
 }
 
 void IFWL_DateTimePicker::DisForm_InitDateTimeCalendar() {
-  if (m_pMonthCal) {
+  if (m_pMonthCal)
     return;
-  }
-  CFWL_WidgetImpProperties propMonth;
-  propMonth.m_dwStyles =
-      FWL_WGTSTYLE_Popup | FWL_WGTSTYLE_Border | FWL_WGTSTYLE_EdgeSunken;
-  propMonth.m_dwStates = FWL_WGTSTATE_Invisible;
-  propMonth.m_pParent = this;
-  propMonth.m_pDataProvider = &m_MonthCalendarDP;
-  propMonth.m_pThemeProvider = m_pProperties->m_pThemeProvider;
 
-  m_pMonthCal.reset(new IFWL_DateTimeCalendar(m_pOwnerApp, propMonth, this));
+  auto prop = pdfium::MakeUnique<CFWL_WidgetProperties>(&m_MonthCalendarDP);
+  prop->m_dwStyles =
+      FWL_WGTSTYLE_Popup | FWL_WGTSTYLE_Border | FWL_WGTSTYLE_EdgeSunken;
+  prop->m_dwStates = FWL_WGTSTATE_Invisible;
+  prop->m_pParent = this;
+  prop->m_pThemeProvider = m_pProperties->m_pThemeProvider;
+
+  m_pMonthCal.reset(
+      new IFWL_DateTimeCalendar(m_pOwnerApp, std::move(prop), this));
   CFX_RectF rtMonthCal;
   m_pMonthCal->GetWidgetRect(rtMonthCal, true);
   rtMonthCal.Set(0, 0, rtMonthCal.width, rtMonthCal.height);
@@ -475,14 +480,14 @@ void IFWL_DateTimePicker::DisForm_InitDateTimeCalendar() {
 }
 
 void IFWL_DateTimePicker::DisForm_InitDateTimeEdit() {
-  if (m_pEdit) {
+  if (m_pEdit)
     return;
-  }
-  CFWL_WidgetImpProperties propEdit;
-  propEdit.m_pParent = this;
-  propEdit.m_pThemeProvider = m_pProperties->m_pThemeProvider;
 
-  m_pEdit.reset(new IFWL_DateTimeEdit(m_pOwnerApp, propEdit, this));
+  auto prop = pdfium::MakeUnique<CFWL_WidgetProperties>();
+  prop->m_pParent = this;
+  prop->m_pThemeProvider = m_pProperties->m_pThemeProvider;
+
+  m_pEdit.reset(new IFWL_DateTimeEdit(m_pOwnerApp, std::move(prop), this));
 }
 
 bool IFWL_DateTimePicker::DisForm_IsMonthCalendarShowed() {

@@ -53,9 +53,9 @@ void AddSquigglyPath(CFX_Path* pPathData,
 }  // namespace
 
 IFWL_Edit::IFWL_Edit(const IFWL_App* app,
-                     const CFWL_WidgetImpProperties& properties,
+                     std::unique_ptr<CFWL_WidgetProperties> properties,
                      IFWL_Widget* pOuter)
-    : IFWL_Widget(app, properties, pOuter),
+    : IFWL_Widget(app, std::move(properties), pOuter),
       m_fVAlignOffset(0.0f),
       m_fScrollOffsetX(0.0f),
       m_fScrollOffsetY(0.0f),
@@ -1449,13 +1449,14 @@ void IFWL_Edit::InitScrollBar(bool bVert) {
   if ((bVert && m_pVertScrollBar) || (!bVert && m_pHorzScrollBar)) {
     return;
   }
-  CFWL_WidgetImpProperties prop;
-  prop.m_dwStyleExes = bVert ? FWL_STYLEEXT_SCB_Vert : FWL_STYLEEXT_SCB_Horz;
-  prop.m_dwStates = FWL_WGTSTATE_Disabled | FWL_WGTSTATE_Invisible;
-  prop.m_pParent = this;
-  prop.m_pThemeProvider = m_pProperties->m_pThemeProvider;
 
-  IFWL_ScrollBar* sb = new IFWL_ScrollBar(m_pOwnerApp, prop, this);
+  auto prop = pdfium::MakeUnique<CFWL_WidgetProperties>();
+  prop->m_dwStyleExes = bVert ? FWL_STYLEEXT_SCB_Vert : FWL_STYLEEXT_SCB_Horz;
+  prop->m_dwStates = FWL_WGTSTATE_Disabled | FWL_WGTSTATE_Invisible;
+  prop->m_pParent = this;
+  prop->m_pThemeProvider = m_pProperties->m_pThemeProvider;
+
+  IFWL_ScrollBar* sb = new IFWL_ScrollBar(m_pOwnerApp, std::move(prop), this);
   if (bVert)
     m_pVertScrollBar.reset(sb);
   else
@@ -1554,8 +1555,8 @@ bool IFWL_Edit::ValidateNumberChar(FX_WCHAR cNum) {
 void IFWL_Edit::InitCaret() {
   if (!m_pCaret) {
     if ((m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_InnerCaret)) {
-      CFWL_WidgetImpProperties prop;
-      m_pCaret.reset(new IFWL_Caret(m_pOwnerApp, prop, this));
+      m_pCaret.reset(new IFWL_Caret(
+          m_pOwnerApp, pdfium::MakeUnique<CFWL_WidgetProperties>(), this));
       m_pCaret->SetParent(this);
       m_pCaret->SetStates(m_pProperties->m_dwStates);
     }

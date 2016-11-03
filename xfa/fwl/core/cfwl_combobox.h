@@ -13,7 +13,6 @@
 #include "xfa/fwl/core/cfwl_widget.h"
 #include "xfa/fwl/core/ifwl_combobox.h"
 
-class CFWL_WidgetProperties;
 class IFWL_ComboBoxDP;
 class CFWL_ComboBoxDP;
 class CFWL_ComboBoxItem;

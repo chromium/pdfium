@@ -13,9 +13,9 @@
 IFWL_ComboBoxProxy::IFWL_ComboBoxProxy(
     IFWL_ComboBox* pComboBox,
     const IFWL_App* app,
-    const CFWL_WidgetImpProperties& properties,
+    std::unique_ptr<CFWL_WidgetProperties> properties,
     IFWL_Widget* pOuter)
-    : IFWL_FormProxy(app, properties, pOuter),
+    : IFWL_FormProxy(app, std::move(properties), pOuter),
       m_bLButtonDown(false),
       m_bLButtonUpSelf(false),
       m_pComboBox(pComboBox) {}

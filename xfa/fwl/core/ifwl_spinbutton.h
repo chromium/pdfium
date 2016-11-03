@@ -15,14 +15,14 @@
 #define FWL_STYLEEXE_SPB_Vert (1L << 0)
 
 class CFWL_MsgMouse;
-class CFWL_WidgetImpProperties;
+class CFWL_WidgetProperties;
 
 FWL_EVENT_DEF(CFWL_EvtSpbClick, CFWL_EventType::Click, bool m_bUp;)
 
 class IFWL_SpinButton : public IFWL_Widget {
  public:
   explicit IFWL_SpinButton(const IFWL_App* app,
-                           const CFWL_WidgetImpProperties& properties);
+                           std::unique_ptr<CFWL_WidgetProperties> properties);
   ~IFWL_SpinButton() override;
 
   // IFWL_Widget

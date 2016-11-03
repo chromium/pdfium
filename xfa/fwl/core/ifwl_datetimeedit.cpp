@@ -10,10 +10,11 @@
 #include "xfa/fwl/core/cfwl_widgetmgr.h"
 #include "xfa/fwl/core/ifwl_datetimepicker.h"
 
-IFWL_DateTimeEdit::IFWL_DateTimeEdit(const IFWL_App* app,
-                                     const CFWL_WidgetImpProperties& properties,
-                                     IFWL_Widget* pOuter)
-    : IFWL_Edit(app, properties, pOuter) {}
+IFWL_DateTimeEdit::IFWL_DateTimeEdit(
+    const IFWL_App* app,
+    std::unique_ptr<CFWL_WidgetProperties> properties,
+    IFWL_Widget* pOuter)
+    : IFWL_Edit(app, std::move(properties), pOuter) {}
 
 void IFWL_DateTimeEdit::OnProcessMessage(CFWL_Message* pMessage) {
   if (m_pWidgetMgr->IsFormDisabled()) {

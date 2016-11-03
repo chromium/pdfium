@@ -54,7 +54,7 @@ enum class FWL_Type {
 class CFWL_AppImp;
 class CFWL_MsgKey;
 class CFWL_Widget;
-class CFWL_WidgetImpProperties;
+class CFWL_WidgetProperties;
 class CFWL_WidgetMgr;
 class IFWL_App;
 class IFWL_DataProvider;
@@ -145,7 +145,7 @@ class IFWL_Widget : public IFWL_WidgetDelegate {
   friend class CFWL_WidgetImpDelegate;
 
   IFWL_Widget(const IFWL_App* app,
-              const CFWL_WidgetImpProperties& properties,
+              std::unique_ptr<CFWL_WidgetProperties> properties,
               IFWL_Widget* pOuter);
 
   bool IsEnabled() const;
@@ -215,7 +215,7 @@ class IFWL_Widget : public IFWL_WidgetDelegate {
 
   const IFWL_App* const m_pOwnerApp;
   CFWL_WidgetMgr* const m_pWidgetMgr;
-  std::unique_ptr<CFWL_WidgetImpProperties> m_pProperties;
+  std::unique_ptr<CFWL_WidgetProperties> m_pProperties;
   IFWL_Widget* m_pOuter;
   void* m_pLayoutItem;
   CFWL_Widget* m_pAssociate;

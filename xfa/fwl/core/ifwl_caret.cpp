@@ -8,15 +8,15 @@
 
 #include "third_party/base/ptr_util.h"
 #include "xfa/fwl/core/cfwl_themebackground.h"
-#include "xfa/fwl/core/cfwl_widgetimpproperties.h"
+#include "xfa/fwl/core/cfwl_widgetproperties.h"
 #include "xfa/fwl/core/fwl_noteimp.h"
 #include "xfa/fwl/core/ifwl_caret.h"
 #include "xfa/fwl/core/ifwl_themeprovider.h"
 
 IFWL_Caret::IFWL_Caret(const IFWL_App* app,
-                       const CFWL_WidgetImpProperties& properties,
+                       std::unique_ptr<CFWL_WidgetProperties> properties,
                        IFWL_Widget* pOuter)
-    : IFWL_Widget(app, properties, pOuter),
+    : IFWL_Widget(app, std::move(properties), pOuter),
       m_pTimer(new IFWL_Caret::Timer(this)),
       m_pTimerInfo(nullptr),
       m_dwElapse(400),

@@ -18,7 +18,7 @@ void CFWL_PushButton::Initialize() {
   ASSERT(!m_pIface);
 
   m_pIface = pdfium::MakeUnique<IFWL_PushButton>(
-      m_pApp, m_pProperties->MakeWidgetImpProperties(&m_buttonData));
+      m_pApp, pdfium::MakeUnique<CFWL_WidgetProperties>(&m_buttonData));
 
   CFWL_Widget::Initialize();
 }

@@ -27,7 +27,7 @@ void CFWL_ListBox::Initialize() {
   ASSERT(!m_pIface);
 
   m_pIface = pdfium::MakeUnique<IFWL_ListBox>(
-      m_pApp, m_pProperties->MakeWidgetImpProperties(&m_ListBoxDP), nullptr);
+      m_pApp, pdfium::MakeUnique<CFWL_WidgetProperties>(&m_ListBoxDP), nullptr);
 
   CFWL_Widget::Initialize();
 }

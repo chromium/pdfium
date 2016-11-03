@@ -26,8 +26,8 @@ const int kCaptionMargin = 5;
 }  // namespace
 
 IFWL_CheckBox::IFWL_CheckBox(const IFWL_App* app,
-                             const CFWL_WidgetImpProperties& properties)
-    : IFWL_Widget(app, properties, nullptr),
+                             std::unique_ptr<CFWL_WidgetProperties> properties)
+    : IFWL_Widget(app, std::move(properties), nullptr),
       m_dwTTOStyles(FDE_TTOSTYLE_SingleLine),
       m_iTTOAlign(FDE_TTOALIGNMENT_Center),
       m_bBtnDown(false) {

@@ -9,7 +9,7 @@
 #include "third_party/base/ptr_util.h"
 #include "xfa/fwl/core/cfwl_message.h"
 #include "xfa/fwl/core/cfwl_themebackground.h"
-#include "xfa/fwl/core/cfwl_widgetimpproperties.h"
+#include "xfa/fwl/core/cfwl_widgetproperties.h"
 #include "xfa/fwl/core/fwl_noteimp.h"
 #include "xfa/fwl/core/ifwl_spinbutton.h"
 #include "xfa/fwl/core/ifwl_themeprovider.h"
@@ -24,9 +24,10 @@ const int kElapseTime = 200;
 
 }  // namespace
 
-IFWL_SpinButton::IFWL_SpinButton(const IFWL_App* app,
-                                 const CFWL_WidgetImpProperties& properties)
-    : IFWL_Widget(app, properties, nullptr),
+IFWL_SpinButton::IFWL_SpinButton(
+    const IFWL_App* app,
+    std::unique_ptr<CFWL_WidgetProperties> properties)
+    : IFWL_Widget(app, std::move(properties), nullptr),
       m_dwUpState(CFWL_PartState_Normal),
       m_dwDnState(CFWL_PartState_Normal),
       m_iButtonIndex(0),

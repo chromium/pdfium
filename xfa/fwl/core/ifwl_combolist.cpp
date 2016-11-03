@@ -10,10 +10,11 @@
 #include "xfa/fwl/core/ifwl_combobox.h"
 #include "xfa/fwl/core/ifwl_comboedit.h"
 
-IFWL_ComboList::IFWL_ComboList(const IFWL_App* app,
-                               const CFWL_WidgetImpProperties& properties,
-                               IFWL_Widget* pOuter)
-    : IFWL_ListBox(app, properties, pOuter), m_bNotifyOwner(true) {
+IFWL_ComboList::IFWL_ComboList(
+    const IFWL_App* app,
+    std::unique_ptr<CFWL_WidgetProperties> properties,
+    IFWL_Widget* pOuter)
+    : IFWL_ListBox(app, std::move(properties), pOuter), m_bNotifyOwner(true) {
   ASSERT(pOuter);
 }
 

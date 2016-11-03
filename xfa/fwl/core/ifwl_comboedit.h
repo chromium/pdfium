@@ -7,7 +7,7 @@
 #ifndef XFA_FWL_CORE_IFWL_COMBOEDIT_H_
 #define XFA_FWL_CORE_IFWL_COMBOEDIT_H_
 
-#include "xfa/fwl/core/cfwl_widgetimpproperties.h"
+#include "xfa/fwl/core/cfwl_widgetproperties.h"
 #include "xfa/fwl/core/ifwl_edit.h"
 #include "xfa/fwl/core/ifwl_widget.h"
 
@@ -16,7 +16,7 @@ class IFWL_ComboBox;
 class IFWL_ComboEdit : public IFWL_Edit {
  public:
   IFWL_ComboEdit(const IFWL_App* app,
-                 const CFWL_WidgetImpProperties& properties,
+                 std::unique_ptr<CFWL_WidgetProperties> properties,
                  IFWL_Widget* pOuter);
 
   // IFWL_Edit.

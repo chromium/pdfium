@@ -9,11 +9,11 @@
 #include "third_party/base/ptr_util.h"
 #include "xfa/fwl/core/fwl_noteimp.h"
 
-IFWL_FormProxy::IFWL_FormProxy(const IFWL_App* app,
-                               const CFWL_WidgetImpProperties& properties,
-                               IFWL_Widget* pOuter)
-    : IFWL_Form(app, properties, pOuter) {
-}
+IFWL_FormProxy::IFWL_FormProxy(
+    const IFWL_App* app,
+    std::unique_ptr<CFWL_WidgetProperties> properties,
+    IFWL_Widget* pOuter)
+    : IFWL_Form(app, std::move(properties), pOuter) {}
 
 IFWL_FormProxy::~IFWL_FormProxy() {}
 

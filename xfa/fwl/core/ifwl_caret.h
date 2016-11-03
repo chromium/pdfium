@@ -13,7 +13,7 @@
 #include "xfa/fwl/core/ifwl_widget.h"
 #include "xfa/fxgraphics/cfx_color.h"
 
-class CFWL_WidgetImpProperties;
+class CFWL_WidgetProperties;
 class IFWL_Widget;
 
 #define FWL_STATE_CAT_HightLight 1
@@ -21,7 +21,7 @@ class IFWL_Widget;
 class IFWL_Caret : public IFWL_Widget {
  public:
   IFWL_Caret(const IFWL_App* app,
-             const CFWL_WidgetImpProperties& properties,
+             std::unique_ptr<CFWL_WidgetProperties> properties,
              IFWL_Widget* pOuter);
   ~IFWL_Caret() override;
 
