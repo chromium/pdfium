@@ -36,11 +36,11 @@ void FXJSE_Initialize() {
   if (!CFXJSE_IsolateTracker::g_pInstance)
     CFXJSE_IsolateTracker::g_pInstance = new CFXJSE_IsolateTracker;
 
-  static FX_BOOL bV8Initialized = FALSE;
+  static bool bV8Initialized = false;
   if (bV8Initialized)
     return;
 
-  bV8Initialized = TRUE;
+  bV8Initialized = true;
   atexit(KillV8);
 }
 

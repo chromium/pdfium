@@ -18,7 +18,7 @@ class CFXJSE_Class {
  public:
   static CFXJSE_Class* Create(CFXJSE_Context* pContext,
                               const FXJSE_CLASS_DESCRIPTOR* lpClassDefintion,
-                              FX_BOOL bIsJSGlobal = FALSE);
+                              bool bIsJSGlobal = false);
   static CFXJSE_Class* GetClassFromContext(CFXJSE_Context* pContext,
                                            const CFX_ByteStringC& szName);
   static void SetUpNamedPropHandler(

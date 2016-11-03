@@ -17,7 +17,7 @@ namespace {
 
 CFDE_XMLNode* XFA_FDEExtension_GetDocumentNode(
     CFDE_XMLDoc* pXMLDoc,
-    FX_BOOL bVerifyWellFormness = FALSE) {
+    bool bVerifyWellFormness = false) {
   if (!pXMLDoc) {
     return nullptr;
   }

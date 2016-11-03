@@ -24,7 +24,7 @@ std::unique_ptr<CFXJSE_Value> CFXJSE_Arguments::GetValue(int32_t index) const {
   return lpArgValue;
 }
 
-FX_BOOL CFXJSE_Arguments::GetBoolean(int32_t index) const {
+bool CFXJSE_Arguments::GetBoolean(int32_t index) const {
   return (*m_pInfo)[index]->BooleanValue();
 }
 

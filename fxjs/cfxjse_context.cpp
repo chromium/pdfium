@@ -156,7 +156,7 @@ CFXJSE_Context* CFXJSE_Context::Create(
   CFXJSE_Class* lpGlobalClassObj = nullptr;
   v8::Local<v8::ObjectTemplate> hObjectTemplate;
   if (lpGlobalClass) {
-    lpGlobalClassObj = CFXJSE_Class::Create(pContext, lpGlobalClass, TRUE);
+    lpGlobalClassObj = CFXJSE_Class::Create(pContext, lpGlobalClass, true);
     ASSERT(lpGlobalClassObj);
     v8::Local<v8::FunctionTemplate> hFunctionTemplate =
         v8::Local<v8::FunctionTemplate>::New(pIsolate,
@@ -202,9 +202,9 @@ void CFXJSE_Context::EnableCompatibleMode() {
   ExecuteScript(szCompatibleModeScript, nullptr, nullptr);
 }
 
-FX_BOOL CFXJSE_Context::ExecuteScript(const FX_CHAR* szScript,
-                                      CFXJSE_Value* lpRetValue,
-                                      CFXJSE_Value* lpNewThisObject) {
+bool CFXJSE_Context::ExecuteScript(const FX_CHAR* szScript,
+                                   CFXJSE_Value* lpRetValue,
+                                   CFXJSE_Value* lpNewThisObject) {
   CFXJSE_ScopeUtil_IsolateHandleContext scope(this);
   v8::TryCatch trycatch(m_pIsolate);
   v8::Local<v8::String> hScriptString =
@@ -214,42 +214,39 @@ FX_BOOL CFXJSE_Context::ExecuteScript(const FX_CHAR* szScript,
     if (!trycatch.HasCaught()) {
       v8::Local<v8::Value> hValue = hScript->Run();
       if (!trycatch.HasCaught()) {
-        if (lpRetValue) {
+        if (lpRetValue)
           lpRetValue->m_hValue.Reset(m_pIsolate, hValue);
-        }
-        return TRUE;
+        return true;
       }
     }
     if (lpRetValue) {
       lpRetValue->m_hValue.Reset(m_pIsolate,
                                  FXJSE_CreateReturnValue(m_pIsolate, trycatch));
     }
-    return FALSE;
-  } else {
-    v8::Local<v8::Value> hNewThis =
-        v8::Local<v8::Value>::New(m_pIsolate, lpNewThisObject->m_hValue);
-    ASSERT(!hNewThis.IsEmpty());
-    v8::Local<v8::Script> hWrapper =
-        v8::Script::Compile(v8::String::NewFromUtf8(
-            m_pIsolate, "(function () { return eval(arguments[0]); })"));
-    v8::Local<v8::Value> hWrapperValue = hWrapper->Run();
-    ASSERT(hWrapperValue->IsFunction());
-    v8::Local<v8::Function> hWrapperFn = hWrapperValue.As<v8::Function>();
-    if (!trycatch.HasCaught()) {
-      v8::Local<v8::Value> rgArgs[] = {hScriptString};
-      v8::Local<v8::Value> hValue =
-          hWrapperFn->Call(hNewThis.As<v8::Object>(), 1, rgArgs);
-      if (!trycatch.HasCaught()) {
-        if (lpRetValue) {
-          lpRetValue->m_hValue.Reset(m_pIsolate, hValue);
-        }
-        return TRUE;
-      }
-    }
-    if (lpRetValue) {
-      lpRetValue->m_hValue.Reset(m_pIsolate,
-                                 FXJSE_CreateReturnValue(m_pIsolate, trycatch));
-    }
-    return FALSE;
+    return false;
   }
+
+  v8::Local<v8::Value> hNewThis =
+      v8::Local<v8::Value>::New(m_pIsolate, lpNewThisObject->m_hValue);
+  ASSERT(!hNewThis.IsEmpty());
+  v8::Local<v8::Script> hWrapper = v8::Script::Compile(v8::String::NewFromUtf8(
+      m_pIsolate, "(function () { return eval(arguments[0]); })"));
+  v8::Local<v8::Value> hWrapperValue = hWrapper->Run();
+  ASSERT(hWrapperValue->IsFunction());
+  v8::Local<v8::Function> hWrapperFn = hWrapperValue.As<v8::Function>();
+  if (!trycatch.HasCaught()) {
+    v8::Local<v8::Value> rgArgs[] = {hScriptString};
+    v8::Local<v8::Value> hValue =
+        hWrapperFn->Call(hNewThis.As<v8::Object>(), 1, rgArgs);
+    if (!trycatch.HasCaught()) {
+      if (lpRetValue)
+        lpRetValue->m_hValue.Reset(m_pIsolate, hValue);
+      return true;
+    }
+  }
+  if (lpRetValue) {
+    lpRetValue->m_hValue.Reset(m_pIsolate,
+                               FXJSE_CreateReturnValue(m_pIsolate, trycatch));
+  }
+  return false;
 }

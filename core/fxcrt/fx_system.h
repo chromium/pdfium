@@ -65,13 +65,6 @@
 
 #ifdef __cplusplus
 extern "C" {
-typedef bool FX_BOOL;  // Deprecated.
-#ifndef TRUE
-#define TRUE true
-#endif
-#ifndef FALSE
-#define FALSE false
-#endif
 #endif  // __cplusplus
 
 typedef void* FX_POSITION;  // Keep until fxcrt containers gone
@@ -89,11 +82,6 @@ typedef wchar_t FX_WCHAR;   // Keep, maybe bad platform wchars.
 // allow -1 as a placeholder for "unknown".
 // TODO(palmer): it should be a |size_t|, or at least unsigned.
 typedef int FX_STRSIZE;
-
-#ifdef __cplusplus
-static_assert(TRUE == true, "true_needs_to_be_true");
-static_assert(FALSE == false, "false_needs_to_be_false");
-#endif
 
 #ifndef ASSERT
 #ifndef NDEBUG

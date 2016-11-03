@@ -28,9 +28,9 @@ typedef void (*FXJSE_PropAccessor)(CFXJSE_Value* pObject,
                                    CFXJSE_Value* pValue);
 typedef int32_t (*FXJSE_PropTypeGetter)(CFXJSE_Value* pObject,
                                         const CFX_ByteStringC& szPropName,
-                                        FX_BOOL bQueryIn);
-typedef FX_BOOL (*FXJSE_PropDeleter)(CFXJSE_Value* pObject,
-                                     const CFX_ByteStringC& szPropName);
+                                        bool bQueryIn);
+typedef bool (*FXJSE_PropDeleter)(CFXJSE_Value* pObject,
+                                  const CFX_ByteStringC& szPropName);
 
 enum FXJSE_ClassPropTypes {
   FXJSE_ClassPropType_None,
