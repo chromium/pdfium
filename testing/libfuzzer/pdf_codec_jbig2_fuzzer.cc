@@ -33,7 +33,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
       new CPDF_Stream);
   stream->AsStream()->SetData(data, size);
   CPDF_StreamAcc src_stream;
-  src_stream.LoadAllData(stream->AsStream(), TRUE);
+  src_stream.LoadAllData(stream->AsStream(), true);
 
   CCodec_Jbig2Module module;
   CCodec_Jbig2Context jbig2_context;
