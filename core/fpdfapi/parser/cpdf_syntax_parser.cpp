@@ -26,10 +26,7 @@
 
 namespace {
 
-struct SearchTagRecord {
-  CFX_ByteStringC m_bsTag;
-  FX_STRSIZE m_Offset;
-};
+enum class ReadStatus { Normal, Backslash, Octal, FinishOctal, CarriageReturn };
 
 }  // namespace
 
@@ -57,30 +54,33 @@ bool CPDF_SyntaxParser::GetCharAt(FX_FILESIZE pos, uint8_t& ch) {
   return GetNextChar(ch);
 }
 
+bool CPDF_SyntaxParser::ReadChar(FX_FILESIZE read_pos, uint32_t read_size) {
+  if (static_cast<FX_FILESIZE>(read_pos + read_size) > m_FileLen) {
+    if (m_FileLen < static_cast<FX_FILESIZE>(read_size)) {
+      read_pos = 0;
+      read_size = static_cast<uint32_t>(m_FileLen);
+    } else {
+      read_pos = m_FileLen - read_size;
+    }
+  }
+  if (!m_pFileAccess->ReadBlock(m_pFileBuf, read_pos, read_size))
+    return false;
+
+  m_BufOffset = read_pos;
+  return true;
+}
+
 bool CPDF_SyntaxParser::GetNextChar(uint8_t& ch) {
   FX_FILESIZE pos = m_Pos + m_HeaderOffset;
   if (pos >= m_FileLen)
     return false;
 
-  if (m_BufOffset >= pos || (FX_FILESIZE)(m_BufOffset + m_BufSize) <= pos) {
+  if (CheckPosition(pos)) {
     FX_FILESIZE read_pos = pos;
     uint32_t read_size = m_BufSize;
-    if ((FX_FILESIZE)read_size > m_FileLen)
-      read_size = (uint32_t)m_FileLen;
-
-    if ((FX_FILESIZE)(read_pos + read_size) > m_FileLen) {
-      if (m_FileLen < (FX_FILESIZE)read_size) {
-        read_pos = 0;
-        read_size = (uint32_t)m_FileLen;
-      } else {
-        read_pos = m_FileLen - read_size;
-      }
-    }
-
-    if (!m_pFileAccess->ReadBlock(m_pFileBuf, read_pos, read_size))
+    read_size = std::min(read_size, static_cast<uint32_t>(m_FileLen));
+    if (!ReadChar(read_pos, read_size))
       return false;
-
-    m_BufOffset = read_pos;
   }
   ch = m_pFileBuf[pos - m_BufOffset];
   m_Pos++;
@@ -92,27 +92,15 @@ bool CPDF_SyntaxParser::GetCharAtBackward(FX_FILESIZE pos, uint8_t& ch) {
   if (pos >= m_FileLen)
     return false;
 
-  if (m_BufOffset >= pos || (FX_FILESIZE)(m_BufOffset + m_BufSize) <= pos) {
+  if (CheckPosition(pos)) {
     FX_FILESIZE read_pos;
-    if (pos < (FX_FILESIZE)m_BufSize)
+    if (pos < static_cast<FX_FILESIZE>(m_BufSize))
       read_pos = 0;
     else
       read_pos = pos - m_BufSize + 1;
-
     uint32_t read_size = m_BufSize;
-    if ((FX_FILESIZE)(read_pos + read_size) > m_FileLen) {
-      if (m_FileLen < (FX_FILESIZE)read_size) {
-        read_pos = 0;
-        read_size = (uint32_t)m_FileLen;
-      } else {
-        read_pos = m_FileLen - read_size;
-      }
-    }
-
-    if (!m_pFileAccess->ReadBlock(m_pFileBuf, read_pos, read_size))
+    if (!ReadChar(read_pos, read_size))
       return false;
-
-    m_BufOffset = read_pos;
   }
   ch = m_pFileBuf[pos - m_BufOffset];
   return true;
@@ -215,30 +203,27 @@ CFX_ByteString CPDF_SyntaxParser::ReadString() {
 
   CFX_ByteTextBuf buf;
   int32_t parlevel = 0;
-  int32_t status = 0;
+  ReadStatus status = ReadStatus::Normal;
   int32_t iEscCode = 0;
   while (1) {
     switch (status) {
-      case 0:
+      case ReadStatus::Normal:
         if (ch == ')') {
-          if (parlevel == 0) {
+          if (parlevel == 0)
             return buf.MakeString();
-          }
           parlevel--;
-          buf.AppendChar(')');
         } else if (ch == '(') {
           parlevel++;
-          buf.AppendChar('(');
-        } else if (ch == '\\') {
-          status = 1;
-        } else {
-          buf.AppendChar(ch);
         }
+        if (ch == '\\')
+          status = ReadStatus::Backslash;
+        else
+          buf.AppendChar(ch);
         break;
-      case 1:
+      case ReadStatus::Backslash:
         if (ch >= '0' && ch <= '7') {
           iEscCode = FXSYS_toDecimalDigit(static_cast<FX_WCHAR>(ch));
-          status = 2;
+          status = ReadStatus::Octal;
           break;
         }
 
@@ -253,38 +238,37 @@ CFX_ByteString CPDF_SyntaxParser::ReadString() {
         } else if (ch == 'f') {
           buf.AppendChar('\f');
         } else if (ch == '\r') {
-          status = 4;
+          status = ReadStatus::CarriageReturn;
           break;
         } else if (ch != '\n') {
           buf.AppendChar(ch);
         }
-        status = 0;
+        status = ReadStatus::Normal;
         break;
-      case 2:
+      case ReadStatus::Octal:
         if (ch >= '0' && ch <= '7') {
           iEscCode =
               iEscCode * 8 + FXSYS_toDecimalDigit(static_cast<FX_WCHAR>(ch));
-          status = 3;
+          status = ReadStatus::FinishOctal;
         } else {
           buf.AppendChar(iEscCode);
-          status = 0;
+          status = ReadStatus::Normal;
           continue;
         }
         break;
-      case 3:
+      case ReadStatus::FinishOctal:
+        status = ReadStatus::Normal;
         if (ch >= '0' && ch <= '7') {
           iEscCode =
               iEscCode * 8 + FXSYS_toDecimalDigit(static_cast<FX_WCHAR>(ch));
           buf.AppendChar(iEscCode);
-          status = 0;
         } else {
           buf.AppendChar(iEscCode);
-          status = 0;
           continue;
         }
         break;
-      case 4:
-        status = 0;
+      case ReadStatus::CarriageReturn:
+        status = ReadStatus::Normal;
         if (ch != '\n')
           continue;
         break;
@@ -648,7 +632,7 @@ CPDF_Stream* CPDF_SyntaxParser::ReadStream(CPDF_Dictionary* pDict,
   const CFX_ByteStringC kEndObjStr("endobj");
 
   CPDF_CryptoHandler* pCryptoHandler =
-      objnum == (uint32_t)m_MetadataObjnum ? nullptr : m_pCryptoHandler.get();
+      objnum == m_MetadataObjnum ? nullptr : m_pCryptoHandler.get();
   if (!pCryptoHandler) {
     bool bSearchForKeyword = true;
     if (len >= 0) {
@@ -792,9 +776,8 @@ void CPDF_SyntaxParser::InitParser(IFX_SeekableReadStream* pFileAccess,
   m_Pos = 0;
   m_pFileAccess = pFileAccess;
   m_BufOffset = 0;
-  pFileAccess->ReadBlock(
-      m_pFileBuf, 0,
-      (size_t)((FX_FILESIZE)m_BufSize > m_FileLen ? m_FileLen : m_BufSize));
+  pFileAccess->ReadBlock(m_pFileBuf, 0,
+                         std::min(m_BufSize, static_cast<uint32_t>(m_FileLen)));
 }
 
 uint32_t CPDF_SyntaxParser::GetDirectNum() {
@@ -903,62 +886,6 @@ bool CPDF_SyntaxParser::SearchWord(const CFX_ByteStringC& tag,
   }
 
   return false;
-}
-
-int32_t CPDF_SyntaxParser::SearchMultiWord(const CFX_ByteStringC& tags,
-                                           bool bWholeWord,
-                                           FX_FILESIZE limit) {
-  int32_t ntags = 1;
-  for (int i = 0; i < tags.GetLength(); ++i) {
-    if (tags[i] == 0)
-      ++ntags;
-  }
-
-  // Ensure that the input byte string happens to be nul-terminated. This
-  // need not be the case, but the loop below uses this guarantee to put
-  // the last pattern into the vector.
-  ASSERT(tags[tags.GetLength()] == 0);
-  std::vector<SearchTagRecord> patterns(ntags);
-  uint32_t start = 0;
-  uint32_t itag = 0;
-  uint32_t max_len = 0;
-  for (int i = 0; i <= tags.GetLength(); ++i) {
-    if (tags[i] == 0) {
-      uint32_t len = i - start;
-      max_len = std::max(len, max_len);
-      patterns[itag].m_bsTag = tags.Mid(start, len);
-      patterns[itag].m_Offset = 0;
-      start = i + 1;
-      ++itag;
-    }
-  }
-
-  const FX_FILESIZE pos_limit = m_Pos + limit;
-  for (FX_FILESIZE pos = m_Pos; !limit || pos < pos_limit; ++pos) {
-    uint8_t byte;
-    if (!GetCharAt(pos, byte))
-      break;
-
-    for (int i = 0; i < ntags; ++i) {
-      SearchTagRecord& pat = patterns[i];
-      if (pat.m_bsTag[pat.m_Offset] != byte) {
-        pat.m_Offset = (pat.m_bsTag[0] == byte) ? 1 : 0;
-        continue;
-      }
-
-      ++pat.m_Offset;
-      if (pat.m_Offset != pat.m_bsTag.GetLength())
-        continue;
-
-      if (!bWholeWord || IsWholeWord(pos - pat.m_bsTag.GetLength(), limit,
-                                     pat.m_bsTag, false)) {
-        return i;
-      }
-
-      pat.m_Offset = (pat.m_bsTag[0] == byte) ? 1 : 0;
-    }
-  }
-  return -1;
 }
 
 FX_FILESIZE CPDF_SyntaxParser::FindTag(const CFX_ByteStringC& tag,

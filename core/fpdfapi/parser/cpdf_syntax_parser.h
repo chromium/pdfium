@@ -47,9 +47,6 @@ class CPDF_SyntaxParser {
                   bool bWholeWord,
                   bool bForward,
                   FX_FILESIZE limit);
-  int SearchMultiWord(const CFX_ByteStringC& words,
-                      bool bWholeWord,
-                      FX_FILESIZE limit);
   FX_FILESIZE FindTag(const CFX_ByteStringC& tag, FX_FILESIZE limit);
 
   void SetEncrypt(std::unique_ptr<CPDF_CryptoHandler> pCryptoHandler);
@@ -67,6 +64,7 @@ class CPDF_SyntaxParser {
   static int s_CurrentRecursionDepth;
 
   uint32_t GetDirectNum();
+  bool ReadChar(FX_FILESIZE read_pos, uint32_t read_size);
   bool GetNextChar(uint8_t& ch);
   bool GetCharAtBackward(FX_FILESIZE pos, uint8_t& ch);
   void GetNextWordInternal(bool* bIsNumber);
@@ -83,9 +81,13 @@ class CPDF_SyntaxParser {
                           uint32_t gennum);
 
   CFX_ByteString MaybeIntern(const CFX_ByteString& str);
+  inline bool CheckPosition(FX_FILESIZE pos) {
+    return m_BufOffset >= pos ||
+           static_cast<FX_FILESIZE>(m_BufOffset + m_BufSize) <= pos;
+  }
 
   FX_FILESIZE m_Pos;
-  int m_MetadataObjnum;
+  uint32_t m_MetadataObjnum;
   IFX_SeekableReadStream* m_pFileAccess;
   FX_FILESIZE m_HeaderOffset;
   FX_FILESIZE m_FileLen;
