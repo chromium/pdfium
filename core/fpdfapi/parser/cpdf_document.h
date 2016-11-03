@@ -124,6 +124,12 @@ class CPDF_Document : public CPDF_IndirectObjectHolder {
       bool bVert,
       CFX_ByteString basefont,
       std::function<void(FX_WCHAR, FX_WCHAR, CPDF_Array*)> Insert);
+  bool InsertDeletePDFPage(CPDF_Dictionary* pPages,
+                           int nPagesToGo,
+                           CPDF_Dictionary* pPageDict,
+                           bool bInsert,
+                           std::set<CPDF_Dictionary*>* pVisited);
+  bool InsertNewPage(int iPage, CPDF_Dictionary* pPageDict);
 
   std::unique_ptr<CPDF_Parser> m_pParser;
   CPDF_Dictionary* m_pRootDict;

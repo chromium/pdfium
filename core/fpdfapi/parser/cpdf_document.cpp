@@ -240,83 +240,6 @@ void InsertWidthArray1(CFX_Font* pFont,
   InsertWidthArrayImpl(widths, size, pWidthArray);
 }
 
-int InsertDeletePDFPage(CPDF_Document* pDoc,
-                        CPDF_Dictionary* pPages,
-                        int nPagesToGo,
-                        CPDF_Dictionary* pPage,
-                        bool bInsert,
-                        std::set<CPDF_Dictionary*>* pVisited) {
-  CPDF_Array* pKidList = pPages->GetArrayFor("Kids");
-  if (!pKidList)
-    return -1;
-
-  for (size_t i = 0; i < pKidList->GetCount(); i++) {
-    CPDF_Dictionary* pKid = pKidList->GetDictAt(i);
-    if (pKid->GetStringFor("Type") == "Page") {
-      if (nPagesToGo == 0) {
-        if (bInsert) {
-          pKidList->InsertAt(i, new CPDF_Reference(pDoc, pPage->GetObjNum()));
-          pPage->SetReferenceFor("Parent", pDoc, pPages->GetObjNum());
-        } else {
-          pKidList->RemoveAt(i);
-        }
-        pPages->SetIntegerFor(
-            "Count", pPages->GetIntegerFor("Count") + (bInsert ? 1 : -1));
-        return 1;
-      }
-      nPagesToGo--;
-    } else {
-      int nPages = pKid->GetIntegerFor("Count");
-      if (nPagesToGo < nPages) {
-        if (pdfium::ContainsKey(*pVisited, pKid))
-          return -1;
-
-        pdfium::ScopedSetInsertion<CPDF_Dictionary*> insertion(pVisited, pKid);
-        if (InsertDeletePDFPage(pDoc, pKid, nPagesToGo, pPage, bInsert,
-                                pVisited) < 0) {
-          return -1;
-        }
-        pPages->SetIntegerFor(
-            "Count", pPages->GetIntegerFor("Count") + (bInsert ? 1 : -1));
-        return 1;
-      }
-      nPagesToGo -= nPages;
-    }
-  }
-  return 0;
-}
-
-int InsertNewPage(CPDF_Document* pDoc,
-                  int iPage,
-                  CPDF_Dictionary* pPageDict,
-                  CFX_ArrayTemplate<uint32_t>& pageList) {
-  CPDF_Dictionary* pRoot = pDoc->GetRoot();
-  CPDF_Dictionary* pPages = pRoot ? pRoot->GetDictFor("Pages") : nullptr;
-  if (!pPages)
-    return -1;
-
-  int nPages = pDoc->GetPageCount();
-  if (iPage < 0 || iPage > nPages)
-    return -1;
-
-  if (iPage == nPages) {
-    CPDF_Array* pPagesList = pPages->GetArrayFor("Kids");
-    if (!pPagesList) {
-      pPagesList = new CPDF_Array;
-      pPages->SetFor("Kids", pPagesList);
-    }
-    pPagesList->Add(new CPDF_Reference(pDoc, pPageDict->GetObjNum()));
-    pPages->SetIntegerFor("Count", nPages + 1);
-    pPageDict->SetReferenceFor("Parent", pDoc, pPages->GetObjNum());
-  } else {
-    std::set<CPDF_Dictionary*> stack = {pPages};
-    if (InsertDeletePDFPage(pDoc, pPages, iPage, pPageDict, true, &stack) < 0)
-      return -1;
-  }
-  pageList.InsertAt(iPage, pPageDict->GetObjNum());
-  return iPage;
-}
-
 int CountPages(CPDF_Dictionary* pPages,
                std::set<CPDF_Dictionary*>* visited_pages) {
   int count = pPages->GetIntegerFor("Count");
@@ -710,11 +633,84 @@ CPDF_Dictionary* CPDF_Document::CreateNewPage(int iPage) {
   CPDF_Dictionary* pDict = new CPDF_Dictionary(m_pByteStringPool);
   pDict->SetNameFor("Type", "Page");
   uint32_t dwObjNum = AddIndirectObject(pDict);
-  if (InsertNewPage(this, iPage, pDict, m_PageList) < 0) {
+  if (!InsertNewPage(iPage, pDict)) {
     ReleaseIndirectObject(dwObjNum);
     return nullptr;
   }
   return pDict;
+}
+
+bool CPDF_Document::InsertDeletePDFPage(CPDF_Dictionary* pPages,
+                                        int nPagesToGo,
+                                        CPDF_Dictionary* pPageDict,
+                                        bool bInsert,
+                                        std::set<CPDF_Dictionary*>* pVisited) {
+  CPDF_Array* pKidList = pPages->GetArrayFor("Kids");
+  if (!pKidList)
+    return false;
+
+  for (size_t i = 0; i < pKidList->GetCount(); i++) {
+    CPDF_Dictionary* pKid = pKidList->GetDictAt(i);
+    if (pKid->GetStringFor("Type") == "Page") {
+      if (nPagesToGo != 0) {
+        nPagesToGo--;
+        continue;
+      }
+      if (bInsert) {
+        pKidList->InsertAt(i, new CPDF_Reference(this, pPageDict->GetObjNum()));
+        pPageDict->SetReferenceFor("Parent", this, pPages->GetObjNum());
+      } else {
+        pKidList->RemoveAt(i);
+      }
+      pPages->SetIntegerFor(
+          "Count", pPages->GetIntegerFor("Count") + (bInsert ? 1 : -1));
+      break;
+    }
+    int nPages = pKid->GetIntegerFor("Count");
+    if (nPagesToGo >= nPages) {
+      nPagesToGo -= nPages;
+      continue;
+    }
+    if (pdfium::ContainsKey(*pVisited, pKid))
+      return false;
+
+    pdfium::ScopedSetInsertion<CPDF_Dictionary*> insertion(pVisited, pKid);
+    if (!InsertDeletePDFPage(pKid, nPagesToGo, pPageDict, bInsert, pVisited))
+      return false;
+
+    pPages->SetIntegerFor("Count",
+                          pPages->GetIntegerFor("Count") + (bInsert ? 1 : -1));
+    break;
+  }
+  return true;
+}
+
+bool CPDF_Document::InsertNewPage(int iPage, CPDF_Dictionary* pPageDict) {
+  CPDF_Dictionary* pRoot = GetRoot();
+  CPDF_Dictionary* pPages = pRoot ? pRoot->GetDictFor("Pages") : nullptr;
+  if (!pPages)
+    return false;
+
+  int nPages = GetPageCount();
+  if (iPage < 0 || iPage > nPages)
+    return false;
+
+  if (iPage == nPages) {
+    CPDF_Array* pPagesList = pPages->GetArrayFor("Kids");
+    if (!pPagesList) {
+      pPagesList = new CPDF_Array;
+      pPages->SetFor("Kids", pPagesList);
+    }
+    pPagesList->Add(new CPDF_Reference(this, pPageDict->GetObjNum()));
+    pPages->SetIntegerFor("Count", nPages + 1);
+    pPageDict->SetReferenceFor("Parent", this, pPages->GetObjNum());
+  } else {
+    std::set<CPDF_Dictionary*> stack = {pPages};
+    if (!InsertDeletePDFPage(pPages, iPage, pPageDict, true, &stack))
+      return false;
+  }
+  m_PageList.InsertAt(iPage, pPageDict->GetObjNum());
+  return true;
 }
 
 void CPDF_Document::DeletePage(int iPage) {
@@ -727,7 +723,7 @@ void CPDF_Document::DeletePage(int iPage) {
     return;
 
   std::set<CPDF_Dictionary*> stack = {pPages};
-  if (InsertDeletePDFPage(this, pPages, iPage, nullptr, false, &stack) < 0)
+  if (!InsertDeletePDFPage(pPages, iPage, nullptr, false, &stack))
     return;
 
   m_PageList.RemoveAt(iPage);
