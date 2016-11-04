@@ -43,9 +43,7 @@ CPDF_Object* CPDF_IndirectObjectHolder::ParseIndirectObject(uint32_t objnum) {
 }
 
 uint32_t CPDF_IndirectObjectHolder::AddIndirectObject(CPDF_Object* pObj) {
-  if (pObj->m_ObjNum)
-    return pObj->m_ObjNum;
-
+  CHECK(!pObj->m_ObjNum);
   m_LastObjNum++;
   m_IndirectObjs[m_LastObjNum].release();  // TODO(tsepez): stop this leak.
   m_IndirectObjs[m_LastObjNum].reset(pObj);

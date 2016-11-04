@@ -69,8 +69,7 @@ class CPDF_TestDocumentForPages : public CPDF_Document {
     CPDF_Dictionary* pagesDict = CreatePageTreeNode(allPages, this, 7);
 
     m_pOwnedRootDict.reset(new CPDF_Dictionary());
-    m_pOwnedRootDict->SetReferenceFor("Pages", this,
-                                      AddIndirectObject(pagesDict));
+    m_pOwnedRootDict->SetReferenceFor("Pages", this, pagesDict->GetObjNum());
     m_pRootDict = m_pOwnedRootDict.get();
     m_PageList.SetSize(7);
   }
