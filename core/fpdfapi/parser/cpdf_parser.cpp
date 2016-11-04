@@ -960,14 +960,16 @@ bool CPDF_Parser::LoadCrossRefV5(FX_FILESIZE* pos, bool bMainXRef) {
   if (!pObject)
     return false;
 
-  CPDF_Object* pUnownedObject = pObject.get();
+  uint32_t objnum = pObject->m_ObjNum;
+  if (!objnum)
+    return false;
 
+  CPDF_Object* pUnownedObject = pObject.get();
   if (m_pDocument) {
     CPDF_Dictionary* pRootDict = m_pDocument->GetRoot();
-    if (pRootDict && pRootDict->GetObjNum() == pObject->m_ObjNum)
+    if (pRootDict && pRootDict->GetObjNum() == objnum)
       return false;
     // Takes ownership of object (std::move someday).
-    uint32_t objnum = pObject->m_ObjNum;
     if (!m_pDocument->ReplaceIndirectObjectIfHigherGeneration(
             objnum, pObject.release())) {
       return false;

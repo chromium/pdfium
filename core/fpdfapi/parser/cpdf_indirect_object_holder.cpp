@@ -56,7 +56,8 @@ uint32_t CPDF_IndirectObjectHolder::AddIndirectObject(CPDF_Object* pObj) {
 bool CPDF_IndirectObjectHolder::ReplaceIndirectObjectIfHigherGeneration(
     uint32_t objnum,
     CPDF_Object* pObj) {
-  if (!objnum || !pObj)
+  ASSERT(objnum);
+  if (!pObj)
     return false;
 
   CPDF_Object* pOldObj = GetIndirectObject(objnum);
