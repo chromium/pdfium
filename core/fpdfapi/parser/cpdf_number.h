@@ -17,6 +17,7 @@ class CPDF_Number : public CPDF_Object {
   explicit CPDF_Number(int value);
   explicit CPDF_Number(FX_FLOAT value);
   explicit CPDF_Number(const CFX_ByteStringC& str);
+  ~CPDF_Number() override;
 
   // CPDF_Object.
   Type GetType() const override;
@@ -32,8 +33,6 @@ class CPDF_Number : public CPDF_Object {
   bool IsInteger() const { return m_bInteger; }
 
  protected:
-  ~CPDF_Number() override;
-
   bool m_bInteger;
   union {
     int m_Integer;

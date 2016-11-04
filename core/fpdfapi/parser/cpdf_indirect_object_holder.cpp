@@ -53,18 +53,17 @@ uint32_t CPDF_IndirectObjectHolder::AddIndirectObject(CPDF_Object* pObj) {
 
 bool CPDF_IndirectObjectHolder::ReplaceIndirectObjectIfHigherGeneration(
     uint32_t objnum,
-    CPDF_Object* pObj) {
+    std::unique_ptr<CPDF_Object> pObj) {
   ASSERT(objnum);
   if (!pObj)
     return false;
 
   CPDF_Object* pOldObj = GetIndirectObject(objnum);
-  if (pOldObj && pObj->GetGenNum() <= pOldObj->GetGenNum()) {
-    delete pObj;
+  if (pOldObj && pObj->GetGenNum() <= pOldObj->GetGenNum())
     return false;
-  }
+
   pObj->m_ObjNum = objnum;
-  m_IndirectObjs[objnum].reset(pObj);
+  m_IndirectObjs[objnum] = std::move(pObj);
   m_LastObjNum = std::max(m_LastObjNum, objnum);
   return true;
 }

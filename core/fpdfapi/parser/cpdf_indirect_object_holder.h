@@ -28,8 +28,9 @@ class CPDF_IndirectObjectHolder {
 
   // Take ownership of |pObj|.
   uint32_t AddIndirectObject(CPDF_Object* pObj);
-  bool ReplaceIndirectObjectIfHigherGeneration(uint32_t objnum,
-                                               CPDF_Object* pObj);
+  bool ReplaceIndirectObjectIfHigherGeneration(
+      uint32_t objnum,
+      std::unique_ptr<CPDF_Object> pObj);
 
   uint32_t GetLastObjNum() const { return m_LastObjNum; }
   void SetLastObjNum(uint32_t objnum) { m_LastObjNum = objnum; }

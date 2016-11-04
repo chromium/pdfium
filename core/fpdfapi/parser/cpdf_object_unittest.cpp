@@ -722,9 +722,8 @@ TEST(PDFArrayTest, AddReferenceAndGetObjectAt) {
   std::unique_ptr<CPDF_Array> arr1(new CPDF_Array);
   // Create two arrays of references by different AddReference() APIs.
   for (size_t i = 0; i < FX_ArraySize(indirect_objs); ++i) {
-    // All the indirect objects inserted will be owned by holder.
-    holder->ReplaceIndirectObjectIfHigherGeneration(obj_nums[i],
-                                                    indirect_objs[i]);
+    holder->ReplaceIndirectObjectIfHigherGeneration(
+        obj_nums[i], pdfium::WrapUnique<CPDF_Object>(indirect_objs[i]));
     arr->AddReference(holder.get(), obj_nums[i]);
     arr1->AddReference(holder.get(), indirect_objs[i]->GetObjNum());
   }

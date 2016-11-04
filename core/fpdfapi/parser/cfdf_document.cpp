@@ -69,11 +69,12 @@ void CFDF_Document::ParseStream(IFX_SeekableReadStream* pFile, bool bOwnFile) {
       if (word != "obj")
         break;
 
-      CPDF_Object* pObj = parser.GetObject(this, objnum, 0, true);
+      auto pObj = pdfium::WrapUnique<CPDF_Object>(
+          parser.GetObject(this, objnum, 0, true));
       if (!pObj)
         break;
 
-      ReplaceIndirectObjectIfHigherGeneration(objnum, pObj);
+      ReplaceIndirectObjectIfHigherGeneration(objnum, std::move(pObj));
       word = parser.GetNextWord(nullptr);
       if (word != "endobj")
         break;

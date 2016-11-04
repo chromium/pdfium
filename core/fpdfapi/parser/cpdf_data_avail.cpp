@@ -1763,13 +1763,11 @@ CPDF_Dictionary* CPDF_DataAvail::GetPage(int index) {
   // We should say to the document, which object is the page.
   m_pDocument->SetPageObjNum(index, dwObjNum);
   // Page object already can be parsed in document.
-  CPDF_Object* pPageDict = m_pDocument->GetIndirectObject(dwObjNum);
-  if (!pPageDict) {
+  if (!m_pDocument->GetIndirectObject(dwObjNum)) {
     m_syntaxParser.InitParser(m_pFileRead, (uint32_t)szPageStartPos);
-    pPageDict = ParseIndirectObjectAt(0, dwObjNum, m_pDocument);
-    if (pPageDict) {
-      m_pDocument->ReplaceIndirectObjectIfHigherGeneration(dwObjNum, pPageDict);
-    }
+    m_pDocument->ReplaceIndirectObjectIfHigherGeneration(
+        dwObjNum, pdfium::WrapUnique<CPDF_Object>(
+                      ParseIndirectObjectAt(0, dwObjNum, m_pDocument)));
   }
   return m_pDocument->GetPage(index);
 }

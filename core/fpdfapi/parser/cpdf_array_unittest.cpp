@@ -3,12 +3,13 @@
 // found in the LICENSE file.
 
 #include "core/fpdfapi/parser/cpdf_array.h"
-#include "core/fpdfapi/parser/cpdf_number.h"
-#include "core/fpdfapi/parser/cpdf_reference.h"
 
 #include <memory>
 
+#include "core/fpdfapi/parser/cpdf_number.h"
+#include "core/fpdfapi/parser/cpdf_reference.h"
 #include "testing/gtest/include/gtest/gtest.h"
+#include "third_party/base/ptr_util.h"
 
 TEST(cpdf_array, RemoveAt) {
   {
@@ -107,10 +108,11 @@ TEST(cpdf_array, Clone) {
     for (size_t i = 0; i < kNumOfRows; ++i) {
       CPDF_Array* arr_elem = new CPDF_Array;
       for (size_t j = 0; j < kNumOfRowElems; ++j) {
-        CPDF_Number* obj = new CPDF_Number(elems[i][j]);
+        std::unique_ptr<CPDF_Number> obj(new CPDF_Number(elems[i][j]));
         // Starts object number from 1.
         int obj_num = i * kNumOfRowElems + j + 1;
-        obj_holder->ReplaceIndirectObjectIfHigherGeneration(obj_num, obj);
+        obj_holder->ReplaceIndirectObjectIfHigherGeneration(obj_num,
+                                                            std::move(obj));
         arr_elem->InsertAt(j, new CPDF_Reference(obj_holder.get(), obj_num));
       }
       arr->InsertAt(i, arr_elem);
