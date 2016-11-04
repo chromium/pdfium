@@ -21,6 +21,7 @@ class CPDF_Array : public CPDF_Object {
   using const_iterator = std::vector<CPDF_Object*>::const_iterator;
 
   CPDF_Array();
+  ~CPDF_Array() override;
 
   // CPDF_Object.
   Type GetType() const override;
@@ -61,15 +62,12 @@ class CPDF_Array : public CPDF_Object {
   const_iterator end() const { return m_Objects.end(); }
 
  protected:
-  ~CPDF_Array() override;
-
   CPDF_Object* CloneNonCyclic(
       bool bDirect,
       std::set<const CPDF_Object*>* pVisited) const override;
 
   std::vector<CPDF_Object*> m_Objects;
 };
-using UniqueArray = std::unique_ptr<CPDF_Array, ReleaseDeleter<CPDF_Object>>;
 
 inline CPDF_Array* ToArray(CPDF_Object* obj) {
   return obj ? obj->AsArray() : nullptr;
@@ -79,12 +77,12 @@ inline const CPDF_Array* ToArray(const CPDF_Object* obj) {
   return obj ? obj->AsArray() : nullptr;
 }
 
-inline UniqueArray ToArray(UniqueObject obj) {
+inline std::unique_ptr<CPDF_Array> ToArray(std::unique_ptr<CPDF_Object> obj) {
   CPDF_Array* pArray = ToArray(obj.get());
   if (!pArray)
     return nullptr;
   obj.release();
-  return UniqueArray(pArray);
+  return std::unique_ptr<CPDF_Array>(pArray);
 }
 
 #endif  // CORE_FPDFAPI_PARSER_CPDF_ARRAY_H_

@@ -47,11 +47,8 @@ CFX_StockFontArray::CFX_StockFontArray() {}
 
 CFX_StockFontArray::~CFX_StockFontArray() {
   for (size_t i = 0; i < FX_ArraySize(m_StockFonts); ++i) {
-    if (!m_StockFonts[i])
-      continue;
-    CPDF_Dictionary* pFontDict = m_StockFonts[i]->GetFontDict();
-    if (pFontDict)
-      pFontDict->Release();
+    if (m_StockFonts[i])
+      delete m_StockFonts[i]->GetFontDict();
   }
 }
 

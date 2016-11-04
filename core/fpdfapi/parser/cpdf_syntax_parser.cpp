@@ -425,8 +425,7 @@ CPDF_Object* CPDF_SyntaxParser::GetObject(CPDF_IndirectObjectHolder* pObjList,
     int32_t nKeys = 0;
     FX_FILESIZE dwSignValuePos = 0;
 
-    std::unique_ptr<CPDF_Dictionary, ReleaseDeleter<CPDF_Dictionary>> pDict(
-        new CPDF_Dictionary(m_pPool));
+    std::unique_ptr<CPDF_Dictionary> pDict(new CPDF_Dictionary(m_pPool));
     while (1) {
       CFX_ByteString key = GetNextWord(nullptr);
       if (key.IsEmpty())
@@ -530,8 +529,7 @@ CPDF_Object* CPDF_SyntaxParser::GetObjectForStrict(
   }
 
   if (word == "[") {
-    std::unique_ptr<CPDF_Array, ReleaseDeleter<CPDF_Array>> pArray(
-        new CPDF_Array);
+    std::unique_ptr<CPDF_Array> pArray(new CPDF_Array);
     while (CPDF_Object* pObj = GetObject(pObjList, objnum, gennum, true))
       pArray->Add(pObj);
 
@@ -544,8 +542,7 @@ CPDF_Object* CPDF_SyntaxParser::GetObjectForStrict(
   }
 
   if (word == "<<") {
-    std::unique_ptr<CPDF_Dictionary, ReleaseDeleter<CPDF_Dictionary>> pDict(
-        new CPDF_Dictionary(m_pPool));
+    std::unique_ptr<CPDF_Dictionary> pDict(new CPDF_Dictionary(m_pPool));
     while (1) {
       FX_FILESIZE SavedPos = m_Pos;
       CFX_ByteString key = GetNextWord(nullptr);
@@ -564,7 +561,7 @@ CPDF_Object* CPDF_SyntaxParser::GetObjectForStrict(
         continue;
 
       key = PDF_NameDecode(key);
-      std::unique_ptr<CPDF_Object, ReleaseDeleter<CPDF_Object>> obj(
+      std::unique_ptr<CPDF_Object> obj(
           GetObject(pObjList, objnum, gennum, true));
       if (!obj) {
         uint8_t ch;
@@ -692,7 +689,7 @@ CPDF_Stream* CPDF_SyntaxParser::ReadStream(CPDF_Dictionary* pDict,
 
       // Can't find "endstream" or "endobj".
       if (endStreamOffset < 0 && endObjOffset < 0) {
-        pDict->Release();
+        delete pDict;
         return nullptr;
       }
 
@@ -718,7 +715,7 @@ CPDF_Stream* CPDF_SyntaxParser::ReadStream(CPDF_Dictionary* pDict,
       }
 
       if (len < 0) {
-        pDict->Release();
+        delete pDict;
         return nullptr;
       }
       pDict->SetIntegerFor("Length", len);
@@ -727,7 +724,7 @@ CPDF_Stream* CPDF_SyntaxParser::ReadStream(CPDF_Dictionary* pDict,
   }
 
   if (len < 0) {
-    pDict->Release();
+    delete pDict;
     return nullptr;
   }
 

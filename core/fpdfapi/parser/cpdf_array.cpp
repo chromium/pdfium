@@ -24,7 +24,7 @@ CPDF_Array::~CPDF_Array() {
   m_ObjNum = kInvalidObjNum;
   for (auto& it : m_Objects) {
     if (it && it->GetObjNum() != kInvalidObjNum)
-      it->Release();
+      delete it;
   }
 }
 
@@ -139,10 +139,9 @@ void CPDF_Array::RemoveAt(size_t i, size_t nCount) {
   if (nCount <= 0 || nCount > m_Objects.size() - i)
     return;
 
-  for (size_t j = 0; j < nCount; ++j) {
-    if (CPDF_Object* p = m_Objects[i + j])
-      p->Release();
-  }
+  for (size_t j = 0; j < nCount; ++j)
+    delete m_Objects[i + j];
+
   m_Objects.erase(m_Objects.begin() + i, m_Objects.begin() + i + nCount);
 }
 
@@ -166,9 +165,7 @@ void CPDF_Array::SetAt(size_t i, CPDF_Object* pObj) {
     ASSERT(false);
     return;
   }
-  if (CPDF_Object* pOld = m_Objects[i])
-    pOld->Release();
-
+  delete m_Objects[i];
   m_Objects[i] = pObj;
 }
 

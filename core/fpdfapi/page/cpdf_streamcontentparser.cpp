@@ -180,12 +180,8 @@ CPDF_StreamContentParser::CPDF_StreamContentParser(
 CPDF_StreamContentParser::~CPDF_StreamContentParser() {
   ClearAllParams();
   FX_Free(m_pPathPoints);
-  if (m_pLastImageDict) {
-    m_pLastImageDict->Release();
-  }
-  if (m_pLastCloneImageDict) {
-    m_pLastCloneImageDict->Release();
-  }
+  delete m_pLastImageDict;
+  delete m_pLastCloneImageDict;
 }
 
 int CPDF_StreamContentParser::GetNextParamPos() {
@@ -194,10 +190,9 @@ int CPDF_StreamContentParser::GetNextParamPos() {
     if (m_ParamStartPos == kParamBufSize) {
       m_ParamStartPos = 0;
     }
-    if (m_ParamBuf[m_ParamStartPos].m_Type == 0) {
-      if (CPDF_Object* pObject = m_ParamBuf[m_ParamStartPos].m_pObject)
-        pObject->Release();
-    }
+    if (m_ParamBuf[m_ParamStartPos].m_Type == 0)
+      delete m_ParamBuf[m_ParamStartPos].m_pObject;
+
     return m_ParamStartPos;
   }
   int index = m_ParamStartPos + m_ParamCount;
@@ -244,10 +239,9 @@ void CPDF_StreamContentParser::AddObjectParam(CPDF_Object* pObj) {
 void CPDF_StreamContentParser::ClearAllParams() {
   uint32_t index = m_ParamStartPos;
   for (uint32_t i = 0; i < m_ParamCount; i++) {
-    if (m_ParamBuf[index].m_Type == 0) {
-      if (CPDF_Object* pObject = m_ParamBuf[index].m_pObject)
-        pObject->Release();
-    }
+    if (m_ParamBuf[index].m_Type == 0)
+      delete m_ParamBuf[index].m_pObject;
+
     index++;
     if (index == kParamBufSize) {
       index = 0;
@@ -531,7 +525,7 @@ void CPDF_StreamContentParser::Handle_BeginImage() {
                                m_pSyntax->GetWordSize());
       if (bsKeyword != "ID") {
         m_pSyntax->SetPos(savePos);
-        pDict->Release();
+        delete pDict;
         return;
       }
     }
@@ -540,8 +534,7 @@ void CPDF_StreamContentParser::Handle_BeginImage() {
     }
     CFX_ByteString key((const FX_CHAR*)m_pSyntax->GetWordBuf() + 1,
                        m_pSyntax->GetWordSize() - 1);
-    std::unique_ptr<CPDF_Object, ReleaseDeleter<CPDF_Object>> pObj(
-        m_pSyntax->ReadNextObject(false, 0));
+    std::unique_ptr<CPDF_Object> pObj(m_pSyntax->ReadNextObject(false, 0));
     if (!key.IsEmpty()) {
       uint32_t dwObjNum = pObj ? pObj->GetObjNum() : 0;
       if (dwObjNum)
@@ -566,7 +559,8 @@ void CPDF_StreamContentParser::Handle_BeginImage() {
     }
   }
   pDict->SetNameFor("Subtype", "Image");
-  UniqueStream pStream(m_pSyntax->ReadInlineStream(m_pDocument, pDict, pCSObj));
+  std::unique_ptr<CPDF_Stream> pStream(
+      m_pSyntax->ReadInlineStream(m_pDocument, pDict, pCSObj));
   bool bGaveDictAway = !!pStream;
   while (1) {
     CPDF_StreamParser::SyntaxType type = m_pSyntax->ParseNextElement();
@@ -583,7 +577,7 @@ void CPDF_StreamContentParser::Handle_BeginImage() {
   }
   CPDF_ImageObject* pImgObj = AddImage(std::move(pStream));
   if (!pImgObj && !bGaveDictAway)
-    pDict->Release();
+    delete pDict;
 }
 
 void CPDF_StreamContentParser::Handle_BeginMarkedContent() {
@@ -669,10 +663,10 @@ void CPDF_StreamContentParser::Handle_ExecuteXObject() {
     type = pXObject->GetDict()->GetStringFor("Subtype");
 
   if (type == "Image") {
-    CPDF_ImageObject* pObj =
-        pXObject->IsInline()
-            ? AddImage(UniqueStream(ToStream(pXObject->Clone())))
-            : AddImage(pXObject->GetObjNum());
+    CPDF_ImageObject* pObj = pXObject->IsInline()
+                                 ? AddImage(std::unique_ptr<CPDF_Stream>(
+                                       ToStream(pXObject->Clone())))
+                                 : AddImage(pXObject->GetObjNum());
 
     m_LastImageName = name;
     m_pLastImage = pObj->GetImage();
@@ -704,7 +698,8 @@ void CPDF_StreamContentParser::AddForm(CPDF_Stream* pStream) {
   m_pObjectHolder->GetPageObjectList()->push_back(std::move(pFormObj));
 }
 
-CPDF_ImageObject* CPDF_StreamContentParser::AddImage(UniqueStream pStream) {
+CPDF_ImageObject* CPDF_StreamContentParser::AddImage(
+    std::unique_ptr<CPDF_Stream> pStream) {
   if (!pStream)
     return nullptr;
 

@@ -138,9 +138,7 @@ CPDF_StreamParser::CPDF_StreamParser(
       m_pPool(pPool) {}
 
 CPDF_StreamParser::~CPDF_StreamParser() {
-  if (m_pLastObj) {
-    m_pLastObj->Release();
-  }
+  delete m_pLastObj;
 }
 
 CPDF_Stream* CPDF_StreamParser::ReadInlineStream(CPDF_Document* pDoc,
@@ -252,10 +250,8 @@ CPDF_Stream* CPDF_StreamParser::ReadInlineStream(CPDF_Document* pDoc,
 }
 
 CPDF_StreamParser::SyntaxType CPDF_StreamParser::ParseNextElement() {
-  if (m_pLastObj) {
-    m_pLastObj->Release();
-    m_pLastObj = nullptr;
-  }
+  delete m_pLastObj;
+  m_pLastObj = nullptr;
 
   m_WordSize = 0;
   bool bIsNumber = true;
@@ -374,7 +370,7 @@ CPDF_Object* CPDF_StreamParser::ReadNextObject(bool bAllowNestedArray,
         break;
 
       if (!m_WordSize || m_WordBuffer[0] != '/') {
-        pDict->Release();
+        delete pDict;
         return nullptr;
       }
 
@@ -382,12 +378,12 @@ CPDF_Object* CPDF_StreamParser::ReadNextObject(bool bAllowNestedArray,
           PDF_NameDecode(CFX_ByteStringC(m_WordBuffer + 1, m_WordSize - 1));
       CPDF_Object* pObj = ReadNextObject(true, 0);
       if (!pObj) {
-        pDict->Release();
+        delete pDict;
         return nullptr;
       }
 
       if (key.IsEmpty())
-        pObj->Release();
+        delete pObj;
       else
         pDict->SetFor(key, pObj);
     }

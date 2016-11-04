@@ -76,8 +76,7 @@ class CPDF_TestDocumentForPages : public CPDF_Document {
   }
 
  private:
-  std::unique_ptr<CPDF_Dictionary, ReleaseDeleter<CPDF_Dictionary>>
-      m_pOwnedRootDict;
+  std::unique_ptr<CPDF_Dictionary> m_pOwnedRootDict;
 };
 }  // namespace
 
@@ -121,7 +120,7 @@ TEST_F(cpdf_document_test, UseCachedPageObjNumIfHaveNotPagesDict) {
   // can be not exists in this case.
   // (case, when hint table is used to page check in CPDF_DataAvail).
   CPDF_Document document(pdfium::MakeUnique<CPDF_Parser>());
-  ScopedDictionary dict(new CPDF_Dictionary());
+  std::unique_ptr<CPDF_Dictionary> dict(new CPDF_Dictionary());
   const int page_count = 100;
   dict->SetIntegerFor("N", page_count);
   document.LoadLinearizedDoc(dict.get());
