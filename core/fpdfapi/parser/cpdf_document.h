@@ -105,10 +105,8 @@ class CPDF_Document : public CPDF_IndirectObjectHolder {
  protected:
   // Retrieve page count information by getting count value from the tree nodes
   int RetrievePageCount() const;
-  CPDF_Dictionary* FindPDFPage(CPDF_Dictionary* pPages,
-                               int iPage,
-                               int nPagesToGo,
-                               int level);
+  // When this method is called, m_pTreeTraversal[level] exists.
+  CPDF_Dictionary* TraversePDFPages(int iPage, int* nPagesToGo, size_t level);
   int FindPageIndex(CPDF_Dictionary* pNode,
                     uint32_t& skip_count,
                     uint32_t objnum,
@@ -130,10 +128,18 @@ class CPDF_Document : public CPDF_IndirectObjectHolder {
                            bool bInsert,
                            std::set<CPDF_Dictionary*>* pVisited);
   bool InsertNewPage(int iPage, CPDF_Dictionary* pPageDict);
+  void ResetTraversal();
 
   std::unique_ptr<CPDF_Parser> m_pParser;
   CPDF_Dictionary* m_pRootDict;
   CPDF_Dictionary* m_pInfoDict;
+  // Vector of pairs to know current position in the page tree. The index in the
+  // vector corresponds to the level being described. The pair contains a
+  // pointer to the dictionary being processed at the level, and an index of the
+  // of the child being processed within the dictionary's /Kids array.
+  std::vector<std::pair<CPDF_Dictionary*, size_t>> m_pTreeTraversal;
+  // Index of the next page that will be traversed from the page tree.
+  int m_iNextPageToTraverse;
   bool m_bLinearized;
   int m_iFirstPageNo;
   uint32_t m_dwFirstPageObjNum;

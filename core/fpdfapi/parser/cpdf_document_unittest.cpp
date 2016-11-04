@@ -95,7 +95,7 @@ TEST_F(cpdf_document_test, GetPages) {
   for (int i = 0; i < 7; i++) {
     CPDF_Dictionary* page = document->GetPage(i);
     ASSERT_TRUE(page);
-    ASSERT_TRUE(page->GetObjectFor("PageNumbering"));
+    ASSERT_TRUE(page->KeyExist("PageNumbering"));
     EXPECT_EQ(i, page->GetIntegerFor("PageNumbering"));
   }
   CPDF_Dictionary* page = document->GetPage(7);
@@ -108,11 +108,34 @@ TEST_F(cpdf_document_test, GetPagesReverseOrder) {
   for (int i = 6; i >= 0; i--) {
     CPDF_Dictionary* page = document->GetPage(i);
     ASSERT_TRUE(page);
-    ASSERT_TRUE(page->GetObjectFor("PageNumbering"));
+    ASSERT_TRUE(page->KeyExist("PageNumbering"));
     EXPECT_EQ(i, page->GetIntegerFor("PageNumbering"));
   }
   CPDF_Dictionary* page = document->GetPage(7);
   EXPECT_FALSE(page);
+}
+
+TEST(cpdf_document, GetPagesInDisorder) {
+  std::unique_ptr<CPDF_TestDocumentForPages> document =
+      pdfium::MakeUnique<CPDF_TestDocumentForPages>();
+
+  CPDF_Dictionary* page = document->GetPage(1);
+  ASSERT_TRUE(page);
+  ASSERT_TRUE(page->KeyExist("PageNumbering"));
+  EXPECT_EQ(1, page->GetIntegerFor("PageNumbering"));
+
+  page = document->GetPage(3);
+  ASSERT_TRUE(page);
+  ASSERT_TRUE(page->KeyExist("PageNumbering"));
+  EXPECT_EQ(3, page->GetIntegerFor("PageNumbering"));
+
+  page = document->GetPage(7);
+  EXPECT_FALSE(page);
+
+  page = document->GetPage(6);
+  ASSERT_TRUE(page);
+  ASSERT_TRUE(page->KeyExist("PageNumbering"));
+  EXPECT_EQ(6, page->GetIntegerFor("PageNumbering"));
 }
 
 TEST_F(cpdf_document_test, UseCachedPageObjNumIfHaveNotPagesDict) {
