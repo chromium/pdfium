@@ -39,8 +39,7 @@ class CPDFSDK_InterForm : public IPDF_FormNotify {
   bool HighlightWidgets();
 
   CPDFSDK_Widget* GetSibling(CPDFSDK_Widget* pWidget, bool bNext) const;
-  CPDFSDK_Widget* GetWidget(CPDF_FormControl* pControl,
-                            bool createIfNeeded) const;
+  CPDFSDK_Widget* GetWidget(CPDF_FormControl* pControl) const;
   void GetWidgets(const CFX_WideString& sFieldName,
                   std::vector<CPDFSDK_Widget*>* widgets) const;
   void GetWidgets(CPDF_FormField* pField,
