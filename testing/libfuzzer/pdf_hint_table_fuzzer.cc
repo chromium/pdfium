@@ -82,13 +82,10 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   dummy_dict.primary_hint_stream_length = GetData(&data32, &data, &size);
   dummy_dict.shared_hint_table_offset = GetData(&data32, &data, &size);
 
-  CPDF_Dictionary* dummy_linearized_dict = new CPDF_Dictionary;
-
+  std::unique_ptr<CPDF_Dictionary> dummy_linearized_dict(new CPDF_Dictionary);
   {
-    HintTableForFuzzing hint_table(&dummy_dict, dummy_linearized_dict);
+    HintTableForFuzzing hint_table(&dummy_dict, dummy_linearized_dict.get());
     hint_table.Fuzz(data, size);
   }
-
-  dummy_linearized_dict->Release();
   return 0;
 }

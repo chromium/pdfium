@@ -634,7 +634,7 @@ CPDF_Dictionary* CPDF_Document::CreateNewPage(int iPage) {
   pDict->SetNameFor("Type", "Page");
   uint32_t dwObjNum = AddIndirectObject(pDict);
   if (!InsertNewPage(iPage, pDict)) {
-    ReleaseIndirectObject(dwObjNum);
+    DeleteIndirectObject(dwObjNum);
     return nullptr;
   }
   return pDict;

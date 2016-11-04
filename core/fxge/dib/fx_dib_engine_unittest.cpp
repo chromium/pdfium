@@ -12,15 +12,16 @@
 #include "core/fxge/dib/dib_int.h"
 #include "core/fxge/fx_dib.h"
 #include "testing/gtest/include/gtest/gtest.h"
+#include "third_party/base/ptr_util.h"
 
 TEST(CStretchEngine, OverflowInCtor) {
   FX_RECT clip_rect;
-  std::unique_ptr<CPDF_Dictionary, ReleaseDeleter<CPDF_Dictionary>> dict_obj(
-      new CPDF_Dictionary());
+  std::unique_ptr<CPDF_Dictionary> dict_obj =
+      pdfium::MakeUnique<CPDF_Dictionary>();
   dict_obj->SetFor("Width", new CPDF_Number(71000));
   dict_obj->SetFor("Height", new CPDF_Number(12500));
-  std::unique_ptr<CPDF_Stream, ReleaseDeleter<CPDF_Stream>> stream(
-      new CPDF_Stream(nullptr, 0, dict_obj.release()));
+  std::unique_ptr<CPDF_Stream> stream =
+      pdfium::MakeUnique<CPDF_Stream>(nullptr, 0, dict_obj.release());
   CPDF_DIBSource dib_source;
   dib_source.Load(nullptr, stream.get(), nullptr, nullptr, nullptr, nullptr,
                   false, 0, false);

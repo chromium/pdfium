@@ -84,7 +84,7 @@ void CFDF_Document::ParseStream(IFX_SeekableReadStream* pFile, bool bOwnFile) {
       if (CPDF_Dictionary* pMainDict =
               ToDictionary(parser.GetObject(this, 0, 0, true))) {
         m_pRootDict = pMainDict->GetDictFor("Root");
-        pMainDict->Release();
+        delete pMainDict;
       }
       break;
     }

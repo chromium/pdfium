@@ -16,6 +16,7 @@ class CPDF_String : public CPDF_Object {
   CPDF_String();
   CPDF_String(const CFX_ByteString& str, bool bHex);
   explicit CPDF_String(const CFX_WideString& str);
+  ~CPDF_String() override;
 
   // CPDF_Object.
   Type GetType() const override;
@@ -30,8 +31,6 @@ class CPDF_String : public CPDF_Object {
   bool IsHex() const { return m_bHex; }
 
  protected:
-  ~CPDF_String() override;
-
   CFX_ByteString m_String;
   bool m_bHex;
 };

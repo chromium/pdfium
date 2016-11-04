@@ -15,7 +15,7 @@
 CPDF_Stream::CPDF_Stream() {}
 
 CPDF_Stream::CPDF_Stream(uint8_t* pData, uint32_t size, CPDF_Dictionary* pDict)
-    : m_pDict(pDict), m_dwSize(size), m_pDataBuf(pData) {}
+    : m_dwSize(size), m_pDict(pDict), m_pDataBuf(pData) {}
 
 CPDF_Stream::~CPDF_Stream() {
   m_ObjNum = kInvalidObjNum;

@@ -61,9 +61,7 @@ CPDF_Parser::CPDF_Parser()
 }
 
 CPDF_Parser::~CPDF_Parser() {
-  if (m_pTrailer)
-    m_pTrailer->Release();
-
+  delete m_pTrailer;
   ReleaseEncryptHandler();
   SetEncryptDictionary(nullptr);
 
@@ -72,13 +70,10 @@ CPDF_Parser::~CPDF_Parser() {
     m_pSyntax->m_pFileAccess = nullptr;
   }
 
-  for (CPDF_Dictionary* trailer : m_Trailers) {
-    if (trailer)
-      trailer->Release();
-  }
+  for (CPDF_Dictionary* trailer : m_Trailers)
+    delete trailer;
 
-  if (m_pLinearized)
-    m_pLinearized->Release();
+  delete m_pLinearized;
 }
 
 uint32_t CPDF_Parser::GetLastObjNum() const {
@@ -357,8 +352,7 @@ bool CPDF_Parser::LoadAllCrossRefV4(FX_FILESIZE xrefpos) {
     CrossRefList.insert(CrossRefList.begin(), xrefpos);
     LoadCrossRefV4(xrefpos, 0, true);
 
-    std::unique_ptr<CPDF_Dictionary, ReleaseDeleter<CPDF_Dictionary>> pDict(
-        LoadTrailerV4());
+    std::unique_ptr<CPDF_Dictionary> pDict(LoadTrailerV4());
     if (!pDict)
       return false;
 
@@ -412,8 +406,7 @@ bool CPDF_Parser::LoadLinearizedAllCrossRefV4(FX_FILESIZE xrefpos,
     CrossRefList.insert(CrossRefList.begin(), xrefpos);
     LoadCrossRefV4(xrefpos, 0, true);
 
-    std::unique_ptr<CPDF_Dictionary, ReleaseDeleter<CPDF_Dictionary>> pDict(
-        LoadTrailerV4());
+    std::unique_ptr<CPDF_Dictionary> pDict(LoadTrailerV4());
     if (!pDict)
       return false;
 
@@ -590,18 +583,14 @@ bool CPDF_Parser::LoadAllCrossRefV5(FX_FILESIZE xrefpos) {
 bool CPDF_Parser::RebuildCrossRef() {
   m_ObjectInfo.clear();
   m_SortedOffset.clear();
-  if (m_pTrailer) {
-    m_pTrailer->Release();
-    m_pTrailer = nullptr;
-  }
+  delete m_pTrailer;
+  m_pTrailer = nullptr;
 
   ParserState state = ParserState::kDefault;
-
   int32_t inside_index = 0;
   uint32_t objnum = 0;
   uint32_t gennum = 0;
   int32_t depth = 0;
-
   const uint32_t kBufferSize = 4096;
   std::vector<uint8_t> buffer(kBufferSize);
 
@@ -755,8 +744,7 @@ bool CPDF_Parser::RebuildCrossRef() {
                       CPDF_Object* pRoot = pDict->GetObjectFor("Root");
                       if (pRoot && pRoot->GetDict() &&
                           pRoot->GetDict()->GetObjectFor("Pages")) {
-                        if (m_pTrailer)
-                          m_pTrailer->Release();
+                        delete m_pTrailer;
                         m_pTrailer = ToDictionary(pDict->Clone());
                       }
                     }
@@ -794,8 +782,7 @@ bool CPDF_Parser::RebuildCrossRef() {
                   m_ObjectInfo[objnum].gennum = gennum;
                 }
 
-                if (pObject)
-                  pObject->Release();
+                delete pObject;
               }
               --i;
               state = ParserState::kDefault;
@@ -812,7 +799,7 @@ bool CPDF_Parser::RebuildCrossRef() {
               CPDF_Object* pObj = m_pSyntax->GetObject(m_pDocument, 0, 0, true);
               if (pObj) {
                 if (!pObj->IsDictionary() && !pObj->AsStream()) {
-                  pObj->Release();
+                  delete pObj;
                 } else {
                   CPDF_Stream* pStream = pObj->AsStream();
                   if (CPDF_Dictionary* pTrailer =
@@ -838,11 +825,11 @@ bool CPDF_Parser::RebuildCrossRef() {
                           }
                         }
                       }
-                      pObj->Release();
+                      delete pObj;
                     } else {
                       if (pObj->IsStream()) {
                         m_pTrailer = ToDictionary(pTrailer->Clone());
-                        pObj->Release();
+                        delete pObj;
                       } else {
                         m_pTrailer = pTrailer;
                       }
@@ -859,7 +846,7 @@ bool CPDF_Parser::RebuildCrossRef() {
                       m_pSyntax->RestorePos(dwSavePos);
                     }
                   } else {
-                    pObj->Release();
+                    delete pObj;
                   }
                 }
               }
@@ -1420,7 +1407,7 @@ CPDF_Dictionary* CPDF_Parser::LoadTrailerV4() {
   if (m_pSyntax->GetKeyword() != "trailer")
     return nullptr;
 
-  std::unique_ptr<CPDF_Object, ReleaseDeleter<CPDF_Object>> pObj(
+  std::unique_ptr<CPDF_Object> pObj(
       m_pSyntax->GetObject(m_pDocument, 0, 0, true));
   if (!ToDictionary(pObj.get()))
     return nullptr;
@@ -1472,7 +1459,7 @@ bool CPDF_Parser::IsLinearizedFile(IFX_SeekableReadStream* pFileAccess,
 
     CPDF_Object* pLen = pDict->GetObjectFor("L");
     if (!pLen) {
-      m_pLinearized->Release();
+      delete m_pLinearized;
       m_pLinearized = nullptr;
       return false;
     }
@@ -1488,7 +1475,7 @@ bool CPDF_Parser::IsLinearizedFile(IFX_SeekableReadStream* pFileAccess,
 
     return true;
   }
-  m_pLinearized->Release();
+  delete m_pLinearized;
   m_pLinearized = nullptr;
   return false;
 }
@@ -1597,12 +1584,11 @@ bool CPDF_Parser::LoadLinearizedAllCrossRefV5(FX_FILESIZE xrefpos) {
 CPDF_Parser::Error CPDF_Parser::LoadLinearizedMainXRefTable() {
   uint32_t dwSaveMetadataObjnum = m_pSyntax->m_MetadataObjnum;
   m_pSyntax->m_MetadataObjnum = 0;
-  if (m_pTrailer) {
-    m_pTrailer->Release();
-    m_pTrailer = nullptr;
-  }
 
+  delete m_pTrailer;
+  m_pTrailer = nullptr;
   m_pSyntax->RestorePos(m_LastXRefOffset - m_pSyntax->m_HeaderOffset);
+
   uint8_t ch = 0;
   uint32_t dwCount = 0;
   m_pSyntax->GetNextChar(ch);

@@ -575,8 +575,7 @@ bool CPDF_FormField::SetItemSelection(int index, bool bSelected, bool bNotify) {
           if (pValue->GetUnicodeText() == opt_value)
             m_pDict->RemoveFor("V");
         } else if (pValue->IsArray()) {
-          std::unique_ptr<CPDF_Array, ReleaseDeleter<CPDF_Array>> pArray(
-              new CPDF_Array);
+          std::unique_ptr<CPDF_Array> pArray(new CPDF_Array);
           for (int i = 0; i < CountOptions(); i++) {
             if (i != index && IsItemSelected(i)) {
               opt_value = GetOptionValue(i);

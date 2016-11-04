@@ -10,7 +10,7 @@
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   CPDF_StreamParser parser(data, size);
   while (CPDF_Object* pObj = parser.ReadNextObject(true, 0))
-    pObj->Release();
+    delete pObj;
 
   return 0;
 }

@@ -71,7 +71,7 @@ bool CPDF_IndirectObjectHolder::ReplaceIndirectObjectIfHigherGeneration(
   return true;
 }
 
-void CPDF_IndirectObjectHolder::ReleaseIndirectObject(uint32_t objnum) {
+void CPDF_IndirectObjectHolder::DeleteIndirectObject(uint32_t objnum) {
   CPDF_Object* pObj = GetIndirectObject(objnum);
   if (!pObj || pObj->GetObjNum() == CPDF_Object::kInvalidObjNum)
     return;

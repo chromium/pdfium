@@ -39,7 +39,7 @@ bool CPDF_ContentMarkItem::HasMCID() const {
 }
 
 void CPDF_ContentMarkItem::SetDirectDict(
-    std::unique_ptr<CPDF_Dictionary, ReleaseDeleter<CPDF_Dictionary>> pDict) {
+    std::unique_ptr<CPDF_Dictionary> pDict) {
   m_ParamType = DirectDict;
   m_pDirectDict = std::move(pDict);
 }

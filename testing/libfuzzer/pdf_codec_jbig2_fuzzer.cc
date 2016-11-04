@@ -29,8 +29,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   if (!bitmap->Create(width, height, FXDIB_1bppRgb))
     return 0;
 
-  std::unique_ptr<CPDF_Object, ReleaseDeleter<CPDF_Object>> stream(
-      new CPDF_Stream);
+  std::unique_ptr<CPDF_Object> stream(new CPDF_Stream);
   stream->AsStream()->SetData(data, size);
   CPDF_StreamAcc src_stream;
   src_stream.LoadAllData(stream->AsStream(), true);
