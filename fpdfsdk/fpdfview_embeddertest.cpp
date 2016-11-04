@@ -56,6 +56,10 @@ TEST_F(FPDFViewEmbeddertest, EmptyDocument) {
   EXPECT_EQ(1, FPDF_VIEWERREF_GetNumCopies(document()));
   EXPECT_EQ(DuplexUndefined, FPDF_VIEWERREF_GetDuplex(document()));
 
+  char buf[100];
+  EXPECT_EQ(0U, FPDF_VIEWERREF_GetName(document(), "foo", nullptr, 0));
+  EXPECT_EQ(0U, FPDF_VIEWERREF_GetName(document(), "foo", buf, sizeof(buf)));
+
   EXPECT_EQ(0u, FPDF_CountNamedDests(document()));
 }
 
@@ -69,11 +73,53 @@ TEST_F(FPDFViewEmbeddertest, Page) {
   EXPECT_EQ(nullptr, LoadPage(1));
 }
 
-TEST_F(FPDFViewEmbeddertest, ViewerRef) {
+TEST_F(FPDFViewEmbeddertest, ViewerRefDummy) {
   EXPECT_TRUE(OpenDocument("about_blank.pdf"));
   EXPECT_TRUE(FPDF_VIEWERREF_GetPrintScaling(document()));
   EXPECT_EQ(1, FPDF_VIEWERREF_GetNumCopies(document()));
   EXPECT_EQ(DuplexUndefined, FPDF_VIEWERREF_GetDuplex(document()));
+
+  char buf[100];
+  EXPECT_EQ(0U, FPDF_VIEWERREF_GetName(document(), "foo", nullptr, 0));
+  EXPECT_EQ(0U, FPDF_VIEWERREF_GetName(document(), "foo", buf, sizeof(buf)));
+}
+
+TEST_F(FPDFViewEmbeddertest, ViewerRef) {
+  EXPECT_TRUE(OpenDocument("viewer_ref.pdf"));
+  EXPECT_TRUE(FPDF_VIEWERREF_GetPrintScaling(document()));
+  EXPECT_EQ(5, FPDF_VIEWERREF_GetNumCopies(document()));
+  EXPECT_EQ(DuplexUndefined, FPDF_VIEWERREF_GetDuplex(document()));
+
+  // Test some corner cases.
+  char buf[100];
+  EXPECT_EQ(0U, FPDF_VIEWERREF_GetName(document(), "", buf, sizeof(buf)));
+  EXPECT_EQ(0U, FPDF_VIEWERREF_GetName(document(), "foo", nullptr, 0));
+  EXPECT_EQ(0U, FPDF_VIEWERREF_GetName(document(), "foo", buf, sizeof(buf)));
+
+  // Make sure |buf| does not get written into when it appears to be too small.
+  strcpy(buf, "ABCD");
+  EXPECT_EQ(4U, FPDF_VIEWERREF_GetName(document(), "Foo", buf, 1));
+  EXPECT_STREQ("ABCD", buf);
+
+  // Note "Foo" is a different key from "foo".
+  EXPECT_EQ(4U,
+            FPDF_VIEWERREF_GetName(document(), "Foo", nullptr, sizeof(buf)));
+  ASSERT_EQ(4U, FPDF_VIEWERREF_GetName(document(), "Foo", buf, sizeof(buf)));
+  EXPECT_STREQ("foo", buf);
+
+  // Try to retrieve a boolean and an integer.
+  EXPECT_EQ(
+      0U, FPDF_VIEWERREF_GetName(document(), "HideToolbar", buf, sizeof(buf)));
+  EXPECT_EQ(0U,
+            FPDF_VIEWERREF_GetName(document(), "NumCopies", buf, sizeof(buf)));
+
+  // Try more valid cases.
+  ASSERT_EQ(4U,
+            FPDF_VIEWERREF_GetName(document(), "Direction", buf, sizeof(buf)));
+  EXPECT_STREQ("R2L", buf);
+  ASSERT_EQ(8U,
+            FPDF_VIEWERREF_GetName(document(), "ViewArea", buf, sizeof(buf)));
+  EXPECT_STREQ("CropBox", buf);
 }
 
 TEST_F(FPDFViewEmbeddertest, NamedDests) {

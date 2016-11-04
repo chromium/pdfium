@@ -914,6 +914,25 @@ FPDF_VIEWERREF_GetPrintPageRange(FPDF_DOCUMENT document);
 DLLEXPORT FPDF_DUPLEXTYPE STDCALL
 FPDF_VIEWERREF_GetDuplex(FPDF_DOCUMENT document);
 
+// Function: FPDF_VIEWERREF_GetName
+//          Gets the contents for a viewer ref, with a given key. The value must
+//          be of type "name".
+// Parameters:
+//          document    -   Handle to the loaded document.
+//          key         -   Name of the key in the viewer pref dictionary.
+//          buffer      -   A string to write the contents of the key to.
+//          length      -   Length of the buffer.
+// Return value:
+//          The number of bytes in the contents, including the NULL terminator.
+//          Thus if the return value is 0, then that indicates an error, such
+//          as when |document| is invalid or |buffer| is NULL. If |length| is
+//          less than the returned length, or |buffer| is NULL, |buffer| will
+//          not be modified.
+DLLEXPORT unsigned long STDCALL FPDF_VIEWERREF_GetName(FPDF_DOCUMENT document,
+                                                       FPDF_BYTESTRING key,
+                                                       char* buffer,
+                                                       unsigned long length);
+
 // Function: FPDF_CountNamedDests
 //          Get the count of named destinations in the PDF document.
 // Parameters:

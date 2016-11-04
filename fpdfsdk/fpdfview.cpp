@@ -942,6 +942,25 @@ FPDF_VIEWERREF_GetDuplex(FPDF_DOCUMENT document) {
   return DuplexUndefined;
 }
 
+DLLEXPORT unsigned long STDCALL FPDF_VIEWERREF_GetName(FPDF_DOCUMENT document,
+                                                       FPDF_BYTESTRING key,
+                                                       char* buffer,
+                                                       unsigned long length) {
+  CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
+  if (!pDoc)
+    return 0;
+
+  CPDF_ViewerPreferences viewRef(pDoc);
+  CFX_ByteString bsVal;
+  if (!viewRef.GenericName(key, &bsVal))
+    return 0;
+
+  unsigned long dwStringLen = bsVal.GetLength() + 1;
+  if (buffer && length >= dwStringLen)
+    memcpy(buffer, bsVal.c_str(), dwStringLen);
+  return dwStringLen;
+}
+
 DLLEXPORT FPDF_DWORD STDCALL FPDF_CountNamedDests(FPDF_DOCUMENT document) {
   CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
   if (!pDoc)

@@ -228,6 +228,7 @@ int CheckPDFiumCApi() {
     CHK(FPDF_VIEWERREF_GetNumCopies);
     CHK(FPDF_VIEWERREF_GetPrintPageRange);
     CHK(FPDF_VIEWERREF_GetDuplex);
+    CHK(FPDF_VIEWERREF_GetName);
     CHK(FPDF_CountNamedDests);
     CHK(FPDF_GetNamedDestByName);
     CHK(FPDF_GetNamedDest);

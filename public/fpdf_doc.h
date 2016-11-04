@@ -271,7 +271,7 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFLink_GetQuadPoints(FPDF_LINK linkAnnot,
 // Returns the number of bytes in the title, including trailing zeros.
 //
 // The |buffer| is always encoded in UTF-16LE. The |buffer| is followed by two
-// bytes of zeros indicating the end of the string.  If |buflen| is less then
+// bytes of zeros indicating the end of the string.  If |buflen| is less than
 // the returned length, or |buffer| is NULL, |buffer| will not be modified.
 DLLEXPORT unsigned long STDCALL FPDF_GetMetaText(FPDF_DOCUMENT doc,
                                                  FPDF_BYTESTRING tag,

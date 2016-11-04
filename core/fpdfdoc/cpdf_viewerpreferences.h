@@ -25,6 +25,11 @@ class CPDF_ViewerPreferences {
   CPDF_Array* PrintPageRange() const;
   CFX_ByteString Duplex() const;
 
+  // Gets the entry for |bsKey|. If the entry exists and it is of type name,
+  // then this method writes the value into |bsVal| and returns true. Otherwise
+  // returns false and |bsVal| is untouched. |bsVal| must not be NULL.
+  bool GenericName(const CFX_ByteString& bsKey, CFX_ByteString* bsVal) const;
+
  private:
   CPDF_Dictionary* GetViewerPreferences() const;
 
