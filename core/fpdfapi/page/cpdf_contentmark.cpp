@@ -110,7 +110,8 @@ void CPDF_ContentMark::MarkData::AddMark(const CFX_ByteString& name,
   if (pDict) {
     if (bDirect) {
       item.SetDirectDict(
-          std::unique_ptr<CPDF_Dictionary>(ToDictionary(pDict->Clone())));
+          std::unique_ptr<CPDF_Dictionary, ReleaseDeleter<CPDF_Dictionary>>(
+              ToDictionary(pDict->Clone())));
     } else {
       item.SetPropertiesDict(pDict);
     }

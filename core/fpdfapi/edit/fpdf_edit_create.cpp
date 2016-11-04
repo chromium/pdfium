@@ -470,8 +470,8 @@ CPDF_FlateEncoder::CPDF_FlateEncoder(const uint8_t* pBuffer,
 }
 
 CPDF_FlateEncoder::~CPDF_FlateEncoder() {
-  if (m_bCloned)
-    delete m_pDict;
+  if (m_bCloned && m_pDict)
+    m_pDict->Release();
   if (m_bNewData)
     FX_Free(m_pData);
 }
@@ -902,8 +902,8 @@ CPDF_Creator::CPDF_Creator(CPDF_Document* pDoc)
 
 CPDF_Creator::~CPDF_Creator() {
   ResetStandardSecurity();
-  if (m_bEncryptCloned) {
-    delete m_pEncryptDict;
+  if (m_bEncryptCloned && m_pEncryptDict) {
+    m_pEncryptDict->Release();
     m_pEncryptDict = nullptr;
   }
   Clear();
@@ -1247,7 +1247,7 @@ int32_t CPDF_Creator::WriteOldIndirectObject(uint32_t objnum) {
       return -1;
     }
     if (!bExistInMap) {
-      m_pDocument->DeleteIndirectObject(objnum);
+      m_pDocument->ReleaseIndirectObject(objnum);
     }
   } else {
     uint8_t* pBuffer;
@@ -1934,7 +1934,7 @@ void CPDF_Creator::InitID(bool bDefault) {
       m_pIDArray->Add(pID1->Clone());
     } else {
       std::vector<uint8_t> buffer =
-          PDF_GenerateFileID((uint32_t)(uintptr_t) this, m_dwLastObjNum);
+          PDF_GenerateFileID((uint32_t)(uintptr_t)this, m_dwLastObjNum);
       CFX_ByteString bsBuffer(buffer.data(), buffer.size());
       m_pIDArray->Add(new CPDF_String(bsBuffer, true));
     }
@@ -1949,7 +1949,7 @@ void CPDF_Creator::InitID(bool bDefault) {
       return;
     }
     std::vector<uint8_t> buffer =
-        PDF_GenerateFileID((uint32_t)(uintptr_t) this, m_dwLastObjNum);
+        PDF_GenerateFileID((uint32_t)(uintptr_t)this, m_dwLastObjNum);
     CFX_ByteString bsBuffer(buffer.data(), buffer.size());
     m_pIDArray->Add(new CPDF_String(bsBuffer, true));
     return;

@@ -97,7 +97,7 @@ class CPDF_StreamContentParser {
   void AddPathPoint(FX_FLOAT x, FX_FLOAT y, int flag);
   void AddPathRect(FX_FLOAT x, FX_FLOAT y, FX_FLOAT w, FX_FLOAT h);
   void AddPathObject(int FillType, bool bStroke);
-  CPDF_ImageObject* AddImage(std::unique_ptr<CPDF_Stream> pStream);
+  CPDF_ImageObject* AddImage(UniqueStream pStream);
   CPDF_ImageObject* AddImage(uint32_t streamObjNum);
   CPDF_ImageObject* AddImage(CPDF_Image* pImage);
 

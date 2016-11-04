@@ -25,16 +25,14 @@
 
 CPDF_Image::CPDF_Image(CPDF_Document* pDoc) : m_pDocument(pDoc) {}
 
-CPDF_Image::CPDF_Image(CPDF_Document* pDoc,
-                       std::unique_ptr<CPDF_Stream> pStream)
+CPDF_Image::CPDF_Image(CPDF_Document* pDoc, UniqueStream pStream)
     : m_pDocument(pDoc),
       m_pStream(pStream.get()),
       m_pOwnedStream(std::move(pStream)) {
   if (!m_pStream)
     return;
 
-  m_pOwnedDict =
-      ToDictionary(std::unique_ptr<CPDF_Object>(m_pStream->GetDict()->Clone()));
+  m_pOwnedDict = ToDictionary(UniqueObject(m_pStream->GetDict()->Clone()));
   m_pDict = m_pOwnedDict.get();
   FinishInitialization();
 }
@@ -63,15 +61,13 @@ void CPDF_Image::FinishInitialization() {
 CPDF_Image* CPDF_Image::Clone() {
   CPDF_Image* pImage = new CPDF_Image(m_pDocument);
   if (m_pOwnedStream) {
-    pImage->m_pOwnedStream =
-        ToStream(std::unique_ptr<CPDF_Object>(m_pOwnedStream->Clone()));
+    pImage->m_pOwnedStream = ToStream(UniqueObject(m_pOwnedStream->Clone()));
     pImage->m_pStream = pImage->m_pOwnedStream.get();
   } else {
     pImage->m_pStream = m_pStream;
   }
   if (m_pOwnedDict) {
-    pImage->m_pOwnedDict =
-        ToDictionary(std::unique_ptr<CPDF_Object>(m_pOwnedDict->Clone()));
+    pImage->m_pOwnedDict = ToDictionary(UniqueObject(m_pOwnedDict->Clone()));
     pImage->m_pDict = pImage->m_pOwnedDict.get();
   } else {
     pImage->m_pDict = m_pDict;
@@ -293,8 +289,10 @@ void CPDF_Image::SetImage(const CFX_DIBitmap* pBitmap, int32_t iCompress) {
         pNewBitmap->Copy(pBitmap);
         pNewBitmap->ConvertFormat(FXDIB_Rgb);
         SetImage(pNewBitmap, iCompress);
-        delete pDict;
-        pDict = nullptr;
+        if (pDict) {
+          pDict->Release();
+          pDict = nullptr;
+        }
         FX_Free(dest_buf);
         dest_buf = nullptr;
         dest_size = 0;

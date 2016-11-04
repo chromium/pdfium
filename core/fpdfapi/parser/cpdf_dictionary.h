@@ -26,7 +26,6 @@ class CPDF_Dictionary : public CPDF_Object {
 
   CPDF_Dictionary();
   explicit CPDF_Dictionary(const CFX_WeakPtr<CFX_ByteStringPool>& pPool);
-  ~CPDF_Dictionary() override;
 
   // CPDF_Object.
   Type GetType() const override;
@@ -89,6 +88,8 @@ class CPDF_Dictionary : public CPDF_Object {
   CFX_WeakPtr<CFX_ByteStringPool> GetByteStringPool() const { return m_pPool; }
 
  protected:
+  ~CPDF_Dictionary() override;
+
   CFX_ByteString MaybeIntern(const CFX_ByteString& str);
   CPDF_Object* CloneNonCyclic(
       bool bDirect,
@@ -98,6 +99,9 @@ class CPDF_Dictionary : public CPDF_Object {
   std::map<CFX_ByteString, CPDF_Object*> m_Map;
 };
 
+using UniqueDictionary =
+    std::unique_ptr<CPDF_Dictionary, ReleaseDeleter<CPDF_Object>>;
+
 inline CPDF_Dictionary* ToDictionary(CPDF_Object* obj) {
   return obj ? obj->AsDictionary() : nullptr;
 }
@@ -106,13 +110,12 @@ inline const CPDF_Dictionary* ToDictionary(const CPDF_Object* obj) {
   return obj ? obj->AsDictionary() : nullptr;
 }
 
-inline std::unique_ptr<CPDF_Dictionary> ToDictionary(
-    std::unique_ptr<CPDF_Object> obj) {
+inline UniqueDictionary ToDictionary(UniqueObject obj) {
   CPDF_Dictionary* pDict = ToDictionary(obj.get());
   if (!pDict)
     return nullptr;
   obj.release();
-  return std::unique_ptr<CPDF_Dictionary>(pDict);
+  return UniqueDictionary(pDict);
 }
 
 #endif  // CORE_FPDFAPI_PARSER_CPDF_DICTIONARY_H_

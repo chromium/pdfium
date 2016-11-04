@@ -94,7 +94,7 @@ class CPDF_Creator {
   FX_FILESIZE m_XrefStart;
   CFX_FileSizeListArray m_ObjectOffset;
   CFX_ArrayTemplate<uint32_t> m_NewObjNumArray;
-  std::unique_ptr<CPDF_Array> m_pIDArray;
+  std::unique_ptr<CPDF_Array, ReleaseDeleter<CPDF_Array>> m_pIDArray;
   int32_t m_FileVersion;
 };
 

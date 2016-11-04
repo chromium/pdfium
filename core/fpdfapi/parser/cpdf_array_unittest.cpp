@@ -10,10 +10,16 @@
 
 #include "testing/gtest/include/gtest/gtest.h"
 
+namespace {
+
+using ScopedArray = std::unique_ptr<CPDF_Array, ReleaseDeleter<CPDF_Array>>;
+
+}  // namespace
+
 TEST(cpdf_array, RemoveAt) {
   {
     int elems[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-    std::unique_ptr<CPDF_Array> arr(new CPDF_Array);
+    ScopedArray arr(new CPDF_Array);
     for (size_t i = 0; i < FX_ArraySize(elems); ++i)
       arr->AddInteger(elems[i]);
     arr->RemoveAt(3, 3);
@@ -30,7 +36,7 @@ TEST(cpdf_array, RemoveAt) {
   {
     // When the range is out of bound, RemoveAt has no effect.
     int elems[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-    std::unique_ptr<CPDF_Array> arr(new CPDF_Array);
+    ScopedArray arr(new CPDF_Array);
     for (size_t i = 0; i < FX_ArraySize(elems); ++i)
       arr->AddInteger(elems[i]);
     arr->RemoveAt(8, 5);
@@ -47,7 +53,7 @@ TEST(cpdf_array, RemoveAt) {
 TEST(cpdf_array, InsertAt) {
   {
     int elems[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-    std::unique_ptr<CPDF_Array> arr(new CPDF_Array);
+    ScopedArray arr(new CPDF_Array);
     for (size_t i = 0; i < FX_ArraySize(elems); ++i)
       arr->InsertAt(i, new CPDF_Number(elems[i]));
     EXPECT_EQ(FX_ArraySize(elems), arr->GetCount());
@@ -66,7 +72,7 @@ TEST(cpdf_array, InsertAt) {
     // an element is inserted at that position while other unfilled
     // positions have nullptr.
     int elems[] = {1, 2};
-    std::unique_ptr<CPDF_Array> arr(new CPDF_Array);
+    ScopedArray arr(new CPDF_Array);
     for (size_t i = 0; i < FX_ArraySize(elems); ++i)
       arr->InsertAt(i, new CPDF_Number(elems[i]));
     arr->InsertAt(10, new CPDF_Number(10));
@@ -83,10 +89,10 @@ TEST(cpdf_array, Clone) {
   {
     // Basic case.
     int elems[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-    std::unique_ptr<CPDF_Array> arr(new CPDF_Array);
+    ScopedArray arr(new CPDF_Array);
     for (size_t i = 0; i < FX_ArraySize(elems); ++i)
       arr->InsertAt(i, new CPDF_Number(elems[i]));
-    std::unique_ptr<CPDF_Array> arr2(arr->Clone()->AsArray());
+    ScopedArray arr2(arr->Clone()->AsArray());
     EXPECT_EQ(arr->GetCount(), arr2->GetCount());
     for (size_t i = 0; i < FX_ArraySize(elems); ++i) {
       // Clone() always create new objects.
@@ -100,7 +106,7 @@ TEST(cpdf_array, Clone) {
     static const size_t kNumOfRowElems = 5;
     int elems[kNumOfRows][kNumOfRowElems] = {
         {1, 2, 3, 4, 5}, {10, 9, 8, 7, 6}, {11, 12, 13, 14, 15}};
-    std::unique_ptr<CPDF_Array> arr(new CPDF_Array);
+    ScopedArray arr(new CPDF_Array);
     // Indirect references to indirect objects.
     std::unique_ptr<CPDF_IndirectObjectHolder> obj_holder(
         new CPDF_IndirectObjectHolder());
@@ -118,10 +124,10 @@ TEST(cpdf_array, Clone) {
     ASSERT_EQ(kNumOfRows, arr->GetCount());
     // Not dereferencing reference objects means just creating new references
     // instead of new copies of direct objects.
-    std::unique_ptr<CPDF_Array> arr1(arr->Clone()->AsArray());
+    ScopedArray arr1(arr->Clone()->AsArray());
     EXPECT_EQ(arr->GetCount(), arr1->GetCount());
     // Dereferencing reference objects creates new copies of direct objects.
-    std::unique_ptr<CPDF_Array> arr2(arr->CloneDirectObject()->AsArray());
+    ScopedArray arr2(arr->CloneDirectObject()->AsArray());
     EXPECT_EQ(arr->GetCount(), arr2->GetCount());
     for (size_t i = 0; i < kNumOfRows; ++i) {
       CPDF_Array* arr_elem = arr->GetObjectAt(i)->AsArray();
@@ -165,7 +171,7 @@ TEST(cpdf_array, Clone) {
 TEST(cpdf_array, Iterator) {
   int elems[] = {-23, -11,     3,         455,   2345877,
                  0,   7895330, -12564334, 10000, -100000};
-  std::unique_ptr<CPDF_Array> arr(new CPDF_Array);
+  ScopedArray arr(new CPDF_Array);
   for (size_t i = 0; i < FX_ArraySize(elems); ++i)
     arr->InsertAt(i, new CPDF_Number(elems[i]));
   size_t index = 0;

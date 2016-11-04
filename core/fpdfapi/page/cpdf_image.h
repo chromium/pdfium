@@ -28,7 +28,7 @@ class IFX_SeekableWriteStream;
 class CPDF_Image {
  public:
   explicit CPDF_Image(CPDF_Document* pDoc);
-  CPDF_Image(CPDF_Document* pDoc, std::unique_ptr<CPDF_Stream> pStream);
+  CPDF_Image(CPDF_Document* pDoc, UniqueStream pStream);
   CPDF_Image(CPDF_Document* pDoc, uint32_t dwStreamObjNum);
   ~CPDF_Image();
 
@@ -84,8 +84,8 @@ class CPDF_Image {
   CPDF_Document* const m_pDocument;
   CPDF_Stream* m_pStream = nullptr;
   CPDF_Dictionary* m_pDict = nullptr;
-  std::unique_ptr<CPDF_Stream> m_pOwnedStream;
-  std::unique_ptr<CPDF_Dictionary> m_pOwnedDict;
+  UniqueStream m_pOwnedStream;
+  UniqueDictionary m_pOwnedDict;
   CPDF_Dictionary* m_pOC = nullptr;
 };
 

@@ -57,7 +57,7 @@ CPDF_Annot::CPDF_Annot(CPDF_Dictionary* pDict,
 
 CPDF_Annot::~CPDF_Annot() {
   if (m_bOwnedAnnotDict)
-    delete m_pAnnotDict;
+    m_pAnnotDict->Release();
   ClearCachedAP();
 }
 

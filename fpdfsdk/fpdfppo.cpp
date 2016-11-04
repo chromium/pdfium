@@ -285,11 +285,11 @@ uint32_t CPDF_PageOrganizer::GetNewObjId(CPDF_Document* pDoc,
     if (pDictClone->KeyExist("Type")) {
       CFX_ByteString strType = pDictClone->GetStringFor("Type");
       if (!FXSYS_stricmp(strType.c_str(), "Pages")) {
-        delete pDictClone;
+        pDictClone->Release();
         return 4;
       }
       if (!FXSYS_stricmp(strType.c_str(), "Page")) {
-        delete pDictClone;
+        pDictClone->Release();
         return 0;
       }
     }
@@ -297,7 +297,7 @@ uint32_t CPDF_PageOrganizer::GetNewObjId(CPDF_Document* pDoc,
   dwNewObjNum = pDoc->AddIndirectObject(pClone);
   (*pObjNumberMap)[dwObjnum] = dwNewObjNum;
   if (!UpdateReference(pClone, pDoc, pObjNumberMap)) {
-    delete pClone;
+    pClone->Release();
     return 0;
   }
   return dwNewObjNum;

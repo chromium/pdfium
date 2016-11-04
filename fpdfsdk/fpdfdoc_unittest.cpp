@@ -87,7 +87,7 @@ class PDFDocTest : public testing::Test {
  protected:
   std::unique_ptr<CPDF_TestPdfDocument> m_pDoc;
   CPDF_IndirectObjectHolder* m_pIndirectObjs;
-  std::unique_ptr<CPDF_Dictionary> m_pRootObj;
+  std::unique_ptr<CPDF_Dictionary, ReleaseDeleter<CPDF_Dictionary>> m_pRootObj;
 };
 
 TEST_F(PDFDocTest, FindBookmark) {

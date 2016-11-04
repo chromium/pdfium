@@ -37,6 +37,11 @@ CPDF_Object* CPDF_Object::CloneNonCyclic(
   return Clone();
 }
 
+void CPDF_Object::Release() {
+  CHECK(!m_ObjNum);
+  delete this;
+}
+
 CFX_ByteString CPDF_Object::GetString() const {
   return CFX_ByteString();
 }

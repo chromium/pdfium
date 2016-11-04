@@ -24,7 +24,7 @@ class CPDF_IndirectObjectHolder {
 
   CPDF_Object* GetIndirectObject(uint32_t objnum) const;
   CPDF_Object* GetOrParseIndirectObject(uint32_t objnum);
-  void DeleteIndirectObject(uint32_t objnum);
+  void ReleaseIndirectObject(uint32_t objnum);
 
   // Take ownership of |pObj|.
   uint32_t AddIndirectObject(CPDF_Object* pObj);

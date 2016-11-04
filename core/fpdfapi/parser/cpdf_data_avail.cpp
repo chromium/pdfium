@@ -83,12 +83,17 @@ CPDF_DataAvail::CPDF_DataAvail(FileAvail* pFileAvail,
 
 CPDF_DataAvail::~CPDF_DataAvail() {
   m_pHintTables.reset();
-  delete m_pLinearized;
-  delete m_pRoot;
-  delete m_pTrailer;
+  if (m_pLinearized)
+    m_pLinearized->Release();
+
+  if (m_pRoot)
+    m_pRoot->Release();
+
+  if (m_pTrailer)
+    m_pTrailer->Release();
 
   for (CPDF_Object* pObject : m_arrayAcroforms)
-    delete pObject;
+    pObject->Release();
 }
 
 void CPDF_DataAvail::SetDocument(CPDF_Document* pDoc) {
@@ -225,7 +230,7 @@ bool CPDF_DataAvail::CheckAcroFormSubObject(DownloadHints* pHints) {
   }
 
   for (CPDF_Object* pObject : m_arrayAcroforms)
-    delete pObject;
+    pObject->Release();
 
   m_arrayAcroforms.clear();
   return true;
@@ -395,7 +400,9 @@ bool CPDF_DataAvail::CheckInfo(DownloadHints* pHints) {
     return false;
   }
 
-  delete pInfo;
+  if (pInfo)
+    pInfo->Release();
+
   m_docStatus =
       (m_bHaveAcroForm ? PDF_DATAAVAIL_ACROFORM : PDF_DATAAVAIL_PAGETREE);
 
@@ -492,7 +499,7 @@ bool CPDF_DataAvail::CheckPage(DownloadHints* pHints) {
     }
 
     if (!pObj->IsDictionary()) {
-      delete pObj;
+      pObj->Release();
       continue;
     }
 
@@ -501,7 +508,7 @@ bool CPDF_DataAvail::CheckPage(DownloadHints* pHints) {
       m_PagesArray.push_back(pObj);
       continue;
     }
-    delete pObj;
+    pObj->Release();
   }
 
   m_PageObjList.RemoveAll();
@@ -517,15 +524,15 @@ bool CPDF_DataAvail::CheckPage(DownloadHints* pHints) {
       continue;
 
     if (!GetPageKids(m_pCurrentParser, pPages)) {
-      delete pPages;
+      pPages->Release();
       while (++i < iPages)
-        delete m_PagesArray[i];
+        m_PagesArray[i]->Release();
 
       m_PagesArray.clear();
       m_docStatus = PDF_DATAAVAIL_ERROR;
       return false;
     }
-    delete pPages;
+    pPages->Release();
   }
 
   m_PagesArray.clear();
@@ -580,12 +587,12 @@ bool CPDF_DataAvail::CheckPages(DownloadHints* pHints) {
   }
 
   if (!GetPageKids(m_pCurrentParser, pPages)) {
-    delete pPages;
+    pPages->Release();
     m_docStatus = PDF_DATAAVAIL_ERROR;
     return false;
   }
 
-  delete pPages;
+  pPages->Release();
   m_docStatus = PDF_DATAAVAIL_PAGE;
   return true;
 }
@@ -756,7 +763,7 @@ bool CPDF_DataAvail::CheckHintTables(DownloadHints* pHints) {
 
   std::unique_ptr<CPDF_HintTables> pHintTables(
       new CPDF_HintTables(this, pDict));
-  std::unique_ptr<CPDF_Object> pHintStream(
+  std::unique_ptr<CPDF_Object, ReleaseDeleter<CPDF_Object>> pHintStream(
       ParseIndirectObjectAt(szHintStart, 0));
   CPDF_Stream* pStream = ToStream(pHintStream.get());
   if (pStream && pHintTables->LoadHintStream(pStream))
@@ -944,11 +951,11 @@ int32_t CPDF_DataAvail::CheckCrossRefStream(DownloadHints* pHints,
       if (pName->GetString() == "XRef") {
         m_Pos += m_parser.m_pSyntax->SavePos();
         xref_offset = pObj->GetDict()->GetIntegerFor("Prev");
-        delete pObj;
+        pObj->Release();
         return 1;
       }
     }
-    delete pObj;
+    pObj->Release();
     return -1;
   }
   pHints->AddSegment(m_Pos, req_size);
@@ -1174,7 +1181,7 @@ bool CPDF_DataAvail::CheckTrailer(DownloadHints* pHints) {
     ScopedFileStream file(FX_CreateMemoryStream(pBuf, (size_t)iSize, false));
     m_syntaxParser.InitParser(file.get(), 0);
 
-    std::unique_ptr<CPDF_Object> pTrailer(
+    std::unique_ptr<CPDF_Object, ReleaseDeleter<CPDF_Object>> pTrailer(
         m_syntaxParser.GetObject(nullptr, 0, 0, true));
     if (!pTrailer) {
       m_Pos += m_syntaxParser.SavePos();
@@ -1259,7 +1266,7 @@ bool CPDF_DataAvail::CheckArrayPageNode(uint32_t dwPageNo,
 
   CPDF_Array* pArray = pPages->AsArray();
   if (!pArray) {
-    delete pPages;
+    pPages->Release();
     m_docStatus = PDF_DATAAVAIL_ERROR;
     return false;
   }
@@ -1274,7 +1281,7 @@ bool CPDF_DataAvail::CheckArrayPageNode(uint32_t dwPageNo,
     pPageNode->m_childNode.Add(pNode);
     pNode->m_dwPageNo = pKid->GetRefObjNum();
   }
-  delete pPages;
+  pPages->Release();
   return true;
 }
 
@@ -1297,12 +1304,12 @@ bool CPDF_DataAvail::CheckUnkownPageNode(uint32_t dwPageNo,
   if (pPage->IsArray()) {
     pPageNode->m_dwPageNo = dwPageNo;
     pPageNode->m_type = PDF_PAGENODE_ARRAY;
-    delete pPage;
+    pPage->Release();
     return true;
   }
 
   if (!pPage->IsDictionary()) {
-    delete pPage;
+    pPage->Release();
     m_docStatus = PDF_DATAAVAIL_ERROR;
     return false;
   }
@@ -1343,11 +1350,11 @@ bool CPDF_DataAvail::CheckUnkownPageNode(uint32_t dwPageNo,
   } else if (type == "Page") {
     pPageNode->m_type = PDF_PAGENODE_PAGE;
   } else {
-    delete pPage;
+    pPage->Release();
     m_docStatus = PDF_DATAAVAIL_ERROR;
     return false;
   }
-  delete pPage;
+  pPage->Release();
   return true;
 }
 
@@ -1435,23 +1442,23 @@ bool CPDF_DataAvail::CheckPageCount(DownloadHints* pHints) {
 
   CPDF_Dictionary* pPagesDict = pPages->GetDict();
   if (!pPagesDict) {
-    delete pPages;
+    pPages->Release();
     m_docStatus = PDF_DATAAVAIL_ERROR;
     return false;
   }
 
   if (!pPagesDict->KeyExist("Kids")) {
-    delete pPages;
+    pPages->Release();
     return true;
   }
 
   int count = pPagesDict->GetIntegerFor("Count");
   if (count > 0) {
-    delete pPages;
+    pPages->Release();
     return true;
   }
 
-  delete pPages;
+  pPages->Release();
   return false;
 }
 

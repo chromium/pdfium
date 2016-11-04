@@ -31,7 +31,7 @@ CPDF_Dictionary::~CPDF_Dictionary() {
   m_ObjNum = kInvalidObjNum;
   for (const auto& it : m_Map) {
     if (it.second && it.second->GetObjNum() != kInvalidObjNum)
-      delete it.second;
+      it.second->Release();
   }
 }
 
@@ -184,7 +184,7 @@ void CPDF_Dictionary::SetFor(const CFX_ByteString& key, CPDF_Object* pObj) {
 
   if (it->second == pObj)
     return;
-  delete it->second;
+  it->second->Release();
 
   if (pObj)
     it->second = pObj;
@@ -208,7 +208,7 @@ void CPDF_Dictionary::RemoveFor(const CFX_ByteString& key) {
   if (it == m_Map.end())
     return;
 
-  delete it->second;
+  it->second->Release();
   m_Map.erase(it);
 }
 
@@ -223,7 +223,7 @@ void CPDF_Dictionary::ReplaceKey(const CFX_ByteString& oldkey,
     return;
 
   if (new_it != m_Map.end()) {
-    delete new_it->second;
+    new_it->second->Release();
     new_it->second = old_it->second;
   } else {
     m_Map.insert(std::make_pair(MaybeIntern(newkey), old_it->second));

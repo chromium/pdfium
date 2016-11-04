@@ -20,7 +20,6 @@ class CPDF_Stream : public CPDF_Object {
 
   // Takes ownership of |pData| and |pDict|.
   CPDF_Stream(uint8_t* pData, uint32_t size, CPDF_Dictionary* pDict);
-  ~CPDF_Stream() override;
 
   // CPDF_Object.
   Type GetType() const override;
@@ -48,16 +47,19 @@ class CPDF_Stream : public CPDF_Object {
   bool IsMemoryBased() const { return m_bMemoryBased; }
 
  protected:
+  ~CPDF_Stream() override;
   CPDF_Object* CloneNonCyclic(
       bool bDirect,
       std::set<const CPDF_Object*>* pVisited) const override;
 
+  std::unique_ptr<CPDF_Dictionary, ReleaseDeleter<CPDF_Dictionary>> m_pDict;
   bool m_bMemoryBased = true;
   uint32_t m_dwSize = 0;
-  std::unique_ptr<CPDF_Dictionary> m_pDict;
   std::unique_ptr<uint8_t, FxFreeDeleter> m_pDataBuf;
   IFX_SeekableReadStream* m_pFile = nullptr;
 };
+
+using UniqueStream = std::unique_ptr<CPDF_Stream, ReleaseDeleter<CPDF_Object>>;
 
 inline CPDF_Stream* ToStream(CPDF_Object* obj) {
   return obj ? obj->AsStream() : nullptr;
@@ -67,12 +69,12 @@ inline const CPDF_Stream* ToStream(const CPDF_Object* obj) {
   return obj ? obj->AsStream() : nullptr;
 }
 
-inline std::unique_ptr<CPDF_Stream> ToStream(std::unique_ptr<CPDF_Object> obj) {
+inline UniqueStream ToStream(UniqueObject obj) {
   CPDF_Stream* pStream = ToStream(obj.get());
   if (!pStream)
     return nullptr;
   obj.release();
-  return std::unique_ptr<CPDF_Stream>(pStream);
+  return UniqueStream(pStream);
 }
 
 #endif  // CORE_FPDFAPI_PARSER_CPDF_STREAM_H_

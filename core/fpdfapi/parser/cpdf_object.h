@@ -38,8 +38,6 @@ class CPDF_Object {
     REFERENCE
   };
 
-  virtual ~CPDF_Object();
-
   virtual Type GetType() const = 0;
   uint32_t GetObjNum() const { return m_ObjNum; }
   uint32_t GetGenNum() const { return m_GenNum; }
@@ -51,6 +49,8 @@ class CPDF_Object {
   // copied to the object it points to directly.
   virtual CPDF_Object* CloneDirectObject() const;
   virtual CPDF_Object* GetDirect() const;
+
+  void Release();
 
   virtual CFX_ByteString GetString() const;
   virtual CFX_WideString GetUnicodeText() const;
@@ -94,8 +94,10 @@ class CPDF_Object {
   friend class CPDF_Parser;
   friend class CPDF_Reference;
   friend class CPDF_Stream;
+  friend struct std::default_delete<CPDF_Object>;
 
   CPDF_Object() : m_ObjNum(0), m_GenNum(0) {}
+  virtual ~CPDF_Object();
 
   CPDF_Object* CloneObjectNonCyclic(bool bDirect) const;
 
@@ -115,5 +117,7 @@ class CPDF_Object {
  private:
   CPDF_Object(const CPDF_Object& src) {}
 };
+
+using UniqueObject = std::unique_ptr<CPDF_Object, ReleaseDeleter<CPDF_Object>>;
 
 #endif  // CORE_FPDFAPI_PARSER_CPDF_OBJECT_H_
