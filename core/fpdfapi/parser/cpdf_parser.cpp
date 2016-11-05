@@ -12,7 +12,6 @@
 #include "core/fpdfapi/parser/cpdf_crypto_handler.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
-#include "core/fpdfapi/parser/cpdf_linearized.h"
 #include "core/fpdfapi/parser/cpdf_number.h"
 #include "core/fpdfapi/parser/cpdf_reference.h"
 #include "core/fpdfapi/parser/cpdf_security_handler.h"
@@ -55,6 +54,8 @@ CPDF_Parser::CPDF_Parser()
       m_pTrailer(nullptr),
       m_pEncryptDict(nullptr),
       m_bVersionUpdated(false),
+      m_pLinearized(nullptr),
+      m_dwFirstPageNo(0),
       m_dwXrefStartObjNum(0) {
   m_pSyntax.reset(new CPDF_SyntaxParser);
 }
@@ -71,6 +72,8 @@ CPDF_Parser::~CPDF_Parser() {
 
   for (CPDF_Dictionary* trailer : m_Trailers)
     delete trailer;
+
+  delete m_pLinearized;
 }
 
 uint32_t CPDF_Parser::GetLastObjNum() const {
@@ -1399,10 +1402,6 @@ CPDF_Object* CPDF_Parser::ParseIndirectObjectAtByStrict(
   return pObj;
 }
 
-uint32_t CPDF_Parser::GetFirstPageNo() const {
-  return m_pLinearized ? m_pLinearized->GetFirstPageNo() : 0;
-}
-
 CPDF_Dictionary* CPDF_Parser::LoadTrailerV4() {
   if (m_pSyntax->GetKeyword() != "trailer")
     return nullptr;
@@ -1449,14 +1448,35 @@ bool CPDF_Parser::IsLinearizedFile(IFX_SeekableReadStream* pFileAccess,
     return false;
   }
 
-  m_pLinearized = CPDF_Linearized::CreateForObject(
-      pdfium::WrapUnique(m_pSyntax->GetObject(nullptr, objnum, gennum, true)));
+  m_pLinearized = m_pSyntax->GetObject(nullptr, objnum, gennum, true);
   if (!m_pLinearized)
     return false;
-  m_LastXRefOffset = m_pLinearized->GetLastXRefOffset();
-  // Move parser onto first page xref table start.
-  m_pSyntax->GetNextWord(nullptr);
-  return true;
+
+  CPDF_Dictionary* pDict = m_pLinearized->GetDict();
+  if (pDict && pDict->GetObjectFor("Linearized")) {
+    m_pSyntax->GetNextWord(nullptr);
+
+    CPDF_Object* pLen = pDict->GetObjectFor("L");
+    if (!pLen) {
+      delete m_pLinearized;
+      m_pLinearized = nullptr;
+      return false;
+    }
+
+    if (pLen->GetInteger() != (int)pFileAccess->GetSize())
+      return false;
+
+    if (CPDF_Number* pNo = ToNumber(pDict->GetObjectFor("P")))
+      m_dwFirstPageNo = pNo->GetInteger();
+
+    if (CPDF_Number* pTable = ToNumber(pDict->GetObjectFor("T")))
+      m_LastXRefOffset = pTable->GetInteger();
+
+    return true;
+  }
+  delete m_pLinearized;
+  m_pLinearized = nullptr;
+  return false;
 }
 
 CPDF_Parser::Error CPDF_Parser::StartLinearizedParse(
@@ -1505,7 +1525,7 @@ CPDF_Parser::Error CPDF_Parser::StartLinearizedParse(
   if (eRet != SUCCESS)
     return eRet;
 
-  m_pDocument->LoadLinearizedDoc(m_pLinearized.get());
+  m_pDocument->LoadLinearizedDoc(m_pLinearized->GetDict());
   if (!m_pDocument->GetRoot() || m_pDocument->GetPageCount() == 0) {
     if (bXRefRebuilt)
       return FORMAT_ERROR;
@@ -1518,7 +1538,7 @@ CPDF_Parser::Error CPDF_Parser::StartLinearizedParse(
     if (eRet != SUCCESS)
       return eRet;
 
-    m_pDocument->LoadLinearizedDoc(m_pLinearized.get());
+    m_pDocument->LoadLinearizedDoc(m_pLinearized->GetDict());
     if (!m_pDocument->GetRoot())
       return FORMAT_ERROR;
   }

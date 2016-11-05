@@ -12,7 +12,6 @@
 #include "core/fpdfapi/parser/cpdf_data_avail.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
-#include "core/fpdfapi/parser/cpdf_linearized.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "core/fxcrt/fx_safe_types.h"
@@ -35,12 +34,12 @@ bool IsValidPageOffsetHintTableBitCount(uint32_t bits) {
 }  // namespace
 
 CPDF_HintTables::CPDF_HintTables(CPDF_DataAvail* pDataAvail,
-                                 CPDF_Linearized* pLinearized)
+                                 CPDF_Dictionary* pLinearized)
     : m_pDataAvail(pDataAvail),
-      m_pLinearized(pLinearized),
+      m_pLinearizedDict(pLinearized),
       m_nFirstPageSharedObjs(0),
       m_szFirstPageObjOffset(0) {
-  ASSERT(m_pLinearized);
+  ASSERT(m_pLinearizedDict);
 }
 
 CPDF_HintTables::~CPDF_HintTables() {}
@@ -488,25 +487,38 @@ bool CPDF_HintTables::LoadHintStream(CPDF_Stream* pHintStream) {
 }
 
 int CPDF_HintTables::GetEndOfFirstPageOffset() const {
-  return static_cast<int>(m_pLinearized->GetFirstPageEndOffset());
+  CPDF_Object* pOffsetE = m_pLinearizedDict->GetDirectObjectFor("E");
+  return pOffsetE ? pOffsetE->GetInteger() : -1;
 }
 
 int CPDF_HintTables::GetNumberOfPages() const {
-  return static_cast<int>(m_pLinearized->GetPageCount());
+  CPDF_Object* pPageNum = m_pLinearizedDict->GetDirectObjectFor("N");
+  return pPageNum ? pPageNum->GetInteger() : 0;
 }
 
 int CPDF_HintTables::GetFirstPageObjectNumber() const {
-  return static_cast<int>(m_pLinearized->GetFirstPageObjNum());
+  CPDF_Object* pFirstPageObj = m_pLinearizedDict->GetDirectObjectFor("O");
+  return pFirstPageObj ? pFirstPageObj->GetInteger() : -1;
 }
 
 int CPDF_HintTables::GetFirstPageNumber() const {
-  return static_cast<int>(m_pLinearized->GetFirstPageNo());
+  CPDF_Object* pFirstPageNum = m_pLinearizedDict->GetDirectObjectFor("P");
+  return pFirstPageNum ? pFirstPageNum->GetInteger() : 0;
 }
 
 int CPDF_HintTables::ReadPrimaryHintStreamOffset() const {
-  return static_cast<int>(m_pLinearized->GetHintStart());
+  return ReadPrimaryHintStream(0);
 }
 
 int CPDF_HintTables::ReadPrimaryHintStreamLength() const {
-  return static_cast<int>(m_pLinearized->GetHintLength());
+  return ReadPrimaryHintStream(1);
+}
+
+int CPDF_HintTables::ReadPrimaryHintStream(int index) const {
+  CPDF_Array* pRange = m_pLinearizedDict->GetArrayFor("H");
+  if (!pRange)
+    return -1;
+
+  CPDF_Object* pStreamLen = pRange->GetDirectObjectAt(index);
+  return pStreamLen ? pStreamLen->GetInteger() : -1;
 }

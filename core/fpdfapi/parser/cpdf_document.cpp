@@ -17,7 +17,6 @@
 #include "core/fpdfapi/page/pageint.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
-#include "core/fpdfapi/parser/cpdf_linearized.h"
 #include "core/fpdfapi/parser/cpdf_number.h"
 #include "core/fpdfapi/parser/cpdf_parser.h"
 #include "core/fpdfapi/parser/cpdf_reference.h"
@@ -379,13 +378,23 @@ void CPDF_Document::LoadDoc() {
   m_PageList.SetSize(RetrievePageCount());
 }
 
-void CPDF_Document::LoadLinearizedDoc(
-    const CPDF_Linearized* pLinearizationParams) {
+void CPDF_Document::LoadLinearizedDoc(CPDF_Dictionary* pLinearizationParams) {
   m_bLinearized = true;
   LoadDocInternal();
-  m_PageList.SetSize(pLinearizationParams->GetPageCount());
-  m_iFirstPageNo = pLinearizationParams->GetFirstPageNo();
-  m_dwFirstPageObjNum = pLinearizationParams->GetFirstPageObjNum();
+
+  uint32_t dwPageCount = 0;
+  CPDF_Object* pCount = pLinearizationParams->GetObjectFor("N");
+  if (ToNumber(pCount))
+    dwPageCount = pCount->GetInteger();
+  m_PageList.SetSize(dwPageCount);
+
+  CPDF_Object* pNo = pLinearizationParams->GetObjectFor("P");
+  if (ToNumber(pNo))
+    m_iFirstPageNo = pNo->GetInteger();
+
+  CPDF_Object* pObjNum = pLinearizationParams->GetObjectFor("O");
+  if (ToNumber(pObjNum))
+    m_dwFirstPageObjNum = pObjNum->GetInteger();
 }
 
 void CPDF_Document::LoadPages() {
