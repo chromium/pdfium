@@ -19,6 +19,7 @@ class CPDF_CryptoHandler;
 class CPDF_Dictionary;
 class CPDF_Document;
 class CPDF_IndirectObjectHolder;
+class CPDF_Linearized;
 class CPDF_Object;
 class CPDF_SecurityHandler;
 class CPDF_StreamAcc;
@@ -88,7 +89,7 @@ class CPDF_Parser {
       uint32_t objnum,
       FX_FILESIZE* pResultPos);
 
-  uint32_t GetFirstPageNo() const { return m_dwFirstPageNo; }
+  uint32_t GetFirstPageNo() const;
 
  protected:
   struct ObjectInfo {
@@ -157,8 +158,7 @@ class CPDF_Parser {
   std::set<FX_FILESIZE> m_SortedOffset;
   std::vector<CPDF_Dictionary*> m_Trailers;
   bool m_bVersionUpdated;
-  CPDF_Object* m_pLinearized;
-  uint32_t m_dwFirstPageNo;
+  std::unique_ptr<CPDF_Linearized> m_pLinearized;
   uint32_t m_dwXrefStartObjNum;
 
   // A map of object numbers to indirect streams. Map owns the streams.
