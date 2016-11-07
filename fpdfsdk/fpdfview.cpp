@@ -192,8 +192,7 @@ bool CPDF_CustomAccess::ReadBlock(void* buffer,
   if (offset < 0)
     return false;
 
-  FX_SAFE_FILESIZE newPos =
-      pdfium::base::checked_cast<FX_FILESIZE, size_t>(size);
+  FX_SAFE_FILESIZE newPos = pdfium::base::checked_cast<FX_FILESIZE>(size);
   newPos += offset;
   if (!newPos.IsValid() ||
       newPos.ValueOrDie() > static_cast<FX_FILESIZE>(m_FileAccess.m_FileLen)) {
@@ -388,8 +387,7 @@ class CMemFile final : public IFX_SeekableReadStream {
     if (offset < 0) {
       return false;
     }
-    FX_SAFE_FILESIZE newPos =
-        pdfium::base::checked_cast<FX_FILESIZE, size_t>(size);
+    FX_SAFE_FILESIZE newPos = pdfium::base::checked_cast<FX_FILESIZE>(size);
     newPos += offset;
     if (!newPos.IsValid() || newPos.ValueOrDie() > m_size) {
       return false;

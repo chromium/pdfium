@@ -1015,10 +1015,8 @@ bool CPDF_Parser::LoadCrossRefV5(FX_FILESIZE* pos, bool bMainXRef) {
     if (startnum < 0)
       continue;
 
-    m_dwXrefStartObjNum =
-        pdfium::base::checked_cast<uint32_t, int32_t>(startnum);
-    uint32_t count =
-        pdfium::base::checked_cast<uint32_t, int32_t>(arrIndex[i].second);
+    m_dwXrefStartObjNum = pdfium::base::checked_cast<uint32_t>(startnum);
+    uint32_t count = pdfium::base::checked_cast<uint32_t>(arrIndex[i].second);
     FX_SAFE_UINT32 dwCaculatedSize = segindex;
     dwCaculatedSize += count;
     dwCaculatedSize *= totalWidth;

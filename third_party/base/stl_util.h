@@ -41,7 +41,7 @@ class FakeUniquePtr : public std::unique_ptr<T> {
 // size_t size() method return values will be checked.
 template <typename ResultType, typename Collection>
 ResultType CollectionSize(const Collection& collection) {
-  return pdfium::base::checked_cast<ResultType, size_t>(collection.size());
+  return pdfium::base::checked_cast<ResultType>(collection.size());
 }
 
 // Track the addition of an object to a set, removing it automatically when

@@ -682,7 +682,7 @@ int CPDF_FormField::InsertOption(CFX_WideString csOptLabel,
     m_pDict->SetFor("Opt", pOpt);
   }
 
-  int iCount = pdfium::base::checked_cast<int, size_t>(pOpt->GetCount());
+  int iCount = pdfium::base::checked_cast<int>(pOpt->GetCount());
   if (index >= iCount) {
     pOpt->AddString(csStr);
     index = iCount;
