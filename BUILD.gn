@@ -761,10 +761,6 @@ static_library("fxge") {
     "core/fxge/android/cfx_androidfontinfo.cpp",
     "core/fxge/android/cfx_androidfontinfo.h",
     "core/fxge/android/fx_android_imp.cpp",
-    "core/fxge/apple/apple_int.h",
-    "core/fxge/apple/cfx_quartzdevice.h",
-    "core/fxge/apple/fx_mac_imp.cpp",
-    "core/fxge/apple/fx_quartz_device.cpp",
     "core/fxge/cfx_facecache.h",
     "core/fxge/cfx_fontcache.h",
     "core/fxge/cfx_fontmapper.h",
@@ -856,9 +852,12 @@ static_library("fxge") {
     sources += [
       "core/fxge/agg/fx_agg_driver.cpp",
       "core/fxge/agg/fx_agg_driver.h",
-      "core/fxge/apple/fx_apple_platform.cpp",
     ]
     deps += [ "third_party:fx_agg" ]
+
+    if (is_mac) {
+      sources += [ "core/fxge/apple/fx_apple_platform.cpp" ]
+    }
   }
 
   if (is_win) {
@@ -872,6 +871,14 @@ static_library("fxge") {
       "core/fxge/win32/win32_int.h",
     ]
     configs -= [ "//build/config/win:lean_and_mean" ]
+  }
+
+  if (is_mac) {
+    sources += [
+      "core/fxge/apple/apple_int.h",
+      "core/fxge/apple/fx_mac_imp.cpp",
+      "core/fxge/apple/fx_quartz_device.cpp",
+    ]
   }
 }
 

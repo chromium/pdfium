@@ -9,8 +9,6 @@
 #include "core/fxge/ge/cfx_folderfontinfo.h"
 #include "core/fxge/ifx_systemfontinfo.h"
 
-#if _FX_OS_ == _FX_MACOSX_
-
 namespace {
 
 const struct {
@@ -137,5 +135,3 @@ void CFX_GEModule::DestroyPlatform() {
   delete reinterpret_cast<CApplePlatform*>(m_pPlatformData);
   m_pPlatformData = nullptr;
 }
-
-#endif  // _FX_OS_ == _FX_MACOSX_

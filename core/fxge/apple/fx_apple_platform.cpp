@@ -6,14 +6,11 @@
 
 #include "core/fxcrt/fx_system.h"
 
-#if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
-
 #ifndef _SKIA_SUPPORT_
 #include "core/fxge/agg/fx_agg_driver.h"
 #endif
 
 #include "core/fxge/apple/apple_int.h"
-#include "core/fxge/apple/cfx_quartzdevice.h"
 #include "core/fxge/cfx_facecache.h"
 #include "core/fxge/cfx_gemodule.h"
 #include "core/fxge/cfx_renderdevice.h"
@@ -186,5 +183,3 @@ void CFX_Font::ReleasePlatformResource() {
     m_pPlatformFont = nullptr;
   }
 }
-
-#endif  // _FXM_PLATFORM_  == _FXM_PLATFORM_APPLE_
