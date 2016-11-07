@@ -12,7 +12,7 @@
 #include "core/fpdfapi/parser/cpdf_crypto_handler.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
-#include "core/fpdfapi/parser/cpdf_linearized.h"
+#include "core/fpdfapi/parser/cpdf_linearized_header.h"
 #include "core/fpdfapi/parser/cpdf_number.h"
 #include "core/fpdfapi/parser/cpdf_reference.h"
 #include "core/fpdfapi/parser/cpdf_security_handler.h"
@@ -1449,7 +1449,7 @@ bool CPDF_Parser::IsLinearizedFile(IFX_SeekableReadStream* pFileAccess,
     return false;
   }
 
-  m_pLinearized = CPDF_Linearized::CreateForObject(
+  m_pLinearized = CPDF_LinearizedHeader::CreateForObject(
       pdfium::WrapUnique(m_pSyntax->GetObject(nullptr, objnum, gennum, true)));
   if (!m_pLinearized)
     return false;

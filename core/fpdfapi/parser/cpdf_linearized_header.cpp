@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fpdfapi/parser/cpdf_linearized.h"
+#include "core/fpdfapi/parser/cpdf_linearized_header.h"
 
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
@@ -32,7 +32,7 @@ bool IsValidNumericDictionaryValue(const CPDF_Dictionary* pDict,
 }  // namespace
 
 // static
-std::unique_ptr<CPDF_Linearized> CPDF_Linearized::CreateForObject(
+std::unique_ptr<CPDF_LinearizedHeader> CPDF_LinearizedHeader::CreateForObject(
     std::unique_ptr<CPDF_Object> pObj) {
   auto pDict = ToDictionary(std::move(pObj));
   if (!pDict || !pDict->KeyExist("Linearized") ||
@@ -43,12 +43,10 @@ std::unique_ptr<CPDF_Linearized> CPDF_Linearized::CreateForObject(
       !IsValidNumericDictionaryValue<FX_FILESIZE>(pDict.get(), "E", 1) ||
       !IsValidNumericDictionaryValue<uint32_t>(pDict.get(), "O", 1))
     return nullptr;
-  return pdfium::WrapUnique(new CPDF_Linearized(pDict.get()));
+  return pdfium::WrapUnique(new CPDF_LinearizedHeader(pDict.get()));
 }
 
-CPDF_Linearized::CPDF_Linearized(const CPDF_Dictionary* pDict) {
-  if (!pDict)
-    return;
+CPDF_LinearizedHeader::CPDF_LinearizedHeader(const CPDF_Dictionary* pDict) {
   m_szFileSize = pDict->GetIntegerFor("L");
   m_dwFirstPageNo = pDict->GetIntegerFor("P");
   m_szLastXRefOffset = pDict->GetIntegerFor("T");
@@ -64,8 +62,8 @@ CPDF_Linearized::CPDF_Linearized(const CPDF_Dictionary* pDict) {
   }
 }
 
-CPDF_Linearized::~CPDF_Linearized() {}
+CPDF_LinearizedHeader::~CPDF_LinearizedHeader() {}
 
-bool CPDF_Linearized::HasHintTable() const {
+bool CPDF_LinearizedHeader::HasHintTable() const {
   return GetPageCount() > 1 && GetHintStart() > 0 && GetHintLength() > 0;
 }

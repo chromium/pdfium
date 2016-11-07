@@ -26,7 +26,7 @@ class CPDF_Font;
 class CPDF_FontEncoding;
 class CPDF_IccProfile;
 class CPDF_Image;
-class CPDF_Linearized;
+class CPDF_LinearizedHeader;
 class CPDF_Parser;
 class CPDF_Pattern;
 class CPDF_StreamAcc;
@@ -86,7 +86,7 @@ class CPDF_Document : public CPDF_IndirectObjectHolder {
   CPDF_IccProfile* LoadIccProfile(CPDF_Stream* pStream);
 
   void LoadDoc();
-  void LoadLinearizedDoc(const CPDF_Linearized* pLinearizationParams);
+  void LoadLinearizedDoc(const CPDF_LinearizedHeader* pLinearizationParams);
   void LoadPages();
 
   void CreateNewDoc();

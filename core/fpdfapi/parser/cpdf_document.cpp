@@ -17,7 +17,7 @@
 #include "core/fpdfapi/page/pageint.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
-#include "core/fpdfapi/parser/cpdf_linearized.h"
+#include "core/fpdfapi/parser/cpdf_linearized_header.h"
 #include "core/fpdfapi/parser/cpdf_number.h"
 #include "core/fpdfapi/parser/cpdf_parser.h"
 #include "core/fpdfapi/parser/cpdf_reference.h"
@@ -380,7 +380,7 @@ void CPDF_Document::LoadDoc() {
 }
 
 void CPDF_Document::LoadLinearizedDoc(
-    const CPDF_Linearized* pLinearizationParams) {
+    const CPDF_LinearizedHeader* pLinearizationParams) {
   m_bLinearized = true;
   LoadDocInternal();
   m_PageList.SetSize(pLinearizationParams->GetPageCount());

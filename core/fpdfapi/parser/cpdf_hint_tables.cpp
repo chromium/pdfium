@@ -12,7 +12,7 @@
 #include "core/fpdfapi/parser/cpdf_data_avail.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
-#include "core/fpdfapi/parser/cpdf_linearized.h"
+#include "core/fpdfapi/parser/cpdf_linearized_header.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "core/fxcrt/fx_safe_types.h"
@@ -35,7 +35,7 @@ bool IsValidPageOffsetHintTableBitCount(uint32_t bits) {
 }  // namespace
 
 CPDF_HintTables::CPDF_HintTables(CPDF_DataAvail* pDataAvail,
-                                 CPDF_Linearized* pLinearized)
+                                 CPDF_LinearizedHeader* pLinearized)
     : m_pDataAvail(pDataAvail),
       m_pLinearized(pLinearized),
       m_nFirstPageSharedObjs(0),

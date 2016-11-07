@@ -15,7 +15,7 @@
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfapi/parser/cpdf_hint_tables.h"
-#include "core/fpdfapi/parser/cpdf_linearized.h"
+#include "core/fpdfapi/parser/cpdf_linearized_header.h"
 #include "core/fpdfapi/parser/cpdf_name.h"
 #include "core/fpdfapi/parser/cpdf_number.h"
 #include "core/fpdfapi/parser/cpdf_reference.h"
@@ -783,7 +783,7 @@ bool CPDF_DataAvail::IsLinearizedFile(uint8_t* pData, uint32_t dwLen) {
     return false;
 
   uint32_t objnum = FXSYS_atoui(wordObjNum.c_str());
-  m_pLinearized = CPDF_Linearized::CreateForObject(pdfium::WrapUnique(
+  m_pLinearized = CPDF_LinearizedHeader::CreateForObject(pdfium::WrapUnique(
       ParseIndirectObjectAt(m_syntaxParser.m_HeaderOffset + 9, objnum)));
   if (!m_pLinearized ||
       m_pLinearized->GetFileSize() != m_pFileRead->GetSize()) {

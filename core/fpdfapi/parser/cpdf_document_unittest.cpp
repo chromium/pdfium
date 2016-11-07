@@ -9,7 +9,7 @@
 #include "core/fpdfapi/cpdf_modulemgr.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
-#include "core/fpdfapi/parser/cpdf_linearized.h"
+#include "core/fpdfapi/parser/cpdf_linearized_header.h"
 #include "core/fpdfapi/parser/cpdf_parser.h"
 #include "core/fxcrt/fx_memory.h"
 #include "testing/gtest/include/gtest/gtest.h"
@@ -76,9 +76,10 @@ class CPDF_TestDocumentForPages : public CPDF_Document {
   std::unique_ptr<CPDF_Dictionary> m_pOwnedRootDict;
 };
 
-class TestLinearized : public CPDF_Linearized {
+class TestLinearized : public CPDF_LinearizedHeader {
  public:
-  explicit TestLinearized(CPDF_Dictionary* dict) : CPDF_Linearized(dict) {}
+  explicit TestLinearized(CPDF_Dictionary* dict)
+      : CPDF_LinearizedHeader(dict) {}
 };
 }  // namespace
 

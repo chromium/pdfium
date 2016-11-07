@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FPDFAPI_PARSER_CPDF_LINEARIZED_H_
-#define CORE_FPDFAPI_PARSER_CPDF_LINEARIZED_H_
+#ifndef CORE_FPDFAPI_PARSER_CPDF_LINEARIZED_HEADER_H_
+#define CORE_FPDFAPI_PARSER_CPDF_LINEARIZED_HEADER_H_
 
 #include <memory>
 
@@ -15,10 +15,10 @@
 class CPDF_Dictionary;
 class CPDF_Object;
 
-class CPDF_Linearized {
+class CPDF_LinearizedHeader {
  public:
-  ~CPDF_Linearized();
-  static std::unique_ptr<CPDF_Linearized> CreateForObject(
+  ~CPDF_LinearizedHeader();
+  static std::unique_ptr<CPDF_LinearizedHeader> CreateForObject(
       std::unique_ptr<CPDF_Object> pObj);
 
   // Will only return values > 0.
@@ -39,7 +39,7 @@ class CPDF_Linearized {
   FX_FILESIZE GetHintLength() const { return m_szHintLength; }
 
  protected:
-  explicit CPDF_Linearized(const CPDF_Dictionary* pDict);
+  explicit CPDF_LinearizedHeader(const CPDF_Dictionary* pDict);
 
  private:
   FX_FILESIZE m_szFileSize = 0;
@@ -52,4 +52,4 @@ class CPDF_Linearized {
   FX_FILESIZE m_szHintLength = 0;
 };
 
-#endif  // CORE_FPDFAPI_PARSER_CPDF_LINEARIZED_H_
+#endif  // CORE_FPDFAPI_PARSER_CPDF_LINEARIZED_HEADER_H_

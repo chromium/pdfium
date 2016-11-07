@@ -20,7 +20,7 @@ int32_t GetData(const int32_t** data32, const uint8_t** data, size_t* size) {
 
 class HintTableForFuzzing : public CPDF_HintTables {
  public:
-  HintTableForFuzzing(CPDF_Linearized* pLinearized,
+  HintTableForFuzzing(CPDF_LinearizedHeader* pLinearized,
                       int shared_hint_table_offset)
       : CPDF_HintTables(nullptr, pLinearized),
         shared_hint_table_offset_(shared_hint_table_offset) {}
@@ -44,10 +44,10 @@ class HintTableForFuzzing : public CPDF_HintTables {
   int shared_hint_table_offset_;
 };
 
-class FakeLinearized : public CPDF_Linearized {
+class FakeLinearized : public CPDF_LinearizedHeader {
  public:
   explicit FakeLinearized(CPDF_Dictionary* linearized_dict)
-      : CPDF_Linearized(linearized_dict) {}
+      : CPDF_LinearizedHeader(linearized_dict) {}
 };
 
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {

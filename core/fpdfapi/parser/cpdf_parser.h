@@ -19,7 +19,7 @@ class CPDF_CryptoHandler;
 class CPDF_Dictionary;
 class CPDF_Document;
 class CPDF_IndirectObjectHolder;
-class CPDF_Linearized;
+class CPDF_LinearizedHeader;
 class CPDF_Object;
 class CPDF_SecurityHandler;
 class CPDF_StreamAcc;
@@ -158,7 +158,7 @@ class CPDF_Parser {
   std::set<FX_FILESIZE> m_SortedOffset;
   std::vector<CPDF_Dictionary*> m_Trailers;
   bool m_bVersionUpdated;
-  std::unique_ptr<CPDF_Linearized> m_pLinearized;
+  std::unique_ptr<CPDF_LinearizedHeader> m_pLinearized;
   uint32_t m_dwXrefStartObjNum;
 
   // A map of object numbers to indirect streams. Map owns the streams.

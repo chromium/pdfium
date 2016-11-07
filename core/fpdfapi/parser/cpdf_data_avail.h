@@ -16,7 +16,7 @@
 class CPDF_Dictionary;
 class CPDF_HintTables;
 class CPDF_IndirectObjectHolder;
-class CPDF_Linearized;
+class CPDF_LinearizedHeader;
 class CPDF_Parser;
 
 enum PDF_DATAAVAIL_STATUS {
@@ -200,7 +200,7 @@ class CPDF_DataAvail final {
   CPDF_Object* m_pRoot;
   uint32_t m_dwRootObjNum;
   uint32_t m_dwInfoObjNum;
-  std::unique_ptr<CPDF_Linearized> m_pLinearized;
+  std::unique_ptr<CPDF_LinearizedHeader> m_pLinearized;
   CPDF_Object* m_pTrailer;
   bool m_bDocAvail;
   FX_FILESIZE m_dwHeaderOffset;
