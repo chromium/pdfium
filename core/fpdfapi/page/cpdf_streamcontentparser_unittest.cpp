@@ -5,7 +5,7 @@
 #include "core/fpdfapi/page/pageint.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
-TEST(fpdf_page_parser, PDF_FindKeyAbbreviation) {
+TEST(cpdf_streamcontentparser, PDF_FindKeyAbbreviation) {
   EXPECT_EQ(CFX_ByteStringC("BitsPerComponent"),
             PDF_FindKeyAbbreviationForTesting(CFX_ByteStringC("BPC")));
   EXPECT_EQ(CFX_ByteStringC("Width"),
@@ -19,7 +19,7 @@ TEST(fpdf_page_parser, PDF_FindKeyAbbreviation) {
             PDF_FindKeyAbbreviationForTesting(CFX_ByteStringC("WW")));
 }
 
-TEST(fpdf_page_parser, PDF_FindValueAbbreviation) {
+TEST(cpdf_streamcontentparser, PDF_FindValueAbbreviation) {
   EXPECT_EQ(CFX_ByteStringC("DeviceGray"),
             PDF_FindValueAbbreviationForTesting(CFX_ByteStringC("G")));
   EXPECT_EQ(CFX_ByteStringC("DCTDecode"),

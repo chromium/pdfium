@@ -5,7 +5,7 @@
 #include "core/fpdfapi/page/pageint.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
-TEST(fpdf_page_parser_old, ReadHexString) {
+TEST(cpdf_streamparser, ReadHexString) {
   {
     // Position out of bounds.
     uint8_t data[] = "12ab>";

@@ -64,7 +64,7 @@ class CPDF_StreamParser {
   CPDF_Object* ReadNextObject(bool bAllowNestedArray, uint32_t dwInArrayLevel);
 
  private:
-  friend class fpdf_page_parser_old_ReadHexString_Test;
+  friend class cpdf_streamparser_ReadHexString_Test;
 
   void GetNextWord(bool& bIsNumber);
   CFX_ByteString ReadString();
@@ -302,7 +302,5 @@ struct PatternValue {
 CFX_ByteStringC PDF_FindKeyAbbreviationForTesting(const CFX_ByteStringC& abbr);
 CFX_ByteStringC PDF_FindValueAbbreviationForTesting(
     const CFX_ByteStringC& abbr);
-
-void PDF_ReplaceAbbr(CPDF_Object* pObj);
 
 #endif  // CORE_FPDFAPI_PAGE_PAGEINT_H_

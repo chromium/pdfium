@@ -6,6 +6,10 @@
 
 #include "core/fpdfapi/page/cpdf_streamcontentparser.h"
 
+#include <memory>
+#include <utility>
+#include <vector>
+
 #include "core/fpdfapi/font/cpdf_font.h"
 #include "core/fpdfapi/font/cpdf_type3font.h"
 #include "core/fpdfapi/page/cpdf_allstates.h"
@@ -22,11 +26,14 @@
 #include "core/fpdfapi/page/cpdf_textobject.h"
 #include "core/fpdfapi/page/pageint.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
+#include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfapi/parser/cpdf_name.h"
 #include "core/fpdfapi/parser/cpdf_number.h"
+#include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
 #include "core/fxcrt/fx_safe_types.h"
+#include "core/fxge/cfx_graphstatedata.h"
 #include "third_party/base/ptr_util.h"
 
 namespace {
@@ -122,7 +129,115 @@ CFX_FloatRect GetShadingBBox(CPDF_ShadingPattern* pShading,
   return rect;
 }
 
+struct AbbrPair {
+  const FX_CHAR* abbr;
+  const FX_CHAR* full_name;
+};
+
+const AbbrPair InlineKeyAbbr[] = {
+    {"BPC", "BitsPerComponent"}, {"CS", "ColorSpace"}, {"D", "Decode"},
+    {"DP", "DecodeParms"},       {"F", "Filter"},      {"H", "Height"},
+    {"IM", "ImageMask"},         {"I", "Interpolate"}, {"W", "Width"},
+};
+
+const AbbrPair InlineValueAbbr[] = {
+    {"G", "DeviceGray"},       {"RGB", "DeviceRGB"},
+    {"CMYK", "DeviceCMYK"},    {"I", "Indexed"},
+    {"AHx", "ASCIIHexDecode"}, {"A85", "ASCII85Decode"},
+    {"LZW", "LZWDecode"},      {"Fl", "FlateDecode"},
+    {"RL", "RunLengthDecode"}, {"CCF", "CCITTFaxDecode"},
+    {"DCT", "DCTDecode"},
+};
+
+struct AbbrReplacementOp {
+  bool is_replace_key;
+  CFX_ByteString key;
+  CFX_ByteStringC replacement;
+};
+
+CFX_ByteStringC FindFullName(const AbbrPair* table,
+                             size_t count,
+                             const CFX_ByteStringC& abbr) {
+  auto it = std::find_if(table, table + count, [abbr](const AbbrPair& pair) {
+    return pair.abbr == abbr;
+  });
+  return it != table + count ? CFX_ByteStringC(it->full_name)
+                             : CFX_ByteStringC();
+}
+
+void ReplaceAbbr(CPDF_Object* pObj) {
+  switch (pObj->GetType()) {
+    case CPDF_Object::DICTIONARY: {
+      CPDF_Dictionary* pDict = pObj->AsDictionary();
+      std::vector<AbbrReplacementOp> replacements;
+      for (const auto& it : *pDict) {
+        CFX_ByteString key = it.first;
+        CPDF_Object* value = it.second;
+        CFX_ByteStringC fullname = FindFullName(
+            InlineKeyAbbr, FX_ArraySize(InlineKeyAbbr), key.AsStringC());
+        if (!fullname.IsEmpty()) {
+          AbbrReplacementOp op;
+          op.is_replace_key = true;
+          op.key = key;
+          op.replacement = fullname;
+          replacements.push_back(op);
+          key = fullname;
+        }
+
+        if (value->IsName()) {
+          CFX_ByteString name = value->GetString();
+          fullname = FindFullName(
+              InlineValueAbbr, FX_ArraySize(InlineValueAbbr), name.AsStringC());
+          if (!fullname.IsEmpty()) {
+            AbbrReplacementOp op;
+            op.is_replace_key = false;
+            op.key = key;
+            op.replacement = fullname;
+            replacements.push_back(op);
+          }
+        } else {
+          ReplaceAbbr(value);
+        }
+      }
+      for (const auto& op : replacements) {
+        if (op.is_replace_key)
+          pDict->ReplaceKey(op.key, CFX_ByteString(op.replacement));
+        else
+          pDict->SetNameFor(op.key, CFX_ByteString(op.replacement));
+      }
+      break;
+    }
+    case CPDF_Object::ARRAY: {
+      CPDF_Array* pArray = pObj->AsArray();
+      for (size_t i = 0; i < pArray->GetCount(); i++) {
+        CPDF_Object* pElement = pArray->GetObjectAt(i);
+        if (pElement->IsName()) {
+          CFX_ByteString name = pElement->GetString();
+          CFX_ByteStringC fullname = FindFullName(
+              InlineValueAbbr, FX_ArraySize(InlineValueAbbr), name.AsStringC());
+          if (!fullname.IsEmpty())
+            pArray->SetAt(i, new CPDF_Name(CFX_ByteString(fullname)));
+        } else {
+          ReplaceAbbr(pElement);
+        }
+      }
+      break;
+    }
+    default:
+      break;
+  }
+}
+
 }  // namespace
+
+CFX_ByteStringC PDF_FindKeyAbbreviationForTesting(const CFX_ByteStringC& abbr) {
+  return FindFullName(InlineKeyAbbr, FX_ArraySize(InlineKeyAbbr), abbr);
+}
+
+CFX_ByteStringC PDF_FindValueAbbreviationForTesting(
+    const CFX_ByteStringC& abbr) {
+  return FindFullName(InlineValueAbbr, FX_ArraySize(InlineValueAbbr), abbr);
+}
 
 CPDF_StreamContentParser::CPDF_StreamContentParser(
     CPDF_Document* pDocument,
@@ -543,7 +658,7 @@ void CPDF_StreamContentParser::Handle_BeginImage() {
         pDict->SetFor(key, pObj.release());
     }
   }
-  PDF_ReplaceAbbr(pDict);
+  ReplaceAbbr(pDict);
   CPDF_Object* pCSObj = nullptr;
   if (pDict->KeyExist("ColorSpace")) {
     pCSObj = pDict->GetDirectObjectFor("ColorSpace");
