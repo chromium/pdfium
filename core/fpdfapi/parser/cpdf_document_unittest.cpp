@@ -9,14 +9,12 @@
 #include "core/fpdfapi/cpdf_modulemgr.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
+#include "core/fpdfapi/parser/cpdf_linearized.h"
 #include "core/fpdfapi/parser/cpdf_parser.h"
 #include "core/fxcrt/fx_memory.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
 namespace {
-
-using ScopedDictionary =
-    std::unique_ptr<CPDF_Dictionary, ReleaseDeleter<CPDF_Dictionary>>;
 
 CPDF_Dictionary* CreatePageTreeNode(CPDF_Array* kids,
                                     CPDF_Document* pDoc,
@@ -76,6 +74,11 @@ class CPDF_TestDocumentForPages : public CPDF_Document {
 
  private:
   std::unique_ptr<CPDF_Dictionary> m_pOwnedRootDict;
+};
+
+class TestLinearized : public CPDF_Linearized {
+ public:
+  explicit TestLinearized(CPDF_Dictionary* dict) : CPDF_Linearized(dict) {}
 };
 }  // namespace
 
@@ -142,10 +145,12 @@ TEST_F(cpdf_document_test, UseCachedPageObjNumIfHaveNotPagesDict) {
   // can be not exists in this case.
   // (case, when hint table is used to page check in CPDF_DataAvail).
   CPDF_Document document(pdfium::MakeUnique<CPDF_Parser>());
-  std::unique_ptr<CPDF_Dictionary> dict(new CPDF_Dictionary());
+  auto dict = pdfium::MakeUnique<CPDF_Dictionary>();
+  dict->SetBooleanFor("Linearized", true);
   const int page_count = 100;
   dict->SetIntegerFor("N", page_count);
-  document.LoadLinearizedDoc(dict.get());
+  TestLinearized linearized(dict.get());
+  document.LoadLinearizedDoc(&linearized);
   ASSERT_EQ(page_count, document.GetPageCount());
   CPDF_Object* page_stub = new CPDF_Dictionary();
   const uint32_t obj_num = document.AddIndirectObject(page_stub);
