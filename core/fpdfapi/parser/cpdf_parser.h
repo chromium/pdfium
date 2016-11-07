@@ -59,8 +59,9 @@ class CPDF_Parser {
 
   CPDF_Dictionary* GetEncryptDict() const { return m_pEncryptDict; }
 
-  CPDF_Object* ParseIndirectObject(CPDF_IndirectObjectHolder* pObjList,
-                                   uint32_t objnum);
+  std::unique_ptr<CPDF_Object> ParseIndirectObject(
+      CPDF_IndirectObjectHolder* pObjList,
+      uint32_t objnum);
 
   uint32_t GetLastObjNum() const;
   bool IsValidObjectNumber(uint32_t objnum) const;
@@ -79,11 +80,12 @@ class CPDF_Parser {
   int GetFileVersion() const { return m_FileVersion; }
   bool IsXRefStream() const { return m_bXRefStream; }
 
-  CPDF_Object* ParseIndirectObjectAt(CPDF_IndirectObjectHolder* pObjList,
-                                     FX_FILESIZE pos,
-                                     uint32_t objnum);
+  std::unique_ptr<CPDF_Object> ParseIndirectObjectAt(
+      CPDF_IndirectObjectHolder* pObjList,
+      FX_FILESIZE pos,
+      uint32_t objnum);
 
-  CPDF_Object* ParseIndirectObjectAtByStrict(
+  std::unique_ptr<CPDF_Object> ParseIndirectObjectAtByStrict(
       CPDF_IndirectObjectHolder* pObjList,
       FX_FILESIZE pos,
       uint32_t objnum,

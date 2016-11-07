@@ -27,30 +27,29 @@ class CPDF_SyntaxParser {
   ~CPDF_SyntaxParser();
 
   void InitParser(IFX_SeekableReadStream* pFileAccess, uint32_t HeaderOffset);
-
   FX_FILESIZE SavePos() const { return m_Pos; }
   void RestorePos(FX_FILESIZE pos) { m_Pos = pos; }
 
-  CPDF_Object* GetObject(CPDF_IndirectObjectHolder* pObjList,
-                         uint32_t objnum,
-                         uint32_t gennum,
-                         bool bDecrypt);
-  CPDF_Object* GetObjectForStrict(CPDF_IndirectObjectHolder* pObjList,
-                                  uint32_t objnum,
-                                  uint32_t gennum);
-  CFX_ByteString GetKeyword();
+  std::unique_ptr<CPDF_Object> GetObject(CPDF_IndirectObjectHolder* pObjList,
+                                         uint32_t objnum,
+                                         uint32_t gennum,
+                                         bool bDecrypt);
 
+  std::unique_ptr<CPDF_Object> GetObjectForStrict(
+      CPDF_IndirectObjectHolder* pObjList,
+      uint32_t objnum,
+      uint32_t gennum);
+
+  CFX_ByteString GetKeyword();
   void ToNextLine();
   void ToNextWord();
-
   bool SearchWord(const CFX_ByteStringC& word,
                   bool bWholeWord,
                   bool bForward,
                   FX_FILESIZE limit);
+
   FX_FILESIZE FindTag(const CFX_ByteStringC& tag, FX_FILESIZE limit);
-
   void SetEncrypt(std::unique_ptr<CPDF_CryptoHandler> pCryptoHandler);
-
   bool ReadBlock(uint8_t* pBuf, uint32_t size);
   bool GetCharAt(FX_FILESIZE pos, uint8_t& ch);
   CFX_ByteString GetNextWord(bool* bIsNumber);
@@ -76,9 +75,9 @@ class CPDF_SyntaxParser {
   CFX_ByteString ReadString();
   CFX_ByteString ReadHexString();
   unsigned int ReadEOLMarkers(FX_FILESIZE pos);
-  CPDF_Stream* ReadStream(CPDF_Dictionary* pDict,
-                          uint32_t objnum,
-                          uint32_t gennum);
+  std::unique_ptr<CPDF_Stream> ReadStream(CPDF_Dictionary* pDict,
+                                          uint32_t objnum,
+                                          uint32_t gennum);
 
   CFX_ByteString MaybeIntern(const CFX_ByteString& str);
   inline bool CheckPosition(FX_FILESIZE pos) {

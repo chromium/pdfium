@@ -156,13 +156,13 @@ class CPDF_DataAvail final {
   void SetStartOffset(FX_FILESIZE dwOffset);
   bool GetNextToken(CFX_ByteString& token);
   bool GetNextChar(uint8_t& ch);
-  CPDF_Object* ParseIndirectObjectAt(
+  std::unique_ptr<CPDF_Object> ParseIndirectObjectAt(
       FX_FILESIZE pos,
       uint32_t objnum,
       CPDF_IndirectObjectHolder* pObjList = nullptr);
-  CPDF_Object* GetObject(uint32_t objnum,
-                         DownloadHints* pHints,
-                         bool* pExistInFile);
+  std::unique_ptr<CPDF_Object> GetObject(uint32_t objnum,
+                                         DownloadHints* pHints,
+                                         bool* pExistInFile);
   bool GetPageKids(CPDF_Parser* pParser, CPDF_Object* pPages);
   bool PreparePageItem();
   bool LoadPages(DownloadHints* pHints);
@@ -197,7 +197,7 @@ class CPDF_DataAvail final {
   IFX_SeekableReadStream* const m_pFileRead;
   CPDF_Parser m_parser;
   CPDF_SyntaxParser m_syntaxParser;
-  CPDF_Object* m_pRoot;
+  std::unique_ptr<CPDF_Object> m_pRoot;
   uint32_t m_dwRootObjNum;
   uint32_t m_dwInfoObjNum;
   std::unique_ptr<CPDF_LinearizedHeader> m_pLinearized;
@@ -239,7 +239,7 @@ class CPDF_DataAvail final {
   bool m_bNeedDownLoadResource;
   bool m_bPageLoadedOK;
   bool m_bLinearizedFormParamLoad;
-  std::vector<CPDF_Object*> m_PagesArray;
+  std::vector<std::unique_ptr<CPDF_Object>> m_PagesArray;
   uint32_t m_dwEncryptObjNum;
   FX_FILESIZE m_dwPrevXRefOffset;
   bool m_bTotalLoadPageTree;

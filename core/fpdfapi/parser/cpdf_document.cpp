@@ -354,7 +354,8 @@ CPDF_Document::~CPDF_Document() {
   m_pByteStringPool.DeleteObject();  // Make weak.
 }
 
-CPDF_Object* CPDF_Document::ParseIndirectObject(uint32_t objnum) {
+std::unique_ptr<CPDF_Object> CPDF_Document::ParseIndirectObject(
+    uint32_t objnum) {
   return m_pParser ? m_pParser->ParseIndirectObject(this, objnum) : nullptr;
 }
 

@@ -113,7 +113,7 @@ class CPDF_Document : public CPDF_IndirectObjectHolder {
                     uint32_t objnum,
                     int& index,
                     int level = 0);
-  CPDF_Object* ParseIndirectObject(uint32_t objnum) override;
+  std::unique_ptr<CPDF_Object> ParseIndirectObject(uint32_t objnum) override;
   void LoadDocInternal();
   size_t CalculateEncodingDict(int charset, CPDF_Dictionary* pBaseDict);
   CPDF_Dictionary* GetPagesDict() const;

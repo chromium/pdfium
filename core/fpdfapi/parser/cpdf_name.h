@@ -12,8 +12,9 @@
 class CPDF_Name : public CPDF_Object {
  public:
   explicit CPDF_Name(const CFX_ByteString& str);
+  ~CPDF_Name() override;
 
-  // CPDF_Object.
+  // CPDF_Object:
   Type GetType() const override;
   CPDF_Object* Clone() const override;
   CFX_ByteString GetString() const override;
@@ -24,8 +25,6 @@ class CPDF_Name : public CPDF_Object {
   const CPDF_Name* AsName() const override;
 
  protected:
-  ~CPDF_Name() override;
-
   CFX_ByteString m_Name;
 };
 

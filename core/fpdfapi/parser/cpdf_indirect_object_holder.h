@@ -39,7 +39,7 @@ class CPDF_IndirectObjectHolder {
   const_iterator end() const { return m_IndirectObjs.end(); }
 
  protected:
-  virtual CPDF_Object* ParseIndirectObject(uint32_t objnum);
+  virtual std::unique_ptr<CPDF_Object> ParseIndirectObject(uint32_t objnum);
 
  private:
   uint32_t m_LastObjNum;

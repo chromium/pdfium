@@ -16,6 +16,7 @@ class CPDF_IndirectObjectHolder;
 class CPDF_Reference : public CPDF_Object {
  public:
   CPDF_Reference(CPDF_IndirectObjectHolder* pDoc, int objnum);
+  ~CPDF_Reference() override;
 
   // CPDF_Object.
   Type GetType() const override;
@@ -35,12 +36,9 @@ class CPDF_Reference : public CPDF_Object {
   void SetRef(CPDF_IndirectObjectHolder* pDoc, uint32_t objnum);
 
  protected:
-  ~CPDF_Reference() override;
-
   CPDF_Object* CloneNonCyclic(
       bool bDirect,
       std::set<const CPDF_Object*>* pVisited) const override;
-
   CPDF_Object* SafeGetDirect() const;
 
   CPDF_IndirectObjectHolder* m_pObjList;

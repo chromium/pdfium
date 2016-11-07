@@ -28,17 +28,18 @@ CPDF_Object* CPDF_IndirectObjectHolder::GetOrParseIndirectObject(
   if (pObj)
     return pObj->GetObjNum() != CPDF_Object::kInvalidObjNum ? pObj : nullptr;
 
-  pObj = ParseIndirectObject(objnum);
-  if (!pObj)
+  std::unique_ptr<CPDF_Object> pNewObj = ParseIndirectObject(objnum);
+  if (!pNewObj)
     return nullptr;
 
-  pObj->m_ObjNum = objnum;
+  pNewObj->m_ObjNum = objnum;
   m_LastObjNum = std::max(m_LastObjNum, objnum);
-  m_IndirectObjs[objnum].reset(pObj);
-  return pObj;
+  m_IndirectObjs[objnum] = std::move(pNewObj);
+  return m_IndirectObjs[objnum].get();
 }
 
-CPDF_Object* CPDF_IndirectObjectHolder::ParseIndirectObject(uint32_t objnum) {
+std::unique_ptr<CPDF_Object> CPDF_IndirectObjectHolder::ParseIndirectObject(
+    uint32_t objnum) {
   return nullptr;
 }
 

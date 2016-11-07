@@ -15,8 +15,9 @@ class CPDF_Boolean : public CPDF_Object {
  public:
   CPDF_Boolean();
   explicit CPDF_Boolean(bool value);
+  ~CPDF_Boolean() override;
 
-  // CPDF_Object.
+  // CPDF_Object:
   Type GetType() const override;
   CPDF_Object* Clone() const override;
   CFX_ByteString GetString() const override;
@@ -27,8 +28,6 @@ class CPDF_Boolean : public CPDF_Object {
   const CPDF_Boolean* AsBoolean() const override;
 
  protected:
-  ~CPDF_Boolean() override;
-
   bool m_bValue;
 };
 

@@ -69,8 +69,8 @@ void CFDF_Document::ParseStream(IFX_SeekableReadStream* pFile, bool bOwnFile) {
       if (word != "obj")
         break;
 
-      auto pObj = pdfium::WrapUnique<CPDF_Object>(
-          parser.GetObject(this, objnum, 0, true));
+      std::unique_ptr<CPDF_Object> pObj =
+          parser.GetObject(this, objnum, 0, true);
       if (!pObj)
         break;
 
@@ -82,11 +82,11 @@ void CFDF_Document::ParseStream(IFX_SeekableReadStream* pFile, bool bOwnFile) {
       if (word != "trailer")
         break;
 
-      if (CPDF_Dictionary* pMainDict =
-              ToDictionary(parser.GetObject(this, 0, 0, true))) {
+      std::unique_ptr<CPDF_Dictionary> pMainDict =
+          ToDictionary(parser.GetObject(this, 0, 0, true));
+      if (pMainDict)
         m_pRootDict = pMainDict->GetDictFor("Root");
-        delete pMainDict;
-      }
+
       break;
     }
   }
