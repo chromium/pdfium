@@ -1759,4 +1759,10 @@ if (pdf_is_standalone) {
       "//samples",
     ]
   }
+  group("fuzzers") {
+    testonly = true
+    deps = [
+      "//testing/libfuzzer",
+    ]
+  }
 }
