@@ -11,9 +11,7 @@
 #include "xfa/fwl/core/fwl_error.h"
 #include "xfa/fwl/core/ifwl_barcode.h"
 
-class CFWL_Widget;
-
-class CFWL_Barcode : public CFWL_Edit {
+class CFWL_Barcode : public CFWL_Edit, public IFWL_BarcodeDP {
  public:
   CFWL_Barcode(const IFWL_App*);
   ~CFWL_Barcode() override;
@@ -38,48 +36,41 @@ class CFWL_Barcode : public CFWL_Edit {
   void SetTruncated(bool truncated);
   void ResetBarcodeAttributes();
 
- protected:
-  class CFWL_BarcodeDP : public IFWL_BarcodeDP {
-   public:
-    CFWL_BarcodeDP();
+  // IFWL_DataProvider
+  FWL_Error GetCaption(IFWL_Widget* pWidget,
+                       CFX_WideString& wsCaption) override;
 
-    // IFWL_DataProvider
-    FWL_Error GetCaption(IFWL_Widget* pWidget,
-                         CFX_WideString& wsCaption) override;
+  // IFWL_BarcodeDP
+  BC_CHAR_ENCODING GetCharEncoding() const override;
+  int32_t GetModuleHeight() const override;
+  int32_t GetModuleWidth() const override;
+  int32_t GetDataLength() const override;
+  bool GetCalChecksum() const override;
+  bool GetPrintChecksum() const override;
+  BC_TEXT_LOC GetTextLocation() const override;
+  int32_t GetWideNarrowRatio() const override;
+  FX_CHAR GetStartChar() const override;
+  FX_CHAR GetEndChar() const override;
+  int32_t GetVersion() const override;
+  int32_t GetErrorCorrectionLevel() const override;
+  bool GetTruncated() const override;
+  uint32_t GetBarcodeAttributeMask() const override;
 
-    // IFWL_BarcodeDP
-    BC_CHAR_ENCODING GetCharEncoding() const override;
-    int32_t GetModuleHeight() const override;
-    int32_t GetModuleWidth() const override;
-    int32_t GetDataLength() const override;
-    bool GetCalChecksum() const override;
-    bool GetPrintChecksum() const override;
-    BC_TEXT_LOC GetTextLocation() const override;
-    int32_t GetWideNarrowRatio() const override;
-    FX_CHAR GetStartChar() const override;
-    FX_CHAR GetEndChar() const override;
-    int32_t GetVersion() const override;
-    int32_t GetErrorCorrectionLevel() const override;
-    bool GetTruncated() const override;
-    uint32_t GetBarcodeAttributeMask() const override;
-
-    BC_CHAR_ENCODING m_eCharEncoding;
-    int32_t m_nModuleHeight;
-    int32_t m_nModuleWidth;
-    int32_t m_nDataLength;
-    bool m_bCalChecksum;
-    bool m_bPrintChecksum;
-    BC_TEXT_LOC m_eTextLocation;
-    int32_t m_nWideNarrowRatio;
-    FX_CHAR m_cStartChar;
-    FX_CHAR m_cEndChar;
-    int32_t m_nVersion;
-    int32_t m_nECLevel;
-    bool m_bTruncated;
-    uint32_t m_dwAttributeMask;
-  };
-
-  CFWL_BarcodeDP m_barcodeData;
+ private:
+  BC_CHAR_ENCODING m_eCharEncoding;
+  int32_t m_nModuleHeight;
+  int32_t m_nModuleWidth;
+  int32_t m_nDataLength;
+  bool m_bCalChecksum;
+  bool m_bPrintChecksum;
+  BC_TEXT_LOC m_eTextLocation;
+  int32_t m_nWideNarrowRatio;
+  FX_CHAR m_cStartChar;
+  FX_CHAR m_cEndChar;
+  int32_t m_nVersion;
+  int32_t m_nECLevel;
+  bool m_bTruncated;
+  uint32_t m_dwAttributeMask;
 };
 
 #endif  // XFA_FWL_CORE_CFWL_BARCODE_H_

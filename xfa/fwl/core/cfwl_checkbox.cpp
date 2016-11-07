@@ -19,7 +19,8 @@ IFWL_CheckBox* ToCheckBox(IFWL_Widget* widget) {
 
 }  // namespace
 
-CFWL_CheckBox::CFWL_CheckBox(const IFWL_App* app) : CFWL_Widget(app) {}
+CFWL_CheckBox::CFWL_CheckBox(const IFWL_App* app)
+    : CFWL_Widget(app), m_fBoxHeight(16.0f), m_wsCaption(L"Check box") {}
 
 CFWL_CheckBox::~CFWL_CheckBox() {}
 
@@ -27,18 +28,18 @@ void CFWL_CheckBox::Initialize() {
   ASSERT(!m_pIface);
 
   m_pIface = pdfium::MakeUnique<IFWL_CheckBox>(
-      m_pApp, pdfium::MakeUnique<CFWL_WidgetProperties>(&m_checkboxData));
+      m_pApp, pdfium::MakeUnique<CFWL_WidgetProperties>(this));
 
   CFWL_Widget::Initialize();
 }
 
 FWL_Error CFWL_CheckBox::SetCaption(const CFX_WideStringC& wsCaption) {
-  m_checkboxData.m_wsCaption = wsCaption;
+  m_wsCaption = wsCaption;
   return FWL_Error::Succeeded;
 }
 
 FWL_Error CFWL_CheckBox::SetBoxSize(FX_FLOAT fHeight) {
-  m_checkboxData.m_fBoxHeight = fHeight;
+  m_fBoxHeight = fHeight;
   return FWL_Error::Succeeded;
 }
 
@@ -50,16 +51,12 @@ FWL_Error CFWL_CheckBox::SetCheckState(int32_t iCheck) {
   return ToCheckBox(GetWidget())->SetCheckState(iCheck);
 }
 
-CFWL_CheckBox::CFWL_CheckBoxDP::CFWL_CheckBoxDP()
-    : m_fBoxHeight(16.0f), m_wsCaption(L"Check box") {}
-
-FWL_Error CFWL_CheckBox::CFWL_CheckBoxDP::GetCaption(
-    IFWL_Widget* pWidget,
-    CFX_WideString& wsCaption) {
+FWL_Error CFWL_CheckBox::GetCaption(IFWL_Widget* pWidget,
+                                    CFX_WideString& wsCaption) {
   wsCaption = m_wsCaption;
   return FWL_Error::Succeeded;
 }
 
-FX_FLOAT CFWL_CheckBox::CFWL_CheckBoxDP::GetBoxSize(IFWL_Widget* pWidget) {
+FX_FLOAT CFWL_CheckBox::GetBoxSize(IFWL_Widget* pWidget) {
   return m_fBoxHeight;
 }

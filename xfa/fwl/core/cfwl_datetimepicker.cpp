@@ -22,7 +22,7 @@ IFWL_DateTimePicker* ToDateTimePicker(IFWL_Widget* widget) {
 }  // namespace
 
 CFWL_DateTimePicker::CFWL_DateTimePicker(const IFWL_App* app)
-    : CFWL_Widget(app) {}
+    : CFWL_Widget(app), m_iYear(2011), m_iMonth(1), m_iDay(1) {}
 
 CFWL_DateTimePicker::~CFWL_DateTimePicker() {}
 
@@ -30,7 +30,7 @@ void CFWL_DateTimePicker::Initialize() {
   ASSERT(!m_pIface);
 
   m_pIface = pdfium::MakeUnique<IFWL_DateTimePicker>(
-      m_pApp, pdfium::MakeUnique<CFWL_WidgetProperties>(&m_DateTimePickerDP));
+      m_pApp, pdfium::MakeUnique<CFWL_WidgetProperties>(this));
 
   CFWL_Widget::Initialize();
 }
@@ -38,9 +38,9 @@ void CFWL_DateTimePicker::Initialize() {
 FWL_Error CFWL_DateTimePicker::SetToday(int32_t iYear,
                                         int32_t iMonth,
                                         int32_t iDay) {
-  m_DateTimePickerDP.m_iYear = iYear;
-  m_DateTimePickerDP.m_iMonth = iMonth;
-  m_DateTimePickerDP.m_iDay = iDay;
+  m_iYear = iYear;
+  m_iMonth = iMonth;
+  m_iDay = iDay;
   return FWL_Error::Succeeded;
 }
 
@@ -72,24 +72,16 @@ FWL_Error CFWL_DateTimePicker::SetCurSel(int32_t iYear,
   return ToDateTimePicker(GetWidget())->SetCurSel(iYear, iMonth, iDay);
 }
 
-CFWL_DateTimePicker::CFWL_DateTimePickerDP::CFWL_DateTimePickerDP() {
-  m_iYear = 2011;
-  m_iMonth = 1;
-  m_iDay = 1;
-}
-
-FWL_Error CFWL_DateTimePicker::CFWL_DateTimePickerDP::GetCaption(
-    IFWL_Widget* pWidget,
-    CFX_WideString& wsCaption) {
+FWL_Error CFWL_DateTimePicker::GetCaption(IFWL_Widget* pWidget,
+                                          CFX_WideString& wsCaption) {
   wsCaption = m_wsData;
   return FWL_Error::Succeeded;
 }
 
-FWL_Error CFWL_DateTimePicker::CFWL_DateTimePickerDP::GetToday(
-    IFWL_Widget* pWidget,
-    int32_t& iYear,
-    int32_t& iMonth,
-    int32_t& iDay) {
+FWL_Error CFWL_DateTimePicker::GetToday(IFWL_Widget* pWidget,
+                                        int32_t& iYear,
+                                        int32_t& iMonth,
+                                        int32_t& iDay) {
   iYear = m_iYear;
   iMonth = m_iMonth;
   iDay = m_iDay;

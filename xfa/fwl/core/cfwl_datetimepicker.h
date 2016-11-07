@@ -10,7 +10,7 @@
 #include "xfa/fwl/core/cfwl_widget.h"
 #include "xfa/fwl/core/ifwl_datetimepicker.h"
 
-class CFWL_DateTimePicker : public CFWL_Widget {
+class CFWL_DateTimePicker : public CFWL_Widget, public IFWL_DateTimePickerDP {
  public:
   CFWL_DateTimePicker(const IFWL_App*);
   ~CFWL_DateTimePicker() override;
@@ -42,27 +42,21 @@ class CFWL_DateTimePicker : public CFWL_Widget {
   FWL_Error ModifyEditStylesEx(uint32_t dwStylesExAdded,
                                uint32_t dwStylesExRemoved);
 
- protected:
-  class CFWL_DateTimePickerDP : public IFWL_DateTimePickerDP {
-   public:
-    CFWL_DateTimePickerDP();
+  // IFWL_DataProvider
+  FWL_Error GetCaption(IFWL_Widget* pWidget,
+                       CFX_WideString& wsCaption) override;
 
-    // IFWL_DataProvider
-    FWL_Error GetCaption(IFWL_Widget* pWidget,
-                         CFX_WideString& wsCaption) override;
+  // IFWL_DateTimePickerDP
+  FWL_Error GetToday(IFWL_Widget* pWidget,
+                     int32_t& iYear,
+                     int32_t& iMonth,
+                     int32_t& iDay) override;
 
-    // IFWL_DateTimePickerDP
-    FWL_Error GetToday(IFWL_Widget* pWidget,
-                       int32_t& iYear,
-                       int32_t& iMonth,
-                       int32_t& iDay) override;
-    int32_t m_iYear;
-    int32_t m_iMonth;
-    int32_t m_iDay;
-    CFX_WideString m_wsData;
-  };
-
-  CFWL_DateTimePickerDP m_DateTimePickerDP;
+ private:
+  int32_t m_iYear;
+  int32_t m_iMonth;
+  int32_t m_iDay;
+  CFX_WideString m_wsData;
 };
 
 #endif  // XFA_FWL_CORE_CFWL_DATETIMEPICKER_H_

@@ -60,7 +60,7 @@ class IFWL_DateTimePickerDP : public IFWL_DataProvider {
                              int32_t& iDay) = 0;
 };
 
-class IFWL_DateTimePicker : public IFWL_Widget {
+class IFWL_DateTimePicker : public IFWL_Widget, public IFWL_MonthCalendarDP {
  public:
   explicit IFWL_DateTimePicker(
       const IFWL_App* app,
@@ -113,25 +113,16 @@ class IFWL_DateTimePicker : public IFWL_Widget {
 
   IFWL_FormProxy* GetFormProxy() const { return m_pForm.get(); }
 
+  // IFWL_DataProvider
+  FWL_Error GetCaption(IFWL_Widget* pWidget,
+                       CFX_WideString& wsCaption) override;
+
+  // IFWL_MonthCalendarDP
+  int32_t GetCurDay(IFWL_Widget* pWidget) override;
+  int32_t GetCurMonth(IFWL_Widget* pWidget) override;
+  int32_t GetCurYear(IFWL_Widget* pWidget) override;
+
  protected:
-  class CFWL_MonthCalendarImpDP : public IFWL_MonthCalendarDP {
-   public:
-    CFWL_MonthCalendarImpDP();
-
-    // IFWL_DataProvider
-    FWL_Error GetCaption(IFWL_Widget* pWidget,
-                         CFX_WideString& wsCaption) override;
-
-    // IFWL_MonthCalendarDP
-    int32_t GetCurDay(IFWL_Widget* pWidget) override;
-    int32_t GetCurMonth(IFWL_Widget* pWidget) override;
-    int32_t GetCurYear(IFWL_Widget* pWidget) override;
-
-    int32_t m_iCurDay;
-    int32_t m_iCurYear;
-    int32_t m_iCurMonth;
-  };
-
   void DrawDropDownButton(CFX_Graphics* pGraphics,
                           IFWL_ThemeProvider* pTheme,
                           const CFX_Matrix* pMatrix);
@@ -153,7 +144,6 @@ class IFWL_DateTimePicker : public IFWL_Widget {
   std::unique_ptr<IFWL_DateTimeCalendar> m_pMonthCal;
   std::unique_ptr<IFWL_FormProxy> m_pForm;
   FX_FLOAT m_fBtn;
-  CFWL_MonthCalendarImpDP m_MonthCalendarDP;
 
  private:
   FWL_Error DisForm_Initialize();
@@ -175,6 +165,10 @@ class IFWL_DateTimePicker : public IFWL_Widget {
   void OnMouseMove(CFWL_MsgMouse* pMsg);
   void OnMouseLeave(CFWL_MsgMouse* pMsg);
   void DisForm_OnFocusChanged(CFWL_Message* pMsg, bool bSet);
+
+  int32_t m_iCurYear;
+  int32_t m_iCurMonth;
+  int32_t m_iCurDay;
 };
 
 #endif  // XFA_FWL_CORE_IFWL_DATETIMEPICKER_H_

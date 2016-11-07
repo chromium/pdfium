@@ -13,11 +13,21 @@
 #include "xfa/fwl/core/cfwl_widget.h"
 #include "xfa/fwl/core/ifwl_combobox.h"
 
-class IFWL_ComboBoxDP;
-class CFWL_ComboBoxDP;
-class CFWL_ComboBoxItem;
+class CFWL_ComboBoxItem : public IFWL_ListItem {
+ public:
+  CFWL_ComboBoxItem();
+  ~CFWL_ComboBoxItem();
 
-class CFWL_ComboBox : public CFWL_Widget {
+  CFX_RectF m_rtItem;
+  uint32_t m_dwStyles;
+  CFX_WideString m_wsText;
+  CFX_DIBitmap* m_pDIB;
+  uint32_t m_dwCheckState;
+  CFX_RectF m_rtCheckBox;
+  void* m_pData;
+};
+
+class CFWL_ComboBox : public CFWL_Widget, public IFWL_ComboBoxDP {
  public:
   CFWL_ComboBox(const IFWL_App*);
   ~CFWL_ComboBox() override;
@@ -68,78 +78,57 @@ class CFWL_ComboBox : public CFWL_Widget {
   FWL_Error EditModifyStylesEx(uint32_t dwStylesExAdded,
                                uint32_t dwStylesExRemoved);
 
- protected:
-  class CFWL_ComboBoxDP : public IFWL_ComboBoxDP {
-   public:
-    CFWL_ComboBoxDP();
-    ~CFWL_ComboBoxDP() override;
+  // IFWL_DataProvider
+  FWL_Error GetCaption(IFWL_Widget* pWidget,
+                       CFX_WideString& wsCaption) override;
 
-    // IFWL_DataProvider
-    FWL_Error GetCaption(IFWL_Widget* pWidget,
-                         CFX_WideString& wsCaption) override;
+  // IFWL_ListBoxDP
+  int32_t CountItems(const IFWL_Widget* pWidget) override;
+  IFWL_ListItem* GetItem(const IFWL_Widget* pWidget, int32_t nIndex) override;
+  int32_t GetItemIndex(IFWL_Widget* pWidget, IFWL_ListItem* pItem) override;
+  bool SetItemIndex(IFWL_Widget* pWidget,
+                    IFWL_ListItem* pItem,
+                    int32_t nIndex) override;
 
-    // IFWL_ListBoxDP
-    int32_t CountItems(const IFWL_Widget* pWidget) override;
-    IFWL_ListItem* GetItem(const IFWL_Widget* pWidget, int32_t nIndex) override;
-    int32_t GetItemIndex(IFWL_Widget* pWidget, IFWL_ListItem* pItem) override;
-    bool SetItemIndex(IFWL_Widget* pWidget,
-                      IFWL_ListItem* pItem,
-                      int32_t nIndex) override;
-
-    uint32_t GetItemStyles(IFWL_Widget* pWidget, IFWL_ListItem* pItem) override;
-    FWL_Error GetItemText(IFWL_Widget* pWidget,
+  uint32_t GetItemStyles(IFWL_Widget* pWidget, IFWL_ListItem* pItem) override;
+  FWL_Error GetItemText(IFWL_Widget* pWidget,
+                        IFWL_ListItem* pItem,
+                        CFX_WideString& wsText) override;
+  FWL_Error GetItemRect(IFWL_Widget* pWidget,
+                        IFWL_ListItem* pItem,
+                        CFX_RectF& rtItem) override;
+  void* GetItemData(IFWL_Widget* pWidget, IFWL_ListItem* pItem) override;
+  FWL_Error SetItemStyles(IFWL_Widget* pWidget,
                           IFWL_ListItem* pItem,
-                          CFX_WideString& wsText) override;
-    FWL_Error GetItemRect(IFWL_Widget* pWidget,
-                          IFWL_ListItem* pItem,
-                          CFX_RectF& rtItem) override;
-    void* GetItemData(IFWL_Widget* pWidget, IFWL_ListItem* pItem) override;
-    FWL_Error SetItemStyles(IFWL_Widget* pWidget,
-                            IFWL_ListItem* pItem,
-                            uint32_t dwStyle) override;
-    FWL_Error SetItemText(IFWL_Widget* pWidget,
-                          IFWL_ListItem* pItem,
-                          const FX_WCHAR* pszText) override;
-    FWL_Error SetItemRect(IFWL_Widget* pWidget,
-                          IFWL_ListItem* pItem,
-                          const CFX_RectF& rtItem) override;
-    FX_FLOAT GetItemHeight(IFWL_Widget* pWidget) override;
-    CFX_DIBitmap* GetItemIcon(IFWL_Widget* pWidget,
-                              IFWL_ListItem* pItem) override;
-    FWL_Error GetItemCheckRect(IFWL_Widget* pWidget,
-                               IFWL_ListItem* pItem,
-                               CFX_RectF& rtCheck) override;
-    FWL_Error SetItemCheckRect(IFWL_Widget* pWidget,
-                               IFWL_ListItem* pItem,
-                               const CFX_RectF& rtCheck) override;
-    uint32_t GetItemCheckState(IFWL_Widget* pWidget,
-                               IFWL_ListItem* pItem) override;
-    FWL_Error SetItemCheckState(IFWL_Widget* pWidget,
-                                IFWL_ListItem* pItem,
-                                uint32_t dwCheckState) override;
+                          uint32_t dwStyle) override;
+  FWL_Error SetItemText(IFWL_Widget* pWidget,
+                        IFWL_ListItem* pItem,
+                        const FX_WCHAR* pszText) override;
+  FWL_Error SetItemRect(IFWL_Widget* pWidget,
+                        IFWL_ListItem* pItem,
+                        const CFX_RectF& rtItem) override;
+  FX_FLOAT GetItemHeight(IFWL_Widget* pWidget) override;
+  CFX_DIBitmap* GetItemIcon(IFWL_Widget* pWidget,
+                            IFWL_ListItem* pItem) override;
+  FWL_Error GetItemCheckRect(IFWL_Widget* pWidget,
+                             IFWL_ListItem* pItem,
+                             CFX_RectF& rtCheck) override;
+  FWL_Error SetItemCheckRect(IFWL_Widget* pWidget,
+                             IFWL_ListItem* pItem,
+                             const CFX_RectF& rtCheck) override;
+  uint32_t GetItemCheckState(IFWL_Widget* pWidget,
+                             IFWL_ListItem* pItem) override;
+  FWL_Error SetItemCheckState(IFWL_Widget* pWidget,
+                              IFWL_ListItem* pItem,
+                              uint32_t dwCheckState) override;
 
-    // IFWL_ComboBoxDP
-    FX_FLOAT GetListHeight(IFWL_Widget* pWidget) override;
+  // IFWL_ComboBoxDP
+  FX_FLOAT GetListHeight(IFWL_Widget* pWidget) override;
 
-    std::vector<std::unique_ptr<CFWL_ComboBoxItem>> m_ItemArray;
-    FX_FLOAT m_fMaxListHeight;
-    FX_FLOAT m_fItemHeight;
-  };
-  CFWL_ComboBoxDP m_comboBoxData;
-};
-
-class CFWL_ComboBoxItem : public IFWL_ListItem {
- public:
-  CFWL_ComboBoxItem();
-  ~CFWL_ComboBoxItem();
-
-  CFX_RectF m_rtItem;
-  uint32_t m_dwStyles;
-  CFX_WideString m_wsText;
-  CFX_DIBitmap* m_pDIB;
-  uint32_t m_dwCheckState;
-  CFX_RectF m_rtCheckBox;
-  void* m_pData;
+ private:
+  std::vector<std::unique_ptr<CFWL_ComboBoxItem>> m_ItemArray;
+  FX_FLOAT m_fMaxListHeight;
+  FX_FLOAT m_fItemHeight;
 };
 
 #endif  // XFA_FWL_CORE_CFWL_COMBOBOX_H_

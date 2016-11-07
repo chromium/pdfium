@@ -13,10 +13,10 @@
 #include "xfa/fwl/core/cfwl_event.h"
 #include "xfa/fwl/core/cfwl_message.h"
 #include "xfa/fwl/core/fwl_error.h"
+#include "xfa/fwl/core/ifwl_tooltip.h"
 #include "xfa/fwl/core/ifwl_widget.h"
 #include "xfa/fxgraphics/cfx_graphics.h"
 
-class CFWL_CoreToolTipDP;
 class CFWL_EventTarget;
 class CFWL_MsgActivate;
 class CFWL_MsgDeactivate;
@@ -127,19 +127,31 @@ class CFWL_EventTarget {
   bool m_bInvalid;
 };
 
-class CFWL_ToolTipContainer final {
+class CFWL_ToolTipContainer final : public IFWL_ToolTipDP {
  public:
   static CFWL_ToolTipContainer* getInstance();
   static void DeleteInstance();
 
+  // IFWL_ToolTipDP
+  FWL_Error GetCaption(IFWL_Widget* pWidget,
+                       CFX_WideString& wsCaption) override;
+  int32_t GetInitialDelay(IFWL_Widget* pWidget) override;
+  int32_t GetAutoPopDelay(IFWL_Widget* pWidget) override;
+  CFX_DIBitmap* GetToolTipIcon(IFWL_Widget* pWidget) override;
+  CFX_SizeF GetToolTipIconSize(IFWL_Widget* pWidget) override;
+
  protected:
   CFWL_ToolTipContainer();
-  ~CFWL_ToolTipContainer();
+  ~CFWL_ToolTipContainer() override;
 
-  std::unique_ptr<CFWL_CoreToolTipDP> m_pToolTipDp;
+  CFX_RectF GetAnchor();
 
  private:
   static CFWL_ToolTipContainer* s_pInstance;
+  CFX_WideString m_wsCaption;
+  int32_t m_nInitDelayTime;
+  int32_t m_nAutoPopDelayTime;
+  CFX_RectF m_fAnchor;
 };
 
 #endif  // XFA_FWL_CORE_FWL_NOTEIMP_H_

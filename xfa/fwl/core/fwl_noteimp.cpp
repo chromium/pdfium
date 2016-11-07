@@ -637,58 +637,6 @@ void CFWL_NoteDriver::ClearInvalidEventTargets(bool bRemoveAll) {
   }
 }
 
-class CFWL_CoreToolTipDP : public IFWL_ToolTipDP {
- public:
-  CFWL_CoreToolTipDP(int32_t iInitDelayTime, int32_t iAutoDelayTime);
-
-  // IFWL_ToolTipDP
-  FWL_Error GetCaption(IFWL_Widget* pWidget,
-                       CFX_WideString& wsCaption) override;
-  int32_t GetInitialDelay(IFWL_Widget* pWidget) override;
-  int32_t GetAutoPopDelay(IFWL_Widget* pWidget) override;
-  CFX_DIBitmap* GetToolTipIcon(IFWL_Widget* pWidget) override;
-  CFX_SizeF GetToolTipIconSize(IFWL_Widget* pWidget) override;
-
-  CFX_RectF GetAnchor();
-
-  CFX_WideString m_wsCaption;
-  int32_t m_nInitDelayTime;
-  int32_t m_nAutoPopDelayTime;
-  CFX_RectF m_fAnchor;
-};
-
-CFWL_CoreToolTipDP::CFWL_CoreToolTipDP(int32_t iInitDelayTime,
-                                       int32_t iAutoDelayTime)
-    : m_nInitDelayTime(iInitDelayTime), m_nAutoPopDelayTime(iAutoDelayTime) {
-  m_fAnchor.Set(0.0, 0.0, 0.0, 0.0);
-}
-
-FWL_Error CFWL_CoreToolTipDP::GetCaption(IFWL_Widget* pWidget,
-                                         CFX_WideString& wsCaption) {
-  wsCaption = m_wsCaption;
-  return FWL_Error::Succeeded;
-}
-
-int32_t CFWL_CoreToolTipDP::GetInitialDelay(IFWL_Widget* pWidget) {
-  return m_nInitDelayTime;
-}
-
-int32_t CFWL_CoreToolTipDP::GetAutoPopDelay(IFWL_Widget* pWidget) {
-  return m_nAutoPopDelayTime;
-}
-
-CFX_DIBitmap* CFWL_CoreToolTipDP::GetToolTipIcon(IFWL_Widget* pWidget) {
-  return nullptr;
-}
-
-CFX_SizeF CFWL_CoreToolTipDP::GetToolTipIconSize(IFWL_Widget* pWidget) {
-  return CFX_SizeF();
-}
-
-CFX_RectF CFWL_CoreToolTipDP::GetAnchor() {
-  return m_fAnchor;
-}
-
 CFWL_EventTarget::CFWL_EventTarget(CFWL_NoteDriver* pNoteDriver,
                                    IFWL_Widget* pListener)
     : m_pListener(pListener), m_pNoteDriver(pNoteDriver), m_bInvalid(false) {}
@@ -759,9 +707,37 @@ bool CFWL_EventTarget::IsFilterEvent(CFWL_Event* pEvent, uint32_t dwFilter) {
 CFWL_ToolTipContainer* CFWL_ToolTipContainer::s_pInstance = nullptr;
 
 CFWL_ToolTipContainer::CFWL_ToolTipContainer()
-    : m_pToolTipDp(new CFWL_CoreToolTipDP(0, 2000)) {}
+    : m_nInitDelayTime(0), m_nAutoPopDelayTime(2000) {
+  m_fAnchor.Set(0.0, 0.0, 0.0, 0.0);
+}
 
 CFWL_ToolTipContainer::~CFWL_ToolTipContainer() {}
+
+FWL_Error CFWL_ToolTipContainer::GetCaption(IFWL_Widget* pWidget,
+                                            CFX_WideString& wsCaption) {
+  wsCaption = m_wsCaption;
+  return FWL_Error::Succeeded;
+}
+
+int32_t CFWL_ToolTipContainer::GetInitialDelay(IFWL_Widget* pWidget) {
+  return m_nInitDelayTime;
+}
+
+int32_t CFWL_ToolTipContainer::GetAutoPopDelay(IFWL_Widget* pWidget) {
+  return m_nAutoPopDelayTime;
+}
+
+CFX_DIBitmap* CFWL_ToolTipContainer::GetToolTipIcon(IFWL_Widget* pWidget) {
+  return nullptr;
+}
+
+CFX_SizeF CFWL_ToolTipContainer::GetToolTipIconSize(IFWL_Widget* pWidget) {
+  return CFX_SizeF();
+}
+
+CFX_RectF CFWL_ToolTipContainer::GetAnchor() {
+  return m_fAnchor;
+}
 
 // static
 CFWL_ToolTipContainer* CFWL_ToolTipContainer::getInstance() {

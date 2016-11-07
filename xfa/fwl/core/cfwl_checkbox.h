@@ -10,7 +10,7 @@
 #include "xfa/fwl/core/cfwl_widget.h"
 #include "xfa/fwl/core/ifwl_checkbox.h"
 
-class CFWL_CheckBox : public CFWL_Widget {
+class CFWL_CheckBox : public CFWL_Widget, public IFWL_CheckBoxDP {
  public:
   CFWL_CheckBox(const IFWL_App*);
   ~CFWL_CheckBox() override;
@@ -22,23 +22,16 @@ class CFWL_CheckBox : public CFWL_Widget {
   int32_t GetCheckState();
   FWL_Error SetCheckState(int32_t iCheck);
 
- protected:
-  class CFWL_CheckBoxDP : public IFWL_CheckBoxDP {
-   public:
-    CFWL_CheckBoxDP();
+  // IFWL_DataProvider
+  FWL_Error GetCaption(IFWL_Widget* pWidget,
+                       CFX_WideString& wsCaption) override;
 
-    // IFWL_DataProvider
-    FWL_Error GetCaption(IFWL_Widget* pWidget,
-                         CFX_WideString& wsCaption) override;
+  // IFWL_CheckBoxDP
+  FX_FLOAT GetBoxSize(IFWL_Widget* pWidget) override;
 
-    // IFWL_CheckBoxDP
-    FX_FLOAT GetBoxSize(IFWL_Widget* pWidget) override;
-
-    FX_FLOAT m_fBoxHeight;
-    CFX_WideString m_wsCaption;
-  };
-
-  CFWL_CheckBoxDP m_checkboxData;
+ private:
+  FX_FLOAT m_fBoxHeight;
+  CFX_WideString m_wsCaption;
 };
 
 #endif  // XFA_FWL_CORE_CFWL_CHECKBOX_H_

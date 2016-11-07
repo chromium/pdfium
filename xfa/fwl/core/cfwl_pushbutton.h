@@ -10,7 +10,7 @@
 #include "xfa/fwl/core/cfwl_widget.h"
 #include "xfa/fwl/core/ifwl_pushbutton.h"
 
-class CFWL_PushButton : public CFWL_Widget {
+class CFWL_PushButton : public CFWL_Widget, public IFWL_PushButtonDP {
  public:
   CFWL_PushButton(const IFWL_App*);
   ~CFWL_PushButton() override;
@@ -22,23 +22,16 @@ class CFWL_PushButton : public CFWL_Widget {
   CFX_DIBitmap* GetPicture();
   FWL_Error SetPicture(CFX_DIBitmap* pBitmap);
 
- protected:
-  class CFWL_PushButtonDP : public IFWL_PushButtonDP {
-   public:
-    CFWL_PushButtonDP() : m_pBitmap(nullptr) {}
+  // IFWL_DataProvider
+  FWL_Error GetCaption(IFWL_Widget* pWidget,
+                       CFX_WideString& wsCaption) override;
 
-    // IFWL_DataProvider
-    FWL_Error GetCaption(IFWL_Widget* pWidget,
-                         CFX_WideString& wsCaption) override;
+  // IFWL_PushButtonDP
+  CFX_DIBitmap* GetPicture(IFWL_Widget* pWidget) override;
 
-    // IFWL_PushButtonDP
-    CFX_DIBitmap* GetPicture(IFWL_Widget* pWidget) override;
-
-    CFX_WideString m_wsCaption;
-    CFX_DIBitmap* m_pBitmap;
-  };
-
-  CFWL_PushButtonDP m_buttonData;
+ private:
+  CFX_WideString m_wsCaption;
+  CFX_DIBitmap* m_pBitmap;
 };
 
 #endif  // XFA_FWL_CORE_CFWL_PUSHBUTTON_H_

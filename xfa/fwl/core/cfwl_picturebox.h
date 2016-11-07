@@ -11,7 +11,7 @@
 #include "xfa/fwl/core/fwl_error.h"
 #include "xfa/fwl/core/ifwl_picturebox.h"
 
-class CFWL_PictureBox : public CFWL_Widget {
+class CFWL_PictureBox : public CFWL_Widget, public IFWL_PictureBoxDP {
  public:
   CFWL_PictureBox(const IFWL_App*);
   ~CFWL_PictureBox() override;
@@ -31,35 +31,28 @@ class CFWL_PictureBox : public CFWL_Widget {
   FWL_Error GetOffset(FX_FLOAT& fx, FX_FLOAT& fy);
   FWL_Error SetOffset(FX_FLOAT fx, FX_FLOAT fy);
 
- protected:
-  class CFWL_PictureBoxDP : public IFWL_PictureBoxDP {
-   public:
-    CFWL_PictureBoxDP();
+  // IFWL_DataProvider
+  FWL_Error GetCaption(IFWL_Widget* pWidget,
+                       CFX_WideString& wsCaption) override;
 
-    // IFWL_DataProvider
-    FWL_Error GetCaption(IFWL_Widget* pWidget,
-                         CFX_WideString& wsCaption) override;
+  // IFWL_PictureBoxDP
+  CFX_DIBitmap* GetPicture(IFWL_Widget* pWidget) override;
+  CFX_DIBitmap* GetErrorPicture(IFWL_Widget* pWidget) override;
+  CFX_DIBitmap* GetInitialPicture(IFWL_Widget* pWidget) override;
+  int32_t GetOpacity(IFWL_Widget* pWidget) override;
+  int32_t GetFlipMode(IFWL_Widget* pWidget) override;
+  FWL_Error GetMatrix(IFWL_Widget* pWidget, CFX_Matrix& matrix) override;
 
-    // IFWL_PictureBoxDP
-    CFX_DIBitmap* GetPicture(IFWL_Widget* pWidget) override;
-    CFX_DIBitmap* GetErrorPicture(IFWL_Widget* pWidget) override;
-    CFX_DIBitmap* GetInitialPicture(IFWL_Widget* pWidget) override;
-    int32_t GetOpacity(IFWL_Widget* pWidget) override;
-    int32_t GetFlipMode(IFWL_Widget* pWidget) override;
-    FWL_Error GetMatrix(IFWL_Widget* pWidget, CFX_Matrix& matrix) override;
-
-    CFX_DIBitmap* m_pBitmap;
-    int32_t m_iOpacity;
-    int32_t m_iFlipMode;
-    FX_FLOAT m_fRotation;
-    FX_FLOAT m_fScaleX;
-    FX_FLOAT m_fScaleY;
-    FX_FLOAT m_fOffSetX;
-    FX_FLOAT m_fOffSetY;
-    CFX_WideString m_wsData;
-  };
-
-  CFWL_PictureBoxDP m_PictureBoxDP;
+ private:
+  CFX_DIBitmap* m_pBitmap;
+  int32_t m_iOpacity;
+  int32_t m_iFlipMode;
+  FX_FLOAT m_fRotation;
+  FX_FLOAT m_fScaleX;
+  FX_FLOAT m_fScaleY;
+  FX_FLOAT m_fOffSetX;
+  FX_FLOAT m_fOffSetY;
+  CFX_WideString m_wsData;
 };
 
 #endif  // XFA_FWL_CORE_CFWL_PICTUREBOX_H_

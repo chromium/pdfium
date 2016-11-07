@@ -32,13 +32,15 @@ IFWL_DateTimePicker::IFWL_DateTimePicker(
       m_iYear(-1),
       m_iMonth(-1),
       m_iDay(-1),
-      m_bLBtnDown(false) {
+      m_bLBtnDown(false),
+      m_iCurYear(2010),
+      m_iCurMonth(3),
+      m_iCurDay(29) {
   m_rtBtn.Set(0, 0, 0, 0);
 
   m_pProperties->m_dwStyleExes = FWL_STYLEEXT_DTP_ShortDateFormat;
 
-  auto monthProp =
-      pdfium::MakeUnique<CFWL_WidgetProperties>(&m_MonthCalendarDP);
+  auto monthProp = pdfium::MakeUnique<CFWL_WidgetProperties>(this);
   monthProp->m_dwStyles = FWL_WGTSTYLE_Popup | FWL_WGTSTYLE_Border;
   monthProp->m_dwStates = FWL_WGTSTATE_Invisible;
   monthProp->m_pParent = this;
@@ -112,8 +114,7 @@ FWL_Error IFWL_DateTimePicker::Update() {
   if (m_pProperties->m_pDataProvider) {
     IFWL_DateTimePickerDP* pData =
         static_cast<IFWL_DateTimePickerDP*>(m_pProperties->m_pDataProvider);
-    pData->GetToday(this, m_MonthCalendarDP.m_iCurYear,
-                    m_MonthCalendarDP.m_iCurMonth, m_MonthCalendarDP.m_iCurDay);
+    pData->GetToday(this, m_iCurYear, m_iCurMonth, m_iCurDay);
   }
   CFX_RectF rtMonthCal;
   m_pMonthCal->GetWidgetRect(rtMonthCal, true);
@@ -464,7 +465,7 @@ void IFWL_DateTimePicker::DisForm_InitDateTimeCalendar() {
   if (m_pMonthCal)
     return;
 
-  auto prop = pdfium::MakeUnique<CFWL_WidgetProperties>(&m_MonthCalendarDP);
+  auto prop = pdfium::MakeUnique<CFWL_WidgetProperties>(this);
   prop->m_dwStyles =
       FWL_WGTSTYLE_Popup | FWL_WGTSTYLE_Border | FWL_WGTSTYLE_EdgeSunken;
   prop->m_dwStates = FWL_WGTSTATE_Invisible;
@@ -575,8 +576,7 @@ FWL_Error IFWL_DateTimePicker::DisForm_Update() {
   if (m_pProperties->m_pDataProvider) {
     IFWL_DateTimePickerDP* pData =
         static_cast<IFWL_DateTimePickerDP*>(m_pProperties->m_pDataProvider);
-    pData->GetToday(this, m_MonthCalendarDP.m_iCurYear,
-                    m_MonthCalendarDP.m_iCurMonth, m_MonthCalendarDP.m_iCurDay);
+    pData->GetToday(this, m_iCurYear, m_iCurMonth, m_iCurDay);
   }
   FX_FLOAT* pWidth = static_cast<FX_FLOAT*>(
       GetThemeCapacity(CFWL_WidgetCapacity::ScrollBarWidth));
@@ -788,29 +788,19 @@ void IFWL_DateTimePicker::DisForm_OnFocusChanged(CFWL_Message* pMsg,
   Repaint(&rtInvalidate);
 }
 
-IFWL_DateTimePicker::CFWL_MonthCalendarImpDP::CFWL_MonthCalendarImpDP() {
-  m_iCurYear = 2010;
-  m_iCurMonth = 3;
-  m_iCurDay = 29;
-}
-
-FWL_Error IFWL_DateTimePicker::CFWL_MonthCalendarImpDP::GetCaption(
-    IFWL_Widget* pWidget,
-    CFX_WideString& wsCaption) {
+FWL_Error IFWL_DateTimePicker::GetCaption(IFWL_Widget* pWidget,
+                                          CFX_WideString& wsCaption) {
   return FWL_Error::Succeeded;
 }
 
-int32_t IFWL_DateTimePicker::CFWL_MonthCalendarImpDP::GetCurDay(
-    IFWL_Widget* pWidget) {
+int32_t IFWL_DateTimePicker::GetCurDay(IFWL_Widget* pWidget) {
   return m_iCurDay;
 }
 
-int32_t IFWL_DateTimePicker::CFWL_MonthCalendarImpDP::GetCurMonth(
-    IFWL_Widget* pWidget) {
+int32_t IFWL_DateTimePicker::GetCurMonth(IFWL_Widget* pWidget) {
   return m_iCurMonth;
 }
 
-int32_t IFWL_DateTimePicker::CFWL_MonthCalendarImpDP::GetCurYear(
-    IFWL_Widget* pWidget) {
+int32_t IFWL_DateTimePicker::GetCurYear(IFWL_Widget* pWidget) {
   return m_iCurYear;
 }
