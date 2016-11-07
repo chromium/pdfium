@@ -49,7 +49,7 @@ class CPDF_Parser {
 
   void SetPassword(const FX_CHAR* password) { m_Password = password; }
   CFX_ByteString GetPassword() { return m_Password; }
-  CPDF_Dictionary* GetTrailer() const { return m_pTrailer; }
+  CPDF_Dictionary* GetTrailer() const { return m_pTrailer.get(); }
   FX_FILESIZE GetLastXRefOffset() const { return m_LastXRefOffset; }
 
   uint32_t GetPermissions() const;
@@ -132,7 +132,7 @@ class CPDF_Parser {
   bool LoadAllCrossRefV4(FX_FILESIZE pos);
   bool LoadAllCrossRefV5(FX_FILESIZE pos);
   bool LoadCrossRefV5(FX_FILESIZE* pos, bool bMainXRef);
-  CPDF_Dictionary* LoadTrailerV4();
+  std::unique_ptr<CPDF_Dictionary> LoadTrailerV4();
   Error SetEncryptHandler();
   void ReleaseEncryptHandler();
   bool LoadLinearizedAllCrossRefV4(FX_FILESIZE pos, uint32_t dwObjCount);
@@ -150,16 +150,16 @@ class CPDF_Parser {
   CPDF_Document* m_pDocument;  // not owned
   bool m_bHasParsed;
   bool m_bOwnFileRead;
+  bool m_bXRefStream;
+  bool m_bVersionUpdated;
   int m_FileVersion;
-  CPDF_Dictionary* m_pTrailer;
   CPDF_Dictionary* m_pEncryptDict;
   FX_FILESIZE m_LastXRefOffset;
-  bool m_bXRefStream;
   std::unique_ptr<CPDF_SecurityHandler> m_pSecurityHandler;
   CFX_ByteString m_Password;
   std::set<FX_FILESIZE> m_SortedOffset;
-  std::vector<CPDF_Dictionary*> m_Trailers;
-  bool m_bVersionUpdated;
+  std::unique_ptr<CPDF_Dictionary> m_pTrailer;
+  std::vector<std::unique_ptr<CPDF_Dictionary>> m_Trailers;
   std::unique_ptr<CPDF_LinearizedHeader> m_pLinearized;
   uint32_t m_dwXrefStartObjNum;
 
