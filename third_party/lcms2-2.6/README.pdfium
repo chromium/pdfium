@@ -21,4 +21,6 @@ Local Modifications:
 0009-cmsStageAllocMatrix-param-swap.patch: Fix rows/cols swap in cmsStageAllocMatrix.
 0010-reject-nan.patch: Reject NaN when reading float numbers.
 0011-memory-leak-ReadSegmentedCurve.patch: Fix memory leak in ReadSegmentedCurve.
+0012-backport-c0a98d86.patch: Fix several issues. Backport from upstream
+    https://github.com/mm2/Little-CMS/commit/c0a98d86
 TODO(ochang): List other patches.
