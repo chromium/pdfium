@@ -13,6 +13,7 @@
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfdoc/cpdf_bookmark.h"
 #include "core/fpdfdoc/cpdf_bookmarktree.h"
+#include "core/fpdfdoc/cpdf_dest.h"
 #include "fpdfsdk/fsdk_define.h"
 #include "third_party/base/stl_util.h"
 
@@ -209,6 +210,32 @@ DLLEXPORT unsigned long STDCALL FPDFDest_GetPageIndex(FPDF_DOCUMENT document,
     return 0;
   CPDF_Dest dest(static_cast<CPDF_Array*>(pDict));
   return dest.GetPageIndex(pDoc);
+}
+
+DLLEXPORT FPDF_BOOL STDCALL FPDFDest_GetLocationInPage(FPDF_DEST pDict,
+                                                       FPDF_BOOL* hasXVal,
+                                                       FPDF_BOOL* hasYVal,
+                                                       FPDF_BOOL* hasZoomVal,
+                                                       FS_FLOAT* x,
+                                                       FS_FLOAT* y,
+                                                       FS_FLOAT* zoom) {
+  if (!pDict)
+    return false;
+
+  std::unique_ptr<CPDF_Dest> dest(
+      new CPDF_Dest(static_cast<CPDF_Object*>(pDict)));
+
+  // FPDF_BOOL is an int, GetXYZ expects bools.
+  bool bHasX;
+  bool bHasY;
+  bool bHasZoom;
+  if (!dest->GetXYZ(&bHasX, &bHasY, &bHasZoom, x, y, zoom))
+    return false;
+
+  *hasXVal = bHasX;
+  *hasYVal = bHasY;
+  *hasZoomVal = bHasZoom;
+  return true;
 }
 
 DLLEXPORT FPDF_LINK STDCALL FPDFLink_GetLinkAtPoint(FPDF_PAGE page,

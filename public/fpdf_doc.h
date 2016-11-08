@@ -171,6 +171,28 @@ DLLEXPORT unsigned long STDCALL FPDFAction_GetURIPath(FPDF_DOCUMENT document,
 DLLEXPORT unsigned long STDCALL FPDFDest_GetPageIndex(FPDF_DOCUMENT document,
                                                       FPDF_DEST dest);
 
+// Get the (x, y, zoom) location of |dest| in the destination page, if the
+// destination is in [page /XYZ x y zoom] syntax.
+//
+//   dest       - handle to the destination.
+//   hasXVal    - out parameter; true if the x value is not null
+//   hasYVal    - out parameter; true if the y value is not null
+//   hasZoomVal - out parameter; true if the zoom value is not null
+//   x          - out parameter; the x coordinate, in page coordinates.
+//   y          - out parameter; the y coordinate, in page coordinates.
+//   zoom       - out parameter; the zoom value.
+// Returns TRUE on successfully reading the /XYZ value.
+//
+// Note the [x, y, zoom] values are only set if the corresponding hasXVal,
+// hasYVal or hasZoomVal flags are true.
+DLLEXPORT FPDF_BOOL STDCALL FPDFDest_GetLocationInPage(FPDF_DEST dest,
+                                                       FPDF_BOOL* hasXCoord,
+                                                       FPDF_BOOL* hasYCoord,
+                                                       FPDF_BOOL* hasZoom,
+                                                       FS_FLOAT* x,
+                                                       FS_FLOAT* y,
+                                                       FS_FLOAT* zoom);
+
 // Find a link at point (|x|,|y|) on |page|.
 //
 //   page - handle to the document page.

@@ -8,12 +8,15 @@
 #include <vector>
 
 #include "core/fpdfapi/cpdf_modulemgr.h"
+#include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfapi/parser/cpdf_name.h"
+#include "core/fpdfapi/parser/cpdf_null.h"
 #include "core/fpdfapi/parser/cpdf_number.h"
 #include "core/fpdfapi/parser/cpdf_parser.h"
 #include "core/fpdfapi/parser/cpdf_reference.h"
 #include "core/fpdfapi/parser/cpdf_string.h"
+#include "core/fpdfdoc/cpdf_dest.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/test_support.h"
 #include "third_party/base/ptr_util.h"
@@ -229,4 +232,42 @@ TEST_F(PDFDocTest, FindBookmark) {
     title = GetFPDFWideString(L"Chapter 3");
     EXPECT_EQ(bookmarks[3].obj, FPDFBookmark_Find(m_pDoc.get(), title.get()));
   }
+}
+
+TEST_F(PDFDocTest, GetLocationInPage) {
+  auto array = pdfium::MakeUnique<CPDF_Array>();
+  array->AddInteger(0);  // Page Index.
+  array->AddName("XYZ");
+  array->AddNumber(4);  // X
+  array->AddNumber(5);  // Y
+  array->AddNumber(6);  // Zoom.
+
+  FPDF_BOOL hasX;
+  FPDF_BOOL hasY;
+  FPDF_BOOL hasZoom;
+  FS_FLOAT x;
+  FS_FLOAT y;
+  FS_FLOAT zoom;
+
+  EXPECT_TRUE(FPDFDest_GetLocationInPage(array.get(), &hasX, &hasY, &hasZoom,
+                                         &x, &y, &zoom));
+  EXPECT_TRUE(hasX);
+  EXPECT_TRUE(hasY);
+  EXPECT_TRUE(hasZoom);
+  EXPECT_EQ(4, x);
+  EXPECT_EQ(5, y);
+  EXPECT_EQ(6, zoom);
+
+  array->SetAt(2, new CPDF_Null);
+  array->SetAt(3, new CPDF_Null);
+  array->SetAt(4, new CPDF_Null);
+  EXPECT_TRUE(FPDFDest_GetLocationInPage(array.get(), &hasX, &hasY, &hasZoom,
+                                         &x, &y, &zoom));
+  EXPECT_FALSE(hasX);
+  EXPECT_FALSE(hasY);
+  EXPECT_FALSE(hasZoom);
+
+  array = pdfium::MakeUnique<CPDF_Array>();
+  EXPECT_FALSE(FPDFDest_GetLocationInPage(array.get(), &hasX, &hasY, &hasZoom,
+                                          &x, &y, &zoom));
 }

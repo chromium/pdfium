@@ -25,6 +25,13 @@ class CPDF_Dest {
   int GetZoomMode();
   FX_FLOAT GetParam(int index);
 
+  bool GetXYZ(bool* pHasX,
+              bool* pHasY,
+              bool* pHasZoom,
+              float* pX,
+              float* pY,
+              float* pZoom) const;
+
  private:
   CPDF_Object* m_pObj;
 };

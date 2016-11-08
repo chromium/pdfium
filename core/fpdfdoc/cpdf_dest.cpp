@@ -8,6 +8,8 @@
 
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
+#include "core/fpdfapi/parser/cpdf_name.h"
+#include "core/fpdfapi/parser/cpdf_number.h"
 
 namespace {
 
@@ -62,6 +64,53 @@ int CPDF_Dest::GetZoomMode() {
   }
 
   return 0;
+}
+
+bool CPDF_Dest::GetXYZ(bool* pHasX,
+                       bool* pHasY,
+                       bool* pHasZoom,
+                       float* pX,
+                       float* pY,
+                       float* pZoom) const {
+  *pHasX = false;
+  *pHasY = false;
+  *pHasZoom = false;
+
+  CPDF_Array* pArray = ToArray(m_pObj);
+  if (!pArray)
+    return false;
+
+  if (pArray->GetCount() < 5)
+    return false;
+
+  const CPDF_Name* xyz = ToName(pArray->GetDirectObjectAt(1));
+  if (!xyz || xyz->GetString() != "XYZ")
+    return false;
+
+  const CPDF_Number* numX = ToNumber(pArray->GetDirectObjectAt(2));
+  const CPDF_Number* numY = ToNumber(pArray->GetDirectObjectAt(3));
+  const CPDF_Number* numZoom = ToNumber(pArray->GetDirectObjectAt(4));
+
+  // If the value is a CPDF_Null then ToNumber will return nullptr.
+  *pHasX = !!numX;
+  *pHasY = !!numY;
+  *pHasZoom = !!numZoom;
+
+  if (numX)
+    *pX = numX->GetNumber();
+  if (numY)
+    *pY = numY->GetNumber();
+
+  // A zoom value of 0 is equivalent to a null value, so treat it as a null.
+  if (numZoom) {
+    float num = numZoom->GetNumber();
+    if (num == 0.0)
+      *pHasZoom = false;
+    else
+      *pZoom = num;
+  }
+
+  return true;
 }
 
 FX_FLOAT CPDF_Dest::GetParam(int index) {

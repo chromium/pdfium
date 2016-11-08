@@ -42,6 +42,31 @@ TEST_F(FPDFDocEmbeddertest, DestGetPageIndex) {
   EXPECT_EQ(0U, FPDFDest_GetPageIndex(document(), dest));
 }
 
+TEST_F(FPDFDocEmbeddertest, DestGetLocationInPage) {
+  EXPECT_TRUE(OpenDocument("named_dests.pdf"));
+
+  // NULL FPDF_DEST case.
+  EXPECT_EQ(0U, FPDFDest_GetPageIndex(document(), nullptr));
+
+  FPDF_DEST dest = FPDF_GetNamedDestByName(document(), "First");
+  EXPECT_TRUE(dest);
+
+  FPDF_BOOL hasX;
+  FPDF_BOOL hasY;
+  FPDF_BOOL hasZoom;
+  FS_FLOAT x;
+  FS_FLOAT y;
+  FS_FLOAT zoom;
+  EXPECT_TRUE(
+      FPDFDest_GetLocationInPage(dest, &hasX, &hasY, &hasZoom, &x, &y, &zoom));
+  EXPECT_TRUE(hasX);
+  EXPECT_TRUE(hasY);
+  EXPECT_TRUE(hasZoom);
+  EXPECT_EQ(0, x);
+  EXPECT_EQ(0, y);
+  EXPECT_EQ(1, zoom);
+}
+
 TEST_F(FPDFDocEmbeddertest, ActionGetFilePath) {
   EXPECT_TRUE(OpenDocument("launch_action.pdf"));
 
