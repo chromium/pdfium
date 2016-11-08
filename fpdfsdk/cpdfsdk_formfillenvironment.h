@@ -112,7 +112,7 @@ class CPDFSDK_FormFillEnvironment
   CPDFXFA_Context* GetXFAContext() const { return m_pUnderlyingDoc; }
   void ResetXFADocument() { m_pUnderlyingDoc = nullptr; }
 
-  int GetPageViewCount() const { return m_pageMap.size(); }
+  int GetPageViewCount() const { return m_PageMap.size(); }
 
   void DisplayCaret(FPDF_PAGE page,
                     FPDF_BOOL bVisible,
@@ -213,7 +213,7 @@ class CPDFSDK_FormFillEnvironment
   std::unique_ptr<CPDFSDK_ActionHandler> m_pActionHandler;
   std::unique_ptr<IJS_Runtime> m_pJSRuntime;
   FPDF_FORMFILLINFO* const m_pInfo;
-  std::map<UnderlyingPageType*, std::unique_ptr<CPDFSDK_PageView>> m_pageMap;
+  std::map<UnderlyingPageType*, std::unique_ptr<CPDFSDK_PageView>> m_PageMap;
   std::unique_ptr<CPDFSDK_InterForm> m_pInterForm;
   CPDFSDK_Annot::ObservedPtr m_pFocusAnnot;
   UnderlyingDocumentType* m_pUnderlyingDoc;
