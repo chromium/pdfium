@@ -5,7 +5,7 @@
 import("../../pdfium.gni")
 
 config("libfuzzer_config") {
-  configs = [ "//third_party/pdfium:pdfium_core_config" ]
+  configs = [ "../..:pdfium_core_config" ]
 
   defines = [
     "PNG_PREFIX",
@@ -20,256 +20,129 @@ config("libfuzzer_config") {
   }
 }
 
+group("libfuzzer") {
+}
+
+template("pdfium_fuzzer") {
+  source_set(target_name) {
+    sources = invoker.sources
+    deps = [
+      "../..:pdfium",
+    ]
+    testonly = true
+    configs -= [ "//build/config/compiler:chromium_code" ]
+    configs += [
+      "//build/config/compiler:no_chromium_code",
+      ":libfuzzer_config",
+    ]
+  }
+}
+
 if (pdf_enable_xfa) {
-  source_set("pdf_fm2js_fuzzer") {
-    testonly = true
-    sources = [
-      "pdf_fm2js_fuzzer.cc",
-    ]
-    deps = [
-      "//third_party/pdfium:pdfium",
-    ]
-    configs -= [ "//build/config/compiler:chromium_code" ]
-    configs += [
-      "//build/config/compiler:no_chromium_code",
-      ":libfuzzer_config",
-    ]
-  }
-  source_set("pdf_xml_fuzzer") {
-    testonly = true
-    sources = [
-      "pdf_xml_fuzzer.cc",
-    ]
-    deps = [
-      "//third_party/pdfium:pdfium",
-    ]
-    configs -= [ "//build/config/compiler:chromium_code" ]
-    configs += [
-      "//build/config/compiler:no_chromium_code",
-      ":libfuzzer_config",
-    ]
-  }
-  source_set("pdf_cfx_saxreader_fuzzer") {
-    testonly = true
+  pdfium_fuzzer("pdf_cfx_saxreader_fuzzer") {
     sources = [
       "pdf_cfx_saxreader_fuzzer.cc",
     ]
-    deps = [
-      "//third_party/pdfium:pdfium",
-    ]
-    configs -= [ "//build/config/compiler:chromium_code" ]
-    configs += [
-      "//build/config/compiler:no_chromium_code",
-      ":libfuzzer_config",
-    ]
   }
-  source_set("pdf_codec_png_fuzzer") {
-    testonly = true
-    sources = [
-      "pdf_codec_png_fuzzer.cc",
-      "xfa_codec_fuzzer.h",
-    ]
-    deps = [
-      "//third_party/pdfium:pdfium",
-    ]
-    configs -= [ "//build/config/compiler:chromium_code" ]
-    configs += [
-      "//build/config/compiler:no_chromium_code",
-      ":libfuzzer_config",
-    ]
-  }
-  source_set("pdf_codec_jpeg_fuzzer") {
-    testonly = true
-    sources = [
-      "pdf_codec_jpeg_fuzzer.cc",
-      "xfa_codec_fuzzer.h",
-    ]
-    deps = [
-      "//third_party/pdfium:pdfium",
-    ]
-    configs -= [ "//build/config/compiler:chromium_code" ]
-    configs += [
-      "//build/config/compiler:no_chromium_code",
-      ":libfuzzer_config",
-    ]
-  }
-  source_set("pdf_codec_gif_fuzzer") {
-    testonly = true
-    sources = [
-      "pdf_codec_gif_fuzzer.cc",
-      "xfa_codec_fuzzer.h",
-    ]
-    deps = [
-      "//third_party/pdfium:pdfium",
-    ]
-    configs -= [ "//build/config/compiler:chromium_code" ]
-    configs += [
-      "//build/config/compiler:no_chromium_code",
-      ":libfuzzer_config",
-    ]
-  }
-  source_set("pdf_codec_bmp_fuzzer") {
-    testonly = true
+
+  pdfium_fuzzer("pdf_codec_bmp_fuzzer") {
     sources = [
       "pdf_codec_bmp_fuzzer.cc",
       "xfa_codec_fuzzer.h",
     ]
-    deps = [
-      "//third_party/pdfium:pdfium",
-    ]
-    configs -= [ "//build/config/compiler:chromium_code" ]
-    configs += [
-      "//build/config/compiler:no_chromium_code",
-      ":libfuzzer_config",
+  }
+
+  pdfium_fuzzer("pdf_codec_gif_fuzzer") {
+    sources = [
+      "pdf_codec_gif_fuzzer.cc",
+      "xfa_codec_fuzzer.h",
     ]
   }
-  source_set("pdf_codec_tiff_fuzzer") {
-    testonly = true
+
+  pdfium_fuzzer("pdf_codec_jpeg_fuzzer") {
+    sources = [
+      "pdf_codec_jpeg_fuzzer.cc",
+      "xfa_codec_fuzzer.h",
+    ]
+  }
+
+  pdfium_fuzzer("pdf_codec_png_fuzzer") {
+    sources = [
+      "pdf_codec_png_fuzzer.cc",
+      "xfa_codec_fuzzer.h",
+    ]
+  }
+
+  pdfium_fuzzer("pdf_codec_tiff_fuzzer") {
     sources = [
       "pdf_codec_tiff_fuzzer.cc",
       "xfa_codec_fuzzer.h",
     ]
-    deps = [
-      "//third_party/pdfium:pdfium",
-    ]
-    configs -= [ "//build/config/compiler:chromium_code" ]
-    configs += [
-      "//build/config/compiler:no_chromium_code",
-      ":libfuzzer_config",
-    ]
   }
-  source_set("pdf_css_fuzzer") {
-    testonly = true
+
+  pdfium_fuzzer("pdf_css_fuzzer") {
     sources = [
       "pdf_css_fuzzer.cc",
     ]
-    deps = [
-      "//third_party/pdfium:pdfium",
+  }
+
+  pdfium_fuzzer("pdf_fm2js_fuzzer") {
+    sources = [
+      "pdf_fm2js_fuzzer.cc",
     ]
-    configs -= [ "//build/config/compiler:chromium_code" ]
-    configs += [
-      "//build/config/compiler:no_chromium_code",
-      ":libfuzzer_config",
+  }
+
+  pdfium_fuzzer("pdf_xml_fuzzer") {
+    sources = [
+      "pdf_xml_fuzzer.cc",
     ]
   }
 }
 
-source_set("pdf_cmap_fuzzer") {
-  testonly = true
+pdfium_fuzzer("pdf_cmap_fuzzer") {
   sources = [
     "pdf_cmap_fuzzer.cc",
   ]
-  deps = [
-    "//third_party/pdfium:pdfium",
-  ]
-  configs -= [ "//build/config/compiler:chromium_code" ]
-  configs += [
-    "//build/config/compiler:no_chromium_code",
-    ":libfuzzer_config",
-  ]
 }
 
-source_set("pdf_codec_fax_fuzzer") {
-  testonly = true
+pdfium_fuzzer("pdf_codec_fax_fuzzer") {
   sources = [
     "pdf_codec_fax_fuzzer.cc",
   ]
-  deps = [
-    "//third_party/pdfium:pdfium",
-  ]
-  configs -= [ "//build/config/compiler:chromium_code" ]
-  configs += [
-    "//build/config/compiler:no_chromium_code",
-    ":libfuzzer_config",
-  ]
 }
 
-source_set("pdf_codec_icc_fuzzer") {
-  testonly = true
+pdfium_fuzzer("pdf_codec_icc_fuzzer") {
   sources = [
     "pdf_codec_icc_fuzzer.cc",
   ]
-  deps = [
-    "//third_party/pdfium:pdfium",
-  ]
-  configs -= [ "//build/config/compiler:chromium_code" ]
-  configs += [
-    "//build/config/compiler:no_chromium_code",
-    ":libfuzzer_config",
-  ]
 }
 
-source_set("pdf_codec_jbig2_fuzzer") {
-  testonly = true
+pdfium_fuzzer("pdf_codec_jbig2_fuzzer") {
   sources = [
     "pdf_codec_jbig2_fuzzer.cc",
   ]
-  deps = [
-    "//third_party/pdfium:pdfium",
-  ]
-  configs -= [ "//build/config/compiler:chromium_code" ]
-  configs += [
-    "//build/config/compiler:no_chromium_code",
-    ":libfuzzer_config",
-  ]
 }
 
-source_set("pdf_jpx_fuzzer") {
-  testonly = true
-  sources = [
-    "pdf_jpx_fuzzer.cc",
-  ]
-  deps = [
-    "//third_party/pdfium:pdfium",
-  ]
-  configs -= [ "//build/config/compiler:chromium_code" ]
-  configs += [
-    "//build/config/compiler:no_chromium_code",
-    ":libfuzzer_config",
-  ]
-}
-
-source_set("pdf_psengine_fuzzer") {
-  testonly = true
-  sources = [
-    "pdf_psengine_fuzzer.cc",
-  ]
-  deps = [
-    "//third_party/pdfium:pdfium",
-  ]
-  configs -= [ "//build/config/compiler:chromium_code" ]
-  configs += [
-    "//build/config/compiler:no_chromium_code",
-    ":libfuzzer_config",
-  ]
-}
-
-source_set("pdf_hint_table_fuzzer") {
-  testonly = true
+pdfium_fuzzer("pdf_hint_table_fuzzer") {
   sources = [
     "pdf_hint_table_fuzzer.cc",
   ]
-  deps = [
-    "//third_party/pdfium:pdfium",
-  ]
-  configs -= [ "//build/config/compiler:chromium_code" ]
-  configs += [
-    "//build/config/compiler:no_chromium_code",
-    ":libfuzzer_config",
+}
+
+pdfium_fuzzer("pdf_jpx_fuzzer") {
+  sources = [
+    "pdf_jpx_fuzzer.cc",
   ]
 }
 
-source_set("pdf_streamparser_fuzzer") {
-  testonly = true
+pdfium_fuzzer("pdf_psengine_fuzzer") {
+  sources = [
+    "pdf_psengine_fuzzer.cc",
+  ]
+}
+
+pdfium_fuzzer("pdf_streamparser_fuzzer") {
   sources = [
     "pdf_streamparser_fuzzer.cc",
-  ]
-  deps = [
-    "//third_party/pdfium:pdfium",
-  ]
-  configs -= [ "//build/config/compiler:chromium_code" ]
-  configs += [
-    "//build/config/compiler:no_chromium_code",
-    ":libfuzzer_config",
   ]
 }

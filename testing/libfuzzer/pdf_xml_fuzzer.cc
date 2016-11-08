@@ -4,11 +4,12 @@
 
 #include <cstddef>
 #include <cstdint>
-#include <limits>
 #include <memory>
 
 #include "core/fxcrt/fx_basic.h"
+#include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/fx_system.h"
+#include "third_party/base/ptr_util.h"
 #include "xfa/fde/xml/fde_xml_imp.h"
 #include "xfa/fxfa/parser/cxfa_xml_parser.h"
 #include "xfa/fxfa/parser/cxfa_widetextread.h"
@@ -45,17 +46,18 @@ CFDE_XMLNode* XFA_FDEExtension_GetDocumentNode(
 }  // namespace
 
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
-  if (size > std::numeric_limits<FX_STRSIZE>::max())
+  FX_SAFE_STRSIZE safe_size = size;
+  if (!safe_size.IsValid())
     return 0;
 
-  CFX_WideString input = CFX_WideString::FromUTF8(
-      CFX_ByteStringC(data, static_cast<FX_STRSIZE>(size)));
+  CFX_WideString input =
+      CFX_WideString::FromUTF8(CFX_ByteStringC(data, safe_size.ValueOrDie()));
   std::unique_ptr<IFX_Stream, ReleaseDeleter<IFX_Stream>> stream(
       new CXFA_WideTextRead(input));
   if (!stream)
     return 0;
 
-  std::unique_ptr<CFDE_XMLDoc> doc(new CFDE_XMLDoc);
+  std::unique_ptr<CFDE_XMLDoc> doc = pdfium::MakeUnique<CFDE_XMLDoc>();
   std::unique_ptr<CFDE_XMLParser, ReleaseDeleter<CFDE_XMLParser>> parser(
       new CXFA_XMLParser(doc->GetRoot(), stream.get()));
 

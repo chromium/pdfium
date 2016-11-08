@@ -49,7 +49,7 @@ class XFACodecFuzzer {
     void Release() override {}
 
     bool ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) override {
-      if (offset < 0 || offset >= m_size)
+      if (offset < 0 || static_cast<size_t>(offset) >= m_size)
         return false;
       if (offset + size > m_size)
         size = m_size - offset;
