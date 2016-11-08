@@ -7,7 +7,7 @@
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_hint_tables.h"
-#include "core/fpdfapi/parser/cpdf_linearized.h"
+#include "core/fpdfapi/parser/cpdf_linearized_header.h"
 #include "third_party/base/ptr_util.h"
 
 int32_t GetData(const int32_t** data32, const uint8_t** data, size_t* size) {
