@@ -194,3 +194,8 @@ DLLEXPORT FPDF_SYSFONTINFO* STDCALL FPDF_GetDefaultSystemFontInfo() {
   pFontInfoExt->m_pFontInfo = pFontInfo.release();
   return pFontInfoExt;
 }
+
+DLLEXPORT void FPDF_FreeDefaultSystemFontInfo(
+    FPDF_SYSFONTINFO* pDefaultFontInfo) {
+  delete static_cast<FPDF_SYSFONTINFO_DEFAULT*>(pDefaultFontInfo);
+}

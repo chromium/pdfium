@@ -158,6 +158,7 @@ int CheckPDFiumCApi() {
     CHK(FPDF_AddInstalledFont);
     CHK(FPDF_SetSystemFontInfo);
     CHK(FPDF_GetDefaultSystemFontInfo);
+    CHK(FPDF_FreeDefaultSystemFontInfo);
 
     // fpdf_text.h
     CHK(FPDFText_LoadPage);

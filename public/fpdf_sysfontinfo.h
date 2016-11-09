@@ -290,10 +290,23 @@ DLLEXPORT void STDCALL FPDF_SetSystemFontInfo(FPDF_SYSFONTINFO* pFontInfo);
  *          Pointer to a FPDF_SYSFONTINFO structure describing the default
  *interface.
  *          Or NULL if the platform doesn't have a default interface.
- *          Application should call FPDF_FreeMemory to free the returned
- *pointer.
+ *          Application should call FPDF_FreeDefaultSystemFontInfo to free the
+ *returned pointer.
  **/
 DLLEXPORT FPDF_SYSFONTINFO* STDCALL FPDF_GetDefaultSystemFontInfo();
+
+/**
+ * Function: FPDF_FreeDefaultSystemFontInfo
+ *           Free a default system font info interface
+ * Comments:
+ *           This function should be called on the output from
+ *FPDF_SetSystemFontInfo once it is no longer needed by the client.
+ * Parameters:
+ *           pFontInfo       -   Pointer to a FPDF_SYSFONTINFO structure
+ * Return Value:
+ *          None
+ **/
+DLLEXPORT void FPDF_FreeDefaultSystemFontInfo(FPDF_SYSFONTINFO* pFontInfo);
 
 #ifdef __cplusplus
 }
