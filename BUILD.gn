@@ -1178,6 +1178,8 @@ if (pdf_enable_xfa) {
       "xfa/fwl/core/cfwl_event.h",
       "xfa/fwl/core/cfwl_listbox.cpp",
       "xfa/fwl/core/cfwl_listbox.h",
+      "xfa/fwl/core/cfwl_listitem.cpp",
+      "xfa/fwl/core/cfwl_listitem.h",
       "xfa/fwl/core/cfwl_message.h",
       "xfa/fwl/core/cfwl_picturebox.cpp",
       "xfa/fwl/core/cfwl_picturebox.h",

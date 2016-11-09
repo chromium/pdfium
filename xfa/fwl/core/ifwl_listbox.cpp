@@ -151,7 +151,7 @@ int32_t IFWL_ListBox::CountSelItems() {
       static_cast<IFWL_ListBoxDP*>(m_pProperties->m_pDataProvider);
   int32_t iCount = pData->CountItems(this);
   for (int32_t i = 0; i < iCount; i++) {
-    IFWL_ListItem* pItem = pData->GetItem(this, i);
+    CFWL_ListItem* pItem = pData->GetItem(this, i);
     if (!pItem) {
       continue;
     }
@@ -163,7 +163,7 @@ int32_t IFWL_ListBox::CountSelItems() {
   return iRet;
 }
 
-IFWL_ListItem* IFWL_ListBox::GetSelItem(int32_t nIndexSel) {
+CFWL_ListItem* IFWL_ListBox::GetSelItem(int32_t nIndexSel) {
   if (!m_pProperties->m_pDataProvider)
     return nullptr;
   int32_t index = 0;
@@ -171,7 +171,7 @@ IFWL_ListItem* IFWL_ListBox::GetSelItem(int32_t nIndexSel) {
       static_cast<IFWL_ListBoxDP*>(m_pProperties->m_pDataProvider);
   int32_t iCount = pData->CountItems(this);
   for (int32_t i = 0; i < iCount; i++) {
-    IFWL_ListItem* pItem = pData->GetItem(this, i);
+    CFWL_ListItem* pItem = pData->GetItem(this, i);
     if (!pItem) {
       return nullptr;
     }
@@ -195,7 +195,7 @@ int32_t IFWL_ListBox::GetSelIndex(int32_t nIndex) {
       static_cast<IFWL_ListBoxDP*>(m_pProperties->m_pDataProvider);
   int32_t iCount = pData->CountItems(this);
   for (int32_t i = 0; i < iCount; i++) {
-    IFWL_ListItem* pItem = pData->GetItem(this, i);
+    CFWL_ListItem* pItem = pData->GetItem(this, i);
     if (!pItem) {
       return -1;
     }
@@ -211,7 +211,7 @@ int32_t IFWL_ListBox::GetSelIndex(int32_t nIndex) {
   return -1;
 }
 
-FWL_Error IFWL_ListBox::SetSelItem(IFWL_ListItem* pItem, bool bSelect) {
+FWL_Error IFWL_ListBox::SetSelItem(CFWL_ListItem* pItem, bool bSelect) {
   if (!m_pProperties->m_pDataProvider)
     return FWL_Error::Indefinite;
   if (!pItem) {
@@ -231,7 +231,7 @@ FWL_Error IFWL_ListBox::SetSelItem(IFWL_ListItem* pItem, bool bSelect) {
   return FWL_Error::Succeeded;
 }
 
-FWL_Error IFWL_ListBox::GetItemText(IFWL_ListItem* pItem,
+FWL_Error IFWL_ListBox::GetItemText(CFWL_ListItem* pItem,
                                     CFX_WideString& wsText) {
   if (!m_pProperties->m_pDataProvider)
     return FWL_Error::Indefinite;
@@ -253,8 +253,8 @@ FWL_Error IFWL_ListBox::GetScrollPos(FX_FLOAT& fPos, bool bVert) {
   return FWL_Error::Indefinite;
 }
 
-IFWL_ListItem* IFWL_ListBox::GetItem(IFWL_ListItem* pItem, uint32_t dwKeyCode) {
-  IFWL_ListItem* hRet = nullptr;
+CFWL_ListItem* IFWL_ListBox::GetItem(CFWL_ListItem* pItem, uint32_t dwKeyCode) {
+  CFWL_ListItem* hRet = nullptr;
   switch (dwKeyCode) {
     case FWL_VKEY_Up:
     case FWL_VKEY_Down:
@@ -283,8 +283,8 @@ IFWL_ListItem* IFWL_ListBox::GetItem(IFWL_ListItem* pItem, uint32_t dwKeyCode) {
   return hRet;
 }
 
-void IFWL_ListBox::SetSelection(IFWL_ListItem* hStart,
-                                IFWL_ListItem* hEnd,
+void IFWL_ListBox::SetSelection(CFWL_ListItem* hStart,
+                                CFWL_ListItem* hEnd,
                                 bool bSelected) {
   IFWL_ListBoxDP* pData =
       static_cast<IFWL_ListBoxDP*>(m_pProperties->m_pDataProvider);
@@ -298,17 +298,17 @@ void IFWL_ListBox::SetSelection(IFWL_ListItem* hStart,
   if (bSelected) {
     int32_t iCount = pData->CountItems(this);
     for (int32_t i = 0; i < iCount; i++) {
-      IFWL_ListItem* pItem = pData->GetItem(this, i);
+      CFWL_ListItem* pItem = pData->GetItem(this, i);
       SetSelectionDirect(pItem, false);
     }
   }
   for (; iStart <= iEnd; iStart++) {
-    IFWL_ListItem* pItem = pData->GetItem(this, iStart);
+    CFWL_ListItem* pItem = pData->GetItem(this, iStart);
     SetSelectionDirect(pItem, bSelected);
   }
 }
 
-void IFWL_ListBox::SetSelectionDirect(IFWL_ListItem* pItem, bool bSelect) {
+void IFWL_ListBox::SetSelectionDirect(CFWL_ListItem* pItem, bool bSelect) {
   IFWL_ListBoxDP* pData =
       static_cast<IFWL_ListBoxDP*>(m_pProperties->m_pDataProvider);
   uint32_t dwOldStyle = pData->GetItemStyles(this, pItem);
@@ -317,7 +317,7 @@ void IFWL_ListBox::SetSelectionDirect(IFWL_ListItem* pItem, bool bSelect) {
   pData->SetItemStyles(this, pItem, dwOldStyle);
 }
 
-bool IFWL_ListBox::IsItemSelected(IFWL_ListItem* pItem) {
+bool IFWL_ListBox::IsItemSelected(CFWL_ListItem* pItem) {
   IFWL_ListBoxDP* pData =
       static_cast<IFWL_ListBoxDP*>(m_pProperties->m_pDataProvider);
   uint32_t dwState = pData->GetItemStyles(this, pItem);
@@ -330,7 +330,7 @@ void IFWL_ListBox::ClearSelection() {
       static_cast<IFWL_ListBoxDP*>(m_pProperties->m_pDataProvider);
   int32_t iCount = pData->CountItems(this);
   for (int32_t i = 0; i < iCount; i++) {
-    IFWL_ListItem* pItem = pData->GetItem(this, i);
+    CFWL_ListItem* pItem = pData->GetItem(this, i);
     uint32_t dwState = pData->GetItemStyles(this, pItem);
     if (!(dwState & FWL_ITEMSTATE_LTB_Selected))
       continue;
@@ -349,18 +349,18 @@ void IFWL_ListBox::SelectAll() {
       static_cast<IFWL_ListBoxDP*>(m_pProperties->m_pDataProvider);
   int32_t iCount = pData->CountItems(this);
   if (iCount > 0) {
-    IFWL_ListItem* pItemStart = pData->GetItem(this, 0);
-    IFWL_ListItem* pItemEnd = pData->GetItem(this, iCount - 1);
+    CFWL_ListItem* pItemStart = pData->GetItem(this, 0);
+    CFWL_ListItem* pItemEnd = pData->GetItem(this, iCount - 1);
     SetSelection(pItemStart, pItemEnd, false);
   }
 }
 
-IFWL_ListItem* IFWL_ListBox::GetFocusedItem() {
+CFWL_ListItem* IFWL_ListBox::GetFocusedItem() {
   IFWL_ListBoxDP* pData =
       static_cast<IFWL_ListBoxDP*>(m_pProperties->m_pDataProvider);
   int32_t iCount = pData->CountItems(this);
   for (int32_t i = 0; i < iCount; i++) {
-    IFWL_ListItem* pItem = pData->GetItem(this, i);
+    CFWL_ListItem* pItem = pData->GetItem(this, i);
     if (!pItem)
       return nullptr;
     if (pData->GetItemStyles(this, pItem) & FWL_ITEMSTATE_LTB_Focused) {
@@ -370,10 +370,10 @@ IFWL_ListItem* IFWL_ListBox::GetFocusedItem() {
   return nullptr;
 }
 
-void IFWL_ListBox::SetFocusItem(IFWL_ListItem* pItem) {
+void IFWL_ListBox::SetFocusItem(CFWL_ListItem* pItem) {
   IFWL_ListBoxDP* pData =
       static_cast<IFWL_ListBoxDP*>(m_pProperties->m_pDataProvider);
-  IFWL_ListItem* hFocus = GetFocusedItem();
+  CFWL_ListItem* hFocus = GetFocusedItem();
   if (pItem != hFocus) {
     if (hFocus) {
       uint32_t dwStyle = pData->GetItemStyles(this, hFocus);
@@ -388,7 +388,7 @@ void IFWL_ListBox::SetFocusItem(IFWL_ListItem* pItem) {
   }
 }
 
-IFWL_ListItem* IFWL_ListBox::GetItemAtPoint(FX_FLOAT fx, FX_FLOAT fy) {
+CFWL_ListItem* IFWL_ListBox::GetItemAtPoint(FX_FLOAT fx, FX_FLOAT fy) {
   fx -= m_rtConent.left, fy -= m_rtConent.top;
   FX_FLOAT fPosX = 0.0f;
   if (m_pHorzScrollBar) {
@@ -402,7 +402,7 @@ IFWL_ListItem* IFWL_ListBox::GetItemAtPoint(FX_FLOAT fx, FX_FLOAT fy) {
       static_cast<IFWL_ListBoxDP*>(m_pProperties->m_pDataProvider);
   int32_t nCount = pData->CountItems(this);
   for (int32_t i = 0; i < nCount; i++) {
-    IFWL_ListItem* pItem = pData->GetItem(this, i);
+    CFWL_ListItem* pItem = pData->GetItem(this, i);
     if (!pItem) {
       continue;
     }
@@ -416,7 +416,7 @@ IFWL_ListItem* IFWL_ListBox::GetItemAtPoint(FX_FLOAT fx, FX_FLOAT fy) {
   return nullptr;
 }
 
-bool IFWL_ListBox::GetItemCheckRect(IFWL_ListItem* pItem, CFX_RectF& rtCheck) {
+bool IFWL_ListBox::GetItemCheckRect(CFWL_ListItem* pItem, CFX_RectF& rtCheck) {
   if (!m_pProperties->m_pDataProvider)
     return false;
   if (!(m_pProperties->m_dwStyleExes & FWL_STYLEEXT_LTB_Check)) {
@@ -428,7 +428,7 @@ bool IFWL_ListBox::GetItemCheckRect(IFWL_ListItem* pItem, CFX_RectF& rtCheck) {
   return true;
 }
 
-bool IFWL_ListBox::GetItemChecked(IFWL_ListItem* pItem) {
+bool IFWL_ListBox::GetItemChecked(CFWL_ListItem* pItem) {
   if (!m_pProperties->m_pDataProvider)
     return false;
   if (!(m_pProperties->m_dwStyleExes & FWL_STYLEEXT_LTB_Check)) {
@@ -439,7 +439,7 @@ bool IFWL_ListBox::GetItemChecked(IFWL_ListItem* pItem) {
   return !!(pData->GetItemCheckState(this, pItem) & FWL_ITEMSTATE_LTB_Checked);
 }
 
-bool IFWL_ListBox::SetItemChecked(IFWL_ListItem* pItem, bool bChecked) {
+bool IFWL_ListBox::SetItemChecked(CFWL_ListItem* pItem, bool bChecked) {
   if (!m_pProperties->m_pDataProvider)
     return false;
   if (!(m_pProperties->m_dwStyleExes & FWL_STYLEEXT_LTB_Check)) {
@@ -452,7 +452,7 @@ bool IFWL_ListBox::SetItemChecked(IFWL_ListItem* pItem, bool bChecked) {
   return true;
 }
 
-bool IFWL_ListBox::ScrollToVisible(IFWL_ListItem* pItem) {
+bool IFWL_ListBox::ScrollToVisible(CFWL_ListItem* pItem) {
   if (!m_pVertScrollBar)
     return false;
   CFX_RectF rtItem;
@@ -525,7 +525,7 @@ void IFWL_ListBox::DrawItems(CFX_Graphics* pGraphics,
       static_cast<IFWL_ListBoxDP*>(m_pProperties->m_pDataProvider);
   int32_t iCount = pData->CountItems(this);
   for (int32_t i = 0; i < iCount; i++) {
-    IFWL_ListItem* pItem = pData->GetItem(this, i);
+    CFWL_ListItem* pItem = pData->GetItem(this, i);
     if (!pItem) {
       continue;
     }
@@ -557,7 +557,7 @@ void IFWL_ListBox::DrawItems(CFX_Graphics* pGraphics,
 
 void IFWL_ListBox::DrawItem(CFX_Graphics* pGraphics,
                             IFWL_ThemeProvider* pTheme,
-                            IFWL_ListItem* pItem,
+                            CFWL_ListItem* pItem,
                             int32_t Index,
                             const CFX_RectF& rtItem,
                             const CFX_Matrix* pMatrix) {
@@ -679,7 +679,7 @@ CFX_SizeF IFWL_ListBox::CalcSize(bool bAutoSize) {
         static_cast<IFWL_ListBoxDP*>(m_pProperties->m_pDataProvider);
     int32_t iCount = pData->CountItems(this);
     for (int32_t i = 0; i < iCount; i++) {
-      IFWL_ListItem* pItem = pData->GetItem(this, i);
+      CFWL_ListItem* pItem = pData->GetItem(this, i);
       if (!bAutoSize) {
         CFX_RectF rtItem;
         rtItem.Set(m_rtClient.left, m_rtClient.top + fs.y, 0, 0);
@@ -710,7 +710,7 @@ CFX_SizeF IFWL_ListBox::CalcSize(bool bAutoSize) {
 
     int32_t iCount = pData->CountItems(this);
     for (int32_t i = 0; i < iCount; i++) {
-      IFWL_ListItem* htem = pData->GetItem(this, i);
+      CFWL_ListItem* htem = pData->GetItem(this, i);
       GetItemSize(fs, htem, fWidth, m_fItemHeight, bAutoSize);
     }
   }
@@ -815,7 +815,7 @@ CFX_SizeF IFWL_ListBox::CalcSize(bool bAutoSize) {
 }
 
 void IFWL_ListBox::GetItemSize(CFX_SizeF& size,
-                               IFWL_ListItem* pItem,
+                               CFWL_ListItem* pItem,
                                FX_FLOAT fWidth,
                                FX_FLOAT fItemHeight,
                                bool bAutoSize) {
@@ -839,7 +839,7 @@ FX_FLOAT IFWL_ListBox::GetMaxTextWidth() {
       static_cast<IFWL_ListBoxDP*>(m_pProperties->m_pDataProvider);
   int32_t iCount = pData->CountItems(this);
   for (int32_t i = 0; i < iCount; i++) {
-    IFWL_ListItem* pItem = pData->GetItem(this, i);
+    CFWL_ListItem* pItem = pData->GetItem(this, i);
     if (!pItem) {
       continue;
     }
@@ -899,7 +899,7 @@ void IFWL_ListBox::ProcessSelChanged() {
   CFX_Int32Array arrSels;
   int32_t iCount = CountSelItems();
   for (int32_t i = 0; i < iCount; i++) {
-    IFWL_ListItem* item = GetSelItem(i);
+    CFWL_ListItem* item = GetSelItem(i);
     if (!item) {
       continue;
     }
@@ -991,7 +991,7 @@ void IFWL_ListBox::OnLButtonDown(CFWL_MsgMouse* pMsg) {
   if ((m_pProperties->m_dwStates & FWL_WGTSTATE_Focused) == 0)
     SetFocus(true);
 
-  IFWL_ListItem* pItem = GetItemAtPoint(pMsg->m_fx, pMsg->m_fy);
+  CFWL_ListItem* pItem = GetItemAtPoint(pMsg->m_fx, pMsg->m_fy);
   if (!pItem)
     return;
 
@@ -1013,7 +1013,7 @@ void IFWL_ListBox::OnLButtonDown(CFWL_MsgMouse* pMsg) {
     SetSelection(pItem, pItem, true);
   }
   if (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_LTB_Check) {
-    IFWL_ListItem* hSelectedItem = GetItemAtPoint(pMsg->m_fx, pMsg->m_fy);
+    CFWL_ListItem* hSelectedItem = GetItemAtPoint(pMsg->m_fx, pMsg->m_fy);
     CFX_RectF rtCheck;
     GetItemCheckRect(hSelectedItem, rtCheck);
     bool bChecked = GetItemChecked(pItem);
@@ -1051,7 +1051,7 @@ void IFWL_ListBox::OnKeyDown(CFWL_MsgKey* pMsg) {
     case FWL_VKEY_Down:
     case FWL_VKEY_Home:
     case FWL_VKEY_End: {
-      IFWL_ListItem* pItem = GetFocusedItem();
+      CFWL_ListItem* pItem = GetFocusedItem();
       pItem = GetItem(pItem, dwKeyCode);
       bool bShift = !!(pMsg->m_dwFlags & FWL_KEYFLAG_Shift);
       bool bCtrl = !!(pMsg->m_dwFlags & FWL_KEYFLAG_Ctrl);
@@ -1065,7 +1065,7 @@ void IFWL_ListBox::OnKeyDown(CFWL_MsgKey* pMsg) {
   }
 }
 
-void IFWL_ListBox::OnVK(IFWL_ListItem* pItem, bool bShift, bool bCtrl) {
+void IFWL_ListBox::OnVK(CFWL_ListItem* pItem, bool bShift, bool bCtrl) {
   if (!pItem)
     return;
 

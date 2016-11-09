@@ -28,7 +28,7 @@ int32_t IFWL_ComboList::MatchItem(const CFX_WideString& wsMatch) {
       static_cast<IFWL_ListBoxDP*>(m_pProperties->m_pDataProvider);
   int32_t iCount = pData->CountItems(this);
   for (int32_t i = 0; i < iCount; i++) {
-    IFWL_ListItem* hItem = pData->GetItem(this, i);
+    CFWL_ListItem* hItem = pData->GetItem(this, i);
     CFX_WideString wsText;
     pData->GetItemText(this, hItem, wsText);
     FX_STRSIZE pos = wsText.Find(wsMatch.c_str());
@@ -44,10 +44,10 @@ void IFWL_ComboList::ChangeSelected(int32_t iSel) {
     return;
   IFWL_ListBoxDP* pData =
       static_cast<IFWL_ListBoxDP*>(m_pProperties->m_pDataProvider);
-  IFWL_ListItem* hItem = pData->GetItem(this, iSel);
+  CFWL_ListItem* hItem = pData->GetItem(this, iSel);
   CFX_RectF rtInvalidate;
   rtInvalidate.Reset();
-  IFWL_ListItem* hOld = GetSelItem(0);
+  CFWL_ListItem* hOld = GetSelItem(0);
   int32_t iOld = pData->GetItemIndex(this, hOld);
   if (iOld == iSel) {
     return;
@@ -59,7 +59,7 @@ void IFWL_ComboList::ChangeSelected(int32_t iSel) {
     CFX_RectF rect;
     GetItemRect(iSel, rect);
     rtInvalidate.Union(rect);
-    IFWL_ListItem* hSel = pData->GetItem(this, iSel);
+    CFWL_ListItem* hSel = pData->GetItem(this, iSel);
     SetSelItem(hSel, true);
   }
   if (!rtInvalidate.IsEmpty()) {
@@ -76,7 +76,7 @@ int32_t IFWL_ComboList::CountItems() {
 void IFWL_ComboList::GetItemRect(int32_t nIndex, CFX_RectF& rtItem) {
   IFWL_ListBoxDP* pData =
       static_cast<IFWL_ListBoxDP*>(m_pProperties->m_pDataProvider);
-  IFWL_ListItem* hItem = pData->GetItem(this, nIndex);
+  CFWL_ListItem* hItem = pData->GetItem(this, nIndex);
   pData->GetItemRect(this, hItem, rtItem);
 }
 
@@ -163,7 +163,7 @@ int32_t IFWL_ComboList::OnDropListMouseMove(CFWL_MsgMouse* pMsg) {
         return 1;
       }
     }
-    IFWL_ListItem* hItem = GetItemAtPoint(pMsg->m_fx, pMsg->m_fy);
+    CFWL_ListItem* hItem = GetItemAtPoint(pMsg->m_fx, pMsg->m_fy);
     if (hItem) {
       if (!m_pProperties->m_pDataProvider)
         return 0;
@@ -207,7 +207,7 @@ int32_t IFWL_ComboList::OnDropListLButtonUp(CFWL_MsgMouse* pMsg) {
       }
     }
     pOuter->ShowDropList(false);
-    IFWL_ListItem* hItem = GetItemAtPoint(pMsg->m_fx, pMsg->m_fy);
+    CFWL_ListItem* hItem = GetItemAtPoint(pMsg->m_fx, pMsg->m_fy);
     if (hItem)
       pOuter->ProcessSelChanged(true);
   }
@@ -254,7 +254,7 @@ void IFWL_ComboList::OnDropListKeyDown(CFWL_MsgKey* pKey) {
       IFWL_ComboBox* pOuter = static_cast<IFWL_ComboBox*>(m_pOuter);
       IFWL_ListBoxDP* pData =
           static_cast<IFWL_ListBoxDP*>(m_pProperties->m_pDataProvider);
-      IFWL_ListItem* hItem =
+      CFWL_ListItem* hItem =
           pData->GetItem(this, pOuter->GetCurrentSelection());
       hItem = GetItem(hItem, dwKeyCode);
       if (!hItem) {
