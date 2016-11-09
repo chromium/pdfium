@@ -492,9 +492,18 @@ CPDF_Dictionary* CPDF_Document::GetPage(int iPage) {
   if (!pPages)
     return nullptr;
 
+  if (iPage - m_iNextPageToTraverse + 1 <= 0) {
+    // This can happen when the page does not have an object number. On repeated
+    // calls to this function for the same page index, this condition causes
+    // TraversePDFPages() to incorrectly return nullptr.
+    // Example "testing/corpus/fx/other/jetman_std.pdf"
+    // We should restart traversing in this case.
+    // TODO(art-snake): optimize this.
+    ResetTraversal();
+  }
+  int nPagesToGo = iPage - m_iNextPageToTraverse + 1;
   if (m_pTreeTraversal.empty())
     m_pTreeTraversal.push_back(std::make_pair(pPages, 0));
-  int nPagesToGo = iPage - m_iNextPageToTraverse + 1;
   CPDF_Dictionary* pPage = TraversePDFPages(iPage, &nPagesToGo, 0);
   m_iNextPageToTraverse = iPage + 1;
   return pPage;

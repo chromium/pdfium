@@ -76,6 +76,27 @@ class CPDF_TestDocumentForPages : public CPDF_Document {
   std::unique_ptr<CPDF_Dictionary> m_pOwnedRootDict;
 };
 
+class CPDF_TestDocumentWithPageWithoutPageNum : public CPDF_Document {
+ public:
+  CPDF_TestDocumentWithPageWithoutPageNum() : CPDF_Document(nullptr) {
+    // Set up test
+    CPDF_Array* allPages = new CPDF_Array();
+    allPages->AddReference(this, AddIndirectObject(CreateNumberedPage(0)));
+    allPages->AddReference(this, AddIndirectObject(CreateNumberedPage(1)));
+    // Page without pageNum.
+    allPages->Add(CreateNumberedPage(2));
+    CPDF_Dictionary* pagesDict = CreatePageTreeNode(allPages, this, 3);
+
+    m_pOwnedRootDict.reset(new CPDF_Dictionary());
+    m_pOwnedRootDict->SetReferenceFor("Pages", this, pagesDict->GetObjNum());
+    m_pRootDict = m_pOwnedRootDict.get();
+    m_PageList.SetSize(3);
+  }
+
+ private:
+  std::unique_ptr<CPDF_Dictionary> m_pOwnedRootDict;
+};
+
 class TestLinearized : public CPDF_LinearizedHeader {
  public:
   explicit TestLinearized(CPDF_Dictionary* dict)
@@ -103,6 +124,18 @@ TEST_F(cpdf_document_test, GetPages) {
   }
   CPDF_Dictionary* page = document->GetPage(7);
   EXPECT_FALSE(page);
+}
+
+TEST_F(cpdf_document_test, GetPageWithoutObjNumTwice) {
+  std::unique_ptr<CPDF_TestDocumentWithPageWithoutPageNum> document =
+      pdfium::MakeUnique<CPDF_TestDocumentWithPageWithoutPageNum>();
+  const CPDF_Dictionary* page = document->GetPage(2);
+  ASSERT_TRUE(page);
+  // This is page without obj num.
+  ASSERT_EQ(0ul, page->GetObjNum());
+  const CPDF_Dictionary* second_call_page = document->GetPage(2);
+  EXPECT_TRUE(second_call_page);
+  EXPECT_EQ(page, second_call_page);
 }
 
 TEST_F(cpdf_document_test, GetPagesReverseOrder) {
