@@ -397,8 +397,6 @@ DLLEXPORT int STDCALL FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
       continue;
 
     CPDF_Dictionary* pAPDic = pAPStream->GetDict();
-    CFX_Matrix matrix = pAPDic->GetMatrixFor("Matrix");
-
     CFX_FloatRect rcStream;
     if (pAPDic->KeyExist("Rect"))
       rcStream = pAPDic->GetRectFor("Rect");
@@ -409,13 +407,15 @@ DLLEXPORT int STDCALL FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
       continue;
 
     CPDF_Object* pObj = pAPStream;
+    if (pObj->IsInline()) {
+      pObj = pObj->Clone();
+      pDocument->AddIndirectObject(pObj);
+    }
 
-    if (pObj) {
-      CPDF_Dictionary* pObjDic = pObj->GetDict();
-      if (pObjDic) {
-        pObjDic->SetNameFor("Type", "XObject");
-        pObjDic->SetNameFor("Subtype", "Form");
-      }
+    CPDF_Dictionary* pObjDic = pObj->GetDict();
+    if (pObjDic) {
+      pObjDic->SetNameFor("Type", "XObject");
+      pObjDic->SetNameFor("Subtype", "Form");
     }
 
     CPDF_Dictionary* pXObject = pNewXORes->GetDictFor("XObject");
@@ -426,15 +426,14 @@ DLLEXPORT int STDCALL FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
 
     CFX_ByteString sFormName;
     sFormName.Format("F%d", i);
-    pXObject->SetReferenceFor(sFormName, pDocument,
-                              pDocument->AddIndirectObject(pObj));
+    pXObject->SetReferenceFor(sFormName, pDocument, pObj->GetObjNum());
 
     CPDF_StreamAcc acc;
     acc.LoadAllData(pNewXObject);
 
     const uint8_t* pData = acc.GetData();
     CFX_ByteString sStream(pData, acc.GetSize());
-
+    CFX_Matrix matrix = pAPDic->GetMatrixFor("Matrix");
     if (matrix.IsIdentity()) {
       matrix.a = 1.0f;
       matrix.b = 0.0f;

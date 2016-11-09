@@ -1721,6 +1721,7 @@ test("pdfium_embeddertests") {
     "core/fxcodec/codec/fx_codec_embeddertest.cpp",
     "core/fxge/ge/fx_ge_text_embeddertest.cpp",
     "fpdfsdk/fpdf_dataavail_embeddertest.cpp",
+    "fpdfsdk/fpdf_flatten_embeddertest.cpp",
     "fpdfsdk/fpdfdoc_embeddertest.cpp",
     "fpdfsdk/fpdfedit_embeddertest.cpp",
     "fpdfsdk/fpdfext_embeddertest.cpp",
