@@ -196,8 +196,9 @@ bool CPDFSDK_AnnotHandlerMgr::Annot_OnKeyDown(CPDFSDK_Annot* pAnnot,
                                               int nKeyCode,
                                               int nFlag) {
   if (m_pFormFillEnv->IsCTRLKeyDown(nFlag) ||
-      m_pFormFillEnv->IsALTKeyDown(nFlag))
+      m_pFormFillEnv->IsALTKeyDown(nFlag)) {
     return GetAnnotHandler(pAnnot)->OnKeyDown(pAnnot, nKeyCode, nFlag);
+  }
 
   CPDFSDK_PageView* pPage = pAnnot->GetPageView();
   CPDFSDK_Annot* pFocusAnnot = pPage->GetFocusAnnot();
@@ -210,7 +211,7 @@ bool CPDFSDK_AnnotHandlerMgr::Annot_OnKeyDown(CPDFSDK_Annot* pAnnot,
     }
   }
 
-  return false;
+  return GetAnnotHandler(pAnnot)->OnKeyDown(pAnnot, nKeyCode, nFlag);
 }
 
 bool CPDFSDK_AnnotHandlerMgr::Annot_OnKeyUp(CPDFSDK_Annot* pAnnot,
