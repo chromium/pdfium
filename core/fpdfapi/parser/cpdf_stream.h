@@ -22,9 +22,9 @@ class CPDF_Stream : public CPDF_Object {
   CPDF_Stream(uint8_t* pData, uint32_t size, CPDF_Dictionary* pDict);
   ~CPDF_Stream() override;
 
-  // CPDF_Object.
+  // CPDF_Object:
   Type GetType() const override;
-  CPDF_Object* Clone() const override;
+  std::unique_ptr<CPDF_Object> Clone() const override;
   CPDF_Dictionary* GetDict() const override;
   CFX_WideString GetUnicodeText() const override;
   bool IsStream() const override;
@@ -48,7 +48,7 @@ class CPDF_Stream : public CPDF_Object {
   bool IsMemoryBased() const { return m_bMemoryBased; }
 
  protected:
-  CPDF_Object* CloneNonCyclic(
+  std::unique_ptr<CPDF_Object> CloneNonCyclic(
       bool bDirect,
       std::set<const CPDF_Object*>* pVisited) const override;
 

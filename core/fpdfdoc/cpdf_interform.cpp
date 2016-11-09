@@ -1105,22 +1105,22 @@ CPDF_FormField* CPDF_InterForm::AddTerminalField(CPDF_Dictionary* pFieldDict) {
       if (pFieldDict->KeyExist("FT")) {
         CPDF_Object* pFTValue = pFieldDict->GetDirectObjectFor("FT");
         if (pFTValue)
-          pParent->SetFor("FT", pFTValue->Clone());
+          pParent->SetFor("FT", pFTValue->Clone().release());
       }
 
       if (pFieldDict->KeyExist("Ff")) {
         CPDF_Object* pFfValue = pFieldDict->GetDirectObjectFor("Ff");
         if (pFfValue)
-          pParent->SetFor("Ff", pFfValue->Clone());
+          pParent->SetFor("Ff", pFfValue->Clone().release());
       }
     }
 
     pField = new CPDF_FormField(this, pParent);
     CPDF_Object* pTObj = pDict->GetObjectFor("T");
     if (ToReference(pTObj)) {
-      CPDF_Object* pClone = pTObj->CloneDirectObject();
+      std::unique_ptr<CPDF_Object> pClone = pTObj->CloneDirectObject();
       if (pClone)
-        pDict->SetFor("T", pClone);
+        pDict->SetFor("T", pClone.release());
       else
         pDict->SetNameFor("T", "");
     }
@@ -1251,7 +1251,7 @@ CFDF_Document* CPDF_InterForm::ExportToFDF(
       } else {
         CPDF_Object* pV = FPDF_GetFieldAttr(pField->m_pDict, "V");
         if (pV)
-          pFieldDict->SetFor("V", pV->CloneDirectObject());
+          pFieldDict->SetFor("V", pV->CloneDirectObject().release());
       }
       pFields->Add(pFieldDict);
     }
@@ -1304,7 +1304,8 @@ void CPDF_InterForm::FDF_ImportField(CPDF_Dictionary* pFieldDict,
   if ((eType == CPDF_FormField::ListBox || eType == CPDF_FormField::ComboBox) &&
       pFieldDict->KeyExist("Opt")) {
     pField->m_pDict->SetFor(
-        "Opt", pFieldDict->GetDirectObjectFor("Opt")->CloneDirectObject());
+        "Opt",
+        pFieldDict->GetDirectObjectFor("Opt")->CloneDirectObject().release());
   }
 
   if (bNotify && m_pFormNotify) {

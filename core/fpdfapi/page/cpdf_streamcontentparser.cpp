@@ -667,7 +667,7 @@ void CPDF_StreamContentParser::Handle_BeginImage() {
       if (name != "DeviceRGB" && name != "DeviceGray" && name != "DeviceCMYK") {
         pCSObj = FindResourceObj("ColorSpace", name);
         if (pCSObj && pCSObj->IsInline()) {
-          pCSObj = pCSObj->Clone();
+          pCSObj = pCSObj->Clone().release();
           pDict->SetFor("ColorSpace", pCSObj);
         }
       }

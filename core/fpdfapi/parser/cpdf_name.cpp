@@ -7,6 +7,7 @@
 #include "core/fpdfapi/parser/cpdf_name.h"
 
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
+#include "third_party/base/ptr_util.h"
 
 CPDF_Name::CPDF_Name(const CFX_ByteString& str) : m_Name(str) {}
 
@@ -16,8 +17,8 @@ CPDF_Object::Type CPDF_Name::GetType() const {
   return NAME;
 }
 
-CPDF_Object* CPDF_Name::Clone() const {
-  return new CPDF_Name(m_Name);
+std::unique_ptr<CPDF_Object> CPDF_Name::Clone() const {
+  return pdfium::MakeUnique<CPDF_Name>(m_Name);
 }
 
 CFX_ByteString CPDF_Name::GetString() const {

@@ -109,7 +109,7 @@ bool CPDF_PageOrganizer::ExportPage(CPDF_Document* pSrcPDFDoc,
       if (cbSrcKeyStr.Compare(("Type")) && cbSrcKeyStr.Compare(("Parent"))) {
         if (pCurPageDict->KeyExist(cbSrcKeyStr))
           pCurPageDict->RemoveFor(cbSrcKeyStr);
-        pCurPageDict->SetFor(cbSrcKeyStr, pObj->Clone());
+        pCurPageDict->SetFor(cbSrcKeyStr, pObj->Clone().release());
       }
     }
 
@@ -123,7 +123,7 @@ bool CPDF_PageOrganizer::ExportPage(CPDF_Document* pSrcPDFDoc,
         // if not exists,we take the letter size.
         pInheritable = PageDictGetInheritableTag(pSrcPageDict, "CropBox");
         if (pInheritable) {
-          pCurPageDict->SetFor("MediaBox", pInheritable->Clone());
+          pCurPageDict->SetFor("MediaBox", pInheritable->Clone().release());
         } else {
           // Make the default size to be letter size (8.5'x11')
           CPDF_Array* pArray = new CPDF_Array;
@@ -134,7 +134,7 @@ bool CPDF_PageOrganizer::ExportPage(CPDF_Document* pSrcPDFDoc,
           pCurPageDict->SetFor("MediaBox", pArray);
         }
       } else {
-        pCurPageDict->SetFor("MediaBox", pInheritable->Clone());
+        pCurPageDict->SetFor("MediaBox", pInheritable->Clone().release());
       }
     }
     // 2 Resources //required
@@ -142,27 +142,25 @@ bool CPDF_PageOrganizer::ExportPage(CPDF_Document* pSrcPDFDoc,
       pInheritable = PageDictGetInheritableTag(pSrcPageDict, "Resources");
       if (!pInheritable)
         return false;
-      pCurPageDict->SetFor("Resources", pInheritable->Clone());
+      pCurPageDict->SetFor("Resources", pInheritable->Clone().release());
     }
     // 3 CropBox  //Optional
     if (!pCurPageDict->KeyExist("CropBox")) {
       pInheritable = PageDictGetInheritableTag(pSrcPageDict, "CropBox");
       if (pInheritable)
-        pCurPageDict->SetFor("CropBox", pInheritable->Clone());
+        pCurPageDict->SetFor("CropBox", pInheritable->Clone().release());
     }
     // 4 Rotate  //Optional
     if (!pCurPageDict->KeyExist("Rotate")) {
       pInheritable = PageDictGetInheritableTag(pSrcPageDict, "Rotate");
       if (pInheritable)
-        pCurPageDict->SetFor("Rotate", pInheritable->Clone());
+        pCurPageDict->SetFor("Rotate", pInheritable->Clone().release());
     }
 
     // Update the reference
     uint32_t dwOldPageObj = pSrcPageDict->GetObjNum();
     uint32_t dwNewPageObj = pCurPageDict->GetObjNum();
-
     (*pObjNumberMap)[dwOldPageObj] = dwNewPageObj;
-
     UpdateReference(pCurPageDict, pDestPDFDoc, pObjNumberMap.get());
     ++curpage;
   }
@@ -277,29 +275,22 @@ uint32_t CPDF_PageOrganizer::GetNewObjId(CPDF_Document* pDoc,
   if (!pDirect)
     return 0;
 
-  CPDF_Object* pClone = pDirect->Clone();
-  if (!pClone)
-    return 0;
-
+  std::unique_ptr<CPDF_Object> pClone = pDirect->Clone();
   if (CPDF_Dictionary* pDictClone = pClone->AsDictionary()) {
     if (pDictClone->KeyExist("Type")) {
       CFX_ByteString strType = pDictClone->GetStringFor("Type");
-      if (!FXSYS_stricmp(strType.c_str(), "Pages")) {
-        delete pDictClone;
+      if (!FXSYS_stricmp(strType.c_str(), "Pages"))
         return 4;
-      }
-      if (!FXSYS_stricmp(strType.c_str(), "Page")) {
-        delete pDictClone;
+      if (!FXSYS_stricmp(strType.c_str(), "Page"))
         return 0;
-      }
     }
   }
-  dwNewObjNum = pDoc->AddIndirectObject(pClone);
+  dwNewObjNum = pDoc->AddIndirectObject(pClone.get());
   (*pObjNumberMap)[dwObjnum] = dwNewObjNum;
-  if (!UpdateReference(pClone, pDoc, pObjNumberMap)) {
-    delete pClone;
+  if (!UpdateReference(pClone.get(), pDoc, pObjNumberMap))
     return 0;
-  }
+
+  pClone.release();  // TODO(tsepez): figure out ownership.
   return dwNewObjNum;
 }
 
@@ -400,6 +391,7 @@ DLLEXPORT FPDF_BOOL STDCALL FPDF_CopyViewerPreferences(FPDF_DOCUMENT dest_doc,
   if (!pDstDict)
     return false;
 
-  pDstDict->SetFor("ViewerPreferences", pSrcDict->CloneDirectObject());
+  pDstDict->SetFor("ViewerPreferences",
+                   pSrcDict->CloneDirectObject().release());
   return true;
 }

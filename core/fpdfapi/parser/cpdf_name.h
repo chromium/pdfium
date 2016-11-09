@@ -16,7 +16,7 @@ class CPDF_Name : public CPDF_Object {
 
   // CPDF_Object:
   Type GetType() const override;
-  CPDF_Object* Clone() const override;
+  std::unique_ptr<CPDF_Object> Clone() const override;
   CFX_ByteString GetString() const override;
   CFX_WideString GetUnicodeText() const override;
   void SetString(const CFX_ByteString& str) override;

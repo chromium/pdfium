@@ -186,7 +186,8 @@ bool GenerateWidgetAP(CPDF_Document* pDoc,
         pStreamResFontList->SetReferenceFor(sFontName, pDoc,
                                             pFontDict->GetObjNum());
     } else {
-      pStreamDict->SetFor("Resources", pFormDict->GetDictFor("DR")->Clone());
+      pStreamDict->SetFor("Resources",
+                          pFormDict->GetDictFor("DR")->Clone().release());
       pStreamResList = pStreamDict->GetDictFor("Resources");
     }
   }
@@ -437,7 +438,8 @@ bool GenerateWidgetAP(CPDF_Document* pDoc,
           pStreamResFontList->SetReferenceFor(sFontName, pDoc,
                                               pFontDict->GetObjNum());
       } else {
-        pStreamDict->SetFor("Resources", pFormDict->GetDictFor("DR")->Clone());
+        pStreamDict->SetFor("Resources",
+                            pFormDict->GetDictFor("DR")->Clone().release());
         pStreamResList = pStreamDict->GetDictFor("Resources");
       }
     }

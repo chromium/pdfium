@@ -5,6 +5,7 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "core/fpdfapi/parser/cpdf_boolean.h"
+#include "third_party/base/ptr_util.h"
 
 CPDF_Boolean::CPDF_Boolean() : m_bValue(false) {}
 
@@ -16,8 +17,8 @@ CPDF_Object::Type CPDF_Boolean::GetType() const {
   return BOOLEAN;
 }
 
-CPDF_Object* CPDF_Boolean::Clone() const {
-  return new CPDF_Boolean(m_bValue);
+std::unique_ptr<CPDF_Object> CPDF_Boolean::Clone() const {
+  return pdfium::MakeUnique<CPDF_Boolean>(m_bValue);
 }
 
 CFX_ByteString CPDF_Boolean::GetString() const {

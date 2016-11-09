@@ -404,7 +404,7 @@ class CPDF_FlateEncoder {
 
 void CPDF_FlateEncoder::CloneDict() {
   if (!m_bCloned) {
-    m_pDict = ToDictionary(m_pDict->Clone());
+    m_pDict = ToDictionary(m_pDict->Clone().release());
     ASSERT(m_pDict);
     m_bCloned = true;
   }
@@ -425,7 +425,7 @@ CPDF_FlateEncoder::CPDF_FlateEncoder(CPDF_Stream* pStream, bool bFlateEncode)
       destAcc.LoadAllData(pStream);
       m_dwSize = destAcc.GetSize();
       m_pData = (uint8_t*)destAcc.DetachData();
-      m_pDict = ToDictionary(pStream->GetDict()->Clone());
+      m_pDict = ToDictionary(pStream->GetDict()->Clone().release());
       m_pDict->RemoveFor("Filter");
       m_bNewData = true;
       m_bCloned = true;
@@ -441,7 +441,7 @@ CPDF_FlateEncoder::CPDF_FlateEncoder(CPDF_Stream* pStream, bool bFlateEncode)
   m_bCloned = true;
   // TODO(thestig): Move to Init() and check return value.
   ::FlateEncode(m_Acc.GetData(), m_Acc.GetSize(), &m_pData, &m_dwSize);
-  m_pDict = ToDictionary(pStream->GetDict()->Clone());
+  m_pDict = ToDictionary(pStream->GetDict()->Clone().release());
   m_pDict->SetIntegerFor("Length", m_dwSize);
   m_pDict->SetNameFor("Filter", "FlateDecode");
   m_pDict->RemoveFor("DecodeParms");
@@ -1931,7 +1931,7 @@ void CPDF_Creator::InitID(bool bDefault) {
     m_pIDArray.reset(new CPDF_Array);
     CPDF_Object* pID1 = pOldIDArray ? pOldIDArray->GetObjectAt(0) : nullptr;
     if (pID1) {
-      m_pIDArray->Add(pID1->Clone());
+      m_pIDArray->Add(pID1->Clone().release());
     } else {
       std::vector<uint8_t> buffer =
           PDF_GenerateFileID((uint32_t)(uintptr_t) this, m_dwLastObjNum);
@@ -1945,7 +1945,7 @@ void CPDF_Creator::InitID(bool bDefault) {
   if (pOldIDArray) {
     CPDF_Object* pID2 = pOldIDArray->GetObjectAt(1);
     if ((m_dwFlags & FPDFCREATE_INCREMENTAL) && m_pEncryptDict && pID2) {
-      m_pIDArray->Add(pID2->Clone());
+      m_pIDArray->Add(pID2->Clone().release());
       return;
     }
     std::vector<uint8_t> buffer =
@@ -1954,7 +1954,7 @@ void CPDF_Creator::InitID(bool bDefault) {
     m_pIDArray->Add(new CPDF_String(bsBuffer, true));
     return;
   }
-  m_pIDArray->Add(m_pIDArray->GetObjectAt(0)->Clone());
+  m_pIDArray->Add(m_pIDArray->GetObjectAt(0)->Clone().release());
   if (m_pEncryptDict && !pOldIDArray && m_pParser && bNewId) {
     if (m_pEncryptDict->GetStringFor("Filter") == "Standard") {
       CFX_ByteString user_pass = m_pParser->GetPassword();

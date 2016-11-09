@@ -7,6 +7,7 @@
 #include "core/fpdfapi/parser/cpdf_string.h"
 
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
+#include "third_party/base/ptr_util.h"
 
 CPDF_String::CPDF_String() : m_bHex(false) {}
 
@@ -23,8 +24,8 @@ CPDF_Object::Type CPDF_String::GetType() const {
   return STRING;
 }
 
-CPDF_Object* CPDF_String::Clone() const {
-  return new CPDF_String(m_String, m_bHex);
+std::unique_ptr<CPDF_Object> CPDF_String::Clone() const {
+  return pdfium::MakeUnique<CPDF_String>(m_String, m_bHex);
 }
 
 CFX_ByteString CPDF_String::GetString() const {

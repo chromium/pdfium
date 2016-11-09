@@ -737,8 +737,7 @@ bool CPDF_Parser::RebuildCrossRef() {
                       CPDF_Object* pRoot = pDict->GetObjectFor("Root");
                       if (pRoot && pRoot->GetDict() &&
                           pRoot->GetDict()->GetObjectFor("Pages")) {
-                        m_pTrailer =
-                            ToDictionary(pdfium::WrapUnique(pDict->Clone()));
+                        m_pTrailer = ToDictionary(pDict->Clone());
                       }
                     }
                   }
@@ -811,14 +810,14 @@ bool CPDF_Parser::RebuildCrossRef() {
                             m_pTrailer->SetReferenceFor(key, m_pDocument,
                                                         dwObjNum);
                           } else {
-                            m_pTrailer->SetFor(key, pElement->Clone());
+                            m_pTrailer->SetFor(key,
+                                               pElement->Clone().release());
                           }
                         }
                       }
                     } else {
                       if (pObj->IsStream()) {
-                        m_pTrailer =
-                            ToDictionary(pdfium::WrapUnique(pTrailer->Clone()));
+                        m_pTrailer = ToDictionary(pTrailer->Clone());
                       } else {
                         m_pTrailer = ToDictionary(std::move(pObj));
                       }
@@ -959,8 +958,7 @@ bool CPDF_Parser::LoadCrossRefV5(FX_FILESIZE* pos, bool bMainXRef) {
   if (size < 0)
     return false;
 
-  std::unique_ptr<CPDF_Dictionary> pNewTrailer =
-      ToDictionary(pdfium::WrapUnique(pDict->Clone()));
+  std::unique_ptr<CPDF_Dictionary> pNewTrailer = ToDictionary(pDict->Clone());
   if (bMainXRef) {
     m_pTrailer = std::move(pNewTrailer);
     ShrinkObjectMap(size);

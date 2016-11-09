@@ -7,6 +7,7 @@
 #include "core/fpdfapi/parser/cpdf_reference.h"
 
 #include "core/fpdfapi/parser/cpdf_indirect_object_holder.h"
+#include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 
 CPDF_Reference::CPDF_Reference(CPDF_IndirectObjectHolder* pDoc, int objnum)
@@ -50,11 +51,11 @@ const CPDF_Reference* CPDF_Reference::AsReference() const {
   return this;
 }
 
-CPDF_Object* CPDF_Reference::Clone() const {
+std::unique_ptr<CPDF_Object> CPDF_Reference::Clone() const {
   return CloneObjectNonCyclic(false);
 }
 
-CPDF_Object* CPDF_Reference::CloneNonCyclic(
+std::unique_ptr<CPDF_Object> CPDF_Reference::CloneNonCyclic(
     bool bDirect,
     std::set<const CPDF_Object*>* pVisited) const {
   pVisited->insert(this);
@@ -64,7 +65,7 @@ CPDF_Object* CPDF_Reference::CloneNonCyclic(
                ? pDirect->CloneNonCyclic(true, pVisited)
                : nullptr;
   }
-  return new CPDF_Reference(m_pObjList, m_RefObjNum);
+  return pdfium::MakeUnique<CPDF_Reference>(m_pObjList, m_RefObjNum);
 }
 
 CPDF_Object* CPDF_Reference::SafeGetDirect() const {

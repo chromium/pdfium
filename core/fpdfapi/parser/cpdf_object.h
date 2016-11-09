@@ -46,12 +46,13 @@ class CPDF_Object {
   bool IsInline() const { return m_ObjNum == 0; }
 
   // Create a deep copy of the object.
-  virtual CPDF_Object* Clone() const = 0;
+  virtual std::unique_ptr<CPDF_Object> Clone() const = 0;
+
   // Create a deep copy of the object except any reference object be
   // copied to the object it points to directly.
-  virtual CPDF_Object* CloneDirectObject() const;
-  virtual CPDF_Object* GetDirect() const;
+  virtual std::unique_ptr<CPDF_Object> CloneDirectObject() const;
 
+  virtual CPDF_Object* GetDirect() const;
   virtual CFX_ByteString GetString() const;
   virtual CFX_WideString GetUnicodeText() const;
   virtual FX_FLOAT GetNumber() const;
@@ -97,7 +98,7 @@ class CPDF_Object {
 
   CPDF_Object() : m_ObjNum(0), m_GenNum(0) {}
 
-  CPDF_Object* CloneObjectNonCyclic(bool bDirect) const;
+  std::unique_ptr<CPDF_Object> CloneObjectNonCyclic(bool bDirect) const;
 
   // Create a deep copy of the object with the option to either
   // copy a reference object or directly copy the object it refers to
@@ -105,7 +106,7 @@ class CPDF_Object {
   // Also check cyclic reference against |pVisited|, no copy if it is found.
   // Complex objects should implement their own CloneNonCyclic()
   // function to properly check for possible loop.
-  virtual CPDF_Object* CloneNonCyclic(
+  virtual std::unique_ptr<CPDF_Object> CloneNonCyclic(
       bool bDirect,
       std::set<const CPDF_Object*>* pVisited) const;
 

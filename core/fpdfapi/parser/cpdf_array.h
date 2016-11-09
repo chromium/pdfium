@@ -23,9 +23,9 @@ class CPDF_Array : public CPDF_Object {
   CPDF_Array();
   ~CPDF_Array() override;
 
-  // CPDF_Object.
+  // CPDF_Object:
   Type GetType() const override;
-  CPDF_Object* Clone() const override;
+  std::unique_ptr<CPDF_Object> Clone() const override;
   bool IsArray() const override;
   CPDF_Array* AsArray() override;
   const CPDF_Array* AsArray() const override;
@@ -62,7 +62,7 @@ class CPDF_Array : public CPDF_Object {
   const_iterator end() const { return m_Objects.end(); }
 
  protected:
-  CPDF_Object* CloneNonCyclic(
+  std::unique_ptr<CPDF_Object> CloneNonCyclic(
       bool bDirect,
       std::set<const CPDF_Object*>* pVisited) const override;
 

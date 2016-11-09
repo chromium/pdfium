@@ -219,14 +219,14 @@ bool CPDF_FormField::ResetField(bool bNotify) {
         return false;
 
       if (pDV) {
-        CPDF_Object* pClone = pDV->Clone();
+        std::unique_ptr<CPDF_Object> pClone = pDV->Clone();
         if (!pClone)
           return false;
 
-        m_pDict->SetFor("V", pClone);
+        m_pDict->SetFor("V", pClone.release());
         if (pRV) {
-          CPDF_Object* pCloneR = pDV->Clone();
-          m_pDict->SetFor("RV", pCloneR);
+          std::unique_ptr<CPDF_Object> pCloneR = pDV->Clone();
+          m_pDict->SetFor("RV", pCloneR.release());
         }
       } else {
         m_pDict->RemoveFor("V");

@@ -91,10 +91,11 @@ class PDFObjectsTest : public testing::Test {
 
     // Indirect references to indirect objects.
     m_ObjHolder.reset(new CPDF_IndirectObjectHolder());
-    m_IndirectObjs = {boolean_true_obj->Clone(), number_int_obj->Clone(),
-                      str_spec_obj->Clone(),     name_obj->Clone(),
-                      m_ArrayObj->Clone(),       m_DictObj->Clone(),
-                      stream_obj->Clone()};
+    m_IndirectObjs = {
+        boolean_true_obj->Clone().release(), number_int_obj->Clone().release(),
+        str_spec_obj->Clone().release(),     name_obj->Clone().release(),
+        m_ArrayObj->Clone().release(),       m_DictObj->Clone().release(),
+        stream_obj->Clone().release()};
     for (size_t i = 0; i < m_IndirectObjs.size(); ++i) {
       m_ObjHolder->AddIndirectObject(m_IndirectObjs[i]);
       m_RefObjs.emplace_back(new CPDF_Reference(
@@ -268,13 +269,13 @@ TEST_F(PDFObjectsTest, GetArray) {
 TEST_F(PDFObjectsTest, Clone) {
   // Check for direct objects.
   for (size_t i = 0; i < m_DirectObjs.size(); ++i) {
-    std::unique_ptr<CPDF_Object> obj(m_DirectObjs[i]->Clone());
+    std::unique_ptr<CPDF_Object> obj = m_DirectObjs[i]->Clone();
     EXPECT_TRUE(Equal(m_DirectObjs[i].get(), obj.get()));
   }
 
   // Check indirect references.
   for (const auto& it : m_RefObjs) {
-    std::unique_ptr<CPDF_Object> obj(it->Clone());
+    std::unique_ptr<CPDF_Object> obj = it->Clone();
     EXPECT_TRUE(Equal(it.get(), obj.get()));
   }
 }
@@ -751,11 +752,12 @@ TEST(PDFArrayTest, CloneDirectObject) {
   ASSERT_TRUE(obj);
   EXPECT_TRUE(obj->IsReference());
 
-  CPDF_Object* cloned_array_object = array->CloneDirectObject();
+  std::unique_ptr<CPDF_Object> cloned_array_object = array->CloneDirectObject();
   ASSERT_TRUE(cloned_array_object);
   ASSERT_TRUE(cloned_array_object->IsArray());
 
-  std::unique_ptr<CPDF_Array> cloned_array(cloned_array_object->AsArray());
+  std::unique_ptr<CPDF_Array> cloned_array =
+      ToArray(std::move(cloned_array_object));
   ASSERT_EQ(1U, cloned_array->GetCount());
   CPDF_Object* cloned_obj = cloned_array->GetObjectAt(0);
   EXPECT_FALSE(cloned_obj);
@@ -785,12 +787,12 @@ TEST(PDFDictionaryTest, CloneDirectObject) {
   ASSERT_TRUE(obj);
   EXPECT_TRUE(obj->IsReference());
 
-  CPDF_Object* cloned_dict_object = dict->CloneDirectObject();
+  std::unique_ptr<CPDF_Object> cloned_dict_object = dict->CloneDirectObject();
   ASSERT_TRUE(cloned_dict_object);
   ASSERT_TRUE(cloned_dict_object->IsDictionary());
 
-  std::unique_ptr<CPDF_Dictionary> cloned_dict(
-      cloned_dict_object->AsDictionary());
+  std::unique_ptr<CPDF_Dictionary> cloned_dict =
+      ToDictionary(std::move(cloned_dict_object));
   ASSERT_EQ(1U, cloned_dict->GetCount());
   CPDF_Object* cloned_obj = cloned_dict->GetObjectFor("foo");
   EXPECT_FALSE(cloned_obj);
@@ -805,7 +807,7 @@ TEST(PDFObjectTest, CloneCheckLoop) {
     arr_obj->InsertAt(0, dict_obj);
 
     // Clone this object to see whether stack overflow will be triggered.
-    std::unique_ptr<CPDF_Array> cloned_array(arr_obj->Clone()->AsArray());
+    std::unique_ptr<CPDF_Array> cloned_array = ToArray(arr_obj->Clone());
     // Cloned object should be the same as the original.
     ASSERT_TRUE(cloned_array);
     EXPECT_EQ(1u, cloned_array->GetCount());
@@ -823,7 +825,7 @@ TEST(PDFObjectTest, CloneCheckLoop) {
     dict_obj->SetFor("stream", stream_obj.get());
 
     // Clone this object to see whether stack overflow will be triggered.
-    std::unique_ptr<CPDF_Stream> cloned_stream(stream_obj->Clone()->AsStream());
+    std::unique_ptr<CPDF_Stream> cloned_stream = ToStream(stream_obj->Clone());
     // Cloned object should be the same as the original.
     ASSERT_TRUE(cloned_stream);
     CPDF_Object* cloned_dict = cloned_stream->GetDict();
@@ -849,8 +851,8 @@ TEST(PDFObjectTest, CloneCheckLoop) {
     EXPECT_EQ(dict_obj, elem0->AsReference()->GetDirect());
 
     // Clone this object to see whether stack overflow will be triggered.
-    std::unique_ptr<CPDF_Dictionary> cloned_dict(
-        ToDictionary(dict_obj->CloneDirectObject()));
+    std::unique_ptr<CPDF_Dictionary> cloned_dict =
+        ToDictionary(dict_obj->CloneDirectObject());
     // Cloned object should be the same as the original.
     ASSERT_TRUE(cloned_dict);
     CPDF_Object* cloned_arr = cloned_dict->GetObjectFor("arr");

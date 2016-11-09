@@ -57,23 +57,23 @@ const CPDF_Dictionary* CPDF_Dictionary::AsDictionary() const {
   return this;
 }
 
-CPDF_Object* CPDF_Dictionary::Clone() const {
+std::unique_ptr<CPDF_Object> CPDF_Dictionary::Clone() const {
   return CloneObjectNonCyclic(false);
 }
 
-CPDF_Object* CPDF_Dictionary::CloneNonCyclic(
+std::unique_ptr<CPDF_Object> CPDF_Dictionary::CloneNonCyclic(
     bool bDirect,
     std::set<const CPDF_Object*>* pVisited) const {
   pVisited->insert(this);
-  CPDF_Dictionary* pCopy = new CPDF_Dictionary(m_pPool);
+  auto pCopy = pdfium::MakeUnique<CPDF_Dictionary>(m_pPool);
   for (const auto& it : *this) {
     CPDF_Object* value = it.second;
     if (!pdfium::ContainsKey(*pVisited, value)) {
-      pCopy->m_Map.insert(
-          std::make_pair(it.first, value->CloneNonCyclic(bDirect, pVisited)));
+      pCopy->m_Map.insert(std::make_pair(
+          it.first, value->CloneNonCyclic(bDirect, pVisited).release()));
     }
   }
-  return pCopy;
+  return std::move(pCopy);
 }
 
 CPDF_Object* CPDF_Dictionary::GetObjectFor(const CFX_ByteString& key) const {

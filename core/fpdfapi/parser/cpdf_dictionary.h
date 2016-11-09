@@ -28,9 +28,9 @@ class CPDF_Dictionary : public CPDF_Object {
   explicit CPDF_Dictionary(const CFX_WeakPtr<CFX_ByteStringPool>& pPool);
   ~CPDF_Dictionary() override;
 
-  // CPDF_Object.
+  // CPDF_Object:
   Type GetType() const override;
-  CPDF_Object* Clone() const override;
+  std::unique_ptr<CPDF_Object> Clone() const override;
   CPDF_Dictionary* GetDict() const override;
   bool IsDictionary() const override;
   CPDF_Dictionary* AsDictionary() override;
@@ -90,7 +90,7 @@ class CPDF_Dictionary : public CPDF_Object {
 
  protected:
   CFX_ByteString MaybeIntern(const CFX_ByteString& str);
-  CPDF_Object* CloneNonCyclic(
+  std::unique_ptr<CPDF_Object> CloneNonCyclic(
       bool bDirect,
       std::set<const CPDF_Object*>* visited) const override;
 

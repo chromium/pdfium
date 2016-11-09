@@ -5,6 +5,7 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "core/fpdfapi/parser/cpdf_number.h"
+#include "third_party/base/ptr_util.h"
 
 CPDF_Number::CPDF_Number() : m_bInteger(true), m_Integer(0) {}
 
@@ -21,8 +22,9 @@ CPDF_Object::Type CPDF_Number::GetType() const {
   return NUMBER;
 }
 
-CPDF_Object* CPDF_Number::Clone() const {
-  return m_bInteger ? new CPDF_Number(m_Integer) : new CPDF_Number(m_Float);
+std::unique_ptr<CPDF_Object> CPDF_Number::Clone() const {
+  return m_bInteger ? pdfium::MakeUnique<CPDF_Number>(m_Integer)
+                    : pdfium::MakeUnique<CPDF_Number>(m_Float);
 }
 
 FX_FLOAT CPDF_Number::GetNumber() const {

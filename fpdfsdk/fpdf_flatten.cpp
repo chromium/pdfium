@@ -408,8 +408,9 @@ DLLEXPORT int STDCALL FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
 
     CPDF_Object* pObj = pAPStream;
     if (pObj->IsInline()) {
-      pObj = pObj->Clone();
-      pDocument->AddIndirectObject(pObj);
+      std::unique_ptr<CPDF_Object> pNew = pObj->Clone();
+      pObj = pNew.get();
+      pDocument->AddIndirectObject(pNew.release());
     }
 
     CPDF_Dictionary* pObjDic = pObj->GetDict();

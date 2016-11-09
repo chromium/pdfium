@@ -19,9 +19,9 @@ class CPDF_Number : public CPDF_Object {
   explicit CPDF_Number(const CFX_ByteStringC& str);
   ~CPDF_Number() override;
 
-  // CPDF_Object.
+  // CPDF_Object:
   Type GetType() const override;
-  CPDF_Object* Clone() const override;
+  std::unique_ptr<CPDF_Object> Clone() const override;
   CFX_ByteString GetString() const override;
   FX_FLOAT GetNumber() const override;
   int GetInteger() const override;

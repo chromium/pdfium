@@ -15,7 +15,7 @@ class CPDF_Null : public CPDF_Object {
 
   // CPDF_Object.
   Type GetType() const override;
-  CPDF_Object* Clone() const override;
+  std::unique_ptr<CPDF_Object> Clone() const override;
 };
 
 #endif  // CORE_FPDFAPI_PARSER_CPDF_NULL_H_

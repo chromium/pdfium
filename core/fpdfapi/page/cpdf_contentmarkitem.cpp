@@ -16,7 +16,7 @@ CPDF_ContentMarkItem::CPDF_ContentMarkItem(const CPDF_ContentMarkItem& that)
       m_ParamType(that.m_ParamType),
       m_pPropertiesDict(that.m_pPropertiesDict) {
   if (that.m_pDirectDict)
-    m_pDirectDict.reset(that.m_pDirectDict->Clone()->AsDictionary());
+    m_pDirectDict = ToDictionary(that.m_pDirectDict->Clone());
 }
 
 CPDF_ContentMarkItem::~CPDF_ContentMarkItem() {}

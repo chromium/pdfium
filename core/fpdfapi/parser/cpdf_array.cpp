@@ -44,21 +44,22 @@ const CPDF_Array* CPDF_Array::AsArray() const {
   return this;
 }
 
-CPDF_Object* CPDF_Array::Clone() const {
+std::unique_ptr<CPDF_Object> CPDF_Array::Clone() const {
   return CloneObjectNonCyclic(false);
 }
 
-CPDF_Object* CPDF_Array::CloneNonCyclic(
+std::unique_ptr<CPDF_Object> CPDF_Array::CloneNonCyclic(
     bool bDirect,
     std::set<const CPDF_Object*>* pVisited) const {
   pVisited->insert(this);
-  CPDF_Array* pCopy = new CPDF_Array();
-  for (size_t i = 0; i < GetCount(); i++) {
-    CPDF_Object* value = m_Objects[i];
-    if (!pdfium::ContainsKey(*pVisited, value))
-      pCopy->m_Objects.push_back(value->CloneNonCyclic(bDirect, pVisited));
+  auto pCopy = pdfium::MakeUnique<CPDF_Array>();
+  for (CPDF_Object* value : m_Objects) {
+    if (!pdfium::ContainsKey(*pVisited, value)) {
+      pCopy->m_Objects.push_back(
+          value->CloneNonCyclic(bDirect, pVisited).release());
+    }
   }
-  return pCopy;
+  return std::move(pCopy);
 }
 
 CFX_FloatRect CPDF_Array::GetRect() {

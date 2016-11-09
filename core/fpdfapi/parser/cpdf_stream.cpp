@@ -68,11 +68,11 @@ void CPDF_Stream::InitStreamFromFile(IFX_SeekableReadStream* pFile,
     m_pDict->SetIntegerFor("Length", m_dwSize);
 }
 
-CPDF_Object* CPDF_Stream::Clone() const {
+std::unique_ptr<CPDF_Object> CPDF_Stream::Clone() const {
   return CloneObjectNonCyclic(false);
 }
 
-CPDF_Object* CPDF_Stream::CloneNonCyclic(
+std::unique_ptr<CPDF_Object> CPDF_Stream::CloneNonCyclic(
     bool bDirect,
     std::set<const CPDF_Object*>* pVisited) const {
   pVisited->insert(this);
@@ -81,11 +81,11 @@ CPDF_Object* CPDF_Stream::CloneNonCyclic(
   uint32_t streamSize = acc.GetSize();
   CPDF_Dictionary* pDict = GetDict();
   if (pDict && !pdfium::ContainsKey(*pVisited, pDict)) {
-    pDict = ToDictionary(
-        static_cast<CPDF_Object*>(pDict)->CloneNonCyclic(bDirect, pVisited));
+    pDict = ToDictionary(static_cast<CPDF_Object*>(pDict)
+                             ->CloneNonCyclic(bDirect, pVisited)
+                             .release());
   }
-
-  return new CPDF_Stream(acc.DetachData(), streamSize, pDict);
+  return pdfium::MakeUnique<CPDF_Stream>(acc.DetachData(), streamSize, pDict);
 }
 
 void CPDF_Stream::SetData(const uint8_t* pData, uint32_t size) {

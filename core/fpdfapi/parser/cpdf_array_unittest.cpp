@@ -87,7 +87,7 @@ TEST(cpdf_array, Clone) {
     std::unique_ptr<CPDF_Array> arr(new CPDF_Array);
     for (size_t i = 0; i < FX_ArraySize(elems); ++i)
       arr->InsertAt(i, new CPDF_Number(elems[i]));
-    std::unique_ptr<CPDF_Array> arr2(arr->Clone()->AsArray());
+    std::unique_ptr<CPDF_Array> arr2 = ToArray(arr->Clone());
     EXPECT_EQ(arr->GetCount(), arr2->GetCount());
     for (size_t i = 0; i < FX_ArraySize(elems); ++i) {
       // Clone() always create new objects.
@@ -120,10 +120,10 @@ TEST(cpdf_array, Clone) {
     ASSERT_EQ(kNumOfRows, arr->GetCount());
     // Not dereferencing reference objects means just creating new references
     // instead of new copies of direct objects.
-    std::unique_ptr<CPDF_Array> arr1(arr->Clone()->AsArray());
+    std::unique_ptr<CPDF_Array> arr1 = ToArray(arr->Clone());
     EXPECT_EQ(arr->GetCount(), arr1->GetCount());
     // Dereferencing reference objects creates new copies of direct objects.
-    std::unique_ptr<CPDF_Array> arr2(arr->CloneDirectObject()->AsArray());
+    std::unique_ptr<CPDF_Array> arr2 = ToArray(arr->CloneDirectObject());
     EXPECT_EQ(arr->GetCount(), arr2->GetCount());
     for (size_t i = 0; i < kNumOfRows; ++i) {
       CPDF_Array* arr_elem = arr->GetObjectAt(i)->AsArray();
