@@ -839,9 +839,8 @@ bool CPDF_ICCBasedCS::v_Load(CPDF_Document* pDoc, CPDF_Array* pArray) {
   if (!m_pProfile)
     return false;
 
-  m_nComponents =
-      m_pProfile
-          ->GetComponents();  // Try using the nComponents from ICC profile
+  // Try using the |nComponents| from ICC profile
+  m_nComponents = m_pProfile->GetComponents();
   CPDF_Dictionary* pDict = pStream->GetDict();
   if (!m_pProfile->m_pTransform) {  // No valid ICC profile or using sRGB
     CPDF_Object* pAlterCSObj =
