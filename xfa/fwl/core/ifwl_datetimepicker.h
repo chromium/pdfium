@@ -30,7 +30,6 @@
 #define FWL_STYLEEXT_DTP_EditVAlignMask (3L << 6)
 #define FWL_STYLEEXT_DTP_EditHAlignModeMask (3L << 8)
 
-class IFWL_DateTimeCalendar;
 class IFWL_DateTimeEdit;
 class IFWL_FormProxy;
 
@@ -140,13 +139,13 @@ class IFWL_DateTimePicker : public IFWL_Widget, public IFWL_MonthCalendarDP {
   int32_t m_iDay;
   bool m_bLBtnDown;
   std::unique_ptr<IFWL_DateTimeEdit> m_pEdit;
-  std::unique_ptr<IFWL_DateTimeCalendar> m_pMonthCal;
+  std::unique_ptr<IFWL_MonthCalendar> m_pMonthCal;
   std::unique_ptr<IFWL_FormProxy> m_pForm;
   FX_FLOAT m_fBtn;
 
  private:
   FWL_Error DisForm_Initialize();
-  void DisForm_InitDateTimeCalendar();
+  void DisForm_InitMonthCalendar();
   void DisForm_InitDateTimeEdit();
   bool DisForm_IsMonthCalendarShowed();
   void DisForm_ShowMonthCalendar(bool bActivate);

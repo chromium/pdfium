@@ -1218,8 +1218,6 @@ if (pdf_enable_xfa) {
       "xfa/fwl/core/ifwl_combolist.cpp",
       "xfa/fwl/core/ifwl_combolist.h",
       "xfa/fwl/core/ifwl_dataprovider.h",
-      "xfa/fwl/core/ifwl_datetimecalendar.cpp",
-      "xfa/fwl/core/ifwl_datetimecalendar.h",
       "xfa/fwl/core/ifwl_datetimeedit.cpp",
       "xfa/fwl/core/ifwl_datetimeedit.h",
       "xfa/fwl/core/ifwl_datetimepicker.cpp",

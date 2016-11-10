@@ -238,11 +238,12 @@ class IFWL_MonthCalendar : public IFWL_Widget {
   FX_FLOAT m_fTodayFlagWid;
   FX_FLOAT m_fMCWid;
   FX_FLOAT m_fMCHei;
+  bool m_bFlag;
 
  private:
-  void OnFocusChanged(CFWL_Message* pMsg, bool bSet);
   void OnLButtonDown(CFWL_MsgMouse* pMsg);
   void OnLButtonUp(CFWL_MsgMouse* pMsg);
+  void DisForm_OnLButtonUp(CFWL_MsgMouse* pMsg);
   void OnMouseMove(CFWL_MsgMouse* pMsg);
   void OnMouseLeave(CFWL_MsgMouse* pMsg);
 };

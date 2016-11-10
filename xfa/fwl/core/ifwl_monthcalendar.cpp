@@ -14,6 +14,8 @@
 #include "xfa/fwl/core/cfwl_themebackground.h"
 #include "xfa/fwl/core/cfwl_themetext.h"
 #include "xfa/fwl/core/fwl_noteimp.h"
+#include "xfa/fwl/core/ifwl_datetimepicker.h"
+#include "xfa/fwl/core/ifwl_formproxy.h"
 #include "xfa/fwl/core/ifwl_monthcalendar.h"
 #include "xfa/fwl/core/ifwl_themeprovider.h"
 
@@ -133,7 +135,8 @@ IFWL_MonthCalendar::IFWL_MonthCalendar(
       m_iHovered(-1),
       m_iLBtnPartStates(CFWL_PartState_Normal),
       m_iRBtnPartStates(CFWL_PartState_Normal),
-      m_iMaxSel(1) {
+      m_iMaxSel(1),
+      m_bFlag(false) {
   m_rtHead.Reset();
   m_rtWeek.Reset();
   m_rtLBtn.Reset();
@@ -1016,10 +1019,8 @@ void IFWL_MonthCalendar::OnProcessMessage(CFWL_Message* pMessage) {
   CFWL_MessageType dwMsgCode = pMessage->GetClassID();
   switch (dwMsgCode) {
     case CFWL_MessageType::SetFocus:
-      OnFocusChanged(pMessage, true);
-      break;
     case CFWL_MessageType::KillFocus:
-      OnFocusChanged(pMessage, false);
+      GetOuter()->GetDelegate()->OnProcessMessage(pMessage);
       break;
     case CFWL_MessageType::Key:
       break;
@@ -1054,15 +1055,6 @@ void IFWL_MonthCalendar::OnDrawWidget(CFX_Graphics* pGraphics,
   DrawWidget(pGraphics, pMatrix);
 }
 
-void IFWL_MonthCalendar::OnFocusChanged(CFWL_Message* pMsg, bool bSet) {
-  if (bSet)
-    m_pProperties->m_dwStates |= FWL_WGTSTATE_Focused;
-  else
-    m_pProperties->m_dwStates &= ~FWL_WGTSTATE_Focused;
-
-  Repaint(&m_rtClient);
-}
-
 void IFWL_MonthCalendar::OnLButtonDown(CFWL_MsgMouse* pMsg) {
   if (m_rtLBtn.Contains(pMsg->m_fx, pMsg->m_fy)) {
     m_iLBtnPartStates = CFWL_PartState_Pressed;
@@ -1078,49 +1070,88 @@ void IFWL_MonthCalendar::OnLButtonDown(CFWL_MsgMouse* pMsg) {
       Repaint(&m_rtClient);
     }
   } else {
-    if (!(m_pProperties->m_dwStyleExes & FWL_STYLEEXT_MCD_MultiSelect)) {
-      int32_t iOldSel = 0;
-      if (m_arrSelDays.GetSize() <= 0)
-        return;
-      iOldSel = m_arrSelDays[0];
-
-      int32_t iCurSel = GetDayAtPoint(pMsg->m_fx, pMsg->m_fy);
-      bool bSelChanged = iCurSel > 0 && iCurSel != iOldSel;
-      if (bSelChanged) {
-        FWL_DATEINFO* lpDatesInfo = m_arrDates.GetAt(iCurSel - 1);
-        CFX_RectF rtInvalidate(lpDatesInfo->rect);
-        if (iOldSel > 0) {
-          lpDatesInfo = m_arrDates.GetAt(iOldSel - 1);
-          rtInvalidate.Union(lpDatesInfo->rect);
-        }
-        AddSelDay(iCurSel);
-        CFWL_EvtClick wmClick;
-        wmClick.m_pSrcTarget = this;
-        DispatchEvent(&wmClick);
-        CFWL_EventMcdDateChanged wmDateSelected;
-        wmDateSelected.m_iStartDay = iCurSel;
-        wmDateSelected.m_iEndDay = iCurSel;
-        wmDateSelected.m_iOldMonth = m_iCurMonth;
-        wmDateSelected.m_iOldYear = m_iCurYear;
-        wmDateSelected.m_pSrcTarget = this;
-        DispatchEvent(&wmDateSelected);
-        Repaint(&rtInvalidate);
-      }
-    }
+    IFWL_DateTimePicker* pIPicker = static_cast<IFWL_DateTimePicker*>(m_pOuter);
+    if (pIPicker->IsMonthCalendarShowed())
+      m_bFlag = 1;
   }
 }
 
 void IFWL_MonthCalendar::OnLButtonUp(CFWL_MsgMouse* pMsg) {
+  if (m_pWidgetMgr->IsFormDisabled())
+    return DisForm_OnLButtonUp(pMsg);
+
   if (m_rtLBtn.Contains(pMsg->m_fx, pMsg->m_fy)) {
     m_iLBtnPartStates = 0;
     Repaint(&m_rtLBtn);
-  } else if (m_rtRBtn.Contains(pMsg->m_fx, pMsg->m_fy)) {
+    return;
+  }
+  if (m_rtRBtn.Contains(pMsg->m_fx, pMsg->m_fy)) {
     m_iRBtnPartStates = 0;
     Repaint(&m_rtRBtn);
-  } else if (m_rtDates.Contains(pMsg->m_fx, pMsg->m_fy)) {
-    int32_t iDay = GetDayAtPoint(pMsg->m_fx, pMsg->m_fy);
-    if (iDay != -1)
-      AddSelDay(iDay);
+    return;
+  }
+  if (m_rtToday.Contains(pMsg->m_fx, pMsg->m_fy))
+    return;
+
+  int32_t iOldSel = 0;
+  if (m_arrSelDays.GetSize() > 0)
+    iOldSel = m_arrSelDays[0];
+
+  int32_t iCurSel = GetDayAtPoint(pMsg->m_fx, pMsg->m_fy);
+  CFX_RectF rt;
+  IFWL_DateTimePicker* pIPicker = static_cast<IFWL_DateTimePicker*>(m_pOuter);
+  pIPicker->GetFormProxy()->GetWidgetRect(rt);
+  rt.Set(0, 0, rt.width, rt.height);
+  if (iCurSel > 0) {
+    FWL_DATEINFO* lpDatesInfo = m_arrDates.GetAt(iCurSel - 1);
+    CFX_RectF rtInvalidate(lpDatesInfo->rect);
+    if (iOldSel > 0 && iOldSel <= m_arrDates.GetSize()) {
+      lpDatesInfo = m_arrDates.GetAt(iOldSel - 1);
+      rtInvalidate.Union(lpDatesInfo->rect);
+    }
+    AddSelDay(iCurSel);
+    if (!m_pOuter)
+      return;
+
+    pIPicker->ProcessSelChanged(m_iCurYear, m_iCurMonth, iCurSel);
+    pIPicker->ShowMonthCalendar(false);
+  } else if (m_bFlag && (!rt.Contains(pMsg->m_fx, pMsg->m_fy))) {
+    pIPicker->ShowMonthCalendar(false);
+  }
+  m_bFlag = 0;
+}
+
+void IFWL_MonthCalendar::DisForm_OnLButtonUp(CFWL_MsgMouse* pMsg) {
+  if (m_rtLBtn.Contains(pMsg->m_fx, pMsg->m_fy)) {
+    m_iLBtnPartStates = 0;
+    Repaint(&(m_rtLBtn));
+    return;
+  }
+  if (m_rtRBtn.Contains(pMsg->m_fx, pMsg->m_fy)) {
+    m_iRBtnPartStates = 0;
+    Repaint(&(m_rtRBtn));
+    return;
+  }
+  if (m_rtToday.Contains(pMsg->m_fx, pMsg->m_fy))
+    return;
+
+  int32_t iOldSel = 0;
+  if (m_arrSelDays.GetSize() > 0)
+    iOldSel = m_arrSelDays[0];
+
+  int32_t iCurSel = GetDayAtPoint(pMsg->m_fx, pMsg->m_fy);
+  if (iCurSel > 0) {
+    FWL_DATEINFO* lpDatesInfo = m_arrDates.GetAt(iCurSel - 1);
+    CFX_RectF rtInvalidate(lpDatesInfo->rect);
+    if (iOldSel > 0 && iOldSel <= m_arrDates.GetSize()) {
+      lpDatesInfo = m_arrDates.GetAt(iOldSel - 1);
+      rtInvalidate.Union(lpDatesInfo->rect);
+    }
+    AddSelDay(iCurSel);
+    IFWL_DateTimePicker* pDateTime =
+        static_cast<IFWL_DateTimePicker*>(m_pOuter);
+    pDateTime->ProcessSelChanged(m_iCurYear, m_iCurMonth, iCurSel);
+    pDateTime->ShowMonthCalendar(false);
   }
 }
 

@@ -11,7 +11,6 @@
 #include "xfa/fwl/core/cfwl_themebackground.h"
 #include "xfa/fwl/core/cfwl_widgetmgr.h"
 #include "xfa/fwl/core/fwl_noteimp.h"
-#include "xfa/fwl/core/ifwl_datetimecalendar.h"
 #include "xfa/fwl/core/ifwl_datetimeedit.h"
 #include "xfa/fwl/core/ifwl_formproxy.h"
 #include "xfa/fwl/core/ifwl_spinbutton.h"
@@ -46,7 +45,7 @@ IFWL_DateTimePicker::IFWL_DateTimePicker(
   monthProp->m_pParent = this;
   monthProp->m_pThemeProvider = m_pProperties->m_pThemeProvider;
   m_pMonthCal.reset(
-      new IFWL_DateTimeCalendar(m_pOwnerApp, std::move(monthProp), this));
+      new IFWL_MonthCalendar(m_pOwnerApp, std::move(monthProp), this));
 
   CFX_RectF rtMonthCal;
   m_pMonthCal->GetWidgetRect(rtMonthCal, true);
@@ -454,14 +453,14 @@ IFWL_DateTimeEdit* IFWL_DateTimePicker::GetDataTimeEdit() {
 
 FWL_Error IFWL_DateTimePicker::DisForm_Initialize() {
   m_pProperties->m_dwStyleExes = FWL_STYLEEXT_DTP_ShortDateFormat;
-  DisForm_InitDateTimeCalendar();
+  DisForm_InitMonthCalendar();
   DisForm_InitDateTimeEdit();
   RegisterEventTarget(m_pMonthCal.get());
   RegisterEventTarget(m_pEdit.get());
   return FWL_Error::Succeeded;
 }
 
-void IFWL_DateTimePicker::DisForm_InitDateTimeCalendar() {
+void IFWL_DateTimePicker::DisForm_InitMonthCalendar() {
   if (m_pMonthCal)
     return;
 
@@ -472,8 +471,7 @@ void IFWL_DateTimePicker::DisForm_InitDateTimeCalendar() {
   prop->m_pParent = this;
   prop->m_pThemeProvider = m_pProperties->m_pThemeProvider;
 
-  m_pMonthCal.reset(
-      new IFWL_DateTimeCalendar(m_pOwnerApp, std::move(prop), this));
+  m_pMonthCal.reset(new IFWL_MonthCalendar(m_pOwnerApp, std::move(prop), this));
   CFX_RectF rtMonthCal;
   m_pMonthCal->GetWidgetRect(rtMonthCal, true);
   rtMonthCal.Set(0, 0, rtMonthCal.width, rtMonthCal.height);
