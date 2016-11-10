@@ -188,7 +188,7 @@ class IFWL_ListBox : public IFWL_Widget {
   void OnMouseWheel(CFWL_MsgMouseWheel* pMsg);
   void OnKeyDown(CFWL_MsgKey* pMsg);
   void OnVK(CFWL_ListItem* hItem, bool bShift, bool bCtrl);
-  bool OnScroll(IFWL_ScrollBar* pScrollBar, uint32_t dwCode, FX_FLOAT fPos);
+  bool OnScroll(IFWL_ScrollBar* pScrollBar, FWL_SCBCODE dwCode, FX_FLOAT fPos);
   void DispatchSelChangedEv();
 };
 

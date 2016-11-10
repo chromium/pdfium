@@ -261,7 +261,7 @@ class IFWL_Edit : public IFWL_Widget {
   void OnMouseMove(CFWL_MsgMouse* pMsg);
   void OnKeyDown(CFWL_MsgKey* pMsg);
   void OnChar(CFWL_MsgKey* pMsg);
-  bool OnScroll(IFWL_ScrollBar* pScrollBar, uint32_t dwCode, FX_FLOAT fPos);
+  bool OnScroll(IFWL_ScrollBar* pScrollBar, FWL_SCBCODE dwCode, FX_FLOAT fPos);
 };
 
 #endif  // XFA_FWL_CORE_IFWL_EDIT_H_

@@ -113,21 +113,9 @@ void IFWL_ScrollBar::SetTrackPos(FX_FLOAT fTrackPos) {
   CalcMaxTrackRect(m_rtMaxTrack);
 }
 
-bool IFWL_ScrollBar::DoScroll(uint32_t dwCode, FX_FLOAT fPos) {
-  switch (dwCode) {
-    case FWL_SCBCODE_Min:
-    case FWL_SCBCODE_Max:
-    case FWL_SCBCODE_PageBackward:
-    case FWL_SCBCODE_PageForward:
-    case FWL_SCBCODE_StepBackward:
-    case FWL_SCBCODE_StepForward:
-    case FWL_SCBCODE_Pos:
-    case FWL_SCBCODE_TrackPos:
-    case FWL_SCBCODE_EndScroll:
-      break;
-    default:
-      return false;
-  }
+bool IFWL_ScrollBar::DoScroll(FWL_SCBCODE dwCode, FX_FLOAT fPos) {
+  if (dwCode == FWL_SCBCODE::None)
+    return false;
   return OnScroll(dwCode, fPos);
 }
 
@@ -474,30 +462,30 @@ void IFWL_ScrollBar::GetTrackRect(CFX_RectF& rect, bool bLower) {
 
 bool IFWL_ScrollBar::SendEvent() {
   if (m_iMinButtonState == CFWL_PartState_Pressed) {
-    DoScroll(FWL_SCBCODE_StepBackward, m_fTrackPos);
+    DoScroll(FWL_SCBCODE::StepBackward, m_fTrackPos);
     return false;
   }
   if (m_iMaxButtonState == CFWL_PartState_Pressed) {
-    DoScroll(FWL_SCBCODE_StepForward, m_fTrackPos);
+    DoScroll(FWL_SCBCODE::StepForward, m_fTrackPos);
     return false;
   }
   if (m_iMinTrackState == CFWL_PartState_Pressed) {
-    DoScroll(FWL_SCBCODE_PageBackward, m_fTrackPos);
+    DoScroll(FWL_SCBCODE::PageBackward, m_fTrackPos);
     return m_rtThumb.Contains(m_cpTrackPointX, m_cpTrackPointY);
   }
   if (m_iMaxTrackState == CFWL_PartState_Pressed) {
-    DoScroll(FWL_SCBCODE_PageForward, m_fTrackPos);
+    DoScroll(FWL_SCBCODE::PageForward, m_fTrackPos);
     return m_rtThumb.Contains(m_cpTrackPointX, m_cpTrackPointY);
   }
   if (m_iMouseWheel) {
-    uint16_t dwCode =
-        m_iMouseWheel < 0 ? FWL_SCBCODE_StepForward : FWL_SCBCODE_StepBackward;
+    FWL_SCBCODE dwCode = m_iMouseWheel < 0 ? FWL_SCBCODE::StepForward
+                                           : FWL_SCBCODE::StepBackward;
     DoScroll(dwCode, m_fTrackPos);
   }
   return true;
 }
 
-bool IFWL_ScrollBar::OnScroll(uint32_t dwCode, FX_FLOAT fPos) {
+bool IFWL_ScrollBar::OnScroll(FWL_SCBCODE dwCode, FX_FLOAT fPos) {
   bool bRet = true;
   CFWL_EvtScroll ev;
   ev.m_iScrollCode = dwCode;
@@ -629,7 +617,7 @@ void IFWL_ScrollBar::DoMouseUp(int32_t iItem,
 
   iState = iNewState;
   Repaint(&rtItem);
-  OnScroll(FWL_SCBCODE_EndScroll, m_fTrackPos);
+  OnScroll(FWL_SCBCODE::EndScroll, m_fTrackPos);
 }
 
 void IFWL_ScrollBar::DoMouseMove(int32_t iItem,
@@ -648,7 +636,7 @@ void IFWL_ScrollBar::DoMouseMove(int32_t iItem,
   } else if ((2 == iItem) && (m_iThumbButtonState == CFWL_PartState_Pressed)) {
     FX_FLOAT fPos = GetTrackPointPos(fx, fy);
     m_fTrackPos = fPos;
-    OnScroll(FWL_SCBCODE_TrackPos, fPos);
+    OnScroll(FWL_SCBCODE::TrackPos, fPos);
   }
 }
 

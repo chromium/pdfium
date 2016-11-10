@@ -13,6 +13,19 @@
 #include "xfa/fwl/core/cfwl_message.h"
 #include "xfa/fwl/core/fwl_error.h"
 
+enum class FWL_SCBCODE {
+  None = 1,
+  Min,
+  Max,
+  PageBackward,
+  PageForward,
+  StepBackward,
+  StepForward,
+  Pos,
+  TrackPos,
+  EndScroll,
+};
+
 enum class CFWL_EventType {
   None = 0,
 
@@ -137,7 +150,7 @@ FWL_EVENT_DEF(CFWL_EvtDraw, CFWL_EventType::Draw, CFX_Graphics* m_pGraphics;
 
 FWL_EVENT_DEF(CFWL_EvtClick, CFWL_EventType::Click)
 
-FWL_EVENT_DEF(CFWL_EvtScroll, CFWL_EventType::Scroll, uint32_t m_iScrollCode;
+FWL_EVENT_DEF(CFWL_EvtScroll, CFWL_EventType::Scroll, FWL_SCBCODE m_iScrollCode;
               FX_FLOAT m_fPos;
               bool* m_pRet;)
 

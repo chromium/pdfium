@@ -1089,49 +1089,50 @@ void IFWL_ListBox::OnVK(CFWL_ListItem* pItem, bool bShift, bool bCtrl) {
 }
 
 bool IFWL_ListBox::OnScroll(IFWL_ScrollBar* pScrollBar,
-                            uint32_t dwCode,
+                            FWL_SCBCODE dwCode,
                             FX_FLOAT fPos) {
   CFX_SizeF fs;
   pScrollBar->GetRange(&fs.x, &fs.y);
   FX_FLOAT iCurPos = pScrollBar->GetPos();
   FX_FLOAT fStep = pScrollBar->GetStepSize();
   switch (dwCode) {
-    case FWL_SCBCODE_Min: {
+    case FWL_SCBCODE::Min: {
       fPos = fs.x;
       break;
     }
-    case FWL_SCBCODE_Max: {
+    case FWL_SCBCODE::Max: {
       fPos = fs.y;
       break;
     }
-    case FWL_SCBCODE_StepBackward: {
+    case FWL_SCBCODE::StepBackward: {
       fPos -= fStep;
       if (fPos < fs.x + fStep / 2)
         fPos = fs.x;
       break;
     }
-    case FWL_SCBCODE_StepForward: {
+    case FWL_SCBCODE::StepForward: {
       fPos += fStep;
       if (fPos > fs.y - fStep / 2)
         fPos = fs.y;
       break;
     }
-    case FWL_SCBCODE_PageBackward: {
+    case FWL_SCBCODE::PageBackward: {
       fPos -= pScrollBar->GetPageSize();
       if (fPos < fs.x)
         fPos = fs.x;
       break;
     }
-    case FWL_SCBCODE_PageForward: {
+    case FWL_SCBCODE::PageForward: {
       fPos += pScrollBar->GetPageSize();
       if (fPos > fs.y)
         fPos = fs.y;
       break;
     }
-    case FWL_SCBCODE_Pos:
-    case FWL_SCBCODE_TrackPos:
+    case FWL_SCBCODE::Pos:
+    case FWL_SCBCODE::TrackPos:
+    case FWL_SCBCODE::None:
       break;
-    case FWL_SCBCODE_EndScroll:
+    case FWL_SCBCODE::EndScroll:
       return false;
   }
   if (iCurPos != fPos) {

@@ -18,19 +18,6 @@ class IFWL_Widget;
 #define FWL_STYLEEXT_SCB_Horz (0L << 0)
 #define FWL_STYLEEXT_SCB_Vert (1L << 0)
 
-enum FWL_SCBCODE {
-  FWL_SCBCODE_None = 1,
-  FWL_SCBCODE_Min,
-  FWL_SCBCODE_Max,
-  FWL_SCBCODE_PageBackward,
-  FWL_SCBCODE_PageForward,
-  FWL_SCBCODE_StepBackward,
-  FWL_SCBCODE_StepForward,
-  FWL_SCBCODE_Pos,
-  FWL_SCBCODE_TrackPos,
-  FWL_SCBCODE_EndScroll,
-};
-
 class IFWL_ScrollBarDP : public IFWL_DataProvider {};
 
 class IFWL_ScrollBar : public IFWL_Widget {
@@ -102,7 +89,7 @@ class IFWL_ScrollBar : public IFWL_Widget {
   FX_FLOAT GetTrackPointPos(FX_FLOAT fx, FX_FLOAT fy);
   void GetTrackRect(CFX_RectF& rect, bool bLower = true);
   bool SendEvent();
-  bool OnScroll(uint32_t dwCode, FX_FLOAT fPos);
+  bool OnScroll(FWL_SCBCODE dwCode, FX_FLOAT fPos);
   void OnLButtonDown(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy);
   void OnLButtonUp(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy);
   void OnMouseMove(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy);
@@ -112,7 +99,7 @@ class IFWL_ScrollBar : public IFWL_Widget {
                     uint32_t dwFlags,
                     FX_FLOAT fDeltaX,
                     FX_FLOAT fDeltaY);
-  bool DoScroll(uint32_t dwCode, FX_FLOAT fPos = 0.0f);
+  bool DoScroll(FWL_SCBCODE dwCode, FX_FLOAT fPos = 0.0f);
   void DoMouseDown(int32_t iItem,
                    const CFX_RectF& rtItem,
                    int32_t& iState,
