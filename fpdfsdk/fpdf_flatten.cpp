@@ -19,8 +19,6 @@
 #include "fpdfsdk/fsdk_define.h"
 #include "third_party/base/stl_util.h"
 
-typedef CFX_ArrayTemplate<CFX_FloatRect> CPDF_RectArray;
-
 enum FPDF_TYPE { MAX, MIN };
 enum FPDF_VALUE { TOP, LEFT, RIGHT, BOTTOM };
 
@@ -47,7 +45,7 @@ bool IsValiableRect(CFX_FloatRect rect, CFX_FloatRect rcPage) {
 
 void GetContentsRect(CPDF_Document* pDoc,
                      CPDF_Dictionary* pDict,
-                     CPDF_RectArray* pRectArray) {
+                     std::vector<CFX_FloatRect>* pRectArray) {
   std::unique_ptr<CPDF_Page> pPDFPage(new CPDF_Page(pDoc, pDict, false));
   pPDFPage->ParseContent();
 
@@ -58,13 +56,13 @@ void GetContentsRect(CPDF_Document* pDoc,
     rc.bottom = pPageObject->m_Bottom;
     rc.top = pPageObject->m_Top;
     if (IsValiableRect(rc, pDict->GetRectFor("MediaBox")))
-      pRectArray->Add(rc);
+      pRectArray->push_back(rc);
   }
 }
 
 void ParserStream(CPDF_Dictionary* pPageDic,
                   CPDF_Dictionary* pStream,
-                  CPDF_RectArray* pRectArray,
+                  std::vector<CFX_FloatRect>* pRectArray,
                   std::vector<CPDF_Dictionary*>* pObjectArray) {
   if (!pStream)
     return;
@@ -75,14 +73,14 @@ void ParserStream(CPDF_Dictionary* pPageDic,
     rect = pStream->GetRectFor("BBox");
 
   if (IsValiableRect(rect, pPageDic->GetRectFor("MediaBox")))
-    pRectArray->Add(rect);
+    pRectArray->push_back(rect);
 
   pObjectArray->push_back(pStream);
 }
 
 int ParserAnnots(CPDF_Document* pSourceDoc,
                  CPDF_Dictionary* pPageDic,
-                 CPDF_RectArray* pRectArray,
+                 std::vector<CFX_FloatRect>* pRectArray,
                  std::vector<CPDF_Dictionary*>* pObjectArray,
                  int nUsage) {
   if (!pSourceDoc || !pPageDic)
@@ -120,60 +118,48 @@ int ParserAnnots(CPDF_Document* pSourceDoc,
   return FLATTEN_SUCCESS;
 }
 
-FX_FLOAT GetMinMaxValue(CPDF_RectArray& array,
+FX_FLOAT GetMinMaxValue(const std::vector<CFX_FloatRect>& array,
                         FPDF_TYPE type,
                         FPDF_VALUE value) {
-  int nRects = array.GetSize();
-  FX_FLOAT fRet = 0.0f;
-
+  size_t nRects = array.size();
   if (nRects <= 0)
     return 0.0f;
 
-  FX_FLOAT* pArray = new FX_FLOAT[nRects];
+  std::vector<FX_FLOAT> pArray(nRects);
   switch (value) {
-    case LEFT: {
-      for (int i = 0; i < nRects; i++)
-        pArray[i] = CFX_FloatRect(array.GetAt(i)).left;
-
+    case LEFT:
+      for (size_t i = 0; i < nRects; i++)
+        pArray[i] = array[i].left;
       break;
-    }
-    case TOP: {
-      for (int i = 0; i < nRects; i++)
-        pArray[i] = CFX_FloatRect(array.GetAt(i)).top;
-
+    case TOP:
+      for (size_t i = 0; i < nRects; i++)
+        pArray[i] = array[i].top;
       break;
-    }
-    case RIGHT: {
-      for (int i = 0; i < nRects; i++)
-        pArray[i] = CFX_FloatRect(array.GetAt(i)).right;
-
+    case RIGHT:
+      for (size_t i = 0; i < nRects; i++)
+        pArray[i] = array[i].right;
       break;
-    }
-    case BOTTOM: {
-      for (int i = 0; i < nRects; i++)
-        pArray[i] = CFX_FloatRect(array.GetAt(i)).bottom;
-
+    case BOTTOM:
+      for (size_t i = 0; i < nRects; i++)
+        pArray[i] = array[i].bottom;
       break;
-    }
     default:
       // Not reachable.
       return 0.0f;
   }
-  fRet = pArray[0];
+
+  FX_FLOAT fRet = pArray[0];
   if (type == MAX) {
-    for (int i = 1; i < nRects; i++)
-      if (fRet <= pArray[i])
-        fRet = pArray[i];
+    for (size_t i = 1; i < nRects; i++)
+      fRet = std::max(fRet, pArray[i]);
   } else {
-    for (int i = 1; i < nRects; i++)
-      if (fRet >= pArray[i])
-        fRet = pArray[i];
+    for (size_t i = 1; i < nRects; i++)
+      fRet = std::min(fRet, pArray[i]);
   }
-  delete[] pArray;
   return fRet;
 }
 
-CFX_FloatRect CalculateRect(CPDF_RectArray* pRectArray) {
+CFX_FloatRect CalculateRect(std::vector<CFX_FloatRect>* pRectArray) {
   CFX_FloatRect rcRet;
 
   rcRet.left = GetMinMaxValue(*pRectArray, MIN, LEFT);
@@ -250,45 +236,34 @@ CFX_Matrix GetMatrix(CFX_FloatRect rcAnnot,
 
 DLLEXPORT int STDCALL FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
   CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
-  if (!page) {
+  if (!page)
     return FLATTEN_FAIL;
-  }
 
   CPDF_Document* pDocument = pPage->m_pDocument;
   CPDF_Dictionary* pPageDict = pPage->m_pFormDict;
-
-  if (!pDocument || !pPageDict) {
+  if (!pDocument || !pPageDict)
     return FLATTEN_FAIL;
-  }
 
   std::vector<CPDF_Dictionary*> ObjectArray;
-  CPDF_RectArray RectArray;
-
-  int iRet = FLATTEN_FAIL;
-  iRet = ParserAnnots(pDocument, pPageDict, &RectArray, &ObjectArray, nFlag);
+  std::vector<CFX_FloatRect> RectArray;
+  int iRet =
+      ParserAnnots(pDocument, pPageDict, &RectArray, &ObjectArray, nFlag);
   if (iRet == FLATTEN_NOTHINGTODO || iRet == FLATTEN_FAIL)
     return iRet;
 
   CFX_FloatRect rcOriginalCB;
   CFX_FloatRect rcMerger = CalculateRect(&RectArray);
   CFX_FloatRect rcOriginalMB = pPageDict->GetRectFor("MediaBox");
-
   if (pPageDict->KeyExist("CropBox"))
     rcOriginalMB = pPageDict->GetRectFor("CropBox");
 
-  if (rcOriginalMB.IsEmpty()) {
+  if (rcOriginalMB.IsEmpty())
     rcOriginalMB = CFX_FloatRect(0.0f, 0.0f, 612.0f, 792.0f);
-  }
 
-  rcMerger.left =
-      rcMerger.left < rcOriginalMB.left ? rcOriginalMB.left : rcMerger.left;
-  rcMerger.right =
-      rcMerger.right > rcOriginalMB.right ? rcOriginalMB.right : rcMerger.right;
-  rcMerger.top =
-      rcMerger.top > rcOriginalMB.top ? rcOriginalMB.top : rcMerger.top;
-  rcMerger.bottom = rcMerger.bottom < rcOriginalMB.bottom ? rcOriginalMB.bottom
-                                                          : rcMerger.bottom;
-
+  rcMerger.left = std::max(rcMerger.left, rcOriginalMB.left);
+  rcMerger.right = std::min(rcMerger.right, rcOriginalMB.right);
+  rcMerger.bottom = std::max(rcMerger.bottom, rcOriginalMB.bottom);
+  rcMerger.top = std::min(rcMerger.top, rcOriginalMB.top);
   if (pPageDict->KeyExist("ArtBox"))
     rcOriginalCB = pPageDict->GetRectFor("ArtBox");
   else
@@ -330,7 +305,6 @@ DLLEXPORT int STDCALL FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
 
   CFX_ByteString key = "";
   int nStreams = pdfium::CollectionSize<int>(ObjectArray);
-
   if (nStreams > 0) {
     for (int iKey = 0; /*iKey < 100*/; iKey++) {
       char sExtend[5] = {};
@@ -344,7 +318,6 @@ DLLEXPORT int STDCALL FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
   SetPageContents(key, pPageDict, pDocument);
 
   CPDF_Dictionary* pNewXORes = nullptr;
-
   if (!key.IsEmpty()) {
     pPageXObject->SetReferenceFor(key, pDocument, dwObjNum);
     CPDF_Dictionary* pNewOXbjectDic = pNewXObject->GetDict();
@@ -452,7 +425,5 @@ DLLEXPORT int STDCALL FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
     pNewXObject->SetData(sStream.raw_str(), sStream.GetLength());
   }
   pPageDict->RemoveFor("Annots");
-
-  RectArray.RemoveAll();
   return FLATTEN_SUCCESS;
 }
