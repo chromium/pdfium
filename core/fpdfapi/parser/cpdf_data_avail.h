@@ -22,7 +22,6 @@ class CPDF_Parser;
 enum PDF_DATAAVAIL_STATUS {
   PDF_DATAAVAIL_HEADER = 0,
   PDF_DATAAVAIL_FIRSTPAGE,
-  PDF_DATAAVAIL_FIRSTPAGE_PREPARE,
   PDF_DATAAVAIL_HINTTABLE,
   PDF_DATAAVAIL_END,
   PDF_DATAAVAIL_CROSSREF,
@@ -192,6 +191,8 @@ class CPDF_DataAvail final {
   bool IsFirstCheck(uint32_t dwPage);
   void ResetFirstCheck(uint32_t dwPage);
   bool IsDataAvail(FX_FILESIZE offset, uint32_t size, DownloadHints* pHints);
+  bool ValidatePage(uint32_t dwPage);
+  bool ValidateForm();
 
   FileAvail* const m_pFileAvail;
   IFX_SeekableReadStream* const m_pFileRead;

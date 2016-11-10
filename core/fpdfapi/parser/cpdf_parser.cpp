@@ -1557,7 +1557,7 @@ CPDF_Parser::Error CPDF_Parser::LoadLinearizedMainXRefTable() {
   m_pSyntax->GetNextChar(ch);
   while (PDFCharIsWhitespace(ch)) {
     ++dwCount;
-    if (m_pSyntax->m_FileLen >=
+    if (m_pSyntax->m_FileLen <=
         (FX_FILESIZE)(m_pSyntax->SavePos() + m_pSyntax->m_HeaderOffset)) {
       break;
     }

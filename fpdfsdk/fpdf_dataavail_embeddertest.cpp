@@ -45,11 +45,20 @@ class TestAsyncLoader : public FX_DOWNLOADHINTS, FX_FILEAVAIL {
     return requested_segments_;
   }
 
-  void ClearRequestedSegments() { requested_segments_.clear(); }
+  size_t max_requested_bound() const { return max_requested_bound_; }
+
+  void ClearRequestedSegments() {
+    requested_segments_.clear();
+    max_requested_bound_ = 0;
+  }
 
   bool is_new_data_available() const { return is_new_data_available_; }
   void set_is_new_data_available(bool is_new_data_available) {
     is_new_data_available_ = is_new_data_available;
+  }
+
+  size_t max_already_available_bound() const {
+    return available_ranges_.empty() ? 0 : available_ranges_.rbegin()->second;
   }
 
  private:
@@ -109,6 +118,7 @@ class TestAsyncLoader : public FX_DOWNLOADHINTS, FX_FILEAVAIL {
 
   void AddSegmentImpl(size_t offset, size_t size) {
     requested_segments_.push_back(std::make_pair(offset, size));
+    max_requested_bound_ = std::max(max_requested_bound_, offset + size);
   }
 
   bool IsDataAvailImpl(size_t offset, size_t size) {
@@ -143,6 +153,7 @@ class TestAsyncLoader : public FX_DOWNLOADHINTS, FX_FILEAVAIL {
   std::unique_ptr<char, pdfium::FreeDeleter> file_contents_;
   size_t file_length_;
   std::vector<std::pair<size_t, size_t>> requested_segments_;
+  size_t max_requested_bound_ = 0;
   bool is_new_data_available_ = true;
 
   using Range = std::pair<size_t, size_t>;
@@ -182,6 +193,46 @@ TEST_F(FPDFDataAvailEmbeddertest, LoadUsingHintTables) {
   // No new data available, to prevent load "Pages" node.
   loader.set_is_new_data_available(false);
   FPDF_PAGE page = LoadPage(1);
+  EXPECT_TRUE(page);
+  UnloadPage(page);
+}
+
+TEST_F(FPDFDataAvailEmbeddertest,
+       DoNotLoadMainCrossRefForFirstPageIfLinearized) {
+  TestAsyncLoader loader("feature_linearized_loading.pdf");
+  avail_ = FPDFAvail_Create(loader.file_avail(), loader.file_access());
+  ASSERT_EQ(PDF_DATA_AVAIL, FPDFAvail_IsDocAvail(avail_, loader.hints()));
+  document_ = FPDFAvail_GetDocument(avail_, nullptr);
+  ASSERT_TRUE(document_);
+  const int first_page_num = FPDFAvail_GetFirstPageNum(document_);
+
+  // The main cross ref table should not be processed.
+  // (It is always at file end)
+  EXPECT_GT(loader.file_access()->m_FileLen,
+            loader.max_already_available_bound());
+
+  // Prevent access to non requested data to coerce the parser to send new
+  // request for non available (non requested before) data.
+  loader.set_is_new_data_available(false);
+  FPDFAvail_IsPageAvail(avail_, first_page_num, loader.hints());
+
+  // The main cross ref table should not be requested.
+  // (It is always at file end)
+  EXPECT_GT(loader.file_access()->m_FileLen, loader.max_requested_bound());
+
+  // Allow parse page.
+  loader.set_is_new_data_available(true);
+  ASSERT_EQ(PDF_DATA_AVAIL,
+            FPDFAvail_IsPageAvail(avail_, first_page_num, loader.hints()));
+
+  // The main cross ref table should not be processed.
+  // (It is always at file end)
+  EXPECT_GT(loader.file_access()->m_FileLen,
+            loader.max_already_available_bound());
+
+  // Prevent loading data, while page loading.
+  loader.set_is_new_data_available(false);
+  FPDF_PAGE page = LoadPage(first_page_num);
   EXPECT_TRUE(page);
   UnloadPage(page);
 }
