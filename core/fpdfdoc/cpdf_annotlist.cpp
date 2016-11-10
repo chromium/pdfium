@@ -18,6 +18,7 @@
 #include "core/fpdfdoc/cpdf_occontext.h"
 #include "core/fpdfdoc/cpvt_generateap.h"
 #include "core/fxge/cfx_renderdevice.h"
+#include "third_party/base/ptr_util.h"
 
 namespace {
 
@@ -33,8 +34,8 @@ std::unique_ptr<CPDF_Annot> CreatePopupAnnot(CPDF_Annot* pAnnot,
   if (sContents.IsEmpty())
     return nullptr;
 
-  CPDF_Dictionary* pAnnotDict =
-      new CPDF_Dictionary(pDocument->GetByteStringPool());
+  auto pAnnotDict =
+      pdfium::MakeUnique<CPDF_Dictionary>(pDocument->GetByteStringPool());
   pAnnotDict->SetNameFor("Type", "Annot");
   pAnnotDict->SetNameFor("Subtype", "Popup");
   pAnnotDict->SetStringFor("T", pParentDict->GetStringFor("T"));
@@ -48,8 +49,8 @@ std::unique_ptr<CPDF_Annot> CreatePopupAnnot(CPDF_Annot* pAnnot,
   pAnnotDict->SetRectFor("Rect", popupRect);
   pAnnotDict->SetIntegerFor("F", 0);
 
-  std::unique_ptr<CPDF_Annot> pPopupAnnot(
-      new CPDF_Annot(pAnnotDict, pDocument, true));
+  auto pPopupAnnot =
+      pdfium::MakeUnique<CPDF_Annot>(std::move(pAnnotDict), pDocument);
   pAnnot->SetPopupAnnot(pPopupAnnot.get());
   return pPopupAnnot;
 }
@@ -79,8 +80,7 @@ CPDF_AnnotList::CPDF_AnnotList(CPDF_Page* pPage)
       continue;
     }
     pAnnots->ConvertToIndirectObjectAt(i, m_pDocument);
-    m_AnnotList.push_back(
-        std::unique_ptr<CPDF_Annot>(new CPDF_Annot(pDict, m_pDocument, false)));
+    m_AnnotList.push_back(pdfium::MakeUnique<CPDF_Annot>(pDict, m_pDocument));
     if (bRegenerateAP && subtype == "Widget" &&
         CPDF_InterForm::IsUpdateAPEnabled()) {
       FPDF_GenerateAP(m_pDocument, pDict);

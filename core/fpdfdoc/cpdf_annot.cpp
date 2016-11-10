@@ -39,26 +39,49 @@ bool ShouldGenerateAPForAnnotation(CPDF_Dictionary* pAnnotDict) {
   return !CPDF_Annot::IsAnnotationHidden(pAnnotDict);
 }
 
+CPDF_Form* AnnotGetMatrix(const CPDF_Page* pPage,
+                          CPDF_Annot* pAnnot,
+                          CPDF_Annot::AppearanceMode mode,
+                          const CFX_Matrix* pUser2Device,
+                          CFX_Matrix* matrix) {
+  CPDF_Form* pForm = pAnnot->GetAPForm(pPage, mode);
+  if (!pForm)
+    return nullptr;
+
+  CFX_FloatRect form_bbox = pForm->m_pFormDict->GetRectFor("BBox");
+  CFX_Matrix form_matrix = pForm->m_pFormDict->GetMatrixFor("Matrix");
+  form_matrix.TransformRect(form_bbox);
+  matrix->MatchRect(pAnnot->GetRect(), form_bbox);
+  matrix->Concat(*pUser2Device);
+  return pForm;
+}
+
 }  // namespace
 
-CPDF_Annot::CPDF_Annot(CPDF_Dictionary* pDict,
-                       CPDF_Document* pDocument,
-                       bool bToOwnDict)
-    : m_bOwnedAnnotDict(bToOwnDict),
-      m_pAnnotDict(pDict),
-      m_pDocument(pDocument),
-      m_bOpenState(false),
-      m_pPopupAnnot(nullptr) {
-  m_nSubtype = StringToAnnotSubtype(m_pAnnotDict->GetStringFor("Subtype"));
-  m_bIsTextMarkupAnnotation = IsTextMarkupAnnotation(m_nSubtype);
-  m_bHasGeneratedAP = m_pAnnotDict->GetBooleanFor(kPDFiumKey_HasGeneratedAP);
-  GenerateAPIfNeeded();
+CPDF_Annot::CPDF_Annot(std::unique_ptr<CPDF_Dictionary> pDict,
+                       CPDF_Document* pDocument)
+    : m_bOwnedAnnotDict(true),
+      m_pAnnotDict(pDict.release()),
+      m_pDocument(pDocument) {
+  Init();
+}
+
+CPDF_Annot::CPDF_Annot(CPDF_Dictionary* pDict, CPDF_Document* pDocument)
+    : m_bOwnedAnnotDict(false), m_pAnnotDict(pDict), m_pDocument(pDocument) {
+  Init();
 }
 
 CPDF_Annot::~CPDF_Annot() {
   if (m_bOwnedAnnotDict)
     delete m_pAnnotDict;
   ClearCachedAP();
+}
+
+void CPDF_Annot::Init() {
+  m_nSubtype = StringToAnnotSubtype(m_pAnnotDict->GetStringFor("Subtype"));
+  m_bIsTextMarkupAnnotation = IsTextMarkupAnnotation(m_nSubtype);
+  m_bHasGeneratedAP = m_pAnnotDict->GetBooleanFor(kPDFiumKey_HasGeneratedAP);
+  GenerateAPIfNeeded();
 }
 
 void CPDF_Annot::GenerateAPIfNeeded() {
@@ -186,23 +209,6 @@ CPDF_Form* CPDF_Annot::GetAPForm(const CPDF_Page* pPage, AppearanceMode mode) {
   pNewForm->ParseContent(nullptr, nullptr, nullptr);
   m_APMap[pStream] = pdfium::WrapUnique(pNewForm);
   return pNewForm;
-}
-
-static CPDF_Form* FPDFDOC_Annot_GetMatrix(const CPDF_Page* pPage,
-                                          CPDF_Annot* pAnnot,
-                                          CPDF_Annot::AppearanceMode mode,
-                                          const CFX_Matrix* pUser2Device,
-                                          CFX_Matrix& matrix) {
-  CPDF_Form* pForm = pAnnot->GetAPForm(pPage, mode);
-  if (!pForm) {
-    return nullptr;
-  }
-  CFX_FloatRect form_bbox = pForm->m_pFormDict->GetRectFor("BBox");
-  CFX_Matrix form_matrix = pForm->m_pFormDict->GetMatrixFor("Matrix");
-  form_matrix.TransformRect(form_bbox);
-  matrix.MatchRect(pAnnot->GetRect(), form_bbox);
-  matrix.Concat(*pUser2Device);
-  return pForm;
 }
 
 // Static.
@@ -365,16 +371,16 @@ bool CPDF_Annot::DrawAppearance(CPDF_Page* pPage,
   GenerateAPIfNeeded();
 
   CFX_Matrix matrix;
-  CPDF_Form* pForm =
-      FPDFDOC_Annot_GetMatrix(pPage, this, mode, pUser2Device, matrix);
-  if (!pForm) {
+  CPDF_Form* pForm = AnnotGetMatrix(pPage, this, mode, pUser2Device, &matrix);
+  if (!pForm)
     return false;
-  }
+
   CPDF_RenderContext context(pPage);
   context.AppendLayer(pForm, &matrix);
   context.Render(pDevice, pOptions, nullptr);
   return true;
 }
+
 bool CPDF_Annot::DrawInContext(const CPDF_Page* pPage,
                                CPDF_RenderContext* pContext,
                                const CFX_Matrix* pUser2Device,
@@ -390,14 +396,14 @@ bool CPDF_Annot::DrawInContext(const CPDF_Page* pPage,
   GenerateAPIfNeeded();
 
   CFX_Matrix matrix;
-  CPDF_Form* pForm =
-      FPDFDOC_Annot_GetMatrix(pPage, this, mode, pUser2Device, matrix);
-  if (!pForm) {
+  CPDF_Form* pForm = AnnotGetMatrix(pPage, this, mode, pUser2Device, &matrix);
+  if (!pForm)
     return false;
-  }
+
   pContext->AppendLayer(pForm, &matrix);
   return true;
 }
+
 void CPDF_Annot::DrawBorder(CFX_RenderDevice* pDevice,
                             const CFX_Matrix* pUser2Device,
                             const CPDF_RenderOptions* pOptions) {

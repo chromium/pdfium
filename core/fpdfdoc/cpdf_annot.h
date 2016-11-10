@@ -73,7 +73,9 @@ class CPDF_Annot {
   static CFX_ByteString AnnotSubtypeToString(CPDF_Annot::Subtype nSubtype);
   static CFX_FloatRect RectFromQuadPoints(CPDF_Dictionary* pAnnotDict);
 
-  CPDF_Annot(CPDF_Dictionary* pDict, CPDF_Document* pDocument, bool bToOwnDict);
+  // The second constructor does not take ownership of the dictionary.
+  CPDF_Annot(std::unique_ptr<CPDF_Dictionary> pDict, CPDF_Document* pDocument);
+  CPDF_Annot(CPDF_Dictionary* pDict, CPDF_Document* pDocument);
   ~CPDF_Annot();
 
   CPDF_Annot::Subtype GetSubtype() const;
@@ -103,6 +105,7 @@ class CPDF_Annot {
   void SetPopupAnnot(CPDF_Annot* pAnnot) { m_pPopupAnnot = pAnnot; }
 
  private:
+  void Init();
   void GenerateAPIfNeeded();
   bool ShouldDrawAnnotation();
 
@@ -117,12 +120,12 @@ class CPDF_Annot {
   CPDF_Annot::Subtype m_nSubtype;
   std::map<CPDF_Stream*, std::unique_ptr<CPDF_Form>> m_APMap;
   // |m_bOpenState| is only set for popup annotations.
-  bool m_bOpenState;
+  bool m_bOpenState = false;
   bool m_bHasGeneratedAP;
   bool m_bIsTextMarkupAnnotation;
   // Not owned. If there is a valid pointer in |m_pPopupAnnot|,
   // then this annot is never a popup.
-  CPDF_Annot* m_pPopupAnnot;
+  CPDF_Annot* m_pPopupAnnot = nullptr;
 };
 
 CPDF_Stream* FPDFDOC_GetAnnotAP(CPDF_Dictionary* pAnnotDict,
