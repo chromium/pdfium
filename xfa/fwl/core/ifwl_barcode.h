@@ -9,6 +9,7 @@
 
 #include <memory>
 
+#include "xfa/fwl/core/ifwl_dataprovider.h"
 #include "xfa/fwl/core/ifwl_edit.h"
 #include "xfa/fwl/core/ifwl_scrollbar.h"
 #include "xfa/fxbarcode/BC_Library.h"
@@ -37,7 +38,7 @@ enum FWL_BCDAttribute {
   FWL_BCDATTRIBUTE_TRUNCATED = 1 << 12
 };
 
-class IFWL_BarcodeDP : public IFWL_EditDP {
+class IFWL_BarcodeDP : public IFWL_DataProvider {
  public:
   virtual BC_CHAR_ENCODING GetCharEncoding() const = 0;
   virtual int32_t GetModuleHeight() const = 0;
@@ -66,8 +67,10 @@ class IFWL_Barcode : public IFWL_Edit {
   void Update() override;
   void DrawWidget(CFX_Graphics* pGraphics,
                   const CFX_Matrix* pMatrix = nullptr) override;
-  FWL_Error SetText(const CFX_WideString& wsText) override;
   void OnProcessEvent(CFWL_Event* pEvent) override;
+
+  // IFWL_Edit
+  void SetText(const CFX_WideString& wsText) override;
 
   void SetType(BC_TYPE type);
   bool IsProtectedType();

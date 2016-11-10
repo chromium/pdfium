@@ -204,19 +204,20 @@ FWL_Error IFWL_DateTimePicker::SetEditText(const CFX_WideString& wsText) {
   if (!m_pEdit)
     return FWL_Error::Indefinite;
 
-  FWL_Error iRet = m_pEdit->SetText(wsText);
+  m_pEdit->SetText(wsText);
   Repaint(&m_rtClient);
   CFWL_Event_DtpEditChanged ev;
   ev.m_wsText = wsText;
   DispatchEvent(&ev);
-  return iRet;
+  return FWL_Error::Succeeded;
 }
 
 FWL_Error IFWL_DateTimePicker::GetEditText(CFX_WideString& wsText,
                                            int32_t nStart,
                                            int32_t nCount) const {
   if (m_pEdit) {
-    return m_pEdit->GetText(wsText, nStart, nCount);
+    m_pEdit->GetText(wsText, nStart, nCount);
+    return FWL_Error::Succeeded;
   }
   return FWL_Error::Indefinite;
 }
@@ -267,15 +268,18 @@ bool IFWL_DateTimePicker::Paste(const CFX_WideString& wsPaste) {
 }
 
 bool IFWL_DateTimePicker::SelectAll() {
-  return m_pEdit->AddSelRange(0) == FWL_Error::Succeeded;
+  m_pEdit->AddSelRange(0);
+  return true;
 }
 
 bool IFWL_DateTimePicker::Delete() {
-  return m_pEdit->ClearText() == FWL_Error::Succeeded;
+  m_pEdit->ClearText();
+  return true;
 }
 
 bool IFWL_DateTimePicker::DeSelect() {
-  return m_pEdit->ClearSelections() == FWL_Error::Succeeded;
+  m_pEdit->ClearSelections();
+  return true;
 }
 
 FWL_Error IFWL_DateTimePicker::GetBBox(CFX_RectF& rect) {
@@ -294,7 +298,8 @@ FWL_Error IFWL_DateTimePicker::GetBBox(CFX_RectF& rect) {
 }
 
 FWL_Error IFWL_DateTimePicker::SetEditLimit(int32_t nLimit) {
-  return m_pEdit->SetLimit(nLimit);
+  m_pEdit->SetLimit(nLimit);
+  return FWL_Error::Succeeded;
 }
 
 void IFWL_DateTimePicker::ModifyEditStylesEx(uint32_t dwStylesExAdded,

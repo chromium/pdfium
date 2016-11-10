@@ -8,11 +8,10 @@
 #define XFA_FWL_CORE_IFWL_EDIT_H_
 
 #include <deque>
-#include <memory>
 #include <vector>
 
+#include "xfa/fde/cfde_txtedtengine.h"
 #include "xfa/fde/ifde_txtedtdorecord.h"
-#include "xfa/fde/ifde_txtedtengine.h"
 #include "xfa/fwl/core/cfwl_event.h"
 #include "xfa/fwl/core/cfwl_widget.h"
 #include "xfa/fwl/core/ifwl_dataprovider.h"
@@ -85,12 +84,6 @@ FWL_EVENT_DEF(CFWL_EvtEdtCheckWord,
               CFX_ByteString bsWord;
               bool bCheckWord;)
 
-FWL_EVENT_DEF(CFWL_EvtEdtGetSuggestWords,
-              CFWL_EventType::GetSuggestedWords,
-              bool bSuggestWords;
-              CFX_ByteString bsWord;
-              std::vector<CFX_ByteString> bsArraySuggestWords;)
-
 class IFDE_TxtEdtDoRecord;
 class IFWL_Edit;
 class CFWL_MsgActivate;
@@ -98,8 +91,6 @@ class CFWL_MsgDeactivate;
 class CFWL_MsgMouse;
 class CFWL_WidgetProperties;
 class IFWL_Caret;
-
-class IFWL_EditDP : public IFWL_DataProvider {};
 
 class IFWL_Edit : public IFWL_Widget {
  public:
@@ -122,45 +113,30 @@ class IFWL_Edit : public IFWL_Widget {
   void OnDrawWidget(CFX_Graphics* pGraphics,
                     const CFX_Matrix* pMatrix) override;
 
-  virtual FWL_Error SetText(const CFX_WideString& wsText);
-  virtual int32_t GetTextLength() const;
-  virtual FWL_Error GetText(CFX_WideString& wsText,
-                            int32_t nStart = 0,
-                            int32_t nCount = -1) const;
-  virtual FWL_Error ClearText();
-  virtual int32_t GetCaretPos() const;
-  virtual int32_t SetCaretPos(int32_t nIndex, bool bBefore = true);
-  virtual FWL_Error AddSelRange(int32_t nStart, int32_t nCount = -1);
-  virtual int32_t CountSelRanges();
-  virtual int32_t GetSelRange(int32_t nIndex, int32_t& nStart);
-  virtual FWL_Error ClearSelections();
-  virtual int32_t GetLimit();
-  virtual FWL_Error SetLimit(int32_t nLimit);
-  virtual FWL_Error SetAliasChar(FX_WCHAR wAlias);
-  virtual FWL_Error Insert(int32_t nStart,
-                           const FX_WCHAR* lpText,
-                           int32_t nLen);
-  virtual FWL_Error DeleteSelections();
-  virtual FWL_Error DeleteRange(int32_t nStart, int32_t nCount = -1);
-  virtual FWL_Error Replace(int32_t nStart,
-                            int32_t nLen,
-                            const CFX_WideStringC& wsReplace);
-  virtual FWL_Error DoClipboard(int32_t iCmd);
-  virtual bool Copy(CFX_WideString& wsCopy);
-  virtual bool Cut(CFX_WideString& wsCut);
-  virtual bool Paste(const CFX_WideString& wsPaste);
-  virtual bool Delete();
-  virtual bool Redo(const IFDE_TxtEdtDoRecord* pRecord);
-  virtual bool Undo(const IFDE_TxtEdtDoRecord* pRecord);
-  virtual bool Undo();
-  virtual bool Redo();
-  virtual bool CanUndo();
-  virtual bool CanRedo();
-  virtual FWL_Error SetTabWidth(FX_FLOAT fTabWidth, bool bEquidistant);
-  virtual FWL_Error SetOuter(IFWL_Widget* pOuter);
-  virtual FWL_Error SetNumberRange(int32_t iMin, int32_t iMax);
-  virtual FWL_Error SetBackgroundColor(uint32_t color);
-  virtual FWL_Error SetFont(const CFX_WideString& wsFont, FX_FLOAT fSize);
+  virtual void SetText(const CFX_WideString& wsText);
+
+  int32_t GetTextLength() const;
+  void GetText(CFX_WideString& wsText, int32_t nStart = 0, int32_t nCount = -1);
+  void ClearText();
+
+  void AddSelRange(int32_t nStart, int32_t nCount = -1);
+  int32_t CountSelRanges();
+  int32_t GetSelRange(int32_t nIndex, int32_t& nStart);
+  void ClearSelections();
+  int32_t GetLimit();
+  void SetLimit(int32_t nLimit);
+  void SetAliasChar(FX_WCHAR wAlias);
+  bool Copy(CFX_WideString& wsCopy);
+  bool Cut(CFX_WideString& wsCut);
+  bool Paste(const CFX_WideString& wsPaste);
+  bool Redo(const IFDE_TxtEdtDoRecord* pRecord);
+  bool Undo(const IFDE_TxtEdtDoRecord* pRecord);
+  bool Undo();
+  bool Redo();
+  bool CanUndo();
+  bool CanRedo();
+
+  void SetOuter(IFWL_Widget* pOuter);
 
   void On_CaretChanged(CFDE_TxtEdtEngine* pEdit,
                        int32_t nPage,
@@ -177,14 +153,13 @@ class IFWL_Edit : public IFWL_Widget {
   void On_AddDoRecord(CFDE_TxtEdtEngine* pEdit, IFDE_TxtEdtDoRecord* pRecord);
   bool On_Validate(CFDE_TxtEdtEngine* pEdit, CFX_WideString& wsText);
   void SetScrollOffset(FX_FLOAT fScrollOffset);
-  bool GetSuggestWords(CFX_PointF pointf,
-                       std::vector<CFX_ByteString>& sSuggest);
-  bool ReplaceSpellCheckWord(CFX_PointF pointf,
-                             const CFX_ByteStringC& bsReplace);
 
  protected:
-  friend class CFWL_TxtEdtEventSink;
+  void ShowCaret(bool bVisible, CFX_RectF* pRect = nullptr);
+  const CFX_RectF& GetRTClient() const { return m_rtClient; }
+  CFDE_TxtEdtEngine* GetTxtEdtEngine() { return &m_EdtEngine; }
 
+ private:
   void DrawTextBk(CFX_Graphics* pGraphics,
                   IFWL_ThemeProvider* pTheme,
                   const CFX_Matrix* pMatrix = nullptr);
@@ -204,7 +179,6 @@ class IFWL_Edit : public IFWL_Widget {
   void DeviceToEngine(CFX_PointF& pt);
   void InitScrollBar(bool bVert = true);
   void InitEngine();
-  virtual void ShowCaret(bool bVisible, CFX_RectF* pRect = nullptr);
   bool ValidateNumberChar(FX_WCHAR cNum);
   void InitCaret();
   void ClearRecord();
@@ -220,37 +194,6 @@ class IFWL_Edit : public IFWL_Widget {
                         int32_t nCount,
                         FX_FLOAT fOffSetX,
                         FX_FLOAT fOffSetY);
-  int32_t GetWordAtPoint(CFX_PointF pointf, int32_t& nCount);
-
-  CFX_RectF m_rtClient;
-  CFX_RectF m_rtEngine;
-  CFX_RectF m_rtStatic;
-  FX_FLOAT m_fVAlignOffset;
-  FX_FLOAT m_fScrollOffsetX;
-  FX_FLOAT m_fScrollOffsetY;
-  std::unique_ptr<CFDE_TxtEdtEngine> m_pEdtEngine;
-  bool m_bLButtonDown;
-  int32_t m_nSelStart;
-  int32_t m_nLimit;
-  FX_FLOAT m_fSpaceAbove;
-  FX_FLOAT m_fSpaceBelow;
-  FX_FLOAT m_fFontSize;
-  FX_ARGB m_argbSel;
-  bool m_bSetRange;
-  int32_t m_iMin;
-  int32_t m_iMax;
-  std::unique_ptr<IFWL_ScrollBar> m_pVertScrollBar;
-  std::unique_ptr<IFWL_ScrollBar> m_pHorzScrollBar;
-  std::unique_ptr<IFWL_Caret> m_pCaret;
-  CFX_WideString m_wsCache;
-  uint32_t m_backColor;
-  bool m_updateBackColor;
-  CFX_WideString m_wsFont;
-  std::deque<std::unique_ptr<IFDE_TxtEdtDoRecord>> m_DoRecords;
-  int32_t m_iCurRecord;
-  int32_t m_iMaxRecord;
-
- private:
   void DoActivate(CFWL_MsgActivate* pMsg);
   void DoDeactivate(CFWL_MsgDeactivate* pMsg);
   void DoButtonDown(CFWL_MsgMouse* pMsg);
@@ -262,6 +205,28 @@ class IFWL_Edit : public IFWL_Widget {
   void OnKeyDown(CFWL_MsgKey* pMsg);
   void OnChar(CFWL_MsgKey* pMsg);
   bool OnScroll(IFWL_ScrollBar* pScrollBar, FWL_SCBCODE dwCode, FX_FLOAT fPos);
+
+  CFX_RectF m_rtClient;
+  CFX_RectF m_rtEngine;
+  CFX_RectF m_rtStatic;
+  FX_FLOAT m_fVAlignOffset;
+  FX_FLOAT m_fScrollOffsetX;
+  FX_FLOAT m_fScrollOffsetY;
+  CFDE_TxtEdtEngine m_EdtEngine;
+  bool m_bLButtonDown;
+  int32_t m_nSelStart;
+  int32_t m_nLimit;
+  FX_FLOAT m_fFontSize;
+  bool m_bSetRange;
+  int32_t m_iMax;
+  std::unique_ptr<IFWL_ScrollBar> m_pVertScrollBar;
+  std::unique_ptr<IFWL_ScrollBar> m_pHorzScrollBar;
+  std::unique_ptr<IFWL_Caret> m_pCaret;
+  CFX_WideString m_wsCache;
+  CFX_WideString m_wsFont;
+  std::deque<std::unique_ptr<IFDE_TxtEdtDoRecord>> m_DoRecords;
+  int32_t m_iCurRecord;
+  int32_t m_iMaxRecord;
 };
 
 #endif  // XFA_FWL_CORE_IFWL_EDIT_H_

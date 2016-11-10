@@ -289,72 +289,6 @@ bool CXFA_FFTextEdit::UpdateFWLData() {
   }
   return true;
 }
-bool CXFA_FFTextEdit::CanUndo() {
-  return ((CFWL_Edit*)m_pNormalWidget)->CanUndo();
-}
-bool CXFA_FFTextEdit::CanRedo() {
-  return ((CFWL_Edit*)m_pNormalWidget)->CanRedo();
-}
-bool CXFA_FFTextEdit::Undo() {
-  return ((CFWL_Edit*)m_pNormalWidget)->Undo();
-}
-bool CXFA_FFTextEdit::Redo() {
-  return ((CFWL_Edit*)m_pNormalWidget)->Redo();
-}
-bool CXFA_FFTextEdit::CanCopy() {
-  int32_t nCount = ((CFWL_Edit*)m_pNormalWidget)->CountSelRanges();
-  return nCount > 0;
-}
-bool CXFA_FFTextEdit::CanCut() {
-  if (m_pNormalWidget->GetStylesEx() & FWL_STYLEEXT_EDT_ReadOnly) {
-    return false;
-  }
-  int32_t nCount = ((CFWL_Edit*)m_pNormalWidget)->CountSelRanges();
-  return nCount > 0;
-}
-bool CXFA_FFTextEdit::CanPaste() {
-  return m_pDataAcc->GetAccess() == XFA_ATTRIBUTEENUM_Open;
-}
-bool CXFA_FFTextEdit::CanSelectAll() {
-  return ((CFWL_Edit*)m_pNormalWidget)->GetTextLength() > 0;
-}
-bool CXFA_FFTextEdit::Copy(CFX_WideString& wsCopy) {
-  return ((CFWL_Edit*)m_pNormalWidget)->Copy(wsCopy);
-}
-bool CXFA_FFTextEdit::Cut(CFX_WideString& wsCut) {
-  return ((CFWL_Edit*)m_pNormalWidget)->Cut(wsCut);
-}
-bool CXFA_FFTextEdit::Paste(const CFX_WideString& wsPaste) {
-  return ((CFWL_Edit*)m_pNormalWidget)->Paste(wsPaste);
-}
-bool CXFA_FFTextEdit::SelectAll() {
-  int32_t nCount = ((CFWL_Edit*)m_pNormalWidget)->GetTextLength();
-  return ((CFWL_Edit*)m_pNormalWidget)->AddSelRange(0, nCount) >= 0;
-}
-bool CXFA_FFTextEdit::Delete() {
-  return ((CFWL_Edit*)m_pNormalWidget)->Delete();
-}
-bool CXFA_FFTextEdit::DeSelect() {
-  return ((CFWL_Edit*)m_pNormalWidget)->ClearSelections() ==
-         FWL_Error::Succeeded;
-}
-bool CXFA_FFTextEdit::GetSuggestWords(CFX_PointF pointf,
-                                      std::vector<CFX_ByteString>& sSuggest) {
-  if (m_pDataAcc->GetUIType() != XFA_Element::TextEdit) {
-    return false;
-  }
-  FWLToClient(pointf.x, pointf.y);
-  return ((CFWL_Edit*)m_pNormalWidget)->GetSuggestWords(pointf, sSuggest);
-}
-bool CXFA_FFTextEdit::ReplaceSpellCheckWord(CFX_PointF pointf,
-                                            const CFX_ByteStringC& bsReplace) {
-  if (m_pDataAcc->GetUIType() != XFA_Element::TextEdit) {
-    return false;
-  }
-  FWLToClient(pointf.x, pointf.y);
-  return ((CFWL_Edit*)m_pNormalWidget)
-      ->ReplaceSpellCheckWord(pointf, bsReplace);
-}
 void CXFA_FFTextEdit::OnTextChanged(IFWL_Widget* pWidget,
                                     const CFX_WideString& wsChanged,
                                     const CFX_WideString& wsPrevText) {
@@ -415,11 +349,6 @@ void CXFA_FFTextEdit::OnProcessEvent(CFWL_Event* pEvent) {
       CFX_WideString wstr(L"FWL_EVENT_DTP_SelectChanged");
       CFWL_EvtEdtCheckWord* event = (CFWL_EvtEdtCheckWord*)pEvent;
       event->bCheckWord = CheckWord(event->bsWord.AsStringC());
-      break;
-    }
-    case CFWL_EventType::GetSuggestedWords: {
-      CFWL_EvtEdtGetSuggestWords* event = (CFWL_EvtEdtGetSuggestWords*)pEvent;
-      event->bSuggestWords = false;
       break;
     }
     default:
@@ -726,51 +655,7 @@ bool CXFA_FFDateTimeEdit::IsDataChanged() {
   m_pDataAcc->GetValue(wsOldValue, XFA_VALUEPICTURE_Edit);
   return wsOldValue != wsText;
 }
-bool CXFA_FFDateTimeEdit::CanUndo() {
-  return ((CFWL_DateTimePicker*)m_pNormalWidget)->CanUndo();
-}
-bool CXFA_FFDateTimeEdit::CanRedo() {
-  return ((CFWL_DateTimePicker*)m_pNormalWidget)->CanRedo();
-}
-bool CXFA_FFDateTimeEdit::Undo() {
-  return ((CFWL_DateTimePicker*)m_pNormalWidget)->Undo();
-}
-bool CXFA_FFDateTimeEdit::Redo() {
-  return ((CFWL_DateTimePicker*)m_pNormalWidget)->Redo();
-}
-bool CXFA_FFDateTimeEdit::CanCopy() {
-  return ((CFWL_DateTimePicker*)m_pNormalWidget)->CanCopy();
-}
-bool CXFA_FFDateTimeEdit::CanCut() {
-  if (m_pDataAcc->GetAccess() != XFA_ATTRIBUTEENUM_Open) {
-    return false;
-  }
-  return ((CFWL_DateTimePicker*)m_pNormalWidget)->CanCut();
-}
-bool CXFA_FFDateTimeEdit::CanPaste() {
-  return m_pDataAcc->GetAccess() == XFA_ATTRIBUTEENUM_Open;
-}
-bool CXFA_FFDateTimeEdit::CanSelectAll() {
-  return ((CFWL_DateTimePicker*)m_pNormalWidget)->CanSelectAll();
-}
-bool CXFA_FFDateTimeEdit::Copy(CFX_WideString& wsCopy) {
-  return ((CFWL_DateTimePicker*)m_pNormalWidget)->Copy(wsCopy);
-}
-bool CXFA_FFDateTimeEdit::Cut(CFX_WideString& wsCut) {
-  return ((CFWL_DateTimePicker*)m_pNormalWidget)->Cut(wsCut);
-}
-bool CXFA_FFDateTimeEdit::Paste(const CFX_WideString& wsPaste) {
-  return ((CFWL_DateTimePicker*)m_pNormalWidget)->Paste(wsPaste);
-}
-bool CXFA_FFDateTimeEdit::SelectAll() {
-  return ((CFWL_DateTimePicker*)m_pNormalWidget)->SelectAll();
-}
-bool CXFA_FFDateTimeEdit::Delete() {
-  return ((CFWL_DateTimePicker*)m_pNormalWidget)->Delete();
-}
-bool CXFA_FFDateTimeEdit::DeSelect() {
-  return ((CFWL_DateTimePicker*)m_pNormalWidget)->DeSelect();
-}
+
 void CXFA_FFDateTimeEdit::OnSelectChanged(IFWL_Widget* pWidget,
                                           int32_t iYear,
                                           int32_t iMonth,

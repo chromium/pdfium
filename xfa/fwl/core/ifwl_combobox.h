@@ -110,7 +110,6 @@ class IFWL_ComboBox : public IFWL_Widget {
   int32_t GetEditSelRange(int32_t nIndex, int32_t& nStart);
   int32_t GetEditLimit();
   FWL_Error SetEditLimit(int32_t nLimit);
-  FWL_Error EditDoClipboard(int32_t iCmd);
   bool EditRedo(const IFDE_TxtEdtDoRecord* pRecord);
   bool EditUndo(const IFDE_TxtEdtDoRecord* pRecord);
   IFWL_ListBox* GetListBoxt();

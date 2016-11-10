@@ -41,7 +41,6 @@ enum class CFWL_EventType {
   DrawItem,
   DropDown,
   EditChanged,
-  GetSuggestedWords,
   HoverChanged,
   Idle,
   Key,

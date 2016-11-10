@@ -45,8 +45,8 @@ void IFWL_Barcode::DrawWidget(CFX_Graphics* pGraphics,
       return;
     }
     CFX_Matrix mt;
-    mt.e = m_rtClient.left;
-    mt.f = m_rtClient.top;
+    mt.e = GetRTClient().left;
+    mt.f = GetRTClient().top;
     if (pMatrix) {
       mt.Concat(*pMatrix);
     }
@@ -69,8 +69,8 @@ void IFWL_Barcode::GenerateBarcodeImageCache() {
   if (!m_pBarcodeEngine)
     return;
   CFX_WideString wsText;
-  if (GetText(wsText) != FWL_Error::Succeeded)
-    return;
+  GetText(wsText);
+
   CFWL_ThemePart part;
   part.m_pWidget = this;
   IFWL_ThemeProvider* pTheme = GetAvailableTheme();
@@ -90,8 +90,8 @@ void IFWL_Barcode::GenerateBarcodeImageCache() {
   if (pFontColor) {
     m_pBarcodeEngine->SetFontColor(*pFontColor);
   }
-  m_pBarcodeEngine->SetHeight(int32_t(m_rtClient.height));
-  m_pBarcodeEngine->SetWidth(int32_t(m_rtClient.width));
+  m_pBarcodeEngine->SetHeight(int32_t(GetRTClient().height));
+  m_pBarcodeEngine->SetWidth(int32_t(GetRTClient().width));
   uint32_t dwAttributeMask = pData->GetBarcodeAttributeMask();
   if (dwAttributeMask & FWL_BCDATTRIBUTE_CHARENCODING) {
     m_pBarcodeEngine->SetCharEncoding(pData->GetCharEncoding());
@@ -155,10 +155,10 @@ void IFWL_Barcode::SetType(BC_TYPE type) {
   m_type = type;
   m_dwStatus = XFA_BCS_NeedUpdate;
 }
-FWL_Error IFWL_Barcode::SetText(const CFX_WideString& wsText) {
+void IFWL_Barcode::SetText(const CFX_WideString& wsText) {
   m_pBarcodeEngine.reset();
   m_dwStatus = XFA_BCS_NeedUpdate;
-  return IFWL_Edit::SetText(wsText);
+  IFWL_Edit::SetText(wsText);
 }
 bool IFWL_Barcode::IsProtectedType() {
   if (!m_pBarcodeEngine) {

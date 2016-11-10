@@ -19,7 +19,7 @@ IFWL_ComboEdit::IFWL_ComboEdit(
 
 void IFWL_ComboEdit::ClearSelected() {
   ClearSelections();
-  Repaint(&m_rtClient);
+  Repaint(&GetRTClient());
 }
 
 void IFWL_ComboEdit::SetSelected() {
@@ -29,7 +29,7 @@ void IFWL_ComboEdit::SetSelected() {
 }
 
 void IFWL_ComboEdit::EndCaret() {
-  m_pEdtEngine->MoveCaretPos(MC_End);
+  GetTxtEdtEngine()->MoveCaretPos(MC_End);
 }
 
 void IFWL_ComboEdit::FlagFocus(bool bSet) {

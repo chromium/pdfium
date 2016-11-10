@@ -127,11 +127,6 @@ FWL_Error CFWL_ComboBox::SetEditLimit(int32_t nLimit) {
                      : FWL_Error::Indefinite;
 }
 
-FWL_Error CFWL_ComboBox::EditDoClipboard(int32_t iCmd) {
-  return GetWidget() ? ToComboBox(GetWidget())->EditDoClipboard(iCmd)
-                     : FWL_Error::Indefinite;
-}
-
 bool CFWL_ComboBox::EditRedo(const IFDE_TxtEdtDoRecord* pRecord) {
   return GetWidget() ? ToComboBox(GetWidget())->EditRedo(pRecord) : false;
 }

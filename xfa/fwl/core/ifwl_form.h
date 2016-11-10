@@ -101,22 +101,15 @@ class IFWL_Form : public IFWL_Widget {
   void OnDrawWidget(CFX_Graphics* pGraphics,
                     const CFX_Matrix* pMatrix) override;
 
-  FWL_FORMSIZE GetFormSize();
-  FWL_Error SetFormSize(FWL_FORMSIZE eFormSize);
   IFWL_Widget* DoModal();
-  IFWL_Widget* DoModal(uint32_t& dwCommandID);
-  FWL_Error EndDoModal();
-  FWL_Error SetBorderRegion(CFX_Path* pPath);
+  void EndDoModal();
+
+  IFWL_Widget* GetSubFocus() const { return m_pSubFocus; }
+  void SetSubFocus(IFWL_Widget* pWidget) { m_pSubFocus = pWidget; }
+
+ private:
   void DrawBackground(CFX_Graphics* pGraphics, IFWL_ThemeProvider* pTheme);
-  IFWL_Widget* GetSubFocus();
-  void SetSubFocus(IFWL_Widget* pWidget);
-
- protected:
-  friend class CFWL_FormImpDelegate;
-
-  void ShowChildWidget(IFWL_Widget* pParent);
   void RemoveSysButtons();
-  void CalcContentRect(CFX_RectF& rtContent);
   CFWL_SysBtn* GetSysBtnAtPoint(FX_FLOAT fx, FX_FLOAT fy);
   CFWL_SysBtn* GetSysBtnByState(uint32_t dwState);
   CFWL_SysBtn* GetSysBtnByIndex(int32_t nIndex);
@@ -130,31 +123,25 @@ class IFWL_Form : public IFWL_Widget {
                      const CFX_Matrix* pMatrix = nullptr);
   void GetEdgeRect(CFX_RectF& rtEdge);
   void SetWorkAreaRect();
-  void SetCursor(FX_FLOAT fx, FX_FLOAT fy);
   void Layout();
-  void ReSetSysBtn();
+  void ResetSysBtn();
   void RegisterForm();
   void UnRegisterForm();
-  bool IsDoModal();
   void SetThemeData();
   bool HasIcon();
   void UpdateIcon();
   void UpdateCaption();
-  void DoWidthLimit(FX_FLOAT& fLeft,
-                    FX_FLOAT& fWidth,
-                    FX_FLOAT fCurX,
-                    FX_FLOAT fSpace,
-                    FX_FLOAT fLimitMin,
-                    FX_FLOAT fLimitMax,
-                    bool bLeft);
-  void DoHeightLimit(FX_FLOAT& fTop,
-                     FX_FLOAT& fHeight,
-                     FX_FLOAT fCurY,
-                     FX_FLOAT fSpace,
-                     FX_FLOAT fLimitMin,
-                     FX_FLOAT fLimitMax,
-                     bool bTop);
+  void OnLButtonDown(CFWL_MsgMouse* pMsg);
+  void OnLButtonUp(CFWL_MsgMouse* pMsg);
+  void OnMouseMove(CFWL_MsgMouse* pMsg);
+  void OnMouseLeave(CFWL_MsgMouse* pMsg);
+  void OnLButtonDblClk(CFWL_MsgMouse* pMsg);
+  void OnWindowMove(CFWL_MsgWindowMove* pMsg);
+  void OnClose(CFWL_MsgClose* pMsg);
 
+#if (_FX_OS_ == _FX_MACOSX_)
+  bool m_bMouseIn;
+#endif
   CFX_RectF m_rtRestore;
   CFX_RectF m_rtCaptionText;
   CFX_RectF m_rtRelative;
@@ -176,23 +163,11 @@ class IFWL_Form : public IFWL_Widget {
   bool m_bMaximized;
   bool m_bSetMaximize;
   bool m_bCustomizeLayout;
-  FWL_FORMSIZE m_eFormSize;
   bool m_bDoModalFlag;
   FX_FLOAT m_fSmallIconSz;
   FX_FLOAT m_fBigIconSz;
   CFX_DIBitmap* m_pBigIcon;
   CFX_DIBitmap* m_pSmallIcon;
-  bool m_bMouseIn;
-
- private:
-  void OnLButtonDown(CFWL_MsgMouse* pMsg);
-  void OnLButtonUp(CFWL_MsgMouse* pMsg);
-  void OnMouseMove(CFWL_MsgMouse* pMsg);
-  void OnMouseHover(CFWL_MsgMouse* pMsg);
-  void OnMouseLeave(CFWL_MsgMouse* pMsg);
-  void OnLButtonDblClk(CFWL_MsgMouse* pMsg);
-  void OnWindowMove(CFWL_MsgWindowMove* pMsg);
-  void OnClose(CFWL_MsgClose* pMsg);
 };
 
 #endif  // XFA_FWL_CORE_IFWL_FORM_H_

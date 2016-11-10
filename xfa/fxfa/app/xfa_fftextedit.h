@@ -24,24 +24,6 @@ class CXFA_FFTextEdit : public CXFA_FFField {
   bool OnRButtonUp(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) override;
   bool OnSetFocus(CXFA_FFWidget* pOldWidget) override;
   bool OnKillFocus(CXFA_FFWidget* pNewWidget) override;
-  bool CanUndo() override;
-  bool CanRedo() override;
-  bool Undo() override;
-  bool Redo() override;
-  bool CanCopy() override;
-  bool CanCut() override;
-  bool CanPaste() override;
-  bool CanSelectAll() override;
-  bool Copy(CFX_WideString& wsCopy) override;
-  bool Cut(CFX_WideString& wsCut) override;
-  bool Paste(const CFX_WideString& wsPaste) override;
-  bool SelectAll() override;
-  bool Delete() override;
-  bool DeSelect() override;
-  bool GetSuggestWords(CFX_PointF pointf,
-                       std::vector<CFX_ByteString>& sSuggest) override;
-  bool ReplaceSpellCheckWord(CFX_PointF pointf,
-                             const CFX_ByteStringC& bsReplace) override;
   void OnProcessMessage(CFWL_Message* pMessage) override;
   void OnProcessEvent(CFWL_Event* pEvent) override;
   void OnDrawWidget(CFX_Graphics* pGraphics,
@@ -107,21 +89,6 @@ class CXFA_FFDateTimeEdit : public CXFA_FFTextEdit {
                bool bDrawFocus = false) override;
   bool LoadWidget() override;
   void UpdateWidgetProperty() override;
-
-  bool CanUndo() override;
-  bool CanRedo() override;
-  bool Undo() override;
-  bool Redo() override;
-  bool CanCopy() override;
-  bool CanCut() override;
-  bool CanPaste() override;
-  bool CanSelectAll() override;
-  bool Copy(CFX_WideString& wsCopy) override;
-  bool Cut(CFX_WideString& wsCut) override;
-  bool Paste(const CFX_WideString& wsPaste) override;
-  bool SelectAll() override;
-  bool Delete() override;
-  bool DeSelect() override;
   void OnProcessEvent(CFWL_Event* pEvent) override;
 
   void OnSelectChanged(IFWL_Widget* pWidget,

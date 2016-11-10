@@ -286,8 +286,10 @@ FWL_Error IFWL_ComboBox::GetEditText(CFX_WideString& wsText,
                                      int32_t nStart,
                                      int32_t nCount) const {
   if (m_pEdit) {
-    return m_pEdit->GetText(wsText, nStart, nCount);
-  } else if (m_pListBox) {
+    m_pEdit->GetText(wsText, nStart, nCount);
+    return FWL_Error::Succeeded;
+  }
+  if (m_pListBox) {
     IFWL_ComboBoxDP* pData =
         static_cast<IFWL_ComboBoxDP*>(m_pProperties->m_pDataProvider);
     CFWL_ListItem* hItem = pData->GetItem(this, m_iCurSel);
@@ -320,13 +322,8 @@ int32_t IFWL_ComboBox::GetEditLimit() {
 FWL_Error IFWL_ComboBox::SetEditLimit(int32_t nLimit) {
   if (!m_pEdit)
     return FWL_Error::Indefinite;
-  return m_pEdit->SetLimit(nLimit);
-}
-
-FWL_Error IFWL_ComboBox::EditDoClipboard(int32_t iCmd) {
-  if (!m_pEdit)
-    return FWL_Error::Indefinite;
-  return m_pEdit->DoClipboard(iCmd);
+  m_pEdit->SetLimit(nLimit);
+  return FWL_Error::Succeeded;
 }
 
 bool IFWL_ComboBox::EditRedo(const IFDE_TxtEdtDoRecord* pRecord) {
@@ -402,15 +399,18 @@ bool IFWL_ComboBox::EditPaste(const CFX_WideString& wsPaste) {
 }
 
 bool IFWL_ComboBox::EditSelectAll() {
-  return m_pEdit->AddSelRange(0) == FWL_Error::Succeeded;
+  m_pEdit->AddSelRange(0);
+  return true;
 }
 
 bool IFWL_ComboBox::EditDelete() {
-  return m_pEdit->ClearText() == FWL_Error::Succeeded;
+  m_pEdit->ClearText();
+  return true;
 }
 
 bool IFWL_ComboBox::EditDeSelect() {
-  return m_pEdit->ClearSelections() == FWL_Error::Succeeded;
+  m_pEdit->ClearSelections();
+  return true;
 }
 
 FWL_Error IFWL_ComboBox::GetBBox(CFX_RectF& rect) {
