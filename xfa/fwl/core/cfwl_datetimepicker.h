@@ -39,8 +39,7 @@ class CFWL_DateTimePicker : public CFWL_Widget, public IFWL_DateTimePickerDP {
   bool DeSelect();
   FWL_Error GetBBox(CFX_RectF& rect);
   FWL_Error SetEditLimit(int32_t nLimit);
-  FWL_Error ModifyEditStylesEx(uint32_t dwStylesExAdded,
-                               uint32_t dwStylesExRemoved);
+  void ModifyEditStylesEx(uint32_t dwStylesExAdded, uint32_t dwStylesExRemoved);
 
   // IFWL_DataProvider
   FWL_Error GetCaption(IFWL_Widget* pWidget,

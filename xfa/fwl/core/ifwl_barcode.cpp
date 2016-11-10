@@ -25,25 +25,24 @@ FWL_Type IFWL_Barcode::GetClassID() const {
   return FWL_Type::Barcode;
 }
 
-FWL_Error IFWL_Barcode::Update() {
+void IFWL_Barcode::Update() {
   if (IsLocked()) {
-    return FWL_Error::Indefinite;
+    return;
   }
-  FWL_Error ret = IFWL_Edit::Update();
+  IFWL_Edit::Update();
   GenerateBarcodeImageCache();
-  return ret;
 }
 
-FWL_Error IFWL_Barcode::DrawWidget(CFX_Graphics* pGraphics,
-                                   const CFX_Matrix* pMatrix) {
+void IFWL_Barcode::DrawWidget(CFX_Graphics* pGraphics,
+                              const CFX_Matrix* pMatrix) {
   if (!pGraphics)
-    return FWL_Error::Indefinite;
+    return;
   if (!m_pProperties->m_pThemeProvider)
-    return FWL_Error::Indefinite;
+    return;
   if ((m_pProperties->m_dwStates & FWL_WGTSTATE_Focused) == 0) {
     GenerateBarcodeImageCache();
     if (!m_pBarcodeEngine || (m_dwStatus & XFA_BCS_EncodeSuccess) == 0) {
-      return FWL_Error::Succeeded;
+      return;
     }
     CFX_Matrix mt;
     mt.e = m_rtClient.left;
@@ -52,13 +51,11 @@ FWL_Error IFWL_Barcode::DrawWidget(CFX_Graphics* pGraphics,
       mt.Concat(*pMatrix);
     }
     int32_t errorCode = 0;
-    if (!m_pBarcodeEngine->RenderDevice(pGraphics->GetRenderDevice(), pMatrix,
-                                        errorCode)) {
-      return FWL_Error::Indefinite;
-    }
-    return FWL_Error::Succeeded;
+    m_pBarcodeEngine->RenderDevice(pGraphics->GetRenderDevice(), pMatrix,
+                                   errorCode);
+    return;
   }
-  return IFWL_Edit::DrawWidget(pGraphics, pMatrix);
+  IFWL_Edit::DrawWidget(pGraphics, pMatrix);
 }
 void IFWL_Barcode::GenerateBarcodeImageCache() {
   if ((m_dwStatus & XFA_BCS_NeedUpdate) == 0)

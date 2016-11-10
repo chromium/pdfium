@@ -38,35 +38,30 @@ const IFWL_Widget* CFWL_Widget::GetWidget() const {
   return m_pIface.get();
 }
 
-FWL_Error CFWL_Widget::GetWidgetRect(CFX_RectF& rect, bool bAutoSize) {
-  if (!m_pIface)
-    return FWL_Error::Indefinite;
-  return m_pIface->GetWidgetRect(rect, bAutoSize);
+void CFWL_Widget::GetWidgetRect(CFX_RectF& rect, bool bAutoSize) {
+  if (m_pIface)
+    m_pIface->GetWidgetRect(rect, bAutoSize);
 }
 
-FWL_Error CFWL_Widget::GetGlobalRect(CFX_RectF& rect) {
-  if (!m_pIface)
-    return FWL_Error::Indefinite;
-  return m_pIface->GetGlobalRect(rect);
+void CFWL_Widget::GetGlobalRect(CFX_RectF& rect) {
+  if (m_pIface)
+    m_pIface->GetGlobalRect(rect);
 }
 
-FWL_Error CFWL_Widget::SetWidgetRect(const CFX_RectF& rect) {
-  if (!m_pIface)
-    return FWL_Error::Indefinite;
-  return m_pIface->SetWidgetRect(rect);
+void CFWL_Widget::SetWidgetRect(const CFX_RectF& rect) {
+  if (m_pIface)
+    m_pIface->SetWidgetRect(rect);
 }
 
-FWL_Error CFWL_Widget::GetClientRect(CFX_RectF& rect) {
-  if (!m_pIface)
-    return FWL_Error::Indefinite;
-  return m_pIface->GetClientRect(rect);
+void CFWL_Widget::GetClientRect(CFX_RectF& rect) {
+  if (m_pIface)
+    m_pIface->GetClientRect(rect);
 }
 
-FWL_Error CFWL_Widget::ModifyStyles(uint32_t dwStylesAdded,
-                                    uint32_t dwStylesRemoved) {
-  if (!m_pIface)
-    return FWL_Error::Indefinite;
-  return m_pIface->ModifyStyles(dwStylesAdded, dwStylesRemoved);
+void CFWL_Widget::ModifyStyles(uint32_t dwStylesAdded,
+                               uint32_t dwStylesRemoved) {
+  if (m_pIface)
+    m_pIface->ModifyStyles(dwStylesAdded, dwStylesRemoved);
 }
 
 uint32_t CFWL_Widget::GetStylesEx() {
@@ -75,9 +70,9 @@ uint32_t CFWL_Widget::GetStylesEx() {
   return m_pIface->GetStylesEx();
 }
 
-FWL_Error CFWL_Widget::ModifyStylesEx(uint32_t dwStylesExAdded,
-                                      uint32_t dwStylesExRemoved) {
-  return m_pIface->ModifyStylesEx(dwStylesExAdded, dwStylesExRemoved);
+void CFWL_Widget::ModifyStylesEx(uint32_t dwStylesExAdded,
+                                 uint32_t dwStylesExRemoved) {
+  m_pIface->ModifyStylesEx(dwStylesExAdded, dwStylesExRemoved);
 }
 
 uint32_t CFWL_Widget::GetStates() {
@@ -118,11 +113,10 @@ FWL_WidgetHit CFWL_Widget::HitTest(FX_FLOAT fx, FX_FLOAT fy) {
   return m_pIface->HitTest(fx, fy);
 }
 
-FWL_Error CFWL_Widget::DrawWidget(CFX_Graphics* pGraphics,
-                                  const CFX_Matrix* pMatrix) {
-  if (!m_pIface)
-    return FWL_Error::Indefinite;
-  return m_pIface->DrawWidget(pGraphics, pMatrix);
+void CFWL_Widget::DrawWidget(CFX_Graphics* pGraphics,
+                             const CFX_Matrix* pMatrix) {
+  if (m_pIface)
+    m_pIface->DrawWidget(pGraphics, pMatrix);
 }
 
 IFWL_WidgetDelegate* CFWL_Widget::GetDelegate() const {

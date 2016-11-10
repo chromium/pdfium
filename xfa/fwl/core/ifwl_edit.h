@@ -110,14 +110,13 @@ class IFWL_Edit : public IFWL_Widget {
 
   // IFWL_Widget:
   FWL_Type GetClassID() const override;
-  FWL_Error GetWidgetRect(CFX_RectF& rect, bool bAutoSize = false) override;
-  FWL_Error SetWidgetRect(const CFX_RectF& rect) override;
-  FWL_Error Update() override;
+  void GetWidgetRect(CFX_RectF& rect, bool bAutoSize = false) override;
+  void Update() override;
   FWL_WidgetHit HitTest(FX_FLOAT fx, FX_FLOAT fy) override;
   void SetStates(uint32_t dwStates, bool bSet = true) override;
-  FWL_Error DrawWidget(CFX_Graphics* pGraphics,
-                       const CFX_Matrix* pMatrix = nullptr) override;
-  FWL_Error SetThemeProvider(IFWL_ThemeProvider* pThemeProvider) override;
+  void DrawWidget(CFX_Graphics* pGraphics,
+                  const CFX_Matrix* pMatrix = nullptr) override;
+  void SetThemeProvider(IFWL_ThemeProvider* pThemeProvider) override;
   void OnProcessMessage(CFWL_Message* pMessage) override;
   void OnProcessEvent(CFWL_Event* pEvent) override;
   void OnDrawWidget(CFX_Graphics* pGraphics,

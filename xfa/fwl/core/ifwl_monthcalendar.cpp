@@ -157,7 +157,7 @@ FWL_Type IFWL_MonthCalendar::GetClassID() const {
   return FWL_Type::MonthCalendar;
 }
 
-FWL_Error IFWL_MonthCalendar::GetWidgetRect(CFX_RectF& rect, bool bAutoSize) {
+void IFWL_MonthCalendar::GetWidgetRect(CFX_RectF& rect, bool bAutoSize) {
   if (bAutoSize) {
     CFX_SizeF fs = CalcSize(true);
     rect.Set(0, 0, fs.x, fs.y);
@@ -165,12 +165,11 @@ FWL_Error IFWL_MonthCalendar::GetWidgetRect(CFX_RectF& rect, bool bAutoSize) {
   } else {
     rect = m_pProperties->m_rtWidget;
   }
-  return FWL_Error::Succeeded;
 }
 
-FWL_Error IFWL_MonthCalendar::Update() {
+void IFWL_MonthCalendar::Update() {
   if (IsLocked()) {
-    return FWL_Error::Indefinite;
+    return;
   }
   if (!m_pProperties->m_pThemeProvider) {
     m_pProperties->m_pThemeProvider = GetAvailableTheme();
@@ -182,13 +181,12 @@ FWL_Error IFWL_MonthCalendar::Update() {
   ClearDateItem();
   ReSetDateItem();
   LayOut();
-  return FWL_Error::Succeeded;
 }
 
-FWL_Error IFWL_MonthCalendar::DrawWidget(CFX_Graphics* pGraphics,
-                                         const CFX_Matrix* pMatrix) {
+void IFWL_MonthCalendar::DrawWidget(CFX_Graphics* pGraphics,
+                                    const CFX_Matrix* pMatrix) {
   if (!pGraphics)
-    return FWL_Error::Indefinite;
+    return;
   if (!m_pProperties->m_pThemeProvider) {
     m_pProperties->m_pThemeProvider = GetAvailableTheme();
   }
@@ -215,7 +213,6 @@ FWL_Error IFWL_MonthCalendar::DrawWidget(CFX_Graphics* pGraphics,
     DrawWeekNumberSep(pGraphics, pTheme, pMatrix);
     DrawWeekNumber(pGraphics, pTheme, pMatrix);
   }
-  return FWL_Error::Succeeded;
 }
 
 int32_t IFWL_MonthCalendar::CountSelect() {

@@ -28,7 +28,7 @@ class CFWL_ComboBox : public CFWL_Widget, public IFWL_ComboBoxDP {
   FWL_Error GetTextByIndex(int32_t iIndex, CFX_WideString& wsText);
   int32_t GetCurSel();
   FWL_Error SetCurSel(int32_t iSel);
-  FWL_Error SetEditText(const CFX_WideString& wsText);
+  void SetEditText(const CFX_WideString& wsText);
   int32_t GetEditTextLength() const;
   FWL_Error GetEditText(CFX_WideString& wsText,
                         int32_t nStart = 0,
@@ -43,7 +43,7 @@ class CFWL_ComboBox : public CFWL_Widget, public IFWL_ComboBoxDP {
   FWL_Error SetMaxListHeight(FX_FLOAT fMaxHeight);
   FWL_Error SetItemData(int32_t iIndex, void* pData);
   void* GetItemData(int32_t iIndex);
-  FWL_Error SetListTheme(IFWL_ThemeProvider* pTheme);
+  void SetListTheme(IFWL_ThemeProvider* pTheme);
   bool AfterFocusShowDropList();
   FWL_Error OpenDropDownList(bool bActivate);
 
@@ -61,8 +61,7 @@ class CFWL_ComboBox : public CFWL_Widget, public IFWL_ComboBoxDP {
   bool EditDelete();
   bool EditDeSelect();
   FWL_Error GetBBox(CFX_RectF& rect);
-  FWL_Error EditModifyStylesEx(uint32_t dwStylesExAdded,
-                               uint32_t dwStylesExRemoved);
+  void EditModifyStylesEx(uint32_t dwStylesExAdded, uint32_t dwStylesExRemoved);
 
   // IFWL_DataProvider
   FWL_Error GetCaption(IFWL_Widget* pWidget,

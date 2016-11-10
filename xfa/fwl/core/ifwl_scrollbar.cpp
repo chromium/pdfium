@@ -61,13 +61,13 @@ FWL_Type IFWL_ScrollBar::GetClassID() const {
   return FWL_Type::ScrollBar;
 }
 
-FWL_Error IFWL_ScrollBar::GetWidgetRect(CFX_RectF& rect, bool bAutoSize) {
+void IFWL_ScrollBar::GetWidgetRect(CFX_RectF& rect, bool bAutoSize) {
   if (bAutoSize) {
     rect.Set(0, 0, 0, 0);
     FX_FLOAT* pfMinWidth = static_cast<FX_FLOAT*>(
         GetThemeCapacity(CFWL_WidgetCapacity::ScrollBarWidth));
     if (!pfMinWidth)
-      return FWL_Error::Indefinite;
+      return;
     if (IsVertical()) {
       rect.Set(0, 0, (*pfMinWidth), (*pfMinWidth) * 3);
     } else {
@@ -77,26 +77,24 @@ FWL_Error IFWL_ScrollBar::GetWidgetRect(CFX_RectF& rect, bool bAutoSize) {
   } else {
     rect = m_pProperties->m_rtWidget;
   }
-  return FWL_Error::Succeeded;
 }
 
-FWL_Error IFWL_ScrollBar::Update() {
+void IFWL_ScrollBar::Update() {
   if (IsLocked()) {
-    return FWL_Error::Indefinite;
+    return;
   }
   if (!m_pProperties->m_pThemeProvider) {
     m_pProperties->m_pThemeProvider = GetAvailableTheme();
   }
   Layout();
-  return FWL_Error::Succeeded;
 }
 
-FWL_Error IFWL_ScrollBar::DrawWidget(CFX_Graphics* pGraphics,
-                                     const CFX_Matrix* pMatrix) {
+void IFWL_ScrollBar::DrawWidget(CFX_Graphics* pGraphics,
+                                const CFX_Matrix* pMatrix) {
   if (!pGraphics)
-    return FWL_Error::Indefinite;
+    return;
   if (!m_pProperties->m_pThemeProvider)
-    return FWL_Error::Indefinite;
+    return;
   IFWL_ThemeProvider* pTheme = m_pProperties->m_pThemeProvider;
   if (HasBorder()) {
     DrawBorder(pGraphics, CFWL_Part::Border, pTheme, pMatrix);
@@ -109,7 +107,6 @@ FWL_Error IFWL_ScrollBar::DrawWidget(CFX_Graphics* pGraphics,
   DrawArrowBtn(pGraphics, pTheme, true, pMatrix);
   DrawArrowBtn(pGraphics, pTheme, false, pMatrix);
   DrawThumb(pGraphics, pTheme, pMatrix);
-  return FWL_Error::Succeeded;
 }
 
 inline bool IFWL_ScrollBar::IsVertical() {

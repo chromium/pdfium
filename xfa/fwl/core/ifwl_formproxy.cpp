@@ -28,14 +28,10 @@ bool IFWL_FormProxy::IsInstance(const CFX_WideStringC& wsClass) const {
   return IFWL_Form::IsInstance(wsClass);
 }
 
-FWL_Error IFWL_FormProxy::Update() {
-  return FWL_Error::Succeeded;
-}
+void IFWL_FormProxy::Update() {}
 
-FWL_Error IFWL_FormProxy::DrawWidget(CFX_Graphics* pGraphics,
-                                     const CFX_Matrix* pMatrix) {
-  return FWL_Error::Succeeded;
-}
+void IFWL_FormProxy::DrawWidget(CFX_Graphics* pGraphics,
+                                const CFX_Matrix* pMatrix) {}
 
 void IFWL_FormProxy::OnProcessMessage(CFWL_Message* pMessage) {
   m_pOuter->GetDelegate()->OnProcessMessage(pMessage);

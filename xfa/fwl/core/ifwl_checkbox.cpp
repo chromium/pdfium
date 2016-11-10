@@ -43,15 +43,15 @@ FWL_Type IFWL_CheckBox::GetClassID() const {
   return FWL_Type::CheckBox;
 }
 
-FWL_Error IFWL_CheckBox::GetWidgetRect(CFX_RectF& rect, bool bAutoSize) {
+void IFWL_CheckBox::GetWidgetRect(CFX_RectF& rect, bool bAutoSize) {
   if (bAutoSize) {
     rect.Set(0, 0, 0, 0);
     if (!m_pProperties->m_pThemeProvider)
       m_pProperties->m_pThemeProvider = GetAvailableTheme();
     if (!m_pProperties->m_pThemeProvider)
-      return FWL_Error::Indefinite;
+      return;
     if (!m_pProperties->m_pDataProvider)
-      return FWL_Error::Indefinite;
+      return;
     CFX_WideString wsCaption;
     m_pProperties->m_pDataProvider->GetCaption(this, wsCaption);
     if (wsCaption.GetLength() > 0) {
@@ -72,27 +72,25 @@ FWL_Error IFWL_CheckBox::GetWidgetRect(CFX_RectF& rect, bool bAutoSize) {
   } else {
     rect = m_pProperties->m_rtWidget;
   }
-  return FWL_Error::Succeeded;
 }
 
-FWL_Error IFWL_CheckBox::Update() {
+void IFWL_CheckBox::Update() {
   if (IsLocked()) {
-    return FWL_Error::Indefinite;
+    return;
   }
   if (!m_pProperties->m_pThemeProvider) {
     m_pProperties->m_pThemeProvider = GetAvailableTheme();
   }
   UpdateTextOutStyles();
   Layout();
-  return FWL_Error::Succeeded;
 }
 
-FWL_Error IFWL_CheckBox::DrawWidget(CFX_Graphics* pGraphics,
-                                    const CFX_Matrix* pMatrix) {
+void IFWL_CheckBox::DrawWidget(CFX_Graphics* pGraphics,
+                               const CFX_Matrix* pMatrix) {
   if (!pGraphics)
-    return FWL_Error::Indefinite;
+    return;
   if (!m_pProperties->m_pThemeProvider)
-    return FWL_Error::Indefinite;
+    return;
   IFWL_ThemeProvider* pTheme = m_pProperties->m_pThemeProvider;
   if (HasBorder()) {
     DrawBorder(pGraphics, CFWL_Part::Border, m_pProperties->m_pThemeProvider,
@@ -121,13 +119,14 @@ FWL_Error IFWL_CheckBox::DrawWidget(CFX_Graphics* pGraphics,
     pTheme->DrawBackground(&param);
   }
   if (!m_pProperties->m_pDataProvider)
-    return FWL_Error::Indefinite;
+    return;
+
   {
     CFX_WideString wsCaption;
     m_pProperties->m_pDataProvider->GetCaption(this, wsCaption);
     int32_t iLen = wsCaption.GetLength();
     if (iLen <= 0)
-      return FWL_Error::Indefinite;
+      return;
     CFWL_ThemeText textParam;
     textParam.m_pWidget = this;
     textParam.m_iPart = CFWL_Part::Caption;
@@ -142,7 +141,6 @@ FWL_Error IFWL_CheckBox::DrawWidget(CFX_Graphics* pGraphics,
     textParam.m_iTTOAlign = m_iTTOAlign;
     pTheme->DrawText(&textParam);
   }
-  return FWL_Error::Succeeded;
 }
 
 int32_t IFWL_CheckBox::GetCheckState() {

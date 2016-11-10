@@ -148,8 +148,8 @@ FWL_Error CFWL_DateTimePicker::SetEditLimit(int32_t nLimit) {
   return ToDateTimePicker(GetWidget())->SetEditLimit(nLimit);
 }
 
-FWL_Error CFWL_DateTimePicker::ModifyEditStylesEx(uint32_t dwStylesExAdded,
-                                                  uint32_t dwStylesExRemoved) {
-  return ToDateTimePicker(GetWidget())
+void CFWL_DateTimePicker::ModifyEditStylesEx(uint32_t dwStylesExAdded,
+                                             uint32_t dwStylesExRemoved) {
+  ToDateTimePicker(GetWidget())
       ->ModifyEditStylesEx(dwStylesExAdded, dwStylesExRemoved);
 }

@@ -26,15 +26,14 @@ class CFWL_Widget {
   IFWL_Widget* GetWidget();
   const IFWL_Widget* GetWidget() const;
 
-  FWL_Error GetWidgetRect(CFX_RectF& rect, bool bAutoSize = false);
-  FWL_Error SetWidgetRect(const CFX_RectF& rect);
-  FWL_Error GetGlobalRect(CFX_RectF& rect);
-  FWL_Error GetClientRect(CFX_RectF& rtClient);
+  void GetWidgetRect(CFX_RectF& rect, bool bAutoSize = false);
+  void SetWidgetRect(const CFX_RectF& rect);
+  void GetGlobalRect(CFX_RectF& rect);
+  void GetClientRect(CFX_RectF& rtClient);
 
-  FWL_Error ModifyStyles(uint32_t dwStylesAdded, uint32_t dwStylesRemoved);
+  void ModifyStyles(uint32_t dwStylesAdded, uint32_t dwStylesRemoved);
   uint32_t GetStylesEx();
-  FWL_Error ModifyStylesEx(uint32_t dwStylesExAdded,
-                           uint32_t dwStylesExRemoved);
+  void ModifyStylesEx(uint32_t dwStylesExAdded, uint32_t dwStylesExRemoved);
 
   uint32_t GetStates();
   void SetStates(uint32_t dwStates, bool bSet = true);
@@ -47,8 +46,7 @@ class CFWL_Widget {
 
   FWL_WidgetHit HitTest(FX_FLOAT fx, FX_FLOAT fy);
 
-  FWL_Error DrawWidget(CFX_Graphics* pGraphics,
-                       const CFX_Matrix* pMatrix = nullptr);
+  void DrawWidget(CFX_Graphics* pGraphics, const CFX_Matrix* pMatrix = nullptr);
 
   IFWL_WidgetDelegate* GetDelegate() const;
   void SetDelegate(IFWL_WidgetDelegate*);

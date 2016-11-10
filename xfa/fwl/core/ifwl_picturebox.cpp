@@ -28,11 +28,11 @@ FWL_Type IFWL_PictureBox::GetClassID() const {
   return FWL_Type::PictureBox;
 }
 
-FWL_Error IFWL_PictureBox::GetWidgetRect(CFX_RectF& rect, bool bAutoSize) {
+void IFWL_PictureBox::GetWidgetRect(CFX_RectF& rect, bool bAutoSize) {
   if (bAutoSize) {
     rect.Set(0, 0, 0, 0);
     if (!m_pProperties->m_pDataProvider)
-      return FWL_Error::Indefinite;
+      return;
     CFX_DIBitmap* pBitmap =
         static_cast<IFWL_PictureBoxDP*>(m_pProperties->m_pDataProvider)
             ->GetPicture(this);
@@ -44,26 +44,24 @@ FWL_Error IFWL_PictureBox::GetWidgetRect(CFX_RectF& rect, bool bAutoSize) {
   } else {
     rect = m_pProperties->m_rtWidget;
   }
-  return FWL_Error::Succeeded;
 }
 
-FWL_Error IFWL_PictureBox::Update() {
+void IFWL_PictureBox::Update() {
   if (IsLocked()) {
-    return FWL_Error::Succeeded;
+    return;
   }
   if (!m_pProperties->m_pThemeProvider) {
     m_pProperties->m_pThemeProvider = GetAvailableTheme();
   }
   GetClientRect(m_rtClient);
-  return FWL_Error::Succeeded;
 }
 
-FWL_Error IFWL_PictureBox::DrawWidget(CFX_Graphics* pGraphics,
-                                      const CFX_Matrix* pMatrix) {
+void IFWL_PictureBox::DrawWidget(CFX_Graphics* pGraphics,
+                                 const CFX_Matrix* pMatrix) {
   if (!pGraphics)
-    return FWL_Error::Indefinite;
+    return;
   if (!m_pProperties->m_pThemeProvider)
-    return FWL_Error::Indefinite;
+    return;
   IFWL_ThemeProvider* pTheme = GetAvailableTheme();
   if (HasBorder()) {
     DrawBorder(pGraphics, CFWL_Part::Border, pTheme, pMatrix);
@@ -72,7 +70,6 @@ FWL_Error IFWL_PictureBox::DrawWidget(CFX_Graphics* pGraphics,
     DrawEdge(pGraphics, CFWL_Part::Edge, pTheme, pMatrix);
   }
   DrawBkground(pGraphics, pTheme, pMatrix);
-  return FWL_Error::Succeeded;
 }
 
 void IFWL_PictureBox::DrawBkground(CFX_Graphics* pGraphics,

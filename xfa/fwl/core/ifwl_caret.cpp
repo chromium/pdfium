@@ -35,17 +35,16 @@ FWL_Type IFWL_Caret::GetClassID() const {
   return FWL_Type::Caret;
 }
 
-FWL_Error IFWL_Caret::DrawWidget(CFX_Graphics* pGraphics,
-                                 const CFX_Matrix* pMatrix) {
+void IFWL_Caret::DrawWidget(CFX_Graphics* pGraphics,
+                            const CFX_Matrix* pMatrix) {
   if (!pGraphics)
-    return FWL_Error::Indefinite;
+    return;
   if (!m_pProperties->m_pThemeProvider)
     m_pProperties->m_pThemeProvider = GetAvailableTheme();
   if (!m_pProperties->m_pThemeProvider)
-    return FWL_Error::Indefinite;
+    return;
 
   DrawCaretBK(pGraphics, m_pProperties->m_pThemeProvider, pMatrix);
-  return FWL_Error::Succeeded;
 }
 
 void IFWL_Caret::ShowCaret(bool bFlag) {

@@ -42,7 +42,7 @@ FWL_Type IFWL_ListBox::GetClassID() const {
   return FWL_Type::ListBox;
 }
 
-FWL_Error IFWL_ListBox::GetWidgetRect(CFX_RectF& rect, bool bAutoSize) {
+void IFWL_ListBox::GetWidgetRect(CFX_RectF& rect, bool bAutoSize) {
   if (bAutoSize) {
     rect.Set(0, 0, 0, 0);
     if (!m_pProperties->m_pThemeProvider) {
@@ -54,12 +54,11 @@ FWL_Error IFWL_ListBox::GetWidgetRect(CFX_RectF& rect, bool bAutoSize) {
   } else {
     rect = m_pProperties->m_rtWidget;
   }
-  return FWL_Error::Succeeded;
 }
 
-FWL_Error IFWL_ListBox::Update() {
+void IFWL_ListBox::Update() {
   if (IsLocked()) {
-    return FWL_Error::Indefinite;
+    return;
   }
   if (!m_pProperties->m_pThemeProvider) {
     m_pProperties->m_pThemeProvider = GetAvailableTheme();
@@ -83,7 +82,6 @@ FWL_Error IFWL_ListBox::Update() {
   m_dwTTOStyles |= FDE_TTOSTYLE_SingleLine;
   m_fScorllBarWidth = GetScrollWidth();
   CalcSize();
-  return FWL_Error::Succeeded;
 }
 
 FWL_WidgetHit IFWL_ListBox::HitTest(FX_FLOAT fx, FX_FLOAT fy) {
@@ -104,12 +102,12 @@ FWL_WidgetHit IFWL_ListBox::HitTest(FX_FLOAT fx, FX_FLOAT fy) {
   return FWL_WidgetHit::Unknown;
 }
 
-FWL_Error IFWL_ListBox::DrawWidget(CFX_Graphics* pGraphics,
-                                   const CFX_Matrix* pMatrix) {
+void IFWL_ListBox::DrawWidget(CFX_Graphics* pGraphics,
+                              const CFX_Matrix* pMatrix) {
   if (!pGraphics)
-    return FWL_Error::Indefinite;
+    return;
   if (!m_pProperties->m_pThemeProvider)
-    return FWL_Error::Indefinite;
+    return;
   IFWL_ThemeProvider* pTheme = m_pProperties->m_pThemeProvider;
   pGraphics->SaveGraphState();
   if (HasBorder()) {
@@ -134,14 +132,11 @@ FWL_Error IFWL_ListBox::DrawWidget(CFX_Graphics* pGraphics,
   }
   DrawItems(pGraphics, pTheme, pMatrix);
   pGraphics->RestoreGraphState();
-  return FWL_Error::Succeeded;
 }
 
-FWL_Error IFWL_ListBox::SetThemeProvider(IFWL_ThemeProvider* pThemeProvider) {
-  if (!pThemeProvider)
-    return FWL_Error::Indefinite;
-  m_pProperties->m_pThemeProvider = pThemeProvider;
-  return FWL_Error::Succeeded;
+void IFWL_ListBox::SetThemeProvider(IFWL_ThemeProvider* pThemeProvider) {
+  if (pThemeProvider)
+    m_pProperties->m_pThemeProvider = pThemeProvider;
 }
 int32_t IFWL_ListBox::CountSelItems() {
   if (!m_pProperties->m_pDataProvider)

@@ -32,7 +32,7 @@ FWL_Type IFWL_PushButton::GetClassID() const {
   return FWL_Type::PushButton;
 }
 
-FWL_Error IFWL_PushButton::GetWidgetRect(CFX_RectF& rect, bool bAutoSize) {
+void IFWL_PushButton::GetWidgetRect(CFX_RectF& rect, bool bAutoSize) {
   if (bAutoSize) {
     rect.Set(0, 0, 0, 0);
     if (!m_pProperties->m_pThemeProvider) {
@@ -56,7 +56,6 @@ FWL_Error IFWL_PushButton::GetWidgetRect(CFX_RectF& rect, bool bAutoSize) {
   } else {
     rect = m_pProperties->m_rtWidget;
   }
-  return FWL_Error::Succeeded;
 }
 
 void IFWL_PushButton::SetStates(uint32_t dwStates, bool bSet) {
@@ -67,9 +66,9 @@ void IFWL_PushButton::SetStates(uint32_t dwStates, bool bSet) {
   IFWL_Widget::SetStates(dwStates, bSet);
 }
 
-FWL_Error IFWL_PushButton::Update() {
+void IFWL_PushButton::Update() {
   if (IsLocked()) {
-    return FWL_Error::Indefinite;
+    return;
   }
   if (!m_pProperties->m_pThemeProvider) {
     m_pProperties->m_pThemeProvider = GetAvailableTheme();
@@ -80,15 +79,14 @@ FWL_Error IFWL_PushButton::Update() {
   FX_FLOAT* fcaption =
       static_cast<FX_FLOAT*>(GetThemeCapacity(CFWL_WidgetCapacity::Margin));
   m_rtCaption.Inflate(-*fcaption, -*fcaption);
-  return FWL_Error::Succeeded;
 }
 
-FWL_Error IFWL_PushButton::DrawWidget(CFX_Graphics* pGraphics,
-                                      const CFX_Matrix* pMatrix) {
+void IFWL_PushButton::DrawWidget(CFX_Graphics* pGraphics,
+                                 const CFX_Matrix* pMatrix) {
   if (!pGraphics)
-    return FWL_Error::Indefinite;
+    return;
   if (!m_pProperties->m_pThemeProvider)
-    return FWL_Error::Indefinite;
+    return;
   IFWL_PushButtonDP* pData =
       static_cast<IFWL_PushButtonDP*>(m_pProperties->m_pDataProvider);
   CFX_DIBitmap* pPicture = nullptr;
@@ -269,7 +267,6 @@ FWL_Error IFWL_PushButton::DrawWidget(CFX_Graphics* pGraphics,
       DrawText(pGraphics, m_pProperties->m_pThemeProvider, &matrix);
       break;
   }
-  return FWL_Error::Succeeded;
 }
 
 void IFWL_PushButton::DrawBkground(CFX_Graphics* pGraphics,

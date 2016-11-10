@@ -85,15 +85,15 @@ class IFWL_ComboBox : public IFWL_Widget {
 
   // IFWL_Widget
   FWL_Type GetClassID() const override;
-  FWL_Error GetWidgetRect(CFX_RectF& rect, bool bAutoSize = false) override;
-  FWL_Error ModifyStylesEx(uint32_t dwStylesExAdded,
-                           uint32_t dwStylesExRemoved) override;
+  void GetWidgetRect(CFX_RectF& rect, bool bAutoSize = false) override;
+  void ModifyStylesEx(uint32_t dwStylesExAdded,
+                      uint32_t dwStylesExRemoved) override;
   void SetStates(uint32_t dwStates, bool bSet = true) override;
-  FWL_Error Update() override;
+  void Update() override;
   FWL_WidgetHit HitTest(FX_FLOAT fx, FX_FLOAT fy) override;
-  FWL_Error DrawWidget(CFX_Graphics* pGraphics,
-                       const CFX_Matrix* pMatrix = nullptr) override;
-  FWL_Error SetThemeProvider(IFWL_ThemeProvider* pThemeProvider) override;
+  void DrawWidget(CFX_Graphics* pGraphics,
+                  const CFX_Matrix* pMatrix = nullptr) override;
+  void SetThemeProvider(IFWL_ThemeProvider* pThemeProvider) override;
   void OnProcessMessage(CFWL_Message* pMessage) override;
   void OnProcessEvent(CFWL_Event* pEvent) override;
   void OnDrawWidget(CFX_Graphics* pGraphics,
@@ -101,7 +101,7 @@ class IFWL_ComboBox : public IFWL_Widget {
 
   int32_t GetCurSel();
   FWL_Error SetCurSel(int32_t iSel);
-  FWL_Error SetEditText(const CFX_WideString& wsText);
+  void SetEditText(const CFX_WideString& wsText);
   int32_t GetEditTextLength() const;
   FWL_Error GetEditText(CFX_WideString& wsText,
                         int32_t nStart = 0,
@@ -130,8 +130,7 @@ class IFWL_ComboBox : public IFWL_Widget {
   bool EditDelete();
   bool EditDeSelect();
   FWL_Error GetBBox(CFX_RectF& rect);
-  FWL_Error EditModifyStylesEx(uint32_t dwStylesExAdded,
-                               uint32_t dwStylesExRemoved);
+  void EditModifyStylesEx(uint32_t dwStylesExAdded, uint32_t dwStylesExRemoved);
 
   void DrawStretchHandler(CFX_Graphics* pGraphics, const CFX_Matrix* pMatrix);
   bool IsDropListShowed();
@@ -155,12 +154,12 @@ class IFWL_ComboBox : public IFWL_Widget {
   void DisForm_InitComboEdit();
   void DisForm_ShowDropList(bool bActivate);
   bool DisForm_IsDropListShowed();
-  FWL_Error DisForm_ModifyStylesEx(uint32_t dwStylesExAdded,
-                                   uint32_t dwStylesExRemoved);
-  FWL_Error DisForm_Update();
+  void DisForm_ModifyStylesEx(uint32_t dwStylesExAdded,
+                              uint32_t dwStylesExRemoved);
+  void DisForm_Update();
   FWL_WidgetHit DisForm_HitTest(FX_FLOAT fx, FX_FLOAT fy);
-  FWL_Error DisForm_DrawWidget(CFX_Graphics* pGraphics,
-                               const CFX_Matrix* pMatrix = nullptr);
+  void DisForm_DrawWidget(CFX_Graphics* pGraphics,
+                          const CFX_Matrix* pMatrix = nullptr);
   FWL_Error DisForm_GetBBox(CFX_RectF& rect);
   void DisForm_Layout();
 

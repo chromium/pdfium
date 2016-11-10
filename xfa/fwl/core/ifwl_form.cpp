@@ -86,7 +86,7 @@ bool IFWL_Form::IsInstance(const CFX_WideStringC& wsClass) const {
   return IFWL_Widget::IsInstance(wsClass);
 }
 
-FWL_Error IFWL_Form::GetWidgetRect(CFX_RectF& rect, bool bAutoSize) {
+void IFWL_Form::GetWidgetRect(CFX_RectF& rect, bool bAutoSize) {
   if (bAutoSize) {
     rect.Reset();
     FX_FLOAT fCapHeight = GetCaptionHeight();
@@ -98,23 +98,21 @@ FWL_Error IFWL_Form::GetWidgetRect(CFX_RectF& rect, bool bAutoSize) {
   } else {
     rect = m_pProperties->m_rtWidget;
   }
-  return FWL_Error::Succeeded;
 }
-FWL_Error IFWL_Form::GetClientRect(CFX_RectF& rect) {
+void IFWL_Form::GetClientRect(CFX_RectF& rect) {
   if ((m_pProperties->m_dwStyles & FWL_WGTSTYLE_Caption) == 0) {
     rect = m_pProperties->m_rtWidget;
     rect.Offset(-rect.left, -rect.top);
-    return FWL_Error::Succeeded;
+    return;
   }
 #ifdef FWL_UseMacSystemBorder
   rect = m_rtRelative;
   CFWL_WidgetMgr* pWidgetMgr = GetOwnerApp()->GetWidgetMgr();
   if (!pWidgetMgr)
-    return FWL_Error::Indefinite;
+    return;
 
   rect.left = 0;
   rect.top = 0;
-  return FWL_Error::Succeeded;
 #else
   FX_FLOAT x = 0;
   FX_FLOAT y = 0;
@@ -133,12 +131,11 @@ FWL_Error IFWL_Form::GetClientRect(CFX_RectF& rect) {
   rect = m_pProperties->m_rtWidget;
   rect.Offset(-rect.left, -rect.top);
   rect.Deflate(x, t, x, y);
-  return FWL_Error::Succeeded;
 #endif
 }
-FWL_Error IFWL_Form::Update() {
+void IFWL_Form::Update() {
   if (m_iLock > 0) {
-    return FWL_Error::Succeeded;
+    return;
   }
   if (!m_pProperties->m_pThemeProvider) {
     m_pProperties->m_pThemeProvider = GetAvailableTheme();
@@ -152,7 +149,6 @@ FWL_Error IFWL_Form::Update() {
 #endif
   UpdateCaption();
   Layout();
-  return FWL_Error::Succeeded;
 }
 FWL_WidgetHit IFWL_Form::HitTest(FX_FLOAT fx, FX_FLOAT fy) {
   GetAvailableTheme();
@@ -206,12 +202,11 @@ FWL_WidgetHit IFWL_Form::HitTest(FX_FLOAT fx, FX_FLOAT fy) {
   }
   return FWL_WidgetHit::Client;
 }
-FWL_Error IFWL_Form::DrawWidget(CFX_Graphics* pGraphics,
-                                const CFX_Matrix* pMatrix) {
+void IFWL_Form::DrawWidget(CFX_Graphics* pGraphics, const CFX_Matrix* pMatrix) {
   if (!pGraphics)
-    return FWL_Error::Indefinite;
+    return;
   if (!m_pProperties->m_pThemeProvider)
-    return FWL_Error::Indefinite;
+    return;
   IFWL_ThemeProvider* pTheme = m_pProperties->m_pThemeProvider;
   bool bInactive = !IsActive();
   int32_t iState = bInactive ? CFWL_PartState_Inactive : CFWL_PartState_Normal;
@@ -219,7 +214,7 @@ FWL_Error IFWL_Form::DrawWidget(CFX_Graphics* pGraphics,
     DrawBackground(pGraphics, pTheme);
   }
 #ifdef FWL_UseMacSystemBorder
-  return FWL_Error::Succeeded;
+  return;
 #endif
   CFWL_ThemeBackground param;
   param.m_pWidget = this;
@@ -322,7 +317,6 @@ FWL_Error IFWL_Form::DrawWidget(CFX_Graphics* pGraphics,
     }
   }
 #endif
-  return FWL_Error::Succeeded;
 }
 
 FWL_FORMSIZE IFWL_Form::GetFormSize() {

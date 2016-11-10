@@ -92,7 +92,7 @@ FWL_Type IFWL_Edit::GetClassID() const {
   return FWL_Type::Edit;
 }
 
-FWL_Error IFWL_Edit::GetWidgetRect(CFX_RectF& rect, bool bAutoSize) {
+void IFWL_Edit::GetWidgetRect(CFX_RectF& rect, bool bAutoSize) {
   if (bAutoSize) {
     rect.Set(0, 0, 0, 0);
     if (m_pEdtEngine) {
@@ -124,7 +124,6 @@ FWL_Error IFWL_Edit::GetWidgetRect(CFX_RectF& rect, bool bAutoSize) {
       }
     }
   }
-  return FWL_Error::Succeeded;
 }
 
 void IFWL_Edit::SetStates(uint32_t dwStates, bool bSet) {
@@ -135,25 +134,21 @@ void IFWL_Edit::SetStates(uint32_t dwStates, bool bSet) {
   IFWL_Widget::SetStates(dwStates, bSet);
 }
 
-FWL_Error IFWL_Edit::SetWidgetRect(const CFX_RectF& rect) {
-  return IFWL_Widget::SetWidgetRect(rect);
-}
-FWL_Error IFWL_Edit::Update() {
+void IFWL_Edit::Update() {
   if (IsLocked()) {
-    return FWL_Error::Indefinite;
+    return;
   }
   if (!m_pProperties->m_pThemeProvider) {
     m_pProperties->m_pThemeProvider = GetAvailableTheme();
   }
   Layout();
   if (m_rtClient.IsEmpty()) {
-    return FWL_Error::Indefinite;
+    return;
   }
   UpdateEditEngine();
   UpdateVAlignment();
   UpdateScroll();
   InitCaret();
-  return FWL_Error::Succeeded;
 }
 
 FWL_WidgetHit IFWL_Edit::HitTest(FX_FLOAT fx, FX_FLOAT fy) {
@@ -322,14 +317,13 @@ void IFWL_Edit::DrawSpellCheck(CFX_Graphics* pGraphics,
   }
   pGraphics->RestoreGraphState();
 }
-FWL_Error IFWL_Edit::DrawWidget(CFX_Graphics* pGraphics,
-                                const CFX_Matrix* pMatrix) {
+void IFWL_Edit::DrawWidget(CFX_Graphics* pGraphics, const CFX_Matrix* pMatrix) {
   if (!pGraphics)
-    return FWL_Error::Indefinite;
+    return;
   if (!m_pProperties->m_pThemeProvider)
-    return FWL_Error::Indefinite;
+    return;
   if (m_rtClient.IsEmpty()) {
-    return FWL_Error::Indefinite;
+    return;
   }
   IFWL_ThemeProvider* pTheme = m_pProperties->m_pThemeProvider;
   if (!m_pWidgetMgr->IsFormDisabled()) {
@@ -348,11 +342,10 @@ FWL_Error IFWL_Edit::DrawWidget(CFX_Graphics* pGraphics,
   if (HasEdge()) {
     DrawEdge(pGraphics, CFWL_Part::Edge, pTheme, pMatrix);
   }
-  return FWL_Error::Succeeded;
 }
-FWL_Error IFWL_Edit::SetThemeProvider(IFWL_ThemeProvider* pThemeProvider) {
+void IFWL_Edit::SetThemeProvider(IFWL_ThemeProvider* pThemeProvider) {
   if (!pThemeProvider)
-    return FWL_Error::Indefinite;
+    return;
   if (m_pHorzScrollBar) {
     m_pHorzScrollBar->SetThemeProvider(pThemeProvider);
   }
@@ -363,7 +356,6 @@ FWL_Error IFWL_Edit::SetThemeProvider(IFWL_ThemeProvider* pThemeProvider) {
     m_pCaret->SetThemeProvider(pThemeProvider);
   }
   m_pProperties->m_pThemeProvider = pThemeProvider;
-  return FWL_Error::Succeeded;
 }
 
 FWL_Error IFWL_Edit::SetText(const CFX_WideString& wsText) {

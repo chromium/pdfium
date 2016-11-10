@@ -21,7 +21,6 @@ class CFWL_WidgetProperties {
   CFWL_WidgetProperties(IFWL_DataProvider* dataProvider);
   ~CFWL_WidgetProperties();
 
-  CFX_Matrix m_ctmOnParent;
   CFX_RectF m_rtWidget;
   uint32_t m_dwStyles;
   uint32_t m_dwStyleExes;
@@ -44,7 +43,6 @@ inline CFWL_WidgetProperties::CFWL_WidgetProperties(
       m_pDataProvider(dataProvider),
       m_pParent(nullptr),
       m_pOwner(nullptr) {
-  m_ctmOnParent.SetIdentity();
   m_rtWidget.Set(0, 0, 0, 0);
 }
 

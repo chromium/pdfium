@@ -91,9 +91,9 @@ FWL_Error CFWL_ComboBox::SetCurSel(int32_t iSel) {
                      : FWL_Error::Indefinite;
 }
 
-FWL_Error CFWL_ComboBox::SetEditText(const CFX_WideString& wsText) {
-  return GetWidget() ? ToComboBox(GetWidget())->SetEditText(wsText)
-                     : FWL_Error::Indefinite;
+void CFWL_ComboBox::SetEditText(const CFX_WideString& wsText) {
+  if (GetWidget())
+    ToComboBox(GetWidget())->SetEditText(wsText);
 }
 
 int32_t CFWL_ComboBox::GetEditTextLength() const {
@@ -160,8 +160,8 @@ void* CFWL_ComboBox::GetItemData(int32_t iIndex) {
   return pItem ? pItem->m_pData : nullptr;
 }
 
-FWL_Error CFWL_ComboBox::SetListTheme(IFWL_ThemeProvider* pTheme) {
-  return ToComboBox(GetWidget())->GetListBoxt()->SetThemeProvider(pTheme);
+void CFWL_ComboBox::SetListTheme(IFWL_ThemeProvider* pTheme) {
+  ToComboBox(GetWidget())->GetListBoxt()->SetThemeProvider(pTheme);
 }
 
 bool CFWL_ComboBox::AfterFocusShowDropList() {
@@ -229,12 +229,12 @@ FWL_Error CFWL_ComboBox::GetBBox(CFX_RectF& rect) {
                      : FWL_Error::Indefinite;
 }
 
-FWL_Error CFWL_ComboBox::EditModifyStylesEx(uint32_t dwStylesExAdded,
-                                            uint32_t dwStylesExRemoved) {
-  return GetWidget()
-             ? ToComboBox(GetWidget())
-                   ->EditModifyStylesEx(dwStylesExAdded, dwStylesExRemoved)
-             : FWL_Error::Indefinite;
+void CFWL_ComboBox::EditModifyStylesEx(uint32_t dwStylesExAdded,
+                                       uint32_t dwStylesExRemoved) {
+  if (GetWidget()) {
+    ToComboBox(GetWidget())
+        ->EditModifyStylesEx(dwStylesExAdded, dwStylesExRemoved);
+  }
 }
 
 FWL_Error CFWL_ComboBox::GetCaption(IFWL_Widget* pWidget,

@@ -13,6 +13,8 @@
 #include "core/fxcrt/fx_system.h"
 #include "xfa/fwl/core/cfwl_event.h"
 #include "xfa/fwl/core/cfwl_themepart.h"
+#include "xfa/fwl/core/cfwl_widgetmgr.h"
+#include "xfa/fwl/core/cfwl_widgetproperties.h"
 #include "xfa/fwl/core/fwl_widgethit.h"
 #include "xfa/fwl/core/ifwl_widgetdelegate.h"
 #include "xfa/fwl/theme/cfwl_widgettp.h"
@@ -68,49 +70,47 @@ class IFWL_Widget : public IFWL_WidgetDelegate {
 
   virtual FWL_Type GetClassID() const = 0;
   virtual bool IsInstance(const CFX_WideStringC& wsClass) const;
-
-  virtual FWL_Error GetWidgetRect(CFX_RectF& rect, bool bAutoSize = false);
-  virtual FWL_Error GetGlobalRect(CFX_RectF& rect);
-  virtual FWL_Error SetWidgetRect(const CFX_RectF& rect);
-  virtual FWL_Error GetClientRect(CFX_RectF& rect);
-
-  virtual IFWL_Widget* GetParent();
-  virtual FWL_Error SetParent(IFWL_Widget* pParent);
-
-  virtual IFWL_Widget* GetOwner();
-  virtual FWL_Error SetOwner(IFWL_Widget* pOwner);
-
-  virtual IFWL_Widget* GetOuter();
-
-  virtual uint32_t GetStyles();
-  virtual FWL_Error ModifyStyles(uint32_t dwStylesAdded,
-                                 uint32_t dwStylesRemoved);
-  virtual uint32_t GetStylesEx();
-  virtual FWL_Error ModifyStylesEx(uint32_t dwStylesExAdded,
-                                   uint32_t dwStylesExRemoved);
-
-  virtual uint32_t GetStates();
+  virtual void GetWidgetRect(CFX_RectF& rect, bool bAutoSize = false);
+  virtual void GetClientRect(CFX_RectF& rect);
+  virtual void ModifyStylesEx(uint32_t dwStylesExAdded,
+                              uint32_t dwStylesExRemoved);
   virtual void SetStates(uint32_t dwStates, bool bSet = true);
-
-  virtual FWL_Error Update();
-  virtual FWL_Error LockUpdate();
-  virtual FWL_Error UnlockUpdate();
-
+  virtual void Update();
   virtual FWL_WidgetHit HitTest(FX_FLOAT fx, FX_FLOAT fy);
+  virtual void DrawWidget(CFX_Graphics* pGraphics,
+                          const CFX_Matrix* pMatrix = nullptr);
+  virtual void SetThemeProvider(IFWL_ThemeProvider* pThemeProvider);
 
-  virtual FWL_Error TransformTo(IFWL_Widget* pWidget,
-                                FX_FLOAT& fx,
-                                FX_FLOAT& fy);
-  virtual FWL_Error TransformTo(IFWL_Widget* pWidget, CFX_RectF& rt);
+  // IFWL_WidgetDelegate.
+  void OnProcessMessage(CFWL_Message* pMessage) override;
+  void OnProcessEvent(CFWL_Event* pEvent) override;
+  void OnDrawWidget(CFX_Graphics* pGraphics,
+                    const CFX_Matrix* pMatrix = nullptr) override;
 
-  virtual FWL_Error GetMatrix(CFX_Matrix& matrix, bool bGlobal = false);
-  virtual FWL_Error SetMatrix(const CFX_Matrix& matrix);
+  void SetWidgetRect(const CFX_RectF& rect);
+  void GetGlobalRect(CFX_RectF& rect);
 
-  virtual FWL_Error DrawWidget(CFX_Graphics* pGraphics,
-                               const CFX_Matrix* pMatrix = nullptr);
+  void SetParent(IFWL_Widget* pParent);
 
-  virtual IFWL_ThemeProvider* GetThemeProvider();
-  virtual FWL_Error SetThemeProvider(IFWL_ThemeProvider* pThemeProvider);
+  IFWL_Widget* GetOwner() { return m_pWidgetMgr->GetOwnerWidget(this); }
+  IFWL_Widget* GetOuter() const { return m_pOuter; }
+
+  uint32_t GetStyles() const { return m_pProperties->m_dwStyles; }
+  void ModifyStyles(uint32_t dwStylesAdded, uint32_t dwStylesRemoved);
+  uint32_t GetStylesEx() const { return m_pProperties->m_dwStyleExes; }
+  uint32_t GetStates() const { return m_pProperties->m_dwStates; }
+
+  void LockUpdate() { m_iLock++; }
+  void UnlockUpdate() {
+    if (IsLocked())
+      m_iLock--;
+  }
+
+  void TransformTo(IFWL_Widget* pWidget, FX_FLOAT& fx, FX_FLOAT& fy);
+  void GetMatrix(CFX_Matrix& matrix, bool bGlobal = false);
+  IFWL_ThemeProvider* GetThemeProvider() const {
+    return m_pProperties->m_pThemeProvider;
+  }
 
   void SetDelegate(IFWL_WidgetDelegate* delegate) { m_pDelegate = delegate; }
   IFWL_WidgetDelegate* GetDelegate() {
@@ -120,51 +120,44 @@ class IFWL_Widget : public IFWL_WidgetDelegate {
     return m_pDelegate ? m_pDelegate : this;
   }
 
-  // IFWL_WidgetDelegate.
-  void OnProcessMessage(CFWL_Message* pMessage) override;
-  void OnProcessEvent(CFWL_Event* pEvent) override;
-  void OnDrawWidget(CFX_Graphics* pGraphics,
-                    const CFX_Matrix* pMatrix = nullptr) override;
+  const IFWL_App* GetOwnerApp() const { return m_pOwnerApp; }
+  uint32_t GetEventKey() const { return m_nEventKey; }
+  void SetEventKey(uint32_t key) { m_nEventKey = key; }
 
-  const IFWL_App* GetOwnerApp() const;
+  void* GetLayoutItem() const { return m_pLayoutItem; }
+  void SetLayoutItem(void* pItem) { m_pLayoutItem = pItem; }
 
-  CFX_SizeF GetOffsetFromParent(IFWL_Widget* pParent);
-
-  uint32_t GetEventKey() const;
-  void SetEventKey(uint32_t key);
-
-  void* GetLayoutItem() const;
-  void SetLayoutItem(void* pItem);
-
-  void SetAssociateWidget(CFWL_Widget* pAssociate);
+  void SetAssociateWidget(CFWL_Widget* pAssociate) {
+    m_pAssociate = pAssociate;
+  }
 
   void SetFocus(bool bFocus);
   void Repaint(const CFX_RectF* pRect = nullptr);
 
  protected:
-  friend class CFWL_WidgetImpDelegate;
-
   IFWL_Widget(const IFWL_App* app,
               std::unique_ptr<CFWL_WidgetProperties> properties,
               IFWL_Widget* pOuter);
 
-  bool IsEnabled() const;
-  bool IsVisible() const;
-  bool IsActive() const;
-  bool IsOverLapper() const;
-  bool IsPopup() const;
-  bool IsChild() const;
-  bool IsLocked() const;
-  bool IsOffscreen() const;
-  bool HasBorder() const;
-  bool HasEdge() const;
+  bool IsEnabled() const {
+    return (m_pProperties->m_dwStates & FWL_WGTSTATE_Disabled) == 0;
+  }
+  bool IsActive() const {
+    return (m_pProperties->m_dwStates & FWL_WGTSTATE_Deactivated) == 0;
+  }
+  bool IsLocked() const { return m_iLock > 0; }
+  bool HasBorder() const {
+    return !!(m_pProperties->m_dwStyles & FWL_WGTSTYLE_Border);
+  }
+  bool HasEdge() const {
+    return !!(m_pProperties->m_dwStyles & FWL_WGTSTYLE_EdgeMask);
+  }
   void GetEdgeRect(CFX_RectF& rtEdge);
   FX_FLOAT GetBorderSize(bool bCX = true);
   FX_FLOAT GetEdgeWidth();
   void GetRelativeRect(CFX_RectF& rect);
   void* GetThemeCapacity(CFWL_WidgetCapacity dwCapacity);
   IFWL_ThemeProvider* GetAvailableTheme();
-  IFWL_Widget* GetRootOuter();
   CFX_SizeF CalcTextSize(const CFX_WideString& wsText,
                          IFWL_ThemeProvider* pTheme,
                          bool bMultiLine = false,
@@ -179,6 +172,47 @@ class IFWL_Widget : public IFWL_WidgetDelegate {
                    FX_FLOAT fMaxHeight,
                    const CFX_RectF& rtAnchor,
                    CFX_RectF& rtPopup);
+  void RegisterEventTarget(IFWL_Widget* pEventSource = nullptr,
+                           uint32_t dwFilter = FWL_EVENT_ALL_MASK);
+  void UnregisterEventTarget();
+  void DispatchKeyEvent(CFWL_MsgKey* pNote);
+  void DispatchEvent(CFWL_Event* pEvent);
+  void DrawBorder(CFX_Graphics* pGraphics,
+                  CFWL_Part iPartBorder,
+                  IFWL_ThemeProvider* pTheme,
+                  const CFX_Matrix* pMatrix = nullptr);
+  void DrawEdge(CFX_Graphics* pGraphics,
+                CFWL_Part iPartEdge,
+                IFWL_ThemeProvider* pTheme,
+                const CFX_Matrix* pMatrix = nullptr);
+
+  const IFWL_App* const m_pOwnerApp;
+  CFWL_WidgetMgr* const m_pWidgetMgr;
+  std::unique_ptr<CFWL_WidgetProperties> m_pProperties;
+  IFWL_Widget* m_pOuter;
+  int32_t m_iLock;
+
+ private:
+  IFWL_Widget* GetParent() { return m_pWidgetMgr->GetParentWidget(this); }
+  CFX_SizeF GetOffsetFromParent(IFWL_Widget* pParent);
+
+  bool IsVisible() const {
+    return (m_pProperties->m_dwStates & FWL_WGTSTATE_Invisible) == 0;
+  }
+  bool IsOverLapper() const {
+    return (m_pProperties->m_dwStyles & FWL_WGTSTYLE_WindowTypeMask) ==
+           FWL_WGTSTYLE_OverLapper;
+  }
+  bool IsPopup() const {
+    return !!(m_pProperties->m_dwStyles & FWL_WGTSTYLE_Popup);
+  }
+  bool IsChild() const {
+    return !!(m_pProperties->m_dwStyles & FWL_WGTSTYLE_Child);
+  }
+  bool IsOffscreen() const {
+    return !!(m_pProperties->m_dwStyles & FWL_WGTSTYLE_Offscreen);
+  }
+  IFWL_Widget* GetRootOuter();
   bool GetPopupPosMenu(FX_FLOAT fMinHeight,
                        FX_FLOAT fMaxHeight,
                        const CFX_RectF& rtAnchor,
@@ -192,37 +226,16 @@ class IFWL_Widget : public IFWL_WidgetDelegate {
                           const CFX_RectF& rtAnchor,
                           CFX_RectF& rtPopup);
   bool GetScreenSize(FX_FLOAT& fx, FX_FLOAT& fy);
-  void RegisterEventTarget(IFWL_Widget* pEventSource = nullptr,
-                           uint32_t dwFilter = FWL_EVENT_ALL_MASK);
-  void UnregisterEventTarget();
-  void DispatchKeyEvent(CFWL_MsgKey* pNote);
-  void DispatchEvent(CFWL_Event* pEvent);
   void DrawBackground(CFX_Graphics* pGraphics,
                       CFWL_Part iPartBk,
                       IFWL_ThemeProvider* pTheme,
                       const CFX_Matrix* pMatrix = nullptr);
-  void DrawBorder(CFX_Graphics* pGraphics,
-                  CFWL_Part iPartBorder,
-                  IFWL_ThemeProvider* pTheme,
-                  const CFX_Matrix* pMatrix = nullptr);
-  void DrawEdge(CFX_Graphics* pGraphics,
-                CFWL_Part iPartEdge,
-                IFWL_ThemeProvider* pTheme,
-                const CFX_Matrix* pMatrix = nullptr);
   void NotifyDriver();
-
   bool IsParent(IFWL_Widget* pParent);
 
-  const IFWL_App* const m_pOwnerApp;
-  CFWL_WidgetMgr* const m_pWidgetMgr;
-  std::unique_ptr<CFWL_WidgetProperties> m_pProperties;
-  IFWL_Widget* m_pOuter;
   void* m_pLayoutItem;
   CFWL_Widget* m_pAssociate;
-  int32_t m_iLock;
   uint32_t m_nEventKey;
-
- private:
   IFWL_WidgetDelegate* m_pDelegate;  // Not owned.
 };
 

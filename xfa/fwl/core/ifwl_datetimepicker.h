@@ -69,12 +69,12 @@ class IFWL_DateTimePicker : public IFWL_Widget, public IFWL_MonthCalendarDP {
 
   // IFWL_Widget
   FWL_Type GetClassID() const override;
-  FWL_Error GetWidgetRect(CFX_RectF& rect, bool bAutoSize = false) override;
-  FWL_Error Update() override;
+  void GetWidgetRect(CFX_RectF& rect, bool bAutoSize = false) override;
+  void Update() override;
   FWL_WidgetHit HitTest(FX_FLOAT fx, FX_FLOAT fy) override;
-  FWL_Error DrawWidget(CFX_Graphics* pGraphics,
-                       const CFX_Matrix* pMatrix = nullptr) override;
-  FWL_Error SetThemeProvider(IFWL_ThemeProvider* pTP) override;
+  void DrawWidget(CFX_Graphics* pGraphics,
+                  const CFX_Matrix* pMatrix = nullptr) override;
+  void SetThemeProvider(IFWL_ThemeProvider* pTP) override;
   void OnProcessMessage(CFWL_Message* pMessage) override;
   void OnDrawWidget(CFX_Graphics* pGraphics,
                     const CFX_Matrix* pMatrix) override;
@@ -103,8 +103,7 @@ class IFWL_DateTimePicker : public IFWL_Widget, public IFWL_MonthCalendarDP {
   bool DeSelect();
   FWL_Error GetBBox(CFX_RectF& rect);
   FWL_Error SetEditLimit(int32_t nLimit);
-  FWL_Error ModifyEditStylesEx(uint32_t dwStylesExAdded,
-                               uint32_t dwStylesExRemoved);
+  void ModifyEditStylesEx(uint32_t dwStylesExAdded, uint32_t dwStylesExRemoved);
   IFWL_DateTimeEdit* GetDataTimeEdit();
 
   bool IsMonthCalendarShowed();
@@ -153,11 +152,11 @@ class IFWL_DateTimePicker : public IFWL_Widget, public IFWL_MonthCalendarDP {
   void DisForm_ShowMonthCalendar(bool bActivate);
   FWL_WidgetHit DisForm_HitTest(FX_FLOAT fx, FX_FLOAT fy);
   bool DisForm_IsNeedShowButton();
-  FWL_Error DisForm_Update();
-  FWL_Error DisForm_GetWidgetRect(CFX_RectF& rect, bool bAutoSize = false);
+  void DisForm_Update();
+  void DisForm_GetWidgetRect(CFX_RectF& rect, bool bAutoSize = false);
   FWL_Error DisForm_GetBBox(CFX_RectF& rect);
-  FWL_Error DisForm_DrawWidget(CFX_Graphics* pGraphics,
-                               const CFX_Matrix* pMatrix = nullptr);
+  void DisForm_DrawWidget(CFX_Graphics* pGraphics,
+                          const CFX_Matrix* pMatrix = nullptr);
 
   void OnFocusChanged(CFWL_Message* pMsg, bool bSet);
   void OnLButtonDown(CFWL_MsgMouse* pMsg);

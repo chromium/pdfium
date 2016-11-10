@@ -40,7 +40,7 @@ FWL_Type IFWL_ToolTip::GetClassID() const {
   return FWL_Type::ToolTip;
 }
 
-FWL_Error IFWL_ToolTip::GetWidgetRect(CFX_RectF& rect, bool bAutoSize) {
+void IFWL_ToolTip::GetWidgetRect(CFX_RectF& rect, bool bAutoSize) {
   if (bAutoSize) {
     rect.Set(0, 0, 0, 0);
     if (!m_pProperties->m_pThemeProvider) {
@@ -63,12 +63,11 @@ FWL_Error IFWL_ToolTip::GetWidgetRect(CFX_RectF& rect, bool bAutoSize) {
   } else {
     rect = m_pProperties->m_rtWidget;
   }
-  return FWL_Error::Succeeded;
 }
 
-FWL_Error IFWL_ToolTip::Update() {
+void IFWL_ToolTip::Update() {
   if (IsLocked()) {
-    return FWL_Error::Indefinite;
+    return;
   }
   if (!m_pProperties->m_pThemeProvider) {
     m_pProperties->m_pThemeProvider = GetAvailableTheme();
@@ -76,10 +75,9 @@ FWL_Error IFWL_ToolTip::Update() {
   UpdateTextOutStyles();
   GetClientRect(m_rtClient);
   m_rtCaption = m_rtClient;
-  return FWL_Error::Succeeded;
 }
 
-FWL_Error IFWL_ToolTip::GetClientRect(CFX_RectF& rect) {
+void IFWL_ToolTip::GetClientRect(CFX_RectF& rect) {
   FX_FLOAT x = 0;
   FX_FLOAT y = 0;
   FX_FLOAT t = 0;
@@ -95,18 +93,16 @@ FWL_Error IFWL_ToolTip::GetClientRect(CFX_RectF& rect) {
   rect = m_pProperties->m_rtWidget;
   rect.Offset(-rect.left, -rect.top);
   rect.Deflate(x, t, x, y);
-  return FWL_Error::Succeeded;
 }
 
-FWL_Error IFWL_ToolTip::DrawWidget(CFX_Graphics* pGraphics,
-                                   const CFX_Matrix* pMatrix) {
+void IFWL_ToolTip::DrawWidget(CFX_Graphics* pGraphics,
+                              const CFX_Matrix* pMatrix) {
   if (!pGraphics || !m_pProperties->m_pThemeProvider)
-    return FWL_Error::Indefinite;
+    return;
 
   IFWL_ThemeProvider* pTheme = m_pProperties->m_pThemeProvider;
   DrawBkground(pGraphics, pTheme, pMatrix);
   DrawText(pGraphics, pTheme, pMatrix);
-  return FWL_Error::Succeeded;
 }
 
 void IFWL_ToolTip::DrawBkground(CFX_Graphics* pGraphics,
@@ -206,14 +202,12 @@ void IFWL_ToolTip::RefreshToolTipPos() {
     FX_FLOAT fx = rtAnchor.Center().x + 20;
     FX_FLOAT fy = rtAnchor.Center().y + 20;
     rtPopup.Set(fx, fy, rtWidget.Width(), rtWidget.Height());
-    FX_FLOAT fScreenWidth = 0;
-    FX_FLOAT fScreenHeight = 0;
-    GetScreenSize(fScreenWidth, fScreenHeight);
-    if (rtPopup.bottom() > fScreenHeight) {
-      rtPopup.Offset(0, fScreenHeight - rtPopup.bottom());
+
+    if (rtPopup.bottom() > 0.0f) {
+      rtPopup.Offset(0, 0.0f - rtPopup.bottom());
     }
-    if (rtPopup.right() > fScreenWidth) {
-      rtPopup.Offset(fScreenWidth - rtPopup.right(), 0);
+    if (rtPopup.right() > 0.0f) {
+      rtPopup.Offset(0.0f - rtPopup.right(), 0);
     }
     if (rtPopup.left < 0) {
       rtPopup.Offset(0 - rtPopup.left, 0);

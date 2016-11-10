@@ -63,9 +63,9 @@ class IFWL_Barcode : public IFWL_Edit {
 
   // IFWL_Widget
   FWL_Type GetClassID() const override;
-  FWL_Error Update() override;
-  FWL_Error DrawWidget(CFX_Graphics* pGraphics,
-                       const CFX_Matrix* pMatrix = nullptr) override;
+  void Update() override;
+  void DrawWidget(CFX_Graphics* pGraphics,
+                  const CFX_Matrix* pMatrix = nullptr) override;
   FWL_Error SetText(const CFX_WideString& wsText) override;
   void OnProcessEvent(CFWL_Event* pEvent) override;
 

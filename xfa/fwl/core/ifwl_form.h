@@ -91,12 +91,12 @@ class IFWL_Form : public IFWL_Widget {
   // IFWL_Widget
   FWL_Type GetClassID() const override;
   bool IsInstance(const CFX_WideStringC& wsClass) const override;
-  FWL_Error GetWidgetRect(CFX_RectF& rect, bool bAutoSize = false) override;
-  FWL_Error GetClientRect(CFX_RectF& rect) override;
-  FWL_Error Update() override;
+  void GetWidgetRect(CFX_RectF& rect, bool bAutoSize = false) override;
+  void GetClientRect(CFX_RectF& rect) override;
+  void Update() override;
   FWL_WidgetHit HitTest(FX_FLOAT fx, FX_FLOAT fy) override;
-  FWL_Error DrawWidget(CFX_Graphics* pGraphics,
-                       const CFX_Matrix* pMatrix = nullptr) override;
+  void DrawWidget(CFX_Graphics* pGraphics,
+                  const CFX_Matrix* pMatrix = nullptr) override;
   void OnProcessMessage(CFWL_Message* pMessage) override;
   void OnDrawWidget(CFX_Graphics* pGraphics,
                     const CFX_Matrix* pMatrix) override;
