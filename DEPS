@@ -18,8 +18,8 @@ vars = {
   'pdfium_tests_revision': '06411790a46e6497e5293f921ea9aa9fb2615e41',
   'skia_revision': 'a9fd106d0c4dd5449c607add0716db7bbd81bc73',
   'tools_memory_revision': '427f10475e1a8d72424c29d00bf689122b738e5d',
-  'trace_event_revision': '6232c13e4edb36c84c61653fdae5a4afb5af9745',
-  'v8_revision': 'a964163e6ac4f1124b22ea7e46b8afe26dec02e0',
+  'trace_event_revision': '06294c8a4a6f744ef284cd63cfe54dbf61eea290',
+  'v8_revision': '1fe5910cfbae66c0933358962b6b0e8102f275ce',
 }
 
 deps = {
