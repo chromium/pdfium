@@ -50,11 +50,7 @@ class IFWL_ToolTip : public IFWL_Form {
   void OnDrawWidget(CFX_Graphics* pGraphics,
                     const CFX_Matrix* pMatrix) override;
 
-  void SetAnchor(const CFX_RectF& rtAnchor);
-  void Show();
-  void Hide();
-
- protected:
+ private:
   class Timer : public IFWL_Timer {
    public:
     explicit Timer(IFWL_ToolTip* pToolTip);
@@ -75,7 +71,6 @@ class IFWL_ToolTip : public IFWL_Form {
 
   CFX_RectF m_rtClient;
   CFX_RectF m_rtCaption;
-  bool m_bBtnDown;
   uint32_t m_dwTTOStyles;
   int32_t m_iTTOAlign;
   CFX_RectF m_rtAnchor;
@@ -83,14 +78,6 @@ class IFWL_ToolTip : public IFWL_Form {
   IFWL_TimerInfo* m_pTimerInfoHide;
   IFWL_ToolTip::Timer m_TimerShow;
   IFWL_ToolTip::Timer m_TimerHide;
-
- private:
-  void OnFocusChanged(CFWL_Message* pMsg, bool bSet);
-  void OnLButtonDown(CFWL_MsgMouse* pMsg);
-  void OnLButtonUp(CFWL_MsgMouse* pMsg);
-  void OnMouseMove(CFWL_MsgMouse* pMsg);
-  void OnMouseLeave(CFWL_MsgMouse* pMsg);
-  void OnKeyDown(CFWL_MsgKey* pMsg);
 };
 
 #endif  // XFA_FWL_CORE_IFWL_TOOLTIP_H_

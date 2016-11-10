@@ -1092,7 +1092,7 @@ bool IFWL_ListBox::OnScroll(IFWL_ScrollBar* pScrollBar,
                             uint32_t dwCode,
                             FX_FLOAT fPos) {
   CFX_SizeF fs;
-  pScrollBar->GetRange(fs.x, fs.y);
+  pScrollBar->GetRange(&fs.x, &fs.y);
   FX_FLOAT iCurPos = pScrollBar->GetPos();
   FX_FLOAT fStep = pScrollBar->GetStepSize();
   switch (dwCode) {

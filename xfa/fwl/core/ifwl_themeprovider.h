@@ -8,8 +8,6 @@
 #define XFA_FWL_CORE_IFWL_THEMEPROVIDER_H_
 
 #include "core/fxcrt/fx_coordinates.h"
-#include "core/fxcrt/fx_system.h"
-#include "xfa/fwl/core/fwl_error.h"
 #include "xfa/fwl/theme/cfwl_widgettp.h"
 
 class CFWL_ThemeBackground;

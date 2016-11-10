@@ -20,7 +20,6 @@ IFWL_ToolTip::IFWL_ToolTip(const IFWL_App* app,
                            std::unique_ptr<CFWL_WidgetProperties> properties,
                            IFWL_Widget* pOuter)
     : IFWL_Form(app, std::move(properties), pOuter),
-      m_bBtnDown(false),
       m_dwTTOStyles(FDE_TTOSTYLE_SingleLine),
       m_iTTOAlign(FDE_TTOALIGNMENT_Center),
       m_pTimerInfoShow(nullptr),
@@ -156,30 +155,6 @@ void IFWL_ToolTip::UpdateTextOutStyles() {
   }
   if (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_TTP_Multiline) {
     m_dwTTOStyles &= ~FDE_TTOSTYLE_SingleLine;
-  }
-}
-
-void IFWL_ToolTip::SetAnchor(const CFX_RectF& rtAnchor) {
-  m_rtAnchor = rtAnchor;
-}
-
-void IFWL_ToolTip::Show() {
-  IFWL_ToolTipDP* pData =
-      static_cast<IFWL_ToolTipDP*>(m_pProperties->m_pDataProvider);
-  int32_t nInitDelay = pData->GetInitialDelay(this);
-  if ((m_pProperties->m_dwStates & FWL_WGTSTATE_Invisible))
-    m_pTimerInfoShow = m_TimerShow.StartTimer(nInitDelay, false);
-}
-
-void IFWL_ToolTip::Hide() {
-  SetStates(FWL_WGTSTATE_Invisible, true);
-  if (m_pTimerInfoHide) {
-    m_pTimerInfoHide->StopTimer();
-    m_pTimerInfoHide = nullptr;
-  }
-  if (m_pTimerInfoShow) {
-    m_pTimerInfoShow->StopTimer();
-    m_pTimerInfoShow = nullptr;
   }
 }
 

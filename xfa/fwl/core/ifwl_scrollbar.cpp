@@ -38,10 +38,7 @@ IFWL_ScrollBar::IFWL_ScrollBar(
       m_cpTrackPointX(0),
       m_cpTrackPointY(0),
       m_iMouseWheel(0),
-      m_bTrackMouseLeave(false),
-      m_bMouseHover(false),
       m_bMouseDown(false),
-      m_bRepaintThumb(false),
       m_fButtonLen(0),
       m_bMinSize(false),
       m_bCustomLayout(false),
@@ -109,59 +106,11 @@ void IFWL_ScrollBar::DrawWidget(CFX_Graphics* pGraphics,
   DrawThumb(pGraphics, pTheme, pMatrix);
 }
 
-inline bool IFWL_ScrollBar::IsVertical() {
-  return m_pProperties->m_dwStyleExes & FWL_STYLEEXT_SCB_Vert;
-}
-
-FWL_Error IFWL_ScrollBar::GetRange(FX_FLOAT& fMin, FX_FLOAT& fMax) {
-  fMin = m_fRangeMin;
-  fMax = m_fRangeMax;
-  return FWL_Error::Succeeded;
-}
-
-FWL_Error IFWL_ScrollBar::SetRange(FX_FLOAT fMin, FX_FLOAT fMax) {
-  m_fRangeMin = fMin;
-  m_fRangeMax = fMax;
-  return FWL_Error::Succeeded;
-}
-
-FX_FLOAT IFWL_ScrollBar::GetPageSize() {
-  return m_fPageSize;
-}
-
-FWL_Error IFWL_ScrollBar::SetPageSize(FX_FLOAT fPageSize) {
-  m_fPageSize = fPageSize;
-  return FWL_Error::Succeeded;
-}
-
-FX_FLOAT IFWL_ScrollBar::GetStepSize() {
-  return m_fStepSize;
-}
-
-FWL_Error IFWL_ScrollBar::SetStepSize(FX_FLOAT fStepSize) {
-  m_fStepSize = fStepSize;
-  return FWL_Error::Succeeded;
-}
-
-FX_FLOAT IFWL_ScrollBar::GetPos() {
-  return m_fPos;
-}
-
-FWL_Error IFWL_ScrollBar::SetPos(FX_FLOAT fPos) {
-  m_fPos = fPos;
-  return FWL_Error::Succeeded;
-}
-
-FX_FLOAT IFWL_ScrollBar::GetTrackPos() {
-  return m_fTrackPos;
-}
-
-FWL_Error IFWL_ScrollBar::SetTrackPos(FX_FLOAT fTrackPos) {
+void IFWL_ScrollBar::SetTrackPos(FX_FLOAT fTrackPos) {
   m_fTrackPos = fTrackPos;
   CalcThumbButtonRect(m_rtThumb);
   CalcMinTrackRect(m_rtMinTrack);
   CalcMaxTrackRect(m_rtMaxTrack);
-  return FWL_Error::Succeeded;
 }
 
 bool IFWL_ScrollBar::DoScroll(uint32_t dwCode, FX_FLOAT fPos) {
@@ -171,21 +120,15 @@ bool IFWL_ScrollBar::DoScroll(uint32_t dwCode, FX_FLOAT fPos) {
     case FWL_SCBCODE_PageBackward:
     case FWL_SCBCODE_PageForward:
     case FWL_SCBCODE_StepBackward:
-      break;
     case FWL_SCBCODE_StepForward:
-      break;
     case FWL_SCBCODE_Pos:
     case FWL_SCBCODE_TrackPos:
     case FWL_SCBCODE_EndScroll:
       break;
-    default: { return false; }
+    default:
+      return false;
   }
   return OnScroll(dwCode, fPos);
-}
-
-FWL_Error IFWL_ScrollBar::SetOuter(IFWL_Widget* pOuter) {
-  m_pOuter = pOuter;
-  return FWL_Error::Succeeded;
 }
 
 void IFWL_ScrollBar::DrawTrack(CFX_Graphics* pGraphics,

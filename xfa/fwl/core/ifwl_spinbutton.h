@@ -21,8 +21,8 @@ FWL_EVENT_DEF(CFWL_EvtSpbClick, CFWL_EventType::Click, bool m_bUp;)
 
 class IFWL_SpinButton : public IFWL_Widget {
  public:
-  explicit IFWL_SpinButton(const IFWL_App* app,
-                           std::unique_ptr<CFWL_WidgetProperties> properties);
+  IFWL_SpinButton(const IFWL_App* app,
+                  std::unique_ptr<CFWL_WidgetProperties> properties);
   ~IFWL_SpinButton() override;
 
   // IFWL_Widget
@@ -37,10 +37,7 @@ class IFWL_SpinButton : public IFWL_Widget {
   void OnDrawWidget(CFX_Graphics* pGraphics,
                     const CFX_Matrix* pMatrix) override;
 
-  FWL_Error EnableButton(bool bEnable, bool bUp = true);
-  bool IsButtonEnable(bool bUp = true);
-
- protected:
+ private:
   class Timer : public IFWL_Timer {
    public:
     explicit Timer(IFWL_SpinButton* pToolTip);
@@ -50,12 +47,20 @@ class IFWL_SpinButton : public IFWL_Widget {
   };
   friend class IFWL_SpinButton::Timer;
 
+  void EnableButton(bool bEnable, bool bUp = true);
+  bool IsButtonEnabled(bool bUp = true);
   void DrawUpButton(CFX_Graphics* pGraphics,
                     IFWL_ThemeProvider* pTheme,
                     const CFX_Matrix* pMatrix);
   void DrawDownButton(CFX_Graphics* pGraphics,
                       IFWL_ThemeProvider* pTheme,
                       const CFX_Matrix* pMatrix);
+  void OnFocusChanged(CFWL_Message* pMsg, bool bSet);
+  void OnLButtonDown(CFWL_MsgMouse* pMsg);
+  void OnLButtonUp(CFWL_MsgMouse* pMsg);
+  void OnMouseMove(CFWL_MsgMouse* pMsg);
+  void OnMouseLeave(CFWL_MsgMouse* pMsg);
+  void OnKeyDown(CFWL_MsgKey* pMsg);
 
   CFX_RectF m_rtClient;
   CFX_RectF m_rtUpButton;
@@ -66,14 +71,6 @@ class IFWL_SpinButton : public IFWL_Widget {
   bool m_bLButtonDwn;
   IFWL_TimerInfo* m_pTimerInfo;
   IFWL_SpinButton::Timer m_Timer;
-
- private:
-  void OnFocusChanged(CFWL_Message* pMsg, bool bSet);
-  void OnLButtonDown(CFWL_MsgMouse* pMsg);
-  void OnLButtonUp(CFWL_MsgMouse* pMsg);
-  void OnMouseMove(CFWL_MsgMouse* pMsg);
-  void OnMouseLeave(CFWL_MsgMouse* pMsg);
-  void OnKeyDown(CFWL_MsgKey* pMsg);
 };
 
 #endif  // XFA_FWL_CORE_IFWL_SPINBUTTON_H_

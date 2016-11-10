@@ -9,7 +9,6 @@
 
 #include "core/fxcrt/fx_system.h"
 #include "xfa/fwl/core/cfwl_widgetproperties.h"
-#include "xfa/fwl/core/fwl_error.h"
 #include "xfa/fwl/core/ifwl_dataprovider.h"
 #include "xfa/fwl/core/ifwl_timer.h"
 #include "xfa/fwl/core/ifwl_widget.h"
@@ -51,21 +50,25 @@ class IFWL_ScrollBar : public IFWL_Widget {
   void OnDrawWidget(CFX_Graphics* pGraphics,
                     const CFX_Matrix* pMatrix) override;
 
-  bool IsVertical();
-  FWL_Error GetRange(FX_FLOAT& fMin, FX_FLOAT& fMax);
-  FWL_Error SetRange(FX_FLOAT fMin, FX_FLOAT fMax);
-  FX_FLOAT GetPageSize();
-  FWL_Error SetPageSize(FX_FLOAT fPageSize);
-  FX_FLOAT GetStepSize();
-  FWL_Error SetStepSize(FX_FLOAT fStepSize);
-  FX_FLOAT GetPos();
-  FWL_Error SetPos(FX_FLOAT fPos);
-  FX_FLOAT GetTrackPos();
-  FWL_Error SetTrackPos(FX_FLOAT fTrackPos);
-  bool DoScroll(uint32_t dwCode, FX_FLOAT fPos = 0.0f);
-  FWL_Error SetOuter(IFWL_Widget* pOuter);
+  void GetRange(FX_FLOAT* fMin, FX_FLOAT* fMax) const {
+    ASSERT(fMin);
+    ASSERT(fMax);
+    *fMin = m_fRangeMin;
+    *fMax = m_fRangeMax;
+  }
+  void SetRange(FX_FLOAT fMin, FX_FLOAT fMax) {
+    m_fRangeMin = fMin;
+    m_fRangeMax = fMax;
+  }
+  FX_FLOAT GetPageSize() const { return m_fPageSize; }
+  void SetPageSize(FX_FLOAT fPageSize) { m_fPageSize = fPageSize; }
+  FX_FLOAT GetStepSize() const { return m_fStepSize; }
+  void SetStepSize(FX_FLOAT fStepSize) { m_fStepSize = fStepSize; }
+  FX_FLOAT GetPos() const { return m_fPos; }
+  void SetPos(FX_FLOAT fPos) { m_fPos = fPos; }
+  void SetTrackPos(FX_FLOAT fTrackPos);
 
- protected:
+ private:
   class Timer : public IFWL_Timer {
    public:
     explicit Timer(IFWL_ScrollBar* pToolTip);
@@ -75,7 +78,9 @@ class IFWL_ScrollBar : public IFWL_Widget {
   };
   friend class IFWL_ScrollBar::Timer;
 
-  IFWL_ScrollBar();
+  bool IsVertical() const {
+    return !!(m_pProperties->m_dwStyleExes & FWL_STYLEEXT_SCB_Vert);
+  }
   void DrawTrack(CFX_Graphics* pGraphics,
                  IFWL_ThemeProvider* pTheme,
                  bool bLower = true,
@@ -98,40 +103,6 @@ class IFWL_ScrollBar : public IFWL_Widget {
   void GetTrackRect(CFX_RectF& rect, bool bLower = true);
   bool SendEvent();
   bool OnScroll(uint32_t dwCode, FX_FLOAT fPos);
-
-  IFWL_TimerInfo* m_pTimerInfo;
-  FX_FLOAT m_fRangeMin;
-  FX_FLOAT m_fRangeMax;
-  FX_FLOAT m_fPageSize;
-  FX_FLOAT m_fStepSize;
-  FX_FLOAT m_fPos;
-  FX_FLOAT m_fTrackPos;
-  int32_t m_iMinButtonState;
-  int32_t m_iMaxButtonState;
-  int32_t m_iThumbButtonState;
-  int32_t m_iMinTrackState;
-  int32_t m_iMaxTrackState;
-  FX_FLOAT m_fLastTrackPos;
-  FX_FLOAT m_cpTrackPointX;
-  FX_FLOAT m_cpTrackPointY;
-  int32_t m_iMouseWheel;
-  bool m_bTrackMouseLeave;
-  bool m_bMouseHover;
-  bool m_bMouseDown;
-  bool m_bRepaintThumb;
-  FX_FLOAT m_fButtonLen;
-  bool m_bMinSize;
-  CFX_RectF m_rtClient;
-  CFX_RectF m_rtThumb;
-  CFX_RectF m_rtMinBtn;
-  CFX_RectF m_rtMaxBtn;
-  CFX_RectF m_rtMinTrack;
-  CFX_RectF m_rtMaxTrack;
-  bool m_bCustomLayout;
-  FX_FLOAT m_fMinThumb;
-  IFWL_ScrollBar::Timer m_Timer;
-
- private:
   void OnLButtonDown(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy);
   void OnLButtonUp(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy);
   void OnMouseMove(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy);
@@ -141,6 +112,7 @@ class IFWL_ScrollBar : public IFWL_Widget {
                     uint32_t dwFlags,
                     FX_FLOAT fDeltaX,
                     FX_FLOAT fDeltaY);
+  bool DoScroll(uint32_t dwCode, FX_FLOAT fPos = 0.0f);
   void DoMouseDown(int32_t iItem,
                    const CFX_RectF& rtItem,
                    int32_t& iState,
@@ -158,6 +130,35 @@ class IFWL_ScrollBar : public IFWL_Widget {
                    FX_FLOAT fy);
   void DoMouseLeave(int32_t iItem, const CFX_RectF& rtItem, int32_t& iState);
   void DoMouseHover(int32_t iItem, const CFX_RectF& rtItem, int32_t& iState);
+
+  IFWL_TimerInfo* m_pTimerInfo;
+  FX_FLOAT m_fRangeMin;
+  FX_FLOAT m_fRangeMax;
+  FX_FLOAT m_fPageSize;
+  FX_FLOAT m_fStepSize;
+  FX_FLOAT m_fPos;
+  FX_FLOAT m_fTrackPos;
+  int32_t m_iMinButtonState;
+  int32_t m_iMaxButtonState;
+  int32_t m_iThumbButtonState;
+  int32_t m_iMinTrackState;
+  int32_t m_iMaxTrackState;
+  FX_FLOAT m_fLastTrackPos;
+  FX_FLOAT m_cpTrackPointX;
+  FX_FLOAT m_cpTrackPointY;
+  int32_t m_iMouseWheel;
+  bool m_bMouseDown;
+  FX_FLOAT m_fButtonLen;
+  bool m_bMinSize;
+  CFX_RectF m_rtClient;
+  CFX_RectF m_rtThumb;
+  CFX_RectF m_rtMinBtn;
+  CFX_RectF m_rtMaxBtn;
+  CFX_RectF m_rtMinTrack;
+  CFX_RectF m_rtMaxTrack;
+  bool m_bCustomLayout;
+  FX_FLOAT m_fMinThumb;
+  IFWL_ScrollBar::Timer m_Timer;
 };
 
 #endif  // XFA_FWL_CORE_IFWL_SCROLLBAR_H_

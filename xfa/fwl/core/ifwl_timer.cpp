@@ -28,6 +28,6 @@ IFWL_TimerInfo* IFWL_Timer::StartTimer(uint32_t dwElapse, bool bImmediately) {
   return pTimerInfo;
 }
 
-FWL_Error IFWL_TimerInfo::StopTimer() {
-  return m_pMgr->Stop(this);
+void IFWL_TimerInfo::StopTimer() {
+  m_pMgr->Stop(this);
 }

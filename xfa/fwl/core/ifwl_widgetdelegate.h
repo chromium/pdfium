@@ -9,8 +9,6 @@
 
 #include <stdint.h>
 
-#include "xfa/fwl/core/fwl_error.h"
-
 class CFWL_Event;
 class CFWL_Message;
 class CFX_Graphics;

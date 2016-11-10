@@ -8,7 +8,6 @@
 #define XFA_FWL_CORE_IFWL_TIMER_H_
 
 #include "core/fxcrt/fx_system.h"
-#include "xfa/fwl/core/fwl_error.h"
 
 class IFWL_AdapterTimerMgr;
 class IFWL_TimerInfo;
@@ -33,9 +32,9 @@ class IFWL_TimerInfo {
   }
   virtual ~IFWL_TimerInfo() {}
 
-  FWL_Error StopTimer();
+  void StopTimer();
 
- protected:
+ private:
   IFWL_AdapterTimerMgr* m_pMgr;  // Not owned.
 };
 
