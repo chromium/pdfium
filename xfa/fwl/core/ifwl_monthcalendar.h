@@ -37,10 +37,6 @@ FWL_EVENT_DEF(CFWL_EventMcdDateChanged,
 class CFWL_MsgMouse;
 class IFWL_Widget;
 
-struct FWL_DATEINFO;
-
-extern uint8_t FX_DaysInMonth(int32_t iYear, uint8_t iMonth);
-
 class IFWL_MonthCalendarDP : public IFWL_DataProvider {
  public:
   virtual int32_t GetCurDay(IFWL_Widget* pWidget) = 0;
@@ -65,45 +61,56 @@ class IFWL_MonthCalendar : public IFWL_Widget {
   void OnDrawWidget(CFX_Graphics* pGraphics,
                     const CFX_Matrix* pMatrix) override;
 
-  int32_t CountSelect();
-  bool GetSelect(int32_t& iYear,
-                 int32_t& iMonth,
-                 int32_t& iDay,
-                 int32_t nIndex = 0);
-  bool SetSelect(int32_t iYear, int32_t iMonth, int32_t iDay);
+  void SetSelect(int32_t iYear, int32_t iMonth, int32_t iDay);
 
- protected:
+ private:
   struct DATE {
     DATE() : iYear(0), iMonth(0), iDay(0) {}
+
     DATE(int32_t year, int32_t month, int32_t day)
         : iYear(year), iMonth(month), iDay(day) {}
+
     bool operator<(const DATE& right) {
-      if (iYear < right.iYear) {
+      if (iYear < right.iYear)
         return true;
-      } else if (iYear == right.iYear) {
-        if (iMonth < right.iMonth) {
+      if (iYear == right.iYear) {
+        if (iMonth < right.iMonth)
           return true;
-        } else if (iMonth == right.iMonth) {
+        if (iMonth == right.iMonth)
           return iDay < right.iDay;
-        }
       }
       return false;
     }
+
     bool operator>(const DATE& right) {
-      if (iYear > right.iYear) {
+      if (iYear > right.iYear)
         return true;
-      } else if (iYear == right.iYear) {
-        if (iMonth > right.iMonth) {
+      if (iYear == right.iYear) {
+        if (iMonth > right.iMonth)
           return true;
-        } else if (iMonth == right.iMonth) {
+        if (iMonth == right.iMonth)
           return iDay > right.iDay;
-        }
       }
       return false;
     }
+
     int32_t iYear;
     int32_t iMonth;
     int32_t iDay;
+  };
+  struct DATEINFO {
+    DATEINFO(int32_t day,
+             int32_t dayofweek,
+             uint32_t dwSt,
+             CFX_RectF rc,
+             CFX_WideString& wsday);
+    ~DATEINFO();
+
+    int32_t iDay;
+    int32_t iDayOfWeek;
+    uint32_t dwStates;
+    CFX_RectF rect;
+    CFX_WideString wsDay;
   };
 
   void DrawBkground(CFX_Graphics* pGraphics,
@@ -148,38 +155,35 @@ class IFWL_MonthCalendar : public IFWL_Widget {
   void DrawDatesInCircle(CFX_Graphics* pGraphics,
                          IFWL_ThemeProvider* pTheme,
                          const CFX_Matrix* pMatrix);
-  void DrawTodayCircle(CFX_Graphics* pGraphics,
-                       IFWL_ThemeProvider* pTheme,
-                       const CFX_Matrix* pMatrix);
   CFX_SizeF CalcSize(bool bAutoSize = false);
-  void LayOut();
+  void Layout();
   void CalcHeadSize();
   void CalcTodaySize();
   void CalDateItem();
   void GetCapValue();
-  int32_t CalWeekNumber(int32_t iYear, int32_t iMonth, int32_t iDay);
-  bool GetMinDate(int32_t& iYear, int32_t& iMonth, int32_t& iDay);
-  bool SetMinDate(int32_t iYear, int32_t iMonth, int32_t iDay);
-  bool GetMaxDate(int32_t& iYear, int32_t& iMonth, int32_t& iDay);
-  bool SetMaxDate(int32_t iYear, int32_t iMonth, int32_t iDay);
-  bool InitDate();
+  void InitDate();
   void ClearDateItem();
-  void ReSetDateItem();
-  bool NextMonth();
-  bool PrevMonth();
+  void ResetDateItem();
+  void NextMonth();
+  void PrevMonth();
   void ChangeToMonth(int32_t iYear, int32_t iMonth);
-  bool RemoveSelDay(int32_t iDay, bool bAll = false);
-  bool AddSelDay(int32_t iDay);
-  bool JumpToToday();
+  void RemoveSelDay(int32_t iDay, bool bAll = false);
+  void AddSelDay(int32_t iDay);
+  void JumpToToday();
   void GetHeadText(int32_t iYear, int32_t iMonth, CFX_WideString& wsHead);
   void GetTodayText(int32_t iYear,
                     int32_t iMonth,
                     int32_t iDay,
                     CFX_WideString& wsToday);
   int32_t GetDayAtPoint(FX_FLOAT x, FX_FLOAT y);
-  bool GetDayRect(int32_t iDay, CFX_RectF& rtDay);
+  void GetDayRect(int32_t iDay, CFX_RectF& rtDay);
+  void OnLButtonDown(CFWL_MsgMouse* pMsg);
+  void OnLButtonUp(CFWL_MsgMouse* pMsg);
+  void DisForm_OnLButtonUp(CFWL_MsgMouse* pMsg);
+  void OnMouseMove(CFWL_MsgMouse* pMsg);
+  void OnMouseLeave(CFWL_MsgMouse* pMsg);
 
-  bool m_bInit;
+  bool m_bInitialized;
   CFX_RectF m_rtHead;
   CFX_RectF m_rtWeek;
   CFX_RectF m_rtLBtn;
@@ -191,11 +195,10 @@ class IFWL_MonthCalendar : public IFWL_Widget {
   CFX_RectF m_rtTodayFlag;
   CFX_RectF m_rtWeekNum;
   CFX_RectF m_rtWeekNumSep;
-  CFX_RectF m_rtTemp;
   CFX_WideString m_wsHead;
   CFX_WideString m_wsToday;
   std::unique_ptr<CFX_DateTime> m_pDateTime;
-  CFX_ArrayTemplate<FWL_DATEINFO*> m_arrDates;
+  CFX_ArrayTemplate<DATEINFO*> m_arrDates;
   int32_t m_iCurYear;
   int32_t m_iCurMonth;
   int32_t m_iYear;
@@ -210,7 +213,6 @@ class IFWL_MonthCalendar : public IFWL_Widget {
   CFX_SizeF m_szCell;
   CFX_SizeF m_szToday;
   CFX_ArrayTemplate<int32_t> m_arrSelDays;
-  int32_t m_iMaxSel;
   CFX_RectF m_rtClient;
   FX_FLOAT m_fHeadWid;
   FX_FLOAT m_fHeadHei;
@@ -239,28 +241,6 @@ class IFWL_MonthCalendar : public IFWL_Widget {
   FX_FLOAT m_fMCWid;
   FX_FLOAT m_fMCHei;
   bool m_bFlag;
-
- private:
-  void OnLButtonDown(CFWL_MsgMouse* pMsg);
-  void OnLButtonUp(CFWL_MsgMouse* pMsg);
-  void DisForm_OnLButtonUp(CFWL_MsgMouse* pMsg);
-  void OnMouseMove(CFWL_MsgMouse* pMsg);
-  void OnMouseLeave(CFWL_MsgMouse* pMsg);
-};
-
-struct FWL_DATEINFO {
-  FWL_DATEINFO(int32_t day,
-               int32_t dayofweek,
-               uint32_t dwSt,
-               CFX_RectF rc,
-               CFX_WideString& wsday);
-  ~FWL_DATEINFO();
-
-  int32_t iDay;
-  int32_t iDayOfWeek;
-  uint32_t dwStates;
-  CFX_RectF rect;
-  CFX_WideString wsDay;
 };
 
 #endif  // XFA_FWL_CORE_IFWL_MONTHCALENDAR_H_
