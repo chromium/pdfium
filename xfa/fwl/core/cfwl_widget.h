@@ -28,8 +28,6 @@ class CFWL_Widget {
 
   void GetWidgetRect(CFX_RectF& rect, bool bAutoSize = false);
   void SetWidgetRect(const CFX_RectF& rect);
-  void GetGlobalRect(CFX_RectF& rect);
-  void GetClientRect(CFX_RectF& rtClient);
 
   void ModifyStyles(uint32_t dwStylesAdded, uint32_t dwStylesRemoved);
   uint32_t GetStylesEx();

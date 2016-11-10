@@ -43,19 +43,9 @@ void CFWL_Widget::GetWidgetRect(CFX_RectF& rect, bool bAutoSize) {
     m_pIface->GetWidgetRect(rect, bAutoSize);
 }
 
-void CFWL_Widget::GetGlobalRect(CFX_RectF& rect) {
-  if (m_pIface)
-    m_pIface->GetGlobalRect(rect);
-}
-
 void CFWL_Widget::SetWidgetRect(const CFX_RectF& rect) {
   if (m_pIface)
     m_pIface->SetWidgetRect(rect);
-}
-
-void CFWL_Widget::GetClientRect(CFX_RectF& rect) {
-  if (m_pIface)
-    m_pIface->GetClientRect(rect);
 }
 
 void CFWL_Widget::ModifyStyles(uint32_t dwStylesAdded,

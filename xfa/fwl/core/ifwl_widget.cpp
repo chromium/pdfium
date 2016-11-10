@@ -75,19 +75,6 @@ void IFWL_Widget::GetWidgetRect(CFX_RectF& rect, bool bAutoSize) {
   }
 }
 
-void IFWL_Widget::GetGlobalRect(CFX_RectF& rect) {
-  IFWL_Widget* pForm = m_pWidgetMgr->GetSystemFormWidget(this);
-  if (!pForm)
-    return;
-
-  rect.Set(0, 0, m_pProperties->m_rtWidget.width,
-           m_pProperties->m_rtWidget.height);
-  if (pForm == this)
-    return;
-
-  TransformTo(pForm, rect.left, rect.top);
-}
-
 void IFWL_Widget::SetWidgetRect(const CFX_RectF& rect) {
   CFX_RectF rtOld = m_pProperties->m_rtWidget;
   m_pProperties->m_rtWidget = rect;

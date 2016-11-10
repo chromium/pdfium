@@ -88,7 +88,6 @@ class IFWL_Widget : public IFWL_WidgetDelegate {
                     const CFX_Matrix* pMatrix = nullptr) override;
 
   void SetWidgetRect(const CFX_RectF& rect);
-  void GetGlobalRect(CFX_RectF& rect);
 
   void SetParent(IFWL_Widget* pParent);
 

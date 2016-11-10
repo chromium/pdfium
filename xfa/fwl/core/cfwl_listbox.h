@@ -22,28 +22,6 @@ class CFWL_ListBox : public CFWL_Widget, public IFWL_ListBoxDP {
 
   void Initialize();
 
-  FWL_Error AddDIBitmap(CFX_DIBitmap* pDIB, CFWL_ListItem* pItem);
-  CFWL_ListItem* AddString(const CFX_WideStringC& wsAdd, bool bSelect = false);
-  bool DeleteString(CFWL_ListItem* pItem);
-  void DeleteAll();
-  int32_t CountSelItems();
-  CFWL_ListItem* GetSelItem(int32_t nIndexSel);
-  int32_t GetSelIndex(int32_t nIndex);
-  void SetSelItem(CFWL_ListItem* pItem, bool bSelect = true);
-  void GetItemText(CFWL_ListItem* pItem, CFX_WideString& wsText);
-  void GetScrollPos(FX_FLOAT& fPos, bool bVert = true);
-  FWL_Error SetItemHeight(FX_FLOAT fItemHeight);
-  CFWL_ListItem* GetFocusItem();
-  FWL_Error SetFocusItem(CFWL_ListItem* pItem);
-  int32_t CountItems();
-  CFWL_ListItem* GetItem(int32_t nIndex);
-  FWL_Error SetItemString(CFWL_ListItem* pItem, const CFX_WideStringC& wsText);
-  FWL_Error GetItemString(CFWL_ListItem* pItem, CFX_WideString& wsText);
-  FWL_Error SetItemData(CFWL_ListItem* pItem, void* pData);
-  void* GetItemData(CFWL_ListItem* pItem);
-  CFWL_ListItem* GetItemAtPoint(FX_FLOAT fx, FX_FLOAT fy);
-  uint32_t GetItemStates(CFWL_ListItem* pItem);
-
   // IFWL_DataProvider:
   FWL_Error GetCaption(IFWL_Widget* pWidget,
                        CFX_WideString& wsCaption) override;
@@ -87,10 +65,26 @@ class CFWL_ListBox : public CFWL_Widget, public IFWL_ListBoxDP {
                          CFWL_ListItem* pItem,
                          uint32_t dwCheckState) override;
 
+  CFWL_ListItem* AddString(const CFX_WideStringC& wsAdd, bool bSelect = false);
+  bool DeleteString(CFWL_ListItem* pItem);
+  void DeleteAll();
+
+  int32_t CountSelItems();
+
+  void SetSelItem(CFWL_ListItem* pItem, bool bSelect = true);
+  CFWL_ListItem* GetSelItem(int32_t nIndexSel);
+  int32_t GetSelIndex(int32_t nIndex);
+
+  void GetScrollPos(FX_FLOAT& fPos, bool bVert = true);
+
+  CFWL_ListItem* GetItem(int32_t nIndex);
+  void GetItemText(CFWL_ListItem* pItem, CFX_WideString& wsText);
+  uint32_t GetItemStates(CFWL_ListItem* pItem);
+
  private:
+  int32_t CountItems();
+
   std::vector<std::unique_ptr<CFWL_ListItem>> m_ItemArray;
-  CFX_WideString m_wsData;
-  FX_FLOAT m_fItemHeight;
 };
 
 #endif  // XFA_FWL_CORE_CFWL_LISTBOX_H_

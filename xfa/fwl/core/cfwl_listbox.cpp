@@ -32,11 +32,6 @@ void CFWL_ListBox::Initialize() {
   CFWL_Widget::Initialize();
 }
 
-FWL_Error CFWL_ListBox::AddDIBitmap(CFX_DIBitmap* pDIB, CFWL_ListItem* pItem) {
-  static_cast<CFWL_ListItem*>(pItem)->m_pDIB = pDIB;
-  return FWL_Error::Succeeded;
-}
-
 CFWL_ListItem* CFWL_ListBox::AddString(const CFX_WideStringC& wsAdd,
                                        bool bSelect) {
   std::unique_ptr<CFWL_ListItem> pItem(new CFWL_ListItem);
@@ -106,25 +101,6 @@ void CFWL_ListBox::GetScrollPos(FX_FLOAT& fPos, bool bVert) {
     ToListBox(GetWidget())->GetScrollPos(fPos, bVert);
 }
 
-FWL_Error CFWL_ListBox::SetItemHeight(FX_FLOAT fItemHeight) {
-  m_fItemHeight = fItemHeight;
-  return FWL_Error::Succeeded;
-}
-
-CFWL_ListItem* CFWL_ListBox::GetFocusItem() {
-  for (const auto& pItem : m_ItemArray) {
-    if (pItem->m_dwStates & FWL_ITEMSTATE_LTB_Focused)
-      return pItem.get();
-  }
-  return nullptr;
-}
-
-FWL_Error CFWL_ListBox::SetFocusItem(CFWL_ListItem* pItem) {
-  int32_t nIndex = GetItemIndex(GetWidget(), pItem);
-  m_ItemArray[nIndex]->m_dwStates |= FWL_ITEMSTATE_LTB_Focused;
-  return FWL_Error::Succeeded;
-}
-
 int32_t CFWL_ListBox::CountItems() {
   return pdfium::CollectionSize<int32_t>(m_ItemArray);
 }
@@ -136,58 +112,6 @@ CFWL_ListItem* CFWL_ListBox::GetItem(int32_t nIndex) {
   return m_ItemArray[nIndex].get();
 }
 
-FWL_Error CFWL_ListBox::SetItemString(CFWL_ListItem* pItem,
-                                      const CFX_WideStringC& wsText) {
-  if (!pItem)
-    return FWL_Error::Indefinite;
-  static_cast<CFWL_ListItem*>(pItem)->m_wsText = wsText;
-  return FWL_Error::Succeeded;
-}
-
-FWL_Error CFWL_ListBox::GetItemString(CFWL_ListItem* pItem,
-                                      CFX_WideString& wsText) {
-  if (!pItem)
-    return FWL_Error::Indefinite;
-  wsText = static_cast<CFWL_ListItem*>(pItem)->m_wsText;
-  return FWL_Error::Succeeded;
-}
-
-FWL_Error CFWL_ListBox::SetItemData(CFWL_ListItem* pItem, void* pData) {
-  if (!pItem)
-    return FWL_Error::Indefinite;
-  static_cast<CFWL_ListItem*>(pItem)->m_pData = pData;
-  return FWL_Error::Succeeded;
-}
-
-void* CFWL_ListBox::GetItemData(CFWL_ListItem* pItem) {
-  return pItem ? static_cast<CFWL_ListItem*>(pItem)->m_pData : nullptr;
-}
-
-CFWL_ListItem* CFWL_ListBox::GetItemAtPoint(FX_FLOAT fx, FX_FLOAT fy) {
-  CFX_RectF rtClient;
-  GetWidget()->GetClientRect(rtClient);
-  fx -= rtClient.left;
-  fy -= rtClient.top;
-  FX_FLOAT fPosX = 0;
-  FX_FLOAT fPosY = 0;
-  ToListBox(GetWidget())->GetScrollPos(fx);
-  ToListBox(GetWidget())->GetScrollPos(fy, false);
-  int32_t nCount = CountItems(nullptr);
-  for (int32_t i = 0; i < nCount; i++) {
-    CFWL_ListItem* pItem = GetItem(nullptr, i);
-    if (!pItem) {
-      continue;
-    }
-    CFX_RectF rtItem;
-    GetItemRect(nullptr, pItem, rtItem);
-    rtItem.Offset(-fPosX, -fPosY);
-    if (rtItem.Contains(fx, fy)) {
-      return pItem;
-    }
-  }
-  return nullptr;
-}
-
 uint32_t CFWL_ListBox::GetItemStates(CFWL_ListItem* pItem) {
   if (!pItem)
     return 0;
@@ -197,7 +121,7 @@ uint32_t CFWL_ListBox::GetItemStates(CFWL_ListItem* pItem) {
 
 FWL_Error CFWL_ListBox::GetCaption(IFWL_Widget* pWidget,
                                    CFX_WideString& wsCaption) {
-  wsCaption = m_wsData;
+  wsCaption = L"";
   return FWL_Error::Succeeded;
 }
 
@@ -278,7 +202,7 @@ void CFWL_ListBox::SetItemRect(IFWL_Widget* pWidget,
 }
 
 FX_FLOAT CFWL_ListBox::GetItemHeight(IFWL_Widget* pWidget) {
-  return m_fItemHeight;
+  return 20;
 }
 
 CFX_DIBitmap* CFWL_ListBox::GetItemIcon(IFWL_Widget* pWidget,
