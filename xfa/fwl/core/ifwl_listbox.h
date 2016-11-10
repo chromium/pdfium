@@ -60,42 +60,36 @@ class IFWL_ListBoxDP : public IFWL_DataProvider {
                             int32_t nIndex) = 0;
   virtual uint32_t GetItemStyles(IFWL_Widget* pWidget,
                                  CFWL_ListItem* pItem) = 0;
-  virtual FWL_Error GetItemText(IFWL_Widget* pWidget,
-                                CFWL_ListItem* pItem,
-                                CFX_WideString& wsText) = 0;
-  virtual FWL_Error GetItemRect(IFWL_Widget* pWidget,
-                                CFWL_ListItem* pItem,
-                                CFX_RectF& rtItem) = 0;
+  virtual void GetItemText(IFWL_Widget* pWidget,
+                           CFWL_ListItem* pItem,
+                           CFX_WideString& wsText) = 0;
+  virtual void GetItemRect(IFWL_Widget* pWidget,
+                           CFWL_ListItem* pItem,
+                           CFX_RectF& rtItem) = 0;
   virtual void* GetItemData(IFWL_Widget* pWidget, CFWL_ListItem* pItem) = 0;
-  virtual FWL_Error SetItemStyles(IFWL_Widget* pWidget,
-                                  CFWL_ListItem* pItem,
-                                  uint32_t dwStyle) = 0;
-  virtual FWL_Error SetItemText(IFWL_Widget* pWidget,
-                                CFWL_ListItem* pItem,
-                                const FX_WCHAR* pszText) = 0;
-  virtual FWL_Error SetItemRect(IFWL_Widget* pWidget,
-                                CFWL_ListItem* pItem,
-                                const CFX_RectF& rtItem) = 0;
+  virtual void SetItemStyles(IFWL_Widget* pWidget,
+                             CFWL_ListItem* pItem,
+                             uint32_t dwStyle) = 0;
+  virtual void SetItemText(IFWL_Widget* pWidget,
+                           CFWL_ListItem* pItem,
+                           const FX_WCHAR* pszText) = 0;
+  virtual void SetItemRect(IFWL_Widget* pWidget,
+                           CFWL_ListItem* pItem,
+                           const CFX_RectF& rtItem) = 0;
   virtual FX_FLOAT GetItemHeight(IFWL_Widget* pWidget) = 0;
   virtual CFX_DIBitmap* GetItemIcon(IFWL_Widget* pWidget,
                                     CFWL_ListItem* pItem) = 0;
-  virtual FWL_Error GetItemCheckRect(IFWL_Widget* pWidget,
-                                     CFWL_ListItem* pItem,
-                                     CFX_RectF& rtCheck) = 0;
-  virtual FWL_Error SetItemCheckRect(IFWL_Widget* pWidget,
-                                     CFWL_ListItem* pItem,
-                                     const CFX_RectF& rtCheck) = 0;
+  virtual void GetItemCheckRect(IFWL_Widget* pWidget,
+                                CFWL_ListItem* pItem,
+                                CFX_RectF& rtCheck) = 0;
+  virtual void SetItemCheckRect(IFWL_Widget* pWidget,
+                                CFWL_ListItem* pItem,
+                                const CFX_RectF& rtCheck) = 0;
   virtual uint32_t GetItemCheckState(IFWL_Widget* pWidget,
                                      CFWL_ListItem* pItem) = 0;
-  virtual FWL_Error SetItemCheckState(IFWL_Widget* pWidget,
-                                      CFWL_ListItem* pItem,
-                                      uint32_t dwCheckState) = 0;
-};
-
-class IFWL_ListBoxCompare {
- public:
-  virtual ~IFWL_ListBoxCompare() {}
-  virtual int32_t Compare(CFWL_ListItem* hLeft, CFWL_ListItem* hRight) = 0;
+  virtual void SetItemCheckState(IFWL_Widget* pWidget,
+                                 CFWL_ListItem* pItem,
+                                 uint32_t dwCheckState) = 0;
 };
 
 class IFWL_ListBox : public IFWL_Widget {
@@ -121,27 +115,32 @@ class IFWL_ListBox : public IFWL_Widget {
   int32_t CountSelItems();
   CFWL_ListItem* GetSelItem(int32_t nIndexSel);
   int32_t GetSelIndex(int32_t nIndex);
-  FWL_Error SetSelItem(CFWL_ListItem* hItem, bool bSelect = true);
-  FWL_Error GetItemText(CFWL_ListItem* hItem, CFX_WideString& wsText);
-  FWL_Error GetScrollPos(FX_FLOAT& fPos, bool bVert = true);
-  FWL_Error* Sort(IFWL_ListBoxCompare* pCom);
+  void SetSelItem(CFWL_ListItem* hItem, bool bSelect = true);
+  void GetItemText(CFWL_ListItem* hItem, CFX_WideString& wsText);
+  void GetScrollPos(FX_FLOAT& fPos, bool bVert = true);
 
  protected:
-  friend class CFWL_ListBoxImpDelegate;
-
   CFWL_ListItem* GetItem(CFWL_ListItem* hItem, uint32_t dwKeyCode);
   void SetSelection(CFWL_ListItem* hStart, CFWL_ListItem* hEnd, bool bSelected);
+  CFWL_ListItem* GetItemAtPoint(FX_FLOAT fx, FX_FLOAT fy);
+  bool ScrollToVisible(CFWL_ListItem* hItem);
+  FX_FLOAT CalcItemHeight();
+  void InitScrollBar(bool bVert = true);
+  bool IsShowScrollBar(bool bVert);
+  FX_FLOAT GetItemHeight() const { return m_fItemHeight; }
+  IFWL_ScrollBar* GetVertScrollBar() const { return m_pVertScrollBar.get(); }
+  const CFX_RectF& GetRTClient() const { return m_rtClient; }
+
+ private:
   void SetSelectionDirect(CFWL_ListItem* hItem, bool bSelect);
   bool IsItemSelected(CFWL_ListItem* hItem);
   void ClearSelection();
   void SelectAll();
   CFWL_ListItem* GetFocusedItem();
   void SetFocusItem(CFWL_ListItem* hItem);
-  CFWL_ListItem* GetItemAtPoint(FX_FLOAT fx, FX_FLOAT fy);
   bool GetItemCheckRect(CFWL_ListItem* hItem, CFX_RectF& rtCheck);
   bool SetItemChecked(CFWL_ListItem* hItem, bool bChecked);
   bool GetItemChecked(CFWL_ListItem* hItem);
-  bool ScrollToVisible(CFWL_ListItem* hItem);
   void DrawBkground(CFX_Graphics* pGraphics,
                     IFWL_ThemeProvider* pTheme,
                     const CFX_Matrix* pMatrix = nullptr);
@@ -163,10 +162,15 @@ class IFWL_ListBox : public IFWL_Widget {
                    bool bAutoSize = false);
   FX_FLOAT GetMaxTextWidth();
   FX_FLOAT GetScrollWidth();
-  FX_FLOAT GetItemHeigt();
-  void InitScrollBar(bool bVert = true);
-  bool IsShowScrollBar(bool bVert);
   void ProcessSelChanged();
+  void OnFocusChanged(CFWL_Message* pMsg, bool bSet = true);
+  void OnLButtonDown(CFWL_MsgMouse* pMsg);
+  void OnLButtonUp(CFWL_MsgMouse* pMsg);
+  void OnMouseWheel(CFWL_MsgMouseWheel* pMsg);
+  void OnKeyDown(CFWL_MsgKey* pMsg);
+  void OnVK(CFWL_ListItem* hItem, bool bShift, bool bCtrl);
+  bool OnScroll(IFWL_ScrollBar* pScrollBar, FWL_SCBCODE dwCode, FX_FLOAT fPos);
+  void DispatchSelChangedEv();
 
   CFX_RectF m_rtClient;
   CFX_RectF m_rtStatic;
@@ -180,16 +184,6 @@ class IFWL_ListBox : public IFWL_Widget {
   FX_FLOAT m_fScorllBarWidth;
   bool m_bLButtonDown;
   IFWL_ThemeProvider* m_pScrollBarTP;
-
- private:
-  void OnFocusChanged(CFWL_Message* pMsg, bool bSet = true);
-  void OnLButtonDown(CFWL_MsgMouse* pMsg);
-  void OnLButtonUp(CFWL_MsgMouse* pMsg);
-  void OnMouseWheel(CFWL_MsgMouseWheel* pMsg);
-  void OnKeyDown(CFWL_MsgKey* pMsg);
-  void OnVK(CFWL_ListItem* hItem, bool bShift, bool bCtrl);
-  bool OnScroll(IFWL_ScrollBar* pScrollBar, FWL_SCBCODE dwCode, FX_FLOAT fPos);
-  void DispatchSelChangedEv();
 };
 
 #endif  // XFA_FWL_CORE_IFWL_LISTBOX_H_

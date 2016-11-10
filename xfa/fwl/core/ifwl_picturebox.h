@@ -8,7 +8,6 @@
 #define XFA_FWL_CORE_IFWL_PICTUREBOX_H_
 
 #include "xfa/fwl/core/cfwl_widgetproperties.h"
-#include "xfa/fwl/core/fwl_error.h"
 #include "xfa/fwl/core/ifwl_dataprovider.h"
 #include "xfa/fwl/core/ifwl_widget.h"
 
@@ -55,18 +54,14 @@ class IFWL_PictureBox : public IFWL_Widget {
   void OnDrawWidget(CFX_Graphics* pGraphics,
                     const CFX_Matrix* pMatrix) override;
 
- protected:
+ private:
   void DrawBkground(CFX_Graphics* pGraphics,
                     IFWL_ThemeProvider* pTheme,
                     const CFX_Matrix* pMatrix = nullptr);
-  bool VStyle(uint32_t dwStyle);
 
   CFX_RectF m_rtClient;
   CFX_RectF m_rtImage;
   CFX_Matrix m_matrix;
-  bool m_bTop;
-  bool m_bVCenter;
-  bool m_bButton;
 };
 
 #endif  // XFA_FWL_CORE_IFWL_PICTUREBOX_H_

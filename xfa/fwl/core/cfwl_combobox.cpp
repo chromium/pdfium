@@ -281,55 +281,46 @@ uint32_t CFWL_ComboBox::GetItemStyles(IFWL_Widget* pWidget,
   return static_cast<CFWL_ListItem*>(pItem)->m_dwStyles;
 }
 
-FWL_Error CFWL_ComboBox::GetItemText(IFWL_Widget* pWidget,
-                                     CFWL_ListItem* pItem,
-                                     CFX_WideString& wsText) {
-  if (!pItem)
-    return FWL_Error::Indefinite;
-  wsText = static_cast<CFWL_ListItem*>(pItem)->m_wsText;
-  return FWL_Error::Succeeded;
+void CFWL_ComboBox::GetItemText(IFWL_Widget* pWidget,
+                                CFWL_ListItem* pItem,
+                                CFX_WideString& wsText) {
+  if (pItem)
+    wsText = static_cast<CFWL_ListItem*>(pItem)->m_wsText;
 }
 
-FWL_Error CFWL_ComboBox::GetItemRect(IFWL_Widget* pWidget,
-                                     CFWL_ListItem* pItem,
-                                     CFX_RectF& rtItem) {
+void CFWL_ComboBox::GetItemRect(IFWL_Widget* pWidget,
+                                CFWL_ListItem* pItem,
+                                CFX_RectF& rtItem) {
   if (!pItem)
-    return FWL_Error::Indefinite;
+    return;
   CFWL_ListItem* pComboItem = static_cast<CFWL_ListItem*>(pItem);
   rtItem.Set(pComboItem->m_rtItem.left, pComboItem->m_rtItem.top,
              pComboItem->m_rtItem.width, pComboItem->m_rtItem.height);
-  return FWL_Error::Succeeded;
 }
 
 void* CFWL_ComboBox::GetItemData(IFWL_Widget* pWidget, CFWL_ListItem* pItem) {
   return pItem ? static_cast<CFWL_ListItem*>(pItem)->m_pData : nullptr;
 }
 
-FWL_Error CFWL_ComboBox::SetItemStyles(IFWL_Widget* pWidget,
-                                       CFWL_ListItem* pItem,
-                                       uint32_t dwStyle) {
-  if (!pItem)
-    return FWL_Error::Indefinite;
-  static_cast<CFWL_ListItem*>(pItem)->m_dwStyles = dwStyle;
-  return FWL_Error::Succeeded;
+void CFWL_ComboBox::SetItemStyles(IFWL_Widget* pWidget,
+                                  CFWL_ListItem* pItem,
+                                  uint32_t dwStyle) {
+  if (pItem)
+    static_cast<CFWL_ListItem*>(pItem)->m_dwStyles = dwStyle;
 }
 
-FWL_Error CFWL_ComboBox::SetItemText(IFWL_Widget* pWidget,
-                                     CFWL_ListItem* pItem,
-                                     const FX_WCHAR* pszText) {
-  if (!pItem)
-    return FWL_Error::Indefinite;
-  static_cast<CFWL_ListItem*>(pItem)->m_wsText = pszText;
-  return FWL_Error::Succeeded;
+void CFWL_ComboBox::SetItemText(IFWL_Widget* pWidget,
+                                CFWL_ListItem* pItem,
+                                const FX_WCHAR* pszText) {
+  if (pItem)
+    static_cast<CFWL_ListItem*>(pItem)->m_wsText = pszText;
 }
 
-FWL_Error CFWL_ComboBox::SetItemRect(IFWL_Widget* pWidget,
-                                     CFWL_ListItem* pItem,
-                                     const CFX_RectF& rtItem) {
-  if (!pItem)
-    return FWL_Error::Indefinite;
-  static_cast<CFWL_ListItem*>(pItem)->m_rtItem = rtItem;
-  return FWL_Error::Succeeded;
+void CFWL_ComboBox::SetItemRect(IFWL_Widget* pWidget,
+                                CFWL_ListItem* pItem,
+                                const CFX_RectF& rtItem) {
+  if (pItem)
+    static_cast<CFWL_ListItem*>(pItem)->m_rtItem = rtItem;
 }
 
 FX_FLOAT CFWL_ComboBox::GetItemHeight(IFWL_Widget* pWidget) {
@@ -341,18 +332,16 @@ CFX_DIBitmap* CFWL_ComboBox::GetItemIcon(IFWL_Widget* pWidget,
   return pItem ? static_cast<CFWL_ListItem*>(pItem)->m_pDIB : nullptr;
 }
 
-FWL_Error CFWL_ComboBox::GetItemCheckRect(IFWL_Widget* pWidget,
-                                          CFWL_ListItem* pItem,
-                                          CFX_RectF& rtCheck) {
+void CFWL_ComboBox::GetItemCheckRect(IFWL_Widget* pWidget,
+                                     CFWL_ListItem* pItem,
+                                     CFX_RectF& rtCheck) {
   rtCheck = static_cast<CFWL_ListItem*>(pItem)->m_rtCheckBox;
-  return FWL_Error::Succeeded;
 }
 
-FWL_Error CFWL_ComboBox::SetItemCheckRect(IFWL_Widget* pWidget,
-                                          CFWL_ListItem* pItem,
-                                          const CFX_RectF& rtCheck) {
+void CFWL_ComboBox::SetItemCheckRect(IFWL_Widget* pWidget,
+                                     CFWL_ListItem* pItem,
+                                     const CFX_RectF& rtCheck) {
   static_cast<CFWL_ListItem*>(pItem)->m_rtCheckBox = rtCheck;
-  return FWL_Error::Succeeded;
 }
 
 uint32_t CFWL_ComboBox::GetItemCheckState(IFWL_Widget* pWidget,
@@ -360,11 +349,10 @@ uint32_t CFWL_ComboBox::GetItemCheckState(IFWL_Widget* pWidget,
   return static_cast<CFWL_ListItem*>(pItem)->m_dwCheckState;
 }
 
-FWL_Error CFWL_ComboBox::SetItemCheckState(IFWL_Widget* pWidget,
-                                           CFWL_ListItem* pItem,
-                                           uint32_t dwCheckState) {
+void CFWL_ComboBox::SetItemCheckState(IFWL_Widget* pWidget,
+                                      CFWL_ListItem* pItem,
+                                      uint32_t dwCheckState) {
   static_cast<CFWL_ListItem*>(pItem)->m_dwCheckState = dwCheckState;
-  return FWL_Error::Succeeded;
 }
 
 FX_FLOAT CFWL_ComboBox::GetListHeight(IFWL_Widget* pWidget) {

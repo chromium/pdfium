@@ -53,7 +53,7 @@ class IFWL_PushButton : public IFWL_Widget {
   void OnDrawWidget(CFX_Graphics* pGraphics,
                     const CFX_Matrix* pMatrix) override;
 
- protected:
+ private:
   void DrawBkground(CFX_Graphics* pGraphics,
                     IFWL_ThemeProvider* pTheme,
                     const CFX_Matrix* pMatrix);
@@ -62,20 +62,18 @@ class IFWL_PushButton : public IFWL_Widget {
                 const CFX_Matrix* pMatrix);
   uint32_t GetPartStates();
   void UpdateTextOutStyles();
-
-  CFX_RectF m_rtClient;
-  CFX_RectF m_rtCaption;
-  bool m_bBtnDown;
-  uint32_t m_dwTTOStyles;
-  int32_t m_iTTOAlign;
-
- private:
   void OnFocusChanged(CFWL_Message* pMsg, bool bSet);
   void OnLButtonDown(CFWL_MsgMouse* pMsg);
   void OnLButtonUp(CFWL_MsgMouse* pMsg);
   void OnMouseMove(CFWL_MsgMouse* pMsg);
   void OnMouseLeave(CFWL_MsgMouse* pMsg);
   void OnKeyDown(CFWL_MsgKey* pMsg);
+
+  CFX_RectF m_rtClient;
+  CFX_RectF m_rtCaption;
+  bool m_bBtnDown;
+  uint32_t m_dwTTOStyles;
+  int32_t m_iTTOAlign;
 };
 
 #endif  // XFA_FWL_CORE_IFWL_PUSHBUTTON_H_

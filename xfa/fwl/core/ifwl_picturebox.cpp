@@ -13,10 +13,7 @@
 IFWL_PictureBox::IFWL_PictureBox(
     const IFWL_App* app,
     std::unique_ptr<CFWL_WidgetProperties> properties)
-    : IFWL_Widget(app, std::move(properties), nullptr),
-      m_bTop(false),
-      m_bVCenter(false),
-      m_bButton(false) {
+    : IFWL_Widget(app, std::move(properties), nullptr) {
   m_rtClient.Reset();
   m_rtImage.Reset();
   m_matrix.SetIdentity();
@@ -98,21 +95,6 @@ void IFWL_PictureBox::DrawBkground(CFX_Graphics* pGraphics,
   pGraphics->DrawImage(pPicture, CFX_PointF((m_rtClient.width - fx) / 2,
                                             (m_rtClient.height - fy) / 2),
                        &matrix);
-}
-
-bool IFWL_PictureBox::VStyle(uint32_t dwStyle) {
-  switch (dwStyle & FWL_STYLEEXT_PTB_VAlignMask) {
-    case FWL_STYLEEXT_PTB_Top:
-      m_bTop = true;
-      return true;
-    case FWL_STYLEEXT_PTB_Vcenter:
-      m_bVCenter = true;
-      return true;
-    case FWL_STYLEEXT_PTB_Bottom:
-      m_bButton = true;
-      return true;
-  }
-  return false;
 }
 
 void IFWL_PictureBox::OnDrawWidget(CFX_Graphics* pGraphics,

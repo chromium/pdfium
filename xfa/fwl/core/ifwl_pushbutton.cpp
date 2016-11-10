@@ -369,7 +369,8 @@ void IFWL_PushButton::UpdateTextOutStyles() {
       m_iTTOAlign = FDE_TTOALIGNMENT_BottomRight;
       break;
     }
-    default: {}
+    default:
+      break;
   }
   m_dwTTOStyles = FDE_TTOSTYLE_SingleLine;
   if (m_pProperties->m_dwStyleExes & FWL_WGTSTYLE_RTLReading) {

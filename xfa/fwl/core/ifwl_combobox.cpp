@@ -291,7 +291,8 @@ FWL_Error IFWL_ComboBox::GetEditText(CFX_WideString& wsText,
     IFWL_ComboBoxDP* pData =
         static_cast<IFWL_ComboBoxDP*>(m_pProperties->m_pDataProvider);
     CFWL_ListItem* hItem = pData->GetItem(this, m_iCurSel);
-    return m_pListBox->GetItemText(hItem, wsText);
+    m_pListBox->GetItemText(hItem, wsText);
+    return FWL_Error::Succeeded;
   }
   return FWL_Error::Indefinite;
 }
@@ -508,7 +509,7 @@ void IFWL_ComboBox::ShowDropList(bool bActivate) {
     CFWL_EvtCmbPreDropDown ev;
     ev.m_pSrcTarget = this;
     DispatchEvent(&ev);
-    m_fItemHeight = m_pListBox->m_fItemHeight;
+    m_fItemHeight = m_pListBox->GetItemHeight();
     m_pListBox->SetFocus(true);
     m_pComboBoxProxy->DoModal();
     m_pListBox->SetFocus(false);
@@ -741,7 +742,7 @@ void IFWL_ComboBox::DisForm_ShowDropList(bool bActivate) {
     }
     ReSetListItemAlignment();
     pComboList->ChangeSelected(m_iCurSel);
-    FX_FLOAT fItemHeight = pComboList->GetItemHeigt();
+    FX_FLOAT fItemHeight = pComboList->CalcItemHeight();
     FX_FLOAT fBorder = GetBorderSize();
     FX_FLOAT fPopupMin = 0.0f;
     if (iItems > 3) {

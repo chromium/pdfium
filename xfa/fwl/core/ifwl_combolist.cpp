@@ -103,13 +103,14 @@ void IFWL_ComboList::OnProcessMessage(CFWL_Message* pMessage) {
     OnDropListFocusChanged(pMessage, dwHashCode == CFWL_MessageType::SetFocus);
   } else if (dwHashCode == CFWL_MessageType::Mouse) {
     CFWL_MsgMouse* pMsg = static_cast<CFWL_MsgMouse*>(pMessage);
-    if (IsShowScrollBar(true) && m_pVertScrollBar) {
+    IFWL_ScrollBar* vertSB = GetVertScrollBar();
+    if (IsShowScrollBar(true) && vertSB) {
       CFX_RectF rect;
-      m_pVertScrollBar->GetWidgetRect(rect);
+      vertSB->GetWidgetRect(rect);
       if (rect.Contains(pMsg->m_fx, pMsg->m_fy)) {
         pMsg->m_fx -= rect.left;
         pMsg->m_fy -= rect.top;
-        m_pVertScrollBar->GetDelegate()->OnProcessMessage(pMsg);
+        vertSB->GetDelegate()->OnProcessMessage(pMsg);
         return;
       }
     }
@@ -152,13 +153,14 @@ void IFWL_ComboList::OnDropListFocusChanged(CFWL_Message* pMsg, bool bSet) {
 }
 
 int32_t IFWL_ComboList::OnDropListMouseMove(CFWL_MsgMouse* pMsg) {
-  if (m_rtClient.Contains(pMsg->m_fx, pMsg->m_fy)) {
+  if (GetRTClient().Contains(pMsg->m_fx, pMsg->m_fy)) {
     if (m_bNotifyOwner) {
       m_bNotifyOwner = false;
     }
-    if (IsShowScrollBar(true) && m_pVertScrollBar) {
+    IFWL_ScrollBar* vertSB = GetVertScrollBar();
+    if (IsShowScrollBar(true) && vertSB) {
       CFX_RectF rect;
-      m_pVertScrollBar->GetWidgetRect(rect);
+      vertSB->GetWidgetRect(rect);
       if (rect.Contains(pMsg->m_fx, pMsg->m_fy)) {
         return 1;
       }
@@ -185,7 +187,7 @@ int32_t IFWL_ComboList::OnDropListMouseMove(CFWL_MsgMouse* pMsg) {
 }
 
 int32_t IFWL_ComboList::OnDropListLButtonDown(CFWL_MsgMouse* pMsg) {
-  if (m_rtClient.Contains(pMsg->m_fx, pMsg->m_fy))
+  if (GetRTClient().Contains(pMsg->m_fx, pMsg->m_fy))
     return 0;
 
   IFWL_ComboBox* pOuter = static_cast<IFWL_ComboBox*>(m_pOuter);
@@ -199,9 +201,10 @@ int32_t IFWL_ComboList::OnDropListLButtonUp(CFWL_MsgMouse* pMsg) {
     ClientToOuter(pMsg->m_fx, pMsg->m_fy);
     pOuter->GetDelegate()->OnProcessMessage(pMsg);
   } else {
-    if (IsShowScrollBar(true) && m_pVertScrollBar) {
+    IFWL_ScrollBar* vertSB = GetVertScrollBar();
+    if (IsShowScrollBar(true) && vertSB) {
       CFX_RectF rect;
-      m_pVertScrollBar->GetWidgetRect(rect);
+      vertSB->GetWidgetRect(rect);
       if (rect.Contains(pMsg->m_fx, pMsg->m_fy)) {
         return 1;
       }

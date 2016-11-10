@@ -25,9 +25,6 @@ class IFWL_FormProxy : public IFWL_Form {
   void DrawWidget(CFX_Graphics* pGraphics,
                   const CFX_Matrix* pMatrix = nullptr) override;
   void OnProcessMessage(CFWL_Message* pMessage) override;
-
- protected:
-  friend class CFWL_FormProxyImpDelegate;
 };
 
 #endif  // XFA_FWL_CORE_IFWL_FORMPROXY_H_

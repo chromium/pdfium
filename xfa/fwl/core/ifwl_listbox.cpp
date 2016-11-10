@@ -206,9 +206,9 @@ int32_t IFWL_ListBox::GetSelIndex(int32_t nIndex) {
   return -1;
 }
 
-FWL_Error IFWL_ListBox::SetSelItem(CFWL_ListItem* pItem, bool bSelect) {
+void IFWL_ListBox::SetSelItem(CFWL_ListItem* pItem, bool bSelect) {
   if (!m_pProperties->m_pDataProvider)
-    return FWL_Error::Indefinite;
+    return;
   if (!pItem) {
     if (bSelect) {
       SelectAll();
@@ -216,36 +216,31 @@ FWL_Error IFWL_ListBox::SetSelItem(CFWL_ListItem* pItem, bool bSelect) {
       ClearSelection();
       SetFocusItem(nullptr);
     }
-    return FWL_Error::Indefinite;
+    return;
   }
   if (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_LTB_MultiSelection) {
     SetSelectionDirect(pItem, bSelect);
   } else {
     SetSelection(pItem, pItem, bSelect);
   }
-  return FWL_Error::Succeeded;
 }
 
-FWL_Error IFWL_ListBox::GetItemText(CFWL_ListItem* pItem,
-                                    CFX_WideString& wsText) {
+void IFWL_ListBox::GetItemText(CFWL_ListItem* pItem, CFX_WideString& wsText) {
   if (!m_pProperties->m_pDataProvider)
-    return FWL_Error::Indefinite;
+    return;
   IFWL_ListBoxDP* pData =
       static_cast<IFWL_ListBoxDP*>(m_pProperties->m_pDataProvider);
   if (!pItem)
-    return FWL_Error::Indefinite;
+    return;
   pData->GetItemText(this, pItem, wsText);
-  return FWL_Error::Succeeded;
 }
 
-FWL_Error IFWL_ListBox::GetScrollPos(FX_FLOAT& fPos, bool bVert) {
+void IFWL_ListBox::GetScrollPos(FX_FLOAT& fPos, bool bVert) {
   if ((bVert && IsShowScrollBar(true)) || (!bVert && IsShowScrollBar(false))) {
     IFWL_ScrollBar* pScrollBar =
         bVert ? m_pVertScrollBar.get() : m_pHorzScrollBar.get();
     fPos = pScrollBar->GetPos();
-    return FWL_Error::Succeeded;
   }
-  return FWL_Error::Indefinite;
 }
 
 CFWL_ListItem* IFWL_ListBox::GetItem(CFWL_ListItem* pItem, uint32_t dwKeyCode) {
@@ -699,7 +694,7 @@ CFX_SizeF IFWL_ListBox::CalcSize(bool bAutoSize) {
     }
     IFWL_ListBoxDP* pData =
         static_cast<IFWL_ListBoxDP*>(m_pProperties->m_pDataProvider);
-    m_fItemHeight = GetItemHeigt();
+    m_fItemHeight = CalcItemHeight();
     if ((GetStylesEx() & FWL_STYLEEXT_LTB_Icon))
       fWidth += m_fItemHeight;
 
@@ -856,7 +851,7 @@ FX_FLOAT IFWL_ListBox::GetScrollWidth() {
   return *pfWidth;
 }
 
-FX_FLOAT IFWL_ListBox::GetItemHeigt() {
+FX_FLOAT IFWL_ListBox::CalcItemHeight() {
   FX_FLOAT* pfFont =
       static_cast<FX_FLOAT*>(GetThemeCapacity(CFWL_WidgetCapacity::FontSize));
   if (!pfFont)
@@ -873,8 +868,11 @@ void IFWL_ListBox::InitScrollBar(bool bVert) {
   prop->m_dwStates = FWL_WGTSTATE_Invisible;
   prop->m_pParent = this;
   prop->m_pThemeProvider = m_pScrollBarTP;
-  (bVert ? &m_pVertScrollBar : &m_pHorzScrollBar)
-      ->reset(new IFWL_ScrollBar(m_pOwnerApp, std::move(prop), this));
+  IFWL_ScrollBar* sb = new IFWL_ScrollBar(m_pOwnerApp, std::move(prop), this);
+  if (bVert)
+    m_pVertScrollBar.reset(sb);
+  else
+    m_pHorzScrollBar.reset(sb);
 }
 
 bool IFWL_ListBox::IsShowScrollBar(bool bVert) {
