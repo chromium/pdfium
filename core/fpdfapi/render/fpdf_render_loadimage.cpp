@@ -58,6 +58,10 @@ bool IsAllowedBPCValue(int bpc) {
   return bpc == 1 || bpc == 2 || bpc == 4 || bpc == 8 || bpc == 16;
 }
 
+bool IsAllowedICCComponents(int nComp) {
+  return nComp == 1 || nComp == 3 || nComp == 4;
+}
+
 template <typename T>
 T ClampValue(T value, T max_value) {
   value = std::min(value, max_value);
@@ -536,18 +540,43 @@ CCodec_ScanlineDecoder* FPDFAPI_CreateFlateDecoder(
 
 int CPDF_DIBSource::CreateDecoder() {
   const CFX_ByteString& decoder = m_pStreamAcc->GetImageDecoder();
-  if (decoder.IsEmpty()) {
+  if (decoder.IsEmpty())
     return 1;
-  }
-  if (m_bDoBpcCheck && m_bpc == 0) {
+
+  if (m_bDoBpcCheck && m_bpc == 0)
     return 0;
+
+  if (decoder == "JPXDecode") {
+    LoadJpxBitmap();
+    return m_pCachedBitmap ? 1 : 0;
   }
+  if (decoder == "JBIG2Decode") {
+    m_pCachedBitmap = pdfium::MakeUnique<CFX_DIBitmap>();
+    if (!m_pCachedBitmap->Create(
+            m_Width, m_Height, m_bImageMask ? FXDIB_1bppMask : FXDIB_1bppRgb)) {
+      m_pCachedBitmap.reset();
+      return 0;
+    }
+    m_Status = 1;
+    return 2;
+  }
+
   const uint8_t* src_data = m_pStreamAcc->GetData();
   uint32_t src_size = m_pStreamAcc->GetSize();
   const CPDF_Dictionary* pParams = m_pStreamAcc->GetImageParam();
   if (decoder == "CCITTFaxDecode") {
     m_pDecoder.reset(FPDFAPI_CreateFaxDecoder(src_data, src_size, m_Width,
                                               m_Height, pParams));
+  } else if (decoder == "FlateDecode") {
+    m_pDecoder.reset(FPDFAPI_CreateFlateDecoder(
+        src_data, src_size, m_Width, m_Height, m_nComponents, m_bpc, pParams));
+  } else if (decoder == "RunLengthDecode") {
+    m_pDecoder.reset(CPDF_ModuleMgr::Get()
+                         ->GetCodecModule()
+                         ->GetBasicModule()
+                         ->CreateRunLengthDecoder(src_data, src_size, m_Width,
+                                                  m_Height, m_nComponents,
+                                                  m_bpc));
   } else if (decoder == "DCTDecode") {
     m_pDecoder.reset(CPDF_ModuleMgr::Get()->GetJpegModule()->CreateDecoder(
         src_data, src_size, m_Width, m_Height, m_nComponents,
@@ -563,12 +592,41 @@ int CPDF_DIBSource::CreateDecoder() {
           FX_Free(m_pCompData);
           m_pCompData = nullptr;
           m_nComponents = static_cast<uint32_t>(comps);
-          if (m_pColorSpace &&
-              m_pColorSpace->CountComponents() != m_nComponents) {
-            return 0;
+          if (m_pColorSpace) {
+            switch (m_Family) {
+              case PDFCS_DEVICEGRAY:
+              case PDFCS_DEVICERGB:
+              case PDFCS_DEVICECMYK: {
+                uint32_t dwMinComps = ComponentsForFamily(m_Family);
+                if (m_pColorSpace->CountComponents() < dwMinComps ||
+                    m_nComponents < dwMinComps) {
+                  return 0;
+                }
+                break;
+              }
+              case PDFCS_LAB: {
+                if (m_nComponents != 3 || m_pColorSpace->CountComponents() < 3)
+                  return 0;
+                break;
+              }
+              case PDFCS_ICCBASED: {
+                if (!IsAllowedICCComponents(m_nComponents) ||
+                    !IsAllowedICCComponents(m_pColorSpace->CountComponents()) ||
+                    m_pColorSpace->CountComponents() < m_nComponents) {
+                  return 0;
+                }
+                break;
+              }
+              default: {
+                if (m_pColorSpace->CountComponents() != m_nComponents)
+                  return 0;
+                break;
+              }
+            }
+          } else {
+            if (m_Family == PDFCS_LAB && m_nComponents != 3)
+              return 0;
           }
-          if (m_Family == PDFCS_LAB && m_nComponents != 3)
-            return 0;
           m_pCompData = GetDecodeAndMaskArray(m_bDefaultDecode, m_bColorKey);
           if (!m_pCompData)
             return 0;
@@ -578,28 +636,6 @@ int CPDF_DIBSource::CreateDecoder() {
             src_data, src_size, m_Width, m_Height, m_nComponents, bTransform));
       }
     }
-  } else if (decoder == "FlateDecode") {
-    m_pDecoder.reset(FPDFAPI_CreateFlateDecoder(
-        src_data, src_size, m_Width, m_Height, m_nComponents, m_bpc, pParams));
-  } else if (decoder == "JPXDecode") {
-    LoadJpxBitmap();
-    return m_pCachedBitmap ? 1 : 0;
-  } else if (decoder == "JBIG2Decode") {
-    m_pCachedBitmap.reset(new CFX_DIBitmap);
-    if (!m_pCachedBitmap->Create(
-            m_Width, m_Height, m_bImageMask ? FXDIB_1bppMask : FXDIB_1bppRgb)) {
-      m_pCachedBitmap.reset();
-      return 0;
-    }
-    m_Status = 1;
-    return 2;
-  } else if (decoder == "RunLengthDecode") {
-    m_pDecoder.reset(CPDF_ModuleMgr::Get()
-                         ->GetCodecModule()
-                         ->GetBasicModule()
-                         ->CreateRunLengthDecoder(src_data, src_size, m_Width,
-                                                  m_Height, m_nComponents,
-                                                  m_bpc));
   }
   if (!m_pDecoder)
     return 0;

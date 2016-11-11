@@ -21,6 +21,12 @@
 
 namespace {
 
+FX_FLOAT NormalizeChannel(FX_FLOAT fVal) {
+  return std::min(std::max(fVal, 0.0f), 1.0f);
+}
+
+}  // namespace
+
 uint32_t ComponentsForFamily(int family) {
   if (family == PDFCS_DEVICERGB)
     return 3;
@@ -29,12 +35,6 @@ uint32_t ComponentsForFamily(int family) {
   ASSERT(family == PDFCS_DEVICECMYK);
   return 4;
 }
-
-FX_FLOAT NormalizeChannel(FX_FLOAT fVal) {
-  return std::min(std::max(fVal, 0.0f), 1.0f);
-}
-
-}  // namespace
 
 void sRGB_to_AdobeCMYK(FX_FLOAT R,
                        FX_FLOAT G,

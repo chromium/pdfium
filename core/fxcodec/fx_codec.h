@@ -96,6 +96,7 @@ class CCodec_ModuleMgr {
 };
 
 void ReverseRGB(uint8_t* pDestBuf, const uint8_t* pSrcBuf, int pixels);
+uint32_t ComponentsForFamily(int family);
 void sRGB_to_AdobeCMYK(FX_FLOAT R,
                        FX_FLOAT G,
                        FX_FLOAT B,
