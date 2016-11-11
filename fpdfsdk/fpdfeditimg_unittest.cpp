@@ -43,6 +43,7 @@ TEST_F(PDFEditTest, NewImgeObj) {
   FPDF_PAGEOBJECT page_image = FPDFPageObj_NewImgeObj(doc);
   FPDFPage_InsertObject(page, page_image);
   EXPECT_EQ(1, FPDFPage_CountObject(page));
+  EXPECT_TRUE(FPDFPage_GenerateContent(page));
 
   FPDF_ClosePage(page);
   FPDF_CloseDocument(doc);

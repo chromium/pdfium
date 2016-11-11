@@ -94,16 +94,21 @@ void CPDF_PageContentGenerator::ProcessImage(CFX_ByteTextBuf& buf,
     return;
   }
   buf << "q " << pImageObj->m_Matrix << " cm ";
+
   CPDF_Image* pImage = pImageObj->GetImage();
-  if (!pImage->IsInline()) {
-    CPDF_Stream* pStream = pImage->GetStream();
-    uint32_t dwSavedObjNum = pStream->GetObjNum();
-    CFX_ByteString name = RealizeResource(pStream, "XObject");
-    if (dwSavedObjNum == 0) {
-      pImageObj->SetUnownedImage(m_pDocument->GetPageData()->GetImage(pStream));
-    }
-    buf << "/" << PDF_NameEncode(name) << " Do Q\n";
-  }
+  if (pImage->IsInline())
+    return;
+
+  CPDF_Stream* pStream = pImage->GetStream();
+  if (!pStream)
+    return;
+
+  bool bWasInline = pStream->IsInline();
+  CFX_ByteString name = RealizeResource(pStream, "XObject");
+  if (bWasInline)
+    pImageObj->SetUnownedImage(m_pDocument->GetPageData()->GetImage(pStream));
+
+  buf << "/" << PDF_NameEncode(name) << " Do Q\n";
 }
 
 void CPDF_PageContentGenerator::ProcessForm(CFX_ByteTextBuf& buf,
