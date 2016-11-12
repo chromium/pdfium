@@ -62,12 +62,7 @@ class CXFA_TimeZoneProvider {
   CXFA_TimeZoneProvider();
   ~CXFA_TimeZoneProvider();
 
-  static CXFA_TimeZoneProvider* Create();
-  static CXFA_TimeZoneProvider* Get();
-  static void Destroy();
-
-  void SetTimeZone(FX_TIMEZONE& tz);
-  void GetTimeZone(FX_TIMEZONE& tz);
+  void GetTimeZone(FX_TIMEZONE* tz) const;
 
  private:
   FX_TIMEZONE m_tz;

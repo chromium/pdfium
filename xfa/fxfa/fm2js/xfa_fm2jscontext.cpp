@@ -1182,7 +1182,7 @@ void CXFA_FM2JSContext::IsoTime2Num(CFXJSE_Value* pThis,
   int32_t milSecond = uniTime.GetMillisecond();
 
   FX_TIMEZONE tzLocale;
-  pMgr->GetDefLocale()->GetTimeZone(tzLocale);
+  pMgr->GetDefLocale()->GetTimeZone(&tzLocale);
 
   // TODO(dsinclair): See if there is other time conversion code in pdfium and
   //   consolidate.
@@ -1605,19 +1605,19 @@ void CXFA_FM2JSContext::Time2Num(CFXJSE_Value* pThis,
   int32_t second = uniTime.GetSecond();
   int32_t milSecond = uniTime.GetMillisecond();
   int32_t mins = hour * 60 + min;
-  CXFA_TimeZoneProvider* pProvider = CXFA_TimeZoneProvider::Get();
-  if (pProvider) {
-    FX_TIMEZONE tz;
-    pProvider->GetTimeZone(tz);
-    mins -= (tz.tzHour * 60);
-    while (mins > 1440)
-      mins -= 1440;
-    while (mins < 0)
-      mins += 1440;
 
-    hour = mins / 60;
-    min = mins % 60;
-  }
+  FX_TIMEZONE tz;
+  CXFA_TimeZoneProvider provider;
+  provider.GetTimeZone(&tz);
+  mins -= (tz.tzHour * 60);
+  while (mins > 1440)
+    mins -= 1440;
+
+  while (mins < 0)
+    mins += 1440;
+
+  hour = mins / 60;
+  min = mins % 60;
   args.GetReturnValue()->SetInteger(hour * 3600000 + min * 60000 +
                                     second * 1000 + milSecond + 1);
 }

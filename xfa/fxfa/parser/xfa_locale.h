@@ -31,7 +31,7 @@ class CXFA_XMLLocale : public IFX_Locale {
                   bool bAbbr = true) const override;
   void GetMeridiemName(CFX_WideString& wsMeridiemName,
                        bool bAM = true) const override;
-  void GetTimeZone(FX_TIMEZONE& tz) const override;
+  void GetTimeZone(FX_TIMEZONE* tz) const override;
   void GetEraName(CFX_WideString& wsEraName, bool bAD = true) const override;
 
   void GetDatePattern(FX_LOCALEDATETIMESUBCATEGORY eType,
@@ -73,7 +73,7 @@ class CXFA_NodeLocale : public IFX_Locale {
                   bool bAbbr = true) const override;
   void GetMeridiemName(CFX_WideString& wsMeridiemName,
                        bool bAM = true) const override;
-  void GetTimeZone(FX_TIMEZONE& tz) const override;
+  void GetTimeZone(FX_TIMEZONE* tz) const override;
   void GetEraName(CFX_WideString& wsEraName, bool bAD = true) const override;
 
   void GetDatePattern(FX_LOCALEDATETIMESUBCATEGORY eType,

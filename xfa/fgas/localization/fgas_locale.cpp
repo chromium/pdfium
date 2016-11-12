@@ -2241,7 +2241,7 @@ static void FX_ResolveZone(uint8_t& wHour,
                            IFX_Locale* pLocale) {
   int32_t iMinuteDiff = wHour * 60 + wMinute;
   FX_TIMEZONE tzLocale;
-  pLocale->GetTimeZone(tzLocale);
+  pLocale->GetTimeZone(&tzLocale);
   iMinuteDiff += tzLocale.tzHour * 60 +
                  (tzLocale.tzHour < 0 ? -tzLocale.tzMinute : tzLocale.tzMinute);
   iMinuteDiff -= tzDiff.tzHour * 60 +
@@ -3923,7 +3923,7 @@ static bool FX_TimeFormat(const CFX_WideString& wsTimePattern,
     } else if (dwSymbol == FXBSTR_ID(0, 0, 'Z', '1')) {
       wsResult += FX_WSTRC(L"GMT");
       FX_TIMEZONE tz;
-      pLocale->GetTimeZone(tz);
+      pLocale->GetTimeZone(&tz);
       if (!bGMT && (tz.tzHour != 0 || tz.tzMinute != 0)) {
         if (tz.tzHour < 0) {
           wsResult += FX_WSTRC(L"-");
@@ -3936,7 +3936,7 @@ static bool FX_TimeFormat(const CFX_WideString& wsTimePattern,
       }
     } else if (dwSymbol == FXBSTR_ID(0, 0, 'z', '1')) {
       FX_TIMEZONE tz;
-      pLocale->GetTimeZone(tz);
+      pLocale->GetTimeZone(&tz);
       if (!bGMT && tz.tzHour != 0 && tz.tzMinute != 0) {
         if (tz.tzHour < 0) {
           wsResult += FX_WSTRC(L"-");

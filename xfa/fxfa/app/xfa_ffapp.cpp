@@ -74,12 +74,9 @@ CXFA_FFApp::CXFA_FFApp(IXFA_AppProvider* pProvider)
     : m_pProvider(pProvider),
       m_pWidgetMgrDelegate(nullptr),
       m_pFWLApp(new IFWL_App(this)) {
-  CXFA_TimeZoneProvider::Create();
 }
 
-CXFA_FFApp::~CXFA_FFApp() {
-  CXFA_TimeZoneProvider::Destroy();
-}
+CXFA_FFApp::~CXFA_FFApp() {}
 
 CXFA_FFDocHandler* CXFA_FFApp::GetDocHandler() {
   if (!m_pDocHandler)

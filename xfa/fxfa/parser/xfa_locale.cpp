@@ -103,8 +103,9 @@ void CXFA_XMLLocale::GetMeridiemName(CFX_WideString& wsMeridiemName,
   wsMeridiemName = GetCalendarSymbol("meridiem", bAM ? 0 : 1, false);
 }
 
-void CXFA_XMLLocale::GetTimeZone(FX_TIMEZONE& tz) const {
-  CXFA_TimeZoneProvider::Get()->GetTimeZone(tz);
+void CXFA_XMLLocale::GetTimeZone(FX_TIMEZONE* tz) const {
+  CXFA_TimeZoneProvider provider;
+  provider.GetTimeZone(tz);
 }
 
 void CXFA_XMLLocale::GetEraName(CFX_WideString& wsEraName, bool bAD) const {
@@ -288,8 +289,9 @@ void CXFA_NodeLocale::GetMeridiemName(CFX_WideString& wsMeridiemName,
       GetCalendarSymbol(XFA_Element::MeridiemNames, bAM ? 0 : 1, false);
 }
 
-void CXFA_NodeLocale::GetTimeZone(FX_TIMEZONE& tz) const {
-  CXFA_TimeZoneProvider::Get()->GetTimeZone(tz);
+void CXFA_NodeLocale::GetTimeZone(FX_TIMEZONE* tz) const {
+  CXFA_TimeZoneProvider provider;
+  provider.GetTimeZone(tz);
 }
 
 void CXFA_NodeLocale::GetEraName(CFX_WideString& wsEraName, bool bAD) const {

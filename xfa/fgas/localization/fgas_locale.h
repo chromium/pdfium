@@ -68,7 +68,7 @@ class IFX_Locale {
                           bool bAbbr = true) const = 0;
   virtual void GetMeridiemName(CFX_WideString& wsMeridiemName,
                                bool bAM = true) const = 0;
-  virtual void GetTimeZone(FX_TIMEZONE& tz) const = 0;
+  virtual void GetTimeZone(FX_TIMEZONE* tz) const = 0;
   virtual void GetEraName(CFX_WideString& wsEraName, bool bAD = true) const = 0;
   virtual void GetDatePattern(FX_LOCALEDATETIMESUBCATEGORY eType,
                               CFX_WideString& wsPattern) const = 0;

@@ -6,6 +6,8 @@
 
 #include "xfa/fxfa/parser/xfa_localemgr.h"
 
+#include <time.h>
+
 #include <memory>
 #include <utility>
 
@@ -1245,37 +1247,21 @@ CFX_WideStringC CXFA_LocaleMgr::GetConfigLocaleName(CXFA_Node* pConfig) {
   return m_wsConfigLocale.AsStringC();
 }
 
-static CXFA_TimeZoneProvider* g_pProvider = nullptr;
+static bool g_bProviderTimeZoneSet = false;
 
-// Static.
-CXFA_TimeZoneProvider* CXFA_TimeZoneProvider::Create() {
-  ASSERT(!g_pProvider);
-  g_pProvider = new CXFA_TimeZoneProvider();
-  return g_pProvider;
-}
-
-// Static.
-CXFA_TimeZoneProvider* CXFA_TimeZoneProvider::Get() {
-  if (!g_pProvider) {
-    g_pProvider = new CXFA_TimeZoneProvider();
-  }
-  return g_pProvider;
-}
-
-// Static.
-void CXFA_TimeZoneProvider::Destroy() {
-  delete g_pProvider;
-  g_pProvider = nullptr;
-}
-
-#include <time.h>
 CXFA_TimeZoneProvider::CXFA_TimeZoneProvider() {
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
-  _tzset();
+  if (!g_bProviderTimeZoneSet) {
+    g_bProviderTimeZoneSet = true;
+    _tzset();
+  }
   m_tz.tzHour = (int8_t)(_timezone / 3600 * -1);
   m_tz.tzMinute = (int8_t)((FXSYS_abs(_timezone) % 3600) / 60);
 #else
-  tzset();
+  if (!g_bProviderTimeZoneSet) {
+    g_bProviderTimeZoneSet = true;
+    tzset();
+  }
   m_tz.tzHour = (int8_t)(timezone / 3600 * -1);
   m_tz.tzMinute = (int8_t)((FXSYS_abs((int)timezone) % 3600) / 60);
 #endif
@@ -1283,10 +1269,6 @@ CXFA_TimeZoneProvider::CXFA_TimeZoneProvider() {
 
 CXFA_TimeZoneProvider::~CXFA_TimeZoneProvider() {}
 
-void CXFA_TimeZoneProvider::SetTimeZone(FX_TIMEZONE& tz) {
-  m_tz = tz;
-}
-
-void CXFA_TimeZoneProvider::GetTimeZone(FX_TIMEZONE& tz) {
-  tz = m_tz;
+void CXFA_TimeZoneProvider::GetTimeZone(FX_TIMEZONE* tz) const {
+  *tz = m_tz;
 }
