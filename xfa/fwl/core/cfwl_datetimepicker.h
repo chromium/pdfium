@@ -17,39 +17,25 @@ class CFWL_DateTimePicker : public CFWL_Widget, public IFWL_DateTimePickerDP {
 
   void Initialize();
 
-  FWL_Error SetToday(int32_t iYear, int32_t iMonth, int32_t iDay);
-  FWL_Error GetEditText(CFX_WideString& wsText);
-  FWL_Error SetEditText(const CFX_WideString& wsText);
-  int32_t CountSelRanges();
-  int32_t GetSelRange(int32_t nIndex, int32_t& nStart);
-  FWL_Error GetCurSel(int32_t& iYear, int32_t& iMonth, int32_t& iDay);
-  FWL_Error SetCurSel(int32_t iYear, int32_t iMonth, int32_t iDay);
-  bool CanUndo();
-  bool CanRedo();
-  bool Undo();
-  bool Redo();
-  bool CanCopy();
-  bool CanCut();
-  bool CanSelectAll();
-  bool Copy(CFX_WideString& wsCopy);
-  bool Cut(CFX_WideString& wsCut);
-  bool Paste(const CFX_WideString& wsPaste);
-  bool SelectAll();
-  bool Delete();
-  bool DeSelect();
-  FWL_Error GetBBox(CFX_RectF& rect);
-  FWL_Error SetEditLimit(int32_t nLimit);
-  void ModifyEditStylesEx(uint32_t dwStylesExAdded, uint32_t dwStylesExRemoved);
-
   // IFWL_DataProvider
-  FWL_Error GetCaption(IFWL_Widget* pWidget,
-                       CFX_WideString& wsCaption) override;
+  void GetCaption(IFWL_Widget* pWidget, CFX_WideString& wsCaption) override;
 
   // IFWL_DateTimePickerDP
-  FWL_Error GetToday(IFWL_Widget* pWidget,
-                     int32_t& iYear,
-                     int32_t& iMonth,
-                     int32_t& iDay) override;
+  void GetToday(IFWL_Widget* pWidget,
+                int32_t& iYear,
+                int32_t& iMonth,
+                int32_t& iDay) override;
+
+  void GetEditText(CFX_WideString& wsText);
+  void SetEditText(const CFX_WideString& wsText);
+
+  int32_t CountSelRanges();
+  int32_t GetSelRange(int32_t nIndex, int32_t& nStart);
+
+  void SetCurSel(int32_t iYear, int32_t iMonth, int32_t iDay);
+  void GetBBox(CFX_RectF& rect);
+  void SetEditLimit(int32_t nLimit);
+  void ModifyEditStylesEx(uint32_t dwStylesExAdded, uint32_t dwStylesExRemoved);
 
  private:
   int32_t m_iYear;

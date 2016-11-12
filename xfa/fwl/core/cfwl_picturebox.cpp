@@ -95,10 +95,8 @@ FWL_Error CFWL_PictureBox::SetOffset(FX_FLOAT fx, FX_FLOAT fy) {
   return FWL_Error::Succeeded;
 }
 
-FWL_Error CFWL_PictureBox::GetCaption(IFWL_Widget* pWidget,
-                                      CFX_WideString& wsCaption) {
-  return FWL_Error::Succeeded;
-}
+void CFWL_PictureBox::GetCaption(IFWL_Widget* pWidget,
+                                 CFX_WideString& wsCaption) {}
 
 CFX_DIBitmap* CFWL_PictureBox::GetPicture(IFWL_Widget* pWidget) {
   return m_pBitmap;

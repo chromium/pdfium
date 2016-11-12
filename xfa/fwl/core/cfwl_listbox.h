@@ -23,8 +23,7 @@ class CFWL_ListBox : public CFWL_Widget, public IFWL_ListBoxDP {
   void Initialize();
 
   // IFWL_DataProvider:
-  FWL_Error GetCaption(IFWL_Widget* pWidget,
-                       CFX_WideString& wsCaption) override;
+  void GetCaption(IFWL_Widget* pWidget, CFX_WideString& wsCaption) override;
 
   // IFWL_ListBoxDP:
   int32_t CountItems(const IFWL_Widget* pWidget) override;

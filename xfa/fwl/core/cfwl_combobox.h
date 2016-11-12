@@ -63,8 +63,7 @@ class CFWL_ComboBox : public CFWL_Widget, public IFWL_ComboBoxDP {
   void EditModifyStylesEx(uint32_t dwStylesExAdded, uint32_t dwStylesExRemoved);
 
   // IFWL_DataProvider
-  FWL_Error GetCaption(IFWL_Widget* pWidget,
-                       CFX_WideString& wsCaption) override;
+  void GetCaption(IFWL_Widget* pWidget, CFX_WideString& wsCaption) override;
 
   // IFWL_ListBoxDP
   int32_t CountItems(const IFWL_Widget* pWidget) override;

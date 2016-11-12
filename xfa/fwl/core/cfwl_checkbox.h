@@ -23,8 +23,7 @@ class CFWL_CheckBox : public CFWL_Widget, public IFWL_CheckBoxDP {
   FWL_Error SetCheckState(int32_t iCheck);
 
   // IFWL_DataProvider
-  FWL_Error GetCaption(IFWL_Widget* pWidget,
-                       CFX_WideString& wsCaption) override;
+  void GetCaption(IFWL_Widget* pWidget, CFX_WideString& wsCaption) override;
 
   // IFWL_CheckBoxDP
   FX_FLOAT GetBoxSize(IFWL_Widget* pWidget) override;

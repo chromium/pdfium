@@ -37,8 +37,7 @@ class CFWL_Barcode : public CFWL_Edit, public IFWL_BarcodeDP {
   void ResetBarcodeAttributes();
 
   // IFWL_DataProvider
-  FWL_Error GetCaption(IFWL_Widget* pWidget,
-                       CFX_WideString& wsCaption) override;
+  void GetCaption(IFWL_Widget* pWidget, CFX_WideString& wsCaption) override;
 
   // IFWL_BarcodeDP
   BC_CHAR_ENCODING GetCharEncoding() const override;

@@ -23,8 +23,7 @@ class CFWL_ToolTipImpDelegate;
 class IFWL_ToolTipDP : public IFWL_DataProvider {
  public:
   // IFWL_DataProvider
-  FWL_Error GetCaption(IFWL_Widget* pWidget,
-                       CFX_WideString& wsCaption) override = 0;
+  void GetCaption(IFWL_Widget* pWidget, CFX_WideString& wsCaption) override = 0;
 
   virtual int32_t GetInitialDelay(IFWL_Widget* pWidget) = 0;
   virtual int32_t GetAutoPopDelay(IFWL_Widget* pWidget) = 0;

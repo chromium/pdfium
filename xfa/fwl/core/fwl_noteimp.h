@@ -133,8 +133,7 @@ class CFWL_ToolTipContainer final : public IFWL_ToolTipDP {
   static void DeleteInstance();
 
   // IFWL_ToolTipDP
-  FWL_Error GetCaption(IFWL_Widget* pWidget,
-                       CFX_WideString& wsCaption) override;
+  void GetCaption(IFWL_Widget* pWidget, CFX_WideString& wsCaption) override;
   int32_t GetInitialDelay(IFWL_Widget* pWidget) override;
   int32_t GetAutoPopDelay(IFWL_Widget* pWidget) override;
   CFX_DIBitmap* GetToolTipIcon(IFWL_Widget* pWidget) override;

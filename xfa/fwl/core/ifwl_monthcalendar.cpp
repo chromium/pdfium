@@ -985,7 +985,7 @@ void IFWL_MonthCalendar::OnLButtonDown(CFWL_MsgMouse* pMsg) {
     }
   } else {
     IFWL_DateTimePicker* pIPicker = static_cast<IFWL_DateTimePicker*>(m_pOuter);
-    if (pIPicker->IsMonthCalendarShowed())
+    if (pIPicker->IsMonthCalendarVisible())
       m_bFlag = 1;
   }
 }

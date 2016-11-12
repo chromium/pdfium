@@ -8,7 +8,6 @@
 #define XFA_FWL_CORE_IFWL_DATAPROVIDER_H_
 
 #include "core/fxcrt/fx_string.h"
-#include "xfa/fwl/core/fwl_error.h"
 
 class IFWL_Widget;
 
@@ -16,8 +15,7 @@ class IFWL_DataProvider {
  public:
   virtual ~IFWL_DataProvider() {}
 
-  virtual FWL_Error GetCaption(IFWL_Widget* pWidget,
-                               CFX_WideString& wsCaption) = 0;
+  virtual void GetCaption(IFWL_Widget* pWidget, CFX_WideString& wsCaption) = 0;
 };
 
 #endif  // XFA_FWL_CORE_IFWL_DATAPROVIDER_H_

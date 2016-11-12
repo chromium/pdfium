@@ -713,10 +713,9 @@ CFWL_ToolTipContainer::CFWL_ToolTipContainer()
 
 CFWL_ToolTipContainer::~CFWL_ToolTipContainer() {}
 
-FWL_Error CFWL_ToolTipContainer::GetCaption(IFWL_Widget* pWidget,
-                                            CFX_WideString& wsCaption) {
+void CFWL_ToolTipContainer::GetCaption(IFWL_Widget* pWidget,
+                                       CFX_WideString& wsCaption) {
   wsCaption = m_wsCaption;
-  return FWL_Error::Succeeded;
 }
 
 int32_t CFWL_ToolTipContainer::GetInitialDelay(IFWL_Widget* pWidget) {

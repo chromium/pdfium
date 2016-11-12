@@ -232,10 +232,8 @@ void CFWL_ComboBox::EditModifyStylesEx(uint32_t dwStylesExAdded,
   }
 }
 
-FWL_Error CFWL_ComboBox::GetCaption(IFWL_Widget* pWidget,
-                                    CFX_WideString& wsCaption) {
-  return FWL_Error::Succeeded;
-}
+void CFWL_ComboBox::GetCaption(IFWL_Widget* pWidget,
+                               CFX_WideString& wsCaption) {}
 
 int32_t CFWL_ComboBox::CountItems(const IFWL_Widget* pWidget) {
   return m_ItemArray.size();

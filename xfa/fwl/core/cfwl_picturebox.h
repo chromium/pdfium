@@ -32,8 +32,7 @@ class CFWL_PictureBox : public CFWL_Widget, public IFWL_PictureBoxDP {
   FWL_Error SetOffset(FX_FLOAT fx, FX_FLOAT fy);
 
   // IFWL_DataProvider
-  FWL_Error GetCaption(IFWL_Widget* pWidget,
-                       CFX_WideString& wsCaption) override;
+  void GetCaption(IFWL_Widget* pWidget, CFX_WideString& wsCaption) override;
 
   // IFWL_PictureBoxDP
   CFX_DIBitmap* GetPicture(IFWL_Widget* pWidget) override;

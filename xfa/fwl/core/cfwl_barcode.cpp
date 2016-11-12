@@ -111,9 +111,7 @@ bool CFWL_Barcode::IsProtectedType() {
   return GetWidget() ? ToBarcode(GetWidget())->IsProtectedType() : false;
 }
 
-FWL_Error CFWL_Barcode::GetCaption(IFWL_Widget* pWidget,
-                                   CFX_WideString& wsCaption) {
-  return FWL_Error::Succeeded;
+void CFWL_Barcode::GetCaption(IFWL_Widget* pWidget, CFX_WideString& wsCaption) {
 }
 
 BC_CHAR_ENCODING CFWL_Barcode::GetCharEncoding() const {

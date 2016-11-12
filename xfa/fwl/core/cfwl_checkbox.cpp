@@ -51,10 +51,9 @@ FWL_Error CFWL_CheckBox::SetCheckState(int32_t iCheck) {
   return ToCheckBox(GetWidget())->SetCheckState(iCheck);
 }
 
-FWL_Error CFWL_CheckBox::GetCaption(IFWL_Widget* pWidget,
-                                    CFX_WideString& wsCaption) {
+void CFWL_CheckBox::GetCaption(IFWL_Widget* pWidget,
+                               CFX_WideString& wsCaption) {
   wsCaption = m_wsCaption;
-  return FWL_Error::Succeeded;
 }
 
 FX_FLOAT CFWL_CheckBox::GetBoxSize(IFWL_Widget* pWidget) {

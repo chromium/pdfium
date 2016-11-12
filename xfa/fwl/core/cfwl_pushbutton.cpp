@@ -24,11 +24,6 @@ void CFWL_PushButton::Initialize() {
   CFWL_Widget::Initialize();
 }
 
-FWL_Error CFWL_PushButton::GetCaption(CFX_WideString& wsCaption) {
-  wsCaption = m_wsCaption;
-  return FWL_Error::Succeeded;
-}
-
 FWL_Error CFWL_PushButton::SetCaption(const CFX_WideStringC& wsCaption) {
   m_wsCaption = wsCaption;
   return FWL_Error::Succeeded;
@@ -43,10 +38,9 @@ FWL_Error CFWL_PushButton::SetPicture(CFX_DIBitmap* pBitmap) {
   return FWL_Error::Succeeded;
 }
 
-FWL_Error CFWL_PushButton::GetCaption(IFWL_Widget* pWidget,
-                                      CFX_WideString& wsCaption) {
+void CFWL_PushButton::GetCaption(IFWL_Widget* pWidget,
+                                 CFX_WideString& wsCaption) {
   wsCaption = m_wsCaption;
-  return FWL_Error::Succeeded;
 }
 
 CFX_DIBitmap* CFWL_PushButton::GetPicture(IFWL_Widget* pWidget) {

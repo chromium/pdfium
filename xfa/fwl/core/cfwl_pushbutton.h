@@ -17,14 +17,12 @@ class CFWL_PushButton : public CFWL_Widget, public IFWL_PushButtonDP {
 
   void Initialize();
 
-  FWL_Error GetCaption(CFX_WideString& wsCaption);
   FWL_Error SetCaption(const CFX_WideStringC& wsCaption);
   CFX_DIBitmap* GetPicture();
   FWL_Error SetPicture(CFX_DIBitmap* pBitmap);
 
   // IFWL_DataProvider
-  FWL_Error GetCaption(IFWL_Widget* pWidget,
-                       CFX_WideString& wsCaption) override;
+  void GetCaption(IFWL_Widget* pWidget, CFX_WideString& wsCaption) override;
 
   // IFWL_PushButtonDP
   CFX_DIBitmap* GetPicture(IFWL_Widget* pWidget) override;

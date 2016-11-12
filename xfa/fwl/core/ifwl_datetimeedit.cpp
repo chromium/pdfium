@@ -42,7 +42,7 @@ void IFWL_DateTimeEdit::DisForm_OnProcessMessage(CFWL_Message* pMessage) {
 
         IFWL_DateTimePicker* pDateTime =
             static_cast<IFWL_DateTimePicker*>(m_pOuter);
-        if (pDateTime->IsMonthCalendarShowed()) {
+        if (pDateTime->IsMonthCalendarVisible()) {
           CFX_RectF rtInvalidate;
           pDateTime->GetWidgetRect(rtInvalidate);
           pDateTime->ShowMonthCalendar(false);
