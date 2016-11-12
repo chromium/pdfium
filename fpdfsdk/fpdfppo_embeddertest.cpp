@@ -90,3 +90,17 @@ TEST_F(FPDFPPOEmbeddertest, GoodRanges) {
 
   UnloadPage(page);
 }
+
+TEST_F(FPDFPPOEmbeddertest, BUG_664284) {
+  EXPECT_TRUE(OpenDocument("bug_664284.pdf"));
+
+  FPDF_PAGE page = LoadPage(0);
+  EXPECT_TRUE(page);
+
+  FPDF_DOCUMENT output_doc = FPDF_CreateNewDocument();
+  EXPECT_TRUE(output_doc);
+  EXPECT_TRUE(FPDF_ImportPages(output_doc, document(), "1", 0));
+  FPDF_CloseDocument(output_doc);
+
+  UnloadPage(page);
+}

@@ -285,12 +285,12 @@ uint32_t CPDF_PageOrganizer::GetNewObjId(CPDF_Document* pDoc,
         return 0;
     }
   }
-  dwNewObjNum = pDoc->AddIndirectObject(pClone.get());
+  CPDF_Object* pUnownedClone = pClone.get();
+  dwNewObjNum = pDoc->AddIndirectObject(pClone.release());
   (*pObjNumberMap)[dwObjnum] = dwNewObjNum;
-  if (!UpdateReference(pClone.get(), pDoc, pObjNumberMap))
+  if (!UpdateReference(pUnownedClone, pDoc, pObjNumberMap))
     return 0;
 
-  pClone.release();  // TODO(tsepez): figure out ownership.
   return dwNewObjNum;
 }
 
