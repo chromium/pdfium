@@ -10,7 +10,7 @@
 #include "core/fxge/fx_dib.h"
 #include "xfa/fgas/crt/fgas_stream.h"
 #include "xfa/fgas/crt/fgas_utils.h"
-#include "xfa/fgas/font/fgas_font.h"
+#include "xfa/fgas/font/cfgas_fontmgr.h"
 
 class CFDE_CSSAccelerator;
 class CFDE_CSSDeclaration;

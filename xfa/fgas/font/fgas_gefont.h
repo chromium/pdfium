@@ -11,7 +11,7 @@
 
 #include "core/fxcrt/fx_memory.h"
 #include "xfa/fgas/crt/fgas_utils.h"
-#include "xfa/fgas/font/fgas_font.h"
+#include "xfa/fgas/font/cfgas_fontmgr.h"
 
 #define FXFONT_SUBST_ITALIC 0x02
 
@@ -23,17 +23,17 @@ class CFGAS_GEFont {
   static CFGAS_GEFont* LoadFont(const FX_WCHAR* pszFontFamily,
                                 uint32_t dwFontStyles,
                                 uint16_t wCodePage,
-                                IFGAS_FontMgr* pFontMgr);
+                                CFGAS_FontMgr* pFontMgr);
   static CFGAS_GEFont* LoadFont(CFX_Font* pExternalFont,
-                                IFGAS_FontMgr* pFontMgr);
+                                CFGAS_FontMgr* pFontMgr);
   static CFGAS_GEFont* LoadFont(std::unique_ptr<CFX_Font> pInternalFont,
-                                IFGAS_FontMgr* pFontMgr);
+                                CFGAS_FontMgr* pFontMgr);
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
   static CFGAS_GEFont* LoadFont(const uint8_t* pBuffer,
                                 int32_t iLength,
-                                IFGAS_FontMgr* pFontMgr);
+                                CFGAS_FontMgr* pFontMgr);
   static CFGAS_GEFont* LoadFont(IFX_Stream* pFontStream,
-                                IFGAS_FontMgr* pFontMgr,
+                                CFGAS_FontMgr* pFontMgr,
                                 bool bSaveStream);
 #endif
 
@@ -63,7 +63,7 @@ class CFGAS_GEFont {
 #endif
 
  protected:
-  explicit CFGAS_GEFont(IFGAS_FontMgr* pFontMgr);
+  explicit CFGAS_GEFont(CFGAS_FontMgr* pFontMgr);
   CFGAS_GEFont(CFGAS_GEFont* src, uint32_t dwFontStyles);
 
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
@@ -95,7 +95,7 @@ class CFGAS_GEFont {
 #endif
   CFX_Font* m_pFont;
   CFGAS_GEFont* const m_pSrcFont;
-  IFGAS_FontMgr* const m_pFontMgr;
+  CFGAS_FontMgr* const m_pFontMgr;
   int32_t m_iRefCount;
   bool m_bExternalFont;
   std::unique_ptr<IFX_Stream, ReleaseDeleter<IFX_Stream>> m_pStream;

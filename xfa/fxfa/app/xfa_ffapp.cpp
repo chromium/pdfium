@@ -9,7 +9,7 @@
 #include <algorithm>
 #include <utility>
 
-#include "xfa/fgas/font/fgas_stdfontmgr.h"
+#include "xfa/fgas/font/cfgas_fontmgr.h"
 #include "xfa/fwl/core/cfwl_widgetmgr.h"
 #include "xfa/fwl/core/fwl_noteimp.h"
 #include "xfa/fxfa/app/xfa_fwladapter.h"
@@ -115,13 +115,13 @@ CXFA_FontMgr* CXFA_FFApp::GetXFAFontMgr() const {
   return m_pFontMgr.get();
 }
 
-IFGAS_FontMgr* CXFA_FFApp::GetFDEFontMgr() {
+CFGAS_FontMgr* CXFA_FFApp::GetFDEFontMgr() {
   if (!m_pFDEFontMgr) {
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
-    m_pFDEFontMgr = IFGAS_FontMgr::Create(FX_GetDefFontEnumerator());
+    m_pFDEFontMgr = CFGAS_FontMgr::Create(FX_GetDefFontEnumerator());
 #else
     m_pFontSource.reset(new CFX_FontSourceEnum_File);
-    m_pFDEFontMgr = IFGAS_FontMgr::Create(m_pFontSource.get());
+    m_pFDEFontMgr = CFGAS_FontMgr::Create(m_pFontSource.get());
 #endif
   }
   return m_pFDEFontMgr.get();

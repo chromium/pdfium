@@ -20,7 +20,7 @@
 CFGAS_GEFont* CFGAS_GEFont::LoadFont(const FX_WCHAR* pszFontFamily,
                                      uint32_t dwFontStyles,
                                      uint16_t wCodePage,
-                                     IFGAS_FontMgr* pFontMgr) {
+                                     CFGAS_FontMgr* pFontMgr) {
 #if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
   if (pFontMgr)
     return pFontMgr->GetFontByCodePage(wCodePage, dwFontStyles, pszFontFamily);
@@ -37,7 +37,7 @@ CFGAS_GEFont* CFGAS_GEFont::LoadFont(const FX_WCHAR* pszFontFamily,
 
 // static
 CFGAS_GEFont* CFGAS_GEFont::LoadFont(CFX_Font* pExternalFont,
-                                     IFGAS_FontMgr* pFontMgr) {
+                                     CFGAS_FontMgr* pFontMgr) {
   CFGAS_GEFont* pFont = new CFGAS_GEFont(pFontMgr);
   if (!pFont->LoadFontInternal(pExternalFont)) {
     pFont->Release();
@@ -48,7 +48,7 @@ CFGAS_GEFont* CFGAS_GEFont::LoadFont(CFX_Font* pExternalFont,
 
 // static
 CFGAS_GEFont* CFGAS_GEFont::LoadFont(std::unique_ptr<CFX_Font> pInternalFont,
-                                     IFGAS_FontMgr* pFontMgr) {
+                                     CFGAS_FontMgr* pFontMgr) {
   CFGAS_GEFont* pFont = new CFGAS_GEFont(pFontMgr);
   if (!pFont->LoadFontInternal(std::move(pInternalFont))) {
     pFont->Release();
@@ -61,7 +61,7 @@ CFGAS_GEFont* CFGAS_GEFont::LoadFont(std::unique_ptr<CFX_Font> pInternalFont,
 // static
 CFGAS_GEFont* CFGAS_GEFont::LoadFont(const uint8_t* pBuffer,
                                      int32_t iLength,
-                                     IFGAS_FontMgr* pFontMgr) {
+                                     CFGAS_FontMgr* pFontMgr) {
   CFGAS_GEFont* pFont = new CFGAS_GEFont(pFontMgr);
   if (!pFont->LoadFontInternal(pBuffer, iLength)) {
     pFont->Release();
@@ -72,7 +72,7 @@ CFGAS_GEFont* CFGAS_GEFont::LoadFont(const uint8_t* pBuffer,
 
 // static
 CFGAS_GEFont* CFGAS_GEFont::LoadFont(IFX_Stream* pFontStream,
-                                     IFGAS_FontMgr* pFontMgr,
+                                     CFGAS_FontMgr* pFontMgr,
                                      bool bSaveStream) {
   CFGAS_GEFont* pFont = new CFGAS_GEFont(pFontMgr);
   if (!pFont->LoadFontInternal(pFontStream, bSaveStream)) {
@@ -83,7 +83,7 @@ CFGAS_GEFont* CFGAS_GEFont::LoadFont(IFX_Stream* pFontStream,
 }
 #endif  // _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
 
-CFGAS_GEFont::CFGAS_GEFont(IFGAS_FontMgr* pFontMgr)
+CFGAS_GEFont::CFGAS_GEFont(CFGAS_FontMgr* pFontMgr)
     :
 #if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
       m_bUseLogFontStyle(false),

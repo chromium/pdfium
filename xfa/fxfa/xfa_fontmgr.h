@@ -12,7 +12,7 @@
 
 #include "core/fxcrt/fx_ext.h"
 #include "core/fxcrt/fx_system.h"
-#include "xfa/fgas/font/fgas_font.h"
+#include "xfa/fgas/font/cfgas_fontmgr.h"
 #include "xfa/fxfa/fxfa.h"
 
 class CPDF_Font;

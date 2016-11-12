@@ -96,7 +96,7 @@ class CFGAS_GEFont;
 class CFWL_ThemeBackground;
 class CFWL_ThemePart;
 class CFWL_ThemeText;
-class IFGAS_FontMgr;
+class CFGAS_FontMgr;
 class IFWL_Widget;
 
 #if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
@@ -245,7 +245,7 @@ class CFWL_FontData {
 #if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
   std::unique_ptr<CFX_FontSourceEnum_File> m_pFontSource;
 #endif
-  std::unique_ptr<IFGAS_FontMgr> m_pFontMgr;
+  std::unique_ptr<CFGAS_FontMgr> m_pFontMgr;
   std::unique_ptr<CFGAS_GEFont> m_pFont;
 };
 

@@ -106,7 +106,7 @@ FDE_CSSRuleData::FDE_CSSRuleData(CFDE_CSSSelector* pSel,
   }
 }
 
-CFDE_CSSStyleSelector::CFDE_CSSStyleSelector(IFGAS_FontMgr* pFontMgr)
+CFDE_CSSStyleSelector::CFDE_CSSStyleSelector(CFGAS_FontMgr* pFontMgr)
     : m_pFontMgr(pFontMgr), m_fDefFontSize(12.0f) {
   m_ePriorities[FDE_CSSSTYLESHEETPRIORITY_High] = FDE_CSSSTYLESHEETGROUP_Author;
   m_ePriorities[FDE_CSSSTYLESHEETPRIORITY_Mid] = FDE_CSSSTYLESHEETGROUP_User;

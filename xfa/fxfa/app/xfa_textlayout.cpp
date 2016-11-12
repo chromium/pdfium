@@ -94,7 +94,7 @@ void CXFA_TextParser::InitCSSData(CXFA_TextProvider* pTextProvider) {
 
   if (!m_pSelector) {
     CXFA_FFDoc* pDoc = pTextProvider->GetDocNode();
-    IFGAS_FontMgr* pFontMgr = pDoc->GetApp()->GetFDEFontMgr();
+    CFGAS_FontMgr* pFontMgr = pDoc->GetApp()->GetFDEFontMgr();
     ASSERT(pFontMgr);
     m_pSelector.reset(new CFDE_CSSStyleSelector(pFontMgr));
     FX_FLOAT fFontSize = 10;

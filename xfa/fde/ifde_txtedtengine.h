@@ -8,7 +8,7 @@
 #define XFA_FDE_IFDE_TXTEDTENGINE_H_
 
 #include "core/fxge/fx_dib.h"
-#include "xfa/fgas/font/fgas_font.h"
+#include "xfa/fgas/font/cfgas_fontmgr.h"
 
 class CFDE_TxtEdtEngine;
 class IFDE_TxtEdtPage;

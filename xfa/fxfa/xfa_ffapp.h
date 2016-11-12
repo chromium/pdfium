@@ -12,7 +12,7 @@
 
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
-#include "xfa/fgas/font/fgas_font.h"
+#include "xfa/fgas/font/cfgas_fontmgr.h"
 #include "xfa/fwl/core/ifwl_app.h"
 #include "xfa/fxfa/fxfa.h"
 
@@ -52,7 +52,7 @@ class CXFA_FFApp {
 
   CXFA_FFDocHandler* GetDocHandler();
   CXFA_FWLAdapterWidgetMgr* GetWidgetMgr(CFWL_WidgetMgrDelegate* pDelegate);
-  IFGAS_FontMgr* GetFDEFontMgr();
+  CFGAS_FontMgr* GetFDEFontMgr();
   CXFA_FWLTheme* GetFWLTheme();
 
   IXFA_AppProvider* GetAppProvider() const { return m_pProvider; }
@@ -79,7 +79,7 @@ class CXFA_FFApp {
   //
   // TODO(dsinclair): The GEFont should have the FontMgr as the pointer instead
   // of the DEFFontMgr so this goes away. Bug 561.
-  std::unique_ptr<IFGAS_FontMgr> m_pFDEFontMgr;
+  std::unique_ptr<CFGAS_FontMgr> m_pFDEFontMgr;
   std::unique_ptr<CXFA_FontMgr> m_pFontMgr;
 
 #if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_

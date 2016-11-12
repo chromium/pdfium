@@ -10,7 +10,7 @@
 
 #include "xfa/fde/tto/fde_textout.h"
 #include "xfa/fgas/font/fgas_gefont.h"
-#include "xfa/fgas/font/fgas_stdfontmgr.h"
+#include "xfa/fgas/font/cfgas_fontmgr.h"
 #include "xfa/fwl/core/cfwl_themebackground.h"
 #include "xfa/fwl/core/cfwl_themepart.h"
 #include "xfa/fwl/core/cfwl_themetext.h"
@@ -664,10 +664,10 @@ bool CFWL_FontData::LoadFont(const CFX_WideStringC& wsFontFamily,
   m_dwCodePage = dwCodePage;
   if (!m_pFontMgr) {
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
-    m_pFontMgr = IFGAS_FontMgr::Create(FX_GetDefFontEnumerator());
+    m_pFontMgr = CFGAS_FontMgr::Create(FX_GetDefFontEnumerator());
 #else
     m_pFontSource.reset(new CFX_FontSourceEnum_File);
-    m_pFontMgr = IFGAS_FontMgr::Create(m_pFontSource.get());
+    m_pFontMgr = CFGAS_FontMgr::Create(m_pFontSource.get());
 #endif
   }
   m_pFont.reset(CFGAS_GEFont::LoadFont(wsFontFamily.c_str(), dwFontStyles,

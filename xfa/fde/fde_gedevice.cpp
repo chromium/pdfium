@@ -14,7 +14,7 @@
 #include "core/fxge/cfx_substfont.h"
 #include "xfa/fde/cfde_path.h"
 #include "xfa/fde/fde_object.h"
-#include "xfa/fgas/font/fgas_font.h"
+#include "xfa/fgas/font/cfgas_fontmgr.h"
 #include "xfa/fgas/font/fgas_gefont.h"
 
 CFDE_RenderDevice::CFDE_RenderDevice(CFX_RenderDevice* pDevice,

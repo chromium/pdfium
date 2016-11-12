@@ -8,7 +8,7 @@
 #define XFA_FGAS_LAYOUT_FGAS_UNICODE_H_
 
 #include "xfa/fgas/crt/fgas_utils.h"
-#include "xfa/fgas/font/fgas_font.h"
+#include "xfa/fgas/font/cfgas_fontmgr.h"
 
 struct FX_TPO {
   int32_t index;

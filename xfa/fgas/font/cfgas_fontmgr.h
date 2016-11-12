@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FGAS_FONT_FGAS_STDFONTMGR_H_
-#define XFA_FGAS_FONT_FGAS_STDFONTMGR_H_
+#ifndef XFA_FGAS_FONT_CFGAS_FONTMGR_H_
+#define XFA_FGAS_FONT_CFGAS_FONTMGR_H_
 
 #include <vector>
 
@@ -14,53 +14,110 @@
 #include "core/fxge/fx_freetype.h"
 #include "core/fxge/ifx_systemfontinfo.h"
 #include "third_party/freetype/include/freetype/fttypes.h"
-#include "xfa/fgas/font/fgas_font.h"
+#include "xfa/fgas/crt/fgas_stream.h"
+#include "xfa/fgas/font/cfgas_fontmgr.h"
 
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
-int32_t FX_GetSimilarValue(FX_FONTDESCRIPTOR const* pFont,
-                           uint32_t dwFontStyles);
-FX_FONTDESCRIPTOR const* FX_DefFontMatcher(FX_LPFONTMATCHPARAMS pParams,
-                                           const CFX_FontDescriptors& fonts);
+#include "xfa/fgas/crt/fgas_memory.h"
+#include "xfa/fgas/crt/fgas_utils.h"
+#endif  // _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
 
-class CFGAS_StdFontMgrImp : public IFGAS_FontMgr {
+#define FX_FONTSTYLE_Normal 0x00
+#define FX_FONTSTYLE_FixedPitch 0x01
+#define FX_FONTSTYLE_Serif 0x02
+#define FX_FONTSTYLE_Symbolic 0x04
+#define FX_FONTSTYLE_Script 0x08
+#define FX_FONTSTYLE_Italic 0x40
+#define FX_FONTSTYLE_Bold 0x40000
+#define FX_FONTSTYLE_BoldItalic (FX_FONTSTYLE_Bold | FX_FONTSTYLE_Italic)
+#define FX_FONTSTYLE_ExactMatch 0x80000000
+
+class CFX_FontSourceEnum_File;
+class CFGAS_GEFont;
+class CXFA_PDFFontMgr;
+class CFGAS_FontMgr;
+
+#if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
+#define FX_FONTMATCHPARA_MatchStyle 0x01
+
+struct FX_FONTMATCHPARAMS {
+  const FX_WCHAR* pwsFamily;
+  uint32_t dwFontStyles;
+  uint32_t dwUSB;
+  uint32_t dwMatchFlags;
+  FX_WCHAR wUnicode;
+  uint16_t wCodePage;
+};
+
+typedef FX_FONTMATCHPARAMS* FX_LPFONTMATCHPARAMS;
+
+struct FX_FONTSIGNATURE {
+  uint32_t fsUsb[4];
+  uint32_t fsCsb[2];
+};
+
+inline bool operator==(const FX_FONTSIGNATURE& left,
+                       const FX_FONTSIGNATURE& right) {
+  return left.fsUsb[0] == right.fsUsb[0] && left.fsUsb[1] == right.fsUsb[1] &&
+         left.fsUsb[2] == right.fsUsb[2] && left.fsUsb[3] == right.fsUsb[3] &&
+         left.fsCsb[0] == right.fsCsb[0] && left.fsCsb[1] == right.fsCsb[1];
+}
+
+struct FX_FONTDESCRIPTOR {
+  FX_WCHAR wsFontFace[32];
+  uint32_t dwFontStyles;
+  uint8_t uCharSet;
+  FX_FONTSIGNATURE FontSignature;
+};
+
+typedef CFX_MassArrayTemplate<FX_FONTDESCRIPTOR> CFX_FontDescriptors;
+
+inline bool operator==(const FX_FONTDESCRIPTOR& left,
+                       const FX_FONTDESCRIPTOR& right) {
+  return left.uCharSet == right.uCharSet &&
+         left.dwFontStyles == right.dwFontStyles &&
+         left.FontSignature == right.FontSignature &&
+         FXSYS_wcscmp(left.wsFontFace, right.wsFontFace) == 0;
+}
+
+typedef void (*FX_LPEnumAllFonts)(CFX_FontDescriptors& fonts,
+                                  const FX_WCHAR* pwsFaceName,
+                                  FX_WCHAR wUnicode);
+
+FX_LPEnumAllFonts FX_GetDefFontEnumerator();
+
+class CFGAS_FontMgr {
  public:
-  explicit CFGAS_StdFontMgrImp(FX_LPEnumAllFonts pEnumerator);
-  ~CFGAS_StdFontMgrImp() override;
+  explicit CFGAS_FontMgr(FX_LPEnumAllFonts pEnumerator);
+  ~CFGAS_FontMgr();
 
-  // IFGAS_FontMgr:
-  CFGAS_GEFont* GetDefFontByCodePage(
-      uint16_t wCodePage,
-      uint32_t dwFontStyles,
-      const FX_WCHAR* pszFontFamily = nullptr) override;
-  CFGAS_GEFont* GetDefFontByCharset(
-      uint8_t nCharset,
-      uint32_t dwFontStyles,
-      const FX_WCHAR* pszFontFamily = nullptr) override;
-  CFGAS_GEFont* GetDefFontByUnicode(
-      FX_WCHAR wUnicode,
-      uint32_t dwFontStyles,
-      const FX_WCHAR* pszFontFamily = nullptr) override;
-  CFGAS_GEFont* GetDefFontByLanguage(
-      uint16_t wLanguage,
-      uint32_t dwFontStyles,
-      const FX_WCHAR* pszFontFamily = nullptr) override;
+  static std::unique_ptr<CFGAS_FontMgr> Create(FX_LPEnumAllFonts pEnumerator);
+
+  CFGAS_GEFont* GetDefFontByCodePage(uint16_t wCodePage,
+                                     uint32_t dwFontStyles,
+                                     const FX_WCHAR* pszFontFamily = nullptr);
+  CFGAS_GEFont* GetDefFontByUnicode(FX_WCHAR wUnicode,
+                                    uint32_t dwFontStyles,
+                                    const FX_WCHAR* pszFontFamily = nullptr);
   CFGAS_GEFont* LoadFont(const FX_WCHAR* pszFontFamily,
                          uint32_t dwFontStyles,
-                         uint16_t wCodePage = 0xFFFF) override;
-  CFGAS_GEFont* LoadFont(const uint8_t* pBuffer, int32_t iLength) override;
+                         uint16_t wCodePage = 0xFFFF);
+  CFGAS_GEFont* LoadFont(const uint8_t* pBuffer, int32_t iLength);
   CFGAS_GEFont* LoadFont(IFX_Stream* pFontStream,
                          const FX_WCHAR* pszFontAlias = nullptr,
                          uint32_t dwFontStyles = 0,
                          uint16_t wCodePage = 0,
-                         bool bSaveStream = false) override;
+                         bool bSaveStream = false);
   CFGAS_GEFont* LoadFont(CFGAS_GEFont* pSrcFont,
                          uint32_t dwFontStyles,
-                         uint16_t wCodePage = 0xFFFF) override;
+                         uint16_t wCodePage = 0xFFFF);
 
-  void ClearFontCache() override;
-  void RemoveFont(CFGAS_GEFont* pFont) override;
+  // TODO(npm): This method is not being used, but probably should be in
+  // destructor
+  void ClearFontCache();
+  void RemoveFont(CFGAS_GEFont* pFont);
 
- protected:
+ private:
   void RemoveFont(CFX_MapPtrToPtr& fontMap, CFGAS_GEFont* pFont);
   FX_FONTDESCRIPTOR const* FindFont(const FX_WCHAR* pszFontFamily,
                                     uint32_t dwFontStyles,
@@ -79,10 +136,8 @@ class CFGAS_StdFontMgrImp : public IFGAS_FontMgr {
   CFX_MapPtrToPtr m_StreamFonts;
   CFX_MapPtrToPtr m_DeriveFonts;
 };
-uint32_t FX_GetGdiFontStyles(const LOGFONTW& lf);
 
-#else
-
+#else  // _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
 class CFX_FontDescriptor {
  public:
   CFX_FontDescriptor();
@@ -142,49 +197,36 @@ class CFX_FontSourceEnum_File {
   CFX_ByteStringArray m_FolderPaths;
 };
 
-class CFGAS_FontMgrImp : public IFGAS_FontMgr {
+class CFGAS_FontMgr {
  public:
-  explicit CFGAS_FontMgrImp(CFX_FontSourceEnum_File* pFontEnum);
-  ~CFGAS_FontMgrImp() override;
+  explicit CFGAS_FontMgr(CFX_FontSourceEnum_File* pFontEnum);
+  ~CFGAS_FontMgr();
+  static std::unique_ptr<CFGAS_FontMgr> Create(
+      CFX_FontSourceEnum_File* pFontEnum);
 
-  // IFGAS_FontMgr:
-  CFGAS_GEFont* GetDefFontByCodePage(uint16_t wCodePage,
-                                     uint32_t dwFontStyles,
-                                     const FX_WCHAR* pszFontFamily) override;
-  CFGAS_GEFont* GetDefFontByCharset(uint8_t nCharset,
-                                    uint32_t dwFontStyles,
-                                    const FX_WCHAR* pszFontFamily) override;
-  CFGAS_GEFont* GetDefFontByUnicode(FX_WCHAR wUnicode,
-                                    uint32_t dwFontStyles,
-                                    const FX_WCHAR* pszFontFamily) override;
-  CFGAS_GEFont* GetDefFontByLanguage(uint16_t wLanguage,
-                                     uint32_t dwFontStyles,
-                                     const FX_WCHAR* pszFontFamily) override;
   CFGAS_GEFont* GetFontByCodePage(uint16_t wCodePage,
                                   uint32_t dwFontStyles,
-                                  const FX_WCHAR* pszFontFamily) override;
-  CFGAS_GEFont* GetFontByCharset(uint8_t nCharset,
-                                 uint32_t dwFontStyles,
-                                 const FX_WCHAR* pszFontFamily) override;
+                                  const FX_WCHAR* pszFontFamily);
   CFGAS_GEFont* GetFontByUnicode(FX_WCHAR wUnicode,
                                  uint32_t dwFontStyles,
-                                 const FX_WCHAR* pszFontFamily) override;
-  CFGAS_GEFont* GetFontByLanguage(uint16_t wLanguage,
-                                  uint32_t dwFontStyles,
-                                  const FX_WCHAR* pszFontFamily) override;
-  void ClearFontCache() override;
-  void RemoveFont(CFGAS_GEFont* pFont) override;
+                                 const FX_WCHAR* pszFontFamily);
+  void ClearFontCache();
+  void RemoveFont(CFGAS_GEFont* pFont);
 
   CFGAS_GEFont* LoadFont(const CFX_WideString& wsFaceName,
                          int32_t iFaceIndex,
                          int32_t* pFaceCount);
+  inline CFGAS_GEFont* LoadFont(const FX_WCHAR* pszFontFamily,
+                                uint32_t dwFontStyles,
+                                uint16_t wCodePage) {
+    return GetFontByCodePage(wCodePage, dwFontStyles, pszFontFamily);
+  }
   bool EnumFonts();
   bool EnumFontsFromFontMapper();
   bool EnumFontsFromFiles();
 
- protected:
-  void RegisterFace(FXFT_Face pFace,
-                    const CFX_WideString* pFaceName);
+ private:
+  void RegisterFace(FXFT_Face pFace, const CFX_WideString* pFaceName);
   void RegisterFaces(IFX_SeekableReadStream* pFontStream,
                      const CFX_WideString* pFaceName);
   void GetNames(const uint8_t* name_table, CFX_WideStringArray& Names);
@@ -219,4 +261,4 @@ class CFGAS_FontMgrImp : public IFGAS_FontMgr {
 };
 #endif
 
-#endif  // XFA_FGAS_FONT_FGAS_STDFONTMGR_H_
+#endif  // XFA_FGAS_FONT_CFGAS_FONTMGR_H_
