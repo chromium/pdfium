@@ -20,54 +20,13 @@ class CFWL_ComboBox : public CFWL_Widget, public IFWL_ComboBoxDP {
 
   void Initialize();
 
-  int32_t AddString(const CFX_WideStringC& wsText);
-  int32_t AddString(const CFX_WideStringC& wsText, CFX_DIBitmap* pIcon);
-  bool RemoveAt(int32_t iIndex);  // Returns false iff |iIndex| out of range.
-  void RemoveAll();
-  int32_t CountItems();
-  FWL_Error GetTextByIndex(int32_t iIndex, CFX_WideString& wsText);
-  int32_t GetCurSel();
-  FWL_Error SetCurSel(int32_t iSel);
-  void SetEditText(const CFX_WideString& wsText);
-  int32_t GetEditTextLength() const;
-  FWL_Error GetEditText(CFX_WideString& wsText,
-                        int32_t nStart = 0,
-                        int32_t nCount = -1) const;
-  FWL_Error SetEditSelRange(int32_t nStart, int32_t nCount = -1);
-  int32_t GetEditSelRange(int32_t nIndex, int32_t& nStart);
-  int32_t GetEditLimit();
-  FWL_Error SetEditLimit(int32_t nLimit);
-  bool EditRedo(const IFDE_TxtEdtDoRecord* pRecord);
-  bool EditUndo(const IFDE_TxtEdtDoRecord* pRecord);
-  FWL_Error SetMaxListHeight(FX_FLOAT fMaxHeight);
-  FWL_Error SetItemData(int32_t iIndex, void* pData);
-  void* GetItemData(int32_t iIndex);
-  void SetListTheme(IFWL_ThemeProvider* pTheme);
-  bool AfterFocusShowDropList();
-  FWL_Error OpenDropDownList(bool bActivate);
-
-  bool EditCanUndo();
-  bool EditCanRedo();
-  bool EditUndo();
-  bool EditRedo();
-  bool EditCanCopy();
-  bool EditCanCut();
-  bool EditCanSelectAll();
-  bool EditCopy(CFX_WideString& wsCopy);
-  bool EditCut(CFX_WideString& wsCut);
-  bool EditPaste(const CFX_WideString& wsPaste);
-  bool EditSelectAll();
-  bool EditDelete();
-  bool EditDeSelect();
-  FWL_Error GetBBox(CFX_RectF& rect);
-  void EditModifyStylesEx(uint32_t dwStylesExAdded, uint32_t dwStylesExRemoved);
-
   // IFWL_DataProvider
   void GetCaption(IFWL_Widget* pWidget, CFX_WideString& wsCaption) override;
 
   // IFWL_ListBoxDP
-  int32_t CountItems(const IFWL_Widget* pWidget) override;
-  CFWL_ListItem* GetItem(const IFWL_Widget* pWidget, int32_t nIndex) override;
+  int32_t CountItems(const IFWL_Widget* pWidget) const override;
+  CFWL_ListItem* GetItem(const IFWL_Widget* pWidget,
+                         int32_t nIndex) const override;
   int32_t GetItemIndex(IFWL_Widget* pWidget, CFWL_ListItem* pItem) override;
   bool SetItemIndex(IFWL_Widget* pWidget,
                     CFWL_ListItem* pItem,
@@ -107,6 +66,39 @@ class CFWL_ComboBox : public CFWL_Widget, public IFWL_ComboBoxDP {
 
   // IFWL_ComboBoxDP
   FX_FLOAT GetListHeight(IFWL_Widget* pWidget) override;
+
+  int32_t AddString(const CFX_WideStringC& wsText);
+
+  bool RemoveAt(int32_t iIndex);  // Returns false iff |iIndex| out of range.
+  void RemoveAll();
+
+  void GetTextByIndex(int32_t iIndex, CFX_WideString& wsText) const;
+  int32_t GetCurSel() const;
+  void SetCurSel(int32_t iSel);
+
+  void SetEditText(const CFX_WideString& wsText);
+  void GetEditText(CFX_WideString& wsText,
+                   int32_t nStart = 0,
+                   int32_t nCount = -1) const;
+
+  void OpenDropDownList(bool bActivate);
+
+  bool EditCanUndo();
+  bool EditCanRedo();
+  bool EditUndo();
+  bool EditRedo();
+  bool EditCanCopy();
+  bool EditCanCut();
+  bool EditCanSelectAll();
+  bool EditCopy(CFX_WideString& wsCopy);
+  bool EditCut(CFX_WideString& wsCut);
+  bool EditPaste(const CFX_WideString& wsPaste);
+  bool EditSelectAll();
+  bool EditDelete();
+  bool EditDeSelect();
+
+  void GetBBox(CFX_RectF& rect);
+  void EditModifyStylesEx(uint32_t dwStylesExAdded, uint32_t dwStylesExRemoved);
 
  private:
   std::vector<std::unique_ptr<CFWL_ListItem>> m_ItemArray;

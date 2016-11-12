@@ -36,8 +36,6 @@ void IFWL_ComboBoxProxy::OnProcessMessage(CFWL_Message* pMessage) {
         case FWL_MouseCommand::LeftButtonUp:
           OnLButtonUp(pMsg);
           break;
-        case FWL_MouseCommand::Move:
-          break;
         default:
           break;
       }
@@ -97,7 +95,7 @@ void IFWL_ComboBoxProxy::OnLButtonUp(CFWL_MsgMouse* pMsg) {
     GetWidgetRect(rect);
     rect.left = rect.top = 0;
     if (!rect.Contains(pMsg->m_fx, pMsg->m_fy) &&
-        m_pComboBox->IsDropListShowed()) {
+        m_pComboBox->IsDropListVisible()) {
       m_pComboBox->ShowDropList(false);
     }
   } else {

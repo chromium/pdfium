@@ -26,8 +26,9 @@ class CFWL_ListBox : public CFWL_Widget, public IFWL_ListBoxDP {
   void GetCaption(IFWL_Widget* pWidget, CFX_WideString& wsCaption) override;
 
   // IFWL_ListBoxDP:
-  int32_t CountItems(const IFWL_Widget* pWidget) override;
-  CFWL_ListItem* GetItem(const IFWL_Widget* pWidget, int32_t nIndex) override;
+  int32_t CountItems(const IFWL_Widget* pWidget) const override;
+  CFWL_ListItem* GetItem(const IFWL_Widget* pWidget,
+                         int32_t nIndex) const override;
   int32_t GetItemIndex(IFWL_Widget* pWidget, CFWL_ListItem* pItem) override;
   bool SetItemIndex(IFWL_Widget* pWidget,
                     CFWL_ListItem* pItem,
@@ -81,7 +82,7 @@ class CFWL_ListBox : public CFWL_Widget, public IFWL_ListBoxDP {
   uint32_t GetItemStates(CFWL_ListItem* pItem);
 
  private:
-  int32_t CountItems();
+  int32_t CountItems() const;
 
   std::vector<std::unique_ptr<CFWL_ListItem>> m_ItemArray;
 };

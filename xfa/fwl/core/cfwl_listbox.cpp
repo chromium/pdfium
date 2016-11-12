@@ -101,7 +101,7 @@ void CFWL_ListBox::GetScrollPos(FX_FLOAT& fPos, bool bVert) {
     ToListBox(GetWidget())->GetScrollPos(fPos, bVert);
 }
 
-int32_t CFWL_ListBox::CountItems() {
+int32_t CFWL_ListBox::CountItems() const {
   return pdfium::CollectionSize<int32_t>(m_ItemArray);
 }
 
@@ -123,12 +123,12 @@ void CFWL_ListBox::GetCaption(IFWL_Widget* pWidget, CFX_WideString& wsCaption) {
   wsCaption = L"";
 }
 
-int32_t CFWL_ListBox::CountItems(const IFWL_Widget* pWidget) {
+int32_t CFWL_ListBox::CountItems(const IFWL_Widget* pWidget) const {
   return pdfium::CollectionSize<int32_t>(m_ItemArray);
 }
 
 CFWL_ListItem* CFWL_ListBox::GetItem(const IFWL_Widget* pWidget,
-                                     int32_t nIndex) {
+                                     int32_t nIndex) const {
   if (nIndex < 0 || nIndex >= CountItems(pWidget))
     return nullptr;
 

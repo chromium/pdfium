@@ -51,9 +51,9 @@ FWL_EVENT_DEF(CFWL_EvtLtbDrawItem,
 
 class IFWL_ListBoxDP : public IFWL_DataProvider {
  public:
-  virtual int32_t CountItems(const IFWL_Widget* pWidget) = 0;
+  virtual int32_t CountItems(const IFWL_Widget* pWidget) const = 0;
   virtual CFWL_ListItem* GetItem(const IFWL_Widget* pWidget,
-                                 int32_t nIndex) = 0;
+                                 int32_t nIndex) const = 0;
   virtual int32_t GetItemIndex(IFWL_Widget* pWidget, CFWL_ListItem* pItem) = 0;
   virtual bool SetItemIndex(IFWL_Widget* pWidget,
                             CFWL_ListItem* pItem,
@@ -119,15 +119,16 @@ class IFWL_ListBox : public IFWL_Widget {
   void GetItemText(CFWL_ListItem* hItem, CFX_WideString& wsText);
   void GetScrollPos(FX_FLOAT& fPos, bool bVert = true);
 
+  FX_FLOAT GetItemHeight() const { return m_fItemHeight; }
+  FX_FLOAT CalcItemHeight();
+
  protected:
   CFWL_ListItem* GetItem(CFWL_ListItem* hItem, uint32_t dwKeyCode);
   void SetSelection(CFWL_ListItem* hStart, CFWL_ListItem* hEnd, bool bSelected);
   CFWL_ListItem* GetItemAtPoint(FX_FLOAT fx, FX_FLOAT fy);
   bool ScrollToVisible(CFWL_ListItem* hItem);
-  FX_FLOAT CalcItemHeight();
   void InitScrollBar(bool bVert = true);
   bool IsShowScrollBar(bool bVert);
-  FX_FLOAT GetItemHeight() const { return m_fItemHeight; }
   IFWL_ScrollBar* GetVertScrollBar() const { return m_pVertScrollBar.get(); }
   const CFX_RectF& GetRTClient() const { return m_rtClient; }
 

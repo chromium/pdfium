@@ -111,6 +111,10 @@ class IFWL_Widget : public IFWL_WidgetDelegate {
     return m_pProperties->m_pThemeProvider;
   }
 
+  IFWL_DataProvider* GetDataProvider() const {
+    return m_pProperties->m_pDataProvider;
+  }
+
   void SetDelegate(IFWL_WidgetDelegate* delegate) { m_pDelegate = delegate; }
   IFWL_WidgetDelegate* GetDelegate() {
     return m_pDelegate ? m_pDelegate : this;

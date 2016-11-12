@@ -34,7 +34,6 @@ class IFWL_ComboBoxProxy : public IFWL_FormProxy {
 
   bool m_bLButtonDown;
   bool m_bLButtonUpSelf;
-
   IFWL_ComboBox* m_pComboBox;
 };
 

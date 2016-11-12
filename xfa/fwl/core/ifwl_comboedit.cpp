@@ -24,12 +24,8 @@ void IFWL_ComboEdit::ClearSelected() {
 
 void IFWL_ComboEdit::SetSelected() {
   FlagFocus(true);
-  EndCaret();
-  AddSelRange(0);
-}
-
-void IFWL_ComboEdit::EndCaret() {
   GetTxtEdtEngine()->MoveCaretPos(MC_End);
+  AddSelRange(0);
 }
 
 void IFWL_ComboEdit::FlagFocus(bool bSet) {
@@ -39,10 +35,6 @@ void IFWL_ComboEdit::FlagFocus(bool bSet) {
     m_pProperties->m_dwStates &= ~FWL_WGTSTATE_Focused;
     ShowCaret(false);
   }
-}
-
-void IFWL_ComboEdit::SetComboBoxFocus(bool bSet) {
-  m_pOuter->SetFocus(bSet);
 }
 
 void IFWL_ComboEdit::OnProcessMessage(CFWL_Message* pMessage) {
@@ -66,7 +58,7 @@ void IFWL_ComboEdit::OnProcessMessage(CFWL_Message* pMessage) {
       if ((pMsg->m_dwCmd == FWL_MouseCommand::LeftButtonDown) &&
           ((m_pProperties->m_dwStates & FWL_WGTSTATE_Focused) == 0)) {
         SetSelected();
-        SetComboBoxFocus(true);
+        m_pOuter->SetFocus(true);
       }
       break;
     }

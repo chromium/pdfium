@@ -24,11 +24,9 @@ class IFWL_ComboEdit : public IFWL_Edit {
 
   void ClearSelected();
   void SetSelected();
-  void EndCaret();
   void FlagFocus(bool bSet);
 
- protected:
-  void SetComboBoxFocus(bool bSet);
+ private:
   IFWL_ComboBox* m_pOuter;
 };
 

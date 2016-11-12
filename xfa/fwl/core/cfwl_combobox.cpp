@@ -46,16 +46,6 @@ int32_t CFWL_ComboBox::AddString(const CFX_WideStringC& wsText) {
   return m_ItemArray.size() - 1;
 }
 
-int32_t CFWL_ComboBox::AddString(const CFX_WideStringC& wsText,
-                                 CFX_DIBitmap* pIcon) {
-  std::unique_ptr<CFWL_ListItem> pItem(new CFWL_ListItem);
-  pItem->m_wsText = wsText;
-  pItem->m_dwStyles = 0;
-  pItem->m_pDIB = pIcon;
-  m_ItemArray.push_back(std::move(pItem));
-  return m_ItemArray.size() - 1;
-}
-
 bool CFWL_ComboBox::RemoveAt(int32_t iIndex) {
   if (iIndex < 0 || static_cast<size_t>(iIndex) >= m_ItemArray.size()) {
     return false;
@@ -68,27 +58,21 @@ void CFWL_ComboBox::RemoveAll() {
   m_ItemArray.clear();
 }
 
-int32_t CFWL_ComboBox::CountItems() {
-  return CountItems(GetWidget());
-}
-
-FWL_Error CFWL_ComboBox::GetTextByIndex(int32_t iIndex,
-                                        CFX_WideString& wsText) {
+void CFWL_ComboBox::GetTextByIndex(int32_t iIndex,
+                                   CFX_WideString& wsText) const {
   CFWL_ListItem* pItem =
       static_cast<CFWL_ListItem*>(GetItem(m_pIface.get(), iIndex));
-  if (!pItem)
-    return FWL_Error::Indefinite;
-  wsText = pItem->m_wsText;
-  return FWL_Error::Succeeded;
+  if (pItem)
+    wsText = pItem->m_wsText;
 }
 
-int32_t CFWL_ComboBox::GetCurSel() {
+int32_t CFWL_ComboBox::GetCurSel() const {
   return GetWidget() ? ToComboBox(GetWidget())->GetCurSel() : -1;
 }
 
-FWL_Error CFWL_ComboBox::SetCurSel(int32_t iSel) {
-  return GetWidget() ? ToComboBox(GetWidget())->SetCurSel(iSel)
-                     : FWL_Error::Indefinite;
+void CFWL_ComboBox::SetCurSel(int32_t iSel) {
+  if (GetWidget())
+    ToComboBox(GetWidget())->SetCurSel(iSel);
 }
 
 void CFWL_ComboBox::SetEditText(const CFX_WideString& wsText) {
@@ -96,75 +80,15 @@ void CFWL_ComboBox::SetEditText(const CFX_WideString& wsText) {
     ToComboBox(GetWidget())->SetEditText(wsText);
 }
 
-int32_t CFWL_ComboBox::GetEditTextLength() const {
-  return GetWidget() ? ToComboBox(GetWidget())->GetEditTextLength() : 0;
+void CFWL_ComboBox::GetEditText(CFX_WideString& wsText,
+                                int32_t nStart,
+                                int32_t nCount) const {
+  if (GetWidget())
+    ToComboBox(GetWidget())->GetEditText(wsText, nStart, nCount);
 }
 
-FWL_Error CFWL_ComboBox::GetEditText(CFX_WideString& wsText,
-                                     int32_t nStart,
-                                     int32_t nCount) const {
-  return GetWidget()
-             ? ToComboBox(GetWidget())->GetEditText(wsText, nStart, nCount)
-             : FWL_Error::Indefinite;
-}
-
-FWL_Error CFWL_ComboBox::SetEditSelRange(int32_t nStart, int32_t nCount) {
-  return GetWidget() ? ToComboBox(GetWidget())->SetEditSelRange(nStart, nCount)
-                     : FWL_Error::Indefinite;
-}
-
-int32_t CFWL_ComboBox::GetEditSelRange(int32_t nIndex, int32_t& nStart) {
-  return GetWidget() ? ToComboBox(GetWidget())->GetEditSelRange(nIndex, nStart)
-                     : 0;
-}
-
-int32_t CFWL_ComboBox::GetEditLimit() {
-  return GetWidget() ? ToComboBox(GetWidget())->GetEditLimit() : 0;
-}
-
-FWL_Error CFWL_ComboBox::SetEditLimit(int32_t nLimit) {
-  return GetWidget() ? ToComboBox(GetWidget())->SetEditLimit(nLimit)
-                     : FWL_Error::Indefinite;
-}
-
-bool CFWL_ComboBox::EditRedo(const IFDE_TxtEdtDoRecord* pRecord) {
-  return GetWidget() ? ToComboBox(GetWidget())->EditRedo(pRecord) : false;
-}
-
-bool CFWL_ComboBox::EditUndo(const IFDE_TxtEdtDoRecord* pRecord) {
-  return GetWidget() ? ToComboBox(GetWidget())->EditUndo(pRecord) : false;
-}
-
-FWL_Error CFWL_ComboBox::SetMaxListHeight(FX_FLOAT fMaxHeight) {
-  m_fMaxListHeight = fMaxHeight;
-  return FWL_Error::Succeeded;
-}
-
-FWL_Error CFWL_ComboBox::SetItemData(int32_t iIndex, void* pData) {
-  CFWL_ListItem* pItem =
-      static_cast<CFWL_ListItem*>(GetItem(m_pIface.get(), iIndex));
-  if (!pItem)
-    return FWL_Error::Indefinite;
-  pItem->m_pData = pData;
-  return FWL_Error::Succeeded;
-}
-
-void* CFWL_ComboBox::GetItemData(int32_t iIndex) {
-  CFWL_ListItem* pItem =
-      static_cast<CFWL_ListItem*>(GetItem(m_pIface.get(), iIndex));
-  return pItem ? pItem->m_pData : nullptr;
-}
-
-void CFWL_ComboBox::SetListTheme(IFWL_ThemeProvider* pTheme) {
-  ToComboBox(GetWidget())->GetListBoxt()->SetThemeProvider(pTheme);
-}
-
-bool CFWL_ComboBox::AfterFocusShowDropList() {
-  return ToComboBox(GetWidget())->AfterFocusShowDropList();
-}
-
-FWL_Error CFWL_ComboBox::OpenDropDownList(bool bActivate) {
-  return ToComboBox(GetWidget())->OpenDropDownList(bActivate);
+void CFWL_ComboBox::OpenDropDownList(bool bActivate) {
+  ToComboBox(GetWidget())->OpenDropDownList(bActivate);
 }
 
 bool CFWL_ComboBox::EditCanUndo() {
@@ -219,9 +143,9 @@ bool CFWL_ComboBox::EditDeSelect() {
   return GetWidget() ? ToComboBox(GetWidget())->EditDeSelect() : false;
 }
 
-FWL_Error CFWL_ComboBox::GetBBox(CFX_RectF& rect) {
-  return GetWidget() ? ToComboBox(GetWidget())->GetBBox(rect)
-                     : FWL_Error::Indefinite;
+void CFWL_ComboBox::GetBBox(CFX_RectF& rect) {
+  if (GetWidget())
+    ToComboBox(GetWidget())->GetBBox(rect);
 }
 
 void CFWL_ComboBox::EditModifyStylesEx(uint32_t dwStylesExAdded,
@@ -235,12 +159,12 @@ void CFWL_ComboBox::EditModifyStylesEx(uint32_t dwStylesExAdded,
 void CFWL_ComboBox::GetCaption(IFWL_Widget* pWidget,
                                CFX_WideString& wsCaption) {}
 
-int32_t CFWL_ComboBox::CountItems(const IFWL_Widget* pWidget) {
+int32_t CFWL_ComboBox::CountItems(const IFWL_Widget* pWidget) const {
   return m_ItemArray.size();
 }
 
 CFWL_ListItem* CFWL_ComboBox::GetItem(const IFWL_Widget* pWidget,
-                                      int32_t nIndex) {
+                                      int32_t nIndex) const {
   if (nIndex < 0 || static_cast<size_t>(nIndex) >= m_ItemArray.size())
     return nullptr;
 
