@@ -58,8 +58,8 @@ class IFWL_BarcodeDP : public IFWL_DataProvider {
 
 class IFWL_Barcode : public IFWL_Edit {
  public:
-  explicit IFWL_Barcode(const IFWL_App* app,
-                        std::unique_ptr<CFWL_WidgetProperties> properties);
+  IFWL_Barcode(const IFWL_App* app,
+               std::unique_ptr<CFWL_WidgetProperties> properties);
   ~IFWL_Barcode() override;
 
   // IFWL_Widget
@@ -75,7 +75,7 @@ class IFWL_Barcode : public IFWL_Edit {
   void SetType(BC_TYPE type);
   bool IsProtectedType();
 
- protected:
+ private:
   void GenerateBarcodeImageCache();
   void CreateBarcodeEngine();
 

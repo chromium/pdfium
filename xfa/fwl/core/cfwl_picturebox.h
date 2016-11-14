@@ -18,6 +18,17 @@ class CFWL_PictureBox : public CFWL_Widget, public IFWL_PictureBoxDP {
 
   void Initialize();
 
+  // IFWL_DataProvider
+  void GetCaption(IFWL_Widget* pWidget, CFX_WideString& wsCaption) override;
+
+  // IFWL_PictureBoxDP
+  CFX_DIBitmap* GetPicture(IFWL_Widget* pWidget) override;
+  CFX_DIBitmap* GetErrorPicture(IFWL_Widget* pWidget) override;
+  CFX_DIBitmap* GetInitialPicture(IFWL_Widget* pWidget) override;
+  int32_t GetOpacity(IFWL_Widget* pWidget) override;
+  int32_t GetFlipMode(IFWL_Widget* pWidget) override;
+  void GetMatrix(IFWL_Widget* pWidget, CFX_Matrix& matrix) override;
+
   CFX_DIBitmap* GetPicture();
   FWL_Error SetPicture(CFX_DIBitmap* pBitmap);
   FX_FLOAT GetRotation();
@@ -31,16 +42,6 @@ class CFWL_PictureBox : public CFWL_Widget, public IFWL_PictureBoxDP {
   FWL_Error GetOffset(FX_FLOAT& fx, FX_FLOAT& fy);
   FWL_Error SetOffset(FX_FLOAT fx, FX_FLOAT fy);
 
-  // IFWL_DataProvider
-  void GetCaption(IFWL_Widget* pWidget, CFX_WideString& wsCaption) override;
-
-  // IFWL_PictureBoxDP
-  CFX_DIBitmap* GetPicture(IFWL_Widget* pWidget) override;
-  CFX_DIBitmap* GetErrorPicture(IFWL_Widget* pWidget) override;
-  CFX_DIBitmap* GetInitialPicture(IFWL_Widget* pWidget) override;
-  int32_t GetOpacity(IFWL_Widget* pWidget) override;
-  int32_t GetFlipMode(IFWL_Widget* pWidget) override;
-  FWL_Error GetMatrix(IFWL_Widget* pWidget, CFX_Matrix& matrix) override;
 
  private:
   CFX_DIBitmap* m_pBitmap;

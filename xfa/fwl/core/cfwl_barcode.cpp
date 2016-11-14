@@ -83,11 +83,6 @@ void CFWL_Barcode::SetEndChar(FX_CHAR endChar) {
   m_cEndChar = endChar;
 }
 
-void CFWL_Barcode::SetVersion(int32_t version) {
-  m_dwAttributeMask |= FWL_BCDATTRIBUTE_VERSION;
-  m_nVersion = version;
-}
-
 void CFWL_Barcode::SetErrorCorrectionLevel(int32_t ecLevel) {
   m_dwAttributeMask |= FWL_BCDATTRIBUTE_ECLEVEL;
   m_nECLevel = ecLevel;
@@ -96,10 +91,6 @@ void CFWL_Barcode::SetErrorCorrectionLevel(int32_t ecLevel) {
 void CFWL_Barcode::SetTruncated(bool truncated) {
   m_dwAttributeMask |= FWL_BCDATTRIBUTE_TRUNCATED;
   m_bTruncated = truncated;
-}
-
-void CFWL_Barcode::ResetBarcodeAttributes() {
-  m_dwAttributeMask = FWL_BCDATTRIBUTE_NONE;
 }
 
 void CFWL_Barcode::SetType(BC_TYPE type) {
@@ -155,7 +146,7 @@ FX_CHAR CFWL_Barcode::GetEndChar() const {
 }
 
 int32_t CFWL_Barcode::GetVersion() const {
-  return m_nVersion;
+  return 0;
 }
 
 int32_t CFWL_Barcode::GetErrorCorrectionLevel() const {

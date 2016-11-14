@@ -19,11 +19,11 @@ class CXFA_FWLAdapterTimerMgr : public IFWL_AdapterTimerMgr {
   CXFA_FWLAdapterTimerMgr(CPDFSDK_FormFillEnvironment* pFormFillEnv)
       : m_pFormFillEnv(pFormFillEnv) {}
 
-  FWL_Error Start(IFWL_Timer* pTimer,
-                  uint32_t dwElapse,
-                  bool bImmediately,
-                  IFWL_TimerInfo** pTimerInfo) override;
-  FWL_Error Stop(IFWL_TimerInfo* pTimerInfo) override;
+  void Start(IFWL_Timer* pTimer,
+             uint32_t dwElapse,
+             bool bImmediately,
+             IFWL_TimerInfo** pTimerInfo) override;
+  void Stop(IFWL_TimerInfo* pTimerInfo) override;
 
  protected:
   static void TimerProc(int32_t idEvent);

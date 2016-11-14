@@ -143,39 +143,20 @@ void IFWL_CheckBox::DrawWidget(CFX_Graphics* pGraphics,
   }
 }
 
-int32_t IFWL_CheckBox::GetCheckState() {
-  if ((m_pProperties->m_dwStyleExes & FWL_STYLEEXT_CKB_3State) &&
-      ((m_pProperties->m_dwStates & FWL_STATE_CKB_CheckMask) ==
-       FWL_STATE_CKB_Neutral)) {
-    return 2;
-  }
-  if ((m_pProperties->m_dwStates & FWL_STATE_CKB_CheckMask) ==
-      FWL_STATE_CKB_Checked) {
-    return 1;
-  }
-  return 0;
-}
-
-FWL_Error IFWL_CheckBox::SetCheckState(int32_t iCheck) {
+void IFWL_CheckBox::SetCheckState(int32_t iCheck) {
   m_pProperties->m_dwStates &= ~FWL_STATE_CKB_CheckMask;
   switch (iCheck) {
-    case 0: {
-      break;
-    }
-    case 1: {
+    case 1:
       m_pProperties->m_dwStates |= FWL_STATE_CKB_Checked;
       break;
-    }
-    case 2: {
-      if (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_CKB_3State) {
+    case 2:
+      if (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_CKB_3State)
         m_pProperties->m_dwStates |= FWL_STATE_CKB_Neutral;
-      }
       break;
-    }
-    default: {}
+    default:
+      break;
   }
   Repaint(&m_rtClient);
-  return FWL_Error::Succeeded;
 }
 
 void IFWL_CheckBox::Layout() {

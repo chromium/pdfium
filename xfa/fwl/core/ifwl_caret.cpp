@@ -13,14 +13,18 @@
 #include "xfa/fwl/core/ifwl_caret.h"
 #include "xfa/fwl/core/ifwl_themeprovider.h"
 
+namespace {
+
+const uint32_t kFrequency = 400;
+
+}  // namespace
+
 IFWL_Caret::IFWL_Caret(const IFWL_App* app,
                        std::unique_ptr<CFWL_WidgetProperties> properties,
                        IFWL_Widget* pOuter)
     : IFWL_Widget(app, std::move(properties), pOuter),
       m_pTimer(new IFWL_Caret::Timer(this)),
-      m_pTimerInfo(nullptr),
-      m_dwElapse(400),
-      m_bSetColor(false) {
+      m_pTimerInfo(nullptr) {
   SetStates(FWL_STATE_CAT_HightLight);
 }
 
@@ -53,25 +57,9 @@ void IFWL_Caret::ShowCaret(bool bFlag) {
     m_pTimerInfo = nullptr;
   }
   if (bFlag)
-    m_pTimerInfo = m_pTimer->StartTimer(m_dwElapse, true);
+    m_pTimerInfo = m_pTimer->StartTimer(kFrequency, true);
 
   SetStates(FWL_WGTSTATE_Invisible, !bFlag);
-}
-
-FWL_Error IFWL_Caret::GetFrequency(uint32_t& elapse) {
-  elapse = m_dwElapse;
-  return FWL_Error::Succeeded;
-}
-
-FWL_Error IFWL_Caret::SetFrequency(uint32_t elapse) {
-  m_dwElapse = elapse;
-  return FWL_Error::Succeeded;
-}
-
-FWL_Error IFWL_Caret::SetColor(CFX_Color crFill) {
-  m_bSetColor = true;
-  m_crFill = crFill;
-  return FWL_Error::Succeeded;
 }
 
 void IFWL_Caret::DrawCaretBK(CFX_Graphics* pGraphics,
@@ -84,8 +72,6 @@ void IFWL_Caret::DrawCaretBK(CFX_Graphics* pGraphics,
   param.m_pWidget = this;
   param.m_pGraphics = pGraphics;
   param.m_rtPart = rect;
-  if (m_bSetColor)
-    param.m_pData = &m_crFill;
   if (!(m_pProperties->m_dwStates & FWL_STATE_CAT_HightLight))
     return;
 

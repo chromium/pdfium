@@ -114,7 +114,7 @@ int32_t CFWL_PictureBox::GetOpacity(IFWL_Widget* pWidget) {
   return m_iOpacity;
 }
 
-FWL_Error CFWL_PictureBox::GetMatrix(IFWL_Widget* pWidget, CFX_Matrix& matrix) {
+void CFWL_PictureBox::GetMatrix(IFWL_Widget* pWidget, CFX_Matrix& matrix) {
   CFX_RectF rect;
   pWidget->GetClientRect(rect);
   FX_FLOAT fLen = rect.width / 2;
@@ -125,7 +125,6 @@ FWL_Error CFWL_PictureBox::GetMatrix(IFWL_Widget* pWidget, CFX_Matrix& matrix) {
   matrix.Translate(fLen, fWid);
   matrix.Scale(m_fScaleX, m_fScaleY);
   matrix.Translate(m_fOffSetX, m_fOffSetY);
-  return FWL_Error::Succeeded;
 }
 
 int32_t CFWL_PictureBox::GetFlipMode(IFWL_Widget* pWidget) {

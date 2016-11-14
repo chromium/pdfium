@@ -34,11 +34,8 @@ class IFWL_Caret : public IFWL_Widget {
                     const CFX_Matrix* pMatrix) override;
 
   void ShowCaret(bool bFlag = true);
-  FWL_Error GetFrequency(uint32_t& elapse);
-  FWL_Error SetFrequency(uint32_t elapse);
-  FWL_Error SetColor(CFX_Color crFill);
 
- protected:
+ private:
   class Timer : public IFWL_Timer {
    public:
     explicit Timer(IFWL_Caret* pCaret);
@@ -54,9 +51,6 @@ class IFWL_Caret : public IFWL_Widget {
 
   std::unique_ptr<IFWL_Caret::Timer> m_pTimer;
   IFWL_TimerInfo* m_pTimerInfo;  // not owned.
-  uint32_t m_dwElapse;
-  CFX_Color m_crFill;
-  bool m_bSetColor;
 };
 
 #endif  // XFA_FWL_CORE_IFWL_CARET_H_

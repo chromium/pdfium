@@ -18,24 +18,6 @@ class CFWL_Barcode : public CFWL_Edit, public IFWL_BarcodeDP {
 
   void Initialize();
 
-  void SetType(BC_TYPE type);
-  bool IsProtectedType();
-
-  void SetCharEncoding(BC_CHAR_ENCODING encoding);
-  void SetModuleHeight(int32_t height);
-  void SetModuleWidth(int32_t width);
-  void SetDataLength(int32_t dataLength);
-  void SetCalChecksum(bool calChecksum);
-  void SetPrintChecksum(bool printChecksum);
-  void SetTextLocation(BC_TEXT_LOC location);
-  void SetWideNarrowRatio(int32_t ratio);
-  void SetStartChar(FX_CHAR startChar);
-  void SetEndChar(FX_CHAR endChar);
-  void SetVersion(int32_t version);
-  void SetErrorCorrectionLevel(int32_t ecLevel);
-  void SetTruncated(bool truncated);
-  void ResetBarcodeAttributes();
-
   // IFWL_DataProvider
   void GetCaption(IFWL_Widget* pWidget, CFX_WideString& wsCaption) override;
 
@@ -55,6 +37,22 @@ class CFWL_Barcode : public CFWL_Edit, public IFWL_BarcodeDP {
   bool GetTruncated() const override;
   uint32_t GetBarcodeAttributeMask() const override;
 
+  void SetType(BC_TYPE type);
+  bool IsProtectedType();
+
+  void SetCharEncoding(BC_CHAR_ENCODING encoding);
+  void SetModuleHeight(int32_t height);
+  void SetModuleWidth(int32_t width);
+  void SetDataLength(int32_t dataLength);
+  void SetCalChecksum(bool calChecksum);
+  void SetPrintChecksum(bool printChecksum);
+  void SetTextLocation(BC_TEXT_LOC location);
+  void SetWideNarrowRatio(int32_t ratio);
+  void SetStartChar(FX_CHAR startChar);
+  void SetEndChar(FX_CHAR endChar);
+  void SetErrorCorrectionLevel(int32_t ecLevel);
+  void SetTruncated(bool truncated);
+
  private:
   BC_CHAR_ENCODING m_eCharEncoding;
   int32_t m_nModuleHeight;
@@ -66,7 +64,6 @@ class CFWL_Barcode : public CFWL_Edit, public IFWL_BarcodeDP {
   int32_t m_nWideNarrowRatio;
   FX_CHAR m_cStartChar;
   FX_CHAR m_cEndChar;
-  int32_t m_nVersion;
   int32_t m_nECLevel;
   bool m_bTruncated;
   uint32_t m_dwAttributeMask;

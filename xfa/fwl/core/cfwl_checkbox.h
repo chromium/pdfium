@@ -17,16 +17,13 @@ class CFWL_CheckBox : public CFWL_Widget, public IFWL_CheckBoxDP {
 
   void Initialize();
 
-  FWL_Error SetCaption(const CFX_WideStringC& wsCaption);
-  FWL_Error SetBoxSize(FX_FLOAT fHeight);
-  int32_t GetCheckState();
-  FWL_Error SetCheckState(int32_t iCheck);
-
   // IFWL_DataProvider
   void GetCaption(IFWL_Widget* pWidget, CFX_WideString& wsCaption) override;
 
   // IFWL_CheckBoxDP
   FX_FLOAT GetBoxSize(IFWL_Widget* pWidget) override;
+
+  void SetBoxSize(FX_FLOAT fHeight);
 
  private:
   FX_FLOAT m_fBoxHeight;
