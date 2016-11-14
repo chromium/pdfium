@@ -34,7 +34,7 @@ class CPDF_PageContentGenerator {
                    const uint8_t* data,
                    uint32_t size,
                    CFX_Matrix& matrix);
-  CFX_ByteString RealizeResource(CPDF_Object* pResourceObj,
+  CFX_ByteString RealizeResource(uint32_t dwResourceObjNum,
                                  const CFX_ByteString& bsType);
 
   CPDF_Page* m_pPage;

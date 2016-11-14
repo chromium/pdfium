@@ -33,6 +33,7 @@ class CPDF_Image {
   ~CPDF_Image();
 
   CPDF_Image* Clone();
+  void ConvertStreamToIndirectObject();
 
   CPDF_Dictionary* GetInlineDict() const { return m_pDict; }
   CPDF_Stream* GetStream() const { return m_pStream; }

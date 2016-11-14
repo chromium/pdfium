@@ -59,8 +59,9 @@ void CPDF_PageContentGenerator::GenerateContent() {
 }
 
 CFX_ByteString CPDF_PageContentGenerator::RealizeResource(
-    CPDF_Object* pResourceObj,
+    uint32_t dwResourceObjNum,
     const CFX_ByteString& bsType) {
+  ASSERT(dwResourceObjNum);
   if (!m_pPage->m_pResources) {
     m_pPage->m_pResources =
         new CPDF_Dictionary(m_pDocument->GetByteStringPool());
@@ -82,8 +83,7 @@ CFX_ByteString CPDF_PageContentGenerator::RealizeResource(
     }
     idnum++;
   }
-  pResList->SetReferenceFor(name, m_pDocument,
-                            m_pDocument->AddIndirectObject(pResourceObj));
+  pResList->SetReferenceFor(name, m_pDocument, dwResourceObjNum);
   return name;
 }
 
@@ -104,9 +104,13 @@ void CPDF_PageContentGenerator::ProcessImage(CFX_ByteTextBuf& buf,
     return;
 
   bool bWasInline = pStream->IsInline();
-  CFX_ByteString name = RealizeResource(pStream, "XObject");
   if (bWasInline)
-    pImageObj->SetUnownedImage(m_pDocument->GetPageData()->GetImage(pStream));
+    pImage->ConvertStreamToIndirectObject();
+
+  uint32_t dwObjNum = pStream->GetObjNum();
+  CFX_ByteString name = RealizeResource(dwObjNum, "XObject");
+  if (bWasInline)
+    pImageObj->SetUnownedImage(m_pDocument->GetPageData()->GetImage(dwObjNum));
 
   buf << "/" << PDF_NameEncode(name) << " Do Q\n";
 }
@@ -118,20 +122,22 @@ void CPDF_PageContentGenerator::ProcessForm(CFX_ByteTextBuf& buf,
   if (!data || !size)
     return;
 
+  buf << "q " << matrix << " cm ";
+
+  CFX_FloatRect bbox = m_pPage->GetPageBBox();
+  matrix.TransformRect(bbox);
+
   CPDF_Dictionary* pFormDict =
       new CPDF_Dictionary(m_pDocument->GetByteStringPool());
   pFormDict->SetNameFor("Type", "XObject");
   pFormDict->SetNameFor("Subtype", "Form");
-
-  CFX_FloatRect bbox = m_pPage->GetPageBBox();
-  matrix.TransformRect(bbox);
   pFormDict->SetRectFor("BBox", bbox);
 
   CPDF_Stream* pStream = new CPDF_Stream;
   pStream->InitStream(data, size, pFormDict);
-  buf << "q " << matrix << " cm ";
 
-  CFX_ByteString name = RealizeResource(pStream, "XObject");
+  CFX_ByteString name =
+      RealizeResource(m_pDocument->AddIndirectObject(pStream), "XObject");
   buf << "/" << PDF_NameEncode(name) << " Do Q\n";
 }
 

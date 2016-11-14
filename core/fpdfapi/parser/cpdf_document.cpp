@@ -641,12 +641,9 @@ CPDF_IccProfile* CPDF_Document::LoadIccProfile(CPDF_Stream* pStream) {
   return m_pDocPage->GetIccProfile(pStream);
 }
 
-CPDF_Image* CPDF_Document::LoadImageF(CPDF_Object* pObj) {
-  if (!pObj)
-    return nullptr;
-
-  ASSERT(pObj->GetObjNum());
-  return m_pDocPage->GetImage(pObj);
+CPDF_Image* CPDF_Document::LoadImageFromPageData(uint32_t dwStreamObjNum) {
+  ASSERT(dwStreamObjNum);
+  return m_pDocPage->GetImage(dwStreamObjNum);
 }
 
 void CPDF_Document::CreateNewDoc() {

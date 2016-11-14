@@ -81,7 +81,7 @@ class CPDF_Document : public CPDF_IndirectObjectHolder {
                             bool bShading,
                             const CFX_Matrix& matrix);
 
-  CPDF_Image* LoadImageF(CPDF_Object* pObj);
+  CPDF_Image* LoadImageFromPageData(uint32_t dwStreamObjNum);
   CPDF_StreamAcc* LoadFontFile(CPDF_Stream* pStream);
   CPDF_IccProfile* LoadIccProfile(CPDF_Stream* pStream);
 

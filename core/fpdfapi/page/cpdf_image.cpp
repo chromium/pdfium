@@ -30,9 +30,6 @@ CPDF_Image::CPDF_Image(CPDF_Document* pDoc,
     : m_pDocument(pDoc),
       m_pStream(pStream.get()),
       m_pOwnedStream(std::move(pStream)) {
-  if (!m_pStream)
-    return;
-
   m_pOwnedDict =
       ToDictionary(std::unique_ptr<CPDF_Object>(m_pStream->GetDict()->Clone()));
   m_pDict = m_pOwnedDict.get();
@@ -42,9 +39,6 @@ CPDF_Image::CPDF_Image(CPDF_Document* pDoc,
 CPDF_Image::CPDF_Image(CPDF_Document* pDoc, uint32_t dwStreamObjNum)
     : m_pDocument(pDoc),
       m_pStream(ToStream(pDoc->GetIndirectObject(dwStreamObjNum))) {
-  if (!m_pStream)
-    return;
-
   m_pDict = m_pStream->GetDict();
   FinishInitialization();
 }
@@ -77,6 +71,14 @@ CPDF_Image* CPDF_Image::Clone() {
     pImage->m_pDict = m_pDict;
   }
   return pImage;
+}
+
+void CPDF_Image::ConvertStreamToIndirectObject() {
+  if (!m_pStream->IsInline())
+    return;
+
+  ASSERT(m_pOwnedStream);
+  m_pDocument->AddIndirectObject(m_pOwnedStream.release());
 }
 
 CPDF_Dictionary* CPDF_Image::InitJPEG(uint8_t* pData, uint32_t size) {
@@ -122,8 +124,10 @@ CPDF_Dictionary* CPDF_Image::InitJPEG(uint8_t* pData, uint32_t size) {
   m_bIsMask = false;
   m_Width = width;
   m_Height = height;
-  if (!m_pStream)
-    m_pStream = new CPDF_Stream;
+  if (!m_pStream) {
+    m_pOwnedStream = pdfium::MakeUnique<CPDF_Stream>();
+    m_pStream = m_pOwnedStream.get();
+  }
   return pDict;
 }
 
@@ -334,9 +338,10 @@ void CPDF_Image::SetImage(const CFX_DIBitmap* pBitmap, int32_t iCompress) {
       dest_offset = 0;
     }
   }
-  if (!m_pStream)
-    m_pStream = new CPDF_Stream;
-
+  if (!m_pStream) {
+    m_pOwnedStream = pdfium::MakeUnique<CPDF_Stream>();
+    m_pStream = m_pOwnedStream.get();
+  }
   m_pStream->InitStream(dest_buf, dest_size, pDict);
   m_bIsMask = pBitmap->IsAlphaMask();
   m_Width = BitmapWidth;

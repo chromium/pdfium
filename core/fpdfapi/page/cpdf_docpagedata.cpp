@@ -393,31 +393,21 @@ void CPDF_DocPageData::ReleasePattern(const CPDF_Object* pPatternObj) {
   pPattern->clear();
 }
 
-CPDF_Image* CPDF_DocPageData::GetImage(CPDF_Object* pImageStream) {
-  if (!pImageStream)
-    return nullptr;
-
-  ASSERT(!pImageStream->IsInline());
-  const uint32_t dwObjNum = pImageStream->GetObjNum();
-  auto it = m_ImageMap.find(dwObjNum);
+CPDF_Image* CPDF_DocPageData::GetImage(uint32_t dwStreamObjNum) {
+  ASSERT(dwStreamObjNum);
+  auto it = m_ImageMap.find(dwStreamObjNum);
   if (it != m_ImageMap.end())
     return it->second->AddRef();
 
   CPDF_CountedImage* pCountedImage =
-      new CPDF_CountedImage(new CPDF_Image(m_pPDFDoc, dwObjNum));
-  m_ImageMap[dwObjNum] = pCountedImage;
+      new CPDF_CountedImage(new CPDF_Image(m_pPDFDoc, dwStreamObjNum));
+  m_ImageMap[dwStreamObjNum] = pCountedImage;
   return pCountedImage->AddRef();
 }
 
-void CPDF_DocPageData::ReleaseImage(const CPDF_Object* pImageStream) {
-  if (!pImageStream)
-    return;
-
-  uint32_t dwObjNum = pImageStream->GetObjNum();
-  if (!dwObjNum)
-    return;
-
-  auto it = m_ImageMap.find(dwObjNum);
+void CPDF_DocPageData::ReleaseImage(uint32_t dwStreamObjNum) {
+  ASSERT(dwStreamObjNum);
+  auto it = m_ImageMap.find(dwStreamObjNum);
   if (it == m_ImageMap.end())
     return;
 

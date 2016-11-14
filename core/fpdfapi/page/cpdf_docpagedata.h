@@ -42,8 +42,8 @@ class CPDF_DocPageData {
                            bool bShading,
                            const CFX_Matrix& matrix);
   void ReleasePattern(const CPDF_Object* pPatternObj);
-  CPDF_Image* GetImage(CPDF_Object* pImageStream);
-  void ReleaseImage(const CPDF_Object* pImageStream);
+  CPDF_Image* GetImage(uint32_t dwStreamObjNum);
+  void ReleaseImage(uint32_t dwStreamObjNum);
   CPDF_IccProfile* GetIccProfile(CPDF_Stream* pIccProfileStream);
   void ReleaseIccProfile(const CPDF_IccProfile* pIccProfile);
   CPDF_StreamAcc* GetFontFileStreamAcc(CPDF_Stream* pFontStream);

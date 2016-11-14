@@ -79,6 +79,6 @@ void CPDF_ImageObject::Release() {
     return;
 
   CPDF_DocPageData* pPageData = m_pImage->GetDocument()->GetPageData();
-  pPageData->ReleaseImage(m_pImage->GetStream());
+  pPageData->ReleaseImage(m_pImage->GetStream()->GetObjNum());
   m_pImage = nullptr;
 }
