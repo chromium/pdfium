@@ -80,8 +80,14 @@ CPDF_Type3Cache* CPDF_DocRenderData::GetCachedType3(CPDF_Type3Font* pFont) {
 
 void CPDF_DocRenderData::ReleaseCachedType3(CPDF_Type3Font* pFont) {
   auto it = m_Type3FaceMap.find(pFont);
-  if (it != m_Type3FaceMap.end())
+  if (it != m_Type3FaceMap.end()) {
     it->second->RemoveRef();
+    if (it->second->use_count() < 2) {
+      delete it->second->get();
+      delete it->second;
+      m_Type3FaceMap.erase(it);
+    }
+  }
 }
 
 CPDF_RenderOptions::CPDF_RenderOptions()
@@ -1150,8 +1156,14 @@ CPDF_TransferFunc* CPDF_DocRenderData::GetTransferFunc(CPDF_Object* pObj) {
 
 void CPDF_DocRenderData::ReleaseTransferFunc(CPDF_Object* pObj) {
   auto it = m_TransferFuncMap.find(pObj);
-  if (it != m_TransferFuncMap.end())
+  if (it != m_TransferFuncMap.end()) {
     it->second->RemoveRef();
+    if (it->second->use_count() < 2) {
+      delete it->second->get();
+      delete it->second;
+      m_TransferFuncMap.erase(it);
+    }
+  }
 }
 
 CPDF_DeviceBuffer::CPDF_DeviceBuffer()
