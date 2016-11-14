@@ -64,15 +64,21 @@ enum OutputFormat {
 
 struct Options {
   Options()
-      : show_config(false), send_events(false), output_format(OUTPUT_NONE) {}
+      : show_config(false),
+        send_events(false),
+        pages(false),
+        output_format(OUTPUT_NONE) {}
 
   bool show_config;
   bool send_events;
+  bool pages;
   OutputFormat output_format;
   std::string scale_factor_as_string;
   std::string exe_path;
   std::string bin_directory;
   std::string font_directory;
+  int firstPage;
+  int lastPage;
 };
 
 struct FPDF_FORMFILLINFO_PDFiumTest : public FPDF_FORMFILLINFO {
@@ -466,6 +472,23 @@ bool ParseCommandLine(const std::vector<std::string>& args,
         return false;
       }
       options->scale_factor_as_string = cur_arg.substr(8);
+    } else if (cur_arg.size() > 8 && cur_arg.compare(0, 8, "--pages=") == 0) {
+      if (options->pages) {
+        fprintf(stderr, "Duplicate --pages argument\n");
+        return false;
+      }
+      options->pages = true;
+      const std::string pagesstring = cur_arg.substr(8);
+      size_t firstdash = pagesstring.find("-");
+      if (firstdash == std::string::npos) {
+        std::stringstream(pagesstring) >> options->firstPage;
+        options->lastPage = options->firstPage;
+      } else {
+        std::stringstream(pagesstring.substr(0, firstdash)) >>
+            options->firstPage;
+        std::stringstream(pagesstring.substr(firstdash + 1)) >>
+            options->lastPage;
+      }
     } else if (cur_arg.size() >= 2 && cur_arg[0] == '-' && cur_arg[1] == '-') {
       fprintf(stderr, "Unrecognized argument %s\n", cur_arg.c_str());
       return false;
@@ -777,7 +800,9 @@ void RenderPdf(const std::string& name,
   int page_count = FPDF_GetPageCount(doc);
   int rendered_pages = 0;
   int bad_pages = 0;
-  for (int i = 0; i < page_count; ++i) {
+  int firstPage = options.pages ? options.firstPage : 0;
+  int lastPage = options.pages ? options.lastPage + 1 : page_count;
+  for (int i = firstPage; i < lastPage; ++i) {
     if (bIsLinearized) {
       nRet = PDF_DATA_NOTAVAIL;
       while (nRet == PDF_DATA_NOTAVAIL)
@@ -835,6 +860,7 @@ static const char kUsageString[] =
     "  --bin-dir=<path>  - override path to v8 external data\n"
     "  --font-dir=<path> - override path to external fonts\n"
     "  --scale=<number>  - scale output size by number (e.g. 0.5)\n"
+    "  --pages=<number>(-<number>) - only render the given page(s)\n"
 #ifdef _WIN32
     "  --bmp - write page images <pdf-name>.<page-number>.bmp\n"
     "  --emf - write page meta files <pdf-name>.<page-number>.emf\n"
