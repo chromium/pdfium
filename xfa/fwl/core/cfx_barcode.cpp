@@ -78,24 +78,7 @@ bool CFX_Barcode::SetHeight(int32_t height) {
 bool CFX_Barcode::SetWidth(int32_t width) {
   return m_pBCEngine ? m_pBCEngine->SetWidth(width) : false;
 }
-bool CFX_Barcode::CheckContentValidity(const CFX_WideStringC& contents) {
-  switch (GetType()) {
-    case BC_CODE39:
-    case BC_CODABAR:
-    case BC_CODE128:
-    case BC_CODE128_B:
-    case BC_CODE128_C:
-    case BC_EAN8:
-    case BC_EAN13:
-    case BC_UPCA:
-      return m_pBCEngine
-                 ? static_cast<CBC_OneCode*>(m_pBCEngine.get())
-                       ->CheckContentValidity(contents)
-                 : true;
-    default:
-      return true;
-  }
-}
+
 bool CFX_Barcode::SetPrintChecksum(bool checksum) {
   switch (GetType()) {
     case BC_CODE39:
@@ -185,24 +168,7 @@ bool CFX_Barcode::SetFontSize(FX_FLOAT size) {
       return false;
   }
 }
-bool CFX_Barcode::SetFontStyle(int32_t style) {
-  switch (GetType()) {
-    case BC_CODE39:
-    case BC_CODABAR:
-    case BC_CODE128:
-    case BC_CODE128_B:
-    case BC_CODE128_C:
-    case BC_EAN8:
-    case BC_EAN13:
-    case BC_UPCA:
-      return m_pBCEngine ? (static_cast<CBC_OneCode*>(m_pBCEngine.get())
-                                ->SetFontStyle(style),
-                            true)
-                         : false;
-    default:
-      return false;
-  }
-}
+
 bool CFX_Barcode::SetFontColor(FX_ARGB color) {
   switch (GetType()) {
     case BC_CODE39:
@@ -331,8 +297,4 @@ bool CFX_Barcode::RenderDevice(CFX_RenderDevice* device,
                                const CFX_Matrix* matrix,
                                int32_t& e) {
   return m_pBCEngine && m_pBCEngine->RenderDevice(device, matrix, e);
-}
-
-bool CFX_Barcode::RenderBitmap(CFX_DIBitmap*& pOutBitmap, int32_t& e) {
-  return m_pBCEngine && m_pBCEngine->RenderBitmap(pOutBitmap, e);
 }

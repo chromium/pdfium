@@ -28,24 +28,29 @@ class CFX_Barcode {
   bool Create(BC_TYPE type);
   BC_TYPE GetType();
   bool Encode(const CFX_WideStringC& contents, bool isDevice, int32_t& e);
+
   bool RenderDevice(CFX_RenderDevice* device,
                     const CFX_Matrix* matrix,
                     int32_t& e);
-  bool RenderBitmap(CFX_DIBitmap*& pOutBitmap, int32_t& e);
+
   bool SetCharEncoding(BC_CHAR_ENCODING encoding);
+
   bool SetModuleHeight(int32_t moduleHeight);
   bool SetModuleWidth(int32_t moduleWidth);
+
   bool SetHeight(int32_t height);
   bool SetWidth(int32_t width);
-  bool CheckContentValidity(const CFX_WideStringC& contents);
+
   bool SetPrintChecksum(bool checksum);
   bool SetDataLength(int32_t length);
   bool SetCalChecksum(bool state);
+
   bool SetFont(CFX_Font* pFont);
   bool SetFontSize(FX_FLOAT size);
-  bool SetFontStyle(int32_t style);
   bool SetFontColor(FX_ARGB color);
+
   bool SetTextLocation(BC_TEXT_LOC location);
+
   bool SetWideNarrowRatio(int32_t ratio);
   bool SetStartChar(FX_CHAR start);
   bool SetEndChar(FX_CHAR end);
@@ -53,7 +58,7 @@ class CFX_Barcode {
   bool SetErrorCorrectionLevel(int32_t level);
   bool SetTruncated(bool truncated);
 
- protected:
+ private:
   std::unique_ptr<CBC_CodeBase> m_pBCEngine;
 };
 

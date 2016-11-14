@@ -19,6 +19,4 @@ IFWL_App::IFWL_App(CXFA_FFApp* pAdapter)
   ASSERT(m_pAdapterNative);
 }
 
-IFWL_App::~IFWL_App() {
-  CFWL_ToolTipContainer::DeleteInstance();
-}
+IFWL_App::~IFWL_App() {}

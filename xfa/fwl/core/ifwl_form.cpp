@@ -329,7 +329,9 @@ IFWL_Widget* IFWL_Form::DoModal() {
   if (!pDriver)
     return nullptr;
 
-  m_pNoteLoop.reset(new CFWL_NoteLoop(this));
+  m_pNoteLoop = pdfium::MakeUnique<CFWL_NoteLoop>();
+  m_pNoteLoop->SetMainForm(this);
+
   pDriver->PushNoteLoop(m_pNoteLoop.get());
   m_bDoModalFlag = true;
   SetStates(FWL_WGTSTATE_Invisible, false);

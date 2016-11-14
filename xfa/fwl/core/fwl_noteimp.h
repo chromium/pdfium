@@ -12,7 +12,6 @@
 
 #include "xfa/fwl/core/cfwl_event.h"
 #include "xfa/fwl/core/cfwl_message.h"
-#include "xfa/fwl/core/fwl_error.h"
 #include "xfa/fwl/core/ifwl_tooltip.h"
 #include "xfa/fwl/core/ifwl_widget.h"
 #include "xfa/fxgraphics/cfx_graphics.h"
@@ -34,18 +33,15 @@ class IFWL_Widget;
 
 class CFWL_NoteLoop {
  public:
-  CFWL_NoteLoop(IFWL_Widget* pForm = nullptr);
+  CFWL_NoteLoop();
   ~CFWL_NoteLoop() {}
 
-  FWL_Error Idle(int32_t count);
-  IFWL_Widget* GetForm();
-  bool ContinueModal();
-  FWL_Error EndModalLoop();
-  FWL_Error SetMainForm(IFWL_Widget* pForm);
+  IFWL_Widget* GetForm() const { return m_pForm; }
+  bool ContinueModal() const { return m_bContinueModal; }
+  void EndModalLoop() { m_bContinueModal = false; }
+  void SetMainForm(IFWL_Widget* pForm) { m_pForm = pForm; }
 
- protected:
-  void GenerateCommondEvent(uint32_t dwCommand);
-
+ private:
   IFWL_Widget* m_pForm;
   bool m_bContinueModal;
 };
@@ -56,31 +52,36 @@ class CFWL_NoteDriver {
   ~CFWL_NoteDriver();
 
   void SendEvent(CFWL_Event* pNote);
-  FWL_Error RegisterEventTarget(IFWL_Widget* pListener,
-                                IFWL_Widget* pEventSource = nullptr,
-                                uint32_t dwFilter = FWL_EVENT_ALL_MASK);
-  FWL_Error UnregisterEventTarget(IFWL_Widget* pListener);
-  void ClearEventTargets(bool bRemoveAll);
-  FWL_Error PushNoteLoop(CFWL_NoteLoop* pNoteLoop);
-  CFWL_NoteLoop* PopNoteLoop();
-  IFWL_Widget* GetFocus();
-  bool SetFocus(IFWL_Widget* pFocus, bool bNotify = false);
-  void SetGrab(IFWL_Widget* pGrab, bool bSet);
-  FWL_Error Run();
 
-  IFWL_Widget* GetHover();
-  void SetHover(IFWL_Widget* pHover);
+  void RegisterEventTarget(IFWL_Widget* pListener,
+                           IFWL_Widget* pEventSource = nullptr,
+                           uint32_t dwFilter = FWL_EVENT_ALL_MASK);
+  void UnregisterEventTarget(IFWL_Widget* pListener);
+  void ClearEventTargets(bool bRemoveAll);
+
+  CFWL_NoteLoop* GetTopLoop() const;
+  void PushNoteLoop(CFWL_NoteLoop* pNoteLoop);
+  CFWL_NoteLoop* PopNoteLoop();
+
+  IFWL_Widget* GetFocus() const { return m_pFocus; }
+  bool SetFocus(IFWL_Widget* pFocus, bool bNotify = false);
+  void SetGrab(IFWL_Widget* pGrab, bool bSet) {
+    m_pGrab = bSet ? pGrab : nullptr;
+  }
+
+  void Run();
+
   void NotifyTargetHide(IFWL_Widget* pNoteTarget);
   void NotifyTargetDestroy(IFWL_Widget* pNoteTarget);
-  FWL_Error RegisterForm(IFWL_Widget* pForm);
-  FWL_Error UnRegisterForm(IFWL_Widget* pForm);
+
+  void RegisterForm(IFWL_Widget* pForm);
+  void UnRegisterForm(IFWL_Widget* pForm);
+
   bool QueueMessage(CFWL_Message* pMessage);
   bool UnqueueMessage(CFWL_NoteLoop* pNoteLoop);
-  CFWL_NoteLoop* GetTopLoop();
-  int32_t CountLoop();
   bool ProcessMessage(CFWL_Message* pMessage);
 
- protected:
+ private:
   bool DispatchMessage(CFWL_Message* pMessage, IFWL_Widget* pMessageForm);
   bool DoActivate(CFWL_MsgActivate* pMsg, IFWL_Widget* pMessageForm);
   bool DoDeactivate(CFWL_MsgDeactivate* pMsg, IFWL_Widget* pMessageForm);
@@ -96,7 +97,6 @@ class CFWL_NoteDriver {
   void MouseSecondary(CFWL_MsgMouse* pMsg);
   bool IsValidMessage(CFWL_Message* pMessage);
   IFWL_Widget* GetMessageForm(IFWL_Widget* pDstTarget);
-  void ClearInvalidEventTargets(bool bRemoveAll);
 
   CFX_ArrayTemplate<IFWL_Widget*> m_forms;
   CFX_ArrayTemplate<CFWL_Message*> m_noteQueue;
@@ -110,47 +110,22 @@ class CFWL_NoteDriver {
 
 class CFWL_EventTarget {
  public:
-  CFWL_EventTarget(CFWL_NoteDriver* pNoteDriver, IFWL_Widget* pListener);
+  CFWL_EventTarget(IFWL_Widget* pListener);
   ~CFWL_EventTarget();
 
   int32_t SetEventSource(IFWL_Widget* pSource,
                          uint32_t dwFilter = FWL_EVENT_ALL_MASK);
   bool ProcessEvent(CFWL_Event* pEvent);
-  bool IsFilterEvent(CFWL_Event* pEvent, uint32_t dwFilter);
-  bool IsInvalid() { return m_bInvalid; }
+
+  bool IsInvalid() const { return m_bInvalid; }
   void FlagInvalid() { m_bInvalid = true; }
 
- protected:
+ private:
+  bool IsFilterEvent(CFWL_Event* pEvent, uint32_t dwFilter) const;
+
   CFX_MapPtrTemplate<void*, uint32_t> m_eventSources;
   IFWL_Widget* m_pListener;
-  CFWL_NoteDriver* m_pNoteDriver;
   bool m_bInvalid;
-};
-
-class CFWL_ToolTipContainer final : public IFWL_ToolTipDP {
- public:
-  static CFWL_ToolTipContainer* getInstance();
-  static void DeleteInstance();
-
-  // IFWL_ToolTipDP
-  void GetCaption(IFWL_Widget* pWidget, CFX_WideString& wsCaption) override;
-  int32_t GetInitialDelay(IFWL_Widget* pWidget) override;
-  int32_t GetAutoPopDelay(IFWL_Widget* pWidget) override;
-  CFX_DIBitmap* GetToolTipIcon(IFWL_Widget* pWidget) override;
-  CFX_SizeF GetToolTipIconSize(IFWL_Widget* pWidget) override;
-
- protected:
-  CFWL_ToolTipContainer();
-  ~CFWL_ToolTipContainer() override;
-
-  CFX_RectF GetAnchor();
-
- private:
-  static CFWL_ToolTipContainer* s_pInstance;
-  CFX_WideString m_wsCaption;
-  int32_t m_nInitDelayTime;
-  int32_t m_nAutoPopDelayTime;
-  CFX_RectF m_fAnchor;
 };
 
 #endif  // XFA_FWL_CORE_FWL_NOTEIMP_H_
