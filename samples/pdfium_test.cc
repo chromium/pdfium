@@ -77,18 +77,19 @@ struct Options {
   std::string exe_path;
   std::string bin_directory;
   std::string font_directory;
-  int firstPage;
-  int lastPage;
+  // 0-based page numbers to be rendered.
+  int first_page;
+  int last_page;
 };
 
 struct FPDF_FORMFILLINFO_PDFiumTest : public FPDF_FORMFILLINFO {
   // Hold a map of the currently loaded pages in order to avoid them
   // to get loaded twice.
-  std::map<int, FPDF_PAGE> loadedPages;
+  std::map<int, FPDF_PAGE> loaded_pages;
 
   // Hold a pointer of FPDF_FORMHANDLE so that PDFium app hooks can
   // make use of it.
-  FPDF_FORMHANDLE formHandle;
+  FPDF_FORMHANDLE form_handle;
 };
 
 struct AvailDeleter {
@@ -96,8 +97,8 @@ struct AvailDeleter {
 };
 
 static FPDF_FORMFILLINFO_PDFiumTest* ToPDFiumTestFormFillInfo(
-    FPDF_FORMFILLINFO* formFillInfo) {
-  return static_cast<FPDF_FORMFILLINFO_PDFiumTest*>(formFillInfo);
+    FPDF_FORMFILLINFO* form_fill_info) {
+  return static_cast<FPDF_FORMFILLINFO_PDFiumTest*>(form_fill_info);
 }
 
 static bool CheckDimensions(int stride, int width, int height) {
@@ -297,11 +298,11 @@ void WriteSkp(const char* pdf_name, int num, SkPictureRecorder* recorder) {
 int ExampleAppAlert(IPDF_JSPLATFORM*,
                     FPDF_WIDESTRING msg,
                     FPDF_WIDESTRING title,
-                    int nType,
-                    int nIcon) {
+                    int type,
+                    int icon) {
   printf("%ls", GetPlatformWString(title).c_str());
-  if (nIcon || nType)
-    printf("[icon=%d,type=%d]", nIcon, nType);
+  if (icon || type)
+    printf("[icon=%d,type=%d]", icon, type);
   printf(": %ls\n", GetPlatformWString(msg).c_str());
   return 0;
 }
@@ -309,16 +310,16 @@ int ExampleAppAlert(IPDF_JSPLATFORM*,
 int ExampleAppResponse(IPDF_JSPLATFORM*,
                        FPDF_WIDESTRING question,
                        FPDF_WIDESTRING title,
-                       FPDF_WIDESTRING defaultValue,
+                       FPDF_WIDESTRING default_value,
                        FPDF_WIDESTRING label,
-                       FPDF_BOOL isPassword,
+                       FPDF_BOOL is_password,
                        void* response,
                        int length) {
   printf("%ls: %ls, defaultValue=%ls, label=%ls, isPassword=%d, length=%d\n",
          GetPlatformWString(title).c_str(),
          GetPlatformWString(question).c_str(),
-         GetPlatformWString(defaultValue).c_str(),
-         GetPlatformWString(label).c_str(), isPassword, length);
+         GetPlatformWString(default_value).c_str(),
+         GetPlatformWString(label).c_str(), is_password, length);
 
   // UTF-16, always LE regardless of platform.
   uint8_t* ptr = static_cast<uint8_t*>(response);
@@ -329,20 +330,20 @@ int ExampleAppResponse(IPDF_JSPLATFORM*,
   return 4;
 }
 
-void ExampleDocGotoPage(IPDF_JSPLATFORM*, int pageNumber) {
-  printf("Goto Page: %d\n", pageNumber);
+void ExampleDocGotoPage(IPDF_JSPLATFORM*, int page_number) {
+  printf("Goto Page: %d\n", page_number);
 }
 
 void ExampleDocMail(IPDF_JSPLATFORM*,
                     void* mailData,
                     int length,
-                    FPDF_BOOL bUI,
+                    FPDF_BOOL UI,
                     FPDF_WIDESTRING To,
                     FPDF_WIDESTRING Subject,
                     FPDF_WIDESTRING CC,
                     FPDF_WIDESTRING BCC,
                     FPDF_WIDESTRING Msg) {
-  printf("Mail Msg: %d, to=%ls, cc=%ls, bcc=%ls, subject=%ls, body=%ls\n", bUI,
+  printf("Mail Msg: %d, to=%ls, cc=%ls, bcc=%ls, subject=%ls, body=%ls\n", UI,
          GetPlatformWString(To).c_str(), GetPlatformWString(CC).c_str(),
          GetPlatformWString(BCC).c_str(), GetPlatformWString(Subject).c_str(),
          GetPlatformWString(Msg).c_str());
@@ -478,16 +479,16 @@ bool ParseCommandLine(const std::vector<std::string>& args,
         return false;
       }
       options->pages = true;
-      const std::string pagesstring = cur_arg.substr(8);
-      size_t firstdash = pagesstring.find("-");
-      if (firstdash == std::string::npos) {
-        std::stringstream(pagesstring) >> options->firstPage;
-        options->lastPage = options->firstPage;
+      const std::string pages_string = cur_arg.substr(8);
+      size_t first_dash = pages_string.find("-");
+      if (first_dash == std::string::npos) {
+        std::stringstream(pages_string) >> options->first_page;
+        options->last_page = options->first_page;
       } else {
-        std::stringstream(pagesstring.substr(0, firstdash)) >>
-            options->firstPage;
-        std::stringstream(pagesstring.substr(firstdash + 1)) >>
-            options->lastPage;
+        std::stringstream(pages_string.substr(0, first_dash)) >>
+            options->first_page;
+        std::stringstream(pages_string.substr(first_dash + 1)) >>
+            options->last_page;
       }
     } else if (cur_arg.size() >= 2 && cur_arg[0] == '-' && cur_arg[1] == '-') {
       fprintf(stderr, "Unrecognized argument %s\n", cur_arg.c_str());
@@ -502,12 +503,11 @@ bool ParseCommandLine(const std::vector<std::string>& args,
   return true;
 }
 
-FPDF_BOOL Is_Data_Avail(FX_FILEAVAIL* pThis, size_t offset, size_t size) {
+FPDF_BOOL Is_Data_Avail(FX_FILEAVAIL* avail, size_t offset, size_t size) {
   return true;
 }
 
-void Add_Segment(FX_DOWNLOADHINTS* pThis, size_t offset, size_t size) {
-}
+void Add_Segment(FX_DOWNLOADHINTS* hints, size_t offset, size_t size) {}
 
 void SendPageEvents(const FPDF_FORMHANDLE& form,
                     const FPDF_PAGE& page,
@@ -573,34 +573,35 @@ void SendPageEvents(const FPDF_FORMHANDLE& form,
 FPDF_PAGE GetPageForIndex(FPDF_FORMFILLINFO* param,
                           FPDF_DOCUMENT doc,
                           int index) {
-  FPDF_FORMFILLINFO_PDFiumTest* formFillInfo = ToPDFiumTestFormFillInfo(param);
-  auto& loadedPages = formFillInfo->loadedPages;
+  FPDF_FORMFILLINFO_PDFiumTest* form_fill_info =
+      ToPDFiumTestFormFillInfo(param);
+  auto& loaded_pages = form_fill_info->loaded_pages;
 
-  auto iter = loadedPages.find(index);
-  if (iter != loadedPages.end())
+  auto iter = loaded_pages.find(index);
+  if (iter != loaded_pages.end())
     return iter->second;
 
   FPDF_PAGE page = FPDF_LoadPage(doc, index);
   if (!page)
     return nullptr;
 
-  FPDF_FORMHANDLE& formHandle = formFillInfo->formHandle;
+  FPDF_FORMHANDLE& form_handle = form_fill_info->form_handle;
 
-  FORM_OnAfterLoadPage(page, formHandle);
-  FORM_DoPageAAction(page, formHandle, FPDFPAGE_AACTION_OPEN);
+  FORM_OnAfterLoadPage(page, form_handle);
+  FORM_DoPageAAction(page, form_handle, FPDFPAGE_AACTION_OPEN);
 
-  loadedPages[index] = page;
+  loaded_pages[index] = page;
   return page;
 }
 
 bool RenderPage(const std::string& name,
                 FPDF_DOCUMENT doc,
                 FPDF_FORMHANDLE& form,
-                FPDF_FORMFILLINFO_PDFiumTest& formFillInfo,
+                FPDF_FORMFILLINFO_PDFiumTest& form_fill_info,
                 const int page_index,
                 const Options& options,
                 const std::string& events) {
-  FPDF_PAGE page = GetPageForIndex(&formFillInfo, doc, page_index);
+  FPDF_PAGE page = GetPageForIndex(&form_fill_info, doc, page_index);
   if (!page)
     return false;
 
@@ -667,7 +668,7 @@ bool RenderPage(const std::string& name,
     fprintf(stderr, "Page was too large to be rendered.\n");
   }
 
-  formFillInfo.loadedPages.erase(page_index);
+  form_fill_info.loaded_pages.erase(page_index);
 
   FORM_DoPageAAction(page, form, FPDFPAGE_AACTION_CLOSE);
   FORM_OnBeforeClosePage(page, form);
@@ -782,7 +783,7 @@ void RenderPdf(const std::string& name,
   (void)FPDF_GetDocPermissions(doc);
 
   FPDF_FORMHANDLE form = FPDFDOC_InitFormFillEnvironment(doc, &form_callbacks);
-  form_callbacks.formHandle = form;
+  form_callbacks.form_handle = form;
 
 #ifdef PDF_ENABLE_XFA
   int doc_type = DOCTYPE_PDF;
@@ -800,9 +801,9 @@ void RenderPdf(const std::string& name,
   int page_count = FPDF_GetPageCount(doc);
   int rendered_pages = 0;
   int bad_pages = 0;
-  int firstPage = options.pages ? options.firstPage : 0;
-  int lastPage = options.pages ? options.lastPage + 1 : page_count;
-  for (int i = firstPage; i < lastPage; ++i) {
+  int first_page = options.pages ? options.first_page : 0;
+  int last_page = options.pages ? options.last_page + 1 : page_count;
+  for (int i = first_page; i < last_page; ++i) {
     if (bIsLinearized) {
       nRet = PDF_DATA_NOTAVAIL;
       while (nRet == PDF_DATA_NOTAVAIL)
@@ -860,7 +861,7 @@ static const char kUsageString[] =
     "  --bin-dir=<path>  - override path to v8 external data\n"
     "  --font-dir=<path> - override path to external fonts\n"
     "  --scale=<number>  - scale output size by number (e.g. 0.5)\n"
-    "  --pages=<number>(-<number>) - only render the given page(s)\n"
+    "  --pages=<number>(-<number>) - only render the given 0-based page(s)\n"
 #ifdef _WIN32
     "  --bmp - write page images <pdf-name>.<page-number>.bmp\n"
     "  --emf - write page meta files <pdf-name>.<page-number>.emf\n"
@@ -918,12 +919,12 @@ int main(int argc, const char* argv[]) {
   }
   FPDF_InitLibraryWithConfig(&config);
 
-  UNSUPPORT_INFO unsuppored_info;
-  memset(&unsuppored_info, '\0', sizeof(unsuppored_info));
-  unsuppored_info.version = 1;
-  unsuppored_info.FSDK_UnSupport_Handler = ExampleUnsupportedHandler;
+  UNSUPPORT_INFO unsupported_info;
+  memset(&unsupported_info, '\0', sizeof(unsupported_info));
+  unsupported_info.version = 1;
+  unsupported_info.FSDK_UnSupport_Handler = ExampleUnsupportedHandler;
 
-  FSDK_SetUnSpObjProcessHandler(&unsuppored_info);
+  FSDK_SetUnSpObjProcessHandler(&unsupported_info);
 
   for (const std::string& filename : files) {
     size_t file_length = 0;
