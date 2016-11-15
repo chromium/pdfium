@@ -61,6 +61,7 @@ class CPDF_Dictionary : public CPDF_Object {
 
   // Set* functions invalidate iterators for the element with the key |key|.
   void SetFor(const CFX_ByteString& key, CPDF_Object* pObj);
+  void SetBooleanFor(const CFX_ByteString& key, bool bValue);
   void SetNameFor(const CFX_ByteString& key, const CFX_ByteString& name);
   void SetStringFor(const CFX_ByteString& key, const CFX_ByteString& str);
   void SetIntegerFor(const CFX_ByteString& key, int i);
@@ -68,9 +69,12 @@ class CPDF_Dictionary : public CPDF_Object {
   void SetReferenceFor(const CFX_ByteString& key,
                        CPDF_IndirectObjectHolder* pDoc,
                        uint32_t objnum);
+  void SetReferenceFor(const CFX_ByteString& key,
+                       CPDF_IndirectObjectHolder* pDoc,
+                       CPDF_Object* pObj);
+
   void SetRectFor(const CFX_ByteString& key, const CFX_FloatRect& rect);
   void SetMatrixFor(const CFX_ByteString& key, const CFX_Matrix& matrix);
-  void SetBooleanFor(const CFX_ByteString& key, bool bValue);
 
   void ConvertToIndirectObjectFor(const CFX_ByteString& key,
                                   CPDF_IndirectObjectHolder* pHolder);

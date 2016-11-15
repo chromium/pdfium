@@ -43,13 +43,14 @@ std::unique_ptr<CPDF_Object> CPDF_IndirectObjectHolder::ParseIndirectObject(
   return nullptr;
 }
 
-uint32_t CPDF_IndirectObjectHolder::AddIndirectObject(CPDF_Object* pObj) {
+CPDF_Object* CPDF_IndirectObjectHolder::AddIndirectObject(
+    std::unique_ptr<CPDF_Object> pObj) {
   CHECK(!pObj->m_ObjNum);
-  m_LastObjNum++;
+  CPDF_Object* pUnowned = pObj.get();
+  pObj->m_ObjNum = ++m_LastObjNum;
   m_IndirectObjs[m_LastObjNum].release();  // TODO(tsepez): stop this leak.
-  m_IndirectObjs[m_LastObjNum].reset(pObj);
-  pObj->m_ObjNum = m_LastObjNum;
-  return m_LastObjNum;
+  m_IndirectObjs[m_LastObjNum] = std::move(pObj);
+  return pUnowned;
 }
 
 bool CPDF_IndirectObjectHolder::ReplaceIndirectObjectIfHigherGeneration(

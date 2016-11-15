@@ -12,15 +12,13 @@ TEST(cpdf_formfield, FPDF_GetFullName) {
   EXPECT_TRUE(name.IsEmpty());
 
   CPDF_IndirectObjectHolder obj_holder;
-  CPDF_Dictionary* root = new CPDF_Dictionary();
-  obj_holder.AddIndirectObject(root);
+  CPDF_Dictionary* root = obj_holder.NewIndirect<CPDF_Dictionary>();
   root->SetNameFor("T", "foo");
   name = FPDF_GetFullName(root);
   EXPECT_STREQ("foo", name.UTF8Encode().c_str());
 
-  CPDF_Dictionary* dict1 = new CPDF_Dictionary();
-  root->SetReferenceFor("Parent", &obj_holder,
-                        obj_holder.AddIndirectObject(dict1));
+  CPDF_Dictionary* dict1 = obj_holder.NewIndirect<CPDF_Dictionary>();
+  root->SetReferenceFor("Parent", &obj_holder, dict1);
   dict1->SetNameFor("T", "bar");
   name = FPDF_GetFullName(root);
   EXPECT_STREQ("bar.foo", name.UTF8Encode().c_str());
@@ -30,9 +28,9 @@ TEST(cpdf_formfield, FPDF_GetFullName) {
   name = FPDF_GetFullName(root);
   EXPECT_STREQ("bar.foo", name.UTF8Encode().c_str());
 
-  CPDF_Dictionary* dict3 = new CPDF_Dictionary();
-  dict2->SetReferenceFor("Parent", &obj_holder,
-                         obj_holder.AddIndirectObject(dict3));
+  CPDF_Dictionary* dict3 = obj_holder.NewIndirect<CPDF_Dictionary>();
+  dict2->SetReferenceFor("Parent", &obj_holder, dict3);
+
   dict3->SetNameFor("T", "qux");
   name = FPDF_GetFullName(root);
   EXPECT_STREQ("qux.bar.foo", name.UTF8Encode().c_str());

@@ -55,6 +55,7 @@ class CPDF_Array : public CPDF_Object {
   void AddString(const CFX_ByteString& str);
   void AddName(const CFX_ByteString& str);
   void AddReference(CPDF_IndirectObjectHolder* pDoc, uint32_t objnum);
+  void AddReference(CPDF_IndirectObjectHolder* pDoc, CPDF_Object* pObj);
 
   iterator begin() { return m_Objects.begin(); }
   iterator end() { return m_Objects.end(); }

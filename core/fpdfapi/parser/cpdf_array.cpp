@@ -155,8 +155,8 @@ void CPDF_Array::ConvertToIndirectObjectAt(size_t i,
   if (!pObj || pObj->IsReference())
     return;
 
-  uint32_t dwObjNum = pHolder->AddIndirectObject(pObj);
-  m_Objects[i] = new CPDF_Reference(pHolder, dwObjNum);
+  CPDF_Object* pNew = pHolder->AddIndirectObject(pdfium::WrapUnique(pObj));
+  m_Objects[i] = new CPDF_Reference(pHolder, pNew->GetObjNum());
 }
 
 void CPDF_Array::SetAt(size_t i, CPDF_Object* pObj) {
@@ -208,4 +208,10 @@ void CPDF_Array::AddNumber(FX_FLOAT f) {
 void CPDF_Array::AddReference(CPDF_IndirectObjectHolder* pDoc,
                               uint32_t objnum) {
   Add(new CPDF_Reference(pDoc, objnum));
+}
+
+void CPDF_Array::AddReference(CPDF_IndirectObjectHolder* pDoc,
+                              CPDF_Object* pObj) {
+  ASSERT(!pObj->IsInline());
+  Add(new CPDF_Reference(pDoc, pObj->GetObjNum()));
 }

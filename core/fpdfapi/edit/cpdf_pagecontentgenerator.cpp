@@ -52,10 +52,9 @@ void CPDF_PageContentGenerator::GenerateContent() {
   if (pContent)
     pPageDict->RemoveFor("Contents");
 
-  CPDF_Stream* pStream = new CPDF_Stream;
+  CPDF_Stream* pStream = m_pDocument->NewIndirect<CPDF_Stream>();
   pStream->SetData(buf.GetBuffer(), buf.GetLength());
-  pPageDict->SetReferenceFor("Contents", m_pDocument,
-                             m_pDocument->AddIndirectObject(pStream));
+  pPageDict->SetReferenceFor("Contents", m_pDocument, pStream);
 }
 
 CFX_ByteString CPDF_PageContentGenerator::RealizeResource(
@@ -63,11 +62,10 @@ CFX_ByteString CPDF_PageContentGenerator::RealizeResource(
     const CFX_ByteString& bsType) {
   ASSERT(dwResourceObjNum);
   if (!m_pPage->m_pResources) {
-    m_pPage->m_pResources =
-        new CPDF_Dictionary(m_pDocument->GetByteStringPool());
-    m_pPage->m_pFormDict->SetReferenceFor(
-        "Resources", m_pDocument,
-        m_pDocument->AddIndirectObject(m_pPage->m_pResources));
+    m_pPage->m_pResources = m_pDocument->NewIndirect<CPDF_Dictionary>(
+        m_pDocument->GetByteStringPool());
+    m_pPage->m_pFormDict->SetReferenceFor("Resources", m_pDocument,
+                                          m_pPage->m_pResources);
   }
   CPDF_Dictionary* pResList = m_pPage->m_pResources->GetDictFor(bsType);
   if (!pResList) {
@@ -133,11 +131,10 @@ void CPDF_PageContentGenerator::ProcessForm(CFX_ByteTextBuf& buf,
   pFormDict->SetNameFor("Subtype", "Form");
   pFormDict->SetRectFor("BBox", bbox);
 
-  CPDF_Stream* pStream = new CPDF_Stream;
+  CPDF_Stream* pStream = m_pDocument->NewIndirect<CPDF_Stream>();
   pStream->InitStream(data, size, pFormDict);
 
-  CFX_ByteString name =
-      RealizeResource(m_pDocument->AddIndirectObject(pStream), "XObject");
+  CFX_ByteString name = RealizeResource(pStream->GetObjNum(), "XObject");
   buf << "/" << PDF_NameEncode(name) << " Do Q\n";
 }
 
@@ -181,8 +178,7 @@ void CPDF_PageContentGenerator::TransformContent(CFX_Matrix& matrix) {
     contentStream.LoadAllData(pStream);
     ProcessForm(buf, contentStream.GetData(), contentStream.GetSize(), matrix);
   }
-  CPDF_Stream* pStream = new CPDF_Stream;
+  CPDF_Stream* pStream = m_pDocument->NewIndirect<CPDF_Stream>();
   pStream->SetData(buf.GetBuffer(), buf.GetLength());
-  m_pPage->m_pFormDict->SetReferenceFor(
-      "Contents", m_pDocument, m_pDocument->AddIndirectObject(pStream));
+  m_pPage->m_pFormDict->SetReferenceFor("Contents", m_pDocument, pStream);
 }

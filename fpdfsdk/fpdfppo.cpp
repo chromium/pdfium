@@ -170,9 +170,9 @@ bool CPDF_PageOrganizer::PDFDocInit() {
   CPDF_Dictionary* pNewPages =
       pElement ? ToDictionary(pElement->GetDirect()) : nullptr;
   if (!pNewPages) {
-    pNewPages = new CPDF_Dictionary(m_pDestPDFDoc->GetByteStringPool());
-    pNewRoot->SetReferenceFor("Pages", m_pDestPDFDoc,
-                              m_pDestPDFDoc->AddIndirectObject(pNewPages));
+    pNewPages = m_pDestPDFDoc->NewIndirect<CPDF_Dictionary>(
+        m_pDestPDFDoc->GetByteStringPool());
+    pNewRoot->SetReferenceFor("Pages", m_pDestPDFDoc, pNewPages);
   }
 
   CFX_ByteString cbPageType = pNewPages->GetStringFor("Type", "");
@@ -181,9 +181,8 @@ bool CPDF_PageOrganizer::PDFDocInit() {
 
   if (!pNewPages->GetArrayFor("Kids")) {
     pNewPages->SetIntegerFor("Count", 0);
-    pNewPages->SetReferenceFor(
-        "Kids", m_pDestPDFDoc,
-        m_pDestPDFDoc->AddIndirectObject(new CPDF_Array));
+    pNewPages->SetReferenceFor("Kids", m_pDestPDFDoc,
+                               m_pDestPDFDoc->NewIndirect<CPDF_Array>());
   }
 
   return true;
@@ -331,8 +330,9 @@ uint32_t CPDF_PageOrganizer::GetNewObjId(ObjectNumberMap* pObjNumberMap,
         return 0;
     }
   }
-  CPDF_Object* pUnownedClone = pClone.get();
-  dwNewObjNum = m_pDestPDFDoc->AddIndirectObject(pClone.release());
+  CPDF_Object* pUnownedClone =
+      m_pDestPDFDoc->AddIndirectObject(std::move(pClone));
+  dwNewObjNum = pUnownedClone->GetObjNum();
   (*pObjNumberMap)[dwObjnum] = dwNewObjNum;
   if (!UpdateReference(pUnownedClone, pObjNumberMap))
     return 0;

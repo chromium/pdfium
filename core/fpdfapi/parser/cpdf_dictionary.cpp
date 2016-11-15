@@ -199,8 +199,9 @@ void CPDF_Dictionary::ConvertToIndirectObjectFor(
   if (it == m_Map.end() || it->second->IsReference())
     return;
 
-  uint32_t objnum = pHolder->AddIndirectObject(it->second);
-  it->second = new CPDF_Reference(pHolder, objnum);
+  CPDF_Object* pObj =
+      pHolder->AddIndirectObject(pdfium::WrapUnique(it->second));
+  it->second = new CPDF_Reference(pHolder, pObj->GetObjNum());
 }
 
 void CPDF_Dictionary::RemoveFor(const CFX_ByteString& key) {
@@ -249,6 +250,13 @@ void CPDF_Dictionary::SetReferenceFor(const CFX_ByteString& key,
                                       CPDF_IndirectObjectHolder* pDoc,
                                       uint32_t objnum) {
   SetFor(key, new CPDF_Reference(pDoc, objnum));
+}
+
+void CPDF_Dictionary::SetReferenceFor(const CFX_ByteString& key,
+                                      CPDF_IndirectObjectHolder* pDoc,
+                                      CPDF_Object* pObj) {
+  ASSERT(!pObj->IsInline());
+  SetFor(key, new CPDF_Reference(pDoc, pObj->GetObjNum()));
 }
 
 void CPDF_Dictionary::SetNumberFor(const CFX_ByteString& key, FX_FLOAT f) {

@@ -316,10 +316,9 @@ void CPDFSDK_BAAnnot::WriteAppearance(const CFX_ByteString& sAPType,
   }
 
   if (!pStream) {
-    pStream = new CPDF_Stream;
     CPDF_Document* pDoc = m_pPageView->GetPDFDocument();
-    pParentDict->SetReferenceFor(sAPType, pDoc,
-                                 pDoc->AddIndirectObject(pStream));
+    pStream = pDoc->NewIndirect<CPDF_Stream>();
+    pParentDict->SetReferenceFor(sAPType, pDoc, pStream);
   }
 
   CPDF_Dictionary* pStreamDict = pStream->GetDict();
@@ -354,8 +353,9 @@ void CPDFSDK_BAAnnot::SetAction(const CPDF_Action& action) {
   CPDF_Dictionary* pDict = action.GetDict();
   if (pDict != m_pAnnot->GetAnnotDict()->GetDictFor("A")) {
     CPDF_Document* pDoc = m_pPageView->GetPDFDocument();
-    m_pAnnot->GetAnnotDict()->SetReferenceFor("A", pDoc,
-                                              pDoc->AddIndirectObject(pDict));
+    if (pDict->IsInline())
+      pDict = pDoc->AddIndirectObject(pDict->Clone())->AsDictionary();
+    m_pAnnot->GetAnnotDict()->SetReferenceFor("A", pDoc, pDict);
   }
 }
 

@@ -78,7 +78,7 @@ void CPDF_Image::ConvertStreamToIndirectObject() {
     return;
 
   ASSERT(m_pOwnedStream);
-  m_pDocument->AddIndirectObject(m_pOwnedStream.release());
+  m_pDocument->AddIndirectObject(std::move(m_pOwnedStream));
 }
 
 CPDF_Dictionary* CPDF_Image::InitJPEG(uint8_t* pData, uint32_t size) {
@@ -212,7 +212,7 @@ void CPDF_Image::SetImage(const CFX_DIBitmap* pBitmap, int32_t iCompress) {
   } else if (bpp == 8) {
     int32_t iPalette = pBitmap->GetPaletteSize();
     if (iPalette > 0) {
-      CPDF_Array* pCS = new CPDF_Array;
+      CPDF_Array* pCS = m_pDocument->NewIndirect<CPDF_Array>();
       pCS->AddName("Indexed");
       pCS->AddName("DeviceRGB");
       pCS->AddInteger(iPalette - 1);
@@ -225,12 +225,11 @@ void CPDF_Image::SetImage(const CFX_DIBitmap* pBitmap, int32_t iCompress) {
         ptr[2] = (uint8_t)argb;
         ptr += 3;
       }
-      CPDF_Stream* pCTS = new CPDF_Stream(
+      CPDF_Stream* pCTS = m_pDocument->NewIndirect<CPDF_Stream>(
           pColorTable, iPalette * 3,
           new CPDF_Dictionary(m_pDocument->GetByteStringPool()));
-      pCS->AddReference(m_pDocument, m_pDocument->AddIndirectObject(pCTS));
-      pDict->SetReferenceFor("ColorSpace", m_pDocument,
-                             m_pDocument->AddIndirectObject(pCS));
+      pCS->AddReference(m_pDocument, pCTS);
+      pDict->SetReferenceFor("ColorSpace", m_pDocument, pCS);
     } else {
       pDict->SetNameFor("ColorSpace", "DeviceGray");
     }
@@ -282,9 +281,9 @@ void CPDF_Image::SetImage(const CFX_DIBitmap* pBitmap, int32_t iCompress) {
       }
     }
     pMaskDict->SetIntegerFor("Length", mask_size);
-    pDict->SetReferenceFor("SMask", m_pDocument,
-                           m_pDocument->AddIndirectObject(new CPDF_Stream(
-                               mask_buf, mask_size, pMaskDict)));
+    pDict->SetReferenceFor(
+        "SMask", m_pDocument,
+        m_pDocument->NewIndirect<CPDF_Stream>(mask_buf, mask_size, pMaskDict));
     if (bDeleteMask)
       delete pMaskBitmap;
   }

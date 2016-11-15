@@ -172,12 +172,12 @@ CFX_FloatRect CalculateRect(std::vector<CFX_FloatRect>* pRectArray) {
 
 uint32_t NewIndirectContentsStream(const CFX_ByteString& key,
                                    CPDF_Document* pDocument) {
-  CPDF_Stream* pNewContents = new CPDF_Stream(
+  CPDF_Stream* pNewContents = pDocument->NewIndirect<CPDF_Stream>(
       nullptr, 0, new CPDF_Dictionary(pDocument->GetByteStringPool()));
   CFX_ByteString sStream;
   sStream.Format("q 1 0 0 1 0 0 cm /%s Do Q", key.c_str());
   pNewContents->SetData(sStream.raw_str(), sStream.GetLength());
-  return pDocument->AddIndirectObject(pNewContents);
+  return pNewContents->GetObjNum();
 }
 
 void SetPageContents(const CFX_ByteString& key,
@@ -197,7 +197,7 @@ void SetPageContents(const CFX_ByteString& key,
   }
   pPage->ConvertToIndirectObjectFor("Contents", pDocument);
   if (!pContentsArray) {
-    pContentsArray = new CPDF_Array;
+    pContentsArray = pDocument->NewIndirect<CPDF_Array>();
     CPDF_StreamAcc acc;
     acc.LoadAllData(pContentsStream);
     CFX_ByteString sStream = "q\n";
@@ -206,8 +206,7 @@ void SetPageContents(const CFX_ByteString& key,
     sStream = sStream + sBody + "\nQ";
     pContentsStream->SetData(sStream.raw_str(), sStream.GetLength());
     pContentsArray->AddReference(pDocument, pContentsStream->GetObjNum());
-    pPage->SetReferenceFor("Contents", pDocument,
-                           pDocument->AddIndirectObject(pContentsArray));
+    pPage->SetReferenceFor("Contents", pDocument, pContentsArray);
   }
   if (!key.IsEmpty()) {
     pContentsArray->AddReference(pDocument,
@@ -293,10 +292,10 @@ DLLEXPORT int STDCALL FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
     pPageDict->SetFor("Resources", pRes);
   }
 
-  CPDF_Stream* pNewXObject = new CPDF_Stream(
+  CPDF_Stream* pNewXObject = pDocument->NewIndirect<CPDF_Stream>(
       nullptr, 0, new CPDF_Dictionary(pDocument->GetByteStringPool()));
 
-  uint32_t dwObjNum = pDocument->AddIndirectObject(pNewXObject);
+  uint32_t dwObjNum = pNewXObject->GetObjNum();
   CPDF_Dictionary* pPageXObject = pRes->GetDictFor("XObject");
   if (!pPageXObject) {
     pPageXObject = new CPDF_Dictionary(pDocument->GetByteStringPool());
@@ -383,7 +382,7 @@ DLLEXPORT int STDCALL FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
     if (pObj->IsInline()) {
       std::unique_ptr<CPDF_Object> pNew = pObj->Clone();
       pObj = pNew.get();
-      pDocument->AddIndirectObject(pNew.release());
+      pDocument->AddIndirectObject(std::move(pNew));
     }
 
     CPDF_Dictionary* pObjDic = pObj->GetDict();

@@ -11,6 +11,7 @@
 #include <memory>
 
 #include "core/fxcrt/fx_system.h"
+#include "third_party/base/ptr_util.h"
 
 class CPDF_Object;
 
@@ -26,8 +27,17 @@ class CPDF_IndirectObjectHolder {
   CPDF_Object* GetOrParseIndirectObject(uint32_t objnum);
   void DeleteIndirectObject(uint32_t objnum);
 
-  // Take ownership of |pObj|.
-  uint32_t AddIndirectObject(CPDF_Object* pObj);
+  // Creates and adds a new object owned by the indirect object holder,
+  // and returns an unowned pointer to it.
+  template <typename T, typename... Args>
+  T* NewIndirect(Args... args) {
+    return static_cast<T*>(AddIndirectObject(pdfium::MakeUnique<T>(args...)));
+  }
+
+  // Takes ownership of |pObj|, returns unowned pointer to it.
+  CPDF_Object* AddIndirectObject(std::unique_ptr<CPDF_Object> pObj);
+
+  // Always takes ownership of |pObj|, return true if higher generation number.
   bool ReplaceIndirectObjectIfHigherGeneration(
       uint32_t objnum,
       std::unique_ptr<CPDF_Object> pObj);
