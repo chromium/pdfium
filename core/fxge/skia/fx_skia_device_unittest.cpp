@@ -153,6 +153,7 @@ TEST(fxge, SkiaStatePath) {
                         State::Graphic::kPath, 0xFF112233});
 }
 
+#ifdef _SKIA_SUPPORT_
 TEST(fxge, SkiaStateText) {
   Harness(&CommonTest,
           {State::Change::kNo, State::Save::kYes, State::Clip::kDifferentMatrix,
@@ -160,6 +161,7 @@ TEST(fxge, SkiaStateText) {
   Harness(&CommonTest, {State::Change::kNo, State::Save::kYes,
                         State::Clip::kSame, State::Graphic::kText, 0xFF445566});
 }
+#endif
 
 TEST(fxge, SkiaStateOOSClip) {
   Harness(&OutOfSequenceClipTest, {});

@@ -23,6 +23,10 @@ config("pdfium_common_config") {
     defines += [ "_SKIA_SUPPORT_" ]
   }
 
+  if (pdf_use_skia_paths) {
+    defines += [ "_SKIA_SUPPORT_PATHS_" ]
+  }
+
   if (pdf_enable_v8) {
     defines += [ "PDF_ENABLE_V8" ]
   }
@@ -845,7 +849,7 @@ static_library("fxge") {
     ]
   }
 
-  if (pdf_use_skia) {
+  if (pdf_use_skia || pdf_use_skia_paths) {
     sources += [ "core/fxge/skia/fx_skia_device.cpp" ]
     deps += [ "//skia" ]
   } else {
@@ -1691,7 +1695,7 @@ test("pdfium_unittests") {
       "xfa/fxfa/parser/xfa_utils_unittest.cpp",
     ]
   }
-  if (pdf_use_skia) {
+  if (pdf_use_skia || pdf_use_skia_paths) {
     sources += [ "core/fxge/skia/fx_skia_device_unittest.cpp" ]
     deps += [ "//skia" ]
   }

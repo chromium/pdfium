@@ -10,8 +10,11 @@ pdf_enable_v8_override = true
 # Build PDFium either with or without XFA Forms support.
 pdf_enable_xfa_override = false
 
-# Build PDFium against skia (experimental) rather than agg.
+# Build PDFium against skia (experimental) rather than agg, replacing all PDFium graphics.
 pdf_use_skia_override = false
+
+# Build PDFium against skia (experimental) rather than agg, adding only path support.
+pdf_use_skia_paths_override = false
 
 # Build PDFium either with or without experimental win32 GDI APIs.
 pdf_use_win32_gdi_override = false

@@ -60,7 +60,7 @@ executable("pdfium_test") {
     ]
     configs += [ "//v8:external_startup_data" ]
   }
-  if (pdf_use_skia) {
+  if (pdf_use_skia || pdf_use_skia_paths) {
     deps += [ "//skia" ]
   }
   configs += [ ":pdfium_samples_config" ]

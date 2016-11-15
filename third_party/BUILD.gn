@@ -90,7 +90,7 @@ static_library("fx_freetype") {
     "freetype/src/truetype/truetype.c",
     "freetype/src/type1/type1.c",
   ]
-  if (pdf_use_skia) {
+  if (pdf_use_skia || pdf_use_skia_paths) {
     sources += [
       "freetype/src/base/ftfntfmt.c",
       "freetype/src/base/ftfstype.c",
@@ -99,7 +99,7 @@ static_library("fx_freetype") {
   }
 }
 
-if (!pdf_use_skia) {
+if (!pdf_use_skia && !pdf_use_skia_paths) {
   config("fx_agg_warnings") {
     visibility = [ ":*" ]
     if (is_clang) {
