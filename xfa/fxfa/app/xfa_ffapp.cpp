@@ -131,7 +131,7 @@ CXFA_FWLTheme* CXFA_FFApp::GetFWLTheme() {
 }
 
 CXFA_FWLAdapterWidgetMgr* CXFA_FFApp::GetWidgetMgr(
-    CFWL_WidgetMgrDelegate* pDelegate) {
+    IFWL_WidgetMgrDelegate* pDelegate) {
   if (!m_pAdapterWidgetMgr) {
     m_pAdapterWidgetMgr.reset(new CXFA_FWLAdapterWidgetMgr);
     pDelegate->OnSetCapability(FWL_WGTMGR_DisableThread |

@@ -416,23 +416,26 @@ void IFWL_Widget::SetGrab(bool bSet) {
   pDriver->SetGrab(this, bSet);
 }
 
-bool IFWL_Widget::GetPopupPos(FX_FLOAT fMinHeight,
+void IFWL_Widget::GetPopupPos(FX_FLOAT fMinHeight,
                               FX_FLOAT fMaxHeight,
                               const CFX_RectF& rtAnchor,
                               CFX_RectF& rtPopup) {
   if (GetClassID() == FWL_Type::ComboBox) {
     if (m_pWidgetMgr->IsFormDisabled()) {
-      return m_pWidgetMgr->GetAdapterPopupPos(this, fMinHeight, fMaxHeight,
-                                              rtAnchor, rtPopup);
+      m_pWidgetMgr->GetAdapterPopupPos(this, fMinHeight, fMaxHeight, rtAnchor,
+                                       rtPopup);
+      return;
     }
-    return GetPopupPosComboBox(fMinHeight, fMaxHeight, rtAnchor, rtPopup);
+    GetPopupPosComboBox(fMinHeight, fMaxHeight, rtAnchor, rtPopup);
+    return;
   }
   if (GetClassID() == FWL_Type::DateTimePicker &&
       m_pWidgetMgr->IsFormDisabled()) {
-    return m_pWidgetMgr->GetAdapterPopupPos(this, fMinHeight, fMaxHeight,
-                                            rtAnchor, rtPopup);
+    m_pWidgetMgr->GetAdapterPopupPos(this, fMinHeight, fMaxHeight, rtAnchor,
+                                     rtPopup);
+    return;
   }
-  return GetPopupPosGeneral(fMinHeight, fMaxHeight, rtAnchor, rtPopup);
+  GetPopupPosGeneral(fMinHeight, fMaxHeight, rtAnchor, rtPopup);
 }
 
 bool IFWL_Widget::GetPopupPosMenu(FX_FLOAT fMinHeight,

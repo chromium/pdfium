@@ -386,10 +386,10 @@ bool CFWL_NoteDriver::DoKey(CFWL_MsgKey* pMsg, IFWL_Widget* pMessageForm) {
         pFocus = nullptr;
     }
     bool bFind = false;
-    IFWL_Widget* pNextTabStop = pWidgetMgr->nextTab(pForm, pFocus, bFind);
+    IFWL_Widget* pNextTabStop = pWidgetMgr->NextTab(pForm, pFocus, bFind);
     if (!pNextTabStop) {
       bFind = false;
-      pNextTabStop = pWidgetMgr->nextTab(pForm, nullptr, bFind);
+      pNextTabStop = pWidgetMgr->NextTab(pForm, nullptr, bFind);
     }
     if (pNextTabStop == pFocus) {
       return true;

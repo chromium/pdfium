@@ -18,7 +18,6 @@
 #define FWL_WGTMGR_DisableForm 0x00000002
 
 class CFWL_Message;
-class CFWL_WidgetMgrDelegate;
 class CXFA_FFApp;
 class CXFA_FWLAdapterWidgetMgr;
 class CFX_Graphics;
@@ -44,86 +43,84 @@ class CFWL_WidgetMgrItem {
 #endif
 };
 
-class CFWL_WidgetMgr {
+class IFWL_WidgetMgrDelegate {
+ public:
+  virtual void OnSetCapability(
+      uint32_t dwCapability = FWL_WGTMGR_DisableThread) = 0;
+  virtual void OnProcessMessageToForm(CFWL_Message* pMessage) = 0;
+  virtual void OnDrawWidget(IFWL_Widget* pWidget,
+                            CFX_Graphics* pGraphics,
+                            const CFX_Matrix* pMatrix) = 0;
+};
+
+class CFWL_WidgetMgr : public IFWL_WidgetMgrDelegate {
  public:
   explicit CFWL_WidgetMgr(CXFA_FFApp* pAdapterNative);
   ~CFWL_WidgetMgr();
 
+  // IFWL_WidgetMgrDelegate
+  void OnSetCapability(
+      uint32_t dwCapability = FWL_WGTMGR_DisableThread) override;
+  void OnProcessMessageToForm(CFWL_Message* pMessage) override;
+  void OnDrawWidget(IFWL_Widget* pWidget,
+                    CFX_Graphics* pGraphics,
+                    const CFX_Matrix* pMatrix) override;
+
   IFWL_Widget* GetParentWidget(IFWL_Widget* pWidget) const;
   IFWL_Widget* GetOwnerWidget(IFWL_Widget* pWidget) const;
-  IFWL_Widget* GetFirstSiblingWidget(IFWL_Widget* pWidget) const;
-  IFWL_Widget* GetPriorSiblingWidget(IFWL_Widget* pWidget) const;
   IFWL_Widget* GetNextSiblingWidget(IFWL_Widget* pWidget) const;
-  IFWL_Widget* GetLastSiblingWidget(IFWL_Widget* pWidget) const;
   IFWL_Widget* GetFirstChildWidget(IFWL_Widget* pWidget) const;
-  IFWL_Widget* GetLastChildWidget(IFWL_Widget* pWidget) const;
   IFWL_Widget* GetSystemFormWidget(IFWL_Widget* pWidget) const;
 
-  bool SetWidgetIndex(IFWL_Widget* pWidget, int32_t nIndex);
-  FWL_Error RepaintWidget(IFWL_Widget* pWidget,
-                          const CFX_RectF* pRect = nullptr);
+  void RepaintWidget(IFWL_Widget* pWidget, const CFX_RectF* pRect = nullptr);
 
-  void AddWidget(IFWL_Widget* pWidget);
   void InsertWidget(IFWL_Widget* pParent,
                     IFWL_Widget* pChild,
                     int32_t nIndex = -1);
   void RemoveWidget(IFWL_Widget* pWidget);
   void SetOwner(IFWL_Widget* pOwner, IFWL_Widget* pOwned);
   void SetParent(IFWL_Widget* pParent, IFWL_Widget* pChild);
-  bool IsChild(IFWL_Widget* pChild, IFWL_Widget* pParent);
-  FWL_Error SetWidgetRect_Native(IFWL_Widget* pWidget, const CFX_RectF& rect);
+
+  void SetWidgetRect_Native(IFWL_Widget* pWidget, const CFX_RectF& rect);
+
   IFWL_Widget* GetWidgetAtPoint(IFWL_Widget* pParent, FX_FLOAT fx, FX_FLOAT fy);
+
   void NotifySizeChanged(IFWL_Widget* pForm, FX_FLOAT fx, FX_FLOAT fy);
-  IFWL_Widget* nextTab(IFWL_Widget* parent, IFWL_Widget* focus, bool& bFind);
-  int32_t CountRadioButtonGroup(IFWL_Widget* pFirst);
-  IFWL_Widget* GetSiblingRadioButton(IFWL_Widget* pWidget, bool bNext);
-  IFWL_Widget* GetRadioButtonGroupHeader(IFWL_Widget* pRadioButton);
+
+  IFWL_Widget* NextTab(IFWL_Widget* parent, IFWL_Widget* focus, bool& bFind);
+
   void GetSameGroupRadioButton(IFWL_Widget* pRadioButton,
-                               CFX_ArrayTemplate<IFWL_Widget*>& group);
-  IFWL_Widget* GetDefaultButton(IFWL_Widget* pParent);
+                               CFX_ArrayTemplate<IFWL_Widget*>& group) const;
+  IFWL_Widget* GetDefaultButton(IFWL_Widget* pParent) const;
   void AddRedrawCounts(IFWL_Widget* pWidget);
-  void ResetRedrawCounts(IFWL_Widget* pWidget);
-  CXFA_FWLAdapterWidgetMgr* GetAdapterWidgetMgr() const { return m_pAdapter; }
-  CFWL_WidgetMgrDelegate* GetDelegate() const { return m_pDelegate.get(); }
-  CFWL_WidgetMgrItem* GetWidgetMgrItem(IFWL_Widget* pWidget) const;
-  bool IsThreadEnabled();
-  bool IsFormDisabled();
-  bool GetAdapterPopupPos(IFWL_Widget* pWidget,
+
+  bool IsFormDisabled() const {
+    return !!(m_dwCapability & FWL_WGTMGR_DisableForm);
+  }
+
+  void GetAdapterPopupPos(IFWL_Widget* pWidget,
                           FX_FLOAT fMinHeight,
                           FX_FLOAT fMaxHeight,
                           const CFX_RectF& rtAnchor,
-                          CFX_RectF& rtPopup);
+                          CFX_RectF& rtPopup) const;
 
- protected:
-  friend class CFWL_WidgetMgrDelegate;
+ private:
+  IFWL_Widget* GetFirstSiblingWidget(IFWL_Widget* pWidget) const;
+  IFWL_Widget* GetPriorSiblingWidget(IFWL_Widget* pWidget) const;
+  IFWL_Widget* GetLastChildWidget(IFWL_Widget* pWidget) const;
+  CFWL_WidgetMgrItem* GetWidgetMgrItem(IFWL_Widget* pWidget) const;
 
-  int32_t TravelWidgetMgr(CFWL_WidgetMgrItem* pParent,
-                          int32_t* pIndex,
-                          CFWL_WidgetMgrItem* pItem,
-                          IFWL_Widget** pWidget = nullptr);
-  bool IsAbleNative(IFWL_Widget* pWidget) const;
+  void SetWidgetIndex(IFWL_Widget* pWidget, int32_t nIndex);
 
-  uint32_t m_dwCapability;
-  std::unique_ptr<CFWL_WidgetMgrDelegate> m_pDelegate;
-  std::map<IFWL_Widget*, std::unique_ptr<CFWL_WidgetMgrItem>> m_mapWidgetItem;
-  CXFA_FWLAdapterWidgetMgr* const m_pAdapter;
-#if (_FX_OS_ == _FX_WIN32_DESKTOP_) || (_FX_OS_ == _FX_WIN64_)
-  CFX_RectF m_rtScreen;
-#endif
-};
+  int32_t CountRadioButtonGroup(IFWL_Widget* pFirst) const;
+  IFWL_Widget* GetRadioButtonGroupHeader(IFWL_Widget* pRadioButton) const;
 
-class CFWL_WidgetMgrDelegate {
- public:
-  explicit CFWL_WidgetMgrDelegate(CFWL_WidgetMgr* pWidgetMgr);
-  ~CFWL_WidgetMgrDelegate() {}
+  void ResetRedrawCounts(IFWL_Widget* pWidget);
 
-  FWL_Error OnSetCapability(uint32_t dwCapability = FWL_WGTMGR_DisableThread);
-  void OnProcessMessageToForm(CFWL_Message* pMessage);
-  void OnDrawWidget(IFWL_Widget* pWidget,
-                    CFX_Graphics* pGraphics,
-                    const CFX_Matrix* pMatrix);
+  bool IsThreadEnabled() const {
+    return !(m_dwCapability & FWL_WGTMGR_DisableThread);
+  }
 
- protected:
   void DrawChild(IFWL_Widget* pParent,
                  const CFX_RectF& rtClip,
                  CFX_Graphics* pGraphics,
@@ -138,9 +135,16 @@ class CFWL_WidgetMgrDelegate {
   bool IsNeedRepaint(IFWL_Widget* pWidget,
                      CFX_Matrix* pMatrix,
                      const CFX_RectF& rtDirty);
-  bool bUseOffscreenDirect(IFWL_Widget* pWidget);
+  bool UseOffscreenDirect(IFWL_Widget* pWidget) const;
 
-  CFWL_WidgetMgr* m_pWidgetMgr;
+  bool IsAbleNative(IFWL_Widget* pWidget) const;
+
+  uint32_t m_dwCapability;
+  std::map<IFWL_Widget*, std::unique_ptr<CFWL_WidgetMgrItem>> m_mapWidgetItem;
+  CXFA_FWLAdapterWidgetMgr* const m_pAdapter;
+#if (_FX_OS_ == _FX_WIN32_DESKTOP_) || (_FX_OS_ == _FX_WIN64_)
+  CFX_RectF m_rtScreen;
+#endif
 };
 
 #endif  // XFA_FWL_CORE_CFWL_WIDGETMGR_H_

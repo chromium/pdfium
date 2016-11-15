@@ -171,7 +171,7 @@ class IFWL_Widget : public IFWL_WidgetDelegate {
                     int32_t iTTOAlign,
                     CFX_RectF& rect);
   void SetGrab(bool bSet);
-  bool GetPopupPos(FX_FLOAT fMinHeight,
+  void GetPopupPos(FX_FLOAT fMinHeight,
                    FX_FLOAT fMaxHeight,
                    const CFX_RectF& rtAnchor,
                    CFX_RectF& rtPopup);
