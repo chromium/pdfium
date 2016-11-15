@@ -403,7 +403,7 @@ bool CFX_RenderDevice::CreateCompatibleBitmap(CFX_DIBitmap* pDIB,
   }
   if (m_RenderCaps & FXRC_BYTEMASK_OUTPUT)
     return pDIB->Create(width, height, FXDIB_8bppMask);
-#if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_ || defined _SKIA_SUPPORT_PATHS_
+#if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
   return pDIB->Create(width, height, m_RenderCaps & FXRC_ALPHA_OUTPUT
                                          ? FXDIB_Argb
                                          : FXDIB_Rgb32);

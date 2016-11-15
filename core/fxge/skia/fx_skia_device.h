@@ -5,7 +5,7 @@
 #ifndef CORE_FXGE_SKIA_FX_SKIA_DEVICE_H_
 #define CORE_FXGE_SKIA_FX_SKIA_DEVICE_H_
 
-#if defined _SKIA_SUPPORT_ || defined _SKIA_SUPPORT_PATHS_
+#if defined(_SKIA_SUPPORT_)
 
 #include "core/fxge/cfx_pathdata.h"
 #include "core/fxge/ifx_renderdevicedriver.h"
@@ -25,10 +25,8 @@ class CFX_SkiaDeviceDriver : public IFX_RenderDeviceDriver {
                        bool bRgbByteOrder,
                        CFX_DIBitmap* pOriDevice,
                        bool bGroupKnockout);
-#ifdef _SKIA_SUPPORT_
   explicit CFX_SkiaDeviceDriver(SkPictureRecorder* recorder);
   CFX_SkiaDeviceDriver(int size_x, int size_y);
-#endif
   ~CFX_SkiaDeviceDriver() override;
 
   /** Options */
@@ -86,17 +84,12 @@ class CFX_SkiaDeviceDriver : public IFX_RenderDeviceDriver {
                  int dest_left,
                  int dest_top,
                  int blend_type) override;
-#ifdef _SKIA_SUPPORT_
   bool SetBitsWithMask(const CFX_DIBSource* pBitmap,
                        const CFX_DIBSource* pMask,
                        int dest_left,
                        int dest_top,
                        int bitmap_alpha,
                        int blend_type) override;
-#else
-  void SetClipMask(const FX_RECT& clipBox, const SkPath& skClipPath);
-#endif
-
   bool StretchDIBits(const CFX_DIBSource* pBitmap,
                      uint32_t color,
                      int dest_left,
@@ -132,13 +125,11 @@ class CFX_SkiaDeviceDriver : public IFX_RenderDeviceDriver {
                       FX_FLOAT font_size,
                       uint32_t color) override;
 
-#ifdef _SKIA_SUPPORT_
   bool DrawShading(const CPDF_ShadingPattern* pPattern,
                    const CFX_Matrix* pMatrix,
                    const FX_RECT& clip_rect,
                    int alpha,
                    bool bAlphaMode) override;
-#endif
 
   virtual uint8_t* GetBuffer() const;
 
@@ -161,12 +152,6 @@ class CFX_SkiaDeviceDriver : public IFX_RenderDeviceDriver {
   SkCanvas* m_pCanvas;
   SkPictureRecorder* const m_pRecorder;
   std::unique_ptr<SkiaState> m_pCache;
-#ifndef _SKIA_SUPPORT_
-  std::unique_ptr<CFX_ClipRgn> m_pClipRgn;
-  std::vector<std::unique_ptr<CFX_ClipRgn>> m_StateStack;
-  int m_FillFlags;
-  bool m_bRgbByteOrder;
-#endif
   bool m_bGroupKnockout;
 };
 #endif  // defined(_SKIA_SUPPORT_)
