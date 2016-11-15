@@ -17,6 +17,10 @@ IFWL_Edit* ToEdit(IFWL_Widget* widget) {
   return static_cast<IFWL_Edit*>(widget);
 }
 
+const IFWL_Edit* ToEdit(const IFWL_Widget* widget) {
+  return static_cast<const IFWL_Edit*>(widget);
+}
+
 }  // namespace
 
 CFWL_Edit::CFWL_Edit(const IFWL_App* app) : CFWL_Widget(app) {}
@@ -39,20 +43,20 @@ void CFWL_Edit::SetText(const CFX_WideString& wsText) {
 
 void CFWL_Edit::GetText(CFX_WideString& wsText,
                         int32_t nStart,
-                        int32_t nCount) {
+                        int32_t nCount) const {
   if (GetWidget())
     ToEdit(GetWidget())->GetText(wsText, nStart, nCount);
 }
 
-int32_t CFWL_Edit::CountSelRanges() {
+int32_t CFWL_Edit::CountSelRanges() const {
   return GetWidget() ? ToEdit(GetWidget())->CountSelRanges() : 0;
 }
 
-int32_t CFWL_Edit::GetSelRange(int32_t nIndex, int32_t& nStart) {
+int32_t CFWL_Edit::GetSelRange(int32_t nIndex, int32_t& nStart) const {
   return GetWidget() ? ToEdit(GetWidget())->GetSelRange(nIndex, nStart) : 0;
 }
 
-int32_t CFWL_Edit::GetLimit() {
+int32_t CFWL_Edit::GetLimit() const {
   return GetWidget() ? ToEdit(GetWidget())->GetLimit() : -1;
 }
 

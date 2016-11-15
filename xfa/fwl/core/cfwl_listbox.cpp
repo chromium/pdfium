@@ -69,15 +69,11 @@ void CFWL_ListBox::DeleteAll() {
 }
 
 int32_t CFWL_ListBox::CountSelItems() {
-  if (!GetWidget())
-    return 0;
-  return ToListBox(GetWidget())->CountSelItems();
+  return GetWidget() ? ToListBox(GetWidget())->CountSelItems() : 0;
 }
 
 CFWL_ListItem* CFWL_ListBox::GetSelItem(int32_t nIndexSel) {
-  if (!GetWidget())
-    return nullptr;
-  return ToListBox(GetWidget())->GetSelItem(nIndexSel);
+  return GetWidget() ? ToListBox(GetWidget())->GetSelItem(nIndexSel) : nullptr;
 }
 
 int32_t CFWL_ListBox::GetSelIndex(int32_t nIndex) {
@@ -96,17 +92,8 @@ void CFWL_ListBox::GetItemText(CFWL_ListItem* pItem, CFX_WideString& wsText) {
     ToListBox(GetWidget())->GetItemText(pItem, wsText);
 }
 
-void CFWL_ListBox::GetScrollPos(FX_FLOAT& fPos, bool bVert) {
-  if (GetWidget())
-    ToListBox(GetWidget())->GetScrollPos(fPos, bVert);
-}
-
-int32_t CFWL_ListBox::CountItems() const {
-  return pdfium::CollectionSize<int32_t>(m_ItemArray);
-}
-
 CFWL_ListItem* CFWL_ListBox::GetItem(int32_t nIndex) {
-  if (nIndex < 0 || nIndex >= CountItems())
+  if (nIndex < 0 || nIndex >= CountItems(nullptr))
     return nullptr;
 
   return m_ItemArray[nIndex].get();
@@ -131,7 +118,6 @@ CFWL_ListItem* CFWL_ListBox::GetItem(const IFWL_Widget* pWidget,
                                      int32_t nIndex) const {
   if (nIndex < 0 || nIndex >= CountItems(pWidget))
     return nullptr;
-
   return m_ItemArray[nIndex].get();
 }
 
@@ -144,20 +130,9 @@ int32_t CFWL_ListBox::GetItemIndex(IFWL_Widget* pWidget, CFWL_ListItem* pItem) {
   return it != m_ItemArray.end() ? it - m_ItemArray.begin() : -1;
 }
 
-bool CFWL_ListBox::SetItemIndex(IFWL_Widget* pWidget,
-                                CFWL_ListItem* pItem,
-                                int32_t nIndex) {
-  if (nIndex < 0 || nIndex >= CountItems(pWidget))
-    return false;
-  m_ItemArray[nIndex].reset(static_cast<CFWL_ListItem*>(pItem));
-  return true;
-}
-
 uint32_t CFWL_ListBox::GetItemStyles(IFWL_Widget* pWidget,
                                      CFWL_ListItem* pItem) {
-  if (!pItem)
-    return 0;
-  return static_cast<CFWL_ListItem*>(pItem)->m_dwStates;
+  return pItem ? static_cast<CFWL_ListItem*>(pItem)->m_dwStates : 0;
 }
 
 void CFWL_ListBox::GetItemText(IFWL_Widget* pWidget,
@@ -185,22 +160,11 @@ void CFWL_ListBox::SetItemStyles(IFWL_Widget* pWidget,
     static_cast<CFWL_ListItem*>(pItem)->m_dwStates = dwStyle;
 }
 
-void CFWL_ListBox::SetItemText(IFWL_Widget* pWidget,
-                               CFWL_ListItem* pItem,
-                               const FX_WCHAR* pszText) {
-  if (pItem)
-    static_cast<CFWL_ListItem*>(pItem)->m_wsText = pszText;
-}
-
 void CFWL_ListBox::SetItemRect(IFWL_Widget* pWidget,
                                CFWL_ListItem* pItem,
                                const CFX_RectF& rtItem) {
   if (pItem)
     static_cast<CFWL_ListItem*>(pItem)->m_rtItem = rtItem;
-}
-
-FX_FLOAT CFWL_ListBox::GetItemHeight(IFWL_Widget* pWidget) {
-  return 20;
 }
 
 CFX_DIBitmap* CFWL_ListBox::GetItemIcon(IFWL_Widget* pWidget,

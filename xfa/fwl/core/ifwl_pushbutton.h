@@ -31,10 +31,7 @@ class CFWL_MsgMouse;
 class CFX_DIBitmap;
 class IFWL_Widget;
 
-class IFWL_PushButtonDP : public IFWL_DataProvider {
- public:
-  virtual CFX_DIBitmap* GetPicture(IFWL_Widget* pWidget) = 0;
-};
+class IFWL_PushButtonDP : public IFWL_DataProvider {};
 
 class IFWL_PushButton : public IFWL_Widget {
  public:

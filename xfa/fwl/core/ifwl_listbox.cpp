@@ -235,14 +235,6 @@ void IFWL_ListBox::GetItemText(CFWL_ListItem* pItem, CFX_WideString& wsText) {
   pData->GetItemText(this, pItem, wsText);
 }
 
-void IFWL_ListBox::GetScrollPos(FX_FLOAT& fPos, bool bVert) {
-  if ((bVert && IsShowScrollBar(true)) || (!bVert && IsShowScrollBar(false))) {
-    IFWL_ScrollBar* pScrollBar =
-        bVert ? m_pVertScrollBar.get() : m_pHorzScrollBar.get();
-    fPos = pScrollBar->GetPos();
-  }
-}
-
 CFWL_ListItem* IFWL_ListBox::GetItem(CFWL_ListItem* pItem, uint32_t dwKeyCode) {
   CFWL_ListItem* hRet = nullptr;
   switch (dwKeyCode) {

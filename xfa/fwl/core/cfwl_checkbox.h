@@ -12,7 +12,7 @@
 
 class CFWL_CheckBox : public CFWL_Widget, public IFWL_CheckBoxDP {
  public:
-  CFWL_CheckBox(const IFWL_App*);
+  explicit CFWL_CheckBox(const IFWL_App* pApp);
   ~CFWL_CheckBox() override;
 
   void Initialize();
@@ -27,7 +27,6 @@ class CFWL_CheckBox : public CFWL_Widget, public IFWL_CheckBoxDP {
 
  private:
   FX_FLOAT m_fBoxHeight;
-  CFX_WideString m_wsCaption;
 };
 
 #endif  // XFA_FWL_CORE_CFWL_CHECKBOX_H_

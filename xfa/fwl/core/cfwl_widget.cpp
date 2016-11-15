@@ -18,10 +18,7 @@
 #define FWL_WGT_CalcWidth 2048
 #define FWL_WGT_CalcMultiLineDefWidth 120.0f
 
-CFWL_Widget::CFWL_Widget(const IFWL_App* app)
-    : m_pApp(app), m_pWidgetMgr(app->GetWidgetMgr()) {
-  ASSERT(m_pWidgetMgr);
-}
+CFWL_Widget::CFWL_Widget(const IFWL_App* app) : m_pApp(app) {}
 
 CFWL_Widget::~CFWL_Widget() {}
 

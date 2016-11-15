@@ -116,14 +116,16 @@ class IFWL_Edit : public IFWL_Widget {
   virtual void SetText(const CFX_WideString& wsText);
 
   int32_t GetTextLength() const;
-  void GetText(CFX_WideString& wsText, int32_t nStart = 0, int32_t nCount = -1);
+  void GetText(CFX_WideString& wsText,
+               int32_t nStart = 0,
+               int32_t nCount = -1) const;
   void ClearText();
 
   void AddSelRange(int32_t nStart, int32_t nCount = -1);
-  int32_t CountSelRanges();
-  int32_t GetSelRange(int32_t nIndex, int32_t& nStart);
+  int32_t CountSelRanges() const;
+  int32_t GetSelRange(int32_t nIndex, int32_t& nStart) const;
   void ClearSelections();
-  int32_t GetLimit();
+  int32_t GetLimit() const;
   void SetLimit(int32_t nLimit);
   void SetAliasChar(FX_WCHAR wAlias);
   bool Copy(CFX_WideString& wsCopy);

@@ -160,11 +160,11 @@ int32_t CFDE_TxtEdtEngine::GetTextLength() const {
 
 void CFDE_TxtEdtEngine::GetText(CFX_WideString& wsText,
                                 int32_t nStart,
-                                int32_t nCount) {
+                                int32_t nCount) const {
   int32_t nTextBufLength = GetTextBufLength();
-  if (nCount == -1) {
+  if (nCount == -1)
     nCount = nTextBufLength - nStart;
-  }
+
   m_pTxtBuf->GetRange(wsText, nStart, nCount);
   RecoverParagEnd(wsText);
 }
@@ -646,11 +646,11 @@ void CFDE_TxtEdtEngine::AddSelRange(int32_t nStart, int32_t nCount) {
   m_Param.pEventSink->On_SelChanged(this);
 }
 
-int32_t CFDE_TxtEdtEngine::CountSelRanges() {
+int32_t CFDE_TxtEdtEngine::CountSelRanges() const {
   return m_SelRangePtrArr.GetSize();
 }
 
-int32_t CFDE_TxtEdtEngine::GetSelRange(int32_t nIndex, int32_t& nStart) {
+int32_t CFDE_TxtEdtEngine::GetSelRange(int32_t nIndex, int32_t& nStart) const {
   nStart = m_SelRangePtrArr[nIndex]->nStart;
   return m_SelRangePtrArr[nIndex]->nCount;
 }
@@ -1190,7 +1190,7 @@ bool CFDE_TxtEdtEngine::ReplaceParagEnd(FX_WCHAR*& lpText,
   return bPreIsCR;
 }
 
-void CFDE_TxtEdtEngine::RecoverParagEnd(CFX_WideString& wsText) {
+void CFDE_TxtEdtEngine::RecoverParagEnd(CFX_WideString& wsText) const {
   FX_WCHAR wc = (m_nFirstLineEnd == FDE_TXTEDIT_LINEEND_CR) ? L'\n' : L'\r';
   if (m_nFirstLineEnd == FDE_TXTEDIT_LINEEND_CRLF) {
     CFX_ArrayTemplate<int32_t> PosArr;

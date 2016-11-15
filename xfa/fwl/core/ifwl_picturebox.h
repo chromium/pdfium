@@ -29,15 +29,7 @@
 class CFX_DIBitmap;
 class IFWL_Widget;
 
-class IFWL_PictureBoxDP : public IFWL_DataProvider {
- public:
-  virtual CFX_DIBitmap* GetPicture(IFWL_Widget* pWidget) = 0;
-  virtual CFX_DIBitmap* GetErrorPicture(IFWL_Widget* pWidget) = 0;
-  virtual CFX_DIBitmap* GetInitialPicture(IFWL_Widget* pWidget) = 0;
-  virtual int32_t GetOpacity(IFWL_Widget* pWidget) = 0;
-  virtual int32_t GetFlipMode(IFWL_Widget* pWidget) = 0;
-  virtual void GetMatrix(IFWL_Widget* pWidget, CFX_Matrix& matrix) = 0;
-};
+class IFWL_PictureBoxDP : public IFWL_DataProvider {};
 
 class IFWL_PictureBox : public IFWL_Widget {
  public:

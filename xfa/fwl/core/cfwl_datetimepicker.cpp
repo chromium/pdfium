@@ -22,7 +22,7 @@ IFWL_DateTimePicker* ToDateTimePicker(IFWL_Widget* widget) {
 }  // namespace
 
 CFWL_DateTimePicker::CFWL_DateTimePicker(const IFWL_App* app)
-    : CFWL_Widget(app), m_iYear(2011), m_iMonth(1), m_iDay(1) {}
+    : CFWL_Widget(app) {}
 
 CFWL_DateTimePicker::~CFWL_DateTimePicker() {}
 
@@ -66,9 +66,9 @@ void CFWL_DateTimePicker::GetToday(IFWL_Widget* pWidget,
                                    int32_t& iYear,
                                    int32_t& iMonth,
                                    int32_t& iDay) {
-  iYear = m_iYear;
-  iMonth = m_iMonth;
-  iDay = m_iDay;
+  iYear = 2011;
+  iMonth = 1;
+  iDay = 1;
 }
 
 void CFWL_DateTimePicker::GetBBox(CFX_RectF& rect) {

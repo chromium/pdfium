@@ -297,7 +297,7 @@ int32_t IFWL_Edit::GetTextLength() const {
 
 void IFWL_Edit::GetText(CFX_WideString& wsText,
                         int32_t nStart,
-                        int32_t nCount) {
+                        int32_t nCount) const {
   m_EdtEngine.GetText(wsText, nStart, nCount);
 }
 
@@ -309,11 +309,11 @@ void IFWL_Edit::AddSelRange(int32_t nStart, int32_t nCount) {
   m_EdtEngine.AddSelRange(nStart, nCount);
 }
 
-int32_t IFWL_Edit::CountSelRanges() {
+int32_t IFWL_Edit::CountSelRanges() const {
   return m_EdtEngine.CountSelRanges();
 }
 
-int32_t IFWL_Edit::GetSelRange(int32_t nIndex, int32_t& nStart) {
+int32_t IFWL_Edit::GetSelRange(int32_t nIndex, int32_t& nStart) const {
   return m_EdtEngine.GetSelRange(nIndex, nStart);
 }
 
@@ -321,7 +321,7 @@ void IFWL_Edit::ClearSelections() {
   m_EdtEngine.ClearSelection();
 }
 
-int32_t IFWL_Edit::GetLimit() {
+int32_t IFWL_Edit::GetLimit() const {
   return m_nLimit;
 }
 

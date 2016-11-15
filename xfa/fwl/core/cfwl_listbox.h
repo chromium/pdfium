@@ -17,7 +17,7 @@
 
 class CFWL_ListBox : public CFWL_Widget, public IFWL_ListBoxDP {
  public:
-  CFWL_ListBox(const IFWL_App*);
+  explicit CFWL_ListBox(const IFWL_App* pApp);
   ~CFWL_ListBox() override;
 
   void Initialize();
@@ -30,9 +30,6 @@ class CFWL_ListBox : public CFWL_Widget, public IFWL_ListBoxDP {
   CFWL_ListItem* GetItem(const IFWL_Widget* pWidget,
                          int32_t nIndex) const override;
   int32_t GetItemIndex(IFWL_Widget* pWidget, CFWL_ListItem* pItem) override;
-  bool SetItemIndex(IFWL_Widget* pWidget,
-                    CFWL_ListItem* pItem,
-                    int32_t nIndex) override;
   uint32_t GetItemStyles(IFWL_Widget* pWidget, CFWL_ListItem* pItem) override;
   void GetItemText(IFWL_Widget* pWidget,
                    CFWL_ListItem* pItem,
@@ -44,13 +41,9 @@ class CFWL_ListBox : public CFWL_Widget, public IFWL_ListBoxDP {
   void SetItemStyles(IFWL_Widget* pWidget,
                      CFWL_ListItem* pItem,
                      uint32_t dwStyle) override;
-  void SetItemText(IFWL_Widget* pWidget,
-                   CFWL_ListItem* pItem,
-                   const FX_WCHAR* pszText) override;
   void SetItemRect(IFWL_Widget* pWidget,
                    CFWL_ListItem* pItem,
                    const CFX_RectF& rtItem) override;
-  FX_FLOAT GetItemHeight(IFWL_Widget* pWidget) override;
   CFX_DIBitmap* GetItemIcon(IFWL_Widget* pWidget,
                             CFWL_ListItem* pItem) override;
   void GetItemCheckRect(IFWL_Widget* pWidget,
@@ -70,20 +63,15 @@ class CFWL_ListBox : public CFWL_Widget, public IFWL_ListBoxDP {
   void DeleteAll();
 
   int32_t CountSelItems();
-
   void SetSelItem(CFWL_ListItem* pItem, bool bSelect = true);
   CFWL_ListItem* GetSelItem(int32_t nIndexSel);
   int32_t GetSelIndex(int32_t nIndex);
-
-  void GetScrollPos(FX_FLOAT& fPos, bool bVert = true);
 
   CFWL_ListItem* GetItem(int32_t nIndex);
   void GetItemText(CFWL_ListItem* pItem, CFX_WideString& wsText);
   uint32_t GetItemStates(CFWL_ListItem* pItem);
 
  private:
-  int32_t CountItems() const;
-
   std::vector<std::unique_ptr<CFWL_ListItem>> m_ItemArray;
 };
 

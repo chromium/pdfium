@@ -25,7 +25,7 @@ const IFWL_ComboBox* ToComboBox(const IFWL_Widget* widget) {
 }  // namespace
 
 CFWL_ComboBox::CFWL_ComboBox(const IFWL_App* app)
-    : CFWL_Widget(app), m_fMaxListHeight(0), m_fItemHeight(0) {}
+    : CFWL_Widget(app), m_fMaxListHeight(0) {}
 
 CFWL_ComboBox::~CFWL_ComboBox() {}
 
@@ -181,16 +181,6 @@ int32_t CFWL_ComboBox::GetItemIndex(IFWL_Widget* pWidget,
   return it != m_ItemArray.end() ? it - m_ItemArray.begin() : -1;
 }
 
-bool CFWL_ComboBox::SetItemIndex(IFWL_Widget* pWidget,
-                                 CFWL_ListItem* pItem,
-                                 int32_t nIndex) {
-  if (nIndex < 0 || static_cast<size_t>(nIndex) >= m_ItemArray.size())
-    return false;
-
-  m_ItemArray[nIndex].reset(static_cast<CFWL_ListItem*>(pItem));
-  return true;
-}
-
 uint32_t CFWL_ComboBox::GetItemStyles(IFWL_Widget* pWidget,
                                       CFWL_ListItem* pItem) {
   if (!pItem)
@@ -226,22 +216,11 @@ void CFWL_ComboBox::SetItemStyles(IFWL_Widget* pWidget,
     static_cast<CFWL_ListItem*>(pItem)->m_dwStyles = dwStyle;
 }
 
-void CFWL_ComboBox::SetItemText(IFWL_Widget* pWidget,
-                                CFWL_ListItem* pItem,
-                                const FX_WCHAR* pszText) {
-  if (pItem)
-    static_cast<CFWL_ListItem*>(pItem)->m_wsText = pszText;
-}
-
 void CFWL_ComboBox::SetItemRect(IFWL_Widget* pWidget,
                                 CFWL_ListItem* pItem,
                                 const CFX_RectF& rtItem) {
   if (pItem)
     static_cast<CFWL_ListItem*>(pItem)->m_rtItem = rtItem;
-}
-
-FX_FLOAT CFWL_ComboBox::GetItemHeight(IFWL_Widget* pWidget) {
-  return m_fItemHeight;
 }
 
 CFX_DIBitmap* CFWL_ComboBox::GetItemIcon(IFWL_Widget* pWidget,

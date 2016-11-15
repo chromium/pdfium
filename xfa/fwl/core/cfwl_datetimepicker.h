@@ -12,7 +12,7 @@
 
 class CFWL_DateTimePicker : public CFWL_Widget, public IFWL_DateTimePickerDP {
  public:
-  CFWL_DateTimePicker(const IFWL_App*);
+  explicit CFWL_DateTimePicker(const IFWL_App* pApp);
   ~CFWL_DateTimePicker() override;
 
   void Initialize();
@@ -38,9 +38,6 @@ class CFWL_DateTimePicker : public CFWL_Widget, public IFWL_DateTimePickerDP {
   void ModifyEditStylesEx(uint32_t dwStylesExAdded, uint32_t dwStylesExRemoved);
 
  private:
-  int32_t m_iYear;
-  int32_t m_iMonth;
-  int32_t m_iDay;
   CFX_WideString m_wsData;
 };
 

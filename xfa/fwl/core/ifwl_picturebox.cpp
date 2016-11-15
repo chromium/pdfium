@@ -30,13 +30,6 @@ void IFWL_PictureBox::GetWidgetRect(CFX_RectF& rect, bool bAutoSize) {
     rect.Set(0, 0, 0, 0);
     if (!m_pProperties->m_pDataProvider)
       return;
-    CFX_DIBitmap* pBitmap =
-        static_cast<IFWL_PictureBoxDP*>(m_pProperties->m_pDataProvider)
-            ->GetPicture(this);
-    if (pBitmap) {
-      rect.Set(0, 0, (FX_FLOAT)pBitmap->GetWidth(),
-               (FX_FLOAT)pBitmap->GetHeight());
-    }
     IFWL_Widget::GetWidgetRect(rect, true);
   } else {
     rect = m_pProperties->m_rtWidget;
@@ -72,29 +65,7 @@ void IFWL_PictureBox::DrawWidget(CFX_Graphics* pGraphics,
 void IFWL_PictureBox::DrawBkground(CFX_Graphics* pGraphics,
                                    IFWL_ThemeProvider* pTheme,
                                    const CFX_Matrix* pMatrix) {
-  IFWL_PictureBoxDP* pPictureDP =
-      static_cast<IFWL_PictureBoxDP*>(m_pProperties->m_pDataProvider);
-  if (!pPictureDP)
-    return;
-
-  CFX_DIBitmap* pPicture = pPictureDP->GetPicture(this);
-  CFX_Matrix matrix;
-  pPictureDP->GetMatrix(this, matrix);
-  if (!pPicture)
-    return;
-
-  matrix.Concat(*pMatrix);
-  FX_FLOAT fx = (FX_FLOAT)pPicture->GetWidth();
-  FX_FLOAT fy = (FX_FLOAT)pPicture->GetHeight();
-  if (fx > m_rtClient.width) {
-    fx = m_rtClient.width;
-  }
-  if (fy > m_rtClient.height) {
-    fy = m_rtClient.height;
-  }
-  pGraphics->DrawImage(pPicture, CFX_PointF((m_rtClient.width - fx) / 2,
-                                            (m_rtClient.height - fy) / 2),
-                       &matrix);
+  return;
 }
 
 void IFWL_PictureBox::OnDrawWidget(CFX_Graphics* pGraphics,

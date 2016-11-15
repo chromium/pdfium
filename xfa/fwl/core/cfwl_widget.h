@@ -20,7 +20,7 @@ class CFWL_WidgetMgr;
 
 class CFWL_Widget {
  public:
-  CFWL_Widget(const IFWL_App*);
+  explicit CFWL_Widget(const IFWL_App*);
   virtual ~CFWL_Widget();
 
   IFWL_Widget* GetWidget();
@@ -35,7 +35,6 @@ class CFWL_Widget {
 
   uint32_t GetStates();
   void SetStates(uint32_t dwStates, bool bSet = true);
-
   void SetLayoutItem(void* pItem);
 
   void Update();
@@ -43,7 +42,6 @@ class CFWL_Widget {
   void UnlockUpdate();
 
   FWL_WidgetHit HitTest(FX_FLOAT fx, FX_FLOAT fy);
-
   void DrawWidget(CFX_Graphics* pGraphics, const CFX_Matrix* pMatrix = nullptr);
 
   IFWL_WidgetDelegate* GetDelegate() const;
@@ -54,7 +52,6 @@ class CFWL_Widget {
 
   const IFWL_App* m_pApp;
   std::unique_ptr<IFWL_Widget> m_pIface;
-  CFWL_WidgetMgr* const m_pWidgetMgr;
 };
 
 #endif  // XFA_FWL_CORE_CFWL_WIDGET_H_

@@ -15,7 +15,7 @@
 
 class CFWL_ComboBox : public CFWL_Widget, public IFWL_ComboBoxDP {
  public:
-  CFWL_ComboBox(const IFWL_App*);
+  explicit CFWL_ComboBox(const IFWL_App* pApp);
   ~CFWL_ComboBox() override;
 
   void Initialize();
@@ -28,10 +28,6 @@ class CFWL_ComboBox : public CFWL_Widget, public IFWL_ComboBoxDP {
   CFWL_ListItem* GetItem(const IFWL_Widget* pWidget,
                          int32_t nIndex) const override;
   int32_t GetItemIndex(IFWL_Widget* pWidget, CFWL_ListItem* pItem) override;
-  bool SetItemIndex(IFWL_Widget* pWidget,
-                    CFWL_ListItem* pItem,
-                    int32_t nIndex) override;
-
   uint32_t GetItemStyles(IFWL_Widget* pWidget, CFWL_ListItem* pItem) override;
   void GetItemText(IFWL_Widget* pWidget,
                    CFWL_ListItem* pItem,
@@ -43,13 +39,9 @@ class CFWL_ComboBox : public CFWL_Widget, public IFWL_ComboBoxDP {
   void SetItemStyles(IFWL_Widget* pWidget,
                      CFWL_ListItem* pItem,
                      uint32_t dwStyle) override;
-  void SetItemText(IFWL_Widget* pWidget,
-                   CFWL_ListItem* pItem,
-                   const FX_WCHAR* pszText) override;
   void SetItemRect(IFWL_Widget* pWidget,
                    CFWL_ListItem* pItem,
                    const CFX_RectF& rtItem) override;
-  FX_FLOAT GetItemHeight(IFWL_Widget* pWidget) override;
   CFX_DIBitmap* GetItemIcon(IFWL_Widget* pWidget,
                             CFWL_ListItem* pItem) override;
   void GetItemCheckRect(IFWL_Widget* pWidget,
@@ -103,7 +95,6 @@ class CFWL_ComboBox : public CFWL_Widget, public IFWL_ComboBoxDP {
  private:
   std::vector<std::unique_ptr<CFWL_ListItem>> m_ItemArray;
   FX_FLOAT m_fMaxListHeight;
-  FX_FLOAT m_fItemHeight;
 };
 
 #endif  // XFA_FWL_CORE_CFWL_COMBOBOX_H_

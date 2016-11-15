@@ -16,18 +16,24 @@ class IFDE_TxtEdtDoRecord;
 
 class CFWL_Edit : public CFWL_Widget {
  public:
-  CFWL_Edit(const IFWL_App*);
+  explicit CFWL_Edit(const IFWL_App*);
   ~CFWL_Edit() override;
 
   void Initialize();
 
   void SetText(const CFX_WideString& wsText);
-  void GetText(CFX_WideString& wsText, int32_t nStart = 0, int32_t nCount = -1);
-  int32_t CountSelRanges();
-  int32_t GetSelRange(int32_t nIndex, int32_t& nStart);
-  int32_t GetLimit();
+  void GetText(CFX_WideString& wsText,
+               int32_t nStart = 0,
+               int32_t nCount = -1) const;
+
+  int32_t CountSelRanges() const;
+  int32_t GetSelRange(int32_t nIndex, int32_t& nStart) const;
+
+  int32_t GetLimit() const;
   void SetLimit(int32_t nLimit);
+
   void SetAliasChar(FX_WCHAR wAlias);
+
   void SetScrollOffset(FX_FLOAT fScrollOffset);
 };
 

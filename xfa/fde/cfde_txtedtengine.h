@@ -31,7 +31,9 @@ class CFDE_TxtEdtEngine {
   void SetTextByStream(IFX_Stream* pStream);
   void SetText(const CFX_WideString& wsText);
   int32_t GetTextLength() const;
-  void GetText(CFX_WideString& wsText, int32_t nStart, int32_t nCount = -1);
+  void GetText(CFX_WideString& wsText,
+               int32_t nStart,
+               int32_t nCount = -1) const;
   void ClearText();
 
   int32_t GetCaretRect(CFX_RectF& rtCaret) const;
@@ -57,8 +59,8 @@ class CFDE_TxtEdtEngine {
   void RemoveSelRange(int32_t nStart, int32_t nCount = -1);
 
   void AddSelRange(int32_t nStart, int32_t nCount = -1);
-  int32_t CountSelRanges();
-  int32_t GetSelRange(int32_t nIndex, int32_t& nStart);
+  int32_t CountSelRanges() const;
+  int32_t GetSelRange(int32_t nIndex, int32_t& nStart) const;
   void ClearSelection();
 
   bool Redo(const IFDE_TxtEdtDoRecord* pRecord);
@@ -126,7 +128,7 @@ class CFDE_TxtEdtEngine {
   bool ReplaceParagEnd(FX_WCHAR*& lpText,
                        int32_t& nLength,
                        bool bPreIsCR = false);
-  void RecoverParagEnd(CFX_WideString& wsText);
+  void RecoverParagEnd(CFX_WideString& wsText) const;
   int32_t MovePage2Char(int32_t nIndex);
   void TextPos2ParagPos(int32_t nIndex, FDE_TXTEDTPARAGPOS& ParagPos) const;
   int32_t MoveForward(bool& bBefore);

@@ -13,7 +13,7 @@
 
 class CFWL_Barcode : public CFWL_Edit, public IFWL_BarcodeDP {
  public:
-  CFWL_Barcode(const IFWL_App*);
+  explicit CFWL_Barcode(const IFWL_App* pApp);
   ~CFWL_Barcode() override;
 
   void Initialize();
