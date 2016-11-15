@@ -7,6 +7,9 @@
 #include "fpdfsdk/javascript/PublicMethods.h"
 
 #include <algorithm>
+#include <iomanip>
+#include <sstream>
+#include <string>
 #include <vector>
 
 #include "core/fpdfdoc/cpdf_interform.h"
@@ -83,6 +86,24 @@ void AlertIfPossible(CJS_Context* pContext, const FX_WCHAR* swMsg) {
   if (pFormFillEnv)
     pFormFillEnv->JS_appAlert(swMsg, nullptr, 0, 3);
 }
+
+#if _FX_OS_ != _FX_ANDROID_
+CFX_ByteString CalculateString(double dValue,
+                               int iDec,
+                               int* iDec2,
+                               bool* bNegative) {
+  *bNegative = dValue < 0;
+  if (*bNegative)
+    dValue = -dValue;
+  std::stringstream ss;
+  ss << std::fixed << std::setprecision(iDec) << dValue;
+  std::string stringValue = ss.str();
+  size_t iDecimalPos = stringValue.find(".");
+  *iDec2 = iDecimalPos == std::string::npos ? stringValue.size()
+                                            : static_cast<int>(iDecimalPos);
+  return CFX_ByteString(stringValue.c_str());
+}
+#endif
 
 }  // namespace
 
@@ -760,66 +781,45 @@ bool CJS_PublicMethods::AFNumber_Format(IJS_Context* cc,
   if (iNegStyle < 0 || iNegStyle > 3)
     iNegStyle = 0;
 
-  // for processing decimal places
+  // Processing decimal places
   strValue.Replace(",", ".");
   double dValue = atof(strValue.c_str());
   if (iDec > 0)
     dValue += DOUBLE_CORRECT;
 
+  // Calculating number string
+  bool bNegative;
   int iDec2;
-  int iNegative = 0;
-
-  strValue = fcvt(dValue, iDec, &iDec2, &iNegative);
+  strValue = CalculateString(dValue, iDec, &iDec2, &bNegative);
   if (strValue.IsEmpty()) {
     dValue = 0;
-    strValue = fcvt(dValue, iDec, &iDec2, &iNegative);
+    strValue = CalculateString(dValue, iDec, &iDec2, &bNegative);
     if (strValue.IsEmpty()) {
       strValue = "0";
       iDec2 = 1;
     }
   }
 
-  if (iDec2 < 0) {
-    for (int iNum = 0; iNum < abs(iDec2); iNum++) {
-      strValue = "0" + strValue;
-    }
-    iDec2 = 0;
-  }
-  int iMax = strValue.GetLength();
-  if (iDec2 > iMax) {
-    for (int iNum = 0; iNum <= iDec2 - iMax; iNum++) {
-      strValue += "0";
-    }
-    iMax = iDec2 + 1;
-  }
-
-  // for processing seperator style
-  if (iDec2 < iMax) {
-    if (iSepStyle == 0 || iSepStyle == 1) {
-      strValue.Insert(iDec2, '.');
-      iMax++;
-    } else if (iSepStyle == 2 || iSepStyle == 3) {
-      strValue.Insert(iDec2, ',');
-      iMax++;
-    }
+  // Processing separator style
+  if (iDec2 < strValue.GetLength()) {
+    if (iSepStyle == 2 || iSepStyle == 3)
+      strValue.Replace(".", ",");
 
     if (iDec2 == 0)
       strValue.Insert(iDec2, '0');
   }
   if (iSepStyle == 0 || iSepStyle == 2) {
-    char cSeperator;
+    char cSeparator;
     if (iSepStyle == 0)
-      cSeperator = ',';
+      cSeparator = ',';
     else
-      cSeperator = '.';
+      cSeparator = '.';
 
-    for (int iDecPositive = iDec2 - 3; iDecPositive > 0; iDecPositive -= 3) {
-      strValue.Insert(iDecPositive, cSeperator);
-      iMax++;
-    }
+    for (int iDecPositive = iDec2 - 3; iDecPositive > 0; iDecPositive -= 3)
+      strValue.Insert(iDecPositive, cSeparator);
   }
 
-  // for processing currency string
+  // Processing currency string
   Value = CFX_WideString::FromLocal(strValue.AsStringC());
 
   if (bCurrencyPrepend)
@@ -827,13 +827,12 @@ bool CJS_PublicMethods::AFNumber_Format(IJS_Context* cc,
   else
     Value = Value + wstrCurrency;
 
-  // for processing negative style
-  if (iNegative) {
-    if (iNegStyle == 0) {
+  // Processing negative style
+  if (bNegative) {
+    if (iNegStyle == 0)
       Value = L"-" + Value;
-    } else if (iNegStyle == 2 || iNegStyle == 3) {
+    else if (iNegStyle == 2 || iNegStyle == 3)
       Value = L"(" + Value + L")";
-    }
     if (iNegStyle == 1 || iNegStyle == 3) {
       if (Field* fTarget = pEvent->Target_Field()) {
         CJS_Array arColor;
