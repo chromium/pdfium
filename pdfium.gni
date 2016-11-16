@@ -17,8 +17,11 @@ declare_args() {
   # Build PDFium either with or without XFA Forms support.
   pdf_enable_xfa = pdf_enable_xfa_override
 
-  # Build PDFium against skia (experimental) rather than agg.
+  # Build PDFium against skia (experimental) rather than agg. Use Skia to draw everything.
   pdf_use_skia = pdf_use_skia_override
+
+  # Build PDFium against skia (experimental) rather than agg. Use Skia to draw paths.
+  pdf_use_skia_paths = pdf_use_skia_paths_override
 
   # Build PDFium with or without experimental win32 GDI APIs.
   pdf_use_win32_gdi = pdf_use_win32_gdi_override

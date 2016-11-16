@@ -6,7 +6,7 @@
 
 #include "core/fxcrt/fx_ext.h"
 
-#ifndef _SKIA_SUPPORT_
+#if !defined _SKIA_SUPPORT_ && !defined _SKIA_SUPPORT_PATHS_
 #include "core/fxge/agg/fx_agg_driver.h"
 #endif
 

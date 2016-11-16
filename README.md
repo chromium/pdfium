@@ -83,6 +83,7 @@ use_goma = true  # Googlers only.
 is_debug = true  # Enable debugging features.
 
 pdf_use_skia = false  # Set true to enable experimental skia backend.
+pdf_use_skia_paths = false  # Set true to enable experimental skia backend (paths only).
 
 pdf_enable_xfa = true  # Set false to remove XFA support (implies JS support).
 pdf_enable_v8 = true  # Set false to remove Javascript support.
