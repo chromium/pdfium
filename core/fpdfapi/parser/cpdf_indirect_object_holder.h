@@ -10,6 +10,8 @@
 #include <map>
 #include <memory>
 
+#include "core/fxcrt/cfx_string_pool_template.h"
+#include "core/fxcrt/cfx_weak_ptr.h"
 #include "core/fxcrt/fx_system.h"
 #include "third_party/base/ptr_util.h"
 
@@ -45,6 +47,10 @@ class CPDF_IndirectObjectHolder {
   uint32_t GetLastObjNum() const { return m_LastObjNum; }
   void SetLastObjNum(uint32_t objnum) { m_LastObjNum = objnum; }
 
+  CFX_WeakPtr<CFX_ByteStringPool> GetByteStringPool() const {
+    return m_pByteStringPool;
+  }
+
   const_iterator begin() const { return m_IndirectObjs.begin(); }
   const_iterator end() const { return m_IndirectObjs.end(); }
 
@@ -54,6 +60,7 @@ class CPDF_IndirectObjectHolder {
  private:
   uint32_t m_LastObjNum;
   std::map<uint32_t, std::unique_ptr<CPDF_Object>> m_IndirectObjs;
+  CFX_WeakPtr<CFX_ByteStringPool> m_pByteStringPool;
 };
 
 #endif  // CORE_FPDFAPI_PARSER_CPDF_INDIRECT_OBJECT_HOLDER_H_

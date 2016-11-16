@@ -9,9 +9,13 @@
 #include "core/fpdfapi/parser/cpdf_object.h"
 #include "core/fpdfapi/parser/cpdf_parser.h"
 
-CPDF_IndirectObjectHolder::CPDF_IndirectObjectHolder() : m_LastObjNum(0) {}
+CPDF_IndirectObjectHolder::CPDF_IndirectObjectHolder()
+    : m_LastObjNum(0),
+      m_pByteStringPool(pdfium::MakeUnique<CFX_ByteStringPool>()) {}
 
-CPDF_IndirectObjectHolder::~CPDF_IndirectObjectHolder() {}
+CPDF_IndirectObjectHolder::~CPDF_IndirectObjectHolder() {
+  m_pByteStringPool.DeleteObject();  // Make weak.
+}
 
 CPDF_Object* CPDF_IndirectObjectHolder::GetIndirectObject(
     uint32_t objnum) const {

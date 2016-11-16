@@ -9,8 +9,6 @@
 
 #include "core/fpdfapi/parser/cpdf_indirect_object_holder.h"
 #include "core/fpdfapi/parser/cpdf_object.h"
-#include "core/fxcrt/cfx_string_pool_template.h"
-#include "core/fxcrt/cfx_weak_ptr.h"
 #include "core/fxcrt/fx_basic.h"
 
 class CPDF_Dictionary;
@@ -25,9 +23,6 @@ class CFDF_Document : public CPDF_IndirectObjectHolder {
 
   bool WriteBuf(CFX_ByteTextBuf& buf) const;
   CPDF_Dictionary* GetRoot() const { return m_pRootDict; }
-  CFX_WeakPtr<CFX_ByteStringPool> GetByteStringPool() const {
-    return m_pByteStringPool;
-  }
 
  protected:
   CFDF_Document();
@@ -36,7 +31,6 @@ class CFDF_Document : public CPDF_IndirectObjectHolder {
   CPDF_Dictionary* m_pRootDict;
   IFX_SeekableReadStream* m_pFile;
   bool m_bOwnFile;
-  CFX_WeakPtr<CFX_ByteStringPool> m_pByteStringPool;
 };
 
 #endif  // CORE_FPDFAPI_PARSER_CFDF_DOCUMENT_H_

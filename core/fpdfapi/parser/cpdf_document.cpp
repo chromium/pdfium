@@ -343,8 +343,7 @@ CPDF_Document::CPDF_Document(std::unique_ptr<CPDF_Parser> pParser)
       m_iFirstPageNo(0),
       m_dwFirstPageObjNum(0),
       m_pDocPage(new CPDF_DocPageData(this)),
-      m_pDocRender(new CPDF_DocRenderData(this)),
-      m_pByteStringPool(pdfium::MakeUnique<CFX_ByteStringPool>()) {
+      m_pDocRender(new CPDF_DocRenderData(this)) {
   if (pParser)
     SetLastObjNum(m_pParser->GetLastObjNum());
 }
@@ -352,7 +351,6 @@ CPDF_Document::CPDF_Document(std::unique_ptr<CPDF_Parser> pParser)
 CPDF_Document::~CPDF_Document() {
   delete m_pDocPage;
   CPDF_ModuleMgr::Get()->GetPageModule()->ClearStockFont(this);
-  m_pByteStringPool.DeleteObject();  // Make weak.
 }
 
 std::unique_ptr<CPDF_Object> CPDF_Document::ParseIndirectObject(
@@ -649,19 +647,19 @@ CPDF_Image* CPDF_Document::LoadImageFromPageData(uint32_t dwStreamObjNum) {
 
 void CPDF_Document::CreateNewDoc() {
   ASSERT(!m_pRootDict && !m_pInfoDict);
-  m_pRootDict = NewIndirect<CPDF_Dictionary>(m_pByteStringPool);
+  m_pRootDict = NewIndirect<CPDF_Dictionary>(GetByteStringPool());
   m_pRootDict->SetNameFor("Type", "Catalog");
 
-  CPDF_Dictionary* pPages = NewIndirect<CPDF_Dictionary>(m_pByteStringPool);
+  CPDF_Dictionary* pPages = NewIndirect<CPDF_Dictionary>(GetByteStringPool());
   pPages->SetNameFor("Type", "Pages");
   pPages->SetNumberFor("Count", 0);
   pPages->SetFor("Kids", new CPDF_Array);
   m_pRootDict->SetReferenceFor("Pages", this, pPages);
-  m_pInfoDict = NewIndirect<CPDF_Dictionary>(m_pByteStringPool);
+  m_pInfoDict = NewIndirect<CPDF_Dictionary>(GetByteStringPool());
 }
 
 CPDF_Dictionary* CPDF_Document::CreateNewPage(int iPage) {
-  CPDF_Dictionary* pDict = NewIndirect<CPDF_Dictionary>(m_pByteStringPool);
+  CPDF_Dictionary* pDict = NewIndirect<CPDF_Dictionary>(GetByteStringPool());
   pDict->SetNameFor("Type", "Page");
   uint32_t dwObjNum = pDict->GetObjNum();
   if (!InsertNewPage(iPage, pDict)) {
@@ -781,7 +779,7 @@ size_t CPDF_Document::CalculateEncodingDict(int charset,
     return i;
 
   CPDF_Dictionary* pEncodingDict =
-      NewIndirect<CPDF_Dictionary>(m_pByteStringPool);
+      NewIndirect<CPDF_Dictionary>(GetByteStringPool());
   pEncodingDict->SetNameFor("BaseEncoding", "WinAnsiEncoding");
 
   CPDF_Array* pArray = new CPDF_Array;
@@ -803,7 +801,8 @@ CPDF_Dictionary* CPDF_Document::ProcessbCJK(
     bool bVert,
     CFX_ByteString basefont,
     std::function<void(FX_WCHAR, FX_WCHAR, CPDF_Array*)> Insert) {
-  CPDF_Dictionary* pFontDict = NewIndirect<CPDF_Dictionary>(m_pByteStringPool);
+  CPDF_Dictionary* pFontDict =
+      NewIndirect<CPDF_Dictionary>(GetByteStringPool());
   CFX_ByteString cmap;
   CFX_ByteString ordering;
   int supplement = 0;
@@ -853,7 +852,7 @@ CPDF_Dictionary* CPDF_Document::ProcessbCJK(
   pFontDict->SetNameFor("Type", "Font");
   pFontDict->SetNameFor("Subtype", "CIDFontType2");
   pFontDict->SetNameFor("BaseFont", basefont);
-  CPDF_Dictionary* pCIDSysInfo = new CPDF_Dictionary(m_pByteStringPool);
+  CPDF_Dictionary* pCIDSysInfo = new CPDF_Dictionary(GetByteStringPool());
   pCIDSysInfo->SetStringFor("Registry", "Adobe");
   pCIDSysInfo->SetStringFor("Ordering", ordering);
   pCIDSysInfo->SetIntegerFor("Supplement", supplement);
@@ -878,7 +877,8 @@ CPDF_Font* CPDF_Document::AddFont(CFX_Font* pFont, int charset, bool bVert) {
       CalculateFlags(pFont->IsBold(), pFont->IsItalic(), pFont->IsFixedWidth(),
                      false, false, charset == FXFONT_SYMBOL_CHARSET);
 
-  CPDF_Dictionary* pBaseDict = NewIndirect<CPDF_Dictionary>(m_pByteStringPool);
+  CPDF_Dictionary* pBaseDict =
+      NewIndirect<CPDF_Dictionary>(GetByteStringPool());
   pBaseDict->SetNameFor("Type", "Font");
   std::unique_ptr<CFX_UnicodeEncoding> pEncoding(
       new CFX_UnicodeEncoding(pFont));
@@ -1008,7 +1008,8 @@ CPDF_Font* CPDF_Document::AddWindowsFont(LOGFONTA* pLogFont,
                  ptm->otmrcFontBox.right, ptm->otmrcFontBox.top};
   FX_Free(tm_buf);
   basefont.Replace(" ", "");
-  CPDF_Dictionary* pBaseDict = NewIndirect<CPDF_Dictionary>(m_pByteStringPool);
+  CPDF_Dictionary* pBaseDict =
+      NewIndirect<CPDF_Dictionary>(GetByteStringPool());
   pBaseDict->SetNameFor("Type", "Font");
   CPDF_Dictionary* pFontDict = pBaseDict;
   if (!bCJK) {

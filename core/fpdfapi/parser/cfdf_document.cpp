@@ -15,13 +15,11 @@ CFDF_Document::CFDF_Document()
     : CPDF_IndirectObjectHolder(),
       m_pRootDict(nullptr),
       m_pFile(nullptr),
-      m_bOwnFile(false),
-      m_pByteStringPool(pdfium::MakeUnique<CFX_ByteStringPool>()) {}
+      m_bOwnFile(false) {}
 
 CFDF_Document::~CFDF_Document() {
   if (m_bOwnFile && m_pFile)
     m_pFile->Release();
-  m_pByteStringPool.DeleteObject();  // Make weak.
 }
 
 CFDF_Document* CFDF_Document::CreateNewDoc() {
