@@ -270,22 +270,22 @@ void CPDF_Dictionary::SetBooleanFor(const CFX_ByteString& key, bool bValue) {
 void CPDF_Dictionary::SetRectFor(const CFX_ByteString& key,
                                  const CFX_FloatRect& rect) {
   CPDF_Array* pArray = new CPDF_Array;
-  pArray->AddNumber(rect.left);
-  pArray->AddNumber(rect.bottom);
-  pArray->AddNumber(rect.right);
-  pArray->AddNumber(rect.top);
+  pArray->AddNew<CPDF_Number>(rect.left);
+  pArray->AddNew<CPDF_Number>(rect.bottom);
+  pArray->AddNew<CPDF_Number>(rect.right);
+  pArray->AddNew<CPDF_Number>(rect.top);
   SetFor(key, pArray);
 }
 
 void CPDF_Dictionary::SetMatrixFor(const CFX_ByteString& key,
                                    const CFX_Matrix& matrix) {
   CPDF_Array* pArray = new CPDF_Array;
-  pArray->AddNumber(matrix.a);
-  pArray->AddNumber(matrix.b);
-  pArray->AddNumber(matrix.c);
-  pArray->AddNumber(matrix.d);
-  pArray->AddNumber(matrix.e);
-  pArray->AddNumber(matrix.f);
+  pArray->AddNew<CPDF_Number>(matrix.a);
+  pArray->AddNew<CPDF_Number>(matrix.b);
+  pArray->AddNew<CPDF_Number>(matrix.c);
+  pArray->AddNew<CPDF_Number>(matrix.d);
+  pArray->AddNew<CPDF_Number>(matrix.e);
+  pArray->AddNew<CPDF_Number>(matrix.f);
   SetFor(key, pArray);
 }
 

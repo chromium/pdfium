@@ -17,6 +17,9 @@
 #include "core/fpdfapi/parser/cpdf_boolean.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
+#include "core/fpdfapi/parser/cpdf_name.h"
+#include "core/fpdfapi/parser/cpdf_number.h"
+#include "core/fpdfapi/parser/cpdf_reference.h"
 #include "core/fpdfapi/parser/cpdf_string.h"
 #include "core/fpdfapi/render/cpdf_pagerendercache.h"
 #include "core/fpdfapi/render/render_int.h"
@@ -107,8 +110,8 @@ CPDF_Dictionary* CPDF_Image::InitJPEG(uint8_t* pData, uint32_t size) {
     csname = "DeviceCMYK";
     CPDF_Array* pDecode = new CPDF_Array;
     for (int n = 0; n < 4; n++) {
-      pDecode->AddInteger(1);
-      pDecode->AddInteger(0);
+      pDecode->AddNew<CPDF_Number>(1);
+      pDecode->AddNew<CPDF_Number>(0);
     }
     pDict->SetFor("Decode", pDecode);
   }
@@ -181,15 +184,15 @@ void CPDF_Image::SetImage(const CFX_DIBitmap* pBitmap, int32_t iCompress) {
       pDict->SetFor("ImageMask", new CPDF_Boolean(true));
       if (reset_a == 0) {
         CPDF_Array* pArray = new CPDF_Array;
-        pArray->AddInteger(1);
-        pArray->AddInteger(0);
+        pArray->AddNew<CPDF_Number>(1);
+        pArray->AddNew<CPDF_Number>(0);
         pDict->SetFor("Decode", pArray);
       }
     } else {
       CPDF_Array* pCS = new CPDF_Array;
-      pCS->AddName("Indexed");
-      pCS->AddName("DeviceRGB");
-      pCS->AddInteger(1);
+      pCS->AddNew<CPDF_Name>("Indexed");
+      pCS->AddNew<CPDF_Name>("DeviceRGB");
+      pCS->AddNew<CPDF_Number>(1);
       CFX_ByteString ct;
       FX_CHAR* pBuf = ct.GetBuffer(6);
       pBuf[0] = (FX_CHAR)reset_r;
@@ -199,7 +202,7 @@ void CPDF_Image::SetImage(const CFX_DIBitmap* pBitmap, int32_t iCompress) {
       pBuf[4] = (FX_CHAR)set_g;
       pBuf[5] = (FX_CHAR)set_b;
       ct.ReleaseBuffer(6);
-      pCS->Add(new CPDF_String(ct, true));
+      pCS->AddNew<CPDF_String>(ct, true);
       pDict->SetFor("ColorSpace", pCS);
     }
     pDict->SetIntegerFor("BitsPerComponent", 1);
@@ -213,9 +216,9 @@ void CPDF_Image::SetImage(const CFX_DIBitmap* pBitmap, int32_t iCompress) {
     int32_t iPalette = pBitmap->GetPaletteSize();
     if (iPalette > 0) {
       CPDF_Array* pCS = m_pDocument->NewIndirect<CPDF_Array>();
-      pCS->AddName("Indexed");
-      pCS->AddName("DeviceRGB");
-      pCS->AddInteger(iPalette - 1);
+      pCS->AddNew<CPDF_Name>("Indexed");
+      pCS->AddNew<CPDF_Name>("DeviceRGB");
+      pCS->AddNew<CPDF_Number>(iPalette - 1);
       uint8_t* pColorTable = FX_Alloc2D(uint8_t, iPalette, 3);
       uint8_t* ptr = pColorTable;
       for (int32_t i = 0; i < iPalette; i++) {
@@ -228,7 +231,7 @@ void CPDF_Image::SetImage(const CFX_DIBitmap* pBitmap, int32_t iCompress) {
       CPDF_Stream* pCTS = m_pDocument->NewIndirect<CPDF_Stream>(
           pColorTable, iPalette * 3,
           new CPDF_Dictionary(m_pDocument->GetByteStringPool()));
-      pCS->AddReference(m_pDocument, pCTS);
+      pCS->AddNew<CPDF_Reference>(m_pDocument, pCTS->GetObjNum());
       pDict->SetReferenceFor("ColorSpace", m_pDocument, pCS);
     } else {
       pDict->SetNameFor("ColorSpace", "DeviceGray");

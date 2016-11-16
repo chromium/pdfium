@@ -8,6 +8,7 @@
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_hint_tables.h"
 #include "core/fpdfapi/parser/cpdf_linearized_header.h"
+#include "core/fpdfapi/parser/cpdf_number.h"
 #include "third_party/base/ptr_util.h"
 
 int32_t GetData(const int32_t** data32, const uint8_t** data, size_t* size) {
@@ -73,9 +74,9 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
 
   auto hint_info = pdfium::MakeUnique<CPDF_Array>();
   // Add primary hint stream offset
-  hint_info->AddInteger(GetData(&data32, &data, &size));
+  hint_info->AddNew<CPDF_Number>(GetData(&data32, &data, &size));
   // Add primary hint stream size
-  hint_info->AddInteger(GetData(&data32, &data, &size));
+  hint_info->AddNew<CPDF_Number>(GetData(&data32, &data, &size));
   // Set hint stream info.
   linearized_dict->SetFor("H", hint_info.release());
 

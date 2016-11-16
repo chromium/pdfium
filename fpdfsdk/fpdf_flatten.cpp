@@ -13,6 +13,7 @@
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfapi/parser/cpdf_number.h"
+#include "core/fpdfapi/parser/cpdf_reference.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "core/fpdfdoc/cpdf_annot.h"
@@ -205,12 +206,13 @@ void SetPageContents(const CFX_ByteString& key,
         CFX_ByteString((const FX_CHAR*)acc.GetData(), acc.GetSize());
     sStream = sStream + sBody + "\nQ";
     pContentsStream->SetData(sStream.raw_str(), sStream.GetLength());
-    pContentsArray->AddReference(pDocument, pContentsStream->GetObjNum());
+    pContentsArray->AddNew<CPDF_Reference>(pDocument,
+                                           pContentsStream->GetObjNum());
     pPage->SetReferenceFor("Contents", pDocument, pContentsArray);
   }
   if (!key.IsEmpty()) {
-    pContentsArray->AddReference(pDocument,
-                                 NewIndirectContentsStream(key, pDocument));
+    pContentsArray->AddNew<CPDF_Reference>(
+        pDocument, NewIndirectContentsStream(key, pDocument));
   }
 }
 
@@ -270,19 +272,19 @@ DLLEXPORT int STDCALL FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
 
   if (!rcOriginalMB.IsEmpty()) {
     CPDF_Array* pMediaBox = new CPDF_Array();
-    pMediaBox->Add(new CPDF_Number(rcOriginalMB.left));
-    pMediaBox->Add(new CPDF_Number(rcOriginalMB.bottom));
-    pMediaBox->Add(new CPDF_Number(rcOriginalMB.right));
-    pMediaBox->Add(new CPDF_Number(rcOriginalMB.top));
+    pMediaBox->AddNew<CPDF_Number>(rcOriginalMB.left);
+    pMediaBox->AddNew<CPDF_Number>(rcOriginalMB.bottom);
+    pMediaBox->AddNew<CPDF_Number>(rcOriginalMB.right);
+    pMediaBox->AddNew<CPDF_Number>(rcOriginalMB.top);
     pPageDict->SetFor("MediaBox", pMediaBox);
   }
 
   if (!rcOriginalCB.IsEmpty()) {
     CPDF_Array* pCropBox = new CPDF_Array();
-    pCropBox->Add(new CPDF_Number(rcOriginalCB.left));
-    pCropBox->Add(new CPDF_Number(rcOriginalCB.bottom));
-    pCropBox->Add(new CPDF_Number(rcOriginalCB.right));
-    pCropBox->Add(new CPDF_Number(rcOriginalCB.top));
+    pCropBox->AddNew<CPDF_Number>(rcOriginalCB.left);
+    pCropBox->AddNew<CPDF_Number>(rcOriginalCB.bottom);
+    pCropBox->AddNew<CPDF_Number>(rcOriginalCB.right);
+    pCropBox->AddNew<CPDF_Number>(rcOriginalCB.top);
     pPageDict->SetFor("ArtBox", pCropBox);
   }
 

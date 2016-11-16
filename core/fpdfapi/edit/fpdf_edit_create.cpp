@@ -1931,12 +1931,12 @@ void CPDF_Creator::InitID(bool bDefault) {
     m_pIDArray.reset(new CPDF_Array);
     CPDF_Object* pID1 = pOldIDArray ? pOldIDArray->GetObjectAt(0) : nullptr;
     if (pID1) {
-      m_pIDArray->Add(pID1->Clone().release());
+      m_pIDArray->Add(pID1->Clone());
     } else {
       std::vector<uint8_t> buffer =
           PDF_GenerateFileID((uint32_t)(uintptr_t) this, m_dwLastObjNum);
       CFX_ByteString bsBuffer(buffer.data(), buffer.size());
-      m_pIDArray->Add(new CPDF_String(bsBuffer, true));
+      m_pIDArray->AddNew<CPDF_String>(bsBuffer, true);
     }
   }
   if (!bDefault) {
@@ -1945,21 +1945,20 @@ void CPDF_Creator::InitID(bool bDefault) {
   if (pOldIDArray) {
     CPDF_Object* pID2 = pOldIDArray->GetObjectAt(1);
     if ((m_dwFlags & FPDFCREATE_INCREMENTAL) && m_pEncryptDict && pID2) {
-      m_pIDArray->Add(pID2->Clone().release());
+      m_pIDArray->Add(pID2->Clone());
       return;
     }
     std::vector<uint8_t> buffer =
         PDF_GenerateFileID((uint32_t)(uintptr_t) this, m_dwLastObjNum);
     CFX_ByteString bsBuffer(buffer.data(), buffer.size());
-    m_pIDArray->Add(new CPDF_String(bsBuffer, true));
+    m_pIDArray->AddNew<CPDF_String>(bsBuffer, true);
     return;
   }
-  m_pIDArray->Add(m_pIDArray->GetObjectAt(0)->Clone().release());
+  m_pIDArray->Add(m_pIDArray->GetObjectAt(0)->Clone());
   if (m_pEncryptDict && !pOldIDArray && m_pParser && bNewId) {
     if (m_pEncryptDict->GetStringFor("Filter") == "Standard") {
       CFX_ByteString user_pass = m_pParser->GetPassword();
       uint32_t flag = PDF_ENCRYPT_CONTENT;
-
       CPDF_SecurityHandler handler;
       handler.OnCreate(m_pEncryptDict, m_pIDArray.get(), user_pass.raw_str(),
                        user_pass.GetLength(), flag);

@@ -27,10 +27,10 @@ void SetBoundingBox(CPDF_Page* page,
                     float right,
                     float top) {
   CPDF_Array* pBoundingBoxArray = new CPDF_Array;
-  pBoundingBoxArray->Add(new CPDF_Number(left));
-  pBoundingBoxArray->Add(new CPDF_Number(bottom));
-  pBoundingBoxArray->Add(new CPDF_Number(right));
-  pBoundingBoxArray->Add(new CPDF_Number(top));
+  pBoundingBoxArray->AddNew<CPDF_Number>(left);
+  pBoundingBoxArray->AddNew<CPDF_Number>(bottom);
+  pBoundingBoxArray->AddNew<CPDF_Number>(right);
+  pBoundingBoxArray->AddNew<CPDF_Number>(top);
   page->m_pFormDict->SetFor(key, pBoundingBoxArray);
 }
 
@@ -142,23 +142,22 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFPage_TransFormWithClip(FPDF_PAGE page,
   CPDF_Array* pArray = ToArray(pContentObj);
   if (pArray) {
     pContentArray = pArray;
-    CPDF_Reference* pRef = new CPDF_Reference(pDoc, pStream->GetObjNum());
-    pContentArray->InsertAt(0, pRef);
-    pContentArray->AddReference(pDoc, pEndStream->GetObjNum());
+    pContentArray->InsertNewAt<CPDF_Reference>(0, pDoc, pStream->GetObjNum());
+    pContentArray->AddNew<CPDF_Reference>(pDoc, pEndStream->GetObjNum());
   } else if (CPDF_Reference* pReference = ToReference(pContentObj)) {
     CPDF_Object* pDirectObj = pReference->GetDirect();
     if (pDirectObj) {
       CPDF_Array* pObjArray = pDirectObj->AsArray();
       if (pObjArray) {
         pContentArray = pObjArray;
-        CPDF_Reference* pRef = new CPDF_Reference(pDoc, pStream->GetObjNum());
-        pContentArray->InsertAt(0, pRef);
-        pContentArray->AddReference(pDoc, pEndStream->GetObjNum());
+        pContentArray->InsertNewAt<CPDF_Reference>(0, pDoc,
+                                                   pStream->GetObjNum());
+        pContentArray->AddNew<CPDF_Reference>(pDoc, pEndStream->GetObjNum());
       } else if (pDirectObj->IsStream()) {
         pContentArray = pDoc->NewIndirect<CPDF_Array>();
-        pContentArray->AddReference(pDoc, pStream->GetObjNum());
-        pContentArray->AddReference(pDoc, pDirectObj->GetObjNum());
-        pContentArray->AddReference(pDoc, pEndStream->GetObjNum());
+        pContentArray->AddNew<CPDF_Reference>(pDoc, pStream->GetObjNum());
+        pContentArray->AddNew<CPDF_Reference>(pDoc, pDirectObj->GetObjNum());
+        pContentArray->AddNew<CPDF_Reference>(pDoc, pEndStream->GetObjNum());
         pPageDic->SetReferenceFor("Contents", pDoc, pContentArray);
       }
     }
@@ -307,26 +306,28 @@ DLLEXPORT void STDCALL FPDFPage_InsertClipPath(FPDF_PAGE page,
   CPDF_Stream* pStream = pDoc->NewIndirect<CPDF_Stream>(nullptr, 0, pDic);
   pStream->SetData(strClip.GetBuffer(), strClip.GetSize());
 
-  CPDF_Array* pContentArray = nullptr;
   CPDF_Array* pArray = ToArray(pContentObj);
   if (pArray) {
-    pContentArray = pArray;
-    CPDF_Reference* pRef = new CPDF_Reference(pDoc, pStream->GetObjNum());
-    pContentArray->InsertAt(0, pRef);
-  } else if (CPDF_Reference* pReference = ToReference(pContentObj)) {
-    CPDF_Object* pDirectObj = pReference->GetDirect();
-    if (pDirectObj) {
-      CPDF_Array* pObjArray = pDirectObj->AsArray();
-      if (pObjArray) {
-        pContentArray = pObjArray;
-        CPDF_Reference* pRef = new CPDF_Reference(pDoc, pStream->GetObjNum());
-        pContentArray->InsertAt(0, pRef);
-      } else if (pDirectObj->IsStream()) {
-        pContentArray = pDoc->NewIndirect<CPDF_Array>();
-        pContentArray->AddReference(pDoc, pStream->GetObjNum());
-        pContentArray->AddReference(pDoc, pDirectObj->GetObjNum());
-        pPageDic->SetReferenceFor("Contents", pDoc, pContentArray);
-      }
-    }
+    pArray->InsertNewAt<CPDF_Reference>(0, pDoc, pStream->GetObjNum());
+    return;
+  }
+  CPDF_Reference* pReference = ToReference(pContentObj);
+  if (!pReference)
+    return;
+
+  CPDF_Object* pDirectObj = pReference->GetDirect();
+  if (!pDirectObj)
+    return;
+
+  CPDF_Array* pObjArray = pDirectObj->AsArray();
+  if (pObjArray) {
+    pObjArray->InsertNewAt<CPDF_Reference>(0, pDoc, pStream->GetObjNum());
+    return;
+  }
+  if (pDirectObj->IsStream()) {
+    CPDF_Array* pContentArray = pDoc->NewIndirect<CPDF_Array>();
+    pContentArray->AddNew<CPDF_Reference>(pDoc, pStream->GetObjNum());
+    pContentArray->AddNew<CPDF_Reference>(pDoc, pDirectObj->GetObjNum());
+    pPageDic->SetReferenceFor("Contents", pDoc, pContentArray);
   }
 }

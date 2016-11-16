@@ -216,7 +216,7 @@ void ReplaceAbbr(CPDF_Object* pObj) {
           CFX_ByteStringC fullname = FindFullName(
               InlineValueAbbr, FX_ArraySize(InlineValueAbbr), name.AsStringC());
           if (!fullname.IsEmpty())
-            pArray->SetAt(i, new CPDF_Name(CFX_ByteString(fullname)));
+            pArray->SetNewAt<CPDF_Name>(i, CFX_ByteString(fullname));
         } else {
           ReplaceAbbr(pElement);
         }

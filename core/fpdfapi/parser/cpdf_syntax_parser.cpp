@@ -414,7 +414,7 @@ std::unique_ptr<CPDF_Object> CPDF_SyntaxParser::GetObject(
     std::unique_ptr<CPDF_Array> pArray = pdfium::MakeUnique<CPDF_Array>();
     while (std::unique_ptr<CPDF_Object> pObj =
                GetObject(pObjList, objnum, gennum, true)) {
-      pArray->Add(pObj.release());
+      pArray->Add(std::move(pObj));
     }
     return std::move(pArray);
   }
@@ -534,7 +534,7 @@ std::unique_ptr<CPDF_Object> CPDF_SyntaxParser::GetObjectForStrict(
     std::unique_ptr<CPDF_Array> pArray = pdfium::MakeUnique<CPDF_Array>();
     while (std::unique_ptr<CPDF_Object> pObj =
                GetObject(pObjList, objnum, gennum, true)) {
-      pArray->Add(pObj.release());
+      pArray->Add(std::move(pObj));
     }
     return m_WordBuffer[0] == ']' ? std::move(pArray) : nullptr;
   }

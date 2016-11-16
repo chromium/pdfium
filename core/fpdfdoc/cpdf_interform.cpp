@@ -1237,8 +1237,8 @@ CFDF_Document* CPDF_InterForm::ExportToFDF(
         continue;
 
       CFX_WideString fullname = FPDF_GetFullName(pField->GetFieldDict());
-      CPDF_Dictionary* pFieldDict =
-          new CPDF_Dictionary(pDoc->GetByteStringPool());
+      auto pFieldDict =
+          pdfium::MakeUnique<CPDF_Dictionary>(pDoc->GetByteStringPool());
       pFieldDict->SetFor("T", new CPDF_String(fullname));
       if (pField->GetType() == CPDF_FormField::CheckBox ||
           pField->GetType() == CPDF_FormField::RadioButton) {
@@ -1254,7 +1254,7 @@ CFDF_Document* CPDF_InterForm::ExportToFDF(
         if (pV)
           pFieldDict->SetFor("V", pV->CloneDirectObject().release());
       }
-      pFields->Add(pFieldDict);
+      pFields->Add(std::move(pFieldDict));
     }
   }
   return pDoc;

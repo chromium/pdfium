@@ -555,7 +555,7 @@ bool CPDF_FormField::SetItemSelection(int index, bool bSelected, bool bNotify) {
         for (int i = 0; i < CountOptions(); i++) {
           if (i == index || IsItemSelected(i)) {
             opt_value = GetOptionValue(i);
-            pArray->AddString(PDF_EncodeText(opt_value));
+            pArray->AddNew<CPDF_String>(PDF_EncodeText(opt_value), false);
           }
         }
         m_pDict->SetFor("V", pArray);
@@ -563,7 +563,7 @@ bool CPDF_FormField::SetItemSelection(int index, bool bSelected, bool bNotify) {
     } else {
       m_pDict->SetStringFor("V", PDF_EncodeText(opt_value));
       CPDF_Array* pI = new CPDF_Array;
-      pI->AddInteger(index);
+      pI->AddNew<CPDF_Number>(index);
       m_pDict->SetFor("I", pI);
     }
   } else {
@@ -579,7 +579,7 @@ bool CPDF_FormField::SetItemSelection(int index, bool bSelected, bool bNotify) {
           for (int i = 0; i < CountOptions(); i++) {
             if (i != index && IsItemSelected(i)) {
               opt_value = GetOptionValue(i);
-              pArray->AddString(PDF_EncodeText(opt_value));
+              pArray->AddNew<CPDF_String>(PDF_EncodeText(opt_value), false);
             }
           }
           if (pArray->GetCount() > 0)
@@ -684,11 +684,10 @@ int CPDF_FormField::InsertOption(CFX_WideString csOptLabel,
 
   int iCount = pdfium::base::checked_cast<int>(pOpt->GetCount());
   if (index >= iCount) {
-    pOpt->AddString(csStr);
+    pOpt->AddNew<CPDF_String>(csStr, false);
     index = iCount;
   } else {
-    CPDF_String* pString = new CPDF_String(csStr, false);
-    pOpt->InsertAt(index, pString);
+    pOpt->InsertNewAt<CPDF_String>(index, csStr, false);
   }
 
   if (bNotify)
@@ -836,7 +835,7 @@ bool CPDF_FormField::IsOptionSelected(int iOptIndex) const {
   if (!pArray)
     return false;
 
-  for (CPDF_Object* pObj : *pArray) {
+  for (const auto& pObj : *pArray) {
     if (pObj->GetInteger() == iOptIndex)
       return true;
   }
@@ -879,14 +878,14 @@ bool CPDF_FormField::SelectOption(int iOptIndex, bool bSelected, bool bNotify) {
         if (!NotifyListOrComboBoxBeforeChange(csValue))
           return false;
       }
-      pArray->InsertAt(i, new CPDF_Number(iOptIndex));
+      pArray->InsertNewAt<CPDF_Number>(i, iOptIndex);
       bReturn = true;
       break;
     }
   }
   if (!bReturn) {
     if (bSelected)
-      pArray->AddInteger(iOptIndex);
+      pArray->AddNew<CPDF_Number>(iOptIndex);
 
     if (pArray->IsEmpty())
       m_pDict->RemoveFor("I");

@@ -385,10 +385,9 @@ CPDF_Object* CPDF_StreamParser::ReadNextObject(bool bAllowNestedArray,
     while (1) {
       CPDF_Object* pObj = ReadNextObject(bAllowNestedArray, dwInArrayLevel + 1);
       if (pObj) {
-        pArray->Add(pObj);
+        pArray->Add(pdfium::WrapUnique(pObj));
         continue;
       }
-
       if (!m_WordSize || m_WordBuffer[0] == ']')
         break;
     }

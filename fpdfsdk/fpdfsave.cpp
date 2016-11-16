@@ -183,9 +183,9 @@ bool SaveXFADocumentData(CPDFXFA_Context* pContext,
         CPDF_Stream* pData = pPDFDocument->NewIndirect<CPDF_Stream>();
         pData->InitStreamFromFile(pDsfileWrite.get(), pDataDict);
         iLast = pArray->GetCount() - 2;
-        pArray->InsertAt(iLast, new CPDF_String("datasets", false));
-        pArray->InsertAt(iLast + 1,
-                         new CPDF_Reference(pPDFDocument, pData->GetObjNum()));
+        pArray->InsertNewAt<CPDF_String>(iLast, "datasets", false);
+        pArray->InsertNewAt<CPDF_Reference>(iLast + 1, pPDFDocument,
+                                            pData->GetObjNum());
       }
       fileList->push_back(std::move(pDsfileWrite));
     }
@@ -205,9 +205,9 @@ bool SaveXFADocumentData(CPDFXFA_Context* pContext,
         CPDF_Stream* pData = pPDFDocument->NewIndirect<CPDF_Stream>();
         pData->InitStreamFromFile(pfileWrite.get(), pDataDict);
         iLast = pArray->GetCount() - 2;
-        pArray->InsertAt(iLast, new CPDF_String("form", false));
-        pArray->InsertAt(iLast + 1,
-                         new CPDF_Reference(pPDFDocument, pData->GetObjNum()));
+        pArray->InsertNewAt<CPDF_String>(iLast, "form", false);
+        pArray->InsertNewAt<CPDF_Reference>(iLast + 1, pPDFDocument,
+                                            pData->GetObjNum());
       }
       fileList->push_back(std::move(pfileWrite));
     }

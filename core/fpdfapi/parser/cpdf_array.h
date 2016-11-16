@@ -7,6 +7,7 @@
 #ifndef CORE_FPDFAPI_PARSER_CPDF_ARRAY_H_
 #define CORE_FPDFAPI_PARSER_CPDF_ARRAY_H_
 
+#include <memory>
 #include <set>
 #include <vector>
 
@@ -14,11 +15,12 @@
 #include "core/fpdfapi/parser/cpdf_object.h"
 #include "core/fxcrt/fx_basic.h"
 #include "core/fxcrt/fx_coordinates.h"
+#include "third_party/base/ptr_util.h"
 
 class CPDF_Array : public CPDF_Object {
  public:
-  using iterator = std::vector<CPDF_Object*>::iterator;
-  using const_iterator = std::vector<CPDF_Object*>::const_iterator;
+  using const_iterator =
+      std::vector<std::unique_ptr<CPDF_Object>>::const_iterator;
 
   CPDF_Array();
   ~CPDF_Array() override;
@@ -44,21 +46,28 @@ class CPDF_Array : public CPDF_Object {
   CFX_Matrix GetMatrix();
   CFX_FloatRect GetRect();
 
-  void SetAt(size_t index, CPDF_Object* pObj);
-  void InsertAt(size_t index, CPDF_Object* pObj);
+  // Takes ownership of |pObj|, returns unowned pointer to it.
+  CPDF_Object* Add(std::unique_ptr<CPDF_Object> pObj);
+  CPDF_Object* SetAt(size_t index, std::unique_ptr<CPDF_Object> pObj);
+  CPDF_Object* InsertAt(size_t index, std::unique_ptr<CPDF_Object> pObj);
+
+  // Creates object owned by the array, returns unowned pointer to it.
+  template <typename T, typename... Args>
+  T* AddNew(Args... args) {
+    return static_cast<T*>(Add(pdfium::MakeUnique<T>(args...)));
+  }
+  template <typename T, typename... Args>
+  T* SetNewAt(size_t index, Args... args) {
+    return static_cast<T*>(SetAt(index, pdfium::MakeUnique<T>(args...)));
+  }
+  template <typename T, typename... Args>
+  T* InsertNewAt(size_t index, Args... args) {
+    return static_cast<T*>(InsertAt(index, pdfium::MakeUnique<T>(args...)));
+  }
+
   void RemoveAt(size_t index, size_t nCount = 1);
   void ConvertToIndirectObjectAt(size_t index, CPDF_IndirectObjectHolder* pDoc);
 
-  void Add(CPDF_Object* pObj);
-  void AddNumber(FX_FLOAT f);
-  void AddInteger(int i);
-  void AddString(const CFX_ByteString& str);
-  void AddName(const CFX_ByteString& str);
-  void AddReference(CPDF_IndirectObjectHolder* pDoc, uint32_t objnum);
-  void AddReference(CPDF_IndirectObjectHolder* pDoc, CPDF_Object* pObj);
-
-  iterator begin() { return m_Objects.begin(); }
-  iterator end() { return m_Objects.end(); }
   const_iterator begin() const { return m_Objects.begin(); }
   const_iterator end() const { return m_Objects.end(); }
 
@@ -67,7 +76,7 @@ class CPDF_Array : public CPDF_Object {
       bool bDirect,
       std::set<const CPDF_Object*>* pVisited) const override;
 
-  std::vector<CPDF_Object*> m_Objects;
+  std::vector<std::unique_ptr<CPDF_Object>> m_Objects;
 };
 
 inline CPDF_Array* ToArray(CPDF_Object* obj) {

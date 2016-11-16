@@ -16,7 +16,7 @@ TEST(cpdf_array, RemoveAt) {
     int elems[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
     std::unique_ptr<CPDF_Array> arr(new CPDF_Array);
     for (size_t i = 0; i < FX_ArraySize(elems); ++i)
-      arr->AddInteger(elems[i]);
+      arr->AddNew<CPDF_Number>(elems[i]);
     arr->RemoveAt(3, 3);
     int expected[] = {1, 2, 3, 7, 8, 9, 10};
     EXPECT_EQ(FX_ArraySize(expected), arr->GetCount());
@@ -33,7 +33,7 @@ TEST(cpdf_array, RemoveAt) {
     int elems[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
     std::unique_ptr<CPDF_Array> arr(new CPDF_Array);
     for (size_t i = 0; i < FX_ArraySize(elems); ++i)
-      arr->AddInteger(elems[i]);
+      arr->AddNew<CPDF_Number>(elems[i]);
     arr->RemoveAt(8, 5);
     EXPECT_EQ(FX_ArraySize(elems), arr->GetCount());
     for (size_t i = 0; i < FX_ArraySize(elems); ++i)
@@ -48,15 +48,15 @@ TEST(cpdf_array, RemoveAt) {
 TEST(cpdf_array, InsertAt) {
   {
     int elems[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-    std::unique_ptr<CPDF_Array> arr(new CPDF_Array);
+    auto arr = pdfium::MakeUnique<CPDF_Array>();
     for (size_t i = 0; i < FX_ArraySize(elems); ++i)
-      arr->InsertAt(i, new CPDF_Number(elems[i]));
+      arr->InsertNewAt<CPDF_Number>(i, elems[i]);
     EXPECT_EQ(FX_ArraySize(elems), arr->GetCount());
     for (size_t i = 0; i < FX_ArraySize(elems); ++i)
       EXPECT_EQ(elems[i], arr->GetIntegerAt(i));
-    arr->InsertAt(3, new CPDF_Number(33));
-    arr->InsertAt(6, new CPDF_Number(55));
-    arr->InsertAt(12, new CPDF_Number(12));
+    arr->InsertNewAt<CPDF_Number>(3, 33);
+    arr->InsertNewAt<CPDF_Number>(6, 55);
+    arr->InsertNewAt<CPDF_Number>(12, 12);
     int expected[] = {1, 2, 3, 33, 4, 5, 55, 6, 7, 8, 9, 10, 12};
     EXPECT_EQ(FX_ArraySize(expected), arr->GetCount());
     for (size_t i = 0; i < FX_ArraySize(expected); ++i)
@@ -67,10 +67,10 @@ TEST(cpdf_array, InsertAt) {
     // an element is inserted at that position while other unfilled
     // positions have nullptr.
     int elems[] = {1, 2};
-    std::unique_ptr<CPDF_Array> arr(new CPDF_Array);
+    auto arr = pdfium::MakeUnique<CPDF_Array>();
     for (size_t i = 0; i < FX_ArraySize(elems); ++i)
-      arr->InsertAt(i, new CPDF_Number(elems[i]));
-    arr->InsertAt(10, new CPDF_Number(10));
+      arr->InsertNewAt<CPDF_Number>(i, elems[i]);
+    arr->InsertNewAt<CPDF_Number>(10, 10);
     EXPECT_EQ(11u, arr->GetCount());
     for (size_t i = 0; i < FX_ArraySize(elems); ++i)
       EXPECT_EQ(elems[i], arr->GetIntegerAt(i));
@@ -84,9 +84,9 @@ TEST(cpdf_array, Clone) {
   {
     // Basic case.
     int elems[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-    std::unique_ptr<CPDF_Array> arr(new CPDF_Array);
+    auto arr = pdfium::MakeUnique<CPDF_Array>();
     for (size_t i = 0; i < FX_ArraySize(elems); ++i)
-      arr->InsertAt(i, new CPDF_Number(elems[i]));
+      arr->InsertNewAt<CPDF_Number>(i, elems[i]);
     std::unique_ptr<CPDF_Array> arr2 = ToArray(arr->Clone());
     EXPECT_EQ(arr->GetCount(), arr2->GetCount());
     for (size_t i = 0; i < FX_ArraySize(elems); ++i) {
@@ -106,16 +106,16 @@ TEST(cpdf_array, Clone) {
     std::unique_ptr<CPDF_IndirectObjectHolder> obj_holder(
         new CPDF_IndirectObjectHolder());
     for (size_t i = 0; i < kNumOfRows; ++i) {
-      CPDF_Array* arr_elem = new CPDF_Array;
+      auto arr_elem = pdfium::MakeUnique<CPDF_Array>();
       for (size_t j = 0; j < kNumOfRowElems; ++j) {
         std::unique_ptr<CPDF_Number> obj(new CPDF_Number(elems[i][j]));
         // Starts object number from 1.
         int obj_num = i * kNumOfRowElems + j + 1;
         obj_holder->ReplaceIndirectObjectIfHigherGeneration(obj_num,
                                                             std::move(obj));
-        arr_elem->InsertAt(j, new CPDF_Reference(obj_holder.get(), obj_num));
+        arr_elem->InsertNewAt<CPDF_Reference>(j, obj_holder.get(), obj_num);
       }
-      arr->InsertAt(i, arr_elem);
+      arr->InsertAt(i, std::move(arr_elem));
     }
     ASSERT_EQ(kNumOfRows, arr->GetCount());
     // Not dereferencing reference objects means just creating new references
@@ -169,7 +169,7 @@ TEST(cpdf_array, Iterator) {
                  0,   7895330, -12564334, 10000, -100000};
   std::unique_ptr<CPDF_Array> arr(new CPDF_Array);
   for (size_t i = 0; i < FX_ArraySize(elems); ++i)
-    arr->InsertAt(i, new CPDF_Number(elems[i]));
+    arr->InsertNewAt<CPDF_Number>(i, elems[i]);
   size_t index = 0;
   for (const auto& it : *arr)
     EXPECT_EQ(elems[index++], it->AsNumber()->GetInteger());

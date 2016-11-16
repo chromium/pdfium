@@ -236,11 +236,11 @@ TEST_F(PDFDocTest, FindBookmark) {
 
 TEST_F(PDFDocTest, GetLocationInPage) {
   auto array = pdfium::MakeUnique<CPDF_Array>();
-  array->AddInteger(0);  // Page Index.
-  array->AddName("XYZ");
-  array->AddNumber(4);  // X
-  array->AddNumber(5);  // Y
-  array->AddNumber(6);  // Zoom.
+  array->AddNew<CPDF_Number>(0);  // Page Index.
+  array->AddNew<CPDF_Name>("XYZ");
+  array->AddNew<CPDF_Number>(4);  // X
+  array->AddNew<CPDF_Number>(5);  // Y
+  array->AddNew<CPDF_Number>(6);  // Zoom.
 
   FPDF_BOOL hasX;
   FPDF_BOOL hasY;
@@ -258,9 +258,9 @@ TEST_F(PDFDocTest, GetLocationInPage) {
   EXPECT_EQ(5, y);
   EXPECT_EQ(6, zoom);
 
-  array->SetAt(2, new CPDF_Null);
-  array->SetAt(3, new CPDF_Null);
-  array->SetAt(4, new CPDF_Null);
+  array->SetNewAt<CPDF_Null>(2);
+  array->SetNewAt<CPDF_Null>(3);
+  array->SetNewAt<CPDF_Null>(4);
   EXPECT_TRUE(FPDFDest_GetLocationInPage(array.get(), &hasX, &hasY, &hasZoom,
                                          &x, &y, &zoom));
   EXPECT_FALSE(hasX);

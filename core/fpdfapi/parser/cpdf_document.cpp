@@ -18,6 +18,7 @@
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_linearized_header.h"
+#include "core/fpdfapi/parser/cpdf_name.h"
 #include "core/fpdfapi/parser/cpdf_number.h"
 #include "core/fpdfapi/parser/cpdf_parser.h"
 #include "core/fpdfapi/parser/cpdf_reference.h"
@@ -194,13 +195,12 @@ void InsertWidthArrayImpl(int* widths, int size, CPDF_Array* pWidthArray) {
   }
   if (i == size) {
     int first = pWidthArray->GetIntegerAt(pWidthArray->GetCount() - 1);
-    pWidthArray->AddInteger(first + size - 1);
-    pWidthArray->AddInteger(*widths);
+    pWidthArray->AddNew<CPDF_Number>(first + size - 1);
+    pWidthArray->AddNew<CPDF_Number>(*widths);
   } else {
-    CPDF_Array* pWidthArray1 = new CPDF_Array;
-    pWidthArray->Add(pWidthArray1);
+    CPDF_Array* pWidthArray1 = pWidthArray->AddNew<CPDF_Array>();
     for (i = 0; i < size; i++)
-      pWidthArray1->AddInteger(widths[i]);
+      pWidthArray1->AddNew<CPDF_Number>(widths[i]);
   }
   FX_Free(widths);
 }
@@ -688,7 +688,7 @@ bool CPDF_Document::InsertDeletePDFPage(CPDF_Dictionary* pPages,
         continue;
       }
       if (bInsert) {
-        pKidList->InsertAt(i, new CPDF_Reference(this, pPageDict->GetObjNum()));
+        pKidList->InsertNewAt<CPDF_Reference>(i, this, pPageDict->GetObjNum());
         pPageDict->SetReferenceFor("Parent", this, pPages->GetObjNum());
       } else {
         pKidList->RemoveAt(i);
@@ -733,7 +733,7 @@ bool CPDF_Document::InsertNewPage(int iPage, CPDF_Dictionary* pPageDict) {
       pPagesList = new CPDF_Array;
       pPages->SetFor("Kids", pPagesList);
     }
-    pPagesList->Add(new CPDF_Reference(this, pPageDict->GetObjNum()));
+    pPagesList->AddNew<CPDF_Reference>(this, pPageDict->GetObjNum());
     pPages->SetIntegerFor("Count", nPages + 1);
     pPageDict->SetReferenceFor("Parent", this, pPages->GetObjNum());
     ResetTraversal();
@@ -785,12 +785,12 @@ size_t CPDF_Document::CalculateEncodingDict(int charset,
   pEncodingDict->SetNameFor("BaseEncoding", "WinAnsiEncoding");
 
   CPDF_Array* pArray = new CPDF_Array;
-  pArray->AddInteger(128);
+  pArray->AddNew<CPDF_Number>(128);
 
   const uint16_t* pUnicodes = g_FX_CharsetUnicodes[i].m_pUnicodes;
   for (int j = 0; j < 128; j++) {
     CFX_ByteString name = PDF_AdobeNameFromUnicode(pUnicodes[j]);
-    pArray->AddName(name.IsEmpty() ? ".notdef" : name);
+    pArray->AddNew<CPDF_Name>(name.IsEmpty() ? ".notdef" : name);
   }
   pEncodingDict->SetFor("Differences", pArray);
   pBaseDict->SetReferenceFor("Encoding", this, pEncodingDict);
@@ -813,36 +813,36 @@ CPDF_Dictionary* CPDF_Document::ProcessbCJK(
       cmap = bVert ? "ETenms-B5-V" : "ETenms-B5-H";
       ordering = "CNS1";
       supplement = 4;
-      pWidthArray->AddInteger(1);
+      pWidthArray->AddNew<CPDF_Number>(1);
       Insert(0x20, 0x7e, pWidthArray);
       break;
     case FXFONT_GB2312_CHARSET:
       cmap = bVert ? "GBK-EUC-V" : "GBK-EUC-H";
       ordering = "GB1";
       supplement = 2;
-      pWidthArray->AddInteger(7716);
+      pWidthArray->AddNew<CPDF_Number>(7716);
       Insert(0x20, 0x20, pWidthArray);
-      pWidthArray->AddInteger(814);
+      pWidthArray->AddNew<CPDF_Number>(814);
       Insert(0x21, 0x7e, pWidthArray);
       break;
     case FXFONT_HANGUL_CHARSET:
       cmap = bVert ? "KSCms-UHC-V" : "KSCms-UHC-H";
       ordering = "Korea1";
       supplement = 2;
-      pWidthArray->AddInteger(1);
+      pWidthArray->AddNew<CPDF_Number>(1);
       Insert(0x20, 0x7e, pWidthArray);
       break;
     case FXFONT_SHIFTJIS_CHARSET:
       cmap = bVert ? "90ms-RKSJ-V" : "90ms-RKSJ-H";
       ordering = "Japan1";
       supplement = 5;
-      pWidthArray->AddInteger(231);
+      pWidthArray->AddNew<CPDF_Number>(231);
       Insert(0x20, 0x7d, pWidthArray);
-      pWidthArray->AddInteger(326);
+      pWidthArray->AddNew<CPDF_Number>(326);
       Insert(0xa0, 0xa0, pWidthArray);
-      pWidthArray->AddInteger(327);
+      pWidthArray->AddNew<CPDF_Number>(327);
       Insert(0xa1, 0xdf, pWidthArray);
-      pWidthArray->AddInteger(631);
+      pWidthArray->AddNew<CPDF_Number>(631);
       Insert(0x7e, 0x7e, pWidthArray);
       break;
   }
@@ -860,7 +860,7 @@ CPDF_Dictionary* CPDF_Document::ProcessbCJK(
   pFontDict->SetFor("CIDSystemInfo", pCIDSysInfo);
   CPDF_Array* pArray = new CPDF_Array;
   pBaseDict->SetFor("DescendantFonts", pArray);
-  pArray->AddReference(this, pFontDict->GetObjNum());
+  pArray->AddNew<CPDF_Reference>(this, pFontDict->GetObjNum());
   return pFontDict;
 }
 
@@ -888,7 +888,7 @@ CPDF_Font* CPDF_Document::AddFont(CFX_Font* pFont, int charset, bool bVert) {
     for (int charcode = 32; charcode < 128; charcode++) {
       int glyph_index = pEncoding->GlyphFromCharCode(charcode);
       int char_width = pFont->GetGlyphWidth(glyph_index);
-      pWidths->AddInteger(char_width);
+      pWidths->AddNew<CPDF_Number>(char_width);
     }
     if (charset == FXFONT_ANSI_CHARSET || charset == FXFONT_DEFAULT_CHARSET ||
         charset == FXFONT_SYMBOL_CHARSET) {
@@ -896,7 +896,7 @@ CPDF_Font* CPDF_Document::AddFont(CFX_Font* pFont, int charset, bool bVert) {
       for (int charcode = 128; charcode <= 255; charcode++) {
         int glyph_index = pEncoding->GlyphFromCharCode(charcode);
         int char_width = pFont->GetGlyphWidth(glyph_index);
-        pWidths->AddInteger(char_width);
+        pWidths->AddNew<CPDF_Number>(char_width);
       }
     } else {
       size_t i = CalculateEncodingDict(charset, pBaseDict);
@@ -905,7 +905,7 @@ CPDF_Font* CPDF_Document::AddFont(CFX_Font* pFont, int charset, bool bVert) {
         for (int j = 0; j < 128; j++) {
           int glyph_index = pEncoding->GlyphFromCharCode(pUnicodes[j]);
           int char_width = pFont->GetGlyphWidth(glyph_index);
-          pWidths->AddInteger(char_width);
+          pWidths->AddNew<CPDF_Number>(char_width);
         }
       }
     }
@@ -924,10 +924,10 @@ CPDF_Font* CPDF_Document::AddFont(CFX_Font* pFont, int charset, bool bVert) {
   FX_RECT bbox;
   pFont->GetBBox(bbox);
   CPDF_Array* pBBox = new CPDF_Array;
-  pBBox->AddInteger(bbox.left);
-  pBBox->AddInteger(bbox.bottom);
-  pBBox->AddInteger(bbox.right);
-  pBBox->AddInteger(bbox.top);
+  pBBox->AddNew<CPDF_Number>(bbox.left);
+  pBBox->AddNew<CPDF_Number>(bbox.bottom);
+  pBBox->AddNew<CPDF_Number>(bbox.right);
+  pBBox->AddNew<CPDF_Number>(bbox.top);
   int32_t nStemV = 0;
   if (pFont->GetSubstFont()) {
     nStemV = pFont->GetSubstFont()->m_Weight / 5;
@@ -1023,7 +1023,7 @@ CPDF_Font* CPDF_Document::AddWindowsFont(LOGFONTA* pLogFont,
     GetCharWidth(hDC, 32, 255, char_widths);
     CPDF_Array* pWidths = new CPDF_Array;
     for (size_t i = 0; i < 224; i++)
-      pWidths->AddInteger(char_widths[i]);
+      pWidths->AddNew<CPDF_Number>(char_widths[i]);
     ProcessNonbCJK(pBaseDict, pLogFont->lfWeight > FW_MEDIUM,
                    pLogFont->lfItalic != 0, basefont, pWidths);
   } else {
@@ -1035,7 +1035,7 @@ CPDF_Font* CPDF_Document::AddWindowsFont(LOGFONTA* pLogFont,
   }
   CPDF_Array* pBBox = new CPDF_Array;
   for (int i = 0; i < 4; i++)
-    pBBox->AddInteger(bbox[i]);
+    pBBox->AddNew<CPDF_Number>(bbox[i]);
   std::unique_ptr<CPDF_Dictionary> pFontDesc =
       CalculateFontDesc(this, basefont, flags, italicangle, ascend, descend,
                         pBBox, pLogFont->lfWeight / 5);

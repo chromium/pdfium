@@ -162,7 +162,7 @@ int CPDFSDK_BAAnnot::GetStructParent() const {
 void CPDFSDK_BAAnnot::SetBorderWidth(int nWidth) {
   CPDF_Array* pBorder = m_pAnnot->GetAnnotDict()->GetArrayFor("Border");
   if (pBorder) {
-    pBorder->SetAt(2, new CPDF_Number(nWidth));
+    pBorder->SetNewAt<CPDF_Number>(2, nWidth);
   } else {
     CPDF_Dictionary* pBSDict = m_pAnnot->GetAnnotDict()->GetDictFor("BS");
     if (!pBSDict) {
@@ -242,9 +242,12 @@ BorderStyle CPDFSDK_BAAnnot::GetBorderStyle() const {
 
 void CPDFSDK_BAAnnot::SetColor(FX_COLORREF color) {
   CPDF_Array* pArray = new CPDF_Array;
-  pArray->AddNumber((FX_FLOAT)FXSYS_GetRValue(color) / 255.0f);
-  pArray->AddNumber((FX_FLOAT)FXSYS_GetGValue(color) / 255.0f);
-  pArray->AddNumber((FX_FLOAT)FXSYS_GetBValue(color) / 255.0f);
+  pArray->AddNew<CPDF_Number>(static_cast<FX_FLOAT>(FXSYS_GetRValue(color)) /
+                              255.0f);
+  pArray->AddNew<CPDF_Number>(static_cast<FX_FLOAT>(FXSYS_GetGValue(color)) /
+                              255.0f);
+  pArray->AddNew<CPDF_Number>(static_cast<FX_FLOAT>(FXSYS_GetBValue(color)) /
+                              255.0f);
   m_pAnnot->GetAnnotDict()->SetFor("C", pArray);
 }
 

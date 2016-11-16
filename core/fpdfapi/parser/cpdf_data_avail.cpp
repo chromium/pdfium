@@ -470,15 +470,13 @@ bool CPDF_DataAvail::CheckPage(DownloadHints* pHints) {
 
     CPDF_Array* pArray = ToArray(pObj.get());
     if (pArray) {
-      for (CPDF_Object* pArrayObj : *pArray) {
-        if (CPDF_Reference* pRef = ToReference(pArrayObj))
+      for (const auto& pArrayObj : *pArray) {
+        if (CPDF_Reference* pRef = ToReference(pArrayObj.get()))
           UnavailObjList.Add(pRef->GetRefObjNum());
       }
     }
-
-    if (!pObj->IsDictionary()) {
+    if (!pObj->IsDictionary())
       continue;
-    }
 
     CFX_ByteString type = pObj->GetDict()->GetStringFor("Type");
     if (type == "Pages") {

@@ -221,10 +221,10 @@ bool CPDF_PageOrganizer::ExportPage(const std::vector<uint16_t>& pageNums,
       } else {
         // Make the default size to be letter size (8.5'x11')
         CPDF_Array* pArray = new CPDF_Array;
-        pArray->AddNumber(0);
-        pArray->AddNumber(0);
-        pArray->AddNumber(612);
-        pArray->AddNumber(792);
+        pArray->AddNew<CPDF_Number>(0);
+        pArray->AddNew<CPDF_Number>(0);
+        pArray->AddNew<CPDF_Number>(612);
+        pArray->AddNew<CPDF_Number>(792);
         pCurPageDict->SetFor("MediaBox", pArray);
       }
     }

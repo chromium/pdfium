@@ -110,10 +110,10 @@ DLLEXPORT FPDF_PAGE STDCALL FPDFPage_New(FPDF_DOCUMENT document,
     return nullptr;
 
   CPDF_Array* pMediaBoxArray = new CPDF_Array;
-  pMediaBoxArray->Add(new CPDF_Number(0));
-  pMediaBoxArray->Add(new CPDF_Number(0));
-  pMediaBoxArray->Add(new CPDF_Number(FX_FLOAT(width)));
-  pMediaBoxArray->Add(new CPDF_Number(FX_FLOAT(height)));
+  pMediaBoxArray->AddNew<CPDF_Number>(0);
+  pMediaBoxArray->AddNew<CPDF_Number>(0);
+  pMediaBoxArray->AddNew<CPDF_Number>(static_cast<FX_FLOAT>(width));
+  pMediaBoxArray->AddNew<CPDF_Number>(static_cast<FX_FLOAT>(height));
   pPageDict->SetFor("MediaBox", pMediaBoxArray);
   pPageDict->SetFor("Rotate", new CPDF_Number(0));
   pPageDict->SetFor("Resources",
@@ -298,10 +298,10 @@ DLLEXPORT void STDCALL FPDFPage_TransformAnnots(FPDF_PAGE page,
       pRectArray = new CPDF_Array;
       pAnnot->GetAnnotDict()->SetFor("Rect", pRectArray);
     }
-    pRectArray->SetAt(0, new CPDF_Number(rect.left));
-    pRectArray->SetAt(1, new CPDF_Number(rect.bottom));
-    pRectArray->SetAt(2, new CPDF_Number(rect.right));
-    pRectArray->SetAt(3, new CPDF_Number(rect.top));
+    pRectArray->SetNewAt<CPDF_Number>(0, rect.left);
+    pRectArray->SetNewAt<CPDF_Number>(1, rect.bottom);
+    pRectArray->SetNewAt<CPDF_Number>(2, rect.right);
+    pRectArray->SetNewAt<CPDF_Number>(3, rect.top);
 
     // TODO: Transform AP's rectangle
   }
