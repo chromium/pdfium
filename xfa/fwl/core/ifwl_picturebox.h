@@ -47,10 +47,6 @@ class IFWL_PictureBox : public IFWL_Widget {
                     const CFX_Matrix* pMatrix) override;
 
  private:
-  void DrawBkground(CFX_Graphics* pGraphics,
-                    IFWL_ThemeProvider* pTheme,
-                    const CFX_Matrix* pMatrix = nullptr);
-
   CFX_RectF m_rtClient;
   CFX_RectF m_rtImage;
   CFX_Matrix m_matrix;

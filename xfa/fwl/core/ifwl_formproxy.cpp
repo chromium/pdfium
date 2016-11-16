@@ -22,9 +22,8 @@ FWL_Type IFWL_FormProxy::GetClassID() const {
 }
 
 bool IFWL_FormProxy::IsInstance(const CFX_WideStringC& wsClass) const {
-  if (wsClass == CFX_WideStringC(FWL_CLASS_FormProxy)) {
+  if (wsClass == CFX_WideStringC(FWL_CLASS_FormProxy))
     return true;
-  }
   return IFWL_Form::IsInstance(wsClass);
 }
 

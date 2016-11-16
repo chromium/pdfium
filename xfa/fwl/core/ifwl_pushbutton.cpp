@@ -33,29 +33,31 @@ FWL_Type IFWL_PushButton::GetClassID() const {
 }
 
 void IFWL_PushButton::GetWidgetRect(CFX_RectF& rect, bool bAutoSize) {
-  if (bAutoSize) {
-    rect.Set(0, 0, 0, 0);
-    if (!m_pProperties->m_pThemeProvider) {
-      m_pProperties->m_pThemeProvider = GetAvailableTheme();
-    }
-    CFX_WideString wsCaption;
-    IFWL_PushButtonDP* pData =
-        static_cast<IFWL_PushButtonDP*>(m_pProperties->m_pDataProvider);
-    if (pData) {
-      pData->GetCaption(this, wsCaption);
-    }
-    int32_t iLen = wsCaption.GetLength();
-    if (iLen > 0) {
-      CFX_SizeF sz = CalcTextSize(wsCaption, m_pProperties->m_pThemeProvider);
-      rect.Set(0, 0, sz.x, sz.y);
-    }
-    FX_FLOAT* fcaption =
-        static_cast<FX_FLOAT*>(GetThemeCapacity(CFWL_WidgetCapacity::Margin));
-    rect.Inflate(*fcaption, *fcaption);
-    IFWL_Widget::GetWidgetRect(rect, true);
-  } else {
+  if (!bAutoSize) {
     rect = m_pProperties->m_rtWidget;
+    return;
   }
+
+  rect.Set(0, 0, 0, 0);
+  if (!m_pProperties->m_pThemeProvider)
+    m_pProperties->m_pThemeProvider = GetAvailableTheme();
+
+  CFX_WideString wsCaption;
+  IFWL_PushButtonDP* pData =
+      static_cast<IFWL_PushButtonDP*>(m_pProperties->m_pDataProvider);
+  if (pData)
+    pData->GetCaption(this, wsCaption);
+
+  int32_t iLen = wsCaption.GetLength();
+  if (iLen > 0) {
+    CFX_SizeF sz = CalcTextSize(wsCaption, m_pProperties->m_pThemeProvider);
+    rect.Set(0, 0, sz.x, sz.y);
+  }
+
+  FX_FLOAT* fcaption =
+      static_cast<FX_FLOAT*>(GetThemeCapacity(CFWL_WidgetCapacity::Margin));
+  rect.Inflate(*fcaption, *fcaption);
+  IFWL_Widget::GetWidgetRect(rect, true);
 }
 
 void IFWL_PushButton::SetStates(uint32_t dwStates, bool bSet) {
@@ -67,12 +69,11 @@ void IFWL_PushButton::SetStates(uint32_t dwStates, bool bSet) {
 }
 
 void IFWL_PushButton::Update() {
-  if (IsLocked()) {
+  if (IsLocked())
     return;
-  }
-  if (!m_pProperties->m_pThemeProvider) {
+  if (!m_pProperties->m_pThemeProvider)
     m_pProperties->m_pThemeProvider = GetAvailableTheme();
-  }
+
   UpdateTextOutStyles();
   GetClientRect(m_rtClient);
   m_rtCaption = m_rtClient;
@@ -87,6 +88,7 @@ void IFWL_PushButton::DrawWidget(CFX_Graphics* pGraphics,
     return;
   if (!m_pProperties->m_pThemeProvider)
     return;
+
   IFWL_PushButtonDP* pData =
       static_cast<IFWL_PushButtonDP*>(m_pProperties->m_pDataProvider);
   IFWL_ThemeProvider* pTheme = m_pProperties->m_pThemeProvider;
@@ -103,9 +105,9 @@ void IFWL_PushButton::DrawWidget(CFX_Graphics* pGraphics,
   matrix.Concat(*pMatrix);
 
   CFX_WideString wsCaption;
-  if (pData) {
+  if (pData)
     pData->GetCaption(this, wsCaption);
-  }
+
   CFX_RectF rtText;
   rtText.Set(0, 0, 0, 0);
   if (!wsCaption.IsEmpty())
@@ -129,13 +131,11 @@ void IFWL_PushButton::DrawBkground(CFX_Graphics* pGraphics,
   param.m_iPart = CFWL_Part::Background;
   param.m_dwStates = GetPartStates();
   param.m_pGraphics = pGraphics;
-  if (pMatrix) {
+  if (pMatrix)
     param.m_matrix.Concat(*pMatrix);
-  }
   param.m_rtPart = m_rtClient;
-  if (m_pProperties->m_dwStates & FWL_WGTSTATE_Focused) {
+  if (m_pProperties->m_dwStates & FWL_WGTSTATE_Focused)
     param.m_pData = &m_rtCaption;
-  }
   pTheme->DrawBackground(&param);
 }
 
@@ -144,19 +144,19 @@ void IFWL_PushButton::DrawText(CFX_Graphics* pGraphics,
                                const CFX_Matrix* pMatrix) {
   if (!m_pProperties->m_pDataProvider)
     return;
+
   CFX_WideString wsCaption;
   m_pProperties->m_pDataProvider->GetCaption(this, wsCaption);
-  if (wsCaption.IsEmpty()) {
+  if (wsCaption.IsEmpty())
     return;
-  }
+
   CFWL_ThemeText param;
   param.m_pWidget = this;
   param.m_iPart = CFWL_Part::Caption;
   param.m_dwStates = GetPartStates();
   param.m_pGraphics = pGraphics;
-  if (pMatrix) {
+  if (pMatrix)
     param.m_matrix.Concat(*pMatrix);
-  }
   param.m_rtPart = m_rtCaption;
   param.m_wsText = wsCaption;
   param.m_dwTTOStyles = m_dwTTOStyles;
@@ -166,23 +166,20 @@ void IFWL_PushButton::DrawText(CFX_Graphics* pGraphics,
 
 uint32_t IFWL_PushButton::GetPartStates() {
   uint32_t dwStates = CFWL_PartState_Normal;
-  if (m_pProperties->m_dwStates & FWL_WGTSTATE_Focused) {
+  if (m_pProperties->m_dwStates & FWL_WGTSTATE_Focused)
     dwStates |= CFWL_PartState_Focused;
-  }
-  if (m_pProperties->m_dwStates & FWL_WGTSTATE_Disabled) {
+  if (m_pProperties->m_dwStates & FWL_WGTSTATE_Disabled)
     dwStates = CFWL_PartState_Disabled;
-  } else if (m_pProperties->m_dwStates & FWL_STATE_PSB_Pressed) {
+  else if (m_pProperties->m_dwStates & FWL_STATE_PSB_Pressed)
     dwStates |= CFWL_PartState_Pressed;
-  } else if (m_pProperties->m_dwStates & FWL_STATE_PSB_Hovered) {
+  else if (m_pProperties->m_dwStates & FWL_STATE_PSB_Hovered)
     dwStates |= CFWL_PartState_Hovered;
-  } else if (m_pProperties->m_dwStates & FWL_STATE_PSB_Default) {
+  else if (m_pProperties->m_dwStates & FWL_STATE_PSB_Default)
     dwStates |= CFWL_PartState_Default;
-  }
   return dwStates;
 }
 
 void IFWL_PushButton::UpdateTextOutStyles() {
-  m_iTTOAlign = FDE_TTOALIGNMENT_Center;
   switch (m_pProperties->m_dwStyleExes &
           (FWL_STYLEEXT_PSB_HLayoutMask | FWL_STYLEEXT_PSB_VLayoutMask)) {
     case FWL_STYLEEXT_PSB_Left | FWL_STYLEEXT_PSB_Top: {
@@ -201,10 +198,6 @@ void IFWL_PushButton::UpdateTextOutStyles() {
       m_iTTOAlign = FDE_TTOALIGNMENT_CenterLeft;
       break;
     }
-    case FWL_STYLEEXT_PSB_Center | FWL_STYLEEXT_PSB_VCenter: {
-      m_iTTOAlign = FDE_TTOALIGNMENT_Center;
-      break;
-    }
     case FWL_STYLEEXT_PSB_Right | FWL_STYLEEXT_PSB_VCenter: {
       m_iTTOAlign = FDE_TTOALIGNMENT_CenterRight;
       break;
@@ -221,13 +214,15 @@ void IFWL_PushButton::UpdateTextOutStyles() {
       m_iTTOAlign = FDE_TTOALIGNMENT_BottomRight;
       break;
     }
-    default:
+    case FWL_STYLEEXT_PSB_Center | FWL_STYLEEXT_PSB_VCenter:
+    default: {
+      m_iTTOAlign = FDE_TTOALIGNMENT_Center;
       break;
+    }
   }
   m_dwTTOStyles = FDE_TTOSTYLE_SingleLine;
-  if (m_pProperties->m_dwStyleExes & FWL_WGTSTYLE_RTLReading) {
+  if (m_pProperties->m_dwStyleExes & FWL_WGTSTYLE_RTLReading)
     m_dwTTOStyles |= FDE_TTOSTYLE_RTL;
-  }
 }
 
 void IFWL_PushButton::OnProcessMessage(CFWL_Message* pMessage) {

@@ -40,37 +40,37 @@ FWL_Type IFWL_ToolTip::GetClassID() const {
 }
 
 void IFWL_ToolTip::GetWidgetRect(CFX_RectF& rect, bool bAutoSize) {
-  if (bAutoSize) {
-    rect.Set(0, 0, 0, 0);
-    if (!m_pProperties->m_pThemeProvider) {
-      m_pProperties->m_pThemeProvider = GetAvailableTheme();
-    }
-    CFX_WideString wsCaption;
-    IFWL_ToolTipDP* pData =
-        static_cast<IFWL_ToolTipDP*>(m_pProperties->m_pDataProvider);
-    if (pData) {
-      pData->GetCaption(this, wsCaption);
-    }
-    int32_t iLen = wsCaption.GetLength();
-    if (iLen > 0) {
-      CFX_SizeF sz = CalcTextSize(wsCaption, m_pProperties->m_pThemeProvider);
-      rect.Set(0, 0, sz.x, sz.y);
-      rect.width += 25;
-      rect.height += 16;
-    }
-    IFWL_Widget::GetWidgetRect(rect, true);
-  } else {
+  if (!bAutoSize) {
     rect = m_pProperties->m_rtWidget;
+    return;
   }
+
+  rect.Set(0, 0, 0, 0);
+  if (!m_pProperties->m_pThemeProvider)
+    m_pProperties->m_pThemeProvider = GetAvailableTheme();
+
+  CFX_WideString wsCaption;
+  IFWL_ToolTipDP* pData =
+      static_cast<IFWL_ToolTipDP*>(m_pProperties->m_pDataProvider);
+  if (pData)
+    pData->GetCaption(this, wsCaption);
+
+  int32_t iLen = wsCaption.GetLength();
+  if (iLen > 0) {
+    CFX_SizeF sz = CalcTextSize(wsCaption, m_pProperties->m_pThemeProvider);
+    rect.Set(0, 0, sz.x, sz.y);
+    rect.width += 25;
+    rect.height += 16;
+  }
+  IFWL_Widget::GetWidgetRect(rect, true);
 }
 
 void IFWL_ToolTip::Update() {
-  if (IsLocked()) {
+  if (IsLocked())
     return;
-  }
-  if (!m_pProperties->m_pThemeProvider) {
+  if (!m_pProperties->m_pThemeProvider)
     m_pProperties->m_pThemeProvider = GetAvailableTheme();
-  }
+
   UpdateTextOutStyles();
   GetClientRect(m_rtClient);
   m_rtCaption = m_rtClient;
@@ -112,13 +112,11 @@ void IFWL_ToolTip::DrawBkground(CFX_Graphics* pGraphics,
   param.m_iPart = CFWL_Part::Background;
   param.m_dwStates = m_pProperties->m_dwStates;
   param.m_pGraphics = pGraphics;
-  if (pMatrix) {
+  if (pMatrix)
     param.m_matrix.Concat(*pMatrix);
-  }
   param.m_rtPart = m_rtClient;
-  if (m_pProperties->m_dwStates & FWL_WGTSTATE_Focused) {
+  if (m_pProperties->m_dwStates & FWL_WGTSTATE_Focused)
     param.m_pData = &m_rtCaption;
-  }
   pTheme->DrawBackground(&param);
 }
 
@@ -127,19 +125,19 @@ void IFWL_ToolTip::DrawText(CFX_Graphics* pGraphics,
                             const CFX_Matrix* pMatrix) {
   if (!m_pProperties->m_pDataProvider)
     return;
+
   CFX_WideString wsCaption;
   m_pProperties->m_pDataProvider->GetCaption(this, wsCaption);
-  if (wsCaption.IsEmpty()) {
+  if (wsCaption.IsEmpty())
     return;
-  }
+
   CFWL_ThemeText param;
   param.m_pWidget = this;
   param.m_iPart = CFWL_Part::Caption;
   param.m_dwStates = m_pProperties->m_dwStates;
   param.m_pGraphics = pGraphics;
-  if (pMatrix) {
+  if (pMatrix)
     param.m_matrix.Concat(*pMatrix);
-  }
   param.m_rtPart = m_rtCaption;
   param.m_wsText = wsCaption;
   param.m_dwTTOStyles = m_dwTTOStyles;
@@ -150,12 +148,10 @@ void IFWL_ToolTip::DrawText(CFX_Graphics* pGraphics,
 void IFWL_ToolTip::UpdateTextOutStyles() {
   m_iTTOAlign = FDE_TTOALIGNMENT_Center;
   m_dwTTOStyles = FDE_TTOSTYLE_SingleLine;
-  if (m_pProperties->m_dwStyleExes & FWL_WGTSTYLE_RTLReading) {
+  if (m_pProperties->m_dwStyleExes & FWL_WGTSTYLE_RTLReading)
     m_dwTTOStyles |= FDE_TTOSTYLE_RTL;
-  }
-  if (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_TTP_Multiline) {
+  if (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_TTP_Multiline)
     m_dwTTOStyles &= ~FDE_TTOSTYLE_SingleLine;
-  }
 }
 
 void IFWL_ToolTip::SetStates(uint32_t dwStates, bool bSet) {
@@ -178,18 +174,15 @@ void IFWL_ToolTip::RefreshToolTipPos() {
     FX_FLOAT fy = rtAnchor.Center().y + 20;
     rtPopup.Set(fx, fy, rtWidget.Width(), rtWidget.Height());
 
-    if (rtPopup.bottom() > 0.0f) {
+    if (rtPopup.bottom() > 0.0f)
       rtPopup.Offset(0, 0.0f - rtPopup.bottom());
-    }
-    if (rtPopup.right() > 0.0f) {
+    if (rtPopup.right() > 0.0f)
       rtPopup.Offset(0.0f - rtPopup.right(), 0);
-    }
-    if (rtPopup.left < 0) {
+    if (rtPopup.left < 0)
       rtPopup.Offset(0 - rtPopup.left, 0);
-    }
-    if (rtPopup.top < 0) {
+    if (rtPopup.top < 0)
       rtPopup.Offset(0, 0 - rtPopup.top);
-    }
+
     SetWidgetRect(rtPopup);
     Update();
   }

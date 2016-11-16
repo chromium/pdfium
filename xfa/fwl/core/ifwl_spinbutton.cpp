@@ -47,18 +47,19 @@ FWL_Type IFWL_SpinButton::GetClassID() const {
 }
 
 void IFWL_SpinButton::GetWidgetRect(CFX_RectF& rect, bool bAutoSize) {
-  if (bAutoSize) {
-    rect.Set(0, 0, kMinWidth, kMinHeight);
-    IFWL_Widget::GetWidgetRect(rect, true);
-  } else {
+  if (!bAutoSize) {
     rect = m_pProperties->m_rtWidget;
+    return;
   }
+
+  rect.Set(0, 0, kMinWidth, kMinHeight);
+  IFWL_Widget::GetWidgetRect(rect, true);
 }
 
 void IFWL_SpinButton::Update() {
-  if (IsLocked()) {
+  if (IsLocked())
     return;
-  }
+
   GetClientRect(m_rtClient);
   if (m_pProperties->m_dwStyleExes & FWL_STYLEEXE_SPB_Vert) {
     m_rtUpButton.Set(m_rtClient.top, m_rtClient.left, m_rtClient.width,

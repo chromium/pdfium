@@ -26,23 +26,23 @@ FWL_Type IFWL_PictureBox::GetClassID() const {
 }
 
 void IFWL_PictureBox::GetWidgetRect(CFX_RectF& rect, bool bAutoSize) {
-  if (bAutoSize) {
-    rect.Set(0, 0, 0, 0);
-    if (!m_pProperties->m_pDataProvider)
-      return;
-    IFWL_Widget::GetWidgetRect(rect, true);
-  } else {
+  if (!bAutoSize) {
     rect = m_pProperties->m_rtWidget;
+    return;
   }
+
+  rect.Set(0, 0, 0, 0);
+  if (!m_pProperties->m_pDataProvider)
+    return;
+  IFWL_Widget::GetWidgetRect(rect, true);
 }
 
 void IFWL_PictureBox::Update() {
-  if (IsLocked()) {
+  if (IsLocked())
     return;
-  }
-  if (!m_pProperties->m_pThemeProvider) {
+  if (!m_pProperties->m_pThemeProvider)
     m_pProperties->m_pThemeProvider = GetAvailableTheme();
-  }
+
   GetClientRect(m_rtClient);
 }
 
@@ -52,20 +52,12 @@ void IFWL_PictureBox::DrawWidget(CFX_Graphics* pGraphics,
     return;
   if (!m_pProperties->m_pThemeProvider)
     return;
-  IFWL_ThemeProvider* pTheme = GetAvailableTheme();
-  if (HasBorder()) {
-    DrawBorder(pGraphics, CFWL_Part::Border, pTheme, pMatrix);
-  }
-  if (HasEdge()) {
-    DrawEdge(pGraphics, CFWL_Part::Edge, pTheme, pMatrix);
-  }
-  DrawBkground(pGraphics, pTheme, pMatrix);
-}
 
-void IFWL_PictureBox::DrawBkground(CFX_Graphics* pGraphics,
-                                   IFWL_ThemeProvider* pTheme,
-                                   const CFX_Matrix* pMatrix) {
-  return;
+  IFWL_ThemeProvider* pTheme = GetAvailableTheme();
+  if (HasBorder())
+    DrawBorder(pGraphics, CFWL_Part::Border, pTheme, pMatrix);
+  if (HasEdge())
+    DrawEdge(pGraphics, CFWL_Part::Edge, pTheme, pMatrix);
 }
 
 void IFWL_PictureBox::OnDrawWidget(CFX_Graphics* pGraphics,

@@ -61,17 +61,18 @@ bool IFWL_Widget::IsInstance(const CFX_WideStringC& wsClass) const {
 }
 
 void IFWL_Widget::GetWidgetRect(CFX_RectF& rect, bool bAutoSize) {
-  if (bAutoSize) {
-    if (HasEdge()) {
-      FX_FLOAT fEdge = GetEdgeWidth();
-      rect.Inflate(fEdge, fEdge);
-    }
-    if (HasBorder()) {
-      FX_FLOAT fBorder = GetBorderSize();
-      rect.Inflate(fBorder, fBorder);
-    }
-  } else {
+  if (!bAutoSize) {
     rect = m_pProperties->m_rtWidget;
+    return;
+  }
+
+  if (HasEdge()) {
+    FX_FLOAT fEdge = GetEdgeWidth();
+    rect.Inflate(fEdge, fEdge);
+  }
+  if (HasBorder()) {
+    FX_FLOAT fBorder = GetBorderSize();
+    rect.Inflate(fBorder, fBorder);
   }
 }
 
@@ -233,31 +234,32 @@ void IFWL_Widget::TransformTo(IFWL_Widget* pWidget,
 void IFWL_Widget::GetMatrix(CFX_Matrix& matrix, bool bGlobal) {
   if (!m_pProperties)
     return;
-  if (bGlobal) {
-    IFWL_Widget* parent = GetParent();
-    CFX_ArrayTemplate<IFWL_Widget*> parents;
-    while (parent) {
-      parents.Add(parent);
-      parent = parent->GetParent();
-    }
+  if (!bGlobal) {
     matrix.SetIdentity();
-    CFX_Matrix ctmOnParent;
-    CFX_RectF rect;
-    int32_t count = parents.GetSize();
-    for (int32_t i = count - 2; i >= 0; i--) {
-      parent = parents.GetAt(i);
-      parent->GetMatrix(ctmOnParent, false);
-      parent->GetWidgetRect(rect);
-      matrix.Concat(ctmOnParent, true);
-      matrix.Translate(rect.left, rect.top, true);
-    }
-    CFX_Matrix m;
-    m.SetIdentity();
-    matrix.Concat(m, true);
-    parents.RemoveAll();
-  } else {
-    matrix.SetIdentity();
+    return;
   }
+
+  IFWL_Widget* parent = GetParent();
+  CFX_ArrayTemplate<IFWL_Widget*> parents;
+  while (parent) {
+    parents.Add(parent);
+    parent = parent->GetParent();
+  }
+  matrix.SetIdentity();
+  CFX_Matrix ctmOnParent;
+  CFX_RectF rect;
+  int32_t count = parents.GetSize();
+  for (int32_t i = count - 2; i >= 0; i--) {
+    parent = parents.GetAt(i);
+    parent->GetMatrix(ctmOnParent, false);
+    parent->GetWidgetRect(rect);
+    matrix.Concat(ctmOnParent, true);
+    matrix.Translate(rect.left, rect.top, true);
+  }
+  CFX_Matrix m;
+  m.SetIdentity();
+  matrix.Concat(m, true);
+  parents.RemoveAll();
 }
 
 void IFWL_Widget::DrawWidget(CFX_Graphics* pGraphics,
@@ -317,15 +319,16 @@ void* IFWL_Widget::GetThemeCapacity(CFWL_WidgetCapacity dwCapacity) {
   IFWL_ThemeProvider* pTheme = GetAvailableTheme();
   if (!pTheme)
     return nullptr;
+
   CFWL_ThemePart part;
   part.m_pWidget = this;
   return pTheme->GetCapacity(&part, dwCapacity);
 }
 
 IFWL_ThemeProvider* IFWL_Widget::GetAvailableTheme() {
-  if (m_pProperties->m_pThemeProvider) {
+  if (m_pProperties->m_pThemeProvider)
     return m_pProperties->m_pThemeProvider;
-  }
+
   IFWL_Widget* pUp = this;
   do {
     pUp = (pUp->GetStyles() & FWL_WGTSTYLE_Popup)
@@ -344,9 +347,9 @@ IFWL_Widget* IFWL_Widget::GetRootOuter() {
   IFWL_Widget* pRet = m_pOuter;
   if (!pRet)
     return nullptr;
-  while (IFWL_Widget* pOuter = pRet->GetOuter()) {
+
+  while (IFWL_Widget* pOuter = pRet->GetOuter())
     pRet = pOuter;
-  }
   return pRet;
 }
 
@@ -400,17 +403,17 @@ void IFWL_Widget::SetFocus(bool bFocus) {
     return;
 
   IFWL_Widget* curFocus = pDriver->GetFocus();
-  if (bFocus && curFocus != this) {
+  if (bFocus && curFocus != this)
     pDriver->SetFocus(this);
-  } else if (!bFocus && curFocus == this) {
+  else if (!bFocus && curFocus == this)
     pDriver->SetFocus(nullptr);
-  }
 }
 
 void IFWL_Widget::SetGrab(bool bSet) {
   const IFWL_App* pApp = GetOwnerApp();
   if (!pApp)
     return;
+
   CFWL_NoteDriver* pDriver =
       static_cast<CFWL_NoteDriver*>(pApp->GetNoteDriver());
   pDriver->SetGrab(this, bSet);
@@ -479,19 +482,19 @@ bool IFWL_Widget::GetPopupPosComboBox(FX_FLOAT fMinHeight,
   FX_FLOAT fy = 0;
 
   FX_FLOAT fPopHeight = rtPopup.height;
-  if (rtPopup.height > fMaxHeight) {
+  if (rtPopup.height > fMaxHeight)
     fPopHeight = fMaxHeight;
-  } else if (rtPopup.height < fMinHeight) {
+  else if (rtPopup.height < fMinHeight)
     fPopHeight = fMinHeight;
-  }
+
   FX_FLOAT fWidth = std::max(rtAnchor.width, rtPopup.width);
   FX_FLOAT fBottom = rtAnchor.bottom() + fPopHeight;
   TransformTo(nullptr, fx, fy);
-  if (fBottom + fy > 0.0f) {
+  if (fBottom + fy > 0.0f)
     rtPopup.Set(rtAnchor.left, rtAnchor.top - fPopHeight, fWidth, fPopHeight);
-  } else {
+  else
     rtPopup.Set(rtAnchor.left, rtAnchor.bottom(), fWidth, fPopHeight);
-  }
+
   rtPopup.Offset(fx, fy);
   return true;
 }
@@ -543,6 +546,7 @@ void IFWL_Widget::UnregisterEventTarget() {
 void IFWL_Widget::DispatchKeyEvent(CFWL_MsgKey* pNote) {
   if (!pNote)
     return;
+
   CFWL_EvtKey* pEvent = new CFWL_EvtKey;
   pEvent->m_pSrcTarget = this;
   pEvent->m_dwCmd = pNote->m_dwCmd;
@@ -560,6 +564,7 @@ void IFWL_Widget::DispatchEvent(CFWL_Event* pEvent) {
   const IFWL_App* pApp = GetOwnerApp();
   if (!pApp)
     return;
+
   CFWL_NoteDriver* pNoteDriver = pApp->GetNoteDriver();
   if (!pNoteDriver)
     return;
@@ -587,9 +592,8 @@ void IFWL_Widget::DrawBackground(CFX_Graphics* pGraphics,
   param.m_pWidget = this;
   param.m_iPart = iPartBk;
   param.m_pGraphics = pGraphics;
-  if (pMatrix) {
+  if (pMatrix)
     param.m_matrix.Concat(*pMatrix, true);
-  }
   param.m_rtPart = rtRelative;
   pTheme->DrawBackground(&param);
 }
@@ -604,9 +608,8 @@ void IFWL_Widget::DrawBorder(CFX_Graphics* pGraphics,
   param.m_pWidget = this;
   param.m_iPart = iPartBorder;
   param.m_pGraphics = pGraphics;
-  if (pMatrix) {
+  if (pMatrix)
     param.m_matrix.Concat(*pMatrix, true);
-  }
   param.m_rtPart = rtRelative;
   pTheme->DrawBackground(&param);
 }
@@ -621,9 +624,8 @@ void IFWL_Widget::DrawEdge(CFX_Graphics* pGraphics,
   param.m_pWidget = this;
   param.m_iPart = iPartEdge;
   param.m_pGraphics = pGraphics;
-  if (pMatrix) {
+  if (pMatrix)
     param.m_matrix.Concat(*pMatrix, true);
-  }
   param.m_rtPart = rtEdge;
   pTheme->DrawBackground(&param);
 }

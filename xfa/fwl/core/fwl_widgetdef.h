@@ -56,6 +56,7 @@
 #define FWL_VKEY_MButton 0x04
 #define FWL_VKEY_Back 0x08
 #define FWL_VKEY_Tab 0x09
+#define FWL_VKEY_NewLine 0x0A
 #define FWL_VKEY_Clear 0x0C
 #define FWL_VKEY_Return 0x0D
 #define FWL_VKEY_Shift 0x10

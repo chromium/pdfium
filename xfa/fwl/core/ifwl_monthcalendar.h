@@ -101,9 +101,9 @@ class IFWL_MonthCalendar : public IFWL_Widget {
     CFX_WideString wsDay;
   };
 
-  void DrawBkground(CFX_Graphics* pGraphics,
-                    IFWL_ThemeProvider* pTheme,
-                    const CFX_Matrix* pMatrix);
+  void DrawBackground(CFX_Graphics* pGraphics,
+                      IFWL_ThemeProvider* pTheme,
+                      const CFX_Matrix* pMatrix);
   void DrawHeadBK(CFX_Graphics* pGraphics,
                   IFWL_ThemeProvider* pTheme,
                   const CFX_Matrix* pMatrix);
