@@ -10,7 +10,9 @@
 
 #include "xfa/fwl/core/cfwl_datetimepicker.h"
 #include "xfa/fwl/core/cfwl_edit.h"
-#include "xfa/fwl/core/cfwl_message.h"
+#include "xfa/fwl/core/cfwl_msgkillfocus.h"
+#include "xfa/fwl/core/cfwl_msgmouse.h"
+#include "xfa/fwl/core/cfwl_msgsetfocus.h"
 #include "xfa/fwl/core/fwl_noteimp.h"
 #include "xfa/fwl/core/ifwl_edit.h"
 #include "xfa/fxfa/app/xfa_fffield.h"

@@ -7,7 +7,6 @@
 #ifndef XFA_FWL_CORE_IFWL_DATETIMEEDIT_H_
 #define XFA_FWL_CORE_IFWL_DATETIMEEDIT_H_
 
-#include "xfa/fwl/core/cfwl_message.h"
 #include "xfa/fwl/core/cfwl_widgetproperties.h"
 #include "xfa/fwl/core/fwl_error.h"
 #include "xfa/fwl/core/ifwl_edit.h"

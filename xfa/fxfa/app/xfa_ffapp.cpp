@@ -134,8 +134,7 @@ CXFA_FWLAdapterWidgetMgr* CXFA_FFApp::GetWidgetMgr(
     IFWL_WidgetMgrDelegate* pDelegate) {
   if (!m_pAdapterWidgetMgr) {
     m_pAdapterWidgetMgr.reset(new CXFA_FWLAdapterWidgetMgr);
-    pDelegate->OnSetCapability(FWL_WGTMGR_DisableThread |
-                               FWL_WGTMGR_DisableForm);
+    pDelegate->OnSetCapability(FWL_WGTMGR_DisableForm);
     m_pWidgetMgrDelegate = pDelegate;
   }
   return m_pAdapterWidgetMgr.get();

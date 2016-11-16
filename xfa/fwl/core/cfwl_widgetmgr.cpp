@@ -6,7 +6,6 @@
 
 #include "xfa/fwl/core/cfwl_widgetmgr.h"
 
-#include "xfa/fwl/core/cfwl_message.h"
 #include "xfa/fwl/core/fwl_noteimp.h"
 #include "xfa/fwl/core/ifwl_app.h"
 #include "xfa/fwl/core/ifwl_form.h"
@@ -474,23 +473,17 @@ void CFWL_WidgetMgr::OnProcessMessageToForm(CFWL_Message* pMessage) {
   if (!pNoteDriver)
     return;
 
-  if (IsThreadEnabled())
-    pMessage = static_cast<CFWL_Message*>(pMessage->Clone());
+  std::unique_ptr<CFWL_Message> pClonedMessage = pMessage->Clone();
   if (IsFormDisabled())
-    pNoteDriver->ProcessMessage(pMessage);
+    pNoteDriver->ProcessMessage(pClonedMessage.get());
   else
-    pNoteDriver->QueueMessage(pMessage);
+    pNoteDriver->QueueMessage(std::move(pClonedMessage));
 
 #if (_FX_OS_ == _FX_MACOSX_)
   CFWL_NoteLoop* pTopLoop = pNoteDriver->GetTopLoop();
   if (pTopLoop)
     pNoteDriver->UnqueueMessage(pTopLoop);
 #endif
-
-  if (IsThreadEnabled())
-    pMessage->Release();
-
-  return;
 }
 
 void CFWL_WidgetMgr::OnDrawWidget(IFWL_Widget* pWidget,

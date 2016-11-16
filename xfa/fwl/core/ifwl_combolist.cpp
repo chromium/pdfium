@@ -7,6 +7,9 @@
 #include "xfa/fwl/core/ifwl_combolist.h"
 
 #include "third_party/base/ptr_util.h"
+#include "xfa/fwl/core/cfwl_msgkey.h"
+#include "xfa/fwl/core/cfwl_msgkillfocus.h"
+#include "xfa/fwl/core/cfwl_msgmouse.h"
 #include "xfa/fwl/core/ifwl_combobox.h"
 #include "xfa/fwl/core/ifwl_comboedit.h"
 

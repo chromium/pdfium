@@ -6,6 +6,8 @@
 
 #include "xfa/fwl/core/ifwl_comboboxproxy.h"
 
+#include "xfa/fwl/core/cfwl_msgkillfocus.h"
+#include "xfa/fwl/core/cfwl_msgmouse.h"
 #include "xfa/fwl/core/fwl_noteimp.h"
 #include "xfa/fwl/core/ifwl_app.h"
 #include "xfa/fwl/core/ifwl_combobox.h"
@@ -42,10 +44,10 @@ void IFWL_ComboBoxProxy::OnProcessMessage(CFWL_Message* pMessage) {
       break;
     }
     case CFWL_MessageType::KillFocus:
-      OnFocusChanged(static_cast<CFWL_MsgKillFocus*>(pMessage), false);
+      OnFocusChanged(pMessage, false);
       break;
     case CFWL_MessageType::SetFocus:
-      OnFocusChanged(static_cast<CFWL_MsgKillFocus*>(pMessage), true);
+      OnFocusChanged(pMessage, true);
       break;
     default:
       break;
@@ -58,7 +60,7 @@ void IFWL_ComboBoxProxy::OnDrawWidget(CFX_Graphics* pGraphics,
   m_pComboBox->DrawStretchHandler(pGraphics, pMatrix);
 }
 
-void IFWL_ComboBoxProxy::OnLButtonDown(CFWL_MsgMouse* pMsg) {
+void IFWL_ComboBoxProxy::OnLButtonDown(CFWL_Message* pMessage) {
   const IFWL_App* pApp = GetOwnerApp();
   if (!pApp)
     return;
@@ -68,6 +70,8 @@ void IFWL_ComboBoxProxy::OnLButtonDown(CFWL_MsgMouse* pMsg) {
   CFX_RectF rtWidget;
   GetWidgetRect(rtWidget);
   rtWidget.left = rtWidget.top = 0;
+
+  CFWL_MsgMouse* pMsg = static_cast<CFWL_MsgMouse*>(pMessage);
   if (rtWidget.Contains(pMsg->m_fx, pMsg->m_fy)) {
     m_bLButtonDown = true;
     pDriver->SetGrab(this, true);
@@ -78,7 +82,7 @@ void IFWL_ComboBoxProxy::OnLButtonDown(CFWL_MsgMouse* pMsg) {
   }
 }
 
-void IFWL_ComboBoxProxy::OnLButtonUp(CFWL_MsgMouse* pMsg) {
+void IFWL_ComboBoxProxy::OnLButtonUp(CFWL_Message* pMessage) {
   m_bLButtonDown = false;
   const IFWL_App* pApp = GetOwnerApp();
   if (!pApp)
@@ -92,6 +96,7 @@ void IFWL_ComboBoxProxy::OnLButtonUp(CFWL_MsgMouse* pMsg) {
     return;
   }
 
+  CFWL_MsgMouse* pMsg = static_cast<CFWL_MsgMouse*>(pMessage);
   CFX_RectF rect;
   GetWidgetRect(rect);
   rect.left = rect.top = 0;
@@ -101,9 +106,11 @@ void IFWL_ComboBoxProxy::OnLButtonUp(CFWL_MsgMouse* pMsg) {
   }
 }
 
-void IFWL_ComboBoxProxy::OnFocusChanged(CFWL_MsgKillFocus* pMsg, bool bSet) {
+void IFWL_ComboBoxProxy::OnFocusChanged(CFWL_Message* pMessage, bool bSet) {
   if (bSet)
     return;
+
+  CFWL_MsgKillFocus* pMsg = static_cast<CFWL_MsgKillFocus*>(pMessage);
   if (!pMsg->m_pSetFocus)
     m_pComboBox->ShowDropList(false);
 }

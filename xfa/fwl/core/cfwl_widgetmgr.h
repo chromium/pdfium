@@ -14,7 +14,6 @@
 #include "xfa/fwl/core/fwl_error.h"
 #include "xfa/fxgraphics/cfx_graphics.h"
 
-#define FWL_WGTMGR_DisableThread 0x00000001
 #define FWL_WGTMGR_DisableForm 0x00000002
 
 class CFWL_Message;
@@ -45,8 +44,7 @@ class CFWL_WidgetMgrItem {
 
 class IFWL_WidgetMgrDelegate {
  public:
-  virtual void OnSetCapability(
-      uint32_t dwCapability = FWL_WGTMGR_DisableThread) = 0;
+  virtual void OnSetCapability(uint32_t dwCapability) = 0;
   virtual void OnProcessMessageToForm(CFWL_Message* pMessage) = 0;
   virtual void OnDrawWidget(IFWL_Widget* pWidget,
                             CFX_Graphics* pGraphics,
@@ -59,8 +57,7 @@ class CFWL_WidgetMgr : public IFWL_WidgetMgrDelegate {
   ~CFWL_WidgetMgr();
 
   // IFWL_WidgetMgrDelegate
-  void OnSetCapability(
-      uint32_t dwCapability = FWL_WGTMGR_DisableThread) override;
+  void OnSetCapability(uint32_t dwCapability) override;
   void OnProcessMessageToForm(CFWL_Message* pMessage) override;
   void OnDrawWidget(IFWL_Widget* pWidget,
                     CFX_Graphics* pGraphics,
@@ -116,10 +113,6 @@ class CFWL_WidgetMgr : public IFWL_WidgetMgrDelegate {
   IFWL_Widget* GetRadioButtonGroupHeader(IFWL_Widget* pRadioButton) const;
 
   void ResetRedrawCounts(IFWL_Widget* pWidget);
-
-  bool IsThreadEnabled() const {
-    return !(m_dwCapability & FWL_WGTMGR_DisableThread);
-  }
 
   void DrawChild(IFWL_Widget* pParent,
                  const CFX_RectF& rtClip,

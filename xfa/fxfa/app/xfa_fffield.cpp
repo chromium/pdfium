@@ -7,7 +7,11 @@
 #include "xfa/fxfa/app/xfa_fffield.h"
 
 #include "xfa/fwl/core/cfwl_edit.h"
-#include "xfa/fwl/core/cfwl_message.h"
+#include "xfa/fwl/core/cfwl_msgkey.h"
+#include "xfa/fwl/core/cfwl_msgkillfocus.h"
+#include "xfa/fwl/core/cfwl_msgmouse.h"
+#include "xfa/fwl/core/cfwl_msgmousewheel.h"
+#include "xfa/fwl/core/cfwl_msgsetfocus.h"
 #include "xfa/fwl/core/cfwl_picturebox.h"
 #include "xfa/fwl/core/cfwl_widgetmgr.h"
 #include "xfa/fwl/core/ifwl_edit.h"

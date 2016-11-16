@@ -10,7 +10,8 @@
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
-#include "xfa/fwl/core/cfwl_message.h"
+#include "xfa/fwl/core/cfwl_msgkey.h"
+#include "xfa/fwl/core/cfwl_msgmouse.h"
 #include "xfa/fwl/core/fwl_error.h"
 
 enum class FWL_SCBCODE {

@@ -7,11 +7,11 @@
 #ifndef XFA_FWL_CORE_FWL_NOTEIMP_H_
 #define XFA_FWL_CORE_FWL_NOTEIMP_H_
 
+#include <deque>
 #include <memory>
 #include <unordered_map>
 
 #include "xfa/fwl/core/cfwl_event.h"
-#include "xfa/fwl/core/cfwl_message.h"
 #include "xfa/fwl/core/ifwl_tooltip.h"
 #include "xfa/fwl/core/ifwl_widget.h"
 #include "xfa/fxgraphics/cfx_graphics.h"
@@ -67,7 +67,7 @@ class CFWL_NoteDriver {
   void RegisterForm(IFWL_Widget* pForm);
   void UnRegisterForm(IFWL_Widget* pForm);
 
-  void QueueMessage(CFWL_Message* pMessage);
+  void QueueMessage(std::unique_ptr<CFWL_Message> pMessage);
   void UnqueueMessage(CFWL_NoteLoop* pNoteLoop);
   void ProcessMessage(CFWL_Message* pMessage);
 
@@ -84,7 +84,7 @@ class CFWL_NoteDriver {
   IFWL_Widget* GetMessageForm(IFWL_Widget* pDstTarget);
 
   CFX_ArrayTemplate<IFWL_Widget*> m_forms;
-  CFX_ArrayTemplate<CFWL_Message*> m_noteQueue;
+  std::deque<std::unique_ptr<CFWL_Message>> m_noteQueue;
   CFX_ArrayTemplate<CFWL_NoteLoop*> m_noteLoopQueue;
   std::unordered_map<uint32_t, CFWL_EventTarget*> m_eventTargets;
   IFWL_Widget* m_pHover;

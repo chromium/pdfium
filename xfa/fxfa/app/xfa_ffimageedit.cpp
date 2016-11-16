@@ -6,7 +6,7 @@
 
 #include "xfa/fxfa/app/xfa_ffimageedit.h"
 
-#include "xfa/fwl/core/cfwl_message.h"
+#include "xfa/fwl/core/cfwl_msgmouse.h"
 #include "xfa/fwl/core/cfwl_picturebox.h"
 #include "xfa/fwl/core/fwl_noteimp.h"
 #include "xfa/fwl/core/ifwl_app.h"

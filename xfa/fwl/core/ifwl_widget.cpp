@@ -9,7 +9,11 @@
 #include <algorithm>
 
 #include "xfa/fde/tto/fde_textout.h"
-#include "xfa/fwl/core/cfwl_message.h"
+#include "xfa/fwl/core/cfwl_msgkey.h"
+#include "xfa/fwl/core/cfwl_msgkillfocus.h"
+#include "xfa/fwl/core/cfwl_msgmouse.h"
+#include "xfa/fwl/core/cfwl_msgmousewheel.h"
+#include "xfa/fwl/core/cfwl_msgsetfocus.h"
 #include "xfa/fwl/core/cfwl_themebackground.h"
 #include "xfa/fwl/core/cfwl_themepart.h"
 #include "xfa/fwl/core/cfwl_themetext.h"

@@ -9,7 +9,11 @@
 #include "core/fxcrt/fx_ext.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
-#include "xfa/fwl/core/cfwl_message.h"
+#include "xfa/fwl/core/cfwl_msgkey.h"
+#include "xfa/fwl/core/cfwl_msgkillfocus.h"
+#include "xfa/fwl/core/cfwl_msgmouse.h"
+#include "xfa/fwl/core/cfwl_msgmousewheel.h"
+#include "xfa/fwl/core/cfwl_msgsetfocus.h"
 #include "xfa/fwl/core/cfwl_widgetmgr.h"
 #include "xfa/fwl/core/ifwl_app.h"
 #include "xfa/fwl/core/ifwl_tooltip.h"
@@ -182,23 +186,21 @@ void CFWL_NoteDriver::UnRegisterForm(IFWL_Widget* pForm) {
   m_forms.RemoveAt(nIndex);
 }
 
-void CFWL_NoteDriver::QueueMessage(CFWL_Message* pMessage) {
-  pMessage->Retain();
-  m_noteQueue.Add(pMessage);
+void CFWL_NoteDriver::QueueMessage(std::unique_ptr<CFWL_Message> pMessage) {
+  m_noteQueue.push_back(std::move(pMessage));
 }
 
 void CFWL_NoteDriver::UnqueueMessage(CFWL_NoteLoop* pNoteLoop) {
-  if (m_noteQueue.GetSize() < 1)
+  if (m_noteQueue.empty())
     return;
 
-  CFWL_Message* pMessage = m_noteQueue[0];
-  m_noteQueue.RemoveAt(0);
-  if (!IsValidMessage(pMessage)) {
-    pMessage->Release();
+  std::unique_ptr<CFWL_Message> pMessage = std::move(m_noteQueue[0]);
+  m_noteQueue.pop_front();
+
+  if (!IsValidMessage(pMessage.get()))
     return;
-  }
-  ProcessMessage(pMessage);
-  pMessage->Release();
+
+  ProcessMessage(pMessage.get());
 }
 
 CFWL_NoteLoop* CFWL_NoteDriver::GetTopLoop() const {

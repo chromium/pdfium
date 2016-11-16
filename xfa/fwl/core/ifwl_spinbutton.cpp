@@ -7,7 +7,8 @@
 #include "xfa/fwl/core/ifwl_spinbutton.h"
 
 #include "third_party/base/ptr_util.h"
-#include "xfa/fwl/core/cfwl_message.h"
+#include "xfa/fwl/core/cfwl_msgkey.h"
+#include "xfa/fwl/core/cfwl_msgmouse.h"
 #include "xfa/fwl/core/cfwl_themebackground.h"
 #include "xfa/fwl/core/cfwl_widgetproperties.h"
 #include "xfa/fwl/core/fwl_noteimp.h"
