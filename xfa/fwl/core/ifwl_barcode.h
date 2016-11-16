@@ -73,7 +73,7 @@ class IFWL_Barcode : public IFWL_Edit {
   void SetText(const CFX_WideString& wsText) override;
 
   void SetType(BC_TYPE type);
-  bool IsProtectedType();
+  bool IsProtectedType() const;
 
  private:
   void GenerateBarcodeImageCache();

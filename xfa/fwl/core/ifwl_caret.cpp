@@ -65,21 +65,21 @@ void IFWL_Caret::ShowCaret(bool bFlag) {
 void IFWL_Caret::DrawCaretBK(CFX_Graphics* pGraphics,
                              IFWL_ThemeProvider* pTheme,
                              const CFX_Matrix* pMatrix) {
+  if (!(m_pProperties->m_dwStates & FWL_STATE_CAT_HightLight))
+    return;
+
   CFX_RectF rect;
   GetWidgetRect(rect);
   rect.Set(0, 0, rect.width, rect.height);
+
   CFWL_ThemeBackground param;
   param.m_pWidget = this;
   param.m_pGraphics = pGraphics;
   param.m_rtPart = rect;
-  if (!(m_pProperties->m_dwStates & FWL_STATE_CAT_HightLight))
-    return;
-
   param.m_iPart = CFWL_Part::Background;
   param.m_dwStates = CFWL_PartState_HightLight;
   if (pMatrix)
     param.m_matrix.Concat(*pMatrix);
-
   pTheme->DrawBackground(&param);
 }
 
@@ -94,8 +94,8 @@ IFWL_Caret::Timer::Timer(IFWL_Caret* pCaret) : IFWL_Timer(pCaret) {}
 
 void IFWL_Caret::Timer::Run(IFWL_TimerInfo* pTimerInfo) {
   IFWL_Caret* pCaret = static_cast<IFWL_Caret*>(m_pWidget);
-  bool toggle = !(pCaret->GetStates() & FWL_STATE_CAT_HightLight);
-  pCaret->SetStates(FWL_STATE_CAT_HightLight, toggle);
+  pCaret->SetStates(FWL_STATE_CAT_HightLight,
+                    !(pCaret->GetStates() & FWL_STATE_CAT_HightLight));
 
   CFX_RectF rt;
   pCaret->GetWidgetRect(rt);

@@ -74,14 +74,14 @@ class IFWL_CheckBox : public IFWL_Widget {
  private:
   void SetCheckState(int32_t iCheck);
   void Layout();
-  uint32_t GetPartStates();
+  uint32_t GetPartStates() const;
   void UpdateTextOutStyles();
   void NextStates();
-  void OnFocusChanged(CFWL_Message* pMsg, bool bSet);
-  void OnLButtonDown(CFWL_MsgMouse* pMsg);
+  void OnFocusChanged(bool bSet);
+  void OnLButtonDown();
   void OnLButtonUp(CFWL_MsgMouse* pMsg);
   void OnMouseMove(CFWL_MsgMouse* pMsg);
-  void OnMouseLeave(CFWL_MsgMouse* pMsg);
+  void OnMouseLeave();
   void OnKeyDown(CFWL_MsgKey* pMsg);
 
   CFX_RectF m_rtClient;
