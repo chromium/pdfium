@@ -17,10 +17,6 @@ IFWL_Edit* ToEdit(IFWL_Widget* widget) {
   return static_cast<IFWL_Edit*>(widget);
 }
 
-const IFWL_Edit* ToEdit(const IFWL_Widget* widget) {
-  return static_cast<const IFWL_Edit*>(widget);
-}
-
 }  // namespace
 
 CFWL_Edit::CFWL_Edit(const IFWL_App* app) : CFWL_Widget(app) {}

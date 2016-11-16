@@ -17,11 +17,6 @@
 #include "xfa/fxgraphics/cfx_graphics.h"
 
 class CFWL_EventTarget;
-class CFWL_MsgKey;
-class CFWL_MsgKillFocus;
-class CFWL_MsgMouse;
-class CFWL_MsgMouseWheel;
-class CFWL_MsgSetFocus;
 class CFWL_TargetImp;
 class IFWL_ToolTip;
 class IFWL_Widget;
@@ -72,19 +67,19 @@ class CFWL_NoteDriver {
   void RegisterForm(IFWL_Widget* pForm);
   void UnRegisterForm(IFWL_Widget* pForm);
 
-  bool QueueMessage(CFWL_Message* pMessage);
-  bool UnqueueMessage(CFWL_NoteLoop* pNoteLoop);
-  bool ProcessMessage(CFWL_Message* pMessage);
+  void QueueMessage(CFWL_Message* pMessage);
+  void UnqueueMessage(CFWL_NoteLoop* pNoteLoop);
+  void ProcessMessage(CFWL_Message* pMessage);
 
  private:
   bool DispatchMessage(CFWL_Message* pMessage, IFWL_Widget* pMessageForm);
-  bool DoSetFocus(CFWL_MsgSetFocus* pMsg, IFWL_Widget* pMessageForm);
-  bool DoKillFocus(CFWL_MsgKillFocus* pMsg, IFWL_Widget* pMessageForm);
-  bool DoKey(CFWL_MsgKey* pMsg, IFWL_Widget* pMessageForm);
-  bool DoMouse(CFWL_MsgMouse* pMsg, IFWL_Widget* pMessageForm);
-  bool DoWheel(CFWL_MsgMouseWheel* pMsg, IFWL_Widget* pMessageForm);
-  bool DoMouseEx(CFWL_MsgMouse* pMsg, IFWL_Widget* pMessageForm);
-  void MouseSecondary(CFWL_MsgMouse* pMsg);
+  bool DoSetFocus(CFWL_Message* pMsg, IFWL_Widget* pMessageForm);
+  bool DoKillFocus(CFWL_Message* pMsg, IFWL_Widget* pMessageForm);
+  bool DoKey(CFWL_Message* pMsg, IFWL_Widget* pMessageForm);
+  bool DoMouse(CFWL_Message* pMsg, IFWL_Widget* pMessageForm);
+  bool DoWheel(CFWL_Message* pMsg, IFWL_Widget* pMessageForm);
+  bool DoMouseEx(CFWL_Message* pMsg, IFWL_Widget* pMessageForm);
+  void MouseSecondary(CFWL_Message* pMsg);
   bool IsValidMessage(CFWL_Message* pMessage);
   IFWL_Widget* GetMessageForm(IFWL_Widget* pDstTarget);
 

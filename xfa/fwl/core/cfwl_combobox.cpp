@@ -18,10 +18,6 @@ IFWL_ComboBox* ToComboBox(IFWL_Widget* widget) {
   return static_cast<IFWL_ComboBox*>(widget);
 }
 
-const IFWL_ComboBox* ToComboBox(const IFWL_Widget* widget) {
-  return static_cast<const IFWL_ComboBox*>(widget);
-}
-
 }  // namespace
 
 CFWL_ComboBox::CFWL_ComboBox(const IFWL_App* app)

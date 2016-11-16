@@ -23,8 +23,8 @@ class CFWL_Widget {
   explicit CFWL_Widget(const IFWL_App*);
   virtual ~CFWL_Widget();
 
-  IFWL_Widget* GetWidget();
-  const IFWL_Widget* GetWidget() const;
+  IFWL_Widget* GetWidget() { return m_pIface.get(); }
+  IFWL_Widget* GetWidget() const { return m_pIface.get(); }
 
   void GetWidgetRect(CFX_RectF& rect, bool bAutoSize = false);
   void SetWidgetRect(const CFX_RectF& rect);

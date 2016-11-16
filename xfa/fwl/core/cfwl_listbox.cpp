@@ -47,13 +47,9 @@ bool CFWL_ListBox::DeleteString(CFWL_ListItem* pItem) {
   if (nIndex < 0 || static_cast<size_t>(nIndex) >= m_ItemArray.size())
     return false;
 
-  int32_t iCount = CountItems(m_pIface.get());
   int32_t iSel = nIndex + 1;
-  if (iSel >= iCount) {
+  if (iSel >= CountItems(m_pIface.get()))
     iSel = nIndex - 1;
-    if (iSel < 0)
-      iSel = -1;
-  }
   if (iSel >= 0) {
     CFWL_ListItem* pSel =
         static_cast<CFWL_ListItem*>(GetItem(m_pIface.get(), iSel));

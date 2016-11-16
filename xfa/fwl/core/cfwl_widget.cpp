@@ -27,14 +27,6 @@ void CFWL_Widget::Initialize() {
   m_pIface->SetAssociateWidget(this);
 }
 
-IFWL_Widget* CFWL_Widget::GetWidget() {
-  return m_pIface.get();
-}
-
-const IFWL_Widget* CFWL_Widget::GetWidget() const {
-  return m_pIface.get();
-}
-
 void CFWL_Widget::GetWidgetRect(CFX_RectF& rect, bool bAutoSize) {
   if (m_pIface)
     m_pIface->GetWidgetRect(rect, bAutoSize);
@@ -52,9 +44,7 @@ void CFWL_Widget::ModifyStyles(uint32_t dwStylesAdded,
 }
 
 uint32_t CFWL_Widget::GetStylesEx() {
-  if (!m_pIface)
-    return 0;
-  return m_pIface->GetStylesEx();
+  return m_pIface ? m_pIface->GetStylesEx() : 0;
 }
 
 void CFWL_Widget::ModifyStylesEx(uint32_t dwStylesExAdded,
@@ -77,21 +67,18 @@ void CFWL_Widget::SetLayoutItem(void* pItem) {
 }
 
 void CFWL_Widget::Update() {
-  if (!m_pIface)
-    return;
-  m_pIface->Update();
+  if (m_pIface)
+    m_pIface->Update();
 }
 
 void CFWL_Widget::LockUpdate() {
-  if (!m_pIface)
-    return;
-  m_pIface->LockUpdate();
+  if (m_pIface)
+    m_pIface->LockUpdate();
 }
 
 void CFWL_Widget::UnlockUpdate() {
-  if (!m_pIface)
-    return;
-  m_pIface->UnlockUpdate();
+  if (m_pIface)
+    m_pIface->UnlockUpdate();
 }
 
 FWL_WidgetHit CFWL_Widget::HitTest(FX_FLOAT fx, FX_FLOAT fy) {

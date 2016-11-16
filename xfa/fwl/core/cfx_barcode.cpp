@@ -60,21 +60,27 @@ bool CFX_Barcode::Create(BC_TYPE type) {
   m_pBCEngine.reset(CreateBarCodeEngineObject(type));
   return !!m_pBCEngine;
 }
+
 BC_TYPE CFX_Barcode::GetType() {
   return m_pBCEngine ? m_pBCEngine->GetType() : BC_UNKNOWN;
 }
+
 bool CFX_Barcode::SetCharEncoding(BC_CHAR_ENCODING encoding) {
   return m_pBCEngine ? m_pBCEngine->SetCharEncoding(encoding) : false;
 }
+
 bool CFX_Barcode::SetModuleHeight(int32_t moduleHeight) {
   return m_pBCEngine ? m_pBCEngine->SetModuleHeight(moduleHeight) : false;
 }
+
 bool CFX_Barcode::SetModuleWidth(int32_t moduleWidth) {
   return m_pBCEngine ? m_pBCEngine->SetModuleWidth(moduleWidth) : false;
 }
+
 bool CFX_Barcode::SetHeight(int32_t height) {
   return m_pBCEngine ? m_pBCEngine->SetHeight(height) : false;
 }
+
 bool CFX_Barcode::SetWidth(int32_t width) {
   return m_pBCEngine ? m_pBCEngine->SetWidth(width) : false;
 }
@@ -97,6 +103,7 @@ bool CFX_Barcode::SetPrintChecksum(bool checksum) {
       return false;
   }
 }
+
 bool CFX_Barcode::SetDataLength(int32_t length) {
   switch (GetType()) {
     case BC_CODE39:
@@ -115,6 +122,7 @@ bool CFX_Barcode::SetDataLength(int32_t length) {
       return false;
   }
 }
+
 bool CFX_Barcode::SetCalChecksum(bool state) {
   switch (GetType()) {
     case BC_CODE39:
@@ -133,6 +141,7 @@ bool CFX_Barcode::SetCalChecksum(bool state) {
       return false;
   }
 }
+
 bool CFX_Barcode::SetFont(CFX_Font* pFont) {
   switch (GetType()) {
     case BC_CODE39:
@@ -150,6 +159,7 @@ bool CFX_Barcode::SetFont(CFX_Font* pFont) {
       return false;
   }
 }
+
 bool CFX_Barcode::SetFontSize(FX_FLOAT size) {
   switch (GetType()) {
     case BC_CODE39:
@@ -187,6 +197,7 @@ bool CFX_Barcode::SetFontColor(FX_ARGB color) {
       return false;
   }
 }
+
 bool CFX_Barcode::SetTextLocation(BC_TEXT_LOC location) {
   typedef bool (CBC_CodeBase::*memptrtype)(BC_TEXT_LOC);
   memptrtype memptr = nullptr;
@@ -207,6 +218,7 @@ bool CFX_Barcode::SetTextLocation(BC_TEXT_LOC location) {
   }
   return m_pBCEngine && memptr ? (m_pBCEngine.get()->*memptr)(location) : false;
 }
+
 bool CFX_Barcode::SetWideNarrowRatio(int32_t ratio) {
   typedef bool (CBC_CodeBase::*memptrtype)(int32_t);
   memptrtype memptr = nullptr;
@@ -222,6 +234,7 @@ bool CFX_Barcode::SetWideNarrowRatio(int32_t ratio) {
   }
   return m_pBCEngine && memptr ? (m_pBCEngine.get()->*memptr)(ratio) : false;
 }
+
 bool CFX_Barcode::SetStartChar(FX_CHAR start) {
   typedef bool (CBC_CodeBase::*memptrtype)(FX_CHAR);
   memptrtype memptr = nullptr;
@@ -234,6 +247,7 @@ bool CFX_Barcode::SetStartChar(FX_CHAR start) {
   }
   return m_pBCEngine && memptr ? (m_pBCEngine.get()->*memptr)(start) : false;
 }
+
 bool CFX_Barcode::SetEndChar(FX_CHAR end) {
   typedef bool (CBC_CodeBase::*memptrtype)(FX_CHAR);
   memptrtype memptr = nullptr;
@@ -246,6 +260,7 @@ bool CFX_Barcode::SetEndChar(FX_CHAR end) {
   }
   return m_pBCEngine && memptr ? (m_pBCEngine.get()->*memptr)(end) : false;
 }
+
 bool CFX_Barcode::SetVersion(int32_t version) {
   typedef bool (CBC_CodeBase::*memptrtype)(int32_t);
   memptrtype memptr = nullptr;
@@ -258,6 +273,7 @@ bool CFX_Barcode::SetVersion(int32_t version) {
   }
   return m_pBCEngine && memptr ? (m_pBCEngine.get()->*memptr)(version) : false;
 }
+
 bool CFX_Barcode::SetErrorCorrectionLevel(int32_t level) {
   typedef bool (CBC_CodeBase::*memptrtype)(int32_t);
   memptrtype memptr = nullptr;
