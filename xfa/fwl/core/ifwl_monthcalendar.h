@@ -22,18 +22,6 @@
 #define FWL_ITEMSTATE_MCD_Selected (1L << 1)
 #define FWL_ITEMSTATE_MCD_Focused (1L << 2)
 
-FWL_EVENT_DEF(CFWL_Event_McdDateSelected,
-              CFWL_EventType::DataSelected,
-              int32_t m_iStartDay;
-              int32_t m_iEndDay;)
-
-FWL_EVENT_DEF(CFWL_EventMcdDateChanged,
-              CFWL_EventType::DateChanged,
-              int32_t m_iOldYear;
-              int32_t m_iOldMonth;
-              int32_t m_iStartDay;
-              int32_t m_iEndDay;)
-
 class CFWL_MsgMouse;
 class IFWL_Widget;
 

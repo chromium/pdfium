@@ -36,9 +36,6 @@ class CFWL_DateTimePicker : public CFWL_Widget, public IFWL_DateTimePickerDP {
   void GetBBox(CFX_RectF& rect);
   void SetEditLimit(int32_t nLimit);
   void ModifyEditStylesEx(uint32_t dwStylesExAdded, uint32_t dwStylesExRemoved);
-
- private:
-  CFX_WideString m_wsData;
 };
 
 #endif  // XFA_FWL_CORE_CFWL_DATETIMEPICKER_H_

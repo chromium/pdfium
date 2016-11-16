@@ -59,7 +59,7 @@ void CFWL_DateTimePicker::SetCurSel(int32_t iYear,
 
 void CFWL_DateTimePicker::GetCaption(IFWL_Widget* pWidget,
                                      CFX_WideString& wsCaption) {
-  wsCaption = m_wsData;
+  wsCaption = L"";
 }
 
 void CFWL_DateTimePicker::GetToday(IFWL_Widget* pWidget,

@@ -1348,12 +1348,6 @@ void IFWL_Edit::OnProcessMessage(CFWL_Message* pMessage) {
 
   CFWL_MessageType dwMsgCode = pMessage->GetClassID();
   switch (dwMsgCode) {
-    case CFWL_MessageType::Activate:
-      DoActivate(static_cast<CFWL_MsgActivate*>(pMessage));
-      break;
-    case CFWL_MessageType::Deactivate:
-      DoDeactivate(static_cast<CFWL_MsgDeactivate*>(pMessage));
-      break;
     case CFWL_MessageType::SetFocus:
     case CFWL_MessageType::KillFocus:
       OnFocusChanged(pMessage, dwMsgCode == CFWL_MessageType::SetFocus);
@@ -1413,16 +1407,6 @@ void IFWL_Edit::OnProcessEvent(CFWL_Event* pEvent) {
 void IFWL_Edit::OnDrawWidget(CFX_Graphics* pGraphics,
                              const CFX_Matrix* pMatrix) {
   DrawWidget(pGraphics, pMatrix);
-}
-
-void IFWL_Edit::DoActivate(CFWL_MsgActivate* pMsg) {
-  m_pProperties->m_dwStates |= ~FWL_WGTSTATE_Deactivated;
-  Repaint(&m_rtClient);
-}
-
-void IFWL_Edit::DoDeactivate(CFWL_MsgDeactivate* pMsg) {
-  m_pProperties->m_dwStates &= FWL_WGTSTATE_Deactivated;
-  Repaint(&m_rtClient);
 }
 
 void IFWL_Edit::DoButtonDown(CFWL_MsgMouse* pMsg) {

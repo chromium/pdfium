@@ -17,16 +17,11 @@
 #include "xfa/fxgraphics/cfx_graphics.h"
 
 class CFWL_EventTarget;
-class CFWL_MsgActivate;
-class CFWL_MsgDeactivate;
-class CFWL_MsgDropFiles;
 class CFWL_MsgKey;
 class CFWL_MsgKillFocus;
 class CFWL_MsgMouse;
 class CFWL_MsgMouseWheel;
 class CFWL_MsgSetFocus;
-class CFWL_MsgSize;
-class CFWL_MsgWindowMove;
 class CFWL_TargetImp;
 class IFWL_ToolTip;
 class IFWL_Widget;
@@ -83,16 +78,11 @@ class CFWL_NoteDriver {
 
  private:
   bool DispatchMessage(CFWL_Message* pMessage, IFWL_Widget* pMessageForm);
-  bool DoActivate(CFWL_MsgActivate* pMsg, IFWL_Widget* pMessageForm);
-  bool DoDeactivate(CFWL_MsgDeactivate* pMsg, IFWL_Widget* pMessageForm);
   bool DoSetFocus(CFWL_MsgSetFocus* pMsg, IFWL_Widget* pMessageForm);
   bool DoKillFocus(CFWL_MsgKillFocus* pMsg, IFWL_Widget* pMessageForm);
   bool DoKey(CFWL_MsgKey* pMsg, IFWL_Widget* pMessageForm);
   bool DoMouse(CFWL_MsgMouse* pMsg, IFWL_Widget* pMessageForm);
   bool DoWheel(CFWL_MsgMouseWheel* pMsg, IFWL_Widget* pMessageForm);
-  bool DoSize(CFWL_MsgSize* pMsg);
-  bool DoWindowMove(CFWL_MsgWindowMove* pMsg, IFWL_Widget* pMessageForm);
-  bool DoDragFiles(CFWL_MsgDropFiles* pMsg, IFWL_Widget* pMessageForm);
   bool DoMouseEx(CFWL_MsgMouse* pMsg, IFWL_Widget* pMessageForm);
   void MouseSecondary(CFWL_MsgMouse* pMsg);
   bool IsValidMessage(CFWL_Message* pMessage);

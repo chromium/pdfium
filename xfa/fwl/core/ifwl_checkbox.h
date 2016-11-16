@@ -77,7 +77,6 @@ class IFWL_CheckBox : public IFWL_Widget {
   uint32_t GetPartStates();
   void UpdateTextOutStyles();
   void NextStates();
-  void OnActivate(CFWL_Message* pMsg);
   void OnFocusChanged(CFWL_Message* pMsg, bool bSet);
   void OnLButtonDown(CFWL_MsgMouse* pMsg);
   void OnLButtonUp(CFWL_MsgMouse* pMsg);

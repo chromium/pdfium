@@ -29,7 +29,6 @@ class IFWL_ComboBoxProxy : public IFWL_FormProxy {
  private:
   void OnLButtonDown(CFWL_MsgMouse* pMsg);
   void OnLButtonUp(CFWL_MsgMouse* pMsg);
-  void OnDeactive(CFWL_MsgDeactivate* pMsg);
   void OnFocusChanged(CFWL_MsgKillFocus* pMsg, bool bSet);
 
   bool m_bLButtonDown;

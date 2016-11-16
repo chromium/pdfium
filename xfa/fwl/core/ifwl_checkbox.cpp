@@ -374,9 +374,6 @@ void IFWL_CheckBox::OnProcessMessage(CFWL_Message* pMessage) {
     return;
 
   switch (pMessage->GetClassID()) {
-    case CFWL_MessageType::Activate:
-      OnActivate(pMessage);
-      break;
     case CFWL_MessageType::SetFocus:
       OnFocusChanged(pMessage, true);
       break;
@@ -419,11 +416,6 @@ void IFWL_CheckBox::OnProcessMessage(CFWL_Message* pMessage) {
 void IFWL_CheckBox::OnDrawWidget(CFX_Graphics* pGraphics,
                                  const CFX_Matrix* pMatrix) {
   DrawWidget(pGraphics, pMatrix);
-}
-
-void IFWL_CheckBox::OnActivate(CFWL_Message* pMsg) {
-  m_pProperties->m_dwStates &= ~FWL_WGTSTATE_Deactivated;
-  Repaint(&(m_rtClient));
 }
 
 void IFWL_CheckBox::OnFocusChanged(CFWL_Message* pMsg, bool bSet) {

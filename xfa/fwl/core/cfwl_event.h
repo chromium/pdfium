@@ -34,18 +34,12 @@ enum class CFWL_EventType {
   Click,
   Close,
   CloseUp,
-  ContextMenu,
-  DataSelected,
-  DateChanged,
-  Draw,
   DrawItem,
   DropDown,
   EditChanged,
   HoverChanged,
-  Idle,
   Key,
   KillFocus,
-  MenuCommand,
   Mouse,
   MouseWheel,
   PostDropDown,
@@ -144,9 +138,6 @@ FWL_EVENT_DEF(CFWL_EvtKillFocus,
               CFWL_EventType::KillFocus,
               IFWL_Widget* m_pKillFocus;)
 
-FWL_EVENT_DEF(CFWL_EvtDraw, CFWL_EventType::Draw, CFX_Graphics* m_pGraphics;
-              IFWL_Widget * m_pWidget;)
-
 FWL_EVENT_DEF(CFWL_EvtClick, CFWL_EventType::Click)
 
 FWL_EVENT_DEF(CFWL_EvtScroll, CFWL_EventType::Scroll, FWL_SCBCODE m_iScrollCode;
@@ -155,23 +146,10 @@ FWL_EVENT_DEF(CFWL_EvtScroll, CFWL_EventType::Scroll, FWL_SCBCODE m_iScrollCode;
 
 FWL_EVENT_DEF(CFWL_EvtClose, CFWL_EventType::Close)
 
-FWL_EVENT_DEF(CFWL_EvtContextMenu,
-              CFWL_EventType::ContextMenu,
-              FX_FLOAT m_fPosX;
-              FX_FLOAT m_fPosY;
-              IFWL_Widget * m_pOwner;)
-
-FWL_EVENT_DEF(CFWL_EvtMenuCommand,
-              CFWL_EventType::MenuCommand,
-              int32_t m_iCommand;
-              void* m_pData;)
-
 FWL_EVENT_DEF(CFWL_EvtSizeChanged,
               CFWL_EventType::SizeChanged,
               IFWL_Widget* m_pWidget;
               CFX_RectF m_rtOld;
               CFX_RectF m_rtNew;)
-
-FWL_EVENT_DEF(CFWL_EvtIdle, CFWL_EventType::Idle)
 
 #endif  // XFA_FWL_CORE_CFWL_EVENT_H_

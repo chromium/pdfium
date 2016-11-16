@@ -69,8 +69,6 @@ struct RestoreInfo {
 };
 
 class CFWL_MsgMouse;
-class CFWL_MsgClose;
-class CFWL_MsgWindowMove;
 class CFWL_NoteLoop;
 class IFWL_Widget;
 class IFWL_ThemeProvider;
@@ -136,8 +134,6 @@ class IFWL_Form : public IFWL_Widget {
   void OnMouseMove(CFWL_MsgMouse* pMsg);
   void OnMouseLeave(CFWL_MsgMouse* pMsg);
   void OnLButtonDblClk(CFWL_MsgMouse* pMsg);
-  void OnWindowMove(CFWL_MsgWindowMove* pMsg);
-  void OnClose(CFWL_MsgClose* pMsg);
 
 #if (_FX_OS_ == _FX_MACOSX_)
   bool m_bMouseIn;

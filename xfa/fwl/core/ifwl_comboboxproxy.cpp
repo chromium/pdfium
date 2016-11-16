@@ -41,9 +41,6 @@ void IFWL_ComboBoxProxy::OnProcessMessage(CFWL_Message* pMessage) {
       }
       break;
     }
-    case CFWL_MessageType::Deactivate:
-      OnDeactive(static_cast<CFWL_MsgDeactivate*>(pMessage));
-      break;
     case CFWL_MessageType::KillFocus:
       OnFocusChanged(static_cast<CFWL_MsgKillFocus*>(pMessage), false);
       break;
@@ -101,10 +98,6 @@ void IFWL_ComboBoxProxy::OnLButtonUp(CFWL_MsgMouse* pMsg) {
   } else {
     m_bLButtonUpSelf = true;
   }
-}
-
-void IFWL_ComboBoxProxy::OnDeactive(CFWL_MsgDeactivate* pMsg) {
-  m_pComboBox->ShowDropList(false);
 }
 
 void IFWL_ComboBoxProxy::OnFocusChanged(CFWL_MsgKillFocus* pMsg, bool bSet) {

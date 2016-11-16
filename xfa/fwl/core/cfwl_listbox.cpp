@@ -44,16 +44,15 @@ CFWL_ListItem* CFWL_ListBox::AddString(const CFX_WideStringC& wsAdd,
 
 bool CFWL_ListBox::DeleteString(CFWL_ListItem* pItem) {
   int32_t nIndex = GetItemIndex(GetWidget(), pItem);
-  if (nIndex < 0 || static_cast<size_t>(nIndex) >= m_ItemArray.size()) {
+  if (nIndex < 0 || static_cast<size_t>(nIndex) >= m_ItemArray.size())
     return false;
-  }
+
   int32_t iCount = CountItems(m_pIface.get());
   int32_t iSel = nIndex + 1;
   if (iSel >= iCount) {
     iSel = nIndex - 1;
-    if (iSel < 0) {
+    if (iSel < 0)
       iSel = -1;
-    }
   }
   if (iSel >= 0) {
     CFWL_ListItem* pSel =
@@ -77,9 +76,7 @@ CFWL_ListItem* CFWL_ListBox::GetSelItem(int32_t nIndexSel) {
 }
 
 int32_t CFWL_ListBox::GetSelIndex(int32_t nIndex) {
-  if (!GetWidget())
-    return 0;
-  return ToListBox(GetWidget())->GetSelIndex(nIndex);
+  return GetWidget() ? ToListBox(GetWidget())->GetSelIndex(nIndex) : 0;
 }
 
 void CFWL_ListBox::SetSelItem(CFWL_ListItem* pItem, bool bSelect) {
@@ -95,15 +92,13 @@ void CFWL_ListBox::GetItemText(CFWL_ListItem* pItem, CFX_WideString& wsText) {
 CFWL_ListItem* CFWL_ListBox::GetItem(int32_t nIndex) {
   if (nIndex < 0 || nIndex >= CountItems(nullptr))
     return nullptr;
-
   return m_ItemArray[nIndex].get();
 }
 
 uint32_t CFWL_ListBox::GetItemStates(CFWL_ListItem* pItem) {
   if (!pItem)
     return 0;
-  CFWL_ListItem* pListItem = static_cast<CFWL_ListItem*>(pItem);
-  return pListItem->m_dwStates | pListItem->m_dwCheckState;
+  return pItem->m_dwStates | pItem->m_dwCheckState;
 }
 
 void CFWL_ListBox::GetCaption(IFWL_Widget* pWidget, CFX_WideString& wsCaption) {

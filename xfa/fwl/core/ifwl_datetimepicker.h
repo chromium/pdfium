@@ -41,10 +41,6 @@ FWL_EVENT_DEF(CFWL_Event_DtpEditChanged,
               CFWL_EventType::EditChanged,
               CFX_WideString m_wsText;)
 
-FWL_EVENT_DEF(CFWL_Event_DtpHoverChanged,
-              CFWL_EventType::HoverChanged,
-              int32_t hoverday;)
-
 FWL_EVENT_DEF(CFWL_Event_DtpSelectChanged,
               CFWL_EventType::SelectChanged,
               int32_t iYear;

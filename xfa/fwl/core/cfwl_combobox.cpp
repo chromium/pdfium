@@ -47,9 +47,9 @@ int32_t CFWL_ComboBox::AddString(const CFX_WideStringC& wsText) {
 }
 
 bool CFWL_ComboBox::RemoveAt(int32_t iIndex) {
-  if (iIndex < 0 || static_cast<size_t>(iIndex) >= m_ItemArray.size()) {
+  if (iIndex < 0 || static_cast<size_t>(iIndex) >= m_ItemArray.size())
     return false;
-  }
+
   m_ItemArray.erase(m_ItemArray.begin() + iIndex);
   return true;
 }
@@ -167,7 +167,6 @@ CFWL_ListItem* CFWL_ComboBox::GetItem(const IFWL_Widget* pWidget,
                                       int32_t nIndex) const {
   if (nIndex < 0 || static_cast<size_t>(nIndex) >= m_ItemArray.size())
     return nullptr;
-
   return m_ItemArray[nIndex].get();
 }
 
@@ -183,9 +182,7 @@ int32_t CFWL_ComboBox::GetItemIndex(IFWL_Widget* pWidget,
 
 uint32_t CFWL_ComboBox::GetItemStyles(IFWL_Widget* pWidget,
                                       CFWL_ListItem* pItem) {
-  if (!pItem)
-    return 0;
-  return static_cast<CFWL_ListItem*>(pItem)->m_dwStyles;
+  return pItem ? static_cast<CFWL_ListItem*>(pItem)->m_dwStyles : 0;
 }
 
 void CFWL_ComboBox::GetItemText(IFWL_Widget* pWidget,
@@ -200,6 +197,7 @@ void CFWL_ComboBox::GetItemRect(IFWL_Widget* pWidget,
                                 CFX_RectF& rtItem) {
   if (!pItem)
     return;
+
   CFWL_ListItem* pComboItem = static_cast<CFWL_ListItem*>(pItem);
   rtItem.Set(pComboItem->m_rtItem.left, pComboItem->m_rtItem.top,
              pComboItem->m_rtItem.width, pComboItem->m_rtItem.height);

@@ -232,15 +232,6 @@ bool CFWL_NoteDriver::DispatchMessage(CFWL_Message* pMessage,
                                       IFWL_Widget* pMessageForm) {
   bool bRet = false;
   switch (pMessage->GetClassID()) {
-    case CFWL_MessageType::Activate: {
-      bRet = DoActivate(static_cast<CFWL_MsgActivate*>(pMessage), pMessageForm);
-      break;
-    }
-    case CFWL_MessageType::Deactivate: {
-      bRet = DoDeactivate(static_cast<CFWL_MsgDeactivate*>(pMessage),
-                          pMessageForm);
-      break;
-    }
     case CFWL_MessageType::SetFocus: {
       bRet = DoSetFocus(static_cast<CFWL_MsgSetFocus*>(pMessage), pMessageForm);
       break;
@@ -262,24 +253,6 @@ bool CFWL_NoteDriver::DispatchMessage(CFWL_Message* pMessage,
       bRet = DoWheel(static_cast<CFWL_MsgMouseWheel*>(pMessage), pMessageForm);
       break;
     }
-    case CFWL_MessageType::Size: {
-      bRet = DoSize(static_cast<CFWL_MsgSize*>(pMessage));
-      break;
-    }
-    case CFWL_MessageType::Cursor: {
-      bRet = true;
-      break;
-    }
-    case CFWL_MessageType::WindowMove: {
-      bRet = DoWindowMove(static_cast<CFWL_MsgWindowMove*>(pMessage),
-                          pMessageForm);
-      break;
-    }
-    case CFWL_MessageType::DropFiles: {
-      bRet =
-          DoDragFiles(static_cast<CFWL_MsgDropFiles*>(pMessage), pMessageForm);
-      break;
-    }
     default: {
       bRet = true;
       break;
@@ -294,43 +267,6 @@ bool CFWL_NoteDriver::DispatchMessage(CFWL_Message* pMessage,
   return bRet;
 }
 
-bool CFWL_NoteDriver::DoActivate(CFWL_MsgActivate* pMsg,
-                                 IFWL_Widget* pMessageForm) {
-  pMsg->m_pDstTarget = pMessageForm;
-  return !!(pMsg->m_pDstTarget->GetStates() & FWL_WGTSTATE_Deactivated);
-}
-
-bool CFWL_NoteDriver::DoDeactivate(CFWL_MsgDeactivate* pMsg,
-                                   IFWL_Widget* pMessageForm) {
-  int32_t iTrackLoop = m_noteLoopQueue.GetSize();
-  if (iTrackLoop <= 0)
-    return false;
-  if (iTrackLoop == 1) {
-    if (pMessageForm->IsInstance(FX_WSTRC(L"FWL_FORMPROXY"))) {
-      return false;
-    }
-    if (pMsg->m_pSrcTarget &&
-        pMsg->m_pSrcTarget->IsInstance(FX_WSTRC(L"FWL_FORMPROXY"))) {
-      return false;
-    }
-    if (pMsg->m_pSrcTarget &&
-        pMsg->m_pSrcTarget->GetClassID() == FWL_Type::ToolTip) {
-      return false;
-    }
-    return true;
-  }
-  IFWL_Widget* pDst = pMsg->m_pDstTarget;
-  if (!pDst)
-    return false;
-#if (_FX_OS_ == _FX_MACOSX_)
-  if (pDst == pMessageForm && pDst->IsInstance(L"FWL_FORMPROXY")) {
-    return true;
-  }
-#endif
-  return pDst != pMessageForm &&
-         !pDst->IsInstance(FX_WSTRC(L"FWL_FORMPROXY")) &&
-         !pMessageForm->IsInstance(FX_WSTRC(L"FWL_FORMPROXY"));
-}
 bool CFWL_NoteDriver::DoSetFocus(CFWL_MsgSetFocus* pMsg,
                                  IFWL_Widget* pMessageForm) {
   CFWL_WidgetMgr* pWidgetMgr = pMessageForm->GetOwnerApp()->GetWidgetMgr();
@@ -444,23 +380,7 @@ bool CFWL_NoteDriver::DoWheel(CFWL_MsgMouseWheel* pMsg,
   pMsg->m_pDstTarget = pDst;
   return true;
 }
-bool CFWL_NoteDriver::DoSize(CFWL_MsgSize* pMsg) {
-  CFWL_WidgetMgr* pWidgetMgr =
-      pMsg->m_pDstTarget->GetOwnerApp()->GetWidgetMgr();
-  if (!pWidgetMgr)
-    return false;
-  pWidgetMgr->NotifySizeChanged(pMsg->m_pDstTarget, (FX_FLOAT)pMsg->m_iWidth,
-                                (FX_FLOAT)pMsg->m_iHeight);
-  return true;
-}
-bool CFWL_NoteDriver::DoWindowMove(CFWL_MsgWindowMove* pMsg,
-                                   IFWL_Widget* pMessageForm) {
-  return pMsg->m_pDstTarget == pMessageForm;
-}
-bool CFWL_NoteDriver::DoDragFiles(CFWL_MsgDropFiles* pMsg,
-                                  IFWL_Widget* pMessageForm) {
-  return pMsg->m_pDstTarget == pMessageForm;
-}
+
 bool CFWL_NoteDriver::DoMouseEx(CFWL_MsgMouse* pMsg,
                                 IFWL_Widget* pMessageForm) {
   CFWL_WidgetMgr* pWidgetMgr = pMessageForm->GetOwnerApp()->GetWidgetMgr();
@@ -512,9 +432,6 @@ void CFWL_NoteDriver::MouseSecondary(CFWL_MsgMouse* pMsg) {
   DispatchMessage(&msHover, nullptr);
 }
 bool CFWL_NoteDriver::IsValidMessage(CFWL_Message* pMessage) {
-  if (pMessage->GetClassID() == CFWL_MessageType::Post)
-    return true;
-
   int32_t iCount = m_noteLoopQueue.GetSize();
   for (int32_t i = 0; i < iCount; i++) {
     CFWL_NoteLoop* pNoteLoop = static_cast<CFWL_NoteLoop*>(m_noteLoopQueue[i]);
@@ -591,8 +508,7 @@ bool CFWL_EventTarget::ProcessEvent(CFWL_Event* pEvent) {
     IFWL_Widget* pSource = nullptr;
     uint32_t dwFilter = 0;
     m_eventSources.GetNextAssoc(pos, (void*&)pSource, dwFilter);
-    if (pSource == pEvent->m_pSrcTarget ||
-        pEvent->GetClassID() == CFWL_EventType::Idle) {
+    if (pSource == pEvent->m_pSrcTarget) {
       if (IsFilterEvent(pEvent, dwFilter)) {
         pDelegate->OnProcessEvent(pEvent);
         return true;
@@ -617,14 +533,10 @@ bool CFWL_EventTarget::IsFilterEvent(CFWL_Event* pEvent,
     case CFWL_EventType::SetFocus:
     case CFWL_EventType::KillFocus:
       return !!(dwFilter & FWL_EVENT_FOCUSCHANGED_MASK);
-    case CFWL_EventType::Draw:
-      return !!(dwFilter & FWL_EVENT_DRAW_MASK);
     case CFWL_EventType::Close:
       return !!(dwFilter & FWL_EVENT_CLOSE_MASK);
     case CFWL_EventType::SizeChanged:
       return !!(dwFilter & FWL_EVENT_SIZECHANGED_MASK);
-    case CFWL_EventType::Idle:
-      return !!(dwFilter & FWL_EVENT_IDLE_MASK);
     default:
       return !!(dwFilter & FWL_EVENT_CONTROL_MASK);
   }

@@ -666,62 +666,13 @@ void IFWL_Form::UpdateCaption() {
 }
 
 #ifdef FWL_UseMacSystemBorder
-void IFWL_Form::OnProcessMessage(CFWL_Message* pMessage) {
-  if (!pMessage)
-    return;
-
-  switch (pMessage->GetClassID()) {
-    case CFWL_MessageType::Activate: {
-      m_pProperties->m_dwStates &= ~FWL_WGTSTATE_Deactivated;
-      Repaint(&m_rtRelative);
-      break;
-    }
-    case CFWL_MessageType::Deactivate: {
-      m_pProperties->m_dwStates |= FWL_WGTSTATE_Deactivated;
-      Repaint(&m_rtRelative);
-      break;
-    }
-    default:
-      break;
-  }
-}
+void IFWL_Form::OnProcessMessage(CFWL_Message* pMessage) {}
 #else
 void IFWL_Form::OnProcessMessage(CFWL_Message* pMessage) {
   if (!pMessage)
     return;
 
   switch (pMessage->GetClassID()) {
-    case CFWL_MessageType::Activate: {
-      m_pProperties->m_dwStates &= ~FWL_WGTSTATE_Deactivated;
-      const IFWL_App* pApp = GetOwnerApp();
-      CFWL_NoteDriver* pDriver =
-          static_cast<CFWL_NoteDriver*>(pApp->GetNoteDriver());
-      IFWL_Widget* pSubFocus = GetSubFocus();
-      if (pSubFocus && pSubFocus != pDriver->GetFocus())
-        pDriver->SetFocus(pSubFocus);
-
-      Repaint(&m_rtRelative);
-      break;
-    }
-    case CFWL_MessageType::Deactivate: {
-      m_pProperties->m_dwStates |= FWL_WGTSTATE_Deactivated;
-      const IFWL_App* pApp = GetOwnerApp();
-      CFWL_NoteDriver* pDriver =
-          static_cast<CFWL_NoteDriver*>(pApp->GetNoteDriver());
-      IFWL_Widget* pSubFocus = GetSubFocus();
-      if (pSubFocus) {
-        if (pSubFocus == pDriver->GetFocus()) {
-          pDriver->SetFocus(nullptr);
-        } else if (pSubFocus->GetStates() & FWL_WGTSTATE_Focused) {
-          if (IFWL_WidgetDelegate* pDelegate = pSubFocus->GetDelegate()) {
-            CFWL_MsgKillFocus ms;
-            pDelegate->OnProcessMessage(&ms);
-          }
-        }
-      }
-      Repaint(&m_rtRelative);
-      break;
-    }
     case CFWL_MessageType::Mouse: {
       CFWL_MsgMouse* pMsg = static_cast<CFWL_MsgMouse*>(pMessage);
       switch (pMsg->m_dwCmd) {
@@ -745,30 +696,6 @@ void IFWL_Form::OnProcessMessage(CFWL_Message* pMessage) {
       }
       break;
     }
-    case CFWL_MessageType::Size: {
-      CFWL_WidgetMgr* pWidgetMgr = GetOwnerApp()->GetWidgetMgr();
-      if (!pWidgetMgr)
-        return;
-
-      pWidgetMgr->AddRedrawCounts(this);
-      if (!m_bSetMaximize)
-        break;
-
-      m_bSetMaximize = false;
-      CFWL_MsgSize* pMsg = static_cast<CFWL_MsgSize*>(pMessage);
-      m_pProperties->m_rtWidget.left = 0;
-      m_pProperties->m_rtWidget.top = 0;
-      m_pProperties->m_rtWidget.width = (FX_FLOAT)pMsg->m_iWidth;
-      m_pProperties->m_rtWidget.height = (FX_FLOAT)pMsg->m_iHeight;
-      Update();
-      break;
-    }
-    case CFWL_MessageType::WindowMove:
-      OnWindowMove(static_cast<CFWL_MsgWindowMove*>(pMessage));
-      break;
-    case CFWL_MessageType::Close:
-      OnClose(static_cast<CFWL_MsgClose*>(pMessage));
-      break;
     default:
       break;
   }
@@ -899,17 +826,6 @@ void IFWL_Form::OnLButtonDblClk(CFWL_MsgMouse* pMsg) {
     Update();
     m_bMaximized = !m_bMaximized;
   }
-}
-
-void IFWL_Form::OnWindowMove(CFWL_MsgWindowMove* pMsg) {
-  m_pProperties->m_rtWidget.left = pMsg->m_fx;
-  m_pProperties->m_rtWidget.top = pMsg->m_fy;
-}
-
-void IFWL_Form::OnClose(CFWL_MsgClose* pMsg) {
-  CFWL_EvtClose eClose;
-  eClose.m_pSrcTarget = this;
-  DispatchEvent(&eClose);
 }
 
 CFWL_SysBtn::CFWL_SysBtn() {

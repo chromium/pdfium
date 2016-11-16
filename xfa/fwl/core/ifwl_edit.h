@@ -86,8 +86,6 @@ FWL_EVENT_DEF(CFWL_EvtEdtCheckWord,
 
 class IFDE_TxtEdtDoRecord;
 class IFWL_Edit;
-class CFWL_MsgActivate;
-class CFWL_MsgDeactivate;
 class CFWL_MsgMouse;
 class CFWL_WidgetProperties;
 class IFWL_Caret;
@@ -196,8 +194,6 @@ class IFWL_Edit : public IFWL_Widget {
                         int32_t nCount,
                         FX_FLOAT fOffSetX,
                         FX_FLOAT fOffSetY);
-  void DoActivate(CFWL_MsgActivate* pMsg);
-  void DoDeactivate(CFWL_MsgDeactivate* pMsg);
   void DoButtonDown(CFWL_MsgMouse* pMsg);
   void OnFocusChanged(CFWL_Message* pMsg, bool bSet);
   void OnLButtonDown(CFWL_MsgMouse* pMsg);
