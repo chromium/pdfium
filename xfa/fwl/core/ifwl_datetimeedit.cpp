@@ -32,24 +32,26 @@ void IFWL_DateTimeEdit::OnProcessMessage(CFWL_Message* pMessage) {
 
 void IFWL_DateTimeEdit::DisForm_OnProcessMessage(CFWL_Message* pMessage) {
   CFWL_MessageType dwHashCode = pMessage->GetClassID();
-  if (m_pWidgetMgr->IsFormDisabled()) {
-    if (dwHashCode == CFWL_MessageType::Mouse) {
-      CFWL_MsgMouse* pMouse = static_cast<CFWL_MsgMouse*>(pMessage);
-      if (pMouse->m_dwCmd == FWL_MouseCommand::LeftButtonDown ||
-          pMouse->m_dwCmd == FWL_MouseCommand::RightButtonDown) {
-        if ((m_pProperties->m_dwStates & FWL_WGTSTATE_Focused) == 0)
-          m_pProperties->m_dwStates |= FWL_WGTSTATE_Focused;
+  if (!m_pWidgetMgr->IsFormDisabled() ||
+      dwHashCode != CFWL_MessageType::Mouse) {
+    IFWL_Edit::OnProcessMessage(pMessage);
+    return;
+  }
 
-        IFWL_DateTimePicker* pDateTime =
-            static_cast<IFWL_DateTimePicker*>(m_pOuter);
-        if (pDateTime->IsMonthCalendarVisible()) {
-          CFX_RectF rtInvalidate;
-          pDateTime->GetWidgetRect(rtInvalidate);
-          pDateTime->ShowMonthCalendar(false);
-          rtInvalidate.Offset(-rtInvalidate.left, -rtInvalidate.top);
-          pDateTime->Repaint(&rtInvalidate);
-        }
-      }
+  CFWL_MsgMouse* pMouse = static_cast<CFWL_MsgMouse*>(pMessage);
+  if (pMouse->m_dwCmd == FWL_MouseCommand::LeftButtonDown ||
+      pMouse->m_dwCmd == FWL_MouseCommand::RightButtonDown) {
+    if ((m_pProperties->m_dwStates & FWL_WGTSTATE_Focused) == 0)
+      m_pProperties->m_dwStates |= FWL_WGTSTATE_Focused;
+
+    IFWL_DateTimePicker* pDateTime =
+        static_cast<IFWL_DateTimePicker*>(m_pOuter);
+    if (pDateTime->IsMonthCalendarVisible()) {
+      CFX_RectF rtInvalidate;
+      pDateTime->GetWidgetRect(rtInvalidate);
+      pDateTime->ShowMonthCalendar(false);
+      rtInvalidate.Offset(-rtInvalidate.left, -rtInvalidate.top);
+      pDateTime->Repaint(&rtInvalidate);
     }
   }
   IFWL_Edit::OnProcessMessage(pMessage);

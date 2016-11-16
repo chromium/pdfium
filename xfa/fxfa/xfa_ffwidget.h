@@ -92,9 +92,9 @@ class CXFA_FFWidget : public CXFA_ContentLayoutItem {
   virtual bool Copy(CFX_WideString& wsCopy);
   virtual bool Cut(CFX_WideString& wsCut);
   virtual bool Paste(const CFX_WideString& wsPaste);
-  virtual bool SelectAll();
-  virtual bool Delete();
-  virtual bool DeSelect();
+  virtual void SelectAll();
+  virtual void Delete();
+  virtual void DeSelect();
   virtual bool GetSuggestWords(CFX_PointF pointf,
                                std::vector<CFX_ByteString>& sSuggest);
   virtual bool ReplaceSpellCheckWord(CFX_PointF pointf,

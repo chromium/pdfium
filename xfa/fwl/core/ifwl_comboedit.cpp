@@ -31,10 +31,11 @@ void IFWL_ComboEdit::SetSelected() {
 void IFWL_ComboEdit::FlagFocus(bool bSet) {
   if (bSet) {
     m_pProperties->m_dwStates |= FWL_WGTSTATE_Focused;
-  } else {
-    m_pProperties->m_dwStates &= ~FWL_WGTSTATE_Focused;
-    ShowCaret(false);
+    return;
   }
+
+  m_pProperties->m_dwStates &= ~FWL_WGTSTATE_Focused;
+  ShowCaret(false);
 }
 
 void IFWL_ComboEdit::OnProcessMessage(CFWL_Message* pMessage) {

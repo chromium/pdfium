@@ -439,14 +439,14 @@ bool CXFA_FFComboBox::Paste(const CFX_WideString& wsPaste) {
   return m_pDataAcc->IsChoiceListAllowTextEntry() &&
          ((CFWL_ComboBox*)m_pNormalWidget)->EditPaste(wsPaste);
 }
-bool CXFA_FFComboBox::SelectAll() {
-  return ((CFWL_ComboBox*)m_pNormalWidget)->EditSelectAll();
+void CXFA_FFComboBox::SelectAll() {
+  ((CFWL_ComboBox*)m_pNormalWidget)->EditSelectAll();
 }
-bool CXFA_FFComboBox::Delete() {
-  return ((CFWL_ComboBox*)m_pNormalWidget)->EditDelete();
+void CXFA_FFComboBox::Delete() {
+  ((CFWL_ComboBox*)m_pNormalWidget)->EditDelete();
 }
-bool CXFA_FFComboBox::DeSelect() {
-  return ((CFWL_ComboBox*)m_pNormalWidget)->EditDeSelect();
+void CXFA_FFComboBox::DeSelect() {
+  ((CFWL_ComboBox*)m_pNormalWidget)->EditDeSelect();
 }
 void CXFA_FFComboBox::SetItemState(int32_t nIndex, bool bSelected) {
   if (bSelected) {

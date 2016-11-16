@@ -63,9 +63,9 @@ class CXFA_FFComboBox : public CXFA_FFField {
   bool Copy(CFX_WideString& wsCopy) override;
   bool Cut(CFX_WideString& wsCut) override;
   bool Paste(const CFX_WideString& wsPaste) override;
-  bool SelectAll() override;
-  bool Delete() override;
-  bool DeSelect() override;
+  void SelectAll() override;
+  void Delete() override;
+  void DeSelect() override;
 
   // IFWL_WidgetDelegate
   void OnProcessMessage(CFWL_Message* pMessage) override;

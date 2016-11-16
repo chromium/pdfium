@@ -10,6 +10,7 @@
 #include "xfa/fwl/core/cfwl_event.h"
 #include "xfa/fwl/core/cfwl_widgetproperties.h"
 #include "xfa/fwl/core/ifwl_dataprovider.h"
+#include "xfa/fwl/core/ifwl_datetimeedit.h"
 #include "xfa/fwl/core/ifwl_monthcalendar.h"
 #include "xfa/fwl/core/ifwl_widget.h"
 
@@ -90,14 +91,16 @@ class IFWL_DateTimePicker : public IFWL_Widget, public IFWL_MonthCalendarDP {
                    int32_t nStart = 0,
                    int32_t nCount = -1) const;
 
-  int32_t CountSelRanges();
-  int32_t GetSelRange(int32_t nIndex, int32_t& nStart);
+  int32_t CountSelRanges() const { return m_pEdit->CountSelRanges(); }
+  int32_t GetSelRange(int32_t nIndex, int32_t& nStart) const {
+    return m_pEdit->GetSelRange(nIndex, nStart);
+  }
 
-  void GetBBox(CFX_RectF& rect);
-  void SetEditLimit(int32_t nLimit);
+  void GetBBox(CFX_RectF& rect) const;
+  void SetEditLimit(int32_t nLimit) { m_pEdit->SetLimit(nLimit); }
   void ModifyEditStylesEx(uint32_t dwStylesExAdded, uint32_t dwStylesExRemoved);
 
-  bool IsMonthCalendarVisible();
+  bool IsMonthCalendarVisible() const;
   void ShowMonthCalendar(bool bActivate);
   void ProcessSelChanged(int32_t iYear, int32_t iMonth, int32_t iDay);
 
@@ -114,13 +117,13 @@ class IFWL_DateTimePicker : public IFWL_Widget, public IFWL_MonthCalendarDP {
   void ResetEditAlignment();
   void InitProxyForm();
 
-  bool DisForm_IsMonthCalendarVisible();
+  bool DisForm_IsMonthCalendarVisible() const;
   void DisForm_ShowMonthCalendar(bool bActivate);
-  FWL_WidgetHit DisForm_HitTest(FX_FLOAT fx, FX_FLOAT fy);
-  bool DisForm_IsNeedShowButton();
+  FWL_WidgetHit DisForm_HitTest(FX_FLOAT fx, FX_FLOAT fy) const;
+  bool DisForm_IsNeedShowButton() const;
   void DisForm_Update();
   void DisForm_GetWidgetRect(CFX_RectF& rect, bool bAutoSize = false);
-  void DisForm_GetBBox(CFX_RectF& rect);
+  void DisForm_GetBBox(CFX_RectF& rect) const;
   void DisForm_DrawWidget(CFX_Graphics* pGraphics,
                           const CFX_Matrix* pMatrix = nullptr);
   void DisForm_OnFocusChanged(CFWL_Message* pMsg, bool bSet);

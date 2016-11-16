@@ -85,9 +85,9 @@ class CFWL_ComboBox : public CFWL_Widget, public IFWL_ComboBoxDP {
   bool EditCopy(CFX_WideString& wsCopy);
   bool EditCut(CFX_WideString& wsCut);
   bool EditPaste(const CFX_WideString& wsPaste);
-  bool EditSelectAll();
-  bool EditDelete();
-  bool EditDeSelect();
+  void EditSelectAll();
+  void EditDelete();
+  void EditDeSelect();
 
   void GetBBox(CFX_RectF& rect);
   void EditModifyStylesEx(uint32_t dwStylesExAdded, uint32_t dwStylesExRemoved);

@@ -7,6 +7,8 @@
 #ifndef XFA_FWL_CORE_IFWL_COMBOBOX_H_
 #define XFA_FWL_CORE_IFWL_COMBOBOX_H_
 
+#include "xfa/fwl/core/ifwl_comboboxproxy.h"
+#include "xfa/fwl/core/ifwl_comboedit.h"
 #include "xfa/fwl/core/ifwl_combolist.h"
 #include "xfa/fwl/core/ifwl_form.h"
 #include "xfa/fwl/core/ifwl_listbox.h"
@@ -15,7 +17,6 @@
 class CFWL_WidgetProperties;
 class IFWL_ComboBox;
 class IFWL_ComboBoxProxy;
-class IFWL_ComboEdit;
 class IFWL_FormProxy;
 class IFWL_ListBox;
 class IFWL_Widget;
@@ -99,7 +100,7 @@ class IFWL_ComboBox : public IFWL_Widget {
   void OnDrawWidget(CFX_Graphics* pGraphics,
                     const CFX_Matrix* pMatrix) override;
 
-  int32_t GetCurSel() const;
+  int32_t GetCurSel() const { return m_iCurSel; }
   void SetCurSel(int32_t iSel);
 
   void SetEditText(const CFX_WideString& wsText);
@@ -109,26 +110,34 @@ class IFWL_ComboBox : public IFWL_Widget {
 
   void OpenDropDownList(bool bActivate);
 
-  bool EditCanUndo();
-  bool EditCanRedo();
-  bool EditUndo();
-  bool EditRedo();
-  bool EditCanCopy();
-  bool EditCanCut();
-  bool EditCanSelectAll();
-  bool EditCopy(CFX_WideString& wsCopy);
-  bool EditCut(CFX_WideString& wsCut);
-  bool EditPaste(const CFX_WideString& wsPaste);
-  bool EditSelectAll();
-  bool EditDelete();
-  bool EditDeSelect();
+  bool EditCanUndo() const { return m_pEdit->CanUndo(); }
+  bool EditCanRedo() const { return m_pEdit->CanRedo(); }
+  bool EditUndo() { return m_pEdit->Undo(); }
+  bool EditRedo() { return m_pEdit->Redo(); }
+  bool EditCanCopy() const { return m_pEdit->CountSelRanges() > 0; }
+  bool EditCanCut() const {
+    if (m_pEdit->GetStylesEx() & FWL_STYLEEXT_EDT_ReadOnly)
+      return false;
+    return EditCanCopy();
+  }
+  bool EditCanSelectAll() const { return m_pEdit->GetTextLength() > 0; }
+  bool EditCopy(CFX_WideString& wsCopy) const { return m_pEdit->Copy(wsCopy); }
+  bool EditCut(CFX_WideString& wsCut) { return m_pEdit->Cut(wsCut); }
+  bool EditPaste(const CFX_WideString& wsPaste) {
+    return m_pEdit->Paste(wsPaste);
+  }
+  void EditSelectAll() { m_pEdit->AddSelRange(0); }
+  void EditDelete() { m_pEdit->ClearText(); }
+  void EditDeSelect() { m_pEdit->ClearSelections(); }
 
-  void GetBBox(CFX_RectF& rect);
+  void GetBBox(CFX_RectF& rect) const;
   void EditModifyStylesEx(uint32_t dwStylesExAdded, uint32_t dwStylesExRemoved);
 
   void DrawStretchHandler(CFX_Graphics* pGraphics, const CFX_Matrix* pMatrix);
-  bool IsDropListVisible();
-
+  bool IsDropListVisible() const {
+    return m_pComboBoxProxy &&
+           !(m_pComboBoxProxy->GetStates() & FWL_WGTSTATE_Invisible);
+  }
   void ShowDropList(bool bActivate);
 
   IFWL_ComboEdit* GetComboEdit() const { return m_pEdit.get(); }
@@ -160,7 +169,7 @@ class IFWL_ComboBox : public IFWL_Widget {
   FWL_WidgetHit DisForm_HitTest(FX_FLOAT fx, FX_FLOAT fy);
   void DisForm_DrawWidget(CFX_Graphics* pGraphics,
                           const CFX_Matrix* pMatrix = nullptr);
-  void DisForm_GetBBox(CFX_RectF& rect);
+  void DisForm_GetBBox(CFX_RectF& rect) const;
   void DisForm_Layout();
   void OnFocusChanged(CFWL_Message* pMsg, bool bSet = true);
   void OnLButtonDown(CFWL_MsgMouse* pMsg);
@@ -182,7 +191,7 @@ class IFWL_ComboBox : public IFWL_Widget {
   CFX_RectF m_rtHandler;
   std::unique_ptr<IFWL_ComboEdit> m_pEdit;
   std::unique_ptr<IFWL_ComboList> m_pListBox;
-  IFWL_ComboBoxProxy* m_pComboBoxProxy;
+  IFWL_ComboBoxProxy* m_pComboBoxProxy;  // Can this be a unique_ptr?
   bool m_bLButtonDown;
   bool m_bUpFormHandler;
   int32_t m_iCurSel;

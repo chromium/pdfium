@@ -87,23 +87,23 @@ void IFWL_ComboBoxProxy::OnLButtonUp(CFWL_MsgMouse* pMsg) {
   CFWL_NoteDriver* pDriver =
       static_cast<CFWL_NoteDriver*>(pApp->GetNoteDriver());
   pDriver->SetGrab(this, false);
-  if (m_bLButtonUpSelf) {
-    CFX_RectF rect;
-    GetWidgetRect(rect);
-    rect.left = rect.top = 0;
-    if (!rect.Contains(pMsg->m_fx, pMsg->m_fy) &&
-        m_pComboBox->IsDropListVisible()) {
-      m_pComboBox->ShowDropList(false);
-    }
-  } else {
+  if (!m_bLButtonUpSelf) {
     m_bLButtonUpSelf = true;
+    return;
+  }
+
+  CFX_RectF rect;
+  GetWidgetRect(rect);
+  rect.left = rect.top = 0;
+  if (!rect.Contains(pMsg->m_fx, pMsg->m_fy) &&
+      m_pComboBox->IsDropListVisible()) {
+    m_pComboBox->ShowDropList(false);
   }
 }
 
 void IFWL_ComboBoxProxy::OnFocusChanged(CFWL_MsgKillFocus* pMsg, bool bSet) {
   if (bSet)
     return;
-
   if (!pMsg->m_pSetFocus)
     m_pComboBox->ShowDropList(false);
 }

@@ -127,16 +127,19 @@ bool CFWL_ComboBox::EditPaste(const CFX_WideString& wsPaste) {
   return GetWidget() ? ToComboBox(GetWidget())->EditPaste(wsPaste) : false;
 }
 
-bool CFWL_ComboBox::EditSelectAll() {
-  return GetWidget() ? ToComboBox(GetWidget())->EditSelectAll() : false;
+void CFWL_ComboBox::EditSelectAll() {
+  if (GetWidget())
+    ToComboBox(GetWidget())->EditSelectAll();
 }
 
-bool CFWL_ComboBox::EditDelete() {
-  return GetWidget() ? ToComboBox(GetWidget())->EditDelete() : false;
+void CFWL_ComboBox::EditDelete() {
+  if (GetWidget())
+    ToComboBox(GetWidget())->EditDelete();
 }
 
-bool CFWL_ComboBox::EditDeSelect() {
-  return GetWidget() ? ToComboBox(GetWidget())->EditDeSelect() : false;
+void CFWL_ComboBox::EditDeSelect() {
+  if (GetWidget())
+    ToComboBox(GetWidget())->EditDeSelect();
 }
 
 void CFWL_ComboBox::GetBBox(CFX_RectF& rect) {

@@ -304,15 +304,13 @@ bool CXFA_FFWidget::Cut(CFX_WideString& wsCut) {
 bool CXFA_FFWidget::Paste(const CFX_WideString& wsPaste) {
   return false;
 }
-bool CXFA_FFWidget::SelectAll() {
-  return false;
-}
-bool CXFA_FFWidget::Delete() {
-  return false;
-}
-bool CXFA_FFWidget::DeSelect() {
-  return false;
-}
+
+void CXFA_FFWidget::SelectAll() {}
+
+void CXFA_FFWidget::Delete() {}
+
+void CXFA_FFWidget::DeSelect() {}
+
 bool CXFA_FFWidget::GetSuggestWords(CFX_PointF pointf,
                                     std::vector<CFX_ByteString>& sSuggest) {
   return false;
