@@ -23,6 +23,7 @@
 #include "core/fpdfapi/parser/cpdf_parser.h"
 #include "core/fpdfapi/parser/cpdf_reference.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
+#include "core/fpdfapi/render/cpdf_docrenderdata.h"
 #include "core/fpdfapi/render/render_int.h"
 #include "core/fxcodec/JBig2_DocumentContext.h"
 #include "core/fxge/cfx_unicodeencoding.h"

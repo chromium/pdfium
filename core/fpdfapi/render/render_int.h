@@ -63,27 +63,6 @@ class CPDF_TransferFunc {
   uint8_t m_Samples[256 * 3];
 };
 
-class CPDF_DocRenderData {
- public:
-  explicit CPDF_DocRenderData(CPDF_Document* pPDFDoc);
-  ~CPDF_DocRenderData();
-  CPDF_Type3Cache* GetCachedType3(CPDF_Type3Font* pFont);
-  CPDF_TransferFunc* GetTransferFunc(CPDF_Object* pObj);
-  void Clear(bool bRelease = false);
-  void ReleaseCachedType3(CPDF_Type3Font* pFont);
-  void ReleaseTransferFunc(CPDF_Object* pObj);
-
- private:
-  using CPDF_Type3CacheMap =
-      std::map<CPDF_Font*, CPDF_CountedObject<CPDF_Type3Cache>*>;
-  using CPDF_TransferFuncMap =
-      std::map<CPDF_Object*, CPDF_CountedObject<CPDF_TransferFunc>*>;
-
-  CPDF_Document* m_pPDFDoc;
-  CPDF_Type3CacheMap m_Type3FaceMap;
-  CPDF_TransferFuncMap m_TransferFuncMap;
-};
-
 class CPDF_RenderStatus {
  public:
   CPDF_RenderStatus();

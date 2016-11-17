@@ -534,6 +534,8 @@ static_library("fpdfapi") {
     "core/fpdfapi/parser/fpdf_parser_decode.h",
     "core/fpdfapi/parser/fpdf_parser_utility.cpp",
     "core/fpdfapi/parser/fpdf_parser_utility.h",
+    "core/fpdfapi/render/cpdf_docrenderdata.cpp",
+    "core/fpdfapi/render/cpdf_docrenderdata.h",
     "core/fpdfapi/render/cpdf_pagerendercache.h",
     "core/fpdfapi/render/cpdf_progressiverenderer.h",
     "core/fpdfapi/render/cpdf_rendercontext.h",
