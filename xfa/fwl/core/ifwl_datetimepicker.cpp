@@ -7,6 +7,7 @@
 #include "xfa/fwl/core/ifwl_datetimepicker.h"
 
 #include "third_party/base/ptr_util.h"
+#include "xfa/fwl/core/cfwl_evteditchanged.h"
 #include "xfa/fwl/core/cfwl_msgmouse.h"
 #include "xfa/fwl/core/cfwl_msgsetfocus.h"
 #include "xfa/fwl/core/cfwl_themebackground.h"
@@ -197,8 +198,8 @@ void IFWL_DateTimePicker::SetEditText(const CFX_WideString& wsText) {
 
   m_pEdit->SetText(wsText);
   Repaint(&m_rtClient);
-  CFWL_Event_DtpEditChanged ev;
-  ev.m_wsText = wsText;
+
+  CFWL_EvtEditChanged ev;
   DispatchEvent(&ev);
 }
 

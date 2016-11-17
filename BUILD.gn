@@ -1188,6 +1188,8 @@ if (pdf_enable_xfa) {
       "xfa/fwl/core/cfwl_evtclick.h",
       "xfa/fwl/core/cfwl_evtclose.cpp",
       "xfa/fwl/core/cfwl_evtclose.h",
+      "xfa/fwl/core/cfwl_evteditchanged.cpp",
+      "xfa/fwl/core/cfwl_evteditchanged.h",
       "xfa/fwl/core/cfwl_evtkey.cpp",
       "xfa/fwl/core/cfwl_evtkey.h",
       "xfa/fwl/core/cfwl_evtkillfocus.cpp",

@@ -45,12 +45,6 @@ class IFWL_Widget;
 #define FWL_STYLEEXT_CMB_ListItemIconText (1L << 12)
 #define FWL_STYLEEXT_CMB_ReadOnly (1L << 13)
 
-FWL_EVENT_DEF(CFWL_EvtCmbEditChanged,
-              CFWL_EventType::EditChanged,
-              int32_t nChangeType;
-              CFX_WideString wsInsert;
-              CFX_WideString wsDelete;)
-
 FWL_EVENT_DEF(CFWL_EvtCmbSelChanged,
               CFWL_EventType::SelectChanged,
               CFX_Int32Array iArraySels;

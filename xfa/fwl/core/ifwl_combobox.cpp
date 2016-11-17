@@ -9,6 +9,7 @@
 #include "third_party/base/ptr_util.h"
 #include "xfa/fde/cfde_txtedtengine.h"
 #include "xfa/fde/tto/fde_textout.h"
+#include "xfa/fwl/core/cfwl_evteditchanged.h"
 #include "xfa/fwl/core/cfwl_evtpostdropdown.h"
 #include "xfa/fwl/core/cfwl_evtpredropdown.h"
 #include "xfa/fwl/core/cfwl_evttextchanged.h"
@@ -855,13 +856,8 @@ void IFWL_ComboBox::OnProcessEvent(CFWL_Event* pEvent) {
     pScrollEv.m_fPos = pScrollEvent->m_fPos;
     DispatchEvent(&pScrollEv);
   } else if (dwFlag == CFWL_EventType::TextChanged) {
-    CFWL_EvtTextChanged* pTextChangedEvent =
-        static_cast<CFWL_EvtTextChanged*>(pEvent);
-    CFWL_EvtCmbEditChanged pTemp;
+    CFWL_EvtEditChanged pTemp;
     pTemp.m_pSrcTarget = this;
-    pTemp.wsInsert = pTextChangedEvent->wsInsert;
-    pTemp.wsDelete = pTextChangedEvent->wsDelete;
-    pTemp.nChangeType = pTextChangedEvent->nChangeType;
     DispatchEvent(&pTemp);
   }
 }

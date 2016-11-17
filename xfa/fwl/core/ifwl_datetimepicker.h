@@ -34,10 +34,6 @@
 class IFWL_DateTimeEdit;
 class IFWL_FormProxy;
 
-FWL_EVENT_DEF(CFWL_Event_DtpEditChanged,
-              CFWL_EventType::EditChanged,
-              CFX_WideString m_wsText;)
-
 FWL_EVENT_DEF(CFWL_Event_DtpSelectChanged,
               CFWL_EventType::SelectChanged,
               int32_t iYear;
