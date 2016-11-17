@@ -9,6 +9,7 @@
 
 #include <memory>
 #include <set>
+#include <type_traits>
 
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
@@ -115,6 +116,14 @@ class CPDF_Object {
 
  private:
   CPDF_Object(const CPDF_Object& src) {}
+};
+
+template <typename T>
+struct CanInternStrings {
+  static const bool value = std::is_same<T, CPDF_Array>::value ||
+                            std::is_same<T, CPDF_Dictionary>::value ||
+                            std::is_same<T, CPDF_Name>::value ||
+                            std::is_same<T, CPDF_String>::value;
 };
 
 #endif  // CORE_FPDFAPI_PARSER_CPDF_OBJECT_H_

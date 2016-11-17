@@ -79,7 +79,6 @@ class CPDF_SyntaxParser {
                                           uint32_t objnum,
                                           uint32_t gennum);
 
-  CFX_ByteString MaybeIntern(const CFX_ByteString& str);
   inline bool CheckPosition(FX_FILESIZE pos) {
     return m_BufOffset >= pos ||
            static_cast<FX_FILESIZE>(m_BufOffset + m_BufSize) <= pos;

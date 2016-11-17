@@ -9,6 +9,7 @@
 
 #include <memory>
 #include <set>
+#include <type_traits>
 #include <vector>
 
 #include "core/fpdfapi/parser/cpdf_indirect_object_holder.h"
@@ -23,6 +24,7 @@ class CPDF_Array : public CPDF_Object {
       std::vector<std::unique_ptr<CPDF_Object>>::const_iterator;
 
   CPDF_Array();
+  explicit CPDF_Array(const CFX_WeakPtr<CFX_ByteStringPool>& pPool);
   ~CPDF_Array() override;
 
   // CPDF_Object:
@@ -52,17 +54,43 @@ class CPDF_Array : public CPDF_Object {
   CPDF_Object* InsertAt(size_t index, std::unique_ptr<CPDF_Object> pObj);
 
   // Creates object owned by the array, returns unowned pointer to it.
+  // We have special cases for objects that can intern strings from
+  // a ByteStringPool.
   template <typename T, typename... Args>
-  T* AddNew(Args... args) {
+  typename std::enable_if<!CanInternStrings<T>::value, T*>::type AddNew(
+      Args... args) {
     return static_cast<T*>(Add(pdfium::MakeUnique<T>(args...)));
   }
   template <typename T, typename... Args>
-  T* SetNewAt(size_t index, Args... args) {
+  typename std::enable_if<CanInternStrings<T>::value, T*>::type AddNew(
+      Args... args) {
+    return static_cast<T*>(Add(pdfium::MakeUnique<T>(m_pPool, args...)));
+  }
+  template <typename T, typename... Args>
+  typename std::enable_if<!CanInternStrings<T>::value, T*>::type SetNewAt(
+      size_t index,
+      Args... args) {
     return static_cast<T*>(SetAt(index, pdfium::MakeUnique<T>(args...)));
   }
   template <typename T, typename... Args>
-  T* InsertNewAt(size_t index, Args... args) {
+  typename std::enable_if<CanInternStrings<T>::value, T*>::type SetNewAt(
+      size_t index,
+      Args... args) {
+    return static_cast<T*>(
+        SetAt(index, pdfium::MakeUnique<T>(m_pPool, args...)));
+  }
+  template <typename T, typename... Args>
+  typename std::enable_if<!CanInternStrings<T>::value, T*>::type InsertNewAt(
+      size_t index,
+      Args... args) {
     return static_cast<T*>(InsertAt(index, pdfium::MakeUnique<T>(args...)));
+  }
+  template <typename T, typename... Args>
+  typename std::enable_if<CanInternStrings<T>::value, T*>::type InsertNewAt(
+      size_t index,
+      Args... args) {
+    return static_cast<T*>(
+        InsertAt(index, pdfium::MakeUnique<T>(m_pPool, args...)));
   }
 
   void RemoveAt(size_t index, size_t nCount = 1);
@@ -77,6 +105,7 @@ class CPDF_Array : public CPDF_Object {
       std::set<const CPDF_Object*>* pVisited) const override;
 
   std::vector<std::unique_ptr<CPDF_Object>> m_Objects;
+  CFX_WeakPtr<CFX_ByteStringPool> m_pPool;
 };
 
 inline CPDF_Array* ToArray(CPDF_Object* obj) {

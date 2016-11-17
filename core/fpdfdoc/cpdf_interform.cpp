@@ -59,8 +59,7 @@ void InitDict(CPDF_Dictionary*& pFormDict, CPDF_Document* pDocument) {
     return;
 
   if (!pFormDict) {
-    pFormDict =
-        pDocument->NewIndirect<CPDF_Dictionary>(pDocument->GetByteStringPool());
+    pFormDict = pDocument->NewIndirect<CPDF_Dictionary>();
     pDocument->GetRoot()->SetReferenceFor("AcroForm", pDocument,
                                           pFormDict->GetObjNum());
   }

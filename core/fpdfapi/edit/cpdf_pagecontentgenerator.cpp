@@ -62,8 +62,7 @@ CFX_ByteString CPDF_PageContentGenerator::RealizeResource(
     const CFX_ByteString& bsType) {
   ASSERT(dwResourceObjNum);
   if (!m_pPage->m_pResources) {
-    m_pPage->m_pResources = m_pDocument->NewIndirect<CPDF_Dictionary>(
-        m_pDocument->GetByteStringPool());
+    m_pPage->m_pResources = m_pDocument->NewIndirect<CPDF_Dictionary>();
     m_pPage->m_pFormDict->SetReferenceFor("Resources", m_pDocument,
                                           m_pPage->m_pResources);
   }

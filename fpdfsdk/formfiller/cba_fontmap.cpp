@@ -184,8 +184,7 @@ void CBA_FontMap::AddFontToAnnotDict(CPDF_Font* pFont,
     }
     CPDF_Dictionary* pStreamResFontList = pStreamResList->GetDictFor("Font");
     if (!pStreamResFontList) {
-      pStreamResFontList = m_pDocument->NewIndirect<CPDF_Dictionary>(
-          m_pDocument->GetByteStringPool());
+      pStreamResFontList = m_pDocument->NewIndirect<CPDF_Dictionary>();
       pStreamResList->SetReferenceFor("Font", m_pDocument, pStreamResFontList);
     }
     if (!pStreamResFontList->KeyExist(sAlias)) {

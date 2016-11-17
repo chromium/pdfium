@@ -175,8 +175,7 @@ CPDF_Font* CPDF_DocPageData::GetStandardFont(const CFX_ByteString& fontName,
     return fontData->AddRef();
   }
 
-  CPDF_Dictionary* pDict =
-      m_pPDFDoc->NewIndirect<CPDF_Dictionary>(m_pPDFDoc->GetByteStringPool());
+  CPDF_Dictionary* pDict = m_pPDFDoc->NewIndirect<CPDF_Dictionary>();
   pDict->SetNameFor("Type", "Font");
   pDict->SetNameFor("Subtype", "Type1");
   pDict->SetNameFor("BaseFont", fontName);

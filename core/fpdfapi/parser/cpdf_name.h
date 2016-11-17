@@ -8,10 +8,12 @@
 #define CORE_FPDFAPI_PARSER_CPDF_NAME_H_
 
 #include "core/fpdfapi/parser/cpdf_object.h"
+#include "core/fxcrt/cfx_string_pool_template.h"
+#include "core/fxcrt/cfx_weak_ptr.h"
 
 class CPDF_Name : public CPDF_Object {
  public:
-  explicit CPDF_Name(const CFX_ByteString& str);
+  CPDF_Name(CFX_WeakPtr<CFX_ByteStringPool> pPool, const CFX_ByteString& str);
   ~CPDF_Name() override;
 
   // CPDF_Object:

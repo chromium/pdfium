@@ -83,8 +83,10 @@ DLLEXPORT FPDF_DOCUMENT STDCALL FPDF_CreateNewDocument() {
   CPDF_Dictionary* pInfoDict = nullptr;
   pInfoDict = pDoc->GetInfo();
   if (pInfoDict) {
-    if (FSDK_IsSandBoxPolicyEnabled(FPDF_POLICY_MACHINETIME_ACCESS))
-      pInfoDict->SetFor("CreationDate", new CPDF_String(DateStr, false));
+    if (FSDK_IsSandBoxPolicyEnabled(FPDF_POLICY_MACHINETIME_ACCESS)) {
+      pInfoDict->SetFor("CreationDate",
+                        new CPDF_String(nullptr, DateStr, false));
+    }
     pInfoDict->SetFor("Creator", new CPDF_String(L"PDFium"));
   }
 

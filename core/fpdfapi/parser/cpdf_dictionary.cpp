@@ -238,12 +238,12 @@ void CPDF_Dictionary::SetIntegerFor(const CFX_ByteString& key, int i) {
 
 void CPDF_Dictionary::SetNameFor(const CFX_ByteString& key,
                                  const CFX_ByteString& name) {
-  SetFor(key, new CPDF_Name(MaybeIntern(name)));
+  SetFor(key, new CPDF_Name(GetByteStringPool(), name));
 }
 
 void CPDF_Dictionary::SetStringFor(const CFX_ByteString& key,
                                    const CFX_ByteString& str) {
-  SetFor(key, new CPDF_String(MaybeIntern(str), false));
+  SetFor(key, new CPDF_String(GetByteStringPool(), str, false));
 }
 
 void CPDF_Dictionary::SetReferenceFor(const CFX_ByteString& key,

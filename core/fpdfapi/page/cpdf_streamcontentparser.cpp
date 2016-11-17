@@ -323,8 +323,8 @@ void CPDF_StreamContentParser::AddNameParam(const FX_CHAR* name, int len) {
   ContentParam& param = m_ParamBuf[GetNextParamPos()];
   if (len > 32) {
     param.m_Type = ContentParam::OBJECT;
-    param.m_pObject = new CPDF_Name(
-        m_pDocument->GetByteStringPool()->Intern(PDF_NameDecode(bsName)));
+    param.m_pObject =
+        new CPDF_Name(m_pDocument->GetByteStringPool(), PDF_NameDecode(bsName));
   } else {
     param.m_Type = ContentParam::NAME;
     if (bsName.Find('#') == -1) {
@@ -385,8 +385,9 @@ CPDF_Object* CPDF_StreamContentParser::GetObject(uint32_t index) {
     return pNumber;
   }
   if (param.m_Type == ContentParam::NAME) {
-    CPDF_Name* pName = new CPDF_Name(m_pDocument->GetByteStringPool()->Intern(
-        CFX_ByteString(param.m_Name.m_Buffer, param.m_Name.m_Len)));
+    CPDF_Name* pName = new CPDF_Name(
+        m_pDocument->GetByteStringPool(),
+        CFX_ByteString(param.m_Name.m_Buffer, param.m_Name.m_Len));
     param.m_Type = ContentParam::OBJECT;
     param.m_pObject = pName;
     return pName;

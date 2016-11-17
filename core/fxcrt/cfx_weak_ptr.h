@@ -7,6 +7,7 @@
 #ifndef CORE_FXCRT_CFX_WEAK_PTR_H_
 #define CORE_FXCRT_CFX_WEAK_PTR_H_
 
+#include <cstddef>
 #include <memory>
 
 #include "core/fxcrt/cfx_retain_ptr.h"
@@ -20,6 +21,9 @@ class CFX_WeakPtr {
   CFX_WeakPtr(CFX_WeakPtr&& that) { Swap(that); }
   CFX_WeakPtr(std::unique_ptr<T, D> pObj)
       : m_pHandle(new Handle(std::move(pObj))) {}
+
+  // Deliberately implicit to allow passing nullptr.
+  CFX_WeakPtr(std::nullptr_t arg) {}
 
   explicit operator bool() const { return m_pHandle && !!m_pHandle->Get(); }
   bool HasOneRef() const { return m_pHandle && m_pHandle->HasOneRef(); }

@@ -8,13 +8,17 @@
 #define CORE_FPDFAPI_PARSER_CPDF_STRING_H_
 
 #include "core/fpdfapi/parser/cpdf_object.h"
+#include "core/fxcrt/cfx_string_pool_template.h"
+#include "core/fxcrt/cfx_weak_ptr.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
 
 class CPDF_String : public CPDF_Object {
  public:
   CPDF_String();
-  CPDF_String(const CFX_ByteString& str, bool bHex);
+  CPDF_String(CFX_WeakPtr<CFX_ByteStringPool> pPool,
+              const CFX_ByteString& str,
+              bool bHex);
   explicit CPDF_String(const CFX_WideString& str);
   ~CPDF_String() override;
 

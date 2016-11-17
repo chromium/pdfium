@@ -9,13 +9,13 @@
 
 #include <map>
 #include <memory>
+#include <type_traits>
 
+#include "core/fpdfapi/parser/cpdf_object.h"
 #include "core/fxcrt/cfx_string_pool_template.h"
 #include "core/fxcrt/cfx_weak_ptr.h"
 #include "core/fxcrt/fx_system.h"
 #include "third_party/base/ptr_util.h"
-
-class CPDF_Object;
 
 class CPDF_IndirectObjectHolder {
  public:
@@ -30,10 +30,18 @@ class CPDF_IndirectObjectHolder {
   void DeleteIndirectObject(uint32_t objnum);
 
   // Creates and adds a new object owned by the indirect object holder,
-  // and returns an unowned pointer to it.
+  // and returns an unowned pointer to it.  We have a special case to
+  // handle objects that can intern strings from our ByteStringPool.
   template <typename T, typename... Args>
-  T* NewIndirect(Args... args) {
+  typename std::enable_if<!CanInternStrings<T>::value, T*>::type NewIndirect(
+      Args... args) {
     return static_cast<T*>(AddIndirectObject(pdfium::MakeUnique<T>(args...)));
+  }
+  template <typename T, typename... Args>
+  typename std::enable_if<CanInternStrings<T>::value, T*>::type NewIndirect(
+      Args... args) {
+    return static_cast<T*>(
+        AddIndirectObject(pdfium::MakeUnique<T>(m_pByteStringPool, args...)));
   }
 
   // Takes ownership of |pObj|, returns unowned pointer to it.

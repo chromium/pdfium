@@ -647,19 +647,19 @@ CPDF_Image* CPDF_Document::LoadImageFromPageData(uint32_t dwStreamObjNum) {
 
 void CPDF_Document::CreateNewDoc() {
   ASSERT(!m_pRootDict && !m_pInfoDict);
-  m_pRootDict = NewIndirect<CPDF_Dictionary>(GetByteStringPool());
+  m_pRootDict = NewIndirect<CPDF_Dictionary>();
   m_pRootDict->SetNameFor("Type", "Catalog");
 
-  CPDF_Dictionary* pPages = NewIndirect<CPDF_Dictionary>(GetByteStringPool());
+  CPDF_Dictionary* pPages = NewIndirect<CPDF_Dictionary>();
   pPages->SetNameFor("Type", "Pages");
   pPages->SetNumberFor("Count", 0);
   pPages->SetFor("Kids", new CPDF_Array);
   m_pRootDict->SetReferenceFor("Pages", this, pPages);
-  m_pInfoDict = NewIndirect<CPDF_Dictionary>(GetByteStringPool());
+  m_pInfoDict = NewIndirect<CPDF_Dictionary>();
 }
 
 CPDF_Dictionary* CPDF_Document::CreateNewPage(int iPage) {
-  CPDF_Dictionary* pDict = NewIndirect<CPDF_Dictionary>(GetByteStringPool());
+  CPDF_Dictionary* pDict = NewIndirect<CPDF_Dictionary>();
   pDict->SetNameFor("Type", "Page");
   uint32_t dwObjNum = pDict->GetObjNum();
   if (!InsertNewPage(iPage, pDict)) {
@@ -778,8 +778,7 @@ size_t CPDF_Document::CalculateEncodingDict(int charset,
   if (i == FX_ArraySize(g_FX_CharsetUnicodes))
     return i;
 
-  CPDF_Dictionary* pEncodingDict =
-      NewIndirect<CPDF_Dictionary>(GetByteStringPool());
+  CPDF_Dictionary* pEncodingDict = NewIndirect<CPDF_Dictionary>();
   pEncodingDict->SetNameFor("BaseEncoding", "WinAnsiEncoding");
 
   CPDF_Array* pArray = new CPDF_Array;
@@ -801,8 +800,7 @@ CPDF_Dictionary* CPDF_Document::ProcessbCJK(
     bool bVert,
     CFX_ByteString basefont,
     std::function<void(FX_WCHAR, FX_WCHAR, CPDF_Array*)> Insert) {
-  CPDF_Dictionary* pFontDict =
-      NewIndirect<CPDF_Dictionary>(GetByteStringPool());
+  CPDF_Dictionary* pFontDict = NewIndirect<CPDF_Dictionary>();
   CFX_ByteString cmap;
   CFX_ByteString ordering;
   int supplement = 0;
@@ -877,8 +875,7 @@ CPDF_Font* CPDF_Document::AddFont(CFX_Font* pFont, int charset, bool bVert) {
       CalculateFlags(pFont->IsBold(), pFont->IsItalic(), pFont->IsFixedWidth(),
                      false, false, charset == FXFONT_SYMBOL_CHARSET);
 
-  CPDF_Dictionary* pBaseDict =
-      NewIndirect<CPDF_Dictionary>(GetByteStringPool());
+  CPDF_Dictionary* pBaseDict = NewIndirect<CPDF_Dictionary>();
   pBaseDict->SetNameFor("Type", "Font");
   std::unique_ptr<CFX_UnicodeEncoding> pEncoding(
       new CFX_UnicodeEncoding(pFont));
@@ -1008,8 +1005,7 @@ CPDF_Font* CPDF_Document::AddWindowsFont(LOGFONTA* pLogFont,
                  ptm->otmrcFontBox.right, ptm->otmrcFontBox.top};
   FX_Free(tm_buf);
   basefont.Replace(" ", "");
-  CPDF_Dictionary* pBaseDict =
-      NewIndirect<CPDF_Dictionary>(GetByteStringPool());
+  CPDF_Dictionary* pBaseDict = NewIndirect<CPDF_Dictionary>();
   pBaseDict->SetNameFor("Type", "Font");
   CPDF_Dictionary* pFontDict = pBaseDict;
   if (!bCJK) {

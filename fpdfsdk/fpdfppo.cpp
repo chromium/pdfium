@@ -160,24 +160,24 @@ bool CPDF_PageOrganizer::PDFDocInit() {
 
   CFX_ByteString producerstr;
   producerstr.Format("PDFium");
-  pDocInfoDict->SetFor("Producer", new CPDF_String(producerstr, false));
+  pDocInfoDict->SetFor("Producer",
+                       new CPDF_String(nullptr, producerstr, false));
 
   CFX_ByteString cbRootType = pNewRoot->GetStringFor("Type", "");
   if (cbRootType.IsEmpty())
-    pNewRoot->SetFor("Type", new CPDF_Name("Catalog"));
+    pNewRoot->SetFor("Type", new CPDF_Name(nullptr, "Catalog"));
 
   CPDF_Object* pElement = pNewRoot->GetObjectFor("Pages");
   CPDF_Dictionary* pNewPages =
       pElement ? ToDictionary(pElement->GetDirect()) : nullptr;
   if (!pNewPages) {
-    pNewPages = m_pDestPDFDoc->NewIndirect<CPDF_Dictionary>(
-        m_pDestPDFDoc->GetByteStringPool());
+    pNewPages = m_pDestPDFDoc->NewIndirect<CPDF_Dictionary>();
     pNewRoot->SetReferenceFor("Pages", m_pDestPDFDoc, pNewPages);
   }
 
   CFX_ByteString cbPageType = pNewPages->GetStringFor("Type", "");
   if (cbPageType.IsEmpty())
-    pNewPages->SetFor("Type", new CPDF_Name("Pages"));
+    pNewPages->SetFor("Type", new CPDF_Name(nullptr, "Pages"));
 
   if (!pNewPages->GetArrayFor("Kids")) {
     pNewPages->SetIntegerFor("Count", 0);

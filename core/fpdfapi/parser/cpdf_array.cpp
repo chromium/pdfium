@@ -18,6 +18,9 @@
 
 CPDF_Array::CPDF_Array() {}
 
+CPDF_Array::CPDF_Array(const CFX_WeakPtr<CFX_ByteStringPool>& pPool)
+    : m_pPool(pPool) {}
+
 CPDF_Array::~CPDF_Array() {
   // Break cycles for cyclic references.
   m_ObjNum = kInvalidObjNum;

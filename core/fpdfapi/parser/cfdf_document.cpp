@@ -24,8 +24,7 @@ CFDF_Document::~CFDF_Document() {
 
 CFDF_Document* CFDF_Document::CreateNewDoc() {
   CFDF_Document* pDoc = new CFDF_Document;
-  pDoc->m_pRootDict =
-      pDoc->NewIndirect<CPDF_Dictionary>(pDoc->GetByteStringPool());
+  pDoc->m_pRootDict = pDoc->NewIndirect<CPDF_Dictionary>();
   pDoc->m_pRootDict->SetFor("FDF",
                             new CPDF_Dictionary(pDoc->GetByteStringPool()));
   return pDoc;

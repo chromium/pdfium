@@ -61,7 +61,7 @@ bool GenerateWidgetAP(CPDF_Document* pDoc,
 
   CPDF_Dictionary* pFontDict = pDRFontDict->GetDictFor(sFontName.Mid(1));
   if (!pFontDict) {
-    pFontDict = pDoc->NewIndirect<CPDF_Dictionary>(pDoc->GetByteStringPool());
+    pFontDict = pDoc->NewIndirect<CPDF_Dictionary>();
     pFontDict->SetNameFor("Type", "Font");
     pFontDict->SetNameFor("Subtype", "Type1");
     pFontDict->SetNameFor("BaseFont", "Helvetica");
@@ -572,8 +572,7 @@ std::unique_ptr<CPDF_Dictionary> GenerateExtGStateDict(
 std::unique_ptr<CPDF_Dictionary> GenerateResourceFontDict(
     CPDF_Document* pDoc,
     const CFX_ByteString& sFontDictName) {
-  CPDF_Dictionary* pFontDict =
-      pDoc->NewIndirect<CPDF_Dictionary>(pDoc->GetByteStringPool());
+  CPDF_Dictionary* pFontDict = pDoc->NewIndirect<CPDF_Dictionary>();
   pFontDict->SetNameFor("Type", "Font");
   pFontDict->SetNameFor("Subtype", "Type1");
   pFontDict->SetNameFor("BaseFont", "Helvetica");

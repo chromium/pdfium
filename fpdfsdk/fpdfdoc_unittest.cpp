@@ -129,7 +129,7 @@ TEST_F(PDFDocTest, FindBookmark) {
     bookmarks[2].obj->SetFor(
         "Prev", new CPDF_Reference(m_pIndirectObjs, bookmarks[1].num));
 
-    bookmarks[0].obj->SetFor("Type", new CPDF_Name("Outlines"));
+    bookmarks[0].obj->SetFor("Type", new CPDF_Name(nullptr, "Outlines"));
     bookmarks[0].obj->SetFor("Count", new CPDF_Number(2));
     bookmarks[0].obj->SetFor(
         "First", new CPDF_Reference(m_pIndirectObjs, bookmarks[1].num));
@@ -172,7 +172,7 @@ TEST_F(PDFDocTest, FindBookmark) {
     bookmarks[2].obj->SetFor(
         "First", new CPDF_Reference(m_pIndirectObjs, bookmarks[1].num));
 
-    bookmarks[0].obj->SetFor("Type", new CPDF_Name("Outlines"));
+    bookmarks[0].obj->SetFor("Type", new CPDF_Name(nullptr, "Outlines"));
     bookmarks[0].obj->SetFor("Count", new CPDF_Number(2));
     bookmarks[0].obj->SetFor(
         "First", new CPDF_Reference(m_pIndirectObjs, bookmarks[1].num));
@@ -213,7 +213,7 @@ TEST_F(PDFDocTest, FindBookmark) {
     bookmarks[3].obj->SetFor(
         "Next", new CPDF_Reference(m_pIndirectObjs, bookmarks[1].num));
 
-    bookmarks[0].obj->SetFor("Type", new CPDF_Name("Outlines"));
+    bookmarks[0].obj->SetFor("Type", new CPDF_Name(nullptr, "Outlines"));
     bookmarks[0].obj->SetFor("Count", new CPDF_Number(2));
     bookmarks[0].obj->SetFor(
         "First", new CPDF_Reference(m_pIndirectObjs, bookmarks[1].num));

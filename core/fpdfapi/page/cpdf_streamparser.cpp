@@ -336,17 +336,17 @@ CPDF_Object* CPDF_StreamParser::ReadNextObject(bool bAllowNestedArray,
   if (first_char == '/') {
     CFX_ByteString name =
         PDF_NameDecode(CFX_ByteStringC(m_WordBuffer + 1, m_WordSize - 1));
-    return new CPDF_Name(m_pPool ? m_pPool->Intern(name) : name);
+    return new CPDF_Name(m_pPool, name);
   }
 
   if (first_char == '(') {
     CFX_ByteString str = ReadString();
-    return new CPDF_String(m_pPool ? m_pPool->Intern(str) : str, false);
+    return new CPDF_String(m_pPool, str, false);
   }
 
   if (first_char == '<') {
     if (m_WordSize == 1)
-      return new CPDF_String(ReadHexString(), true);
+      return new CPDF_String(m_pPool, ReadHexString(), true);
 
     CPDF_Dictionary* pDict = new CPDF_Dictionary(m_pPool);
     while (1) {

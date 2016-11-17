@@ -56,7 +56,7 @@ class PDFObjectsTest : public testing::Test {
     CPDF_String* str_reg_obj = new CPDF_String(L"A simple test");
     CPDF_String* str_spec_obj = new CPDF_String(L"\t\n");
     // Name object.
-    CPDF_Name* name_obj = new CPDF_Name("space");
+    CPDF_Name* name_obj = new CPDF_Name(nullptr, "space");
     // Array object.
     m_ArrayObj = new CPDF_Array;
     m_ArrayObj->InsertNewAt<CPDF_Number>(0, 8902);
@@ -620,12 +620,12 @@ TEST(PDFArrayTest, GetTypeAt) {
     arr_val->AddNew<CPDF_Number>(2);
 
     CPDF_Dictionary* dict_val = arr->InsertNewAt<CPDF_Dictionary>(12);
-    dict_val->SetFor("key1", new CPDF_String("Linda", false));
-    dict_val->SetFor("key2", new CPDF_String("Zoe", false));
+    dict_val->SetFor("key1", new CPDF_String(nullptr, "Linda", false));
+    dict_val->SetFor("key2", new CPDF_String(nullptr, "Zoe", false));
 
     CPDF_Dictionary* stream_dict = new CPDF_Dictionary();
-    stream_dict->SetFor("key1", new CPDF_String("John", false));
-    stream_dict->SetFor("key2", new CPDF_String("King", false));
+    stream_dict->SetFor("key1", new CPDF_String(nullptr, "John", false));
+    stream_dict->SetFor("key2", new CPDF_String(nullptr, "King", false));
     uint8_t data[] = "A stream for test";
     // The data buffer will be owned by stream object, so it needs to be
     // dynamically allocated.
@@ -710,8 +710,9 @@ TEST(PDFArrayTest, AddReferenceAndGetObjectAt) {
   CPDF_Boolean* boolean_obj = new CPDF_Boolean(true);
   CPDF_Number* int_obj = new CPDF_Number(-1234);
   CPDF_Number* float_obj = new CPDF_Number(2345.089f);
-  CPDF_String* str_obj = new CPDF_String("Adsfdsf 343434 %&&*\n", false);
-  CPDF_Name* name_obj = new CPDF_Name("Title:");
+  CPDF_String* str_obj =
+      new CPDF_String(nullptr, "Adsfdsf 343434 %&&*\n", false);
+  CPDF_Name* name_obj = new CPDF_Name(nullptr, "Title:");
   CPDF_Null* null_obj = new CPDF_Null();
   CPDF_Object* indirect_objs[] = {boolean_obj, int_obj,  float_obj,
                                   str_obj,     name_obj, null_obj};

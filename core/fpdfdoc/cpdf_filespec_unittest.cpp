@@ -115,7 +115,7 @@ TEST(cpdf_filespec, GetFileName) {
   }
   {
     // Invalid object.
-    std::unique_ptr<CPDF_Object> name_obj(new CPDF_Name("test.pdf"));
+    std::unique_ptr<CPDF_Object> name_obj(new CPDF_Name(nullptr, "test.pdf"));
     CPDF_FileSpec file_spec(name_obj.get());
     CFX_WideString file_name;
     EXPECT_FALSE(file_spec.GetFileName(&file_name));

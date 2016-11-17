@@ -1689,13 +1689,13 @@ CPDF_Object* CPDF_FontEncoding::Realize(CFX_WeakPtr<CFX_ByteStringPool> pPool) {
   }
   if (predefined) {
     if (predefined == PDFFONT_ENCODING_WINANSI) {
-      return new CPDF_Name(pPool->Intern("WinAnsiEncoding"));
+      return new CPDF_Name(pPool, "WinAnsiEncoding");
     }
     if (predefined == PDFFONT_ENCODING_MACROMAN) {
-      return new CPDF_Name(pPool->Intern("MacRomanEncoding"));
+      return new CPDF_Name(pPool, "MacRomanEncoding");
     }
     if (predefined == PDFFONT_ENCODING_MACEXPERT) {
-      return new CPDF_Name(pPool->Intern("MacExpertEncoding"));
+      return new CPDF_Name(pPool, "MacExpertEncoding");
     }
     return nullptr;
   }

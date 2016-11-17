@@ -402,13 +402,13 @@ std::unique_ptr<CPDF_Object> CPDF_SyntaxParser::GetObject(
     CFX_ByteString str = ReadString();
     if (m_pCryptoHandler && bDecrypt)
       m_pCryptoHandler->Decrypt(objnum, gennum, str);
-    return pdfium::MakeUnique<CPDF_String>(MaybeIntern(str), false);
+    return pdfium::MakeUnique<CPDF_String>(m_pPool, str, false);
   }
   if (word == "<") {
     CFX_ByteString str = ReadHexString();
     if (m_pCryptoHandler && bDecrypt)
       m_pCryptoHandler->Decrypt(objnum, gennum, str);
-    return pdfium::MakeUnique<CPDF_String>(MaybeIntern(str), true);
+    return pdfium::MakeUnique<CPDF_String>(m_pPool, str, true);
   }
   if (word == "[") {
     std::unique_ptr<CPDF_Array> pArray = pdfium::MakeUnique<CPDF_Array>();
@@ -419,8 +419,9 @@ std::unique_ptr<CPDF_Object> CPDF_SyntaxParser::GetObject(
     return std::move(pArray);
   }
   if (word[0] == '/') {
-    return pdfium::MakeUnique<CPDF_Name>(MaybeIntern(
-        PDF_NameDecode(CFX_ByteStringC(m_WordBuffer + 1, m_WordSize - 1))));
+    return pdfium::MakeUnique<CPDF_Name>(
+        m_pPool,
+        PDF_NameDecode(CFX_ByteStringC(m_WordBuffer + 1, m_WordSize - 1)));
   }
   if (word == "<<") {
     int32_t nKeys = 0;
@@ -522,13 +523,13 @@ std::unique_ptr<CPDF_Object> CPDF_SyntaxParser::GetObjectForStrict(
     CFX_ByteString str = ReadString();
     if (m_pCryptoHandler)
       m_pCryptoHandler->Decrypt(objnum, gennum, str);
-    return pdfium::MakeUnique<CPDF_String>(MaybeIntern(str), false);
+    return pdfium::MakeUnique<CPDF_String>(m_pPool, str, false);
   }
   if (word == "<") {
     CFX_ByteString str = ReadHexString();
     if (m_pCryptoHandler)
       m_pCryptoHandler->Decrypt(objnum, gennum, str);
-    return pdfium::MakeUnique<CPDF_String>(MaybeIntern(str), true);
+    return pdfium::MakeUnique<CPDF_String>(m_pPool, str, true);
   }
   if (word == "[") {
     std::unique_ptr<CPDF_Array> pArray = pdfium::MakeUnique<CPDF_Array>();
@@ -539,8 +540,9 @@ std::unique_ptr<CPDF_Object> CPDF_SyntaxParser::GetObjectForStrict(
     return m_WordBuffer[0] == ']' ? std::move(pArray) : nullptr;
   }
   if (word[0] == '/') {
-    return pdfium::MakeUnique<CPDF_Name>(MaybeIntern(
-        PDF_NameDecode(CFX_ByteStringC(m_WordBuffer + 1, m_WordSize - 1))));
+    return pdfium::MakeUnique<CPDF_Name>(
+        m_pPool,
+        PDF_NameDecode(CFX_ByteStringC(m_WordBuffer + 1, m_WordSize - 1)));
   }
   if (word == "<<") {
     std::unique_ptr<CPDF_Dictionary> pDict =
@@ -915,8 +917,4 @@ FX_FILESIZE CPDF_SyntaxParser::FindTag(const CFX_ByteStringC& tag,
 void CPDF_SyntaxParser::SetEncrypt(
     std::unique_ptr<CPDF_CryptoHandler> pCryptoHandler) {
   m_pCryptoHandler = std::move(pCryptoHandler);
-}
-
-CFX_ByteString CPDF_SyntaxParser::MaybeIntern(const CFX_ByteString& str) {
-  return m_pPool ? m_pPool->Intern(str) : str;
 }
