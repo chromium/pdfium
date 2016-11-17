@@ -345,10 +345,6 @@ void IFWL_ComboBox::ShowDropList(bool bActivate) {
   if (!bActivate) {
     m_pComboBoxProxy->EndDoModal();
 
-    CFWL_EvtCmbCloseUp ev;
-    ev.m_pSrcTarget = this;
-    DispatchEvent(&ev);
-
     m_bLButtonDown = false;
     m_pListBox->SetNotifyOwner(true);
     SetFocus(true);

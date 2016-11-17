@@ -171,12 +171,7 @@ void IFWL_ComboList::OnDropListMouseMove(CFWL_MsgMouse* pMsg) {
 
     IFWL_ListBoxDP* pData =
         static_cast<IFWL_ListBoxDP*>(m_pProperties->m_pDataProvider);
-    int32_t iSel = pData->GetItemIndex(this, hItem);
-    CFWL_EvtCmbHoverChanged event;
-    event.m_pSrcTarget = m_pOuter;
-    event.m_iCurHover = iSel;
-    DispatchEvent(&event);
-    ChangeSelected(iSel);
+    ChangeSelected(pData->GetItemIndex(this, hItem));
   } else if (m_bNotifyOwner) {
     ClientToOuter(pMsg->m_fx, pMsg->m_fy);
     IFWL_ComboBox* pOuter = static_cast<IFWL_ComboBox*>(m_pOuter);

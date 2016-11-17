@@ -608,16 +608,11 @@ void IFWL_DateTimePicker::OnLButtonDown(CFWL_MsgMouse* pMsg) {
 
   if (IsMonthCalendarVisible()) {
     ShowMonthCalendar(false);
-    CFWL_Event_DtpCloseUp ev;
-    DispatchEvent(&ev);
     return;
   }
-
-  if (!(m_pProperties->m_dwStyleExes & FWL_STYLEEXT_DTP_TimeFormat)) {
+  if (!(m_pProperties->m_dwStyleExes & FWL_STYLEEXT_DTP_TimeFormat))
     ShowMonthCalendar(true);
-    CFWL_Event_DtpDropDown ev;
-    DispatchEvent(&ev);
-  }
+
   m_bLBtnDown = true;
   Repaint(&m_rtClient);
 }

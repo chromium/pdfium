@@ -34,10 +34,6 @@
 class IFWL_DateTimeEdit;
 class IFWL_FormProxy;
 
-FWL_EVENT_DEF(CFWL_Event_DtpDropDown, CFWL_EventType::DropDown)
-
-FWL_EVENT_DEF(CFWL_Event_DtpCloseUp, CFWL_EventType::CloseUp)
-
 FWL_EVENT_DEF(CFWL_Event_DtpEditChanged,
               CFWL_EventType::EditChanged,
               CFX_WideString m_wsText;)

@@ -49,8 +49,6 @@ FWL_EVENT_DEF(CFWL_EvtCmbPreDropDown, CFWL_EventType::PreDropDown)
 
 FWL_EVENT_DEF(CFWL_EvtCmbPostDropDown, CFWL_EventType::PostDropDown)
 
-FWL_EVENT_DEF(CFWL_EvtCmbCloseUp, CFWL_EventType::CloseUp)
-
 FWL_EVENT_DEF(CFWL_EvtCmbEditChanged,
               CFWL_EventType::EditChanged,
               int32_t nChangeType;
@@ -61,10 +59,6 @@ FWL_EVENT_DEF(CFWL_EvtCmbSelChanged,
               CFWL_EventType::SelectChanged,
               CFX_Int32Array iArraySels;
               bool bLButtonUp;)
-
-FWL_EVENT_DEF(CFWL_EvtCmbHoverChanged,
-              CFWL_EventType::HoverChanged,
-              int32_t m_iCurHover;)
 
 FWL_EVENT_DEF(CFWL_EvtCmbDrawItem,
               CFWL_EventType::DrawItem,
