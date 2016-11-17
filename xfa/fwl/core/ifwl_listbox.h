@@ -42,13 +42,6 @@ FWL_EVENT_DEF(CFWL_EvtLtbSelChanged,
               CFWL_EventType::SelectChanged,
               CFX_Int32Array iarraySels;)
 
-FWL_EVENT_DEF(CFWL_EvtLtbDrawItem,
-              CFWL_EventType::DrawItem,
-              CFX_Graphics* m_pGraphics;
-              CFX_Matrix m_matrix;
-              int32_t m_index;
-              CFX_RectF m_rect;)
-
 class IFWL_ListBoxDP : public IFWL_DataProvider {
  public:
   virtual int32_t CountItems(const IFWL_Widget* pWidget) const = 0;

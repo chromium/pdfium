@@ -510,17 +510,8 @@ void IFWL_ListBox::DrawItems(CFX_Graphics* pGraphics,
     if (bMultiCol && rtItem.left > m_rtConent.right())
       break;
 
-    if (GetStylesEx() & FWL_STYLEEXT_LTB_OwnerDraw) {
-      CFWL_EvtLtbDrawItem ev;
-      ev.m_pSrcTarget = this;
-      ev.m_pGraphics = pGraphics;
-      ev.m_matrix = *pMatrix;
-      ev.m_index = i;
-      ev.m_rect = rtItem;
-      DispatchEvent(&ev);
-    } else {
+    if (!(GetStylesEx() & FWL_STYLEEXT_LTB_OwnerDraw))
       DrawItem(pGraphics, pTheme, pItem, i, rtItem, pMatrix);
-    }
   }
 }
 

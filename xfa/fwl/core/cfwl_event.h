@@ -21,7 +21,6 @@ enum class CFWL_EventType {
   CheckWord,
   Click,
   Close,
-  DrawItem,
   EditChanged,
   Key,
   KillFocus,

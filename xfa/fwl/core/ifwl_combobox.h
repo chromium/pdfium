@@ -56,13 +56,6 @@ FWL_EVENT_DEF(CFWL_EvtCmbSelChanged,
               CFX_Int32Array iArraySels;
               bool bLButtonUp;)
 
-FWL_EVENT_DEF(CFWL_EvtCmbDrawItem,
-              CFWL_EventType::DrawItem,
-              CFX_Graphics* m_pGraphics;
-              CFX_Matrix m_matrix;
-              int32_t m_index;
-              CFX_RectF m_rtItem;)
-
 class IFWL_ComboBoxDP : public IFWL_ListBoxDP {
  public:
   virtual FX_FLOAT GetListHeight(IFWL_Widget* pWidget) = 0;

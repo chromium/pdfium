@@ -847,16 +847,7 @@ void IFWL_ComboBox::OnProcessMessage(CFWL_Message* pMessage) {
 
 void IFWL_ComboBox::OnProcessEvent(CFWL_Event* pEvent) {
   CFWL_EventType dwFlag = pEvent->GetClassID();
-  if (dwFlag == CFWL_EventType::DrawItem) {
-    CFWL_EvtLtbDrawItem* pDrawItemEvent =
-        static_cast<CFWL_EvtLtbDrawItem*>(pEvent);
-    CFWL_EvtCmbDrawItem pTemp;
-    pTemp.m_pSrcTarget = this;
-    pTemp.m_pGraphics = pDrawItemEvent->m_pGraphics;
-    pTemp.m_index = pDrawItemEvent->m_index;
-    pTemp.m_rtItem = pDrawItemEvent->m_rect;
-    DispatchEvent(&pTemp);
-  } else if (dwFlag == CFWL_EventType::Scroll) {
+  if (dwFlag == CFWL_EventType::Scroll) {
     CFWL_EvtScroll* pScrollEvent = static_cast<CFWL_EvtScroll*>(pEvent);
     CFWL_EvtScroll pScrollEv;
     pScrollEv.m_pSrcTarget = this;
