@@ -17,8 +17,6 @@
 class CFWL_MsgMouse;
 class CFWL_WidgetProperties;
 
-FWL_EVENT_DEF(CFWL_EvtSpbClick, CFWL_EventType::Click, bool m_bUp;)
-
 class IFWL_SpinButton : public IFWL_Widget {
  public:
   IFWL_SpinButton(const IFWL_App* app,

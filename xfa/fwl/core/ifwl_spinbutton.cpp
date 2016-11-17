@@ -7,6 +7,7 @@
 #include "xfa/fwl/core/ifwl_spinbutton.h"
 
 #include "third_party/base/ptr_util.h"
+#include "xfa/fwl/core/cfwl_evtclick.h"
 #include "xfa/fwl/core/cfwl_msgkey.h"
 #include "xfa/fwl/core/cfwl_msgmouse.h"
 #include "xfa/fwl/core/cfwl_themebackground.h"
@@ -236,10 +237,11 @@ void IFWL_SpinButton::OnLButtonDown(CFWL_MsgMouse* pMsg) {
     m_iButtonIndex = 1;
     m_dwDnState = CFWL_PartState_Pressed;
   }
-  CFWL_EvtSpbClick wmPosChanged;
+
+  CFWL_EvtClick wmPosChanged;
   wmPosChanged.m_pSrcTarget = this;
-  wmPosChanged.m_bUp = bUpPress;
   DispatchEvent(&wmPosChanged);
+
   Repaint(bUpPress ? &m_rtUpButton : &m_rtDnButton);
   m_pTimerInfo = m_Timer.StartTimer(kElapseTime, true);
 }
@@ -363,10 +365,10 @@ void IFWL_SpinButton::OnKeyDown(CFWL_MsgKey* pMsg) {
   if (!bUpEnable && !bDownEnable)
     return;
 
-  CFWL_EvtSpbClick wmPosChanged;
+  CFWL_EvtClick wmPosChanged;
   wmPosChanged.m_pSrcTarget = this;
-  wmPosChanged.m_bUp = bUpEnable;
   DispatchEvent(&wmPosChanged);
+
   Repaint(bUpEnable ? &m_rtUpButton : &m_rtDnButton);
 }
 
@@ -379,8 +381,7 @@ void IFWL_SpinButton::Timer::Run(IFWL_TimerInfo* pTimerInfo) {
   if (!pButton->m_pTimerInfo)
     return;
 
-  CFWL_EvtSpbClick wmPosChanged;
+  CFWL_EvtClick wmPosChanged;
   wmPosChanged.m_pSrcTarget = pButton;
-  wmPosChanged.m_bUp = pButton->m_iButtonIndex == 0;
   pButton->DispatchEvent(&wmPosChanged);
 }
