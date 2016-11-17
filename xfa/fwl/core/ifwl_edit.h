@@ -28,8 +28,6 @@
 #define FWL_STYLEEXT_EDT_Validate (1L << 7)
 #define FWL_STYLEEXT_EDT_Password (1L << 8)
 #define FWL_STYLEEXT_EDT_Number (1L << 9)
-#define FWL_STYLEEXT_EDT_HSelfAdaption (1L << 10)
-#define FWL_STYLEEXT_EDT_VSelfAdaption (1L << 11)
 #define FWL_STYLEEXT_EDT_VerticalLayout (1L << 12)
 #define FWL_STYLEEXT_EDT_VerticalChars (1L << 13)
 #define FWL_STYLEEXT_EDT_ReverseLine (1L << 14)
@@ -66,12 +64,6 @@ FWL_EVENT_DEF(CFWL_EvtEdtTextChanged,
               CFX_WideString wsPrevText;)
 
 FWL_EVENT_DEF(CFWL_EvtEdtTextFull, CFWL_EventType::TextFull)
-
-FWL_EVENT_DEF(CFWL_EvtEdtPreSelfAdaption,
-              CFWL_EventType::PreSelfAdaption,
-              bool bHSelfAdaption;
-              bool bVSelfAdaption;
-              CFX_RectF rtAfterChange;)
 
 FWL_EVENT_DEF(CFWL_EvtEdtValidate,
               CFWL_EventType::Validate,

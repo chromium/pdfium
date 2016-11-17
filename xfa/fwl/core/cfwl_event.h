@@ -32,7 +32,6 @@ enum class CFWL_EventType {
   MouseWheel,
   PostDropDown,
   PreDropDown,
-  PreSelfAdaption,
   Scroll,
   SelectChanged,
   SetFocus,

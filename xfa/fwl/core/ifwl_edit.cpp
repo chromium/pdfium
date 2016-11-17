@@ -444,60 +444,11 @@ void IFWL_Edit::On_CaretChanged(CFDE_TxtEdtEngine* pEdit,
 
 void IFWL_Edit::On_TextChanged(CFDE_TxtEdtEngine* pEdit,
                                FDE_TXTEDT_TEXTCHANGE_INFO& ChangeInfo) {
-  uint32_t dwStyleEx = m_pProperties->m_dwStyleExes;
-  if (dwStyleEx & FWL_STYLEEXT_EDT_VAlignMask)
+  if (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_VAlignMask)
     UpdateVAlignment();
 
-  IFDE_TxtEdtPage* page = m_EdtEngine.GetPage(0);
-  FX_FLOAT fContentWidth = page->GetContentsBox().width;
-  FX_FLOAT fContentHeight = page->GetContentsBox().height;
   CFX_RectF rtTemp;
   GetClientRect(rtTemp);
-  bool bHSelfAdaption =
-      !!(m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_HSelfAdaption);
-  bool bVSelfAdaption =
-      !!(m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_VSelfAdaption);
-  bool bNeedUpdate = false;
-  if (bHSelfAdaption || bVSelfAdaption) {
-    CFWL_EvtEdtPreSelfAdaption evt;
-    evt.m_pSrcTarget = this;
-    evt.bHSelfAdaption = true;
-    evt.bVSelfAdaption = true;
-    FX_FLOAT fWidth;
-    FX_FLOAT fHight;
-    fWidth = bHSelfAdaption ? fContentWidth : m_pProperties->m_rtWidget.width;
-    fHight = bVSelfAdaption ? fContentHeight : m_pProperties->m_rtWidget.height;
-    evt.rtAfterChange.Set(0, 0, fWidth, fHight);
-    DispatchEvent(&evt);
-    if (!evt.bHSelfAdaption) {
-      ModifyStylesEx(
-          0, FWL_STYLEEXT_EDT_HSelfAdaption | FWL_STYLEEXT_EDT_AutoHScroll);
-    }
-    if (!evt.bVSelfAdaption) {
-      ModifyStylesEx(
-          0, FWL_STYLEEXT_EDT_VSelfAdaption | FWL_STYLEEXT_EDT_AutoVScroll);
-    }
-    bNeedUpdate = (bHSelfAdaption && !evt.bHSelfAdaption) ||
-                  (bVSelfAdaption && !evt.bVSelfAdaption);
-  }
-
-  FX_FLOAT fContentWidth1 = fContentWidth;
-  FX_FLOAT fContentHeight1 = fContentHeight;
-  if (bNeedUpdate) {
-    UpdateEditParams();
-    UpdateEditLayout();
-    IFDE_TxtEdtPage* page1 = m_EdtEngine.GetPage(0);
-    fContentWidth1 = page1->GetContentsBox().width;
-    fContentHeight1 = page1->GetContentsBox().height;
-  }
-  if (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_HSelfAdaption) {
-    rtTemp.width = std::max(m_pProperties->m_rtWidget.width, fContentWidth1);
-    m_pProperties->m_rtWidget.width = fContentWidth1;
-  }
-  if (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_VSelfAdaption) {
-    rtTemp.height = std::max(m_pProperties->m_rtWidget.height, fContentHeight1);
-    m_pProperties->m_rtWidget.height = fContentHeight1;
-  }
 
   CFWL_EvtEdtTextChanged event;
   event.m_pSrcTarget = this;
@@ -506,6 +457,7 @@ void IFWL_Edit::On_TextChanged(CFDE_TxtEdtEngine* pEdit,
   event.wsDelete = ChangeInfo.wsDelete;
   event.wsPrevText = ChangeInfo.wsPrevText;
   DispatchEvent(&event);
+
   LayoutScrollBar();
   Repaint(&rtTemp);
 }
@@ -873,10 +825,8 @@ bool IFWL_Edit::UpdateOffset() {
     offsetY = rtCaret.top - rtEidt.top;
   if (rtCaret.bottom() > rtEidt.bottom())
     offsetY = rtCaret.bottom() - rtEidt.bottom();
-  if (!(m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_HSelfAdaption))
-    m_fScrollOffsetX += offsetX;
-  if (!(m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_VSelfAdaption))
-    m_fScrollOffsetY += offsetY;
+  m_fScrollOffsetX += offsetX;
+  m_fScrollOffsetY += offsetY;
   if (m_fFontSize > m_rtEngine.height)
     m_fScrollOffsetY = 0;
   return true;
@@ -935,7 +885,6 @@ void IFWL_Edit::UpdateCaret() {
   CFX_RectF rtCaret;
   rtCaret.Set(rtFDE.left, rtFDE.top, rtFDE.width, rtFDE.height);
 
-  CFX_RectF temp = rtCaret;
   CFX_RectF rtClient;
   GetClientRect(rtClient);
   rtCaret.Intersect(rtClient);
@@ -946,23 +895,8 @@ void IFWL_Edit::UpdateCaret() {
     rtCaret.width = right - rtCaret.left;
   }
 
-  bool bShow = true;
-  bool bShowWhole = false;
-  if (!(m_pProperties->m_dwStates & FWL_WGTSTATE_Focused) || rtCaret.IsEmpty())
-    bShow = false;
-  if (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_HSelfAdaption &&
-      temp.right() > m_rtEngine.right()) {
-    bShowWhole = true;
-  }
-  if (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_VSelfAdaption &&
-      temp.bottom() > m_rtEngine.bottom()) {
-    bShowWhole = true;
-  } else {
-    bShow = (m_pProperties->m_dwStates & FWL_WGTSTATE_Focused &&
-             !rtCaret.IsEmpty());
-  }
-  if (bShowWhole)
-    rtCaret = temp;
+  bool bShow =
+      m_pProperties->m_dwStates & FWL_WGTSTATE_Focused && !rtCaret.IsEmpty();
   ShowCaret(bShow, &rtCaret);
 }
 
