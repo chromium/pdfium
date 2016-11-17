@@ -9,6 +9,12 @@
 #include <algorithm>
 
 #include "xfa/fde/tto/fde_textout.h"
+#include "xfa/fwl/core/cfwl_evtkey.h"
+#include "xfa/fwl/core/cfwl_evtkillfocus.h"
+#include "xfa/fwl/core/cfwl_evtmouse.h"
+#include "xfa/fwl/core/cfwl_evtmousewheel.h"
+#include "xfa/fwl/core/cfwl_evtsetfocus.h"
+#include "xfa/fwl/core/cfwl_evtsizechanged.h"
 #include "xfa/fwl/core/cfwl_msgkey.h"
 #include "xfa/fwl/core/cfwl_msgkillfocus.h"
 #include "xfa/fwl/core/cfwl_msgmouse.h"

@@ -14,19 +14,6 @@
 #include "xfa/fwl/core/cfwl_msgmouse.h"
 #include "xfa/fwl/core/fwl_error.h"
 
-enum class FWL_SCBCODE {
-  None = 1,
-  Min,
-  Max,
-  PageBackward,
-  PageForward,
-  StepBackward,
-  StepForward,
-  Pos,
-  TrackPos,
-  EndScroll,
-};
-
 enum class CFWL_EventType {
   None = 0,
 
@@ -82,15 +69,6 @@ class CFWL_Event {
   IFWL_Widget* m_pDstTarget;
 };
 
-inline CFWL_Event::CFWL_Event()
-    : m_pSrcTarget(nullptr), m_pDstTarget(nullptr) {}
-
-inline CFWL_Event::~CFWL_Event() {}
-
-inline CFWL_EventType CFWL_Event::GetClassID() const {
-  return CFWL_EventType::None;
-}
-
 #define FWL_EVENT_DEF(classname, eventType, ...)                            \
   class classname : public CFWL_Event {                                     \
    public:                                                                  \
@@ -102,42 +80,5 @@ inline CFWL_EventType CFWL_Event::GetClassID() const {
   inline classname::classname() {}                                          \
   inline classname::~classname() {}                                         \
   inline CFWL_EventType classname::GetClassID() const { return eventType; }
-
-FWL_EVENT_DEF(CFWL_EvtMouse, CFWL_EventType::Mouse, FX_FLOAT m_fx;
-              FX_FLOAT m_fy;
-              uint32_t m_dwFlags;
-              FWL_MouseCommand m_dwCmd;)
-
-FWL_EVENT_DEF(CFWL_EvtMouseWheel, CFWL_EventType::MouseWheel, FX_FLOAT m_fx;
-              FX_FLOAT m_fy;
-              FX_FLOAT m_fDeltaX;
-              FX_FLOAT m_fDeltaY;
-              uint32_t m_dwFlags;)
-
-FWL_EVENT_DEF(CFWL_EvtKey, CFWL_EventType::Key, uint32_t m_dwKeyCode;
-              uint32_t m_dwFlags;
-              FWL_KeyCommand m_dwCmd;)
-
-FWL_EVENT_DEF(CFWL_EvtSetFocus,
-              CFWL_EventType::SetFocus,
-              IFWL_Widget* m_pSetFocus;)
-
-FWL_EVENT_DEF(CFWL_EvtKillFocus,
-              CFWL_EventType::KillFocus,
-              IFWL_Widget* m_pKillFocus;)
-
-FWL_EVENT_DEF(CFWL_EvtClick, CFWL_EventType::Click)
-
-FWL_EVENT_DEF(CFWL_EvtScroll, CFWL_EventType::Scroll, FWL_SCBCODE m_iScrollCode;
-              FX_FLOAT m_fPos;
-              bool* m_pRet;)
-
-FWL_EVENT_DEF(CFWL_EvtClose, CFWL_EventType::Close)
-
-FWL_EVENT_DEF(CFWL_EvtSizeChanged,
-              CFWL_EventType::SizeChanged,
-              IFWL_Widget* m_pWidget;
-              CFX_RectF m_rtOld;
-              CFX_RectF m_rtNew;)
 
 #endif  // XFA_FWL_CORE_CFWL_EVENT_H_
