@@ -10,11 +10,13 @@
 
 #include "xfa/fwl/core/cfwl_datetimepicker.h"
 #include "xfa/fwl/core/cfwl_edit.h"
+#include "xfa/fwl/core/cfwl_evtcheckword.h"
+#include "xfa/fwl/core/cfwl_evttextchanged.h"
+#include "xfa/fwl/core/cfwl_evtvalidate.h"
 #include "xfa/fwl/core/cfwl_msgkillfocus.h"
 #include "xfa/fwl/core/cfwl_msgmouse.h"
 #include "xfa/fwl/core/cfwl_msgsetfocus.h"
 #include "xfa/fwl/core/fwl_noteimp.h"
-#include "xfa/fwl/core/ifwl_edit.h"
 #include "xfa/fxfa/app/xfa_fffield.h"
 #include "xfa/fxfa/app/xfa_fwladapter.h"
 #include "xfa/fxfa/app/xfa_textlayout.h"
@@ -338,7 +340,7 @@ void CXFA_FFTextEdit::OnProcessEvent(CFWL_Event* pEvent) {
   CXFA_FFField::OnProcessEvent(pEvent);
   switch (pEvent->GetClassID()) {
     case CFWL_EventType::TextChanged: {
-      CFWL_EvtEdtTextChanged* event = (CFWL_EvtEdtTextChanged*)pEvent;
+      CFWL_EvtTextChanged* event = static_cast<CFWL_EvtTextChanged*>(pEvent);
       CFX_WideString wsChange;
       OnTextChanged(m_pNormalWidget->GetWidget(), wsChange, event->wsPrevText);
       break;
@@ -349,7 +351,7 @@ void CXFA_FFTextEdit::OnProcessEvent(CFWL_Event* pEvent) {
     }
     case CFWL_EventType::CheckWord: {
       CFX_WideString wstr(L"FWL_EVENT_DTP_SelectChanged");
-      CFWL_EvtEdtCheckWord* event = (CFWL_EvtEdtCheckWord*)pEvent;
+      CFWL_EvtCheckWord* event = static_cast<CFWL_EvtCheckWord*>(pEvent);
       event->bCheckWord = CheckWord(event->bsWord.AsStringC());
       break;
     }
@@ -417,9 +419,9 @@ void CXFA_FFNumericEdit::UpdateWidgetProperty() {
 
 void CXFA_FFNumericEdit::OnProcessEvent(CFWL_Event* pEvent) {
   if (pEvent->GetClassID() == CFWL_EventType::Validate) {
-    CFWL_EvtEdtValidate* event = (CFWL_EvtEdtValidate*)pEvent;
-    CFX_WideString wsChange = event->wsInsert;
-    event->bValidate = OnValidate(m_pNormalWidget->GetWidget(), wsChange);
+    CFWL_EvtValidate* event = static_cast<CFWL_EvtValidate*>(pEvent);
+    event->bValidate =
+        OnValidate(m_pNormalWidget->GetWidget(), event->wsInsert);
     return;
   }
   CXFA_FFTextEdit::OnProcessEvent(pEvent);

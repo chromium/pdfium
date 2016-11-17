@@ -50,32 +50,6 @@
 #define FWL_STYLEEXT_EDT_OuterScrollbar (1L << 26)
 #define FWL_STYLEEXT_EDT_LastLineHeight (1L << 27)
 
-enum FWL_EDT_TEXTCHANGED {
-  FWL_EDT_TEXTCHANGED_Insert = 0,
-  FWL_EDT_TEXTCHANGED_Delete,
-  FWL_EDT_TEXTCHANGED_Replace,
-};
-
-FWL_EVENT_DEF(CFWL_EvtEdtTextChanged,
-              CFWL_EventType::TextChanged,
-              int32_t nChangeType;
-              CFX_WideString wsInsert;
-              CFX_WideString wsDelete;
-              CFX_WideString wsPrevText;)
-
-FWL_EVENT_DEF(CFWL_EvtEdtTextFull, CFWL_EventType::TextFull)
-
-FWL_EVENT_DEF(CFWL_EvtEdtValidate,
-              CFWL_EventType::Validate,
-              IFWL_Widget* pDstWidget;
-              CFX_WideString wsInsert;
-              bool bValidate;)
-
-FWL_EVENT_DEF(CFWL_EvtEdtCheckWord,
-              CFWL_EventType::CheckWord,
-              CFX_ByteString bsWord;
-              bool bCheckWord;)
-
 class IFDE_TxtEdtDoRecord;
 class IFWL_Edit;
 class CFWL_MsgMouse;

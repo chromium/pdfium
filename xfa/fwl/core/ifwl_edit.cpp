@@ -17,6 +17,10 @@
 #include "xfa/fde/fde_render.h"
 #include "xfa/fde/ifde_txtedtpage.h"
 #include "xfa/fgas/font/fgas_gefont.h"
+#include "xfa/fwl/core/cfwl_evtcheckword.h"
+#include "xfa/fwl/core/cfwl_evttextchanged.h"
+#include "xfa/fwl/core/cfwl_evttextfull.h"
+#include "xfa/fwl/core/cfwl_evtvalidate.h"
 #include "xfa/fwl/core/cfwl_msgkey.h"
 #include "xfa/fwl/core/cfwl_msgmouse.h"
 #include "xfa/fwl/core/cfwl_themebackground.h"
@@ -196,7 +200,7 @@ void IFWL_Edit::DrawSpellCheck(CFX_Graphics* pGraphics,
     pGraphics->ConcatMatrix(const_cast<CFX_Matrix*>(pMatrix));
 
   CFX_Color crLine(0xFFFF0000);
-  CFWL_EvtEdtCheckWord checkWordEvent;
+  CFWL_EvtCheckWord checkWordEvent;
   checkWordEvent.m_pSrcTarget = this;
 
   CFX_ByteString sLatinWord;
@@ -220,6 +224,7 @@ void IFWL_Edit::DrawSpellCheck(CFX_Graphics* pGraphics,
     checkWordEvent.bsWord = sLatinWord;
     checkWordEvent.bCheckWord = true;
     DispatchEvent(&checkWordEvent);
+
     if (!sLatinWord.IsEmpty() && !checkWordEvent.bCheckWord) {
       AddSpellCheckObj(pathSpell, nStart, sLatinWord.GetLength(), fOffSetX,
                        fOffSetY);
@@ -450,7 +455,7 @@ void IFWL_Edit::On_TextChanged(CFDE_TxtEdtEngine* pEdit,
   CFX_RectF rtTemp;
   GetClientRect(rtTemp);
 
-  CFWL_EvtEdtTextChanged event;
+  CFWL_EvtTextChanged event;
   event.m_pSrcTarget = this;
   event.nChangeType = ChangeInfo.nChangeType;
   event.wsInsert = ChangeInfo.wsInsert;
@@ -500,7 +505,7 @@ bool IFWL_Edit::On_Validate(CFDE_TxtEdtEngine* pEdit, CFX_WideString& wsText) {
   if (!pDst)
     pDst = this;
 
-  CFWL_EvtEdtValidate event;
+  CFWL_EvtValidate event;
   event.pDstWidget = pDst;
   event.m_pSrcTarget = this;
   event.wsInsert = wsText;
@@ -1273,16 +1278,12 @@ void IFWL_Edit::ClearRecord() {
 }
 
 void IFWL_Edit::ProcessInsertError(int32_t iError) {
-  switch (iError) {
-    case -2: {
-      CFWL_EvtEdtTextFull textFullEvent;
-      textFullEvent.m_pSrcTarget = this;
-      DispatchEvent(&textFullEvent);
-      break;
-    }
-    default:
-      break;
-  }
+  if (iError != -2)
+    return;
+
+  CFWL_EvtTextFull textFullEvent;
+  textFullEvent.m_pSrcTarget = this;
+  DispatchEvent(&textFullEvent);
 }
 
 void IFWL_Edit::OnProcessMessage(CFWL_Message* pMessage) {
