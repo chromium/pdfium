@@ -18,6 +18,7 @@
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfapi/render/cpdf_pagerendercache.h"
+#include "core/fpdfapi/render/cpdf_renderstatus.h"
 #include "core/fxcodec/fx_codec.h"
 #include "core/fxcrt/fx_safe_types.h"
 

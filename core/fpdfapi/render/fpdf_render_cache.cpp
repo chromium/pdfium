@@ -10,6 +10,7 @@
 #include "core/fpdfapi/page/pageint.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfapi/render/cpdf_rendercontext.h"
+#include "core/fpdfapi/render/cpdf_renderstatus.h"
 #include "core/fpdfapi/render/render_int.h"
 
 struct CACHEINFO {
