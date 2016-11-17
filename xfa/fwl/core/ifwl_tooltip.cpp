@@ -50,10 +50,8 @@ void IFWL_ToolTip::GetWidgetRect(CFX_RectF& rect, bool bAutoSize) {
     m_pProperties->m_pThemeProvider = GetAvailableTheme();
 
   CFX_WideString wsCaption;
-  IFWL_ToolTipDP* pData =
-      static_cast<IFWL_ToolTipDP*>(m_pProperties->m_pDataProvider);
-  if (pData)
-    pData->GetCaption(this, wsCaption);
+  if (m_pProperties->m_pDataProvider)
+    m_pProperties->m_pDataProvider->GetCaption(this, wsCaption);
 
   int32_t iLen = wsCaption.GetLength();
   if (iLen > 0) {
@@ -152,16 +150,6 @@ void IFWL_ToolTip::UpdateTextOutStyles() {
     m_dwTTOStyles |= FDE_TTOSTYLE_RTL;
   if (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_TTP_Multiline)
     m_dwTTOStyles &= ~FDE_TTOSTYLE_SingleLine;
-}
-
-void IFWL_ToolTip::SetStates(uint32_t dwStates, bool bSet) {
-  if ((dwStates & FWL_WGTSTATE_Invisible) && !bSet) {
-    IFWL_ToolTipDP* pData =
-        static_cast<IFWL_ToolTipDP*>(m_pProperties->m_pDataProvider);
-    int32_t nAutoPopDelay = pData->GetAutoPopDelay(this);
-    m_pTimerInfoHide = m_TimerHide.StartTimer(nAutoPopDelay, false);
-  }
-  IFWL_Widget::SetStates(dwStates, bSet);
 }
 
 void IFWL_ToolTip::RefreshToolTipPos() {

@@ -12,24 +12,12 @@
 
 class CFWL_WidgetProperties;
 class IFWL_Widget;
-class CFWL_ToolTipImpDelegate;
 
 #define FWL_STYLEEXT_TTP_Rectangle (0L << 3)
 #define FWL_STYLEEXT_TTP_RoundCorner (1L << 3)
 #define FWL_STYLEEXT_TTP_Balloon (1L << 4)
 #define FWL_STYLEEXT_TTP_Multiline (1L << 5)
 #define FWL_STYLEEXT_TTP_NoAnchor (1L << 6)
-
-class IFWL_ToolTipDP : public IFWL_DataProvider {
- public:
-  // IFWL_DataProvider
-  void GetCaption(IFWL_Widget* pWidget, CFX_WideString& wsCaption) override = 0;
-
-  virtual int32_t GetInitialDelay(IFWL_Widget* pWidget) = 0;
-  virtual int32_t GetAutoPopDelay(IFWL_Widget* pWidget) = 0;
-  virtual CFX_DIBitmap* GetToolTipIcon(IFWL_Widget* pWidget) = 0;
-  virtual CFX_SizeF GetToolTipIconSize(IFWL_Widget* pWidget) = 0;
-};
 
 class IFWL_ToolTip : public IFWL_Form {
  public:
