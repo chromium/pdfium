@@ -843,20 +843,6 @@ bool IFWL_ListBox::IsShowScrollBar(bool bVert) {
          (m_pProperties->m_dwStates & FWL_WGTSTATE_Focused);
 }
 
-void IFWL_ListBox::ProcessSelChanged() {
-  CFWL_EvtLtbSelChanged selEvent;
-  selEvent.m_pSrcTarget = this;
-  CFX_Int32Array arrSels;
-  int32_t iCount = CountSelItems();
-  for (int32_t i = 0; i < iCount; i++) {
-    CFWL_ListItem* item = GetSelItem(i);
-    if (!item)
-      continue;
-    selEvent.iarraySels.Add(i);
-  }
-  DispatchEvent(&selEvent);
-}
-
 void IFWL_ListBox::OnProcessMessage(CFWL_Message* pMessage) {
   if (!pMessage)
     return;
@@ -974,7 +960,6 @@ void IFWL_ListBox::OnLButtonDown(CFWL_MsgMouse* pMsg) {
   SetFocusItem(pItem);
   ScrollToVisible(pItem);
   SetGrab(true);
-  ProcessSelChanged();
   Repaint(&m_rtClient);
 }
 
@@ -984,7 +969,6 @@ void IFWL_ListBox::OnLButtonUp(CFWL_MsgMouse* pMsg) {
 
   m_bLButtonDown = false;
   SetGrab(false);
-  DispatchSelChangedEv();
 }
 
 void IFWL_ListBox::OnMouseWheel(CFWL_MsgMouseWheel* pMsg) {
@@ -1005,8 +989,6 @@ void IFWL_ListBox::OnKeyDown(CFWL_MsgKey* pMsg) {
       bool bShift = !!(pMsg->m_dwFlags & FWL_KEYFLAG_Shift);
       bool bCtrl = !!(pMsg->m_dwFlags & FWL_KEYFLAG_Ctrl);
       OnVK(pItem, bShift, bCtrl);
-      DispatchSelChangedEv();
-      ProcessSelChanged();
       break;
     }
     default:
@@ -1096,10 +1078,4 @@ bool IFWL_ListBox::OnScroll(IFWL_ScrollBar* pScrollBar,
     Repaint(&m_rtClient);
   }
   return true;
-}
-
-void IFWL_ListBox::DispatchSelChangedEv() {
-  CFWL_EvtLtbSelChanged ev;
-  ev.m_pSrcTarget = this;
-  DispatchEvent(&ev);
 }

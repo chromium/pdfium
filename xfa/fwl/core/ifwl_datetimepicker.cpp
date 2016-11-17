@@ -8,6 +8,7 @@
 
 #include "third_party/base/ptr_util.h"
 #include "xfa/fwl/core/cfwl_evteditchanged.h"
+#include "xfa/fwl/core/cfwl_evtselectchanged.h"
 #include "xfa/fwl/core/cfwl_msgmouse.h"
 #include "xfa/fwl/core/cfwl_msgsetfocus.h"
 #include "xfa/fwl/core/cfwl_themebackground.h"
@@ -356,7 +357,7 @@ void IFWL_DateTimePicker::ProcessSelChanged(int32_t iYear,
   m_pEdit->Update();
   Repaint(&m_rtClient);
 
-  CFWL_Event_DtpSelectChanged ev;
+  CFWL_EvtSelectChanged ev;
   ev.m_pSrcTarget = this;
   ev.iYear = m_iYear;
   ev.iMonth = m_iMonth;

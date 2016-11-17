@@ -11,6 +11,7 @@
 #include "xfa/fwl/core/cfwl_datetimepicker.h"
 #include "xfa/fwl/core/cfwl_edit.h"
 #include "xfa/fwl/core/cfwl_evtcheckword.h"
+#include "xfa/fwl/core/cfwl_evtselectchanged.h"
 #include "xfa/fwl/core/cfwl_evttextchanged.h"
 #include "xfa/fwl/core/cfwl_evtvalidate.h"
 #include "xfa/fwl/core/cfwl_msgkillfocus.h"
@@ -686,7 +687,7 @@ void CXFA_FFDateTimeEdit::OnSelectChanged(IFWL_Widget* pWidget,
 
 void CXFA_FFDateTimeEdit::OnProcessEvent(CFWL_Event* pEvent) {
   if (pEvent->GetClassID() == CFWL_EventType::SelectChanged) {
-    CFWL_Event_DtpSelectChanged* event = (CFWL_Event_DtpSelectChanged*)pEvent;
+    CFWL_EvtSelectChanged* event = static_cast<CFWL_EvtSelectChanged*>(pEvent);
     OnSelectChanged(m_pNormalWidget->GetWidget(), event->iYear, event->iMonth,
                     event->iDay);
     return;

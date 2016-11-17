@@ -34,12 +34,6 @@
 class IFWL_DateTimeEdit;
 class IFWL_FormProxy;
 
-FWL_EVENT_DEF(CFWL_Event_DtpSelectChanged,
-              CFWL_EventType::SelectChanged,
-              int32_t iYear;
-              int32_t iMonth;
-              int32_t iDay;)
-
 class IFWL_DateTimePickerDP : public IFWL_DataProvider {
  public:
   virtual void GetToday(IFWL_Widget* pWidget,

@@ -77,7 +77,6 @@ class CXFA_FFComboBox : public CXFA_FFField {
 
   void OnTextChanged(IFWL_Widget* pWidget, const CFX_WideString& wsChanged);
   void OnSelectChanged(IFWL_Widget* pWidget,
-                       const CFX_Int32Array& arrSels,
                        bool bLButtonUp);
   void OnPreOpen(IFWL_Widget* pWidget);
   void OnPostOpen(IFWL_Widget* pWidget);

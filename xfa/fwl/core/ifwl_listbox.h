@@ -38,10 +38,6 @@ class CFWL_MsgMouse;
 class CFWL_MsgMouseWheel;
 class CFX_DIBitmap;
 
-FWL_EVENT_DEF(CFWL_EvtLtbSelChanged,
-              CFWL_EventType::SelectChanged,
-              CFX_Int32Array iarraySels;)
-
 class IFWL_ListBoxDP : public IFWL_DataProvider {
  public:
   virtual int32_t CountItems(const IFWL_Widget* pWidget) const = 0;
@@ -148,7 +144,7 @@ class IFWL_ListBox : public IFWL_Widget {
                    bool bAutoSize = false);
   FX_FLOAT GetMaxTextWidth();
   FX_FLOAT GetScrollWidth();
-  void ProcessSelChanged();
+
   void OnFocusChanged(CFWL_Message* pMsg, bool bSet = true);
   void OnLButtonDown(CFWL_MsgMouse* pMsg);
   void OnLButtonUp(CFWL_MsgMouse* pMsg);
@@ -156,7 +152,6 @@ class IFWL_ListBox : public IFWL_Widget {
   void OnKeyDown(CFWL_MsgKey* pMsg);
   void OnVK(CFWL_ListItem* hItem, bool bShift, bool bCtrl);
   bool OnScroll(IFWL_ScrollBar* pScrollBar, FWL_SCBCODE dwCode, FX_FLOAT fPos);
-  void DispatchSelChangedEv();
 
   CFX_RectF m_rtClient;
   CFX_RectF m_rtStatic;

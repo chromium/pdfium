@@ -12,6 +12,7 @@
 #include "xfa/fwl/core/cfwl_evteditchanged.h"
 #include "xfa/fwl/core/cfwl_evtpostdropdown.h"
 #include "xfa/fwl/core/cfwl_evtpredropdown.h"
+#include "xfa/fwl/core/cfwl_evtselectchanged.h"
 #include "xfa/fwl/core/cfwl_evttextchanged.h"
 #include "xfa/fwl/core/cfwl_msgkey.h"
 #include "xfa/fwl/core/cfwl_msgkillfocus.h"
@@ -562,10 +563,9 @@ void IFWL_ComboBox::ProcessSelChanged(bool bLButtonUp) {
     m_pEdit->SetSelected();
   }
 
-  CFWL_EvtCmbSelChanged ev;
+  CFWL_EvtSelectChanged ev;
   ev.bLButtonUp = bLButtonUp;
   ev.m_pSrcTarget = this;
-  ev.iArraySels.Add(m_iCurSel);
   DispatchEvent(&ev);
 }
 

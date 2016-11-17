@@ -1206,6 +1206,8 @@ if (pdf_enable_xfa) {
       "xfa/fwl/core/cfwl_evtpredropdown.h",
       "xfa/fwl/core/cfwl_evtscroll.cpp",
       "xfa/fwl/core/cfwl_evtscroll.h",
+      "xfa/fwl/core/cfwl_evtselectchanged.cpp",
+      "xfa/fwl/core/cfwl_evtselectchanged.h",
       "xfa/fwl/core/cfwl_evtsetfocus.cpp",
       "xfa/fwl/core/cfwl_evtsetfocus.h",
       "xfa/fwl/core/cfwl_evtsizechanged.cpp",

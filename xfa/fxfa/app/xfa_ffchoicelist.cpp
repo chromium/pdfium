@@ -7,6 +7,7 @@
 #include "xfa/fxfa/app/xfa_ffchoicelist.h"
 
 #include "xfa/fwl/core/cfwl_combobox.h"
+#include "xfa/fwl/core/cfwl_evtselectchanged.h"
 #include "xfa/fwl/core/cfwl_listbox.h"
 #include "xfa/fwl/core/fwl_noteimp.h"
 #include "xfa/fwl/core/ifwl_app.h"
@@ -480,7 +481,6 @@ void CXFA_FFComboBox::OnTextChanged(IFWL_Widget* pWidget,
   FWLEventSelChange(&eParam);
 }
 void CXFA_FFComboBox::OnSelectChanged(IFWL_Widget* pWidget,
-                                      const CFX_Int32Array& arrSels,
                                       bool bLButtonUp) {
   CXFA_EventParam eParam;
   m_pDataAcc->GetValue(eParam.m_wsPrevText, XFA_VALUEPICTURE_Raw);
@@ -511,9 +511,9 @@ void CXFA_FFComboBox::OnProcessEvent(CFWL_Event* pEvent) {
   CXFA_FFField::OnProcessEvent(pEvent);
   switch (pEvent->GetClassID()) {
     case CFWL_EventType::SelectChanged: {
-      CFWL_EvtCmbSelChanged* postEvent = (CFWL_EvtCmbSelChanged*)pEvent;
-      OnSelectChanged(m_pNormalWidget->GetWidget(), postEvent->iArraySels,
-                      postEvent->bLButtonUp);
+      CFWL_EvtSelectChanged* postEvent =
+          static_cast<CFWL_EvtSelectChanged*>(pEvent);
+      OnSelectChanged(m_pNormalWidget->GetWidget(), postEvent->bLButtonUp);
       break;
     }
     case CFWL_EventType::EditChanged: {
