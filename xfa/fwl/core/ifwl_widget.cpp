@@ -551,13 +551,12 @@ void IFWL_Widget::DispatchKeyEvent(CFWL_MsgKey* pNote) {
   if (!pNote)
     return;
 
-  CFWL_EvtKey* pEvent = new CFWL_EvtKey;
+  auto pEvent = pdfium::MakeUnique<CFWL_EvtKey>();
   pEvent->m_pSrcTarget = this;
   pEvent->m_dwCmd = pNote->m_dwCmd;
   pEvent->m_dwKeyCode = pNote->m_dwKeyCode;
   pEvent->m_dwFlags = pNote->m_dwFlags;
-  DispatchEvent(pEvent);
-  pEvent->Release();
+  DispatchEvent(pEvent.get());
 }
 
 void IFWL_Widget::DispatchEvent(CFWL_Event* pEvent) {

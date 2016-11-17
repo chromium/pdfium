@@ -78,30 +78,17 @@ class CFWL_Event {
 
   virtual CFWL_EventType GetClassID() const;
 
-  uint32_t Release();
-
   IFWL_Widget* m_pSrcTarget;
   IFWL_Widget* m_pDstTarget;
-
- private:
-  uint32_t m_dwRefCount;
 };
 
 inline CFWL_Event::CFWL_Event()
-    : m_pSrcTarget(nullptr), m_pDstTarget(nullptr), m_dwRefCount(1) {}
+    : m_pSrcTarget(nullptr), m_pDstTarget(nullptr) {}
 
 inline CFWL_Event::~CFWL_Event() {}
 
 inline CFWL_EventType CFWL_Event::GetClassID() const {
   return CFWL_EventType::None;
-}
-
-inline uint32_t CFWL_Event::Release() {
-  m_dwRefCount--;
-  uint32_t dwRefCount = m_dwRefCount;
-  if (!m_dwRefCount)
-    delete this;
-  return dwRefCount;
 }
 
 #define FWL_EVENT_DEF(classname, eventType, ...)                            \
