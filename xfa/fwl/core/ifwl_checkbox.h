@@ -47,8 +47,6 @@ class CFWL_MsgMouse;
 class CFWL_WidgetProperties;
 class IFWL_Widget;
 
-FWL_EVENT_DEF(CFWL_EvtCkbCheckStateChanged, CFWL_EventType::CheckStateChanged)
-
 class IFWL_CheckBoxDP : public IFWL_DataProvider {
  public:
   virtual FX_FLOAT GetBoxSize(IFWL_Widget* pWidget) = 0;

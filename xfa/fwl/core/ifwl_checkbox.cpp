@@ -10,6 +10,7 @@
 
 #include "third_party/base/ptr_util.h"
 #include "xfa/fde/tto/fde_textout.h"
+#include "xfa/fwl/core/cfwl_evtcheckstatechanged.h"
 #include "xfa/fwl/core/cfwl_msgkey.h"
 #include "xfa/fwl/core/cfwl_msgmouse.h"
 #include "xfa/fwl/core/cfwl_themebackground.h"
@@ -360,11 +361,12 @@ void IFWL_CheckBox::NextStates() {
   }
 
   Repaint(&m_rtClient);
-  if (dwFirststate != m_pProperties->m_dwStates) {
-    CFWL_EvtCkbCheckStateChanged wmCheckBoxState;
-    wmCheckBoxState.m_pSrcTarget = this;
-    DispatchEvent(&wmCheckBoxState);
-  }
+  if (dwFirststate == m_pProperties->m_dwStates)
+    return;
+
+  CFWL_EvtCheckStateChanged wmCheckBoxState;
+  wmCheckBoxState.m_pSrcTarget = this;
+  DispatchEvent(&wmCheckBoxState);
 }
 
 void IFWL_CheckBox::OnProcessMessage(CFWL_Message* pMessage) {

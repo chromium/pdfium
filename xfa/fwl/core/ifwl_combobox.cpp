@@ -9,6 +9,8 @@
 #include "third_party/base/ptr_util.h"
 #include "xfa/fde/cfde_txtedtengine.h"
 #include "xfa/fde/tto/fde_textout.h"
+#include "xfa/fwl/core/cfwl_evtpostdropdown.h"
+#include "xfa/fwl/core/cfwl_evtpredropdown.h"
 #include "xfa/fwl/core/cfwl_evttextchanged.h"
 #include "xfa/fwl/core/cfwl_msgkey.h"
 #include "xfa/fwl/core/cfwl_msgkillfocus.h"
@@ -393,7 +395,7 @@ void IFWL_ComboBox::ShowDropList(bool bActivate) {
   m_pListBox->SetWidgetRect(m_rtList);
   m_pListBox->Update();
 
-  CFWL_EvtCmbPreDropDown ev;
+  CFWL_EvtPreDropDown ev;
   ev.m_pSrcTarget = this;
   DispatchEvent(&ev);
 
@@ -617,7 +619,7 @@ void IFWL_ComboBox::DisForm_ShowDropList(bool bActivate) {
     return;
 
   if (bActivate) {
-    CFWL_EvtCmbPreDropDown preEvent;
+    CFWL_EvtPreDropDown preEvent;
     preEvent.m_pSrcTarget = this;
     DispatchEvent(&preEvent);
 
@@ -651,7 +653,7 @@ void IFWL_ComboBox::DisForm_ShowDropList(bool bActivate) {
 
   m_pListBox->SetStates(FWL_WGTSTATE_Invisible, !bActivate);
   if (bActivate) {
-    CFWL_EvtCmbPostDropDown postEvent;
+    CFWL_EvtPostDropDown postEvent;
     postEvent.m_pSrcTarget = this;
     DispatchEvent(&postEvent);
   }

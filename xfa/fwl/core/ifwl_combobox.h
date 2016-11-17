@@ -45,10 +45,6 @@ class IFWL_Widget;
 #define FWL_STYLEEXT_CMB_ListItemIconText (1L << 12)
 #define FWL_STYLEEXT_CMB_ReadOnly (1L << 13)
 
-FWL_EVENT_DEF(CFWL_EvtCmbPreDropDown, CFWL_EventType::PreDropDown)
-
-FWL_EVENT_DEF(CFWL_EvtCmbPostDropDown, CFWL_EventType::PostDropDown)
-
 FWL_EVENT_DEF(CFWL_EvtCmbEditChanged,
               CFWL_EventType::EditChanged,
               int32_t nChangeType;
