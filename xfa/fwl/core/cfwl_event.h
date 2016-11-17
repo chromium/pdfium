@@ -64,16 +64,4 @@ class CFWL_Event {
   IFWL_Widget* m_pDstTarget;
 };
 
-#define FWL_EVENT_DEF(classname, eventType, ...)                            \
-  class classname : public CFWL_Event {                                     \
-   public:                                                                  \
-    classname();                                                            \
-    ~classname() override;                                                  \
-    CFWL_EventType GetClassID() const override;                             \
-    __VA_ARGS__                                                             \
-  };                                                                        \
-  inline classname::classname() {}                                          \
-  inline classname::~classname() {}                                         \
-  inline CFWL_EventType classname::GetClassID() const { return eventType; }
-
 #endif  // XFA_FWL_CORE_CFWL_EVENT_H_
