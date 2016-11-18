@@ -13,7 +13,7 @@
 #include "core/fxge/cfx_pathdata.h"
 #include "core/fxge/ifx_renderdevicedriver.h"
 
-#if defined _SKIA_SUPPORT_
+#if defined _SKIA_SUPPORT_ || defined _SKIA_SUPPORT_PATHS_
 #include "third_party/skia/include/core/SkTypes.h"
 #endif
 
@@ -814,6 +814,12 @@ bool CFX_RenderDevice::SetBitsWithMask(const CFX_DIBSource* pBitmap,
                                        int blend_type) {
   return m_pDeviceDriver->SetBitsWithMask(pBitmap, pMask, left, top,
                                           bitmap_alpha, blend_type);
+}
+#endif
+
+#ifdef _SKIA_SUPPORT_PATHS_
+void CFX_RenderDevice::UnPreMultiplyDevice() {
+  SkASSERT(0);
 }
 #endif
 

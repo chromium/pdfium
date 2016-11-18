@@ -230,6 +230,10 @@ class CFX_RenderDevice {
   void Flush();
 #endif
 
+#ifdef _SKIA_SUPPORT_PATHS_
+  virtual void UnPreMultiplyDevice();
+#endif
+
  private:
   void InitDeviceInfo();
   void UpdateClipBox();

@@ -93,7 +93,9 @@ class CFX_SkiaDeviceDriver : public IFX_RenderDeviceDriver {
                        int dest_top,
                        int bitmap_alpha,
                        int blend_type) override;
-#else
+#endif
+
+#ifdef _SKIA_SUPPORT_PATHS_
   void SetClipMask(const FX_RECT& clipBox, const SkPath& skClipPath);
 #endif
 
@@ -149,6 +151,10 @@ class CFX_SkiaDeviceDriver : public IFX_RenderDeviceDriver {
   void Flush();
   SkPictureRecorder* GetRecorder() const { return m_pRecorder; }
   static void PreMultiply(CFX_DIBitmap* pDIBitmap);
+#ifdef _SKIA_SUPPORT_PATHS_
+  void UnPreMultiplyDevice();
+  void UnPreMultiply(CFX_DIBitmap* pDIBitmap);
+#endif
   SkCanvas* SkiaCanvas() { return m_pCanvas; }
   void DebugVerifyBitmapIsPreMultiplied() const;
   void Dump() const;
@@ -161,7 +167,7 @@ class CFX_SkiaDeviceDriver : public IFX_RenderDeviceDriver {
   SkCanvas* m_pCanvas;
   SkPictureRecorder* const m_pRecorder;
   std::unique_ptr<SkiaState> m_pCache;
-#ifndef _SKIA_SUPPORT_
+#ifdef _SKIA_SUPPORT_PATHS_
   std::unique_ptr<CFX_ClipRgn> m_pClipRgn;
   std::vector<std::unique_ptr<CFX_ClipRgn>> m_StateStack;
   int m_FillFlags;

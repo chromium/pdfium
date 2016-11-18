@@ -63,6 +63,9 @@ CFX_DIBitmap::CFX_DIBitmap() {
   m_bExtBuf = false;
   m_pBuffer = nullptr;
   m_pPalette = nullptr;
+#ifdef _SKIA_SUPPORT_PATHS_
+  m_bUnPreMultiply = false;
+#endif
 }
 
 #define _MAX_OOM_LIMIT_ 12000000

@@ -1125,6 +1125,9 @@ void CPDF_RenderStatus::ProcessObjectNoClip(CPDF_PageObject* pObj,
 #if defined _SKIA_SUPPORT_
   DebugVerifyDeviceIsPreMultiplied();
 #endif
+#if defined _SKIA_SUPPORT_PATHS_
+  UnPreMultiplyDevice();
+#endif
 }
 
 bool CPDF_RenderStatus::DrawObjWithBlend(CPDF_PageObject* pObj,
@@ -1643,6 +1646,12 @@ CPDF_GraphicStates* CPDF_RenderStatus::CloneObjStates(
 #if defined _SKIA_SUPPORT_
 void CPDF_RenderStatus::DebugVerifyDeviceIsPreMultiplied() const {
   m_pDevice->DebugVerifyBitmapIsPreMultiplied();
+}
+#endif
+
+#if defined _SKIA_SUPPORT_PATHS_
+void CPDF_RenderStatus::UnPreMultiplyDevice() {
+  m_pDevice->UnPreMultiplyDevice();
 }
 #endif
 

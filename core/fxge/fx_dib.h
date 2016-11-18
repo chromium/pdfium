@@ -248,7 +248,7 @@ class CFX_DIBSource {
                       int& src_top,
                       const CFX_ClipRgn* pClipRgn);
 
-#if defined _SKIA_SUPPORT_
+#if defined _SKIA_SUPPORT_ || defined _SKIA_SUPPORT_PATHS_
   void DebugVerifyBitmapIsPreMultiplied(void* buffer = nullptr) const;
 #endif
 
@@ -371,11 +371,20 @@ class CFX_DIBitmap : public CFX_DIBSource {
 
   bool ConvertColorScale(uint32_t forecolor, uint32_t backcolor);
 
+#ifdef _SKIA_SUPPORT_PATHS_
+  bool IsMarkedForUnPreMultiply() const { return m_bUnPreMultiply; }
+
+  void MarkForUnPreMultiply(bool mark) { m_bUnPreMultiply = mark; }
+#endif
+
  protected:
   bool GetGrayData(void* pIccTransform = nullptr);
 
   uint8_t* m_pBuffer;
   bool m_bExtBuf;
+#ifdef _SKIA_SUPPORT_PATHS_
+  bool m_bUnPreMultiply;
+#endif
 };
 
 class CFX_DIBExtractor {
