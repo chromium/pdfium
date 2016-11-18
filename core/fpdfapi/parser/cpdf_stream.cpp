@@ -113,6 +113,10 @@ bool CPDF_Stream::ReadRawData(FX_FILESIZE offset,
   return true;
 }
 
+bool CPDF_Stream::HasFilter() const {
+  return m_pDict && m_pDict->KeyExist("Filter");
+}
+
 CFX_WideString CPDF_Stream::GetUnicodeText() const {
   CPDF_StreamAcc stream;
   stream.LoadAllData(this, false);

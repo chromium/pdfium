@@ -417,26 +417,24 @@ CPDF_FlateEncoder::CPDF_FlateEncoder(CPDF_Stream* pStream, bool bFlateEncode)
       m_bCloned(false),
       m_bNewData(false) {
   m_Acc.LoadAllData(pStream, true);
-  if ((pStream && pStream->GetDict() &&
-       pStream->GetDict()->KeyExist("Filter")) ||
-      !bFlateEncode) {
-    if (pStream->GetDict()->KeyExist("Filter") && !bFlateEncode) {
-      CPDF_StreamAcc destAcc;
-      destAcc.LoadAllData(pStream);
-      m_dwSize = destAcc.GetSize();
-      m_pData = (uint8_t*)destAcc.DetachData();
-      m_pDict = ToDictionary(pStream->GetDict()->Clone().release());
-      m_pDict->RemoveFor("Filter");
-      m_bNewData = true;
-      m_bCloned = true;
-    } else {
-      m_pData = (uint8_t*)m_Acc.GetData();
-      m_dwSize = m_Acc.GetSize();
-      m_pDict = pStream->GetDict();
-    }
+  bool bHasFilter = pStream && pStream->HasFilter();
+  if (bHasFilter && !bFlateEncode) {
+    CPDF_StreamAcc destAcc;
+    destAcc.LoadAllData(pStream);
+    m_dwSize = destAcc.GetSize();
+    m_pData = (uint8_t*)destAcc.DetachData();
+    m_pDict = ToDictionary(pStream->GetDict()->Clone().release());
+    m_pDict->RemoveFor("Filter");
+    m_bNewData = true;
+    m_bCloned = true;
     return;
   }
-
+  if (bHasFilter || !bFlateEncode) {
+    m_pData = (uint8_t*)m_Acc.GetData();
+    m_dwSize = m_Acc.GetSize();
+    m_pDict = pStream->GetDict();
+    return;
+  }
   m_bNewData = true;
   m_bCloned = true;
   // TODO(thestig): Move to Init() and check return value.

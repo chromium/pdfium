@@ -46,6 +46,7 @@ class CPDF_Stream : public CPDF_Object {
                    uint32_t buf_size) const;
 
   bool IsMemoryBased() const { return m_bMemoryBased; }
+  bool HasFilter() const;
 
  protected:
   std::unique_ptr<CPDF_Object> CloneNonCyclic(
