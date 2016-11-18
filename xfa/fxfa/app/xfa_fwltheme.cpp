@@ -68,13 +68,8 @@ CXFA_FWLTheme::CXFA_FWLTheme(CXFA_FFApp* pApp)
                                              m_pApp->GetFDEFontMgr());
   }
   if (!m_pCalendarFont) {
-#if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
-    m_pCalendarFont = m_pApp->GetFDEFontMgr()->GetDefFontByCodePage(
-        FX_CODEPAGE_MSWin_WesternEuropean, 0, nullptr);
-#else
     m_pCalendarFont = m_pApp->GetFDEFontMgr()->GetFontByCodePage(
         FX_CODEPAGE_MSWin_WesternEuropean, 0, nullptr);
-#endif
   }
 
   ASSERT(m_pCalendarFont);

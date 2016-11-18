@@ -438,12 +438,9 @@ int32_t CFGAS_GEFont::GetGlyphIndex(FX_WCHAR wUnicode,
   if (m_pFontMgr && bRecursive) {
     CFX_WideString wsFamily;
     GetFamilyName(wsFamily);
-#if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
-    CFGAS_GEFont* pFont = m_pFontMgr->GetDefFontByUnicode(
-        wUnicode, GetFontStyles(), wsFamily.c_str());
-#else
     CFGAS_GEFont* pFont = m_pFontMgr->GetFontByUnicode(
         wUnicode, GetFontStyles(), wsFamily.c_str());
+#if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
     if (!pFont)
       pFont = m_pFontMgr->GetFontByUnicode(wUnicode, GetFontStyles(), nullptr);
 #endif
