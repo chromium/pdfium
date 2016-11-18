@@ -185,6 +185,12 @@ hooks = [
     'action': ['python', 'pdfium/build/vs_toolchain.py', 'update'],
   },
   {
+    # Update the Mac toolchain if necessary.
+    'name': 'mac_toolchain',
+    'pattern': '.',
+    'action': ['python', 'pdfium/build/mac_toolchain.py'],
+  },
+  {
     # Pull sanitizer-instrumented third-party libraries if requested via
     # GYP_DEFINES.
     'name': 'instrumented_libraries',
