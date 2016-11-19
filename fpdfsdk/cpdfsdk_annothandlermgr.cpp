@@ -6,6 +6,8 @@
 
 #include "fpdfsdk/cpdfsdk_annothandlermgr.h"
 
+#include "core/fpdfapi/parser/cpdf_number.h"
+#include "core/fpdfapi/parser/cpdf_string.h"
 #include "core/fpdfdoc/cpdf_annot.h"
 #include "fpdfsdk/cba_annotiterator.h"
 #include "fpdfsdk/cpdfsdk_annot.h"
@@ -62,8 +64,9 @@ void CPDFSDK_AnnotHandlerMgr::Annot_OnCreate(CPDFSDK_Annot* pAnnot) {
   CPDF_Annot* pPDFAnnot = pAnnot->GetPDFAnnot();
 
   CPDFSDK_DateTime curTime;
-  pPDFAnnot->GetAnnotDict()->SetStringFor("M", curTime.ToPDFDateTimeString());
-  pPDFAnnot->GetAnnotDict()->SetNumberFor("F", 0);
+  pPDFAnnot->GetAnnotDict()->SetNewFor<CPDF_String>(
+      "M", curTime.ToPDFDateTimeString(), false);
+  pPDFAnnot->GetAnnotDict()->SetNewFor<CPDF_Number>("F", 0);
 }
 
 void CPDFSDK_AnnotHandlerMgr::Annot_OnLoad(CPDFSDK_Annot* pAnnot) {

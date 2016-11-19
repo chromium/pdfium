@@ -6,6 +6,9 @@
 
 #include "core/fpdfapi/parser/cfdf_document.h"
 
+#include <memory>
+#include <utility>
+
 #include "core/fpdfapi/edit/cpdf_creator.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_syntax_parser.h"
@@ -25,8 +28,7 @@ CFDF_Document::~CFDF_Document() {
 CFDF_Document* CFDF_Document::CreateNewDoc() {
   CFDF_Document* pDoc = new CFDF_Document;
   pDoc->m_pRootDict = pDoc->NewIndirect<CPDF_Dictionary>();
-  pDoc->m_pRootDict->SetFor("FDF",
-                            new CPDF_Dictionary(pDoc->GetByteStringPool()));
+  pDoc->m_pRootDict->SetNewFor<CPDF_Dictionary>("FDF");
   return pDoc;
 }
 

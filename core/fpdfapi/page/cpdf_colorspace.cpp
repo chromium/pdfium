@@ -345,7 +345,7 @@ std::unique_ptr<CPDF_ColorSpace> CPDF_ColorSpace::Load(CPDF_Document* pDoc,
 
     for (const auto& it : *pDict) {
       std::unique_ptr<CPDF_ColorSpace> pRet;
-      CPDF_Object* pValue = it.second;
+      CPDF_Object* pValue = it.second.get();
       if (ToName(pValue))
         pRet.reset(ColorspaceFromName(pValue->GetString()));
       if (pRet)

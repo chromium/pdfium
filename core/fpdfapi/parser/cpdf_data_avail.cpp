@@ -142,10 +142,8 @@ bool CPDF_DataAvail::AreObjectsAvailable(std::vector<CPDF_Object*>& obj_array,
           continue;
 
         for (const auto& it : *pDict) {
-          const CFX_ByteString& key = it.first;
-          CPDF_Object* value = it.second;
-          if (key != "Parent")
-            new_obj_array.push_back(value);
+          if (it.first != "Parent")
+            new_obj_array.push_back(it.second.get());
         }
       } break;
       case CPDF_Object::REFERENCE: {

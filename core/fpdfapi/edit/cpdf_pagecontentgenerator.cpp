@@ -16,6 +16,8 @@
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
+#include "core/fpdfapi/parser/cpdf_name.h"
+#include "core/fpdfapi/parser/cpdf_reference.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
@@ -54,7 +56,8 @@ void CPDF_PageContentGenerator::GenerateContent() {
 
   CPDF_Stream* pStream = m_pDocument->NewIndirect<CPDF_Stream>();
   pStream->SetData(buf.GetBuffer(), buf.GetLength());
-  pPageDict->SetReferenceFor("Contents", m_pDocument, pStream);
+  pPageDict->SetNewFor<CPDF_Reference>("Contents", m_pDocument,
+                                       pStream->GetObjNum());
 }
 
 CFX_ByteString CPDF_PageContentGenerator::RealizeResource(
@@ -63,14 +66,13 @@ CFX_ByteString CPDF_PageContentGenerator::RealizeResource(
   ASSERT(dwResourceObjNum);
   if (!m_pPage->m_pResources) {
     m_pPage->m_pResources = m_pDocument->NewIndirect<CPDF_Dictionary>();
-    m_pPage->m_pFormDict->SetReferenceFor("Resources", m_pDocument,
-                                          m_pPage->m_pResources);
+    m_pPage->m_pFormDict->SetNewFor<CPDF_Reference>(
+        "Resources", m_pDocument, m_pPage->m_pResources->GetObjNum());
   }
   CPDF_Dictionary* pResList = m_pPage->m_pResources->GetDictFor(bsType);
-  if (!pResList) {
-    pResList = new CPDF_Dictionary(m_pDocument->GetByteStringPool());
-    m_pPage->m_pResources->SetFor(bsType, pResList);
-  }
+  if (!pResList)
+    pResList = m_pPage->m_pResources->SetNewFor<CPDF_Dictionary>(bsType);
+
   CFX_ByteString name;
   int idnum = 1;
   while (1) {
@@ -80,7 +82,7 @@ CFX_ByteString CPDF_PageContentGenerator::RealizeResource(
     }
     idnum++;
   }
-  pResList->SetReferenceFor(name, m_pDocument, dwResourceObjNum);
+  pResList->SetNewFor<CPDF_Reference>(name, m_pDocument, dwResourceObjNum);
   return name;
 }
 
@@ -126,8 +128,8 @@ void CPDF_PageContentGenerator::ProcessForm(CFX_ByteTextBuf& buf,
 
   CPDF_Dictionary* pFormDict =
       new CPDF_Dictionary(m_pDocument->GetByteStringPool());
-  pFormDict->SetNameFor("Type", "XObject");
-  pFormDict->SetNameFor("Subtype", "Form");
+  pFormDict->SetNewFor<CPDF_Name>("Type", "XObject");
+  pFormDict->SetNewFor<CPDF_Name>("Subtype", "Form");
   pFormDict->SetRectFor("BBox", bbox);
 
   CPDF_Stream* pStream = m_pDocument->NewIndirect<CPDF_Stream>();
@@ -179,5 +181,6 @@ void CPDF_PageContentGenerator::TransformContent(CFX_Matrix& matrix) {
   }
   CPDF_Stream* pStream = m_pDocument->NewIndirect<CPDF_Stream>();
   pStream->SetData(buf.GetBuffer(), buf.GetLength());
-  m_pPage->m_pFormDict->SetReferenceFor("Contents", m_pDocument, pStream);
+  m_pPage->m_pFormDict->SetNewFor<CPDF_Reference>("Contents", m_pDocument,
+                                                  pStream->GetObjNum());
 }

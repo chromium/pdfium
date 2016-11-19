@@ -7,7 +7,9 @@
 #include "core/fpdfdoc/cpdf_filespec.h"
 
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
+#include "core/fpdfapi/parser/cpdf_name.h"
 #include "core/fpdfapi/parser/cpdf_object.h"
+#include "core/fpdfapi/parser/cpdf_string.h"
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
 #include "core/fxcrt/fx_system.h"
 
@@ -112,7 +114,7 @@ bool CPDF_FileSpec::GetFileName(CFX_WideString* csFileName) const {
 
 CPDF_FileSpec::CPDF_FileSpec(const CFX_WeakPtr<CFX_ByteStringPool>& pPool) {
   m_pObj = new CPDF_Dictionary(pPool);
-  m_pObj->AsDictionary()->SetNameFor("Type", "Filespec");
+  m_pObj->AsDictionary()->SetNewFor<CPDF_Name>("Type", "Filespec");
 }
 
 CFX_WideString CPDF_FileSpec::EncodeFileName(const CFX_WideStringC& filepath) {
@@ -161,7 +163,8 @@ void CPDF_FileSpec::SetFileName(const CFX_WideStringC& wsFileName) {
   if (m_pObj->IsString()) {
     m_pObj->SetString(CFX_ByteString::FromUnicode(wsStr));
   } else if (CPDF_Dictionary* pDict = m_pObj->AsDictionary()) {
-    pDict->SetStringFor("F", CFX_ByteString::FromUnicode(wsStr));
-    pDict->SetStringFor("UF", PDF_EncodeText(wsStr));
+    pDict->SetNewFor<CPDF_String>("F", CFX_ByteString::FromUnicode(wsStr),
+                                  false);
+    pDict->SetNewFor<CPDF_String>("UF", PDF_EncodeText(wsStr), false);
   }
 }

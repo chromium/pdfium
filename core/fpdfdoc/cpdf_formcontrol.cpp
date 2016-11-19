@@ -11,6 +11,7 @@
 #include "core/fpdfapi/page/cpdf_form.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
+#include "core/fpdfapi/parser/cpdf_name.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
 #include "core/fpdfapi/render/cpdf_rendercontext.h"
@@ -61,14 +62,14 @@ void CPDF_FormControl::SetOnStateName(const CFX_ByteString& csOn) {
 
   CFX_ByteString csAS = m_pWidgetDict->GetStringFor("AS", "Off");
   if (csAS != "Off")
-    m_pWidgetDict->SetNameFor("AS", csValue);
+    m_pWidgetDict->SetNewFor<CPDF_Name>("AS", csValue);
 
   CPDF_Dictionary* pAP = m_pWidgetDict->GetDictFor("AP");
   if (!pAP)
     return;
 
   for (const auto& it : *pAP) {
-    CPDF_Object* pObj1 = it.second;
+    CPDF_Object* pObj1 = it.second.get();
     if (!pObj1)
       continue;
 
@@ -80,7 +81,7 @@ void CPDF_FormControl::SetOnStateName(const CFX_ByteString& csOn) {
     auto subdict_it = pSubDict->begin();
     while (subdict_it != pSubDict->end()) {
       const CFX_ByteString& csKey2 = subdict_it->first;
-      CPDF_Object* pObj2 = subdict_it->second;
+      CPDF_Object* pObj2 = subdict_it->second.get();
       ++subdict_it;
       if (!pObj2)
         continue;
@@ -155,7 +156,7 @@ void CPDF_FormControl::CheckControl(bool bChecked) {
     csAS = csOn;
   if (csOldAS == csAS)
     return;
-  m_pWidgetDict->SetNameFor("AS", csAS);
+  m_pWidgetDict->SetNewFor<CPDF_Name>("AS", csAS);
 }
 
 void CPDF_FormControl::DrawControl(CFX_RenderDevice* pDevice,

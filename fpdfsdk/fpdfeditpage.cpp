@@ -83,11 +83,9 @@ DLLEXPORT FPDF_DOCUMENT STDCALL FPDF_CreateNewDocument() {
   CPDF_Dictionary* pInfoDict = nullptr;
   pInfoDict = pDoc->GetInfo();
   if (pInfoDict) {
-    if (FSDK_IsSandBoxPolicyEnabled(FPDF_POLICY_MACHINETIME_ACCESS)) {
-      pInfoDict->SetFor("CreationDate",
-                        new CPDF_String(nullptr, DateStr, false));
-    }
-    pInfoDict->SetFor("Creator", new CPDF_String(L"PDFium"));
+    if (FSDK_IsSandBoxPolicyEnabled(FPDF_POLICY_MACHINETIME_ACCESS))
+      pInfoDict->SetNewFor<CPDF_String>("CreationDate", DateStr, false);
+    pInfoDict->SetNewFor<CPDF_String>("Creator", L"PDFium");
   }
 
   return FPDFDocumentFromCPDFDocument(pDoc);
@@ -111,15 +109,13 @@ DLLEXPORT FPDF_PAGE STDCALL FPDFPage_New(FPDF_DOCUMENT document,
   if (!pPageDict)
     return nullptr;
 
-  CPDF_Array* pMediaBoxArray = new CPDF_Array;
+  CPDF_Array* pMediaBoxArray = pPageDict->SetNewFor<CPDF_Array>("MediaBox");
   pMediaBoxArray->AddNew<CPDF_Number>(0);
   pMediaBoxArray->AddNew<CPDF_Number>(0);
   pMediaBoxArray->AddNew<CPDF_Number>(static_cast<FX_FLOAT>(width));
   pMediaBoxArray->AddNew<CPDF_Number>(static_cast<FX_FLOAT>(height));
-  pPageDict->SetFor("MediaBox", pMediaBoxArray);
-  pPageDict->SetFor("Rotate", new CPDF_Number(0));
-  pPageDict->SetFor("Resources",
-                    new CPDF_Dictionary(pDoc->GetByteStringPool()));
+  pPageDict->SetNewFor<CPDF_Number>("Rotate", 0);
+  pPageDict->SetNewFor<CPDF_Dictionary>("Resources");
 
 #ifdef PDF_ENABLE_XFA
   CPDFXFA_Page* pPage =
@@ -296,10 +292,9 @@ DLLEXPORT void STDCALL FPDFPage_TransformAnnots(FPDF_PAGE page,
     rect.Transform(&matrix);
 
     CPDF_Array* pRectArray = pAnnot->GetAnnotDict()->GetArrayFor("Rect");
-    if (!pRectArray) {
-      pRectArray = new CPDF_Array;
-      pAnnot->GetAnnotDict()->SetFor("Rect", pRectArray);
-    }
+    if (!pRectArray)
+      pRectArray = pAnnot->GetAnnotDict()->SetNewFor<CPDF_Array>("Rect");
+
     pRectArray->SetNewAt<CPDF_Number>(0, rect.left);
     pRectArray->SetNewAt<CPDF_Number>(1, rect.bottom);
     pRectArray->SetNewAt<CPDF_Number>(2, rect.right);
@@ -316,5 +311,5 @@ DLLEXPORT void STDCALL FPDFPage_SetRotation(FPDF_PAGE page, int rotate) {
 
   CPDF_Dictionary* pDict = pPage->m_pFormDict;
   rotate %= 4;
-  pDict->SetFor("Rotate", new CPDF_Number(rotate * 90));
+  pDict->SetNewFor<CPDF_Number>("Rotate", rotate * 90);
 }

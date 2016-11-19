@@ -8,6 +8,7 @@
 
 #include <memory>
 #include <set>
+#include <utility>
 #include <vector>
 
 #include "core/fpdfapi/cpdf_modulemgr.h"
@@ -22,6 +23,7 @@
 #include "core/fpdfapi/parser/cpdf_number.h"
 #include "core/fpdfapi/parser/cpdf_parser.h"
 #include "core/fpdfapi/parser/cpdf_reference.h"
+#include "core/fpdfapi/parser/cpdf_string.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/render/cpdf_docrenderdata.h"
 #include "core/fpdfapi/render/render_int.h"
@@ -265,7 +267,7 @@ int CountPages(CPDF_Dictionary* pPages,
       count++;
     }
   }
-  pPages->SetIntegerFor("Count", count);
+  pPages->SetNewFor<CPDF_Number>("Count", count);
   return count;
 }
 
@@ -304,11 +306,11 @@ void ProcessNonbCJK(CPDF_Dictionary* pBaseDict,
     basefont += ",Bold";
   else if (italic)
     basefont += ",Italic";
-  pBaseDict->SetNameFor("Subtype", "TrueType");
-  pBaseDict->SetNameFor("BaseFont", basefont);
-  pBaseDict->SetNumberFor("FirstChar", 32);
-  pBaseDict->SetNumberFor("LastChar", 255);
-  pBaseDict->SetFor("Widths", pWidths);
+  pBaseDict->SetNewFor<CPDF_Name>("Subtype", "TrueType");
+  pBaseDict->SetNewFor<CPDF_Name>("BaseFont", basefont);
+  pBaseDict->SetNewFor<CPDF_Number>("FirstChar", 32);
+  pBaseDict->SetNewFor<CPDF_Number>("LastChar", 255);
+  pBaseDict->SetFor("Widths", pdfium::WrapUnique(pWidths));
 }
 
 std::unique_ptr<CPDF_Dictionary> CalculateFontDesc(CPDF_Document* pDoc,
@@ -321,14 +323,14 @@ std::unique_ptr<CPDF_Dictionary> CalculateFontDesc(CPDF_Document* pDoc,
                                                    int32_t stemV) {
   auto pFontDesc =
       pdfium::MakeUnique<CPDF_Dictionary>(pDoc->GetByteStringPool());
-  pFontDesc->SetNameFor("Type", "FontDescriptor");
-  pFontDesc->SetNameFor("FontName", basefont);
-  pFontDesc->SetIntegerFor("Flags", flags);
-  pFontDesc->SetFor("FontBBox", bbox);
-  pFontDesc->SetIntegerFor("ItalicAngle", italicangle);
-  pFontDesc->SetIntegerFor("Ascent", ascend);
-  pFontDesc->SetIntegerFor("Descent", descend);
-  pFontDesc->SetIntegerFor("StemV", stemV);
+  pFontDesc->SetNewFor<CPDF_Name>("Type", "FontDescriptor");
+  pFontDesc->SetNewFor<CPDF_Name>("FontName", basefont);
+  pFontDesc->SetNewFor<CPDF_Number>("Flags", flags);
+  pFontDesc->SetFor("FontBBox", pdfium::WrapUnique(bbox));
+  pFontDesc->SetNewFor<CPDF_Number>("ItalicAngle", italicangle);
+  pFontDesc->SetNewFor<CPDF_Number>("Ascent", ascend);
+  pFontDesc->SetNewFor<CPDF_Number>("Descent", descend);
+  pFontDesc->SetNewFor<CPDF_Number>("StemV", stemV);
   return pFontDesc;
 }
 
@@ -649,19 +651,19 @@ CPDF_Image* CPDF_Document::LoadImageFromPageData(uint32_t dwStreamObjNum) {
 void CPDF_Document::CreateNewDoc() {
   ASSERT(!m_pRootDict && !m_pInfoDict);
   m_pRootDict = NewIndirect<CPDF_Dictionary>();
-  m_pRootDict->SetNameFor("Type", "Catalog");
+  m_pRootDict->SetNewFor<CPDF_Name>("Type", "Catalog");
 
   CPDF_Dictionary* pPages = NewIndirect<CPDF_Dictionary>();
-  pPages->SetNameFor("Type", "Pages");
-  pPages->SetNumberFor("Count", 0);
-  pPages->SetFor("Kids", new CPDF_Array);
-  m_pRootDict->SetReferenceFor("Pages", this, pPages);
+  pPages->SetNewFor<CPDF_Name>("Type", "Pages");
+  pPages->SetNewFor<CPDF_Number>("Count", 0);
+  pPages->SetNewFor<CPDF_Array>("Kids");
+  m_pRootDict->SetNewFor<CPDF_Reference>("Pages", this, pPages->GetObjNum());
   m_pInfoDict = NewIndirect<CPDF_Dictionary>();
 }
 
 CPDF_Dictionary* CPDF_Document::CreateNewPage(int iPage) {
   CPDF_Dictionary* pDict = NewIndirect<CPDF_Dictionary>();
-  pDict->SetNameFor("Type", "Page");
+  pDict->SetNewFor<CPDF_Name>("Type", "Page");
   uint32_t dwObjNum = pDict->GetObjNum();
   if (!InsertNewPage(iPage, pDict)) {
     DeleteIndirectObject(dwObjNum);
@@ -688,11 +690,12 @@ bool CPDF_Document::InsertDeletePDFPage(CPDF_Dictionary* pPages,
       }
       if (bInsert) {
         pKidList->InsertNewAt<CPDF_Reference>(i, this, pPageDict->GetObjNum());
-        pPageDict->SetReferenceFor("Parent", this, pPages->GetObjNum());
+        pPageDict->SetNewFor<CPDF_Reference>("Parent", this,
+                                             pPages->GetObjNum());
       } else {
         pKidList->RemoveAt(i);
       }
-      pPages->SetIntegerFor(
+      pPages->SetNewFor<CPDF_Number>(
           "Count", pPages->GetIntegerFor("Count") + (bInsert ? 1 : -1));
       ResetTraversal();
       break;
@@ -709,8 +712,8 @@ bool CPDF_Document::InsertDeletePDFPage(CPDF_Dictionary* pPages,
     if (!InsertDeletePDFPage(pKid, nPagesToGo, pPageDict, bInsert, pVisited))
       return false;
 
-    pPages->SetIntegerFor("Count",
-                          pPages->GetIntegerFor("Count") + (bInsert ? 1 : -1));
+    pPages->SetNewFor<CPDF_Number>(
+        "Count", pPages->GetIntegerFor("Count") + (bInsert ? 1 : -1));
     break;
   }
   return true;
@@ -728,13 +731,11 @@ bool CPDF_Document::InsertNewPage(int iPage, CPDF_Dictionary* pPageDict) {
 
   if (iPage == nPages) {
     CPDF_Array* pPagesList = pPages->GetArrayFor("Kids");
-    if (!pPagesList) {
-      pPagesList = new CPDF_Array;
-      pPages->SetFor("Kids", pPagesList);
-    }
+    if (!pPagesList)
+      pPagesList = pPages->SetNewFor<CPDF_Array>("Kids");
     pPagesList->AddNew<CPDF_Reference>(this, pPageDict->GetObjNum());
-    pPages->SetIntegerFor("Count", nPages + 1);
-    pPageDict->SetReferenceFor("Parent", this, pPages->GetObjNum());
+    pPages->SetNewFor<CPDF_Number>("Count", nPages + 1);
+    pPageDict->SetNewFor<CPDF_Reference>("Parent", this, pPages->GetObjNum());
     ResetTraversal();
   } else {
     std::set<CPDF_Dictionary*> stack = {pPages};
@@ -780,9 +781,9 @@ size_t CPDF_Document::CalculateEncodingDict(int charset,
     return i;
 
   CPDF_Dictionary* pEncodingDict = NewIndirect<CPDF_Dictionary>();
-  pEncodingDict->SetNameFor("BaseEncoding", "WinAnsiEncoding");
+  pEncodingDict->SetNewFor<CPDF_Name>("BaseEncoding", "WinAnsiEncoding");
 
-  CPDF_Array* pArray = new CPDF_Array;
+  CPDF_Array* pArray = pEncodingDict->SetNewFor<CPDF_Array>("Differences");
   pArray->AddNew<CPDF_Number>(128);
 
   const uint16_t* pUnicodes = g_FX_CharsetUnicodes[i].m_pUnicodes;
@@ -790,8 +791,8 @@ size_t CPDF_Document::CalculateEncodingDict(int charset,
     CFX_ByteString name = PDF_AdobeNameFromUnicode(pUnicodes[j]);
     pArray->AddNew<CPDF_Name>(name.IsEmpty() ? ".notdef" : name);
   }
-  pEncodingDict->SetFor("Differences", pArray);
-  pBaseDict->SetReferenceFor("Encoding", this, pEncodingDict);
+  pBaseDict->SetNewFor<CPDF_Reference>("Encoding", this,
+                                       pEncodingDict->GetObjNum());
   return i;
 }
 
@@ -805,7 +806,7 @@ CPDF_Dictionary* CPDF_Document::ProcessbCJK(
   CFX_ByteString cmap;
   CFX_ByteString ordering;
   int supplement = 0;
-  CPDF_Array* pWidthArray = new CPDF_Array;
+  CPDF_Array* pWidthArray = pFontDict->SetNewFor<CPDF_Array>("W");
   switch (charset) {
     case FXFONT_CHINESEBIG5_CHARSET:
       cmap = bVert ? "ETenms-B5-V" : "ETenms-B5-H";
@@ -844,20 +845,20 @@ CPDF_Dictionary* CPDF_Document::ProcessbCJK(
       Insert(0x7e, 0x7e, pWidthArray);
       break;
   }
-  pBaseDict->SetNameFor("Subtype", "Type0");
-  pBaseDict->SetNameFor("BaseFont", basefont);
-  pBaseDict->SetNameFor("Encoding", cmap);
-  pFontDict->SetFor("W", pWidthArray);
-  pFontDict->SetNameFor("Type", "Font");
-  pFontDict->SetNameFor("Subtype", "CIDFontType2");
-  pFontDict->SetNameFor("BaseFont", basefont);
-  CPDF_Dictionary* pCIDSysInfo = new CPDF_Dictionary(GetByteStringPool());
-  pCIDSysInfo->SetStringFor("Registry", "Adobe");
-  pCIDSysInfo->SetStringFor("Ordering", ordering);
-  pCIDSysInfo->SetIntegerFor("Supplement", supplement);
-  pFontDict->SetFor("CIDSystemInfo", pCIDSysInfo);
-  CPDF_Array* pArray = new CPDF_Array;
-  pBaseDict->SetFor("DescendantFonts", pArray);
+  pBaseDict->SetNewFor<CPDF_Name>("Subtype", "Type0");
+  pBaseDict->SetNewFor<CPDF_Name>("BaseFont", basefont);
+  pBaseDict->SetNewFor<CPDF_Name>("Encoding", cmap);
+  pFontDict->SetNewFor<CPDF_Name>("Type", "Font");
+  pFontDict->SetNewFor<CPDF_Name>("Subtype", "CIDFontType2");
+  pFontDict->SetNewFor<CPDF_Name>("BaseFont", basefont);
+
+  CPDF_Dictionary* pCIDSysInfo =
+      pFontDict->SetNewFor<CPDF_Dictionary>("CIDSystemInfo");
+  pCIDSysInfo->SetNewFor<CPDF_String>("Registry", "Adobe", false);
+  pCIDSysInfo->SetNewFor<CPDF_String>("Ordering", ordering, false);
+  pCIDSysInfo->SetNewFor<CPDF_Number>("Supplement", supplement);
+
+  CPDF_Array* pArray = pBaseDict->SetNewFor<CPDF_Array>("DescendantFonts");
   pArray->AddNew<CPDF_Reference>(this, pFontDict->GetObjNum());
   return pFontDict;
 }
@@ -877,7 +878,7 @@ CPDF_Font* CPDF_Document::AddFont(CFX_Font* pFont, int charset, bool bVert) {
                      false, false, charset == FXFONT_SYMBOL_CHARSET);
 
   CPDF_Dictionary* pBaseDict = NewIndirect<CPDF_Dictionary>();
-  pBaseDict->SetNameFor("Type", "Font");
+  pBaseDict->SetNewFor<CPDF_Name>("Type", "Font");
   std::unique_ptr<CFX_UnicodeEncoding> pEncoding(
       new CFX_UnicodeEncoding(pFont));
   CPDF_Dictionary* pFontDict = pBaseDict;
@@ -890,7 +891,7 @@ CPDF_Font* CPDF_Document::AddFont(CFX_Font* pFont, int charset, bool bVert) {
     }
     if (charset == FXFONT_ANSI_CHARSET || charset == FXFONT_DEFAULT_CHARSET ||
         charset == FXFONT_SYMBOL_CHARSET) {
-      pBaseDict->SetNameFor("Encoding", "WinAnsiEncoding");
+      pBaseDict->SetNewFor<CPDF_Name>("Encoding", "WinAnsiEncoding");
       for (int charcode = 128; charcode <= 255; charcode++) {
         int glyph_index = pEncoding->GlyphFromCharCode(charcode);
         int char_width = pFont->GetGlyphWidth(glyph_index);
@@ -944,7 +945,8 @@ CPDF_Font* CPDF_Document::AddFont(CFX_Font* pFont, int charset, bool bVert) {
   CPDF_Dictionary* pFontDesc = ToDictionary(AddIndirectObject(
       CalculateFontDesc(this, basefont, flags, italicangle, pFont->GetAscent(),
                         pFont->GetDescent(), pBBox, nStemV)));
-  pFontDict->SetReferenceFor("FontDescriptor", this, pFontDesc);
+  pFontDict->SetNewFor<CPDF_Reference>("FontDescriptor", this,
+                                       pFontDesc->GetObjNum());
   return LoadFont(pBaseDict);
 }
 
@@ -1007,13 +1009,13 @@ CPDF_Font* CPDF_Document::AddWindowsFont(LOGFONTA* pLogFont,
   FX_Free(tm_buf);
   basefont.Replace(" ", "");
   CPDF_Dictionary* pBaseDict = NewIndirect<CPDF_Dictionary>();
-  pBaseDict->SetNameFor("Type", "Font");
+  pBaseDict->SetNewFor<CPDF_Name>("Type", "Font");
   CPDF_Dictionary* pFontDict = pBaseDict;
   if (!bCJK) {
     if (pLogFont->lfCharSet == FXFONT_ANSI_CHARSET ||
         pLogFont->lfCharSet == FXFONT_DEFAULT_CHARSET ||
         pLogFont->lfCharSet == FXFONT_SYMBOL_CHARSET) {
-      pBaseDict->SetNameFor("Encoding", "WinAnsiEncoding");
+      pBaseDict->SetNewFor<CPDF_Name>("Encoding", "WinAnsiEncoding");
     } else {
       CalculateEncodingDict(pLogFont->lfCharSet, pBaseDict);
     }
@@ -1037,9 +1039,10 @@ CPDF_Font* CPDF_Document::AddWindowsFont(LOGFONTA* pLogFont,
   std::unique_ptr<CPDF_Dictionary> pFontDesc =
       CalculateFontDesc(this, basefont, flags, italicangle, ascend, descend,
                         pBBox, pLogFont->lfWeight / 5);
-  pFontDesc->SetIntegerFor("CapHeight", capheight);
-  pFontDict->SetReferenceFor("FontDescriptor", this,
-                             AddIndirectObject(std::move(pFontDesc)));
+  pFontDesc->SetNewFor<CPDF_Number>("CapHeight", capheight);
+  pFontDict->SetNewFor<CPDF_Reference>(
+      "FontDescriptor", this,
+      AddIndirectObject(std::move(pFontDesc))->GetObjNum());
   hFont = SelectObject(hDC, hFont);
   DeleteObject(hFont);
   DeleteDC(hDC);

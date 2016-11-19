@@ -7,6 +7,7 @@
 #include "core/fpdfapi/page/cpdf_docpagedata.h"
 
 #include <algorithm>
+#include <memory>
 #include <set>
 
 #include "core/fdrm/crypto/fx_crypt.h"
@@ -21,6 +22,7 @@
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
+#include "core/fpdfapi/parser/cpdf_name.h"
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "third_party/base/stl_util.h"
 
@@ -176,12 +178,13 @@ CPDF_Font* CPDF_DocPageData::GetStandardFont(const CFX_ByteString& fontName,
   }
 
   CPDF_Dictionary* pDict = m_pPDFDoc->NewIndirect<CPDF_Dictionary>();
-  pDict->SetNameFor("Type", "Font");
-  pDict->SetNameFor("Subtype", "Type1");
-  pDict->SetNameFor("BaseFont", fontName);
+  pDict->SetNewFor<CPDF_Name>("Type", "Font");
+  pDict->SetNewFor<CPDF_Name>("Subtype", "Type1");
+  pDict->SetNewFor<CPDF_Name>("BaseFont", fontName);
   if (pEncoding) {
-    pDict->SetFor("Encoding",
-                  pEncoding->Realize(m_pPDFDoc->GetByteStringPool()));
+    pDict->SetFor(
+        "Encoding",
+        pdfium::WrapUnique(pEncoding->Realize(m_pPDFDoc->GetByteStringPool())));
   }
 
   std::unique_ptr<CPDF_Font> pFont = CPDF_Font::Create(m_pPDFDoc, pDict);

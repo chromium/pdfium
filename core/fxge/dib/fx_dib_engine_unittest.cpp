@@ -18,8 +18,8 @@ TEST(CStretchEngine, OverflowInCtor) {
   FX_RECT clip_rect;
   std::unique_ptr<CPDF_Dictionary> dict_obj =
       pdfium::MakeUnique<CPDF_Dictionary>();
-  dict_obj->SetFor("Width", new CPDF_Number(71000));
-  dict_obj->SetFor("Height", new CPDF_Number(12500));
+  dict_obj->SetNewFor<CPDF_Number>("Width", 71000);
+  dict_obj->SetNewFor<CPDF_Number>("Height", 12500);
   std::unique_ptr<CPDF_Stream> stream =
       pdfium::MakeUnique<CPDF_Stream>(nullptr, 0, dict_obj.release());
   CPDF_DIBSource dib_source;

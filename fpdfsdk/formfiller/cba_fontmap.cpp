@@ -9,6 +9,7 @@
 #include "core/fpdfapi/font/cpdf_font.h"
 #include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
+#include "core/fpdfapi/parser/cpdf_reference.h"
 #include "core/fpdfapi/parser/cpdf_simple_parser.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
@@ -119,11 +120,10 @@ CPDF_Font* CBA_FontMap::FindResFontSameCharset(CPDF_Dictionary* pResDict,
   CPDF_Font* pFind = nullptr;
   for (const auto& it : *pFonts) {
     const CFX_ByteString& csKey = it.first;
-    CPDF_Object* pObj = it.second;
-    if (!pObj)
+    if (!it.second)
       continue;
 
-    CPDF_Dictionary* pElement = ToDictionary(pObj->GetDirect());
+    CPDF_Dictionary* pElement = ToDictionary(it.second->GetDirect());
     if (!pElement)
       continue;
     if (pElement->GetStringFor("Type") != "Font")
@@ -154,10 +154,8 @@ void CBA_FontMap::AddFontToAnnotDict(CPDF_Font* pFont,
     return;
 
   CPDF_Dictionary* pAPDict = m_pAnnotDict->GetDictFor("AP");
-  if (!pAPDict) {
-    pAPDict = new CPDF_Dictionary(m_pDocument->GetByteStringPool());
-    m_pAnnotDict->SetFor("AP", pAPDict);
-  }
+  if (!pAPDict)
+    pAPDict = m_pAnnotDict->SetNewFor<CPDF_Dictionary>("AP");
 
   // to avoid checkbox and radiobutton
   CPDF_Object* pObject = pAPDict->GetObjectFor(m_sAPType);
@@ -167,7 +165,8 @@ void CBA_FontMap::AddFontToAnnotDict(CPDF_Font* pFont,
   CPDF_Stream* pStream = pAPDict->GetStreamFor(m_sAPType);
   if (!pStream) {
     pStream = m_pDocument->NewIndirect<CPDF_Stream>();
-    pAPDict->SetReferenceFor(m_sAPType, m_pDocument, pStream);
+    pAPDict->SetNewFor<CPDF_Reference>(m_sAPType, m_pDocument,
+                                       pStream->GetObjNum());
   }
 
   CPDF_Dictionary* pStreamDict = pStream->GetDict();
@@ -178,18 +177,17 @@ void CBA_FontMap::AddFontToAnnotDict(CPDF_Font* pFont,
 
   if (pStreamDict) {
     CPDF_Dictionary* pStreamResList = pStreamDict->GetDictFor("Resources");
-    if (!pStreamResList) {
-      pStreamResList = new CPDF_Dictionary(m_pDocument->GetByteStringPool());
-      pStreamDict->SetFor("Resources", pStreamResList);
-    }
+    if (!pStreamResList)
+      pStreamResList = pStreamDict->SetNewFor<CPDF_Dictionary>("Resources");
     CPDF_Dictionary* pStreamResFontList = pStreamResList->GetDictFor("Font");
     if (!pStreamResFontList) {
       pStreamResFontList = m_pDocument->NewIndirect<CPDF_Dictionary>();
-      pStreamResList->SetReferenceFor("Font", m_pDocument, pStreamResFontList);
+      pStreamResList->SetNewFor<CPDF_Reference>(
+          "Font", m_pDocument, pStreamResFontList->GetObjNum());
     }
     if (!pStreamResFontList->KeyExist(sAlias)) {
-      pStreamResFontList->SetReferenceFor(sAlias, m_pDocument,
-                                          pFont->GetFontDict()->GetObjNum());
+      pStreamResFontList->SetNewFor<CPDF_Reference>(
+          sAlias, m_pDocument, pFont->GetFontDict()->GetObjNum());
     }
   }
 }

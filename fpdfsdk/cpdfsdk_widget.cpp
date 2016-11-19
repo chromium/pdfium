@@ -8,9 +8,12 @@
 
 #include <memory>
 
+#include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
+#include "core/fpdfapi/parser/cpdf_reference.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
+#include "core/fpdfapi/parser/cpdf_string.h"
 #include "core/fpdfdoc/cpdf_defaultappearance.h"
 #include "core/fpdfdoc/cpdf_formcontrol.h"
 #include "core/fpdfdoc/cpdf_formfield.h"
@@ -966,21 +969,21 @@ void CPDFSDK_Widget::ResetAppearance_PushButton() {
   if (pNormalIcon) {
     if (CPDF_Dictionary* pImageDict = pNormalIcon->GetDict()) {
       if (pImageDict->GetStringFor("Name").IsEmpty())
-        pImageDict->SetStringFor("Name", "ImgA");
+        pImageDict->SetNewFor<CPDF_String>("Name", "ImgA", false);
     }
   }
 
   if (pRolloverIcon) {
     if (CPDF_Dictionary* pImageDict = pRolloverIcon->GetDict()) {
       if (pImageDict->GetStringFor("Name").IsEmpty())
-        pImageDict->SetStringFor("Name", "ImgB");
+        pImageDict->SetNewFor<CPDF_String>("Name", "ImgB", false);
     }
   }
 
   if (pDownIcon) {
     if (CPDF_Dictionary* pImageDict = pDownIcon->GetDict()) {
       if (pImageDict->GetStringFor("Name").IsEmpty())
-        pImageDict->SetStringFor("Name", "ImgC");
+        pImageDict->SetNewFor<CPDF_String>("Name", "ImgC", false);
     }
   }
 
@@ -1804,14 +1807,12 @@ void CPDFSDK_Widget::AddImageToAppearance(const CFX_ByteString& sAPType,
 
   CPDF_Document* pDoc = m_pPageView->GetPDFDocument();
   CPDF_Dictionary* pStreamResList = pStreamDict->GetDictFor("Resources");
-  if (!pStreamResList) {
-    pStreamResList = new CPDF_Dictionary(pDoc->GetByteStringPool());
-    pStreamDict->SetFor("Resources", pStreamResList);
-  }
+  if (!pStreamResList)
+    pStreamResList = pStreamDict->SetNewFor<CPDF_Dictionary>("Resources");
 
-  CPDF_Dictionary* pXObject = new CPDF_Dictionary(pDoc->GetByteStringPool());
-  pXObject->SetReferenceFor(sImageAlias, pDoc, pImage->GetObjNum());
-  pStreamResList->SetFor("XObject", pXObject);
+  CPDF_Dictionary* pXObject =
+      pStreamResList->SetNewFor<CPDF_Dictionary>("XObject");
+  pXObject->SetNewFor<CPDF_Reference>(sImageAlias, pDoc, pImage->GetObjNum());
 }
 
 void CPDFSDK_Widget::RemoveAppearance(const CFX_ByteString& sAPType) {

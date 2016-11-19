@@ -5,6 +5,7 @@
 #include <cstdint>
 
 #include "core/fpdfapi/parser/cpdf_array.h"
+#include "core/fpdfapi/parser/cpdf_boolean.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_hint_tables.h"
 #include "core/fpdfapi/parser/cpdf_linearized_header.h"
@@ -62,15 +63,15 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
 
   auto linearized_dict = pdfium::MakeUnique<CPDF_Dictionary>();
   // Set initial value.
-  linearized_dict->SetBooleanFor("Linearized", true);
+  linearized_dict->SetNewFor<CPDF_Boolean>("Linearized", true);
   // Set first page end offset
-  linearized_dict->SetIntegerFor("E", GetData(&data32, &data, &size));
+  linearized_dict->SetNewFor<CPDF_Number>("E", GetData(&data32, &data, &size));
   // Set page count
-  linearized_dict->SetIntegerFor("N", GetData(&data32, &data, &size));
+  linearized_dict->SetNewFor<CPDF_Number>("N", GetData(&data32, &data, &size));
   // Set first page obj num
-  linearized_dict->SetIntegerFor("O", GetData(&data32, &data, &size));
+  linearized_dict->SetNewFor<CPDF_Number>("O", GetData(&data32, &data, &size));
   // Set first page no
-  linearized_dict->SetIntegerFor("P", GetData(&data32, &data, &size));
+  linearized_dict->SetNewFor<CPDF_Number>("P", GetData(&data32, &data, &size));
 
   auto hint_info = pdfium::MakeUnique<CPDF_Array>();
   // Add primary hint stream offset
@@ -78,7 +79,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   // Add primary hint stream size
   hint_info->AddNew<CPDF_Number>(GetData(&data32, &data, &size));
   // Set hint stream info.
-  linearized_dict->SetFor("H", hint_info.release());
+  linearized_dict->SetFor("H", std::move(hint_info));
 
   const int shared_hint_table_offset = GetData(&data32, &data, &size);
 

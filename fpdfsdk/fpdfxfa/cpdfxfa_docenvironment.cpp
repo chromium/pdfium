@@ -6,6 +6,8 @@
 
 #include "fpdfsdk/fpdfxfa/cpdfxfa_docenvironment.h"
 
+#include <memory>
+
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "core/fpdfapi/parser/cpdf_string.h"
@@ -398,7 +400,7 @@ void CPDFXFA_DocEnvironment::SetTitle(CXFA_FFDoc* hDoc,
     return;
 
   if (CPDF_Dictionary* pInfoDict = m_pContext->GetPDFDoc()->GetInfo())
-    pInfoDict->SetFor("Title", new CPDF_String(wsTitle));
+    pInfoDict->SetNewFor<CPDF_String>("Title", wsTitle);
 }
 
 void CPDFXFA_DocEnvironment::ExportData(CXFA_FFDoc* hDoc,

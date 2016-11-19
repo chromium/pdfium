@@ -13,6 +13,7 @@
 #include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
+#include "core/fpdfapi/parser/cpdf_string.h"
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
 #include "core/fpdfdoc/cpdf_interform.h"
 #include "core/fpdfdoc/cpdf_nametree.h"
@@ -809,7 +810,7 @@ bool Document::info(IJS_Context* cc,
   // It's to be compatible to non-standard info dictionary.
   for (const auto& it : *pDictionary) {
     const CFX_ByteString& bsKey = it.first;
-    CPDF_Object* pValueObj = it.second;
+    CPDF_Object* pValueObj = it.second.get();
     CFX_WideString wsKey = CFX_WideString::FromUTF8(bsKey.AsStringC());
     if (pValueObj->IsString() || pValueObj->IsName()) {
       pRuntime->PutObjectString(pObj, wsKey, pValueObj->GetUnicodeText());
@@ -844,7 +845,8 @@ bool Document::getPropertyInternal(IJS_Context* cc,
     }
     CFX_WideString csProperty;
     vp >> csProperty;
-    pDictionary->SetStringFor(propName, PDF_EncodeText(csProperty));
+    pDictionary->SetNewFor<CPDF_String>(propName, PDF_EncodeText(csProperty),
+                                        false);
     m_pFormFillEnv->SetChangeMark();
   }
   return true;

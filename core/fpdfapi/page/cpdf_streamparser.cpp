@@ -8,6 +8,8 @@
 
 #include <limits.h>
 
+#include <utility>
+
 #include "core/fpdfapi/cpdf_modulemgr.h"
 #include "core/fpdfapi/page/cpdf_docpagedata.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
@@ -230,7 +232,7 @@ CPDF_Stream* CPDF_StreamParser::ReadInlineStream(CPDF_Document* pDoc,
     FXSYS_memcpy(pData, m_pBuf + m_Pos, dwStreamSize);
     m_Pos += dwStreamSize;
   }
-  pDict->SetIntegerFor("Length", (int)dwStreamSize);
+  pDict->SetNewFor<CPDF_Number>("Length", (int)dwStreamSize);
   return new CPDF_Stream(pData, dwStreamSize, pDict);
 }
 
@@ -361,16 +363,13 @@ CPDF_Object* CPDF_StreamParser::ReadNextObject(bool bAllowNestedArray,
 
       CFX_ByteString key =
           PDF_NameDecode(CFX_ByteStringC(m_WordBuffer + 1, m_WordSize - 1));
-      CPDF_Object* pObj = ReadNextObject(true, 0);
+      auto pObj = pdfium::WrapUnique(ReadNextObject(true, 0));
       if (!pObj) {
         delete pDict;
         return nullptr;
       }
-
-      if (key.IsEmpty())
-        delete pObj;
-      else
-        pDict->SetFor(key, pObj);
+      if (!key.IsEmpty())
+        pDict->SetFor(key, std::move(pObj));
     }
     return pDict;
   }

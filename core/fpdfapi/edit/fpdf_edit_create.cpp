@@ -13,6 +13,8 @@
 #include "core/fpdfapi/parser/cpdf_crypto_handler.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
+#include "core/fpdfapi/parser/cpdf_name.h"
+#include "core/fpdfapi/parser/cpdf_number.h"
 #include "core/fpdfapi/parser/cpdf_parser.h"
 #include "core/fpdfapi/parser/cpdf_reference.h"
 #include "core/fpdfapi/parser/cpdf_security_handler.h"
@@ -128,7 +130,7 @@ int32_t PDF_CreatorAppendObject(const CPDF_Object* pObj,
       const CPDF_Dictionary* p = pObj->AsDictionary();
       for (const auto& it : *p) {
         const CFX_ByteString& key = it.first;
-        CPDF_Object* pValue = it.second;
+        CPDF_Object* pValue = it.second.get();
         if (pFile->AppendString("/") < 0) {
           return -1;
         }
@@ -197,7 +199,7 @@ int32_t PDF_CreatorWriteTrailer(CPDF_Document* pDocument,
     CPDF_Dictionary* p = pParser->GetTrailer();
     for (const auto& it : *p) {
       const CFX_ByteString& key = it.first;
-      CPDF_Object* pValue = it.second;
+      CPDF_Object* pValue = it.second.get();
       if (key == "Encrypt" || key == "Size" || key == "Filter" ||
           key == "Index" || key == "Length" || key == "Prev" || key == "W" ||
           key == "XRefStm" || key == "Type" || key == "ID") {
@@ -440,8 +442,8 @@ CPDF_FlateEncoder::CPDF_FlateEncoder(CPDF_Stream* pStream, bool bFlateEncode)
   // TODO(thestig): Move to Init() and check return value.
   ::FlateEncode(m_Acc.GetData(), m_Acc.GetSize(), &m_pData, &m_dwSize);
   m_pDict = ToDictionary(pStream->GetDict()->Clone().release());
-  m_pDict->SetIntegerFor("Length", m_dwSize);
-  m_pDict->SetNameFor("Filter", "FlateDecode");
+  m_pDict->SetNewFor<CPDF_Number>("Length", static_cast<int>(m_dwSize));
+  m_pDict->SetNewFor<CPDF_Name>("Filter", "FlateDecode");
   m_pDict->RemoveFor("DecodeParms");
 }
 
@@ -993,7 +995,8 @@ int32_t CPDF_Creator::WriteStream(const CPDF_Object* pStream,
   if ((uint32_t)encoder.m_pDict->GetIntegerFor("Length") !=
       encryptor.m_dwSize) {
     encoder.CloneDict();
-    encoder.m_pDict->SetIntegerFor("Length", encryptor.m_dwSize);
+    encoder.m_pDict->SetNewFor<CPDF_Number>(
+        "Length", static_cast<int>(encryptor.m_dwSize));
   }
   if (WriteDirectObj(objnum, encoder.m_pDict) < 0) {
     return -1;
@@ -1106,7 +1109,8 @@ int32_t CPDF_Creator::WriteDirectObj(uint32_t objnum,
       if ((uint32_t)encoder.m_pDict->GetIntegerFor("Length") !=
           encryptor.m_dwSize) {
         encoder.CloneDict();
-        encoder.m_pDict->SetIntegerFor("Length", encryptor.m_dwSize);
+        encoder.m_pDict->SetNewFor<CPDF_Number>(
+            "Length", static_cast<int>(encryptor.m_dwSize));
       }
       if (WriteDirectObj(objnum, encoder.m_pDict) < 0) {
         return -1;
@@ -1189,7 +1193,7 @@ int32_t CPDF_Creator::WriteDirectObj(uint32_t objnum,
       for (const auto& it : *p) {
         bool bSignValue = false;
         const CFX_ByteString& key = it.first;
-        CPDF_Object* pValue = it.second;
+        CPDF_Object* pValue = it.second.get();
         if (m_File.AppendString("/") < 0) {
           return -1;
         }
@@ -1711,7 +1715,7 @@ int32_t CPDF_Creator::WriteDoc_Stage4(IFX_Pause* pPause) {
       CPDF_Dictionary* p = m_pParser->GetTrailer();
       for (const auto& it : *p) {
         const CFX_ByteString& key = it.first;
-        CPDF_Object* pValue = it.second;
+        CPDF_Object* pValue = it.second.get();
         // TODO(ochang): Consolidate with similar check in
         // PDF_CreatorWriteTrailer.
         if (key == "Encrypt" || key == "Size" || key == "Filter" ||

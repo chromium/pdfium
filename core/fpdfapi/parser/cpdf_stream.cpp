@@ -7,6 +7,7 @@
 #include "core/fpdfapi/parser/cpdf_stream.h"
 
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
+#include "core/fpdfapi/parser/cpdf_number.h"
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
 #include "third_party/base/numerics/safe_conversions.h"
@@ -54,7 +55,7 @@ void CPDF_Stream::InitStream(const uint8_t* pData,
     FXSYS_memcpy(m_pDataBuf.get(), pData, size);
   m_dwSize = size;
   if (m_pDict)
-    m_pDict->SetIntegerFor("Length", m_dwSize);
+    m_pDict->SetNewFor<CPDF_Number>("Length", static_cast<int>(m_dwSize));
 }
 
 void CPDF_Stream::InitStreamFromFile(IFX_SeekableReadStream* pFile,
@@ -65,7 +66,7 @@ void CPDF_Stream::InitStreamFromFile(IFX_SeekableReadStream* pFile,
   m_pFile = pFile;
   m_dwSize = pdfium::base::checked_cast<uint32_t>(pFile->GetSize());
   if (m_pDict)
-    m_pDict->SetIntegerFor("Length", m_dwSize);
+    m_pDict->SetNewFor<CPDF_Number>("Length", static_cast<int>(m_dwSize));
 }
 
 std::unique_ptr<CPDF_Object> CPDF_Stream::Clone() const {
@@ -96,7 +97,7 @@ void CPDF_Stream::SetData(const uint8_t* pData, uint32_t size) {
   m_dwSize = size;
   if (!m_pDict)
     m_pDict.reset(new CPDF_Dictionary());
-  m_pDict->SetIntegerFor("Length", size);
+  m_pDict->SetNewFor<CPDF_Number>("Length", static_cast<int>(size));
   m_pDict->RemoveFor("Filter");
   m_pDict->RemoveFor("DecodeParms");
 }

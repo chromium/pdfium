@@ -8,6 +8,7 @@
 #define CORE_FPDFAPI_PARSER_CPDF_DICTIONARY_H_
 
 #include <map>
+#include <memory>
 #include <set>
 
 #include "core/fpdfapi/parser/cpdf_object.h"
@@ -21,8 +22,8 @@ class CPDF_IndirectObjectHolder;
 
 class CPDF_Dictionary : public CPDF_Object {
  public:
-  using iterator = std::map<CFX_ByteString, CPDF_Object*>::iterator;
-  using const_iterator = std::map<CFX_ByteString, CPDF_Object*>::const_iterator;
+  using const_iterator =
+      std::map<CFX_ByteString, std::unique_ptr<CPDF_Object>>::const_iterator;
 
   CPDF_Dictionary();
   explicit CPDF_Dictionary(const CFX_WeakPtr<CFX_ByteStringPool>& pPool);
@@ -60,19 +61,27 @@ class CPDF_Dictionary : public CPDF_Object {
   bool IsSignatureDict() const;
 
   // Set* functions invalidate iterators for the element with the key |key|.
-  void SetFor(const CFX_ByteString& key, CPDF_Object* pObj);
-  void SetBooleanFor(const CFX_ByteString& key, bool bValue);
-  void SetNameFor(const CFX_ByteString& key, const CFX_ByteString& name);
-  void SetStringFor(const CFX_ByteString& key, const CFX_ByteString& str);
-  void SetIntegerFor(const CFX_ByteString& key, int i);
-  void SetNumberFor(const CFX_ByteString& key, FX_FLOAT f);
-  void SetReferenceFor(const CFX_ByteString& key,
-                       CPDF_IndirectObjectHolder* pDoc,
-                       uint32_t objnum);
-  void SetReferenceFor(const CFX_ByteString& key,
-                       CPDF_IndirectObjectHolder* pDoc,
-                       CPDF_Object* pObj);
+  // Takes ownership of |pObj|, returns an unowned pointer to it.
+  CPDF_Object* SetFor(const CFX_ByteString& key,
+                      std::unique_ptr<CPDF_Object> pObj);
 
+  // Creates a new object owned by the dictionary and returns an unowned
+  // pointer to it.
+  template <typename T, typename... Args>
+  typename std::enable_if<!CanInternStrings<T>::value, T*>::type SetNewFor(
+      const CFX_ByteString& key,
+      Args... args) {
+    return static_cast<T*>(SetFor(key, pdfium::MakeUnique<T>(args...)));
+  }
+  template <typename T, typename... Args>
+  typename std::enable_if<CanInternStrings<T>::value, T*>::type SetNewFor(
+      const CFX_ByteString& key,
+      Args... args) {
+    return static_cast<T*>(
+        SetFor(key, pdfium::MakeUnique<T>(m_pPool, args...)));
+  }
+
+  // Convenience functions to convert native objects to array form.
   void SetRectFor(const CFX_ByteString& key, const CFX_FloatRect& rect);
   void SetMatrixFor(const CFX_ByteString& key, const CFX_Matrix& matrix);
 
@@ -85,8 +94,6 @@ class CPDF_Dictionary : public CPDF_Object {
   // Invalidates iterators for the element with the key |oldkey|.
   void ReplaceKey(const CFX_ByteString& oldkey, const CFX_ByteString& newkey);
 
-  iterator begin() { return m_Map.begin(); }
-  iterator end() { return m_Map.end(); }
   const_iterator begin() const { return m_Map.begin(); }
   const_iterator end() const { return m_Map.end(); }
 
@@ -99,7 +106,7 @@ class CPDF_Dictionary : public CPDF_Object {
       std::set<const CPDF_Object*>* visited) const override;
 
   CFX_WeakPtr<CFX_ByteStringPool> m_pPool;
-  std::map<CFX_ByteString, CPDF_Object*> m_Map;
+  std::map<CFX_ByteString, std::unique_ptr<CPDF_Object>> m_Map;
 };
 
 inline CPDF_Dictionary* ToDictionary(CPDF_Object* obj) {

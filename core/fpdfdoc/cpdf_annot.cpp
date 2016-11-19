@@ -9,6 +9,7 @@
 #include "core/fpdfapi/page/cpdf_form.h"
 #include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
+#include "core/fpdfapi/parser/cpdf_boolean.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfapi/render/cpdf_rendercontext.h"
 #include "core/fpdfapi/render/cpdf_renderoptions.h"
@@ -109,7 +110,7 @@ void CPDF_Annot::GenerateAPIfNeeded() {
     result = CPVT_GenerateAP::GenerateUnderlineAP(m_pDocument, m_pAnnotDict);
 
   if (result) {
-    m_pAnnotDict->SetBooleanFor(kPDFiumKey_HasGeneratedAP, result);
+    m_pAnnotDict->SetNewFor<CPDF_Boolean>(kPDFiumKey_HasGeneratedAP, result);
     m_bHasGeneratedAP = result;
   }
 }

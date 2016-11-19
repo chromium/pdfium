@@ -105,7 +105,7 @@ TEST_F(PDFDocTest, FindBookmark) {
   }
   {
     // Empty bookmark tree.
-    m_pRootObj->SetFor("Outlines", new CPDF_Dictionary());
+    m_pRootObj->SetNewFor<CPDF_Dictionary>("Outlines");
     std::unique_ptr<unsigned short, pdfium::FreeDeleter> title =
         GetFPDFWideString(L"");
     EXPECT_EQ(nullptr, FPDFBookmark_Find(m_pDoc.get(), title.get()));
@@ -117,27 +117,27 @@ TEST_F(PDFDocTest, FindBookmark) {
     // Check on a regular bookmark tree.
     auto bookmarks = CreateDictObjs(3);
 
-    bookmarks[1].obj->SetFor("Title", new CPDF_String(L"Chapter 1"));
-    bookmarks[1].obj->SetFor(
-        "Parent", new CPDF_Reference(m_pIndirectObjs, bookmarks[0].num));
-    bookmarks[1].obj->SetFor(
-        "Next", new CPDF_Reference(m_pIndirectObjs, bookmarks[2].num));
+    bookmarks[1].obj->SetNewFor<CPDF_String>("Title", L"Chapter 1");
+    bookmarks[1].obj->SetNewFor<CPDF_Reference>("Parent", m_pIndirectObjs,
+                                                bookmarks[0].num);
+    bookmarks[1].obj->SetNewFor<CPDF_Reference>("Next", m_pIndirectObjs,
+                                                bookmarks[2].num);
 
-    bookmarks[2].obj->SetFor("Title", new CPDF_String(L"Chapter 2"));
-    bookmarks[2].obj->SetFor(
-        "Parent", new CPDF_Reference(m_pIndirectObjs, bookmarks[0].num));
-    bookmarks[2].obj->SetFor(
-        "Prev", new CPDF_Reference(m_pIndirectObjs, bookmarks[1].num));
+    bookmarks[2].obj->SetNewFor<CPDF_String>("Title", L"Chapter 2");
+    bookmarks[2].obj->SetNewFor<CPDF_Reference>("Parent", m_pIndirectObjs,
+                                                bookmarks[0].num);
+    bookmarks[2].obj->SetNewFor<CPDF_Reference>("Prev", m_pIndirectObjs,
+                                                bookmarks[1].num);
 
-    bookmarks[0].obj->SetFor("Type", new CPDF_Name(nullptr, "Outlines"));
-    bookmarks[0].obj->SetFor("Count", new CPDF_Number(2));
-    bookmarks[0].obj->SetFor(
-        "First", new CPDF_Reference(m_pIndirectObjs, bookmarks[1].num));
-    bookmarks[0].obj->SetFor(
-        "Last", new CPDF_Reference(m_pIndirectObjs, bookmarks[2].num));
+    bookmarks[0].obj->SetNewFor<CPDF_Name>("Type", "Outlines");
+    bookmarks[0].obj->SetNewFor<CPDF_Number>("Count", 2);
+    bookmarks[0].obj->SetNewFor<CPDF_Reference>("First", m_pIndirectObjs,
+                                                bookmarks[1].num);
+    bookmarks[0].obj->SetNewFor<CPDF_Reference>("Last", m_pIndirectObjs,
+                                                bookmarks[2].num);
 
-    m_pRootObj->SetFor("Outlines",
-                       new CPDF_Reference(m_pIndirectObjs, bookmarks[0].num));
+    m_pRootObj->SetNewFor<CPDF_Reference>("Outlines", m_pIndirectObjs,
+                                          bookmarks[0].num);
 
     // Title with no match.
     std::unique_ptr<unsigned short, pdfium::FreeDeleter> title =
@@ -160,27 +160,27 @@ TEST_F(PDFDocTest, FindBookmark) {
     // Circular bookmarks in depth.
     auto bookmarks = CreateDictObjs(3);
 
-    bookmarks[1].obj->SetFor("Title", new CPDF_String(L"Chapter 1"));
-    bookmarks[1].obj->SetFor(
-        "Parent", new CPDF_Reference(m_pIndirectObjs, bookmarks[0].num));
-    bookmarks[1].obj->SetFor(
-        "First", new CPDF_Reference(m_pIndirectObjs, bookmarks[2].num));
+    bookmarks[1].obj->SetNewFor<CPDF_String>("Title", L"Chapter 1");
+    bookmarks[1].obj->SetNewFor<CPDF_Reference>("Parent", m_pIndirectObjs,
+                                                bookmarks[0].num);
+    bookmarks[1].obj->SetNewFor<CPDF_Reference>("First", m_pIndirectObjs,
+                                                bookmarks[2].num);
 
-    bookmarks[2].obj->SetFor("Title", new CPDF_String(L"Chapter 2"));
-    bookmarks[2].obj->SetFor(
-        "Parent", new CPDF_Reference(m_pIndirectObjs, bookmarks[1].num));
-    bookmarks[2].obj->SetFor(
-        "First", new CPDF_Reference(m_pIndirectObjs, bookmarks[1].num));
+    bookmarks[2].obj->SetNewFor<CPDF_String>("Title", L"Chapter 2");
+    bookmarks[2].obj->SetNewFor<CPDF_Reference>("Parent", m_pIndirectObjs,
+                                                bookmarks[1].num);
+    bookmarks[2].obj->SetNewFor<CPDF_Reference>("First", m_pIndirectObjs,
+                                                bookmarks[1].num);
 
-    bookmarks[0].obj->SetFor("Type", new CPDF_Name(nullptr, "Outlines"));
-    bookmarks[0].obj->SetFor("Count", new CPDF_Number(2));
-    bookmarks[0].obj->SetFor(
-        "First", new CPDF_Reference(m_pIndirectObjs, bookmarks[1].num));
-    bookmarks[0].obj->SetFor(
-        "Last", new CPDF_Reference(m_pIndirectObjs, bookmarks[2].num));
+    bookmarks[0].obj->SetNewFor<CPDF_Name>("Type", "Outlines");
+    bookmarks[0].obj->SetNewFor<CPDF_Number>("Count", 2);
+    bookmarks[0].obj->SetNewFor<CPDF_Reference>("First", m_pIndirectObjs,
+                                                bookmarks[1].num);
+    bookmarks[0].obj->SetNewFor<CPDF_Reference>("Last", m_pIndirectObjs,
+                                                bookmarks[2].num);
 
-    m_pRootObj->SetFor("Outlines",
-                       new CPDF_Reference(m_pIndirectObjs, bookmarks[0].num));
+    m_pRootObj->SetNewFor<CPDF_Reference>("Outlines", m_pIndirectObjs,
+                                          bookmarks[0].num);
 
     // Title with no match.
     std::unique_ptr<unsigned short, pdfium::FreeDeleter> title =
@@ -195,33 +195,33 @@ TEST_F(PDFDocTest, FindBookmark) {
     // Circular bookmarks in breadth.
     auto bookmarks = CreateDictObjs(4);
 
-    bookmarks[1].obj->SetFor("Title", new CPDF_String(L"Chapter 1"));
-    bookmarks[1].obj->SetFor(
-        "Parent", new CPDF_Reference(m_pIndirectObjs, bookmarks[0].num));
-    bookmarks[1].obj->SetFor(
-        "Next", new CPDF_Reference(m_pIndirectObjs, bookmarks[2].num));
+    bookmarks[1].obj->SetNewFor<CPDF_String>("Title", L"Chapter 1");
+    bookmarks[1].obj->SetNewFor<CPDF_Reference>("Parent", m_pIndirectObjs,
+                                                bookmarks[0].num);
+    bookmarks[1].obj->SetNewFor<CPDF_Reference>("Next", m_pIndirectObjs,
+                                                bookmarks[2].num);
 
-    bookmarks[2].obj->SetFor("Title", new CPDF_String(L"Chapter 2"));
-    bookmarks[2].obj->SetFor(
-        "Parent", new CPDF_Reference(m_pIndirectObjs, bookmarks[0].num));
-    bookmarks[2].obj->SetFor(
-        "Next", new CPDF_Reference(m_pIndirectObjs, bookmarks[3].num));
+    bookmarks[2].obj->SetNewFor<CPDF_String>("Title", L"Chapter 2");
+    bookmarks[2].obj->SetNewFor<CPDF_Reference>("Parent", m_pIndirectObjs,
+                                                bookmarks[0].num);
+    bookmarks[2].obj->SetNewFor<CPDF_Reference>("Next", m_pIndirectObjs,
+                                                bookmarks[3].num);
 
-    bookmarks[3].obj->SetFor("Title", new CPDF_String(L"Chapter 3"));
-    bookmarks[3].obj->SetFor(
-        "Parent", new CPDF_Reference(m_pIndirectObjs, bookmarks[0].num));
-    bookmarks[3].obj->SetFor(
-        "Next", new CPDF_Reference(m_pIndirectObjs, bookmarks[1].num));
+    bookmarks[3].obj->SetNewFor<CPDF_String>("Title", L"Chapter 3");
+    bookmarks[3].obj->SetNewFor<CPDF_Reference>("Parent", m_pIndirectObjs,
+                                                bookmarks[0].num);
+    bookmarks[3].obj->SetNewFor<CPDF_Reference>("Next", m_pIndirectObjs,
+                                                bookmarks[1].num);
 
-    bookmarks[0].obj->SetFor("Type", new CPDF_Name(nullptr, "Outlines"));
-    bookmarks[0].obj->SetFor("Count", new CPDF_Number(2));
-    bookmarks[0].obj->SetFor(
-        "First", new CPDF_Reference(m_pIndirectObjs, bookmarks[1].num));
-    bookmarks[0].obj->SetFor(
-        "Last", new CPDF_Reference(m_pIndirectObjs, bookmarks[2].num));
+    bookmarks[0].obj->SetNewFor<CPDF_Name>("Type", "Outlines");
+    bookmarks[0].obj->SetNewFor<CPDF_Number>("Count", 2);
+    bookmarks[0].obj->SetNewFor<CPDF_Reference>("First", m_pIndirectObjs,
+                                                bookmarks[1].num);
+    bookmarks[0].obj->SetNewFor<CPDF_Reference>("Last", m_pIndirectObjs,
+                                                bookmarks[2].num);
 
-    m_pRootObj->SetFor("Outlines",
-                       new CPDF_Reference(m_pIndirectObjs, bookmarks[0].num));
+    m_pRootObj->SetNewFor<CPDF_Reference>("Outlines", m_pIndirectObjs,
+                                          bookmarks[0].num);
 
     // Title with no match.
     std::unique_ptr<unsigned short, pdfium::FreeDeleter> title =

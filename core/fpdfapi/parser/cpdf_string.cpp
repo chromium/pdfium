@@ -6,6 +6,8 @@
 
 #include "core/fpdfapi/parser/cpdf_string.h"
 
+#include <utility>
+
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
 #include "third_party/base/ptr_util.h"
 
@@ -19,8 +21,11 @@ CPDF_String::CPDF_String(CFX_WeakPtr<CFX_ByteStringPool> pPool,
     m_String = pPool->Intern(m_String);
 }
 
-CPDF_String::CPDF_String(const CFX_WideString& str) : m_bHex(false) {
-  m_String = PDF_EncodeText(str);
+CPDF_String::CPDF_String(CFX_WeakPtr<CFX_ByteStringPool> pPool,
+                         const CFX_WideString& str)
+    : m_String(PDF_EncodeText(str)), m_bHex(false) {
+  if (pPool)
+    m_String = pPool->Intern(m_String);
 }
 
 CPDF_String::~CPDF_String() {}

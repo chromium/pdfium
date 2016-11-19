@@ -30,6 +30,7 @@
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfapi/parser/cpdf_name.h"
 #include "core/fpdfapi/parser/cpdf_number.h"
+#include "core/fpdfapi/parser/cpdf_reference.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
 #include "core/fxcrt/fx_safe_types.h"
@@ -172,7 +173,7 @@ void ReplaceAbbr(CPDF_Object* pObj) {
       std::vector<AbbrReplacementOp> replacements;
       for (const auto& it : *pDict) {
         CFX_ByteString key = it.first;
-        CPDF_Object* value = it.second;
+        CPDF_Object* value = it.second.get();
         CFX_ByteStringC fullname = FindFullName(
             InlineKeyAbbr, FX_ArraySize(InlineKeyAbbr), key.AsStringC());
         if (!fullname.IsEmpty()) {
@@ -203,7 +204,7 @@ void ReplaceAbbr(CPDF_Object* pObj) {
         if (op.is_replace_key)
           pDict->ReplaceKey(op.key, CFX_ByteString(op.replacement));
         else
-          pDict->SetNameFor(op.key, CFX_ByteString(op.replacement));
+          pDict->SetNewFor<CPDF_Name>(op.key, CFX_ByteString(op.replacement));
       }
       break;
     }
@@ -650,13 +651,13 @@ void CPDF_StreamContentParser::Handle_BeginImage() {
     }
     CFX_ByteString key((const FX_CHAR*)m_pSyntax->GetWordBuf() + 1,
                        m_pSyntax->GetWordSize() - 1);
-    std::unique_ptr<CPDF_Object> pObj(m_pSyntax->ReadNextObject(false, 0));
+    auto pObj = pdfium::WrapUnique(m_pSyntax->ReadNextObject(false, 0));
     if (!key.IsEmpty()) {
       uint32_t dwObjNum = pObj ? pObj->GetObjNum() : 0;
       if (dwObjNum)
-        pDict->SetReferenceFor(key, m_pDocument, dwObjNum);
+        pDict->SetNewFor<CPDF_Reference>(key, m_pDocument, dwObjNum);
       else
-        pDict->SetFor(key, pObj.release());
+        pDict->SetFor(key, std::move(pObj));
     }
   }
   ReplaceAbbr(pDict);
@@ -667,14 +668,12 @@ void CPDF_StreamContentParser::Handle_BeginImage() {
       CFX_ByteString name = pCSObj->GetString();
       if (name != "DeviceRGB" && name != "DeviceGray" && name != "DeviceCMYK") {
         pCSObj = FindResourceObj("ColorSpace", name);
-        if (pCSObj && pCSObj->IsInline()) {
-          pCSObj = pCSObj->Clone().release();
-          pDict->SetFor("ColorSpace", pCSObj);
-        }
+        if (pCSObj && pCSObj->IsInline())
+          pDict->SetFor("ColorSpace", pCSObj->Clone());
       }
     }
   }
-  pDict->SetNameFor("Subtype", "Image");
+  pDict->SetNewFor<CPDF_Name>("Subtype", "Image");
   std::unique_ptr<CPDF_Stream> pStream(
       m_pSyntax->ReadInlineStream(m_pDocument, pDict, pCSObj));
   bool bGaveDictAway = !!pStream;

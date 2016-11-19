@@ -6,6 +6,8 @@
 
 #include "core/fpdfapi/font/cpdf_fontencoding.h"
 
+#include <utility>
+
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_name.h"
@@ -1701,7 +1703,7 @@ CPDF_Object* CPDF_FontEncoding::Realize(CFX_WeakPtr<CFX_ByteStringPool> pPool) {
   }
   const uint16_t* pStandard =
       PDF_UnicodesForPredefinedCharSet(PDFFONT_ENCODING_WINANSI);
-  CPDF_Array* pDiff = new CPDF_Array;
+  auto pDiff = pdfium::MakeUnique<CPDF_Array>();
   for (int i = 0; i < 256; i++) {
     if (pStandard[i] == m_Unicodes[i])
       continue;
@@ -1711,8 +1713,8 @@ CPDF_Object* CPDF_FontEncoding::Realize(CFX_WeakPtr<CFX_ByteStringPool> pPool) {
   }
 
   CPDF_Dictionary* pDict = new CPDF_Dictionary(pPool);
-  pDict->SetNameFor("BaseEncoding", "WinAnsiEncoding");
-  pDict->SetFor("Differences", pDiff);
+  pDict->SetNewFor<CPDF_Name>("BaseEncoding", "WinAnsiEncoding");
+  pDict->SetFor("Differences", std::move(pDiff));
   return pDict;
 }
 

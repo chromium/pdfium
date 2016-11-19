@@ -6,6 +6,8 @@
 
 #include "core/fpdfapi/parser/cpdf_parser.h"
 
+#include <algorithm>
+#include <utility>
 #include <vector>
 
 #include "core/fpdfapi/parser/cpdf_array.h"
@@ -802,16 +804,15 @@ bool CPDF_Parser::RebuildCrossRef() {
                         auto it = pTrailer->begin();
                         while (it != pTrailer->end()) {
                           const CFX_ByteString& key = it->first;
-                          CPDF_Object* pElement = it->second;
+                          CPDF_Object* pElement = it->second.get();
                           ++it;
                           uint32_t dwObjNum =
                               pElement ? pElement->GetObjNum() : 0;
                           if (dwObjNum) {
-                            m_pTrailer->SetReferenceFor(key, m_pDocument,
-                                                        dwObjNum);
+                            m_pTrailer->SetNewFor<CPDF_Reference>(
+                                key, m_pDocument, dwObjNum);
                           } else {
-                            m_pTrailer->SetFor(key,
-                                               pElement->Clone().release());
+                            m_pTrailer->SetFor(key, pElement->Clone());
                           }
                         }
                       }
@@ -1075,7 +1076,7 @@ CPDF_Array* CPDF_Parser::GetIDArray() {
 
   if (CPDF_Reference* pRef = pID->AsReference()) {
     pID = ParseIndirectObject(nullptr, pRef->GetRefObjNum()).release();
-    m_pTrailer->SetFor("ID", pID);
+    m_pTrailer->SetFor("ID", pdfium::WrapUnique(pID));
   }
   return ToArray(pID);
 }

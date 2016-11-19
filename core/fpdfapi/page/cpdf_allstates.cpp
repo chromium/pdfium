@@ -6,6 +6,8 @@
 
 #include "core/fpdfapi/page/cpdf_allstates.h"
 
+#include <algorithm>
+
 #include "core/fpdfapi/page/pageint.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
@@ -52,7 +54,7 @@ void CPDF_AllStates::ProcessExtGS(CPDF_Dictionary* pGS,
                                   CPDF_StreamContentParser* pParser) {
   for (const auto& it : *pGS) {
     const CFX_ByteString& key_str = it.first;
-    CPDF_Object* pElement = it.second;
+    CPDF_Object* pElement = it.second.get();
     CPDF_Object* pObject = pElement ? pElement->GetDirect() : nullptr;
     if (!pObject)
       continue;

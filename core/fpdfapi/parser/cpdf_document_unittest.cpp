@@ -5,13 +5,17 @@
 #include "core/fpdfapi/parser/cpdf_document.h"
 
 #include <memory>
+#include <utility>
 
 #include "core/fpdfapi/cpdf_modulemgr.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
+#include "core/fpdfapi/parser/cpdf_boolean.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_linearized_header.h"
+#include "core/fpdfapi/parser/cpdf_number.h"
 #include "core/fpdfapi/parser/cpdf_parser.h"
 #include "core/fpdfapi/parser/cpdf_reference.h"
+#include "core/fpdfapi/parser/cpdf_string.h"
 #include "core/fxcrt/fx_memory.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "third_party/base/ptr_util.h"
@@ -23,18 +27,20 @@ CPDF_Dictionary* CreatePageTreeNode(std::unique_ptr<CPDF_Array> kids,
                                     int count) {
   CPDF_Array* pUnowned = pDoc->AddIndirectObject(std::move(kids))->AsArray();
   CPDF_Dictionary* pageNode = pDoc->NewIndirect<CPDF_Dictionary>();
-  pageNode->SetStringFor("Type", "Pages");
-  pageNode->SetReferenceFor("Kids", pDoc, pUnowned);
-  pageNode->SetIntegerFor("Count", count);
-  for (size_t i = 0; i < pUnowned->GetCount(); i++)
-    pUnowned->GetDictAt(i)->SetReferenceFor("Parent", pDoc, pageNode);
+  pageNode->SetNewFor<CPDF_String>("Type", "Pages", false);
+  pageNode->SetNewFor<CPDF_Reference>("Kids", pDoc, pUnowned->GetObjNum());
+  pageNode->SetNewFor<CPDF_Number>("Count", count);
+  for (size_t i = 0; i < pUnowned->GetCount(); i++) {
+    pUnowned->GetDictAt(i)->SetNewFor<CPDF_Reference>("Parent", pDoc,
+                                                      pageNode->GetObjNum());
+  }
   return pageNode;
 }
 
 std::unique_ptr<CPDF_Dictionary> CreateNumberedPage(size_t number) {
   auto page = pdfium::MakeUnique<CPDF_Dictionary>();
-  page->SetStringFor("Type", "Page");
-  page->SetIntegerFor("PageNumbering", number);
+  page->SetNewFor<CPDF_String>("Type", "Page", false);
+  page->SetNewFor<CPDF_Number>("PageNumbering", static_cast<int>(number));
   return page;
 }
 
@@ -79,7 +85,8 @@ class CPDF_TestDocumentForPages : public CPDF_Document {
         CreatePageTreeNode(std::move(allPages), this, 7);
 
     m_pOwnedRootDict = pdfium::MakeUnique<CPDF_Dictionary>();
-    m_pOwnedRootDict->SetReferenceFor("Pages", this, pagesDict);
+    m_pOwnedRootDict->SetNewFor<CPDF_Reference>("Pages", this,
+                                                pagesDict->GetObjNum());
     m_pRootDict = m_pOwnedRootDict.get();
     m_PageList.SetSize(7);
   }
@@ -102,7 +109,8 @@ class CPDF_TestDocumentWithPageWithoutPageNum : public CPDF_Document {
     CPDF_Dictionary* pagesDict =
         CreatePageTreeNode(std::move(allPages), this, 3);
     m_pOwnedRootDict.reset(new CPDF_Dictionary());
-    m_pOwnedRootDict->SetReferenceFor("Pages", this, pagesDict->GetObjNum());
+    m_pOwnedRootDict->SetNewFor<CPDF_Reference>("Pages", this,
+                                                pagesDict->GetObjNum());
     m_pRootDict = m_pOwnedRootDict.get();
     m_PageList.SetSize(3);
   }
@@ -194,9 +202,9 @@ TEST_F(cpdf_document_test, UseCachedPageObjNumIfHaveNotPagesDict) {
   // (case, when hint table is used to page check in CPDF_DataAvail).
   CPDF_Document document(pdfium::MakeUnique<CPDF_Parser>());
   auto dict = pdfium::MakeUnique<CPDF_Dictionary>();
-  dict->SetBooleanFor("Linearized", true);
+  dict->SetNewFor<CPDF_Boolean>("Linearized", true);
   const int page_count = 100;
-  dict->SetIntegerFor("N", page_count);
+  dict->SetNewFor<CPDF_Number>("N", page_count);
   TestLinearized linearized(dict.get());
   document.LoadLinearizedDoc(&linearized);
   ASSERT_EQ(page_count, document.GetPageCount());

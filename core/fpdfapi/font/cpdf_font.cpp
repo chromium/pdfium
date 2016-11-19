@@ -7,6 +7,7 @@
 #include "core/fpdfapi/font/cpdf_font.h"
 
 #include <memory>
+#include <utility>
 #include <vector>
 
 #include "core/fpdfapi/cpdf_modulemgr.h"
@@ -310,10 +311,10 @@ CPDF_Font* CPDF_Font::GetStockFont(CPDF_Document* pDoc,
     return pFont;
 
   CPDF_Dictionary* pDict = new CPDF_Dictionary(pDoc->GetByteStringPool());
-  pDict->SetNameFor("Type", "Font");
-  pDict->SetNameFor("Subtype", "Type1");
-  pDict->SetNameFor("BaseFont", fontname);
-  pDict->SetNameFor("Encoding", "WinAnsiEncoding");
+  pDict->SetNewFor<CPDF_Name>("Type", "Font");
+  pDict->SetNewFor<CPDF_Name>("Subtype", "Type1");
+  pDict->SetNewFor<CPDF_Name>("BaseFont", fontname);
+  pDict->SetNewFor<CPDF_Name>("Encoding", "WinAnsiEncoding");
   return pFontGlobals->Set(pDoc, font_id, CPDF_Font::Create(nullptr, pDict));
 }
 

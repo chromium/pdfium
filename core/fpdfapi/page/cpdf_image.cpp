@@ -8,6 +8,7 @@
 
 #include <algorithm>
 #include <memory>
+#include <utility>
 #include <vector>
 
 #include "core/fpdfapi/cpdf_modulemgr.h"
@@ -97,10 +98,10 @@ CPDF_Dictionary* CPDF_Image::InitJPEG(uint8_t* pData, uint32_t size) {
 
   CPDF_Dictionary* pDict =
       new CPDF_Dictionary(m_pDocument->GetByteStringPool());
-  pDict->SetNameFor("Type", "XObject");
-  pDict->SetNameFor("Subtype", "Image");
-  pDict->SetIntegerFor("Width", width);
-  pDict->SetIntegerFor("Height", height);
+  pDict->SetNewFor<CPDF_Name>("Type", "XObject");
+  pDict->SetNewFor<CPDF_Name>("Subtype", "Image");
+  pDict->SetNewFor<CPDF_Number>("Width", width);
+  pDict->SetNewFor<CPDF_Number>("Height", height);
   const FX_CHAR* csname = nullptr;
   if (num_comps == 1) {
     csname = "DeviceGray";
@@ -108,21 +109,18 @@ CPDF_Dictionary* CPDF_Image::InitJPEG(uint8_t* pData, uint32_t size) {
     csname = "DeviceRGB";
   } else if (num_comps == 4) {
     csname = "DeviceCMYK";
-    CPDF_Array* pDecode = new CPDF_Array;
+    CPDF_Array* pDecode = pDict->SetNewFor<CPDF_Array>("Decode");
     for (int n = 0; n < 4; n++) {
       pDecode->AddNew<CPDF_Number>(1);
       pDecode->AddNew<CPDF_Number>(0);
     }
-    pDict->SetFor("Decode", pDecode);
   }
-  pDict->SetNameFor("ColorSpace", csname);
-  pDict->SetIntegerFor("BitsPerComponent", bits);
-  pDict->SetNameFor("Filter", "DCTDecode");
+  pDict->SetNewFor<CPDF_Name>("ColorSpace", csname);
+  pDict->SetNewFor<CPDF_Number>("BitsPerComponent", bits);
+  pDict->SetNewFor<CPDF_Name>("Filter", "DCTDecode");
   if (!color_trans) {
-    CPDF_Dictionary* pParms =
-        new CPDF_Dictionary(m_pDocument->GetByteStringPool());
-    pDict->SetFor("DecodeParms", pParms);
-    pParms->SetIntegerFor("ColorTransform", 0);
+    CPDF_Dictionary* pParms = pDict->SetNewFor<CPDF_Dictionary>("DecodeParms");
+    pParms->SetNewFor<CPDF_Number>("ColorTransform", 0);
   }
   m_bIsMask = false;
   m_Width = width;
@@ -166,10 +164,10 @@ void CPDF_Image::SetImage(const CFX_DIBitmap* pBitmap, int32_t iCompress) {
 
   CPDF_Dictionary* pDict =
       new CPDF_Dictionary(m_pDocument->GetByteStringPool());
-  pDict->SetNameFor("Type", "XObject");
-  pDict->SetNameFor("Subtype", "Image");
-  pDict->SetIntegerFor("Width", BitmapWidth);
-  pDict->SetIntegerFor("Height", BitmapHeight);
+  pDict->SetNewFor<CPDF_Name>("Type", "XObject");
+  pDict->SetNewFor<CPDF_Name>("Subtype", "Image");
+  pDict->SetNewFor<CPDF_Number>("Width", BitmapWidth);
+  pDict->SetNewFor<CPDF_Number>("Height", BitmapHeight);
   uint8_t* dest_buf = nullptr;
   FX_STRSIZE dest_pitch = 0, dest_size = 0, opType = -1;
   if (bpp == 1) {
@@ -181,15 +179,14 @@ void CPDF_Image::SetImage(const CFX_DIBitmap* pBitmap, int32_t iCompress) {
       ArgbDecode(pBitmap->GetPaletteArgb(1), set_a, set_r, set_g, set_b);
     }
     if (set_a == 0 || reset_a == 0) {
-      pDict->SetFor("ImageMask", new CPDF_Boolean(true));
+      pDict->SetNewFor<CPDF_Boolean>("ImageMask", true);
       if (reset_a == 0) {
-        CPDF_Array* pArray = new CPDF_Array;
+        CPDF_Array* pArray = pDict->SetNewFor<CPDF_Array>("Decode");
         pArray->AddNew<CPDF_Number>(1);
         pArray->AddNew<CPDF_Number>(0);
-        pDict->SetFor("Decode", pArray);
       }
     } else {
-      CPDF_Array* pCS = new CPDF_Array;
+      CPDF_Array* pCS = pDict->SetNewFor<CPDF_Array>("ColorSpace");
       pCS->AddNew<CPDF_Name>("Indexed");
       pCS->AddNew<CPDF_Name>("DeviceRGB");
       pCS->AddNew<CPDF_Number>(1);
@@ -203,9 +200,8 @@ void CPDF_Image::SetImage(const CFX_DIBitmap* pBitmap, int32_t iCompress) {
       pBuf[5] = (FX_CHAR)set_b;
       ct.ReleaseBuffer(6);
       pCS->AddNew<CPDF_String>(ct, true);
-      pDict->SetFor("ColorSpace", pCS);
     }
-    pDict->SetIntegerFor("BitsPerComponent", 1);
+    pDict->SetNewFor<CPDF_Number>("BitsPerComponent", 1);
     dest_pitch = (BitmapWidth + 7) / 8;
     if ((iCompress & 0x03) == PDF_IMAGE_NO_COMPRESS) {
       opType = 1;
@@ -232,11 +228,12 @@ void CPDF_Image::SetImage(const CFX_DIBitmap* pBitmap, int32_t iCompress) {
           pColorTable, iPalette * 3,
           new CPDF_Dictionary(m_pDocument->GetByteStringPool()));
       pCS->AddNew<CPDF_Reference>(m_pDocument, pCTS->GetObjNum());
-      pDict->SetReferenceFor("ColorSpace", m_pDocument, pCS);
+      pDict->SetNewFor<CPDF_Reference>("ColorSpace", m_pDocument,
+                                       pCS->GetObjNum());
     } else {
-      pDict->SetNameFor("ColorSpace", "DeviceGray");
+      pDict->SetNewFor<CPDF_Name>("ColorSpace", "DeviceGray");
     }
-    pDict->SetIntegerFor("BitsPerComponent", 8);
+    pDict->SetNewFor<CPDF_Number>("BitsPerComponent", 8);
     if ((iCompress & 0x03) == PDF_IMAGE_NO_COMPRESS) {
       dest_pitch = BitmapWidth;
       opType = 1;
@@ -244,8 +241,8 @@ void CPDF_Image::SetImage(const CFX_DIBitmap* pBitmap, int32_t iCompress) {
       opType = 0;
     }
   } else {
-    pDict->SetNameFor("ColorSpace", "DeviceRGB");
-    pDict->SetIntegerFor("BitsPerComponent", 8);
+    pDict->SetNewFor<CPDF_Name>("ColorSpace", "DeviceRGB");
+    pDict->SetNewFor<CPDF_Number>("BitsPerComponent", 8);
     if ((iCompress & 0x03) == PDF_IMAGE_NO_COMPRESS) {
       dest_pitch = BitmapWidth * 3;
       opType = 2;
@@ -266,12 +263,12 @@ void CPDF_Image::SetImage(const CFX_DIBitmap* pBitmap, int32_t iCompress) {
     FX_STRSIZE mask_size = 0;
     CPDF_Dictionary* pMaskDict =
         new CPDF_Dictionary(m_pDocument->GetByteStringPool());
-    pMaskDict->SetNameFor("Type", "XObject");
-    pMaskDict->SetNameFor("Subtype", "Image");
-    pMaskDict->SetIntegerFor("Width", maskWidth);
-    pMaskDict->SetIntegerFor("Height", maskHeight);
-    pMaskDict->SetNameFor("ColorSpace", "DeviceGray");
-    pMaskDict->SetIntegerFor("BitsPerComponent", 8);
+    pMaskDict->SetNewFor<CPDF_Name>("Type", "XObject");
+    pMaskDict->SetNewFor<CPDF_Name>("Subtype", "Image");
+    pMaskDict->SetNewFor<CPDF_Number>("Width", maskWidth);
+    pMaskDict->SetNewFor<CPDF_Number>("Height", maskHeight);
+    pMaskDict->SetNewFor<CPDF_Name>("ColorSpace", "DeviceGray");
+    pMaskDict->SetNewFor<CPDF_Number>("BitsPerComponent", 8);
     if (pMaskBitmap->GetBPP() == 8 &&
         (iCompress & PDF_IMAGE_MASK_LOSSY_COMPRESS) != 0) {
     } else if (pMaskBitmap->GetFormat() == FXDIB_1bppMask) {
@@ -283,10 +280,11 @@ void CPDF_Image::SetImage(const CFX_DIBitmap* pBitmap, int32_t iCompress) {
                      maskWidth);
       }
     }
-    pMaskDict->SetIntegerFor("Length", mask_size);
-    pDict->SetReferenceFor(
+    pMaskDict->SetNewFor<CPDF_Number>("Length", mask_size);
+    pDict->SetNewFor<CPDF_Reference>(
         "SMask", m_pDocument,
-        m_pDocument->NewIndirect<CPDF_Stream>(mask_buf, mask_size, pMaskDict));
+        m_pDocument->NewIndirect<CPDF_Stream>(mask_buf, mask_size, pMaskDict)
+            ->GetObjNum());
     if (bDeleteMask)
       delete pMaskBitmap;
   }

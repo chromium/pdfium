@@ -6,6 +6,8 @@
 
 #include "core/fpdfapi/parser/cpdf_syntax_parser.h"
 
+#include <algorithm>
+#include <utility>
 #include <vector>
 
 #include "core/fpdfapi/cpdf_modulemgr.h"
@@ -458,7 +460,7 @@ std::unique_ptr<CPDF_Object> CPDF_SyntaxParser::GetObject(
         continue;
 
       CFX_ByteString keyNoSlash(key.raw_str() + 1, key.GetLength() - 1);
-      pDict->SetFor(keyNoSlash, pObj.release());
+      pDict->SetFor(keyNoSlash, std::move(pObj));
     }
 
     // Only when this is a signature dictionary and has contents, we reset the
@@ -466,8 +468,7 @@ std::unique_ptr<CPDF_Object> CPDF_SyntaxParser::GetObject(
     if (pDict->IsSignatureDict() && dwSignValuePos) {
       CFX_AutoRestorer<FX_FILESIZE> save_pos(&m_Pos);
       m_Pos = dwSignValuePos;
-      pDict->SetFor("Contents",
-                    GetObject(pObjList, objnum, gennum, false).release());
+      pDict->SetFor("Contents", GetObject(pObjList, objnum, gennum, false));
     }
 
     FX_FILESIZE SavedPos = m_Pos;
@@ -576,7 +577,7 @@ std::unique_ptr<CPDF_Object> CPDF_SyntaxParser::GetObjectForStrict(
 
       if (key.GetLength() > 1) {
         pDict->SetFor(CFX_ByteString(key.c_str() + 1, key.GetLength() - 1),
-                      obj.release());
+                      std::move(obj));
       }
     }
 
@@ -722,7 +723,7 @@ std::unique_ptr<CPDF_Stream> CPDF_SyntaxParser::ReadStream(
         delete pDict;
         return nullptr;
       }
-      pDict->SetIntegerFor("Length", len);
+      pDict->SetNewFor<CPDF_Number>("Length", static_cast<int>(len));
     }
     m_Pos = streamStartPos;
   }

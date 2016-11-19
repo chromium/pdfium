@@ -11,10 +11,15 @@
 #include <utility>
 
 #include "core/fpdfapi/font/cpdf_font.h"
+#include "core/fpdfapi/parser/cpdf_boolean.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
+#include "core/fpdfapi/parser/cpdf_name.h"
+#include "core/fpdfapi/parser/cpdf_number.h"
+#include "core/fpdfapi/parser/cpdf_reference.h"
 #include "core/fpdfapi/parser/cpdf_simple_parser.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
+#include "core/fpdfapi/parser/cpdf_string.h"
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
 #include "core/fpdfdoc/cpdf_annot.h"
 #include "core/fpdfdoc/cpdf_formfield.h"
@@ -62,11 +67,12 @@ bool GenerateWidgetAP(CPDF_Document* pDoc,
   CPDF_Dictionary* pFontDict = pDRFontDict->GetDictFor(sFontName.Mid(1));
   if (!pFontDict) {
     pFontDict = pDoc->NewIndirect<CPDF_Dictionary>();
-    pFontDict->SetNameFor("Type", "Font");
-    pFontDict->SetNameFor("Subtype", "Type1");
-    pFontDict->SetNameFor("BaseFont", "Helvetica");
-    pFontDict->SetNameFor("Encoding", "WinAnsiEncoding");
-    pDRFontDict->SetReferenceFor(sFontName.Mid(1), pDoc, pFontDict);
+    pFontDict->SetNewFor<CPDF_Name>("Type", "Font");
+    pFontDict->SetNewFor<CPDF_Name>("Subtype", "Type1");
+    pFontDict->SetNewFor<CPDF_Name>("BaseFont", "Helvetica");
+    pFontDict->SetNewFor<CPDF_Name>("Encoding", "WinAnsiEncoding");
+    pDRFontDict->SetNewFor<CPDF_Reference>(sFontName.Mid(1), pDoc,
+                                           pFontDict->GetObjNum());
   }
   CPDF_Font* pDefFont = pDoc->LoadFont(pFontDict);
   if (!pDefFont)
@@ -163,18 +169,15 @@ bool GenerateWidgetAP(CPDF_Document* pDoc,
       CFX_FloatRect(rcBBox.left + fBorderWidth, rcBBox.bottom + fBorderWidth,
                     rcBBox.right - fBorderWidth, rcBBox.top - fBorderWidth);
   rcBody.Normalize();
+
   CPDF_Dictionary* pAPDict = pAnnotDict->GetDictFor("AP");
-  if (!pAPDict) {
-    auto pNewAPDict =
-        pdfium::MakeUnique<CPDF_Dictionary>(pDoc->GetByteStringPool());
-    // Ownership passes to |pAnnotDict|.
-    pAPDict = pNewAPDict.release();
-    pAnnotDict->SetFor("AP", pAPDict);
-  }
+  if (!pAPDict)
+    pAPDict = pAnnotDict->SetNewFor<CPDF_Dictionary>("AP");
+
   CPDF_Stream* pNormalStream = pAPDict->GetStreamFor("N");
   if (!pNormalStream) {
     pNormalStream = pDoc->NewIndirect<CPDF_Stream>();
-    pAPDict->SetReferenceFor("N", pDoc, pNormalStream);
+    pAPDict->SetNewFor<CPDF_Reference>("N", pDoc, pNormalStream->GetObjNum());
   }
   CPDF_Dictionary* pStreamDict = pNormalStream->GetDict();
   if (pStreamDict) {
@@ -183,18 +186,14 @@ bool GenerateWidgetAP(CPDF_Document* pDoc,
     CPDF_Dictionary* pStreamResList = pStreamDict->GetDictFor("Resources");
     if (pStreamResList) {
       CPDF_Dictionary* pStreamResFontList = pStreamResList->GetDictFor("Font");
-      if (!pStreamResFontList) {
-        auto pNewStreamResFontList =
-            pdfium::MakeUnique<CPDF_Dictionary>(pDoc->GetByteStringPool());
-        // Ownership passes to |pStreamResList|.
-        pStreamResFontList = pNewStreamResFontList.release();
-        pStreamResList->SetFor("Font", pStreamResFontList);
+      if (!pStreamResFontList)
+        pStreamResFontList = pStreamResList->SetNewFor<CPDF_Dictionary>("Font");
+      if (!pStreamResFontList->KeyExist(sFontName)) {
+        pStreamResFontList->SetNewFor<CPDF_Reference>(sFontName, pDoc,
+                                                      pFontDict->GetObjNum());
       }
-      if (!pStreamResFontList->KeyExist(sFontName))
-        pStreamResFontList->SetReferenceFor(sFontName, pDoc, pFontDict);
     } else {
-      pStreamDict->SetFor("Resources",
-                          pFormDict->GetDictFor("DR")->Clone().release());
+      pStreamDict->SetFor("Resources", pFormDict->GetDictFor("DR")->Clone());
       pStreamResList = pStreamDict->GetDictFor("Resources");
     }
   }
@@ -438,17 +437,15 @@ bool GenerateWidgetAP(CPDF_Document* pDoc,
         CPDF_Dictionary* pStreamResFontList =
             pStreamResList->GetDictFor("Font");
         if (!pStreamResFontList) {
-          auto pNewStreamResFontList =
-              pdfium::MakeUnique<CPDF_Dictionary>(pDoc->GetByteStringPool());
-          // Ownership passes to |pStreamResList|.
-          pStreamResFontList = pNewStreamResFontList.release();
-          pStreamResList->SetFor("Font", pStreamResFontList);
+          pStreamResFontList =
+              pStreamResList->SetNewFor<CPDF_Dictionary>("Font");
         }
-        if (!pStreamResFontList->KeyExist(sFontName))
-          pStreamResFontList->SetReferenceFor(sFontName, pDoc, pFontDict);
+        if (!pStreamResFontList->KeyExist(sFontName)) {
+          pStreamResFontList->SetNewFor<CPDF_Reference>(sFontName, pDoc,
+                                                        pFontDict->GetObjNum());
+        }
       } else {
-        pStreamDict->SetFor("Resources",
-                            pFormDict->GetDictFor("DR")->Clone().release());
+        pStreamDict->SetFor("Resources", pFormDict->GetDictFor("DR")->Clone());
         pStreamResList = pStreamDict->GetDictFor("Resources");
       }
     }
@@ -554,18 +551,18 @@ std::unique_ptr<CPDF_Dictionary> GenerateExtGStateDict(
     const CFX_ByteString& sBlendMode) {
   auto pGSDict =
       pdfium::MakeUnique<CPDF_Dictionary>(pAnnotDict.GetByteStringPool());
-  pGSDict->SetStringFor("Type", "ExtGState");
+  pGSDict->SetNewFor<CPDF_String>("Type", "ExtGState", false);
 
   FX_FLOAT fOpacity =
       pAnnotDict.KeyExist("CA") ? pAnnotDict.GetNumberFor("CA") : 1;
-  pGSDict->SetNumberFor("CA", fOpacity);
-  pGSDict->SetNumberFor("ca", fOpacity);
-  pGSDict->SetBooleanFor("AIS", false);
-  pGSDict->SetStringFor("BM", sBlendMode);
+  pGSDict->SetNewFor<CPDF_Number>("CA", fOpacity);
+  pGSDict->SetNewFor<CPDF_Number>("ca", fOpacity);
+  pGSDict->SetNewFor<CPDF_Boolean>("AIS", false);
+  pGSDict->SetNewFor<CPDF_String>("BM", sBlendMode, false);
 
   auto pExtGStateDict =
       pdfium::MakeUnique<CPDF_Dictionary>(pAnnotDict.GetByteStringPool());
-  pExtGStateDict->SetFor(sExtGSDictName, pGSDict.release());
+  pExtGStateDict->SetFor(sExtGSDictName, std::move(pGSDict));
   return pExtGStateDict;
 }
 
@@ -573,14 +570,15 @@ std::unique_ptr<CPDF_Dictionary> GenerateResourceFontDict(
     CPDF_Document* pDoc,
     const CFX_ByteString& sFontDictName) {
   CPDF_Dictionary* pFontDict = pDoc->NewIndirect<CPDF_Dictionary>();
-  pFontDict->SetNameFor("Type", "Font");
-  pFontDict->SetNameFor("Subtype", "Type1");
-  pFontDict->SetNameFor("BaseFont", "Helvetica");
-  pFontDict->SetNameFor("Encoding", "WinAnsiEncoding");
+  pFontDict->SetNewFor<CPDF_Name>("Type", "Font");
+  pFontDict->SetNewFor<CPDF_Name>("Subtype", "Type1");
+  pFontDict->SetNewFor<CPDF_Name>("BaseFont", "Helvetica");
+  pFontDict->SetNewFor<CPDF_Name>("Encoding", "WinAnsiEncoding");
 
   auto pResourceFontDict =
       pdfium::MakeUnique<CPDF_Dictionary>(pDoc->GetByteStringPool());
-  pResourceFontDict->SetReferenceFor(sFontDictName, pDoc, pFontDict);
+  pResourceFontDict->SetNewFor<CPDF_Reference>(sFontDictName, pDoc,
+                                               pFontDict->GetObjNum());
   return pResourceFontDict;
 }
 
@@ -591,9 +589,9 @@ std::unique_ptr<CPDF_Dictionary> GenerateResourceDict(
   auto pResourceDict =
       pdfium::MakeUnique<CPDF_Dictionary>(pDoc->GetByteStringPool());
   if (pExtGStateDict)
-    pResourceDict->SetFor("ExtGState", pExtGStateDict.release());
+    pResourceDict->SetFor("ExtGState", std::move(pExtGStateDict));
   if (pResourceFontDict)
-    pResourceDict->SetFor("Font", pResourceFontDict.release());
+    pResourceDict->SetFor("Font", std::move(pResourceFontDict));
   return pResourceDict;
 }
 
@@ -605,20 +603,19 @@ void GenerateAndSetAPDict(CPDF_Document* pDoc,
   CPDF_Stream* pNormalStream = pDoc->NewIndirect<CPDF_Stream>();
   pNormalStream->SetData(sAppStream.GetBuffer(), sAppStream.GetSize());
 
-  auto pAPDict = pdfium::MakeUnique<CPDF_Dictionary>(pDoc->GetByteStringPool());
-  pAPDict->SetReferenceFor("N", pDoc, pNormalStream);
-  pAnnotDict->SetFor("AP", pAPDict.release());
+  CPDF_Dictionary* pAPDict = pAnnotDict->SetNewFor<CPDF_Dictionary>("AP");
+  pAPDict->SetNewFor<CPDF_Reference>("N", pDoc, pNormalStream->GetObjNum());
 
   CPDF_Dictionary* pStreamDict = pNormalStream->GetDict();
-  pStreamDict->SetIntegerFor("FormType", 1);
-  pStreamDict->SetStringFor("Subtype", "Form");
+  pStreamDict->SetNewFor<CPDF_Number>("FormType", 1);
+  pStreamDict->SetNewFor<CPDF_String>("Subtype", "Form", false);
   pStreamDict->SetMatrixFor("Matrix", CFX_Matrix());
 
   CFX_FloatRect rect = bIsTextMarkupAnnotation
                            ? CPDF_Annot::RectFromQuadPoints(pAnnotDict)
                            : pAnnotDict->GetRectFor("Rect");
   pStreamDict->SetRectFor("BBox", rect);
-  pStreamDict->SetFor("Resources", pResourceDict.release());
+  pStreamDict->SetFor("Resources", std::move(pResourceDict));
 }
 
 CFX_ByteString GetPaintOperatorString(bool bIsStrokeRect, bool bIsFillRect) {
@@ -693,7 +690,6 @@ bool FPDF_GenerateAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict) {
 
   CPDF_Object* pFieldFlagsObj = FPDF_GetFieldAttr(pAnnotDict, "Ff");
   uint32_t flags = pFieldFlagsObj ? pFieldFlagsObj->GetInteger() : 0;
-
   if (field_type == "Ch") {
     return (flags & (1 << 17))
                ? CPVT_GenerateAP::GenerateComboBoxAP(pDoc, pAnnotDict)
@@ -705,7 +701,8 @@ bool FPDF_GenerateAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict) {
       if (!pAnnotDict->KeyExist("AS")) {
         if (CPDF_Dictionary* pParentDict = pAnnotDict->GetDictFor("Parent")) {
           if (pParentDict->KeyExist("AS")) {
-            pAnnotDict->SetStringFor("AS", pParentDict->GetStringFor("AS"));
+            pAnnotDict->SetNewFor<CPDF_String>(
+                "AS", pParentDict->GetStringFor("AS"), false);
           }
         }
       }

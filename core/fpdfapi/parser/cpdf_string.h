@@ -7,6 +7,8 @@
 #ifndef CORE_FPDFAPI_PARSER_CPDF_STRING_H_
 #define CORE_FPDFAPI_PARSER_CPDF_STRING_H_
 
+#include <memory>
+
 #include "core/fpdfapi/parser/cpdf_object.h"
 #include "core/fxcrt/cfx_string_pool_template.h"
 #include "core/fxcrt/cfx_weak_ptr.h"
@@ -19,7 +21,7 @@ class CPDF_String : public CPDF_Object {
   CPDF_String(CFX_WeakPtr<CFX_ByteStringPool> pPool,
               const CFX_ByteString& str,
               bool bHex);
-  explicit CPDF_String(const CFX_WideString& str);
+  CPDF_String(CFX_WeakPtr<CFX_ByteStringPool> pPool, const CFX_WideString& str);
   ~CPDF_String() override;
 
   // CPDF_Object:

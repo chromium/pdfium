@@ -9,6 +9,7 @@
 #include "core/fpdfapi/font/cpdf_font.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
+#include "core/fpdfapi/parser/cpdf_reference.h"
 #include "core/fpdfdoc/cpdf_interform.h"
 
 CPVT_FontMap::CPVT_FontMap(CPDF_Document* pDoc,
@@ -39,8 +40,8 @@ void CPVT_FontMap::GetAnnotSysPDFFont(CPDF_Document* pDoc,
 
   CPDF_Dictionary* pFontList = pResDict->GetDictFor("Font");
   if (pFontList && !pFontList->KeyExist(sSysFontAlias)) {
-    pFontList->SetReferenceFor(sSysFontAlias, pDoc,
-                               pPDFFont->GetFontDict()->GetObjNum());
+    pFontList->SetNewFor<CPDF_Reference>(sSysFontAlias, pDoc,
+                                         pPDFFont->GetFontDict()->GetObjNum());
   }
   pSysFont = pPDFFont;
 }
