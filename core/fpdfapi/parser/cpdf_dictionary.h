@@ -10,6 +10,7 @@
 #include <map>
 #include <memory>
 #include <set>
+#include <utility>
 
 #include "core/fpdfapi/parser/cpdf_object.h"
 #include "core/fxcrt/cfx_string_pool_template.h"
@@ -70,15 +71,16 @@ class CPDF_Dictionary : public CPDF_Object {
   template <typename T, typename... Args>
   typename std::enable_if<!CanInternStrings<T>::value, T*>::type SetNewFor(
       const CFX_ByteString& key,
-      Args... args) {
-    return static_cast<T*>(SetFor(key, pdfium::MakeUnique<T>(args...)));
+      Args&&... args) {
+    return static_cast<T*>(
+        SetFor(key, pdfium::MakeUnique<T>(std::forward<Args>(args)...)));
   }
   template <typename T, typename... Args>
   typename std::enable_if<CanInternStrings<T>::value, T*>::type SetNewFor(
       const CFX_ByteString& key,
-      Args... args) {
-    return static_cast<T*>(
-        SetFor(key, pdfium::MakeUnique<T>(m_pPool, args...)));
+      Args&&... args) {
+    return static_cast<T*>(SetFor(
+        key, pdfium::MakeUnique<T>(m_pPool, std::forward<Args>(args)...)));
   }
 
   // Convenience functions to convert native objects to array form.

@@ -10,6 +10,7 @@
 #include <memory>
 #include <set>
 #include <type_traits>
+#include <utility>
 #include <vector>
 
 #include "core/fpdfapi/parser/cpdf_indirect_object_holder.h"
@@ -58,39 +59,43 @@ class CPDF_Array : public CPDF_Object {
   // a ByteStringPool.
   template <typename T, typename... Args>
   typename std::enable_if<!CanInternStrings<T>::value, T*>::type AddNew(
-      Args... args) {
-    return static_cast<T*>(Add(pdfium::MakeUnique<T>(args...)));
+      Args&&... args) {
+    return static_cast<T*>(
+        Add(pdfium::MakeUnique<T>(std::forward<Args>(args)...)));
   }
   template <typename T, typename... Args>
   typename std::enable_if<CanInternStrings<T>::value, T*>::type AddNew(
-      Args... args) {
-    return static_cast<T*>(Add(pdfium::MakeUnique<T>(m_pPool, args...)));
+      Args&&... args) {
+    return static_cast<T*>(
+        Add(pdfium::MakeUnique<T>(m_pPool, std::forward<Args>(args)...)));
   }
   template <typename T, typename... Args>
   typename std::enable_if<!CanInternStrings<T>::value, T*>::type SetNewAt(
       size_t index,
-      Args... args) {
-    return static_cast<T*>(SetAt(index, pdfium::MakeUnique<T>(args...)));
+      Args&&... args) {
+    return static_cast<T*>(
+        SetAt(index, pdfium::MakeUnique<T>(std::forward<Args>(args)...)));
   }
   template <typename T, typename... Args>
   typename std::enable_if<CanInternStrings<T>::value, T*>::type SetNewAt(
       size_t index,
-      Args... args) {
-    return static_cast<T*>(
-        SetAt(index, pdfium::MakeUnique<T>(m_pPool, args...)));
+      Args&&... args) {
+    return static_cast<T*>(SetAt(
+        index, pdfium::MakeUnique<T>(m_pPool, std::forward<Args>(args)...)));
   }
   template <typename T, typename... Args>
   typename std::enable_if<!CanInternStrings<T>::value, T*>::type InsertNewAt(
       size_t index,
-      Args... args) {
-    return static_cast<T*>(InsertAt(index, pdfium::MakeUnique<T>(args...)));
+      Args&&... args) {
+    return static_cast<T*>(
+        InsertAt(index, pdfium::MakeUnique<T>(std::forward<Args>(args)...)));
   }
   template <typename T, typename... Args>
   typename std::enable_if<CanInternStrings<T>::value, T*>::type InsertNewAt(
       size_t index,
-      Args... args) {
-    return static_cast<T*>(
-        InsertAt(index, pdfium::MakeUnique<T>(m_pPool, args...)));
+      Args&&... args) {
+    return static_cast<T*>(InsertAt(
+        index, pdfium::MakeUnique<T>(m_pPool, std::forward<Args>(args)...)));
   }
 
   void RemoveAt(size_t index, size_t nCount = 1);
