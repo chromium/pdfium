@@ -99,39 +99,8 @@ void IFWL_Form::GetWidgetRect(CFX_RectF& rect, bool bAutoSize) {
 }
 
 void IFWL_Form::GetClientRect(CFX_RectF& rect) {
-  if ((m_pProperties->m_dwStyles & FWL_WGTSTYLE_Caption) == 0) {
-    rect = m_pProperties->m_rtWidget;
-    rect.Offset(-rect.left, -rect.top);
-    return;
-  }
-
-#ifdef FWL_UseMacSystemBorder
-  rect = m_rtRelative;
-  CFWL_WidgetMgr* pWidgetMgr = GetOwnerApp()->GetWidgetMgr();
-  if (!pWidgetMgr)
-    return;
-
-  rect.left = 0;
-  rect.top = 0;
-#else
-  FX_FLOAT x = 0;
-  FX_FLOAT y = 0;
-  FX_FLOAT t = 0;
-  IFWL_ThemeProvider* pTheme = m_pProperties->m_pThemeProvider;
-  if (pTheme) {
-    CFWL_ThemePart part;
-    part.m_pWidget = this;
-    x = *static_cast<FX_FLOAT*>(
-        pTheme->GetCapacity(&part, CFWL_WidgetCapacity::CXBorder));
-    y = *static_cast<FX_FLOAT*>(
-        pTheme->GetCapacity(&part, CFWL_WidgetCapacity::CYBorder));
-    t = *static_cast<FX_FLOAT*>(
-        pTheme->GetCapacity(&part, CFWL_WidgetCapacity::CYCaption));
-  }
   rect = m_pProperties->m_rtWidget;
   rect.Offset(-rect.left, -rect.top);
-  rect.Deflate(x, t, x, y);
-#endif
 }
 
 void IFWL_Form::Update() {
@@ -248,13 +217,7 @@ void IFWL_Form::DrawWidget(CFX_Graphics* pGraphics, const CFX_Matrix* pMatrix) {
     param.m_dwStates = iState;
     pTheme->DrawBackground(&param);
   }
-  if (m_pProperties->m_dwStyles & FWL_WGTSTYLE_Caption) {
-    param.m_iPart = CFWL_Part::Caption;
-    param.m_dwStates = iState;
-    param.m_rtPart = m_rtCaption;
-    pTheme->DrawBackground(&param);
-    DrawCaptionText(pGraphics, pTheme, pMatrix);
-  } else if (m_pProperties->m_dwStyles & FWL_WGTSTYLE_NarrowCaption) {
+  if (m_pProperties->m_dwStyles & FWL_WGTSTYLE_NarrowCaption) {
     param.m_iPart = CFWL_Part::NarrowCaption;
     param.m_dwStates = iState;
     param.m_rtPart = m_rtCaption;
@@ -453,9 +416,7 @@ int32_t IFWL_Form::GetSysBtnIndex(CFWL_SysBtn* pBtn) {
 FX_FLOAT IFWL_Form::GetCaptionHeight() {
   CFWL_WidgetCapacity dwCapacity = CFWL_WidgetCapacity::None;
 
-  if (m_pProperties->m_dwStyles & FWL_WGTSTYLE_Caption)
-    dwCapacity = CFWL_WidgetCapacity::CYCaption;
-  else if (m_pProperties->m_dwStyles & FWL_WGTSTYLE_NarrowCaption)
+  if (m_pProperties->m_dwStyles & FWL_WGTSTYLE_NarrowCaption)
     dwCapacity = CFWL_WidgetCapacity::CYNarrowCaption;
 
   if (dwCapacity != CFWL_WidgetCapacity::None) {
