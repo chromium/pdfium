@@ -193,6 +193,7 @@ static_library("test_support") {
     "testing/test_support.cpp",
     "testing/test_support.h",
     "testing/utils/path_service.cpp",
+    "testing/utils/path_service.h",
   ]
   deps = [
     ":pdfium",

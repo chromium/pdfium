@@ -11,6 +11,7 @@
 #include <utility>
 #include <vector>
 
+#include "core/fdrm/crypto/fx_crypt.h"
 #include "public/fpdf_dataavail.h"
 #include "public/fpdf_edit.h"
 #include "public/fpdf_text.h"
@@ -35,13 +36,25 @@ v8::StartupData* g_v8_snapshot = nullptr;
 #endif  // V8_USE_EXTERNAL_STARTUP_DATA
 #endif  // PDF_ENABLE_V8
 
-}  // namespace
-
 FPDF_BOOL Is_Data_Avail(FX_FILEAVAIL* pThis, size_t offset, size_t size) {
   return true;
 }
 
 void Add_Segment(FX_DOWNLOADHINTS* pThis, size_t offset, size_t size) {}
+
+std::string CRYPT_ToBase16(const uint8_t* digest) {
+  static char const zEncode[] = "0123456789abcdef";
+  std::string ret;
+  ret.resize(32);
+  for (int i = 0, j = 0; i < 16; i++, j += 2) {
+    uint8_t a = digest[i];
+    ret[j] = zEncode[(a >> 4) & 0xf];
+    ret[j + 1] = zEncode[a & 0xf];
+  }
+  return ret;
+}
+
+}  // namespace
 
 EmbedderTest::EmbedderTest()
     : default_delegate_(new EmbedderTest::Delegate()),
@@ -321,6 +334,25 @@ FPDF_PAGE EmbedderTest::GetPageTrampoline(FPDF_FORMFILLINFO* info,
                                           int page_index) {
   return static_cast<EmbedderTest*>(info)->delegate_->GetPage(info, document,
                                                               page_index);
+}
+
+// static
+void EmbedderTest::CompareBitmap(FPDF_BITMAP bitmap,
+                                 int expected_width,
+                                 int expected_height,
+                                 const char* expected_md5sum) {
+  ASSERT_EQ(expected_width, FPDFBitmap_GetWidth(bitmap));
+  ASSERT_EQ(expected_height, FPDFBitmap_GetHeight(bitmap));
+  const int expected_stride = expected_width * 4;
+  ASSERT_EQ(expected_stride, FPDFBitmap_GetStride(bitmap));
+
+  if (!expected_md5sum)
+    return;
+
+  uint8_t digest[16];
+  CRYPT_MD5Generate(static_cast<uint8_t*>(FPDFBitmap_GetBuffer(bitmap)),
+                    expected_stride * expected_height, digest);
+  EXPECT_EQ(expected_md5sum, CRYPT_ToBase16(digest));
 }
 
 // Can't use gtest-provided main since we need to stash the path to the

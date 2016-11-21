@@ -92,6 +92,7 @@ TEST_F(FPDFParserDecodeEmbeddertest, Bug_552046) {
   EXPECT_TRUE(OpenDocument("bug_552046.pdf"));
   FPDF_PAGE page = LoadPage(0);
   FPDF_BITMAP bitmap = RenderPage(page);
+  CompareBitmap(bitmap, 612, 792, "1940568c9ba33bac5d0b1ee9558c76b3");
   FPDFBitmap_Destroy(bitmap);
   UnloadPage(page);
 }
@@ -102,6 +103,7 @@ TEST_F(FPDFParserDecodeEmbeddertest, Bug_555784) {
   EXPECT_TRUE(OpenDocument("bug_555784.pdf"));
   FPDF_PAGE page = LoadPage(0);
   FPDF_BITMAP bitmap = RenderPage(page);
+  CompareBitmap(bitmap, 612, 792, "1940568c9ba33bac5d0b1ee9558c76b3");
   FPDFBitmap_Destroy(bitmap);
   UnloadPage(page);
 }
@@ -112,6 +114,13 @@ TEST_F(FPDFParserDecodeEmbeddertest, Bug_455199) {
   EXPECT_TRUE(OpenDocument("bug_455199.pdf"));
   FPDF_PAGE page = LoadPage(0);
   FPDF_BITMAP bitmap = RenderPage(page);
+#if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
+  // Rendering on Mac is inconsistent, so skip this check.
+  const char* const kExpectedMd5sum = nullptr;
+#else
+  const char kExpectedMd5sum[] = "6f9f0fd903da177babb24dd50a806a56";
+#endif
+  CompareBitmap(bitmap, 200, 200, kExpectedMd5sum);
   FPDFBitmap_Destroy(bitmap);
   UnloadPage(page);
 }

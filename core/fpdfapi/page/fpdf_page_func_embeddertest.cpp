@@ -15,6 +15,7 @@ TEST_F(FPDFPageFuncEmbeddertest, Bug_551460) {
   FPDF_PAGE page = LoadPage(0);
   EXPECT_NE(nullptr, page);
   FPDF_BITMAP bitmap = RenderPage(page);
+  CompareBitmap(bitmap, 612, 792, "1940568c9ba33bac5d0b1ee9558c76b3");
   FPDFBitmap_Destroy(bitmap);
   UnloadPage(page);
 }

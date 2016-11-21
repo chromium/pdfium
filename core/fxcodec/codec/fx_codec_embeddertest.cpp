@@ -14,6 +14,7 @@ TEST_F(FXCodecEmbeddertest, Bug_631912) {
   FPDF_PAGE page = LoadPage(0);
   EXPECT_NE(nullptr, page);
   FPDF_BITMAP bitmap = RenderPage(page);
+  CompareBitmap(bitmap, 691, 432, "24d75af646f8772c5ee7ced260452ae4");
   FPDFBitmap_Destroy(bitmap);
   UnloadPage(page);
 }
