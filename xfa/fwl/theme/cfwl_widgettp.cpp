@@ -197,9 +197,7 @@ void CFWL_WidgetTP::DrawEdge(CFX_Graphics* pGraphics,
   if (!pRect)
     return;
   pGraphics->SaveGraphState();
-  CFX_Color crStroke(FWL_GetThemeColor(0) == 0
-                         ? ArgbEncode(255, 127, 157, 185)
-                         : FWLTHEME_COLOR_Green_BKSelected);
+  CFX_Color crStroke(ArgbEncode(255, 127, 157, 185));
   pGraphics->SetStrokeColor(&crStroke);
   CFX_Path path;
   path.Create();
@@ -594,9 +592,9 @@ void CFWL_WidgetTP::DrawBtn(CFX_Graphics* pGraphics,
                             CFX_Matrix* pMatrix) {
   CFX_Path path;
   path.Create();
-  if (!CFWL_ArrowData::HasInstance()) {
-    CFWL_ArrowData::GetInstance()->SetColorData(FWL_GetThemeColor(0));
-  }
+  if (!CFWL_ArrowData::HasInstance())
+    CFWL_ArrowData::GetInstance()->SetColorData(0);
+
   CFWL_ArrowData::CColorData* pColorData =
       CFWL_ArrowData::GetInstance()->m_pColorData.get();
   FX_FLOAT fRight = pRect->right();
@@ -618,9 +616,9 @@ void CFWL_WidgetTP::DrawArrowBtn(CFX_Graphics* pGraphics,
                                  FWLTHEME_STATE eState,
                                  CFX_Matrix* pMatrix) {
   DrawBtn(pGraphics, pRect, eState, pMatrix);
-  if (!CFWL_ArrowData::HasInstance()) {
-    CFWL_ArrowData::GetInstance()->SetColorData(FWL_GetThemeColor(0));
-  }
+  if (!CFWL_ArrowData::HasInstance())
+    CFWL_ArrowData::GetInstance()->SetColorData(0);
+
   CFWL_ArrowData::CColorData* pColorData =
       CFWL_ArrowData::GetInstance()->m_pColorData.get();
   DrawArrow(pGraphics, pRect, eDict, pColorData->clrSign[eState - 1], pMatrix);
@@ -693,8 +691,4 @@ CFGAS_GEFont* CFWL_FontManager::FindFont(const CFX_WideStringC& wsFontFamily,
 void FWLTHEME_Release() {
   CFWL_ArrowData::DestroyInstance();
   CFWL_FontManager::DestroyInstance();
-}
-
-uint32_t FWL_GetThemeColor(uint32_t dwThemeID) {
-  return 0x0000ffff & dwThemeID;
 }

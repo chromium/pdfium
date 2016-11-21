@@ -219,7 +219,6 @@ class CFWL_WidgetTP {
 };
 
 void FWLTHEME_Release();
-uint32_t FWL_GetThemeColor(uint32_t dwThemeID);
 
 class CFWL_FontData {
  public:
