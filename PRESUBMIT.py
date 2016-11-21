@@ -239,7 +239,7 @@ def _CheckIncludeOrder(input_api, output_api):
 
   warnings = []
   for f in input_api.AffectedFiles(file_filter=FileFilterIncludeOrder):
-    if f.LocalPath().endswith(('.cc', '.h', '.mm')):
+    if f.LocalPath().endswith(('.cc', '.cpp', '.h', '.mm')):
       changed_linenums = set(line_num for line_num, _ in f.ChangedContents())
       warnings.extend(_CheckIncludeOrderInFile(input_api, f, changed_linenums))
 
