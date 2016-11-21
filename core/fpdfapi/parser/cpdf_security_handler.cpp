@@ -39,24 +39,24 @@ void CalcEncryptKey(CPDF_Dictionary* pEncrypt,
   for (uint32_t i = 0; i < 32; i++) {
     passcode[i] = i < pass_size ? password[i] : defpasscode[i - pass_size];
   }
-  uint8_t md5[100];
-  CRYPT_MD5Start(md5);
-  CRYPT_MD5Update(md5, passcode, 32);
+  CRYPT_md5_context md5;
+  CRYPT_MD5Start(&md5);
+  CRYPT_MD5Update(&md5, passcode, 32);
   CFX_ByteString okey = pEncrypt->GetStringFor("O");
-  CRYPT_MD5Update(md5, (uint8_t*)okey.c_str(), okey.GetLength());
+  CRYPT_MD5Update(&md5, (uint8_t*)okey.c_str(), okey.GetLength());
   uint32_t perm = pEncrypt->GetIntegerFor("P");
-  CRYPT_MD5Update(md5, (uint8_t*)&perm, 4);
+  CRYPT_MD5Update(&md5, (uint8_t*)&perm, 4);
   if (pIdArray) {
     CFX_ByteString id = pIdArray->GetStringAt(0);
-    CRYPT_MD5Update(md5, (uint8_t*)id.c_str(), id.GetLength());
+    CRYPT_MD5Update(&md5, (uint8_t*)id.c_str(), id.GetLength());
   }
   if (!bIgnoreMeta && revision >= 3 &&
       !pEncrypt->GetIntegerFor("EncryptMetadata", 1)) {
     uint32_t tag = (uint32_t)-1;
-    CRYPT_MD5Update(md5, (uint8_t*)&tag, 4);
+    CRYPT_MD5Update(&md5, (uint8_t*)&tag, 4);
   }
   uint8_t digest[16];
-  CRYPT_MD5Finish(md5, digest);
+  CRYPT_MD5Finish(&md5, digest);
   uint32_t copy_len = keylen;
   if (copy_len > sizeof(digest)) {
     copy_len = sizeof(digest);
@@ -436,15 +436,15 @@ bool CPDF_SecurityHandler::CheckUserPassword(const uint8_t* password,
         tmpkey[j] = key[j] ^ static_cast<uint8_t>(i);
       CRYPT_ArcFourCryptBlock(test, 32, tmpkey, key_len);
     }
-    uint8_t md5[100];
-    CRYPT_MD5Start(md5);
-    CRYPT_MD5Update(md5, defpasscode, 32);
+    CRYPT_md5_context md5;
+    CRYPT_MD5Start(&md5);
+    CRYPT_MD5Update(&md5, defpasscode, 32);
     CPDF_Array* pIdArray = m_pParser->GetIDArray();
     if (pIdArray) {
       CFX_ByteString id = pIdArray->GetStringAt(0);
-      CRYPT_MD5Update(md5, (uint8_t*)id.c_str(), id.GetLength());
+      CRYPT_MD5Update(&md5, (uint8_t*)id.c_str(), id.GetLength());
     }
-    CRYPT_MD5Finish(md5, ukeybuf);
+    CRYPT_MD5Finish(&md5, ukeybuf);
     return FXSYS_memcmp(test, ukeybuf, 16) == 0;
   }
   if (FXSYS_memcmp((void*)ukey.c_str(), ukeybuf, 16) == 0) {
@@ -587,15 +587,15 @@ void CPDF_SecurityHandler::OnCreate(CPDF_Dictionary* pEncryptDict,
     pEncryptDict->SetNewFor<CPDF_String>("U", CFX_ByteString(tempbuf, 32),
                                          false);
   } else {
-    uint8_t md5[100];
-    CRYPT_MD5Start(md5);
-    CRYPT_MD5Update(md5, defpasscode, 32);
+    CRYPT_md5_context md5;
+    CRYPT_MD5Start(&md5);
+    CRYPT_MD5Update(&md5, defpasscode, 32);
     if (pIdArray) {
       CFX_ByteString id = pIdArray->GetStringAt(0);
-      CRYPT_MD5Update(md5, (uint8_t*)id.c_str(), id.GetLength());
+      CRYPT_MD5Update(&md5, (uint8_t*)id.c_str(), id.GetLength());
     }
     uint8_t digest[32];
-    CRYPT_MD5Finish(md5, digest);
+    CRYPT_MD5Finish(&md5, digest);
     CRYPT_ArcFourCryptBlock(digest, 16, m_EncryptKey, key_len);
     uint8_t tempkey[32];
     for (uint8_t i = 1; i <= 19; i++) {

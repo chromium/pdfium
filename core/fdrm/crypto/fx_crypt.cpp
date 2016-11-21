@@ -57,11 +57,6 @@ void CRYPT_ArcFourCryptBlock(uint8_t* pData,
   CRYPT_ArcFourSetup(&s, key, keylen);
   CRYPT_ArcFourCrypt(&s, pData, size);
 }
-struct md5_context {
-  uint32_t total[2];
-  uint32_t state[4];
-  uint8_t buffer[64];
-};
 #define GET_UINT32(n, b, i)                            \
   {                                                    \
     (n) = (uint32_t)((uint8_t*)b)[(i)] |               \
@@ -76,7 +71,7 @@ struct md5_context {
     (((uint8_t*)b)[(i) + 2]) = (uint8_t)(((n) >> 16) & 0xFF); \
     (((uint8_t*)b)[(i) + 3]) = (uint8_t)(((n) >> 24) & 0xFF); \
   }
-void md5_process(struct md5_context* ctx, const uint8_t data[64]) {
+void md5_process(struct CRYPT_md5_context* ctx, const uint8_t data[64]) {
   uint32_t A, B, C, D, X[16];
   GET_UINT32(X[0], data, 0);
   GET_UINT32(X[1], data, 4);
@@ -182,7 +177,7 @@ void md5_process(struct md5_context* ctx, const uint8_t data[64]) {
   ctx->state[3] += D;
 }
 void CRYPT_MD5Start(void* context) {
-  struct md5_context* ctx = (struct md5_context*)context;
+  struct CRYPT_md5_context* ctx = (struct CRYPT_md5_context*)context;
   ctx->total[0] = 0;
   ctx->total[1] = 0;
   ctx->state[0] = 0x67452301;
@@ -191,7 +186,7 @@ void CRYPT_MD5Start(void* context) {
   ctx->state[3] = 0x10325476;
 }
 void CRYPT_MD5Update(void* pctx, const uint8_t* input, uint32_t length) {
-  struct md5_context* ctx = (struct md5_context*)pctx;
+  struct CRYPT_md5_context* ctx = (struct CRYPT_md5_context*)pctx;
   uint32_t left, fill;
   if (!length) {
     return;
@@ -223,7 +218,7 @@ const uint8_t md5_padding[64] = {
     0,    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0,    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 void CRYPT_MD5Finish(void* pctx, uint8_t digest[16]) {
-  struct md5_context* ctx = (struct md5_context*)pctx;
+  struct CRYPT_md5_context* ctx = (struct CRYPT_md5_context*)pctx;
   uint32_t last, padn;
   uint8_t msglen[8];
   PUT_UINT32(ctx->total[0], msglen, 0);
@@ -240,7 +235,7 @@ void CRYPT_MD5Finish(void* pctx, uint8_t digest[16]) {
 void CRYPT_MD5Generate(const uint8_t* input,
                        uint32_t length,
                        uint8_t digest[16]) {
-  md5_context ctx;
+  CRYPT_md5_context ctx;
   CRYPT_MD5Start(&ctx);
   CRYPT_MD5Update(&ctx, input, length);
   CRYPT_MD5Finish(&ctx, digest);

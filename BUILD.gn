@@ -1704,6 +1704,7 @@ if (pdf_enable_xfa) {
 
 test("pdfium_unittests") {
   sources = [
+    "core/fdrm/crypto/fx_crypt_unittest.cpp",
     "core/fpdfapi/font/fpdf_font_cid_unittest.cpp",
     "core/fpdfapi/font/fpdf_font_unittest.cpp",
     "core/fpdfapi/page/cpdf_streamcontentparser_unittest.cpp",

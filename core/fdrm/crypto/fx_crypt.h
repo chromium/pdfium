@@ -13,6 +13,12 @@
 extern "C" {
 #endif
 
+struct CRYPT_md5_context {
+  uint32_t total[2];
+  uint32_t state[4];
+  uint8_t buffer[64];
+};
+
 void CRYPT_ArcFourCryptBlock(uint8_t* data,
                              uint32_t size,
                              const uint8_t* key,
