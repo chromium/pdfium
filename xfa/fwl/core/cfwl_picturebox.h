@@ -9,15 +9,16 @@
 
 #include "xfa/fwl/core/cfwl_widget.h"
 #include "xfa/fwl/core/ifwl_picturebox.h"
+#include "xfa/fwl/core/ifwl_widget.h"
 
-class CFWL_PictureBox : public CFWL_Widget, public IFWL_PictureBoxDP {
+class CFWL_PictureBox : public CFWL_Widget, public IFWL_Widget::DataProvider {
  public:
   explicit CFWL_PictureBox(const IFWL_App* pApp);
   ~CFWL_PictureBox() override;
 
   void Initialize();
 
-  // IFWL_DataProvider
+  // IFWL_Widget::DataProvider
   void GetCaption(IFWL_Widget* pWidget, CFX_WideString& wsCaption) override;
 };
 

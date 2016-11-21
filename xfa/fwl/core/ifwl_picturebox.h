@@ -8,7 +8,6 @@
 #define XFA_FWL_CORE_IFWL_PICTUREBOX_H_
 
 #include "xfa/fwl/core/cfwl_widgetproperties.h"
-#include "xfa/fwl/core/ifwl_dataprovider.h"
 #include "xfa/fwl/core/ifwl_widget.h"
 
 #define FWL_STYLEEXT_PTB_Left 0L << 0
@@ -28,8 +27,6 @@
 
 class CFX_DIBitmap;
 class IFWL_Widget;
-
-class IFWL_PictureBoxDP : public IFWL_DataProvider {};
 
 class IFWL_PictureBox : public IFWL_Widget {
  public:

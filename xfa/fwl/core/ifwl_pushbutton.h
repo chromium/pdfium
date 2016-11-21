@@ -8,7 +8,6 @@
 #define XFA_FWL_CORE_IFWL_PUSHBUTTON_H_
 
 #include "xfa/fwl/core/cfwl_widgetproperties.h"
-#include "xfa/fwl/core/ifwl_dataprovider.h"
 #include "xfa/fwl/core/ifwl_widget.h"
 
 #define FWL_STYLEEXT_PSB_Left (0L << 0)
@@ -30,8 +29,6 @@
 class CFWL_MsgMouse;
 class CFX_DIBitmap;
 class IFWL_Widget;
-
-class IFWL_PushButtonDP : public IFWL_DataProvider {};
 
 class IFWL_PushButton : public IFWL_Widget {
  public:

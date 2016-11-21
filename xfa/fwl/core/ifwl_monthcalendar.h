@@ -10,7 +10,6 @@
 #include "xfa/fgas/localization/fgas_datetime.h"
 #include "xfa/fwl/core/cfwl_event.h"
 #include "xfa/fwl/core/cfwl_widgetproperties.h"
-#include "xfa/fwl/core/ifwl_dataprovider.h"
 #include "xfa/fwl/core/ifwl_widget.h"
 
 #define FWL_STYLEEXT_MCD_MultiSelect (1L << 0)
@@ -25,15 +24,15 @@
 class CFWL_MsgMouse;
 class IFWL_Widget;
 
-class IFWL_MonthCalendarDP : public IFWL_DataProvider {
- public:
-  virtual int32_t GetCurDay(IFWL_Widget* pWidget) = 0;
-  virtual int32_t GetCurMonth(IFWL_Widget* pWidget) = 0;
-  virtual int32_t GetCurYear(IFWL_Widget* pWidget) = 0;
-};
-
 class IFWL_MonthCalendar : public IFWL_Widget {
  public:
+  class DataProvider : public IFWL_Widget::DataProvider {
+   public:
+    virtual int32_t GetCurDay(IFWL_Widget* pWidget) = 0;
+    virtual int32_t GetCurMonth(IFWL_Widget* pWidget) = 0;
+    virtual int32_t GetCurYear(IFWL_Widget* pWidget) = 0;
+  };
+
   IFWL_MonthCalendar(const IFWL_App* app,
                      std::unique_ptr<CFWL_WidgetProperties> properties,
                      IFWL_Widget* pOuter);

@@ -10,15 +10,15 @@
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_system.h"
 #include "xfa/fwl/core/fwl_widgetdef.h"
+#include "xfa/fwl/core/ifwl_widget.h"
 
-class IFWL_DataProvider;
 class IFWL_ThemeProvider;
 class IFWL_Widget;
 
 class CFWL_WidgetProperties {
  public:
   CFWL_WidgetProperties();
-  CFWL_WidgetProperties(IFWL_DataProvider* dataProvider);
+  CFWL_WidgetProperties(IFWL_Widget::DataProvider* dataProvider);
   ~CFWL_WidgetProperties();
 
   CFX_RectF m_rtWidget;
@@ -26,7 +26,7 @@ class CFWL_WidgetProperties {
   uint32_t m_dwStyleExes;
   uint32_t m_dwStates;
   IFWL_ThemeProvider* m_pThemeProvider;
-  IFWL_DataProvider* m_pDataProvider;
+  IFWL_Widget::DataProvider* m_pDataProvider;
   IFWL_Widget* m_pParent;
   IFWL_Widget* m_pOwner;
 };
@@ -35,7 +35,7 @@ inline CFWL_WidgetProperties::CFWL_WidgetProperties()
     : CFWL_WidgetProperties(nullptr) {}
 
 inline CFWL_WidgetProperties::CFWL_WidgetProperties(
-    IFWL_DataProvider* dataProvider)
+    IFWL_Widget::DataProvider* dataProvider)
     : m_dwStyles(FWL_WGTSTYLE_Child),
       m_dwStyleExes(0),
       m_dwStates(0),

@@ -12,6 +12,7 @@
 #include "xfa/fwl/core/fwl_noteimp.h"
 #include "xfa/fwl/core/ifwl_caret.h"
 #include "xfa/fwl/core/ifwl_themeprovider.h"
+#include "xfa/fwl/core/ifwl_timerinfo.h"
 
 namespace {
 

@@ -11,7 +11,6 @@
 
 #include "core/fxcrt/fx_system.h"
 #include "xfa/fwl/core/cfwl_widgetproperties.h"
-#include "xfa/fwl/core/ifwl_dataprovider.h"
 #include "xfa/fwl/core/ifwl_widget.h"
 
 #define FWL_CLASS_Form L"FWL_FORM"
@@ -28,40 +27,13 @@
 #define FWL_UseMacSystemBorder
 #endif
 
-#define FWL_SYSBUTTONSTATE_Hover 0x0001
-#define FWL_SYSBUTTONSTATE_Pressed 0x0002
-#define FWL_SYSBUTTONSTATE_Disabled 0x0010
-
-enum FWL_FORMSIZE {
-  FWL_FORMSIZE_Manual = 0,
-  FWL_FORMSIZE_Width,
-  FWL_FORMSIZE_Height,
-  FWL_FORMSIZE_All,
-};
-
-class CFWL_SysBtn {
- public:
-  CFWL_SysBtn();
-
-  bool IsDisabled() const;
-  uint32_t GetPartState() const;
-
-  void SetNormal();
-  void SetPressed();
-  void SetHover();
-  void SetDisabled(bool bDisabled);
-
-  CFX_RectF m_rtBtn;
-  uint32_t m_dwState;
-};
-
 class CFWL_MsgMouse;
 class CFWL_NoteLoop;
 class IFWL_Widget;
 class IFWL_ThemeProvider;
 class CFWL_SysBtn;
 
-class IFWL_FormDP : public IFWL_DataProvider {};
+class IFWL_FormDP : public IFWL_Widget::DataProvider {};
 
 class IFWL_Form : public IFWL_Widget {
  public:

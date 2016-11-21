@@ -46,10 +46,8 @@ void IFWL_PushButton::GetWidgetRect(CFX_RectF& rect, bool bAutoSize) {
     m_pProperties->m_pThemeProvider = GetAvailableTheme();
 
   CFX_WideString wsCaption;
-  IFWL_PushButtonDP* pData =
-      static_cast<IFWL_PushButtonDP*>(m_pProperties->m_pDataProvider);
-  if (pData)
-    pData->GetCaption(this, wsCaption);
+  if (m_pProperties->m_pDataProvider)
+    m_pProperties->m_pDataProvider->GetCaption(this, wsCaption);
 
   int32_t iLen = wsCaption.GetLength();
   if (iLen > 0) {
@@ -92,8 +90,6 @@ void IFWL_PushButton::DrawWidget(CFX_Graphics* pGraphics,
   if (!m_pProperties->m_pThemeProvider)
     return;
 
-  IFWL_PushButtonDP* pData =
-      static_cast<IFWL_PushButtonDP*>(m_pProperties->m_pDataProvider);
   IFWL_ThemeProvider* pTheme = m_pProperties->m_pThemeProvider;
   if (HasBorder()) {
     DrawBorder(pGraphics, CFWL_Part::Border, m_pProperties->m_pThemeProvider,
@@ -108,8 +104,8 @@ void IFWL_PushButton::DrawWidget(CFX_Graphics* pGraphics,
   matrix.Concat(*pMatrix);
 
   CFX_WideString wsCaption;
-  if (pData)
-    pData->GetCaption(this, wsCaption);
+  if (m_pProperties->m_pDataProvider)
+    m_pProperties->m_pDataProvider->GetCaption(this, wsCaption);
 
   CFX_RectF rtText;
   rtText.Set(0, 0, 0, 0);

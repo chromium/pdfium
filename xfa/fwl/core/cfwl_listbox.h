@@ -15,17 +15,17 @@
 #include "xfa/fwl/core/ifwl_listbox.h"
 #include "xfa/fwl/core/ifwl_widget.h"
 
-class CFWL_ListBox : public CFWL_Widget, public IFWL_ListBoxDP {
+class CFWL_ListBox : public CFWL_Widget, public IFWL_ListBox::DataProvider {
  public:
   explicit CFWL_ListBox(const IFWL_App* pApp);
   ~CFWL_ListBox() override;
 
   void Initialize();
 
-  // IFWL_DataProvider:
+  // IFWL_Widget::DataProvider:
   void GetCaption(IFWL_Widget* pWidget, CFX_WideString& wsCaption) override;
 
-  // IFWL_ListBoxDP:
+  // IFWL_ListBox::DataProvider:
   int32_t CountItems(const IFWL_Widget* pWidget) const override;
   CFWL_ListItem* GetItem(const IFWL_Widget* pWidget,
                          int32_t nIndex) const override;

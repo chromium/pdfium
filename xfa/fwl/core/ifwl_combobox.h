@@ -45,13 +45,13 @@ class IFWL_Widget;
 #define FWL_STYLEEXT_CMB_ListItemIconText (1L << 12)
 #define FWL_STYLEEXT_CMB_ReadOnly (1L << 13)
 
-class IFWL_ComboBoxDP : public IFWL_ListBoxDP {
- public:
-  virtual FX_FLOAT GetListHeight(IFWL_Widget* pWidget) = 0;
-};
-
 class IFWL_ComboBox : public IFWL_Widget {
  public:
+  class DataProvider : public IFWL_ListBox::DataProvider {
+   public:
+    virtual FX_FLOAT GetListHeight(IFWL_Widget* pWidget) = 0;
+  };
+
   explicit IFWL_ComboBox(const IFWL_App* app,
                          std::unique_ptr<CFWL_WidgetProperties> properties);
   ~IFWL_ComboBox() override;

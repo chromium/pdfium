@@ -9,9 +9,9 @@
 
 #include <memory>
 
-#include "xfa/fwl/core/ifwl_dataprovider.h"
 #include "xfa/fwl/core/ifwl_edit.h"
 #include "xfa/fwl/core/ifwl_scrollbar.h"
+#include "xfa/fwl/core/ifwl_widget.h"
 #include "xfa/fxbarcode/BC_Library.h"
 
 class CFWL_WidgetProperties;
@@ -38,7 +38,7 @@ enum FWL_BCDAttribute {
   FWL_BCDATTRIBUTE_TRUNCATED = 1 << 12
 };
 
-class IFWL_BarcodeDP : public IFWL_DataProvider {
+class IFWL_BarcodeDP : public IFWL_Widget::DataProvider {
  public:
   virtual BC_CHAR_ENCODING GetCharEncoding() const = 0;
   virtual int32_t GetModuleHeight() const = 0;

@@ -10,6 +10,7 @@
 
 #include "third_party/base/ptr_util.h"
 #include "xfa/fwl/core/fwl_error.h"
+#include "xfa/fwl/core/ifwl_combobox.h"
 #include "xfa/fwl/core/ifwl_widget.h"
 
 namespace {

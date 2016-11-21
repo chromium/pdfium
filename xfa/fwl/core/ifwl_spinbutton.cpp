@@ -16,7 +16,7 @@
 #include "xfa/fwl/core/ifwl_spinbutton.h"
 #include "xfa/fwl/core/ifwl_themeprovider.h"
 #include "xfa/fwl/core/ifwl_themeprovider.h"
-#include "xfa/fwl/core/ifwl_timer.h"
+#include "xfa/fwl/core/ifwl_timerinfo.h"
 
 namespace {
 

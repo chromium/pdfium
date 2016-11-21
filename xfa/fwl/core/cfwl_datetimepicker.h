@@ -17,7 +17,7 @@ class CFWL_DateTimePicker : public CFWL_Widget, public IFWL_DateTimePickerDP {
 
   void Initialize();
 
-  // IFWL_DataProvider
+  // IFWL_Widget::DataProvider
   void GetCaption(IFWL_Widget* pWidget, CFX_WideString& wsCaption) override;
 
   // IFWL_DateTimePickerDP

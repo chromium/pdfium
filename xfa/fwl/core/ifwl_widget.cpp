@@ -118,10 +118,21 @@ void IFWL_Widget::SetParent(IFWL_Widget* pParent) {
   m_pWidgetMgr->SetParent(pParent, this);
 }
 
+uint32_t IFWL_Widget::GetStyles() const {
+  return m_pProperties->m_dwStyles;
+}
+
 void IFWL_Widget::ModifyStyles(uint32_t dwStylesAdded,
                                uint32_t dwStylesRemoved) {
   m_pProperties->m_dwStyles =
       (m_pProperties->m_dwStyles & ~dwStylesRemoved) | dwStylesAdded;
+}
+
+uint32_t IFWL_Widget::GetStylesEx() const {
+  return m_pProperties->m_dwStyleExes;
+}
+uint32_t IFWL_Widget::GetStates() const {
+  return m_pProperties->m_dwStates;
 }
 
 void IFWL_Widget::ModifyStylesEx(uint32_t dwStylesExAdded,
@@ -272,11 +283,56 @@ void IFWL_Widget::GetMatrix(CFX_Matrix& matrix, bool bGlobal) {
   parents.RemoveAll();
 }
 
+IFWL_ThemeProvider* IFWL_Widget::GetThemeProvider() const {
+  return m_pProperties->m_pThemeProvider;
+}
+
+IFWL_Widget::DataProvider* IFWL_Widget::GetDataProvider() const {
+  return m_pProperties->m_pDataProvider;
+}
+
 void IFWL_Widget::DrawWidget(CFX_Graphics* pGraphics,
                              const CFX_Matrix* pMatrix) {}
 
 void IFWL_Widget::SetThemeProvider(IFWL_ThemeProvider* pThemeProvider) {
   m_pProperties->m_pThemeProvider = pThemeProvider;
+}
+
+bool IFWL_Widget::IsEnabled() const {
+  return (m_pProperties->m_dwStates & FWL_WGTSTATE_Disabled) == 0;
+}
+
+bool IFWL_Widget::IsActive() const {
+  return (m_pProperties->m_dwStates & FWL_WGTSTATE_Deactivated) == 0;
+}
+
+bool IFWL_Widget::HasBorder() const {
+  return !!(m_pProperties->m_dwStyles & FWL_WGTSTYLE_Border);
+}
+
+bool IFWL_Widget::HasEdge() const {
+  return !!(m_pProperties->m_dwStyles & FWL_WGTSTYLE_EdgeMask);
+}
+
+bool IFWL_Widget::IsVisible() const {
+  return (m_pProperties->m_dwStates & FWL_WGTSTATE_Invisible) == 0;
+}
+
+bool IFWL_Widget::IsOverLapper() const {
+  return (m_pProperties->m_dwStyles & FWL_WGTSTYLE_WindowTypeMask) ==
+         FWL_WGTSTYLE_OverLapper;
+}
+
+bool IFWL_Widget::IsPopup() const {
+  return !!(m_pProperties->m_dwStyles & FWL_WGTSTYLE_Popup);
+}
+
+bool IFWL_Widget::IsChild() const {
+  return !!(m_pProperties->m_dwStyles & FWL_WGTSTYLE_Child);
+}
+
+bool IFWL_Widget::IsOffscreen() const {
+  return !!(m_pProperties->m_dwStyles & FWL_WGTSTYLE_Offscreen);
 }
 
 void IFWL_Widget::GetEdgeRect(CFX_RectF& rtEdge) {

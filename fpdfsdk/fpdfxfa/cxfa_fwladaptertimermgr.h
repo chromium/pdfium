@@ -11,6 +11,7 @@
 
 #include "fpdfsdk/fpdfxfa/cpdfxfa_context.h"
 #include "xfa/fwl/core/ifwl_adaptertimermgr.h"
+#include "xfa/fwl/core/ifwl_timerinfo.h"
 
 struct CFWL_TimerInfo;
 

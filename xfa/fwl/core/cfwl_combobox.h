@@ -13,17 +13,17 @@
 #include "xfa/fwl/core/cfwl_widget.h"
 #include "xfa/fwl/core/ifwl_combobox.h"
 
-class CFWL_ComboBox : public CFWL_Widget, public IFWL_ComboBoxDP {
+class CFWL_ComboBox : public CFWL_Widget, public IFWL_ComboBox::DataProvider {
  public:
   explicit CFWL_ComboBox(const IFWL_App* pApp);
   ~CFWL_ComboBox() override;
 
   void Initialize();
 
-  // IFWL_DataProvider
+  // IFWL_Widget::DataProvider
   void GetCaption(IFWL_Widget* pWidget, CFX_WideString& wsCaption) override;
 
-  // IFWL_ListBoxDP
+  // IFWL_ListBox::DataProvider
   int32_t CountItems(const IFWL_Widget* pWidget) const override;
   CFWL_ListItem* GetItem(const IFWL_Widget* pWidget,
                          int32_t nIndex) const override;
@@ -56,7 +56,7 @@ class CFWL_ComboBox : public CFWL_Widget, public IFWL_ComboBoxDP {
                          CFWL_ListItem* pItem,
                          uint32_t dwCheckState) override;
 
-  // IFWL_ComboBoxDP
+  // IFWL_ComboBox::DataProvider
   FX_FLOAT GetListHeight(IFWL_Widget* pWidget) override;
 
   int32_t AddString(const CFX_WideStringC& wsText);

@@ -14,6 +14,7 @@
 #include "xfa/fwl/core/fwl_noteimp.h"
 #include "xfa/fwl/core/ifwl_scrollbar.h"
 #include "xfa/fwl/core/ifwl_themeprovider.h"
+#include "xfa/fwl/core/ifwl_timerinfo.h"
 
 #define FWL_SCROLLBAR_Elapse 500
 #define FWL_SCROLLBAR_MinThumb 5

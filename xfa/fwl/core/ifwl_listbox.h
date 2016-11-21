@@ -12,7 +12,6 @@
 #include "xfa/fwl/core/cfwl_event.h"
 #include "xfa/fwl/core/cfwl_listitem.h"
 #include "xfa/fwl/core/cfwl_widgetproperties.h"
-#include "xfa/fwl/core/ifwl_dataprovider.h"
 #include "xfa/fwl/core/ifwl_edit.h"
 #include "xfa/fwl/core/ifwl_listbox.h"
 #include "xfa/fwl/core/ifwl_widget.h"
@@ -38,44 +37,45 @@ class CFWL_MsgMouse;
 class CFWL_MsgMouseWheel;
 class CFX_DIBitmap;
 
-class IFWL_ListBoxDP : public IFWL_DataProvider {
- public:
-  virtual int32_t CountItems(const IFWL_Widget* pWidget) const = 0;
-  virtual CFWL_ListItem* GetItem(const IFWL_Widget* pWidget,
-                                 int32_t nIndex) const = 0;
-  virtual int32_t GetItemIndex(IFWL_Widget* pWidget, CFWL_ListItem* pItem) = 0;
-  virtual uint32_t GetItemStyles(IFWL_Widget* pWidget,
-                                 CFWL_ListItem* pItem) = 0;
-  virtual void GetItemText(IFWL_Widget* pWidget,
-                           CFWL_ListItem* pItem,
-                           CFX_WideString& wsText) = 0;
-  virtual void GetItemRect(IFWL_Widget* pWidget,
-                           CFWL_ListItem* pItem,
-                           CFX_RectF& rtItem) = 0;
-  virtual void* GetItemData(IFWL_Widget* pWidget, CFWL_ListItem* pItem) = 0;
-  virtual void SetItemStyles(IFWL_Widget* pWidget,
-                             CFWL_ListItem* pItem,
-                             uint32_t dwStyle) = 0;
-  virtual void SetItemRect(IFWL_Widget* pWidget,
-                           CFWL_ListItem* pItem,
-                           const CFX_RectF& rtItem) = 0;
-  virtual CFX_DIBitmap* GetItemIcon(IFWL_Widget* pWidget,
-                                    CFWL_ListItem* pItem) = 0;
-  virtual void GetItemCheckRect(IFWL_Widget* pWidget,
-                                CFWL_ListItem* pItem,
-                                CFX_RectF& rtCheck) = 0;
-  virtual void SetItemCheckRect(IFWL_Widget* pWidget,
-                                CFWL_ListItem* pItem,
-                                const CFX_RectF& rtCheck) = 0;
-  virtual uint32_t GetItemCheckState(IFWL_Widget* pWidget,
-                                     CFWL_ListItem* pItem) = 0;
-  virtual void SetItemCheckState(IFWL_Widget* pWidget,
-                                 CFWL_ListItem* pItem,
-                                 uint32_t dwCheckState) = 0;
-};
-
 class IFWL_ListBox : public IFWL_Widget {
  public:
+  class DataProvider : public IFWL_Widget::DataProvider {
+   public:
+    virtual int32_t CountItems(const IFWL_Widget* pWidget) const = 0;
+    virtual CFWL_ListItem* GetItem(const IFWL_Widget* pWidget,
+                                   int32_t nIndex) const = 0;
+    virtual int32_t GetItemIndex(IFWL_Widget* pWidget,
+                                 CFWL_ListItem* pItem) = 0;
+    virtual uint32_t GetItemStyles(IFWL_Widget* pWidget,
+                                   CFWL_ListItem* pItem) = 0;
+    virtual void GetItemText(IFWL_Widget* pWidget,
+                             CFWL_ListItem* pItem,
+                             CFX_WideString& wsText) = 0;
+    virtual void GetItemRect(IFWL_Widget* pWidget,
+                             CFWL_ListItem* pItem,
+                             CFX_RectF& rtItem) = 0;
+    virtual void* GetItemData(IFWL_Widget* pWidget, CFWL_ListItem* pItem) = 0;
+    virtual void SetItemStyles(IFWL_Widget* pWidget,
+                               CFWL_ListItem* pItem,
+                               uint32_t dwStyle) = 0;
+    virtual void SetItemRect(IFWL_Widget* pWidget,
+                             CFWL_ListItem* pItem,
+                             const CFX_RectF& rtItem) = 0;
+    virtual CFX_DIBitmap* GetItemIcon(IFWL_Widget* pWidget,
+                                      CFWL_ListItem* pItem) = 0;
+    virtual void GetItemCheckRect(IFWL_Widget* pWidget,
+                                  CFWL_ListItem* pItem,
+                                  CFX_RectF& rtCheck) = 0;
+    virtual void SetItemCheckRect(IFWL_Widget* pWidget,
+                                  CFWL_ListItem* pItem,
+                                  const CFX_RectF& rtCheck) = 0;
+    virtual uint32_t GetItemCheckState(IFWL_Widget* pWidget,
+                                       CFWL_ListItem* pItem) = 0;
+    virtual void SetItemCheckState(IFWL_Widget* pWidget,
+                                   CFWL_ListItem* pItem,
+                                   uint32_t dwCheckState) = 0;
+  };
+
   IFWL_ListBox(const IFWL_App* app,
                std::unique_ptr<CFWL_WidgetProperties> properties,
                IFWL_Widget* pOuter);

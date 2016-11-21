@@ -14,7 +14,6 @@
 #include "xfa/fwl/core/cfwl_event.h"
 #include "xfa/fwl/core/cfwl_themepart.h"
 #include "xfa/fwl/core/cfwl_widgetmgr.h"
-#include "xfa/fwl/core/cfwl_widgetproperties.h"
 #include "xfa/fwl/core/fwl_widgethit.h"
 #include "xfa/fwl/core/ifwl_widgetdelegate.h"
 #include "xfa/fwl/theme/cfwl_widgettp.h"
@@ -59,13 +58,18 @@ class CFWL_Widget;
 class CFWL_WidgetProperties;
 class CFWL_WidgetMgr;
 class IFWL_App;
-class IFWL_DataProvider;
 class IFWL_ThemeProvider;
 class IFWL_Widget;
 enum class FWL_Type;
 
 class IFWL_Widget : public IFWL_WidgetDelegate {
  public:
+  class DataProvider {
+   public:
+    virtual void GetCaption(IFWL_Widget* pWidget,
+                            CFX_WideString& wsCaption) = 0;
+  };
+
   ~IFWL_Widget() override;
 
   virtual FWL_Type GetClassID() const = 0;
@@ -94,10 +98,10 @@ class IFWL_Widget : public IFWL_WidgetDelegate {
   IFWL_Widget* GetOwner() { return m_pWidgetMgr->GetOwnerWidget(this); }
   IFWL_Widget* GetOuter() const { return m_pOuter; }
 
-  uint32_t GetStyles() const { return m_pProperties->m_dwStyles; }
+  uint32_t GetStyles() const;
   void ModifyStyles(uint32_t dwStylesAdded, uint32_t dwStylesRemoved);
-  uint32_t GetStylesEx() const { return m_pProperties->m_dwStyleExes; }
-  uint32_t GetStates() const { return m_pProperties->m_dwStates; }
+  uint32_t GetStylesEx() const;
+  uint32_t GetStates() const;
 
   void LockUpdate() { m_iLock++; }
   void UnlockUpdate() {
@@ -107,13 +111,8 @@ class IFWL_Widget : public IFWL_WidgetDelegate {
 
   void TransformTo(IFWL_Widget* pWidget, FX_FLOAT& fx, FX_FLOAT& fy);
   void GetMatrix(CFX_Matrix& matrix, bool bGlobal = false);
-  IFWL_ThemeProvider* GetThemeProvider() const {
-    return m_pProperties->m_pThemeProvider;
-  }
-
-  IFWL_DataProvider* GetDataProvider() const {
-    return m_pProperties->m_pDataProvider;
-  }
+  IFWL_ThemeProvider* GetThemeProvider() const;
+  IFWL_Widget::DataProvider* GetDataProvider() const;
 
   void SetDelegate(IFWL_WidgetDelegate* delegate) { m_pDelegate = delegate; }
   IFWL_WidgetDelegate* GetDelegate() {
@@ -142,19 +141,11 @@ class IFWL_Widget : public IFWL_WidgetDelegate {
               std::unique_ptr<CFWL_WidgetProperties> properties,
               IFWL_Widget* pOuter);
 
-  bool IsEnabled() const {
-    return (m_pProperties->m_dwStates & FWL_WGTSTATE_Disabled) == 0;
-  }
-  bool IsActive() const {
-    return (m_pProperties->m_dwStates & FWL_WGTSTATE_Deactivated) == 0;
-  }
+  bool IsEnabled() const;
+  bool IsActive() const;
   bool IsLocked() const { return m_iLock > 0; }
-  bool HasBorder() const {
-    return !!(m_pProperties->m_dwStyles & FWL_WGTSTYLE_Border);
-  }
-  bool HasEdge() const {
-    return !!(m_pProperties->m_dwStyles & FWL_WGTSTYLE_EdgeMask);
-  }
+  bool HasBorder() const;
+  bool HasEdge() const;
   void GetEdgeRect(CFX_RectF& rtEdge);
   FX_FLOAT GetBorderSize(bool bCX = true);
   FX_FLOAT GetEdgeWidth();
@@ -199,22 +190,11 @@ class IFWL_Widget : public IFWL_WidgetDelegate {
   IFWL_Widget* GetParent() { return m_pWidgetMgr->GetParentWidget(this); }
   CFX_SizeF GetOffsetFromParent(IFWL_Widget* pParent);
 
-  bool IsVisible() const {
-    return (m_pProperties->m_dwStates & FWL_WGTSTATE_Invisible) == 0;
-  }
-  bool IsOverLapper() const {
-    return (m_pProperties->m_dwStyles & FWL_WGTSTYLE_WindowTypeMask) ==
-           FWL_WGTSTYLE_OverLapper;
-  }
-  bool IsPopup() const {
-    return !!(m_pProperties->m_dwStyles & FWL_WGTSTYLE_Popup);
-  }
-  bool IsChild() const {
-    return !!(m_pProperties->m_dwStyles & FWL_WGTSTYLE_Child);
-  }
-  bool IsOffscreen() const {
-    return !!(m_pProperties->m_dwStyles & FWL_WGTSTYLE_Offscreen);
-  }
+  bool IsVisible() const;
+  bool IsOverLapper() const;
+  bool IsPopup() const;
+  bool IsChild() const;
+  bool IsOffscreen() const;
   IFWL_Widget* GetRootOuter();
   bool GetPopupPosMenu(FX_FLOAT fMinHeight,
                        FX_FLOAT fMaxHeight,

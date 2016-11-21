@@ -18,7 +18,7 @@ class CFWL_Barcode : public CFWL_Edit, public IFWL_BarcodeDP {
 
   void Initialize();
 
-  // IFWL_DataProvider
+  // IFWL_Widget::DataProvider
   void GetCaption(IFWL_Widget* pWidget, CFX_WideString& wsCaption) override;
 
   // IFWL_BarcodeDP

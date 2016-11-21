@@ -9,7 +9,6 @@
 
 #include "core/fxcrt/fx_system.h"
 
-class IFWL_AdapterTimerMgr;
 class IFWL_TimerInfo;
 class IFWL_Widget;
 
@@ -23,19 +22,6 @@ class IFWL_Timer {
 
  protected:
   IFWL_Widget* m_pWidget;  // Not owned.
-};
-
-class IFWL_TimerInfo {
- public:
-  explicit IFWL_TimerInfo(IFWL_AdapterTimerMgr* mgr) : m_pMgr(mgr) {
-    ASSERT(mgr);
-  }
-  virtual ~IFWL_TimerInfo() {}
-
-  void StopTimer();
-
- private:
-  IFWL_AdapterTimerMgr* m_pMgr;  // Not owned.
 };
 
 #endif  // XFA_FWL_CORE_IFWL_TIMER_H_

@@ -13,6 +13,7 @@
 #include "xfa/fwl/core/cfwl_themetext.h"
 #include "xfa/fwl/core/fwl_noteimp.h"
 #include "xfa/fwl/core/ifwl_themeprovider.h"
+#include "xfa/fwl/core/ifwl_timerinfo.h"
 #include "xfa/fwl/core/ifwl_tooltip.h"
 #include "xfa/fwl/theme/cfwl_widgettp.h"
 

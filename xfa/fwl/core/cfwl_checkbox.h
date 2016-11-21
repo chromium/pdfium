@@ -17,7 +17,7 @@ class CFWL_CheckBox : public CFWL_Widget, public IFWL_CheckBoxDP {
 
   void Initialize();
 
-  // IFWL_DataProvider
+  // IFWL_Widget::DataProvider
   void GetCaption(IFWL_Widget* pWidget, CFX_WideString& wsCaption) override;
 
   // IFWL_CheckBoxDP

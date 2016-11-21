@@ -724,8 +724,9 @@ void IFWL_MonthCalendar::GetCapValue() {
 
 void IFWL_MonthCalendar::InitDate() {
   if (m_pProperties->m_pDataProvider) {
-    IFWL_MonthCalendarDP* pDateProv =
-        static_cast<IFWL_MonthCalendarDP*>(m_pProperties->m_pDataProvider);
+    IFWL_MonthCalendar::DataProvider* pDateProv =
+        static_cast<IFWL_MonthCalendar::DataProvider*>(
+            m_pProperties->m_pDataProvider);
     m_iYear = pDateProv->GetCurYear(this);
     m_iMonth = pDateProv->GetCurMonth(this);
     m_iDay = pDateProv->GetCurDay(this);

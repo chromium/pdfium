@@ -9,7 +9,6 @@
 
 #include "xfa/fwl/core/cfwl_event.h"
 #include "xfa/fwl/core/cfwl_widgetproperties.h"
-#include "xfa/fwl/core/ifwl_dataprovider.h"
 #include "xfa/fwl/core/ifwl_widget.h"
 
 #define FWL_STYLEEXT_CKB_Left (0L << 0)
@@ -47,7 +46,7 @@ class CFWL_MsgMouse;
 class CFWL_WidgetProperties;
 class IFWL_Widget;
 
-class IFWL_CheckBoxDP : public IFWL_DataProvider {
+class IFWL_CheckBoxDP : public IFWL_Widget::DataProvider {
  public:
   virtual FX_FLOAT GetBoxSize(IFWL_Widget* pWidget) = 0;
 };

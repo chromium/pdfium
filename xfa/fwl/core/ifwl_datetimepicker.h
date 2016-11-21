@@ -9,7 +9,6 @@
 
 #include "xfa/fwl/core/cfwl_event.h"
 #include "xfa/fwl/core/cfwl_widgetproperties.h"
-#include "xfa/fwl/core/ifwl_dataprovider.h"
 #include "xfa/fwl/core/ifwl_datetimeedit.h"
 #include "xfa/fwl/core/ifwl_monthcalendar.h"
 #include "xfa/fwl/core/ifwl_widget.h"
@@ -34,7 +33,7 @@
 class IFWL_DateTimeEdit;
 class IFWL_FormProxy;
 
-class IFWL_DateTimePickerDP : public IFWL_DataProvider {
+class IFWL_DateTimePickerDP : public IFWL_Widget::DataProvider {
  public:
   virtual void GetToday(IFWL_Widget* pWidget,
                         int32_t& iYear,
@@ -42,7 +41,8 @@ class IFWL_DateTimePickerDP : public IFWL_DataProvider {
                         int32_t& iDay) = 0;
 };
 
-class IFWL_DateTimePicker : public IFWL_Widget, public IFWL_MonthCalendarDP {
+class IFWL_DateTimePicker : public IFWL_Widget,
+                            public IFWL_MonthCalendar::DataProvider {
  public:
   explicit IFWL_DateTimePicker(
       const IFWL_App* app,
@@ -61,10 +61,10 @@ class IFWL_DateTimePicker : public IFWL_Widget, public IFWL_MonthCalendarDP {
   void OnDrawWidget(CFX_Graphics* pGraphics,
                     const CFX_Matrix* pMatrix) override;
 
-  // IFWL_DataProvider
+  // IFWL_Widget::DataProvider
   void GetCaption(IFWL_Widget* pWidget, CFX_WideString& wsCaption) override;
 
-  // IFWL_MonthCalendarDP
+  // IFWL_MonthCalendar::DataProvider
   int32_t GetCurDay(IFWL_Widget* pWidget) override;
   int32_t GetCurMonth(IFWL_Widget* pWidget) override;
   int32_t GetCurYear(IFWL_Widget* pWidget) override;
