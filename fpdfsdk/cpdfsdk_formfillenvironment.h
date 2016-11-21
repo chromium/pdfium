@@ -7,7 +7,9 @@
 #ifndef FPDFSDK_CPDFSDK_FORMFILLENVIRONMENT_H_
 #define FPDFSDK_CPDFSDK_FORMFILLENVIRONMENT_H_
 
+#include <map>
 #include <memory>
+#include <vector>
 
 #include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fpdfapi/parser/cpdf_document.h"

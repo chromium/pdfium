@@ -6,6 +6,8 @@
 
 #include "fpdfsdk/javascript/JS_GlobalData.h"
 
+#include <utility>
+
 #include "core/fdrm/crypto/fx_crypt.h"
 #include "third_party/base/stl_util.h"
 

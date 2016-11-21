@@ -6,6 +6,8 @@
 
 #include "xfa/fxfa/parser/cxfa_widetextread.h"
 
+#include <algorithm>
+
 #include "core/fxcrt/fx_ext.h"
 #include "xfa/fgas/crt/fgas_codepage.h"
 

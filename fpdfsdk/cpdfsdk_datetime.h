@@ -8,7 +8,7 @@
 #define FPDFSDK_CPDFSDK_DATETIME_H_
 
 #if _FX_OS_ == _FX_ANDROID_
-#include "time.h"
+#include <time.h>
 #else
 #include <ctime>
 #endif

@@ -17,7 +17,7 @@ struct CFWL_TimerInfo;
 
 class CXFA_FWLAdapterTimerMgr : public IFWL_AdapterTimerMgr {
  public:
-  CXFA_FWLAdapterTimerMgr(CPDFSDK_FormFillEnvironment* pFormFillEnv)
+  explicit CXFA_FWLAdapterTimerMgr(CPDFSDK_FormFillEnvironment* pFormFillEnv)
       : m_pFormFillEnv(pFormFillEnv) {}
 
   void Start(IFWL_Timer* pTimer,

@@ -364,6 +364,7 @@ bool RetrieveSpecificFont(uint8_t charSet,
   lf.lfPitchAndFamily = pitchAndFamily;
   if (pcsFontName) {
     // TODO(dsinclair): Should this be strncpy?
+    // NOLINTNEXTLINE(runtime/printf)
     strcpy(lf.lfFaceName, pcsFontName);
   }
   return RetrieveSpecificFont(lf);

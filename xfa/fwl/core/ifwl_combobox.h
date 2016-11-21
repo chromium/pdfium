@@ -7,6 +7,8 @@
 #ifndef XFA_FWL_CORE_IFWL_COMBOBOX_H_
 #define XFA_FWL_CORE_IFWL_COMBOBOX_H_
 
+#include <memory>
+
 #include "xfa/fwl/core/ifwl_comboboxproxy.h"
 #include "xfa/fwl/core/ifwl_comboedit.h"
 #include "xfa/fwl/core/ifwl_combolist.h"

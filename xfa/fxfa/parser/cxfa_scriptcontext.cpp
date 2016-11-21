@@ -6,6 +6,8 @@
 
 #include "xfa/fxfa/parser/cxfa_scriptcontext.h"
 
+#include <utility>
+
 #include "core/fxcrt/fx_ext.h"
 #include "fxjs/cfxjse_arguments.h"
 #include "fxjs/cfxjse_class.h"

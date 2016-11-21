@@ -6,6 +6,8 @@
 
 #include "xfa/fde/cfx_wordbreak.h"
 
+#include <utility>
+
 #include "xfa/fde/cfx_chariter.h"
 
 namespace {

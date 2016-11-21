@@ -14,7 +14,7 @@
 
 class util : public CJS_EmbedObj {
  public:
-  util(CJS_Object* pJSObject);
+  explicit util(CJS_Object* pJSObject);
   ~util() override;
 
   bool printd(IJS_Context* cc,
@@ -44,7 +44,7 @@ class util : public CJS_EmbedObj {
 
 class CJS_Util : public CJS_Object {
  public:
-  CJS_Util(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {}
+  explicit CJS_Util(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {}
   ~CJS_Util() override {}
 
   DECLARE_JS_CLASS();

@@ -7,6 +7,8 @@
 #include "xfa/fwl/core/ifwl_monthcalendar.h"
 
 #include <algorithm>
+#include <memory>
+#include <utility>
 
 #include "third_party/base/ptr_util.h"
 #include "xfa/fde/tto/fde_textout.h"
@@ -16,7 +18,6 @@
 #include "xfa/fwl/core/fwl_noteimp.h"
 #include "xfa/fwl/core/ifwl_datetimepicker.h"
 #include "xfa/fwl/core/ifwl_formproxy.h"
-#include "xfa/fwl/core/ifwl_monthcalendar.h"
 #include "xfa/fwl/core/ifwl_themeprovider.h"
 
 #define MONTHCAL_HSEP_HEIGHT 1

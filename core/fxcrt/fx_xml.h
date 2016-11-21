@@ -66,7 +66,7 @@ class CXML_Element {
                              FX_FILESIZE* pParsedSize = nullptr);
 
   CXML_Element(const CFX_ByteStringC& qSpace, const CFX_ByteStringC& tagName);
-  CXML_Element(const CFX_ByteStringC& qTagName);
+  explicit CXML_Element(const CFX_ByteStringC& qTagName);
   CXML_Element();
   ~CXML_Element();
 

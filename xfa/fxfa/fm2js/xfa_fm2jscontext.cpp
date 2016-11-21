@@ -8,6 +8,10 @@
 
 #include <time.h>
 
+#include <algorithm>
+#include <memory>
+#include <vector>
+
 #include "core/fxcrt/fx_ext.h"
 #include "fxjs/cfxjse_arguments.h"
 #include "fxjs/cfxjse_class.h"

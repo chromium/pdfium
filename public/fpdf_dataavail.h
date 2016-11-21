@@ -9,6 +9,7 @@
 
 #include <stddef.h>
 
+// NOLINTNEXTLINE(build/include)
 #include "fpdfview.h"
 
 #define PDF_LINEARIZATION_UNKNOWN -1

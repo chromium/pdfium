@@ -11,7 +11,7 @@
 
 class CXFA_WideTextRead : public IFX_Stream {
  public:
-  CXFA_WideTextRead(const CFX_WideString& wsBuffer);
+  explicit CXFA_WideTextRead(const CFX_WideString& wsBuffer);
 
   // IFX_Stream
   void Release() override;

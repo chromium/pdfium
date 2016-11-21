@@ -6,6 +6,8 @@
 
 #include "xfa/fwl/core/cfwl_widgetmgr.h"
 
+#include <utility>
+
 #include "xfa/fwl/core/fwl_noteimp.h"
 #include "xfa/fwl/core/ifwl_app.h"
 #include "xfa/fwl/core/ifwl_form.h"

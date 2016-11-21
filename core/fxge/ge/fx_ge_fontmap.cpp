@@ -4,6 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include <memory>
+
 #include "core/fxge/cfx_fontmapper.h"
 #include "core/fxge/ifx_systemfontinfo.h"
 

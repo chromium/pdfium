@@ -7,6 +7,8 @@
 #ifndef XFA_FWL_CORE_IFWL_MONTHCALENDAR_H_
 #define XFA_FWL_CORE_IFWL_MONTHCALENDAR_H_
 
+#include <memory>
+
 #include "xfa/fgas/localization/fgas_datetime.h"
 #include "xfa/fwl/core/cfwl_event.h"
 #include "xfa/fwl/core/cfwl_widgetproperties.h"

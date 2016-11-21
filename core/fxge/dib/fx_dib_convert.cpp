@@ -4,6 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include <memory>
+#include <utility>
+
 #include "core/fxcodec/fx_codec.h"
 #include "core/fxge/fx_dib.h"
 

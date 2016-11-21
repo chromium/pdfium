@@ -6,6 +6,8 @@
 
 #include "xfa/fwl/core/ifwl_barcode.h"
 
+#include <utility>
+
 #include "third_party/base/ptr_util.h"
 #include "xfa/fgas/font/fgas_gefont.h"
 #include "xfa/fwl/core/cfwl_themepart.h"

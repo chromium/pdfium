@@ -6,6 +6,9 @@
 
 #include "core/fpdfapi/page/cpdf_contentmark.h"
 
+#include <memory>
+#include <utility>
+
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "third_party/base/stl_util.h"
 

@@ -96,7 +96,7 @@ class CFDE_CSSFontFaceRule : public IFDE_CSSFontFaceRule, public CFX_Target {
 
 class CFDE_CSSStyleSheet : public IFDE_CSSStyleSheet, public CFX_Target {
  public:
-  CFDE_CSSStyleSheet(uint32_t dwMediaList);
+  explicit CFDE_CSSStyleSheet(uint32_t dwMediaList);
   ~CFDE_CSSStyleSheet() override;
 
   // IFX_Retainable:

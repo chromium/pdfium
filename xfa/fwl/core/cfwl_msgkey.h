@@ -7,6 +7,8 @@
 #ifndef XFA_FWL_CORE_CFWL_MSGKEY_H_
 #define XFA_FWL_CORE_CFWL_MSGKEY_H_
 
+#include <memory>
+
 #include "xfa/fwl/core/cfwl_message.h"
 
 enum class FWL_KeyCommand { KeyDown, KeyUp, Char };

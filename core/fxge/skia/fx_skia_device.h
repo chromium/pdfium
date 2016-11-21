@@ -7,6 +7,9 @@
 
 #if defined _SKIA_SUPPORT_ || defined _SKIA_SUPPORT_PATHS_
 
+#include <memory>
+#include <vector>
+
 #include "core/fxge/cfx_pathdata.h"
 #include "core/fxge/ifx_renderdevicedriver.h"
 

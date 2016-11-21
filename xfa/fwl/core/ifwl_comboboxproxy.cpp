@@ -6,6 +6,9 @@
 
 #include "xfa/fwl/core/ifwl_comboboxproxy.h"
 
+#include <memory>
+#include <utility>
+
 #include "xfa/fwl/core/cfwl_msgkillfocus.h"
 #include "xfa/fwl/core/cfwl_msgmouse.h"
 #include "xfa/fwl/core/fwl_noteimp.h"

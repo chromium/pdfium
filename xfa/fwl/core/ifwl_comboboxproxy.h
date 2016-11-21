@@ -7,6 +7,8 @@
 #ifndef XFA_FWL_CORE_IFWL_COMBOBOXPROXY_H_
 #define XFA_FWL_CORE_IFWL_COMBOBOXPROXY_H_
 
+#include <memory>
+
 #include "xfa/fwl/core/ifwl_formproxy.h"
 
 class IFWL_ComboBox;

@@ -6,6 +6,8 @@
 
 #include "public/fpdf_sysfontinfo.h"
 
+#include <memory>
+
 #include "core/fxge/cfx_fontmapper.h"
 #include "core/fxge/cfx_gemodule.h"
 #include "core/fxge/fx_font.h"

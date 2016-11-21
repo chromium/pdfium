@@ -7,6 +7,8 @@
 #ifndef FPDFSDK_PDFWINDOW_PWL_LISTBOX_H_
 #define FPDFSDK_PDFWINDOW_PWL_LISTBOX_H_
 
+#include <memory>
+
 #include "fpdfsdk/fxedit/fx_edit.h"
 #include "fpdfsdk/pdfwindow/PWL_Wnd.h"
 
@@ -20,7 +22,7 @@ struct CPVT_WordProps;
 
 class CPWL_List_Notify {
  public:
-  CPWL_List_Notify(CPWL_ListBox* pList);
+  explicit CPWL_List_Notify(CPWL_ListBox* pList);
   ~CPWL_List_Notify();
 
   void IOnSetScrollInfoY(FX_FLOAT fPlateMin,

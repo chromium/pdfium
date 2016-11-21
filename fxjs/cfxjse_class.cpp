@@ -6,6 +6,8 @@
 
 #include "fxjs/cfxjse_class.h"
 
+#include <memory>
+
 #include "fxjs/cfxjse_context.h"
 #include "fxjs/cfxjse_value.h"
 

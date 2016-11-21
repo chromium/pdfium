@@ -56,6 +56,7 @@ class CFX_SharedCopyOnWrite {
   class CountedObj : public ObjClass {
    public:
     template <typename... Args>
+    // NOLINTNEXTLINE(runtime/explicit)
     CountedObj(Args... params) : ObjClass(params...), m_RefCount(0) {}
 
     CountedObj(const CountedObj& src) : ObjClass(src), m_RefCount(0) {}

@@ -649,6 +649,7 @@ TEST(fxcrt, ByteStringGetBuffer) {
   {
     CFX_ByteString str;
     FX_CHAR* buffer = str.GetBuffer(12);
+    // NOLINTNEXTLINE(runtime/printf)
     strcpy(buffer, "clams");
     str.ReleaseBuffer();
     EXPECT_EQ("clams", str);
@@ -656,6 +657,7 @@ TEST(fxcrt, ByteStringGetBuffer) {
   {
     CFX_ByteString str("cl");
     FX_CHAR* buffer = str.GetBuffer(12);
+    // NOLINTNEXTLINE(runtime/printf)
     strcpy(buffer + 2, "ams");
     str.ReleaseBuffer();
     EXPECT_EQ("clams", str);

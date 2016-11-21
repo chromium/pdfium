@@ -6,6 +6,12 @@
 
 #include "core/fxge/fx_font.h"
 
+#include <algorithm>
+#include <limits>
+#include <memory>
+#include <utility>
+#include <vector>
+
 #include "core/fpdfapi/font/cpdf_font.h"
 #include "core/fxge/cfx_facecache.h"
 #include "core/fxge/cfx_fontcache.h"

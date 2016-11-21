@@ -7,6 +7,7 @@
 #include "core/fxcodec/codec/ccodec_jbig2module.h"
 
 #include <list>
+#include <memory>
 
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "core/fxcodec/JBig2_DocumentContext.h"

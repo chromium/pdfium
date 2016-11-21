@@ -7,6 +7,8 @@
 #ifndef XFA_FGAS_LOCALIZATION_FGAS_LOCALE_H_
 #define XFA_FGAS_LOCALIZATION_FGAS_LOCALE_H_
 
+#include <memory>
+
 #include "core/fxcrt/fx_xml.h"
 #include "xfa/fgas/localization/fgas_datetime.h"
 
@@ -97,13 +99,13 @@ bool FX_TimeFromCanonical(const CFX_WideStringC& wsTime,
 class CFX_Decimal {
  public:
   CFX_Decimal();
-  CFX_Decimal(uint32_t val);
-  CFX_Decimal(uint64_t val);
-  CFX_Decimal(int32_t val);
-  CFX_Decimal(int64_t val);
-  CFX_Decimal(FX_FLOAT val, uint8_t scale = 3);
-  CFX_Decimal(const CFX_WideStringC& str);
-  CFX_Decimal(const CFX_ByteStringC& str);
+  explicit CFX_Decimal(uint32_t val);
+  explicit CFX_Decimal(uint64_t val);
+  explicit CFX_Decimal(int32_t val);
+  explicit CFX_Decimal(int64_t val);
+  explicit CFX_Decimal(FX_FLOAT val, uint8_t scale = 3);
+  explicit CFX_Decimal(const CFX_WideStringC& str);
+  explicit CFX_Decimal(const CFX_ByteStringC& str);
   operator CFX_WideString() const;
   operator double() const;
   bool operator==(const CFX_Decimal& val) const;

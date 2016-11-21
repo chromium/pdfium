@@ -24,7 +24,7 @@ class CXFA_SAXContext {
 
 class CXFA_SAXReaderHandler {
  public:
-  CXFA_SAXReaderHandler(CXFA_ChecksumContext* pContext);
+  explicit CXFA_SAXReaderHandler(CXFA_ChecksumContext* pContext);
   ~CXFA_SAXReaderHandler();
 
   CXFA_SAXContext* OnTagEnter(const CFX_ByteStringC& bsTagName,

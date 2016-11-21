@@ -7,6 +7,7 @@
 #include "fxjs/cfxjse_isolatetracker.h"
 
 #include <algorithm>
+#include <utility>
 
 CFXJSE_IsolateTracker::CFXJSE_IsolateTracker() {}
 

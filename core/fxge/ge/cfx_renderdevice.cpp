@@ -6,6 +6,11 @@
 
 #include "core/fxge/cfx_renderdevice.h"
 
+#include <algorithm>
+#include <memory>
+#include <utility>
+#include <vector>
+
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxge/cfx_facecache.h"
 #include "core/fxge/cfx_fxgedevice.h"

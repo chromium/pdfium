@@ -33,7 +33,7 @@ class CFX_BaseArray : public CFX_Target {
 template <class baseType>
 class CFX_BaseArrayTemplate : public CFX_BaseArray {
  public:
-  CFX_BaseArrayTemplate(int32_t iGrowSize)
+  explicit CFX_BaseArrayTemplate(int32_t iGrowSize)
       : CFX_BaseArray(iGrowSize, sizeof(baseType)) {}
   CFX_BaseArrayTemplate(int32_t iGrowSize, int32_t iBlockSize)
       : CFX_BaseArray(iGrowSize, iBlockSize) {}
@@ -123,7 +123,7 @@ class CFX_BaseMassArray : public CFX_Target {
 template <class baseType>
 class CFX_MassArrayTemplate : public CFX_BaseMassArray {
  public:
-  CFX_MassArrayTemplate(int32_t iChunkSize)
+  explicit CFX_MassArrayTemplate(int32_t iChunkSize)
       : CFX_BaseMassArray(iChunkSize, sizeof(baseType)) {}
   CFX_MassArrayTemplate(int32_t iChunkSize, int32_t iBlockSize)
       : CFX_BaseMassArray(iChunkSize, iBlockSize) {}
@@ -171,7 +171,7 @@ class CFX_MassArrayTemplate : public CFX_BaseMassArray {
 template <class baseType>
 class CFX_ObjectMassArrayTemplate : public CFX_BaseMassArray {
  public:
-  CFX_ObjectMassArrayTemplate(int32_t iChunkSize)
+  explicit CFX_ObjectMassArrayTemplate(int32_t iChunkSize)
       : CFX_BaseMassArray(iChunkSize, sizeof(baseType)) {}
   ~CFX_ObjectMassArrayTemplate() { RemoveAll(false); }
 
@@ -265,7 +265,7 @@ class CFX_BaseDiscreteArray : public CFX_Target {
 template <class baseType>
 class CFX_DiscreteArrayTemplate : public CFX_BaseDiscreteArray {
  public:
-  CFX_DiscreteArrayTemplate(int32_t iChunkSize)
+  explicit CFX_DiscreteArrayTemplate(int32_t iChunkSize)
       : CFX_BaseDiscreteArray(iChunkSize, sizeof(baseType)) {}
 
   baseType& GetAt(int32_t index, const baseType& defValue) const {
@@ -298,7 +298,7 @@ class CFX_BaseStack : public CFX_Target {
 template <class baseType>
 class CFX_StackTemplate : public CFX_BaseStack {
  public:
-  CFX_StackTemplate(int32_t iChunkSize)
+  explicit CFX_StackTemplate(int32_t iChunkSize)
       : CFX_BaseStack(iChunkSize, sizeof(baseType)) {}
 
   int32_t Push(const baseType& element) {
@@ -320,7 +320,7 @@ class CFX_StackTemplate : public CFX_BaseStack {
 template <class baseType>
 class CFX_ObjectStackTemplate : public CFX_BaseStack {
  public:
-  CFX_ObjectStackTemplate(int32_t iChunkSize)
+  explicit CFX_ObjectStackTemplate(int32_t iChunkSize)
       : CFX_BaseStack(iChunkSize, sizeof(baseType)) {}
   ~CFX_ObjectStackTemplate() { RemoveAll(false); }
 

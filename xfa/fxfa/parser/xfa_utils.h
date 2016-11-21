@@ -26,7 +26,7 @@ bool XFA_FDEExtension_ResolveNamespaceQualifier(
 template <class NodeType, class TraverseStrategy>
 class CXFA_NodeIteratorTemplate {
  public:
-  CXFA_NodeIteratorTemplate(NodeType* pRootNode = nullptr)
+  explicit CXFA_NodeIteratorTemplate(NodeType* pRootNode = nullptr)
       : m_pRoot(pRootNode), m_NodeStack(100) {
     if (pRootNode) {
       m_NodeStack.Push(pRootNode);

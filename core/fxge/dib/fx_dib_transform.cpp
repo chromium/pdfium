@@ -6,6 +6,9 @@
 
 #include "core/fxge/dib/dib_int.h"
 
+#include <memory>
+#include <utility>
+
 #include "core/fxge/fx_dib.h"
 #include "third_party/base/ptr_util.h"
 

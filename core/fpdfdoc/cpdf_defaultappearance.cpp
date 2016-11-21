@@ -6,6 +6,8 @@
 
 #include "core/fpdfdoc/cpdf_defaultappearance.h"
 
+#include <algorithm>
+
 #include "core/fpdfapi/parser/cpdf_simple_parser.h"
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
 #include "core/fpdfdoc/cpdf_formcontrol.h"

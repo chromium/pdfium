@@ -7,6 +7,7 @@
 #include "core/fpdfapi/page/cpdf_page.h"
 
 #include <set>
+#include <utility>
 
 #include "core/fpdfapi/cpdf_pagerendercontext.h"
 #include "core/fpdfapi/page/cpdf_pageobject.h"

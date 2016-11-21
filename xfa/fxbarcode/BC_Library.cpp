@@ -4,6 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "xfa/fxbarcode/BC_Library.h"
+
 #include <stdint.h>
 
 #include "xfa/fxbarcode/common/reedsolomon/BC_ReedSolomonGF256.h"

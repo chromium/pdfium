@@ -8,6 +8,7 @@
 #define XFA_FGAS_FONT_FGAS_GEFONT_H_
 
 #include <map>
+#include <memory>
 
 #include "core/fxcrt/fx_memory.h"
 #include "xfa/fgas/crt/fgas_utils.h"

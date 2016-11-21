@@ -24,6 +24,7 @@ class CFX_StringCTemplate {
   CFX_StringCTemplate() : m_Ptr(nullptr), m_Length(0) {}
 
   // Deliberately implicit to avoid calling on every string literal.
+  // NOLINTNEXTLINE(runtime/explicit)
   CFX_StringCTemplate(const CharType* ptr)
       : m_Ptr(reinterpret_cast<const UnsignedType*>(ptr)),
         m_Length(ptr ? FXSYS_len(ptr) : 0) {}
@@ -41,6 +42,7 @@ class CFX_StringCTemplate {
 
   // Deliberately implicit to avoid calling on every string literal.
   // |ch| must be an lvalue that outlives the the CFX_StringCTemplate.
+  // NOLINTNEXTLINE(runtime/explicit)
   CFX_StringCTemplate(CharType& ch) {
     m_Ptr = reinterpret_cast<const UnsignedType*>(&ch);
     m_Length = 1;

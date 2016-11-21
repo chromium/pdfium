@@ -5,6 +5,7 @@
 #include "xfa/fxfa/xfa_ffapp.h"
 
 #include <memory>
+#include <vector>
 
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"

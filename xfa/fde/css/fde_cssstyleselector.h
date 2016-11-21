@@ -353,7 +353,7 @@ class CFDE_CSSComputedStyle : public IFDE_CSSComputedStyle,
                               public IFDE_CSSParagraphStyle,
                               public CFX_Target {
  public:
-  CFDE_CSSComputedStyle(IFX_MemoryAllocator* pAlloc);
+  explicit CFDE_CSSComputedStyle(IFX_MemoryAllocator* pAlloc);
   ~CFDE_CSSComputedStyle() override;
 
   // IFX_Retainable

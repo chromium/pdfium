@@ -37,7 +37,7 @@ enum XFA_DOCVIEW_LAYOUTSTATUS {
 };
 class CXFA_FFDocView {
  public:
-  CXFA_FFDocView(CXFA_FFDoc* pDoc);
+  explicit CXFA_FFDocView(CXFA_FFDoc* pDoc);
   ~CXFA_FFDocView();
 
   CXFA_FFDoc* GetDoc() { return m_pDoc; }

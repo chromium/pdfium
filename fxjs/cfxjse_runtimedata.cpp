@@ -6,6 +6,8 @@
 
 #include "fxjs/cfxjse_runtimedata.h"
 
+#include <utility>
+
 #include "fxjs/cfxjse_isolatetracker.h"
 #include "fxjs/fxjs_v8.h"
 

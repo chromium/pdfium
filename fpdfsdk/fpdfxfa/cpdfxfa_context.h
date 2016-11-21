@@ -29,7 +29,7 @@ enum LoadStatus {
 
 class CPDFXFA_Context : public IXFA_AppProvider {
  public:
-  CPDFXFA_Context(std::unique_ptr<CPDF_Document> pPDFDoc);
+  explicit CPDFXFA_Context(std::unique_ptr<CPDF_Document> pPDFDoc);
   ~CPDFXFA_Context() override;
 
   bool LoadXFADoc();

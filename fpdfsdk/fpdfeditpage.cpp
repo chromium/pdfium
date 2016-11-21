@@ -34,7 +34,7 @@
 #endif  // PDF_ENABLE_XFA
 
 #if _FX_OS_ == _FX_ANDROID_
-#include "time.h"
+#include <time.h>
 #else
 #include <ctime>
 #endif
@@ -300,7 +300,7 @@ DLLEXPORT void STDCALL FPDFPage_TransformAnnots(FPDF_PAGE page,
     pRectArray->SetNewAt<CPDF_Number>(2, rect.right);
     pRectArray->SetNewAt<CPDF_Number>(3, rect.top);
 
-    // TODO: Transform AP's rectangle
+    // TODO(unknown): Transform AP's rectangle
   }
 }
 

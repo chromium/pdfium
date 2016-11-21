@@ -455,7 +455,7 @@ class CFX_MapPtrToPtr {
   };
 
  public:
-  CFX_MapPtrToPtr(int nBlockSize = 10);
+  explicit CFX_MapPtrToPtr(int nBlockSize = 10);
   ~CFX_MapPtrToPtr();
 
   int GetCount() const { return m_nCount; }
@@ -554,7 +554,7 @@ class CFX_PtrList {
   };
 
  public:
-  CFX_PtrList(int nBlockSize = 10);
+  explicit CFX_PtrList(int nBlockSize = 10);
 
   FX_POSITION GetHeadPosition() const { return (FX_POSITION)m_pNodeHead; }
   FX_POSITION GetTailPosition() const { return (FX_POSITION)m_pNodeTail; }

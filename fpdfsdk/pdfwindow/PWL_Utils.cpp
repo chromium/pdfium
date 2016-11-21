@@ -7,6 +7,7 @@
 #include "fpdfsdk/pdfwindow/PWL_Utils.h"
 
 #include <algorithm>
+#include <memory>
 
 #include "core/fpdfdoc/cpvt_word.h"
 #include "core/fxge/cfx_graphstatedata.h"

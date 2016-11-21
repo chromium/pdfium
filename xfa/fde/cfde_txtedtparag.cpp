@@ -6,6 +6,8 @@
 
 #include "xfa/fde/cfde_txtedtparag.h"
 
+#include <memory>
+
 #include "xfa/fde/cfde_txtedtbuf.h"
 #include "xfa/fde/cfde_txtedtbufiter.h"
 #include "xfa/fde/cfde_txtedtengine.h"

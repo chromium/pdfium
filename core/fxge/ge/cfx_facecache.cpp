@@ -7,6 +7,8 @@
 #include "core/fxge/cfx_facecache.h"
 
 #include <algorithm>
+#include <limits>
+#include <memory>
 
 #include "core/fxge/cfx_fontmgr.h"
 #include "core/fxge/cfx_gemodule.h"

@@ -11,7 +11,7 @@
 
 class CBC_BarcodeRow {
  public:
-  CBC_BarcodeRow(int32_t width);
+  explicit CBC_BarcodeRow(int32_t width);
   virtual ~CBC_BarcodeRow();
 
   void set(int32_t x, uint8_t value);

@@ -56,7 +56,7 @@ class CXFA_XMLLocale : public IFX_Locale {
 
 class CXFA_NodeLocale : public IFX_Locale {
  public:
-  CXFA_NodeLocale(CXFA_Node* pLocale);
+  explicit CXFA_NodeLocale(CXFA_Node* pLocale);
   ~CXFA_NodeLocale() override;
 
   // IFX_Locale

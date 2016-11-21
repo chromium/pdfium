@@ -8,6 +8,7 @@
 #define XFA_FWL_CORE_IFWL_EDIT_H_
 
 #include <deque>
+#include <memory>
 #include <vector>
 
 #include "xfa/fde/cfde_txtedtengine.h"

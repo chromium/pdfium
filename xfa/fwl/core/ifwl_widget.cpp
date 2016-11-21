@@ -7,6 +7,7 @@
 #include "xfa/fwl/core/ifwl_widget.h"
 
 #include <algorithm>
+#include <utility>
 
 #include "xfa/fde/tto/fde_textout.h"
 #include "xfa/fwl/core/cfwl_evtkey.h"
@@ -29,7 +30,6 @@
 #include "xfa/fwl/core/ifwl_combobox.h"
 #include "xfa/fwl/core/ifwl_form.h"
 #include "xfa/fwl/core/ifwl_themeprovider.h"
-#include "xfa/fwl/core/ifwl_widget.h"
 #include "xfa/fxfa/xfa_ffapp.h"
 
 #define FWL_STYLEEXT_MNU_Vert (1L << 0)

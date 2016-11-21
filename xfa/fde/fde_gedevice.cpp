@@ -7,6 +7,7 @@
 #include "xfa/fde/fde_gedevice.h"
 
 #include <algorithm>
+#include <memory>
 
 #include "core/fxge/cfx_gemodule.h"
 #include "core/fxge/cfx_graphstatedata.h"

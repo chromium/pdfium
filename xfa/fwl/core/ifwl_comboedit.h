@@ -7,6 +7,8 @@
 #ifndef XFA_FWL_CORE_IFWL_COMBOEDIT_H_
 #define XFA_FWL_CORE_IFWL_COMBOEDIT_H_
 
+#include <memory>
+
 #include "xfa/fwl/core/cfwl_widgetproperties.h"
 #include "xfa/fwl/core/ifwl_edit.h"
 #include "xfa/fwl/core/ifwl_widget.h"

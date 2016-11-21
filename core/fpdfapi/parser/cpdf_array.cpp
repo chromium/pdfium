@@ -7,6 +7,7 @@
 #include "core/fpdfapi/parser/cpdf_array.h"
 
 #include <set>
+#include <utility>
 
 #include "core/fpdfapi/parser/cpdf_name.h"
 #include "core/fpdfapi/parser/cpdf_number.h"

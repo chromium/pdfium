@@ -6,6 +6,7 @@
 
 #include "fpdfsdk/javascript/app.h"
 
+#include <map>
 #include <memory>
 #include <vector>
 

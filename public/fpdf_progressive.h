@@ -7,6 +7,7 @@
 #ifndef PUBLIC_FPDF_PROGRESSIVE_H_
 #define PUBLIC_FPDF_PROGRESSIVE_H_
 
+// NOLINTNEXTLINE(build/include)
 #include "fpdfview.h"
 
 // Flags for progressive process status.

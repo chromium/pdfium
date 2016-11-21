@@ -7,6 +7,8 @@
 #ifndef XFA_FXFA_FM2JS_XFA_FM2JSCONTEXT_H_
 #define XFA_FXFA_FM2JS_XFA_FM2JSCONTEXT_H_
 
+#include <memory>
+
 #include "fxjs/cfxjse_arguments.h"
 #include "fxjs/cfxjse_context.h"
 #include "xfa/fxfa/parser/xfa_resolvenode_rs.h"

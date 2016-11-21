@@ -9,6 +9,9 @@
 
 #include <functional>
 #include <memory>
+#include <set>
+#include <utility>
+#include <vector>
 
 #include "core/fpdfapi/parser/cpdf_indirect_object_holder.h"
 #include "core/fpdfapi/parser/cpdf_object.h"

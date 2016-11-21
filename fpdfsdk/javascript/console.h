@@ -13,7 +13,7 @@
 
 class console : public CJS_EmbedObj {
  public:
-  console(CJS_Object* pJSObject);
+  explicit console(CJS_Object* pJSObject);
   ~console() override;
 
  public:
@@ -37,7 +37,7 @@ class console : public CJS_EmbedObj {
 
 class CJS_Console : public CJS_Object {
  public:
-  CJS_Console(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {}
+  explicit CJS_Console(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {}
   ~CJS_Console() override {}
 
   DECLARE_JS_CLASS();

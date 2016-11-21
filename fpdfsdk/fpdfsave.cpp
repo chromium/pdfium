@@ -6,6 +6,8 @@
 
 #include "public/fpdf_save.h"
 
+#include <memory>
+#include <utility>
 #include <vector>
 
 #include "core/fpdfapi/edit/cpdf_creator.h"
@@ -30,7 +32,7 @@
 #endif
 
 #if _FX_OS_ == _FX_ANDROID_
-#include "time.h"
+#include <time.h>
 #else
 #include <ctime>
 #endif

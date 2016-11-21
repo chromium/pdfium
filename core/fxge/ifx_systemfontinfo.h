@@ -7,6 +7,8 @@
 #ifndef CORE_FXGE_IFX_SYSTEMFONTINFO_H_
 #define CORE_FXGE_IFX_SYSTEMFONTINFO_H_
 
+#include <memory>
+
 #include "core/fxge/cfx_fontmapper.h"
 #include "core/fxge/fx_font.h"
 

@@ -26,7 +26,7 @@
 
 class CXFA_FWLTheme final : public IFWL_ThemeProvider {
  public:
-  CXFA_FWLTheme(CXFA_FFApp* pApp);
+  explicit CXFA_FWLTheme(CXFA_FFApp* pApp);
   ~CXFA_FWLTheme() override;
 
   // IFWL_ThemeProvider:

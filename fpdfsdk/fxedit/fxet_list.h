@@ -7,6 +7,8 @@
 #ifndef FPDFSDK_FXEDIT_FXET_LIST_H_
 #define FPDFSDK_FXEDIT_FXET_LIST_H_
 
+#include <memory>
+
 #include "core/fxcrt/fx_coordinates.h"
 #include "fpdfsdk/fxedit/fx_edit.h"
 

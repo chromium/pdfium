@@ -97,6 +97,7 @@ TEST_F(FPDFViewEmbeddertest, ViewerRef) {
   EXPECT_EQ(0U, FPDF_VIEWERREF_GetName(document(), "foo", buf, sizeof(buf)));
 
   // Make sure |buf| does not get written into when it appears to be too small.
+  // NOLINTNEXTLINE(runtime/printf)
   strcpy(buf, "ABCD");
   EXPECT_EQ(4U, FPDF_VIEWERREF_GetName(document(), "Foo", buf, 1));
   EXPECT_STREQ("ABCD", buf);

@@ -6,6 +6,8 @@
 
 #include "core/fpdfdoc/cpdf_apsettings.h"
 
+#include <algorithm>
+
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfdoc/cpdf_formcontrol.h"

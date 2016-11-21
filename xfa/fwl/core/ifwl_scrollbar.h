@@ -7,6 +7,8 @@
 #ifndef XFA_FWL_CORE_IFWL_SCROLLBAR_H_
 #define XFA_FWL_CORE_IFWL_SCROLLBAR_H_
 
+#include <memory>
+
 #include "core/fxcrt/fx_system.h"
 #include "xfa/fwl/core/cfwl_evtscroll.h"
 #include "xfa/fwl/core/cfwl_widgetproperties.h"

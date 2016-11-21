@@ -5,6 +5,7 @@
 #include "core/fpdfapi/parser/cpdf_array.h"
 
 #include <memory>
+#include <utility>
 
 #include "core/fpdfapi/parser/cpdf_number.h"
 #include "core/fpdfapi/parser/cpdf_reference.h"

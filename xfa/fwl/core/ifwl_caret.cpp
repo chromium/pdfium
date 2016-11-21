@@ -6,11 +6,12 @@
 
 #include "xfa/fwl/core/ifwl_caret.h"
 
+#include <utility>
+
 #include "third_party/base/ptr_util.h"
 #include "xfa/fwl/core/cfwl_themebackground.h"
 #include "xfa/fwl/core/cfwl_widgetproperties.h"
 #include "xfa/fwl/core/fwl_noteimp.h"
-#include "xfa/fwl/core/ifwl_caret.h"
 #include "xfa/fwl/core/ifwl_themeprovider.h"
 #include "xfa/fwl/core/ifwl_timerinfo.h"
 

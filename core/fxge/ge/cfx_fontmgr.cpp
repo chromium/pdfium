@@ -6,6 +6,9 @@
 
 #include "core/fxge/cfx_fontmgr.h"
 
+#include <memory>
+#include <utility>
+
 #include "core/fxge/cfx_fontmapper.h"
 #include "core/fxge/cfx_substfont.h"
 #include "core/fxge/fontdata/chromefontdata/chromefontdata.h"

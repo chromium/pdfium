@@ -13,7 +13,7 @@
 
 class Report : public CJS_EmbedObj {
  public:
-  Report(CJS_Object* pJSObject);
+  explicit Report(CJS_Object* pJSObject);
   ~Report() override;
 
  public:
@@ -29,7 +29,7 @@ class Report : public CJS_EmbedObj {
 
 class CJS_Report : public CJS_Object {
  public:
-  CJS_Report(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {}
+  explicit CJS_Report(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {}
   ~CJS_Report() override {}
 
   DECLARE_JS_CLASS();

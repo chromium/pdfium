@@ -6,6 +6,7 @@
 
 #include <algorithm>
 #include <limits>
+#include <memory>
 #include <vector>
 
 #include "core/fpdfapi/page/cpdf_colorspace.h"

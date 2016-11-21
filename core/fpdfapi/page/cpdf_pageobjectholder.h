@@ -7,6 +7,8 @@
 #ifndef CORE_FPDFAPI_PAGE_CPDF_PAGEOBJECTHOLDER_H_
 #define CORE_FPDFAPI_PAGE_CPDF_PAGEOBJECTHOLDER_H_
 
+#include <memory>
+
 #include "core/fpdfapi/page/cpdf_pageobjectlist.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_system.h"

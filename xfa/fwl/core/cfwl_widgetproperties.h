@@ -18,7 +18,7 @@ class IFWL_Widget;
 class CFWL_WidgetProperties {
  public:
   CFWL_WidgetProperties();
-  CFWL_WidgetProperties(IFWL_Widget::DataProvider* dataProvider);
+  explicit CFWL_WidgetProperties(IFWL_Widget::DataProvider* dataProvider);
   ~CFWL_WidgetProperties();
 
   CFX_RectF m_rtWidget;

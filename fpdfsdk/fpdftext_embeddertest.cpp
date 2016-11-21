@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+#include <memory>
+
 #include "core/fxcrt/fx_basic.h"
 #include "public/fpdf_text.h"
 #include "public/fpdfview.h"

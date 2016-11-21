@@ -30,7 +30,7 @@ struct CPWL_FontMap_Native {
 
 class CPWL_FontMap : public IPVT_FontMap {
  public:
-  CPWL_FontMap(CFX_SystemHandler* pSystemHandler);
+  explicit CPWL_FontMap(CFX_SystemHandler* pSystemHandler);
   ~CPWL_FontMap() override;
 
   // IPVT_FontMap

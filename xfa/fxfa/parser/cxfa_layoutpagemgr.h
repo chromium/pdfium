@@ -14,7 +14,7 @@ class CXFA_LayoutItem;
 
 class CXFA_LayoutPageMgr {
  public:
-  CXFA_LayoutPageMgr(CXFA_LayoutProcessor* pLayoutProcessor);
+  explicit CXFA_LayoutPageMgr(CXFA_LayoutProcessor* pLayoutProcessor);
   ~CXFA_LayoutPageMgr();
 
   bool InitLayoutPage(CXFA_Node* pFormNode);

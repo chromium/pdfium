@@ -7,6 +7,8 @@
 #ifndef XFA_FWL_CORE_CFWL_MSGKILLFOCUS_H_
 #define XFA_FWL_CORE_CFWL_MSGKILLFOCUS_H_
 
+#include <memory>
+
 #include "xfa/fwl/core/cfwl_message.h"
 
 class CFWL_MsgKillFocus : public CFWL_Message {

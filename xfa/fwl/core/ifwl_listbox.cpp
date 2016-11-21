@@ -6,6 +6,10 @@
 
 #include "xfa/fwl/core/ifwl_listbox.h"
 
+#include <algorithm>
+#include <memory>
+#include <utility>
+
 #include "third_party/base/ptr_util.h"
 #include "xfa/fde/tto/fde_textout.h"
 #include "xfa/fwl/core/cfwl_msgkey.h"
@@ -15,7 +19,6 @@
 #include "xfa/fwl/core/cfwl_themepart.h"
 #include "xfa/fwl/core/cfwl_themetext.h"
 #include "xfa/fwl/core/ifwl_app.h"
-#include "xfa/fwl/core/ifwl_listbox.h"
 #include "xfa/fwl/core/ifwl_themeprovider.h"
 
 namespace {

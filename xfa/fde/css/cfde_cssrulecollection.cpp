@@ -11,7 +11,6 @@
 
 #include "xfa/fde/css/fde_csscache.h"
 #include "xfa/fde/css/fde_cssdeclaration.h"
-#include "xfa/fde/css/fde_cssstyleselector.h"
 #include "xfa/fde/css/fde_cssstylesheet.h"
 #include "xfa/fde/css/fde_csssyntax.h"
 #include "xfa/fxfa/app/xfa_textlayout.h"

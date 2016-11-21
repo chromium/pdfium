@@ -30,7 +30,7 @@ uint8_t FX_DaysInMonth(int32_t iYear, uint8_t iMonth);
 class CFX_Unitime {
  public:
   CFX_Unitime() { m_iUnitime = 0; }
-  CFX_Unitime(FX_UNITIME iUnitime) { m_iUnitime = iUnitime; }
+  explicit CFX_Unitime(FX_UNITIME iUnitime) { m_iUnitime = iUnitime; }
   CFX_Unitime(const CFX_Unitime& unitime) { m_iUnitime = unitime.m_iUnitime; }
   operator FX_UNITIME*() { return &m_iUnitime; }
   operator FX_UNITIME const*() const { return &m_iUnitime; }
@@ -212,7 +212,7 @@ struct FX_DATETIME {
 class CFX_DateTime {
  public:
   CFX_DateTime() {}
-  CFX_DateTime(const FX_DATETIME& dt) { m_DateTime = dt; }
+  explicit CFX_DateTime(const FX_DATETIME& dt) { m_DateTime = dt; }
   CFX_DateTime(const CFX_DateTime& dt) { m_DateTime = dt.m_DateTime; }
   virtual ~CFX_DateTime() {}
   operator FX_DATETIME*() { return &m_DateTime; }

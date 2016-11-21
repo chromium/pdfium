@@ -4,7 +4,9 @@
 
 #include <algorithm>
 #include <memory>
+#include <set>
 #include <string>
+#include <utility>
 #include <vector>
 
 #include "public/fpdfview.h"
@@ -16,7 +18,7 @@
 namespace {
 class TestAsyncLoader : public FX_DOWNLOADHINTS, FX_FILEAVAIL {
  public:
-  TestAsyncLoader(const std::string& file_name) {
+  explicit TestAsyncLoader(const std::string& file_name) {
     std::string file_path;
     if (!PathService::GetTestFilePath(file_name, &file_path))
       return;

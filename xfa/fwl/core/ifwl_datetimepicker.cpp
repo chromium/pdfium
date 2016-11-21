@@ -6,6 +6,9 @@
 
 #include "xfa/fwl/core/ifwl_datetimepicker.h"
 
+#include <memory>
+#include <utility>
+
 #include "third_party/base/ptr_util.h"
 #include "xfa/fwl/core/cfwl_evteditchanged.h"
 #include "xfa/fwl/core/cfwl_evtselectchanged.h"

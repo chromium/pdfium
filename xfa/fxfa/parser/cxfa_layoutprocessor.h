@@ -20,7 +20,7 @@ class IFX_Pause;
 
 class CXFA_LayoutProcessor {
  public:
-  CXFA_LayoutProcessor(CXFA_Document* pDocument);
+  explicit CXFA_LayoutProcessor(CXFA_Document* pDocument);
   ~CXFA_LayoutProcessor();
 
   CXFA_Document* GetDocument() const;

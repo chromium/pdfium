@@ -7,6 +7,7 @@
 #include "core/fxge/agg/fx_agg_driver.h"
 
 #include <algorithm>
+#include <utility>
 
 #include "core/fxcodec/fx_codec.h"
 #include "core/fxcrt/fx_memory.h"

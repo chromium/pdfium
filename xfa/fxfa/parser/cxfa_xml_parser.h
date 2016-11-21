@@ -7,6 +7,8 @@
 #ifndef XFA_FXFA_PARSER_CXFA_XML_PARSER_H_
 #define XFA_FXFA_PARSER_CXFA_XML_PARSER_H_
 
+#include <memory>
+
 #include "xfa/fde/xml/fde_xml_imp.h"
 
 class IFX_Stream;

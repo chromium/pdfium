@@ -6,6 +6,8 @@
 
 #include "core/fpdfdoc/cpdf_variabletext.h"
 
+#include <algorithm>
+
 #include "core/fpdfapi/font/cpdf_font.h"
 #include "core/fpdfdoc/cline.h"
 #include "core/fpdfdoc/cpvt_section.h"

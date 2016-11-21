@@ -12,19 +12,13 @@ LINT_FILTERS = [
   # Rvalue ref checks are unreliable.
   '-build/c++11',
   # Need to fix header names not matching cpp names.
-  '-build/include',
-  # Need to fix header names not matching cpp names.
   '-build/include_order',
   # Too many to fix at the moment.
   '-readability/casting',
   # Need to refactor large methods to fix.
   '-readability/fn_size',
-  # Need to fix errors when making methods explicit.
-  '-runtime/explicit',
   # Lots of usage to fix first.
   '-runtime/int',
-  # Need to fix two snprintf TODOs
-  '-runtime/printf',
   # Lots of non-const references need to be fixed
   '-runtime/references',
   # We are not thread safe, so this will never pass.

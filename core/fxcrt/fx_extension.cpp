@@ -6,6 +6,8 @@
 
 #include "core/fxcrt/extension.h"
 
+#include <algorithm>
+#include <memory>
 #include <utility>
 
 #include "core/fxcrt/fx_basic.h"

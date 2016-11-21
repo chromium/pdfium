@@ -8,6 +8,7 @@
 #define CORE_FXGE_CFX_FACECACHE_H_
 
 #include <map>
+#include <memory>
 
 #include "core/fxge/fx_font.h"
 #include "core/fxge/fx_freetype.h"

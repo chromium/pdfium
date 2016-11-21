@@ -25,7 +25,7 @@ struct FX_STATICSTORECHUNK {
 
 class CFX_StaticStore : public IFX_MemoryAllocator, public CFX_Target {
  public:
-  CFX_StaticStore(size_t iDefChunkSize);
+  explicit CFX_StaticStore(size_t iDefChunkSize);
   ~CFX_StaticStore() override;
 
   void* Alloc(size_t size) override;

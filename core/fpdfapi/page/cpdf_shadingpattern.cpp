@@ -6,6 +6,8 @@
 
 #include "core/fpdfapi/page/cpdf_shadingpattern.h"
 
+#include <algorithm>
+
 #include "core/fpdfapi/page/cpdf_docpagedata.h"
 #include "core/fpdfapi/page/pageint.h"
 #include "core/fpdfapi/parser/cpdf_array.h"

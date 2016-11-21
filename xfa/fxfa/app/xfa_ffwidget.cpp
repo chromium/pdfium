@@ -8,6 +8,7 @@
 
 #include <algorithm>
 #include <memory>
+#include <vector>
 
 #include "core/fpdfapi/page/cpdf_pageobjectholder.h"
 #include "core/fxcodec/codec/ccodec_progressivedecoder.h"

@@ -160,7 +160,7 @@ typedef CFX_BaseArrayTemplate<CFX_TxtPiece> CFX_TxtPieceArray;
 
 class CFX_TxtLine {
  public:
-  CFX_TxtLine(int32_t iBlockSize);
+  explicit CFX_TxtLine(int32_t iBlockSize);
   ~CFX_TxtLine();
 
   int32_t CountChars() const { return m_pLineChars->GetSize(); }
@@ -199,7 +199,7 @@ class CFX_TxtLine {
 
 class CFX_TxtBreak {
  public:
-  CFX_TxtBreak(uint32_t dwPolicies);
+  explicit CFX_TxtBreak(uint32_t dwPolicies);
   ~CFX_TxtBreak();
 
   void SetLineWidth(FX_FLOAT fLineWidth);

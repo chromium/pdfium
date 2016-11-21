@@ -7,6 +7,8 @@
 #ifndef XFA_FWL_CORE_CFWL_MSGMOUSEWHEEL_H_
 #define XFA_FWL_CORE_CFWL_MSGMOUSEWHEEL_H_
 
+#include <memory>
+
 #include "xfa/fwl/core/cfwl_message.h"
 
 class CFWL_MsgMouseWheel : public CFWL_Message {

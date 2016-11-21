@@ -8,6 +8,7 @@
 #define CORE_FXGE_CFX_FONTMAPPER_H_
 
 #include <memory>
+#include <utility>
 #include <vector>
 
 #include "core/fxge/cfx_fontmgr.h"

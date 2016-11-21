@@ -7,6 +7,7 @@
 #include "xfa/fwl/theme/cfwl_widgettp.h"
 
 #include <algorithm>
+#include <utility>
 
 #include "xfa/fde/tto/fde_textout.h"
 #include "xfa/fgas/font/fgas_gefont.h"

@@ -4,6 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include <memory>
+
 #include "core/fxge/apple/apple_int.h"
 #include "core/fxge/cfx_gemodule.h"
 #include "core/fxge/ge/cfx_folderfontinfo.h"

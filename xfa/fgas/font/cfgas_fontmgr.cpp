@@ -6,6 +6,9 @@
 
 #include "xfa/fgas/font/cfgas_fontmgr.h"
 
+#include <memory>
+#include <utility>
+
 #include "core/fxcrt/fx_stream.h"
 #include "core/fxge/cfx_fontmapper.h"
 #include "core/fxge/cfx_fontmgr.h"

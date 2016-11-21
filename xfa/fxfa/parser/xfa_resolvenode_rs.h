@@ -7,6 +7,8 @@
 #ifndef XFA_FXFA_PARSER_XFA_RESOLVENODE_RS_H_
 #define XFA_FXFA_PARSER_XFA_RESOLVENODE_RS_H_
 
+#include <memory>
+
 #include "fxjs/cfxjse_value.h"
 #include "xfa/fxfa/fxfa.h"
 #include "xfa/fxfa/parser/cxfa_valuearray.h"

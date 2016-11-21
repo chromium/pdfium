@@ -6,6 +6,7 @@
 
 #include "core/fxcrt/xml_int.h"
 
+#include <algorithm>
 #include <vector>
 
 #include "core/fxcrt/fx_ext.h"

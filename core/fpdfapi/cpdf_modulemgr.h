@@ -8,6 +8,7 @@
 #define CORE_FPDFAPI_CPDF_MODULEMGR_H_
 
 #include <memory>
+#include <utility>
 
 #include "core/fxcrt/fx_basic.h"
 

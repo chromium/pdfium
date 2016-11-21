@@ -11,7 +11,7 @@
 
 class CXFA_ContentLayoutItem : public CXFA_LayoutItem {
  public:
-  CXFA_ContentLayoutItem(CXFA_Node* pNode);
+  explicit CXFA_ContentLayoutItem(CXFA_Node* pNode);
   ~CXFA_ContentLayoutItem() override;
 
   CXFA_ContentLayoutItem* m_pPrev;

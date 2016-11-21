@@ -14,7 +14,7 @@ class CXFA_FFWidgetHandler;
 
 class CXFA_FFNotify {
  public:
-  CXFA_FFNotify(CXFA_FFDoc* pDoc);
+  explicit CXFA_FFNotify(CXFA_FFDoc* pDoc);
   ~CXFA_FFNotify();
 
   void OnPageEvent(CXFA_ContainerLayoutItem* pSender, uint32_t dwEvent);

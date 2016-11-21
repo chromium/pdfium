@@ -14,7 +14,7 @@ class CFDE_TxtEdtBuf;
 
 class CFDE_TxtEdtBufIter : public IFX_CharIter {
  public:
-  CFDE_TxtEdtBufIter(CFDE_TxtEdtBuf* pBuf, FX_WCHAR wcAlias = 0);
+  explicit CFDE_TxtEdtBufIter(CFDE_TxtEdtBuf* pBuf, FX_WCHAR wcAlias = 0);
   ~CFDE_TxtEdtBufIter() override;
 
   bool Next(bool bPrev = false) override;

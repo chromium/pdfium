@@ -7,6 +7,7 @@
 #ifndef XFA_FGAS_FONT_CFGAS_FONTMGR_H_
 #define XFA_FGAS_FONT_CFGAS_FONTMGR_H_
 
+#include <memory>
 #include <vector>
 
 #include "core/fxcrt/fx_ext.h"

@@ -6,6 +6,9 @@
 
 #include "xfa/fwl/core/ifwl_combolist.h"
 
+#include <memory>
+#include <utility>
+
 #include "third_party/base/ptr_util.h"
 #include "xfa/fwl/core/cfwl_msgkey.h"
 #include "xfa/fwl/core/cfwl_msgkillfocus.h"

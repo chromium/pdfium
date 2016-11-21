@@ -15,7 +15,7 @@ class IJS_Context;
 
 class CPDFXFA_DocEnvironment : public IXFA_DocEnvironment {
  public:
-  CPDFXFA_DocEnvironment(CPDFXFA_Context*);
+  explicit CPDFXFA_DocEnvironment(CPDFXFA_Context*);
   ~CPDFXFA_DocEnvironment() override;
 
   // IXFA_DocEnvironment

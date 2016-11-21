@@ -7,6 +7,7 @@
 #ifndef PUBLIC_FPDF_SAVE_H_
 #define PUBLIC_FPDF_SAVE_H_
 
+// NOLINTNEXTLINE(build/include)
 #include "fpdfview.h"
 
 #ifdef __cplusplus

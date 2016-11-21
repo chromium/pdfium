@@ -95,7 +95,7 @@ class CFWL_NoteDriver {
 
 class CFWL_EventTarget {
  public:
-  CFWL_EventTarget(IFWL_Widget* pListener);
+  explicit CFWL_EventTarget(IFWL_Widget* pListener);
   ~CFWL_EventTarget();
 
   int32_t SetEventSource(IFWL_Widget* pSource,

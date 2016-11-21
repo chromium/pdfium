@@ -6,6 +6,8 @@
 
 #include "xfa/fwl/core/cfwl_msgsetfocus.h"
 
+#include <memory>
+
 #include "third_party/base/ptr_util.h"
 
 CFWL_MsgSetFocus::CFWL_MsgSetFocus() {}

@@ -9,6 +9,7 @@
 
 #include <cstddef>
 #include <memory>
+#include <utility>
 
 #include "core/fxcrt/cfx_retain_ptr.h"
 #include "core/fxcrt/fx_system.h"
@@ -19,10 +20,11 @@ class CFX_WeakPtr {
   CFX_WeakPtr() {}
   CFX_WeakPtr(const CFX_WeakPtr& that) : m_pHandle(that.m_pHandle) {}
   CFX_WeakPtr(CFX_WeakPtr&& that) { Swap(that); }
-  CFX_WeakPtr(std::unique_ptr<T, D> pObj)
+  explicit CFX_WeakPtr(std::unique_ptr<T, D> pObj)
       : m_pHandle(new Handle(std::move(pObj))) {}
 
   // Deliberately implicit to allow passing nullptr.
+  // NOLINTNEXTLINE(runtime/explicit)
   CFX_WeakPtr(std::nullptr_t arg) {}
 
   explicit operator bool() const { return m_pHandle && !!m_pHandle->Get(); }

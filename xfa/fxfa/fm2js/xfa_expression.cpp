@@ -6,6 +6,8 @@
 
 #include "xfa/fxfa/fm2js/xfa_expression.h"
 
+#include <utility>
+
 #include "core/fxcrt/fx_basic.h"
 
 namespace {

@@ -6,6 +6,8 @@
 
 #include "xfa/fde/cfde_txtedtbuf.h"
 
+#include <algorithm>
+
 #include "xfa/fgas/crt/fgas_memory.h"
 
 namespace {

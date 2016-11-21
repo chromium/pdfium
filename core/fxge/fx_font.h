@@ -8,6 +8,7 @@
 #define CORE_FXGE_FX_FONT_H_
 
 #include <memory>
+#include <utility>
 #include <vector>
 
 #include "core/fxcrt/fx_system.h"
@@ -169,6 +170,7 @@ class CFX_Font {
   static const uint8_t s_WeightPow_SHIFTJIS[kWeightPowArraySize];
 
 #ifdef PDF_ENABLE_XFA
+
  protected:
   CFX_BinaryBuf m_OtfFontData;
   bool m_bShallowCopy;

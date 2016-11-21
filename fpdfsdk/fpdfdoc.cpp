@@ -6,6 +6,7 @@
 
 #include "public/fpdf_doc.h"
 
+#include <memory>
 #include <set>
 
 #include "core/fpdfapi/page/cpdf_page.h"

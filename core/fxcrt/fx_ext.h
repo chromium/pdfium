@@ -9,6 +9,7 @@
 
 #include <cctype>
 #include <cwctype>
+#include <memory>
 
 #include "core/fxcrt/fx_basic.h"
 

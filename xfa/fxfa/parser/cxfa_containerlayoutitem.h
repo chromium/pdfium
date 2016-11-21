@@ -11,7 +11,7 @@
 
 class CXFA_ContainerLayoutItem : public CXFA_LayoutItem {
  public:
-  CXFA_ContainerLayoutItem(CXFA_Node* pNode);
+  explicit CXFA_ContainerLayoutItem(CXFA_Node* pNode);
 
   CXFA_LayoutProcessor* GetLayout() const;
   int32_t GetPageIndex() const;

@@ -7,6 +7,8 @@
 #ifndef XFA_FWL_CORE_IFWL_SPINBUTTON_H_
 #define XFA_FWL_CORE_IFWL_SPINBUTTON_H_
 
+#include <memory>
+
 #include "xfa/fwl/core/cfwl_event.h"
 #include "xfa/fwl/core/ifwl_timer.h"
 #include "xfa/fwl/core/ifwl_widget.h"

@@ -6,6 +6,9 @@
 
 #include "xfa/fwl/core/ifwl_picturebox.h"
 
+#include <memory>
+#include <utility>
+
 #include "third_party/base/ptr_util.h"
 #include "xfa/fwl/core/cfwl_picturebox.h"
 #include "xfa/fwl/core/fwl_noteimp.h"

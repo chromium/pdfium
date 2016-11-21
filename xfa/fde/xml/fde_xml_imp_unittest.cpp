@@ -4,6 +4,8 @@
 
 #include "xfa/fde/xml/fde_xml_imp.h"
 
+#include <memory>
+
 #include "testing/gtest/include/gtest/gtest.h"
 #include "xfa/fgas/crt/fgas_stream.h"
 

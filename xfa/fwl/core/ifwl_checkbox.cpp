@@ -7,6 +7,8 @@
 #include "xfa/fwl/core/ifwl_checkbox.h"
 
 #include <algorithm>
+#include <memory>
+#include <utility>
 
 #include "third_party/base/ptr_util.h"
 #include "xfa/fde/tto/fde_textout.h"
@@ -18,7 +20,6 @@
 #include "xfa/fwl/core/cfwl_widgetmgr.h"
 #include "xfa/fwl/core/fwl_noteimp.h"
 #include "xfa/fwl/core/ifwl_app.h"
-#include "xfa/fwl/core/ifwl_checkbox.h"
 #include "xfa/fwl/core/ifwl_themeprovider.h"
 
 namespace {

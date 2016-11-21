@@ -6,6 +6,8 @@
 
 #include "core/fpdfapi/page/cpdf_contentmarkitem.h"
 
+#include <utility>
+
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 
 CPDF_ContentMarkItem::CPDF_ContentMarkItem()

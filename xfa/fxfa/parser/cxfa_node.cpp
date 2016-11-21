@@ -8,6 +8,7 @@
 
 #include <map>
 #include <memory>
+#include <utility>
 
 #include "core/fxcrt/fx_ext.h"
 #include "fxjs/cfxjse_value.h"

@@ -7,7 +7,10 @@
 #include "core/fxge/fx_dib.h"
 
 #include <limits.h>
+
 #include <algorithm>
+#include <memory>
+#include <utility>
 
 #include "core/fxcodec/fx_codec.h"
 #include "core/fxge/cfx_gemodule.h"

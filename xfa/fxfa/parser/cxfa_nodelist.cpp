@@ -6,6 +6,8 @@
 
 #include "xfa/fxfa/parser/xfa_object.h"
 
+#include <memory>
+
 #include "core/fxcrt/fx_ext.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_scriptcontext.h"

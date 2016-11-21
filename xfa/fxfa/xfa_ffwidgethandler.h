@@ -18,7 +18,7 @@ enum class FWL_WidgetHit;
 
 class CXFA_FFWidgetHandler {
  public:
-  CXFA_FFWidgetHandler(CXFA_FFDocView* pDocView);
+  explicit CXFA_FFWidgetHandler(CXFA_FFDocView* pDocView);
   ~CXFA_FFWidgetHandler();
 
   CXFA_FFWidget* CreateWidget(CXFA_FFWidget* hParent,

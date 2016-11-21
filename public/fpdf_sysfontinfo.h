@@ -7,6 +7,7 @@
 #ifndef PUBLIC_FPDF_SYSFONTINFO_H_
 #define PUBLIC_FPDF_SYSFONTINFO_H_
 
+// NOLINTNEXTLINE(build/include)
 #include "fpdfview.h"
 
 /* Character sets for the font */

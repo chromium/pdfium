@@ -8,6 +8,7 @@
 #define FPDFSDK_CPDFSDK_INTERFORM_H_
 
 #include <map>
+#include <memory>
 #include <vector>
 
 #include "core/fpdfdoc/cpdf_action.h"

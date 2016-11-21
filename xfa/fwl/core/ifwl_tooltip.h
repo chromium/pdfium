@@ -7,6 +7,8 @@
 #ifndef XFA_FWL_CORE_IFWL_TOOLTIP_H_
 #define XFA_FWL_CORE_IFWL_TOOLTIP_H_
 
+#include <memory>
+
 #include "xfa/fwl/core/ifwl_form.h"
 #include "xfa/fwl/core/ifwl_timer.h"
 

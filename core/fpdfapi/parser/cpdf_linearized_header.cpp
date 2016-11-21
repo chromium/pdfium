@@ -6,6 +6,9 @@
 
 #include "core/fpdfapi/parser/cpdf_linearized_header.h"
 
+#include <algorithm>
+#include <utility>
+
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_number.h"

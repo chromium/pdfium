@@ -6,6 +6,10 @@
 
 #include "xfa/fwl/core/ifwl_combobox.h"
 
+#include <algorithm>
+#include <memory>
+#include <utility>
+
 #include "third_party/base/ptr_util.h"
 #include "xfa/fde/cfde_txtedtengine.h"
 #include "xfa/fde/tto/fde_textout.h"
@@ -24,7 +28,6 @@
 #include "xfa/fwl/core/cfwl_widgetmgr.h"
 #include "xfa/fwl/core/fwl_noteimp.h"
 #include "xfa/fwl/core/ifwl_app.h"
-#include "xfa/fwl/core/ifwl_combobox.h"
 #include "xfa/fwl/core/ifwl_formproxy.h"
 #include "xfa/fwl/core/ifwl_listbox.h"
 #include "xfa/fwl/core/ifwl_themeprovider.h"

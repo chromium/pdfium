@@ -6,6 +6,8 @@
 
 #include "core/fxge/ge/cfx_folderfontinfo.h"
 
+#include <limits>
+
 #include "core/fxge/cfx_fontmapper.h"
 #include "core/fxge/fx_font.h"
 

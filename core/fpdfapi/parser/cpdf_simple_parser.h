@@ -13,7 +13,7 @@
 class CPDF_SimpleParser {
  public:
   CPDF_SimpleParser(const uint8_t* pData, uint32_t dwSize);
-  CPDF_SimpleParser(const CFX_ByteStringC& str);
+  explicit CPDF_SimpleParser(const CFX_ByteStringC& str);
 
   CFX_ByteStringC GetWord();
 

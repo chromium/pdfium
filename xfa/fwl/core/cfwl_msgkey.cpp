@@ -6,6 +6,8 @@
 
 #include "xfa/fwl/core/cfwl_msgkey.h"
 
+#include <memory>
+
 #include "third_party/base/ptr_util.h"
 
 CFWL_MsgKey::CFWL_MsgKey() {}

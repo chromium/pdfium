@@ -6,6 +6,9 @@
 
 #include "core/fpdfapi/font/font_int.h"
 
+#include <memory>
+#include <utility>
+
 #include "core/fpdfapi/cpdf_modulemgr.h"
 #include "core/fpdfapi/page/cpdf_form.h"
 #include "core/fpdfapi/page/cpdf_pagemodule.h"

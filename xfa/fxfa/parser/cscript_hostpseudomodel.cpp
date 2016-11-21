@@ -6,6 +6,8 @@
 
 #include "xfa/fxfa/parser/cscript_hostpseudomodel.h"
 
+#include <memory>
+
 #include "fxjs/cfxjse_arguments.h"
 #include "xfa/fxfa/app/xfa_ffnotify.h"
 #include "xfa/fxfa/parser/cxfa_document.h"

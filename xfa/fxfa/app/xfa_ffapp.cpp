@@ -7,7 +7,9 @@
 #include "xfa/fxfa/xfa_ffapp.h"
 
 #include <algorithm>
+#include <memory>
 #include <utility>
+#include <vector>
 
 #include "xfa/fgas/font/cfgas_fontmgr.h"
 #include "xfa/fwl/core/cfwl_widgetmgr.h"

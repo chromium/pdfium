@@ -6,6 +6,8 @@
 
 #include "fpdfsdk/cba_annotiterator.h"
 
+#include <algorithm>
+
 #include "core/fpdfapi/page/cpdf_page.h"
 #include "fpdfsdk/cpdfsdk_annot.h"
 #include "fpdfsdk/cpdfsdk_pageview.h"

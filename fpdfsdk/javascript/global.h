@@ -32,7 +32,7 @@ struct JSGlobalData {
 
 class JSGlobalAlternate : public CJS_EmbedObj {
  public:
-  JSGlobalAlternate(CJS_Object* pJSObject);
+  explicit JSGlobalAlternate(CJS_Object* pJSObject);
   ~JSGlobalAlternate() override;
 
   bool setPersistent(IJS_Context* cc,

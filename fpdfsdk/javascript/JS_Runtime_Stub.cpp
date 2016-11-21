@@ -120,7 +120,7 @@ class CJS_ContextStub final : public IJS_Context {
 
 class CJS_RuntimeStub final : public IJS_Runtime {
  public:
-  CJS_RuntimeStub(CPDFSDK_FormFillEnvironment* pFormFillEnv)
+  explicit CJS_RuntimeStub(CPDFSDK_FormFillEnvironment* pFormFillEnv)
       : m_pFormFillEnv(pFormFillEnv) {}
   ~CJS_RuntimeStub() override {}
 

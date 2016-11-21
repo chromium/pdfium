@@ -18,7 +18,7 @@ class GlobalTimer;
 
 class TimerObj : public CJS_EmbedObj {
  public:
-  TimerObj(CJS_Object* pJSObject);
+  explicit TimerObj(CJS_Object* pJSObject);
   ~TimerObj() override;
 
   void SetTimer(GlobalTimer* pTimer);
@@ -30,7 +30,7 @@ class TimerObj : public CJS_EmbedObj {
 
 class CJS_TimerObj : public CJS_Object {
  public:
-  CJS_TimerObj(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {}
+  explicit CJS_TimerObj(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {}
   ~CJS_TimerObj() override {}
 
   DECLARE_JS_CLASS();
@@ -38,7 +38,7 @@ class CJS_TimerObj : public CJS_Object {
 
 class app : public CJS_EmbedObj {
  public:
-  app(CJS_Object* pJSObject);
+  explicit app(CJS_Object* pJSObject);
   ~app() override;
 
   bool activeDocs(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);

@@ -6,6 +6,9 @@
 
 #include "public/fpdf_text.h"
 
+#include <algorithm>
+#include <vector>
+
 #include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fpdfdoc/cpdf_viewerpreferences.h"
 #include "core/fpdftext/cpdf_linkextract.h"

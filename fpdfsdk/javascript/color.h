@@ -14,7 +14,7 @@
 
 class color : public CJS_EmbedObj {
  public:
-  color(CJS_Object* pJSObject);
+  explicit color(CJS_Object* pJSObject);
   ~color() override;
 
   bool black(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
@@ -63,7 +63,7 @@ class color : public CJS_EmbedObj {
 
 class CJS_Color : public CJS_Object {
  public:
-  CJS_Color(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {}
+  explicit CJS_Color(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {}
   ~CJS_Color() override {}
 
   DECLARE_JS_CLASS();

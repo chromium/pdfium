@@ -7,6 +7,7 @@
 #include "xfa/fxfa/fm2js/xfa_fmparse.h"
 
 #include <memory>
+#include <utility>
 
 CXFA_FMParse::CXFA_FMParse() : m_pToken(nullptr), m_pErrorInfo(0) {}
 

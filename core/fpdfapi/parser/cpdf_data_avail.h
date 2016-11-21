@@ -7,6 +7,8 @@
 #ifndef CORE_FPDFAPI_PARSER_CPDF_DATA_AVAIL_H_
 #define CORE_FPDFAPI_PARSER_CPDF_DATA_AVAIL_H_
 
+#include <memory>
+#include <set>
 #include <vector>
 
 #include "core/fpdfapi/parser/cpdf_parser.h"

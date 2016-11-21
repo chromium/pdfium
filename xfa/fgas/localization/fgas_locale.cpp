@@ -4,6 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "xfa/fgas/localization/fgas_locale.h"
+
 #include <algorithm>
 
 #include "core/fxcrt/fx_ext.h"
@@ -92,9 +94,9 @@ class CFX_LCNumeric {
   CFX_LCNumeric(int64_t integral,
                 uint32_t fractional = 0,
                 int32_t exponent = 0);
-  CFX_LCNumeric(FX_FLOAT dbRetValue);
-  CFX_LCNumeric(double dbvalue);
-  CFX_LCNumeric(CFX_WideString& wsNumeric);
+  explicit CFX_LCNumeric(FX_FLOAT dbRetValue);
+  explicit CFX_LCNumeric(double dbvalue);
+  explicit CFX_LCNumeric(CFX_WideString& wsNumeric);
 
   FX_FLOAT GetFloat() const;
   double GetDouble() const;

@@ -60,7 +60,7 @@ enum JS_EVENT_T {
 
 class CJS_EventHandler {
  public:
-  CJS_EventHandler(CJS_Context* pContext);
+  explicit CJS_EventHandler(CJS_Context* pContext);
   virtual ~CJS_EventHandler();
 
   void OnApp_Init();

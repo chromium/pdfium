@@ -6,6 +6,9 @@
 
 #include "core/fpdfapi/parser/cpdf_indirect_object_holder.h"
 
+#include <algorithm>
+#include <utility>
+
 #include "core/fpdfapi/parser/cpdf_object.h"
 #include "core/fpdfapi/parser/cpdf_parser.h"
 
