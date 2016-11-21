@@ -233,7 +233,7 @@ CPDF_Stream* CPDF_StreamParser::ReadInlineStream(CPDF_Document* pDoc,
     m_Pos += dwStreamSize;
   }
   pDict->SetNewFor<CPDF_Number>("Length", (int)dwStreamSize);
-  return new CPDF_Stream(pData, dwStreamSize, pDict);
+  return new CPDF_Stream(pData, dwStreamSize, pdfium::WrapUnique(pDict));
 }
 
 CPDF_StreamParser::SyntaxType CPDF_StreamParser::ParseNextElement() {

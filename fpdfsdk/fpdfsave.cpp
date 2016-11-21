@@ -176,14 +176,16 @@ bool SaveXFADocumentData(CPDFXFA_Context* pContext,
       // Datasets
       pChecksum->UpdateChecksum(pDsfileWrite.get());
       pChecksum->FinishChecksum();
-      CPDF_Dictionary* pDataDict =
-          new CPDF_Dictionary(pPDFDocument->GetByteStringPool());
+      auto pDataDict = pdfium::MakeUnique<CPDF_Dictionary>(
+          pPDFDocument->GetByteStringPool());
       if (iDataSetsIndex != -1) {
-        if (pDataSetsStream)
-          pDataSetsStream->InitStreamFromFile(pDsfileWrite.get(), pDataDict);
+        if (pDataSetsStream) {
+          pDataSetsStream->InitStreamFromFile(pDsfileWrite.get(),
+                                              std::move(pDataDict));
+        }
       } else {
         CPDF_Stream* pData = pPDFDocument->NewIndirect<CPDF_Stream>();
-        pData->InitStreamFromFile(pDsfileWrite.get(), pDataDict);
+        pData->InitStreamFromFile(pDsfileWrite.get(), std::move(pDataDict));
         iLast = pArray->GetCount() - 2;
         pArray->InsertNewAt<CPDF_String>(iLast, "datasets", false);
         pArray->InsertNewAt<CPDF_Reference>(iLast + 1, pPDFDocument,
@@ -198,14 +200,16 @@ bool SaveXFADocumentData(CPDFXFA_Context* pContext,
     if (pXFADocView->GetDoc()->SavePackage(XFA_HASHCODE_Form, pfileWrite.get(),
                                            pChecksum.get()) &&
         pfileWrite->GetSize() > 0) {
-      CPDF_Dictionary* pDataDict =
-          new CPDF_Dictionary(pPDFDocument->GetByteStringPool());
+      auto pDataDict = pdfium::MakeUnique<CPDF_Dictionary>(
+          pPDFDocument->GetByteStringPool());
       if (iFormIndex != -1) {
-        if (pFormStream)
-          pFormStream->InitStreamFromFile(pfileWrite.get(), pDataDict);
+        if (pFormStream) {
+          pFormStream->InitStreamFromFile(pfileWrite.get(),
+                                          std::move(pDataDict));
+        }
       } else {
         CPDF_Stream* pData = pPDFDocument->NewIndirect<CPDF_Stream>();
-        pData->InitStreamFromFile(pfileWrite.get(), pDataDict);
+        pData->InitStreamFromFile(pfileWrite.get(), std::move(pDataDict));
         iLast = pArray->GetCount() - 2;
         pArray->InsertNewAt<CPDF_String>(iLast, "form", false);
         pArray->InsertNewAt<CPDF_Reference>(iLast + 1, pPDFDocument,

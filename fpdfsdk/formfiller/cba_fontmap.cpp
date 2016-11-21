@@ -6,6 +6,8 @@
 
 #include "fpdfsdk/formfiller/cba_fontmap.h"
 
+#include <utility>
+
 #include "core/fpdfapi/font/cpdf_font.h"
 #include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
@@ -171,24 +173,24 @@ void CBA_FontMap::AddFontToAnnotDict(CPDF_Font* pFont,
 
   CPDF_Dictionary* pStreamDict = pStream->GetDict();
   if (!pStreamDict) {
-    pStreamDict = new CPDF_Dictionary(m_pDocument->GetByteStringPool());
-    pStream->InitStream(nullptr, 0, pStreamDict);
+    auto pOwnedDict =
+        pdfium::MakeUnique<CPDF_Dictionary>(m_pDocument->GetByteStringPool());
+    pStreamDict = pOwnedDict.get();
+    pStream->InitStream(nullptr, 0, std::move(pOwnedDict));
   }
 
-  if (pStreamDict) {
-    CPDF_Dictionary* pStreamResList = pStreamDict->GetDictFor("Resources");
-    if (!pStreamResList)
-      pStreamResList = pStreamDict->SetNewFor<CPDF_Dictionary>("Resources");
-    CPDF_Dictionary* pStreamResFontList = pStreamResList->GetDictFor("Font");
-    if (!pStreamResFontList) {
-      pStreamResFontList = m_pDocument->NewIndirect<CPDF_Dictionary>();
-      pStreamResList->SetNewFor<CPDF_Reference>(
-          "Font", m_pDocument, pStreamResFontList->GetObjNum());
-    }
-    if (!pStreamResFontList->KeyExist(sAlias)) {
-      pStreamResFontList->SetNewFor<CPDF_Reference>(
-          sAlias, m_pDocument, pFont->GetFontDict()->GetObjNum());
-    }
+  CPDF_Dictionary* pStreamResList = pStreamDict->GetDictFor("Resources");
+  if (!pStreamResList)
+    pStreamResList = pStreamDict->SetNewFor<CPDF_Dictionary>("Resources");
+  CPDF_Dictionary* pStreamResFontList = pStreamResList->GetDictFor("Font");
+  if (!pStreamResFontList) {
+    pStreamResFontList = m_pDocument->NewIndirect<CPDF_Dictionary>();
+    pStreamResList->SetNewFor<CPDF_Reference>("Font", m_pDocument,
+                                              pStreamResFontList->GetObjNum());
+  }
+  if (!pStreamResFontList->KeyExist(sAlias)) {
+    pStreamResFontList->SetNewFor<CPDF_Reference>(
+        sAlias, m_pDocument, pFont->GetFontDict()->GetObjNum());
   }
 }
 

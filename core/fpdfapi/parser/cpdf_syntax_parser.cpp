@@ -752,7 +752,8 @@ std::unique_ptr<CPDF_Stream> CPDF_SyntaxParser::ReadStream(
     }
   }
 
-  auto pStream = pdfium::MakeUnique<CPDF_Stream>(pData, len, pDict);
+  auto pStream =
+      pdfium::MakeUnique<CPDF_Stream>(pData, len, pdfium::WrapUnique(pDict));
   streamStartPos = m_Pos;
   FXSYS_memset(m_WordBuffer, 0, kEndObjStr.GetLength() + 1);
   GetNextWordInternal(nullptr);

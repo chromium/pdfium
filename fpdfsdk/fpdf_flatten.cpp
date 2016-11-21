@@ -178,7 +178,8 @@ CFX_FloatRect CalculateRect(std::vector<CFX_FloatRect>* pRectArray) {
 uint32_t NewIndirectContentsStream(const CFX_ByteString& key,
                                    CPDF_Document* pDocument) {
   CPDF_Stream* pNewContents = pDocument->NewIndirect<CPDF_Stream>(
-      nullptr, 0, new CPDF_Dictionary(pDocument->GetByteStringPool()));
+      nullptr, 0,
+      pdfium::MakeUnique<CPDF_Dictionary>(pDocument->GetByteStringPool()));
   CFX_ByteString sStream;
   sStream.Format("q 1 0 0 1 0 0 cm /%s Do Q", key.c_str());
   pNewContents->SetData(sStream.raw_str(), sStream.GetLength());
@@ -296,7 +297,8 @@ DLLEXPORT int STDCALL FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
     pRes = pPageDict->SetNewFor<CPDF_Dictionary>("Resources");
 
   CPDF_Stream* pNewXObject = pDocument->NewIndirect<CPDF_Stream>(
-      nullptr, 0, new CPDF_Dictionary(pDocument->GetByteStringPool()));
+      nullptr, 0,
+      pdfium::MakeUnique<CPDF_Dictionary>(pDocument->GetByteStringPool()));
 
   uint32_t dwObjNum = pNewXObject->GetObjNum();
   CPDF_Dictionary* pPageXObject = pRes->GetDictFor("XObject");

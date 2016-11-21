@@ -46,11 +46,11 @@ TEST(CXFAFileRead, NormalStreams) {
 
   // 16 chars total.
   stream1->InitStream(reinterpret_cast<const uint8_t*>("one t"), 5,
-                      new CPDF_Dictionary());
+                      pdfium::MakeUnique<CPDF_Dictionary>());
   stream2->InitStream(reinterpret_cast<const uint8_t*>("wo "), 3,
-                      new CPDF_Dictionary());
+                      pdfium::MakeUnique<CPDF_Dictionary>());
   stream3->InitStream(reinterpret_cast<const uint8_t*>("three!!!"), 8,
-                      new CPDF_Dictionary());
+                      pdfium::MakeUnique<CPDF_Dictionary>());
 
   streams.push_back(stream1.get());
   streams.push_back(stream2.get());

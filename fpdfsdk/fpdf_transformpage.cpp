@@ -128,13 +128,14 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFPage_TransFormWithClip(FPDF_PAGE page,
   if (!pDoc)
     return false;
 
-  CPDF_Dictionary* pDic = new CPDF_Dictionary(pDoc->GetByteStringPool());
-  CPDF_Stream* pStream = pDoc->NewIndirect<CPDF_Stream>(nullptr, 0, pDic);
+  CPDF_Stream* pStream = pDoc->NewIndirect<CPDF_Stream>(
+      nullptr, 0,
+      pdfium::MakeUnique<CPDF_Dictionary>(pDoc->GetByteStringPool()));
   pStream->SetData(textBuf.GetBuffer(), textBuf.GetSize());
 
-  pDic = new CPDF_Dictionary(pDoc->GetByteStringPool());
-
-  CPDF_Stream* pEndStream = pDoc->NewIndirect<CPDF_Stream>(nullptr, 0, pDic);
+  CPDF_Stream* pEndStream = pDoc->NewIndirect<CPDF_Stream>(
+      nullptr, 0,
+      pdfium::MakeUnique<CPDF_Dictionary>(pDoc->GetByteStringPool()));
   pEndStream->SetData((const uint8_t*)" Q", 2);
 
   CPDF_Array* pContentArray = nullptr;
@@ -302,8 +303,9 @@ DLLEXPORT void STDCALL FPDFPage_InsertClipPath(FPDF_PAGE page,
   if (!pDoc)
     return;
 
-  CPDF_Dictionary* pDic = new CPDF_Dictionary(pDoc->GetByteStringPool());
-  CPDF_Stream* pStream = pDoc->NewIndirect<CPDF_Stream>(nullptr, 0, pDic);
+  CPDF_Stream* pStream = pDoc->NewIndirect<CPDF_Stream>(
+      nullptr, 0,
+      pdfium::MakeUnique<CPDF_Dictionary>(pDoc->GetByteStringPool()));
   pStream->SetData(strClip.GetBuffer(), strClip.GetSize());
 
   CPDF_Array* pArray = ToArray(pContentObj);

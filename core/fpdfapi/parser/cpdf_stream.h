@@ -18,8 +18,11 @@ class CPDF_Stream : public CPDF_Object {
  public:
   CPDF_Stream();
 
-  // Takes ownership of |pData| and |pDict|.
-  CPDF_Stream(uint8_t* pData, uint32_t size, CPDF_Dictionary* pDict);
+  // Takes ownership of |pData|.
+  CPDF_Stream(uint8_t* pData,
+              uint32_t size,
+              std::unique_ptr<CPDF_Dictionary> pDict);
+
   ~CPDF_Stream() override;
 
   // CPDF_Object:
@@ -37,9 +40,11 @@ class CPDF_Stream : public CPDF_Object {
   // Does not takes onwership of |pData|, copies into internally-owned buffer.
   void SetData(const uint8_t* pData, uint32_t size);
 
-  void InitStream(const uint8_t* pData, uint32_t size, CPDF_Dictionary* pDict);
+  void InitStream(const uint8_t* pData,
+                  uint32_t size,
+                  std::unique_ptr<CPDF_Dictionary> pDict);
   void InitStreamFromFile(IFX_SeekableReadStream* pFile,
-                          CPDF_Dictionary* pDict);
+                          std::unique_ptr<CPDF_Dictionary> pDict);
 
   bool ReadRawData(FX_FILESIZE start_pos,
                    uint8_t* pBuf,

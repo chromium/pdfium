@@ -71,10 +71,12 @@ class PDFObjectsTest : public testing::Test {
     size_t buf_len = FX_ArraySize(content);
     uint8_t* buf = reinterpret_cast<uint8_t*>(malloc(buf_len));
     memcpy(buf, content, buf_len);
-    m_StreamDictObj = new CPDF_Dictionary();
+    auto pNewDict = pdfium::MakeUnique<CPDF_Dictionary>();
+    m_StreamDictObj = pNewDict.get();
     m_StreamDictObj->SetNewFor<CPDF_String>("key1", L" test dict");
     m_StreamDictObj->SetNewFor<CPDF_Number>("key2", -1);
-    CPDF_Stream* stream_obj = new CPDF_Stream(buf, buf_len, m_StreamDictObj);
+    CPDF_Stream* stream_obj =
+        new CPDF_Stream(buf, buf_len, std::move(pNewDict));
     // Null Object.
     CPDF_Null* null_obj = new CPDF_Null;
     // All direct objects.
@@ -588,7 +590,8 @@ TEST(PDFArrayTest, GetTypeAt) {
       size_t data_size = FX_ArraySize(content);
       uint8_t* data = reinterpret_cast<uint8_t*>(malloc(data_size));
       memcpy(data, content, data_size);
-      stream_vals[i] = arr->AddNew<CPDF_Stream>(data, data_size, vals[i]);
+      stream_vals[i] = arr->AddNew<CPDF_Stream>(data, data_size,
+                                                pdfium::WrapUnique(vals[i]));
     }
     for (size_t i = 0; i < 3; ++i) {
       TestArrayAccessors(arr.get(), i,     // Array and index.
@@ -633,8 +636,8 @@ TEST(PDFArrayTest, GetTypeAt) {
     size_t buf_size = sizeof(data);
     uint8_t* buf = reinterpret_cast<uint8_t*>(malloc(buf_size));
     memcpy(buf, data, buf_size);
-    CPDF_Stream* stream_val =
-        arr->InsertNewAt<CPDF_Stream>(13, buf, buf_size, stream_dict);
+    CPDF_Stream* stream_val = arr->InsertNewAt<CPDF_Stream>(
+        13, buf, buf_size, pdfium::WrapUnique(stream_dict));
     const char* const expected_str[] = {
         "true",          "false", "0",    "-1234", "2345", "0.05", "",
         "It is a test!", "NAME",  "test", "",      "",     "",     ""};
@@ -816,10 +819,12 @@ TEST(PDFObjectTest, CloneCheckLoop) {
     EXPECT_EQ(nullptr, cloned_dict->AsDictionary()->GetObjectFor("arr"));
   }
   {
-    // Create a dictionary/stream pair with a reference loop.
+    // Create a dictionary/stream pair with a reference loop. It takes
+    // some work to do this nowadays, in particular we need the
+    // anti-pattern pdfium::WrapUnique(dict.get()).
     auto dict_obj = pdfium::MakeUnique<CPDF_Dictionary>();
-    CPDF_Stream* stream_obj =
-        dict_obj->SetNewFor<CPDF_Stream>("stream", nullptr, 0, dict_obj.get());
+    CPDF_Stream* stream_obj = dict_obj->SetNewFor<CPDF_Stream>(
+        "stream", nullptr, 0, pdfium::WrapUnique(dict_obj.get()));
     // Clone this object to see whether stack overflow will be triggered.
     std::unique_ptr<CPDF_Stream> cloned_stream = ToStream(stream_obj->Clone());
     // Cloned object should be the same as the original.

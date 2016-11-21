@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 #include <memory>
+#include <utility>
 
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_number.h"
@@ -21,7 +22,7 @@ TEST(CStretchEngine, OverflowInCtor) {
   dict_obj->SetNewFor<CPDF_Number>("Width", 71000);
   dict_obj->SetNewFor<CPDF_Number>("Height", 12500);
   std::unique_ptr<CPDF_Stream> stream =
-      pdfium::MakeUnique<CPDF_Stream>(nullptr, 0, dict_obj.release());
+      pdfium::MakeUnique<CPDF_Stream>(nullptr, 0, std::move(dict_obj));
   CPDF_DIBSource dib_source;
   dib_source.Load(nullptr, stream.get(), nullptr, nullptr, nullptr, nullptr,
                   false, 0, false);

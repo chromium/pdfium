@@ -7,6 +7,7 @@
 #include "fpdfsdk/cpdfsdk_baannot.h"
 
 #include <algorithm>
+#include <utility>
 
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
@@ -323,19 +324,16 @@ void CPDFSDK_BAAnnot::WriteAppearance(const CFX_ByteString& sAPType,
 
   CPDF_Dictionary* pStreamDict = pStream->GetDict();
   if (!pStreamDict) {
-    pStreamDict =
-        new CPDF_Dictionary(m_pAnnot->GetDocument()->GetByteStringPool());
+    auto pNewDict = pdfium::MakeUnique<CPDF_Dictionary>(
+        m_pAnnot->GetDocument()->GetByteStringPool());
+    pStreamDict = pNewDict.get();
     pStreamDict->SetNewFor<CPDF_Name>("Type", "XObject");
     pStreamDict->SetNewFor<CPDF_Name>("Subtype", "Form");
     pStreamDict->SetNewFor<CPDF_Number>("FormType", 1);
-    pStream->InitStream(nullptr, 0, pStreamDict);
+    pStream->InitStream(nullptr, 0, std::move(pNewDict));
   }
-
-  if (pStreamDict) {
-    pStreamDict->SetMatrixFor("Matrix", matrix);
-    pStreamDict->SetRectFor("BBox", rcBBox);
-  }
-
+  pStreamDict->SetMatrixFor("Matrix", matrix);
+  pStreamDict->SetRectFor("BBox", rcBBox);
   pStream->SetData((uint8_t*)sContents.c_str(), sContents.GetLength());
 }
 

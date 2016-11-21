@@ -6,6 +6,8 @@
 
 #include "core/fpdfapi/parser/cpdf_stream.h"
 
+#include <utility>
+
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_number.h"
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
@@ -15,8 +17,10 @@
 
 CPDF_Stream::CPDF_Stream() {}
 
-CPDF_Stream::CPDF_Stream(uint8_t* pData, uint32_t size, CPDF_Dictionary* pDict)
-    : m_dwSize(size), m_pDict(pDict), m_pDataBuf(pData) {}
+CPDF_Stream::CPDF_Stream(uint8_t* pData,
+                         uint32_t size,
+                         std::unique_ptr<CPDF_Dictionary> pDict)
+    : m_dwSize(size), m_pDict(std::move(pDict)), m_pDataBuf(pData) {}
 
 CPDF_Stream::~CPDF_Stream() {
   m_ObjNum = kInvalidObjNum;
@@ -46,8 +50,8 @@ const CPDF_Stream* CPDF_Stream::AsStream() const {
 
 void CPDF_Stream::InitStream(const uint8_t* pData,
                              uint32_t size,
-                             CPDF_Dictionary* pDict) {
-  m_pDict.reset(pDict);
+                             std::unique_ptr<CPDF_Dictionary> pDict) {
+  m_pDict = std::move(pDict);
   m_bMemoryBased = true;
   m_pFile = nullptr;
   m_pDataBuf.reset(FX_Alloc(uint8_t, size));
@@ -59,8 +63,8 @@ void CPDF_Stream::InitStream(const uint8_t* pData,
 }
 
 void CPDF_Stream::InitStreamFromFile(IFX_SeekableReadStream* pFile,
-                                     CPDF_Dictionary* pDict) {
-  m_pDict.reset(pDict);
+                                     std::unique_ptr<CPDF_Dictionary> pDict) {
+  m_pDict = std::move(pDict);
   m_bMemoryBased = false;
   m_pDataBuf.reset();
   m_pFile = pFile;
@@ -79,14 +83,16 @@ std::unique_ptr<CPDF_Object> CPDF_Stream::CloneNonCyclic(
   pVisited->insert(this);
   CPDF_StreamAcc acc;
   acc.LoadAllData(this, true);
+
   uint32_t streamSize = acc.GetSize();
   CPDF_Dictionary* pDict = GetDict();
+  std::unique_ptr<CPDF_Dictionary> pNewDict;
   if (pDict && !pdfium::ContainsKey(*pVisited, pDict)) {
-    pDict = ToDictionary(static_cast<CPDF_Object*>(pDict)
-                             ->CloneNonCyclic(bDirect, pVisited)
-                             .release());
+    pNewDict = ToDictionary(
+        static_cast<CPDF_Object*>(pDict)->CloneNonCyclic(bDirect, pVisited));
   }
-  return pdfium::MakeUnique<CPDF_Stream>(acc.DetachData(), streamSize, pDict);
+  return pdfium::MakeUnique<CPDF_Stream>(acc.DetachData(), streamSize,
+                                         std::move(pNewDict));
 }
 
 void CPDF_Stream::SetData(const uint8_t* pData, uint32_t size) {

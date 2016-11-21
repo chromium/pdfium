@@ -7,6 +7,7 @@
 #include "core/fpdfapi/page/cpdf_image.h"
 
 #include <algorithm>
+#include <memory>
 #include <utility>
 #include <vector>
 
@@ -19,11 +20,13 @@
 #include "core/fpdfapi/parser/cpdf_name.h"
 #include "core/fpdfapi/parser/cpdf_number.h"
 #include "core/fpdfapi/parser/cpdf_reference.h"
+#include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/cpdf_string.h"
 #include "core/fpdfapi/render/cpdf_pagerendercache.h"
 #include "core/fpdfapi/render/render_int.h"
 #include "core/fxcodec/fx_codec.h"
 #include "core/fxge/fx_dib.h"
+#include "third_party/base/ptr_util.h"
 
 CPDF_Image::CPDF_Image(CPDF_Document* pDoc) : m_pDocument(pDoc) {}
 
@@ -147,7 +150,7 @@ void CPDF_Image::SetJpegImage(IFX_SeekableReadStream* pFile) {
   if (!pDict)
     return;
 
-  m_pStream->InitStreamFromFile(pFile, pDict);
+  m_pStream->InitStreamFromFile(pFile, pdfium::WrapUnique(pDict));
 }
 
 void CPDF_Image::SetImage(const CFX_DIBitmap* pBitmap, int32_t iCompress) {
@@ -160,8 +163,8 @@ void CPDF_Image::SetImage(const CFX_DIBitmap* pBitmap, int32_t iCompress) {
   int32_t src_pitch = pBitmap->GetPitch();
   int32_t bpp = pBitmap->GetBPP();
 
-  CPDF_Dictionary* pDict =
-      new CPDF_Dictionary(m_pDocument->GetByteStringPool());
+  auto pDict =
+      pdfium::MakeUnique<CPDF_Dictionary>(m_pDocument->GetByteStringPool());
   pDict->SetNewFor<CPDF_Name>("Type", "XObject");
   pDict->SetNewFor<CPDF_Name>("Subtype", "Image");
   pDict->SetNewFor<CPDF_Number>("Width", BitmapWidth);
@@ -222,9 +225,10 @@ void CPDF_Image::SetImage(const CFX_DIBitmap* pBitmap, int32_t iCompress) {
         ptr[2] = (uint8_t)argb;
         ptr += 3;
       }
+      auto pNewDict =
+          pdfium::MakeUnique<CPDF_Dictionary>(m_pDocument->GetByteStringPool());
       CPDF_Stream* pCTS = m_pDocument->NewIndirect<CPDF_Stream>(
-          pColorTable, iPalette * 3,
-          new CPDF_Dictionary(m_pDocument->GetByteStringPool()));
+          pColorTable, iPalette * 3, std::move(pNewDict));
       pCS->AddNew<CPDF_Reference>(m_pDocument, pCTS->GetObjNum());
       pDict->SetNewFor<CPDF_Reference>("ColorSpace", m_pDocument,
                                        pCS->GetObjNum());
@@ -259,8 +263,8 @@ void CPDF_Image::SetImage(const CFX_DIBitmap* pBitmap, int32_t iCompress) {
     int32_t maskHeight = pMaskBitmap->GetHeight();
     uint8_t* mask_buf = nullptr;
     FX_STRSIZE mask_size = 0;
-    CPDF_Dictionary* pMaskDict =
-        new CPDF_Dictionary(m_pDocument->GetByteStringPool());
+    auto pMaskDict =
+        pdfium::MakeUnique<CPDF_Dictionary>(m_pDocument->GetByteStringPool());
     pMaskDict->SetNewFor<CPDF_Name>("Type", "XObject");
     pMaskDict->SetNewFor<CPDF_Name>("Subtype", "Image");
     pMaskDict->SetNewFor<CPDF_Number>("Width", maskWidth);
@@ -279,10 +283,10 @@ void CPDF_Image::SetImage(const CFX_DIBitmap* pBitmap, int32_t iCompress) {
       }
     }
     pMaskDict->SetNewFor<CPDF_Number>("Length", mask_size);
-    pDict->SetNewFor<CPDF_Reference>(
-        "SMask", m_pDocument,
-        m_pDocument->NewIndirect<CPDF_Stream>(mask_buf, mask_size, pMaskDict)
-            ->GetObjNum());
+    CPDF_Stream* pNewStream = m_pDocument->NewIndirect<CPDF_Stream>(
+        mask_buf, mask_size, std::move(pMaskDict));
+    pDict->SetNewFor<CPDF_Reference>("SMask", m_pDocument,
+                                     pNewStream->GetObjNum());
     if (bDeleteMask)
       delete pMaskBitmap;
   }
@@ -295,8 +299,6 @@ void CPDF_Image::SetImage(const CFX_DIBitmap* pBitmap, int32_t iCompress) {
         pNewBitmap->Copy(pBitmap);
         pNewBitmap->ConvertFormat(FXDIB_Rgb);
         SetImage(pNewBitmap, iCompress);
-        delete pDict;
-        pDict = nullptr;
         FX_Free(dest_buf);
         dest_buf = nullptr;
         dest_size = 0;
@@ -340,7 +342,7 @@ void CPDF_Image::SetImage(const CFX_DIBitmap* pBitmap, int32_t iCompress) {
     m_pOwnedStream = pdfium::MakeUnique<CPDF_Stream>();
     m_pStream = m_pOwnedStream.get();
   }
-  m_pStream->InitStream(dest_buf, dest_size, pDict);
+  m_pStream->InitStream(dest_buf, dest_size, std::move(pDict));
   m_bIsMask = pBitmap->IsAlphaMask();
   m_Width = BitmapWidth;
   m_Height = BitmapHeight;
