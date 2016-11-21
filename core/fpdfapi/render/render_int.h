@@ -15,6 +15,7 @@
 #include "core/fpdfapi/page/cpdf_countedobject.h"
 #include "core/fpdfapi/page/cpdf_graphicstates.h"
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
+#include "core/fpdfapi/render/cpdf_imageloader.h"
 #include "core/fpdfapi/render/cpdf_rendercontext.h"
 #include "core/fpdfapi/render/cpdf_renderoptions.h"
 #include "core/fxge/cfx_fxgedevice.h"
@@ -31,7 +32,6 @@ class CPDF_Document;
 class CPDF_Font;
 class CPDF_FormObject;
 class CPDF_ImageCacheEntry;
-class CPDF_ImageLoaderHandle;
 class CPDF_ImageObject;
 class CPDF_ImageRenderer;
 class CPDF_Object;
@@ -49,78 +49,6 @@ class CPDF_Type3Cache;
 class CPDF_Type3Glyphs;
 class CPDF_Type3Char;
 class CPDF_Type3Font;
-
-bool IsAvailableMatrix(const CFX_Matrix& matrix);
-
-class CPDF_TransferFunc {
- public:
-  explicit CPDF_TransferFunc(CPDF_Document* pDoc);
-
-  FX_COLORREF TranslateColor(FX_COLORREF src) const;
-  CFX_DIBSource* TranslateImage(const CFX_DIBSource* pSrc, bool bAutoDropSrc);
-
-  CPDF_Document* const m_pPDFDoc;
-  bool m_bIdentity;
-  uint8_t m_Samples[256 * 3];
-};
-
-class CPDF_ImageLoader {
- public:
-  CPDF_ImageLoader()
-      : m_pBitmap(nullptr),
-        m_pMask(nullptr),
-        m_MatteColor(0),
-        m_bCached(false),
-        m_nDownsampleWidth(0),
-        m_nDownsampleHeight(0) {}
-  ~CPDF_ImageLoader();
-
-  bool Start(const CPDF_ImageObject* pImage,
-             CPDF_PageRenderCache* pCache,
-             std::unique_ptr<CPDF_ImageLoaderHandle>* pLoadHandle,
-             bool bStdCS = false,
-             uint32_t GroupFamily = 0,
-             bool bLoadMask = false,
-             CPDF_RenderStatus* pRenderStatus = nullptr,
-             int32_t nDownsampleWidth = 0,
-             int32_t nDownsampleHeight = 0);
-  bool Continue(CPDF_ImageLoaderHandle* LoadHandle, IFX_Pause* pPause);
-
-  CFX_DIBSource* m_pBitmap;
-  CFX_DIBSource* m_pMask;
-  uint32_t m_MatteColor;
-  bool m_bCached;
-
- protected:
-  int32_t m_nDownsampleWidth;
-  int32_t m_nDownsampleHeight;
-};
-
-class CPDF_ImageLoaderHandle {
- public:
-  CPDF_ImageLoaderHandle();
-  ~CPDF_ImageLoaderHandle();
-
-  bool Start(CPDF_ImageLoader* pImageLoader,
-             const CPDF_ImageObject* pImage,
-             CPDF_PageRenderCache* pCache,
-             bool bStdCS = false,
-             uint32_t GroupFamily = 0,
-             bool bLoadMask = false,
-             CPDF_RenderStatus* pRenderStatus = nullptr,
-             int32_t nDownsampleWidth = 0,
-             int32_t nDownsampleHeight = 0);
-  bool Continue(IFX_Pause* pPause);
-
- protected:
-  void HandleFailure();
-
-  CPDF_ImageLoader* m_pImageLoader;
-  CPDF_PageRenderCache* m_pCache;
-  CPDF_ImageObject* m_pImage;
-  int32_t m_nDownsampleWidth;
-  int32_t m_nDownsampleHeight;
-};
 
 class CPDF_ImageRenderer {
  public:
@@ -168,7 +96,6 @@ class CPDF_ImageRenderer {
   uint32_t m_Flags;
   std::unique_ptr<CFX_ImageTransformer> m_pTransformer;
   void* m_DeviceHandle;
-  std::unique_ptr<CPDF_ImageLoaderHandle> m_LoadHandle;
   bool m_bStdCS;
   int m_BlendType;
 };

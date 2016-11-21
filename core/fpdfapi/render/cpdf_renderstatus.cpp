@@ -38,6 +38,7 @@
 #include "core/fpdfapi/render/cpdf_rendercontext.h"
 #include "core/fpdfapi/render/cpdf_renderoptions.h"
 #include "core/fpdfapi/render/cpdf_textrenderer.h"
+#include "core/fpdfapi/render/cpdf_transferfunc.h"
 #include "core/fpdfapi/render/cpdf_type3cache.h"
 #include "core/fpdfapi/render/render_int.h"
 #include "core/fpdfdoc/cpdf_occontext.h"
@@ -895,6 +896,16 @@ std::unique_ptr<CFX_DIBitmap> DrawPatternBitmap(
   return pBitmap;
 }
 
+bool IsAvailableMatrix(const CFX_Matrix& matrix) {
+  if (matrix.a == 0 || matrix.d == 0)
+    return matrix.b != 0 && matrix.c != 0;
+
+  if (matrix.b == 0 || matrix.c == 0)
+    return matrix.a != 0 && matrix.d != 0;
+
+  return true;
+}
+
 }  // namespace
 
 // static
@@ -1216,16 +1227,6 @@ bool CPDF_RenderStatus::ProcessForm(const CPDF_FormObject* pFormObj,
 #if defined _SKIA_SUPPORT_
   DebugVerifyDeviceIsPreMultiplied();
 #endif
-  return true;
-}
-
-bool IsAvailableMatrix(const CFX_Matrix& matrix) {
-  if (matrix.a == 0 || matrix.d == 0) {
-    return matrix.b != 0 && matrix.c != 0;
-  }
-  if (matrix.b == 0 || matrix.c == 0) {
-    return matrix.a != 0 && matrix.d != 0;
-  }
   return true;
 }
 

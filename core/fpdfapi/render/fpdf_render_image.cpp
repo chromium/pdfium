@@ -25,6 +25,7 @@
 #include "core/fpdfapi/render/cpdf_rendercontext.h"
 #include "core/fpdfapi/render/cpdf_renderoptions.h"
 #include "core/fpdfapi/render/cpdf_renderstatus.h"
+#include "core/fpdfapi/render/cpdf_transferfunc.h"
 #include "core/fpdfdoc/cpdf_occontext.h"
 #include "core/fxcodec/fx_codec.h"
 #include "core/fxcrt/fx_safe_types.h"
@@ -34,21 +35,6 @@
 #ifdef _SKIA_SUPPORT_
 #include "core/fxge/skia/fx_skia_device.h"
 #endif
-
-CPDF_TransferFunc::CPDF_TransferFunc(CPDF_Document* pDoc) : m_pPDFDoc(pDoc) {}
-
-FX_COLORREF CPDF_TransferFunc::TranslateColor(FX_COLORREF rgb) const {
-  return FXSYS_RGB(m_Samples[FXSYS_GetRValue(rgb)],
-                   m_Samples[256 + FXSYS_GetGValue(rgb)],
-                   m_Samples[512 + FXSYS_GetBValue(rgb)]);
-}
-
-CFX_DIBSource* CPDF_TransferFunc::TranslateImage(const CFX_DIBSource* pSrc,
-                                                 bool bAutoDropSrc) {
-  CPDF_DIBTransferFunc* pDest = new CPDF_DIBTransferFunc(this);
-  pDest->LoadSrc(pSrc, bAutoDropSrc);
-  return pDest;
-}
 
 CPDF_DIBTransferFunc::~CPDF_DIBTransferFunc() {}
 
@@ -251,15 +237,12 @@ bool CPDF_ImageRenderer::StartLoadDIBSource() {
   if (m_ImageMatrix.d > 0) {
     dest_height = -dest_height;
   }
-  if (m_Loader.Start(m_pImageObject,
-                     m_pRenderStatus->m_pContext->GetPageCache(), &m_LoadHandle,
-                     m_bStdCS, m_pRenderStatus->m_GroupFamily,
-                     m_pRenderStatus->m_bLoadMask, m_pRenderStatus, dest_width,
-                     dest_height)) {
-    if (m_LoadHandle) {
-      m_Status = 4;
-      return true;
-    }
+  if (m_Loader.Start(
+          m_pImageObject, m_pRenderStatus->m_pContext->GetPageCache(), m_bStdCS,
+          m_pRenderStatus->m_GroupFamily, m_pRenderStatus->m_bLoadMask,
+          m_pRenderStatus, dest_width, dest_height)) {
+    m_Status = 4;
+    return true;
   }
   return false;
 }
@@ -810,7 +793,7 @@ bool CPDF_ImageRenderer::Continue(IFX_Pause* pPause) {
     return m_pRenderStatus->m_pDevice->ContinueDIBits(m_DeviceHandle, pPause);
 
   if (m_Status == 4) {
-    if (m_Loader.Continue(m_LoadHandle.get(), pPause))
+    if (m_Loader.Continue(pPause))
       return true;
 
     if (StartRenderDIBSource())
