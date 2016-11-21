@@ -61,10 +61,7 @@ class IFWL_Widget;
 class IFWL_ThemeProvider;
 class CFWL_SysBtn;
 
-class IFWL_FormDP : public IFWL_DataProvider {
- public:
-  virtual CFX_DIBitmap* GetIcon(IFWL_Widget* pWidget, bool bBig) = 0;
-};
+class IFWL_FormDP : public IFWL_DataProvider {};
 
 class IFWL_Form : public IFWL_Widget {
  public:
@@ -99,18 +96,12 @@ class IFWL_Form : public IFWL_Widget {
   CFWL_SysBtn* GetSysBtnByState(uint32_t dwState);
   CFWL_SysBtn* GetSysBtnByIndex(int32_t nIndex);
   int32_t GetSysBtnIndex(CFWL_SysBtn* pBtn);
-  void DrawIconImage(CFX_Graphics* pGs,
-                     IFWL_ThemeProvider* pTheme,
-                     const CFX_Matrix* pMatrix = nullptr);
   void GetEdgeRect(CFX_RectF& rtEdge);
   void SetWorkAreaRect();
   void Layout();
   void ResetSysBtn();
   void RegisterForm();
   void UnRegisterForm();
-  void SetThemeData();
-  bool HasIcon();
-  void UpdateIcon();
   void OnLButtonDown(CFWL_MsgMouse* pMsg);
   void OnLButtonUp(CFWL_MsgMouse* pMsg);
   void OnMouseMove(CFWL_MsgMouse* pMsg);
@@ -122,7 +113,6 @@ class IFWL_Form : public IFWL_Widget {
 #endif
   CFX_RectF m_rtRestore;
   CFX_RectF m_rtRelative;
-  CFX_RectF m_rtIcon;
   CFWL_SysBtn* m_pCloseBox;
   CFWL_SysBtn* m_pMinBox;
   CFWL_SysBtn* m_pMaxBox;
@@ -137,10 +127,6 @@ class IFWL_Form : public IFWL_Widget {
   bool m_bSetMaximize;
   bool m_bCustomizeLayout;
   bool m_bDoModalFlag;
-  FX_FLOAT m_fSmallIconSz;
-  FX_FLOAT m_fBigIconSz;
-  CFX_DIBitmap* m_pBigIcon;
-  CFX_DIBitmap* m_pSmallIcon;
 };
 
 #endif  // XFA_FWL_CORE_IFWL_FORM_H_

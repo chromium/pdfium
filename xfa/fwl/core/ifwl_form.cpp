@@ -53,12 +53,9 @@ IFWL_Form::IFWL_Form(const IFWL_App* app,
       m_bMaximized(false),
       m_bSetMaximize(false),
       m_bCustomizeLayout(false),
-      m_bDoModalFlag(false),
-      m_pBigIcon(nullptr),
-      m_pSmallIcon(nullptr) {
+      m_bDoModalFlag(false) {
   m_rtRelative.Reset();
   m_rtRestore.Reset();
-  m_rtIcon.Reset();
 
   RegisterForm();
   RegisterEventTarget();
@@ -104,12 +101,6 @@ void IFWL_Form::Update() {
     return;
   if (!m_pProperties->m_pThemeProvider)
     m_pProperties->m_pThemeProvider = GetAvailableTheme();
-
-#ifndef FWL_UseMacSystemBorder
-  SetThemeData();
-  if (m_pProperties->m_dwStyles & FWL_WGTSTYLE_Icon)
-    UpdateIcon();
-#endif
 
   Layout();
 }
@@ -211,11 +202,6 @@ void IFWL_Form::DrawWidget(CFX_Graphics* pGraphics, const CFX_Matrix* pMatrix) {
     param.m_rtPart = rtEdge;
     param.m_dwStates = iState;
     pTheme->DrawBackground(&param);
-  }
-  if (m_pProperties->m_dwStyles & FWL_WGTSTYLE_Icon) {
-    param.m_iPart = CFWL_Part::Icon;
-    if (HasIcon())
-      DrawIconImage(pGraphics, pTheme, pMatrix);
   }
 
 #if (_FX_OS_ == _FX_MACOSX_)
@@ -393,22 +379,6 @@ int32_t IFWL_Form::GetSysBtnIndex(CFWL_SysBtn* pBtn) {
   return arrBtn.Find(pBtn);
 }
 
-void IFWL_Form::DrawIconImage(CFX_Graphics* pGs,
-                              IFWL_ThemeProvider* pTheme,
-                              const CFX_Matrix* pMatrix) {
-  IFWL_FormDP* pData =
-      static_cast<IFWL_FormDP*>(m_pProperties->m_pDataProvider);
-  CFWL_ThemeBackground param;
-  param.m_pWidget = this;
-  param.m_iPart = CFWL_Part::Icon;
-  param.m_pGraphics = pGs;
-  param.m_pImage = pData->GetIcon(this, false);
-  param.m_rtPart = m_rtIcon;
-  if (pMatrix)
-    param.m_matrix.Concat(*pMatrix);
-  pTheme->DrawBackground(&param);
-}
-
 void IFWL_Form::GetEdgeRect(CFX_RectF& rtEdge) {
   rtEdge = m_rtRelative;
   if (m_pProperties->m_dwStyles & FWL_WGTSTYLE_Border) {
@@ -490,15 +460,6 @@ void IFWL_Form::ResetSysBtn() {
     }
     m_iSysBox++;
   }
-
-  IFWL_FormDP* pData =
-      static_cast<IFWL_FormDP*>(m_pProperties->m_pDataProvider);
-  if (m_pProperties->m_dwStyles & FWL_WGTSTYLE_Icon &&
-      pData->GetIcon(this, false)) {
-    if (!m_bCustomizeLayout) {
-      m_rtIcon.Set(5, (0 - m_fSmallIconSz) / 2, m_fSmallIconSz, m_fSmallIconSz);
-    }
-  }
 }
 
 void IFWL_Form::RegisterForm() {
@@ -525,34 +486,6 @@ void IFWL_Form::UnRegisterForm() {
     return;
 
   pDriver->UnRegisterForm(this);
-}
-
-void IFWL_Form::SetThemeData() {
-  m_fSmallIconSz =
-      *static_cast<FX_FLOAT*>(GetThemeCapacity(CFWL_WidgetCapacity::SmallIcon));
-  m_fBigIconSz =
-      *static_cast<FX_FLOAT*>(GetThemeCapacity(CFWL_WidgetCapacity::BigIcon));
-}
-
-bool IFWL_Form::HasIcon() {
-  IFWL_FormDP* pData =
-      static_cast<IFWL_FormDP*>(m_pProperties->m_pDataProvider);
-  return !!pData->GetIcon(this, false);
-}
-
-void IFWL_Form::UpdateIcon() {
-  CFWL_WidgetMgr* pWidgetMgr = GetOwnerApp()->GetWidgetMgr();
-  if (!pWidgetMgr)
-    return;
-
-  IFWL_FormDP* pData =
-      static_cast<IFWL_FormDP*>(m_pProperties->m_pDataProvider);
-  CFX_DIBitmap* pBigIcon = pData->GetIcon(this, true);
-  CFX_DIBitmap* pSmallIcon = pData->GetIcon(this, false);
-  if (pBigIcon)
-    m_pBigIcon = pBigIcon;
-  if (pSmallIcon)
-    m_pSmallIcon = pSmallIcon;
 }
 
 void IFWL_Form::OnProcessMessage(CFWL_Message* pMessage) {
