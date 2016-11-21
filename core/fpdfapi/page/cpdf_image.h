@@ -12,11 +12,6 @@
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fxcrt/fx_system.h"
 
-#define PDF_IMAGE_NO_COMPRESS 0x0000
-#define PDF_IMAGE_LOSSY_COMPRESS 0x0001
-#define PDF_IMAGE_LOSSLESS_COMPRESS 0x0002
-#define PDF_IMAGE_MASK_LOSSY_COMPRESS 0x0004
-
 class CFX_DIBSource;
 class CFX_DIBitmap;
 class CPDF_Document;
@@ -55,7 +50,7 @@ class CPDF_Image {
                                uint32_t GroupFamily = 0,
                                bool bLoadMask = false) const;
 
-  void SetImage(const CFX_DIBitmap* pDIBitmap, int32_t iCompress);
+  void SetImage(const CFX_DIBitmap* pDIBitmap);
   void SetJpegImage(IFX_SeekableReadStream* pFile);
 
   void ResetCache(CPDF_Page* pPage, const CFX_DIBitmap* pDIBitmap);

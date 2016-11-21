@@ -153,15 +153,11 @@ void CPDF_Image::SetJpegImage(IFX_SeekableReadStream* pFile) {
   m_pStream->InitStreamFromFile(pFile, pdfium::WrapUnique(pDict));
 }
 
-void CPDF_Image::SetImage(const CFX_DIBitmap* pBitmap, int32_t iCompress) {
+void CPDF_Image::SetImage(const CFX_DIBitmap* pBitmap) {
   int32_t BitmapWidth = pBitmap->GetWidth();
   int32_t BitmapHeight = pBitmap->GetHeight();
-  if (BitmapWidth < 1 || BitmapHeight < 1) {
+  if (BitmapWidth < 1 || BitmapHeight < 1)
     return;
-  }
-  uint8_t* src_buf = pBitmap->GetBuffer();
-  int32_t src_pitch = pBitmap->GetPitch();
-  int32_t bpp = pBitmap->GetBPP();
 
   auto pDict =
       pdfium::MakeUnique<CPDF_Dictionary>(m_pDocument->GetByteStringPool());
@@ -169,11 +165,19 @@ void CPDF_Image::SetImage(const CFX_DIBitmap* pBitmap, int32_t iCompress) {
   pDict->SetNewFor<CPDF_Name>("Subtype", "Image");
   pDict->SetNewFor<CPDF_Number>("Width", BitmapWidth);
   pDict->SetNewFor<CPDF_Number>("Height", BitmapHeight);
-  uint8_t* dest_buf = nullptr;
-  FX_STRSIZE dest_pitch = 0, dest_size = 0, opType = -1;
+
+  const int32_t bpp = pBitmap->GetBPP();
+  FX_STRSIZE dest_pitch = 0;
+  bool bCopyWithoutAlpha = true;
   if (bpp == 1) {
-    int32_t reset_a = 0, reset_r = 0, reset_g = 0, reset_b = 0;
-    int32_t set_a = 0, set_r = 0, set_g = 0, set_b = 0;
+    int32_t reset_a = 0;
+    int32_t reset_r = 0;
+    int32_t reset_g = 0;
+    int32_t reset_b = 0;
+    int32_t set_a = 0;
+    int32_t set_r = 0;
+    int32_t set_g = 0;
+    int32_t set_b = 0;
     if (!pBitmap->IsAlphaMask()) {
       ArgbDecode(pBitmap->GetPaletteArgb(0), reset_a, reset_r, reset_g,
                  reset_b);
@@ -204,11 +208,6 @@ void CPDF_Image::SetImage(const CFX_DIBitmap* pBitmap, int32_t iCompress) {
     }
     pDict->SetNewFor<CPDF_Number>("BitsPerComponent", 1);
     dest_pitch = (BitmapWidth + 7) / 8;
-    if ((iCompress & 0x03) == PDF_IMAGE_NO_COMPRESS) {
-      opType = 1;
-    } else {
-      opType = 0;
-    }
   } else if (bpp == 8) {
     int32_t iPalette = pBitmap->GetPaletteSize();
     if (iPalette > 0) {
@@ -236,28 +235,16 @@ void CPDF_Image::SetImage(const CFX_DIBitmap* pBitmap, int32_t iCompress) {
       pDict->SetNewFor<CPDF_Name>("ColorSpace", "DeviceGray");
     }
     pDict->SetNewFor<CPDF_Number>("BitsPerComponent", 8);
-    if ((iCompress & 0x03) == PDF_IMAGE_NO_COMPRESS) {
-      dest_pitch = BitmapWidth;
-      opType = 1;
-    } else {
-      opType = 0;
-    }
+    dest_pitch = BitmapWidth;
   } else {
     pDict->SetNewFor<CPDF_Name>("ColorSpace", "DeviceRGB");
     pDict->SetNewFor<CPDF_Number>("BitsPerComponent", 8);
-    if ((iCompress & 0x03) == PDF_IMAGE_NO_COMPRESS) {
-      dest_pitch = BitmapWidth * 3;
-      opType = 2;
-    } else {
-      opType = 0;
-    }
+    dest_pitch = BitmapWidth * 3;
+    bCopyWithoutAlpha = false;
   }
-  const CFX_DIBitmap* pMaskBitmap = nullptr;
-  bool bDeleteMask = false;
-  if (pBitmap->HasAlpha()) {
-    pMaskBitmap = pBitmap->GetAlphaMask();
-    bDeleteMask = true;
-  }
+
+  const CFX_DIBitmap* pMaskBitmap =
+      pBitmap->HasAlpha() ? pBitmap->GetAlphaMask() : nullptr;
   if (pMaskBitmap) {
     int32_t maskWidth = pMaskBitmap->GetWidth();
     int32_t maskHeight = pMaskBitmap->GetHeight();
@@ -271,10 +258,7 @@ void CPDF_Image::SetImage(const CFX_DIBitmap* pBitmap, int32_t iCompress) {
     pMaskDict->SetNewFor<CPDF_Number>("Height", maskHeight);
     pMaskDict->SetNewFor<CPDF_Name>("ColorSpace", "DeviceGray");
     pMaskDict->SetNewFor<CPDF_Number>("BitsPerComponent", 8);
-    if (pMaskBitmap->GetBPP() == 8 &&
-        (iCompress & PDF_IMAGE_MASK_LOSSY_COMPRESS) != 0) {
-    } else if (pMaskBitmap->GetFormat() == FXDIB_1bppMask) {
-    } else {
+    if (pMaskBitmap->GetFormat() != FXDIB_1bppMask) {
       mask_buf = FX_Alloc2D(uint8_t, maskHeight, maskWidth);
       mask_size = maskHeight * maskWidth;  // Safe since checked alloc returned.
       for (int32_t a = 0; a < maskHeight; a++) {
@@ -287,40 +271,22 @@ void CPDF_Image::SetImage(const CFX_DIBitmap* pBitmap, int32_t iCompress) {
         mask_buf, mask_size, std::move(pMaskDict));
     pDict->SetNewFor<CPDF_Reference>("SMask", m_pDocument,
                                      pNewStream->GetObjNum());
-    if (bDeleteMask)
-      delete pMaskBitmap;
+    delete pMaskBitmap;
   }
-  if (opType == 0) {
-    if (iCompress & PDF_IMAGE_LOSSLESS_COMPRESS) {
-    } else {
-      if (pBitmap->GetBPP() == 1) {
-      } else if (pBitmap->GetBPP() >= 8 && pBitmap->GetPalette()) {
-        CFX_DIBitmap* pNewBitmap = new CFX_DIBitmap();
-        pNewBitmap->Copy(pBitmap);
-        pNewBitmap->ConvertFormat(FXDIB_Rgb);
-        SetImage(pNewBitmap, iCompress);
-        FX_Free(dest_buf);
-        dest_buf = nullptr;
-        dest_size = 0;
-        delete pNewBitmap;
-        return;
-      }
-    }
-  } else if (opType == 1) {
-    dest_buf = FX_Alloc2D(uint8_t, dest_pitch, BitmapHeight);
-    dest_size = dest_pitch * BitmapHeight;  // Safe as checked alloc returned.
 
-    uint8_t* pDest = dest_buf;
+  uint8_t* src_buf = pBitmap->GetBuffer();
+  int32_t src_pitch = pBitmap->GetPitch();
+  uint8_t* dest_buf = FX_Alloc2D(uint8_t, dest_pitch, BitmapHeight);
+  // Safe as checked alloc returned.
+  FX_STRSIZE dest_size = dest_pitch * BitmapHeight;
+  uint8_t* pDest = dest_buf;
+  if (bCopyWithoutAlpha) {
     for (int32_t i = 0; i < BitmapHeight; i++) {
       FXSYS_memcpy(pDest, src_buf, dest_pitch);
       pDest += dest_pitch;
       src_buf += src_pitch;
     }
-  } else if (opType == 2) {
-    dest_buf = FX_Alloc2D(uint8_t, dest_pitch, BitmapHeight);
-    dest_size = dest_pitch * BitmapHeight;  // Safe as checked alloc returned.
-
-    uint8_t* pDest = dest_buf;
+  } else {
     int32_t src_offset = 0;
     int32_t dest_offset = 0;
     for (int32_t row = 0; row < BitmapHeight; row++) {
