@@ -8,7 +8,7 @@
 
 #include "xfa/fde/tto/fde_textout.h"
 #include "xfa/fgas/crt/fgas_codepage.h"
-#include "xfa/fgas/font/fgas_gefont.h"
+#include "xfa/fgas/font/cfgas_gefont.h"
 #include "xfa/fwl/core/cfwl_themebackground.h"
 #include "xfa/fwl/core/cfwl_themetext.h"
 #include "xfa/fwl/core/ifwl_barcode.h"

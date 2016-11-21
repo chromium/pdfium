@@ -9,7 +9,7 @@
 #include <utility>
 
 #include "third_party/base/ptr_util.h"
-#include "xfa/fgas/font/fgas_gefont.h"
+#include "xfa/fgas/font/cfgas_gefont.h"
 #include "xfa/fwl/core/cfwl_themepart.h"
 #include "xfa/fwl/core/cfx_barcode.h"
 #include "xfa/fwl/core/fwl_noteimp.h"

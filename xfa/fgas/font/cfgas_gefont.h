@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FGAS_FONT_FGAS_GEFONT_H_
-#define XFA_FGAS_FONT_FGAS_GEFONT_H_
+#ifndef XFA_FGAS_FONT_CFGAS_GEFONT_H_
+#define XFA_FGAS_FONT_CFGAS_GEFONT_H_
 
 #include <map>
 #include <memory>
@@ -43,7 +43,6 @@ class CFGAS_GEFont {
   void Release();
   CFGAS_GEFont* Retain();
   CFGAS_GEFont* Derive(uint32_t dwFontStyles, uint16_t wCodePage = 0);
-  void GetFamilyName(CFX_WideString& wsFamily) const;
   uint32_t GetFontStyles() const;
   bool GetCharWidth(FX_WCHAR wUnicode, int32_t& iWidth, bool bCharCode);
   int32_t GetGlyphIndex(FX_WCHAR wUnicode, bool bCharCode = false);
@@ -51,8 +50,6 @@ class CFGAS_GEFont {
   int32_t GetDescent() const;
   bool GetCharBBox(FX_WCHAR wUnicode, CFX_Rect& bbox, bool bCharCode = false);
   bool GetBBox(CFX_Rect& bbox);
-  int32_t GetItalicAngle() const;
-  void Reset();
   CFGAS_GEFont* GetSubstFont(int32_t iGlyphIndex) const;
   CFX_Font* GetDevFont() const { return m_pFont; }
   void SetFontProvider(CXFA_PDFFontMgr* pProvider) { m_pProvider = pProvider; }
@@ -63,7 +60,7 @@ class CFGAS_GEFont {
   }
 #endif
 
- protected:
+ private:
   explicit CFGAS_GEFont(CFGAS_FontMgr* pFontMgr);
   CFGAS_GEFont(CFGAS_GEFont* src, uint32_t dwFontStyles);
 
@@ -89,6 +86,7 @@ class CFGAS_GEFont {
                         bool bRecursive,
                         CFGAS_GEFont** ppFont,
                         bool bCharCode = false);
+  CFX_WideString GetFamilyName() const;
 
 #if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
   bool m_bUseLogFontStyle;
@@ -112,4 +110,4 @@ class CFGAS_GEFont {
   std::map<FX_WCHAR, CFGAS_GEFont*> m_FontMapper;
 };
 
-#endif  // XFA_FGAS_FONT_FGAS_GEFONT_H_
+#endif  // XFA_FGAS_FONT_CFGAS_GEFONT_H_

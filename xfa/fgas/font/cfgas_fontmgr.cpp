@@ -16,8 +16,8 @@
 #include "core/fxge/ifx_systemfontinfo.h"
 #include "third_party/base/ptr_util.h"
 #include "xfa/fgas/crt/fgas_codepage.h"
+#include "xfa/fgas/font/cfgas_gefont.h"
 #include "xfa/fgas/font/fgas_fontutils.h"
-#include "xfa/fgas/font/fgas_gefont.h"
 
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
 

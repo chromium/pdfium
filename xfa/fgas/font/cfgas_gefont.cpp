@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fgas/font/fgas_gefont.h"
+#include "xfa/fgas/font/cfgas_gefont.h"
 
 #include <memory>
 #include <utility>
@@ -12,6 +12,7 @@
 #include "core/fxge/cfx_substfont.h"
 #include "core/fxge/cfx_unicodeencoding.h"
 #include "core/fxge/cfx_unicodeencodingex.h"
+#include "third_party/base/ptr_util.h"
 #include "xfa/fgas/crt/fgas_codepage.h"
 #include "xfa/fgas/font/fgas_fontutils.h"
 #include "xfa/fxfa/xfa_fontmgr.h"
@@ -120,9 +121,8 @@ CFGAS_GEFont::CFGAS_GEFont(CFGAS_GEFont* src, uint32_t dwFontStyles)
   }
   pSubst->m_Weight =
       (dwFontStyles & FX_FONTSTYLE_Bold) ? FXFONT_FW_BOLD : FXFONT_FW_NORMAL;
-  if (dwFontStyles & FX_FONTSTYLE_Italic) {
+  if (dwFontStyles & FX_FONTSTYLE_Italic)
     pSubst->m_SubstFlags |= FXFONT_SUBST_ITALIC;
-  }
   InitFont();
 }
 
@@ -144,9 +144,8 @@ CFGAS_GEFont::~CFGAS_GEFont() {
 
 void CFGAS_GEFont::Release() {
   if (--m_iRefCount < 1) {
-    if (m_pFontMgr) {
+    if (m_pFontMgr)
       m_pFontMgr->RemoveFont(this);
-    }
     delete this;
   }
 }
@@ -159,45 +158,35 @@ CFGAS_GEFont* CFGAS_GEFont::Retain() {
 bool CFGAS_GEFont::LoadFontInternal(const FX_WCHAR* pszFontFamily,
                                     uint32_t dwFontStyles,
                                     uint16_t wCodePage) {
-  if (m_pFont) {
+  if (m_pFont)
     return false;
-  }
   CFX_ByteString csFontFamily;
-  if (pszFontFamily) {
+  if (pszFontFamily)
     csFontFamily = CFX_ByteString::FromUnicode(pszFontFamily);
-  }
   uint32_t dwFlags = 0;
-  if (dwFontStyles & FX_FONTSTYLE_FixedPitch) {
+  if (dwFontStyles & FX_FONTSTYLE_FixedPitch)
     dwFlags |= FXFONT_FIXED_PITCH;
-  }
-  if (dwFontStyles & FX_FONTSTYLE_Serif) {
+  if (dwFontStyles & FX_FONTSTYLE_Serif)
     dwFlags |= FXFONT_SERIF;
-  }
-  if (dwFontStyles & FX_FONTSTYLE_Symbolic) {
+  if (dwFontStyles & FX_FONTSTYLE_Symbolic)
     dwFlags |= FXFONT_SYMBOLIC;
-  }
-  if (dwFontStyles & FX_FONTSTYLE_Script) {
+  if (dwFontStyles & FX_FONTSTYLE_Script)
     dwFlags |= FXFONT_SCRIPT;
-  }
-  if (dwFontStyles & FX_FONTSTYLE_Italic) {
+  if (dwFontStyles & FX_FONTSTYLE_Italic)
     dwFlags |= FXFONT_ITALIC;
-  }
-  if (dwFontStyles & FX_FONTSTYLE_Bold) {
+  if (dwFontStyles & FX_FONTSTYLE_Bold)
     dwFlags |= FXFONT_BOLD;
-  }
-  if (dwFontStyles & FX_FONTSTYLE_ExactMatch) {
+  if (dwFontStyles & FX_FONTSTYLE_ExactMatch)
     dwFlags |= FXFONT_EXACTMATCH;
-  }
   int32_t iWeight =
       (dwFontStyles & FX_FONTSTYLE_Bold) ? FXFONT_FW_BOLD : FXFONT_FW_NORMAL;
   m_pFont = new CFX_Font;
-  if ((dwFlags & FXFONT_ITALIC) && (dwFlags & FXFONT_BOLD)) {
+  if ((dwFlags & FXFONT_ITALIC) && (dwFlags & FXFONT_BOLD))
     csFontFamily += ",BoldItalic";
-  } else if (dwFlags & FXFONT_BOLD) {
+  else if (dwFlags & FXFONT_BOLD)
     csFontFamily += ",Bold";
-  } else if (dwFlags & FXFONT_ITALIC) {
+  else if (dwFlags & FXFONT_ITALIC)
     csFontFamily += ",Italic";
-  }
   m_pFont->LoadSubst(csFontFamily, true, dwFlags, iWeight, 0, wCodePage, false);
   if (!m_pFont->GetFace())
     return false;
@@ -255,12 +244,14 @@ bool CFGAS_GEFont::InitFont() {
     if (!m_pFontEncoding)
       return false;
   }
-  if (!m_pCharWidthMap)
-    m_pCharWidthMap.reset(new CFX_DiscreteArrayTemplate<uint16_t>(1024));
+  if (!m_pCharWidthMap) {
+    m_pCharWidthMap =
+        pdfium::MakeUnique<CFX_DiscreteArrayTemplate<uint16_t>>(1024);
+  }
   if (!m_pRectArray)
-    m_pRectArray.reset(new CFX_MassArrayTemplate<CFX_Rect>(16));
+    m_pRectArray = pdfium::MakeUnique<CFX_MassArrayTemplate<CFX_Rect>>(16);
   if (!m_pBBoxMap)
-    m_pBBoxMap.reset(new CFX_MapPtrToPtr(16));
+    m_pBBoxMap = pdfium::MakeUnique<CFX_MapPtrToPtr>(16);
 
   return true;
 }
@@ -271,14 +262,13 @@ CFGAS_GEFont* CFGAS_GEFont::Derive(uint32_t dwFontStyles, uint16_t wCodePage) {
   return new CFGAS_GEFont(this, dwFontStyles);
 }
 
-void CFGAS_GEFont::GetFamilyName(CFX_WideString& wsFamily) const {
+CFX_WideString CFGAS_GEFont::GetFamilyName() const {
   if (!m_pFont->GetSubstFont() ||
       m_pFont->GetSubstFont()->m_Family.GetLength() == 0) {
-    wsFamily = CFX_WideString::FromLocal(m_pFont->GetFamilyName().AsStringC());
-  } else {
-    wsFamily = CFX_WideString::FromLocal(
-        m_pFont->GetSubstFont()->m_Family.AsStringC());
+    return CFX_WideString::FromLocal(m_pFont->GetFamilyName().AsStringC());
   }
+  return CFX_WideString::FromLocal(
+      m_pFont->GetSubstFont()->m_Family.AsStringC());
 }
 
 uint32_t CFGAS_GEFont::GetFontStyles() const {
@@ -329,9 +319,8 @@ bool CFGAS_GEFont::GetCharWidthInternal(FX_WCHAR wUnicode,
     if (iGlyph != 0xFFFF && pFont) {
       if (pFont == this) {
         iWidth = m_pFont->GetGlyphWidth(iGlyph);
-        if (iWidth < 0) {
+        if (iWidth < 0)
           iWidth = -1;
-        }
       } else if (pFont->GetCharWidthInternal(wUnicode, iWidth, false,
                                              bCharCode)) {
         return true;
@@ -381,26 +370,22 @@ bool CFGAS_GEFont::GetCharBBoxInternal(FX_WCHAR wUnicode,
   bbox = *static_cast<const CFX_Rect*>(pRect);
   return true;
 }
+
 bool CFGAS_GEFont::GetBBox(CFX_Rect& bbox) {
   FX_RECT rt(0, 0, 0, 0);
-  bool bRet = m_pFont->GetBBox(rt);
-  if (bRet) {
-    bbox.left = rt.left;
-    bbox.width = rt.Width();
-    bbox.top = rt.bottom;
-    bbox.height = -rt.Height();
-  }
-  return bRet;
+  if (!m_pFont->GetBBox(rt))
+    return false;
+  bbox.left = rt.left;
+  bbox.width = rt.Width();
+  bbox.top = rt.bottom;
+  bbox.height = -rt.Height();
+  return true;
 }
-int32_t CFGAS_GEFont::GetItalicAngle() const {
-  if (!m_pFont->GetSubstFont()) {
-    return 0;
-  }
-  return m_pFont->GetSubstFont()->m_ItalicAngle;
-}
+
 int32_t CFGAS_GEFont::GetGlyphIndex(FX_WCHAR wUnicode, bool bCharCode) {
   return GetGlyphIndex(wUnicode, true, nullptr, bCharCode);
 }
+
 int32_t CFGAS_GEFont::GetGlyphIndex(FX_WCHAR wUnicode,
                                     bool bRecursive,
                                     CFGAS_GEFont** ppFont,
@@ -408,19 +393,18 @@ int32_t CFGAS_GEFont::GetGlyphIndex(FX_WCHAR wUnicode,
   ASSERT(m_pFontEncoding);
   int32_t iGlyphIndex = m_pFontEncoding->GlyphFromCharCode(wUnicode);
   if (iGlyphIndex > 0) {
-    if (ppFont) {
+    if (ppFont)
       *ppFont = this;
-    }
     return iGlyphIndex;
   }
   const FGAS_FONTUSB* pFontUSB = FGAS_GetUnicodeBitField(wUnicode);
-  if (!pFontUSB) {
+  if (!pFontUSB)
     return 0xFFFF;
-  }
+
   uint16_t wBitField = pFontUSB->wBitField;
-  if (wBitField >= 128) {
+  if (wBitField >= 128)
     return 0xFFFF;
-  }
+
   auto it = m_FontMapper.find(wUnicode);
   CFGAS_GEFont* pFont = it != m_FontMapper.end() ? it->second : nullptr;
   if (pFont && pFont != this) {
@@ -435,55 +419,43 @@ int32_t CFGAS_GEFont::GetGlyphIndex(FX_WCHAR wUnicode,
       }
     }
   }
-  if (m_pFontMgr && bRecursive) {
-    CFX_WideString wsFamily;
-    GetFamilyName(wsFamily);
-    CFGAS_GEFont* pFont = m_pFontMgr->GetFontByUnicode(
-        wUnicode, GetFontStyles(), wsFamily.c_str());
+  if (!m_pFontMgr || !bRecursive)
+    return 0xFFFF;
+  CFX_WideString wsFamily = GetFamilyName();
+  pFont =
+      m_pFontMgr->GetFontByUnicode(wUnicode, GetFontStyles(), wsFamily.c_str());
 #if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
-    if (!pFont)
-      pFont = m_pFontMgr->GetFontByUnicode(wUnicode, GetFontStyles(), nullptr);
+  if (!pFont)
+    pFont = m_pFontMgr->GetFontByUnicode(wUnicode, GetFontStyles(), nullptr);
 #endif
-    if (pFont) {
-      if (pFont == this) {
-        pFont->Release();
-        return 0xFFFF;
-      }
-      m_FontMapper[wUnicode] = pFont;
-      int32_t i = m_SubstFonts.GetSize();
-      m_SubstFonts.Add(pFont);
-      iGlyphIndex = pFont->GetGlyphIndex(wUnicode, false, nullptr, bCharCode);
-      if (iGlyphIndex != 0xFFFF) {
-        iGlyphIndex |= ((i + 1) << 24);
-        if (ppFont)
-          *ppFont = pFont;
-        return iGlyphIndex;
-      }
-    }
+  if (!pFont)
+    return 0xFFFF;
+  if (pFont == this) {
+    pFont->Release();
+    return 0xFFFF;
   }
-  return 0xFFFF;
+  m_FontMapper[wUnicode] = pFont;
+  int32_t i = m_SubstFonts.GetSize();
+  m_SubstFonts.Add(pFont);
+  iGlyphIndex = pFont->GetGlyphIndex(wUnicode, false, nullptr, bCharCode);
+  if (iGlyphIndex == 0xFFFF)
+    return 0xFFFF;
+  iGlyphIndex |= ((i + 1) << 24);
+  if (ppFont)
+    *ppFont = pFont;
+  return iGlyphIndex;
 }
+
 int32_t CFGAS_GEFont::GetAscent() const {
   return m_pFont->GetAscent();
 }
+
 int32_t CFGAS_GEFont::GetDescent() const {
   return m_pFont->GetDescent();
 }
-void CFGAS_GEFont::Reset() {
-  for (int32_t i = 0; i < m_SubstFonts.GetSize(); i++)
-    m_SubstFonts[i]->Reset();
-  if (m_pCharWidthMap) {
-    m_pCharWidthMap->RemoveAll();
-  }
-  if (m_pBBoxMap) {
-    m_pBBoxMap->RemoveAll();
-  }
-  if (m_pRectArray) {
-    m_pRectArray->RemoveAll(false);
-  }
-}
+
 CFGAS_GEFont* CFGAS_GEFont::GetSubstFont(int32_t iGlyphIndex) const {
-  iGlyphIndex = ((uint32_t)iGlyphIndex) >> 24;
+  iGlyphIndex = static_cast<uint32_t>(iGlyphIndex) >> 24;
   return iGlyphIndex == 0 ? const_cast<CFGAS_GEFont*>(this)
                           : m_SubstFonts[iGlyphIndex - 1];
 }

@@ -10,8 +10,8 @@
 #include <utility>
 
 #include "xfa/fde/tto/fde_textout.h"
-#include "xfa/fgas/font/fgas_gefont.h"
 #include "xfa/fgas/font/cfgas_fontmgr.h"
+#include "xfa/fgas/font/cfgas_gefont.h"
 #include "xfa/fwl/core/cfwl_themebackground.h"
 #include "xfa/fwl/core/cfwl_themepart.h"
 #include "xfa/fwl/core/cfwl_themetext.h"

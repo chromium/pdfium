@@ -13,7 +13,7 @@
 #include "core/fpdfapi/font/cpdf_font.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
-#include "xfa/fgas/font/fgas_gefont.h"
+#include "xfa/fgas/font/cfgas_gefont.h"
 #include "xfa/fxfa/xfa_ffapp.h"
 #include "xfa/fxfa/xfa_ffdoc.h"
 

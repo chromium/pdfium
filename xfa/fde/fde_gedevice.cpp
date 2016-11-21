@@ -16,7 +16,7 @@
 #include "xfa/fde/cfde_path.h"
 #include "xfa/fde/fde_object.h"
 #include "xfa/fgas/font/cfgas_fontmgr.h"
-#include "xfa/fgas/font/fgas_gefont.h"
+#include "xfa/fgas/font/cfgas_gefont.h"
 
 CFDE_RenderDevice::CFDE_RenderDevice(CFX_RenderDevice* pDevice,
                                      bool bOwnerDevice)

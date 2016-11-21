@@ -17,7 +17,7 @@
 #include "xfa/fde/fde_gedevice.h"
 #include "xfa/fde/fde_render.h"
 #include "xfa/fde/ifde_txtedtpage.h"
-#include "xfa/fgas/font/fgas_gefont.h"
+#include "xfa/fgas/font/cfgas_gefont.h"
 #include "xfa/fwl/core/cfwl_evtcheckword.h"
 #include "xfa/fwl/core/cfwl_evttextchanged.h"
 #include "xfa/fwl/core/cfwl_evttextfull.h"
