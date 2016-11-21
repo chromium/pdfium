@@ -55,11 +55,6 @@ class CFWL_SysBtn {
   uint32_t m_dwState;
 };
 
-enum FORM_RESIZETYPE {
-  FORM_RESIZETYPE_None = 0,
-  FORM_RESIZETYPE_Cap,
-};
-
 struct RestoreInfo {
   RestoreInfo();
   ~RestoreInfo();
@@ -154,7 +149,6 @@ class IFWL_Form : public IFWL_Widget {
   FX_FLOAT m_fCYBorder;
   int32_t m_iCaptureBtn;
   int32_t m_iSysBox;
-  int32_t m_eResizeType;
   bool m_bLButtonDown;
   bool m_bMaximized;
   bool m_bSetMaximize;

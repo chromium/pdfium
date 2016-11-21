@@ -54,7 +54,6 @@ IFWL_Form::IFWL_Form(const IFWL_App* app,
       m_fCYBorder(0),
       m_iCaptureBtn(-1),
       m_iSysBox(0),
-      m_eResizeType(FORM_RESIZETYPE_None),
       m_bLButtonDown(false),
       m_bMaximized(false),
       m_bSetMaximize(false),
@@ -730,7 +729,6 @@ void IFWL_Form::OnDrawWidget(CFX_Graphics* pGraphics,
 void IFWL_Form::OnLButtonDown(CFWL_MsgMouse* pMsg) {
   SetGrab(true);
   m_bLButtonDown = true;
-  m_eResizeType = FORM_RESIZETYPE_None;
 
   CFWL_SysBtn* pPressBtn = GetSysBtnAtPoint(pMsg->m_fx, pMsg->m_fy);
   m_iCaptureBtn = GetSysBtnIndex(pPressBtn);
@@ -743,8 +741,6 @@ void IFWL_Form::OnLButtonDown(CFWL_MsgMouse* pMsg) {
   if (pPressBtn) {
     pPressBtn->SetPressed();
     Repaint(&pPressBtn->m_rtBtn);
-  } else if (rtCap.Contains(pMsg->m_fx, pMsg->m_fy)) {
-    m_eResizeType = FORM_RESIZETYPE_Cap;
   }
 
   m_InfoStart.m_ptStart = CFX_PointF(pMsg->m_fx, pMsg->m_fy);
