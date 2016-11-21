@@ -23,7 +23,6 @@ class IFWL_ThemeProvider {
   virtual void DrawText(CFWL_ThemeText* pParams) = 0;
   virtual void* GetCapacity(CFWL_ThemePart* pThemePart,
                             CFWL_WidgetCapacity dwCapacity) = 0;
-  virtual bool IsCustomizedLayout(IFWL_Widget* pWidget) = 0;
   virtual void CalcTextRect(CFWL_ThemeText* pParams, CFX_RectF& rect) = 0;
 };
 

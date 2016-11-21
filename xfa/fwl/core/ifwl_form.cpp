@@ -55,7 +55,6 @@ IFWL_Form::IFWL_Form(const IFWL_App* app,
       m_bLButtonDown(false),
       m_bMaximized(false),
       m_bSetMaximize(false),
-      m_bCustomizeLayout(false),
       m_bDoModalFlag(false) {
   m_rtRelative.Reset();
   m_rtRestore.Reset();
@@ -416,50 +415,41 @@ void IFWL_Form::ResetSysBtn() {
       *static_cast<FX_FLOAT*>(GetThemeCapacity(CFWL_WidgetCapacity::CYBorder));
   RemoveSysButtons();
 
-  IFWL_ThemeProvider* pTheme = m_pProperties->m_pThemeProvider;
-  m_bCustomizeLayout = pTheme->IsCustomizedLayout(this);
-
   m_iSysBox = 0;
   if (m_pProperties->m_dwStyles & FWL_WGTSTYLE_CloseBox) {
     m_pCloseBox = new CFWL_SysBtn;
-    if (!m_bCustomizeLayout) {
-      m_pCloseBox->m_rtBtn.Set(
+    m_pCloseBox->m_rtBtn.Set(
+        m_rtRelative.right() - kSystemButtonMargin - kSystemButtonSize,
+        kSystemButtonMargin, kSystemButtonSize, kSystemButtonSize);
+    m_iSysBox++;
+  }
+  if (m_pProperties->m_dwStyles & FWL_WGTSTYLE_MaximizeBox) {
+    m_pMaxBox = new CFWL_SysBtn;
+    if (m_pCloseBox) {
+      m_pMaxBox->m_rtBtn.Set(
+          m_pCloseBox->m_rtBtn.left - kSystemButtonSpan - kSystemButtonSize,
+          m_pCloseBox->m_rtBtn.top, kSystemButtonSize, kSystemButtonSize);
+    } else {
+      m_pMaxBox->m_rtBtn.Set(
           m_rtRelative.right() - kSystemButtonMargin - kSystemButtonSize,
           kSystemButtonMargin, kSystemButtonSize, kSystemButtonSize);
     }
     m_iSysBox++;
   }
-  if (m_pProperties->m_dwStyles & FWL_WGTSTYLE_MaximizeBox) {
-    m_pMaxBox = new CFWL_SysBtn;
-    if (!m_bCustomizeLayout) {
-      if (m_pCloseBox) {
-        m_pMaxBox->m_rtBtn.Set(
-            m_pCloseBox->m_rtBtn.left - kSystemButtonSpan - kSystemButtonSize,
-            m_pCloseBox->m_rtBtn.top, kSystemButtonSize, kSystemButtonSize);
-      } else {
-        m_pMaxBox->m_rtBtn.Set(
-            m_rtRelative.right() - kSystemButtonMargin - kSystemButtonSize,
-            kSystemButtonMargin, kSystemButtonSize, kSystemButtonSize);
-      }
-    }
-    m_iSysBox++;
-  }
   if (m_pProperties->m_dwStyles & FWL_WGTSTYLE_MinimizeBox) {
     m_pMinBox = new CFWL_SysBtn;
-    if (!m_bCustomizeLayout) {
-      if (m_pMaxBox) {
-        m_pMinBox->m_rtBtn.Set(
-            m_pMaxBox->m_rtBtn.left - kSystemButtonSpan - kSystemButtonSize,
-            m_pMaxBox->m_rtBtn.top, kSystemButtonSize, kSystemButtonSize);
-      } else if (m_pCloseBox) {
-        m_pMinBox->m_rtBtn.Set(
-            m_pCloseBox->m_rtBtn.left - kSystemButtonSpan - kSystemButtonSize,
-            m_pCloseBox->m_rtBtn.top, kSystemButtonSize, kSystemButtonSize);
-      } else {
-        m_pMinBox->m_rtBtn.Set(
-            m_rtRelative.right() - kSystemButtonMargin - kSystemButtonSize,
-            kSystemButtonMargin, kSystemButtonSize, kSystemButtonSize);
-      }
+    if (m_pMaxBox) {
+      m_pMinBox->m_rtBtn.Set(
+          m_pMaxBox->m_rtBtn.left - kSystemButtonSpan - kSystemButtonSize,
+          m_pMaxBox->m_rtBtn.top, kSystemButtonSize, kSystemButtonSize);
+    } else if (m_pCloseBox) {
+      m_pMinBox->m_rtBtn.Set(
+          m_pCloseBox->m_rtBtn.left - kSystemButtonSpan - kSystemButtonSize,
+          m_pCloseBox->m_rtBtn.top, kSystemButtonSize, kSystemButtonSize);
+    } else {
+      m_pMinBox->m_rtBtn.Set(
+          m_rtRelative.right() - kSystemButtonMargin - kSystemButtonSize,
+          kSystemButtonMargin, kSystemButtonSize, kSystemButtonSize);
     }
     m_iSysBox++;
   }

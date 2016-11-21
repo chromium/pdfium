@@ -97,7 +97,6 @@ class IFWL_Form : public IFWL_Widget {
   bool m_bLButtonDown;
   bool m_bMaximized;
   bool m_bSetMaximize;
-  bool m_bCustomizeLayout;
   bool m_bDoModalFlag;
 };
 

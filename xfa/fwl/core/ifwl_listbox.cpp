@@ -638,48 +638,24 @@ CFX_SizeF IFWL_ListBox::CalcSize(bool bAutoSize) {
     }
   }
 
-  FX_FLOAT fWidth = 0;
-  if (m_pProperties->m_pThemeProvider->IsCustomizedLayout(this)) {
-    IFWL_ListBox::DataProvider* pData =
-        static_cast<IFWL_ListBox::DataProvider*>(
-            m_pProperties->m_pDataProvider);
-    int32_t iCount = pData->CountItems(this);
-    for (int32_t i = 0; i < iCount; i++) {
-      CFWL_ListItem* pItem = pData->GetItem(this, i);
-      if (!bAutoSize) {
-        CFX_RectF rtItem;
-        rtItem.Set(m_rtClient.left, m_rtClient.top + fs.y, 0, 0);
-        IFWL_ListBox::DataProvider* pBox =
-            static_cast<IFWL_ListBox::DataProvider*>(
-                m_pProperties->m_pDataProvider);
-        pBox->SetItemRect(this, pItem, rtItem);
-      }
-      if (fs.x < 0) {
-        fs.x = 0;
-        fWidth = 0;
-      }
-    }
-  } else {
-    fWidth = GetMaxTextWidth();
-    fWidth += 2 * kItemTextMargin;
-    if (!bAutoSize) {
-      FX_FLOAT fActualWidth =
-          m_rtClient.width - rtUIMargin.left - rtUIMargin.width;
-      fWidth = std::max(fWidth, fActualWidth);
-    }
+  FX_FLOAT fWidth = GetMaxTextWidth();
+  fWidth += 2 * kItemTextMargin;
+  if (!bAutoSize) {
+    FX_FLOAT fActualWidth =
+        m_rtClient.width - rtUIMargin.left - rtUIMargin.width;
+    fWidth = std::max(fWidth, fActualWidth);
+  }
 
-    IFWL_ListBox::DataProvider* pData =
-        static_cast<IFWL_ListBox::DataProvider*>(
-            m_pProperties->m_pDataProvider);
-    m_fItemHeight = CalcItemHeight();
-    if ((GetStylesEx() & FWL_STYLEEXT_LTB_Icon))
-      fWidth += m_fItemHeight;
+  IFWL_ListBox::DataProvider* pData =
+      static_cast<IFWL_ListBox::DataProvider*>(m_pProperties->m_pDataProvider);
+  m_fItemHeight = CalcItemHeight();
+  if ((GetStylesEx() & FWL_STYLEEXT_LTB_Icon))
+    fWidth += m_fItemHeight;
 
-    int32_t iCount = pData->CountItems(this);
-    for (int32_t i = 0; i < iCount; i++) {
-      CFWL_ListItem* htem = pData->GetItem(this, i);
-      GetItemSize(fs, htem, fWidth, m_fItemHeight, bAutoSize);
-    }
+  int32_t iCount = pData->CountItems(this);
+  for (int32_t i = 0; i < iCount; i++) {
+    CFWL_ListItem* htem = pData->GetItem(this, i);
+    GetItemSize(fs, htem, fWidth, m_fItemHeight, bAutoSize);
   }
   if (bAutoSize)
     return fs;

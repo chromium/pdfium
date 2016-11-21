@@ -116,7 +116,6 @@ class CFWL_WidgetTP {
   virtual void DrawText(CFWL_ThemeText* pParams);
   virtual void* GetCapacity(CFWL_ThemePart* pThemePart,
                             CFWL_WidgetCapacity dwCapacity);
-  virtual bool IsCustomizedLayout(IFWL_Widget* pWidget);
   virtual void CalcTextRect(CFWL_ThemeText* pParams, CFX_RectF& rect);
 
   void SetFont(IFWL_Widget* pWidget,

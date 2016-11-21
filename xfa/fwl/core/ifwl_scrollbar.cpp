@@ -46,7 +46,6 @@ IFWL_ScrollBar::IFWL_ScrollBar(
       m_bMouseDown(false),
       m_fButtonLen(0),
       m_bMinSize(false),
-      m_bCustomLayout(false),
       m_fMinThumb(FWL_SCROLLBAR_MinThumb),
       m_Timer(this) {
   m_rtClient.Reset();
@@ -176,7 +175,6 @@ void IFWL_ScrollBar::Layout() {
   part.m_pWidget = this;
   m_fMinThumb = *static_cast<FX_FLOAT*>(
       pTheme->GetCapacity(&part, CFWL_WidgetCapacity::Size));
-  m_bCustomLayout = pTheme->IsCustomizedLayout(this);
   GetClientRect(m_rtClient);
   CalcButtonLen();
   CalcMinButtonRect(m_rtMinBtn);
@@ -198,9 +196,6 @@ void IFWL_ScrollBar::CalcButtonLen() {
 }
 
 void IFWL_ScrollBar::CalcMinButtonRect(CFX_RectF& rect) {
-  if (m_bCustomLayout)
-    return;
-
   rect.left = m_rtClient.left;
   rect.top = m_rtClient.top;
   rect.width = IsVertical() ? m_rtClient.width : m_fButtonLen;
@@ -208,9 +203,6 @@ void IFWL_ScrollBar::CalcMinButtonRect(CFX_RectF& rect) {
 }
 
 void IFWL_ScrollBar::CalcMaxButtonRect(CFX_RectF& rect) {
-  if (m_bCustomLayout)
-    return;
-
   rect.left =
       IsVertical() ? m_rtClient.left : m_rtClient.right() - m_fButtonLen;
   rect.top = IsVertical() ? m_rtClient.bottom() - m_fButtonLen : m_rtClient.top;
@@ -241,21 +233,9 @@ void IFWL_ScrollBar::CalcThumbButtonRect(CFX_RectF& rect) {
   CFX_RectF rtClient = m_rtClient;
   FX_FLOAT fLength = IsVertical() ? rtClient.height : rtClient.width;
   FX_FLOAT fSize = m_fButtonLen;
-  if (m_bCustomLayout) {
-    if (IsVertical()) {
-      fLength = fLength - m_rtMinBtn.height - m_rtMaxBtn.height;
-      if (fLength < m_rtMinBtn.height || fLength < m_rtMaxBtn.height)
-        fLength = 0.0f;
-    } else {
-      fLength = fLength - m_rtMinBtn.width - m_rtMaxBtn.width;
-      if (fLength < m_rtMinBtn.width || fLength < m_rtMaxBtn.width)
-        fLength = 0.0f;
-    }
-  } else {
-    fLength -= fSize * 2.0f;
-    if (fLength < fSize)
-      fLength = 0.0f;
-  }
+  fLength -= fSize * 2.0f;
+  if (fLength < fSize)
+    fLength = 0.0f;
 
   FX_FLOAT fThumbSize = fLength * fLength / (fRange + fLength);
   fThumbSize = std::max(fThumbSize, m_fMinThumb);
@@ -266,43 +246,17 @@ void IFWL_ScrollBar::CalcThumbButtonRect(CFX_RectF& rect) {
   if (!fRange)
     return;
 
-  if (m_bCustomLayout) {
-    FX_FLOAT iPos = fDiff * (fTrackPos - m_fRangeMin) / fRange;
-    rect.left = rtClient.left;
-    if (!IsVertical()) {
-      if ((m_rtMinBtn.right() == m_rtMaxBtn.left && m_rtMinBtn.width > 0 &&
-           m_rtMaxBtn.width > 0) ||
-          (0 == m_rtMinBtn.width && 0 == m_rtMaxBtn.width)) {
-        rect.left += iPos;
-      } else {
-        rect.left += m_rtMinBtn.right() + iPos;
-      }
-    }
-    rect.top = rtClient.top;
-    if (IsVertical()) {
-      if ((m_rtMinBtn.bottom() == m_rtMaxBtn.top && m_rtMinBtn.height > 0 &&
-           m_rtMaxBtn.height > 0) ||
-          (0 == m_rtMinBtn.height && 0 == m_rtMaxBtn.height)) {
-        rect.top += iPos;
-      } else {
-        rect.top += m_rtMinBtn.bottom() + iPos;
-      }
-    }
-    rect.width = IsVertical() ? rtClient.width : fThumbSize;
-    rect.height = IsVertical() ? fThumbSize : rtClient.height;
-  } else {
-    FX_FLOAT iPos = fSize + fDiff * (fTrackPos - m_fRangeMin) / fRange;
-    rect.left = rtClient.left;
-    if (!IsVertical())
-      rect.left += iPos;
+  FX_FLOAT iPos = fSize + fDiff * (fTrackPos - m_fRangeMin) / fRange;
+  rect.left = rtClient.left;
+  if (!IsVertical())
+    rect.left += iPos;
 
-    rect.top = rtClient.top;
-    if (IsVertical())
-      rect.top += iPos;
+  rect.top = rtClient.top;
+  if (IsVertical())
+    rect.top += iPos;
 
-    rect.width = IsVertical() ? rtClient.width : fThumbSize;
-    rect.height = IsVertical() ? fThumbSize : rtClient.height;
-  }
+  rect.width = IsVertical() ? rtClient.width : fThumbSize;
+  rect.height = IsVertical() ? fThumbSize : rtClient.height;
 }
 
 void IFWL_ScrollBar::CalcMinTrackRect(CFX_RectF& rect) {
@@ -320,22 +274,6 @@ void IFWL_ScrollBar::CalcMinTrackRect(CFX_RectF& rect) {
   bool bVertical = IsVertical();
   rect.width = bVertical ? m_rtClient.width : ix;
   rect.height = bVertical ? iy : m_rtClient.height;
-  if (!m_bCustomLayout)
-    return;
-
-  if (bVertical) {
-    if (m_rtMinBtn.height == 0 && m_rtMaxBtn.height == 0) {
-      rect.top = m_rtClient.top;
-    } else if (m_rtMinBtn.top < m_rtThumb.top) {
-      rect.top = m_rtMinBtn.bottom();
-      rect.height -= (m_rtMinBtn.bottom() - m_rtClient.top);
-    }
-  } else if (m_rtMinBtn.width == 0 && m_rtMaxBtn.width == 0) {
-    rect.left = m_rtClient.left;
-  } else if (m_rtMinBtn.left < m_rtThumb.left) {
-    rect.left = m_rtMinBtn.right();
-    rect.width -= (m_rtMinBtn.right() - m_rtClient.left);
-  }
 }
 
 void IFWL_ScrollBar::CalcMaxTrackRect(CFX_RectF& rect) {
@@ -351,22 +289,6 @@ void IFWL_ScrollBar::CalcMaxTrackRect(CFX_RectF& rect) {
   rect.top = bVertical ? iy : m_rtClient.top;
   rect.width = bVertical ? m_rtClient.width : m_rtClient.right() - ix;
   rect.height = bVertical ? m_rtClient.bottom() - iy : m_rtClient.height;
-  if (!m_bCustomLayout)
-    return;
-
-  if (bVertical) {
-    if (m_rtMinBtn.top > m_rtThumb.top && m_rtMinBtn.height > 0 &&
-        m_rtMaxBtn.height > 0) {
-      rect.height -= (m_rtClient.bottom() - m_rtMinBtn.top);
-    } else if (m_rtMinBtn.height > 0 && m_rtMaxBtn.height > 0) {
-      rect.height -= (m_rtClient.bottom() - m_rtMaxBtn.top);
-    }
-  } else if (m_rtMinBtn.left > m_rtThumb.left && m_rtMinBtn.width > 0 &&
-             m_rtMaxBtn.width > 0) {
-    rect.width -= (m_rtClient.right() - m_rtMinBtn.left);
-  } else if (m_rtMinBtn.width > 0 && m_rtMaxBtn.width > 0) {
-    rect.width -= (m_rtClient.right() - m_rtMaxBtn.left);
-  }
 }
 
 FX_FLOAT IFWL_ScrollBar::GetTrackPointPos(FX_FLOAT fx, FX_FLOAT fy) {
@@ -374,44 +296,22 @@ FX_FLOAT IFWL_ScrollBar::GetTrackPointPos(FX_FLOAT fx, FX_FLOAT fy) {
   FX_FLOAT fDiffY = fy - m_cpTrackPointY;
   FX_FLOAT fRange = m_fRangeMax - m_fRangeMin;
   FX_FLOAT fPos;
-  if (m_bCustomLayout) {
-    if (IsVertical()) {
-      if (m_rtMinBtn.height == 0 && m_rtMaxBtn.height == 0) {
-        fPos = fRange * fDiffY / (m_rtClient.height - m_rtThumb.height);
-      } else if (m_rtMinBtn.bottom() == m_rtMaxBtn.top) {
-        fPos = fRange * fDiffY /
-               (m_rtMinBtn.top - m_rtClient.top - m_rtThumb.height);
-      } else {
-        fPos = fRange * fDiffY /
-               (m_rtMaxBtn.top - m_rtMinBtn.bottom() - m_rtThumb.height);
-      }
-    } else {
-      if (m_rtMinBtn.width == 0 && m_rtMaxBtn.width == 0) {
-        fPos = fRange * fDiffX / (m_rtClient.width - m_rtThumb.width);
-      } else if (m_rtMinBtn.right() == m_rtMaxBtn.left) {
-        fPos = fRange * fDiffX /
-               (m_rtMinBtn.left - m_rtClient.left - m_rtThumb.width);
-      } else {
-        fPos = fRange * fDiffX /
-               (m_rtMaxBtn.left - m_rtMinBtn.right() - m_rtThumb.width);
-      }
-    }
+
+  if (IsVertical()) {
+    fPos = fRange * fDiffY /
+           (m_rtMaxBtn.top - m_rtMinBtn.bottom() - m_rtThumb.height);
   } else {
-    if (IsVertical()) {
-      fPos = fRange * fDiffY /
-             (m_rtMaxBtn.top - m_rtMinBtn.bottom() - m_rtThumb.height);
-    } else {
-      fPos = fRange * fDiffX /
-             (m_rtMaxBtn.left - m_rtMinBtn.right() - m_rtThumb.width);
-    }
+    fPos = fRange * fDiffX /
+           (m_rtMaxBtn.left - m_rtMinBtn.right() - m_rtThumb.width);
   }
+
   fPos += m_fLastTrackPos;
   return std::min(std::max(fPos, m_fRangeMin), m_fRangeMax);
 }
 
 void IFWL_ScrollBar::GetTrackRect(CFX_RectF& rect, bool bLower) {
   bool bDisabled = !!(m_pProperties->m_dwStates & FWL_WGTSTATE_Disabled);
-  if (bDisabled || m_bCustomLayout) {
+  if (bDisabled) {
     rect = bLower ? m_rtMinTrack : m_rtMaxTrack;
     return;
   }

@@ -310,10 +310,6 @@ void* CXFA_FWLTheme::GetCapacity(CFWL_ThemePart* pThemePart,
   return GetTheme(pThemePart->m_pWidget)->GetCapacity(pThemePart, dwCapacity);
 }
 
-bool CXFA_FWLTheme::IsCustomizedLayout(IFWL_Widget* pWidget) {
-  return GetTheme(pWidget)->IsCustomizedLayout(pWidget);
-}
-
 void CXFA_FWLTheme::CalcTextRect(CFWL_ThemeText* pParams, CFX_RectF& rect) {
   if (pParams->m_pWidget->GetClassID() == FWL_Type::MonthCalendar) {
     CXFA_FFWidget* pWidget = XFA_ThemeGetOuterWidget(pParams->m_pWidget);

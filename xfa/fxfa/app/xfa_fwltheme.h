@@ -34,7 +34,6 @@ class CXFA_FWLTheme final : public IFWL_ThemeProvider {
   void DrawText(CFWL_ThemeText* pParams) override;
   void* GetCapacity(CFWL_ThemePart* pThemePart,
                     CFWL_WidgetCapacity dwCapacity) override;
-  bool IsCustomizedLayout(IFWL_Widget* pWidget) override;
   void CalcTextRect(CFWL_ThemeText* pParams, CFX_RectF& rect) override;
 
  private:

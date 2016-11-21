@@ -143,7 +143,6 @@ class IFWL_ScrollBar : public IFWL_Widget {
   CFX_RectF m_rtMaxBtn;
   CFX_RectF m_rtMinTrack;
   CFX_RectF m_rtMaxTrack;
-  bool m_bCustomLayout;
   FX_FLOAT m_fMinThumb;
   IFWL_ScrollBar::Timer m_Timer;
 };

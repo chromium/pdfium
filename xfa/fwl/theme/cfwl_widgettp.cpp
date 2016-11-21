@@ -117,10 +117,6 @@ void* CFWL_WidgetTP::GetCapacity(CFWL_ThemePart* pThemePart,
   return &m_fValue;
 }
 
-bool CFWL_WidgetTP::IsCustomizedLayout(IFWL_Widget* pWidget) {
-  return false;
-}
-
 void CFWL_WidgetTP::CalcTextRect(CFWL_ThemeText* pParams, CFX_RectF& rect) {
   if (!pParams || !m_pTextOut)
     return;
