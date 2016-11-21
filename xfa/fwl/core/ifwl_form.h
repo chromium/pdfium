@@ -55,14 +55,6 @@ class CFWL_SysBtn {
   uint32_t m_dwState;
 };
 
-struct RestoreInfo {
-  RestoreInfo();
-  ~RestoreInfo();
-
-  CFX_PointF m_ptStart;
-  CFX_SizeF m_szStart;
-};
-
 class CFWL_MsgMouse;
 class CFWL_NoteLoop;
 class IFWL_Widget;
@@ -144,7 +136,6 @@ class IFWL_Form : public IFWL_Widget {
   CFWL_SysBtn* m_pCaptionBox;
   std::unique_ptr<CFWL_NoteLoop> m_pNoteLoop;
   IFWL_Widget* m_pSubFocus;
-  RestoreInfo m_InfoStart;
   FX_FLOAT m_fCXBorder;
   FX_FLOAT m_fCYBorder;
   int32_t m_iCaptureBtn;

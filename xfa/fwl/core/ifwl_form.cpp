@@ -34,10 +34,6 @@ const uint8_t kCornerEnlarge = 10;
 
 }  // namespace
 
-RestoreInfo::RestoreInfo() {}
-
-RestoreInfo::~RestoreInfo() {}
-
 IFWL_Form::IFWL_Form(const IFWL_App* app,
                      std::unique_ptr<CFWL_WidgetProperties> properties,
                      IFWL_Widget* pOuter)
@@ -738,14 +734,11 @@ void IFWL_Form::OnLButtonDown(CFWL_MsgMouse* pMsg) {
             m_rtCaption.width - kSystemButtonSize * m_iSysBox - 2 * m_fCYBorder,
             m_rtCaption.height - m_fCXBorder);
 
-  if (pPressBtn) {
-    pPressBtn->SetPressed();
-    Repaint(&pPressBtn->m_rtBtn);
-  }
+  if (!pPressBtn)
+    return;
 
-  m_InfoStart.m_ptStart = CFX_PointF(pMsg->m_fx, pMsg->m_fy);
-  m_InfoStart.m_szStart = CFX_SizeF(m_pProperties->m_rtWidget.width,
-                                    m_pProperties->m_rtWidget.height);
+  pPressBtn->SetPressed();
+  Repaint(&pPressBtn->m_rtBtn);
 }
 
 void IFWL_Form::OnLButtonUp(CFWL_MsgMouse* pMsg) {
