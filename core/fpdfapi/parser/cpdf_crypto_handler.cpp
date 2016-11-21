@@ -126,7 +126,7 @@ void* CPDF_CryptoHandler::CryptStart(uint32_t objnum,
     }
     return pContext;
   }
-  void* pContext = FX_Alloc(uint8_t, 1040);
+  CRYPT_rc4_context* pContext = FX_Alloc(CRYPT_rc4_context, 1);
   CRYPT_ArcFourSetup(pContext, realkey, realkeylen);
   return pContext;
 }
@@ -146,10 +146,11 @@ bool CPDF_CryptoHandler::CryptStream(void* context,
   if (m_Cipher == FXCIPHER_RC4) {
     int old_size = dest_buf.GetSize();
     dest_buf.AppendBlock(src_buf, src_size);
-    CRYPT_ArcFourCrypt(context, dest_buf.GetBuffer() + old_size, src_size);
+    CRYPT_ArcFourCrypt(reinterpret_cast<CRYPT_rc4_context*>(context),
+                       dest_buf.GetBuffer() + old_size, src_size);
     return true;
   }
-  AESCryptContext* pContext = (AESCryptContext*)context;
+  AESCryptContext* pContext = reinterpret_cast<AESCryptContext*>(context);
   if (pContext->m_bIV && bEncrypt) {
     dest_buf.AppendBlock(pContext->m_Block, 16);
     pContext->m_bIV = false;

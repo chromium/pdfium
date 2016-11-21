@@ -9,11 +9,10 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-struct rc4_state {
-  int x, y, m[256];
-};
-void CRYPT_ArcFourSetup(void* context, const uint8_t* key, uint32_t length) {
-  rc4_state* s = (rc4_state*)context;
+
+void CRYPT_ArcFourSetup(CRYPT_rc4_context* s,
+                        const uint8_t* key,
+                        uint32_t length) {
   int i, j, k, *m, a;
   s->x = 0;
   s->y = 0;
@@ -32,8 +31,10 @@ void CRYPT_ArcFourSetup(void* context, const uint8_t* key, uint32_t length) {
     }
   }
 }
-void CRYPT_ArcFourCrypt(void* context, unsigned char* data, uint32_t length) {
-  struct rc4_state* s = (struct rc4_state*)context;
+
+void CRYPT_ArcFourCrypt(CRYPT_rc4_context* s,
+                        unsigned char* data,
+                        uint32_t length) {
   int i, x, y, *m, a, b;
   x = s->x;
   y = s->y;
@@ -49,14 +50,16 @@ void CRYPT_ArcFourCrypt(void* context, unsigned char* data, uint32_t length) {
   s->x = x;
   s->y = y;
 }
+
 void CRYPT_ArcFourCryptBlock(uint8_t* pData,
                              uint32_t size,
                              const uint8_t* key,
                              uint32_t keylen) {
-  rc4_state s;
+  CRYPT_rc4_context s;
   CRYPT_ArcFourSetup(&s, key, keylen);
   CRYPT_ArcFourCrypt(&s, pData, size);
 }
+
 #define GET_UINT32(n, b, i)                            \
   {                                                    \
     (n) = (uint32_t)((uint8_t*)b)[(i)] |               \
@@ -71,7 +74,8 @@ void CRYPT_ArcFourCryptBlock(uint8_t* pData,
     (((uint8_t*)b)[(i) + 2]) = (uint8_t)(((n) >> 16) & 0xFF); \
     (((uint8_t*)b)[(i) + 3]) = (uint8_t)(((n) >> 24) & 0xFF); \
   }
-void md5_process(struct CRYPT_md5_context* ctx, const uint8_t data[64]) {
+
+void md5_process(CRYPT_md5_context* ctx, const uint8_t data[64]) {
   uint32_t A, B, C, D, X[16];
   GET_UINT32(X[0], data, 0);
   GET_UINT32(X[1], data, 4);
@@ -176,8 +180,8 @@ void md5_process(struct CRYPT_md5_context* ctx, const uint8_t data[64]) {
   ctx->state[2] += C;
   ctx->state[3] += D;
 }
-void CRYPT_MD5Start(void* context) {
-  struct CRYPT_md5_context* ctx = (struct CRYPT_md5_context*)context;
+
+void CRYPT_MD5Start(CRYPT_md5_context* ctx) {
   ctx->total[0] = 0;
   ctx->total[1] = 0;
   ctx->state[0] = 0x67452301;
@@ -185,8 +189,10 @@ void CRYPT_MD5Start(void* context) {
   ctx->state[2] = 0x98BADCFE;
   ctx->state[3] = 0x10325476;
 }
-void CRYPT_MD5Update(void* pctx, const uint8_t* input, uint32_t length) {
-  struct CRYPT_md5_context* ctx = (struct CRYPT_md5_context*)pctx;
+
+void CRYPT_MD5Update(CRYPT_md5_context* ctx,
+                     const uint8_t* input,
+                     uint32_t length) {
   uint32_t left, fill;
   if (!length) {
     return;
@@ -213,12 +219,13 @@ void CRYPT_MD5Update(void* pctx, const uint8_t* input, uint32_t length) {
     FXSYS_memcpy((void*)(ctx->buffer + left), (void*)input, length);
   }
 }
+
 const uint8_t md5_padding[64] = {
     0x80, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0,    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0,    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-void CRYPT_MD5Finish(void* pctx, uint8_t digest[16]) {
-  struct CRYPT_md5_context* ctx = (struct CRYPT_md5_context*)pctx;
+
+void CRYPT_MD5Finish(CRYPT_md5_context* ctx, uint8_t digest[16]) {
   uint32_t last, padn;
   uint8_t msglen[8];
   PUT_UINT32(ctx->total[0], msglen, 0);
@@ -232,6 +239,7 @@ void CRYPT_MD5Finish(void* pctx, uint8_t digest[16]) {
   PUT_UINT32(ctx->state[2], digest, 8);
   PUT_UINT32(ctx->state[3], digest, 12);
 }
+
 void CRYPT_MD5Generate(const uint8_t* input,
                        uint32_t length,
                        uint8_t digest[16]) {
@@ -240,6 +248,7 @@ void CRYPT_MD5Generate(const uint8_t* input,
   CRYPT_MD5Update(&ctx, input, length);
   CRYPT_MD5Finish(&ctx, digest);
 }
+
 #ifdef __cplusplus
 };
 #endif

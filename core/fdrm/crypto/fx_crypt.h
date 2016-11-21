@@ -13,6 +13,12 @@
 extern "C" {
 #endif
 
+struct CRYPT_rc4_context {
+  int32_t x;
+  int32_t y;
+  int32_t m[256];
+};
+
 struct CRYPT_md5_context {
   uint32_t total[2];
   uint32_t state[4];
@@ -23,8 +29,12 @@ void CRYPT_ArcFourCryptBlock(uint8_t* data,
                              uint32_t size,
                              const uint8_t* key,
                              uint32_t keylen);
-void CRYPT_ArcFourSetup(void* context, const uint8_t* key, uint32_t length);
-void CRYPT_ArcFourCrypt(void* context, uint8_t* data, uint32_t size);
+void CRYPT_ArcFourSetup(CRYPT_rc4_context* context,
+                        const uint8_t* key,
+                        uint32_t length);
+void CRYPT_ArcFourCrypt(CRYPT_rc4_context* context,
+                        uint8_t* data,
+                        uint32_t size);
 void CRYPT_AESSetKey(void* context,
                      uint32_t blocklen,
                      const uint8_t* key,
@@ -40,9 +50,11 @@ void CRYPT_AESEncrypt(void* context,
                       const uint8_t* src,
                       uint32_t size);
 void CRYPT_MD5Generate(const uint8_t* data, uint32_t size, uint8_t digest[16]);
-void CRYPT_MD5Start(void* context);
-void CRYPT_MD5Update(void* context, const uint8_t* data, uint32_t size);
-void CRYPT_MD5Finish(void* context, uint8_t digest[16]);
+void CRYPT_MD5Start(CRYPT_md5_context* context);
+void CRYPT_MD5Update(CRYPT_md5_context* context,
+                     const uint8_t* data,
+                     uint32_t size);
+void CRYPT_MD5Finish(CRYPT_md5_context* context, uint8_t digest[16]);
 void CRYPT_SHA1Generate(const uint8_t* data, uint32_t size, uint8_t digest[20]);
 void CRYPT_SHA1Start(void* context);
 void CRYPT_SHA1Update(void* context, const uint8_t* data, uint32_t size);
