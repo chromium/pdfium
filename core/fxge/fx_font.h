@@ -23,7 +23,7 @@ class CFX_GlyphBitmap;
 class CFX_PathData;
 class CFX_SizeGlyphCache;
 
-#ifdef _SKIA_SUPPORT_
+#if defined _SKIA_SUPPORT_ || defined _SKIA_SUPPORT_PATHS_
 class SkTypeface;
 
 using CFX_TypeFace = SkTypeface;
@@ -129,7 +129,7 @@ class CFX_Font {
                                          int& text_flags) const;
   const CFX_PathData* LoadGlyphPath(uint32_t glyph_index, int dest_width) const;
 
-#ifdef _SKIA_SUPPORT_
+#if defined _SKIA_SUPPORT_ || defined _SKIA_SUPPORT_PATHS_
   CFX_TypeFace* GetDeviceCache() const;
 #endif
 

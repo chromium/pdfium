@@ -15,9 +15,12 @@ class SkMatrix;
 class SkPaint;
 class SkPath;
 class SkPictureRecorder;
-class SkiaState;
 struct FXTEXT_CHARPOS;
 struct SkIRect;
+
+#ifdef _SKIA_SUPPORT_
+class SkiaState;
+#endif
 
 class CFX_SkiaDeviceDriver : public IFX_RenderDeviceDriver {
  public:
@@ -166,7 +169,9 @@ class CFX_SkiaDeviceDriver : public IFX_RenderDeviceDriver {
   CFX_DIBitmap* m_pOriDevice;
   SkCanvas* m_pCanvas;
   SkPictureRecorder* const m_pRecorder;
+#ifdef _SKIA_SUPPORT_
   std::unique_ptr<SkiaState> m_pCache;
+#endif
 #ifdef _SKIA_SUPPORT_PATHS_
   std::unique_ptr<CFX_ClipRgn> m_pClipRgn;
   std::vector<std::unique_ptr<CFX_ClipRgn>> m_StateStack;

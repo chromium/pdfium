@@ -709,7 +709,7 @@ const CFX_PathData* CFX_Font::LoadGlyphPath(uint32_t glyph_index,
   return GetFaceCache()->LoadGlyphPath(this, glyph_index, dest_width);
 }
 
-#ifdef _SKIA_SUPPORT_
+#if defined _SKIA_SUPPORT_ || _SKIA_SUPPORT_PATHS_
 CFX_TypeFace* CFX_Font::GetDeviceCache() const {
   return GetFaceCache()->GetDeviceCache(this);
 }
