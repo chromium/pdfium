@@ -593,7 +593,7 @@ void CFWL_WidgetTP::DrawBtn(CFX_Graphics* pGraphics,
   CFX_Path path;
   path.Create();
   if (!CFWL_ArrowData::HasInstance())
-    CFWL_ArrowData::GetInstance()->SetColorData(0);
+    CFWL_ArrowData::GetInstance();
 
   CFWL_ArrowData::CColorData* pColorData =
       CFWL_ArrowData::GetInstance()->m_pColorData.get();
@@ -617,15 +617,11 @@ void CFWL_WidgetTP::DrawArrowBtn(CFX_Graphics* pGraphics,
                                  CFX_Matrix* pMatrix) {
   DrawBtn(pGraphics, pRect, eState, pMatrix);
   if (!CFWL_ArrowData::HasInstance())
-    CFWL_ArrowData::GetInstance()->SetColorData(0);
+    CFWL_ArrowData::GetInstance();
 
   CFWL_ArrowData::CColorData* pColorData =
       CFWL_ArrowData::GetInstance()->m_pColorData.get();
   DrawArrow(pGraphics, pRect, eDict, pColorData->clrSign[eState - 1], pMatrix);
-}
-
-CFWL_ArrowData::CFWL_ArrowData() : m_pColorData(nullptr) {
-  SetColorData(0);
 }
 
 CFWL_FontData::CFWL_FontData() : m_dwStyles(0), m_dwCodePage(0) {}

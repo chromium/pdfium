@@ -32,7 +32,6 @@ class CFWL_PushButtonTP : public CFWL_WidgetTP {
     FX_ARGB clrFill[5];
   };
 
-  void SetThemeData(uint32_t dwID);
   void SetTopLineColor(uint32_t* pData);
   void SetLeftLineColor(uint32_t* pData);
   void SetRightLineColor(uint32_t* pData);
@@ -44,6 +43,9 @@ class CFWL_PushButtonTP : public CFWL_WidgetTP {
   int32_t GetColorID(uint32_t dwStates) const;
 
   std::unique_ptr<PBThemeData> m_pThemeData;
+
+ private:
+  void SetThemeData();
 };
 
 #endif  // XFA_FWL_THEME_CFWL_PUSHBUTTONTP_H_

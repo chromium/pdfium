@@ -54,9 +54,11 @@ class CFWL_ScrollBarTP : public CFWL_WidgetTP {
                bool bVert,
                FWLTHEME_STATE eState,
                CFX_Matrix* pMatrix = nullptr);
-  void SetThemeData(uint32_t dwID);
 
   std::unique_ptr<SBThemeData> m_pThemeData;
+
+ private:
+  void SetThemeData();
 };
 
 #endif  // XFA_FWL_THEME_CFWL_SCROLLBARTP_H_

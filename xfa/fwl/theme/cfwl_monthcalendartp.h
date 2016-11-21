@@ -46,10 +46,12 @@ class CFWL_MonthCalendarTP : public CFWL_WidgetTP {
   void DrawHSeperator(CFWL_ThemeBackground* pParams, CFX_Matrix* pMatrix);
   void DrawWeekNumSep(CFWL_ThemeBackground* pParams, CFX_Matrix* pMatrix);
   FWLTHEME_STATE GetState(uint32_t dwFWLStates);
-  void SetThemeData(uint32_t dwThemeID);
 
   std::unique_ptr<MCThemeData> m_pThemeData;
   CFX_WideString wsResource;
+
+ private:
+  void SetThemeData();
 };
 
 #endif  // XFA_FWL_THEME_CFWL_MONTHCALENDARTP_H_

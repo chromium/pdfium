@@ -24,13 +24,14 @@ class CFWL_ArrowData {
   static CFWL_ArrowData* GetInstance();
   static bool HasInstance();
   static void DestroyInstance();
-  void SetColorData(uint32_t dwID);
 
   std::unique_ptr<CColorData> m_pColorData;
 
  private:
   CFWL_ArrowData();
   ~CFWL_ArrowData();
+
+  void SetColorData();
 };
 
 #endif  // XFA_FWL_THEME_CFWL_ARROWDATA_H_

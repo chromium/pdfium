@@ -16,7 +16,7 @@
 #define PUSHBUTTON_SIZE_Corner 2
 
 CFWL_PushButtonTP::CFWL_PushButtonTP() : m_pThemeData(new PBThemeData) {
-  SetThemeData(0);
+  SetThemeData();
 }
 
 CFWL_PushButtonTP::~CFWL_PushButtonTP() {}
@@ -107,50 +107,27 @@ void CFWL_PushButtonTP::Finalize() {
   CFWL_WidgetTP::Finalize();
 }
 
-void CFWL_PushButtonTP::SetThemeData(uint32_t dwID) {
-  if (dwID) {
-    m_pThemeData->clrBorder[0] = ArgbEncode(255, 55, 98, 6);
-    m_pThemeData->clrBorder[1] = ArgbEncode(255, 55, 98, 6);
-    m_pThemeData->clrBorder[2] = ArgbEncode(255, 55, 98, 6);
-    m_pThemeData->clrBorder[3] = ArgbEncode(255, 55, 98, 6);
-    m_pThemeData->clrBorder[4] = ArgbEncode(255, 172, 168, 153);
-    m_pThemeData->clrStart[0] = ArgbEncode(255, 255, 255, 246);
-    m_pThemeData->clrStart[1] = ArgbEncode(255, 223, 205, 180);
-    m_pThemeData->clrStart[2] = ArgbEncode(255, 252, 197, 149);
-    m_pThemeData->clrStart[3] = ArgbEncode(255, 194, 209, 143);
-    m_pThemeData->clrStart[4] = ArgbEncode(255, 216, 216, 216);
-    m_pThemeData->clrEnd[0] = ArgbEncode(255, 227, 209, 184);
-    m_pThemeData->clrEnd[1] = ArgbEncode(255, 248, 244, 228);
-    m_pThemeData->clrEnd[2] = ArgbEncode(255, 207, 114, 37);
-    m_pThemeData->clrEnd[3] = ArgbEncode(255, 144, 193, 84);
-    m_pThemeData->clrEnd[4] = ArgbEncode(255, 172, 168, 153);
-    m_pThemeData->clrFill[0] = ArgbEncode(255, 255, 255, 255);
-    m_pThemeData->clrFill[1] = ArgbEncode(255, 226, 225, 218);
-    m_pThemeData->clrFill[2] = ArgbEncode(255, 255, 255, 255);
-    m_pThemeData->clrFill[3] = ArgbEncode(255, 255, 255, 255);
-    m_pThemeData->clrFill[4] = ArgbEncode(255, 245, 244, 234);
-  } else {
-    m_pThemeData->clrBorder[0] = ArgbEncode(255, 0, 60, 116);
-    m_pThemeData->clrBorder[1] = ArgbEncode(255, 0, 60, 116);
-    m_pThemeData->clrBorder[2] = ArgbEncode(255, 0, 60, 116);
-    m_pThemeData->clrBorder[3] = ArgbEncode(255, 0, 60, 116);
-    m_pThemeData->clrBorder[4] = ArgbEncode(255, 201, 199, 186);
-    m_pThemeData->clrStart[0] = ArgbEncode(255, 255, 255, 255);
-    m_pThemeData->clrStart[1] = ArgbEncode(255, 209, 204, 193);
-    m_pThemeData->clrStart[2] = ArgbEncode(255, 255, 240, 207);
-    m_pThemeData->clrStart[3] = ArgbEncode(255, 206, 231, 255);
-    m_pThemeData->clrStart[4] = ArgbEncode(255, 245, 244, 234);
-    m_pThemeData->clrEnd[0] = ArgbEncode(255, 214, 208, 197);
-    m_pThemeData->clrEnd[1] = ArgbEncode(255, 242, 241, 238);
-    m_pThemeData->clrEnd[2] = ArgbEncode(255, 229, 151, 0);
-    m_pThemeData->clrEnd[3] = ArgbEncode(255, 105, 130, 238);
-    m_pThemeData->clrEnd[4] = ArgbEncode(255, 245, 244, 234);
-    m_pThemeData->clrFill[0] = ArgbEncode(255, 255, 255, 255);
-    m_pThemeData->clrFill[1] = ArgbEncode(255, 226, 225, 218);
-    m_pThemeData->clrFill[2] = ArgbEncode(255, 255, 255, 255);
-    m_pThemeData->clrFill[3] = ArgbEncode(255, 255, 255, 255);
-    m_pThemeData->clrFill[4] = ArgbEncode(255, 245, 244, 234);
-  }
+void CFWL_PushButtonTP::SetThemeData() {
+  m_pThemeData->clrBorder[0] = ArgbEncode(255, 0, 60, 116);
+  m_pThemeData->clrBorder[1] = ArgbEncode(255, 0, 60, 116);
+  m_pThemeData->clrBorder[2] = ArgbEncode(255, 0, 60, 116);
+  m_pThemeData->clrBorder[3] = ArgbEncode(255, 0, 60, 116);
+  m_pThemeData->clrBorder[4] = ArgbEncode(255, 201, 199, 186);
+  m_pThemeData->clrStart[0] = ArgbEncode(255, 255, 255, 255);
+  m_pThemeData->clrStart[1] = ArgbEncode(255, 209, 204, 193);
+  m_pThemeData->clrStart[2] = ArgbEncode(255, 255, 240, 207);
+  m_pThemeData->clrStart[3] = ArgbEncode(255, 206, 231, 255);
+  m_pThemeData->clrStart[4] = ArgbEncode(255, 245, 244, 234);
+  m_pThemeData->clrEnd[0] = ArgbEncode(255, 214, 208, 197);
+  m_pThemeData->clrEnd[1] = ArgbEncode(255, 242, 241, 238);
+  m_pThemeData->clrEnd[2] = ArgbEncode(255, 229, 151, 0);
+  m_pThemeData->clrEnd[3] = ArgbEncode(255, 105, 130, 238);
+  m_pThemeData->clrEnd[4] = ArgbEncode(255, 245, 244, 234);
+  m_pThemeData->clrFill[0] = ArgbEncode(255, 255, 255, 255);
+  m_pThemeData->clrFill[1] = ArgbEncode(255, 226, 225, 218);
+  m_pThemeData->clrFill[2] = ArgbEncode(255, 255, 255, 255);
+  m_pThemeData->clrFill[3] = ArgbEncode(255, 255, 255, 255);
+  m_pThemeData->clrFill[4] = ArgbEncode(255, 245, 244, 234);
 }
 
 int32_t CFWL_PushButtonTP::GetColorID(uint32_t dwStates) const {

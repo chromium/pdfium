@@ -20,7 +20,7 @@ const float kPawLength = 12.5f;
 }  // namespace
 
 CFWL_ScrollBarTP::CFWL_ScrollBarTP() : m_pThemeData(new SBThemeData) {
-  SetThemeData(0);
+  SetThemeData();
 }
 
 CFWL_ScrollBarTP::~CFWL_ScrollBarTP() {}
@@ -256,47 +256,27 @@ void CFWL_ScrollBarTP::DrawMaxMinBtn(CFX_Graphics* pGraphics,
   DrawArrowBtn(pGraphics, &rtArrowBtn, eDict, eState, pMatrix);
 }
 
-void CFWL_ScrollBarTP::SetThemeData(uint32_t dwID) {
+void CFWL_ScrollBarTP::SetThemeData() {
   m_pThemeData->clrPawColorLight[3] = ArgbEncode(0xff, 208, 223, 172);
   m_pThemeData->clrPawColorDark[3] = ArgbEncode(0xff, 140, 157, 115);
   m_pThemeData->clrBtnBK[3][0] = ArgbEncode(0xff, 164, 180, 139);
   m_pThemeData->clrBtnBK[3][1] = ArgbEncode(0xff, 141, 157, 115);
   m_pThemeData->clrBtnBorder[3] = ArgbEncode(0xff, 236, 233, 216);
-  if (dwID) {
-    m_pThemeData->clrPawColorLight[0] = ArgbEncode(0xff, 208, 223, 172);
-    m_pThemeData->clrPawColorDark[0] = ArgbEncode(0xff, 140, 157, 115);
-    m_pThemeData->clrBtnBK[0][0] = ArgbEncode(0xff, 162, 179, 141);
-    m_pThemeData->clrBtnBK[0][1] = ArgbEncode(0xff, 149, 167, 117);
-    m_pThemeData->clrBtnBorder[0] = ArgbEncode(0xff, 142, 153, 125);
-    m_pThemeData->clrPawColorLight[1] = ArgbEncode(0xff, 235, 245, 212);
-    m_pThemeData->clrPawColorDark[1] = ArgbEncode(0xff, 182, 198, 142);
-    m_pThemeData->clrBtnBK[1][0] = ArgbEncode(0xff, 200, 213, 170);
-    m_pThemeData->clrBtnBK[1][1] = ArgbEncode(0xff, 195, 208, 150);
-    m_pThemeData->clrBtnBorder[1] = ArgbEncode(0xff, 189, 203, 150);
-    m_pThemeData->clrPawColorLight[2] = ArgbEncode(0xff, 208, 223, 172);
-    m_pThemeData->clrPawColorDark[2] = ArgbEncode(0xff, 140, 157, 115);
-    m_pThemeData->clrBtnBK[2][0] = ArgbEncode(0xff, 164, 180, 139);
-    m_pThemeData->clrBtnBK[2][1] = ArgbEncode(0xff, 141, 157, 115);
-    m_pThemeData->clrBtnBorder[2] = ArgbEncode(0xff, 128, 146, 102);
-    m_pThemeData->clrTrackBKStart = ArgbEncode(0xff, 243, 241, 236);
-    m_pThemeData->clrTrackBKEnd = ArgbEncode(0xff, 254, 254, 251);
-  } else {
-    m_pThemeData->clrPawColorLight[0] = ArgbEncode(0xff, 238, 244, 254);
-    m_pThemeData->clrPawColorDark[0] = ArgbEncode(0xff, 140, 176, 248);
-    m_pThemeData->clrBtnBK[0][0] = ArgbEncode(0xff, 197, 213, 252);
-    m_pThemeData->clrBtnBK[0][1] = ArgbEncode(0xff, 182, 205, 251);
-    m_pThemeData->clrBtnBorder[0] = ArgbEncode(0xff, 148, 176, 221);
-    m_pThemeData->clrPawColorLight[1] = ArgbEncode(0xff, 252, 253, 255);
-    m_pThemeData->clrPawColorDark[1] = ArgbEncode(0xff, 156, 197, 255);
-    m_pThemeData->clrBtnBK[1][0] = ArgbEncode(0xff, 216, 232, 255);
-    m_pThemeData->clrBtnBK[1][1] = ArgbEncode(0xff, 204, 225, 255);
-    m_pThemeData->clrBtnBorder[1] = ArgbEncode(0xff, 218, 230, 254);
-    m_pThemeData->clrPawColorLight[2] = ArgbEncode(0xff, 207, 221, 253);
-    m_pThemeData->clrPawColorDark[2] = ArgbEncode(0xff, 131, 158, 216);
-    m_pThemeData->clrBtnBK[2][0] = ArgbEncode(0xff, 167, 190, 245);
-    m_pThemeData->clrBtnBK[2][1] = ArgbEncode(0xff, 146, 179, 249);
-    m_pThemeData->clrBtnBorder[2] = ArgbEncode(0xff, 124, 159, 211);
-    m_pThemeData->clrTrackBKStart = ArgbEncode(0xff, 243, 241, 236);
-    m_pThemeData->clrTrackBKEnd = ArgbEncode(0xff, 254, 254, 251);
-  }
+  m_pThemeData->clrPawColorLight[0] = ArgbEncode(0xff, 238, 244, 254);
+  m_pThemeData->clrPawColorDark[0] = ArgbEncode(0xff, 140, 176, 248);
+  m_pThemeData->clrBtnBK[0][0] = ArgbEncode(0xff, 197, 213, 252);
+  m_pThemeData->clrBtnBK[0][1] = ArgbEncode(0xff, 182, 205, 251);
+  m_pThemeData->clrBtnBorder[0] = ArgbEncode(0xff, 148, 176, 221);
+  m_pThemeData->clrPawColorLight[1] = ArgbEncode(0xff, 252, 253, 255);
+  m_pThemeData->clrPawColorDark[1] = ArgbEncode(0xff, 156, 197, 255);
+  m_pThemeData->clrBtnBK[1][0] = ArgbEncode(0xff, 216, 232, 255);
+  m_pThemeData->clrBtnBK[1][1] = ArgbEncode(0xff, 204, 225, 255);
+  m_pThemeData->clrBtnBorder[1] = ArgbEncode(0xff, 218, 230, 254);
+  m_pThemeData->clrPawColorLight[2] = ArgbEncode(0xff, 207, 221, 253);
+  m_pThemeData->clrPawColorDark[2] = ArgbEncode(0xff, 131, 158, 216);
+  m_pThemeData->clrBtnBK[2][0] = ArgbEncode(0xff, 167, 190, 245);
+  m_pThemeData->clrBtnBK[2][1] = ArgbEncode(0xff, 146, 179, 249);
+  m_pThemeData->clrBtnBorder[2] = ArgbEncode(0xff, 124, 159, 211);
+  m_pThemeData->clrTrackBKStart = ArgbEncode(0xff, 243, 241, 236);
+  m_pThemeData->clrTrackBKEnd = ArgbEncode(0xff, 254, 254, 251);
 }

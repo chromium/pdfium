@@ -50,7 +50,7 @@ const int kSeparatorY = kHeaderHeight + kDatesCellHeight + kSeparatorDOffset;
 }  // namespace
 
 CFWL_MonthCalendarTP::CFWL_MonthCalendarTP() : m_pThemeData(new MCThemeData) {
-  SetThemeData(0);
+  SetThemeData();
 }
 
 CFWL_MonthCalendarTP::~CFWL_MonthCalendarTP() {}
@@ -540,22 +540,12 @@ FWLTHEME_STATE CFWL_MonthCalendarTP::GetState(uint32_t dwFWLStates) {
   return FWLTHEME_STATE_Normal;
 }
 
-void CFWL_MonthCalendarTP::SetThemeData(uint32_t dwThemeID) {
-  if (dwThemeID == 0) {
-    m_pThemeData->clrCaption = ArgbEncode(0xff, 0, 153, 255);
-    m_pThemeData->clrSeperator = ArgbEncode(0xff, 141, 161, 239);
-    m_pThemeData->clrDatesHoverBK = ArgbEncode(0xff, 193, 211, 251);
-    m_pThemeData->clrDatesSelectedBK = ArgbEncode(0xff, 173, 188, 239);
-    m_pThemeData->clrDatesCircle = ArgbEncode(0xff, 103, 144, 209);
-    m_pThemeData->clrToday = ArgbEncode(0xff, 0, 0, 0);
-    m_pThemeData->clrBK = ArgbEncode(0xff, 255, 255, 255);
-  } else {
-    m_pThemeData->clrCaption = ArgbEncode(0xff, 128, 128, 0);
-    m_pThemeData->clrSeperator = ArgbEncode(0xff, 128, 128, 64);
-    m_pThemeData->clrDatesHoverBK = ArgbEncode(0xff, 217, 220, 191);
-    m_pThemeData->clrDatesSelectedBK = ArgbEncode(0xff, 204, 208, 183);
-    m_pThemeData->clrDatesCircle = ArgbEncode(0xff, 128, 128, 0);
-    m_pThemeData->clrToday = ArgbEncode(0xff, 0, 0, 0);
-    m_pThemeData->clrBK = ArgbEncode(0xff, 255, 255, 255);
-  }
+void CFWL_MonthCalendarTP::SetThemeData() {
+  m_pThemeData->clrCaption = ArgbEncode(0xff, 0, 153, 255);
+  m_pThemeData->clrSeperator = ArgbEncode(0xff, 141, 161, 239);
+  m_pThemeData->clrDatesHoverBK = ArgbEncode(0xff, 193, 211, 251);
+  m_pThemeData->clrDatesSelectedBK = ArgbEncode(0xff, 173, 188, 239);
+  m_pThemeData->clrDatesCircle = ArgbEncode(0xff, 103, 144, 209);
+  m_pThemeData->clrToday = ArgbEncode(0xff, 0, 0, 0);
+  m_pThemeData->clrBK = ArgbEncode(0xff, 255, 255, 255);
 }

@@ -66,11 +66,13 @@ class CFWL_CheckBoxTP : public CFWL_WidgetTP {
                     FX_ARGB argbFill,
                     CFX_Matrix* pMatrix);
 
-  void SetThemeData(uint32_t dwID);
   void InitCheckPath(FX_FLOAT fCheckLen);
 
   std::unique_ptr<CKBThemeData> m_pThemeData;
   std::unique_ptr<CFX_Path> m_pCheckPath;
+
+ private:
+  void SetThemeData();
 };
 
 #endif  // XFA_FWL_THEME_CFWL_CHECKBOXTP_H_
