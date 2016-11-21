@@ -99,10 +99,6 @@ class IFWL_Form : public IFWL_Widget {
   CFWL_SysBtn* GetSysBtnByState(uint32_t dwState);
   CFWL_SysBtn* GetSysBtnByIndex(int32_t nIndex);
   int32_t GetSysBtnIndex(CFWL_SysBtn* pBtn);
-  FX_FLOAT GetCaptionHeight();
-  void DrawCaptionText(CFX_Graphics* pGs,
-                       IFWL_ThemeProvider* pTheme,
-                       const CFX_Matrix* pMatrix = nullptr);
   void DrawIconImage(CFX_Graphics* pGs,
                      IFWL_ThemeProvider* pTheme,
                      const CFX_Matrix* pMatrix = nullptr);
@@ -115,7 +111,6 @@ class IFWL_Form : public IFWL_Widget {
   void SetThemeData();
   bool HasIcon();
   void UpdateIcon();
-  void UpdateCaption();
   void OnLButtonDown(CFWL_MsgMouse* pMsg);
   void OnLButtonUp(CFWL_MsgMouse* pMsg);
   void OnMouseMove(CFWL_MsgMouse* pMsg);
@@ -126,14 +121,11 @@ class IFWL_Form : public IFWL_Widget {
   bool m_bMouseIn;
 #endif
   CFX_RectF m_rtRestore;
-  CFX_RectF m_rtCaptionText;
   CFX_RectF m_rtRelative;
-  CFX_RectF m_rtCaption;
   CFX_RectF m_rtIcon;
   CFWL_SysBtn* m_pCloseBox;
   CFWL_SysBtn* m_pMinBox;
   CFWL_SysBtn* m_pMaxBox;
-  CFWL_SysBtn* m_pCaptionBox;
   std::unique_ptr<CFWL_NoteLoop> m_pNoteLoop;
   IFWL_Widget* m_pSubFocus;
   FX_FLOAT m_fCXBorder;

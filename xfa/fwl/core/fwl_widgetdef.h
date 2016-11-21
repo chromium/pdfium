@@ -11,7 +11,6 @@
 #define FWL_WGTSTYLE_Popup (1L << 0)
 #define FWL_WGTSTYLE_Child (2L << 0)
 #define FWL_WGTSTYLE_Border (1L << 2)
-#define FWL_WGTSTYLE_NarrowCaption (1L << 4)
 #define FWL_WGTSTYLE_Icon (1L << 5)
 #define FWL_WGTSTYLE_MinimizeBox (1L << 6)
 #define FWL_WGTSTYLE_MaximizeBox (1L << 7)
