@@ -41,18 +41,6 @@ bool CFWL_WidgetTP::IsValidWidget(IFWL_Widget* pWidget) {
   return false;
 }
 
-uint32_t CFWL_WidgetTP::GetThemeID(IFWL_Widget* pWidget) {
-  return m_dwThemeID;
-}
-
-uint32_t CFWL_WidgetTP::SetThemeID(IFWL_Widget* pWidget, uint32_t dwThemeID) {
-  uint32_t dwOld = m_dwThemeID;
-  m_dwThemeID = dwThemeID;
-  if (CFWL_ArrowData::HasInstance())
-    CFWL_ArrowData::GetInstance()->SetColorData(FWL_GetThemeColor(dwThemeID));
-  return dwOld;
-}
-
 void CFWL_WidgetTP::DrawBackground(CFWL_ThemeBackground* pParams) {}
 
 void CFWL_WidgetTP::DrawText(CFWL_ThemeText* pParams) {
@@ -112,8 +100,7 @@ void* CFWL_WidgetTP::GetCapacity(CFWL_ThemePart* pThemePart,
       return m_pFDEFont;
     }
     case CFWL_WidgetCapacity::TextSelColor: {
-      m_dwValue = (m_dwThemeID == 0) ? FWLTHEME_CAPACITY_TextSelColor
-                                     : FWLTHEME_COLOR_Green_BKSelected;
+      m_dwValue = FWLTHEME_CAPACITY_TextSelColor;
       return &m_dwValue;
     }
     case CFWL_WidgetCapacity::LineHeight: {
@@ -131,7 +118,7 @@ void* CFWL_WidgetTP::GetCapacity(CFWL_ThemePart* pThemePart,
 }
 
 bool CFWL_WidgetTP::IsCustomizedLayout(IFWL_Widget* pWidget) {
-  return !!FWL_GetThemeLayout(m_dwThemeID);
+  return !!FWL_GetThemeLayout(0);
 }
 
 void CFWL_WidgetTP::CalcTextRect(CFWL_ThemeText* pParams, CFX_RectF& rect) {
@@ -144,9 +131,7 @@ void CFWL_WidgetTP::CalcTextRect(CFWL_ThemeText* pParams, CFX_RectF& rect) {
                             pParams->m_wsText.GetLength(), rect);
 }
 
-void CFWL_WidgetTP::Initialize() {
-  m_dwThemeID = 0;
-}
+void CFWL_WidgetTP::Initialize() {}
 
 void CFWL_WidgetTP::Finalize() {
   if (!m_pTextOut)
@@ -184,8 +169,7 @@ CFGAS_GEFont* CFWL_WidgetTP::GetFont(IFWL_Widget* pWidget) {
   return m_pFDEFont;
 }
 
-CFWL_WidgetTP::CFWL_WidgetTP()
-    : m_dwRefCount(1), m_pFDEFont(nullptr), m_dwThemeID(0) {}
+CFWL_WidgetTP::CFWL_WidgetTP() : m_dwRefCount(1), m_pFDEFont(nullptr) {}
 
 void CFWL_WidgetTP::InitTTO() {
   if (m_pTextOut)
@@ -213,7 +197,7 @@ void CFWL_WidgetTP::DrawEdge(CFX_Graphics* pGraphics,
   if (!pRect)
     return;
   pGraphics->SaveGraphState();
-  CFX_Color crStroke(FWL_GetThemeColor(m_dwThemeID) == 0
+  CFX_Color crStroke(FWL_GetThemeColor(0) == 0
                          ? ArgbEncode(255, 127, 157, 185)
                          : FWLTHEME_COLOR_Green_BKSelected);
   pGraphics->SetStrokeColor(&crStroke);
@@ -611,7 +595,7 @@ void CFWL_WidgetTP::DrawBtn(CFX_Graphics* pGraphics,
   CFX_Path path;
   path.Create();
   if (!CFWL_ArrowData::HasInstance()) {
-    CFWL_ArrowData::GetInstance()->SetColorData(FWL_GetThemeColor(m_dwThemeID));
+    CFWL_ArrowData::GetInstance()->SetColorData(FWL_GetThemeColor(0));
   }
   CFWL_ArrowData::CColorData* pColorData =
       CFWL_ArrowData::GetInstance()->m_pColorData.get();
@@ -635,7 +619,7 @@ void CFWL_WidgetTP::DrawArrowBtn(CFX_Graphics* pGraphics,
                                  CFX_Matrix* pMatrix) {
   DrawBtn(pGraphics, pRect, eState, pMatrix);
   if (!CFWL_ArrowData::HasInstance()) {
-    CFWL_ArrowData::GetInstance()->SetColorData(FWL_GetThemeColor(m_dwThemeID));
+    CFWL_ArrowData::GetInstance()->SetColorData(FWL_GetThemeColor(0));
   }
   CFWL_ArrowData::CColorData* pColorData =
       CFWL_ArrowData::GetInstance()->m_pColorData.get();

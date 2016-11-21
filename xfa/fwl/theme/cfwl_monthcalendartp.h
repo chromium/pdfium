@@ -20,7 +20,6 @@ class CFWL_MonthCalendarTP : public CFWL_WidgetTP {
   void Initialize() override;
   void Finalize() override;
   bool IsValidWidget(IFWL_Widget* pWidget) override;
-  uint32_t SetThemeID(IFWL_Widget* pWidget, uint32_t dwThemeID) override;
   void DrawBackground(CFWL_ThemeBackground* pParams) override;
   void DrawText(CFWL_ThemeText* pParams) override;
   void* GetCapacity(CFWL_ThemePart* pThemePart,

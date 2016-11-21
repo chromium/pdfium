@@ -19,9 +19,7 @@ const float kComboFormHandler = 8.0f;
 
 }  // namespace
 
-CFWL_ComboBoxTP::CFWL_ComboBoxTP() {
-  m_dwThemeID = 0;
-}
+CFWL_ComboBoxTP::CFWL_ComboBoxTP() {}
 
 CFWL_ComboBoxTP::~CFWL_ComboBoxTP() {}
 

@@ -108,13 +108,9 @@ void CXFA_FWLTheme::DrawText(CFWL_ThemeText* pParams) {
          (CFWL_PartState_Hovered | CFWL_PartState_Selected))) {
       m_pTextOut->SetTextColor(0xFFFFFFFF);
     }
-    if (pParams->m_iPart == CFWL_Part::Caption) {
-      if (m_pMonthCalendarTP->GetThemeID(pParams->m_pWidget) == 0) {
-        m_pTextOut->SetTextColor(ArgbEncode(0xff, 0, 153, 255));
-      } else {
-        m_pTextOut->SetTextColor(ArgbEncode(0xff, 128, 128, 0));
-      }
-    }
+    if (pParams->m_iPart == CFWL_Part::Caption)
+      m_pTextOut->SetTextColor(ArgbEncode(0xff, 0, 153, 255));
+
     CFX_Graphics* pGraphics = pParams->m_pGraphics;
     CFX_RenderDevice* pRenderDevice = pGraphics->GetRenderDevice();
     if (!pRenderDevice)

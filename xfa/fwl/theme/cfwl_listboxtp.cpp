@@ -85,7 +85,7 @@ void CFWL_ListBoxTP::DrawListBoxItem(CFX_Graphics* pGraphics,
                                      CFX_Matrix* pMatrix) {
   if (dwStates & CFWL_PartState_Selected) {
     pGraphics->SaveGraphState();
-    CFX_Color crFill(FWL_GetThemeColor(m_dwThemeID) == 0
+    CFX_Color crFill(FWL_GetThemeColor(0) == 0
                          ? FWLTHEME_COLOR_BKSelected
                          : FWLTHEME_COLOR_Green_BKSelected);
     pGraphics->SetFillColor(&crFill);

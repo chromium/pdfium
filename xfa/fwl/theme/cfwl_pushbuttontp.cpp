@@ -24,11 +24,6 @@ CFWL_PushButtonTP::~CFWL_PushButtonTP() {}
 bool CFWL_PushButtonTP::IsValidWidget(IFWL_Widget* pWidget) {
   return pWidget && pWidget->GetClassID() == FWL_Type::PushButton;
 }
-uint32_t CFWL_PushButtonTP::SetThemeID(IFWL_Widget* pWidget,
-                                       uint32_t dwThemeID) {
-  SetThemeData(FWL_GetThemeColor(dwThemeID));
-  return CFWL_WidgetTP::SetThemeID(pWidget, dwThemeID);
-}
 
 void CFWL_PushButtonTP::DrawBackground(CFWL_ThemeBackground* pParams) {
   switch (pParams->m_iPart) {

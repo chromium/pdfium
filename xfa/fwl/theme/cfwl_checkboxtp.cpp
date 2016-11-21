@@ -39,12 +39,6 @@ bool CFWL_CheckBoxTP::IsValidWidget(IFWL_Widget* pWidget) {
   return pWidget && pWidget->GetClassID() == FWL_Type::CheckBox;
 }
 
-uint32_t CFWL_CheckBoxTP::SetThemeID(IFWL_Widget* pWidget, uint32_t dwThemeID) {
-  if (m_pThemeData)
-    SetThemeData(FWL_GetThemeColor(dwThemeID));
-  return CFWL_WidgetTP::SetThemeID(pWidget, dwThemeID);
-}
-
 void CFWL_CheckBoxTP::DrawText(CFWL_ThemeText* pParams) {
   if (!m_pTextOut)
     return;

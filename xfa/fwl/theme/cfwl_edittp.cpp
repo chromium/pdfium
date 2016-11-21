@@ -54,7 +54,7 @@ void CFWL_EditTP::DrawBackground(CFWL_ThemeBackground* pParams) {
       if (pParams->m_pPath) {
         CFX_Graphics* pGraphics = pParams->m_pGraphics;
         pGraphics->SaveGraphState();
-        CFX_Color crSelected(FWL_GetThemeColor(m_dwThemeID) == 0
+        CFX_Color crSelected(FWL_GetThemeColor(0) == 0
                                  ? FWLTHEME_COLOR_BKSelected
                                  : FWLTHEME_COLOR_Green_BKSelected);
         pGraphics->SetFillColor(&crSelected);

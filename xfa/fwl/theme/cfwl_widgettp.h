@@ -111,8 +111,6 @@ class CFWL_WidgetTP {
   virtual void Finalize();
 
   virtual bool IsValidWidget(IFWL_Widget* pWidget);
-  virtual uint32_t GetThemeID(IFWL_Widget* pWidget);
-  virtual uint32_t SetThemeID(IFWL_Widget* pWidget, uint32_t dwThemeID);
 
   virtual void DrawBackground(CFWL_ThemeBackground* pParams);
   virtual void DrawText(CFWL_ThemeText* pParams);
@@ -218,7 +216,6 @@ class CFWL_WidgetTP {
   FX_FLOAT m_fValue;
   uint32_t m_dwValue;
   CFX_RectF m_rtMargin;
-  uint32_t m_dwThemeID;
 };
 
 void FWLTHEME_Release();

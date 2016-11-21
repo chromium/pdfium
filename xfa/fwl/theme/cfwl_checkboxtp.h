@@ -21,7 +21,6 @@ class CFWL_CheckBoxTP : public CFWL_WidgetTP {
   void Initialize() override;
   void Finalize() override;
   bool IsValidWidget(IFWL_Widget* pWidget) override;
-  uint32_t SetThemeID(IFWL_Widget* pWidget, uint32_t dwThemeID) override;
   void DrawText(CFWL_ThemeText* pParams) override;
   void DrawBackground(CFWL_ThemeBackground* pParams) override;
 

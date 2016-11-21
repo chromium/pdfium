@@ -59,13 +59,6 @@ bool CFWL_MonthCalendarTP::IsValidWidget(IFWL_Widget* pWidget) {
   return pWidget && pWidget->GetClassID() == FWL_Type::MonthCalendar;
 }
 
-uint32_t CFWL_MonthCalendarTP::SetThemeID(IFWL_Widget* pWidget,
-                                          uint32_t dwThemeID) {
-  if (m_pThemeData)
-    SetThemeData(FWL_GetThemeColor(dwThemeID));
-  return CFWL_WidgetTP::SetThemeID(pWidget, dwThemeID);
-}
-
 void CFWL_MonthCalendarTP::DrawBackground(CFWL_ThemeBackground* pParams) {
   if (!pParams)
     return;

@@ -38,13 +38,6 @@ void* CFWL_ScrollBarTP::GetCapacity(CFWL_ThemePart* pThemePart,
   return CFWL_WidgetTP::GetCapacity(pThemePart, dwCapacity);
 }
 
-uint32_t CFWL_ScrollBarTP::SetThemeID(IFWL_Widget* pWidget,
-                                      uint32_t dwThemeID) {
-  if (m_pThemeData)
-    SetThemeData(FWL_GetThemeColor(dwThemeID));
-  return CFWL_WidgetTP::SetThemeID(pWidget, dwThemeID);
-}
-
 void CFWL_ScrollBarTP::DrawBackground(CFWL_ThemeBackground* pParams) {
   if (!pParams)
     return;
