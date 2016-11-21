@@ -28,7 +28,7 @@ bool CPDF_Type3Char::LoadBitmap(CPDF_RenderContext* pContext) {
   if (!pPageObj->IsImage())
     return false;
 
-  m_ImageMatrix = pPageObj->AsImage()->m_Matrix;
+  m_ImageMatrix = pPageObj->AsImage()->matrix();
   std::unique_ptr<CFX_DIBSource> pSource(
       pPageObj->AsImage()->GetImage()->LoadDIBSource());
   if (pSource)

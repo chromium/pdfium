@@ -848,7 +848,7 @@ CPDF_ImageObject* CPDF_StreamContentParser::AddImageObject(
 
   CFX_Matrix ImageMatrix = m_pCurStates->m_CTM;
   ImageMatrix.Concat(m_mtContentToUser);
-  pImageObj->m_Matrix = ImageMatrix;
+  pImageObj->set_matrix(ImageMatrix);
   pImageObj->CalcBoundingBox();
 
   CPDF_ImageObject* pRet = pImageObj.get();

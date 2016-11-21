@@ -55,12 +55,10 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFImageObj_SetMatrix(FPDF_PAGEOBJECT image_object,
     return false;
 
   CPDF_ImageObject* pImgObj = reinterpret_cast<CPDF_ImageObject*>(image_object);
-  pImgObj->m_Matrix.a = static_cast<FX_FLOAT>(a);
-  pImgObj->m_Matrix.b = static_cast<FX_FLOAT>(b);
-  pImgObj->m_Matrix.c = static_cast<FX_FLOAT>(c);
-  pImgObj->m_Matrix.d = static_cast<FX_FLOAT>(d);
-  pImgObj->m_Matrix.e = static_cast<FX_FLOAT>(e);
-  pImgObj->m_Matrix.f = static_cast<FX_FLOAT>(f);
+  pImgObj->set_matrix(
+      CFX_Matrix(static_cast<FX_FLOAT>(a), static_cast<FX_FLOAT>(b),
+                 static_cast<FX_FLOAT>(c), static_cast<FX_FLOAT>(d),
+                 static_cast<FX_FLOAT>(e), static_cast<FX_FLOAT>(f)));
   pImgObj->CalcBoundingBox();
   return true;
 }

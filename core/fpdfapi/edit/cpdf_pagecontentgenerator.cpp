@@ -19,7 +19,7 @@
 
 namespace {
 
-CFX_ByteTextBuf& operator<<(CFX_ByteTextBuf& ar, CFX_Matrix& matrix) {
+CFX_ByteTextBuf& operator<<(CFX_ByteTextBuf& ar, const CFX_Matrix& matrix) {
   ar << matrix.a << " " << matrix.b << " " << matrix.c << " " << matrix.d << " "
      << matrix.e << " " << matrix.f;
   return ar;
@@ -84,11 +84,11 @@ CFX_ByteString CPDF_PageContentGenerator::RealizeResource(
 
 void CPDF_PageContentGenerator::ProcessImage(CFX_ByteTextBuf* buf,
                                              CPDF_ImageObject* pImageObj) {
-  if ((pImageObj->m_Matrix.a == 0 && pImageObj->m_Matrix.b == 0) ||
-      (pImageObj->m_Matrix.c == 0 && pImageObj->m_Matrix.d == 0)) {
+  if ((pImageObj->matrix().a == 0 && pImageObj->matrix().b == 0) ||
+      (pImageObj->matrix().c == 0 && pImageObj->matrix().d == 0)) {
     return;
   }
-  *buf << "q " << pImageObj->m_Matrix << " cm ";
+  *buf << "q " << pImageObj->matrix() << " cm ";
 
   CPDF_Image* pImage = pImageObj->GetImage();
   if (pImage->IsInline())

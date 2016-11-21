@@ -378,11 +378,10 @@ bool CPDF_ImageRenderer::Start(CPDF_RenderStatus* pStatus,
       !m_pRenderStatus->m_Options.m_pOCContext->CheckOCGVisible(pOC)) {
     return false;
   }
-  m_ImageMatrix = m_pImageObject->m_Matrix;
+  m_ImageMatrix = m_pImageObject->matrix();
   m_ImageMatrix.Concat(*pObj2Device);
-  if (StartLoadDIBSource()) {
+  if (StartLoadDIBSource())
     return true;
-  }
   return StartRenderDIBSource();
 }
 
