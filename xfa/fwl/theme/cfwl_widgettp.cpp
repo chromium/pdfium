@@ -118,7 +118,7 @@ void* CFWL_WidgetTP::GetCapacity(CFWL_ThemePart* pThemePart,
 }
 
 bool CFWL_WidgetTP::IsCustomizedLayout(IFWL_Widget* pWidget) {
-  return !!FWL_GetThemeLayout(0);
+  return false;
 }
 
 void CFWL_WidgetTP::CalcTextRect(CFWL_ThemeText* pParams, CFX_RectF& rect) {
@@ -693,10 +693,6 @@ CFGAS_GEFont* CFWL_FontManager::FindFont(const CFX_WideStringC& wsFontFamily,
 void FWLTHEME_Release() {
   CFWL_ArrowData::DestroyInstance();
   CFWL_FontManager::DestroyInstance();
-}
-
-uint32_t FWL_GetThemeLayout(uint32_t dwThemeID) {
-  return 0xffff0000 & dwThemeID;
 }
 
 uint32_t FWL_GetThemeColor(uint32_t dwThemeID) {
