@@ -7,12 +7,10 @@
 #include "core/fpdfapi/page/cpdf_image.h"
 
 #include <algorithm>
-#include <memory>
 #include <utility>
 #include <vector>
 
 #include "core/fpdfapi/cpdf_modulemgr.h"
-#include "core/fpdfapi/page/cpdf_docpagedata.h"
 #include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_boolean.h"
@@ -31,7 +29,8 @@ CPDF_Image::CPDF_Image(CPDF_Document* pDoc) : m_pDocument(pDoc) {}
 
 CPDF_Image::CPDF_Image(CPDF_Document* pDoc,
                        std::unique_ptr<CPDF_Stream> pStream)
-    : m_pDocument(pDoc),
+    : m_bIsInline(true),
+      m_pDocument(pDoc),
       m_pStream(pStream.get()),
       m_pOwnedStream(std::move(pStream)) {
   m_pOwnedDict =
@@ -60,16 +59,15 @@ void CPDF_Image::FinishInitialization() {
 
 CPDF_Image* CPDF_Image::Clone() {
   CPDF_Image* pImage = new CPDF_Image(m_pDocument);
+  pImage->m_bIsInline = m_bIsInline;
   if (m_pOwnedStream) {
-    pImage->m_pOwnedStream =
-        ToStream(std::unique_ptr<CPDF_Object>(m_pOwnedStream->Clone()));
+    pImage->m_pOwnedStream = ToStream(m_pOwnedStream->Clone());
     pImage->m_pStream = pImage->m_pOwnedStream.get();
   } else {
     pImage->m_pStream = m_pStream;
   }
   if (m_pOwnedDict) {
-    pImage->m_pOwnedDict =
-        ToDictionary(std::unique_ptr<CPDF_Object>(m_pOwnedDict->Clone()));
+    pImage->m_pOwnedDict = ToDictionary(m_pOwnedDict->Clone());
     pImage->m_pDict = pImage->m_pOwnedDict.get();
   } else {
     pImage->m_pDict = m_pDict;
