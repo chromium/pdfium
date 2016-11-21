@@ -65,11 +65,6 @@ void CRYPT_SHA512Finish(void* context, uint8_t digest[64]);
 void CRYPT_SHA512Generate(const uint8_t* data,
                           uint32_t size,
                           uint8_t digest[64]);
-void CRYPT_SetPubKeyDecryptor(bool (*func)(const uint8_t* pData,
-                                           uint32_t size,
-                                           uint8_t* data_buf,
-                                           uint32_t& data_len));
-
 #ifdef __cplusplus
 };
 #endif
