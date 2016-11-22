@@ -128,7 +128,7 @@ CPDF_StreamParser::~CPDF_StreamParser() {}
 
 std::unique_ptr<CPDF_Stream> CPDF_StreamParser::ReadInlineStream(
     CPDF_Document* pDoc,
-    CPDF_Dictionary* pDict,
+    std::unique_ptr<CPDF_Dictionary> pDict,
     CPDF_Object* pCSObj) {
   if (m_Pos == m_Size)
     return nullptr;
@@ -231,8 +231,7 @@ std::unique_ptr<CPDF_Stream> CPDF_StreamParser::ReadInlineStream(
     m_Pos += dwStreamSize;
   }
   pDict->SetNewFor<CPDF_Number>("Length", (int)dwStreamSize);
-  return pdfium::MakeUnique<CPDF_Stream>(pData, dwStreamSize,
-                                         pdfium::WrapUnique(pDict));
+  return pdfium::MakeUnique<CPDF_Stream>(pData, dwStreamSize, std::move(pDict));
 }
 
 CPDF_StreamParser::SyntaxType CPDF_StreamParser::ParseNextElement() {

@@ -630,8 +630,8 @@ void CPDF_StreamContentParser::Handle_BeginMarkedContent_Dictionary() {
 
 void CPDF_StreamContentParser::Handle_BeginImage() {
   FX_FILESIZE savePos = m_pSyntax->GetPos();
-  CPDF_Dictionary* pDict =
-      new CPDF_Dictionary(m_pDocument->GetByteStringPool());
+  auto pDict =
+      pdfium::MakeUnique<CPDF_Dictionary>(m_pDocument->GetByteStringPool());
   while (1) {
     CPDF_StreamParser::SyntaxType type = m_pSyntax->ParseNextElement();
     if (type == CPDF_StreamParser::Keyword) {
@@ -639,7 +639,6 @@ void CPDF_StreamContentParser::Handle_BeginImage() {
                                m_pSyntax->GetWordSize());
       if (bsKeyword != "ID") {
         m_pSyntax->SetPos(savePos);
-        delete pDict;
         return;
       }
     }
@@ -657,7 +656,7 @@ void CPDF_StreamContentParser::Handle_BeginImage() {
         pDict->SetFor(key, std::move(pObj));
     }
   }
-  ReplaceAbbr(pDict);
+  ReplaceAbbr(pDict.get());
   CPDF_Object* pCSObj = nullptr;
   if (pDict->KeyExist("ColorSpace")) {
     pCSObj = pDict->GetDirectObjectFor("ColorSpace");
@@ -671,9 +670,8 @@ void CPDF_StreamContentParser::Handle_BeginImage() {
     }
   }
   pDict->SetNewFor<CPDF_Name>("Subtype", "Image");
-  std::unique_ptr<CPDF_Stream> pStream(
-      m_pSyntax->ReadInlineStream(m_pDocument, pDict, pCSObj));
-  bool bGaveDictAway = !!pStream;
+  std::unique_ptr<CPDF_Stream> pStream =
+      m_pSyntax->ReadInlineStream(m_pDocument, std::move(pDict), pCSObj);
   while (1) {
     CPDF_StreamParser::SyntaxType type = m_pSyntax->ParseNextElement();
     if (type == CPDF_StreamParser::EndOfData) {
@@ -687,9 +685,7 @@ void CPDF_StreamContentParser::Handle_BeginImage() {
       break;
     }
   }
-  CPDF_ImageObject* pImgObj = AddImage(std::move(pStream));
-  if (!pImgObj && !bGaveDictAway)
-    delete pDict;
+  AddImage(std::move(pStream));
 }
 
 void CPDF_StreamContentParser::Handle_BeginMarkedContent() {

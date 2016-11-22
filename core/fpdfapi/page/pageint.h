@@ -61,9 +61,10 @@ class CPDF_StreamParser {
   std::unique_ptr<CPDF_Object> GetObject() { return std::move(m_pLastObj); }
   std::unique_ptr<CPDF_Object> ReadNextObject(bool bAllowNestedArray,
                                               uint32_t dwInArrayLevel);
-  std::unique_ptr<CPDF_Stream> ReadInlineStream(CPDF_Document* pDoc,
-                                                CPDF_Dictionary* pDict,
-                                                CPDF_Object* pCSObj);
+  std::unique_ptr<CPDF_Stream> ReadInlineStream(
+      CPDF_Document* pDoc,
+      std::unique_ptr<CPDF_Dictionary> pDict,
+      CPDF_Object* pCSObj);
 
  private:
   friend class cpdf_streamparser_ReadHexString_Test;
