@@ -28,6 +28,11 @@ void UpdateAnnotRects(CPDFSDK_PageView* pPageView, CPDFSDK_BAAnnot* pBAAnnot) {
   rects.push_back(pBAAnnot->GetRect());
   if (CPDF_Annot* pPopupAnnot = pBAAnnot->GetPDFPopupAnnot())
     rects.push_back(pPopupAnnot->GetRect());
+
+  // Make the rects round up to avoid https://crbug.com/662804
+  for (CFX_FloatRect& rect : rects)
+    rect.Inflate(1, 1);
+
   pPageView->UpdateRects(rects);
 }
 
