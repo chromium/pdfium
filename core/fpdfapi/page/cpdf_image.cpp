@@ -26,6 +26,7 @@
 #include "core/fpdfapi/render/render_int.h"
 #include "core/fxcodec/fx_codec.h"
 #include "core/fxge/fx_dib.h"
+#include "third_party/base/numerics/safe_conversions.h"
 #include "third_party/base/ptr_util.h"
 
 CPDF_Image::CPDF_Image(CPDF_Document* pDoc) : m_pDocument(pDoc) {}
@@ -86,7 +87,8 @@ void CPDF_Image::ConvertStreamToIndirectObject() {
   m_pDocument->AddIndirectObject(std::move(m_pOwnedStream));
 }
 
-CPDF_Dictionary* CPDF_Image::InitJPEG(uint8_t* pData, uint32_t size) {
+std::unique_ptr<CPDF_Dictionary> CPDF_Image::InitJPEG(uint8_t* pData,
+                                                      uint32_t size) {
   int32_t width;
   int32_t height;
   int32_t num_comps;
@@ -97,8 +99,8 @@ CPDF_Dictionary* CPDF_Image::InitJPEG(uint8_t* pData, uint32_t size) {
     return nullptr;
   }
 
-  CPDF_Dictionary* pDict =
-      new CPDF_Dictionary(m_pDocument->GetByteStringPool());
+  auto pDict =
+      pdfium::MakeUnique<CPDF_Dictionary>(m_pDocument->GetByteStringPool());
   pDict->SetNewFor<CPDF_Name>("Type", "XObject");
   pDict->SetNewFor<CPDF_Name>("Subtype", "Image");
   pDict->SetNewFor<CPDF_Number>("Width", width);
@@ -134,14 +136,17 @@ CPDF_Dictionary* CPDF_Image::InitJPEG(uint8_t* pData, uint32_t size) {
 }
 
 void CPDF_Image::SetJpegImage(IFX_SeekableReadStream* pFile) {
-  uint32_t size = (uint32_t)pFile->GetSize();
+  uint32_t size = pdfium::base::checked_cast<uint32_t>(pFile->GetSize());
   if (!size)
     return;
 
   uint32_t dwEstimateSize = std::min(size, 8192U);
   std::vector<uint8_t> data(dwEstimateSize);
-  pFile->ReadBlock(data.data(), 0, dwEstimateSize);
-  CPDF_Dictionary* pDict = InitJPEG(data.data(), dwEstimateSize);
+  if (!pFile->ReadBlock(data.data(), 0, dwEstimateSize))
+    return;
+
+  std::unique_ptr<CPDF_Dictionary> pDict =
+      InitJPEG(data.data(), dwEstimateSize);
   if (!pDict && size > dwEstimateSize) {
     data.resize(size);
     pFile->ReadBlock(data.data(), 0, size);
@@ -150,7 +155,7 @@ void CPDF_Image::SetJpegImage(IFX_SeekableReadStream* pFile) {
   if (!pDict)
     return;
 
-  m_pStream->InitStreamFromFile(pFile, pdfium::WrapUnique(pDict));
+  m_pStream->InitStreamFromFile(pFile, std::move(pDict));
 }
 
 void CPDF_Image::SetImage(const CFX_DIBitmap* pBitmap) {

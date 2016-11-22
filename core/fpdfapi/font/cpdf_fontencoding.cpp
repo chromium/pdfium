@@ -1672,7 +1672,8 @@ bool CPDF_FontEncoding::IsIdentical(CPDF_FontEncoding* pAnother) const {
          0;
 }
 
-CPDF_Object* CPDF_FontEncoding::Realize(CFX_WeakPtr<CFX_ByteStringPool> pPool) {
+std::unique_ptr<CPDF_Object> CPDF_FontEncoding::Realize(
+    CFX_WeakPtr<CFX_ByteStringPool> pPool) {
   int predefined = 0;
   for (int cs = PDFFONT_ENCODING_WINANSI; cs < PDFFONT_ENCODING_ZAPFDINGBATS;
        cs++) {
@@ -1690,15 +1691,13 @@ CPDF_Object* CPDF_FontEncoding::Realize(CFX_WeakPtr<CFX_ByteStringPool> pPool) {
     }
   }
   if (predefined) {
-    if (predefined == PDFFONT_ENCODING_WINANSI) {
-      return new CPDF_Name(pPool, "WinAnsiEncoding");
-    }
-    if (predefined == PDFFONT_ENCODING_MACROMAN) {
-      return new CPDF_Name(pPool, "MacRomanEncoding");
-    }
-    if (predefined == PDFFONT_ENCODING_MACEXPERT) {
-      return new CPDF_Name(pPool, "MacExpertEncoding");
-    }
+    if (predefined == PDFFONT_ENCODING_WINANSI)
+      return pdfium::MakeUnique<CPDF_Name>(pPool, "WinAnsiEncoding");
+    if (predefined == PDFFONT_ENCODING_MACROMAN)
+      return pdfium::MakeUnique<CPDF_Name>(pPool, "MacRomanEncoding");
+    if (predefined == PDFFONT_ENCODING_MACEXPERT)
+      return pdfium::MakeUnique<CPDF_Name>(pPool, "MacExpertEncoding");
+
     return nullptr;
   }
   const uint16_t* pStandard =
@@ -1712,10 +1711,10 @@ CPDF_Object* CPDF_FontEncoding::Realize(CFX_WeakPtr<CFX_ByteStringPool> pPool) {
     pDiff->AddNew<CPDF_Name>(PDF_AdobeNameFromUnicode(m_Unicodes[i]));
   }
 
-  CPDF_Dictionary* pDict = new CPDF_Dictionary(pPool);
+  auto pDict = pdfium::MakeUnique<CPDF_Dictionary>(pPool);
   pDict->SetNewFor<CPDF_Name>("BaseEncoding", "WinAnsiEncoding");
   pDict->SetFor("Differences", std::move(pDiff));
-  return pDict;
+  return std::move(pDict);
 }
 
 uint32_t FT_CharCodeFromUnicode(int encoding, FX_WCHAR unicode) {

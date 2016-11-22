@@ -8,6 +8,7 @@
 
 #include <limits.h>
 
+#include <memory>
 #include <utility>
 
 #include "core/fpdfapi/cpdf_modulemgr.h"
@@ -112,7 +113,6 @@ CPDF_StreamParser::CPDF_StreamParser(const uint8_t* pData, uint32_t dwSize)
     : m_pBuf(pData),
       m_Size(dwSize),
       m_Pos(0),
-      m_pLastObj(nullptr),
       m_pPool(nullptr) {}
 
 CPDF_StreamParser::CPDF_StreamParser(
@@ -122,16 +122,14 @@ CPDF_StreamParser::CPDF_StreamParser(
     : m_pBuf(pData),
       m_Size(dwSize),
       m_Pos(0),
-      m_pLastObj(nullptr),
       m_pPool(pPool) {}
 
-CPDF_StreamParser::~CPDF_StreamParser() {
-  delete m_pLastObj;
-}
+CPDF_StreamParser::~CPDF_StreamParser() {}
 
-CPDF_Stream* CPDF_StreamParser::ReadInlineStream(CPDF_Document* pDoc,
-                                                 CPDF_Dictionary* pDict,
-                                                 CPDF_Object* pCSObj) {
+std::unique_ptr<CPDF_Stream> CPDF_StreamParser::ReadInlineStream(
+    CPDF_Document* pDoc,
+    CPDF_Dictionary* pDict,
+    CPDF_Object* pCSObj) {
   if (m_Pos == m_Size)
     return nullptr;
 
@@ -233,15 +231,13 @@ CPDF_Stream* CPDF_StreamParser::ReadInlineStream(CPDF_Document* pDoc,
     m_Pos += dwStreamSize;
   }
   pDict->SetNewFor<CPDF_Number>("Length", (int)dwStreamSize);
-  return new CPDF_Stream(pData, dwStreamSize, pdfium::WrapUnique(pDict));
+  return pdfium::MakeUnique<CPDF_Stream>(pData, dwStreamSize,
+                                         pdfium::WrapUnique(pDict));
 }
 
 CPDF_StreamParser::SyntaxType CPDF_StreamParser::ParseNextElement() {
-  delete m_pLastObj;
-  m_pLastObj = nullptr;
-
+  m_pLastObj.reset();
   m_WordSize = 0;
-  bool bIsNumber = true;
   if (!PositionIsInBounds())
     return EndOfData;
 
@@ -273,6 +269,7 @@ CPDF_StreamParser::SyntaxType CPDF_StreamParser::ParseNextElement() {
     return Others;
   }
 
+  bool bIsNumber = true;
   while (1) {
     if (m_WordSize < kMaxWordBuffer)
       m_WordBuffer[m_WordSize++] = ch;
@@ -300,30 +297,25 @@ CPDF_StreamParser::SyntaxType CPDF_StreamParser::ParseNextElement() {
 
   if (m_WordSize == 4) {
     if (memcmp(m_WordBuffer, "true", 4) == 0) {
-      m_pLastObj = new CPDF_Boolean(true);
+      m_pLastObj = pdfium::MakeUnique<CPDF_Boolean>(true);
       return Others;
     }
     if (memcmp(m_WordBuffer, "null", 4) == 0) {
-      m_pLastObj = new CPDF_Null;
+      m_pLastObj = pdfium::MakeUnique<CPDF_Null>();
       return Others;
     }
   } else if (m_WordSize == 5) {
     if (memcmp(m_WordBuffer, "false", 5) == 0) {
-      m_pLastObj = new CPDF_Boolean(false);
+      m_pLastObj = pdfium::MakeUnique<CPDF_Boolean>(false);
       return Others;
     }
   }
   return Keyword;
 }
 
-CPDF_Object* CPDF_StreamParser::GetObject() {
-  CPDF_Object* pObj = m_pLastObj;
-  m_pLastObj = nullptr;
-  return pObj;
-}
-
-CPDF_Object* CPDF_StreamParser::ReadNextObject(bool bAllowNestedArray,
-                                               uint32_t dwInArrayLevel) {
+std::unique_ptr<CPDF_Object> CPDF_StreamParser::ReadNextObject(
+    bool bAllowNestedArray,
+    uint32_t dwInArrayLevel) {
   bool bIsNumber;
   GetNextWord(bIsNumber);
   if (!m_WordSize)
@@ -331,47 +323,45 @@ CPDF_Object* CPDF_StreamParser::ReadNextObject(bool bAllowNestedArray,
 
   if (bIsNumber) {
     m_WordBuffer[m_WordSize] = 0;
-    return new CPDF_Number(CFX_ByteStringC(m_WordBuffer, m_WordSize));
+    return pdfium::MakeUnique<CPDF_Number>(
+        CFX_ByteStringC(m_WordBuffer, m_WordSize));
   }
 
   int first_char = m_WordBuffer[0];
   if (first_char == '/') {
     CFX_ByteString name =
         PDF_NameDecode(CFX_ByteStringC(m_WordBuffer + 1, m_WordSize - 1));
-    return new CPDF_Name(m_pPool, name);
+    return pdfium::MakeUnique<CPDF_Name>(m_pPool, name);
   }
 
   if (first_char == '(') {
     CFX_ByteString str = ReadString();
-    return new CPDF_String(m_pPool, str, false);
+    return pdfium::MakeUnique<CPDF_String>(m_pPool, str, false);
   }
 
   if (first_char == '<') {
     if (m_WordSize == 1)
-      return new CPDF_String(m_pPool, ReadHexString(), true);
+      return pdfium::MakeUnique<CPDF_String>(m_pPool, ReadHexString(), true);
 
-    CPDF_Dictionary* pDict = new CPDF_Dictionary(m_pPool);
+    auto pDict = pdfium::MakeUnique<CPDF_Dictionary>(m_pPool);
     while (1) {
       GetNextWord(bIsNumber);
       if (m_WordSize == 2 && m_WordBuffer[0] == '>')
         break;
 
-      if (!m_WordSize || m_WordBuffer[0] != '/') {
-        delete pDict;
+      if (!m_WordSize || m_WordBuffer[0] != '/')
         return nullptr;
-      }
 
       CFX_ByteString key =
           PDF_NameDecode(CFX_ByteStringC(m_WordBuffer + 1, m_WordSize - 1));
-      auto pObj = pdfium::WrapUnique(ReadNextObject(true, 0));
-      if (!pObj) {
-        delete pDict;
+      std::unique_ptr<CPDF_Object> pObj = ReadNextObject(true, 0);
+      if (!pObj)
         return nullptr;
-      }
+
       if (!key.IsEmpty())
         pDict->SetFor(key, std::move(pObj));
     }
-    return pDict;
+    return std::move(pDict);
   }
 
   if (first_char == '[') {
@@ -380,28 +370,28 @@ CPDF_Object* CPDF_StreamParser::ReadNextObject(bool bAllowNestedArray,
       return nullptr;
     }
 
-    CPDF_Array* pArray = new CPDF_Array;
+    auto pArray = pdfium::MakeUnique<CPDF_Array>();
     while (1) {
-      CPDF_Object* pObj = ReadNextObject(bAllowNestedArray, dwInArrayLevel + 1);
+      std::unique_ptr<CPDF_Object> pObj =
+          ReadNextObject(bAllowNestedArray, dwInArrayLevel + 1);
       if (pObj) {
-        pArray->Add(pdfium::WrapUnique(pObj));
+        pArray->Add(std::move(pObj));
         continue;
       }
       if (!m_WordSize || m_WordBuffer[0] == ']')
         break;
     }
-    return pArray;
+    return std::move(pArray);
   }
 
   if (m_WordSize == 5 && !memcmp(m_WordBuffer, "false", 5))
-    return new CPDF_Boolean(false);
+    return pdfium::MakeUnique<CPDF_Boolean>(false);
 
   if (m_WordSize == 4) {
     if (memcmp(m_WordBuffer, "true", 4) == 0)
-      return new CPDF_Boolean(true);
-
+      return pdfium::MakeUnique<CPDF_Boolean>(true);
     if (memcmp(m_WordBuffer, "null", 4) == 0)
-      return new CPDF_Null;
+      return pdfium::MakeUnique<CPDF_Null>();
   }
 
   return nullptr;

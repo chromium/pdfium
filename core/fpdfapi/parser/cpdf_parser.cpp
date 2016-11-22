@@ -1070,14 +1070,21 @@ bool CPDF_Parser::LoadCrossRefV5(FX_FILESIZE* pos, bool bMainXRef) {
 }
 
 CPDF_Array* CPDF_Parser::GetIDArray() {
-  CPDF_Object* pID = m_pTrailer ? m_pTrailer->GetObjectFor("ID") : nullptr;
+  if (!m_pTrailer)
+    return nullptr;
+
+  CPDF_Object* pID = m_pTrailer->GetObjectFor("ID");
   if (!pID)
     return nullptr;
 
-  if (CPDF_Reference* pRef = pID->AsReference()) {
-    pID = ParseIndirectObject(nullptr, pRef->GetRefObjNum()).release();
-    m_pTrailer->SetFor("ID", pdfium::WrapUnique(pID));
-  }
+  CPDF_Reference* pRef = pID->AsReference();
+  if (!pRef)
+    return ToArray(pID);
+
+  std::unique_ptr<CPDF_Object> pNewObj =
+      ParseIndirectObject(nullptr, pRef->GetRefObjNum());
+  pID = pNewObj.get();
+  m_pTrailer->SetFor("ID", std::move(pNewObj));
   return ToArray(pID);
 }
 

@@ -70,7 +70,7 @@ class CPDF_Image {
 
  private:
   void FinishInitialization();
-  CPDF_Dictionary* InitJPEG(uint8_t* pData, uint32_t size);
+  std::unique_ptr<CPDF_Dictionary> InitJPEG(uint8_t* pData, uint32_t size);
 
   int32_t m_Height = 0;
   int32_t m_Width = 0;

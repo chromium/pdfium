@@ -299,7 +299,7 @@ void ProcessNonbCJK(CPDF_Dictionary* pBaseDict,
                     bool bold,
                     bool italic,
                     CFX_ByteString basefont,
-                    CPDF_Array* pWidths) {
+                    std::unique_ptr<CPDF_Array> pWidths) {
   if (bold && italic)
     basefont += ",BoldItalic";
   else if (bold)
@@ -310,23 +310,24 @@ void ProcessNonbCJK(CPDF_Dictionary* pBaseDict,
   pBaseDict->SetNewFor<CPDF_Name>("BaseFont", basefont);
   pBaseDict->SetNewFor<CPDF_Number>("FirstChar", 32);
   pBaseDict->SetNewFor<CPDF_Number>("LastChar", 255);
-  pBaseDict->SetFor("Widths", pdfium::WrapUnique(pWidths));
+  pBaseDict->SetFor("Widths", std::move(pWidths));
 }
 
-std::unique_ptr<CPDF_Dictionary> CalculateFontDesc(CPDF_Document* pDoc,
-                                                   CFX_ByteString basefont,
-                                                   int flags,
-                                                   int italicangle,
-                                                   int ascend,
-                                                   int descend,
-                                                   CPDF_Array* bbox,
-                                                   int32_t stemV) {
+std::unique_ptr<CPDF_Dictionary> CalculateFontDesc(
+    CPDF_Document* pDoc,
+    CFX_ByteString basefont,
+    int flags,
+    int italicangle,
+    int ascend,
+    int descend,
+    std::unique_ptr<CPDF_Array> bbox,
+    int32_t stemV) {
   auto pFontDesc =
       pdfium::MakeUnique<CPDF_Dictionary>(pDoc->GetByteStringPool());
   pFontDesc->SetNewFor<CPDF_Name>("Type", "FontDescriptor");
   pFontDesc->SetNewFor<CPDF_Name>("FontName", basefont);
   pFontDesc->SetNewFor<CPDF_Number>("Flags", flags);
-  pFontDesc->SetFor("FontBBox", pdfium::WrapUnique(bbox));
+  pFontDesc->SetFor("FontBBox", std::move(bbox));
   pFontDesc->SetNewFor<CPDF_Number>("ItalicAngle", italicangle);
   pFontDesc->SetNewFor<CPDF_Number>("Ascent", ascend);
   pFontDesc->SetNewFor<CPDF_Number>("Descent", descend);
@@ -883,7 +884,7 @@ CPDF_Font* CPDF_Document::AddFont(CFX_Font* pFont, int charset, bool bVert) {
       new CFX_UnicodeEncoding(pFont));
   CPDF_Dictionary* pFontDict = pBaseDict;
   if (!bCJK) {
-    CPDF_Array* pWidths = new CPDF_Array;
+    auto pWidths = pdfium::MakeUnique<CPDF_Array>();
     for (int charcode = 32; charcode < 128; charcode++) {
       int glyph_index = pEncoding->GlyphFromCharCode(charcode);
       int char_width = pFont->GetGlyphWidth(glyph_index);
@@ -909,7 +910,7 @@ CPDF_Font* CPDF_Document::AddFont(CFX_Font* pFont, int charset, bool bVert) {
       }
     }
     ProcessNonbCJK(pBaseDict, pFont->IsBold(), pFont->IsItalic(), basefont,
-                   pWidths);
+                   std::move(pWidths));
   } else {
     pFontDict = ProcessbCJK(pBaseDict, charset, bVert, basefont,
                             [pFont, &pEncoding](FX_WCHAR start, FX_WCHAR end,
@@ -922,7 +923,7 @@ CPDF_Font* CPDF_Document::AddFont(CFX_Font* pFont, int charset, bool bVert) {
       pFont->GetSubstFont() ? pFont->GetSubstFont()->m_ItalicAngle : 0;
   FX_RECT bbox;
   pFont->GetBBox(bbox);
-  CPDF_Array* pBBox = new CPDF_Array;
+  auto pBBox = pdfium::MakeUnique<CPDF_Array>();
   pBBox->AddNew<CPDF_Number>(bbox.left);
   pBBox->AddNew<CPDF_Number>(bbox.bottom);
   pBBox->AddNew<CPDF_Number>(bbox.right);
@@ -944,7 +945,7 @@ CPDF_Font* CPDF_Document::AddFont(CFX_Font* pFont, int charset, bool bVert) {
   }
   CPDF_Dictionary* pFontDesc = ToDictionary(AddIndirectObject(
       CalculateFontDesc(this, basefont, flags, italicangle, pFont->GetAscent(),
-                        pFont->GetDescent(), pBBox, nStemV)));
+                        pFont->GetDescent(), std::move(pBBox), nStemV)));
   pFontDict->SetNewFor<CPDF_Reference>("FontDescriptor", this,
                                        pFontDesc->GetObjNum());
   return LoadFont(pBaseDict);
@@ -1021,11 +1022,11 @@ CPDF_Font* CPDF_Document::AddWindowsFont(LOGFONTA* pLogFont,
     }
     int char_widths[224];
     GetCharWidth(hDC, 32, 255, char_widths);
-    CPDF_Array* pWidths = new CPDF_Array;
+    auto pWidths = pdfium::MakeUnique<CPDF_Array>();
     for (size_t i = 0; i < 224; i++)
       pWidths->AddNew<CPDF_Number>(char_widths[i]);
     ProcessNonbCJK(pBaseDict, pLogFont->lfWeight > FW_MEDIUM,
-                   pLogFont->lfItalic != 0, basefont, pWidths);
+                   pLogFont->lfItalic != 0, basefont, std::move(pWidths));
   } else {
     pFontDict =
         ProcessbCJK(pBaseDict, pLogFont->lfCharSet, bVert, basefont,
@@ -1033,12 +1034,12 @@ CPDF_Font* CPDF_Document::AddWindowsFont(LOGFONTA* pLogFont,
                       InsertWidthArray(hDC, start, end, widthArr);
                     });
   }
-  CPDF_Array* pBBox = new CPDF_Array;
+  auto pBBox = pdfium::MakeUnique<CPDF_Array>();
   for (int i = 0; i < 4; i++)
     pBBox->AddNew<CPDF_Number>(bbox[i]);
   std::unique_ptr<CPDF_Dictionary> pFontDesc =
       CalculateFontDesc(this, basefont, flags, italicangle, ascend, descend,
-                        pBBox, pLogFont->lfWeight / 5);
+                        std::move(pBBox), pLogFont->lfWeight / 5);
   pFontDesc->SetNewFor<CPDF_Number>("CapHeight", capheight);
   pFontDict->SetNewFor<CPDF_Reference>(
       "FontDescriptor", this,

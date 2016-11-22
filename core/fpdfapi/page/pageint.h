@@ -11,6 +11,7 @@
 #include <memory>
 #include <set>
 #include <unordered_map>
+#include <utility>
 #include <vector>
 
 #include "core/fpdfapi/page/cpdf_contentmark.h"
@@ -52,16 +53,17 @@ class CPDF_StreamParser {
                     const CFX_WeakPtr<CFX_ByteStringPool>& pPool);
   ~CPDF_StreamParser();
 
-  CPDF_Stream* ReadInlineStream(CPDF_Document* pDoc,
-                                CPDF_Dictionary* pDict,
-                                CPDF_Object* pCSObj);
   SyntaxType ParseNextElement();
   uint8_t* GetWordBuf() { return m_WordBuffer; }
   uint32_t GetWordSize() const { return m_WordSize; }
-  CPDF_Object* GetObject();
   uint32_t GetPos() const { return m_Pos; }
   void SetPos(uint32_t pos) { m_Pos = pos; }
-  CPDF_Object* ReadNextObject(bool bAllowNestedArray, uint32_t dwInArrayLevel);
+  std::unique_ptr<CPDF_Object> GetObject() { return std::move(m_pLastObj); }
+  std::unique_ptr<CPDF_Object> ReadNextObject(bool bAllowNestedArray,
+                                              uint32_t dwInArrayLevel);
+  std::unique_ptr<CPDF_Stream> ReadInlineStream(CPDF_Document* pDoc,
+                                                CPDF_Dictionary* pDict,
+                                                CPDF_Object* pCSObj);
 
  private:
   friend class cpdf_streamparser_ReadHexString_Test;
@@ -76,7 +78,7 @@ class CPDF_StreamParser {
   uint32_t m_Pos;   // Current byte position within m_pBuf.
   uint8_t m_WordBuffer[256];
   uint32_t m_WordSize;
-  CPDF_Object* m_pLastObj;
+  std::unique_ptr<CPDF_Object> m_pLastObj;
   CFX_WeakPtr<CFX_ByteStringPool> m_pPool;
 };
 

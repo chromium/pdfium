@@ -182,9 +182,8 @@ CPDF_Font* CPDF_DocPageData::GetStandardFont(const CFX_ByteString& fontName,
   pDict->SetNewFor<CPDF_Name>("Subtype", "Type1");
   pDict->SetNewFor<CPDF_Name>("BaseFont", fontName);
   if (pEncoding) {
-    pDict->SetFor(
-        "Encoding",
-        pdfium::WrapUnique(pEncoding->Realize(m_pPDFDoc->GetByteStringPool())));
+    pDict->SetFor("Encoding",
+                  pEncoding->Realize(m_pPDFDoc->GetByteStringPool()));
   }
 
   std::unique_ptr<CPDF_Font> pFont = CPDF_Font::Create(m_pPDFDoc, pDict);
