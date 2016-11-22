@@ -7,6 +7,8 @@
 #ifndef CORE_FPDFAPI_PAGE_CPDF_COUNTEDOBJECT_H_
 #define CORE_FPDFAPI_PAGE_CPDF_COUNTEDOBJECT_H_
 
+#include <memory>
+
 #include "core/fpdfapi/page/cpdf_colorspace.h"
 #include "core/fpdfapi/page/cpdf_pattern.h"
 #include "core/fxcrt/fx_system.h"
@@ -14,10 +16,11 @@
 template <class T>
 class CPDF_CountedObject {
  public:
-  explicit CPDF_CountedObject(T* ptr) : m_nCount(1), m_pObj(ptr) {}
-  void reset(T* ptr) {  // CAUTION: tosses prior ref counts.
+  explicit CPDF_CountedObject(std::unique_ptr<T> ptr)
+      : m_nCount(1), m_pObj(ptr.release()) {}
+  void reset(std::unique_ptr<T> ptr) {  // CAUTION: tosses prior ref counts.
     m_nCount = 1;
-    m_pObj = ptr;
+    m_pObj = ptr.release();
   }
   void clear() {  // Now you're all weak ptrs ...
     // Guard against accidental re-entry.

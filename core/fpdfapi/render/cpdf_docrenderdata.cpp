@@ -55,8 +55,8 @@ CPDF_Type3Cache* CPDF_DocRenderData::GetCachedType3(CPDF_Type3Font* pFont) {
   CPDF_CountedObject<CPDF_Type3Cache>* pCache;
   auto it = m_Type3FaceMap.find(pFont);
   if (it == m_Type3FaceMap.end()) {
-    CPDF_Type3Cache* pType3 = new CPDF_Type3Cache(pFont);
-    pCache = new CPDF_CountedObject<CPDF_Type3Cache>(pType3);
+    pCache = new CPDF_CountedObject<CPDF_Type3Cache>(
+        pdfium::MakeUnique<CPDF_Type3Cache>(pFont));
     m_Type3FaceMap[pFont] = pCache;
   } else {
     pCache = it->second;
@@ -104,9 +104,10 @@ CPDF_TransferFunc* CPDF_DocRenderData::GetTransferFunc(CPDF_Object* pObj) {
     if (!pFuncs[0])
       return nullptr;
   }
-  CPDF_TransferFunc* pTransfer = new CPDF_TransferFunc(m_pPDFDoc);
   CPDF_CountedObject<CPDF_TransferFunc>* pTransferCounter =
-      new CPDF_CountedObject<CPDF_TransferFunc>(pTransfer);
+      new CPDF_CountedObject<CPDF_TransferFunc>(
+          pdfium::MakeUnique<CPDF_TransferFunc>(m_pPDFDoc));
+  CPDF_TransferFunc* pTransfer = pTransferCounter->get();
   m_TransferFuncMap[pObj] = pTransferCounter;
   FX_FLOAT output[kMaxOutputs];
   FXSYS_memset(output, 0, sizeof(output));
