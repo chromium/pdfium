@@ -26,7 +26,6 @@ class CPDF_Image {
   CPDF_Image(CPDF_Document* pDoc, uint32_t dwStreamObjNum);
   ~CPDF_Image();
 
-  CPDF_Image* Clone();
   void ConvertStreamToIndirectObject();
 
   CPDF_Dictionary* GetInlineDict() const { return m_pDict; }

@@ -61,24 +61,6 @@ void CPDF_Image::FinishInitialization() {
   m_Width = m_pDict->GetIntegerFor("Width");
 }
 
-CPDF_Image* CPDF_Image::Clone() {
-  CPDF_Image* pImage = new CPDF_Image(m_pDocument);
-  pImage->m_bIsInline = m_bIsInline;
-  if (m_pOwnedStream) {
-    pImage->m_pOwnedStream = ToStream(m_pOwnedStream->Clone());
-    pImage->m_pStream = pImage->m_pOwnedStream.get();
-  } else {
-    pImage->m_pStream = m_pStream;
-  }
-  if (m_pOwnedDict) {
-    pImage->m_pOwnedDict = ToDictionary(m_pOwnedDict->Clone());
-    pImage->m_pDict = pImage->m_pOwnedDict.get();
-  } else {
-    pImage->m_pDict = m_pDict;
-  }
-  return pImage;
-}
-
 void CPDF_Image::ConvertStreamToIndirectObject() {
   if (!m_pStream->IsInline())
     return;
@@ -329,7 +311,7 @@ CFX_DIBSource* CPDF_Image::LoadDIBSource(CFX_DIBSource** ppMask,
                                          bool bStdCS,
                                          uint32_t GroupFamily,
                                          bool bLoadMask) const {
-  std::unique_ptr<CPDF_DIBSource> source(new CPDF_DIBSource);
+  auto source = pdfium::MakeUnique<CPDF_DIBSource>();
   if (source->Load(m_pDocument, m_pStream,
                    reinterpret_cast<CPDF_DIBSource**>(ppMask), pMatteColor,
                    nullptr, nullptr, bStdCS, GroupFamily, bLoadMask)) {
@@ -355,7 +337,7 @@ bool CPDF_Image::StartLoadDIBSource(CPDF_Dictionary* pFormResource,
                                     bool bStdCS,
                                     uint32_t GroupFamily,
                                     bool bLoadMask) {
-  std::unique_ptr<CPDF_DIBSource> source(new CPDF_DIBSource);
+  auto source = pdfium::MakeUnique<CPDF_DIBSource>();
   int ret =
       source->StartLoadDIBSource(m_pDocument, m_pStream, true, pFormResource,
                                  pPageResource, bStdCS, GroupFamily, bLoadMask);

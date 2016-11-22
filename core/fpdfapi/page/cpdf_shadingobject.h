@@ -18,7 +18,6 @@ class CPDF_ShadingObject : public CPDF_PageObject {
   ~CPDF_ShadingObject() override;
 
   // CPDF_PageObject
-  CPDF_ShadingObject* Clone() const override;
   Type GetType() const override;
   void Transform(const CFX_Matrix& matrix) override;
   bool IsShading() const override;

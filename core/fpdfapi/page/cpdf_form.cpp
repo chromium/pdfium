@@ -50,12 +50,3 @@ void CPDF_Form::ParseContent(CPDF_AllStates* pGraphicStates,
   StartParse(pGraphicStates, pParentMatrix, pType3Char, level);
   ContinueParse(nullptr);
 }
-
-CPDF_Form* CPDF_Form::Clone() const {
-  CPDF_Form* pCloneForm =
-      new CPDF_Form(m_pDocument, m_pPageResources, m_pFormStream, m_pResources);
-  for (const auto& pObj : m_PageObjectList)
-    pCloneForm->m_PageObjectList.emplace_back(pObj->Clone());
-
-  return pCloneForm;
-}

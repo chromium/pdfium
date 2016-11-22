@@ -19,15 +19,6 @@ CPDF_ImageObject::~CPDF_ImageObject() {
   Release();
 }
 
-CPDF_ImageObject* CPDF_ImageObject::Clone() const {
-  CPDF_ImageObject* obj = new CPDF_ImageObject;
-  obj->CopyData(this);
-
-  obj->m_pImage = m_pImage->Clone();
-  obj->m_Matrix = m_Matrix;
-  return obj;
-}
-
 CPDF_PageObject::Type CPDF_ImageObject::GetType() const {
   return IMAGE;
 }

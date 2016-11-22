@@ -10,17 +10,6 @@ CPDF_PathObject::CPDF_PathObject() {}
 
 CPDF_PathObject::~CPDF_PathObject() {}
 
-CPDF_PathObject* CPDF_PathObject::Clone() const {
-  CPDF_PathObject* obj = new CPDF_PathObject;
-  obj->CopyData(this);
-
-  obj->m_Path = m_Path;
-  obj->m_FillType = m_FillType;
-  obj->m_bStroke = m_bStroke;
-  obj->m_Matrix = m_Matrix;
-  return obj;
-}
-
 CPDF_PageObject::Type CPDF_PathObject::GetType() const {
   return PATH;
 }

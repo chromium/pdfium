@@ -18,7 +18,6 @@ class CPDF_PathObject : public CPDF_PageObject {
   ~CPDF_PathObject() override;
 
   // CPDF_PageObject
-  CPDF_PathObject* Clone() const override;
   Type GetType() const override;
   void Transform(const CFX_Matrix& maxtrix) override;
   bool IsPath() const override;

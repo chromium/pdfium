@@ -7,6 +7,8 @@
 #ifndef CORE_FPDFAPI_PAGE_CPDF_TEXTOBJECT_H_
 #define CORE_FPDFAPI_PAGE_CPDF_TEXTOBJECT_H_
 
+#include <memory>
+
 #include "core/fpdfapi/page/cpdf_pageobject.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
@@ -23,13 +25,13 @@ class CPDF_TextObject : public CPDF_PageObject {
   ~CPDF_TextObject() override;
 
   // CPDF_PageObject
-  CPDF_TextObject* Clone() const override;
   Type GetType() const override;
   void Transform(const CFX_Matrix& matrix) override;
   bool IsText() const override;
   CPDF_TextObject* AsText() override;
   const CPDF_TextObject* AsText() const override;
 
+  std::unique_ptr<CPDF_TextObject> Clone() const;
   int CountItems() const;
   void GetItemInfo(int index, CPDF_TextObjectItem* pInfo) const;
   int CountChars() const;

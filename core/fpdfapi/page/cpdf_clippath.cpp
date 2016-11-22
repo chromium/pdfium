@@ -123,7 +123,7 @@ CPDF_ClipPath::PathData::PathData(const PathData& that) {
   m_TextList.resize(that.m_TextList.size());
   for (size_t i = 0; i < that.m_TextList.size(); ++i) {
     if (that.m_TextList[i])
-      m_TextList[i].reset(that.m_TextList[i]->Clone());
+      m_TextList[i] = that.m_TextList[i]->Clone();
   }
 }
 

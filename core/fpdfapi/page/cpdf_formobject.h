@@ -20,7 +20,6 @@ class CPDF_FormObject : public CPDF_PageObject {
   ~CPDF_FormObject() override;
 
   // CPDF_PageObject:
-  CPDF_FormObject* Clone() const override;
   Type GetType() const override;
   void Transform(const CFX_Matrix& matrix) override;
   bool IsForm() const override;

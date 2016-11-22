@@ -29,8 +29,6 @@ class CPDF_Form : public CPDF_PageObjectHolder {
                     CPDF_Type3Char* pType3Char,
                     int level = 0);
 
-  CPDF_Form* Clone() const;
-
  private:
   void StartParse(CPDF_AllStates* pGraphicStates,
                   const CFX_Matrix* pParentMatrix,

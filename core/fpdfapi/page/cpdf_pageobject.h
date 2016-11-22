@@ -31,7 +31,6 @@ class CPDF_PageObject : public CPDF_GraphicStates {
   CPDF_PageObject();
   ~CPDF_PageObject() override;
 
-  virtual CPDF_PageObject* Clone() const = 0;
   virtual Type GetType() const = 0;
   virtual void Transform(const CFX_Matrix& matrix) = 0;
   virtual bool IsText() const;

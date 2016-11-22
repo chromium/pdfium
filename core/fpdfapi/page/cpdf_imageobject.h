@@ -20,7 +20,6 @@ class CPDF_ImageObject : public CPDF_PageObject {
   ~CPDF_ImageObject() override;
 
   // CPDF_PageObject
-  CPDF_ImageObject* Clone() const override;
   Type GetType() const override;
   void Transform(const CFX_Matrix& matrix) override;
   bool IsImage() const override;

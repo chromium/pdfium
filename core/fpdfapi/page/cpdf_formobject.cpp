@@ -29,15 +29,6 @@ const CPDF_FormObject* CPDF_FormObject::AsForm() const {
   return this;
 }
 
-CPDF_FormObject* CPDF_FormObject::Clone() const {
-  CPDF_FormObject* obj = new CPDF_FormObject;
-  obj->CopyData(this);
-
-  obj->m_pForm.reset(m_pForm->Clone());
-  obj->m_FormMatrix = m_FormMatrix;
-  return obj;
-}
-
 CPDF_PageObject::Type CPDF_FormObject::GetType() const {
   return FORM;
 }

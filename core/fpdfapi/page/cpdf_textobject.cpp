@@ -8,6 +8,7 @@
 
 #include "core/fpdfapi/font/cpdf_cidfont.h"
 #include "core/fpdfapi/font/cpdf_font.h"
+#include "third_party/base/ptr_util.h"
 
 CPDF_TextObject::CPDF_TextObject()
     : m_PosX(0),
@@ -109,8 +110,8 @@ void CPDF_TextObject::GetCharInfo(int index, CPDF_TextObjectItem* pInfo) const {
   }
 }
 
-CPDF_TextObject* CPDF_TextObject::Clone() const {
-  CPDF_TextObject* obj = new CPDF_TextObject;
+std::unique_ptr<CPDF_TextObject> CPDF_TextObject::Clone() const {
+  auto obj = pdfium::MakeUnique<CPDF_TextObject>();
   obj->CopyData(this);
 
   obj->m_nChars = m_nChars;
