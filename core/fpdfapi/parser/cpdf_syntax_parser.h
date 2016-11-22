@@ -75,9 +75,10 @@ class CPDF_SyntaxParser {
   CFX_ByteString ReadString();
   CFX_ByteString ReadHexString();
   unsigned int ReadEOLMarkers(FX_FILESIZE pos);
-  std::unique_ptr<CPDF_Stream> ReadStream(CPDF_Dictionary* pDict,
-                                          uint32_t objnum,
-                                          uint32_t gennum);
+  std::unique_ptr<CPDF_Stream> ReadStream(
+      std::unique_ptr<CPDF_Dictionary> pDict,
+      uint32_t objnum,
+      uint32_t gennum);
 
   inline bool CheckPosition(FX_FILESIZE pos) {
     return m_BufOffset >= pos ||

@@ -6,6 +6,8 @@
 
 #include "core/fpdfdoc/cpdf_annot.h"
 
+#include <utility>
+
 #include "core/fpdfapi/page/cpdf_form.h"
 #include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
@@ -205,11 +207,13 @@ CPDF_Form* CPDF_Annot::GetAPForm(const CPDF_Page* pPage, AppearanceMode mode) {
   if (it != m_APMap.end())
     return it->second.get();
 
-  CPDF_Form* pNewForm =
-      new CPDF_Form(m_pDocument, pPage->m_pResources, pStream);
+  auto pNewForm =
+      pdfium::MakeUnique<CPDF_Form>(m_pDocument, pPage->m_pResources, pStream);
   pNewForm->ParseContent(nullptr, nullptr, nullptr);
-  m_APMap[pStream] = pdfium::WrapUnique(pNewForm);
-  return pNewForm;
+
+  CPDF_Form* pResult = pNewForm.get();
+  m_APMap[pStream] = std::move(pNewForm);
+  return pResult;
 }
 
 // Static.

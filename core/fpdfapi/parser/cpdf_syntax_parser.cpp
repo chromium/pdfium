@@ -477,9 +477,8 @@ std::unique_ptr<CPDF_Object> CPDF_SyntaxParser::GetObject(
       m_Pos = SavedPos;
       return std::move(pDict);
     }
-    return ReadStream(pDict.release(), objnum, gennum);
+    return ReadStream(std::move(pDict), objnum, gennum);
   }
-
   if (word == ">>")
     m_Pos = SavedObjPos;
 
@@ -587,10 +586,8 @@ std::unique_ptr<CPDF_Object> CPDF_SyntaxParser::GetObjectForStrict(
       m_Pos = SavedPos;
       return std::move(pDict);
     }
-
-    return ReadStream(pDict.release(), objnum, gennum);
+    return ReadStream(std::move(pDict), objnum, gennum);
   }
-
   if (word == ">>")
     m_Pos = SavedObjPos;
 
@@ -614,7 +611,7 @@ unsigned int CPDF_SyntaxParser::ReadEOLMarkers(FX_FILESIZE pos) {
 }
 
 std::unique_ptr<CPDF_Stream> CPDF_SyntaxParser::ReadStream(
-    CPDF_Dictionary* pDict,
+    std::unique_ptr<CPDF_Dictionary> pDict,
     uint32_t objnum,
     uint32_t gennum) {
   CPDF_Object* pLenObj = pDict->GetObjectFor("Length");
@@ -693,10 +690,8 @@ std::unique_ptr<CPDF_Stream> CPDF_SyntaxParser::ReadStream(
       }
 
       // Can't find "endstream" or "endobj".
-      if (endStreamOffset < 0 && endObjOffset < 0) {
-        delete pDict;
+      if (endStreamOffset < 0 && endObjOffset < 0)
         return nullptr;
-      }
 
       if (endStreamOffset < 0 && endObjOffset >= 0) {
         // Correct the position of end stream.
@@ -707,8 +702,8 @@ std::unique_ptr<CPDF_Stream> CPDF_SyntaxParser::ReadStream(
       } else if (endStreamOffset > endObjOffset) {
         endStreamOffset = endObjOffset;
       }
-
       len = endStreamOffset;
+
       int numMarkers = ReadEOLMarkers(streamStartPos + endStreamOffset - 2);
       if (numMarkers == 2) {
         len -= 2;
@@ -718,20 +713,15 @@ std::unique_ptr<CPDF_Stream> CPDF_SyntaxParser::ReadStream(
           len -= 1;
         }
       }
-
-      if (len < 0) {
-        delete pDict;
+      if (len < 0)
         return nullptr;
-      }
+
       pDict->SetNewFor<CPDF_Number>("Length", static_cast<int>(len));
     }
     m_Pos = streamStartPos;
   }
-
-  if (len < 0) {
-    delete pDict;
+  if (len < 0)
     return nullptr;
-  }
 
   uint8_t* pData = nullptr;
   if (len > 0) {
@@ -744,7 +734,6 @@ std::unique_ptr<CPDF_Stream> CPDF_SyntaxParser::ReadStream(
       void* context = pCryptoHandler->DecryptStart(objnum, gennum);
       pCryptoHandler->DecryptStream(context, pData, len, dest_buf);
       pCryptoHandler->DecryptFinish(context, dest_buf);
-
       FX_Free(pData);
       pData = dest_buf.GetBuffer();
       len = dest_buf.GetSize();
@@ -752,8 +741,7 @@ std::unique_ptr<CPDF_Stream> CPDF_SyntaxParser::ReadStream(
     }
   }
 
-  auto pStream =
-      pdfium::MakeUnique<CPDF_Stream>(pData, len, pdfium::WrapUnique(pDict));
+  auto pStream = pdfium::MakeUnique<CPDF_Stream>(pData, len, std::move(pDict));
   streamStartPos = m_Pos;
   FXSYS_memset(m_WordBuffer, 0, kEndObjStr.GetLength() + 1);
   GetNextWordInternal(nullptr);
