@@ -7,120 +7,17 @@
 #ifndef CORE_FPDFAPI_PAGE_PAGEINT_H_
 #define CORE_FPDFAPI_PAGE_PAGEINT_H_
 
-#include <map>
 #include <memory>
-#include <set>
-#include <unordered_map>
-#include <utility>
 #include <vector>
 
-#include "core/fpdfapi/page/cpdf_contentmark.h"
+#include "core/fpdfapi/page/cpdf_colorspace.h"
 #include "core/fpdfapi/page/cpdf_countedobject.h"
-#include "core/fpdfapi/page/cpdf_pageobjectholder.h"
-#include "core/fpdfapi/page/cpdf_streamcontentparser.h"
-#include "core/fpdfapi/parser/cpdf_stream.h"
-#include "core/fxcrt/cfx_string_pool_template.h"
-#include "core/fxcrt/cfx_weak_ptr.h"
-#include "core/fxge/cfx_pathdata.h"
-#include "core/fxge/cfx_renderdevice.h"
 
-class CPDF_AllStates;
-class CPDF_ColorSpace;
 class CPDF_ExpIntFunc;
-class CPDF_Font;
-class CPDF_FontEncoding;
-class CPDF_Form;
-class CPDF_IccProfile;
-class CPDF_Image;
-class CPDF_ImageObject;
-class CPDF_Page;
 class CPDF_Pattern;
 class CPDF_SampledFunc;
 class CPDF_StitchFunc;
 class CPDF_StreamAcc;
-class CPDF_TextObject;
-class CPDF_Type3Char;
-
-#define PARSE_STEP_LIMIT 100
-
-class CPDF_StreamParser {
- public:
-  enum SyntaxType { EndOfData, Number, Keyword, Name, Others };
-
-  CPDF_StreamParser(const uint8_t* pData, uint32_t dwSize);
-  CPDF_StreamParser(const uint8_t* pData,
-                    uint32_t dwSize,
-                    const CFX_WeakPtr<CFX_ByteStringPool>& pPool);
-  ~CPDF_StreamParser();
-
-  SyntaxType ParseNextElement();
-  uint8_t* GetWordBuf() { return m_WordBuffer; }
-  uint32_t GetWordSize() const { return m_WordSize; }
-  uint32_t GetPos() const { return m_Pos; }
-  void SetPos(uint32_t pos) { m_Pos = pos; }
-  std::unique_ptr<CPDF_Object> GetObject() { return std::move(m_pLastObj); }
-  std::unique_ptr<CPDF_Object> ReadNextObject(bool bAllowNestedArray,
-                                              uint32_t dwInArrayLevel);
-  std::unique_ptr<CPDF_Stream> ReadInlineStream(
-      CPDF_Document* pDoc,
-      std::unique_ptr<CPDF_Dictionary> pDict,
-      CPDF_Object* pCSObj);
-
- private:
-  friend class cpdf_streamparser_ReadHexString_Test;
-
-  void GetNextWord(bool& bIsNumber);
-  CFX_ByteString ReadString();
-  CFX_ByteString ReadHexString();
-  bool PositionIsInBounds() const;
-
-  const uint8_t* m_pBuf;
-  uint32_t m_Size;  // Length in bytes of m_pBuf.
-  uint32_t m_Pos;   // Current byte position within m_pBuf.
-  uint8_t m_WordBuffer[256];
-  uint32_t m_WordSize;
-  std::unique_ptr<CPDF_Object> m_pLastObj;
-  CFX_WeakPtr<CFX_ByteStringPool> m_pPool;
-};
-
-#define _FPDF_MAX_TYPE3_FORM_LEVEL_ 4
-
-class CPDF_ContentParser {
- public:
-  enum ParseStatus { Ready, ToBeContinued, Done };
-
-  CPDF_ContentParser();
-  ~CPDF_ContentParser();
-
-  ParseStatus GetStatus() const { return m_Status; }
-  void Start(CPDF_Page* pPage);
-  void Start(CPDF_Form* pForm,
-             CPDF_AllStates* pGraphicStates,
-             const CFX_Matrix* pParentMatrix,
-             CPDF_Type3Char* pType3Char,
-             int level);
-  void Continue(IFX_Pause* pPause);
-
- private:
-  enum InternalStage {
-    STAGE_GETCONTENT = 1,
-    STAGE_PARSE,
-    STAGE_CHECKCLIP,
-  };
-
-  ParseStatus m_Status;
-  InternalStage m_InternalStage;
-  CPDF_PageObjectHolder* m_pObjectHolder;
-  bool m_bForm;
-  CPDF_Type3Char* m_pType3Char;
-  uint32_t m_nStreams;
-  std::unique_ptr<CPDF_StreamAcc> m_pSingleStream;
-  std::vector<std::unique_ptr<CPDF_StreamAcc>> m_StreamArray;
-  uint8_t* m_pData;
-  uint32_t m_Size;
-  uint32_t m_CurrentOffset;
-  std::unique_ptr<CPDF_StreamContentParser> m_pParser;
-};
 
 class CPDF_Function {
  public:

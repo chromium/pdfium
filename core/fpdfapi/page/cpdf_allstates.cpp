@@ -8,6 +8,8 @@
 
 #include <algorithm>
 
+#include "core/fpdfapi/page/cpdf_pageobjectholder.h"
+#include "core/fpdfapi/page/cpdf_streamcontentparser.h"
 #include "core/fpdfapi/page/pageint.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"

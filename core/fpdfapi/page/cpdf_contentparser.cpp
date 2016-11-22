@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fpdfapi/page/pageint.h"
+#include "core/fpdfapi/page/cpdf_contentparser.h"
 
 #include "core/fpdfapi/font/cpdf_type3char.h"
 #include "core/fpdfapi/page/cpdf_allstates.h"
@@ -17,6 +17,8 @@
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "core/fxcrt/fx_safe_types.h"
+
+#define PARSE_STEP_LIMIT 100
 
 CPDF_ContentParser::CPDF_ContentParser()
     : m_Status(Ready),

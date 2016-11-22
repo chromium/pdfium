@@ -5,7 +5,7 @@
 #include <cstdint>
 #include <memory>
 
-#include "core/fpdfapi/page/pageint.h"
+#include "core/fpdfapi/page/cpdf_streamparser.h"
 #include "core/fpdfapi/parser/cpdf_object.h"
 
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {

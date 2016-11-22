@@ -17,6 +17,8 @@
 #include "core/fxcrt/fx_system.h"
 #include "third_party/base/stl_util.h"
 
+#define FPDF_MAX_TYPE3_FORM_LEVEL 4
+
 CPDF_Type3Font::CPDF_Type3Font()
     : m_pCharProcs(nullptr),
       m_pPageResources(nullptr),
@@ -90,7 +92,7 @@ void CPDF_Type3Font::CheckType3FontMetrics() {
 }
 
 CPDF_Type3Char* CPDF_Type3Font::LoadChar(uint32_t charcode) {
-  if (m_CharLoadingDepth >= _FPDF_MAX_TYPE3_FORM_LEVEL_)
+  if (m_CharLoadingDepth >= FPDF_MAX_TYPE3_FORM_LEVEL)
     return nullptr;
 
   auto it = m_CacheMap.find(charcode);

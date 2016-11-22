@@ -23,6 +23,7 @@
 #include "core/fpdfapi/page/cpdf_pathobject.h"
 #include "core/fpdfapi/page/cpdf_shadingobject.h"
 #include "core/fpdfapi/page/cpdf_shadingpattern.h"
+#include "core/fpdfapi/page/cpdf_streamparser.h"
 #include "core/fpdfapi/page/cpdf_textobject.h"
 #include "core/fpdfapi/page/pageint.h"
 #include "core/fpdfapi/parser/cpdf_array.h"

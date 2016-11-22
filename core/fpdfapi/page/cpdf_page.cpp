@@ -10,6 +10,7 @@
 #include <utility>
 
 #include "core/fpdfapi/cpdf_pagerendercontext.h"
+#include "core/fpdfapi/page/cpdf_contentparser.h"
 #include "core/fpdfapi/page/cpdf_pageobject.h"
 #include "core/fpdfapi/page/pageint.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
