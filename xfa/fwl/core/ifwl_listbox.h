@@ -98,13 +98,13 @@ class IFWL_ListBox : public IFWL_Widget {
   CFWL_ListItem* GetSelItem(int32_t nIndexSel);
   int32_t GetSelIndex(int32_t nIndex);
   void SetSelItem(CFWL_ListItem* hItem, bool bSelect = true);
-  void GetItemText(CFWL_ListItem* hItem, CFX_WideString& wsText);
+  void GetDataProviderItemText(CFWL_ListItem* hItem, CFX_WideString& wsText);
 
   FX_FLOAT GetItemHeight() const { return m_fItemHeight; }
   FX_FLOAT CalcItemHeight();
 
  protected:
-  CFWL_ListItem* GetItem(CFWL_ListItem* hItem, uint32_t dwKeyCode);
+  CFWL_ListItem* GetListItem(CFWL_ListItem* hItem, uint32_t dwKeyCode);
   void SetSelection(CFWL_ListItem* hStart, CFWL_ListItem* hEnd, bool bSelected);
   CFWL_ListItem* GetItemAtPoint(FX_FLOAT fx, FX_FLOAT fy);
   bool ScrollToVisible(CFWL_ListItem* hItem);
@@ -120,7 +120,7 @@ class IFWL_ListBox : public IFWL_Widget {
   void SelectAll();
   CFWL_ListItem* GetFocusedItem();
   void SetFocusItem(CFWL_ListItem* hItem);
-  bool GetItemCheckRect(CFWL_ListItem* hItem, CFX_RectF& rtCheck);
+  bool GetItemCheckRectInternal(CFWL_ListItem* hItem, CFX_RectF& rtCheck);
   bool SetItemChecked(CFWL_ListItem* hItem, bool bChecked);
   bool GetItemChecked(CFWL_ListItem* hItem);
   void DrawBkground(CFX_Graphics* pGraphics,

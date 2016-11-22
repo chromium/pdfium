@@ -215,7 +215,8 @@ void IFWL_ListBox::SetSelItem(CFWL_ListItem* pItem, bool bSelect) {
     SetSelection(pItem, pItem, bSelect);
 }
 
-void IFWL_ListBox::GetItemText(CFWL_ListItem* pItem, CFX_WideString& wsText) {
+void IFWL_ListBox::GetDataProviderItemText(CFWL_ListItem* pItem,
+                                           CFX_WideString& wsText) {
   if (!m_pProperties->m_pDataProvider)
     return;
 
@@ -227,7 +228,8 @@ void IFWL_ListBox::GetItemText(CFWL_ListItem* pItem, CFX_WideString& wsText) {
   pData->GetItemText(this, pItem, wsText);
 }
 
-CFWL_ListItem* IFWL_ListBox::GetItem(CFWL_ListItem* pItem, uint32_t dwKeyCode) {
+CFWL_ListItem* IFWL_ListBox::GetListItem(CFWL_ListItem* pItem,
+                                         uint32_t dwKeyCode) {
   CFWL_ListItem* hRet = nullptr;
   switch (dwKeyCode) {
     case FWL_VKEY_Up:
@@ -391,7 +393,8 @@ CFWL_ListItem* IFWL_ListBox::GetItemAtPoint(FX_FLOAT fx, FX_FLOAT fy) {
   return nullptr;
 }
 
-bool IFWL_ListBox::GetItemCheckRect(CFWL_ListItem* pItem, CFX_RectF& rtCheck) {
+bool IFWL_ListBox::GetItemCheckRectInternal(CFWL_ListItem* pItem,
+                                            CFX_RectF& rtCheck) {
   if (!m_pProperties->m_pDataProvider)
     return false;
   if (!(m_pProperties->m_dwStyleExes & FWL_STYLEEXT_LTB_Check))
@@ -935,7 +938,7 @@ void IFWL_ListBox::OnLButtonDown(CFWL_MsgMouse* pMsg) {
   if (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_LTB_Check) {
     CFWL_ListItem* hSelectedItem = GetItemAtPoint(pMsg->m_fx, pMsg->m_fy);
     CFX_RectF rtCheck;
-    GetItemCheckRect(hSelectedItem, rtCheck);
+    GetItemCheckRectInternal(hSelectedItem, rtCheck);
     bool bChecked = GetItemChecked(pItem);
     if (rtCheck.Contains(pMsg->m_fx, pMsg->m_fy)) {
       SetItemChecked(pItem, !bChecked);
@@ -970,7 +973,7 @@ void IFWL_ListBox::OnKeyDown(CFWL_MsgKey* pMsg) {
     case FWL_VKEY_Home:
     case FWL_VKEY_End: {
       CFWL_ListItem* pItem = GetFocusedItem();
-      pItem = GetItem(pItem, dwKeyCode);
+      pItem = GetListItem(pItem, dwKeyCode);
       bool bShift = !!(pMsg->m_dwFlags & FWL_KEYFLAG_Shift);
       bool bCtrl = !!(pMsg->m_dwFlags & FWL_KEYFLAG_Ctrl);
       OnVK(pItem, bShift, bCtrl);

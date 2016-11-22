@@ -66,7 +66,7 @@ bool CXFA_FFListBox::LoadWidget() {
   m_pDataAcc->GetSelectedItems(iSelArray);
   int32_t iSelCount = iSelArray.GetSize();
   for (int32_t j = 0; j < iSelCount; j++) {
-    CFWL_ListItem* item = pListBox->GetItem(iSelArray[j]);
+    CFWL_ListItem* item = pListBox->GetItem(nullptr, iSelArray[j]);
     pListBox->SetSelItem(item, true);
   }
   m_pNormalWidget->UnlockUpdate();
@@ -100,7 +100,7 @@ bool CXFA_FFListBox::IsDataChanged() {
     return true;
 
   for (int32_t i = 0; i < iSels; ++i) {
-    CFWL_ListItem* hlistItem = pListBox->GetItem(iSelArray[i]);
+    CFWL_ListItem* hlistItem = pListBox->GetItem(nullptr, iSelArray[i]);
     if (!(pListBox->GetItemStates(hlistItem) & FWL_ITEMSTATE_LTB_Selected))
       return true;
   }
@@ -160,7 +160,7 @@ void CXFA_FFListBox::OnSelectChanged(IFWL_Widget* pWidget,
   CFWL_ListBox* pListBox = (CFWL_ListBox*)m_pNormalWidget;
   int32_t iSels = pListBox->CountSelItems();
   if (iSels > 0) {
-    pListBox->GetItemText(pListBox->GetSelItem(0), eParam.m_wsNewText);
+    pListBox->GetItemText(nullptr, pListBox->GetSelItem(0), eParam.m_wsNewText);
   }
   m_pDataAcc->ProcessEvent(XFA_ATTRIBUTEENUM_Change, &eParam);
 }
@@ -178,13 +178,13 @@ void CXFA_FFListBox::InsertItem(const CFX_WideStringC& wsLabel,
   AddInvalidateRect();
 }
 void CXFA_FFListBox::DeleteItem(int32_t nIndex) {
-  if (nIndex < 0) {
-    ((CFWL_ListBox*)m_pNormalWidget)->DeleteAll();
-  } else {
-    ((CFWL_ListBox*)m_pNormalWidget)
-        ->DeleteString(((CFWL_ListBox*)m_pNormalWidget)->GetItem(nIndex));
-  }
-  m_pNormalWidget->Update();
+  CFWL_ListBox* listBox = static_cast<CFWL_ListBox*>(m_pNormalWidget);
+  if (nIndex < 0)
+    listBox->DeleteAll();
+  else
+    listBox->DeleteString(listBox->GetItem(nullptr, nIndex));
+
+  listBox->Update();
   AddInvalidateRect();
 }
 

@@ -207,7 +207,7 @@ void IFWL_ComboBox::DrawWidget(CFX_Graphics* pGraphics,
           static_cast<IFWL_ComboBox::DataProvider*>(
               m_pProperties->m_pDataProvider);
       CFWL_ListItem* hItem = pData->GetItem(this, m_iCurSel);
-      m_pListBox->GetItemText(hItem, wsText);
+      m_pListBox->GetDataProviderItemText(hItem, wsText);
 
       CFWL_ThemeText theme_text;
       theme_text.m_pWidget = this;
@@ -261,7 +261,7 @@ void IFWL_ComboBox::SetCurSel(int32_t iSel) {
           static_cast<IFWL_ComboBox::DataProvider*>(
               m_pProperties->m_pDataProvider);
       CFWL_ListItem* hItem = pData->GetItem(this, iSel);
-      m_pListBox->GetItemText(hItem, wsText);
+      m_pListBox->GetDataProviderItemText(hItem, wsText);
       m_pEdit->SetText(wsText);
     }
     m_pEdit->Update();
@@ -298,7 +298,7 @@ void IFWL_ComboBox::GetEditText(CFX_WideString& wsText,
   IFWL_ComboBox::DataProvider* pData =
       static_cast<IFWL_ComboBox::DataProvider*>(m_pProperties->m_pDataProvider);
   CFWL_ListItem* hItem = pData->GetItem(this, m_iCurSel);
-  m_pListBox->GetItemText(hItem, wsText);
+  m_pListBox->GetDataProviderItemText(hItem, wsText);
 }
 
 void IFWL_ComboBox::OpenDropDownList(bool bActivate) {
@@ -327,7 +327,7 @@ void IFWL_ComboBox::EditModifyStylesEx(uint32_t dwStylesExAdded,
     m_pEdit->ModifyStylesEx(dwStylesExAdded, dwStylesExRemoved);
 }
 
-FX_FLOAT IFWL_ComboBox::GetListHeight() {
+FX_FLOAT IFWL_ComboBox::GetDataProviderListHeight() {
   return static_cast<IFWL_ComboBox::DataProvider*>(
              m_pProperties->m_pDataProvider)
       ->GetListHeight(this);
@@ -371,9 +371,9 @@ void IFWL_ComboBox::ShowDropList(bool bActivate) {
                         (FWL_STYLEEXT_CMB_Sort | FWL_STYLEEXT_CMB_OwnerDraw);
   m_pListBox->ModifyStylesEx(dwStyleAdd, 0);
   m_pListBox->GetWidgetRect(m_rtList, true);
-  FX_FLOAT fHeight = GetListHeight();
-  if (fHeight > 0 && m_rtList.height > GetListHeight()) {
-    m_rtList.height = GetListHeight();
+  FX_FLOAT fHeight = GetDataProviderListHeight();
+  if (fHeight > 0 && m_rtList.height > fHeight) {
+    m_rtList.height = fHeight;
     m_pListBox->ModifyStyles(FWL_WGTSTYLE_VScroll, 0);
   }
 
@@ -435,7 +435,7 @@ void IFWL_ComboBox::SyncEditText(int32_t iListItem) {
   IFWL_ComboBox::DataProvider* pData =
       static_cast<IFWL_ComboBox::DataProvider*>(m_pProperties->m_pDataProvider);
   CFWL_ListItem* hItem = pData->GetItem(this, iListItem);
-  m_pListBox->GetItemText(hItem, wsText);
+  m_pListBox->GetDataProviderItemText(hItem, wsText);
   m_pEdit->SetText(wsText);
   m_pEdit->Update();
   m_pEdit->SetSelected();
@@ -468,7 +468,7 @@ void IFWL_ComboBox::Layout() {
         static_cast<IFWL_ComboBox::DataProvider*>(
             m_pProperties->m_pDataProvider);
     CFWL_ListItem* hItem = pData->GetItem(this, m_iCurSel);
-    m_pListBox->GetItemText(hItem, wsText);
+    m_pListBox->GetDataProviderItemText(hItem, wsText);
     m_pEdit->LockUpdate();
     m_pEdit->SetText(wsText);
     m_pEdit->UnlockUpdate();
@@ -804,7 +804,7 @@ void IFWL_ComboBox::DisForm_Layout() {
         static_cast<IFWL_ComboBox::DataProvider*>(
             m_pProperties->m_pDataProvider);
     CFWL_ListItem* hItem = pData->GetItem(this, m_iCurSel);
-    m_pListBox->GetItemText(hItem, wsText);
+    m_pListBox->GetDataProviderItemText(hItem, wsText);
     m_pEdit->LockUpdate();
     m_pEdit->SetText(wsText);
     m_pEdit->UnlockUpdate();
@@ -990,7 +990,7 @@ void IFWL_ComboBox::DoSubCtrlKey(CFWL_MsgKey* pMsg) {
             static_cast<IFWL_ComboBox::DataProvider*>(
                 m_pProperties->m_pDataProvider);
         CFWL_ListItem* hItem = pData->GetItem(this, iCurSel);
-        m_pListBox->GetItemText(hItem, wsTemp);
+        m_pListBox->GetDataProviderItemText(hItem, wsTemp);
         bMatchEqual = wsText == wsTemp;
       }
     }
@@ -1126,7 +1126,7 @@ void IFWL_ComboBox::DisForm_OnKey(CFWL_MsgKey* pMsg) {
       if (iCurSel >= 0) {
         CFX_WideString wsTemp;
         CFWL_ListItem* item = m_pListBox->GetSelItem(iCurSel);
-        m_pListBox->GetItemText(item, wsTemp);
+        m_pListBox->GetDataProviderItemText(item, wsTemp);
         bMatchEqual = wsText == wsTemp;
       }
     }

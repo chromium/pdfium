@@ -260,7 +260,7 @@ void IFWL_ComboList::OnDropListKeyDown(CFWL_MsgKey* pKey) {
               m_pProperties->m_pDataProvider);
       CFWL_ListItem* hItem =
           pData->GetItem(this, pOuter->GetCurrentSelection());
-      hItem = GetItem(hItem, dwKeyCode);
+      hItem = GetListItem(hItem, dwKeyCode);
       if (!hItem)
         break;
 

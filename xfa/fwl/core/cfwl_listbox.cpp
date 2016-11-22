@@ -82,15 +82,11 @@ void CFWL_ListBox::SetSelItem(CFWL_ListItem* pItem, bool bSelect) {
     ToListBox(GetWidget())->SetSelItem(pItem, bSelect);
 }
 
-void CFWL_ListBox::GetItemText(CFWL_ListItem* pItem, CFX_WideString& wsText) {
-  if (GetWidget())
-    ToListBox(GetWidget())->GetItemText(pItem, wsText);
-}
-
-CFWL_ListItem* CFWL_ListBox::GetItem(int32_t nIndex) {
-  if (nIndex < 0 || nIndex >= CountItems(nullptr))
-    return nullptr;
-  return m_ItemArray[nIndex].get();
+void CFWL_ListBox::GetItemText(IFWL_Widget* pWidget,
+                               CFWL_ListItem* pItem,
+                               CFX_WideString& wsText) {
+  if (pItem)
+    wsText = static_cast<CFWL_ListItem*>(pItem)->m_wsText;
 }
 
 uint32_t CFWL_ListBox::GetItemStates(CFWL_ListItem* pItem) {
@@ -122,13 +118,6 @@ int32_t CFWL_ListBox::GetItemIndex(IFWL_Widget* pWidget, CFWL_ListItem* pItem) {
 uint32_t CFWL_ListBox::GetItemStyles(IFWL_Widget* pWidget,
                                      CFWL_ListItem* pItem) {
   return pItem ? static_cast<CFWL_ListItem*>(pItem)->m_dwStates : 0;
-}
-
-void CFWL_ListBox::GetItemText(IFWL_Widget* pWidget,
-                               CFWL_ListItem* pItem,
-                               CFX_WideString& wsText) {
-  if (pItem)
-    wsText = static_cast<CFWL_ListItem*>(pItem)->m_wsText;
 }
 
 void CFWL_ListBox::GetItemRect(IFWL_Widget* pWidget,

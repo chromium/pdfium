@@ -120,7 +120,7 @@ class IFWL_ComboBox : public IFWL_Widget {
   int32_t GetCurrentSelection() const { return m_iCurSel; }
 
  private:
-  FX_FLOAT GetListHeight();
+  FX_FLOAT GetDataProviderListHeight();
   bool IsDropDownStyle() const {
     return !!(m_pProperties->m_dwStyleExes & FWL_STYLEEXT_CMB_DropDown);
   }

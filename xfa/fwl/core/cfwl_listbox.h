@@ -64,8 +64,6 @@ class CFWL_ListBox : public CFWL_Widget, public IFWL_ListBox::DataProvider {
   CFWL_ListItem* GetSelItem(int32_t nIndexSel);
   int32_t GetSelIndex(int32_t nIndex);
 
-  CFWL_ListItem* GetItem(int32_t nIndex);
-  void GetItemText(CFWL_ListItem* pItem, CFX_WideString& wsText);
   uint32_t GetItemStates(CFWL_ListItem* pItem);
 
  private:
