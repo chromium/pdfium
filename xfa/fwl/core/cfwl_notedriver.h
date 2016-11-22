@@ -29,9 +29,7 @@ class CFWL_NoteDriver {
 
   void SendEvent(CFWL_Event* pNote);
 
-  void RegisterEventTarget(IFWL_Widget* pListener,
-                           IFWL_Widget* pEventSource = nullptr,
-                           uint32_t dwFilter = FWL_EVENT_ALL_MASK);
+  void RegisterEventTarget(IFWL_Widget* pListener, IFWL_Widget* pEventSource);
   void UnregisterEventTarget(IFWL_Widget* pListener);
   void ClearEventTargets(bool bRemoveAll);
 

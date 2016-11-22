@@ -37,19 +37,6 @@ enum class CFWL_EventType {
   Validate
 };
 
-enum FWLEventMask {
-  FWL_EVENT_MOUSE_MASK = 1 << 0,
-  FWL_EVENT_MOUSEWHEEL_MASK = 1 << 1,
-  FWL_EVENT_KEY_MASK = 1 << 2,
-  FWL_EVENT_FOCUSCHANGED_MASK = 1 << 3,
-  FWL_EVENT_DRAW_MASK = 1 << 4,
-  FWL_EVENT_CLOSE_MASK = 1 << 5,
-  FWL_EVENT_SIZECHANGED_MASK = 1 << 6,
-  FWL_EVENT_IDLE_MASK = 1 << 7,
-  FWL_EVENT_CONTROL_MASK = 1 << 8,
-  FWL_EVENT_ALL_MASK = 0xFF
-};
-
 class CFX_Graphics;
 class IFWL_Widget;
 

@@ -46,8 +46,7 @@ void CFWL_NoteDriver::SendEvent(CFWL_Event* pNote) {
 }
 
 void CFWL_NoteDriver::RegisterEventTarget(IFWL_Widget* pListener,
-                                          IFWL_Widget* pEventSource,
-                                          uint32_t dwFilter) {
+                                          IFWL_Widget* pEventSource) {
   uint32_t key = pListener->GetEventKey();
   if (key == 0) {
     do {
@@ -58,7 +57,7 @@ void CFWL_NoteDriver::RegisterEventTarget(IFWL_Widget* pListener,
   if (!m_eventTargets[key])
     m_eventTargets[key] = new CFWL_EventTarget(pListener);
 
-  m_eventTargets[key]->SetEventSource(pEventSource, dwFilter);
+  m_eventTargets[key]->SetEventSource(pEventSource);
 }
 
 void CFWL_NoteDriver::UnregisterEventTarget(IFWL_Widget* pListener) {

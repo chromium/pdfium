@@ -61,7 +61,7 @@ IFWL_Form::IFWL_Form(const IFWL_App* app,
   m_rtRestore.Reset();
 
   RegisterForm();
-  RegisterEventTarget();
+  RegisterEventTarget(nullptr);
 }
 
 IFWL_Form::~IFWL_Form() {

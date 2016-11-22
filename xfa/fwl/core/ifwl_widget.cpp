@@ -584,8 +584,7 @@ bool IFWL_Widget::GetPopupPosGeneral(FX_FLOAT fMinHeight,
   return true;
 }
 
-void IFWL_Widget::RegisterEventTarget(IFWL_Widget* pEventSource,
-                                      uint32_t dwFilter) {
+void IFWL_Widget::RegisterEventTarget(IFWL_Widget* pEventSource) {
   const IFWL_App* pApp = GetOwnerApp();
   if (!pApp)
     return;
@@ -594,7 +593,7 @@ void IFWL_Widget::RegisterEventTarget(IFWL_Widget* pEventSource,
   if (!pNoteDriver)
     return;
 
-  pNoteDriver->RegisterEventTarget(this, pEventSource, dwFilter);
+  pNoteDriver->RegisterEventTarget(this, pEventSource);
 }
 
 void IFWL_Widget::UnregisterEventTarget() {

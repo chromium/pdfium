@@ -7,6 +7,8 @@
 #ifndef XFA_FWL_CORE_CFWL_EVENTTARGET_H_
 #define XFA_FWL_CORE_CFWL_EVENTTARGET_H_
 
+#include <set>
+
 #include "core/fxcrt/fx_basic.h"
 #include "xfa/fwl/core/cfwl_event.h"
 
@@ -18,17 +20,14 @@ class CFWL_EventTarget {
   explicit CFWL_EventTarget(IFWL_Widget* pListener);
   ~CFWL_EventTarget();
 
-  int32_t SetEventSource(IFWL_Widget* pSource,
-                         uint32_t dwFilter = FWL_EVENT_ALL_MASK);
+  void SetEventSource(IFWL_Widget* pSource);
   bool ProcessEvent(CFWL_Event* pEvent);
 
   bool IsInvalid() const { return m_bInvalid; }
   void FlagInvalid() { m_bInvalid = true; }
 
  private:
-  bool IsFilterEvent(CFWL_Event* pEvent, uint32_t dwFilter) const;
-
-  CFX_MapPtrTemplate<void*, uint32_t> m_eventSources;
+  std::set<IFWL_Widget*> m_widgets;
   IFWL_Widget* m_pListener;
   bool m_bInvalid;
 };

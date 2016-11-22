@@ -166,8 +166,7 @@ class IFWL_Widget : public IFWL_WidgetDelegate {
                    FX_FLOAT fMaxHeight,
                    const CFX_RectF& rtAnchor,
                    CFX_RectF& rtPopup);
-  void RegisterEventTarget(IFWL_Widget* pEventSource = nullptr,
-                           uint32_t dwFilter = FWL_EVENT_ALL_MASK);
+  void RegisterEventTarget(IFWL_Widget* pEventSource);
   void UnregisterEventTarget();
   void DispatchKeyEvent(CFWL_MsgKey* pNote);
   void DispatchEvent(CFWL_Event* pEvent);
