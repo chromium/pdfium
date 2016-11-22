@@ -15,10 +15,10 @@
 #include "xfa/fwl/core/cfwl_evtcheckstatechanged.h"
 #include "xfa/fwl/core/cfwl_msgkey.h"
 #include "xfa/fwl/core/cfwl_msgmouse.h"
+#include "xfa/fwl/core/cfwl_notedriver.h"
 #include "xfa/fwl/core/cfwl_themebackground.h"
 #include "xfa/fwl/core/cfwl_themetext.h"
 #include "xfa/fwl/core/cfwl_widgetmgr.h"
-#include "xfa/fwl/core/fwl_noteimp.h"
 #include "xfa/fwl/core/ifwl_app.h"
 #include "xfa/fwl/core/ifwl_themeprovider.h"
 
@@ -70,8 +70,8 @@ void IFWL_CheckBox::GetWidgetRect(CFX_RectF& rect, bool bAutoSize) {
   }
   rect.Inflate(kCaptionMargin, kCaptionMargin);
 
-  IFWL_CheckBoxDP* pData =
-      static_cast<IFWL_CheckBoxDP*>(m_pProperties->m_pDataProvider);
+  IFWL_CheckBox::DataProvider* pData =
+      static_cast<IFWL_CheckBox::DataProvider*>(m_pProperties->m_pDataProvider);
   FX_FLOAT fCheckBox = pData->GetBoxSize(this);
   rect.width += fCheckBox;
   rect.height = std::max(rect.height, fCheckBox);
@@ -172,8 +172,8 @@ void IFWL_CheckBox::Layout() {
   FX_FLOAT fBoxTop = m_rtClient.top;
   FX_FLOAT fClientBottom = m_rtClient.bottom();
 
-  IFWL_CheckBoxDP* pData =
-      static_cast<IFWL_CheckBoxDP*>(m_pProperties->m_pDataProvider);
+  IFWL_CheckBox::DataProvider* pData =
+      static_cast<IFWL_CheckBox::DataProvider*>(m_pProperties->m_pDataProvider);
   FX_FLOAT fCheckBox = pData->GetBoxSize(this);
   switch (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_CKB_VLayoutMask) {
     case FWL_STYLEEXT_CKB_Top:

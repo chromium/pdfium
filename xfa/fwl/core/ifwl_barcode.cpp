@@ -10,9 +10,9 @@
 
 #include "third_party/base/ptr_util.h"
 #include "xfa/fgas/font/cfgas_gefont.h"
+#include "xfa/fwl/core/cfwl_notedriver.h"
 #include "xfa/fwl/core/cfwl_themepart.h"
 #include "xfa/fwl/core/cfx_barcode.h"
-#include "xfa/fwl/core/fwl_noteimp.h"
 #include "xfa/fwl/core/ifwl_themeprovider.h"
 
 IFWL_Barcode::IFWL_Barcode(const IFWL_App* app,
@@ -66,8 +66,8 @@ void IFWL_Barcode::GenerateBarcodeImageCache() {
 
   m_dwStatus = 0;
   CreateBarcodeEngine();
-  IFWL_BarcodeDP* pData =
-      static_cast<IFWL_BarcodeDP*>(m_pProperties->m_pDataProvider);
+  IFWL_Barcode::DataProvider* pData =
+      static_cast<IFWL_Barcode::DataProvider*>(m_pProperties->m_pDataProvider);
   if (!pData)
     return;
   if (!m_pBarcodeEngine)

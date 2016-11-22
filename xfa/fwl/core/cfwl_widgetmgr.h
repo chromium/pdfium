@@ -12,6 +12,7 @@
 
 #include "core/fxcrt/fx_system.h"
 #include "xfa/fwl/core/fwl_error.h"
+#include "xfa/fwl/core/ifwl_widgetmgrdelegate.h"
 #include "xfa/fxgraphics/cfx_graphics.h"
 
 #define FWL_WGTMGR_DisableForm 0x00000002
@@ -22,34 +23,6 @@ class CXFA_FWLAdapterWidgetMgr;
 class CFX_Graphics;
 class CFX_Matrix;
 class IFWL_Widget;
-
-class CFWL_WidgetMgrItem {
- public:
-  CFWL_WidgetMgrItem();
-  explicit CFWL_WidgetMgrItem(IFWL_Widget* widget);
-  ~CFWL_WidgetMgrItem();
-
-  CFWL_WidgetMgrItem* pParent;
-  CFWL_WidgetMgrItem* pOwner;
-  CFWL_WidgetMgrItem* pChild;
-  CFWL_WidgetMgrItem* pPrevious;
-  CFWL_WidgetMgrItem* pNext;
-  IFWL_Widget* const pWidget;
-  std::unique_ptr<CFX_Graphics> pOffscreen;
-  int32_t iRedrawCounter;
-#if (_FX_OS_ == _FX_WIN32_DESKTOP_) || (_FX_OS_ == _FX_WIN64_)
-  bool bOutsideChanged;
-#endif
-};
-
-class IFWL_WidgetMgrDelegate {
- public:
-  virtual void OnSetCapability(uint32_t dwCapability) = 0;
-  virtual void OnProcessMessageToForm(CFWL_Message* pMessage) = 0;
-  virtual void OnDrawWidget(IFWL_Widget* pWidget,
-                            CFX_Graphics* pGraphics,
-                            const CFX_Matrix* pMatrix) = 0;
-};
 
 class CFWL_WidgetMgr : public IFWL_WidgetMgrDelegate {
  public:
@@ -102,10 +75,29 @@ class CFWL_WidgetMgr : public IFWL_WidgetMgrDelegate {
                           CFX_RectF& rtPopup) const;
 
  private:
+  class Item {
+   public:
+    Item();
+    explicit Item(IFWL_Widget* widget);
+    ~Item();
+
+    Item* pParent;
+    Item* pOwner;
+    Item* pChild;
+    Item* pPrevious;
+    Item* pNext;
+    IFWL_Widget* const pWidget;
+    std::unique_ptr<CFX_Graphics> pOffscreen;
+    int32_t iRedrawCounter;
+#if (_FX_OS_ == _FX_WIN32_DESKTOP_) || (_FX_OS_ == _FX_WIN64_)
+    bool bOutsideChanged;
+#endif
+  };
+
   IFWL_Widget* GetFirstSiblingWidget(IFWL_Widget* pWidget) const;
   IFWL_Widget* GetPriorSiblingWidget(IFWL_Widget* pWidget) const;
   IFWL_Widget* GetLastChildWidget(IFWL_Widget* pWidget) const;
-  CFWL_WidgetMgrItem* GetWidgetMgrItem(IFWL_Widget* pWidget) const;
+  Item* GetWidgetMgrItem(IFWL_Widget* pWidget) const;
 
   void SetWidgetIndex(IFWL_Widget* pWidget, int32_t nIndex);
 
@@ -133,7 +125,7 @@ class CFWL_WidgetMgr : public IFWL_WidgetMgrDelegate {
   bool IsAbleNative(IFWL_Widget* pWidget) const;
 
   uint32_t m_dwCapability;
-  std::map<IFWL_Widget*, std::unique_ptr<CFWL_WidgetMgrItem>> m_mapWidgetItem;
+  std::map<IFWL_Widget*, std::unique_ptr<Item>> m_mapWidgetItem;
   CXFA_FWLAdapterWidgetMgr* const m_pAdapter;
 #if (_FX_OS_ == _FX_WIN32_DESKTOP_) || (_FX_OS_ == _FX_WIN64_)
   CFX_RectF m_rtScreen;

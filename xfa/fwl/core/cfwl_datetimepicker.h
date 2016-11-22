@@ -10,7 +10,8 @@
 #include "xfa/fwl/core/cfwl_widget.h"
 #include "xfa/fwl/core/ifwl_datetimepicker.h"
 
-class CFWL_DateTimePicker : public CFWL_Widget, public IFWL_DateTimePickerDP {
+class CFWL_DateTimePicker : public CFWL_Widget,
+                            public IFWL_DateTimePicker::DataProvider {
  public:
   explicit CFWL_DateTimePicker(const IFWL_App* pApp);
   ~CFWL_DateTimePicker() override;
@@ -20,7 +21,7 @@ class CFWL_DateTimePicker : public CFWL_Widget, public IFWL_DateTimePickerDP {
   // IFWL_Widget::DataProvider
   void GetCaption(IFWL_Widget* pWidget, CFX_WideString& wsCaption) override;
 
-  // IFWL_DateTimePickerDP
+  // IFWL_DateTimePicker::DataProvider
   void GetToday(IFWL_Widget* pWidget,
                 int32_t& iYear,
                 int32_t& iMonth,

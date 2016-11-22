@@ -10,8 +10,8 @@
 #include <utility>
 
 #include "third_party/base/ptr_util.h"
+#include "xfa/fwl/core/cfwl_notedriver.h"
 #include "xfa/fwl/core/cfwl_picturebox.h"
-#include "xfa/fwl/core/fwl_noteimp.h"
 
 IFWL_PictureBox::IFWL_PictureBox(
     const IFWL_App* app,

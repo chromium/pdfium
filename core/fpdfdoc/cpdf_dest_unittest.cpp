@@ -3,8 +3,8 @@
 // found in the LICENSE file.
 
 #include "core/fpdfapi/parser/cpdf_array.h"
-#include "core/fpdfapi/parser/cpdf_null.h"
 #include "core/fpdfapi/parser/cpdf_name.h"
+#include "core/fpdfapi/parser/cpdf_null.h"
 #include "core/fpdfapi/parser/cpdf_number.h"
 #include "core/fpdfdoc/cpdf_dest.h"
 #include "testing/gtest/include/gtest/gtest.h"

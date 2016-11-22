@@ -38,26 +38,26 @@ enum FWL_BCDAttribute {
   FWL_BCDATTRIBUTE_TRUNCATED = 1 << 12
 };
 
-class IFWL_BarcodeDP : public IFWL_Widget::DataProvider {
- public:
-  virtual BC_CHAR_ENCODING GetCharEncoding() const = 0;
-  virtual int32_t GetModuleHeight() const = 0;
-  virtual int32_t GetModuleWidth() const = 0;
-  virtual int32_t GetDataLength() const = 0;
-  virtual bool GetCalChecksum() const = 0;
-  virtual bool GetPrintChecksum() const = 0;
-  virtual BC_TEXT_LOC GetTextLocation() const = 0;
-  virtual int32_t GetWideNarrowRatio() const = 0;
-  virtual FX_CHAR GetStartChar() const = 0;
-  virtual FX_CHAR GetEndChar() const = 0;
-  virtual int32_t GetVersion() const = 0;
-  virtual int32_t GetErrorCorrectionLevel() const = 0;
-  virtual bool GetTruncated() const = 0;
-  virtual uint32_t GetBarcodeAttributeMask() const = 0;
-};
-
 class IFWL_Barcode : public IFWL_Edit {
  public:
+  class DataProvider : public IFWL_Widget::DataProvider {
+   public:
+    virtual BC_CHAR_ENCODING GetCharEncoding() const = 0;
+    virtual int32_t GetModuleHeight() const = 0;
+    virtual int32_t GetModuleWidth() const = 0;
+    virtual int32_t GetDataLength() const = 0;
+    virtual bool GetCalChecksum() const = 0;
+    virtual bool GetPrintChecksum() const = 0;
+    virtual BC_TEXT_LOC GetTextLocation() const = 0;
+    virtual int32_t GetWideNarrowRatio() const = 0;
+    virtual FX_CHAR GetStartChar() const = 0;
+    virtual FX_CHAR GetEndChar() const = 0;
+    virtual int32_t GetVersion() const = 0;
+    virtual int32_t GetErrorCorrectionLevel() const = 0;
+    virtual bool GetTruncated() const = 0;
+    virtual uint32_t GetBarcodeAttributeMask() const = 0;
+  };
+
   IFWL_Barcode(const IFWL_App* app,
                std::unique_ptr<CFWL_WidgetProperties> properties);
   ~IFWL_Barcode() override;

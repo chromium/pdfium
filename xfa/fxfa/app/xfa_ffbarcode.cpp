@@ -8,7 +8,7 @@
 
 #include "core/fxcrt/fx_ext.h"
 #include "xfa/fwl/core/cfwl_barcode.h"
-#include "xfa/fwl/core/fwl_noteimp.h"
+#include "xfa/fwl/core/cfwl_notedriver.h"
 #include "xfa/fwl/core/ifwl_app.h"
 #include "xfa/fxfa/app/xfa_fffield.h"
 #include "xfa/fxfa/app/xfa_fftextedit.h"

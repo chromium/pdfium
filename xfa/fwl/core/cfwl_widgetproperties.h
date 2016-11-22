@@ -31,21 +31,4 @@ class CFWL_WidgetProperties {
   IFWL_Widget* m_pOwner;
 };
 
-inline CFWL_WidgetProperties::CFWL_WidgetProperties()
-    : CFWL_WidgetProperties(nullptr) {}
-
-inline CFWL_WidgetProperties::CFWL_WidgetProperties(
-    IFWL_Widget::DataProvider* dataProvider)
-    : m_dwStyles(FWL_WGTSTYLE_Child),
-      m_dwStyleExes(0),
-      m_dwStates(0),
-      m_pThemeProvider(nullptr),
-      m_pDataProvider(dataProvider),
-      m_pParent(nullptr),
-      m_pOwner(nullptr) {
-  m_rtWidget.Set(0, 0, 0, 0);
-}
-
-inline CFWL_WidgetProperties::~CFWL_WidgetProperties() {}
-
 #endif  // XFA_FWL_CORE_CFWL_WIDGETPROPERTIES_H_

@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FWL_CORE_FWL_NOTEIMP_H_
-#define XFA_FWL_CORE_FWL_NOTEIMP_H_
+#ifndef XFA_FWL_CORE_CFWL_NOTEDRIVER_H_
+#define XFA_FWL_CORE_CFWL_NOTEDRIVER_H_
 
 #include <deque>
 #include <memory>
@@ -17,24 +17,10 @@
 #include "xfa/fxgraphics/cfx_graphics.h"
 
 class CFWL_EventTarget;
+class CFWL_NoteLoop;
 class CFWL_TargetImp;
 class IFWL_ToolTip;
 class IFWL_Widget;
-
-class CFWL_NoteLoop {
- public:
-  CFWL_NoteLoop();
-  ~CFWL_NoteLoop() {}
-
-  IFWL_Widget* GetForm() const { return m_pForm; }
-  bool ContinueModal() const { return m_bContinueModal; }
-  void EndModalLoop() { m_bContinueModal = false; }
-  void SetMainForm(IFWL_Widget* pForm) { m_pForm = pForm; }
-
- private:
-  IFWL_Widget* m_pForm;
-  bool m_bContinueModal;
-};
 
 class CFWL_NoteDriver {
  public:
@@ -93,24 +79,4 @@ class CFWL_NoteDriver {
   std::unique_ptr<CFWL_NoteLoop> m_pNoteLoop;
 };
 
-class CFWL_EventTarget {
- public:
-  explicit CFWL_EventTarget(IFWL_Widget* pListener);
-  ~CFWL_EventTarget();
-
-  int32_t SetEventSource(IFWL_Widget* pSource,
-                         uint32_t dwFilter = FWL_EVENT_ALL_MASK);
-  bool ProcessEvent(CFWL_Event* pEvent);
-
-  bool IsInvalid() const { return m_bInvalid; }
-  void FlagInvalid() { m_bInvalid = true; }
-
- private:
-  bool IsFilterEvent(CFWL_Event* pEvent, uint32_t dwFilter) const;
-
-  CFX_MapPtrTemplate<void*, uint32_t> m_eventSources;
-  IFWL_Widget* m_pListener;
-  bool m_bInvalid;
-};
-
-#endif  // XFA_FWL_CORE_FWL_NOTEIMP_H_
+#endif  // XFA_FWL_CORE_CFWL_NOTEDRIVER_H_

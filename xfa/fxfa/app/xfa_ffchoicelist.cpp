@@ -9,7 +9,7 @@
 #include "xfa/fwl/core/cfwl_combobox.h"
 #include "xfa/fwl/core/cfwl_evtselectchanged.h"
 #include "xfa/fwl/core/cfwl_listbox.h"
-#include "xfa/fwl/core/fwl_noteimp.h"
+#include "xfa/fwl/core/cfwl_notedriver.h"
 #include "xfa/fwl/core/ifwl_app.h"
 #include "xfa/fwl/core/ifwl_combobox.h"
 #include "xfa/fwl/core/ifwl_edit.h"

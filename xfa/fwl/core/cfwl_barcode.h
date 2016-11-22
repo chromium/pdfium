@@ -11,7 +11,7 @@
 #include "xfa/fwl/core/fwl_error.h"
 #include "xfa/fwl/core/ifwl_barcode.h"
 
-class CFWL_Barcode : public CFWL_Edit, public IFWL_BarcodeDP {
+class CFWL_Barcode : public CFWL_Edit, public IFWL_Barcode::DataProvider {
  public:
   explicit CFWL_Barcode(const IFWL_App* pApp);
   ~CFWL_Barcode() override;
@@ -21,7 +21,7 @@ class CFWL_Barcode : public CFWL_Edit, public IFWL_BarcodeDP {
   // IFWL_Widget::DataProvider
   void GetCaption(IFWL_Widget* pWidget, CFX_WideString& wsCaption) override;
 
-  // IFWL_BarcodeDP
+  // IFWL_Barcode::DataProvider
   BC_CHAR_ENCODING GetCharEncoding() const override;
   int32_t GetModuleHeight() const override;
   int32_t GetModuleWidth() const override;

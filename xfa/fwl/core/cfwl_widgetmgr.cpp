@@ -8,7 +8,8 @@
 
 #include <utility>
 
-#include "xfa/fwl/core/fwl_noteimp.h"
+#include "third_party/base/ptr_util.h"
+#include "xfa/fwl/core/cfwl_notedriver.h"
 #include "xfa/fwl/core/ifwl_app.h"
 #include "xfa/fwl/core/ifwl_form.h"
 #include "xfa/fxfa/app/xfa_fwladapter.h"
@@ -38,7 +39,7 @@ bool FWL_UseOffscreen(IFWL_Widget* pWidget) {
 CFWL_WidgetMgr::CFWL_WidgetMgr(CXFA_FFApp* pAdapterNative)
     : m_dwCapability(0), m_pAdapter(pAdapterNative->GetWidgetMgr(this)) {
   ASSERT(m_pAdapter);
-  m_mapWidgetItem[nullptr].reset(new CFWL_WidgetMgrItem);
+  m_mapWidgetItem[nullptr] = pdfium::MakeUnique<Item>();
 #if (_FX_OS_ == _FX_WIN32_DESKTOP_) || (_FX_OS_ == _FX_WIN64_)
   m_rtScreen.Reset();
 #endif
@@ -47,17 +48,17 @@ CFWL_WidgetMgr::CFWL_WidgetMgr(CXFA_FFApp* pAdapterNative)
 CFWL_WidgetMgr::~CFWL_WidgetMgr() {}
 
 IFWL_Widget* CFWL_WidgetMgr::GetParentWidget(IFWL_Widget* pWidget) const {
-  CFWL_WidgetMgrItem* pItem = GetWidgetMgrItem(pWidget);
+  Item* pItem = GetWidgetMgrItem(pWidget);
   return pItem && pItem->pParent ? pItem->pParent->pWidget : nullptr;
 }
 
 IFWL_Widget* CFWL_WidgetMgr::GetOwnerWidget(IFWL_Widget* pWidget) const {
-  CFWL_WidgetMgrItem* pItem = GetWidgetMgrItem(pWidget);
+  Item* pItem = GetWidgetMgrItem(pWidget);
   return pItem && pItem->pOwner ? pItem->pOwner->pWidget : nullptr;
 }
 
 IFWL_Widget* CFWL_WidgetMgr::GetFirstSiblingWidget(IFWL_Widget* pWidget) const {
-  CFWL_WidgetMgrItem* pItem = GetWidgetMgrItem(pWidget);
+  Item* pItem = GetWidgetMgrItem(pWidget);
   if (!pItem)
     return nullptr;
 
@@ -68,22 +69,22 @@ IFWL_Widget* CFWL_WidgetMgr::GetFirstSiblingWidget(IFWL_Widget* pWidget) const {
 }
 
 IFWL_Widget* CFWL_WidgetMgr::GetPriorSiblingWidget(IFWL_Widget* pWidget) const {
-  CFWL_WidgetMgrItem* pItem = GetWidgetMgrItem(pWidget);
+  Item* pItem = GetWidgetMgrItem(pWidget);
   return pItem && pItem->pPrevious ? pItem->pPrevious->pWidget : nullptr;
 }
 
 IFWL_Widget* CFWL_WidgetMgr::GetNextSiblingWidget(IFWL_Widget* pWidget) const {
-  CFWL_WidgetMgrItem* pItem = GetWidgetMgrItem(pWidget);
+  Item* pItem = GetWidgetMgrItem(pWidget);
   return pItem && pItem->pNext ? pItem->pNext->pWidget : nullptr;
 }
 
 IFWL_Widget* CFWL_WidgetMgr::GetFirstChildWidget(IFWL_Widget* pWidget) const {
-  CFWL_WidgetMgrItem* pItem = GetWidgetMgrItem(pWidget);
+  Item* pItem = GetWidgetMgrItem(pWidget);
   return pItem && pItem->pChild ? pItem->pChild->pWidget : nullptr;
 }
 
 IFWL_Widget* CFWL_WidgetMgr::GetLastChildWidget(IFWL_Widget* pWidget) const {
-  CFWL_WidgetMgrItem* pItem = GetWidgetMgrItem(pWidget);
+  Item* pItem = GetWidgetMgrItem(pWidget);
   if (!pItem)
     return nullptr;
 
@@ -94,7 +95,7 @@ IFWL_Widget* CFWL_WidgetMgr::GetLastChildWidget(IFWL_Widget* pWidget) const {
 }
 
 IFWL_Widget* CFWL_WidgetMgr::GetSystemFormWidget(IFWL_Widget* pWidget) const {
-  CFWL_WidgetMgrItem* pItem = GetWidgetMgrItem(pWidget);
+  Item* pItem = GetWidgetMgrItem(pWidget);
   while (pItem) {
     if (IsAbleNative(pItem->pWidget))
       return pItem->pWidget;
@@ -104,13 +105,13 @@ IFWL_Widget* CFWL_WidgetMgr::GetSystemFormWidget(IFWL_Widget* pWidget) const {
 }
 
 void CFWL_WidgetMgr::SetWidgetIndex(IFWL_Widget* pWidget, int32_t nIndex) {
-  CFWL_WidgetMgrItem* pItem = GetWidgetMgrItem(pWidget);
+  Item* pItem = GetWidgetMgrItem(pWidget);
   if (!pItem)
     return;
   if (!pItem->pParent)
     return;
 
-  CFWL_WidgetMgrItem* pChild = pItem->pParent->pChild;
+  Item* pChild = pItem->pParent->pChild;
   int32_t i = 0;
   while (pChild) {
     if (pChild == pItem) {
@@ -203,18 +204,21 @@ void CFWL_WidgetMgr::RepaintWidget(IFWL_Widget* pWidget,
 void CFWL_WidgetMgr::InsertWidget(IFWL_Widget* pParent,
                                   IFWL_Widget* pChild,
                                   int32_t nIndex) {
-  CFWL_WidgetMgrItem* pParentItem = GetWidgetMgrItem(pParent);
+  Item* pParentItem = GetWidgetMgrItem(pParent);
   if (!pParentItem) {
-    pParentItem = new CFWL_WidgetMgrItem(pParent);
-    m_mapWidgetItem[pParent].reset(pParentItem);
+    auto item = pdfium::MakeUnique<Item>(pParent);
+    pParentItem = item.get();
+    m_mapWidgetItem[pParent] = std::move(item);
+
     pParentItem->pParent = GetWidgetMgrItem(nullptr);
     SetWidgetIndex(pParent, -1);
   }
 
-  CFWL_WidgetMgrItem* pItem = GetWidgetMgrItem(pChild);
+  Item* pItem = GetWidgetMgrItem(pChild);
   if (!pItem) {
-    pItem = new CFWL_WidgetMgrItem(pChild);
-    m_mapWidgetItem[pChild].reset(pItem);
+    auto item = pdfium::MakeUnique<Item>(pChild);
+    pItem = item.get();
+    m_mapWidgetItem[pChild] = std::move(item);
   }
   if (pItem->pParent && pItem->pParent != pParentItem) {
     if (pItem->pPrevious)
@@ -229,7 +233,7 @@ void CFWL_WidgetMgr::InsertWidget(IFWL_Widget* pParent,
 }
 
 void CFWL_WidgetMgr::RemoveWidget(IFWL_Widget* pWidget) {
-  CFWL_WidgetMgrItem* pItem = GetWidgetMgrItem(pWidget);
+  Item* pItem = GetWidgetMgrItem(pWidget);
   if (!pItem)
     return;
   if (pItem->pPrevious)
@@ -239,9 +243,9 @@ void CFWL_WidgetMgr::RemoveWidget(IFWL_Widget* pWidget) {
   if (pItem->pParent && pItem->pParent->pChild == pItem)
     pItem->pParent->pChild = pItem->pNext;
 
-  CFWL_WidgetMgrItem* pChild = pItem->pChild;
+  Item* pChild = pItem->pChild;
   while (pChild) {
-    CFWL_WidgetMgrItem* pNext = pChild->pNext;
+    Item* pNext = pChild->pNext;
     RemoveWidget(pChild->pWidget);
     pChild = pNext;
   }
@@ -249,24 +253,27 @@ void CFWL_WidgetMgr::RemoveWidget(IFWL_Widget* pWidget) {
 }
 
 void CFWL_WidgetMgr::SetOwner(IFWL_Widget* pOwner, IFWL_Widget* pOwned) {
-  CFWL_WidgetMgrItem* pParentItem = GetWidgetMgrItem(pOwner);
+  Item* pParentItem = GetWidgetMgrItem(pOwner);
   if (!pParentItem) {
-    pParentItem = new CFWL_WidgetMgrItem(pOwner);
-    m_mapWidgetItem[pOwner].reset(pParentItem);
+    auto item = pdfium::MakeUnique<Item>(pOwner);
+    pParentItem = item.get();
+    m_mapWidgetItem[pOwner] = std::move(item);
+
     pParentItem->pParent = GetWidgetMgrItem(nullptr);
     SetWidgetIndex(pOwner, -1);
   }
 
-  CFWL_WidgetMgrItem* pItem = GetWidgetMgrItem(pOwned);
+  Item* pItem = GetWidgetMgrItem(pOwned);
   if (!pItem) {
-    pItem = new CFWL_WidgetMgrItem(pOwned);
-    m_mapWidgetItem[pOwned].reset(pItem);
+    auto item = pdfium::MakeUnique<Item>(pOwned);
+    pItem = item.get();
+    m_mapWidgetItem[pOwned] = std::move(item);
   }
   pItem->pOwner = pParentItem;
 }
 void CFWL_WidgetMgr::SetParent(IFWL_Widget* pParent, IFWL_Widget* pChild) {
-  CFWL_WidgetMgrItem* pParentItem = GetWidgetMgrItem(pParent);
-  CFWL_WidgetMgrItem* pItem = GetWidgetMgrItem(pChild);
+  Item* pParentItem = GetWidgetMgrItem(pParent);
+  Item* pItem = GetWidgetMgrItem(pChild);
   if (!pItem)
     return;
   if (pItem->pParent && pItem->pParent != pParentItem) {
@@ -289,7 +296,7 @@ void CFWL_WidgetMgr::SetWidgetRect_Native(IFWL_Widget* pWidget,
   if (!FWL_UseOffscreen(pWidget))
     return;
 
-  CFWL_WidgetMgrItem* pItem = GetWidgetMgrItem(pWidget);
+  Item* pItem = GetWidgetMgrItem(pWidget);
   pItem->iRedrawCounter++;
   if (pItem->pOffscreen) {
     CFX_RenderDevice* pDevice = pItem->pOffscreen->GetRenderDevice();
@@ -427,12 +434,11 @@ void CFWL_WidgetMgr::ResetRedrawCounts(IFWL_Widget* pWidget) {
   GetWidgetMgrItem(pWidget)->iRedrawCounter = 0;
 }
 
-CFWL_WidgetMgrItem* CFWL_WidgetMgr::GetWidgetMgrItem(
+CFWL_WidgetMgr::Item* CFWL_WidgetMgr::GetWidgetMgrItem(
     IFWL_Widget* pWidget) const {
   auto it = m_mapWidgetItem.find(pWidget);
-  return it != m_mapWidgetItem.end()
-             ? static_cast<CFWL_WidgetMgrItem*>(it->second.get())
-             : nullptr;
+  return it != m_mapWidgetItem.end() ? static_cast<Item*>(it->second.get())
+                                     : nullptr;
 }
 
 bool CFWL_WidgetMgr::IsAbleNative(IFWL_Widget* pWidget) const {
@@ -591,7 +597,7 @@ CFX_Graphics* CFWL_WidgetMgr::DrawWidgetBefore(IFWL_Widget* pWidget,
   if (!FWL_UseOffscreen(pWidget))
     return pGraphics;
 
-  CFWL_WidgetMgrItem* pItem = GetWidgetMgrItem(pWidget);
+  Item* pItem = GetWidgetMgrItem(pWidget);
   if (!pItem->pOffscreen) {
     pItem->pOffscreen.reset(new CFX_Graphics);
     CFX_RectF rect;
@@ -610,21 +616,21 @@ void CFWL_WidgetMgr::DrawWidgetAfter(IFWL_Widget* pWidget,
                                      CFX_RectF& rtClip,
                                      const CFX_Matrix* pMatrix) {
   if (FWL_UseOffscreen(pWidget)) {
-    CFWL_WidgetMgrItem* pItem = GetWidgetMgrItem(pWidget);
+    Item* pItem = GetWidgetMgrItem(pWidget);
     pGraphics->Transfer(pItem->pOffscreen.get(), rtClip.left, rtClip.top,
                         rtClip, pMatrix);
 #ifdef _WIN32
     pItem->pOffscreen->ClearClip();
 #endif
   }
-  CFWL_WidgetMgrItem* pItem = GetWidgetMgrItem(pWidget);
+  Item* pItem = GetWidgetMgrItem(pWidget);
   pItem->iRedrawCounter = 0;
 }
 
 bool CFWL_WidgetMgr::IsNeedRepaint(IFWL_Widget* pWidget,
                                    CFX_Matrix* pMatrix,
                                    const CFX_RectF& rtDirty) {
-  CFWL_WidgetMgrItem* pItem = GetWidgetMgrItem(pWidget);
+  Item* pItem = GetWidgetMgrItem(pWidget);
   if (pItem && pItem->iRedrawCounter > 0) {
     pItem->iRedrawCounter = 0;
     return true;
@@ -722,7 +728,7 @@ bool CFWL_WidgetMgr::IsNeedRepaint(IFWL_Widget* pWidget,
 }
 
 bool CFWL_WidgetMgr::UseOffscreenDirect(IFWL_Widget* pWidget) const {
-  CFWL_WidgetMgrItem* pItem = GetWidgetMgrItem(pWidget);
+  Item* pItem = GetWidgetMgrItem(pWidget);
   if (!FWL_UseOffscreen(pWidget) || !(pItem->pOffscreen))
     return false;
 
@@ -742,9 +748,9 @@ bool CFWL_WidgetMgr::UseOffscreenDirect(IFWL_Widget* pWidget) const {
   return pItem->iRedrawCounter == 0;
 }
 
-CFWL_WidgetMgrItem::CFWL_WidgetMgrItem() : CFWL_WidgetMgrItem(nullptr) {}
+CFWL_WidgetMgr::Item::Item() : CFWL_WidgetMgr::Item(nullptr) {}
 
-CFWL_WidgetMgrItem::CFWL_WidgetMgrItem(IFWL_Widget* widget)
+CFWL_WidgetMgr::Item::Item(IFWL_Widget* widget)
     : pParent(nullptr),
       pOwner(nullptr),
       pChild(nullptr),
@@ -759,4 +765,4 @@ CFWL_WidgetMgrItem::CFWL_WidgetMgrItem(IFWL_Widget* widget)
 {
 }
 
-CFWL_WidgetMgrItem::~CFWL_WidgetMgrItem() {}
+CFWL_WidgetMgr::Item::~Item() {}

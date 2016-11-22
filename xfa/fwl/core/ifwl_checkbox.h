@@ -48,13 +48,13 @@ class CFWL_MsgMouse;
 class CFWL_WidgetProperties;
 class IFWL_Widget;
 
-class IFWL_CheckBoxDP : public IFWL_Widget::DataProvider {
- public:
-  virtual FX_FLOAT GetBoxSize(IFWL_Widget* pWidget) = 0;
-};
-
 class IFWL_CheckBox : public IFWL_Widget {
  public:
+  class DataProvider : public IFWL_Widget::DataProvider {
+   public:
+    virtual FX_FLOAT GetBoxSize(IFWL_Widget* pWidget) = 0;
+  };
+
   IFWL_CheckBox(const IFWL_App* app,
                 std::unique_ptr<CFWL_WidgetProperties> properties);
   ~IFWL_CheckBox() override;

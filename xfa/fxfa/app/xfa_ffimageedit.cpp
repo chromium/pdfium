@@ -7,8 +7,8 @@
 #include "xfa/fxfa/app/xfa_ffimageedit.h"
 
 #include "xfa/fwl/core/cfwl_msgmouse.h"
+#include "xfa/fwl/core/cfwl_notedriver.h"
 #include "xfa/fwl/core/cfwl_picturebox.h"
-#include "xfa/fwl/core/fwl_noteimp.h"
 #include "xfa/fwl/core/ifwl_app.h"
 #include "xfa/fxfa/app/xfa_fffield.h"
 #include "xfa/fxfa/xfa_ffdoc.h"

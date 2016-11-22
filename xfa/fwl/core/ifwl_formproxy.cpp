@@ -10,7 +10,7 @@
 #include <utility>
 
 #include "third_party/base/ptr_util.h"
-#include "xfa/fwl/core/fwl_noteimp.h"
+#include "xfa/fwl/core/cfwl_notedriver.h"
 
 IFWL_FormProxy::IFWL_FormProxy(
     const IFWL_App* app,

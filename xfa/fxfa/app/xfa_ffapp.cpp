@@ -12,8 +12,8 @@
 #include <vector>
 
 #include "xfa/fgas/font/cfgas_fontmgr.h"
+#include "xfa/fwl/core/cfwl_notedriver.h"
 #include "xfa/fwl/core/cfwl_widgetmgr.h"
-#include "xfa/fwl/core/fwl_noteimp.h"
 #include "xfa/fxfa/app/xfa_fwladapter.h"
 #include "xfa/fxfa/app/xfa_fwltheme.h"
 #include "xfa/fxfa/xfa_ffdoc.h"

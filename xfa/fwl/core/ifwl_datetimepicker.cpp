@@ -14,9 +14,9 @@
 #include "xfa/fwl/core/cfwl_evtselectchanged.h"
 #include "xfa/fwl/core/cfwl_msgmouse.h"
 #include "xfa/fwl/core/cfwl_msgsetfocus.h"
+#include "xfa/fwl/core/cfwl_notedriver.h"
 #include "xfa/fwl/core/cfwl_themebackground.h"
 #include "xfa/fwl/core/cfwl_widgetmgr.h"
-#include "xfa/fwl/core/fwl_noteimp.h"
 #include "xfa/fwl/core/ifwl_formproxy.h"
 #include "xfa/fwl/core/ifwl_spinbutton.h"
 #include "xfa/fwl/core/ifwl_themeprovider.h"
@@ -118,8 +118,9 @@ void IFWL_DateTimePicker::Update() {
   if (!(m_pMonthCal->GetThemeProvider()))
     m_pMonthCal->SetThemeProvider(m_pProperties->m_pThemeProvider);
   if (m_pProperties->m_pDataProvider) {
-    IFWL_DateTimePickerDP* pData =
-        static_cast<IFWL_DateTimePickerDP*>(m_pProperties->m_pDataProvider);
+    IFWL_DateTimePicker::DataProvider* pData =
+        static_cast<IFWL_DateTimePicker::DataProvider*>(
+            m_pProperties->m_pDataProvider);
     pData->GetToday(this, m_iCurYear, m_iCurMonth, m_iCurDay);
   }
 
@@ -467,8 +468,9 @@ void IFWL_DateTimePicker::DisForm_Update() {
   if (!m_pMonthCal->GetThemeProvider())
     m_pMonthCal->SetThemeProvider(m_pProperties->m_pThemeProvider);
   if (m_pProperties->m_pDataProvider) {
-    IFWL_DateTimePickerDP* pData =
-        static_cast<IFWL_DateTimePickerDP*>(m_pProperties->m_pDataProvider);
+    IFWL_DateTimePicker::DataProvider* pData =
+        static_cast<IFWL_DateTimePicker::DataProvider*>(
+            m_pProperties->m_pDataProvider);
     pData->GetToday(this, m_iCurYear, m_iCurMonth, m_iCurDay);
   }
 

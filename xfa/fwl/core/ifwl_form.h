@@ -33,8 +33,6 @@ class IFWL_Widget;
 class IFWL_ThemeProvider;
 class CFWL_SysBtn;
 
-class IFWL_FormDP : public IFWL_Widget::DataProvider {};
-
 class IFWL_Form : public IFWL_Widget {
  public:
   IFWL_Form(const IFWL_App* app,

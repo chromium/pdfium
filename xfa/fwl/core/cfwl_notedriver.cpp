@@ -4,23 +4,23 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fwl/core/fwl_noteimp.h"
+#include "xfa/fwl/core/cfwl_notedriver.h"
 
 #include <utility>
 
 #include "core/fxcrt/fx_ext.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
+#include "xfa/fwl/core/cfwl_eventtarget.h"
 #include "xfa/fwl/core/cfwl_msgkey.h"
 #include "xfa/fwl/core/cfwl_msgkillfocus.h"
 #include "xfa/fwl/core/cfwl_msgmouse.h"
 #include "xfa/fwl/core/cfwl_msgmousewheel.h"
 #include "xfa/fwl/core/cfwl_msgsetfocus.h"
+#include "xfa/fwl/core/cfwl_noteloop.h"
 #include "xfa/fwl/core/cfwl_widgetmgr.h"
 #include "xfa/fwl/core/ifwl_app.h"
 #include "xfa/fwl/core/ifwl_tooltip.h"
-
-CFWL_NoteLoop::CFWL_NoteLoop() : m_bContinueModal(true) {}
 
 CFWL_NoteDriver::CFWL_NoteDriver()
     : m_pHover(nullptr),
@@ -485,69 +485,5 @@ void CFWL_NoteDriver::ClearEventTargets(bool bRemoveAll) {
       delete old->second;
       m_eventTargets.erase(old);
     }
-  }
-}
-
-CFWL_EventTarget::CFWL_EventTarget(IFWL_Widget* pListener)
-    : m_pListener(pListener), m_bInvalid(false) {}
-
-CFWL_EventTarget::~CFWL_EventTarget() {
-  m_eventSources.RemoveAll();
-}
-
-int32_t CFWL_EventTarget::SetEventSource(IFWL_Widget* pSource,
-                                         uint32_t dwFilter) {
-  if (pSource) {
-    m_eventSources.SetAt(pSource, dwFilter);
-    return m_eventSources.GetCount();
-  }
-  return 1;
-}
-
-bool CFWL_EventTarget::ProcessEvent(CFWL_Event* pEvent) {
-  IFWL_WidgetDelegate* pDelegate = m_pListener->GetDelegate();
-  if (!pDelegate)
-    return false;
-  if (m_eventSources.GetCount() == 0) {
-    pDelegate->OnProcessEvent(pEvent);
-    return true;
-  }
-
-  FX_POSITION pos = m_eventSources.GetStartPosition();
-  while (pos) {
-    IFWL_Widget* pSource = nullptr;
-    uint32_t dwFilter = 0;
-    m_eventSources.GetNextAssoc(pos, (void*&)pSource, dwFilter);
-    if (pSource == pEvent->m_pSrcTarget) {
-      if (IsFilterEvent(pEvent, dwFilter)) {
-        pDelegate->OnProcessEvent(pEvent);
-        return true;
-      }
-    }
-  }
-  return false;
-}
-
-bool CFWL_EventTarget::IsFilterEvent(CFWL_Event* pEvent,
-                                     uint32_t dwFilter) const {
-  if (dwFilter == FWL_EVENT_ALL_MASK)
-    return true;
-
-  switch (pEvent->GetClassID()) {
-    case CFWL_EventType::Mouse:
-      return !!(dwFilter & FWL_EVENT_MOUSE_MASK);
-    case CFWL_EventType::MouseWheel:
-      return !!(dwFilter & FWL_EVENT_MOUSEWHEEL_MASK);
-    case CFWL_EventType::Key:
-      return !!(dwFilter & FWL_EVENT_KEY_MASK);
-    case CFWL_EventType::SetFocus:
-    case CFWL_EventType::KillFocus:
-      return !!(dwFilter & FWL_EVENT_FOCUSCHANGED_MASK);
-    case CFWL_EventType::Close:
-      return !!(dwFilter & FWL_EVENT_CLOSE_MASK);
-    case CFWL_EventType::SizeChanged:
-      return !!(dwFilter & FWL_EVENT_SIZECHANGED_MASK);
-    default:
-      return !!(dwFilter & FWL_EVENT_CONTROL_MASK);
   }
 }

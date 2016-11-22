@@ -35,17 +35,17 @@
 class IFWL_DateTimeEdit;
 class IFWL_FormProxy;
 
-class IFWL_DateTimePickerDP : public IFWL_Widget::DataProvider {
- public:
-  virtual void GetToday(IFWL_Widget* pWidget,
-                        int32_t& iYear,
-                        int32_t& iMonth,
-                        int32_t& iDay) = 0;
-};
-
 class IFWL_DateTimePicker : public IFWL_Widget,
                             public IFWL_MonthCalendar::DataProvider {
  public:
+  class DataProvider : public IFWL_Widget::DataProvider {
+   public:
+    virtual void GetToday(IFWL_Widget* pWidget,
+                          int32_t& iYear,
+                          int32_t& iMonth,
+                          int32_t& iDay) = 0;
+  };
+
   explicit IFWL_DateTimePicker(
       const IFWL_App* app,
       std::unique_ptr<CFWL_WidgetProperties> properties);

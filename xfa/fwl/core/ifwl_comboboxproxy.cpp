@@ -11,7 +11,7 @@
 
 #include "xfa/fwl/core/cfwl_msgkillfocus.h"
 #include "xfa/fwl/core/cfwl_msgmouse.h"
-#include "xfa/fwl/core/fwl_noteimp.h"
+#include "xfa/fwl/core/cfwl_notedriver.h"
 #include "xfa/fwl/core/ifwl_app.h"
 #include "xfa/fwl/core/ifwl_combobox.h"
 
