@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FWL_CORE_IFWL_APP_H_
-#define XFA_FWL_CORE_IFWL_APP_H_
+#ifndef XFA_FWL_CORE_CFWL_APP_H_
+#define XFA_FWL_CORE_CFWL_APP_H_
 
 #include <memory>
 
@@ -27,10 +27,10 @@ enum FWL_KeyFlag {
   FWL_KEYFLAG_MButton = 1 << 6
 };
 
-class IFWL_App {
+class CFWL_App {
  public:
-  explicit IFWL_App(CXFA_FFApp* pAdapter);
-  ~IFWL_App();
+  explicit CFWL_App(CXFA_FFApp* pAdapter);
+  ~CFWL_App();
 
   CXFA_FFApp* GetAdapterNative() const { return m_pAdapterNative; }
   CFWL_WidgetMgr* GetWidgetMgr() const { return m_pWidgetMgr.get(); }
@@ -42,4 +42,4 @@ class IFWL_App {
   std::unique_ptr<CFWL_NoteDriver> m_pNoteDriver;
 };
 
-#endif  // XFA_FWL_CORE_IFWL_APP_H_
+#endif  // XFA_FWL_CORE_CFWL_APP_H_

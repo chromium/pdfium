@@ -13,7 +13,7 @@
 
 class CFWL_PictureBox : public CFWL_Widget, public IFWL_Widget::DataProvider {
  public:
-  explicit CFWL_PictureBox(const IFWL_App* pApp);
+  explicit CFWL_PictureBox(const CFWL_App* pApp);
   ~CFWL_PictureBox() override;
 
   void Initialize();

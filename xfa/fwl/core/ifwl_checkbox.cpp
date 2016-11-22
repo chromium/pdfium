@@ -12,6 +12,7 @@
 
 #include "third_party/base/ptr_util.h"
 #include "xfa/fde/tto/fde_textout.h"
+#include "xfa/fwl/core/cfwl_app.h"
 #include "xfa/fwl/core/cfwl_evtcheckstatechanged.h"
 #include "xfa/fwl/core/cfwl_msgkey.h"
 #include "xfa/fwl/core/cfwl_msgmouse.h"
@@ -19,7 +20,6 @@
 #include "xfa/fwl/core/cfwl_themebackground.h"
 #include "xfa/fwl/core/cfwl_themetext.h"
 #include "xfa/fwl/core/cfwl_widgetmgr.h"
-#include "xfa/fwl/core/ifwl_app.h"
 #include "xfa/fwl/core/ifwl_themeprovider.h"
 
 namespace {
@@ -28,7 +28,7 @@ const int kCaptionMargin = 5;
 
 }  // namespace
 
-IFWL_CheckBox::IFWL_CheckBox(const IFWL_App* app,
+IFWL_CheckBox::IFWL_CheckBox(const CFWL_App* app,
                              std::unique_ptr<CFWL_WidgetProperties> properties)
     : IFWL_Widget(app, std::move(properties), nullptr),
       m_dwTTOStyles(FDE_TTOSTYLE_SingleLine),

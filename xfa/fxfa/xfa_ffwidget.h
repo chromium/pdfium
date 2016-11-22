@@ -11,7 +11,7 @@
 
 #include "core/fxcodec/fx_codec_def.h"
 #include "core/fxge/cfx_graphstatedata.h"
-#include "xfa/fwl/core/ifwl_app.h"
+#include "xfa/fwl/core/cfwl_app.h"
 #include "xfa/fxfa/fxfa.h"
 #include "xfa/fxfa/parser/cxfa_contentlayoutitem.h"
 
@@ -124,7 +124,7 @@ class CXFA_FFWidget : public CXFA_ContentLayoutItem {
   bool IsLayoutRectEmpty();
   CXFA_FFWidget* GetParent();
   bool IsAncestorOf(CXFA_FFWidget* pWidget);
-  const IFWL_App* GetFWLApp();
+  const CFWL_App* GetFWLApp();
 
  protected:
   virtual bool PtInActiveRect(FX_FLOAT fx, FX_FLOAT fy);

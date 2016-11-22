@@ -18,6 +18,7 @@
 #include "xfa/fde/fde_render.h"
 #include "xfa/fde/ifde_txtedtpage.h"
 #include "xfa/fgas/font/cfgas_gefont.h"
+#include "xfa/fwl/core/cfwl_app.h"
 #include "xfa/fwl/core/cfwl_evtcheckword.h"
 #include "xfa/fwl/core/cfwl_evttextchanged.h"
 #include "xfa/fwl/core/cfwl_evttextfull.h"
@@ -27,7 +28,6 @@
 #include "xfa/fwl/core/cfwl_themebackground.h"
 #include "xfa/fwl/core/cfwl_themepart.h"
 #include "xfa/fwl/core/cfwl_widgetmgr.h"
-#include "xfa/fwl/core/ifwl_app.h"
 #include "xfa/fwl/core/ifwl_caret.h"
 #include "xfa/fwl/core/ifwl_themeprovider.h"
 #include "xfa/fxfa/xfa_ffdoc.h"
@@ -57,7 +57,7 @@ void AddSquigglyPath(CFX_Path* pPathData,
 
 }  // namespace
 
-IFWL_Edit::IFWL_Edit(const IFWL_App* app,
+IFWL_Edit::IFWL_Edit(const CFWL_App* app,
                      std::unique_ptr<CFWL_WidgetProperties> properties,
                      IFWL_Widget* pOuter)
     : IFWL_Widget(app, std::move(properties), pOuter),

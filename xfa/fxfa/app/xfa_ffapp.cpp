@@ -75,8 +75,7 @@ void CXFA_FileRead::Release() {
 CXFA_FFApp::CXFA_FFApp(IXFA_AppProvider* pProvider)
     : m_pProvider(pProvider),
       m_pWidgetMgrDelegate(nullptr),
-      m_pFWLApp(new IFWL_App(this)) {
-}
+      m_pFWLApp(new CFWL_App(this)) {}
 
 CXFA_FFApp::~CXFA_FFApp() {}
 

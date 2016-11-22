@@ -54,7 +54,7 @@ class IFWL_ComboBox : public IFWL_Widget {
     virtual FX_FLOAT GetListHeight(IFWL_Widget* pWidget) = 0;
   };
 
-  explicit IFWL_ComboBox(const IFWL_App* app,
+  explicit IFWL_ComboBox(const CFWL_App* app,
                          std::unique_ptr<CFWL_WidgetProperties> properties);
   ~IFWL_ComboBox() override;
 

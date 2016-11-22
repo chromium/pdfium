@@ -7,17 +7,17 @@
 #include "xfa/fwl/core/cfwl_widget.h"
 
 #include "xfa/fde/tto/fde_textout.h"
+#include "xfa/fwl/core/cfwl_app.h"
 #include "xfa/fwl/core/cfwl_notedriver.h"
 #include "xfa/fwl/core/cfwl_themetext.h"
 #include "xfa/fwl/core/cfwl_widgetmgr.h"
-#include "xfa/fwl/core/ifwl_app.h"
 #include "xfa/fwl/core/ifwl_themeprovider.h"
 
 #define FWL_WGT_CalcHeight 2048
 #define FWL_WGT_CalcWidth 2048
 #define FWL_WGT_CalcMultiLineDefWidth 120.0f
 
-CFWL_Widget::CFWL_Widget(const IFWL_App* app) : m_pApp(app) {}
+CFWL_Widget::CFWL_Widget(const CFWL_App* app) : m_pApp(app) {}
 
 CFWL_Widget::~CFWL_Widget() {}
 

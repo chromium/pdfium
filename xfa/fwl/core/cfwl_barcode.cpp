@@ -18,7 +18,7 @@ IFWL_Barcode* ToBarcode(IFWL_Widget* widget) {
 
 }  // namespace
 
-CFWL_Barcode::CFWL_Barcode(const IFWL_App* app)
+CFWL_Barcode::CFWL_Barcode(const CFWL_App* app)
     : CFWL_Edit(app), m_dwAttributeMask(FWL_BCDATTRIBUTE_NONE) {}
 
 CFWL_Barcode::~CFWL_Barcode() {}

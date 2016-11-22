@@ -17,7 +17,7 @@ class IFWL_ComboBox;
 
 class IFWL_ComboEdit : public IFWL_Edit {
  public:
-  IFWL_ComboEdit(const IFWL_App* app,
+  IFWL_ComboEdit(const CFWL_App* app,
                  std::unique_ptr<CFWL_WidgetProperties> properties,
                  IFWL_Widget* pOuter);
 

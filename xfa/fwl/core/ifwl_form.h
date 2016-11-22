@@ -35,7 +35,7 @@ class CFWL_SysBtn;
 
 class IFWL_Form : public IFWL_Widget {
  public:
-  IFWL_Form(const IFWL_App* app,
+  IFWL_Form(const CFWL_App* app,
             std::unique_ptr<CFWL_WidgetProperties> properties,
             IFWL_Widget* pOuter);
   ~IFWL_Form() override;

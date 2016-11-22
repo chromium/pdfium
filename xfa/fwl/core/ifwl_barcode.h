@@ -58,7 +58,7 @@ class IFWL_Barcode : public IFWL_Edit {
     virtual uint32_t GetBarcodeAttributeMask() const = 0;
   };
 
-  IFWL_Barcode(const IFWL_App* app,
+  IFWL_Barcode(const CFWL_App* app,
                std::unique_ptr<CFWL_WidgetProperties> properties);
   ~IFWL_Barcode() override;
 

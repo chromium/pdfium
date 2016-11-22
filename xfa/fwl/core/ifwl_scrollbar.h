@@ -22,7 +22,7 @@ class IFWL_Widget;
 
 class IFWL_ScrollBar : public IFWL_Widget {
  public:
-  IFWL_ScrollBar(const IFWL_App* app,
+  IFWL_ScrollBar(const CFWL_App* app,
                  std::unique_ptr<CFWL_WidgetProperties> properties,
                  IFWL_Widget* pOuter);
   ~IFWL_ScrollBar() override;

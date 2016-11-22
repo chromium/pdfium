@@ -76,7 +76,7 @@ class IFWL_ListBox : public IFWL_Widget {
                                    uint32_t dwCheckState) = 0;
   };
 
-  IFWL_ListBox(const IFWL_App* app,
+  IFWL_ListBox(const CFWL_App* app,
                std::unique_ptr<CFWL_WidgetProperties> properties,
                IFWL_Widget* pOuter);
   ~IFWL_ListBox() override;

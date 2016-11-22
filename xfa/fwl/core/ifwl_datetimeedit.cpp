@@ -15,7 +15,7 @@
 #include "xfa/fwl/core/ifwl_datetimepicker.h"
 
 IFWL_DateTimeEdit::IFWL_DateTimeEdit(
-    const IFWL_App* app,
+    const CFWL_App* app,
     std::unique_ptr<CFWL_WidgetProperties> properties,
     IFWL_Widget* pOuter)
     : IFWL_Edit(app, std::move(properties), pOuter) {}

@@ -122,7 +122,7 @@ CFX_WideString* GetCapacityForMonth(IFWL_ThemeProvider* pTheme,
 }  // namespace
 
 IFWL_MonthCalendar::IFWL_MonthCalendar(
-    const IFWL_App* app,
+    const CFWL_App* app,
     std::unique_ptr<CFWL_WidgetProperties> properties,
     IFWL_Widget* pOuter)
     : IFWL_Widget(app, std::move(properties), pOuter),

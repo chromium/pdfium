@@ -55,7 +55,7 @@ class IFWL_CheckBox : public IFWL_Widget {
     virtual FX_FLOAT GetBoxSize(IFWL_Widget* pWidget) = 0;
   };
 
-  IFWL_CheckBox(const IFWL_App* app,
+  IFWL_CheckBox(const CFWL_App* app,
                 std::unique_ptr<CFWL_WidgetProperties> properties);
   ~IFWL_CheckBox() override;
 

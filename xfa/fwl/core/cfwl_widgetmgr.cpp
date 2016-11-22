@@ -9,8 +9,8 @@
 #include <utility>
 
 #include "third_party/base/ptr_util.h"
+#include "xfa/fwl/core/cfwl_app.h"
 #include "xfa/fwl/core/cfwl_notedriver.h"
-#include "xfa/fwl/core/ifwl_app.h"
 #include "xfa/fwl/core/ifwl_form.h"
 #include "xfa/fxfa/app/xfa_fwladapter.h"
 #include "xfa/fxfa/xfa_ffapp.h"
@@ -472,7 +472,7 @@ void CFWL_WidgetMgr::OnProcessMessageToForm(CFWL_Message* pMessage) {
     return;
 
   IFWL_Widget* pDstWidget = pMessage->m_pDstTarget;
-  const IFWL_App* pApp = pDstWidget->GetOwnerApp();
+  const CFWL_App* pApp = pDstWidget->GetOwnerApp();
   if (!pApp)
     return;
 

@@ -59,7 +59,7 @@ class IFWL_Caret;
 
 class IFWL_Edit : public IFWL_Widget {
  public:
-  IFWL_Edit(const IFWL_App* app,
+  IFWL_Edit(const CFWL_App* app,
             std::unique_ptr<CFWL_WidgetProperties> properties,
             IFWL_Widget* pOuter);
   ~IFWL_Edit() override;

@@ -11,7 +11,7 @@
 #include "third_party/base/ptr_util.h"
 #include "xfa/fwl/core/fwl_error.h"
 
-CFWL_CheckBox::CFWL_CheckBox(const IFWL_App* app)
+CFWL_CheckBox::CFWL_CheckBox(const CFWL_App* app)
     : CFWL_Widget(app), m_fBoxHeight(16.0f) {}
 
 CFWL_CheckBox::~CFWL_CheckBox() {}

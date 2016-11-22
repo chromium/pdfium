@@ -13,7 +13,7 @@
 class CFWL_DateTimePicker : public CFWL_Widget,
                             public IFWL_DateTimePicker::DataProvider {
  public:
-  explicit CFWL_DateTimePicker(const IFWL_App* pApp);
+  explicit CFWL_DateTimePicker(const CFWL_App* pApp);
   ~CFWL_DateTimePicker() override;
 
   void Initialize();

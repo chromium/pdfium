@@ -23,7 +23,7 @@
 #define FWL_SCROLLBAR_MinThumb 5
 
 IFWL_ScrollBar::IFWL_ScrollBar(
-    const IFWL_App* app,
+    const CFWL_App* app,
     std::unique_ptr<CFWL_WidgetProperties> properties,
     IFWL_Widget* pOuter)
     : IFWL_Widget(app, std::move(properties), pOuter),

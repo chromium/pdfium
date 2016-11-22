@@ -16,7 +16,7 @@ class IFWL_ComboBox;
 class IFWL_ComboBoxProxy : public IFWL_FormProxy {
  public:
   IFWL_ComboBoxProxy(IFWL_ComboBox* pCombobBox,
-                     const IFWL_App* app,
+                     const CFWL_App* app,
                      std::unique_ptr<CFWL_WidgetProperties> properties,
                      IFWL_Widget* pOuter);
   ~IFWL_ComboBoxProxy() override;

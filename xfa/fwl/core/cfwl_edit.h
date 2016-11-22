@@ -16,7 +16,7 @@ class IFDE_TxtEdtDoRecord;
 
 class CFWL_Edit : public CFWL_Widget {
  public:
-  explicit CFWL_Edit(const IFWL_App*);
+  explicit CFWL_Edit(const CFWL_App*);
   ~CFWL_Edit() override;
 
   void Initialize();

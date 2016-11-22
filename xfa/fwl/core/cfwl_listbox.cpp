@@ -21,7 +21,7 @@ IFWL_ListBox* ToListBox(IFWL_Widget* widget) {
 
 }  // namespace
 
-CFWL_ListBox::CFWL_ListBox(const IFWL_App* app) : CFWL_Widget(app) {}
+CFWL_ListBox::CFWL_ListBox(const CFWL_App* app) : CFWL_Widget(app) {}
 
 CFWL_ListBox::~CFWL_ListBox() {}
 

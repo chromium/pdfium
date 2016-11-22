@@ -13,6 +13,7 @@
 #include "third_party/base/ptr_util.h"
 #include "xfa/fde/cfde_txtedtengine.h"
 #include "xfa/fde/tto/fde_textout.h"
+#include "xfa/fwl/core/cfwl_app.h"
 #include "xfa/fwl/core/cfwl_evteditchanged.h"
 #include "xfa/fwl/core/cfwl_evtpostdropdown.h"
 #include "xfa/fwl/core/cfwl_evtpredropdown.h"
@@ -27,12 +28,11 @@
 #include "xfa/fwl/core/cfwl_themepart.h"
 #include "xfa/fwl/core/cfwl_themetext.h"
 #include "xfa/fwl/core/cfwl_widgetmgr.h"
-#include "xfa/fwl/core/ifwl_app.h"
 #include "xfa/fwl/core/ifwl_formproxy.h"
 #include "xfa/fwl/core/ifwl_listbox.h"
 #include "xfa/fwl/core/ifwl_themeprovider.h"
 
-IFWL_ComboBox::IFWL_ComboBox(const IFWL_App* app,
+IFWL_ComboBox::IFWL_ComboBox(const CFWL_App* app,
                              std::unique_ptr<CFWL_WidgetProperties> properties)
     : IFWL_Widget(app, std::move(properties), nullptr),
       m_pComboBoxProxy(nullptr),

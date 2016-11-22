@@ -21,7 +21,7 @@ IFWL_DateTimePicker* ToDateTimePicker(IFWL_Widget* widget) {
 
 }  // namespace
 
-CFWL_DateTimePicker::CFWL_DateTimePicker(const IFWL_App* app)
+CFWL_DateTimePicker::CFWL_DateTimePicker(const CFWL_App* app)
     : CFWL_Widget(app) {}
 
 CFWL_DateTimePicker::~CFWL_DateTimePicker() {}

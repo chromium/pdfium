@@ -21,7 +21,7 @@ IFWL_ComboBox* ToComboBox(IFWL_Widget* widget) {
 
 }  // namespace
 
-CFWL_ComboBox::CFWL_ComboBox(const IFWL_App* app)
+CFWL_ComboBox::CFWL_ComboBox(const CFWL_App* app)
     : CFWL_Widget(app), m_fMaxListHeight(0) {}
 
 CFWL_ComboBox::~CFWL_ComboBox() {}

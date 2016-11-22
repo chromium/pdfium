@@ -6,11 +6,11 @@
 
 #include "xfa/fxfa/app/xfa_ffchoicelist.h"
 
+#include "xfa/fwl/core/cfwl_app.h"
 #include "xfa/fwl/core/cfwl_combobox.h"
 #include "xfa/fwl/core/cfwl_evtselectchanged.h"
 #include "xfa/fwl/core/cfwl_listbox.h"
 #include "xfa/fwl/core/cfwl_notedriver.h"
-#include "xfa/fwl/core/ifwl_app.h"
 #include "xfa/fwl/core/ifwl_combobox.h"
 #include "xfa/fwl/core/ifwl_edit.h"
 #include "xfa/fwl/core/ifwl_listbox.h"

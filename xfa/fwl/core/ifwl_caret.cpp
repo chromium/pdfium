@@ -21,7 +21,7 @@ const uint32_t kFrequency = 400;
 
 }  // namespace
 
-IFWL_Caret::IFWL_Caret(const IFWL_App* app,
+IFWL_Caret::IFWL_Caret(const CFWL_App* app,
                        std::unique_ptr<CFWL_WidgetProperties> properties,
                        IFWL_Widget* pOuter)
     : IFWL_Widget(app, std::move(properties), pOuter),

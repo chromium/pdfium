@@ -13,7 +13,7 @@
 
 class CFWL_PushButton : public CFWL_Widget, public IFWL_Widget::DataProvider {
  public:
-  explicit CFWL_PushButton(const IFWL_App*);
+  explicit CFWL_PushButton(const CFWL_App*);
   ~CFWL_PushButton() override;
 
   void Initialize();

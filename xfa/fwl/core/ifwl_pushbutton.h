@@ -34,7 +34,7 @@ class IFWL_Widget;
 
 class IFWL_PushButton : public IFWL_Widget {
  public:
-  IFWL_PushButton(const IFWL_App* app,
+  IFWL_PushButton(const CFWL_App* app,
                   std::unique_ptr<CFWL_WidgetProperties> properties);
   ~IFWL_PushButton() override;
 

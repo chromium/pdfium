@@ -12,7 +12,7 @@
 
 class CFWL_CheckBox : public CFWL_Widget, public IFWL_CheckBox::DataProvider {
  public:
-  explicit CFWL_CheckBox(const IFWL_App* pApp);
+  explicit CFWL_CheckBox(const CFWL_App* pApp);
   ~CFWL_CheckBox() override;
 
   void Initialize();

@@ -9,15 +9,15 @@
 #include <memory>
 #include <utility>
 
+#include "xfa/fwl/core/cfwl_app.h"
 #include "xfa/fwl/core/cfwl_msgkillfocus.h"
 #include "xfa/fwl/core/cfwl_msgmouse.h"
 #include "xfa/fwl/core/cfwl_notedriver.h"
-#include "xfa/fwl/core/ifwl_app.h"
 #include "xfa/fwl/core/ifwl_combobox.h"
 
 IFWL_ComboBoxProxy::IFWL_ComboBoxProxy(
     IFWL_ComboBox* pComboBox,
-    const IFWL_App* app,
+    const CFWL_App* app,
     std::unique_ptr<CFWL_WidgetProperties> properties,
     IFWL_Widget* pOuter)
     : IFWL_FormProxy(app, std::move(properties), pOuter),
@@ -64,7 +64,7 @@ void IFWL_ComboBoxProxy::OnDrawWidget(CFX_Graphics* pGraphics,
 }
 
 void IFWL_ComboBoxProxy::OnLButtonDown(CFWL_Message* pMessage) {
-  const IFWL_App* pApp = GetOwnerApp();
+  const CFWL_App* pApp = GetOwnerApp();
   if (!pApp)
     return;
 
@@ -87,7 +87,7 @@ void IFWL_ComboBoxProxy::OnLButtonDown(CFWL_Message* pMessage) {
 
 void IFWL_ComboBoxProxy::OnLButtonUp(CFWL_Message* pMessage) {
   m_bLButtonDown = false;
-  const IFWL_App* pApp = GetOwnerApp();
+  const CFWL_App* pApp = GetOwnerApp();
   if (!pApp)
     return;
 

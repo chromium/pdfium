@@ -20,7 +20,7 @@ class CFWL_WidgetMgr;
 
 class CFWL_Widget {
  public:
-  explicit CFWL_Widget(const IFWL_App*);
+  explicit CFWL_Widget(const CFWL_App*);
   virtual ~CFWL_Widget();
 
   IFWL_Widget* GetWidget() { return m_pIface.get(); }
@@ -50,7 +50,7 @@ class CFWL_Widget {
  protected:
   void Initialize();
 
-  const IFWL_App* m_pApp;
+  const CFWL_App* m_pApp;
   std::unique_ptr<IFWL_Widget> m_pIface;
 };
 

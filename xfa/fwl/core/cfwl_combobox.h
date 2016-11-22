@@ -15,7 +15,7 @@
 
 class CFWL_ComboBox : public CFWL_Widget, public IFWL_ComboBox::DataProvider {
  public:
-  explicit CFWL_ComboBox(const IFWL_App* pApp);
+  explicit CFWL_ComboBox(const CFWL_App* pApp);
   ~CFWL_ComboBox() override;
 
   void Initialize();

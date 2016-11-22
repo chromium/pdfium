@@ -32,7 +32,7 @@ class IFWL_Widget;
 
 class IFWL_PictureBox : public IFWL_Widget {
  public:
-  explicit IFWL_PictureBox(const IFWL_App* app,
+  explicit IFWL_PictureBox(const CFWL_App* app,
                            std::unique_ptr<CFWL_WidgetProperties> properties);
   ~IFWL_PictureBox() override;
 

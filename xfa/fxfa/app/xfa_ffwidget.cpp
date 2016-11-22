@@ -46,7 +46,7 @@ void CXFA_FFWidget::SetPageView(CXFA_FFPageView* pPageView) {
   m_pPageView = pPageView;
 }
 
-const IFWL_App* CXFA_FFWidget::GetFWLApp() {
+const CFWL_App* CXFA_FFWidget::GetFWLApp() {
   return GetPageView()->GetDocView()->GetDoc()->GetApp()->GetFWLApp();
 }
 

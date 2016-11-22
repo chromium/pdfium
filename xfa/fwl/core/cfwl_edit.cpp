@@ -19,7 +19,7 @@ IFWL_Edit* ToEdit(IFWL_Widget* widget) {
 
 }  // namespace
 
-CFWL_Edit::CFWL_Edit(const IFWL_App* app) : CFWL_Widget(app) {}
+CFWL_Edit::CFWL_Edit(const CFWL_App* app) : CFWL_Widget(app) {}
 
 CFWL_Edit::~CFWL_Edit() {}
 

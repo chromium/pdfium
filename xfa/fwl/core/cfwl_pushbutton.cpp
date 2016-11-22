@@ -10,7 +10,7 @@
 
 #include "third_party/base/ptr_util.h"
 
-CFWL_PushButton::CFWL_PushButton(const IFWL_App* app) : CFWL_Widget(app) {}
+CFWL_PushButton::CFWL_PushButton(const CFWL_App* app) : CFWL_Widget(app) {}
 
 CFWL_PushButton::~CFWL_PushButton() {}
 

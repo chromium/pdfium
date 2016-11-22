@@ -28,7 +28,7 @@ const int kElapseTime = 200;
 }  // namespace
 
 IFWL_SpinButton::IFWL_SpinButton(
-    const IFWL_App* app,
+    const CFWL_App* app,
     std::unique_ptr<CFWL_WidgetProperties> properties)
     : IFWL_Widget(app, std::move(properties), nullptr),
       m_dwUpState(CFWL_PartState_Normal),

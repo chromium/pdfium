@@ -29,7 +29,7 @@ const int kDateTimePickerHeight = 20;
 }  // namespace
 
 IFWL_DateTimePicker::IFWL_DateTimePicker(
-    const IFWL_App* app,
+    const CFWL_App* app,
     std::unique_ptr<CFWL_WidgetProperties> properties)
     : IFWL_Widget(app, std::move(properties), nullptr),
       m_iBtnState(1),

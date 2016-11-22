@@ -57,7 +57,7 @@ class CFWL_MsgKey;
 class CFWL_Widget;
 class CFWL_WidgetProperties;
 class CFWL_WidgetMgr;
-class IFWL_App;
+class CFWL_App;
 class IFWL_ThemeProvider;
 class IFWL_Widget;
 enum class FWL_Type;
@@ -118,7 +118,7 @@ class IFWL_Widget : public IFWL_WidgetDelegate {
     return m_pDelegate ? m_pDelegate : this;
   }
 
-  const IFWL_App* GetOwnerApp() const { return m_pOwnerApp; }
+  const CFWL_App* GetOwnerApp() const { return m_pOwnerApp; }
   uint32_t GetEventKey() const { return m_nEventKey; }
   void SetEventKey(uint32_t key) { m_nEventKey = key; }
 
@@ -133,7 +133,7 @@ class IFWL_Widget : public IFWL_WidgetDelegate {
   void Repaint(const CFX_RectF* pRect = nullptr);
 
  protected:
-  IFWL_Widget(const IFWL_App* app,
+  IFWL_Widget(const CFWL_App* app,
               std::unique_ptr<CFWL_WidgetProperties> properties,
               IFWL_Widget* pOuter);
 
@@ -175,7 +175,7 @@ class IFWL_Widget : public IFWL_WidgetDelegate {
                 IFWL_ThemeProvider* pTheme,
                 const CFX_Matrix* pMatrix = nullptr);
 
-  const IFWL_App* const m_pOwnerApp;
+  const CFWL_App* const m_pOwnerApp;
   CFWL_WidgetMgr* const m_pWidgetMgr;
   std::unique_ptr<CFWL_WidgetProperties> m_pProperties;
   IFWL_Widget* m_pOuter;

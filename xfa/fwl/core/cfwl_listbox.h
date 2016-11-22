@@ -17,7 +17,7 @@
 
 class CFWL_ListBox : public CFWL_Widget, public IFWL_ListBox::DataProvider {
  public:
-  explicit CFWL_ListBox(const IFWL_App* pApp);
+  explicit CFWL_ListBox(const CFWL_App* pApp);
   ~CFWL_ListBox() override;
 
   void Initialize();

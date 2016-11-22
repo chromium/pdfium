@@ -35,7 +35,7 @@ class IFWL_MonthCalendar : public IFWL_Widget {
     virtual int32_t GetCurYear(IFWL_Widget* pWidget) = 0;
   };
 
-  IFWL_MonthCalendar(const IFWL_App* app,
+  IFWL_MonthCalendar(const CFWL_App* app,
                      std::unique_ptr<CFWL_WidgetProperties> properties,
                      IFWL_Widget* pOuter);
   ~IFWL_MonthCalendar() override;

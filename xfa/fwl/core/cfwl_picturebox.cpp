@@ -10,7 +10,7 @@
 
 #include "third_party/base/ptr_util.h"
 
-CFWL_PictureBox::CFWL_PictureBox(const IFWL_App* app) : CFWL_Widget(app) {}
+CFWL_PictureBox::CFWL_PictureBox(const CFWL_App* app) : CFWL_Widget(app) {}
 
 CFWL_PictureBox::~CFWL_PictureBox() {}
 

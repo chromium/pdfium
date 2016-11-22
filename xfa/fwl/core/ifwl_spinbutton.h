@@ -21,7 +21,7 @@ class CFWL_WidgetProperties;
 
 class IFWL_SpinButton : public IFWL_Widget {
  public:
-  IFWL_SpinButton(const IFWL_App* app,
+  IFWL_SpinButton(const CFWL_App* app,
                   std::unique_ptr<CFWL_WidgetProperties> properties);
   ~IFWL_SpinButton() override;
 

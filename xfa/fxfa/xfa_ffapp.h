@@ -13,7 +13,7 @@
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "xfa/fgas/font/cfgas_fontmgr.h"
-#include "xfa/fwl/core/ifwl_app.h"
+#include "xfa/fwl/core/cfwl_app.h"
 #include "xfa/fxfa/fxfa.h"
 
 class CXFA_DefFontMgr;
@@ -56,7 +56,7 @@ class CXFA_FFApp {
   CXFA_FWLTheme* GetFWLTheme();
 
   IXFA_AppProvider* GetAppProvider() const { return m_pProvider; }
-  const IFWL_App* GetFWLApp() const { return m_pFWLApp.get(); }
+  const CFWL_App* GetFWLApp() const { return m_pFWLApp.get(); }
   IFWL_AdapterTimerMgr* GetTimerMgr() const;
   CXFA_FontMgr* GetXFAFontMgr() const;
   IFWL_WidgetMgrDelegate* GetWidgetMgrDelegate() const {
@@ -91,7 +91,7 @@ class CXFA_FFApp {
   // |m_pFWLApp| has to be released first, then |m_pFWLTheme| since the former
   // may refers to theme manager and the latter refers to font manager.
   std::unique_ptr<CXFA_FWLTheme> m_pFWLTheme;
-  std::unique_ptr<IFWL_App> m_pFWLApp;
+  std::unique_ptr<CFWL_App> m_pFWLApp;
 };
 
 #endif  // XFA_FXFA_XFA_FFAPP_H_

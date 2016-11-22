@@ -10,6 +10,7 @@
 
 #include "third_party/base/ptr_util.h"
 #include "xfa/fde/tto/fde_textout.h"
+#include "xfa/fwl/core/cfwl_app.h"
 #include "xfa/fwl/core/cfwl_evtclose.h"
 #include "xfa/fwl/core/cfwl_msgmouse.h"
 #include "xfa/fwl/core/cfwl_notedriver.h"
@@ -19,7 +20,6 @@
 #include "xfa/fwl/core/cfwl_themepart.h"
 #include "xfa/fwl/core/cfwl_themetext.h"
 #include "xfa/fwl/core/cfwl_widgetmgr.h"
-#include "xfa/fwl/core/ifwl_app.h"
 #include "xfa/fwl/core/ifwl_formproxy.h"
 #include "xfa/fwl/core/ifwl_themeprovider.h"
 #include "xfa/fwl/theme/cfwl_widgettp.h"
@@ -38,7 +38,7 @@ const uint8_t kCornerEnlarge = 10;
 
 }  // namespace
 
-IFWL_Form::IFWL_Form(const IFWL_App* app,
+IFWL_Form::IFWL_Form(const CFWL_App* app,
                      std::unique_ptr<CFWL_WidgetProperties> properties,
                      IFWL_Widget* pOuter)
     : IFWL_Widget(app, std::move(properties), pOuter),
@@ -268,7 +268,7 @@ void IFWL_Form::DrawWidget(CFX_Graphics* pGraphics, const CFX_Matrix* pMatrix) {
 }
 
 IFWL_Widget* IFWL_Form::DoModal() {
-  const IFWL_App* pApp = GetOwnerApp();
+  const CFWL_App* pApp = GetOwnerApp();
   if (!pApp)
     return nullptr;
 
@@ -300,7 +300,7 @@ void IFWL_Form::EndDoModal() {
 
 #if (_FX_OS_ == _FX_MACOSX_)
   m_pNoteLoop->EndModalLoop();
-  const IFWL_App* pApp = GetOwnerApp();
+  const CFWL_App* pApp = GetOwnerApp();
   if (!pApp)
     return;
 
@@ -457,7 +457,7 @@ void IFWL_Form::ResetSysBtn() {
 }
 
 void IFWL_Form::RegisterForm() {
-  const IFWL_App* pApp = GetOwnerApp();
+  const CFWL_App* pApp = GetOwnerApp();
   if (!pApp)
     return;
 
@@ -470,7 +470,7 @@ void IFWL_Form::RegisterForm() {
 }
 
 void IFWL_Form::UnRegisterForm() {
-  const IFWL_App* pApp = GetOwnerApp();
+  const CFWL_App* pApp = GetOwnerApp();
   if (!pApp)
     return;
 

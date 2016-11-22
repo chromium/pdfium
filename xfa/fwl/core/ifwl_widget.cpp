@@ -10,6 +10,7 @@
 #include <utility>
 
 #include "xfa/fde/tto/fde_textout.h"
+#include "xfa/fwl/core/cfwl_app.h"
 #include "xfa/fwl/core/cfwl_evtkey.h"
 #include "xfa/fwl/core/cfwl_evtkillfocus.h"
 #include "xfa/fwl/core/cfwl_evtmouse.h"
@@ -26,7 +27,6 @@
 #include "xfa/fwl/core/cfwl_themepart.h"
 #include "xfa/fwl/core/cfwl_themetext.h"
 #include "xfa/fwl/core/cfwl_widgetmgr.h"
-#include "xfa/fwl/core/ifwl_app.h"
 #include "xfa/fwl/core/ifwl_combobox.h"
 #include "xfa/fwl/core/ifwl_form.h"
 #include "xfa/fwl/core/ifwl_themeprovider.h"
@@ -37,7 +37,7 @@
 #define FWL_WGT_CalcWidth 2048
 #define FWL_WGT_CalcMultiLineDefWidth 120.0f
 
-IFWL_Widget::IFWL_Widget(const IFWL_App* app,
+IFWL_Widget::IFWL_Widget(const CFWL_App* app,
                          std::unique_ptr<CFWL_WidgetProperties> properties,
                          IFWL_Widget* pOuter)
     : m_pOwnerApp(app),
@@ -459,7 +459,7 @@ void IFWL_Widget::SetFocus(bool bFocus) {
   if (m_pWidgetMgr->IsFormDisabled())
     return;
 
-  const IFWL_App* pApp = GetOwnerApp();
+  const CFWL_App* pApp = GetOwnerApp();
   if (!pApp)
     return;
 
@@ -476,7 +476,7 @@ void IFWL_Widget::SetFocus(bool bFocus) {
 }
 
 void IFWL_Widget::SetGrab(bool bSet) {
-  const IFWL_App* pApp = GetOwnerApp();
+  const CFWL_App* pApp = GetOwnerApp();
   if (!pApp)
     return;
 
@@ -585,7 +585,7 @@ bool IFWL_Widget::GetPopupPosGeneral(FX_FLOAT fMinHeight,
 }
 
 void IFWL_Widget::RegisterEventTarget(IFWL_Widget* pEventSource) {
-  const IFWL_App* pApp = GetOwnerApp();
+  const CFWL_App* pApp = GetOwnerApp();
   if (!pApp)
     return;
 
@@ -597,7 +597,7 @@ void IFWL_Widget::RegisterEventTarget(IFWL_Widget* pEventSource) {
 }
 
 void IFWL_Widget::UnregisterEventTarget() {
-  const IFWL_App* pApp = GetOwnerApp();
+  const CFWL_App* pApp = GetOwnerApp();
   if (!pApp)
     return;
 
@@ -625,7 +625,7 @@ void IFWL_Widget::DispatchEvent(CFWL_Event* pEvent) {
     m_pOuter->GetDelegate()->OnProcessEvent(pEvent);
     return;
   }
-  const IFWL_App* pApp = GetOwnerApp();
+  const CFWL_App* pApp = GetOwnerApp();
   if (!pApp)
     return;
 
@@ -695,7 +695,7 @@ void IFWL_Widget::DrawEdge(CFX_Graphics* pGraphics,
 }
 
 void IFWL_Widget::NotifyDriver() {
-  const IFWL_App* pApp = GetOwnerApp();
+  const CFWL_App* pApp = GetOwnerApp();
   if (!pApp)
     return;
 

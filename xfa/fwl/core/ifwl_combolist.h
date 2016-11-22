@@ -15,7 +15,7 @@
 
 class IFWL_ComboList : public IFWL_ListBox {
  public:
-  IFWL_ComboList(const IFWL_App* app,
+  IFWL_ComboList(const CFWL_App* app,
                  std::unique_ptr<CFWL_WidgetProperties> properties,
                  IFWL_Widget* pOuter);
 
