@@ -8,12 +8,6 @@
 #include "core/fxcodec/fx_codec.h"
 #include "third_party/lcms2-2.6/include/lcms2.h"
 
-const uint32_t N_COMPONENT_LAB = 3;
-const uint32_t N_COMPONENT_GRAY = 1;
-const uint32_t N_COMPONENT_RGB = 3;
-const uint32_t N_COMPONENT_CMYK = 4;
-const uint32_t N_COMPONENT_DEFAULT = 3;
-
 struct CLcmsCmm {
   cmsHTRANSFORM m_hTransform;
   int m_nSrcComponents;
@@ -57,28 +51,6 @@ bool CheckComponents(cmsColorSpaceSignature cs, int nComponents, bool bDst) {
   return true;
 }
 
-uint32_t GetCSComponents(cmsColorSpaceSignature cs) {
-  uint32_t components;
-  switch (cs) {
-    case cmsSigLabData:
-      components = N_COMPONENT_LAB;
-      break;
-    case cmsSigGrayData:
-      components = N_COMPONENT_GRAY;
-      break;
-    case cmsSigRgbData:
-      components = N_COMPONENT_RGB;
-      break;
-    case cmsSigCmykData:
-      components = N_COMPONENT_CMYK;
-      break;
-    default:
-      components = N_COMPONENT_DEFAULT;
-      break;
-  }
-  return components;
-}
-
 void* IccLib_CreateTransform(const unsigned char* pSrcProfileData,
                              uint32_t dwSrcProfileSize,
                              uint32_t& nSrcComponents,
@@ -108,7 +80,15 @@ void* IccLib_CreateTransform(const unsigned char* pSrcProfileData,
   int srcFormat;
   bool bLab = false;
   cmsColorSpaceSignature srcCS = cmsGetColorSpace(srcProfile);
-  nSrcComponents = GetCSComponents(srcCS);
+
+  nSrcComponents = cmsChannelsOf(srcCS);
+  // According to PDF spec, number of components must be 1, 3, or 4.
+  if (nSrcComponents != 1 && nSrcComponents != 3 && nSrcComponents != 4) {
+    cmsCloseProfile(srcProfile);
+    cmsCloseProfile(dstProfile);
+    return nullptr;
+  }
+
   if (srcCS == cmsSigLabData) {
     srcFormat =
         COLORSPACE_SH(PT_Lab) | CHANNELS_SH(nSrcComponents) | BYTES_SH(0);
