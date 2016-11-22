@@ -9,7 +9,7 @@
 
 #include <memory>
 
-#include "xfa/fwl/core/ifwl_timer.h"
+#include "xfa/fwl/core/cfwl_timer.h"
 #include "xfa/fwl/core/ifwl_widget.h"
 #include "xfa/fxgraphics/cfx_color.h"
 
@@ -36,12 +36,12 @@ class IFWL_Caret : public IFWL_Widget {
   void ShowCaret(bool bFlag = true);
 
  private:
-  class Timer : public IFWL_Timer {
+  class Timer : public CFWL_Timer {
    public:
     explicit Timer(IFWL_Caret* pCaret);
     ~Timer() override {}
 
-    void Run(IFWL_TimerInfo* hTimer) override;
+    void Run(CFWL_TimerInfo* hTimer) override;
   };
   friend class IFWL_Caret::Timer;
 
@@ -50,7 +50,7 @@ class IFWL_Caret : public IFWL_Widget {
                    const CFX_Matrix* pMatrix);
 
   std::unique_ptr<IFWL_Caret::Timer> m_pTimer;
-  IFWL_TimerInfo* m_pTimerInfo;  // not owned.
+  CFWL_TimerInfo* m_pTimerInfo;  // not owned.
 };
 
 #endif  // XFA_FWL_CORE_IFWL_CARET_H_

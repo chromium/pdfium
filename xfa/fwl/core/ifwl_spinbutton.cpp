@@ -15,9 +15,9 @@
 #include "xfa/fwl/core/cfwl_msgmouse.h"
 #include "xfa/fwl/core/cfwl_notedriver.h"
 #include "xfa/fwl/core/cfwl_themebackground.h"
+#include "xfa/fwl/core/cfwl_timerinfo.h"
 #include "xfa/fwl/core/cfwl_widgetproperties.h"
 #include "xfa/fwl/core/ifwl_themeprovider.h"
-#include "xfa/fwl/core/ifwl_timerinfo.h"
 
 namespace {
 
@@ -374,9 +374,9 @@ void IFWL_SpinButton::OnKeyDown(CFWL_MsgKey* pMsg) {
 }
 
 IFWL_SpinButton::Timer::Timer(IFWL_SpinButton* pToolTip)
-    : IFWL_Timer(pToolTip) {}
+    : CFWL_Timer(pToolTip) {}
 
-void IFWL_SpinButton::Timer::Run(IFWL_TimerInfo* pTimerInfo) {
+void IFWL_SpinButton::Timer::Run(CFWL_TimerInfo* pTimerInfo) {
   IFWL_SpinButton* pButton = static_cast<IFWL_SpinButton*>(m_pWidget);
 
   if (!pButton->m_pTimerInfo)

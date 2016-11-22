@@ -4,15 +4,15 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fwl/core/ifwl_timer.h"
+#include "xfa/fwl/core/cfwl_timer.h"
 
+#include "xfa/fwl/core/cfwl_timerinfo.h"
 #include "xfa/fwl/core/ifwl_adaptertimermgr.h"
 #include "xfa/fwl/core/ifwl_app.h"
-#include "xfa/fwl/core/ifwl_timerinfo.h"
 #include "xfa/fwl/core/ifwl_widget.h"
 #include "xfa/fxfa/xfa_ffapp.h"
 
-IFWL_TimerInfo* IFWL_Timer::StartTimer(uint32_t dwElapse, bool bImmediately) {
+CFWL_TimerInfo* CFWL_Timer::StartTimer(uint32_t dwElapse, bool bImmediately) {
   const IFWL_App* pApp = m_pWidget->GetOwnerApp();
   if (!pApp)
     return nullptr;
@@ -25,7 +25,7 @@ IFWL_TimerInfo* IFWL_Timer::StartTimer(uint32_t dwElapse, bool bImmediately) {
   if (!pAdapterTimerMgr)
     return nullptr;
 
-  IFWL_TimerInfo* pTimerInfo = nullptr;
+  CFWL_TimerInfo* pTimerInfo = nullptr;
   pAdapterTimerMgr->Start(this, dwElapse, bImmediately, &pTimerInfo);
   return pTimerInfo;
 }

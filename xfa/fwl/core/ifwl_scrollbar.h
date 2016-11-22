@@ -11,8 +11,8 @@
 
 #include "core/fxcrt/fx_system.h"
 #include "xfa/fwl/core/cfwl_evtscroll.h"
+#include "xfa/fwl/core/cfwl_timer.h"
 #include "xfa/fwl/core/cfwl_widgetproperties.h"
-#include "xfa/fwl/core/ifwl_timer.h"
 #include "xfa/fwl/core/ifwl_widget.h"
 
 class IFWL_Widget;
@@ -56,12 +56,12 @@ class IFWL_ScrollBar : public IFWL_Widget {
   void SetTrackPos(FX_FLOAT fTrackPos);
 
  private:
-  class Timer : public IFWL_Timer {
+  class Timer : public CFWL_Timer {
    public:
     explicit Timer(IFWL_ScrollBar* pToolTip);
     ~Timer() override {}
 
-    void Run(IFWL_TimerInfo* pTimerInfo) override;
+    void Run(CFWL_TimerInfo* pTimerInfo) override;
   };
   friend class IFWL_ScrollBar::Timer;
 
@@ -118,7 +118,7 @@ class IFWL_ScrollBar : public IFWL_Widget {
   void DoMouseLeave(int32_t iItem, const CFX_RectF& rtItem, int32_t& iState);
   void DoMouseHover(int32_t iItem, const CFX_RectF& rtItem, int32_t& iState);
 
-  IFWL_TimerInfo* m_pTimerInfo;
+  CFWL_TimerInfo* m_pTimerInfo;
   FX_FLOAT m_fRangeMin;
   FX_FLOAT m_fRangeMax;
   FX_FLOAT m_fPageSize;

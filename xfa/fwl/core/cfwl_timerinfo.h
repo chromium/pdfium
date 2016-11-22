@@ -4,19 +4,19 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FWL_CORE_IFWL_TIMERINFO_H_
-#define XFA_FWL_CORE_IFWL_TIMERINFO_H_
+#ifndef XFA_FWL_CORE_CFWL_TIMERINFO_H_
+#define XFA_FWL_CORE_CFWL_TIMERINFO_H_
 
 #include "core/fxcrt/fx_system.h"
 
 class IFWL_AdapterTimerMgr;
 
-class IFWL_TimerInfo {
+class CFWL_TimerInfo {
  public:
-  explicit IFWL_TimerInfo(IFWL_AdapterTimerMgr* mgr) : m_pMgr(mgr) {
+  explicit CFWL_TimerInfo(IFWL_AdapterTimerMgr* mgr) : m_pMgr(mgr) {
     ASSERT(mgr);
   }
-  virtual ~IFWL_TimerInfo() {}
+  virtual ~CFWL_TimerInfo() {}
 
   void StopTimer();
 
@@ -24,4 +24,4 @@ class IFWL_TimerInfo {
   IFWL_AdapterTimerMgr* m_pMgr;  // Not owned.
 };
 
-#endif  // XFA_FWL_CORE_IFWL_TIMERINFO_H_
+#endif  // XFA_FWL_CORE_CFWL_TIMERINFO_H_

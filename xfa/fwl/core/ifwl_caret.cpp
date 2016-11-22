@@ -11,9 +11,9 @@
 #include "third_party/base/ptr_util.h"
 #include "xfa/fwl/core/cfwl_notedriver.h"
 #include "xfa/fwl/core/cfwl_themebackground.h"
+#include "xfa/fwl/core/cfwl_timerinfo.h"
 #include "xfa/fwl/core/cfwl_widgetproperties.h"
 #include "xfa/fwl/core/ifwl_themeprovider.h"
-#include "xfa/fwl/core/ifwl_timerinfo.h"
 
 namespace {
 
@@ -92,9 +92,9 @@ void IFWL_Caret::OnDrawWidget(CFX_Graphics* pGraphics,
   DrawWidget(pGraphics, pMatrix);
 }
 
-IFWL_Caret::Timer::Timer(IFWL_Caret* pCaret) : IFWL_Timer(pCaret) {}
+IFWL_Caret::Timer::Timer(IFWL_Caret* pCaret) : CFWL_Timer(pCaret) {}
 
-void IFWL_Caret::Timer::Run(IFWL_TimerInfo* pTimerInfo) {
+void IFWL_Caret::Timer::Run(CFWL_TimerInfo* pTimerInfo) {
   IFWL_Caret* pCaret = static_cast<IFWL_Caret*>(m_pWidget);
   pCaret->SetStates(FWL_STATE_CAT_HightLight,
                     !(pCaret->GetStates() & FWL_STATE_CAT_HightLight));

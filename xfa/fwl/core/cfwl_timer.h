@@ -4,24 +4,24 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FWL_CORE_IFWL_TIMER_H_
-#define XFA_FWL_CORE_IFWL_TIMER_H_
+#ifndef XFA_FWL_CORE_CFWL_TIMER_H_
+#define XFA_FWL_CORE_CFWL_TIMER_H_
 
 #include "core/fxcrt/fx_system.h"
 
-class IFWL_TimerInfo;
+class CFWL_TimerInfo;
 class IFWL_Widget;
 
-class IFWL_Timer {
+class CFWL_Timer {
  public:
-  explicit IFWL_Timer(IFWL_Widget* parent) : m_pWidget(parent) {}
-  virtual ~IFWL_Timer() {}
+  explicit CFWL_Timer(IFWL_Widget* parent) : m_pWidget(parent) {}
+  virtual ~CFWL_Timer() {}
 
-  virtual void Run(IFWL_TimerInfo* hTimer) = 0;
-  IFWL_TimerInfo* StartTimer(uint32_t dwElapse, bool bImmediately);
+  virtual void Run(CFWL_TimerInfo* hTimer) = 0;
+  CFWL_TimerInfo* StartTimer(uint32_t dwElapse, bool bImmediately);
 
  protected:
   IFWL_Widget* m_pWidget;  // Not owned.
 };
 
-#endif  // XFA_FWL_CORE_IFWL_TIMER_H_
+#endif  // XFA_FWL_CORE_CFWL_TIMER_H_

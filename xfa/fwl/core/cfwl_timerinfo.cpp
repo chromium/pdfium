@@ -4,10 +4,10 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fwl/core/ifwl_timerinfo.h"
+#include "xfa/fwl/core/cfwl_timerinfo.h"
 
 #include "xfa/fwl/core/ifwl_adaptertimermgr.h"
 
-void IFWL_TimerInfo::StopTimer() {
+void CFWL_TimerInfo::StopTimer() {
   m_pMgr->Stop(this);
 }

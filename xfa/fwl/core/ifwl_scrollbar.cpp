@@ -16,8 +16,8 @@
 #include "xfa/fwl/core/cfwl_notedriver.h"
 #include "xfa/fwl/core/cfwl_themebackground.h"
 #include "xfa/fwl/core/cfwl_themepart.h"
+#include "xfa/fwl/core/cfwl_timerinfo.h"
 #include "xfa/fwl/core/ifwl_themeprovider.h"
-#include "xfa/fwl/core/ifwl_timerinfo.h"
 
 #define FWL_SCROLLBAR_Elapse 500
 #define FWL_SCROLLBAR_MinThumb 5
@@ -550,9 +550,9 @@ void IFWL_ScrollBar::DoMouseHover(int32_t iItem,
   Repaint(&rtItem);
 }
 
-IFWL_ScrollBar::Timer::Timer(IFWL_ScrollBar* pToolTip) : IFWL_Timer(pToolTip) {}
+IFWL_ScrollBar::Timer::Timer(IFWL_ScrollBar* pToolTip) : CFWL_Timer(pToolTip) {}
 
-void IFWL_ScrollBar::Timer::Run(IFWL_TimerInfo* pTimerInfo) {
+void IFWL_ScrollBar::Timer::Run(CFWL_TimerInfo* pTimerInfo) {
   IFWL_ScrollBar* pButton = static_cast<IFWL_ScrollBar*>(m_pWidget);
 
   if (pButton->m_pTimerInfo)

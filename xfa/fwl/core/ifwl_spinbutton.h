@@ -10,7 +10,7 @@
 #include <memory>
 
 #include "xfa/fwl/core/cfwl_event.h"
-#include "xfa/fwl/core/ifwl_timer.h"
+#include "xfa/fwl/core/cfwl_timer.h"
 #include "xfa/fwl/core/ifwl_widget.h"
 #include "xfa/fxfa/cxfa_eventparam.h"
 
@@ -38,12 +38,12 @@ class IFWL_SpinButton : public IFWL_Widget {
                     const CFX_Matrix* pMatrix) override;
 
  private:
-  class Timer : public IFWL_Timer {
+  class Timer : public CFWL_Timer {
    public:
     explicit Timer(IFWL_SpinButton* pToolTip);
     ~Timer() override {}
 
-    void Run(IFWL_TimerInfo* pTimerInfo) override;
+    void Run(CFWL_TimerInfo* pTimerInfo) override;
   };
   friend class IFWL_SpinButton::Timer;
 
@@ -69,7 +69,7 @@ class IFWL_SpinButton : public IFWL_Widget {
   uint32_t m_dwDnState;
   int32_t m_iButtonIndex;
   bool m_bLButtonDwn;
-  IFWL_TimerInfo* m_pTimerInfo;
+  CFWL_TimerInfo* m_pTimerInfo;
   IFWL_SpinButton::Timer m_Timer;
 };
 
