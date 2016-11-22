@@ -137,6 +137,9 @@ void FFLCommon(FPDF_FORMHANDLE hHandle,
     pPageView->PageView_OnDraw(pDevice.get(), &matrix, &options);
 #endif  // PDF_ENABLE_XFA
 
+#ifdef _SKIA_SUPPORT_PATHS
+  CFXBitmapFromFPDFBitmap(bitmap)->UnPreMultiply();
+#endif
   pDevice->RestoreState(false);
   delete options.m_pOCContext;
   options.m_pOCContext = nullptr;

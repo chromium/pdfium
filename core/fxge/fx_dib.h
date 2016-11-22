@@ -371,20 +371,25 @@ class CFX_DIBitmap : public CFX_DIBSource {
 
   bool ConvertColorScale(uint32_t forecolor, uint32_t backcolor);
 
-#ifdef _SKIA_SUPPORT_PATHS_
-  bool IsMarkedForUnPreMultiply() const { return m_bUnPreMultiply; }
-
-  void MarkForUnPreMultiply(bool mark) { m_bUnPreMultiply = mark; }
+#if defined _SKIA_SUPPORT_ || _SKIA_SUPPORT_PATHS_
+  void PreMultiply();
+#endif
+#if defined _SKIA_SUPPORT_PATHS_
+  void UnPreMultiply();
 #endif
 
  protected:
   bool GetGrayData(void* pIccTransform = nullptr);
 
-  uint8_t* m_pBuffer;
-  bool m_bExtBuf;
-#ifdef _SKIA_SUPPORT_PATHS_
-  bool m_bUnPreMultiply;
+#if defined _SKIA_SUPPORT_PATHS_
+  enum class Format { kCleared, kPreMultiplied, kUnPreMultiplied };
 #endif
+
+  uint8_t* m_pBuffer;
+#if defined _SKIA_SUPPORT_PATHS_
+  Format m_nFormat;
+#endif
+  bool m_bExtBuf;
 };
 
 class CFX_DIBExtractor {

@@ -66,10 +66,6 @@ class CPDF_RenderStatus {
   void DebugVerifyDeviceIsPreMultiplied() const;
 #endif
 
-#if defined _SKIA_SUPPORT_PATHS_
-  void UnPreMultiplyDevice();
-#endif
-
   CPDF_RenderOptions m_Options;
   CPDF_Dictionary* m_pFormResource;
   CPDF_Dictionary* m_pPageResource;

@@ -34,14 +34,14 @@
 #include "third_party/skia/include/core/SkTypeface.h"
 #include "third_party/skia/include/effects/SkDashPathEffect.h"
 #include "third_party/skia/include/pathops/SkPathOps.h"
+#include "third_party/skia/include/core/SkShader.h"
+#include "third_party/skia/include/effects/SkGradientShader.h"
 
 #ifdef _SKIA_SUPPORT_
 #include "third_party/skia/include/core/SkColorFilter.h"
 #include "third_party/skia/include/core/SkColorPriv.h"
 #include "third_party/skia/include/core/SkMaskFilter.h"
 #include "third_party/skia/include/core/SkPictureRecorder.h"
-#include "third_party/skia/include/core/SkShader.h"
-#include "third_party/skia/include/effects/SkGradientShader.h"
 #endif  // _SKIA_SUPPORT_
 
 #ifdef SK_DEBUG
@@ -313,7 +313,6 @@ SkBlendMode GetSkiaBlendMode(int blend_type) {
   }
 }
 
-#ifdef _SKIA_SUPPORT_
 bool AddColors(const CPDF_ExpIntFunc* pFunc, SkTDArray<SkColor>* skColors) {
   if (pFunc->CountInputs() != 1)
     return false;
@@ -497,6 +496,7 @@ void ClipAngledGradient(const SkPoint pts[2],
   clip->lineTo(IntersectSides(rectPts[maxBounds], slope, startEdgePt));
 }
 
+#ifdef _SKIA_SUPPORT_
 void SetBitmapMatrix(const CFX_Matrix* pMatrix,
                      int width,
                      int height,
@@ -1171,14 +1171,12 @@ bool CFX_SkiaDeviceDriver::DrawDeviceText(int nChars,
     positions[index] = {cp.m_OriginX * flip, cp.m_OriginY * vFlip};
     glyphs[index] = (uint16_t)cp.m_GlyphIndex;
   }
+#ifdef _SKIA_SUPPORT_PATHS_
+  m_pBitmap->PreMultiply();
+#endif  // _SKIA_SUPPORT_PATHS_
   m_pCanvas->drawPosText(glyphs.begin(), nChars * 2, positions.begin(), paint);
   m_pCanvas->restore();
 
-#ifdef _SKIA_SUPPORT_PATHS_
-  if (FXARGB_A(color) < 255) {
-    m_pBitmap->MarkForUnPreMultiply(true);
-  }
-#endif  // _SKIA_SUPPORT_PATHS_
   return true;
 }
 
@@ -1449,6 +1447,9 @@ bool CFX_SkiaDeviceDriver::DrawPath(
     DebugShowSkiaPath(*fillPath);
     DebugShowCanvasMatrix(m_pCanvas);
     DebugShowCanvasClip(m_pCanvas);
+#ifdef _SKIA_SUPPORT_PATHS_
+    m_pBitmap->PreMultiply();
+#endif  // _SKIA_SUPPORT_PATHS_
     m_pCanvas->drawPath(*fillPath, skPaint);
   }
   if (pGraphState && stroke_alpha) {
@@ -1457,15 +1458,12 @@ bool CFX_SkiaDeviceDriver::DrawPath(
     DebugShowCanvasClip(m_pCanvas);
     skPaint.setStyle(SkPaint::kStroke_Style);
     skPaint.setColor(stroke_color);
+#ifdef _SKIA_SUPPORT_PATHS_
+    m_pBitmap->PreMultiply();
+#endif  // _SKIA_SUPPORT_PATHS_
     m_pCanvas->drawPath(skPath, skPaint);
   }
   m_pCanvas->restore();
-#ifdef _SKIA_SUPPORT_PATHS_
-  if ((fill_mode & 3 && FXARGB_A(fill_color) < 255) ||
-      (pGraphState && stroke_alpha < 255)) {
-    m_pBitmap->MarkForUnPreMultiply(true);
-  }
-#endif  // _SKIA_SUPPORT_PATHS_
   return true;
 }
 
@@ -1498,7 +1496,6 @@ bool CFX_SkiaDeviceDriver::FillRectWithBlend(const FX_RECT* pRect,
   return true;
 }
 
-#ifdef _SKIA_SUPPORT_
 bool CFX_SkiaDeviceDriver::DrawShading(const CPDF_ShadingPattern* pPattern,
                                        const CFX_Matrix* pMatrix,
                                        const FX_RECT& clip_rect,
@@ -1632,7 +1629,6 @@ bool CFX_SkiaDeviceDriver::DrawShading(const CPDF_ShadingPattern* pPattern,
   m_pCanvas->restore();
   return true;
 }
-#endif  // _SKIA_SUPPORT_
 
 uint8_t* CFX_SkiaDeviceDriver::GetBuffer() const {
   return m_pBitmap->GetBuffer();
@@ -1680,6 +1676,7 @@ bool CFX_SkiaDeviceDriver::GetDIBits(CFX_DIBitmap* pBitmap, int left, int top) {
 #endif  // _SKIA_SUPPORT_
 
 #ifdef _SKIA_SUPPORT_PATHS_
+  m_pBitmap->UnPreMultiply();
   FX_RECT rect(left, top, left + pBitmap->GetWidth(),
                top + pBitmap->GetHeight());
   CFX_DIBitmap* pBack = nullptr;
@@ -1844,7 +1841,7 @@ bool CFX_SkiaDeviceDriver::StartDIBits(const CFX_DIBSource* pSource,
 #ifdef _SKIA_SUPPORT_PATHS_
   if (!m_pBitmap->GetBuffer())
     return true;
-
+  m_pBitmap->UnPreMultiply();
   CFX_ImageRenderer* pRenderer = new CFX_ImageRenderer;
   pRenderer->Start(m_pBitmap, m_pClipRgn.get(), pSource, bitmap_alpha, argb,
                    pMatrix, render_flags, m_bRgbByteOrder, 0, nullptr);
@@ -1866,17 +1863,27 @@ bool CFX_SkiaDeviceDriver::ContinueDIBits(void* handle, IFX_Pause* pPause) {
 #endif  // _SKIA_SUPPORT_PATHS_
 }
 
-#ifdef _SKIA_SUPPORT_
+#if defined _SKIA_SUPPORT_
 void CFX_SkiaDeviceDriver::PreMultiply(CFX_DIBitmap* pDIBitmap) {
-  void* buffer = pDIBitmap->GetBuffer();
+  pDIBitmap->PreMultiply();
+}
+#endif  // _SKIA_SUPPORT_
+
+void CFX_DIBitmap::PreMultiply() {
+  if (this->GetBPP() != 32)
+    return;
+  void* buffer = this->GetBuffer();
   if (!buffer)
     return;
-  if (pDIBitmap->GetBPP() != 32) {
+#if defined _SKIA_SUPPORT_PATHS_
+  Format priorFormat = m_nFormat;
+  m_nFormat = Format::kPreMultiplied;
+  if (priorFormat != Format::kUnPreMultiplied)
     return;
-  }
-  int height = pDIBitmap->GetHeight();
-  int width = pDIBitmap->GetWidth();
-  int rowBytes = pDIBitmap->GetPitch();
+#endif
+  int height = this->GetHeight();
+  int width = this->GetWidth();
+  int rowBytes = this->GetPitch();
   SkImageInfo unpremultipliedInfo =
       SkImageInfo::Make(width, height, kN32_SkColorType, kUnpremul_SkAlphaType);
   SkPixmap unpremultiplied(unpremultipliedInfo, buffer, rowBytes);
@@ -1884,24 +1891,24 @@ void CFX_SkiaDeviceDriver::PreMultiply(CFX_DIBitmap* pDIBitmap) {
       SkImageInfo::Make(width, height, kN32_SkColorType, kPremul_SkAlphaType);
   SkPixmap premultiplied(premultipliedInfo, buffer, rowBytes);
   unpremultiplied.readPixels(premultiplied);
-  pDIBitmap->DebugVerifyBitmapIsPreMultiplied();
+  this->DebugVerifyBitmapIsPreMultiplied();
 }
-#endif  // _SKIA_SUPPORT_
 
 #ifdef _SKIA_SUPPORT_PATHS_
-void CFX_SkiaDeviceDriver::UnPreMultiply(CFX_DIBitmap* pDIBitmap) {
-  if (!pDIBitmap->IsMarkedForUnPreMultiply())
+void CFX_DIBitmap::UnPreMultiply() {
+  if (this->GetBPP() != 32)
     return;
-  pDIBitmap->DebugVerifyBitmapIsPreMultiplied();
-  void* buffer = pDIBitmap->GetBuffer();
+  void* buffer = this->GetBuffer();
   if (!buffer)
     return;
-  if (pDIBitmap->GetBPP() != 32) {
+  Format priorFormat = m_nFormat;
+  m_nFormat = Format::kUnPreMultiplied;
+  if (priorFormat != Format::kPreMultiplied)
     return;
-  }
-  int height = pDIBitmap->GetHeight();
-  int width = pDIBitmap->GetWidth();
-  int rowBytes = pDIBitmap->GetPitch();
+  this->DebugVerifyBitmapIsPreMultiplied();
+  int height = this->GetHeight();
+  int width = this->GetWidth();
+  int rowBytes = this->GetPitch();
   SkImageInfo premultipliedInfo =
       SkImageInfo::Make(width, height, kN32_SkColorType, kPremul_SkAlphaType);
   SkPixmap premultiplied(premultipliedInfo, buffer, rowBytes);
@@ -1909,7 +1916,6 @@ void CFX_SkiaDeviceDriver::UnPreMultiply(CFX_DIBitmap* pDIBitmap) {
       SkImageInfo::Make(width, height, kN32_SkColorType, kUnpremul_SkAlphaType);
   SkPixmap unpremultiplied(unpremultipliedInfo, buffer, rowBytes);
   premultiplied.readPixels(unpremultiplied);
-  pDIBitmap->MarkForUnPreMultiply(false);
 }
 #endif  // _SKIA_SUPPORT_PATHS_
 
@@ -1977,10 +1983,10 @@ void CFX_SkiaDeviceDriver::Clear(uint32_t color) {
 #endif  // _SKIA_SUPPORT_
 
 void CFX_SkiaDeviceDriver::Dump() const {
-#if SHOW_SKIA_PATH
+#if SHOW_SKIA_PATH && defined _SKIA_SUPPORT_
   if (m_pCache)
     m_pCache->Dump(this);
-#endif  // SHOW_SKIA_PATH
+#endif  // SHOW_SKIA_PATH && defined _SKIA_SUPPORT_
 }
 
 #ifdef _SKIA_SUPPORT_
@@ -1989,12 +1995,6 @@ void CFX_SkiaDeviceDriver::DebugVerifyBitmapIsPreMultiplied() const {
     m_pOriDevice->DebugVerifyBitmapIsPreMultiplied();
 }
 #endif  // _SKIA_SUPPORT_
-
-#ifdef _SKIA_SUPPORT_PATHS_
-void CFX_SkiaDeviceDriver::UnPreMultiplyDevice() {
-  UnPreMultiply(m_pBitmap);
-}
-#endif  // _SKIA_SUPPORT_PATHS_
 
 CFX_FxgeDevice::CFX_FxgeDevice() {
 #ifdef _SKIA_SUPPORT_
@@ -2086,15 +2086,6 @@ bool CFX_FxgeDevice::SetBitsWithMask(const CFX_DIBSource* pBitmap,
   return false;
 }
 #endif  // _SKIA_SUPPORT_
-
-#ifdef _SKIA_SUPPORT_PATHS_
-void CFX_FxgeDevice::UnPreMultiplyDevice() {
-  CFX_SkiaDeviceDriver* skDriver =
-      static_cast<CFX_SkiaDeviceDriver*>(GetDeviceDriver());
-  if (skDriver)
-    skDriver->UnPreMultiplyDevice();
-}
-#endif  // _SKIA_SUPPORT_PATHS_
 
 void CFX_DIBSource::DebugVerifyBitmapIsPreMultiplied(void* opt) const {
 #ifdef SK_DEBUG

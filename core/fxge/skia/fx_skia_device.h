@@ -140,13 +140,11 @@ class CFX_SkiaDeviceDriver : public IFX_RenderDeviceDriver {
                       FX_FLOAT font_size,
                       uint32_t color) override;
 
-#ifdef _SKIA_SUPPORT_
   bool DrawShading(const CPDF_ShadingPattern* pPattern,
                    const CFX_Matrix* pMatrix,
                    const FX_RECT& clip_rect,
                    int alpha,
                    bool bAlphaMode) override;
-#endif
 
   virtual uint8_t* GetBuffer() const;
 
@@ -157,10 +155,6 @@ class CFX_SkiaDeviceDriver : public IFX_RenderDeviceDriver {
   void Flush();
   SkPictureRecorder* GetRecorder() const { return m_pRecorder; }
   static void PreMultiply(CFX_DIBitmap* pDIBitmap);
-#ifdef _SKIA_SUPPORT_PATHS_
-  void UnPreMultiplyDevice();
-  void UnPreMultiply(CFX_DIBitmap* pDIBitmap);
-#endif
   SkCanvas* SkiaCanvas() { return m_pCanvas; }
   void DebugVerifyBitmapIsPreMultiplied() const;
   void Dump() const;

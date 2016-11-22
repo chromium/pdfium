@@ -39,10 +39,6 @@ class CFX_FxgeDevice : public CFX_RenderDevice {
                        int blend_type) override;
 #endif
 
-#ifdef _SKIA_SUPPORT_PATHS_
-  void UnPreMultiplyDevice() override;
-#endif
-
  private:
   bool m_bOwnedBitmap;
 };

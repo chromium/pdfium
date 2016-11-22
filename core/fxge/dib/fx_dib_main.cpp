@@ -67,7 +67,7 @@ CFX_DIBitmap::CFX_DIBitmap() {
   m_pBuffer = nullptr;
   m_pPalette = nullptr;
 #ifdef _SKIA_SUPPORT_PATHS_
-  m_bUnPreMultiply = false;
+  m_nFormat = Format::kCleared;
 #endif
 }
 

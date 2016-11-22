@@ -893,6 +893,9 @@ std::unique_ptr<CFX_DIBitmap> DrawPatternBitmap(
   CPDF_RenderContext context(pDoc, pCache);
   context.AppendLayer(pPattern->form(), &mtPattern2Bitmap);
   context.Render(&bitmap_device, &options, nullptr);
+#if defined _SKIA_SUPPORT_PATHS_
+  pBitmap->UnPreMultiply();
+#endif
   return pBitmap;
 }
 
@@ -1135,9 +1138,6 @@ void CPDF_RenderStatus::ProcessObjectNoClip(CPDF_PageObject* pObj,
     DrawObjWithBackground(pObj, pObj2Device);
 #if defined _SKIA_SUPPORT_
   DebugVerifyDeviceIsPreMultiplied();
-#endif
-#if defined _SKIA_SUPPORT_PATHS_
-  UnPreMultiplyDevice();
 #endif
 }
 
@@ -1547,6 +1547,9 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
                            nullptr, nullptr, &m_Options, 0, m_bDropObjects,
                            pFormResource, true);
   bitmap_render.ProcessObjectNoClip(pPageObj, &new_matrix);
+#if defined _SKIA_SUPPORT_PATHS_
+  bitmap->UnPreMultiply();
+#endif
   m_bStopped = bitmap_render.m_bStopped;
   if (pSMaskDict) {
     CFX_Matrix smask_matrix = *pPageObj->m_GeneralState.GetSMaskMatrix();
@@ -1647,12 +1650,6 @@ CPDF_GraphicStates* CPDF_RenderStatus::CloneObjStates(
 #if defined _SKIA_SUPPORT_
 void CPDF_RenderStatus::DebugVerifyDeviceIsPreMultiplied() const {
   m_pDevice->DebugVerifyBitmapIsPreMultiplied();
-}
-#endif
-
-#if defined _SKIA_SUPPORT_PATHS_
-void CPDF_RenderStatus::UnPreMultiplyDevice() {
-  m_pDevice->UnPreMultiplyDevice();
 }
 #endif
 

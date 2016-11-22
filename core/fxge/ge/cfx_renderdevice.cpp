@@ -822,12 +822,6 @@ bool CFX_RenderDevice::SetBitsWithMask(const CFX_DIBSource* pBitmap,
 }
 #endif
 
-#ifdef _SKIA_SUPPORT_PATHS_
-void CFX_RenderDevice::UnPreMultiplyDevice() {
-  SkASSERT(0);
-}
-#endif
-
 bool CFX_RenderDevice::DrawNormalText(int nChars,
                                       const FXTEXT_CHARPOS* pCharPos,
                                       CFX_Font* pFont,

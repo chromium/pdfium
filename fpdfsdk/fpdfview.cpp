@@ -598,6 +598,9 @@ DLLEXPORT void STDCALL FPDF_RenderPageBitmap(FPDF_BITMAP bitmap,
   FPDF_RenderPage_Retail(pContext, page, start_x, start_y, size_x, size_y,
                          rotate, flags, true, nullptr);
 
+#ifdef _SKIA_SUPPORT_PATHS_
+  pBitmap->UnPreMultiply();
+#endif
   pPage->SetRenderContext(nullptr);
 }
 
