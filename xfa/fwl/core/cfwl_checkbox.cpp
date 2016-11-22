@@ -29,11 +29,6 @@ void CFWL_CheckBox::SetBoxSize(FX_FLOAT fHeight) {
   m_fBoxHeight = fHeight;
 }
 
-void CFWL_CheckBox::GetCaption(IFWL_Widget* pWidget,
-                               CFX_WideString& wsCaption) {
-  wsCaption = L"Check box";
-}
-
 FX_FLOAT CFWL_CheckBox::GetBoxSize(IFWL_Widget* pWidget) {
   return m_fBoxHeight;
 }

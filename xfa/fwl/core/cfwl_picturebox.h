@@ -17,9 +17,6 @@ class CFWL_PictureBox : public CFWL_Widget, public IFWL_Widget::DataProvider {
   ~CFWL_PictureBox() override;
 
   void Initialize();
-
-  // IFWL_Widget::DataProvider
-  void GetCaption(IFWL_Widget* pWidget, CFX_WideString& wsCaption) override;
 };
 
 #endif  // XFA_FWL_CORE_CFWL_PICTUREBOX_H_

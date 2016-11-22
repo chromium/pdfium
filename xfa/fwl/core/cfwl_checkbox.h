@@ -17,9 +17,6 @@ class CFWL_CheckBox : public CFWL_Widget, public IFWL_CheckBox::DataProvider {
 
   void Initialize();
 
-  // IFWL_Widget::DataProvider
-  void GetCaption(IFWL_Widget* pWidget, CFX_WideString& wsCaption) override;
-
   // IFWL_CheckBox::DataProvider
   FX_FLOAT GetBoxSize(IFWL_Widget* pWidget) override;
 

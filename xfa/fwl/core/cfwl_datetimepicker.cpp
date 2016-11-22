@@ -57,11 +57,6 @@ void CFWL_DateTimePicker::SetCurSel(int32_t iYear,
   ToDateTimePicker(GetWidget())->SetCurSel(iYear, iMonth, iDay);
 }
 
-void CFWL_DateTimePicker::GetCaption(IFWL_Widget* pWidget,
-                                     CFX_WideString& wsCaption) {
-  wsCaption = L"";
-}
-
 void CFWL_DateTimePicker::GetToday(IFWL_Widget* pWidget,
                                    int32_t& iYear,
                                    int32_t& iMonth,

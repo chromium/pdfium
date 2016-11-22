@@ -99,10 +99,6 @@ uint32_t CFWL_ListBox::GetItemStates(CFWL_ListItem* pItem) {
   return pItem->m_dwStates | pItem->m_dwCheckState;
 }
 
-void CFWL_ListBox::GetCaption(IFWL_Widget* pWidget, CFX_WideString& wsCaption) {
-  wsCaption = L"";
-}
-
 int32_t CFWL_ListBox::CountItems(const IFWL_Widget* pWidget) const {
   return pdfium::CollectionSize<int32_t>(m_ItemArray);
 }

@@ -20,9 +20,6 @@ class CFWL_ComboBox : public CFWL_Widget, public IFWL_ComboBox::DataProvider {
 
   void Initialize();
 
-  // IFWL_Widget::DataProvider
-  void GetCaption(IFWL_Widget* pWidget, CFX_WideString& wsCaption) override;
-
   // IFWL_ListBox::DataProvider
   int32_t CountItems(const IFWL_Widget* pWidget) const override;
   CFWL_ListItem* GetItem(const IFWL_Widget* pWidget,

@@ -18,9 +18,6 @@ class CFWL_Barcode : public CFWL_Edit, public IFWL_Barcode::DataProvider {
 
   void Initialize();
 
-  // IFWL_Widget::DataProvider
-  void GetCaption(IFWL_Widget* pWidget, CFX_WideString& wsCaption) override;
-
   // IFWL_Barcode::DataProvider
   BC_CHAR_ENCODING GetCharEncoding() const override;
   int32_t GetModuleHeight() const override;

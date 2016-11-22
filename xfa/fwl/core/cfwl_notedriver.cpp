@@ -20,7 +20,7 @@
 #include "xfa/fwl/core/cfwl_noteloop.h"
 #include "xfa/fwl/core/cfwl_widgetmgr.h"
 #include "xfa/fwl/core/ifwl_app.h"
-#include "xfa/fwl/core/ifwl_tooltip.h"
+#include "xfa/fwl/core/ifwl_form.h"
 
 CFWL_NoteDriver::CFWL_NoteDriver()
     : m_pHover(nullptr),

@@ -64,11 +64,7 @@ enum class FWL_Type;
 
 class IFWL_Widget : public IFWL_WidgetDelegate {
  public:
-  class DataProvider {
-   public:
-    virtual void GetCaption(IFWL_Widget* pWidget,
-                            CFX_WideString& wsCaption) = 0;
-  };
+  class DataProvider {};
 
   ~IFWL_Widget() override;
 

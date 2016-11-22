@@ -53,9 +53,6 @@ class IFWL_PushButton : public IFWL_Widget {
   void DrawBkground(CFX_Graphics* pGraphics,
                     IFWL_ThemeProvider* pTheme,
                     const CFX_Matrix* pMatrix);
-  void DrawText(CFX_Graphics* pGraphics,
-                IFWL_ThemeProvider* pTheme,
-                const CFX_Matrix* pMatrix);
   uint32_t GetPartStates();
   void UpdateTextOutStyles();
   void OnFocusChanged(CFWL_Message* pMsg, bool bSet);

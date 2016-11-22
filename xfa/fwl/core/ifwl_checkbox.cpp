@@ -60,14 +60,10 @@ void IFWL_CheckBox::GetWidgetRect(CFX_RectF& rect, bool bAutoSize) {
   if (!m_pProperties->m_pDataProvider)
     return;
 
-  CFX_WideString wsCaption;
-  m_pProperties->m_pDataProvider->GetCaption(this, wsCaption);
-  if (wsCaption.GetLength() > 0) {
-    CFX_SizeF sz = CalcTextSize(
-        wsCaption, m_pProperties->m_pThemeProvider,
-        !!(m_pProperties->m_dwStyleExes & FWL_STYLEEXT_CKB_MultiLine));
-    rect.Set(0, 0, sz.x, sz.y);
-  }
+  CFX_SizeF sz = CalcTextSize(
+      L"Check box", m_pProperties->m_pThemeProvider,
+      !!(m_pProperties->m_dwStyleExes & FWL_STYLEEXT_CKB_MultiLine));
+  rect.Set(0, 0, sz.x, sz.y);
   rect.Inflate(kCaptionMargin, kCaptionMargin);
 
   IFWL_CheckBox::DataProvider* pData =
@@ -124,11 +120,6 @@ void IFWL_CheckBox::DrawWidget(CFX_Graphics* pGraphics,
   if (!m_pProperties->m_pDataProvider)
     return;
 
-  CFX_WideString wsCaption;
-  m_pProperties->m_pDataProvider->GetCaption(this, wsCaption);
-  if (wsCaption.GetLength() <= 0)
-    return;
-
   CFWL_ThemeText textParam;
   textParam.m_pWidget = this;
   textParam.m_iPart = CFWL_Part::Caption;
@@ -137,7 +128,7 @@ void IFWL_CheckBox::DrawWidget(CFX_Graphics* pGraphics,
   if (pMatrix)
     textParam.m_matrix.Concat(*pMatrix);
   textParam.m_rtPart = m_rtCaption;
-  textParam.m_wsText = wsCaption;
+  textParam.m_wsText = L"Check box";
   textParam.m_dwTTOStyles = m_dwTTOStyles;
   textParam.m_iTTOAlign = m_iTTOAlign;
   pTheme->DrawText(&textParam);
@@ -211,14 +202,7 @@ void IFWL_CheckBox::Layout() {
   rtFocus.Set(m_rtCaption.left, m_rtCaption.top, m_rtCaption.width,
               m_rtCaption.height);
 
-  CFX_WideString wsCaption;
-  m_pProperties->m_pDataProvider->GetCaption(this, wsCaption);
-  if (wsCaption.IsEmpty()) {
-    m_rtFocus.Set(0, 0, 0, 0);
-    return;
-  }
-
-  CalcTextRect(wsCaption, m_pProperties->m_pThemeProvider, m_dwTTOStyles,
+  CalcTextRect(L"Check box", m_pProperties->m_pThemeProvider, m_dwTTOStyles,
                m_iTTOAlign, rtFocus);
   if ((m_pProperties->m_dwStyleExes & FWL_STYLEEXT_CKB_MultiLine) == 0) {
     FX_FLOAT fWidth = std::max(m_rtCaption.width, rtFocus.width);

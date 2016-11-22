@@ -23,5 +23,3 @@ void CFWL_PictureBox::Initialize() {
   CFWL_Widget::Initialize();
 }
 
-void CFWL_PictureBox::GetCaption(IFWL_Widget* pWidget,
-                                 CFX_WideString& wsCaption) {}

@@ -156,9 +156,6 @@ void CFWL_ComboBox::EditModifyStylesEx(uint32_t dwStylesExAdded,
   }
 }
 
-void CFWL_ComboBox::GetCaption(IFWL_Widget* pWidget,
-                               CFX_WideString& wsCaption) {}
-
 int32_t CFWL_ComboBox::CountItems(const IFWL_Widget* pWidget) const {
   return m_ItemArray.size();
 }

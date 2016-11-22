@@ -675,9 +675,6 @@ void IFWL_DateTimePicker::DisForm_OnFocusChanged(CFWL_Message* pMsg,
   Repaint(&rtInvalidate);
 }
 
-void IFWL_DateTimePicker::GetCaption(IFWL_Widget* pWidget,
-                                     CFX_WideString& wsCaption) {}
-
 int32_t IFWL_DateTimePicker::GetCurDay(IFWL_Widget* pWidget) {
   return m_iCurDay;
 }

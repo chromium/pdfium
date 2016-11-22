@@ -23,7 +23,3 @@ void CFWL_PushButton::Initialize() {
   CFWL_Widget::Initialize();
 }
 
-void CFWL_PushButton::GetCaption(IFWL_Widget* pWidget,
-                                 CFX_WideString& wsCaption) {
-  wsCaption = L"";
-}

@@ -63,9 +63,6 @@ class IFWL_DateTimePicker : public IFWL_Widget,
   void OnDrawWidget(CFX_Graphics* pGraphics,
                     const CFX_Matrix* pMatrix) override;
 
-  // IFWL_Widget::DataProvider
-  void GetCaption(IFWL_Widget* pWidget, CFX_WideString& wsCaption) override;
-
   // IFWL_MonthCalendar::DataProvider
   int32_t GetCurDay(IFWL_Widget* pWidget) override;
   int32_t GetCurMonth(IFWL_Widget* pWidget) override;

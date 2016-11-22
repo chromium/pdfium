@@ -12,14 +12,12 @@
 #include <unordered_map>
 
 #include "xfa/fwl/core/cfwl_event.h"
-#include "xfa/fwl/core/ifwl_tooltip.h"
 #include "xfa/fwl/core/ifwl_widget.h"
 #include "xfa/fxgraphics/cfx_graphics.h"
 
 class CFWL_EventTarget;
 class CFWL_NoteLoop;
 class CFWL_TargetImp;
-class IFWL_ToolTip;
 class IFWL_Widget;
 
 class CFWL_NoteDriver {

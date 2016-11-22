@@ -18,9 +18,6 @@ class CFWL_DateTimePicker : public CFWL_Widget,
 
   void Initialize();
 
-  // IFWL_Widget::DataProvider
-  void GetCaption(IFWL_Widget* pWidget, CFX_WideString& wsCaption) override;
-
   // IFWL_DateTimePicker::DataProvider
   void GetToday(IFWL_Widget* pWidget,
                 int32_t& iYear,
