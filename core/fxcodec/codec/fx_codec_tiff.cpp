@@ -447,7 +447,11 @@ bool CCodec_TiffContext::Decode(CFX_DIBitmap* pDIBitmap) {
   uint16_t bps = 0;
   TIFFGetField(m_tif_ctx, TIFFTAG_SAMPLESPERPIXEL, &spp);
   TIFFGetField(m_tif_ctx, TIFFTAG_BITSPERSAMPLE, &bps);
-  uint32_t bpp = bps * spp;
+  FX_SAFE_UINT32 safe_bpp = bps;
+  safe_bpp *= spp;
+  if (!safe_bpp.IsValid())
+    return false;
+  uint32_t bpp = safe_bpp.ValueOrDie();
   if (bpp == 1)
     return Decode1bppRGB(pDIBitmap, height, width, bps, spp);
   if (bpp <= 8)
