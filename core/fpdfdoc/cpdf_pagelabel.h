@@ -15,7 +15,7 @@ class CPDF_PageLabel {
  public:
   explicit CPDF_PageLabel(CPDF_Document* pDocument);
 
-  CFX_WideString GetLabel(int nPage) const;
+  bool GetLabel(int nPage, CFX_WideString* wsLabel) const;
   int32_t GetPageByLabel(const CFX_ByteStringC& bsLabel) const;
   int32_t GetPageByLabel(const CFX_WideStringC& wsLabel) const;
 

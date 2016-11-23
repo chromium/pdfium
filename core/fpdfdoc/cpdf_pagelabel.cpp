@@ -75,16 +75,21 @@ CFX_WideString GetLabelNumPortion(int num, const CFX_ByteString& bsStyle) {
 CPDF_PageLabel::CPDF_PageLabel(CPDF_Document* pDocument)
     : m_pDocument(pDocument) {}
 
-CFX_WideString CPDF_PageLabel::GetLabel(int nPage) const {
-  CFX_WideString wsLabel;
+bool CPDF_PageLabel::GetLabel(int nPage, CFX_WideString* wsLabel) const {
   if (!m_pDocument)
-    return wsLabel;
+    return false;
+
+  if (nPage < 0 || nPage >= m_pDocument->GetPageCount())
+    return false;
 
   CPDF_Dictionary* pPDFRoot = m_pDocument->GetRoot();
   if (!pPDFRoot)
-    return wsLabel;
+    return false;
 
   CPDF_Dictionary* pLabels = pPDFRoot->GetDictFor("PageLabels");
+  if (!pLabels)
+    return false;
+
   CPDF_NumberTree numberTree(pLabels);
   CPDF_Object* pValue = nullptr;
   int n = nPage;
@@ -99,18 +104,18 @@ CFX_WideString CPDF_PageLabel::GetLabel(int nPage) const {
     pValue = pValue->GetDirect();
     if (CPDF_Dictionary* pLabel = pValue->AsDictionary()) {
       if (pLabel->KeyExist("P"))
-        wsLabel += pLabel->GetUnicodeTextFor("P");
+        *wsLabel += pLabel->GetUnicodeTextFor("P");
 
       CFX_ByteString bsNumberingStyle = pLabel->GetStringFor("S", "");
       int nLabelNum = nPage - n + pLabel->GetIntegerFor("St", 1);
       CFX_WideString wsNumPortion =
           GetLabelNumPortion(nLabelNum, bsNumberingStyle);
-      wsLabel += wsNumPortion;
-      return wsLabel;
+      *wsLabel += wsNumPortion;
+      return true;
     }
   }
-  wsLabel.Format(L"%d", nPage + 1);
-  return wsLabel;
+  wsLabel->Format(L"%d", nPage + 1);
+  return true;
 }
 
 int32_t CPDF_PageLabel::GetPageByLabel(const CFX_ByteStringC& bsLabel) const {
@@ -123,7 +128,10 @@ int32_t CPDF_PageLabel::GetPageByLabel(const CFX_ByteStringC& bsLabel) const {
 
   int nPages = m_pDocument->GetPageCount();
   for (int i = 0; i < nPages; i++) {
-    if (PDF_EncodeText(GetLabel(i)).Compare(bsLabel))
+    CFX_WideString str;
+    if (!GetLabel(i, &str))
+      continue;
+    if (PDF_EncodeText(str).Compare(bsLabel))
       return i;
   }
 
