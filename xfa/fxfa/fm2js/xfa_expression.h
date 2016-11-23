@@ -8,6 +8,7 @@
 #define XFA_FXFA_FM2JS_XFA_EXPRESSION_H_
 
 #include <memory>
+#include <vector>
 
 #include "xfa/fxfa/fm2js/xfa_simpleexpression.h"
 
@@ -197,7 +198,7 @@ class CXFA_FMForeachExpression : public CXFA_FMLoopExpression {
   CXFA_FMForeachExpression(
       uint32_t line,
       const CFX_WideStringC& wsIdentifier,
-      CFX_ArrayTemplate<CXFA_FMSimpleExpression*>* pAccessors,
+      std::vector<std::unique_ptr<CXFA_FMSimpleExpression>>&& pAccessors,
       CXFA_FMExpression* pList);
   ~CXFA_FMForeachExpression() override;
 
@@ -206,7 +207,7 @@ class CXFA_FMForeachExpression : public CXFA_FMLoopExpression {
 
  private:
   CFX_WideStringC m_wsIdentifier;
-  CFX_ArrayTemplate<CXFA_FMSimpleExpression*>* m_pAccessors;
+  std::vector<std::unique_ptr<CXFA_FMSimpleExpression>> m_pAccessors;
   std::unique_ptr<CXFA_FMExpression> m_pList;
 };
 

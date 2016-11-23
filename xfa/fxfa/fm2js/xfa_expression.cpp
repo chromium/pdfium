@@ -510,21 +510,14 @@ void CXFA_FMForExpression::ToImpliedReturnJS(CFX_WideTextBuf& javascript) {
 CXFA_FMForeachExpression::CXFA_FMForeachExpression(
     uint32_t line,
     const CFX_WideStringC& wsIdentifier,
-    CFX_ArrayTemplate<CXFA_FMSimpleExpression*>* pAccessors,
+    std::vector<std::unique_ptr<CXFA_FMSimpleExpression>>&& pAccessors,
     CXFA_FMExpression* pList)
     : CXFA_FMLoopExpression(line),
       m_wsIdentifier(wsIdentifier),
-      m_pAccessors(pAccessors),
+      m_pAccessors(std::move(pAccessors)),
       m_pList(pList) {}
 
-CXFA_FMForeachExpression::~CXFA_FMForeachExpression() {
-  if (m_pAccessors) {
-    for (int i = 0; i < m_pAccessors->GetSize(); ++i)
-      m_pAccessors->GetAt(i);
-
-    delete m_pAccessors;
-  }
-}
+CXFA_FMForeachExpression::~CXFA_FMForeachExpression() {}
 
 void CXFA_FMForeachExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
   javascript << FX_WSTRC(L"{\n");
@@ -543,10 +536,10 @@ void CXFA_FMForeachExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
   javascript << XFA_FM_EXPTypeToString(CONCATFMOBJECT);
   javascript << FX_WSTRC(L"(");
 
-  for (int i = 0; i < m_pAccessors->GetSize(); ++i) {
-    CXFA_FMSimpleExpression* s = m_pAccessors->GetAt(i);
+  for (size_t i = 0; i < m_pAccessors.size(); ++i) {
+    CXFA_FMSimpleExpression* s = m_pAccessors.at(i).get();
     s->ToJavaScript(javascript);
-    if (i + 1 < m_pAccessors->GetSize()) {
+    if (i + 1 < m_pAccessors.size()) {
       javascript << FX_WSTRC(L", ");
     }
   }
@@ -594,10 +587,10 @@ void CXFA_FMForeachExpression::ToImpliedReturnJS(CFX_WideTextBuf& javascript) {
   javascript << FX_WSTRC(L" = ");
   javascript << XFA_FM_EXPTypeToString(CONCATFMOBJECT);
   javascript << FX_WSTRC(L"(");
-  for (int i = 0; i < m_pAccessors->GetSize(); ++i) {
-    CXFA_FMSimpleExpression* s = m_pAccessors->GetAt(i);
+  for (size_t i = 0; i < m_pAccessors.size(); ++i) {
+    CXFA_FMSimpleExpression* s = m_pAccessors.at(i).get();
     s->ToJavaScript(javascript);
-    if (i + 1 < m_pAccessors->GetSize()) {
+    if (i + 1 < m_pAccessors.size()) {
       javascript << FX_WSTRC(L", ");
     }
   }
