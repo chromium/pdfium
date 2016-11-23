@@ -10,6 +10,7 @@
 #include <memory>
 
 #include "core/fpdfapi/parser/cpdf_stream.h"
+#include "core/fxcrt/cfx_maybe_owned.h"
 #include "core/fxcrt/fx_system.h"
 
 class CFX_DIBSource;
@@ -28,8 +29,8 @@ class CPDF_Image {
 
   void ConvertStreamToIndirectObject();
 
-  CPDF_Dictionary* GetInlineDict() const { return m_pDict; }
-  CPDF_Stream* GetStream() const { return m_pStream; }
+  CPDF_Dictionary* GetInlineDict() const { return m_pDict.Get(); }
+  CPDF_Stream* GetStream() const { return m_pStream.Get(); }
   CPDF_Dictionary* GetDict() const {
     return m_pStream ? m_pStream->GetDict() : nullptr;
   }
@@ -77,10 +78,8 @@ class CPDF_Image {
   bool m_bIsMask = false;
   bool m_bInterpolate = false;
   CPDF_Document* const m_pDocument;
-  CPDF_Stream* m_pStream = nullptr;
-  CPDF_Dictionary* m_pDict = nullptr;
-  std::unique_ptr<CPDF_Stream> m_pOwnedStream;
-  std::unique_ptr<CPDF_Dictionary> m_pOwnedDict;
+  CFX_MaybeOwned<CPDF_Stream> m_pStream;
+  CFX_MaybeOwned<CPDF_Dictionary> m_pDict;
   CPDF_Dictionary* m_pOC = nullptr;
 };
 

@@ -35,18 +35,19 @@ CPDF_Image::CPDF_Image(CPDF_Document* pDoc,
                        std::unique_ptr<CPDF_Stream> pStream)
     : m_bIsInline(true),
       m_pDocument(pDoc),
-      m_pStream(pStream.get()),
-      m_pOwnedStream(std::move(pStream)) {
-  m_pOwnedDict =
-      ToDictionary(std::unique_ptr<CPDF_Object>(m_pStream->GetDict()->Clone()));
-  m_pDict = m_pOwnedDict.get();
+      m_pStream(std::move(pStream)),
+      m_pDict(ToDictionary(m_pStream->GetDict()->Clone())) {
+  ASSERT(m_pStream.IsOwned());
+  ASSERT(m_pDict.IsOwned());
   FinishInitialization();
 }
 
 CPDF_Image::CPDF_Image(CPDF_Document* pDoc, uint32_t dwStreamObjNum)
     : m_pDocument(pDoc),
-      m_pStream(ToStream(pDoc->GetIndirectObject(dwStreamObjNum))) {
-  m_pDict = m_pStream->GetDict();
+      m_pStream(ToStream(pDoc->GetIndirectObject(dwStreamObjNum))),
+      m_pDict(m_pStream->GetDict()) {
+  ASSERT(!m_pStream.IsOwned());
+  ASSERT(!m_pDict.IsOwned());
   FinishInitialization();
 }
 
@@ -65,8 +66,8 @@ void CPDF_Image::ConvertStreamToIndirectObject() {
   if (!m_pStream->IsInline())
     return;
 
-  ASSERT(m_pOwnedStream);
-  m_pDocument->AddIndirectObject(std::move(m_pOwnedStream));
+  ASSERT(m_pStream.IsOwned());
+  m_pDocument->AddIndirectObject(m_pStream.Release());
 }
 
 std::unique_ptr<CPDF_Dictionary> CPDF_Image::InitJPEG(uint8_t* pData,
@@ -110,10 +111,8 @@ std::unique_ptr<CPDF_Dictionary> CPDF_Image::InitJPEG(uint8_t* pData,
   m_bIsMask = false;
   m_Width = width;
   m_Height = height;
-  if (!m_pStream) {
-    m_pOwnedStream = pdfium::MakeUnique<CPDF_Stream>();
-    m_pStream = m_pOwnedStream.get();
-  }
+  if (!m_pStream)
+    m_pStream = pdfium::MakeUnique<CPDF_Stream>();
   return pDict;
 }
 
@@ -291,10 +290,9 @@ void CPDF_Image::SetImage(const CFX_DIBitmap* pBitmap) {
       dest_offset = 0;
     }
   }
-  if (!m_pStream) {
-    m_pOwnedStream = pdfium::MakeUnique<CPDF_Stream>();
-    m_pStream = m_pOwnedStream.get();
-  }
+  if (!m_pStream)
+    m_pStream = pdfium::MakeUnique<CPDF_Stream>();
+
   m_pStream->InitStream(dest_buf, dest_size, std::move(pDict));
   m_bIsMask = pBitmap->IsAlphaMask();
   m_Width = BitmapWidth;
@@ -303,7 +301,7 @@ void CPDF_Image::SetImage(const CFX_DIBitmap* pBitmap) {
 }
 
 void CPDF_Image::ResetCache(CPDF_Page* pPage, const CFX_DIBitmap* pBitmap) {
-  pPage->GetRenderCache()->ResetBitmap(m_pStream, pBitmap);
+  pPage->GetRenderCache()->ResetBitmap(m_pStream.Get(), pBitmap);
 }
 
 CFX_DIBSource* CPDF_Image::LoadDIBSource(CFX_DIBSource** ppMask,
@@ -312,7 +310,7 @@ CFX_DIBSource* CPDF_Image::LoadDIBSource(CFX_DIBSource** ppMask,
                                          uint32_t GroupFamily,
                                          bool bLoadMask) const {
   auto source = pdfium::MakeUnique<CPDF_DIBSource>();
-  if (source->Load(m_pDocument, m_pStream,
+  if (source->Load(m_pDocument, m_pStream.Get(),
                    reinterpret_cast<CPDF_DIBSource**>(ppMask), pMatteColor,
                    nullptr, nullptr, bStdCS, GroupFamily, bLoadMask)) {
     return source.release();
@@ -338,9 +336,9 @@ bool CPDF_Image::StartLoadDIBSource(CPDF_Dictionary* pFormResource,
                                     uint32_t GroupFamily,
                                     bool bLoadMask) {
   auto source = pdfium::MakeUnique<CPDF_DIBSource>();
-  int ret =
-      source->StartLoadDIBSource(m_pDocument, m_pStream, true, pFormResource,
-                                 pPageResource, bStdCS, GroupFamily, bLoadMask);
+  int ret = source->StartLoadDIBSource(m_pDocument, m_pStream.Get(), true,
+                                       pFormResource, pPageResource, bStdCS,
+                                       GroupFamily, bLoadMask);
   if (ret == 2) {
     m_pDIBSource = source.release();
     return true;
