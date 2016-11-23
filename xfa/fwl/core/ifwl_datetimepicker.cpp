@@ -36,9 +36,6 @@ IFWL_DateTimePicker::IFWL_DateTimePicker(
       m_iYear(-1),
       m_iMonth(-1),
       m_iDay(-1),
-      m_iCurYear(2010),
-      m_iCurMonth(3),
-      m_iCurDay(29),
       m_bLBtnDown(false) {
   m_rtBtn.Set(0, 0, 0, 0);
 
@@ -117,12 +114,6 @@ void IFWL_DateTimePicker::Update() {
   m_pEdit->Update();
   if (!(m_pMonthCal->GetThemeProvider()))
     m_pMonthCal->SetThemeProvider(m_pProperties->m_pThemeProvider);
-  if (m_pProperties->m_pDataProvider) {
-    IFWL_DateTimePicker::DataProvider* pData =
-        static_cast<IFWL_DateTimePicker::DataProvider*>(
-            m_pProperties->m_pDataProvider);
-    pData->GetToday(this, m_iCurYear, m_iCurMonth, m_iCurDay);
-  }
 
   CFX_RectF rtMonthCal;
   m_pMonthCal->GetWidgetRect(rtMonthCal, true);
@@ -467,12 +458,6 @@ void IFWL_DateTimePicker::DisForm_Update() {
 
   if (!m_pMonthCal->GetThemeProvider())
     m_pMonthCal->SetThemeProvider(m_pProperties->m_pThemeProvider);
-  if (m_pProperties->m_pDataProvider) {
-    IFWL_DateTimePicker::DataProvider* pData =
-        static_cast<IFWL_DateTimePicker::DataProvider*>(
-            m_pProperties->m_pDataProvider);
-    pData->GetToday(this, m_iCurYear, m_iCurMonth, m_iCurDay);
-  }
 
   FX_FLOAT* pWidth = static_cast<FX_FLOAT*>(
       GetThemeCapacity(CFWL_WidgetCapacity::ScrollBarWidth));
@@ -673,16 +658,4 @@ void IFWL_DateTimePicker::DisForm_OnFocusChanged(CFWL_Message* pMsg,
   }
   rtInvalidate.Inflate(2, 2);
   Repaint(&rtInvalidate);
-}
-
-int32_t IFWL_DateTimePicker::GetCurDay(IFWL_Widget* pWidget) {
-  return m_iCurDay;
-}
-
-int32_t IFWL_DateTimePicker::GetCurMonth(IFWL_Widget* pWidget) {
-  return m_iCurMonth;
-}
-
-int32_t IFWL_DateTimePicker::GetCurYear(IFWL_Widget* pWidget) {
-  return m_iCurYear;
 }

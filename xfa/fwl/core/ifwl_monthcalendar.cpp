@@ -724,22 +724,14 @@ void IFWL_MonthCalendar::GetCapValue() {
 }
 
 void IFWL_MonthCalendar::InitDate() {
-  if (m_pProperties->m_pDataProvider) {
-    IFWL_MonthCalendar::DataProvider* pDateProv =
-        static_cast<IFWL_MonthCalendar::DataProvider*>(
-            m_pProperties->m_pDataProvider);
-    m_iYear = pDateProv->GetCurYear(this);
-    m_iMonth = pDateProv->GetCurMonth(this);
-    m_iDay = pDateProv->GetCurDay(this);
-    m_iCurYear = m_iYear;
-    m_iCurMonth = m_iMonth;
-  } else {
-    m_iDay = 1;
-    m_iMonth = 1;
-    m_iYear = 1;
-    m_iCurYear = m_iYear;
-    m_iCurMonth = m_iMonth;
-  }
+  // TODO(dsinclair): These should pull the real today values instead of
+  // pretending it's 2011-01-01.
+  m_iYear = 2011;
+  m_iMonth = 1;
+  m_iDay = 1;
+  m_iCurYear = m_iYear;
+  m_iCurMonth = m_iMonth;
+
   GetTodayText(m_iYear, m_iMonth, m_iDay, m_wsToday);
   GetHeadText(m_iCurYear, m_iCurMonth, m_wsHead);
   m_dtMin = DATE(1500, 12, 1);

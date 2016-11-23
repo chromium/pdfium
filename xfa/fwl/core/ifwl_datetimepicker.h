@@ -36,16 +36,8 @@ class IFWL_DateTimeEdit;
 class IFWL_FormProxy;
 
 class IFWL_DateTimePicker : public IFWL_Widget,
-                            public IFWL_MonthCalendar::DataProvider {
+                            public IFWL_Widget::DataProvider {
  public:
-  class DataProvider : public IFWL_Widget::DataProvider {
-   public:
-    virtual void GetToday(IFWL_Widget* pWidget,
-                          int32_t& iYear,
-                          int32_t& iMonth,
-                          int32_t& iDay) = 0;
-  };
-
   explicit IFWL_DateTimePicker(
       const CFWL_App* app,
       std::unique_ptr<CFWL_WidgetProperties> properties);
@@ -62,11 +54,6 @@ class IFWL_DateTimePicker : public IFWL_Widget,
   void OnProcessMessage(CFWL_Message* pMessage) override;
   void OnDrawWidget(CFX_Graphics* pGraphics,
                     const CFX_Matrix* pMatrix) override;
-
-  // IFWL_MonthCalendar::DataProvider
-  int32_t GetCurDay(IFWL_Widget* pWidget) override;
-  int32_t GetCurMonth(IFWL_Widget* pWidget) override;
-  int32_t GetCurYear(IFWL_Widget* pWidget) override;
 
   void GetCurSel(int32_t& iYear, int32_t& iMonth, int32_t& iDay);
   void SetCurSel(int32_t iYear, int32_t iMonth, int32_t iDay);
@@ -124,9 +111,6 @@ class IFWL_DateTimePicker : public IFWL_Widget,
   int32_t m_iYear;
   int32_t m_iMonth;
   int32_t m_iDay;
-  int32_t m_iCurYear;
-  int32_t m_iCurMonth;
-  int32_t m_iCurDay;
   bool m_bLBtnDown;
   std::unique_ptr<IFWL_DateTimeEdit> m_pEdit;
   std::unique_ptr<IFWL_MonthCalendar> m_pMonthCal;

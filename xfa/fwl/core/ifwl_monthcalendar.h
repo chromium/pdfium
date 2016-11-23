@@ -28,13 +28,6 @@ class IFWL_Widget;
 
 class IFWL_MonthCalendar : public IFWL_Widget {
  public:
-  class DataProvider : public IFWL_Widget::DataProvider {
-   public:
-    virtual int32_t GetCurDay(IFWL_Widget* pWidget) = 0;
-    virtual int32_t GetCurMonth(IFWL_Widget* pWidget) = 0;
-    virtual int32_t GetCurYear(IFWL_Widget* pWidget) = 0;
-  };
-
   IFWL_MonthCalendar(const CFWL_App* app,
                      std::unique_ptr<CFWL_WidgetProperties> properties,
                      IFWL_Widget* pOuter);
