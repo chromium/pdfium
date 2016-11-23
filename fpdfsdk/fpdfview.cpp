@@ -48,6 +48,74 @@
 #include "core/fxge/cfx_windowsdevice.h"
 #endif
 
+namespace {
+
+void RenderPageImpl(CPDF_PageRenderContext* pContext,
+                    CPDF_Page* pPage,
+                    const CFX_Matrix& matrix,
+                    const FX_RECT& clipping_rect,
+                    int flags,
+                    bool bNeedToRestore,
+                    IFSDK_PAUSE_Adapter* pause) {
+  if (!pContext->m_pOptions)
+    pContext->m_pOptions = pdfium::MakeUnique<CPDF_RenderOptions>();
+
+  if (flags & FPDF_LCD_TEXT)
+    pContext->m_pOptions->m_Flags |= RENDER_CLEARTYPE;
+  else
+    pContext->m_pOptions->m_Flags &= ~RENDER_CLEARTYPE;
+
+  if (flags & FPDF_NO_NATIVETEXT)
+    pContext->m_pOptions->m_Flags |= RENDER_NO_NATIVETEXT;
+  if (flags & FPDF_RENDER_LIMITEDIMAGECACHE)
+    pContext->m_pOptions->m_Flags |= RENDER_LIMITEDIMAGECACHE;
+  if (flags & FPDF_RENDER_FORCEHALFTONE)
+    pContext->m_pOptions->m_Flags |= RENDER_FORCE_HALFTONE;
+#ifndef PDF_ENABLE_XFA
+  if (flags & FPDF_RENDER_NO_SMOOTHTEXT)
+    pContext->m_pOptions->m_Flags |= RENDER_NOTEXTSMOOTH;
+  if (flags & FPDF_RENDER_NO_SMOOTHIMAGE)
+    pContext->m_pOptions->m_Flags |= RENDER_NOIMAGESMOOTH;
+  if (flags & FPDF_RENDER_NO_SMOOTHPATH)
+    pContext->m_pOptions->m_Flags |= RENDER_NOPATHSMOOTH;
+#endif  // PDF_ENABLE_XFA
+
+  // Grayscale output
+  if (flags & FPDF_GRAYSCALE) {
+    pContext->m_pOptions->m_ColorMode = RENDER_COLOR_GRAY;
+    pContext->m_pOptions->m_ForeColor = 0;
+    pContext->m_pOptions->m_BackColor = 0xffffff;
+  }
+
+  const CPDF_OCContext::UsageType usage =
+      (flags & FPDF_PRINTING) ? CPDF_OCContext::Print : CPDF_OCContext::View;
+  pContext->m_pOptions->m_AddFlags = flags >> 8;
+  pContext->m_pOptions->m_pOCContext =
+      new CPDF_OCContext(pPage->m_pDocument, usage);
+
+  pContext->m_pDevice->SaveState();
+  pContext->m_pDevice->SetClip_Rect(clipping_rect);
+
+  pContext->m_pContext = pdfium::MakeUnique<CPDF_RenderContext>(pPage);
+  pContext->m_pContext->AppendLayer(pPage, &matrix);
+
+  if (flags & FPDF_ANNOT) {
+    pContext->m_pAnnots = pdfium::MakeUnique<CPDF_AnnotList>(pPage);
+    bool bPrinting = pContext->m_pDevice->GetDeviceClass() != FXDC_DISPLAY;
+    pContext->m_pAnnots->DisplayAnnots(pPage, pContext->m_pContext.get(),
+                                       bPrinting, &matrix, false, nullptr);
+  }
+
+  pContext->m_pRenderer = pdfium::MakeUnique<CPDF_ProgressiveRenderer>(
+      pContext->m_pContext.get(), pContext->m_pDevice.get(),
+      pContext->m_pOptions.get());
+  pContext->m_pRenderer->Start(pause);
+  if (bNeedToRestore)
+    pContext->m_pDevice->RestoreState(false);
+}
+
+}  // namespace
+
 UnderlyingDocumentType* UnderlyingFromFPDFDocument(FPDF_DOCUMENT doc) {
   return static_cast<UnderlyingDocumentType*>(doc);
 }
@@ -604,6 +672,50 @@ DLLEXPORT void STDCALL FPDF_RenderPageBitmap(FPDF_BITMAP bitmap,
   pPage->SetRenderContext(nullptr);
 }
 
+DLLEXPORT void STDCALL FPDF_RenderPageBitmapWithMatrix(FPDF_BITMAP bitmap,
+                                                       FPDF_PAGE page,
+                                                       const FS_MATRIX* matrix,
+                                                       const FS_RECTF* clipping,
+                                                       int flags) {
+  if (!bitmap)
+    return;
+
+  CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
+  if (!pPage)
+    return;
+
+  CPDF_PageRenderContext* pContext = new CPDF_PageRenderContext;
+  pPage->SetRenderContext(pdfium::WrapUnique(pContext));
+  CFX_FxgeDevice* pDevice = new CFX_FxgeDevice;
+  pContext->m_pDevice.reset(pDevice);
+  CFX_DIBitmap* pBitmap = CFXBitmapFromFPDFBitmap(bitmap);
+  pDevice->Attach(pBitmap, !!(flags & FPDF_REVERSE_BYTE_ORDER), nullptr, false);
+
+  CFX_Matrix transform_matrix = pPage->GetPageMatrix();
+  if (matrix) {
+    CFX_Matrix cmatrix;
+    cmatrix.a = matrix->a;
+    cmatrix.b = matrix->b;
+    cmatrix.c = matrix->c;
+    cmatrix.d = matrix->d;
+    cmatrix.e = matrix->e;
+    cmatrix.f = matrix->f;
+    transform_matrix.Concat(cmatrix);
+  }
+
+  CFX_FloatRect clipping_rect;
+  if (clipping) {
+    clipping_rect.left = clipping->left;
+    clipping_rect.bottom = clipping->bottom;
+    clipping_rect.right = clipping->right;
+    clipping_rect.top = clipping->top;
+  }
+  RenderPageImpl(pContext, pPage, transform_matrix, clipping_rect.ToFxRect(),
+                 flags, true, nullptr);
+
+  pPage->SetRenderContext(nullptr);
+}
+
 #ifdef _SKIA_SUPPORT_
 DLLEXPORT FPDF_RECORDER STDCALL FPDF_RenderPageSkp(FPDF_PAGE page,
                                                    int size_x,
@@ -813,62 +925,10 @@ void FPDF_RenderPage_Retail(CPDF_PageRenderContext* pContext,
   if (!pPage)
     return;
 
-  if (!pContext->m_pOptions)
-    pContext->m_pOptions = pdfium::MakeUnique<CPDF_RenderOptions>();
-
-  if (flags & FPDF_LCD_TEXT)
-    pContext->m_pOptions->m_Flags |= RENDER_CLEARTYPE;
-  else
-    pContext->m_pOptions->m_Flags &= ~RENDER_CLEARTYPE;
-  if (flags & FPDF_NO_NATIVETEXT)
-    pContext->m_pOptions->m_Flags |= RENDER_NO_NATIVETEXT;
-  if (flags & FPDF_RENDER_LIMITEDIMAGECACHE)
-    pContext->m_pOptions->m_Flags |= RENDER_LIMITEDIMAGECACHE;
-  if (flags & FPDF_RENDER_FORCEHALFTONE)
-    pContext->m_pOptions->m_Flags |= RENDER_FORCE_HALFTONE;
-#ifndef PDF_ENABLE_XFA
-  if (flags & FPDF_RENDER_NO_SMOOTHTEXT)
-    pContext->m_pOptions->m_Flags |= RENDER_NOTEXTSMOOTH;
-  if (flags & FPDF_RENDER_NO_SMOOTHIMAGE)
-    pContext->m_pOptions->m_Flags |= RENDER_NOIMAGESMOOTH;
-  if (flags & FPDF_RENDER_NO_SMOOTHPATH)
-    pContext->m_pOptions->m_Flags |= RENDER_NOPATHSMOOTH;
-#endif  // PDF_ENABLE_XFA
-  // Grayscale output
-  if (flags & FPDF_GRAYSCALE) {
-    pContext->m_pOptions->m_ColorMode = RENDER_COLOR_GRAY;
-    pContext->m_pOptions->m_ForeColor = 0;
-    pContext->m_pOptions->m_BackColor = 0xffffff;
-  }
-  const CPDF_OCContext::UsageType usage =
-      (flags & FPDF_PRINTING) ? CPDF_OCContext::Print : CPDF_OCContext::View;
-  pContext->m_pOptions->m_AddFlags = flags >> 8;
-  pContext->m_pOptions->m_pOCContext =
-      new CPDF_OCContext(pPage->m_pDocument, usage);
-
   CFX_Matrix matrix;
   pPage->GetDisplayMatrix(matrix, start_x, start_y, size_x, size_y, rotate);
-
-  pContext->m_pDevice->SaveState();
-  pContext->m_pDevice->SetClip_Rect(
-      FX_RECT(start_x, start_y, start_x + size_x, start_y + size_y));
-
-  pContext->m_pContext = pdfium::MakeUnique<CPDF_RenderContext>(pPage);
-  pContext->m_pContext->AppendLayer(pPage, &matrix);
-
-  if (flags & FPDF_ANNOT) {
-    pContext->m_pAnnots = pdfium::MakeUnique<CPDF_AnnotList>(pPage);
-    bool bPrinting = pContext->m_pDevice->GetDeviceClass() != FXDC_DISPLAY;
-    pContext->m_pAnnots->DisplayAnnots(pPage, pContext->m_pContext.get(),
-                                       bPrinting, &matrix, false, nullptr);
-  }
-
-  pContext->m_pRenderer = pdfium::MakeUnique<CPDF_ProgressiveRenderer>(
-      pContext->m_pContext.get(), pContext->m_pDevice.get(),
-      pContext->m_pOptions.get());
-  pContext->m_pRenderer->Start(pause);
-  if (bNeedToRestore)
-    pContext->m_pDevice->RestoreState(false);
+  FX_RECT rect(start_x, start_y, start_x + size_x, start_y + size_y);
+  RenderPageImpl(pContext, pPage, matrix, rect, flags, bNeedToRestore, pause);
 }
 
 DLLEXPORT int STDCALL FPDF_GetPageSizeByIndex(FPDF_DOCUMENT document,

@@ -225,6 +225,7 @@ int CheckPDFiumCApi() {
     CHK(FPDF_GetPageHeight);
     CHK(FPDF_GetPageSizeByIndex);
     CHK(FPDF_RenderPageBitmap);
+    CHK(FPDF_RenderPageBitmapWithMatrix);
     CHK(FPDF_ClosePage);
     CHK(FPDF_CloseDocument);
     CHK(FPDF_DeviceToPage);

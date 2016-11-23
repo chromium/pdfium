@@ -327,3 +327,54 @@ TEST_F(FPDFViewEmbeddertest, Hang_355) {
 TEST_F(FPDFViewEmbeddertest, Hang_360) {
   EXPECT_FALSE(OpenDocument("bug_360.pdf"));
 }
+
+TEST_F(FPDFViewEmbeddertest, FPDF_RenderPageBitmapWithMatrix) {
+  const char kAllBlackMd5sum[] = "5708fc5c4a8bd0abde99c8e8f0390615";
+  const char kTopLeftQuarterBlackMd5sum[] = "24e4d1ec06fa0258af758cfc8b2ad50a";
+
+  EXPECT_TRUE(OpenDocument("black.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  EXPECT_NE(nullptr, page);
+  const int width = static_cast<int>(FPDF_GetPageWidth(page));
+  const int height = static_cast<int>(FPDF_GetPageHeight(page));
+  EXPECT_EQ(612, width);
+  EXPECT_EQ(792, height);
+
+  FPDF_BITMAP bitmap = RenderPage(page);
+  CompareBitmap(bitmap, width, height, kAllBlackMd5sum);
+  FPDFBitmap_Destroy(bitmap);
+
+  // Try rendering with an identity matrix. The output should be the same as
+  // the RenderPage() output.
+  FS_MATRIX matrix;
+  matrix.a = 1;
+  matrix.b = 0;
+  matrix.c = 0;
+  matrix.d = 1;
+  matrix.e = 0;
+  matrix.f = 0;
+
+  FS_RECTF rect;
+  rect.left = 0;
+  rect.top = 0;
+  rect.right = width;
+  rect.bottom = height;
+
+  bitmap = FPDFBitmap_Create(width, height, 0);
+  FPDFBitmap_FillRect(bitmap, 0, 0, width, height, 0xFFFFFFFF);
+  FPDF_RenderPageBitmapWithMatrix(bitmap, page, &matrix, &rect, 0);
+  CompareBitmap(bitmap, width, height, kAllBlackMd5sum);
+  FPDFBitmap_Destroy(bitmap);
+
+  // Now render again with the image scaled.
+  matrix.a = 0.5;
+  matrix.d = 0.5;
+
+  bitmap = FPDFBitmap_Create(width, height, 0);
+  FPDFBitmap_FillRect(bitmap, 0, 0, width, height, 0xFFFFFFFF);
+  FPDF_RenderPageBitmapWithMatrix(bitmap, page, &matrix, &rect, 0);
+  CompareBitmap(bitmap, width, height, kTopLeftQuarterBlackMd5sum);
+  FPDFBitmap_Destroy(bitmap);
+
+  UnloadPage(page);
+}

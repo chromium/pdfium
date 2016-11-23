@@ -596,11 +596,11 @@ DLLEXPORT void STDCALL FPDF_RenderPage(HDC dc,
 //                            1 (rotated 90 degrees clockwise)
 //                            2 (rotated 180 degrees)
 //                            3 (rotated 90 degrees counter-clockwise)
-//          flags       -   0 for normal display, or combination of flags
-//                          defined above. With FPDF_ANNOT flag, it renders all
-//                          annotations that does not require user-interaction,
-//                          which are all annotations except widget and popup
-//                          annotations.
+//          flags       -   0 for normal display, or combination of the Page
+//                          Rendering flags defined above. With the FPDF_ANNOT
+//                          flag, it renders all annotations that do not require
+//                          user-interaction, which are all annotations except
+//                          widget and popup annotations.
 // Return value:
 //          None.
 DLLEXPORT void STDCALL FPDF_RenderPageBitmap(FPDF_BITMAP bitmap,
@@ -611,6 +611,28 @@ DLLEXPORT void STDCALL FPDF_RenderPageBitmap(FPDF_BITMAP bitmap,
                                              int size_y,
                                              int rotate,
                                              int flags);
+
+// Function: FPDF_RenderPageBitmapWithMatrix
+//          Render contents of a page to a device independent bitmap.
+// Parameters:
+//          bitmap      -   Handle to the device independent bitmap (as the
+//                          output buffer). The bitmap handle can be created
+//                          by FPDFBitmap_Create.
+//          page        -   Handle to the page. Returned by FPDF_LoadPage
+//          matrix      -   The transform matrix.
+//          clipping    -   The rect to clip to.
+//          flags       -   0 for normal display, or combination of the Page
+//                          Rendering flags defined above. With the FPDF_ANNOT
+//                          flag, it renders all annotations that do not require
+//                          user-interaction, which are all annotations except
+//                          widget and popup annotations.
+// Return value:
+//          None.
+DLLEXPORT void STDCALL FPDF_RenderPageBitmapWithMatrix(FPDF_BITMAP bitmap,
+                                                       FPDF_PAGE page,
+                                                       const FS_MATRIX* matrix,
+                                                       const FS_RECTF* clipping,
+                                                       int flags);
 
 #ifdef _SKIA_SUPPORT_
 DLLEXPORT FPDF_RECORDER STDCALL FPDF_RenderPageSkp(FPDF_PAGE page,
