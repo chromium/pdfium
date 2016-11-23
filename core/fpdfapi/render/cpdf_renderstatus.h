@@ -132,14 +132,14 @@ class CPDF_RenderStatus {
                                bool bStroke);
   bool ProcessForm(const CPDF_FormObject* pFormObj,
                    const CFX_Matrix* pObj2Device);
-  CFX_DIBitmap* GetBackdrop(const CPDF_PageObject* pObj,
-                            const FX_RECT& rect,
-                            int& left,
-                            int& top,
-                            bool bBackAlphaRequired);
-  CFX_DIBitmap* LoadSMask(CPDF_Dictionary* pSMaskDict,
-                          FX_RECT* pClipRect,
-                          const CFX_Matrix* pMatrix);
+  std::unique_ptr<CFX_DIBitmap> GetBackdrop(const CPDF_PageObject* pObj,
+                                            const FX_RECT& rect,
+                                            int& left,
+                                            int& top,
+                                            bool bBackAlphaRequired);
+  std::unique_ptr<CFX_DIBitmap> LoadSMask(CPDF_Dictionary* pSMaskDict,
+                                          FX_RECT* pClipRect,
+                                          const CFX_Matrix* pMatrix);
   static CPDF_Type3Cache* GetCachedType3(CPDF_Type3Font* pFont);
   static CPDF_GraphicStates* CloneObjStates(const CPDF_GraphicStates* pPathObj,
                                             bool bStroke);

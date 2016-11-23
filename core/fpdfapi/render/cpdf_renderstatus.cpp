@@ -1556,8 +1556,8 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
   if (pSMaskDict) {
     CFX_Matrix smask_matrix = *pPageObj->m_GeneralState.GetSMaskMatrix();
     smask_matrix.Concat(*pObj2Device);
-    std::unique_ptr<CFX_DIBSource> pSMaskSource(
-        LoadSMask(pSMaskDict, &rect, &smask_matrix));
+    std::unique_ptr<CFX_DIBSource> pSMaskSource =
+        LoadSMask(pSMaskDict, &rect, &smask_matrix);
     if (pSMaskSource)
       bitmap->MultiplyAlpha(pSMaskSource.get());
   }
@@ -1585,11 +1585,12 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
   return true;
 }
 
-CFX_DIBitmap* CPDF_RenderStatus::GetBackdrop(const CPDF_PageObject* pObj,
-                                             const FX_RECT& rect,
-                                             int& left,
-                                             int& top,
-                                             bool bBackAlphaRequired) {
+std::unique_ptr<CFX_DIBitmap> CPDF_RenderStatus::GetBackdrop(
+    const CPDF_PageObject* pObj,
+    const FX_RECT& rect,
+    int& left,
+    int& top,
+    bool bBackAlphaRequired) {
   FX_RECT bbox = rect;
   bbox.Intersect(m_pDevice->GetClipBox());
   left = bbox.left;
@@ -1599,7 +1600,7 @@ CFX_DIBitmap* CPDF_RenderStatus::GetBackdrop(const CPDF_PageObject* pObj,
   FX_FLOAT scaleY = FXSYS_fabs(deviceCTM.d);
   int width = FXSYS_round(bbox.Width() * scaleX);
   int height = FXSYS_round(bbox.Height() * scaleY);
-  std::unique_ptr<CFX_DIBitmap> pBackdrop(new CFX_DIBitmap);
+  auto pBackdrop = pdfium::MakeUnique<CFX_DIBitmap>();
   if (bBackAlphaRequired && !m_bDropObjects)
     pBackdrop->Create(width, height, FXDIB_Argb);
   else
@@ -1616,7 +1617,7 @@ CFX_DIBitmap* CPDF_RenderStatus::GetBackdrop(const CPDF_PageObject* pObj,
 
   if (!bNeedDraw) {
     m_pDevice->GetDIBits(pBackdrop.get(), left, top);
-    return pBackdrop.release();
+    return pBackdrop;
   }
 
   CFX_Matrix FinalMatrix = m_DeviceMatrix;
@@ -1626,7 +1627,7 @@ CFX_DIBitmap* CPDF_RenderStatus::GetBackdrop(const CPDF_PageObject* pObj,
   CFX_FxgeDevice device;
   device.Attach(pBackdrop.get(), false, nullptr, false);
   m_pContext->Render(&device, pObj, &m_Options, &FinalMatrix);
-  return pBackdrop.release();
+  return pBackdrop;
 }
 
 CPDF_GraphicStates* CPDF_RenderStatus::CloneObjStates(
@@ -2474,9 +2475,9 @@ void CPDF_RenderStatus::CompositeDIBitmap(CFX_DIBitmap* pDIBitmap,
   int back_left, back_top;
   FX_RECT rect(left, top, left + pDIBitmap->GetWidth(),
                top + pDIBitmap->GetHeight());
-  std::unique_ptr<CFX_DIBitmap> pBackdrop(
+  std::unique_ptr<CFX_DIBitmap> pBackdrop =
       GetBackdrop(m_pCurObj, rect, back_left, back_top,
-                  blend_mode > FXDIB_BLEND_NORMAL && bIsolated));
+                  blend_mode > FXDIB_BLEND_NORMAL && bIsolated);
   if (!pBackdrop)
     return;
 
@@ -2490,7 +2491,7 @@ void CPDF_RenderStatus::CompositeDIBitmap(CFX_DIBitmap* pDIBitmap,
                              pDIBitmap, mask_argb, 0, 0, blend_mode);
   }
 
-  std::unique_ptr<CFX_DIBitmap> pBackdrop1(new CFX_DIBitmap);
+  auto pBackdrop1 = pdfium::MakeUnique<CFX_DIBitmap>();
   pBackdrop1->Create(pBackdrop->GetWidth(), pBackdrop->GetHeight(),
                      FXDIB_Rgb32);
   pBackdrop1->Clear((uint32_t)-1);
@@ -2500,9 +2501,10 @@ void CPDF_RenderStatus::CompositeDIBitmap(CFX_DIBitmap* pDIBitmap,
   m_pDevice->SetDIBits(pBackdrop.get(), back_left, back_top);
 }
 
-CFX_DIBitmap* CPDF_RenderStatus::LoadSMask(CPDF_Dictionary* pSMaskDict,
-                                           FX_RECT* pClipRect,
-                                           const CFX_Matrix* pMatrix) {
+std::unique_ptr<CFX_DIBitmap> CPDF_RenderStatus::LoadSMask(
+    CPDF_Dictionary* pSMaskDict,
+    FX_RECT* pClipRect,
+    const CFX_Matrix* pMatrix) {
   if (!pSMaskDict)
     return nullptr;
 
@@ -2591,7 +2593,8 @@ CFX_DIBitmap* CPDF_RenderStatus::LoadSMask(CPDF_Dictionary* pSMaskDict,
                     nullptr, &options, 0, m_bDropObjects, pFormResource, true,
                     nullptr, 0, color_space_family, bLuminosity);
   status.RenderObjectList(&form, &matrix);
-  std::unique_ptr<CFX_DIBitmap> pMask(new CFX_DIBitmap);
+
+  auto pMask = pdfium::MakeUnique<CFX_DIBitmap>();
   if (!pMask->Create(width, height, FXDIB_8bppMask))
     return nullptr;
 
@@ -2631,5 +2634,5 @@ CFX_DIBitmap* CPDF_RenderStatus::LoadSMask(CPDF_Dictionary* pSMaskDict,
   } else {
     FXSYS_memcpy(dest_buf, src_buf, dest_pitch * height);
   }
-  return pMask.release();
+  return pMask;
 }
