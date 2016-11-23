@@ -13,15 +13,12 @@
 #include "xfa/fwl/core/cfwl_widget.h"
 #include "xfa/fwl/core/ifwl_combobox.h"
 
-class CFWL_ComboBox : public CFWL_Widget, public IFWL_ComboBox::DataProvider {
+class CFWL_ComboBox : public CFWL_Widget, public IFWL_Widget::DataProvider {
  public:
   explicit CFWL_ComboBox(const CFWL_App* pApp);
   ~CFWL_ComboBox() override;
 
   void Initialize();
-
-  // IFWL_ComboBox::DataProvider
-  FX_FLOAT GetListHeight(IFWL_Widget* pWidget) override;
 
   void AddString(const CFX_WideStringC& wsText);
   bool RemoveAt(int32_t iIndex);  // Returns false iff |iIndex| out of range.
@@ -54,9 +51,6 @@ class CFWL_ComboBox : public CFWL_Widget, public IFWL_ComboBox::DataProvider {
 
   void GetBBox(CFX_RectF& rect);
   void EditModifyStylesEx(uint32_t dwStylesExAdded, uint32_t dwStylesExRemoved);
-
- private:
-  FX_FLOAT m_fMaxListHeight;
 };
 
 #endif  // XFA_FWL_CORE_CFWL_COMBOBOX_H_

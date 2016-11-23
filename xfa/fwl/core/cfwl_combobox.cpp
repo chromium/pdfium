@@ -21,8 +21,7 @@ IFWL_ComboBox* ToComboBox(IFWL_Widget* widget) {
 
 }  // namespace
 
-CFWL_ComboBox::CFWL_ComboBox(const CFWL_App* app)
-    : CFWL_Widget(app), m_fMaxListHeight(0) {}
+CFWL_ComboBox::CFWL_ComboBox(const CFWL_App* app) : CFWL_Widget(app) {}
 
 CFWL_ComboBox::~CFWL_ComboBox() {}
 
@@ -47,10 +46,6 @@ bool CFWL_ComboBox::RemoveAt(int32_t iIndex) {
 void CFWL_ComboBox::RemoveAll() {
   if (GetWidget())
     ToComboBox(GetWidget())->RemoveAll();
-}
-
-FX_FLOAT CFWL_ComboBox::GetListHeight(IFWL_Widget* pWidget) {
-  return m_fMaxListHeight;
 }
 
 void CFWL_ComboBox::GetTextByIndex(int32_t iIndex,

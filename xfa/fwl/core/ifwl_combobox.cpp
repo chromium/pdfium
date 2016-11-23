@@ -337,12 +337,6 @@ void IFWL_ComboBox::EditModifyStylesEx(uint32_t dwStylesExAdded,
     m_pEdit->ModifyStylesEx(dwStylesExAdded, dwStylesExRemoved);
 }
 
-FX_FLOAT IFWL_ComboBox::GetDataProviderListHeight() {
-  return static_cast<IFWL_ComboBox::DataProvider*>(
-             m_pProperties->m_pDataProvider)
-      ->GetListHeight(this);
-}
-
 void IFWL_ComboBox::DrawStretchHandler(CFX_Graphics* pGraphics,
                                        const CFX_Matrix* pMatrix) {
   CFWL_ThemeBackground param;
@@ -381,11 +375,6 @@ void IFWL_ComboBox::ShowDropList(bool bActivate) {
                         (FWL_STYLEEXT_CMB_Sort | FWL_STYLEEXT_CMB_OwnerDraw);
   m_pListBox->ModifyStylesEx(dwStyleAdd, 0);
   m_pListBox->GetWidgetRect(m_rtList, true);
-  FX_FLOAT fHeight = GetDataProviderListHeight();
-  if (fHeight > 0 && m_rtList.height > fHeight) {
-    m_rtList.height = fHeight;
-    m_pListBox->ModifyStyles(FWL_WGTSTYLE_VScroll, 0);
-  }
 
   CFX_RectF rtAnchor;
   rtAnchor.Set(0, 0, m_pProperties->m_rtWidget.width,
@@ -396,8 +385,7 @@ void IFWL_ComboBox::ShowDropList(bool bActivate) {
   if (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_CMB_ListDrag)
     m_rtProxy.height += m_fComboFormHandler;
 
-  FX_FLOAT fMinHeight = 0;
-  GetPopupPos(fMinHeight, m_rtProxy.height, rtAnchor, m_rtProxy);
+  GetPopupPos(0, m_rtProxy.height, rtAnchor, m_rtProxy);
   if (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_CMB_ListDrag) {
     FX_FLOAT fx = 0;
     FX_FLOAT fy = m_rtClient.top + m_rtClient.height / 2;

@@ -49,11 +49,6 @@ class IFWL_Widget;
 
 class IFWL_ComboBox : public IFWL_Widget {
  public:
-  class DataProvider : public IFWL_Widget::DataProvider {
-   public:
-    virtual FX_FLOAT GetListHeight(IFWL_Widget* pWidget) = 0;
-  };
-
   explicit IFWL_ComboBox(const CFWL_App* app,
                          std::unique_ptr<CFWL_WidgetProperties> properties);
   ~IFWL_ComboBox() override;
@@ -125,7 +120,6 @@ class IFWL_ComboBox : public IFWL_Widget {
   int32_t GetCurrentSelection() const { return m_iCurSel; }
 
  private:
-  FX_FLOAT GetDataProviderListHeight();
   bool IsDropDownStyle() const {
     return !!(m_pProperties->m_dwStyleExes & FWL_STYLEEXT_CMB_DropDown);
   }
