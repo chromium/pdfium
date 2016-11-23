@@ -171,8 +171,6 @@ void IFWL_Widget::SetStates(uint32_t dwStates, bool bSet) {
   return;
 }
 
-void IFWL_Widget::Update() {}
-
 FWL_WidgetHit IFWL_Widget::HitTest(FX_FLOAT fx, FX_FLOAT fy) {
   CFX_RectF rtClient;
   GetClientRect(rtClient);
@@ -290,9 +288,6 @@ IFWL_ThemeProvider* IFWL_Widget::GetThemeProvider() const {
 IFWL_Widget::DataProvider* IFWL_Widget::GetDataProvider() const {
   return m_pProperties->m_pDataProvider;
 }
-
-void IFWL_Widget::DrawWidget(CFX_Graphics* pGraphics,
-                             const CFX_Matrix* pMatrix) {}
 
 void IFWL_Widget::SetThemeProvider(IFWL_ThemeProvider* pThemeProvider) {
   m_pProperties->m_pThemeProvider = pThemeProvider;

@@ -41,6 +41,8 @@ FWL_Type IFWL_Caret::GetClassID() const {
   return FWL_Type::Caret;
 }
 
+void IFWL_Caret::Update() {}
+
 void IFWL_Caret::DrawWidget(CFX_Graphics* pGraphics,
                             const CFX_Matrix* pMatrix) {
   if (!pGraphics)

@@ -32,6 +32,7 @@ class IFWL_Caret : public IFWL_Widget {
   void OnProcessMessage(CFWL_Message* pMessage) override;
   void OnDrawWidget(CFX_Graphics* pGraphics,
                     const CFX_Matrix* pMatrix) override;
+  void Update() override;
 
   void ShowCaret(bool bFlag = true);
 

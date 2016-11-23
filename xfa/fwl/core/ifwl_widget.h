@@ -75,10 +75,10 @@ class IFWL_Widget : public IFWL_WidgetDelegate {
   virtual void ModifyStylesEx(uint32_t dwStylesExAdded,
                               uint32_t dwStylesExRemoved);
   virtual void SetStates(uint32_t dwStates, bool bSet = true);
-  virtual void Update();
+  virtual void Update() = 0;
   virtual FWL_WidgetHit HitTest(FX_FLOAT fx, FX_FLOAT fy);
   virtual void DrawWidget(CFX_Graphics* pGraphics,
-                          const CFX_Matrix* pMatrix = nullptr);
+                          const CFX_Matrix* pMatrix = nullptr) = 0;
   virtual void SetThemeProvider(IFWL_ThemeProvider* pThemeProvider);
 
   // IFWL_WidgetDelegate.
