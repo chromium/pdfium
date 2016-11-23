@@ -35,8 +35,7 @@ void IFWL_PictureBox::GetWidgetRect(CFX_RectF& rect, bool bAutoSize) {
   }
 
   rect.Set(0, 0, 0, 0);
-  if (!m_pProperties->m_pDataProvider)
-    return;
+
   IFWL_Widget::GetWidgetRect(rect, true);
 }
 

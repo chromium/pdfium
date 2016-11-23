@@ -7,6 +7,7 @@
 #include "xfa/fwl/core/cfwl_checkbox.h"
 
 #include <memory>
+#include <utility>
 
 #include "third_party/base/ptr_util.h"
 #include "xfa/fwl/core/fwl_error.h"
@@ -19,8 +20,10 @@ CFWL_CheckBox::~CFWL_CheckBox() {}
 void CFWL_CheckBox::Initialize() {
   ASSERT(!m_pIface);
 
-  m_pIface = pdfium::MakeUnique<IFWL_CheckBox>(
-      m_pApp, pdfium::MakeUnique<CFWL_WidgetProperties>(this));
+  auto iface = pdfium::MakeUnique<IFWL_CheckBox>(
+      m_pApp, pdfium::MakeUnique<CFWL_WidgetProperties>());
+  iface->SetDataProvider(this);
+  m_pIface = std::move(iface);
 
   CFWL_Widget::Initialize();
 }

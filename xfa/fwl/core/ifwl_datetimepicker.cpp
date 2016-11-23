@@ -41,7 +41,7 @@ IFWL_DateTimePicker::IFWL_DateTimePicker(
 
   m_pProperties->m_dwStyleExes = FWL_STYLEEXT_DTP_ShortDateFormat;
 
-  auto monthProp = pdfium::MakeUnique<CFWL_WidgetProperties>(this);
+  auto monthProp = pdfium::MakeUnique<CFWL_WidgetProperties>();
   monthProp->m_dwStyles = FWL_WGTSTYLE_Popup | FWL_WGTSTYLE_Border;
   monthProp->m_dwStates = FWL_WGTSTATE_Invisible;
   monthProp->m_pParent = this;

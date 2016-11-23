@@ -9,9 +9,8 @@
 
 #include "xfa/fwl/core/cfwl_widget.h"
 #include "xfa/fwl/core/ifwl_pushbutton.h"
-#include "xfa/fwl/core/ifwl_widget.h"
 
-class CFWL_PushButton : public CFWL_Widget, public IFWL_Widget::DataProvider {
+class CFWL_PushButton : public CFWL_Widget {
  public:
   explicit CFWL_PushButton(const CFWL_App*);
   ~CFWL_PushButton() override;

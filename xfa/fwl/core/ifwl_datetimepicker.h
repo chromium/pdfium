@@ -35,8 +35,7 @@
 class IFWL_DateTimeEdit;
 class IFWL_FormProxy;
 
-class IFWL_DateTimePicker : public IFWL_Widget,
-                            public IFWL_Widget::DataProvider {
+class IFWL_DateTimePicker : public IFWL_Widget {
  public:
   explicit IFWL_DateTimePicker(
       const CFWL_App* app,

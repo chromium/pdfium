@@ -64,8 +64,6 @@ enum class FWL_Type;
 
 class IFWL_Widget : public IFWL_WidgetDelegate {
  public:
-  class DataProvider {};
-
   ~IFWL_Widget() override;
 
   virtual FWL_Type GetClassID() const = 0;
@@ -108,7 +106,6 @@ class IFWL_Widget : public IFWL_WidgetDelegate {
   void TransformTo(IFWL_Widget* pWidget, FX_FLOAT& fx, FX_FLOAT& fy);
   void GetMatrix(CFX_Matrix& matrix, bool bGlobal = false);
   IFWL_ThemeProvider* GetThemeProvider() const;
-  IFWL_Widget::DataProvider* GetDataProvider() const;
 
   void SetDelegate(IFWL_WidgetDelegate* delegate) { m_pDelegate = delegate; }
   IFWL_WidgetDelegate* GetDelegate() {

@@ -285,10 +285,6 @@ IFWL_ThemeProvider* IFWL_Widget::GetThemeProvider() const {
   return m_pProperties->m_pThemeProvider;
 }
 
-IFWL_Widget::DataProvider* IFWL_Widget::GetDataProvider() const {
-  return m_pProperties->m_pDataProvider;
-}
-
 void IFWL_Widget::SetThemeProvider(IFWL_ThemeProvider* pThemeProvider) {
   m_pProperties->m_pThemeProvider = pThemeProvider;
 }

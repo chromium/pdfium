@@ -18,7 +18,6 @@ class IFWL_Widget;
 class CFWL_WidgetProperties {
  public:
   CFWL_WidgetProperties();
-  explicit CFWL_WidgetProperties(IFWL_Widget::DataProvider* dataProvider);
   ~CFWL_WidgetProperties();
 
   CFX_RectF m_rtWidget;
@@ -26,7 +25,6 @@ class CFWL_WidgetProperties {
   uint32_t m_dwStyleExes;
   uint32_t m_dwStates;
   IFWL_ThemeProvider* m_pThemeProvider;
-  IFWL_Widget::DataProvider* m_pDataProvider;
   IFWL_Widget* m_pParent;
   IFWL_Widget* m_pOwner;
 };

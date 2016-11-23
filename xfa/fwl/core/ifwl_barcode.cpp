@@ -66,10 +66,6 @@ void IFWL_Barcode::GenerateBarcodeImageCache() {
 
   m_dwStatus = 0;
   CreateBarcodeEngine();
-  IFWL_Barcode::DataProvider* pData =
-      static_cast<IFWL_Barcode::DataProvider*>(m_pProperties->m_pDataProvider);
-  if (!pData)
-    return;
   if (!m_pBarcodeEngine)
     return;
 
@@ -98,33 +94,35 @@ void IFWL_Barcode::GenerateBarcodeImageCache() {
 
   m_pBarcodeEngine->SetHeight(int32_t(GetRTClient().height));
   m_pBarcodeEngine->SetWidth(int32_t(GetRTClient().width));
-  uint32_t dwAttributeMask = pData->GetBarcodeAttributeMask();
+  uint32_t dwAttributeMask = m_pDataProvider->GetBarcodeAttributeMask();
   if (dwAttributeMask & FWL_BCDATTRIBUTE_CHARENCODING)
-    m_pBarcodeEngine->SetCharEncoding(pData->GetCharEncoding());
+    m_pBarcodeEngine->SetCharEncoding(m_pDataProvider->GetCharEncoding());
   if (dwAttributeMask & FWL_BCDATTRIBUTE_MODULEHEIGHT)
-    m_pBarcodeEngine->SetModuleHeight(pData->GetModuleHeight());
+    m_pBarcodeEngine->SetModuleHeight(m_pDataProvider->GetModuleHeight());
   if (dwAttributeMask & FWL_BCDATTRIBUTE_MODULEWIDTH)
-    m_pBarcodeEngine->SetModuleWidth(pData->GetModuleWidth());
+    m_pBarcodeEngine->SetModuleWidth(m_pDataProvider->GetModuleWidth());
   if (dwAttributeMask & FWL_BCDATTRIBUTE_DATALENGTH)
-    m_pBarcodeEngine->SetDataLength(pData->GetDataLength());
+    m_pBarcodeEngine->SetDataLength(m_pDataProvider->GetDataLength());
   if (dwAttributeMask & FWL_BCDATTRIBUTE_CALCHECKSUM)
-    m_pBarcodeEngine->SetCalChecksum(pData->GetCalChecksum());
+    m_pBarcodeEngine->SetCalChecksum(m_pDataProvider->GetCalChecksum());
   if (dwAttributeMask & FWL_BCDATTRIBUTE_PRINTCHECKSUM)
-    m_pBarcodeEngine->SetPrintChecksum(pData->GetPrintChecksum());
+    m_pBarcodeEngine->SetPrintChecksum(m_pDataProvider->GetPrintChecksum());
   if (dwAttributeMask & FWL_BCDATTRIBUTE_TEXTLOCATION)
-    m_pBarcodeEngine->SetTextLocation(pData->GetTextLocation());
+    m_pBarcodeEngine->SetTextLocation(m_pDataProvider->GetTextLocation());
   if (dwAttributeMask & FWL_BCDATTRIBUTE_WIDENARROWRATIO)
-    m_pBarcodeEngine->SetWideNarrowRatio(pData->GetWideNarrowRatio());
+    m_pBarcodeEngine->SetWideNarrowRatio(m_pDataProvider->GetWideNarrowRatio());
   if (dwAttributeMask & FWL_BCDATTRIBUTE_STARTCHAR)
-    m_pBarcodeEngine->SetStartChar(pData->GetStartChar());
+    m_pBarcodeEngine->SetStartChar(m_pDataProvider->GetStartChar());
   if (dwAttributeMask & FWL_BCDATTRIBUTE_ENDCHAR)
-    m_pBarcodeEngine->SetEndChar(pData->GetEndChar());
+    m_pBarcodeEngine->SetEndChar(m_pDataProvider->GetEndChar());
   if (dwAttributeMask & FWL_BCDATTRIBUTE_VERSION)
-    m_pBarcodeEngine->SetVersion(pData->GetVersion());
-  if (dwAttributeMask & FWL_BCDATTRIBUTE_ECLEVEL)
-    m_pBarcodeEngine->SetErrorCorrectionLevel(pData->GetErrorCorrectionLevel());
+    m_pBarcodeEngine->SetVersion(m_pDataProvider->GetVersion());
+  if (dwAttributeMask & FWL_BCDATTRIBUTE_ECLEVEL) {
+    m_pBarcodeEngine->SetErrorCorrectionLevel(
+        m_pDataProvider->GetErrorCorrectionLevel());
+  }
   if (dwAttributeMask & FWL_BCDATTRIBUTE_TRUNCATED)
-    m_pBarcodeEngine->SetTruncated(pData->GetTruncated());
+    m_pBarcodeEngine->SetTruncated(m_pDataProvider->GetTruncated());
 
   int32_t errorCode = 0;
   m_dwStatus = m_pBarcodeEngine->Encode(wsText.AsStringC(), true, errorCode)

@@ -50,7 +50,7 @@ class IFWL_Widget;
 
 class IFWL_CheckBox : public IFWL_Widget {
  public:
-  class DataProvider : public IFWL_Widget::DataProvider {
+  class DataProvider {
    public:
     virtual FX_FLOAT GetBoxSize(IFWL_Widget* pWidget) = 0;
   };
@@ -70,6 +70,10 @@ class IFWL_CheckBox : public IFWL_Widget {
   void OnDrawWidget(CFX_Graphics* pGraphics,
                     const CFX_Matrix* pMatrix) override;
 
+  void SetDataProvider(IFWL_CheckBox::DataProvider* pProvider) {
+    m_pDataProvider = pProvider;
+  }
+
  private:
   void SetCheckState(int32_t iCheck);
   void Layout();
@@ -83,6 +87,7 @@ class IFWL_CheckBox : public IFWL_Widget {
   void OnMouseLeave();
   void OnKeyDown(CFWL_MsgKey* pMsg);
 
+  IFWL_CheckBox::DataProvider* m_pDataProvider;  // Not owned.
   CFX_RectF m_rtClient;
   CFX_RectF m_rtBox;
   CFX_RectF m_rtCaption;

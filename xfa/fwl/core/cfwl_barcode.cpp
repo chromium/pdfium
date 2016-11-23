@@ -7,6 +7,7 @@
 #include "xfa/fwl/core/cfwl_barcode.h"
 
 #include <memory>
+#include <utility>
 
 #include "third_party/base/ptr_util.h"
 
@@ -26,8 +27,10 @@ CFWL_Barcode::~CFWL_Barcode() {}
 void CFWL_Barcode::Initialize() {
   ASSERT(!m_pIface);
 
-  m_pIface = pdfium::MakeUnique<IFWL_Barcode>(
-      m_pApp, pdfium::MakeUnique<CFWL_WidgetProperties>(this));
+  auto iface = pdfium::MakeUnique<IFWL_Barcode>(
+      m_pApp, pdfium::MakeUnique<CFWL_WidgetProperties>());
+  iface->SetDataProvider(this);
+  m_pIface = std::move(iface);
 
   CFWL_Widget::Initialize();
 }

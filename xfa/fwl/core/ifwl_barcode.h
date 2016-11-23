@@ -40,7 +40,7 @@ enum FWL_BCDAttribute {
 
 class IFWL_Barcode : public IFWL_Edit {
  public:
-  class DataProvider : public IFWL_Widget::DataProvider {
+  class DataProvider {
    public:
     virtual BC_CHAR_ENCODING GetCharEncoding() const = 0;
     virtual int32_t GetModuleHeight() const = 0;
@@ -75,11 +75,16 @@ class IFWL_Barcode : public IFWL_Edit {
   void SetType(BC_TYPE type);
   bool IsProtectedType() const;
 
+  void SetDataProvider(IFWL_Barcode::DataProvider* provider) {
+    m_pDataProvider = provider;
+  }
+
  private:
   void GenerateBarcodeImageCache();
   void CreateBarcodeEngine();
 
   std::unique_ptr<CFX_Barcode> m_pBarcodeEngine;
+  IFWL_Barcode::DataProvider* m_pDataProvider;  // Not owned.
   uint32_t m_dwStatus;
   BC_TYPE m_type;
 };

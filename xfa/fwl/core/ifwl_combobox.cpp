@@ -50,14 +50,14 @@ IFWL_ComboBox::IFWL_ComboBox(const CFWL_App* app,
     return;
   }
 
-  auto prop =
-      pdfium::MakeUnique<CFWL_WidgetProperties>(m_pProperties->m_pDataProvider);
+  auto prop = pdfium::MakeUnique<CFWL_WidgetProperties>();
   prop->m_pThemeProvider = m_pProperties->m_pThemeProvider;
   prop->m_dwStyles |= FWL_WGTSTYLE_Border | FWL_WGTSTYLE_VScroll;
   if (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_CMB_ListItemIconText)
     prop->m_dwStyleExes |= FWL_STYLEEXT_LTB_Icon;
+  m_pListBox =
+      pdfium::MakeUnique<IFWL_ComboList>(m_pOwnerApp, std::move(prop), this);
 
-  m_pListBox.reset(new IFWL_ComboList(m_pOwnerApp, std::move(prop), this));
   if ((m_pProperties->m_dwStyleExes & FWL_STYLEEXT_CMB_DropDown) && !m_pEdit) {
     m_pEdit.reset(new IFWL_ComboEdit(
         m_pOwnerApp, pdfium::MakeUnique<CFWL_WidgetProperties>(), this));
@@ -590,13 +590,11 @@ void IFWL_ComboBox::DisForm_InitComboList() {
   if (m_pListBox)
     return;
 
-  auto prop =
-      pdfium::MakeUnique<CFWL_WidgetProperties>(m_pProperties->m_pDataProvider);
+  auto prop = pdfium::MakeUnique<CFWL_WidgetProperties>();
   prop->m_pParent = this;
   prop->m_dwStyles = FWL_WGTSTYLE_Border | FWL_WGTSTYLE_VScroll;
   prop->m_dwStates = FWL_WGTSTATE_Invisible;
   prop->m_pThemeProvider = m_pProperties->m_pThemeProvider;
-
   m_pListBox =
       pdfium::MakeUnique<IFWL_ComboList>(m_pOwnerApp, std::move(prop), this);
 }

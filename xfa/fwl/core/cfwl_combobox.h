@@ -13,7 +13,7 @@
 #include "xfa/fwl/core/cfwl_widget.h"
 #include "xfa/fwl/core/ifwl_combobox.h"
 
-class CFWL_ComboBox : public CFWL_Widget, public IFWL_Widget::DataProvider {
+class CFWL_ComboBox : public CFWL_Widget {
  public:
   explicit CFWL_ComboBox(const CFWL_App* pApp);
   ~CFWL_ComboBox() override;

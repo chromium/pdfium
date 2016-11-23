@@ -221,8 +221,6 @@ void IFWL_SpinButton::OnLButtonDown(CFWL_MsgMouse* pMsg) {
   m_bLButtonDwn = true;
   SetGrab(true);
   SetFocus(true);
-  if (!m_pProperties->m_pDataProvider)
-    return;
 
   bool bUpPress =
       (m_rtUpButton.Contains(pMsg->m_fx, pMsg->m_fy) && IsButtonEnabled(true));
@@ -274,8 +272,6 @@ void IFWL_SpinButton::OnLButtonUp(CFWL_MsgMouse* pMsg) {
 }
 
 void IFWL_SpinButton::OnMouseMove(CFWL_MsgMouse* pMsg) {
-  if (!m_pProperties->m_pDataProvider)
-    return;
   if (m_bLButtonDwn)
     return;
 
@@ -351,9 +347,6 @@ void IFWL_SpinButton::OnMouseLeave(CFWL_MsgMouse* pMsg) {
 }
 
 void IFWL_SpinButton::OnKeyDown(CFWL_MsgKey* pMsg) {
-  if (!m_pProperties->m_pDataProvider)
-    return;
-
   bool bUp =
       pMsg->m_dwKeyCode == FWL_VKEY_Up || pMsg->m_dwKeyCode == FWL_VKEY_Left;
   bool bDown =

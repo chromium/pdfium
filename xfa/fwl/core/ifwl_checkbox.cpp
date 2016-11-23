@@ -57,8 +57,6 @@ void IFWL_CheckBox::GetWidgetRect(CFX_RectF& rect, bool bAutoSize) {
     m_pProperties->m_pThemeProvider = GetAvailableTheme();
   if (!m_pProperties->m_pThemeProvider)
     return;
-  if (!m_pProperties->m_pDataProvider)
-    return;
 
   CFX_SizeF sz = CalcTextSize(
       L"Check box", m_pProperties->m_pThemeProvider,
@@ -66,9 +64,7 @@ void IFWL_CheckBox::GetWidgetRect(CFX_RectF& rect, bool bAutoSize) {
   rect.Set(0, 0, sz.x, sz.y);
   rect.Inflate(kCaptionMargin, kCaptionMargin);
 
-  IFWL_CheckBox::DataProvider* pData =
-      static_cast<IFWL_CheckBox::DataProvider*>(m_pProperties->m_pDataProvider);
-  FX_FLOAT fCheckBox = pData->GetBoxSize(this);
+  FX_FLOAT fCheckBox = m_pDataProvider->GetBoxSize(this);
   rect.width += fCheckBox;
   rect.height = std::max(rect.height, fCheckBox);
   IFWL_Widget::GetWidgetRect(rect, true);
@@ -117,9 +113,6 @@ void IFWL_CheckBox::DrawWidget(CFX_Graphics* pGraphics,
   param.m_rtPart = m_rtBox;
   pTheme->DrawBackground(&param);
 
-  if (!m_pProperties->m_pDataProvider)
-    return;
-
   CFWL_ThemeText textParam;
   textParam.m_pWidget = this;
   textParam.m_iPart = CFWL_Part::Caption;
@@ -157,15 +150,10 @@ void IFWL_CheckBox::Layout() {
       FXSYS_round(m_pProperties->m_rtWidget.height);
   GetClientRect(m_rtClient);
 
-  if (!m_pProperties->m_pDataProvider)
-    return;
-
   FX_FLOAT fBoxTop = m_rtClient.top;
   FX_FLOAT fClientBottom = m_rtClient.bottom();
 
-  IFWL_CheckBox::DataProvider* pData =
-      static_cast<IFWL_CheckBox::DataProvider*>(m_pProperties->m_pDataProvider);
-  FX_FLOAT fCheckBox = pData->GetBoxSize(this);
+  FX_FLOAT fCheckBox = m_pDataProvider->GetBoxSize(this);
   switch (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_CKB_VLayoutMask) {
     case FWL_STYLEEXT_CKB_Top:
       break;

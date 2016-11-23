@@ -10,12 +10,11 @@
 #include <memory>
 #include <vector>
 
+#include "xfa/fwl/core/cfwl_listitem.h"
 #include "xfa/fwl/core/cfwl_widget.h"
 #include "xfa/fwl/core/fwl_error.h"
-#include "xfa/fwl/core/ifwl_listbox.h"
-#include "xfa/fwl/core/ifwl_widget.h"
 
-class CFWL_ListBox : public CFWL_Widget, public IFWL_ListBox::DataProvider {
+class CFWL_ListBox : public CFWL_Widget {
  public:
   explicit CFWL_ListBox(const CFWL_App* pApp);
   ~CFWL_ListBox() override;
