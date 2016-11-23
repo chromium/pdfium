@@ -7,6 +7,7 @@
 #include "core/fpdfapi/page/cpdf_colorspace.h"
 
 #include <memory>
+#include <utility>
 
 #include "core/fpdfapi/cpdf_modulemgr.h"
 #include "core/fpdfapi/page/cpdf_docpagedata.h"
@@ -20,6 +21,8 @@
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "core/fpdfapi/parser/cpdf_string.h"
 #include "core/fxcodec/fx_codec.h"
+#include "core/fxcrt/cfx_maybe_owned.h"
+#include "core/fxcrt/fx_memory.h"
 
 namespace {
 
@@ -175,11 +178,10 @@ class CPDF_ICCBasedCS : public CPDF_ColorSpace {
                           int image_height,
                           bool bTransMask = false) const override;
 
-  CPDF_ColorSpace* m_pAlterCS;
+  CFX_MaybeOwned<CPDF_ColorSpace> m_pAlterCS;
   CPDF_IccProfile* m_pProfile;
   uint8_t* m_pCache;
   FX_FLOAT* m_pRanges;
-  bool m_bOwn;
 };
 
 class CPDF_IndexedCS : public CPDF_ColorSpace {
@@ -815,17 +817,13 @@ void CPDF_LabCS::TranslateImageLine(uint8_t* pDestBuf,
 
 CPDF_ICCBasedCS::CPDF_ICCBasedCS(CPDF_Document* pDoc)
     : CPDF_ColorSpace(pDoc, PDFCS_ICCBASED, 0),
-      m_pAlterCS(nullptr),
       m_pProfile(nullptr),
       m_pCache(nullptr),
-      m_pRanges(nullptr),
-      m_bOwn(false) {}
+      m_pRanges(nullptr) {}
 
 CPDF_ICCBasedCS::~CPDF_ICCBasedCS() {
   FX_Free(m_pCache);
   FX_Free(m_pRanges);
-  if (m_pAlterCS && m_bOwn)
-    m_pAlterCS->Release();
   if (m_pProfile && m_pDocument)
     m_pDocument->GetPageData()->ReleaseIccProfile(m_pProfile);
 }
@@ -852,8 +850,7 @@ bool CPDF_ICCBasedCS::v_Load(CPDF_Document* pDoc, CPDF_Array* pArray) {
         if (m_nComponents == 0) {                 // NO valid ICC profile
           if (pAlterCS->CountComponents() > 0) {  // Use Alternative colorspace
             m_nComponents = pAlterCS->CountComponents();
-            m_pAlterCS = pAlterCS.release();
-            m_bOwn = true;
+            m_pAlterCS = std::move(pAlterCS);
           } else {  // No valid alternative colorspace
             int32_t nDictComponents = pDict ? pDict->GetIntegerFor("N") : 0;
             if (nDictComponents != 1 && nDictComponents != 3 &&
@@ -863,10 +860,8 @@ bool CPDF_ICCBasedCS::v_Load(CPDF_Document* pDoc, CPDF_Array* pArray) {
             m_nComponents = nDictComponents;
           }
         } else {  // Using sRGB
-          if (pAlterCS->CountComponents() == m_nComponents) {
-            m_pAlterCS = pAlterCS.release();
-            m_bOwn = true;
-          }
+          if (pAlterCS->CountComponents() == m_nComponents)
+            m_pAlterCS = std::move(pAlterCS);
         }
       }
     }
