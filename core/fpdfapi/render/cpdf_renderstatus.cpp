@@ -34,6 +34,7 @@
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfapi/render/cpdf_charposlist.h"
 #include "core/fpdfapi/render/cpdf_docrenderdata.h"
+#include "core/fpdfapi/render/cpdf_imagerenderer.h"
 #include "core/fpdfapi/render/cpdf_pagerendercache.h"
 #include "core/fpdfapi/render/cpdf_rendercontext.h"
 #include "core/fpdfapi/render/cpdf_renderoptions.h"
@@ -1075,7 +1076,8 @@ bool CPDF_RenderStatus::ContinueSingleObject(CPDF_PageObject* pObj,
 
   if (pObj->IsImage()) {
     m_pImageRenderer.reset(new CPDF_ImageRenderer);
-    if (!m_pImageRenderer->Start(this, pObj, pObj2Device, false)) {
+    if (!m_pImageRenderer->Start(this, pObj, pObj2Device, false,
+                                 FXDIB_BLEND_NORMAL)) {
       if (!m_pImageRenderer->m_Result)
         DrawObjWithBackground(pObj, pObj2Device);
       m_pImageRenderer.reset();
@@ -1894,7 +1896,7 @@ bool CPDF_RenderStatus::ProcessType3Text(CPDF_TextObject* textobj,
         image_matrix.Concat(matrix);
         CPDF_ImageRenderer renderer;
         if (renderer.Start(this, pType3Char->m_pBitmap.get(), fill_argb, 255,
-                           &image_matrix, 0, false)) {
+                           &image_matrix, 0, false, FXDIB_BLEND_NORMAL)) {
           renderer.Continue(nullptr);
         }
         if (!renderer.m_Result)

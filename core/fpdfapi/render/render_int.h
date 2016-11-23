@@ -33,7 +33,6 @@ class CPDF_Font;
 class CPDF_FormObject;
 class CPDF_ImageCacheEntry;
 class CPDF_ImageObject;
-class CPDF_ImageRenderer;
 class CPDF_Object;
 class CPDF_PageObject;
 class CPDF_PageObjectHolder;
@@ -49,56 +48,6 @@ class CPDF_Type3Cache;
 class CPDF_Type3Glyphs;
 class CPDF_Type3Char;
 class CPDF_Type3Font;
-
-class CPDF_ImageRenderer {
- public:
-  CPDF_ImageRenderer();
-  ~CPDF_ImageRenderer();
-
-  bool Start(CPDF_RenderStatus* pStatus,
-             CPDF_PageObject* pObj,
-             const CFX_Matrix* pObj2Device,
-             bool bStdCS,
-             int blendType = FXDIB_BLEND_NORMAL);
-  bool Continue(IFX_Pause* pPause);
-
-  bool Start(CPDF_RenderStatus* pStatus,
-             const CFX_DIBSource* pDIBSource,
-             FX_ARGB bitmap_argb,
-             int bitmap_alpha,
-             const CFX_Matrix* pImage2Device,
-             uint32_t flags,
-             bool bStdCS,
-             int blendType = FXDIB_BLEND_NORMAL);
-
-  bool m_Result;
-
- protected:
-  bool StartBitmapAlpha();
-  bool StartDIBSource();
-  bool StartRenderDIBSource();
-  bool StartLoadDIBSource();
-  bool DrawMaskedImage();
-  bool DrawPatternImage(const CFX_Matrix* pObj2Device);
-
-  CPDF_RenderStatus* m_pRenderStatus;
-  CPDF_ImageObject* m_pImageObject;
-  int m_Status;
-  const CFX_Matrix* m_pObj2Device;
-  CFX_Matrix m_ImageMatrix;
-  CPDF_ImageLoader m_Loader;
-  const CFX_DIBSource* m_pDIBSource;
-  std::unique_ptr<CFX_DIBitmap> m_pClone;
-  int m_BitmapAlpha;
-  bool m_bPatternColor;
-  CPDF_Pattern* m_pPattern;
-  FX_ARGB m_FillArgb;
-  uint32_t m_Flags;
-  std::unique_ptr<CFX_ImageTransformer> m_pTransformer;
-  void* m_DeviceHandle;
-  bool m_bStdCS;
-  int m_BlendType;
-};
 
 class CPDF_ScaledRenderBuffer {
  public:
