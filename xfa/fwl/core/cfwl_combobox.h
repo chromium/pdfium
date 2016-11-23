@@ -20,44 +20,10 @@ class CFWL_ComboBox : public CFWL_Widget, public IFWL_ComboBox::DataProvider {
 
   void Initialize();
 
-  // IFWL_ListBox::DataProvider
-  int32_t CountItems(const IFWL_Widget* pWidget) const override;
-  CFWL_ListItem* GetItem(const IFWL_Widget* pWidget,
-                         int32_t nIndex) const override;
-  int32_t GetItemIndex(IFWL_Widget* pWidget, CFWL_ListItem* pItem) override;
-  uint32_t GetItemStyles(IFWL_Widget* pWidget, CFWL_ListItem* pItem) override;
-  void GetItemText(IFWL_Widget* pWidget,
-                   CFWL_ListItem* pItem,
-                   CFX_WideString& wsText) override;
-  void GetItemRect(IFWL_Widget* pWidget,
-                   CFWL_ListItem* pItem,
-                   CFX_RectF& rtItem) override;
-  void* GetItemData(IFWL_Widget* pWidget, CFWL_ListItem* pItem) override;
-  void SetItemStyles(IFWL_Widget* pWidget,
-                     CFWL_ListItem* pItem,
-                     uint32_t dwStyle) override;
-  void SetItemRect(IFWL_Widget* pWidget,
-                   CFWL_ListItem* pItem,
-                   const CFX_RectF& rtItem) override;
-  CFX_DIBitmap* GetItemIcon(IFWL_Widget* pWidget,
-                            CFWL_ListItem* pItem) override;
-  void GetItemCheckRect(IFWL_Widget* pWidget,
-                        CFWL_ListItem* pItem,
-                        CFX_RectF& rtCheck) override;
-  void SetItemCheckRect(IFWL_Widget* pWidget,
-                        CFWL_ListItem* pItem,
-                        const CFX_RectF& rtCheck) override;
-  uint32_t GetItemCheckState(IFWL_Widget* pWidget,
-                             CFWL_ListItem* pItem) override;
-  void SetItemCheckState(IFWL_Widget* pWidget,
-                         CFWL_ListItem* pItem,
-                         uint32_t dwCheckState) override;
-
   // IFWL_ComboBox::DataProvider
   FX_FLOAT GetListHeight(IFWL_Widget* pWidget) override;
 
-  int32_t AddString(const CFX_WideStringC& wsText);
-
+  void AddString(const CFX_WideStringC& wsText);
   bool RemoveAt(int32_t iIndex);  // Returns false iff |iIndex| out of range.
   void RemoveAll();
 
@@ -90,7 +56,6 @@ class CFWL_ComboBox : public CFWL_Widget, public IFWL_ComboBox::DataProvider {
   void EditModifyStylesEx(uint32_t dwStylesExAdded, uint32_t dwStylesExRemoved);
 
  private:
-  std::vector<std::unique_ptr<CFWL_ListItem>> m_ItemArray;
   FX_FLOAT m_fMaxListHeight;
 };
 

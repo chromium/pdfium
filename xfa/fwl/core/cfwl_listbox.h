@@ -22,52 +22,20 @@ class CFWL_ListBox : public CFWL_Widget, public IFWL_ListBox::DataProvider {
 
   void Initialize();
 
-  // IFWL_ListBox::DataProvider:
-  int32_t CountItems(const IFWL_Widget* pWidget) const override;
-  CFWL_ListItem* GetItem(const IFWL_Widget* pWidget,
-                         int32_t nIndex) const override;
-  int32_t GetItemIndex(IFWL_Widget* pWidget, CFWL_ListItem* pItem) override;
-  uint32_t GetItemStyles(IFWL_Widget* pWidget, CFWL_ListItem* pItem) override;
+  CFWL_ListItem* GetItem(const IFWL_Widget* pWidget, int32_t nIndex) const;
   void GetItemText(IFWL_Widget* pWidget,
                    CFWL_ListItem* pItem,
-                   CFX_WideString& wsText) override;
-  void GetItemRect(IFWL_Widget* pWidget,
-                   CFWL_ListItem* pItem,
-                   CFX_RectF& rtItem) override;
-  void* GetItemData(IFWL_Widget* pWidget, CFWL_ListItem* pItem) override;
-  void SetItemStyles(IFWL_Widget* pWidget,
-                     CFWL_ListItem* pItem,
-                     uint32_t dwStyle) override;
-  void SetItemRect(IFWL_Widget* pWidget,
-                   CFWL_ListItem* pItem,
-                   const CFX_RectF& rtItem) override;
-  CFX_DIBitmap* GetItemIcon(IFWL_Widget* pWidget,
-                            CFWL_ListItem* pItem) override;
-  void GetItemCheckRect(IFWL_Widget* pWidget,
-                        CFWL_ListItem* pItem,
-                        CFX_RectF& rtCheck) override;
-  void SetItemCheckRect(IFWL_Widget* pWidget,
-                        CFWL_ListItem* pItem,
-                        const CFX_RectF& rtCheck) override;
-  uint32_t GetItemCheckState(IFWL_Widget* pWidget,
-                             CFWL_ListItem* pItem) override;
-  void SetItemCheckState(IFWL_Widget* pWidget,
-                         CFWL_ListItem* pItem,
-                         uint32_t dwCheckState) override;
+                   CFX_WideString& wsText);
 
   CFWL_ListItem* AddString(const CFX_WideStringC& wsAdd, bool bSelect = false);
   bool DeleteString(CFWL_ListItem* pItem);
   void DeleteAll();
-
   int32_t CountSelItems();
   void SetSelItem(CFWL_ListItem* pItem, bool bSelect = true);
   CFWL_ListItem* GetSelItem(int32_t nIndexSel);
   int32_t GetSelIndex(int32_t nIndex);
 
   uint32_t GetItemStates(CFWL_ListItem* pItem);
-
- private:
-  std::vector<std::unique_ptr<CFWL_ListItem>> m_ItemArray;
 };
 
 #endif  // XFA_FWL_CORE_CFWL_LISTBOX_H_

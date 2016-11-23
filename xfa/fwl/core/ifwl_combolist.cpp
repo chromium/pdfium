@@ -28,16 +28,12 @@ IFWL_ComboList::IFWL_ComboList(
 int32_t IFWL_ComboList::MatchItem(const CFX_WideString& wsMatch) {
   if (wsMatch.IsEmpty())
     return -1;
-  if (!m_pProperties->m_pDataProvider)
-    return -1;
 
-  IFWL_ListBox::DataProvider* pData =
-      static_cast<IFWL_ListBox::DataProvider*>(m_pProperties->m_pDataProvider);
-  int32_t iCount = pData->CountItems(this);
+  int32_t iCount = CountItems(this);
   for (int32_t i = 0; i < iCount; i++) {
-    CFWL_ListItem* hItem = pData->GetItem(this, i);
+    CFWL_ListItem* hItem = GetItem(this, i);
     CFX_WideString wsText;
-    pData->GetItemText(this, hItem, wsText);
+    GetItemText(this, hItem, wsText);
     FX_STRSIZE pos = wsText.Find(wsMatch.c_str());
     if (!pos)
       return i;
@@ -46,44 +42,28 @@ int32_t IFWL_ComboList::MatchItem(const CFX_WideString& wsMatch) {
 }
 
 void IFWL_ComboList::ChangeSelected(int32_t iSel) {
-  if (!m_pProperties->m_pDataProvider)
-    return;
-
-  IFWL_ListBox::DataProvider* pData =
-      static_cast<IFWL_ListBox::DataProvider*>(m_pProperties->m_pDataProvider);
-  CFWL_ListItem* hItem = pData->GetItem(this, iSel);
+  CFWL_ListItem* hItem = GetItem(this, iSel);
   CFX_RectF rtInvalidate;
   rtInvalidate.Reset();
   CFWL_ListItem* hOld = GetSelItem(0);
-  int32_t iOld = pData->GetItemIndex(this, hOld);
+  int32_t iOld = GetItemIndex(this, hOld);
   if (iOld == iSel)
     return;
   if (iOld > -1) {
-    GetItemRect(iOld, rtInvalidate);
+    CFWL_ListItem* hItem = GetItem(this, iOld);
+    GetItemRect(this, hItem, rtInvalidate);
     SetSelItem(hOld, false);
   }
   if (hItem) {
     CFX_RectF rect;
-    GetItemRect(iSel, rect);
+    CFWL_ListItem* hItem = GetItem(this, iSel);
+    GetItemRect(this, hItem, rect);
     rtInvalidate.Union(rect);
-    CFWL_ListItem* hSel = pData->GetItem(this, iSel);
+    CFWL_ListItem* hSel = GetItem(this, iSel);
     SetSelItem(hSel, true);
   }
   if (!rtInvalidate.IsEmpty())
     Repaint(&rtInvalidate);
-}
-
-int32_t IFWL_ComboList::CountItems() {
-  IFWL_ListBox::DataProvider* pData =
-      static_cast<IFWL_ListBox::DataProvider*>(m_pProperties->m_pDataProvider);
-  return pData ? pData->CountItems(this) : 0;
-}
-
-void IFWL_ComboList::GetItemRect(int32_t nIndex, CFX_RectF& rtItem) {
-  IFWL_ListBox::DataProvider* pData =
-      static_cast<IFWL_ListBox::DataProvider*>(m_pProperties->m_pDataProvider);
-  CFWL_ListItem* hItem = pData->GetItem(this, nIndex);
-  pData->GetItemRect(this, hItem, rtItem);
 }
 
 void IFWL_ComboList::ClientToOuter(FX_FLOAT& fx, FX_FLOAT& fy) {
@@ -170,13 +150,8 @@ void IFWL_ComboList::OnDropListMouseMove(CFWL_MsgMouse* pMsg) {
     CFWL_ListItem* hItem = GetItemAtPoint(pMsg->m_fx, pMsg->m_fy);
     if (!hItem)
       return;
-    if (!m_pProperties->m_pDataProvider)
-      return;
 
-    IFWL_ListBox::DataProvider* pData =
-        static_cast<IFWL_ListBox::DataProvider*>(
-            m_pProperties->m_pDataProvider);
-    ChangeSelected(pData->GetItemIndex(this, hItem));
+    ChangeSelected(GetItemIndex(this, hItem));
   } else if (m_bNotifyOwner) {
     ClientToOuter(pMsg->m_fx, pMsg->m_fy);
     IFWL_ComboBox* pOuter = static_cast<IFWL_ComboBox*>(m_pOuter);
@@ -255,11 +230,7 @@ void IFWL_ComboList::OnDropListKeyDown(CFWL_MsgKey* pKey) {
     case FWL_VKEY_Home:
     case FWL_VKEY_End: {
       IFWL_ComboBox* pOuter = static_cast<IFWL_ComboBox*>(m_pOuter);
-      IFWL_ListBox::DataProvider* pData =
-          static_cast<IFWL_ListBox::DataProvider*>(
-              m_pProperties->m_pDataProvider);
-      CFWL_ListItem* hItem =
-          pData->GetItem(this, pOuter->GetCurrentSelection());
+      CFWL_ListItem* hItem = GetItem(this, pOuter->GetCurrentSelection());
       hItem = GetListItem(hItem, dwKeyCode);
       if (!hItem)
         break;

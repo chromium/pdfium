@@ -100,6 +100,18 @@ void IFWL_ComboBox::GetWidgetRect(CFX_RectF& rect, bool bAutoSize) {
   IFWL_Widget::GetWidgetRect(rect, true);
 }
 
+void IFWL_ComboBox::AddString(const CFX_WideStringC& wsText) {
+  m_pListBox->AddString(wsText);
+}
+
+bool IFWL_ComboBox::RemoveAt(int32_t iIndex) {
+  return m_pListBox->RemoveAt(iIndex);
+}
+
+void IFWL_ComboBox::RemoveAll() {
+  m_pListBox->DeleteAll();
+}
+
 void IFWL_ComboBox::ModifyStylesEx(uint32_t dwStylesExAdded,
                                    uint32_t dwStylesExRemoved) {
   if (m_pWidgetMgr->IsFormDisabled()) {
@@ -179,13 +191,11 @@ void IFWL_ComboBox::DrawWidget(CFX_Graphics* pGraphics,
     param.m_rtPart = rtTextBk;
 
     if (m_iCurSel >= 0) {
-      IFWL_ListBox::DataProvider* pData =
-          static_cast<IFWL_ListBox::DataProvider*>(
-              m_pListBox->GetDataProvider());
-      void* p = pData->GetItemData(m_pListBox.get(),
-                                   pData->GetItem(m_pListBox.get(), m_iCurSel));
-      if (p)
+      if (void* p = m_pListBox->GetItemData(
+              m_pListBox.get(),
+              m_pListBox->GetItem(m_pListBox.get(), m_iCurSel))) {
         param.m_pData = p;
+      }
     }
 
     if (m_pProperties->m_dwStates & FWL_WGTSTATE_Disabled) {
@@ -203,10 +213,7 @@ void IFWL_ComboBox::DrawWidget(CFX_Graphics* pGraphics,
         return;
 
       CFX_WideString wsText;
-      IFWL_ComboBox::DataProvider* pData =
-          static_cast<IFWL_ComboBox::DataProvider*>(
-              m_pProperties->m_pDataProvider);
-      CFWL_ListItem* hItem = pData->GetItem(this, m_iCurSel);
+      CFWL_ListItem* hItem = m_pListBox->GetItem(this, m_iCurSel);
       m_pListBox->GetDataProviderItemText(hItem, wsText);
 
       CFWL_ThemeText theme_text;
@@ -249,18 +256,23 @@ void IFWL_ComboBox::SetThemeProvider(IFWL_ThemeProvider* pThemeProvider) {
     m_pEdit->SetThemeProvider(pThemeProvider);
 }
 
+void IFWL_ComboBox::GetTextByIndex(int32_t iIndex,
+                                   CFX_WideString& wsText) const {
+  CFWL_ListItem* pItem = static_cast<CFWL_ListItem*>(
+      m_pListBox->GetItem(m_pListBox.get(), iIndex));
+  if (pItem)
+    wsText = pItem->m_wsText;
+}
+
 void IFWL_ComboBox::SetCurSel(int32_t iSel) {
-  int32_t iCount = m_pListBox->CountItems();
+  int32_t iCount = m_pListBox->CountItems(nullptr);
   bool bClearSel = iSel < 0 || iSel >= iCount;
   if (IsDropDownStyle() && m_pEdit) {
     if (bClearSel) {
       m_pEdit->SetText(CFX_WideString());
     } else {
       CFX_WideString wsText;
-      IFWL_ComboBox::DataProvider* pData =
-          static_cast<IFWL_ComboBox::DataProvider*>(
-              m_pProperties->m_pDataProvider);
-      CFWL_ListItem* hItem = pData->GetItem(this, iSel);
+      CFWL_ListItem* hItem = m_pListBox->GetItem(this, iSel);
       m_pListBox->GetDataProviderItemText(hItem, wsText);
       m_pEdit->SetText(wsText);
     }
@@ -295,9 +307,7 @@ void IFWL_ComboBox::GetEditText(CFX_WideString& wsText,
   if (!m_pListBox)
     return;
 
-  IFWL_ComboBox::DataProvider* pData =
-      static_cast<IFWL_ComboBox::DataProvider*>(m_pProperties->m_pDataProvider);
-  CFWL_ListItem* hItem = pData->GetItem(this, m_iCurSel);
+  CFWL_ListItem* hItem = m_pListBox->GetItem(this, m_iCurSel);
   m_pListBox->GetDataProviderItemText(hItem, wsText);
 }
 
@@ -432,9 +442,7 @@ void IFWL_ComboBox::MatchEditText() {
 
 void IFWL_ComboBox::SyncEditText(int32_t iListItem) {
   CFX_WideString wsText;
-  IFWL_ComboBox::DataProvider* pData =
-      static_cast<IFWL_ComboBox::DataProvider*>(m_pProperties->m_pDataProvider);
-  CFWL_ListItem* hItem = pData->GetItem(this, iListItem);
+  CFWL_ListItem* hItem = m_pListBox->GetItem(this, iListItem);
   m_pListBox->GetDataProviderItemText(hItem, wsText);
   m_pEdit->SetText(wsText);
   m_pEdit->Update();
@@ -464,10 +472,7 @@ void IFWL_ComboBox::Layout() {
 
   if (m_iCurSel >= 0) {
     CFX_WideString wsText;
-    IFWL_ComboBox::DataProvider* pData =
-        static_cast<IFWL_ComboBox::DataProvider*>(
-            m_pProperties->m_pDataProvider);
-    CFWL_ListItem* hItem = pData->GetItem(this, m_iCurSel);
+    CFWL_ListItem* hItem = m_pListBox->GetItem(this, m_iCurSel);
     m_pListBox->GetDataProviderItemText(hItem, wsText);
     m_pEdit->LockUpdate();
     m_pEdit->SetText(wsText);
@@ -551,22 +556,18 @@ void IFWL_ComboBox::ResetListItemAlignment() {
 }
 
 void IFWL_ComboBox::ProcessSelChanged(bool bLButtonUp) {
-  IFWL_ComboBox::DataProvider* pDatas =
-      static_cast<IFWL_ComboBox::DataProvider*>(m_pProperties->m_pDataProvider);
-  m_iCurSel = pDatas->GetItemIndex(this, m_pListBox->GetSelItem(0));
+  m_iCurSel = m_pListBox->GetItemIndex(this, m_pListBox->GetSelItem(0));
   if (!IsDropDownStyle()) {
     Repaint(&m_rtClient);
     return;
   }
 
-  IFWL_ComboBox::DataProvider* pData =
-      static_cast<IFWL_ComboBox::DataProvider*>(m_pProperties->m_pDataProvider);
-  CFWL_ListItem* hItem = pData->GetItem(this, m_iCurSel);
+  CFWL_ListItem* hItem = m_pListBox->GetItem(this, m_iCurSel);
   if (!hItem)
     return;
 
   CFX_WideString wsText;
-  pData->GetItemText(this, hItem, wsText);
+  m_pListBox->GetItemText(this, hItem, wsText);
   if (m_pEdit) {
     m_pEdit->SetText(wsText);
     m_pEdit->Update();
@@ -635,7 +636,7 @@ void IFWL_ComboBox::DisForm_ShowDropList(bool bActivate) {
     DispatchEvent(&preEvent);
 
     IFWL_ComboList* pComboList = m_pListBox.get();
-    int32_t iItems = pComboList->CountItems();
+    int32_t iItems = pComboList->CountItems(nullptr);
     if (iItems < 1)
       return;
 
@@ -800,10 +801,7 @@ void IFWL_ComboBox::DisForm_Layout() {
 
   if (m_iCurSel >= 0) {
     CFX_WideString wsText;
-    IFWL_ComboBox::DataProvider* pData =
-        static_cast<IFWL_ComboBox::DataProvider*>(
-            m_pProperties->m_pDataProvider);
-    CFWL_ListItem* hItem = pData->GetItem(this, m_iCurSel);
+    CFWL_ListItem* hItem = m_pListBox->GetItem(this, m_iCurSel);
     m_pListBox->GetDataProviderItemText(hItem, wsText);
     m_pEdit->LockUpdate();
     m_pEdit->SetText(wsText);
@@ -973,7 +971,7 @@ void IFWL_ComboBox::DoSubCtrlKey(CFWL_MsgKey* pMsg) {
   const bool bUp = dwKeyCode == FWL_VKEY_Up;
   const bool bDown = dwKeyCode == FWL_VKEY_Down;
   if (bUp || bDown) {
-    int32_t iCount = m_pListBox->CountItems();
+    int32_t iCount = m_pListBox->CountItems(nullptr);
     if (iCount < 1)
       return;
 
@@ -986,10 +984,7 @@ void IFWL_ComboBox::DoSubCtrlKey(CFWL_MsgKey* pMsg) {
       iCurSel = m_pListBox->MatchItem(wsText);
       if (iCurSel >= 0) {
         CFX_WideString wsTemp;
-        IFWL_ComboBox::DataProvider* pData =
-            static_cast<IFWL_ComboBox::DataProvider*>(
-                m_pProperties->m_pDataProvider);
-        CFWL_ListItem* hItem = pData->GetItem(this, iCurSel);
+        CFWL_ListItem* hItem = m_pListBox->GetItem(this, iCurSel);
         m_pListBox->GetDataProviderItemText(hItem, wsTemp);
         bMatchEqual = wsText == wsTemp;
       }
@@ -1113,7 +1108,7 @@ void IFWL_ComboBox::DisForm_OnKey(CFWL_MsgKey* pMsg) {
   const bool bDown = dwKeyCode == FWL_VKEY_Down;
   if (bUp || bDown) {
     IFWL_ComboList* pComboList = m_pListBox.get();
-    int32_t iCount = pComboList->CountItems();
+    int32_t iCount = pComboList->CountItems(nullptr);
     if (iCount < 1)
       return;
 

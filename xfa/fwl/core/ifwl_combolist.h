@@ -25,12 +25,10 @@ class IFWL_ComboList : public IFWL_ListBox {
   int32_t MatchItem(const CFX_WideString& wsMatch);
 
   void ChangeSelected(int32_t iSel);
-  int32_t CountItems();
 
   void SetNotifyOwner(bool notify) { m_bNotifyOwner = notify; }
 
  private:
-  void GetItemRect(int32_t nIndex, CFX_RectF& rtItem);
   void ClientToOuter(FX_FLOAT& fx, FX_FLOAT& fy);
   void OnDropListFocusChanged(CFWL_Message* pMsg, bool bSet);
   void OnDropListMouseMove(CFWL_MsgMouse* pMsg);

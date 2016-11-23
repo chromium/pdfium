@@ -49,7 +49,7 @@ class IFWL_Widget;
 
 class IFWL_ComboBox : public IFWL_Widget {
  public:
-  class DataProvider : public IFWL_ListBox::DataProvider {
+  class DataProvider : public IFWL_Widget::DataProvider {
    public:
     virtual FX_FLOAT GetListHeight(IFWL_Widget* pWidget) = 0;
   };
@@ -74,8 +74,13 @@ class IFWL_ComboBox : public IFWL_Widget {
   void OnDrawWidget(CFX_Graphics* pGraphics,
                     const CFX_Matrix* pMatrix) override;
 
+  void GetTextByIndex(int32_t iIndex, CFX_WideString& wsText) const;
   int32_t GetCurSel() const { return m_iCurSel; }
   void SetCurSel(int32_t iSel);
+
+  void AddString(const CFX_WideStringC& wsText);
+  bool RemoveAt(int32_t iIndex);  // Returns false iff |iIndex| out of range.
+  void RemoveAll();
 
   void SetEditText(const CFX_WideString& wsText);
   void GetEditText(CFX_WideString& wsText,
