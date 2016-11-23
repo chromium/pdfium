@@ -20,6 +20,7 @@
 #include "public/fpdf_progressive.h"
 #include "public/fpdf_save.h"
 #include "public/fpdf_searchex.h"
+#include "public/fpdf_structtree.h"
 #include "public/fpdf_sysfontinfo.h"
 #include "public/fpdf_text.h"
 #include "public/fpdf_transformpage.h"
@@ -153,6 +154,15 @@ int CheckPDFiumCApi() {
 
     // fpdf_searchex.h
     CHK(FPDFText_GetCharIndexFromTextIndex);
+
+    // fpdf_structtree.h
+    CHK(FPDF_StructTree_GetForPage);
+    CHK(FPDF_StructTree_Close);
+    CHK(FPDF_StructTree_CountChildren);
+    CHK(FPDF_StructTree_GetChildAtIndex);
+    CHK(FPDF_StructElement_GetAltText);
+    CHK(FPDF_StructElement_CountChildren);
+    CHK(FPDF_StructElement_GetChildAtIndex);
 
     // fpdf_sysfontinfo.h
     CHK(FPDF_GetDefaultTTFMap);

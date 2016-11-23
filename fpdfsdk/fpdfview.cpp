@@ -1110,7 +1110,7 @@ DLLEXPORT FPDF_DEST STDCALL FPDF_GetNamedDest(FPDF_DOCUMENT document,
   int len = utf16Name.GetLength();
   if (!buffer) {
     *buflen = len;
-  } else if (*buflen >= len) {
+  } else if (len <= *buflen) {
     memcpy(buffer, utf16Name.c_str(), len);
     *buflen = len;
   } else {

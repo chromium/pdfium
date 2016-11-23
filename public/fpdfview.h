@@ -39,6 +39,8 @@ typedef void* FPDF_PAGERANGE;
 typedef void* FPDF_PATH;
 typedef void* FPDF_RECORDER;
 typedef void* FPDF_SCHHANDLE;
+typedef void* FPDF_STRUCTELEMENT;
+typedef void* FPDF_STRUCTTREE;
 typedef void* FPDF_TEXTPAGE;
 
 #ifdef PDF_ENABLE_XFA

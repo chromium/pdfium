@@ -149,10 +149,8 @@ typedef struct _IPDF_JsPlatform {
   *       The filePath should be always input in local encoding.
   *
   *       The return value always indicated number of bytes required for the
-  * buffer, even when there is
-  *       no buffer specified, or the buffer size is less then required. In this
-  * case, the buffer will not
-  *       be modified.
+  *       buffer , even when there is no buffer specified, or the buffer size is
+  *       less than required. In this case, the buffer will not be modified.
   */
   int (*Doc_getFilePath)(struct _IPDF_JsPlatform* pThis,
                          void* filePath,

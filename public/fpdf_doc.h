@@ -68,7 +68,7 @@ FPDFBookmark_GetNextSibling(FPDF_DOCUMENT document, FPDF_BOOKMARK bookmark);
 // |buflen| parameters.
 //
 // Regardless of the platform, the |buffer| is always in UTF-16LE encoding. The
-// string is terminated by a UTF16 NUL character. If |buflen| is less then the
+// string is terminated by a UTF16 NUL character. If |buflen| is less than the
 // required length, or |buffer| is NULL, |buffer| will not be modified.
 DLLEXPORT unsigned long STDCALL FPDFBookmark_GetTitle(FPDF_BOOKMARK bookmark,
                                                       void* buffer,
@@ -142,7 +142,7 @@ DLLEXPORT FPDF_DEST STDCALL FPDFAction_GetDest(FPDF_DOCUMENT document,
 // NUL character.
 //
 // Regardless of the platform, the |buffer| is always in UTF-16LE encoding.
-// If |buflen| is less then the returned length, or |buffer| is NULL, |buffer|
+// If |buflen| is less than the returned length, or |buffer| is NULL, |buffer|
 // will not be modified.
 DLLEXPORT unsigned long STDCALL
 FPDFAction_GetFilePath(FPDF_ACTION action, void* buffer, unsigned long buflen);
@@ -156,7 +156,7 @@ FPDFAction_GetFilePath(FPDF_ACTION action, void* buffer, unsigned long buflen);
 //
 // Returns the number of bytes in the URI path, including trailing zeros.
 //
-// The |buffer| is always encoded in 7-bit ASCII. If |buflen| is less then the
+// The |buffer| is always encoded in 7-bit ASCII. If |buflen| is less than the
 // returned length, or |buffer| is NULL, |buffer| will not be modified.
 DLLEXPORT unsigned long STDCALL FPDFAction_GetURIPath(FPDF_DOCUMENT document,
                                                       FPDF_ACTION action,
