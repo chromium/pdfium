@@ -622,6 +622,7 @@ class SkiaState {
         m_drawText(false),
         m_drawPath(false),
         m_fillPath(false),
+        m_groupKnockout(false),
         m_debugDisable(false) {}
 
   bool DrawPath(const CFX_PathData* pPathData,
@@ -638,8 +639,9 @@ class SkiaState {
       FlushCommands(pDriver);
     if (m_drawText)
       FlushText(pDriver);
-    if (m_drawPath && DrawChanged(pMatrix, pDrawState, fill_color, stroke_color,
-                                  fill_mode, blend_type)) {
+    if (m_drawPath &&
+        DrawChanged(pMatrix, pDrawState, fill_color, stroke_color, fill_mode,
+                    blend_type, pDriver->m_bGroupKnockout)) {
       FlushPath(pDriver);
     }
     if (!m_drawPath) {
@@ -653,6 +655,7 @@ class SkiaState {
       m_fillColor = fill_color;
       m_strokeColor = stroke_color;
       m_blendType = blend_type;
+      m_groupKnockout = pDriver->m_bGroupKnockout;
       if (pMatrix)
         m_drawMatrix = *pMatrix;
     }
@@ -679,9 +682,7 @@ class SkiaState {
       SkPath strokePath;
       const SkPath* fillPath = &m_skPath;
       if (stroke_alpha) {
-        SkAlpha fillA = SkColorGetA(m_fillColor);
-        SkAlpha strokeA = SkColorGetA(m_strokeColor);
-        if (fillA && fillA < 0xFF && strokeA && strokeA < 0xFF) {
+        if (m_groupKnockout) {
           skPaint.getFillPath(m_skPath, &strokePath);
           if (Op(m_skPath, strokePath, SkPathOp::kDifference_SkPathOp,
                  &strokePath)) {
@@ -756,9 +757,9 @@ class SkiaState {
       skPaint.setTypeface(typeface);
     }
     skPaint.setTextEncoding(SkPaint::kGlyphID_TextEncoding);
-    skPaint.setTextSize(m_fontSize);
-    skPaint.setSubpixelText(true);
     skPaint.setHinting(SkPaint::kNo_Hinting);
+    skPaint.setTextSize(SkTAbs(m_fontSize));
+    skPaint.setSubpixelText(true);
     SkCanvas* skCanvas = pDriver->SkiaCanvas();
     skCanvas->save();
     skCanvas->concat(skMatrix);
@@ -898,13 +899,14 @@ class SkiaState {
                    uint32_t fill_color,
                    uint32_t stroke_color,
                    int fill_mode,
-                   int blend_type) {
+                   int blend_type,
+                   bool group_knockout) {
     return MatrixChanged(pMatrix, m_drawMatrix) ||
            StateChanged(pState, m_drawState) || fill_color != m_fillColor ||
            stroke_color != m_strokeColor ||
            ((fill_mode & 3) == FXFILL_ALTERNATE) !=
                (m_skPath.getFillType() == SkPath::kEvenOdd_FillType) ||
-           blend_type != m_blendType;
+           blend_type != m_blendType || group_knockout != m_groupKnockout;
   }
 
   bool FontChanged(CFX_Font* pFont,
@@ -1003,6 +1005,7 @@ class SkiaState {
   bool m_drawText;
   bool m_drawPath;
   bool m_fillPath;
+  bool m_groupKnockout;
   bool m_debugDisable;  // turn off cache for debugging
 };
 #endif  // _SKIA_SUPPORT_
@@ -1153,7 +1156,7 @@ bool CFX_SkiaDeviceDriver::DrawDeviceText(int nChars,
   paint.setTypeface(typeface);
   paint.setTextEncoding(SkPaint::kGlyphID_TextEncoding);
   paint.setHinting(SkPaint::kNo_Hinting);
-  paint.setTextSize(font_size);
+  paint.setTextSize(SkTAbs(font_size));
   paint.setSubpixelText(true);
   m_pCanvas->save();
   SkScalar flip = font_size < 0 ? -1 : 1;
