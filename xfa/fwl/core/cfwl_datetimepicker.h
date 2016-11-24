@@ -56,9 +56,7 @@ class CFWL_DateTimePicker : public CFWL_Widget {
   void SetCurSel(int32_t iYear, int32_t iMonth, int32_t iDay);
 
   void SetEditText(const CFX_WideString& wsText);
-  void GetEditText(CFX_WideString& wsText,
-                   int32_t nStart = 0,
-                   int32_t nCount = -1) const;
+  CFX_WideString GetEditText(int32_t nStart = 0, int32_t nCount = -1) const;
 
   int32_t CountSelRanges() const { return m_pEdit->CountSelRanges(); }
   int32_t GetSelRange(int32_t nIndex, int32_t& nStart) const {

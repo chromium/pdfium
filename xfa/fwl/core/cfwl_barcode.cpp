@@ -165,8 +165,7 @@ void CFWL_Barcode::GenerateBarcodeImageCache() {
   if (!m_pBarcodeEngine)
     return;
 
-  CFX_WideString wsText;
-  GetText(wsText);
+  CFX_WideString wsText = GetText();
 
   CFWL_ThemePart part;
   part.m_pWidget = this;

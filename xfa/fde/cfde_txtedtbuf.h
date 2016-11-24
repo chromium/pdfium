@@ -23,11 +23,9 @@ class CFDE_TxtEdtBuf {
   int32_t GetChunkSize() const;
   int32_t GetTextLength() const;
   void SetText(const CFX_WideString& wsText);
-  void GetText(CFX_WideString& wsText) const;
+  CFX_WideString GetText() const;
   FX_WCHAR GetCharByIndex(int32_t nIndex) const;
-  void GetRange(CFX_WideString& wsText,
-                int32_t nBegin,
-                int32_t nCount = -1) const;
+  CFX_WideString GetRange(int32_t nBegin, int32_t nCount = -1) const;
 
   void Insert(int32_t nPos, const FX_WCHAR* lpText, int32_t nLength = 1);
   void Delete(int32_t nIndex, int32_t nLength = 1);

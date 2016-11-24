@@ -196,11 +196,9 @@ void CFWL_DateTimePicker::SetEditText(const CFX_WideString& wsText) {
   DispatchEvent(&ev);
 }
 
-void CFWL_DateTimePicker::GetEditText(CFX_WideString& wsText,
-                                      int32_t nStart,
-                                      int32_t nCount) const {
-  if (m_pEdit)
-    m_pEdit->GetText(wsText, nStart, nCount);
+CFX_WideString CFWL_DateTimePicker::GetEditText(int32_t nStart,
+                                                int32_t nCount) const {
+  return m_pEdit ? m_pEdit->GetText(nStart, nCount) : L"";
 }
 
 void CFWL_DateTimePicker::GetBBox(CFX_RectF& rect) const {

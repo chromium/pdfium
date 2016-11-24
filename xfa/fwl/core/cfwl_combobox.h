@@ -77,9 +77,7 @@ class CFWL_ComboBox : public CFWL_Widget {
   void RemoveAll();
 
   void SetEditText(const CFX_WideString& wsText);
-  void GetEditText(CFX_WideString& wsText,
-                   int32_t nStart = 0,
-                   int32_t nCount = -1) const;
+  CFX_WideString GetEditText(int32_t nStart = 0, int32_t nCount = -1) const;
 
   void OpenDropDownList(bool bActivate);
 

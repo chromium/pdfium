@@ -202,11 +202,10 @@ void CFWL_ListBox::SetSelItem(CFWL_ListItem* pItem, bool bSelect) {
     SetSelection(pItem, pItem, bSelect);
 }
 
-void CFWL_ListBox::GetDataProviderItemText(CFWL_ListItem* pItem,
-                                           CFX_WideString& wsText) {
+CFX_WideString CFWL_ListBox::GetDataProviderItemText(CFWL_ListItem* pItem) {
   if (!pItem)
-    return;
-  GetItemText(this, pItem, wsText);
+    return L"";
+  return GetItemText(this, pItem);
 }
 
 CFWL_ListItem* CFWL_ListBox::GetListItem(CFWL_ListItem* pItem,
@@ -544,8 +543,7 @@ void CFWL_ListBox::DrawItem(CFX_Graphics* pGraphics,
     pTheme->DrawBackground(&param);
   }
 
-  CFX_WideString wsText;
-  GetItemText(this, pItem, wsText);
+  CFX_WideString wsText = GetItemText(this, pItem);
   if (wsText.GetLength() <= 0)
     return;
 
@@ -719,8 +717,7 @@ FX_FLOAT CFWL_ListBox::GetMaxTextWidth() {
     if (!pItem)
       continue;
 
-    CFX_WideString wsText;
-    GetItemText(this, pItem, wsText);
+    CFX_WideString wsText = GetItemText(this, pItem);
     CFX_SizeF sz = CalcTextSize(wsText, m_pProperties->m_pThemeProvider);
     fRet = std::max(fRet, sz.x);
   }
@@ -1006,11 +1003,9 @@ bool CFWL_ListBox::OnScroll(CFWL_ScrollBar* pScrollBar,
   return true;
 }
 
-void CFWL_ListBox::GetItemText(CFWL_Widget* pWidget,
-                               CFWL_ListItem* pItem,
-                               CFX_WideString& wsText) {
-  if (pItem)
-    wsText = static_cast<CFWL_ListItem*>(pItem)->m_wsText;
+CFX_WideString CFWL_ListBox::GetItemText(CFWL_Widget* pWidget,
+                                         CFWL_ListItem* pItem) {
+  return pItem ? static_cast<CFWL_ListItem*>(pItem)->m_wsText : L"";
 }
 
 int32_t CFWL_ListBox::CountItems(const CFWL_Widget* pWidget) const {

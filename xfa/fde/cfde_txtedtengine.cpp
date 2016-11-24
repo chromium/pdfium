@@ -160,15 +160,15 @@ int32_t CFDE_TxtEdtEngine::GetTextLength() const {
   return GetTextBufLength();
 }
 
-void CFDE_TxtEdtEngine::GetText(CFX_WideString& wsText,
-                                int32_t nStart,
-                                int32_t nCount) const {
+CFX_WideString CFDE_TxtEdtEngine::GetText(int32_t nStart,
+                                          int32_t nCount) const {
   int32_t nTextBufLength = GetTextBufLength();
   if (nCount == -1)
     nCount = nTextBufLength - nStart;
 
-  m_pTxtBuf->GetRange(wsText, nStart, nCount);
+  CFX_WideString wsText = m_pTxtBuf->GetRange(nStart, nCount);
   RecoverParagEnd(wsText);
+  return wsText;
 }
 
 void CFDE_TxtEdtEngine::ClearText() {
@@ -374,9 +374,8 @@ int32_t CFDE_TxtEdtEngine::Insert(int32_t nStart,
       (m_Param.dwMode & FDE_TEXTEDITMODE_LimitArea_Horz)) {
     int32_t nTemp = nLength;
     if (m_Param.dwMode & FDE_TEXTEDITMODE_Password) {
-      CFX_WideString wsText;
       while (nLength > 0) {
-        GetPreInsertText(wsText, m_nCaret, lpBuffer, nLength);
+        CFX_WideString wsText = GetPreInsertText(m_nCaret, lpBuffer, nLength);
         int32_t nTotal = wsText.GetLength();
         FX_WCHAR* lpBuf = wsText.GetBuffer(nTotal);
         for (int32_t i = 0; i < nTotal; i++) {
@@ -389,9 +388,8 @@ int32_t CFDE_TxtEdtEngine::Insert(int32_t nStart,
         nLength--;
       }
     } else {
-      CFX_WideString wsText;
       while (nLength > 0) {
-        GetPreInsertText(wsText, m_nCaret, lpBuffer, nLength);
+        CFX_WideString wsText = GetPreInsertText(m_nCaret, lpBuffer, nLength);
         if (IsFitArea(wsText)) {
           break;
         }
@@ -406,8 +404,7 @@ int32_t CFDE_TxtEdtEngine::Insert(int32_t nStart,
     }
   }
   if (m_Param.dwMode & FDE_TEXTEDITMODE_Validate) {
-    CFX_WideString wsText;
-    GetPreInsertText(wsText, m_nCaret, lpBuffer, nLength);
+    CFX_WideString wsText = GetPreInsertText(m_nCaret, lpBuffer, nLength);
     if (!m_Param.pEventSink->On_Validate(this, wsText)) {
       return FDE_TXTEDT_MODIFY_RET_F_Invalidate;
     }
@@ -420,7 +417,7 @@ int32_t CFDE_TxtEdtEngine::Insert(int32_t nStart,
         this,
         new CFDE_TxtEdtDoRecord_Insert(this, m_nCaret, lpBuffer, nLength));
 
-  GetText(m_ChangeInfo.wsPrevText, 0);
+  m_ChangeInfo.wsPrevText = GetText(0);
   Inner_Insert(m_nCaret, lpBuffer, nLength);
   m_ChangeInfo.nChangeType = FDE_TXTEDT_TEXTCHANGE_TYPE_Insert;
   m_ChangeInfo.wsInsert = CFX_WideString(lpBuffer, nLength);
@@ -468,21 +465,19 @@ int32_t CFDE_TxtEdtEngine::Delete(int32_t nStart, bool bBackspace) {
     }
   }
   if (m_Param.dwMode & FDE_TEXTEDITMODE_Validate) {
-    CFX_WideString wsText;
-    GetPreDeleteText(wsText, nStart, nCount);
+    CFX_WideString wsText = GetPreDeleteText(nStart, nCount);
     if (!m_Param.pEventSink->On_Validate(this, wsText)) {
       return FDE_TXTEDT_MODIFY_RET_F_Invalidate;
     }
   }
   if (!(m_Param.dwMode & FDE_TEXTEDITMODE_NoRedoUndo)) {
-    CFX_WideString wsRange;
-    m_pTxtBuf->GetRange(wsRange, nStart, nCount);
+    CFX_WideString wsRange = m_pTxtBuf->GetRange(nStart, nCount);
     m_Param.pEventSink->On_AddDoRecord(
         this,
         new CFDE_TxtEdtDoRecord_DeleteRange(this, nStart, m_nCaret, wsRange));
   }
   m_ChangeInfo.nChangeType = FDE_TXTEDT_TEXTCHANGE_TYPE_Delete;
-  GetText(m_ChangeInfo.wsDelete, nStart, nCount);
+  m_ChangeInfo.wsDelete = GetText(nStart, nCount);
   Inner_DeleteRange(nStart, nCount);
   SetCaretPos(nStart + ((!bBackspace && nStart > 0) ? -1 : 0),
               (bBackspace || nStart == 0));
@@ -501,8 +496,7 @@ int32_t CFDE_TxtEdtEngine::DeleteRange(int32_t nStart, int32_t nCount) {
     return FDE_TXTEDT_MODIFY_RET_S_Normal;
   }
   if (m_Param.dwMode & FDE_TEXTEDITMODE_Validate) {
-    CFX_WideString wsText;
-    GetPreDeleteText(wsText, nStart, nCount);
+    CFX_WideString wsText = GetPreDeleteText(nStart, nCount);
     if (!m_Param.pEventSink->On_Validate(this, wsText)) {
       return FDE_TXTEDT_MODIFY_RET_F_Invalidate;
     }
@@ -523,9 +517,8 @@ int32_t CFDE_TxtEdtEngine::Replace(int32_t nStart,
     return FDE_TXTEDT_MODIFY_RET_F_Boundary;
   }
   if (m_Param.dwMode & FDE_TEXTEDITMODE_Validate) {
-    CFX_WideString wsText;
-    GetPreReplaceText(wsText, nStart, nLength, wsReplace.c_str(),
-                      wsReplace.GetLength());
+    CFX_WideString wsText = GetPreReplaceText(
+        nStart, nLength, wsReplace.c_str(), wsReplace.GetLength());
     if (!m_Param.pEventSink->On_Validate(this, wsText)) {
       return FDE_TXTEDT_MODIFY_RET_F_Invalidate;
     }
@@ -534,7 +527,7 @@ int32_t CFDE_TxtEdtEngine::Replace(int32_t nStart,
     ClearSelection();
   }
   m_ChangeInfo.nChangeType = FDE_TXTEDT_TEXTCHANGE_TYPE_Replace;
-  GetText(m_ChangeInfo.wsDelete, nStart, nLength);
+  m_ChangeInfo.wsDelete = GetText(nStart, nLength);
   if (nLength > 0) {
     Inner_DeleteRange(nStart, nLength);
   }
@@ -778,18 +771,17 @@ int32_t CFDE_TxtEdtEngine::Line2Parag(int32_t nStartParag,
   return i;
 }
 
-void CFDE_TxtEdtEngine::GetPreDeleteText(CFX_WideString& wsText,
-                                         int32_t nIndex,
-                                         int32_t nLength) {
-  GetText(wsText, 0, GetTextBufLength());
+CFX_WideString CFDE_TxtEdtEngine::GetPreDeleteText(int32_t nIndex,
+                                                   int32_t nLength) {
+  CFX_WideString wsText = GetText(0, GetTextBufLength());
   wsText.Delete(nIndex, nLength);
+  return wsText;
 }
 
-void CFDE_TxtEdtEngine::GetPreInsertText(CFX_WideString& wsText,
-                                         int32_t nIndex,
-                                         const FX_WCHAR* lpText,
-                                         int32_t nLength) {
-  GetText(wsText, 0, GetTextBufLength());
+CFX_WideString CFDE_TxtEdtEngine::GetPreInsertText(int32_t nIndex,
+                                                   const FX_WCHAR* lpText,
+                                                   int32_t nLength) {
+  CFX_WideString wsText = GetText(0, GetTextBufLength());
   int32_t nSelIndex = 0;
   int32_t nSelLength = 0;
   int32_t nSelCount = CountSelRanges();
@@ -808,14 +800,14 @@ void CFDE_TxtEdtEngine::GetPreInsertText(CFX_WideString& wsText,
                (nOldLength - nIndex) * sizeof(FX_WCHAR));
   wsTemp.ReleaseBuffer(nOldLength + nLength);
   wsText = wsTemp;
+  return wsText;
 }
 
-void CFDE_TxtEdtEngine::GetPreReplaceText(CFX_WideString& wsText,
-                                          int32_t nIndex,
-                                          int32_t nOriginLength,
-                                          const FX_WCHAR* lpText,
-                                          int32_t nLength) {
-  GetText(wsText, 0, GetTextBufLength());
+CFX_WideString CFDE_TxtEdtEngine::GetPreReplaceText(int32_t nIndex,
+                                                    int32_t nOriginLength,
+                                                    const FX_WCHAR* lpText,
+                                                    int32_t nLength) {
+  CFX_WideString wsText = GetText(0, GetTextBufLength());
   int32_t nSelIndex = 0;
   int32_t nSelLength = 0;
   int32_t nSelCount = CountSelRanges();
@@ -825,9 +817,10 @@ void CFDE_TxtEdtEngine::GetPreReplaceText(CFX_WideString& wsText,
   }
   wsText.Delete(nIndex, nOriginLength);
   int32_t i = 0;
-  for (i = 0; i < nLength; i++) {
+  for (i = 0; i < nLength; i++)
     wsText.Insert(nIndex++, lpText[i]);
-  }
+
+  return wsText;
 }
 
 void CFDE_TxtEdtEngine::Inner_Insert(int32_t nStart,
@@ -959,14 +952,13 @@ void CFDE_TxtEdtEngine::DeleteRange_DoRecord(int32_t nStart,
   ASSERT((nStart + nCount) <= m_pTxtBuf->GetTextLength());
 
   if (!(m_Param.dwMode & FDE_TEXTEDITMODE_NoRedoUndo)) {
-    CFX_WideString wsRange;
-    m_pTxtBuf->GetRange(wsRange, nStart, nCount);
+    CFX_WideString wsRange = m_pTxtBuf->GetRange(nStart, nCount);
     m_Param.pEventSink->On_AddDoRecord(
         this, new CFDE_TxtEdtDoRecord_DeleteRange(this, nStart, m_nCaret,
                                                   wsRange, bSel));
   }
   m_ChangeInfo.nChangeType = FDE_TXTEDT_TEXTCHANGE_TYPE_Delete;
-  GetText(m_ChangeInfo.wsDelete, nStart, nCount);
+  m_ChangeInfo.wsDelete = GetText(nStart, nCount);
   Inner_DeleteRange(nStart, nCount);
 }
 

@@ -187,8 +187,7 @@ bool CXFA_FFTextEdit::OnKillFocus(CXFA_FFWidget* pNewWidget) {
   return true;
 }
 bool CXFA_FFTextEdit::CommitData() {
-  CFX_WideString wsText;
-  ((CFWL_Edit*)m_pNormalWidget)->GetText(wsText);
+  CFX_WideString wsText = static_cast<CFWL_Edit*>(m_pNormalWidget)->GetText();
   if (m_pDataAcc->SetValue(wsText, XFA_VALUEPICTURE_Edit)) {
     m_pDataAcc->UpdateUIDisplay(this);
     return true;
@@ -283,8 +282,8 @@ bool CXFA_FFTextEdit::UpdateFWLData() {
   }
   CFX_WideString wsText;
   m_pDataAcc->GetValue(wsText, eType);
-  CFX_WideString wsOldText;
-  ((CFWL_Edit*)m_pNormalWidget)->GetText(wsOldText);
+  CFX_WideString wsOldText =
+      static_cast<CFWL_Edit*>(m_pNormalWidget)->GetText();
   if (wsText != wsOldText || (eType == XFA_VALUEPICTURE_Edit && bUpdate)) {
     ((CFWL_Edit*)m_pNormalWidget)->SetText(wsText);
     bUpdate = true;
@@ -306,13 +305,13 @@ void CXFA_FFTextEdit::OnTextChanged(CFWL_Widget* pWidget,
   CFWL_Edit* pEdit = ((CFWL_Edit*)m_pNormalWidget);
   if (m_pDataAcc->GetUIType() == XFA_Element::DateTimeEdit) {
     CFWL_DateTimePicker* pDateTime = (CFWL_DateTimePicker*)pEdit;
-    pDateTime->GetEditText(eParam.m_wsNewText);
+    eParam.m_wsNewText = pDateTime->GetEditText();
     int32_t iSels = pDateTime->CountSelRanges();
     if (iSels) {
       eParam.m_iSelEnd = pDateTime->GetSelRange(0, eParam.m_iSelStart);
     }
   } else {
-    pEdit->GetText(eParam.m_wsNewText);
+    eParam.m_wsNewText = pEdit->GetText();
     int32_t iSels = pEdit->CountSelRanges();
     if (iSels) {
       eParam.m_iSelEnd = pEdit->GetSelRange(0, eParam.m_iSelStart);
@@ -616,8 +615,8 @@ uint32_t CXFA_FFDateTimeEdit::GetAlignment() {
   return dwExtendedStyle;
 }
 bool CXFA_FFDateTimeEdit::CommitData() {
-  CFX_WideString wsText;
-  ((CFWL_DateTimePicker*)m_pNormalWidget)->GetEditText(wsText);
+  CFX_WideString wsText =
+      static_cast<CFWL_DateTimePicker*>(m_pNormalWidget)->GetEditText();
   if (m_pDataAcc->SetValue(wsText, XFA_VALUEPICTURE_Edit)) {
     m_pDataAcc->UpdateUIDisplay(this);
     return true;
@@ -652,8 +651,8 @@ bool CXFA_FFDateTimeEdit::IsDataChanged() {
   if (m_dwStatus & XFA_WidgetStatus_TextEditValueChanged) {
     return true;
   }
-  CFX_WideString wsText;
-  ((CFWL_DateTimePicker*)m_pNormalWidget)->GetEditText(wsText);
+  CFX_WideString wsText =
+      static_cast<CFWL_DateTimePicker*>(m_pNormalWidget)->GetEditText();
   CFX_WideString wsOldValue;
   m_pDataAcc->GetValue(wsOldValue, XFA_VALUEPICTURE_Edit);
   return wsOldValue != wsText;

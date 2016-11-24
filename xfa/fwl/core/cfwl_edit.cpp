@@ -113,8 +113,7 @@ void CFWL_Edit::GetWidgetRect(CFX_RectF& rect, bool bAutoSize) {
 
   int32_t iTextLen = m_EdtEngine.GetTextLength();
   if (iTextLen > 0) {
-    CFX_WideString wsText;
-    m_EdtEngine.GetText(wsText, 0);
+    CFX_WideString wsText = m_EdtEngine.GetText(0);
     CFX_SizeF sz = CalcTextSize(
         wsText, m_pProperties->m_pThemeProvider,
         !!(m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_MultiLine));
@@ -212,8 +211,7 @@ void CFWL_Edit::DrawSpellCheck(CFX_Graphics* pGraphics,
   FX_FLOAT fOffSetX = m_rtEngine.left - m_fScrollOffsetX;
   FX_FLOAT fOffSetY = m_rtEngine.top - m_fScrollOffsetY + m_fVAlignOffset;
 
-  CFX_WideString wsSpell;
-  GetText(wsSpell);
+  CFX_WideString wsSpell = GetText();
   int32_t nContentLen = wsSpell.GetLength();
   for (int i = 0; i < nContentLen; i++) {
     if (FX_EDIT_ISLATINWORD(wsSpell[i])) {
@@ -300,10 +298,8 @@ int32_t CFWL_Edit::GetTextLength() const {
   return m_EdtEngine.GetTextLength();
 }
 
-void CFWL_Edit::GetText(CFX_WideString& wsText,
-                        int32_t nStart,
-                        int32_t nCount) const {
-  m_EdtEngine.GetText(wsText, nStart, nCount);
+CFX_WideString CFWL_Edit::GetText(int32_t nStart, int32_t nCount) const {
+  return m_EdtEngine.GetText(nStart, nCount);
 }
 
 void CFWL_Edit::ClearText() {
@@ -349,7 +345,7 @@ bool CFWL_Edit::Copy(CFX_WideString& wsCopy) {
   int32_t nStart, nLength;
   for (int32_t i = 0; i < nCount; i++) {
     nLength = m_EdtEngine.GetSelRange(i, nStart);
-    m_EdtEngine.GetText(wsTemp, nStart, nLength);
+    wsTemp = m_EdtEngine.GetText(nStart, nLength);
     wsCopy += wsTemp;
     wsTemp.clear();
   }
@@ -366,7 +362,7 @@ bool CFWL_Edit::Cut(CFX_WideString& wsCut) {
   int32_t nStart, nLength;
   for (int32_t i = 0; i < nCount; i++) {
     nLength = m_EdtEngine.GetSelRange(i, nStart);
-    m_EdtEngine.GetText(wsTemp, nStart, nLength);
+    wsTemp = m_EdtEngine.GetText(nStart, nLength);
     wsCut += wsTemp;
     wsTemp.clear();
   }
@@ -1232,8 +1228,7 @@ bool CFWL_Edit::ValidateNumberChar(FX_WCHAR cNum) {
   if (!m_bSetRange)
     return true;
 
-  CFX_WideString wsOld, wsText;
-  m_EdtEngine.GetText(wsText, 0);
+  CFX_WideString wsText = m_EdtEngine.GetText(0);
   if (wsText.IsEmpty()) {
     if (cNum == L'0')
       return false;

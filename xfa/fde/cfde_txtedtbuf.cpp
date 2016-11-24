@@ -67,8 +67,8 @@ void CFDE_TxtEdtBuf::SetText(const CFX_WideString& wsText) {
   m_bChanged = true;
 }
 
-void CFDE_TxtEdtBuf::GetText(CFX_WideString& wsText) const {
-  GetRange(wsText, 0, m_nTotal);
+CFX_WideString CFDE_TxtEdtBuf::GetText() const {
+  return GetRange(0, m_nTotal);
 }
 
 FX_WCHAR CFDE_TxtEdtBuf::GetCharByIndex(int32_t nIndex) const {
@@ -88,13 +88,13 @@ FX_WCHAR CFDE_TxtEdtBuf::GetCharByIndex(int32_t nIndex) const {
   return pChunkHeader->wChars[pChunkHeader->nUsed - (nTotal - nIndex)];
 }
 
-void CFDE_TxtEdtBuf::GetRange(CFX_WideString& wsText,
-                              int32_t nBegin,
-                              int32_t nLength) const {
+CFX_WideString CFDE_TxtEdtBuf::GetRange(int32_t nBegin, int32_t nLength) const {
   FDE_CHUNKPLACE cp;
   Index2CP(nBegin, cp);
   int32_t nLeave = nLength;
   int32_t nCount = m_Chunks.GetSize();
+
+  CFX_WideString wsText;
   FX_WCHAR* lpDstBuf = wsText.GetBuffer(nLength);
   int32_t nChunkIndex = cp.nChunkIndex;
   FDE_CHUNKHEADER* lpChunkHeader = m_Chunks[nChunkIndex];
@@ -116,6 +116,8 @@ void CFDE_TxtEdtBuf::GetRange(CFX_WideString& wsText,
     nCopyLength = lpChunkHeader->nUsed;
   }
   wsText.ReleaseBuffer();
+
+  return wsText;
 }
 
 void CFDE_TxtEdtBuf::Insert(int32_t nPos,

@@ -80,9 +80,7 @@ class CFWL_Edit : public CFWL_Widget {
   virtual void SetText(const CFX_WideString& wsText);
 
   int32_t GetTextLength() const;
-  void GetText(CFX_WideString& wsText,
-               int32_t nStart = 0,
-               int32_t nCount = -1) const;
+  CFX_WideString GetText(int32_t nStart = 0, int32_t nCount = -1) const;
   void ClearText();
 
   void AddSelRange(int32_t nStart, int32_t nCount = -1);

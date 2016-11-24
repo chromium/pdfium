@@ -32,8 +32,7 @@ int32_t CFWL_ComboList::MatchItem(const CFX_WideString& wsMatch) {
   int32_t iCount = CountItems(this);
   for (int32_t i = 0; i < iCount; i++) {
     CFWL_ListItem* hItem = GetItem(this, i);
-    CFX_WideString wsText;
-    GetItemText(this, hItem, wsText);
+    CFX_WideString wsText = GetItemText(this, hItem);
     FX_STRSIZE pos = wsText.Find(wsMatch.c_str());
     if (!pos)
       return i;

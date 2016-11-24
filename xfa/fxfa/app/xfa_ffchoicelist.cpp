@@ -160,8 +160,10 @@ void CXFA_FFListBox::OnSelectChanged(CFWL_Widget* pWidget,
   CFWL_ListBox* pListBox = (CFWL_ListBox*)m_pNormalWidget;
   int32_t iSels = pListBox->CountSelItems();
   if (iSels > 0) {
-    pListBox->GetItemText(nullptr, pListBox->GetSelItem(0), eParam.m_wsNewText);
+    eParam.m_wsNewText =
+        pListBox->GetItemText(nullptr, pListBox->GetSelItem(0));
   }
+
   m_pDataAcc->ProcessEvent(XFA_ATTRIBUTEENUM_Change, &eParam);
 }
 void CXFA_FFListBox::SetItemState(int32_t nIndex, bool bSelected) {
@@ -316,8 +318,7 @@ bool CXFA_FFComboBox::CommitData() {
 }
 bool CXFA_FFComboBox::IsDataChanged() {
   CFWL_ComboBox* pFWLcombobox = ((CFWL_ComboBox*)m_pNormalWidget);
-  CFX_WideString wsText;
-  pFWLcombobox->GetEditText(wsText);
+  CFX_WideString wsText = pFWLcombobox->GetEditText();
   int32_t iCursel = pFWLcombobox->GetCurSel();
   if (iCursel >= 0) {
     CFX_WideString wsSel;
@@ -338,7 +339,7 @@ void CXFA_FFComboBox::FWLEventSelChange(CXFA_EventParam* pParam) {
   pParam->m_eType = XFA_EVENT_Change;
   pParam->m_pTarget = m_pDataAcc;
   CFWL_ComboBox* pFWLcombobox = ((CFWL_ComboBox*)m_pNormalWidget);
-  pFWLcombobox->GetEditText(pParam->m_wsNewText);
+  pParam->m_wsNewText = pFWLcombobox->GetEditText();
   m_pDataAcc->ProcessEvent(XFA_ATTRIBUTEENUM_Change, pParam);
 }
 uint32_t CXFA_FFComboBox::GetAlignment() {
