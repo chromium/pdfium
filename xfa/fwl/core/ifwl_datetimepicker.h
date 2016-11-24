@@ -9,10 +9,10 @@
 
 #include <memory>
 
+#include "xfa/fwl/core/cfwl_datetimeedit.h"
 #include "xfa/fwl/core/cfwl_event.h"
+#include "xfa/fwl/core/cfwl_monthcalendar.h"
 #include "xfa/fwl/core/cfwl_widgetproperties.h"
-#include "xfa/fwl/core/ifwl_datetimeedit.h"
-#include "xfa/fwl/core/ifwl_monthcalendar.h"
 #include "xfa/fwl/core/ifwl_widget.h"
 
 #define FWL_STYLEEXT_DTP_AllowEdit (1L << 0)
@@ -32,8 +32,8 @@
 #define FWL_STYLEEXT_DTP_EditVAlignMask (3L << 6)
 #define FWL_STYLEEXT_DTP_EditHAlignModeMask (3L << 8)
 
-class IFWL_DateTimeEdit;
-class IFWL_FormProxy;
+class CFWL_DateTimeEdit;
+class CFWL_FormProxy;
 
 class IFWL_DateTimePicker : public IFWL_Widget {
  public:
@@ -75,7 +75,7 @@ class IFWL_DateTimePicker : public IFWL_Widget {
   void ShowMonthCalendar(bool bActivate);
   void ProcessSelChanged(int32_t iYear, int32_t iMonth, int32_t iDay);
 
-  IFWL_FormProxy* GetFormProxy() const { return m_pForm.get(); }
+  CFWL_FormProxy* GetFormProxy() const { return m_pForm.get(); }
 
  private:
   void DrawDropDownButton(CFX_Graphics* pGraphics,
@@ -111,9 +111,9 @@ class IFWL_DateTimePicker : public IFWL_Widget {
   int32_t m_iMonth;
   int32_t m_iDay;
   bool m_bLBtnDown;
-  std::unique_ptr<IFWL_DateTimeEdit> m_pEdit;
-  std::unique_ptr<IFWL_MonthCalendar> m_pMonthCal;
-  std::unique_ptr<IFWL_FormProxy> m_pForm;
+  std::unique_ptr<CFWL_DateTimeEdit> m_pEdit;
+  std::unique_ptr<CFWL_MonthCalendar> m_pMonthCal;
+  std::unique_ptr<CFWL_FormProxy> m_pForm;
   FX_FLOAT m_fBtn;
 };
 

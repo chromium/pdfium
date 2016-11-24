@@ -19,6 +19,7 @@
 #include "xfa/fde/ifde_txtedtpage.h"
 #include "xfa/fgas/font/cfgas_gefont.h"
 #include "xfa/fwl/core/cfwl_app.h"
+#include "xfa/fwl/core/cfwl_caret.h"
 #include "xfa/fwl/core/cfwl_evtcheckword.h"
 #include "xfa/fwl/core/cfwl_evttextchanged.h"
 #include "xfa/fwl/core/cfwl_evttextfull.h"
@@ -28,7 +29,6 @@
 #include "xfa/fwl/core/cfwl_themebackground.h"
 #include "xfa/fwl/core/cfwl_themepart.h"
 #include "xfa/fwl/core/cfwl_widgetmgr.h"
-#include "xfa/fwl/core/ifwl_caret.h"
 #include "xfa/fwl/core/ifwl_themeprovider.h"
 #include "xfa/fxfa/xfa_ffdoc.h"
 #include "xfa/fxfa/xfa_ffwidget.h"
@@ -435,7 +435,7 @@ void IFWL_Edit::On_CaretChanged(CFDE_TxtEdtEngine* pEdit,
   rtInvalid.Set(0, 0, 0, 0);
   bool bRepaintScroll = false;
   if (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_MultiLine) {
-    IFWL_ScrollBar* pScroll = UpdateScroll();
+    CFWL_ScrollBar* pScroll = UpdateScroll();
     if (pScroll) {
       pScroll->GetWidgetRect(rtInvalid);
       bRepaintScroll = true;
@@ -838,7 +838,7 @@ bool IFWL_Edit::UpdateOffset() {
   return true;
 }
 
-bool IFWL_Edit::UpdateOffset(IFWL_ScrollBar* pScrollBar, FX_FLOAT fPosChanged) {
+bool IFWL_Edit::UpdateOffset(CFWL_ScrollBar* pScrollBar, FX_FLOAT fPosChanged) {
   if (pScrollBar == m_pHorzScrollBar.get())
     m_fScrollOffsetX += fPosChanged;
   else
@@ -906,7 +906,7 @@ void IFWL_Edit::UpdateCaret() {
   ShowCaret(bShow, &rtCaret);
 }
 
-IFWL_ScrollBar* IFWL_Edit::UpdateScroll() {
+CFWL_ScrollBar* IFWL_Edit::UpdateScroll() {
   bool bShowHorz =
       m_pHorzScrollBar &&
       ((m_pHorzScrollBar->GetStates() & FWL_WGTSTATE_Invisible) == 0);
@@ -921,7 +921,7 @@ IFWL_ScrollBar* IFWL_Edit::UpdateScroll() {
     return nullptr;
 
   const CFX_RectF& rtFDE = pPage->GetContentsBox();
-  IFWL_ScrollBar* pRepaint = nullptr;
+  CFWL_ScrollBar* pRepaint = nullptr;
   if (bShowHorz) {
     CFX_RectF rtScroll;
     m_pHorzScrollBar->GetWidgetRect(rtScroll);
@@ -1170,7 +1170,7 @@ void IFWL_Edit::InitScrollBar(bool bVert) {
   prop->m_pParent = this;
   prop->m_pThemeProvider = m_pProperties->m_pThemeProvider;
 
-  IFWL_ScrollBar* sb = new IFWL_ScrollBar(m_pOwnerApp, std::move(prop), this);
+  CFWL_ScrollBar* sb = new CFWL_ScrollBar(m_pOwnerApp, std::move(prop), this);
   if (bVert)
     m_pVertScrollBar.reset(sb);
   else
@@ -1262,7 +1262,7 @@ bool IFWL_Edit::ValidateNumberChar(FX_WCHAR cNum) {
 void IFWL_Edit::InitCaret() {
   if (!m_pCaret) {
     if ((m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_InnerCaret)) {
-      m_pCaret.reset(new IFWL_Caret(
+      m_pCaret.reset(new CFWL_Caret(
           m_pOwnerApp, pdfium::MakeUnique<CFWL_WidgetProperties>(), this));
       m_pCaret->SetParent(this);
       m_pCaret->SetStates(m_pProperties->m_dwStates);
@@ -1344,7 +1344,7 @@ void IFWL_Edit::OnProcessEvent(CFWL_Event* pEvent) {
   if ((pSrcTarget == m_pVertScrollBar.get() && m_pVertScrollBar) ||
       (pSrcTarget == m_pHorzScrollBar.get() && m_pHorzScrollBar)) {
     CFWL_EvtScroll* pScrollEvent = static_cast<CFWL_EvtScroll*>(pEvent);
-    OnScroll(static_cast<IFWL_ScrollBar*>(pSrcTarget),
+    OnScroll(static_cast<CFWL_ScrollBar*>(pSrcTarget),
              pScrollEvent->m_iScrollCode, pScrollEvent->m_fPos);
   }
 }
@@ -1593,7 +1593,7 @@ void IFWL_Edit::OnChar(CFWL_MsgKey* pMsg) {
     ProcessInsertError(iError);
 }
 
-bool IFWL_Edit::OnScroll(IFWL_ScrollBar* pScrollBar,
+bool IFWL_Edit::OnScroll(CFWL_ScrollBar* pScrollBar,
                          FWL_SCBCODE dwCode,
                          FX_FLOAT fPos) {
   CFX_SizeF fs;

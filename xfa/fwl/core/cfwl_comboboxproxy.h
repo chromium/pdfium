@@ -4,24 +4,24 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FWL_CORE_IFWL_COMBOBOXPROXY_H_
-#define XFA_FWL_CORE_IFWL_COMBOBOXPROXY_H_
+#ifndef XFA_FWL_CORE_CFWL_COMBOBOXPROXY_H_
+#define XFA_FWL_CORE_CFWL_COMBOBOXPROXY_H_
 
 #include <memory>
 
-#include "xfa/fwl/core/ifwl_formproxy.h"
+#include "xfa/fwl/core/cfwl_formproxy.h"
 
 class IFWL_ComboBox;
 
-class IFWL_ComboBoxProxy : public IFWL_FormProxy {
+class CFWL_ComboBoxProxy : public CFWL_FormProxy {
  public:
-  IFWL_ComboBoxProxy(IFWL_ComboBox* pCombobBox,
+  CFWL_ComboBoxProxy(IFWL_ComboBox* pCombobBox,
                      const CFWL_App* app,
                      std::unique_ptr<CFWL_WidgetProperties> properties,
                      IFWL_Widget* pOuter);
-  ~IFWL_ComboBoxProxy() override;
+  ~CFWL_ComboBoxProxy() override;
 
-  // IFWL_FormProxy
+  // CFWL_FormProxy
   void OnProcessMessage(CFWL_Message* pMessage) override;
   void OnDrawWidget(CFX_Graphics* pGraphics,
                     const CFX_Matrix* pMatrix) override;
@@ -38,4 +38,4 @@ class IFWL_ComboBoxProxy : public IFWL_FormProxy {
   IFWL_ComboBox* m_pComboBox;
 };
 
-#endif  // XFA_FWL_CORE_IFWL_COMBOBOXPROXY_H_
+#endif  // XFA_FWL_CORE_CFWL_COMBOBOXPROXY_H_

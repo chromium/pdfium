@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fwl/core/ifwl_comboedit.h"
+#include "xfa/fwl/core/cfwl_comboedit.h"
 
 #include <memory>
 #include <utility>
@@ -13,7 +13,7 @@
 #include "xfa/fwl/core/cfwl_msgmouse.h"
 #include "xfa/fwl/core/ifwl_combobox.h"
 
-IFWL_ComboEdit::IFWL_ComboEdit(
+CFWL_ComboEdit::CFWL_ComboEdit(
     const CFWL_App* app,
     std::unique_ptr<CFWL_WidgetProperties> properties,
     IFWL_Widget* pOuter)
@@ -21,18 +21,18 @@ IFWL_ComboEdit::IFWL_ComboEdit(
   m_pOuter = static_cast<IFWL_ComboBox*>(pOuter);
 }
 
-void IFWL_ComboEdit::ClearSelected() {
+void CFWL_ComboEdit::ClearSelected() {
   ClearSelections();
   Repaint(&GetRTClient());
 }
 
-void IFWL_ComboEdit::SetSelected() {
+void CFWL_ComboEdit::SetSelected() {
   FlagFocus(true);
   GetTxtEdtEngine()->MoveCaretPos(MC_End);
   AddSelRange(0);
 }
 
-void IFWL_ComboEdit::FlagFocus(bool bSet) {
+void CFWL_ComboEdit::FlagFocus(bool bSet) {
   if (bSet) {
     m_pProperties->m_dwStates |= FWL_WGTSTATE_Focused;
     return;
@@ -42,7 +42,7 @@ void IFWL_ComboEdit::FlagFocus(bool bSet) {
   ShowCaret(false);
 }
 
-void IFWL_ComboEdit::OnProcessMessage(CFWL_Message* pMessage) {
+void CFWL_ComboEdit::OnProcessMessage(CFWL_Message* pMessage) {
   if (!pMessage)
     return;
 

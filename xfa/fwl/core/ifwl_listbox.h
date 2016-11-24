@@ -107,7 +107,7 @@ class IFWL_ListBox : public IFWL_Widget {
   bool ScrollToVisible(CFWL_ListItem* hItem);
   void InitScrollBar(bool bVert = true);
   bool IsShowScrollBar(bool bVert);
-  IFWL_ScrollBar* GetVertScrollBar() const { return m_pVertScrollBar.get(); }
+  CFWL_ScrollBar* GetVertScrollBar() const { return m_pVertScrollBar.get(); }
   const CFX_RectF& GetRTClient() const { return m_rtClient; }
 
  private:
@@ -148,13 +148,13 @@ class IFWL_ListBox : public IFWL_Widget {
   void OnMouseWheel(CFWL_MsgMouseWheel* pMsg);
   void OnKeyDown(CFWL_MsgKey* pMsg);
   void OnVK(CFWL_ListItem* hItem, bool bShift, bool bCtrl);
-  bool OnScroll(IFWL_ScrollBar* pScrollBar, FWL_SCBCODE dwCode, FX_FLOAT fPos);
+  bool OnScroll(CFWL_ScrollBar* pScrollBar, FWL_SCBCODE dwCode, FX_FLOAT fPos);
 
   CFX_RectF m_rtClient;
   CFX_RectF m_rtStatic;
   CFX_RectF m_rtConent;
-  std::unique_ptr<IFWL_ScrollBar> m_pHorzScrollBar;
-  std::unique_ptr<IFWL_ScrollBar> m_pVertScrollBar;
+  std::unique_ptr<CFWL_ScrollBar> m_pHorzScrollBar;
+  std::unique_ptr<CFWL_ScrollBar> m_pVertScrollBar;
   uint32_t m_dwTTOStyles;
   int32_t m_iTTOAligns;
   CFWL_ListItem* m_hAnchor;

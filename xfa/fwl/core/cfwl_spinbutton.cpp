@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fwl/core/ifwl_spinbutton.h"
+#include "xfa/fwl/core/cfwl_spinbutton.h"
 
 #include <memory>
 #include <utility>
@@ -27,7 +27,7 @@ const int kElapseTime = 200;
 
 }  // namespace
 
-IFWL_SpinButton::IFWL_SpinButton(
+CFWL_SpinButton::CFWL_SpinButton(
     const CFWL_App* app,
     std::unique_ptr<CFWL_WidgetProperties> properties)
     : IFWL_Widget(app, std::move(properties), nullptr),
@@ -43,13 +43,13 @@ IFWL_SpinButton::IFWL_SpinButton(
   m_pProperties->m_dwStyleExes |= FWL_STYLEEXE_SPB_Vert;
 }
 
-IFWL_SpinButton::~IFWL_SpinButton() {}
+CFWL_SpinButton::~CFWL_SpinButton() {}
 
-FWL_Type IFWL_SpinButton::GetClassID() const {
+FWL_Type CFWL_SpinButton::GetClassID() const {
   return FWL_Type::SpinButton;
 }
 
-void IFWL_SpinButton::GetWidgetRect(CFX_RectF& rect, bool bAutoSize) {
+void CFWL_SpinButton::GetWidgetRect(CFX_RectF& rect, bool bAutoSize) {
   if (!bAutoSize) {
     rect = m_pProperties->m_rtWidget;
     return;
@@ -59,7 +59,7 @@ void IFWL_SpinButton::GetWidgetRect(CFX_RectF& rect, bool bAutoSize) {
   IFWL_Widget::GetWidgetRect(rect, true);
 }
 
-void IFWL_SpinButton::Update() {
+void CFWL_SpinButton::Update() {
   if (IsLocked())
     return;
 
@@ -77,7 +77,7 @@ void IFWL_SpinButton::Update() {
   }
 }
 
-FWL_WidgetHit IFWL_SpinButton::HitTest(FX_FLOAT fx, FX_FLOAT fy) {
+FWL_WidgetHit CFWL_SpinButton::HitTest(FX_FLOAT fx, FX_FLOAT fy) {
   if (m_rtClient.Contains(fx, fy))
     return FWL_WidgetHit::Client;
   if (HasBorder() && (m_rtClient.Contains(fx, fy)))
@@ -95,7 +95,7 @@ FWL_WidgetHit IFWL_SpinButton::HitTest(FX_FLOAT fx, FX_FLOAT fy) {
   return FWL_WidgetHit::Unknown;
 }
 
-void IFWL_SpinButton::DrawWidget(CFX_Graphics* pGraphics,
+void CFWL_SpinButton::DrawWidget(CFX_Graphics* pGraphics,
                                  const CFX_Matrix* pMatrix) {
   if (!pGraphics)
     return;
@@ -114,20 +114,20 @@ void IFWL_SpinButton::DrawWidget(CFX_Graphics* pGraphics,
   DrawDownButton(pGraphics, pTheme, pMatrix);
 }
 
-void IFWL_SpinButton::EnableButton(bool bEnable, bool bUp) {
+void CFWL_SpinButton::EnableButton(bool bEnable, bool bUp) {
   if (bUp)
     m_dwUpState = bEnable ? CFWL_PartState_Normal : CFWL_PartState_Disabled;
   else
     m_dwDnState = bEnable ? CFWL_PartState_Normal : CFWL_PartState_Disabled;
 }
 
-bool IFWL_SpinButton::IsButtonEnabled(bool bUp) {
+bool CFWL_SpinButton::IsButtonEnabled(bool bUp) {
   if (bUp)
     return (m_dwUpState != CFWL_PartState_Disabled);
   return (m_dwDnState != CFWL_PartState_Disabled);
 }
 
-void IFWL_SpinButton::DrawUpButton(CFX_Graphics* pGraphics,
+void CFWL_SpinButton::DrawUpButton(CFX_Graphics* pGraphics,
                                    IFWL_ThemeProvider* pTheme,
                                    const CFX_Matrix* pMatrix) {
   CFWL_ThemeBackground params;
@@ -142,7 +142,7 @@ void IFWL_SpinButton::DrawUpButton(CFX_Graphics* pGraphics,
   pTheme->DrawBackground(&params);
 }
 
-void IFWL_SpinButton::DrawDownButton(CFX_Graphics* pGraphics,
+void CFWL_SpinButton::DrawDownButton(CFX_Graphics* pGraphics,
                                      IFWL_ThemeProvider* pTheme,
                                      const CFX_Matrix* pMatrix) {
   CFWL_ThemeBackground params;
@@ -157,7 +157,7 @@ void IFWL_SpinButton::DrawDownButton(CFX_Graphics* pGraphics,
   pTheme->DrawBackground(&params);
 }
 
-void IFWL_SpinButton::OnProcessMessage(CFWL_Message* pMessage) {
+void CFWL_SpinButton::OnProcessMessage(CFWL_Message* pMessage) {
   if (!pMessage)
     return;
 
@@ -203,12 +203,12 @@ void IFWL_SpinButton::OnProcessMessage(CFWL_Message* pMessage) {
   IFWL_Widget::OnProcessMessage(pMessage);
 }
 
-void IFWL_SpinButton::OnDrawWidget(CFX_Graphics* pGraphics,
+void CFWL_SpinButton::OnDrawWidget(CFX_Graphics* pGraphics,
                                    const CFX_Matrix* pMatrix) {
   DrawWidget(pGraphics, pMatrix);
 }
 
-void IFWL_SpinButton::OnFocusChanged(CFWL_Message* pMsg, bool bSet) {
+void CFWL_SpinButton::OnFocusChanged(CFWL_Message* pMsg, bool bSet) {
   if (bSet)
     m_pProperties->m_dwStates |= (FWL_WGTSTATE_Focused);
   else
@@ -217,7 +217,7 @@ void IFWL_SpinButton::OnFocusChanged(CFWL_Message* pMsg, bool bSet) {
   Repaint(&m_rtClient);
 }
 
-void IFWL_SpinButton::OnLButtonDown(CFWL_MsgMouse* pMsg) {
+void CFWL_SpinButton::OnLButtonDown(CFWL_MsgMouse* pMsg) {
   m_bLButtonDwn = true;
   SetGrab(true);
   SetFocus(true);
@@ -245,7 +245,7 @@ void IFWL_SpinButton::OnLButtonDown(CFWL_MsgMouse* pMsg) {
   m_pTimerInfo = m_Timer.StartTimer(kElapseTime, true);
 }
 
-void IFWL_SpinButton::OnLButtonUp(CFWL_MsgMouse* pMsg) {
+void CFWL_SpinButton::OnLButtonUp(CFWL_MsgMouse* pMsg) {
   if (m_pProperties->m_dwStates & CFWL_PartState_Disabled)
     return;
 
@@ -271,7 +271,7 @@ void IFWL_SpinButton::OnLButtonUp(CFWL_MsgMouse* pMsg) {
     Repaint(&rtInvalidate);
 }
 
-void IFWL_SpinButton::OnMouseMove(CFWL_MsgMouse* pMsg) {
+void CFWL_SpinButton::OnMouseMove(CFWL_MsgMouse* pMsg) {
   if (m_bLButtonDwn)
     return;
 
@@ -335,7 +335,7 @@ void IFWL_SpinButton::OnMouseMove(CFWL_MsgMouse* pMsg) {
     Repaint(&rtInvlidate);
 }
 
-void IFWL_SpinButton::OnMouseLeave(CFWL_MsgMouse* pMsg) {
+void CFWL_SpinButton::OnMouseLeave(CFWL_MsgMouse* pMsg) {
   if (!pMsg)
     return;
   if (m_dwUpState != CFWL_PartState_Normal && IsButtonEnabled(true))
@@ -346,7 +346,7 @@ void IFWL_SpinButton::OnMouseLeave(CFWL_MsgMouse* pMsg) {
   Repaint(&m_rtClient);
 }
 
-void IFWL_SpinButton::OnKeyDown(CFWL_MsgKey* pMsg) {
+void CFWL_SpinButton::OnKeyDown(CFWL_MsgKey* pMsg) {
   bool bUp =
       pMsg->m_dwKeyCode == FWL_VKEY_Up || pMsg->m_dwKeyCode == FWL_VKEY_Left;
   bool bDown =
@@ -366,11 +366,11 @@ void IFWL_SpinButton::OnKeyDown(CFWL_MsgKey* pMsg) {
   Repaint(bUpEnable ? &m_rtUpButton : &m_rtDnButton);
 }
 
-IFWL_SpinButton::Timer::Timer(IFWL_SpinButton* pToolTip)
+CFWL_SpinButton::Timer::Timer(CFWL_SpinButton* pToolTip)
     : CFWL_Timer(pToolTip) {}
 
-void IFWL_SpinButton::Timer::Run(CFWL_TimerInfo* pTimerInfo) {
-  IFWL_SpinButton* pButton = static_cast<IFWL_SpinButton*>(m_pWidget);
+void CFWL_SpinButton::Timer::Run(CFWL_TimerInfo* pTimerInfo) {
+  CFWL_SpinButton* pButton = static_cast<CFWL_SpinButton*>(m_pWidget);
 
   if (!pButton->m_pTimerInfo)
     return;

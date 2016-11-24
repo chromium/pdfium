@@ -14,8 +14,8 @@
 #include "xfa/fde/cfde_txtedtengine.h"
 #include "xfa/fde/ifde_txtedtdorecord.h"
 #include "xfa/fwl/core/cfwl_event.h"
+#include "xfa/fwl/core/cfwl_scrollbar.h"
 #include "xfa/fwl/core/cfwl_widget.h"
-#include "xfa/fwl/core/ifwl_scrollbar.h"
 #include "xfa/fwl/core/ifwl_widget.h"
 #include "xfa/fxgraphics/cfx_path.h"
 
@@ -55,7 +55,7 @@ class IFDE_TxtEdtDoRecord;
 class IFWL_Edit;
 class CFWL_MsgMouse;
 class CFWL_WidgetProperties;
-class IFWL_Caret;
+class CFWL_Caret;
 
 class IFWL_Edit : public IFWL_Widget {
  public:
@@ -137,10 +137,10 @@ class IFWL_Edit : public IFWL_Widget {
   void UpdateEditParams();
   void UpdateEditLayout();
   bool UpdateOffset();
-  bool UpdateOffset(IFWL_ScrollBar* pScrollBar, FX_FLOAT fPosChanged);
+  bool UpdateOffset(CFWL_ScrollBar* pScrollBar, FX_FLOAT fPosChanged);
   void UpdateVAlignment();
   void UpdateCaret();
-  IFWL_ScrollBar* UpdateScroll();
+  CFWL_ScrollBar* UpdateScroll();
   void Layout();
   void LayoutScrollBar();
   void DeviceToEngine(CFX_PointF& pt);
@@ -169,7 +169,7 @@ class IFWL_Edit : public IFWL_Widget {
   void OnMouseMove(CFWL_MsgMouse* pMsg);
   void OnKeyDown(CFWL_MsgKey* pMsg);
   void OnChar(CFWL_MsgKey* pMsg);
-  bool OnScroll(IFWL_ScrollBar* pScrollBar, FWL_SCBCODE dwCode, FX_FLOAT fPos);
+  bool OnScroll(CFWL_ScrollBar* pScrollBar, FWL_SCBCODE dwCode, FX_FLOAT fPos);
 
   CFX_RectF m_rtClient;
   CFX_RectF m_rtEngine;
@@ -184,9 +184,9 @@ class IFWL_Edit : public IFWL_Widget {
   FX_FLOAT m_fFontSize;
   bool m_bSetRange;
   int32_t m_iMax;
-  std::unique_ptr<IFWL_ScrollBar> m_pVertScrollBar;
-  std::unique_ptr<IFWL_ScrollBar> m_pHorzScrollBar;
-  std::unique_ptr<IFWL_Caret> m_pCaret;
+  std::unique_ptr<CFWL_ScrollBar> m_pVertScrollBar;
+  std::unique_ptr<CFWL_ScrollBar> m_pHorzScrollBar;
+  std::unique_ptr<CFWL_Caret> m_pCaret;
   CFX_WideString m_wsCache;
   CFX_WideString m_wsFont;
   std::deque<std::unique_ptr<IFDE_TxtEdtDoRecord>> m_DoRecords;

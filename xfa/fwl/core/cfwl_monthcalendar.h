@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FWL_CORE_IFWL_MONTHCALENDAR_H_
-#define XFA_FWL_CORE_IFWL_MONTHCALENDAR_H_
+#ifndef XFA_FWL_CORE_CFWL_MONTHCALENDAR_H_
+#define XFA_FWL_CORE_CFWL_MONTHCALENDAR_H_
 
 #include <memory>
 
@@ -26,12 +26,12 @@
 class CFWL_MsgMouse;
 class IFWL_Widget;
 
-class IFWL_MonthCalendar : public IFWL_Widget {
+class CFWL_MonthCalendar : public IFWL_Widget {
  public:
-  IFWL_MonthCalendar(const CFWL_App* app,
+  CFWL_MonthCalendar(const CFWL_App* app,
                      std::unique_ptr<CFWL_WidgetProperties> properties,
                      IFWL_Widget* pOuter);
-  ~IFWL_MonthCalendar() override;
+  ~CFWL_MonthCalendar() override;
 
   // FWL_WidgetImp
   FWL_Type GetClassID() const override;
@@ -225,4 +225,4 @@ class IFWL_MonthCalendar : public IFWL_Widget {
   bool m_bFlag;
 };
 
-#endif  // XFA_FWL_CORE_IFWL_MONTHCALENDAR_H_
+#endif  // XFA_FWL_CORE_CFWL_MONTHCALENDAR_H_

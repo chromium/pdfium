@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fwl/core/ifwl_caret.h"
+#include "xfa/fwl/core/cfwl_caret.h"
 
 #include <utility>
 
@@ -21,29 +21,29 @@ const uint32_t kFrequency = 400;
 
 }  // namespace
 
-IFWL_Caret::IFWL_Caret(const CFWL_App* app,
+CFWL_Caret::CFWL_Caret(const CFWL_App* app,
                        std::unique_ptr<CFWL_WidgetProperties> properties,
                        IFWL_Widget* pOuter)
     : IFWL_Widget(app, std::move(properties), pOuter),
-      m_pTimer(new IFWL_Caret::Timer(this)),
+      m_pTimer(new CFWL_Caret::Timer(this)),
       m_pTimerInfo(nullptr) {
   SetStates(FWL_STATE_CAT_HightLight);
 }
 
-IFWL_Caret::~IFWL_Caret() {
+CFWL_Caret::~CFWL_Caret() {
   if (m_pTimerInfo) {
     m_pTimerInfo->StopTimer();
     m_pTimerInfo = nullptr;
   }
 }
 
-FWL_Type IFWL_Caret::GetClassID() const {
+FWL_Type CFWL_Caret::GetClassID() const {
   return FWL_Type::Caret;
 }
 
-void IFWL_Caret::Update() {}
+void CFWL_Caret::Update() {}
 
-void IFWL_Caret::DrawWidget(CFX_Graphics* pGraphics,
+void CFWL_Caret::DrawWidget(CFX_Graphics* pGraphics,
                             const CFX_Matrix* pMatrix) {
   if (!pGraphics)
     return;
@@ -55,7 +55,7 @@ void IFWL_Caret::DrawWidget(CFX_Graphics* pGraphics,
   DrawCaretBK(pGraphics, m_pProperties->m_pThemeProvider, pMatrix);
 }
 
-void IFWL_Caret::ShowCaret(bool bFlag) {
+void CFWL_Caret::ShowCaret(bool bFlag) {
   if (m_pTimerInfo) {
     m_pTimerInfo->StopTimer();
     m_pTimerInfo = nullptr;
@@ -66,7 +66,7 @@ void IFWL_Caret::ShowCaret(bool bFlag) {
   SetStates(FWL_WGTSTATE_Invisible, !bFlag);
 }
 
-void IFWL_Caret::DrawCaretBK(CFX_Graphics* pGraphics,
+void CFWL_Caret::DrawCaretBK(CFX_Graphics* pGraphics,
                              IFWL_ThemeProvider* pTheme,
                              const CFX_Matrix* pMatrix) {
   if (!(m_pProperties->m_dwStates & FWL_STATE_CAT_HightLight))
@@ -87,17 +87,17 @@ void IFWL_Caret::DrawCaretBK(CFX_Graphics* pGraphics,
   pTheme->DrawBackground(&param);
 }
 
-void IFWL_Caret::OnProcessMessage(CFWL_Message* pMessage) {}
+void CFWL_Caret::OnProcessMessage(CFWL_Message* pMessage) {}
 
-void IFWL_Caret::OnDrawWidget(CFX_Graphics* pGraphics,
+void CFWL_Caret::OnDrawWidget(CFX_Graphics* pGraphics,
                               const CFX_Matrix* pMatrix) {
   DrawWidget(pGraphics, pMatrix);
 }
 
-IFWL_Caret::Timer::Timer(IFWL_Caret* pCaret) : CFWL_Timer(pCaret) {}
+CFWL_Caret::Timer::Timer(CFWL_Caret* pCaret) : CFWL_Timer(pCaret) {}
 
-void IFWL_Caret::Timer::Run(CFWL_TimerInfo* pTimerInfo) {
-  IFWL_Caret* pCaret = static_cast<IFWL_Caret*>(m_pWidget);
+void CFWL_Caret::Timer::Run(CFWL_TimerInfo* pTimerInfo) {
+  CFWL_Caret* pCaret = static_cast<CFWL_Caret*>(m_pWidget);
   pCaret->SetStates(FWL_STATE_CAT_HightLight,
                     !(pCaret->GetStates() & FWL_STATE_CAT_HightLight));
 

@@ -748,7 +748,7 @@ void IFWL_ListBox::InitScrollBar(bool bVert) {
   prop->m_dwStates = FWL_WGTSTATE_Invisible;
   prop->m_pParent = this;
   prop->m_pThemeProvider = m_pScrollBarTP;
-  IFWL_ScrollBar* sb = new IFWL_ScrollBar(m_pOwnerApp, std::move(prop), this);
+  CFWL_ScrollBar* sb = new CFWL_ScrollBar(m_pOwnerApp, std::move(prop), this);
   if (bVert)
     m_pVertScrollBar.reset(sb);
   else
@@ -756,7 +756,7 @@ void IFWL_ListBox::InitScrollBar(bool bVert) {
 }
 
 bool IFWL_ListBox::IsShowScrollBar(bool bVert) {
-  IFWL_ScrollBar* pScrollbar =
+  CFWL_ScrollBar* pScrollbar =
       bVert ? m_pVertScrollBar.get() : m_pHorzScrollBar.get();
   if (!pScrollbar || (pScrollbar->GetStates() & FWL_WGTSTATE_Invisible))
     return false;
@@ -818,7 +818,7 @@ void IFWL_ListBox::OnProcessEvent(CFWL_Event* pEvent) {
   if ((pSrcTarget == m_pVertScrollBar.get() && m_pVertScrollBar) ||
       (pSrcTarget == m_pHorzScrollBar.get() && m_pHorzScrollBar)) {
     CFWL_EvtScroll* pScrollEvent = static_cast<CFWL_EvtScroll*>(pEvent);
-    OnScroll(static_cast<IFWL_ScrollBar*>(pSrcTarget),
+    OnScroll(static_cast<CFWL_ScrollBar*>(pSrcTarget),
              pScrollEvent->m_iScrollCode, pScrollEvent->m_fPos);
   }
 }
@@ -947,7 +947,7 @@ void IFWL_ListBox::OnVK(CFWL_ListItem* pItem, bool bShift, bool bCtrl) {
   Repaint(&rtInvalidate);
 }
 
-bool IFWL_ListBox::OnScroll(IFWL_ScrollBar* pScrollBar,
+bool IFWL_ListBox::OnScroll(CFWL_ScrollBar* pScrollBar,
                             FWL_SCBCODE dwCode,
                             FX_FLOAT fPos) {
   CFX_SizeF fs;

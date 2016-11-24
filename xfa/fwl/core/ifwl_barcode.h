@@ -9,8 +9,8 @@
 
 #include <memory>
 
+#include "xfa/fwl/core/cfwl_scrollbar.h"
 #include "xfa/fwl/core/ifwl_edit.h"
-#include "xfa/fwl/core/ifwl_scrollbar.h"
 #include "xfa/fwl/core/ifwl_widget.h"
 #include "xfa/fxbarcode/BC_Library.h"
 

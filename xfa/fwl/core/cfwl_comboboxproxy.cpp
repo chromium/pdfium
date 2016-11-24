@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fwl/core/ifwl_comboboxproxy.h"
+#include "xfa/fwl/core/cfwl_comboboxproxy.h"
 
 #include <memory>
 #include <utility>
@@ -15,19 +15,19 @@
 #include "xfa/fwl/core/cfwl_notedriver.h"
 #include "xfa/fwl/core/ifwl_combobox.h"
 
-IFWL_ComboBoxProxy::IFWL_ComboBoxProxy(
+CFWL_ComboBoxProxy::CFWL_ComboBoxProxy(
     IFWL_ComboBox* pComboBox,
     const CFWL_App* app,
     std::unique_ptr<CFWL_WidgetProperties> properties,
     IFWL_Widget* pOuter)
-    : IFWL_FormProxy(app, std::move(properties), pOuter),
+    : CFWL_FormProxy(app, std::move(properties), pOuter),
       m_bLButtonDown(false),
       m_bLButtonUpSelf(false),
       m_pComboBox(pComboBox) {}
 
-IFWL_ComboBoxProxy::~IFWL_ComboBoxProxy() {}
+CFWL_ComboBoxProxy::~CFWL_ComboBoxProxy() {}
 
-void IFWL_ComboBoxProxy::OnProcessMessage(CFWL_Message* pMessage) {
+void CFWL_ComboBoxProxy::OnProcessMessage(CFWL_Message* pMessage) {
   if (!pMessage)
     return;
 
@@ -58,12 +58,12 @@ void IFWL_ComboBoxProxy::OnProcessMessage(CFWL_Message* pMessage) {
   IFWL_Widget::OnProcessMessage(pMessage);
 }
 
-void IFWL_ComboBoxProxy::OnDrawWidget(CFX_Graphics* pGraphics,
+void CFWL_ComboBoxProxy::OnDrawWidget(CFX_Graphics* pGraphics,
                                       const CFX_Matrix* pMatrix) {
   m_pComboBox->DrawStretchHandler(pGraphics, pMatrix);
 }
 
-void IFWL_ComboBoxProxy::OnLButtonDown(CFWL_Message* pMessage) {
+void CFWL_ComboBoxProxy::OnLButtonDown(CFWL_Message* pMessage) {
   const CFWL_App* pApp = GetOwnerApp();
   if (!pApp)
     return;
@@ -85,7 +85,7 @@ void IFWL_ComboBoxProxy::OnLButtonDown(CFWL_Message* pMessage) {
   }
 }
 
-void IFWL_ComboBoxProxy::OnLButtonUp(CFWL_Message* pMessage) {
+void CFWL_ComboBoxProxy::OnLButtonUp(CFWL_Message* pMessage) {
   m_bLButtonDown = false;
   const CFWL_App* pApp = GetOwnerApp();
   if (!pApp)
@@ -109,7 +109,7 @@ void IFWL_ComboBoxProxy::OnLButtonUp(CFWL_Message* pMessage) {
   }
 }
 
-void IFWL_ComboBoxProxy::OnFocusChanged(CFWL_Message* pMessage, bool bSet) {
+void CFWL_ComboBoxProxy::OnFocusChanged(CFWL_Message* pMessage, bool bSet) {
   if (bSet)
     return;
 

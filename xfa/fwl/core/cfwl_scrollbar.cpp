@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fwl/core/ifwl_scrollbar.h"
+#include "xfa/fwl/core/cfwl_scrollbar.h"
 
 #include <algorithm>
 #include <memory>
@@ -22,7 +22,7 @@
 #define FWL_SCROLLBAR_Elapse 500
 #define FWL_SCROLLBAR_MinThumb 5
 
-IFWL_ScrollBar::IFWL_ScrollBar(
+CFWL_ScrollBar::CFWL_ScrollBar(
     const CFWL_App* app,
     std::unique_ptr<CFWL_WidgetProperties> properties,
     IFWL_Widget* pOuter)
@@ -56,13 +56,13 @@ IFWL_ScrollBar::IFWL_ScrollBar(
   m_rtMaxTrack.Reset();
 }
 
-IFWL_ScrollBar::~IFWL_ScrollBar() {}
+CFWL_ScrollBar::~CFWL_ScrollBar() {}
 
-FWL_Type IFWL_ScrollBar::GetClassID() const {
+FWL_Type CFWL_ScrollBar::GetClassID() const {
   return FWL_Type::ScrollBar;
 }
 
-void IFWL_ScrollBar::GetWidgetRect(CFX_RectF& rect, bool bAutoSize) {
+void CFWL_ScrollBar::GetWidgetRect(CFX_RectF& rect, bool bAutoSize) {
   if (!bAutoSize) {
     rect = m_pProperties->m_rtWidget;
     return;
@@ -80,7 +80,7 @@ void IFWL_ScrollBar::GetWidgetRect(CFX_RectF& rect, bool bAutoSize) {
   IFWL_Widget::GetWidgetRect(rect, true);
 }
 
-void IFWL_ScrollBar::Update() {
+void CFWL_ScrollBar::Update() {
   if (IsLocked())
     return;
   if (!m_pProperties->m_pThemeProvider)
@@ -89,7 +89,7 @@ void IFWL_ScrollBar::Update() {
   Layout();
 }
 
-void IFWL_ScrollBar::DrawWidget(CFX_Graphics* pGraphics,
+void CFWL_ScrollBar::DrawWidget(CFX_Graphics* pGraphics,
                                 const CFX_Matrix* pMatrix) {
   if (!pGraphics)
     return;
@@ -108,20 +108,20 @@ void IFWL_ScrollBar::DrawWidget(CFX_Graphics* pGraphics,
   DrawThumb(pGraphics, pTheme, pMatrix);
 }
 
-void IFWL_ScrollBar::SetTrackPos(FX_FLOAT fTrackPos) {
+void CFWL_ScrollBar::SetTrackPos(FX_FLOAT fTrackPos) {
   m_fTrackPos = fTrackPos;
   CalcThumbButtonRect(m_rtThumb);
   CalcMinTrackRect(m_rtMinTrack);
   CalcMaxTrackRect(m_rtMaxTrack);
 }
 
-bool IFWL_ScrollBar::DoScroll(FWL_SCBCODE dwCode, FX_FLOAT fPos) {
+bool CFWL_ScrollBar::DoScroll(FWL_SCBCODE dwCode, FX_FLOAT fPos) {
   if (dwCode == FWL_SCBCODE::None)
     return false;
   return OnScroll(dwCode, fPos);
 }
 
-void IFWL_ScrollBar::DrawTrack(CFX_Graphics* pGraphics,
+void CFWL_ScrollBar::DrawTrack(CFX_Graphics* pGraphics,
                                IFWL_ThemeProvider* pTheme,
                                bool bLower,
                                const CFX_Matrix* pMatrix) {
@@ -137,7 +137,7 @@ void IFWL_ScrollBar::DrawTrack(CFX_Graphics* pGraphics,
   pTheme->DrawBackground(&param);
 }
 
-void IFWL_ScrollBar::DrawArrowBtn(CFX_Graphics* pGraphics,
+void CFWL_ScrollBar::DrawArrowBtn(CFX_Graphics* pGraphics,
                                   IFWL_ThemeProvider* pTheme,
                                   bool bMinBtn,
                                   const CFX_Matrix* pMatrix) {
@@ -154,7 +154,7 @@ void IFWL_ScrollBar::DrawArrowBtn(CFX_Graphics* pGraphics,
     pTheme->DrawBackground(&param);
 }
 
-void IFWL_ScrollBar::DrawThumb(CFX_Graphics* pGraphics,
+void CFWL_ScrollBar::DrawThumb(CFX_Graphics* pGraphics,
                                IFWL_ThemeProvider* pTheme,
                                const CFX_Matrix* pMatrix) {
   CFWL_ThemeBackground param;
@@ -169,7 +169,7 @@ void IFWL_ScrollBar::DrawThumb(CFX_Graphics* pGraphics,
   pTheme->DrawBackground(&param);
 }
 
-void IFWL_ScrollBar::Layout() {
+void CFWL_ScrollBar::Layout() {
   IFWL_ThemeProvider* pTheme = m_pProperties->m_pThemeProvider;
   CFWL_ThemePart part;
   part.m_pWidget = this;
@@ -184,7 +184,7 @@ void IFWL_ScrollBar::Layout() {
   CalcMaxTrackRect(m_rtMaxTrack);
 }
 
-void IFWL_ScrollBar::CalcButtonLen() {
+void CFWL_ScrollBar::CalcButtonLen() {
   m_fButtonLen = IsVertical() ? m_rtClient.width : m_rtClient.height;
   FX_FLOAT fLength = IsVertical() ? m_rtClient.height : m_rtClient.width;
   if (fLength < m_fButtonLen * 2) {
@@ -195,14 +195,14 @@ void IFWL_ScrollBar::CalcButtonLen() {
   }
 }
 
-void IFWL_ScrollBar::CalcMinButtonRect(CFX_RectF& rect) {
+void CFWL_ScrollBar::CalcMinButtonRect(CFX_RectF& rect) {
   rect.left = m_rtClient.left;
   rect.top = m_rtClient.top;
   rect.width = IsVertical() ? m_rtClient.width : m_fButtonLen;
   rect.height = IsVertical() ? m_fButtonLen : m_rtClient.height;
 }
 
-void IFWL_ScrollBar::CalcMaxButtonRect(CFX_RectF& rect) {
+void CFWL_ScrollBar::CalcMaxButtonRect(CFX_RectF& rect) {
   rect.left =
       IsVertical() ? m_rtClient.left : m_rtClient.right() - m_fButtonLen;
   rect.top = IsVertical() ? m_rtClient.bottom() - m_fButtonLen : m_rtClient.top;
@@ -210,7 +210,7 @@ void IFWL_ScrollBar::CalcMaxButtonRect(CFX_RectF& rect) {
   rect.height = IsVertical() ? m_fButtonLen : m_rtClient.height;
 }
 
-void IFWL_ScrollBar::CalcThumbButtonRect(CFX_RectF& rect) {
+void CFWL_ScrollBar::CalcThumbButtonRect(CFX_RectF& rect) {
   if (!IsEnabled()) {
     m_rtThumb.Reset();
     return;
@@ -259,7 +259,7 @@ void IFWL_ScrollBar::CalcThumbButtonRect(CFX_RectF& rect) {
   rect.height = IsVertical() ? fThumbSize : rtClient.height;
 }
 
-void IFWL_ScrollBar::CalcMinTrackRect(CFX_RectF& rect) {
+void CFWL_ScrollBar::CalcMinTrackRect(CFX_RectF& rect) {
   if (m_bMinSize) {
     rect.Empty();
     return;
@@ -276,7 +276,7 @@ void IFWL_ScrollBar::CalcMinTrackRect(CFX_RectF& rect) {
   rect.height = bVertical ? iy : m_rtClient.height;
 }
 
-void IFWL_ScrollBar::CalcMaxTrackRect(CFX_RectF& rect) {
+void CFWL_ScrollBar::CalcMaxTrackRect(CFX_RectF& rect) {
   if (m_bMinSize) {
     rect.Empty();
     return;
@@ -291,7 +291,7 @@ void IFWL_ScrollBar::CalcMaxTrackRect(CFX_RectF& rect) {
   rect.height = bVertical ? m_rtClient.bottom() - iy : m_rtClient.height;
 }
 
-FX_FLOAT IFWL_ScrollBar::GetTrackPointPos(FX_FLOAT fx, FX_FLOAT fy) {
+FX_FLOAT CFWL_ScrollBar::GetTrackPointPos(FX_FLOAT fx, FX_FLOAT fy) {
   FX_FLOAT fDiffX = fx - m_cpTrackPointX;
   FX_FLOAT fDiffY = fy - m_cpTrackPointY;
   FX_FLOAT fRange = m_fRangeMax - m_fRangeMin;
@@ -309,7 +309,7 @@ FX_FLOAT IFWL_ScrollBar::GetTrackPointPos(FX_FLOAT fx, FX_FLOAT fy) {
   return std::min(std::max(fPos, m_fRangeMin), m_fRangeMax);
 }
 
-void IFWL_ScrollBar::GetTrackRect(CFX_RectF& rect, bool bLower) {
+void CFWL_ScrollBar::GetTrackRect(CFX_RectF& rect, bool bLower) {
   bool bDisabled = !!(m_pProperties->m_dwStates & FWL_WGTSTATE_Disabled);
   if (bDisabled) {
     rect = bLower ? m_rtMinTrack : m_rtMaxTrack;
@@ -349,7 +349,7 @@ void IFWL_ScrollBar::GetTrackRect(CFX_RectF& rect, bool bLower) {
            m_rtMaxTrack.height);
 }
 
-bool IFWL_ScrollBar::SendEvent() {
+bool CFWL_ScrollBar::SendEvent() {
   if (m_iMinButtonState == CFWL_PartState_Pressed) {
     DoScroll(FWL_SCBCODE::StepBackward, m_fTrackPos);
     return false;
@@ -374,7 +374,7 @@ bool IFWL_ScrollBar::SendEvent() {
   return true;
 }
 
-bool IFWL_ScrollBar::OnScroll(FWL_SCBCODE dwCode, FX_FLOAT fPos) {
+bool CFWL_ScrollBar::OnScroll(FWL_SCBCODE dwCode, FX_FLOAT fPos) {
   bool bRet = true;
   CFWL_EvtScroll ev;
   ev.m_iScrollCode = dwCode;
@@ -385,7 +385,7 @@ bool IFWL_ScrollBar::OnScroll(FWL_SCBCODE dwCode, FX_FLOAT fPos) {
   return bRet;
 }
 
-void IFWL_ScrollBar::OnProcessMessage(CFWL_Message* pMessage) {
+void CFWL_ScrollBar::OnProcessMessage(CFWL_Message* pMessage) {
   if (!pMessage)
     return;
 
@@ -415,12 +415,12 @@ void IFWL_ScrollBar::OnProcessMessage(CFWL_Message* pMessage) {
   }
 }
 
-void IFWL_ScrollBar::OnDrawWidget(CFX_Graphics* pGraphics,
+void CFWL_ScrollBar::OnDrawWidget(CFX_Graphics* pGraphics,
                                   const CFX_Matrix* pMatrix) {
   DrawWidget(pGraphics, pMatrix);
 }
 
-void IFWL_ScrollBar::OnLButtonDown(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) {
+void CFWL_ScrollBar::OnLButtonDown(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) {
   if (!IsEnabled())
     return;
 
@@ -444,7 +444,7 @@ void IFWL_ScrollBar::OnLButtonDown(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) {
     m_pTimerInfo = m_Timer.StartTimer(FWL_SCROLLBAR_Elapse, true);
 }
 
-void IFWL_ScrollBar::OnLButtonUp(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) {
+void CFWL_ScrollBar::OnLButtonUp(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) {
   m_pTimerInfo->StopTimer();
   m_bMouseDown = false;
   DoMouseUp(0, m_rtMinBtn, m_iMinButtonState, fx, fy);
@@ -455,7 +455,7 @@ void IFWL_ScrollBar::OnLButtonUp(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) {
   SetGrab(false);
 }
 
-void IFWL_ScrollBar::OnMouseMove(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) {
+void CFWL_ScrollBar::OnMouseMove(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) {
   DoMouseMove(0, m_rtMinBtn, m_iMinButtonState, fx, fy);
   DoMouseMove(1, m_rtThumb, m_iThumbButtonState, fx, fy);
   DoMouseMove(2, m_rtMaxBtn, m_iMaxButtonState, fx, fy);
@@ -463,7 +463,7 @@ void IFWL_ScrollBar::OnMouseMove(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) {
   DoMouseMove(4, m_rtMaxTrack, m_iMaxTrackState, fx, fy);
 }
 
-void IFWL_ScrollBar::OnMouseLeave() {
+void CFWL_ScrollBar::OnMouseLeave() {
   DoMouseLeave(0, m_rtMinBtn, m_iMinButtonState);
   DoMouseLeave(1, m_rtThumb, m_iThumbButtonState);
   DoMouseLeave(2, m_rtMaxBtn, m_iMaxButtonState);
@@ -471,7 +471,7 @@ void IFWL_ScrollBar::OnMouseLeave() {
   DoMouseLeave(4, m_rtMaxTrack, m_iMaxTrackState);
 }
 
-void IFWL_ScrollBar::OnMouseWheel(FX_FLOAT fx,
+void CFWL_ScrollBar::OnMouseWheel(FX_FLOAT fx,
                                   FX_FLOAT fy,
                                   uint32_t dwFlags,
                                   FX_FLOAT fDeltaX,
@@ -481,7 +481,7 @@ void IFWL_ScrollBar::OnMouseWheel(FX_FLOAT fx,
   m_iMouseWheel = 0;
 }
 
-void IFWL_ScrollBar::DoMouseDown(int32_t iItem,
+void CFWL_ScrollBar::DoMouseDown(int32_t iItem,
                                  const CFX_RectF& rtItem,
                                  int32_t& iState,
                                  FX_FLOAT fx,
@@ -495,7 +495,7 @@ void IFWL_ScrollBar::DoMouseDown(int32_t iItem,
   Repaint(&rtItem);
 }
 
-void IFWL_ScrollBar::DoMouseUp(int32_t iItem,
+void CFWL_ScrollBar::DoMouseUp(int32_t iItem,
                                const CFX_RectF& rtItem,
                                int32_t& iState,
                                FX_FLOAT fx,
@@ -510,7 +510,7 @@ void IFWL_ScrollBar::DoMouseUp(int32_t iItem,
   OnScroll(FWL_SCBCODE::EndScroll, m_fTrackPos);
 }
 
-void IFWL_ScrollBar::DoMouseMove(int32_t iItem,
+void CFWL_ScrollBar::DoMouseMove(int32_t iItem,
                                  const CFX_RectF& rtItem,
                                  int32_t& iState,
                                  FX_FLOAT fx,
@@ -530,7 +530,7 @@ void IFWL_ScrollBar::DoMouseMove(int32_t iItem,
   }
 }
 
-void IFWL_ScrollBar::DoMouseLeave(int32_t iItem,
+void CFWL_ScrollBar::DoMouseLeave(int32_t iItem,
                                   const CFX_RectF& rtItem,
                                   int32_t& iState) {
   if (iState == CFWL_PartState_Normal)
@@ -540,7 +540,7 @@ void IFWL_ScrollBar::DoMouseLeave(int32_t iItem,
   Repaint(&rtItem);
 }
 
-void IFWL_ScrollBar::DoMouseHover(int32_t iItem,
+void CFWL_ScrollBar::DoMouseHover(int32_t iItem,
                                   const CFX_RectF& rtItem,
                                   int32_t& iState) {
   if (iState == CFWL_PartState_Hovered)
@@ -550,10 +550,10 @@ void IFWL_ScrollBar::DoMouseHover(int32_t iItem,
   Repaint(&rtItem);
 }
 
-IFWL_ScrollBar::Timer::Timer(IFWL_ScrollBar* pToolTip) : CFWL_Timer(pToolTip) {}
+CFWL_ScrollBar::Timer::Timer(CFWL_ScrollBar* pToolTip) : CFWL_Timer(pToolTip) {}
 
-void IFWL_ScrollBar::Timer::Run(CFWL_TimerInfo* pTimerInfo) {
-  IFWL_ScrollBar* pButton = static_cast<IFWL_ScrollBar*>(m_pWidget);
+void CFWL_ScrollBar::Timer::Run(CFWL_TimerInfo* pTimerInfo) {
+  CFWL_ScrollBar* pButton = static_cast<CFWL_ScrollBar*>(m_pWidget);
 
   if (pButton->m_pTimerInfo)
     pButton->m_pTimerInfo->StopTimer();

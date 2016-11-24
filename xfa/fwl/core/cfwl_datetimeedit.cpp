@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fwl/core/ifwl_datetimeedit.h"
+#include "xfa/fwl/core/cfwl_datetimeedit.h"
 
 #include <memory>
 #include <utility>
@@ -14,13 +14,13 @@
 #include "xfa/fwl/core/cfwl_widgetmgr.h"
 #include "xfa/fwl/core/ifwl_datetimepicker.h"
 
-IFWL_DateTimeEdit::IFWL_DateTimeEdit(
+CFWL_DateTimeEdit::CFWL_DateTimeEdit(
     const CFWL_App* app,
     std::unique_ptr<CFWL_WidgetProperties> properties,
     IFWL_Widget* pOuter)
     : IFWL_Edit(app, std::move(properties), pOuter) {}
 
-void IFWL_DateTimeEdit::OnProcessMessage(CFWL_Message* pMessage) {
+void CFWL_DateTimeEdit::OnProcessMessage(CFWL_Message* pMessage) {
   if (m_pWidgetMgr->IsFormDisabled()) {
     DisForm_OnProcessMessage(pMessage);
     return;
@@ -34,7 +34,7 @@ void IFWL_DateTimeEdit::OnProcessMessage(CFWL_Message* pMessage) {
   }
 }
 
-void IFWL_DateTimeEdit::DisForm_OnProcessMessage(CFWL_Message* pMessage) {
+void CFWL_DateTimeEdit::DisForm_OnProcessMessage(CFWL_Message* pMessage) {
   CFWL_MessageType dwHashCode = pMessage->GetClassID();
   if (!m_pWidgetMgr->IsFormDisabled() ||
       dwHashCode != CFWL_MessageType::Mouse) {

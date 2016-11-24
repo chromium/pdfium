@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FWL_CORE_IFWL_FORM_H_
-#define XFA_FWL_CORE_IFWL_FORM_H_
+#ifndef XFA_FWL_CORE_CFWL_FORM_H_
+#define XFA_FWL_CORE_CFWL_FORM_H_
 
 #include <memory>
 
@@ -33,12 +33,12 @@ class IFWL_Widget;
 class IFWL_ThemeProvider;
 class CFWL_SysBtn;
 
-class IFWL_Form : public IFWL_Widget {
+class CFWL_Form : public IFWL_Widget {
  public:
-  IFWL_Form(const CFWL_App* app,
+  CFWL_Form(const CFWL_App* app,
             std::unique_ptr<CFWL_WidgetProperties> properties,
             IFWL_Widget* pOuter);
-  ~IFWL_Form() override;
+  ~CFWL_Form() override;
 
   // IFWL_Widget
   FWL_Type GetClassID() const override;
@@ -98,4 +98,4 @@ class IFWL_Form : public IFWL_Widget {
   bool m_bDoModalFlag;
 };
 
-#endif  // XFA_FWL_CORE_IFWL_FORM_H_
+#endif  // XFA_FWL_CORE_CFWL_FORM_H_

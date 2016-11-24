@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FWL_CORE_IFWL_CARET_H_
-#define XFA_FWL_CORE_IFWL_CARET_H_
+#ifndef XFA_FWL_CORE_CFWL_CARET_H_
+#define XFA_FWL_CORE_CFWL_CARET_H_
 
 #include <memory>
 
@@ -18,12 +18,12 @@ class IFWL_Widget;
 
 #define FWL_STATE_CAT_HightLight 1
 
-class IFWL_Caret : public IFWL_Widget {
+class CFWL_Caret : public IFWL_Widget {
  public:
-  IFWL_Caret(const CFWL_App* app,
+  CFWL_Caret(const CFWL_App* app,
              std::unique_ptr<CFWL_WidgetProperties> properties,
              IFWL_Widget* pOuter);
-  ~IFWL_Caret() override;
+  ~CFWL_Caret() override;
 
   // IFWL_Widget
   FWL_Type GetClassID() const override;
@@ -39,19 +39,19 @@ class IFWL_Caret : public IFWL_Widget {
  private:
   class Timer : public CFWL_Timer {
    public:
-    explicit Timer(IFWL_Caret* pCaret);
+    explicit Timer(CFWL_Caret* pCaret);
     ~Timer() override {}
 
     void Run(CFWL_TimerInfo* hTimer) override;
   };
-  friend class IFWL_Caret::Timer;
+  friend class CFWL_Caret::Timer;
 
   void DrawCaretBK(CFX_Graphics* pGraphics,
                    IFWL_ThemeProvider* pTheme,
                    const CFX_Matrix* pMatrix);
 
-  std::unique_ptr<IFWL_Caret::Timer> m_pTimer;
+  std::unique_ptr<CFWL_Caret::Timer> m_pTimer;
   CFWL_TimerInfo* m_pTimerInfo;  // not owned.
 };
 
-#endif  // XFA_FWL_CORE_IFWL_CARET_H_
+#endif  // XFA_FWL_CORE_CFWL_CARET_H_

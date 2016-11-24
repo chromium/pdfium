@@ -12,13 +12,13 @@
 #include "third_party/base/ptr_util.h"
 #include "xfa/fwl/core/cfwl_evteditchanged.h"
 #include "xfa/fwl/core/cfwl_evtselectchanged.h"
+#include "xfa/fwl/core/cfwl_formproxy.h"
 #include "xfa/fwl/core/cfwl_msgmouse.h"
 #include "xfa/fwl/core/cfwl_msgsetfocus.h"
 #include "xfa/fwl/core/cfwl_notedriver.h"
+#include "xfa/fwl/core/cfwl_spinbutton.h"
 #include "xfa/fwl/core/cfwl_themebackground.h"
 #include "xfa/fwl/core/cfwl_widgetmgr.h"
-#include "xfa/fwl/core/ifwl_formproxy.h"
-#include "xfa/fwl/core/ifwl_spinbutton.h"
 #include "xfa/fwl/core/ifwl_themeprovider.h"
 
 namespace {
@@ -47,7 +47,7 @@ IFWL_DateTimePicker::IFWL_DateTimePicker(
   monthProp->m_pParent = this;
   monthProp->m_pThemeProvider = m_pProperties->m_pThemeProvider;
   m_pMonthCal.reset(
-      new IFWL_MonthCalendar(m_pOwnerApp, std::move(monthProp), this));
+      new CFWL_MonthCalendar(m_pOwnerApp, std::move(monthProp), this));
 
   CFX_RectF rtMonthCal;
   m_pMonthCal->GetWidgetRect(rtMonthCal, true);
@@ -58,7 +58,7 @@ IFWL_DateTimePicker::IFWL_DateTimePicker(
   editProp->m_pParent = this;
   editProp->m_pThemeProvider = m_pProperties->m_pThemeProvider;
 
-  m_pEdit.reset(new IFWL_DateTimeEdit(m_pOwnerApp, std::move(editProp), this));
+  m_pEdit.reset(new CFWL_DateTimeEdit(m_pOwnerApp, std::move(editProp), this));
   RegisterEventTarget(m_pMonthCal.get());
   RegisterEventTarget(m_pEdit.get());
 }
@@ -371,7 +371,7 @@ void IFWL_DateTimePicker::InitProxyForm() {
   prop->m_dwStates = FWL_WGTSTATE_Invisible;
   prop->m_pOwner = this;
 
-  m_pForm = pdfium::MakeUnique<IFWL_FormProxy>(m_pOwnerApp, std::move(prop),
+  m_pForm = pdfium::MakeUnique<CFWL_FormProxy>(m_pOwnerApp, std::move(prop),
                                                m_pMonthCal.get());
   m_pMonthCal->SetParent(m_pForm.get());
 }

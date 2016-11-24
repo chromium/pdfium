@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FWL_CORE_IFWL_SCROLLBAR_H_
-#define XFA_FWL_CORE_IFWL_SCROLLBAR_H_
+#ifndef XFA_FWL_CORE_CFWL_SCROLLBAR_H_
+#define XFA_FWL_CORE_CFWL_SCROLLBAR_H_
 
 #include <memory>
 
@@ -20,12 +20,12 @@ class IFWL_Widget;
 #define FWL_STYLEEXT_SCB_Horz (0L << 0)
 #define FWL_STYLEEXT_SCB_Vert (1L << 0)
 
-class IFWL_ScrollBar : public IFWL_Widget {
+class CFWL_ScrollBar : public IFWL_Widget {
  public:
-  IFWL_ScrollBar(const CFWL_App* app,
+  CFWL_ScrollBar(const CFWL_App* app,
                  std::unique_ptr<CFWL_WidgetProperties> properties,
                  IFWL_Widget* pOuter);
-  ~IFWL_ScrollBar() override;
+  ~CFWL_ScrollBar() override;
 
   // IFWL_Widget
   FWL_Type GetClassID() const override;
@@ -58,12 +58,12 @@ class IFWL_ScrollBar : public IFWL_Widget {
  private:
   class Timer : public CFWL_Timer {
    public:
-    explicit Timer(IFWL_ScrollBar* pToolTip);
+    explicit Timer(CFWL_ScrollBar* pToolTip);
     ~Timer() override {}
 
     void Run(CFWL_TimerInfo* pTimerInfo) override;
   };
-  friend class IFWL_ScrollBar::Timer;
+  friend class CFWL_ScrollBar::Timer;
 
   bool IsVertical() const {
     return !!(m_pProperties->m_dwStyleExes & FWL_STYLEEXT_SCB_Vert);
@@ -144,7 +144,7 @@ class IFWL_ScrollBar : public IFWL_Widget {
   CFX_RectF m_rtMinTrack;
   CFX_RectF m_rtMaxTrack;
   FX_FLOAT m_fMinThumb;
-  IFWL_ScrollBar::Timer m_Timer;
+  CFWL_ScrollBar::Timer m_Timer;
 };
 
-#endif  // XFA_FWL_CORE_IFWL_SCROLLBAR_H_
+#endif  // XFA_FWL_CORE_CFWL_SCROLLBAR_H_

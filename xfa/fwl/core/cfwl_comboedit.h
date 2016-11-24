@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FWL_CORE_IFWL_COMBOEDIT_H_
-#define XFA_FWL_CORE_IFWL_COMBOEDIT_H_
+#ifndef XFA_FWL_CORE_CFWL_COMBOEDIT_H_
+#define XFA_FWL_CORE_CFWL_COMBOEDIT_H_
 
 #include <memory>
 
@@ -15,9 +15,9 @@
 
 class IFWL_ComboBox;
 
-class IFWL_ComboEdit : public IFWL_Edit {
+class CFWL_ComboEdit : public IFWL_Edit {
  public:
-  IFWL_ComboEdit(const CFWL_App* app,
+  CFWL_ComboEdit(const CFWL_App* app,
                  std::unique_ptr<CFWL_WidgetProperties> properties,
                  IFWL_Widget* pOuter);
 
@@ -32,4 +32,4 @@ class IFWL_ComboEdit : public IFWL_Edit {
   IFWL_ComboBox* m_pOuter;
 };
 
-#endif  // XFA_FWL_CORE_IFWL_COMBOEDIT_H_
+#endif  // XFA_FWL_CORE_CFWL_COMBOEDIT_H_

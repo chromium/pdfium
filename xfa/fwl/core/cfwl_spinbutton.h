@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FWL_CORE_IFWL_SPINBUTTON_H_
-#define XFA_FWL_CORE_IFWL_SPINBUTTON_H_
+#ifndef XFA_FWL_CORE_CFWL_SPINBUTTON_H_
+#define XFA_FWL_CORE_CFWL_SPINBUTTON_H_
 
 #include <memory>
 
@@ -19,11 +19,11 @@
 class CFWL_MsgMouse;
 class CFWL_WidgetProperties;
 
-class IFWL_SpinButton : public IFWL_Widget {
+class CFWL_SpinButton : public IFWL_Widget {
  public:
-  IFWL_SpinButton(const CFWL_App* app,
+  CFWL_SpinButton(const CFWL_App* app,
                   std::unique_ptr<CFWL_WidgetProperties> properties);
-  ~IFWL_SpinButton() override;
+  ~CFWL_SpinButton() override;
 
   // IFWL_Widget
   FWL_Type GetClassID() const override;
@@ -40,12 +40,12 @@ class IFWL_SpinButton : public IFWL_Widget {
  private:
   class Timer : public CFWL_Timer {
    public:
-    explicit Timer(IFWL_SpinButton* pToolTip);
+    explicit Timer(CFWL_SpinButton* pToolTip);
     ~Timer() override {}
 
     void Run(CFWL_TimerInfo* pTimerInfo) override;
   };
-  friend class IFWL_SpinButton::Timer;
+  friend class CFWL_SpinButton::Timer;
 
   void EnableButton(bool bEnable, bool bUp = true);
   bool IsButtonEnabled(bool bUp = true);
@@ -70,7 +70,7 @@ class IFWL_SpinButton : public IFWL_Widget {
   int32_t m_iButtonIndex;
   bool m_bLButtonDwn;
   CFWL_TimerInfo* m_pTimerInfo;
-  IFWL_SpinButton::Timer m_Timer;
+  CFWL_SpinButton::Timer m_Timer;
 };
 
-#endif  // XFA_FWL_CORE_IFWL_SPINBUTTON_H_
+#endif  // XFA_FWL_CORE_CFWL_SPINBUTTON_H_

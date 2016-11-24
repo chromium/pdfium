@@ -19,6 +19,7 @@
 #include "xfa/fwl/core/cfwl_evtpredropdown.h"
 #include "xfa/fwl/core/cfwl_evtselectchanged.h"
 #include "xfa/fwl/core/cfwl_evttextchanged.h"
+#include "xfa/fwl/core/cfwl_formproxy.h"
 #include "xfa/fwl/core/cfwl_msgkey.h"
 #include "xfa/fwl/core/cfwl_msgkillfocus.h"
 #include "xfa/fwl/core/cfwl_msgmouse.h"
@@ -28,7 +29,6 @@
 #include "xfa/fwl/core/cfwl_themepart.h"
 #include "xfa/fwl/core/cfwl_themetext.h"
 #include "xfa/fwl/core/cfwl_widgetmgr.h"
-#include "xfa/fwl/core/ifwl_formproxy.h"
 #include "xfa/fwl/core/ifwl_listbox.h"
 #include "xfa/fwl/core/ifwl_themeprovider.h"
 
@@ -56,10 +56,10 @@ IFWL_ComboBox::IFWL_ComboBox(const CFWL_App* app,
   if (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_CMB_ListItemIconText)
     prop->m_dwStyleExes |= FWL_STYLEEXT_LTB_Icon;
   m_pListBox =
-      pdfium::MakeUnique<IFWL_ComboList>(m_pOwnerApp, std::move(prop), this);
+      pdfium::MakeUnique<CFWL_ComboList>(m_pOwnerApp, std::move(prop), this);
 
   if ((m_pProperties->m_dwStyleExes & FWL_STYLEEXT_CMB_DropDown) && !m_pEdit) {
-    m_pEdit.reset(new IFWL_ComboEdit(
+    m_pEdit.reset(new CFWL_ComboEdit(
         m_pOwnerApp, pdfium::MakeUnique<CFWL_WidgetProperties>(), this));
     m_pEdit->SetOuter(this);
   }
@@ -122,7 +122,7 @@ void IFWL_ComboBox::ModifyStylesEx(uint32_t dwStylesExAdded,
   bool bAddDropDown = !!(dwStylesExAdded & FWL_STYLEEXT_CMB_DropDown);
   bool bRemoveDropDown = !!(dwStylesExRemoved & FWL_STYLEEXT_CMB_DropDown);
   if (bAddDropDown && !m_pEdit) {
-    m_pEdit = pdfium::MakeUnique<IFWL_ComboEdit>(
+    m_pEdit = pdfium::MakeUnique<CFWL_ComboEdit>(
         m_pOwnerApp, pdfium::MakeUnique<CFWL_WidgetProperties>(), nullptr);
     m_pEdit->SetOuter(this);
     m_pEdit->SetParent(this);
@@ -581,7 +581,7 @@ void IFWL_ComboBox::InitProxyForm() {
 
   // TODO(dsinclair): Does this leak? I don't see a delete, but I'm not sure
   // if the SetParent call is going to transfer ownership.
-  m_pComboBoxProxy = new IFWL_ComboBoxProxy(this, m_pOwnerApp, std::move(prop),
+  m_pComboBoxProxy = new CFWL_ComboBoxProxy(this, m_pOwnerApp, std::move(prop),
                                             m_pListBox.get());
   m_pListBox->SetParent(m_pComboBoxProxy);
 }
@@ -596,7 +596,7 @@ void IFWL_ComboBox::DisForm_InitComboList() {
   prop->m_dwStates = FWL_WGTSTATE_Invisible;
   prop->m_pThemeProvider = m_pProperties->m_pThemeProvider;
   m_pListBox =
-      pdfium::MakeUnique<IFWL_ComboList>(m_pOwnerApp, std::move(prop), this);
+      pdfium::MakeUnique<CFWL_ComboList>(m_pOwnerApp, std::move(prop), this);
 }
 
 void IFWL_ComboBox::DisForm_InitComboEdit() {
@@ -608,7 +608,7 @@ void IFWL_ComboBox::DisForm_InitComboEdit() {
   prop->m_pThemeProvider = m_pProperties->m_pThemeProvider;
 
   m_pEdit =
-      pdfium::MakeUnique<IFWL_ComboEdit>(m_pOwnerApp, std::move(prop), this);
+      pdfium::MakeUnique<CFWL_ComboEdit>(m_pOwnerApp, std::move(prop), this);
   m_pEdit->SetOuter(this);
 }
 
@@ -621,7 +621,7 @@ void IFWL_ComboBox::DisForm_ShowDropList(bool bActivate) {
     preEvent.m_pSrcTarget = this;
     DispatchEvent(&preEvent);
 
-    IFWL_ComboList* pComboList = m_pListBox.get();
+    CFWL_ComboList* pComboList = m_pListBox.get();
     int32_t iItems = pComboList->CountItems(nullptr);
     if (iItems < 1)
       return;
@@ -1093,7 +1093,7 @@ void IFWL_ComboBox::DisForm_OnKey(CFWL_MsgKey* pMsg) {
   const bool bUp = dwKeyCode == FWL_VKEY_Up;
   const bool bDown = dwKeyCode == FWL_VKEY_Down;
   if (bUp || bDown) {
-    IFWL_ComboList* pComboList = m_pListBox.get();
+    CFWL_ComboList* pComboList = m_pListBox.get();
     int32_t iCount = pComboList->CountItems(nullptr);
     if (iCount < 1)
       return;

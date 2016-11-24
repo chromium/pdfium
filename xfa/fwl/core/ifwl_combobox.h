@@ -9,17 +9,17 @@
 
 #include <memory>
 
-#include "xfa/fwl/core/ifwl_comboboxproxy.h"
-#include "xfa/fwl/core/ifwl_comboedit.h"
-#include "xfa/fwl/core/ifwl_combolist.h"
-#include "xfa/fwl/core/ifwl_form.h"
+#include "xfa/fwl/core/cfwl_comboboxproxy.h"
+#include "xfa/fwl/core/cfwl_comboedit.h"
+#include "xfa/fwl/core/cfwl_combolist.h"
+#include "xfa/fwl/core/cfwl_form.h"
 #include "xfa/fwl/core/ifwl_listbox.h"
 #include "xfa/fxgraphics/cfx_graphics.h"
 
 class CFWL_WidgetProperties;
 class IFWL_ComboBox;
-class IFWL_ComboBoxProxy;
-class IFWL_FormProxy;
+class CFWL_ComboBoxProxy;
+class CFWL_FormProxy;
 class IFWL_ListBox;
 class IFWL_Widget;
 
@@ -114,7 +114,7 @@ class IFWL_ComboBox : public IFWL_Widget {
   }
   void ShowDropList(bool bActivate);
 
-  IFWL_ComboEdit* GetComboEdit() const { return m_pEdit.get(); }
+  CFWL_ComboEdit* GetComboEdit() const { return m_pEdit.get(); }
 
   void ProcessSelChanged(bool bLButtonUp);
   int32_t GetCurrentSelection() const { return m_iCurSel; }
@@ -162,9 +162,9 @@ class IFWL_ComboBox : public IFWL_Widget {
   CFX_RectF m_rtList;
   CFX_RectF m_rtProxy;
   CFX_RectF m_rtHandler;
-  std::unique_ptr<IFWL_ComboEdit> m_pEdit;
-  std::unique_ptr<IFWL_ComboList> m_pListBox;
-  IFWL_ComboBoxProxy* m_pComboBoxProxy;  // Can this be a unique_ptr?
+  std::unique_ptr<CFWL_ComboEdit> m_pEdit;
+  std::unique_ptr<CFWL_ComboList> m_pListBox;
+  CFWL_ComboBoxProxy* m_pComboBoxProxy;  // Can this be a unique_ptr?
   bool m_bLButtonDown;
   bool m_bUpFormHandler;
   int32_t m_iCurSel;

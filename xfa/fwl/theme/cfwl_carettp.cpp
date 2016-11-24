@@ -6,8 +6,8 @@
 
 #include "xfa/fwl/theme/cfwl_carettp.h"
 
+#include "xfa/fwl/core/cfwl_caret.h"
 #include "xfa/fwl/core/cfwl_themebackground.h"
-#include "xfa/fwl/core/ifwl_caret.h"
 #include "xfa/fwl/core/ifwl_widget.h"
 #include "xfa/fxgraphics/cfx_color.h"
 #include "xfa/fxgraphics/cfx_path.h"

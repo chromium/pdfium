@@ -17,6 +17,7 @@
 #include "xfa/fwl/core/cfwl_evtmousewheel.h"
 #include "xfa/fwl/core/cfwl_evtsetfocus.h"
 #include "xfa/fwl/core/cfwl_evtsizechanged.h"
+#include "xfa/fwl/core/cfwl_form.h"
 #include "xfa/fwl/core/cfwl_msgkey.h"
 #include "xfa/fwl/core/cfwl_msgkillfocus.h"
 #include "xfa/fwl/core/cfwl_msgmouse.h"
@@ -28,7 +29,6 @@
 #include "xfa/fwl/core/cfwl_themetext.h"
 #include "xfa/fwl/core/cfwl_widgetmgr.h"
 #include "xfa/fwl/core/ifwl_combobox.h"
-#include "xfa/fwl/core/ifwl_form.h"
 #include "xfa/fwl/core/ifwl_themeprovider.h"
 #include "xfa/fxfa/xfa_ffapp.h"
 

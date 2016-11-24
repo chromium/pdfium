@@ -4,21 +4,21 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FWL_CORE_IFWL_FORMPROXY_H_
-#define XFA_FWL_CORE_IFWL_FORMPROXY_H_
+#ifndef XFA_FWL_CORE_CFWL_FORMPROXY_H_
+#define XFA_FWL_CORE_CFWL_FORMPROXY_H_
 
 #include <memory>
 
-#include "xfa/fwl/core/ifwl_form.h"
+#include "xfa/fwl/core/cfwl_form.h"
 
 class CFWL_WidgetProperties;
 
-class IFWL_FormProxy : public IFWL_Form {
+class CFWL_FormProxy : public CFWL_Form {
  public:
-  IFWL_FormProxy(const CFWL_App* app,
+  CFWL_FormProxy(const CFWL_App* app,
                  std::unique_ptr<CFWL_WidgetProperties> properties,
                  IFWL_Widget* pOuter);
-  ~IFWL_FormProxy() override;
+  ~CFWL_FormProxy() override;
 
   // IFWL_Widget
   FWL_Type GetClassID() const override;
@@ -29,4 +29,4 @@ class IFWL_FormProxy : public IFWL_Form {
   void OnProcessMessage(CFWL_Message* pMessage) override;
 };
 
-#endif  // XFA_FWL_CORE_IFWL_FORMPROXY_H_
+#endif  // XFA_FWL_CORE_CFWL_FORMPROXY_H_

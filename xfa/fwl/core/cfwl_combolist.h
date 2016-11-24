@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FWL_CORE_IFWL_COMBOLIST_H_
-#define XFA_FWL_CORE_IFWL_COMBOLIST_H_
+#ifndef XFA_FWL_CORE_CFWL_COMBOLIST_H_
+#define XFA_FWL_CORE_CFWL_COMBOLIST_H_
 
 #include <memory>
 
@@ -13,9 +13,9 @@
 #include "xfa/fwl/core/ifwl_listbox.h"
 #include "xfa/fwl/core/ifwl_widget.h"
 
-class IFWL_ComboList : public IFWL_ListBox {
+class CFWL_ComboList : public IFWL_ListBox {
  public:
-  IFWL_ComboList(const CFWL_App* app,
+  CFWL_ComboList(const CFWL_App* app,
                  std::unique_ptr<CFWL_WidgetProperties> properties,
                  IFWL_Widget* pOuter);
 
@@ -40,4 +40,4 @@ class IFWL_ComboList : public IFWL_ListBox {
   bool m_bNotifyOwner;
 };
 
-#endif  // XFA_FWL_CORE_IFWL_COMBOLIST_H_
+#endif  // XFA_FWL_CORE_CFWL_COMBOLIST_H_

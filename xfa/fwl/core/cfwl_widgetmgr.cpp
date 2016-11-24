@@ -10,8 +10,8 @@
 
 #include "third_party/base/ptr_util.h"
 #include "xfa/fwl/core/cfwl_app.h"
+#include "xfa/fwl/core/cfwl_form.h"
 #include "xfa/fwl/core/cfwl_notedriver.h"
-#include "xfa/fwl/core/ifwl_form.h"
 #include "xfa/fxfa/app/xfa_fwladapter.h"
 #include "xfa/fxfa/xfa_ffapp.h"
 

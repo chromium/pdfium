@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fwl/core/ifwl_form.h"
+#include "xfa/fwl/core/cfwl_form.h"
 
 #include <utility>
 
@@ -12,6 +12,7 @@
 #include "xfa/fde/tto/fde_textout.h"
 #include "xfa/fwl/core/cfwl_app.h"
 #include "xfa/fwl/core/cfwl_evtclose.h"
+#include "xfa/fwl/core/cfwl_formproxy.h"
 #include "xfa/fwl/core/cfwl_msgmouse.h"
 #include "xfa/fwl/core/cfwl_notedriver.h"
 #include "xfa/fwl/core/cfwl_noteloop.h"
@@ -20,7 +21,6 @@
 #include "xfa/fwl/core/cfwl_themepart.h"
 #include "xfa/fwl/core/cfwl_themetext.h"
 #include "xfa/fwl/core/cfwl_widgetmgr.h"
-#include "xfa/fwl/core/ifwl_formproxy.h"
 #include "xfa/fwl/core/ifwl_themeprovider.h"
 #include "xfa/fwl/theme/cfwl_widgettp.h"
 
@@ -38,7 +38,7 @@ const uint8_t kCornerEnlarge = 10;
 
 }  // namespace
 
-IFWL_Form::IFWL_Form(const CFWL_App* app,
+CFWL_Form::CFWL_Form(const CFWL_App* app,
                      std::unique_ptr<CFWL_WidgetProperties> properties,
                      IFWL_Widget* pOuter)
     : IFWL_Widget(app, std::move(properties), pOuter),
@@ -64,23 +64,23 @@ IFWL_Form::IFWL_Form(const CFWL_App* app,
   RegisterEventTarget(nullptr);
 }
 
-IFWL_Form::~IFWL_Form() {
+CFWL_Form::~CFWL_Form() {
   UnregisterEventTarget();
   UnRegisterForm();
   RemoveSysButtons();
 }
 
-FWL_Type IFWL_Form::GetClassID() const {
+FWL_Type CFWL_Form::GetClassID() const {
   return FWL_Type::Form;
 }
 
-bool IFWL_Form::IsInstance(const CFX_WideStringC& wsClass) const {
+bool CFWL_Form::IsInstance(const CFX_WideStringC& wsClass) const {
   if (wsClass == CFX_WideStringC(FWL_CLASS_Form))
     return true;
   return IFWL_Widget::IsInstance(wsClass);
 }
 
-void IFWL_Form::GetWidgetRect(CFX_RectF& rect, bool bAutoSize) {
+void CFWL_Form::GetWidgetRect(CFX_RectF& rect, bool bAutoSize) {
   if (!bAutoSize) {
     rect = m_pProperties->m_rtWidget;
     return;
@@ -94,12 +94,12 @@ void IFWL_Form::GetWidgetRect(CFX_RectF& rect, bool bAutoSize) {
   rect.width += fCXBorder + fCXBorder + fEdge + fEdge;
 }
 
-void IFWL_Form::GetClientRect(CFX_RectF& rect) {
+void CFWL_Form::GetClientRect(CFX_RectF& rect) {
   rect = m_pProperties->m_rtWidget;
   rect.Offset(-rect.left, -rect.top);
 }
 
-void IFWL_Form::Update() {
+void CFWL_Form::Update() {
   if (m_iLock > 0)
     return;
   if (!m_pProperties->m_pThemeProvider)
@@ -108,7 +108,7 @@ void IFWL_Form::Update() {
   Layout();
 }
 
-FWL_WidgetHit IFWL_Form::HitTest(FX_FLOAT fx, FX_FLOAT fy) {
+FWL_WidgetHit CFWL_Form::HitTest(FX_FLOAT fx, FX_FLOAT fy) {
   GetAvailableTheme();
 
   if (m_pCloseBox && m_pCloseBox->m_rtBtn.Contains(fx, fy))
@@ -171,7 +171,7 @@ FWL_WidgetHit IFWL_Form::HitTest(FX_FLOAT fx, FX_FLOAT fy) {
   return FWL_WidgetHit::Client;
 }
 
-void IFWL_Form::DrawWidget(CFX_Graphics* pGraphics, const CFX_Matrix* pMatrix) {
+void CFWL_Form::DrawWidget(CFX_Graphics* pGraphics, const CFX_Matrix* pMatrix) {
   if (!pGraphics)
     return;
   if (!m_pProperties->m_pThemeProvider)
@@ -267,7 +267,7 @@ void IFWL_Form::DrawWidget(CFX_Graphics* pGraphics, const CFX_Matrix* pMatrix) {
 #endif
 }
 
-IFWL_Widget* IFWL_Form::DoModal() {
+IFWL_Widget* CFWL_Form::DoModal() {
   const CFWL_App* pApp = GetOwnerApp();
   if (!pApp)
     return nullptr;
@@ -292,7 +292,7 @@ IFWL_Widget* IFWL_Form::DoModal() {
   return nullptr;
 }
 
-void IFWL_Form::EndDoModal() {
+void CFWL_Form::EndDoModal() {
   if (!m_pNoteLoop)
     return;
 
@@ -317,7 +317,7 @@ void IFWL_Form::EndDoModal() {
 #endif
 }
 
-void IFWL_Form::DrawBackground(CFX_Graphics* pGraphics,
+void CFWL_Form::DrawBackground(CFX_Graphics* pGraphics,
                                IFWL_ThemeProvider* pTheme) {
   CFWL_ThemeBackground param;
   param.m_pWidget = this;
@@ -328,7 +328,7 @@ void IFWL_Form::DrawBackground(CFX_Graphics* pGraphics,
   pTheme->DrawBackground(&param);
 }
 
-void IFWL_Form::RemoveSysButtons() {
+void CFWL_Form::RemoveSysButtons() {
   delete m_pCloseBox;
   m_pCloseBox = nullptr;
   delete m_pMinBox;
@@ -337,7 +337,7 @@ void IFWL_Form::RemoveSysButtons() {
   m_pMaxBox = nullptr;
 }
 
-CFWL_SysBtn* IFWL_Form::GetSysBtnAtPoint(FX_FLOAT fx, FX_FLOAT fy) {
+CFWL_SysBtn* CFWL_Form::GetSysBtnAtPoint(FX_FLOAT fx, FX_FLOAT fy) {
   if (m_pCloseBox && m_pCloseBox->m_rtBtn.Contains(fx, fy))
     return m_pCloseBox;
   if (m_pMaxBox && m_pMaxBox->m_rtBtn.Contains(fx, fy))
@@ -347,7 +347,7 @@ CFWL_SysBtn* IFWL_Form::GetSysBtnAtPoint(FX_FLOAT fx, FX_FLOAT fy) {
   return nullptr;
 }
 
-CFWL_SysBtn* IFWL_Form::GetSysBtnByState(uint32_t dwState) {
+CFWL_SysBtn* CFWL_Form::GetSysBtnByState(uint32_t dwState) {
   if (m_pCloseBox && (m_pCloseBox->m_dwState & dwState))
     return m_pCloseBox;
   if (m_pMaxBox && (m_pMaxBox->m_dwState & dwState))
@@ -357,7 +357,7 @@ CFWL_SysBtn* IFWL_Form::GetSysBtnByState(uint32_t dwState) {
   return nullptr;
 }
 
-CFWL_SysBtn* IFWL_Form::GetSysBtnByIndex(int32_t nIndex) {
+CFWL_SysBtn* CFWL_Form::GetSysBtnByIndex(int32_t nIndex) {
   if (nIndex < 0)
     return nullptr;
 
@@ -371,7 +371,7 @@ CFWL_SysBtn* IFWL_Form::GetSysBtnByIndex(int32_t nIndex) {
   return arrBtn[nIndex];
 }
 
-int32_t IFWL_Form::GetSysBtnIndex(CFWL_SysBtn* pBtn) {
+int32_t CFWL_Form::GetSysBtnIndex(CFWL_SysBtn* pBtn) {
   CFX_ArrayTemplate<CFWL_SysBtn*> arrBtn;
   if (m_pMinBox)
     arrBtn.Add(m_pMinBox);
@@ -382,7 +382,7 @@ int32_t IFWL_Form::GetSysBtnIndex(CFWL_SysBtn* pBtn) {
   return arrBtn.Find(pBtn);
 }
 
-void IFWL_Form::GetEdgeRect(CFX_RectF& rtEdge) {
+void CFWL_Form::GetEdgeRect(CFX_RectF& rtEdge) {
   rtEdge = m_rtRelative;
   if (m_pProperties->m_dwStyles & FWL_WGTSTYLE_Border) {
     FX_FLOAT fCX = GetBorderSize();
@@ -391,7 +391,7 @@ void IFWL_Form::GetEdgeRect(CFX_RectF& rtEdge) {
   }
 }
 
-void IFWL_Form::SetWorkAreaRect() {
+void CFWL_Form::SetWorkAreaRect() {
   m_rtRestore = m_pProperties->m_rtWidget;
   CFWL_WidgetMgr* pWidgetMgr = GetOwnerApp()->GetWidgetMgr();
   if (!pWidgetMgr)
@@ -401,7 +401,7 @@ void IFWL_Form::SetWorkAreaRect() {
   Repaint(&m_rtRelative);
 }
 
-void IFWL_Form::Layout() {
+void CFWL_Form::Layout() {
   GetRelativeRect(m_rtRelative);
 
 #ifndef FWL_UseMacSystemBorder
@@ -409,7 +409,7 @@ void IFWL_Form::Layout() {
 #endif
 }
 
-void IFWL_Form::ResetSysBtn() {
+void CFWL_Form::ResetSysBtn() {
   m_fCXBorder =
       *static_cast<FX_FLOAT*>(GetThemeCapacity(CFWL_WidgetCapacity::CXBorder));
   m_fCYBorder =
@@ -456,7 +456,7 @@ void IFWL_Form::ResetSysBtn() {
   }
 }
 
-void IFWL_Form::RegisterForm() {
+void CFWL_Form::RegisterForm() {
   const CFWL_App* pApp = GetOwnerApp();
   if (!pApp)
     return;
@@ -469,7 +469,7 @@ void IFWL_Form::RegisterForm() {
   pDriver->RegisterForm(this);
 }
 
-void IFWL_Form::UnRegisterForm() {
+void CFWL_Form::UnRegisterForm() {
   const CFWL_App* pApp = GetOwnerApp();
   if (!pApp)
     return;
@@ -482,7 +482,7 @@ void IFWL_Form::UnRegisterForm() {
   pDriver->UnRegisterForm(this);
 }
 
-void IFWL_Form::OnProcessMessage(CFWL_Message* pMessage) {
+void CFWL_Form::OnProcessMessage(CFWL_Message* pMessage) {
 #ifndef FWL_UseMacSystemBorder
   if (!pMessage)
     return;
@@ -517,12 +517,12 @@ void IFWL_Form::OnProcessMessage(CFWL_Message* pMessage) {
 #endif  // FWL_UseMacSystemBorder
 }
 
-void IFWL_Form::OnDrawWidget(CFX_Graphics* pGraphics,
+void CFWL_Form::OnDrawWidget(CFX_Graphics* pGraphics,
                              const CFX_Matrix* pMatrix) {
   DrawWidget(pGraphics, pMatrix);
 }
 
-void IFWL_Form::OnLButtonDown(CFWL_MsgMouse* pMsg) {
+void CFWL_Form::OnLButtonDown(CFWL_MsgMouse* pMsg) {
   SetGrab(true);
   m_bLButtonDown = true;
 
@@ -536,7 +536,7 @@ void IFWL_Form::OnLButtonDown(CFWL_MsgMouse* pMsg) {
   Repaint(&pPressBtn->m_rtBtn);
 }
 
-void IFWL_Form::OnLButtonUp(CFWL_MsgMouse* pMsg) {
+void CFWL_Form::OnLButtonUp(CFWL_MsgMouse* pMsg) {
   SetGrab(false);
   m_bLButtonDown = false;
   CFWL_SysBtn* pPointBtn = GetSysBtnAtPoint(pMsg->m_fx, pMsg->m_fy);
@@ -562,7 +562,7 @@ void IFWL_Form::OnLButtonUp(CFWL_MsgMouse* pMsg) {
   }
 }
 
-void IFWL_Form::OnMouseMove(CFWL_MsgMouse* pMsg) {
+void CFWL_Form::OnMouseMove(CFWL_MsgMouse* pMsg) {
   if (m_bLButtonDown)
     return;
 
@@ -616,7 +616,7 @@ void IFWL_Form::OnMouseMove(CFWL_MsgMouse* pMsg) {
     Repaint(&rtInvalidate);
 }
 
-void IFWL_Form::OnMouseLeave(CFWL_MsgMouse* pMsg) {
+void CFWL_Form::OnMouseLeave(CFWL_MsgMouse* pMsg) {
   CFWL_SysBtn* pHover = GetSysBtnByState(FWL_SYSBUTTONSTATE_Hover);
   if (!pHover)
     return;
@@ -625,7 +625,7 @@ void IFWL_Form::OnMouseLeave(CFWL_MsgMouse* pMsg) {
   Repaint(&pHover->m_rtBtn);
 }
 
-void IFWL_Form::OnLButtonDblClk(CFWL_MsgMouse* pMsg) {
+void CFWL_Form::OnLButtonDblClk(CFWL_MsgMouse* pMsg) {
   if ((m_pProperties->m_dwStyleExes & FWL_STYLEEXT_FRM_Resize) &&
       HitTest(pMsg->m_fx, pMsg->m_fy) == FWL_WidgetHit::Titlebar) {
     if (m_bMaximized)

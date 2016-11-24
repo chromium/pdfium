@@ -13,6 +13,7 @@
 #include "third_party/base/stl_util.h"
 #include "xfa/fwl/core/cfwl_app.h"
 #include "xfa/fwl/core/cfwl_eventtarget.h"
+#include "xfa/fwl/core/cfwl_form.h"
 #include "xfa/fwl/core/cfwl_msgkey.h"
 #include "xfa/fwl/core/cfwl_msgkillfocus.h"
 #include "xfa/fwl/core/cfwl_msgmouse.h"
@@ -20,7 +21,6 @@
 #include "xfa/fwl/core/cfwl_msgsetfocus.h"
 #include "xfa/fwl/core/cfwl_noteloop.h"
 #include "xfa/fwl/core/cfwl_widgetmgr.h"
-#include "xfa/fwl/core/ifwl_form.h"
 
 CFWL_NoteDriver::CFWL_NoteDriver()
     : m_pHover(nullptr),
@@ -103,7 +103,7 @@ bool CFWL_NoteDriver::SetFocus(IFWL_Widget* pFocus, bool bNotify) {
   if (pFocus) {
     IFWL_Widget* pWidget =
         pFocus->GetOwnerApp()->GetWidgetMgr()->GetSystemFormWidget(pFocus);
-    IFWL_Form* pForm = static_cast<IFWL_Form*>(pWidget);
+    CFWL_Form* pForm = static_cast<CFWL_Form*>(pWidget);
     if (pForm)
       pForm->SetSubFocus(pFocus);
 
@@ -149,7 +149,7 @@ void CFWL_NoteDriver::NotifyTargetDestroy(IFWL_Widget* pNoteTarget) {
   UnregisterEventTarget(pNoteTarget);
 
   for (int32_t nIndex = 0; nIndex < m_forms.GetSize(); nIndex++) {
-    IFWL_Form* pForm = static_cast<IFWL_Form*>(m_forms[nIndex]);
+    CFWL_Form* pForm = static_cast<CFWL_Form*>(m_forms[nIndex]);
     if (!pForm)
       continue;
 
@@ -275,7 +275,7 @@ bool CFWL_NoteDriver::DoSetFocus(CFWL_Message* pMessage,
   if (!pWidget)
     return false;
 
-  IFWL_Form* pForm = static_cast<IFWL_Form*>(pWidget);
+  CFWL_Form* pForm = static_cast<CFWL_Form*>(pWidget);
   IFWL_Widget* pSubFocus = pForm->GetSubFocus();
   if (pSubFocus && ((pSubFocus->GetStates() & FWL_WGTSTATE_Focused) == 0)) {
     pMessage->m_pDstTarget = pSubFocus;
@@ -296,7 +296,7 @@ bool CFWL_NoteDriver::DoKillFocus(CFWL_Message* pMessage,
     return true;
   }
 
-  IFWL_Form* pForm = static_cast<IFWL_Form*>(pMessage->m_pDstTarget);
+  CFWL_Form* pForm = static_cast<CFWL_Form*>(pMessage->m_pDstTarget);
   if (!pForm)
     return false;
 
@@ -450,7 +450,7 @@ bool CFWL_NoteDriver::IsValidMessage(CFWL_Message* pMessage) {
   }
 
   for (int32_t j = 0; j < m_forms.GetSize(); j++) {
-    IFWL_Form* pForm = static_cast<IFWL_Form*>(m_forms[j]);
+    CFWL_Form* pForm = static_cast<CFWL_Form*>(m_forms[j]);
     if (pForm == pMessage->m_pDstTarget)
       return true;
   }
