@@ -113,6 +113,7 @@ class CFWL_ListBox : public CFWL_Widget {
 
  private:
   void SetSelectionDirect(CFWL_ListItem* hItem, bool bSelect);
+  bool IsMultiSelection() const;
   bool IsItemSelected(CFWL_ListItem* hItem);
   void ClearSelection();
   void SelectAll();

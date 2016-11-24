@@ -196,7 +196,7 @@ void CFWL_ListBox::SetSelItem(CFWL_ListItem* pItem, bool bSelect) {
     }
     return;
   }
-  if (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_LTB_MultiSelection)
+  if (IsMultiSelection())
     SetSelectionDirect(pItem, bSelect);
   else
     SetSelection(pItem, pItem, bSelect);
@@ -269,13 +269,17 @@ void CFWL_ListBox::SetSelectionDirect(CFWL_ListItem* pItem, bool bSelect) {
   SetItemStyles(this, pItem, dwOldStyle);
 }
 
+bool CFWL_ListBox::IsMultiSelection() const {
+  return m_pProperties->m_dwStyleExes & FWL_STYLEEXT_LTB_MultiSelection;
+}
+
 bool CFWL_ListBox::IsItemSelected(CFWL_ListItem* pItem) {
   uint32_t dwState = GetItemStyles(this, pItem);
   return (dwState & FWL_ITEMSTATE_LTB_Selected) != 0;
 }
 
 void CFWL_ListBox::ClearSelection() {
-  bool bMulti = m_pProperties->m_dwStyleExes & FWL_STYLEEXT_LTB_MultiSelection;
+  bool bMulti = IsMultiSelection();
   int32_t iCount = CountItems(this);
   for (int32_t i = 0; i < iCount; i++) {
     CFWL_ListItem* pItem = GetItem(this, i);
@@ -289,7 +293,7 @@ void CFWL_ListBox::ClearSelection() {
 }
 
 void CFWL_ListBox::SelectAll() {
-  if (!(m_pProperties->m_dwStyleExes & FWL_STYLEEXT_LTB_MultiSelection))
+  if (!IsMultiSelection())
     return;
 
   int32_t iCount = CountItems(this);
@@ -852,7 +856,7 @@ void CFWL_ListBox::OnLButtonDown(CFWL_MsgMouse* pMsg) {
   if (!pItem)
     return;
 
-  if (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_LTB_MultiSelection) {
+  if (IsMultiSelection()) {
     if (pMsg->m_dwFlags & FWL_KEYFLAG_Ctrl) {
       bool bSelected = IsItemSelected(pItem);
       SetSelectionDirect(pItem, !bSelected);
@@ -922,7 +926,7 @@ void CFWL_ListBox::OnVK(CFWL_ListItem* pItem, bool bShift, bool bCtrl) {
   if (!pItem)
     return;
 
-  if (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_LTB_MultiSelection) {
+  if (IsMultiSelection()) {
     if (bCtrl) {
       // Do nothing.
     } else if (bShift) {
