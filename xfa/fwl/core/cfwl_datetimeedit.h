@@ -9,18 +9,18 @@
 
 #include <memory>
 
+#include "xfa/fwl/core/cfwl_edit.h"
+#include "xfa/fwl/core/cfwl_widget.h"
 #include "xfa/fwl/core/cfwl_widgetproperties.h"
 #include "xfa/fwl/core/fwl_error.h"
-#include "xfa/fwl/core/ifwl_edit.h"
-#include "xfa/fwl/core/ifwl_widget.h"
 
-class CFWL_DateTimeEdit : public IFWL_Edit {
+class CFWL_DateTimeEdit : public CFWL_Edit {
  public:
   CFWL_DateTimeEdit(const CFWL_App* app,
                     std::unique_ptr<CFWL_WidgetProperties> properties,
-                    IFWL_Widget* pOuter);
+                    CFWL_Widget* pOuter);
 
-  // IFWL_Edit.
+  // CFWL_Edit.
   void OnProcessMessage(CFWL_Message* pMessage) override;
 
  private:

@@ -12,7 +12,7 @@
 
 class CFDE_TxtEdtEngine;
 class IFDE_TxtEdtPage;
-class IFWL_Edit;
+class CFWL_Edit;
 
 #define FDE_TEXTEDITMODE_MultiLines (1L << 0)
 #define FDE_TEXTEDITMODE_AutoLineWrap (1L << 1)
@@ -102,7 +102,7 @@ struct FDE_TXTEDTPARAMS {
   int32_t nLineEnd;
   int32_t nHorzScale;
   FX_FLOAT fCharSpace;
-  IFWL_Edit* pEventSink;
+  CFWL_Edit* pEventSink;
 };
 
 enum FDE_TXTEDT_TEXTCHANGE_TYPE {

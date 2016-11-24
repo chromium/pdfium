@@ -11,8 +11,8 @@
 
 #include "xfa/fgas/localization/fgas_datetime.h"
 #include "xfa/fwl/core/cfwl_event.h"
+#include "xfa/fwl/core/cfwl_widget.h"
 #include "xfa/fwl/core/cfwl_widgetproperties.h"
-#include "xfa/fwl/core/ifwl_widget.h"
 
 #define FWL_STYLEEXT_MCD_MultiSelect (1L << 0)
 #define FWL_STYLEEXT_MCD_NoToday (1L << 1)
@@ -24,13 +24,13 @@
 #define FWL_ITEMSTATE_MCD_Focused (1L << 2)
 
 class CFWL_MsgMouse;
-class IFWL_Widget;
+class CFWL_Widget;
 
-class CFWL_MonthCalendar : public IFWL_Widget {
+class CFWL_MonthCalendar : public CFWL_Widget {
  public:
   CFWL_MonthCalendar(const CFWL_App* app,
                      std::unique_ptr<CFWL_WidgetProperties> properties,
-                     IFWL_Widget* pOuter);
+                     CFWL_Widget* pOuter);
   ~CFWL_MonthCalendar() override;
 
   // FWL_WidgetImp

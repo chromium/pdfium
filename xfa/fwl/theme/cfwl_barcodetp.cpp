@@ -6,15 +6,15 @@
 
 #include "xfa/fwl/theme/cfwl_barcodetp.h"
 
+#include "xfa/fwl/core/cfwl_barcode.h"
 #include "xfa/fwl/core/cfwl_themebackground.h"
-#include "xfa/fwl/core/ifwl_barcode.h"
-#include "xfa/fwl/core/ifwl_widget.h"
+#include "xfa/fwl/core/cfwl_widget.h"
 
 CFWL_BarcodeTP::CFWL_BarcodeTP() {}
 
 CFWL_BarcodeTP::~CFWL_BarcodeTP() {}
 
-bool CFWL_BarcodeTP::IsValidWidget(IFWL_Widget* pWidget) {
+bool CFWL_BarcodeTP::IsValidWidget(CFWL_Widget* pWidget) {
   return pWidget && pWidget->GetClassID() == FWL_Type::Barcode;
 }
 

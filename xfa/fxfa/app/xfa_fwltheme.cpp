@@ -9,19 +9,19 @@
 #include "xfa/fde/tto/fde_textout.h"
 #include "xfa/fgas/crt/fgas_codepage.h"
 #include "xfa/fgas/font/cfgas_gefont.h"
+#include "xfa/fwl/core/cfwl_barcode.h"
 #include "xfa/fwl/core/cfwl_caret.h"
+#include "xfa/fwl/core/cfwl_checkbox.h"
+#include "xfa/fwl/core/cfwl_combobox.h"
+#include "xfa/fwl/core/cfwl_datetimepicker.h"
+#include "xfa/fwl/core/cfwl_edit.h"
+#include "xfa/fwl/core/cfwl_listbox.h"
 #include "xfa/fwl/core/cfwl_monthcalendar.h"
+#include "xfa/fwl/core/cfwl_picturebox.h"
+#include "xfa/fwl/core/cfwl_pushbutton.h"
 #include "xfa/fwl/core/cfwl_scrollbar.h"
 #include "xfa/fwl/core/cfwl_themebackground.h"
 #include "xfa/fwl/core/cfwl_themetext.h"
-#include "xfa/fwl/core/ifwl_barcode.h"
-#include "xfa/fwl/core/ifwl_checkbox.h"
-#include "xfa/fwl/core/ifwl_combobox.h"
-#include "xfa/fwl/core/ifwl_datetimepicker.h"
-#include "xfa/fwl/core/ifwl_edit.h"
-#include "xfa/fwl/core/ifwl_listbox.h"
-#include "xfa/fwl/core/ifwl_picturebox.h"
-#include "xfa/fwl/core/ifwl_pushbutton.h"
 #include "xfa/fxfa/xfa_ffapp.h"
 #include "xfa/fxfa/xfa_ffwidget.h"
 #include "xfa/fxgraphics/cfx_color.h"
@@ -34,8 +34,8 @@ const FX_WCHAR* const g_FWLTheme_CalFonts[] = {
 
 }  // namespace
 
-CXFA_FFWidget* XFA_ThemeGetOuterWidget(IFWL_Widget* pWidget) {
-  IFWL_Widget* pOuter = pWidget;
+CXFA_FFWidget* XFA_ThemeGetOuterWidget(CFWL_Widget* pWidget) {
+  CFWL_Widget* pOuter = pWidget;
   while (pOuter && pOuter->GetOuter())
     pOuter = pOuter->GetOuter();
 
@@ -342,7 +342,7 @@ void CXFA_FWLTheme::CalcTextRect(CFWL_ThemeText* pParams, CFX_RectF& rect) {
                             pParams->m_wsText.GetLength(), rect);
 }
 
-CFWL_WidgetTP* CXFA_FWLTheme::GetTheme(IFWL_Widget* pWidget) {
+CFWL_WidgetTP* CXFA_FWLTheme::GetTheme(CFWL_Widget* pWidget) {
   switch (pWidget->GetClassID()) {
     case FWL_Type::CheckBox:
       return m_pCheckBoxTP.get();

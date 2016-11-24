@@ -124,13 +124,12 @@ CXFA_FFBarcode::~CXFA_FFBarcode() {}
 
 bool CXFA_FFBarcode::LoadWidget() {
   CFWL_Barcode* pFWLBarcode = new CFWL_Barcode(GetFWLApp());
-  pFWLBarcode->Initialize();
 
   m_pNormalWidget = pFWLBarcode;
   m_pNormalWidget->SetLayoutItem(this);
-  IFWL_Widget* pWidget = m_pNormalWidget->GetWidget();
-  CFWL_NoteDriver* pNoteDriver = pWidget->GetOwnerApp()->GetNoteDriver();
-  pNoteDriver->RegisterEventTarget(pWidget, pWidget);
+  CFWL_NoteDriver* pNoteDriver =
+      m_pNormalWidget->GetOwnerApp()->GetNoteDriver();
+  pNoteDriver->RegisterEventTarget(m_pNormalWidget, m_pNormalWidget);
 
   m_pOldDelegate = m_pNormalWidget->GetDelegate();
   m_pNormalWidget->SetDelegate(this);

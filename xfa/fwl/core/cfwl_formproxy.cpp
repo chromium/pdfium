@@ -15,7 +15,7 @@
 CFWL_FormProxy::CFWL_FormProxy(
     const CFWL_App* app,
     std::unique_ptr<CFWL_WidgetProperties> properties,
-    IFWL_Widget* pOuter)
+    CFWL_Widget* pOuter)
     : CFWL_Form(app, std::move(properties), pOuter) {}
 
 CFWL_FormProxy::~CFWL_FormProxy() {}

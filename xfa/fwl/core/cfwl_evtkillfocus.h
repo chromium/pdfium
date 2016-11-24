@@ -16,7 +16,7 @@ class CFWL_EvtKillFocus : public CFWL_Event {
 
   CFWL_EventType GetClassID() const override;
 
-  IFWL_Widget* m_pKillFocus;
+  CFWL_Widget* m_pKillFocus;
 };
 
 #endif  // XFA_FWL_CORE_CFWL_EVTKILLFOCUS_H_

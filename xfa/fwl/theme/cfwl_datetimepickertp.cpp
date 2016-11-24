@@ -6,14 +6,14 @@
 
 #include "xfa/fwl/theme/cfwl_datetimepickertp.h"
 
+#include "xfa/fwl/core/cfwl_datetimepicker.h"
 #include "xfa/fwl/core/cfwl_themebackground.h"
-#include "xfa/fwl/core/ifwl_datetimepicker.h"
 
 CFWL_DateTimePickerTP::CFWL_DateTimePickerTP() {}
 
 CFWL_DateTimePickerTP::~CFWL_DateTimePickerTP() {}
 
-bool CFWL_DateTimePickerTP::IsValidWidget(IFWL_Widget* pWidget) {
+bool CFWL_DateTimePickerTP::IsValidWidget(CFWL_Widget* pWidget) {
   return pWidget && pWidget->GetClassID() == FWL_Type::DateTimePicker;
 }
 

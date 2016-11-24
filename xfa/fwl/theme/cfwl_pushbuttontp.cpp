@@ -6,10 +6,10 @@
 
 #include "xfa/fwl/theme/cfwl_pushbuttontp.h"
 
+#include "xfa/fwl/core/cfwl_pushbutton.h"
 #include "xfa/fwl/core/cfwl_themebackground.h"
-#include "xfa/fwl/core/ifwl_pushbutton.h"
+#include "xfa/fwl/core/cfwl_widget.h"
 #include "xfa/fwl/core/ifwl_themeprovider.h"
-#include "xfa/fwl/core/ifwl_widget.h"
 #include "xfa/fxgraphics/cfx_color.h"
 #include "xfa/fxgraphics/cfx_path.h"
 
@@ -21,7 +21,7 @@ CFWL_PushButtonTP::CFWL_PushButtonTP() : m_pThemeData(new PBThemeData) {
 
 CFWL_PushButtonTP::~CFWL_PushButtonTP() {}
 
-bool CFWL_PushButtonTP::IsValidWidget(IFWL_Widget* pWidget) {
+bool CFWL_PushButtonTP::IsValidWidget(CFWL_Widget* pWidget) {
   return pWidget && pWidget->GetClassID() == FWL_Type::PushButton;
 }
 

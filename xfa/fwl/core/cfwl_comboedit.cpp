@@ -10,15 +10,15 @@
 #include <utility>
 
 #include "xfa/fde/cfde_txtedtengine.h"
+#include "xfa/fwl/core/cfwl_combobox.h"
 #include "xfa/fwl/core/cfwl_msgmouse.h"
-#include "xfa/fwl/core/ifwl_combobox.h"
 
 CFWL_ComboEdit::CFWL_ComboEdit(
     const CFWL_App* app,
     std::unique_ptr<CFWL_WidgetProperties> properties,
-    IFWL_Widget* pOuter)
-    : IFWL_Edit(app, std::move(properties), pOuter) {
-  m_pOuter = static_cast<IFWL_ComboBox*>(pOuter);
+    CFWL_Widget* pOuter)
+    : CFWL_Edit(app, std::move(properties), pOuter) {
+  m_pOuter = static_cast<CFWL_ComboBox*>(pOuter);
 }
 
 void CFWL_ComboEdit::ClearSelected() {
@@ -71,5 +71,5 @@ void CFWL_ComboEdit::OnProcessMessage(CFWL_Message* pMessage) {
       break;
   }
   if (backDefault)
-    IFWL_Edit::OnProcessMessage(pMessage);
+    CFWL_Edit::OnProcessMessage(pMessage);
 }

@@ -17,10 +17,10 @@ class CFWL_FormProxy : public CFWL_Form {
  public:
   CFWL_FormProxy(const CFWL_App* app,
                  std::unique_ptr<CFWL_WidgetProperties> properties,
-                 IFWL_Widget* pOuter);
+                 CFWL_Widget* pOuter);
   ~CFWL_FormProxy() override;
 
-  // IFWL_Widget
+  // CFWL_Widget
   FWL_Type GetClassID() const override;
   bool IsInstance(const CFX_WideStringC& wsClass) const override;
   void Update() override;

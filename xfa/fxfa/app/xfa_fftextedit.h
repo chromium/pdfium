@@ -29,10 +29,10 @@ class CXFA_FFTextEdit : public CXFA_FFField {
   void OnDrawWidget(CFX_Graphics* pGraphics,
                     const CFX_Matrix* pMatrix = nullptr) override;
 
-  void OnTextChanged(IFWL_Widget* pWidget,
+  void OnTextChanged(CFWL_Widget* pWidget,
                      const CFX_WideString& wsChanged,
                      const CFX_WideString& wsPrevText);
-  void OnTextFull(IFWL_Widget* pWidget);
+  void OnTextFull(CFWL_Widget* pWidget);
   bool CheckWord(const CFX_ByteStringC& sWord);
 
  protected:
@@ -57,7 +57,7 @@ class CXFA_FFNumericEdit : public CXFA_FFTextEdit {
   void OnProcessEvent(CFWL_Event* pEvent) override;
 
  public:
-  bool OnValidate(IFWL_Widget* pWidget, CFX_WideString& wsText);
+  bool OnValidate(CFWL_Widget* pWidget, CFX_WideString& wsText);
 };
 
 class CXFA_FFPasswordEdit : public CXFA_FFTextEdit {
@@ -91,7 +91,7 @@ class CXFA_FFDateTimeEdit : public CXFA_FFTextEdit {
   void UpdateWidgetProperty() override;
   void OnProcessEvent(CFWL_Event* pEvent) override;
 
-  void OnSelectChanged(IFWL_Widget* pWidget,
+  void OnSelectChanged(CFWL_Widget* pWidget,
                        int32_t iYear,
                        int32_t iMonth,
                        int32_t iDay);

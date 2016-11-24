@@ -12,13 +12,13 @@
 #include <unordered_map>
 
 #include "xfa/fwl/core/cfwl_event.h"
-#include "xfa/fwl/core/ifwl_widget.h"
+#include "xfa/fwl/core/cfwl_widget.h"
 #include "xfa/fxgraphics/cfx_graphics.h"
 
 class CFWL_EventTarget;
 class CFWL_NoteLoop;
 class CFWL_TargetImp;
-class IFWL_Widget;
+class CFWL_Widget;
 
 class CFWL_NoteDriver {
  public:
@@ -27,51 +27,51 @@ class CFWL_NoteDriver {
 
   void SendEvent(CFWL_Event* pNote);
 
-  void RegisterEventTarget(IFWL_Widget* pListener, IFWL_Widget* pEventSource);
-  void UnregisterEventTarget(IFWL_Widget* pListener);
+  void RegisterEventTarget(CFWL_Widget* pListener, CFWL_Widget* pEventSource);
+  void UnregisterEventTarget(CFWL_Widget* pListener);
   void ClearEventTargets(bool bRemoveAll);
 
   CFWL_NoteLoop* GetTopLoop() const;
   void PushNoteLoop(CFWL_NoteLoop* pNoteLoop);
   CFWL_NoteLoop* PopNoteLoop();
 
-  IFWL_Widget* GetFocus() const { return m_pFocus; }
-  bool SetFocus(IFWL_Widget* pFocus, bool bNotify = false);
-  void SetGrab(IFWL_Widget* pGrab, bool bSet) {
+  CFWL_Widget* GetFocus() const { return m_pFocus; }
+  bool SetFocus(CFWL_Widget* pFocus, bool bNotify = false);
+  void SetGrab(CFWL_Widget* pGrab, bool bSet) {
     m_pGrab = bSet ? pGrab : nullptr;
   }
 
   void Run();
 
-  void NotifyTargetHide(IFWL_Widget* pNoteTarget);
-  void NotifyTargetDestroy(IFWL_Widget* pNoteTarget);
+  void NotifyTargetHide(CFWL_Widget* pNoteTarget);
+  void NotifyTargetDestroy(CFWL_Widget* pNoteTarget);
 
-  void RegisterForm(IFWL_Widget* pForm);
-  void UnRegisterForm(IFWL_Widget* pForm);
+  void RegisterForm(CFWL_Widget* pForm);
+  void UnRegisterForm(CFWL_Widget* pForm);
 
   void QueueMessage(std::unique_ptr<CFWL_Message> pMessage);
   void UnqueueMessage(CFWL_NoteLoop* pNoteLoop);
   void ProcessMessage(CFWL_Message* pMessage);
 
  private:
-  bool DispatchMessage(CFWL_Message* pMessage, IFWL_Widget* pMessageForm);
-  bool DoSetFocus(CFWL_Message* pMsg, IFWL_Widget* pMessageForm);
-  bool DoKillFocus(CFWL_Message* pMsg, IFWL_Widget* pMessageForm);
-  bool DoKey(CFWL_Message* pMsg, IFWL_Widget* pMessageForm);
-  bool DoMouse(CFWL_Message* pMsg, IFWL_Widget* pMessageForm);
-  bool DoWheel(CFWL_Message* pMsg, IFWL_Widget* pMessageForm);
-  bool DoMouseEx(CFWL_Message* pMsg, IFWL_Widget* pMessageForm);
+  bool DispatchMessage(CFWL_Message* pMessage, CFWL_Widget* pMessageForm);
+  bool DoSetFocus(CFWL_Message* pMsg, CFWL_Widget* pMessageForm);
+  bool DoKillFocus(CFWL_Message* pMsg, CFWL_Widget* pMessageForm);
+  bool DoKey(CFWL_Message* pMsg, CFWL_Widget* pMessageForm);
+  bool DoMouse(CFWL_Message* pMsg, CFWL_Widget* pMessageForm);
+  bool DoWheel(CFWL_Message* pMsg, CFWL_Widget* pMessageForm);
+  bool DoMouseEx(CFWL_Message* pMsg, CFWL_Widget* pMessageForm);
   void MouseSecondary(CFWL_Message* pMsg);
   bool IsValidMessage(CFWL_Message* pMessage);
-  IFWL_Widget* GetMessageForm(IFWL_Widget* pDstTarget);
+  CFWL_Widget* GetMessageForm(CFWL_Widget* pDstTarget);
 
-  CFX_ArrayTemplate<IFWL_Widget*> m_forms;
+  CFX_ArrayTemplate<CFWL_Widget*> m_forms;
   std::deque<std::unique_ptr<CFWL_Message>> m_noteQueue;
   CFX_ArrayTemplate<CFWL_NoteLoop*> m_noteLoopQueue;
   std::unordered_map<uint32_t, CFWL_EventTarget*> m_eventTargets;
-  IFWL_Widget* m_pHover;
-  IFWL_Widget* m_pFocus;
-  IFWL_Widget* m_pGrab;
+  CFWL_Widget* m_pHover;
+  CFWL_Widget* m_pFocus;
+  CFWL_Widget* m_pGrab;
   std::unique_ptr<CFWL_NoteLoop> m_pNoteLoop;
 };
 

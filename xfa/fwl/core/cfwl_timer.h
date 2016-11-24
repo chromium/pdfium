@@ -10,18 +10,18 @@
 #include "core/fxcrt/fx_system.h"
 
 class CFWL_TimerInfo;
-class IFWL_Widget;
+class CFWL_Widget;
 
 class CFWL_Timer {
  public:
-  explicit CFWL_Timer(IFWL_Widget* parent) : m_pWidget(parent) {}
+  explicit CFWL_Timer(CFWL_Widget* parent) : m_pWidget(parent) {}
   virtual ~CFWL_Timer() {}
 
   virtual void Run(CFWL_TimerInfo* hTimer) = 0;
   CFWL_TimerInfo* StartTimer(uint32_t dwElapse, bool bImmediately);
 
  protected:
-  IFWL_Widget* m_pWidget;  // Not owned.
+  CFWL_Widget* m_pWidget;  // Not owned.
 };
 
 #endif  // XFA_FWL_CORE_CFWL_TIMER_H_

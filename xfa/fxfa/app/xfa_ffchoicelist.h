@@ -23,7 +23,7 @@ class CXFA_FFListBox : public CXFA_FFField {
   void OnDrawWidget(CFX_Graphics* pGraphics,
                     const CFX_Matrix* pMatrix = nullptr) override;
 
-  void OnSelectChanged(IFWL_Widget* pWidget, const CFX_Int32Array& arrSels);
+  void OnSelectChanged(CFWL_Widget* pWidget, const CFX_Int32Array& arrSels);
   void SetItemState(int32_t nIndex, bool bSelected);
   void InsertItem(const CFX_WideStringC& wsLabel, int32_t nIndex = -1);
   void DeleteItem(int32_t nIndex);
@@ -75,11 +75,10 @@ class CXFA_FFComboBox : public CXFA_FFField {
 
   virtual void OpenDropDownList();
 
-  void OnTextChanged(IFWL_Widget* pWidget, const CFX_WideString& wsChanged);
-  void OnSelectChanged(IFWL_Widget* pWidget,
-                       bool bLButtonUp);
-  void OnPreOpen(IFWL_Widget* pWidget);
-  void OnPostOpen(IFWL_Widget* pWidget);
+  void OnTextChanged(CFWL_Widget* pWidget, const CFX_WideString& wsChanged);
+  void OnSelectChanged(CFWL_Widget* pWidget, bool bLButtonUp);
+  void OnPreOpen(CFWL_Widget* pWidget);
+  void OnPostOpen(CFWL_Widget* pWidget);
   void SetItemState(int32_t nIndex, bool bSelected);
   void InsertItem(const CFX_WideStringC& wsLabel, int32_t nIndex = -1);
   void DeleteItem(int32_t nIndex);

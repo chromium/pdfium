@@ -23,8 +23,8 @@ const uint32_t kFrequency = 400;
 
 CFWL_Caret::CFWL_Caret(const CFWL_App* app,
                        std::unique_ptr<CFWL_WidgetProperties> properties,
-                       IFWL_Widget* pOuter)
-    : IFWL_Widget(app, std::move(properties), pOuter),
+                       CFWL_Widget* pOuter)
+    : CFWL_Widget(app, std::move(properties), pOuter),
       m_pTimer(new CFWL_Caret::Timer(this)),
       m_pTimerInfo(nullptr) {
   SetStates(FWL_STATE_CAT_HightLight);

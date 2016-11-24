@@ -47,22 +47,20 @@ void CXFA_FFPushButton::RenderWidget(CFX_Graphics* pGS,
   CFX_Matrix mt;
   mt.Set(1, 0, 0, 1, rtWidget.left, rtWidget.top);
   mt.Concat(mtRotate);
-  GetApp()->GetWidgetMgrDelegate()->OnDrawWidget(m_pNormalWidget->GetWidget(),
-                                                 pGS, &mt);
+  GetApp()->GetWidgetMgrDelegate()->OnDrawWidget(m_pNormalWidget, pGS, &mt);
 }
 bool CXFA_FFPushButton::LoadWidget() {
   ASSERT(!m_pNormalWidget);
   CFWL_PushButton* pPushButton = new CFWL_PushButton(GetFWLApp());
-  pPushButton->Initialize();
-
   m_pOldDelegate = pPushButton->GetDelegate();
   pPushButton->SetDelegate(this);
 
   m_pNormalWidget = pPushButton;
   m_pNormalWidget->SetLayoutItem(this);
-  IFWL_Widget* pWidget = m_pNormalWidget->GetWidget();
-  CFWL_NoteDriver* pNoteDriver = pWidget->GetOwnerApp()->GetNoteDriver();
-  pNoteDriver->RegisterEventTarget(pWidget, pWidget);
+
+  CFWL_NoteDriver* pNoteDriver =
+      m_pNormalWidget->GetOwnerApp()->GetNoteDriver();
+  pNoteDriver->RegisterEventTarget(m_pNormalWidget, m_pNormalWidget);
   m_pNormalWidget->LockUpdate();
   UpdateWidgetProperty();
   LoadHighlightCaption();

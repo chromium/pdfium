@@ -24,13 +24,12 @@ CXFA_FFImageEdit::~CXFA_FFImageEdit() {
 }
 bool CXFA_FFImageEdit::LoadWidget() {
   CFWL_PictureBox* pPictureBox = new CFWL_PictureBox(GetFWLApp());
-  pPictureBox->Initialize();
   m_pNormalWidget = pPictureBox;
   m_pNormalWidget->SetLayoutItem(this);
 
-  IFWL_Widget* pWidget = m_pNormalWidget->GetWidget();
-  CFWL_NoteDriver* pNoteDriver = pWidget->GetOwnerApp()->GetNoteDriver();
-  pNoteDriver->RegisterEventTarget(pWidget, pWidget);
+  CFWL_NoteDriver* pNoteDriver =
+      m_pNormalWidget->GetOwnerApp()->GetNoteDriver();
+  pNoteDriver->RegisterEventTarget(m_pNormalWidget, m_pNormalWidget);
 
   m_pOldDelegate = pPictureBox->GetDelegate();
   pPictureBox->SetDelegate(this);
@@ -99,7 +98,7 @@ bool CXFA_FFImageEdit::OnLButtonDown(uint32_t dwFlags,
   ms.m_dwFlags = dwFlags;
   ms.m_fx = fx;
   ms.m_fy = fy;
-  ms.m_pDstTarget = m_pNormalWidget->GetWidget();
+  ms.m_pDstTarget = m_pNormalWidget;
   FWLToClient(ms.m_fx, ms.m_fy);
   TranslateFWLMessage(&ms);
   return true;

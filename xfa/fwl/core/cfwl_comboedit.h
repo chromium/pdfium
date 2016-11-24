@@ -9,19 +9,19 @@
 
 #include <memory>
 
+#include "xfa/fwl/core/cfwl_edit.h"
+#include "xfa/fwl/core/cfwl_widget.h"
 #include "xfa/fwl/core/cfwl_widgetproperties.h"
-#include "xfa/fwl/core/ifwl_edit.h"
-#include "xfa/fwl/core/ifwl_widget.h"
 
-class IFWL_ComboBox;
+class CFWL_ComboBox;
 
-class CFWL_ComboEdit : public IFWL_Edit {
+class CFWL_ComboEdit : public CFWL_Edit {
  public:
   CFWL_ComboEdit(const CFWL_App* app,
                  std::unique_ptr<CFWL_WidgetProperties> properties,
-                 IFWL_Widget* pOuter);
+                 CFWL_Widget* pOuter);
 
-  // IFWL_Edit.
+  // CFWL_Edit.
   void OnProcessMessage(CFWL_Message* pMessage) override;
 
   void ClearSelected();
@@ -29,7 +29,7 @@ class CFWL_ComboEdit : public IFWL_Edit {
   void FlagFocus(bool bSet);
 
  private:
-  IFWL_ComboBox* m_pOuter;
+  CFWL_ComboBox* m_pOuter;
 };
 
 #endif  // XFA_FWL_CORE_CFWL_COMBOEDIT_H_

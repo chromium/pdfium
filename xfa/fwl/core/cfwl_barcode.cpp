@@ -6,33 +6,93 @@
 
 #include "xfa/fwl/core/cfwl_barcode.h"
 
-#include <memory>
 #include <utility>
 
 #include "third_party/base/ptr_util.h"
-
-namespace {
-
-IFWL_Barcode* ToBarcode(IFWL_Widget* widget) {
-  return static_cast<IFWL_Barcode*>(widget);
-}
-
-}  // namespace
+#include "xfa/fgas/font/cfgas_gefont.h"
+#include "xfa/fwl/core/cfwl_notedriver.h"
+#include "xfa/fwl/core/cfwl_themepart.h"
+#include "xfa/fwl/core/cfx_barcode.h"
+#include "xfa/fwl/core/ifwl_themeprovider.h"
 
 CFWL_Barcode::CFWL_Barcode(const CFWL_App* app)
-    : CFWL_Edit(app), m_dwAttributeMask(FWL_BCDATTRIBUTE_NONE) {}
+    : CFWL_Edit(app, pdfium::MakeUnique<CFWL_WidgetProperties>(), nullptr),
+      m_dwStatus(0),
+      m_type(BC_UNKNOWN),
+      m_dwAttributeMask(FWL_BCDATTRIBUTE_NONE) {}
 
 CFWL_Barcode::~CFWL_Barcode() {}
 
-void CFWL_Barcode::Initialize() {
-  ASSERT(!m_pIface);
+FWL_Type CFWL_Barcode::GetClassID() const {
+  return FWL_Type::Barcode;
+}
 
-  auto iface = pdfium::MakeUnique<IFWL_Barcode>(
-      m_pApp, pdfium::MakeUnique<CFWL_WidgetProperties>());
-  iface->SetDataProvider(this);
-  m_pIface = std::move(iface);
+void CFWL_Barcode::Update() {
+  if (IsLocked())
+    return;
 
-  CFWL_Widget::Initialize();
+  CFWL_Edit::Update();
+  GenerateBarcodeImageCache();
+}
+
+void CFWL_Barcode::DrawWidget(CFX_Graphics* pGraphics,
+                              const CFX_Matrix* pMatrix) {
+  if (!pGraphics)
+    return;
+  if (!m_pProperties->m_pThemeProvider)
+    return;
+  if ((m_pProperties->m_dwStates & FWL_WGTSTATE_Focused) == 0) {
+    GenerateBarcodeImageCache();
+    if (!m_pBarcodeEngine || (m_dwStatus & XFA_BCS_EncodeSuccess) == 0)
+      return;
+
+    CFX_Matrix mt;
+    mt.e = GetRTClient().left;
+    mt.f = GetRTClient().top;
+    if (pMatrix)
+      mt.Concat(*pMatrix);
+
+    int32_t errorCode = 0;
+    m_pBarcodeEngine->RenderDevice(pGraphics->GetRenderDevice(), pMatrix,
+                                   errorCode);
+    return;
+  }
+  CFWL_Edit::DrawWidget(pGraphics, pMatrix);
+}
+
+void CFWL_Barcode::SetType(BC_TYPE type) {
+  if (m_type == type)
+    return;
+
+  m_pBarcodeEngine.reset();
+  m_type = type;
+  m_dwStatus = XFA_BCS_NeedUpdate;
+}
+
+void CFWL_Barcode::SetText(const CFX_WideString& wsText) {
+  m_pBarcodeEngine.reset();
+  m_dwStatus = XFA_BCS_NeedUpdate;
+  CFWL_Edit::SetText(wsText);
+}
+
+bool CFWL_Barcode::IsProtectedType() const {
+  if (!m_pBarcodeEngine)
+    return true;
+
+  BC_TYPE tEngineType = m_pBarcodeEngine->GetType();
+  if (tEngineType == BC_QR_CODE || tEngineType == BC_PDF417 ||
+      tEngineType == BC_DATAMATRIX) {
+    return true;
+  }
+  return false;
+}
+
+void CFWL_Barcode::OnProcessEvent(CFWL_Event* pEvent) {
+  if (pEvent->GetClassID() == CFWL_EventType::TextChanged) {
+    m_pBarcodeEngine.reset();
+    m_dwStatus = XFA_BCS_NeedUpdate;
+  }
+  CFWL_Edit::OnProcessEvent(pEvent);
 }
 
 void CFWL_Barcode::SetCharEncoding(BC_CHAR_ENCODING encoding) {
@@ -53,7 +113,7 @@ void CFWL_Barcode::SetModuleWidth(int32_t width) {
 void CFWL_Barcode::SetDataLength(int32_t dataLength) {
   m_dwAttributeMask |= FWL_BCDATTRIBUTE_DATALENGTH;
   m_nDataLength = dataLength;
-  ToBarcode(GetWidget())->SetLimit(dataLength);
+  SetLimit(dataLength);
 }
 
 void CFWL_Barcode::SetCalChecksum(bool calChecksum) {
@@ -96,67 +156,78 @@ void CFWL_Barcode::SetTruncated(bool truncated) {
   m_bTruncated = truncated;
 }
 
-void CFWL_Barcode::SetType(BC_TYPE type) {
-  if (GetWidget())
-    ToBarcode(GetWidget())->SetType(type);
+void CFWL_Barcode::GenerateBarcodeImageCache() {
+  if ((m_dwStatus & XFA_BCS_NeedUpdate) == 0)
+    return;
+
+  m_dwStatus = 0;
+  CreateBarcodeEngine();
+  if (!m_pBarcodeEngine)
+    return;
+
+  CFX_WideString wsText;
+  GetText(wsText);
+
+  CFWL_ThemePart part;
+  part.m_pWidget = this;
+
+  IFWL_ThemeProvider* pTheme = GetAvailableTheme();
+  CFGAS_GEFont* pFont = static_cast<CFGAS_GEFont*>(
+      pTheme->GetCapacity(&part, CFWL_WidgetCapacity::Font));
+  CFX_Font* pCXFont = pFont ? pFont->GetDevFont() : nullptr;
+  if (pCXFont)
+    m_pBarcodeEngine->SetFont(pCXFont);
+
+  FX_FLOAT* pFontSize = static_cast<FX_FLOAT*>(
+      pTheme->GetCapacity(&part, CFWL_WidgetCapacity::FontSize));
+  if (pFontSize)
+    m_pBarcodeEngine->SetFontSize(*pFontSize);
+
+  FX_ARGB* pFontColor = static_cast<FX_ARGB*>(
+      pTheme->GetCapacity(&part, CFWL_WidgetCapacity::TextColor));
+  if (pFontColor)
+    m_pBarcodeEngine->SetFontColor(*pFontColor);
+
+  m_pBarcodeEngine->SetHeight(int32_t(GetRTClient().height));
+  m_pBarcodeEngine->SetWidth(int32_t(GetRTClient().width));
+  if (m_dwAttributeMask & FWL_BCDATTRIBUTE_CHARENCODING)
+    m_pBarcodeEngine->SetCharEncoding(m_eCharEncoding);
+  if (m_dwAttributeMask & FWL_BCDATTRIBUTE_MODULEHEIGHT)
+    m_pBarcodeEngine->SetModuleHeight(m_nModuleHeight);
+  if (m_dwAttributeMask & FWL_BCDATTRIBUTE_MODULEWIDTH)
+    m_pBarcodeEngine->SetModuleWidth(m_nModuleWidth);
+  if (m_dwAttributeMask & FWL_BCDATTRIBUTE_DATALENGTH)
+    m_pBarcodeEngine->SetDataLength(m_nDataLength);
+  if (m_dwAttributeMask & FWL_BCDATTRIBUTE_CALCHECKSUM)
+    m_pBarcodeEngine->SetCalChecksum(m_bCalChecksum);
+  if (m_dwAttributeMask & FWL_BCDATTRIBUTE_PRINTCHECKSUM)
+    m_pBarcodeEngine->SetPrintChecksum(m_bPrintChecksum);
+  if (m_dwAttributeMask & FWL_BCDATTRIBUTE_TEXTLOCATION)
+    m_pBarcodeEngine->SetTextLocation(m_eTextLocation);
+  if (m_dwAttributeMask & FWL_BCDATTRIBUTE_WIDENARROWRATIO)
+    m_pBarcodeEngine->SetWideNarrowRatio(m_nWideNarrowRatio);
+  if (m_dwAttributeMask & FWL_BCDATTRIBUTE_STARTCHAR)
+    m_pBarcodeEngine->SetStartChar(m_cStartChar);
+  if (m_dwAttributeMask & FWL_BCDATTRIBUTE_ENDCHAR)
+    m_pBarcodeEngine->SetEndChar(m_cEndChar);
+  if (m_dwAttributeMask & FWL_BCDATTRIBUTE_VERSION)
+    m_pBarcodeEngine->SetVersion(0);
+  if (m_dwAttributeMask & FWL_BCDATTRIBUTE_ECLEVEL)
+    m_pBarcodeEngine->SetErrorCorrectionLevel(m_nECLevel);
+  if (m_dwAttributeMask & FWL_BCDATTRIBUTE_TRUNCATED)
+    m_pBarcodeEngine->SetTruncated(m_bTruncated);
+
+  int32_t errorCode = 0;
+  m_dwStatus = m_pBarcodeEngine->Encode(wsText.AsStringC(), true, errorCode)
+                   ? XFA_BCS_EncodeSuccess
+                   : 0;
 }
 
-bool CFWL_Barcode::IsProtectedType() {
-  return GetWidget() ? ToBarcode(GetWidget())->IsProtectedType() : false;
-}
+void CFWL_Barcode::CreateBarcodeEngine() {
+  if (m_pBarcodeEngine || m_type == BC_UNKNOWN)
+    return;
 
-BC_CHAR_ENCODING CFWL_Barcode::GetCharEncoding() const {
-  return m_eCharEncoding;
-}
-
-int32_t CFWL_Barcode::GetModuleHeight() const {
-  return m_nModuleHeight;
-}
-
-int32_t CFWL_Barcode::GetModuleWidth() const {
-  return m_nModuleWidth;
-}
-
-int32_t CFWL_Barcode::GetDataLength() const {
-  return m_nDataLength;
-}
-
-bool CFWL_Barcode::GetCalChecksum() const {
-  return m_bCalChecksum;
-}
-
-bool CFWL_Barcode::GetPrintChecksum() const {
-  return m_bPrintChecksum;
-}
-
-BC_TEXT_LOC CFWL_Barcode::GetTextLocation() const {
-  return m_eTextLocation;
-}
-
-int32_t CFWL_Barcode::GetWideNarrowRatio() const {
-  return m_nWideNarrowRatio;
-}
-
-FX_CHAR CFWL_Barcode::GetStartChar() const {
-  return m_cStartChar;
-}
-
-FX_CHAR CFWL_Barcode::GetEndChar() const {
-  return m_cEndChar;
-}
-
-int32_t CFWL_Barcode::GetVersion() const {
-  return 0;
-}
-
-int32_t CFWL_Barcode::GetErrorCorrectionLevel() const {
-  return m_nECLevel;
-}
-
-bool CFWL_Barcode::GetTruncated() const {
-  return m_bTruncated;
-}
-
-uint32_t CFWL_Barcode::GetBarcodeAttributeMask() const {
-  return m_dwAttributeMask;
+  std::unique_ptr<CFX_Barcode> pBarcode(new CFX_Barcode);
+  if (pBarcode->Create(m_type))
+    m_pBarcodeEngine = std::move(pBarcode);
 }

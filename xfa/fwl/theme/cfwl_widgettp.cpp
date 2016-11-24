@@ -15,9 +15,9 @@
 #include "xfa/fwl/core/cfwl_themebackground.h"
 #include "xfa/fwl/core/cfwl_themepart.h"
 #include "xfa/fwl/core/cfwl_themetext.h"
+#include "xfa/fwl/core/cfwl_widget.h"
 #include "xfa/fwl/core/cfwl_widgetmgr.h"
 #include "xfa/fwl/core/ifwl_themeprovider.h"
-#include "xfa/fwl/core/ifwl_widget.h"
 #include "xfa/fwl/theme/cfwl_arrowdata.h"
 #include "xfa/fxgraphics/cfx_color.h"
 #include "xfa/fxgraphics/cfx_path.h"
@@ -37,7 +37,7 @@ const float kCYBorder = 1.0f;
 
 }  // namespace
 
-bool CFWL_WidgetTP::IsValidWidget(IFWL_Widget* pWidget) {
+bool CFWL_WidgetTP::IsValidWidget(CFWL_Widget* pWidget) {
   return false;
 }
 
@@ -136,7 +136,7 @@ void CFWL_WidgetTP::Finalize() {
 
 CFWL_WidgetTP::~CFWL_WidgetTP() {}
 
-void CFWL_WidgetTP::SetFont(IFWL_Widget* pWidget,
+void CFWL_WidgetTP::SetFont(CFWL_Widget* pWidget,
                             const FX_WCHAR* strFont,
                             FX_FLOAT fFontSize,
                             FX_ARGB rgbFont) {
@@ -149,7 +149,7 @@ void CFWL_WidgetTP::SetFont(IFWL_Widget* pWidget,
   m_pTextOut->SetTextColor(rgbFont);
 }
 
-void CFWL_WidgetTP::SetFont(IFWL_Widget* pWidget,
+void CFWL_WidgetTP::SetFont(CFWL_Widget* pWidget,
                             CFGAS_GEFont* pFont,
                             FX_FLOAT fFontSize,
                             FX_ARGB rgbFont) {
@@ -161,7 +161,7 @@ void CFWL_WidgetTP::SetFont(IFWL_Widget* pWidget,
   m_pTextOut->SetTextColor(rgbFont);
 }
 
-CFGAS_GEFont* CFWL_WidgetTP::GetFont(IFWL_Widget* pWidget) {
+CFGAS_GEFont* CFWL_WidgetTP::GetFont(CFWL_Widget* pWidget) {
   return m_pFDEFont;
 }
 

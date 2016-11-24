@@ -11,7 +11,7 @@
 
 #include "xfa/fwl/core/cfwl_event.h"
 #include "xfa/fwl/core/cfwl_timer.h"
-#include "xfa/fwl/core/ifwl_widget.h"
+#include "xfa/fwl/core/cfwl_widget.h"
 #include "xfa/fxfa/cxfa_eventparam.h"
 
 #define FWL_STYLEEXE_SPB_Vert (1L << 0)
@@ -19,13 +19,13 @@
 class CFWL_MsgMouse;
 class CFWL_WidgetProperties;
 
-class CFWL_SpinButton : public IFWL_Widget {
+class CFWL_SpinButton : public CFWL_Widget {
  public:
   CFWL_SpinButton(const CFWL_App* app,
                   std::unique_ptr<CFWL_WidgetProperties> properties);
   ~CFWL_SpinButton() override;
 
-  // IFWL_Widget
+  // CFWL_Widget
   FWL_Type GetClassID() const override;
   void GetWidgetRect(CFX_RectF& rect, bool bAutoSize = false) override;
   void Update() override;

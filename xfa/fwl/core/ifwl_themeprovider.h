@@ -13,7 +13,7 @@
 class CFWL_ThemeBackground;
 class CFWL_ThemePart;
 class CFWL_ThemeText;
-class IFWL_Widget;
+class CFWL_Widget;
 
 class IFWL_ThemeProvider {
  public:

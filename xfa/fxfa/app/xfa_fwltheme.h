@@ -37,7 +37,7 @@ class CXFA_FWLTheme final : public IFWL_ThemeProvider {
   void CalcTextRect(CFWL_ThemeText* pParams, CFX_RectF& rect) override;
 
  private:
-  CFWL_WidgetTP* GetTheme(IFWL_Widget* pWidget);
+  CFWL_WidgetTP* GetTheme(CFWL_Widget* pWidget);
   std::unique_ptr<CFWL_CheckBoxTP> m_pCheckBoxTP;
   std::unique_ptr<CFWL_ListBoxTP> m_pListBoxTP;
   std::unique_ptr<CFWL_PictureBoxTP> m_pPictureBoxTP;
@@ -59,6 +59,6 @@ class CXFA_FWLTheme final : public IFWL_ThemeProvider {
   CFX_SizeF m_SizeAboveBelow;
 };
 
-CXFA_FFWidget* XFA_ThemeGetOuterWidget(IFWL_Widget* pWidget);
+CXFA_FFWidget* XFA_ThemeGetOuterWidget(CFWL_Widget* pWidget);
 
 #endif  // XFA_FXFA_APP_XFA_FWLTHEME_H_

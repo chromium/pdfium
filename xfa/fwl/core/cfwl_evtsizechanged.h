@@ -16,7 +16,7 @@ class CFWL_EvtSizeChanged : public CFWL_Event {
 
   CFWL_EventType GetClassID() const override;
 
-  IFWL_Widget* m_pWidget;
+  CFWL_Widget* m_pWidget;
   CFX_RectF m_rtOld;
   CFX_RectF m_rtNew;
 };

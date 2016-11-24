@@ -8,14 +8,14 @@
 
 #include "xfa/fwl/core/cfwl_caret.h"
 #include "xfa/fwl/core/cfwl_themebackground.h"
-#include "xfa/fwl/core/ifwl_widget.h"
+#include "xfa/fwl/core/cfwl_widget.h"
 #include "xfa/fxgraphics/cfx_color.h"
 #include "xfa/fxgraphics/cfx_path.h"
 
 CFWL_CaretTP::CFWL_CaretTP() {}
 CFWL_CaretTP::~CFWL_CaretTP() {}
 
-bool CFWL_CaretTP::IsValidWidget(IFWL_Widget* pWidget) {
+bool CFWL_CaretTP::IsValidWidget(CFWL_Widget* pWidget) {
   return pWidget && pWidget->GetClassID() == FWL_Type::Caret;
 }
 

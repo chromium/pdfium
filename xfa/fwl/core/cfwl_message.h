@@ -23,7 +23,7 @@ enum class CFWL_MessageType {
   SetFocus
 };
 
-class IFWL_Widget;
+class CFWL_Widget;
 
 class CFWL_Message {
  public:
@@ -33,8 +33,8 @@ class CFWL_Message {
   virtual std::unique_ptr<CFWL_Message> Clone();
   virtual CFWL_MessageType GetClassID() const;
 
-  IFWL_Widget* m_pSrcTarget;
-  IFWL_Widget* m_pDstTarget;
+  CFWL_Widget* m_pSrcTarget;
+  CFWL_Widget* m_pDstTarget;
   uint32_t m_dwExtend;
 };
 

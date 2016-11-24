@@ -17,7 +17,7 @@ class CFWL_ListBoxTP : public CFWL_WidgetTP {
   // CFWL_WidgetTP
   void Initialize() override;
   void Finalize() override;
-  bool IsValidWidget(IFWL_Widget* pWidget) override;
+  bool IsValidWidget(CFWL_Widget* pWidget) override;
   void DrawBackground(CFWL_ThemeBackground* pParams) override;
 
  protected:

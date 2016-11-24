@@ -10,8 +10,8 @@
 #include "xfa/fwl/core/cfwl_monthcalendar.h"
 #include "xfa/fwl/core/cfwl_themebackground.h"
 #include "xfa/fwl/core/cfwl_themetext.h"
+#include "xfa/fwl/core/cfwl_widget.h"
 #include "xfa/fwl/core/ifwl_themeprovider.h"
-#include "xfa/fwl/core/ifwl_widget.h"
 #include "xfa/fxgraphics/cfx_color.h"
 #include "xfa/fxgraphics/cfx_path.h"
 
@@ -55,7 +55,7 @@ CFWL_MonthCalendarTP::CFWL_MonthCalendarTP() : m_pThemeData(new MCThemeData) {
 
 CFWL_MonthCalendarTP::~CFWL_MonthCalendarTP() {}
 
-bool CFWL_MonthCalendarTP::IsValidWidget(IFWL_Widget* pWidget) {
+bool CFWL_MonthCalendarTP::IsValidWidget(CFWL_Widget* pWidget) {
   return pWidget && pWidget->GetClassID() == FWL_Type::MonthCalendar;
 }
 

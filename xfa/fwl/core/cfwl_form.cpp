@@ -40,8 +40,8 @@ const uint8_t kCornerEnlarge = 10;
 
 CFWL_Form::CFWL_Form(const CFWL_App* app,
                      std::unique_ptr<CFWL_WidgetProperties> properties,
-                     IFWL_Widget* pOuter)
-    : IFWL_Widget(app, std::move(properties), pOuter),
+                     CFWL_Widget* pOuter)
+    : CFWL_Widget(app, std::move(properties), pOuter),
 #if (_FX_OS_ == _FX_MACOSX_)
       m_bMouseIn(false),
 #endif
@@ -77,7 +77,7 @@ FWL_Type CFWL_Form::GetClassID() const {
 bool CFWL_Form::IsInstance(const CFX_WideStringC& wsClass) const {
   if (wsClass == CFX_WideStringC(FWL_CLASS_Form))
     return true;
-  return IFWL_Widget::IsInstance(wsClass);
+  return CFWL_Widget::IsInstance(wsClass);
 }
 
 void CFWL_Form::GetWidgetRect(CFX_RectF& rect, bool bAutoSize) {
@@ -267,7 +267,7 @@ void CFWL_Form::DrawWidget(CFX_Graphics* pGraphics, const CFX_Matrix* pMatrix) {
 #endif
 }
 
-IFWL_Widget* CFWL_Form::DoModal() {
+CFWL_Widget* CFWL_Form::DoModal() {
   const CFWL_App* pApp = GetOwnerApp();
   if (!pApp)
     return nullptr;

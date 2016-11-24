@@ -6,15 +6,15 @@
 
 #include "xfa/fwl/theme/cfwl_pictureboxtp.h"
 
+#include "xfa/fwl/core/cfwl_picturebox.h"
 #include "xfa/fwl/core/cfwl_themebackground.h"
-#include "xfa/fwl/core/ifwl_picturebox.h"
-#include "xfa/fwl/core/ifwl_widget.h"
+#include "xfa/fwl/core/cfwl_widget.h"
 
 CFWL_PictureBoxTP::CFWL_PictureBoxTP() {}
 
 CFWL_PictureBoxTP::~CFWL_PictureBoxTP() {}
 
-bool CFWL_PictureBoxTP::IsValidWidget(IFWL_Widget* pWidget) {
+bool CFWL_PictureBoxTP::IsValidWidget(CFWL_Widget* pWidget) {
   return pWidget && pWidget->GetClassID() == FWL_Type::PictureBox;
 }
 

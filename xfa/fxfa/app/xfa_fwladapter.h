@@ -11,15 +11,15 @@
 #include "core/fxcrt/fx_system.h"
 #include "xfa/fwl/core/fwl_error.h"
 
-class IFWL_Widget;
+class CFWL_Widget;
 
 class CXFA_FWLAdapterWidgetMgr {
  public:
   CXFA_FWLAdapterWidgetMgr();
   ~CXFA_FWLAdapterWidgetMgr();
 
-  void RepaintWidget(IFWL_Widget* pWidget, const CFX_RectF* pRect);
-  bool GetPopupPos(IFWL_Widget* pWidget,
+  void RepaintWidget(CFWL_Widget* pWidget, const CFX_RectF* pRect);
+  bool GetPopupPos(CFWL_Widget* pWidget,
                    FX_FLOAT fMinHeight,
                    FX_FLOAT fMaxHeight,
                    const CFX_RectF& rtAnchor,

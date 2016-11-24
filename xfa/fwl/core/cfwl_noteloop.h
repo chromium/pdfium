@@ -7,20 +7,20 @@
 #ifndef XFA_FWL_CORE_CFWL_NOTELOOP_H_
 #define XFA_FWL_CORE_CFWL_NOTELOOP_H_
 
-class IFWL_Widget;
+class CFWL_Widget;
 
 class CFWL_NoteLoop {
  public:
   CFWL_NoteLoop();
   ~CFWL_NoteLoop() {}
 
-  IFWL_Widget* GetForm() const { return m_pForm; }
+  CFWL_Widget* GetForm() const { return m_pForm; }
   bool ContinueModal() const { return m_bContinueModal; }
   void EndModalLoop() { m_bContinueModal = false; }
-  void SetMainForm(IFWL_Widget* pForm) { m_pForm = pForm; }
+  void SetMainForm(CFWL_Widget* pForm) { m_pForm = pForm; }
 
  private:
-  IFWL_Widget* m_pForm;
+  CFWL_Widget* m_pForm;
   bool m_bContinueModal;
 };
 

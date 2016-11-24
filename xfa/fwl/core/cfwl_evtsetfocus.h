@@ -16,7 +16,7 @@ class CFWL_EvtSetFocus : public CFWL_Event {
 
   CFWL_EventType GetClassID() const override;
 
-  IFWL_Widget* m_pSetFocus;
+  CFWL_Widget* m_pSetFocus;
 };
 
 #endif  // XFA_FWL_CORE_CFWL_EVTSETFOCUS_H_

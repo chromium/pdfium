@@ -12,22 +12,22 @@
 #include "core/fxcrt/fx_system.h"
 #include "xfa/fwl/core/cfwl_evtscroll.h"
 #include "xfa/fwl/core/cfwl_timer.h"
+#include "xfa/fwl/core/cfwl_widget.h"
 #include "xfa/fwl/core/cfwl_widgetproperties.h"
-#include "xfa/fwl/core/ifwl_widget.h"
 
-class IFWL_Widget;
+class CFWL_Widget;
 
 #define FWL_STYLEEXT_SCB_Horz (0L << 0)
 #define FWL_STYLEEXT_SCB_Vert (1L << 0)
 
-class CFWL_ScrollBar : public IFWL_Widget {
+class CFWL_ScrollBar : public CFWL_Widget {
  public:
   CFWL_ScrollBar(const CFWL_App* app,
                  std::unique_ptr<CFWL_WidgetProperties> properties,
-                 IFWL_Widget* pOuter);
+                 CFWL_Widget* pOuter);
   ~CFWL_ScrollBar() override;
 
-  // IFWL_Widget
+  // CFWL_Widget
   FWL_Type GetClassID() const override;
   void GetWidgetRect(CFX_RectF& rect, bool bAutoSize = false) override;
   void Update() override;

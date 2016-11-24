@@ -17,7 +17,7 @@
 #include "xfa/fde/ifx_chariter.h"
 #include "xfa/fde/tto/fde_textout.h"
 #include "xfa/fgas/layout/fgas_textbreak.h"
-#include "xfa/fwl/core/ifwl_edit.h"
+#include "xfa/fwl/core/cfwl_edit.h"
 
 namespace {
 

@@ -20,7 +20,7 @@ class CFWL_MsgSetFocus : public CFWL_Message {
   std::unique_ptr<CFWL_Message> Clone() override;
   CFWL_MessageType GetClassID() const override;
 
-  IFWL_Widget* m_pKillFocus;
+  CFWL_Widget* m_pKillFocus;
 };
 
 #endif  // XFA_FWL_CORE_CFWL_MSGSETFOCUS_H_

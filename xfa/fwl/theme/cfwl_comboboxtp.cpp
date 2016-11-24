@@ -6,10 +6,10 @@
 
 #include "xfa/fwl/theme/cfwl_comboboxtp.h"
 
+#include "xfa/fwl/core/cfwl_combobox.h"
 #include "xfa/fwl/core/cfwl_themebackground.h"
-#include "xfa/fwl/core/ifwl_combobox.h"
+#include "xfa/fwl/core/cfwl_widget.h"
 #include "xfa/fwl/core/ifwl_themeprovider.h"
-#include "xfa/fwl/core/ifwl_widget.h"
 #include "xfa/fxgraphics/cfx_color.h"
 #include "xfa/fxgraphics/cfx_path.h"
 
@@ -23,7 +23,7 @@ CFWL_ComboBoxTP::CFWL_ComboBoxTP() {}
 
 CFWL_ComboBoxTP::~CFWL_ComboBoxTP() {}
 
-bool CFWL_ComboBoxTP::IsValidWidget(IFWL_Widget* pWidget) {
+bool CFWL_ComboBoxTP::IsValidWidget(CFWL_Widget* pWidget) {
   return pWidget && pWidget->GetClassID() == FWL_Type::ComboBox;
 }
 

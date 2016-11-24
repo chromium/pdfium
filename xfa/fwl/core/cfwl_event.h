@@ -38,7 +38,7 @@ enum class CFWL_EventType {
 };
 
 class CFX_Graphics;
-class IFWL_Widget;
+class CFWL_Widget;
 
 class CFWL_Event {
  public:
@@ -47,8 +47,8 @@ class CFWL_Event {
 
   virtual CFWL_EventType GetClassID() const;
 
-  IFWL_Widget* m_pSrcTarget;
-  IFWL_Widget* m_pDstTarget;
+  CFWL_Widget* m_pSrcTarget;
+  CFWL_Widget* m_pDstTarget;
 };
 
 #endif  // XFA_FWL_CORE_CFWL_EVENT_H_

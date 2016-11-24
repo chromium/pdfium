@@ -77,7 +77,7 @@ enum CFWL_PartState {
   CFWL_PartState_Selected = 1 << 14
 };
 
-class IFWL_Widget;
+class CFWL_Widget;
 
 class CFWL_ThemePart {
  public:
@@ -85,7 +85,7 @@ class CFWL_ThemePart {
 
   CFX_Matrix m_matrix;
   CFX_RectF m_rtPart;
-  IFWL_Widget* m_pWidget;
+  CFWL_Widget* m_pWidget;
   CFWL_Part m_iPart;
   uint32_t m_dwStates;
   bool m_bMaximize;

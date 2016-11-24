@@ -6,9 +6,9 @@
 
 #include "xfa/fwl/theme/cfwl_edittp.h"
 
+#include "xfa/fwl/core/cfwl_edit.h"
 #include "xfa/fwl/core/cfwl_themebackground.h"
-#include "xfa/fwl/core/ifwl_edit.h"
-#include "xfa/fwl/core/ifwl_widget.h"
+#include "xfa/fwl/core/cfwl_widget.h"
 #include "xfa/fxfa/app/xfa_fwltheme.h"
 #include "xfa/fxfa/xfa_ffwidget.h"
 #include "xfa/fxgraphics/cfx_color.h"
@@ -17,7 +17,7 @@
 CFWL_EditTP::CFWL_EditTP() {}
 CFWL_EditTP::~CFWL_EditTP() {}
 
-bool CFWL_EditTP::IsValidWidget(IFWL_Widget* pWidget) {
+bool CFWL_EditTP::IsValidWidget(CFWL_Widget* pWidget) {
   return pWidget && pWidget->GetClassID() == FWL_Type::Edit;
 }
 

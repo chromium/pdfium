@@ -8,8 +8,8 @@
 
 #include "xfa/fwl/core/cfwl_app.h"
 #include "xfa/fwl/core/cfwl_timerinfo.h"
+#include "xfa/fwl/core/cfwl_widget.h"
 #include "xfa/fwl/core/ifwl_adaptertimermgr.h"
-#include "xfa/fwl/core/ifwl_widget.h"
 #include "xfa/fxfa/xfa_ffapp.h"
 
 CFWL_TimerInfo* CFWL_Timer::StartTimer(uint32_t dwElapse, bool bImmediately) {

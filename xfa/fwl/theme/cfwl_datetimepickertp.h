@@ -15,7 +15,7 @@ class CFWL_DateTimePickerTP : public CFWL_WidgetTP {
   ~CFWL_DateTimePickerTP() override;
 
   // CFWL_WidgetTP
-  bool IsValidWidget(IFWL_Widget* pWidget) override;
+  bool IsValidWidget(CFWL_Widget* pWidget) override;
   void DrawBackground(CFWL_ThemeBackground* pParams) override;
 
  protected:

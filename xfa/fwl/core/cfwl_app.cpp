@@ -8,8 +8,8 @@
 
 #include "third_party/base/ptr_util.h"
 #include "xfa/fwl/core/cfwl_notedriver.h"
+#include "xfa/fwl/core/cfwl_widget.h"
 #include "xfa/fwl/core/cfwl_widgetmgr.h"
-#include "xfa/fwl/core/ifwl_widget.h"
 #include "xfa/fxfa/app/xfa_fwladapter.h"
 
 CFWL_App::CFWL_App(CXFA_FFApp* pAdapter)

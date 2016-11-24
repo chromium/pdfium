@@ -28,13 +28,12 @@ CXFA_FFCheckButton::~CXFA_FFCheckButton() {}
 
 bool CXFA_FFCheckButton::LoadWidget() {
   CFWL_CheckBox* pCheckBox = new CFWL_CheckBox(GetFWLApp());
-  pCheckBox->Initialize();
   m_pNormalWidget = pCheckBox;
   m_pNormalWidget->SetLayoutItem(this);
 
-  IFWL_Widget* pWidget = m_pNormalWidget->GetWidget();
-  CFWL_NoteDriver* pNoteDriver = pWidget->GetOwnerApp()->GetNoteDriver();
-  pNoteDriver->RegisterEventTarget(pWidget, pWidget);
+  CFWL_NoteDriver* pNoteDriver =
+      m_pNormalWidget->GetOwnerApp()->GetNoteDriver();
+  pNoteDriver->RegisterEventTarget(m_pNormalWidget, m_pNormalWidget);
 
   m_pOldDelegate = m_pNormalWidget->GetDelegate();
   m_pNormalWidget->SetDelegate(this);
@@ -238,8 +237,7 @@ void CXFA_FFCheckButton::RenderWidget(CFX_Graphics* pGS,
   CFX_Matrix mt;
   mt.Set(1, 0, 0, 1, m_rtCheckBox.left, m_rtCheckBox.top);
   mt.Concat(mtRotate);
-  GetApp()->GetWidgetMgrDelegate()->OnDrawWidget(m_pNormalWidget->GetWidget(),
-                                                 pGS, &mt);
+  GetApp()->GetWidgetMgrDelegate()->OnDrawWidget(m_pNormalWidget, pGS, &mt);
 }
 bool CXFA_FFCheckButton::OnLButtonUp(uint32_t dwFlags,
                                      FX_FLOAT fx,
@@ -254,7 +252,7 @@ bool CXFA_FFCheckButton::OnLButtonUp(uint32_t dwFlags,
   ms.m_fx = fx;
   ms.m_fy = fy;
   FWLToClient(ms.m_fx, ms.m_fy);
-  ms.m_pDstTarget = m_pNormalWidget->GetWidget();
+  ms.m_pDstTarget = m_pNormalWidget;
   TranslateFWLMessage(&ms);
   return true;
 }

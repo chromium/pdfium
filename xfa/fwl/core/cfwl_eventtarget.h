@@ -13,22 +13,22 @@
 #include "xfa/fwl/core/cfwl_event.h"
 
 class CFWL_Event;
-class IFWL_Widget;
+class CFWL_Widget;
 
 class CFWL_EventTarget {
  public:
-  explicit CFWL_EventTarget(IFWL_Widget* pListener);
+  explicit CFWL_EventTarget(CFWL_Widget* pListener);
   ~CFWL_EventTarget();
 
-  void SetEventSource(IFWL_Widget* pSource);
+  void SetEventSource(CFWL_Widget* pSource);
   bool ProcessEvent(CFWL_Event* pEvent);
 
   bool IsInvalid() const { return m_bInvalid; }
   void FlagInvalid() { m_bInvalid = true; }
 
  private:
-  std::set<IFWL_Widget*> m_widgets;
-  IFWL_Widget* m_pListener;
+  std::set<CFWL_Widget*> m_widgets;
+  CFWL_Widget* m_pListener;
   bool m_bInvalid;
 };
 

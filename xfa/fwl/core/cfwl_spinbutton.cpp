@@ -30,7 +30,7 @@ const int kElapseTime = 200;
 CFWL_SpinButton::CFWL_SpinButton(
     const CFWL_App* app,
     std::unique_ptr<CFWL_WidgetProperties> properties)
-    : IFWL_Widget(app, std::move(properties), nullptr),
+    : CFWL_Widget(app, std::move(properties), nullptr),
       m_dwUpState(CFWL_PartState_Normal),
       m_dwDnState(CFWL_PartState_Normal),
       m_iButtonIndex(0),
@@ -56,7 +56,7 @@ void CFWL_SpinButton::GetWidgetRect(CFX_RectF& rect, bool bAutoSize) {
   }
 
   rect.Set(0, 0, kMinWidth, kMinHeight);
-  IFWL_Widget::GetWidgetRect(rect, true);
+  CFWL_Widget::GetWidgetRect(rect, true);
 }
 
 void CFWL_SpinButton::Update() {
@@ -200,7 +200,7 @@ void CFWL_SpinButton::OnProcessMessage(CFWL_Message* pMessage) {
     default:
       break;
   }
-  IFWL_Widget::OnProcessMessage(pMessage);
+  CFWL_Widget::OnProcessMessage(pMessage);
 }
 
 void CFWL_SpinButton::OnDrawWidget(CFX_Graphics* pGraphics,

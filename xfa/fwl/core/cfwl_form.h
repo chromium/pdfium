@@ -10,8 +10,8 @@
 #include <memory>
 
 #include "core/fxcrt/fx_system.h"
+#include "xfa/fwl/core/cfwl_widget.h"
 #include "xfa/fwl/core/cfwl_widgetproperties.h"
-#include "xfa/fwl/core/ifwl_widget.h"
 
 #define FWL_CLASS_Form L"FWL_FORM"
 #define FWL_CLASS_FormProxy L"FWL_FORMPROXY"
@@ -29,18 +29,18 @@
 
 class CFWL_MsgMouse;
 class CFWL_NoteLoop;
-class IFWL_Widget;
+class CFWL_Widget;
 class IFWL_ThemeProvider;
 class CFWL_SysBtn;
 
-class CFWL_Form : public IFWL_Widget {
+class CFWL_Form : public CFWL_Widget {
  public:
   CFWL_Form(const CFWL_App* app,
             std::unique_ptr<CFWL_WidgetProperties> properties,
-            IFWL_Widget* pOuter);
+            CFWL_Widget* pOuter);
   ~CFWL_Form() override;
 
-  // IFWL_Widget
+  // CFWL_Widget
   FWL_Type GetClassID() const override;
   bool IsInstance(const CFX_WideStringC& wsClass) const override;
   void GetWidgetRect(CFX_RectF& rect, bool bAutoSize = false) override;
@@ -53,11 +53,11 @@ class CFWL_Form : public IFWL_Widget {
   void OnDrawWidget(CFX_Graphics* pGraphics,
                     const CFX_Matrix* pMatrix) override;
 
-  IFWL_Widget* DoModal();
+  CFWL_Widget* DoModal();
   void EndDoModal();
 
-  IFWL_Widget* GetSubFocus() const { return m_pSubFocus; }
-  void SetSubFocus(IFWL_Widget* pWidget) { m_pSubFocus = pWidget; }
+  CFWL_Widget* GetSubFocus() const { return m_pSubFocus; }
+  void SetSubFocus(CFWL_Widget* pWidget) { m_pSubFocus = pWidget; }
 
  private:
   void DrawBackground(CFX_Graphics* pGraphics, IFWL_ThemeProvider* pTheme);
@@ -87,7 +87,7 @@ class CFWL_Form : public IFWL_Widget {
   CFWL_SysBtn* m_pMinBox;
   CFWL_SysBtn* m_pMaxBox;
   std::unique_ptr<CFWL_NoteLoop> m_pNoteLoop;
-  IFWL_Widget* m_pSubFocus;
+  CFWL_Widget* m_pSubFocus;
   FX_FLOAT m_fCXBorder;
   FX_FLOAT m_fCYBorder;
   int32_t m_iCaptureBtn;

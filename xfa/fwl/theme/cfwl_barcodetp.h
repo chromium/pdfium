@@ -16,7 +16,7 @@ class CFWL_BarcodeTP : public CFWL_WidgetTP {
   ~CFWL_BarcodeTP() override;
 
   // CFWL_WidgetTP
-  bool IsValidWidget(IFWL_Widget* pWidget) override;
+  bool IsValidWidget(CFWL_Widget* pWidget) override;
   void DrawBackground(CFWL_ThemeBackground* pParams) override;
 };
 

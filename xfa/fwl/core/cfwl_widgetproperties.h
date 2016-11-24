@@ -9,11 +9,11 @@
 
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_system.h"
+#include "xfa/fwl/core/cfwl_widget.h"
 #include "xfa/fwl/core/fwl_widgetdef.h"
-#include "xfa/fwl/core/ifwl_widget.h"
 
 class IFWL_ThemeProvider;
-class IFWL_Widget;
+class CFWL_Widget;
 
 class CFWL_WidgetProperties {
  public:
@@ -25,8 +25,8 @@ class CFWL_WidgetProperties {
   uint32_t m_dwStyleExes;
   uint32_t m_dwStates;
   IFWL_ThemeProvider* m_pThemeProvider;
-  IFWL_Widget* m_pParent;
-  IFWL_Widget* m_pOwner;
+  CFWL_Widget* m_pParent;
+  CFWL_Widget* m_pOwner;
 };
 
 #endif  // XFA_FWL_CORE_CFWL_WIDGETPROPERTIES_H_

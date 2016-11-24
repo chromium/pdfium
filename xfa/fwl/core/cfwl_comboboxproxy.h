@@ -11,14 +11,14 @@
 
 #include "xfa/fwl/core/cfwl_formproxy.h"
 
-class IFWL_ComboBox;
+class CFWL_ComboBox;
 
 class CFWL_ComboBoxProxy : public CFWL_FormProxy {
  public:
-  CFWL_ComboBoxProxy(IFWL_ComboBox* pCombobBox,
+  CFWL_ComboBoxProxy(CFWL_ComboBox* pCombobBox,
                      const CFWL_App* app,
                      std::unique_ptr<CFWL_WidgetProperties> properties,
-                     IFWL_Widget* pOuter);
+                     CFWL_Widget* pOuter);
   ~CFWL_ComboBoxProxy() override;
 
   // CFWL_FormProxy
@@ -35,7 +35,7 @@ class CFWL_ComboBoxProxy : public CFWL_FormProxy {
 
   bool m_bLButtonDown;
   bool m_bLButtonUpSelf;
-  IFWL_ComboBox* m_pComboBox;
+  CFWL_ComboBox* m_pComboBox;
 };
 
 #endif  // XFA_FWL_CORE_CFWL_COMBOBOXPROXY_H_

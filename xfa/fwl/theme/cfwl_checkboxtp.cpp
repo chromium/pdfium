@@ -8,10 +8,10 @@
 
 #include "core/fxge/cfx_pathdata.h"
 #include "xfa/fde/tto/fde_textout.h"
+#include "xfa/fwl/core/cfwl_checkbox.h"
 #include "xfa/fwl/core/cfwl_themebackground.h"
 #include "xfa/fwl/core/cfwl_themetext.h"
-#include "xfa/fwl/core/ifwl_checkbox.h"
-#include "xfa/fwl/core/ifwl_widget.h"
+#include "xfa/fwl/core/cfwl_widget.h"
 #include "xfa/fxgraphics/cfx_color.h"
 #include "xfa/fxgraphics/cfx_path.h"
 
@@ -35,7 +35,7 @@ CFWL_CheckBoxTP::~CFWL_CheckBoxTP() {
     m_pCheckPath->Clear();
 }
 
-bool CFWL_CheckBoxTP::IsValidWidget(IFWL_Widget* pWidget) {
+bool CFWL_CheckBoxTP::IsValidWidget(CFWL_Widget* pWidget) {
   return pWidget && pWidget->GetClassID() == FWL_Type::CheckBox;
 }
 
@@ -297,7 +297,7 @@ void CFWL_CheckBoxTP::DrawBackground(CFWL_ThemeBackground* pParams) {
   }
 }
 
-void CFWL_CheckBoxTP::DrawCheckSign(IFWL_Widget* pWidget,
+void CFWL_CheckBoxTP::DrawCheckSign(CFWL_Widget* pWidget,
                                     CFX_Graphics* pGraphics,
                                     const CFX_RectF& pRtBox,
                                     int32_t iState,

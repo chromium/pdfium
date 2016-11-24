@@ -22,7 +22,7 @@ class CXFA_FWLTheme;
 class CXFA_FFDocHandler;
 class CXFA_FontMgr;
 class IFWL_AdapterTimerMgr;
-class IFWL_WidgetMgrDelegate;
+class CFWL_WidgetMgrDelegate;
 
 class CXFA_FileRead : public IFX_SeekableReadStream {
  public:
@@ -51,7 +51,7 @@ class CXFA_FFApp {
   void SetDefaultFontMgr(std::unique_ptr<CXFA_DefFontMgr> pFontMgr);
 
   CXFA_FFDocHandler* GetDocHandler();
-  CXFA_FWLAdapterWidgetMgr* GetWidgetMgr(IFWL_WidgetMgrDelegate* pDelegate);
+  CXFA_FWLAdapterWidgetMgr* GetWidgetMgr(CFWL_WidgetMgrDelegate* pDelegate);
   CFGAS_FontMgr* GetFDEFontMgr();
   CXFA_FWLTheme* GetFWLTheme();
 
@@ -59,7 +59,7 @@ class CXFA_FFApp {
   const CFWL_App* GetFWLApp() const { return m_pFWLApp.get(); }
   IFWL_AdapterTimerMgr* GetTimerMgr() const;
   CXFA_FontMgr* GetXFAFontMgr() const;
-  IFWL_WidgetMgrDelegate* GetWidgetMgrDelegate() const {
+  CFWL_WidgetMgrDelegate* GetWidgetMgrDelegate() const {
     return m_pWidgetMgrDelegate;
   }
 
@@ -86,7 +86,7 @@ class CXFA_FFApp {
   std::unique_ptr<CFX_FontSourceEnum_File> m_pFontSource;
 #endif
   std::unique_ptr<CXFA_FWLAdapterWidgetMgr> m_pAdapterWidgetMgr;
-  IFWL_WidgetMgrDelegate* m_pWidgetMgrDelegate;  // not owned.
+  CFWL_WidgetMgrDelegate* m_pWidgetMgrDelegate;  // not owned.
 
   // |m_pFWLApp| has to be released first, then |m_pFWLTheme| since the former
   // may refers to theme manager and the latter refers to font manager.

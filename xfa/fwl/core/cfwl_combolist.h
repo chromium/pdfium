@@ -9,17 +9,17 @@
 
 #include <memory>
 
+#include "xfa/fwl/core/cfwl_listbox.h"
+#include "xfa/fwl/core/cfwl_widget.h"
 #include "xfa/fwl/core/cfwl_widgetproperties.h"
-#include "xfa/fwl/core/ifwl_listbox.h"
-#include "xfa/fwl/core/ifwl_widget.h"
 
-class CFWL_ComboList : public IFWL_ListBox {
+class CFWL_ComboList : public CFWL_ListBox {
  public:
   CFWL_ComboList(const CFWL_App* app,
                  std::unique_ptr<CFWL_WidgetProperties> properties,
-                 IFWL_Widget* pOuter);
+                 CFWL_Widget* pOuter);
 
-  // IFWL_ListBox.
+  // CFWL_ListBox.
   void OnProcessMessage(CFWL_Message* pMessage) override;
 
   int32_t MatchItem(const CFX_WideString& wsMatch);

@@ -10,22 +10,22 @@
 #include <memory>
 
 #include "xfa/fwl/core/cfwl_timer.h"
-#include "xfa/fwl/core/ifwl_widget.h"
+#include "xfa/fwl/core/cfwl_widget.h"
 #include "xfa/fxgraphics/cfx_color.h"
 
 class CFWL_WidgetProperties;
-class IFWL_Widget;
+class CFWL_Widget;
 
 #define FWL_STATE_CAT_HightLight 1
 
-class CFWL_Caret : public IFWL_Widget {
+class CFWL_Caret : public CFWL_Widget {
  public:
   CFWL_Caret(const CFWL_App* app,
              std::unique_ptr<CFWL_WidgetProperties> properties,
-             IFWL_Widget* pOuter);
+             CFWL_Widget* pOuter);
   ~CFWL_Caret() override;
 
-  // IFWL_Widget
+  // CFWL_Widget
   FWL_Type GetClassID() const override;
   void DrawWidget(CFX_Graphics* pGraphics,
                   const CFX_Matrix* pMatrix = nullptr) override;

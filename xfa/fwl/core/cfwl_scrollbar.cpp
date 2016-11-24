@@ -25,8 +25,8 @@
 CFWL_ScrollBar::CFWL_ScrollBar(
     const CFWL_App* app,
     std::unique_ptr<CFWL_WidgetProperties> properties,
-    IFWL_Widget* pOuter)
-    : IFWL_Widget(app, std::move(properties), pOuter),
+    CFWL_Widget* pOuter)
+    : CFWL_Widget(app, std::move(properties), pOuter),
       m_pTimerInfo(nullptr),
       m_fRangeMin(0),
       m_fRangeMax(-1),
@@ -77,7 +77,7 @@ void CFWL_ScrollBar::GetWidgetRect(CFX_RectF& rect, bool bAutoSize) {
     rect.Set(0, 0, (*pfMinWidth), (*pfMinWidth) * 3);
   else
     rect.Set(0, 0, (*pfMinWidth) * 3, (*pfMinWidth));
-  IFWL_Widget::GetWidgetRect(rect, true);
+  CFWL_Widget::GetWidgetRect(rect, true);
 }
 
 void CFWL_ScrollBar::Update() {

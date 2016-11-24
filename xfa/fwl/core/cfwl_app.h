@@ -15,7 +15,7 @@ class CFWL_NoteDriver;
 class CFWL_WidgetMgr;
 class CXFA_FFApp;
 class CXFA_FWLAdapterWidgetMgr;
-class IFWL_Widget;
+class CFWL_Widget;
 
 enum FWL_KeyFlag {
   FWL_KEYFLAG_Ctrl = 1 << 0,

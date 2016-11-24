@@ -97,7 +97,7 @@ class CFWL_ThemeBackground;
 class CFWL_ThemePart;
 class CFWL_ThemeText;
 class CFGAS_FontMgr;
-class IFWL_Widget;
+class CFWL_Widget;
 
 #if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
 class CFX_FontSourceEnum_File;
@@ -110,7 +110,7 @@ class CFWL_WidgetTP {
   virtual void Initialize();
   virtual void Finalize();
 
-  virtual bool IsValidWidget(IFWL_Widget* pWidget);
+  virtual bool IsValidWidget(CFWL_Widget* pWidget);
 
   virtual void DrawBackground(CFWL_ThemeBackground* pParams);
   virtual void DrawText(CFWL_ThemeText* pParams);
@@ -118,15 +118,15 @@ class CFWL_WidgetTP {
                             CFWL_WidgetCapacity dwCapacity);
   virtual void CalcTextRect(CFWL_ThemeText* pParams, CFX_RectF& rect);
 
-  void SetFont(IFWL_Widget* pWidget,
+  void SetFont(CFWL_Widget* pWidget,
                const FX_WCHAR* strFont,
                FX_FLOAT fFontSize,
                FX_ARGB rgbFont);
-  void SetFont(IFWL_Widget* pWidget,
+  void SetFont(CFWL_Widget* pWidget,
                CFGAS_GEFont* pFont,
                FX_FLOAT fFontSize,
                FX_ARGB rgbFont);
-  CFGAS_GEFont* GetFont(IFWL_Widget* pWidget);
+  CFGAS_GEFont* GetFont(CFWL_Widget* pWidget);
 
  protected:
   CFWL_WidgetTP();

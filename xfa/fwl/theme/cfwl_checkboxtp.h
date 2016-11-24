@@ -20,7 +20,7 @@ class CFWL_CheckBoxTP : public CFWL_WidgetTP {
   // CFWL_WidgeTP
   void Initialize() override;
   void Finalize() override;
-  bool IsValidWidget(IFWL_Widget* pWidget) override;
+  bool IsValidWidget(CFWL_Widget* pWidget) override;
   void DrawText(CFWL_ThemeText* pParams) override;
   void DrawBackground(CFWL_ThemeBackground* pParams) override;
 
@@ -36,7 +36,7 @@ class CFWL_CheckBoxTP : public CFWL_WidgetTP {
     FX_ARGB clrSignNeutralPressed;
   };
 
-  void DrawCheckSign(IFWL_Widget* pWidget,
+  void DrawCheckSign(CFWL_Widget* pWidget,
                      CFX_Graphics* pGraphics,
                      const CFX_RectF& pRtBox,
                      int32_t iState,

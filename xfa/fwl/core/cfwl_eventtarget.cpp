@@ -6,15 +6,15 @@
 
 #include "xfa/fwl/core/cfwl_eventtarget.h"
 
-#include "xfa/fwl/core/ifwl_widget.h"
+#include "xfa/fwl/core/cfwl_widget.h"
 #include "xfa/fwl/core/ifwl_widgetdelegate.h"
 
-CFWL_EventTarget::CFWL_EventTarget(IFWL_Widget* pListener)
+CFWL_EventTarget::CFWL_EventTarget(CFWL_Widget* pListener)
     : m_pListener(pListener), m_bInvalid(false) {}
 
 CFWL_EventTarget::~CFWL_EventTarget() {}
 
-void CFWL_EventTarget::SetEventSource(IFWL_Widget* pSource) {
+void CFWL_EventTarget::SetEventSource(CFWL_Widget* pSource) {
   if (pSource)
     m_widgets.insert(pSource);
 }

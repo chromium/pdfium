@@ -12,12 +12,12 @@
 
 #include "third_party/base/ptr_util.h"
 #include "xfa/fde/tto/fde_textout.h"
+#include "xfa/fwl/core/cfwl_datetimepicker.h"
 #include "xfa/fwl/core/cfwl_formproxy.h"
 #include "xfa/fwl/core/cfwl_msgmouse.h"
 #include "xfa/fwl/core/cfwl_notedriver.h"
 #include "xfa/fwl/core/cfwl_themebackground.h"
 #include "xfa/fwl/core/cfwl_themetext.h"
-#include "xfa/fwl/core/ifwl_datetimepicker.h"
 #include "xfa/fwl/core/ifwl_themeprovider.h"
 
 #define MONTHCAL_HSEP_HEIGHT 1
@@ -124,8 +124,8 @@ CFX_WideString* GetCapacityForMonth(IFWL_ThemeProvider* pTheme,
 CFWL_MonthCalendar::CFWL_MonthCalendar(
     const CFWL_App* app,
     std::unique_ptr<CFWL_WidgetProperties> properties,
-    IFWL_Widget* pOuter)
-    : IFWL_Widget(app, std::move(properties), pOuter),
+    CFWL_Widget* pOuter)
+    : CFWL_Widget(app, std::move(properties), pOuter),
       m_bInitialized(false),
       m_pDateTime(new CFX_DateTime),
       m_iCurYear(2011),
@@ -168,7 +168,7 @@ void CFWL_MonthCalendar::GetWidgetRect(CFX_RectF& rect, bool bAutoSize) {
 
   CFX_SizeF fs = CalcSize(true);
   rect.Set(0, 0, fs.x, fs.y);
-  IFWL_Widget::GetWidgetRect(rect, true);
+  CFWL_Widget::GetWidgetRect(rect, true);
 }
 
 void CFWL_MonthCalendar::Update() {
@@ -943,7 +943,7 @@ void CFWL_MonthCalendar::OnProcessMessage(CFWL_Message* pMessage) {
     default:
       break;
   }
-  IFWL_Widget::OnProcessMessage(pMessage);
+  CFWL_Widget::OnProcessMessage(pMessage);
 }
 
 void CFWL_MonthCalendar::OnDrawWidget(CFX_Graphics* pGraphics,
@@ -966,7 +966,7 @@ void CFWL_MonthCalendar::OnLButtonDown(CFWL_MsgMouse* pMsg) {
       Repaint(&m_rtClient);
     }
   } else {
-    IFWL_DateTimePicker* pIPicker = static_cast<IFWL_DateTimePicker*>(m_pOuter);
+    CFWL_DateTimePicker* pIPicker = static_cast<CFWL_DateTimePicker*>(m_pOuter);
     if (pIPicker->IsMonthCalendarVisible())
       m_bFlag = 1;
   }
@@ -995,7 +995,7 @@ void CFWL_MonthCalendar::OnLButtonUp(CFWL_MsgMouse* pMsg) {
 
   int32_t iCurSel = GetDayAtPoint(pMsg->m_fx, pMsg->m_fy);
   CFX_RectF rt;
-  IFWL_DateTimePicker* pIPicker = static_cast<IFWL_DateTimePicker*>(m_pOuter);
+  CFWL_DateTimePicker* pIPicker = static_cast<CFWL_DateTimePicker*>(m_pOuter);
   pIPicker->GetFormProxy()->GetWidgetRect(rt);
   rt.Set(0, 0, rt.width, rt.height);
   if (iCurSel > 0) {
@@ -1044,8 +1044,8 @@ void CFWL_MonthCalendar::DisForm_OnLButtonUp(CFWL_MsgMouse* pMsg) {
       rtInvalidate.Union(lpDatesInfo->rect);
     }
     AddSelDay(iCurSel);
-    IFWL_DateTimePicker* pDateTime =
-        static_cast<IFWL_DateTimePicker*>(m_pOuter);
+    CFWL_DateTimePicker* pDateTime =
+        static_cast<CFWL_DateTimePicker*>(m_pOuter);
     pDateTime->ProcessSelChanged(m_iCurYear, m_iCurMonth, iCurSel);
     pDateTime->ShowMonthCalendar(false);
   }

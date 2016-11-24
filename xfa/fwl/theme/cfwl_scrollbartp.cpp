@@ -8,8 +8,8 @@
 
 #include "xfa/fwl/core/cfwl_scrollbar.h"
 #include "xfa/fwl/core/cfwl_themebackground.h"
+#include "xfa/fwl/core/cfwl_widget.h"
 #include "xfa/fwl/core/ifwl_themeprovider.h"
-#include "xfa/fwl/core/ifwl_widget.h"
 #include "xfa/fxgraphics/cfx_color.h"
 #include "xfa/fxgraphics/cfx_path.h"
 
@@ -25,7 +25,7 @@ CFWL_ScrollBarTP::CFWL_ScrollBarTP() : m_pThemeData(new SBThemeData) {
 
 CFWL_ScrollBarTP::~CFWL_ScrollBarTP() {}
 
-bool CFWL_ScrollBarTP::IsValidWidget(IFWL_Widget* pWidget) {
+bool CFWL_ScrollBarTP::IsValidWidget(CFWL_Widget* pWidget) {
   return pWidget && pWidget->GetClassID() == FWL_Type::ScrollBar;
 }
 
@@ -42,7 +42,7 @@ void CFWL_ScrollBarTP::DrawBackground(CFWL_ThemeBackground* pParams) {
   if (!pParams)
     return;
 
-  IFWL_Widget* pWidget = pParams->m_pWidget;
+  CFWL_Widget* pWidget = pParams->m_pWidget;
   FWLTHEME_STATE eState = FWLTHEME_STATE_Normal;
   if (pParams->m_dwStates & CFWL_PartState_Hovered)
     eState = FWLTHEME_STATE_Hover;

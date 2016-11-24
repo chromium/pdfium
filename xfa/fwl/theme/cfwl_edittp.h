@@ -17,7 +17,7 @@ class CFWL_EditTP : public CFWL_WidgetTP {
   // CFWL_WidgeTTP
   void Initialize() override;
   void Finalize() override;
-  bool IsValidWidget(IFWL_Widget* pWidget) override;
+  bool IsValidWidget(CFWL_Widget* pWidget) override;
   void DrawBackground(CFWL_ThemeBackground* pParams) override;
 };
 

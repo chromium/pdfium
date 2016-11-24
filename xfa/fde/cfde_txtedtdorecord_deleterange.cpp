@@ -7,7 +7,7 @@
 #include "xfa/fde/cfde_txtedtdorecord_deleterange.h"
 
 #include "xfa/fde/cfde_txtedtengine.h"
-#include "xfa/fwl/core/ifwl_edit.h"
+#include "xfa/fwl/core/cfwl_edit.h"
 
 CFDE_TxtEdtDoRecord_DeleteRange::CFDE_TxtEdtDoRecord_DeleteRange(
     CFDE_TxtEdtEngine* pEngine,

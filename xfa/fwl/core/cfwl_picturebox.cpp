@@ -10,16 +10,54 @@
 
 #include "third_party/base/ptr_util.h"
 
-CFWL_PictureBox::CFWL_PictureBox(const CFWL_App* app) : CFWL_Widget(app) {}
+CFWL_PictureBox::CFWL_PictureBox(const CFWL_App* app)
+    : CFWL_Widget(app, pdfium::MakeUnique<CFWL_WidgetProperties>(), nullptr) {
+  m_rtClient.Reset();
+  m_rtImage.Reset();
+  m_matrix.SetIdentity();
+}
 
 CFWL_PictureBox::~CFWL_PictureBox() {}
 
-void CFWL_PictureBox::Initialize() {
-  ASSERT(!m_pIface);
-
-  m_pIface = pdfium::MakeUnique<IFWL_PictureBox>(
-      m_pApp, pdfium::MakeUnique<CFWL_WidgetProperties>());
-
-  CFWL_Widget::Initialize();
+FWL_Type CFWL_PictureBox::GetClassID() const {
+  return FWL_Type::PictureBox;
 }
 
+void CFWL_PictureBox::GetWidgetRect(CFX_RectF& rect, bool bAutoSize) {
+  if (!bAutoSize) {
+    rect = m_pProperties->m_rtWidget;
+    return;
+  }
+
+  rect.Set(0, 0, 0, 0);
+
+  CFWL_Widget::GetWidgetRect(rect, true);
+}
+
+void CFWL_PictureBox::Update() {
+  if (IsLocked())
+    return;
+  if (!m_pProperties->m_pThemeProvider)
+    m_pProperties->m_pThemeProvider = GetAvailableTheme();
+
+  GetClientRect(m_rtClient);
+}
+
+void CFWL_PictureBox::DrawWidget(CFX_Graphics* pGraphics,
+                                 const CFX_Matrix* pMatrix) {
+  if (!pGraphics)
+    return;
+  if (!m_pProperties->m_pThemeProvider)
+    return;
+
+  IFWL_ThemeProvider* pTheme = GetAvailableTheme();
+  if (HasBorder())
+    DrawBorder(pGraphics, CFWL_Part::Border, pTheme, pMatrix);
+  if (HasEdge())
+    DrawEdge(pGraphics, CFWL_Part::Edge, pTheme, pMatrix);
+}
+
+void CFWL_PictureBox::OnDrawWidget(CFX_Graphics* pGraphics,
+                                   const CFX_Matrix* pMatrix) {
+  DrawWidget(pGraphics, pMatrix);
+}

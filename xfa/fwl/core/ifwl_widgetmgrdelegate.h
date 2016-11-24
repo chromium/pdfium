@@ -10,13 +10,13 @@
 class CFWL_Message;
 class CFX_Graphics;
 class CFX_Matrix;
-class IFWL_Widget;
+class CFWL_Widget;
 
-class IFWL_WidgetMgrDelegate {
+class CFWL_WidgetMgrDelegate {
  public:
   virtual void OnSetCapability(uint32_t dwCapability) = 0;
   virtual void OnProcessMessageToForm(CFWL_Message* pMessage) = 0;
-  virtual void OnDrawWidget(IFWL_Widget* pWidget,
+  virtual void OnDrawWidget(CFWL_Widget* pWidget,
                             CFX_Graphics* pGraphics,
                             const CFX_Matrix* pMatrix) = 0;
 };

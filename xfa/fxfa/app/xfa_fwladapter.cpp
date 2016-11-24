@@ -13,7 +13,7 @@ CXFA_FWLAdapterWidgetMgr::CXFA_FWLAdapterWidgetMgr() {}
 
 CXFA_FWLAdapterWidgetMgr::~CXFA_FWLAdapterWidgetMgr() {}
 
-void CXFA_FWLAdapterWidgetMgr::RepaintWidget(IFWL_Widget* pWidget,
+void CXFA_FWLAdapterWidgetMgr::RepaintWidget(CFWL_Widget* pWidget,
                                              const CFX_RectF* pRect) {
   if (!pWidget)
     return;
@@ -26,7 +26,7 @@ void CXFA_FWLAdapterWidgetMgr::RepaintWidget(IFWL_Widget* pWidget,
   pFFWidget->AddInvalidateRect(nullptr);
 }
 
-bool CXFA_FWLAdapterWidgetMgr::GetPopupPos(IFWL_Widget* pWidget,
+bool CXFA_FWLAdapterWidgetMgr::GetPopupPos(CFWL_Widget* pWidget,
                                            FX_FLOAT fMinHeight,
                                            FX_FLOAT fMaxHeight,
                                            const CFX_RectF& rtAnchor,

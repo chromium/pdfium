@@ -35,21 +35,21 @@ CXFA_FFTextEdit::CXFA_FFTextEdit(CXFA_FFPageView* pPageView,
 
 CXFA_FFTextEdit::~CXFA_FFTextEdit() {
   if (m_pNormalWidget) {
-    IFWL_Widget* pWidget = m_pNormalWidget->GetWidget();
-    CFWL_NoteDriver* pNoteDriver = pWidget->GetOwnerApp()->GetNoteDriver();
-    pNoteDriver->UnregisterEventTarget(pWidget);
+    CFWL_NoteDriver* pNoteDriver =
+        m_pNormalWidget->GetOwnerApp()->GetNoteDriver();
+    pNoteDriver->UnregisterEventTarget(m_pNormalWidget);
   }
 }
 
 bool CXFA_FFTextEdit::LoadWidget() {
-  CFWL_Edit* pFWLEdit = new CFWL_Edit(GetFWLApp());
-  pFWLEdit->Initialize();
+  CFWL_Edit* pFWLEdit = new CFWL_Edit(
+      GetFWLApp(), pdfium::MakeUnique<CFWL_WidgetProperties>(), nullptr);
   m_pNormalWidget = pFWLEdit;
   m_pNormalWidget->SetLayoutItem(this);
 
-  IFWL_Widget* pWidget = m_pNormalWidget->GetWidget();
-  CFWL_NoteDriver* pNoteDriver = pWidget->GetOwnerApp()->GetNoteDriver();
-  pNoteDriver->RegisterEventTarget(pWidget, pWidget);
+  CFWL_NoteDriver* pNoteDriver =
+      m_pNormalWidget->GetOwnerApp()->GetNoteDriver();
+  pNoteDriver->RegisterEventTarget(m_pNormalWidget, m_pNormalWidget);
 
   m_pOldDelegate = m_pNormalWidget->GetDelegate();
   m_pNormalWidget->SetDelegate(this);
@@ -122,7 +122,7 @@ bool CXFA_FFTextEdit::OnLButtonDown(uint32_t dwFlags,
   ms.m_dwFlags = dwFlags;
   ms.m_fx = fx;
   ms.m_fy = fy;
-  ms.m_pDstTarget = m_pNormalWidget->GetWidget();
+  ms.m_pDstTarget = m_pNormalWidget;
   FWLToClient(ms.m_fx, ms.m_fy);
   TranslateFWLMessage(&ms);
   return true;
@@ -167,14 +167,14 @@ bool CXFA_FFTextEdit::OnSetFocus(CXFA_FFWidget* pOldWidget) {
   }
   CXFA_FFWidget::OnSetFocus(pOldWidget);
   CFWL_MsgSetFocus ms;
-  ms.m_pDstTarget = m_pNormalWidget->GetWidget();
+  ms.m_pDstTarget = m_pNormalWidget;
   ms.m_pSrcTarget = nullptr;
   TranslateFWLMessage(&ms);
   return true;
 }
 bool CXFA_FFTextEdit::OnKillFocus(CXFA_FFWidget* pNewWidget) {
   CFWL_MsgKillFocus ms;
-  ms.m_pDstTarget = m_pNormalWidget->GetWidget();
+  ms.m_pDstTarget = m_pNormalWidget;
   ms.m_pSrcTarget = nullptr;
   TranslateFWLMessage(&ms);
   m_dwStatus &= ~XFA_WidgetStatus_Focused;
@@ -294,7 +294,7 @@ bool CXFA_FFTextEdit::UpdateFWLData() {
   }
   return true;
 }
-void CXFA_FFTextEdit::OnTextChanged(IFWL_Widget* pWidget,
+void CXFA_FFTextEdit::OnTextChanged(CFWL_Widget* pWidget,
                                     const CFX_WideString& wsChanged,
                                     const CFX_WideString& wsPrevText) {
   m_dwStatus |= XFA_WidgetStatus_TextEditValueChanged;
@@ -320,7 +320,7 @@ void CXFA_FFTextEdit::OnTextChanged(IFWL_Widget* pWidget,
   }
   m_pDataAcc->ProcessEvent(XFA_ATTRIBUTEENUM_Change, &eParam);
 }
-void CXFA_FFTextEdit::OnTextFull(IFWL_Widget* pWidget) {
+void CXFA_FFTextEdit::OnTextFull(CFWL_Widget* pWidget) {
   CXFA_EventParam eParam;
   eParam.m_eType = XFA_EVENT_Full;
   eParam.m_pTarget = m_pDataAcc;
@@ -343,11 +343,11 @@ void CXFA_FFTextEdit::OnProcessEvent(CFWL_Event* pEvent) {
     case CFWL_EventType::TextChanged: {
       CFWL_EvtTextChanged* event = static_cast<CFWL_EvtTextChanged*>(pEvent);
       CFX_WideString wsChange;
-      OnTextChanged(m_pNormalWidget->GetWidget(), wsChange, event->wsPrevText);
+      OnTextChanged(m_pNormalWidget, wsChange, event->wsPrevText);
       break;
     }
     case CFWL_EventType::TextFull: {
-      OnTextFull(m_pNormalWidget->GetWidget());
+      OnTextFull(m_pNormalWidget);
       break;
     }
     case CFWL_EventType::CheckWord: {
@@ -372,14 +372,14 @@ CXFA_FFNumericEdit::CXFA_FFNumericEdit(CXFA_FFPageView* pPageView,
     : CXFA_FFTextEdit(pPageView, pDataAcc) {}
 CXFA_FFNumericEdit::~CXFA_FFNumericEdit() {}
 bool CXFA_FFNumericEdit::LoadWidget() {
-  CFWL_Edit* pWidget = new CFWL_Edit(GetFWLApp());
-  pWidget->Initialize();
+  CFWL_Edit* pWidget = new CFWL_Edit(
+      GetFWLApp(), pdfium::MakeUnique<CFWL_WidgetProperties>(), nullptr);
   m_pNormalWidget = pWidget;
 
-  IFWL_Widget* pIWidget = m_pNormalWidget->GetWidget();
   m_pNormalWidget->SetLayoutItem(this);
-  CFWL_NoteDriver* pNoteDriver = pIWidget->GetOwnerApp()->GetNoteDriver();
-  pNoteDriver->RegisterEventTarget(pIWidget, pIWidget);
+  CFWL_NoteDriver* pNoteDriver =
+      m_pNormalWidget->GetOwnerApp()->GetNoteDriver();
+  pNoteDriver->RegisterEventTarget(m_pNormalWidget, m_pNormalWidget);
 
   m_pOldDelegate = m_pNormalWidget->GetDelegate();
   m_pNormalWidget->SetDelegate(this);
@@ -421,14 +421,13 @@ void CXFA_FFNumericEdit::UpdateWidgetProperty() {
 void CXFA_FFNumericEdit::OnProcessEvent(CFWL_Event* pEvent) {
   if (pEvent->GetClassID() == CFWL_EventType::Validate) {
     CFWL_EvtValidate* event = static_cast<CFWL_EvtValidate*>(pEvent);
-    event->bValidate =
-        OnValidate(m_pNormalWidget->GetWidget(), event->wsInsert);
+    event->bValidate = OnValidate(m_pNormalWidget, event->wsInsert);
     return;
   }
   CXFA_FFTextEdit::OnProcessEvent(pEvent);
 }
 
-bool CXFA_FFNumericEdit::OnValidate(IFWL_Widget* pWidget,
+bool CXFA_FFNumericEdit::OnValidate(CFWL_Widget* pWidget,
                                     CFX_WideString& wsText) {
   CFX_WideString wsPattern;
   m_pDataAcc->GetPictureContent(wsPattern, XFA_VALUEPICTURE_Edit);
@@ -452,14 +451,14 @@ CXFA_FFPasswordEdit::CXFA_FFPasswordEdit(CXFA_FFPageView* pPageView,
 CXFA_FFPasswordEdit::~CXFA_FFPasswordEdit() {}
 
 bool CXFA_FFPasswordEdit::LoadWidget() {
-  CFWL_Edit* pWidget = new CFWL_Edit(GetFWLApp());
-  pWidget->Initialize();
+  CFWL_Edit* pWidget = new CFWL_Edit(
+      GetFWLApp(), pdfium::MakeUnique<CFWL_WidgetProperties>(), nullptr);
   m_pNormalWidget = pWidget;
   m_pNormalWidget->SetLayoutItem(this);
 
-  IFWL_Widget* pIWidget = m_pNormalWidget->GetWidget();
-  CFWL_NoteDriver* pNoteDriver = pIWidget->GetOwnerApp()->GetNoteDriver();
-  pNoteDriver->RegisterEventTarget(pIWidget, pIWidget);
+  CFWL_NoteDriver* pNoteDriver =
+      m_pNormalWidget->GetOwnerApp()->GetNoteDriver();
+  pNoteDriver->RegisterEventTarget(m_pNormalWidget, m_pNormalWidget);
 
   m_pOldDelegate = m_pNormalWidget->GetDelegate();
   m_pNormalWidget->SetDelegate(this);
@@ -523,12 +522,11 @@ bool CXFA_FFDateTimeEdit::PtInActiveRect(FX_FLOAT fx, FX_FLOAT fy) {
 }
 bool CXFA_FFDateTimeEdit::LoadWidget() {
   CFWL_DateTimePicker* pWidget = new CFWL_DateTimePicker(GetFWLApp());
-  pWidget->Initialize();
   m_pNormalWidget = pWidget;
   m_pNormalWidget->SetLayoutItem(this);
-  IFWL_Widget* pIWidget = m_pNormalWidget->GetWidget();
-  CFWL_NoteDriver* pNoteDriver = pIWidget->GetOwnerApp()->GetNoteDriver();
-  pNoteDriver->RegisterEventTarget(pIWidget, pIWidget);
+  CFWL_NoteDriver* pNoteDriver =
+      m_pNormalWidget->GetOwnerApp()->GetNoteDriver();
+  pNoteDriver->RegisterEventTarget(m_pNormalWidget, m_pNormalWidget);
 
   m_pOldDelegate = m_pNormalWidget->GetDelegate();
   m_pNormalWidget->SetDelegate(this);
@@ -661,7 +659,7 @@ bool CXFA_FFDateTimeEdit::IsDataChanged() {
   return wsOldValue != wsText;
 }
 
-void CXFA_FFDateTimeEdit::OnSelectChanged(IFWL_Widget* pWidget,
+void CXFA_FFDateTimeEdit::OnSelectChanged(CFWL_Widget* pWidget,
                                           int32_t iYear,
                                           int32_t iMonth,
                                           int32_t iDay) {
@@ -688,8 +686,7 @@ void CXFA_FFDateTimeEdit::OnSelectChanged(IFWL_Widget* pWidget,
 void CXFA_FFDateTimeEdit::OnProcessEvent(CFWL_Event* pEvent) {
   if (pEvent->GetClassID() == CFWL_EventType::SelectChanged) {
     CFWL_EvtSelectChanged* event = static_cast<CFWL_EvtSelectChanged*>(pEvent);
-    OnSelectChanged(m_pNormalWidget->GetWidget(), event->iYear, event->iMonth,
-                    event->iDay);
+    OnSelectChanged(m_pNormalWidget, event->iYear, event->iMonth, event->iDay);
     return;
   }
   CXFA_FFTextEdit::OnProcessEvent(pEvent);
