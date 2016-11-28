@@ -12,7 +12,6 @@
 #include "core/fxcrt/fx_basic.h"
 #include "core/fxge/fx_dib.h"
 
-class CPDF_ImageLoaderHandle;
 class CPDF_ImageObject;
 class CPDF_PageRenderCache;
 class CPDF_RenderStatus;
@@ -38,10 +37,12 @@ class CPDF_ImageLoader {
   bool m_bCached;
 
  private:
+  void HandleFailure();
+
   int32_t m_nDownsampleWidth;
   int32_t m_nDownsampleHeight;
-
-  std::unique_ptr<CPDF_ImageLoaderHandle> m_pLoadHandle;
+  CPDF_PageRenderCache* m_pCache;
+  CPDF_ImageObject* m_pImage;
 };
 
 #endif  // CORE_FPDFAPI_RENDER_CPDF_IMAGELOADER_H_
