@@ -132,7 +132,7 @@ class cpdf_document_test : public testing::Test {
     CPDF_ModuleMgr* module_mgr = CPDF_ModuleMgr::Get();
     module_mgr->InitPageModule();
   }
-  void TearDown() override {}
+  void TearDown() override { CPDF_ModuleMgr::Destroy(); }
 };
 
 TEST_F(cpdf_document_test, GetPages) {
@@ -173,7 +173,7 @@ TEST_F(cpdf_document_test, GetPagesReverseOrder) {
   EXPECT_FALSE(page);
 }
 
-TEST(cpdf_document, GetPagesInDisorder) {
+TEST_F(cpdf_document_test, GetPagesInDisorder) {
   std::unique_ptr<CPDF_TestDocumentForPages> document =
       pdfium::MakeUnique<CPDF_TestDocumentForPages>();
 
