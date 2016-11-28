@@ -8,6 +8,7 @@
 #define XFA_FXFA_FM2JS_XFA_SIMPLEEXPRESSION_H_
 
 #include <memory>
+#include <vector>
 
 #include "core/fxcrt/fx_basic.h"
 #include "xfa/fxfa/fm2js/xfa_lexer.h"
@@ -228,10 +229,11 @@ class CXFA_FMNotExpression : public CXFA_FMUnaryExpression {
 
 class CXFA_FMCallExpression : public CXFA_FMUnaryExpression {
  public:
-  CXFA_FMCallExpression(uint32_t line,
-                        CXFA_FMSimpleExpression* pExp,
-                        CFX_ArrayTemplate<CXFA_FMSimpleExpression*>* pArguments,
-                        bool bIsSomMethod);
+  CXFA_FMCallExpression(
+      uint32_t line,
+      CXFA_FMSimpleExpression* pExp,
+      std::vector<std::unique_ptr<CXFA_FMSimpleExpression>>&& pArguments,
+      bool bIsSomMethod);
   ~CXFA_FMCallExpression() override;
 
   bool IsBuildInFunc(CFX_WideTextBuf* funcName);
@@ -240,7 +242,7 @@ class CXFA_FMCallExpression : public CXFA_FMUnaryExpression {
 
  private:
   bool m_bIsSomMethod;
-  CFX_ArrayTemplate<CXFA_FMSimpleExpression*>* m_pArguments;
+  std::vector<std::unique_ptr<CXFA_FMSimpleExpression>> m_Arguments;
 };
 
 class CXFA_FMDotAccessorExpression : public CXFA_FMBinExpression {

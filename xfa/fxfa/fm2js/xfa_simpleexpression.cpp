@@ -6,6 +6,8 @@
 
 #include "xfa/fxfa/fm2js/xfa_simpleexpression.h"
 
+#include <utility>
+
 #include "core/fxcrt/fx_ext.h"
 
 namespace {
@@ -477,20 +479,13 @@ void CXFA_FMNotExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
 CXFA_FMCallExpression::CXFA_FMCallExpression(
     uint32_t line,
     CXFA_FMSimpleExpression* pExp,
-    CFX_ArrayTemplate<CXFA_FMSimpleExpression*>* pArguments,
+    std::vector<std::unique_ptr<CXFA_FMSimpleExpression>>&& pArguments,
     bool bIsSomMethod)
     : CXFA_FMUnaryExpression(line, TOKcall, pExp),
       m_bIsSomMethod(bIsSomMethod),
-      m_pArguments(pArguments) {}
+      m_Arguments(std::move(pArguments)) {}
 
-CXFA_FMCallExpression::~CXFA_FMCallExpression() {
-  if (m_pArguments) {
-    for (int i = 0; i < m_pArguments->GetSize(); ++i)
-      delete m_pArguments->GetAt(i);
-
-    delete m_pArguments;
-  }
-}
+CXFA_FMCallExpression::~CXFA_FMCallExpression() {}
 
 bool CXFA_FMCallExpression::IsBuildInFunc(CFX_WideTextBuf* funcName) {
   uint32_t uHash = FX_HashCode_GetW(funcName->AsStringC(), true);
@@ -536,41 +531,37 @@ void CXFA_FMCallExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
   m_pExp->ToJavaScript(funcName);
   if (m_bIsSomMethod) {
     javascript << funcName;
-    javascript << FX_WSTRC(L"(");
-    if (m_pArguments) {
-      uint32_t methodPara = IsMethodWithObjParam(funcName.AsStringC());
-      if (methodPara > 0) {
-        for (int i = 0; i < m_pArguments->GetSize(); ++i) {
-          // Currently none of our expressions use objects for a parameter over
-          // the 6th. Make sure we don't overflow the shift when doing this
-          // check. If we ever need more the 32 object params we can revisit.
-          if (i < 32 && (methodPara & (0x01 << i)) > 0) {
-            javascript << gs_lpStrExpFuncName[GETFMJSOBJ];
-          } else {
-            javascript << gs_lpStrExpFuncName[GETFMVALUE];
-          }
-          javascript << FX_WSTRC(L"(");
-          CXFA_FMSimpleExpression* e = m_pArguments->GetAt(i);
-          e->ToJavaScript(javascript);
-          javascript << FX_WSTRC(L")");
-          if (i + 1 < m_pArguments->GetSize()) {
-            javascript << FX_WSTRC(L", ");
-          }
-        }
-      } else {
-        for (int i = 0; i < m_pArguments->GetSize(); ++i) {
+    javascript << L"(";
+    uint32_t methodPara = IsMethodWithObjParam(funcName.AsStringC());
+    if (methodPara > 0) {
+      for (size_t i = 0; i < m_Arguments.size(); ++i) {
+        // Currently none of our expressions use objects for a parameter over
+        // the 6th. Make sure we don't overflow the shift when doing this
+        // check. If we ever need more the 32 object params we can revisit.
+        if (i < 32 && (methodPara & (0x01 << i)) > 0) {
+          javascript << gs_lpStrExpFuncName[GETFMJSOBJ];
+        } else {
           javascript << gs_lpStrExpFuncName[GETFMVALUE];
-          javascript << FX_WSTRC(L"(");
-          CXFA_FMSimpleExpression* e = m_pArguments->GetAt(i);
-          e->ToJavaScript(javascript);
-          javascript << FX_WSTRC(L")");
-          if (i + 1 < m_pArguments->GetSize()) {
-            javascript << FX_WSTRC(L", ");
-          }
+        }
+        javascript << L"(";
+        const auto& expr = m_Arguments[i];
+        expr->ToJavaScript(javascript);
+        javascript << L")";
+        if (i + 1 < m_Arguments.size()) {
+          javascript << L", ";
         }
       }
+    } else {
+      for (const auto& expr : m_Arguments) {
+        javascript << gs_lpStrExpFuncName[GETFMVALUE];
+        javascript << L"(";
+        expr->ToJavaScript(javascript);
+        javascript << L")";
+        if (expr != m_Arguments.back())
+          javascript << L", ";
+      }
     }
-    javascript << FX_WSTRC(L")");
+    javascript << L")";
   } else {
     bool isEvalFunc = false;
     bool isExistsFunc = false;
@@ -594,28 +585,26 @@ void CXFA_FMCallExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
     javascript << FX_WSTRC(L"(");
     if (isExistsFunc) {
       javascript << FX_WSTRC(L"\n(\nfunction ()\n{\ntry\n{\n");
-      if (m_pArguments && m_pArguments->GetSize() > 0) {
-        CXFA_FMSimpleExpression* e = m_pArguments->GetAt(0);
+      if (!m_Arguments.empty()) {
+        const auto& expr = m_Arguments[0];
         javascript << FX_WSTRC(L"return ");
-        e->ToJavaScript(javascript);
+        expr->ToJavaScript(javascript);
         javascript << FX_WSTRC(L";\n}\n");
       } else {
         javascript << FX_WSTRC(L"return 0;\n}\n");
       }
       javascript << FX_WSTRC(
           L"catch(accessExceptions)\n{\nreturn 0;\n}\n}\n).call(this)\n");
-    } else if (m_pArguments) {
-      for (int i = 0; i < m_pArguments->GetSize(); ++i) {
-        CXFA_FMSimpleExpression* e = m_pArguments->GetAt(i);
-        e->ToJavaScript(javascript);
-        if (i + 1 < m_pArguments->GetSize()) {
-          javascript << FX_WSTRC(L", ");
-        }
+    } else {
+      for (const auto& expr : m_Arguments) {
+        expr->ToJavaScript(javascript);
+        if (expr != m_Arguments.back())
+          javascript << L", ";
       }
     }
-    javascript << FX_WSTRC(L")");
+    javascript << L")";
     if (isEvalFunc) {
-      javascript << FX_WSTRC(L")");
+      javascript << L")";
     }
   }
 }

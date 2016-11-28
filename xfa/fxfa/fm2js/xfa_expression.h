@@ -46,7 +46,7 @@ class CXFA_FMFunctionDefinition : public CXFA_FMExpression {
       bool isGlobal,
       const CFX_WideStringC& wsName,
       std::unique_ptr<CFX_WideStringCArray> pArguments,
-      CFX_ArrayTemplate<CXFA_FMExpression*>* pExpressions);
+      std::vector<std::unique_ptr<CXFA_FMExpression>>&& pExpressions);
   ~CXFA_FMFunctionDefinition() override;
 
   void ToJavaScript(CFX_WideTextBuf& javascript) override;
@@ -55,7 +55,7 @@ class CXFA_FMFunctionDefinition : public CXFA_FMExpression {
  private:
   CFX_WideStringC m_wsName;
   std::unique_ptr<CFX_WideStringCArray> m_pArguments;
-  CFX_ArrayTemplate<CXFA_FMExpression*>* m_pExpressions;
+  std::vector<std::unique_ptr<CXFA_FMExpression>> m_pExpressions;
   bool m_isGlobal;
 };
 
@@ -88,17 +88,16 @@ class CXFA_FMExpExpression : public CXFA_FMExpression {
 
 class CXFA_FMBlockExpression : public CXFA_FMExpression {
  public:
-  // Takes ownership of |pExpressionList|.
   CXFA_FMBlockExpression(
       uint32_t line,
-      CFX_ArrayTemplate<CXFA_FMExpression*>* pExpressionList);
+      std::vector<std::unique_ptr<CXFA_FMExpression>>&& pExpressionList);
   ~CXFA_FMBlockExpression() override;
 
   void ToJavaScript(CFX_WideTextBuf& javascript) override;
   void ToImpliedReturnJS(CFX_WideTextBuf&) override;
 
  private:
-  CFX_ArrayTemplate<CXFA_FMExpression*>* m_pExpressionList;
+  std::vector<std::unique_ptr<CXFA_FMExpression>> m_ExpressionList;
 };
 
 class CXFA_FMDoExpression : public CXFA_FMExpression {

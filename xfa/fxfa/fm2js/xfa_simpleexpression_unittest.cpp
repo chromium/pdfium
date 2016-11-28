@@ -5,21 +5,21 @@
 #include "xfa/fxfa/fm2js/xfa_simpleexpression.h"
 
 #include <memory>
+#include <utility>
 
 #include "testing/gtest/include/gtest/gtest.h"
+#include "third_party/base/ptr_util.h"
 #include "xfa/fxfa/fm2js/xfa_lexer.h"
 
 TEST(FMCallExpression, more_than_32_arguments) {
   // Use sign as it has 3 object parameters at positions 0, 5, and 6.
-  std::unique_ptr<CXFA_FMIdentifierExpression> exp(
-      new CXFA_FMIdentifierExpression(0, CFX_WideStringC(L"sign")));
+  auto exp = pdfium::MakeUnique<CXFA_FMIdentifierExpression>(0, L"sign");
 
-  std::unique_ptr<CFX_ArrayTemplate<CXFA_FMSimpleExpression*>> args(
-      new CFX_ArrayTemplate<CXFA_FMSimpleExpression*>());
+  std::vector<std::unique_ptr<CXFA_FMSimpleExpression>> args;
   for (size_t i = 0; i < 50; i++)
-    args->Add(new CXFA_FMSimpleExpression(0, TOKnan));
+    args.push_back(pdfium::MakeUnique<CXFA_FMSimpleExpression>(0, TOKnan));
 
-  CXFA_FMCallExpression callExp(0, exp.release(), args.release(), true);
+  CXFA_FMCallExpression callExp(0, exp.release(), std::move(args), true);
   CFX_WideTextBuf js;
   callExp.ToJavaScript(js);
 
