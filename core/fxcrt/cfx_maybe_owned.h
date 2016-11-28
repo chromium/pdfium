@@ -21,7 +21,7 @@ class CFX_MaybeOwned {
  public:
   CFX_MaybeOwned() : m_pObj(nullptr) {}
   explicit CFX_MaybeOwned(T* ptr) : m_pObj(ptr) {}
-  explicit CFX_MaybeOwned(std::unique_ptr<T> ptr)
+  explicit CFX_MaybeOwned(std::unique_ptr<T, D> ptr)
       : m_pOwnedObj(std::move(ptr)), m_pObj(m_pOwnedObj.get()) {}
 
   CFX_MaybeOwned(const CFX_MaybeOwned& that) = delete;
@@ -30,7 +30,7 @@ class CFX_MaybeOwned {
     that.m_pObj = nullptr;
   }
 
-  void Reset(std::unique_ptr<T> ptr) {
+  void Reset(std::unique_ptr<T, D> ptr) {
     m_pOwnedObj = std::move(ptr);
     m_pObj = m_pOwnedObj.get();
   }
@@ -41,7 +41,7 @@ class CFX_MaybeOwned {
 
   bool IsOwned() const { return !!m_pOwnedObj; }
   T* Get() const { return m_pObj; }
-  std::unique_ptr<T> Release() {
+  std::unique_ptr<T, D> Release() {
     ASSERT(IsOwned());
     return std::move(m_pOwnedObj);
   }
@@ -57,7 +57,7 @@ class CFX_MaybeOwned {
     Reset(ptr);
     return *this;
   }
-  CFX_MaybeOwned& operator=(std::unique_ptr<T> ptr) {
+  CFX_MaybeOwned& operator=(std::unique_ptr<T, D> ptr) {
     Reset(std::move(ptr));
     return *this;
   }
@@ -65,13 +65,13 @@ class CFX_MaybeOwned {
   bool operator==(const CFX_MaybeOwned& that) const {
     return Get() == that.Get();
   }
-  bool operator==(const std::unique_ptr<T>& ptr) const {
+  bool operator==(const std::unique_ptr<T, D>& ptr) const {
     return Get() == ptr.get();
   }
   bool operator==(T* ptr) const { return Get() == ptr; }
 
   bool operator!=(const CFX_MaybeOwned& that) const { return !(*this == that); }
-  bool operator!=(const std::unique_ptr<T> ptr) const {
+  bool operator!=(const std::unique_ptr<T, D> ptr) const {
     return !(*this == ptr);
   }
   bool operator!=(T* ptr) const { return !(*this == ptr); }

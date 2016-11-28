@@ -74,14 +74,14 @@ uint32_t CPDF_StreamAcc::GetSize() const {
   return m_pStream ? m_pStream->GetRawSize() : 0;
 }
 
-uint8_t* CPDF_StreamAcc::DetachData() {
+std::unique_ptr<uint8_t, FxFreeDeleter> CPDF_StreamAcc::DetachData() {
   if (m_bNewBuf) {
-    uint8_t* p = m_pData;
+    std::unique_ptr<uint8_t, FxFreeDeleter> p(m_pData);
     m_pData = nullptr;
     m_dwSize = 0;
     return p;
   }
-  uint8_t* p = FX_Alloc(uint8_t, m_dwSize);
-  FXSYS_memcpy(p, m_pData, m_dwSize);
+  std::unique_ptr<uint8_t, FxFreeDeleter> p(FX_Alloc(uint8_t, m_dwSize));
+  FXSYS_memcpy(p.get(), m_pData, m_dwSize);
   return p;
 }

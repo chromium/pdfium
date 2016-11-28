@@ -7,6 +7,8 @@
 #ifndef CORE_FPDFAPI_PARSER_CPDF_STREAM_ACC_H_
 #define CORE_FPDFAPI_PARSER_CPDF_STREAM_ACC_H_
 
+#include <memory>
+
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fxcrt/fx_string.h"
@@ -31,7 +33,7 @@ class CPDF_StreamAcc {
   uint32_t GetSize() const;
   const CFX_ByteString& GetImageDecoder() const { return m_ImageDecoder; }
   const CPDF_Dictionary* GetImageParam() const { return m_pImageParam; }
-  uint8_t* DetachData();
+  std::unique_ptr<uint8_t, FxFreeDeleter> DetachData();
 
  protected:
   uint8_t* m_pData;

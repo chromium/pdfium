@@ -91,7 +91,7 @@ std::unique_ptr<CPDF_Object> CPDF_Stream::CloneNonCyclic(
     pNewDict = ToDictionary(
         static_cast<CPDF_Object*>(pDict)->CloneNonCyclic(bDirect, pVisited));
   }
-  return pdfium::MakeUnique<CPDF_Stream>(acc.DetachData(), streamSize,
+  return pdfium::MakeUnique<CPDF_Stream>(acc.DetachData().release(), streamSize,
                                          std::move(pNewDict));
 }
 
