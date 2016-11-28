@@ -4,30 +4,14 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _SKIA_SUPPORT_
-#include "core/fxge/agg/fx_agg_driver.h"
-#endif
-
 #include <memory>
 
 #include "core/fxge/cfx_gemodule.h"
 #include "core/fxge/ge/cfx_folderfontinfo.h"
-#include "core/fxge/ge/fx_text_int.h"
 #include "core/fxge/ifx_systemfontinfo.h"
 
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_LINUX_
 namespace {
-
-class CFX_LinuxFontInfo : public CFX_FolderFontInfo {
- public:
-  void* MapFont(int weight,
-                bool bItalic,
-                int charset,
-                int pitch_family,
-                const FX_CHAR* family,
-                int& iExact) override;
-  bool ParseFontCfg(const char** pUserPaths);
-};
 
 const size_t kLinuxGpNameSize = 6;
 
@@ -73,13 +57,25 @@ size_t GetJapanesePreference(const FX_CHAR* facearr,
     }
     return 3;
   }
-  if (!(pitch_family & FXFONT_FF_ROMAN) && weight > 400) {
+  if (!(pitch_family & FXFONT_FF_ROMAN) && weight > 400)
     return 0;
-  }
+
   return 2;
 }
 
-}  // namespace
+class CFX_LinuxFontInfo : public CFX_FolderFontInfo {
+ public:
+  CFX_LinuxFontInfo() {}
+  ~CFX_LinuxFontInfo() override {}
+
+  void* MapFont(int weight,
+                bool bItalic,
+                int charset,
+                int pitch_family,
+                const FX_CHAR* family,
+                int& iExact) override;
+  bool ParseFontCfg(const char** pUserPaths);
+};
 
 void* CFX_LinuxFontInfo::MapFont(int weight,
                                  bool bItalic,
@@ -99,36 +95,32 @@ void* CFX_LinuxFontInfo::MapFont(int weight,
       ASSERT(index < FX_ArraySize(g_LinuxGpFontList));
       for (size_t i = 0; i < kLinuxGpNameSize; i++) {
         auto it = m_FontList.find(g_LinuxGpFontList[index][i]);
-        if (it != m_FontList.end()) {
+        if (it != m_FontList.end())
           return it->second;
-        }
       }
       break;
     }
     case FXFONT_GB2312_CHARSET: {
       for (size_t i = 0; i < FX_ArraySize(g_LinuxGbFontList); ++i) {
         auto it = m_FontList.find(g_LinuxGbFontList[i]);
-        if (it != m_FontList.end()) {
+        if (it != m_FontList.end())
           return it->second;
-        }
       }
       break;
     }
     case FXFONT_CHINESEBIG5_CHARSET: {
       for (size_t i = 0; i < FX_ArraySize(g_LinuxB5FontList); ++i) {
         auto it = m_FontList.find(g_LinuxB5FontList[i]);
-        if (it != m_FontList.end()) {
+        if (it != m_FontList.end())
           return it->second;
-        }
       }
       break;
     }
     case FXFONT_HANGUL_CHARSET: {
       for (size_t i = 0; i < FX_ArraySize(g_LinuxHGFontList); ++i) {
         auto it = m_FontList.find(g_LinuxHGFontList[i]);
-        if (it != m_FontList.end()) {
+        if (it != m_FontList.end())
           return it->second;
-        }
       }
       break;
     }
@@ -138,6 +130,17 @@ void* CFX_LinuxFontInfo::MapFont(int weight,
   }
   return FindFont(weight, bItalic, charset, pitch_family, cstr_face, !bCJK);
 }
+
+bool CFX_LinuxFontInfo::ParseFontCfg(const char** pUserPaths) {
+  if (!pUserPaths)
+    return false;
+
+  for (const char** pPath = pUserPaths; *pPath; ++pPath)
+    AddPath(*pPath);
+  return true;
+}
+
+}  // namespace
 
 std::unique_ptr<IFX_SystemFontInfo> IFX_SystemFontInfo::CreateDefault(
     const char** pUserPaths) {
@@ -149,15 +152,6 @@ std::unique_ptr<IFX_SystemFontInfo> IFX_SystemFontInfo::CreateDefault(
     pInfo->AddPath("/usr/local/share/fonts");
   }
   return std::unique_ptr<IFX_SystemFontInfo>(pInfo);
-}
-
-bool CFX_LinuxFontInfo::ParseFontCfg(const char** pUserPaths) {
-  if (!pUserPaths)
-    return false;
-
-  for (const char** pPath = pUserPaths; *pPath; ++pPath)
-    AddPath(*pPath);
-  return true;
 }
 
 void CFX_GEModule::InitPlatform() {
