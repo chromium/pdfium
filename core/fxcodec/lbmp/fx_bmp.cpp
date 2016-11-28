@@ -171,8 +171,10 @@ int32_t bmp_read_header(bmp_decompress_struct_p bmp_ptr) {
         return 0;
       }
     }
-    ASSERT(bmp_ptr->width > 0);
-    ASSERT(bmp_ptr->compress_flag <= BMP_BITFIELDS);
+    if (bmp_ptr->width <= 0 || bmp_ptr->compress_flag > BMP_BITFIELDS) {
+      bmp_error(bmp_ptr, "The Bmp File Is Corrupt");
+      return 0;
+    }
     switch (bmp_ptr->bitCounts) {
       case 1:
       case 4:
@@ -184,12 +186,8 @@ int32_t bmp_read_header(bmp_decompress_struct_p bmp_ptr) {
           return 0;
         }
       }
-      case 32: {
-        if (bmp_ptr->width <= 0 || bmp_ptr->compress_flag > BMP_BITFIELDS) {
-          bmp_error(bmp_ptr, "The Bmp File Is Corrupt");
-          return 0;
-        }
-      } break;
+      case 32:
+        break;
       default:
         bmp_error(bmp_ptr, "The Bmp File Is Corrupt");
         return 0;
