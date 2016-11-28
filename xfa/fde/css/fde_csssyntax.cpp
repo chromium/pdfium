@@ -6,6 +6,8 @@
 
 #include "xfa/fde/css/fde_csssyntax.h"
 
+#include <algorithm>
+
 #include "xfa/fde/css/fde_cssdatatable.h"
 #include "xfa/fgas/crt/fgas_codepage.h"
 
@@ -280,16 +282,13 @@ FDE_CSSSYNTAXSTATUS CFDE_CSSSyntaxParser::DoSyntaxParse() {
 
           if (wch <= ' ' || wch == ';') {
             int32_t iURIStart, iURILength = m_TextData.GetLength();
-            if (iURILength > 0 &&
-                FDE_ParseCSSURI(m_TextData.GetBuffer(), iURILength, iURIStart,
-                                iURILength)) {
+            if (iURILength > 0 && FDE_ParseCSSURI(m_TextData.GetBuffer(),
+                                                  &iURIStart, &iURILength)) {
               m_TextData.Subtract(iURIStart, iURILength);
               SwitchMode(FDE_CSSSYNTAXMODE_MediaType);
-              if (IsImportEnabled()) {
+              if (IsImportEnabled())
                 return FDE_CSSSYNTAXSTATUS_URI;
-              } else {
-                break;
-              }
+              break;
             }
           }
           AppendChar(wch);
@@ -468,15 +467,10 @@ bool CFDE_CSSTextBuf::ExpandBuf(int32_t iDesiredSize) {
   m_iBufLen = iDesiredSize;
   return true;
 }
+
 void CFDE_CSSTextBuf::Subtract(int32_t iStart, int32_t iLength) {
-  ASSERT(iStart >= 0 && iLength > 0);
-  if (iLength > m_iDatLen - iStart) {
-    iLength = m_iDatLen - iStart;
-  }
-  if (iLength < 0) {
-    iLength = 0;
-  } else {
-    FXSYS_memmove(m_pBuffer, m_pBuffer + iStart, iLength * sizeof(FX_WCHAR));
-  }
+  ASSERT(iStart >= 0 && iLength >= 0);
+  iLength = std::max(std::min(iLength, m_iDatLen - iStart), 0);
+  FXSYS_memmove(m_pBuffer, m_pBuffer + iStart, iLength * sizeof(FX_WCHAR));
   m_iDatLen = iLength;
 }

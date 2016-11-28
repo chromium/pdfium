@@ -301,33 +301,35 @@ IFDE_CSSValue* CFDE_CSSDeclaration::ParseColor(const FDE_CSSPROPERTYARGS* pArgs,
   }
   return FXTARGET_NewWith(pArgs->pStaticStore) CFDE_CSSPrimitiveValue(dwColor);
 }
+
 IFDE_CSSValue* CFDE_CSSDeclaration::ParseURI(const FDE_CSSPROPERTYARGS* pArgs,
                                              const FX_WCHAR* pszValue,
                                              int32_t iValueLen) {
   int32_t iOffset;
-  if (!FDE_ParseCSSURI(pszValue, iValueLen, iOffset, iValueLen)) {
+  if (!FDE_ParseCSSURI(pszValue, &iOffset, &iValueLen))
     return nullptr;
-  }
-  if (iValueLen <= 0) {
+
+  if (iValueLen <= 0)
     return nullptr;
-  }
+
   pszValue = CopyToLocal(pArgs, pszValue + iOffset, iValueLen);
   return pszValue
              ? FXTARGET_NewWith(pArgs->pStaticStore)
                    CFDE_CSSPrimitiveValue(FDE_CSSPRIMITIVETYPE_URI, pszValue)
              : nullptr;
 }
+
 IFDE_CSSValue* CFDE_CSSDeclaration::ParseString(
     const FDE_CSSPROPERTYARGS* pArgs,
     const FX_WCHAR* pszValue,
     int32_t iValueLen) {
   int32_t iOffset;
-  if (!FDE_ParseCSSString(pszValue, iValueLen, iOffset, iValueLen)) {
+  if (!FDE_ParseCSSString(pszValue, iValueLen, &iOffset, &iValueLen))
     return nullptr;
-  }
-  if (iValueLen <= 0) {
+
+  if (iValueLen <= 0)
     return nullptr;
-  }
+
   pszValue = CopyToLocal(pArgs, pszValue + iOffset, iValueLen);
   return pszValue
              ? FXTARGET_NewWith(pArgs->pStaticStore)

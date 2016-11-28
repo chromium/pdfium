@@ -698,31 +698,31 @@ bool FDE_ParseCSSNumber(const FX_WCHAR* pszValue,
 
 bool FDE_ParseCSSString(const FX_WCHAR* pszValue,
                         int32_t iValueLen,
-                        int32_t& iOffset,
-                        int32_t& iLength) {
+                        int32_t* iOffset,
+                        int32_t* iLength) {
   ASSERT(pszValue && iValueLen > 0);
-  iOffset = 0;
-  iLength = iValueLen;
+  *iOffset = 0;
+  *iLength = iValueLen;
   if (iValueLen >= 2) {
     FX_WCHAR first = pszValue[0], last = pszValue[iValueLen - 1];
     if ((first == '\"' && last == '\"') || (first == '\'' && last == '\'')) {
-      iOffset = 1, iLength -= 2;
+      *iOffset = 1;
+      *iLength -= 2;
     }
   }
   return iValueLen > 0;
 }
 
 bool FDE_ParseCSSURI(const FX_WCHAR* pszValue,
-                     int32_t iValueLen,
-                     int32_t& iOffset,
-                     int32_t& iLength) {
-  ASSERT(pszValue && iValueLen > 0);
-  if (iValueLen < 6 || pszValue[iValueLen - 1] != ')' ||
+                     int32_t* iOffset,
+                     int32_t* iLength) {
+  ASSERT(pszValue && *iLength > 0);
+  if (*iLength < 6 || pszValue[*iLength - 1] != ')' ||
       FXSYS_wcsnicmp(L"url(", pszValue, 4)) {
     return false;
   }
-  if (FDE_ParseCSSString(pszValue + 4, iValueLen - 5, iOffset, iLength)) {
-    iOffset += 4;
+  if (FDE_ParseCSSString(pszValue + 4, *iLength - 5, iOffset, iLength)) {
+    *iOffset += 4;
     return true;
   }
   return false;

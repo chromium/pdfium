@@ -161,14 +161,13 @@ bool FDE_ParseCSSNumber(const FX_WCHAR* pszValue,
                         FDE_CSSPRIMITIVETYPE& eUnit);
 bool FDE_ParseCSSString(const FX_WCHAR* pszValue,
                         int32_t iValueLen,
-                        int32_t& iOffset,
-                        int32_t& iLength);
+                        int32_t* iOffset,
+                        int32_t* iLength);
 bool FDE_ParseCSSColor(const FX_WCHAR* pszValue,
                        int32_t iValueLen,
                        FX_ARGB& dwColor);
 bool FDE_ParseCSSURI(const FX_WCHAR* pszValue,
-                     int32_t iValueLen,
-                     int32_t& iOffset,
-                     int32_t& iLength);
+                     int32_t* iOffset,
+                     int32_t* iLength);
 
 #endif  // XFA_FDE_CSS_FDE_CSSDATATABLE_H_
