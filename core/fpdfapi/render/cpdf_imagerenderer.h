@@ -11,6 +11,7 @@
 
 #include "core/fpdfapi/render/cpdf_imageloader.h"
 
+class CFX_FxgeDevice;
 class CFX_ImageTransformer;
 class CPDF_ImageObject;
 class CPDF_PageObject;
@@ -38,8 +39,7 @@ class CPDF_ImageRenderer {
              int blendType);
 
   bool Continue(IFX_Pause* pPause);
-
-  bool m_Result;
+  bool GetResult() const { return m_Result; }
 
  private:
   bool StartBitmapAlpha();
@@ -48,6 +48,14 @@ class CPDF_ImageRenderer {
   bool StartLoadDIBSource();
   bool DrawMaskedImage();
   bool DrawPatternImage(const CFX_Matrix* pObj2Device);
+  bool NotDrawing() const;
+  FX_RECT GetDrawRect() const;
+  CFX_Matrix GetDrawMatrix(const FX_RECT& rect) const;
+  void CalculateDrawImage(CFX_FxgeDevice* bitmap_device1,
+                          CFX_FxgeDevice* bitmap_device2,
+                          const CFX_DIBSource* pDIBSource,
+                          CFX_Matrix* pNewMatrix,
+                          const FX_RECT& rect) const;
 
   CPDF_RenderStatus* m_pRenderStatus;
   CPDF_ImageObject* m_pImageObject;
@@ -66,6 +74,7 @@ class CPDF_ImageRenderer {
   void* m_DeviceHandle;
   bool m_bStdCS;
   int m_BlendType;
+  bool m_Result;
 };
 
 #endif  // CORE_FPDFAPI_RENDER_CPDF_IMAGERENDERER_H_

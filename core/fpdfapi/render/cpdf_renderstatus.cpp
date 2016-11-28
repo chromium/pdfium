@@ -1058,7 +1058,7 @@ bool CPDF_RenderStatus::ContinueSingleObject(CPDF_PageObject* pObj,
     if (m_pImageRenderer->Continue(pPause))
       return true;
 
-    if (!m_pImageRenderer->m_Result)
+    if (!m_pImageRenderer->GetResult())
       DrawObjWithBackground(pObj, pObj2Device);
     m_pImageRenderer.reset();
     return false;
@@ -1078,7 +1078,7 @@ bool CPDF_RenderStatus::ContinueSingleObject(CPDF_PageObject* pObj,
     m_pImageRenderer.reset(new CPDF_ImageRenderer);
     if (!m_pImageRenderer->Start(this, pObj, pObj2Device, false,
                                  FXDIB_BLEND_NORMAL)) {
-      if (!m_pImageRenderer->m_Result)
+      if (!m_pImageRenderer->GetResult())
         DrawObjWithBackground(pObj, pObj2Device);
       m_pImageRenderer.reset();
       return false;
@@ -1900,7 +1900,7 @@ bool CPDF_RenderStatus::ProcessType3Text(CPDF_TextObject* textobj,
                            &image_matrix, 0, false, FXDIB_BLEND_NORMAL)) {
           renderer.Continue(nullptr);
         }
-        if (!renderer.m_Result)
+        if (!renderer.GetResult())
           return false;
       }
     }
@@ -2375,10 +2375,9 @@ void CPDF_RenderStatus::ProcessPathPattern(CPDF_PathObject* pPathObj,
 bool CPDF_RenderStatus::ProcessImage(CPDF_ImageObject* pImageObj,
                                      const CFX_Matrix* pObj2Device) {
   CPDF_ImageRenderer render;
-  if (render.Start(this, pImageObj, pObj2Device, m_bStdCS, m_curBlend)) {
+  if (render.Start(this, pImageObj, pObj2Device, m_bStdCS, m_curBlend))
     render.Continue(nullptr);
-  }
-  return render.m_Result;
+  return render.GetResult();
 }
 
 void CPDF_RenderStatus::CompositeDIBitmap(CFX_DIBitmap* pDIBitmap,
