@@ -463,7 +463,8 @@ bool CPDFSDK_InterForm::FDFToURLEncodedData(CFX_WideString csFDFFile,
 
 bool CPDFSDK_InterForm::FDFToURLEncodedData(uint8_t*& pBuf,
                                             FX_STRSIZE& nBufSize) {
-  CFDF_Document* pFDF = CFDF_Document::ParseMemory(pBuf, nBufSize);
+  std::unique_ptr<CFDF_Document> pFDF =
+      CFDF_Document::ParseMemory(pBuf, nBufSize);
   if (!pFDF)
     return true;
 
@@ -506,9 +507,9 @@ bool CPDFSDK_InterForm::ExportFieldsToFDFTextBuf(
     const std::vector<CPDF_FormField*>& fields,
     bool bIncludeOrExclude,
     CFX_ByteTextBuf& textBuf) {
-  std::unique_ptr<CFDF_Document> pFDF(
+  std::unique_ptr<CFDF_Document> pFDF =
       m_pInterForm->ExportToFDF(m_pFormFillEnv->JS_docGetFilePath().AsStringC(),
-                                fields, bIncludeOrExclude, false));
+                                fields, bIncludeOrExclude, false);
   return pFDF ? pFDF->WriteBuf(textBuf) : false;
 }
 
@@ -525,26 +526,21 @@ bool CPDFSDK_InterForm::SubmitForm(const CFX_WideString& sDestination,
   if (!m_pFormFillEnv || !m_pInterForm)
     return false;
 
-  CFX_WideString wsPDFFilePath = m_pFormFillEnv->JS_docGetFilePath();
-  CFDF_Document* pFDFDoc =
-      m_pInterForm->ExportToFDF(wsPDFFilePath.AsStringC(), false);
+  std::unique_ptr<CFDF_Document> pFDFDoc = m_pInterForm->ExportToFDF(
+      m_pFormFillEnv->JS_docGetFilePath().AsStringC(), false);
   if (!pFDFDoc)
     return false;
 
   CFX_ByteTextBuf FdfBuffer;
-  bool bRet = pFDFDoc->WriteBuf(FdfBuffer);
-  delete pFDFDoc;
-  if (!bRet)
+  if (!pFDFDoc->WriteBuf(FdfBuffer))
     return false;
 
   uint8_t* pBuffer = FdfBuffer.GetBuffer();
   FX_STRSIZE nBufSize = FdfBuffer.GetLength();
-
   if (bUrlEncoded && !FDFToURLEncodedData(pBuffer, nBufSize))
     return false;
 
   m_pFormFillEnv->JS_docSubmitForm(pBuffer, nBufSize, sDestination.c_str());
-
   if (bUrlEncoded)
     FX_Free(pBuffer);
 
@@ -552,15 +548,9 @@ bool CPDFSDK_InterForm::SubmitForm(const CFX_WideString& sDestination,
 }
 
 bool CPDFSDK_InterForm::ExportFormToFDFTextBuf(CFX_ByteTextBuf& textBuf) {
-  CFDF_Document* pFDF = m_pInterForm->ExportToFDF(
+  std::unique_ptr<CFDF_Document> pFDF = m_pInterForm->ExportToFDF(
       m_pFormFillEnv->JS_docGetFilePath().AsStringC(), false);
-  if (!pFDF)
-    return false;
-
-  bool bRet = pFDF->WriteBuf(textBuf);
-  delete pFDF;
-
-  return bRet;
+  return pFDF && pFDF->WriteBuf(textBuf);
 }
 
 bool CPDFSDK_InterForm::DoAction_ResetForm(const CPDF_Action& action) {

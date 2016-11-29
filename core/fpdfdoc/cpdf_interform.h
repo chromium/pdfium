@@ -73,12 +73,14 @@ class CPDF_InterForm {
       const std::vector<CPDF_FormField*>* fields,
       bool bIncludeOrExclude) const;
 
-  CFDF_Document* ExportToFDF(const CFX_WideStringC& pdf_path,
-                             bool bSimpleFileSpec) const;
-  CFDF_Document* ExportToFDF(const CFX_WideStringC& pdf_path,
-                             const std::vector<CPDF_FormField*>& fields,
-                             bool bIncludeOrExclude,
-                             bool bSimpleFileSpec) const;
+  std::unique_ptr<CFDF_Document> ExportToFDF(const CFX_WideStringC& pdf_path,
+                                             bool bSimpleFileSpec) const;
+
+  std::unique_ptr<CFDF_Document> ExportToFDF(
+      const CFX_WideStringC& pdf_path,
+      const std::vector<CPDF_FormField*>& fields,
+      bool bIncludeOrExclude,
+      bool bSimpleFileSpec) const;
 
   bool ResetForm(const std::vector<CPDF_FormField*>& fields,
                  bool bIncludeOrExclude,

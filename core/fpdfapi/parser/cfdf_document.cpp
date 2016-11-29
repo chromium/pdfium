@@ -25,24 +25,26 @@ CFDF_Document::~CFDF_Document() {
     m_pFile->Release();
 }
 
-CFDF_Document* CFDF_Document::CreateNewDoc() {
-  CFDF_Document* pDoc = new CFDF_Document;
+std::unique_ptr<CFDF_Document> CFDF_Document::CreateNewDoc() {
+  auto pDoc = pdfium::MakeUnique<CFDF_Document>();
   pDoc->m_pRootDict = pDoc->NewIndirect<CPDF_Dictionary>();
   pDoc->m_pRootDict->SetNewFor<CPDF_Dictionary>("FDF");
   return pDoc;
 }
 
-CFDF_Document* CFDF_Document::ParseFile(IFX_SeekableReadStream* pFile,
-                                        bool bOwnFile) {
+std::unique_ptr<CFDF_Document> CFDF_Document::ParseFile(
+    IFX_SeekableReadStream* pFile,
+    bool bOwnFile) {
   if (!pFile)
     return nullptr;
 
-  std::unique_ptr<CFDF_Document> pDoc(new CFDF_Document);
+  auto pDoc = pdfium::MakeUnique<CFDF_Document>();
   pDoc->ParseStream(pFile, bOwnFile);
-  return pDoc->m_pRootDict ? pDoc.release() : nullptr;
+  return pDoc->m_pRootDict ? std::move(pDoc) : nullptr;
 }
 
-CFDF_Document* CFDF_Document::ParseMemory(const uint8_t* pData, uint32_t size) {
+std::unique_ptr<CFDF_Document> CFDF_Document::ParseMemory(const uint8_t* pData,
+                                                          uint32_t size) {
   return CFDF_Document::ParseFile(FX_CreateMemoryStream((uint8_t*)pData, size),
                                   true);
 }

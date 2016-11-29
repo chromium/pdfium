@@ -1185,8 +1185,9 @@ CPDF_FormField* CPDF_InterForm::CheckRequiredFields(
   return nullptr;
 }
 
-CFDF_Document* CPDF_InterForm::ExportToFDF(const CFX_WideStringC& pdf_path,
-                                           bool bSimpleFileSpec) const {
+std::unique_ptr<CFDF_Document> CPDF_InterForm::ExportToFDF(
+    const CFX_WideStringC& pdf_path,
+    bool bSimpleFileSpec) const {
   std::vector<CPDF_FormField*> fields;
   size_t nCount = m_pFieldTree->m_Root.CountFields();
   for (size_t i = 0; i < nCount; ++i)
@@ -1194,12 +1195,12 @@ CFDF_Document* CPDF_InterForm::ExportToFDF(const CFX_WideStringC& pdf_path,
   return ExportToFDF(pdf_path, fields, true, bSimpleFileSpec);
 }
 
-CFDF_Document* CPDF_InterForm::ExportToFDF(
+std::unique_ptr<CFDF_Document> CPDF_InterForm::ExportToFDF(
     const CFX_WideStringC& pdf_path,
     const std::vector<CPDF_FormField*>& fields,
     bool bIncludeOrExclude,
     bool bSimpleFileSpec) const {
-  CFDF_Document* pDoc = CFDF_Document::CreateNewDoc();
+  std::unique_ptr<CFDF_Document> pDoc = CFDF_Document::CreateNewDoc();
   if (!pDoc)
     return nullptr;
 
