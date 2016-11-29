@@ -6,6 +6,7 @@
 #define CORE_FXCRT_CFX_RETAIN_PTR_H_
 
 #include <memory>
+#include <utility>
 
 #include "core/fxcrt/fx_memory.h"
 
@@ -17,9 +18,12 @@ class CFX_RetainPtr {
       m_pObj->Retain();
   }
 
-  CFX_RetainPtr() : CFX_RetainPtr(nullptr) {}
+  CFX_RetainPtr() {}
   CFX_RetainPtr(const CFX_RetainPtr& that) : CFX_RetainPtr(that.Get()) {}
   CFX_RetainPtr(CFX_RetainPtr&& that) { Swap(that); }
+
+  // Deliberately implicit to allow returning nullptrs.
+  CFX_RetainPtr(std::nullptr_t ptr) {}
 
   template <class U>
   CFX_RetainPtr(const CFX_RetainPtr<U>& that) : CFX_RetainPtr(that.Get()) {}
@@ -52,5 +56,31 @@ class CFX_RetainPtr {
  private:
   std::unique_ptr<T, ReleaseDeleter<T>> m_pObj;
 };
+
+// Trivial implementation - internal ref count with virtual destructor.
+class CFX_Retainable {
+ public:
+  void Retain() { ++m_nRefCount; }
+  void Release() {
+    if (--m_nRefCount == 0)
+      delete this;
+  }
+  bool HasOneRef() const { return m_nRefCount == 1; }
+
+ protected:
+  virtual ~CFX_Retainable() {}
+  intptr_t m_nRefCount = 0;
+};
+
+namespace pdfium {
+
+// Helper to make a CFX_RetainPtr along the lines of std::make_unique<>(),
+// or pdfium::MakeUnique<>(). Arguments are forwarded to T's constructor.
+template <typename T, typename... Args>
+CFX_RetainPtr<T> MakeRetain(Args&&... args) {
+  return CFX_RetainPtr<T>(new T(std::forward<Args>(args)...));
+}
+
+}  // namespace pdfium
 
 #endif  // CORE_FXCRT_CFX_RETAIN_PTR_H_

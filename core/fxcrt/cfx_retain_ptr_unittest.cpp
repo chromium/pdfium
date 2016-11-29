@@ -213,3 +213,13 @@ TEST(fxcrt, RetainPtrBool) {
   EXPECT_FALSE(null_bool);
   EXPECT_TRUE(obj1_bool);
 }
+
+TEST(fxcrt, RetainPtrMakeRetained) {
+  auto ptr = pdfium::MakeRetain<CFX_Retainable>();
+  EXPECT_TRUE(ptr->HasOneRef());
+  {
+    CFX_RetainPtr<CFX_Retainable> other = ptr;
+    EXPECT_FALSE(ptr->HasOneRef());
+  }
+  EXPECT_TRUE(ptr->HasOneRef());
+}
