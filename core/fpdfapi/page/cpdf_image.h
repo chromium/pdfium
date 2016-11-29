@@ -7,6 +7,8 @@
 #ifndef CORE_FPDFAPI_PAGE_CPDF_IMAGE_H_
 #define CORE_FPDFAPI_PAGE_CPDF_IMAGE_H_
 
+#include <memory>
+
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fxcrt/fx_system.h"
 
@@ -14,16 +16,13 @@
 #define PDF_IMAGE_LOSSY_COMPRESS 0x0001
 #define PDF_IMAGE_LOSSLESS_COMPRESS 0x0002
 #define PDF_IMAGE_MASK_LOSSY_COMPRESS 0x0004
-#define PDF_IMAGE_MASK_LOSSLESS_COMPRESS 0x0008
 
 class CFX_DIBSource;
 class CFX_DIBitmap;
-class CPDF_Dictionay;
 class CPDF_Document;
 class CPDF_Page;
 class IFX_Pause;
 class IFX_SeekableReadStream;
-class IFX_SeekableWriteStream;
 
 class CPDF_Image {
  public:
@@ -46,7 +45,7 @@ class CPDF_Image {
   int32_t GetPixelHeight() const { return m_Height; }
   int32_t GetPixelWidth() const { return m_Width; }
 
-  bool IsInline() const { return !!m_pOwnedStream; }
+  bool IsInline() const { return m_bIsInline; }
   bool IsMask() const { return m_bIsMask; }
   bool IsInterpol() const { return m_bInterpolate; }
 
@@ -80,6 +79,7 @@ class CPDF_Image {
 
   int32_t m_Height = 0;
   int32_t m_Width = 0;
+  bool m_bIsInline = false;
   bool m_bIsMask = false;
   bool m_bInterpolate = false;
   CPDF_Document* const m_pDocument;
