@@ -111,7 +111,7 @@ class CXFA_FMUnaryExpression : public CXFA_FMSimpleExpression {
  public:
   CXFA_FMUnaryExpression(uint32_t line,
                          XFA_FM_TOKEN op,
-                         CXFA_FMSimpleExpression* pExp);
+                         std::unique_ptr<CXFA_FMSimpleExpression> pExp);
   ~CXFA_FMUnaryExpression() override;
 
   void ToJavaScript(CFX_WideTextBuf& javascript) override;
@@ -124,8 +124,8 @@ class CXFA_FMBinExpression : public CXFA_FMSimpleExpression {
  public:
   CXFA_FMBinExpression(uint32_t line,
                        XFA_FM_TOKEN op,
-                       CXFA_FMSimpleExpression* pExp1,
-                       CXFA_FMSimpleExpression* pExp2);
+                       std::unique_ptr<CXFA_FMSimpleExpression> pExp1,
+                       std::unique_ptr<CXFA_FMSimpleExpression> pExp2);
   ~CXFA_FMBinExpression() override;
 
   void ToJavaScript(CFX_WideTextBuf& javascript) override;
@@ -139,8 +139,8 @@ class CXFA_FMAssignExpression : public CXFA_FMBinExpression {
  public:
   CXFA_FMAssignExpression(uint32_t line,
                           XFA_FM_TOKEN op,
-                          CXFA_FMSimpleExpression* pExp1,
-                          CXFA_FMSimpleExpression* pExp2);
+                          std::unique_ptr<CXFA_FMSimpleExpression> pExp1,
+                          std::unique_ptr<CXFA_FMSimpleExpression> pExp2);
   ~CXFA_FMAssignExpression() override {}
   void ToJavaScript(CFX_WideTextBuf& javascript) override;
   void ToImpliedReturnJS(CFX_WideTextBuf& javascript) override;
@@ -150,8 +150,8 @@ class CXFA_FMLogicalOrExpression : public CXFA_FMBinExpression {
  public:
   CXFA_FMLogicalOrExpression(uint32_t line,
                              XFA_FM_TOKEN op,
-                             CXFA_FMSimpleExpression* pExp1,
-                             CXFA_FMSimpleExpression* pExp2);
+                             std::unique_ptr<CXFA_FMSimpleExpression> pExp1,
+                             std::unique_ptr<CXFA_FMSimpleExpression> pExp2);
   ~CXFA_FMLogicalOrExpression() override {}
   void ToJavaScript(CFX_WideTextBuf& javascript) override;
 };
@@ -160,8 +160,8 @@ class CXFA_FMLogicalAndExpression : public CXFA_FMBinExpression {
  public:
   CXFA_FMLogicalAndExpression(uint32_t line,
                               XFA_FM_TOKEN op,
-                              CXFA_FMSimpleExpression* pExp1,
-                              CXFA_FMSimpleExpression* pExp2);
+                              std::unique_ptr<CXFA_FMSimpleExpression> pExp1,
+                              std::unique_ptr<CXFA_FMSimpleExpression> pExp2);
   ~CXFA_FMLogicalAndExpression() override {}
   void ToJavaScript(CFX_WideTextBuf& javascript) override;
 };
@@ -170,8 +170,8 @@ class CXFA_FMEqualityExpression : public CXFA_FMBinExpression {
  public:
   CXFA_FMEqualityExpression(uint32_t line,
                             XFA_FM_TOKEN op,
-                            CXFA_FMSimpleExpression* pExp1,
-                            CXFA_FMSimpleExpression* pExp2);
+                            std::unique_ptr<CXFA_FMSimpleExpression> pExp1,
+                            std::unique_ptr<CXFA_FMSimpleExpression> pExp2);
   ~CXFA_FMEqualityExpression() override {}
   void ToJavaScript(CFX_WideTextBuf& javascript) override;
 };
@@ -180,8 +180,8 @@ class CXFA_FMRelationalExpression : public CXFA_FMBinExpression {
  public:
   CXFA_FMRelationalExpression(uint32_t line,
                               XFA_FM_TOKEN op,
-                              CXFA_FMSimpleExpression* pExp1,
-                              CXFA_FMSimpleExpression* pExp2);
+                              std::unique_ptr<CXFA_FMSimpleExpression> pExp1,
+                              std::unique_ptr<CXFA_FMSimpleExpression> pExp2);
   ~CXFA_FMRelationalExpression() override {}
   void ToJavaScript(CFX_WideTextBuf& javascript) override;
 };
@@ -190,39 +190,43 @@ class CXFA_FMAdditiveExpression : public CXFA_FMBinExpression {
  public:
   CXFA_FMAdditiveExpression(uint32_t line,
                             XFA_FM_TOKEN op,
-                            CXFA_FMSimpleExpression* pExp1,
-                            CXFA_FMSimpleExpression* pExp2);
+                            std::unique_ptr<CXFA_FMSimpleExpression> pExp1,
+                            std::unique_ptr<CXFA_FMSimpleExpression> pExp2);
   ~CXFA_FMAdditiveExpression() override {}
   void ToJavaScript(CFX_WideTextBuf& javascript) override;
 };
 
 class CXFA_FMMultiplicativeExpression : public CXFA_FMBinExpression {
  public:
-  CXFA_FMMultiplicativeExpression(uint32_t line,
-                                  XFA_FM_TOKEN op,
-                                  CXFA_FMSimpleExpression* pExp1,
-                                  CXFA_FMSimpleExpression* pExp2);
+  CXFA_FMMultiplicativeExpression(
+      uint32_t line,
+      XFA_FM_TOKEN op,
+      std::unique_ptr<CXFA_FMSimpleExpression> pExp1,
+      std::unique_ptr<CXFA_FMSimpleExpression> pExp2);
   ~CXFA_FMMultiplicativeExpression() override {}
   void ToJavaScript(CFX_WideTextBuf& javascript) override;
 };
 
 class CXFA_FMPosExpression : public CXFA_FMUnaryExpression {
  public:
-  CXFA_FMPosExpression(uint32_t line, CXFA_FMSimpleExpression* pExp);
+  CXFA_FMPosExpression(uint32_t line,
+                       std::unique_ptr<CXFA_FMSimpleExpression> pExp);
   ~CXFA_FMPosExpression() override {}
   void ToJavaScript(CFX_WideTextBuf& javascript) override;
 };
 
 class CXFA_FMNegExpression : public CXFA_FMUnaryExpression {
  public:
-  CXFA_FMNegExpression(uint32_t line, CXFA_FMSimpleExpression* pExp);
+  CXFA_FMNegExpression(uint32_t line,
+                       std::unique_ptr<CXFA_FMSimpleExpression> pExp);
   ~CXFA_FMNegExpression() override {}
   void ToJavaScript(CFX_WideTextBuf& javascript) override;
 };
 
 class CXFA_FMNotExpression : public CXFA_FMUnaryExpression {
  public:
-  CXFA_FMNotExpression(uint32_t line, CXFA_FMSimpleExpression* pExp);
+  CXFA_FMNotExpression(uint32_t line,
+                       std::unique_ptr<CXFA_FMSimpleExpression> pExp);
   ~CXFA_FMNotExpression() override {}
   void ToJavaScript(CFX_WideTextBuf& javascript) override;
 };
@@ -231,7 +235,7 @@ class CXFA_FMCallExpression : public CXFA_FMUnaryExpression {
  public:
   CXFA_FMCallExpression(
       uint32_t line,
-      CXFA_FMSimpleExpression* pExp,
+      std::unique_ptr<CXFA_FMSimpleExpression> pExp,
       std::vector<std::unique_ptr<CXFA_FMSimpleExpression>>&& pArguments,
       bool bIsSomMethod);
   ~CXFA_FMCallExpression() override;
@@ -247,11 +251,12 @@ class CXFA_FMCallExpression : public CXFA_FMUnaryExpression {
 
 class CXFA_FMDotAccessorExpression : public CXFA_FMBinExpression {
  public:
-  CXFA_FMDotAccessorExpression(uint32_t line,
-                               CXFA_FMSimpleExpression* pAccessor,
-                               XFA_FM_TOKEN op,
-                               CFX_WideStringC wsIdentifier,
-                               CXFA_FMSimpleExpression* pIndexExp);
+  CXFA_FMDotAccessorExpression(
+      uint32_t line,
+      std::unique_ptr<CXFA_FMSimpleExpression> pAccessor,
+      XFA_FM_TOKEN op,
+      CFX_WideStringC wsIdentifier,
+      std::unique_ptr<CXFA_FMSimpleExpression> pIndexExp);
   ~CXFA_FMDotAccessorExpression() override;
   void ToJavaScript(CFX_WideTextBuf& javascript) override;
 
@@ -263,7 +268,7 @@ class CXFA_FMIndexExpression : public CXFA_FMUnaryExpression {
  public:
   CXFA_FMIndexExpression(uint32_t line,
                          XFA_FM_AccessorIndex accessorIndex,
-                         CXFA_FMSimpleExpression* pIndexExp,
+                         std::unique_ptr<CXFA_FMSimpleExpression> pIndexExp,
                          bool bIsStarIndex);
   ~CXFA_FMIndexExpression() override {}
   void ToJavaScript(CFX_WideTextBuf& javascript) override;
@@ -275,11 +280,12 @@ class CXFA_FMIndexExpression : public CXFA_FMUnaryExpression {
 
 class CXFA_FMDotDotAccessorExpression : public CXFA_FMBinExpression {
  public:
-  CXFA_FMDotDotAccessorExpression(uint32_t line,
-                                  CXFA_FMSimpleExpression* pAccessor,
-                                  XFA_FM_TOKEN op,
-                                  CFX_WideStringC wsIdentifier,
-                                  CXFA_FMSimpleExpression* pIndexExp);
+  CXFA_FMDotDotAccessorExpression(
+      uint32_t line,
+      std::unique_ptr<CXFA_FMSimpleExpression> pAccessor,
+      XFA_FM_TOKEN op,
+      CFX_WideStringC wsIdentifier,
+      std::unique_ptr<CXFA_FMSimpleExpression> pIndexExp);
   ~CXFA_FMDotDotAccessorExpression() override;
 
   void ToJavaScript(CFX_WideTextBuf& javascript) override;
@@ -290,9 +296,10 @@ class CXFA_FMDotDotAccessorExpression : public CXFA_FMBinExpression {
 
 class CXFA_FMMethodCallExpression : public CXFA_FMBinExpression {
  public:
-  CXFA_FMMethodCallExpression(uint32_t line,
-                              CXFA_FMSimpleExpression* pAccessorExp1,
-                              CXFA_FMSimpleExpression* pCallExp);
+  CXFA_FMMethodCallExpression(
+      uint32_t line,
+      std::unique_ptr<CXFA_FMSimpleExpression> pAccessorExp1,
+      std::unique_ptr<CXFA_FMSimpleExpression> pCallExp);
   ~CXFA_FMMethodCallExpression() override {}
   void ToJavaScript(CFX_WideTextBuf& javascript) override;
 };

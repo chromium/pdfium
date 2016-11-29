@@ -63,7 +63,7 @@ class CXFA_FMVarExpression : public CXFA_FMExpression {
  public:
   CXFA_FMVarExpression(uint32_t line,
                        const CFX_WideStringC& wsName,
-                       CXFA_FMExpression* pInit);
+                       std::unique_ptr<CXFA_FMExpression> pInit);
   ~CXFA_FMVarExpression() override;
 
   void ToJavaScript(CFX_WideTextBuf& javascript) override;
@@ -76,7 +76,8 @@ class CXFA_FMVarExpression : public CXFA_FMExpression {
 
 class CXFA_FMExpExpression : public CXFA_FMExpression {
  public:
-  CXFA_FMExpExpression(uint32_t line, CXFA_FMSimpleExpression* pExpression);
+  CXFA_FMExpExpression(uint32_t line,
+                       std::unique_ptr<CXFA_FMSimpleExpression> pExpression);
   ~CXFA_FMExpExpression() override;
 
   void ToJavaScript(CFX_WideTextBuf& javascript) override;
@@ -102,7 +103,7 @@ class CXFA_FMBlockExpression : public CXFA_FMExpression {
 
 class CXFA_FMDoExpression : public CXFA_FMExpression {
  public:
-  CXFA_FMDoExpression(uint32_t line, CXFA_FMExpression* pList);
+  CXFA_FMDoExpression(uint32_t line, std::unique_ptr<CXFA_FMExpression> pList);
   ~CXFA_FMDoExpression() override;
 
   void ToJavaScript(CFX_WideTextBuf& javascript) override;
@@ -115,9 +116,9 @@ class CXFA_FMDoExpression : public CXFA_FMExpression {
 class CXFA_FMIfExpression : public CXFA_FMExpression {
  public:
   CXFA_FMIfExpression(uint32_t line,
-                      CXFA_FMSimpleExpression* pExpression,
-                      CXFA_FMExpression* pIfExpression,
-                      CXFA_FMExpression* pElseExpression);
+                      std::unique_ptr<CXFA_FMSimpleExpression> pExpression,
+                      std::unique_ptr<CXFA_FMExpression> pIfExpression,
+                      std::unique_ptr<CXFA_FMExpression> pElseExpression);
   ~CXFA_FMIfExpression() override;
 
   void ToJavaScript(CFX_WideTextBuf& javascript) override;
@@ -140,8 +141,8 @@ class CXFA_FMLoopExpression : public CXFA_FMExpression {
 class CXFA_FMWhileExpression : public CXFA_FMLoopExpression {
  public:
   CXFA_FMWhileExpression(uint32_t line,
-                         CXFA_FMSimpleExpression* pCodition,
-                         CXFA_FMExpression* pExpression);
+                         std::unique_ptr<CXFA_FMSimpleExpression> pCodition,
+                         std::unique_ptr<CXFA_FMExpression> pExpression);
   ~CXFA_FMWhileExpression() override;
 
   void ToJavaScript(CFX_WideTextBuf& javascript) override;
@@ -172,11 +173,11 @@ class CXFA_FMForExpression : public CXFA_FMLoopExpression {
  public:
   CXFA_FMForExpression(uint32_t line,
                        const CFX_WideStringC& wsVariant,
-                       CXFA_FMSimpleExpression* pAssignment,
-                       CXFA_FMSimpleExpression* pAccessor,
+                       std::unique_ptr<CXFA_FMSimpleExpression> pAssignment,
+                       std::unique_ptr<CXFA_FMSimpleExpression> pAccessor,
                        int32_t iDirection,
-                       CXFA_FMSimpleExpression* pStep,
-                       CXFA_FMExpression* pList);
+                       std::unique_ptr<CXFA_FMSimpleExpression> pStep,
+                       std::unique_ptr<CXFA_FMExpression> pList);
   ~CXFA_FMForExpression() override;
 
   void ToJavaScript(CFX_WideTextBuf& javascript) override;
@@ -198,7 +199,7 @@ class CXFA_FMForeachExpression : public CXFA_FMLoopExpression {
       uint32_t line,
       const CFX_WideStringC& wsIdentifier,
       std::vector<std::unique_ptr<CXFA_FMSimpleExpression>>&& pAccessors,
-      CXFA_FMExpression* pList);
+      std::unique_ptr<CXFA_FMExpression> pList);
   ~CXFA_FMForeachExpression() override;
 
   void ToJavaScript(CFX_WideTextBuf& javascript) override;

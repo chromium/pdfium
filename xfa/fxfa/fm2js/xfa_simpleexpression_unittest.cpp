@@ -19,7 +19,7 @@ TEST(FMCallExpression, more_than_32_arguments) {
   for (size_t i = 0; i < 50; i++)
     args.push_back(pdfium::MakeUnique<CXFA_FMSimpleExpression>(0, TOKnan));
 
-  CXFA_FMCallExpression callExp(0, exp.release(), std::move(args), true);
+  CXFA_FMCallExpression callExp(0, std::move(exp), std::move(args), true);
   CFX_WideTextBuf js;
   callExp.ToJavaScript(js);
 
