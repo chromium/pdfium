@@ -233,22 +233,16 @@ bool CPDF_ImageCacheEntry::GetCachedBitmap(CFX_DIBSource*& pBitmap,
     return false;
   }
   m_MatteColor = MatteColor;
-  if (pSrc->GetPitch() * pSrc->GetHeight() < FPDF_HUGE_IMAGE_SIZE) {
-    m_pCachedBitmap = pSrc->Clone();
-    delete pSrc;
-  } else {
-    m_pCachedBitmap = pSrc;
-  }
-  if (pMaskSrc) {
-    m_pCachedMask = pMaskSrc->Clone();
-    delete pMaskSrc;
-  }
+  m_pCachedBitmap = pSrc;
+  if (pMaskSrc)
+    m_pCachedMask = pMaskSrc;
 
   pBitmap = m_pCachedBitmap;
   pMask = m_pCachedMask;
   CalcSize();
   return false;
 }
+
 CFX_DIBSource* CPDF_ImageCacheEntry::DetachBitmap() {
   CFX_DIBSource* pDIBSource = m_pCurBitmap;
   m_pCurBitmap = nullptr;
