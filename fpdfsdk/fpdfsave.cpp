@@ -136,7 +136,7 @@ bool SaveXFADocumentData(CPDFXFA_Context* pContext,
     streamAcc.LoadAllData(pTemplateStream);
     uint8_t* pData = (uint8_t*)streamAcc.GetData();
     uint32_t dwSize2 = streamAcc.GetSize();
-    ScopedFileStream pTemplate(FX_CreateMemoryStream(pData, dwSize2));
+    ScopedFileStream pTemplate(IFX_MemoryStream::Create(pData, dwSize2));
     pChecksum->UpdateChecksum(pTemplate.get());
   }
   CPDF_Stream* pFormStream = nullptr;
@@ -169,7 +169,7 @@ bool SaveXFADocumentData(CPDFXFA_Context* pContext,
   }
   // L"datasets"
   {
-    ScopedFileStream pDsfileWrite(FX_CreateMemoryStream());
+    ScopedFileStream pDsfileWrite(IFX_MemoryStream::Create());
     if (pXFADocView->GetDoc()->SavePackage(XFA_HASHCODE_Datasets,
                                            pDsfileWrite.get(), nullptr) &&
         pDsfileWrite->GetSize() > 0) {
@@ -196,7 +196,7 @@ bool SaveXFADocumentData(CPDFXFA_Context* pContext,
   }
   // L"form"
   {
-    ScopedFileStream pfileWrite(FX_CreateMemoryStream());
+    ScopedFileStream pfileWrite(IFX_MemoryStream::Create());
     if (pXFADocView->GetDoc()->SavePackage(XFA_HASHCODE_Form, pfileWrite.get(),
                                            pChecksum.get()) &&
         pfileWrite->GetSize() > 0) {

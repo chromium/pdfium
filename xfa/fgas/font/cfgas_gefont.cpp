@@ -209,7 +209,7 @@ bool CFGAS_GEFont::LoadFontInternal(IFX_Stream* pFontStream, bool bSaveStream) {
   if (bSaveStream)
     m_pStream.reset(pFontStream);
 
-  m_pFileRead.reset(FX_CreateFileRead(pFontStream, false));
+  m_pFileRead.reset(pFontStream->MakeSeekableReadStream());
   m_pFont = new CFX_Font;
   if (m_pFont->LoadFile(m_pFileRead.get()))
     return InitFont();

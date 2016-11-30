@@ -197,7 +197,7 @@ void RegenerateFormFile_Changed(CXFA_Node* pNode,
         if (!pRichTextXML)
           break;
 
-        IFX_MemoryStream* pMemStream = FX_CreateMemoryStream(true);
+        IFX_MemoryStream* pMemStream = IFX_MemoryStream::Create(true);
         IFX_Stream* pTempStream = IFX_Stream::CreateStream(
             (IFX_SeekableWriteStream*)pMemStream, FX_STREAMACCESS_Text |
                                                       FX_STREAMACCESS_Write |

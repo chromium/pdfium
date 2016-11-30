@@ -1066,11 +1066,11 @@ CFX_DIBitmap* XFA_LoadImageData(CXFA_FFDoc* pDoc,
       pImageBuffer = FX_Alloc(uint8_t, iLength);
       int32_t iRead = XFA_Base64Decode(bsData.c_str(), pImageBuffer);
       if (iRead > 0) {
-        pImageFileRead = FX_CreateMemoryStream(pImageBuffer, iRead);
+        pImageFileRead = IFX_MemoryStream::Create(pImageBuffer, iRead);
       }
     } else {
       bsContent = CFX_ByteString::FromUnicode(wsImage);
-      pImageFileRead = FX_CreateMemoryStream(
+      pImageFileRead = IFX_MemoryStream::Create(
           const_cast<uint8_t*>(bsContent.raw_str()), bsContent.GetLength());
     }
   } else {

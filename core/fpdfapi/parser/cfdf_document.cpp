@@ -45,8 +45,8 @@ std::unique_ptr<CFDF_Document> CFDF_Document::ParseFile(
 
 std::unique_ptr<CFDF_Document> CFDF_Document::ParseMemory(const uint8_t* pData,
                                                           uint32_t size) {
-  return CFDF_Document::ParseFile(FX_CreateMemoryStream((uint8_t*)pData, size),
-                                  true);
+  return CFDF_Document::ParseFile(
+      IFX_MemoryStream::Create((uint8_t*)pData, size), true);
 }
 
 void CFDF_Document::ParseStream(IFX_SeekableReadStream* pFile, bool bOwnFile) {

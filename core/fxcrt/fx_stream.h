@@ -85,6 +85,8 @@ class IFX_SeekableWriteStream : public IFX_WriteStream {
 
 class IFX_SeekableReadStream : public IFX_ReadStream {
  public:
+  static IFX_SeekableReadStream* CreateFromFilename(const FX_CHAR* filename);
+
   // IFX_ReadStream:
   void Release() override = 0;
   bool IsEOF() override;
@@ -95,12 +97,14 @@ class IFX_SeekableReadStream : public IFX_ReadStream {
   virtual FX_FILESIZE GetSize() = 0;
 };
 
-IFX_SeekableReadStream* FX_CreateFileRead(const FX_CHAR* filename);
-IFX_SeekableReadStream* FX_CreateFileRead(const FX_WCHAR* filename);
-
 class IFX_SeekableStream : public IFX_SeekableReadStream,
                            public IFX_SeekableWriteStream {
  public:
+  static IFX_SeekableStream* CreateFromFilename(const FX_CHAR* filename,
+                                                uint32_t dwModes);
+  static IFX_SeekableStream* CreateFromFilename(const FX_WCHAR* filename,
+                                                uint32_t dwModes);
+
   virtual IFX_SeekableStream* Retain() = 0;
 
   // IFX_SeekableReadStream:
@@ -119,11 +123,6 @@ class IFX_SeekableStream : public IFX_SeekableReadStream,
   bool Flush() override = 0;
 };
 
-IFX_SeekableStream* FX_CreateFileStream(const FX_CHAR* filename,
-                                        uint32_t dwModes);
-IFX_SeekableStream* FX_CreateFileStream(const FX_WCHAR* filename,
-                                        uint32_t dwModes);
-
 #ifdef PDF_ENABLE_XFA
 class IFX_FileAccess {
  public:
@@ -138,6 +137,11 @@ IFX_FileAccess* FX_CreateDefaultFileAccess(const CFX_WideStringC& wsPath);
 
 class IFX_MemoryStream : public IFX_SeekableStream {
  public:
+  static IFX_MemoryStream* Create(uint8_t* pBuffer,
+                                  size_t nSize,
+                                  bool bTakeOver = false);
+  static IFX_MemoryStream* Create(bool bConsecutive = false);
+
   virtual bool IsConsecutive() const = 0;
   virtual void EstimateSize(size_t nInitSize, size_t nGrowSize) = 0;
   virtual uint8_t* GetBuffer() const = 0;
@@ -146,11 +150,6 @@ class IFX_MemoryStream : public IFX_SeekableStream {
                             bool bTakeOver = false) = 0;
   virtual void DetachBuffer() = 0;
 };
-
-IFX_MemoryStream* FX_CreateMemoryStream(uint8_t* pBuffer,
-                                        size_t nSize,
-                                        bool bTakeOver = false);
-IFX_MemoryStream* FX_CreateMemoryStream(bool bConsecutive = false);
 
 class IFX_BufferRead : public IFX_ReadStream {
  public:

@@ -393,16 +393,14 @@ DLLEXPORT FPDF_DOCUMENT STDCALL FPDF_LoadDocument(FPDF_STRING file_path,
   // NOTE: the creation of the file needs to be by the embedder on the
   // other side of this API.
   IFX_SeekableReadStream* pFileAccess =
-      FX_CreateFileRead((const FX_CHAR*)file_path);
-  if (!pFileAccess) {
+      IFX_SeekableReadStream::CreateFromFilename((const FX_CHAR*)file_path);
+  if (!pFileAccess)
     return nullptr;
-  }
 
-  std::unique_ptr<CPDF_Parser> pParser(new CPDF_Parser);
+  auto pParser = pdfium::MakeUnique<CPDF_Parser>();
   pParser->SetPassword(password);
 
-  std::unique_ptr<CPDF_Document> pDocument(
-      new CPDF_Document(std::move(pParser)));
+  auto pDocument = pdfium::MakeUnique<CPDF_Document>(std::move(pParser));
   CPDF_Parser::Error error =
       pDocument->GetParser()->StartParse(pFileAccess, pDocument.get());
   if (error != CPDF_Parser::SUCCESS) {

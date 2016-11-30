@@ -37,6 +37,7 @@ class IFX_Stream {
                                   uint32_t dwAccess);
   static IFX_Stream* CreateTextStream(IFX_Stream* pBaseStream,
                                       bool bDeleteOnRelease);
+
   virtual ~IFX_Stream() {}
   virtual void Release() = 0;
   virtual IFX_Stream* Retain() = 0;
@@ -61,9 +62,9 @@ class IFX_Stream {
   virtual int32_t GetBOM(uint8_t bom[4]) const = 0;
   virtual uint16_t GetCodePage() const = 0;
   virtual uint16_t SetCodePage(uint16_t wCodePage) = 0;
+
+  IFX_SeekableReadStream* MakeSeekableReadStream();
 };
 
-IFX_SeekableReadStream* FX_CreateFileRead(IFX_Stream* pBaseStream,
-                                          bool bReleaseStream);
 
 #endif  // XFA_FGAS_CRT_FGAS_STREAM_H_

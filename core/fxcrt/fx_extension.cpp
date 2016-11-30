@@ -40,7 +40,7 @@ void CFX_CRTFileAccess::GetPath(CFX_WideString& wsPath) {
 }
 
 IFX_SeekableStream* CFX_CRTFileAccess::CreateFileStream(uint32_t dwModes) {
-  return FX_CreateFileStream(m_path.c_str(), dwModes);
+  return IFX_SeekableStream::CreateFromFilename(m_path.c_str(), dwModes);
 }
 
 bool CFX_CRTFileAccess::Init(const CFX_WideStringC& wsPath) {
@@ -338,33 +338,41 @@ IFX_FileAccess* FX_CreateDefaultFileAccess(const CFX_WideStringC& wsPath) {
 }
 #endif  // PDF_ENABLE_XFA
 
-IFX_SeekableStream* FX_CreateFileStream(const FX_CHAR* filename,
-                                        uint32_t dwModes) {
+// static
+IFX_SeekableStream* IFX_SeekableStream::CreateFromFilename(
+    const FX_CHAR* filename,
+    uint32_t dwModes) {
   std::unique_ptr<IFXCRT_FileAccess> pFA(IFXCRT_FileAccess::Create());
   if (!pFA->Open(filename, dwModes))
     return nullptr;
   return new CFX_CRTFileStream(std::move(pFA));
 }
 
-IFX_SeekableStream* FX_CreateFileStream(const FX_WCHAR* filename,
-                                        uint32_t dwModes) {
+// static
+IFX_SeekableStream* IFX_SeekableStream::CreateFromFilename(
+    const FX_WCHAR* filename,
+    uint32_t dwModes) {
   std::unique_ptr<IFXCRT_FileAccess> pFA(IFXCRT_FileAccess::Create());
   if (!pFA->Open(filename, dwModes))
     return nullptr;
   return new CFX_CRTFileStream(std::move(pFA));
 }
-IFX_SeekableReadStream* FX_CreateFileRead(const FX_CHAR* filename) {
-  return FX_CreateFileStream(filename, FX_FILEMODE_ReadOnly);
+
+// static
+IFX_SeekableReadStream* IFX_SeekableReadStream::CreateFromFilename(
+    const FX_CHAR* filename) {
+  return IFX_SeekableStream::CreateFromFilename(filename, FX_FILEMODE_ReadOnly);
 }
-IFX_SeekableReadStream* FX_CreateFileRead(const FX_WCHAR* filename) {
-  return FX_CreateFileStream(filename, FX_FILEMODE_ReadOnly);
-}
-IFX_MemoryStream* FX_CreateMemoryStream(uint8_t* pBuffer,
-                                        size_t dwSize,
-                                        bool bTakeOver) {
+
+// static
+IFX_MemoryStream* IFX_MemoryStream::Create(uint8_t* pBuffer,
+                                           size_t dwSize,
+                                           bool bTakeOver) {
   return new CFX_MemoryStream(pBuffer, dwSize, bTakeOver);
 }
-IFX_MemoryStream* FX_CreateMemoryStream(bool bConsecutive) {
+
+// static
+IFX_MemoryStream* IFX_MemoryStream::Create(bool bConsecutive) {
   return new CFX_MemoryStream(bConsecutive);
 }
 

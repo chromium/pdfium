@@ -1124,7 +1124,7 @@ std::unique_ptr<CPDF_Object> CPDF_Parser::ParseIndirectObject(
   if (!pObjStream)
     return nullptr;
 
-  ScopedFileStream file(FX_CreateMemoryStream(
+  ScopedFileStream file(IFX_MemoryStream::Create(
       (uint8_t*)pObjStream->GetData(), (size_t)pObjStream->GetSize(), false));
   CPDF_SyntaxParser syntax;
   syntax.InitParser(file.get(), 0);
@@ -1204,7 +1204,7 @@ void CPDF_Parser::GetIndirectBinary(uint32_t objnum,
     const uint8_t* pData = pObjStream->GetData();
     uint32_t totalsize = pObjStream->GetSize();
     ScopedFileStream file(
-        FX_CreateMemoryStream((uint8_t*)pData, (size_t)totalsize, false));
+        IFX_MemoryStream::Create((uint8_t*)pData, (size_t)totalsize, false));
 
     CPDF_SyntaxParser syntax;
     syntax.InitParser(file.get(), 0);

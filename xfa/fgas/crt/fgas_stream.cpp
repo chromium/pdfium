@@ -1452,10 +1452,8 @@ IFX_Stream* CFX_Stream::CreateSharedStream(uint32_t dwAccess,
   return pShared;
 }
 
-IFX_SeekableReadStream* FX_CreateFileRead(IFX_Stream* pBaseStream,
-                                          bool bReleaseStream) {
-  ASSERT(pBaseStream);
-  return new CFGAS_FileRead(pBaseStream, bReleaseStream);
+IFX_SeekableReadStream* IFX_Stream::MakeSeekableReadStream() {
+  return new CFGAS_FileRead(this, false);
 }
 
 CFGAS_FileRead::CFGAS_FileRead(IFX_Stream* pStream, bool bReleaseStream)

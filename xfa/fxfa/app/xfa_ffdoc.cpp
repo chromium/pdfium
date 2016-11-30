@@ -417,8 +417,8 @@ CFX_DIBitmap* CXFA_FFDoc::GetPDFNamedImage(const CFX_WideStringC& wsName,
   CPDF_StreamAcc streamAcc;
   streamAcc.LoadAllData(pStream);
 
-  IFX_SeekableReadStream* pImageFileRead =
-      FX_CreateMemoryStream((uint8_t*)streamAcc.GetData(), streamAcc.GetSize());
+  IFX_SeekableReadStream* pImageFileRead = IFX_MemoryStream::Create(
+      (uint8_t*)streamAcc.GetData(), streamAcc.GetSize());
 
   CFX_DIBitmap* pDibSource = XFA_LoadImageFromBuffer(
       pImageFileRead, FXCODEC_IMAGE_UNKNOWN, iImageXDpi, iImageYDpi);

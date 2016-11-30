@@ -45,7 +45,8 @@ class CPDF_TestParser : public CPDF_Parser {
 
   // Setup reading from a file and initial states.
   bool InitTestFromFile(const FX_CHAR* path) {
-    IFX_SeekableReadStream* pFileAccess = FX_CreateFileRead(path);
+    IFX_SeekableReadStream* pFileAccess =
+        IFX_SeekableReadStream::CreateFromFilename(path);
     if (!pFileAccess)
       return false;
 

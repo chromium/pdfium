@@ -909,7 +909,7 @@ IFX_SeekableReadStream* CFGAS_FontMgr::CreateFontStream(
   uint8_t* pBuffer = FX_Alloc(uint8_t, dwFileSize + 1);
   dwFileSize = pSystemFontInfo->GetFontData(hFont, 0, pBuffer, dwFileSize);
 
-  return FX_CreateMemoryStream(pBuffer, dwFileSize, true);
+  return IFX_MemoryStream::Create(pBuffer, dwFileSize, true);
 }
 
 IFX_SeekableReadStream* CFGAS_FontMgr::CreateFontStream(
