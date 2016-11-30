@@ -66,7 +66,6 @@ class CPDF_Font {
                                int& offset) const;
   virtual int CountChar(const FX_CHAR* pString, int size) const;
   virtual int AppendChar(FX_CHAR* buf, uint32_t charcode) const;
-  virtual int GetCharSize(uint32_t charcode) const;
   virtual int GlyphFromCharCode(uint32_t charcode, bool* pVertGlyph) = 0;
   virtual int GlyphFromCharCodeExt(uint32_t charcode);
   virtual CFX_WideString UnicodeFromCharCode(uint32_t charcode) const;
@@ -74,9 +73,7 @@ class CPDF_Font {
 
   const CFX_ByteString& GetBaseFont() const { return m_BaseFont; }
   CFX_SubstFont* GetSubstFont() const { return m_Font.GetSubstFont(); }
-  uint32_t GetFlags() const { return m_Flags; }
   bool IsEmbedded() const { return IsType3Font() || m_pFontFile != nullptr; }
-  CPDF_StreamAcc* GetFontFile() const { return m_pFontFile; }
   CPDF_Dictionary* GetFontDict() const { return m_pFontDict; }
   bool IsStandardFont() const;
   FXFT_Face GetFace() const { return m_Font.GetFace(); }
@@ -85,8 +82,6 @@ class CPDF_Font {
   void GetFontBBox(FX_RECT& rect) const { rect = m_FontBBox; }
   int GetTypeAscent() const { return m_Ascent; }
   int GetTypeDescent() const { return m_Descent; }
-  int GetItalicAngle() const { return m_ItalicAngle; }
-  int GetStemV() const { return m_StemV; }
   int GetStringWidth(const FX_CHAR* pString, int size);
   uint32_t FallbackFontFromCharcode(uint32_t charcode);
   int FallbackGlyphFromCharcode(int fallbackFont, uint32_t charcode);

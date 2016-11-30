@@ -122,10 +122,6 @@ int CPDF_Font::CountChar(const FX_CHAR* pString, int size) const {
   return size;
 }
 
-int CPDF_Font::GetCharSize(uint32_t charcode) const {
-  return 1;
-}
-
 int CPDF_Font::GlyphFromCharCodeExt(uint32_t charcode) {
   return GlyphFromCharCode(charcode, nullptr);
 }
