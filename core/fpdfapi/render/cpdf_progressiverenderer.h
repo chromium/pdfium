@@ -43,8 +43,6 @@ class CPDF_ProgressiveRenderer {
   void Continue(IFX_Pause* pPause);
 
  private:
-  void RenderStep();
-
   // Maximum page objects to render before checking for pause.
   static const int kStepLimit = 100;
 

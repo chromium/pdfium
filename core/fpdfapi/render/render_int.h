@@ -49,54 +49,6 @@ class CPDF_Type3Glyphs;
 class CPDF_Type3Char;
 class CPDF_Type3Font;
 
-class CPDF_ScaledRenderBuffer {
- public:
-  CPDF_ScaledRenderBuffer();
-  ~CPDF_ScaledRenderBuffer();
-
-  bool Initialize(CPDF_RenderContext* pContext,
-                  CFX_RenderDevice* pDevice,
-                  const FX_RECT& pRect,
-                  const CPDF_PageObject* pObj,
-                  const CPDF_RenderOptions* pOptions = nullptr,
-                  int max_dpi = 0);
-  CFX_RenderDevice* GetDevice() {
-    return m_pBitmapDevice ? m_pBitmapDevice.get() : m_pDevice;
-  }
-  CFX_Matrix* GetMatrix() { return &m_Matrix; }
-  void OutputToDevice();
-
- private:
-  CFX_RenderDevice* m_pDevice;
-  CPDF_RenderContext* m_pContext;
-  FX_RECT m_Rect;
-  const CPDF_PageObject* m_pObject;
-  std::unique_ptr<CFX_FxgeDevice> m_pBitmapDevice;
-  CFX_Matrix m_Matrix;
-};
-
-class CPDF_DeviceBuffer {
- public:
-  CPDF_DeviceBuffer();
-  ~CPDF_DeviceBuffer();
-  bool Initialize(CPDF_RenderContext* pContext,
-                  CFX_RenderDevice* pDevice,
-                  FX_RECT* pRect,
-                  const CPDF_PageObject* pObj,
-                  int max_dpi = 0);
-  void OutputToDevice();
-  CFX_DIBitmap* GetBitmap() const { return m_pBitmap.get(); }
-  const CFX_Matrix* GetMatrix() const { return &m_Matrix; }
-
- private:
-  CFX_RenderDevice* m_pDevice;
-  CPDF_RenderContext* m_pContext;
-  FX_RECT m_Rect;
-  const CPDF_PageObject* m_pObject;
-  std::unique_ptr<CFX_DIBitmap> m_pBitmap;
-  CFX_Matrix m_Matrix;
-};
-
 class CPDF_ImageCacheEntry {
  public:
   CPDF_ImageCacheEntry(CPDF_Document* pDoc, CPDF_Stream* pStream);
