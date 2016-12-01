@@ -118,7 +118,7 @@ int32_t CGifLZWDecoder::Decode(uint8_t* des_buf, uint32_t& des_size) {
       if (code == code_clear) {
         ClearTable();
         continue;
-      } else if (code == code_end) {
+      } else if (code >= code_end) {
         des_size = i;
         return 1;
       } else {
