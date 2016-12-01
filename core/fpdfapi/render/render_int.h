@@ -141,11 +141,12 @@ class CPDF_ImageCacheEntry {
 
   CPDF_Document* m_pDocument;
   CPDF_Stream* m_pStream;
-  CFX_DIBSource* m_pCachedBitmap;
-  CFX_DIBSource* m_pCachedMask;
+  std::unique_ptr<CFX_DIBSource> m_pCachedBitmap;
+  std::unique_ptr<CFX_DIBSource> m_pCachedMask;
   uint32_t m_dwCacheSize;
   void CalcSize();
 };
+
 typedef struct {
   FX_FLOAT m_DecodeMin;
   FX_FLOAT m_DecodeStep;

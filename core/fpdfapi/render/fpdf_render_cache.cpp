@@ -4,11 +4,13 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fpdfapi/render/cpdf_pagerendercache.h"
+#include <memory>
+#include <utility>
 
 #include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fpdfapi/page/pageint.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
+#include "core/fpdfapi/render/cpdf_pagerendercache.h"
 #include "core/fpdfapi/render/cpdf_rendercontext.h"
 #include "core/fpdfapi/render/cpdf_renderstatus.h"
 #include "core/fpdfapi/render/render_int.h"
@@ -179,19 +181,14 @@ CPDF_ImageCacheEntry::CPDF_ImageCacheEntry(CPDF_Document* pDoc,
       m_pRenderStatus(nullptr),
       m_pDocument(pDoc),
       m_pStream(pStream),
-      m_pCachedBitmap(nullptr),
-      m_pCachedMask(nullptr),
       m_dwCacheSize(0) {}
-CPDF_ImageCacheEntry::~CPDF_ImageCacheEntry() {
-  delete m_pCachedBitmap;
-  delete m_pCachedMask;
-}
+
+CPDF_ImageCacheEntry::~CPDF_ImageCacheEntry() {}
+
 void CPDF_ImageCacheEntry::Reset(const CFX_DIBitmap* pBitmap) {
-  delete m_pCachedBitmap;
-  m_pCachedBitmap = nullptr;
-  if (pBitmap) {
-    m_pCachedBitmap = pBitmap->Clone();
-  }
+  m_pCachedBitmap.reset();
+  if (pBitmap)
+    m_pCachedBitmap = pdfium::WrapUnique<CFX_DIBSource>(pBitmap->Clone());
   CalcSize();
 }
 
@@ -212,8 +209,8 @@ bool CPDF_ImageCacheEntry::GetCachedBitmap(CFX_DIBSource*& pBitmap,
                                            int32_t downsampleWidth,
                                            int32_t downsampleHeight) {
   if (m_pCachedBitmap) {
-    pBitmap = m_pCachedBitmap;
-    pMask = m_pCachedMask;
+    pBitmap = m_pCachedBitmap.get();
+    pMask = m_pCachedMask.get();
     MatteColor = m_MatteColor;
     return true;
   }
@@ -223,22 +220,21 @@ bool CPDF_ImageCacheEntry::GetCachedBitmap(CFX_DIBSource*& pBitmap,
   CPDF_RenderContext* pContext = pRenderStatus->GetContext();
   CPDF_PageRenderCache* pPageRenderCache = pContext->GetPageCache();
   m_dwTimeCount = pPageRenderCache->GetTimeCount();
-  CPDF_DIBSource* pSrc = new CPDF_DIBSource;
+  std::unique_ptr<CPDF_DIBSource> pSrc = pdfium::MakeUnique<CPDF_DIBSource>();
   CPDF_DIBSource* pMaskSrc = nullptr;
   if (!pSrc->Load(m_pDocument, m_pStream, &pMaskSrc, &MatteColor,
                   pRenderStatus->m_pFormResource, pPageResources, bStdCS,
                   GroupFamily, bLoadMask)) {
-    delete pSrc;
     pBitmap = nullptr;
     return false;
   }
   m_MatteColor = MatteColor;
-  m_pCachedBitmap = pSrc;
+  m_pCachedBitmap = std::move(pSrc);
   if (pMaskSrc)
-    m_pCachedMask = pMaskSrc;
+    m_pCachedMask = pdfium::WrapUnique<CFX_DIBSource>(pMaskSrc);
 
-  pBitmap = m_pCachedBitmap;
-  pMask = m_pCachedMask;
+  pBitmap = m_pCachedBitmap.get();
+  pMask = m_pCachedMask.get();
   CalcSize();
   return false;
 }
@@ -262,22 +258,22 @@ int CPDF_ImageCacheEntry::StartGetCachedBitmap(CPDF_Dictionary* pFormResources,
                                                int32_t downsampleWidth,
                                                int32_t downsampleHeight) {
   if (m_pCachedBitmap) {
-    m_pCurBitmap = m_pCachedBitmap;
-    m_pCurMask = m_pCachedMask;
+    m_pCurBitmap = m_pCachedBitmap.get();
+    m_pCurMask = m_pCachedMask.get();
     return 1;
   }
-  if (!pRenderStatus) {
+  if (!pRenderStatus)
     return 0;
-  }
+
   m_pRenderStatus = pRenderStatus;
   m_pCurBitmap = new CPDF_DIBSource;
   int ret =
       ((CPDF_DIBSource*)m_pCurBitmap)
           ->StartLoadDIBSource(m_pDocument, m_pStream, true, pFormResources,
                                pPageResources, bStdCS, GroupFamily, bLoadMask);
-  if (ret == 2) {
+  if (ret == 2)
     return ret;
-  }
+
   if (!ret) {
     delete m_pCurBitmap;
     m_pCurBitmap = nullptr;
@@ -293,11 +289,11 @@ void CPDF_ImageCacheEntry::ContinueGetCachedBitmap() {
   CPDF_RenderContext* pContext = m_pRenderStatus->GetContext();
   CPDF_PageRenderCache* pPageRenderCache = pContext->GetPageCache();
   m_dwTimeCount = pPageRenderCache->GetTimeCount();
-  m_pCachedBitmap = m_pCurBitmap;
+  m_pCachedBitmap = pdfium::WrapUnique<CFX_DIBSource>(m_pCurBitmap);
   if (m_pCurMask)
-    m_pCachedMask = m_pCurMask;
+    m_pCachedMask = pdfium::WrapUnique<CFX_DIBSource>(m_pCurMask);
   else
-    m_pCurMask = m_pCachedMask;
+    m_pCurMask = m_pCachedMask.get();
   CalcSize();
 }
 
@@ -315,6 +311,6 @@ int CPDF_ImageCacheEntry::Continue(IFX_Pause* pPause) {
   return 0;
 }
 void CPDF_ImageCacheEntry::CalcSize() {
-  m_dwCacheSize = FPDF_ImageCache_EstimateImageSize(m_pCachedBitmap) +
-                  FPDF_ImageCache_EstimateImageSize(m_pCachedMask);
+  m_dwCacheSize = FPDF_ImageCache_EstimateImageSize(m_pCachedBitmap.get()) +
+                  FPDF_ImageCache_EstimateImageSize(m_pCachedMask.get());
 }
