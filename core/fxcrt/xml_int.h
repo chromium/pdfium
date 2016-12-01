@@ -14,49 +14,6 @@
 class CFX_UTF8Decoder;
 class CXML_Element;
 
-class CXML_DataBufAcc : public IFX_BufferRead {
- public:
-  CXML_DataBufAcc(const uint8_t* pBuffer, size_t size);
-  ~CXML_DataBufAcc() override;
-
-  // IFX_BufferRead
-  void Release() override;
-  bool IsEOF() override;
-  FX_FILESIZE GetPosition() override;
-  size_t ReadBlock(void* buffer, size_t size) override;
-  bool ReadNextBlock(bool bRestart = false) override;
-  const uint8_t* GetBlockBuffer() override;
-  size_t GetBlockSize() override;
-  FX_FILESIZE GetBlockOffset() override;
-
- protected:
-  const uint8_t* m_pBuffer;
-  size_t m_dwSize;
-  size_t m_dwCurPos;
-};
-
-class CXML_DataStmAcc : public IFX_BufferRead {
- public:
-  explicit CXML_DataStmAcc(IFX_SeekableReadStream* pFileRead);
-  ~CXML_DataStmAcc() override;
-
-  // IFX_BufferRead
-  void Release() override;
-  bool IsEOF() override;
-  FX_FILESIZE GetPosition() override;
-  size_t ReadBlock(void* buffer, size_t size) override;
-  bool ReadNextBlock(bool bRestart = false) override;
-  const uint8_t* GetBlockBuffer() override;
-  size_t GetBlockSize() override;
-  FX_FILESIZE GetBlockOffset() override;
-
- protected:
-  IFX_SeekableReadStream* m_pFileRead;
-  uint8_t* m_pBuffer;
-  FX_FILESIZE m_nStart;
-  size_t m_dwSize;
-};
-
 class CXML_Parser {
  public:
   CXML_Parser();
@@ -64,7 +21,7 @@ class CXML_Parser {
 
   bool Init(uint8_t* pBuffer, size_t size);
   bool Init(IFX_SeekableReadStream* pFileRead);
-  bool Init(IFX_BufferRead* pBuffer);
+  bool Init(IFX_BufferedReadStream* pBuffer);
   bool Init(bool bOwndedStream);
   bool ReadNextBlock();
   bool IsEOF();
@@ -84,7 +41,7 @@ class CXML_Parser {
                             CXML_Element* pElement);
   void InsertCDATASegment(CFX_UTF8Decoder& decoder, CXML_Element* pElement);
 
-  IFX_BufferRead* m_pDataAcc;
+  IFX_BufferedReadStream* m_pDataAcc;
   bool m_bOwnedStream;
   FX_FILESIZE m_nOffset;
   bool m_bSaveSpaceChars;

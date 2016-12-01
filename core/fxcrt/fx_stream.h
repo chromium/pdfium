@@ -151,7 +151,7 @@ class IFX_MemoryStream : public IFX_SeekableStream {
   virtual void DetachBuffer() = 0;
 };
 
-class IFX_BufferRead : public IFX_ReadStream {
+class IFX_BufferedReadStream : public IFX_ReadStream {
  public:
   // IFX_ReadStream:
   void Release() override = 0;

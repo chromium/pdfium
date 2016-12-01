@@ -129,7 +129,7 @@ class CFX_BufferReadStreamImp : public IFX_StreamImp {
   CFX_BufferReadStreamImp();
   ~CFX_BufferReadStreamImp() override;
 
-  bool LoadBufferRead(IFX_BufferRead* pBufferRead,
+  bool LoadBufferRead(IFX_BufferedReadStream* pBufferRead,
                       int32_t iFileSize,
                       uint32_t dwAccess,
                       bool bReleaseBufferRead);
@@ -151,7 +151,7 @@ class CFX_BufferReadStreamImp : public IFX_StreamImp {
   bool SetLength(int32_t iLength) override { return false; }
 
  private:
-  IFX_BufferRead* m_pBufferRead;
+  IFX_BufferedReadStream* m_pBufferRead;
   bool m_bReleaseBufferRead;
   int32_t m_iPosition;
   int32_t m_iBufferSize;
@@ -200,7 +200,7 @@ class CFX_Stream : public IFX_Stream {
   bool LoadBuffer(uint8_t* pData, int32_t iTotalSize, uint32_t dwAccess);
   bool LoadFileRead(IFX_SeekableReadStream* pFileRead, uint32_t dwAccess);
   bool LoadFileWrite(IFX_SeekableWriteStream* pFileWrite, uint32_t dwAccess);
-  bool LoadBufferRead(IFX_BufferRead* pBufferRead,
+  bool LoadBufferRead(IFX_BufferedReadStream* pBufferRead,
                       int32_t iFileSize,
                       uint32_t dwAccess,
                       bool bReleaseBufferRead);
@@ -608,10 +608,11 @@ CFX_BufferReadStreamImp::~CFX_BufferReadStreamImp() {
     m_pBufferRead->Release();
   }
 }
-bool CFX_BufferReadStreamImp::LoadBufferRead(IFX_BufferRead* pBufferRead,
-                                             int32_t iFileSize,
-                                             uint32_t dwAccess,
-                                             bool bReleaseBufferRead) {
+bool CFX_BufferReadStreamImp::LoadBufferRead(
+    IFX_BufferedReadStream* pBufferRead,
+    int32_t iFileSize,
+    uint32_t dwAccess,
+    bool bReleaseBufferRead) {
   ASSERT(!m_pBufferRead && pBufferRead);
   if (dwAccess & FX_STREAMACCESS_Write) {
     return false;
@@ -1195,7 +1196,7 @@ bool CFX_Stream::LoadBuffer(uint8_t* pData,
   return true;
 }
 
-bool CFX_Stream::LoadBufferRead(IFX_BufferRead* pBufferRead,
+bool CFX_Stream::LoadBufferRead(IFX_BufferedReadStream* pBufferRead,
                                 int32_t iFileSize,
                                 uint32_t dwAccess,
                                 bool bReleaseBufferRead) {

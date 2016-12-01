@@ -61,7 +61,7 @@ class CXML_Element {
   static CXML_Element* Parse(IFX_SeekableReadStream* pFile,
                              bool bSaveSpaceChars = false,
                              FX_FILESIZE* pParsedSize = nullptr);
-  static CXML_Element* Parse(IFX_BufferRead* pBuffer,
+  static CXML_Element* Parse(IFX_BufferedReadStream* pBuffer,
                              bool bSaveSpaceChars = false,
                              FX_FILESIZE* pParsedSize = nullptr);
 

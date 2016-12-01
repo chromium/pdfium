@@ -68,7 +68,26 @@ bool g_FXCRT_XML_IsNameChar(uint8_t ch) {
   return !!(g_FXCRT_XML_ByteTypes[ch] & FXCRTM_XML_CHARTYPE_NameChar);
 }
 
-}  // namespace
+class CXML_DataBufAcc : public IFX_BufferedReadStream {
+ public:
+  CXML_DataBufAcc(const uint8_t* pBuffer, size_t size);
+  ~CXML_DataBufAcc() override;
+
+  // IFX_BufferedReadStream
+  void Release() override;
+  bool IsEOF() override;
+  FX_FILESIZE GetPosition() override;
+  size_t ReadBlock(void* buffer, size_t size) override;
+  bool ReadNextBlock(bool bRestart) override;
+  const uint8_t* GetBlockBuffer() override;
+  size_t GetBlockSize() override;
+  FX_FILESIZE GetBlockOffset() override;
+
+ private:
+  const uint8_t* m_pBuffer;
+  size_t m_dwSize;
+  size_t m_dwCurPos;
+};
 
 CXML_DataBufAcc::CXML_DataBufAcc(const uint8_t* pBuffer, size_t size)
     : m_pBuffer(pBuffer), m_dwSize(size), m_dwCurPos(0) {}
@@ -113,6 +132,28 @@ size_t CXML_DataBufAcc::GetBlockSize() {
 FX_FILESIZE CXML_DataBufAcc::GetBlockOffset() {
   return 0;
 }
+
+class CXML_DataStmAcc : public IFX_BufferedReadStream {
+ public:
+  explicit CXML_DataStmAcc(IFX_SeekableReadStream* pFileRead);
+  ~CXML_DataStmAcc() override;
+
+  // IFX_BufferedReadStream
+  void Release() override;
+  bool IsEOF() override;
+  FX_FILESIZE GetPosition() override;
+  size_t ReadBlock(void* buffer, size_t size) override;
+  bool ReadNextBlock(bool bRestart) override;
+  const uint8_t* GetBlockBuffer() override;
+  size_t GetBlockSize() override;
+  FX_FILESIZE GetBlockOffset() override;
+
+ private:
+  IFX_SeekableReadStream* m_pFileRead;
+  uint8_t* m_pBuffer;
+  FX_FILESIZE m_nStart;
+  size_t m_dwSize;
+};
 
 CXML_DataStmAcc::CXML_DataStmAcc(IFX_SeekableReadStream* pFileRead)
     : m_pFileRead(pFileRead), m_pBuffer(nullptr), m_nStart(0), m_dwSize(0) {
@@ -169,6 +210,8 @@ FX_FILESIZE CXML_DataStmAcc::GetBlockOffset() {
   return m_nStart;
 }
 
+}  // namespace
+
 CXML_Parser::CXML_Parser()
     : m_pDataAcc(nullptr),
       m_bOwnedStream(false),
@@ -195,7 +238,7 @@ bool CXML_Parser::Init(IFX_SeekableReadStream* pFileRead) {
   return Init(true);
 }
 
-bool CXML_Parser::Init(IFX_BufferRead* pBuffer) {
+bool CXML_Parser::Init(IFX_BufferedReadStream* pBuffer) {
   if (!pBuffer)
     return false;
 
@@ -667,7 +710,7 @@ CXML_Element* CXML_Element::Parse(IFX_SeekableReadStream* pFile,
   }
   return XML_ContinueParse(parser, bSaveSpaceChars, pParsedSize);
 }
-CXML_Element* CXML_Element::Parse(IFX_BufferRead* pBuffer,
+CXML_Element* CXML_Element::Parse(IFX_BufferedReadStream* pBuffer,
                                   bool bSaveSpaceChars,
                                   FX_FILESIZE* pParsedSize) {
   CXML_Parser parser;
