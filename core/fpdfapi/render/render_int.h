@@ -49,56 +49,6 @@ class CPDF_Type3Glyphs;
 class CPDF_Type3Char;
 class CPDF_Type3Font;
 
-class CPDF_ImageCacheEntry {
- public:
-  CPDF_ImageCacheEntry(CPDF_Document* pDoc, CPDF_Stream* pStream);
-  ~CPDF_ImageCacheEntry();
-
-  void Reset(const CFX_DIBitmap* pBitmap);
-  bool GetCachedBitmap(CFX_DIBSource*& pBitmap,
-                       CFX_DIBSource*& pMask,
-                       uint32_t& MatteColor,
-                       CPDF_Dictionary* pPageResources,
-                       bool bStdCS = false,
-                       uint32_t GroupFamily = 0,
-                       bool bLoadMask = false,
-                       CPDF_RenderStatus* pRenderStatus = nullptr,
-                       int32_t downsampleWidth = 0,
-                       int32_t downsampleHeight = 0);
-  uint32_t EstimateSize() const { return m_dwCacheSize; }
-  uint32_t GetTimeCount() const { return m_dwTimeCount; }
-  CPDF_Stream* GetStream() const { return m_pStream; }
-  void SetTimeCount(uint32_t dwTimeCount) { m_dwTimeCount = dwTimeCount; }
-  int m_dwTimeCount;
-
- public:
-  int StartGetCachedBitmap(CPDF_Dictionary* pFormResources,
-                           CPDF_Dictionary* pPageResources,
-                           bool bStdCS = false,
-                           uint32_t GroupFamily = 0,
-                           bool bLoadMask = false,
-                           CPDF_RenderStatus* pRenderStatus = nullptr,
-                           int32_t downsampleWidth = 0,
-                           int32_t downsampleHeight = 0);
-  int Continue(IFX_Pause* pPause);
-  CFX_DIBSource* DetachBitmap();
-  CFX_DIBSource* DetachMask();
-  CFX_DIBSource* m_pCurBitmap;
-  CFX_DIBSource* m_pCurMask;
-  uint32_t m_MatteColor;
-  CPDF_RenderStatus* m_pRenderStatus;
-
- protected:
-  void ContinueGetCachedBitmap();
-
-  CPDF_Document* m_pDocument;
-  CPDF_Stream* m_pStream;
-  std::unique_ptr<CFX_DIBSource> m_pCachedBitmap;
-  std::unique_ptr<CFX_DIBSource> m_pCachedMask;
-  uint32_t m_dwCacheSize;
-  void CalcSize();
-};
-
 typedef struct {
   FX_FLOAT m_DecodeMin;
   FX_FLOAT m_DecodeStep;

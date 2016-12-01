@@ -24,40 +24,28 @@ class CPDF_PageRenderCache {
   explicit CPDF_PageRenderCache(CPDF_Page* pPage);
   ~CPDF_PageRenderCache();
 
-  uint32_t EstimateSize();
   void CacheOptimization(int32_t dwLimitCacheSize);
   uint32_t GetTimeCount() const { return m_nTimeCount; }
-  void SetTimeCount(uint32_t dwTimeCount) { m_nTimeCount = dwTimeCount; }
-
-  void GetCachedBitmap(CPDF_Stream* pStream,
-                       CFX_DIBSource*& pBitmap,
-                       CFX_DIBSource*& pMask,
-                       uint32_t& MatteColor,
-                       bool bStdCS = false,
-                       uint32_t GroupFamily = 0,
-                       bool bLoadMask = false,
-                       CPDF_RenderStatus* pRenderStatus = nullptr,
-                       int32_t downsampleWidth = 0,
-                       int32_t downsampleHeight = 0);
 
   void ResetBitmap(CPDF_Stream* pStream, const CFX_DIBitmap* pBitmap);
-  void ClearImageCacheEntry(CPDF_Stream* pStream);
   CPDF_Page* GetPage() const { return m_pPage; }
   CPDF_ImageCacheEntry* GetCurImageCacheEntry() const {
     return m_pCurImageCacheEntry;
   }
 
   bool StartGetCachedBitmap(CPDF_Stream* pStream,
-                            bool bStdCS = false,
-                            uint32_t GroupFamily = 0,
-                            bool bLoadMask = false,
-                            CPDF_RenderStatus* pRenderStatus = nullptr,
-                            int32_t downsampleWidth = 0,
-                            int32_t downsampleHeight = 0);
+                            bool bStdCS,
+                            uint32_t GroupFamily,
+                            bool bLoadMask,
+                            CPDF_RenderStatus* pRenderStatus,
+                            int32_t downsampleWidth,
+                            int32_t downsampleHeight);
 
   bool Continue(IFX_Pause* pPause);
 
- protected:
+ private:
+  void ClearImageCacheEntry(CPDF_Stream* pStream);
+
   CPDF_Page* const m_pPage;
   CPDF_ImageCacheEntry* m_pCurImageCacheEntry;
   std::map<CPDF_Stream*, CPDF_ImageCacheEntry*> m_ImageCache;
