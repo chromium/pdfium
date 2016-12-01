@@ -25,19 +25,9 @@ class CPDF_Page;
 class CPDF_PageRenderContext;
 class IFSDK_PAUSE_Adapter;
 
-class CPDF_CustomAccess final : public IFX_SeekableReadStream {
- public:
-  explicit CPDF_CustomAccess(FPDF_FILEACCESS* pFileAccess);
-  ~CPDF_CustomAccess() override {}
-
-  // IFX_SeekableReadStream
-  FX_FILESIZE GetSize() override;
-  void Release() override;
-  bool ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) override;
-
- private:
-  FPDF_FILEACCESS m_FileAccess;
-};
+// Layering prevents fxcrt from knowing about FPDF_FILEACCESS, so this can't
+// be a static method of IFX_SeekableReadStream.
+IFX_SeekableReadStream* MakeSeekableReadStream(FPDF_FILEACCESS* pFileAccess);
 
 #ifdef PDF_ENABLE_XFA
 class CFPDF_FileStream : public IFX_SeekableStream {

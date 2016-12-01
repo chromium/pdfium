@@ -117,6 +117,47 @@ void RenderPageImpl(CPDF_PageRenderContext* pContext,
     pContext->m_pDevice->RestoreState(false);
 }
 
+class CPDF_CustomAccess final : public IFX_SeekableReadStream {
+ public:
+  explicit CPDF_CustomAccess(FPDF_FILEACCESS* pFileAccess);
+  ~CPDF_CustomAccess() override {}
+
+  // IFX_SeekableReadStream
+  FX_FILESIZE GetSize() override;
+  void Release() override;
+  bool ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) override;
+
+ private:
+  FPDF_FILEACCESS m_FileAccess;
+};
+
+CPDF_CustomAccess::CPDF_CustomAccess(FPDF_FILEACCESS* pFileAccess)
+    : m_FileAccess(*pFileAccess) {}
+
+FX_FILESIZE CPDF_CustomAccess::GetSize() {
+  return m_FileAccess.m_FileLen;
+}
+
+void CPDF_CustomAccess::Release() {
+  delete this;
+}
+
+bool CPDF_CustomAccess::ReadBlock(void* buffer,
+                                  FX_FILESIZE offset,
+                                  size_t size) {
+  if (offset < 0)
+    return false;
+
+  FX_SAFE_FILESIZE newPos = pdfium::base::checked_cast<FX_FILESIZE>(size);
+  newPos += offset;
+  if (!newPos.IsValid() ||
+      newPos.ValueOrDie() > static_cast<FX_FILESIZE>(m_FileAccess.m_FileLen)) {
+    return false;
+  }
+  return !!m_FileAccess.m_GetBlock(m_FileAccess.m_Param, offset,
+                                   reinterpret_cast<uint8_t*>(buffer), size);
+}
+
 }  // namespace
 
 UnderlyingDocumentType* UnderlyingFromFPDFDocument(FPDF_DOCUMENT doc) {
@@ -246,31 +287,8 @@ bool CFPDF_FileStream::Flush() {
 }
 #endif  // PDF_ENABLE_XFA
 
-CPDF_CustomAccess::CPDF_CustomAccess(FPDF_FILEACCESS* pFileAccess)
-    : m_FileAccess(*pFileAccess) {}
-
-FX_FILESIZE CPDF_CustomAccess::GetSize() {
-  return m_FileAccess.m_FileLen;
-}
-
-void CPDF_CustomAccess::Release() {
-  delete this;
-}
-
-bool CPDF_CustomAccess::ReadBlock(void* buffer,
-                                  FX_FILESIZE offset,
-                                  size_t size) {
-  if (offset < 0)
-    return false;
-
-  FX_SAFE_FILESIZE newPos = pdfium::base::checked_cast<FX_FILESIZE>(size);
-  newPos += offset;
-  if (!newPos.IsValid() ||
-      newPos.ValueOrDie() > static_cast<FX_FILESIZE>(m_FileAccess.m_FileLen)) {
-    return false;
-  }
-  return !!m_FileAccess.m_GetBlock(m_FileAccess.m_Param, offset,
-                                   reinterpret_cast<uint8_t*>(buffer), size);
+IFX_SeekableReadStream* MakeSeekableReadStream(FPDF_FILEACCESS* pFileAccess) {
+  return new CPDF_CustomAccess(pFileAccess);
 }
 
 // 0 bit: FPDF_POLICY_MACHINETIME_ACCESS
