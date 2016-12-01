@@ -91,7 +91,6 @@ class CPDF_Object {
  protected:
   friend class CPDF_Array;
   friend class CPDF_Dictionary;
-  friend class CPDF_Document;
   friend class CPDF_IndirectObjectHolder;
   friend class CPDF_Parser;
   friend class CPDF_Reference;

@@ -54,8 +54,6 @@ class CPDF_Page : public CPDF_PageObjectHolder {
   void SetView(View* pView) { m_pView = pView; }
 
  protected:
-  friend class CPDF_ContentParser;
-
   void StartParse();
 
   FX_FLOAT m_PageWidth;

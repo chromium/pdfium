@@ -99,6 +99,7 @@ class CPDF_DataAvail final {
                  bool bSupportHintTable);
   ~CPDF_DataAvail();
 
+  bool IsDataAvail(FX_FILESIZE offset, uint32_t size, DownloadHints* pHints);
   DocAvailStatus IsDocAvail(DownloadHints* pHints);
   void SetDocument(CPDF_Document* pDoc);
   DocAvailStatus IsPageAvail(uint32_t dwPage, DownloadHints* pHints);
@@ -109,8 +110,6 @@ class CPDF_DataAvail final {
   IFX_SeekableReadStream* GetFileRead() const { return m_pFileRead; }
   int GetPageCount() const;
   CPDF_Dictionary* GetPage(int index);
-
-  friend class CPDF_HintTables;
 
  protected:
   class PageNode {
@@ -192,7 +191,6 @@ class CPDF_DataAvail final {
   bool CheckPageCount(DownloadHints* pHints);
   bool IsFirstCheck(uint32_t dwPage);
   void ResetFirstCheck(uint32_t dwPage);
-  bool IsDataAvail(FX_FILESIZE offset, uint32_t size, DownloadHints* pHints);
   bool ValidatePage(uint32_t dwPage);
   bool ValidateForm();
 

@@ -58,8 +58,6 @@ class CPDF_PageRenderCache {
   bool Continue(IFX_Pause* pPause);
 
  protected:
-  friend class CPDF_Page;
-
   CPDF_Page* const m_pPage;
   CPDF_ImageCacheEntry* m_pCurImageCacheEntry;
   std::map<CPDF_Stream*, CPDF_ImageCacheEntry*> m_ImageCache;
