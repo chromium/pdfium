@@ -11,13 +11,10 @@
 
 #include "third_party/base/ptr_util.h"
 
-CXFA_FMProgram::CXFA_FMProgram() {}
+CXFA_FMProgram::CXFA_FMProgram(const CFX_WideStringC& wsFormcalc)
+    : m_parse(wsFormcalc, &m_pErrorInfo) {}
 
 CXFA_FMProgram::~CXFA_FMProgram() {}
-
-int32_t CXFA_FMProgram::Init(const CFX_WideStringC& wsFormcalc) {
-  return m_parse.Init(wsFormcalc, &m_pErrorInfo);
-}
 
 int32_t CXFA_FMProgram::ParseProgram() {
   m_parse.NextToken();

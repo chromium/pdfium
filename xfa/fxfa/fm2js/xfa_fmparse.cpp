@@ -12,16 +12,13 @@
 
 #include "third_party/base/ptr_util.h"
 
-CXFA_FMParse::CXFA_FMParse() : m_pToken(nullptr), m_pErrorInfo(0) {}
+CXFA_FMParse::CXFA_FMParse(const CFX_WideStringC& wsFormcalc,
+                           CXFA_FMErrorInfo* pErrorInfo)
+    : m_pToken(nullptr), m_pErrorInfo(pErrorInfo) {
+  m_lexer = pdfium::MakeUnique<CXFA_FMLexer>(wsFormcalc, m_pErrorInfo);
+}
 
 CXFA_FMParse::~CXFA_FMParse() {}
-
-int32_t CXFA_FMParse::Init(const CFX_WideStringC& wsFormcalc,
-                           CXFA_FMErrorInfo* pErrorInfo) {
-  m_pErrorInfo = pErrorInfo;
-  m_lexer = pdfium::MakeUnique<CXFA_FMLexer>(wsFormcalc, m_pErrorInfo);
-  return 0;
-}
 
 void CXFA_FMParse::NextToken() {
   m_pToken = m_lexer->NextToken();

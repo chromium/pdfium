@@ -6482,14 +6482,8 @@ int32_t CXFA_FM2JSContext::Translate(const CFX_WideStringC& wsFormcalc,
     wsError.clear();
     return 0;
   }
-  int32_t status = 0;
-  CXFA_FMProgram program;
-  status = program.Init(wsFormcalc);
-  if (status) {
-    wsError = program.GetError().message;
-    return status;
-  }
-  status = program.ParseProgram();
+  CXFA_FMProgram program(wsFormcalc);
+  int32_t status = program.ParseProgram();
   if (status) {
     wsError = program.GetError().message;
     return status;

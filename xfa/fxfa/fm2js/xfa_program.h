@@ -14,10 +14,9 @@
 
 class CXFA_FMProgram {
  public:
-  CXFA_FMProgram();
+  explicit CXFA_FMProgram(const CFX_WideStringC& wsFormcalc);
   ~CXFA_FMProgram();
 
-  int32_t Init(const CFX_WideStringC& wsFormcalc);
   int32_t ParseProgram();
   int32_t TranslateProgram(CFX_WideTextBuf& wsJavaScript);
 
