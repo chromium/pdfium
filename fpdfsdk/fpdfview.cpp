@@ -50,6 +50,9 @@
 
 namespace {
 
+// Also indicates whether library is currently initialized.
+CCodec_ModuleMgr* g_pCodecModule = nullptr;
+
 void RenderPageImpl(CPDF_PageRenderContext* pContext,
                     CPDF_Page* pPage,
                     const CFX_Matrix& matrix,
@@ -295,18 +298,20 @@ FPDF_BOOL FSDK_IsSandBoxPolicyEnabled(FPDF_DWORD policy) {
   }
 }
 
-CCodec_ModuleMgr* g_pCodecModule = nullptr;
-
 DLLEXPORT void STDCALL FPDF_InitLibrary() {
   FPDF_InitLibraryWithConfig(nullptr);
 }
 
 DLLEXPORT void STDCALL
 FPDF_InitLibraryWithConfig(const FPDF_LIBRARY_CONFIG* cfg) {
+  if (g_pCodecModule)
+    return;
+
   g_pCodecModule = new CCodec_ModuleMgr();
 
   CFX_GEModule* pModule = CFX_GEModule::Get();
   pModule->Init(cfg ? cfg->m_pUserFontPaths : nullptr, g_pCodecModule);
+
   CPDF_ModuleMgr* pModuleMgr = CPDF_ModuleMgr::Get();
   pModuleMgr->SetCodecModule(g_pCodecModule);
   pModuleMgr->InitPageModule();
@@ -324,6 +329,9 @@ FPDF_InitLibraryWithConfig(const FPDF_LIBRARY_CONFIG* cfg) {
 }
 
 DLLEXPORT void STDCALL FPDF_DestroyLibrary() {
+  if (!g_pCodecModule)
+    return;
+
 #ifdef PDF_ENABLE_XFA
   BC_Library_Destory();
   FXJSE_Finalize();

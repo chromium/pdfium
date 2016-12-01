@@ -35,7 +35,6 @@ class CFSDK_UnsupportInfo_Adapter {
 class CPDF_ModuleMgr {
  public:
   static CPDF_ModuleMgr* Get();
-  static void Create();
   static void Destroy();
   static const int kFileBufSize = 512;
 

@@ -1734,6 +1734,7 @@ test("pdfium_unittests") {
     "core/fxge/dib/fx_dib_engine_unittest.cpp",
     "fpdfsdk/fpdfdoc_unittest.cpp",
     "fpdfsdk/fpdfeditimg_unittest.cpp",
+    "fpdfsdk/fpdfview_unittest.cpp",
   ]
   deps = [
     ":pdfium",
