@@ -326,7 +326,7 @@ bool CXFA_FFDoc::OpenDoc(CPDF_Document* pPDFDoc) {
   if (xfaStreams.empty())
     return false;
 
-  IFX_SeekableReadStream* pFileRead = new CXFA_FileRead(xfaStreams);
+  IFX_SeekableReadStream* pFileRead = MakeSeekableReadStream(xfaStreams);
   m_pPDFDoc = pPDFDoc;
   if (m_pStream) {
     m_pStream->Release();

@@ -13,12 +13,12 @@
 #include "testing/gtest/include/gtest/gtest.h"
 #include "third_party/base/ptr_util.h"
 
-using UniqueFileRead =
-    std::unique_ptr<CXFA_FileRead, ReleaseDeleter<CXFA_FileRead>>;
+using UniqueFileRead = std::unique_ptr<IFX_SeekableReadStream,
+                                       ReleaseDeleter<IFX_SeekableReadStream>>;
 
 TEST(CXFAFileRead, NoStreams) {
   std::vector<CPDF_Stream*> streams;
-  UniqueFileRead fileread(new CXFA_FileRead(streams));
+  UniqueFileRead fileread(MakeSeekableReadStream(streams));
 
   uint8_t output_buffer[16];
   memset(output_buffer, 0xbd, sizeof(output_buffer));
@@ -30,7 +30,7 @@ TEST(CXFAFileRead, EmptyStreams) {
   std::vector<CPDF_Stream*> streams;
   std::unique_ptr<CPDF_Stream> stream1 = pdfium::MakeUnique<CPDF_Stream>();
   streams.push_back(stream1.get());
-  UniqueFileRead fileread(new CXFA_FileRead(streams));
+  UniqueFileRead fileread(MakeSeekableReadStream(streams));
 
   uint8_t output_buffer[16];
   memset(output_buffer, 0xbd, sizeof(output_buffer));
@@ -55,7 +55,7 @@ TEST(CXFAFileRead, NormalStreams) {
   streams.push_back(stream1.get());
   streams.push_back(stream2.get());
   streams.push_back(stream3.get());
-  UniqueFileRead fileread(new CXFA_FileRead(streams));
+  UniqueFileRead fileread(MakeSeekableReadStream(streams));
 
   uint8_t output_buffer[16];
   memset(output_buffer, 0xbd, sizeof(output_buffer));

@@ -21,6 +21,22 @@
 #include "xfa/fxfa/xfa_ffwidgethandler.h"
 #include "xfa/fxfa/xfa_fontmgr.h"
 
+namespace {
+
+class CXFA_FileRead : public IFX_SeekableReadStream {
+ public:
+  explicit CXFA_FileRead(const std::vector<CPDF_Stream*>& streams);
+  ~CXFA_FileRead() override;
+
+  // IFX_SeekableReadStream
+  FX_FILESIZE GetSize() override;
+  bool ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) override;
+  void Release() override;
+
+ private:
+  CFX_ObjectArray<CPDF_StreamAcc> m_Data;
+};
+
 CXFA_FileRead::CXFA_FileRead(const std::vector<CPDF_Stream*>& streams) {
   for (CPDF_Stream* pStream : streams) {
     CPDF_StreamAcc& acc = m_Data.Add();
@@ -70,6 +86,13 @@ bool CXFA_FileRead::ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) {
 
 void CXFA_FileRead::Release() {
   delete this;
+}
+
+}  // namespace
+
+IFX_SeekableReadStream* MakeSeekableReadStream(
+    const std::vector<CPDF_Stream*>& streams) {
+  return new CXFA_FileRead(streams);
 }
 
 CXFA_FFApp::CXFA_FFApp(IXFA_AppProvider* pProvider)

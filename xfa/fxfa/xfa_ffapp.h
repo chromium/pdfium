@@ -24,19 +24,10 @@ class CXFA_FontMgr;
 class IFWL_AdapterTimerMgr;
 class CFWL_WidgetMgrDelegate;
 
-class CXFA_FileRead : public IFX_SeekableReadStream {
- public:
-  explicit CXFA_FileRead(const std::vector<CPDF_Stream*>& streams);
-  ~CXFA_FileRead() override;
-
-  // IFX_SeekableReadStream
-  FX_FILESIZE GetSize() override;
-  bool ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) override;
-  void Release() override;
-
- protected:
-  CFX_ObjectArray<CPDF_StreamAcc> m_Data;
-};
+// Layering prevents fxcrt from knowing about CPDF_Streams; this could go
+// in fpdfsdk, but it is XFA-Only.
+IFX_SeekableReadStream* MakeSeekableReadStream(
+    const std::vector<CPDF_Stream*>& streams);
 
 class CXFA_FFApp {
  public:
