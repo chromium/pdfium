@@ -14,10 +14,11 @@
 #include <direct.h>
 
 class CFindFileDataA;
-
 typedef CFindFileDataA FX_FileHandle;
 #define FX_FILESIZE int32_t
+
 #else
+
 #include <dirent.h>
 #include <fcntl.h>
 #include <sys/stat.h>
@@ -43,14 +44,6 @@ bool FX_GetNextFile(FX_FileHandle* handle,
 void FX_CloseFolder(FX_FileHandle* handle);
 FX_WCHAR FX_GetFolderSeparator();
 
-#define FX_GETBYTEOFFSET32(a) 0
-#define FX_GETBYTEOFFSET40(a) 0
-#define FX_GETBYTEOFFSET48(a) 0
-#define FX_GETBYTEOFFSET56(a) 0
-#define FX_GETBYTEOFFSET24(a) ((uint8_t)(a >> 24))
-#define FX_GETBYTEOFFSET16(a) ((uint8_t)(a >> 16))
-#define FX_GETBYTEOFFSET8(a) ((uint8_t)(a >> 8))
-#define FX_GETBYTEOFFSET0(a) ((uint8_t)(a))
 #define FX_FILEMODE_Write 0
 #define FX_FILEMODE_ReadOnly 1
 #define FX_FILEMODE_Truncate 2
@@ -123,18 +116,6 @@ class IFX_SeekableStream : public IFX_SeekableReadStream,
   bool Flush() override = 0;
 };
 
-#ifdef PDF_ENABLE_XFA
-class IFX_FileAccess {
- public:
-  virtual ~IFX_FileAccess() {}
-  virtual void Release() = 0;
-  virtual IFX_FileAccess* Retain() = 0;
-  virtual void GetPath(CFX_WideString& wsPath) = 0;
-  virtual IFX_SeekableStream* CreateFileStream(uint32_t dwModes) = 0;
-};
-IFX_FileAccess* FX_CreateDefaultFileAccess(const CFX_WideStringC& wsPath);
-#endif  // PDF_ENABLE_XFA
-
 class IFX_MemoryStream : public IFX_SeekableStream {
  public:
   static IFX_MemoryStream* Create(uint8_t* pBuffer,
@@ -164,6 +145,19 @@ class IFX_BufferedReadStream : public IFX_ReadStream {
   virtual size_t GetBlockSize() = 0;
   virtual FX_FILESIZE GetBlockOffset() = 0;
 };
+
+#ifdef PDF_ENABLE_XFA
+class IFX_FileAccess {
+ public:
+  static IFX_FileAccess* CreateDefault(const CFX_WideStringC& wsPath);
+
+  virtual ~IFX_FileAccess() {}
+  virtual void Release() = 0;
+  virtual IFX_FileAccess* Retain() = 0;
+  virtual void GetPath(CFX_WideString& wsPath) = 0;
+  virtual IFX_SeekableStream* CreateFileStream(uint32_t dwModes) = 0;
+};
+#endif  // PDF_ENABLE_XFA
 
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
 class CFindFileData {

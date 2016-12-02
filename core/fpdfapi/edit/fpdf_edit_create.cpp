@@ -30,6 +30,15 @@
 #define PDF_OBJECTSTREAM_MAXLENGTH (256 * 1024)
 #define PDF_XREFSTREAM_MAXSIZE 10000
 
+#define FX_GETBYTEOFFSET32(a) 0
+#define FX_GETBYTEOFFSET40(a) 0
+#define FX_GETBYTEOFFSET48(a) 0
+#define FX_GETBYTEOFFSET56(a) 0
+#define FX_GETBYTEOFFSET24(a) ((uint8_t)(a >> 24))
+#define FX_GETBYTEOFFSET16(a) ((uint8_t)(a >> 16))
+#define FX_GETBYTEOFFSET8(a) ((uint8_t)(a >> 8))
+#define FX_GETBYTEOFFSET0(a) ((uint8_t)(a))
+
 // TODO(ochang): Make helper for appending "objnum 0 R ".
 
 namespace {

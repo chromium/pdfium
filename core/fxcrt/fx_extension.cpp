@@ -408,7 +408,7 @@ bool CFX_MemoryStream::ExpandBlocks(size_t size) {
 }  // namespace
 
 #ifdef PDF_ENABLE_XFA
-IFX_FileAccess* FX_CreateDefaultFileAccess(const CFX_WideStringC& wsPath) {
+IFX_FileAccess* IFX_FileAccess::CreateDefault(const CFX_WideStringC& wsPath) {
   if (wsPath.GetLength() == 0)
     return nullptr;
 
