@@ -473,7 +473,7 @@ IFX_SeekableReadStream* CPDFSDK_FormFillEnvironment::DownloadFromURL(
 
   FPDF_LPFILEHANDLER fileHandler = m_pInfo->FFI_DownloadFromURL(m_pInfo, wsURL);
 
-  return new CFPDF_FileStream(fileHandler);
+  return MakeSeekableStream(fileHandler);
 }
 
 CFX_WideString CPDFSDK_FormFillEnvironment::PostRequestURL(

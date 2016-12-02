@@ -30,28 +30,9 @@ class IFSDK_PAUSE_Adapter;
 IFX_SeekableReadStream* MakeSeekableReadStream(FPDF_FILEACCESS* pFileAccess);
 
 #ifdef PDF_ENABLE_XFA
-class CFPDF_FileStream : public IFX_SeekableStream {
- public:
-  explicit CFPDF_FileStream(FPDF_FILEHANDLER* pFS);
-  ~CFPDF_FileStream() override {}
-
-  // IFX_SeekableStream:
-  IFX_SeekableStream* Retain() override;
-  void Release() override;
-  FX_FILESIZE GetSize() override;
-  bool IsEOF() override;
-  FX_FILESIZE GetPosition() override;
-  bool ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) override;
-  size_t ReadBlock(void* buffer, size_t size) override;
-  bool WriteBlock(const void* buffer, FX_FILESIZE offset, size_t size) override;
-  bool Flush() override;
-
-  void SetPosition(FX_FILESIZE pos) { m_nCurPos = pos; }
-
- protected:
-  FPDF_FILEHANDLER* m_pFS;
-  FX_FILESIZE m_nCurPos;
-};
+// Layering prevents fxcrt from knowing about FPDF_FILEHANDLER, so this can't
+// be a static method of IFX_SeekableStream.
+IFX_SeekableStream* MakeSeekableStream(FPDF_FILEHANDLER* pFileHandler);
 #endif  // PDF_ENABLE_XFA
 
 // Object types for public FPDF_ types; these correspond to next layer down

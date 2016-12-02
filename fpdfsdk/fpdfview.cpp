@@ -158,51 +158,30 @@ bool CPDF_CustomAccess::ReadBlock(void* buffer,
                                    reinterpret_cast<uint8_t*>(buffer), size);
 }
 
-}  // namespace
-
-UnderlyingDocumentType* UnderlyingFromFPDFDocument(FPDF_DOCUMENT doc) {
-  return static_cast<UnderlyingDocumentType*>(doc);
-}
-
-FPDF_DOCUMENT FPDFDocumentFromUnderlying(UnderlyingDocumentType* doc) {
-  return static_cast<FPDF_DOCUMENT>(doc);
-}
-
-UnderlyingPageType* UnderlyingFromFPDFPage(FPDF_PAGE page) {
-  return static_cast<UnderlyingPageType*>(page);
-}
-
-CPDF_Document* CPDFDocumentFromFPDFDocument(FPDF_DOCUMENT doc) {
 #ifdef PDF_ENABLE_XFA
-  return doc ? UnderlyingFromFPDFDocument(doc)->GetPDFDoc() : nullptr;
-#else   // PDF_ENABLE_XFA
-  return UnderlyingFromFPDFDocument(doc);
-#endif  // PDF_ENABLE_XFA
-}
+class CFPDF_FileStream : public IFX_SeekableStream {
+ public:
+  explicit CFPDF_FileStream(FPDF_FILEHANDLER* pFS);
+  ~CFPDF_FileStream() override {}
 
-FPDF_DOCUMENT FPDFDocumentFromCPDFDocument(CPDF_Document* doc) {
-#ifdef PDF_ENABLE_XFA
-  return doc ? FPDFDocumentFromUnderlying(
-                   new CPDFXFA_Context(pdfium::WrapUnique(doc)))
-             : nullptr;
-#else   // PDF_ENABLE_XFA
-  return FPDFDocumentFromUnderlying(doc);
-#endif  // PDF_ENABLE_XFA
-}
+  // IFX_SeekableStream:
+  IFX_SeekableStream* Retain() override;
+  void Release() override;
+  FX_FILESIZE GetSize() override;
+  bool IsEOF() override;
+  FX_FILESIZE GetPosition() override;
+  bool ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) override;
+  size_t ReadBlock(void* buffer, size_t size) override;
+  bool WriteBlock(const void* buffer, FX_FILESIZE offset, size_t size) override;
+  bool Flush() override;
 
-CPDF_Page* CPDFPageFromFPDFPage(FPDF_PAGE page) {
-#ifdef PDF_ENABLE_XFA
-  return page ? UnderlyingFromFPDFPage(page)->GetPDFPage() : nullptr;
-#else   // PDF_ENABLE_XFA
-  return UnderlyingFromFPDFPage(page);
-#endif  // PDF_ENABLE_XFA
-}
+  void SetPosition(FX_FILESIZE pos) { m_nCurPos = pos; }
 
-CFX_DIBitmap* CFXBitmapFromFPDFBitmap(FPDF_BITMAP bitmap) {
-  return static_cast<CFX_DIBitmap*>(bitmap);
-}
+ protected:
+  FPDF_FILEHANDLER* m_pFS;
+  FX_FILESIZE m_nCurPos;
+};
 
-#ifdef PDF_ENABLE_XFA
 CFPDF_FileStream::CFPDF_FileStream(FPDF_FILEHANDLER* pFS) {
   m_pFS = pFS;
   m_nCurPos = 0;
@@ -287,9 +266,59 @@ bool CFPDF_FileStream::Flush() {
 }
 #endif  // PDF_ENABLE_XFA
 
+}  // namespace
+
+UnderlyingDocumentType* UnderlyingFromFPDFDocument(FPDF_DOCUMENT doc) {
+  return static_cast<UnderlyingDocumentType*>(doc);
+}
+
+FPDF_DOCUMENT FPDFDocumentFromUnderlying(UnderlyingDocumentType* doc) {
+  return static_cast<FPDF_DOCUMENT>(doc);
+}
+
+UnderlyingPageType* UnderlyingFromFPDFPage(FPDF_PAGE page) {
+  return static_cast<UnderlyingPageType*>(page);
+}
+
+CPDF_Document* CPDFDocumentFromFPDFDocument(FPDF_DOCUMENT doc) {
+#ifdef PDF_ENABLE_XFA
+  return doc ? UnderlyingFromFPDFDocument(doc)->GetPDFDoc() : nullptr;
+#else   // PDF_ENABLE_XFA
+  return UnderlyingFromFPDFDocument(doc);
+#endif  // PDF_ENABLE_XFA
+}
+
+FPDF_DOCUMENT FPDFDocumentFromCPDFDocument(CPDF_Document* doc) {
+#ifdef PDF_ENABLE_XFA
+  return doc ? FPDFDocumentFromUnderlying(
+                   new CPDFXFA_Context(pdfium::WrapUnique(doc)))
+             : nullptr;
+#else   // PDF_ENABLE_XFA
+  return FPDFDocumentFromUnderlying(doc);
+#endif  // PDF_ENABLE_XFA
+}
+
+CPDF_Page* CPDFPageFromFPDFPage(FPDF_PAGE page) {
+#ifdef PDF_ENABLE_XFA
+  return page ? UnderlyingFromFPDFPage(page)->GetPDFPage() : nullptr;
+#else   // PDF_ENABLE_XFA
+  return UnderlyingFromFPDFPage(page);
+#endif  // PDF_ENABLE_XFA
+}
+
+CFX_DIBitmap* CFXBitmapFromFPDFBitmap(FPDF_BITMAP bitmap) {
+  return static_cast<CFX_DIBitmap*>(bitmap);
+}
+
 IFX_SeekableReadStream* MakeSeekableReadStream(FPDF_FILEACCESS* pFileAccess) {
   return new CPDF_CustomAccess(pFileAccess);
 }
+
+#ifdef PDF_ENABLE_XFA
+IFX_SeekableStream* MakeSeekableStream(FPDF_FILEHANDLER* pFilehandler) {
+  return new CFPDF_FileStream(pFilehandler);
+}
+#endif  // PDF_ENABLE_XFA
 
 // 0 bit: FPDF_POLICY_MACHINETIME_ACCESS
 static uint32_t foxit_sandbox_policy = 0xFFFFFFFF;
