@@ -23,4 +23,5 @@ Local Modifications:
 0011-memory-leak-ReadSegmentedCurve.patch: Fix memory leak in ReadSegmentedCurve.
 0012-backport-c0a98d86.patch: Fix several issues. Backport from upstream
     https://github.com/mm2/Little-CMS/commit/c0a98d86
+0013-utf8.patch: Encode source files as utf-8.
 TODO(ochang): List other patches.

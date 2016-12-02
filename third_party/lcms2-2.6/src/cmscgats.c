@@ -258,7 +258,7 @@ static PROPERTY PredefinedProperties[] = {
                                // needed.
 
         {"SAMPLE_BACKING",   WRITE_STRINGIFY},   // Identifies the backing material used behind the sample during
-                               // measurement. Allowed values are “black? “white? or {"na".
+                               // measurement. Allowed values are "black" "white" or "na".
 
         {"CHISQ_DOF",        WRITE_STRINGIFY},   // Degrees of freedom associated with the Chi squared statistic
 
@@ -274,7 +274,7 @@ static PROPERTY PredefinedProperties[] = {
                                // denote the use of filters such as none, D65, Red, Green or Blue.
 
        {"POLARIZATION",      WRITE_STRINGIFY},   // Identifies the use of a physical polarization filter during measurement. Allowed
-                               // values are {"yes? “white? “none?or “na?
+                               // values are "yes" "white" "none" or "na"
 
        {"WEIGHTING_FUNCTION", WRITE_PAIR},   // Indicates such functions as: the CIE standard observer functions used in the
                                // calculation of various data parameters (2 degree and 10 degree), CIE standard
