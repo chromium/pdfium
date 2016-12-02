@@ -198,7 +198,7 @@ void RegenerateFormFile_Changed(CXFA_Node* pNode,
           break;
 
         IFX_MemoryStream* pMemStream = IFX_MemoryStream::Create(true);
-        IFX_Stream* pTempStream = IFX_Stream::CreateStream(
+        IFGAS_Stream* pTempStream = IFGAS_Stream::CreateStream(
             (IFX_SeekableWriteStream*)pMemStream, FX_STREAMACCESS_Text |
                                                       FX_STREAMACCESS_Write |
                                                       FX_STREAMACCESS_Append);
@@ -317,7 +317,7 @@ void RegenerateFormFile_Changed(CXFA_Node* pNode,
 }
 
 void RegenerateFormFile_Container(CXFA_Node* pNode,
-                                  IFX_Stream* pStream,
+                                  IFGAS_Stream* pStream,
                                   bool bSaveXML = false) {
   XFA_Element eType = pNode->GetElementType();
   if (eType == XFA_Element::Field || eType == XFA_Element::Draw ||
@@ -371,7 +371,7 @@ void RegenerateFormFile_Container(CXFA_Node* pNode,
 }  // namespace
 
 void XFA_DataExporter_RegenerateFormFile(CXFA_Node* pNode,
-                                         IFX_Stream* pStream,
+                                         IFGAS_Stream* pStream,
                                          const FX_CHAR* pChecksum,
                                          bool bSaveXML) {
   if (pNode->IsModelNode()) {
@@ -456,7 +456,7 @@ bool CXFA_DataExporter::Export(IFX_SeekableWriteStream* pWrite,
     ASSERT(false);
     return false;
   }
-  IFX_Stream* pStream = IFX_Stream::CreateStream(
+  IFGAS_Stream* pStream = IFGAS_Stream::CreateStream(
       pWrite,
       FX_STREAMACCESS_Text | FX_STREAMACCESS_Write | FX_STREAMACCESS_Append);
   if (!pStream)
@@ -468,7 +468,7 @@ bool CXFA_DataExporter::Export(IFX_SeekableWriteStream* pWrite,
   return bRet;
 }
 
-bool CXFA_DataExporter::Export(IFX_Stream* pStream,
+bool CXFA_DataExporter::Export(IFGAS_Stream* pStream,
                                CXFA_Node* pNode,
                                uint32_t dwFlag,
                                const FX_CHAR* pChecksum) {

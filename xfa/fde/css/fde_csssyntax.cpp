@@ -35,7 +35,7 @@ CFDE_CSSSyntaxParser::~CFDE_CSSSyntaxParser() {
   m_TextPlane.Reset();
 }
 
-bool CFDE_CSSSyntaxParser::Init(IFX_Stream* pStream,
+bool CFDE_CSSSyntaxParser::Init(IFGAS_Stream* pStream,
                                 int32_t iCSSPlaneSize,
                                 int32_t iTextDataSize,
                                 bool bOnlyDeclaration) {
@@ -433,7 +433,7 @@ bool CFDE_CSSTextBuf::EstimateSize(int32_t iAllocSize) {
   m_bExtBuf = false;
   return ExpandBuf(iAllocSize);
 }
-int32_t CFDE_CSSTextBuf::LoadFromStream(IFX_Stream* pTxtStream,
+int32_t CFDE_CSSTextBuf::LoadFromStream(IFGAS_Stream* pTxtStream,
                                         int32_t iStreamOffset,
                                         int32_t iMaxChars,
                                         bool& bEOS) {

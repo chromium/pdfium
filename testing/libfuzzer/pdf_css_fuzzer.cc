@@ -15,7 +15,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
 
   CFX_WideString input = CFX_WideString::FromUTF8(
       CFX_ByteStringC(data, static_cast<FX_STRSIZE>(size)));
-  std::unique_ptr<IFX_Stream, ReleaseDeleter<IFX_Stream>> stream(
+  std::unique_ptr<IFGAS_Stream, ReleaseDeleter<IFGAS_Stream>> stream(
       new CXFA_WideTextRead(input));
   if (!stream)
     return 0;

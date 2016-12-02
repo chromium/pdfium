@@ -12,7 +12,7 @@
 class CXFA_Document;
 class CXFA_Node;
 class IFX_SeekableWriteStream;
-class IFX_Stream;
+class IFGAS_Stream;
 
 class CXFA_DataExporter {
  public:
@@ -25,7 +25,7 @@ class CXFA_DataExporter {
               const FX_CHAR* pChecksum);
 
  protected:
-  bool Export(IFX_Stream* pStream,
+  bool Export(IFGAS_Stream* pStream,
               CXFA_Node* pNode,
               uint32_t dwFlag,
               const FX_CHAR* pChecksum);

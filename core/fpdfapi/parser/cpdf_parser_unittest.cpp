@@ -18,10 +18,10 @@ class CFX_TestBufferRead : public IFX_SeekableReadStream {
   CFX_TestBufferRead(const unsigned char* buffer_in, size_t buf_size)
       : buffer_(buffer_in), total_size_(buf_size) {}
 
-  // IFX_Stream
+  // IFX_ReadStream:
   void Release() override { delete this; }
 
-  // IFX_SeekableReadStream
+  // IFX_SeekableReadStream:
   bool ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) override {
     if (offset < 0 || offset + size > total_size_)
       return false;

@@ -173,7 +173,7 @@ bool XFA_FieldIsMultiListBox(CXFA_Node* pFieldNode);
 
 void XFA_DataExporter_DealWithDataGroupNode(CXFA_Node* pDataNode);
 void XFA_DataExporter_RegenerateFormFile(CXFA_Node* pNode,
-                                         IFX_Stream* pStream,
+                                         IFGAS_Stream* pStream,
                                          const FX_CHAR* pChecksum = nullptr,
                                          bool bSaveXML = false);
 

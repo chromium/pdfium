@@ -11,12 +11,12 @@
 
 #include "xfa/fde/xml/fde_xml_imp.h"
 
-class IFX_Stream;
+class IFGAS_Stream;
 class IFX_Pause;
 
 class CXFA_XMLParser : public CFDE_XMLParser {
  public:
-  CXFA_XMLParser(CFDE_XMLNode* pRoot, IFX_Stream* pStream);
+  CXFA_XMLParser(CFDE_XMLNode* pRoot, IFGAS_Stream* pStream);
   ~CXFA_XMLParser() override;
 
   // CFDE_XMLParser
@@ -31,7 +31,7 @@ class CXFA_XMLParser : public CFDE_XMLParser {
 
  protected:
   CFDE_XMLNode* m_pRoot;
-  IFX_Stream* m_pStream;
+  IFGAS_Stream* m_pStream;
   std::unique_ptr<CFDE_XMLSyntaxParser, ReleaseDeleter<CFDE_XMLSyntaxParser>>
       m_pParser;
   CFDE_XMLNode* m_pParent;

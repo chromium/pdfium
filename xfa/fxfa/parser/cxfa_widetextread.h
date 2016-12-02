@@ -9,13 +9,13 @@
 
 #include "xfa/fgas/crt/fgas_stream.h"
 
-class CXFA_WideTextRead : public IFX_Stream {
+class CXFA_WideTextRead : public IFGAS_Stream {
  public:
   explicit CXFA_WideTextRead(const CFX_WideString& wsBuffer);
 
-  // IFX_Stream
+  // IFGAS_Stream
   void Release() override;
-  IFX_Stream* Retain() override;
+  IFGAS_Stream* Retain() override;
   uint32_t GetAccessModes() const override;
   int32_t GetLength() const override;
   int32_t Seek(FX_STREAMSEEK eSeek, int32_t iOffset) override;
@@ -30,9 +30,9 @@ class CXFA_WideTextRead : public IFX_Stream {
   int32_t GetBOM(uint8_t bom[4]) const override;
   uint16_t GetCodePage() const override;
   uint16_t SetCodePage(uint16_t wCodePage) override;
-  IFX_Stream* CreateSharedStream(uint32_t dwAccess,
-                                 int32_t iOffset,
-                                 int32_t iLength) override;
+  IFGAS_Stream* CreateSharedStream(uint32_t dwAccess,
+                                   int32_t iOffset,
+                                   int32_t iLength) override;
 
   CFX_WideString GetSrcText() const;
 

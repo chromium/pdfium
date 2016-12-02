@@ -26,7 +26,7 @@ TEST(CFDE_XMLSyntaxParser, CData) {
 
   // We * sizeof(FX_WCHAR) because we pass in the uint8_t, not the FX_WCHAR.
   size_t len = FXSYS_wcslen(input) * sizeof(FX_WCHAR);
-  std::unique_ptr<IFX_Stream> stream(IFX_Stream::CreateStream(
+  std::unique_ptr<IFGAS_Stream> stream(IFGAS_Stream::CreateStream(
       reinterpret_cast<uint8_t*>(const_cast<FX_WCHAR*>(input)), len, 0));
   CFDE_XMLSyntaxParser parser;
   parser.Init(stream.get(), 256);
@@ -84,7 +84,7 @@ TEST(CFDE_XMLSyntaxParser, CDataWithInnerScript) {
 
   // We * sizeof(FX_WCHAR) because we pass in the uint8_t, not the FX_WCHAR.
   size_t len = FXSYS_wcslen(input) * sizeof(FX_WCHAR);
-  std::unique_ptr<IFX_Stream> stream(IFX_Stream::CreateStream(
+  std::unique_ptr<IFGAS_Stream> stream(IFGAS_Stream::CreateStream(
       reinterpret_cast<uint8_t*>(const_cast<FX_WCHAR*>(input)), len, 0));
   CFDE_XMLSyntaxParser parser;
   parser.Init(stream.get(), 256);
@@ -131,7 +131,7 @@ TEST(CFDE_XMLSyntaxParser, ArrowBangArrow) {
 
   // We * sizeof(FX_WCHAR) because we pass in the uint8_t, not the FX_WCHAR.
   size_t len = FXSYS_wcslen(input) * sizeof(FX_WCHAR);
-  std::unique_ptr<IFX_Stream> stream(IFX_Stream::CreateStream(
+  std::unique_ptr<IFGAS_Stream> stream(IFGAS_Stream::CreateStream(
       reinterpret_cast<uint8_t*>(const_cast<FX_WCHAR*>(input)), len, 0));
   CFDE_XMLSyntaxParser parser;
   parser.Init(stream.get(), 256);
@@ -174,7 +174,7 @@ TEST(CFDE_XMLSyntaxParser, ArrowBangBracketArrow) {
 
   // We * sizeof(FX_WCHAR) because we pass in the uint8_t, not the FX_WCHAR.
   size_t len = FXSYS_wcslen(input) * sizeof(FX_WCHAR);
-  std::unique_ptr<IFX_Stream> stream(IFX_Stream::CreateStream(
+  std::unique_ptr<IFGAS_Stream> stream(IFGAS_Stream::CreateStream(
       reinterpret_cast<uint8_t*>(const_cast<FX_WCHAR*>(input)), len, 0));
   CFDE_XMLSyntaxParser parser;
   parser.Init(stream.get(), 256);
@@ -211,7 +211,7 @@ TEST(CFDE_XMLSyntaxParser, IncompleteCData) {
 
   // We * sizeof(FX_WCHAR) because we pass in the uint8_t, not the FX_WCHAR.
   size_t len = FXSYS_wcslen(input) * sizeof(FX_WCHAR);
-  std::unique_ptr<IFX_Stream> stream(IFX_Stream::CreateStream(
+  std::unique_ptr<IFGAS_Stream> stream(IFGAS_Stream::CreateStream(
       reinterpret_cast<uint8_t*>(const_cast<FX_WCHAR*>(input)), len, 0));
   CFDE_XMLSyntaxParser parser;
   parser.Init(stream.get(), 256);
@@ -248,7 +248,7 @@ TEST(CFDE_XMLSyntaxParser, UnClosedCData) {
 
   // We * sizeof(FX_WCHAR) because we pass in the uint8_t, not the FX_WCHAR.
   size_t len = FXSYS_wcslen(input) * sizeof(FX_WCHAR);
-  std::unique_ptr<IFX_Stream> stream(IFX_Stream::CreateStream(
+  std::unique_ptr<IFGAS_Stream> stream(IFGAS_Stream::CreateStream(
       reinterpret_cast<uint8_t*>(const_cast<FX_WCHAR*>(input)), len, 0));
   CFDE_XMLSyntaxParser parser;
   parser.Init(stream.get(), 256);
@@ -285,7 +285,7 @@ TEST(CFDE_XMLSyntaxParser, EmptyCData) {
 
   // We * sizeof(FX_WCHAR) because we pass in the uint8_t, not the FX_WCHAR.
   size_t len = FXSYS_wcslen(input) * sizeof(FX_WCHAR);
-  std::unique_ptr<IFX_Stream> stream(IFX_Stream::CreateStream(
+  std::unique_ptr<IFGAS_Stream> stream(IFGAS_Stream::CreateStream(
       reinterpret_cast<uint8_t*>(const_cast<FX_WCHAR*>(input)), len, 0));
   CFDE_XMLSyntaxParser parser;
   parser.Init(stream.get(), 256);
@@ -332,7 +332,7 @@ TEST(CFDE_XMLSyntaxParser, Comment) {
 
   // We * sizeof(FX_WCHAR) because we pass in the uint8_t, not the FX_WCHAR.
   size_t len = FXSYS_wcslen(input) * sizeof(FX_WCHAR);
-  std::unique_ptr<IFX_Stream> stream(IFX_Stream::CreateStream(
+  std::unique_ptr<IFGAS_Stream> stream(IFGAS_Stream::CreateStream(
       reinterpret_cast<uint8_t*>(const_cast<FX_WCHAR*>(input)), len, 0));
   CFDE_XMLSyntaxParser parser;
   parser.Init(stream.get(), 256);
@@ -375,7 +375,7 @@ TEST(CFDE_XMLSyntaxParser, IncorrectCommentStart) {
 
   // We * sizeof(FX_WCHAR) because we pass in the uint8_t, not the FX_WCHAR.
   size_t len = FXSYS_wcslen(input) * sizeof(FX_WCHAR);
-  std::unique_ptr<IFX_Stream> stream(IFX_Stream::CreateStream(
+  std::unique_ptr<IFGAS_Stream> stream(IFGAS_Stream::CreateStream(
       reinterpret_cast<uint8_t*>(const_cast<FX_WCHAR*>(input)), len, 0));
   CFDE_XMLSyntaxParser parser;
   parser.Init(stream.get(), 256);
@@ -418,7 +418,7 @@ TEST(CFDE_XMLSyntaxParser, CommentEmpty) {
 
   // We * sizeof(FX_WCHAR) because we pass in the uint8_t, not the FX_WCHAR.
   size_t len = FXSYS_wcslen(input) * sizeof(FX_WCHAR);
-  std::unique_ptr<IFX_Stream> stream(IFX_Stream::CreateStream(
+  std::unique_ptr<IFGAS_Stream> stream(IFGAS_Stream::CreateStream(
       reinterpret_cast<uint8_t*>(const_cast<FX_WCHAR*>(input)), len, 0));
   CFDE_XMLSyntaxParser parser;
   parser.Init(stream.get(), 256);
@@ -461,7 +461,7 @@ TEST(CFDE_XMLSyntaxParser, CommentThreeDash) {
 
   // We * sizeof(FX_WCHAR) because we pass in the uint8_t, not the FX_WCHAR.
   size_t len = FXSYS_wcslen(input) * sizeof(FX_WCHAR);
-  std::unique_ptr<IFX_Stream> stream(IFX_Stream::CreateStream(
+  std::unique_ptr<IFGAS_Stream> stream(IFGAS_Stream::CreateStream(
       reinterpret_cast<uint8_t*>(const_cast<FX_WCHAR*>(input)), len, 0));
   CFDE_XMLSyntaxParser parser;
   parser.Init(stream.get(), 256);
@@ -496,7 +496,7 @@ TEST(CFDE_XMLSyntaxParser, CommentTwoDash) {
 
   // We * sizeof(FX_WCHAR) because we pass in the uint8_t, not the FX_WCHAR.
   size_t len = FXSYS_wcslen(input) * sizeof(FX_WCHAR);
-  std::unique_ptr<IFX_Stream> stream(IFX_Stream::CreateStream(
+  std::unique_ptr<IFGAS_Stream> stream(IFGAS_Stream::CreateStream(
       reinterpret_cast<uint8_t*>(const_cast<FX_WCHAR*>(input)), len, 0));
   CFDE_XMLSyntaxParser parser;
   parser.Init(stream.get(), 256);
@@ -535,7 +535,7 @@ TEST(CFDE_XMLSyntaxParser, Entities) {
 
   // We * sizeof(FX_WCHAR) because we pass in the uint8_t, not the FX_WCHAR.
   size_t len = FXSYS_wcslen(input) * sizeof(FX_WCHAR);
-  std::unique_ptr<IFX_Stream> stream(IFX_Stream::CreateStream(
+  std::unique_ptr<IFGAS_Stream> stream(IFGAS_Stream::CreateStream(
       reinterpret_cast<uint8_t*>(const_cast<FX_WCHAR*>(input)), len, 0));
   CFDE_XMLSyntaxParser parser;
   parser.Init(stream.get(), 256);
@@ -575,7 +575,7 @@ TEST(CFDE_XMLSyntaxParser, EntityOverflowHex) {
 
   // We * sizeof(FX_WCHAR) because we pass in the uint8_t, not the FX_WCHAR.
   size_t len = FXSYS_wcslen(input) * sizeof(FX_WCHAR);
-  std::unique_ptr<IFX_Stream> stream(IFX_Stream::CreateStream(
+  std::unique_ptr<IFGAS_Stream> stream(IFGAS_Stream::CreateStream(
       reinterpret_cast<uint8_t*>(const_cast<FX_WCHAR*>(input)), len, 0));
   CFDE_XMLSyntaxParser parser;
   parser.Init(stream.get(), 256);
@@ -615,7 +615,7 @@ TEST(CFDE_XMLSyntaxParser, EntityOverflowDecimal) {
 
   // We * sizeof(FX_WCHAR) because we pass in the uint8_t, not the FX_WCHAR.
   size_t len = FXSYS_wcslen(input) * sizeof(FX_WCHAR);
-  std::unique_ptr<IFX_Stream> stream(IFX_Stream::CreateStream(
+  std::unique_ptr<IFGAS_Stream> stream(IFGAS_Stream::CreateStream(
       reinterpret_cast<uint8_t*>(const_cast<FX_WCHAR*>(input)), len, 0));
   CFDE_XMLSyntaxParser parser;
   parser.Init(stream.get(), 256);

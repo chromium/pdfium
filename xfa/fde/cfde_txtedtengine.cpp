@@ -107,7 +107,7 @@ IFDE_TxtEdtPage* CFDE_TxtEdtEngine::GetPage(int32_t nIndex) {
   return m_PagePtrArray[nIndex];
 }
 
-void CFDE_TxtEdtEngine::SetTextByStream(IFX_Stream* pStream) {
+void CFDE_TxtEdtEngine::SetTextByStream(IFGAS_Stream* pStream) {
   ResetEngine();
   int32_t nIndex = 0;
   if (pStream && pStream->GetLength()) {

@@ -17,7 +17,7 @@ class CXFA_Node;
 class CXFA_XMLParser;
 class IFX_SeekableReadStream;
 class IFX_Pause;
-class IFX_Stream;
+class IFGAS_Stream;
 
 class CXFA_SimpleParser {
  public:
@@ -77,7 +77,7 @@ class CXFA_SimpleParser {
 
   CXFA_XMLParser* m_pXMLParser;
   std::unique_ptr<CFDE_XMLDoc> m_pXMLDoc;
-  std::unique_ptr<IFX_Stream, ReleaseDeleter<IFX_Stream>> m_pStream;
+  std::unique_ptr<IFGAS_Stream, ReleaseDeleter<IFGAS_Stream>> m_pStream;
   IFX_SeekableReadStream* m_pFileRead;
   CXFA_Document* m_pFactory;
   CXFA_Node* m_pRootNode;

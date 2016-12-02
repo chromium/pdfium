@@ -281,7 +281,7 @@ int32_t CXFA_SimpleParser::StartParse(IFX_SeekableReadStream* pStream,
                                       XFA_XDPPACKET ePacketID) {
   CloseParser();
   m_pFileRead = pStream;
-  m_pStream.reset(IFX_Stream::CreateStream(
+  m_pStream.reset(IFGAS_Stream::CreateStream(
       pStream, FX_STREAMACCESS_Read | FX_STREAMACCESS_Text));
   if (!m_pStream)
     return XFA_PARSESTATUS_StreamErr;
@@ -325,7 +325,7 @@ int32_t CXFA_SimpleParser::ParseXMLData(const CFX_WideString& wsXML,
   CloseParser();
   pXMLNode = nullptr;
 
-  std::unique_ptr<IFX_Stream> pStream(new CXFA_WideTextRead(wsXML));
+  std::unique_ptr<IFGAS_Stream> pStream(new CXFA_WideTextRead(wsXML));
   m_pXMLDoc.reset(new CFDE_XMLDoc);
   CXFA_XMLParser* pParser =
       new CXFA_XMLParser(m_pXMLDoc->GetRoot(), pStream.get());

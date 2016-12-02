@@ -19,7 +19,7 @@ void CXFA_WideTextRead::Release() {
     delete this;
 }
 
-IFX_Stream* CXFA_WideTextRead::Retain() {
+IFGAS_Stream* CXFA_WideTextRead::Retain() {
   m_iRefCount++;
   return this;
 }
@@ -98,9 +98,9 @@ uint16_t CXFA_WideTextRead::SetCodePage(uint16_t wCodePage) {
   return GetCodePage();
 }
 
-IFX_Stream* CXFA_WideTextRead::CreateSharedStream(uint32_t dwAccess,
-                                                  int32_t iOffset,
-                                                  int32_t iLength) {
+IFGAS_Stream* CXFA_WideTextRead::CreateSharedStream(uint32_t dwAccess,
+                                                    int32_t iOffset,
+                                                    int32_t iLength) {
   return nullptr;
 }
 

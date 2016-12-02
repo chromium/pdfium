@@ -49,7 +49,7 @@ IFDE_CSSStyleSheet* IFDE_CSSStyleSheet::LoadHTMLStandardStyleSheet() {
 
 IFDE_CSSStyleSheet* IFDE_CSSStyleSheet::LoadFromStream(
     const CFX_WideString& szUrl,
-    IFX_Stream* pStream,
+    IFGAS_Stream* pStream,
     uint16_t wCodePage,
     uint32_t dwMediaList) {
   CFDE_CSSStyleSheet* pStyleSheet = new CFDE_CSSStyleSheet(dwMediaList);
@@ -144,7 +144,7 @@ IFDE_CSSRule* CFDE_CSSStyleSheet::GetRule(int32_t index) {
 }
 
 bool CFDE_CSSStyleSheet::LoadFromStream(const CFX_WideString& szUrl,
-                                        IFX_Stream* pStream,
+                                        IFGAS_Stream* pStream,
                                         uint16_t wCodePage) {
   std::unique_ptr<CFDE_CSSSyntaxParser> pSyntax(new CFDE_CSSSyntaxParser);
   if (pStream->GetCodePage() != wCodePage)

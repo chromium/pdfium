@@ -26,25 +26,25 @@ enum FX_STREAMSEEK {
   FX_STREAMSEEK_End,
 };
 
-class IFX_Stream {
+class IFGAS_Stream {
  public:
-  static IFX_Stream* CreateStream(IFX_SeekableReadStream* pFileRead,
-                                  uint32_t dwAccess);
-  static IFX_Stream* CreateStream(IFX_SeekableWriteStream* pFileWrite,
-                                  uint32_t dwAccess);
-  static IFX_Stream* CreateStream(uint8_t* pData,
-                                  int32_t length,
-                                  uint32_t dwAccess);
-  static IFX_Stream* CreateTextStream(IFX_Stream* pBaseStream,
-                                      bool bDeleteOnRelease);
+  static IFGAS_Stream* CreateStream(IFX_SeekableReadStream* pFileRead,
+                                    uint32_t dwAccess);
+  static IFGAS_Stream* CreateStream(IFX_SeekableWriteStream* pFileWrite,
+                                    uint32_t dwAccess);
+  static IFGAS_Stream* CreateStream(uint8_t* pData,
+                                    int32_t length,
+                                    uint32_t dwAccess);
+  static IFGAS_Stream* CreateTextStream(IFGAS_Stream* pBaseStream,
+                                        bool bDeleteOnRelease);
 
-  virtual ~IFX_Stream() {}
+  virtual ~IFGAS_Stream() {}
   virtual void Release() = 0;
-  virtual IFX_Stream* Retain() = 0;
+  virtual IFGAS_Stream* Retain() = 0;
 
-  virtual IFX_Stream* CreateSharedStream(uint32_t dwAccess,
-                                         int32_t iOffset,
-                                         int32_t iLength) = 0;
+  virtual IFGAS_Stream* CreateSharedStream(uint32_t dwAccess,
+                                           int32_t iOffset,
+                                           int32_t iLength) = 0;
 
   virtual uint32_t GetAccessModes() const = 0;
   virtual int32_t GetLength() const = 0;

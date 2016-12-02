@@ -72,7 +72,7 @@ CFGAS_GEFont* CFGAS_GEFont::LoadFont(const uint8_t* pBuffer,
 }
 
 // static
-CFGAS_GEFont* CFGAS_GEFont::LoadFont(IFX_Stream* pFontStream,
+CFGAS_GEFont* CFGAS_GEFont::LoadFont(IFGAS_Stream* pFontStream,
                                      CFGAS_FontMgr* pFontMgr,
                                      bool bSaveStream) {
   CFGAS_GEFont* pFont = new CFGAS_GEFont(pFontMgr);
@@ -203,7 +203,8 @@ bool CFGAS_GEFont::LoadFontInternal(const uint8_t* pBuffer, int32_t length) {
   return InitFont();
 }
 
-bool CFGAS_GEFont::LoadFontInternal(IFX_Stream* pFontStream, bool bSaveStream) {
+bool CFGAS_GEFont::LoadFontInternal(IFGAS_Stream* pFontStream,
+                                    bool bSaveStream) {
   if (m_pFont || m_pFileRead || !pFontStream || pFontStream->GetLength() < 1)
     return false;
   if (bSaveStream)

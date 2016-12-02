@@ -1443,8 +1443,8 @@ void CXFA_Node::Script_NodeClass_SaveXML(CFXJSE_Arguments* pArguments) {
     }
     std::unique_ptr<IFX_MemoryStream, ReleaseDeleter<IFX_MemoryStream>>
         pMemoryStream(IFX_MemoryStream::Create(true));
-    std::unique_ptr<IFX_Stream, ReleaseDeleter<IFX_Stream>> pStream(
-        IFX_Stream::CreateStream(
+    std::unique_ptr<IFGAS_Stream, ReleaseDeleter<IFGAS_Stream>> pStream(
+        IFGAS_Stream::CreateStream(
             static_cast<IFX_SeekableWriteStream*>(pMemoryStream.get()),
             FX_STREAMACCESS_Text | FX_STREAMACCESS_Write |
                 FX_STREAMACCESS_Append));
