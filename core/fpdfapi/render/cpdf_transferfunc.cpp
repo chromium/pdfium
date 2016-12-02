@@ -7,7 +7,7 @@
 #include "core/fpdfapi/render/cpdf_transferfunc.h"
 
 #include "core/fpdfapi/parser/cpdf_document.h"
-#include "core/fpdfapi/render/render_int.h"
+#include "core/fpdfapi/render/cpdf_dibtransferfunc.h"
 
 CPDF_TransferFunc::CPDF_TransferFunc(CPDF_Document* pDoc) : m_pPDFDoc(pDoc) {}
 

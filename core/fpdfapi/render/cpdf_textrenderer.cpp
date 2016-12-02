@@ -1,38 +1,19 @@
-// Copyright 2014 PDFium Authors. All rights reserved.
+// Copyright 2016 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fpdfapi/render/render_int.h"
+#include "core/fpdfapi/render/cpdf_textrenderer.h"
 
 #include <vector>
 
-#include "core/fpdfapi/font/cpdf_cidfont.h"
 #include "core/fpdfapi/font/cpdf_font.h"
-#include "core/fpdfapi/font/cpdf_type3char.h"
-#include "core/fpdfapi/font/cpdf_type3font.h"
-#include "core/fpdfapi/page/cpdf_docpagedata.h"
-#include "core/fpdfapi/page/cpdf_form.h"
-#include "core/fpdfapi/page/cpdf_imageobject.h"
-#include "core/fpdfapi/page/cpdf_pageobject.h"
-#include "core/fpdfapi/page/cpdf_pathobject.h"
-#include "core/fpdfapi/page/cpdf_textobject.h"
-#include "core/fpdfapi/parser/cpdf_dictionary.h"
-#include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfapi/render/cpdf_charposlist.h"
-#include "core/fpdfapi/render/cpdf_docrenderdata.h"
 #include "core/fpdfapi/render/cpdf_renderoptions.h"
-#include "core/fpdfapi/render/cpdf_renderstatus.h"
-#include "core/fpdfapi/render/cpdf_textrenderer.h"
-#include "core/fpdfapi/render/cpdf_type3cache.h"
-#include "core/fxge/cfx_facecache.h"
-#include "core/fxge/cfx_fxgedevice.h"
-#include "core/fxge/cfx_gemodule.h"
 #include "core/fxge/cfx_graphstatedata.h"
 #include "core/fxge/cfx_pathdata.h"
 #include "core/fxge/cfx_renderdevice.h"
-#include "third_party/base/numerics/safe_math.h"
 
 // static
 bool CPDF_TextRenderer::DrawTextPath(CFX_RenderDevice* pDevice,
@@ -52,6 +33,7 @@ bool CPDF_TextRenderer::DrawTextPath(CFX_RenderDevice* pDevice,
   CharPosList.Load(nChars, pCharCodes, pCharPos, pFont, font_size);
   if (CharPosList.m_nChars == 0)
     return true;
+
   bool bDraw = true;
   int32_t fontPosition = CharPosList.m_pCharPos[0].m_FallbackFontPosition;
   uint32_t startIndex = 0;
@@ -159,28 +141,22 @@ bool CPDF_TextRenderer::DrawNormalText(CFX_RenderDevice* pDevice,
     uint32_t dwFlags = pOptions->m_Flags;
     if (dwFlags & RENDER_CLEARTYPE) {
       FXGE_flags |= FXTEXT_CLEARTYPE;
-      if (dwFlags & RENDER_BGR_STRIPE) {
+      if (dwFlags & RENDER_BGR_STRIPE)
         FXGE_flags |= FXTEXT_BGR_STRIPE;
-      }
     }
-    if (dwFlags & RENDER_NOTEXTSMOOTH) {
+    if (dwFlags & RENDER_NOTEXTSMOOTH)
       FXGE_flags |= FXTEXT_NOSMOOTH;
-    }
-    if (dwFlags & RENDER_PRINTGRAPHICTEXT) {
+    if (dwFlags & RENDER_PRINTGRAPHICTEXT)
       FXGE_flags |= FXTEXT_PRINTGRAPHICTEXT;
-    }
-    if (dwFlags & RENDER_NO_NATIVETEXT) {
+    if (dwFlags & RENDER_NO_NATIVETEXT)
       FXGE_flags |= FXTEXT_NO_NATIVETEXT;
-    }
-    if (dwFlags & RENDER_PRINTIMAGETEXT) {
+    if (dwFlags & RENDER_PRINTIMAGETEXT)
       FXGE_flags |= FXTEXT_PRINTIMAGETEXT;
-    }
   } else {
     FXGE_flags = FXTEXT_CLEARTYPE;
   }
-  if (pFont->IsCIDFont()) {
+  if (pFont->IsCIDFont())
     FXGE_flags |= FXFONT_CIDFONT;
-  }
   bool bDraw = true;
   int32_t fontPosition = CharPosList.m_pCharPos[0].m_FallbackFontPosition;
   uint32_t startIndex = 0;

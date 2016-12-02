@@ -56,6 +56,8 @@ typedef struct {
   int m_ColorKeyMax;
 } DIB_COMP_DATA;
 
+#define FPDF_HUGE_IMAGE_SIZE 60000000
+
 class CPDF_DIBSource : public CFX_DIBSource {
  public:
   CPDF_DIBSource();
@@ -173,25 +175,13 @@ class CPDF_DIBSource : public CFX_DIBSource {
   int m_Status;
 };
 
-#define FPDF_HUGE_IMAGE_SIZE 60000000
-class CPDF_DIBTransferFunc : public CFX_FilteredDIB {
- public:
-  explicit CPDF_DIBTransferFunc(const CPDF_TransferFunc* pTransferFunc);
-  ~CPDF_DIBTransferFunc() override;
-
-  // CFX_FilteredDIB
-  FXDIB_Format GetDestFormat() override;
-  FX_ARGB* GetDestPalette() override;
-  void TranslateScanline(const uint8_t* src_buf,
-                         std::vector<uint8_t>* dest_buf) const override;
-  void TranslateDownSamples(uint8_t* dest_buf,
-                            const uint8_t* src_buf,
-                            int pixels,
-                            int Bpp) const override;
-
-  const uint8_t* m_RampR;
-  const uint8_t* m_RampG;
-  const uint8_t* m_RampB;
-};
+CCodec_ScanlineDecoder* FPDFAPI_CreateFlateDecoder(
+    const uint8_t* src_buf,
+    uint32_t src_size,
+    int width,
+    int height,
+    int nComps,
+    int bpc,
+    const CPDF_Dictionary* pParams);
 
 #endif  // CORE_FPDFAPI_RENDER_RENDER_INT_H_

@@ -1,47 +1,29 @@
-// Copyright 2014 PDFium Authors. All rights reserved.
+// Copyright 2016 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fpdfapi/render/render_int.h"
+#include "core/fpdfapi/render/cpdf_dibtransferfunc.h"
 
-#include <memory>
-#include <utility>
 #include <vector>
 
-#include "core/fpdfapi/page/cpdf_docpagedata.h"
-#include "core/fpdfapi/page/cpdf_form.h"
-#include "core/fpdfapi/page/cpdf_image.h"
-#include "core/fpdfapi/page/cpdf_imageobject.h"
-#include "core/fpdfapi/page/cpdf_page.h"
-#include "core/fpdfapi/page/cpdf_shadingpattern.h"
-#include "core/fpdfapi/page/cpdf_tilingpattern.h"
-#include "core/fpdfapi/page/pageint.h"
-#include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
-#include "core/fpdfapi/parser/cpdf_document.h"
-#include "core/fpdfapi/render/cpdf_pagerendercache.h"
-#include "core/fpdfapi/render/cpdf_rendercontext.h"
-#include "core/fpdfapi/render/cpdf_renderoptions.h"
-#include "core/fpdfapi/render/cpdf_renderstatus.h"
 #include "core/fpdfapi/render/cpdf_transferfunc.h"
-#include "core/fpdfdoc/cpdf_occontext.h"
-#include "core/fxcodec/fx_codec.h"
-#include "core/fxcrt/fx_safe_types.h"
-#include "core/fxge/cfx_fxgedevice.h"
-#include "core/fxge/cfx_pathdata.h"
 
-#ifdef _SKIA_SUPPORT_
-#include "core/fxge/skia/fx_skia_device.h"
-#endif
+CPDF_DIBTransferFunc::CPDF_DIBTransferFunc(
+    const CPDF_TransferFunc* pTransferFunc) {
+  m_RampR = pTransferFunc->m_Samples;
+  m_RampG = &pTransferFunc->m_Samples[256];
+  m_RampB = &pTransferFunc->m_Samples[512];
+}
 
 CPDF_DIBTransferFunc::~CPDF_DIBTransferFunc() {}
 
 FXDIB_Format CPDF_DIBTransferFunc::GetDestFormat() {
-  if (m_pSrc->IsAlphaMask()) {
+  if (m_pSrc->IsAlphaMask())
     return FXDIB_8bppMask;
-  }
+
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
   return (m_pSrc->HasAlpha()) ? FXDIB_Argb : FXDIB_Rgb32;
 #else
@@ -51,13 +33,6 @@ FXDIB_Format CPDF_DIBTransferFunc::GetDestFormat() {
 
 FX_ARGB* CPDF_DIBTransferFunc::GetDestPalette() {
   return nullptr;
-}
-
-CPDF_DIBTransferFunc::CPDF_DIBTransferFunc(
-    const CPDF_TransferFunc* pTransferFunc) {
-  m_RampR = pTransferFunc->m_Samples;
-  m_RampG = &pTransferFunc->m_Samples[256];
-  m_RampB = &pTransferFunc->m_Samples[512];
 }
 
 void CPDF_DIBTransferFunc::TranslateScanline(
@@ -125,9 +100,8 @@ void CPDF_DIBTransferFunc::TranslateScanline(
     }
     case FXDIB_8bppMask: {
       int index = 0;
-      for (int i = 0; i < m_Width; i++) {
+      for (int i = 0; i < m_Width; i++)
         (*dest_buf)[index++] = m_RampR[*(src_buf++)];
-      }
       break;
     }
     case FXDIB_Rgb: {
@@ -171,9 +145,8 @@ void CPDF_DIBTransferFunc::TranslateDownSamples(uint8_t* dest_buf,
                                                 int pixels,
                                                 int Bpp) const {
   if (Bpp == 8) {
-    for (int i = 0; i < pixels; i++) {
+    for (int i = 0; i < pixels; i++)
       *dest_buf++ = m_RampR[*(src_buf++)];
-    }
   } else if (Bpp == 24) {
     for (int i = 0; i < pixels; i++) {
       *dest_buf++ = m_RampB[*(src_buf++)];
@@ -203,12 +176,3 @@ void CPDF_DIBTransferFunc::TranslateDownSamples(uint8_t* dest_buf,
 #endif
   }
 }
-
-CCodec_ScanlineDecoder* FPDFAPI_CreateFlateDecoder(
-    const uint8_t* src_buf,
-    uint32_t src_size,
-    int width,
-    int height,
-    int nComps,
-    int bpc,
-    const CPDF_Dictionary* pParams);
