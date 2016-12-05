@@ -197,6 +197,9 @@ static_library("test_support") {
     "testing/utils/path_service.cpp",
     "testing/utils/path_service.h",
   ]
+  data = [
+    "testing/resources/",
+  ]
   deps = [
     ":pdfium",
     "//testing/gmock",
@@ -1776,7 +1779,6 @@ test("pdfium_unittests") {
   }
   configs += [ ":pdfium_core_config" ]
   if (is_android) {
-    ignore_all_data_deps = true
     use_raw_android_executable = true
   }
 }

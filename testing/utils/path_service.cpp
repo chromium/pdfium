@@ -73,7 +73,11 @@ bool PathService::GetSourceDir(std::string* path) {
     path->push_back(PATH_SEPARATOR);
   path->append("..");
   path->push_back(PATH_SEPARATOR);
+#if defined(ANDROID)
+  path->append("chromium_tests_root");
+#else   // Non-Android
   path->append("..");
+#endif  // defined(ANDROID)
   return true;
 }
 
