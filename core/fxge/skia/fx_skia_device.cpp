@@ -6,14 +6,14 @@
 #include <utility>
 #include <vector>
 
-#include "core/fxcodec/fx_codec.h"
-#include "core/fxcrt/fx_memory.h"
-
+#include "core/fpdfapi/page/cpdf_meshstream.h"
 #include "core/fpdfapi/page/cpdf_shadingpattern.h"
 #include "core/fpdfapi/page/pageint.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
+#include "core/fxcodec/fx_codec.h"
+#include "core/fxcrt/fx_memory.h"
 #include "core/fxge/cfx_fxgedevice.h"
 #include "core/fxge/cfx_gemodule.h"
 #include "core/fxge/cfx_graphstatedata.h"
@@ -161,7 +161,7 @@ void DebugShowSkiaPath(const SkPath& path) {
   sk_bzero(buffer, sizeof(buffer));
   SkMemoryWStream stream(buffer, sizeof(buffer));
   path.dump(&stream, false, false);
-  printf("%s\n", buffer);
+  printf("%s", buffer);
 #endif  // SHOW_SKIA_PATH
 }
 
@@ -170,13 +170,13 @@ void DebugShowCanvasMatrix(const SkCanvas* canvas) {
   SkMatrix matrix = canvas->getTotalMatrix();
   SkScalar m[9];
   matrix.get9(m);
-  printf("(%g,%g,%g) (%g,%g,%g) (%g,%g,%g)\n", m[0], m[1], m[2], m[3], m[4],
-         m[5], m[6], m[7], m[8]);
+  printf("matrix (%g,%g,%g) (%g,%g,%g) (%g,%g,%g)\n", m[0], m[1], m[2], m[3],
+         m[4], m[5], m[6], m[7], m[8]);
 #endif  // SHOW_SKIA_PATH
 }
 
-void DebugShowCanvasClip(const SkCanvas* canvas) {
 #if SHOW_SKIA_PATH
+void DebugShowCanvasClip(const SkCanvas* canvas) {
   SkRect local;
   SkIRect device;
   canvas->getClipBounds(&local);
@@ -187,6 +187,39 @@ void DebugShowCanvasClip(const SkCanvas* canvas) {
          device.fRight, device.fBottom);
   const SkClipStack* clipStack = canvas->getClipStack();
   clipStack->dump();
+}
+
+void DebugShowSkiaPaint(const SkPaint& paint) {
+  if (SkPaint::kFill_Style == paint.getStyle()) {
+    printf("fill 0x%08x\n", paint.getColor());
+  } else {
+    printf("stroke 0x%08x width %g\n", paint.getColor(),
+           paint.getStrokeWidth());
+  }
+}
+#endif  // SHOW_SKIA_PATH
+
+void DebugShowSkiaDrawPath(const SkCanvas* canvas,
+                           const SkPaint& paint,
+                           const SkPath& path) {
+#if SHOW_SKIA_PATH
+  DebugShowSkiaPaint(paint);
+  DebugShowCanvasMatrix(canvas);
+  DebugShowCanvasClip(canvas);
+  DebugShowSkiaPath(path);
+  printf("\n");
+#endif  // SHOW_SKIA_PATH
+}
+
+void DebugShowSkiaDrawRect(const SkCanvas* canvas,
+                           const SkPaint& paint,
+                           const SkRect& rect) {
+#if SHOW_SKIA_PATH
+  DebugShowSkiaPaint(paint);
+  DebugShowCanvasMatrix(canvas);
+  DebugShowCanvasClip(canvas);
+  printf("rect %g %g %g %g\n", rect.fLeft, rect.fTop, rect.fRight,
+         rect.fBottom);
 #endif  // SHOW_SKIA_PATH
 }
 
@@ -384,18 +417,18 @@ bool AddSamples(const CPDF_SampledFunc* pFunc,
 bool AddStitching(const CPDF_StitchFunc* pFunc,
                   SkTDArray<SkColor>* skColors,
                   SkTDArray<SkScalar>* skPos) {
-  int inputs = pFunc->CountInputs();
   FX_FLOAT boundsStart = pFunc->GetDomain(0);
 
   const auto& subFunctions = pFunc->GetSubFunctions();
-  for (int i = 0; i < inputs; ++i) {
+  int subFunctionCount = subFunctions.size();
+  for (int i = 0; i < subFunctionCount; ++i) {
     const CPDF_ExpIntFunc* pSubFunc = subFunctions[i]->ToExpIntFunc();
     if (!pSubFunc)
       return false;
     if (!AddColors(pSubFunc, skColors))
       return false;
     FX_FLOAT boundsEnd =
-        i < inputs - 1 ? pFunc->GetBound(i) : pFunc->GetDomain(1);
+        i < subFunctionCount - 1 ? pFunc->GetBound(i + 1) : pFunc->GetDomain(1);
     skPos->push(boundsStart);
     skPos->push(boundsEnd);
     boundsStart = boundsEnd;
@@ -1215,7 +1248,7 @@ int CFX_SkiaDeviceDriver::GetDeviceCaps(int caps_id) const {
       return 0;
     case FXDC_RENDER_CAPS: {
       int flags = FXRC_GET_BITS | FXRC_ALPHA_PATH | FXRC_ALPHA_IMAGE |
-                  FXRC_BLEND_MODE | FXRC_SOFT_CLIP;
+                  FXRC_BLEND_MODE | FXRC_SOFT_CLIP | FXRC_SHADING;
       if (m_pBitmap->HasAlpha()) {
         flags |= FXRC_ALPHA_OUTPUT;
       } else if (m_pBitmap->IsAlphaMask()) {
@@ -1406,6 +1439,8 @@ bool CFX_SkiaDeviceDriver::DrawPath(
     uint32_t stroke_color,                  // stroke color
     int fill_mode,  // fill mode, WINDING or ALTERNATE. 0 for not filled
     int blend_type) {
+  if (fill_mode & FX_ZEROAREA_FILL)
+    return true;
 #ifdef _SKIA_SUPPORT_
   if (m_pCache->DrawPath(pPathData, pObject2Device, pGraphState, fill_color,
                          stroke_color, fill_mode, blend_type, this)) {
@@ -1447,23 +1482,19 @@ bool CFX_SkiaDeviceDriver::DrawPath(
     }
     skPaint.setStyle(SkPaint::kFill_Style);
     skPaint.setColor(fill_color);
-    DebugShowSkiaPath(*fillPath);
-    DebugShowCanvasMatrix(m_pCanvas);
-    DebugShowCanvasClip(m_pCanvas);
 #ifdef _SKIA_SUPPORT_PATHS_
     m_pBitmap->PreMultiply();
 #endif  // _SKIA_SUPPORT_PATHS_
+    DebugShowSkiaDrawPath(m_pCanvas, skPaint, *fillPath);
     m_pCanvas->drawPath(*fillPath, skPaint);
   }
   if (pGraphState && stroke_alpha) {
-    DebugShowSkiaPath(skPath);
-    DebugShowCanvasMatrix(m_pCanvas);
-    DebugShowCanvasClip(m_pCanvas);
     skPaint.setStyle(SkPaint::kStroke_Style);
     skPaint.setColor(stroke_color);
 #ifdef _SKIA_SUPPORT_PATHS_
     m_pBitmap->PreMultiply();
 #endif  // _SKIA_SUPPORT_PATHS_
+    DebugShowSkiaDrawPath(m_pCanvas, skPaint, skPath);
     m_pCanvas->drawPath(skPath, skPaint);
   }
   m_pCanvas->restore();
@@ -1486,15 +1517,10 @@ bool CFX_SkiaDeviceDriver::FillRectWithBlend(const FX_RECT* pRect,
   spaint.setAntiAlias(true);
   spaint.setColor(fill_color);
   spaint.setBlendMode(GetSkiaBlendMode(blend_type));
-  DebugShowCanvasClip(m_pCanvas);
-  DebugShowCanvasMatrix(m_pCanvas);
   SkRect rect =
       SkRect::MakeLTRB(pRect->left, SkTMin(pRect->top, pRect->bottom),
                        pRect->right, SkTMax(pRect->bottom, pRect->top));
-#if SHOW_SKIA_PATH
-  printf("fill rect = %g %g %g %g\n\n", rect.fLeft, rect.fTop, rect.fRight,
-         rect.fBottom);
-#endif  // SHOW_SKIA_PATH
+  DebugShowSkiaDrawRect(m_pCanvas, spaint, rect);
   m_pCanvas->drawRect(rect, spaint);
   return true;
 }
@@ -1504,20 +1530,24 @@ bool CFX_SkiaDeviceDriver::DrawShading(const CPDF_ShadingPattern* pPattern,
                                        const FX_RECT& clip_rect,
                                        int alpha,
                                        bool bAlphaMode) {
-  if (kAxialShading != pPattern->GetShadingType() &&
-      kRadialShading != pPattern->GetShadingType()) {
+  ShadingType shadingType = pPattern->GetShadingType();
+  if (kAxialShading != shadingType && kRadialShading != shadingType &&
+      kCoonsPatchMeshShading != shadingType) {
     // TODO(caryclark) more types
     return false;
   }
+  int csFamily = pPattern->GetCS()->GetFamily();
+  if (PDFCS_DEVICERGB != csFamily && PDFCS_DEVICEGRAY != csFamily)
+    return false;
   const std::vector<std::unique_ptr<CPDF_Function>>& pFuncs =
       pPattern->GetFuncs();
   int nFuncs = pFuncs.size();
-  if (nFuncs != 1)  // TODO(caryclark) remove this restriction
+  if (nFuncs > 1)  // TODO(caryclark) remove this restriction
     return false;
   CPDF_Dictionary* pDict = pPattern->GetShadingObject()->GetDict();
   CPDF_Array* pCoords = pDict->GetArrayFor("Coords");
-  if (!pCoords)
-    return true;
+  if (!pCoords && kCoonsPatchMeshShading != shadingType)
+    return false;
   // TODO(caryclark) Respect Domain[0], Domain[1]. (Don't know what they do
   // yet.)
   SkTDArray<SkColor> skColors;
@@ -1556,7 +1586,7 @@ bool CFX_SkiaDeviceDriver::DrawShading(const CPDF_ShadingPattern* pPattern,
                                    clip_rect.right, clip_rect.bottom);
   SkPath skClip;
   SkPath skPath;
-  if (kAxialShading == pPattern->GetShadingType()) {
+  if (kAxialShading == shadingType) {
     FX_FLOAT start_x = pCoords->GetNumberAt(0);
     FX_FLOAT start_y = pCoords->GetNumberAt(1);
     FX_FLOAT end_x = pCoords->GetNumberAt(2);
@@ -1596,8 +1626,7 @@ bool CFX_SkiaDeviceDriver::DrawShading(const CPDF_ShadingPattern* pPattern,
     }
     skPath.addRect(skRect);
     skMatrix.setIdentity();
-  } else {
-    ASSERT(kRadialShading == pPattern->GetShadingType());
+  } else if (kRadialShading == shadingType) {
     FX_FLOAT start_x = pCoords->GetNumberAt(0);
     FX_FLOAT start_y = pCoords->GetNumberAt(1);
     FX_FLOAT start_r = pCoords->GetNumberAt(2);
@@ -1623,6 +1652,47 @@ bool CFX_SkiaDeviceDriver::DrawShading(const CPDF_ShadingPattern* pPattern,
       return false;
     skPath.addRect(skRect);
     skPath.transform(inverse);
+  } else {
+    ASSERT(kCoonsPatchMeshShading == shadingType);
+    CPDF_Stream* pStream = ToStream(pPattern->GetShadingObject());
+    if (!pStream)
+      return false;
+    CPDF_MeshStream stream(shadingType, pPattern->GetFuncs(), pStream,
+                           pPattern->GetCS());
+    if (!stream.Load())
+      return false;
+    SkPoint cubics[12];
+    SkColor colors[4];
+    m_pCanvas->save();
+    if (!skClip.isEmpty())
+      m_pCanvas->clipPath(skClip, SkCanvas::kIntersect_Op, true);
+    m_pCanvas->concat(skMatrix);
+    while (!stream.BitStream()->IsEOF()) {
+      uint32_t flag = stream.GetFlag();
+      int iStartPoint = flag ? 4 : 0;
+      int iStartColor = flag ? 2 : 0;
+      if (flag) {
+        SkPoint tempCubics[4];
+        for (int i = 0; i < (int)SK_ARRAY_COUNT(tempCubics); i++)
+          tempCubics[i] = cubics[(flag * 3 + i) % 12];
+        FXSYS_memcpy(cubics, tempCubics, sizeof(tempCubics));
+        SkColor tempColors[2];
+        tempColors[0] = colors[flag];
+        tempColors[1] = colors[(flag + 1) % 4];
+        FXSYS_memcpy(colors, tempColors, sizeof(tempColors));
+      }
+      for (int i = iStartPoint; i < (int)SK_ARRAY_COUNT(cubics); i++)
+        stream.GetCoords(cubics[i].fX, cubics[i].fY);
+      for (int i = iStartColor; i < (int)SK_ARRAY_COUNT(colors); i++) {
+        FX_FLOAT r = 0.0f, g = 0.0f, b = 0.0f;
+        stream.GetColor(r, g, b);
+        colors[i] = SkColorSetARGBInline(0xFF, (U8CPU)(r * 255),
+                                         (U8CPU)(g * 255), (U8CPU)(b * 255));
+      }
+      m_pCanvas->drawPatch(cubics, colors, nullptr, paint);
+    }
+    m_pCanvas->restore();
+    return true;
   }
   m_pCanvas->save();
   if (!skClip.isEmpty())
