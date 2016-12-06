@@ -11,6 +11,7 @@
 #include <vector>
 
 #include "core/fxcodec/fx_codec.h"
+#include "core/fxcrt/cfx_maybe_owned.h"
 #include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxge/cfx_fontmapper.h"
@@ -813,7 +814,7 @@ bool CGdiDeviceDriver::GDI_SetDIBits(CFX_DIBitmap* pBitmap1,
   } else {
     CFX_DIBitmap* pBitmap = pBitmap1;
     if (pBitmap->IsCmykImage()) {
-      pBitmap = pBitmap->CloneConvert(FXDIB_Rgb);
+      pBitmap = pBitmap->CloneConvert(FXDIB_Rgb).release();
       if (!pBitmap)
         return false;
     }
@@ -852,23 +853,19 @@ bool CGdiDeviceDriver::GDI_StretchDIBits(CFX_DIBitmap* pBitmap1,
   } else {
     SetStretchBltMode(m_hDC, COLORONCOLOR);
   }
-  CFX_DIBitmap* pToStrechBitmap = pBitmap;
-  bool del = false;
+  CFX_MaybeOwned<CFX_DIBitmap> pToStrechBitmap(pBitmap);
   if (m_DeviceClass == FXDC_PRINTER &&
       ((int64_t)pBitmap->GetWidth() * pBitmap->GetHeight() >
        (int64_t)abs(dest_width) * abs(dest_height))) {
     pToStrechBitmap = pBitmap->StretchTo(dest_width, dest_height);
-    del = true;
   }
   CFX_ByteString toStrechBitmapInfo =
-      CFX_WindowsDIB::GetBitmapInfo(pToStrechBitmap);
+      CFX_WindowsDIB::GetBitmapInfo(pToStrechBitmap.Get());
   ::StretchDIBits(m_hDC, dest_left, dest_top, dest_width, dest_height, 0, 0,
                   pToStrechBitmap->GetWidth(), pToStrechBitmap->GetHeight(),
                   pToStrechBitmap->GetBuffer(),
                   (BITMAPINFO*)toStrechBitmapInfo.c_str(), DIB_RGB_COLORS,
                   SRCCOPY);
-  if (del)
-    delete pToStrechBitmap;
   return true;
 }
 

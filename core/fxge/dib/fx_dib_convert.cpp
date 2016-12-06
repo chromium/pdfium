@@ -9,6 +9,7 @@
 
 #include "core/fxcodec/fx_codec.h"
 #include "core/fxge/fx_dib.h"
+#include "third_party/base/ptr_util.h"
 
 class CFX_Palette {
  public:
@@ -781,11 +782,12 @@ bool ConvertBuffer(FXDIB_Format dest_format,
   }
 }
 
-CFX_DIBitmap* CFX_DIBSource::CloneConvert(FXDIB_Format dest_format) const {
+std::unique_ptr<CFX_DIBitmap> CFX_DIBSource::CloneConvert(
+    FXDIB_Format dest_format) const {
   if (dest_format == GetFormat())
     return Clone(nullptr);
 
-  std::unique_ptr<CFX_DIBitmap> pClone(new CFX_DIBitmap);
+  std::unique_ptr<CFX_DIBitmap> pClone = pdfium::MakeUnique<CFX_DIBitmap>();
   if (!pClone->Create(m_Width, m_Height, dest_format))
     return nullptr;
 
@@ -819,7 +821,8 @@ CFX_DIBitmap* CFX_DIBSource::CloneConvert(FXDIB_Format dest_format) const {
   }
   if (pal_8bpp)
     pClone->CopyPalette(pal_8bpp.get());
-  return pClone.release();
+
+  return pClone;
 }
 
 bool CFX_DIBitmap::ConvertFormat(FXDIB_Format dest_format) {

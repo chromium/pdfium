@@ -34,7 +34,7 @@ CPDF_ImageCacheEntry::~CPDF_ImageCacheEntry() {}
 void CPDF_ImageCacheEntry::Reset(const CFX_DIBitmap* pBitmap) {
   m_pCachedBitmap.reset();
   if (pBitmap)
-    m_pCachedBitmap = pdfium::WrapUnique<CFX_DIBSource>(pBitmap->Clone());
+    m_pCachedBitmap = pBitmap->Clone();
   CalcSize();
 }
 

@@ -82,9 +82,10 @@ void CBC_TwoDimWriter::RenderBitmapResult(CFX_DIBitmap*& pOutBitmap,
     }
   }
   if (!m_bFixedSize) {
-    CFX_DIBitmap* pStretchBitmap = pOutBitmap->StretchTo(m_Width, m_Height);
+    std::unique_ptr<CFX_DIBitmap> pStretchBitmap =
+        pOutBitmap->StretchTo(m_Width, m_Height);
     delete pOutBitmap;
-    pOutBitmap = pStretchBitmap;
+    pOutBitmap = pStretchBitmap.release();
   }
 }
 

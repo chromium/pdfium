@@ -85,8 +85,6 @@ class CPDF_DIBSource : public CFX_DIBSource {
                           int clip_left,
                           int clip_width) const override;
 
-  CFX_DIBitmap* GetBitmap() const;
-  void ReleaseBitmap(CFX_DIBitmap* pBitmap) const;
   uint32_t GetMatteColor() const { return m_MatteColor; }
 
   int StartLoadDIBSource(CPDF_Document* pDoc,

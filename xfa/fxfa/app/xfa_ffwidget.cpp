@@ -13,6 +13,7 @@
 #include "core/fpdfapi/page/cpdf_pageobjectholder.h"
 #include "core/fxcodec/codec/ccodec_progressivedecoder.h"
 #include "core/fxcodec/fx_codec.h"
+#include "core/fxcrt/cfx_maybe_owned.h"
 #include "core/fxge/cfx_gemodule.h"
 #include "core/fxge/cfx_pathdata.h"
 #include "core/fxge/cfx_renderdevice.h"
@@ -647,7 +648,7 @@ bool CXFA_ImageRenderer::StartDIBSource() {
     if (m_pDIBSource->HasAlpha() &&
         !(m_pDevice->GetRenderCaps() & FXRC_ALPHA_IMAGE) &&
         !(m_pDevice->GetRenderCaps() & FXRC_GET_BITS)) {
-      m_pCloneConvert.reset(m_pDIBSource->CloneConvert(FXDIB_Rgb));
+      m_pCloneConvert = m_pDIBSource->CloneConvert(FXDIB_Rgb);
       if (!m_pCloneConvert) {
         m_Result = false;
         return false;
@@ -783,10 +784,8 @@ void CXFA_ImageRenderer::CompositeDIBitmap(CFX_DIBitmap* pDIBitmap,
       FX_RECT rect(left, top, left + pDIBitmap->GetWidth(),
                    top + pDIBitmap->GetHeight());
       rect.Intersect(m_pDevice->GetClipBox());
-      CFX_DIBitmap* pClone = nullptr;
-      bool bClone = false;
+      CFX_MaybeOwned<CFX_DIBitmap> pClone;
       if (m_pDevice->GetBackDrop() && m_pDevice->GetBitmap()) {
-        bClone = true;
         pClone = m_pDevice->GetBackDrop()->Clone(&rect);
         CFX_DIBitmap* pForeBitmap = m_pDevice->GetBitmap();
         pClone->CompositeBitmap(0, 0, pClone->GetWidth(), pClone->GetHeight(),
@@ -803,35 +802,34 @@ void CXFA_ImageRenderer::CompositeDIBitmap(CFX_DIBitmap* pDIBitmap,
         pClone = pDIBitmap;
       }
       if (m_pDevice->GetBackDrop()) {
-        m_pDevice->SetDIBits(pClone, rect.left, rect.top);
+        m_pDevice->SetDIBits(pClone.Get(), rect.left, rect.top);
       } else {
         if (pDIBitmap->IsAlphaMask())
           return;
         m_pDevice->SetDIBitsWithBlend(pDIBitmap, rect.left, rect.top,
                                       blend_mode);
       }
-      if (bClone) {
-        delete pClone;
-      }
     }
     return;
   }
-  if (pDIBitmap->HasAlpha() &&
-      !(m_pDevice->GetRenderCaps() & FXRC_ALPHA_IMAGE)) {
-    CFX_DIBitmap* pCloneConvert = pDIBitmap->CloneConvert(FXDIB_Rgb);
-    if (!pCloneConvert) {
-      return;
-    }
-    CXFA_ImageRenderer imageRender;
-    bool bRet = imageRender.Start(m_pDevice, pCloneConvert, m_FillArgb,
-                                  m_BitmapAlpha, &m_ImageMatrix, m_Flags);
-    while (bRet) {
-      bRet = imageRender.Continue(nullptr);
-    }
-    delete pCloneConvert;
+  if (!pDIBitmap->HasAlpha() ||
+      (m_pDevice->GetRenderCaps() & FXRC_ALPHA_IMAGE)) {
     return;
   }
+  std::unique_ptr<CFX_DIBitmap> pCloneConvert =
+      pDIBitmap->CloneConvert(FXDIB_Rgb);
+  if (!pCloneConvert)
+    return;
+
+  CXFA_ImageRenderer imageRender;
+  if (!imageRender.Start(m_pDevice, pCloneConvert.get(), m_FillArgb,
+                         m_BitmapAlpha, &m_ImageMatrix, m_Flags)) {
+    return;
+  }
+  while (imageRender.Continue(nullptr))
+    continue;
 }
+
 void XFA_DrawImage(CFX_Graphics* pGS,
                    const CFX_RectF& rtImage,
                    CFX_Matrix* pMatrix,

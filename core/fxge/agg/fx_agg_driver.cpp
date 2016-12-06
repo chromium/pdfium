@@ -1602,7 +1602,7 @@ bool CFX_AggDeviceDriver::GetDIBits(CFX_DIBitmap* pBitmap, int left, int top) {
 
   FX_RECT rect(left, top, left + pBitmap->GetWidth(),
                top + pBitmap->GetHeight());
-  CFX_DIBitmap* pBack = nullptr;
+  std::unique_ptr<CFX_DIBitmap> pBack;
   if (m_pOriDevice) {
     pBack = m_pOriDevice->Clone(&rect);
     if (!pBack)
@@ -1616,18 +1616,15 @@ bool CFX_AggDeviceDriver::GetDIBits(CFX_DIBitmap* pBitmap, int left, int top) {
       return true;
   }
 
-  bool bRet = true;
   left = std::min(left, 0);
   top = std::min(top, 0);
   if (m_bRgbByteOrder) {
     RgbByteOrderTransferBitmap(pBitmap, 0, 0, rect.Width(), rect.Height(),
-                               pBack, left, top);
-  } else {
-    bRet = pBitmap->TransferBitmap(0, 0, rect.Width(), rect.Height(), pBack,
-                                   left, top);
+                               pBack.get(), left, top);
+    return true;
   }
-  delete pBack;
-  return bRet;
+  return pBitmap->TransferBitmap(0, 0, rect.Width(), rect.Height(), pBack.get(),
+                                 left, top);
 }
 
 CFX_DIBitmap* CFX_AggDeviceDriver::GetBackDrop() {

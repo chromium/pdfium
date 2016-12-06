@@ -7,6 +7,7 @@
 #include "core/fxcodec/codec/ccodec_progressivedecoder.h"
 
 #include <algorithm>
+#include <memory>
 
 #include "core/fxcodec/fx_codec.h"
 #include "core/fxge/fx_dib.h"
@@ -2261,7 +2262,7 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::ContinueDecode(IFX_Pause* pPause) {
           (m_clipBox.left == 0 && m_clipBox.top == 0 &&
            m_clipBox.right == m_SrcWidth && m_clipBox.bottom == m_SrcHeight)
               ? pDIBitmap
-              : pDIBitmap->Clone(&m_clipBox);
+              : pDIBitmap->Clone(&m_clipBox).release();
       if (pDIBitmap != pClipBitmap) {
         delete pDIBitmap;
       }
@@ -2346,7 +2347,7 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::ContinueDecode(IFX_Pause* pPause) {
         m_status = FXCODEC_STATUS_ERR_MEMORY;
         return m_status;
       }
-      CFX_DIBitmap* pStrechBitmap = pFormatBitmap->StretchTo(
+      std::unique_ptr<CFX_DIBitmap> pStrechBitmap = pFormatBitmap->StretchTo(
           m_sizeX, m_sizeY, m_bInterpol ? FXDIB_INTERPOL : FXDIB_DOWNSAMPLE);
       delete pFormatBitmap;
       pFormatBitmap = nullptr;
@@ -2357,9 +2358,7 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::ContinueDecode(IFX_Pause* pPause) {
         return m_status;
       }
       m_pDeviceBitmap->TransferBitmap(m_startX, m_startY, m_sizeX, m_sizeY,
-                                      pStrechBitmap, 0, 0);
-      delete pStrechBitmap;
-      pStrechBitmap = nullptr;
+                                      pStrechBitmap.get(), 0, 0);
       m_pDeviceBitmap = nullptr;
       m_pFile = nullptr;
       m_status = FXCODEC_STATUS_DECODE_FINISH;

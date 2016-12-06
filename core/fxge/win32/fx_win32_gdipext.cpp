@@ -7,6 +7,7 @@
 #include <windows.h>
 
 #include <algorithm>
+#include <memory>
 
 #include "core/fxcrt/fx_system.h"
 #include "core/fxge/cfx_gemodule.h"
@@ -14,6 +15,7 @@
 #include "core/fxge/cfx_pathdata.h"
 #include "core/fxge/win32/cfx_windowsdib.h"
 #include "core/fxge/win32/win32_int.h"
+#include "third_party/base/ptr_util.h"
 
 // Has to come before gdiplus.h
 namespace Gdiplus {
@@ -458,26 +460,27 @@ static GpBrush* _GdipCreateBrush(DWORD argb) {
   CallFunc(GdipCreateSolidFill)((ARGB)argb, &solidBrush);
   return solidBrush;
 }
-static CFX_DIBitmap* _StretchMonoToGray(int dest_width,
-                                        int dest_height,
-                                        const CFX_DIBitmap* pSource,
-                                        FX_RECT* pClipRect) {
+
+static std::unique_ptr<CFX_DIBitmap> StretchMonoToGray(
+    int dest_width,
+    int dest_height,
+    const CFX_DIBitmap* pSource,
+    FX_RECT* pClipRect) {
   bool bFlipX = dest_width < 0;
-  if (bFlipX) {
+  if (bFlipX)
     dest_width = -dest_width;
-  }
+
   bool bFlipY = dest_height < 0;
-  if (bFlipY) {
+  if (bFlipY)
     dest_height = -dest_height;
-  }
+
   int result_width = pClipRect->Width();
   int result_height = pClipRect->Height();
   int result_pitch = (result_width + 3) / 4 * 4;
-  CFX_DIBitmap* pStretched = new CFX_DIBitmap;
-  if (!pStretched->Create(result_width, result_height, FXDIB_8bppRgb)) {
-    delete pStretched;
+  auto pStretched = pdfium::MakeUnique<CFX_DIBitmap>();
+  if (!pStretched->Create(result_width, result_height, FXDIB_8bppRgb))
     return nullptr;
-  }
+
   LPBYTE dest_buf = pStretched->GetBuffer();
   int src_width = pSource->GetWidth();
   int src_height = pSource->GetHeight();
@@ -512,6 +515,7 @@ static CFX_DIBitmap* _StretchMonoToGray(int dest_width,
   }
   return pStretched;
 }
+
 static void OutputImageMask(GpGraphics* pGraphics,
                             BOOL bMonoDevice,
                             const CFX_DIBitmap* pBitmap,
@@ -558,10 +562,10 @@ static void OutputImageMask(GpGraphics* pGraphics,
       return;
     }
     image_clip.Offset(-image_rect.left, -image_rect.top);
-    CFX_DIBitmap* pStretched = nullptr;
+    std::unique_ptr<CFX_DIBitmap> pStretched;
     if (src_width * src_height > 10000) {
       pStretched =
-          _StretchMonoToGray(dest_width, dest_height, pBitmap, &image_clip);
+          StretchMonoToGray(dest_width, dest_height, pBitmap, &image_clip);
     } else {
       pStretched =
           pBitmap->StretchTo(dest_width, dest_height, false, &image_clip);
@@ -584,7 +588,6 @@ static void OutputImageMask(GpGraphics* pGraphics,
                              image_rect.left + image_clip.left,
                              image_rect.top + image_clip.top);
     CallFunc(GdipDisposeImage)(bitmap);
-    delete pStretched;
     return;
   }
   GpBitmap* bitmap;
@@ -610,13 +613,11 @@ static void OutputImage(GpGraphics* pGraphics,
       ((CWin32Platform*)CFX_GEModule::Get()->GetPlatformData())->m_GdiplusExt;
   if (pBitmap->GetBPP() == 1 && (pSrcRect->left % 8)) {
     FX_RECT new_rect(0, 0, src_width, src_height);
-    CFX_DIBitmap* pCloned = pBitmap->Clone(pSrcRect);
-    if (!pCloned) {
+    std::unique_ptr<CFX_DIBitmap> pCloned = pBitmap->Clone(pSrcRect);
+    if (!pCloned)
       return;
-    }
-    OutputImage(pGraphics, pCloned, &new_rect, dest_left, dest_top, dest_width,
-                dest_height);
-    delete pCloned;
+    OutputImage(pGraphics, pCloned.get(), &new_rect, dest_left, dest_top,
+                dest_width, dest_height);
     return;
   }
   int src_pitch = pBitmap->GetPitch();

@@ -343,9 +343,10 @@ void CBC_OneDimWriter::RenderBitmapResult(CFX_DIBitmap*& pOutBitmap,
               e);
     BC_EXCEPTION_CHECK_ReturnVoid(e);
   }
-  CFX_DIBitmap* pStretchBitmap = pOutBitmap->StretchTo(m_Width, m_Height);
+  std::unique_ptr<CFX_DIBitmap> pStretchBitmap =
+      pOutBitmap->StretchTo(m_Width, m_Height);
   delete pOutBitmap;
-  pOutBitmap = pStretchBitmap;
+  pOutBitmap = pStretchBitmap.release();
 }
 
 void CBC_OneDimWriter::RenderDeviceResult(CFX_RenderDevice* device,

@@ -215,18 +215,19 @@ class CFX_DIBSource {
 
   void CopyPalette(const uint32_t* pSrcPal);
 
-  CFX_DIBitmap* Clone(const FX_RECT* pClip = nullptr) const;
-  CFX_DIBitmap* CloneConvert(FXDIB_Format format) const;
+  std::unique_ptr<CFX_DIBitmap> Clone(const FX_RECT* pClip = nullptr) const;
+  std::unique_ptr<CFX_DIBitmap> CloneConvert(FXDIB_Format format) const;
 
-  CFX_DIBitmap* StretchTo(int dest_width,
-                          int dest_height,
-                          uint32_t flags = 0,
-                          const FX_RECT* pClip = nullptr) const;
-  CFX_DIBitmap* TransformTo(const CFX_Matrix* pMatrix,
-                            int& left,
-                            int& top,
-                            uint32_t flags = 0,
-                            const FX_RECT* pClip = nullptr) const;
+  std::unique_ptr<CFX_DIBitmap> StretchTo(int dest_width,
+                                          int dest_height,
+                                          uint32_t flags = 0,
+                                          const FX_RECT* pClip = nullptr) const;
+  std::unique_ptr<CFX_DIBitmap> TransformTo(
+      const CFX_Matrix* pMatrix,
+      int& left,
+      int& top,
+      uint32_t flags = 0,
+      const FX_RECT* pClip = nullptr) const;
 
   CFX_DIBitmap* GetAlphaMask(const FX_RECT* pClip = nullptr) const;
   bool CopyAlphaMask(const CFX_DIBSource* pAlphaMask,
@@ -307,14 +308,14 @@ class CFX_DIBitmap : public CFX_DIBSource {
   void SetPixel(int x, int y, uint32_t color);
 
   bool LoadChannel(FXDIB_Channel destChannel,
-                   const CFX_DIBSource* pSrcBitmap,
+                   CFX_DIBSource* pSrcBitmap,
                    FXDIB_Channel srcChannel);
 
   bool LoadChannel(FXDIB_Channel destChannel, int value);
 
   bool MultiplyAlpha(int alpha);
 
-  bool MultiplyAlpha(const CFX_DIBSource* pAlphaMask);
+  bool MultiplyAlpha(CFX_DIBSource* pAlphaMask);
 
   bool TransferBitmap(int dest_left,
                       int dest_top,

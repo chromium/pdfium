@@ -132,16 +132,6 @@ CPDF_DIBSource::~CPDF_DIBSource() {
   }
 }
 
-CFX_DIBitmap* CPDF_DIBSource::GetBitmap() const {
-  return m_pCachedBitmap ? m_pCachedBitmap.get() : Clone();
-}
-
-void CPDF_DIBSource::ReleaseBitmap(CFX_DIBitmap* pBitmap) const {
-  if (pBitmap && pBitmap != m_pCachedBitmap.get()) {
-    delete pBitmap;
-  }
-}
-
 bool CPDF_DIBSource::Load(CPDF_Document* pDoc,
                           const CPDF_Stream* pStream,
                           CPDF_DIBSource** ppMask,

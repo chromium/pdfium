@@ -46,6 +46,7 @@
 #include "core/fpdfapi/render/render_int.h"
 #include "core/fpdfdoc/cpdf_occontext.h"
 #include "core/fxcodec/fx_codec.h"
+#include "core/fxcrt/cfx_maybe_owned.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxge/cfx_fxgedevice.h"
 #include "core/fxge/cfx_graphstatedata.h"
@@ -2265,7 +2266,7 @@ void CPDF_RenderStatus::DrawTilingPattern(CPDF_TilingPattern* pPattern,
     std::unique_ptr<CFX_DIBitmap> pEnlargedBitmap =
         DrawPatternBitmap(m_pContext->GetDocument(), m_pContext->GetPageCache(),
                           pPattern, pObj2Device, 8, 8, m_Options.m_Flags);
-    pPatternBitmap.reset(pEnlargedBitmap->StretchTo(width, height));
+    pPatternBitmap = pEnlargedBitmap->StretchTo(width, height);
   } else {
     pPatternBitmap = DrawPatternBitmap(
         m_pContext->GetDocument(), m_pContext->GetPageCache(), pPattern,
@@ -2439,10 +2440,8 @@ void CPDF_RenderStatus::CompositeDIBitmap(CFX_DIBitmap* pDIBitmap,
       FX_RECT rect(left, top, left + pDIBitmap->GetWidth(),
                    top + pDIBitmap->GetHeight());
       rect.Intersect(m_pDevice->GetClipBox());
-      CFX_DIBitmap* pClone = nullptr;
-      bool bClone = false;
+      CFX_MaybeOwned<CFX_DIBitmap> pClone;
       if (m_pDevice->GetBackDrop() && m_pDevice->GetBitmap()) {
-        bClone = true;
         pClone = m_pDevice->GetBackDrop()->Clone(&rect);
         CFX_DIBitmap* pForeBitmap = m_pDevice->GetBitmap();
         pClone->CompositeBitmap(0, 0, pClone->GetWidth(), pClone->GetHeight(),
@@ -2459,16 +2458,12 @@ void CPDF_RenderStatus::CompositeDIBitmap(CFX_DIBitmap* pDIBitmap,
         pClone = pDIBitmap;
       }
       if (m_pDevice->GetBackDrop()) {
-        m_pDevice->SetDIBits(pClone, rect.left, rect.top);
+        m_pDevice->SetDIBits(pClone.Get(), rect.left, rect.top);
       } else {
-        if (pDIBitmap->IsAlphaMask()) {
+        if (pDIBitmap->IsAlphaMask())
           return;
-        }
         m_pDevice->SetDIBitsWithBlend(pDIBitmap, rect.left, rect.top,
                                       blend_mode);
-      }
-      if (bClone) {
-        delete pClone;
       }
     }
     return;

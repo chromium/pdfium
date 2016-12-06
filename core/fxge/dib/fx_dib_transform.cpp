@@ -301,23 +301,25 @@ FX_RECT FXDIB_SwapClipBox(FX_RECT& clip,
   return rect;
 }
 
-CFX_DIBitmap* CFX_DIBSource::TransformTo(const CFX_Matrix* pDestMatrix,
-                                         int& result_left,
-                                         int& result_top,
-                                         uint32_t flags,
-                                         const FX_RECT* pDestClip) const {
+std::unique_ptr<CFX_DIBitmap> CFX_DIBSource::TransformTo(
+    const CFX_Matrix* pDestMatrix,
+    int& result_left,
+    int& result_top,
+    uint32_t flags,
+    const FX_RECT* pDestClip) const {
   CFX_ImageTransformer transformer(this, pDestMatrix, flags, pDestClip);
   transformer.Start();
   transformer.Continue(nullptr);
   result_left = transformer.result().left;
   result_top = transformer.result().top;
-  return transformer.DetachBitmap().release();
+  return transformer.DetachBitmap();
 }
 
-CFX_DIBitmap* CFX_DIBSource::StretchTo(int dest_width,
-                                       int dest_height,
-                                       uint32_t flags,
-                                       const FX_RECT* pClip) const {
+std::unique_ptr<CFX_DIBitmap> CFX_DIBSource::StretchTo(
+    int dest_width,
+    int dest_height,
+    uint32_t flags,
+    const FX_RECT* pClip) const {
   FX_RECT clip_rect(0, 0, FXSYS_abs(dest_width), FXSYS_abs(dest_height));
   if (pClip)
     clip_rect.Intersect(*pClip);
@@ -333,7 +335,8 @@ CFX_DIBitmap* CFX_DIBSource::StretchTo(int dest_width,
                                clip_rect, flags);
   if (stretcher.Start())
     stretcher.Continue(nullptr);
-  return storer.Detach().release();
+
+  return storer.Detach();
 }
 
 CFX_ImageTransformer::CFX_ImageTransformer(const CFX_DIBSource* pSrc,
