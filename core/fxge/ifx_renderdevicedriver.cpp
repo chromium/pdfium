@@ -99,3 +99,7 @@ bool IFX_RenderDeviceDriver::SetBitsWithMask(const CFX_DIBSource* pBitmap,
                                              int blend_type) {
   return false;
 }
+
+#if defined _SKIA_SUPPORT_ || _SKIA_SUPPORT_PATHS_
+void IFX_RenderDeviceDriver::Flush() {}
+#endif

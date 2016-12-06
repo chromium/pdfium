@@ -898,6 +898,7 @@ std::unique_ptr<CFX_DIBitmap> DrawPatternBitmap(
   context.AppendLayer(pPattern->form(), &mtPattern2Bitmap);
   context.Render(&bitmap_device, &options, nullptr);
 #if defined _SKIA_SUPPORT_PATHS_
+  bitmap_device.Flush();
   pBitmap->UnPreMultiply();
 #endif
   return pBitmap;
@@ -1553,6 +1554,7 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
                            pFormResource, true);
   bitmap_render.ProcessObjectNoClip(pPageObj, &new_matrix);
 #if defined _SKIA_SUPPORT_PATHS_
+  bitmap_device.Flush();
   bitmap->UnPreMultiply();
 #endif
   m_bStopped = bitmap_render.m_bStopped;

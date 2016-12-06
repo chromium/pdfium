@@ -354,9 +354,13 @@ CFX_RenderDevice::CFX_RenderDevice()
       m_RenderCaps(0),
       m_DeviceClass(0) {}
 
-CFX_RenderDevice::~CFX_RenderDevice() {}
+CFX_RenderDevice::~CFX_RenderDevice() {
+#if defined _SKIA_SUPPORT_ || defined _SKIA_SUPPORT_PATHS_
+  Flush();
+#endif
+}
 
-#ifdef _SKIA_SUPPORT_
+#if defined _SKIA_SUPPORT_ || defined _SKIA_SUPPORT_PATHS_
 void CFX_RenderDevice::Flush() {
   m_pDeviceDriver.reset();
 }
@@ -615,6 +619,9 @@ bool CFX_RenderDevice::DrawFillStrokePath(const CFX_PathData* pPathData,
           blend_type)) {
     return false;
   }
+#if defined _SKIA_SUPPORT_ || defined _SKIA_SUPPORT_PATHS_
+  bitmap_device.GetDeviceDriver()->Flush();
+#endif
   FX_RECT src_rect(0, 0, FXSYS_round(rect.Width() * fScaleX),
                    FXSYS_round(rect.Height() * fScaleY));
   return m_pDeviceDriver->SetDIBits(&bitmap, 0, &src_rect, rect.left, rect.top,

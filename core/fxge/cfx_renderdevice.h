@@ -227,6 +227,8 @@ class CFX_RenderDevice {
                                int top,
                                int bitmap_alpha,
                                int blend_type);
+#endif
+#if defined _SKIA_SUPPORT_ || defined _SKIA_SUPPORT_PATHS_
   void Flush();
 #endif
 

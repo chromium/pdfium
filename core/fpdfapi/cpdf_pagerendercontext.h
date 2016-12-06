@@ -21,10 +21,10 @@ class CPDF_PageRenderContext {
   CPDF_PageRenderContext();
   ~CPDF_PageRenderContext();
 
+  std::unique_ptr<CPDF_AnnotList> m_pAnnots;
   std::unique_ptr<CFX_RenderDevice> m_pDevice;
   std::unique_ptr<CPDF_RenderContext> m_pContext;
   std::unique_ptr<CPDF_ProgressiveRenderer> m_pRenderer;
-  std::unique_ptr<CPDF_AnnotList> m_pAnnots;
   std::unique_ptr<CPDF_RenderOptions> m_pOptions;
 };
 

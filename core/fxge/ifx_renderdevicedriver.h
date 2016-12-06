@@ -103,6 +103,9 @@ class IFX_RenderDeviceDriver {
                                int top,
                                int bitmap_alpha,
                                int blend_type);
+#if defined _SKIA_SUPPORT_ || defined _SKIA_SUPPORT_PATHS_
+  virtual void Flush();
+#endif
 };
 
 #endif  // CORE_FXGE_IFX_RENDERDEVICEDRIVER_H_

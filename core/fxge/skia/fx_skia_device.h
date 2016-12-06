@@ -152,8 +152,9 @@ class CFX_SkiaDeviceDriver : public IFX_RenderDeviceDriver {
                    const CFX_GraphStateData* pGraphState,
                    const SkMatrix& matrix);
   void Clear(uint32_t color);
-  void Flush();
+  void Flush() override;
   SkPictureRecorder* GetRecorder() const { return m_pRecorder; }
+  void PreMultiply() { m_pBitmap->PreMultiply(); }
   static void PreMultiply(CFX_DIBitmap* pDIBitmap);
   SkCanvas* SkiaCanvas() { return m_pCanvas; }
   void DebugVerifyBitmapIsPreMultiplied() const;
@@ -166,9 +167,7 @@ class CFX_SkiaDeviceDriver : public IFX_RenderDeviceDriver {
   CFX_DIBitmap* m_pOriDevice;
   SkCanvas* m_pCanvas;
   SkPictureRecorder* const m_pRecorder;
-#ifdef _SKIA_SUPPORT_
   std::unique_ptr<SkiaState> m_pCache;
-#endif
 #ifdef _SKIA_SUPPORT_PATHS_
   std::unique_ptr<CFX_ClipRgn> m_pClipRgn;
   std::vector<std::unique_ptr<CFX_ClipRgn>> m_StateStack;
@@ -177,6 +176,6 @@ class CFX_SkiaDeviceDriver : public IFX_RenderDeviceDriver {
 #endif
   bool m_bGroupKnockout;
 };
-#endif  // defined(_SKIA_SUPPORT_)
+#endif  // defined _SKIA_SUPPORT_ || defined _SKIA_SUPPORT_PATHS_
 
 #endif  // CORE_FXGE_SKIA_FX_SKIA_DEVICE_H_
