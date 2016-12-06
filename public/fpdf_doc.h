@@ -313,10 +313,10 @@ DLLEXPORT unsigned long STDCALL FPDF_GetMetaText(FPDF_DOCUMENT document,
 // The |buffer| is always encoded in UTF-16LE. The |buffer| is followed by two
 // bytes of zeros indicating the end of the string.  If |buflen| is less than
 // the returned length, or |buffer| is NULL, |buffer| will not be modified.
-DLLEXPORT unsigned long STDCALL FPDF_GetPagelLabel(FPDF_DOCUMENT document,
-                                                   int page_index,
-                                                   void* buffer,
-                                                   unsigned long buflen);
+DLLEXPORT unsigned long STDCALL FPDF_GetPageLabel(FPDF_DOCUMENT document,
+                                                  int page_index,
+                                                  void* buffer,
+                                                  unsigned long buflen);
 
 #ifdef __cplusplus
 }  // extern "C"

@@ -396,10 +396,10 @@ DLLEXPORT unsigned long STDCALL FPDF_GetMetaText(FPDF_DOCUMENT document,
   return Utf16EncodeMaybeCopyAndReturnLength(text, buffer, buflen);
 }
 
-DLLEXPORT unsigned long STDCALL FPDF_GetPagelLabel(FPDF_DOCUMENT document,
-                                                   int page_index,
-                                                   void* buffer,
-                                                   unsigned long buflen) {
+DLLEXPORT unsigned long STDCALL FPDF_GetPageLabel(FPDF_DOCUMENT document,
+                                                  int page_index,
+                                                  void* buffer,
+                                                  unsigned long buflen) {
   if (page_index < 0)
     return 0;
 

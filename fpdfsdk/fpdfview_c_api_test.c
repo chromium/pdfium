@@ -65,7 +65,7 @@ int CheckPDFiumCApi() {
     CHK(FPDFLink_CountQuadPoints);
     CHK(FPDFLink_GetQuadPoints);
     CHK(FPDF_GetMetaText);
-    CHK(FPDF_GetPagelLabel);
+    CHK(FPDF_GetPageLabel);
 
     // fpdf_edit.h
     CHK(FPDF_CreateNewDocument);
