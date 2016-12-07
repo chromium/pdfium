@@ -60,15 +60,24 @@ class CFX_RetainPtr {
 // Trivial implementation - internal ref count with virtual destructor.
 class CFX_Retainable {
  public:
+  bool HasOneRef() const { return m_nRefCount == 1; }
+
+ protected:
+  virtual ~CFX_Retainable() {}
+
+ private:
+  template <typename U>
+  friend struct ReleaseDeleter;
+
+  template <typename U>
+  friend class CFX_RetainPtr;
+
   void Retain() { ++m_nRefCount; }
   void Release() {
     if (--m_nRefCount == 0)
       delete this;
   }
-  bool HasOneRef() const { return m_nRefCount == 1; }
 
- protected:
-  virtual ~CFX_Retainable() {}
   intptr_t m_nRefCount = 0;
 };
 
@@ -76,6 +85,8 @@ namespace pdfium {
 
 // Helper to make a CFX_RetainPtr along the lines of std::make_unique<>(),
 // or pdfium::MakeUnique<>(). Arguments are forwarded to T's constructor.
+// Classes managed by CFX_RetainPtr should have protected (or private)
+// constructors, and should friend this function.
 template <typename T, typename... Args>
 CFX_RetainPtr<T> MakeRetain(Args&&... args) {
   return CFX_RetainPtr<T>(new T(std::forward<Args>(args)...));

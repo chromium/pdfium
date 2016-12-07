@@ -70,8 +70,8 @@ bool g_FXCRT_XML_IsNameChar(uint8_t ch) {
 
 class CXML_DataBufAcc : public IFX_BufferedReadStream {
  public:
-  CXML_DataBufAcc(const uint8_t* pBuffer, size_t size);
-  ~CXML_DataBufAcc() override;
+  template <typename T, typename... Args>
+  friend CFX_RetainPtr<T> pdfium::MakeRetain(Args&&... args);
 
   // IFX_BufferedReadStream
   bool IsEOF() override;
@@ -83,6 +83,9 @@ class CXML_DataBufAcc : public IFX_BufferedReadStream {
   FX_FILESIZE GetBlockOffset() override;
 
  private:
+  CXML_DataBufAcc(const uint8_t* pBuffer, size_t size);
+  ~CXML_DataBufAcc() override;
+
   const uint8_t* m_pBuffer;
   size_t m_dwSize;
   size_t m_dwCurPos;
@@ -130,9 +133,8 @@ FX_FILESIZE CXML_DataBufAcc::GetBlockOffset() {
 
 class CXML_DataStmAcc : public IFX_BufferedReadStream {
  public:
-  explicit CXML_DataStmAcc(
-      const CFX_RetainPtr<IFX_SeekableReadStream>& pFileRead);
-  ~CXML_DataStmAcc() override;
+  template <typename T, typename... Args>
+  friend CFX_RetainPtr<T> pdfium::MakeRetain(Args&&... args);
 
   // IFX_BufferedReadStream
   bool IsEOF() override;
@@ -144,6 +146,10 @@ class CXML_DataStmAcc : public IFX_BufferedReadStream {
   FX_FILESIZE GetBlockOffset() override;
 
  private:
+  explicit CXML_DataStmAcc(
+      const CFX_RetainPtr<IFX_SeekableReadStream>& pFileRead);
+  ~CXML_DataStmAcc() override;
+
   CFX_RetainPtr<IFX_SeekableReadStream> m_pFileRead;
   uint8_t* m_pBuffer;
   FX_FILESIZE m_nStart;
@@ -215,12 +221,12 @@ CXML_Parser::CXML_Parser()
 CXML_Parser::~CXML_Parser() {}
 
 bool CXML_Parser::Init(uint8_t* pBuffer, size_t size) {
-  m_pDataAcc.Reset(new CXML_DataBufAcc(pBuffer, size));
+  m_pDataAcc = pdfium::MakeRetain<CXML_DataBufAcc>(pBuffer, size);
   return Init();
 }
 
 bool CXML_Parser::Init(const CFX_RetainPtr<IFX_SeekableReadStream>& pFileRead) {
-  m_pDataAcc.Reset(new CXML_DataStmAcc(pFileRead));
+  m_pDataAcc = pdfium::MakeRetain<CXML_DataStmAcc>(pFileRead);
   return Init();
 }
 

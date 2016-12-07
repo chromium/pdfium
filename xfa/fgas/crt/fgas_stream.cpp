@@ -194,8 +194,8 @@ enum FX_STREAMTYPE {
 
 class CFGAS_Stream : public IFGAS_Stream {
  public:
-  CFGAS_Stream();
-  ~CFGAS_Stream() override;
+  template <typename T, typename... Args>
+  friend CFX_RetainPtr<T> pdfium::MakeRetain(Args&&... args);
 
   bool LoadFile(const FX_WCHAR* pszSrcFileName, uint32_t dwAccess);
   bool LoadBuffer(uint8_t* pData, int32_t iTotalSize, uint32_t dwAccess);
@@ -227,6 +227,9 @@ class CFGAS_Stream : public IFGAS_Stream {
                                                  int32_t iLength) override;
 
  protected:
+  CFGAS_Stream();
+  ~CFGAS_Stream() override;
+
   FX_STREAMTYPE m_eStreamType;
   IFGAS_StreamImp* m_pStreamImp;
   uint32_t m_dwAccess;
@@ -239,8 +242,8 @@ class CFGAS_Stream : public IFGAS_Stream {
 
 class CFGAS_TextStream : public IFGAS_Stream {
  public:
-  explicit CFGAS_TextStream(const CFX_RetainPtr<IFGAS_Stream>& pStream);
-  ~CFGAS_TextStream() override;
+  template <typename T, typename... Args>
+  friend CFX_RetainPtr<T> pdfium::MakeRetain(Args&&... args);
 
   // IFGAS_Stream
   uint32_t GetAccessModes() const override;
@@ -262,6 +265,9 @@ class CFGAS_TextStream : public IFGAS_Stream {
                                                  int32_t iLength) override;
 
  protected:
+  explicit CFGAS_TextStream(const CFX_RetainPtr<IFGAS_Stream>& pStream);
+  ~CFGAS_TextStream() override;
+
   void InitStream();
 
   uint16_t m_wCodePage;

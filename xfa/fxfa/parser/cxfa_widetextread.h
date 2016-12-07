@@ -7,11 +7,13 @@
 #ifndef XFA_FXFA_PARSER_CXFA_WIDETEXTREAD_H_
 #define XFA_FXFA_PARSER_CXFA_WIDETEXTREAD_H_
 
+#include "core/fxcrt/cfx_retain_ptr.h"
 #include "xfa/fgas/crt/fgas_stream.h"
 
 class CXFA_WideTextRead : public IFGAS_Stream {
  public:
-  explicit CXFA_WideTextRead(const CFX_WideString& wsBuffer);
+  template <typename T, typename... Args>
+  friend CFX_RetainPtr<T> pdfium::MakeRetain(Args&&... args);
 
   // IFGAS_Stream
   uint32_t GetAccessModes() const override;
@@ -35,6 +37,9 @@ class CXFA_WideTextRead : public IFGAS_Stream {
   CFX_WideString GetSrcText() const;
 
  protected:
+  explicit CXFA_WideTextRead(const CFX_WideString& wsBuffer);
+  ~CXFA_WideTextRead() override;
+
   CFX_WideString m_wsBuffer;
   int32_t m_iPosition;
 };
