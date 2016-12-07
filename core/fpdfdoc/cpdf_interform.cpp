@@ -1079,8 +1079,12 @@ void CPDF_InterForm::FixPageFields(const CPDF_Page* pPage) {
 }
 
 CPDF_FormField* CPDF_InterForm::AddTerminalField(CPDF_Dictionary* pFieldDict) {
-  if (!pFieldDict->KeyExist("T"))
-    return nullptr;
+  if (!pFieldDict->KeyExist("FT")) {
+    // Key "FT" is required for terminal fields, it is also inheritable.
+    CPDF_Dictionary* pParentDict = pFieldDict->GetDictFor("Parent");
+    if (!pParentDict || !pParentDict->KeyExist("FT"))
+      return nullptr;
+  }
 
   CPDF_Dictionary* pDict = pFieldDict;
   CFX_WideString csWName = FPDF_GetFullName(pFieldDict);
