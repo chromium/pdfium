@@ -25,35 +25,25 @@ namespace {
 
 class CFX_CRTFileAccess : public IFX_FileAccess {
  public:
-  CFX_CRTFileAccess();
-  ~CFX_CRTFileAccess() override;
+  template <typename T, typename... Args>
+  friend CFX_RetainPtr<T> pdfium::MakeRetain(Args&&... args);
 
   // IFX_FileAccess
-  void Release() override;
-  IFX_FileAccess* Retain() override;
   void GetPath(CFX_WideString& wsPath) override;
   CFX_RetainPtr<IFX_SeekableStream> CreateFileStream(uint32_t dwModes) override;
 
   bool Init(const CFX_WideStringC& wsPath);
 
  private:
+  CFX_CRTFileAccess();
+  ~CFX_CRTFileAccess() override;
+
   CFX_WideString m_path;
-  uint32_t m_RefCount;
 };
 
-CFX_CRTFileAccess::CFX_CRTFileAccess() : m_RefCount(0) {}
+CFX_CRTFileAccess::CFX_CRTFileAccess() {}
 
 CFX_CRTFileAccess::~CFX_CRTFileAccess() {}
-
-void CFX_CRTFileAccess::Release() {
-  if (--m_RefCount == 0)
-    delete this;
-}
-
-IFX_FileAccess* CFX_CRTFileAccess::Retain() {
-  m_RefCount++;
-  return (IFX_FileAccess*)this;
-}
 
 void CFX_CRTFileAccess::GetPath(CFX_WideString& wsPath) {
   wsPath = m_path;
@@ -66,7 +56,6 @@ CFX_RetainPtr<IFX_SeekableStream> CFX_CRTFileAccess::CreateFileStream(
 
 bool CFX_CRTFileAccess::Init(const CFX_WideStringC& wsPath) {
   m_path = wsPath;
-  m_RefCount = 1;
   return true;
 }
 
@@ -385,11 +374,12 @@ bool CFX_MemoryStream::ExpandBlocks(size_t size) {
 }  // namespace
 
 #ifdef PDF_ENABLE_XFA
-IFX_FileAccess* IFX_FileAccess::CreateDefault(const CFX_WideStringC& wsPath) {
+CFX_RetainPtr<IFX_FileAccess> IFX_FileAccess::CreateDefault(
+    const CFX_WideStringC& wsPath) {
   if (wsPath.GetLength() == 0)
     return nullptr;
 
-  CFX_CRTFileAccess* pFA = new CFX_CRTFileAccess;
+  auto pFA = pdfium::MakeRetain<CFX_CRTFileAccess>();
   pFA->Init(wsPath);
   return pFA;
 }

@@ -179,7 +179,7 @@ class CFX_FontSourceEnum_File {
   ~CFX_FontSourceEnum_File();
 
   FX_POSITION GetStartPosition();
-  IFX_FileAccess* GetNext(FX_POSITION& pos);
+  CFX_RetainPtr<IFX_FileAccess> GetNext(FX_POSITION& pos);
 
  private:
   CFX_ByteString GetNextFile();

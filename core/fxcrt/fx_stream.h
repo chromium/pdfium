@@ -143,13 +143,11 @@ class IFX_BufferedReadStream : public IFX_ReadStream {
 };
 
 #ifdef PDF_ENABLE_XFA
-class IFX_FileAccess {
+class IFX_FileAccess : public CFX_Retainable {
  public:
-  static IFX_FileAccess* CreateDefault(const CFX_WideStringC& wsPath);
+  static CFX_RetainPtr<IFX_FileAccess> CreateDefault(
+      const CFX_WideStringC& wsPath);
 
-  virtual ~IFX_FileAccess() {}
-  virtual void Release() = 0;
-  virtual IFX_FileAccess* Retain() = 0;
   virtual void GetPath(CFX_WideString& wsPath) = 0;
   virtual CFX_RetainPtr<IFX_SeekableStream> CreateFileStream(
       uint32_t dwModes) = 0;
