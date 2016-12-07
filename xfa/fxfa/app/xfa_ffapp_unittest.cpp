@@ -13,12 +13,10 @@
 #include "testing/gtest/include/gtest/gtest.h"
 #include "third_party/base/ptr_util.h"
 
-using UniqueFileRead = std::unique_ptr<IFX_SeekableReadStream,
-                                       ReleaseDeleter<IFX_SeekableReadStream>>;
-
 TEST(CXFAFileRead, NoStreams) {
   std::vector<CPDF_Stream*> streams;
-  UniqueFileRead fileread(MakeSeekableReadStream(streams));
+  CFX_RetainPtr<IFX_SeekableReadStream> fileread =
+      MakeSeekableReadStream(streams);
 
   uint8_t output_buffer[16];
   memset(output_buffer, 0xbd, sizeof(output_buffer));
@@ -28,9 +26,10 @@ TEST(CXFAFileRead, NoStreams) {
 
 TEST(CXFAFileRead, EmptyStreams) {
   std::vector<CPDF_Stream*> streams;
-  std::unique_ptr<CPDF_Stream> stream1 = pdfium::MakeUnique<CPDF_Stream>();
+  auto stream1 = pdfium::MakeUnique<CPDF_Stream>();
   streams.push_back(stream1.get());
-  UniqueFileRead fileread(MakeSeekableReadStream(streams));
+  CFX_RetainPtr<IFX_SeekableReadStream> fileread =
+      MakeSeekableReadStream(streams);
 
   uint8_t output_buffer[16];
   memset(output_buffer, 0xbd, sizeof(output_buffer));
@@ -40,9 +39,9 @@ TEST(CXFAFileRead, EmptyStreams) {
 
 TEST(CXFAFileRead, NormalStreams) {
   std::vector<CPDF_Stream*> streams;
-  std::unique_ptr<CPDF_Stream> stream1 = pdfium::MakeUnique<CPDF_Stream>();
-  std::unique_ptr<CPDF_Stream> stream2 = pdfium::MakeUnique<CPDF_Stream>();
-  std::unique_ptr<CPDF_Stream> stream3 = pdfium::MakeUnique<CPDF_Stream>();
+  auto stream1 = pdfium::MakeUnique<CPDF_Stream>();
+  auto stream2 = pdfium::MakeUnique<CPDF_Stream>();
+  auto stream3 = pdfium::MakeUnique<CPDF_Stream>();
 
   // 16 chars total.
   stream1->InitStream(reinterpret_cast<const uint8_t*>("one t"), 5,
@@ -55,7 +54,8 @@ TEST(CXFAFileRead, NormalStreams) {
   streams.push_back(stream1.get());
   streams.push_back(stream2.get());
   streams.push_back(stream3.get());
-  UniqueFileRead fileread(MakeSeekableReadStream(streams));
+  CFX_RetainPtr<IFX_SeekableReadStream> fileread =
+      MakeSeekableReadStream(streams);
 
   uint8_t output_buffer[16];
   memset(output_buffer, 0xbd, sizeof(output_buffer));

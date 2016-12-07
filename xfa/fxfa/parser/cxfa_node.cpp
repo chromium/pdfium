@@ -1441,13 +1441,16 @@ void CXFA_Node::Script_NodeClass_SaveXML(CFXJSE_Arguments* pArguments) {
       }
       XFA_DataExporter_DealWithDataGroupNode(this);
     }
-    std::unique_ptr<IFX_MemoryStream, ReleaseDeleter<IFX_MemoryStream>>
-        pMemoryStream(IFX_MemoryStream::Create(true));
+    CFX_RetainPtr<IFX_MemoryStream> pMemoryStream =
+        IFX_MemoryStream::Create(true);
+
+    // Note: ambiguious below without static_cast.
     std::unique_ptr<IFGAS_Stream, ReleaseDeleter<IFGAS_Stream>> pStream(
         IFGAS_Stream::CreateStream(
-            static_cast<IFX_SeekableWriteStream*>(pMemoryStream.get()),
+            CFX_RetainPtr<IFX_SeekableWriteStream>(pMemoryStream),
             FX_STREAMACCESS_Text | FX_STREAMACCESS_Write |
                 FX_STREAMACCESS_Append));
+
     if (!pStream) {
       pArguments->GetReturnValue()->SetString(bsXMLHeader);
       return;

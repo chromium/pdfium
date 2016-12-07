@@ -51,7 +51,7 @@ class CPDF_Image {
                                bool bLoadMask = false) const;
 
   void SetImage(const CFX_DIBitmap* pDIBitmap);
-  void SetJpegImage(IFX_SeekableReadStream* pFile);
+  void SetJpegImage(const CFX_RetainPtr<IFX_SeekableReadStream>& pFile);
 
   void ResetCache(CPDF_Page* pPage, const CFX_DIBitmap* pDIBitmap);
 

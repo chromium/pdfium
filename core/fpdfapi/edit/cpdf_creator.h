@@ -9,6 +9,7 @@
 
 #include <memory>
 
+#include "core/fxcrt/cfx_retain_ptr.h"
 #include "core/fxcrt/fx_basic.h"
 
 class CPDF_Array;
@@ -32,7 +33,7 @@ class CPDF_Creator {
   ~CPDF_Creator();
 
   void RemoveSecurity();
-  bool Create(IFX_WriteStream* pFile, uint32_t flags = 0);
+  bool Create(const CFX_RetainPtr<IFX_WriteStream>& pFile, uint32_t flags = 0);
   int32_t Continue(IFX_Pause* pPause = nullptr);
   bool SetFileVersion(int32_t fileVersion = 17);
 

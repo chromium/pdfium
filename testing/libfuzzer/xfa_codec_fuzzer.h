@@ -17,10 +17,8 @@ class XFACodecFuzzer {
     std::unique_ptr<CCodec_ModuleMgr> mgr(new CCodec_ModuleMgr());
     std::unique_ptr<CCodec_ProgressiveDecoder> decoder(
         mgr->CreateProgressiveDecoder());
-    Reader source(data, size);
-
-    FXCODEC_STATUS status =
-        decoder->LoadImageInfo(&source, type, nullptr, true);
+    CFX_RetainPtr<Reader> source(new Reader(data, size));
+    FXCODEC_STATUS status = decoder->LoadImageInfo(source, type, nullptr, true);
     if (status != FXCODEC_STATUS_FRAME_READY)
       return 0;
 
@@ -45,8 +43,6 @@ class XFACodecFuzzer {
    public:
     Reader(const uint8_t* data, size_t size) : m_data(data), m_size(size) {}
     ~Reader() {}
-
-    void Release() override {}
 
     bool ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) override {
       if (offset < 0 || static_cast<size_t>(offset) >= m_size)

@@ -9,6 +9,7 @@
 
 #include <vector>
 
+#include "core/fxcrt/cfx_retain_ptr.h"
 #include "xfa/fxfa/fxfa_basic.h"
 #include "xfa/fxfa/fxfa_widget.h"
 
@@ -230,7 +231,8 @@ class IXFA_AppProvider {
    * @param[in] wsURL - http, ftp, such as
    * "http://www.w3.org/TR/REC-xml-names/".
    */
-  virtual IFX_SeekableReadStream* DownloadURL(const CFX_WideString& wsURL) = 0;
+  virtual CFX_RetainPtr<IFX_SeekableReadStream> DownloadURL(
+      const CFX_WideString& wsURL) = 0;
 
   /**
    * POST data to the given url.
@@ -320,7 +322,7 @@ class IXFA_DocEnvironment {
   virtual bool SetGlobalProperty(CXFA_FFDoc* hDoc,
                                  const CFX_ByteStringC& szPropName,
                                  CFXJSE_Value* pValue) = 0;
-  virtual IFX_SeekableReadStream* OpenLinkedFile(
+  virtual CFX_RetainPtr<IFX_SeekableReadStream> OpenLinkedFile(
       CXFA_FFDoc* hDoc,
       const CFX_WideString& wsLink) = 0;
 };

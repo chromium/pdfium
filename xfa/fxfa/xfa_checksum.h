@@ -62,7 +62,7 @@ class CXFA_ChecksumContext {
 
   void StartChecksum();
   void Update(const CFX_ByteStringC& bsText);
-  bool UpdateChecksum(IFX_SeekableReadStream* pSrcFile,
+  bool UpdateChecksum(const CFX_RetainPtr<IFX_SeekableReadStream>& pSrcFile,
                       FX_FILESIZE offset = 0,
                       size_t size = 0);
   void FinishChecksum();

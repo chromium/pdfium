@@ -119,15 +119,17 @@ void RenderPageImpl(CPDF_PageRenderContext* pContext,
 
 class CPDF_CustomAccess final : public IFX_SeekableReadStream {
  public:
-  explicit CPDF_CustomAccess(FPDF_FILEACCESS* pFileAccess);
-  ~CPDF_CustomAccess() override {}
+  static CFX_RetainPtr<CPDF_CustomAccess> Create(FPDF_FILEACCESS* pFileAccess) {
+    return CFX_RetainPtr<CPDF_CustomAccess>(new CPDF_CustomAccess(pFileAccess));
+  }
 
   // IFX_SeekableReadStream
   FX_FILESIZE GetSize() override;
-  void Release() override;
   bool ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) override;
 
  private:
+  explicit CPDF_CustomAccess(FPDF_FILEACCESS* pFileAccess);
+
   FPDF_FILEACCESS m_FileAccess;
 };
 
@@ -136,10 +138,6 @@ CPDF_CustomAccess::CPDF_CustomAccess(FPDF_FILEACCESS* pFileAccess)
 
 FX_FILESIZE CPDF_CustomAccess::GetSize() {
   return m_FileAccess.m_FileLen;
-}
-
-void CPDF_CustomAccess::Release() {
-  delete this;
 }
 
 bool CPDF_CustomAccess::ReadBlock(void* buffer,
@@ -161,12 +159,12 @@ bool CPDF_CustomAccess::ReadBlock(void* buffer,
 #ifdef PDF_ENABLE_XFA
 class CFPDF_FileStream : public IFX_SeekableStream {
  public:
-  explicit CFPDF_FileStream(FPDF_FILEHANDLER* pFS);
-  ~CFPDF_FileStream() override {}
+  static CFX_RetainPtr<CFPDF_FileStream> Create(FPDF_FILEHANDLER* pFS) {
+    return CFX_RetainPtr<CFPDF_FileStream>(new CFPDF_FileStream(pFS));
+  }
+  ~CFPDF_FileStream() override;
 
   // IFX_SeekableStream:
-  IFX_SeekableStream* Retain() override;
-  void Release() override;
   FX_FILESIZE GetSize() override;
   bool IsEOF() override;
   FX_FILESIZE GetPosition() override;
@@ -178,6 +176,8 @@ class CFPDF_FileStream : public IFX_SeekableStream {
   void SetPosition(FX_FILESIZE pos) { m_nCurPos = pos; }
 
  protected:
+  explicit CFPDF_FileStream(FPDF_FILEHANDLER* pFS);
+
   FPDF_FILEHANDLER* m_pFS;
   FX_FILESIZE m_nCurPos;
 };
@@ -187,14 +187,9 @@ CFPDF_FileStream::CFPDF_FileStream(FPDF_FILEHANDLER* pFS) {
   m_nCurPos = 0;
 }
 
-IFX_SeekableStream* CFPDF_FileStream::Retain() {
-  return this;
-}
-
-void CFPDF_FileStream::Release() {
+CFPDF_FileStream::~CFPDF_FileStream() {
   if (m_pFS && m_pFS->Release)
     m_pFS->Release(m_pFS->clientData);
-  delete this;
 }
 
 FX_FILESIZE CFPDF_FileStream::GetSize() {
@@ -310,13 +305,15 @@ CFX_DIBitmap* CFXBitmapFromFPDFBitmap(FPDF_BITMAP bitmap) {
   return static_cast<CFX_DIBitmap*>(bitmap);
 }
 
-IFX_SeekableReadStream* MakeSeekableReadStream(FPDF_FILEACCESS* pFileAccess) {
-  return new CPDF_CustomAccess(pFileAccess);
+CFX_RetainPtr<IFX_SeekableReadStream> MakeSeekableReadStream(
+    FPDF_FILEACCESS* pFileAccess) {
+  return CPDF_CustomAccess::Create(pFileAccess);
 }
 
 #ifdef PDF_ENABLE_XFA
-IFX_SeekableStream* MakeSeekableStream(FPDF_FILEHANDLER* pFilehandler) {
-  return new CFPDF_FileStream(pFilehandler);
+CFX_RetainPtr<IFX_SeekableStream> MakeSeekableStream(
+    FPDF_FILEHANDLER* pFilehandler) {
+  return CFPDF_FileStream::Create(pFilehandler);
 }
 #endif  // PDF_ENABLE_XFA
 
@@ -447,7 +444,7 @@ DLLEXPORT FPDF_DOCUMENT STDCALL FPDF_LoadDocument(FPDF_STRING file_path,
                                                   FPDF_BYTESTRING password) {
   // NOTE: the creation of the file needs to be by the embedder on the
   // other side of this API.
-  IFX_SeekableReadStream* pFileAccess =
+  CFX_RetainPtr<IFX_SeekableReadStream> pFileAccess =
       IFX_SeekableReadStream::CreateFromFilename((const FX_CHAR*)file_path);
   if (!pFileAccess)
     return nullptr;
@@ -500,25 +497,26 @@ DLLEXPORT FPDF_BOOL STDCALL FPDF_LoadXFA(FPDF_DOCUMENT document) {
 
 class CMemFile final : public IFX_SeekableReadStream {
  public:
-  CMemFile(uint8_t* pBuf, FX_FILESIZE size) : m_pBuf(pBuf), m_size(size) {}
+  static CFX_RetainPtr<CMemFile> Create(uint8_t* pBuf, FX_FILESIZE size) {
+    return CFX_RetainPtr<CMemFile>(new CMemFile(pBuf, size));
+  }
 
-  void Release() override { delete this; }
   FX_FILESIZE GetSize() override { return m_size; }
   bool ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) override {
-    if (offset < 0) {
+    if (offset < 0)
       return false;
-    }
+
     FX_SAFE_FILESIZE newPos = pdfium::base::checked_cast<FX_FILESIZE>(size);
     newPos += offset;
-    if (!newPos.IsValid() || newPos.ValueOrDie() > m_size) {
+    if (!newPos.IsValid() || newPos.ValueOrDie() > m_size)
       return false;
-    }
+
     FXSYS_memcpy(buffer, m_pBuf + offset, size);
     return true;
   }
 
  private:
-  ~CMemFile() override {}
+  CMemFile(uint8_t* pBuf, FX_FILESIZE size) : m_pBuf(pBuf), m_size(size) {}
 
   uint8_t* const m_pBuf;
   const FX_FILESIZE m_size;
@@ -527,12 +525,11 @@ class CMemFile final : public IFX_SeekableReadStream {
 DLLEXPORT FPDF_DOCUMENT STDCALL FPDF_LoadMemDocument(const void* data_buf,
                                                      int size,
                                                      FPDF_BYTESTRING password) {
-  CMemFile* pMemFile = new CMemFile((uint8_t*)data_buf, size);
-  std::unique_ptr<CPDF_Parser> pParser(new CPDF_Parser);
+  CFX_RetainPtr<CMemFile> pMemFile = CMemFile::Create((uint8_t*)data_buf, size);
+  auto pParser = pdfium::MakeUnique<CPDF_Parser>();
   pParser->SetPassword(password);
 
-  std::unique_ptr<CPDF_Document> pDocument(
-      new CPDF_Document(std::move(pParser)));
+  auto pDocument = pdfium::MakeUnique<CPDF_Document>(std::move(pParser));
   CPDF_Parser::Error error =
       pDocument->GetParser()->StartParse(pMemFile, pDocument.get());
   if (error != CPDF_Parser::SUCCESS) {
@@ -546,12 +543,12 @@ DLLEXPORT FPDF_DOCUMENT STDCALL FPDF_LoadMemDocument(const void* data_buf,
 DLLEXPORT FPDF_DOCUMENT STDCALL
 FPDF_LoadCustomDocument(FPDF_FILEACCESS* pFileAccess,
                         FPDF_BYTESTRING password) {
-  CPDF_CustomAccess* pFile = new CPDF_CustomAccess(pFileAccess);
-  std::unique_ptr<CPDF_Parser> pParser(new CPDF_Parser);
+  CFX_RetainPtr<CPDF_CustomAccess> pFile =
+      CPDF_CustomAccess::Create(pFileAccess);
+  auto pParser = pdfium::MakeUnique<CPDF_Parser>();
   pParser->SetPassword(password);
 
-  std::unique_ptr<CPDF_Document> pDocument(
-      new CPDF_Document(std::move(pParser)));
+  auto pDocument = pdfium::MakeUnique<CPDF_Document>(std::move(pParser));
   CPDF_Parser::Error error =
       pDocument->GetParser()->StartParse(pFile, pDocument.get());
   if (error != CPDF_Parser::SUCCESS) {

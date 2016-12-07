@@ -32,7 +32,7 @@ class CFX_CRTFileAccess : public IFX_FileAccess {
   void Release() override;
   IFX_FileAccess* Retain() override;
   void GetPath(CFX_WideString& wsPath) override;
-  IFX_SeekableStream* CreateFileStream(uint32_t dwModes) override;
+  CFX_RetainPtr<IFX_SeekableStream> CreateFileStream(uint32_t dwModes) override;
 
   bool Init(const CFX_WideStringC& wsPath);
 
@@ -59,7 +59,8 @@ void CFX_CRTFileAccess::GetPath(CFX_WideString& wsPath) {
   wsPath = m_path;
 }
 
-IFX_SeekableStream* CFX_CRTFileAccess::CreateFileStream(uint32_t dwModes) {
+CFX_RetainPtr<IFX_SeekableStream> CFX_CRTFileAccess::CreateFileStream(
+    uint32_t dwModes) {
   return IFX_SeekableStream::CreateFromFilename(m_path.c_str(), dwModes);
 }
 
@@ -77,8 +78,6 @@ class CFX_CRTFileStream final : public IFX_SeekableStream {
   ~CFX_CRTFileStream() override;
 
   // IFX_SeekableStream:
-  IFX_SeekableStream* Retain() override;
-  void Release() override;
   FX_FILESIZE GetSize() override;
   bool IsEOF() override;
   FX_FILESIZE GetPosition() override;
@@ -89,23 +88,12 @@ class CFX_CRTFileStream final : public IFX_SeekableStream {
 
  private:
   std::unique_ptr<IFXCRT_FileAccess> m_pFile;
-  uint32_t m_dwCount;
 };
 
 CFX_CRTFileStream::CFX_CRTFileStream(std::unique_ptr<IFXCRT_FileAccess> pFA)
-    : m_pFile(std::move(pFA)), m_dwCount(1) {}
+    : m_pFile(std::move(pFA)) {}
 
 CFX_CRTFileStream::~CFX_CRTFileStream() {}
-IFX_SeekableStream* CFX_CRTFileStream::Retain() {
-  m_dwCount++;
-  return this;
-}
-
-void CFX_CRTFileStream::Release() {
-  uint32_t nCount = --m_dwCount;
-  if (!nCount)
-    delete this;
-}
 
 FX_FILESIZE CFX_CRTFileStream::GetSize() {
   return m_pFile->GetSize();
@@ -150,8 +138,6 @@ class CFX_MemoryStream final : public IFX_MemoryStream {
   ~CFX_MemoryStream() override;
 
   // IFX_MemoryStream
-  IFX_SeekableStream* Retain() override;
-  void Release() override;
   FX_FILESIZE GetSize() override;
   bool IsEOF() override;
   FX_FILESIZE GetPosition() override;
@@ -168,19 +154,18 @@ class CFX_MemoryStream final : public IFX_MemoryStream {
   void DetachBuffer() override;
 
  private:
+  bool ExpandBlocks(size_t size);
+
   CFX_ArrayTemplate<uint8_t*> m_Blocks;
-  uint32_t m_dwCount;
   size_t m_nTotalSize;
   size_t m_nCurSize;
   size_t m_nCurPos;
   size_t m_nGrowSize;
   uint32_t m_dwFlags;
-  bool ExpandBlocks(size_t size);
 };
 
 CFX_MemoryStream::CFX_MemoryStream(bool bConsecutive)
-    : m_dwCount(1),
-      m_nTotalSize(0),
+    : m_nTotalSize(0),
       m_nCurSize(0),
       m_nCurPos(0),
       m_nGrowSize(FX_MEMSTREAM_BlockSize) {
@@ -191,8 +176,7 @@ CFX_MemoryStream::CFX_MemoryStream(bool bConsecutive)
 CFX_MemoryStream::CFX_MemoryStream(uint8_t* pBuffer,
                                    size_t nSize,
                                    bool bTakeOver)
-    : m_dwCount(1),
-      m_nTotalSize(nSize),
+    : m_nTotalSize(nSize),
       m_nCurSize(nSize),
       m_nCurPos(0),
       m_nGrowSize(FX_MEMSTREAM_BlockSize) {
@@ -208,19 +192,6 @@ CFX_MemoryStream::~CFX_MemoryStream() {
     }
   }
   m_Blocks.RemoveAll();
-}
-
-IFX_SeekableStream* CFX_MemoryStream::Retain() {
-  m_dwCount++;
-  return this;
-}
-
-void CFX_MemoryStream::Release() {
-  uint32_t nCount = --m_dwCount;
-  if (nCount) {
-    return;
-  }
-  delete this;
 }
 
 FX_FILESIZE CFX_MemoryStream::GetSize() {
@@ -419,41 +390,44 @@ IFX_FileAccess* IFX_FileAccess::CreateDefault(const CFX_WideStringC& wsPath) {
 #endif  // PDF_ENABLE_XFA
 
 // static
-IFX_SeekableStream* IFX_SeekableStream::CreateFromFilename(
+CFX_RetainPtr<IFX_SeekableStream> IFX_SeekableStream::CreateFromFilename(
     const FX_CHAR* filename,
     uint32_t dwModes) {
   std::unique_ptr<IFXCRT_FileAccess> pFA(IFXCRT_FileAccess::Create());
   if (!pFA->Open(filename, dwModes))
     return nullptr;
-  return new CFX_CRTFileStream(std::move(pFA));
+  return CFX_RetainPtr<IFX_SeekableStream>(
+      new CFX_CRTFileStream(std::move(pFA)));
 }
 
 // static
-IFX_SeekableStream* IFX_SeekableStream::CreateFromFilename(
+CFX_RetainPtr<IFX_SeekableStream> IFX_SeekableStream::CreateFromFilename(
     const FX_WCHAR* filename,
     uint32_t dwModes) {
   std::unique_ptr<IFXCRT_FileAccess> pFA(IFXCRT_FileAccess::Create());
   if (!pFA->Open(filename, dwModes))
     return nullptr;
-  return new CFX_CRTFileStream(std::move(pFA));
+  return CFX_RetainPtr<IFX_SeekableStream>(
+      new CFX_CRTFileStream(std::move(pFA)));
 }
 
 // static
-IFX_SeekableReadStream* IFX_SeekableReadStream::CreateFromFilename(
-    const FX_CHAR* filename) {
+CFX_RetainPtr<IFX_SeekableReadStream>
+IFX_SeekableReadStream::CreateFromFilename(const FX_CHAR* filename) {
   return IFX_SeekableStream::CreateFromFilename(filename, FX_FILEMODE_ReadOnly);
 }
 
 // static
-IFX_MemoryStream* IFX_MemoryStream::Create(uint8_t* pBuffer,
-                                           size_t dwSize,
-                                           bool bTakeOver) {
-  return new CFX_MemoryStream(pBuffer, dwSize, bTakeOver);
+CFX_RetainPtr<IFX_MemoryStream> IFX_MemoryStream::Create(uint8_t* pBuffer,
+                                                         size_t dwSize,
+                                                         bool bTakeOver) {
+  return CFX_RetainPtr<IFX_MemoryStream>(
+      new CFX_MemoryStream(pBuffer, dwSize, bTakeOver));
 }
 
 // static
-IFX_MemoryStream* IFX_MemoryStream::Create(bool bConsecutive) {
-  return new CFX_MemoryStream(bConsecutive);
+CFX_RetainPtr<IFX_MemoryStream> IFX_MemoryStream::Create(bool bConsecutive) {
+  return CFX_RetainPtr<IFX_MemoryStream>(new CFX_MemoryStream(bConsecutive));
 }
 
 FX_FLOAT FXSYS_tan(FX_FLOAT a) {

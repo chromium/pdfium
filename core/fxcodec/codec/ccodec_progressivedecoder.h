@@ -10,6 +10,7 @@
 #include <vector>
 
 #include "core/fxcodec/fx_codec_def.h"
+#include "core/fxcrt/cfx_retain_ptr.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxge/fx_dib.h"
 
@@ -45,10 +46,11 @@ class CCodec_ProgressiveDecoder {
   explicit CCodec_ProgressiveDecoder(CCodec_ModuleMgr* pCodecMgr);
   ~CCodec_ProgressiveDecoder();
 
-  FXCODEC_STATUS LoadImageInfo(IFX_SeekableReadStream* pFile,
-                               FXCODEC_IMAGE_TYPE imageType,
-                               CFX_DIBAttribute* pAttribute,
-                               bool bSkipImageTypeCheck);
+  FXCODEC_STATUS LoadImageInfo(
+      const CFX_RetainPtr<IFX_SeekableReadStream>& pFile,
+      FXCODEC_IMAGE_TYPE imageType,
+      CFX_DIBAttribute* pAttribute,
+      bool bSkipImageTypeCheck);
 
   FXCODEC_IMAGE_TYPE GetType() const { return m_imagType; }
   int32_t GetWidth() const { return m_SrcWidth; }
@@ -125,7 +127,7 @@ class CCodec_ProgressiveDecoder {
     std::vector<uint8_t> m_pWeightTables;
   };
 
-  IFX_SeekableReadStream* m_pFile;
+  CFX_RetainPtr<IFX_SeekableReadStream> m_pFile;
   CCodec_ModuleMgr* m_pCodecMgr;
   FXJPEG_Context* m_pJpegContext;
   FXPNG_Context* m_pPngContext;

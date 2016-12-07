@@ -16,17 +16,14 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   if (!stream)
     return 0;
 
-  std::unique_ptr<IFX_SeekableReadStream,
-                  ReleaseDeleter<IFX_SeekableReadStream>>
-      fileRead(stream->MakeSeekableReadStream());
+  CFX_RetainPtr<IFX_SeekableReadStream> fileRead =
+      stream->MakeSeekableReadStream();
   if (!fileRead)
     return 0;
 
   CFX_SAXReader reader;
-  if (reader.StartParse(fileRead.get(), 0, -1, CFX_SaxParseMode_NotSkipSpace) <
-      0) {
+  if (reader.StartParse(fileRead, 0, -1, CFX_SaxParseMode_NotSkipSpace) < 0)
     return 0;
-  }
 
   while (1) {
     int32_t ret = reader.ContinueParse(nullptr);

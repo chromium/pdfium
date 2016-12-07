@@ -33,9 +33,10 @@ CPDF_DataAvail::DownloadHints::~DownloadHints() {}
 // static
 int CPDF_DataAvail::s_CurrentDataAvailRecursionDepth = 0;
 
-CPDF_DataAvail::CPDF_DataAvail(FileAvail* pFileAvail,
-                               IFX_SeekableReadStream* pFileRead,
-                               bool bSupportHintTable)
+CPDF_DataAvail::CPDF_DataAvail(
+    FileAvail* pFileAvail,
+    const CFX_RetainPtr<IFX_SeekableReadStream>& pFileRead,
+    bool bSupportHintTable)
     : m_pFileAvail(pFileAvail), m_pFileRead(pFileRead) {
   m_Pos = 0;
   m_dwFileLen = 0;
@@ -72,7 +73,6 @@ CPDF_DataAvail::CPDF_DataAvail(FileAvail* pFileAvail,
   m_pPageDict = nullptr;
   m_pPageResource = nullptr;
   m_docStatus = PDF_DATAAVAIL_HEADER;
-  m_parser.m_bOwnFileRead = false;
   m_bTotalLoadPageTree = false;
   m_bCurPageDictLoadOK = false;
   m_bLinearedDataOK = false;
@@ -320,7 +320,6 @@ bool CPDF_DataAvail::LoadAllFile(DownloadHints* pHints) {
 
 bool CPDF_DataAvail::LoadAllXref(DownloadHints* pHints) {
   m_parser.m_pSyntax->InitParser(m_pFileRead, (uint32_t)m_dwHeaderOffset);
-  m_parser.m_bOwnFileRead = false;
   if (!m_parser.LoadAllCrossRefV4(m_dwLastXRefOffset) &&
       !m_parser.LoadAllCrossRefV5(m_dwLastXRefOffset)) {
     m_docStatus = PDF_DATAAVAIL_LOADALLFILE;
@@ -718,15 +717,16 @@ bool CPDF_DataAvail::IsLinearizedFile(uint8_t* pData, uint32_t dwLen) {
   if (m_pLinearized)
     return true;
 
-  ScopedFileStream file(IFX_MemoryStream::Create(pData, (size_t)dwLen, false));
-  int32_t offset = GetHeaderOffset(file.get());
+  CFX_RetainPtr<IFX_MemoryStream> file =
+      IFX_MemoryStream::Create(pData, (size_t)dwLen, false);
+  int32_t offset = GetHeaderOffset(file);
   if (offset == -1) {
     m_docStatus = PDF_DATAAVAIL_ERROR;
     return false;
   }
 
   m_dwHeaderOffset = offset;
-  m_syntaxParser.InitParser(file.get(), offset);
+  m_syntaxParser.InitParser(file, offset);
   m_syntaxParser.RestorePos(m_syntaxParser.m_HeaderOffset + 9);
 
   bool bNumber;
@@ -753,9 +753,9 @@ bool CPDF_DataAvail::CheckEnd(DownloadHints* pHints) {
     uint8_t buffer[1024];
     m_pFileRead->ReadBlock(buffer, req_pos, dwSize);
 
-    ScopedFileStream file(
-        IFX_MemoryStream::Create(buffer, (size_t)dwSize, false));
-    m_syntaxParser.InitParser(file.get(), 0);
+    CFX_RetainPtr<IFX_MemoryStream> file =
+        IFX_MemoryStream::Create(buffer, (size_t)dwSize, false);
+    m_syntaxParser.InitParser(file, 0);
     m_syntaxParser.RestorePos(dwSize - 1);
 
     if (m_syntaxParser.SearchWord("startxref", true, false, dwSize)) {
@@ -801,8 +801,9 @@ int32_t CPDF_DataAvail::CheckCrossRefStream(DownloadHints* pHints,
 
     m_pFileRead->ReadBlock(pBuf, m_dwCurrentXRefSteam, iSize);
 
-    ScopedFileStream file(IFX_MemoryStream::Create(pBuf, (size_t)iSize, false));
-    m_parser.m_pSyntax->InitParser(file.get(), 0);
+    CFX_RetainPtr<IFX_MemoryStream> file =
+        IFX_MemoryStream::Create(pBuf, (size_t)iSize, false);
+    m_parser.m_pSyntax->InitParser(file, 0);
 
     bool bNumber;
     CFX_ByteString objnum = m_parser.m_pSyntax->GetNextWord(&bNumber);
@@ -1047,8 +1048,9 @@ bool CPDF_DataAvail::CheckTrailer(DownloadHints* pHints) {
     if (!m_pFileRead->ReadBlock(pBuf, m_dwTrailerOffset, iSize))
       return false;
 
-    ScopedFileStream file(IFX_MemoryStream::Create(pBuf, (size_t)iSize, false));
-    m_syntaxParser.InitParser(file.get(), 0);
+    CFX_RetainPtr<IFX_MemoryStream> file =
+        IFX_MemoryStream::Create(pBuf, (size_t)iSize, false);
+    m_syntaxParser.InitParser(file, 0);
 
     std::unique_ptr<CPDF_Object> pTrailer(
         m_syntaxParser.GetObject(nullptr, 0, 0, true));

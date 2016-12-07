@@ -63,32 +63,34 @@ static const FX_SAXReader_LPFParse
 }  // namespace
 
 CFX_SAXFile::CFX_SAXFile()
-    : m_pFile(nullptr),
-      m_dwStart(0),
+    : m_dwStart(0),
       m_dwEnd(0),
       m_dwCur(0),
       m_pBuf(nullptr),
       m_dwBufSize(0),
       m_dwBufIndex(0) {}
-bool CFX_SAXFile::StartFile(IFX_SeekableReadStream* pFile,
+
+CFX_SAXFile::~CFX_SAXFile() {}
+
+bool CFX_SAXFile::StartFile(const CFX_RetainPtr<IFX_SeekableReadStream>& pFile,
                             uint32_t dwStart,
                             uint32_t dwLen) {
   ASSERT(!m_pFile && pFile);
   uint32_t dwSize = pFile->GetSize();
-  if (dwStart >= dwSize) {
+  if (dwStart >= dwSize)
     return false;
-  }
-  if (dwLen == static_cast<uint32_t>(-1) || dwStart + dwLen > dwSize) {
+
+  if (dwLen == static_cast<uint32_t>(-1) || dwStart + dwLen > dwSize)
     dwLen = dwSize - dwStart;
-  }
-  if (dwLen == 0) {
+
+  if (dwLen == 0)
     return false;
-  }
+
   m_dwBufSize = std::min(dwLen, kSaxFileBufSize);
   m_pBuf = FX_Alloc(uint8_t, m_dwBufSize);
-  if (!pFile->ReadBlock(m_pBuf, dwStart, m_dwBufSize)) {
+  if (!pFile->ReadBlock(m_pBuf, dwStart, m_dwBufSize))
     return false;
-  }
+
   m_dwStart = dwStart;
   m_dwEnd = dwStart + dwLen;
   m_dwCur = dwStart;
@@ -214,15 +216,16 @@ bool CFX_SAXReader::SkipSpace(uint8_t ch) {
   return (m_dwParseMode & CFX_SaxParseMode_NotSkipSpace) == 0 && ch < 0x21;
 }
 
-int32_t CFX_SAXReader::StartParse(IFX_SeekableReadStream* pFile,
-                                  uint32_t dwStart,
-                                  uint32_t dwLen,
-                                  uint32_t dwParseMode) {
+int32_t CFX_SAXReader::StartParse(
+    const CFX_RetainPtr<IFX_SeekableReadStream>& pFile,
+    uint32_t dwStart,
+    uint32_t dwLen,
+    uint32_t dwParseMode) {
   m_iState = -1;
   Reset();
-  if (!m_File.StartFile(pFile, dwStart, dwLen)) {
+  if (!m_File.StartFile(pFile, dwStart, dwLen))
     return -1;
-  }
+
   m_iState = 0;
   m_eMode = CFX_SaxMode::Text;
   m_ePrevMode = CFX_SaxMode::Text;

@@ -197,17 +197,20 @@ void RegenerateFormFile_Changed(CXFA_Node* pNode,
         if (!pRichTextXML)
           break;
 
-        IFX_MemoryStream* pMemStream = IFX_MemoryStream::Create(true);
+        CFX_RetainPtr<IFX_MemoryStream> pMemStream =
+            IFX_MemoryStream::Create(true);
+
+        // Note: ambiguous without cast below.
         IFGAS_Stream* pTempStream = IFGAS_Stream::CreateStream(
-            (IFX_SeekableWriteStream*)pMemStream, FX_STREAMACCESS_Text |
-                                                      FX_STREAMACCESS_Write |
-                                                      FX_STREAMACCESS_Append);
+            CFX_RetainPtr<IFX_SeekableWriteStream>(pMemStream),
+            FX_STREAMACCESS_Text | FX_STREAMACCESS_Write |
+                FX_STREAMACCESS_Append);
+
         pTempStream->SetCodePage(FX_CODEPAGE_UTF8);
         pRichTextXML->SaveXMLNode(pTempStream);
         wsChildren += CFX_WideString::FromUTF8(
             CFX_ByteStringC(pMemStream->GetBuffer(), pMemStream->GetSize()));
         pTempStream->Release();
-        pMemStream->Release();
       } else if (pRawValueNode->GetElementType() == XFA_Element::Sharpxml &&
                  wsContentType == FX_WSTRC(L"text/xml")) {
         CFX_WideString wsRawValue;
@@ -444,18 +447,20 @@ CXFA_DataExporter::CXFA_DataExporter(CXFA_Document* pDocument)
   ASSERT(m_pDocument);
 }
 
-bool CXFA_DataExporter::Export(IFX_SeekableWriteStream* pWrite) {
+bool CXFA_DataExporter::Export(
+    const CFX_RetainPtr<IFX_SeekableWriteStream>& pWrite) {
   return Export(pWrite, m_pDocument->GetRoot(), 0, nullptr);
 }
 
-bool CXFA_DataExporter::Export(IFX_SeekableWriteStream* pWrite,
-                               CXFA_Node* pNode,
-                               uint32_t dwFlag,
-                               const FX_CHAR* pChecksum) {
-  if (!pWrite) {
-    ASSERT(false);
+bool CXFA_DataExporter::Export(
+    const CFX_RetainPtr<IFX_SeekableWriteStream>& pWrite,
+    CXFA_Node* pNode,
+    uint32_t dwFlag,
+    const FX_CHAR* pChecksum) {
+  ASSERT(pWrite);
+  if (!pWrite)
     return false;
-  }
+
   IFGAS_Stream* pStream = IFGAS_Stream::CreateStream(
       pWrite,
       FX_STREAMACCESS_Text | FX_STREAMACCESS_Write | FX_STREAMACCESS_Append);

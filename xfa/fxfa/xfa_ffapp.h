@@ -12,6 +12,7 @@
 
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
+#include "core/fxcrt/cfx_retain_ptr.h"
 #include "xfa/fgas/font/cfgas_fontmgr.h"
 #include "xfa/fwl/core/cfwl_app.h"
 #include "xfa/fxfa/fxfa.h"
@@ -26,7 +27,7 @@ class CFWL_WidgetMgrDelegate;
 
 // Layering prevents fxcrt from knowing about CPDF_Streams; this could go
 // in fpdfsdk, but it is XFA-Only.
-IFX_SeekableReadStream* MakeSeekableReadStream(
+CFX_RetainPtr<IFX_SeekableReadStream> MakeSeekableReadStream(
     const std::vector<CPDF_Stream*>& streams);
 
 class CXFA_FFApp {
@@ -35,8 +36,7 @@ class CXFA_FFApp {
   ~CXFA_FFApp();
 
   CXFA_FFDoc* CreateDoc(IXFA_DocEnvironment* pDocEnvironment,
-                        IFX_SeekableReadStream* pStream,
-                        bool bTakeOverFile);
+                        const CFX_RetainPtr<IFX_SeekableReadStream>& pStream);
   CXFA_FFDoc* CreateDoc(IXFA_DocEnvironment* pDocEnvironment,
                         CPDF_Document* pPDFDoc);
   void SetDefaultFontMgr(std::unique_ptr<CXFA_DefFontMgr> pFontMgr);

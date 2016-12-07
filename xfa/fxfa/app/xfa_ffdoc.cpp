@@ -152,12 +152,10 @@ int32_t Base64DecodeW(const FX_WCHAR* pSrc, int32_t iSrcLen, uint8_t* pDst) {
 CXFA_FFDoc::CXFA_FFDoc(CXFA_FFApp* pApp, IXFA_DocEnvironment* pDocEnvironment)
     : m_pDocEnvironment(pDocEnvironment),
       m_pDocumentParser(nullptr),
-      m_pStream(nullptr),
       m_pApp(pApp),
       m_pNotify(nullptr),
       m_pPDFDoc(nullptr),
-      m_dwDocType(XFA_DOCTYPE_Static),
-      m_bOwnStream(true) {}
+      m_dwDocType(XFA_DOCTYPE_Static) {}
 
 CXFA_FFDoc::~CXFA_FFDoc() {
   CloseDoc();
@@ -292,8 +290,7 @@ CXFA_FFDocView* CXFA_FFDoc::GetDocView() {
   return it != m_TypeToDocViewMap.end() ? it->second.get() : nullptr;
 }
 
-bool CXFA_FFDoc::OpenDoc(IFX_SeekableReadStream* pStream, bool bTakeOverFile) {
-  m_bOwnStream = bTakeOverFile;
+bool CXFA_FFDoc::OpenDoc(const CFX_RetainPtr<IFX_SeekableReadStream>& pStream) {
   m_pStream = pStream;
   return true;
 }
@@ -326,14 +323,8 @@ bool CXFA_FFDoc::OpenDoc(CPDF_Document* pPDFDoc) {
   if (xfaStreams.empty())
     return false;
 
-  IFX_SeekableReadStream* pFileRead = MakeSeekableReadStream(xfaStreams);
   m_pPDFDoc = pPDFDoc;
-  if (m_pStream) {
-    m_pStream->Release();
-    m_pStream = nullptr;
-  }
-  m_pStream = pFileRead;
-  m_bOwnStream = true;
+  m_pStream = MakeSeekableReadStream(xfaStreams);
   return true;
 }
 
@@ -350,11 +341,6 @@ bool CXFA_FFDoc::CloseDoc() {
 
   m_pNotify.reset(nullptr);
   m_pApp->GetXFAFontMgr()->ReleaseDocFonts(this);
-
-  if (m_dwDocType != XFA_DOCTYPE_XDP && m_pStream && m_bOwnStream) {
-    m_pStream->Release();
-    m_pStream = nullptr;
-  }
 
   for (const auto& pair : m_HashToDibDpiMap)
     delete pair.second.pDibSource;
@@ -417,21 +403,21 @@ CFX_DIBitmap* CXFA_FFDoc::GetPDFNamedImage(const CFX_WideStringC& wsName,
   CPDF_StreamAcc streamAcc;
   streamAcc.LoadAllData(pStream);
 
-  IFX_SeekableReadStream* pImageFileRead = IFX_MemoryStream::Create(
-      (uint8_t*)streamAcc.GetData(), streamAcc.GetSize());
+  CFX_RetainPtr<IFX_SeekableReadStream> pImageFileRead =
+      IFX_MemoryStream::Create((uint8_t*)streamAcc.GetData(),
+                               streamAcc.GetSize());
 
   CFX_DIBitmap* pDibSource = XFA_LoadImageFromBuffer(
       pImageFileRead, FXCODEC_IMAGE_UNKNOWN, iImageXDpi, iImageYDpi);
   m_HashToDibDpiMap[dwHash] = {pDibSource, iImageXDpi, iImageYDpi};
-  pImageFileRead->Release();
   return pDibSource;
 }
 
-bool CXFA_FFDoc::SavePackage(XFA_HashCode code,
-                             IFX_SeekableWriteStream* pFile,
-                             CXFA_ChecksumContext* pCSContext) {
+bool CXFA_FFDoc::SavePackage(
+    XFA_HashCode code,
+    const CFX_RetainPtr<IFX_SeekableWriteStream>& pFile,
+    CXFA_ChecksumContext* pCSContext) {
   CXFA_Document* doc = m_pDocumentParser->GetDocument();
-
   std::unique_ptr<CXFA_DataExporter> pExport(new CXFA_DataExporter(doc));
   CXFA_Node* pNode = code == XFA_HASHCODE_Xfa ? doc->GetRoot()
                                               : ToNode(doc->GetXFAObject(code));
@@ -446,8 +432,10 @@ bool CXFA_FFDoc::SavePackage(XFA_HashCode code,
       pFile, pNode, 0, bsChecksum.GetLength() ? bsChecksum.c_str() : nullptr);
 }
 
-bool CXFA_FFDoc::ImportData(IFX_SeekableReadStream* pStream, bool bXDP) {
-  std::unique_ptr<CXFA_DataImporter> importer(
-      new CXFA_DataImporter(m_pDocumentParser->GetDocument()));
+bool CXFA_FFDoc::ImportData(
+    const CFX_RetainPtr<IFX_SeekableReadStream>& pStream,
+    bool bXDP) {
+  auto importer =
+      pdfium::MakeUnique<CXFA_DataImporter>(m_pDocumentParser->GetDocument());
   return importer->ImportData(pStream);
 }

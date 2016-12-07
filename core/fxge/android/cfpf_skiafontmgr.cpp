@@ -28,14 +28,17 @@ static unsigned long FPF_SkiaStream_Read(FXFT_Stream stream,
                                          unsigned long offset,
                                          unsigned char* buffer,
                                          unsigned long count) {
+  if (count == 0)
+    return 0;
+
   IFX_SeekableReadStream* pFileRead =
-      (IFX_SeekableReadStream*)stream->descriptor.pointer;
+      static_cast<IFX_SeekableReadStream*>(stream->descriptor.pointer);
   if (!pFileRead)
     return 0;
-  if (count > 0) {
-    if (!pFileRead->ReadBlock(buffer, (FX_FILESIZE)offset, (size_t)count))
-      return 0;
-  }
+
+  if (!pFileRead->ReadBlock(buffer, (FX_FILESIZE)offset, (size_t)count))
+    return 0;
+
   return count;
 }
 
@@ -358,8 +361,9 @@ CFPF_SkiaFont* CFPF_SkiaFontMgr::CreateFont(const CFX_ByteStringC& bsFamilyname,
   return nullptr;
 }
 
-FXFT_Face CFPF_SkiaFontMgr::GetFontFace(IFX_SeekableReadStream* pFileRead,
-                                        int32_t iFaceIndex) {
+FXFT_Face CFPF_SkiaFontMgr::GetFontFace(
+    const CFX_RetainPtr<IFX_SeekableReadStream>& pFileRead,
+    int32_t iFaceIndex) {
   if (!pFileRead)
     return nullptr;
   if (pFileRead->GetSize() == 0)
@@ -369,7 +373,7 @@ FXFT_Face CFPF_SkiaFontMgr::GetFontFace(IFX_SeekableReadStream* pFileRead,
   FXFT_StreamRec streamRec;
   FXSYS_memset(&streamRec, 0, sizeof(FXFT_StreamRec));
   streamRec.size = pFileRead->GetSize();
-  streamRec.descriptor.pointer = pFileRead;
+  streamRec.descriptor.pointer = static_cast<void*>(pFileRead.Get());
   streamRec.read = FPF_SkiaStream_Read;
   streamRec.close = FPF_SkiaStream_Close;
   FXFT_Open_Args args;

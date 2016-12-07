@@ -7,6 +7,7 @@
 #ifndef XFA_FGAS_FONT_CFGAS_FONTMGR_H_
 #define XFA_FGAS_FONT_CFGAS_FONTMGR_H_
 
+#include <map>
 #include <memory>
 #include <vector>
 
@@ -214,7 +215,7 @@ class CFGAS_FontMgr {
   bool EnumFontsFromFontMapper();
   bool EnumFontsFromFiles();
   void RegisterFace(FXFT_Face pFace, const CFX_WideString* pFaceName);
-  void RegisterFaces(IFX_SeekableReadStream* pFontStream,
+  void RegisterFaces(const CFX_RetainPtr<IFX_SeekableReadStream>& pFontStream,
                      const CFX_WideString* pFaceName);
   void GetNames(const uint8_t* name_table, CFX_WideStringArray& Names);
   std::vector<uint16_t> GetCharsets(FXFT_Face pFace) const;
@@ -236,16 +237,20 @@ class CFGAS_FontMgr {
   CFGAS_GEFont* LoadFont(const CFX_WideString& wsFaceName,
                          int32_t iFaceIndex,
                          int32_t* pFaceCount);
-  FXFT_Face LoadFace(IFX_SeekableReadStream* pFontStream, int32_t iFaceIndex);
-  IFX_SeekableReadStream* CreateFontStream(CFX_FontMapper* pFontMapper,
-                                           IFX_SystemFontInfo* pSystemFontInfo,
-                                           uint32_t index);
-  IFX_SeekableReadStream* CreateFontStream(const CFX_ByteString& bsFaceName);
+  FXFT_Face LoadFace(const CFX_RetainPtr<IFX_SeekableReadStream>& pFontStream,
+                     int32_t iFaceIndex);
+  CFX_RetainPtr<IFX_SeekableReadStream> CreateFontStream(
+      CFX_FontMapper* pFontMapper,
+      IFX_SystemFontInfo* pSystemFontInfo,
+      uint32_t index);
+  CFX_RetainPtr<IFX_SeekableReadStream> CreateFontStream(
+      const CFX_ByteString& bsFaceName);
 
   CFX_FontDescriptors m_InstalledFonts;
   CFX_MapPtrTemplate<uint32_t, CFX_FontDescriptorInfos*> m_Hash2CandidateList;
   CFX_MapPtrTemplate<uint32_t, CFX_ArrayTemplate<CFGAS_GEFont*>*> m_Hash2Fonts;
-  CFX_MapPtrTemplate<CFGAS_GEFont*, IFX_SeekableReadStream*> m_IFXFont2FileRead;
+  std::map<CFGAS_GEFont*, CFX_RetainPtr<IFX_SeekableReadStream> >
+      m_IFXFont2FileRead;
   CFX_MapPtrTemplate<FX_WCHAR, CFGAS_GEFont*> m_FailedUnicodes2Nullptr;
   CFX_FontSourceEnum_File* const m_pFontSource;
 };

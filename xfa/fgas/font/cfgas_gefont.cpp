@@ -210,12 +210,13 @@ bool CFGAS_GEFont::LoadFontInternal(IFGAS_Stream* pFontStream,
   if (bSaveStream)
     m_pStream.reset(pFontStream);
 
-  m_pFileRead.reset(pFontStream->MakeSeekableReadStream());
+  m_pFileRead = pFontStream->MakeSeekableReadStream();
   m_pFont = new CFX_Font;
-  if (m_pFont->LoadFile(m_pFileRead.get()))
-    return InitFont();
-  m_pFileRead.reset();
-  return false;
+  if (!m_pFont->LoadFile(m_pFileRead)) {
+    m_pFileRead.Reset();
+    return false;
+  }
+  return InitFont();
 }
 #endif  // _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
 

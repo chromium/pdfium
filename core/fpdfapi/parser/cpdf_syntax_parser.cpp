@@ -756,8 +756,9 @@ std::unique_ptr<CPDF_Stream> CPDF_SyntaxParser::ReadStream(
   return pStream;
 }
 
-void CPDF_SyntaxParser::InitParser(IFX_SeekableReadStream* pFileAccess,
-                                   uint32_t HeaderOffset) {
+void CPDF_SyntaxParser::InitParser(
+    const CFX_RetainPtr<IFX_SeekableReadStream>& pFileAccess,
+    uint32_t HeaderOffset) {
   FX_Free(m_pFileBuf);
 
   m_pFileBuf = FX_Alloc(uint8_t, m_BufSize);

@@ -7,6 +7,7 @@
 #ifndef FPDFSDK_FPDFXFA_CPDFXFA_DOCENVIRONMENT_H_
 #define FPDFSDK_FPDFXFA_CPDFXFA_DOCENVIRONMENT_H_
 
+#include "core/fxcrt/cfx_retain_ptr.h"
 #include "public/fpdfview.h"
 #include "xfa/fxfa/fxfa.h"
 
@@ -85,8 +86,9 @@ class CPDFXFA_DocEnvironment : public IXFA_DocEnvironment {
                          const CFX_ByteStringC& szPropName,
                          CFXJSE_Value* pValue) override;
 
-  IFX_SeekableReadStream* OpenLinkedFile(CXFA_FFDoc* hDoc,
-                                         const CFX_WideString& wsLink) override;
+  CFX_RetainPtr<IFX_SeekableReadStream> OpenLinkedFile(
+      CXFA_FFDoc* hDoc,
+      const CFX_WideString& wsLink) override;
 
  private:
   bool OnBeforeNotifySubmit();

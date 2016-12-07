@@ -7,6 +7,7 @@
 #ifndef CORE_FXCODEC_CODEC_CCODEC_TIFFMODULE_H_
 #define CORE_FXCODEC_CODEC_CCODEC_TIFFMODULE_H_
 
+#include "core/fxcrt/cfx_retain_ptr.h"
 #include "core/fxcrt/fx_system.h"
 
 class CCodec_TiffContext;
@@ -18,7 +19,8 @@ class CCodec_TiffModule {
  public:
   ~CCodec_TiffModule() {}
 
-  CCodec_TiffContext* CreateDecoder(IFX_SeekableReadStream* file_ptr);
+  CCodec_TiffContext* CreateDecoder(
+      const CFX_RetainPtr<IFX_SeekableReadStream>& file_ptr);
 
   bool LoadFrameInfo(CCodec_TiffContext* ctx,
                      int32_t frame,

@@ -234,7 +234,7 @@ CFX_FileBufferArchive::~CFX_FileBufferArchive() {}
 void CFX_FileBufferArchive::Clear() {
   m_Length = 0;
   m_pBuffer.reset();
-  m_pFile = nullptr;
+  m_pFile.Reset();
 }
 
 bool CFX_FileBufferArchive::Flush() {
@@ -285,7 +285,8 @@ int32_t CFX_FileBufferArchive::AppendString(const CFX_ByteStringC& lpsz) {
   return AppendBlock(lpsz.raw_str(), lpsz.GetLength());
 }
 
-void CFX_FileBufferArchive::AttachFile(IFX_WriteStream* pFile) {
+void CFX_FileBufferArchive::AttachFile(
+    const CFX_RetainPtr<IFX_WriteStream>& pFile) {
   ASSERT(pFile);
   m_pFile = pFile;
 }

@@ -31,7 +31,7 @@ class CFPF_SkiaFontMgr {
                             uint32_t dwMatch = 0);
 
   bool InitFTLibrary();
-  FXFT_Face GetFontFace(IFX_SeekableReadStream* pFileRead,
+  FXFT_Face GetFontFace(const CFX_RetainPtr<IFX_SeekableReadStream>& pFileRead,
                         int32_t iFaceIndex = 0);
   FXFT_Face GetFontFace(const CFX_ByteStringC& bsFile, int32_t iFaceIndex = 0);
   FXFT_Face GetFontFace(const uint8_t* pBuffer,

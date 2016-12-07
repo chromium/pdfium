@@ -11,6 +11,7 @@
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "core/fpdfapi/parser/cpdf_string.h"
+#include "core/fxcrt/cfx_retain_ptr.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_interform.h"
 #include "fpdfsdk/cpdfsdk_pageview.h"
@@ -437,15 +438,15 @@ void CPDFXFA_DocEnvironment::ExportData(CXFA_FFDoc* hDoc,
   if (!pFileHandler)
     return;
 
-  std::unique_ptr<IFX_SeekableStream, ReleaseDeleter<IFX_SeekableStream>>
-      fileWrite(MakeSeekableStream(pFileHandler));
+  CFX_RetainPtr<IFX_SeekableStream> fileWrite =
+      MakeSeekableStream(pFileHandler);
   CFX_ByteString content;
   if (fileType == FXFA_SAVEAS_XML) {
     content = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n";
     fileWrite->WriteBlock(content.c_str(), fileWrite->GetSize(),
                           content.GetLength());
-    m_pContext->GetXFADocView()->GetDoc()->SavePackage(
-        XFA_HASHCODE_Data, fileWrite.get(), nullptr);
+    m_pContext->GetXFADocView()->GetDoc()->SavePackage(XFA_HASHCODE_Data,
+                                                       fileWrite, nullptr);
   } else if (fileType == FXFA_SAVEAS_XDP) {
     if (!m_pContext->GetPDFDoc())
       return;
@@ -475,13 +476,13 @@ void CPDFXFA_DocEnvironment::ExportData(CXFA_FFDoc* hDoc,
       if (!pStream)
         continue;
       if (pPrePDFObj->GetString() == "form") {
-        m_pContext->GetXFADocView()->GetDoc()->SavePackage(
-            XFA_HASHCODE_Form, fileWrite.get(), nullptr);
+        m_pContext->GetXFADocView()->GetDoc()->SavePackage(XFA_HASHCODE_Form,
+                                                           fileWrite, nullptr);
         continue;
       }
       if (pPrePDFObj->GetString() == "datasets") {
         m_pContext->GetXFADocView()->GetDoc()->SavePackage(
-            XFA_HASHCODE_Datasets, fileWrite.get(), nullptr);
+            XFA_HASHCODE_Datasets, fileWrite, nullptr);
         continue;
       }
       if (i == size - 1) {
@@ -699,7 +700,7 @@ bool CPDFXFA_DocEnvironment::SubmitData(CXFA_FFDoc* hDoc, CXFA_Submit submit) {
   return ret;
 }
 
-IFX_SeekableReadStream* CPDFXFA_DocEnvironment::OpenLinkedFile(
+CFX_RetainPtr<IFX_SeekableReadStream> CPDFXFA_DocEnvironment::OpenLinkedFile(
     CXFA_FFDoc* hDoc,
     const CFX_WideString& wsLink) {
   CPDFSDK_FormFillEnvironment* pFormFillEnv = m_pContext->GetFormFillEnv();
@@ -729,13 +730,13 @@ bool CPDFXFA_DocEnvironment::ExportSubmitFile(FPDF_FILEHANDLER* pFileHandler,
   if (!pFormFillEnv)
     return false;
 
-  std::unique_ptr<IFX_SeekableStream, ReleaseDeleter<IFX_SeekableStream>>
-      fileStream(MakeSeekableStream(pFileHandler));
+  CFX_RetainPtr<IFX_SeekableStream> fileStream =
+      MakeSeekableStream(pFileHandler);
 
   if (fileType == FXFA_SAVEAS_XML) {
     const char kContent[] = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n";
     fileStream->WriteBlock(kContent, 0, strlen(kContent));
-    m_pContext->GetXFADoc()->SavePackage(XFA_HASHCODE_Data, fileStream.get(),
+    m_pContext->GetXFADoc()->SavePackage(XFA_HASHCODE_Data, fileStream,
                                          nullptr);
     return true;
   }
@@ -797,11 +798,11 @@ bool CPDFXFA_DocEnvironment::ExportSubmitFile(FPDF_FILEHANDLER* pFileHandler,
     if (pPrePDFObj->GetString() == "form" && !(flag & FXFA_FORM))
       continue;
     if (pPrePDFObj->GetString() == "form") {
-      m_pContext->GetXFADoc()->SavePackage(XFA_HASHCODE_Form, fileStream.get(),
+      m_pContext->GetXFADoc()->SavePackage(XFA_HASHCODE_Form, fileStream,
                                            nullptr);
     } else if (pPrePDFObj->GetString() == "datasets") {
-      m_pContext->GetXFADoc()->SavePackage(XFA_HASHCODE_Datasets,
-                                           fileStream.get(), nullptr);
+      m_pContext->GetXFADoc()->SavePackage(XFA_HASHCODE_Datasets, fileStream,
+                                           nullptr);
     } else {
       // PDF,creator.
     }

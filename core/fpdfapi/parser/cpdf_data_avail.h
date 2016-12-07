@@ -95,7 +95,7 @@ class CPDF_DataAvail final {
   };
 
   CPDF_DataAvail(FileAvail* pFileAvail,
-                 IFX_SeekableReadStream* pFileRead,
+                 const CFX_RetainPtr<IFX_SeekableReadStream>& pFileRead,
                  bool bSupportHintTable);
   ~CPDF_DataAvail();
 
@@ -107,7 +107,9 @@ class CPDF_DataAvail final {
   DocLinearizationStatus IsLinearizedPDF();
   bool IsLinearized();
   void GetLinearizedMainXRefInfo(FX_FILESIZE* pPos, uint32_t* pSize);
-  IFX_SeekableReadStream* GetFileRead() const { return m_pFileRead; }
+  CFX_RetainPtr<IFX_SeekableReadStream> GetFileRead() const {
+    return m_pFileRead;
+  }
   int GetPageCount() const;
   CPDF_Dictionary* GetPage(int index);
 
@@ -195,7 +197,7 @@ class CPDF_DataAvail final {
   bool ValidateForm();
 
   FileAvail* const m_pFileAvail;
-  IFX_SeekableReadStream* const m_pFileRead;
+  CFX_RetainPtr<IFX_SeekableReadStream> m_pFileRead;
   CPDF_Parser m_parser;
   CPDF_SyntaxParser m_syntaxParser;
   std::unique_ptr<CPDF_Object> m_pRoot;

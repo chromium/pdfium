@@ -11,6 +11,7 @@
 
 #include "core/fpdfapi/parser/cpdf_data_avail.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
+#include "core/fxcrt/cfx_retain_ptr.h"
 #include "fpdfsdk/fsdk_define.h"
 #include "public/fpdf_formfill.h"
 #include "third_party/base/ptr_util.h"
@@ -43,7 +44,7 @@ namespace {
 
 class CFPDF_FileAvailWrap : public CPDF_DataAvail::FileAvail {
  public:
-  CFPDF_FileAvailWrap() { m_pfileAvail = nullptr; }
+  CFPDF_FileAvailWrap() : m_pfileAvail(nullptr) {}
   ~CFPDF_FileAvailWrap() override {}
 
   void Set(FX_FILEAVAIL* pfileAvail) { m_pfileAvail = pfileAvail; }
@@ -59,7 +60,9 @@ class CFPDF_FileAvailWrap : public CPDF_DataAvail::FileAvail {
 
 class CFPDF_FileAccessWrap : public IFX_SeekableReadStream {
  public:
-  CFPDF_FileAccessWrap() { m_pFileAccess = nullptr; }
+  static CFX_RetainPtr<CFPDF_FileAccessWrap> Create() {
+    return CFX_RetainPtr<CFPDF_FileAccessWrap>(new CFPDF_FileAccessWrap());
+  }
   ~CFPDF_FileAccessWrap() override {}
 
   void Set(FPDF_FILEACCESS* pFile) { m_pFileAccess = pFile; }
@@ -72,9 +75,9 @@ class CFPDF_FileAccessWrap : public IFX_SeekableReadStream {
                                        (uint8_t*)buffer, size);
   }
 
-  void Release() override {}
-
  private:
+  CFPDF_FileAccessWrap() : m_pFileAccess(nullptr) {}
+
   FPDF_FILEACCESS* m_pFileAccess;
 };
 
@@ -97,12 +100,14 @@ class CFPDF_DownloadHintsWrap : public CPDF_DataAvail::DownloadHints {
 
 class CFPDF_DataAvail {
  public:
-  CFPDF_DataAvail() {}
+  CFPDF_DataAvail()
+      : m_FileAvail(new CFPDF_FileAvailWrap),
+        m_FileRead(CFPDF_FileAccessWrap::Create()) {}
   ~CFPDF_DataAvail() {}
 
   std::unique_ptr<CPDF_DataAvail> m_pDataAvail;
-  CFPDF_FileAvailWrap m_FileAvail;
-  CFPDF_FileAccessWrap m_FileRead;
+  std::unique_ptr<CFPDF_FileAvailWrap> m_FileAvail;
+  CFX_RetainPtr<CFPDF_FileAccessWrap> m_FileRead;
 };
 
 CFPDF_DataAvail* CFPDFDataAvailFromFPDFAvail(FPDF_AVAIL avail) {
@@ -114,10 +119,10 @@ CFPDF_DataAvail* CFPDFDataAvailFromFPDFAvail(FPDF_AVAIL avail) {
 DLLEXPORT FPDF_AVAIL STDCALL FPDFAvail_Create(FX_FILEAVAIL* file_avail,
                                               FPDF_FILEACCESS* file) {
   CFPDF_DataAvail* pAvail = new CFPDF_DataAvail;
-  pAvail->m_FileAvail.Set(file_avail);
-  pAvail->m_FileRead.Set(file);
+  pAvail->m_FileAvail->Set(file_avail);
+  pAvail->m_FileRead->Set(file);
   pAvail->m_pDataAvail = pdfium::MakeUnique<CPDF_DataAvail>(
-      &pAvail->m_FileAvail, &pAvail->m_FileRead, true);
+      pAvail->m_FileAvail.get(), pAvail->m_FileRead, true);
   return pAvail;
 }
 

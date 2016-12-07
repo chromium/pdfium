@@ -161,15 +161,19 @@ void XFA_DrawImage(CFX_Graphics* pGS,
                    int32_t iImageYDpi,
                    int32_t iHorzAlign = XFA_ATTRIBUTEENUM_Left,
                    int32_t iVertAlign = XFA_ATTRIBUTEENUM_Top);
+
 CFX_DIBitmap* XFA_LoadImageData(CXFA_FFDoc* pDoc,
                                 CXFA_Image* pImage,
                                 bool& bNameImage,
                                 int32_t& iImageXDpi,
                                 int32_t& iImageYDpi);
-CFX_DIBitmap* XFA_LoadImageFromBuffer(IFX_SeekableReadStream* pImageFileRead,
-                                      FXCODEC_IMAGE_TYPE type,
-                                      int32_t& iImageXDpi,
-                                      int32_t& iImageYDpi);
+
+CFX_DIBitmap* XFA_LoadImageFromBuffer(
+    const CFX_RetainPtr<IFX_SeekableReadStream>& pImageFileRead,
+    FXCODEC_IMAGE_TYPE type,
+    int32_t& iImageXDpi,
+    int32_t& iImageYDpi);
+
 FXCODEC_IMAGE_TYPE XFA_GetImageType(const CFX_WideString& wsType);
 FX_CHAR* XFA_Base64Encode(const uint8_t* buf, int32_t buf_len);
 void XFA_RectWidthoutMargin(CFX_RectF& rt,

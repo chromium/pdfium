@@ -40,7 +40,7 @@ class CXFA_FFDoc {
 
   CXFA_FFDocView* CreateDocView(uint32_t dwView = 0);
 
-  bool OpenDoc(IFX_SeekableReadStream* pStream, bool bTakeOverFile);
+  bool OpenDoc(const CFX_RetainPtr<IFX_SeekableReadStream>& pStream);
   bool OpenDoc(CPDF_Document* pPDFDoc);
   bool CloseDoc();
 
@@ -54,21 +54,21 @@ class CXFA_FFDoc {
                                  int32_t& iImageYDpi);
 
   bool SavePackage(XFA_HashCode code,
-                   IFX_SeekableWriteStream* pFile,
+                   const CFX_RetainPtr<IFX_SeekableWriteStream>& pFile,
                    CXFA_ChecksumContext* pCSContext);
-  bool ImportData(IFX_SeekableReadStream* pStream, bool bXDP = true);
+  bool ImportData(const CFX_RetainPtr<IFX_SeekableReadStream>& pStream,
+                  bool bXDP = true);
 
  protected:
   IXFA_DocEnvironment* const m_pDocEnvironment;
   std::unique_ptr<CXFA_DocumentParser> m_pDocumentParser;
-  IFX_SeekableReadStream* m_pStream;
+  CFX_RetainPtr<IFX_SeekableReadStream> m_pStream;
   CXFA_FFApp* m_pApp;
   std::unique_ptr<CXFA_FFNotify> m_pNotify;
   CPDF_Document* m_pPDFDoc;
   std::map<uint32_t, FX_IMAGEDIB_AND_DPI> m_HashToDibDpiMap;
   std::map<uint32_t, std::unique_ptr<CXFA_FFDocView>> m_TypeToDocViewMap;
   uint32_t m_dwDocType;
-  bool m_bOwnStream;
 };
 
 #endif  // XFA_FXFA_XFA_FFDOC_H_

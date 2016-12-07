@@ -62,8 +62,9 @@ void CPDF_Stream::InitStream(const uint8_t* pData,
     m_pDict->SetNewFor<CPDF_Number>("Length", static_cast<int>(m_dwSize));
 }
 
-void CPDF_Stream::InitStreamFromFile(IFX_SeekableReadStream* pFile,
-                                     std::unique_ptr<CPDF_Dictionary> pDict) {
+void CPDF_Stream::InitStreamFromFile(
+    const CFX_RetainPtr<IFX_SeekableReadStream>& pFile,
+    std::unique_ptr<CPDF_Dictionary> pDict) {
   m_pDict = std::move(pDict);
   m_bMemoryBased = false;
   m_pDataBuf.reset();

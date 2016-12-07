@@ -32,7 +32,8 @@ FPDFImageObj_LoadJpegFile(FPDF_PAGE* pages,
   if (!image_object || !fileAccess || !pages)
     return false;
 
-  IFX_SeekableReadStream* pFile = MakeSeekableReadStream(fileAccess);
+  CFX_RetainPtr<IFX_SeekableReadStream> pFile =
+      MakeSeekableReadStream(fileAccess);
   CPDF_ImageObject* pImgObj = reinterpret_cast<CPDF_ImageObject*>(image_object);
   for (int index = 0; index < nCount; index++) {
     CPDF_Page* pPage = CPDFPageFromFPDFPage(pages[index]);

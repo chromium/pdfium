@@ -31,7 +31,6 @@ class CXFA_FileRead : public IFX_SeekableReadStream {
   // IFX_SeekableReadStream
   FX_FILESIZE GetSize() override;
   bool ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) override;
-  void Release() override;
 
  private:
   CFX_ObjectArray<CPDF_StreamAcc> m_Data;
@@ -84,15 +83,11 @@ bool CXFA_FileRead::ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) {
   return false;
 }
 
-void CXFA_FileRead::Release() {
-  delete this;
-}
-
 }  // namespace
 
-IFX_SeekableReadStream* MakeSeekableReadStream(
+CFX_RetainPtr<IFX_SeekableReadStream> MakeSeekableReadStream(
     const std::vector<CPDF_Stream*>& streams) {
-  return new CXFA_FileRead(streams);
+  return CFX_RetainPtr<IFX_SeekableReadStream>(new CXFA_FileRead(streams));
 }
 
 CXFA_FFApp::CXFA_FFApp(IXFA_AppProvider* pProvider)
@@ -108,12 +103,11 @@ CXFA_FFDocHandler* CXFA_FFApp::GetDocHandler() {
   return m_pDocHandler.get();
 }
 
-CXFA_FFDoc* CXFA_FFApp::CreateDoc(IXFA_DocEnvironment* pDocEnvironment,
-                                  IFX_SeekableReadStream* pStream,
-                                  bool bTakeOverFile) {
-  std::unique_ptr<CXFA_FFDoc> pDoc(new CXFA_FFDoc(this, pDocEnvironment));
-  bool bSuccess = pDoc->OpenDoc(pStream, bTakeOverFile);
-  return bSuccess ? pDoc.release() : nullptr;
+CXFA_FFDoc* CXFA_FFApp::CreateDoc(
+    IXFA_DocEnvironment* pDocEnvironment,
+    const CFX_RetainPtr<IFX_SeekableReadStream>& pStream) {
+  auto pDoc = pdfium::MakeUnique<CXFA_FFDoc>(this, pDocEnvironment);
+  return pDoc->OpenDoc(pStream) ? pDoc.release() : nullptr;
 }
 
 CXFA_FFDoc* CXFA_FFApp::CreateDoc(IXFA_DocEnvironment* pDocEnvironment,

@@ -10,6 +10,7 @@
 #include <algorithm>
 #include <memory>
 
+#include "core/fxcrt/cfx_retain_ptr.h"
 #include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_stream.h"
 #include "core/fxcrt/fx_string.h"
@@ -119,16 +120,14 @@ class CFX_FileBufferArchive {
   int32_t AppendByte(uint8_t byte);
   int32_t AppendDWord(uint32_t i);
   int32_t AppendString(const CFX_ByteStringC& lpsz);
-
-  // |pFile| must outlive the CFX_FileBufferArchive.
-  void AttachFile(IFX_WriteStream* pFile);
+  void AttachFile(const CFX_RetainPtr<IFX_WriteStream>& pFile);
 
  private:
   static const size_t kBufSize = 32768;
 
   size_t m_Length;
   std::unique_ptr<uint8_t, FxFreeDeleter> m_pBuffer;
-  IFX_WriteStream* m_pFile;
+  CFX_RetainPtr<IFX_WriteStream> m_pFile;
 };
 
 class CFX_CharMap {

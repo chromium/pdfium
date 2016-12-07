@@ -7,6 +7,7 @@
 #ifndef XFA_FXFA_PARSER_CXFA_DATAEXPORTER_H_
 #define XFA_FXFA_PARSER_CXFA_DATAEXPORTER_H_
 
+#include "core/fxcrt/cfx_retain_ptr.h"
 #include "core/fxcrt/fx_string.h"
 
 class CXFA_Document;
@@ -18,8 +19,8 @@ class CXFA_DataExporter {
  public:
   explicit CXFA_DataExporter(CXFA_Document* pDocument);
 
-  bool Export(IFX_SeekableWriteStream* pWrite);
-  bool Export(IFX_SeekableWriteStream* pWrite,
+  bool Export(const CFX_RetainPtr<IFX_SeekableWriteStream>& pWrite);
+  bool Export(const CFX_RetainPtr<IFX_SeekableWriteStream>& pWrite,
               CXFA_Node* pNode,
               uint32_t dwFlag,
               const FX_CHAR* pChecksum);

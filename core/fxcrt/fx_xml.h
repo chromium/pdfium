@@ -58,12 +58,13 @@ class CXML_Element {
                              size_t size,
                              bool bSaveSpaceChars = false,
                              FX_FILESIZE* pParsedSize = nullptr);
-  static CXML_Element* Parse(IFX_SeekableReadStream* pFile,
+  static CXML_Element* Parse(const CFX_RetainPtr<IFX_SeekableReadStream>& pFile,
                              bool bSaveSpaceChars = false,
                              FX_FILESIZE* pParsedSize = nullptr);
-  static CXML_Element* Parse(IFX_BufferedReadStream* pBuffer,
-                             bool bSaveSpaceChars = false,
-                             FX_FILESIZE* pParsedSize = nullptr);
+  static CXML_Element* Parse(
+      const CFX_RetainPtr<IFX_BufferedReadStream>& pBuffer,
+      bool bSaveSpaceChars = false,
+      FX_FILESIZE* pParsedSize = nullptr);
 
   CXML_Element(const CFX_ByteStringC& qSpace, const CFX_ByteStringC& tagName);
   explicit CXML_Element(const CFX_ByteStringC& qTagName);

@@ -1054,7 +1054,7 @@ CFX_DIBitmap* XFA_LoadImageData(CXFA_FFDoc* pDoc,
   FXCODEC_IMAGE_TYPE type = XFA_GetImageType(wsContentType);
   CFX_ByteString bsContent;
   uint8_t* pImageBuffer = nullptr;
-  IFX_SeekableReadStream* pImageFileRead = nullptr;
+  CFX_RetainPtr<IFX_SeekableReadStream> pImageFileRead;
   if (wsImage.GetLength() > 0) {
     XFA_ATTRIBUTEENUM iEncoding =
         (XFA_ATTRIBUTEENUM)pImage->GetTransferEncoding();
@@ -1092,7 +1092,6 @@ CFX_DIBitmap* XFA_LoadImageData(CXFA_FFDoc* pDoc,
   CFX_DIBitmap* pBitmap =
       XFA_LoadImageFromBuffer(pImageFileRead, type, iImageXDpi, iImageYDpi);
   FX_Free(pImageBuffer);
-  pImageFileRead->Release();
   return pBitmap;
 }
 static FXDIB_Format XFA_GetDIBFormat(FXCODEC_IMAGE_TYPE type,
@@ -1115,18 +1114,20 @@ static FXDIB_Format XFA_GetDIBFormat(FXCODEC_IMAGE_TYPE type,
   }
   return dibFormat;
 }
-CFX_DIBitmap* XFA_LoadImageFromBuffer(IFX_SeekableReadStream* pImageFileRead,
-                                      FXCODEC_IMAGE_TYPE type,
-                                      int32_t& iImageXDpi,
-                                      int32_t& iImageYDpi) {
+
+CFX_DIBitmap* XFA_LoadImageFromBuffer(
+    const CFX_RetainPtr<IFX_SeekableReadStream>& pImageFileRead,
+    FXCODEC_IMAGE_TYPE type,
+    int32_t& iImageXDpi,
+    int32_t& iImageYDpi) {
   CFX_GEModule* pGeModule = CFX_GEModule::Get();
-  if (!pGeModule) {
+  if (!pGeModule)
     return nullptr;
-  }
+
   CCodec_ModuleMgr* pCodecMgr = pGeModule->GetCodecModule();
-  if (!pCodecMgr) {
+  if (!pCodecMgr)
     return nullptr;
-  }
+
   CFX_DIBAttribute dibAttr;
   CFX_DIBitmap* pBitmap = nullptr;
   CCodec_ProgressiveDecoder* pProgressiveDecoder =

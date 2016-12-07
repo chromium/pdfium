@@ -7,6 +7,7 @@
 #ifndef XFA_FGAS_CRT_FGAS_STREAM_H_
 #define XFA_FGAS_CRT_FGAS_STREAM_H_
 
+#include "core/fxcrt/cfx_retain_ptr.h"
 #include "core/fxcrt/fx_stream.h"
 #include "core/fxcrt/fx_system.h"
 
@@ -28,10 +29,12 @@ enum FX_STREAMSEEK {
 
 class IFGAS_Stream {
  public:
-  static IFGAS_Stream* CreateStream(IFX_SeekableReadStream* pFileRead,
-                                    uint32_t dwAccess);
-  static IFGAS_Stream* CreateStream(IFX_SeekableWriteStream* pFileWrite,
-                                    uint32_t dwAccess);
+  static IFGAS_Stream* CreateStream(
+      const CFX_RetainPtr<IFX_SeekableReadStream>& pFileRead,
+      uint32_t dwAccess);
+  static IFGAS_Stream* CreateStream(
+      const CFX_RetainPtr<IFX_SeekableWriteStream>& pFileWrite,
+      uint32_t dwAccess);
   static IFGAS_Stream* CreateStream(uint8_t* pData,
                                     int32_t length,
                                     uint32_t dwAccess);
@@ -63,7 +66,7 @@ class IFGAS_Stream {
   virtual uint16_t GetCodePage() const = 0;
   virtual uint16_t SetCodePage(uint16_t wCodePage) = 0;
 
-  IFX_SeekableReadStream* MakeSeekableReadStream();
+  CFX_RetainPtr<IFX_SeekableReadStream> MakeSeekableReadStream();
 };
 
 
