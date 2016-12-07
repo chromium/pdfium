@@ -7,6 +7,7 @@
 #include "xfa/fxfa/parser/cxfa_simple_parser.h"
 
 #include "core/fxcrt/fx_ext.h"
+#include "third_party/base/ptr_util.h"
 #include "xfa/fgas/crt/fgas_codepage.h"
 #include "xfa/fxfa/fxfa.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
@@ -282,8 +283,8 @@ int32_t CXFA_SimpleParser::StartParse(
     XFA_XDPPACKET ePacketID) {
   CloseParser();
   m_pFileRead = pStream;
-  m_pStream.reset(IFGAS_Stream::CreateStream(
-      pStream, FX_STREAMACCESS_Read | FX_STREAMACCESS_Text));
+  m_pStream = IFGAS_Stream::CreateStream(
+      pStream, FX_STREAMACCESS_Read | FX_STREAMACCESS_Text);
   if (!m_pStream)
     return XFA_PARSESTATUS_StreamErr;
 
@@ -293,7 +294,7 @@ int32_t CXFA_SimpleParser::StartParse(
     m_pStream->SetCodePage(FX_CODEPAGE_UTF8);
   }
   m_pXMLDoc.reset(new CFDE_XMLDoc);
-  m_pXMLParser = new CXFA_XMLParser(m_pXMLDoc->GetRoot(), m_pStream.get());
+  m_pXMLParser = new CXFA_XMLParser(m_pXMLDoc->GetRoot(), m_pStream);
   if (!m_pXMLDoc->LoadXML(m_pXMLParser))
     return XFA_PARSESTATUS_StatusErr;
 
@@ -313,10 +314,10 @@ int32_t CXFA_SimpleParser::DoParse(IFX_Pause* pPause) {
 
   m_pRootNode = ParseAsXDPPacket(GetDocumentNode(m_pXMLDoc.get()), m_ePacketID);
   m_pXMLDoc->CloseXML();
-  m_pStream.reset();
-
+  m_pStream.Reset();
   if (!m_pRootNode)
     return XFA_PARSESTATUS_StatusErr;
+
   return XFA_PARSESTATUS_Done;
 }
 
@@ -326,10 +327,9 @@ int32_t CXFA_SimpleParser::ParseXMLData(const CFX_WideString& wsXML,
   CloseParser();
   pXMLNode = nullptr;
 
-  std::unique_ptr<IFGAS_Stream> pStream(new CXFA_WideTextRead(wsXML));
-  m_pXMLDoc.reset(new CFDE_XMLDoc);
-  CXFA_XMLParser* pParser =
-      new CXFA_XMLParser(m_pXMLDoc->GetRoot(), pStream.get());
+  auto pStream = pdfium::MakeRetain<CXFA_WideTextRead>(wsXML);
+  m_pXMLDoc = pdfium::MakeUnique<CFDE_XMLDoc>();
+  CXFA_XMLParser* pParser = new CXFA_XMLParser(m_pXMLDoc->GetRoot(), pStream);
   pParser->m_dwCheckStatus = 0x03;
   if (!m_pXMLDoc->LoadXML(pParser))
     return XFA_PARSESTATUS_StatusErr;
@@ -1306,5 +1306,5 @@ void CXFA_SimpleParser::ParseInstruction(CXFA_Node* pXFANode,
 
 void CXFA_SimpleParser::CloseParser() {
   m_pXMLDoc.reset();
-  m_pStream.reset();
+  m_pStream.Reset();
 }

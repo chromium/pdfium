@@ -751,7 +751,7 @@ class IFDE_CSSStyleSheet : public IFX_Retainable {
   static IFDE_CSSStyleSheet* LoadHTMLStandardStyleSheet();
   static IFDE_CSSStyleSheet* LoadFromStream(
       const CFX_WideString& szUrl,
-      IFGAS_Stream* pStream,
+      const CFX_RetainPtr<IFGAS_Stream>& pStream,
       uint16_t wCodePage,
       uint32_t dwMediaList = FDE_CSSMEDIATYPE_ALL);
   static IFDE_CSSStyleSheet* LoadFromBuffer(

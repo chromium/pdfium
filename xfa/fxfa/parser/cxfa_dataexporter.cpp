@@ -201,7 +201,7 @@ void RegenerateFormFile_Changed(CXFA_Node* pNode,
             IFX_MemoryStream::Create(true);
 
         // Note: ambiguous without cast below.
-        IFGAS_Stream* pTempStream = IFGAS_Stream::CreateStream(
+        CFX_RetainPtr<IFGAS_Stream> pTempStream = IFGAS_Stream::CreateStream(
             CFX_RetainPtr<IFX_SeekableWriteStream>(pMemStream),
             FX_STREAMACCESS_Text | FX_STREAMACCESS_Write |
                 FX_STREAMACCESS_Append);
@@ -210,7 +210,6 @@ void RegenerateFormFile_Changed(CXFA_Node* pNode,
         pRichTextXML->SaveXMLNode(pTempStream);
         wsChildren += CFX_WideString::FromUTF8(
             CFX_ByteStringC(pMemStream->GetBuffer(), pMemStream->GetSize()));
-        pTempStream->Release();
       } else if (pRawValueNode->GetElementType() == XFA_Element::Sharpxml &&
                  wsContentType == FX_WSTRC(L"text/xml")) {
         CFX_WideString wsRawValue;
@@ -320,7 +319,7 @@ void RegenerateFormFile_Changed(CXFA_Node* pNode,
 }
 
 void RegenerateFormFile_Container(CXFA_Node* pNode,
-                                  IFGAS_Stream* pStream,
+                                  const CFX_RetainPtr<IFGAS_Stream>& pStream,
                                   bool bSaveXML = false) {
   XFA_Element eType = pNode->GetElementType();
   if (eType == XFA_Element::Field || eType == XFA_Element::Draw ||
@@ -373,10 +372,11 @@ void RegenerateFormFile_Container(CXFA_Node* pNode,
 
 }  // namespace
 
-void XFA_DataExporter_RegenerateFormFile(CXFA_Node* pNode,
-                                         IFGAS_Stream* pStream,
-                                         const FX_CHAR* pChecksum,
-                                         bool bSaveXML) {
+void XFA_DataExporter_RegenerateFormFile(
+    CXFA_Node* pNode,
+    const CFX_RetainPtr<IFGAS_Stream>& pStream,
+    const FX_CHAR* pChecksum,
+    bool bSaveXML) {
   if (pNode->IsModelNode()) {
     static const FX_WCHAR s_pwsTagName[] = L"<form";
     static const FX_WCHAR s_pwsClose[] = L"</form\n>";
@@ -461,19 +461,17 @@ bool CXFA_DataExporter::Export(
   if (!pWrite)
     return false;
 
-  IFGAS_Stream* pStream = IFGAS_Stream::CreateStream(
+  CFX_RetainPtr<IFGAS_Stream> pStream = IFGAS_Stream::CreateStream(
       pWrite,
       FX_STREAMACCESS_Text | FX_STREAMACCESS_Write | FX_STREAMACCESS_Append);
   if (!pStream)
     return false;
 
   pStream->SetCodePage(FX_CODEPAGE_UTF8);
-  bool bRet = Export(pStream, pNode, dwFlag, pChecksum);
-  pStream->Release();
-  return bRet;
+  return Export(pStream, pNode, dwFlag, pChecksum);
 }
 
-bool CXFA_DataExporter::Export(IFGAS_Stream* pStream,
+bool CXFA_DataExporter::Export(const CFX_RetainPtr<IFGAS_Stream>& pStream,
                                CXFA_Node* pNode,
                                uint32_t dwFlag,
                                const FX_CHAR* pChecksum) {

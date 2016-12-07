@@ -1445,11 +1445,9 @@ void CXFA_Node::Script_NodeClass_SaveXML(CFXJSE_Arguments* pArguments) {
         IFX_MemoryStream::Create(true);
 
     // Note: ambiguious below without static_cast.
-    std::unique_ptr<IFGAS_Stream, ReleaseDeleter<IFGAS_Stream>> pStream(
-        IFGAS_Stream::CreateStream(
-            CFX_RetainPtr<IFX_SeekableWriteStream>(pMemoryStream),
-            FX_STREAMACCESS_Text | FX_STREAMACCESS_Write |
-                FX_STREAMACCESS_Append));
+    CFX_RetainPtr<IFGAS_Stream> pStream = IFGAS_Stream::CreateStream(
+        CFX_RetainPtr<IFX_SeekableWriteStream>(pMemoryStream),
+        FX_STREAMACCESS_Text | FX_STREAMACCESS_Write | FX_STREAMACCESS_Append);
 
     if (!pStream) {
       pArguments->GetReturnValue()->SetString(bsXMLHeader);
@@ -1458,9 +1456,9 @@ void CXFA_Node::Script_NodeClass_SaveXML(CFXJSE_Arguments* pArguments) {
     pStream->SetCodePage(FX_CODEPAGE_UTF8);
     pStream->WriteData(bsXMLHeader.raw_str(), bsXMLHeader.GetLength());
     if (GetPacketID() == XFA_XDPPACKET_Form)
-      XFA_DataExporter_RegenerateFormFile(this, pStream.get(), nullptr, true);
+      XFA_DataExporter_RegenerateFormFile(this, pStream, nullptr, true);
     else
-      pElement->SaveXMLNode(pStream.get());
+      pElement->SaveXMLNode(pStream);
     // TODO(weili): Check whether we need to save pretty print XML, pdfium:501.
     // For now, just put it here to avoid unused variable warning.
     (void)bPrettyMode;

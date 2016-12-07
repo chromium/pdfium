@@ -7,6 +7,7 @@
 #ifndef XFA_FDE_CSS_FDE_CSSSYNTAX_H_
 #define XFA_FDE_CSS_FDE_CSSSYNTAX_H_
 
+#include "core/fxcrt/cfx_retain_ptr.h"
 #include "xfa/fde/css/fde_css.h"
 #include "xfa/fgas/crt/fgas_memory.h"
 #include "xfa/fgas/crt/fgas_stream.h"
@@ -18,7 +19,7 @@ class CFDE_CSSTextBuf : public CFX_Target {
 
   bool AttachBuffer(const FX_WCHAR* pBuffer, int32_t iBufLen);
   bool EstimateSize(int32_t iAllocSize);
-  int32_t LoadFromStream(IFGAS_Stream* pTxtStream,
+  int32_t LoadFromStream(const CFX_RetainPtr<IFGAS_Stream>& pTxtStream,
                          int32_t iStreamOffset,
                          int32_t iMaxChars,
                          bool& bEOS);
@@ -80,7 +81,7 @@ class CFDE_CSSSyntaxParser : public CFX_Target {
   CFDE_CSSSyntaxParser();
   ~CFDE_CSSSyntaxParser() override;
 
-  bool Init(IFGAS_Stream* pStream,
+  bool Init(const CFX_RetainPtr<IFGAS_Stream>& pStream,
             int32_t iCSSPlaneSize,
             int32_t iTextDataSize = 32,
             bool bOnlyDeclaration = false);
@@ -106,7 +107,7 @@ class CFDE_CSSSyntaxParser : public CFX_Target {
   bool IsImportEnabled() const;
   void DisableImport() { m_dwCheck = 0; }
 
-  IFGAS_Stream* m_pStream;
+  CFX_RetainPtr<IFGAS_Stream> m_pStream;
   int32_t m_iStreamPos;
   int32_t m_iPlaneSize;
   CFDE_CSSTextBuf m_TextData;

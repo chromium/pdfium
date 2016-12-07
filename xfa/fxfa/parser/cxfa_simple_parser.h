@@ -78,7 +78,7 @@ class CXFA_SimpleParser {
 
   CXFA_XMLParser* m_pXMLParser;
   std::unique_ptr<CFDE_XMLDoc> m_pXMLDoc;
-  std::unique_ptr<IFGAS_Stream, ReleaseDeleter<IFGAS_Stream>> m_pStream;
+  CFX_RetainPtr<IFGAS_Stream> m_pStream;
   CFX_RetainPtr<IFX_SeekableReadStream> m_pFileRead;
   CXFA_Document* m_pFactory;
   CXFA_Node* m_pRootNode;

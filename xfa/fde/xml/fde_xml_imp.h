@@ -63,7 +63,7 @@ class CFDE_XMLNode : public CFX_Target {
   bool InsertNodeItem(CFDE_XMLNode::NodeItem eItem, CFDE_XMLNode* pNode);
   CFDE_XMLNode* RemoveNodeItem(CFDE_XMLNode::NodeItem eItem);
 
-  void SaveXMLNode(IFGAS_Stream* pXMLStream);
+  void SaveXMLNode(const CFX_RetainPtr<IFGAS_Stream>& pXMLStream);
 
   CFDE_XMLNode* m_pParent;
   CFDE_XMLNode* m_pChild;
@@ -197,14 +197,15 @@ class CFDE_XMLDoc : public CFX_Target {
   int32_t DoLoad(IFX_Pause* pPause = nullptr);
   void CloseXML();
   CFDE_XMLNode* GetRoot() const { return m_pRoot; }
-  void SaveXML(IFGAS_Stream* pXMLStream = nullptr, bool bSaveBOM = true);
-  void SaveXMLNode(IFGAS_Stream* pXMLStream, CFDE_XMLNode* pNode);
+  void SaveXML(CFX_RetainPtr<IFGAS_Stream>& pXMLStream, bool bSaveBOM = true);
+  void SaveXMLNode(const CFX_RetainPtr<IFGAS_Stream>& pXMLStream,
+                   CFDE_XMLNode* pNode);
 
  protected:
   void Reset(bool bInitRoot);
   void ReleaseParser();
 
-  IFGAS_Stream* m_pStream;
+  CFX_RetainPtr<IFGAS_Stream> m_pStream;
   int32_t m_iStatus;
   CFDE_XMLNode* m_pRoot;
   CFDE_XMLSyntaxParser* m_pSyntaxParser;
@@ -261,7 +262,7 @@ class CFDE_XMLSyntaxParser : public CFX_Target {
   ~CFDE_XMLSyntaxParser() override;
 
   void Release() { delete this; }
-  void Init(IFGAS_Stream* pStream,
+  void Init(const CFX_RetainPtr<IFGAS_Stream>& pStream,
             int32_t iXMLPlaneSize,
             int32_t iTextDataSize = 256);
 
@@ -320,7 +321,7 @@ class CFDE_XMLSyntaxParser : public CFX_Target {
 
   void ParseTextChar(FX_WCHAR ch);
 
-  IFGAS_Stream* m_pStream;
+  CFX_RetainPtr<IFGAS_Stream> m_pStream;
   int32_t m_iXMLPlaneSize;
   int32_t m_iCurrentPos;
   int32_t m_iCurrentNodeNum;

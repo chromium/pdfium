@@ -35,7 +35,7 @@ CFDE_CSSSyntaxParser::~CFDE_CSSSyntaxParser() {
   m_TextPlane.Reset();
 }
 
-bool CFDE_CSSSyntaxParser::Init(IFGAS_Stream* pStream,
+bool CFDE_CSSSyntaxParser::Init(const CFX_RetainPtr<IFGAS_Stream>& pStream,
                                 int32_t iCSSPlaneSize,
                                 int32_t iTextDataSize,
                                 bool bOnlyDeclaration) {
@@ -433,22 +433,25 @@ bool CFDE_CSSTextBuf::EstimateSize(int32_t iAllocSize) {
   m_bExtBuf = false;
   return ExpandBuf(iAllocSize);
 }
-int32_t CFDE_CSSTextBuf::LoadFromStream(IFGAS_Stream* pTxtStream,
-                                        int32_t iStreamOffset,
-                                        int32_t iMaxChars,
-                                        bool& bEOS) {
+
+int32_t CFDE_CSSTextBuf::LoadFromStream(
+    const CFX_RetainPtr<IFGAS_Stream>& pTxtStream,
+    int32_t iStreamOffset,
+    int32_t iMaxChars,
+    bool& bEOS) {
   ASSERT(iStreamOffset >= 0 && iMaxChars > 0);
   Clear();
   m_bExtBuf = false;
-  if (!ExpandBuf(iMaxChars)) {
+  if (!ExpandBuf(iMaxChars))
     return 0;
-  }
-  if (pTxtStream->GetPosition() != iStreamOffset) {
+
+  if (pTxtStream->GetPosition() != iStreamOffset)
     pTxtStream->Seek(FX_STREAMSEEK_Begin, iStreamOffset);
-  }
+
   m_iDatLen = pTxtStream->ReadString(m_pBuffer, iMaxChars, bEOS);
   return m_iDatLen;
 }
+
 bool CFDE_CSSTextBuf::ExpandBuf(int32_t iDesiredSize) {
   if (m_bExtBuf) {
     return false;

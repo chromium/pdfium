@@ -394,7 +394,7 @@ CFDE_XMLNode* CFDE_XMLNode::Clone(bool bRecursive) {
   return nullptr;
 }
 
-void CFDE_XMLNode::SaveXMLNode(IFGAS_Stream* pXMLStream) {
+void CFDE_XMLNode::SaveXMLNode(const CFX_RetainPtr<IFGAS_Stream>& pXMLStream) {
   CFDE_XMLNode* pNode = (CFDE_XMLNode*)this;
   switch (pNode->GetType()) {
     case FDE_XMLNODE_Instruction: {
@@ -986,7 +986,8 @@ void CFDE_XMLDoc::CloseXML() {
   ReleaseParser();
 }
 
-void CFDE_XMLDoc::SaveXMLNode(IFGAS_Stream* pXMLStream, CFDE_XMLNode* pINode) {
+void CFDE_XMLDoc::SaveXMLNode(const CFX_RetainPtr<IFGAS_Stream>& pXMLStream,
+                              CFDE_XMLNode* pINode) {
   CFDE_XMLNode* pNode = (CFDE_XMLNode*)pINode;
   switch (pNode->GetType()) {
     case FDE_XMLNODE_Instruction: {
@@ -1096,7 +1097,8 @@ void CFDE_XMLDoc::SaveXMLNode(IFGAS_Stream* pXMLStream, CFDE_XMLNode* pINode) {
   }
 }
 
-void CFDE_XMLDoc::SaveXML(IFGAS_Stream* pXMLStream, bool bSaveBOM) {
+void CFDE_XMLDoc::SaveXML(CFX_RetainPtr<IFGAS_Stream>& pXMLStream,
+                          bool bSaveBOM) {
   if (!pXMLStream || pXMLStream == m_pStream) {
     m_pStream->Seek(FX_STREAMSEEK_Begin, 0);
     pXMLStream = m_pStream;
@@ -1288,7 +1290,7 @@ CFDE_XMLSyntaxParser::CFDE_XMLSyntaxParser()
   m_CurNode.eNodeType = FDE_XMLNODE_Unknown;
 }
 
-void CFDE_XMLSyntaxParser::Init(IFGAS_Stream* pStream,
+void CFDE_XMLSyntaxParser::Init(const CFX_RetainPtr<IFGAS_Stream>& pStream,
                                 int32_t iXMLPlaneSize,
                                 int32_t iTextDataSize) {
   ASSERT(!m_pStream && !m_pBuffer);

@@ -33,7 +33,7 @@ class CFGAS_GEFont {
   static CFGAS_GEFont* LoadFont(const uint8_t* pBuffer,
                                 int32_t iLength,
                                 CFGAS_FontMgr* pFontMgr);
-  static CFGAS_GEFont* LoadFont(IFGAS_Stream* pFontStream,
+  static CFGAS_GEFont* LoadFont(const CFX_RetainPtr<IFGAS_Stream>& pFontStream,
                                 CFGAS_FontMgr* pFontMgr,
                                 bool bSaveStream);
 #endif
@@ -69,7 +69,8 @@ class CFGAS_GEFont {
                         uint32_t dwFontStyles,
                         uint16_t wCodePage);
   bool LoadFontInternal(const uint8_t* pBuffer, int32_t length);
-  bool LoadFontInternal(IFGAS_Stream* pFontStream, bool bSaveStream);
+  bool LoadFontInternal(const CFX_RetainPtr<IFGAS_Stream>& pFontStream,
+                        bool bSaveStream);
 #endif
   bool LoadFontInternal(CFX_Font* pExternalFont);
   bool LoadFontInternal(std::unique_ptr<CFX_Font> pInternalFont);
@@ -97,7 +98,7 @@ class CFGAS_GEFont {
   CFGAS_FontMgr* const m_pFontMgr;
   int32_t m_iRefCount;
   bool m_bExternalFont;
-  std::unique_ptr<IFGAS_Stream, ReleaseDeleter<IFGAS_Stream>> m_pStream;
+  CFX_RetainPtr<IFGAS_Stream> m_pStream;
   CFX_RetainPtr<IFX_SeekableReadStream> m_pFileRead;
   std::unique_ptr<CFX_UnicodeEncoding> m_pFontEncoding;
   std::unique_ptr<CFX_DiscreteArrayTemplate<uint16_t>> m_pCharWidthMap;

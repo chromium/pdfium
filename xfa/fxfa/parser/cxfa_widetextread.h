@@ -14,8 +14,6 @@ class CXFA_WideTextRead : public IFGAS_Stream {
   explicit CXFA_WideTextRead(const CFX_WideString& wsBuffer);
 
   // IFGAS_Stream
-  void Release() override;
-  IFGAS_Stream* Retain() override;
   uint32_t GetAccessModes() const override;
   int32_t GetLength() const override;
   int32_t Seek(FX_STREAMSEEK eSeek, int32_t iOffset) override;
@@ -30,16 +28,15 @@ class CXFA_WideTextRead : public IFGAS_Stream {
   int32_t GetBOM(uint8_t bom[4]) const override;
   uint16_t GetCodePage() const override;
   uint16_t SetCodePage(uint16_t wCodePage) override;
-  IFGAS_Stream* CreateSharedStream(uint32_t dwAccess,
-                                   int32_t iOffset,
-                                   int32_t iLength) override;
+  CFX_RetainPtr<IFGAS_Stream> CreateSharedStream(uint32_t dwAccess,
+                                                 int32_t iOffset,
+                                                 int32_t iLength) override;
 
   CFX_WideString GetSrcText() const;
 
  protected:
   CFX_WideString m_wsBuffer;
   int32_t m_iPosition;
-  int32_t m_iRefCount;
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_WIDETEXTREAD_H_

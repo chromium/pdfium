@@ -26,7 +26,7 @@ class CXFA_DataExporter {
               const FX_CHAR* pChecksum);
 
  protected:
-  bool Export(IFGAS_Stream* pStream,
+  bool Export(const CFX_RetainPtr<IFGAS_Stream>& pStream,
               CXFA_Node* pNode,
               uint32_t dwFlag,
               const FX_CHAR* pChecksum);

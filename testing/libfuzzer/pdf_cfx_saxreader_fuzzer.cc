@@ -4,6 +4,7 @@
 
 #include <memory>
 
+#include "core/fxcrt/cfx_retain_ptr.h"
 #include "xfa/fde/xml/cfx_saxreader.h"
 #include "xfa/fgas/crt/fgas_stream.h"
 #include "xfa/fxfa/parser/cxfa_widetextread.h"
@@ -11,8 +12,7 @@
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   CFX_WideString input = CFX_WideString::FromUTF8(
       CFX_ByteStringC(data, static_cast<FX_STRSIZE>(size)));
-  std::unique_ptr<IFGAS_Stream, ReleaseDeleter<IFGAS_Stream>> stream(
-      new CXFA_WideTextRead(input));
+  auto stream = pdfium::MakeRetain<CXFA_WideTextRead>(input);
   if (!stream)
     return 0;
 

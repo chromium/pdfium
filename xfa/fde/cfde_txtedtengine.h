@@ -9,6 +9,7 @@
 
 #include <memory>
 
+#include "core/fxcrt/cfx_retain_ptr.h"
 #include "xfa/fde/ifde_txtedtengine.h"
 
 class CFDE_TxtEdtBuf;
@@ -28,7 +29,7 @@ class CFDE_TxtEdtEngine {
   int32_t CountPages() const;
   IFDE_TxtEdtPage* GetPage(int32_t nIndex);
 
-  void SetTextByStream(IFGAS_Stream* pStream);
+  void SetTextByStream(const CFX_RetainPtr<IFGAS_Stream>& pStream);
   void SetText(const CFX_WideString& wsText);
   int32_t GetTextLength() const;
   CFX_WideString GetText(int32_t nStart, int32_t nCount = -1) const;

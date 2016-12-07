@@ -8,6 +8,7 @@
 
 #include <memory>
 
+#include "third_party/base/ptr_util.h"
 #include "xfa/fde/css/fde_cssdatatable.h"
 #include "xfa/fde/css/fde_csssyntax.h"
 #include "xfa/fgas/crt/fgas_codepage.h"
@@ -49,7 +50,7 @@ IFDE_CSSStyleSheet* IFDE_CSSStyleSheet::LoadHTMLStandardStyleSheet() {
 
 IFDE_CSSStyleSheet* IFDE_CSSStyleSheet::LoadFromStream(
     const CFX_WideString& szUrl,
-    IFGAS_Stream* pStream,
+    const CFX_RetainPtr<IFGAS_Stream>& pStream,
     uint16_t wCodePage,
     uint32_t dwMediaList) {
   CFDE_CSSStyleSheet* pStyleSheet = new CFDE_CSSStyleSheet(dwMediaList);
@@ -143,10 +144,11 @@ IFDE_CSSRule* CFDE_CSSStyleSheet::GetRule(int32_t index) {
   return m_RuleArray.GetAt(index);
 }
 
-bool CFDE_CSSStyleSheet::LoadFromStream(const CFX_WideString& szUrl,
-                                        IFGAS_Stream* pStream,
-                                        uint16_t wCodePage) {
-  std::unique_ptr<CFDE_CSSSyntaxParser> pSyntax(new CFDE_CSSSyntaxParser);
+bool CFDE_CSSStyleSheet::LoadFromStream(
+    const CFX_WideString& szUrl,
+    const CFX_RetainPtr<IFGAS_Stream>& pStream,
+    uint16_t wCodePage) {
+  auto pSyntax = pdfium::MakeUnique<CFDE_CSSSyntaxParser>();
   if (pStream->GetCodePage() != wCodePage)
     pStream->SetCodePage(wCodePage);
 

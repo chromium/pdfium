@@ -111,7 +111,7 @@ class CFDE_CSSStyleSheet : public IFDE_CSSStyleSheet, public CFX_Target {
   IFDE_CSSRule* GetRule(int32_t index) override;
 
   bool LoadFromStream(const CFX_WideString& szUrl,
-                      IFGAS_Stream* pStream,
+                      const CFX_RetainPtr<IFGAS_Stream>& pStream,
                       uint16_t wCodePage);
   bool LoadFromBuffer(const CFX_WideString& szUrl,
                       const FX_WCHAR* pBuffer,

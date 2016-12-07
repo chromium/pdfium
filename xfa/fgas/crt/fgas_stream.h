@@ -27,27 +27,23 @@ enum FX_STREAMSEEK {
   FX_STREAMSEEK_End,
 };
 
-class IFGAS_Stream {
+class IFGAS_Stream : public CFX_Retainable {
  public:
-  static IFGAS_Stream* CreateStream(
+  static CFX_RetainPtr<IFGAS_Stream> CreateStream(
       const CFX_RetainPtr<IFX_SeekableReadStream>& pFileRead,
       uint32_t dwAccess);
-  static IFGAS_Stream* CreateStream(
+  static CFX_RetainPtr<IFGAS_Stream> CreateStream(
       const CFX_RetainPtr<IFX_SeekableWriteStream>& pFileWrite,
       uint32_t dwAccess);
-  static IFGAS_Stream* CreateStream(uint8_t* pData,
-                                    int32_t length,
-                                    uint32_t dwAccess);
-  static IFGAS_Stream* CreateTextStream(IFGAS_Stream* pBaseStream,
-                                        bool bDeleteOnRelease);
+  static CFX_RetainPtr<IFGAS_Stream> CreateStream(uint8_t* pData,
+                                                  int32_t length,
+                                                  uint32_t dwAccess);
+  static CFX_RetainPtr<IFGAS_Stream> CreateTextStream(
+      const CFX_RetainPtr<IFGAS_Stream>& pBaseStream);
 
-  virtual ~IFGAS_Stream() {}
-  virtual void Release() = 0;
-  virtual IFGAS_Stream* Retain() = 0;
-
-  virtual IFGAS_Stream* CreateSharedStream(uint32_t dwAccess,
-                                           int32_t iOffset,
-                                           int32_t iLength) = 0;
+  virtual CFX_RetainPtr<IFGAS_Stream> CreateSharedStream(uint32_t dwAccess,
+                                                         int32_t iOffset,
+                                                         int32_t iLength) = 0;
 
   virtual uint32_t GetAccessModes() const = 0;
   virtual int32_t GetLength() const = 0;

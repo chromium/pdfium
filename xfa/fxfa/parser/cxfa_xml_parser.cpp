@@ -6,7 +6,8 @@
 
 #include "xfa/fxfa/parser/cxfa_xml_parser.h"
 
-CXFA_XMLParser::CXFA_XMLParser(CFDE_XMLNode* pRoot, IFGAS_Stream* pStream)
+CXFA_XMLParser::CXFA_XMLParser(CFDE_XMLNode* pRoot,
+                               const CFX_RetainPtr<IFGAS_Stream>& pStream)
     : m_nElementStart(0),
       m_dwCheckStatus(0),
       m_dwCurrentCheckStatus(0),

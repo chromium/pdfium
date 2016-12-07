@@ -172,10 +172,11 @@ void XFA_GetPlainTextFromRichText(CFDE_XMLNode* pXMLNode,
 bool XFA_FieldIsMultiListBox(CXFA_Node* pFieldNode);
 
 void XFA_DataExporter_DealWithDataGroupNode(CXFA_Node* pDataNode);
-void XFA_DataExporter_RegenerateFormFile(CXFA_Node* pNode,
-                                         IFGAS_Stream* pStream,
-                                         const FX_CHAR* pChecksum = nullptr,
-                                         bool bSaveXML = false);
+void XFA_DataExporter_RegenerateFormFile(
+    CXFA_Node* pNode,
+    const CFX_RetainPtr<IFGAS_Stream>& pStream,
+    const FX_CHAR* pChecksum = nullptr,
+    bool bSaveXML = false);
 
 const XFA_NOTSUREATTRIBUTE* XFA_GetNotsureAttribute(
     XFA_Element eElement,
