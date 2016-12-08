@@ -68,7 +68,7 @@ class CFWL_ComboBox : public CFWL_Widget {
   void OnDrawWidget(CFX_Graphics* pGraphics,
                     const CFX_Matrix* pMatrix) override;
 
-  void GetTextByIndex(int32_t iIndex, CFX_WideString& wsText) const;
+  CFX_WideString GetTextByIndex(int32_t iIndex) const;
   int32_t GetCurSel() const { return m_iCurSel; }
   void SetCurSel(int32_t iSel);
 
@@ -101,7 +101,7 @@ class CFWL_ComboBox : public CFWL_Widget {
   void EditDelete() { m_pEdit->ClearText(); }
   void EditDeSelect() { m_pEdit->ClearSelections(); }
 
-  void GetBBox(CFX_RectF& rect) const;
+  CFX_RectF GetBBox() const;
   void EditModifyStylesEx(uint32_t dwStylesExAdded, uint32_t dwStylesExRemoved);
 
   void DrawStretchHandler(CFX_Graphics* pGraphics, const CFX_Matrix* pMatrix);
@@ -146,7 +146,7 @@ class CFWL_ComboBox : public CFWL_Widget {
   void DisForm_Update();
   FWL_WidgetHit DisForm_HitTest(FX_FLOAT fx, FX_FLOAT fy);
   void DisForm_DrawWidget(CFX_Graphics* pGraphics, const CFX_Matrix* pMatrix);
-  void DisForm_GetBBox(CFX_RectF& rect) const;
+  CFX_RectF DisForm_GetBBox() const;
   void DisForm_Layout();
   void DisForm_OnProcessMessage(CFWL_Message* pMessage);
   void DisForm_OnLButtonDown(CFWL_MsgMouse* pMsg);

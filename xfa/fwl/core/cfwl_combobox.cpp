@@ -252,12 +252,10 @@ void CFWL_ComboBox::SetThemeProvider(IFWL_ThemeProvider* pThemeProvider) {
     m_pEdit->SetThemeProvider(pThemeProvider);
 }
 
-void CFWL_ComboBox::GetTextByIndex(int32_t iIndex,
-                                   CFX_WideString& wsText) const {
+CFX_WideString CFWL_ComboBox::GetTextByIndex(int32_t iIndex) const {
   CFWL_ListItem* pItem = static_cast<CFWL_ListItem*>(
       m_pListBox->GetItem(m_pListBox.get(), iIndex));
-  if (pItem)
-    wsText = pItem->m_wsText;
+  return pItem ? pItem->m_wsText : L"";
 }
 
 void CFWL_ComboBox::SetCurSel(int32_t iSel) {
@@ -314,20 +312,19 @@ void CFWL_ComboBox::OpenDropDownList(bool bActivate) {
   ShowDropList(bActivate);
 }
 
-void CFWL_ComboBox::GetBBox(CFX_RectF& rect) const {
-  if (m_pWidgetMgr->IsFormDisabled()) {
-    DisForm_GetBBox(rect);
-    return;
-  }
+CFX_RectF CFWL_ComboBox::GetBBox() const {
+  if (m_pWidgetMgr->IsFormDisabled())
+    return DisForm_GetBBox();
 
-  rect = m_pProperties->m_rtWidget;
+  CFX_RectF rect = m_pProperties->m_rtWidget;
   if (!m_pListBox || !IsDropListVisible())
-    return;
+    return rect;
 
   CFX_RectF rtList;
   m_pListBox->GetWidgetRect(rtList, false);
   rtList.Offset(rect.left, rect.top);
   rect.Union(rtList);
+  return rect;
 }
 
 void CFWL_ComboBox::EditModifyStylesEx(uint32_t dwStylesExAdded,
@@ -737,15 +734,16 @@ void CFWL_ComboBox::DisForm_DrawWidget(CFX_Graphics* pGraphics,
   }
 }
 
-void CFWL_ComboBox::DisForm_GetBBox(CFX_RectF& rect) const {
-  rect = m_pProperties->m_rtWidget;
+CFX_RectF CFWL_ComboBox::DisForm_GetBBox() const {
+  CFX_RectF rect = m_pProperties->m_rtWidget;
   if (!m_pListBox || !DisForm_IsDropListVisible())
-    return;
+    return rect;
 
   CFX_RectF rtList;
   m_pListBox->GetWidgetRect(rtList, false);
   rtList.Offset(rect.left, rect.top);
   rect.Union(rtList);
+  return rect;
 }
 
 void CFWL_ComboBox::DisForm_Layout() {

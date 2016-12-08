@@ -227,16 +227,13 @@ bool CXFA_FFComboBox::GetBBox(CFX_RectF& rtBox,
 }
 
 bool CXFA_FFComboBox::PtInActiveRect(FX_FLOAT fx, FX_FLOAT fy) {
-  if (!m_pNormalWidget) {
+  if (!m_pNormalWidget)
     return false;
-  }
-  CFX_RectF rtWidget;
-  ((CFWL_ComboBox*)m_pNormalWidget)->GetBBox(rtWidget);
-  if (rtWidget.Contains(fx, fy)) {
-    return true;
-  }
-  return false;
+  return static_cast<CFWL_ComboBox*>(m_pNormalWidget)
+      ->GetBBox()
+      .Contains(fx, fy);
 }
+
 bool CXFA_FFComboBox::LoadWidget() {
   CFWL_ComboBox* pComboBox = new CFWL_ComboBox(GetFWLApp());
   m_pNormalWidget = (CFWL_Widget*)pComboBox;
@@ -321,12 +318,11 @@ bool CXFA_FFComboBox::IsDataChanged() {
   CFX_WideString wsText = pFWLcombobox->GetEditText();
   int32_t iCursel = pFWLcombobox->GetCurSel();
   if (iCursel >= 0) {
-    CFX_WideString wsSel;
-    pFWLcombobox->GetTextByIndex(iCursel, wsSel);
-    if (wsSel == wsText) {
+    CFX_WideString wsSel = pFWLcombobox->GetTextByIndex(iCursel);
+    if (wsSel == wsText)
       m_pDataAcc->GetChoiceListItem(wsText, iCursel, true);
-    }
   }
+
   CFX_WideString wsOldValue;
   m_pDataAcc->GetValue(wsOldValue, XFA_VALUEPICTURE_Raw);
   if (wsOldValue != wsText) {
