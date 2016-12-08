@@ -14,8 +14,7 @@ class CFX_LCNumeric;
 class CFX_FormatString {
  public:
   CFX_FormatString(IFX_LocaleMgr* pLocaleMgr, bool bUseLCID);
-
-  void Release() { delete this; }
+  ~CFX_FormatString();
 
   void SplitFormatString(const CFX_WideString& wsFormatString,
                          CFX_WideStringArray& wsPatterns);
@@ -62,8 +61,6 @@ class CFX_FormatString {
   bool FormatNull(const CFX_WideString& wsPattern, CFX_WideString& wsOutput);
 
  protected:
-  ~CFX_FormatString();
-
   IFX_Locale* GetTextFormat(const CFX_WideString& wsPattern,
                             const CFX_WideStringC& wsCategory,
                             CFX_WideString& wsPurgePattern);

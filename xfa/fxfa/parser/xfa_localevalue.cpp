@@ -7,6 +7,7 @@
 #include "xfa/fxfa/parser/xfa_localevalue.h"
 
 #include "core/fxcrt/fx_ext.h"
+#include "third_party/base/ptr_util.h"
 #include "xfa/fgas/localization/fgas_localeimp.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/xfa_localemgr.h"
@@ -93,21 +94,20 @@ static FX_LOCALECATEGORY XFA_ValugeCategory(FX_LOCALECATEGORY eCategory,
   }
   return eCategory;
 }
+
 bool CXFA_LocaleValue::ValidateValue(const CFX_WideString& wsValue,
                                      const CFX_WideString& wsPattern,
                                      IFX_Locale* pLocale,
                                      CFX_WideString* pMatchFormat) {
   CFX_WideString wsOutput;
   IFX_Locale* locale = m_pLocaleMgr->GetDefLocale();
-  if (pLocale) {
+  if (pLocale)
     m_pLocaleMgr->SetDefLocale(pLocale);
-  }
-  CFX_FormatString* pFormat = nullptr;
-  if (m_pLocaleMgr)
-    pFormat = new CFX_FormatString(m_pLocaleMgr, false);
 
+  auto pFormat = pdfium::MakeUnique<CFX_FormatString>(m_pLocaleMgr, false);
   CFX_WideStringArray wsPatterns;
   pFormat->SplitFormatString(wsPattern, wsPatterns);
+
   bool bRet = false;
   int32_t iCount = wsPatterns.GetSize();
   int32_t i = 0;
@@ -181,15 +181,15 @@ bool CXFA_LocaleValue::ValidateValue(const CFX_WideString& wsValue,
         break;
     }
   }
-  if (bRet && pMatchFormat) {
+  if (bRet && pMatchFormat)
     *pMatchFormat = wsPatterns[i - 1];
-  }
-  pFormat->Release();
-  if (pLocale) {
+
+  if (pLocale)
     m_pLocaleMgr->SetDefLocale(locale);
-  }
+
   return bRet;
 }
+
 CFX_WideString CXFA_LocaleValue::GetValue() const {
   return m_wsValue;
 }
@@ -458,44 +458,34 @@ bool CXFA_LocaleValue::SetDateTime(const CFX_WideString& wsDateTime,
   m_dwType = XFA_VT_DATETIME;
   return m_bValid = ParsePatternValue(wsDateTime, wsFormat, pLocale);
 }
+
 bool CXFA_LocaleValue::FormatPatterns(CFX_WideString& wsResult,
                                       const CFX_WideString& wsFormat,
                                       IFX_Locale* pLocale,
                                       XFA_VALUEPICTURE eValueType) const {
-  wsResult.clear();
-  bool bRet = false;
-
-  CFX_FormatString* pFormat = nullptr;
-  if (m_pLocaleMgr)
-    pFormat = new CFX_FormatString(m_pLocaleMgr, false);
-
+  auto pFormat = pdfium::MakeUnique<CFX_FormatString>(m_pLocaleMgr, false);
   CFX_WideStringArray wsPatterns;
   pFormat->SplitFormatString(wsFormat, wsPatterns);
+  wsResult.clear();
   int32_t iCount = wsPatterns.GetSize();
   for (int32_t i = 0; i < iCount; i++) {
-    bRet = FormatSinglePattern(wsResult, wsPatterns[i], pLocale, eValueType);
-    if (bRet) {
-      break;
-    }
+    if (FormatSinglePattern(wsResult, wsPatterns[i], pLocale, eValueType))
+      return true;
   }
-  pFormat->Release();
-  return bRet;
+  return false;
 }
+
 bool CXFA_LocaleValue::FormatSinglePattern(CFX_WideString& wsResult,
                                            const CFX_WideString& wsFormat,
                                            IFX_Locale* pLocale,
                                            XFA_VALUEPICTURE eValueType) const {
   IFX_Locale* locale = m_pLocaleMgr->GetDefLocale();
-  if (pLocale) {
+  if (pLocale)
     m_pLocaleMgr->SetDefLocale(pLocale);
-  }
+
   wsResult.clear();
   bool bRet = false;
-
-  CFX_FormatString* pFormat = nullptr;
-  if (m_pLocaleMgr)
-    pFormat = new CFX_FormatString(m_pLocaleMgr, false);
-
+  auto pFormat = pdfium::MakeUnique<CFX_FormatString>(m_pLocaleMgr, false);
   FX_LOCALECATEGORY eCategory = pFormat->GetCategory(wsFormat);
   eCategory = XFA_ValugeCategory(eCategory, m_dwType);
   switch (eCategory) {
@@ -531,16 +521,16 @@ bool CXFA_LocaleValue::FormatSinglePattern(CFX_WideString& wsResult,
       wsResult = m_wsValue;
       bRet = true;
   }
-  pFormat->Release();
   if (!bRet && (eCategory != FX_LOCALECATEGORY_Num ||
                 eValueType != XFA_VALUEPICTURE_Display)) {
     wsResult = m_wsValue;
   }
-  if (pLocale) {
+  if (pLocale)
     m_pLocaleMgr->SetDefLocale(locale);
-  }
+
   return bRet;
 }
+
 static bool XFA_ValueSplitDateTime(const CFX_WideString& wsDateTime,
                                    CFX_WideString& wsDate,
                                    CFX_WideString& wsTime) {
@@ -799,14 +789,10 @@ bool CXFA_LocaleValue::ParsePatternValue(const CFX_WideString& wsValue,
                                          const CFX_WideString& wsPattern,
                                          IFX_Locale* pLocale) {
   IFX_Locale* locale = m_pLocaleMgr->GetDefLocale();
-  if (pLocale) {
+  if (pLocale)
     m_pLocaleMgr->SetDefLocale(pLocale);
-  }
 
-  CFX_FormatString* pFormat = nullptr;
-  if (m_pLocaleMgr)
-    pFormat = new CFX_FormatString(m_pLocaleMgr, false);
-
+  auto pFormat = pdfium::MakeUnique<CFX_FormatString>(m_pLocaleMgr, false);
   CFX_WideStringArray wsPatterns;
   pFormat->SplitFormatString(wsPattern, wsPatterns);
   bool bRet = false;
@@ -875,15 +861,15 @@ bool CXFA_LocaleValue::ParsePatternValue(const CFX_WideString& wsValue,
         break;
     }
   }
-  if (!bRet) {
+  if (!bRet)
     m_wsValue = wsValue;
-  }
-  pFormat->Release();
-  if (pLocale) {
+
+  if (pLocale)
     m_pLocaleMgr->SetDefLocale(locale);
-  }
+
   return bRet;
 }
+
 void CXFA_LocaleValue::GetNumbericFormat(CFX_WideString& wsFormat,
                                          int32_t nIntLen,
                                          int32_t nDecLen,
