@@ -11,14 +11,9 @@
 
 class CFWL_EvtTextChanged : public CFWL_Event {
  public:
-  CFWL_EvtTextChanged();
+  explicit CFWL_EvtTextChanged(CFWL_Widget* pSrcTarget);
   ~CFWL_EvtTextChanged() override;
 
-  CFWL_EventType GetClassID() const override;
-
-  int32_t nChangeType;
-  CFX_WideString wsInsert;
-  CFX_WideString wsDelete;
   CFX_WideString wsPrevText;
 };
 

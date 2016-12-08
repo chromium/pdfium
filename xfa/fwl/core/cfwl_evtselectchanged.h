@@ -11,10 +11,8 @@
 
 class CFWL_EvtSelectChanged : public CFWL_Event {
  public:
-  CFWL_EvtSelectChanged();
+  explicit CFWL_EvtSelectChanged(CFWL_Widget* pSrcTarget);
   ~CFWL_EvtSelectChanged() override;
-
-  CFWL_EventType GetClassID() const override;
 
   // Used by ComboBox.
   bool bLButtonUp;

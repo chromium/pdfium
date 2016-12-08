@@ -11,7 +11,7 @@
 #include "third_party/base/ptr_util.h"
 #include "xfa/fde/tto/fde_textout.h"
 #include "xfa/fwl/core/cfwl_app.h"
-#include "xfa/fwl/core/cfwl_evtclose.h"
+#include "xfa/fwl/core/cfwl_event.h"
 #include "xfa/fwl/core/cfwl_formproxy.h"
 #include "xfa/fwl/core/cfwl_msgmouse.h"
 #include "xfa/fwl/core/cfwl_notedriver.h"
@@ -487,8 +487,8 @@ void CFWL_Form::OnProcessMessage(CFWL_Message* pMessage) {
   if (!pMessage)
     return;
 
-  switch (pMessage->GetClassID()) {
-    case CFWL_MessageType::Mouse: {
+  switch (pMessage->GetType()) {
+    case CFWL_Message::Type::Mouse: {
       CFWL_MsgMouse* pMsg = static_cast<CFWL_MsgMouse*>(pMessage);
       switch (pMsg->m_dwCmd) {
         case FWL_MouseCommand::LeftButtonDown:
@@ -556,8 +556,7 @@ void CFWL_Form::OnLButtonUp(CFWL_MsgMouse* pMsg) {
     }
     m_bMaximized = !m_bMaximized;
   } else if (pPressedBtn != m_pMinBox) {
-    CFWL_EvtClose eClose;
-    eClose.m_pSrcTarget = this;
+    CFWL_Event eClose(CFWL_Event::Type::Close, this);
     DispatchEvent(&eClose);
   }
 }

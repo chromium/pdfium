@@ -6,10 +6,7 @@
 
 #include "xfa/fwl/core/cfwl_evtselectchanged.h"
 
-CFWL_EvtSelectChanged::CFWL_EvtSelectChanged() {}
+CFWL_EvtSelectChanged::CFWL_EvtSelectChanged(CFWL_Widget* pSrcTarget)
+    : CFWL_Event(CFWL_Event::Type::SelectChanged, pSrcTarget) {}
 
 CFWL_EvtSelectChanged::~CFWL_EvtSelectChanged() {}
-
-CFWL_EventType CFWL_EvtSelectChanged::GetClassID() const {
-  return CFWL_EventType::SelectChanged;
-}

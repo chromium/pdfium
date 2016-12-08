@@ -9,7 +9,6 @@
 
 #include <memory>
 
-#include "xfa/fwl/core/cfwl_event.h"
 #include "xfa/fwl/core/cfwl_timer.h"
 #include "xfa/fwl/core/cfwl_widget.h"
 #include "xfa/fxfa/cxfa_eventparam.h"
@@ -33,7 +32,6 @@ class CFWL_SpinButton : public CFWL_Widget {
   void DrawWidget(CFX_Graphics* pGraphics,
                   const CFX_Matrix* pMatrix = nullptr) override;
   void OnProcessMessage(CFWL_Message* pMessage) override;
-  void OnProcessEvent(CFWL_Event* pEvent) override;
   void OnDrawWidget(CFX_Graphics* pGraphics,
                     const CFX_Matrix* pMatrix) override;
 

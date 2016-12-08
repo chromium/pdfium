@@ -93,12 +93,12 @@ bool CXFA_FFImageEdit::OnLButtonDown(uint32_t dwFlags,
     return false;
 
   SetButtonDown(true);
-  CFWL_MsgMouse ms;
+
+  CFWL_MsgMouse ms(nullptr, m_pNormalWidget);
   ms.m_dwCmd = FWL_MouseCommand::LeftButtonDown;
   ms.m_dwFlags = dwFlags;
   ms.m_fx = fx;
   ms.m_fy = fy;
-  ms.m_pDstTarget = m_pNormalWidget;
   FWLToClient(ms.m_fx, ms.m_fy);
   TranslateFWLMessage(&ms);
   return true;

@@ -20,9 +20,9 @@
 #include "xfa/fgas/font/cfgas_gefont.h"
 #include "xfa/fwl/core/cfwl_app.h"
 #include "xfa/fwl/core/cfwl_caret.h"
+#include "xfa/fwl/core/cfwl_event.h"
 #include "xfa/fwl/core/cfwl_evtcheckword.h"
 #include "xfa/fwl/core/cfwl_evttextchanged.h"
-#include "xfa/fwl/core/cfwl_evttextfull.h"
 #include "xfa/fwl/core/cfwl_evtvalidate.h"
 #include "xfa/fwl/core/cfwl_msgkey.h"
 #include "xfa/fwl/core/cfwl_msgmouse.h"
@@ -200,8 +200,7 @@ void CFWL_Edit::DrawSpellCheck(CFX_Graphics* pGraphics,
     pGraphics->ConcatMatrix(const_cast<CFX_Matrix*>(pMatrix));
 
   CFX_Color crLine(0xFFFF0000);
-  CFWL_EvtCheckWord checkWordEvent;
-  checkWordEvent.m_pSrcTarget = this;
+  CFWL_EvtCheckWord checkWordEvent(this);
 
   CFX_ByteString sLatinWord;
   CFX_Path pathSpell;
@@ -452,11 +451,7 @@ void CFWL_Edit::On_TextChanged(CFDE_TxtEdtEngine* pEdit,
   CFX_RectF rtTemp;
   GetClientRect(rtTemp);
 
-  CFWL_EvtTextChanged event;
-  event.m_pSrcTarget = this;
-  event.nChangeType = ChangeInfo.nChangeType;
-  event.wsInsert = ChangeInfo.wsInsert;
-  event.wsDelete = ChangeInfo.wsDelete;
+  CFWL_EvtTextChanged event(this);
   event.wsPrevText = ChangeInfo.wsPrevText;
   DispatchEvent(&event);
 
@@ -502,9 +497,7 @@ bool CFWL_Edit::On_Validate(CFDE_TxtEdtEngine* pEdit, CFX_WideString& wsText) {
   if (!pDst)
     pDst = this;
 
-  CFWL_EvtValidate event;
-  event.pDstWidget = pDst;
-  event.m_pSrcTarget = this;
+  CFWL_EvtValidate event(this);
   event.wsInsert = wsText;
   event.bValidate = true;
   DispatchEvent(&event);
@@ -1277,8 +1270,7 @@ void CFWL_Edit::ProcessInsertError(int32_t iError) {
   if (iError != -2)
     return;
 
-  CFWL_EvtTextFull textFullEvent;
-  textFullEvent.m_pSrcTarget = this;
+  CFWL_Event textFullEvent(CFWL_Event::Type::TextFull, this);
   DispatchEvent(&textFullEvent);
 }
 
@@ -1286,13 +1278,14 @@ void CFWL_Edit::OnProcessMessage(CFWL_Message* pMessage) {
   if (!pMessage)
     return;
 
-  CFWL_MessageType dwMsgCode = pMessage->GetClassID();
-  switch (dwMsgCode) {
-    case CFWL_MessageType::SetFocus:
-    case CFWL_MessageType::KillFocus:
-      OnFocusChanged(pMessage, dwMsgCode == CFWL_MessageType::SetFocus);
+  switch (pMessage->GetType()) {
+    case CFWL_Message::Type::SetFocus:
+      OnFocusChanged(pMessage, true);
       break;
-    case CFWL_MessageType::Mouse: {
+    case CFWL_Message::Type::KillFocus:
+      OnFocusChanged(pMessage, false);
+      break;
+    case CFWL_Message::Type::Mouse: {
       CFWL_MsgMouse* pMsg = static_cast<CFWL_MsgMouse*>(pMessage);
       switch (pMsg->m_dwCmd) {
         case FWL_MouseCommand::LeftButtonDown:
@@ -1315,7 +1308,7 @@ void CFWL_Edit::OnProcessMessage(CFWL_Message* pMessage) {
       }
       break;
     }
-    case CFWL_MessageType::Key: {
+    case CFWL_Message::Type::Key: {
       CFWL_MsgKey* pKey = static_cast<CFWL_MsgKey*>(pMessage);
       if (pKey->m_dwCmd == FWL_KeyCommand::KeyDown)
         OnKeyDown(pKey);
@@ -1332,7 +1325,7 @@ void CFWL_Edit::OnProcessMessage(CFWL_Message* pMessage) {
 void CFWL_Edit::OnProcessEvent(CFWL_Event* pEvent) {
   if (!pEvent)
     return;
-  if (pEvent->GetClassID() != CFWL_EventType::Scroll)
+  if (pEvent->GetType() != CFWL_Event::Type::Scroll)
     return;
 
   CFWL_Widget* pSrcTarget = pEvent->m_pSrcTarget;
@@ -1522,11 +1515,7 @@ void CFWL_Edit::OnKeyDown(CFWL_MsgKey* pMsg) {
       break;
     }
     case FWL_VKEY_F2:
-      break;
-    case FWL_VKEY_Tab: {
-      DispatchKeyEvent(pMsg);
-      break;
-    }
+    case FWL_VKEY_Tab:
     default:
       break;
   }
@@ -1589,54 +1578,54 @@ void CFWL_Edit::OnChar(CFWL_MsgKey* pMsg) {
 }
 
 bool CFWL_Edit::OnScroll(CFWL_ScrollBar* pScrollBar,
-                         FWL_SCBCODE dwCode,
+                         CFWL_EvtScroll::Code dwCode,
                          FX_FLOAT fPos) {
   CFX_SizeF fs;
   pScrollBar->GetRange(&fs.x, &fs.y);
   FX_FLOAT iCurPos = pScrollBar->GetPos();
   FX_FLOAT fStep = pScrollBar->GetStepSize();
   switch (dwCode) {
-    case FWL_SCBCODE::Min: {
+    case CFWL_EvtScroll::Code::Min: {
       fPos = fs.x;
       break;
     }
-    case FWL_SCBCODE::Max: {
+    case CFWL_EvtScroll::Code::Max: {
       fPos = fs.y;
       break;
     }
-    case FWL_SCBCODE::StepBackward: {
+    case CFWL_EvtScroll::Code::StepBackward: {
       fPos -= fStep;
       if (fPos < fs.x + fStep / 2) {
         fPos = fs.x;
       }
       break;
     }
-    case FWL_SCBCODE::StepForward: {
+    case CFWL_EvtScroll::Code::StepForward: {
       fPos += fStep;
       if (fPos > fs.y - fStep / 2) {
         fPos = fs.y;
       }
       break;
     }
-    case FWL_SCBCODE::PageBackward: {
+    case CFWL_EvtScroll::Code::PageBackward: {
       fPos -= pScrollBar->GetPageSize();
       if (fPos < fs.x) {
         fPos = fs.x;
       }
       break;
     }
-    case FWL_SCBCODE::PageForward: {
+    case CFWL_EvtScroll::Code::PageForward: {
       fPos += pScrollBar->GetPageSize();
       if (fPos > fs.y) {
         fPos = fs.y;
       }
       break;
     }
-    case FWL_SCBCODE::Pos:
-    case FWL_SCBCODE::TrackPos:
-    case FWL_SCBCODE::None:
+    case CFWL_EvtScroll::Code::Pos:
+    case CFWL_EvtScroll::Code::TrackPos:
+    case CFWL_EvtScroll::Code::None:
       break;
-    case FWL_SCBCODE::EndScroll:
+    case CFWL_EvtScroll::Code::EndScroll:
       return false;
   }
   if (iCurPos == fPos)

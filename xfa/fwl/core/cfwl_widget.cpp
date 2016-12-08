@@ -12,12 +12,8 @@
 #include "xfa/fde/tto/fde_textout.h"
 #include "xfa/fwl/core/cfwl_app.h"
 #include "xfa/fwl/core/cfwl_combobox.h"
-#include "xfa/fwl/core/cfwl_evtkey.h"
-#include "xfa/fwl/core/cfwl_evtkillfocus.h"
+#include "xfa/fwl/core/cfwl_event.h"
 #include "xfa/fwl/core/cfwl_evtmouse.h"
-#include "xfa/fwl/core/cfwl_evtmousewheel.h"
-#include "xfa/fwl/core/cfwl_evtsetfocus.h"
-#include "xfa/fwl/core/cfwl_evtsizechanged.h"
 #include "xfa/fwl/core/cfwl_form.h"
 #include "xfa/fwl/core/cfwl_msgkey.h"
 #include "xfa/fwl/core/cfwl_msgkillfocus.h"
@@ -86,21 +82,10 @@ void CFWL_Widget::GetWidgetRect(CFX_RectF& rect, bool bAutoSize) {
 }
 
 void CFWL_Widget::SetWidgetRect(const CFX_RectF& rect) {
-  CFX_RectF rtOld = m_pProperties->m_rtWidget;
   m_pProperties->m_rtWidget = rect;
-  if (IsChild()) {
-    if (FXSYS_fabs(rtOld.width - rect.width) > 0.5f ||
-        FXSYS_fabs(rtOld.height - rect.height) > 0.5f) {
-      CFWL_EvtSizeChanged ev;
-      ev.m_pSrcTarget = this;
-      ev.m_rtOld = rtOld;
-      ev.m_rtNew = rect;
-
-      if (IFWL_WidgetDelegate* pDelegate = GetDelegate())
-        pDelegate->OnProcessEvent(&ev);
-    }
+  if (IsChild())
     return;
-  }
+
   m_pWidgetMgr->SetWidgetRect_Native(this, rect);
 }
 
@@ -598,18 +583,6 @@ void CFWL_Widget::UnregisterEventTarget() {
   pNoteDriver->UnregisterEventTarget(this);
 }
 
-void CFWL_Widget::DispatchKeyEvent(CFWL_MsgKey* pNote) {
-  if (!pNote)
-    return;
-
-  auto pEvent = pdfium::MakeUnique<CFWL_EvtKey>();
-  pEvent->m_pSrcTarget = this;
-  pEvent->m_dwCmd = pNote->m_dwCmd;
-  pEvent->m_dwKeyCode = pNote->m_dwKeyCode;
-  pEvent->m_dwFlags = pNote->m_dwFlags;
-  DispatchEvent(pEvent.get());
-}
-
 void CFWL_Widget::DispatchEvent(CFWL_Event* pEvent) {
   if (m_pOuter) {
     m_pOuter->GetDelegate()->OnProcessEvent(pEvent);
@@ -733,61 +706,12 @@ void CFWL_Widget::OnProcessMessage(CFWL_Message* pMessage) {
     return;
 
   CFWL_Widget* pWidget = pMessage->m_pDstTarget;
-  CFWL_MessageType dwMsgCode = pMessage->GetClassID();
-  switch (dwMsgCode) {
-    case CFWL_MessageType::Mouse: {
+  switch (pMessage->GetType()) {
+    case CFWL_Message::Type::Mouse: {
       CFWL_MsgMouse* pMsgMouse = static_cast<CFWL_MsgMouse*>(pMessage);
-      CFWL_EvtMouse evt;
-      evt.m_pSrcTarget = pWidget;
-      evt.m_pDstTarget = pWidget;
+
+      CFWL_EvtMouse evt(pWidget, pWidget);
       evt.m_dwCmd = pMsgMouse->m_dwCmd;
-      evt.m_dwFlags = pMsgMouse->m_dwFlags;
-      evt.m_fx = pMsgMouse->m_fx;
-      evt.m_fy = pMsgMouse->m_fy;
-      pWidget->DispatchEvent(&evt);
-      break;
-    }
-    case CFWL_MessageType::MouseWheel: {
-      CFWL_MsgMouseWheel* pMsgMouseWheel =
-          static_cast<CFWL_MsgMouseWheel*>(pMessage);
-      CFWL_EvtMouseWheel evt;
-      evt.m_pSrcTarget = pWidget;
-      evt.m_pDstTarget = pWidget;
-      evt.m_dwFlags = pMsgMouseWheel->m_dwFlags;
-      evt.m_fDeltaX = pMsgMouseWheel->m_fDeltaX;
-      evt.m_fDeltaY = pMsgMouseWheel->m_fDeltaY;
-      evt.m_fx = pMsgMouseWheel->m_fx;
-      evt.m_fy = pMsgMouseWheel->m_fy;
-      pWidget->DispatchEvent(&evt);
-      break;
-    }
-    case CFWL_MessageType::Key: {
-      CFWL_MsgKey* pMsgKey = static_cast<CFWL_MsgKey*>(pMessage);
-      CFWL_EvtKey evt;
-      evt.m_pSrcTarget = pWidget;
-      evt.m_pDstTarget = pWidget;
-      evt.m_dwKeyCode = pMsgKey->m_dwKeyCode;
-      evt.m_dwFlags = pMsgKey->m_dwFlags;
-      evt.m_dwCmd = pMsgKey->m_dwCmd;
-      pWidget->DispatchEvent(&evt);
-      break;
-    }
-    case CFWL_MessageType::SetFocus: {
-      CFWL_MsgSetFocus* pMsgSetFocus = static_cast<CFWL_MsgSetFocus*>(pMessage);
-      CFWL_EvtSetFocus evt;
-      evt.m_pSrcTarget = pMsgSetFocus->m_pDstTarget;
-      evt.m_pDstTarget = pMsgSetFocus->m_pDstTarget;
-      evt.m_pSetFocus = pWidget;
-      pWidget->DispatchEvent(&evt);
-      break;
-    }
-    case CFWL_MessageType::KillFocus: {
-      CFWL_MsgKillFocus* pMsgKillFocus =
-          static_cast<CFWL_MsgKillFocus*>(pMessage);
-      CFWL_EvtKillFocus evt;
-      evt.m_pSrcTarget = pMsgKillFocus->m_pDstTarget;
-      evt.m_pDstTarget = pMsgKillFocus->m_pDstTarget;
-      evt.m_pKillFocus = pWidget;
       pWidget->DispatchEvent(&evt);
       break;
     }

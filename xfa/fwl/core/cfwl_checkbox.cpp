@@ -13,7 +13,7 @@
 #include "third_party/base/ptr_util.h"
 #include "xfa/fde/tto/fde_textout.h"
 #include "xfa/fwl/core/cfwl_app.h"
-#include "xfa/fwl/core/cfwl_evtcheckstatechanged.h"
+#include "xfa/fwl/core/cfwl_event.h"
 #include "xfa/fwl/core/cfwl_msgkey.h"
 #include "xfa/fwl/core/cfwl_msgmouse.h"
 #include "xfa/fwl/core/cfwl_notedriver.h"
@@ -339,8 +339,7 @@ void CFWL_CheckBox::NextStates() {
   if (dwFirststate == m_pProperties->m_dwStates)
     return;
 
-  CFWL_EvtCheckStateChanged wmCheckBoxState;
-  wmCheckBoxState.m_pSrcTarget = this;
+  CFWL_Event wmCheckBoxState(CFWL_Event::Type::CheckStateChanged, this);
   DispatchEvent(&wmCheckBoxState);
 }
 
@@ -348,14 +347,14 @@ void CFWL_CheckBox::OnProcessMessage(CFWL_Message* pMessage) {
   if (!pMessage)
     return;
 
-  switch (pMessage->GetClassID()) {
-    case CFWL_MessageType::SetFocus:
+  switch (pMessage->GetType()) {
+    case CFWL_Message::Type::SetFocus:
       OnFocusChanged(true);
       break;
-    case CFWL_MessageType::KillFocus:
+    case CFWL_Message::Type::KillFocus:
       OnFocusChanged(false);
       break;
-    case CFWL_MessageType::Mouse: {
+    case CFWL_Message::Type::Mouse: {
       CFWL_MsgMouse* pMsg = static_cast<CFWL_MsgMouse*>(pMessage);
       switch (pMsg->m_dwCmd) {
         case FWL_MouseCommand::LeftButtonDown:
@@ -375,7 +374,7 @@ void CFWL_CheckBox::OnProcessMessage(CFWL_Message* pMessage) {
       }
       break;
     }
-    case CFWL_MessageType::Key: {
+    case CFWL_Message::Type::Key: {
       CFWL_MsgKey* pKey = static_cast<CFWL_MsgKey*>(pMessage);
       if (pKey->m_dwCmd == FWL_KeyCommand::KeyDown)
         OnKeyDown(pKey);
@@ -474,10 +473,8 @@ void CFWL_CheckBox::OnMouseLeave() {
 }
 
 void CFWL_CheckBox::OnKeyDown(CFWL_MsgKey* pMsg) {
-  if (pMsg->m_dwKeyCode == FWL_VKEY_Tab) {
-    DispatchKeyEvent(pMsg);
+  if (pMsg->m_dwKeyCode == FWL_VKEY_Tab)
     return;
-  }
   if (pMsg->m_dwKeyCode == FWL_VKEY_Return ||
       pMsg->m_dwKeyCode == FWL_VKEY_Space) {
     NextStates();

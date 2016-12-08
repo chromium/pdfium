@@ -13,14 +13,11 @@
 
 class CFWL_MsgSetFocus : public CFWL_Message {
  public:
-  CFWL_MsgSetFocus();
+  CFWL_MsgSetFocus(CFWL_Widget* pSrcTarget, CFWL_Widget* pDstTarget);
   ~CFWL_MsgSetFocus() override;
 
   // CFWL_Message
   std::unique_ptr<CFWL_Message> Clone() override;
-  CFWL_MessageType GetClassID() const override;
-
-  CFWL_Widget* m_pKillFocus;
 };
 
 #endif  // XFA_FWL_CORE_CFWL_MSGSETFOCUS_H_

@@ -117,12 +117,11 @@ bool CXFA_FFTextEdit::OnLButtonDown(uint32_t dwFlags,
     AddInvalidateRect();
   }
   SetButtonDown(true);
-  CFWL_MsgMouse ms;
+  CFWL_MsgMouse ms(nullptr, m_pNormalWidget);
   ms.m_dwCmd = FWL_MouseCommand::LeftButtonDown;
   ms.m_dwFlags = dwFlags;
   ms.m_fx = fx;
   ms.m_fy = fy;
-  ms.m_pDstTarget = m_pNormalWidget;
   FWLToClient(ms.m_fx, ms.m_fy);
   TranslateFWLMessage(&ms);
   return true;
@@ -142,7 +141,7 @@ bool CXFA_FFTextEdit::OnRButtonDown(uint32_t dwFlags,
     AddInvalidateRect();
   }
   SetButtonDown(true);
-  CFWL_MsgMouse ms;
+  CFWL_MsgMouse ms(nullptr, nullptr);
   ms.m_dwCmd = FWL_MouseCommand::RightButtonDown;
   ms.m_dwFlags = dwFlags;
   ms.m_fx = fx;
@@ -166,16 +165,12 @@ bool CXFA_FFTextEdit::OnSetFocus(CXFA_FFWidget* pOldWidget) {
     AddInvalidateRect();
   }
   CXFA_FFWidget::OnSetFocus(pOldWidget);
-  CFWL_MsgSetFocus ms;
-  ms.m_pDstTarget = m_pNormalWidget;
-  ms.m_pSrcTarget = nullptr;
+  CFWL_MsgSetFocus ms(nullptr, m_pNormalWidget);
   TranslateFWLMessage(&ms);
   return true;
 }
 bool CXFA_FFTextEdit::OnKillFocus(CXFA_FFWidget* pNewWidget) {
-  CFWL_MsgKillFocus ms;
-  ms.m_pDstTarget = m_pNormalWidget;
-  ms.m_pSrcTarget = nullptr;
+  CFWL_MsgKillFocus ms(nullptr, m_pNormalWidget);
   TranslateFWLMessage(&ms);
   m_dwStatus &= ~XFA_WidgetStatus_Focused;
   SetEditScrollOffset();
@@ -338,18 +333,18 @@ void CXFA_FFTextEdit::OnProcessMessage(CFWL_Message* pMessage) {
 
 void CXFA_FFTextEdit::OnProcessEvent(CFWL_Event* pEvent) {
   CXFA_FFField::OnProcessEvent(pEvent);
-  switch (pEvent->GetClassID()) {
-    case CFWL_EventType::TextChanged: {
+  switch (pEvent->GetType()) {
+    case CFWL_Event::Type::TextChanged: {
       CFWL_EvtTextChanged* event = static_cast<CFWL_EvtTextChanged*>(pEvent);
       CFX_WideString wsChange;
       OnTextChanged(m_pNormalWidget, wsChange, event->wsPrevText);
       break;
     }
-    case CFWL_EventType::TextFull: {
+    case CFWL_Event::Type::TextFull: {
       OnTextFull(m_pNormalWidget);
       break;
     }
-    case CFWL_EventType::CheckWord: {
+    case CFWL_Event::Type::CheckWord: {
       CFX_WideString wstr(L"FWL_EVENT_DTP_SelectChanged");
       CFWL_EvtCheckWord* event = static_cast<CFWL_EvtCheckWord*>(pEvent);
       event->bCheckWord = CheckWord(event->bsWord.AsStringC());
@@ -418,7 +413,7 @@ void CXFA_FFNumericEdit::UpdateWidgetProperty() {
 }
 
 void CXFA_FFNumericEdit::OnProcessEvent(CFWL_Event* pEvent) {
-  if (pEvent->GetClassID() == CFWL_EventType::Validate) {
+  if (pEvent->GetType() == CFWL_Event::Type::Validate) {
     CFWL_EvtValidate* event = static_cast<CFWL_EvtValidate*>(pEvent);
     event->bValidate = OnValidate(m_pNormalWidget, event->wsInsert);
     return;
@@ -683,7 +678,7 @@ void CXFA_FFDateTimeEdit::OnSelectChanged(CFWL_Widget* pWidget,
 }
 
 void CXFA_FFDateTimeEdit::OnProcessEvent(CFWL_Event* pEvent) {
-  if (pEvent->GetClassID() == CFWL_EventType::SelectChanged) {
+  if (pEvent->GetType() == CFWL_Event::Type::SelectChanged) {
     CFWL_EvtSelectChanged* event = static_cast<CFWL_EvtSelectChanged*>(pEvent);
     OnSelectChanged(m_pNormalWidget, event->iYear, event->iMonth, event->iDay);
     return;

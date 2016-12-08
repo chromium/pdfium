@@ -246,13 +246,12 @@ bool CXFA_FFCheckButton::OnLButtonUp(uint32_t dwFlags,
     return false;
 
   SetButtonDown(false);
-  CFWL_MsgMouse ms;
+  CFWL_MsgMouse ms(nullptr, m_pNormalWidget);
   ms.m_dwCmd = FWL_MouseCommand::LeftButtonUp;
   ms.m_dwFlags = dwFlags;
   ms.m_fx = fx;
   ms.m_fy = fy;
   FWLToClient(ms.m_fx, ms.m_fy);
-  ms.m_pDstTarget = m_pNormalWidget;
   TranslateFWLMessage(&ms);
   return true;
 }
@@ -300,8 +299,8 @@ void CXFA_FFCheckButton::OnProcessMessage(CFWL_Message* pMessage) {
 
 void CXFA_FFCheckButton::OnProcessEvent(CFWL_Event* pEvent) {
   CXFA_FFField::OnProcessEvent(pEvent);
-  switch (pEvent->GetClassID()) {
-    case CFWL_EventType::CheckStateChanged: {
+  switch (pEvent->GetType()) {
+    case CFWL_Event::Type::CheckStateChanged: {
       CXFA_EventParam eParam;
       eParam.m_eType = XFA_EVENT_Change;
       m_pDataAcc->GetValue(eParam.m_wsNewText, XFA_VALUEPICTURE_Raw);

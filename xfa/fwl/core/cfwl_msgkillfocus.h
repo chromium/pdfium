@@ -13,12 +13,12 @@
 
 class CFWL_MsgKillFocus : public CFWL_Message {
  public:
-  CFWL_MsgKillFocus();
+  explicit CFWL_MsgKillFocus(CFWL_Widget* pSrcTarget);
+  CFWL_MsgKillFocus(CFWL_Widget* pSrcTarget, CFWL_Widget* pDstTarget);
   ~CFWL_MsgKillFocus() override;
 
   // CFWL_Message
   std::unique_ptr<CFWL_Message> Clone() override;
-  CFWL_MessageType GetClassID() const override;
 
   CFWL_Widget* m_pSetFocus;
 };

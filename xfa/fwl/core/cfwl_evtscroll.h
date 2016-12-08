@@ -9,29 +9,26 @@
 
 #include "xfa/fwl/core/cfwl_event.h"
 
-enum class FWL_SCBCODE {
-  None = 1,
-  Min,
-  Max,
-  PageBackward,
-  PageForward,
-  StepBackward,
-  StepForward,
-  Pos,
-  TrackPos,
-  EndScroll,
-};
-
 class CFWL_EvtScroll : public CFWL_Event {
  public:
-  CFWL_EvtScroll();
+  enum class Code {
+    None = 1,
+    Min,
+    Max,
+    PageBackward,
+    PageForward,
+    StepBackward,
+    StepForward,
+    Pos,
+    TrackPos,
+    EndScroll,
+  };
+
+  explicit CFWL_EvtScroll(CFWL_Widget* pSrcTarget);
   ~CFWL_EvtScroll() override;
 
-  CFWL_EventType GetClassID() const override;
-
-  FWL_SCBCODE m_iScrollCode;
+  Code m_iScrollCode;
   FX_FLOAT m_fPos;
-  bool* m_pRet;
 };
 
 #endif  // XFA_FWL_CORE_CFWL_EVTSCROLL_H_

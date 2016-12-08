@@ -10,7 +10,7 @@
 #include <utility>
 
 #include "third_party/base/ptr_util.h"
-#include "xfa/fwl/core/cfwl_evtclick.h"
+#include "xfa/fwl/core/cfwl_event.h"
 #include "xfa/fwl/core/cfwl_msgkey.h"
 #include "xfa/fwl/core/cfwl_msgmouse.h"
 #include "xfa/fwl/core/cfwl_notedriver.h"
@@ -161,17 +161,16 @@ void CFWL_SpinButton::OnProcessMessage(CFWL_Message* pMessage) {
   if (!pMessage)
     return;
 
-  CFWL_MessageType dwMsgCode = pMessage->GetClassID();
-  switch (dwMsgCode) {
-    case CFWL_MessageType::SetFocus: {
+  switch (pMessage->GetType()) {
+    case CFWL_Message::Type::SetFocus: {
       OnFocusChanged(pMessage, true);
       break;
     }
-    case CFWL_MessageType::KillFocus: {
+    case CFWL_Message::Type::KillFocus: {
       OnFocusChanged(pMessage, false);
       break;
     }
-    case CFWL_MessageType::Mouse: {
+    case CFWL_Message::Type::Mouse: {
       CFWL_MsgMouse* pMsg = static_cast<CFWL_MsgMouse*>(pMessage);
       switch (pMsg->m_dwCmd) {
         case FWL_MouseCommand::LeftButtonDown:
@@ -191,7 +190,7 @@ void CFWL_SpinButton::OnProcessMessage(CFWL_Message* pMessage) {
       }
       break;
     }
-    case CFWL_MessageType::Key: {
+    case CFWL_Message::Type::Key: {
       CFWL_MsgKey* pKey = static_cast<CFWL_MsgKey*>(pMessage);
       if (pKey->m_dwCmd == FWL_KeyCommand::KeyDown)
         OnKeyDown(pKey);
@@ -237,8 +236,7 @@ void CFWL_SpinButton::OnLButtonDown(CFWL_MsgMouse* pMsg) {
     m_dwDnState = CFWL_PartState_Pressed;
   }
 
-  CFWL_EvtClick wmPosChanged;
-  wmPosChanged.m_pSrcTarget = this;
+  CFWL_Event wmPosChanged(CFWL_Event::Type::Click, this);
   DispatchEvent(&wmPosChanged);
 
   Repaint(bUpPress ? &m_rtUpButton : &m_rtDnButton);
@@ -359,8 +357,7 @@ void CFWL_SpinButton::OnKeyDown(CFWL_MsgKey* pMsg) {
   if (!bUpEnable && !bDownEnable)
     return;
 
-  CFWL_EvtClick wmPosChanged;
-  wmPosChanged.m_pSrcTarget = this;
+  CFWL_Event wmPosChanged(CFWL_Event::Type::Click, this);
   DispatchEvent(&wmPosChanged);
 
   Repaint(bUpEnable ? &m_rtUpButton : &m_rtDnButton);
@@ -375,7 +372,6 @@ void CFWL_SpinButton::Timer::Run(CFWL_TimerInfo* pTimerInfo) {
   if (!pButton->m_pTimerInfo)
     return;
 
-  CFWL_EvtClick wmPosChanged;
-  wmPosChanged.m_pSrcTarget = pButton;
+  CFWL_Event wmPosChanged(CFWL_Event::Type::Click, pButton);
   pButton->DispatchEvent(&wmPosChanged);
 }

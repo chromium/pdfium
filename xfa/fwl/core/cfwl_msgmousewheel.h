@@ -13,12 +13,11 @@
 
 class CFWL_MsgMouseWheel : public CFWL_Message {
  public:
-  CFWL_MsgMouseWheel();
+  CFWL_MsgMouseWheel(CFWL_Widget* pSrcTarget, CFWL_Widget* pDstTarget);
   ~CFWL_MsgMouseWheel() override;
 
   // CFWL_Message
   std::unique_ptr<CFWL_Message> Clone() override;
-  CFWL_MessageType GetClassID() const override;
 
   FX_FLOAT m_fx;
   FX_FLOAT m_fy;

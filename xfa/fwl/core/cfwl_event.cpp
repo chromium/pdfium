@@ -6,10 +6,15 @@
 
 #include "xfa/fwl/core/cfwl_event.h"
 
-CFWL_Event::CFWL_Event() : m_pSrcTarget(nullptr), m_pDstTarget(nullptr) {}
+CFWL_Event::CFWL_Event(CFWL_Event::Type type)
+    : CFWL_Event(type, nullptr, nullptr) {}
+
+CFWL_Event::CFWL_Event(Type type, CFWL_Widget* pSrcTarget)
+    : CFWL_Event(type, pSrcTarget, nullptr) {}
+
+CFWL_Event::CFWL_Event(Type type,
+                       CFWL_Widget* pSrcTarget,
+                       CFWL_Widget* pDstTarget)
+    : m_pSrcTarget(pSrcTarget), m_pDstTarget(pDstTarget), m_type(type) {}
 
 CFWL_Event::~CFWL_Event() {}
-
-CFWL_EventType CFWL_Event::GetClassID() const {
-  return CFWL_EventType::None;
-}

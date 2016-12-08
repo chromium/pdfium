@@ -10,14 +10,11 @@
 
 #include "third_party/base/ptr_util.h"
 
-CFWL_MsgKey::CFWL_MsgKey() {}
+CFWL_MsgKey::CFWL_MsgKey(CFWL_Widget* pSrcTarget, CFWL_Widget* pDstTarget)
+    : CFWL_Message(CFWL_Message::Type::Key, pSrcTarget, pDstTarget) {}
 
 CFWL_MsgKey::~CFWL_MsgKey() {}
 
 std::unique_ptr<CFWL_Message> CFWL_MsgKey::Clone() {
   return pdfium::MakeUnique<CFWL_MsgKey>(*this);
-}
-
-CFWL_MessageType CFWL_MsgKey::GetClassID() const {
-  return CFWL_MessageType::Key;
 }

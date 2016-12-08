@@ -11,14 +11,10 @@
 
 class CFWL_EvtMouse : public CFWL_Event {
  public:
-  CFWL_EvtMouse();
+  explicit CFWL_EvtMouse(CFWL_Widget* pSrcTarget);
+  CFWL_EvtMouse(CFWL_Widget* pSrcTarget, CFWL_Widget* pDstTarget);
   ~CFWL_EvtMouse() override;
 
-  CFWL_EventType GetClassID() const override;
-
-  FX_FLOAT m_fx;
-  FX_FLOAT m_fy;
-  uint32_t m_dwFlags;
   FWL_MouseCommand m_dwCmd;
 };
 

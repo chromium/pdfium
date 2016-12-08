@@ -77,12 +77,12 @@ void CFWL_ComboList::OnProcessMessage(CFWL_Message* pMessage) {
   if (!pMessage)
     return;
 
-  CFWL_MessageType dwHashCode = pMessage->GetClassID();
+  CFWL_Message::Type type = pMessage->GetType();
   bool backDefault = true;
-  if (dwHashCode == CFWL_MessageType::SetFocus ||
-      dwHashCode == CFWL_MessageType::KillFocus) {
-    OnDropListFocusChanged(pMessage, dwHashCode == CFWL_MessageType::SetFocus);
-  } else if (dwHashCode == CFWL_MessageType::Mouse) {
+  if (type == CFWL_Message::Type::SetFocus ||
+      type == CFWL_Message::Type::KillFocus) {
+    OnDropListFocusChanged(pMessage, type == CFWL_Message::Type::SetFocus);
+  } else if (type == CFWL_Message::Type::Mouse) {
     CFWL_MsgMouse* pMsg = static_cast<CFWL_MsgMouse*>(pMessage);
     CFWL_ScrollBar* vertSB = GetVertScrollBar();
     if (IsShowScrollBar(true) && vertSB) {
@@ -114,7 +114,7 @@ void CFWL_ComboList::OnProcessMessage(CFWL_Message* pMessage) {
       default:
         break;
     }
-  } else if (dwHashCode == CFWL_MessageType::Key) {
+  } else if (type == CFWL_Message::Type::Key) {
     backDefault = !OnDropListKey(static_cast<CFWL_MsgKey*>(pMessage));
   }
   if (backDefault)

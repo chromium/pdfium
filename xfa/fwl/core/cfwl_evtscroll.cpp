@@ -6,10 +6,7 @@
 
 #include "xfa/fwl/core/cfwl_evtscroll.h"
 
-CFWL_EvtScroll::CFWL_EvtScroll() {}
+CFWL_EvtScroll::CFWL_EvtScroll(CFWL_Widget* pSrcTarget)
+    : CFWL_Event(CFWL_Event::Type::Scroll, pSrcTarget) {}
 
 CFWL_EvtScroll::~CFWL_EvtScroll() {}
-
-CFWL_EventType CFWL_EvtScroll::GetClassID() const {
-  return CFWL_EventType::Scroll;
-}

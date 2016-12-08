@@ -10,7 +10,7 @@
 #include <utility>
 
 #include "third_party/base/ptr_util.h"
-#include "xfa/fwl/core/cfwl_evteditchanged.h"
+#include "xfa/fwl/core/cfwl_event.h"
 #include "xfa/fwl/core/cfwl_evtselectchanged.h"
 #include "xfa/fwl/core/cfwl_formproxy.h"
 #include "xfa/fwl/core/cfwl_msgmouse.h"
@@ -192,7 +192,7 @@ void CFWL_DateTimePicker::SetEditText(const CFX_WideString& wsText) {
   m_pEdit->SetText(wsText);
   Repaint(&m_rtClient);
 
-  CFWL_EvtEditChanged ev;
+  CFWL_Event ev(CFWL_Event::Type::EditChanged);
   DispatchEvent(&ev);
 }
 
@@ -347,8 +347,7 @@ void CFWL_DateTimePicker::ProcessSelChanged(int32_t iYear,
   m_pEdit->Update();
   Repaint(&m_rtClient);
 
-  CFWL_EvtSelectChanged ev;
-  ev.m_pSrcTarget = this;
+  CFWL_EvtSelectChanged ev(this);
   ev.iYear = m_iYear;
   ev.iMonth = m_iMonth;
   ev.iDay = m_iDay;
@@ -399,9 +398,7 @@ void CFWL_DateTimePicker::DisForm_ShowMonthCalendar(bool bActivate) {
   m_pMonthCal->SetStates(FWL_WGTSTATE_Invisible, !bActivate);
 
   if (bActivate) {
-    CFWL_MsgSetFocus msg;
-    msg.m_pDstTarget = m_pMonthCal.get();
-    msg.m_pSrcTarget = m_pEdit.get();
+    CFWL_MsgSetFocus msg(m_pEdit.get(), m_pMonthCal.get());
     m_pEdit->GetDelegate()->OnProcessMessage(&msg);
   }
 
@@ -520,14 +517,14 @@ void CFWL_DateTimePicker::OnProcessMessage(CFWL_Message* pMessage) {
   if (!pMessage)
     return;
 
-  switch (pMessage->GetClassID()) {
-    case CFWL_MessageType::SetFocus:
+  switch (pMessage->GetType()) {
+    case CFWL_Message::Type::SetFocus:
       OnFocusChanged(pMessage, true);
       break;
-    case CFWL_MessageType::KillFocus:
+    case CFWL_Message::Type::KillFocus:
       OnFocusChanged(pMessage, false);
       break;
-    case CFWL_MessageType::Mouse: {
+    case CFWL_Message::Type::Mouse: {
       CFWL_MsgMouse* pMouse = static_cast<CFWL_MsgMouse*>(pMessage);
       switch (pMouse->m_dwCmd) {
         case FWL_MouseCommand::LeftButtonDown:
@@ -547,7 +544,7 @@ void CFWL_DateTimePicker::OnProcessMessage(CFWL_Message* pMessage) {
       }
       break;
     }
-    case CFWL_MessageType::Key: {
+    case CFWL_Message::Type::Key: {
       if (m_pEdit->GetStates() & FWL_WGTSTATE_Focused) {
         m_pEdit->GetDelegate()->OnProcessMessage(pMessage);
         return;

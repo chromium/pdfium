@@ -6,10 +6,7 @@
 
 #include "xfa/fwl/core/cfwl_evttextchanged.h"
 
-CFWL_EvtTextChanged::CFWL_EvtTextChanged() {}
+CFWL_EvtTextChanged::CFWL_EvtTextChanged(CFWL_Widget* pSrcTarget)
+    : CFWL_Event(CFWL_Event::Type::TextChanged, pSrcTarget) {}
 
 CFWL_EvtTextChanged::~CFWL_EvtTextChanged() {}
-
-CFWL_EventType CFWL_EvtTextChanged::GetClassID() const {
-  return CFWL_EventType::TextChanged;
-}

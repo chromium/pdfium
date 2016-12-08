@@ -89,7 +89,7 @@ class CFWL_ScrollBar : public CFWL_Widget {
   FX_FLOAT GetTrackPointPos(FX_FLOAT fx, FX_FLOAT fy);
   void GetTrackRect(CFX_RectF& rect, bool bLower = true);
   bool SendEvent();
-  bool OnScroll(FWL_SCBCODE dwCode, FX_FLOAT fPos);
+  bool OnScroll(CFWL_EvtScroll::Code dwCode, FX_FLOAT fPos);
   void OnLButtonDown(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy);
   void OnLButtonUp(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy);
   void OnMouseMove(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy);
@@ -99,7 +99,7 @@ class CFWL_ScrollBar : public CFWL_Widget {
                     uint32_t dwFlags,
                     FX_FLOAT fDeltaX,
                     FX_FLOAT fDeltaY);
-  bool DoScroll(FWL_SCBCODE dwCode, FX_FLOAT fPos = 0.0f);
+  bool DoScroll(CFWL_EvtScroll::Code dwCode, FX_FLOAT fPos = 0.0f);
   void DoMouseDown(int32_t iItem,
                    const CFX_RectF& rtItem,
                    int32_t& iState,

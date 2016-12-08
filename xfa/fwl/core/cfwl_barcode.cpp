@@ -88,7 +88,7 @@ bool CFWL_Barcode::IsProtectedType() const {
 }
 
 void CFWL_Barcode::OnProcessEvent(CFWL_Event* pEvent) {
-  if (pEvent->GetClassID() == CFWL_EventType::TextChanged) {
+  if (pEvent->GetType() == CFWL_Event::Type::TextChanged) {
     m_pBarcodeEngine.reset();
     m_dwStatus = XFA_BCS_NeedUpdate;
   }

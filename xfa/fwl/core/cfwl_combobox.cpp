@@ -14,9 +14,7 @@
 #include "xfa/fde/cfde_txtedtengine.h"
 #include "xfa/fde/tto/fde_textout.h"
 #include "xfa/fwl/core/cfwl_app.h"
-#include "xfa/fwl/core/cfwl_evteditchanged.h"
-#include "xfa/fwl/core/cfwl_evtpostdropdown.h"
-#include "xfa/fwl/core/cfwl_evtpredropdown.h"
+#include "xfa/fwl/core/cfwl_event.h"
 #include "xfa/fwl/core/cfwl_evtselectchanged.h"
 #include "xfa/fwl/core/cfwl_evttextchanged.h"
 #include "xfa/fwl/core/cfwl_formproxy.h"
@@ -399,8 +397,7 @@ void CFWL_ComboBox::ShowDropList(bool bActivate) {
   m_pListBox->SetWidgetRect(m_rtList);
   m_pListBox->Update();
 
-  CFWL_EvtPreDropDown ev;
-  ev.m_pSrcTarget = this;
+  CFWL_Event ev(CFWL_Event::Type::PreDropDown, this);
   DispatchEvent(&ev);
 
   m_fItemHeight = m_pListBox->GetItemHeight();
@@ -553,9 +550,8 @@ void CFWL_ComboBox::ProcessSelChanged(bool bLButtonUp) {
     m_pEdit->SetSelected();
   }
 
-  CFWL_EvtSelectChanged ev;
+  CFWL_EvtSelectChanged ev(this);
   ev.bLButtonUp = bLButtonUp;
-  ev.m_pSrcTarget = this;
   DispatchEvent(&ev);
 }
 
@@ -608,8 +604,7 @@ void CFWL_ComboBox::DisForm_ShowDropList(bool bActivate) {
     return;
 
   if (bActivate) {
-    CFWL_EvtPreDropDown preEvent;
-    preEvent.m_pSrcTarget = this;
+    CFWL_Event preEvent(CFWL_Event::Type::PreDropDown, this);
     DispatchEvent(&preEvent);
 
     CFWL_ComboList* pComboList = m_pListBox.get();
@@ -642,8 +637,7 @@ void CFWL_ComboBox::DisForm_ShowDropList(bool bActivate) {
 
   m_pListBox->SetStates(FWL_WGTSTATE_Invisible, !bActivate);
   if (bActivate) {
-    CFWL_EvtPostDropDown postEvent;
-    postEvent.m_pSrcTarget = this;
+    CFWL_Event postEvent(CFWL_Event::Type::PostDropDown, this);
     DispatchEvent(&postEvent);
   }
 
@@ -794,14 +788,14 @@ void CFWL_ComboBox::OnProcessMessage(CFWL_Message* pMessage) {
   if (!pMessage)
     return;
 
-  switch (pMessage->GetClassID()) {
-    case CFWL_MessageType::SetFocus:
+  switch (pMessage->GetType()) {
+    case CFWL_Message::Type::SetFocus:
       OnFocusChanged(pMessage, true);
       break;
-    case CFWL_MessageType::KillFocus:
+    case CFWL_Message::Type::KillFocus:
       OnFocusChanged(pMessage, false);
       break;
-    case CFWL_MessageType::Mouse: {
+    case CFWL_Message::Type::Mouse: {
       CFWL_MsgMouse* pMsg = static_cast<CFWL_MsgMouse*>(pMessage);
       switch (pMsg->m_dwCmd) {
         case FWL_MouseCommand::LeftButtonDown:
@@ -821,7 +815,7 @@ void CFWL_ComboBox::OnProcessMessage(CFWL_Message* pMessage) {
       }
       break;
     }
-    case CFWL_MessageType::Key:
+    case CFWL_Message::Type::Key:
       OnKey(static_cast<CFWL_MsgKey*>(pMessage));
       break;
     default:
@@ -832,17 +826,15 @@ void CFWL_ComboBox::OnProcessMessage(CFWL_Message* pMessage) {
 }
 
 void CFWL_ComboBox::OnProcessEvent(CFWL_Event* pEvent) {
-  CFWL_EventType dwFlag = pEvent->GetClassID();
-  if (dwFlag == CFWL_EventType::Scroll) {
+  CFWL_Event::Type type = pEvent->GetType();
+  if (type == CFWL_Event::Type::Scroll) {
     CFWL_EvtScroll* pScrollEvent = static_cast<CFWL_EvtScroll*>(pEvent);
-    CFWL_EvtScroll pScrollEv;
-    pScrollEv.m_pSrcTarget = this;
+    CFWL_EvtScroll pScrollEv(this);
     pScrollEv.m_iScrollCode = pScrollEvent->m_iScrollCode;
     pScrollEv.m_fPos = pScrollEvent->m_fPos;
     DispatchEvent(&pScrollEv);
-  } else if (dwFlag == CFWL_EventType::TextChanged) {
-    CFWL_EvtEditChanged pTemp;
-    pTemp.m_pSrcTarget = this;
+  } else if (type == CFWL_Event::Type::TextChanged) {
+    CFWL_Event pTemp(CFWL_Event::Type::EditChanged, this);
     DispatchEvent(&pTemp);
   }
 }
@@ -934,10 +926,8 @@ void CFWL_ComboBox::OnMouseLeave(CFWL_MsgMouse* pMsg) {
 
 void CFWL_ComboBox::OnKey(CFWL_MsgKey* pMsg) {
   uint32_t dwKeyCode = pMsg->m_dwKeyCode;
-  if (dwKeyCode == FWL_VKEY_Tab) {
-    DispatchKeyEvent(pMsg);
+  if (dwKeyCode == FWL_VKEY_Tab)
     return;
-  }
   if (pMsg->m_pDstTarget == this)
     DoSubCtrlKey(pMsg);
 }
@@ -990,18 +980,18 @@ void CFWL_ComboBox::DisForm_OnProcessMessage(CFWL_Message* pMessage) {
     return;
 
   bool backDefault = true;
-  switch (pMessage->GetClassID()) {
-    case CFWL_MessageType::SetFocus: {
+  switch (pMessage->GetType()) {
+    case CFWL_Message::Type::SetFocus: {
       backDefault = false;
       DisForm_OnFocusChanged(pMessage, true);
       break;
     }
-    case CFWL_MessageType::KillFocus: {
+    case CFWL_Message::Type::KillFocus: {
       backDefault = false;
       DisForm_OnFocusChanged(pMessage, false);
       break;
     }
-    case CFWL_MessageType::Mouse: {
+    case CFWL_Message::Type::Mouse: {
       backDefault = false;
       CFWL_MsgMouse* pMsg = static_cast<CFWL_MsgMouse*>(pMessage);
       switch (pMsg->m_dwCmd) {
@@ -1016,7 +1006,7 @@ void CFWL_ComboBox::DisForm_OnProcessMessage(CFWL_Message* pMessage) {
       }
       break;
     }
-    case CFWL_MessageType::Key: {
+    case CFWL_Message::Type::Key: {
       backDefault = false;
       CFWL_MsgKey* pKey = static_cast<CFWL_MsgKey*>(pMessage);
       if (pKey->m_dwCmd == FWL_KeyCommand::KeyUp)
@@ -1061,17 +1051,13 @@ void CFWL_ComboBox::DisForm_OnFocusChanged(CFWL_Message* pMsg, bool bSet) {
   if (bSet) {
     m_pProperties->m_dwStates |= FWL_WGTSTATE_Focused;
     if ((m_pEdit->GetStates() & FWL_WGTSTATE_Focused) == 0) {
-      CFWL_MsgSetFocus msg;
-      msg.m_pDstTarget = m_pEdit.get();
-      msg.m_pSrcTarget = nullptr;
+      CFWL_MsgSetFocus msg(nullptr, m_pEdit.get());
       m_pEdit->GetDelegate()->OnProcessMessage(&msg);
     }
   } else {
     m_pProperties->m_dwStates &= ~FWL_WGTSTATE_Focused;
     DisForm_ShowDropList(false);
-    CFWL_MsgKillFocus msg;
-    msg.m_pDstTarget = nullptr;
-    msg.m_pSrcTarget = m_pEdit.get();
+    CFWL_MsgKillFocus msg(m_pEdit.get());
     m_pEdit->GetDelegate()->OnProcessMessage(&msg);
   }
 }

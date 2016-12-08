@@ -11,7 +11,7 @@
 
 #include "third_party/base/ptr_util.h"
 #include "xfa/fde/tto/fde_textout.h"
-#include "xfa/fwl/core/cfwl_evtclick.h"
+#include "xfa/fwl/core/cfwl_event.h"
 #include "xfa/fwl/core/cfwl_evtmouse.h"
 #include "xfa/fwl/core/cfwl_msgkey.h"
 #include "xfa/fwl/core/cfwl_msgmouse.h"
@@ -174,15 +174,14 @@ void CFWL_PushButton::OnProcessMessage(CFWL_Message* pMessage) {
   if (!IsEnabled())
     return;
 
-  CFWL_MessageType dwMsgCode = pMessage->GetClassID();
-  switch (dwMsgCode) {
-    case CFWL_MessageType::SetFocus:
+  switch (pMessage->GetType()) {
+    case CFWL_Message::Type::SetFocus:
       OnFocusChanged(pMessage, true);
       break;
-    case CFWL_MessageType::KillFocus:
+    case CFWL_Message::Type::KillFocus:
       OnFocusChanged(pMessage, false);
       break;
-    case CFWL_MessageType::Mouse: {
+    case CFWL_Message::Type::Mouse: {
       CFWL_MsgMouse* pMsg = static_cast<CFWL_MsgMouse*>(pMessage);
       switch (pMsg->m_dwCmd) {
         case FWL_MouseCommand::LeftButtonDown:
@@ -202,7 +201,7 @@ void CFWL_PushButton::OnProcessMessage(CFWL_Message* pMessage) {
       }
       break;
     }
-    case CFWL_MessageType::Key: {
+    case CFWL_Message::Type::Key: {
       CFWL_MsgKey* pKey = static_cast<CFWL_MsgKey*>(pMessage);
       if (pKey->m_dwCmd == FWL_KeyCommand::KeyDown)
         OnKeyDown(pKey);
@@ -248,8 +247,7 @@ void CFWL_PushButton::OnLButtonUp(CFWL_MsgMouse* pMsg) {
     m_pProperties->m_dwStates &= ~FWL_STATE_PSB_Pressed;
   }
   if (m_rtClient.Contains(pMsg->m_fx, pMsg->m_fy)) {
-    CFWL_EvtClick wmClick;
-    wmClick.m_pSrcTarget = this;
+    CFWL_Event wmClick(CFWL_Event::Type::Click, this);
     DispatchEvent(&wmClick);
   }
   Repaint(&m_rtClient);
@@ -297,18 +295,13 @@ void CFWL_PushButton::OnMouseLeave(CFWL_MsgMouse* pMsg) {
 }
 
 void CFWL_PushButton::OnKeyDown(CFWL_MsgKey* pMsg) {
-  if (pMsg->m_dwKeyCode == FWL_VKEY_Return) {
-    CFWL_EvtMouse wmMouse;
-    wmMouse.m_pSrcTarget = this;
-    wmMouse.m_dwCmd = FWL_MouseCommand::LeftButtonUp;
-    DispatchEvent(&wmMouse);
-    CFWL_EvtClick wmClick;
-    wmClick.m_pSrcTarget = this;
-    DispatchEvent(&wmClick);
-    return;
-  }
-  if (pMsg->m_dwKeyCode != FWL_VKEY_Tab)
+  if (pMsg->m_dwKeyCode != FWL_VKEY_Return)
     return;
 
-  DispatchKeyEvent(pMsg);
+  CFWL_EvtMouse wmMouse(this);
+  wmMouse.m_dwCmd = FWL_MouseCommand::LeftButtonUp;
+  DispatchEvent(&wmMouse);
+
+  CFWL_Event wmClick(CFWL_Event::Type::Click, this);
+  DispatchEvent(&wmClick);
 }

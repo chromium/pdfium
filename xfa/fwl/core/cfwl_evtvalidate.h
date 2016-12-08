@@ -11,12 +11,9 @@
 
 class CFWL_EvtValidate : public CFWL_Event {
  public:
-  CFWL_EvtValidate();
+  explicit CFWL_EvtValidate(CFWL_Widget* pSrcTarget);
   ~CFWL_EvtValidate() override;
 
-  CFWL_EventType GetClassID() const override;
-
-  CFWL_Widget* pDstWidget;
   CFX_WideString wsInsert;
   bool bValidate;
 };

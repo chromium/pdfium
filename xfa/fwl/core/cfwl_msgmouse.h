@@ -26,12 +26,11 @@ enum class FWL_MouseCommand {
 
 class CFWL_MsgMouse : public CFWL_Message {
  public:
-  CFWL_MsgMouse();
+  CFWL_MsgMouse(CFWL_Widget* pSrcTarget, CFWL_Widget* pDstTarget);
   ~CFWL_MsgMouse() override;
 
   // CFWL_Message
   std::unique_ptr<CFWL_Message> Clone() override;
-  CFWL_MessageType GetClassID() const override;
 
   FX_FLOAT m_fx;
   FX_FLOAT m_fy;

@@ -47,18 +47,18 @@ void CFWL_ComboEdit::OnProcessMessage(CFWL_Message* pMessage) {
     return;
 
   bool backDefault = true;
-  switch (pMessage->GetClassID()) {
-    case CFWL_MessageType::SetFocus: {
+  switch (pMessage->GetType()) {
+    case CFWL_Message::Type::SetFocus: {
       m_pProperties->m_dwStates |= FWL_WGTSTATE_Focused;
       backDefault = false;
       break;
     }
-    case CFWL_MessageType::KillFocus: {
+    case CFWL_Message::Type::KillFocus: {
       m_pProperties->m_dwStates &= ~FWL_WGTSTATE_Focused;
       backDefault = false;
       break;
     }
-    case CFWL_MessageType::Mouse: {
+    case CFWL_Message::Type::Mouse: {
       CFWL_MsgMouse* pMsg = static_cast<CFWL_MsgMouse*>(pMessage);
       if ((pMsg->m_dwCmd == FWL_MouseCommand::LeftButtonDown) &&
           ((m_pProperties->m_dwStates & FWL_WGTSTATE_Focused) == 0)) {

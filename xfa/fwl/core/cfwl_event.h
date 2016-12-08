@@ -14,41 +14,39 @@
 #include "xfa/fwl/core/cfwl_msgmouse.h"
 #include "xfa/fwl/core/fwl_error.h"
 
-enum class CFWL_EventType {
-  None = 0,
-
-  CheckStateChanged,
-  CheckWord,
-  Click,
-  Close,
-  EditChanged,
-  Key,
-  KillFocus,
-  Mouse,
-  MouseWheel,
-  PostDropDown,
-  PreDropDown,
-  Scroll,
-  SelectChanged,
-  SetFocus,
-  SizeChanged,
-  TextChanged,
-  TextFull,
-  Validate
-};
-
 class CFX_Graphics;
 class CFWL_Widget;
 
 class CFWL_Event {
  public:
-  CFWL_Event();
+  enum class Type {
+    CheckStateChanged,
+    CheckWord,
+    Click,
+    Close,
+    EditChanged,
+    Mouse,
+    PostDropDown,
+    PreDropDown,
+    Scroll,
+    SelectChanged,
+    TextChanged,
+    TextFull,
+    Validate
+  };
+
+  explicit CFWL_Event(Type type);
+  CFWL_Event(Type type, CFWL_Widget* pSrcTarget);
+  CFWL_Event(Type type, CFWL_Widget* pSrcTarget, CFWL_Widget* pDstTarget);
   virtual ~CFWL_Event();
 
-  virtual CFWL_EventType GetClassID() const;
+  Type GetType() const { return m_type; }
 
   CFWL_Widget* m_pSrcTarget;
   CFWL_Widget* m_pDstTarget;
+
+ private:
+  Type m_type;
 };
 
 #endif  // XFA_FWL_CORE_CFWL_EVENT_H_

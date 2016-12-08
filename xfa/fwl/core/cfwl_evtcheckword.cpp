@@ -6,10 +6,8 @@
 
 #include "xfa/fwl/core/cfwl_evtcheckword.h"
 
-CFWL_EvtCheckWord::CFWL_EvtCheckWord() {}
+CFWL_EvtCheckWord::CFWL_EvtCheckWord(CFWL_Widget* pSrcTarget)
+    : CFWL_Event(CFWL_Event::Type::CheckWord, pSrcTarget) {}
 
 CFWL_EvtCheckWord::~CFWL_EvtCheckWord() {}
 
-CFWL_EventType CFWL_EvtCheckWord::GetClassID() const {
-  return CFWL_EventType::CheckWord;
-}

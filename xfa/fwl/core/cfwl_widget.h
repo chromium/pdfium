@@ -140,7 +140,6 @@ class CFWL_Widget : public IFWL_WidgetDelegate {
                    CFX_RectF& rtPopup);
   void RegisterEventTarget(CFWL_Widget* pEventSource);
   void UnregisterEventTarget();
-  void DispatchKeyEvent(CFWL_MsgKey* pNote);
   void DispatchEvent(CFWL_Event* pEvent);
   void DrawBorder(CFX_Graphics* pGraphics,
                   CFWL_Part iPartBorder,

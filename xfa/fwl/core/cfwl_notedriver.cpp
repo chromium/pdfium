@@ -91,9 +91,7 @@ bool CFWL_NoteDriver::SetFocus(CFWL_Widget* pFocus, bool bNotify) {
   CFWL_Widget* pPrev = m_pFocus;
   m_pFocus = pFocus;
   if (pPrev) {
-    CFWL_MsgKillFocus ms;
-    ms.m_pDstTarget = pPrev;
-    ms.m_pSrcTarget = pPrev;
+    CFWL_MsgKillFocus ms(pPrev, pPrev);
     if (bNotify)
       ms.m_dwExtend = 1;
 
@@ -107,8 +105,7 @@ bool CFWL_NoteDriver::SetFocus(CFWL_Widget* pFocus, bool bNotify) {
     if (pForm)
       pForm->SetSubFocus(pFocus);
 
-    CFWL_MsgSetFocus ms;
-    ms.m_pDstTarget = pFocus;
+    CFWL_MsgSetFocus ms(nullptr, pFocus);
     if (bNotify)
       ms.m_dwExtend = 1;
     if (IFWL_WidgetDelegate* pDelegate = pFocus->GetDelegate())
@@ -222,34 +219,34 @@ void CFWL_NoteDriver::ProcessMessage(CFWL_Message* pMessage) {
   if (!DispatchMessage(pMessage, pMessageForm))
     return;
 
-  if (pMessage->GetClassID() == CFWL_MessageType::Mouse)
+  if (pMessage->GetType() == CFWL_Message::Type::Mouse)
     MouseSecondary(pMessage);
 }
 
 bool CFWL_NoteDriver::DispatchMessage(CFWL_Message* pMessage,
                                       CFWL_Widget* pMessageForm) {
-  switch (pMessage->GetClassID()) {
-    case CFWL_MessageType::SetFocus: {
+  switch (pMessage->GetType()) {
+    case CFWL_Message::Type::SetFocus: {
       if (!DoSetFocus(pMessage, pMessageForm))
         return false;
       break;
     }
-    case CFWL_MessageType::KillFocus: {
+    case CFWL_Message::Type::KillFocus: {
       if (!DoKillFocus(pMessage, pMessageForm))
         return false;
       break;
     }
-    case CFWL_MessageType::Key: {
+    case CFWL_Message::Type::Key: {
       if (!DoKey(pMessage, pMessageForm))
         return false;
       break;
     }
-    case CFWL_MessageType::Mouse: {
+    case CFWL_Message::Type::Mouse: {
       if (!DoMouse(pMessage, pMessageForm))
         return false;
       break;
     }
-    case CFWL_MessageType::MouseWheel: {
+    case CFWL_Message::Type::MouseWheel: {
       if (!DoWheel(pMessage, pMessageForm))
         return false;
       break;
@@ -416,8 +413,7 @@ void CFWL_NoteDriver::MouseSecondary(CFWL_Message* pMessage) {
 
   CFWL_MsgMouse* pMsg = static_cast<CFWL_MsgMouse*>(pMessage);
   if (m_pHover) {
-    CFWL_MsgMouse msLeave;
-    msLeave.m_pDstTarget = m_pHover;
+    CFWL_MsgMouse msLeave(nullptr, m_pHover);
     msLeave.m_fx = pMsg->m_fx;
     msLeave.m_fy = pMsg->m_fy;
     pTarget->TransformTo(m_pHover, msLeave.m_fx, msLeave.m_fy);
@@ -432,8 +428,7 @@ void CFWL_NoteDriver::MouseSecondary(CFWL_Message* pMessage) {
   }
   m_pHover = pTarget;
 
-  CFWL_MsgMouse msHover;
-  msHover.m_pDstTarget = pTarget;
+  CFWL_MsgMouse msHover(nullptr, pTarget);
   msHover.m_fx = pMsg->m_fx;
   msHover.m_fy = pMsg->m_fy;
   msHover.m_dwFlags = 0;

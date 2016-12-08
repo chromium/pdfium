@@ -6,10 +6,7 @@
 
 #include "xfa/fwl/core/cfwl_evtvalidate.h"
 
-CFWL_EvtValidate::CFWL_EvtValidate() {}
+CFWL_EvtValidate::CFWL_EvtValidate(CFWL_Widget* pSrcTarget)
+    : CFWL_Event(CFWL_Event::Type::Validate, pSrcTarget) {}
 
 CFWL_EvtValidate::~CFWL_EvtValidate() {}
-
-CFWL_EventType CFWL_EvtValidate::GetClassID() const {
-  return CFWL_EventType::Validate;
-}

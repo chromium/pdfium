@@ -31,8 +31,8 @@ void CFWL_ComboBoxProxy::OnProcessMessage(CFWL_Message* pMessage) {
   if (!pMessage)
     return;
 
-  switch (pMessage->GetClassID()) {
-    case CFWL_MessageType::Mouse: {
+  switch (pMessage->GetType()) {
+    case CFWL_Message::Type::Mouse: {
       CFWL_MsgMouse* pMsg = static_cast<CFWL_MsgMouse*>(pMessage);
       switch (pMsg->m_dwCmd) {
         case FWL_MouseCommand::LeftButtonDown:
@@ -46,10 +46,10 @@ void CFWL_ComboBoxProxy::OnProcessMessage(CFWL_Message* pMessage) {
       }
       break;
     }
-    case CFWL_MessageType::KillFocus:
+    case CFWL_Message::Type::KillFocus:
       OnFocusChanged(pMessage, false);
       break;
-    case CFWL_MessageType::SetFocus:
+    case CFWL_Message::Type::SetFocus:
       OnFocusChanged(pMessage, true);
       break;
     default:

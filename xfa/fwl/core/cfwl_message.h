@@ -14,28 +14,26 @@
 #include "core/fxcrt/fx_system.h"
 #include "xfa/fwl/core/fwl_error.h"
 
-enum class CFWL_MessageType {
-  None = 0,
-  Key,
-  KillFocus,
-  Mouse,
-  MouseWheel,
-  SetFocus
-};
-
 class CFWL_Widget;
 
 class CFWL_Message {
  public:
-  CFWL_Message();
+  enum class Type { Key, KillFocus, Mouse, MouseWheel, SetFocus };
+
+  explicit CFWL_Message(Type type);
+  CFWL_Message(Type type, CFWL_Widget* pSrcTarget);
+  CFWL_Message(Type type, CFWL_Widget* pSrcTarget, CFWL_Widget* pDstTarget);
   virtual ~CFWL_Message();
 
   virtual std::unique_ptr<CFWL_Message> Clone();
-  virtual CFWL_MessageType GetClassID() const;
+  Type GetType() const { return m_type; }
 
   CFWL_Widget* m_pSrcTarget;
   CFWL_Widget* m_pDstTarget;
   uint32_t m_dwExtend;
+
+ private:
+  Type m_type;
 };
 
 

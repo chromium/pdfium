@@ -11,10 +11,8 @@
 
 class CFWL_EvtCheckWord : public CFWL_Event {
  public:
-  CFWL_EvtCheckWord();
+  explicit CFWL_EvtCheckWord(CFWL_Widget* pSrcTarget);
   ~CFWL_EvtCheckWord() override;
-
-  CFWL_EventType GetClassID() const override;
 
   CFX_ByteString bsWord;
   bool bCheckWord;

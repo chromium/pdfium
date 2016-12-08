@@ -772,15 +772,14 @@ void CFWL_ListBox::OnProcessMessage(CFWL_Message* pMessage) {
   if (!IsEnabled())
     return;
 
-  CFWL_MessageType dwMsgCode = pMessage->GetClassID();
-  switch (dwMsgCode) {
-    case CFWL_MessageType::SetFocus:
+  switch (pMessage->GetType()) {
+    case CFWL_Message::Type::SetFocus:
       OnFocusChanged(pMessage, true);
       break;
-    case CFWL_MessageType::KillFocus:
+    case CFWL_Message::Type::KillFocus:
       OnFocusChanged(pMessage, false);
       break;
-    case CFWL_MessageType::Mouse: {
+    case CFWL_Message::Type::Mouse: {
       CFWL_MsgMouse* pMsg = static_cast<CFWL_MsgMouse*>(pMessage);
       switch (pMsg->m_dwCmd) {
         case FWL_MouseCommand::LeftButtonDown:
@@ -794,10 +793,10 @@ void CFWL_ListBox::OnProcessMessage(CFWL_Message* pMessage) {
       }
       break;
     }
-    case CFWL_MessageType::MouseWheel:
+    case CFWL_Message::Type::MouseWheel:
       OnMouseWheel(static_cast<CFWL_MsgMouseWheel*>(pMessage));
       break;
-    case CFWL_MessageType::Key: {
+    case CFWL_Message::Type::Key: {
       CFWL_MsgKey* pMsg = static_cast<CFWL_MsgKey*>(pMessage);
       if (pMsg->m_dwCmd == FWL_KeyCommand::KeyDown)
         OnKeyDown(pMsg);
@@ -812,7 +811,7 @@ void CFWL_ListBox::OnProcessMessage(CFWL_Message* pMessage) {
 void CFWL_ListBox::OnProcessEvent(CFWL_Event* pEvent) {
   if (!pEvent)
     return;
-  if (pEvent->GetClassID() != CFWL_EventType::Scroll)
+  if (pEvent->GetType() != CFWL_Event::Type::Scroll)
     return;
 
   CFWL_Widget* pSrcTarget = pEvent->m_pSrcTarget;
@@ -949,50 +948,50 @@ void CFWL_ListBox::OnVK(CFWL_ListItem* pItem, bool bShift, bool bCtrl) {
 }
 
 bool CFWL_ListBox::OnScroll(CFWL_ScrollBar* pScrollBar,
-                            FWL_SCBCODE dwCode,
+                            CFWL_EvtScroll::Code dwCode,
                             FX_FLOAT fPos) {
   CFX_SizeF fs;
   pScrollBar->GetRange(&fs.x, &fs.y);
   FX_FLOAT iCurPos = pScrollBar->GetPos();
   FX_FLOAT fStep = pScrollBar->GetStepSize();
   switch (dwCode) {
-    case FWL_SCBCODE::Min: {
+    case CFWL_EvtScroll::Code::Min: {
       fPos = fs.x;
       break;
     }
-    case FWL_SCBCODE::Max: {
+    case CFWL_EvtScroll::Code::Max: {
       fPos = fs.y;
       break;
     }
-    case FWL_SCBCODE::StepBackward: {
+    case CFWL_EvtScroll::Code::StepBackward: {
       fPos -= fStep;
       if (fPos < fs.x + fStep / 2)
         fPos = fs.x;
       break;
     }
-    case FWL_SCBCODE::StepForward: {
+    case CFWL_EvtScroll::Code::StepForward: {
       fPos += fStep;
       if (fPos > fs.y - fStep / 2)
         fPos = fs.y;
       break;
     }
-    case FWL_SCBCODE::PageBackward: {
+    case CFWL_EvtScroll::Code::PageBackward: {
       fPos -= pScrollBar->GetPageSize();
       if (fPos < fs.x)
         fPos = fs.x;
       break;
     }
-    case FWL_SCBCODE::PageForward: {
+    case CFWL_EvtScroll::Code::PageForward: {
       fPos += pScrollBar->GetPageSize();
       if (fPos > fs.y)
         fPos = fs.y;
       break;
     }
-    case FWL_SCBCODE::Pos:
-    case FWL_SCBCODE::TrackPos:
-    case FWL_SCBCODE::None:
+    case CFWL_EvtScroll::Code::Pos:
+    case CFWL_EvtScroll::Code::TrackPos:
+    case CFWL_EvtScroll::Code::None:
       break;
-    case FWL_SCBCODE::EndScroll:
+    case CFWL_EvtScroll::Code::EndScroll:
       return false;
   }
   if (iCurPos != fPos) {

@@ -10,14 +10,11 @@
 
 #include "third_party/base/ptr_util.h"
 
-CFWL_MsgMouse::CFWL_MsgMouse() {}
+CFWL_MsgMouse::CFWL_MsgMouse(CFWL_Widget* pSrcTarget, CFWL_Widget* pDstTarget)
+    : CFWL_Message(CFWL_Message::Type::Mouse, pSrcTarget, pDstTarget) {}
 
 CFWL_MsgMouse::~CFWL_MsgMouse() {}
 
 std::unique_ptr<CFWL_Message> CFWL_MsgMouse::Clone() {
   return pdfium::MakeUnique<CFWL_MsgMouse>(*this);
-}
-
-CFWL_MessageType CFWL_MsgMouse::GetClassID() const {
-  return CFWL_MessageType::Mouse;
 }

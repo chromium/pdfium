@@ -6,10 +6,10 @@
 
 #include "xfa/fwl/core/cfwl_evtmouse.h"
 
-CFWL_EvtMouse::CFWL_EvtMouse() {}
+CFWL_EvtMouse::CFWL_EvtMouse(CFWL_Widget* pSrcTarget)
+    : CFWL_EvtMouse(pSrcTarget, nullptr) {}
+
+CFWL_EvtMouse::CFWL_EvtMouse(CFWL_Widget* pSrcTarget, CFWL_Widget* pDstTarget)
+    : CFWL_Event(CFWL_Event::Type::Mouse, pSrcTarget, pDstTarget) {}
 
 CFWL_EvtMouse::~CFWL_EvtMouse() {}
-
-CFWL_EventType CFWL_EvtMouse::GetClassID() const {
-  return CFWL_EventType::Mouse;
-}

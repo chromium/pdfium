@@ -912,15 +912,14 @@ void CFWL_MonthCalendar::OnProcessMessage(CFWL_Message* pMessage) {
   if (!pMessage)
     return;
 
-  CFWL_MessageType dwMsgCode = pMessage->GetClassID();
-  switch (dwMsgCode) {
-    case CFWL_MessageType::SetFocus:
-    case CFWL_MessageType::KillFocus:
+  switch (pMessage->GetType()) {
+    case CFWL_Message::Type::SetFocus:
+    case CFWL_Message::Type::KillFocus:
       GetOuter()->GetDelegate()->OnProcessMessage(pMessage);
       break;
-    case CFWL_MessageType::Key:
+    case CFWL_Message::Type::Key:
       break;
-    case CFWL_MessageType::Mouse: {
+    case CFWL_Message::Type::Mouse: {
       CFWL_MsgMouse* pMouse = static_cast<CFWL_MsgMouse*>(pMessage);
       switch (pMouse->m_dwCmd) {
         case FWL_MouseCommand::LeftButtonDown:

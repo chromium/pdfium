@@ -196,8 +196,8 @@ void CXFA_FFListBox::OnProcessMessage(CFWL_Message* pMessage) {
 
 void CXFA_FFListBox::OnProcessEvent(CFWL_Event* pEvent) {
   CXFA_FFField::OnProcessEvent(pEvent);
-  switch (pEvent->GetClassID()) {
-    case CFWL_EventType::SelectChanged: {
+  switch (pEvent->GetType()) {
+    case CFWL_Event::Type::SelectChanged: {
       CFX_Int32Array arrSels;
       OnSelectChanged(m_pNormalWidget, arrSels);
       break;
@@ -510,23 +510,23 @@ void CXFA_FFComboBox::OnProcessMessage(CFWL_Message* pMessage) {
 
 void CXFA_FFComboBox::OnProcessEvent(CFWL_Event* pEvent) {
   CXFA_FFField::OnProcessEvent(pEvent);
-  switch (pEvent->GetClassID()) {
-    case CFWL_EventType::SelectChanged: {
+  switch (pEvent->GetType()) {
+    case CFWL_Event::Type::SelectChanged: {
       CFWL_EvtSelectChanged* postEvent =
           static_cast<CFWL_EvtSelectChanged*>(pEvent);
       OnSelectChanged(m_pNormalWidget, postEvent->bLButtonUp);
       break;
     }
-    case CFWL_EventType::EditChanged: {
+    case CFWL_Event::Type::EditChanged: {
       CFX_WideString wsChanged;
       OnTextChanged(m_pNormalWidget, wsChanged);
       break;
     }
-    case CFWL_EventType::PreDropDown: {
+    case CFWL_Event::Type::PreDropDown: {
       OnPreOpen(m_pNormalWidget);
       break;
     }
-    case CFWL_EventType::PostDropDown: {
+    case CFWL_Event::Type::PostDropDown: {
       OnPostOpen(m_pNormalWidget);
       break;
     }

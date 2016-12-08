@@ -166,7 +166,9 @@ class CFWL_Edit : public CFWL_Widget {
   void OnMouseMove(CFWL_MsgMouse* pMsg);
   void OnKeyDown(CFWL_MsgKey* pMsg);
   void OnChar(CFWL_MsgKey* pMsg);
-  bool OnScroll(CFWL_ScrollBar* pScrollBar, FWL_SCBCODE dwCode, FX_FLOAT fPos);
+  bool OnScroll(CFWL_ScrollBar* pScrollBar,
+                CFWL_EvtScroll::Code dwCode,
+                FX_FLOAT fPos);
 
   CFX_RectF m_rtClient;
   CFX_RectF m_rtEngine;

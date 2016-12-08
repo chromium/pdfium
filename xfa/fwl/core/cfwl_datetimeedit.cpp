@@ -26,18 +26,17 @@ void CFWL_DateTimeEdit::OnProcessMessage(CFWL_Message* pMessage) {
     return;
   }
 
-  CFWL_MessageType dwHashCode = pMessage->GetClassID();
-  if (dwHashCode == CFWL_MessageType::SetFocus ||
-      dwHashCode == CFWL_MessageType::KillFocus) {
+  CFWL_Message::Type type = pMessage->GetType();
+  if (type == CFWL_Message::Type::SetFocus ||
+      type == CFWL_Message::Type::KillFocus) {
     CFWL_Widget* pOuter = GetOuter();
     pOuter->GetDelegate()->OnProcessMessage(pMessage);
   }
 }
 
 void CFWL_DateTimeEdit::DisForm_OnProcessMessage(CFWL_Message* pMessage) {
-  CFWL_MessageType dwHashCode = pMessage->GetClassID();
   if (!m_pWidgetMgr->IsFormDisabled() ||
-      dwHashCode != CFWL_MessageType::Mouse) {
+      pMessage->GetType() != CFWL_Message::Type::Mouse) {
     CFWL_Edit::OnProcessMessage(pMessage);
     return;
   }

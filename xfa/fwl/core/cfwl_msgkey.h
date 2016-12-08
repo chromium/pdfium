@@ -15,12 +15,11 @@ enum class FWL_KeyCommand { KeyDown, KeyUp, Char };
 
 class CFWL_MsgKey : public CFWL_Message {
  public:
-  CFWL_MsgKey();
+  CFWL_MsgKey(CFWL_Widget* pSrcTarget, CFWL_Widget* pDstTarget);
   ~CFWL_MsgKey() override;
 
   // CFWL_Message
   std::unique_ptr<CFWL_Message> Clone() override;
-  CFWL_MessageType GetClassID() const override;
 
   uint32_t m_dwKeyCode;
   uint32_t m_dwFlags;

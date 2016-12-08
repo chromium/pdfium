@@ -10,14 +10,12 @@
 
 #include "third_party/base/ptr_util.h"
 
-CFWL_MsgSetFocus::CFWL_MsgSetFocus() {}
+CFWL_MsgSetFocus::CFWL_MsgSetFocus(CFWL_Widget* pSrcTarget,
+                                   CFWL_Widget* pDstTarget)
+    : CFWL_Message(CFWL_Message::Type::SetFocus, pSrcTarget, pDstTarget) {}
 
 CFWL_MsgSetFocus::~CFWL_MsgSetFocus() {}
 
 std::unique_ptr<CFWL_Message> CFWL_MsgSetFocus::Clone() {
   return pdfium::MakeUnique<CFWL_MsgSetFocus>(*this);
-}
-
-CFWL_MessageType CFWL_MsgSetFocus::GetClassID() const {
-  return CFWL_MessageType::SetFocus;
 }

@@ -148,7 +148,9 @@ class CFWL_ListBox : public CFWL_Widget {
   void OnMouseWheel(CFWL_MsgMouseWheel* pMsg);
   void OnKeyDown(CFWL_MsgKey* pMsg);
   void OnVK(CFWL_ListItem* hItem, bool bShift, bool bCtrl);
-  bool OnScroll(CFWL_ScrollBar* pScrollBar, FWL_SCBCODE dwCode, FX_FLOAT fPos);
+  bool OnScroll(CFWL_ScrollBar* pScrollBar,
+                CFWL_EvtScroll::Code dwCode,
+                FX_FLOAT fPos);
 
   CFX_RectF m_rtClient;
   CFX_RectF m_rtStatic;
