@@ -947,12 +947,12 @@ int32_t CFGAS_FontMgr::CalcPenalty(CFX_FontDescriptor* pInstalled,
   int32_t nPenalty = 30000;
   if (FontName.GetLength() != 0) {
     if (FontName != pInstalled->m_wsFaceName) {
-      int32_t i;
-      for (i = 0; i < pInstalled->m_wsFamilyNames.GetSize(); i++) {
+      size_t i;
+      for (i = 0; i < pInstalled->m_wsFamilyNames.size(); ++i) {
         if (pInstalled->m_wsFamilyNames[i] == FontName)
           break;
       }
-      if (i == pInstalled->m_wsFamilyNames.GetSize())
+      if (i == pInstalled->m_wsFamilyNames.size())
         nPenalty += 0xFFFF;
       else
         nPenalty -= 28000;
@@ -961,12 +961,12 @@ int32_t CFGAS_FontMgr::CalcPenalty(CFX_FontDescriptor* pInstalled,
     }
     if (30000 == nPenalty &&
         0 == IsPartName(pInstalled->m_wsFaceName, FontName)) {
-      int32_t i;
-      for (i = 0; i < pInstalled->m_wsFamilyNames.GetSize(); i++) {
+      size_t i;
+      for (i = 0; i < pInstalled->m_wsFamilyNames.size(); i++) {
         if (IsPartName(pInstalled->m_wsFamilyNames[i], FontName) != 0)
           break;
       }
-      if (i == pInstalled->m_wsFamilyNames.GetSize())
+      if (i == pInstalled->m_wsFamilyNames.size())
         nPenalty += 0xFFFF;
       else
         nPenalty -= 26000;
@@ -1058,13 +1058,12 @@ void CFGAS_FontMgr::RegisterFace(FXFT_Face pFace,
       table.clear();
   }
   GetNames(table.empty() ? nullptr : table.data(), pFont->m_wsFamilyNames);
-
-  pFont->m_wsFamilyNames.Add(CFX_ByteString(pFace->family_name).UTF8Decode());
+  pFont->m_wsFamilyNames.push_back(
+      CFX_ByteString(pFace->family_name).UTF8Decode());
   pFont->m_wsFaceName =
       pFaceName ? *pFaceName
                 : CFX_WideString::FromLocal(FXFT_Get_Postscript_Name(pFace));
   pFont->m_nFaceIndex = pFace->face_index;
-
   m_InstalledFonts.Add(pFont.release());
 }
 
@@ -1106,7 +1105,7 @@ uint32_t CFGAS_FontMgr::GetFlags(FXFT_Face pFace) {
 }
 
 void CFGAS_FontMgr::GetNames(const uint8_t* name_table,
-                             CFX_WideStringArray& Names) {
+                             std::vector<CFX_WideString>& Names) {
   if (!name_table)
     return;
 
@@ -1130,14 +1129,14 @@ void CFGAS_FontMgr::GetNames(const uint8_t* name_table,
         FX_WCHAR wcTemp = GetUInt16(lpStr + nNameOffset + k * 2);
         wsFamily += wcTemp;
       }
-      Names.Add(wsFamily);
+      Names.push_back(wsFamily);
       continue;
     }
     for (uint16_t k = 0; k < nNameLength; k++) {
       FX_WCHAR wcTemp = GetUInt8(lpStr + nNameOffset + k);
       wsFamily += wcTemp;
     }
-    Names.Add(wsFamily);
+    Names.push_back(wsFamily);
   }
 }
 

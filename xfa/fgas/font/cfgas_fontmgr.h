@@ -137,7 +137,7 @@ class CFX_FontDescriptor {
 
   int32_t m_nFaceIndex;
   CFX_WideString m_wsFaceName;
-  CFX_WideStringArray m_wsFamilyNames;
+  std::vector<CFX_WideString> m_wsFamilyNames;
   uint32_t m_dwFontStyles;
   uint32_t m_dwUsb[4];
   uint32_t m_dwCsb[2];
@@ -217,7 +217,7 @@ class CFGAS_FontMgr {
   void RegisterFace(FXFT_Face pFace, const CFX_WideString* pFaceName);
   void RegisterFaces(const CFX_RetainPtr<IFX_SeekableReadStream>& pFontStream,
                      const CFX_WideString* pFaceName);
-  void GetNames(const uint8_t* name_table, CFX_WideStringArray& Names);
+  void GetNames(const uint8_t* name_table, std::vector<CFX_WideString>& Names);
   std::vector<uint16_t> GetCharsets(FXFT_Face pFace) const;
   void GetUSBCSB(FXFT_Face pFace, uint32_t* USB, uint32_t* CSB);
   uint32_t GetFlags(FXFT_Face pFace);

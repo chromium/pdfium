@@ -7,6 +7,7 @@
 #include "xfa/fxfa/parser/cxfa_widgetdata.h"
 
 #include "core/fxcrt/fx_ext.h"
+#include "third_party/base/stl_util.h"
 #include "xfa/fxbarcode/BC_Library.h"
 #include "xfa/fxfa/app/xfa_ffnotify.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
@@ -805,8 +806,9 @@ bool CXFA_WidgetData::GetChoiceListItem(CFX_WideString& wsText,
   return false;
 }
 
-void CXFA_WidgetData::GetChoiceListItems(CFX_WideStringArray& wsTextArray,
-                                         bool bSaveValue) {
+void CXFA_WidgetData::GetChoiceListItems(
+    std::vector<CFX_WideString>& wsTextArray,
+    bool bSaveValue) {
   CXFA_NodeArray pItems;
   CXFA_Node* pItem = nullptr;
   int32_t iCount = 0;
@@ -832,22 +834,24 @@ void CXFA_WidgetData::GetChoiceListItems(CFX_WideStringArray& wsTextArray,
   }
   pItems.RemoveAll();
   pNode = pItem->GetNodeItem(XFA_NODEITEM_FirstChild);
-  for (; pNode; pNode = pNode->GetNodeItem(XFA_NODEITEM_NextSibling))
-    pNode->TryContent(wsTextArray.Add());
+  for (; pNode; pNode = pNode->GetNodeItem(XFA_NODEITEM_NextSibling)) {
+    wsTextArray.emplace_back();
+    pNode->TryContent(wsTextArray.back());
+  }
 }
 
 int32_t CXFA_WidgetData::CountSelectedItems() {
-  CFX_WideStringArray wsValueArray;
+  std::vector<CFX_WideString> wsValueArray;
   GetSelectedItemsValue(wsValueArray);
   if (IsListBox() || !IsChoiceListAllowTextEntry())
-    return wsValueArray.GetSize();
+    return pdfium::CollectionSize<int32_t>(wsValueArray);
 
   int32_t iSelected = 0;
-  CFX_WideStringArray wsSaveTextArray;
+  std::vector<CFX_WideString> wsSaveTextArray;
   GetChoiceListItems(wsSaveTextArray, true);
-  int32_t iValues = wsValueArray.GetSize();
+  int32_t iValues = pdfium::CollectionSize<int32_t>(wsValueArray);
   for (int32_t i = 0; i < iValues; i++) {
-    int32_t iSaves = wsSaveTextArray.GetSize();
+    int32_t iSaves = pdfium::CollectionSize<int32_t>(wsSaveTextArray);
     for (int32_t j = 0; j < iSaves; j++) {
       if (wsValueArray[i] == wsSaveTextArray[j]) {
         iSelected++;
@@ -859,11 +863,11 @@ int32_t CXFA_WidgetData::CountSelectedItems() {
 }
 
 int32_t CXFA_WidgetData::GetSelectedItem(int32_t nIndex) {
-  CFX_WideStringArray wsValueArray;
+  std::vector<CFX_WideString> wsValueArray;
   GetSelectedItemsValue(wsValueArray);
-  CFX_WideStringArray wsSaveTextArray;
+  std::vector<CFX_WideString> wsSaveTextArray;
   GetChoiceListItems(wsSaveTextArray, true);
-  int32_t iSaves = wsSaveTextArray.GetSize();
+  int32_t iSaves = pdfium::CollectionSize<int32_t>(wsSaveTextArray);
   for (int32_t j = 0; j < iSaves; j++) {
     if (wsValueArray[nIndex] == wsSaveTextArray[j])
       return j;
@@ -872,15 +876,15 @@ int32_t CXFA_WidgetData::GetSelectedItem(int32_t nIndex) {
 }
 
 void CXFA_WidgetData::GetSelectedItems(CFX_Int32Array& iSelArray) {
-  CFX_WideStringArray wsValueArray;
+  std::vector<CFX_WideString> wsValueArray;
   GetSelectedItemsValue(wsValueArray);
-  int32_t iValues = wsValueArray.GetSize();
+  int32_t iValues = pdfium::CollectionSize<int32_t>(wsValueArray);
   if (iValues < 1)
     return;
 
-  CFX_WideStringArray wsSaveTextArray;
+  std::vector<CFX_WideString> wsSaveTextArray;
   GetChoiceListItems(wsSaveTextArray, true);
-  int32_t iSaves = wsSaveTextArray.GetSize();
+  int32_t iSaves = pdfium::CollectionSize<int32_t>(wsSaveTextArray);
   for (int32_t i = 0; i < iValues; i++) {
     for (int32_t j = 0; j < iSaves; j++) {
       if (wsValueArray[i] == wsSaveTextArray[j]) {
@@ -892,7 +896,7 @@ void CXFA_WidgetData::GetSelectedItems(CFX_Int32Array& iSelArray) {
 }
 
 void CXFA_WidgetData::GetSelectedItemsValue(
-    CFX_WideStringArray& wsSelTextArray) {
+    std::vector<CFX_WideString>& wsSelTextArray) {
   CFX_WideString wsValue = GetRawValue();
   if (GetChoiceListOpen() == XFA_ATTRIBUTEENUM_MultiSelect) {
     if (!wsValue.IsEmpty()) {
@@ -901,18 +905,18 @@ void CXFA_WidgetData::GetSelectedItemsValue(
       int32_t iEnd = wsValue.Find(L'\n', iStart);
       iEnd = (iEnd == -1) ? iLength : iEnd;
       while (iEnd >= iStart) {
-        wsSelTextArray.Add(wsValue.Mid(iStart, iEnd - iStart));
+        wsSelTextArray.push_back(wsValue.Mid(iStart, iEnd - iStart));
         iStart = iEnd + 1;
         if (iStart >= iLength)
           break;
 
         iEnd = wsValue.Find(L'\n', iStart);
         if (iEnd < 0)
-          wsSelTextArray.Add(wsValue.Mid(iStart, iLength - iStart));
+          wsSelTextArray.push_back(wsValue.Mid(iStart, iLength - iStart));
       }
     }
   } else {
-    wsSelTextArray.Add(wsValue);
+    wsSelTextArray.push_back(wsValue);
   }
 }
 
@@ -920,14 +924,14 @@ bool CXFA_WidgetData::GetItemState(int32_t nIndex) {
   if (nIndex < 0)
     return false;
 
-  CFX_WideStringArray wsSaveTextArray;
+  std::vector<CFX_WideString> wsSaveTextArray;
   GetChoiceListItems(wsSaveTextArray, true);
-  if (wsSaveTextArray.GetSize() <= nIndex)
+  if (pdfium::CollectionSize<int32_t>(wsSaveTextArray) <= nIndex)
     return false;
 
-  CFX_WideStringArray wsValueArray;
+  std::vector<CFX_WideString> wsValueArray;
   GetSelectedItemsValue(wsValueArray);
-  int32_t iValues = wsValueArray.GetSize();
+  int32_t iValues = pdfium::CollectionSize<int32_t>(wsValueArray);
   for (int32_t j = 0; j < iValues; j++) {
     if (wsValueArray[j] == wsSaveTextArray[nIndex])
       return true;
@@ -943,15 +947,15 @@ void CXFA_WidgetData::SetItemState(int32_t nIndex,
   if (nIndex < 0)
     return;
 
-  CFX_WideStringArray wsSaveTextArray;
+  std::vector<CFX_WideString> wsSaveTextArray;
   GetChoiceListItems(wsSaveTextArray, true);
-  if (wsSaveTextArray.GetSize() <= nIndex)
+  if (pdfium::CollectionSize<int32_t>(wsSaveTextArray) <= nIndex)
     return;
 
   int32_t iSel = -1;
-  CFX_WideStringArray wsValueArray;
+  std::vector<CFX_WideString> wsValueArray;
   GetSelectedItemsValue(wsValueArray);
-  int32_t iValues = wsValueArray.GetSize();
+  int32_t iValues = pdfium::CollectionSize<int32_t>(wsValueArray);
   for (int32_t j = 0; j < iValues; j++) {
     if (wsValueArray[j] == wsSaveTextArray[nIndex]) {
       iSel = j;
@@ -1003,7 +1007,7 @@ void CXFA_WidgetData::SetSelectedItems(CFX_Int32Array& iSelArray,
   CFX_WideString wsValue;
   int32_t iSize = iSelArray.GetSize();
   if (iSize >= 1) {
-    CFX_WideStringArray wsSaveTextArray;
+    std::vector<CFX_WideString> wsSaveTextArray;
     GetChoiceListItems(wsSaveTextArray, true);
     CFX_WideString wsItemValue;
     for (int32_t i = 0; i < iSize; i++) {

@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <memory>
 
+#include "third_party/base/stl_util.h"
 #include "xfa/fde/css/fde_csscache.h"
 #include "xfa/fde/css/fde_cssdeclaration.h"
 #include "xfa/fde/css/fde_cssstylesheet.h"
@@ -1749,7 +1750,8 @@ IFDE_CSSParagraphStyle* CFDE_CSSComputedStyle::GetParagraphStyles() {
 
 bool CFDE_CSSComputedStyle::GetCustomStyle(const CFX_WideStringC& wsName,
                                            CFX_WideString& wsValue) const {
-  for (int32_t i = m_CustomProperties.GetSize() - 2; i > -1; i -= 2) {
+  for (int32_t i = pdfium::CollectionSize<int32_t>(m_CustomProperties) - 2;
+       i > -1; i -= 2) {
     if (wsName == m_CustomProperties[i]) {
       wsValue = m_CustomProperties[i + 1];
       return true;
@@ -1895,8 +1897,8 @@ void CFDE_CSSComputedStyle::SetLetterSpacing(
 
 void CFDE_CSSComputedStyle::AddCustomStyle(const CFX_WideString& wsName,
                                            const CFX_WideString& wsValue) {
-  m_CustomProperties.Add(wsName);
-  m_CustomProperties.Add(wsValue);
+  m_CustomProperties.push_back(wsName);
+  m_CustomProperties.push_back(wsValue);
 }
 
 CFDE_CSSInheritedData::CFDE_CSSInheritedData() {

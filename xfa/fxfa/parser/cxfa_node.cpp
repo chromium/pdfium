@@ -9,6 +9,7 @@
 #include <map>
 #include <memory>
 #include <utility>
+#include <vector>
 
 #include "core/fxcrt/fx_ext.h"
 #include "fxjs/cfxjse_value.h"
@@ -4150,7 +4151,7 @@ bool CXFA_Node::SetScriptContent(const CFX_WideString& wsContent,
                                       bScriptModify, false);
         CXFA_Node* pBind = GetBindData();
         if (bSyncData && pBind) {
-          CFX_WideStringArray wsSaveTextArray;
+          std::vector<CFX_WideString> wsSaveTextArray;
           int32_t iSize = 0;
           if (!wsContent.IsEmpty()) {
             int32_t iStart = 0;
@@ -4158,17 +4159,18 @@ bool CXFA_Node::SetScriptContent(const CFX_WideString& wsContent,
             int32_t iEnd = wsContent.Find(L'\n', iStart);
             iEnd = (iEnd == -1) ? iLength : iEnd;
             while (iEnd >= iStart) {
-              wsSaveTextArray.Add(wsContent.Mid(iStart, iEnd - iStart));
+              wsSaveTextArray.push_back(wsContent.Mid(iStart, iEnd - iStart));
               iStart = iEnd + 1;
               if (iStart >= iLength) {
                 break;
               }
               iEnd = wsContent.Find(L'\n', iStart);
               if (iEnd < 0) {
-                wsSaveTextArray.Add(wsContent.Mid(iStart, iLength - iStart));
+                wsSaveTextArray.push_back(
+                    wsContent.Mid(iStart, iLength - iStart));
               }
             }
-            iSize = wsSaveTextArray.GetSize();
+            iSize = pdfium::CollectionSize<int32_t>(wsSaveTextArray);
           }
           if (iSize == 0) {
             while (CXFA_Node* pChildNode =

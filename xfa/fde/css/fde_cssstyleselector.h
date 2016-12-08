@@ -414,7 +414,7 @@ class CFDE_CSSComputedStyle : public IFDE_CSSComputedStyle,
   IFX_MemoryAllocator* const m_pAllocator;
   CFDE_CSSInheritedData m_InheritedData;
   CFDE_CSSNonInheritedData m_NonInheritedData;
-  CFX_WideStringArray m_CustomProperties;
+  std::vector<CFX_WideString> m_CustomProperties;
 };
 
 #endif  // XFA_FDE_CSS_FDE_CSSSTYLESELECTOR_H_

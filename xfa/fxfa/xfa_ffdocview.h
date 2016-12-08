@@ -9,6 +9,7 @@
 
 #include <map>
 #include <memory>
+#include <vector>
 
 #include "xfa/fxfa/cxfa_eventparam.h"
 #include "xfa/fxfa/xfa_ffdoc.h"
@@ -98,7 +99,7 @@ class CXFA_FFDocView {
                                        bool bRecursive,
                                        CXFA_Node* pExclude);
   bool m_bLayoutEvent;
-  CFX_WideStringArray m_arrNullTestMsg;
+  std::vector<CFX_WideString> m_arrNullTestMsg;
   CXFA_FFWidget* m_pListFocusWidget;
   bool m_bInLayoutStatus;
 

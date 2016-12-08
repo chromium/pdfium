@@ -6,7 +6,10 @@
 
 #include "xfa/fxfa/app/xfa_ffchoicelist.h"
 
+#include <vector>
+
 #include "third_party/base/ptr_util.h"
+#include "third_party/base/stl_util.h"
 #include "xfa/fwl/cfwl_app.h"
 #include "xfa/fwl/cfwl_combobox.h"
 #include "xfa/fwl/cfwl_edit.h"
@@ -50,9 +53,9 @@ bool CXFA_FFListBox::LoadWidget() {
   m_pNormalWidget->SetDelegate(this);
   m_pNormalWidget->LockUpdate();
 
-  CFX_WideStringArray wsLabelArray;
+  std::vector<CFX_WideString> wsLabelArray;
   m_pDataAcc->GetChoiceListItems(wsLabelArray, false);
-  int32_t iItems = wsLabelArray.GetSize();
+  int32_t iItems = pdfium::CollectionSize<int32_t>(wsLabelArray);
   for (int32_t i = 0; i < iItems; i++) {
     pListBox->AddString(wsLabelArray[i].AsStringC());
   }
@@ -247,9 +250,9 @@ bool CXFA_FFComboBox::LoadWidget() {
   m_pNormalWidget->SetDelegate(this);
   m_pNormalWidget->LockUpdate();
 
-  CFX_WideStringArray wsLabelArray;
+  std::vector<CFX_WideString> wsLabelArray;
   m_pDataAcc->GetChoiceListItems(wsLabelArray, false);
-  int32_t iItems = wsLabelArray.GetSize();
+  int32_t iItems = pdfium::CollectionSize<int32_t>(wsLabelArray);
   for (int32_t i = 0; i < iItems; i++) {
     pComboBox->AddString(wsLabelArray[i].AsStringC());
   }

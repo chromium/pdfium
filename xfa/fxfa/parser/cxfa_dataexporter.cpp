@@ -6,7 +6,10 @@
 
 #include "xfa/fxfa/parser/cxfa_dataexporter.h"
 
+#include <vector>
+
 #include "core/fxcrt/fx_basic.h"
+#include "third_party/base/stl_util.h"
 #include "xfa/fde/xml/fde_xml_imp.h"
 #include "xfa/fgas/crt/fgas_codepage.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
@@ -217,12 +220,12 @@ void RegenerateFormFile_Changed(CXFA_Node* pNode,
         if (wsRawValue.IsEmpty())
           break;
 
-        CFX_WideStringArray wsSelTextArray;
+        std::vector<CFX_WideString> wsSelTextArray;
         int32_t iStart = 0;
         int32_t iEnd = wsRawValue.Find(L'\n', iStart);
         iEnd = (iEnd == -1) ? wsRawValue.GetLength() : iEnd;
         while (iEnd >= iStart) {
-          wsSelTextArray.Add(wsRawValue.Mid(iStart, iEnd - iStart));
+          wsSelTextArray.push_back(wsRawValue.Mid(iStart, iEnd - iStart));
           iStart = iEnd + 1;
           if (iStart >= wsRawValue.GetLength())
             break;
@@ -242,7 +245,8 @@ void RegenerateFormFile_Changed(CXFA_Node* pNode,
         buf << FX_WSTRC(L"<");
         buf << bodyTagName;
         buf << FX_WSTRC(L" xmlns=\"\"\n>");
-        for (int32_t i = 0; i < wsSelTextArray.GetSize(); i++) {
+        for (int32_t i = 0; i < pdfium::CollectionSize<int32_t>(wsSelTextArray);
+             i++) {
           buf << FX_WSTRC(L"<value\n>");
           buf << ExportEncodeContent(wsSelTextArray[i].AsStringC());
           buf << FX_WSTRC(L"</value\n>");

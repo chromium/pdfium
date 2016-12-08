@@ -8,6 +8,7 @@
 #define XFA_FDE_XML_FDE_XML_IMP_H_
 
 #include <memory>
+#include <vector>
 
 #include "core/fxcrt/fx_system.h"
 #include "xfa/fde/xml/fde_xml.h"
@@ -105,8 +106,8 @@ class CFDE_XMLInstruction : public CFDE_XMLNode {
   void RemoveData(int32_t index);
 
   CFX_WideString m_wsTarget;
-  CFX_WideStringArray m_Attributes;
-  CFX_WideStringArray m_TargetData;
+  std::vector<CFX_WideString> m_Attributes;
+  std::vector<CFX_WideString> m_TargetData;
 };
 
 class CFDE_XMLElement : public CFDE_XMLNode {
@@ -148,7 +149,7 @@ class CFDE_XMLElement : public CFDE_XMLNode {
   void SetTextData(const CFX_WideString& wsText);
 
   CFX_WideString m_wsTag;
-  CFX_WideStringArray m_Attributes;
+  std::vector<CFX_WideString> m_Attributes;
 };
 
 class CFDE_XMLText : public CFDE_XMLNode {

@@ -6,8 +6,11 @@
 
 #include "xfa/fxfa/parser/xfa_localevalue.h"
 
+#include <vector>
+
 #include "core/fxcrt/fx_ext.h"
 #include "third_party/base/ptr_util.h"
+#include "third_party/base/stl_util.h"
 #include "xfa/fgas/localization/fgas_localeimp.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/xfa_localemgr.h"
@@ -105,11 +108,11 @@ bool CXFA_LocaleValue::ValidateValue(const CFX_WideString& wsValue,
     m_pLocaleMgr->SetDefLocale(pLocale);
 
   auto pFormat = pdfium::MakeUnique<CFX_FormatString>(m_pLocaleMgr, false);
-  CFX_WideStringArray wsPatterns;
+  std::vector<CFX_WideString> wsPatterns;
   pFormat->SplitFormatString(wsPattern, wsPatterns);
 
   bool bRet = false;
-  int32_t iCount = wsPatterns.GetSize();
+  int32_t iCount = pdfium::CollectionSize<int32_t>(wsPatterns);
   int32_t i = 0;
   for (; i < iCount && !bRet; i++) {
     CFX_WideString wsFormat = wsPatterns[i];
@@ -464,10 +467,10 @@ bool CXFA_LocaleValue::FormatPatterns(CFX_WideString& wsResult,
                                       IFX_Locale* pLocale,
                                       XFA_VALUEPICTURE eValueType) const {
   auto pFormat = pdfium::MakeUnique<CFX_FormatString>(m_pLocaleMgr, false);
-  CFX_WideStringArray wsPatterns;
+  std::vector<CFX_WideString> wsPatterns;
   pFormat->SplitFormatString(wsFormat, wsPatterns);
   wsResult.clear();
-  int32_t iCount = wsPatterns.GetSize();
+  int32_t iCount = pdfium::CollectionSize<int32_t>(wsPatterns);
   for (int32_t i = 0; i < iCount; i++) {
     if (FormatSinglePattern(wsResult, wsPatterns[i], pLocale, eValueType))
       return true;
@@ -793,10 +796,10 @@ bool CXFA_LocaleValue::ParsePatternValue(const CFX_WideString& wsValue,
     m_pLocaleMgr->SetDefLocale(pLocale);
 
   auto pFormat = pdfium::MakeUnique<CFX_FormatString>(m_pLocaleMgr, false);
-  CFX_WideStringArray wsPatterns;
+  std::vector<CFX_WideString> wsPatterns;
   pFormat->SplitFormatString(wsPattern, wsPatterns);
   bool bRet = false;
-  int32_t iCount = wsPatterns.GetSize();
+  int32_t iCount = pdfium::CollectionSize<int32_t>(wsPatterns);
   for (int32_t i = 0; i < iCount && !bRet; i++) {
     CFX_WideString wsFormat = wsPatterns[i];
     FX_LOCALECATEGORY eCategory = pFormat->GetCategory(wsFormat);

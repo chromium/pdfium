@@ -6,7 +6,10 @@
 
 #include "xfa/fxfa/parser/xfa_document_datamerger_imp.h"
 
+#include <vector>
+
 #include "core/fxcrt/fx_ext.h"
+#include "third_party/base/stl_util.h"
 #include "xfa/fde/xml/fde_xml_imp.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_layoutprocessor.h"
@@ -149,9 +152,9 @@ void CreateDataBinding(CXFA_Node* pFormNode,
       case XFA_Element::ChoiceList:
         defValue.GetChildValueContent(wsValue);
         if (pWidgetData->GetChoiceListOpen() == XFA_ATTRIBUTEENUM_MultiSelect) {
-          CFX_WideStringArray wsSelTextArray;
+          std::vector<CFX_WideString> wsSelTextArray;
           pWidgetData->GetSelectedItemsValue(wsSelTextArray);
-          int32_t iSize = wsSelTextArray.GetSize();
+          int32_t iSize = pdfium::CollectionSize<int32_t>(wsSelTextArray);
           if (iSize >= 1) {
             CXFA_Node* pValue = nullptr;
             for (int32_t i = 0; i < iSize; i++) {

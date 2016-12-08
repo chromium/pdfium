@@ -7,6 +7,7 @@
 #include "xfa/fxfa/xfa_ffdocview.h"
 
 #include "core/fxcrt/fx_ext.h"
+#include "third_party/base/stl_util.h"
 #include "xfa/fxfa/app/xfa_ffbarcode.h"
 #include "xfa/fxfa/app/xfa_ffcheckbutton.h"
 #include "xfa/fxfa/app/xfa_ffchoicelist.h"
@@ -146,7 +147,7 @@ int32_t CXFA_FFDocView::GetLayoutStatus() {
   return m_iStatus;
 }
 void CXFA_FFDocView::ShowNullTestMsg() {
-  int32_t iCount = m_arrNullTestMsg.GetSize();
+  int32_t iCount = pdfium::CollectionSize<int32_t>(m_arrNullTestMsg);
   CXFA_FFApp* pApp = m_pDoc->GetApp();
   IXFA_AppProvider* pAppProvider = pApp->GetAppProvider();
   if (pAppProvider && iCount) {
@@ -169,7 +170,7 @@ void CXFA_FFDocView::ShowNullTestMsg() {
     pAppProvider->LoadString(XFA_IDS_AppName, wsTitle);
     pAppProvider->MsgBox(wsMsg, wsTitle, XFA_MBICON_Status, XFA_MB_OK);
   }
-  m_arrNullTestMsg.RemoveAll();
+  m_arrNullTestMsg.clear();
 }
 void CXFA_FFDocView::UpdateDocView() {
   if (IsUpdateLocked()) {

@@ -8,7 +8,9 @@
 
 #include <algorithm>
 #include <memory>
+#include <vector>
 
+#include "third_party/base/stl_util.h"
 #include "xfa/fxfa/app/xfa_ffnotify.h"
 #include "xfa/fxfa/parser/cxfa_containerlayoutitem.h"
 #include "xfa/fxfa/parser/cxfa_contentlayoutitem.h"
@@ -25,7 +27,7 @@ namespace {
 int32_t SeparateStringW(const FX_WCHAR* pStr,
                         int32_t iStrLen,
                         FX_WCHAR delimiter,
-                        CFX_WideStringArray& pieces) {
+                        std::vector<CFX_WideString>& pieces) {
   if (!pStr)
     return 0;
   if (iStrLen < 0)
@@ -35,15 +37,14 @@ int32_t SeparateStringW(const FX_WCHAR* pStr,
   const FX_WCHAR* pEnd = pStr + iStrLen;
   while (true) {
     if (pStr >= pEnd || delimiter == *pStr) {
-      CFX_WideString sub(pToken, pStr - pToken);
-      pieces.Add(sub);
+      pieces.push_back(CFX_WideString(pToken, pStr - pToken));
       pToken = pStr + 1;
       if (pStr >= pEnd)
         break;
     }
     pStr++;
   }
-  return pieces.GetSize();
+  return pdfium::CollectionSize<int32_t>(pieces);
 }
 
 }  // namespace
@@ -1401,10 +1402,10 @@ void CXFA_ItemLayoutProcessor::DoLayoutTableContainer(CXFA_Node* pLayoutNode) {
                               : fContainerWidth - fLeftInset - fRightInset;
   CFX_WideStringC wsColumnWidths;
   if (pLayoutNode->TryCData(XFA_ATTRIBUTE_ColumnWidths, wsColumnWidths)) {
-    CFX_WideStringArray widths;
+    std::vector<CFX_WideString> widths;
     if (SeparateStringW(wsColumnWidths.c_str(), wsColumnWidths.GetLength(),
                         L' ', widths) > 0) {
-      int32_t iCols = widths.GetSize();
+      int32_t iCols = pdfium::CollectionSize<int32_t>(widths);
       CFX_WideString wsWidth;
       for (int32_t i = 0; i < iCols; i++) {
         wsWidth = widths[i];

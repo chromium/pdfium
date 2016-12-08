@@ -476,7 +476,7 @@ int32_t CXFA_WidgetAcc::ProcessNullTestValidate(CXFA_Validate validate,
     }
     if (!wsNullMsg.IsEmpty()) {
       if (eNullTest != XFA_ATTRIBUTEENUM_Disabled) {
-        m_pDocView->m_arrNullTestMsg.Add(wsNullMsg);
+        m_pDocView->m_arrNullTestMsg.push_back(wsNullMsg);
         return XFA_EVENTERROR_Error;
       }
       return XFA_EVENTERROR_Success;

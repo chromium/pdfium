@@ -7,6 +7,7 @@
 #include "xfa/fgas/localization/fgas_locale.h"
 
 #include <algorithm>
+#include <vector>
 
 #include "core/fxcrt/fx_ext.h"
 #include "core/fxcrt/fx_xml.h"
@@ -262,9 +263,12 @@ CFX_WideString CFX_LCNumeric::ToString(int32_t nTreading,
 
 CFX_FormatString::CFX_FormatString(IFX_LocaleMgr* pLocaleMgr, bool bUseLCID)
     : m_pLocaleMgr(pLocaleMgr), m_bUseLCID(bUseLCID) {}
+
 CFX_FormatString::~CFX_FormatString() {}
-void CFX_FormatString::SplitFormatString(const CFX_WideString& wsFormatString,
-                                         CFX_WideStringArray& wsPatterns) {
+
+void CFX_FormatString::SplitFormatString(
+    const CFX_WideString& wsFormatString,
+    std::vector<CFX_WideString>& wsPatterns) {
   int32_t iStrLen = wsFormatString.GetLength();
   const FX_WCHAR* pStr = wsFormatString.c_str();
   const FX_WCHAR* pToken = pStr;
@@ -272,20 +276,19 @@ void CFX_FormatString::SplitFormatString(const CFX_WideString& wsFormatString,
   bool iQuote = false;
   while (true) {
     if (pStr >= pEnd) {
-      CFX_WideString sub(pToken, pStr - pToken);
-      wsPatterns.Add(sub);
+      wsPatterns.push_back(CFX_WideString(pToken, pStr - pToken));
       return;
     }
     if (*pStr == '\'') {
       iQuote = !iQuote;
     } else if (*pStr == L'|' && !iQuote) {
-      CFX_WideString sub(pToken, pStr - pToken);
-      wsPatterns.Add(sub);
+      wsPatterns.push_back(CFX_WideString(pToken, pStr - pToken));
       pToken = pStr + 1;
     }
     pStr++;
   }
 }
+
 static CFX_WideString FX_GetLiteralText(const FX_WCHAR* pStrPattern,
                                         int32_t& iPattern,
                                         int32_t iLenPattern) {

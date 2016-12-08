@@ -7,6 +7,8 @@
 #ifndef XFA_FGAS_LOCALIZATION_FGAS_LOCALEIMP_H_
 #define XFA_FGAS_LOCALIZATION_FGAS_LOCALEIMP_H_
 
+#include <vector>
+
 #include "xfa/fgas/localization/fgas_locale.h"
 
 class CFX_LCNumeric;
@@ -17,7 +19,7 @@ class CFX_FormatString {
   ~CFX_FormatString();
 
   void SplitFormatString(const CFX_WideString& wsFormatString,
-                         CFX_WideStringArray& wsPatterns);
+                         std::vector<CFX_WideString>& wsPatterns);
   FX_LOCALECATEGORY GetCategory(const CFX_WideString& wsPattern);
   uint16_t GetLCID(const CFX_WideString& wsPattern);
   CFX_WideString GetLocaleName(const CFX_WideString& wsPattern);
