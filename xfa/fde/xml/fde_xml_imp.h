@@ -7,6 +7,8 @@
 #ifndef XFA_FDE_XML_FDE_XML_IMP_H_
 #define XFA_FDE_XML_FDE_XML_IMP_H_
 
+#include <memory>
+
 #include "core/fxcrt/fx_system.h"
 #include "xfa/fde/xml/fde_xml.h"
 #include "xfa/fgas/crt/fgas_memory.h"
@@ -19,8 +21,8 @@ class CFDE_XMLElement;
 class CFDE_XMLText;
 class CFDE_XMLDoc;
 class CFDE_XMLDOMParser;
-class CFDE_XMLParser;
 class CFDE_XMLSyntaxParser;
+class IFDE_XMLParser;
 
 class CFDE_XMLNode : public CFX_Target {
  public:
@@ -193,7 +195,7 @@ class CFDE_XMLDoc : public CFX_Target {
   CFDE_XMLDoc();
   ~CFDE_XMLDoc() override;
 
-  bool LoadXML(CFDE_XMLParser* pXMLParser);
+  bool LoadXML(std::unique_ptr<IFDE_XMLParser> pXMLParser);
   int32_t DoLoad(IFX_Pause* pPause = nullptr);
   void CloseXML();
   CFDE_XMLNode* GetRoot() const { return m_pRoot; }
@@ -209,14 +211,12 @@ class CFDE_XMLDoc : public CFX_Target {
   int32_t m_iStatus;
   CFDE_XMLNode* m_pRoot;
   CFDE_XMLSyntaxParser* m_pSyntaxParser;
-  CFDE_XMLParser* m_pXMLParser;
+  std::unique_ptr<IFDE_XMLParser> m_pXMLParser;
 };
 
-class CFDE_XMLParser {
+class IFDE_XMLParser {
  public:
-  virtual ~CFDE_XMLParser() {}
-
-  virtual void Release() = 0;
+  virtual ~IFDE_XMLParser() {}
   virtual int32_t DoParser(IFX_Pause* pPause) = 0;
 };
 

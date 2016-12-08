@@ -14,14 +14,13 @@
 class IFGAS_Stream;
 class IFX_Pause;
 
-class CXFA_XMLParser : public CFDE_XMLParser {
+class CXFA_XMLParser : public IFDE_XMLParser {
  public:
   CXFA_XMLParser(CFDE_XMLNode* pRoot,
                  const CFX_RetainPtr<IFGAS_Stream>& pStream);
   ~CXFA_XMLParser() override;
 
-  // CFDE_XMLParser
-  void Release() override;
+  // IFDE_XMLParser
   int32_t DoParser(IFX_Pause* pPause) override;
 
   FX_FILESIZE m_nStart[2];

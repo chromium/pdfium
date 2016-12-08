@@ -29,10 +29,6 @@ CXFA_XMLParser::~CXFA_XMLParser() {
   m_ws2.clear();
 }
 
-void CXFA_XMLParser::Release() {
-  delete this;
-}
-
 int32_t CXFA_XMLParser::DoParser(IFX_Pause* pPause) {
   if (m_syntaxParserResult == FDE_XmlSyntaxResult::Error)
     return -1;

@@ -7,6 +7,7 @@
 #include "xfa/fde/xml/fde_xml_imp.h"
 
 #include <algorithm>
+#include <utility>
 
 #include "core/fxcrt/fx_ext.h"
 #include "core/fxcrt/fx_safe_types.h"
@@ -957,29 +958,27 @@ void CFDE_XMLDoc::Reset(bool bInitRoot) {
 }
 
 void CFDE_XMLDoc::ReleaseParser() {
-  if (m_pXMLParser) {
-    m_pXMLParser->Release();
-    m_pXMLParser = nullptr;
-  }
+  m_pXMLParser.reset();
   if (m_pSyntaxParser) {
     m_pSyntaxParser->Release();
     m_pSyntaxParser = nullptr;
   }
 }
 
-bool CFDE_XMLDoc::LoadXML(CFDE_XMLParser* pXMLParser) {
+bool CFDE_XMLDoc::LoadXML(std::unique_ptr<IFDE_XMLParser> pXMLParser) {
   if (!pXMLParser)
     return false;
 
   Reset(true);
-  m_pXMLParser = pXMLParser;
-  return !!m_pXMLParser;
+  m_pXMLParser = std::move(pXMLParser);
+  return true;
 }
 
 int32_t CFDE_XMLDoc::DoLoad(IFX_Pause* pPause) {
-  if (m_iStatus >= 100)
-    return m_iStatus;
-  return m_iStatus = m_pXMLParser->DoParser(pPause);
+  if (m_iStatus < 100)
+    m_iStatus = m_pXMLParser->DoParser(pPause);
+
+  return m_iStatus;
 }
 
 void CFDE_XMLDoc::CloseXML() {
