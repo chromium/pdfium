@@ -124,7 +124,7 @@ void CFWL_ComboBox::ModifyStylesEx(uint32_t dwStylesExAdded,
     m_pEdit->SetOuter(this);
     m_pEdit->SetParent(this);
   } else if (bRemoveDropDown && m_pEdit) {
-    m_pEdit->SetStates(FWL_WGTSTATE_Invisible, true);
+    m_pEdit->SetStates(FWL_WGTSTATE_Invisible);
   }
   CFWL_Widget::ModifyStylesEx(dwStylesExAdded, dwStylesExRemoved);
 }
@@ -276,12 +276,20 @@ void CFWL_ComboBox::SetCurSel(int32_t iSel) {
   m_iCurSel = bClearSel ? -1 : iSel;
 }
 
-void CFWL_ComboBox::SetStates(uint32_t dwStates, bool bSet) {
+void CFWL_ComboBox::SetStates(uint32_t dwStates) {
   if (IsDropDownStyle() && m_pEdit)
-    m_pEdit->SetStates(dwStates, bSet);
+    m_pEdit->SetStates(dwStates);
   if (m_pListBox)
-    m_pListBox->SetStates(dwStates, bSet);
-  CFWL_Widget::SetStates(dwStates, bSet);
+    m_pListBox->SetStates(dwStates);
+  CFWL_Widget::SetStates(dwStates);
+}
+
+void CFWL_ComboBox::RemoveStates(uint32_t dwStates) {
+  if (IsDropDownStyle() && m_pEdit)
+    m_pEdit->RemoveStates(dwStates);
+  if (m_pListBox)
+    m_pListBox->RemoveStates(dwStates);
+  CFWL_Widget::RemoveStates(dwStates);
 }
 
 void CFWL_ComboBox::SetEditText(const CFX_WideString& wsText) {
@@ -319,7 +327,7 @@ void CFWL_ComboBox::GetBBox(CFX_RectF& rect) const {
     return;
 
   CFX_RectF rtList;
-  m_pListBox->GetWidgetRect(rtList);
+  m_pListBox->GetWidgetRect(rtList, false);
   rtList.Offset(rect.left, rect.top);
   rect.Union(rtList);
 }
@@ -635,14 +643,16 @@ void CFWL_ComboBox::DisForm_ShowDropList(bool bActivate) {
     SetFocus(true);
   }
 
-  m_pListBox->SetStates(FWL_WGTSTATE_Invisible, !bActivate);
   if (bActivate) {
+    m_pListBox->RemoveStates(FWL_WGTSTATE_Invisible);
     CFWL_Event postEvent(CFWL_Event::Type::PostDropDown, this);
     DispatchEvent(&postEvent);
+  } else {
+    m_pListBox->SetStates(FWL_WGTSTATE_Invisible);
   }
 
   CFX_RectF rect;
-  m_pListBox->GetWidgetRect(rect);
+  m_pListBox->GetWidgetRect(rect, false);
   rect.Inflate(2, 2);
   Repaint(&rect);
 }
@@ -683,7 +693,7 @@ FWL_WidgetHit CFWL_ComboBox::DisForm_HitTest(FX_FLOAT fx, FX_FLOAT fy) {
   if (m_rtBtn.Contains(fx, fy))
     return FWL_WidgetHit::Client;
   if (DisForm_IsDropListVisible()) {
-    m_pListBox->GetWidgetRect(rect);
+    m_pListBox->GetWidgetRect(rect, false);
     if (rect.Contains(fx, fy))
       return FWL_WidgetHit::Client;
   }
@@ -713,7 +723,7 @@ void CFWL_ComboBox::DisForm_DrawWidget(CFX_Graphics* pGraphics,
 
   if (m_pEdit) {
     CFX_RectF rtEdit;
-    m_pEdit->GetWidgetRect(rtEdit);
+    m_pEdit->GetWidgetRect(rtEdit, false);
     CFX_Matrix mt;
     mt.Set(1, 0, 0, 1, rtEdit.left, rtEdit.top);
     mt.Concat(mtOrg);
@@ -721,7 +731,7 @@ void CFWL_ComboBox::DisForm_DrawWidget(CFX_Graphics* pGraphics,
   }
   if (m_pListBox && DisForm_IsDropListVisible()) {
     CFX_RectF rtList;
-    m_pListBox->GetWidgetRect(rtList);
+    m_pListBox->GetWidgetRect(rtList, false);
     CFX_Matrix mt;
     mt.Set(1, 0, 0, 1, rtList.left, rtList.top);
     mt.Concat(mtOrg);
@@ -735,7 +745,7 @@ void CFWL_ComboBox::DisForm_GetBBox(CFX_RectF& rect) const {
     return;
 
   CFX_RectF rtList;
-  m_pListBox->GetWidgetRect(rtList);
+  m_pListBox->GetWidgetRect(rtList, false);
   rtList.Offset(rect.left, rect.top);
   rect.Union(rtList);
 }

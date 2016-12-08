@@ -39,11 +39,10 @@ class CFWL_PushButton : public CFWL_Widget {
 
   // CFWL_Widget
   FWL_Type GetClassID() const override;
-  void GetWidgetRect(CFX_RectF& rect, bool bAutoSize = false) override;
-  void SetStates(uint32_t dwStates, bool bSet = true) override;
+  void GetWidgetRect(CFX_RectF& rect, bool bAutoSize) override;
+  void SetStates(uint32_t dwStates) override;
   void Update() override;
-  void DrawWidget(CFX_Graphics* pGraphics,
-                  const CFX_Matrix* pMatrix = nullptr) override;
+  void DrawWidget(CFX_Graphics* pGraphics, const CFX_Matrix* pMatrix) override;
   void OnProcessMessage(CFWL_Message* pMessage) override;
   void OnDrawWidget(CFX_Graphics* pGraphics,
                     const CFX_Matrix* pMatrix) override;

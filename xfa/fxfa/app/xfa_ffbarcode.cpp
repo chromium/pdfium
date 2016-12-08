@@ -158,7 +158,7 @@ void CXFA_FFBarcode::RenderWidget(CFX_Graphics* pGS,
   DrawBorder(pGS, borderUI, m_rtUI, &mtRotate);
   RenderCaption(pGS, &mtRotate);
   CFX_RectF rtWidget;
-  m_pNormalWidget->GetWidgetRect(rtWidget);
+  m_pNormalWidget->GetWidgetRect(rtWidget, false);
   CFX_Matrix mt;
   mt.Set(1, 0, 0, 1, rtWidget.left, rtWidget.top);
   mt.Concat(mtRotate);

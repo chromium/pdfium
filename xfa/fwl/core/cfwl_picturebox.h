@@ -37,10 +37,9 @@ class CFWL_PictureBox : public CFWL_Widget {
 
   // CFWL_Widget
   FWL_Type GetClassID() const override;
-  void GetWidgetRect(CFX_RectF& rect, bool bAutoSize = false) override;
+  void GetWidgetRect(CFX_RectF& rect, bool bAutoSize) override;
   void Update() override;
-  void DrawWidget(CFX_Graphics* pGraphics,
-                  const CFX_Matrix* pMatrix = nullptr) override;
+  void DrawWidget(CFX_Graphics* pGraphics, const CFX_Matrix* pMatrix) override;
   void OnDrawWidget(CFX_Graphics* pGraphics,
                     const CFX_Matrix* pMatrix) override;
 

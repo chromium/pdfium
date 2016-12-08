@@ -309,7 +309,7 @@ void CFWL_CheckBox::NextStates() {
               pCheckBox->GetStates() & FWL_STATE_CKB_Checked) {
             pCheckBox->SetCheckState(0);
             CFX_RectF rt;
-            pCheckBox->GetWidgetRect(rt);
+            pCheckBox->GetWidgetRect(rt, false);
             rt.left = rt.top = 0;
             m_pWidgetMgr->RepaintWidget(pCheckBox, &rt);
             break;

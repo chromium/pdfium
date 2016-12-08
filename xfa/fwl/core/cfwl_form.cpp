@@ -281,7 +281,7 @@ CFWL_Widget* CFWL_Form::DoModal() {
 
   pDriver->PushNoteLoop(m_pNoteLoop.get());
   m_bDoModalFlag = true;
-  SetStates(FWL_WGTSTATE_Invisible, false);
+  RemoveStates(FWL_WGTSTATE_Invisible);
   pDriver->Run();
 
 #if _FX_OS_ != _FX_MACOSX_
@@ -310,9 +310,9 @@ void CFWL_Form::EndDoModal() {
     return;
 
   pDriver->PopNoteLoop();
-  SetStates(FWL_WGTSTATE_Invisible, true);
+  SetStates(FWL_WGTSTATE_Invisible);
 #else
-  SetStates(FWL_WGTSTATE_Invisible, true);
+  SetStates(FWL_WGTSTATE_Invisible);
   m_pNoteLoop->EndModalLoop();
 #endif
 }

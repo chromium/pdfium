@@ -277,10 +277,12 @@ bool CXFA_FFCheckButton::IsDataChanged() {
 }
 void CXFA_FFCheckButton::SetFWLCheckState(XFA_CHECKSTATE eCheckState) {
   if (eCheckState == XFA_CHECKSTATE_Neutral) {
-    m_pNormalWidget->SetStates(FWL_STATE_CKB_Neutral, true);
+    m_pNormalWidget->SetStates(FWL_STATE_CKB_Neutral);
   } else {
-    m_pNormalWidget->SetStates(FWL_STATE_CKB_Checked,
-                               eCheckState == XFA_CHECKSTATE_On);
+    if (eCheckState == XFA_CHECKSTATE_On)
+      m_pNormalWidget->SetStates(FWL_STATE_CKB_Checked);
+    else
+      m_pNormalWidget->RemoveStates(FWL_STATE_CKB_Checked);
   }
 }
 bool CXFA_FFCheckButton::UpdateFWLData() {

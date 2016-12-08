@@ -59,7 +59,7 @@ void CFWL_Caret::ShowCaret() {
   if (m_pTimerInfo)
     m_pTimerInfo->StopTimer();
   m_pTimerInfo = m_pTimer->StartTimer(kFrequency, true);
-  SetStates(FWL_WGTSTATE_Invisible, false);
+  RemoveStates(FWL_WGTSTATE_Invisible);
 }
 
 void CFWL_Caret::HideCaret() {
@@ -67,7 +67,7 @@ void CFWL_Caret::HideCaret() {
     m_pTimerInfo->StopTimer();
     m_pTimerInfo = nullptr;
   }
-  SetStates(FWL_WGTSTATE_Invisible, true);
+  SetStates(FWL_WGTSTATE_Invisible);
 }
 
 void CFWL_Caret::DrawCaretBK(CFX_Graphics* pGraphics,
@@ -77,7 +77,7 @@ void CFWL_Caret::DrawCaretBK(CFX_Graphics* pGraphics,
     return;
 
   CFX_RectF rect;
-  GetWidgetRect(rect);
+  GetWidgetRect(rect, false);
   rect.Set(0, 0, rect.width, rect.height);
 
   CFWL_ThemeBackground param;
@@ -102,11 +102,13 @@ CFWL_Caret::Timer::Timer(CFWL_Caret* pCaret) : CFWL_Timer(pCaret) {}
 
 void CFWL_Caret::Timer::Run(CFWL_TimerInfo* pTimerInfo) {
   CFWL_Caret* pCaret = static_cast<CFWL_Caret*>(m_pWidget);
-  pCaret->SetStates(FWL_STATE_CAT_HightLight,
-                    !(pCaret->GetStates() & FWL_STATE_CAT_HightLight));
+  if (!(pCaret->GetStates() & FWL_STATE_CAT_HightLight))
+    pCaret->SetStates(FWL_STATE_CAT_HightLight);
+  else
+    pCaret->RemoveStates(FWL_STATE_CAT_HightLight);
 
   CFX_RectF rt;
-  pCaret->GetWidgetRect(rt);
+  pCaret->GetWidgetRect(rt, false);
   rt.Set(0, 0, rt.width + 1, rt.height);
   pCaret->Repaint(&rt);
 }

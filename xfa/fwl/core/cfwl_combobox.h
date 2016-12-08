@@ -54,14 +54,14 @@ class CFWL_ComboBox : public CFWL_Widget {
 
   // CFWL_Widget
   FWL_Type GetClassID() const override;
-  void GetWidgetRect(CFX_RectF& rect, bool bAutoSize = false) override;
+  void GetWidgetRect(CFX_RectF& rect, bool bAutoSize) override;
   void ModifyStylesEx(uint32_t dwStylesExAdded,
                       uint32_t dwStylesExRemoved) override;
-  void SetStates(uint32_t dwStates, bool bSet = true) override;
+  void SetStates(uint32_t dwStates) override;
+  void RemoveStates(uint32_t dwStates) override;
   void Update() override;
   FWL_WidgetHit HitTest(FX_FLOAT fx, FX_FLOAT fy) override;
-  void DrawWidget(CFX_Graphics* pGraphics,
-                  const CFX_Matrix* pMatrix = nullptr) override;
+  void DrawWidget(CFX_Graphics* pGraphics, const CFX_Matrix* pMatrix) override;
   void SetThemeProvider(IFWL_ThemeProvider* pThemeProvider) override;
   void OnProcessMessage(CFWL_Message* pMessage) override;
   void OnProcessEvent(CFWL_Event* pEvent) override;

@@ -122,12 +122,12 @@ void CFWL_Edit::GetWidgetRect(CFX_RectF& rect, bool bAutoSize) {
   CFWL_Widget::GetWidgetRect(rect, true);
 }
 
-void CFWL_Edit::SetStates(uint32_t dwStates, bool bSet) {
+void CFWL_Edit::SetStates(uint32_t dwStates) {
   if ((m_pProperties->m_dwStates & FWL_WGTSTATE_Invisible) ||
       (m_pProperties->m_dwStates & FWL_WGTSTATE_Disabled)) {
     HideCaret(nullptr);
   }
-  CFWL_Widget::SetStates(dwStates, bSet);
+  CFWL_Widget::SetStates(dwStates);
 }
 
 void CFWL_Edit::Update() {
@@ -150,13 +150,13 @@ FWL_WidgetHit CFWL_Edit::HitTest(FX_FLOAT fx, FX_FLOAT fy) {
   if (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_OuterScrollbar) {
     if (IsShowScrollBar(true)) {
       CFX_RectF rect;
-      m_pVertScrollBar->GetWidgetRect(rect);
+      m_pVertScrollBar->GetWidgetRect(rect, false);
       if (rect.Contains(fx, fy))
         return FWL_WidgetHit::VScrollBar;
     }
     if (IsShowScrollBar(false)) {
       CFX_RectF rect;
-      m_pHorzScrollBar->GetWidgetRect(rect);
+      m_pHorzScrollBar->GetWidgetRect(rect, false);
       if (rect.Contains(fx, fy))
         return FWL_WidgetHit::HScrollBar;
     }
@@ -432,7 +432,7 @@ void CFWL_Edit::On_CaretChanged(CFDE_TxtEdtEngine* pEdit,
   if (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_MultiLine) {
     CFWL_ScrollBar* pScroll = UpdateScroll();
     if (pScroll) {
-      pScroll->GetWidgetRect(rtInvalid);
+      pScroll->GetWidgetRect(rtInvalid, false);
       bRepaintScroll = true;
     }
   }
@@ -529,13 +529,13 @@ void CFWL_Edit::DrawTextBk(CFX_Graphics* pGraphics,
   if (!IsShowScrollBar(true) || !IsShowScrollBar(false))
     return;
 
-  CFX_RectF rtScorll;
-  m_pHorzScrollBar->GetWidgetRect(rtScorll);
+  CFX_RectF rtScroll;
+  m_pHorzScrollBar->GetWidgetRect(rtScroll, false);
 
   CFX_RectF rtStatic;
-  rtStatic.Set(m_rtClient.right() - rtScorll.height,
-               m_rtClient.bottom() - rtScorll.height, rtScorll.height,
-               rtScorll.height);
+  rtStatic.Set(m_rtClient.right() - rtScroll.height,
+               m_rtClient.bottom() - rtScroll.height, rtScroll.height,
+               rtScroll.height);
   param.m_bStaticBackground = true;
   param.m_bMaximize = true;
   param.m_rtPart = rtStatic;
@@ -914,7 +914,7 @@ CFWL_ScrollBar* CFWL_Edit::UpdateScroll() {
   CFWL_ScrollBar* pRepaint = nullptr;
   if (bShowHorz) {
     CFX_RectF rtScroll;
-    m_pHorzScrollBar->GetWidgetRect(rtScroll);
+    m_pHorzScrollBar->GetWidgetRect(rtScroll, false);
     if (rtScroll.width < rtFDE.width) {
       m_pHorzScrollBar->LockUpdate();
       FX_FLOAT fRange = rtFDE.width - rtScroll.width;
@@ -925,14 +925,14 @@ CFWL_ScrollBar* CFWL_Edit::UpdateScroll() {
       m_pHorzScrollBar->SetTrackPos(fPos);
       m_pHorzScrollBar->SetPageSize(rtScroll.width);
       m_pHorzScrollBar->SetStepSize(rtScroll.width / 10);
-      m_pHorzScrollBar->SetStates(FWL_WGTSTATE_Disabled, false);
+      m_pHorzScrollBar->RemoveStates(FWL_WGTSTATE_Disabled);
       m_pHorzScrollBar->UnlockUpdate();
       m_pHorzScrollBar->Update();
       pRepaint = m_pHorzScrollBar.get();
     } else if ((m_pHorzScrollBar->GetStates() & FWL_WGTSTATE_Disabled) == 0) {
       m_pHorzScrollBar->LockUpdate();
       m_pHorzScrollBar->SetRange(0, -1);
-      m_pHorzScrollBar->SetStates(FWL_WGTSTATE_Disabled, true);
+      m_pHorzScrollBar->SetStates(FWL_WGTSTATE_Disabled);
       m_pHorzScrollBar->UnlockUpdate();
       m_pHorzScrollBar->Update();
       pRepaint = m_pHorzScrollBar.get();
@@ -941,7 +941,7 @@ CFWL_ScrollBar* CFWL_Edit::UpdateScroll() {
 
   if (bShowVert) {
     CFX_RectF rtScroll;
-    m_pVertScrollBar->GetWidgetRect(rtScroll);
+    m_pVertScrollBar->GetWidgetRect(rtScroll, false);
     if (rtScroll.height < rtFDE.height) {
       m_pVertScrollBar->LockUpdate();
       FX_FLOAT fStep = m_EdtEngine.GetEditParams()->fLineSpace;
@@ -953,14 +953,14 @@ CFWL_ScrollBar* CFWL_Edit::UpdateScroll() {
       m_pVertScrollBar->SetTrackPos(fPos);
       m_pVertScrollBar->SetPageSize(rtScroll.height);
       m_pVertScrollBar->SetStepSize(fStep);
-      m_pVertScrollBar->SetStates(FWL_WGTSTATE_Disabled, false);
+      m_pVertScrollBar->RemoveStates(FWL_WGTSTATE_Disabled);
       m_pVertScrollBar->UnlockUpdate();
       m_pVertScrollBar->Update();
       pRepaint = m_pVertScrollBar.get();
     } else if ((m_pVertScrollBar->GetStates() & FWL_WGTSTATE_Disabled) == 0) {
       m_pVertScrollBar->LockUpdate();
       m_pVertScrollBar->SetRange(0, -1);
-      m_pVertScrollBar->SetStates(FWL_WGTSTATE_Disabled, true);
+      m_pVertScrollBar->SetStates(FWL_WGTSTATE_Disabled);
       m_pVertScrollBar->UnlockUpdate();
       m_pVertScrollBar->Update();
       pRepaint = m_pVertScrollBar.get();
@@ -1054,10 +1054,10 @@ void CFWL_Edit::Layout() {
     }
 
     m_pVertScrollBar->SetWidgetRect(rtVertScr);
-    m_pVertScrollBar->SetStates(FWL_WGTSTATE_Invisible, false);
+    m_pVertScrollBar->RemoveStates(FWL_WGTSTATE_Invisible);
     m_pVertScrollBar->Update();
   } else if (m_pVertScrollBar) {
-    m_pVertScrollBar->SetStates(FWL_WGTSTATE_Invisible, true);
+    m_pVertScrollBar->SetStates(FWL_WGTSTATE_Invisible);
   }
 
   if (bShowHorzScrollbar) {
@@ -1075,10 +1075,10 @@ void CFWL_Edit::Layout() {
       m_rtEngine.height -= fWidth;
     }
     m_pHorzScrollBar->SetWidgetRect(rtHoriScr);
-    m_pHorzScrollBar->SetStates(FWL_WGTSTATE_Invisible, false);
+    m_pHorzScrollBar->RemoveStates(FWL_WGTSTATE_Invisible);
     m_pHorzScrollBar->Update();
   } else if (m_pHorzScrollBar) {
-    m_pHorzScrollBar->SetStates(FWL_WGTSTATE_Invisible, true);
+    m_pHorzScrollBar->SetStates(FWL_WGTSTATE_Invisible);
   }
 }
 
@@ -1110,9 +1110,9 @@ void CFWL_Edit::LayoutScrollBar() {
       m_pVertScrollBar->SetWidgetRect(rtVertScr);
       m_pVertScrollBar->Update();
     }
-    m_pVertScrollBar->SetStates(FWL_WGTSTATE_Invisible, false);
+    m_pVertScrollBar->RemoveStates(FWL_WGTSTATE_Invisible);
   } else if (m_pVertScrollBar) {
-    m_pVertScrollBar->SetStates(FWL_WGTSTATE_Invisible, true);
+    m_pVertScrollBar->SetStates(FWL_WGTSTATE_Invisible);
   }
 
   if (bShowHorzScrollbar) {
@@ -1137,9 +1137,9 @@ void CFWL_Edit::LayoutScrollBar() {
       m_pHorzScrollBar->SetWidgetRect(rtHoriScr);
       m_pHorzScrollBar->Update();
     }
-    m_pHorzScrollBar->SetStates(FWL_WGTSTATE_Invisible, false);
+    m_pHorzScrollBar->RemoveStates(FWL_WGTSTATE_Invisible);
   } else if (m_pHorzScrollBar) {
-    m_pHorzScrollBar->SetStates(FWL_WGTSTATE_Invisible, true);
+    m_pHorzScrollBar->SetStates(FWL_WGTSTATE_Invisible);
   }
   if (bShowVertScrollbar || bShowHorzScrollbar)
     UpdateScroll();
@@ -1182,7 +1182,7 @@ void CFWL_Edit::ShowCaret(CFX_RectF* pRect) {
     pOuter = pOuter->GetOuter();
 
     CFX_RectF rtOuter;
-    pOuter->GetWidgetRect(rtOuter);
+    pOuter->GetWidgetRect(rtOuter, false);
     pRect->Offset(rtOuter.left, rtOuter.top);
   }
 
@@ -1648,7 +1648,7 @@ bool CFWL_Edit::OnScroll(CFWL_ScrollBar* pScrollBar,
   UpdateCaret();
 
   CFX_RectF rect;
-  GetWidgetRect(rect);
+  GetWidgetRect(rect, false);
   CFX_RectF rtInvalidate;
   rtInvalidate.Set(0, 0, rect.width + 2, rect.height + 2);
   Repaint(&rtInvalidate);

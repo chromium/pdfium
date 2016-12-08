@@ -24,8 +24,7 @@ class CFWL_FormProxy : public CFWL_Form {
   FWL_Type GetClassID() const override;
   bool IsInstance(const CFX_WideStringC& wsClass) const override;
   void Update() override;
-  void DrawWidget(CFX_Graphics* pGraphics,
-                  const CFX_Matrix* pMatrix = nullptr) override;
+  void DrawWidget(CFX_Graphics* pGraphics, const CFX_Matrix* pMatrix) override;
   void OnProcessMessage(CFWL_Message* pMessage) override;
 };
 

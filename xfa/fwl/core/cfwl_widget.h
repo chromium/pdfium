@@ -51,15 +51,16 @@ class CFWL_Widget : public IFWL_WidgetDelegate {
 
   virtual FWL_Type GetClassID() const = 0;
   virtual bool IsInstance(const CFX_WideStringC& wsClass) const;
-  virtual void GetWidgetRect(CFX_RectF& rect, bool bAutoSize = false);
+  virtual void GetWidgetRect(CFX_RectF& rect, bool bAutoSize);
   virtual void GetClientRect(CFX_RectF& rect);
   virtual void ModifyStylesEx(uint32_t dwStylesExAdded,
                               uint32_t dwStylesExRemoved);
-  virtual void SetStates(uint32_t dwStates, bool bSet = true);
+  virtual void SetStates(uint32_t dwStates);
+  virtual void RemoveStates(uint32_t dwStates);
   virtual void Update() = 0;
   virtual FWL_WidgetHit HitTest(FX_FLOAT fx, FX_FLOAT fy);
   virtual void DrawWidget(CFX_Graphics* pGraphics,
-                          const CFX_Matrix* pMatrix = nullptr) = 0;
+                          const CFX_Matrix* pMatrix) = 0;
   virtual void SetThemeProvider(IFWL_ThemeProvider* pThemeProvider);
 
   // IFWL_WidgetDelegate.

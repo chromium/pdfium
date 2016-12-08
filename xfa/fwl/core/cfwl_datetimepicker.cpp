@@ -129,7 +129,7 @@ FWL_WidgetHit CFWL_DateTimePicker::HitTest(FX_FLOAT fx, FX_FLOAT fy) {
     return FWL_WidgetHit::Client;
   if (IsMonthCalendarVisible()) {
     CFX_RectF rect;
-    m_pMonthCal->GetWidgetRect(rect);
+    m_pMonthCal->GetWidgetRect(rect, false);
     if (rect.Contains(fx, fy))
       return FWL_WidgetHit::Client;
   }
@@ -210,7 +210,7 @@ void CFWL_DateTimePicker::GetBBox(CFX_RectF& rect) const {
   rect = m_pProperties->m_rtWidget;
   if (IsMonthCalendarVisible()) {
     CFX_RectF rtMonth;
-    m_pMonthCal->GetWidgetRect(rtMonth);
+    m_pMonthCal->GetWidgetRect(rtMonth, false);
     rtMonth.Offset(m_pProperties->m_rtWidget.left,
                    m_pProperties->m_rtWidget.top);
     rect.Union(rtMonth);
@@ -268,7 +268,7 @@ void CFWL_DateTimePicker::ShowMonthCalendar(bool bActivate) {
   }
 
   CFX_RectF rtMonth;
-  m_pMonthCal->GetWidgetRect(rtMonth);
+  m_pMonthCal->GetWidgetRect(rtMonth, false);
 
   CFX_RectF rtAnchor;
   rtAnchor.Set(0, 0, m_pProperties->m_rtWidget.width,
@@ -277,7 +277,10 @@ void CFWL_DateTimePicker::ShowMonthCalendar(bool bActivate) {
   m_pForm->SetWidgetRect(rtMonth);
 
   rtMonth.left = rtMonth.top = 0;
-  m_pMonthCal->SetStates(FWL_WGTSTATE_Invisible, !bActivate);
+  if (bActivate)
+    m_pMonthCal->RemoveStates(FWL_WGTSTATE_Invisible);
+  else
+    m_pMonthCal->SetStates(FWL_WGTSTATE_Invisible);
   m_pMonthCal->SetWidgetRect(rtMonth);
   m_pMonthCal->Update();
   m_pForm->DoModal();
@@ -395,7 +398,10 @@ void CFWL_DateTimePicker::DisForm_ShowMonthCalendar(bool bActivate) {
       m_pMonthCal->SetSelect(m_iYear, m_iMonth, m_iDay);
     m_pMonthCal->Update();
   }
-  m_pMonthCal->SetStates(FWL_WGTSTATE_Invisible, !bActivate);
+  if (bActivate)
+    m_pMonthCal->RemoveStates(FWL_WGTSTATE_Invisible);
+  else
+    m_pMonthCal->SetStates(FWL_WGTSTATE_Invisible);
 
   if (bActivate) {
     CFWL_MsgSetFocus msg(m_pEdit.get(), m_pMonthCal.get());
@@ -405,7 +411,7 @@ void CFWL_DateTimePicker::DisForm_ShowMonthCalendar(bool bActivate) {
   CFX_RectF rtInvalidate, rtCal;
   rtInvalidate.Set(0, 0, m_pProperties->m_rtWidget.width,
                    m_pProperties->m_rtWidget.height);
-  m_pMonthCal->GetWidgetRect(rtCal);
+  m_pMonthCal->GetWidgetRect(rtCal, false);
   rtInvalidate.Union(rtCal);
   rtInvalidate.Inflate(2, 2);
   Repaint(&rtInvalidate);
@@ -423,7 +429,7 @@ FWL_WidgetHit CFWL_DateTimePicker::DisForm_HitTest(FX_FLOAT fx,
   if (rect.Contains(fx, fy))
     return FWL_WidgetHit::Client;
   if (IsMonthCalendarVisible()) {
-    m_pMonthCal->GetWidgetRect(rect);
+    m_pMonthCal->GetWidgetRect(rect, false);
     if (rect.Contains(fx, fy))
       return FWL_WidgetHit::Client;
   }
@@ -482,7 +488,7 @@ void CFWL_DateTimePicker::DisForm_GetBBox(CFX_RectF& rect) const {
     return;
 
   CFX_RectF rtMonth;
-  m_pMonthCal->GetWidgetRect(rtMonth);
+  m_pMonthCal->GetWidgetRect(rtMonth, false);
   rtMonth.Offset(m_pProperties->m_rtWidget.left, m_pProperties->m_rtWidget.top);
   rect.Union(rtMonth);
 }
@@ -493,7 +499,7 @@ void CFWL_DateTimePicker::DisForm_DrawWidget(CFX_Graphics* pGraphics,
     return;
   if (m_pEdit) {
     CFX_RectF rtEdit;
-    m_pEdit->GetWidgetRect(rtEdit);
+    m_pEdit->GetWidgetRect(rtEdit, false);
 
     CFX_Matrix mt;
     mt.Set(1, 0, 0, 1, rtEdit.left, rtEdit.top);
@@ -505,7 +511,7 @@ void CFWL_DateTimePicker::DisForm_DrawWidget(CFX_Graphics* pGraphics,
     return;
 
   CFX_RectF rtMonth;
-  m_pMonthCal->GetWidgetRect(rtMonth);
+  m_pMonthCal->GetWidgetRect(rtMonth, false);
   CFX_Matrix mt;
   mt.Set(1, 0, 0, 1, rtMonth.left, rtMonth.top);
   if (pMatrix)

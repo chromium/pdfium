@@ -995,7 +995,7 @@ void CFWL_MonthCalendar::OnLButtonUp(CFWL_MsgMouse* pMsg) {
   int32_t iCurSel = GetDayAtPoint(pMsg->m_fx, pMsg->m_fy);
   CFX_RectF rt;
   CFWL_DateTimePicker* pIPicker = static_cast<CFWL_DateTimePicker*>(m_pOuter);
-  pIPicker->GetFormProxy()->GetWidgetRect(rt);
+  pIPicker->GetFormProxy()->GetWidgetRect(rt, false);
   rt.Set(0, 0, rt.width, rt.height);
   if (iCurSel > 0) {
     DATEINFO* lpDatesInfo = m_arrDates.GetAt(iCurSel - 1);

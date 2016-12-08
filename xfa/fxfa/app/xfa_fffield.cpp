@@ -70,7 +70,7 @@ void CXFA_FFField::RenderWidget(CFX_Graphics* pGS,
   RenderCaption(pGS, &mtRotate);
   DrawHighlight(pGS, &mtRotate, dwStatus, false);
   CFX_RectF rtWidget;
-  m_pNormalWidget->GetWidgetRect(rtWidget);
+  m_pNormalWidget->GetWidgetRect(rtWidget, false);
   CFX_Matrix mt;
   mt.Set(1, 0, 0, 1, rtWidget.left, rtWidget.top);
   mt.Concat(mtRotate);
@@ -368,7 +368,7 @@ void CXFA_FFField::FWLToClient(FX_FLOAT& fx, FX_FLOAT& fy) {
     return;
   }
   CFX_RectF rtWidget;
-  m_pNormalWidget->GetWidgetRect(rtWidget);
+  m_pNormalWidget->GetWidgetRect(rtWidget, false);
   fx -= rtWidget.left;
   fy -= rtWidget.top;
 }
@@ -593,7 +593,7 @@ bool CXFA_FFField::PtInActiveRect(FX_FLOAT fx, FX_FLOAT fy) {
     return false;
   }
   CFX_RectF rtWidget;
-  m_pNormalWidget->GetWidgetRect(rtWidget);
+  m_pNormalWidget->GetWidgetRect(rtWidget, false);
   if (rtWidget.Contains(fx, fy)) {
     return true;
   }

@@ -136,10 +136,9 @@ static void NotifyHideChildWidget(CFWL_WidgetMgr* widgetMgr,
   }
 }
 
-void CFWL_Widget::SetStates(uint32_t dwStates, bool bSet) {
-  bSet ? (m_pProperties->m_dwStates |= dwStates)
-       : (m_pProperties->m_dwStates &= ~dwStates);
-  if (!(dwStates & FWL_WGTSTATE_Invisible) || !bSet)
+void CFWL_Widget::SetStates(uint32_t dwStates) {
+  m_pProperties->m_dwStates |= dwStates;
+  if (!(dwStates & FWL_WGTSTATE_Invisible))
     return;
 
   CFWL_NoteDriver* noteDriver =
@@ -153,6 +152,10 @@ void CFWL_Widget::SetStates(uint32_t dwStates, bool bSet) {
     child = widgetMgr->GetNextSiblingWidget(child);
   }
   return;
+}
+
+void CFWL_Widget::RemoveStates(uint32_t dwStates) {
+  m_pProperties->m_dwStates &= ~dwStates;
 }
 
 FWL_WidgetHit CFWL_Widget::HitTest(FX_FLOAT fx, FX_FLOAT fy) {
@@ -195,7 +198,7 @@ void CFWL_Widget::TransformTo(CFWL_Widget* pWidget,
   CFX_Matrix m;
   CFWL_Widget* parent = GetParent();
   if (parent) {
-    GetWidgetRect(r);
+    GetWidgetRect(r, false);
     fx += r.left;
     fy += r.top;
     GetMatrix(m, true);
@@ -205,7 +208,7 @@ void CFWL_Widget::TransformTo(CFWL_Widget* pWidget,
   if (!form1)
     return;
   if (!pWidget) {
-    form1->GetWidgetRect(r);
+    form1->GetWidgetRect(r, false);
     fx += r.left;
     fy += r.top;
     return;
@@ -214,10 +217,10 @@ void CFWL_Widget::TransformTo(CFWL_Widget* pWidget,
   if (!form2)
     return;
   if (form1 != form2) {
-    form1->GetWidgetRect(r);
+    form1->GetWidgetRect(r, false);
     fx += r.left;
     fy += r.top;
-    form2->GetWidgetRect(r);
+    form2->GetWidgetRect(r, false);
     fx -= r.left;
     fy -= r.top;
   }
@@ -228,7 +231,7 @@ void CFWL_Widget::TransformTo(CFWL_Widget* pWidget,
     m1.SetIdentity();
     m1.SetReverse(m);
     m1.TransformPoint(fx, fy);
-    pWidget->GetWidgetRect(r);
+    pWidget->GetWidgetRect(r, false);
     fx -= r.left;
     fy -= r.top;
   }
@@ -255,7 +258,7 @@ void CFWL_Widget::GetMatrix(CFX_Matrix& matrix, bool bGlobal) {
   for (int32_t i = count - 2; i >= 0; i--) {
     parent = parents.GetAt(i);
     parent->GetMatrix(ctmOnParent, false);
-    parent->GetWidgetRect(rect);
+    parent->GetWidgetRect(rect, false);
     matrix.Concat(ctmOnParent, true);
     matrix.Translate(rect.left, rect.top, true);
   }
@@ -684,7 +687,7 @@ CFX_SizeF CFWL_Widget::GetOffsetFromParent(CFWL_Widget* pParent) {
   CFWL_Widget* pDstWidget = GetParent();
   while (pDstWidget && pDstWidget != pParent) {
     CFX_RectF rtDst;
-    pDstWidget->GetWidgetRect(rtDst);
+    pDstWidget->GetWidgetRect(rtDst, false);
     szRet += CFX_SizeF(rtDst.left, rtDst.top);
     pDstWidget = pWidgetMgr->GetParentWidget(pDstWidget);
   }

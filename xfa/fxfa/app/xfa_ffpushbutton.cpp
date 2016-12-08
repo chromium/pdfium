@@ -215,7 +215,7 @@ void CXFA_FFPushButton::OnDrawWidget(CFX_Graphics* pGraphics,
     if ((m_pNormalWidget->GetStates() & FWL_STATE_PSB_Pressed) &&
         (m_pNormalWidget->GetStates() & FWL_STATE_PSB_Hovered)) {
       CFX_RectF rtFill;
-      m_pNormalWidget->GetWidgetRect(rtFill);
+      m_pNormalWidget->GetWidgetRect(rtFill, false);
       rtFill.left = rtFill.top = 0;
       FX_FLOAT fLineWith = GetLineWidth();
       rtFill.Deflate(fLineWith, fLineWith);
@@ -237,7 +237,7 @@ void CXFA_FFPushButton::OnDrawWidget(CFX_Graphics* pGraphics,
       CFX_Path path;
       path.Create();
       CFX_RectF rect;
-      m_pNormalWidget->GetWidgetRect(rect);
+      m_pNormalWidget->GetWidgetRect(rect, false);
       path.AddRectangle(0, 0, rect.width, rect.height);
       pGraphics->StrokePath(&path, (CFX_Matrix*)pMatrix);
     }

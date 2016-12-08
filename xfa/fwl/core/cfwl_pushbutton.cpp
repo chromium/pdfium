@@ -51,12 +51,12 @@ void CFWL_PushButton::GetWidgetRect(CFX_RectF& rect, bool bAutoSize) {
   CFWL_Widget::GetWidgetRect(rect, true);
 }
 
-void CFWL_PushButton::SetStates(uint32_t dwStates, bool bSet) {
-  if ((dwStates & FWL_WGTSTATE_Disabled) && bSet) {
+void CFWL_PushButton::SetStates(uint32_t dwStates) {
+  if (dwStates & FWL_WGTSTATE_Disabled) {
     m_pProperties->m_dwStates = FWL_WGTSTATE_Disabled;
     return;
   }
-  CFWL_Widget::SetStates(dwStates, bSet);
+  CFWL_Widget::SetStates(dwStates);
 }
 
 void CFWL_PushButton::Update() {

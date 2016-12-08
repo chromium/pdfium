@@ -62,7 +62,7 @@ void CXFA_FFImageEdit::RenderWidget(CFX_Graphics* pGS,
   RenderCaption(pGS, &mtRotate);
   if (CFX_DIBitmap* pDIBitmap = m_pDataAcc->GetImageEditImage()) {
     CFX_RectF rtImage;
-    m_pNormalWidget->GetWidgetRect(rtImage);
+    m_pNormalWidget->GetWidgetRect(rtImage, false);
     int32_t iHorzAlign = XFA_ATTRIBUTEENUM_Left;
     int32_t iVertAlign = XFA_ATTRIBUTEENUM_Top;
     if (CXFA_Para para = m_pDataAcc->GetPara()) {

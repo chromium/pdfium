@@ -46,8 +46,7 @@ class CFWL_Barcode : public CFWL_Edit {
   // CFWL_Widget
   FWL_Type GetClassID() const override;
   void Update() override;
-  void DrawWidget(CFX_Graphics* pGraphics,
-                  const CFX_Matrix* pMatrix = nullptr) override;
+  void DrawWidget(CFX_Graphics* pGraphics, const CFX_Matrix* pMatrix) override;
   void OnProcessEvent(CFWL_Event* pEvent) override;
 
   // CFWL_Edit
