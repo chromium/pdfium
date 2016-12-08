@@ -19,6 +19,9 @@ class CPDF_StreamAcc {
   CPDF_StreamAcc();
   ~CPDF_StreamAcc();
 
+  CPDF_StreamAcc(const CPDF_StreamAcc&) = delete;
+  CPDF_StreamAcc& operator=(const CPDF_StreamAcc&) = delete;
+
   void LoadAllData(const CPDF_Stream* pStream,
                    bool bRawAccess = false,
                    uint32_t estimated_size = 0,

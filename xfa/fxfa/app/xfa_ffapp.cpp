@@ -11,6 +11,7 @@
 #include <utility>
 #include <vector>
 
+#include "third_party/base/stl_util.h"
 #include "xfa/fgas/font/cfgas_fontmgr.h"
 #include "xfa/fwl/cfwl_notedriver.h"
 #include "xfa/fwl/cfwl_widgetmgr.h"
@@ -33,13 +34,13 @@ class CXFA_FileRead : public IFX_SeekableReadStream {
   bool ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) override;
 
  private:
-  CFX_ObjectArray<CPDF_StreamAcc> m_Data;
+  std::vector<std::unique_ptr<CPDF_StreamAcc>> m_Data;
 };
 
 CXFA_FileRead::CXFA_FileRead(const std::vector<CPDF_Stream*>& streams) {
   for (CPDF_Stream* pStream : streams) {
-    CPDF_StreamAcc& acc = m_Data.Add();
-    acc.LoadAllData(pStream);
+    m_Data.push_back(pdfium::MakeUnique<CPDF_StreamAcc>());
+    m_Data.back()->LoadAllData(pStream);
   }
 }
 
@@ -47,35 +48,32 @@ CXFA_FileRead::~CXFA_FileRead() {}
 
 FX_FILESIZE CXFA_FileRead::GetSize() {
   uint32_t dwSize = 0;
-  int32_t iCount = m_Data.GetSize();
-  for (int32_t i = 0; i < iCount; i++) {
-    CPDF_StreamAcc& acc = m_Data[i];
-    dwSize += acc.GetSize();
-  }
+  for (const auto& acc : m_Data)
+    dwSize += acc->GetSize();
   return dwSize;
 }
 
 bool CXFA_FileRead::ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) {
-  int32_t iCount = m_Data.GetSize();
+  int32_t iCount = pdfium::CollectionSize<int32_t>(m_Data);
   int32_t index = 0;
   while (index < iCount) {
-    CPDF_StreamAcc& acc = m_Data[index];
-    FX_FILESIZE dwSize = acc.GetSize();
-    if (offset < dwSize) {
+    const auto& acc = m_Data[index];
+    FX_FILESIZE dwSize = acc->GetSize();
+    if (offset < dwSize)
       break;
-    }
+
     offset -= dwSize;
     index++;
   }
   while (index < iCount) {
-    CPDF_StreamAcc& acc = m_Data[index];
-    uint32_t dwSize = acc.GetSize();
+    const auto& acc = m_Data[index];
+    uint32_t dwSize = acc->GetSize();
     size_t dwRead = std::min(size, static_cast<size_t>(dwSize - offset));
-    FXSYS_memcpy(buffer, acc.GetData() + offset, dwRead);
+    FXSYS_memcpy(buffer, acc->GetData() + offset, dwRead);
     size -= dwRead;
-    if (size == 0) {
+    if (size == 0)
       return true;
-    }
+
     buffer = (uint8_t*)buffer + dwRead;
     offset = 0;
     index++;
