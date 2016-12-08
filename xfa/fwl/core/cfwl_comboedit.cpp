@@ -39,7 +39,7 @@ void CFWL_ComboEdit::FlagFocus(bool bSet) {
   }
 
   m_pProperties->m_dwStates &= ~FWL_WGTSTATE_Focused;
-  ShowCaret(false);
+  HideCaret(nullptr);
 }
 
 void CFWL_ComboEdit::OnProcessMessage(CFWL_Message* pMessage) {

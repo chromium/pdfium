@@ -81,7 +81,7 @@ CFWL_Edit::CFWL_Edit(const CFWL_App* app,
 
 CFWL_Edit::~CFWL_Edit() {
   if (m_pProperties->m_dwStates & FWL_WGTSTATE_Focused)
-    ShowCaret(false);
+    HideCaret(nullptr);
   ClearRecord();
 }
 
@@ -125,7 +125,7 @@ void CFWL_Edit::GetWidgetRect(CFX_RectF& rect, bool bAutoSize) {
 void CFWL_Edit::SetStates(uint32_t dwStates, bool bSet) {
   if ((m_pProperties->m_dwStates & FWL_WGTSTATE_Invisible) ||
       (m_pProperties->m_dwStates & FWL_WGTSTATE_Disabled)) {
-    ShowCaret(false);
+    HideCaret(nullptr);
   }
   CFWL_Widget::SetStates(dwStates, bSet);
 }
@@ -890,9 +890,10 @@ void CFWL_Edit::UpdateCaret() {
     rtCaret.width = right - rtCaret.left;
   }
 
-  bool bShow =
-      m_pProperties->m_dwStates & FWL_WGTSTATE_Focused && !rtCaret.IsEmpty();
-  ShowCaret(bShow, &rtCaret);
+  if (m_pProperties->m_dwStates & FWL_WGTSTATE_Focused && !rtCaret.IsEmpty())
+    ShowCaret(&rtCaret);
+  else
+    HideCaret(&rtCaret);
 }
 
 CFWL_ScrollBar* CFWL_Edit::UpdateScroll() {
@@ -1166,55 +1167,65 @@ void CFWL_Edit::InitScrollBar(bool bVert) {
     m_pHorzScrollBar.reset(sb);
 }
 
-bool FWL_ShowCaret(CFWL_Widget* pWidget,
-                   bool bVisible,
-                   const CFX_RectF* pRtAnchor) {
-  CXFA_FFWidget* pXFAWidget =
-      static_cast<CXFA_FFWidget*>(pWidget->GetLayoutItem());
-  if (!pXFAWidget)
-    return false;
-
-  IXFA_DocEnvironment* pDocEnvironment =
-      pXFAWidget->GetDoc()->GetDocEnvironment();
-  if (!pDocEnvironment)
-    return false;
-
-  if (bVisible) {
-    CFX_Matrix mt;
-    pXFAWidget->GetRotateMatrix(mt);
-    CFX_RectF rt(*pRtAnchor);
-    mt.TransformRect(rt);
-    pDocEnvironment->DisplayCaret(pXFAWidget, bVisible, &rt);
-    return true;
-  }
-
-  pDocEnvironment->DisplayCaret(pXFAWidget, bVisible, pRtAnchor);
-  return true;
-}
-
-void CFWL_Edit::ShowCaret(bool bVisible, CFX_RectF* pRect) {
+void CFWL_Edit::ShowCaret(CFX_RectF* pRect) {
   if (m_pCaret) {
-    m_pCaret->ShowCaret(bVisible);
-    if (bVisible && !pRect->IsEmpty())
+    m_pCaret->ShowCaret();
+    if (!pRect->IsEmpty())
       m_pCaret->SetWidgetRect(*pRect);
     Repaint(&m_rtEngine);
     return;
   }
 
   CFWL_Widget* pOuter = this;
-  if (bVisible) {
-    pRect->Offset(m_pProperties->m_rtWidget.left,
-                  m_pProperties->m_rtWidget.top);
-  }
+  pRect->Offset(m_pProperties->m_rtWidget.left, m_pProperties->m_rtWidget.top);
   while (pOuter->GetOuter()) {
     pOuter = pOuter->GetOuter();
-    if (bVisible) {
-      CFX_RectF rtOuter;
-      pOuter->GetWidgetRect(rtOuter);
-      pRect->Offset(rtOuter.left, rtOuter.top);
-    }
+
+    CFX_RectF rtOuter;
+    pOuter->GetWidgetRect(rtOuter);
+    pRect->Offset(rtOuter.left, rtOuter.top);
   }
-  FWL_ShowCaret(pOuter, bVisible, pRect);
+
+  CXFA_FFWidget* pXFAWidget =
+      static_cast<CXFA_FFWidget*>(pOuter->GetLayoutItem());
+  if (!pXFAWidget)
+    return;
+
+  IXFA_DocEnvironment* pDocEnvironment =
+      pXFAWidget->GetDoc()->GetDocEnvironment();
+  if (!pDocEnvironment)
+    return;
+
+  CFX_Matrix mt;
+  pXFAWidget->GetRotateMatrix(mt);
+
+  CFX_RectF rt(*pRect);
+  mt.TransformRect(rt);
+  pDocEnvironment->DisplayCaret(pXFAWidget, true, &rt);
+}
+
+void CFWL_Edit::HideCaret(CFX_RectF* pRect) {
+  if (m_pCaret) {
+    m_pCaret->HideCaret();
+    Repaint(&m_rtEngine);
+    return;
+  }
+
+  CFWL_Widget* pOuter = this;
+  while (pOuter->GetOuter())
+    pOuter = pOuter->GetOuter();
+
+  CXFA_FFWidget* pXFAWidget =
+      static_cast<CXFA_FFWidget*>(pOuter->GetLayoutItem());
+  if (!pXFAWidget)
+    return;
+
+  IXFA_DocEnvironment* pDocEnvironment =
+      pXFAWidget->GetDoc()->GetDocEnvironment();
+  if (!pDocEnvironment)
+    return;
+
+  pDocEnvironment->DisplayCaret(pXFAWidget, false, pRect);
 }
 
 bool CFWL_Edit::ValidateNumberChar(FX_WCHAR cNum) {
@@ -1250,8 +1261,8 @@ bool CFWL_Edit::ValidateNumberChar(FX_WCHAR cNum) {
 void CFWL_Edit::InitCaret() {
   if (!m_pCaret) {
     if ((m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_InnerCaret)) {
-      m_pCaret.reset(new CFWL_Caret(
-          m_pOwnerApp, pdfium::MakeUnique<CFWL_WidgetProperties>(), this));
+      m_pCaret = pdfium::MakeUnique<CFWL_Caret>(
+          m_pOwnerApp, pdfium::MakeUnique<CFWL_WidgetProperties>(), this);
       m_pCaret->SetParent(this);
       m_pCaret->SetStates(m_pProperties->m_dwStates);
     }
@@ -1371,7 +1382,7 @@ void CFWL_Edit::OnFocusChanged(CFWL_Message* pMsg, bool bSet) {
     UpdateCaret();
   } else if (m_pProperties->m_dwStates & FWL_WGTSTATE_Focused) {
     m_pProperties->m_dwStates &= ~FWL_WGTSTATE_Focused;
-    ShowCaret(false);
+    HideCaret(nullptr);
     if ((dwStyleEx & FWL_STYLEEXT_EDT_NoHideSel) == 0) {
       int32_t nSel = CountSelRanges();
       if (nSel > 0) {

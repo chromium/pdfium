@@ -119,7 +119,8 @@ class CFWL_Edit : public CFWL_Widget {
   void SetScrollOffset(FX_FLOAT fScrollOffset);
 
  protected:
-  void ShowCaret(bool bVisible, CFX_RectF* pRect = nullptr);
+  void ShowCaret(CFX_RectF* pRect);
+  void HideCaret(CFX_RectF* pRect);
   const CFX_RectF& GetRTClient() const { return m_rtClient; }
   CFDE_TxtEdtEngine* GetTxtEdtEngine() { return &m_EdtEngine; }
 

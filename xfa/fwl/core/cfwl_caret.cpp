@@ -55,15 +55,19 @@ void CFWL_Caret::DrawWidget(CFX_Graphics* pGraphics,
   DrawCaretBK(pGraphics, m_pProperties->m_pThemeProvider, pMatrix);
 }
 
-void CFWL_Caret::ShowCaret(bool bFlag) {
+void CFWL_Caret::ShowCaret() {
+  if (m_pTimerInfo)
+    m_pTimerInfo->StopTimer();
+  m_pTimerInfo = m_pTimer->StartTimer(kFrequency, true);
+  SetStates(FWL_WGTSTATE_Invisible, false);
+}
+
+void CFWL_Caret::HideCaret() {
   if (m_pTimerInfo) {
     m_pTimerInfo->StopTimer();
     m_pTimerInfo = nullptr;
   }
-  if (bFlag)
-    m_pTimerInfo = m_pTimer->StartTimer(kFrequency, true);
-
-  SetStates(FWL_WGTSTATE_Invisible, !bFlag);
+  SetStates(FWL_WGTSTATE_Invisible, true);
 }
 
 void CFWL_Caret::DrawCaretBK(CFX_Graphics* pGraphics,
