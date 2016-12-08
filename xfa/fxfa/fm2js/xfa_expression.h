@@ -40,13 +40,13 @@ class CXFA_FMExpression {
 
 class CXFA_FMFunctionDefinition : public CXFA_FMExpression {
  public:
-  // Takes ownership of |pExpressions|.
+  // Takes ownership of |arguments| and |expressions|.
   CXFA_FMFunctionDefinition(
       uint32_t line,
       bool isGlobal,
       const CFX_WideStringC& wsName,
-      std::unique_ptr<CFX_WideStringCArray> pArguments,
-      std::vector<std::unique_ptr<CXFA_FMExpression>>&& pExpressions);
+      std::vector<CFX_WideStringC>&& arguments,
+      std::vector<std::unique_ptr<CXFA_FMExpression>>&& expressions);
   ~CXFA_FMFunctionDefinition() override;
 
   void ToJavaScript(CFX_WideTextBuf& javascript) override;
@@ -54,7 +54,7 @@ class CXFA_FMFunctionDefinition : public CXFA_FMExpression {
 
  private:
   CFX_WideStringC m_wsName;
-  std::unique_ptr<CFX_WideStringCArray> m_pArguments;
+  std::vector<CFX_WideStringC> m_pArguments;
   std::vector<std::unique_ptr<CXFA_FMExpression>> m_pExpressions;
   bool m_isGlobal;
 };

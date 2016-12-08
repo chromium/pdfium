@@ -34,12 +34,12 @@ CXFA_FMFunctionDefinition::CXFA_FMFunctionDefinition(
     uint32_t line,
     bool isGlobal,
     const CFX_WideStringC& wsName,
-    std::unique_ptr<CFX_WideStringCArray> pArguments,
-    std::vector<std::unique_ptr<CXFA_FMExpression>>&& pExpressions)
+    std::vector<CFX_WideStringC>&& arguments,
+    std::vector<std::unique_ptr<CXFA_FMExpression>>&& expressions)
     : CXFA_FMExpression(line, XFA_FM_EXPTYPE_FUNC),
       m_wsName(wsName),
-      m_pArguments(std::move(pArguments)),
-      m_pExpressions(std::move(pExpressions)),
+      m_pArguments(std::move(arguments)),
+      m_pExpressions(std::move(expressions)),
       m_isGlobal(isGlobal) {}
 
 CXFA_FMFunctionDefinition::~CXFA_FMFunctionDefinition() {}
@@ -60,21 +60,18 @@ void CXFA_FMFunctionDefinition::ToJavaScript(CFX_WideTextBuf& javascript) {
     javascript << m_wsName;
   }
   javascript << FX_WSTRC(L"(");
-  if (m_pArguments != 0) {
-    CFX_WideStringC identifier = 0;
-    for (int i = 0; i < m_pArguments->GetSize(); ++i) {
-      identifier = m_pArguments->GetAt(i);
-      if (identifier.GetAt(0) == L'!') {
-        CFX_WideString tempIdentifier =
-            EXCLAMATION_IN_IDENTIFIER + identifier.Mid(1);
-        javascript << tempIdentifier;
-      } else {
-        javascript << identifier;
-      }
-      if (i + 1 < m_pArguments->GetSize()) {
-        javascript << FX_WSTRC(L", ");
-      }
+  bool bNeedComma = false;
+  for (const auto& identifier : m_pArguments) {
+    if (bNeedComma)
+      javascript << FX_WSTRC(L", ");
+    if (identifier.GetAt(0) == L'!') {
+      CFX_WideString tempIdentifier =
+          EXCLAMATION_IN_IDENTIFIER + identifier.Mid(1);
+      javascript << tempIdentifier;
+    } else {
+      javascript << identifier;
     }
+    bNeedComma = true;
   }
   javascript << FX_WSTRC(L")\n{\n");
   javascript << FX_WSTRC(L"var ");

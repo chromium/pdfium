@@ -26,8 +26,9 @@ int32_t CXFA_FMProgram::ParseProgram() {
   if (!m_pErrorInfo.message.IsEmpty())
     return -1;
 
+  std::vector<CFX_WideStringC> arguments;
   m_globalFunction = pdfium::MakeUnique<CXFA_FMFunctionDefinition>(
-      1, true, L"", nullptr, std::move(expressions));
+      1, true, L"", std::move(arguments), std::move(expressions));
   return 0;
 }
 
