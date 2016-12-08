@@ -55,10 +55,10 @@ class CFWL_DateTimePicker : public CFWL_Widget {
   void SetCurSel(int32_t iYear, int32_t iMonth, int32_t iDay);
 
   void SetEditText(const CFX_WideString& wsText);
-  CFX_WideString GetEditText(int32_t nStart = 0, int32_t nCount = -1) const;
+  CFX_WideString GetEditText() const;
 
   int32_t CountSelRanges() const { return m_pEdit->CountSelRanges(); }
-  int32_t GetSelRange(int32_t nIndex, int32_t& nStart) const {
+  int32_t GetSelRange(int32_t nIndex, int32_t* nStart) const {
     return m_pEdit->GetSelRange(nIndex, nStart);
   }
 
@@ -82,6 +82,11 @@ class CFWL_DateTimePicker : public CFWL_Widget {
                         CFX_WideString& wsText);
   void ResetEditAlignment();
   void InitProxyForm();
+  void OnFocusChanged(CFWL_Message* pMsg, bool bSet);
+  void OnLButtonDown(CFWL_MsgMouse* pMsg);
+  void OnLButtonUp(CFWL_MsgMouse* pMsg);
+  void OnMouseMove(CFWL_MsgMouse* pMsg);
+  void OnMouseLeave(CFWL_MsgMouse* pMsg);
 
   bool DisForm_IsMonthCalendarVisible() const;
   void DisForm_ShowMonthCalendar(bool bActivate);
@@ -90,14 +95,8 @@ class CFWL_DateTimePicker : public CFWL_Widget {
   void DisForm_Update();
   void DisForm_GetWidgetRect(CFX_RectF& rect, bool bAutoSize);
   void DisForm_GetBBox(CFX_RectF& rect) const;
-  void DisForm_DrawWidget(CFX_Graphics* pGraphics,
-                          const CFX_Matrix* pMatrix = nullptr);
+  void DisForm_DrawWidget(CFX_Graphics* pGraphics, const CFX_Matrix* pMatrix);
   void DisForm_OnFocusChanged(CFWL_Message* pMsg, bool bSet);
-  void OnFocusChanged(CFWL_Message* pMsg, bool bSet);
-  void OnLButtonDown(CFWL_MsgMouse* pMsg);
-  void OnLButtonUp(CFWL_MsgMouse* pMsg);
-  void OnMouseMove(CFWL_MsgMouse* pMsg);
-  void OnMouseLeave(CFWL_MsgMouse* pMsg);
 
   CFX_RectF m_rtBtn;
   CFX_RectF m_rtClient;

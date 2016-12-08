@@ -69,15 +69,15 @@ class CFWL_ScrollBar : public CFWL_Widget {
   }
   void DrawTrack(CFX_Graphics* pGraphics,
                  IFWL_ThemeProvider* pTheme,
-                 bool bLower = true,
-                 const CFX_Matrix* pMatrix = nullptr);
+                 bool bLower,
+                 const CFX_Matrix* pMatrix);
   void DrawArrowBtn(CFX_Graphics* pGraphics,
                     IFWL_ThemeProvider* pTheme,
-                    bool bMinBtn = true,
-                    const CFX_Matrix* pMatrix = nullptr);
+                    bool bMinBtn,
+                    const CFX_Matrix* pMatrix);
   void DrawThumb(CFX_Graphics* pGraphics,
                  IFWL_ThemeProvider* pTheme,
-                 const CFX_Matrix* pMatrix = nullptr);
+                 const CFX_Matrix* pMatrix);
   void Layout();
   void CalcButtonLen();
   void CalcMinButtonRect(CFX_RectF& rect);
@@ -86,7 +86,7 @@ class CFWL_ScrollBar : public CFWL_Widget {
   void CalcMinTrackRect(CFX_RectF& rect);
   void CalcMaxTrackRect(CFX_RectF& rect);
   FX_FLOAT GetTrackPointPos(FX_FLOAT fx, FX_FLOAT fy);
-  void GetTrackRect(CFX_RectF& rect, bool bLower = true);
+
   bool SendEvent();
   bool OnScroll(CFWL_EvtScroll::Code dwCode, FX_FLOAT fPos);
   void OnLButtonDown(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy);
@@ -98,7 +98,7 @@ class CFWL_ScrollBar : public CFWL_Widget {
                     uint32_t dwFlags,
                     FX_FLOAT fDeltaX,
                     FX_FLOAT fDeltaY);
-  bool DoScroll(CFWL_EvtScroll::Code dwCode, FX_FLOAT fPos = 0.0f);
+  bool DoScroll(CFWL_EvtScroll::Code dwCode, FX_FLOAT fPos);
   void DoMouseDown(int32_t iItem,
                    const CFX_RectF& rtItem,
                    int32_t& iState,

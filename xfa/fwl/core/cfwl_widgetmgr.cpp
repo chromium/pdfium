@@ -104,7 +104,7 @@ CFWL_Widget* CFWL_WidgetMgr::GetSystemFormWidget(CFWL_Widget* pWidget) const {
   return nullptr;
 }
 
-void CFWL_WidgetMgr::SetWidgetIndex(CFWL_Widget* pWidget, int32_t nIndex) {
+void CFWL_WidgetMgr::AppendWidget(CFWL_Widget* pWidget) {
   Item* pItem = GetWidgetMgrItem(pWidget);
   if (!pItem)
     return;
@@ -115,8 +115,6 @@ void CFWL_WidgetMgr::SetWidgetIndex(CFWL_Widget* pWidget, int32_t nIndex) {
   int32_t i = 0;
   while (pChild) {
     if (pChild == pItem) {
-      if (i == nIndex)
-        return;
       if (pChild->pPrevious)
         pChild->pPrevious->pNext = pChild->pNext;
       if (pChild->pNext)
@@ -137,40 +135,16 @@ void CFWL_WidgetMgr::SetWidgetIndex(CFWL_Widget* pWidget, int32_t nIndex) {
 
   pChild = pItem->pParent->pChild;
   if (pChild) {
-    if (nIndex < 0) {
-      while (pChild->pNext)
-        pChild = pChild->pNext;
-
-      pChild->pNext = pItem;
-      pItem->pPrevious = pChild;
-      pItem->pNext = nullptr;
-      return;
-    }
-
-    i = 0;
-    while (i < nIndex && pChild->pNext) {
+    while (pChild->pNext)
       pChild = pChild->pNext;
-      ++i;
-    }
-    if (!pChild->pNext) {
-      pChild->pNext = pItem;
-      pItem->pPrevious = pChild;
-      pItem->pNext = nullptr;
-      return;
-    }
-    if (pChild->pPrevious) {
-      pItem->pPrevious = pChild->pPrevious;
-      pChild->pPrevious->pNext = pItem;
-    }
-    pChild->pPrevious = pItem;
-    pItem->pNext = pChild;
-    if (pItem->pParent->pChild == pChild)
-      pItem->pParent->pChild = pItem;
+
+    pChild->pNext = pItem;
+    pItem->pPrevious = pChild;
   } else {
     pItem->pParent->pChild = pItem;
     pItem->pPrevious = nullptr;
-    pItem->pNext = nullptr;
   }
+  pItem->pNext = nullptr;
 }
 
 void CFWL_WidgetMgr::RepaintWidget(CFWL_Widget* pWidget,
@@ -201,9 +175,7 @@ void CFWL_WidgetMgr::RepaintWidget(CFWL_Widget* pWidget,
   m_pAdapter->RepaintWidget(pNative, &rect);
 }
 
-void CFWL_WidgetMgr::InsertWidget(CFWL_Widget* pParent,
-                                  CFWL_Widget* pChild,
-                                  int32_t nIndex) {
+void CFWL_WidgetMgr::InsertWidget(CFWL_Widget* pParent, CFWL_Widget* pChild) {
   Item* pParentItem = GetWidgetMgrItem(pParent);
   if (!pParentItem) {
     auto item = pdfium::MakeUnique<Item>(pParent);
@@ -211,7 +183,7 @@ void CFWL_WidgetMgr::InsertWidget(CFWL_Widget* pParent,
     m_mapWidgetItem[pParent] = std::move(item);
 
     pParentItem->pParent = GetWidgetMgrItem(nullptr);
-    SetWidgetIndex(pParent, -1);
+    AppendWidget(pParent);
   }
 
   Item* pItem = GetWidgetMgrItem(pChild);
@@ -229,7 +201,7 @@ void CFWL_WidgetMgr::InsertWidget(CFWL_Widget* pParent,
       pItem->pParent->pChild = pItem->pNext;
   }
   pItem->pParent = pParentItem;
-  SetWidgetIndex(pChild, nIndex);
+  AppendWidget(pChild);
 }
 
 void CFWL_WidgetMgr::RemoveWidget(CFWL_Widget* pWidget) {
@@ -260,7 +232,7 @@ void CFWL_WidgetMgr::SetOwner(CFWL_Widget* pOwner, CFWL_Widget* pOwned) {
     m_mapWidgetItem[pOwner] = std::move(item);
 
     pParentItem->pParent = GetWidgetMgrItem(nullptr);
-    SetWidgetIndex(pOwner, -1);
+    AppendWidget(pOwner);
   }
 
   Item* pItem = GetWidgetMgrItem(pOwned);
@@ -288,7 +260,7 @@ void CFWL_WidgetMgr::SetParent(CFWL_Widget* pParent, CFWL_Widget* pChild) {
     pItem->pPrevious = nullptr;
   }
   pItem->pParent = pParentItem;
-  SetWidgetIndex(pChild, -1);
+  AppendWidget(pChild);
 }
 
 void CFWL_WidgetMgr::SetWidgetRect_Native(CFWL_Widget* pWidget,
@@ -327,7 +299,7 @@ CFWL_Widget* CFWL_WidgetMgr::GetWidgetAtPoint(CFWL_Widget* parent,
       x1 = x;
       y1 = y;
       CFX_Matrix matrixOnParent;
-      child->GetMatrix(matrixOnParent);
+      child->GetMatrix(matrixOnParent, false);
       CFX_Matrix m;
       m.SetIdentity();
       m.SetReverse(matrixOnParent);

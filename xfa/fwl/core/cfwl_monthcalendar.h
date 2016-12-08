@@ -136,7 +136,7 @@ class CFWL_MonthCalendar : public CFWL_Widget {
   void DrawDatesInCircle(CFX_Graphics* pGraphics,
                          IFWL_ThemeProvider* pTheme,
                          const CFX_Matrix* pMatrix);
-  CFX_SizeF CalcSize(bool bAutoSize = false);
+  CFX_SizeF CalcSize();
   void Layout();
   void CalcHeadSize();
   void CalcTodaySize();
@@ -148,7 +148,7 @@ class CFWL_MonthCalendar : public CFWL_Widget {
   void NextMonth();
   void PrevMonth();
   void ChangeToMonth(int32_t iYear, int32_t iMonth);
-  void RemoveSelDay(int32_t iDay, bool bAll = false);
+  void RemoveSelDay();
   void AddSelDay(int32_t iDay);
   void JumpToToday();
   void GetHeadText(int32_t iYear, int32_t iMonth, CFX_WideString& wsHead);

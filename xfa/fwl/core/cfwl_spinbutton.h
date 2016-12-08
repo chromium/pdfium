@@ -44,8 +44,9 @@ class CFWL_SpinButton : public CFWL_Widget {
   };
   friend class CFWL_SpinButton::Timer;
 
-  void EnableButton(bool bEnable, bool bUp = true);
-  bool IsButtonEnabled(bool bUp = true);
+  void DisableButton();
+  bool IsUpButtonEnabled();
+  bool IsDownButtonEnabled();
   void DrawUpButton(CFX_Graphics* pGraphics,
                     IFWL_ThemeProvider* pTheme,
                     const CFX_Matrix* pMatrix);

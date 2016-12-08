@@ -42,11 +42,9 @@ class CFWL_WidgetMgr : public CFWL_WidgetMgrDelegate {
   CFWL_Widget* GetFirstChildWidget(CFWL_Widget* pWidget) const;
   CFWL_Widget* GetSystemFormWidget(CFWL_Widget* pWidget) const;
 
-  void RepaintWidget(CFWL_Widget* pWidget, const CFX_RectF* pRect = nullptr);
+  void RepaintWidget(CFWL_Widget* pWidget, const CFX_RectF* pRect);
 
-  void InsertWidget(CFWL_Widget* pParent,
-                    CFWL_Widget* pChild,
-                    int32_t nIndex = -1);
+  void InsertWidget(CFWL_Widget* pParent, CFWL_Widget* pChild);
   void RemoveWidget(CFWL_Widget* pWidget);
   void SetOwner(CFWL_Widget* pOwner, CFWL_Widget* pOwned);
   void SetParent(CFWL_Widget* pParent, CFWL_Widget* pChild);
@@ -99,7 +97,7 @@ class CFWL_WidgetMgr : public CFWL_WidgetMgrDelegate {
   CFWL_Widget* GetLastChildWidget(CFWL_Widget* pWidget) const;
   Item* GetWidgetMgrItem(CFWL_Widget* pWidget) const;
 
-  void SetWidgetIndex(CFWL_Widget* pWidget, int32_t nIndex);
+  void AppendWidget(CFWL_Widget* pWidget);
 
   int32_t CountRadioButtonGroup(CFWL_Widget* pFirst) const;
   CFWL_Widget* GetRadioButtonGroupHeader(CFWL_Widget* pRadioButton) const;

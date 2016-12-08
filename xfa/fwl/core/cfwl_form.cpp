@@ -385,7 +385,7 @@ int32_t CFWL_Form::GetSysBtnIndex(CFWL_SysBtn* pBtn) {
 void CFWL_Form::GetEdgeRect(CFX_RectF& rtEdge) {
   rtEdge = m_rtRelative;
   if (m_pProperties->m_dwStyles & FWL_WGTSTYLE_Border) {
-    FX_FLOAT fCX = GetBorderSize();
+    FX_FLOAT fCX = GetBorderSize(true);
     FX_FLOAT fCY = GetBorderSize(false);
     rtEdge.Deflate(fCX, fCY, fCX, fCY);
   }
@@ -549,7 +549,7 @@ void CFWL_Form::OnLButtonUp(CFWL_MsgMouse* pMsg) {
     if (m_bMaximized) {
       SetWidgetRect(m_rtRestore);
       Update();
-      Repaint();
+      Repaint(nullptr);
     } else {
       SetWorkAreaRect();
       Update();

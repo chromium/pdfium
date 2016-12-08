@@ -84,7 +84,7 @@ class CFWL_ListBox : public CFWL_Widget {
   void SetItemCheckState(CFWL_Widget* pWidget,
                          CFWL_ListItem* pItem,
                          uint32_t dwCheckState);
-  CFWL_ListItem* AddString(const CFX_WideStringC& wsAdd, bool bSelect = false);
+  CFWL_ListItem* AddString(const CFX_WideStringC& wsAdd);
   bool RemoveAt(int32_t iIndex);
   bool DeleteString(CFWL_ListItem* pItem);
   void DeleteAll();
@@ -92,7 +92,7 @@ class CFWL_ListBox : public CFWL_Widget {
   int32_t CountSelItems();
   CFWL_ListItem* GetSelItem(int32_t nIndexSel);
   int32_t GetSelIndex(int32_t nIndex);
-  void SetSelItem(CFWL_ListItem* hItem, bool bSelect = true);
+  void SetSelItem(CFWL_ListItem* hItem, bool bSelect);
   CFX_WideString GetDataProviderItemText(CFWL_ListItem* hItem);
 
   FX_FLOAT GetItemHeight() const { return m_fItemHeight; }
@@ -103,7 +103,8 @@ class CFWL_ListBox : public CFWL_Widget {
   void SetSelection(CFWL_ListItem* hStart, CFWL_ListItem* hEnd, bool bSelected);
   CFWL_ListItem* GetItemAtPoint(FX_FLOAT fx, FX_FLOAT fy);
   bool ScrollToVisible(CFWL_ListItem* hItem);
-  void InitScrollBar(bool bVert = true);
+  void InitVerticalScrollBar();
+  void InitHorizontalScrollBar();
   bool IsShowScrollBar(bool bVert);
   CFWL_ScrollBar* GetVertScrollBar() const { return m_pVertScrollBar.get(); }
   const CFX_RectF& GetRTClient() const { return m_rtClient; }
@@ -121,27 +122,27 @@ class CFWL_ListBox : public CFWL_Widget {
   bool GetItemChecked(CFWL_ListItem* hItem);
   void DrawBkground(CFX_Graphics* pGraphics,
                     IFWL_ThemeProvider* pTheme,
-                    const CFX_Matrix* pMatrix = nullptr);
+                    const CFX_Matrix* pMatrix);
   void DrawItems(CFX_Graphics* pGraphics,
                  IFWL_ThemeProvider* pTheme,
-                 const CFX_Matrix* pMatrix = nullptr);
+                 const CFX_Matrix* pMatrix);
   void DrawItem(CFX_Graphics* pGraphics,
                 IFWL_ThemeProvider* pTheme,
                 CFWL_ListItem* hItem,
                 int32_t Index,
                 const CFX_RectF& rtItem,
-                const CFX_Matrix* pMatrix = nullptr);
+                const CFX_Matrix* pMatrix);
   void DrawStatic(CFX_Graphics* pGraphics, IFWL_ThemeProvider* pTheme);
-  CFX_SizeF CalcSize(bool bAutoSize = false);
+  CFX_SizeF CalcSize(bool bAutoSize);
   void GetItemSize(CFX_SizeF& size,
                    CFWL_ListItem* hItem,
                    FX_FLOAT fWidth,
                    FX_FLOAT fHeight,
-                   bool bAutoSize = false);
+                   bool bAutoSize);
   FX_FLOAT GetMaxTextWidth();
   FX_FLOAT GetScrollWidth();
 
-  void OnFocusChanged(CFWL_Message* pMsg, bool bSet = true);
+  void OnFocusChanged(CFWL_Message* pMsg, bool bSet);
   void OnLButtonDown(CFWL_MsgMouse* pMsg);
   void OnLButtonUp(CFWL_MsgMouse* pMsg);
   void OnMouseWheel(CFWL_MsgMouseWheel* pMsg);

@@ -300,11 +300,9 @@ void CFWL_ComboBox::SetEditText(const CFX_WideString& wsText) {
   m_pEdit->Update();
 }
 
-CFX_WideString CFWL_ComboBox::GetEditText(int32_t nStart,
-                                          int32_t nCount) const {
-  if (m_pEdit) {
-    return m_pEdit->GetText(nStart, nCount);
-  }
+CFX_WideString CFWL_ComboBox::GetEditText() const {
+  if (m_pEdit)
+    return m_pEdit->GetText();
   if (!m_pListBox)
     return L"";
 
@@ -624,7 +622,7 @@ void CFWL_ComboBox::DisForm_ShowDropList(bool bActivate) {
     pComboList->ChangeSelected(m_iCurSel);
 
     FX_FLOAT fItemHeight = pComboList->CalcItemHeight();
-    FX_FLOAT fBorder = GetBorderSize();
+    FX_FLOAT fBorder = GetBorderSize(true);
     FX_FLOAT fPopupMin = 0.0f;
     if (iItems > 3)
       fPopupMin = fItemHeight * 3 + fBorder * 2;

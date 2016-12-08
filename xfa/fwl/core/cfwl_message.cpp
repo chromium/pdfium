@@ -17,7 +17,6 @@ CFWL_Message::CFWL_Message(Type type,
                            CFWL_Widget* pDstTarget)
     : m_pSrcTarget(pSrcTarget),
       m_pDstTarget(pDstTarget),
-      m_dwExtend(0),
       m_type(type) {}
 
 CFWL_Message::~CFWL_Message() {}

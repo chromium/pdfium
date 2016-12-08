@@ -32,7 +32,7 @@ class CFDE_TxtEdtEngine {
   void SetTextByStream(const CFX_RetainPtr<IFGAS_Stream>& pStream);
   void SetText(const CFX_WideString& wsText);
   int32_t GetTextLength() const;
-  CFX_WideString GetText(int32_t nStart, int32_t nCount = -1) const;
+  CFX_WideString GetText(int32_t nStart, int32_t nCount) const;
   void ClearText();
 
   int32_t GetCaretRect(CFX_RectF& rtCaret) const;
@@ -55,11 +55,11 @@ class CFDE_TxtEdtEngine {
   void SetLimit(int32_t nLimit);
   void SetAliasChar(FX_WCHAR wcAlias);
 
-  void RemoveSelRange(int32_t nStart, int32_t nCount = -1);
+  void RemoveSelRange(int32_t nStart, int32_t nCount);
 
-  void AddSelRange(int32_t nStart, int32_t nCount = -1);
+  void AddSelRange(int32_t nStart, int32_t nCount);
   int32_t CountSelRanges() const;
-  int32_t GetSelRange(int32_t nIndex, int32_t& nStart) const;
+  int32_t GetSelRange(int32_t nIndex, int32_t* nStart) const;
   void ClearSelection();
 
   bool Redo(const IFDE_TxtEdtDoRecord* pRecord);

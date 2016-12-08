@@ -303,13 +303,13 @@ void CXFA_FFTextEdit::OnTextChanged(CFWL_Widget* pWidget,
     eParam.m_wsNewText = pDateTime->GetEditText();
     int32_t iSels = pDateTime->CountSelRanges();
     if (iSels) {
-      eParam.m_iSelEnd = pDateTime->GetSelRange(0, eParam.m_iSelStart);
+      eParam.m_iSelEnd = pDateTime->GetSelRange(0, &eParam.m_iSelStart);
     }
   } else {
     eParam.m_wsNewText = pEdit->GetText();
     int32_t iSels = pEdit->CountSelRanges();
     if (iSels) {
-      eParam.m_iSelEnd = pEdit->GetSelRange(0, eParam.m_iSelStart);
+      eParam.m_iSelEnd = pEdit->GetSelRange(0, &eParam.m_iSelStart);
     }
   }
   m_pDataAcc->ProcessEvent(XFA_ATTRIBUTEENUM_Change, &eParam);

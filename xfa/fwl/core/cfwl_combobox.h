@@ -77,7 +77,7 @@ class CFWL_ComboBox : public CFWL_Widget {
   void RemoveAll();
 
   void SetEditText(const CFX_WideString& wsText);
-  CFX_WideString GetEditText(int32_t nStart = 0, int32_t nCount = -1) const;
+  CFX_WideString GetEditText() const;
 
   void OpenDropDownList(bool bActivate);
 
@@ -127,6 +127,14 @@ class CFWL_ComboBox : public CFWL_Widget {
   void ResetEditAlignment();
   void ResetListItemAlignment();
   void InitProxyForm();
+  void OnFocusChanged(CFWL_Message* pMsg, bool bSet);
+  void OnLButtonDown(CFWL_MsgMouse* pMsg);
+  void OnLButtonUp(CFWL_MsgMouse* pMsg);
+  void OnMouseMove(CFWL_MsgMouse* pMsg);
+  void OnMouseLeave(CFWL_MsgMouse* pMsg);
+  void OnKey(CFWL_MsgKey* pMsg);
+  void DoSubCtrlKey(CFWL_MsgKey* pMsg);
+
   void DisForm_InitComboList();
   void DisForm_InitComboEdit();
   void DisForm_ShowDropList(bool bActivate);
@@ -137,20 +145,12 @@ class CFWL_ComboBox : public CFWL_Widget {
                               uint32_t dwStylesExRemoved);
   void DisForm_Update();
   FWL_WidgetHit DisForm_HitTest(FX_FLOAT fx, FX_FLOAT fy);
-  void DisForm_DrawWidget(CFX_Graphics* pGraphics,
-                          const CFX_Matrix* pMatrix = nullptr);
+  void DisForm_DrawWidget(CFX_Graphics* pGraphics, const CFX_Matrix* pMatrix);
   void DisForm_GetBBox(CFX_RectF& rect) const;
   void DisForm_Layout();
-  void OnFocusChanged(CFWL_Message* pMsg, bool bSet = true);
-  void OnLButtonDown(CFWL_MsgMouse* pMsg);
-  void OnLButtonUp(CFWL_MsgMouse* pMsg);
-  void OnMouseMove(CFWL_MsgMouse* pMsg);
-  void OnMouseLeave(CFWL_MsgMouse* pMsg);
-  void OnKey(CFWL_MsgKey* pMsg);
-  void DoSubCtrlKey(CFWL_MsgKey* pMsg);
   void DisForm_OnProcessMessage(CFWL_Message* pMessage);
   void DisForm_OnLButtonDown(CFWL_MsgMouse* pMsg);
-  void DisForm_OnFocusChanged(CFWL_Message* pMsg, bool bSet = true);
+  void DisForm_OnFocusChanged(CFWL_Message* pMsg, bool bSet);
   void DisForm_OnKey(CFWL_MsgKey* pMsg);
 
   CFX_RectF m_rtClient;

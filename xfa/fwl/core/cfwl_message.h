@@ -30,7 +30,6 @@ class CFWL_Message {
 
   CFWL_Widget* m_pSrcTarget;
   CFWL_Widget* m_pDstTarget;
-  uint32_t m_dwExtend;
 
  private:
   Type m_type;

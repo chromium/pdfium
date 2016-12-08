@@ -309,46 +309,6 @@ FX_FLOAT CFWL_ScrollBar::GetTrackPointPos(FX_FLOAT fx, FX_FLOAT fy) {
   return std::min(std::max(fPos, m_fRangeMin), m_fRangeMax);
 }
 
-void CFWL_ScrollBar::GetTrackRect(CFX_RectF& rect, bool bLower) {
-  bool bDisabled = !!(m_pProperties->m_dwStates & FWL_WGTSTATE_Disabled);
-  if (bDisabled) {
-    rect = bLower ? m_rtMinTrack : m_rtMaxTrack;
-    return;
-  }
-
-  FX_FLOAT fW = m_rtThumb.width / 2;
-  FX_FLOAT fH = m_rtThumb.height / 2;
-  bool bVert = IsVertical();
-  if (bLower) {
-    if (bVert) {
-      FX_FLOAT fMinTrackHeight = m_rtMinTrack.height - fH - m_rtMinBtn.height;
-      fMinTrackHeight = (fMinTrackHeight >= 0.0f) ? fMinTrackHeight : 0.0f;
-      rect.Set(m_rtMinTrack.left, m_rtMinTrack.top + m_rtMinBtn.height,
-               m_rtMinTrack.width, fMinTrackHeight);
-      return;
-    }
-
-    FX_FLOAT fMinTrackWidth = m_rtMinTrack.width - fW - m_rtMinBtn.width + 2;
-    fMinTrackWidth = (fMinTrackWidth >= 0.0f) ? fMinTrackWidth : 0.0f;
-    rect.Set(m_rtMinTrack.left + m_rtMinBtn.width - 1, m_rtMinTrack.top,
-             fMinTrackWidth, m_rtMinTrack.height);
-    return;
-  }
-
-  if (bVert) {
-    FX_FLOAT fMaxTrackHeight = m_rtMaxTrack.height - fH - m_rtMaxBtn.height;
-    fMaxTrackHeight = (fMaxTrackHeight >= 0.0f) ? fMaxTrackHeight : 0.0f;
-    rect.Set(m_rtMaxTrack.left, m_rtMaxTrack.top + fH, m_rtMaxTrack.width,
-             fMaxTrackHeight);
-    return;
-  }
-
-  FX_FLOAT fMaxTrackWidth = m_rtMaxTrack.width - fW - m_rtMaxBtn.width + 2;
-  fMaxTrackWidth = (fMaxTrackWidth >= 0.0f) ? fMaxTrackWidth : 0.0f;
-  rect.Set(m_rtMaxTrack.left + fW, m_rtMaxTrack.top, fMaxTrackWidth,
-           m_rtMaxTrack.height);
-}
-
 bool CFWL_ScrollBar::SendEvent() {
   if (m_iMinButtonState == CFWL_PartState_Pressed) {
     DoScroll(CFWL_EvtScroll::Code::StepBackward, m_fTrackPos);

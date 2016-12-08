@@ -114,17 +114,16 @@ void CFWL_SpinButton::DrawWidget(CFX_Graphics* pGraphics,
   DrawDownButton(pGraphics, pTheme, pMatrix);
 }
 
-void CFWL_SpinButton::EnableButton(bool bEnable, bool bUp) {
-  if (bUp)
-    m_dwUpState = bEnable ? CFWL_PartState_Normal : CFWL_PartState_Disabled;
-  else
-    m_dwDnState = bEnable ? CFWL_PartState_Normal : CFWL_PartState_Disabled;
+void CFWL_SpinButton::DisableButton() {
+  m_dwDnState = CFWL_PartState_Disabled;
 }
 
-bool CFWL_SpinButton::IsButtonEnabled(bool bUp) {
-  if (bUp)
-    return (m_dwUpState != CFWL_PartState_Disabled);
-  return (m_dwDnState != CFWL_PartState_Disabled);
+bool CFWL_SpinButton::IsUpButtonEnabled() {
+  return m_dwUpState != CFWL_PartState_Disabled;
+}
+
+bool CFWL_SpinButton::IsDownButtonEnabled() {
+  return m_dwDnState != CFWL_PartState_Disabled;
 }
 
 void CFWL_SpinButton::DrawUpButton(CFX_Graphics* pGraphics,
@@ -222,9 +221,9 @@ void CFWL_SpinButton::OnLButtonDown(CFWL_MsgMouse* pMsg) {
   SetFocus(true);
 
   bool bUpPress =
-      (m_rtUpButton.Contains(pMsg->m_fx, pMsg->m_fy) && IsButtonEnabled(true));
+      (m_rtUpButton.Contains(pMsg->m_fx, pMsg->m_fy) && IsUpButtonEnabled());
   bool bDnPress =
-      (m_rtDnButton.Contains(pMsg->m_fx, pMsg->m_fy) && IsButtonEnabled(false));
+      (m_rtDnButton.Contains(pMsg->m_fx, pMsg->m_fy) && IsDownButtonEnabled());
   if (!bUpPress && !bDnPress)
     return;
   if (bUpPress) {
@@ -256,11 +255,11 @@ void CFWL_SpinButton::OnLButtonUp(CFWL_MsgMouse* pMsg) {
   }
   bool bRepaint = false;
   CFX_RectF rtInvalidate;
-  if (m_dwUpState == CFWL_PartState_Pressed && IsButtonEnabled(true)) {
+  if (m_dwUpState == CFWL_PartState_Pressed && IsUpButtonEnabled()) {
     m_dwUpState = CFWL_PartState_Normal;
     bRepaint = true;
     rtInvalidate = m_rtUpButton;
-  } else if (m_dwDnState == CFWL_PartState_Pressed && IsButtonEnabled(false)) {
+  } else if (m_dwDnState == CFWL_PartState_Pressed && IsDownButtonEnabled()) {
     m_dwDnState = CFWL_PartState_Normal;
     bRepaint = true;
     rtInvalidate = m_rtDnButton;
@@ -277,13 +276,13 @@ void CFWL_SpinButton::OnMouseMove(CFWL_MsgMouse* pMsg) {
   CFX_RectF rtInvlidate;
   rtInvlidate.Reset();
   if (m_rtUpButton.Contains(pMsg->m_fx, pMsg->m_fy)) {
-    if (IsButtonEnabled(true)) {
+    if (IsUpButtonEnabled()) {
       if (m_dwUpState == CFWL_PartState_Hovered) {
         m_dwUpState = CFWL_PartState_Hovered;
         bRepaint = true;
         rtInvlidate = m_rtUpButton;
       }
-      if (m_dwDnState != CFWL_PartState_Normal && IsButtonEnabled(false)) {
+      if (m_dwDnState != CFWL_PartState_Normal && IsDownButtonEnabled()) {
         m_dwDnState = CFWL_PartState_Normal;
         if (bRepaint)
           rtInvlidate.Union(m_rtDnButton);
@@ -293,17 +292,17 @@ void CFWL_SpinButton::OnMouseMove(CFWL_MsgMouse* pMsg) {
         bRepaint = true;
       }
     }
-    if (!IsButtonEnabled(false))
-      EnableButton(false, false);
+    if (!IsDownButtonEnabled())
+      DisableButton();
 
   } else if (m_rtDnButton.Contains(pMsg->m_fx, pMsg->m_fy)) {
-    if (IsButtonEnabled(false)) {
+    if (IsDownButtonEnabled()) {
       if (m_dwDnState != CFWL_PartState_Hovered) {
         m_dwDnState = CFWL_PartState_Hovered;
         bRepaint = true;
         rtInvlidate = m_rtDnButton;
       }
-      if (m_dwUpState != CFWL_PartState_Normal && IsButtonEnabled(true)) {
+      if (m_dwUpState != CFWL_PartState_Normal && IsUpButtonEnabled()) {
         m_dwUpState = CFWL_PartState_Normal;
         if (bRepaint)
           rtInvlidate.Union(m_rtUpButton);
@@ -336,9 +335,9 @@ void CFWL_SpinButton::OnMouseMove(CFWL_MsgMouse* pMsg) {
 void CFWL_SpinButton::OnMouseLeave(CFWL_MsgMouse* pMsg) {
   if (!pMsg)
     return;
-  if (m_dwUpState != CFWL_PartState_Normal && IsButtonEnabled(true))
+  if (m_dwUpState != CFWL_PartState_Normal && IsUpButtonEnabled())
     m_dwUpState = CFWL_PartState_Normal;
-  if (m_dwDnState != CFWL_PartState_Normal && IsButtonEnabled(false))
+  if (m_dwDnState != CFWL_PartState_Normal && IsDownButtonEnabled())
     m_dwDnState = CFWL_PartState_Normal;
 
   Repaint(&m_rtClient);
@@ -352,8 +351,8 @@ void CFWL_SpinButton::OnKeyDown(CFWL_MsgKey* pMsg) {
   if (!bUp && !bDown)
     return;
 
-  bool bUpEnable = IsButtonEnabled(true);
-  bool bDownEnable = IsButtonEnabled(false);
+  bool bUpEnable = IsUpButtonEnabled();
+  bool bDownEnable = IsDownButtonEnabled();
   if (!bUpEnable && !bDownEnable)
     return;
 

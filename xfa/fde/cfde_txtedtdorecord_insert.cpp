@@ -31,7 +31,7 @@ bool CFDE_TxtEdtDoRecord_Insert::Undo() const {
   FDE_TXTEDTPARAMS& Param = m_pEngine->m_Param;
   m_pEngine->m_ChangeInfo.nChangeType = FDE_TXTEDT_TEXTCHANGE_TYPE_Delete;
   m_pEngine->m_ChangeInfo.wsDelete = m_wsInsert;
-  Param.pEventSink->On_TextChanged(m_pEngine, m_pEngine->m_ChangeInfo);
+  Param.pEventSink->OnTextChanged(m_pEngine->m_ChangeInfo);
   m_pEngine->SetCaretPos(m_nCaret, true);
   return true;
 }
@@ -41,7 +41,7 @@ bool CFDE_TxtEdtDoRecord_Insert::Redo() const {
   FDE_TXTEDTPARAMS& Param = m_pEngine->m_Param;
   m_pEngine->m_ChangeInfo.nChangeType = FDE_TXTEDT_TEXTCHANGE_TYPE_Insert;
   m_pEngine->m_ChangeInfo.wsDelete = m_wsInsert;
-  Param.pEventSink->On_TextChanged(m_pEngine, m_pEngine->m_ChangeInfo);
+  Param.pEventSink->OnTextChanged(m_pEngine->m_ChangeInfo);
   m_pEngine->SetCaretPos(m_nCaret, false);
   return true;
 }

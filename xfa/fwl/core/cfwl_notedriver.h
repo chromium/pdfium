@@ -36,7 +36,7 @@ class CFWL_NoteDriver {
   CFWL_NoteLoop* PopNoteLoop();
 
   CFWL_Widget* GetFocus() const { return m_pFocus; }
-  bool SetFocus(CFWL_Widget* pFocus, bool bNotify = false);
+  bool SetFocus(CFWL_Widget* pFocus);
   void SetGrab(CFWL_Widget* pGrab, bool bSet) {
     m_pGrab = bSet ? pGrab : nullptr;
   }

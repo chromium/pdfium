@@ -67,7 +67,7 @@ class CFWL_Widget : public IFWL_WidgetDelegate {
   void OnProcessMessage(CFWL_Message* pMessage) override;
   void OnProcessEvent(CFWL_Event* pEvent) override;
   void OnDrawWidget(CFX_Graphics* pGraphics,
-                    const CFX_Matrix* pMatrix = nullptr) override;
+                    const CFX_Matrix* pMatrix) override;
 
   void SetWidgetRect(const CFX_RectF& rect);
 
@@ -88,7 +88,7 @@ class CFWL_Widget : public IFWL_WidgetDelegate {
   }
 
   void TransformTo(CFWL_Widget* pWidget, FX_FLOAT& fx, FX_FLOAT& fy);
-  void GetMatrix(CFX_Matrix& matrix, bool bGlobal = false);
+  void GetMatrix(CFX_Matrix& matrix, bool bGlobal);
   IFWL_ThemeProvider* GetThemeProvider() const;
 
   void SetDelegate(IFWL_WidgetDelegate* delegate) { m_pDelegate = delegate; }
@@ -107,7 +107,7 @@ class CFWL_Widget : public IFWL_WidgetDelegate {
   void SetLayoutItem(void* pItem) { m_pLayoutItem = pItem; }
 
   void SetFocus(bool bFocus);
-  void Repaint(const CFX_RectF* pRect = nullptr);
+  void Repaint(const CFX_RectF* pRect);
 
  protected:
   CFWL_Widget(const CFWL_App* app,
@@ -120,15 +120,14 @@ class CFWL_Widget : public IFWL_WidgetDelegate {
   bool HasBorder() const;
   bool HasEdge() const;
   void GetEdgeRect(CFX_RectF& rtEdge);
-  FX_FLOAT GetBorderSize(bool bCX = true);
+  FX_FLOAT GetBorderSize(bool bCX);
   FX_FLOAT GetEdgeWidth();
   void GetRelativeRect(CFX_RectF& rect);
   void* GetThemeCapacity(CFWL_WidgetCapacity dwCapacity);
   IFWL_ThemeProvider* GetAvailableTheme();
   CFX_SizeF CalcTextSize(const CFX_WideString& wsText,
                          IFWL_ThemeProvider* pTheme,
-                         bool bMultiLine = false,
-                         int32_t iLineWidth = -1);
+                         bool bMultiLine);
   void CalcTextRect(const CFX_WideString& wsText,
                     IFWL_ThemeProvider* pTheme,
                     uint32_t dwTTOStyles,
@@ -145,11 +144,11 @@ class CFWL_Widget : public IFWL_WidgetDelegate {
   void DrawBorder(CFX_Graphics* pGraphics,
                   CFWL_Part iPartBorder,
                   IFWL_ThemeProvider* pTheme,
-                  const CFX_Matrix* pMatrix = nullptr);
+                  const CFX_Matrix* pMatrix);
   void DrawEdge(CFX_Graphics* pGraphics,
                 CFWL_Part iPartEdge,
                 IFWL_ThemeProvider* pTheme,
-                const CFX_Matrix* pMatrix = nullptr);
+                const CFX_Matrix* pMatrix);
 
   const CFWL_App* const m_pOwnerApp;
   CFWL_WidgetMgr* const m_pWidgetMgr;
@@ -183,7 +182,7 @@ class CFWL_Widget : public IFWL_WidgetDelegate {
   void DrawBackground(CFX_Graphics* pGraphics,
                       CFWL_Part iPartBk,
                       IFWL_ThemeProvider* pTheme,
-                      const CFX_Matrix* pMatrix = nullptr);
+                      const CFX_Matrix* pMatrix);
   void NotifyDriver();
   bool IsParent(CFWL_Widget* pParent);
 

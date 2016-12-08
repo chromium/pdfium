@@ -76,7 +76,7 @@ void CFWL_Widget::GetWidgetRect(CFX_RectF& rect, bool bAutoSize) {
     rect.Inflate(fEdge, fEdge);
   }
   if (HasBorder()) {
-    FX_FLOAT fBorder = GetBorderSize();
+    FX_FLOAT fBorder = GetBorderSize(true);
     rect.Inflate(fBorder, fBorder);
   }
 }
@@ -317,7 +317,7 @@ void CFWL_Widget::GetEdgeRect(CFX_RectF& rtEdge) {
   rtEdge = m_pProperties->m_rtWidget;
   rtEdge.left = rtEdge.top = 0;
   if (HasBorder()) {
-    FX_FLOAT fCX = GetBorderSize();
+    FX_FLOAT fCX = GetBorderSize(true);
     FX_FLOAT fCY = GetBorderSize(false);
     rtEdge.Deflate(fCX, fCY);
   }
@@ -399,8 +399,7 @@ CFWL_Widget* CFWL_Widget::GetRootOuter() {
 
 CFX_SizeF CFWL_Widget::CalcTextSize(const CFX_WideString& wsText,
                                     IFWL_ThemeProvider* pTheme,
-                                    bool bMultiLine,
-                                    int32_t iLineWidth) {
+                                    bool bMultiLine) {
   if (!pTheme)
     return CFX_SizeF();
 
@@ -411,10 +410,8 @@ CFX_SizeF CFWL_Widget::CalcTextSize(const CFX_WideString& wsText,
       bMultiLine ? FDE_TTOSTYLE_LineWrap : FDE_TTOSTYLE_SingleLine;
   calPart.m_iTTOAlign = FDE_TTOALIGNMENT_TopLeft;
   CFX_RectF rect;
-  FX_FLOAT fWidth = bMultiLine
-                        ? (iLineWidth > 0 ? (FX_FLOAT)iLineWidth
-                                          : FWL_WGT_CalcMultiLineDefWidth)
-                        : FWL_WGT_CalcWidth;
+  FX_FLOAT fWidth =
+      bMultiLine ? FWL_WGT_CalcMultiLineDefWidth : FWL_WGT_CalcWidth;
   rect.Set(0, 0, fWidth, FWL_WGT_CalcHeight);
   pTheme->CalcTextRect(&calPart, rect);
   return CFX_SizeF(rect.width, rect.height);

@@ -79,12 +79,12 @@ class CFWL_Edit : public CFWL_Widget {
   virtual void SetText(const CFX_WideString& wsText);
 
   int32_t GetTextLength() const;
-  CFX_WideString GetText(int32_t nStart = 0, int32_t nCount = -1) const;
+  CFX_WideString GetText() const;
   void ClearText();
 
-  void AddSelRange(int32_t nStart, int32_t nCount = -1);
+  void AddSelRange(int32_t nStart);
   int32_t CountSelRanges() const;
-  int32_t GetSelRange(int32_t nIndex, int32_t& nStart) const;
+  int32_t GetSelRange(int32_t nIndex, int32_t* nStart) const;
   void ClearSelections();
   int32_t GetLimit() const;
   void SetLimit(int32_t nLimit);
@@ -101,20 +101,13 @@ class CFWL_Edit : public CFWL_Widget {
 
   void SetOuter(CFWL_Widget* pOuter);
 
-  void On_CaretChanged(CFDE_TxtEdtEngine* pEdit,
-                       int32_t nPage,
-                       bool bVisible = true);
-  void On_TextChanged(CFDE_TxtEdtEngine* pEdit,
-                      FDE_TXTEDT_TEXTCHANGE_INFO& ChangeInfo);
-  void On_SelChanged(CFDE_TxtEdtEngine* pEdit);
-  bool On_PageLoad(CFDE_TxtEdtEngine* pEdit,
-                   int32_t nPageIndex,
-                   int32_t nPurpose);
-  bool On_PageUnload(CFDE_TxtEdtEngine* pEdit,
-                     int32_t nPageIndex,
-                     int32_t nPurpose);
-  void On_AddDoRecord(CFDE_TxtEdtEngine* pEdit, IFDE_TxtEdtDoRecord* pRecord);
-  bool On_Validate(CFDE_TxtEdtEngine* pEdit, CFX_WideString& wsText);
+  void OnCaretChanged();
+  void OnTextChanged(const FDE_TXTEDT_TEXTCHANGE_INFO& ChangeInfo);
+  void OnSelChanged();
+  bool OnPageLoad(int32_t nPageIndex);
+  bool OnPageUnload(int32_t nPageIndex);
+  void OnAddDoRecord(std::unique_ptr<IFDE_TxtEdtDoRecord> pRecord);
+  bool OnValidate(const CFX_WideString& wsText);
   void SetScrollOffset(FX_FLOAT fScrollOffset);
 
  protected:
@@ -126,10 +119,12 @@ class CFWL_Edit : public CFWL_Widget {
  private:
   void DrawTextBk(CFX_Graphics* pGraphics,
                   IFWL_ThemeProvider* pTheme,
-                  const CFX_Matrix* pMatrix = nullptr);
+                  const CFX_Matrix* pMatrix);
   void DrawContent(CFX_Graphics* pGraphics,
                    IFWL_ThemeProvider* pTheme,
-                   const CFX_Matrix* pMatrix = nullptr);
+                   const CFX_Matrix* pMatrix);
+  void DrawSpellCheck(CFX_Graphics* pGraphics, const CFX_Matrix* pMatrix);
+
   void UpdateEditEngine();
   void UpdateEditParams();
   void UpdateEditLayout();
@@ -141,23 +136,22 @@ class CFWL_Edit : public CFWL_Widget {
   void Layout();
   void LayoutScrollBar();
   void DeviceToEngine(CFX_PointF& pt);
-  void InitScrollBar(bool bVert = true);
+  void InitVerticalScrollBar();
+  void InitHorizontalScrollBar();
   void InitEngine();
-  bool ValidateNumberChar(FX_WCHAR cNum);
   void InitCaret();
+  bool ValidateNumberChar(FX_WCHAR cNum);
   void ClearRecord();
   bool IsShowScrollBar(bool bVert);
   bool IsContentHeightOverflow();
-  int32_t AddDoRecord(IFDE_TxtEdtDoRecord* pRecord);
+  int32_t AddDoRecord(std::unique_ptr<IFDE_TxtEdtDoRecord> pRecord);
   void ProcessInsertError(int32_t iError);
-
-  void DrawSpellCheck(CFX_Graphics* pGraphics,
-                      const CFX_Matrix* pMatrix = nullptr);
   void AddSpellCheckObj(CFX_Path& PathData,
                         int32_t nStart,
                         int32_t nCount,
                         FX_FLOAT fOffSetX,
                         FX_FLOAT fOffSetY);
+
   void DoButtonDown(CFWL_MsgMouse* pMsg);
   void OnFocusChanged(CFWL_Message* pMsg, bool bSet);
   void OnLButtonDown(CFWL_MsgMouse* pMsg);

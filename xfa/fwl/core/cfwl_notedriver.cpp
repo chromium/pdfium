@@ -84,19 +84,17 @@ CFWL_NoteLoop* CFWL_NoteDriver::PopNoteLoop() {
   return p;
 }
 
-bool CFWL_NoteDriver::SetFocus(CFWL_Widget* pFocus, bool bNotify) {
+bool CFWL_NoteDriver::SetFocus(CFWL_Widget* pFocus) {
   if (m_pFocus == pFocus)
     return true;
 
   CFWL_Widget* pPrev = m_pFocus;
   m_pFocus = pFocus;
   if (pPrev) {
-    CFWL_MsgKillFocus ms(pPrev, pPrev);
-    if (bNotify)
-      ms.m_dwExtend = 1;
-
-    if (IFWL_WidgetDelegate* pDelegate = pPrev->GetDelegate())
+    if (IFWL_WidgetDelegate* pDelegate = pPrev->GetDelegate()) {
+      CFWL_MsgKillFocus ms(pPrev, pPrev);
       pDelegate->OnProcessMessage(&ms);
+    }
   }
   if (pFocus) {
     CFWL_Widget* pWidget =
@@ -105,11 +103,10 @@ bool CFWL_NoteDriver::SetFocus(CFWL_Widget* pFocus, bool bNotify) {
     if (pForm)
       pForm->SetSubFocus(pFocus);
 
-    CFWL_MsgSetFocus ms(nullptr, pFocus);
-    if (bNotify)
-      ms.m_dwExtend = 1;
-    if (IFWL_WidgetDelegate* pDelegate = pFocus->GetDelegate())
+    if (IFWL_WidgetDelegate* pDelegate = pFocus->GetDelegate()) {
+      CFWL_MsgSetFocus ms(nullptr, pFocus);
       pDelegate->OnProcessMessage(&ms);
+    }
   }
   return true;
 }
