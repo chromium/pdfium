@@ -17,8 +17,7 @@ void CXFA_FWLAdapterWidgetMgr::RepaintWidget(CFWL_Widget* pWidget) {
   if (!pWidget)
     return;
 
-  CXFA_FFWidget* pFFWidget =
-      static_cast<CXFA_FFWidget*>(pWidget->GetLayoutItem());
+  CXFA_FFWidget* pFFWidget = pWidget->GetLayoutItem();
   if (!pFFWidget)
     return;
 
@@ -30,8 +29,7 @@ bool CXFA_FWLAdapterWidgetMgr::GetPopupPos(CFWL_Widget* pWidget,
                                            FX_FLOAT fMaxHeight,
                                            const CFX_RectF& rtAnchor,
                                            CFX_RectF& rtPopup) {
-  CXFA_FFWidget* pFFWidget =
-      static_cast<CXFA_FFWidget*>(pWidget->GetLayoutItem());
+  CXFA_FFWidget* pFFWidget = pWidget->GetLayoutItem();
   CFX_Matrix mt;
   pFFWidget->GetRotateMatrix(mt);
   CFX_RectF rtRotateAnchor(rtAnchor);

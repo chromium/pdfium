@@ -43,6 +43,7 @@ class CFWL_MessageKey;
 class CFWL_Widget;
 class CFWL_WidgetMgr;
 class CFWL_WidgetProperties;
+class CXFA_FFWidget;
 class IFWL_ThemeProvider;
 
 class CFWL_Widget : public IFWL_WidgetDelegate {
@@ -105,8 +106,8 @@ class CFWL_Widget : public IFWL_WidgetDelegate {
   uint32_t GetEventKey() const { return m_nEventKey; }
   void SetEventKey(uint32_t key) { m_nEventKey = key; }
 
-  void* GetLayoutItem() const { return m_pLayoutItem; }
-  void SetLayoutItem(void* pItem) { m_pLayoutItem = pItem; }
+  CXFA_FFWidget* GetLayoutItem() const { return m_pLayoutItem; }
+  void SetLayoutItem(CXFA_FFWidget* pItem) { m_pLayoutItem = pItem; }
 
   void SetFocus(bool bFocus);
   void RepaintRect(const CFX_RectF& pRect);
@@ -189,7 +190,7 @@ class CFWL_Widget : public IFWL_WidgetDelegate {
   void NotifyDriver();
   bool IsParent(CFWL_Widget* pParent);
 
-  void* m_pLayoutItem;
+  CXFA_FFWidget* m_pLayoutItem;
   uint32_t m_nEventKey;
   IFWL_WidgetDelegate* m_pDelegate;  // Not owned.
 };

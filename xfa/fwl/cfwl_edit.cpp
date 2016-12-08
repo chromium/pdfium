@@ -1168,8 +1168,7 @@ void CFWL_Edit::ShowCaret(CFX_RectF* pRect) {
     pRect->Offset(rtOuter.left, rtOuter.top);
   }
 
-  CXFA_FFWidget* pXFAWidget =
-      static_cast<CXFA_FFWidget*>(pOuter->GetLayoutItem());
+  CXFA_FFWidget* pXFAWidget = pOuter->GetLayoutItem();
   if (!pXFAWidget)
     return;
 
@@ -1197,8 +1196,7 @@ void CFWL_Edit::HideCaret(CFX_RectF* pRect) {
   while (pOuter->GetOuter())
     pOuter = pOuter->GetOuter();
 
-  CXFA_FFWidget* pXFAWidget =
-      static_cast<CXFA_FFWidget*>(pOuter->GetLayoutItem());
+  CXFA_FFWidget* pXFAWidget = pOuter->GetLayoutItem();
   if (!pXFAWidget)
     return;
 
