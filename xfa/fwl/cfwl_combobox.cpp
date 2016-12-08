@@ -162,14 +162,6 @@ void CFWL_ComboBox::DrawWidget(CFX_Graphics* pGraphics,
       param.m_matrix.Concat(*pMatrix);
     param.m_rtPart = rtTextBk;
 
-    if (m_iCurSel >= 0) {
-      if (void* p = m_pListBox->GetItemData(
-              m_pListBox.get(),
-              m_pListBox->GetItem(m_pListBox.get(), m_iCurSel))) {
-        param.m_pData = p;
-      }
-    }
-
     if (m_pProperties->m_dwStates & FWL_WGTSTATE_Disabled) {
       param.m_dwStates = CFWL_PartState_Disabled;
     } else if ((m_pProperties->m_dwStates & FWL_WGTSTATE_Focused) &&

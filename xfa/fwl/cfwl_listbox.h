@@ -65,7 +65,6 @@ class CFWL_ListBox : public CFWL_Widget {
   void GetItemRect(CFWL_Widget* pWidget,
                    CFWL_ListItem* pItem,
                    CFX_RectF& rtItem);
-  void* GetItemData(CFWL_Widget* pWidget, CFWL_ListItem* pItem);
   void SetItemStyles(CFWL_Widget* pWidget,
                      CFWL_ListItem* pItem,
                      uint32_t dwStyle);

@@ -1040,10 +1040,6 @@ void CFWL_ListBox::GetItemRect(CFWL_Widget* pWidget,
     rtItem = static_cast<CFWL_ListItem*>(pItem)->m_rtItem;
 }
 
-void* CFWL_ListBox::GetItemData(CFWL_Widget* pWidget, CFWL_ListItem* pItem) {
-  return pItem ? static_cast<CFWL_ListItem*>(pItem)->m_pData : nullptr;
-}
-
 void CFWL_ListBox::SetItemStyles(CFWL_Widget* pWidget,
                                  CFWL_ListItem* pItem,
                                  uint32_t dwStyle) {

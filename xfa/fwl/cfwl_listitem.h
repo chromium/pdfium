@@ -22,7 +22,6 @@ class CFWL_ListItem {
   uint32_t m_dwStyles;
   CFX_WideString m_wsText;
   CFX_DIBitmap* m_pDIB;
-  void* m_pData;
   uint32_t m_dwCheckState;
   CFX_RectF m_rtCheckBox;
 };
