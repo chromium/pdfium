@@ -61,7 +61,7 @@ void CFWL_ListBox::GetWidgetRect(CFX_RectF& rect, bool bAutoSize) {
 
   CFX_SizeF fs = CalcSize(true);
   rect.Set(0, 0, fs.x, fs.y);
-  CFWL_Widget::GetWidgetRect(rect, true);
+  InflateWidgetRect(rect);
 }
 
 void CFWL_ListBox::Update() {

@@ -30,8 +30,7 @@ void CFWL_PictureBox::GetWidgetRect(CFX_RectF& rect, bool bAutoSize) {
   }
 
   rect.Set(0, 0, 0, 0);
-
-  CFWL_Widget::GetWidgetRect(rect, true);
+  InflateWidgetRect(rect);
 }
 
 void CFWL_PictureBox::Update() {

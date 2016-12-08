@@ -94,7 +94,7 @@ void CFWL_ComboBox::GetWidgetRect(CFX_RectF& rect, bool bAutoSize) {
     return;
 
   rect.Inflate(0, 0, *pFWidth, 0);
-  CFWL_Widget::GetWidgetRect(rect, true);
+  InflateWidgetRect(rect);
 }
 
 void CFWL_ComboBox::AddString(const CFX_WideStringC& wsText) {

@@ -70,7 +70,7 @@ void CFWL_CheckBox::GetWidgetRect(CFX_RectF& rect, bool bAutoSize) {
 
   rect.width += m_fBoxHeight;
   rect.height = std::max(rect.height, m_fBoxHeight);
-  CFWL_Widget::GetWidgetRect(rect, true);
+  InflateWidgetRect(rect);
 }
 
 void CFWL_CheckBox::Update() {

@@ -48,7 +48,7 @@ void CFWL_PushButton::GetWidgetRect(CFX_RectF& rect, bool bAutoSize) {
   FX_FLOAT* fcaption =
       static_cast<FX_FLOAT*>(GetThemeCapacity(CFWL_WidgetCapacity::Margin));
   rect.Inflate(*fcaption, *fcaption);
-  CFWL_Widget::GetWidgetRect(rect, true);
+  InflateWidgetRect(rect);
 }
 
 void CFWL_PushButton::SetStates(uint32_t dwStates) {

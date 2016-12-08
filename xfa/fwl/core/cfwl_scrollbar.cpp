@@ -77,7 +77,8 @@ void CFWL_ScrollBar::GetWidgetRect(CFX_RectF& rect, bool bAutoSize) {
     rect.Set(0, 0, (*pfMinWidth), (*pfMinWidth) * 3);
   else
     rect.Set(0, 0, (*pfMinWidth) * 3, (*pfMinWidth));
-  CFWL_Widget::GetWidgetRect(rect, true);
+
+  InflateWidgetRect(rect);
 }
 
 void CFWL_ScrollBar::Update() {

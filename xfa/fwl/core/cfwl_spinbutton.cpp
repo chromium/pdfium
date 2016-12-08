@@ -56,7 +56,7 @@ void CFWL_SpinButton::GetWidgetRect(CFX_RectF& rect, bool bAutoSize) {
   }
 
   rect.Set(0, 0, kMinWidth, kMinHeight);
-  CFWL_Widget::GetWidgetRect(rect, true);
+  InflateWidgetRect(rect);
 }
 
 void CFWL_SpinButton::Update() {

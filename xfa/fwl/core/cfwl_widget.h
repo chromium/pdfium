@@ -69,6 +69,7 @@ class CFWL_Widget : public IFWL_WidgetDelegate {
   void OnDrawWidget(CFX_Graphics* pGraphics,
                     const CFX_Matrix* pMatrix) override;
 
+  void InflateWidgetRect(CFX_RectF& rect);
   void SetWidgetRect(const CFX_RectF& rect);
 
   void SetParent(CFWL_Widget* pParent);

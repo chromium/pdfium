@@ -79,7 +79,7 @@ void CFWL_DateTimePicker::GetWidgetRect(CFX_RectF& rect, bool bAutoSize) {
   }
 
   rect.Set(0, 0, kDateTimePickerWidth, kDateTimePickerHeight);
-  CFWL_Widget::GetWidgetRect(rect, true);
+  InflateWidgetRect(rect);
 }
 
 void CFWL_DateTimePicker::Update() {

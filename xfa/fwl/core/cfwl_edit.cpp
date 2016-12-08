@@ -119,7 +119,7 @@ void CFWL_Edit::GetWidgetRect(CFX_RectF& rect, bool bAutoSize) {
         !!(m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_MultiLine));
     rect.Set(0, 0, sz.x, sz.y);
   }
-  CFWL_Widget::GetWidgetRect(rect, true);
+  InflateWidgetRect(rect);
 }
 
 void CFWL_Edit::SetStates(uint32_t dwStates) {

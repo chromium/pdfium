@@ -70,7 +70,10 @@ void CFWL_Widget::GetWidgetRect(CFX_RectF& rect, bool bAutoSize) {
     rect = m_pProperties->m_rtWidget;
     return;
   }
+  InflateWidgetRect(rect);
+}
 
+void CFWL_Widget::InflateWidgetRect(CFX_RectF& rect) {
   if (HasEdge()) {
     FX_FLOAT fEdge = GetEdgeWidth();
     rect.Inflate(fEdge, fEdge);
