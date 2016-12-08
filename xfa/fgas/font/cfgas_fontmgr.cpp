@@ -501,40 +501,38 @@ CFX_FontDescriptor::~CFX_FontDescriptor() {}
 
 CFX_FontSourceEnum_File::CFX_FontSourceEnum_File() {
   for (size_t i = 0; i < FX_ArraySize(g_FontFolders); ++i)
-    m_FolderPaths.Add(g_FontFolders[i]);
+    m_FolderPaths.push_back(g_FontFolders[i]);
 }
 
 CFX_FontSourceEnum_File::~CFX_FontSourceEnum_File() {}
 
 CFX_ByteString CFX_FontSourceEnum_File::GetNextFile() {
   FX_FileHandle* pCurHandle =
-      m_FolderQueue.GetSize() != 0
-          ? m_FolderQueue.GetDataPtr(m_FolderQueue.GetSize() - 1)->pFileHandle
-          : nullptr;
+      !m_FolderQueue.empty() ? m_FolderQueue.back().pFileHandle : nullptr;
   if (!pCurHandle) {
-    if (m_FolderPaths.GetSize() < 1)
+    if (m_FolderPaths.empty())
       return "";
-    pCurHandle =
-        FX_OpenFolder(m_FolderPaths[m_FolderPaths.GetSize() - 1].c_str());
+    pCurHandle = FX_OpenFolder(m_FolderPaths.back().c_str());
     FX_HandleParentPath hpp;
     hpp.pFileHandle = pCurHandle;
-    hpp.bsParentPath = m_FolderPaths[m_FolderPaths.GetSize() - 1];
-    m_FolderQueue.Add(hpp);
+    hpp.bsParentPath = m_FolderPaths.back();
+    m_FolderQueue.push_back(hpp);
   }
   CFX_ByteString bsName;
   bool bFolder;
-  CFX_ByteString bsFolderSpearator =
+  CFX_ByteString bsFolderSeparator =
       CFX_ByteString::FromUnicode(CFX_WideString(FX_GetFolderSeparator()));
   while (true) {
     if (!FX_GetNextFile(pCurHandle, &bsName, &bFolder)) {
       FX_CloseFolder(pCurHandle);
-      m_FolderQueue.RemoveAt(m_FolderQueue.GetSize() - 1);
-      if (m_FolderQueue.GetSize() == 0) {
-        m_FolderPaths.RemoveAt(m_FolderPaths.GetSize() - 1);
-        return m_FolderPaths.GetSize() != 0 ? GetNextFile() : "";
+      if (!m_FolderQueue.empty())
+        m_FolderQueue.pop_back();
+      if (!m_FolderQueue.empty()) {
+        if (!m_FolderPaths.empty())
+          m_FolderPaths.pop_back();
+        return !m_FolderPaths.empty() ? GetNextFile() : "";
       }
-      pCurHandle =
-          m_FolderQueue.GetDataPtr(m_FolderQueue.GetSize() - 1)->pFileHandle;
+      pCurHandle = m_FolderQueue.back().pFileHandle;
       continue;
     }
     if (bsName == "." || bsName == "..")
@@ -542,18 +540,15 @@ CFX_ByteString CFX_FontSourceEnum_File::GetNextFile() {
     if (bFolder) {
       FX_HandleParentPath hpp;
       hpp.bsParentPath =
-          m_FolderQueue.GetDataPtr(m_FolderQueue.GetSize() - 1)->bsParentPath +
-          bsFolderSpearator + bsName;
+          m_FolderQueue.back().bsParentPath + bsFolderSeparator + bsName;
       hpp.pFileHandle = FX_OpenFolder(hpp.bsParentPath.c_str());
       if (!hpp.pFileHandle)
         continue;
-      m_FolderQueue.Add(hpp);
+      m_FolderQueue.push_back(hpp);
       pCurHandle = hpp.pFileHandle;
       continue;
     }
-    bsName =
-        m_FolderQueue.GetDataPtr(m_FolderQueue.GetSize() - 1)->bsParentPath +
-        bsFolderSpearator + bsName;
+    bsName = m_FolderQueue.back().bsParentPath + bsFolderSeparator + bsName;
     break;
   }
   return bsName;

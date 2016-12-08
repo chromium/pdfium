@@ -185,8 +185,8 @@ class CFX_FontSourceEnum_File {
   CFX_ByteString GetNextFile();
 
   CFX_WideString m_wsNext;
-  CFX_ObjectArray<FX_HandleParentPath> m_FolderQueue;
-  CFX_ByteStringArray m_FolderPaths;
+  std::vector<FX_HandleParentPath> m_FolderQueue;
+  std::vector<CFX_ByteString> m_FolderPaths;
 };
 
 class CFGAS_FontMgr {
