@@ -50,7 +50,7 @@ void CFWL_SpinButton::Update() {
   if (IsLocked())
     return;
 
-  GetClientRect(m_rtClient);
+  m_rtClient = GetClientRect();
   if (m_pProperties->m_dwStyleExes & FWL_STYLEEXE_SPB_Vert) {
     m_rtUpButton.Set(m_rtClient.top, m_rtClient.left, m_rtClient.width,
                      m_rtClient.height / 2);
@@ -69,12 +69,8 @@ FWL_WidgetHit CFWL_SpinButton::HitTest(FX_FLOAT fx, FX_FLOAT fy) {
     return FWL_WidgetHit::Client;
   if (HasBorder() && (m_rtClient.Contains(fx, fy)))
     return FWL_WidgetHit::Border;
-  if (HasEdge()) {
-    CFX_RectF rtEdge;
-    GetEdgeRect(rtEdge);
-    if (rtEdge.Contains(fx, fy))
-      return FWL_WidgetHit::Left;
-  }
+  if (HasEdge() && GetEdgeRect().Contains(fx, fy))
+    return FWL_WidgetHit::Left;
   if (m_rtUpButton.Contains(fx, fy))
     return FWL_WidgetHit::UpButton;
   if (m_rtDnButton.Contains(fx, fy))
@@ -199,7 +195,7 @@ void CFWL_SpinButton::OnFocusChanged(CFWL_Message* pMsg, bool bSet) {
   else
     m_pProperties->m_dwStates &= ~(FWL_WGTSTATE_Focused);
 
-  Repaint(&m_rtClient);
+  RepaintRect(m_rtClient);
 }
 
 void CFWL_SpinButton::OnLButtonDown(CFWL_MessageMouse* pMsg) {
@@ -225,7 +221,7 @@ void CFWL_SpinButton::OnLButtonDown(CFWL_MessageMouse* pMsg) {
   CFWL_Event wmPosChanged(CFWL_Event::Type::Click, this);
   DispatchEvent(&wmPosChanged);
 
-  Repaint(bUpPress ? &m_rtUpButton : &m_rtDnButton);
+  RepaintRect(bUpPress ? m_rtUpButton : m_rtDnButton);
   m_pTimerInfo = m_Timer.StartTimer(kElapseTime, true);
 }
 
@@ -252,7 +248,7 @@ void CFWL_SpinButton::OnLButtonUp(CFWL_MessageMouse* pMsg) {
     rtInvalidate = m_rtDnButton;
   }
   if (bRepaint)
-    Repaint(&rtInvalidate);
+    RepaintRect(rtInvalidate);
 }
 
 void CFWL_SpinButton::OnMouseMove(CFWL_MessageMouse* pMsg) {
@@ -316,7 +312,7 @@ void CFWL_SpinButton::OnMouseMove(CFWL_MessageMouse* pMsg) {
     }
   }
   if (bRepaint)
-    Repaint(&rtInvlidate);
+    RepaintRect(rtInvlidate);
 }
 
 void CFWL_SpinButton::OnMouseLeave(CFWL_MessageMouse* pMsg) {
@@ -327,7 +323,7 @@ void CFWL_SpinButton::OnMouseLeave(CFWL_MessageMouse* pMsg) {
   if (m_dwDnState != CFWL_PartState_Normal && IsDownButtonEnabled())
     m_dwDnState = CFWL_PartState_Normal;
 
-  Repaint(&m_rtClient);
+  RepaintRect(m_rtClient);
 }
 
 void CFWL_SpinButton::OnKeyDown(CFWL_MessageKey* pMsg) {
@@ -346,7 +342,7 @@ void CFWL_SpinButton::OnKeyDown(CFWL_MessageKey* pMsg) {
   CFWL_Event wmPosChanged(CFWL_Event::Type::Click, this);
   DispatchEvent(&wmPosChanged);
 
-  Repaint(bUpEnable ? &m_rtUpButton : &m_rtDnButton);
+  RepaintRect(bUpEnable ? m_rtUpButton : m_rtDnButton);
 }
 
 CFWL_SpinButton::Timer::Timer(CFWL_SpinButton* pToolTip)

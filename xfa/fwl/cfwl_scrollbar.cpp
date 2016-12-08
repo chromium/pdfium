@@ -157,7 +157,7 @@ void CFWL_ScrollBar::Layout() {
   part.m_pWidget = this;
   m_fMinThumb = *static_cast<FX_FLOAT*>(
       pTheme->GetCapacity(&part, CFWL_WidgetCapacity::Size));
-  GetClientRect(m_rtClient);
+  m_rtClient = GetClientRect();
   CalcButtonLen();
   CalcMinButtonRect(m_rtMinBtn);
   CalcMaxButtonRect(m_rtMaxBtn);
@@ -433,7 +433,7 @@ void CFWL_ScrollBar::DoMouseDown(int32_t iItem,
     return;
 
   iState = CFWL_PartState_Pressed;
-  Repaint(&rtItem);
+  RepaintRect(rtItem);
 }
 
 void CFWL_ScrollBar::DoMouseUp(int32_t iItem,
@@ -447,7 +447,7 @@ void CFWL_ScrollBar::DoMouseUp(int32_t iItem,
     return;
 
   iState = iNewState;
-  Repaint(&rtItem);
+  RepaintRect(rtItem);
   OnScroll(CFWL_EventScroll::Code::EndScroll, m_fTrackPos);
 }
 
@@ -463,7 +463,7 @@ void CFWL_ScrollBar::DoMouseMove(int32_t iItem,
       return;
 
     iState = iNewState;
-    Repaint(&rtItem);
+    RepaintRect(rtItem);
   } else if ((2 == iItem) && (m_iThumbButtonState == CFWL_PartState_Pressed)) {
     FX_FLOAT fPos = GetTrackPointPos(fx, fy);
     m_fTrackPos = fPos;
@@ -478,7 +478,7 @@ void CFWL_ScrollBar::DoMouseLeave(int32_t iItem,
     return;
 
   iState = CFWL_PartState_Normal;
-  Repaint(&rtItem);
+  RepaintRect(rtItem);
 }
 
 void CFWL_ScrollBar::DoMouseHover(int32_t iItem,
@@ -488,7 +488,7 @@ void CFWL_ScrollBar::DoMouseHover(int32_t iItem,
     return;
 
   iState = CFWL_PartState_Hovered;
-  Repaint(&rtItem);
+  RepaintRect(rtItem);
 }
 
 CFWL_ScrollBar::Timer::Timer(CFWL_ScrollBar* pToolTip) : CFWL_Timer(pToolTip) {}

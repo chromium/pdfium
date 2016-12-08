@@ -53,7 +53,7 @@ void CFWL_DateTimeEdit::DisForm_OnProcessMessage(CFWL_Message* pMessage) {
       CFX_RectF rtInvalidate = pDateTime->GetWidgetRect();
       pDateTime->ShowMonthCalendar(false);
       rtInvalidate.Offset(-rtInvalidate.left, -rtInvalidate.top);
-      pDateTime->Repaint(&rtInvalidate);
+      pDateTime->RepaintRect(rtInvalidate);
     }
   }
   CFWL_Edit::OnProcessMessage(pMessage);

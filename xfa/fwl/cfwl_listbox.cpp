@@ -385,7 +385,7 @@ bool CFWL_ListBox::ScrollToVisible(CFWL_ListItem* pItem) {
 
   m_pVertScrollBar->SetPos(fPosY);
   m_pVertScrollBar->SetTrackPos(fPosY);
-  Repaint(&m_rtClient);
+  RepaintRect(m_rtClient);
   return true;
 }
 
@@ -554,7 +554,7 @@ CFX_SizeF CFWL_ListBox::CalcSize(bool bAutoSize) {
   if (!m_pProperties->m_pThemeProvider)
     return fs;
 
-  GetClientRect(m_rtClient);
+  m_rtClient = GetClientRect();
   m_rtConent = m_rtClient;
   CFX_RectF rtUIMargin;
   rtUIMargin.Set(0, 0, 0, 0);
@@ -841,7 +841,7 @@ void CFWL_ListBox::OnFocusChanged(CFWL_Message* pMsg, bool bSet) {
   else
     m_pProperties->m_dwStates &= ~(FWL_WGTSTATE_Focused);
 
-  Repaint(&m_rtClient);
+  RepaintRect(m_rtClient);
 }
 
 void CFWL_ListBox::OnLButtonDown(CFWL_MessageMouse* pMsg) {
@@ -883,7 +883,7 @@ void CFWL_ListBox::OnLButtonDown(CFWL_MessageMouse* pMsg) {
   SetFocusItem(pItem);
   ScrollToVisible(pItem);
   SetGrab(true);
-  Repaint(&m_rtClient);
+  RepaintRect(m_rtClient);
 }
 
 void CFWL_ListBox::OnLButtonUp(CFWL_MessageMouse* pMsg) {
@@ -945,7 +945,7 @@ void CFWL_ListBox::OnVK(CFWL_ListItem* pItem, bool bShift, bool bCtrl) {
   CFX_RectF rtInvalidate;
   rtInvalidate.Set(0, 0, m_pProperties->m_rtWidget.width,
                    m_pProperties->m_rtWidget.height);
-  Repaint(&rtInvalidate);
+  RepaintRect(rtInvalidate);
 }
 
 bool CFWL_ListBox::OnScroll(CFWL_ScrollBar* pScrollBar,
@@ -998,7 +998,7 @@ bool CFWL_ListBox::OnScroll(CFWL_ScrollBar* pScrollBar,
   if (iCurPos != fPos) {
     pScrollBar->SetPos(fPos);
     pScrollBar->SetTrackPos(fPos);
-    Repaint(&m_rtClient);
+    RepaintRect(m_rtClient);
   }
   return true;
 }

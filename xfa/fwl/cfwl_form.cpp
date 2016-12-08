@@ -80,9 +80,10 @@ bool CFWL_Form::IsInstance(const CFX_WideStringC& wsClass) const {
   return CFWL_Widget::IsInstance(wsClass);
 }
 
-void CFWL_Form::GetClientRect(CFX_RectF& rect) {
-  rect = m_pProperties->m_rtWidget;
+CFX_RectF CFWL_Form::GetClientRect() {
+  CFX_RectF rect = m_pProperties->m_rtWidget;
   rect.Offset(-rect.left, -rect.top);
+  return rect;
 }
 
 void CFWL_Form::Update() {
@@ -384,11 +385,11 @@ void CFWL_Form::SetWorkAreaRect() {
     return;
 
   m_bSetMaximize = true;
-  Repaint(&m_rtRelative);
+  RepaintRect(m_rtRelative);
 }
 
 void CFWL_Form::Layout() {
-  GetRelativeRect(m_rtRelative);
+  m_rtRelative = GetRelativeRect();
 
 #ifndef FWL_UseMacSystemBorder
   ResetSysBtn();
@@ -519,7 +520,7 @@ void CFWL_Form::OnLButtonDown(CFWL_MessageMouse* pMsg) {
     return;
 
   pPressBtn->SetPressed();
-  Repaint(&pPressBtn->m_rtBtn);
+  RepaintRect(pPressBtn->m_rtBtn);
 }
 
 void CFWL_Form::OnLButtonUp(CFWL_MessageMouse* pMsg) {
@@ -535,7 +536,7 @@ void CFWL_Form::OnLButtonUp(CFWL_MessageMouse* pMsg) {
     if (m_bMaximized) {
       SetWidgetRect(m_rtRestore);
       Update();
-      Repaint(nullptr);
+      Repaint();
     } else {
       SetWorkAreaRect();
       Update();
@@ -598,7 +599,7 @@ void CFWL_Form::OnMouseMove(CFWL_MessageMouse* pMsg) {
 #endif
 
   if (!rtInvalidate.IsEmpty())
-    Repaint(&rtInvalidate);
+    RepaintRect(rtInvalidate);
 }
 
 void CFWL_Form::OnMouseLeave(CFWL_MessageMouse* pMsg) {
@@ -607,7 +608,7 @@ void CFWL_Form::OnMouseLeave(CFWL_MessageMouse* pMsg) {
     return;
 
   pHover->SetNormal();
-  Repaint(&pHover->m_rtBtn);
+  RepaintRect(pHover->m_rtBtn);
 }
 
 void CFWL_Form::OnLButtonDblClk(CFWL_MessageMouse* pMsg) {

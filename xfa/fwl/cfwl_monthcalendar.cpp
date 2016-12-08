@@ -601,7 +601,7 @@ void CFWL_MonthCalendar::CalcTodaySize() {
 }
 
 void CFWL_MonthCalendar::Layout() {
-  GetClientRect(m_rtClient);
+  m_rtClient = GetClientRect();
 
   m_rtHead.Set(
       m_rtClient.left + MONTHCAL_HEADER_BTN_HMARGIN, m_rtClient.top,
@@ -934,15 +934,15 @@ void CFWL_MonthCalendar::OnLButtonDown(CFWL_MessageMouse* pMsg) {
   if (m_rtLBtn.Contains(pMsg->m_fx, pMsg->m_fy)) {
     m_iLBtnPartStates = CFWL_PartState_Pressed;
     PrevMonth();
-    Repaint(&m_rtClient);
+    RepaintRect(m_rtClient);
   } else if (m_rtRBtn.Contains(pMsg->m_fx, pMsg->m_fy)) {
     m_iRBtnPartStates |= CFWL_PartState_Pressed;
     NextMonth();
-    Repaint(&m_rtClient);
+    RepaintRect(m_rtClient);
   } else if (m_rtToday.Contains(pMsg->m_fx, pMsg->m_fy)) {
     if ((m_pProperties->m_dwStyleExes & FWL_STYLEEXT_MCD_NoToday) == 0) {
       JumpToToday();
-      Repaint(&m_rtClient);
+      RepaintRect(m_rtClient);
     }
   } else {
     CFWL_DateTimePicker* pIPicker = static_cast<CFWL_DateTimePicker*>(m_pOuter);
@@ -957,12 +957,12 @@ void CFWL_MonthCalendar::OnLButtonUp(CFWL_MessageMouse* pMsg) {
 
   if (m_rtLBtn.Contains(pMsg->m_fx, pMsg->m_fy)) {
     m_iLBtnPartStates = 0;
-    Repaint(&m_rtLBtn);
+    RepaintRect(m_rtLBtn);
     return;
   }
   if (m_rtRBtn.Contains(pMsg->m_fx, pMsg->m_fy)) {
     m_iRBtnPartStates = 0;
-    Repaint(&m_rtRBtn);
+    RepaintRect(m_rtRBtn);
     return;
   }
   if (m_rtToday.Contains(pMsg->m_fx, pMsg->m_fy))
@@ -998,12 +998,12 @@ void CFWL_MonthCalendar::OnLButtonUp(CFWL_MessageMouse* pMsg) {
 void CFWL_MonthCalendar::DisForm_OnLButtonUp(CFWL_MessageMouse* pMsg) {
   if (m_rtLBtn.Contains(pMsg->m_fx, pMsg->m_fy)) {
     m_iLBtnPartStates = 0;
-    Repaint(&(m_rtLBtn));
+    RepaintRect(m_rtLBtn);
     return;
   }
   if (m_rtRBtn.Contains(pMsg->m_fx, pMsg->m_fy)) {
     m_iRBtnPartStates = 0;
-    Repaint(&(m_rtRBtn));
+    RepaintRect(m_rtRBtn);
     return;
   }
   if (m_rtToday.Contains(pMsg->m_fx, pMsg->m_fy))
@@ -1060,7 +1060,7 @@ void CFWL_MonthCalendar::OnMouseMove(CFWL_MessageMouse* pMsg) {
     m_iHovered = -1;
   }
   if (bRepaint && !rtInvalidate.IsEmpty())
-    Repaint(&rtInvalidate);
+    RepaintRect(rtInvalidate);
 }
 
 void CFWL_MonthCalendar::OnMouseLeave(CFWL_MessageMouse* pMsg) {
@@ -1072,7 +1072,7 @@ void CFWL_MonthCalendar::OnMouseLeave(CFWL_MessageMouse* pMsg) {
   GetDayRect(m_iHovered, rtInvalidate);
   m_iHovered = -1;
   if (!rtInvalidate.IsEmpty())
-    Repaint(&rtInvalidate);
+    RepaintRect(rtInvalidate);
 }
 
 CFWL_MonthCalendar::DATEINFO::DATEINFO(int32_t day,

@@ -400,7 +400,7 @@ void CFWL_ComboBox::Layout() {
   if (m_pWidgetMgr->IsFormDisabled())
     return DisForm_Layout();
 
-  GetClientRect(m_rtClient);
+  m_rtClient = GetClientRect();
   FX_FLOAT* pFWidth = static_cast<FX_FLOAT*>(
       GetThemeCapacity(CFWL_WidgetCapacity::ScrollBarWidth));
   if (!pFWidth)
@@ -504,7 +504,7 @@ void CFWL_ComboBox::ResetListItemAlignment() {
 void CFWL_ComboBox::ProcessSelChanged(bool bLButtonUp) {
   m_iCurSel = m_pListBox->GetItemIndex(this, m_pListBox->GetSelItem(0));
   if (!IsDropDownStyle()) {
-    Repaint(&m_rtClient);
+    RepaintRect(m_rtClient);
     return;
   }
 
@@ -614,7 +614,7 @@ void CFWL_ComboBox::DisForm_ShowDropList(bool bActivate) {
 
   CFX_RectF rect = m_pListBox->GetWidgetRect();
   rect.Inflate(2, 2);
-  Repaint(&rect);
+  RepaintRect(rect);
 }
 
 void CFWL_ComboBox::DisForm_ModifyStylesEx(uint32_t dwStylesExAdded,
@@ -709,7 +709,7 @@ CFX_RectF CFWL_ComboBox::DisForm_GetBBox() const {
 }
 
 void CFWL_ComboBox::DisForm_Layout() {
-  GetClientRect(m_rtClient);
+  m_rtClient = GetClientRect();
   m_rtContent = m_rtClient;
   FX_FLOAT* pFWidth = static_cast<FX_FLOAT*>(
       GetThemeCapacity(CFWL_WidgetCapacity::ScrollBarWidth));
@@ -822,13 +822,13 @@ void CFWL_ComboBox::OnFocusChanged(CFWL_Message* pMsg, bool bSet) {
       return;
     }
 
-    Repaint(&m_rtClient);
+    RepaintRect(m_rtClient);
     return;
   }
 
   m_pProperties->m_dwStates &= ~FWL_WGTSTATE_Focused;
   if (!IsDropDownStyle() || pMsg->m_pDstTarget == m_pListBox.get()) {
-    Repaint(&m_rtClient);
+    RepaintRect(m_rtClient);
     return;
   }
   if (!m_pEdit)
@@ -851,11 +851,11 @@ void CFWL_ComboBox::OnLButtonDown(CFWL_MessageMouse* pMsg) {
 
   m_bLButtonDown = true;
   m_iBtnState = CFWL_PartState_Pressed;
-  Repaint(&m_rtClient);
+  RepaintRect(m_rtClient);
 
   ShowDropList(true);
   m_iBtnState = CFWL_PartState_Normal;
-  Repaint(&m_rtClient);
+  RepaintRect(m_rtClient);
 }
 
 void CFWL_ComboBox::OnLButtonUp(CFWL_MessageMouse* pMsg) {
@@ -865,7 +865,7 @@ void CFWL_ComboBox::OnLButtonUp(CFWL_MessageMouse* pMsg) {
   else
     m_iBtnState = CFWL_PartState_Normal;
 
-  Repaint(&m_rtBtn);
+  RepaintRect(m_rtBtn);
 }
 
 void CFWL_ComboBox::OnMouseMove(CFWL_MessageMouse* pMsg) {
@@ -879,7 +879,7 @@ void CFWL_ComboBox::OnMouseMove(CFWL_MessageMouse* pMsg) {
   if ((iOldState != m_iBtnState) &&
       !((m_pProperties->m_dwStates & FWL_WGTSTATE_Disabled) ==
         FWL_WGTSTATE_Disabled)) {
-    Repaint(&m_rtBtn);
+    RepaintRect(m_rtBtn);
   }
 }
 
@@ -888,7 +888,7 @@ void CFWL_ComboBox::OnMouseLeave(CFWL_MessageMouse* pMsg) {
       !((m_pProperties->m_dwStates & FWL_WGTSTATE_Disabled) ==
         FWL_WGTSTATE_Disabled)) {
     m_iBtnState = CFWL_PartState_Normal;
-    Repaint(&m_rtBtn);
+    RepaintRect(m_rtBtn);
   }
 }
 
@@ -935,7 +935,7 @@ void CFWL_ComboBox::DoSubCtrlKey(CFWL_MessageKey* pMsg) {
     if (bDropDown && m_pEdit)
       SyncEditText(m_iCurSel);
     else
-      Repaint(&m_rtClient);
+      RepaintRect(m_rtClient);
     return;
   }
 

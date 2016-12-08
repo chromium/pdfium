@@ -120,7 +120,7 @@ void CFWL_CheckBox::SetCheckState(int32_t iCheck) {
     default:
       break;
   }
-  Repaint(&m_rtClient);
+  RepaintRect(m_rtClient);
 }
 
 void CFWL_CheckBox::Layout() {
@@ -128,7 +128,7 @@ void CFWL_CheckBox::Layout() {
       FXSYS_round(m_pProperties->m_rtWidget.width);
   m_pProperties->m_rtWidget.height =
       FXSYS_round(m_pProperties->m_rtWidget.height);
-  GetClientRect(m_rtClient);
+  m_rtClient = GetClientRect();
 
   FX_FLOAT fBoxTop = m_rtClient.top;
   FX_FLOAT fClientBottom = m_rtClient.bottom();
@@ -287,7 +287,7 @@ void CFWL_CheckBox::NextStates() {
             pCheckBox->SetCheckState(0);
             CFX_RectF rt = pCheckBox->GetWidgetRect();
             rt.left = rt.top = 0;
-            m_pWidgetMgr->RepaintWidget(pCheckBox, &rt);
+            m_pWidgetMgr->RepaintWidget(pCheckBox, rt);
             break;
           }
         }
@@ -311,7 +311,7 @@ void CFWL_CheckBox::NextStates() {
     }
   }
 
-  Repaint(&m_rtClient);
+  RepaintRect(m_rtClient);
   if (dwFirststate == m_pProperties->m_dwStates)
     return;
 
@@ -374,7 +374,7 @@ void CFWL_CheckBox::OnFocusChanged(bool bSet) {
   else
     m_pProperties->m_dwStates &= ~FWL_WGTSTATE_Focused;
 
-  Repaint(&m_rtClient);
+  RepaintRect(m_rtClient);
 }
 
 void CFWL_CheckBox::OnLButtonDown() {
@@ -386,7 +386,7 @@ void CFWL_CheckBox::OnLButtonDown() {
   m_bBtnDown = true;
   m_pProperties->m_dwStates &= ~FWL_STATE_CKB_Hovered;
   m_pProperties->m_dwStates |= FWL_STATE_CKB_Pressed;
-  Repaint(&m_rtClient);
+  RepaintRect(m_rtClient);
 }
 
 void CFWL_CheckBox::OnLButtonUp(CFWL_MessageMouse* pMsg) {
@@ -436,7 +436,7 @@ void CFWL_CheckBox::OnMouseMove(CFWL_MessageMouse* pMsg) {
     }
   }
   if (bRepaint)
-    Repaint(&m_rtBox);
+    RepaintRect(m_rtBox);
 }
 
 void CFWL_CheckBox::OnMouseLeave() {
@@ -445,7 +445,7 @@ void CFWL_CheckBox::OnMouseLeave() {
   else
     m_pProperties->m_dwStates &= ~FWL_STATE_CKB_Hovered;
 
-  Repaint(&m_rtBox);
+  RepaintRect(m_rtBox);
 }
 
 void CFWL_CheckBox::OnKeyDown(CFWL_MessageKey* pMsg) {

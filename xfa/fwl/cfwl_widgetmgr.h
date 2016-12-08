@@ -42,7 +42,7 @@ class CFWL_WidgetMgr : public CFWL_WidgetMgrDelegate {
   CFWL_Widget* GetFirstChildWidget(CFWL_Widget* pWidget) const;
   CFWL_Widget* GetSystemFormWidget(CFWL_Widget* pWidget) const;
 
-  void RepaintWidget(CFWL_Widget* pWidget, const CFX_RectF* pRect);
+  void RepaintWidget(CFWL_Widget* pWidget, const CFX_RectF& pRect);
 
   void InsertWidget(CFWL_Widget* pParent, CFWL_Widget* pChild);
   void RemoveWidget(CFWL_Widget* pWidget);

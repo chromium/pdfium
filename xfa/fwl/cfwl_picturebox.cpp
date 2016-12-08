@@ -29,7 +29,7 @@ void CFWL_PictureBox::Update() {
   if (!m_pProperties->m_pThemeProvider)
     m_pProperties->m_pThemeProvider = GetAvailableTheme();
 
-  GetClientRect(m_rtClient);
+  m_rtClient = GetClientRect();
 }
 
 void CFWL_PictureBox::DrawWidget(CFX_Graphics* pGraphics,

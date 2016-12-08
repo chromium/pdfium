@@ -53,7 +53,7 @@ class CFWL_Widget : public IFWL_WidgetDelegate {
   virtual bool IsInstance(const CFX_WideStringC& wsClass) const;
   virtual CFX_RectF GetAutosizedWidgetRect();
   virtual CFX_RectF GetWidgetRect();
-  virtual void GetClientRect(CFX_RectF& rect);
+  virtual CFX_RectF GetClientRect();
   virtual void ModifyStylesEx(uint32_t dwStylesExAdded,
                               uint32_t dwStylesExRemoved);
   virtual void SetStates(uint32_t dwStates);
@@ -109,7 +109,8 @@ class CFWL_Widget : public IFWL_WidgetDelegate {
   void SetLayoutItem(void* pItem) { m_pLayoutItem = pItem; }
 
   void SetFocus(bool bFocus);
-  void Repaint(const CFX_RectF* pRect);
+  void RepaintRect(const CFX_RectF& pRect);
+  void Repaint();
 
  protected:
   CFWL_Widget(const CFWL_App* app,
@@ -121,10 +122,10 @@ class CFWL_Widget : public IFWL_WidgetDelegate {
   bool IsLocked() const { return m_iLock > 0; }
   bool HasBorder() const;
   bool HasEdge() const;
-  void GetEdgeRect(CFX_RectF& rtEdge);
+  CFX_RectF GetEdgeRect();
   FX_FLOAT GetBorderSize(bool bCX);
   FX_FLOAT GetEdgeWidth();
-  void GetRelativeRect(CFX_RectF& rect);
+  CFX_RectF GetRelativeRect();
   void* GetThemeCapacity(CFWL_WidgetCapacity dwCapacity);
   IFWL_ThemeProvider* GetAvailableTheme();
   CFX_SizeF CalcTextSize(const CFX_WideString& wsText,

@@ -62,7 +62,7 @@ void CFWL_ComboList::ChangeSelected(int32_t iSel) {
     SetSelItem(hSel, true);
   }
   if (!rtInvalidate.IsEmpty())
-    Repaint(&rtInvalidate);
+    RepaintRect(rtInvalidate);
 }
 
 void CFWL_ComboList::ClientToOuter(FX_FLOAT& fx, FX_FLOAT& fy) {
@@ -236,7 +236,7 @@ void CFWL_ComboList::OnDropListKeyDown(CFWL_MessageKey* pKey) {
       CFX_RectF rtInvalidate;
       rtInvalidate.Set(0, 0, m_pProperties->m_rtWidget.width,
                        m_pProperties->m_rtWidget.height);
-      Repaint(&rtInvalidate);
+      RepaintRect(rtInvalidate);
       break;
     }
     default:

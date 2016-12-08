@@ -23,7 +23,7 @@ CFWL_ComboEdit::CFWL_ComboEdit(
 
 void CFWL_ComboEdit::ClearSelected() {
   ClearSelections();
-  Repaint(&GetRTClient());
+  RepaintRect(GetRTClient());
 }
 
 void CFWL_ComboEdit::SetSelected() {

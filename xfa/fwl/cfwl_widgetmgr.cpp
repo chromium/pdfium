@@ -148,18 +148,18 @@ void CFWL_WidgetMgr::AppendWidget(CFWL_Widget* pWidget) {
 }
 
 void CFWL_WidgetMgr::RepaintWidget(CFWL_Widget* pWidget,
-                                   const CFX_RectF* pRect) {
+                                   const CFX_RectF& rect) {
   if (!m_pAdapter)
     return;
 
   CFWL_Widget* pNative = pWidget;
-  CFX_RectF rect(*pRect);
+  CFX_RectF transformedRect = rect;
   if (IsFormDisabled()) {
     CFWL_Widget* pOuter = pWidget->GetOuter();
     while (pOuter) {
       CFX_RectF rtTemp = pNative->GetWidgetRect();
-      rect.left += rtTemp.left;
-      rect.top += rtTemp.top;
+      transformedRect.left += rtTemp.left;
+      transformedRect.top += rtTemp.top;
       pNative = pOuter;
       pOuter = pOuter->GetOuter();
     }
@@ -168,10 +168,10 @@ void CFWL_WidgetMgr::RepaintWidget(CFWL_Widget* pWidget,
     if (!pNative)
       return;
 
-    pWidget->TransformTo(pNative, rect.left, rect.top);
+    pWidget->TransformTo(pNative, transformedRect.left, transformedRect.top);
   }
   AddRedrawCounts(pNative);
-  m_pAdapter->RepaintWidget(pNative, &rect);
+  m_pAdapter->RepaintWidget(pNative);
 }
 
 void CFWL_WidgetMgr::InsertWidget(CFWL_Widget* pParent, CFWL_Widget* pChild) {
@@ -497,11 +497,8 @@ void CFWL_WidgetMgr::OnDrawWidget(CFWL_Widget* pWidget,
   }
 #endif  // _FX_OS_ == _FX_MACOSX_
 
-  if (!IsFormDisabled()) {
-    CFX_RectF rtClient;
-    pWidget->GetClientRect(rtClient);
-    clipBounds.Intersect(rtClient);
-  }
+  if (!IsFormDisabled())
+    clipBounds.Intersect(pWidget->GetClientRect());
   if (!clipBounds.IsEmpty())
     DrawChild(pWidget, clipBounds, pTemp, pMatrix);
 

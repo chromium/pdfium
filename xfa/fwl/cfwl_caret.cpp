@@ -108,5 +108,5 @@ void CFWL_Caret::Timer::Run(CFWL_TimerInfo* pTimerInfo) {
 
   CFX_RectF rt = pCaret->GetWidgetRect();
   rt.Set(0, 0, rt.width + 1, rt.height);
-  pCaret->Repaint(&rt);
+  pCaret->RepaintRect(rt);
 }

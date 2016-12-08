@@ -429,7 +429,7 @@ void CFWL_Edit::OnCaretChanged() {
   if (bRepaintContent || bRepaintScroll) {
     if (bRepaintContent)
       rtInvalid.Union(m_rtEngine);
-    Repaint(&rtInvalid);
+    RepaintRect(rtInvalid);
   }
 }
 
@@ -437,21 +437,16 @@ void CFWL_Edit::OnTextChanged(const FDE_TXTEDT_TEXTCHANGE_INFO& ChangeInfo) {
   if (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_VAlignMask)
     UpdateVAlignment();
 
-  CFX_RectF rtTemp;
-  GetClientRect(rtTemp);
-
   CFWL_EventTextChanged event(this);
   event.wsPrevText = ChangeInfo.wsPrevText;
   DispatchEvent(&event);
 
   LayoutScrollBar();
-  Repaint(&rtTemp);
+  RepaintRect(GetClientRect());
 }
 
 void CFWL_Edit::OnSelChanged() {
-  CFX_RectF rtTemp;
-  GetClientRect(rtTemp);
-  Repaint(&rtTemp);
+  RepaintRect(GetClientRect());
 }
 
 bool CFWL_Edit::OnPageLoad(int32_t nPageIndex) {
@@ -863,10 +858,8 @@ void CFWL_Edit::UpdateCaret() {
   CFX_RectF rtCaret;
   rtCaret.Set(rtFDE.left, rtFDE.top, rtFDE.width, rtFDE.height);
 
-  CFX_RectF rtClient;
-  GetClientRect(rtClient);
+  CFX_RectF rtClient = GetClientRect();
   rtCaret.Intersect(rtClient);
-
   if (rtCaret.left > rtClient.right()) {
     FX_FLOAT right = rtCaret.right();
     rtCaret.left = rtClient.right() - 1;
@@ -990,7 +983,7 @@ int32_t CFWL_Edit::AddDoRecord(std::unique_ptr<IFDE_TxtEdtDoRecord> pRecord) {
 }
 
 void CFWL_Edit::Layout() {
-  GetClientRect(m_rtClient);
+  m_rtClient = GetClientRect();
   m_rtEngine = m_rtClient;
   FX_FLOAT* pfWidth = static_cast<FX_FLOAT*>(
       GetThemeCapacity(CFWL_WidgetCapacity::ScrollBarWidth));
@@ -1162,7 +1155,7 @@ void CFWL_Edit::ShowCaret(CFX_RectF* pRect) {
     m_pCaret->ShowCaret();
     if (!pRect->IsEmpty())
       m_pCaret->SetWidgetRect(*pRect);
-    Repaint(&m_rtEngine);
+    RepaintRect(m_rtEngine);
     return;
   }
 
@@ -1196,7 +1189,7 @@ void CFWL_Edit::ShowCaret(CFX_RectF* pRect) {
 void CFWL_Edit::HideCaret(CFX_RectF* pRect) {
   if (m_pCaret) {
     m_pCaret->HideCaret();
-    Repaint(&m_rtEngine);
+    RepaintRect(m_rtEngine);
     return;
   }
 
@@ -1391,7 +1384,7 @@ void CFWL_Edit::OnFocusChanged(CFWL_Message* pMsg, bool bSet) {
   CFX_RectF rtInvalidate;
   rtInvalidate.Set(0, 0, m_pProperties->m_rtWidget.width,
                    m_pProperties->m_rtWidget.height);
-  Repaint(&rtInvalidate);
+  RepaintRect(rtInvalidate);
 }
 
 void CFWL_Edit::OnLButtonDown(CFWL_MessageMouse* pMsg) {
@@ -1417,7 +1410,7 @@ void CFWL_Edit::OnLButtonDown(CFWL_MessageMouse* pMsg) {
     m_nSelStart = nIndex;
   }
   if (bRepaint)
-    Repaint(&m_rtEngine);
+    RepaintRect(m_rtEngine);
 }
 
 void CFWL_Edit::OnLButtonUp(CFWL_MessageMouse* pMsg) {
@@ -1439,7 +1432,7 @@ void CFWL_Edit::OnButtonDblClk(CFWL_MessageMouse* pMsg) {
 
   m_EdtEngine.AddSelRange(nIndex, nCount);
   m_EdtEngine.SetCaretPos(nIndex + nCount - 1, false);
-  Repaint(&m_rtEngine);
+  RepaintRect(m_rtEngine);
 }
 
 void CFWL_Edit::OnMouseMove(CFWL_MessageMouse* pMsg) {
@@ -1639,6 +1632,6 @@ bool CFWL_Edit::OnScroll(CFWL_ScrollBar* pScrollBar,
   CFX_RectF rect = GetWidgetRect();
   CFX_RectF rtInvalidate;
   rtInvalidate.Set(0, 0, rect.width + 2, rect.height + 2);
-  Repaint(&rtInvalidate);
+  RepaintRect(rtInvalidate);
   return true;
 }
