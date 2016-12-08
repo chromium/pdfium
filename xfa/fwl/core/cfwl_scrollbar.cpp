@@ -62,25 +62,6 @@ FWL_Type CFWL_ScrollBar::GetClassID() const {
   return FWL_Type::ScrollBar;
 }
 
-void CFWL_ScrollBar::GetWidgetRect(CFX_RectF& rect, bool bAutoSize) {
-  if (!bAutoSize) {
-    rect = m_pProperties->m_rtWidget;
-    return;
-  }
-
-  rect.Set(0, 0, 0, 0);
-  FX_FLOAT* pfMinWidth = static_cast<FX_FLOAT*>(
-      GetThemeCapacity(CFWL_WidgetCapacity::ScrollBarWidth));
-  if (!pfMinWidth)
-    return;
-  if (IsVertical())
-    rect.Set(0, 0, (*pfMinWidth), (*pfMinWidth) * 3);
-  else
-    rect.Set(0, 0, (*pfMinWidth) * 3, (*pfMinWidth));
-
-  InflateWidgetRect(rect);
-}
-
 void CFWL_ScrollBar::Update() {
   if (IsLocked())
     return;

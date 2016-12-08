@@ -160,15 +160,12 @@ FWL_Type CFWL_MonthCalendar::GetClassID() const {
   return FWL_Type::MonthCalendar;
 }
 
-void CFWL_MonthCalendar::GetWidgetRect(CFX_RectF& rect, bool bAutoSize) {
-  if (!bAutoSize) {
-    rect = m_pProperties->m_rtWidget;
-    return;
-  }
-
+CFX_RectF CFWL_MonthCalendar::GetAutosizedWidgetRect() {
   CFX_SizeF fs = CalcSize();
+  CFX_RectF rect;
   rect.Set(0, 0, fs.x, fs.y);
   InflateWidgetRect(rect);
+  return rect;
 }
 
 void CFWL_MonthCalendar::Update() {
@@ -976,9 +973,8 @@ void CFWL_MonthCalendar::OnLButtonUp(CFWL_MsgMouse* pMsg) {
     iOldSel = m_arrSelDays[0];
 
   int32_t iCurSel = GetDayAtPoint(pMsg->m_fx, pMsg->m_fy);
-  CFX_RectF rt;
   CFWL_DateTimePicker* pIPicker = static_cast<CFWL_DateTimePicker*>(m_pOuter);
-  pIPicker->GetFormProxy()->GetWidgetRect(rt, false);
+  CFX_RectF rt = pIPicker->GetFormProxy()->GetWidgetRect();
   rt.Set(0, 0, rt.width, rt.height);
   if (iCurSel > 0) {
     DATEINFO* lpDatesInfo = m_arrDates.GetAt(iCurSel - 1);

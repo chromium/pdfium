@@ -20,9 +20,6 @@
 #include "xfa/fwl/core/ifwl_themeprovider.h"
 
 namespace {
-
-const int kMinWidth = 18;
-const int kMinHeight = 32;
 const int kElapseTime = 200;
 
 }  // namespace
@@ -47,16 +44,6 @@ CFWL_SpinButton::~CFWL_SpinButton() {}
 
 FWL_Type CFWL_SpinButton::GetClassID() const {
   return FWL_Type::SpinButton;
-}
-
-void CFWL_SpinButton::GetWidgetRect(CFX_RectF& rect, bool bAutoSize) {
-  if (!bAutoSize) {
-    rect = m_pProperties->m_rtWidget;
-    return;
-  }
-
-  rect.Set(0, 0, kMinWidth, kMinHeight);
-  InflateWidgetRect(rect);
 }
 
 void CFWL_SpinButton::Update() {

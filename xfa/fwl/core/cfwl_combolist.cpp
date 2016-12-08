@@ -86,8 +86,7 @@ void CFWL_ComboList::OnProcessMessage(CFWL_Message* pMessage) {
     CFWL_MsgMouse* pMsg = static_cast<CFWL_MsgMouse*>(pMessage);
     CFWL_ScrollBar* vertSB = GetVertScrollBar();
     if (IsShowScrollBar(true) && vertSB) {
-      CFX_RectF rect;
-      vertSB->GetWidgetRect(rect, false);
+      CFX_RectF rect = vertSB->GetWidgetRect();
       if (rect.Contains(pMsg->m_fx, pMsg->m_fy)) {
         pMsg->m_fx -= rect.left;
         pMsg->m_fy -= rect.top;
@@ -140,8 +139,7 @@ void CFWL_ComboList::OnDropListMouseMove(CFWL_MsgMouse* pMsg) {
 
     CFWL_ScrollBar* vertSB = GetVertScrollBar();
     if (IsShowScrollBar(true) && vertSB) {
-      CFX_RectF rect;
-      vertSB->GetWidgetRect(rect, false);
+      CFX_RectF rect = vertSB->GetWidgetRect();
       if (rect.Contains(pMsg->m_fx, pMsg->m_fy))
         return;
     }
@@ -176,8 +174,7 @@ void CFWL_ComboList::OnDropListLButtonUp(CFWL_MsgMouse* pMsg) {
 
   CFWL_ScrollBar* vertSB = GetVertScrollBar();
   if (IsShowScrollBar(true) && vertSB) {
-    CFX_RectF rect;
-    vertSB->GetWidgetRect(rect, false);
+    CFX_RectF rect = vertSB->GetWidgetRect();
     if (rect.Contains(pMsg->m_fx, pMsg->m_fy))
       return;
   }

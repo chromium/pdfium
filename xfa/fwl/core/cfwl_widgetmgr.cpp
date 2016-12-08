@@ -157,8 +157,7 @@ void CFWL_WidgetMgr::RepaintWidget(CFWL_Widget* pWidget,
   if (IsFormDisabled()) {
     CFWL_Widget* pOuter = pWidget->GetOuter();
     while (pOuter) {
-      CFX_RectF rtTemp;
-      pNative->GetWidgetRect(rtTemp, false);
+      CFX_RectF rtTemp = pNative->GetWidgetRect();
       rect.left += rtTemp.left;
       rect.top += rtTemp.top;
       pNative = pOuter;
@@ -304,8 +303,7 @@ CFWL_Widget* CFWL_WidgetMgr::GetWidgetAtPoint(CFWL_Widget* parent,
       m.SetIdentity();
       m.SetReverse(matrixOnParent);
       m.TransformPoint(x1, y1);
-      CFX_RectF bounds;
-      child->GetWidgetRect(bounds, false);
+      CFX_RectF bounds = child->GetWidgetRect();
       if (bounds.Contains(x1, y1)) {
         x1 -= bounds.left;
         y1 -= bounds.top;
@@ -473,8 +471,7 @@ void CFWL_WidgetMgr::OnDrawWidget(CFWL_Widget* pWidget,
     return;
 
   CFX_Graphics* pTemp = DrawWidgetBefore(pWidget, pGraphics, pMatrix);
-  CFX_RectF clipCopy;
-  pWidget->GetWidgetRect(clipCopy, false);
+  CFX_RectF clipCopy = pWidget->GetWidgetRect();
   clipCopy.left = clipCopy.top = 0;
 
   if (UseOffscreenDirect(pWidget)) {
@@ -527,8 +524,7 @@ void CFWL_WidgetMgr::DrawChild(CFWL_Widget* parent,
     if (child->GetStates() & FWL_WGTSTATE_Invisible)
       continue;
 
-    CFX_RectF rtWidget;
-    child->GetWidgetRect(rtWidget, false);
+    CFX_RectF rtWidget = child->GetWidgetRect();
     if (rtWidget.IsEmpty())
       continue;
 
@@ -572,8 +568,7 @@ CFX_Graphics* CFWL_WidgetMgr::DrawWidgetBefore(CFWL_Widget* pWidget,
   Item* pItem = GetWidgetMgrItem(pWidget);
   if (!pItem->pOffscreen) {
     pItem->pOffscreen.reset(new CFX_Graphics);
-    CFX_RectF rect;
-    pWidget->GetWidgetRect(rect, false);
+    CFX_RectF rect = pWidget->GetWidgetRect();
     pItem->pOffscreen->Create((int32_t)rect.width, (int32_t)rect.height,
                               FXDIB_Argb);
   }
@@ -608,8 +603,7 @@ bool CFWL_WidgetMgr::IsNeedRepaint(CFWL_Widget* pWidget,
     return true;
   }
 
-  CFX_RectF rtWidget;
-  pWidget->GetWidgetRect(rtWidget, false);
+  CFX_RectF rtWidget = pWidget->GetWidgetRect();
   rtWidget.left = rtWidget.top = 0;
   pMatrix->TransformRect(rtWidget);
   if (!rtWidget.IntersectWith(rtDirty))
@@ -645,8 +639,7 @@ bool CFWL_WidgetMgr::IsNeedRepaint(CFWL_Widget* pWidget,
   hitPoint[10].hitPoint.y = hitPoint[11].hitPoint.y =
       rtWidget.height + rtWidget.top;
   do {
-    CFX_RectF rect;
-    pChild->GetWidgetRect(rect, false);
+    CFX_RectF rect = pChild->GetWidgetRect();
     CFX_RectF r = rect;
     r.left += rtWidget.left;
     r.top += rtWidget.top;
@@ -706,8 +699,7 @@ bool CFWL_WidgetMgr::UseOffscreenDirect(CFWL_Widget* pWidget) const {
 
 #if (_FX_OS_ == _FX_WIN32_DESKTOP_) || (_FX_OS_ == _FX_WIN64_)
   if (pItem->bOutsideChanged) {
-    CFX_RectF r;
-    pWidget->GetWidgetRect(r, false);
+    CFX_RectF r = pWidget->GetWidgetRect();
     CFX_RectF temp(m_rtScreen);
     temp.Deflate(50, 50);
     if (!temp.Contains(r))

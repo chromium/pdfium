@@ -43,7 +43,6 @@ class CFWL_Form : public CFWL_Widget {
   // CFWL_Widget
   FWL_Type GetClassID() const override;
   bool IsInstance(const CFX_WideStringC& wsClass) const override;
-  void GetWidgetRect(CFX_RectF& rect, bool bAutoSize) override;
   void GetClientRect(CFX_RectF& rect) override;
   void Update() override;
   FWL_WidgetHit HitTest(FX_FLOAT fx, FX_FLOAT fy) override;

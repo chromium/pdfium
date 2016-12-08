@@ -23,16 +23,6 @@ FWL_Type CFWL_PictureBox::GetClassID() const {
   return FWL_Type::PictureBox;
 }
 
-void CFWL_PictureBox::GetWidgetRect(CFX_RectF& rect, bool bAutoSize) {
-  if (!bAutoSize) {
-    rect = m_pProperties->m_rtWidget;
-    return;
-  }
-
-  rect.Set(0, 0, 0, 0);
-  InflateWidgetRect(rect);
-}
-
 void CFWL_PictureBox::Update() {
   if (IsLocked())
     return;

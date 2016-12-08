@@ -26,7 +26,6 @@ class CFWL_SpinButton : public CFWL_Widget {
 
   // CFWL_Widget
   FWL_Type GetClassID() const override;
-  void GetWidgetRect(CFX_RectF& rect, bool bAutoSize) override;
   void Update() override;
   FWL_WidgetHit HitTest(FX_FLOAT fx, FX_FLOAT fy) override;
   void DrawWidget(CFX_Graphics* pGraphics, const CFX_Matrix* pMatrix) override;

@@ -80,20 +80,6 @@ bool CFWL_Form::IsInstance(const CFX_WideStringC& wsClass) const {
   return CFWL_Widget::IsInstance(wsClass);
 }
 
-void CFWL_Form::GetWidgetRect(CFX_RectF& rect, bool bAutoSize) {
-  if (!bAutoSize) {
-    rect = m_pProperties->m_rtWidget;
-    return;
-  }
-
-  rect.Reset();
-  FX_FLOAT fCXBorder = GetBorderSize(true);
-  FX_FLOAT fCYBorder = GetBorderSize(false);
-  FX_FLOAT fEdge = GetEdgeWidth();
-  rect.height += fCYBorder + fEdge + fEdge;
-  rect.width += fCXBorder + fCXBorder + fEdge + fEdge;
-}
-
 void CFWL_Form::GetClientRect(CFX_RectF& rect) {
   rect = m_pProperties->m_rtWidget;
   rect.Offset(-rect.left, -rect.top);

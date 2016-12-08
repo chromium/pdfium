@@ -49,21 +49,6 @@ FWL_Type CFWL_ListBox::GetClassID() const {
   return FWL_Type::ListBox;
 }
 
-void CFWL_ListBox::GetWidgetRect(CFX_RectF& rect, bool bAutoSize) {
-  if (!bAutoSize) {
-    rect = m_pProperties->m_rtWidget;
-    return;
-  }
-
-  rect.Set(0, 0, 0, 0);
-  if (!m_pProperties->m_pThemeProvider)
-    m_pProperties->m_pThemeProvider = GetAvailableTheme();
-
-  CFX_SizeF fs = CalcSize(true);
-  rect.Set(0, 0, fs.x, fs.y);
-  InflateWidgetRect(rect);
-}
-
 void CFWL_ListBox::Update() {
   if (IsLocked())
     return;
@@ -95,14 +80,12 @@ void CFWL_ListBox::Update() {
 
 FWL_WidgetHit CFWL_ListBox::HitTest(FX_FLOAT fx, FX_FLOAT fy) {
   if (IsShowScrollBar(false)) {
-    CFX_RectF rect;
-    m_pHorzScrollBar->GetWidgetRect(rect, false);
+    CFX_RectF rect = m_pHorzScrollBar->GetWidgetRect();
     if (rect.Contains(fx, fy))
       return FWL_WidgetHit::HScrollBar;
   }
   if (IsShowScrollBar(true)) {
-    CFX_RectF rect;
-    m_pVertScrollBar->GetWidgetRect(rect, false);
+    CFX_RectF rect = m_pVertScrollBar->GetWidgetRect();
     if (rect.Contains(fx, fy))
       return FWL_WidgetHit::VScrollBar;
   }

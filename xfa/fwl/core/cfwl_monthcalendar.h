@@ -35,7 +35,7 @@ class CFWL_MonthCalendar : public CFWL_Widget {
 
   // FWL_WidgetImp
   FWL_Type GetClassID() const override;
-  void GetWidgetRect(CFX_RectF& rect, bool bAutoSize) override;
+  CFX_RectF GetAutosizedWidgetRect() override;
   void Update() override;
   void DrawWidget(CFX_Graphics* pGraphics, const CFX_Matrix* pMatrix) override;
   void OnProcessMessage(CFWL_Message* pMessage) override;

@@ -35,22 +35,6 @@ FWL_Type CFWL_PushButton::GetClassID() const {
   return FWL_Type::PushButton;
 }
 
-void CFWL_PushButton::GetWidgetRect(CFX_RectF& rect, bool bAutoSize) {
-  if (!bAutoSize) {
-    rect = m_pProperties->m_rtWidget;
-    return;
-  }
-
-  rect.Set(0, 0, 0, 0);
-  if (!m_pProperties->m_pThemeProvider)
-    m_pProperties->m_pThemeProvider = GetAvailableTheme();
-
-  FX_FLOAT* fcaption =
-      static_cast<FX_FLOAT*>(GetThemeCapacity(CFWL_WidgetCapacity::Margin));
-  rect.Inflate(*fcaption, *fcaption);
-  InflateWidgetRect(rect);
-}
-
 void CFWL_PushButton::SetStates(uint32_t dwStates) {
   if (dwStates & FWL_WGTSTATE_Disabled) {
     m_pProperties->m_dwStates = FWL_WGTSTATE_Disabled;

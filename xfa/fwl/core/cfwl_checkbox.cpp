@@ -50,29 +50,6 @@ void CFWL_CheckBox::SetBoxSize(FX_FLOAT fHeight) {
   m_fBoxHeight = fHeight;
 }
 
-void CFWL_CheckBox::GetWidgetRect(CFX_RectF& rect, bool bAutoSize) {
-  if (!bAutoSize) {
-    rect = m_pProperties->m_rtWidget;
-    return;
-  }
-
-  rect.Set(0, 0, 0, 0);
-  if (!m_pProperties->m_pThemeProvider)
-    m_pProperties->m_pThemeProvider = GetAvailableTheme();
-  if (!m_pProperties->m_pThemeProvider)
-    return;
-
-  CFX_SizeF sz = CalcTextSize(
-      L"Check box", m_pProperties->m_pThemeProvider,
-      !!(m_pProperties->m_dwStyleExes & FWL_STYLEEXT_CKB_MultiLine));
-  rect.Set(0, 0, sz.x, sz.y);
-  rect.Inflate(kCaptionMargin, kCaptionMargin);
-
-  rect.width += m_fBoxHeight;
-  rect.height = std::max(rect.height, m_fBoxHeight);
-  InflateWidgetRect(rect);
-}
-
 void CFWL_CheckBox::Update() {
   if (IsLocked())
     return;
@@ -308,8 +285,7 @@ void CFWL_CheckBox::NextStates() {
           if (pCheckBox != this &&
               pCheckBox->GetStates() & FWL_STATE_CKB_Checked) {
             pCheckBox->SetCheckState(0);
-            CFX_RectF rt;
-            pCheckBox->GetWidgetRect(rt, false);
+            CFX_RectF rt = pCheckBox->GetWidgetRect();
             rt.left = rt.top = 0;
             m_pWidgetMgr->RepaintWidget(pCheckBox, &rt);
             break;

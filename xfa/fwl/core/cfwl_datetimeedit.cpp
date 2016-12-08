@@ -50,8 +50,7 @@ void CFWL_DateTimeEdit::DisForm_OnProcessMessage(CFWL_Message* pMessage) {
     CFWL_DateTimePicker* pDateTime =
         static_cast<CFWL_DateTimePicker*>(m_pOuter);
     if (pDateTime->IsMonthCalendarVisible()) {
-      CFX_RectF rtInvalidate;
-      pDateTime->GetWidgetRect(rtInvalidate, false);
+      CFX_RectF rtInvalidate = pDateTime->GetWidgetRect();
       pDateTime->ShowMonthCalendar(false);
       rtInvalidate.Offset(-rtInvalidate.left, -rtInvalidate.top);
       pDateTime->Repaint(&rtInvalidate);

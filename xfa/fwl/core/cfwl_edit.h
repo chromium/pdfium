@@ -65,7 +65,8 @@ class CFWL_Edit : public CFWL_Widget {
 
   // CFWL_Widget:
   FWL_Type GetClassID() const override;
-  void GetWidgetRect(CFX_RectF& rect, bool bAutoSize) override;
+  CFX_RectF GetAutosizedWidgetRect() override;
+  CFX_RectF GetWidgetRect() override;
   void Update() override;
   FWL_WidgetHit HitTest(FX_FLOAT fx, FX_FLOAT fy) override;
   void SetStates(uint32_t dwStates) override;

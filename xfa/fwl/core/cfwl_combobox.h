@@ -54,7 +54,6 @@ class CFWL_ComboBox : public CFWL_Widget {
 
   // CFWL_Widget
   FWL_Type GetClassID() const override;
-  void GetWidgetRect(CFX_RectF& rect, bool bAutoSize) override;
   void ModifyStylesEx(uint32_t dwStylesExAdded,
                       uint32_t dwStylesExRemoved) override;
   void SetStates(uint32_t dwStates) override;

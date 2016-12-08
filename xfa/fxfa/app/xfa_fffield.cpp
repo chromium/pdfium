@@ -69,8 +69,8 @@ void CXFA_FFField::RenderWidget(CFX_Graphics* pGS,
   DrawBorder(pGS, borderUI, m_rtUI, &mtRotate);
   RenderCaption(pGS, &mtRotate);
   DrawHighlight(pGS, &mtRotate, dwStatus, false);
-  CFX_RectF rtWidget;
-  m_pNormalWidget->GetWidgetRect(rtWidget, false);
+
+  CFX_RectF rtWidget = m_pNormalWidget->GetWidgetRect();
   CFX_Matrix mt;
   mt.Set(1, 0, 0, 1, rtWidget.left, rtWidget.top);
   mt.Concat(mtRotate);
@@ -363,15 +363,16 @@ bool CXFA_FFField::OnMouseExit() {
   TranslateFWLMessage(&ms);
   return true;
 }
+
 void CXFA_FFField::FWLToClient(FX_FLOAT& fx, FX_FLOAT& fy) {
-  if (!m_pNormalWidget) {
+  if (!m_pNormalWidget)
     return;
-  }
-  CFX_RectF rtWidget;
-  m_pNormalWidget->GetWidgetRect(rtWidget, false);
+
+  CFX_RectF rtWidget = m_pNormalWidget->GetWidgetRect();
   fx -= rtWidget.left;
   fy -= rtWidget.top;
 }
+
 bool CXFA_FFField::OnLButtonDown(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) {
   if (!m_pNormalWidget) {
     return false;
@@ -585,20 +586,15 @@ FWL_WidgetHit CXFA_FFField::OnHitTest(FX_FLOAT fx, FX_FLOAT fy) {
     return FWL_WidgetHit::Titlebar;
   return FWL_WidgetHit::Border;
 }
+
 bool CXFA_FFField::OnSetCursor(FX_FLOAT fx, FX_FLOAT fy) {
   return true;
 }
+
 bool CXFA_FFField::PtInActiveRect(FX_FLOAT fx, FX_FLOAT fy) {
-  if (!m_pNormalWidget) {
-    return false;
-  }
-  CFX_RectF rtWidget;
-  m_pNormalWidget->GetWidgetRect(rtWidget, false);
-  if (rtWidget.Contains(fx, fy)) {
-    return true;
-  }
-  return false;
+  return m_pNormalWidget && m_pNormalWidget->GetWidgetRect().Contains(fx, fy);
 }
+
 void CXFA_FFField::LayoutCaption() {
   CXFA_TextLayout* pCapTextLayout = m_pDataAcc->GetCaptionTextLayout();
   if (!pCapTextLayout)

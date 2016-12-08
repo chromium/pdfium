@@ -42,7 +42,6 @@ class CFWL_DateTimePicker : public CFWL_Widget {
 
   // CFWL_Widget
   FWL_Type GetClassID() const override;
-  void GetWidgetRect(CFX_RectF& rect, bool bAutoSize) override;
   void Update() override;
   FWL_WidgetHit HitTest(FX_FLOAT fx, FX_FLOAT fy) override;
   void DrawWidget(CFX_Graphics* pGraphics, const CFX_Matrix* pMatrix) override;
@@ -93,7 +92,6 @@ class CFWL_DateTimePicker : public CFWL_Widget {
   FWL_WidgetHit DisForm_HitTest(FX_FLOAT fx, FX_FLOAT fy) const;
   bool DisForm_IsNeedShowButton() const;
   void DisForm_Update();
-  void DisForm_GetWidgetRect(CFX_RectF& rect, bool bAutoSize);
   void DisForm_GetBBox(CFX_RectF& rect) const;
   void DisForm_DrawWidget(CFX_Graphics* pGraphics, const CFX_Matrix* pMatrix);
   void DisForm_OnFocusChanged(CFWL_Message* pMsg, bool bSet);

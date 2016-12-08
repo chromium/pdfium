@@ -51,7 +51,8 @@ class CFWL_Widget : public IFWL_WidgetDelegate {
 
   virtual FWL_Type GetClassID() const = 0;
   virtual bool IsInstance(const CFX_WideStringC& wsClass) const;
-  virtual void GetWidgetRect(CFX_RectF& rect, bool bAutoSize);
+  virtual CFX_RectF GetAutosizedWidgetRect();
+  virtual CFX_RectF GetWidgetRect();
   virtual void GetClientRect(CFX_RectF& rect);
   virtual void ModifyStylesEx(uint32_t dwStylesExAdded,
                               uint32_t dwStylesExRemoved);
