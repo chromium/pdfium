@@ -6,9 +6,9 @@
 
 #include "xfa/fwl/theme/cfwl_listboxtp.h"
 
-#include "xfa/fwl/core/cfwl_listbox.h"
-#include "xfa/fwl/core/cfwl_themebackground.h"
-#include "xfa/fwl/core/cfwl_widget.h"
+#include "xfa/fwl/cfwl_listbox.h"
+#include "xfa/fwl/cfwl_themebackground.h"
+#include "xfa/fwl/cfwl_widget.h"
 #include "xfa/fxgraphics/cfx_color.h"
 #include "xfa/fxgraphics/cfx_path.h"
 

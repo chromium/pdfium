@@ -11,8 +11,8 @@
 #include <vector>
 
 #include "fpdfsdk/fpdfxfa/cpdfxfa_context.h"
-#include "xfa/fwl/core/cfwl_timerinfo.h"
-#include "xfa/fwl/core/ifwl_adaptertimermgr.h"
+#include "xfa/fwl/cfwl_timerinfo.h"
+#include "xfa/fwl/ifwl_adaptertimermgr.h"
 
 class CXFA_FWLAdapterTimerMgr : public IFWL_AdapterTimerMgr {
  public:

@@ -15,7 +15,7 @@
 #include "core/fxge/cfx_renderdevice.h"
 #include "core/fxge/fx_dib.h"
 #include "core/fxge/fx_font.h"
-#include "xfa/fwl/core/fwl_error.h"
+#include "xfa/fwl/fwl_error.h"
 
 class CFX_Color;
 class CFX_Path;

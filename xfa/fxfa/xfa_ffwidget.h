@@ -11,7 +11,7 @@
 
 #include "core/fxcodec/fx_codec_def.h"
 #include "core/fxge/cfx_graphstatedata.h"
-#include "xfa/fwl/core/cfwl_app.h"
+#include "xfa/fwl/cfwl_app.h"
 #include "xfa/fxfa/fxfa.h"
 #include "xfa/fxfa/parser/cxfa_contentlayoutitem.h"
 

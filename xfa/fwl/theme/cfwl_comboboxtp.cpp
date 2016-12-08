@@ -6,10 +6,10 @@
 
 #include "xfa/fwl/theme/cfwl_comboboxtp.h"
 
-#include "xfa/fwl/core/cfwl_combobox.h"
-#include "xfa/fwl/core/cfwl_themebackground.h"
-#include "xfa/fwl/core/cfwl_widget.h"
-#include "xfa/fwl/core/ifwl_themeprovider.h"
+#include "xfa/fwl/cfwl_combobox.h"
+#include "xfa/fwl/cfwl_themebackground.h"
+#include "xfa/fwl/cfwl_widget.h"
+#include "xfa/fwl/ifwl_themeprovider.h"
 #include "xfa/fxgraphics/cfx_color.h"
 #include "xfa/fxgraphics/cfx_path.h"
 

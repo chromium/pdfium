@@ -17,7 +17,7 @@
 #include "core/fxge/cfx_gemodule.h"
 #include "core/fxge/cfx_pathdata.h"
 #include "core/fxge/cfx_renderdevice.h"
-#include "xfa/fwl/core/fwl_widgethit.h"
+#include "xfa/fwl/fwl_widgethit.h"
 #include "xfa/fxfa/app/xfa_textlayout.h"
 #include "xfa/fxfa/cxfa_eventparam.h"
 #include "xfa/fxfa/fxfa_widget.h"

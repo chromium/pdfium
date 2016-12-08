@@ -6,10 +6,10 @@
 
 #include "xfa/fxfa/app/xfa_ffimageedit.h"
 
-#include "xfa/fwl/core/cfwl_app.h"
-#include "xfa/fwl/core/cfwl_msgmouse.h"
-#include "xfa/fwl/core/cfwl_notedriver.h"
-#include "xfa/fwl/core/cfwl_picturebox.h"
+#include "xfa/fwl/cfwl_app.h"
+#include "xfa/fwl/cfwl_messagemouse.h"
+#include "xfa/fwl/cfwl_notedriver.h"
+#include "xfa/fwl/cfwl_picturebox.h"
 #include "xfa/fxfa/app/xfa_fffield.h"
 #include "xfa/fxfa/xfa_ffdoc.h"
 #include "xfa/fxfa/xfa_ffdocview.h"
@@ -93,7 +93,7 @@ bool CXFA_FFImageEdit::OnLButtonDown(uint32_t dwFlags,
 
   SetButtonDown(true);
 
-  CFWL_MsgMouse ms(nullptr, m_pNormalWidget);
+  CFWL_MessageMouse ms(nullptr, m_pNormalWidget);
   ms.m_dwCmd = FWL_MouseCommand::LeftButtonDown;
   ms.m_dwFlags = dwFlags;
   ms.m_fx = fx;

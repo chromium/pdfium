@@ -17,7 +17,7 @@
 #include "core/fxcrt/fx_ext.h"
 #include "core/fxcrt/fx_memory.h"
 #include "xfa/fde/xml/fde_xml_imp.h"
-#include "xfa/fwl/core/cfwl_notedriver.h"
+#include "xfa/fwl/cfwl_notedriver.h"
 #include "xfa/fxfa/app/xfa_ffnotify.h"
 #include "xfa/fxfa/parser/cxfa_dataexporter.h"
 #include "xfa/fxfa/parser/cxfa_dataimporter.h"

@@ -6,10 +6,10 @@
 
 #include "xfa/fxfa/app/xfa_ffcheckbutton.h"
 
-#include "xfa/fwl/core/cfwl_checkbox.h"
-#include "xfa/fwl/core/cfwl_msgmouse.h"
-#include "xfa/fwl/core/cfwl_notedriver.h"
-#include "xfa/fwl/core/cfwl_widgetmgr.h"
+#include "xfa/fwl/cfwl_checkbox.h"
+#include "xfa/fwl/cfwl_messagemouse.h"
+#include "xfa/fwl/cfwl_notedriver.h"
+#include "xfa/fwl/cfwl_widgetmgr.h"
 #include "xfa/fxfa/app/xfa_ffexclgroup.h"
 #include "xfa/fxfa/app/xfa_fffield.h"
 #include "xfa/fxfa/xfa_ffapp.h"
@@ -246,7 +246,7 @@ bool CXFA_FFCheckButton::OnLButtonUp(uint32_t dwFlags,
     return false;
 
   SetButtonDown(false);
-  CFWL_MsgMouse ms(nullptr, m_pNormalWidget);
+  CFWL_MessageMouse ms(nullptr, m_pNormalWidget);
   ms.m_dwCmd = FWL_MouseCommand::LeftButtonUp;
   ms.m_dwFlags = dwFlags;
   ms.m_fx = fx;

@@ -6,15 +6,15 @@
 
 #include "xfa/fxfa/app/xfa_fffield.h"
 
-#include "xfa/fwl/core/cfwl_edit.h"
-#include "xfa/fwl/core/cfwl_evtmouse.h"
-#include "xfa/fwl/core/cfwl_msgkey.h"
-#include "xfa/fwl/core/cfwl_msgkillfocus.h"
-#include "xfa/fwl/core/cfwl_msgmouse.h"
-#include "xfa/fwl/core/cfwl_msgmousewheel.h"
-#include "xfa/fwl/core/cfwl_msgsetfocus.h"
-#include "xfa/fwl/core/cfwl_picturebox.h"
-#include "xfa/fwl/core/cfwl_widgetmgr.h"
+#include "xfa/fwl/cfwl_edit.h"
+#include "xfa/fwl/cfwl_eventmouse.h"
+#include "xfa/fwl/cfwl_messagekey.h"
+#include "xfa/fwl/cfwl_messagekillfocus.h"
+#include "xfa/fwl/cfwl_messagemouse.h"
+#include "xfa/fwl/cfwl_messagemousewheel.h"
+#include "xfa/fwl/cfwl_messagesetfocus.h"
+#include "xfa/fwl/cfwl_picturebox.h"
+#include "xfa/fwl/cfwl_widgetmgr.h"
 #include "xfa/fxfa/app/xfa_fwltheme.h"
 #include "xfa/fxfa/app/xfa_textlayout.h"
 #include "xfa/fxfa/xfa_ffapp.h"
@@ -349,7 +349,7 @@ bool CXFA_FFField::OnMouseEnter() {
   if (!m_pNormalWidget) {
     return false;
   }
-  CFWL_MsgMouse ms(nullptr, m_pNormalWidget);
+  CFWL_MessageMouse ms(nullptr, m_pNormalWidget);
   ms.m_dwCmd = FWL_MouseCommand::Enter;
   TranslateFWLMessage(&ms);
   return true;
@@ -358,7 +358,7 @@ bool CXFA_FFField::OnMouseExit() {
   if (!m_pNormalWidget) {
     return false;
   }
-  CFWL_MsgMouse ms(nullptr, m_pNormalWidget);
+  CFWL_MessageMouse ms(nullptr, m_pNormalWidget);
   ms.m_dwCmd = FWL_MouseCommand::Leave;
   TranslateFWLMessage(&ms);
   return true;
@@ -385,7 +385,7 @@ bool CXFA_FFField::OnLButtonDown(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) {
     return false;
   }
   SetButtonDown(true);
-  CFWL_MsgMouse ms(nullptr, m_pNormalWidget);
+  CFWL_MessageMouse ms(nullptr, m_pNormalWidget);
   ms.m_dwCmd = FWL_MouseCommand::LeftButtonDown;
   ms.m_dwFlags = dwFlags;
   ms.m_fx = fx;
@@ -402,7 +402,7 @@ bool CXFA_FFField::OnLButtonUp(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) {
     return false;
   }
   SetButtonDown(false);
-  CFWL_MsgMouse ms(nullptr, m_pNormalWidget);
+  CFWL_MessageMouse ms(nullptr, m_pNormalWidget);
   ms.m_dwCmd = FWL_MouseCommand::LeftButtonUp;
   ms.m_dwFlags = dwFlags;
   ms.m_fx = fx;
@@ -415,7 +415,7 @@ bool CXFA_FFField::OnLButtonDblClk(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) {
   if (!m_pNormalWidget) {
     return false;
   }
-  CFWL_MsgMouse ms(nullptr, m_pNormalWidget);
+  CFWL_MessageMouse ms(nullptr, m_pNormalWidget);
   ms.m_dwCmd = FWL_MouseCommand::LeftButtonDblClk;
   ms.m_dwFlags = dwFlags;
   ms.m_fx = fx;
@@ -428,7 +428,7 @@ bool CXFA_FFField::OnMouseMove(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) {
   if (!m_pNormalWidget) {
     return false;
   }
-  CFWL_MsgMouse ms(nullptr, m_pNormalWidget);
+  CFWL_MessageMouse ms(nullptr, m_pNormalWidget);
   ms.m_dwCmd = FWL_MouseCommand::Move;
   ms.m_dwFlags = dwFlags;
   ms.m_fx = fx;
@@ -444,7 +444,7 @@ bool CXFA_FFField::OnMouseWheel(uint32_t dwFlags,
   if (!m_pNormalWidget) {
     return false;
   }
-  CFWL_MsgMouseWheel ms(nullptr, m_pNormalWidget);
+  CFWL_MessageMouseWheel ms(nullptr, m_pNormalWidget);
   ms.m_dwFlags = dwFlags;
   ms.m_fx = fx;
   ms.m_fy = fy;
@@ -467,7 +467,7 @@ bool CXFA_FFField::OnRButtonDown(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) {
   }
   SetButtonDown(true);
 
-  CFWL_MsgMouse ms(nullptr, m_pNormalWidget);
+  CFWL_MessageMouse ms(nullptr, m_pNormalWidget);
   ms.m_dwCmd = FWL_MouseCommand::RightButtonDown;
   ms.m_dwFlags = dwFlags;
   ms.m_fx = fx;
@@ -484,7 +484,7 @@ bool CXFA_FFField::OnRButtonUp(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) {
     return false;
   }
   SetButtonDown(false);
-  CFWL_MsgMouse ms(nullptr, m_pNormalWidget);
+  CFWL_MessageMouse ms(nullptr, m_pNormalWidget);
   ms.m_dwCmd = FWL_MouseCommand::RightButtonUp;
   ms.m_dwFlags = dwFlags;
   ms.m_fx = fx;
@@ -497,7 +497,7 @@ bool CXFA_FFField::OnRButtonDblClk(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) {
   if (!m_pNormalWidget) {
     return false;
   }
-  CFWL_MsgMouse ms(nullptr, m_pNormalWidget);
+  CFWL_MessageMouse ms(nullptr, m_pNormalWidget);
   ms.m_dwCmd = FWL_MouseCommand::RightButtonDblClk;
   ms.m_dwFlags = dwFlags;
   ms.m_fx = fx;
@@ -512,7 +512,7 @@ bool CXFA_FFField::OnSetFocus(CXFA_FFWidget* pOldWidget) {
   if (!m_pNormalWidget) {
     return false;
   }
-  CFWL_MsgSetFocus ms(nullptr, m_pNormalWidget);
+  CFWL_MessageSetFocus ms(nullptr, m_pNormalWidget);
   TranslateFWLMessage(&ms);
   m_dwStatus |= XFA_WidgetStatus_Focused;
   AddInvalidateRect();
@@ -522,7 +522,7 @@ bool CXFA_FFField::OnKillFocus(CXFA_FFWidget* pNewWidget) {
   if (!m_pNormalWidget) {
     return CXFA_FFWidget::OnKillFocus(pNewWidget);
   }
-  CFWL_MsgKillFocus ms(nullptr, m_pNormalWidget);
+  CFWL_MessageKillFocus ms(nullptr, m_pNormalWidget);
   TranslateFWLMessage(&ms);
   m_dwStatus &= ~XFA_WidgetStatus_Focused;
   AddInvalidateRect();
@@ -533,7 +533,7 @@ bool CXFA_FFField::OnKeyDown(uint32_t dwKeyCode, uint32_t dwFlags) {
   if (!m_pNormalWidget || !m_pDataAcc->GetDoc()->GetXFADoc()->IsInteractive()) {
     return false;
   }
-  CFWL_MsgKey ms(nullptr, m_pNormalWidget);
+  CFWL_MessageKey ms(nullptr, m_pNormalWidget);
   ms.m_dwCmd = FWL_KeyCommand::KeyDown;
   ms.m_dwFlags = dwFlags;
   ms.m_dwKeyCode = dwKeyCode;
@@ -544,7 +544,7 @@ bool CXFA_FFField::OnKeyUp(uint32_t dwKeyCode, uint32_t dwFlags) {
   if (!m_pNormalWidget || !m_pDataAcc->GetDoc()->GetXFADoc()->IsInteractive()) {
     return false;
   }
-  CFWL_MsgKey ms(nullptr, m_pNormalWidget);
+  CFWL_MessageKey ms(nullptr, m_pNormalWidget);
   ms.m_dwCmd = FWL_KeyCommand::KeyUp;
   ms.m_dwFlags = dwFlags;
   ms.m_dwKeyCode = dwKeyCode;
@@ -564,7 +564,7 @@ bool CXFA_FFField::OnChar(uint32_t dwChar, uint32_t dwFlags) {
   if (m_pDataAcc->GetAccess() != XFA_ATTRIBUTEENUM_Open) {
     return false;
   }
-  CFWL_MsgKey ms(nullptr, m_pNormalWidget);
+  CFWL_MessageKey ms(nullptr, m_pNormalWidget);
   ms.m_dwCmd = FWL_KeyCommand::Char;
   ms.m_dwFlags = dwFlags;
   ms.m_dwKeyCode = dwChar;
@@ -757,7 +757,7 @@ void CXFA_FFField::OnProcessMessage(CFWL_Message* pMessage) {}
 void CXFA_FFField::OnProcessEvent(CFWL_Event* pEvent) {
   switch (pEvent->GetType()) {
     case CFWL_Event::Type::Mouse: {
-      CFWL_EvtMouse* event = (CFWL_EvtMouse*)pEvent;
+      CFWL_EventMouse* event = (CFWL_EventMouse*)pEvent;
       if (event->m_dwCmd == FWL_MouseCommand::Enter) {
         CXFA_EventParam eParam;
         eParam.m_eType = XFA_EVENT_MouseEnter;

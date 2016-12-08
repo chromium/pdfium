@@ -7,8 +7,8 @@
 #ifndef XFA_FXFA_APP_XFA_FFFIELD_H_
 #define XFA_FXFA_APP_XFA_FFFIELD_H_
 
-#include "xfa/fwl/core/cfwl_widget.h"
-#include "xfa/fwl/core/ifwl_widgetdelegate.h"
+#include "xfa/fwl/cfwl_widget.h"
+#include "xfa/fwl/ifwl_widgetdelegate.h"
 #include "xfa/fxfa/xfa_ffpageview.h"
 #include "xfa/fxfa/xfa_ffwidget.h"
 

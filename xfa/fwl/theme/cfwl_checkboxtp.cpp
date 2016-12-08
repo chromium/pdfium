@@ -8,10 +8,10 @@
 
 #include "core/fxge/cfx_pathdata.h"
 #include "xfa/fde/tto/fde_textout.h"
-#include "xfa/fwl/core/cfwl_checkbox.h"
-#include "xfa/fwl/core/cfwl_themebackground.h"
-#include "xfa/fwl/core/cfwl_themetext.h"
-#include "xfa/fwl/core/cfwl_widget.h"
+#include "xfa/fwl/cfwl_checkbox.h"
+#include "xfa/fwl/cfwl_themebackground.h"
+#include "xfa/fwl/cfwl_themetext.h"
+#include "xfa/fwl/cfwl_widget.h"
 #include "xfa/fxgraphics/cfx_color.h"
 #include "xfa/fxgraphics/cfx_path.h"
 

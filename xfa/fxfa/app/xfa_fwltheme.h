@@ -9,7 +9,7 @@
 
 #include <memory>
 
-#include "xfa/fwl/core/ifwl_themeprovider.h"
+#include "xfa/fwl/ifwl_themeprovider.h"
 #include "xfa/fwl/theme/cfwl_barcodetp.h"
 #include "xfa/fwl/theme/cfwl_carettp.h"
 #include "xfa/fwl/theme/cfwl_checkboxtp.h"

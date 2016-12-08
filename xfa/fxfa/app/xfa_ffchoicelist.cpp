@@ -7,13 +7,13 @@
 #include "xfa/fxfa/app/xfa_ffchoicelist.h"
 
 #include "third_party/base/ptr_util.h"
-#include "xfa/fwl/core/cfwl_app.h"
-#include "xfa/fwl/core/cfwl_combobox.h"
-#include "xfa/fwl/core/cfwl_edit.h"
-#include "xfa/fwl/core/cfwl_evtselectchanged.h"
-#include "xfa/fwl/core/cfwl_listbox.h"
-#include "xfa/fwl/core/cfwl_notedriver.h"
-#include "xfa/fwl/core/cfwl_widgetproperties.h"
+#include "xfa/fwl/cfwl_app.h"
+#include "xfa/fwl/cfwl_combobox.h"
+#include "xfa/fwl/cfwl_edit.h"
+#include "xfa/fwl/cfwl_eventselectchanged.h"
+#include "xfa/fwl/cfwl_listbox.h"
+#include "xfa/fwl/cfwl_notedriver.h"
+#include "xfa/fwl/cfwl_widgetproperties.h"
 #include "xfa/fxfa/app/xfa_fffield.h"
 #include "xfa/fxfa/app/xfa_fwladapter.h"
 #include "xfa/fxfa/cxfa_eventparam.h"
@@ -508,8 +508,8 @@ void CXFA_FFComboBox::OnProcessEvent(CFWL_Event* pEvent) {
   CXFA_FFField::OnProcessEvent(pEvent);
   switch (pEvent->GetType()) {
     case CFWL_Event::Type::SelectChanged: {
-      CFWL_EvtSelectChanged* postEvent =
-          static_cast<CFWL_EvtSelectChanged*>(pEvent);
+      CFWL_EventSelectChanged* postEvent =
+          static_cast<CFWL_EventSelectChanged*>(pEvent);
       OnSelectChanged(m_pNormalWidget, postEvent->bLButtonUp);
       break;
     }
