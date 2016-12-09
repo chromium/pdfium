@@ -1038,7 +1038,7 @@ class SkiaState {
       } else {
         SkASSERT(Clip::kPath == m_commands[m_clipIndex]);
         m_pDriver->SkiaCanvas()->clipPath(m_clips[m_clipIndex],
-                                          SkCanvas::kIntersect_Op, true);
+                                          kIntersect_SkClipOp, true);
       }
       ++m_clipIndex;
     }
@@ -1449,7 +1449,7 @@ bool CFX_SkiaDeviceDriver::SetClip_PathFill(
         SkRect skClipRect =
             SkRect::MakeLTRB(rectf.left, rectf.bottom, rectf.right, rectf.top);
         DebugDrawSkiaClipRect(m_pCanvas, skClipRect);
-        m_pCanvas->clipRect(skClipRect, SkCanvas::kIntersect_Op, true);
+        m_pCanvas->clipRect(skClipRect, kIntersect_SkClipOp, true);
       }
 
 #ifdef _SKIA_SUPPORT_PATHS_
@@ -1469,7 +1469,7 @@ bool CFX_SkiaDeviceDriver::SetClip_PathFill(
   DebugShowSkiaPath(skClipPath);
   if (!cached) {
     DebugDrawSkiaClipPath(m_pCanvas, skClipPath);
-    m_pCanvas->clipPath(skClipPath, SkCanvas::kIntersect_Op, true);
+    m_pCanvas->clipPath(skClipPath, kIntersect_SkClipOp, true);
   }
 #ifdef _SKIA_SUPPORT_PATHS_
   FX_RECT clipBox(0, 0, GetDeviceCaps(FXDC_PIXEL_WIDTH),
@@ -1503,7 +1503,7 @@ bool CFX_SkiaDeviceDriver::SetClip_PathStroke(
   dst_path.transform(skMatrix);
   if (!cached) {
     DebugDrawSkiaClipPath(m_pCanvas, dst_path);
-    m_pCanvas->clipPath(dst_path, SkCanvas::kIntersect_Op, true);
+    m_pCanvas->clipPath(dst_path, kIntersect_SkClipOp, true);
   }
 #ifdef _SKIA_SUPPORT_PATHS_
   FX_RECT clipBox(0, 0, GetDeviceCaps(FXDC_PIXEL_WIDTH),
@@ -1745,7 +1745,7 @@ bool CFX_SkiaDeviceDriver::DrawShading(const CPDF_ShadingPattern* pPattern,
     SkColor colors[4];
     m_pCanvas->save();
     if (!skClip.isEmpty())
-      m_pCanvas->clipPath(skClip, SkCanvas::kIntersect_Op, true);
+      m_pCanvas->clipPath(skClip, kIntersect_SkClipOp, true);
     m_pCanvas->concat(skMatrix);
     while (!stream.BitStream()->IsEOF()) {
       uint32_t flag = stream.GetFlag();
@@ -1776,7 +1776,7 @@ bool CFX_SkiaDeviceDriver::DrawShading(const CPDF_ShadingPattern* pPattern,
   }
   m_pCanvas->save();
   if (!skClip.isEmpty())
-    m_pCanvas->clipPath(skClip, SkCanvas::kIntersect_Op, true);
+    m_pCanvas->clipPath(skClip, kIntersect_SkClipOp, true);
   m_pCanvas->concat(skMatrix);
   m_pCanvas->drawPath(skPath, paint);
   m_pCanvas->restore();
@@ -1915,7 +1915,7 @@ bool CFX_SkiaDeviceDriver::StretchDIBits(const CFX_DIBSource* pSource,
   m_pCanvas->save();
   SkRect skClipRect = SkRect::MakeLTRB(pClipRect->left, pClipRect->bottom,
                                        pClipRect->right, pClipRect->top);
-  m_pCanvas->clipRect(skClipRect, SkCanvas::kIntersect_Op, true);
+  m_pCanvas->clipRect(skClipRect, kIntersect_SkClipOp, true);
   void* dummy;
   bool result = StartDIBits(pSource, 0xFF, argb, &m, 0, dummy, blend_type);
   m_pCanvas->restore();
