@@ -91,7 +91,7 @@ class CFWL_Widget : public IFWL_WidgetDelegate {
   }
 
   void TransformTo(CFWL_Widget* pWidget, FX_FLOAT& fx, FX_FLOAT& fy);
-  void GetMatrix(CFX_Matrix& matrix, bool bGlobal);
+  CFX_Matrix GetMatrix();
   IFWL_ThemeProvider* GetThemeProvider() const;
 
   void SetDelegate(IFWL_WidgetDelegate* delegate) { m_pDelegate = delegate; }

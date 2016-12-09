@@ -298,7 +298,6 @@ CFWL_Widget* CFWL_WidgetMgr::GetWidgetAtPoint(CFWL_Widget* parent,
       x1 = x;
       y1 = y;
       CFX_Matrix matrixOnParent;
-      child->GetMatrix(matrixOnParent, false);
       CFX_Matrix m;
       m.SetIdentity();
       m.SetReverse(matrixOnParent);
@@ -528,7 +527,7 @@ void CFWL_WidgetMgr::DrawChild(CFWL_Widget* parent,
     CFX_Matrix widgetMatrix;
     CFX_RectF clipBounds(rtWidget);
     if (!bFormDisable)
-      child->GetMatrix(widgetMatrix, true);
+      widgetMatrix = child->GetMatrix();
     if (pMatrix)
       widgetMatrix.Concat(*pMatrix);
 

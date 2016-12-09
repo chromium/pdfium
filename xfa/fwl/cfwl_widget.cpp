@@ -195,7 +195,7 @@ void CFWL_Widget::TransformTo(CFWL_Widget* pWidget,
     r = GetWidgetRect();
     fx += r.left;
     fy += r.top;
-    GetMatrix(m, true);
+    m = GetMatrix();
     m.TransformPoint(fx, fy);
   }
   CFWL_Widget* form1 = m_pWidgetMgr->GetSystemFormWidget(this);
@@ -221,10 +221,8 @@ void CFWL_Widget::TransformTo(CFWL_Widget* pWidget,
   }
   parent = pWidget->GetParent();
   if (parent) {
-    pWidget->GetMatrix(m, true);
     CFX_Matrix m1;
-    m1.SetIdentity();
-    m1.SetReverse(m);
+    m1.SetReverse(pWidget->GetMatrix());
     m1.TransformPoint(fx, fy);
     r = pWidget->GetWidgetRect();
     fx -= r.left;
@@ -232,13 +230,9 @@ void CFWL_Widget::TransformTo(CFWL_Widget* pWidget,
   }
 }
 
-void CFWL_Widget::GetMatrix(CFX_Matrix& matrix, bool bGlobal) {
+CFX_Matrix CFWL_Widget::GetMatrix() {
   if (!m_pProperties)
-    return;
-  if (!bGlobal) {
-    matrix.SetIdentity();
-    return;
-  }
+    return CFX_Matrix();
 
   CFWL_Widget* parent = GetParent();
   CFX_ArrayTemplate<CFWL_Widget*> parents;
@@ -246,13 +240,16 @@ void CFWL_Widget::GetMatrix(CFX_Matrix& matrix, bool bGlobal) {
     parents.Add(parent);
     parent = parent->GetParent();
   }
-  matrix.SetIdentity();
+
+  CFX_Matrix matrix;
   CFX_Matrix ctmOnParent;
   CFX_RectF rect;
   int32_t count = parents.GetSize();
   for (int32_t i = count - 2; i >= 0; i--) {
     parent = parents.GetAt(i);
-    parent->GetMatrix(ctmOnParent, false);
+
+    if (parent->m_pProperties)
+      ctmOnParent.SetIdentity();
     rect = parent->GetWidgetRect();
     matrix.Concat(ctmOnParent, true);
     matrix.Translate(rect.left, rect.top, true);
@@ -261,6 +258,8 @@ void CFWL_Widget::GetMatrix(CFX_Matrix& matrix, bool bGlobal) {
   m.SetIdentity();
   matrix.Concat(m, true);
   parents.RemoveAll();
+
+  return matrix;
 }
 
 IFWL_ThemeProvider* CFWL_Widget::GetThemeProvider() const {
