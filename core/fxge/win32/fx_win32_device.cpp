@@ -738,7 +738,9 @@ CGdiDeviceDriver::CGdiDeviceDriver(HDC hDC, int device_class) {
   CWin32Platform* pPlatform =
       (CWin32Platform*)CFX_GEModule::Get()->GetPlatformData();
   SetStretchBltMode(hDC, pPlatform->m_bHalfTone ? HALFTONE : COLORONCOLOR);
-  if (GetObjectType(m_hDC) == OBJ_MEMDC) {
+  DWORD obj_type = GetObjectType(m_hDC);
+  m_bMetafileDCType = obj_type == OBJ_ENHMETADC || obj_type == OBJ_ENHMETAFILE;
+  if (obj_type == OBJ_MEMDC) {
     HBITMAP hBitmap = CreateBitmap(1, 1, 1, 1, nullptr);
     hBitmap = (HBITMAP)SelectObject(m_hDC, hBitmap);
     BITMAP bitmap;
@@ -940,45 +942,45 @@ void* CGdiDeviceDriver::GetPlatformSurface() const {
 void CGdiDeviceDriver::DrawLine(FX_FLOAT x1,
                                 FX_FLOAT y1,
                                 FX_FLOAT x2,
-                                FX_FLOAT y2,
-                                const CFX_Matrix* pMatrix) {
-  bool bStartOutOfBounds = x1 < 0 || x1 > m_Width || y1 < 0 || y1 > m_Height;
-  bool bEndOutOfBounds = x2 < 0 || x2 > m_Width || y2 < 0 || y2 > m_Height;
-  if (bStartOutOfBounds & bEndOutOfBounds)
-    return;
-
-  if (bStartOutOfBounds || bEndOutOfBounds) {
-    FX_FLOAT x[2];
-    FX_FLOAT y[2];
-    int np;
-#ifdef _SKIA_SUPPORT_
-    // TODO(caryclark) temporary replacement of antigrain in line function
-    // to permit removing antigrain altogether
-    rect_base rect = {0.0f, 0.0f, (FX_FLOAT)(m_Width), (FX_FLOAT)(m_Height)};
-    np = clip_liang_barsky(x1, y1, x2, y2, rect, x, y);
-#else
-    agg::rect_base<FX_FLOAT> rect(0.0f, 0.0f, (FX_FLOAT)(m_Width),
-                                  (FX_FLOAT)(m_Height));
-    np = agg::clip_liang_barsky<FX_FLOAT>(x1, y1, x2, y2, rect, x, y);
-#endif
-    if (np == 0)
+                                FX_FLOAT y2) {
+  if (!m_bMetafileDCType) {  // EMF drawing is not bound to the DC.
+    int startOutOfBoundsFlag = (x1 < 0) | ((x1 > m_Width) << 1) |
+                               ((y1 < 0) << 2) | ((y1 > m_Height) << 3);
+    int endOutOfBoundsFlag = (x2 < 0) | ((x2 > m_Width) << 1) |
+                             ((y2 < 0) << 2) | ((y2 > m_Height) << 3);
+    if (startOutOfBoundsFlag & endOutOfBoundsFlag)
       return;
 
-    if (np == 1) {
-      x2 = x[0];
-      y2 = y[0];
-    } else {
-      ASSERT(np == 2);
-      x1 = x[0];
-      y1 = y[0];
-      x2 = x[1];
-      y2 = y[1];
+    if (startOutOfBoundsFlag || endOutOfBoundsFlag) {
+      FX_FLOAT x[2];
+      FX_FLOAT y[2];
+      int np;
+#ifdef _SKIA_SUPPORT_
+      // TODO(caryclark) temporary replacement of antigrain in line function
+      // to permit removing antigrain altogether
+      rect_base rect = {0.0f, 0.0f, (FX_FLOAT)(m_Width), (FX_FLOAT)(m_Height)};
+      np = clip_liang_barsky(x1, y1, x2, y2, rect, x, y);
+#else
+      agg::rect_base<FX_FLOAT> rect(0.0f, 0.0f, (FX_FLOAT)(m_Width),
+                                    (FX_FLOAT)(m_Height));
+      np = agg::clip_liang_barsky<FX_FLOAT>(x1, y1, x2, y2, rect, x, y);
+#endif
+      if (np == 0)
+        return;
+
+      if (np == 1) {
+        x2 = x[0];
+        y2 = y[0];
+      } else {
+        ASSERT(np == 2);
+        x1 = x[0];
+        y1 = y[0];
+        x2 = x[1];
+        y2 = y[1];
+      }
     }
   }
-  if (pMatrix) {
-    pMatrix->Transform(x1, y1);
-    pMatrix->Transform(x2, y2);
-  }
+
   MoveToEx(m_hDC, FXSYS_round(x1), FXSYS_round(y1), nullptr);
   LineTo(m_hDC, FXSYS_round(x2), FXSYS_round(y2));
 }
@@ -1057,7 +1059,11 @@ bool CGdiDeviceDriver::DrawPath(const CFX_PathData* pPathData,
     FX_FLOAT y1 = pPathData->GetPointY(0);
     FX_FLOAT x2 = pPathData->GetPointX(1);
     FX_FLOAT y2 = pPathData->GetPointY(1);
-    DrawLine(x1, y1, x2, y2, pMatrix);
+    if (pMatrix) {
+      pMatrix->Transform(x1, y1);
+      pMatrix->Transform(x2, y2);
+    }
+    DrawLine(x1, y1, x2, y2);
   } else {
     SetPathToDC(m_hDC, pPathData, pMatrix);
     if (pGraphState && stroke_alpha) {

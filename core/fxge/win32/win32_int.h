@@ -152,11 +152,7 @@ class CGdiDeviceDriver : public IFX_RenderDeviceDriver {
   bool GetClipBox(FX_RECT* pRect) override;
   void* GetPlatformSurface() const override;
 
-  void DrawLine(FX_FLOAT x1,
-                FX_FLOAT y1,
-                FX_FLOAT x2,
-                FX_FLOAT y2,
-                const CFX_Matrix* pMatrix);
+  void DrawLine(FX_FLOAT x1, FX_FLOAT y1, FX_FLOAT x2, FX_FLOAT y2);
 
   bool GDI_SetDIBits(CFX_DIBitmap* pBitmap,
                      const FX_RECT* pSrcRect,
@@ -177,6 +173,7 @@ class CGdiDeviceDriver : public IFX_RenderDeviceDriver {
                           uint32_t flags);
 
   HDC m_hDC;
+  bool m_bMetafileDCType;
   int m_Width;
   int m_Height;
   int m_nBitsPerPixel;
