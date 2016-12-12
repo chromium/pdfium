@@ -207,6 +207,10 @@ SK_API void SkDebugf_FileLine(const char* file,
 #define SK_SUPPORT_LEGACY_GETTOPDEVICE
 #endif
 
+#ifndef SK_SUPPORT_EXOTIC_CLIPOPS
+#define SK_SUPPORT_EXOTIC_CLIPOPS
+#endif
+
 #ifndef SK_SUPPORT_LEGACY_GETDEVICE
 #define SK_SUPPORT_LEGACY_GETDEVICE
 #endif
