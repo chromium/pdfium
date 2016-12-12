@@ -230,10 +230,6 @@ SK_API void SkDebugf_FileLine(const char* file,
 #define SK_IGNORE_GPU_DITHER
 #endif
 
-#ifndef    SK_SUPPORT_LEGACY_CLIPOPS_PLAIN_ENUM
-#   define SK_SUPPORT_LEGACY_CLIPOPS_PLAIN_ENUM
-#endif
-
 #ifndef SK_SUPPORT_LEGACY_EVAL_CUBIC
 #define SK_SUPPORT_LEGACY_EVAL_CUBIC
 #endif
