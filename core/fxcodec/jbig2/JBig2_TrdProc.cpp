@@ -25,6 +25,7 @@ CJBig2_Image* CJBig2_TRDProc::decode_Huffman(CJBig2_BitStream* pStream,
 
   STRIPT *= SBSTRIPS;
   STRIPT = -STRIPT;
+  int32_t FIRSTS = 0;
   uint32_t NINSTANCES = 0;
   while (NINSTANCES < SBNUMINSTANCES) {
     int32_t DT;
@@ -34,7 +35,6 @@ CJBig2_Image* CJBig2_TRDProc::decode_Huffman(CJBig2_BitStream* pStream,
     DT *= SBSTRIPS;
     STRIPT = STRIPT + DT;
     bool bFirst = true;
-    int32_t FIRSTS = 0;
     int32_t CURS = 0;
     for (;;) {
       if (bFirst) {
