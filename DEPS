@@ -13,7 +13,7 @@ vars = {
   'gen_library_loader_revision': '916d4acd8b2cde67a390737dfba90b3c37de23a1',
   'gmock_revision': '29763965ab52f24565299976b936d1265cb6a271',
   'gtest_revision': '8245545b6dc9c4703e6496d1efd19e975ad2b038',
-  'icu_revision': '2341038bf72869a5683a893a2b319a48ffec7f62',
+  'icu_revision': '73e24736676b4b438270fda44e5b2c83b49fdd80',
   'instrumented_lib_revision': '45f5814b1543e41ea0be54c771e3840ea52cca4a',
   'pdfium_tests_revision': '9d17ef47f310332ac64e78e636681d493482a409',
   'skia_revision': '76073c11040204d51dceb49cbd0b05be8e7fd0a2',
