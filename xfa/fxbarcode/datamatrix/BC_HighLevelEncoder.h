@@ -7,6 +7,8 @@
 #ifndef XFA_FXBARCODE_DATAMATRIX_BC_HIGHLEVELENCODER_H_
 #define XFA_FXBARCODE_DATAMATRIX_BC_HIGHLEVELENCODER_H_
 
+#include <vector>
+
 #include "xfa/fxbarcode/datamatrix/BC_SymbolShapeHint.h"
 
 #define ASCII_ENCODATION 0
@@ -61,7 +63,7 @@ class CBC_HighLevelEncoder : public CBC_SymbolShapeHint {
 
  private:
   static FX_WCHAR randomize253State(FX_WCHAR ch, int32_t codewordPosition);
-  static int32_t findMinimums(CFX_FloatArray& charCounts,
+  static int32_t findMinimums(std::vector<FX_FLOAT>& charCounts,
                               CFX_Int32Array& intCharCounts,
                               int32_t min,
                               CFX_ByteArray& mins);

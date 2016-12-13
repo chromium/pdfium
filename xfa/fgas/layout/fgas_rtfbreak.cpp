@@ -10,6 +10,7 @@
 
 #include "core/fxcrt/fx_arabic.h"
 #include "core/fxcrt/fx_arb.h"
+#include "third_party/base/stl_util.h"
 #include "xfa/fgas/font/cfgas_gefont.h"
 #include "xfa/fgas/layout/fgas_linebreak.h"
 #include "xfa/fgas/layout/fgas_unicode.h"
@@ -152,9 +153,9 @@ void CFX_RTFBreak::AddPositionedTab(FX_FLOAT fTabPos) {
     m_bOrphanLine = false;
   }
 }
-void CFX_RTFBreak::SetPositionedTabs(const CFX_FloatArray& tabs) {
+void CFX_RTFBreak::SetPositionedTabs(const std::vector<FX_FLOAT>& tabs) {
   m_PositionedTabs.RemoveAll();
-  int32_t iCount = tabs.GetSize();
+  int32_t iCount = pdfium::CollectionSize<int32_t>(tabs);
   m_PositionedTabs.SetSize(iCount);
   int32_t iLineEnd = m_iBoundaryEnd;
   int32_t iTabPos;

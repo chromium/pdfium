@@ -9,6 +9,7 @@
 #include <algorithm>
 
 #include "core/fxcrt/fx_ext.h"
+#include "third_party/base/stl_util.h"
 #include "xfa/fde/cfde_path.h"
 #include "xfa/fde/css/fde_csscache.h"
 #include "xfa/fde/css/fde_cssstyleselector.h"
@@ -1004,10 +1005,9 @@ bool CXFA_TextLayout::DoLayout(int32_t iBlockIndex,
       iLineIndex = m_Blocks.ElementAt(iBlockCount - 1) +
                    m_Blocks.ElementAt(iBlockCount - 2);
     }
-    if (m_pLoader->m_BlocksHeight.GetSize() > 0) {
-      for (int32_t i = 0; i < iBlockIndex; i++) {
-        fLinePos -= m_pLoader->m_BlocksHeight.ElementAt(i * 2 + 1);
-      }
+    if (!m_pLoader->m_BlocksHeight.empty()) {
+      for (int32_t i = 0; i < iBlockIndex; i++)
+        fLinePos -= m_pLoader->m_BlocksHeight[i * 2 + 1];
     }
   }
   int32_t iCount = m_pLoader->m_lineHeights.GetSize();
@@ -1028,13 +1028,13 @@ bool CXFA_TextLayout::DoLayout(int32_t iBlockIndex,
       }
       if (i == iLineIndex) {
         if (fCalcHeight <= fLinePos) {
-          if (m_pLoader->m_BlocksHeight.GetSize() > iBlockIndex * 2 &&
-              (m_pLoader->m_BlocksHeight.GetAt(iBlockIndex * 2) ==
-               iBlockIndex)) {
-            m_pLoader->m_BlocksHeight.SetAt(iBlockIndex * 2 + 1, fCalcHeight);
+          if (pdfium::CollectionSize<int32_t>(m_pLoader->m_BlocksHeight) >
+                  iBlockIndex * 2 &&
+              (m_pLoader->m_BlocksHeight[iBlockIndex * 2] == iBlockIndex)) {
+            m_pLoader->m_BlocksHeight[iBlockIndex * 2 + 1] = fCalcHeight;
           } else {
-            m_pLoader->m_BlocksHeight.Add((FX_FLOAT)iBlockIndex);
-            m_pLoader->m_BlocksHeight.Add(fCalcHeight);
+            m_pLoader->m_BlocksHeight.push_back((FX_FLOAT)iBlockIndex);
+            m_pLoader->m_BlocksHeight.push_back(fCalcHeight);
           }
         }
         return true;
@@ -1103,7 +1103,8 @@ bool CXFA_TextLayout::Layout(int32_t iBlock) {
   CXFA_Node* pNode = nullptr;
   CFX_SizeF szText(m_pLoader->m_fWidth, m_pLoader->m_fHeight);
   int32_t iCount = m_Blocks.GetSize();
-  int32_t iBlocksHeightCount = m_pLoader->m_BlocksHeight.GetSize();
+  int32_t iBlocksHeightCount =
+      pdfium::CollectionSize<int32_t>(m_pLoader->m_BlocksHeight);
   iBlocksHeightCount /= 2;
   if (iBlock < iBlocksHeightCount)
     return true;
@@ -1112,7 +1113,7 @@ bool CXFA_TextLayout::Layout(int32_t iBlock) {
     m_pBreak.reset(CreateBreak(true));
     fLinePos = m_pLoader->m_fStartLineOffset;
     for (int32_t i = 0; i < iBlocksHeightCount; i++) {
-      fLinePos -= m_pLoader->m_BlocksHeight.ElementAt(i * 2 + 1);
+      fLinePos -= m_pLoader->m_BlocksHeight[i * 2 + 1];
     }
     m_pLoader->m_iChar = 0;
     if (iCount > 1)
@@ -1187,17 +1188,17 @@ void CXFA_TextLayout::ItemBlocks(const CFX_RectF& rtText, int32_t iBlockIndex) {
   FX_FLOAT fLinePos = m_pLoader->m_fStartLineOffset;
   int32_t iLineIndex = 0;
   if (iBlockIndex > 0) {
-    int32_t iBlockHeightCount = m_pLoader->m_BlocksHeight.GetSize();
+    int32_t iBlockHeightCount =
+        pdfium::CollectionSize<int32_t>(m_pLoader->m_BlocksHeight);
     iBlockHeightCount /= 2;
     if (iBlockHeightCount >= iBlockIndex) {
       for (int32_t i = 0; i < iBlockIndex; i++) {
-        fLinePos -= m_pLoader->m_BlocksHeight.ElementAt(i * 2 + 1);
+        fLinePos -= m_pLoader->m_BlocksHeight[i * 2 + 1];
       }
     } else {
       fLinePos = 0;
     }
-    iLineIndex = m_Blocks.ElementAt(iBlockCount - 1) +
-                 m_Blocks.ElementAt(iBlockCount - 2);
+    iLineIndex = m_Blocks[iBlockCount - 1] + m_Blocks[iBlockCount - 2];
   }
   int32_t i = 0;
   for (i = iLineIndex; i < iCountHeight; i++) {

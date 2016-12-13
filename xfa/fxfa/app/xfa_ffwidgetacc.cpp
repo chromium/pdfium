@@ -8,8 +8,10 @@
 
 #include <algorithm>
 #include <memory>
+#include <vector>
 
 #include "fxjs/cfxjse_value.h"
+#include "third_party/base/stl_util.h"
 #include "xfa/fde/tto/fde_textout.h"
 #include "xfa/fde/xml/fde_xml_imp.h"
 #include "xfa/fxfa/app/xfa_ffcheckbutton.h"
@@ -125,7 +127,7 @@ class CXFA_FieldLayoutData : public CXFA_WidgetLayoutData {
   std::unique_ptr<CXFA_TextLayout> m_pCapTextLayout;
   std::unique_ptr<CXFA_TextProvider> m_pCapTextProvider;
   std::unique_ptr<CFDE_TextOut> m_pTextOut;
-  std::unique_ptr<CFX_FloatArray> m_pFieldSplitArray;
+  std::vector<FX_FLOAT> m_FieldSplitArray;
 };
 
 class CXFA_TextEditData : public CXFA_FieldLayoutData {
@@ -1239,14 +1241,11 @@ bool CXFA_WidgetAcc::FindSplitPos(int32_t iBlockIndex, FX_FLOAT& fCalcHeight) {
     }
     iLinesCount = pFieldData->m_pTextOut->GetTotalLines();
   }
-  if (!pFieldData->m_pFieldSplitArray) {
-    pFieldData->m_pFieldSplitArray.reset(new CFX_FloatArray);
-  }
-  CFX_FloatArray* pFieldArray = pFieldData->m_pFieldSplitArray.get();
-  int32_t iFieldSplitCount = pFieldArray->GetSize();
+  std::vector<FX_FLOAT>* pFieldArray = &pFieldData->m_FieldSplitArray;
+  int32_t iFieldSplitCount = pdfium::CollectionSize<int32_t>(*pFieldArray);
   for (int32_t i = 0; i < iBlockIndex * 3; i += 3) {
-    iLinesCount -= (int32_t)pFieldArray->GetAt(i + 1);
-    fHeight -= pFieldArray->GetAt(i + 2);
+    iLinesCount -= (int32_t)(*pFieldArray)[i + 1];
+    fHeight -= (*pFieldArray)[i + 2];
   }
   if (iLinesCount == 0) {
     return false;
@@ -1275,20 +1274,18 @@ bool CXFA_WidgetAcc::FindSplitPos(int32_t iBlockIndex, FX_FLOAT& fCalcHeight) {
           break;
       }
     }
-    if (fStartOffset < 0.1f) {
+    if (fStartOffset < 0.1f)
       fStartOffset = 0;
-    }
   }
   for (int32_t i = iBlockIndex - 1; iBlockIndex > 0 && i < iBlockIndex; i++) {
-    fStartOffset = pFieldArray->GetAt(i * 3) - pFieldArray->GetAt(i * 3 + 2);
-    if (fStartOffset < 0.1f) {
+    fStartOffset = (*pFieldArray)[i * 3] - (*pFieldArray)[i * 3 + 2];
+    if (fStartOffset < 0.1f)
       fStartOffset = 0;
-    }
   }
   if (iFieldSplitCount / 3 == (iBlockIndex + 1)) {
-    pFieldArray->SetAt(0, fStartOffset);
+    (*pFieldArray)[0] = fStartOffset;
   } else {
-    pFieldArray->Add(fStartOffset);
+    pFieldArray->push_back(fStartOffset);
   }
   XFA_VERSION version = GetDoc()->GetXFADoc()->GetCurVersionMode();
   bool bCanSplitNoContent = false;
@@ -1321,22 +1318,22 @@ bool CXFA_WidgetAcc::FindSplitPos(int32_t iBlockIndex, FX_FLOAT& fCalcHeight) {
     }
     if (fStartOffset + XFA_FLOAT_PERCISION >= fCalcHeight) {
       if (iFieldSplitCount / 3 == (iBlockIndex + 1)) {
-        pFieldArray->SetAt(iBlockIndex * 3 + 1, 0);
-        pFieldArray->SetAt(iBlockIndex * 3 + 2, fCalcHeight);
+        (*pFieldArray)[iBlockIndex * 3 + 1] = 0;
+        (*pFieldArray)[iBlockIndex * 3 + 2] = fCalcHeight;
       } else {
-        pFieldArray->Add(0);
-        pFieldArray->Add(fCalcHeight);
+        pFieldArray->push_back(0);
+        pFieldArray->push_back(fCalcHeight);
       }
       return false;
     }
     if (fCalcHeight - fStartOffset < fLineHeight) {
       fCalcHeight = fStartOffset;
       if (iFieldSplitCount / 3 == (iBlockIndex + 1)) {
-        pFieldArray->SetAt(iBlockIndex * 3 + 1, 0);
-        pFieldArray->SetAt(iBlockIndex * 3 + 2, fCalcHeight);
+        (*pFieldArray)[iBlockIndex * 3 + 1] = 0;
+        (*pFieldArray)[iBlockIndex * 3 + 2] = fCalcHeight;
       } else {
-        pFieldArray->Add(0);
-        pFieldArray->Add(fCalcHeight);
+        pFieldArray->push_back(0);
+        pFieldArray->push_back(fCalcHeight);
       }
       return true;
     }
@@ -1347,11 +1344,11 @@ bool CXFA_WidgetAcc::FindSplitPos(int32_t iBlockIndex, FX_FLOAT& fCalcHeight) {
     if (iLineNum >= iLinesCount) {
       if (fCalcHeight - fStartOffset - fTextHeight >= fFontSize) {
         if (iFieldSplitCount / 3 == (iBlockIndex + 1)) {
-          pFieldArray->SetAt(iBlockIndex * 3 + 1, (FX_FLOAT)iLinesCount);
-          pFieldArray->SetAt(iBlockIndex * 3 + 2, fCalcHeight);
+          (*pFieldArray)[iBlockIndex * 3 + 1] = (FX_FLOAT)iLinesCount;
+          (*pFieldArray)[iBlockIndex * 3 + 2] = fCalcHeight;
         } else {
-          pFieldArray->Add((FX_FLOAT)iLinesCount);
-          pFieldArray->Add(fCalcHeight);
+          pFieldArray->push_back((FX_FLOAT)iLinesCount);
+          pFieldArray->push_back(fCalcHeight);
         }
         return false;
       }
@@ -1369,11 +1366,11 @@ bool CXFA_WidgetAcc::FindSplitPos(int32_t iBlockIndex, FX_FLOAT& fCalcHeight) {
       FX_FLOAT fSplitHeight =
           iLineNum * fLineHeight + fCapReserve + fStartOffset;
       if (iFieldSplitCount / 3 == (iBlockIndex + 1)) {
-        pFieldArray->SetAt(iBlockIndex * 3 + 1, (FX_FLOAT)iLineNum);
-        pFieldArray->SetAt(iBlockIndex * 3 + 2, fSplitHeight);
+        (*pFieldArray)[iBlockIndex * 3 + 1] = (FX_FLOAT)iLineNum;
+        (*pFieldArray)[iBlockIndex * 3 + 2] = fSplitHeight;
       } else {
-        pFieldArray->Add((FX_FLOAT)iLineNum);
-        pFieldArray->Add(fSplitHeight);
+        pFieldArray->push_back((FX_FLOAT)iLineNum);
+        pFieldArray->push_back(fSplitHeight);
       }
       if (fabs(fSplitHeight - fCalcHeight) < XFA_FLOAT_PERCISION) {
         return false;

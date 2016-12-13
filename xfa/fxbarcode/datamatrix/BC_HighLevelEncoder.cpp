@@ -138,21 +138,21 @@ int32_t CBC_HighLevelEncoder::lookAheadTest(CFX_WideString msg,
   if (startpos >= msg.GetLength()) {
     return currentMode;
   }
-  CFX_FloatArray charCounts;
+  std::vector<FX_FLOAT> charCounts;
   if (currentMode == ASCII_ENCODATION) {
-    charCounts.Add(0);
-    charCounts.Add(1);
-    charCounts.Add(1);
-    charCounts.Add(1);
-    charCounts.Add(1);
-    charCounts.Add(1.25f);
+    charCounts.push_back(0);
+    charCounts.push_back(1);
+    charCounts.push_back(1);
+    charCounts.push_back(1);
+    charCounts.push_back(1);
+    charCounts.push_back(1.25f);
   } else {
-    charCounts.Add(1);
-    charCounts.Add(2);
-    charCounts.Add(2);
-    charCounts.Add(2);
-    charCounts.Add(2);
-    charCounts.Add(2.25f);
+    charCounts.push_back(1);
+    charCounts.push_back(2);
+    charCounts.push_back(2);
+    charCounts.push_back(2);
+    charCounts.push_back(2);
+    charCounts.push_back(2.25f);
     charCounts[currentMode] = 0;
   }
   int32_t charsProcessed = 0;
@@ -317,7 +317,7 @@ FX_WCHAR CBC_HighLevelEncoder::randomize253State(FX_WCHAR ch,
   return tempVariable <= 254 ? (FX_WCHAR)tempVariable
                              : (FX_WCHAR)(tempVariable - 254);
 }
-int32_t CBC_HighLevelEncoder::findMinimums(CFX_FloatArray& charCounts,
+int32_t CBC_HighLevelEncoder::findMinimums(std::vector<FX_FLOAT>& charCounts,
                                            CFX_Int32Array& intCharCounts,
                                            int32_t min,
                                            CFX_ByteArray& mins) {

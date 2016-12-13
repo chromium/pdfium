@@ -7,6 +7,8 @@
 #ifndef XFA_FGAS_LAYOUT_FGAS_RTFBREAK_H_
 #define XFA_FGAS_LAYOUT_FGAS_RTFBREAK_H_
 
+#include <vector>
+
 #include "core/fxcrt/fx_basic.h"
 #include "core/fxcrt/fx_ucd.h"
 #include "xfa/fgas/crt/fgas_memory.h"
@@ -224,7 +226,7 @@ class CFX_RTFBreak {
   void SetFontSize(FX_FLOAT fFontSize);
   void SetTabWidth(FX_FLOAT fTabWidth);
   void AddPositionedTab(FX_FLOAT fTabPos);
-  void SetPositionedTabs(const CFX_FloatArray& tabs);
+  void SetPositionedTabs(const std::vector<FX_FLOAT>& tabs);
   void ClearPositionedTabs();
   void SetDefaultChar(FX_WCHAR wch);
   void SetLineBreakChar(FX_WCHAR wch);

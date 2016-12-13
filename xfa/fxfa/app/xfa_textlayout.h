@@ -9,6 +9,7 @@
 
 #include <map>
 #include <memory>
+#include <vector>
 
 #include "xfa/fde/css/fde_css.h"
 #include "xfa/fde/fde_gedevice.h"
@@ -155,7 +156,7 @@ class CXFA_LoaderContext {
   IFDE_CSSComputedStyle* m_pParentStyle;
   CFX_ArrayTemplate<FX_FLOAT> m_lineHeights;
   uint32_t m_dwFlags;
-  CFX_FloatArray m_BlocksHeight;
+  std::vector<FX_FLOAT> m_BlocksHeight;
 };
 
 class CXFA_LinkUserData : public IFX_Retainable, public CFX_Target {
