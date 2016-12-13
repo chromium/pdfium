@@ -7,8 +7,11 @@
 #ifndef CORE_FPDFAPI_PARSER_FPDF_PARSER_DECODE_H_
 #define CORE_FPDFAPI_PARSER_FPDF_PARSER_DECODE_H_
 
+#include <memory>
+
 #include "core/fxcrt/fx_basic.h"
 
+class CCodec_ScanlineDecoder;
 class CPDF_Dictionary;
 
 // Indexed by 8-bit char code, contains unicode code points.
@@ -44,6 +47,22 @@ uint32_t RunLengthDecode(const uint8_t* src_buf,
                          uint32_t src_size,
                          uint8_t*& dest_buf,
                          uint32_t& dest_size);
+
+std::unique_ptr<CCodec_ScanlineDecoder> FPDFAPI_CreateFaxDecoder(
+    const uint8_t* src_buf,
+    uint32_t src_size,
+    int width,
+    int height,
+    const CPDF_Dictionary* pParams);
+
+std::unique_ptr<CCodec_ScanlineDecoder> FPDFAPI_CreateFlateDecoder(
+    const uint8_t* src_buf,
+    uint32_t src_size,
+    int width,
+    int height,
+    int nComps,
+    int bpc,
+    const CPDF_Dictionary* pParams);
 
 // Public for testing.
 uint32_t A85Decode(const uint8_t* src_buf,

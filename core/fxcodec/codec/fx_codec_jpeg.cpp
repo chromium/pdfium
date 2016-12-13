@@ -7,11 +7,13 @@
 #include <setjmp.h>
 
 #include <memory>
+#include <utility>
 
 #include "core/fxcodec/codec/codec_int.h"
 #include "core/fxcodec/fx_codec.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxge/fx_dib.h"
+#include "third_party/base/ptr_util.h"
 
 extern "C" {
 #undef FAR
@@ -313,21 +315,22 @@ uint32_t CCodec_JpegDecoder::GetSrcOffset() {
   return (uint32_t)(m_SrcSize - src.bytes_in_buffer);
 }
 
-CCodec_ScanlineDecoder* CCodec_JpegModule::CreateDecoder(const uint8_t* src_buf,
-                                                         uint32_t src_size,
-                                                         int width,
-                                                         int height,
-                                                         int nComps,
-                                                         bool ColorTransform) {
+std::unique_ptr<CCodec_ScanlineDecoder> CCodec_JpegModule::CreateDecoder(
+    const uint8_t* src_buf,
+    uint32_t src_size,
+    int width,
+    int height,
+    int nComps,
+    bool ColorTransform) {
   if (!src_buf || src_size == 0)
     return nullptr;
 
-  std::unique_ptr<CCodec_JpegDecoder> pDecoder(new CCodec_JpegDecoder);
+  auto pDecoder = pdfium::MakeUnique<CCodec_JpegDecoder>();
   if (!pDecoder->Create(src_buf, src_size, width, height, nComps,
                         ColorTransform)) {
     return nullptr;
   }
-  return pDecoder.release();
+  return std::move(pDecoder);
 }
 
 bool CCodec_JpegModule::LoadInfo(const uint8_t* src_buf,

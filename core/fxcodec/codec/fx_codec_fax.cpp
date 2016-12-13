@@ -5,10 +5,12 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include <algorithm>
+#include <memory>
 #include <vector>
 
 #include "core/fxcodec/codec/codec_int.h"
 #include "core/fxcodec/fx_codec.h"
+#include "third_party/base/ptr_util.h"
 
 namespace {
 
@@ -580,16 +582,17 @@ void FaxG4Decode(const uint8_t* src_buf,
   *pbitpos = bitpos;
 }
 
-CCodec_ScanlineDecoder* CCodec_FaxModule::CreateDecoder(const uint8_t* src_buf,
-                                                        uint32_t src_size,
-                                                        int width,
-                                                        int height,
-                                                        int K,
-                                                        bool EndOfLine,
-                                                        bool EncodedByteAlign,
-                                                        bool BlackIs1,
-                                                        int Columns,
-                                                        int Rows) {
+std::unique_ptr<CCodec_ScanlineDecoder> CCodec_FaxModule::CreateDecoder(
+    const uint8_t* src_buf,
+    uint32_t src_size,
+    int width,
+    int height,
+    int K,
+    bool EndOfLine,
+    bool EncodedByteAlign,
+    bool BlackIs1,
+    int Columns,
+    int Rows) {
   int actual_width = Columns ? Columns : width;
   int actual_height = Rows ? Rows : height;
 
@@ -602,6 +605,7 @@ CCodec_ScanlineDecoder* CCodec_FaxModule::CreateDecoder(const uint8_t* src_buf,
     return nullptr;
 
   uint32_t pitch = (static_cast<uint32_t>(actual_width) + 31) / 32 * 4;
-  return new CCodec_FaxDecoder(src_buf, src_size, actual_width, actual_height,
-                               pitch, K, EndOfLine, EncodedByteAlign, BlackIs1);
+  return pdfium::MakeUnique<CCodec_FaxDecoder>(
+      src_buf, src_size, actual_width, actual_height, pitch, K, EndOfLine,
+      EncodedByteAlign, BlackIs1);
 }

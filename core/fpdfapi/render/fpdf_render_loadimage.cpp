@@ -17,6 +17,7 @@
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
+#include "core/fpdfapi/parser/fpdf_parser_decode.h"
 #include "core/fpdfapi/render/cpdf_pagerendercache.h"
 #include "core/fpdfapi/render/cpdf_renderstatus.h"
 #include "core/fxcodec/fx_codec.h"
@@ -513,22 +514,6 @@ DIB_COMP_DATA* CPDF_DIBSource::GetDecodeAndMaskArray(bool& bDefaultDecode,
   return pCompData;
 }
 
-CCodec_ScanlineDecoder* FPDFAPI_CreateFaxDecoder(
-    const uint8_t* src_buf,
-    uint32_t src_size,
-    int width,
-    int height,
-    const CPDF_Dictionary* pParams);
-
-CCodec_ScanlineDecoder* FPDFAPI_CreateFlateDecoder(
-    const uint8_t* src_buf,
-    uint32_t src_size,
-    int width,
-    int height,
-    int nComps,
-    int bpc,
-    const CPDF_Dictionary* pParams);
-
 int CPDF_DIBSource::CreateDecoder() {
   const CFX_ByteString& decoder = m_pStreamAcc->GetImageDecoder();
   if (decoder.IsEmpty())
@@ -556,22 +541,21 @@ int CPDF_DIBSource::CreateDecoder() {
   uint32_t src_size = m_pStreamAcc->GetSize();
   const CPDF_Dictionary* pParams = m_pStreamAcc->GetImageParam();
   if (decoder == "CCITTFaxDecode") {
-    m_pDecoder.reset(FPDFAPI_CreateFaxDecoder(src_data, src_size, m_Width,
-                                              m_Height, pParams));
+    m_pDecoder = FPDFAPI_CreateFaxDecoder(src_data, src_size, m_Width, m_Height,
+                                          pParams);
   } else if (decoder == "FlateDecode") {
-    m_pDecoder.reset(FPDFAPI_CreateFlateDecoder(
-        src_data, src_size, m_Width, m_Height, m_nComponents, m_bpc, pParams));
+    m_pDecoder = FPDFAPI_CreateFlateDecoder(
+        src_data, src_size, m_Width, m_Height, m_nComponents, m_bpc, pParams);
   } else if (decoder == "RunLengthDecode") {
-    m_pDecoder.reset(CPDF_ModuleMgr::Get()
-                         ->GetCodecModule()
-                         ->GetBasicModule()
-                         ->CreateRunLengthDecoder(src_data, src_size, m_Width,
-                                                  m_Height, m_nComponents,
-                                                  m_bpc));
+    m_pDecoder = CPDF_ModuleMgr::Get()
+                     ->GetCodecModule()
+                     ->GetBasicModule()
+                     ->CreateRunLengthDecoder(src_data, src_size, m_Width,
+                                              m_Height, m_nComponents, m_bpc);
   } else if (decoder == "DCTDecode") {
-    m_pDecoder.reset(CPDF_ModuleMgr::Get()->GetJpegModule()->CreateDecoder(
+    m_pDecoder = CPDF_ModuleMgr::Get()->GetJpegModule()->CreateDecoder(
         src_data, src_size, m_Width, m_Height, m_nComponents,
-        !pParams || pParams->GetIntegerFor("ColorTransform", 1)));
+        !pParams || pParams->GetIntegerFor("ColorTransform", 1));
     if (!m_pDecoder) {
       bool bTransform = false;
       int comps;
@@ -623,8 +607,8 @@ int CPDF_DIBSource::CreateDecoder() {
             return 0;
         }
         m_bpc = bpc;
-        m_pDecoder.reset(CPDF_ModuleMgr::Get()->GetJpegModule()->CreateDecoder(
-            src_data, src_size, m_Width, m_Height, m_nComponents, bTransform));
+        m_pDecoder = CPDF_ModuleMgr::Get()->GetJpegModule()->CreateDecoder(
+            src_data, src_size, m_Width, m_Height, m_nComponents, bTransform);
       }
     }
   }

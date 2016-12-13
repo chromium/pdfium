@@ -173,13 +173,4 @@ class CPDF_DIBSource : public CFX_DIBSource {
   int m_Status;
 };
 
-CCodec_ScanlineDecoder* FPDFAPI_CreateFlateDecoder(
-    const uint8_t* src_buf,
-    uint32_t src_size,
-    int width,
-    int height,
-    int nComps,
-    int bpc,
-    const CPDF_Dictionary* pParams);
-
 #endif  // CORE_FPDFAPI_RENDER_RENDER_INT_H_

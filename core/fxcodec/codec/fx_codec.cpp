@@ -14,6 +14,7 @@
 #include "core/fxcrt/fx_ext.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "third_party/base/logging.h"
+#include "third_party/base/ptr_util.h"
 
 CCodec_ModuleMgr::CCodec_ModuleMgr()
     : m_pBasicModule(new CCodec_BasicModule),
@@ -302,19 +303,16 @@ void CCodec_RLScanlineDecoder::UpdateOperator(uint8_t used_bytes) {
   m_Operator = 257 - count;
 }
 
-CCodec_ScanlineDecoder* CCodec_BasicModule::CreateRunLengthDecoder(
-    const uint8_t* src_buf,
-    uint32_t src_size,
-    int width,
-    int height,
-    int nComps,
-    int bpc) {
-  std::unique_ptr<CCodec_RLScanlineDecoder> pRLScanlineDecoder(
-      new CCodec_RLScanlineDecoder);
-  if (!pRLScanlineDecoder->Create(src_buf, src_size, width, height, nComps,
-                                  bpc)) {
+std::unique_ptr<CCodec_ScanlineDecoder>
+CCodec_BasicModule::CreateRunLengthDecoder(const uint8_t* src_buf,
+                                           uint32_t src_size,
+                                           int width,
+                                           int height,
+                                           int nComps,
+                                           int bpc) {
+  auto pDecoder = pdfium::MakeUnique<CCodec_RLScanlineDecoder>();
+  if (!pDecoder->Create(src_buf, src_size, width, height, nComps, bpc))
     return nullptr;
-  }
 
-  return pRLScanlineDecoder.release();
+  return std::move(pDecoder);
 }

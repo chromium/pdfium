@@ -7,6 +7,8 @@
 #ifndef CORE_FXCODEC_CODEC_CCODEC_JPEGMODULE_H_
 #define CORE_FXCODEC_CODEC_CCODEC_JPEGMODULE_H_
 
+#include <memory>
+
 #include "core/fxcrt/fx_system.h"
 
 class CCodec_ScanlineDecoder;
@@ -21,12 +23,12 @@ class CCodec_JpegModule {
  public:
   CCodec_JpegModule() {}
 
-  CCodec_ScanlineDecoder* CreateDecoder(const uint8_t* src_buf,
-                                        uint32_t src_size,
-                                        int width,
-                                        int height,
-                                        int nComps,
-                                        bool ColorTransform);
+  std::unique_ptr<CCodec_ScanlineDecoder> CreateDecoder(const uint8_t* src_buf,
+                                                        uint32_t src_size,
+                                                        int width,
+                                                        int height,
+                                                        int nComps,
+                                                        bool ColorTransform);
   bool LoadInfo(const uint8_t* src_buf,
                 uint32_t src_size,
                 int* width,

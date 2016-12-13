@@ -8,9 +8,11 @@
 
 #include <algorithm>
 #include <memory>
+#include <utility>
 
 #include "core/fxcodec/fx_codec.h"
 #include "core/fxcrt/fx_ext.h"
+#include "third_party/base/ptr_util.h"
 #include "third_party/zlib_v128/zlib.h"
 
 extern "C" {
@@ -771,7 +773,7 @@ uint32_t CCodec_FlateScanlineDecoder::GetSrcOffset() {
   return FPDFAPI_FlateGetTotalIn(m_pFlate);
 }
 
-CCodec_ScanlineDecoder* CCodec_FlateModule::CreateDecoder(
+std::unique_ptr<CCodec_ScanlineDecoder> CCodec_FlateModule::CreateDecoder(
     const uint8_t* src_buf,
     uint32_t src_size,
     int width,
@@ -782,11 +784,12 @@ CCodec_ScanlineDecoder* CCodec_FlateModule::CreateDecoder(
     int Colors,
     int BitsPerComponent,
     int Columns) {
-  CCodec_FlateScanlineDecoder* pDecoder = new CCodec_FlateScanlineDecoder;
+  auto pDecoder = pdfium::MakeUnique<CCodec_FlateScanlineDecoder>();
   pDecoder->Create(src_buf, src_size, width, height, nComps, bpc, predictor,
                    Colors, BitsPerComponent, Columns);
-  return pDecoder;
+  return std::move(pDecoder);
 }
+
 uint32_t CCodec_FlateModule::FlateOrLZWDecode(bool bLZW,
                                               const uint8_t* src_buf,
                                               uint32_t src_size,

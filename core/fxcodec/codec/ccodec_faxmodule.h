@@ -7,22 +7,24 @@
 #ifndef CORE_FXCODEC_CODEC_CCODEC_FAXMODULE_H_
 #define CORE_FXCODEC_CODEC_CCODEC_FAXMODULE_H_
 
+#include <memory>
+
 #include "core/fxcrt/fx_system.h"
 
 class CCodec_ScanlineDecoder;
 
 class CCodec_FaxModule {
  public:
-  CCodec_ScanlineDecoder* CreateDecoder(const uint8_t* src_buf,
-                                        uint32_t src_size,
-                                        int width,
-                                        int height,
-                                        int K,
-                                        bool EndOfLine,
-                                        bool EncodedByteAlign,
-                                        bool BlackIs1,
-                                        int Columns,
-                                        int Rows);
+  std::unique_ptr<CCodec_ScanlineDecoder> CreateDecoder(const uint8_t* src_buf,
+                                                        uint32_t src_size,
+                                                        int width,
+                                                        int height,
+                                                        int K,
+                                                        bool EndOfLine,
+                                                        bool EncodedByteAlign,
+                                                        bool BlackIs1,
+                                                        int Columns,
+                                                        int Rows);
 };
 
 #endif  // CORE_FXCODEC_CODEC_CCODEC_FAXMODULE_H_
