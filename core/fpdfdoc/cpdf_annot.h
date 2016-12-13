@@ -10,6 +10,7 @@
 #include <map>
 #include <memory>
 
+#include "core/fxcrt/cfx_maybe_owned.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
@@ -81,9 +82,8 @@ class CPDF_Annot {
   CPDF_Annot::Subtype GetSubtype() const;
   uint32_t GetFlags() const;
   CFX_FloatRect GetRect() const;
-  const CPDF_Dictionary* GetAnnotDict() const { return m_pAnnotDict; }
-  CPDF_Dictionary* GetAnnotDict() { return m_pAnnotDict; }
   CPDF_Document* GetDocument() const { return m_pDocument; }
+  CPDF_Dictionary* GetAnnotDict() const { return m_pAnnotDict.Get(); }
 
   bool DrawAppearance(CPDF_Page* pPage,
                       CFX_RenderDevice* pDevice,
@@ -111,11 +111,7 @@ class CPDF_Annot {
 
   CFX_FloatRect RectForDrawing() const;
 
-  // For regular annotations, |m_pAnnotDict| is not owned. For
-  // our artificially created popup annotations, |m_pAnnotDict|
-  // is owned by this class.
-  bool m_bOwnedAnnotDict;
-  CPDF_Dictionary* m_pAnnotDict;
+  CFX_MaybeOwned<CPDF_Dictionary> m_pAnnotDict;
   CPDF_Document* const m_pDocument;
   CPDF_Annot::Subtype m_nSubtype;
   std::map<CPDF_Stream*, std::unique_ptr<CPDF_Form>> m_APMap;

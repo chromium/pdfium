@@ -63,20 +63,16 @@ CPDF_Form* AnnotGetMatrix(const CPDF_Page* pPage,
 
 CPDF_Annot::CPDF_Annot(std::unique_ptr<CPDF_Dictionary> pDict,
                        CPDF_Document* pDocument)
-    : m_bOwnedAnnotDict(true),
-      m_pAnnotDict(pDict.release()),
-      m_pDocument(pDocument) {
+    : m_pAnnotDict(std::move(pDict)), m_pDocument(pDocument) {
   Init();
 }
 
 CPDF_Annot::CPDF_Annot(CPDF_Dictionary* pDict, CPDF_Document* pDocument)
-    : m_bOwnedAnnotDict(false), m_pAnnotDict(pDict), m_pDocument(pDocument) {
+    : m_pAnnotDict(pDict), m_pDocument(pDocument) {
   Init();
 }
 
 CPDF_Annot::~CPDF_Annot() {
-  if (m_bOwnedAnnotDict)
-    delete m_pAnnotDict;
   ClearCachedAP();
 }
 
@@ -88,28 +84,29 @@ void CPDF_Annot::Init() {
 }
 
 void CPDF_Annot::GenerateAPIfNeeded() {
-  if (!ShouldGenerateAPForAnnotation(m_pAnnotDict))
+  if (!ShouldGenerateAPForAnnotation(m_pAnnotDict.Get()))
     return;
 
+  CPDF_Dictionary* pDict = m_pAnnotDict.Get();
   bool result = false;
   if (m_nSubtype == CPDF_Annot::Subtype::CIRCLE)
-    result = CPVT_GenerateAP::GenerateCircleAP(m_pDocument, m_pAnnotDict);
+    result = CPVT_GenerateAP::GenerateCircleAP(m_pDocument, pDict);
   else if (m_nSubtype == CPDF_Annot::Subtype::HIGHLIGHT)
-    result = CPVT_GenerateAP::GenerateHighlightAP(m_pDocument, m_pAnnotDict);
+    result = CPVT_GenerateAP::GenerateHighlightAP(m_pDocument, pDict);
   else if (m_nSubtype == CPDF_Annot::Subtype::INK)
-    result = CPVT_GenerateAP::GenerateInkAP(m_pDocument, m_pAnnotDict);
+    result = CPVT_GenerateAP::GenerateInkAP(m_pDocument, pDict);
   else if (m_nSubtype == CPDF_Annot::Subtype::POPUP)
-    result = CPVT_GenerateAP::GeneratePopupAP(m_pDocument, m_pAnnotDict);
+    result = CPVT_GenerateAP::GeneratePopupAP(m_pDocument, pDict);
   else if (m_nSubtype == CPDF_Annot::Subtype::SQUARE)
-    result = CPVT_GenerateAP::GenerateSquareAP(m_pDocument, m_pAnnotDict);
+    result = CPVT_GenerateAP::GenerateSquareAP(m_pDocument, pDict);
   else if (m_nSubtype == CPDF_Annot::Subtype::SQUIGGLY)
-    result = CPVT_GenerateAP::GenerateSquigglyAP(m_pDocument, m_pAnnotDict);
+    result = CPVT_GenerateAP::GenerateSquigglyAP(m_pDocument, pDict);
   else if (m_nSubtype == CPDF_Annot::Subtype::STRIKEOUT)
-    result = CPVT_GenerateAP::GenerateStrikeOutAP(m_pDocument, m_pAnnotDict);
+    result = CPVT_GenerateAP::GenerateStrikeOutAP(m_pDocument, pDict);
   else if (m_nSubtype == CPDF_Annot::Subtype::TEXT)
-    result = CPVT_GenerateAP::GenerateTextAP(m_pDocument, m_pAnnotDict);
+    result = CPVT_GenerateAP::GenerateTextAP(m_pDocument, pDict);
   else if (m_nSubtype == CPDF_Annot::Subtype::UNDERLINE)
-    result = CPVT_GenerateAP::GenerateUnderlineAP(m_pDocument, m_pAnnotDict);
+    result = CPVT_GenerateAP::GenerateUnderlineAP(m_pDocument, pDict);
 
   if (result) {
     m_pAnnotDict->SetNewFor<CPDF_Boolean>(kPDFiumKey_HasGeneratedAP, result);
@@ -118,7 +115,7 @@ void CPDF_Annot::GenerateAPIfNeeded() {
 }
 
 bool CPDF_Annot::ShouldDrawAnnotation() {
-  if (IsAnnotationHidden(m_pAnnotDict))
+  if (IsAnnotationHidden(m_pAnnotDict.Get()))
     return false;
 
   if (m_nSubtype == CPDF_Annot::Subtype::POPUP && !m_bOpenState)
@@ -142,7 +139,7 @@ CFX_FloatRect CPDF_Annot::RectForDrawing() const {
   bool bShouldUseQuadPointsCoords =
       m_bIsTextMarkupAnnotation && m_bHasGeneratedAP;
   if (bShouldUseQuadPointsCoords)
-    return RectFromQuadPoints(m_pAnnotDict);
+    return RectFromQuadPoints(m_pAnnotDict.Get());
 
   return m_pAnnotDict->GetRectFor("Rect");
 }
@@ -199,7 +196,7 @@ CPDF_Stream* FPDFDOC_GetAnnotAP(CPDF_Dictionary* pAnnotDict,
 }
 
 CPDF_Form* CPDF_Annot::GetAPForm(const CPDF_Page* pPage, AppearanceMode mode) {
-  CPDF_Stream* pStream = FPDFDOC_GetAnnotAP(m_pAnnotDict, mode);
+  CPDF_Stream* pStream = FPDFDOC_GetAnnotAP(m_pAnnotDict.Get(), mode);
   if (!pStream)
     return nullptr;
 
