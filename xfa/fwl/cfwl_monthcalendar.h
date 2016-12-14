@@ -14,14 +14,9 @@
 #include "xfa/fwl/cfwl_widget.h"
 #include "xfa/fwl/cfwl_widgetproperties.h"
 
-#define FWL_STYLEEXT_MCD_MultiSelect (1L << 0)
-#define FWL_STYLEEXT_MCD_NoToday (1L << 1)
-#define FWL_STYLEEXT_MCD_NoTodayCircle (1L << 2)
-#define FWL_STYLEEXT_MCD_WeekNumbers (1L << 3)
-#define FWL_ITEMSTATE_MCD_Nomal (0L << 0)
+#define FWL_ITEMSTATE_MCD_Nomal 0
 #define FWL_ITEMSTATE_MCD_Flag (1L << 0)
 #define FWL_ITEMSTATE_MCD_Selected (1L << 1)
-#define FWL_ITEMSTATE_MCD_Focused (1L << 2)
 
 class CFWL_MessageMouse;
 class CFWL_Widget;
@@ -118,12 +113,6 @@ class CFWL_MonthCalendar : public CFWL_Widget {
   void DrawWeek(CFX_Graphics* pGraphics,
                 IFWL_ThemeProvider* pTheme,
                 const CFX_Matrix* pMatrix);
-  void DrawWeekNumber(CFX_Graphics* pGraphics,
-                      IFWL_ThemeProvider* pTheme,
-                      const CFX_Matrix* pMatrix);
-  void DrawWeekNumberSep(CFX_Graphics* pGraphics,
-                         IFWL_ThemeProvider* pTheme,
-                         const CFX_Matrix* pMatrix);
   void DrawToday(CFX_Graphics* pGraphics,
                  IFWL_ThemeProvider* pTheme,
                  const CFX_Matrix* pMatrix);
