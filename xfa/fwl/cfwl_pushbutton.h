@@ -12,21 +12,8 @@
 #include "xfa/fwl/cfwl_widget.h"
 #include "xfa/fwl/cfwl_widgetproperties.h"
 
-#define FWL_STYLEEXT_PSB_Left (0L << 0)
-#define FWL_STYLEEXT_PSB_Center (1L << 0)
-#define FWL_STYLEEXT_PSB_Right (2L << 0)
-#define FWL_STYLEEXT_PSB_Top (0L << 2)
-#define FWL_STYLEEXT_PSB_VCenter (1L << 2)
-#define FWL_STYLEEXT_PSB_Bottom (2L << 2)
-#define FWL_STYLEEXT_PSB_TextOnly (0L << 4)
-#define FWL_STYLEEXT_PSB_IconOnly (1L << 4)
-#define FWL_STYLEEXT_PSB_TextIcon (2L << 4)
-#define FWL_STYLEEXT_PSB_HLayoutMask (3L << 0)
-#define FWL_STYLEEXT_PSB_VLayoutMask (3L << 2)
-#define FWL_STYLEEXT_PSB_ModeMask (3L << 4)
 #define FWL_STATE_PSB_Hovered (1 << FWL_WGTSTATE_MAX)
 #define FWL_STATE_PSB_Pressed (1 << (FWL_WGTSTATE_MAX + 1))
-#define FWL_STATE_PSB_Default (1 << (FWL_WGTSTATE_MAX + 2))
 
 class CFWL_MessageMouse;
 class CFX_DIBitmap;

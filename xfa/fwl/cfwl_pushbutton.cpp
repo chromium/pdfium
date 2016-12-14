@@ -101,52 +101,11 @@ uint32_t CFWL_PushButton::GetPartStates() {
     dwStates |= CFWL_PartState_Pressed;
   else if (m_pProperties->m_dwStates & FWL_STATE_PSB_Hovered)
     dwStates |= CFWL_PartState_Hovered;
-  else if (m_pProperties->m_dwStates & FWL_STATE_PSB_Default)
-    dwStates |= CFWL_PartState_Default;
   return dwStates;
 }
 
 void CFWL_PushButton::UpdateTextOutStyles() {
-  switch (m_pProperties->m_dwStyleExes &
-          (FWL_STYLEEXT_PSB_HLayoutMask | FWL_STYLEEXT_PSB_VLayoutMask)) {
-    case FWL_STYLEEXT_PSB_Left | FWL_STYLEEXT_PSB_Top: {
-      m_iTTOAlign = FDE_TTOALIGNMENT_TopLeft;
-      break;
-    }
-    case FWL_STYLEEXT_PSB_Center | FWL_STYLEEXT_PSB_Top: {
-      m_iTTOAlign = FDE_TTOALIGNMENT_TopCenter;
-      break;
-    }
-    case FWL_STYLEEXT_PSB_Right | FWL_STYLEEXT_PSB_Top: {
-      m_iTTOAlign = FDE_TTOALIGNMENT_TopRight;
-      break;
-    }
-    case FWL_STYLEEXT_PSB_Left | FWL_STYLEEXT_PSB_VCenter: {
-      m_iTTOAlign = FDE_TTOALIGNMENT_CenterLeft;
-      break;
-    }
-    case FWL_STYLEEXT_PSB_Right | FWL_STYLEEXT_PSB_VCenter: {
-      m_iTTOAlign = FDE_TTOALIGNMENT_CenterRight;
-      break;
-    }
-    case FWL_STYLEEXT_PSB_Left | FWL_STYLEEXT_PSB_Bottom: {
-      m_iTTOAlign = FDE_TTOALIGNMENT_BottomLeft;
-      break;
-    }
-    case FWL_STYLEEXT_PSB_Center | FWL_STYLEEXT_PSB_Bottom: {
-      m_iTTOAlign = FDE_TTOALIGNMENT_BottomCenter;
-      break;
-    }
-    case FWL_STYLEEXT_PSB_Right | FWL_STYLEEXT_PSB_Bottom: {
-      m_iTTOAlign = FDE_TTOALIGNMENT_BottomRight;
-      break;
-    }
-    case FWL_STYLEEXT_PSB_Center | FWL_STYLEEXT_PSB_VCenter:
-    default: {
-      m_iTTOAlign = FDE_TTOALIGNMENT_Center;
-      break;
-    }
-  }
+  m_iTTOAlign = FDE_TTOALIGNMENT_TopLeft;
   m_dwTTOStyles = FDE_TTOSTYLE_SingleLine;
   if (m_pProperties->m_dwStyleExes & FWL_WGTSTYLE_RTLReading)
     m_dwTTOStyles |= FDE_TTOSTYLE_RTL;
