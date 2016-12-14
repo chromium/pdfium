@@ -8,6 +8,7 @@
 
 #include <algorithm>
 #include <iomanip>
+#include <limits>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -95,6 +96,11 @@ CFX_ByteString CalculateString(double dValue,
   *bNegative = dValue < 0;
   if (*bNegative)
     dValue = -dValue;
+
+  // Make sure the number of precision characters will fit.
+  if (iDec > std::numeric_limits<double>::digits10)
+    iDec = std::numeric_limits<double>::digits10;
+
   std::stringstream ss;
   ss << std::fixed << std::setprecision(iDec) << dValue;
   std::string stringValue = ss.str();
