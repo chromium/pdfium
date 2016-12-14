@@ -131,35 +131,9 @@ void CFWL_CheckBox::Layout() {
   m_rtClient = GetClientRect();
 
   FX_FLOAT fBoxTop = m_rtClient.top;
-  FX_FLOAT fClientBottom = m_rtClient.bottom();
-
-  switch (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_CKB_VLayoutMask) {
-    case FWL_STYLEEXT_CKB_Top:
-      break;
-    case FWL_STYLEEXT_CKB_Bottom: {
-      fBoxTop = fClientBottom - m_fBoxHeight;
-      break;
-    }
-    case FWL_STYLEEXT_CKB_VCenter:
-    default: {
-      fBoxTop = m_rtClient.top + (m_rtClient.height - m_fBoxHeight) / 2;
-      fBoxTop = FXSYS_floor(fBoxTop);
-      break;
-    }
-  }
-
   FX_FLOAT fBoxLeft = m_rtClient.left;
-  FX_FLOAT fTextLeft = 0.0;
-  FX_FLOAT fTextRight = 0.0;
-  FX_FLOAT fClientRight = m_rtClient.right();
-  if (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_CKB_LeftText) {
-    fBoxLeft = fClientRight - m_fBoxHeight;
-    fTextLeft = m_rtClient.left;
-    fTextRight = fBoxLeft;
-  } else {
-    fTextLeft = fBoxLeft + m_fBoxHeight;
-    fTextRight = fClientRight;
-  }
+  FX_FLOAT fTextLeft = fBoxLeft + m_fBoxHeight;
+  FX_FLOAT fTextRight = m_rtClient.right();
   m_rtBox.Set(fBoxLeft, fBoxTop, m_fBoxHeight, m_fBoxHeight);
   m_rtCaption.Set(fTextLeft, m_rtClient.top, fTextRight - fTextLeft,
                   m_rtClient.height);
@@ -171,29 +145,12 @@ void CFWL_CheckBox::Layout() {
 
   CalcTextRect(L"Check box", m_pProperties->m_pThemeProvider, m_dwTTOStyles,
                m_iTTOAlign, rtFocus);
-  if ((m_pProperties->m_dwStyleExes & FWL_STYLEEXT_CKB_MultiLine) == 0) {
-    FX_FLOAT fWidth = std::max(m_rtCaption.width, rtFocus.width);
-    FX_FLOAT fHeight = std::min(m_rtCaption.height, rtFocus.height);
-    FX_FLOAT fLeft = m_rtCaption.left;
-    FX_FLOAT fTop = m_rtCaption.top;
-    if ((m_pProperties->m_dwStyleExes & FWL_STYLEEXT_CKB_HLayoutMask) ==
-        FWL_STYLEEXT_CKB_Center) {
-      fLeft = m_rtCaption.left + (m_rtCaption.width - fWidth) / 2;
-    } else if ((m_pProperties->m_dwStyleExes & FWL_STYLEEXT_CKB_HLayoutMask) ==
-               FWL_STYLEEXT_CKB_Right) {
-      fLeft = m_rtCaption.right() - fWidth;
-    }
-    if ((m_pProperties->m_dwStyleExes & FWL_STYLEEXT_CKB_VLayoutMask) ==
-        FWL_STYLEEXT_CKB_VCenter) {
-      fTop = m_rtCaption.top + (m_rtCaption.height - fHeight) / 2;
-    } else if ((m_pProperties->m_dwStyleExes & FWL_STYLEEXT_CKB_VLayoutMask) ==
-               FWL_STYLEEXT_CKB_Bottom) {
-      fTop = m_rtCaption.bottom() - fHeight;
-    }
-    m_rtFocus.Set(fLeft, fTop, fWidth, fHeight);
-  } else {
-    m_rtFocus.Set(rtFocus.left, rtFocus.top, rtFocus.width, rtFocus.height);
-  }
+
+  FX_FLOAT fWidth = std::max(m_rtCaption.width, rtFocus.width);
+  FX_FLOAT fHeight = std::min(m_rtCaption.height, rtFocus.height);
+  FX_FLOAT fLeft = m_rtCaption.left;
+  FX_FLOAT fTop = m_rtCaption.top;
+  m_rtFocus.Set(fLeft, fTop, fWidth, fHeight);
   m_rtFocus.Inflate(1, 1);
 }
 
@@ -220,53 +177,11 @@ uint32_t CFWL_CheckBox::GetPartStates() const {
 }
 
 void CFWL_CheckBox::UpdateTextOutStyles() {
-  switch (m_pProperties->m_dwStyleExes &
-          (FWL_STYLEEXT_CKB_HLayoutMask | FWL_STYLEEXT_CKB_VLayoutMask)) {
-    case FWL_STYLEEXT_CKB_Left | FWL_STYLEEXT_CKB_Top: {
-      m_iTTOAlign = FDE_TTOALIGNMENT_TopLeft;
-      break;
-    }
-    case FWL_STYLEEXT_CKB_Center | FWL_STYLEEXT_CKB_Top: {
-      m_iTTOAlign = FDE_TTOALIGNMENT_TopCenter;
-      break;
-    }
-    case FWL_STYLEEXT_CKB_Right | FWL_STYLEEXT_CKB_Top: {
-      m_iTTOAlign = FDE_TTOALIGNMENT_TopRight;
-      break;
-    }
-    case FWL_STYLEEXT_CKB_Left | FWL_STYLEEXT_CKB_VCenter: {
-      m_iTTOAlign = FDE_TTOALIGNMENT_CenterLeft;
-      break;
-    }
-    case FWL_STYLEEXT_CKB_Right | FWL_STYLEEXT_CKB_VCenter: {
-      m_iTTOAlign = FDE_TTOALIGNMENT_CenterRight;
-      break;
-    }
-    case FWL_STYLEEXT_CKB_Left | FWL_STYLEEXT_CKB_Bottom: {
-      m_iTTOAlign = FDE_TTOALIGNMENT_BottomLeft;
-      break;
-    }
-    case FWL_STYLEEXT_CKB_Center | FWL_STYLEEXT_CKB_Bottom: {
-      m_iTTOAlign = FDE_TTOALIGNMENT_BottomCenter;
-      break;
-    }
-    case FWL_STYLEEXT_CKB_Right | FWL_STYLEEXT_CKB_Bottom: {
-      m_iTTOAlign = FDE_TTOALIGNMENT_BottomRight;
-      break;
-    }
-    case FWL_STYLEEXT_CKB_Center | FWL_STYLEEXT_CKB_VCenter:
-    default: {
-      m_iTTOAlign = FDE_TTOALIGNMENT_Center;
-      break;
-    }
-  }
+  m_iTTOAlign = FDE_TTOALIGNMENT_TopLeft;
   m_dwTTOStyles = 0;
   if (m_pProperties->m_dwStyleExes & FWL_WGTSTYLE_RTLReading)
     m_dwTTOStyles |= FDE_TTOSTYLE_RTL;
-  if (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_CKB_MultiLine)
-    m_dwTTOStyles |= FDE_TTOSTYLE_LineWrap;
-  else
-    m_dwTTOStyles |= FDE_TTOSTYLE_SingleLine;
+  m_dwTTOStyles |= FDE_TTOSTYLE_SingleLine;
 }
 
 void CFWL_CheckBox::NextStates() {

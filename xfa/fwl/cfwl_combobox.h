@@ -23,27 +23,20 @@ class CFWL_FormProxy;
 class CFWL_ListBox;
 class CFWL_Widget;
 
-#define FWL_STYLEEXT_CMB_DropList (0L << 0)
 #define FWL_STYLEEXT_CMB_DropDown (1L << 0)
 #define FWL_STYLEEXT_CMB_Sort (1L << 1)
-#define FWL_STYLEEXT_CMB_ListDrag (1L << 2)
 #define FWL_STYLEEXT_CMB_OwnerDraw (1L << 3)
-#define FWL_STYLEEXT_CMB_EditHNear (0L << 4)
+#define FWL_STYLEEXT_CMB_EditHNear 0
 #define FWL_STYLEEXT_CMB_EditHCenter (1L << 4)
-#define FWL_STYLEEXT_CMB_EditHFar (2L << 4)
-#define FWL_STYLEEXT_CMB_EditVNear (0L << 6)
+#define FWL_STYLEEXT_CMB_EditVNear 0
 #define FWL_STYLEEXT_CMB_EditVCenter (1L << 6)
 #define FWL_STYLEEXT_CMB_EditVFar (2L << 6)
 #define FWL_STYLEEXT_CMB_EditJustified (1L << 8)
-#define FWL_STYLEEXT_CMB_EditDistributed (2L << 8)
 #define FWL_STYLEEXT_CMB_EditHAlignMask (3L << 4)
 #define FWL_STYLEEXT_CMB_EditVAlignMask (3L << 6)
-#define FWL_STYLEEXT_CMB_EditHAlignModeMask (3L << 8)
-#define FWL_STYLEEXT_CMB_ListItemLeftAlign (0L << 10)
+#define FWL_STYLEEXT_CMB_ListItemLeftAlign 0
 #define FWL_STYLEEXT_CMB_ListItemCenterAlign (1L << 10)
-#define FWL_STYLEEXT_CMB_ListItemRightAlign (2L << 10)
 #define FWL_STYLEEXT_CMB_ListItemAlignMask (3L << 10)
-#define FWL_STYLEEXT_CMB_ListItemText (0L << 12)
 #define FWL_STYLEEXT_CMB_ReadOnly (1L << 13)
 
 class CFWL_ComboBox : public CFWL_Widget {
@@ -161,7 +154,6 @@ class CFWL_ComboBox : public CFWL_Widget {
   std::unique_ptr<CFWL_ComboList> m_pListBox;
   CFWL_ComboBoxProxy* m_pComboBoxProxy;  // Can this be a unique_ptr?
   bool m_bLButtonDown;
-  bool m_bUpFormHandler;
   int32_t m_iCurSel;
   int32_t m_iBtnState;
   FX_FLOAT m_fComboFormHandler;

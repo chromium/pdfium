@@ -12,21 +12,6 @@
 #include "xfa/fwl/cfwl_widget.h"
 #include "xfa/fwl/cfwl_widgetproperties.h"
 
-#define FWL_STYLEEXT_PTB_Left 0L << 0
-#define FWL_STYLEEXT_PTB_Center 1L << 0
-#define FWL_STYLEEXT_PTB_Right 2L << 0
-#define FWL_STYLEEXT_PTB_Top 0L << 2
-#define FWL_STYLEEXT_PTB_Vcenter 1L << 2
-#define FWL_STYLEEXT_PTB_Bottom 2L << 2
-#define FWL_STYLEEXT_PTB_Normal 0L << 4
-#define FWL_STYLEEXT_PTB_AutoSize 1L << 4
-#define FWL_STYLEEXT_PTB_StretchImage 2L << 4
-#define FWL_STYLEEXT_PTB_StretchHImage 3L << 4
-#define FWL_STYLEEXT_PTB_StretchVImage 4L << 4
-#define FWL_STYLEEXT_PTB_HAlignMask 3L << 0
-#define FWL_STYLEEXT_PTB_VAlignMask 3L << 2
-#define FWL_STYLEEXT_PTB_StretchAlignMask 7L << 4
-
 class CFX_DIBitmap;
 class CFWL_Widget;
 

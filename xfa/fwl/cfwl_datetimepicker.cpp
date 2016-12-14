@@ -205,11 +205,6 @@ void CFWL_DateTimePicker::ModifyEditStylesEx(uint32_t dwStylesExAdded,
 void CFWL_DateTimePicker::DrawDropDownButton(CFX_Graphics* pGraphics,
                                              IFWL_ThemeProvider* pTheme,
                                              const CFX_Matrix* pMatrix) {
-  if ((m_pProperties->m_dwStyleExes & FWL_STYLEEXT_DTP_Spin) ==
-      FWL_STYLEEXT_DTP_Spin) {
-    return;
-  }
-
   CFWL_ThemeBackground param;
   param.m_pWidget = this;
   param.m_iPart = CFWL_Part::DropDownButton;
@@ -308,8 +303,6 @@ void CFWL_DateTimePicker::ResetEditAlignment() {
   }
   if (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_DTP_EditJustified)
     dwAdd |= FWL_STYLEEXT_EDT_Justified;
-  if (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_DTP_EditDistributed)
-    dwAdd |= FWL_STYLEEXT_EDT_Distributed;
 
   m_pEdit->ModifyStylesEx(dwAdd, FWL_STYLEEXT_EDT_HAlignMask |
                                      FWL_STYLEEXT_EDT_HAlignModeMask |
@@ -567,8 +560,7 @@ void CFWL_DateTimePicker::OnLButtonDown(CFWL_MessageMouse* pMsg) {
     ShowMonthCalendar(false);
     return;
   }
-  if (!(m_pProperties->m_dwStyleExes & FWL_STYLEEXT_DTP_TimeFormat))
-    ShowMonthCalendar(true);
+  ShowMonthCalendar(true);
 
   m_bLBtnDown = true;
   RepaintRect(m_rtClient);

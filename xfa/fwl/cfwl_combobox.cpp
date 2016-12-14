@@ -342,23 +342,9 @@ void CFWL_ComboBox::ShowDropList(bool bActivate) {
 
   m_rtList.width = std::max(m_rtList.width, m_rtClient.width);
   m_rtProxy = m_rtList;
-  if (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_CMB_ListDrag)
-    m_rtProxy.height += m_fComboFormHandler;
 
   GetPopupPos(0, m_rtProxy.height, rtAnchor, m_rtProxy);
-  if (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_CMB_ListDrag) {
-    FX_FLOAT fx = 0;
-    FX_FLOAT fy = m_rtClient.top + m_rtClient.height / 2;
-    TransformTo(nullptr, fx, fy);
 
-    m_bUpFormHandler = fy > m_rtProxy.top;
-    if (m_bUpFormHandler) {
-      m_rtHandler.Set(0, 0, m_rtList.width, m_fComboFormHandler);
-      m_rtList.top = m_fComboFormHandler;
-    } else {
-      m_rtHandler.Set(0, m_rtList.height, m_rtList.width, m_fComboFormHandler);
-    }
-  }
   m_pComboBoxProxy->SetWidgetRect(m_rtProxy);
   m_pComboBoxProxy->Update();
   m_pListBox->SetWidgetRect(m_rtList);
@@ -447,11 +433,10 @@ void CFWL_ComboBox::ResetEditAlignment() {
       dwAdd |= FWL_STYLEEXT_EDT_HCenter;
       break;
     }
-    case FWL_STYLEEXT_CMB_EditHFar: {
-      dwAdd |= FWL_STYLEEXT_EDT_HFar;
+    default: {
+      dwAdd |= FWL_STYLEEXT_EDT_HNear;
       break;
     }
-    default: { dwAdd |= FWL_STYLEEXT_EDT_HNear; }
   }
   switch (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_CMB_EditVAlignMask) {
     case FWL_STYLEEXT_CMB_EditVCenter: {
@@ -469,8 +454,6 @@ void CFWL_ComboBox::ResetEditAlignment() {
   }
   if (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_CMB_EditJustified)
     dwAdd |= FWL_STYLEEXT_EDT_Justified;
-  if (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_CMB_EditDistributed)
-    dwAdd |= FWL_STYLEEXT_EDT_Distributed;
 
   m_pEdit->ModifyStylesEx(dwAdd, FWL_STYLEEXT_EDT_HAlignMask |
                                      FWL_STYLEEXT_EDT_HAlignModeMask |
@@ -485,10 +468,6 @@ void CFWL_ComboBox::ResetListItemAlignment() {
   switch (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_CMB_ListItemAlignMask) {
     case FWL_STYLEEXT_CMB_ListItemCenterAlign: {
       dwAdd |= FWL_STYLEEXT_LTB_CenterAlign;
-      break;
-    }
-    case FWL_STYLEEXT_CMB_ListItemRightAlign: {
-      dwAdd |= FWL_STYLEEXT_LTB_RightAlign;
       break;
     }
     default: {

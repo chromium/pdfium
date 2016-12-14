@@ -15,22 +15,17 @@
 #include "xfa/fwl/cfwl_widget.h"
 #include "xfa/fwl/cfwl_widgetproperties.h"
 
-#define FWL_STYLEEXT_DTP_AllowEdit (1L << 0)
-#define FWL_STYLEEXT_DTP_LongDateFormat (0L << 1)
+#define FWL_STYLEEXT_DTP_LongDateFormat 0
 #define FWL_STYLEEXT_DTP_ShortDateFormat (1L << 1)
-#define FWL_STYLEEXT_DTP_TimeFormat (2L << 1)
-#define FWL_STYLEEXT_DTP_Spin (1L << 3)
-#define FWL_STYLEEXT_DTP_EditHNear (0L << 4)
+#define FWL_STYLEEXT_DTP_EditHNear 0
 #define FWL_STYLEEXT_DTP_EditHCenter (1L << 4)
 #define FWL_STYLEEXT_DTP_EditHFar (2L << 4)
-#define FWL_STYLEEXT_DTP_EditVNear (0L << 6)
+#define FWL_STYLEEXT_DTP_EditVNear 0
 #define FWL_STYLEEXT_DTP_EditVCenter (1L << 6)
 #define FWL_STYLEEXT_DTP_EditVFar (2L << 6)
 #define FWL_STYLEEXT_DTP_EditJustified (1L << 8)
-#define FWL_STYLEEXT_DTP_EditDistributed (2L << 8)
 #define FWL_STYLEEXT_DTP_EditHAlignMask (3L << 4)
 #define FWL_STYLEEXT_DTP_EditVAlignMask (3L << 6)
-#define FWL_STYLEEXT_DTP_EditHAlignModeMask (3L << 8)
 
 class CFWL_DateTimeEdit;
 class CFWL_FormProxy;
