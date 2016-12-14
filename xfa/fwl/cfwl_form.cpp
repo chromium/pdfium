@@ -32,12 +32,6 @@ const int kSystemButtonSpan = 2;
 
 }  // namespace
 
-namespace {
-
-const uint8_t kCornerEnlarge = 10;
-
-}  // namespace
-
 CFWL_Form::CFWL_Form(const CFWL_App* app,
                      std::unique_ptr<CFWL_WidgetProperties> properties,
                      CFWL_Widget* pOuter)
@@ -109,53 +103,8 @@ FWL_WidgetHit CFWL_Form::HitTest(FX_FLOAT fx, FX_FLOAT fy) {
   rtCap.Set(m_fCYBorder, m_fCXBorder,
             0 - kSystemButtonSize * m_iSysBox - 2 * m_fCYBorder,
             0 - m_fCXBorder);
-  if (rtCap.Contains(fx, fy))
-    return FWL_WidgetHit::Titlebar;
-  if ((m_pProperties->m_dwStyles & FWL_WGTSTYLE_Border) &&
-      (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_FRM_Resize)) {
-    FX_FLOAT fWidth = m_rtRelative.width - 2 * (m_fCYBorder + kCornerEnlarge);
-    FX_FLOAT fHeight = m_rtRelative.height - 2 * (m_fCXBorder + kCornerEnlarge);
-
-    CFX_RectF rt;
-    rt.Set(0, m_fCXBorder + kCornerEnlarge, m_fCYBorder, fHeight);
-    if (rt.Contains(fx, fy))
-      return FWL_WidgetHit::Left;
-
-    rt.Set(m_rtRelative.width - m_fCYBorder, m_fCXBorder + kCornerEnlarge,
-           m_fCYBorder, fHeight);
-    if (rt.Contains(fx, fy))
-      return FWL_WidgetHit::Right;
-
-    rt.Set(m_fCYBorder + kCornerEnlarge, 0, fWidth, m_fCXBorder);
-    if (rt.Contains(fx, fy))
-      return FWL_WidgetHit::Top;
-
-    rt.Set(m_fCYBorder + kCornerEnlarge, m_rtRelative.height - m_fCXBorder,
-           fWidth, m_fCXBorder);
-    if (rt.Contains(fx, fy))
-      return FWL_WidgetHit::Bottom;
-
-    rt.Set(0, 0, m_fCYBorder + kCornerEnlarge, m_fCXBorder + kCornerEnlarge);
-    if (rt.Contains(fx, fy))
-      return FWL_WidgetHit::LeftTop;
-
-    rt.Set(0, m_rtRelative.height - m_fCXBorder - kCornerEnlarge,
-           m_fCYBorder + kCornerEnlarge, m_fCXBorder + kCornerEnlarge);
-    if (rt.Contains(fx, fy))
-      return FWL_WidgetHit::LeftBottom;
-
-    rt.Set(m_rtRelative.width - m_fCYBorder - kCornerEnlarge, 0,
-           m_fCYBorder + kCornerEnlarge, m_fCXBorder + kCornerEnlarge);
-    if (rt.Contains(fx, fy))
-      return FWL_WidgetHit::RightTop;
-
-    rt.Set(m_rtRelative.width - m_fCYBorder - kCornerEnlarge,
-           m_rtRelative.height - m_fCXBorder - kCornerEnlarge,
-           m_fCYBorder + kCornerEnlarge, m_fCXBorder + kCornerEnlarge);
-    if (rt.Contains(fx, fy))
-      return FWL_WidgetHit::RightBottom;
-  }
-  return FWL_WidgetHit::Client;
+  return rtCap.Contains(fx, fy) ? FWL_WidgetHit::Titlebar
+                                : FWL_WidgetHit::Client;
 }
 
 void CFWL_Form::DrawWidget(CFX_Graphics* pGraphics, const CFX_Matrix* pMatrix) {
@@ -167,8 +116,7 @@ void CFWL_Form::DrawWidget(CFX_Graphics* pGraphics, const CFX_Matrix* pMatrix) {
   IFWL_ThemeProvider* pTheme = m_pProperties->m_pThemeProvider;
   bool bInactive = !IsActive();
   int32_t iState = bInactive ? CFWL_PartState_Inactive : CFWL_PartState_Normal;
-  if ((m_pProperties->m_dwStyleExes & FWL_STYLEEXT_FRM_NoDrawClient) == 0)
-    DrawBackground(pGraphics, pTheme);
+  DrawBackground(pGraphics, pTheme);
 
 #ifdef FWL_UseMacSystemBorder
   return;
@@ -489,9 +437,6 @@ void CFWL_Form::OnProcessMessage(CFWL_Message* pMessage) {
         case FWL_MouseCommand::Leave:
           OnMouseLeave(pMsg);
           break;
-        case FWL_MouseCommand::LeftButtonDblClk:
-          OnLButtonDblClk(pMsg);
-          break;
         default:
           break;
       }
@@ -608,17 +553,4 @@ void CFWL_Form::OnMouseLeave(CFWL_MessageMouse* pMsg) {
 
   pHover->SetNormal();
   RepaintRect(pHover->m_rtBtn);
-}
-
-void CFWL_Form::OnLButtonDblClk(CFWL_MessageMouse* pMsg) {
-  if ((m_pProperties->m_dwStyleExes & FWL_STYLEEXT_FRM_Resize) &&
-      HitTest(pMsg->m_fx, pMsg->m_fy) == FWL_WidgetHit::Titlebar) {
-    if (m_bMaximized)
-      SetWidgetRect(m_rtRestore);
-    else
-      SetWorkAreaRect();
-
-    Update();
-    m_bMaximized = !m_bMaximized;
-  }
 }

@@ -15,13 +15,6 @@
 
 #define FWL_CLASS_Form L"FWL_FORM"
 #define FWL_CLASS_FormProxy L"FWL_FORMPROXY"
-#define FWL_STYLEEXT_FRM_Resize (1L << 0)
-#define FWL_STYLEEXT_FRM_NativeBorder (1L << 1)
-#define FWL_STYLEEXT_FRM_RoundCorner (2L << 1)
-#define FWL_STYLEEXT_FRM_RoundCorner4 (3L << 1)
-#define FWL_STYLEEXT_FRM_NoDrawClient (1L << 3)
-#define FWL_STYLEEXT_FRM_BorderCornerMask (3L << 1)
-#define FWL_STYLEEXT_FRM_Max (3)
 
 #if (_FX_OS_ == _FX_MACOSX_)
 #define FWL_UseMacSystemBorder
@@ -74,7 +67,6 @@ class CFWL_Form : public CFWL_Widget {
   void OnLButtonUp(CFWL_MessageMouse* pMsg);
   void OnMouseMove(CFWL_MessageMouse* pMsg);
   void OnMouseLeave(CFWL_MessageMouse* pMsg);
-  void OnLButtonDblClk(CFWL_MessageMouse* pMsg);
 
 #if (_FX_OS_ == _FX_MACOSX_)
   bool m_bMouseIn;
