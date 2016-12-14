@@ -50,8 +50,6 @@ CFWL_ComboBox::CFWL_ComboBox(const CFWL_App* app)
   auto prop = pdfium::MakeUnique<CFWL_WidgetProperties>();
   prop->m_pThemeProvider = m_pProperties->m_pThemeProvider;
   prop->m_dwStyles |= FWL_WGTSTYLE_Border | FWL_WGTSTYLE_VScroll;
-  if (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_CMB_ListItemIconText)
-    prop->m_dwStyleExes |= FWL_STYLEEXT_LTB_Icon;
   m_pListBox =
       pdfium::MakeUnique<CFWL_ComboList>(m_pOwnerApp, std::move(prop), this);
 

@@ -18,20 +18,13 @@
 #include "xfa/fwl/cfwl_widgetproperties.h"
 
 #define FWL_STYLEEXT_LTB_MultiSelection (1L << 0)
-#define FWL_STYLEEXT_LTB_ShowScrollBarAlaways (1L << 2)
-#define FWL_STYLEEXT_LTB_MultiColumn (1L << 3)
 #define FWL_STYLEEXT_LTB_LeftAlign (0L << 4)
 #define FWL_STYLEEXT_LTB_CenterAlign (1L << 4)
 #define FWL_STYLEEXT_LTB_RightAlign (2L << 4)
-#define FWL_STYLEEXT_LTB_MultiLine (1L << 6)
-#define FWL_STYLEEXT_LTB_OwnerDraw (1L << 7)
-#define FWL_STYLEEXT_LTB_Icon (1L << 8)
-#define FWL_STYLEEXT_LTB_Check (1L << 9)
 #define FWL_STYLEEXT_LTB_AlignMask (3L << 4)
 #define FWL_STYLEEXT_LTB_ShowScrollBarFocus (1L << 10)
 #define FWL_ITEMSTATE_LTB_Selected (1L << 0)
 #define FWL_ITEMSTATE_LTB_Focused (1L << 1)
-#define FWL_ITEMSTATE_LTB_Checked (1L << 2)
 
 class CFWL_MessageKillFocus;
 class CFWL_MessageMouse;
@@ -93,8 +86,6 @@ class CFWL_ListBox : public CFWL_Widget {
   void SelectAll();
   CFWL_ListItem* GetFocusedItem();
   void SetFocusItem(CFWL_ListItem* hItem);
-  bool SetItemChecked(CFWL_ListItem* hItem, bool bChecked);
-  bool GetItemChecked(CFWL_ListItem* hItem);
   void DrawBkground(CFX_Graphics* pGraphics,
                     IFWL_ThemeProvider* pTheme,
                     const CFX_Matrix* pMatrix);

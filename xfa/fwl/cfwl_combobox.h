@@ -44,7 +44,6 @@ class CFWL_Widget;
 #define FWL_STYLEEXT_CMB_ListItemRightAlign (2L << 10)
 #define FWL_STYLEEXT_CMB_ListItemAlignMask (3L << 10)
 #define FWL_STYLEEXT_CMB_ListItemText (0L << 12)
-#define FWL_STYLEEXT_CMB_ListItemIconText (1L << 12)
 #define FWL_STYLEEXT_CMB_ReadOnly (1L << 13)
 
 class CFWL_ComboBox : public CFWL_Widget {
