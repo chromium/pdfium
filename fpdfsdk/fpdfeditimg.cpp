@@ -24,11 +24,11 @@ FPDFPageObj_NewImgeObj(FPDF_DOCUMENT document) {
   return pImageObj;
 }
 
-DLLEXPORT FPDF_BOOL STDCALL
-FPDFImageObj_LoadJpegFile(FPDF_PAGE* pages,
-                          int nCount,
-                          FPDF_PAGEOBJECT image_object,
-                          FPDF_FILEACCESS* fileAccess) {
+FPDF_BOOL FPDFImageObj_LoadJpegHelper(FPDF_PAGE* pages,
+                                      int nCount,
+                                      FPDF_PAGEOBJECT image_object,
+                                      FPDF_FILEACCESS* fileAccess,
+                                      bool inlineJpeg) {
   if (!image_object || !fileAccess || !pages)
     return false;
 
@@ -40,9 +40,31 @@ FPDFImageObj_LoadJpegFile(FPDF_PAGE* pages,
     if (pPage)
       pImgObj->GetImage()->ResetCache(pPage, nullptr);
   }
-  pImgObj->GetImage()->SetJpegImage(pFile);
+
+  if (inlineJpeg)
+    pImgObj->GetImage()->SetJpegImageInline(pFile);
+  else
+    pImgObj->GetImage()->SetJpegImage(pFile);
 
   return true;
+}
+
+DLLEXPORT FPDF_BOOL STDCALL
+FPDFImageObj_LoadJpegFile(FPDF_PAGE* pages,
+                          int nCount,
+                          FPDF_PAGEOBJECT image_object,
+                          FPDF_FILEACCESS* fileAccess) {
+  return FPDFImageObj_LoadJpegHelper(pages, nCount, image_object, fileAccess,
+                                     false);
+}
+
+DLLEXPORT FPDF_BOOL STDCALL
+FPDFImageObj_LoadJpegFileInline(FPDF_PAGE* pages,
+                                int nCount,
+                                FPDF_PAGEOBJECT image_object,
+                                FPDF_FILEACCESS* fileAccess) {
+  return FPDFImageObj_LoadJpegHelper(pages, nCount, image_object, fileAccess,
+                                     true);
 }
 
 DLLEXPORT FPDF_BOOL STDCALL FPDFImageObj_SetMatrix(FPDF_PAGEOBJECT image_object,

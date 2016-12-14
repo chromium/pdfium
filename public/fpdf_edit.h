@@ -201,6 +201,28 @@ FPDFImageObj_LoadJpegFile(FPDF_PAGE* pages,
                           FPDF_PAGEOBJECT image_object,
                           FPDF_FILEACCESS* fileAccess);
 
+// Load an image from a JPEG image file and then set it into |image_object|.
+//
+//   pages        - pointer to the start of all loaded pages, may be NULL.
+//   nCount       - number of |pages|, may be 0.
+//   image_object - handle to an image object.
+//   fileAccess   - file access handler which specifies the JPEG image file.
+//
+// Returns TRUE on success.
+//
+// The image object might already have an associated image, which is shared and
+// cached by the loaded pages. In that case, we need to clear the cached image
+// for all the loaded pages. Pass |pages| and page count (|nCount|) to this API
+// to clear the image cache. If the image is not previously shared, or NULL is a
+// valid |pages| value. This function loads the JPEG image inline, so the image
+// content is copied to the file. This allows |fileAccess| and its associated
+// data to be deleted after this function returns.
+DLLEXPORT FPDF_BOOL STDCALL
+FPDFImageObj_LoadJpegFileInline(FPDF_PAGE* pages,
+                                int nCount,
+                                FPDF_PAGEOBJECT image_object,
+                                FPDF_FILEACCESS* fileAccess);
+
 // Set the transform matrix of |image_object|.
 //
 //   image_object - handle to an image object.

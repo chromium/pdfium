@@ -52,6 +52,7 @@ class CPDF_Image {
 
   void SetImage(const CFX_DIBitmap* pDIBitmap);
   void SetJpegImage(const CFX_RetainPtr<IFX_SeekableReadStream>& pFile);
+  void SetJpegImageInline(const CFX_RetainPtr<IFX_SeekableReadStream>& pFile);
 
   void ResetCache(CPDF_Page* pPage, const CFX_DIBitmap* pDIBitmap);
 

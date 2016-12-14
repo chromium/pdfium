@@ -140,6 +140,23 @@ void CPDF_Image::SetJpegImage(
   m_pStream->InitStreamFromFile(pFile, std::move(pDict));
 }
 
+void CPDF_Image::SetJpegImageInline(
+    const CFX_RetainPtr<IFX_SeekableReadStream>& pFile) {
+  uint32_t size = pdfium::base::checked_cast<uint32_t>(pFile->GetSize());
+  if (!size)
+    return;
+
+  std::vector<uint8_t> data(size);
+  if (!pFile->ReadBlock(data.data(), 0, size))
+    return;
+
+  std::unique_ptr<CPDF_Dictionary> pDict = InitJPEG(data.data(), size);
+  if (!pDict)
+    return;
+
+  m_pStream->InitStream(&(data[0]), size, std::move(pDict));
+}
+
 void CPDF_Image::SetImage(const CFX_DIBitmap* pBitmap) {
   int32_t BitmapWidth = pBitmap->GetWidth();
   int32_t BitmapHeight = pBitmap->GetHeight();
