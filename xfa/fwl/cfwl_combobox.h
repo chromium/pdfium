@@ -72,7 +72,7 @@ class CFWL_ComboBox : public CFWL_Widget {
   void SetCurSel(int32_t iSel);
 
   void AddString(const CFX_WideStringC& wsText);
-  bool RemoveAt(int32_t iIndex);  // Returns false iff |iIndex| out of range.
+  void RemoveAt(int32_t iIndex);
   void RemoveAll();
 
   void SetEditText(const CFX_WideString& wsText);

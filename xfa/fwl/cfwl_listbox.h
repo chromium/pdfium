@@ -59,32 +59,10 @@ class CFWL_ListBox : public CFWL_Widget {
   int32_t CountItems(const CFWL_Widget* pWidget) const;
   CFWL_ListItem* GetItem(const CFWL_Widget* pWidget, int32_t nIndex) const;
   int32_t GetItemIndex(CFWL_Widget* pWidget, CFWL_ListItem* pItem);
-  uint32_t GetItemStyles(CFWL_Widget* pWidget, CFWL_ListItem* pItem);
-  uint32_t GetItemStates(CFWL_ListItem* pItem);
-  CFX_WideString GetItemText(CFWL_Widget* pWidget, CFWL_ListItem* pItem);
-  void GetItemRect(CFWL_Widget* pWidget,
-                   CFWL_ListItem* pItem,
-                   CFX_RectF& rtItem);
-  void SetItemStyles(CFWL_Widget* pWidget,
-                     CFWL_ListItem* pItem,
-                     uint32_t dwStyle);
-  void SetItemRect(CFWL_Widget* pWidget,
-                   CFWL_ListItem* pItem,
-                   const CFX_RectF& rtItem);
-  CFX_DIBitmap* GetItemIcon(CFWL_Widget* pWidget, CFWL_ListItem* pItem);
-  void GetItemCheckRect(CFWL_Widget* pWidget,
-                        CFWL_ListItem* pItem,
-                        CFX_RectF& rtCheck);
-  void SetItemCheckRect(CFWL_Widget* pWidget,
-                        CFWL_ListItem* pItem,
-                        const CFX_RectF& rtCheck);
-  uint32_t GetItemCheckState(CFWL_Widget* pWidget, CFWL_ListItem* pItem);
-  void SetItemCheckState(CFWL_Widget* pWidget,
-                         CFWL_ListItem* pItem,
-                         uint32_t dwCheckState);
+
   CFWL_ListItem* AddString(const CFX_WideStringC& wsAdd);
-  bool RemoveAt(int32_t iIndex);
-  bool DeleteString(CFWL_ListItem* pItem);
+  void RemoveAt(int32_t iIndex);
+  void DeleteString(CFWL_ListItem* pItem);
   void DeleteAll();
 
   int32_t CountSelItems();
@@ -115,7 +93,6 @@ class CFWL_ListBox : public CFWL_Widget {
   void SelectAll();
   CFWL_ListItem* GetFocusedItem();
   void SetFocusItem(CFWL_ListItem* hItem);
-  bool GetItemCheckRectInternal(CFWL_ListItem* hItem, CFX_RectF& rtCheck);
   bool SetItemChecked(CFWL_ListItem* hItem, bool bChecked);
   bool GetItemChecked(CFWL_ListItem* hItem);
   void DrawBkground(CFX_Graphics* pGraphics,
@@ -132,11 +109,11 @@ class CFWL_ListBox : public CFWL_Widget {
                 const CFX_Matrix* pMatrix);
   void DrawStatic(CFX_Graphics* pGraphics, IFWL_ThemeProvider* pTheme);
   CFX_SizeF CalcSize(bool bAutoSize);
-  void GetItemSize(CFX_SizeF& size,
-                   CFWL_ListItem* hItem,
-                   FX_FLOAT fWidth,
-                   FX_FLOAT fHeight,
-                   bool bAutoSize);
+  void UpdateItemSize(CFWL_ListItem* hItem,
+                      CFX_SizeF& size,
+                      FX_FLOAT fWidth,
+                      FX_FLOAT fHeight,
+                      bool bAutoSize) const;
   FX_FLOAT GetMaxTextWidth();
   FX_FLOAT GetScrollWidth();
 

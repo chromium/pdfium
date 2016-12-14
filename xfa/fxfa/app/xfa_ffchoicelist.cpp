@@ -104,7 +104,7 @@ bool CXFA_FFListBox::IsDataChanged() {
 
   for (int32_t i = 0; i < iSels; ++i) {
     CFWL_ListItem* hlistItem = pListBox->GetItem(nullptr, iSelArray[i]);
-    if (!(pListBox->GetItemStates(hlistItem) & FWL_ITEMSTATE_LTB_Selected))
+    if (!(hlistItem->GetStates() & FWL_ITEMSTATE_LTB_Selected))
       return true;
   }
   return false;
@@ -163,8 +163,8 @@ void CXFA_FFListBox::OnSelectChanged(CFWL_Widget* pWidget,
   CFWL_ListBox* pListBox = (CFWL_ListBox*)m_pNormalWidget;
   int32_t iSels = pListBox->CountSelItems();
   if (iSels > 0) {
-    eParam.m_wsNewText =
-        pListBox->GetItemText(nullptr, pListBox->GetSelItem(0));
+    CFWL_ListItem* item = pListBox->GetSelItem(0);
+    eParam.m_wsNewText = item ? item->GetText() : L"";
   }
 
   m_pDataAcc->ProcessEvent(XFA_ATTRIBUTEENUM_Change, &eParam);

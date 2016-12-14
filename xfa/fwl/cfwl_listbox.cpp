@@ -136,9 +136,7 @@ int32_t CFWL_ListBox::CountSelItems() {
     CFWL_ListItem* pItem = GetItem(this, i);
     if (!pItem)
       continue;
-
-    uint32_t dwStyle = GetItemStyles(this, pItem);
-    if (dwStyle & FWL_ITEMSTATE_LTB_Selected)
+    if (pItem->GetStyles() & FWL_ITEMSTATE_LTB_Selected)
       iRet++;
   }
   return iRet;
@@ -158,9 +156,7 @@ int32_t CFWL_ListBox::GetSelIndex(int32_t nIndex) {
     CFWL_ListItem* pItem = GetItem(this, i);
     if (!pItem)
       return -1;
-
-    uint32_t dwStyle = GetItemStyles(this, pItem);
-    if (dwStyle & FWL_ITEMSTATE_LTB_Selected) {
+    if (pItem->GetStyles() & FWL_ITEMSTATE_LTB_Selected) {
       if (index == nIndex)
         return i;
       index++;
@@ -186,9 +182,7 @@ void CFWL_ListBox::SetSelItem(CFWL_ListItem* pItem, bool bSelect) {
 }
 
 CFX_WideString CFWL_ListBox::GetDataProviderItemText(CFWL_ListItem* pItem) {
-  if (!pItem)
-    return L"";
-  return GetItemText(this, pItem);
+  return pItem ? pItem->GetText() : L"";
 }
 
 CFWL_ListItem* CFWL_ListBox::GetListItem(CFWL_ListItem* pItem,
@@ -245,10 +239,13 @@ void CFWL_ListBox::SetSelection(CFWL_ListItem* hStart,
 }
 
 void CFWL_ListBox::SetSelectionDirect(CFWL_ListItem* pItem, bool bSelect) {
-  uint32_t dwOldStyle = GetItemStyles(this, pItem);
+  if (!pItem)
+    return;
+
+  uint32_t dwOldStyle = pItem->GetStyles();
   bSelect ? dwOldStyle |= FWL_ITEMSTATE_LTB_Selected
           : dwOldStyle &= ~FWL_ITEMSTATE_LTB_Selected;
-  SetItemStyles(this, pItem, dwOldStyle);
+  pItem->SetStyles(dwOldStyle);
 }
 
 bool CFWL_ListBox::IsMultiSelection() const {
@@ -256,8 +253,7 @@ bool CFWL_ListBox::IsMultiSelection() const {
 }
 
 bool CFWL_ListBox::IsItemSelected(CFWL_ListItem* pItem) {
-  uint32_t dwState = GetItemStyles(this, pItem);
-  return (dwState & FWL_ITEMSTATE_LTB_Selected) != 0;
+  return pItem && (pItem->GetStyles() & FWL_ITEMSTATE_LTB_Selected) != 0;
 }
 
 void CFWL_ListBox::ClearSelection() {
@@ -265,8 +261,9 @@ void CFWL_ListBox::ClearSelection() {
   int32_t iCount = CountItems(this);
   for (int32_t i = 0; i < iCount; i++) {
     CFWL_ListItem* pItem = GetItem(this, i);
-    uint32_t dwState = GetItemStyles(this, pItem);
-    if (!(dwState & FWL_ITEMSTATE_LTB_Selected))
+    if (!pItem)
+      continue;
+    if (!(pItem->GetStyles() & FWL_ITEMSTATE_LTB_Selected))
       continue;
     SetSelectionDirect(pItem, false);
     if (!bMulti)
@@ -293,7 +290,7 @@ CFWL_ListItem* CFWL_ListBox::GetFocusedItem() {
     CFWL_ListItem* pItem = GetItem(this, i);
     if (!pItem)
       return nullptr;
-    if (GetItemStyles(this, pItem) & FWL_ITEMSTATE_LTB_Focused)
+    if (pItem->GetStyles() & FWL_ITEMSTATE_LTB_Focused)
       return pItem;
   }
   return nullptr;
@@ -305,14 +302,14 @@ void CFWL_ListBox::SetFocusItem(CFWL_ListItem* pItem) {
     return;
 
   if (hFocus) {
-    uint32_t dwStyle = GetItemStyles(this, hFocus);
+    uint32_t dwStyle = hFocus->GetStyles();
     dwStyle &= ~FWL_ITEMSTATE_LTB_Focused;
-    SetItemStyles(this, hFocus, dwStyle);
+    hFocus->SetStyles(dwStyle);
   }
   if (pItem) {
-    uint32_t dwStyle = GetItemStyles(this, pItem);
+    uint32_t dwStyle = pItem->GetStyles();
     dwStyle |= FWL_ITEMSTATE_LTB_Focused;
-    SetItemStyles(this, pItem, dwStyle);
+    pItem->SetStyles(dwStyle);
   }
 }
 
@@ -332,8 +329,7 @@ CFWL_ListItem* CFWL_ListBox::GetItemAtPoint(FX_FLOAT fx, FX_FLOAT fy) {
     if (!pItem)
       continue;
 
-    CFX_RectF rtItem;
-    GetItemRect(this, pItem, rtItem);
+    CFX_RectF rtItem = pItem->GetRect();
     rtItem.Offset(-fPosX, -fPosY);
     if (rtItem.Contains(fx, fy))
       return pItem;
@@ -341,25 +337,17 @@ CFWL_ListItem* CFWL_ListBox::GetItemAtPoint(FX_FLOAT fx, FX_FLOAT fy) {
   return nullptr;
 }
 
-bool CFWL_ListBox::GetItemCheckRectInternal(CFWL_ListItem* pItem,
-                                            CFX_RectF& rtCheck) {
-  if (!(m_pProperties->m_dwStyleExes & FWL_STYLEEXT_LTB_Check))
-    return false;
-  GetItemCheckRect(this, pItem, rtCheck);
-  return true;
-}
-
 bool CFWL_ListBox::GetItemChecked(CFWL_ListItem* pItem) {
   if (!(m_pProperties->m_dwStyleExes & FWL_STYLEEXT_LTB_Check))
     return false;
-  return !!(GetItemCheckState(this, pItem) & FWL_ITEMSTATE_LTB_Checked);
+  return !!(pItem->GetCheckState() & FWL_ITEMSTATE_LTB_Checked);
 }
 
 bool CFWL_ListBox::SetItemChecked(CFWL_ListItem* pItem, bool bChecked) {
   if (!(m_pProperties->m_dwStyleExes & FWL_STYLEEXT_LTB_Check))
     return false;
 
-  SetItemCheckState(this, pItem, bChecked ? FWL_ITEMSTATE_LTB_Checked : 0);
+  pItem->SetCheckState(bChecked ? FWL_ITEMSTATE_LTB_Checked : 0);
   return true;
 }
 
@@ -367,9 +355,7 @@ bool CFWL_ListBox::ScrollToVisible(CFWL_ListItem* pItem) {
   if (!m_pVertScrollBar)
     return false;
 
-  CFX_RectF rtItem;
-  GetItemRect(this, pItem, rtItem);
-
+  CFX_RectF rtItem = pItem ? pItem->GetRect() : CFX_RectF();
   bool bScroll = false;
   FX_FLOAT fPosY = m_pVertScrollBar->GetPos();
   rtItem.Offset(0, -fPosY + m_rtConent.top);
@@ -437,8 +423,7 @@ void CFWL_ListBox::DrawItems(CFX_Graphics* pGraphics,
     if (!pItem)
       continue;
 
-    CFX_RectF rtItem;
-    GetItemRect(this, pItem, rtItem);
+    CFX_RectF rtItem = pItem->GetRect();
     rtItem.Offset(m_rtConent.left - fPosX, m_rtConent.top - fPosY);
     if (rtItem.bottom() < m_rtConent.top)
       continue;
@@ -458,7 +443,7 @@ void CFWL_ListBox::DrawItem(CFX_Graphics* pGraphics,
                             int32_t Index,
                             const CFX_RectF& rtItem,
                             const CFX_Matrix* pMatrix) {
-  uint32_t dwItemStyles = GetItemStyles(this, pItem);
+  uint32_t dwItemStyles = pItem ? pItem->GetStyles() : 0;
   uint32_t dwPartStates = CFWL_PartState_Normal;
   if (m_pProperties->m_dwStates & FWL_WGTSTATE_Disabled)
     dwPartStates = CFWL_PartState_Disabled;
@@ -491,7 +476,7 @@ void CFWL_ListBox::DrawItem(CFX_Graphics* pGraphics,
   bool bHasIcon = !!(GetStylesEx() & FWL_STYLEEXT_LTB_Icon);
   if (bHasIcon) {
     CFX_RectF rtDIB;
-    CFX_DIBitmap* pDib = GetItemIcon(this, pItem);
+    CFX_DIBitmap* pDib = pItem->GetIcon();
     rtDIB.Set(rtItem.left, rtItem.top, rtItem.height, rtItem.height);
     if (pDib) {
       CFWL_ThemeBackground param;
@@ -511,7 +496,8 @@ void CFWL_ListBox::DrawItem(CFX_Graphics* pGraphics,
     CFX_RectF rtCheck;
     rtCheck.Set(rtItem.left, rtItem.top, rtItem.height, rtItem.height);
     rtCheck.Deflate(2, 2, 2, 2);
-    SetItemCheckRect(this, pItem, rtCheck);
+    pItem->SetCheckRect(rtCheck);
+
     CFWL_ThemeBackground param;
     param.m_pWidget = this;
     param.m_iPart = CFWL_Part::Check;
@@ -526,7 +512,10 @@ void CFWL_ListBox::DrawItem(CFX_Graphics* pGraphics,
     pTheme->DrawBackground(&param);
   }
 
-  CFX_WideString wsText = GetItemText(this, pItem);
+  if (!pItem)
+    return;
+
+  CFX_WideString wsText = pItem->GetText();
   if (wsText.GetLength() <= 0)
     return;
 
@@ -550,9 +539,8 @@ void CFWL_ListBox::DrawItem(CFX_Graphics* pGraphics,
 }
 
 CFX_SizeF CFWL_ListBox::CalcSize(bool bAutoSize) {
-  CFX_SizeF fs;
   if (!m_pProperties->m_pThemeProvider)
-    return fs;
+    return CFX_SizeF();
 
   m_rtClient = GetClientRect();
   m_rtConent = m_rtClient;
@@ -580,9 +568,10 @@ CFX_SizeF CFWL_ListBox::CalcSize(bool bAutoSize) {
     fWidth += m_fItemHeight;
 
   int32_t iCount = CountItems(this);
+  CFX_SizeF fs;
   for (int32_t i = 0; i < iCount; i++) {
     CFWL_ListItem* htem = GetItem(this, i);
-    GetItemSize(fs, htem, fWidth, m_fItemHeight, bAutoSize);
+    UpdateItemSize(htem, fs, fWidth, m_fItemHeight, bAutoSize);
   }
   if (bAutoSize)
     return fs;
@@ -675,18 +664,18 @@ CFX_SizeF CFWL_ListBox::CalcSize(bool bAutoSize) {
   return fs;
 }
 
-void CFWL_ListBox::GetItemSize(CFX_SizeF& size,
-                               CFWL_ListItem* pItem,
-                               FX_FLOAT fWidth,
-                               FX_FLOAT fItemHeight,
-                               bool bAutoSize) {
+void CFWL_ListBox::UpdateItemSize(CFWL_ListItem* pItem,
+                                  CFX_SizeF& size,
+                                  FX_FLOAT fWidth,
+                                  FX_FLOAT fItemHeight,
+                                  bool bAutoSize) const {
   if (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_LTB_MultiColumn)
     return;
 
-  if (!bAutoSize) {
+  if (!bAutoSize && pItem) {
     CFX_RectF rtItem;
     rtItem.Set(0, size.y, fWidth, fItemHeight);
-    SetItemRect(this, pItem, rtItem);
+    pItem->SetRect(rtItem);
   }
   size.x = fWidth;
   size.y += fItemHeight;
@@ -700,8 +689,8 @@ FX_FLOAT CFWL_ListBox::GetMaxTextWidth() {
     if (!pItem)
       continue;
 
-    CFX_WideString wsText = GetItemText(this, pItem);
-    CFX_SizeF sz = CalcTextSize(wsText, m_pProperties->m_pThemeProvider, false);
+    CFX_SizeF sz =
+        CalcTextSize(pItem->GetText(), m_pProperties->m_pThemeProvider, false);
     fRet = std::max(fRet, sz.x);
   }
   return fRet;
@@ -873,7 +862,9 @@ void CFWL_ListBox::OnLButtonDown(CFWL_MessageMouse* pMsg) {
   if (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_LTB_Check) {
     CFWL_ListItem* hSelectedItem = GetItemAtPoint(pMsg->m_fx, pMsg->m_fy);
     CFX_RectF rtCheck;
-    GetItemCheckRectInternal(hSelectedItem, rtCheck);
+    if (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_LTB_Check)
+      rtCheck = hSelectedItem->GetCheckRect();
+
     bool bChecked = GetItemChecked(pItem);
     if (rtCheck.Contains(pMsg->m_fx, pMsg->m_fy)) {
       SetItemChecked(pItem, !bChecked);
@@ -1003,11 +994,6 @@ bool CFWL_ListBox::OnScroll(CFWL_ScrollBar* pScrollBar,
   return true;
 }
 
-CFX_WideString CFWL_ListBox::GetItemText(CFWL_Widget* pWidget,
-                                         CFWL_ListItem* pItem) {
-  return pItem ? static_cast<CFWL_ListItem*>(pItem)->m_wsText : L"";
-}
-
 int32_t CFWL_ListBox::CountItems(const CFWL_Widget* pWidget) const {
   return pdfium::CollectionSize<int32_t>(m_ItemArray);
 }
@@ -1020,107 +1006,42 @@ CFWL_ListItem* CFWL_ListBox::GetItem(const CFWL_Widget* pWidget,
 }
 
 int32_t CFWL_ListBox::GetItemIndex(CFWL_Widget* pWidget, CFWL_ListItem* pItem) {
-  auto it = std::find_if(
-      m_ItemArray.begin(), m_ItemArray.end(),
-      [pItem](const std::unique_ptr<CFWL_ListItem>& candidate) {
-        return candidate.get() == static_cast<CFWL_ListItem*>(pItem);
-      });
+  auto it =
+      std::find_if(m_ItemArray.begin(), m_ItemArray.end(),
+                   [pItem](const std::unique_ptr<CFWL_ListItem>& candidate) {
+                     return candidate.get() == pItem;
+                   });
   return it != m_ItemArray.end() ? it - m_ItemArray.begin() : -1;
 }
 
-uint32_t CFWL_ListBox::GetItemStyles(CFWL_Widget* pWidget,
-                                     CFWL_ListItem* pItem) {
-  return pItem ? static_cast<CFWL_ListItem*>(pItem)->m_dwStates : 0;
-}
-
-void CFWL_ListBox::GetItemRect(CFWL_Widget* pWidget,
-                               CFWL_ListItem* pItem,
-                               CFX_RectF& rtItem) {
-  if (pItem)
-    rtItem = static_cast<CFWL_ListItem*>(pItem)->m_rtItem;
-}
-
-void CFWL_ListBox::SetItemStyles(CFWL_Widget* pWidget,
-                                 CFWL_ListItem* pItem,
-                                 uint32_t dwStyle) {
-  if (pItem)
-    static_cast<CFWL_ListItem*>(pItem)->m_dwStates = dwStyle;
-}
-
-void CFWL_ListBox::SetItemRect(CFWL_Widget* pWidget,
-                               CFWL_ListItem* pItem,
-                               const CFX_RectF& rtItem) {
-  if (pItem)
-    static_cast<CFWL_ListItem*>(pItem)->m_rtItem = rtItem;
-}
-
-CFX_DIBitmap* CFWL_ListBox::GetItemIcon(CFWL_Widget* pWidget,
-                                        CFWL_ListItem* pItem) {
-  return static_cast<CFWL_ListItem*>(pItem)->m_pDIB;
-}
-
-void CFWL_ListBox::GetItemCheckRect(CFWL_Widget* pWidget,
-                                    CFWL_ListItem* pItem,
-                                    CFX_RectF& rtCheck) {
-  rtCheck = static_cast<CFWL_ListItem*>(pItem)->m_rtCheckBox;
-}
-
-void CFWL_ListBox::SetItemCheckRect(CFWL_Widget* pWidget,
-                                    CFWL_ListItem* pItem,
-                                    const CFX_RectF& rtCheck) {
-  static_cast<CFWL_ListItem*>(pItem)->m_rtCheckBox = rtCheck;
-}
-
-uint32_t CFWL_ListBox::GetItemCheckState(CFWL_Widget* pWidget,
-                                         CFWL_ListItem* pItem) {
-  return static_cast<CFWL_ListItem*>(pItem)->m_dwCheckState;
-}
-
-void CFWL_ListBox::SetItemCheckState(CFWL_Widget* pWidget,
-                                     CFWL_ListItem* pItem,
-                                     uint32_t dwCheckState) {
-  static_cast<CFWL_ListItem*>(pItem)->m_dwCheckState = dwCheckState;
-}
-
 CFWL_ListItem* CFWL_ListBox::AddString(const CFX_WideStringC& wsAdd) {
-  auto pItem = pdfium::MakeUnique<CFWL_ListItem>();
-  pItem->m_dwStates = 0;
-  pItem->m_wsText = wsAdd;
-  pItem->m_dwStates = 0;
-  m_ItemArray.push_back(std::move(pItem));
+  m_ItemArray.emplace_back(
+      pdfium::MakeUnique<CFWL_ListItem>(CFX_WideString(wsAdd)));
   return m_ItemArray.back().get();
 }
 
-bool CFWL_ListBox::RemoveAt(int32_t iIndex) {
+void CFWL_ListBox::RemoveAt(int32_t iIndex) {
   if (iIndex < 0 || static_cast<size_t>(iIndex) >= m_ItemArray.size())
-    return false;
-
+    return;
   m_ItemArray.erase(m_ItemArray.begin() + iIndex);
-  return true;
 }
 
-bool CFWL_ListBox::DeleteString(CFWL_ListItem* pItem) {
+void CFWL_ListBox::DeleteString(CFWL_ListItem* pItem) {
   int32_t nIndex = GetItemIndex(this, pItem);
   if (nIndex < 0 || static_cast<size_t>(nIndex) >= m_ItemArray.size())
-    return false;
+    return;
 
   int32_t iSel = nIndex + 1;
   if (iSel >= CountItems(this))
     iSel = nIndex - 1;
   if (iSel >= 0) {
-    CFWL_ListItem* pSel = static_cast<CFWL_ListItem*>(GetItem(this, iSel));
-    pSel->m_dwStates |= FWL_ITEMSTATE_LTB_Selected;
+    if (CFWL_ListItem* item = GetItem(this, iSel))
+      item->SetStyles(item->GetStyles() | FWL_ITEMSTATE_LTB_Selected);
   }
+
   m_ItemArray.erase(m_ItemArray.begin() + nIndex);
-  return true;
 }
 
 void CFWL_ListBox::DeleteAll() {
   m_ItemArray.clear();
-}
-
-uint32_t CFWL_ListBox::GetItemStates(CFWL_ListItem* pItem) {
-  if (!pItem)
-    return 0;
-  return pItem->m_dwStates | pItem->m_dwCheckState;
 }

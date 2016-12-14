@@ -61,7 +61,7 @@ class CFWL_DateTimePicker : public CFWL_Widget {
     return m_pEdit->GetSelRange(nIndex, nStart);
   }
 
-  void GetBBox(CFX_RectF& rect) const;
+  CFX_RectF GetBBox() const;
   void SetEditLimit(int32_t nLimit) { m_pEdit->SetLimit(nLimit); }
   void ModifyEditStylesEx(uint32_t dwStylesExAdded, uint32_t dwStylesExRemoved);
 
@@ -92,7 +92,7 @@ class CFWL_DateTimePicker : public CFWL_Widget {
   FWL_WidgetHit DisForm_HitTest(FX_FLOAT fx, FX_FLOAT fy) const;
   bool DisForm_IsNeedShowButton() const;
   void DisForm_Update();
-  void DisForm_GetBBox(CFX_RectF& rect) const;
+  CFX_RectF DisForm_GetBBox() const;
   void DisForm_DrawWidget(CFX_Graphics* pGraphics, const CFX_Matrix* pMatrix);
   void DisForm_OnFocusChanged(CFWL_Message* pMsg, bool bSet);
 

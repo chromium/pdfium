@@ -32,7 +32,7 @@ int32_t CFWL_ComboList::MatchItem(const CFX_WideString& wsMatch) {
   int32_t iCount = CountItems(this);
   for (int32_t i = 0; i < iCount; i++) {
     CFWL_ListItem* hItem = GetItem(this, i);
-    CFX_WideString wsText = GetItemText(this, hItem);
+    CFX_WideString wsText = hItem ? hItem->GetText() : L"";
     FX_STRSIZE pos = wsText.Find(wsMatch.c_str());
     if (!pos)
       return i;
@@ -42,22 +42,20 @@ int32_t CFWL_ComboList::MatchItem(const CFX_WideString& wsMatch) {
 
 void CFWL_ComboList::ChangeSelected(int32_t iSel) {
   CFWL_ListItem* hItem = GetItem(this, iSel);
-  CFX_RectF rtInvalidate;
-  rtInvalidate.Reset();
   CFWL_ListItem* hOld = GetSelItem(0);
   int32_t iOld = GetItemIndex(this, hOld);
   if (iOld == iSel)
     return;
+
+  CFX_RectF rtInvalidate;
   if (iOld > -1) {
-    CFWL_ListItem* hItem = GetItem(this, iOld);
-    GetItemRect(this, hItem, rtInvalidate);
+    if (CFWL_ListItem* hOldItem = GetItem(this, iOld))
+      rtInvalidate = hOldItem->GetRect();
     SetSelItem(hOld, false);
   }
   if (hItem) {
-    CFX_RectF rect;
-    CFWL_ListItem* hItem = GetItem(this, iSel);
-    GetItemRect(this, hItem, rect);
-    rtInvalidate.Union(rect);
+    if (CFWL_ListItem* hOldItem = GetItem(this, iSel))
+      rtInvalidate.Union(hOldItem->GetRect());
     CFWL_ListItem* hSel = GetItem(this, iSel);
     SetSelItem(hSel, true);
   }

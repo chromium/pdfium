@@ -186,10 +186,8 @@ void CFWL_Form::DrawWidget(CFX_Graphics* pGraphics, const CFX_Matrix* pMatrix) {
   }
   if ((m_pProperties->m_dwStyleExes & FWL_WGTSTYLE_EdgeMask) !=
       FWL_WGTSTYLE_EdgeNone) {
-    CFX_RectF rtEdge;
-    GetEdgeRect(rtEdge);
     param.m_iPart = CFWL_Part::Edge;
-    param.m_rtPart = rtEdge;
+    param.m_rtPart = GetEdgeRect();
     param.m_dwStates = iState;
     pTheme->DrawBackground(&param);
   }
@@ -369,13 +367,14 @@ int32_t CFWL_Form::GetSysBtnIndex(CFWL_SysBtn* pBtn) {
   return arrBtn.Find(pBtn);
 }
 
-void CFWL_Form::GetEdgeRect(CFX_RectF& rtEdge) {
-  rtEdge = m_rtRelative;
+CFX_RectF CFWL_Form::GetEdgeRect() {
+  CFX_RectF rtEdge = m_rtRelative;
   if (m_pProperties->m_dwStyles & FWL_WGTSTYLE_Border) {
     FX_FLOAT fCX = GetBorderSize(true);
     FX_FLOAT fCY = GetBorderSize(false);
     rtEdge.Deflate(fCX, fCY, fCX, fCY);
   }
+  return rtEdge;
 }
 
 void CFWL_Form::SetWorkAreaRect() {

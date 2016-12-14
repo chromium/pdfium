@@ -505,16 +505,12 @@ bool CXFA_FFDateTimeEdit::GetBBox(CFX_RectF& rtBox,
 }
 
 bool CXFA_FFDateTimeEdit::PtInActiveRect(FX_FLOAT fx, FX_FLOAT fy) {
-  if (!m_pNormalWidget) {
-    return false;
-  }
-  CFX_RectF rtWidget;
-  ((CFWL_DateTimePicker*)m_pNormalWidget)->GetBBox(rtWidget);
-  if (rtWidget.Contains(fx, fy)) {
-    return true;
-  }
-  return false;
+  return m_pNormalWidget &&
+         static_cast<CFWL_DateTimePicker*>(m_pNormalWidget)
+             ->GetBBox()
+             .Contains(fx, fy);
 }
+
 bool CXFA_FFDateTimeEdit::LoadWidget() {
   CFWL_DateTimePicker* pWidget = new CFWL_DateTimePicker(GetFWLApp());
   m_pNormalWidget = pWidget;

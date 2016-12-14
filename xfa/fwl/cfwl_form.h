@@ -64,7 +64,7 @@ class CFWL_Form : public CFWL_Widget {
   CFWL_SysBtn* GetSysBtnByState(uint32_t dwState);
   CFWL_SysBtn* GetSysBtnByIndex(int32_t nIndex);
   int32_t GetSysBtnIndex(CFWL_SysBtn* pBtn);
-  void GetEdgeRect(CFX_RectF& rtEdge);
+  CFX_RectF GetEdgeRect();
   void SetWorkAreaRect();
   void Layout();
   void ResetSysBtn();

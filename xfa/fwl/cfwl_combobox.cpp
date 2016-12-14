@@ -76,8 +76,8 @@ void CFWL_ComboBox::AddString(const CFX_WideStringC& wsText) {
   m_pListBox->AddString(wsText);
 }
 
-bool CFWL_ComboBox::RemoveAt(int32_t iIndex) {
-  return m_pListBox->RemoveAt(iIndex);
+void CFWL_ComboBox::RemoveAt(int32_t iIndex) {
+  m_pListBox->RemoveAt(iIndex);
 }
 
 void CFWL_ComboBox::RemoveAll() {
@@ -222,7 +222,7 @@ void CFWL_ComboBox::SetThemeProvider(IFWL_ThemeProvider* pThemeProvider) {
 CFX_WideString CFWL_ComboBox::GetTextByIndex(int32_t iIndex) const {
   CFWL_ListItem* pItem = static_cast<CFWL_ListItem*>(
       m_pListBox->GetItem(m_pListBox.get(), iIndex));
-  return pItem ? pItem->m_wsText : L"";
+  return pItem ? pItem->GetText() : L"";
 }
 
 void CFWL_ComboBox::SetCurSel(int32_t iSel) {
@@ -511,10 +511,8 @@ void CFWL_ComboBox::ProcessSelChanged(bool bLButtonUp) {
   CFWL_ListItem* hItem = m_pListBox->GetItem(this, m_iCurSel);
   if (!hItem)
     return;
-
-  CFX_WideString wsText = m_pListBox->GetItemText(this, hItem);
   if (m_pEdit) {
-    m_pEdit->SetText(wsText);
+    m_pEdit->SetText(hItem->GetText());
     m_pEdit->Update();
     m_pEdit->SetSelected();
   }

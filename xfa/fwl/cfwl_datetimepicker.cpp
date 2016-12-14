@@ -183,19 +183,18 @@ CFX_WideString CFWL_DateTimePicker::GetEditText() const {
   return m_pEdit ? m_pEdit->GetText() : L"";
 }
 
-void CFWL_DateTimePicker::GetBBox(CFX_RectF& rect) const {
-  if (m_pWidgetMgr->IsFormDisabled()) {
-    DisForm_GetBBox(rect);
-    return;
-  }
+CFX_RectF CFWL_DateTimePicker::GetBBox() const {
+  if (m_pWidgetMgr->IsFormDisabled())
+    return DisForm_GetBBox();
 
-  rect = m_pProperties->m_rtWidget;
-  if (IsMonthCalendarVisible()) {
-    CFX_RectF rtMonth = m_pMonthCal->GetWidgetRect();
-    rtMonth.Offset(m_pProperties->m_rtWidget.left,
-                   m_pProperties->m_rtWidget.top);
-    rect.Union(rtMonth);
-  }
+  CFX_RectF rect = m_pProperties->m_rtWidget;
+  if (!IsMonthCalendarVisible())
+    return rect;
+
+  CFX_RectF rtMonth = m_pMonthCal->GetWidgetRect();
+  rtMonth.Offset(m_pProperties->m_rtWidget.left, m_pProperties->m_rtWidget.top);
+  rect.Union(rtMonth);
+  return rect;
 }
 
 void CFWL_DateTimePicker::ModifyEditStylesEx(uint32_t dwStylesExAdded,
@@ -450,16 +449,17 @@ void CFWL_DateTimePicker::DisForm_Update() {
   m_pMonthCal->Update();
 }
 
-void CFWL_DateTimePicker::DisForm_GetBBox(CFX_RectF& rect) const {
-  rect = m_pProperties->m_rtWidget;
+CFX_RectF CFWL_DateTimePicker::DisForm_GetBBox() const {
+  CFX_RectF rect = m_pProperties->m_rtWidget;
   if (DisForm_IsNeedShowButton())
     rect.width += m_fBtn;
   if (!IsMonthCalendarVisible())
-    return;
+    return rect;
 
   CFX_RectF rtMonth = m_pMonthCal->GetWidgetRect();
   rtMonth.Offset(m_pProperties->m_rtWidget.left, m_pProperties->m_rtWidget.top);
   rect.Union(rtMonth);
+  return rect;
 }
 
 void CFWL_DateTimePicker::DisForm_DrawWidget(CFX_Graphics* pGraphics,
