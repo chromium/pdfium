@@ -194,7 +194,7 @@ CFX_DIBitmap* CFX_DIBSource::SwapXY(bool bXFlip,
     delete pTransBitmap;
     return nullptr;
   }
-  pTransBitmap->CopyPalette(m_pPalette.get());
+  pTransBitmap->SetPalette(m_pPalette.get());
   int dest_pitch = pTransBitmap->GetPitch();
   uint8_t* dest_buf = pTransBitmap->GetBuffer();
   int row_start = bXFlip ? m_Height - dest_clip.right : dest_clip.left;

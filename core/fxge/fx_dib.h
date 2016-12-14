@@ -213,7 +213,8 @@ class CFX_DIBSource {
     SetPaletteEntry(index, color);
   }
 
-  void CopyPalette(const uint32_t* pSrcPal);
+  // Copies into internally-owned palette.
+  void SetPalette(const uint32_t* pSrcPal);
 
   std::unique_ptr<CFX_DIBitmap> Clone(const FX_RECT* pClip = nullptr) const;
   std::unique_ptr<CFX_DIBitmap> CloneConvert(FXDIB_Format format) const;
@@ -229,9 +230,12 @@ class CFX_DIBSource {
       uint32_t flags = 0,
       const FX_RECT* pClip = nullptr) const;
 
-  CFX_DIBitmap* GetAlphaMask(const FX_RECT* pClip = nullptr) const;
-  bool CopyAlphaMask(const CFX_DIBSource* pAlphaMask,
-                     const FX_RECT* pClip = nullptr);
+  std::unique_ptr<CFX_DIBitmap> CloneAlphaMask(
+      const FX_RECT* pClip = nullptr) const;
+
+  // Copies into internally-owned mask.
+  bool SetAlphaMask(const CFX_DIBSource* pAlphaMask,
+                    const FX_RECT* pClip = nullptr);
 
   CFX_DIBitmap* SwapXY(bool bXFlip,
                        bool bYFlip,

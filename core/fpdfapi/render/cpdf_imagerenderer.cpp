@@ -25,6 +25,7 @@
 #include "core/fpdfapi/render/cpdf_transferfunc.h"
 #include "core/fpdfapi/render/render_int.h"
 #include "core/fpdfdoc/cpdf_occontext.h"
+#include "core/fxcrt/cfx_maybe_owned.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxge/cfx_fxgedevice.h"
 #include "core/fxge/cfx_pathdata.h"
@@ -499,34 +500,37 @@ bool CPDF_ImageRenderer::StartBitmapAlpha() {
                                          FXFILL_WINDING);
     return false;
   }
-  const CFX_DIBSource* pAlphaMask =
-      m_pDIBSource->IsAlphaMask() ? m_pDIBSource : m_pDIBSource->GetAlphaMask();
+  CFX_MaybeOwned<CFX_DIBSource> pAlphaMask;
+  if (m_pDIBSource->IsAlphaMask())
+    pAlphaMask = const_cast<CFX_DIBSource*>(m_pDIBSource);
+  else
+    pAlphaMask = m_pDIBSource->CloneAlphaMask();
+
   if (FXSYS_fabs(m_ImageMatrix.b) >= 0.5f ||
       FXSYS_fabs(m_ImageMatrix.c) >= 0.5f) {
-    int left, top;
-    std::unique_ptr<CFX_DIBitmap> pTransformed(
-        pAlphaMask->TransformTo(&m_ImageMatrix, left, top));
+    int left;
+    int top;
+    std::unique_ptr<CFX_DIBitmap> pTransformed =
+        pAlphaMask->TransformTo(&m_ImageMatrix, left, top);
     if (!pTransformed)
       return true;
 
     m_pRenderStatus->m_pDevice->SetBitMask(
         pTransformed.get(), left, top,
         ArgbEncode(0xff, m_BitmapAlpha, m_BitmapAlpha, m_BitmapAlpha));
-  } else {
-    CFX_FloatRect image_rect_f = m_ImageMatrix.GetUnitRect();
-    FX_RECT image_rect = image_rect_f.GetOuterRect();
-    int dest_width =
-        m_ImageMatrix.a > 0 ? image_rect.Width() : -image_rect.Width();
-    int dest_height =
-        m_ImageMatrix.d > 0 ? -image_rect.Height() : image_rect.Height();
-    int left = dest_width > 0 ? image_rect.left : image_rect.right;
-    int top = dest_height > 0 ? image_rect.top : image_rect.bottom;
-    m_pRenderStatus->m_pDevice->StretchBitMask(
-        pAlphaMask, left, top, dest_width, dest_height,
-        ArgbEncode(0xff, m_BitmapAlpha, m_BitmapAlpha, m_BitmapAlpha));
+    return false;
   }
-  if (m_pDIBSource != pAlphaMask)
-    delete pAlphaMask;
+  CFX_FloatRect image_rect_f = m_ImageMatrix.GetUnitRect();
+  FX_RECT image_rect = image_rect_f.GetOuterRect();
+  int dest_width =
+      m_ImageMatrix.a > 0 ? image_rect.Width() : -image_rect.Width();
+  int dest_height =
+      m_ImageMatrix.d > 0 ? -image_rect.Height() : image_rect.Height();
+  int left = dest_width > 0 ? image_rect.left : image_rect.right;
+  int top = dest_height > 0 ? image_rect.top : image_rect.bottom;
+  m_pRenderStatus->m_pDevice->StretchBitMask(
+      pAlphaMask.Get(), left, top, dest_width, dest_height,
+      ArgbEncode(0xff, m_BitmapAlpha, m_BitmapAlpha, m_BitmapAlpha));
   return false;
 }
 

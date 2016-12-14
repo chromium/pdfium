@@ -247,8 +247,10 @@ void CPDF_Image::SetImage(const CFX_DIBitmap* pBitmap) {
     bCopyWithoutAlpha = false;
   }
 
-  const CFX_DIBitmap* pMaskBitmap =
-      pBitmap->HasAlpha() ? pBitmap->GetAlphaMask() : nullptr;
+  std::unique_ptr<CFX_DIBitmap> pMaskBitmap;
+  if (pBitmap->HasAlpha())
+    pMaskBitmap = pBitmap->CloneAlphaMask();
+
   if (pMaskBitmap) {
     int32_t maskWidth = pMaskBitmap->GetWidth();
     int32_t maskHeight = pMaskBitmap->GetHeight();
@@ -275,7 +277,6 @@ void CPDF_Image::SetImage(const CFX_DIBitmap* pBitmap) {
         mask_buf, mask_size, std::move(pMaskDict));
     pDict->SetNewFor<CPDF_Reference>("SMask", m_pDocument,
                                      pNewStream->GetObjNum());
-    delete pMaskBitmap;
   }
 
   uint8_t* src_buf = pBitmap->GetBuffer();
