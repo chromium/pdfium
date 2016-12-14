@@ -373,14 +373,10 @@ bool CFWL_Edit::Paste(const CFX_WideString& wsPaste) {
 }
 
 bool CFWL_Edit::Redo(const IFDE_TxtEdtDoRecord* pRecord) {
-  if (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_NoRedoUndo)
-    return true;
   return m_EdtEngine.Redo(pRecord);
 }
 
 bool CFWL_Edit::Undo(const IFDE_TxtEdtDoRecord* pRecord) {
-  if (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_NoRedoUndo)
-    return true;
   return m_EdtEngine.Undo(pRecord);
 }
 
@@ -541,8 +537,7 @@ void CFWL_Edit::DrawContent(CFX_Graphics* pGraphics,
     mt.Concat(*pMatrix);
   }
 
-  bool bShowSel = (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_NoHideSel) ||
-                  (m_pProperties->m_dwStates & FWL_WGTSTATE_Focused);
+  bool bShowSel = !!(m_pProperties->m_dwStates & FWL_WGTSTATE_Focused);
   if (bShowSel) {
     CFWL_Widget* pForm = m_pWidgetMgr->GetSystemFormWidget(this);
     if (pForm) {
@@ -638,18 +633,6 @@ void CFWL_Edit::UpdateEditParams() {
   params.nHorzScale = 100;
   params.fPlateWidth = m_rtEngine.width;
   params.fPlateHeight = m_rtEngine.height;
-  if (m_pProperties->m_dwStyles & FWL_WGTSTYLE_RTLLayout)
-    params.dwLayoutStyles |= FDE_TEXTEDITLAYOUT_RTL;
-  if (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_VerticalLayout)
-    params.dwLayoutStyles |= FDE_TEXTEDITLAYOUT_DocVertical;
-  if (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_VerticalChars)
-    params.dwLayoutStyles |= FDE_TEXTEDITLAYOUT_CharVertial;
-  if (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_ReverseLine)
-    params.dwLayoutStyles |= FDE_TEXTEDITLAYOUT_LineReserve;
-  if (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_ArabicShapes)
-    params.dwLayoutStyles |= FDE_TEXTEDITLAYOUT_ArabicShapes;
-  if (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_ExpandTab)
-    params.dwLayoutStyles |= FDE_TEXTEDITLAYOUT_ExpandTab;
   if (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_CombText)
     params.dwLayoutStyles |= FDE_TEXTEDITLAYOUT_CombText;
   if (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_LastLineHeight)
@@ -678,10 +661,6 @@ void CFWL_Edit::UpdateEditParams() {
   switch (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_HAlignModeMask) {
     case FWL_STYLEEXT_EDT_Justified: {
       params.dwAlignment |= FDE_TEXTEDITALIGN_Justified;
-      break;
-    }
-    case FWL_STYLEEXT_EDT_Distributed: {
-      params.dwAlignment |= FDE_TEXTEDITALIGN_Distributed;
       break;
     }
     default: {
@@ -1239,17 +1218,9 @@ bool CFWL_Edit::ValidateNumberChar(FX_WCHAR cNum) {
 }
 
 void CFWL_Edit::InitCaret() {
-  if (!m_pCaret) {
-    if ((m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_InnerCaret)) {
-      m_pCaret = pdfium::MakeUnique<CFWL_Caret>(
-          m_pOwnerApp, pdfium::MakeUnique<CFWL_WidgetProperties>(), this);
-      m_pCaret->SetParent(this);
-      m_pCaret->SetStates(m_pProperties->m_dwStates);
-    }
-  } else if ((m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_InnerCaret) ==
-             0) {
-    m_pCaret.reset();
-  }
+  if (!m_pCaret)
+    return;
+  m_pCaret.reset();
 }
 
 void CFWL_Edit::ClearRecord() {
@@ -1352,8 +1323,7 @@ void CFWL_Edit::DoButtonDown(CFWL_MessageMouse* pMsg) {
 }
 
 void CFWL_Edit::OnFocusChanged(CFWL_Message* pMsg, bool bSet) {
-  uint32_t dwStyleEx = GetStylesEx();
-  bool bRepaint = !!(dwStyleEx & FWL_STYLEEXT_EDT_InnerCaret);
+  bool bRepaint = false;
   if (bSet) {
     m_pProperties->m_dwStates |= FWL_WGTSTATE_Focused;
 
@@ -1363,15 +1333,15 @@ void CFWL_Edit::OnFocusChanged(CFWL_Message* pMsg, bool bSet) {
   } else if (m_pProperties->m_dwStates & FWL_WGTSTATE_Focused) {
     m_pProperties->m_dwStates &= ~FWL_WGTSTATE_Focused;
     HideCaret(nullptr);
-    if ((dwStyleEx & FWL_STYLEEXT_EDT_NoHideSel) == 0) {
-      int32_t nSel = CountSelRanges();
-      if (nSel > 0) {
-        ClearSelections();
-        bRepaint = true;
-      }
-      m_EdtEngine.SetCaretPos(0, true);
-      UpdateOffset();
+
+    int32_t nSel = CountSelRanges();
+    if (nSel > 0) {
+      ClearSelections();
+      bRepaint = true;
     }
+    m_EdtEngine.SetCaretPos(0, true);
+    UpdateOffset();
+
     ClearRecord();
   }
 

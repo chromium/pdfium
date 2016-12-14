@@ -24,7 +24,6 @@
 #define FWL_WGTSTYLE_VCenterAlignment (1L << 15)
 #define FWL_WGTSTYLE_BottomAlignment (2L << 15)
 #define FWL_WGTSTYLE_RTLReading (1L << 17)
-#define FWL_WGTSTYLE_RTLLayout (1L << 18)
 #define FWL_WGTSTYLE_EdgeNone (0L << 19)
 #define FWL_WGTSTYLE_EdgeFlat (1L << 19)
 #define FWL_WGTSTYLE_EdgeRaised (2L << 19)

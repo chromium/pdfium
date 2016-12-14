@@ -205,9 +205,7 @@ int32_t CFDE_TxtEdtEngine::SetCaretPos(int32_t nIndex, bool bBefore) {
     m_nCaret++;
     m_bBefore = true;
   }
-  m_fCaretPosReserve = (m_Param.dwLayoutStyles & FDE_TEXTEDITLAYOUT_DocVertical)
-                           ? m_rtCaret.top
-                           : m_rtCaret.left;
+  m_fCaretPosReserve = m_rtCaret.left;
   m_Param.pEventSink->OnCaretChanged();
   m_nAnchorPos = -1;
   return m_nCaret;
@@ -234,64 +232,38 @@ int32_t CFDE_TxtEdtEngine::MoveCaretPos(FDE_TXTEDTMOVECARET eMoveCaret,
   } else {
     m_nAnchorPos = -1;
   }
-  bool bVertical = m_Param.dwLayoutStyles & FDE_TEXTEDITLAYOUT_DocVertical;
+
   switch (eMoveCaret) {
     case MC_Left: {
-      if (bVertical) {
-        CFX_PointF ptCaret;
-        if (MoveUp(ptCaret)) {
-          UpdateCaretIndex(ptCaret);
-        }
-      } else {
-        bool bBefore = true;
-        int32_t nIndex = MoveBackward(bBefore);
-        if (nIndex >= 0) {
-          UpdateCaretRect(nIndex, bBefore);
-        }
+      bool bBefore = true;
+      int32_t nIndex = MoveBackward(bBefore);
+      if (nIndex >= 0) {
+        UpdateCaretRect(nIndex, bBefore);
       }
-    } break;
+      break;
+    }
     case MC_Right: {
-      if (bVertical) {
-        CFX_PointF ptCaret;
-        if (MoveDown(ptCaret)) {
-          UpdateCaretIndex(ptCaret);
-        }
-      } else {
-        bool bBefore = true;
-        int32_t nIndex = MoveForward(bBefore);
-        if (nIndex >= 0) {
-          UpdateCaretRect(nIndex, bBefore);
-        }
+      bool bBefore = true;
+      int32_t nIndex = MoveForward(bBefore);
+      if (nIndex >= 0) {
+        UpdateCaretRect(nIndex, bBefore);
       }
-    } break;
+      break;
+    }
     case MC_Up: {
-      if (bVertical) {
-        bool bBefore = true;
-        int32_t nIndex = MoveBackward(bBefore);
-        if (nIndex >= 0) {
-          UpdateCaretRect(nIndex, bBefore);
-        }
-      } else {
-        CFX_PointF ptCaret;
-        if (MoveUp(ptCaret)) {
-          UpdateCaretIndex(ptCaret);
-        }
+      CFX_PointF ptCaret;
+      if (MoveUp(ptCaret)) {
+        UpdateCaretIndex(ptCaret);
       }
-    } break;
+      break;
+    }
     case MC_Down: {
-      if (bVertical) {
-        bool bBefore = true;
-        int32_t nIndex = MoveForward(bBefore);
-        if (nIndex >= 0) {
-          UpdateCaretRect(nIndex, bBefore);
-        }
-      } else {
-        CFX_PointF ptCaret;
-        if (MoveDown(ptCaret)) {
-          UpdateCaretIndex(ptCaret);
-        }
+      CFX_PointF ptCaret;
+      if (MoveDown(ptCaret)) {
+        UpdateCaretIndex(ptCaret);
       }
-    } break;
+      break;
+    }
     case MC_WordBackward:
       break;
     case MC_WordForward:
@@ -413,10 +385,9 @@ int32_t CFDE_TxtEdtEngine::Insert(int32_t nStart,
   if (IsSelect()) {
     DeleteSelect();
   }
-  if (!(m_Param.dwMode & FDE_TEXTEDITMODE_NoRedoUndo))
-    m_Param.pEventSink->OnAddDoRecord(
-        pdfium::MakeUnique<CFDE_TxtEdtDoRecord_Insert>(this, m_nCaret, lpBuffer,
-                                                       nLength));
+  m_Param.pEventSink->OnAddDoRecord(
+      pdfium::MakeUnique<CFDE_TxtEdtDoRecord_Insert>(this, m_nCaret, lpBuffer,
+                                                     nLength));
 
   m_ChangeInfo.wsPrevText = GetText(0, -1);
   Inner_Insert(m_nCaret, lpBuffer, nLength);
@@ -470,12 +441,11 @@ int32_t CFDE_TxtEdtEngine::Delete(int32_t nStart, bool bBackspace) {
     if (!m_Param.pEventSink->OnValidate(wsText))
       return FDE_TXTEDT_MODIFY_RET_F_Invalidate;
   }
-  if (!(m_Param.dwMode & FDE_TEXTEDITMODE_NoRedoUndo)) {
-    CFX_WideString wsRange = m_pTxtBuf->GetRange(nStart, nCount);
-    m_Param.pEventSink->OnAddDoRecord(
-        pdfium::MakeUnique<CFDE_TxtEdtDoRecord_DeleteRange>(this, nStart,
-                                                            m_nCaret, wsRange));
-  }
+  CFX_WideString wsRange = m_pTxtBuf->GetRange(nStart, nCount);
+  m_Param.pEventSink->OnAddDoRecord(
+      pdfium::MakeUnique<CFDE_TxtEdtDoRecord_DeleteRange>(this, nStart,
+                                                          m_nCaret, wsRange));
+
   m_ChangeInfo.nChangeType = FDE_TXTEDT_TEXTCHANGE_TYPE_Delete;
   m_ChangeInfo.wsDelete = GetText(nStart, nCount);
   Inner_DeleteRange(nStart, nCount);
@@ -656,15 +626,11 @@ void CFDE_TxtEdtEngine::ClearSelection() {
 bool CFDE_TxtEdtEngine::Redo(const IFDE_TxtEdtDoRecord* pDoRecord) {
   if (IsLocked())
     return false;
-  if (m_Param.dwMode & FDE_TEXTEDITMODE_NoRedoUndo)
-    return false;
   return pDoRecord->Redo();
 }
 
 bool CFDE_TxtEdtEngine::Undo(const IFDE_TxtEdtDoRecord* pDoRecord) {
   if (IsLocked())
-    return false;
-  if (m_Param.dwMode & FDE_TEXTEDITMODE_NoRedoUndo)
     return false;
   return pDoRecord->Undo();
 }
@@ -945,12 +911,11 @@ void CFDE_TxtEdtEngine::DeleteRange_DoRecord(int32_t nStart,
   }
   ASSERT((nStart + nCount) <= m_pTxtBuf->GetTextLength());
 
-  if (!(m_Param.dwMode & FDE_TEXTEDITMODE_NoRedoUndo)) {
-    CFX_WideString wsRange = m_pTxtBuf->GetRange(nStart, nCount);
-    m_Param.pEventSink->OnAddDoRecord(
-        pdfium::MakeUnique<CFDE_TxtEdtDoRecord_DeleteRange>(
-            this, nStart, m_nCaret, wsRange, bSel));
-  }
+  CFX_WideString wsRange = m_pTxtBuf->GetRange(nStart, nCount);
+  m_Param.pEventSink->OnAddDoRecord(
+      pdfium::MakeUnique<CFDE_TxtEdtDoRecord_DeleteRange>(
+          this, nStart, m_nCaret, wsRange, bSel));
+
   m_ChangeInfo.nChangeType = FDE_TXTEDT_TEXTCHANGE_TYPE_Delete;
   m_ChangeInfo.wsDelete = GetText(nStart, nCount);
   Inner_DeleteRange(nStart, nCount);
@@ -1046,52 +1011,25 @@ void CFDE_TxtEdtEngine::UpdateTxtBreak() {
   } else {
     dwStyle |= FX_TXTLAYOUTSTYLE_SingleLine;
   }
-  if (m_Param.dwLayoutStyles & FDE_TEXTEDITLAYOUT_DocVertical) {
-    dwStyle |= FX_TXTLAYOUTSTYLE_VerticalLayout;
-  } else {
-    dwStyle &= ~FX_TXTLAYOUTSTYLE_VerticalLayout;
-  }
-  if (m_Param.dwLayoutStyles & FDE_TEXTEDITLAYOUT_LineReserve) {
-    dwStyle |= FX_TXTLAYOUTSTYLE_ReverseLine;
-  } else {
-    dwStyle &= ~FX_TXTLAYOUTSTYLE_ReverseLine;
-  }
-  if (m_Param.dwLayoutStyles & FDE_TEXTEDITLAYOUT_RTL) {
-    dwStyle |= FX_TXTLAYOUTSTYLE_RTLReadingOrder;
-  } else {
-    dwStyle &= ~FX_TXTLAYOUTSTYLE_RTLReadingOrder;
-  }
+  dwStyle &= ~FX_TXTLAYOUTSTYLE_VerticalLayout;
+  dwStyle &= ~FX_TXTLAYOUTSTYLE_ReverseLine;
+  dwStyle &= ~FX_TXTLAYOUTSTYLE_RTLReadingOrder;
+
   if (m_Param.dwLayoutStyles & FDE_TEXTEDITLAYOUT_CombText) {
     dwStyle |= FX_TXTLAYOUTSTYLE_CombText;
   } else {
     dwStyle &= ~FX_TXTLAYOUTSTYLE_CombText;
   }
-  if (m_Param.dwLayoutStyles & FDE_TEXTEDITLAYOUT_CharVertial) {
-    dwStyle |= FX_TXTLAYOUTSTYLE_VerticalChars;
-  } else {
-    dwStyle &= ~FX_TXTLAYOUTSTYLE_VerticalChars;
-  }
-  if (m_Param.dwLayoutStyles & FDE_TEXTEDITLAYOUT_ExpandTab) {
-    dwStyle |= FX_TXTLAYOUTSTYLE_ExpandTab;
-  } else {
-    dwStyle &= ~FX_TXTLAYOUTSTYLE_ExpandTab;
-  }
-  if (m_Param.dwLayoutStyles & FDE_TEXTEDITLAYOUT_ArabicContext) {
-    dwStyle |= FX_TXTLAYOUTSTYLE_ArabicContext;
-  } else {
-    dwStyle &= ~FX_TXTLAYOUTSTYLE_ArabicContext;
-  }
-  if (m_Param.dwLayoutStyles & FDE_TEXTEDITLAYOUT_ArabicShapes) {
-    dwStyle |= FX_TXTLAYOUTSTYLE_ArabicShapes;
-  } else {
-    dwStyle &= ~FX_TXTLAYOUTSTYLE_ArabicShapes;
-  }
+
+  dwStyle &= ~FX_TXTLAYOUTSTYLE_VerticalChars;
+  dwStyle &= ~FX_TXTLAYOUTSTYLE_ExpandTab;
+  dwStyle &= ~FX_TXTLAYOUTSTYLE_ArabicContext;
+  dwStyle &= ~FX_TXTLAYOUTSTYLE_ArabicShapes;
+
   m_pTextBreak->SetLayoutStyles(dwStyle);
   uint32_t dwAligment = 0;
   if (m_Param.dwAlignment & FDE_TEXTEDITALIGN_Justified) {
     dwAligment |= FX_TXTLINEALIGNMENT_Justified;
-  } else if (m_Param.dwAlignment & FDE_TEXTEDITALIGN_Distributed) {
-    dwAligment |= FX_TXTLINEALIGNMENT_Distributed;
   }
   if (m_Param.dwAlignment & FDE_TEXTEDITALIGN_Center) {
     dwAligment |= FX_TXTLINEALIGNMENT_Center;
@@ -1099,25 +1037,16 @@ void CFDE_TxtEdtEngine::UpdateTxtBreak() {
     dwAligment |= FX_TXTLINEALIGNMENT_Right;
   }
   m_pTextBreak->SetAlignment(dwAligment);
-  if (m_Param.dwLayoutStyles & FDE_TEXTEDITLAYOUT_DocVertical) {
-    if (m_Param.dwMode & FDE_TEXTEDITMODE_AutoLineWrap) {
-      m_pTextBreak->SetLineWidth(m_Param.fPlateHeight);
-    } else {
-      m_pTextBreak->SetLineWidth(kPageWidthMax);
-    }
+
+  if (m_Param.dwMode & FDE_TEXTEDITMODE_AutoLineWrap) {
+    m_pTextBreak->SetLineWidth(m_Param.fPlateWidth);
   } else {
-    if (m_Param.dwMode & FDE_TEXTEDITMODE_AutoLineWrap) {
-      m_pTextBreak->SetLineWidth(m_Param.fPlateWidth);
-    } else {
-      m_pTextBreak->SetLineWidth(kPageWidthMax);
-    }
+    m_pTextBreak->SetLineWidth(kPageWidthMax);
   }
+
   m_nPageLineCount = m_Param.nLineCount;
   if (m_Param.dwLayoutStyles & FDE_TEXTEDITLAYOUT_CombText) {
-    FX_FLOAT fCombWidth =
-        m_Param.dwLayoutStyles & FDE_TEXTEDITLAYOUT_DocVertical
-            ? m_Param.fPlateHeight
-            : m_Param.fPlateWidth;
+    FX_FLOAT fCombWidth = m_Param.fPlateWidth;
     if (m_nLimit > 0) {
       fCombWidth /= m_nLimit;
     }
@@ -1323,85 +1252,34 @@ int32_t CFDE_TxtEdtEngine::MoveBackward(bool& bBefore) {
 bool CFDE_TxtEdtEngine::MoveUp(CFX_PointF& ptCaret) {
   IFDE_TxtEdtPage* pPage = GetPage(m_nCaretPage);
   const CFX_RectF& rtContent = pPage->GetContentsBox();
-  if (m_Param.dwLayoutStyles & FDE_TEXTEDITLAYOUT_DocVertical) {
-    ptCaret.x = m_rtCaret.left + m_rtCaret.width / 2 - m_Param.fLineSpace;
-    ptCaret.y = m_fCaretPosReserve;
-    bool bLineReserve =
-        !!(m_Param.dwLayoutStyles & FDE_TEXTEDITLAYOUT_LineReserve);
-    if (ptCaret.x < rtContent.left) {
-      if (bLineReserve) {
-        if (m_nCaretPage == CountPages() - 1) {
-          return false;
-        }
-      } else {
-        if (m_nCaretPage == 0) {
-          return false;
-        }
-      }
-      if (bLineReserve) {
-        m_nCaretPage++;
-      } else {
-        m_nCaretPage--;
-      }
-      ptCaret.x -= rtContent.left;
-      IFDE_TxtEdtPage* pCurPage = GetPage(m_nCaretPage);
-      ptCaret.x += pCurPage->GetContentsBox().right();
+  ptCaret.x = m_fCaretPosReserve;
+  ptCaret.y = m_rtCaret.top + m_rtCaret.height / 2 - m_Param.fLineSpace;
+  if (ptCaret.y < rtContent.top) {
+    if (m_nCaretPage == 0) {
+      return false;
     }
-  } else {
-    ptCaret.x = m_fCaretPosReserve;
-    ptCaret.y = m_rtCaret.top + m_rtCaret.height / 2 - m_Param.fLineSpace;
-    if (ptCaret.y < rtContent.top) {
-      if (m_nCaretPage == 0) {
-        return false;
-      }
-      ptCaret.y -= rtContent.top;
-      m_nCaretPage--;
-      IFDE_TxtEdtPage* pCurPage = GetPage(m_nCaretPage);
-      ptCaret.y += pCurPage->GetContentsBox().bottom();
-    }
+    ptCaret.y -= rtContent.top;
+    m_nCaretPage--;
+    IFDE_TxtEdtPage* pCurPage = GetPage(m_nCaretPage);
+    ptCaret.y += pCurPage->GetContentsBox().bottom();
   }
+
   return true;
 }
 
 bool CFDE_TxtEdtEngine::MoveDown(CFX_PointF& ptCaret) {
   IFDE_TxtEdtPage* pPage = GetPage(m_nCaretPage);
   const CFX_RectF& rtContent = pPage->GetContentsBox();
-  if (m_Param.dwLayoutStyles & FDE_TEXTEDITLAYOUT_DocVertical) {
-    ptCaret.x = m_rtCaret.left + m_rtCaret.width / 2 + m_Param.fLineSpace;
-    ptCaret.y = m_fCaretPosReserve;
-    if (ptCaret.x >= rtContent.right()) {
-      bool bLineReserve =
-          !!(m_Param.dwLayoutStyles & FDE_TEXTEDITLAYOUT_LineReserve);
-      if (bLineReserve) {
-        if (m_nCaretPage == 0) {
-          return false;
-        }
-      } else {
-        if (m_nCaretPage == CountPages() - 1) {
-          return false;
-        }
-      }
-      if (bLineReserve) {
-        m_nCaretPage--;
-      } else {
-        m_nCaretPage++;
-      }
-      ptCaret.x -= rtContent.right();
-      IFDE_TxtEdtPage* pCurPage = GetPage(m_nCaretPage);
-      ptCaret.x += pCurPage->GetContentsBox().left;
+  ptCaret.x = m_fCaretPosReserve;
+  ptCaret.y = m_rtCaret.top + m_rtCaret.height / 2 + m_Param.fLineSpace;
+  if (ptCaret.y >= rtContent.bottom()) {
+    if (m_nCaretPage == CountPages() - 1) {
+      return false;
     }
-  } else {
-    ptCaret.x = m_fCaretPosReserve;
-    ptCaret.y = m_rtCaret.top + m_rtCaret.height / 2 + m_Param.fLineSpace;
-    if (ptCaret.y >= rtContent.bottom()) {
-      if (m_nCaretPage == CountPages() - 1) {
-        return false;
-      }
-      ptCaret.y -= rtContent.bottom();
-      m_nCaretPage++;
-      IFDE_TxtEdtPage* pCurPage = GetPage(m_nCaretPage);
-      ptCaret.y += pCurPage->GetContentsBox().top;
-    }
+    ptCaret.y -= rtContent.bottom();
+    m_nCaretPage++;
+    IFDE_TxtEdtPage* pCurPage = GetPage(m_nCaretPage);
+    ptCaret.y += pCurPage->GetContentsBox().top;
   }
   return true;
 }
@@ -1542,9 +1420,7 @@ void CFDE_TxtEdtEngine::UpdateCaretRect(int32_t nIndex, bool bBefore) {
     m_nCaret++;
     m_bBefore = true;
   }
-  m_fCaretPosReserve = (m_Param.dwLayoutStyles & FDE_TEXTEDITLAYOUT_DocVertical)
-                           ? m_rtCaret.top
-                           : m_rtCaret.left;
+  m_fCaretPosReserve = m_rtCaret.left;
   m_Param.pEventSink->OnCaretChanged();
 }
 
@@ -1561,25 +1437,15 @@ void CFDE_TxtEdtEngine::GetCaretRect(CFX_RectF& rtCaret,
     bBefore = false;
   }
   int32_t nBIDILevel = pPage->GetCharRect(nIndexInpage, rtCaret, bCombText);
-  if (m_Param.dwLayoutStyles & FDE_TEXTEDITLAYOUT_DocVertical) {
-    if ((!FX_IsOdd(nBIDILevel) && !bBefore) ||
-        (FX_IsOdd(nBIDILevel) && bBefore)) {
-      rtCaret.Offset(0, rtCaret.height - 1.0f);
-    }
-    if (rtCaret.height == 0 && rtCaret.top > 1.0f)
-      rtCaret.top -= 1.0f;
-
-    rtCaret.height = 1.0f;
-  } else {
-    if ((!FX_IsOdd(nBIDILevel) && !bBefore) ||
-        (FX_IsOdd(nBIDILevel) && bBefore)) {
-      rtCaret.Offset(rtCaret.width - 1.0f, 0);
-    }
-    if (rtCaret.width == 0 && rtCaret.left > 1.0f)
-      rtCaret.left -= 1.0f;
-
-    rtCaret.width = 1.0f;
+  if ((!FX_IsOdd(nBIDILevel) && !bBefore) ||
+      (FX_IsOdd(nBIDILevel) && bBefore)) {
+    rtCaret.Offset(rtCaret.width - 1.0f, 0);
   }
+  if (rtCaret.width == 0 && rtCaret.left > 1.0f)
+    rtCaret.left -= 1.0f;
+
+  rtCaret.width = 1.0f;
+
   m_Param.pEventSink->OnPageUnload(m_nCaretPage);
 }
 
