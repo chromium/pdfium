@@ -648,7 +648,6 @@ static_library("fxcodec") {
     "core/fxcodec/jbig2/JBig2_HuffmanTable_Standard.h",
     "core/fxcodec/jbig2/JBig2_Image.cpp",
     "core/fxcodec/jbig2/JBig2_Image.h",
-    "core/fxcodec/jbig2/JBig2_List.h",
     "core/fxcodec/jbig2/JBig2_Page.h",
     "core/fxcodec/jbig2/JBig2_PatternDict.cpp",
     "core/fxcodec/jbig2/JBig2_PatternDict.h",

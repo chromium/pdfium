@@ -7,11 +7,11 @@
 #include "core/fxcodec/jbig2/JBig2_GsidProc.h"
 
 #include <memory>
+#include <vector>
 
 #include "core/fxcodec/jbig2/JBig2_BitStream.h"
 #include "core/fxcodec/jbig2/JBig2_GrdProc.h"
 #include "core/fxcodec/jbig2/JBig2_Image.h"
-#include "core/fxcodec/jbig2/JBig2_List.h"
 #include "core/fxcrt/fx_basic.h"
 
 uint32_t* CJBig2_GSIDProc::decode_Arith(CJBig2_ArithDecoder* pArithDecoder,
@@ -40,7 +40,7 @@ uint32_t* CJBig2_GSIDProc::decode_Arith(CJBig2_ArithDecoder* pArithDecoder,
     pGRD->GBAT[7] = -2;
   }
 
-  CJBig2_List<CJBig2_Image> GSPLANES(GSBPP);
+  std::vector<std::unique_ptr<CJBig2_Image>> GSPLANES(GSBPP);
   for (int32_t i = GSBPP - 1; i >= 0; --i) {
     CJBig2_Image* pImage = nullptr;
     FXCODEC_STATUS status =
@@ -51,19 +51,17 @@ uint32_t* CJBig2_GSIDProc::decode_Arith(CJBig2_ArithDecoder* pArithDecoder,
     if (!pImage)
       return nullptr;
 
-    GSPLANES.set(i, pImage);
-
+    GSPLANES[i].reset(pImage);
     if (i < GSBPP - 1)
-      pImage->composeFrom(0, 0, GSPLANES.get(i + 1), JBIG2_COMPOSE_XOR);
+      pImage->composeFrom(0, 0, GSPLANES[i + 1].get(), JBIG2_COMPOSE_XOR);
   }
   std::unique_ptr<uint32_t, FxFreeDeleter> GSVALS(
       FX_Alloc2D(uint32_t, GSW, GSH));
   JBIG2_memset(GSVALS.get(), 0, sizeof(uint32_t) * GSW * GSH);
   for (uint32_t y = 0; y < GSH; ++y) {
     for (uint32_t x = 0; x < GSW; ++x) {
-      for (int32_t i = 0; i < GSBPP; ++i) {
-        GSVALS.get()[y * GSW + x] |= GSPLANES.get(i)->getPixel(x, y) << i;
-      }
+      for (int32_t i = 0; i < GSBPP; ++i)
+        GSVALS.get()[y * GSW + x] |= GSPLANES[i]->getPixel(x, y) << i;
     }
   }
   return GSVALS.release();

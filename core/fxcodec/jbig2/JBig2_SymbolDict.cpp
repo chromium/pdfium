@@ -8,19 +8,19 @@
 
 #include "core/fxcodec/jbig2/JBig2_Image.h"
 #include "core/fxcrt/fx_memory.h"
+#include "third_party/base/ptr_util.h"
 
 CJBig2_SymbolDict::CJBig2_SymbolDict() {}
 
 CJBig2_SymbolDict::~CJBig2_SymbolDict() {}
 
 std::unique_ptr<CJBig2_SymbolDict> CJBig2_SymbolDict::DeepCopy() const {
-  const CJBig2_SymbolDict* src = this;
-  std::unique_ptr<CJBig2_SymbolDict> dst(new CJBig2_SymbolDict);
-  for (size_t i = 0; i < src->m_SDEXSYMS.size(); ++i) {
-    CJBig2_Image* image = src->m_SDEXSYMS.get(i);
-    dst->m_SDEXSYMS.push_back(image ? new CJBig2_Image(*image) : nullptr);
+  auto dst = pdfium::MakeUnique<CJBig2_SymbolDict>();
+  for (const auto& image : m_SDEXSYMS) {
+    dst->m_SDEXSYMS.push_back(image ? pdfium::MakeUnique<CJBig2_Image>(*image)
+                                    : nullptr);
   }
-  dst->m_gbContext = src->m_gbContext;
-  dst->m_grContext = src->m_grContext;
+  dst->m_gbContext = m_gbContext;
+  dst->m_grContext = m_grContext;
   return dst;
 }

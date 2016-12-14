@@ -14,7 +14,6 @@
 
 #include "core/fpdfapi/parser/cpdf_object.h"
 #include "core/fxcodec/fx_codec_def.h"
-#include "core/fxcodec/jbig2/JBig2_List.h"
 #include "core/fxcodec/jbig2/JBig2_Page.h"
 #include "core/fxcodec/jbig2/JBig2_Segment.h"
 
@@ -89,8 +88,8 @@ class CJBig2_Context {
 
   std::unique_ptr<CJBig2_Context> m_pGlobalContext;
   std::unique_ptr<CJBig2_BitStream> m_pStream;
-  CJBig2_List<CJBig2_Segment> m_SegmentList;
-  CJBig2_List<JBig2PageInfo> m_PageInfoList;
+  std::vector<std::unique_ptr<CJBig2_Segment>> m_SegmentList;
+  std::vector<std::unique_ptr<JBig2PageInfo>> m_PageInfoList;
   std::unique_ptr<CJBig2_Image> m_pPage;
   size_t m_nSegmentDecoded;
   bool m_bInPage;

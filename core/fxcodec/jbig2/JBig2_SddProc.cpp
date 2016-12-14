@@ -264,9 +264,11 @@ CJBig2_SymbolDict* CJBig2_SDDProc::decode_Arith(
   for (I = 0; I < SDNUMINSYMS + SDNUMNEWSYMS; I++) {
     if (EXFLAGS[I] && J < SDNUMEXSYMS) {
       if (I < SDNUMINSYMS) {
-        pDict->AddImage(SDINSYMS[I] ? new CJBig2_Image(*SDINSYMS[I]) : nullptr);
+        pDict->AddImage(SDINSYMS[I]
+                            ? pdfium::MakeUnique<CJBig2_Image>(*SDINSYMS[I])
+                            : nullptr);
       } else {
-        pDict->AddImage(SDNEWSYMS[I - SDNUMINSYMS]);
+        pDict->AddImage(pdfium::WrapUnique(SDNEWSYMS[I - SDNUMINSYMS]));
       }
       ++J;
     } else if (!EXFLAGS[I] && I >= SDNUMINSYMS) {
@@ -596,9 +598,11 @@ CJBig2_SymbolDict* CJBig2_SDDProc::decode_Huffman(
   for (I = 0; I < SDNUMINSYMS + SDNUMNEWSYMS; I++) {
     if (EXFLAGS[I] && J < SDNUMEXSYMS) {
       if (I < SDNUMINSYMS) {
-        pDict->AddImage(SDINSYMS[I] ? new CJBig2_Image(*SDINSYMS[I]) : nullptr);
+        pDict->AddImage(SDINSYMS[I]
+                            ? pdfium::MakeUnique<CJBig2_Image>(*SDINSYMS[I])
+                            : nullptr);
       } else {
-        pDict->AddImage(SDNEWSYMS[I - SDNUMINSYMS]);
+        pDict->AddImage(pdfium::WrapUnique(SDNEWSYMS[I - SDNUMINSYMS]));
       }
       ++J;
     } else if (!EXFLAGS[I] && I >= SDNUMINSYMS) {

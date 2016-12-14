@@ -104,7 +104,7 @@ int32_t CJBig2_Context::decode_SquentialOrgnazation(IFX_Pause* pPause) {
     } else {
       m_pStream->offset(4);
     }
-    m_SegmentList.push_back(m_pSegment.release());
+    m_SegmentList.push_back(std::move(m_pSegment));
     if (m_pStream->getByteLeft() > 0 && m_pPage && pPause &&
         pPause->NeedToPauseNow()) {
       m_ProcessingStatus = FXCODEC_STATUS_DECODE_TOBECONTINUE;
@@ -129,7 +129,7 @@ int32_t CJBig2_Context::decode_RandomOrgnazation_FirstPage(IFX_Pause* pPause) {
     } else if (pSegment->m_cFlags.s.type == 51) {
       break;
     }
-    m_SegmentList.push_back(pSegment.release());
+    m_SegmentList.push_back(std::move(pSegment));
     if (pPause && m_pPause && pPause->NeedToPauseNow()) {
       m_PauseStep = 3;
       m_ProcessingStatus = FXCODEC_STATUS_DECODE_TOBECONTINUE;
@@ -143,7 +143,7 @@ int32_t CJBig2_Context::decode_RandomOrgnazation_FirstPage(IFX_Pause* pPause) {
 int32_t CJBig2_Context::decode_RandomOrgnazation(IFX_Pause* pPause) {
   for (; m_nSegmentDecoded < m_SegmentList.size(); ++m_nSegmentDecoded) {
     int32_t nRet =
-        parseSegmentData(m_SegmentList.get(m_nSegmentDecoded), pPause);
+        parseSegmentData(m_SegmentList[m_nSegmentDecoded].get(), pPause);
     if (nRet == JBIG2_END_OF_PAGE || nRet == JBIG2_END_OF_FILE)
       return JBIG2_SUCCESS;
 
@@ -221,11 +221,9 @@ CJBig2_Segment* CJBig2_Context::findSegmentByNumber(uint32_t dwNumber) {
       return pSeg;
     }
   }
-  for (size_t i = 0; i < m_SegmentList.size(); ++i) {
-    CJBig2_Segment* pSeg = m_SegmentList.get(i);
-    if (pSeg->m_dwNumber == dwNumber) {
-      return pSeg;
-    }
+  for (const auto& pSeg : m_SegmentList) {
+    if (pSeg->m_dwNumber == dwNumber)
+      return pSeg.get();
   }
   return nullptr;
 }
@@ -394,7 +392,7 @@ int32_t CJBig2_Context::ProcessingParseSegmentData(CJBig2_Segment* pSegment,
       }
 
       m_pPage->fill((pPageInfo->m_cFlags & 4) ? 1 : 0);
-      m_PageInfoList.push_back(pPageInfo.release());
+      m_PageInfoList.push_back(std::move(pPageInfo));
       m_bInPage = true;
     } break;
     case 49:
@@ -923,7 +921,7 @@ int32_t CJBig2_Context::parseTextRegion(CJBig2_Segment* pSegment) {
   }
   if (pSegment->m_cFlags.s.type != 4) {
     if (!m_bBufSpecified) {
-      JBig2PageInfo* pPageInfo = m_PageInfoList.back();
+      const auto& pPageInfo = m_PageInfoList.back();
       if ((pPageInfo->m_bIsStriped == 1) &&
           (ri.y + ri.height > m_pPage->height())) {
         m_pPage->expand(ri.y + ri.height, (pPageInfo->m_cFlags & 4) ? 1 : 0);
@@ -1041,7 +1039,7 @@ int32_t CJBig2_Context::parseHalftoneRegion(CJBig2_Segment* pSegment,
   }
   if (pSegment->m_cFlags.s.type != 20) {
     if (!m_bBufSpecified) {
-      JBig2PageInfo* pPageInfo = m_PageInfoList.back();
+      const auto& pPageInfo = m_PageInfoList.back();
       if (pPageInfo->m_bIsStriped == 1 &&
           ri.y + ri.height > m_pPage->height()) {
         m_pPage->expand(ri.y + ri.height, (pPageInfo->m_cFlags & 4) ? 1 : 0);
@@ -1108,7 +1106,7 @@ int32_t CJBig2_Context::parseGenericRegion(CJBig2_Segment* pSegment,
     if (m_ProcessingStatus == FXCODEC_STATUS_DECODE_TOBECONTINUE) {
       if (pSegment->m_cFlags.s.type != 36) {
         if (!m_bBufSpecified) {
-          JBig2PageInfo* pPageInfo = m_PageInfoList.back();
+          const auto& pPageInfo = m_PageInfoList.back();
           if ((pPageInfo->m_bIsStriped == 1) &&
               (m_ri.y + m_ri.height > m_pPage->height())) {
             m_pPage->expand(m_ri.y + m_ri.height,
@@ -1142,7 +1140,7 @@ int32_t CJBig2_Context::parseGenericRegion(CJBig2_Segment* pSegment,
   }
   if (pSegment->m_cFlags.s.type != 36) {
     if (!m_bBufSpecified) {
-      JBig2PageInfo* pPageInfo = m_PageInfoList.back();
+      JBig2PageInfo* pPageInfo = m_PageInfoList.back().get();
       if ((pPageInfo->m_bIsStriped == 1) &&
           (m_ri.y + m_ri.height > m_pPage->height())) {
         m_pPage->expand(m_ri.y + m_ri.height,
@@ -1215,7 +1213,7 @@ int32_t CJBig2_Context::parseGenericRefinementRegion(CJBig2_Segment* pSegment) {
   m_pStream->offset(2);
   if (pSegment->m_cFlags.s.type != 40) {
     if (!m_bBufSpecified) {
-      JBig2PageInfo* pPageInfo = m_PageInfoList.back();
+      JBig2PageInfo* pPageInfo = m_PageInfoList.back().get();
       if ((pPageInfo->m_bIsStriped == 1) &&
           (ri.y + ri.height > m_pPage->height())) {
         m_pPage->expand(ri.y + ri.height, (pPageInfo->m_cFlags & 4) ? 1 : 0);
