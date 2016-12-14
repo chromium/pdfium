@@ -322,18 +322,18 @@ void CPDF_Image::ResetCache(CPDF_Page* pPage, const CFX_DIBitmap* pBitmap) {
   pPage->GetRenderCache()->ResetBitmap(m_pStream.Get(), pBitmap);
 }
 
-CFX_DIBSource* CPDF_Image::LoadDIBSource(CFX_DIBSource** ppMask,
-                                         uint32_t* pMatteColor,
-                                         bool bStdCS,
-                                         uint32_t GroupFamily,
-                                         bool bLoadMask) const {
+std::unique_ptr<CFX_DIBSource> CPDF_Image::LoadDIBSource(CFX_DIBSource** ppMask,
+                                                         uint32_t* pMatteColor,
+                                                         bool bStdCS,
+                                                         uint32_t GroupFamily,
+                                                         bool bLoadMask) const {
   auto source = pdfium::MakeUnique<CPDF_DIBSource>();
-  if (source->Load(m_pDocument, m_pStream.Get(),
-                   reinterpret_cast<CPDF_DIBSource**>(ppMask), pMatteColor,
-                   nullptr, nullptr, bStdCS, GroupFamily, bLoadMask)) {
-    return source.release();
+  if (!source->Load(m_pDocument, m_pStream.Get(),
+                    reinterpret_cast<CPDF_DIBSource**>(ppMask), pMatteColor,
+                    nullptr, nullptr, bStdCS, GroupFamily, bLoadMask)) {
+    return nullptr;
   }
-  return nullptr;
+  return std::move(source);
 }
 
 CFX_DIBSource* CPDF_Image::DetachBitmap() {
