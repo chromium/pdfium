@@ -563,7 +563,7 @@ CFX_Graphics* CFWL_WidgetMgr::DrawWidgetBefore(CFWL_Widget* pWidget,
 
   Item* pItem = GetWidgetMgrItem(pWidget);
   if (!pItem->pOffscreen) {
-    pItem->pOffscreen.reset(new CFX_Graphics);
+    pItem->pOffscreen = pdfium::MakeUnique<CFX_Graphics>();
     CFX_RectF rect = pWidget->GetWidgetRect();
     pItem->pOffscreen->Create((int32_t)rect.width, (int32_t)rect.height,
                               FXDIB_Argb);

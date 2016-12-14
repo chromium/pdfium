@@ -53,7 +53,8 @@ CFWL_DateTimePicker::CFWL_DateTimePicker(const CFWL_App* app)
   editProp->m_pParent = this;
   editProp->m_pThemeProvider = m_pProperties->m_pThemeProvider;
 
-  m_pEdit.reset(new CFWL_DateTimeEdit(m_pOwnerApp, std::move(editProp), this));
+  m_pEdit = pdfium::MakeUnique<CFWL_DateTimeEdit>(m_pOwnerApp,
+                                                  std::move(editProp), this);
   RegisterEventTarget(m_pMonthCal.get());
   RegisterEventTarget(m_pEdit.get());
 }

@@ -13,6 +13,7 @@
 #include "core/fpdfapi/font/cpdf_font.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
+#include "third_party/base/ptr_util.h"
 #include "xfa/fgas/font/cfgas_gefont.h"
 #include "xfa/fxfa/xfa_ffapp.h"
 #include "xfa/fxfa/xfa_ffdoc.h"
@@ -2047,7 +2048,7 @@ CFGAS_GEFont* CXFA_FontMgr::GetFont(CXFA_FFDoc* hDoc,
 
 void CXFA_FontMgr::LoadDocFonts(CXFA_FFDoc* hDoc) {
   if (!m_PDFFontMgrMap[hDoc])
-    m_PDFFontMgrMap[hDoc].reset(new CXFA_PDFFontMgr(hDoc));
+    m_PDFFontMgrMap[hDoc] = pdfium::MakeUnique<CXFA_PDFFontMgr>(hDoc);
 }
 
 void CXFA_FontMgr::ReleaseDocFonts(CXFA_FFDoc* hDoc) {

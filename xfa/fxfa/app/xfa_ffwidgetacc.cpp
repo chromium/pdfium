@@ -11,6 +11,7 @@
 #include <vector>
 
 #include "fxjs/cfxjse_value.h"
+#include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fde/tto/fde_textout.h"
 #include "xfa/fde/xml/fde_xml_imp.h"
@@ -60,9 +61,9 @@ class CXFA_TextLayoutData : public CXFA_WidgetLayoutData {
     if (m_pTextLayout)
       return;
 
-    m_pTextProvider.reset(
-        new CXFA_TextProvider(pAcc, XFA_TEXTPROVIDERTYPE_Text));
-    m_pTextLayout.reset(new CXFA_TextLayout(m_pTextProvider.get()));
+    m_pTextProvider =
+        pdfium::MakeUnique<CXFA_TextProvider>(pAcc, XFA_TEXTPROVIDERTYPE_Text);
+    m_pTextLayout = pdfium::MakeUnique<CXFA_TextLayout>(m_pTextProvider.get());
   }
 
  private:
@@ -120,7 +121,8 @@ class CXFA_FieldLayoutData : public CXFA_WidgetLayoutData {
       return false;
     m_pCapTextProvider.reset(
         new CXFA_TextProvider(pAcc, XFA_TEXTPROVIDERTYPE_Caption));
-    m_pCapTextLayout.reset(new CXFA_TextLayout(m_pCapTextProvider.get()));
+    m_pCapTextLayout =
+        pdfium::MakeUnique<CXFA_TextLayout>(m_pCapTextProvider.get());
     return true;
   }
 
@@ -857,7 +859,7 @@ void CXFA_WidgetAcc::CalculateTextContentSize(CFX_SizeF& size) {
   CXFA_FieldLayoutData* layoutData =
       static_cast<CXFA_FieldLayoutData*>(m_pLayoutData.get());
   if (!layoutData->m_pTextOut) {
-    layoutData->m_pTextOut.reset(new CFDE_TextOut);
+    layoutData->m_pTextOut = pdfium::MakeUnique<CFDE_TextOut>();
     CFDE_TextOut* pTextOut = layoutData->m_pTextOut.get();
     pTextOut->SetFont(GetFDEFont());
     pTextOut->SetFontSize(fFontSize);
@@ -1388,25 +1390,25 @@ void CXFA_WidgetAcc::InitLayoutData() {
   }
   switch (GetUIType()) {
     case XFA_Element::Text:
-      m_pLayoutData.reset(new CXFA_TextLayoutData);
+      m_pLayoutData = pdfium::MakeUnique<CXFA_TextLayoutData>();
       return;
     case XFA_Element::TextEdit:
-      m_pLayoutData.reset(new CXFA_TextEditData);
+      m_pLayoutData = pdfium::MakeUnique<CXFA_TextEditData>();
       return;
     case XFA_Element::Image:
-      m_pLayoutData.reset(new CXFA_ImageLayoutData);
+      m_pLayoutData = pdfium::MakeUnique<CXFA_ImageLayoutData>();
       return;
     case XFA_Element::ImageEdit:
-      m_pLayoutData.reset(new CXFA_ImageEditData);
+      m_pLayoutData = pdfium::MakeUnique<CXFA_ImageEditData>();
       return;
     default:
       break;
   }
   if (GetElementType() == XFA_Element::Field) {
-    m_pLayoutData.reset(new CXFA_FieldLayoutData);
+    m_pLayoutData = pdfium::MakeUnique<CXFA_FieldLayoutData>();
     return;
   }
-  m_pLayoutData.reset(new CXFA_WidgetLayoutData);
+  m_pLayoutData = pdfium::MakeUnique<CXFA_WidgetLayoutData>();
 }
 
 void CXFA_WidgetAcc::StartTextLayout(FX_FLOAT& fCalcWidth,

@@ -10,6 +10,7 @@
 
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_system.h"
+#include "third_party/base/ptr_util.h"
 #include "xfa/fde/cfde_path.h"
 #include "xfa/fde/fde_gedevice.h"
 #include "xfa/fde/fde_object.h"
@@ -132,12 +133,12 @@ void CFDE_TextOut::SetDIBitmap(CFX_DIBitmap* pDIB) {
   m_pRenderDevice.reset();
   CFX_FxgeDevice* device = new CFX_FxgeDevice;
   device->Attach(pDIB, false, nullptr, false);
-  m_pRenderDevice.reset(new CFDE_RenderDevice(device, false));
+  m_pRenderDevice = pdfium::MakeUnique<CFDE_RenderDevice>(device, false);
 }
 
 void CFDE_TextOut::SetRenderDevice(CFX_RenderDevice* pDevice) {
   ASSERT(pDevice);
-  m_pRenderDevice.reset(new CFDE_RenderDevice(pDevice, false));
+  m_pRenderDevice = pdfium::MakeUnique<CFDE_RenderDevice>(pDevice, false);
 }
 
 void CFDE_TextOut::SetClipRect(const CFX_Rect& rtClip) {

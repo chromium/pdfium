@@ -9,6 +9,7 @@
 #include <utility>
 
 #include "core/fxcrt/fx_ext.h"
+#include "third_party/base/ptr_util.h"
 #include "fxjs/cfxjse_arguments.h"
 #include "fxjs/cfxjse_class.h"
 #include "fxjs/cfxjse_value.h"
@@ -142,8 +143,9 @@ void CXFA_ScriptContext::Initialize(v8::Isolate* pIsolate) {
   m_pIsolate = pIsolate;
   DefineJsContext();
   DefineJsClass();
-  m_ResolveProcessor.reset(new CXFA_ResolveProcessor);
+  m_ResolveProcessor = pdfium::MakeUnique<CXFA_ResolveProcessor>();
 }
+
 bool CXFA_ScriptContext::RunScript(XFA_SCRIPTLANGTYPE eScriptType,
                                    const CFX_WideStringC& wsScript,
                                    CFXJSE_Value* hRetValue,

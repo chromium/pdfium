@@ -22,6 +22,7 @@
 #include "core/fxcodec/jbig2/JBig2_PddProc.h"
 #include "core/fxcodec/jbig2/JBig2_SddProc.h"
 #include "core/fxcodec/jbig2/JBig2_TrdProc.h"
+#include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 
 namespace {
@@ -60,10 +61,10 @@ CJBig2_Context::CJBig2_Context(CPDF_StreamAcc* pGlobalStream,
       m_pSymbolDictCache(pSymbolDictCache),
       m_bIsGlobal(bIsGlobal) {
   if (pGlobalStream && (pGlobalStream->GetSize() > 0)) {
-    m_pGlobalContext.reset(new CJBig2_Context(nullptr, pGlobalStream,
-                                              pSymbolDictCache, pPause, true));
+    m_pGlobalContext = pdfium::MakeUnique<CJBig2_Context>(
+        nullptr, pGlobalStream, pSymbolDictCache, pPause, true);
   }
-  m_pStream.reset(new CJBig2_BitStream(pSrcStream));
+  m_pStream = pdfium::MakeUnique<CJBig2_BitStream>(pSrcStream);
 }
 
 CJBig2_Context::~CJBig2_Context() {}
@@ -75,7 +76,7 @@ int32_t CJBig2_Context::decode_SquentialOrgnazation(IFX_Pause* pPause) {
 
   while (m_pStream->getByteLeft() >= JBIG2_MIN_SEGMENT_SIZE) {
     if (!m_pSegment) {
-      m_pSegment.reset(new CJBig2_Segment);
+      m_pSegment = pdfium::MakeUnique<CJBig2_Segment>();
       nRet = parseSegmentHeader(m_pSegment.get());
       if (nRet != JBIG2_SUCCESS) {
         m_pSegment.reset();
@@ -172,7 +173,7 @@ int32_t CJBig2_Context::getFirstPage(uint8_t* pBuf,
     }
   }
   m_PauseStep = 0;
-  m_pPage.reset(new CJBig2_Image(width, height, stride, pBuf));
+  m_pPage = pdfium::MakeUnique<CJBig2_Image>(width, height, stride, pBuf);
   m_bBufSpecified = true;
   if (pPause && pPause->NeedToPauseNow()) {
     m_PauseStep = 1;
@@ -383,7 +384,8 @@ int32_t CJBig2_Context::ProcessingParseSegmentData(CJBig2_Segment* pSegment,
       if (!m_bBufSpecified) {
         uint32_t height =
             bMaxHeight ? pPageInfo->m_wMaxStripeSize : pPageInfo->m_dwHeight;
-        m_pPage.reset(new CJBig2_Image(pPageInfo->m_dwWidth, height));
+        m_pPage =
+            pdfium::MakeUnique<CJBig2_Image>(pPageInfo->m_dwWidth, height);
       }
 
       if (!m_pPage->m_pData) {
@@ -497,12 +499,12 @@ int32_t CJBig2_Context::parseSymbolDict(CJBig2_Segment* pSegment,
 
     int32_t nIndex = 0;
     if (cSDHUFFDH == 0) {
-      Table_B4.reset(new CJBig2_HuffmanTable(
-          HuffmanTable_B4, HuffmanTable_B4_Size, HuffmanTable_HTOOB_B4));
+      Table_B4 = pdfium::MakeUnique<CJBig2_HuffmanTable>(
+          HuffmanTable_B4, HuffmanTable_B4_Size, HuffmanTable_HTOOB_B4);
       pSymbolDictDecoder->SDHUFFDH = Table_B4.get();
     } else if (cSDHUFFDH == 1) {
-      Table_B5.reset(new CJBig2_HuffmanTable(
-          HuffmanTable_B5, HuffmanTable_B5_Size, HuffmanTable_HTOOB_B5));
+      Table_B5 = pdfium::MakeUnique<CJBig2_HuffmanTable>(
+          HuffmanTable_B5, HuffmanTable_B5_Size, HuffmanTable_HTOOB_B5);
       pSymbolDictDecoder->SDHUFFDH = Table_B5.get();
     } else {
       CJBig2_Segment* pSeg =
@@ -512,12 +514,12 @@ int32_t CJBig2_Context::parseSymbolDict(CJBig2_Segment* pSegment,
       pSymbolDictDecoder->SDHUFFDH = pSeg->m_Result.ht;
     }
     if (cSDHUFFDW == 0) {
-      Table_B2.reset(new CJBig2_HuffmanTable(
-          HuffmanTable_B2, HuffmanTable_B2_Size, HuffmanTable_HTOOB_B2));
+      Table_B2 = pdfium::MakeUnique<CJBig2_HuffmanTable>(
+          HuffmanTable_B2, HuffmanTable_B2_Size, HuffmanTable_HTOOB_B2);
       pSymbolDictDecoder->SDHUFFDW = Table_B2.get();
     } else if (cSDHUFFDW == 1) {
-      Table_B3.reset(new CJBig2_HuffmanTable(
-          HuffmanTable_B3, HuffmanTable_B3_Size, HuffmanTable_HTOOB_B3));
+      Table_B3 = pdfium::MakeUnique<CJBig2_HuffmanTable>(
+          HuffmanTable_B3, HuffmanTable_B3_Size, HuffmanTable_HTOOB_B3);
       pSymbolDictDecoder->SDHUFFDW = Table_B3.get();
     } else {
       CJBig2_Segment* pSeg =
@@ -527,8 +529,8 @@ int32_t CJBig2_Context::parseSymbolDict(CJBig2_Segment* pSegment,
       pSymbolDictDecoder->SDHUFFDW = pSeg->m_Result.ht;
     }
     if (cSDHUFFBMSIZE == 0) {
-      Table_B1.reset(new CJBig2_HuffmanTable(
-          HuffmanTable_B1, HuffmanTable_B1_Size, HuffmanTable_HTOOB_B1));
+      Table_B1 = pdfium::MakeUnique<CJBig2_HuffmanTable>(
+          HuffmanTable_B1, HuffmanTable_B1_Size, HuffmanTable_HTOOB_B1);
       pSymbolDictDecoder->SDHUFFBMSIZE = Table_B1.get();
     } else {
       CJBig2_Segment* pSeg =
@@ -540,8 +542,8 @@ int32_t CJBig2_Context::parseSymbolDict(CJBig2_Segment* pSegment,
     if (pSymbolDictDecoder->SDREFAGG == 1) {
       if (cSDHUFFAGGINST == 0) {
         if (!Table_B1) {
-          Table_B1.reset(new CJBig2_HuffmanTable(
-              HuffmanTable_B1, HuffmanTable_B1_Size, HuffmanTable_HTOOB_B1));
+          Table_B1 = pdfium::MakeUnique<CJBig2_HuffmanTable>(
+              HuffmanTable_B1, HuffmanTable_B1_Size, HuffmanTable_HTOOB_B1);
         }
         pSymbolDictDecoder->SDHUFFAGGINST = Table_B1.get();
       } else {
@@ -759,12 +761,12 @@ int32_t CJBig2_Context::parseTextRegion(CJBig2_Segment* pSegment) {
     }
     int32_t nIndex = 0;
     if (cSBHUFFFS == 0) {
-      Table_B6.reset(new CJBig2_HuffmanTable(
-          HuffmanTable_B6, HuffmanTable_B6_Size, HuffmanTable_HTOOB_B6));
+      Table_B6 = pdfium::MakeUnique<CJBig2_HuffmanTable>(
+          HuffmanTable_B6, HuffmanTable_B6_Size, HuffmanTable_HTOOB_B6);
       pTRD->SBHUFFFS = Table_B6.get();
     } else if (cSBHUFFFS == 1) {
-      Table_B7.reset(new CJBig2_HuffmanTable(
-          HuffmanTable_B7, HuffmanTable_B7_Size, HuffmanTable_HTOOB_B7));
+      Table_B7 = pdfium::MakeUnique<CJBig2_HuffmanTable>(
+          HuffmanTable_B7, HuffmanTable_B7_Size, HuffmanTable_HTOOB_B7);
       pTRD->SBHUFFFS = Table_B7.get();
     } else {
       CJBig2_Segment* pSeg =
@@ -774,16 +776,16 @@ int32_t CJBig2_Context::parseTextRegion(CJBig2_Segment* pSegment) {
       pTRD->SBHUFFFS = pSeg->m_Result.ht;
     }
     if (cSBHUFFDS == 0) {
-      Table_B8.reset(new CJBig2_HuffmanTable(
-          HuffmanTable_B8, HuffmanTable_B8_Size, HuffmanTable_HTOOB_B8));
+      Table_B8 = pdfium::MakeUnique<CJBig2_HuffmanTable>(
+          HuffmanTable_B8, HuffmanTable_B8_Size, HuffmanTable_HTOOB_B8);
       pTRD->SBHUFFDS = Table_B8.get();
     } else if (cSBHUFFDS == 1) {
-      Table_B9.reset(new CJBig2_HuffmanTable(
-          HuffmanTable_B9, HuffmanTable_B9_Size, HuffmanTable_HTOOB_B9));
+      Table_B9 = pdfium::MakeUnique<CJBig2_HuffmanTable>(
+          HuffmanTable_B9, HuffmanTable_B9_Size, HuffmanTable_HTOOB_B9);
       pTRD->SBHUFFDS = Table_B9.get();
     } else if (cSBHUFFDS == 2) {
-      Table_B10.reset(new CJBig2_HuffmanTable(
-          HuffmanTable_B10, HuffmanTable_B10_Size, HuffmanTable_HTOOB_B10));
+      Table_B10 = pdfium::MakeUnique<CJBig2_HuffmanTable>(
+          HuffmanTable_B10, HuffmanTable_B10_Size, HuffmanTable_HTOOB_B10);
       pTRD->SBHUFFDS = Table_B10.get();
     } else {
       CJBig2_Segment* pSeg =
@@ -793,16 +795,16 @@ int32_t CJBig2_Context::parseTextRegion(CJBig2_Segment* pSegment) {
       pTRD->SBHUFFDS = pSeg->m_Result.ht;
     }
     if (cSBHUFFDT == 0) {
-      Table_B11.reset(new CJBig2_HuffmanTable(
-          HuffmanTable_B11, HuffmanTable_B11_Size, HuffmanTable_HTOOB_B11));
+      Table_B11 = pdfium::MakeUnique<CJBig2_HuffmanTable>(
+          HuffmanTable_B11, HuffmanTable_B11_Size, HuffmanTable_HTOOB_B11);
       pTRD->SBHUFFDT = Table_B11.get();
     } else if (cSBHUFFDT == 1) {
-      Table_B12.reset(new CJBig2_HuffmanTable(
-          HuffmanTable_B12, HuffmanTable_B12_Size, HuffmanTable_HTOOB_B12));
+      Table_B12 = pdfium::MakeUnique<CJBig2_HuffmanTable>(
+          HuffmanTable_B12, HuffmanTable_B12_Size, HuffmanTable_HTOOB_B12);
       pTRD->SBHUFFDT = Table_B12.get();
     } else if (cSBHUFFDT == 2) {
-      Table_B13.reset(new CJBig2_HuffmanTable(
-          HuffmanTable_B13, HuffmanTable_B13_Size, HuffmanTable_HTOOB_B13));
+      Table_B13 = pdfium::MakeUnique<CJBig2_HuffmanTable>(
+          HuffmanTable_B13, HuffmanTable_B13_Size, HuffmanTable_HTOOB_B13);
       pTRD->SBHUFFDT = Table_B13.get();
     } else {
       CJBig2_Segment* pSeg =
@@ -812,12 +814,12 @@ int32_t CJBig2_Context::parseTextRegion(CJBig2_Segment* pSegment) {
       pTRD->SBHUFFDT = pSeg->m_Result.ht;
     }
     if (cSBHUFFRDW == 0) {
-      Table_B14.reset(new CJBig2_HuffmanTable(
-          HuffmanTable_B14, HuffmanTable_B14_Size, HuffmanTable_HTOOB_B14));
+      Table_B14 = pdfium::MakeUnique<CJBig2_HuffmanTable>(
+          HuffmanTable_B14, HuffmanTable_B14_Size, HuffmanTable_HTOOB_B14);
       pTRD->SBHUFFRDW = Table_B14.get();
     } else if (cSBHUFFRDW == 1) {
-      Table_B15.reset(new CJBig2_HuffmanTable(
-          HuffmanTable_B15, HuffmanTable_B15_Size, HuffmanTable_HTOOB_B15));
+      Table_B15 = pdfium::MakeUnique<CJBig2_HuffmanTable>(
+          HuffmanTable_B15, HuffmanTable_B15_Size, HuffmanTable_HTOOB_B15);
       pTRD->SBHUFFRDW = Table_B15.get();
     } else {
       CJBig2_Segment* pSeg =
@@ -828,14 +830,14 @@ int32_t CJBig2_Context::parseTextRegion(CJBig2_Segment* pSegment) {
     }
     if (cSBHUFFRDH == 0) {
       if (!Table_B14) {
-        Table_B14.reset(new CJBig2_HuffmanTable(
-            HuffmanTable_B14, HuffmanTable_B14_Size, HuffmanTable_HTOOB_B14));
+        Table_B14 = pdfium::MakeUnique<CJBig2_HuffmanTable>(
+            HuffmanTable_B14, HuffmanTable_B14_Size, HuffmanTable_HTOOB_B14);
       }
       pTRD->SBHUFFRDH = Table_B14.get();
     } else if (cSBHUFFRDH == 1) {
       if (!Table_B15) {
-        Table_B15.reset(new CJBig2_HuffmanTable(
-            HuffmanTable_B15, HuffmanTable_B15_Size, HuffmanTable_HTOOB_B15));
+        Table_B15 = pdfium::MakeUnique<CJBig2_HuffmanTable>(
+            HuffmanTable_B15, HuffmanTable_B15_Size, HuffmanTable_HTOOB_B15);
       }
       pTRD->SBHUFFRDH = Table_B15.get();
     } else {
@@ -847,14 +849,14 @@ int32_t CJBig2_Context::parseTextRegion(CJBig2_Segment* pSegment) {
     }
     if (cSBHUFFRDX == 0) {
       if (!Table_B14) {
-        Table_B14.reset(new CJBig2_HuffmanTable(
-            HuffmanTable_B14, HuffmanTable_B14_Size, HuffmanTable_HTOOB_B14));
+        Table_B14 = pdfium::MakeUnique<CJBig2_HuffmanTable>(
+            HuffmanTable_B14, HuffmanTable_B14_Size, HuffmanTable_HTOOB_B14);
       }
       pTRD->SBHUFFRDX = Table_B14.get();
     } else if (cSBHUFFRDX == 1) {
       if (!Table_B15) {
-        Table_B15.reset(new CJBig2_HuffmanTable(
-            HuffmanTable_B15, HuffmanTable_B15_Size, HuffmanTable_HTOOB_B15));
+        Table_B15 = pdfium::MakeUnique<CJBig2_HuffmanTable>(
+            HuffmanTable_B15, HuffmanTable_B15_Size, HuffmanTable_HTOOB_B15);
       }
       pTRD->SBHUFFRDX = Table_B15.get();
     } else {
@@ -866,14 +868,14 @@ int32_t CJBig2_Context::parseTextRegion(CJBig2_Segment* pSegment) {
     }
     if (cSBHUFFRDY == 0) {
       if (!Table_B14) {
-        Table_B14.reset(new CJBig2_HuffmanTable(
-            HuffmanTable_B14, HuffmanTable_B14_Size, HuffmanTable_HTOOB_B14));
+        Table_B14 = pdfium::MakeUnique<CJBig2_HuffmanTable>(
+            HuffmanTable_B14, HuffmanTable_B14_Size, HuffmanTable_HTOOB_B14);
       }
       pTRD->SBHUFFRDY = Table_B14.get();
     } else if (cSBHUFFRDY == 1) {
       if (!Table_B15) {
-        Table_B15.reset(new CJBig2_HuffmanTable(
-            HuffmanTable_B15, HuffmanTable_B15_Size, HuffmanTable_HTOOB_B15));
+        Table_B15 = pdfium::MakeUnique<CJBig2_HuffmanTable>(
+            HuffmanTable_B15, HuffmanTable_B15_Size, HuffmanTable_HTOOB_B15);
       }
       pTRD->SBHUFFRDY = Table_B15.get();
     } else {
@@ -884,8 +886,8 @@ int32_t CJBig2_Context::parseTextRegion(CJBig2_Segment* pSegment) {
       pTRD->SBHUFFRDY = pSeg->m_Result.ht;
     }
     if (cSBHUFFRSIZE == 0) {
-      Table_B1.reset(new CJBig2_HuffmanTable(
-          HuffmanTable_B1, HuffmanTable_B1_Size, HuffmanTable_HTOOB_B1));
+      Table_B1 = pdfium::MakeUnique<CJBig2_HuffmanTable>(
+          HuffmanTable_B1, HuffmanTable_B1_Size, HuffmanTable_HTOOB_B1);
       pTRD->SBHUFFRSIZE = Table_B1.get();
     } else {
       CJBig2_Segment* pSeg =
@@ -1095,7 +1097,8 @@ int32_t CJBig2_Context::parseGenericRegion(CJBig2_Segment* pSegment,
       m_gbContext.resize(size);
     }
     if (!m_pArithDecoder) {
-      m_pArithDecoder.reset(new CJBig2_ArithDecoder(m_pStream.get()));
+      m_pArithDecoder =
+          pdfium::MakeUnique<CJBig2_ArithDecoder>(m_pStream.get());
       m_ProcessingStatus = m_pGRD->Start_decode_Arith(&pSegment->m_Result.im,
                                                       m_pArithDecoder.get(),
                                                       &m_gbContext[0], pPause);

@@ -19,6 +19,7 @@
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "third_party/base/numerics/safe_math.h"
+#include "third_party/base/ptr_util.h"
 
 namespace {
 
@@ -398,7 +399,7 @@ bool CPDF_CIDFont::Load() {
     CPDF_Object* pmap = pCIDFontDict->GetDirectObjectFor("CIDToGIDMap");
     if (pmap) {
       if (CPDF_Stream* pStream = pmap->AsStream()) {
-        m_pStreamAcc.reset(new CPDF_StreamAcc);
+        m_pStreamAcc = pdfium::MakeUnique<CPDF_StreamAcc>();
         m_pStreamAcc->LoadAllData(pStream, false);
       } else if (pmap->GetString() == "Identity") {
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
@@ -581,7 +582,7 @@ int CPDF_CIDFont::GetGlyphIndex(uint32_t unicode, bool* pVertGlyph) {
   if (error || !m_Font.GetSubData())
     return index;
 
-  m_pTTGSUBTable.reset(new CFX_CTTGSUBTable);
+  m_pTTGSUBTable = pdfium::MakeUnique<CFX_CTTGSUBTable>();
   m_pTTGSUBTable->LoadGSUBTable((FT_Bytes)m_Font.GetSubData());
   return GetVerticalGlyph(index, pVertGlyph);
 }

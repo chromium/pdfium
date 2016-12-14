@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <utility>
 
+#include "third_party/base/ptr_util.h"
 #include "xfa/fde/tto/fde_textout.h"
 #include "xfa/fgas/font/cfgas_fontmgr.h"
 #include "xfa/fgas/font/cfgas_gefont.h"
@@ -173,7 +174,7 @@ void CFWL_WidgetTP::InitTTO() {
 
   m_pFDEFont =
       CFWL_FontManager::GetInstance()->FindFont(FX_WSTRC(L"Helvetica"), 0, 0);
-  m_pTextOut.reset(new CFDE_TextOut);
+  m_pTextOut = pdfium::MakeUnique<CFDE_TextOut>();
   m_pTextOut->SetFont(m_pFDEFont);
   m_pTextOut->SetFontSize(FWLTHEME_CAPACITY_FontSize);
   m_pTextOut->SetTextColor(FWLTHEME_CAPACITY_TextColor);
@@ -641,7 +642,7 @@ bool CFWL_FontData::LoadFont(const CFX_WideStringC& wsFontFamily,
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
     m_pFontMgr = CFGAS_FontMgr::Create(FX_GetDefFontEnumerator());
 #else
-    m_pFontSource.reset(new CFX_FontSourceEnum_File);
+    m_pFontSource = pdfium::MakeUnique<CFX_FontSourceEnum_File>();
     m_pFontMgr = CFGAS_FontMgr::Create(m_pFontSource.get());
 #endif
   }

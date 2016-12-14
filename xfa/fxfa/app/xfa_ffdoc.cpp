@@ -16,6 +16,7 @@
 #include "core/fpdfdoc/cpdf_nametree.h"
 #include "core/fxcrt/fx_ext.h"
 #include "core/fxcrt/fx_memory.h"
+#include "third_party/base/ptr_util.h"
 #include "xfa/fde/xml/fde_xml_imp.h"
 #include "xfa/fwl/cfwl_notedriver.h"
 #include "xfa/fxfa/app/xfa_ffnotify.h"
@@ -166,10 +167,9 @@ uint32_t CXFA_FFDoc::GetDocType() {
 }
 
 int32_t CXFA_FFDoc::StartLoad() {
-  m_pNotify.reset(new CXFA_FFNotify(this));
-  m_pDocumentParser.reset(new CXFA_DocumentParser(m_pNotify.get()));
-  int32_t iStatus = m_pDocumentParser->StartParse(m_pStream, XFA_XDPPACKET_XDP);
-  return iStatus;
+  m_pNotify = pdfium::MakeUnique<CXFA_FFNotify>(this);
+  m_pDocumentParser = pdfium::MakeUnique<CXFA_DocumentParser>(m_pNotify.get());
+  return m_pDocumentParser->StartParse(m_pStream, XFA_XDPPACKET_XDP);
 }
 
 bool XFA_GetPDFContentsFromPDFXML(CFDE_XMLNode* pPDFElement,
@@ -272,7 +272,7 @@ void CXFA_FFDoc::StopLoad() {
 
 CXFA_FFDocView* CXFA_FFDoc::CreateDocView(uint32_t dwView) {
   if (!m_TypeToDocViewMap[dwView])
-    m_TypeToDocViewMap[dwView].reset(new CXFA_FFDocView(this));
+    m_TypeToDocViewMap[dwView] = pdfium::MakeUnique<CXFA_FFDocView>(this);
 
   return m_TypeToDocViewMap[dwView].get();
 }

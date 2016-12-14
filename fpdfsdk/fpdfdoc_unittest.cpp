@@ -65,8 +65,9 @@ class PDFDocTest : public testing::Test {
 
     m_pDoc = pdfium::MakeUnique<CPDF_TestPdfDocument>();
     m_pIndirectObjs = m_pDoc->GetHolder();
+
     // Setup the root directory.
-    m_pRootObj.reset(new CPDF_Dictionary());
+    m_pRootObj = pdfium::MakeUnique<CPDF_Dictionary>();
     m_pDoc->SetRoot(m_pRootObj.get());
   }
 

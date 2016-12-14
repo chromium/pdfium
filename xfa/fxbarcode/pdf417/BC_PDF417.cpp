@@ -21,6 +21,8 @@
  */
 
 #include "xfa/fxbarcode/pdf417/BC_PDF417.h"
+
+#include "third_party/base/ptr_util.h"
 #include "xfa/fxbarcode/pdf417/BC_PDF417BarcodeMatrix.h"
 #include "xfa/fxbarcode/pdf417/BC_PDF417BarcodeRow.h"
 #include "xfa/fxbarcode/pdf417/BC_PDF417Compaction.h"
@@ -432,7 +434,7 @@ void CBC_PDF417::generateBarcodeLogic(CFX_WideString msg,
       dataCodewords, errorCorrectionLevel, e);
   BC_EXCEPTION_CHECK_ReturnVoid(e);
   CFX_WideString fullCodewords = dataCodewords + ec;
-  m_barcodeMatrix.reset(new CBC_BarcodeMatrix(rows, cols));
+  m_barcodeMatrix = pdfium::MakeUnique<CBC_BarcodeMatrix>(rows, cols);
   encodeLowLevel(fullCodewords, cols, rows, errorCorrectionLevel,
                  m_barcodeMatrix.get());
 }

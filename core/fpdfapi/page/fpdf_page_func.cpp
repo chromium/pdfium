@@ -20,6 +20,7 @@
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "core/fxcrt/fx_safe_types.h"
+#include "third_party/base/ptr_util.h"
 
 namespace {
 
@@ -495,7 +496,7 @@ bool CPDF_SampledFunc::v_Init(CPDF_Object* pObj) {
     return false;
 
   m_SampleMax = 0xffffffff >> (32 - m_nBitsPerSample);
-  m_pSampleStream.reset(new CPDF_StreamAcc);
+  m_pSampleStream = pdfium::MakeUnique<CPDF_StreamAcc>();
   m_pSampleStream->LoadAllData(pStream, false);
   FX_SAFE_UINT32 nTotalSampleBits = 1;
   m_EncodeInfo.resize(m_nInputs);
@@ -742,13 +743,13 @@ std::unique_ptr<CPDF_Function> CPDF_Function::Load(CPDF_Object* pFuncObj) {
 
   Type type = IntegerToFunctionType(iType);
   if (type == Type::kType0Sampled)
-    pFunc.reset(new CPDF_SampledFunc());
+    pFunc = pdfium::MakeUnique<CPDF_SampledFunc>();
   else if (type == Type::kType2ExpotentialInterpolation)
-    pFunc.reset(new CPDF_ExpIntFunc());
+    pFunc = pdfium::MakeUnique<CPDF_ExpIntFunc>();
   else if (type == Type::kType3Stitching)
-    pFunc.reset(new CPDF_StitchFunc());
+    pFunc = pdfium::MakeUnique<CPDF_StitchFunc>();
   else if (type == Type::kType4PostScript)
-    pFunc.reset(new CPDF_PSFunc());
+    pFunc = pdfium::MakeUnique<CPDF_PSFunc>();
 
   if (!pFunc || !pFunc->Init(pFuncObj))
     return nullptr;

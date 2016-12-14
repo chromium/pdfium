@@ -7,6 +7,7 @@
 #include "xfa/fwl/theme/cfwl_checkboxtp.h"
 
 #include "core/fxge/cfx_pathdata.h"
+#include "third_party/base/ptr_util.h"
 #include "xfa/fde/tto/fde_textout.h"
 #include "xfa/fwl/cfwl_checkbox.h"
 #include "xfa/fwl/cfwl_themebackground.h"
@@ -219,7 +220,7 @@ void CFWL_CheckBoxTP::SetThemeData() {
 
 void CFWL_CheckBoxTP::InitCheckPath(FX_FLOAT fCheckLen) {
   if (!m_pCheckPath) {
-    m_pCheckPath.reset(new CFX_Path);
+    m_pCheckPath = pdfium::MakeUnique<CFX_Path>();
     m_pCheckPath->Create();
     FX_FLOAT fWidth = kSignPath;
     FX_FLOAT fHeight = -kSignPath;

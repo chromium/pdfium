@@ -54,6 +54,7 @@
 #include "core/fxge/cfx_renderdevice.h"
 #include "core/fxge/ifx_renderdevicedriver.h"
 #include "third_party/base/numerics/safe_math.h"
+#include "third_party/base/ptr_util.h"
 
 #ifdef _SKIA_SUPPORT_
 #include "core/fxge/skia/fx_skia_device.h"
@@ -1079,7 +1080,7 @@ bool CPDF_RenderStatus::ContinueSingleObject(CPDF_PageObject* pObj,
     return false;
 
   if (pObj->IsImage()) {
-    m_pImageRenderer.reset(new CPDF_ImageRenderer);
+    m_pImageRenderer = pdfium::MakeUnique<CPDF_ImageRenderer>();
     if (!m_pImageRenderer->Start(this, pObj, pObj2Device, false,
                                  FXDIB_BLEND_NORMAL)) {
       if (!m_pImageRenderer->GetResult())
@@ -1382,7 +1383,7 @@ void CPDF_RenderStatus::ProcessClipPath(CPDF_ClipPath ClipPath,
     CPDF_TextObject* pText = ClipPath.GetText(i);
     if (pText) {
       if (!pTextClippingPath)
-        pTextClippingPath.reset(new CFX_PathData);
+        pTextClippingPath = pdfium::MakeUnique<CFX_PathData>();
       ProcessText(pText, pObj2Device, pTextClippingPath.get());
       continue;
     }
@@ -1513,7 +1514,7 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
   CFX_FxgeDevice bitmap_device;
   std::unique_ptr<CFX_DIBitmap> oriDevice;
   if (!isolated && (m_pDevice->GetRenderCaps() & FXRC_GET_BITS)) {
-    oriDevice.reset(new CFX_DIBitmap);
+    oriDevice = pdfium::MakeUnique<CFX_DIBitmap>();
     if (!m_pDevice->CreateCompatibleBitmap(oriDevice.get(), width, height))
       return true;
     m_pDevice->GetDIBits(oriDevice.get(), rect.left, rect.top);
@@ -1527,7 +1528,7 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
   new_matrix.Scale(scaleX, scaleY);
   std::unique_ptr<CFX_DIBitmap> pTextMask;
   if (bTextClip) {
-    pTextMask.reset(new CFX_DIBitmap);
+    pTextMask = pdfium::MakeUnique<CFX_DIBitmap>();
     if (!pTextMask->Create(width, height, FXDIB_8bppMask))
       return true;
 

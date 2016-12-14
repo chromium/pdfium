@@ -21,6 +21,8 @@
  */
 
 #include "xfa/fxbarcode/common/reedsolomon/BC_ReedSolomonGF256.h"
+
+#include "third_party/base/ptr_util.h"
 #include "xfa/fxbarcode/common/reedsolomon/BC_ReedSolomonGF256Poly.h"
 
 CBC_ReedSolomonGF256* CBC_ReedSolomonGF256::QRCodeField = nullptr;
@@ -56,8 +58,8 @@ CBC_ReedSolomonGF256::CBC_ReedSolomonGF256(int32_t primitive) {
 }
 
 void CBC_ReedSolomonGF256::Init() {
-  m_zero.reset(new CBC_ReedSolomonGF256Poly(this, 0));
-  m_one.reset(new CBC_ReedSolomonGF256Poly(this, 1));
+  m_zero = pdfium::MakeUnique<CBC_ReedSolomonGF256Poly>(this, 0);
+  m_one = pdfium::MakeUnique<CBC_ReedSolomonGF256Poly>(this, 1);
 }
 
 CBC_ReedSolomonGF256::~CBC_ReedSolomonGF256() {}

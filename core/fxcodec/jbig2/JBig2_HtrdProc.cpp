@@ -10,6 +10,7 @@
 
 #include "core/fxcodec/jbig2/JBig2_GsidProc.h"
 #include "core/fxcrt/fx_basic.h"
+#include "third_party/base/ptr_util.h"
 
 CJBig2_Image* CJBig2_HTRDProc::decode_Arith(CJBig2_ArithDecoder* pArithDecoder,
                                             JBig2ArithCtx* gbContext,
@@ -22,7 +23,7 @@ CJBig2_Image* CJBig2_HTRDProc::decode_Arith(CJBig2_ArithDecoder* pArithDecoder,
   std::unique_ptr<CJBig2_Image> HTREG(new CJBig2_Image(HBW, HBH));
   HTREG->fill(HDEFPIXEL);
   if (HENABLESKIP == 1) {
-    HSKIP.reset(new CJBig2_Image(HGW, HGH));
+    HSKIP = pdfium::MakeUnique<CJBig2_Image>(HGW, HGH);
     for (mg = 0; mg < HGH; mg++) {
       for (ng = 0; ng < HGW; ng++) {
         x = (HGX + mg * HRY + ng * HRX) >> 8;

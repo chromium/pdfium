@@ -10,6 +10,7 @@
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_object.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
+#include "third_party/base/ptr_util.h"
 
 CPDF_TilingPattern::CPDF_TilingPattern(CPDF_Document* pDoc,
                                        CPDF_Object* pPatternObj,
@@ -47,7 +48,7 @@ bool CPDF_TilingPattern::Load() {
   if (!pStream)
     return false;
 
-  m_pForm.reset(new CPDF_Form(m_pDocument, nullptr, pStream));
+  m_pForm = pdfium::MakeUnique<CPDF_Form>(m_pDocument, nullptr, pStream);
   m_pForm->ParseContent(nullptr, &m_ParentMatrix, nullptr);
   m_BBox = pDict->GetRectFor("BBox");
   return true;

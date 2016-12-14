@@ -279,7 +279,7 @@ void CPDF_Font::LoadUnicodeMap() const {
   if (!pStream) {
     return;
   }
-  m_pToUnicodeMap.reset(new CPDF_ToUnicodeMap);
+  m_pToUnicodeMap = pdfium::MakeUnique<CPDF_ToUnicodeMap>();
   m_pToUnicodeMap->Load(pStream);
 }
 
@@ -324,18 +324,18 @@ std::unique_ptr<CPDF_Font> CPDF_Font::Create(CPDF_Document* pDoc,
       if (tag == CFX_ByteString(kChineseFontNames[i], 4)) {
         CPDF_Dictionary* pFontDesc = pFontDict->GetDictFor("FontDescriptor");
         if (!pFontDesc || !pFontDesc->KeyExist("FontFile2"))
-          pFont.reset(new CPDF_CIDFont);
+          pFont = pdfium::MakeUnique<CPDF_CIDFont>();
         break;
       }
     }
     if (!pFont)
-      pFont.reset(new CPDF_TrueTypeFont);
+      pFont = pdfium::MakeUnique<CPDF_TrueTypeFont>();
   } else if (type == "Type3") {
-    pFont.reset(new CPDF_Type3Font);
+    pFont = pdfium::MakeUnique<CPDF_Type3Font>();
   } else if (type == "Type0") {
-    pFont.reset(new CPDF_CIDFont);
+    pFont = pdfium::MakeUnique<CPDF_CIDFont>();
   } else {
-    pFont.reset(new CPDF_Type1Font);
+    pFont = pdfium::MakeUnique<CPDF_Type1Font>();
   }
   pFont->m_pFontDict = pFontDict;
   pFont->m_pDocument = pDoc;

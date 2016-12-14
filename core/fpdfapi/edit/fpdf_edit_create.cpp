@@ -25,6 +25,7 @@
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
 #include "core/fxcrt/cfx_maybe_owned.h"
 #include "core/fxcrt/fx_ext.h"
+#include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 
 #define PDF_OBJECTSTREAM_MAXLENGTH (256 * 1024)
@@ -1446,7 +1447,7 @@ int32_t CPDF_Creator::WriteDoc_Stage1(IFX_Pause* pPause) {
     CPDF_Dictionary* pDict = m_pDocument->GetRoot();
     m_pMetadata = pDict ? pDict->GetDirectObjectFor("Metadata") : nullptr;
     if (m_dwFlags & FPDFCREATE_OBJECTSTREAM) {
-      m_pXRefStream.reset(new CPDF_XRefStream);
+      m_pXRefStream = pdfium::MakeUnique<CPDF_XRefStream>();
       m_pXRefStream->Start();
       if ((m_dwFlags & FPDFCREATE_INCREMENTAL) != 0 && m_pParser) {
         FX_FILESIZE prev = m_pParser->GetLastXRefOffset();
@@ -1929,7 +1930,7 @@ void CPDF_Creator::InitID(bool bDefault) {
   CPDF_Array* pOldIDArray = m_pParser ? m_pParser->GetIDArray() : nullptr;
   bool bNewId = !m_pIDArray;
   if (bNewId) {
-    m_pIDArray.reset(new CPDF_Array);
+    m_pIDArray = pdfium::MakeUnique<CPDF_Array>();
     CPDF_Object* pID1 = pOldIDArray ? pOldIDArray->GetObjectAt(0) : nullptr;
     if (pID1) {
       m_pIDArray->Add(pID1->Clone());

@@ -7,6 +7,7 @@
 #include "xfa/fxfa/xfa_ffdocview.h"
 
 #include "core/fxcrt/fx_ext.h"
+#include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fxfa/app/xfa_ffbarcode.h"
 #include "xfa/fxfa/app/xfa_ffcheckbutton.h"
@@ -313,9 +314,9 @@ int32_t CXFA_FFDocView::ProcessWidgetEvent(CXFA_EventParam* pParam,
   return XFA_EVENTERROR_Success;
 }
 CXFA_FFWidgetHandler* CXFA_FFDocView::GetWidgetHandler() {
-  if (!m_pWidgetHandler) {
-    m_pWidgetHandler.reset(new CXFA_FFWidgetHandler(this));
-  }
+  if (!m_pWidgetHandler)
+    m_pWidgetHandler = pdfium::MakeUnique<CXFA_FFWidgetHandler>(this);
+
   return m_pWidgetHandler.get();
 }
 

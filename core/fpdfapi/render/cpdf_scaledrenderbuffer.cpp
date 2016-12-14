@@ -10,6 +10,7 @@
 #include "core/fpdfapi/render/cpdf_renderoptions.h"
 #include "core/fxge/cfx_fxgedevice.h"
 #include "core/fxge/cfx_renderdevice.h"
+#include "third_party/base/ptr_util.h"
 
 #define _FPDFAPI_IMAGESIZE_LIMIT_ (30 * 1024 * 1024)
 
@@ -43,7 +44,7 @@ bool CPDF_ScaledRenderBuffer::Initialize(CPDF_RenderContext* pContext,
     if (dpiv > max_dpi)
       m_Matrix.Scale(1.0f, (FX_FLOAT)(max_dpi) / (FX_FLOAT)dpiv);
   }
-  m_pBitmapDevice.reset(new CFX_FxgeDevice);
+  m_pBitmapDevice = pdfium::MakeUnique<CFX_FxgeDevice>();
   FXDIB_Format dibFormat = FXDIB_Rgb;
   int32_t bpp = 24;
   if (m_pDevice->GetDeviceCaps(FXDC_RENDER_CAPS) & FXRC_ALPHA_OUTPUT) {

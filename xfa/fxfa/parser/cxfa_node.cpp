@@ -13,6 +13,7 @@
 
 #include "core/fxcrt/fx_ext.h"
 #include "fxjs/cfxjse_value.h"
+#include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fde/xml/fde_xml_imp.h"
 #include "xfa/fgas/crt/fgas_codepage.h"
@@ -118,11 +119,11 @@ CXFA_NodeSetPair* NodeSetPairForNode(CXFA_Node* pNode,
     return nullptr;
 
   if (!(*pMap)[pParentNode])
-    (*pMap)[pParentNode].reset(new CXFA_NodeSetPairMap);
+    (*pMap)[pParentNode] = pdfium::MakeUnique<CXFA_NodeSetPairMap>();
 
   CXFA_NodeSetPairMap* pNodeSetPairMap = (*pMap)[pParentNode].get();
   if (!(*pNodeSetPairMap)[dwNameHash])
-    (*pNodeSetPairMap)[dwNameHash].reset(new CXFA_NodeSetPair);
+    (*pNodeSetPairMap)[dwNameHash] = pdfium::MakeUnique<CXFA_NodeSetPair>();
 
   return (*pNodeSetPairMap)[dwNameHash].get();
 }

@@ -12,6 +12,7 @@
 #include "core/fxge/cfx_fxgedevice.h"
 #include "core/fxge/cfx_renderdevice.h"
 #include "core/fxge/fx_dib.h"
+#include "third_party/base/ptr_util.h"
 
 CPDF_DeviceBuffer::CPDF_DeviceBuffer()
     : m_pDevice(nullptr), m_pContext(nullptr), m_pObject(nullptr) {}
@@ -49,7 +50,7 @@ bool CPDF_DeviceBuffer::Initialize(CPDF_RenderContext* pContext,
   CFX_FloatRect rect(*pRect);
   m_Matrix.TransformRect(rect);
   FX_RECT bitmap_rect = rect.GetOuterRect();
-  m_pBitmap.reset(new CFX_DIBitmap);
+  m_pBitmap = pdfium::MakeUnique<CFX_DIBitmap>();
   m_pBitmap->Create(bitmap_rect.Width(), bitmap_rect.Height(), FXDIB_Argb);
   return true;
 }

@@ -12,6 +12,7 @@
 #include "core/fpdfapi/render/cpdf_renderoptions.h"
 #include "core/fpdfapi/render/cpdf_renderstatus.h"
 #include "core/fxge/cfx_renderdevice.h"
+#include "third_party/base/ptr_util.h"
 
 CPDF_ProgressiveRenderer::CPDF_ProgressiveRenderer(
     CPDF_RenderContext* pContext,
@@ -48,7 +49,7 @@ void CPDF_ProgressiveRenderer::Continue(IFX_Pause* pPause) {
       m_pCurrentLayer = m_pContext->GetLayer(m_LayerIndex);
       m_LastObjectRendered =
           m_pCurrentLayer->m_pObjectHolder->GetPageObjectList()->end();
-      m_pRenderStatus.reset(new CPDF_RenderStatus());
+      m_pRenderStatus = pdfium::MakeUnique<CPDF_RenderStatus>();
       m_pRenderStatus->Initialize(
           m_pContext, m_pDevice, nullptr, nullptr, nullptr, nullptr, m_pOptions,
           m_pCurrentLayer->m_pObjectHolder->m_Transparency, false, nullptr);

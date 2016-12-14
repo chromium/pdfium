@@ -56,8 +56,8 @@ CFWL_ComboBox::CFWL_ComboBox(const CFWL_App* app)
       pdfium::MakeUnique<CFWL_ComboList>(m_pOwnerApp, std::move(prop), this);
 
   if ((m_pProperties->m_dwStyleExes & FWL_STYLEEXT_CMB_DropDown) && !m_pEdit) {
-    m_pEdit.reset(new CFWL_ComboEdit(
-        m_pOwnerApp, pdfium::MakeUnique<CFWL_WidgetProperties>(), this));
+    m_pEdit = pdfium::MakeUnique<CFWL_ComboEdit>(
+        m_pOwnerApp, pdfium::MakeUnique<CFWL_WidgetProperties>(), this);
     m_pEdit->SetOuter(this);
   }
   if (m_pEdit)

@@ -22,6 +22,7 @@
 #include "core/fpdfapi/render/cpdf_renderstatus.h"
 #include "core/fxcodec/fx_codec.h"
 #include "core/fxcrt/fx_safe_types.h"
+#include "third_party/base/ptr_util.h"
 
 namespace {
 
@@ -171,7 +172,7 @@ bool CPDF_DIBSource::Load(CPDF_Document* pDoc,
   if (!src_size.IsValid()) {
     return false;
   }
-  m_pStreamAcc.reset(new CPDF_StreamAcc);
+  m_pStreamAcc = pdfium::MakeUnique<CPDF_StreamAcc>();
   m_pStreamAcc->LoadAllData(pStream, false, src_size.ValueOrDie(), true);
   if (m_pStreamAcc->GetSize() == 0 || !m_pStreamAcc->GetData()) {
     return false;
@@ -293,7 +294,7 @@ int CPDF_DIBSource::StartLoadDIBSource(CPDF_Document* pDoc,
   if (!src_size.IsValid()) {
     return 0;
   }
-  m_pStreamAcc.reset(new CPDF_StreamAcc);
+  m_pStreamAcc = pdfium::MakeUnique<CPDF_StreamAcc>();
   m_pStreamAcc->LoadAllData(pStream, false, src_size.ValueOrDie(), true);
   if (m_pStreamAcc->GetSize() == 0 || !m_pStreamAcc->GetData()) {
     return 0;
@@ -335,12 +336,12 @@ int CPDF_DIBSource::ContinueLoadDIBSource(IFX_Pause* pPause) {
     }
     CCodec_Jbig2Module* pJbig2Module = CPDF_ModuleMgr::Get()->GetJbig2Module();
     if (!m_pJbig2Context) {
-      m_pJbig2Context.reset(new CCodec_Jbig2Context());
+      m_pJbig2Context = pdfium::MakeUnique<CCodec_Jbig2Context>();
       if (m_pStreamAcc->GetImageParam()) {
         CPDF_Stream* pGlobals =
             m_pStreamAcc->GetImageParam()->GetStreamFor("JBIG2Globals");
         if (pGlobals) {
-          m_pGlobalStream.reset(new CPDF_StreamAcc);
+          m_pGlobalStream = pdfium::MakeUnique<CPDF_StreamAcc>();
           m_pGlobalStream->LoadAllData(pGlobals, false);
         }
       }
@@ -676,7 +677,7 @@ void CPDF_DIBSource::LoadJpxBitmap() {
     format = FXDIB_Rgb;
   }
 
-  m_pCachedBitmap.reset(new CFX_DIBitmap);
+  m_pCachedBitmap = pdfium::MakeUnique<CFX_DIBitmap>();
   if (!m_pCachedBitmap->Create(width, height, format)) {
     m_pCachedBitmap.reset();
     return;

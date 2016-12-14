@@ -9,6 +9,7 @@
 #include <algorithm>
 
 #include "core/fxcrt/fx_ext.h"
+#include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fde/cfde_path.h"
 #include "xfa/fde/css/fde_csscache.h"
@@ -97,7 +98,7 @@ void CXFA_TextParser::InitCSSData(CXFA_TextProvider* pTextProvider) {
     CXFA_FFDoc* pDoc = pTextProvider->GetDocNode();
     CFGAS_FontMgr* pFontMgr = pDoc->GetApp()->GetFDEFontMgr();
     ASSERT(pFontMgr);
-    m_pSelector.reset(new CFDE_CSSStyleSelector(pFontMgr));
+    m_pSelector = pdfium::MakeUnique<CFDE_CSSStyleSelector>(pFontMgr);
     FX_FLOAT fFontSize = 10;
     CXFA_Font font = pTextProvider->GetFontNode();
     if (font) {
@@ -896,7 +897,7 @@ void CXFA_TextLayout::InitBreak(IFDE_CSSComputedStyle* pStyle,
     m_pBreak->SetLineStartPos(fStart);
     m_pBreak->SetTabWidth(m_textParser.GetTabInterval(pStyle));
     if (!m_pTabstopContext)
-      m_pTabstopContext.reset(new CXFA_TextTabstopsContext);
+      m_pTabstopContext = pdfium::MakeUnique<CXFA_TextTabstopsContext>();
     m_textParser.GetTabstops(pStyle, m_pTabstopContext.get());
     for (int32_t i = 0; i < m_pTabstopContext->m_iTabCount; i++) {
       XFA_TABSTOPS* pTab = m_pTabstopContext->m_tabstops.GetDataPtr(i);
@@ -946,7 +947,7 @@ FX_FLOAT CXFA_TextLayout::GetLayoutHeight() {
 }
 FX_FLOAT CXFA_TextLayout::StartLayout(FX_FLOAT fWidth) {
   if (!m_pLoader)
-    m_pLoader.reset(new CXFA_LoaderContext);
+    m_pLoader = pdfium::MakeUnique<CXFA_LoaderContext>();
 
   if (fWidth < 0 || (m_pLoader->m_fWidth > -1 &&
                      FXSYS_fabs(fWidth - m_pLoader->m_fWidth) > 0)) {

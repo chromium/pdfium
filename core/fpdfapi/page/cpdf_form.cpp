@@ -12,6 +12,7 @@
 #include "core/fpdfapi/page/pageint.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
+#include "third_party/base/ptr_util.h"
 
 CPDF_Form::CPDF_Form(CPDF_Document* pDoc,
                      CPDF_Dictionary* pPageResources,
@@ -39,7 +40,7 @@ void CPDF_Form::StartParse(CPDF_AllStates* pGraphicStates,
   if (m_ParseState == CONTENT_PARSED || m_ParseState == CONTENT_PARSING)
     return;
 
-  m_pParser.reset(new CPDF_ContentParser);
+  m_pParser = pdfium::MakeUnique<CPDF_ContentParser>();
   m_pParser->Start(this, pGraphicStates, pParentMatrix, pType3Char, level);
   m_ParseState = CONTENT_PARSING;
 }

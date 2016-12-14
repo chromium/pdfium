@@ -24,6 +24,7 @@
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxge/fx_freetype.h"
 #include "third_party/base/numerics/safe_conversions.h"
+#include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 
 int TT2PDF(int m, FXFT_Face face) {
@@ -87,7 +88,7 @@ CPDF_Font* CPDF_FontGlobals::Set(CPDF_Document* pDoc,
                                  uint32_t index,
                                  std::unique_ptr<CPDF_Font> pFont) {
   if (!pdfium::ContainsKey(m_StockMap, pDoc))
-    m_StockMap[pDoc].reset(new CFX_StockFontArray);
+    m_StockMap[pDoc] = pdfium::MakeUnique<CFX_StockFontArray>();
   return m_StockMap[pDoc]->SetFont(index, std::move(pFont));
 }
 

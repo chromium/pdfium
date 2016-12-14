@@ -28,6 +28,7 @@
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxge/cfx_fxgedevice.h"
 #include "core/fxge/cfx_pathdata.h"
+#include "third_party/base/ptr_util.h"
 
 #ifdef _SKIA_SUPPORT_
 #include "core/fxge/skia/fx_skia_device.h"
@@ -437,8 +438,8 @@ bool CPDF_ImageRenderer::StartDIBSource() {
     FX_RECT clip_box = m_pRenderStatus->m_pDevice->GetClipBox();
     clip_box.Intersect(image_rect);
     m_Status = 2;
-    m_pTransformer.reset(new CFX_ImageTransformer(m_pDIBSource, &m_ImageMatrix,
-                                                  m_Flags, &clip_box));
+    m_pTransformer = pdfium::MakeUnique<CFX_ImageTransformer>(
+        m_pDIBSource, &m_ImageMatrix, m_Flags, &clip_box);
     m_pTransformer->Start();
     return true;
   }

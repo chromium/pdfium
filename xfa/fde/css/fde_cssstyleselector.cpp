@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <memory>
 
+#include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fde/css/fde_csscache.h"
 #include "xfa/fde/css/fde_cssdeclaration.h"
@@ -126,7 +127,7 @@ void CFDE_CSSStyleSelector::SetDefFontSize(FX_FLOAT fFontSize) {
 
 CFDE_CSSAccelerator* CFDE_CSSStyleSelector::InitAccelerator() {
   if (!m_pAccelerator)
-    m_pAccelerator.reset(new CFDE_CSSAccelerator);
+    m_pAccelerator = pdfium::MakeUnique<CFDE_CSSAccelerator>();
   m_pAccelerator->Clear();
   return m_pAccelerator.get();
 }

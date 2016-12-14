@@ -82,7 +82,7 @@ CFDE_TxtEdtEngine::~CFDE_TxtEdtEngine() {
 
 void CFDE_TxtEdtEngine::SetEditParams(const FDE_TXTEDTPARAMS& params) {
   if (!m_pTextBreak)
-    m_pTextBreak.reset(new CFX_TxtBreak(FX_TXTBREAKPOLICY_None));
+    m_pTextBreak = pdfium::MakeUnique<CFX_TxtBreak>(FX_TXTBREAKPOLICY_None);
 
   FXSYS_memcpy(&m_Param, &params, sizeof(FDE_TXTEDTPARAMS));
   m_wLineEnd = params.wLineBreakChar;

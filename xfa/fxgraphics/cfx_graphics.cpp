@@ -12,6 +12,7 @@
 #include "core/fxge/cfx_gemodule.h"
 #include "core/fxge/cfx_renderdevice.h"
 #include "core/fxge/cfx_unicodeencoding.h"
+#include "third_party/base/ptr_util.h"
 #include "xfa/fxgraphics/cagg_graphics.h"
 #include "xfa/fxgraphics/cfx_color.h"
 #include "xfa/fxgraphics/cfx_path.h"
@@ -597,7 +598,7 @@ FWL_Error CFX_Graphics::Create(int32_t width,
 
   m_type = FX_CONTEXT_Device;
   m_info.isAntialiasing = isAntialiasing;
-  m_aggGraphics.reset(new CAGG_Graphics);
+  m_aggGraphics = pdfium::MakeUnique<CAGG_Graphics>();
   return m_aggGraphics->Create(this, width, height, format);
 }
 

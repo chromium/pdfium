@@ -8,6 +8,7 @@
 
 #include <utility>
 
+#include "third_party/base/ptr_util.h"
 #include "xfa/fde/cfx_chariter.h"
 
 namespace {
@@ -2788,7 +2789,7 @@ void CFX_WordBreak::Attach(IFX_CharIter* pIter) {
 }
 
 void CFX_WordBreak::Attach(const CFX_WideString& wsText) {
-  m_pCurIter.reset(new CFX_CharIter(wsText));
+  m_pCurIter = pdfium::MakeUnique<CFX_CharIter>(wsText);
 }
 
 bool CFX_WordBreak::Next(bool bPrev) {

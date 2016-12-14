@@ -31,6 +31,7 @@
 #include "core/fxge/cfx_pathdata.h"
 #include "core/fxge/cfx_renderdevice.h"
 #include "core/fxge/cfx_unicodeencodingex.h"
+#include "third_party/base/ptr_util.h"
 #include "xfa/fxbarcode/BC_Writer.h"
 #include "xfa/fxbarcode/common/BC_CommonBitMatrix.h"
 
@@ -442,7 +443,7 @@ void CBC_OneDimWriter::RenderResult(const CFX_WideStringC& contents,
   if (!isDevice) {
     m_barWidth = codeLength * m_multiple;
   }
-  m_output.reset(new CBC_CommonBitMatrix);
+  m_output = pdfium::MakeUnique<CBC_CommonBitMatrix>();
   m_output->Init(outputWidth, outputHeight);
   int32_t outputX = leftPadding * m_multiple;
   for (int32_t inputX = 0; inputX < codeOldLength; inputX++) {

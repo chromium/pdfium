@@ -17,6 +17,7 @@
 #include "core/fpdfdoc/cpdf_dest.h"
 #include "core/fpdfdoc/cpdf_pagelabel.h"
 #include "fpdfsdk/fsdk_define.h"
+#include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 
 namespace {
@@ -55,7 +56,7 @@ CPDF_LinkList* GetLinkList(CPDF_Page* page) {
   CPDF_Document* pDoc = page->m_pDocument;
   std::unique_ptr<CPDF_LinkList>* pHolder = pDoc->LinksContext();
   if (!pHolder->get())
-    pHolder->reset(new CPDF_LinkList);
+    *pHolder = pdfium::MakeUnique<CPDF_LinkList>();
   return pHolder->get();
 }
 

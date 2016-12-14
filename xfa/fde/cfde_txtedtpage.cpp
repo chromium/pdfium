@@ -8,6 +8,7 @@
 
 #include <algorithm>
 
+#include "third_party/base/ptr_util.h"
 #include "xfa/fde/cfde_txtedtbuf.h"
 #include "xfa/fde/cfde_txtedtbufiter.h"
 #include "xfa/fde/cfde_txtedtengine.h"
@@ -303,7 +304,7 @@ int32_t CFDE_TxtEdtPage::LoadPage(const CFX_RectF* pClipBox,
       (bVertial && bLineReserve) ? (-pParams->fLineSpace) : pParams->fLineSpace;
   FX_FLOAT fLinePos = fLineStart;
   if (!m_pTextSet)
-    m_pTextSet.reset(new CFDE_TxtEdtTextSet(this));
+    m_pTextSet = pdfium::MakeUnique<CFDE_TxtEdtTextSet>(this);
 
   m_PieceMassArr.RemoveAll(true);
   uint32_t dwBreakStatus = FX_TXTBREAK_None;

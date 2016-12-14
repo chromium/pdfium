@@ -24,6 +24,7 @@
 #include "core/fpdfapi/parser/fpdf_parser_utility.h"
 #include "core/fxcrt/fx_ext.h"
 #include "core/fxcrt/fx_safe_types.h"
+#include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 
 namespace {
@@ -57,7 +58,7 @@ CPDF_Parser::CPDF_Parser()
       m_FileVersion(0),
       m_pEncryptDict(nullptr),
       m_dwXrefStartObjNum(0) {
-  m_pSyntax.reset(new CPDF_SyntaxParser);
+  m_pSyntax = pdfium::MakeUnique<CPDF_SyntaxParser>();
 }
 
 CPDF_Parser::~CPDF_Parser() {
@@ -242,7 +243,7 @@ CPDF_Parser::Error CPDF_Parser::SetEncryptHandler() {
     std::unique_ptr<CPDF_SecurityHandler> pSecurityHandler;
     Error err = HANDLER_ERROR;
     if (filter == "Standard") {
-      pSecurityHandler.reset(new CPDF_SecurityHandler);
+      pSecurityHandler = pdfium::MakeUnique<CPDF_SecurityHandler>();
       err = PASSWORD_ERROR;
     }
     if (!pSecurityHandler)

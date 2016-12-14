@@ -6,6 +6,7 @@
 
 #include "xfa/fxfa/parser/cxfa_document_parser.h"
 
+#include "third_party/base/ptr_util.h"
 #include "xfa/fxfa/fxfa.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 
@@ -23,7 +24,7 @@ int32_t CXFA_DocumentParser::StartParse(
 
   int32_t nRetStatus = m_nodeParser.StartParse(pStream, ePacketID);
   if (nRetStatus == XFA_PARSESTATUS_Ready) {
-    m_pDocument.reset(new CXFA_Document(this));
+    m_pDocument = pdfium::MakeUnique<CXFA_Document>(this);
     m_nodeParser.SetFactory(m_pDocument.get());
   }
   return nRetStatus;

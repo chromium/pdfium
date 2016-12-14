@@ -5,6 +5,7 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "core/fpdfdoc/cpvt_wordinfo.h"
+#include "third_party/base/ptr_util.h"
 
 CPVT_WordInfo::CPVT_WordInfo()
     : Word(0),
@@ -48,7 +49,7 @@ void CPVT_WordInfo::operator=(const CPVT_WordInfo& word) {
   fWordY = word.fWordY;
   fWordTail = word.fWordTail;
   if (word.pWordProps)
-    pWordProps.reset(new CPVT_WordProps(*word.pWordProps));
+    pWordProps = pdfium::MakeUnique<CPVT_WordProps>(*word.pWordProps);
   else
     pWordProps.reset();
 }

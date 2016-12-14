@@ -22,6 +22,7 @@
 
 #include "core/fxge/cfx_fxgedevice.h"
 #include "core/fxge/cfx_gemodule.h"
+#include "third_party/base/ptr_util.h"
 #include "xfa/fxbarcode/BC_Writer.h"
 #include "xfa/fxbarcode/oned/BC_OneDimWriter.h"
 #include "xfa/fxbarcode/oned/BC_OnedEAN13Writer.h"
@@ -33,7 +34,7 @@ CBC_OnedUPCAWriter::CBC_OnedUPCAWriter() {
 }
 
 void CBC_OnedUPCAWriter::Init() {
-  m_subWriter.reset(new CBC_OnedEAN13Writer);
+  m_subWriter = pdfium::MakeUnique<CBC_OnedEAN13Writer>();
 }
 
 CBC_OnedUPCAWriter::~CBC_OnedUPCAWriter() {}

@@ -11,6 +11,7 @@
 #include "core/fxcrt/fx_arabic.h"
 #include "core/fxcrt/fx_arb.h"
 #include "core/fxcrt/fx_memory.h"
+#include "third_party/base/ptr_util.h"
 #include "xfa/fgas/font/cfgas_gefont.h"
 #include "xfa/fgas/layout/fgas_linebreak.h"
 #include "xfa/fgas/layout/fgas_unicode.h"
@@ -70,8 +71,8 @@ CFX_TxtBreak::CFX_TxtBreak(uint32_t dwPolicies)
       m_iCharSpace(0) {
   m_bPagination = (m_dwPolicies & FX_TXTBREAKPOLICY_Pagination) != 0;
   int32_t iSize = m_bPagination ? sizeof(CFX_Char) : sizeof(CFX_TxtChar);
-  m_pTxtLine1.reset(new CFX_TxtLine(iSize));
-  m_pTxtLine2.reset(new CFX_TxtLine(iSize));
+  m_pTxtLine1 = pdfium::MakeUnique<CFX_TxtLine>(iSize);
+  m_pTxtLine2 = pdfium::MakeUnique<CFX_TxtLine>(iSize);
   m_pCurLine = m_pTxtLine1.get();
   ResetArabicContext();
 }

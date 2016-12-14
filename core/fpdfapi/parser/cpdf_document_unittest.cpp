@@ -108,7 +108,7 @@ class CPDF_TestDocumentWithPageWithoutPageNum : public CPDF_Document {
     allPages->Add(CreateNumberedPage(2));
     CPDF_Dictionary* pagesDict =
         CreatePageTreeNode(std::move(allPages), this, 3);
-    m_pOwnedRootDict.reset(new CPDF_Dictionary());
+    m_pOwnedRootDict = pdfium::MakeUnique<CPDF_Dictionary>();
     m_pOwnedRootDict->SetNewFor<CPDF_Reference>("Pages", this,
                                                 pagesDict->GetObjNum());
     m_pRootDict = m_pOwnedRootDict.get();

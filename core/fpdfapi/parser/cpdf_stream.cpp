@@ -13,6 +13,7 @@
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
 #include "third_party/base/numerics/safe_conversions.h"
+#include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 
 CPDF_Stream::CPDF_Stream() {}
@@ -103,7 +104,7 @@ void CPDF_Stream::SetData(const uint8_t* pData, uint32_t size) {
     FXSYS_memcpy(m_pDataBuf.get(), pData, size);
   m_dwSize = size;
   if (!m_pDict)
-    m_pDict.reset(new CPDF_Dictionary());
+    m_pDict = pdfium::MakeUnique<CPDF_Dictionary>();
   m_pDict->SetNewFor<CPDF_Number>("Length", static_cast<int>(size));
   m_pDict->RemoveFor("Filter");
   m_pDict->RemoveFor("DecodeParms");

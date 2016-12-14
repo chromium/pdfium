@@ -5,6 +5,7 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "core/fpdfdoc/cpvt_sectioninfo.h"
+#include "third_party/base/ptr_util.h"
 
 CPVT_SectionInfo::CPVT_SectionInfo() : rcSection(), nTotalLine(0) {}
 
@@ -21,11 +22,12 @@ void CPVT_SectionInfo::operator=(const CPVT_SectionInfo& other) {
   rcSection = other.rcSection;
   nTotalLine = other.nTotalLine;
   if (other.pSecProps)
-    pSecProps.reset(new CPVT_SecProps(*other.pSecProps));
+    pSecProps = pdfium::MakeUnique<CPVT_SecProps>(*other.pSecProps);
   else
     pSecProps.reset();
+
   if (other.pWordProps)
-    pWordProps.reset(new CPVT_WordProps(*other.pWordProps));
+    pWordProps = pdfium::MakeUnique<CPVT_WordProps>(*other.pWordProps);
   else
     pWordProps.reset();
 }
