@@ -185,31 +185,6 @@ void CFWL_WidgetTP::FinalizeTTO() {
   m_pTextOut.reset();
 }
 
-void CFWL_WidgetTP::DrawEdge(CFX_Graphics* pGraphics,
-                             uint32_t dwStyles,
-                             const CFX_RectF* pRect,
-                             CFX_Matrix* pMatrix) {
-  if (!pGraphics)
-    return;
-  if (!pRect)
-    return;
-  pGraphics->SaveGraphState();
-  CFX_Color crStroke(ArgbEncode(255, 127, 157, 185));
-  pGraphics->SetStrokeColor(&crStroke);
-  CFX_Path path;
-  path.Create();
-  path.AddRectangle(pRect->left, pRect->top, pRect->width - 1,
-                    pRect->height - 1);
-  pGraphics->StrokePath(&path, pMatrix);
-  path.Clear();
-  crStroke.Set(ArgbEncode(255, 255, 255, 255));
-  pGraphics->SetStrokeColor(&crStroke);
-  path.AddRectangle(pRect->left + 1, pRect->top + 1, pRect->width - 3,
-                    pRect->height - 3);
-  pGraphics->StrokePath(&path, pMatrix);
-  pGraphics->RestoreGraphState();
-}
-
 void CFWL_WidgetTP::Draw3DRect(CFX_Graphics* pGraphics,
                                FWLTHEME_EDGE eType,
                                FX_FLOAT fWidth,

@@ -45,11 +45,6 @@ void CFWL_EditTP::DrawBackground(CFWL_ThemeBackground* pParams) {
       DrawBorder(pParams->m_pGraphics, &pParams->m_rtPart, &pParams->m_matrix);
       break;
     }
-    case CFWL_Part::Edge: {
-      DrawEdge(pParams->m_pGraphics, pParams->m_pWidget->GetStyles(),
-               &pParams->m_rtPart, &pParams->m_matrix);
-      break;
-    }
     case CFWL_Part::Background: {
       if (pParams->m_pPath) {
         CFX_Graphics* pGraphics = pParams->m_pGraphics;

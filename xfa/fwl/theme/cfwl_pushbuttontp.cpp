@@ -31,11 +31,6 @@ void CFWL_PushButtonTP::DrawBackground(CFWL_ThemeBackground* pParams) {
       DrawBorder(pParams->m_pGraphics, &pParams->m_rtPart, &pParams->m_matrix);
       break;
     }
-    case CFWL_Part::Edge: {
-      DrawEdge(pParams->m_pGraphics, pParams->m_pWidget->GetStyles(),
-               &pParams->m_rtPart, &pParams->m_matrix);
-      break;
-    }
     case CFWL_Part::Background: {
       CFX_RectF& rect = pParams->m_rtPart;
       FX_FLOAT fRight = rect.right();

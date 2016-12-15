@@ -74,10 +74,6 @@ CFX_RectF CFWL_Widget::GetWidgetRect() {
 }
 
 void CFWL_Widget::InflateWidgetRect(CFX_RectF& rect) {
-  if (HasEdge()) {
-    FX_FLOAT fEdge = GetEdgeWidth();
-    rect.Inflate(fEdge, fEdge);
-  }
   if (HasBorder()) {
     FX_FLOAT fBorder = GetBorderSize(true);
     rect.Inflate(fBorder, fBorder);
@@ -93,12 +89,7 @@ void CFWL_Widget::SetWidgetRect(const CFX_RectF& rect) {
 }
 
 CFX_RectF CFWL_Widget::GetClientRect() {
-  CFX_RectF rect = GetEdgeRect();
-  if (HasEdge()) {
-    FX_FLOAT fEdge = GetEdgeWidth();
-    rect.Deflate(fEdge, fEdge);
-  }
-  return rect;
+  return GetEdgeRect();
 }
 
 void CFWL_Widget::SetParent(CFWL_Widget* pParent) {
@@ -165,8 +156,6 @@ void CFWL_Widget::RemoveStates(uint32_t dwStates) {
 FWL_WidgetHit CFWL_Widget::HitTest(FX_FLOAT fx, FX_FLOAT fy) {
   if (GetClientRect().Contains(fx, fy))
     return FWL_WidgetHit::Client;
-  if (HasEdge() && GetEdgeRect().Contains(fx, fy))
-    return FWL_WidgetHit::Edge;
   if (HasBorder() && GetRelativeRect().Contains(fx, fy))
     return FWL_WidgetHit::Border;
   return FWL_WidgetHit::Unknown;
@@ -278,10 +267,6 @@ bool CFWL_Widget::HasBorder() const {
   return !!(m_pProperties->m_dwStyles & FWL_WGTSTYLE_Border);
 }
 
-bool CFWL_Widget::HasEdge() const {
-  return false;
-}
-
 bool CFWL_Widget::IsVisible() const {
   return (m_pProperties->m_dwStates & FWL_WGTSTATE_Invisible) == 0;
 }
@@ -320,10 +305,6 @@ FX_FLOAT CFWL_Widget::GetBorderSize(bool bCX) {
   if (!pfBorder)
     return 0;
   return *pfBorder;
-}
-
-FX_FLOAT CFWL_Widget::GetEdgeWidth() {
-  return 0;
 }
 
 CFX_RectF CFWL_Widget::GetRelativeRect() {
@@ -609,20 +590,6 @@ void CFWL_Widget::DrawBorder(CFX_Graphics* pGraphics,
   if (pMatrix)
     param.m_matrix.Concat(*pMatrix, true);
   param.m_rtPart = GetRelativeRect();
-  pTheme->DrawBackground(&param);
-}
-
-void CFWL_Widget::DrawEdge(CFX_Graphics* pGraphics,
-                           CFWL_Part iPartEdge,
-                           IFWL_ThemeProvider* pTheme,
-                           const CFX_Matrix* pMatrix) {
-  CFWL_ThemeBackground param;
-  param.m_pWidget = this;
-  param.m_iPart = iPartEdge;
-  param.m_pGraphics = pGraphics;
-  if (pMatrix)
-    param.m_matrix.Concat(*pMatrix, true);
-  param.m_rtPart = GetEdgeRect();
   pTheme->DrawBackground(&param);
 }
 

@@ -129,8 +129,6 @@ void CFWL_DateTimePicker::DrawWidget(CFX_Graphics* pGraphics,
   IFWL_ThemeProvider* pTheme = m_pProperties->m_pThemeProvider;
   if (HasBorder())
     DrawBorder(pGraphics, CFWL_Part::Border, pTheme, pMatrix);
-  if (HasEdge())
-    DrawEdge(pGraphics, CFWL_Part::Edge, pTheme, pMatrix);
   if (!m_rtBtn.IsEmpty())
     DrawDropDownButton(pGraphics, pTheme, pMatrix);
   if (m_pWidgetMgr->IsFormDisabled()) {

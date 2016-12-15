@@ -267,8 +267,6 @@ void CFWL_Edit::DrawWidget(CFX_Graphics* pGraphics, const CFX_Matrix* pMatrix) {
   }
   if (HasBorder())
     DrawBorder(pGraphics, CFWL_Part::Border, pTheme, pMatrix);
-  if (HasEdge())
-    DrawEdge(pGraphics, CFWL_Part::Edge, pTheme, pMatrix);
 }
 
 void CFWL_Edit::SetThemeProvider(IFWL_ThemeProvider* pThemeProvider) {

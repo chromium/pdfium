@@ -68,10 +68,6 @@ void CFWL_PushButton::DrawWidget(CFX_Graphics* pGraphics,
     DrawBorder(pGraphics, CFWL_Part::Border, m_pProperties->m_pThemeProvider,
                pMatrix);
   }
-  if (HasEdge()) {
-    DrawEdge(pGraphics, CFWL_Part::Edge, m_pProperties->m_pThemeProvider,
-             pMatrix);
-  }
   DrawBkground(pGraphics, m_pProperties->m_pThemeProvider, pMatrix);
 }
 

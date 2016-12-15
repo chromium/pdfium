@@ -134,10 +134,6 @@ class CFWL_WidgetTP {
   void InitTTO();
   void FinalizeTTO();
 
-  void DrawEdge(CFX_Graphics* pGraphics,
-                uint32_t dwStyles,
-                const CFX_RectF* pRect,
-                CFX_Matrix* pMatrix = nullptr);
   void Draw3DRect(CFX_Graphics* pGraphics,
                   FWLTHEME_EDGE eType,
                   FX_FLOAT fWidth,

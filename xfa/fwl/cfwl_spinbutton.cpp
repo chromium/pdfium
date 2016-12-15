@@ -69,8 +69,6 @@ FWL_WidgetHit CFWL_SpinButton::HitTest(FX_FLOAT fx, FX_FLOAT fy) {
     return FWL_WidgetHit::Client;
   if (HasBorder() && (m_rtClient.Contains(fx, fy)))
     return FWL_WidgetHit::Border;
-  if (HasEdge() && GetEdgeRect().Contains(fx, fy))
-    return FWL_WidgetHit::Left;
   if (m_rtUpButton.Contains(fx, fy))
     return FWL_WidgetHit::UpButton;
   if (m_rtDnButton.Contains(fx, fy))
@@ -90,8 +88,6 @@ void CFWL_SpinButton::DrawWidget(CFX_Graphics* pGraphics,
   IFWL_ThemeProvider* pTheme = GetAvailableTheme();
   if (HasBorder())
     DrawBorder(pGraphics, CFWL_Part::Border, pTheme, pMatrix);
-  if (HasEdge())
-    DrawEdge(pGraphics, CFWL_Part::Edge, pTheme, pMatrix);
 
   DrawUpButton(pGraphics, pTheme, pMatrix);
   DrawDownButton(pGraphics, pTheme, pMatrix);

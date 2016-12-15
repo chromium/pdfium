@@ -29,11 +29,6 @@ void CFWL_ListBoxTP::DrawBackground(CFWL_ThemeBackground* pParams) {
       DrawBorder(pParams->m_pGraphics, &pParams->m_rtPart, &pParams->m_matrix);
       break;
     }
-    case CFWL_Part::Edge: {
-      DrawEdge(pParams->m_pGraphics, pParams->m_pWidget->GetStyles(),
-               &pParams->m_rtPart, &pParams->m_matrix);
-      break;
-    }
     case CFWL_Part::Background: {
       FillSoildRect(pParams->m_pGraphics, ArgbEncode(255, 255, 255, 255),
                     &pParams->m_rtPart, &pParams->m_matrix);

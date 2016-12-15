@@ -195,8 +195,6 @@ void CFWL_MonthCalendar::DrawWidget(CFX_Graphics* pGraphics,
   IFWL_ThemeProvider* pTheme = m_pProperties->m_pThemeProvider;
   if (HasBorder())
     DrawBorder(pGraphics, CFWL_Part::Border, pTheme, pMatrix);
-  if (HasEdge())
-    DrawEdge(pGraphics, CFWL_Part::Edge, pTheme, pMatrix);
 
   DrawBackground(pGraphics, pTheme, pMatrix);
   DrawHeadBK(pGraphics, pTheme, pMatrix);

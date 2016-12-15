@@ -81,8 +81,6 @@ void CFWL_ScrollBar::DrawWidget(CFX_Graphics* pGraphics,
   IFWL_ThemeProvider* pTheme = m_pProperties->m_pThemeProvider;
   if (HasBorder())
     DrawBorder(pGraphics, CFWL_Part::Border, pTheme, pMatrix);
-  if (HasEdge())
-    DrawEdge(pGraphics, CFWL_Part::Edge, pTheme, pMatrix);
   DrawTrack(pGraphics, pTheme, true, pMatrix);
   DrawTrack(pGraphics, pTheme, false, pMatrix);
   DrawArrowBtn(pGraphics, pTheme, true, pMatrix);

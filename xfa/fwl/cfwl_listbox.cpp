@@ -102,8 +102,6 @@ void CFWL_ListBox::DrawWidget(CFX_Graphics* pGraphics,
   pGraphics->SaveGraphState();
   if (HasBorder())
     DrawBorder(pGraphics, CFWL_Part::Border, pTheme, pMatrix);
-  if (HasEdge())
-    DrawEdge(pGraphics, CFWL_Part::Edge, pTheme, pMatrix);
 
   CFX_RectF rtClip(m_rtConent);
   if (IsShowScrollBar(false))

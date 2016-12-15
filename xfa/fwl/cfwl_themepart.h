@@ -27,7 +27,6 @@ enum class CFWL_Part {
   DatesOut,
   DownButton,
   DropDownButton,
-  Edge,
   ForeArrow,
   HSeparator,
   HeadText,

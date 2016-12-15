@@ -42,8 +42,6 @@ void CFWL_PictureBox::DrawWidget(CFX_Graphics* pGraphics,
   IFWL_ThemeProvider* pTheme = GetAvailableTheme();
   if (HasBorder())
     DrawBorder(pGraphics, CFWL_Part::Border, pTheme, pMatrix);
-  if (HasEdge())
-    DrawEdge(pGraphics, CFWL_Part::Edge, pTheme, pMatrix);
 }
 
 void CFWL_PictureBox::OnDrawWidget(CFX_Graphics* pGraphics,

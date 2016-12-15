@@ -72,8 +72,6 @@ void CFWL_CheckBox::DrawWidget(CFX_Graphics* pGraphics,
     DrawBorder(pGraphics, CFWL_Part::Border, m_pProperties->m_pThemeProvider,
                pMatrix);
   }
-  if (HasEdge())
-    DrawEdge(pGraphics, CFWL_Part::Edge, pTheme, pMatrix);
 
   int32_t dwStates = GetPartStates();
 

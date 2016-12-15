@@ -121,10 +121,8 @@ class CFWL_Widget : public IFWL_WidgetDelegate {
   bool IsEnabled() const;
   bool IsLocked() const { return m_iLock > 0; }
   bool HasBorder() const;
-  bool HasEdge() const;
   CFX_RectF GetEdgeRect();
   FX_FLOAT GetBorderSize(bool bCX);
-  FX_FLOAT GetEdgeWidth();
   CFX_RectF GetRelativeRect();
   void* GetThemeCapacity(CFWL_WidgetCapacity dwCapacity);
   IFWL_ThemeProvider* GetAvailableTheme();
@@ -148,10 +146,6 @@ class CFWL_Widget : public IFWL_WidgetDelegate {
                   CFWL_Part iPartBorder,
                   IFWL_ThemeProvider* pTheme,
                   const CFX_Matrix* pMatrix);
-  void DrawEdge(CFX_Graphics* pGraphics,
-                CFWL_Part iPartEdge,
-                IFWL_ThemeProvider* pTheme,
-                const CFX_Matrix* pMatrix);
 
   const CFWL_App* const m_pOwnerApp;
   CFWL_WidgetMgr* const m_pWidgetMgr;
