@@ -274,10 +274,6 @@ bool CFWL_Widget::IsEnabled() const {
   return (m_pProperties->m_dwStates & FWL_WGTSTATE_Disabled) == 0;
 }
 
-bool CFWL_Widget::IsActive() const {
-  return (m_pProperties->m_dwStates & FWL_WGTSTATE_Deactivated) == 0;
-}
-
 bool CFWL_Widget::HasBorder() const {
   return !!(m_pProperties->m_dwStyles & FWL_WGTSTYLE_Border);
 }

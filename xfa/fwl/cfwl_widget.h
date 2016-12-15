@@ -119,7 +119,6 @@ class CFWL_Widget : public IFWL_WidgetDelegate {
               CFWL_Widget* pOuter);
 
   bool IsEnabled() const;
-  bool IsActive() const;
   bool IsLocked() const { return m_iLock > 0; }
   bool HasBorder() const;
   bool HasEdge() const;

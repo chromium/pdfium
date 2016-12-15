@@ -68,7 +68,6 @@ enum CFWL_PartState {
   CFWL_PartState_Focused = 1 << 5,
   CFWL_PartState_HightLight = 1 << 6,
   CFWL_PartState_Hovered = 1 << 7,
-  CFWL_PartState_Inactive = 1 << 8,
   CFWL_PartState_Neutral = 1 << 9,
   CFWL_PartState_Pressed = 1 << 10,
   CFWL_PartState_ReadOnly = 1 << 11,

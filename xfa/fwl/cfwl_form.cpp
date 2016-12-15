@@ -83,8 +83,6 @@ void CFWL_Form::DrawWidget(CFX_Graphics* pGraphics, const CFX_Matrix* pMatrix) {
     return;
 
   IFWL_ThemeProvider* pTheme = m_pProperties->m_pThemeProvider;
-  bool bInactive = !IsActive();
-  int32_t iState = bInactive ? CFWL_PartState_Inactive : CFWL_PartState_Normal;
   DrawBackground(pGraphics, pTheme);
 
 #ifdef FWL_UseMacSystemBorder
@@ -92,7 +90,7 @@ void CFWL_Form::DrawWidget(CFX_Graphics* pGraphics, const CFX_Matrix* pMatrix) {
 #endif
   CFWL_ThemeBackground param;
   param.m_pWidget = this;
-  param.m_dwStates = iState;
+  param.m_dwStates = CFWL_PartState_Normal;
   param.m_pGraphics = pGraphics;
   param.m_rtPart = m_rtRelative;
   if (pMatrix)
@@ -105,7 +103,7 @@ void CFWL_Form::DrawWidget(CFX_Graphics* pGraphics, const CFX_Matrix* pMatrix) {
       FWL_WGTSTYLE_EdgeNone) {
     param.m_iPart = CFWL_Part::Edge;
     param.m_rtPart = GetEdgeRect();
-    param.m_dwStates = iState;
+    param.m_dwStates = CFWL_PartState_Normal;
     pTheme->DrawBackground(&param);
   }
 }

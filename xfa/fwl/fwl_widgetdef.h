@@ -35,11 +35,8 @@
 #define FWL_WGTSTYLE_TransParent (1L << 27)
 #define FWL_WGTSTYLE_NoBackground (1L << 28)
 #define FWL_WGTSTYLE_WindowTypeMask (3L << 0)
-#define FWL_WGTSTATE_Restored (0L << 0)
-#define FWL_WGTSTATE_Minimized (1L << 0)
-#define FWL_WGTSTATE_Maximized (2L << 0)
+
 #define FWL_WGTSTATE_Disabled (1L << 2)
-#define FWL_WGTSTATE_Deactivated (1L << 3)
 #define FWL_WGTSTATE_Focused (1L << 4)
 #define FWL_WGTSTATE_Invisible (1L << 5)
 #define FWL_WGTSTATE_MAX (6)

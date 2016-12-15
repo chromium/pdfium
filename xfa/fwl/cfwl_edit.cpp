@@ -538,14 +538,6 @@ void CFWL_Edit::DrawContent(CFX_Graphics* pGraphics,
   }
 
   bool bShowSel = !!(m_pProperties->m_dwStates & FWL_WGTSTATE_Focused);
-  if (bShowSel) {
-    CFWL_Widget* pForm = m_pWidgetMgr->GetSystemFormWidget(this);
-    if (pForm) {
-      bShowSel = (pForm->GetStates() & FWL_WGTSTATE_Deactivated) !=
-                 FWL_WGTSTATE_Deactivated;
-    }
-  }
-
   int32_t nSelCount = m_EdtEngine.CountSelRanges();
   if (bShowSel && nSelCount > 0) {
     int32_t nPageCharStart = pPage->GetCharStart();
