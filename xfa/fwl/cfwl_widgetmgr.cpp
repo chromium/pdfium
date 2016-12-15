@@ -330,10 +330,6 @@ CFWL_Widget* CFWL_WidgetMgr::NextTab(CFWL_Widget* parent,
     if (focus == child)
       bFind = true;
 
-    if ((child->GetStyles() & FWL_WGTSTYLE_TabStop) &&
-        (!focus || (focus != child && bFind))) {
-      return child;
-    }
     CFWL_Widget* bRet = NextTab(child, focus, bFind);
     if (bRet)
       return bRet;

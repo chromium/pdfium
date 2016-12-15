@@ -279,7 +279,7 @@ bool CFWL_Widget::HasBorder() const {
 }
 
 bool CFWL_Widget::HasEdge() const {
-  return !!(m_pProperties->m_dwStyles & FWL_WGTSTYLE_EdgeMask);
+  return false;
 }
 
 bool CFWL_Widget::IsVisible() const {
@@ -323,25 +323,6 @@ FX_FLOAT CFWL_Widget::GetBorderSize(bool bCX) {
 }
 
 FX_FLOAT CFWL_Widget::GetEdgeWidth() {
-  CFWL_WidgetCapacity dwCapacity = CFWL_WidgetCapacity::None;
-  switch (m_pProperties->m_dwStyles & FWL_WGTSTYLE_EdgeMask) {
-    case FWL_WGTSTYLE_EdgeFlat: {
-      dwCapacity = CFWL_WidgetCapacity::EdgeFlat;
-      break;
-    }
-    case FWL_WGTSTYLE_EdgeRaised: {
-      dwCapacity = CFWL_WidgetCapacity::EdgeRaised;
-      break;
-    }
-    case FWL_WGTSTYLE_EdgeSunken: {
-      dwCapacity = CFWL_WidgetCapacity::EdgeSunken;
-      break;
-    }
-  }
-  if (dwCapacity != CFWL_WidgetCapacity::None) {
-    FX_FLOAT* fRet = static_cast<FX_FLOAT*>(GetThemeCapacity(dwCapacity));
-    return fRet ? *fRet : 0;
-  }
   return 0;
 }
 

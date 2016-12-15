@@ -179,8 +179,6 @@ uint32_t CFWL_CheckBox::GetPartStates() const {
 void CFWL_CheckBox::UpdateTextOutStyles() {
   m_iTTOAlign = FDE_TTOALIGNMENT_TopLeft;
   m_dwTTOStyles = 0;
-  if (m_pProperties->m_dwStyleExes & FWL_WGTSTYLE_RTLReading)
-    m_dwTTOStyles |= FDE_TTOSTYLE_RTL;
   m_dwTTOStyles |= FDE_TTOSTYLE_SingleLine;
 }
 

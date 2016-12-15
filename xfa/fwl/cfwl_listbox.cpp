@@ -70,9 +70,6 @@ void CFWL_ListBox::Update() {
       break;
     }
   }
-  if (m_pProperties->m_dwStyleExes & FWL_WGTSTYLE_RTLReading)
-    m_dwTTOStyles |= FDE_TTOSTYLE_RTL;
-
   m_dwTTOStyles |= FDE_TTOSTYLE_SingleLine;
   m_fScorllBarWidth = GetScrollWidth();
   CalcSize(false);
@@ -512,14 +509,11 @@ CFX_SizeF CFWL_ListBox::CalcSize(bool bAutoSize) {
   if (bAutoSize)
     return fs;
 
-  FX_FLOAT iWidth = m_rtClient.width - rtUIMargin.left - rtUIMargin.width;
   FX_FLOAT iHeight = m_rtClient.height;
   bool bShowVertScr = false;
   bool bShowHorzScr = false;
   if (!bShowVertScr && (m_pProperties->m_dwStyles & FWL_WGTSTYLE_VScroll))
     bShowVertScr = (fs.y > iHeight);
-  if (!bShowHorzScr && (m_pProperties->m_dwStyles & FWL_WGTSTYLE_HScroll))
-    bShowHorzScr = (fs.x > iWidth);
 
   CFX_SizeF szRange;
   if (bShowVertScr) {

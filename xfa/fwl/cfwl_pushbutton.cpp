@@ -107,8 +107,6 @@ uint32_t CFWL_PushButton::GetPartStates() {
 void CFWL_PushButton::UpdateTextOutStyles() {
   m_iTTOAlign = FDE_TTOALIGNMENT_TopLeft;
   m_dwTTOStyles = FDE_TTOSTYLE_SingleLine;
-  if (m_pProperties->m_dwStyleExes & FWL_WGTSTYLE_RTLReading)
-    m_dwTTOStyles |= FDE_TTOSTYLE_RTL;
 }
 
 void CFWL_PushButton::OnProcessMessage(CFWL_Message* pMessage) {

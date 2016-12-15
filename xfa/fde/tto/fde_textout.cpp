@@ -74,9 +74,6 @@ void CFDE_TextOut::SetStyles(uint32_t dwStyles) {
   if (dwStyles & FDE_TTOSTYLE_ArabicShapes) {
     m_dwTxtBkStyles |= FX_TXTLAYOUTSTYLE_ArabicShapes;
   }
-  if (dwStyles & FDE_TTOSTYLE_RTL) {
-    m_dwTxtBkStyles |= FX_TXTLAYOUTSTYLE_RTLReadingOrder;
-  }
   if (dwStyles & FDE_TTOSTYLE_ArabicContext) {
     m_dwTxtBkStyles |= FX_TXTLAYOUTSTYLE_ArabicContext;
   }

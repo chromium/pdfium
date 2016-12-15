@@ -662,8 +662,7 @@ void CFWL_Edit::UpdateEditParams() {
   }
   if (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_MultiLine) {
     params.dwMode |= FDE_TEXTEDITMODE_MultiLines;
-    if ((m_pProperties->m_dwStyles & FWL_WGTSTYLE_HScroll) == 0 &&
-        (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_AutoHScroll) == 0) {
+    if ((m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_AutoHScroll) == 0) {
       params.dwMode |=
           FDE_TEXTEDITMODE_AutoLineWrap | FDE_TEXTEDITMODE_LimitArea_Horz;
     }
@@ -925,8 +924,7 @@ bool CFWL_Edit::IsShowScrollBar(bool bVert) {
            (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_MultiLine) &&
            IsContentHeightOverflow();
   }
-  return bShow && (m_pProperties->m_dwStyles & FWL_WGTSTYLE_HScroll) &&
-         (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_MultiLine);
+  return false;
 }
 
 bool CFWL_Edit::IsContentHeightOverflow() {

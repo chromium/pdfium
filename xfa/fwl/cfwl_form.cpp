@@ -99,13 +99,6 @@ void CFWL_Form::DrawWidget(CFX_Graphics* pGraphics, const CFX_Matrix* pMatrix) {
     param.m_iPart = CFWL_Part::Border;
     pTheme->DrawBackground(&param);
   }
-  if ((m_pProperties->m_dwStyleExes & FWL_WGTSTYLE_EdgeMask) !=
-      FWL_WGTSTYLE_EdgeNone) {
-    param.m_iPart = CFWL_Part::Edge;
-    param.m_rtPart = GetEdgeRect();
-    param.m_dwStates = CFWL_PartState_Normal;
-    pTheme->DrawBackground(&param);
-  }
 }
 
 CFWL_Widget* CFWL_Form::DoModal() {
