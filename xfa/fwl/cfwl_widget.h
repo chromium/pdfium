@@ -161,7 +161,6 @@ class CFWL_Widget : public IFWL_WidgetDelegate {
   bool IsOverLapper() const;
   bool IsPopup() const;
   bool IsChild() const;
-  bool IsOffscreen() const;
   CFWL_Widget* GetRootOuter();
   bool GetPopupPosMenu(FX_FLOAT fMinHeight,
                        FX_FLOAT fMaxHeight,

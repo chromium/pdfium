@@ -82,10 +82,6 @@ void CFWL_Widget::InflateWidgetRect(CFX_RectF& rect) {
 
 void CFWL_Widget::SetWidgetRect(const CFX_RectF& rect) {
   m_pProperties->m_rtWidget = rect;
-  if (IsChild())
-    return;
-
-  m_pWidgetMgr->SetWidgetRect_Native(this, rect);
 }
 
 CFX_RectF CFWL_Widget::GetClientRect() {
@@ -282,10 +278,6 @@ bool CFWL_Widget::IsPopup() const {
 
 bool CFWL_Widget::IsChild() const {
   return !!(m_pProperties->m_dwStyles & FWL_WGTSTYLE_Child);
-}
-
-bool CFWL_Widget::IsOffscreen() const {
-  return !!(m_pProperties->m_dwStyles & FWL_WGTSTYLE_Offscreen);
 }
 
 CFX_RectF CFWL_Widget::GetEdgeRect() {

@@ -49,11 +49,7 @@ class CFWL_WidgetMgr : public CFWL_WidgetMgrDelegate {
   void SetOwner(CFWL_Widget* pOwner, CFWL_Widget* pOwned);
   void SetParent(CFWL_Widget* pParent, CFWL_Widget* pChild);
 
-  void SetWidgetRect_Native(CFWL_Widget* pWidget, const CFX_RectF& rect);
-
   CFWL_Widget* GetWidgetAtPoint(CFWL_Widget* pParent, FX_FLOAT fx, FX_FLOAT fy);
-
-  void NotifySizeChanged(CFWL_Widget* pForm, FX_FLOAT fx, FX_FLOAT fy);
 
   CFWL_Widget* NextTab(CFWL_Widget* parent, CFWL_Widget* focus, bool& bFind);
 
@@ -111,14 +107,9 @@ class CFWL_WidgetMgr : public CFWL_WidgetMgrDelegate {
   CFX_Graphics* DrawWidgetBefore(CFWL_Widget* pWidget,
                                  CFX_Graphics* pGraphics,
                                  const CFX_Matrix* pMatrix);
-  void DrawWidgetAfter(CFWL_Widget* pWidget,
-                       CFX_Graphics* pGraphics,
-                       CFX_RectF& rtClip,
-                       const CFX_Matrix* pMatrix);
   bool IsNeedRepaint(CFWL_Widget* pWidget,
                      CFX_Matrix* pMatrix,
                      const CFX_RectF& rtDirty);
-  bool UseOffscreenDirect(CFWL_Widget* pWidget) const;
 
   bool IsAbleNative(CFWL_Widget* pWidget) const;
 

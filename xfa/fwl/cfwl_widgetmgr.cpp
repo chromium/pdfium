@@ -28,14 +28,6 @@ struct FWL_NEEDREPAINTHITDATA {
 
 }  // namespace
 
-bool FWL_UseOffscreen(CFWL_Widget* pWidget) {
-#if (_FX_OS_ == _FX_MACOSX_)
-  return false;
-#else
-  return !!(pWidget->GetStyles() & FWL_WGTSTYLE_Offscreen);
-#endif
-}
-
 CFWL_WidgetMgr::CFWL_WidgetMgr(CXFA_FFApp* pAdapterNative)
     : m_dwCapability(0), m_pAdapter(pAdapterNative->GetWidgetMgr(this)) {
   ASSERT(m_pAdapter);
@@ -262,28 +254,6 @@ void CFWL_WidgetMgr::SetParent(CFWL_Widget* pParent, CFWL_Widget* pChild) {
   AppendWidget(pChild);
 }
 
-void CFWL_WidgetMgr::SetWidgetRect_Native(CFWL_Widget* pWidget,
-                                          const CFX_RectF& rect) {
-  if (!FWL_UseOffscreen(pWidget))
-    return;
-
-  Item* pItem = GetWidgetMgrItem(pWidget);
-  pItem->iRedrawCounter++;
-  if (pItem->pOffscreen) {
-    CFX_RenderDevice* pDevice = pItem->pOffscreen->GetRenderDevice();
-    if (pDevice && pDevice->GetBitmap()) {
-      CFX_DIBitmap* pBitmap = pDevice->GetBitmap();
-      if (pBitmap->GetWidth() - rect.width > 1 ||
-          pBitmap->GetHeight() - rect.height > 1) {
-        pItem->pOffscreen.reset();
-      }
-    }
-  }
-#if (_FX_OS_ == _FX_WIN32_DESKTOP_) || (_FX_OS_ == _FX_WIN64_)
-  pItem->bOutsideChanged = !m_rtScreen.Contains(rect);
-#endif
-}
-
 CFWL_Widget* CFWL_WidgetMgr::GetWidgetAtPoint(CFWL_Widget* parent,
                                               FX_FLOAT x,
                                               FX_FLOAT y) {
@@ -312,13 +282,6 @@ CFWL_Widget* CFWL_WidgetMgr::GetWidgetAtPoint(CFWL_Widget* parent,
     child = GetPriorSiblingWidget(child);
   }
   return parent;
-}
-
-void CFWL_WidgetMgr::NotifySizeChanged(CFWL_Widget* pForm,
-                                       FX_FLOAT fx,
-                                       FX_FLOAT fy) {
-  if (FWL_UseOffscreen(pForm))
-    GetWidgetMgrItem(pForm)->pOffscreen.reset();
 }
 
 CFWL_Widget* CFWL_WidgetMgr::NextTab(CFWL_Widget* parent,
@@ -465,39 +428,34 @@ void CFWL_WidgetMgr::OnDrawWidget(CFWL_Widget* pWidget,
   if (!pWidget || !pGraphics)
     return;
 
-  CFX_Graphics* pTemp = DrawWidgetBefore(pWidget, pGraphics, pMatrix);
   CFX_RectF clipCopy = pWidget->GetWidgetRect();
   clipCopy.left = clipCopy.top = 0;
 
-  if (UseOffscreenDirect(pWidget)) {
-    DrawWidgetAfter(pWidget, pGraphics, clipCopy, pMatrix);
-    return;
-  }
   CFX_RectF clipBounds;
 
 #if _FX_OS_ == _FX_WIN32_DESKTOP_ || _FX_OS_ == _FX_WIN64_ || \
     _FX_OS_ == _FX_LINUX_DESKTOP_ || _FX_OS_ == _FX_ANDROID_
-  pWidget->GetDelegate()->OnDrawWidget(pTemp, pMatrix);
+  pWidget->GetDelegate()->OnDrawWidget(pGraphics, pMatrix);
   pGraphics->GetClipRect(clipBounds);
   clipCopy = clipBounds;
 #elif _FX_OS_ == _FX_MACOSX_
   if (IsFormDisabled()) {
-    pWidget->GetDelegate()->OnDrawWidget(pTemp, pMatrix);
+    pWidget->GetDelegate()->OnDrawWidget(pGraphics, pMatrix);
     pGraphics->GetClipRect(clipBounds);
     clipCopy = clipBounds;
   } else {
     clipBounds.Set(pMatrix->a, pMatrix->b, pMatrix->c, pMatrix->d);
     const_cast<CFX_Matrix*>(pMatrix)->SetIdentity();  // FIXME: const cast.
-    pWidget->GetDelegate()->OnDrawWidget(pTemp, pMatrix);
+    pWidget->GetDelegate()->OnDrawWidget(pGraphics, pMatrix);
   }
 #endif  // _FX_OS_ == _FX_MACOSX_
 
   if (!IsFormDisabled())
     clipBounds.Intersect(pWidget->GetClientRect());
   if (!clipBounds.IsEmpty())
-    DrawChild(pWidget, clipBounds, pTemp, pMatrix);
+    DrawChild(pWidget, clipBounds, pGraphics, pMatrix);
 
-  DrawWidgetAfter(pWidget, pGraphics, clipCopy, pMatrix);
+  GetWidgetMgrItem(pWidget)->iRedrawCounter = 0;
   ResetRedrawCounts(pWidget);
 }
 
@@ -549,41 +507,6 @@ void CFWL_WidgetMgr::DrawChild(CFWL_Widget* parent,
               bFormDisable ? &widgetMatrix : pMatrix);
     child = GetNextSiblingWidget(child);
   }
-}
-
-CFX_Graphics* CFWL_WidgetMgr::DrawWidgetBefore(CFWL_Widget* pWidget,
-                                               CFX_Graphics* pGraphics,
-                                               const CFX_Matrix* pMatrix) {
-  if (!FWL_UseOffscreen(pWidget))
-    return pGraphics;
-
-  Item* pItem = GetWidgetMgrItem(pWidget);
-  if (!pItem->pOffscreen) {
-    pItem->pOffscreen = pdfium::MakeUnique<CFX_Graphics>();
-    CFX_RectF rect = pWidget->GetWidgetRect();
-    pItem->pOffscreen->Create((int32_t)rect.width, (int32_t)rect.height,
-                              FXDIB_Argb);
-  }
-  CFX_RectF rect;
-  pGraphics->GetClipRect(rect);
-  pItem->pOffscreen->SetClipRect(rect);
-  return pItem->pOffscreen.get();
-}
-
-void CFWL_WidgetMgr::DrawWidgetAfter(CFWL_Widget* pWidget,
-                                     CFX_Graphics* pGraphics,
-                                     CFX_RectF& rtClip,
-                                     const CFX_Matrix* pMatrix) {
-  if (FWL_UseOffscreen(pWidget)) {
-    Item* pItem = GetWidgetMgrItem(pWidget);
-    pGraphics->Transfer(pItem->pOffscreen.get(), rtClip.left, rtClip.top,
-                        rtClip, pMatrix);
-#ifdef _WIN32
-    pItem->pOffscreen->ClearClip();
-#endif
-  }
-  Item* pItem = GetWidgetMgrItem(pWidget);
-  pItem->iRedrawCounter = 0;
 }
 
 bool CFWL_WidgetMgr::IsNeedRepaint(CFWL_Widget* pWidget,
@@ -682,26 +605,6 @@ bool CFWL_WidgetMgr::IsNeedRepaint(CFWL_Widget* pWidget,
   if (rtChilds.Contains(rtDirty) || rtChilds.Contains(rtWidget))
     return false;
   return true;
-}
-
-bool CFWL_WidgetMgr::UseOffscreenDirect(CFWL_Widget* pWidget) const {
-  Item* pItem = GetWidgetMgrItem(pWidget);
-  if (!FWL_UseOffscreen(pWidget) || !(pItem->pOffscreen))
-    return false;
-
-#if (_FX_OS_ == _FX_WIN32_DESKTOP_) || (_FX_OS_ == _FX_WIN64_)
-  if (pItem->bOutsideChanged) {
-    CFX_RectF r = pWidget->GetWidgetRect();
-    CFX_RectF temp(m_rtScreen);
-    temp.Deflate(50, 50);
-    if (!temp.Contains(r))
-      return false;
-
-    pItem->bOutsideChanged = false;
-  }
-#endif
-
-  return pItem->iRedrawCounter == 0;
 }
 
 CFWL_WidgetMgr::Item::Item() : CFWL_WidgetMgr::Item(nullptr) {}
