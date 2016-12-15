@@ -10,11 +10,11 @@
 #define FWL_WGTSTYLE_OverLapper 0
 #define FWL_WGTSTYLE_Popup (1L << 0)
 #define FWL_WGTSTYLE_Child (2L << 0)
+#define FWL_WGTSTYLE_WindowTypeMask (3L << 0)
 #define FWL_WGTSTYLE_Border (1L << 2)
 #define FWL_WGTSTYLE_VScroll (1L << 11)
 #define FWL_WGTSTYLE_Group (1L << 22)
 #define FWL_WGTSTYLE_NoBackground (1L << 28)
-#define FWL_WGTSTYLE_WindowTypeMask (3L << 0)
 
 #define FWL_WGTSTATE_Disabled (1L << 2)
 #define FWL_WGTSTATE_Focused (1L << 4)
