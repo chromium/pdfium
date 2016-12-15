@@ -218,7 +218,6 @@ class CFX_DIBSource {
 
   std::unique_ptr<CFX_DIBitmap> Clone(const FX_RECT* pClip = nullptr) const;
   std::unique_ptr<CFX_DIBitmap> CloneConvert(FXDIB_Format format) const;
-
   std::unique_ptr<CFX_DIBitmap> StretchTo(int dest_width,
                                           int dest_height,
                                           uint32_t flags = 0,
@@ -229,6 +228,10 @@ class CFX_DIBSource {
       int& top,
       uint32_t flags = 0,
       const FX_RECT* pClip = nullptr) const;
+  std::unique_ptr<CFX_DIBitmap> SwapXY(bool bXFlip,
+                                       bool bYFlip,
+                                       const FX_RECT* pClip = nullptr) const;
+  std::unique_ptr<CFX_DIBitmap> FlipImage(bool bXFlip, bool bYFlip) const;
 
   std::unique_ptr<CFX_DIBitmap> CloneAlphaMask(
       const FX_RECT* pClip = nullptr) const;
@@ -237,11 +240,6 @@ class CFX_DIBSource {
   bool SetAlphaMask(const CFX_DIBSource* pAlphaMask,
                     const FX_RECT* pClip = nullptr);
 
-  CFX_DIBitmap* SwapXY(bool bXFlip,
-                       bool bYFlip,
-                       const FX_RECT* pClip = nullptr) const;
-
-  CFX_DIBitmap* FlipImage(bool bXFlip, bool bYFlip) const;
 
   void GetOverlapRect(int& dest_left,
                       int& dest_top,

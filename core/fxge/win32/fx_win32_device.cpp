@@ -795,7 +795,7 @@ bool CGdiDeviceDriver::GDI_SetDIBits(CFX_DIBitmap* pBitmap1,
                                      int left,
                                      int top) {
   if (m_DeviceClass == FXDC_PRINTER) {
-    std::unique_ptr<CFX_DIBitmap> pBitmap(pBitmap1->FlipImage(false, true));
+    std::unique_ptr<CFX_DIBitmap> pBitmap = pBitmap1->FlipImage(false, true);
     if (!pBitmap)
       return false;
 
@@ -814,7 +814,7 @@ bool CGdiDeviceDriver::GDI_SetDIBits(CFX_DIBitmap* pBitmap1,
                     dst_height, pBuffer, (BITMAPINFO*)info.c_str(),
                     DIB_RGB_COLORS, SRCCOPY);
   } else {
-    CFX_DIBitmap* pBitmap = pBitmap1;
+    CFX_MaybeOwned<CFX_DIBitmap> pBitmap(pBitmap1);
     if (pBitmap->IsCmykImage()) {
       pBitmap = pBitmap->CloneConvert(FXDIB_Rgb).release();
       if (!pBitmap)
@@ -822,14 +822,11 @@ bool CGdiDeviceDriver::GDI_SetDIBits(CFX_DIBitmap* pBitmap1,
     }
     int width = pSrcRect->Width(), height = pSrcRect->Height();
     LPBYTE pBuffer = pBitmap->GetBuffer();
-    CFX_ByteString info = CFX_WindowsDIB::GetBitmapInfo(pBitmap);
+    CFX_ByteString info = CFX_WindowsDIB::GetBitmapInfo(pBitmap.Get());
     ::SetDIBitsToDevice(m_hDC, left, top, width, height, pSrcRect->left,
                         pBitmap->GetHeight() - pSrcRect->bottom, 0,
                         pBitmap->GetHeight(), pBuffer,
                         (BITMAPINFO*)info.c_str(), DIB_RGB_COLORS);
-    if (pBitmap != pBitmap1) {
-      delete pBitmap;
-    }
   }
   return true;
 }

@@ -1342,12 +1342,12 @@ bool CFX_DIBitmap::ConvertColorScale(uint32_t forecolor, uint32_t backcolor) {
   return true;
 }
 
-CFX_DIBitmap* CFX_DIBSource::FlipImage(bool bXFlip, bool bYFlip) const {
-  CFX_DIBitmap* pFlipped = new CFX_DIBitmap;
-  if (!pFlipped->Create(m_Width, m_Height, GetFormat())) {
-    delete pFlipped;
+std::unique_ptr<CFX_DIBitmap> CFX_DIBSource::FlipImage(bool bXFlip,
+                                                       bool bYFlip) const {
+  auto pFlipped = pdfium::MakeUnique<CFX_DIBitmap>();
+  if (!pFlipped->Create(m_Width, m_Height, GetFormat()))
     return nullptr;
-  }
+
   pFlipped->SetPalette(m_pPalette.get());
   uint8_t* pDestBuffer = pFlipped->GetBuffer();
   int Bpp = m_bpp / 8;

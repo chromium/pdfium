@@ -108,8 +108,8 @@ bool CGdiPrinterDriver::StretchDIBits(const CFX_DIBSource* pSource,
       return false;
 
     if (dest_width < 0 || dest_height < 0) {
-      std::unique_ptr<CFX_DIBitmap> pFlipped(
-          pSource->FlipImage(dest_width < 0, dest_height < 0));
+      std::unique_ptr<CFX_DIBitmap> pFlipped =
+          pSource->FlipImage(dest_width < 0, dest_height < 0);
       if (!pFlipped)
         return false;
 
@@ -135,8 +135,8 @@ bool CGdiPrinterDriver::StretchDIBits(const CFX_DIBSource* pSource,
     return false;
 
   if (dest_width < 0 || dest_height < 0) {
-    std::unique_ptr<CFX_DIBitmap> pFlipped(
-        pSource->FlipImage(dest_width < 0, dest_height < 0));
+    std::unique_ptr<CFX_DIBitmap> pFlipped =
+        pSource->FlipImage(dest_width < 0, dest_height < 0);
     if (!pFlipped)
       return false;
 
@@ -184,8 +184,8 @@ bool CGdiPrinterDriver::StartDIBits(const CFX_DIBSource* pSource,
   if (FXSYS_fabs(pMatrix->a) >= 0.5f || FXSYS_fabs(pMatrix->d) >= 0.5f)
     return false;
 
-  std::unique_ptr<CFX_DIBitmap> pTransformed(
-      pSource->SwapXY(pMatrix->c > 0, pMatrix->b < 0));
+  std::unique_ptr<CFX_DIBitmap> pTransformed =
+      pSource->SwapXY(pMatrix->c > 0, pMatrix->b < 0);
   if (!pTransformed)
     return false;
 

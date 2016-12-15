@@ -178,22 +178,23 @@ class CFX_BilinearMatrix : public CPDF_FixedMatrix {
     y1 /= base;
   }
 };
-CFX_DIBitmap* CFX_DIBSource::SwapXY(bool bXFlip,
-                                    bool bYFlip,
-                                    const FX_RECT* pDestClip) const {
+
+std::unique_ptr<CFX_DIBitmap> CFX_DIBSource::SwapXY(
+    bool bXFlip,
+    bool bYFlip,
+    const FX_RECT* pDestClip) const {
   FX_RECT dest_clip(0, 0, m_Height, m_Width);
-  if (pDestClip) {
+  if (pDestClip)
     dest_clip.Intersect(*pDestClip);
-  }
-  if (dest_clip.IsEmpty()) {
+  if (dest_clip.IsEmpty())
     return nullptr;
-  }
-  CFX_DIBitmap* pTransBitmap = new CFX_DIBitmap;
-  int result_height = dest_clip.Height(), result_width = dest_clip.Width();
-  if (!pTransBitmap->Create(result_width, result_height, GetFormat())) {
-    delete pTransBitmap;
+
+  auto pTransBitmap = pdfium::MakeUnique<CFX_DIBitmap>();
+  int result_height = dest_clip.Height();
+  int result_width = dest_clip.Width();
+  if (!pTransBitmap->Create(result_width, result_height, GetFormat()))
     return nullptr;
-  }
+
   pTransBitmap->SetPalette(m_pPalette.get());
   int dest_pitch = pTransBitmap->GetPitch();
   uint8_t* dest_buf = pTransBitmap->GetBuffer();
@@ -276,6 +277,7 @@ CFX_DIBitmap* CFX_DIBSource::SwapXY(bool bXFlip,
   }
   return pTransBitmap;
 }
+
 #define FIX16_005 0.05f
 FX_RECT FXDIB_SwapClipBox(FX_RECT& clip,
                           int width,
@@ -415,9 +417,8 @@ bool CFX_ImageTransformer::Continue(IFX_Pause* pPause) {
       return true;
 
     if (m_Storer.GetBitmap()) {
-      std::unique_ptr<CFX_DIBitmap> swapped(
+      m_Storer.Replace(
           m_Storer.GetBitmap()->SwapXY(m_pMatrix->c > 0, m_pMatrix->b < 0));
-      m_Storer.Replace(std::move(swapped));
     }
     return false;
   }
