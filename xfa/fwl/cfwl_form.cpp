@@ -16,7 +16,6 @@
 #include "xfa/fwl/cfwl_messagemouse.h"
 #include "xfa/fwl/cfwl_notedriver.h"
 #include "xfa/fwl/cfwl_noteloop.h"
-#include "xfa/fwl/cfwl_sysbtn.h"
 #include "xfa/fwl/cfwl_themebackground.h"
 #include "xfa/fwl/cfwl_themepart.h"
 #include "xfa/fwl/cfwl_themetext.h"
@@ -24,33 +23,13 @@
 #include "xfa/fwl/ifwl_themeprovider.h"
 #include "xfa/fwl/theme/cfwl_widgettp.h"
 
-namespace {
-
-const int kSystemButtonSize = 21;
-const int kSystemButtonMargin = 5;
-const int kSystemButtonSpan = 2;
-
-}  // namespace
-
 CFWL_Form::CFWL_Form(const CFWL_App* app,
                      std::unique_ptr<CFWL_WidgetProperties> properties,
                      CFWL_Widget* pOuter)
     : CFWL_Widget(app, std::move(properties), pOuter),
-#if (_FX_OS_ == _FX_MACOSX_)
-      m_bMouseIn(false),
-#endif
-      m_pCloseBox(nullptr),
-      m_pMinBox(nullptr),
-      m_pMaxBox(nullptr),
       m_pSubFocus(nullptr),
       m_fCXBorder(0),
-      m_fCYBorder(0),
-      m_iCaptureBtn(-1),
-      m_iSysBox(0),
-      m_bLButtonDown(false),
-      m_bMaximized(false),
-      m_bSetMaximize(false),
-      m_bDoModalFlag(false) {
+      m_fCYBorder(0) {
   m_rtRelative.Reset();
   m_rtRestore.Reset();
 
@@ -61,7 +40,6 @@ CFWL_Form::CFWL_Form(const CFWL_App* app,
 CFWL_Form::~CFWL_Form() {
   UnregisterEventTarget();
   UnRegisterForm();
-  RemoveSysButtons();
 }
 
 FWL_Type CFWL_Form::GetClassID() const {
@@ -92,17 +70,8 @@ void CFWL_Form::Update() {
 FWL_WidgetHit CFWL_Form::HitTest(FX_FLOAT fx, FX_FLOAT fy) {
   GetAvailableTheme();
 
-  if (m_pCloseBox && m_pCloseBox->m_rtBtn.Contains(fx, fy))
-    return FWL_WidgetHit::CloseBox;
-  if (m_pMaxBox && m_pMaxBox->m_rtBtn.Contains(fx, fy))
-    return FWL_WidgetHit::MaxBox;
-  if (m_pMinBox && m_pMinBox->m_rtBtn.Contains(fx, fy))
-    return FWL_WidgetHit::MinBox;
-
   CFX_RectF rtCap;
-  rtCap.Set(m_fCYBorder, m_fCXBorder,
-            0 - kSystemButtonSize * m_iSysBox - 2 * m_fCYBorder,
-            0 - m_fCXBorder);
+  rtCap.Set(m_fCYBorder, m_fCXBorder, -2 * m_fCYBorder, 0 - m_fCXBorder);
   return rtCap.Contains(fx, fy) ? FWL_WidgetHit::Titlebar
                                 : FWL_WidgetHit::Client;
 }
@@ -139,65 +108,6 @@ void CFWL_Form::DrawWidget(CFX_Graphics* pGraphics, const CFX_Matrix* pMatrix) {
     param.m_dwStates = iState;
     pTheme->DrawBackground(&param);
   }
-
-#if (_FX_OS_ == _FX_MACOSX_)
-  {
-    if (m_pCloseBox) {
-      param.m_iPart = CFWL_Part::CloseBox;
-      param.m_dwStates = m_pCloseBox->GetPartState();
-      if (m_pProperties->m_dwStates & FWL_WGTSTATE_Deactivated)
-        param.m_dwStates = CFWL_PartState_Disabled;
-      else if (CFWL_PartState_Normal == param.m_dwStates && m_bMouseIn)
-        param.m_dwStates = CFWL_PartState_Hovered;
-      param.m_rtPart = m_pCloseBox->m_rtBtn;
-      pTheme->DrawBackground(&param);
-    }
-    if (m_pMaxBox) {
-      param.m_iPart = CFWL_Part::MaximizeBox;
-      param.m_dwStates = m_pMaxBox->GetPartState();
-      if (m_pProperties->m_dwStates & FWL_WGTSTATE_Deactivated)
-        param.m_dwStates = CFWL_PartState_Disabled;
-      else if (CFWL_PartState_Normal == param.m_dwStates && m_bMouseIn)
-        param.m_dwStates = CFWL_PartState_Hovered;
-      param.m_rtPart = m_pMaxBox->m_rtBtn;
-      param.m_bMaximize = m_bMaximized;
-      pTheme->DrawBackground(&param);
-    }
-    if (m_pMinBox) {
-      param.m_iPart = CFWL_Part::MinimizeBox;
-      param.m_dwStates = m_pMinBox->GetPartState();
-      if (m_pProperties->m_dwStates & FWL_WGTSTATE_Deactivated)
-        param.m_dwStates = CFWL_PartState_Disabled;
-      else if (CFWL_PartState_Normal == param.m_dwStates && m_bMouseIn)
-        param.m_dwStates = CFWL_PartState_Hovered;
-      param.m_rtPart = m_pMinBox->m_rtBtn;
-      pTheme->DrawBackground(&param);
-    }
-    m_bMouseIn = false;
-  }
-#else
-  {
-    if (m_pCloseBox) {
-      param.m_iPart = CFWL_Part::CloseBox;
-      param.m_dwStates = m_pCloseBox->GetPartState();
-      param.m_rtPart = m_pCloseBox->m_rtBtn;
-      pTheme->DrawBackground(&param);
-    }
-    if (m_pMaxBox) {
-      param.m_iPart = CFWL_Part::MaximizeBox;
-      param.m_dwStates = m_pMaxBox->GetPartState();
-      param.m_rtPart = m_pMaxBox->m_rtBtn;
-      param.m_bMaximize = m_bMaximized;
-      pTheme->DrawBackground(&param);
-    }
-    if (m_pMinBox) {
-      param.m_iPart = CFWL_Part::MinimizeBox;
-      param.m_dwStates = m_pMinBox->GetPartState();
-      param.m_rtPart = m_pMinBox->m_rtBtn;
-      pTheme->DrawBackground(&param);
-    }
-  }
-#endif
 }
 
 CFWL_Widget* CFWL_Form::DoModal() {
@@ -213,7 +123,6 @@ CFWL_Widget* CFWL_Form::DoModal() {
   m_pNoteLoop->SetMainForm(this);
 
   pDriver->PushNoteLoop(m_pNoteLoop.get());
-  m_bDoModalFlag = true;
   RemoveStates(FWL_WGTSTATE_Invisible);
   pDriver->Run();
 
@@ -228,8 +137,6 @@ CFWL_Widget* CFWL_Form::DoModal() {
 void CFWL_Form::EndDoModal() {
   if (!m_pNoteLoop)
     return;
-
-  m_bDoModalFlag = false;
 
 #if (_FX_OS_ == _FX_MACOSX_)
   m_pNoteLoop->EndModalLoop();
@@ -261,60 +168,6 @@ void CFWL_Form::DrawBackground(CFX_Graphics* pGraphics,
   pTheme->DrawBackground(&param);
 }
 
-void CFWL_Form::RemoveSysButtons() {
-  delete m_pCloseBox;
-  m_pCloseBox = nullptr;
-  delete m_pMinBox;
-  m_pMinBox = nullptr;
-  delete m_pMaxBox;
-  m_pMaxBox = nullptr;
-}
-
-CFWL_SysBtn* CFWL_Form::GetSysBtnAtPoint(FX_FLOAT fx, FX_FLOAT fy) {
-  if (m_pCloseBox && m_pCloseBox->m_rtBtn.Contains(fx, fy))
-    return m_pCloseBox;
-  if (m_pMaxBox && m_pMaxBox->m_rtBtn.Contains(fx, fy))
-    return m_pMaxBox;
-  if (m_pMinBox && m_pMinBox->m_rtBtn.Contains(fx, fy))
-    return m_pMinBox;
-  return nullptr;
-}
-
-CFWL_SysBtn* CFWL_Form::GetSysBtnByState(uint32_t dwState) {
-  if (m_pCloseBox && (m_pCloseBox->m_dwState & dwState))
-    return m_pCloseBox;
-  if (m_pMaxBox && (m_pMaxBox->m_dwState & dwState))
-    return m_pMaxBox;
-  if (m_pMinBox && (m_pMinBox->m_dwState & dwState))
-    return m_pMinBox;
-  return nullptr;
-}
-
-CFWL_SysBtn* CFWL_Form::GetSysBtnByIndex(int32_t nIndex) {
-  if (nIndex < 0)
-    return nullptr;
-
-  CFX_ArrayTemplate<CFWL_SysBtn*> arrBtn;
-  if (m_pMinBox)
-    arrBtn.Add(m_pMinBox);
-  if (m_pMaxBox)
-    arrBtn.Add(m_pMaxBox);
-  if (m_pCloseBox)
-    arrBtn.Add(m_pCloseBox);
-  return arrBtn[nIndex];
-}
-
-int32_t CFWL_Form::GetSysBtnIndex(CFWL_SysBtn* pBtn) {
-  CFX_ArrayTemplate<CFWL_SysBtn*> arrBtn;
-  if (m_pMinBox)
-    arrBtn.Add(m_pMinBox);
-  if (m_pMaxBox)
-    arrBtn.Add(m_pMaxBox);
-  if (m_pCloseBox)
-    arrBtn.Add(m_pCloseBox);
-  return arrBtn.Find(pBtn);
-}
-
 CFX_RectF CFWL_Form::GetEdgeRect() {
   CFX_RectF rtEdge = m_rtRelative;
   if (m_pProperties->m_dwStyles & FWL_WGTSTYLE_Border) {
@@ -330,8 +183,6 @@ void CFWL_Form::SetWorkAreaRect() {
   CFWL_WidgetMgr* pWidgetMgr = GetOwnerApp()->GetWidgetMgr();
   if (!pWidgetMgr)
     return;
-
-  m_bSetMaximize = true;
   RepaintRect(m_rtRelative);
 }
 
@@ -339,55 +190,11 @@ void CFWL_Form::Layout() {
   m_rtRelative = GetRelativeRect();
 
 #ifndef FWL_UseMacSystemBorder
-  ResetSysBtn();
-#endif
-}
-
-void CFWL_Form::ResetSysBtn() {
   m_fCXBorder =
       *static_cast<FX_FLOAT*>(GetThemeCapacity(CFWL_WidgetCapacity::CXBorder));
   m_fCYBorder =
       *static_cast<FX_FLOAT*>(GetThemeCapacity(CFWL_WidgetCapacity::CYBorder));
-  RemoveSysButtons();
-
-  m_iSysBox = 0;
-  if (m_pProperties->m_dwStyles & FWL_WGTSTYLE_CloseBox) {
-    m_pCloseBox = new CFWL_SysBtn;
-    m_pCloseBox->m_rtBtn.Set(
-        m_rtRelative.right() - kSystemButtonMargin - kSystemButtonSize,
-        kSystemButtonMargin, kSystemButtonSize, kSystemButtonSize);
-    m_iSysBox++;
-  }
-  if (m_pProperties->m_dwStyles & FWL_WGTSTYLE_MaximizeBox) {
-    m_pMaxBox = new CFWL_SysBtn;
-    if (m_pCloseBox) {
-      m_pMaxBox->m_rtBtn.Set(
-          m_pCloseBox->m_rtBtn.left - kSystemButtonSpan - kSystemButtonSize,
-          m_pCloseBox->m_rtBtn.top, kSystemButtonSize, kSystemButtonSize);
-    } else {
-      m_pMaxBox->m_rtBtn.Set(
-          m_rtRelative.right() - kSystemButtonMargin - kSystemButtonSize,
-          kSystemButtonMargin, kSystemButtonSize, kSystemButtonSize);
-    }
-    m_iSysBox++;
-  }
-  if (m_pProperties->m_dwStyles & FWL_WGTSTYLE_MinimizeBox) {
-    m_pMinBox = new CFWL_SysBtn;
-    if (m_pMaxBox) {
-      m_pMinBox->m_rtBtn.Set(
-          m_pMaxBox->m_rtBtn.left - kSystemButtonSpan - kSystemButtonSize,
-          m_pMaxBox->m_rtBtn.top, kSystemButtonSize, kSystemButtonSize);
-    } else if (m_pCloseBox) {
-      m_pMinBox->m_rtBtn.Set(
-          m_pCloseBox->m_rtBtn.left - kSystemButtonSpan - kSystemButtonSize,
-          m_pCloseBox->m_rtBtn.top, kSystemButtonSize, kSystemButtonSize);
-    } else {
-      m_pMinBox->m_rtBtn.Set(
-          m_rtRelative.right() - kSystemButtonMargin - kSystemButtonSize,
-          kSystemButtonMargin, kSystemButtonSize, kSystemButtonSize);
-    }
-    m_iSysBox++;
-  }
+#endif
 }
 
 void CFWL_Form::RegisterForm() {
@@ -431,12 +238,6 @@ void CFWL_Form::OnProcessMessage(CFWL_Message* pMessage) {
         case FWL_MouseCommand::LeftButtonUp:
           OnLButtonUp(pMsg);
           break;
-        case FWL_MouseCommand::Move:
-          OnMouseMove(pMsg);
-          break;
-        case FWL_MouseCommand::Leave:
-          OnMouseLeave(pMsg);
-          break;
         default:
           break;
       }
@@ -455,102 +256,8 @@ void CFWL_Form::OnDrawWidget(CFX_Graphics* pGraphics,
 
 void CFWL_Form::OnLButtonDown(CFWL_MessageMouse* pMsg) {
   SetGrab(true);
-  m_bLButtonDown = true;
-
-  CFWL_SysBtn* pPressBtn = GetSysBtnAtPoint(pMsg->m_fx, pMsg->m_fy);
-  m_iCaptureBtn = GetSysBtnIndex(pPressBtn);
-
-  if (!pPressBtn)
-    return;
-
-  pPressBtn->SetPressed();
-  RepaintRect(pPressBtn->m_rtBtn);
 }
 
 void CFWL_Form::OnLButtonUp(CFWL_MessageMouse* pMsg) {
   SetGrab(false);
-  m_bLButtonDown = false;
-  CFWL_SysBtn* pPointBtn = GetSysBtnAtPoint(pMsg->m_fx, pMsg->m_fy);
-  CFWL_SysBtn* pPressedBtn = GetSysBtnByIndex(m_iCaptureBtn);
-  if (!pPressedBtn || pPointBtn != pPressedBtn)
-    return;
-  if (pPressedBtn == GetSysBtnByState(FWL_SYSBUTTONSTATE_Pressed))
-    pPressedBtn->SetNormal();
-  if (pPressedBtn == m_pMaxBox) {
-    if (m_bMaximized) {
-      SetWidgetRect(m_rtRestore);
-      Update();
-      Repaint();
-    } else {
-      SetWorkAreaRect();
-      Update();
-    }
-    m_bMaximized = !m_bMaximized;
-  } else if (pPressedBtn != m_pMinBox) {
-    CFWL_Event eClose(CFWL_Event::Type::Close, this);
-    DispatchEvent(&eClose);
-  }
-}
-
-void CFWL_Form::OnMouseMove(CFWL_MessageMouse* pMsg) {
-  if (m_bLButtonDown)
-    return;
-
-  CFX_RectF rtInvalidate;
-  rtInvalidate.Reset();
-  CFWL_SysBtn* pPointBtn = GetSysBtnAtPoint(pMsg->m_fx, pMsg->m_fy);
-  CFWL_SysBtn* pOldHover = GetSysBtnByState(FWL_SYSBUTTONSTATE_Hover);
-
-#if _FX_OS_ == _FX_MACOSX_
-  {
-    if (pOldHover && pPointBtn != pOldHover)
-      pOldHover->SetNormal();
-    if (pPointBtn && pPointBtn != pOldHover)
-      pPointBtn->SetHover();
-    if (m_pCloseBox)
-      rtInvalidate = m_pCloseBox->m_rtBtn;
-    if (m_pMaxBox) {
-      if (rtInvalidate.IsEmpty())
-        rtInvalidate = m_pMaxBox->m_rtBtn;
-      else
-        rtInvalidate.Union(m_pMaxBox->m_rtBtn);
-    }
-    if (m_pMinBox) {
-      if (rtInvalidate.IsEmpty())
-        rtInvalidate = m_pMinBox->m_rtBtn;
-      else
-        rtInvalidate.Union(m_pMinBox->m_rtBtn);
-    }
-    if (!rtInvalidate.IsEmpty() &&
-        rtInvalidate.Contains(pMsg->m_fx, pMsg->m_fy)) {
-      m_bMouseIn = true;
-    }
-  }
-#else
-  {
-    if (pOldHover && pPointBtn != pOldHover) {
-      pOldHover->SetNormal();
-      rtInvalidate = pOldHover->m_rtBtn;
-    }
-    if (pPointBtn && pPointBtn != pOldHover) {
-      pPointBtn->SetHover();
-      if (rtInvalidate.IsEmpty())
-        rtInvalidate = pPointBtn->m_rtBtn;
-      else
-        rtInvalidate.Union(pPointBtn->m_rtBtn);
-    }
-  }
-#endif
-
-  if (!rtInvalidate.IsEmpty())
-    RepaintRect(rtInvalidate);
-}
-
-void CFWL_Form::OnMouseLeave(CFWL_MessageMouse* pMsg) {
-  CFWL_SysBtn* pHover = GetSysBtnByState(FWL_SYSBUTTONSTATE_Hover);
-  if (!pHover)
-    return;
-
-  pHover->SetNormal();
-  RepaintRect(pHover->m_rtBtn);
 }

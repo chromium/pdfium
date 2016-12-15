@@ -7,13 +7,10 @@
 #ifndef XFA_FWL_FWL_WIDGETDEF_H_
 #define XFA_FWL_FWL_WIDGETDEF_H_
 
-#define FWL_WGTSTYLE_OverLapper (0L << 0)
+#define FWL_WGTSTYLE_OverLapper 0
 #define FWL_WGTSTYLE_Popup (1L << 0)
 #define FWL_WGTSTYLE_Child (2L << 0)
 #define FWL_WGTSTYLE_Border (1L << 2)
-#define FWL_WGTSTYLE_MinimizeBox (1L << 6)
-#define FWL_WGTSTYLE_MaximizeBox (1L << 7)
-#define FWL_WGTSTYLE_CloseBox (1L << 8)
 #define FWL_WGTSTYLE_HScroll (1L << 9)
 #define FWL_WGTSTYLE_VScroll (1L << 11)
 #define FWL_WGTSTYLE_LeftScrollbar (1L << 12)

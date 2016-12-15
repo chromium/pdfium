@@ -24,7 +24,6 @@ class CFWL_MessageMouse;
 class CFWL_NoteLoop;
 class CFWL_Widget;
 class IFWL_ThemeProvider;
-class CFWL_SysBtn;
 
 class CFWL_Form : public CFWL_Widget {
  public:
@@ -52,40 +51,20 @@ class CFWL_Form : public CFWL_Widget {
 
  private:
   void DrawBackground(CFX_Graphics* pGraphics, IFWL_ThemeProvider* pTheme);
-  void RemoveSysButtons();
-  CFWL_SysBtn* GetSysBtnAtPoint(FX_FLOAT fx, FX_FLOAT fy);
-  CFWL_SysBtn* GetSysBtnByState(uint32_t dwState);
-  CFWL_SysBtn* GetSysBtnByIndex(int32_t nIndex);
-  int32_t GetSysBtnIndex(CFWL_SysBtn* pBtn);
   CFX_RectF GetEdgeRect();
   void SetWorkAreaRect();
   void Layout();
-  void ResetSysBtn();
   void RegisterForm();
   void UnRegisterForm();
   void OnLButtonDown(CFWL_MessageMouse* pMsg);
   void OnLButtonUp(CFWL_MessageMouse* pMsg);
-  void OnMouseMove(CFWL_MessageMouse* pMsg);
-  void OnMouseLeave(CFWL_MessageMouse* pMsg);
 
-#if (_FX_OS_ == _FX_MACOSX_)
-  bool m_bMouseIn;
-#endif
   CFX_RectF m_rtRestore;
   CFX_RectF m_rtRelative;
-  CFWL_SysBtn* m_pCloseBox;
-  CFWL_SysBtn* m_pMinBox;
-  CFWL_SysBtn* m_pMaxBox;
   std::unique_ptr<CFWL_NoteLoop> m_pNoteLoop;
   CFWL_Widget* m_pSubFocus;
   FX_FLOAT m_fCXBorder;
   FX_FLOAT m_fCYBorder;
-  int32_t m_iCaptureBtn;
-  int32_t m_iSysBox;
-  bool m_bLButtonDown;
-  bool m_bMaximized;
-  bool m_bSetMaximize;
-  bool m_bDoModalFlag;
 };
 
 #endif  // XFA_FWL_CFWL_FORM_H_
