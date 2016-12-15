@@ -265,10 +265,6 @@ bool CFX_Font::LoadClone(const CFX_Font* pFont) {
     m_pSubstFont->m_Family = pFont->m_pSubstFont->m_Family;
     m_pSubstFont->m_ItalicAngle = pFont->m_pSubstFont->m_ItalicAngle;
   }
-  if (pFont->m_OtfFontData.GetSize()) {
-    m_OtfFontData.AttachData(pFont->m_OtfFontData.GetBuffer(),
-                             pFont->m_OtfFontData.GetSize());
-  }
   m_Face = pFont->m_Face;
   m_bEmbedded = pFont->m_bEmbedded;
   m_bVertical = pFont->m_bVertical;
@@ -292,10 +288,8 @@ void CFX_Font::SetFace(FXFT_Face face) {
 
 CFX_Font::~CFX_Font() {
 #ifdef PDF_ENABLE_XFA
-  if (m_bShallowCopy) {
-    m_OtfFontData.DetachBuffer();
+  if (m_bShallowCopy)
     return;
-  }
 #endif  // PDF_ENABLE_XFA
   if (m_Face) {
 #ifndef PDF_ENABLE_XFA

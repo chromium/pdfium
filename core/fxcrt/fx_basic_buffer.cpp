@@ -42,12 +42,6 @@ uint8_t* CFX_BinaryBuf::DetachBuffer() {
   return m_pBuffer.release();
 }
 
-void CFX_BinaryBuf::AttachData(uint8_t* buffer, FX_STRSIZE size) {
-  m_pBuffer.reset(buffer);
-  m_DataSize = size;
-  m_AllocSize = size;
-}
-
 void CFX_BinaryBuf::EstimateSize(FX_STRSIZE size, FX_STRSIZE step) {
   m_AllocStep = step;
   if (m_AllocSize < size)

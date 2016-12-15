@@ -40,9 +40,6 @@ class CFX_BinaryBuf {
   void InsertBlock(FX_STRSIZE pos, const void* pBuf, FX_STRSIZE size);
   void Delete(int start_index, int count);
 
-  // Takes ownership of |pBuf|.
-  void AttachData(uint8_t* pBuf, FX_STRSIZE size);
-
   // Releases ownership of |m_pBuffer| and returns it.
   uint8_t* DetachBuffer();
 

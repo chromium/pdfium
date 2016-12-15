@@ -170,9 +170,7 @@ class CFX_Font {
   static const uint8_t s_WeightPow_SHIFTJIS[kWeightPowArraySize];
 
 #ifdef PDF_ENABLE_XFA
-
  protected:
-  CFX_BinaryBuf m_OtfFontData;
   bool m_bShallowCopy;
   FXFT_StreamRec* m_pOwnedStream;
 #endif  // PDF_ENABLE_XFA
@@ -181,13 +179,9 @@ class CFX_Font {
   friend class CFX_FaceCache;
   CFX_PathData* LoadGlyphPathImpl(uint32_t glyph_index,
                                   int dest_width = 0) const;
-
- private:
   CFX_FaceCache* GetFaceCache() const;
-
   void ReleasePlatformResource();
   void DeleteFace();
-
   void ClearFaceCache();
 
   FXFT_Face m_Face;
