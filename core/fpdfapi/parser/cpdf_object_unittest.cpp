@@ -69,14 +69,14 @@ class PDFObjectsTest : public testing::Test {
     // Stream object.
     const char content[] = "abcdefghijklmnopqrstuvwxyz";
     size_t buf_len = FX_ArraySize(content);
-    uint8_t* buf = reinterpret_cast<uint8_t*>(malloc(buf_len));
-    memcpy(buf, content, buf_len);
+    std::unique_ptr<uint8_t, FxFreeDeleter> buf(FX_Alloc(uint8_t, buf_len));
+    memcpy(buf.get(), content, buf_len);
     auto pNewDict = pdfium::MakeUnique<CPDF_Dictionary>();
     m_StreamDictObj = pNewDict.get();
     m_StreamDictObj->SetNewFor<CPDF_String>("key1", L" test dict");
     m_StreamDictObj->SetNewFor<CPDF_Number>("key2", -1);
     CPDF_Stream* stream_obj =
-        new CPDF_Stream(buf, buf_len, std::move(pNewDict));
+        new CPDF_Stream(std::move(buf), buf_len, std::move(pNewDict));
     // Null Object.
     CPDF_Null* null_obj = new CPDF_Null;
     // All direct objects.
@@ -588,9 +588,10 @@ TEST(PDFArrayTest, GetTypeAt) {
       }
       uint8_t content[] = "content: this is a stream";
       size_t data_size = FX_ArraySize(content);
-      uint8_t* data = reinterpret_cast<uint8_t*>(malloc(data_size));
-      memcpy(data, content, data_size);
-      stream_vals[i] = arr->AddNew<CPDF_Stream>(data, data_size,
+      std::unique_ptr<uint8_t, FxFreeDeleter> data(
+          FX_Alloc(uint8_t, data_size));
+      memcpy(data.get(), content, data_size);
+      stream_vals[i] = arr->AddNew<CPDF_Stream>(std::move(data), data_size,
                                                 pdfium::WrapUnique(vals[i]));
     }
     for (size_t i = 0; i < 3; ++i) {
@@ -634,10 +635,10 @@ TEST(PDFArrayTest, GetTypeAt) {
     // The data buffer will be owned by stream object, so it needs to be
     // dynamically allocated.
     size_t buf_size = sizeof(data);
-    uint8_t* buf = reinterpret_cast<uint8_t*>(malloc(buf_size));
-    memcpy(buf, data, buf_size);
+    std::unique_ptr<uint8_t, FxFreeDeleter> buf(FX_Alloc(uint8_t, buf_size));
+    memcpy(buf.get(), data, buf_size);
     CPDF_Stream* stream_val = arr->InsertNewAt<CPDF_Stream>(
-        13, buf, buf_size, pdfium::WrapUnique(stream_dict));
+        13, std::move(buf), buf_size, pdfium::WrapUnique(stream_dict));
     const char* const expected_str[] = {
         "true",          "false", "0",    "-1234", "2345", "0.05", "",
         "It is a test!", "NAME",  "test", "",      "",     "",     ""};

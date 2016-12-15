@@ -18,10 +18,10 @@
 
 CPDF_Stream::CPDF_Stream() {}
 
-CPDF_Stream::CPDF_Stream(uint8_t* pData,
+CPDF_Stream::CPDF_Stream(std::unique_ptr<uint8_t, FxFreeDeleter> pData,
                          uint32_t size,
                          std::unique_ptr<CPDF_Dictionary> pDict)
-    : m_dwSize(size), m_pDict(std::move(pDict)), m_pDataBuf(pData) {}
+    : m_dwSize(size), m_pDict(std::move(pDict)), m_pDataBuf(std::move(pData)) {}
 
 CPDF_Stream::~CPDF_Stream() {
   m_ObjNum = kInvalidObjNum;
@@ -93,7 +93,7 @@ std::unique_ptr<CPDF_Object> CPDF_Stream::CloneNonCyclic(
     pNewDict = ToDictionary(
         static_cast<CPDF_Object*>(pDict)->CloneNonCyclic(bDirect, pVisited));
   }
-  return pdfium::MakeUnique<CPDF_Stream>(acc.DetachData().release(), streamSize,
+  return pdfium::MakeUnique<CPDF_Stream>(acc.DetachData(), streamSize,
                                          std::move(pNewDict));
 }
 

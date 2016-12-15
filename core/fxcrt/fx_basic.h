@@ -41,7 +41,7 @@ class CFX_BinaryBuf {
   void Delete(int start_index, int count);
 
   // Releases ownership of |m_pBuffer| and returns it.
-  uint8_t* DetachBuffer();
+  std::unique_ptr<uint8_t, FxFreeDeleter> DetachBuffer();
 
  protected:
   void ExpandBuf(FX_STRSIZE size);

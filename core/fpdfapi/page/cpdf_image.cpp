@@ -219,8 +219,9 @@ void CPDF_Image::SetImage(const CFX_DIBitmap* pBitmap) {
       pCS->AddNew<CPDF_Name>("Indexed");
       pCS->AddNew<CPDF_Name>("DeviceRGB");
       pCS->AddNew<CPDF_Number>(iPalette - 1);
-      uint8_t* pColorTable = FX_Alloc2D(uint8_t, iPalette, 3);
-      uint8_t* ptr = pColorTable;
+      std::unique_ptr<uint8_t, FxFreeDeleter> pColorTable(
+          FX_Alloc2D(uint8_t, iPalette, 3));
+      uint8_t* ptr = pColorTable.get();
       for (int32_t i = 0; i < iPalette; i++) {
         uint32_t argb = pBitmap->GetPaletteArgb(i);
         ptr[0] = (uint8_t)(argb >> 16);
@@ -231,7 +232,7 @@ void CPDF_Image::SetImage(const CFX_DIBitmap* pBitmap) {
       auto pNewDict =
           pdfium::MakeUnique<CPDF_Dictionary>(m_pDocument->GetByteStringPool());
       CPDF_Stream* pCTS = m_pDocument->NewIndirect<CPDF_Stream>(
-          pColorTable, iPalette * 3, std::move(pNewDict));
+          std::move(pColorTable), iPalette * 3, std::move(pNewDict));
       pCS->AddNew<CPDF_Reference>(m_pDocument, pCTS->GetObjNum());
       pDict->SetNewFor<CPDF_Reference>("ColorSpace", m_pDocument,
                                        pCS->GetObjNum());
@@ -254,7 +255,7 @@ void CPDF_Image::SetImage(const CFX_DIBitmap* pBitmap) {
   if (pMaskBitmap) {
     int32_t maskWidth = pMaskBitmap->GetWidth();
     int32_t maskHeight = pMaskBitmap->GetHeight();
-    uint8_t* mask_buf = nullptr;
+    std::unique_ptr<uint8_t, FxFreeDeleter> mask_buf;
     FX_STRSIZE mask_size = 0;
     auto pMaskDict =
         pdfium::MakeUnique<CPDF_Dictionary>(m_pDocument->GetByteStringPool());
@@ -265,16 +266,16 @@ void CPDF_Image::SetImage(const CFX_DIBitmap* pBitmap) {
     pMaskDict->SetNewFor<CPDF_Name>("ColorSpace", "DeviceGray");
     pMaskDict->SetNewFor<CPDF_Number>("BitsPerComponent", 8);
     if (pMaskBitmap->GetFormat() != FXDIB_1bppMask) {
-      mask_buf = FX_Alloc2D(uint8_t, maskHeight, maskWidth);
+      mask_buf.reset(FX_Alloc2D(uint8_t, maskHeight, maskWidth));
       mask_size = maskHeight * maskWidth;  // Safe since checked alloc returned.
       for (int32_t a = 0; a < maskHeight; a++) {
-        FXSYS_memcpy(mask_buf + a * maskWidth, pMaskBitmap->GetScanline(a),
-                     maskWidth);
+        FXSYS_memcpy(mask_buf.get() + a * maskWidth,
+                     pMaskBitmap->GetScanline(a), maskWidth);
       }
     }
     pMaskDict->SetNewFor<CPDF_Number>("Length", mask_size);
     CPDF_Stream* pNewStream = m_pDocument->NewIndirect<CPDF_Stream>(
-        mask_buf, mask_size, std::move(pMaskDict));
+        std::move(mask_buf), mask_size, std::move(pMaskDict));
     pDict->SetNewFor<CPDF_Reference>("SMask", m_pDocument,
                                      pNewStream->GetObjNum());
   }

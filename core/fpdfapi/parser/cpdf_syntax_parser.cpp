@@ -723,25 +723,24 @@ std::unique_ptr<CPDF_Stream> CPDF_SyntaxParser::ReadStream(
   if (len < 0)
     return nullptr;
 
-  uint8_t* pData = nullptr;
+  std::unique_ptr<uint8_t, FxFreeDeleter> pData;
   if (len > 0) {
-    pData = FX_Alloc(uint8_t, len);
-    ReadBlock(pData, len);
+    pData.reset(FX_Alloc(uint8_t, len));
+    ReadBlock(pData.get(), len);
     if (pCryptoHandler) {
       CFX_BinaryBuf dest_buf;
       dest_buf.EstimateSize(pCryptoHandler->DecryptGetSize(len));
 
       void* context = pCryptoHandler->DecryptStart(objnum, gennum);
-      pCryptoHandler->DecryptStream(context, pData, len, dest_buf);
+      pCryptoHandler->DecryptStream(context, pData.get(), len, dest_buf);
       pCryptoHandler->DecryptFinish(context, dest_buf);
-      FX_Free(pData);
-      pData = dest_buf.GetBuffer();
       len = dest_buf.GetSize();
-      dest_buf.DetachBuffer();
+      pData = dest_buf.DetachBuffer();
     }
   }
 
-  auto pStream = pdfium::MakeUnique<CPDF_Stream>(pData, len, std::move(pDict));
+  auto pStream =
+      pdfium::MakeUnique<CPDF_Stream>(std::move(pData), len, std::move(pDict));
   streamStartPos = m_Pos;
   FXSYS_memset(m_WordBuffer, 0, kEndObjStr.GetLength() + 1);
   GetNextWordInternal(nullptr);

@@ -6,6 +6,8 @@
 
 #include <algorithm>
 #include <limits>
+#include <memory>
+#include <utility>
 
 #include "core/fxcrt/fx_basic.h"
 #include "core/fxcrt/fx_safe_types.h"
@@ -36,10 +38,10 @@ void CFX_BinaryBuf::Clear() {
   m_DataSize = 0;
 }
 
-uint8_t* CFX_BinaryBuf::DetachBuffer() {
+std::unique_ptr<uint8_t, FxFreeDeleter> CFX_BinaryBuf::DetachBuffer() {
   m_DataSize = 0;
   m_AllocSize = 0;
-  return m_pBuffer.release();
+  return std::move(m_pBuffer);
 }
 
 void CFX_BinaryBuf::EstimateSize(FX_STRSIZE size, FX_STRSIZE step) {

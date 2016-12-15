@@ -19,7 +19,7 @@ class CPDF_Stream : public CPDF_Object {
   CPDF_Stream();
 
   // Takes ownership of |pData|.
-  CPDF_Stream(uint8_t* pData,
+  CPDF_Stream(std::unique_ptr<uint8_t, FxFreeDeleter> pData,
               uint32_t size,
               std::unique_ptr<CPDF_Dictionary> pDict);
 
