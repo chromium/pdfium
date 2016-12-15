@@ -102,21 +102,17 @@ CXFA_FFDocHandler* CXFA_FFApp::GetDocHandler() {
   return m_pDocHandler.get();
 }
 
-CXFA_FFDoc* CXFA_FFApp::CreateDoc(
+std::unique_ptr<CXFA_FFDoc> CXFA_FFApp::CreateDoc(
     IXFA_DocEnvironment* pDocEnvironment,
-    const CFX_RetainPtr<IFX_SeekableReadStream>& pStream) {
-  auto pDoc = pdfium::MakeUnique<CXFA_FFDoc>(this, pDocEnvironment);
-  return pDoc->OpenDoc(pStream) ? pDoc.release() : nullptr;
-}
-
-CXFA_FFDoc* CXFA_FFApp::CreateDoc(IXFA_DocEnvironment* pDocEnvironment,
-                                  CPDF_Document* pPDFDoc) {
+    CPDF_Document* pPDFDoc) {
   if (!pPDFDoc)
     return nullptr;
 
-  std::unique_ptr<CXFA_FFDoc> pDoc(new CXFA_FFDoc(this, pDocEnvironment));
-  bool bSuccess = pDoc->OpenDoc(pPDFDoc);
-  return bSuccess ? pDoc.release() : nullptr;
+  auto pDoc = pdfium::MakeUnique<CXFA_FFDoc>(this, pDocEnvironment);
+  if (!pDoc->OpenDoc(pPDFDoc))
+    return nullptr;
+
+  return pDoc;
 }
 
 void CXFA_FFApp::SetDefaultFontMgr(std::unique_ptr<CXFA_DefFontMgr> pFontMgr) {

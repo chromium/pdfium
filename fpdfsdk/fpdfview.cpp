@@ -890,10 +890,10 @@ DLLEXPORT void STDCALL FPDF_PageToDevice(FPDF_PAGE page,
 DLLEXPORT FPDF_BITMAP STDCALL FPDFBitmap_Create(int width,
                                                 int height,
                                                 int alpha) {
-  std::unique_ptr<CFX_DIBitmap> pBitmap(new CFX_DIBitmap);
-  if (!pBitmap->Create(width, height, alpha ? FXDIB_Argb : FXDIB_Rgb32)) {
+  auto pBitmap = pdfium::MakeUnique<CFX_DIBitmap>();
+  if (!pBitmap->Create(width, height, alpha ? FXDIB_Argb : FXDIB_Rgb32))
     return nullptr;
-  }
+
   return pBitmap.release();
 }
 

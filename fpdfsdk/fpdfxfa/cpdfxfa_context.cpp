@@ -92,7 +92,7 @@ bool CPDFXFA_Context::LoadXFADoc() {
   if (!pApp)
     return false;
 
-  m_pXFADoc.reset(pApp->CreateDoc(&m_DocEnv, m_pPDFDoc.get()));
+  m_pXFADoc = pApp->CreateDoc(&m_DocEnv, m_pPDFDoc.get());
   if (!m_pXFADoc) {
     SetLastError(FPDF_ERR_XFALOAD);
     return false;
