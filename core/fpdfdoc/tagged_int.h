@@ -26,7 +26,6 @@ class CPDF_StructTreeImpl final : public IPDF_StructTree {
   int CountTopElements() const override;
   IPDF_StructElement* GetTopElement(int i) const override;
 
-  void LoadDocTree();
   void LoadPageTree(const CPDF_Dictionary* pPageDict);
   CPDF_StructElementImpl* AddPageNode(
       CPDF_Dictionary* pElement,

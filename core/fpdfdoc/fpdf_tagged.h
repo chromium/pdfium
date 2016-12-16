@@ -7,6 +7,8 @@
 #ifndef CORE_FPDFDOC_FPDF_TAGGED_H_
 #define CORE_FPDFDOC_FPDF_TAGGED_H_
 
+#include <memory>
+
 #include "core/fxge/fx_dib.h"
 
 class CPDF_Dictionary;
@@ -15,9 +17,9 @@ class IPDF_StructElement;
 
 class IPDF_StructTree {
  public:
-  static IPDF_StructTree* LoadDoc(const CPDF_Document* pDoc);
-  static IPDF_StructTree* LoadPage(const CPDF_Document* pDoc,
-                                   const CPDF_Dictionary* pPageDict);
+  static std::unique_ptr<IPDF_StructTree> LoadPage(
+      const CPDF_Document* pDoc,
+      const CPDF_Dictionary* pPageDict);
 
   virtual ~IPDF_StructTree() {}
 
