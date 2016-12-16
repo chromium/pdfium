@@ -219,7 +219,7 @@ CXFA_ChecksumContext::~CXFA_ChecksumContext() {
 
 void CXFA_ChecksumContext::StartChecksum() {
   FinishChecksum();
-  m_pByteContext = FX_Alloc(uint8_t, 128);
+  m_pByteContext = FX_Alloc(CRYPT_sha1_context, 1);
   CRYPT_SHA1Start(m_pByteContext);
   m_bsChecksum.clear();
   m_pSAXReader = new CFX_SAXReader;

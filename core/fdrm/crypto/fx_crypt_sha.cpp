@@ -9,12 +9,6 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-typedef struct {
-  unsigned int h[5];
-  unsigned char block[64];
-  int blkused;
-  unsigned int lenhi, lenlo;
-} SHA_State;
 #define rol(x, y) (((x) << (y)) | (((unsigned int)x) >> (32 - y)))
 static void SHA_Core_Init(unsigned int h[5]) {
   h[0] = 0x67452301;
@@ -78,14 +72,16 @@ static void SHATransform(unsigned int* digest, unsigned int* block) {
   digest[3] += d;
   digest[4] += e;
 }
-void CRYPT_SHA1Start(void* context) {
-  SHA_State* s = (SHA_State*)context;
+
+void CRYPT_SHA1Start(CRYPT_sha1_context* s) {
   SHA_Core_Init(s->h);
   s->blkused = 0;
   s->lenhi = s->lenlo = 0;
 }
-void CRYPT_SHA1Update(void* context, const uint8_t* data, uint32_t size) {
-  SHA_State* s = (SHA_State*)context;
+
+void CRYPT_SHA1Update(CRYPT_sha1_context* s,
+                      const uint8_t* data,
+                      uint32_t size) {
   unsigned char* q = (unsigned char*)data;
   unsigned int wordblock[16];
   int len = size;
@@ -114,8 +110,8 @@ void CRYPT_SHA1Update(void* context, const uint8_t* data, uint32_t size) {
     s->blkused = len;
   }
 }
-void CRYPT_SHA1Finish(void* context, uint8_t digest[20]) {
-  SHA_State* s = (SHA_State*)context;
+
+void CRYPT_SHA1Finish(CRYPT_sha1_context* s, uint8_t digest[20]) {
   int i;
   int pad;
   unsigned char c[64];
@@ -149,16 +145,11 @@ void CRYPT_SHA1Finish(void* context, uint8_t digest[20]) {
 void CRYPT_SHA1Generate(const uint8_t* data,
                         uint32_t size,
                         uint8_t digest[20]) {
-  SHA_State s;
+  CRYPT_sha1_context s;
   CRYPT_SHA1Start(&s);
   CRYPT_SHA1Update(&s, data, size);
   CRYPT_SHA1Finish(&s, digest);
 }
-typedef struct {
-  uint32_t total[2];
-  uint32_t state[8];
-  uint8_t buffer[64];
-} sha256_context;
 #define GET_UINT32(n, b, i)                                             \
   {                                                                     \
     (n) = ((uint32_t)(b)[(i)] << 24) | ((uint32_t)(b)[(i) + 1] << 16) | \
@@ -171,8 +162,8 @@ typedef struct {
     (b)[(i) + 2] = (uint8_t)((n) >> 8);  \
     (b)[(i) + 3] = (uint8_t)((n));       \
   }
-void CRYPT_SHA256Start(void* context) {
-  sha256_context* ctx = (sha256_context*)context;
+
+void CRYPT_SHA256Start(CRYPT_sha256_context* ctx) {
   ctx->total[0] = 0;
   ctx->total[1] = 0;
   ctx->state[0] = 0x6A09E667;
@@ -184,7 +175,8 @@ void CRYPT_SHA256Start(void* context) {
   ctx->state[6] = 0x1F83D9AB;
   ctx->state[7] = 0x5BE0CD19;
 }
-static void sha256_process(sha256_context* ctx, const uint8_t data[64]) {
+
+static void sha256_process(CRYPT_sha256_context* ctx, const uint8_t data[64]) {
   uint32_t temp1, temp2, W[64];
   uint32_t A, B, C, D, E, F, G, H;
   GET_UINT32(W[0], data, 0);
@@ -300,14 +292,15 @@ static void sha256_process(sha256_context* ctx, const uint8_t data[64]) {
   ctx->state[6] += G;
   ctx->state[7] += H;
 }
-void CRYPT_SHA256Update(void* context, const uint8_t* input, uint32_t length) {
-  sha256_context* ctx = (sha256_context*)context;
-  uint32_t left, fill;
-  if (!length) {
+
+void CRYPT_SHA256Update(CRYPT_sha256_context* ctx,
+                        const uint8_t* input,
+                        uint32_t length) {
+  if (!length)
     return;
-  }
-  left = ctx->total[0] & 0x3F;
-  fill = 64 - left;
+
+  uint32_t left = ctx->total[0] & 0x3F;
+  uint32_t fill = 64 - left;
   ctx->total[0] += length;
   ctx->total[0] &= 0xFFFFFFFF;
   if (ctx->total[0] < length) {
@@ -329,12 +322,13 @@ void CRYPT_SHA256Update(void* context, const uint8_t* input, uint32_t length) {
     FXSYS_memcpy((void*)(ctx->buffer + left), (void*)input, length);
   }
 }
+
 static const uint8_t sha256_padding[64] = {
     0x80, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0,    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0,    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-void CRYPT_SHA256Finish(void* context, uint8_t digest[32]) {
-  sha256_context* ctx = (sha256_context*)context;
+
+void CRYPT_SHA256Finish(CRYPT_sha256_context* ctx, uint8_t digest[32]) {
   uint32_t last, padn;
   uint32_t high, low;
   uint8_t msglen[8];
@@ -355,19 +349,16 @@ void CRYPT_SHA256Finish(void* context, uint8_t digest[32]) {
   PUT_UINT32(ctx->state[6], digest, 24);
   PUT_UINT32(ctx->state[7], digest, 28);
 }
+
 void CRYPT_SHA256Generate(const uint8_t* data,
                           uint32_t size,
                           uint8_t digest[32]) {
-  sha256_context ctx;
+  CRYPT_sha256_context ctx;
   CRYPT_SHA256Start(&ctx);
   CRYPT_SHA256Update(&ctx, data, size);
   CRYPT_SHA256Finish(&ctx, digest);
 }
-typedef struct {
-  uint64_t total[2];
-  uint64_t state[8];
-  uint8_t buffer[128];
-} sha384_context;
+
 uint64_t FX_ato64i(const FX_CHAR* str) {
   ASSERT(str);
   uint64_t ret = 0;
@@ -389,12 +380,12 @@ uint64_t FX_ato64i(const FX_CHAR* str) {
   }
   return ret;
 }
-void CRYPT_SHA384Start(void* context) {
-  if (!context) {
+
+void CRYPT_SHA384Start(CRYPT_sha384_context* ctx) {
+  if (!ctx)
     return;
-  }
-  sha384_context* ctx = (sha384_context*)context;
-  FXSYS_memset(ctx, 0, sizeof(sha384_context));
+
+  FXSYS_memset(ctx, 0, sizeof(CRYPT_sha384_context));
   ctx->state[0] = FX_ato64i("cbbb9d5dc1059ed8");
   ctx->state[1] = FX_ato64i("629a292a367cd507");
   ctx->state[2] = FX_ato64i("9159015a3070dd17");
@@ -404,6 +395,7 @@ void CRYPT_SHA384Start(void* context) {
   ctx->state[6] = FX_ato64i("db0c2e0d64f98fa7");
   ctx->state[7] = FX_ato64i("47b5481dbefa4fa4");
 }
+
 #define SHA384_F0(x, y, z) ((x & y) | (z & (x | y)))
 #define SHA384_F1(x, y, z) (z ^ (x & (y ^ z)))
 #define SHA384_SHR(x, n) (x >> n)
@@ -422,6 +414,9 @@ void CRYPT_SHA384Start(void* context) {
     d += temp1;                                            \
     h = temp1 + temp2;                                     \
   }
+#define SHA384_R(t) \
+  (W[t] = SHA384_S1(W[t - 2]) + W[t - 7] + SHA384_S0(W[t - 15]) + W[t - 16])
+
 static const uint8_t sha384_padding[128] = {
     0x80, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0,    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -430,8 +425,7 @@ static const uint8_t sha384_padding[128] = {
     0,    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0,    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 };
-#define SHA384_R(t) \
-  (W[t] = SHA384_S1(W[t - 2]) + W[t - 7] + SHA384_S0(W[t - 15]) + W[t - 16])
+
 static const FX_CHAR* constants[] = {
     "428a2f98d728ae22", "7137449123ef65cd", "b5c0fbcfec4d3b2f",
     "e9b5dba58189dbbc", "3956c25bf348b538", "59f111f1b605d019",
@@ -479,7 +473,8 @@ static const FX_CHAR* constants[] = {
     (b)[(i) + 6] = (uint8_t)((n) >> 8);  \
     (b)[(i) + 7] = (uint8_t)((n));       \
   }
-static void sha384_process(sha384_context* ctx, const uint8_t data[128]) {
+
+static void sha384_process(CRYPT_sha384_context* ctx, const uint8_t data[128]) {
   uint64_t temp1, temp2;
   uint64_t A, B, C, D, E, F, G, H;
   uint64_t W[80];
@@ -546,8 +541,10 @@ static void sha384_process(sha384_context* ctx, const uint8_t data[128]) {
   ctx->state[6] += G;
   ctx->state[7] += H;
 }
-void CRYPT_SHA384Update(void* context, const uint8_t* input, uint32_t length) {
-  sha384_context* ctx = (sha384_context*)context;
+
+void CRYPT_SHA384Update(CRYPT_sha384_context* ctx,
+                        const uint8_t* input,
+                        uint32_t length) {
   uint32_t left, fill;
   if (!length) {
     return;
@@ -574,8 +571,8 @@ void CRYPT_SHA384Update(void* context, const uint8_t* input, uint32_t length) {
     FXSYS_memcpy((void*)(ctx->buffer + left), (void*)input, length);
   }
 }
-void CRYPT_SHA384Finish(void* context, uint8_t digest[48]) {
-  sha384_context* ctx = (sha384_context*)context;
+
+void CRYPT_SHA384Finish(CRYPT_sha384_context* ctx, uint8_t digest[48]) {
   uint32_t last, padn;
   uint8_t msglen[16];
   FXSYS_memset(msglen, 0, 16);
@@ -595,20 +592,22 @@ void CRYPT_SHA384Finish(void* context, uint8_t digest[48]) {
   PUT_UINT64(ctx->state[4], digest, 32);
   PUT_UINT64(ctx->state[5], digest, 40);
 }
+
 void CRYPT_SHA384Generate(const uint8_t* data,
                           uint32_t size,
                           uint8_t digest[64]) {
-  sha384_context context;
+  CRYPT_sha384_context context;
   CRYPT_SHA384Start(&context);
   CRYPT_SHA384Update(&context, data, size);
   CRYPT_SHA384Finish(&context, digest);
 }
+
 void CRYPT_SHA512Start(void* context) {
   if (!context) {
     return;
   }
-  sha384_context* ctx = (sha384_context*)context;
-  FXSYS_memset(ctx, 0, sizeof(sha384_context));
+  CRYPT_sha384_context* ctx = (CRYPT_sha384_context*)context;
+  FXSYS_memset(ctx, 0, sizeof(CRYPT_sha384_context));
   ctx->state[0] = FX_ato64i("6a09e667f3bcc908");
   ctx->state[1] = FX_ato64i("bb67ae8584caa73b");
   ctx->state[2] = FX_ato64i("3c6ef372fe94f82b");
@@ -618,11 +617,14 @@ void CRYPT_SHA512Start(void* context) {
   ctx->state[6] = FX_ato64i("1f83d9abfb41bd6b");
   ctx->state[7] = FX_ato64i("5be0cd19137e2179");
 }
+
 void CRYPT_SHA512Update(void* context, const uint8_t* data, uint32_t size) {
-  CRYPT_SHA384Update(context, data, size);
+  CRYPT_sha384_context* ctx = (CRYPT_sha384_context*)context;
+  CRYPT_SHA384Update(ctx, data, size);
 }
+
 void CRYPT_SHA512Finish(void* context, uint8_t digest[64]) {
-  sha384_context* ctx = (sha384_context*)context;
+  CRYPT_sha384_context* ctx = (CRYPT_sha384_context*)context;
   uint32_t last, padn;
   uint8_t msglen[16];
   FXSYS_memset(msglen, 0, 16);
@@ -644,14 +646,16 @@ void CRYPT_SHA512Finish(void* context, uint8_t digest[64]) {
   PUT_UINT64(ctx->state[6], digest, 48);
   PUT_UINT64(ctx->state[7], digest, 56);
 }
+
 void CRYPT_SHA512Generate(const uint8_t* data,
                           uint32_t size,
                           uint8_t digest[64]) {
-  sha384_context context;
+  CRYPT_sha384_context context;
   CRYPT_SHA512Start(&context);
   CRYPT_SHA512Update(&context, data, size);
   CRYPT_SHA512Finish(&context, digest);
 }
+
 #ifdef __cplusplus
 };
 #endif
