@@ -25,4 +25,6 @@ Local Modifications:
     https://github.com/mm2/Little-CMS/commit/c0a98d86
 0013-utf8.patch: Encode source files as utf-8.
 0014-avoid-fixed-inf.patch: Avoid fixed number LUT optimization on inf values.
+0015-sanitize-float-read.patch: Sanitize floating point read. Partially backport
+    from upstream https://github.com/mm2/Little-CMS/commit/4011a6e3
 TODO(ochang): List other patches.

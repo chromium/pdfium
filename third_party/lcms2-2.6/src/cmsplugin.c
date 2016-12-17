@@ -182,7 +182,9 @@ cmsBool CMSEXPORT  _cmsReadFloat32Number(cmsIOHANDLER* io, cmsFloat32Number* n)
         if (isnan(*n))
             return FALSE;
     }
-    return TRUE;
+
+    // fpclassify() required by C99
+    return (fpclassify(*n) == FP_ZERO) || (fpclassify(*n) == FP_NORMAL);
 }
 
 
