@@ -185,7 +185,7 @@ bool EmbedderTest::OpenDocument(const std::string& filename,
     if (must_linearize) {
       return false;
     }
-    document_ = FPDF_LoadCustomDocument(&file_access_, nullptr);
+    document_ = FPDF_LoadCustomDocument(&file_access_, password);
     if (!document_) {
       return false;
     }

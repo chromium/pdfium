@@ -386,10 +386,11 @@ bool CPDF_SecurityHandler::AES256_CheckPassword(const uint8_t* password,
   if (FXDWORD_GET_LSBFIRST(buf) != m_Permissions)
     return false;
 
-  bool encrypted = IsMetadataEncrypted();
-  if ((buf[8] == 'T' && !encrypted) || (buf[8] == 'F' && encrypted))
-    return false;
-  return true;
+  // Relax this check as there appear to be some non-conforming documents
+  // in the wild. The value in the buffer is the truth; if it requires us
+  // to encrypt metadata, but the dictionary says otherwise, then we may
+  // have a tampered doc.  Otherwise, give it a pass.
+  return buf[8] == 'F' || IsMetadataEncrypted();
 }
 
 bool CPDF_SecurityHandler::CheckPassword(const uint8_t* password,
