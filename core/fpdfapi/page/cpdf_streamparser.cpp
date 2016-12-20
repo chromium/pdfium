@@ -188,7 +188,7 @@ std::unique_ptr<CPDF_Stream> CPDF_StreamParser::ReadInlineStream(
     dwStreamSize = OrigSize;
     m_Pos += OrigSize;
   } else {
-    uint8_t* pIgnore;
+    uint8_t* pIgnore = nullptr;
     uint32_t dwDestSize = OrigSize;
     dwStreamSize =
         PDF_DecodeInlineStream(m_pBuf + m_Pos, m_Size - m_Pos, width, height,
