@@ -15,39 +15,42 @@ class CFX_Observable {
  public:
   class ObservedPtr {
    public:
-    ObservedPtr() : m_pObservedPtr(nullptr) {}
-    explicit ObservedPtr(T* pObservedPtr) : m_pObservedPtr(pObservedPtr) {
-      if (m_pObservedPtr)
-        m_pObservedPtr->AddObservedPtr(this);
+    ObservedPtr() : m_pObservable(nullptr) {}
+    explicit ObservedPtr(T* pObservable) : m_pObservable(pObservable) {
+      if (m_pObservable)
+        m_pObservable->AddObservedPtr(this);
     }
-    ObservedPtr(const ObservedPtr& that) = delete;
+    ObservedPtr(const ObservedPtr& that) : ObservedPtr(that.Get()) {}
     ~ObservedPtr() {
-      if (m_pObservedPtr)
-        m_pObservedPtr->RemoveObservedPtr(this);
+      if (m_pObservable)
+        m_pObservable->RemoveObservedPtr(this);
     }
-    void Reset(T* pObservedPtr = nullptr) {
-      if (m_pObservedPtr)
-        m_pObservedPtr->RemoveObservedPtr(this);
-      m_pObservedPtr = pObservedPtr;
-      if (m_pObservedPtr)
-        m_pObservedPtr->AddObservedPtr(this);
+    void Reset(T* pObservable = nullptr) {
+      if (m_pObservable)
+        m_pObservable->RemoveObservedPtr(this);
+      m_pObservable = pObservable;
+      if (m_pObservable)
+        m_pObservable->AddObservedPtr(this);
     }
     void OnDestroy() {
-      ASSERT(m_pObservedPtr);
-      m_pObservedPtr = nullptr;
+      ASSERT(m_pObservable);
+      m_pObservable = nullptr;
     }
-    ObservedPtr& operator=(const ObservedPtr& that) = delete;
+    ObservedPtr& operator=(const ObservedPtr& that) {
+      Reset(that.Get());
+      return *this;
+    }
     bool operator==(const ObservedPtr& that) const {
-      return m_pObservedPtr == that.m_pObservedPtr;
+      return m_pObservable == that.m_pObservable;
     }
     bool operator!=(const ObservedPtr& that) const { return !(*this == that); }
-    explicit operator bool() const { return !!m_pObservedPtr; }
-    T* Get() const { return m_pObservedPtr; }
-    T& operator*() const { return *m_pObservedPtr; }
-    T* operator->() const { return m_pObservedPtr; }
+    explicit operator bool() const { return !!m_pObservable; }
+    T* Get() const { return m_pObservable; }
+    T& operator*() const { return *m_pObservable; }
+    T* operator->() const { return m_pObservable; }
 
    private:
-    T* m_pObservedPtr;
+    T* m_pObservable;
   };
 
   CFX_Observable() {}

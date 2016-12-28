@@ -5,6 +5,7 @@
 #include "core/fxcrt/cfx_observable.h"
 
 #include <utility>
+#include <vector>
 
 #include "testing/fx_string_testhelpers.h"
 #include "testing/gtest/include/gtest/gtest.h"
@@ -42,6 +43,77 @@ TEST(fxcrt, ObservePtrLivesShorter) {
     EXPECT_EQ(1u, obs.ActiveObservedPtrs());
   }
   EXPECT_EQ(0u, obs.ActiveObservedPtrs());
+}
+
+TEST(fxcrt, ObserveCopyConstruct) {
+  PseudoObservable obs;
+  {
+    PseudoObservable::ObservedPtr ptr(&obs);
+    EXPECT_NE(nullptr, ptr.Get());
+    EXPECT_EQ(1u, obs.ActiveObservedPtrs());
+    {
+      PseudoObservable::ObservedPtr ptr2(ptr);
+      EXPECT_NE(nullptr, ptr2.Get());
+      EXPECT_EQ(2u, obs.ActiveObservedPtrs());
+    }
+    EXPECT_EQ(1u, obs.ActiveObservedPtrs());
+  }
+  EXPECT_EQ(0u, obs.ActiveObservedPtrs());
+}
+
+TEST(fxcrt, ObserveCopyAssign) {
+  PseudoObservable obs;
+  {
+    PseudoObservable::ObservedPtr ptr(&obs);
+    EXPECT_NE(nullptr, ptr.Get());
+    EXPECT_EQ(1u, obs.ActiveObservedPtrs());
+    {
+      PseudoObservable::ObservedPtr ptr2;
+      ptr2 = ptr;
+      EXPECT_NE(nullptr, ptr2.Get());
+      EXPECT_EQ(2u, obs.ActiveObservedPtrs());
+    }
+    EXPECT_EQ(1u, obs.ActiveObservedPtrs());
+  }
+  EXPECT_EQ(0u, obs.ActiveObservedPtrs());
+}
+
+TEST(fxcrt, ObserveVector) {
+  PseudoObservable obs;
+  {
+    std::vector<PseudoObservable::ObservedPtr> vec1;
+    std::vector<PseudoObservable::ObservedPtr> vec2;
+    vec1.emplace_back(&obs);
+    vec1.emplace_back(&obs);
+    EXPECT_NE(nullptr, vec1[0].Get());
+    EXPECT_NE(nullptr, vec1[1].Get());
+    EXPECT_EQ(2u, obs.ActiveObservedPtrs());
+    vec2 = vec1;
+    EXPECT_NE(nullptr, vec2[0].Get());
+    EXPECT_NE(nullptr, vec2[1].Get());
+    EXPECT_EQ(4u, obs.ActiveObservedPtrs());
+    vec1.clear();
+    EXPECT_EQ(2u, obs.ActiveObservedPtrs());
+    vec2.resize(10000);
+    EXPECT_EQ(2u, obs.ActiveObservedPtrs());
+    vec2.resize(0);
+    EXPECT_EQ(0u, obs.ActiveObservedPtrs());
+  }
+  EXPECT_EQ(0u, obs.ActiveObservedPtrs());
+}
+
+TEST(fxcrt, ObserveVectorAutoClear) {
+  std::vector<PseudoObservable::ObservedPtr> vec1;
+  {
+    PseudoObservable obs;
+    vec1.emplace_back(&obs);
+    vec1.emplace_back(&obs);
+    EXPECT_NE(nullptr, vec1[0].Get());
+    EXPECT_NE(nullptr, vec1[1].Get());
+    EXPECT_EQ(2u, obs.ActiveObservedPtrs());
+  }
+  EXPECT_EQ(nullptr, vec1[0].Get());
+  EXPECT_EQ(nullptr, vec1[1].Get());
 }
 
 TEST(fxcrt, ObservePtrResetNull) {
