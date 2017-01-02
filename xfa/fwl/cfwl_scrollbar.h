@@ -79,11 +79,11 @@ class CFWL_ScrollBar : public CFWL_Widget {
                  const CFX_Matrix* pMatrix);
   void Layout();
   void CalcButtonLen();
-  void CalcMinButtonRect(CFX_RectF& rect);
-  void CalcMaxButtonRect(CFX_RectF& rect);
-  void CalcThumbButtonRect(CFX_RectF& rect);
-  void CalcMinTrackRect(CFX_RectF& rect);
-  void CalcMaxTrackRect(CFX_RectF& rect);
+  CFX_RectF CalcMinButtonRect();
+  CFX_RectF CalcMaxButtonRect();
+  CFX_RectF CalcThumbButtonRect(const CFX_RectF& rtThumbRect);
+  CFX_RectF CalcMinTrackRect(const CFX_RectF& rtMinRect);
+  CFX_RectF CalcMaxTrackRect(const CFX_RectF& rtMaxRect);
   FX_FLOAT GetTrackPointPos(FX_FLOAT fx, FX_FLOAT fy);
 
   bool SendEvent();
