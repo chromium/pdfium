@@ -90,11 +90,8 @@ class CXFA_WidgetAcc : public CXFA_WidgetData {
   int32_t ProcessNullTestValidate(CXFA_Validate validate,
                                   int32_t iFlags,
                                   bool bVersionFlag);
-  void GetValidateCaptionName(CFX_WideString& wsCaptionName, bool bVersionFlag);
-  void GetValidateMessage(IXFA_AppProvider* pAppProvider,
-                          CFX_WideString& wsMessage,
-                          bool bError,
-                          bool bVersionFlag);
+  CFX_WideString GetValidateCaptionName(bool bVersionFlag);
+  CFX_WideString GetValidateMessage(bool bError, bool bVersionFlag);
   void CalcCaptionSize(CFX_SizeF& szCap);
   bool CalculateFieldAutoSize(CFX_SizeF& size);
   bool CalculateWidgetAutoSize(CFX_SizeF& size);

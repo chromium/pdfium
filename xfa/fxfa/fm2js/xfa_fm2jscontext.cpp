@@ -6512,12 +6512,11 @@ void CXFA_FM2JSContext::GlobalPropertyGetter(CFXJSE_Value* pValue) {
 void CXFA_FM2JSContext::ThrowException(int32_t iStringID, ...) {
   IXFA_AppProvider* pAppProvider = m_pDocument->GetNotify()->GetAppProvider();
   ASSERT(pAppProvider);
-  CFX_WideString wsFormat;
-  pAppProvider->LoadString(iStringID, wsFormat);
+
   CFX_WideString wsMessage;
   va_list arg_ptr;
   va_start(arg_ptr, iStringID);
-  wsMessage.FormatV(wsFormat.c_str(), arg_ptr);
+  wsMessage.FormatV(pAppProvider->LoadString(iStringID).c_str(), arg_ptr);
   va_end(arg_ptr);
   FXJSE_ThrowMessage(
       FX_UTF8Encode(wsMessage.c_str(), wsMessage.GetLength()).AsStringC());

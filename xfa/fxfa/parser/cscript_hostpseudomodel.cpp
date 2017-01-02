@@ -37,9 +37,8 @@ CScript_HostPseudoModel::~CScript_HostPseudoModel() {}
 void CScript_HostPseudoModel::LoadString(CFXJSE_Value* pValue,
                                          CXFA_FFNotify* pNotify,
                                          uint32_t dwFlag) {
-  CFX_WideString wsValue;
-  pNotify->GetAppProvider()->LoadString(dwFlag, wsValue);
-  pValue->SetString(FX_UTF8Encode(wsValue).AsStringC());
+  pValue->SetString(
+      FX_UTF8Encode(pNotify->GetAppProvider()->LoadString(dwFlag)).AsStringC());
 }
 
 void CScript_HostPseudoModel::AppType(CFXJSE_Value* pValue,
@@ -97,9 +96,8 @@ void CScript_HostPseudoModel::Language(CFXJSE_Value* pValue,
     ThrowException(XFA_IDS_UNABLE_SET_LANGUAGE);
     return;
   }
-  CFX_WideString wsLanguage;
-  pNotify->GetAppProvider()->GetLanguage(wsLanguage);
-  pValue->SetString(FX_UTF8Encode(wsLanguage).AsStringC());
+  pValue->SetString(
+      FX_UTF8Encode(pNotify->GetAppProvider()->GetLanguage()).AsStringC());
 }
 
 void CScript_HostPseudoModel::NumPages(CFXJSE_Value* pValue,
@@ -128,9 +126,8 @@ void CScript_HostPseudoModel::Platform(CFXJSE_Value* pValue,
     ThrowException(XFA_IDS_UNABLE_SET_PLATFORM);
     return;
   }
-  CFX_WideString wsPlatform;
-  pNotify->GetAppProvider()->GetPlatform(wsPlatform);
-  pValue->SetString(FX_UTF8Encode(wsPlatform).AsStringC());
+  pValue->SetString(
+      FX_UTF8Encode(pNotify->GetAppProvider()->GetPlatform()).AsStringC());
 }
 void CScript_HostPseudoModel::Title(CFXJSE_Value* pValue,
                                     bool bSetting,
@@ -210,9 +207,8 @@ void CScript_HostPseudoModel::Name(CFXJSE_Value* pValue,
     ThrowException(XFA_IDS_INVAlID_PROP_SET);
     return;
   }
-  CFX_WideString wsAppName;
-  pNotify->GetAppProvider()->GetAppName(wsAppName);
-  pValue->SetString(FX_UTF8Encode(wsAppName).AsStringC());
+  pValue->SetString(
+      FX_UTF8Encode(pNotify->GetAppProvider()->GetAppName()).AsStringC());
 }
 
 void CScript_HostPseudoModel::GotoURL(CFXJSE_Arguments* pArguments) {

@@ -380,8 +380,7 @@ void CXFA_WidgetAcc::ProcessScriptTestValidate(CXFA_Validate validate,
       if (!pAppProvider) {
         return;
       }
-      CFX_WideString wsTitle;
-      pAppProvider->LoadString(XFA_IDS_AppName, wsTitle);
+      CFX_WideString wsTitle = pAppProvider->GetAppTitle();
       CFX_WideString wsScriptMsg;
       validate.GetScriptMessageText(wsScriptMsg);
       int32_t eScriptTest = validate.GetScriptTest();
@@ -389,7 +388,7 @@ void CXFA_WidgetAcc::ProcessScriptTestValidate(CXFA_Validate validate,
         if (GetNode()->IsUserInteractive())
           return;
         if (wsScriptMsg.IsEmpty())
-          GetValidateMessage(pAppProvider, wsScriptMsg, false, bVersionFlag);
+          wsScriptMsg = GetValidateMessage(false, bVersionFlag);
 
         if (bVersionFlag) {
           pAppProvider->MsgBox(wsScriptMsg, wsTitle, XFA_MBICON_Warning,
@@ -401,9 +400,8 @@ void CXFA_WidgetAcc::ProcessScriptTestValidate(CXFA_Validate validate,
           GetNode()->SetFlag(XFA_NodeFlag_UserInteractive, false);
         }
       } else {
-        if (wsScriptMsg.IsEmpty()) {
-          GetValidateMessage(pAppProvider, wsScriptMsg, true, bVersionFlag);
-        }
+        if (wsScriptMsg.IsEmpty())
+          wsScriptMsg = GetValidateMessage(true, bVersionFlag);
         pAppProvider->MsgBox(wsScriptMsg, wsTitle, XFA_MBICON_Error, XFA_MB_OK);
       }
     }
@@ -430,20 +428,18 @@ int32_t CXFA_WidgetAcc::ProcessFormatTestValidate(CXFA_Validate validate,
       }
       CFX_WideString wsFormatMsg;
       validate.GetFormatMessageText(wsFormatMsg);
-      CFX_WideString wsTitle;
-      pAppProvider->LoadString(XFA_IDS_AppName, wsTitle);
+      CFX_WideString wsTitle = pAppProvider->GetAppTitle();
       int32_t eFormatTest = validate.GetFormatTest();
       if (eFormatTest == XFA_ATTRIBUTEENUM_Error) {
-        if (wsFormatMsg.IsEmpty()) {
-          GetValidateMessage(pAppProvider, wsFormatMsg, true, bVersionFlag);
-        }
+        if (wsFormatMsg.IsEmpty())
+          wsFormatMsg = GetValidateMessage(true, bVersionFlag);
         pAppProvider->MsgBox(wsFormatMsg, wsTitle, XFA_MBICON_Error, XFA_MB_OK);
         return XFA_EVENTERROR_Success;
       }
       if (GetNode()->IsUserInteractive())
         return XFA_EVENTERROR_NotExist;
       if (wsFormatMsg.IsEmpty())
-        GetValidateMessage(pAppProvider, wsFormatMsg, false, bVersionFlag);
+        wsFormatMsg = GetValidateMessage(false, bVersionFlag);
 
       if (bVersionFlag) {
         pAppProvider->MsgBox(wsFormatMsg, wsTitle, XFA_MBICON_Warning,
@@ -496,15 +492,12 @@ int32_t CXFA_WidgetAcc::ProcessNullTestValidate(CXFA_Validate validate,
     return XFA_EVENTERROR_NotExist;
   }
   CFX_WideString wsCaptionName;
-  CFX_WideString wsTitle;
-  pAppProvider->LoadString(XFA_IDS_AppName, wsTitle);
+  CFX_WideString wsTitle = pAppProvider->GetAppTitle();
   switch (eNullTest) {
     case XFA_ATTRIBUTEENUM_Error: {
       if (wsNullMsg.IsEmpty()) {
-        GetValidateCaptionName(wsCaptionName, bVersionFlag);
-        CFX_WideString wsError;
-        pAppProvider->LoadString(XFA_IDS_ValidateNullError, wsError);
-        wsNullMsg.Format(wsError.c_str(), wsCaptionName.c_str());
+        wsCaptionName = GetValidateCaptionName(bVersionFlag);
+        wsNullMsg.Format(L"%s cannot be blank.", wsCaptionName.c_str());
       }
       pAppProvider->MsgBox(wsNullMsg, wsTitle, XFA_MBICON_Status, XFA_MB_OK);
       return XFA_EVENTERROR_Error;
@@ -514,11 +507,10 @@ int32_t CXFA_WidgetAcc::ProcessNullTestValidate(CXFA_Validate validate,
         return true;
 
       if (wsNullMsg.IsEmpty()) {
-        GetValidateCaptionName(wsCaptionName, bVersionFlag);
-        CFX_WideString wsWarning;
-        pAppProvider->LoadString(XFA_IDS_ValidateNullWarning, wsWarning);
-        wsNullMsg.Format(wsWarning.c_str(), wsCaptionName.c_str(),
-                         wsCaptionName.c_str());
+        wsCaptionName = GetValidateCaptionName(bVersionFlag);
+        wsNullMsg.Format(
+            L"%s cannot be blank. To ignore validations for %s, click Ignore.",
+            wsCaptionName.c_str(), wsCaptionName.c_str());
       }
       if (pAppProvider->MsgBox(wsNullMsg, wsTitle, XFA_MBICON_Warning,
                                XFA_MB_YesNo) == XFA_IDYes) {
@@ -532,46 +524,44 @@ int32_t CXFA_WidgetAcc::ProcessNullTestValidate(CXFA_Validate validate,
   }
   return XFA_EVENTERROR_Success;
 }
-void CXFA_WidgetAcc::GetValidateCaptionName(CFX_WideString& wsCaptionName,
-                                            bool bVersionFlag) {
+
+CFX_WideString CXFA_WidgetAcc::GetValidateCaptionName(bool bVersionFlag) {
+  CFX_WideString wsCaptionName;
+
   if (!bVersionFlag) {
-    CXFA_Caption caption = GetCaption();
-    if (caption) {
-      CXFA_Value capValue = caption.GetValue();
-      if (capValue) {
-        CXFA_Text capText = capValue.GetText();
-        if (capText) {
+    if (CXFA_Caption caption = GetCaption()) {
+      if (CXFA_Value capValue = caption.GetValue()) {
+        if (CXFA_Text capText = capValue.GetText())
           capText.GetContent(wsCaptionName);
-        }
       }
     }
   }
-  if (wsCaptionName.IsEmpty()) {
+  if (wsCaptionName.IsEmpty())
     GetName(wsCaptionName);
-  }
+
+  return wsCaptionName;
 }
-void CXFA_WidgetAcc::GetValidateMessage(IXFA_AppProvider* pAppProvider,
-                                        CFX_WideString& wsMessage,
-                                        bool bError,
-                                        bool bVersionFlag) {
-  CFX_WideString wsCaptionName;
-  GetValidateCaptionName(wsCaptionName, bVersionFlag);
-  CFX_WideString wsError;
+
+CFX_WideString CXFA_WidgetAcc::GetValidateMessage(bool bError,
+                                                  bool bVersionFlag) {
+  CFX_WideString wsCaptionName = GetValidateCaptionName(bVersionFlag);
+  CFX_WideString wsMessage;
   if (bVersionFlag) {
-    pAppProvider->LoadString(XFA_IDS_ValidateFailed, wsError);
-    wsMessage.Format(wsError.c_str(), wsCaptionName.c_str());
-    return;
+    wsMessage.Format(L"%s validation failed", wsCaptionName.c_str());
+    return wsMessage;
   }
   if (bError) {
-    pAppProvider->LoadString(XFA_IDS_ValidateError, wsError);
-    wsMessage.Format(wsError.c_str(), wsCaptionName.c_str());
-    return;
+    wsMessage.Format(L"The value you entered for %s is invalid.",
+                     wsCaptionName.c_str());
+    return wsMessage;
   }
-  CFX_WideString wsWarning;
-  pAppProvider->LoadString(XFA_IDS_ValidateWarning, wsWarning);
-  wsMessage.Format(wsWarning.c_str(), wsCaptionName.c_str(),
-                   wsCaptionName.c_str());
+  wsMessage.Format(
+      L"The value you entered for %s is invalid. To ignore "
+      L"validations for %s, click Ignore.",
+      wsCaptionName.c_str(), wsCaptionName.c_str());
+  return wsMessage;
 }
+
 int32_t CXFA_WidgetAcc::ProcessValidate(int32_t iFlags) {
   if (GetElementType() == XFA_Element::Draw) {
     return XFA_EVENTERROR_NotExist;

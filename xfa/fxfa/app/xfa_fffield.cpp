@@ -687,13 +687,8 @@ int32_t CXFA_FFField::CalculateWidgetAcc(CXFA_WidgetAcc* pAcc) {
         }
         IXFA_AppProvider* pAppProvider = GetApp()->GetAppProvider();
         if (pAppProvider) {
-          CFX_WideString wsMessage;
-          CFX_WideString wsWarning;
-          pAppProvider->LoadString(XFA_IDS_NotModifyField, wsWarning);
-          wsMessage += wsWarning;
-          CFX_WideString wsTitle;
-          pAppProvider->LoadString(XFA_IDS_CalcOverride, wsTitle);
-          pAppProvider->MsgBox(wsMessage, wsTitle, XFA_MBICON_Warning,
+          pAppProvider->MsgBox(L"You are not allowed to modify this field.",
+                               L"Calculate Override", XFA_MBICON_Warning,
                                XFA_MB_OK);
         }
       }
@@ -717,15 +712,11 @@ int32_t CXFA_FFField::CalculateWidgetAcc(CXFA_WidgetAcc* pAcc) {
         if (pAppProvider) {
           CFX_WideString wsMessage;
           calc.GetMessageText(wsMessage);
-          if (!wsMessage.IsEmpty()) {
+          if (!wsMessage.IsEmpty())
             wsMessage += L"\r\n";
-          }
-          CFX_WideString wsWarning;
-          pAppProvider->LoadString(XFA_IDS_ModifyField, wsWarning);
-          wsMessage += wsWarning;
-          CFX_WideString wsTitle;
-          pAppProvider->LoadString(XFA_IDS_CalcOverride, wsTitle);
-          if (pAppProvider->MsgBox(wsMessage, wsTitle, XFA_MBICON_Warning,
+          wsMessage += L"Are you sure you want to modify this field?";
+          if (pAppProvider->MsgBox(wsMessage, L"Calculate Override",
+                                   XFA_MBICON_Warning,
                                    XFA_MB_YesNo) == XFA_IDYes) {
             pAcc->GetNode()->SetFlag(XFA_NodeFlag_UserInteractive, false);
             return 1;

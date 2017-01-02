@@ -283,10 +283,9 @@ bool CXFA_Document::IsInteractive() {
 
 CXFA_LocaleMgr* CXFA_Document::GetLocalMgr() {
   if (!m_pLocalMgr) {
-    CFX_WideString wsLanguage;
-    GetNotify()->GetAppProvider()->GetLanguage(wsLanguage);
-    m_pLocalMgr = new CXFA_LocaleMgr(
-        ToNode(GetXFAObject(XFA_HASHCODE_LocaleSet)), wsLanguage);
+    m_pLocalMgr =
+        new CXFA_LocaleMgr(ToNode(GetXFAObject(XFA_HASHCODE_LocaleSet)),
+                           GetNotify()->GetAppProvider()->GetLanguage());
   }
   return m_pLocalMgr;
 }

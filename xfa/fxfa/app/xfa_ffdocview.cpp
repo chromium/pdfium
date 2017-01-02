@@ -159,17 +159,15 @@ void CXFA_FFDocView::ShowNullTestMsg() {
       wsMsg += m_arrNullTestMsg[i] + FX_WSTRC(L"\n");
     }
     if (iRemain > 0) {
-      CFX_WideString wsLimit;
-      pAppProvider->LoadString(XFA_IDS_ValidateLimit, wsLimit);
-      if (!wsLimit.IsEmpty()) {
-        CFX_WideString wsTemp;
-        wsTemp.Format(wsLimit.c_str(), iRemain);
-        wsMsg += FX_WSTRC(L"\n") + wsTemp;
-      }
+      CFX_WideString wsTemp;
+      wsTemp.Format(
+          L"Message limit exceeded. Remaining %d "
+          L"validation errors not reported.",
+          iRemain);
+      wsMsg += FX_WSTRC(L"\n") + wsTemp;
     }
-    CFX_WideString wsTitle;
-    pAppProvider->LoadString(XFA_IDS_AppName, wsTitle);
-    pAppProvider->MsgBox(wsMsg, wsTitle, XFA_MBICON_Status, XFA_MB_OK);
+    pAppProvider->MsgBox(wsMsg, pAppProvider->GetAppTitle(), XFA_MBICON_Status,
+                         XFA_MB_OK);
   }
   m_arrNullTestMsg.clear();
 }

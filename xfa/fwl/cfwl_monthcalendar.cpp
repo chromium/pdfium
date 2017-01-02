@@ -31,92 +31,54 @@
 
 namespace {
 
-CFX_WideString* GetCapacityForDay(IFWL_ThemeProvider* pTheme,
-                                  CFWL_ThemePart& params,
-                                  uint32_t day) {
+CFX_WideString GetCapacityForDay(IFWL_ThemeProvider* pTheme,
+                                 CFWL_ThemePart& params,
+                                 uint32_t day) {
   ASSERT(day < 7);
 
-  if (day == 0) {
-    return static_cast<CFX_WideString*>(
-        pTheme->GetCapacity(&params, CFWL_WidgetCapacity::Sun));
-  }
-  if (day == 1) {
-    return static_cast<CFX_WideString*>(
-        pTheme->GetCapacity(&params, CFWL_WidgetCapacity::Mon));
-  }
-  if (day == 2) {
-    return static_cast<CFX_WideString*>(
-        pTheme->GetCapacity(&params, CFWL_WidgetCapacity::Tue));
-  }
-  if (day == 3) {
-    return static_cast<CFX_WideString*>(
-        pTheme->GetCapacity(&params, CFWL_WidgetCapacity::Wed));
-  }
-  if (day == 4) {
-    return static_cast<CFX_WideString*>(
-        pTheme->GetCapacity(&params, CFWL_WidgetCapacity::Thu));
-  }
-  if (day == 5) {
-    return static_cast<CFX_WideString*>(
-        pTheme->GetCapacity(&params, CFWL_WidgetCapacity::Fri));
-  }
-
-  return static_cast<CFX_WideString*>(
-      pTheme->GetCapacity(&params, CFWL_WidgetCapacity::Sat));
+  if (day == 0)
+    return L"Sun";
+  if (day == 1)
+    return L"Mon";
+  if (day == 2)
+    return L"Tue";
+  if (day == 3)
+    return L"Wed";
+  if (day == 4)
+    return L"Thu";
+  if (day == 5)
+    return L"Fri";
+  return L"Sat";
 }
 
-CFX_WideString* GetCapacityForMonth(IFWL_ThemeProvider* pTheme,
-                                    CFWL_ThemePart& params,
-                                    uint32_t month) {
+CFX_WideString GetCapacityForMonth(IFWL_ThemeProvider* pTheme,
+                                   CFWL_ThemePart& params,
+                                   uint32_t month) {
   ASSERT(month < 12);
 
-  if (month == 0) {
-    return static_cast<CFX_WideString*>(
-        pTheme->GetCapacity(&params, CFWL_WidgetCapacity::January));
-  }
-  if (month == 1) {
-    return static_cast<CFX_WideString*>(
-        pTheme->GetCapacity(&params, CFWL_WidgetCapacity::February));
-  }
-  if (month == 2) {
-    return static_cast<CFX_WideString*>(
-        pTheme->GetCapacity(&params, CFWL_WidgetCapacity::March));
-  }
-  if (month == 3) {
-    return static_cast<CFX_WideString*>(
-        pTheme->GetCapacity(&params, CFWL_WidgetCapacity::April));
-  }
-  if (month == 4) {
-    return static_cast<CFX_WideString*>(
-        pTheme->GetCapacity(&params, CFWL_WidgetCapacity::May));
-  }
-  if (month == 5) {
-    return static_cast<CFX_WideString*>(
-        pTheme->GetCapacity(&params, CFWL_WidgetCapacity::June));
-  }
-  if (month == 6) {
-    return static_cast<CFX_WideString*>(
-        pTheme->GetCapacity(&params, CFWL_WidgetCapacity::July));
-  }
-  if (month == 7) {
-    return static_cast<CFX_WideString*>(
-        pTheme->GetCapacity(&params, CFWL_WidgetCapacity::August));
-  }
-  if (month == 8) {
-    return static_cast<CFX_WideString*>(
-        pTheme->GetCapacity(&params, CFWL_WidgetCapacity::September));
-  }
-  if (month == 9) {
-    return static_cast<CFX_WideString*>(
-        pTheme->GetCapacity(&params, CFWL_WidgetCapacity::October));
-  }
-  if (month == 10) {
-    return static_cast<CFX_WideString*>(
-        pTheme->GetCapacity(&params, CFWL_WidgetCapacity::November));
-  }
-
-  return static_cast<CFX_WideString*>(
-      pTheme->GetCapacity(&params, CFWL_WidgetCapacity::December));
+  if (month == 0)
+    return L"January";
+  if (month == 1)
+    return L"February";
+  if (month == 2)
+    return L"March";
+  if (month == 3)
+    return L"April";
+  if (month == 4)
+    return L"May";
+  if (month == 5)
+    return L"June";
+  if (month == 6)
+    return L"July";
+  if (month == 7)
+    return L"August";
+  if (month == 8)
+    return L"September";
+  if (month == 9)
+    return L"October";
+  if (month == 10)
+    return L"November";
+  return L"December";
 }
 
 }  // namespace
@@ -360,7 +322,7 @@ void CFWL_MonthCalendar::DrawWeek(CFX_Graphics* pGraphics,
     rtDayOfWeek.Set(m_rtWeek.left + i * (m_szCell.x + MONTHCAL_HMARGIN * 2),
                     m_rtWeek.top, m_szCell.x, m_szCell.y);
     params.m_rtPart = rtDayOfWeek;
-    params.m_wsText = *GetCapacityForDay(pTheme, params, i);
+    params.m_wsText = GetCapacityForDay(pTheme, params, i);
     params.m_dwTTOStyles = FDE_TTOSTYLE_SingleLine;
     pTheme->DrawText(&params);
   }
@@ -376,11 +338,9 @@ void CFWL_MonthCalendar::DrawToday(CFX_Graphics* pGraphics,
   params.m_dwStates = CFWL_PartState_Normal;
   params.m_iTTOAlign = FDE_TTOALIGNMENT_CenterLeft;
 
-  CFX_WideString* wsDay = static_cast<CFX_WideString*>(
-      pTheme->GetCapacity(&params, CFWL_WidgetCapacity::Today));
   CFX_WideString wsText;
   GetTodayText(m_iYear, m_iMonth, m_iDay, wsText);
-  params.m_wsText = *wsDay + wsText;
+  params.m_wsText = L"Today" + wsText;
 
   m_szToday =
       CalcTextSize(params.m_wsText, m_pProperties->m_pThemeProvider, false);
@@ -466,7 +426,7 @@ CFX_SizeF CFWL_MonthCalendar::CalcSize() {
   FX_FLOAT fMaxWeekH = 0.0f;
 
   for (uint32_t i = 0; i < 7; ++i) {
-    CFX_SizeF sz = CalcTextSize(*GetCapacityForDay(pTheme, params, i),
+    CFX_SizeF sz = CalcTextSize(GetCapacityForDay(pTheme, params, i),
                                 m_pProperties->m_pThemeProvider, false);
     fMaxWeekW = (fMaxWeekW >= sz.x) ? fMaxWeekW : sz.x;
     fMaxWeekH = (fMaxWeekH >= sz.y) ? fMaxWeekH : sz.y;
@@ -491,7 +451,7 @@ CFX_SizeF CFWL_MonthCalendar::CalcSize() {
   FX_FLOAT fMonthMaxH = 0.0f;
 
   for (uint32_t i = 0; i < 12; ++i) {
-    CFX_SizeF sz = CalcTextSize(*GetCapacityForMonth(pTheme, params, i),
+    CFX_SizeF sz = CalcTextSize(GetCapacityForMonth(pTheme, params, i),
                                 m_pProperties->m_pThemeProvider, false);
     fMonthMaxW = (fMonthMaxW >= sz.x) ? fMonthMaxW : sz.x;
     fMonthMaxH = (fMonthMaxH >= sz.y) ? fMonthMaxH : sz.y;
@@ -509,9 +469,7 @@ CFX_SizeF CFWL_MonthCalendar::CalcSize() {
 
   CFX_WideString wsToday;
   GetTodayText(m_iYear, m_iMonth, m_iDay, wsToday);
-  CFX_WideString* wsText = static_cast<CFX_WideString*>(
-      pTheme->GetCapacity(&params, CFWL_WidgetCapacity::Today));
-  m_wsToday = *wsText + wsToday;
+  m_wsToday = L"Today" + wsToday;
   m_szToday = CalcTextSize(wsToday, m_pProperties->m_pThemeProvider, false);
   m_szToday.y = (m_szToday.y >= m_szCell.y) ? m_szToday.y : m_szCell.y;
   fs.y = m_szCell.x + m_szCell.y * (MONTHCAL_ROWS - 2) + m_szToday.y +

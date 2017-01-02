@@ -19,28 +19,6 @@
 enum class CFWL_WidgetCapacity {
   None = 0,
 
-  Today,
-  Sun,
-  Mon,
-  Tue,
-  Wed,
-  Thu,
-  Fri,
-  Sat,
-
-  January,
-  February,
-  March,
-  April,
-  May,
-  June,
-  July,
-  August,
-  September,
-  October,
-  November,
-  December,
-
   BigIcon,
   ComboFormHandler,
   CXBorder,

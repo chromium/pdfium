@@ -195,15 +195,14 @@ void CXFA_FFTextEdit::ValidateNumberField(const CFX_WideString& wsText) {
   if (pAcc && pAcc->GetUIType() == XFA_Element::NumericEdit) {
     IXFA_AppProvider* pAppProvider = GetApp()->GetAppProvider();
     if (pAppProvider) {
-      CFX_WideString wsTitle;
-      pAppProvider->LoadString(XFA_IDS_AppName, wsTitle);
-      CFX_WideString wsError;
-      pAppProvider->LoadString(XFA_IDS_ValidateNumberError, wsError);
       CFX_WideString wsSomField;
       pAcc->GetNode()->GetSOMExpression(wsSomField);
+
       CFX_WideString wsMessage;
-      wsMessage.Format(wsError.c_str(), wsText.c_str(), wsSomField.c_str());
-      pAppProvider->MsgBox(wsMessage, wsTitle, XFA_MBICON_Error, XFA_MB_OK);
+      wsMessage.Format(L"%s can not contain %s", wsText.c_str(),
+                       wsSomField.c_str());
+      pAppProvider->MsgBox(wsMessage, pAppProvider->GetAppTitle(),
+                           XFA_MBICON_Error, XFA_MB_OK);
     }
   }
 }
