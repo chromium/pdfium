@@ -121,7 +121,7 @@ class CPDF_DataAvail final {
 
     PDF_PAGENODE_TYPE m_type;
     uint32_t m_dwPageNo;
-    CFX_ArrayTemplate<PageNode*> m_childNode;
+    std::vector<std::unique_ptr<PageNode>> m_ChildNodes;
   };
 
   static const int kMaxDataAvailRecursionDepth = 64;
@@ -179,14 +179,14 @@ class CPDF_DataAvail final {
   bool CheckPage(uint32_t dwPage, DownloadHints* pHints);
   bool LoadDocPages(DownloadHints* pHints);
   bool LoadDocPage(uint32_t dwPage, DownloadHints* pHints);
-  bool CheckPageNode(PageNode& pageNodes,
+  bool CheckPageNode(const PageNode& pageNode,
                      int32_t iPage,
                      int32_t& iCount,
                      DownloadHints* pHints,
                      int level);
-  bool CheckUnkownPageNode(uint32_t dwPageNo,
-                           PageNode* pPageNode,
-                           DownloadHints* pHints);
+  bool CheckUnknownPageNode(uint32_t dwPageNo,
+                            PageNode* pPageNode,
+                            DownloadHints* pHints);
   bool CheckArrayPageNode(uint32_t dwPageNo,
                           PageNode* pPageNode,
                           DownloadHints* pHints);
@@ -247,7 +247,7 @@ class CPDF_DataAvail final {
   FX_FILESIZE m_dwPrevXRefOffset;
   bool m_bTotalLoadPageTree;
   bool m_bCurPageDictLoadOK;
-  PageNode m_pageNodes;
+  PageNode m_PageNode;
   std::set<uint32_t> m_pageMapCheckState;
   std::set<uint32_t> m_pagesLoadState;
   std::unique_ptr<CPDF_HintTables> m_pHintTables;

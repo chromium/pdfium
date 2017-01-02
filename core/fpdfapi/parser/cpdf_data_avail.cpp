@@ -24,6 +24,7 @@
 #include "core/fxcrt/fx_ext.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "third_party/base/numerics/safe_conversions.h"
+#include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 
 CPDF_DataAvail::FileAvail::~FileAvail() {}
@@ -1147,16 +1148,16 @@ bool CPDF_DataAvail::CheckArrayPageNode(uint32_t dwPageNo,
     if (!pKid)
       continue;
 
-    PageNode* pNode = new PageNode();
-    pPageNode->m_childNode.Add(pNode);
+    auto pNode = pdfium::MakeUnique<PageNode>();
     pNode->m_dwPageNo = pKid->GetRefObjNum();
+    pPageNode->m_ChildNodes.push_back(std::move(pNode));
   }
   return true;
 }
 
-bool CPDF_DataAvail::CheckUnkownPageNode(uint32_t dwPageNo,
-                                         PageNode* pPageNode,
-                                         DownloadHints* pHints) {
+bool CPDF_DataAvail::CheckUnknownPageNode(uint32_t dwPageNo,
+                                          PageNode* pPageNode,
+                                          DownloadHints* pHints) {
   bool bExist = false;
   std::unique_ptr<CPDF_Object> pPage = GetObject(dwPageNo, pHints, &bExist);
   if (!bExist) {
@@ -1195,9 +1196,9 @@ bool CPDF_DataAvail::CheckUnkownPageNode(uint32_t dwPageNo,
     switch (pKids->GetType()) {
       case CPDF_Object::REFERENCE: {
         CPDF_Reference* pKid = pKids->AsReference();
-        PageNode* pNode = new PageNode();
-        pPageNode->m_childNode.Add(pNode);
+        auto pNode = pdfium::MakeUnique<PageNode>();
         pNode->m_dwPageNo = pKid->GetRefObjNum();
+        pPageNode->m_ChildNodes.push_back(std::move(pNode));
       } break;
       case CPDF_Object::ARRAY: {
         CPDF_Array* pKidsArray = pKids->AsArray();
@@ -1206,9 +1207,9 @@ bool CPDF_DataAvail::CheckUnkownPageNode(uint32_t dwPageNo,
           if (!pKid)
             continue;
 
-          PageNode* pNode = new PageNode();
-          pPageNode->m_childNode.Add(pNode);
+          auto pNode = pdfium::MakeUnique<PageNode>();
           pNode->m_dwPageNo = pKid->GetRefObjNum();
+          pPageNode->m_ChildNodes.push_back(std::move(pNode));
         }
       } break;
       default:
@@ -1223,7 +1224,7 @@ bool CPDF_DataAvail::CheckUnkownPageNode(uint32_t dwPageNo,
   return true;
 }
 
-bool CPDF_DataAvail::CheckPageNode(CPDF_DataAvail::PageNode& pageNodes,
+bool CPDF_DataAvail::CheckPageNode(const CPDF_DataAvail::PageNode& pageNode,
                                    int32_t iPage,
                                    int32_t& iCount,
                                    DownloadHints* pHints,
@@ -1231,24 +1232,27 @@ bool CPDF_DataAvail::CheckPageNode(CPDF_DataAvail::PageNode& pageNodes,
   if (level >= kMaxPageRecursionDepth)
     return false;
 
-  int32_t iSize = pageNodes.m_childNode.GetSize();
+  int32_t iSize = pdfium::CollectionSize<int32_t>(pageNode.m_ChildNodes);
   if (iSize <= 0 || iPage >= iSize) {
     m_docStatus = PDF_DATAAVAIL_ERROR;
     return false;
   }
-
   for (int32_t i = 0; i < iSize; ++i) {
-    PageNode* pNode = pageNodes.m_childNode.GetAt(i);
+    PageNode* pNode = pageNode.m_ChildNodes[i].get();
     if (!pNode)
       continue;
 
+    if (pNode->m_type == PDF_PAGENODE_UNKNOWN) {
+      // Updates the type for the unknown page node.
+      if (!CheckUnknownPageNode(pNode->m_dwPageNo, pNode, pHints))
+        return false;
+    }
+    if (pNode->m_type == PDF_PAGENODE_ARRAY) {
+      // Updates a more specific type for the array page node.
+      if (!CheckArrayPageNode(pNode->m_dwPageNo, pNode, pHints))
+        return false;
+    }
     switch (pNode->m_type) {
-      case PDF_PAGENODE_UNKNOWN:
-        if (!CheckUnkownPageNode(pNode->m_dwPageNo, pNode, pHints)) {
-          return false;
-        }
-        --i;
-        break;
       case PDF_PAGENODE_PAGE:
         iCount++;
         if (iPage == iCount && m_pDocument)
@@ -1258,13 +1262,11 @@ bool CPDF_DataAvail::CheckPageNode(CPDF_DataAvail::PageNode& pageNodes,
         if (!CheckPageNode(*pNode, iPage, iCount, pHints, level + 1))
           return false;
         break;
+      case PDF_PAGENODE_UNKNOWN:
       case PDF_PAGENODE_ARRAY:
-        if (!CheckArrayPageNode(pNode->m_dwPageNo, pNode, pHints))
-          return false;
-        --i;
-        break;
+        // Already converted above, error if we get here.
+        return false;
     }
-
     if (iPage == iCount) {
       m_docStatus = PDF_DATAAVAIL_DONE;
       return true;
@@ -1281,17 +1283,12 @@ bool CPDF_DataAvail::LoadDocPage(uint32_t dwPage, DownloadHints* pHints) {
     m_docStatus = PDF_DATAAVAIL_DONE;
     return true;
   }
-
-  if (m_pageNodes.m_type == PDF_PAGENODE_PAGE) {
-    if (iPage == 0) {
-      m_docStatus = PDF_DATAAVAIL_DONE;
-      return true;
-    }
-    m_docStatus = PDF_DATAAVAIL_ERROR;
+  if (m_PageNode.m_type == PDF_PAGENODE_PAGE) {
+    m_docStatus = iPage == 0 ? PDF_DATAAVAIL_DONE : PDF_DATAAVAIL_ERROR;
     return true;
   }
   int32_t iCount = -1;
-  return CheckPageNode(m_pageNodes, iPage, iCount, pHints, 0);
+  return CheckPageNode(m_PageNode, iPage, iCount, pHints, 0);
 }
 
 bool CPDF_DataAvail::CheckPageCount(DownloadHints* pHints) {
@@ -1319,7 +1316,7 @@ bool CPDF_DataAvail::CheckPageCount(DownloadHints* pHints) {
 }
 
 bool CPDF_DataAvail::LoadDocPages(DownloadHints* pHints) {
-  if (!CheckUnkownPageNode(m_PagesObjNum, &m_pageNodes, pHints))
+  if (!CheckUnknownPageNode(m_PagesObjNum, &m_PageNode, pHints))
     return false;
 
   if (CheckPageCount(pHints)) {
@@ -1703,8 +1700,4 @@ bool CPDF_DataAvail::ValidateForm() {
 
 CPDF_DataAvail::PageNode::PageNode() : m_type(PDF_PAGENODE_UNKNOWN) {}
 
-CPDF_DataAvail::PageNode::~PageNode() {
-  for (int32_t i = 0; i < m_childNode.GetSize(); ++i)
-    delete m_childNode[i];
-  m_childNode.RemoveAll();
-}
+CPDF_DataAvail::PageNode::~PageNode() {}
