@@ -14,6 +14,7 @@ import subprocess
 import sys
 
 import common
+import gold
 import pngdiffer
 import suppressor
 
@@ -39,6 +40,10 @@ class TestRunner:
   def __init__(self, dirname):
     self.test_dir = dirname
 
+  # GenerateAndTest returns a tuple <success, outputfiles> where
+  # success is a boolean indicating whether the tests passed comparison
+  # tests and outputfiles is a list tuples:
+  #          (path_to_image, md5_hash_of_pixelbuffer)
   def GenerateAndTest(self, input_filename, source_dir):
     input_root, _ = os.path.splitext(input_filename)
     expected_txt_path = os.path.join(source_dir, input_root + '_expected.txt')
@@ -59,23 +64,23 @@ class TestRunner:
 
     if raised_exception != None:
       print "FAILURE: " + input_filename + "; " + str(raised_exception)
-      return False
+      return False, []
 
+    results = []
     if os.path.exists(expected_txt_path):
       raised_exception = self.TestText(input_root, expected_txt_path, pdf_path)
     else:
-      raised_exception = self.TestPixel(input_root, pdf_path)
+      raised_exception, results = self.TestPixel(input_root, pdf_path)
 
     if raised_exception != None:
       print "FAILURE: " + input_filename + "; " + str(raised_exception)
-      return False
+      return False, results
 
     if len(actual_images):
       if self.image_differ.HasDifferences(input_filename, source_dir,
                                           self.working_dir):
-        return False
-
-    return True
+        return False, results
+    return True, results
 
   def Generate(self, source_dir, input_filename, input_root, pdf_path):
     original_path = os.path.join(source_dir, input_filename)
@@ -113,12 +118,20 @@ class TestRunner:
 
   def TestPixel(self, input_root, pdf_path):
     cmd_to_run = common.DrMemoryWrapper(self.drmem_wrapper, input_root)
-    cmd_to_run.extend([self.pdfium_test_path, '--send-events', '--png',
-                       pdf_path])
-    return common.RunCommand(cmd_to_run)
-
+    cmd_to_run.extend([self.pdfium_test_path, '--send-events', '--png'])
+    if self.gold_results:
+      cmd_to_run.append('--md5')
+    cmd_to_run.append(pdf_path)
+    return common.RunCommandExtractHashedFiles(cmd_to_run)
 
   def HandleResult(self, input_filename, input_path, result):
+    if self.gold_results:
+      success, image_paths = result
+      for img_path, md5_hash in image_paths:
+        # the output filename (without extension becomes the test name)
+        test_name = os.path.splitext(os.path.split(img_path)[1])[0]
+        self.gold_results.AddTestResult(test_name, md5_hash, img_path)
+
     if self.test_suppressor.IsResultSuppressed(input_filename):
       if result:
         self.surprises.append(input_path)
@@ -129,13 +142,29 @@ class TestRunner:
 
   def Run(self):
     parser = optparse.OptionParser()
+
     parser.add_option('--build-dir', default=os.path.join('out', 'Debug'),
                       help='relative path from the base source directory')
+
     parser.add_option('-j', default=multiprocessing.cpu_count(),
                       dest='num_workers', type='int',
                       help='run NUM_WORKERS jobs in parallel')
+
     parser.add_option('--wrapper', default='', dest="wrapper",
                       help='wrapper for running test under Dr. Memory')
+
+    parser.add_option('--gold_properties', default='', dest="gold_properties",
+                      help='Key value pairs that are written to the top level of the JSON file that is ingested by Gold.')
+
+    parser.add_option('--gold_key', default='', dest="gold_key",
+                      help='Key value pairs that are added to the "key" field of the JSON file that is ingested by Gold.')
+
+    parser.add_option('--gold_output_dir', default='', dest="gold_output_dir",
+                      help='Path of where to write the JSON output to be uploaded to Gold.')
+
+    parser.add_option('--ignore_errors', action="store_true", dest="ignore_errors",
+                      help='Prevents the return value from being non-zero when image comparison fails.')
+
     options, args = parser.parse_args()
 
     finder = common.DirectoryFinder(options.build_dir)
@@ -191,6 +220,14 @@ class TestRunner:
     self.failures = []
     self.surprises = []
 
+    # Collect Gold results if an output directory was named.
+    self.gold_results = None
+    if options.gold_output_dir:
+      self.gold_results = gold.GoldResults("pdfium",
+                                           options.gold_output_dir,
+                                           options.gold_properties,
+                                           options.gold_key)
+
     if options.num_workers > 1 and len(test_cases) > 1:
       try:
         pool = multiprocessing.Pool(options.num_workers)
@@ -215,6 +252,9 @@ class TestRunner:
         self.HandleResult(input_filename,
                           os.path.join(input_file_dir, input_filename), result)
 
+    if self.gold_results:
+      self.gold_results.WriteResults()
+
     if self.surprises:
       self.surprises.sort()
       print '\n\nUnexpected Successes:'
@@ -226,6 +266,6 @@ class TestRunner:
       print '\n\nSummary of Failures:'
       for failure in self.failures:
         print failure
-      return 1
-
+        if not options.ignore_errors:
+          return 1
     return 0

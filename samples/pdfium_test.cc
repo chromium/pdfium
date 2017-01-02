@@ -17,6 +17,7 @@
 #define _SKIA_SUPPORT_
 #endif
 
+#include "core/fdrm/crypto/fx_crypt.h"
 #include "public/fpdf_dataavail.h"
 #include "public/fpdf_edit.h"
 #include "public/fpdf_ext.h"
@@ -67,11 +68,13 @@ struct Options {
       : show_config(false),
         send_events(false),
         pages(false),
+        md5(false),
         output_format(OUTPUT_NONE) {}
 
   bool show_config;
   bool send_events;
   bool pages;
+  bool md5;
   OutputFormat output_format;
   std::string scale_factor_as_string;
   std::string exe_path;
@@ -109,23 +112,37 @@ static bool CheckDimensions(int stride, int width, int height) {
   return true;
 }
 
-static void WritePpm(const char* pdf_name, int num, const void* buffer_void,
-                     int stride, int width, int height) {
+static void OutputMD5Hash(const char* file_name, const char* buffer, int len) {
+  // Get the MD5 hash and write it to stdout.
+  uint8_t digest[16];
+  CRYPT_MD5Generate(reinterpret_cast<const uint8_t*>(buffer), len, digest);
+  printf("MD5:%s:", file_name);
+  for (int i = 0; i < 16; i++)
+    printf("%02x", digest[i]);
+  printf("\n");
+}
+
+static std::string WritePpm(const char* pdf_name,
+                            int num,
+                            const void* buffer_void,
+                            int stride,
+                            int width,
+                            int height) {
   const char* buffer = reinterpret_cast<const char*>(buffer_void);
 
   if (!CheckDimensions(stride, width, height))
-    return;
+    return "";
 
   int out_len = width * height;
   if (out_len > INT_MAX / 3)
-    return;
+    return "";
   out_len *= 3;
 
   char filename[256];
   snprintf(filename, sizeof(filename), "%s.%d.ppm", pdf_name, num);
   FILE* fp = fopen(filename, "wb");
   if (!fp)
-    return;
+    return "";
   fprintf(fp, "P6\n# PDF test render\n%d %d\n255\n", width, height);
   // Source data is B, G, R, unused.
   // Dest data is R, G, B.
@@ -144,6 +161,7 @@ static void WritePpm(const char* pdf_name, int num, const void* buffer_void,
   }
   fwrite(result.data(), out_len, 1, fp);
   fclose(fp);
+  return std::string(filename);
 }
 
 void WriteText(FPDF_PAGE page, const char* pdf_name, int num) {
@@ -177,17 +195,21 @@ void WriteText(FPDF_PAGE page, const char* pdf_name, int num) {
   (void)fclose(fp);
 }
 
-static void WritePng(const char* pdf_name, int num, const void* buffer_void,
-                     int stride, int width, int height) {
+static std::string WritePng(const char* pdf_name,
+                            int num,
+                            const void* buffer_void,
+                            int stride,
+                            int width,
+                            int height) {
   if (!CheckDimensions(stride, width, height))
-    return;
+    return "";
 
   std::vector<unsigned char> png_encoding;
   const unsigned char* buffer = static_cast<const unsigned char*>(buffer_void);
   if (!image_diff_png::EncodeBGRAPNG(
           buffer, width, height, stride, false, &png_encoding)) {
     fprintf(stderr, "Failed to convert bitmap to PNG\n");
-    return;
+    return "";
   }
 
   char filename[256];
@@ -196,13 +218,13 @@ static void WritePng(const char* pdf_name, int num, const void* buffer_void,
   if (chars_formatted < 0 ||
       static_cast<size_t>(chars_formatted) >= sizeof(filename)) {
     fprintf(stderr, "Filename %s is too long\n", filename);
-    return;
+    return "";
   }
 
   FILE* fp = fopen(filename, "wb");
   if (!fp) {
     fprintf(stderr, "Failed to open %s for output\n", filename);
-    return;
+    return "";
   }
 
   size_t bytes_written = fwrite(
@@ -211,23 +233,28 @@ static void WritePng(const char* pdf_name, int num, const void* buffer_void,
     fprintf(stderr, "Failed to write to  %s\n", filename);
 
   (void)fclose(fp);
+  return std::string(filename);
 }
 
 #ifdef _WIN32
-static void WriteBmp(const char* pdf_name, int num, const void* buffer,
-                     int stride, int width, int height) {
+static std::string WriteBmp(const char* pdf_name,
+                            int num,
+                            const void* buffer,
+                            int stride,
+                            int width,
+                            int height) {
   if (!CheckDimensions(stride, width, height))
-    return;
+    return "";
 
   int out_len = stride * height;
   if (out_len > INT_MAX / 3)
-    return;
+    return "";
 
   char filename[256];
   snprintf(filename, sizeof(filename), "%s.%d.bmp", pdf_name, num);
   FILE* fp = fopen(filename, "wb");
   if (!fp)
-    return;
+    return "";
 
   BITMAPINFO bmi = {};
   bmi.bmiHeader.biSize = sizeof(bmi) - sizeof(RGBQUAD);
@@ -247,6 +274,7 @@ static void WriteBmp(const char* pdf_name, int num, const void* buffer,
   fwrite(&bmi, bmi.bmiHeader.biSize, 1, fp);
   fwrite(buffer, out_len, 1, fp);
   fclose(fp);
+  return std::string(filename);
 }
 
 void WriteEmf(FPDF_PAGE page, const char* pdf_name, int num) {
@@ -275,7 +303,9 @@ void WriteEmf(FPDF_PAGE page, const char* pdf_name, int num) {
 #endif
 
 #ifdef PDF_ENABLE_SKIA
-void WriteSkp(const char* pdf_name, int num, SkPictureRecorder* recorder) {
+static std::string WriteSkp(const char* pdf_name,
+                            int num,
+                            SkPictureRecorder* recorder) {
   char filename[256];
   int chars_formatted =
       snprintf(filename, sizeof(filename), "%s.%d.skp", pdf_name, num);
@@ -283,12 +313,13 @@ void WriteSkp(const char* pdf_name, int num, SkPictureRecorder* recorder) {
   if (chars_formatted < 0 ||
       static_cast<size_t>(chars_formatted) >= sizeof(filename)) {
     fprintf(stderr, "Filename %s is too long\n", filename);
-    return;
+    return "";
   }
 
   sk_sp<SkPicture> picture(recorder->finishRecordingAsPicture());
   SkFILEWStream wStream(filename);
   picture->serialize(&wStream);
+  return std::string(filename);
 }
 #endif
 
@@ -490,6 +521,8 @@ bool ParseCommandLine(const std::vector<std::string>& args,
         std::stringstream(pages_string.substr(first_dash + 1)) >>
             options->last_page;
       }
+    } else if (cur_arg == "--md5") {
+      options->md5 = true;
     } else if (cur_arg.size() >= 2 && cur_arg[0] == '-' && cur_arg[1] == '-') {
       fprintf(stderr, "Unrecognized argument %s\n", cur_arg.c_str());
       return false;
@@ -628,10 +661,12 @@ bool RenderPage(const std::string& name,
     const char* buffer =
         reinterpret_cast<const char*>(FPDFBitmap_GetBuffer(bitmap));
 
+    std::string&& image_file_name = "";
     switch (options.output_format) {
 #ifdef _WIN32
       case OUTPUT_BMP:
-        WriteBmp(name.c_str(), page_index, buffer, stride, width, height);
+        image_file_name =
+            WriteBmp(name.c_str(), page_index, buffer, stride, width, height);
         break;
 
       case OUTPUT_EMF:
@@ -643,11 +678,13 @@ bool RenderPage(const std::string& name,
         break;
 
       case OUTPUT_PNG:
-        WritePng(name.c_str(), page_index, buffer, stride, width, height);
+        image_file_name =
+            WritePng(name.c_str(), page_index, buffer, stride, width, height);
         break;
 
       case OUTPUT_PPM:
-        WritePpm(name.c_str(), page_index, buffer, stride, width, height);
+        image_file_name =
+            WritePpm(name.c_str(), page_index, buffer, stride, width, height);
         break;
 
 #ifdef PDF_ENABLE_SKIA
@@ -656,12 +693,17 @@ bool RenderPage(const std::string& name,
             reinterpret_cast<SkPictureRecorder*>(
                 FPDF_RenderPageSkp(page, width, height)));
         FPDF_FFLRecord(form, recorder.get(), page, 0, 0, width, height, 0, 0);
-        WriteSkp(name.c_str(), page_index, recorder.get());
+        image_file_name = WriteSkp(name.c_str(), page_index, recorder.get());
       } break;
 #endif
       default:
         break;
     }
+
+    // Write the filename and the MD5 of the buffer to stdout if we wrote a
+    // file.
+    if (options.md5 && image_file_name != "")
+      OutputMD5Hash(image_file_name.c_str(), buffer, stride * height);
 
     FPDFBitmap_Destroy(bitmap);
   } else {
@@ -872,6 +914,7 @@ static const char kUsageString[] =
 #ifdef PDF_ENABLE_SKIA
     "  --skp - write page images <pdf-name>.<page-number>.skp\n"
 #endif
+    "  --md5 - write output image paths and their md5 hashes to stdout.\n"
     "";
 
 int main(int argc, const char* argv[]) {
