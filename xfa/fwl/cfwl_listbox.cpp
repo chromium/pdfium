@@ -176,10 +176,6 @@ void CFWL_ListBox::SetSelItem(CFWL_ListItem* pItem, bool bSelect) {
     SetSelection(pItem, pItem, bSelect);
 }
 
-CFX_WideString CFWL_ListBox::GetDataProviderItemText(CFWL_ListItem* pItem) {
-  return pItem ? pItem->GetText() : L"";
-}
-
 CFWL_ListItem* CFWL_ListBox::GetListItem(CFWL_ListItem* pItem,
                                          uint32_t dwKeyCode) {
   CFWL_ListItem* hRet = nullptr;

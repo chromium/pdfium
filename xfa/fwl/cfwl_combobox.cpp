@@ -173,7 +173,6 @@ void CFWL_ComboBox::DrawWidget(CFX_Graphics* pGraphics,
         return;
 
       CFWL_ListItem* hItem = m_pListBox->GetItem(this, m_iCurSel);
-      CFX_WideString wsText = m_pListBox->GetDataProviderItemText(hItem);
 
       CFWL_ThemeText theme_text;
       theme_text.m_pWidget = this;
@@ -185,7 +184,7 @@ void CFWL_ComboBox::DrawWidget(CFX_Graphics* pGraphics,
       theme_text.m_dwStates = (m_pProperties->m_dwStates & FWL_WGTSTATE_Focused)
                                   ? CFWL_PartState_Selected
                                   : CFWL_PartState_Normal;
-      theme_text.m_wsText = wsText;
+      theme_text.m_wsText = hItem ? hItem->GetText() : L"";
       theme_text.m_dwTTOStyles = FDE_TTOSTYLE_SingleLine;
       theme_text.m_iTTOAlign = FDE_TTOALIGNMENT_CenterLeft;
       pTheme->DrawText(&theme_text);
@@ -229,8 +228,7 @@ void CFWL_ComboBox::SetCurSel(int32_t iSel) {
       m_pEdit->SetText(CFX_WideString());
     } else {
       CFWL_ListItem* hItem = m_pListBox->GetItem(this, iSel);
-      CFX_WideString wsText = m_pListBox->GetDataProviderItemText(hItem);
-      m_pEdit->SetText(wsText);
+      m_pEdit->SetText(hItem ? hItem->GetText() : L"");
     }
     m_pEdit->Update();
   }
@@ -268,7 +266,7 @@ CFX_WideString CFWL_ComboBox::GetEditText() const {
     return L"";
 
   CFWL_ListItem* hItem = m_pListBox->GetItem(this, m_iCurSel);
-  return m_pListBox->GetDataProviderItemText(hItem);
+  return hItem ? hItem->GetText() : L"";
 }
 
 void CFWL_ComboBox::OpenDropDownList(bool bActivate) {
@@ -372,8 +370,7 @@ void CFWL_ComboBox::MatchEditText() {
 
 void CFWL_ComboBox::SyncEditText(int32_t iListItem) {
   CFWL_ListItem* hItem = m_pListBox->GetItem(this, iListItem);
-  CFX_WideString wsText = m_pListBox->GetDataProviderItemText(hItem);
-  m_pEdit->SetText(wsText);
+  m_pEdit->SetText(hItem ? hItem->GetText() : L"");
   m_pEdit->Update();
   m_pEdit->SetSelected();
 }
@@ -401,9 +398,8 @@ void CFWL_ComboBox::Layout() {
 
   if (m_iCurSel >= 0) {
     CFWL_ListItem* hItem = m_pListBox->GetItem(this, m_iCurSel);
-    CFX_WideString wsText = m_pListBox->GetDataProviderItemText(hItem);
     m_pEdit->LockUpdate();
-    m_pEdit->SetText(wsText);
+    m_pEdit->SetText(hItem ? hItem->GetText() : L"");
     m_pEdit->UnlockUpdate();
   }
   m_pEdit->Update();
@@ -713,9 +709,8 @@ void CFWL_ComboBox::DisForm_Layout() {
 
   if (m_iCurSel >= 0) {
     CFWL_ListItem* hItem = m_pListBox->GetItem(this, m_iCurSel);
-    CFX_WideString wsText = m_pListBox->GetDataProviderItemText(hItem);
     m_pEdit->LockUpdate();
-    m_pEdit->SetText(wsText);
+    m_pEdit->SetText(hItem ? hItem->GetText() : L"");
     m_pEdit->UnlockUpdate();
   }
   m_pEdit->Update();
@@ -890,8 +885,7 @@ void CFWL_ComboBox::DoSubCtrlKey(CFWL_MessageKey* pMsg) {
       iCurSel = m_pListBox->MatchItem(wsText);
       if (iCurSel >= 0) {
         CFWL_ListItem* hItem = m_pListBox->GetItem(this, iCurSel);
-        CFX_WideString wsTemp = m_pListBox->GetDataProviderItemText(hItem);
-        bMatchEqual = wsText == wsTemp;
+        bMatchEqual = wsText == (hItem ? hItem->GetText() : L"");
       }
     }
     if (iCurSel < 0) {
@@ -1020,8 +1014,7 @@ void CFWL_ComboBox::DisForm_OnKey(CFWL_MessageKey* pMsg) {
       iCurSel = pComboList->MatchItem(wsText);
       if (iCurSel >= 0) {
         CFWL_ListItem* item = m_pListBox->GetSelItem(iCurSel);
-        CFX_WideString wsTemp = m_pListBox->GetDataProviderItemText(item);
-        bMatchEqual = wsText == wsTemp;
+        bMatchEqual = wsText == (item ? item->GetText() : L"");
       }
     }
     if (iCurSel < 0) {
