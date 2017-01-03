@@ -343,6 +343,7 @@ CPDF_Document::CPDF_Document(std::unique_ptr<CPDF_Parser> pParser)
       m_pRootDict(nullptr),
       m_pInfoDict(nullptr),
       m_iNextPageToTraverse(0),
+      m_bReachedMaxPageLevel(false),
       m_bLinearized(false),
       m_iFirstPageNo(0),
       m_dwFirstPageObjNum(0),
@@ -399,7 +400,7 @@ void CPDF_Document::LoadPages() {
 CPDF_Dictionary* CPDF_Document::TraversePDFPages(int iPage,
                                                  int* nPagesToGo,
                                                  size_t level) {
-  if (*nPagesToGo < 0)
+  if (*nPagesToGo < 0 || m_bReachedMaxPageLevel)
     return nullptr;
   CPDF_Dictionary* pPages = m_pTreeTraversal[level].first;
   CPDF_Array* pKidList = pPages->GetArrayFor("Kids");
@@ -412,6 +413,7 @@ CPDF_Dictionary* CPDF_Document::TraversePDFPages(int iPage,
 
   if (level >= FX_MAX_PAGE_LEVEL) {
     m_pTreeTraversal.pop_back();
+    m_bReachedMaxPageLevel = true;
     return nullptr;
   }
 
@@ -447,8 +449,9 @@ CPDF_Dictionary* CPDF_Document::TraversePDFPages(int iPage,
       // Check if child was completely processed, i.e. it popped itself out
       if (m_pTreeTraversal.size() == level + 1)
         m_pTreeTraversal[level].second++;
-      // If child did not finish or if no pages to go, we are done
-      if (m_pTreeTraversal.size() != level + 1 || *nPagesToGo == 0) {
+      // If child did not finish, no pages to go, or max level reached, end
+      if (m_pTreeTraversal.size() != level + 1 || *nPagesToGo == 0 ||
+          m_bReachedMaxPageLevel) {
         page = pageKid;
         break;
       }
@@ -461,6 +464,7 @@ CPDF_Dictionary* CPDF_Document::TraversePDFPages(int iPage,
 
 void CPDF_Document::ResetTraversal() {
   m_iNextPageToTraverse = 0;
+  m_bReachedMaxPageLevel = false;
   m_pTreeTraversal.clear();
 }
 

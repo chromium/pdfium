@@ -138,6 +138,7 @@ class CPDF_Document : public CPDF_IndirectObjectHolder {
   std::vector<std::pair<CPDF_Dictionary*, size_t>> m_pTreeTraversal;
   // Index of the next page that will be traversed from the page tree.
   int m_iNextPageToTraverse;
+  bool m_bReachedMaxPageLevel;
   bool m_bLinearized;
   int m_iFirstPageNo;
   uint32_t m_dwFirstPageObjNum;
