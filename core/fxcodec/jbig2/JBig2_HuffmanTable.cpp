@@ -13,6 +13,7 @@
 #include "core/fxcodec/jbig2/JBig2_Define.h"
 #include "core/fxcodec/jbig2/JBig2_HuffmanTable_Standard.h"
 #include "core/fxcrt/fx_memory.h"
+#include "third_party/base/numerics/safe_math.h"
 
 CJBig2_HuffmanTable::CJBig2_HuffmanTable(const JBig2TableLine* pTable,
                                          uint32_t nLines,
@@ -61,17 +62,19 @@ bool CJBig2_HuffmanTable::ParseFromCodedBuffer(CJBig2_BitStream* pStream) {
     return false;
 
   ExtendBuffers(false);
-  int cur_low = low;
+  pdfium::base::CheckedNumeric<int> cur_low = low;
   do {
     if ((pStream->readNBits(HTPS, &PREFLEN[NTEMP]) == -1) ||
         (pStream->readNBits(HTRS, &RANGELEN[NTEMP]) == -1) ||
         (static_cast<size_t>(RANGELEN[NTEMP]) >= 8 * sizeof(cur_low))) {
       return false;
     }
-    RANGELOW[NTEMP] = cur_low;
+    RANGELOW[NTEMP] = cur_low.ValueOrDie();
     cur_low += (1 << RANGELEN[NTEMP]);
+    if (!cur_low.IsValid())
+      return false;
     ExtendBuffers(true);
-  } while (cur_low < high);
+  } while (cur_low.ValueOrDie() < high);
 
   if (pStream->readNBits(HTPS, &PREFLEN[NTEMP]) == -1)
     return false;
