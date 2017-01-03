@@ -128,6 +128,27 @@ TEST(fxcrt, RetainPtrSwap) {
   EXPECT_EQ(1, obj2.release_count());
 }
 
+TEST(fxcrt, RetainPtrLeak) {
+  PseudoRetainable obj;
+  PseudoRetainable* leak;
+  {
+    CFX_RetainPtr<PseudoRetainable> ptr(&obj);
+    leak = ptr.Leak();
+    EXPECT_EQ(1, obj.retain_count());
+    EXPECT_EQ(0, obj.release_count());
+  }
+  EXPECT_EQ(1, obj.retain_count());
+  EXPECT_EQ(0, obj.release_count());
+  {
+    CFX_RetainPtr<PseudoRetainable> ptr;
+    ptr.Unleak(leak);
+    EXPECT_EQ(1, obj.retain_count());
+    EXPECT_EQ(0, obj.release_count());
+  }
+  EXPECT_EQ(1, obj.retain_count());
+  EXPECT_EQ(1, obj.release_count());
+}
+
 TEST(fxcrt, RetainPtrSwapNull) {
   PseudoRetainable obj1;
   {
