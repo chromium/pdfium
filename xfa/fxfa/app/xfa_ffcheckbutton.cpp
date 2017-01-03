@@ -192,8 +192,7 @@ void CXFA_FFCheckButton::CapLeftRightPlacement(CXFA_Margin mgCap) {
   }
 }
 void CXFA_FFCheckButton::AddUIMargin(int32_t iCapPlacement) {
-  CFX_RectF rtUIMargin;
-  m_pDataAcc->GetUIMargin(rtUIMargin);
+  CFX_RectF rtUIMargin = m_pDataAcc->GetUIMargin();
   m_rtUI.top -= rtUIMargin.top / 2 - rtUIMargin.height / 2;
   FX_FLOAT fLeftAddRight = rtUIMargin.left + rtUIMargin.width;
   FX_FLOAT fTopAddBottom = rtUIMargin.top + rtUIMargin.height;

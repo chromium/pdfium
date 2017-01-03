@@ -768,8 +768,7 @@ void CXFA_WidgetAcc::CalcCaptionSize(CFX_SizeF& szCap) {
 bool CXFA_WidgetAcc::CalculateFieldAutoSize(CFX_SizeF& size) {
   CFX_SizeF szCap;
   CalcCaptionSize(szCap);
-  CFX_RectF rtUIMargin;
-  GetUIMargin(rtUIMargin);
+  CFX_RectF rtUIMargin = GetUIMargin();
   size.x += rtUIMargin.left + rtUIMargin.width;
   size.y += rtUIMargin.top + rtUIMargin.height;
   if (szCap.x > 0 && szCap.y > 0) {
@@ -883,8 +882,7 @@ bool CXFA_WidgetAcc::CalculateTextEditAutoSize(CFX_SizeF& size) {
           break;
       }
     }
-    CFX_RectF rtUIMargin;
-    GetUIMargin(rtUIMargin);
+    CFX_RectF rtUIMargin = GetUIMargin();
     size.x -= rtUIMargin.left + rtUIMargin.width;
     CXFA_Margin mgWidget = GetMargin();
     if (mgWidget) {
@@ -1168,8 +1166,7 @@ bool CXFA_WidgetAcc::FindSplitPos(int32_t iBlockIndex, FX_FLOAT& fCalcHeight) {
       mgWidget.GetTopInset(fTopInset);
       mgWidget.GetBottomInset(fBottomInset);
     }
-    CFX_RectF rtUIMargin;
-    GetUIMargin(rtUIMargin);
+    CFX_RectF rtUIMargin = GetUIMargin();
     fTopInset += rtUIMargin.top;
     fBottomInset += rtUIMargin.width;
   }

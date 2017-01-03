@@ -69,9 +69,8 @@ class CXFA_WidgetData : public CXFA_Data {
   bool GetMinHeight(FX_FLOAT& fMinHeight);
   bool GetMaxWidth(FX_FLOAT& fMaxWidth);
   bool GetMaxHeight(FX_FLOAT& fMaxHeight);
-  CXFA_Border GetUIBorder(bool bModified = false);
-  CXFA_Margin GetUIMargin(bool bModified = false);
-  void GetUIMargin(CFX_RectF& rtUIMargin);
+  CXFA_Border GetUIBorder();
+  CFX_RectF GetUIMargin();
   int32_t GetButtonHighlight();
   bool GetButtonRollover(CFX_WideString& wsRollover, bool& bRichText);
   bool GetButtonDown(CFX_WideString& wsDown, bool& bRichText);

@@ -181,10 +181,9 @@ void CFWL_Form::Layout() {
   m_rtRelative = GetRelativeRect();
 
 #ifndef FWL_UseMacSystemBorder
-  m_fCXBorder =
-      *static_cast<FX_FLOAT*>(GetThemeCapacity(CFWL_WidgetCapacity::CXBorder));
-  m_fCYBorder =
-      *static_cast<FX_FLOAT*>(GetThemeCapacity(CFWL_WidgetCapacity::CYBorder));
+  IFWL_ThemeProvider* theme = GetAvailableTheme();
+  m_fCXBorder = theme ? theme->GetCXBorderSize() : 0.0f;
+  m_fCYBorder = theme ? theme->GetCYBorderSize() : 0.0f;
 #endif
 }
 

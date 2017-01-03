@@ -52,9 +52,6 @@ void CFWL_PushButton::Update() {
   UpdateTextOutStyles();
   m_rtClient = GetClientRect();
   m_rtCaption = m_rtClient;
-  FX_FLOAT* fcaption =
-      static_cast<FX_FLOAT*>(GetThemeCapacity(CFWL_WidgetCapacity::Margin));
-  m_rtCaption.Inflate(-*fcaption, -*fcaption);
 }
 
 void CFWL_PushButton::DrawWidget(CFX_Graphics* pGraphics,

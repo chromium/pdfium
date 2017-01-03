@@ -83,15 +83,6 @@ void CFWL_PushButtonTP::DrawBackground(CFWL_ThemeBackground* pParams) {
   }
 }
 
-void* CFWL_PushButtonTP::GetCapacity(CFWL_ThemePart* pThemePart,
-                                     CFWL_WidgetCapacity dwCapacity) {
-  if (dwCapacity == CFWL_WidgetCapacity::Margin) {
-    m_fValue = 0;
-    return &m_fValue;
-  }
-  return CFWL_WidgetTP::GetCapacity(pThemePart, dwCapacity);
-}
-
 void CFWL_PushButtonTP::Initialize() {
   InitTTO();
   CFWL_WidgetTP::Initialize();

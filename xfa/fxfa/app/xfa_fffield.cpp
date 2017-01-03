@@ -135,8 +135,7 @@ void CXFA_FFField::SetEditScrollOffset() {
     FX_FLOAT fScrollOffset = 0;
     CXFA_FFField* pPrev = static_cast<CXFA_FFField*>(GetPrev());
     if (pPrev) {
-      CFX_RectF rtMargin;
-      m_pDataAcc->GetUIMargin(rtMargin);
+      CFX_RectF rtMargin = m_pDataAcc->GetUIMargin();
       fScrollOffset = -rtMargin.top;
     }
     while (pPrev) {
@@ -265,8 +264,7 @@ void CXFA_FFField::CapPlacement() {
 void CXFA_FFField::CapTopBottomPlacement(CXFA_Caption caption,
                                          const CFX_RectF& rtWidget,
                                          int32_t iCapPlacement) {
-  CFX_RectF rtUIMargin;
-  m_pDataAcc->GetUIMargin(rtUIMargin);
+  CFX_RectF rtUIMargin = m_pDataAcc->GetUIMargin();
   m_rtCaption.left += rtUIMargin.left;
   if (CXFA_Margin mgCap = caption.GetMargin()) {
     XFA_RectWidthoutMargin(m_rtCaption, mgCap);
@@ -292,8 +290,7 @@ void CXFA_FFField::CapTopBottomPlacement(CXFA_Caption caption,
 void CXFA_FFField::CapLeftRightPlacement(CXFA_Caption caption,
                                          const CFX_RectF& rtWidget,
                                          int32_t iCapPlacement) {
-  CFX_RectF rtUIMargin;
-  m_pDataAcc->GetUIMargin(rtUIMargin);
+  CFX_RectF rtUIMargin = m_pDataAcc->GetUIMargin();
   m_rtCaption.top += rtUIMargin.top;
   m_rtCaption.height -= rtUIMargin.top;
   if (CXFA_Margin mgCap = caption.GetMargin()) {

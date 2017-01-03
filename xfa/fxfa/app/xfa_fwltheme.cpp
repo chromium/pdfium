@@ -32,6 +32,8 @@ const FX_WCHAR* const g_FWLTheme_CalFonts[] = {
     L"Arial", L"Courier New", L"DejaVu Sans",
 };
 
+const float kLineHeight = 12.0f;
+
 }  // namespace
 
 CXFA_FFWidget* XFA_ThemeGetOuterWidget(CFWL_Widget* pWidget) {
@@ -54,8 +56,6 @@ CXFA_FWLTheme::CXFA_FWLTheme(CXFA_FFApp* pApp)
       m_pCaretTP(new CFWL_CaretTP),
       m_pBarcodeTP(new CFWL_BarcodeTP),
       m_pTextOut(new CFDE_TextOut),
-      m_fCapacity(0.0f),
-      m_dwCapacity(0),
       m_pCalendarFont(nullptr),
       m_pApp(pApp) {
   m_Rect.Reset();
@@ -151,84 +151,80 @@ void CXFA_FWLTheme::DrawText(CFWL_ThemeText* pParams) {
                             pParams->m_wsText.GetLength(), pParams->m_rtPart);
 }
 
-void* CXFA_FWLTheme::GetCapacity(CFWL_ThemePart* pThemePart,
-                                 CFWL_WidgetCapacity dwCapacity) {
-  switch (dwCapacity) {
-    case CFWL_WidgetCapacity::Font: {
-      if (CXFA_FFWidget* pWidget =
-              XFA_ThemeGetOuterWidget(pThemePart->m_pWidget)) {
-        return pWidget->GetDataAcc()->GetFDEFont();
-      }
-      break;
-    }
-    case CFWL_WidgetCapacity::FontSize: {
-      if (CXFA_FFWidget* pWidget =
-              XFA_ThemeGetOuterWidget(pThemePart->m_pWidget)) {
-        m_fCapacity = pWidget->GetDataAcc()->GetFontSize();
-        return &m_fCapacity;
-      }
-      break;
-    }
-    case CFWL_WidgetCapacity::TextColor: {
-      if (CXFA_FFWidget* pWidget =
-              XFA_ThemeGetOuterWidget(pThemePart->m_pWidget)) {
-        m_dwCapacity = pWidget->GetDataAcc()->GetTextColor();
-        return &m_dwCapacity;
-      }
-      break;
-    }
-    case CFWL_WidgetCapacity::LineHeight: {
-      if (CXFA_FFWidget* pWidget =
-              XFA_ThemeGetOuterWidget(pThemePart->m_pWidget)) {
-        m_fCapacity = pWidget->GetDataAcc()->GetLineHeight();
-        return &m_fCapacity;
-      }
-      break;
-    }
-    case CFWL_WidgetCapacity::ScrollBarWidth: {
-      m_fCapacity = 9;
-      return &m_fCapacity;
-    }
-    case CFWL_WidgetCapacity::UIMargin: {
-      CXFA_FFWidget* pWidget = XFA_ThemeGetOuterWidget(pThemePart->m_pWidget);
-      if (pWidget) {
-        CXFA_LayoutItem* pItem = pWidget;
-        CXFA_WidgetAcc* pWidgetAcc = pWidget->GetDataAcc();
-        pWidgetAcc->GetUIMargin(m_Rect);
-        if (CXFA_Para para = pWidgetAcc->GetPara()) {
-          m_Rect.left += para.GetMarginLeft();
-          if (pWidgetAcc->IsMultiLine()) {
-            m_Rect.width += para.GetMarginRight();
-          }
-        }
-        if (!pItem->GetPrev()) {
-          if (pItem->GetNext()) {
-            m_Rect.height = 0;
-          }
-        } else if (!pItem->GetNext()) {
-          m_Rect.top = 0;
-        } else {
-          m_Rect.top = 0;
-          m_Rect.height = 0;
-        }
-      }
-      return &m_Rect;
-    }
-    case CFWL_WidgetCapacity::SpaceAboveBelow: {
-      CXFA_FFWidget* pWidget = XFA_ThemeGetOuterWidget(pThemePart->m_pWidget);
-      if (pWidget) {
-        CXFA_WidgetAcc* pWidgetAcc = pWidget->GetDataAcc();
-        if (CXFA_Para para = pWidgetAcc->GetPara()) {
-          m_SizeAboveBelow.x = para.GetSpaceAbove();
-          m_SizeAboveBelow.y = para.GetSpaceBelow();
-        }
-      }
-      return &m_SizeAboveBelow;
-    }
-    default:
-      break;
+CFX_RectF CXFA_FWLTheme::GetUIMargin(CFWL_ThemePart* pThemePart) const {
+  CFX_RectF rect;
+  rect.Reset();
+
+  CXFA_FFWidget* pWidget = XFA_ThemeGetOuterWidget(pThemePart->m_pWidget);
+  if (!pWidget)
+    return rect;
+
+  CXFA_LayoutItem* pItem = pWidget;
+  CXFA_WidgetAcc* pWidgetAcc = pWidget->GetDataAcc();
+  rect = pWidgetAcc->GetUIMargin();
+  if (CXFA_Para para = pWidgetAcc->GetPara()) {
+    rect.left += para.GetMarginLeft();
+    if (pWidgetAcc->IsMultiLine())
+      rect.width += para.GetMarginRight();
   }
-  return GetTheme(pThemePart->m_pWidget)->GetCapacity(pThemePart, dwCapacity);
+  if (!pItem->GetPrev()) {
+    if (pItem->GetNext())
+      rect.height = 0;
+  } else if (!pItem->GetNext()) {
+    rect.top = 0;
+  } else {
+    rect.top = 0;
+    rect.height = 0;
+  }
+  return rect;
+}
+
+float CXFA_FWLTheme::GetCXBorderSize() const {
+  return 1.0f;
+}
+
+float CXFA_FWLTheme::GetCYBorderSize() const {
+  return 1.0f;
+}
+
+float CXFA_FWLTheme::GetFontSize(CFWL_ThemePart* pThemePart) const {
+  if (CXFA_FFWidget* pWidget = XFA_ThemeGetOuterWidget(pThemePart->m_pWidget))
+    return pWidget->GetDataAcc()->GetFontSize();
+  return FWLTHEME_CAPACITY_FontSize;
+}
+
+CFGAS_GEFont* CXFA_FWLTheme::GetFont(CFWL_ThemePart* pThemePart) const {
+  if (CXFA_FFWidget* pWidget = XFA_ThemeGetOuterWidget(pThemePart->m_pWidget))
+    return pWidget->GetDataAcc()->GetFDEFont();
+  return GetTheme(pThemePart->m_pWidget)->GetFont();
+}
+
+float CXFA_FWLTheme::GetLineHeight(CFWL_ThemePart* pThemePart) const {
+  if (CXFA_FFWidget* pWidget = XFA_ThemeGetOuterWidget(pThemePart->m_pWidget))
+    return pWidget->GetDataAcc()->GetLineHeight();
+  return kLineHeight;
+}
+
+float CXFA_FWLTheme::GetScrollBarWidth() const {
+  return 9.0f;
+}
+
+FX_COLORREF CXFA_FWLTheme::GetTextColor(CFWL_ThemePart* pThemePart) const {
+  if (CXFA_FFWidget* pWidget = XFA_ThemeGetOuterWidget(pThemePart->m_pWidget))
+    return pWidget->GetDataAcc()->GetTextColor();
+  return FWLTHEME_CAPACITY_TextColor;
+}
+
+CFX_SizeF CXFA_FWLTheme::GetSpaceAboveBelow(CFWL_ThemePart* pThemePart) const {
+  CFX_SizeF sizeAboveBelow;
+  if (CXFA_FFWidget* pWidget = XFA_ThemeGetOuterWidget(pThemePart->m_pWidget)) {
+    CXFA_WidgetAcc* pWidgetAcc = pWidget->GetDataAcc();
+    if (CXFA_Para para = pWidgetAcc->GetPara()) {
+      sizeAboveBelow.x = para.GetSpaceAbove();
+      sizeAboveBelow.y = para.GetSpaceBelow();
+    }
+  }
+  return sizeAboveBelow;
 }
 
 void CXFA_FWLTheme::CalcTextRect(CFWL_ThemeText* pParams, CFX_RectF& rect) {
@@ -263,7 +259,7 @@ void CXFA_FWLTheme::CalcTextRect(CFWL_ThemeText* pParams, CFX_RectF& rect) {
                             pParams->m_wsText.GetLength(), rect);
 }
 
-CFWL_WidgetTP* CXFA_FWLTheme::GetTheme(CFWL_Widget* pWidget) {
+CFWL_WidgetTP* CXFA_FWLTheme::GetTheme(CFWL_Widget* pWidget) const {
   switch (pWidget->GetClassID()) {
     case FWL_Type::CheckBox:
       return m_pCheckBoxTP.get();

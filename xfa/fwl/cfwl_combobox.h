@@ -156,8 +156,6 @@ class CFWL_ComboBox : public CFWL_Widget {
   bool m_bLButtonDown;
   int32_t m_iCurSel;
   int32_t m_iBtnState;
-  FX_FLOAT m_fComboFormHandler;
-  FX_FLOAT m_fItemHeight;
 };
 
 #endif  // XFA_FWL_CFWL_COMBOBOX_H_

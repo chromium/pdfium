@@ -16,59 +16,6 @@
 #include "xfa/fwl/theme/cfwl_utils.h"
 #include "xfa/fxgraphics/cfx_graphics.h"
 
-enum class CFWL_WidgetCapacity {
-  None = 0,
-
-  BigIcon,
-  ComboFormHandler,
-  CXBorder,
-  CYBorder,
-  CYCaption,
-  CYNarrowCaption,
-  DatesCellHeight,
-  DatesCellWidth,
-  EdgeFlat,
-  EdgeRaised,
-  EdgeSunken,
-  Font,
-  FontSize,
-  HeaderBtnHeight,
-  HeaderBtnHMargin,
-  HeaderBtnVMargin,
-  HeaderBtnWidth,
-  HeaderHeight,
-  HeaderTextHeight,
-  HeaderTextHMargin,
-  HeaderTextVMargin,
-  HeaderTextWidth,
-  HeaderWidth,
-  Height,
-  HSepHeight,
-  HSepWidth,
-  LineHeight,
-  Margin,
-  ScrollBarWidth,
-  SepDOffset,
-  SepX,
-  SepY,
-  Size,
-  SmallIcon,
-  SpaceAboveBelow,
-  TextColor,
-  TextSelColor,
-  TodayFlagWidth,
-  TodayHeight,
-  TodayWidth,
-  UIMargin,
-  VSepHeight,
-  VSepWidth,
-  WeekHeight,
-  WeekNumHeight,
-  WeekNumWidth,
-  WeekWidth,
-  Width
-};
-
 class CFDE_TextOut;
 class CFGAS_GEFont;
 class CFWL_ThemeBackground;
@@ -92,9 +39,9 @@ class CFWL_WidgetTP {
 
   virtual void DrawBackground(CFWL_ThemeBackground* pParams);
   virtual void DrawText(CFWL_ThemeText* pParams);
-  virtual void* GetCapacity(CFWL_ThemePart* pThemePart,
-                            CFWL_WidgetCapacity dwCapacity);
   virtual void CalcTextRect(CFWL_ThemeText* pParams, CFX_RectF& rect);
+
+  CFGAS_GEFont* GetFont() const { return m_pFDEFont; }
 
   void SetFont(CFWL_Widget* pWidget,
                const FX_WCHAR* strFont,
@@ -186,9 +133,6 @@ class CFWL_WidgetTP {
   uint32_t m_dwRefCount;
   std::unique_ptr<CFDE_TextOut> m_pTextOut;
   CFGAS_GEFont* m_pFDEFont;
-  FX_FLOAT m_fValue;
-  uint32_t m_dwValue;
-  CFX_RectF m_rtMargin;
 };
 
 void FWLTHEME_Release();

@@ -124,7 +124,6 @@ class CFWL_Widget : public IFWL_WidgetDelegate {
   CFX_RectF GetEdgeRect();
   FX_FLOAT GetBorderSize(bool bCX);
   CFX_RectF GetRelativeRect();
-  void* GetThemeCapacity(CFWL_WidgetCapacity dwCapacity);
   IFWL_ThemeProvider* GetAvailableTheme();
   CFX_SizeF CalcTextSize(const CFX_WideString& wsText,
                          IFWL_ThemeProvider* pTheme,

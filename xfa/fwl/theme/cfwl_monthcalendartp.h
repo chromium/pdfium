@@ -22,8 +22,6 @@ class CFWL_MonthCalendarTP : public CFWL_WidgetTP {
   bool IsValidWidget(CFWL_Widget* pWidget) override;
   void DrawBackground(CFWL_ThemeBackground* pParams) override;
   void DrawText(CFWL_ThemeText* pParams) override;
-  void* GetCapacity(CFWL_ThemePart* pThemePart,
-                    CFWL_WidgetCapacity dwCapacity) override;
 
  protected:
   struct MCThemeData {

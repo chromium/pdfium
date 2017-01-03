@@ -24,20 +24,6 @@
 #include "xfa/fxgraphics/cfx_path.h"
 #include "xfa/fxgraphics/cfx_shading.h"
 
-namespace {
-
-const float kEdgeFlat = 2.0f;
-const float kEdgeRaised = 2.0f;
-const float kEdgeSunken = 2.0f;
-const float kLineHeight = 12.0f;
-const float kScrollBarWidth = 17.0f;
-const float kCXBorder = 1.0f;
-const float kCYBorder = 1.0f;
-
-#define FWLTHEME_CAPACITY_TextSelColor (ArgbEncode(255, 153, 193, 218))
-
-}  // namespace
-
 bool CFWL_WidgetTP::IsValidWidget(CFWL_Widget* pWidget) {
   return false;
 }
@@ -60,62 +46,6 @@ void CFWL_WidgetTP::DrawText(CFWL_ThemeText* pParams) {
   pMatrix->Concat(*pGraphics->GetMatrix());
   m_pTextOut->SetMatrix(*pMatrix);
   m_pTextOut->DrawLogicText(pParams->m_wsText.c_str(), iLen, pParams->m_rtPart);
-}
-
-void* CFWL_WidgetTP::GetCapacity(CFWL_ThemePart* pThemePart,
-                                 CFWL_WidgetCapacity dwCapacity) {
-  switch (dwCapacity) {
-    case CFWL_WidgetCapacity::CXBorder: {
-      m_fValue = kCXBorder;
-      break;
-    }
-    case CFWL_WidgetCapacity::CYBorder: {
-      m_fValue = kCYBorder;
-      break;
-    }
-    case CFWL_WidgetCapacity::EdgeFlat: {
-      m_fValue = kEdgeFlat;
-      break;
-    }
-    case CFWL_WidgetCapacity::EdgeRaised: {
-      m_fValue = kEdgeRaised;
-      break;
-    }
-    case CFWL_WidgetCapacity::EdgeSunken: {
-      m_fValue = kEdgeSunken;
-      break;
-    }
-    case CFWL_WidgetCapacity::FontSize: {
-      m_fValue = FWLTHEME_CAPACITY_FontSize;
-      break;
-    }
-    case CFWL_WidgetCapacity::TextColor: {
-      m_dwValue = FWLTHEME_CAPACITY_TextColor;
-      return &m_dwValue;
-    }
-    case CFWL_WidgetCapacity::ScrollBarWidth: {
-      m_fValue = kScrollBarWidth;
-      break;
-    }
-    case CFWL_WidgetCapacity::Font: {
-      return m_pFDEFont;
-    }
-    case CFWL_WidgetCapacity::TextSelColor: {
-      m_dwValue = FWLTHEME_CAPACITY_TextSelColor;
-      return &m_dwValue;
-    }
-    case CFWL_WidgetCapacity::LineHeight: {
-      m_fValue = kLineHeight;
-      break;
-    }
-    case CFWL_WidgetCapacity::UIMargin: {
-      m_rtMargin.Set(0, 0, 0, 0);
-      return &m_rtMargin;
-    }
-    default:
-      return nullptr;
-  }
-  return &m_fValue;
 }
 
 void CFWL_WidgetTP::CalcTextRect(CFWL_ThemeText* pParams, CFX_RectF& rect) {

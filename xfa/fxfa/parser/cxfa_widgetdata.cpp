@@ -399,29 +399,27 @@ bool CXFA_WidgetData::GetMaxHeight(FX_FLOAT& fMaxHeight) {
   return TryMeasure(XFA_ATTRIBUTE_MaxH, fMaxHeight);
 }
 
-CXFA_Border CXFA_WidgetData::GetUIBorder(bool bModified) {
+CXFA_Border CXFA_WidgetData::GetUIBorder() {
   CXFA_Node* pUIChild = GetUIChild();
-  return CXFA_Border(
-      pUIChild ? pUIChild->GetProperty(0, XFA_Element::Border, bModified)
-               : nullptr);
+  return CXFA_Border(pUIChild
+                         ? pUIChild->GetProperty(0, XFA_Element::Border, false)
+                         : nullptr);
 }
 
-CXFA_Margin CXFA_WidgetData::GetUIMargin(bool bModified) {
-  CXFA_Node* pUIChild = GetUIChild();
-  return CXFA_Margin(
-      pUIChild ? pUIChild->GetProperty(0, XFA_Element::Margin, bModified)
-               : nullptr);
-}
-
-void CXFA_WidgetData::GetUIMargin(CFX_RectF& rtUIMargin) {
+CFX_RectF CXFA_WidgetData::GetUIMargin() {
+  CFX_RectF rtUIMargin;
   rtUIMargin.Reset();
-  CXFA_Margin mgUI = GetUIMargin();
+
+  CXFA_Node* pUIChild = GetUIChild();
+  CXFA_Margin mgUI = CXFA_Margin(
+      pUIChild ? pUIChild->GetProperty(0, XFA_Element::Margin, false)
+               : nullptr);
   if (!mgUI)
-    return;
+    return rtUIMargin;
 
   CXFA_Border border = GetUIBorder();
   if (border && border.GetPresence() != XFA_ATTRIBUTEENUM_Visible)
-    return;
+    return rtUIMargin;
 
   FX_FLOAT fLeftInset, fTopInset, fRightInset, fBottomInset;
   bool bLeft = mgUI.GetLeftInset(fLeftInset);
@@ -446,6 +444,7 @@ void CXFA_WidgetData::GetUIMargin(CFX_RectF& rtUIMargin) {
     }
   }
   rtUIMargin.Set(fLeftInset, fTopInset, fRightInset, fBottomInset);
+  return rtUIMargin;
 }
 
 int32_t CXFA_WidgetData::GetButtonHighlight() {

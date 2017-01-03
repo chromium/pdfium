@@ -141,7 +141,6 @@ class CFWL_ScrollBar : public CFWL_Widget {
   CFX_RectF m_rtMaxBtn;
   CFX_RectF m_rtMinTrack;
   CFX_RectF m_rtMaxTrack;
-  FX_FLOAT m_fMinThumb;
   CFWL_ScrollBar::Timer m_Timer;
 };
 

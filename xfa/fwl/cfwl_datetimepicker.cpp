@@ -79,12 +79,12 @@ void CFWL_DateTimePicker::Update() {
 
   m_pEdit->SetThemeProvider(m_pProperties->m_pThemeProvider);
   m_rtClient = GetClientRect();
-  FX_FLOAT* pFWidth = static_cast<FX_FLOAT*>(
-      GetThemeCapacity(CFWL_WidgetCapacity::ScrollBarWidth));
-  if (!pFWidth)
+
+  IFWL_ThemeProvider* theme = GetAvailableTheme();
+  if (!theme)
     return;
 
-  FX_FLOAT fBtn = *pFWidth;
+  FX_FLOAT fBtn = theme->GetScrollBarWidth();
   m_rtBtn.Set(m_rtClient.right() - fBtn, m_rtClient.top, fBtn - 1,
               m_rtClient.height - 1);
 
@@ -426,12 +426,11 @@ void CFWL_DateTimePicker::DisForm_Update() {
   if (!m_pMonthCal->GetThemeProvider())
     m_pMonthCal->SetThemeProvider(m_pProperties->m_pThemeProvider);
 
-  FX_FLOAT* pWidth = static_cast<FX_FLOAT*>(
-      GetThemeCapacity(CFWL_WidgetCapacity::ScrollBarWidth));
-  if (!pWidth)
+  IFWL_ThemeProvider* theme = GetAvailableTheme();
+  if (!theme)
     return;
 
-  m_fBtn = *pWidth;
+  m_fBtn = theme->GetScrollBarWidth();
   CFX_RectF rtMonthCal = m_pMonthCal->GetAutosizedWidgetRect();
   CFX_RectF rtPopUp;
   rtPopUp.Set(rtMonthCal.left, rtMonthCal.top + kDateTimePickerHeight,

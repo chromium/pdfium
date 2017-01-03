@@ -107,8 +107,7 @@ void CXFA_FFImageEdit::SetFWLRect() {
   if (!m_pNormalWidget) {
     return;
   }
-  CFX_RectF rtUIMargin;
-  m_pDataAcc->GetUIMargin(rtUIMargin);
+  CFX_RectF rtUIMargin = m_pDataAcc->GetUIMargin();
   CFX_RectF rtImage(m_rtUI);
   rtImage.Deflate(rtUIMargin.left, rtUIMargin.top, rtUIMargin.width,
                   rtUIMargin.height);

@@ -477,12 +477,12 @@ CFX_SizeF CFWL_ListBox::CalcSize(bool bAutoSize) {
   CFX_RectF rtUIMargin;
   rtUIMargin.Set(0, 0, 0, 0);
   if (!m_pOuter) {
-    CFX_RectF* pUIMargin = static_cast<CFX_RectF*>(
-        GetThemeCapacity(CFWL_WidgetCapacity::UIMargin));
-    if (pUIMargin) {
-      m_rtConent.Deflate(pUIMargin->left, pUIMargin->top, pUIMargin->width,
-                         pUIMargin->height);
-    }
+    CFWL_ThemePart part;
+    part.m_pWidget = this;
+    IFWL_ThemeProvider* theme = GetAvailableTheme();
+    CFX_RectF pUIMargin = theme ? theme->GetUIMargin(&part) : CFX_RectF();
+    m_rtConent.Deflate(pUIMargin.left, pUIMargin.top, pUIMargin.width,
+                       pUIMargin.height);
   }
 
   FX_FLOAT fWidth = GetMaxTextWidth();
@@ -612,19 +612,15 @@ FX_FLOAT CFWL_ListBox::GetMaxTextWidth() {
 }
 
 FX_FLOAT CFWL_ListBox::GetScrollWidth() {
-  FX_FLOAT* pfWidth = static_cast<FX_FLOAT*>(
-      GetThemeCapacity(CFWL_WidgetCapacity::ScrollBarWidth));
-  if (!pfWidth)
-    return 0;
-  return *pfWidth;
+  IFWL_ThemeProvider* theme = GetAvailableTheme();
+  return theme ? theme->GetScrollBarWidth() : 0.0f;
 }
 
 FX_FLOAT CFWL_ListBox::CalcItemHeight() {
-  FX_FLOAT* pfFont =
-      static_cast<FX_FLOAT*>(GetThemeCapacity(CFWL_WidgetCapacity::FontSize));
-  if (!pfFont)
-    return 20;
-  return *pfFont + 2 * kItemTextMargin;
+  IFWL_ThemeProvider* theme = GetAvailableTheme();
+  CFWL_ThemePart part;
+  part.m_pWidget = this;
+  return (theme ? theme->GetFontSize(&part) : 20.0f) + 2 * kItemTextMargin;
 }
 
 void CFWL_ListBox::InitVerticalScrollBar() {

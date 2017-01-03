@@ -13,12 +13,6 @@
 #include "xfa/fxgraphics/cfx_color.h"
 #include "xfa/fxgraphics/cfx_path.h"
 
-namespace {
-
-const float kComboFormHandler = 8.0f;
-
-}  // namespace
-
 CFWL_ComboBoxTP::CFWL_ComboBoxTP() {}
 
 CFWL_ComboBoxTP::~CFWL_ComboBoxTP() {}
@@ -82,15 +76,6 @@ void CFWL_ComboBoxTP::DrawStrethHandler(CFWL_ThemeBackground* pParams,
   CFX_Color cr(ArgbEncode(0xff, 0xff, 0, 0));
   pParams->m_pGraphics->SetFillColor(&cr);
   pParams->m_pGraphics->FillPath(&path, FXFILL_WINDING, &pParams->m_matrix);
-}
-
-void* CFWL_ComboBoxTP::GetCapacity(CFWL_ThemePart* pThemePart,
-                                   CFWL_WidgetCapacity dwCapacity) {
-  if (dwCapacity == CFWL_WidgetCapacity::ComboFormHandler) {
-    m_fValue = kComboFormHandler;
-    return &m_fValue;
-  }
-  return CFWL_WidgetTP::GetCapacity(pThemePart, dwCapacity);
 }
 
 void CFWL_ComboBoxTP::DrawDropDownButton(CFWL_ThemeBackground* pParams,

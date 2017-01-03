@@ -20,7 +20,12 @@
 #include "xfa/fwl/ifwl_themeprovider.h"
 
 #define FWL_SCROLLBAR_Elapse 500
-#define FWL_SCROLLBAR_MinThumb 5
+
+namespace {
+
+const float kMinThumbSize = 5.0f;
+
+}  // namespace
 
 CFWL_ScrollBar::CFWL_ScrollBar(
     const CFWL_App* app,
@@ -46,7 +51,6 @@ CFWL_ScrollBar::CFWL_ScrollBar(
       m_bMouseDown(false),
       m_fButtonLen(0),
       m_bMinSize(false),
-      m_fMinThumb(FWL_SCROLLBAR_MinThumb),
       m_Timer(this) {
   m_rtClient.Reset();
   m_rtThumb.Reset();
@@ -150,12 +154,8 @@ void CFWL_ScrollBar::DrawThumb(CFX_Graphics* pGraphics,
 }
 
 void CFWL_ScrollBar::Layout() {
-  IFWL_ThemeProvider* pTheme = m_pProperties->m_pThemeProvider;
-  CFWL_ThemePart part;
-  part.m_pWidget = this;
-  m_fMinThumb = *static_cast<FX_FLOAT*>(
-      pTheme->GetCapacity(&part, CFWL_WidgetCapacity::Size));
   m_rtClient = GetClientRect();
+
   CalcButtonLen();
   m_rtMinBtn = CalcMinButtonRect();
   m_rtMaxBtn = CalcMaxButtonRect();
@@ -226,7 +226,7 @@ CFX_RectF CFWL_ScrollBar::CalcThumbButtonRect(const CFX_RectF& rtThumb) {
     fLength = 0.0f;
 
   FX_FLOAT fThumbSize = fLength * fLength / (fRange + fLength);
-  fThumbSize = std::max(fThumbSize, m_fMinThumb);
+  fThumbSize = std::max(fThumbSize, kMinThumbSize);
 
   FX_FLOAT fDiff = std::max(fLength - fThumbSize, 0.0f);
   FX_FLOAT fTrackPos =

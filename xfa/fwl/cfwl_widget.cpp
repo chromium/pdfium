@@ -292,11 +292,10 @@ CFX_RectF CFWL_Widget::GetEdgeRect() {
 }
 
 FX_FLOAT CFWL_Widget::GetBorderSize(bool bCX) {
-  FX_FLOAT* pfBorder = static_cast<FX_FLOAT*>(GetThemeCapacity(
-      bCX ? CFWL_WidgetCapacity::CXBorder : CFWL_WidgetCapacity::CYBorder));
-  if (!pfBorder)
-    return 0;
-  return *pfBorder;
+  IFWL_ThemeProvider* theme = GetAvailableTheme();
+  if (!theme)
+    return 0.0f;
+  return bCX ? theme->GetCXBorderSize() : theme->GetCYBorderSize();
 }
 
 CFX_RectF CFWL_Widget::GetRelativeRect() {
@@ -304,16 +303,6 @@ CFX_RectF CFWL_Widget::GetRelativeRect() {
   rect.left = 0;
   rect.top = 0;
   return rect;
-}
-
-void* CFWL_Widget::GetThemeCapacity(CFWL_WidgetCapacity dwCapacity) {
-  IFWL_ThemeProvider* pTheme = GetAvailableTheme();
-  if (!pTheme)
-    return nullptr;
-
-  CFWL_ThemePart part;
-  part.m_pWidget = this;
-  return pTheme->GetCapacity(&part, dwCapacity);
 }
 
 IFWL_ThemeProvider* CFWL_Widget::GetAvailableTheme() {

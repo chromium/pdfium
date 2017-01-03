@@ -21,8 +21,6 @@ class CFWL_PushButtonTP : public CFWL_WidgetTP {
   void Finalize() override;
   bool IsValidWidget(CFWL_Widget* pWidget) override;
   void DrawBackground(CFWL_ThemeBackground* pParams) override;
-  void* GetCapacity(CFWL_ThemePart* pThemePart,
-                    CFWL_WidgetCapacity dwCapacity) override;
 
  protected:
   struct PBThemeData {

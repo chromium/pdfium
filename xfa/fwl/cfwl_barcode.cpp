@@ -165,27 +165,20 @@ void CFWL_Barcode::GenerateBarcodeImageCache() {
   if (!m_pBarcodeEngine)
     return;
 
-  CFX_WideString wsText = GetText();
-
-  CFWL_ThemePart part;
-  part.m_pWidget = this;
-
   IFWL_ThemeProvider* pTheme = GetAvailableTheme();
-  CFGAS_GEFont* pFont = static_cast<CFGAS_GEFont*>(
-      pTheme->GetCapacity(&part, CFWL_WidgetCapacity::Font));
-  CFX_Font* pCXFont = pFont ? pFont->GetDevFont() : nullptr;
-  if (pCXFont)
-    m_pBarcodeEngine->SetFont(pCXFont);
+  if (pTheme) {
+    CFWL_ThemePart part;
+    part.m_pWidget = this;
 
-  FX_FLOAT* pFontSize = static_cast<FX_FLOAT*>(
-      pTheme->GetCapacity(&part, CFWL_WidgetCapacity::FontSize));
-  if (pFontSize)
-    m_pBarcodeEngine->SetFontSize(*pFontSize);
-
-  FX_ARGB* pFontColor = static_cast<FX_ARGB*>(
-      pTheme->GetCapacity(&part, CFWL_WidgetCapacity::TextColor));
-  if (pFontColor)
-    m_pBarcodeEngine->SetFontColor(*pFontColor);
+    if (CFGAS_GEFont* pFont = pTheme->GetFont(&part)) {
+      if (CFX_Font* pCXFont = pFont->GetDevFont())
+        m_pBarcodeEngine->SetFont(pCXFont);
+    }
+    m_pBarcodeEngine->SetFontSize(pTheme->GetFontSize(&part));
+    m_pBarcodeEngine->SetFontColor(pTheme->GetTextColor(&part));
+  } else {
+    m_pBarcodeEngine->SetFontSize(FWLTHEME_CAPACITY_FontSize);
+  }
 
   m_pBarcodeEngine->SetHeight(int32_t(GetRTClient().height));
   m_pBarcodeEngine->SetWidth(int32_t(GetRTClient().width));
@@ -217,7 +210,7 @@ void CFWL_Barcode::GenerateBarcodeImageCache() {
     m_pBarcodeEngine->SetTruncated(m_bTruncated);
 
   int32_t errorCode = 0;
-  m_dwStatus = m_pBarcodeEngine->Encode(wsText.AsStringC(), true, errorCode)
+  m_dwStatus = m_pBarcodeEngine->Encode(GetText().AsStringC(), true, errorCode)
                    ? XFA_BCS_EncodeSuccess
                    : 0;
 }

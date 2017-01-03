@@ -29,15 +29,6 @@ bool CFWL_ScrollBarTP::IsValidWidget(CFWL_Widget* pWidget) {
   return pWidget && pWidget->GetClassID() == FWL_Type::ScrollBar;
 }
 
-void* CFWL_ScrollBarTP::GetCapacity(CFWL_ThemePart* pThemePart,
-                                    CFWL_WidgetCapacity dwCapacity) {
-  if (dwCapacity == CFWL_WidgetCapacity::Size) {
-    m_fValue = 5;
-    return &m_fValue;
-  }
-  return CFWL_WidgetTP::GetCapacity(pThemePart, dwCapacity);
-}
-
 void CFWL_ScrollBarTP::DrawBackground(CFWL_ThemeBackground* pParams) {
   if (!pParams)
     return;
