@@ -409,16 +409,15 @@ void CFWL_WidgetMgr::OnProcessMessageToForm(CFWL_Message* pMessage) {
   if (!pNoteDriver)
     return;
 
-  std::unique_ptr<CFWL_Message> pClonedMessage = pMessage->Clone();
   if (IsFormDisabled())
-    pNoteDriver->ProcessMessage(pClonedMessage.get());
+    pNoteDriver->ProcessMessage(pMessage->Clone());
   else
-    pNoteDriver->QueueMessage(std::move(pClonedMessage));
+    pNoteDriver->QueueMessage(pMessage->Clone());
 
 #if (_FX_OS_ == _FX_MACOSX_)
   CFWL_NoteLoop* pTopLoop = pNoteDriver->GetTopLoop();
   if (pTopLoop)
-    pNoteDriver->UnqueueMessage(pTopLoop);
+    pNoteDriver->UnqueueMessageAndProcess(pTopLoop);
 #endif
 }
 

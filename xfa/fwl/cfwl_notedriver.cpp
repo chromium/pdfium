@@ -6,6 +6,7 @@
 
 #include "xfa/fwl/cfwl_notedriver.h"
 
+#include <algorithm>
 #include <utility>
 
 #include "core/fxcrt/fx_ext.h"
@@ -71,16 +72,15 @@ void CFWL_NoteDriver::UnregisterEventTarget(CFWL_Widget* pListener) {
 }
 
 void CFWL_NoteDriver::PushNoteLoop(CFWL_NoteLoop* pNoteLoop) {
-  m_noteLoopQueue.Add(pNoteLoop);
+  m_NoteLoopQueue.push_back(pNoteLoop);
 }
 
 CFWL_NoteLoop* CFWL_NoteDriver::PopNoteLoop() {
-  int32_t pos = m_noteLoopQueue.GetSize();
-  if (pos <= 0)
+  if (m_NoteLoopQueue.empty())
     return nullptr;
 
-  CFWL_NoteLoop* p = m_noteLoopQueue.GetAt(pos - 1);
-  m_noteLoopQueue.RemoveAt(pos - 1);
+  CFWL_NoteLoop* p = m_NoteLoopQueue.back();
+  m_NoteLoopQueue.pop_back();
   return p;
 }
 
@@ -118,7 +118,7 @@ void CFWL_NoteDriver::Run() {
     CFWL_NoteLoop* pTopLoop = GetTopLoop();
     if (!pTopLoop || !pTopLoop->ContinueModal())
       break;
-    UnqueueMessage(pTopLoop);
+    UnqueueMessageAndProcess(pTopLoop);
   }
 #endif
 }
@@ -142,70 +142,56 @@ void CFWL_NoteDriver::NotifyTargetDestroy(CFWL_Widget* pNoteTarget) {
 
   UnregisterEventTarget(pNoteTarget);
 
-  for (int32_t nIndex = 0; nIndex < m_forms.GetSize(); nIndex++) {
-    CFWL_Form* pForm = static_cast<CFWL_Form*>(m_forms[nIndex]);
+  for (CFWL_Widget* pWidget : m_Forms) {
+    CFWL_Form* pForm = static_cast<CFWL_Form*>(pWidget);
     if (!pForm)
       continue;
 
     CFWL_Widget* pSubFocus = pForm->GetSubFocus();
     if (!pSubFocus)
       return;
+
     if (pSubFocus == pNoteTarget)
       pForm->SetSubFocus(nullptr);
   }
 }
 
 void CFWL_NoteDriver::RegisterForm(CFWL_Widget* pForm) {
-  if (!pForm || m_forms.Find(pForm) >= 0)
+  if (!pForm || pdfium::ContainsValue(m_Forms, pForm))
     return;
 
-  m_forms.Add(pForm);
-  if (m_forms.GetSize() != 1)
-    return;
-
-  CFWL_NoteLoop* pLoop = m_noteLoopQueue.GetAt(0);
-  if (!pLoop)
-    return;
-
-  pLoop->SetMainForm(pForm);
+  m_Forms.push_back(pForm);
+  if (m_Forms.size() == 1 && !m_NoteLoopQueue.empty() && m_NoteLoopQueue[0])
+    m_NoteLoopQueue[0]->SetMainForm(pForm);
 }
 
 void CFWL_NoteDriver::UnRegisterForm(CFWL_Widget* pForm) {
-  if (!pForm)
-    return;
-
-  int32_t nIndex = m_forms.Find(pForm);
-  if (nIndex < 0)
-    return;
-
-  m_forms.RemoveAt(nIndex);
+  auto iter = std::find(m_Forms.begin(), m_Forms.end(), pForm);
+  if (iter != m_Forms.end())
+    m_Forms.erase(iter);
 }
 
 void CFWL_NoteDriver::QueueMessage(std::unique_ptr<CFWL_Message> pMessage) {
-  m_noteQueue.push_back(std::move(pMessage));
+  m_NoteQueue.push_back(std::move(pMessage));
 }
 
-void CFWL_NoteDriver::UnqueueMessage(CFWL_NoteLoop* pNoteLoop) {
-  if (m_noteQueue.empty())
+void CFWL_NoteDriver::UnqueueMessageAndProcess(CFWL_NoteLoop* pNoteLoop) {
+  if (m_NoteQueue.empty())
     return;
 
-  std::unique_ptr<CFWL_Message> pMessage = std::move(m_noteQueue[0]);
-  m_noteQueue.pop_front();
-
+  std::unique_ptr<CFWL_Message> pMessage = std::move(m_NoteQueue.front());
+  m_NoteQueue.pop_front();
   if (!IsValidMessage(pMessage.get()))
     return;
 
-  ProcessMessage(pMessage.get());
+  ProcessMessage(std::move(pMessage));
 }
 
 CFWL_NoteLoop* CFWL_NoteDriver::GetTopLoop() const {
-  int32_t size = m_noteLoopQueue.GetSize();
-  if (size <= 0)
-    return nullptr;
-  return m_noteLoopQueue[size - 1];
+  return !m_NoteLoopQueue.empty() ? m_NoteLoopQueue.back() : nullptr;
 }
 
-void CFWL_NoteDriver::ProcessMessage(CFWL_Message* pMessage) {
+void CFWL_NoteDriver::ProcessMessage(std::unique_ptr<CFWL_Message> pMessage) {
   CFWL_WidgetMgr* pWidgetMgr =
       pMessage->m_pDstTarget->GetOwnerApp()->GetWidgetMgr();
   CFWL_Widget* pMessageForm = pWidgetMgr->IsFormDisabled()
@@ -213,11 +199,12 @@ void CFWL_NoteDriver::ProcessMessage(CFWL_Message* pMessage) {
                                   : GetMessageForm(pMessage->m_pDstTarget);
   if (!pMessageForm)
     return;
-  if (!DispatchMessage(pMessage, pMessageForm))
+
+  if (!DispatchMessage(pMessage.get(), pMessageForm))
     return;
 
   if (pMessage->GetType() == CFWL_Message::Type::Mouse)
-    MouseSecondary(pMessage);
+    MouseSecondary(pMessage.get());
 }
 
 bool CFWL_NoteDriver::DispatchMessage(CFWL_Message* pMessage,
@@ -434,15 +421,13 @@ void CFWL_NoteDriver::MouseSecondary(CFWL_Message* pMessage) {
 }
 
 bool CFWL_NoteDriver::IsValidMessage(CFWL_Message* pMessage) {
-  for (int32_t i = 0; i < m_noteLoopQueue.GetSize(); i++) {
-    CFWL_NoteLoop* pNoteLoop = m_noteLoopQueue[i];
+  for (CFWL_NoteLoop* pNoteLoop : m_NoteLoopQueue) {
     CFWL_Widget* pForm = pNoteLoop->GetForm();
-    if (pForm && (pForm == pMessage->m_pDstTarget))
+    if (pForm && pForm == pMessage->m_pDstTarget)
       return true;
   }
-
-  for (int32_t j = 0; j < m_forms.GetSize(); j++) {
-    CFWL_Form* pForm = static_cast<CFWL_Form*>(m_forms[j]);
+  for (CFWL_Widget* pWidget : m_Forms) {
+    CFWL_Form* pForm = static_cast<CFWL_Form*>(pWidget);
     if (pForm == pMessage->m_pDstTarget)
       return true;
   }
@@ -450,19 +435,20 @@ bool CFWL_NoteDriver::IsValidMessage(CFWL_Message* pMessage) {
 }
 
 CFWL_Widget* CFWL_NoteDriver::GetMessageForm(CFWL_Widget* pDstTarget) {
-  int32_t iTrackLoop = m_noteLoopQueue.GetSize();
-  if (iTrackLoop <= 0)
+  if (m_NoteLoopQueue.empty())
     return nullptr;
 
   CFWL_Widget* pMessageForm = nullptr;
-  if (iTrackLoop > 1)
-    pMessageForm = m_noteLoopQueue[iTrackLoop - 1]->GetForm();
-  else if (m_forms.Find(pDstTarget) < 0)
+  if (m_NoteLoopQueue.size() > 1)
+    pMessageForm = m_NoteLoopQueue.back()->GetForm();
+  else if (!pdfium::ContainsValue(m_Forms, pDstTarget))
     pMessageForm = pDstTarget;
+
   if (!pMessageForm && pDstTarget) {
     CFWL_WidgetMgr* pWidgetMgr = pDstTarget->GetOwnerApp()->GetWidgetMgr();
     if (!pWidgetMgr)
       return nullptr;
+
     pMessageForm = pWidgetMgr->GetSystemFormWidget(pDstTarget);
   }
   return pMessageForm;

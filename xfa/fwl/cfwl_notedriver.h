@@ -10,6 +10,7 @@
 #include <deque>
 #include <memory>
 #include <unordered_map>
+#include <vector>
 
 #include "xfa/fwl/cfwl_event.h"
 #include "xfa/fwl/cfwl_widget.h"
@@ -49,9 +50,9 @@ class CFWL_NoteDriver {
   void RegisterForm(CFWL_Widget* pForm);
   void UnRegisterForm(CFWL_Widget* pForm);
 
+  void ProcessMessage(std::unique_ptr<CFWL_Message> pMessage);
   void QueueMessage(std::unique_ptr<CFWL_Message> pMessage);
-  void UnqueueMessage(CFWL_NoteLoop* pNoteLoop);
-  void ProcessMessage(CFWL_Message* pMessage);
+  void UnqueueMessageAndProcess(CFWL_NoteLoop* pNoteLoop);
 
  private:
   bool DispatchMessage(CFWL_Message* pMessage, CFWL_Widget* pMessageForm);
@@ -65,9 +66,9 @@ class CFWL_NoteDriver {
   bool IsValidMessage(CFWL_Message* pMessage);
   CFWL_Widget* GetMessageForm(CFWL_Widget* pDstTarget);
 
-  CFX_ArrayTemplate<CFWL_Widget*> m_forms;
-  std::deque<std::unique_ptr<CFWL_Message>> m_noteQueue;
-  CFX_ArrayTemplate<CFWL_NoteLoop*> m_noteLoopQueue;
+  std::vector<CFWL_Widget*> m_Forms;
+  std::deque<std::unique_ptr<CFWL_Message>> m_NoteQueue;
+  std::vector<CFWL_NoteLoop*> m_NoteLoopQueue;
   std::unordered_map<uint32_t, CFWL_EventTarget*> m_eventTargets;
   CFWL_Widget* m_pHover;
   CFWL_Widget* m_pFocus;
