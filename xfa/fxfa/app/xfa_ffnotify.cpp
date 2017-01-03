@@ -326,7 +326,7 @@ void CXFA_FFNotify::OnNodeReady(CXFA_Node* pNode) {
   }
   switch (eType) {
     case XFA_Element::BindItems:
-      pDocView->m_BindItems.Add(pNode);
+      pDocView->m_BindItems.push_back(pNode);
       break;
     case XFA_Element::Validate: {
       pNode->SetFlag(XFA_NodeFlag_NeedsInitApp, false);

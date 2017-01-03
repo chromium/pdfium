@@ -120,11 +120,11 @@ class CXFA_FFDocView {
   CXFA_FFWidget* m_pFocusWidget;          // not owned.
   CXFA_FFWidget* m_pOldFocusWidget;       // not owned.
   std::map<CXFA_FFPageView*, std::unique_ptr<CFX_RectF>> m_mapPageInvalidate;
-  CFX_ArrayTemplate<CXFA_WidgetAcc*> m_ValidateAccs;
-  CFX_ArrayTemplate<CXFA_WidgetAcc*> m_CalculateAccs;
-  CFX_ArrayTemplate<CXFA_Node*> m_BindItems;
-  CFX_ArrayTemplate<CXFA_Node*> m_NewAddedNodes;
-  CFX_ArrayTemplate<CXFA_Node*> m_IndexChangedSubforms;
+  std::vector<CXFA_WidgetAcc*> m_ValidateAccs;
+  std::vector<CXFA_WidgetAcc*> m_CalculateAccs;
+  std::vector<CXFA_Node*> m_BindItems;
+  std::vector<CXFA_Node*> m_NewAddedNodes;
+  std::vector<CXFA_Node*> m_IndexChangedSubforms;
   XFA_DOCVIEW_LAYOUTSTATUS m_iStatus;
   int32_t m_iLock;
   friend class CXFA_FFNotify;
