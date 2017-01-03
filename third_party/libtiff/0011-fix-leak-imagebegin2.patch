@@ -1,0 +1,41 @@
+diff --git a/third_party/libtiff/tif_getimage.c b/third_party/libtiff/tif_getimage.c
+index 97fa94d..1cf6ac6 100644
+--- a/third_party/libtiff/tif_getimage.c
++++ b/third_party/libtiff/tif_getimage.c
+@@ -267,6 +267,13 @@ TIFFRGBAImageBegin(TIFFRGBAImage* img, TIFF* tif, int stop, char emsg[1024])
+        img->redcmap = NULL;
+        img->greencmap = NULL;
+        img->bluecmap = NULL;
++       img->Map = NULL;
++       img->BWmap = NULL;
++       img->PALmap = NULL;
++       img->ycbcr = NULL;
++       img->cielab = NULL;
++       img->UaToAa = NULL;
++       img->Bitdepth16To8 = NULL;
+        img->req_orientation = ORIENTATION_BOTLEFT;     /* It is the default */
+ 
+        img->tif = tif;
+@@ -452,13 +459,6 @@ TIFFRGBAImageBegin(TIFFRGBAImage* img, TIFF* tif, int stop, char emsg[1024])
+                            photoTag, img->photometric);
+                         goto fail_return;
+        }
+-       img->Map = NULL;
+-       img->BWmap = NULL;
+-       img->PALmap = NULL;
+-       img->ycbcr = NULL;
+-       img->cielab = NULL;
+-       img->UaToAa = NULL;
+-       img->Bitdepth16To8 = NULL;
+        TIFFGetField(tif, TIFFTAG_IMAGEWIDTH, &img->width);
+        TIFFGetField(tif, TIFFTAG_IMAGELENGTH, &img->height);
+        TIFFGetFieldDefaulted(tif, TIFFTAG_ORIENTATION, &img->orientation);
+@@ -478,7 +478,7 @@ TIFFRGBAImageBegin(TIFFRGBAImage* img, TIFF* tif, int stop, char emsg[1024])
+        return 1;
+ 
+   fail_return:
+-        TIFFRGBAImageEnd(img);
++        TIFFRGBAImageEnd( img );
+         return 0;
+ }
+ 
