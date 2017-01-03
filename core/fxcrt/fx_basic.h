@@ -433,79 +433,7 @@ class CFX_MapPtrTemplate : public CFX_MapPtrToPtr {
     rValue = (ValueType)(uintptr_t)pValue;
   }
 };
-#endif  // PDF_ENABLE_XFA
 
-class CFX_PtrList {
- protected:
-  struct CNode {
-    CNode* pNext;
-    CNode* pPrev;
-    void* data;
-  };
-
- public:
-  explicit CFX_PtrList(int nBlockSize = 10);
-
-  FX_POSITION GetHeadPosition() const { return (FX_POSITION)m_pNodeHead; }
-  FX_POSITION GetTailPosition() const { return (FX_POSITION)m_pNodeTail; }
-
-  void* GetNext(FX_POSITION& rPosition) const {
-    CNode* pNode = (CNode*)rPosition;
-    rPosition = (FX_POSITION)pNode->pNext;
-    return pNode->data;
-  }
-
-  void* GetPrev(FX_POSITION& rPosition) const {
-    CNode* pNode = (CNode*)rPosition;
-    rPosition = (FX_POSITION)pNode->pPrev;
-    return pNode->data;
-  }
-
-  FX_POSITION GetNextPosition(FX_POSITION pos) const {
-    return ((CNode*)pos)->pNext;
-  }
-
-  FX_POSITION GetPrevPosition(FX_POSITION pos) const {
-    return ((CNode*)pos)->pPrev;
-  }
-
-  void* GetAt(FX_POSITION rPosition) const {
-    CNode* pNode = (CNode*)rPosition;
-    return pNode->data;
-  }
-
-  int GetCount() const { return m_nCount; }
-  FX_POSITION AddTail(void* newElement);
-  FX_POSITION AddHead(void* newElement);
-
-  void SetAt(FX_POSITION pos, void* newElement) {
-    CNode* pNode = (CNode*)pos;
-    pNode->data = newElement;
-  }
-  FX_POSITION InsertAfter(FX_POSITION pos, void* newElement);
-
-  FX_POSITION Find(void* searchValue, FX_POSITION startAfter = nullptr) const;
-  FX_POSITION FindIndex(int index) const;
-
-  void RemoveAt(FX_POSITION pos);
-  void RemoveAll();
-
- protected:
-  CNode* m_pNodeHead;
-  CNode* m_pNodeTail;
-  int m_nCount;
-  CNode* m_pNodeFree;
-  struct CFX_Plex* m_pBlocks;
-  int m_nBlockSize;
-
-  CNode* NewNode(CNode* pPrev, CNode* pNext);
-  void FreeNode(CNode* pNode);
-
- public:
-  ~CFX_PtrList();
-};
-
-#ifdef PDF_ENABLE_XFA
 typedef void (*PD_CALLBACK_FREEDATA)(void* pData);
 #endif  // PDF_ENABLE_XFA
 

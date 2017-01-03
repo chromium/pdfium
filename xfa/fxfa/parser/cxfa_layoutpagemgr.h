@@ -7,6 +7,9 @@
 #ifndef XFA_FXFA_PARSER_CXFA_LAYOUTPAGEMGR_H_
 #define XFA_FXFA_PARSER_CXFA_LAYOUTPAGEMGR_H_
 
+#include <iterator>
+#include <list>
+
 #include "xfa/fxfa/parser/xfa_layout_itemlayout.h"
 
 class CXFA_ContainerRecord;
@@ -54,12 +57,12 @@ class CXFA_LayoutPageMgr {
                                         CXFA_ContainerRecord* pPrevRecord);
   void RemoveLayoutRecord(CXFA_ContainerRecord* pNewRecord,
                           CXFA_ContainerRecord* pPrevRecord);
-  inline CXFA_ContainerRecord* GetCurrentContainerRecord() {
-    CXFA_ContainerRecord* result =
-        ((CXFA_ContainerRecord*)m_rgProposedContainerRecord.GetAt(
-            m_pCurrentContainerRecord));
-    ASSERT(result);
-    return result;
+  CXFA_ContainerRecord* GetCurrentContainerRecord() {
+    return *m_CurrentContainerRecordIter;
+  }
+  std::list<CXFA_ContainerRecord*>::iterator GetTailPosition() {
+    auto iter = m_ProposedContainerRecords.end();
+    return !m_ProposedContainerRecords.empty() ? std::prev(iter) : iter;
   }
   CXFA_ContainerRecord* CreateContainerRecord(CXFA_Node* pPageNode = nullptr,
                                               bool bCreateNew = false);
@@ -120,7 +123,6 @@ class CXFA_LayoutPageMgr {
     return m_ePageSetMode == XFA_ATTRIBUTEENUM_OrderedOccurrence;
   }
   void ClearData();
-  void ClearRecordList();
   void MergePageSetContents();
   void LayoutPageSetContents();
   void PrepareLayout();
@@ -129,8 +131,8 @@ class CXFA_LayoutPageMgr {
   CXFA_Node* m_pTemplatePageSetRoot;
   CXFA_ContainerLayoutItem* m_pPageSetLayoutItemRoot;
   CXFA_ContainerLayoutItem* m_pPageSetCurRoot;
-  FX_POSITION m_pCurrentContainerRecord;
-  CFX_PtrList m_rgProposedContainerRecord;
+  std::list<CXFA_ContainerRecord*> m_ProposedContainerRecords;
+  std::list<CXFA_ContainerRecord*>::iterator m_CurrentContainerRecordIter;
   CXFA_Node* m_pCurPageArea;
   int32_t m_nAvailPages;
   int32_t m_nCurPageCount;

@@ -729,7 +729,6 @@ static_library("fxcrt") {
     "core/fxcrt/fx_basic_buffer.cpp",
     "core/fxcrt/fx_basic_coords.cpp",
     "core/fxcrt/fx_basic_gcc.cpp",
-    "core/fxcrt/fx_basic_list.cpp",
     "core/fxcrt/fx_basic_memmgr.cpp",
     "core/fxcrt/fx_basic_plex.cpp",
     "core/fxcrt/fx_basic_utf.cpp",

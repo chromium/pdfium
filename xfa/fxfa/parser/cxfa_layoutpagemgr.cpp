@@ -243,7 +243,7 @@ CXFA_LayoutPageMgr::CXFA_LayoutPageMgr(CXFA_LayoutProcessor* pLayoutProcessor)
       m_pTemplatePageSetRoot(nullptr),
       m_pPageSetLayoutItemRoot(nullptr),
       m_pPageSetCurRoot(nullptr),
-      m_pCurrentContainerRecord(nullptr),
+      m_CurrentContainerRecordIter(m_ProposedContainerRecords.end()),
       m_pCurPageArea(nullptr),
       m_nAvailPages(0),
       m_nCurPageCount(0),
@@ -378,23 +378,26 @@ bool CXFA_LayoutPageMgr::PrepareFirstPage(CXFA_Node* pRootSubform) {
   CXFA_Node *pLeader, *pTrailer;
   if (pBreakBeforeNode &&
       ExecuteBreakBeforeOrAfter(pBreakBeforeNode, true, pLeader, pTrailer)) {
-    m_pCurrentContainerRecord = m_rgProposedContainerRecord.GetHeadPosition();
+    m_CurrentContainerRecordIter = m_ProposedContainerRecords.begin();
     return true;
   }
   return AppendNewPage(true);
 }
 
 bool CXFA_LayoutPageMgr::AppendNewPage(bool bFirstTemPage) {
-  if (m_pCurrentContainerRecord !=
-      m_rgProposedContainerRecord.GetTailPosition()) {
+  if (m_CurrentContainerRecordIter != GetTailPosition())
     return true;
-  }
+
   CXFA_Node* pPageNode = GetNextAvailPageArea(nullptr);
   if (!pPageNode)
     return false;
-  if (bFirstTemPage && !m_pCurrentContainerRecord)
-    m_pCurrentContainerRecord = m_rgProposedContainerRecord.GetHeadPosition();
-  return !bFirstTemPage || m_pCurrentContainerRecord;
+
+  if (bFirstTemPage &&
+      m_CurrentContainerRecordIter == m_ProposedContainerRecords.end()) {
+    m_CurrentContainerRecordIter = m_ProposedContainerRecords.begin();
+  }
+  return !bFirstTemPage ||
+         m_CurrentContainerRecordIter != m_ProposedContainerRecords.end();
 }
 
 void CXFA_LayoutPageMgr::RemoveLayoutRecord(CXFA_ContainerRecord* pNewRecord,
@@ -444,11 +447,10 @@ void CXFA_LayoutPageMgr::SubmitContentItem(
 
   if (eStatus != XFA_ItemLayoutProcessorResult_Done) {
     if (eStatus == XFA_ItemLayoutProcessorResult_PageFullBreak &&
-        m_pCurrentContainerRecord ==
-            m_rgProposedContainerRecord.GetTailPosition()) {
+        m_CurrentContainerRecordIter == GetTailPosition()) {
       AppendNewPage();
     }
-    m_pCurrentContainerRecord = m_rgProposedContainerRecord.GetTailPosition();
+    m_CurrentContainerRecordIter = GetTailPosition();
     m_pCurPageArea = GetCurrentContainerRecord()->pCurPageArea->m_pFormNode;
   }
 }
@@ -463,10 +465,8 @@ FX_FLOAT CXFA_LayoutPageMgr::GetAvailHeight() {
       pLayoutItem->m_pFormNode->GetMeasure(XFA_ATTRIBUTE_H).ToUnit(XFA_UNIT_Pt);
   if (fAvailHeight >= XFA_LAYOUT_FLOAT_PERCISION)
     return fAvailHeight;
-  if (m_pCurrentContainerRecord ==
-      m_rgProposedContainerRecord.GetHeadPosition()) {
+  if (m_CurrentContainerRecordIter == m_ProposedContainerRecords.begin())
     return 0.0f;
-  }
   return XFA_LAYOUT_FLOAT_MAX;
 }
 
@@ -484,10 +484,10 @@ CXFA_ContainerRecord* CXFA_LayoutPageMgr::CreateContainerRecord(
     CXFA_Node* pPageNode,
     bool bCreateNew) {
   CXFA_ContainerRecord* pNewRecord = new CXFA_ContainerRecord();
-  if (m_pCurrentContainerRecord) {
+  if (m_CurrentContainerRecordIter != m_ProposedContainerRecords.end()) {
     if (!IsPageSetRootOrderedOccurrence() || !pPageNode) {
       *pNewRecord = *GetCurrentContainerRecord();
-      m_rgProposedContainerRecord.AddTail(pNewRecord);
+      m_ProposedContainerRecords.push_back(pNewRecord);
       return pNewRecord;
     }
     CXFA_Node* pPageSet = pPageNode->GetNodeItem(XFA_NODEITEM_Parent);
@@ -546,7 +546,7 @@ CXFA_ContainerRecord* CXFA_LayoutPageMgr::CreateContainerRecord(
       pNewRecord->pCurPageSet = m_pPageSetLayoutItemRoot;
     }
   }
-  m_rgProposedContainerRecord.AddTail(pNewRecord);
+  m_ProposedContainerRecords.push_back(pNewRecord);
   return pNewRecord;
 }
 
@@ -748,7 +748,8 @@ bool CXFA_LayoutPageMgr::RunBreak(XFA_Element eBreakType,
     case XFA_ATTRIBUTEENUM_ContentArea:
       if (pTarget && pTarget->GetElementType() != XFA_Element::ContentArea)
         pTarget = nullptr;
-      if (!pTarget || !m_pCurrentContainerRecord ||
+      if (!pTarget ||
+          m_CurrentContainerRecordIter == m_ProposedContainerRecords.end() ||
           pTarget !=
               GetCurrentContainerRecord()->pCurContentArea->m_pFormNode ||
           bStartNew) {
@@ -763,7 +764,8 @@ bool CXFA_LayoutPageMgr::RunBreak(XFA_Element eBreakType,
     case XFA_ATTRIBUTEENUM_PageArea:
       if (pTarget && pTarget->GetElementType() != XFA_Element::PageArea)
         pTarget = nullptr;
-      if (!pTarget || !m_pCurrentContainerRecord ||
+      if (!pTarget ||
+          m_CurrentContainerRecordIter == m_ProposedContainerRecords.end() ||
           pTarget != GetCurrentContainerRecord()->pCurPageArea->m_pFormNode ||
           bStartNew) {
         CXFA_Node* pPageArea = GetNextAvailPageArea(pTarget, nullptr, true);
@@ -816,9 +818,8 @@ bool CXFA_LayoutPageMgr::ExecuteBreakBeforeOrAfter(
                    bStartNew)) {
         return true;
       }
-      if (m_rgProposedContainerRecord.GetCount() > 0 &&
-          m_pCurrentContainerRecord ==
-              m_rgProposedContainerRecord.GetHeadPosition() &&
+      if (!m_ProposedContainerRecords.empty() &&
+          m_CurrentContainerRecordIter == m_ProposedContainerRecords.begin() &&
           eType == XFA_Element::BreakBefore) {
         CXFA_Node* pParentNode = pFormNode->GetNodeItem(
             XFA_NODEITEM_Parent, XFA_ObjectType::ContainerNode);
@@ -1101,9 +1102,10 @@ bool CXFA_LayoutPageMgr::FindPageAreaFromPageSet(CXFA_Node* pPageSet,
                                            pTargetPageArea, pTargetContentArea,
                                            bNewPage, bQuery);
   }
-  XFA_ATTRIBUTEENUM ePreferredPosition = m_pCurrentContainerRecord
-                                             ? XFA_ATTRIBUTEENUM_Rest
-                                             : XFA_ATTRIBUTEENUM_First;
+  XFA_ATTRIBUTEENUM ePreferredPosition =
+      m_CurrentContainerRecordIter != m_ProposedContainerRecords.end()
+          ? XFA_ATTRIBUTEENUM_Rest
+          : XFA_ATTRIBUTEENUM_First;
   return FindPageAreaFromPageSet_SimplexDuplex(
       pPageSet, pStartChild, pTargetPageArea, pTargetContentArea, bNewPage,
       bQuery, ePreferredPosition);
@@ -1528,21 +1530,18 @@ bool CXFA_LayoutPageMgr::GetNextAvailContentHeight(FX_FLOAT fChildHeight) {
     if (m_nCurPageCount == iMax) {
       CXFA_Node* pSrcPage = m_pCurPageArea;
       int32_t nSrcPageCount = m_nCurPageCount;
-      FX_POSITION psSrcRecord = m_rgProposedContainerRecord.GetTailPosition();
+      auto psSrcIter = GetTailPosition();
       CXFA_Node* pNextPage =
           GetNextAvailPageArea(nullptr, nullptr, false, true);
       m_pCurPageArea = pSrcPage;
       m_nCurPageCount = nSrcPageCount;
-      CXFA_ContainerRecord* pPrevRecord = static_cast<CXFA_ContainerRecord*>(
-          m_rgProposedContainerRecord.GetNext(psSrcRecord));
-      while (psSrcRecord) {
-        FX_POSITION psSaveRecord = psSrcRecord;
-        CXFA_ContainerRecord* pInsertRecord =
-            static_cast<CXFA_ContainerRecord*>(
-                m_rgProposedContainerRecord.GetNext(psSrcRecord));
+      CXFA_ContainerRecord* pPrevRecord = *psSrcIter++;
+      while (psSrcIter != m_ProposedContainerRecords.end()) {
+        auto psSaveIter = psSrcIter;
+        CXFA_ContainerRecord* pInsertRecord = *psSrcIter++;
         RemoveLayoutRecord(pInsertRecord, pPrevRecord);
         delete pInsertRecord;
-        m_rgProposedContainerRecord.RemoveAt(psSaveRecord);
+        m_ProposedContainerRecords.erase(psSaveIter);
       }
       if (pNextPage) {
         CXFA_Node* pContentArea =
@@ -1570,23 +1569,16 @@ bool CXFA_LayoutPageMgr::GetNextAvailContentHeight(FX_FLOAT fChildHeight) {
 }
 
 void CXFA_LayoutPageMgr::ClearData() {
-  ClearRecordList();
-}
-
-void CXFA_LayoutPageMgr::ClearRecordList() {
   if (!m_pTemplatePageSetRoot)
     return;
-  if (m_rgProposedContainerRecord.GetCount() > 0) {
-    FX_POSITION sPos;
-    sPos = m_rgProposedContainerRecord.GetHeadPosition();
-    while (sPos) {
-      CXFA_ContainerRecord* pRecord = static_cast<CXFA_ContainerRecord*>(
-          m_rgProposedContainerRecord.GetNext(sPos));
-      delete pRecord;
-    }
-    m_rgProposedContainerRecord.RemoveAll();
+
+  auto sPos = m_ProposedContainerRecords.begin();
+  while (sPos != m_ProposedContainerRecords.end()) {
+    CXFA_ContainerRecord* pRecord = *sPos++;
+    delete pRecord;
   }
-  m_pCurrentContainerRecord = nullptr;
+  m_ProposedContainerRecords.clear();
+  m_CurrentContainerRecordIter = m_ProposedContainerRecords.end();
   m_pCurPageArea = nullptr;
   m_nCurPageCount = 0;
   m_bCreateOverFlowPage = false;
@@ -1942,7 +1934,7 @@ void CXFA_LayoutPageMgr::SyncLayoutData() {
     pNotify->OnPageEvent(pPage, XFA_PAGEVIEWEVENT_PostRemoved);
     delete pPage;
   }
-  ClearRecordList();
+  ClearData();
 }
 
 void XFA_ReleaseLayoutItem_NoPageArea(CXFA_LayoutItem* pLayoutItem) {
@@ -1961,7 +1953,7 @@ void CXFA_LayoutPageMgr::PrepareLayout() {
   m_pPageSetCurRoot = nullptr;
   m_ePageSetMode = XFA_ATTRIBUTEENUM_OrderedOccurrence;
   m_nAvailPages = 0;
-  ClearRecordList();
+  ClearData();
   if (!m_pPageSetLayoutItemRoot)
     return;
 
