@@ -51,12 +51,16 @@ class CScript_HostPseudoModel : public CXFA_Object {
   void CurrentDateTime(CFXJSE_Arguments* pArguments);
 
  protected:
-  void LoadString(CFXJSE_Value* pValue,
-                  CXFA_FFNotify* pNotify,
-                  uint32_t dwFlag);
   bool ValidateArgsForMsg(CFXJSE_Arguments* pArguments,
                           int32_t iArgIndex,
                           CFX_WideString& wsValue);
+
+ private:
+  void ThrowSetLanguageException() const;
+  void ThrowSetNumPagesException() const;
+  void ThrowSetPlatformException() const;
+  void ThrowSetVariationException() const;
+  void ThrowSetVersionException() const;
 };
 
 #endif  // XFA_FXFA_PARSER_CSCRIPT_HOSTPSEUDOMODEL_H_

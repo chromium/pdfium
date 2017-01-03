@@ -39,7 +39,7 @@ void CScript_LayoutPseudoModel::Ready(CFXJSE_Value* pValue,
     return;
   }
   if (bSetting) {
-    ThrowException(XFA_IDS_UNABLE_SET_READY);
+    ThrowSetReadyException();
     return;
   }
   int32_t iStatus = pNotify->GetLayoutStatus();
@@ -65,7 +65,7 @@ void CScript_LayoutPseudoModel::HWXY(CFXJSE_Arguments* pArguments,
         methodName = L"y";
         break;
     }
-    ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, methodName);
+    ThrowParamCountMismatchException(methodName);
     return;
   }
   CXFA_Node* pNode = nullptr;
@@ -177,7 +177,7 @@ void CScript_LayoutPseudoModel::PageCount(CFXJSE_Arguments* pArguments) {
 void CScript_LayoutPseudoModel::PageSpan(CFXJSE_Arguments* pArguments) {
   int32_t iLength = pArguments->GetLength();
   if (iLength != 1) {
-    ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"pageSpan");
+    ThrowParamCountMismatchException(L"pageSpan");
     return;
   }
   CXFA_Node* pNode = nullptr;
@@ -343,7 +343,7 @@ void CScript_LayoutPseudoModel::GetObjArray(CXFA_LayoutProcessor* pDocLayout,
 void CScript_LayoutPseudoModel::PageContent(CFXJSE_Arguments* pArguments) {
   int32_t iLength = pArguments->GetLength();
   if (iLength < 1 || iLength > 3) {
-    ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"pageContent");
+    ThrowParamCountMismatchException(L"pageContent");
     return;
   }
   int32_t iIndex = 0;
@@ -411,7 +411,7 @@ void CScript_LayoutPseudoModel::AbsPageSpan(CFXJSE_Arguments* pArguments) {
 
 void CScript_LayoutPseudoModel::AbsPageInBatch(CFXJSE_Arguments* pArguments) {
   if (pArguments->GetLength() != 1) {
-    ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"absPageInBatch");
+    ThrowParamCountMismatchException(L"absPageInBatch");
     return;
   }
 
@@ -422,7 +422,7 @@ void CScript_LayoutPseudoModel::AbsPageInBatch(CFXJSE_Arguments* pArguments) {
 
 void CScript_LayoutPseudoModel::SheetInBatch(CFXJSE_Arguments* pArguments) {
   if (pArguments->GetLength() != 1) {
-    ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"sheetInBatch");
+    ThrowParamCountMismatchException(L"sheetInBatch");
     return;
   }
 
@@ -456,7 +456,7 @@ void CScript_LayoutPseudoModel::PageImp(CFXJSE_Arguments* pArguments,
     } else {
       methodName = L"page";
     }
-    ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, methodName);
+    ThrowParamCountMismatchException(methodName);
     return;
   }
   CXFA_Node* pNode = nullptr;
@@ -480,4 +480,8 @@ void CScript_LayoutPseudoModel::PageImp(CFXJSE_Arguments* pArguments,
   iPage = pLayoutItem->GetFirst()->GetPage()->GetPageIndex();
   if (pValue)
     pValue->SetInteger(bAbsPage ? iPage : iPage + 1);
+}
+
+void CScript_LayoutPseudoModel::ThrowSetReadyException() const {
+  ThrowException(L"Unable to set ready value.");
 }

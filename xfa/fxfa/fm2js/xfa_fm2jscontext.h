@@ -452,7 +452,16 @@ class CXFA_FM2JSContext : public CFXJSE_HostObject {
  private:
   v8::Isolate* GetScriptRuntime() const { return m_pIsolate; }
   CXFA_Document* GetDocument() const { return m_pDocument; }
-  void ThrowException(int32_t iStringID, ...);
+
+  void ThrowNoDefaultPropertyException(const CFX_ByteStringC& name) const;
+  void ThrowCompilerErrorException() const;
+  void ThrowDivideByZeroException() const;
+  void ThrowServerDeniedException() const;
+  void ThrowPropertyNotInObjectException(const CFX_WideString& name,
+                                         const CFX_WideString& exp) const;
+  void ThrowArgumentMismatchException() const;
+  void ThrowParamCountMismatchException(const CFX_WideString& method) const;
+  void ThrowException(const FX_WCHAR* str, ...) const;
 
   v8::Isolate* m_pIsolate;
   CFXJSE_Class* m_pFMClass;

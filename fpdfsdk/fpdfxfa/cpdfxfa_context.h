@@ -80,7 +80,6 @@ class CPDFXFA_Context : public IXFA_AppProvider {
                      const CFX_WideString& wsData,
                      const CFX_WideString& wsEncode) override;
 
-  CFX_WideString LoadString(int32_t iStringID) override;
   IFWL_AdapterTimerMgr* GetTimerMgr() override;
 
  protected:

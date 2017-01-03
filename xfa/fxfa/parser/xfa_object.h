@@ -90,9 +90,15 @@ class CXFA_Object : public CFXJSE_HostObject {
   void Script_ObjectClass_ClassName(CFXJSE_Value* pValue,
                                     bool bSetting,
                                     XFA_ATTRIBUTE eAttribute);
-  void ThrowException(int32_t iStringID, ...);
+
+  void ThrowInvalidPropertyException() const;
+  void ThrowArgumentMismatchException() const;
+  void ThrowIndexOutOfBoundsException() const;
+  void ThrowParamCountMismatchException(const CFX_WideString& method) const;
 
  protected:
+  void ThrowException(const FX_WCHAR* str, ...) const;
+
   CXFA_Document* const m_pDocument;
   const XFA_ObjectType m_objectType;
   const XFA_Element m_elementType;
@@ -676,6 +682,11 @@ class CXFA_Node : public CXFA_Object {
   uint32_t m_dwNameHash;
   CXFA_Node* m_pAuxNode;
   XFA_MAPMODULEDATA* m_pMapModuleData;
+
+ private:
+  void ThrowMissingPropertyException(const CFX_WideString& obj,
+                                     const CFX_WideString& prop) const;
+  void ThrowTooManyOccurancesException(const CFX_WideString& obj) const;
 };
 
 class CXFA_ThisProxy : public CXFA_Object {

@@ -39,24 +39,6 @@ class IXFA_WidgetIterator;
 #define XFA_IDNo 3
 #define XFA_IDYes 4
 
-#define XFA_IDS_INVAlID_PROP_SET 13
-#define XFA_IDS_NOT_DEFAUL_VALUE 14
-#define XFA_IDS_UNABLE_SET_LANGUAGE 15
-#define XFA_IDS_UNABLE_SET_NUMPAGES 16
-#define XFA_IDS_UNABLE_SET_PLATFORM 17
-#define XFA_IDS_UNABLE_SET_VARIATION 19
-#define XFA_IDS_UNABLE_SET_VERSION 20
-#define XFA_IDS_UNABLE_SET_READY 21
-#define XFA_IDS_COMPILER_ERROR 35
-#define XFA_IDS_DIVIDE_ZERO 44
-#define XFA_IDS_ACCESS_PROPERTY_IN_NOT_OBJECT 61
-#define XFA_IDS_INDEX_OUT_OF_BOUNDS 64
-#define XFA_IDS_INCORRECT_NUMBER_OF_METHOD 65
-#define XFA_IDS_ARGUMENT_MISMATCH 66
-#define XFA_IDS_NOT_HAVE_PROPERTY 70
-#define XFA_IDS_VIOLATE_BOUNDARY 72
-#define XFA_IDS_SERVER_DENY 73
-
 #define XFA_DOCVIEW_View 0x00000000
 #define XFA_DOCVIEW_MasterPage 0x00000001
 #define XFA_DOCVIEW_Design 0x00000002
@@ -242,7 +224,6 @@ class IXFA_AppProvider {
                              const CFX_WideString& wsData,
                              const CFX_WideString& wsEncode) = 0;
 
-  virtual CFX_WideString LoadString(int32_t iStringID) = 0;
   virtual IFWL_AdapterTimerMgr* GetTimerMgr() = 0;
 };
 

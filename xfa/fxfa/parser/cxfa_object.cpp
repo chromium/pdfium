@@ -39,7 +39,7 @@ void CXFA_Object::Script_ObjectClass_ClassName(CFXJSE_Value* pValue,
                                                bool bSetting,
                                                XFA_ATTRIBUTE eAttribute) {
   if (bSetting) {
-    ThrowException(XFA_IDS_INVAlID_PROP_SET);
+    ThrowInvalidPropertyException();
     return;
   }
   CFX_WideStringC className = GetClassName();
@@ -47,14 +47,29 @@ void CXFA_Object::Script_ObjectClass_ClassName(CFXJSE_Value* pValue,
       FX_UTF8Encode(className.c_str(), className.GetLength()).AsStringC());
 }
 
-void CXFA_Object::ThrowException(int32_t iStringID, ...) {
-  IXFA_AppProvider* pAppProvider = m_pDocument->GetNotify()->GetAppProvider();
-  ASSERT(pAppProvider);
+void CXFA_Object::ThrowInvalidPropertyException() const {
+  ThrowException(L"Invalid property set operation.");
+}
 
+void CXFA_Object::ThrowIndexOutOfBoundsException() const {
+  ThrowException(L"Index value is out of bounds.");
+}
+
+void CXFA_Object::ThrowParamCountMismatchException(
+    const CFX_WideString& method) const {
+  ThrowException(L"Incorrect number of parameters calling method '%s'.",
+                 method.c_str());
+}
+
+void CXFA_Object::ThrowArgumentMismatchException() const {
+  ThrowException(L"Argument mismatch in property or function argument.");
+}
+
+void CXFA_Object::ThrowException(const FX_WCHAR* str, ...) const {
   CFX_WideString wsMessage;
   va_list arg_ptr;
-  va_start(arg_ptr, iStringID);
-  wsMessage.FormatV(pAppProvider->LoadString(iStringID).c_str(), arg_ptr);
+  va_start(arg_ptr, str);
+  wsMessage.FormatV(str, arg_ptr);
   va_end(arg_ptr);
   FXJSE_ThrowMessage(
       FX_UTF8Encode(wsMessage.c_str(), wsMessage.GetLength()).AsStringC());

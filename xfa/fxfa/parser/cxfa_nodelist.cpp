@@ -36,85 +36,90 @@ CXFA_Node* CXFA_NodeList::NamedItem(const CFX_WideStringC& wsName) {
 
 void CXFA_NodeList::Script_ListClass_Append(CFXJSE_Arguments* pArguments) {
   int32_t argc = pArguments->GetLength();
-  if (argc == 1) {
-    CXFA_Node* pNode = static_cast<CXFA_Node*>(pArguments->GetObject(0));
-    if (pNode) {
-      Append(pNode);
-    } else {
-      ThrowException(XFA_IDS_ARGUMENT_MISMATCH);
-    }
-  } else {
-    ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"append");
+  if (argc != 1) {
+    ThrowParamCountMismatchException(L"append");
+    return;
   }
+
+  CXFA_Node* pNode = static_cast<CXFA_Node*>(pArguments->GetObject(0));
+  if (!pNode) {
+    ThrowArgumentMismatchException();
+    return;
+  }
+  Append(pNode);
 }
 
 void CXFA_NodeList::Script_ListClass_Insert(CFXJSE_Arguments* pArguments) {
   int32_t argc = pArguments->GetLength();
-  if (argc == 2) {
-    CXFA_Node* pNewNode = static_cast<CXFA_Node*>(pArguments->GetObject(0));
-    CXFA_Node* pBeforeNode = static_cast<CXFA_Node*>(pArguments->GetObject(1));
-    if (pNewNode) {
-      Insert(pNewNode, pBeforeNode);
-    } else {
-      ThrowException(XFA_IDS_ARGUMENT_MISMATCH);
-    }
-  } else {
-    ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"insert");
+  if (argc != 2) {
+    ThrowParamCountMismatchException(L"insert");
+    return;
   }
+
+  CXFA_Node* pNewNode = static_cast<CXFA_Node*>(pArguments->GetObject(0));
+  CXFA_Node* pBeforeNode = static_cast<CXFA_Node*>(pArguments->GetObject(1));
+  if (!pNewNode) {
+    ThrowArgumentMismatchException();
+    return;
+  }
+  Insert(pNewNode, pBeforeNode);
 }
 
 void CXFA_NodeList::Script_ListClass_Remove(CFXJSE_Arguments* pArguments) {
   int32_t argc = pArguments->GetLength();
-  if (argc == 1) {
-    CXFA_Node* pNode = static_cast<CXFA_Node*>(pArguments->GetObject(0));
-    if (pNode) {
-      Remove(pNode);
-    } else {
-      ThrowException(XFA_IDS_ARGUMENT_MISMATCH);
-    }
-  } else {
-    ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"remove");
+  if (argc != 1) {
+    ThrowParamCountMismatchException(L"remove");
+    return;
   }
+
+  CXFA_Node* pNode = static_cast<CXFA_Node*>(pArguments->GetObject(0));
+  if (!pNode) {
+    ThrowArgumentMismatchException();
+    return;
+  }
+  Remove(pNode);
 }
 
 void CXFA_NodeList::Script_ListClass_Item(CFXJSE_Arguments* pArguments) {
   int32_t argc = pArguments->GetLength();
-  if (argc == 1) {
-    int32_t iIndex = pArguments->GetInt32(0);
-    if ((iIndex >= 0) && (iIndex + 1 <= GetLength())) {
-      pArguments->GetReturnValue()->Assign(
-          m_pDocument->GetScriptContext()->GetJSValueFromMap(Item(iIndex)));
-    } else {
-      ThrowException(XFA_IDS_INDEX_OUT_OF_BOUNDS);
-    }
-  } else {
-    ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"item");
+  if (argc != 1) {
+    ThrowParamCountMismatchException(L"item");
+    return;
   }
+
+  int32_t iIndex = pArguments->GetInt32(0);
+  if (iIndex < 0 || iIndex >= GetLength()) {
+    ThrowIndexOutOfBoundsException();
+    return;
+  }
+  pArguments->GetReturnValue()->Assign(
+      m_pDocument->GetScriptContext()->GetJSValueFromMap(Item(iIndex)));
 }
 
 void CXFA_NodeList::Script_TreelistClass_NamedItem(
     CFXJSE_Arguments* pArguments) {
   int32_t argc = pArguments->GetLength();
-  if (argc == 1) {
-    CFX_ByteString szName = pArguments->GetUTF8String(0);
-    CXFA_Node* pNode =
-        NamedItem(CFX_WideString::FromUTF8(szName.AsStringC()).AsStringC());
-    if (!pNode) {
-      return;
-    }
-    pArguments->GetReturnValue()->Assign(
-        m_pDocument->GetScriptContext()->GetJSValueFromMap(pNode));
-  } else {
-    ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"namedItem");
+  if (argc != 1) {
+    ThrowParamCountMismatchException(L"namedItem");
+    return;
   }
+
+  CFX_ByteString szName = pArguments->GetUTF8String(0);
+  CXFA_Node* pNode =
+      NamedItem(CFX_WideString::FromUTF8(szName.AsStringC()).AsStringC());
+  if (!pNode)
+    return;
+
+  pArguments->GetReturnValue()->Assign(
+      m_pDocument->GetScriptContext()->GetJSValueFromMap(pNode));
 }
 
 void CXFA_NodeList::Script_ListClass_Length(CFXJSE_Value* pValue,
                                             bool bSetting,
                                             XFA_ATTRIBUTE eAttribute) {
-  if (!bSetting) {
-    pValue->SetInteger(GetLength());
-  } else {
-    ThrowException(XFA_IDS_INVAlID_PROP_SET);
+  if (bSetting) {
+    ThrowInvalidPropertyException();
+    return;
   }
+  pValue->SetInteger(GetLength());
 }

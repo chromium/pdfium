@@ -55,6 +55,9 @@ class CScript_LayoutPseudoModel : public CXFA_Object {
                    bool bOnPageArea,
                    CXFA_NodeArray& retArray);
   void PageImp(CFXJSE_Arguments* pArguments, bool bAbsPage);
+
+ private:
+  void ThrowSetReadyException() const;
 };
 
 #endif  // XFA_FXFA_PARSER_CSCRIPT_LAYOUTPSEUDOMODEL_H_

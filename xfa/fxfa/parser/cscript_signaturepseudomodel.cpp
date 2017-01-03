@@ -26,7 +26,7 @@ CScript_SignaturePseudoModel::~CScript_SignaturePseudoModel() {}
 void CScript_SignaturePseudoModel::Verify(CFXJSE_Arguments* pArguments) {
   int32_t iLength = pArguments->GetLength();
   if (iLength < 1 || iLength > 4) {
-    ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"verify");
+    ThrowParamCountMismatchException(L"verify");
     return;
   }
 
@@ -38,7 +38,7 @@ void CScript_SignaturePseudoModel::Verify(CFXJSE_Arguments* pArguments) {
 void CScript_SignaturePseudoModel::Sign(CFXJSE_Arguments* pArguments) {
   int32_t iLength = pArguments->GetLength();
   if (iLength < 3 || iLength > 7) {
-    ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"sign");
+    ThrowParamCountMismatchException(L"sign");
     return;
   }
 
@@ -49,7 +49,7 @@ void CScript_SignaturePseudoModel::Sign(CFXJSE_Arguments* pArguments) {
 
 void CScript_SignaturePseudoModel::Enumerate(CFXJSE_Arguments* pArguments) {
   if (pArguments->GetLength() != 0) {
-    ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"enumerate");
+    ThrowParamCountMismatchException(L"enumerate");
     return;
   }
   return;
@@ -58,7 +58,7 @@ void CScript_SignaturePseudoModel::Enumerate(CFXJSE_Arguments* pArguments) {
 void CScript_SignaturePseudoModel::Clear(CFXJSE_Arguments* pArguments) {
   int32_t iLength = pArguments->GetLength();
   if (iLength < 1 || iLength > 2) {
-    ThrowException(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"clear");
+    ThrowParamCountMismatchException(L"clear");
     return;
   }
 

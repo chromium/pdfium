@@ -358,48 +358,6 @@ bool CPDFXFA_Context::PutRequestURL(const CFX_WideString& wsURL,
                                        wsEncode.c_str());
 }
 
-CFX_WideString CPDFXFA_Context::LoadString(int32_t iStringID) {
-  switch (iStringID) {
-    case XFA_IDS_INVAlID_PROP_SET:
-      return L"Invalid property set operation.";
-    case XFA_IDS_NOT_DEFAUL_VALUE:
-      return L" doesn't have a default property.";
-    case XFA_IDS_UNABLE_SET_LANGUAGE:
-      return L"Unable to set language value.";
-    case XFA_IDS_UNABLE_SET_NUMPAGES:
-      return L"Unable to set numPages value.";
-    case XFA_IDS_UNABLE_SET_PLATFORM:
-      return L"Unable to set platform value.";
-    case XFA_IDS_UNABLE_SET_VARIATION:
-      return L"Unable to set variation value.";
-    case XFA_IDS_UNABLE_SET_VERSION:
-      return L"Unable to set version value.";
-    case XFA_IDS_UNABLE_SET_READY:
-      return L"Unable to set ready value.";
-    case XFA_IDS_COMPILER_ERROR:
-      return L"Compiler error.";
-    case XFA_IDS_DIVIDE_ZERO:
-      return L"Divide by zero.";
-    case XFA_IDS_ACCESS_PROPERTY_IN_NOT_OBJECT:
-      return L"An attempt was made to reference property '%s' of a non-object "
-             L"in SOM expression %s.";
-    case XFA_IDS_INDEX_OUT_OF_BOUNDS:
-      return L"Index value is out of bounds.";
-    case XFA_IDS_INCORRECT_NUMBER_OF_METHOD:
-      return L"Incorrect number of parameters calling method '%s'.";
-    case XFA_IDS_ARGUMENT_MISMATCH:
-      return L"Argument mismatch in property or function argument.";
-    case XFA_IDS_NOT_HAVE_PROPERTY:
-      return L"'%s' doesn't have property '%s'.";
-    case XFA_IDS_VIOLATE_BOUNDARY:
-      return L"The element [%s] has violated its allowable number of "
-             L"occurrences.";
-    case XFA_IDS_SERVER_DENY:
-      return L"Server does not permit.";
-  }
-  return L"";
-}
-
 IFWL_AdapterTimerMgr* CPDFXFA_Context::GetTimerMgr() {
   CXFA_FWLAdapterTimerMgr* pAdapter = nullptr;
   if (m_pFormFillEnv)
