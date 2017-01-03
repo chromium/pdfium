@@ -140,13 +140,10 @@ class CFWL_MonthCalendar : public CFWL_Widget {
   void RemoveSelDay();
   void AddSelDay(int32_t iDay);
   void JumpToToday();
-  void GetHeadText(int32_t iYear, int32_t iMonth, CFX_WideString& wsHead);
-  void GetTodayText(int32_t iYear,
-                    int32_t iMonth,
-                    int32_t iDay,
-                    CFX_WideString& wsToday);
+  CFX_WideString GetHeadText(int32_t iYear, int32_t iMonth);
+  CFX_WideString GetTodayText(int32_t iYear, int32_t iMonth, int32_t iDay);
   int32_t GetDayAtPoint(FX_FLOAT x, FX_FLOAT y);
-  void GetDayRect(int32_t iDay, CFX_RectF& rtDay);
+  CFX_RectF GetDayRect(int32_t iDay);
   void OnLButtonDown(CFWL_MessageMouse* pMsg);
   void OnLButtonUp(CFWL_MessageMouse* pMsg);
   void DisForm_OnLButtonUp(CFWL_MessageMouse* pMsg);
