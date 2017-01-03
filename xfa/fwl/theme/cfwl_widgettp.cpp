@@ -19,13 +19,20 @@
 #include "xfa/fwl/cfwl_widget.h"
 #include "xfa/fwl/cfwl_widgetmgr.h"
 #include "xfa/fwl/ifwl_themeprovider.h"
-#include "xfa/fwl/theme/cfwl_arrowdata.h"
 #include "xfa/fxgraphics/cfx_color.h"
 #include "xfa/fxgraphics/cfx_path.h"
 #include "xfa/fxgraphics/cfx_shading.h"
 
-bool CFWL_WidgetTP::IsValidWidget(CFWL_Widget* pWidget) {
-  return false;
+CFWL_WidgetTP::CFWL_WidgetTP()
+    : m_dwRefCount(1), m_pFDEFont(nullptr), m_pColorData(nullptr) {}
+
+CFWL_WidgetTP::~CFWL_WidgetTP() {}
+
+void CFWL_WidgetTP::Initialize() {}
+
+void CFWL_WidgetTP::Finalize() {
+  if (m_pTextOut)
+    FinalizeTTO();
 }
 
 void CFWL_WidgetTP::DrawBackground(CFWL_ThemeBackground* pParams) {}
@@ -42,61 +49,36 @@ void CFWL_WidgetTP::DrawText(CFWL_ThemeText* pParams) {
   m_pTextOut->SetRenderDevice(pGraphics->GetRenderDevice());
   m_pTextOut->SetStyles(pParams->m_dwTTOStyles);
   m_pTextOut->SetAlignment(pParams->m_iTTOAlign);
+
   CFX_Matrix* pMatrix = &pParams->m_matrix;
   pMatrix->Concat(*pGraphics->GetMatrix());
   m_pTextOut->SetMatrix(*pMatrix);
   m_pTextOut->DrawLogicText(pParams->m_wsText.c_str(), iLen, pParams->m_rtPart);
 }
 
-void CFWL_WidgetTP::CalcTextRect(CFWL_ThemeText* pParams, CFX_RectF& rect) {
-  if (!pParams || !m_pTextOut)
+void CFWL_WidgetTP::InitializeArrowColorData() {
+  if (m_pColorData)
     return;
 
-  m_pTextOut->SetAlignment(pParams->m_iTTOAlign);
-  m_pTextOut->SetStyles(pParams->m_dwTTOStyles | FDE_TTOSTYLE_ArabicContext);
-  m_pTextOut->CalcLogicSize(pParams->m_wsText.c_str(),
-                            pParams->m_wsText.GetLength(), rect);
+  m_pColorData = pdfium::MakeUnique<CColorData>();
+  m_pColorData->clrBorder[0] = ArgbEncode(255, 202, 216, 249);
+  m_pColorData->clrBorder[1] = ArgbEncode(255, 171, 190, 233);
+  m_pColorData->clrBorder[2] = ArgbEncode(255, 135, 147, 219);
+  m_pColorData->clrBorder[3] = ArgbEncode(255, 172, 168, 153);
+  m_pColorData->clrStart[0] = ArgbEncode(255, 225, 234, 254);
+  m_pColorData->clrStart[1] = ArgbEncode(255, 253, 255, 255);
+  m_pColorData->clrStart[2] = ArgbEncode(255, 110, 142, 241);
+  m_pColorData->clrStart[3] = ArgbEncode(255, 254, 254, 251);
+  m_pColorData->clrEnd[0] = ArgbEncode(255, 175, 204, 251);
+  m_pColorData->clrEnd[1] = ArgbEncode(255, 185, 218, 251);
+  m_pColorData->clrEnd[2] = ArgbEncode(255, 210, 222, 235);
+  m_pColorData->clrEnd[3] = ArgbEncode(255, 243, 241, 236);
+  m_pColorData->clrSign[0] = ArgbEncode(255, 77, 97, 133);
+  m_pColorData->clrSign[1] = ArgbEncode(255, 77, 97, 133);
+  m_pColorData->clrSign[2] = ArgbEncode(255, 77, 97, 133);
+  m_pColorData->clrSign[3] = ArgbEncode(255, 128, 128, 128);
 }
 
-void CFWL_WidgetTP::Initialize() {}
-
-void CFWL_WidgetTP::Finalize() {
-  if (!m_pTextOut)
-    FinalizeTTO();
-}
-
-CFWL_WidgetTP::~CFWL_WidgetTP() {}
-
-void CFWL_WidgetTP::SetFont(CFWL_Widget* pWidget,
-                            const FX_WCHAR* strFont,
-                            FX_FLOAT fFontSize,
-                            FX_ARGB rgbFont) {
-  if (!m_pTextOut)
-    return;
-
-  m_pFDEFont = CFWL_FontManager::GetInstance()->FindFont(strFont, 0, 0);
-  m_pTextOut->SetFont(m_pFDEFont);
-  m_pTextOut->SetFontSize(fFontSize);
-  m_pTextOut->SetTextColor(rgbFont);
-}
-
-void CFWL_WidgetTP::SetFont(CFWL_Widget* pWidget,
-                            CFGAS_GEFont* pFont,
-                            FX_FLOAT fFontSize,
-                            FX_ARGB rgbFont) {
-  if (!m_pTextOut)
-    return;
-
-  m_pTextOut->SetFont(pFont);
-  m_pTextOut->SetFontSize(fFontSize);
-  m_pTextOut->SetTextColor(rgbFont);
-}
-
-CFGAS_GEFont* CFWL_WidgetTP::GetFont(CFWL_Widget* pWidget) {
-  return m_pFDEFont;
-}
-
-CFWL_WidgetTP::CFWL_WidgetTP() : m_dwRefCount(1), m_pFDEFont(nullptr) {}
 
 void CFWL_WidgetTP::InitTTO() {
   if (m_pTextOut)
@@ -113,136 +95,6 @@ void CFWL_WidgetTP::InitTTO() {
 
 void CFWL_WidgetTP::FinalizeTTO() {
   m_pTextOut.reset();
-}
-
-void CFWL_WidgetTP::Draw3DRect(CFX_Graphics* pGraphics,
-                               FWLTHEME_EDGE eType,
-                               FX_FLOAT fWidth,
-                               const CFX_RectF* pRect,
-                               FX_ARGB cr1,
-                               FX_ARGB cr2,
-                               FX_ARGB cr3,
-                               FX_ARGB cr4,
-                               CFX_Matrix* pMatrix) {
-  if (!pGraphics)
-    return;
-  if (!pRect)
-    return;
-  pGraphics->SaveGraphState();
-  if (eType == FWLTHEME_EDGE_Flat) {
-    CFX_Path path;
-    path.Create();
-    path.AddRectangle(pRect->left, pRect->top, pRect->width, pRect->height);
-    path.AddRectangle(pRect->left + 1, pRect->top + 1, pRect->width - 2,
-                      pRect->height - 2);
-    CFX_Color cr(ArgbEncode(255, 100, 100, 100));
-    pGraphics->SetFillColor(&cr);
-    pGraphics->FillPath(&path, FXFILL_WINDING, pMatrix);
-    path.Clear();
-    path.AddRectangle(pRect->left + 1, pRect->top + 1, pRect->width - 2,
-                      pRect->height - 2);
-    path.AddRectangle(pRect->left + 2, pRect->top + 2, pRect->width - 4,
-                      pRect->height - 4);
-    cr.Set(0xFFFFFFFF);
-    pGraphics->SetFillColor(&cr);
-    pGraphics->FillPath(&path, FXFILL_WINDING, pMatrix);
-  } else {
-    FX_FLOAT fLeft = pRect->left;
-    FX_FLOAT fRight = pRect->right();
-    FX_FLOAT fTop = pRect->top;
-    FX_FLOAT fBottom = pRect->bottom();
-    FX_FLOAT fHalfWidth = fWidth / 2.0f;
-    CFX_Color crLT(eType == FWLTHEME_EDGE_Raised ? cr4 : cr1);
-    pGraphics->SetFillColor(&crLT);
-    CFX_Path pathLT;
-    pathLT.Create();
-    pathLT.MoveTo(fLeft, fBottom - fHalfWidth);
-    pathLT.LineTo(fLeft, fTop);
-    pathLT.LineTo(fRight - fHalfWidth, fTop);
-    pathLT.LineTo(fRight - fHalfWidth, fTop + fHalfWidth);
-    pathLT.LineTo(fLeft + fHalfWidth, fTop + fHalfWidth);
-    pathLT.LineTo(fLeft + fHalfWidth, fBottom - fHalfWidth);
-    pathLT.LineTo(fLeft, fBottom - fHalfWidth);
-    pGraphics->FillPath(&pathLT, FXFILL_WINDING, pMatrix);
-    crLT = CFX_Color(eType == FWLTHEME_EDGE_Raised ? cr3 : cr2);
-    pGraphics->SetFillColor(&crLT);
-    pathLT.Clear();
-    pathLT.MoveTo(fLeft + fHalfWidth, fBottom - fWidth);
-    pathLT.LineTo(fLeft + fHalfWidth, fTop + fHalfWidth);
-    pathLT.LineTo(fRight - fWidth, fTop + fHalfWidth);
-    pathLT.LineTo(fRight - fWidth, fTop + fWidth);
-    pathLT.LineTo(fLeft + fWidth, fTop + fWidth);
-    pathLT.LineTo(fLeft + fWidth, fBottom - fWidth);
-    pathLT.LineTo(fLeft + fHalfWidth, fBottom - fWidth);
-    pGraphics->FillPath(&pathLT, FXFILL_WINDING, pMatrix);
-    CFX_Color crRB(eType == FWLTHEME_EDGE_Raised ? cr1 : cr3);
-    pGraphics->SetFillColor(&crRB);
-    CFX_Path pathRB;
-    pathRB.Create();
-    pathRB.MoveTo(fRight - fHalfWidth, fTop + fHalfWidth);
-    pathRB.LineTo(fRight - fHalfWidth, fBottom - fHalfWidth);
-    pathRB.LineTo(fLeft + fHalfWidth, fBottom - fHalfWidth);
-    pathRB.LineTo(fLeft + fHalfWidth, fBottom - fWidth);
-    pathRB.LineTo(fRight - fWidth, fBottom - fWidth);
-    pathRB.LineTo(fRight - fWidth, fTop + fHalfWidth);
-    pathRB.LineTo(fRight - fHalfWidth, fTop + fHalfWidth);
-    pGraphics->FillPath(&pathRB, FXFILL_WINDING, pMatrix);
-    crRB = CFX_Color(eType == FWLTHEME_EDGE_Raised ? cr2 : cr4);
-    pGraphics->SetFillColor(&crRB);
-    pathRB.Clear();
-    pathRB.MoveTo(fRight, fTop);
-    pathRB.LineTo(fRight, fBottom);
-    pathRB.LineTo(fLeft, fBottom);
-    pathRB.LineTo(fLeft, fBottom - fHalfWidth);
-    pathRB.LineTo(fRight - fHalfWidth, fBottom - fHalfWidth);
-    pathRB.LineTo(fRight - fHalfWidth, fTop);
-    pathRB.LineTo(fRight, fTop);
-    pGraphics->FillPath(&pathRB, FXFILL_WINDING, pMatrix);
-  }
-  pGraphics->RestoreGraphState();
-}
-
-void CFWL_WidgetTP::Draw3DCircle(CFX_Graphics* pGraphics,
-                                 FWLTHEME_EDGE eType,
-                                 FX_FLOAT fWidth,
-                                 const CFX_RectF* pRect,
-                                 FX_ARGB cr1,
-                                 FX_ARGB cr2,
-                                 FX_ARGB cr3,
-                                 FX_ARGB cr4,
-                                 CFX_Matrix* pMatrix) {
-  if (!pGraphics)
-    return;
-  if (!pRect)
-    return;
-  pGraphics->SaveGraphState();
-  CFX_Path path;
-  path.Create();
-  path.AddArc(pRect->left, pRect->top, pRect->width, pRect->height,
-              FX_PI * 3 / 4, FX_PI);
-  CFX_Color crFill1(eType == FWLTHEME_EDGE_Raised ? cr4 : cr1);
-  pGraphics->SetStrokeColor(&crFill1);
-  pGraphics->StrokePath(&path, pMatrix);
-  CFX_RectF rtInner(*pRect);
-  rtInner.Deflate(pRect->width / 4, pRect->height / 4);
-  path.Clear();
-  path.AddArc(rtInner.left, rtInner.top, rtInner.width, rtInner.height,
-              FX_PI * 3 / 4, FX_PI);
-  CFX_Color crFill2(eType == FWLTHEME_EDGE_Raised ? cr3 : cr2);
-  pGraphics->SetStrokeColor(&crFill2);
-  pGraphics->StrokePath(&path, pMatrix);
-  path.Clear();
-  path.AddArc(pRect->left, pRect->top, pRect->width, pRect->height,
-              FX_PI * 7 / 4, FX_PI);
-  CFX_Color crFill3(eType == FWLTHEME_EDGE_Raised ? cr1 : cr3);
-  pGraphics->SetStrokeColor(&crFill3);
-  pGraphics->StrokePath(&path, pMatrix);
-  path.AddArc(rtInner.left, rtInner.top, rtInner.width, rtInner.height,
-              FX_PI * 7 / 4, FX_PI);
-  CFX_Color crFill4(eType == FWLTHEME_EDGE_Raised ? cr2 : cr4);
-  pGraphics->SetStrokeColor(&crFill4);
-  pGraphics->StrokePath(&path, pMatrix);
-  pGraphics->RestoreGraphState();
 }
 
 void CFWL_WidgetTP::DrawBorder(CFX_Graphics* pGraphics,
@@ -311,53 +163,6 @@ void CFWL_WidgetTP::DrawAxialShading(CFX_Graphics* pGraphics,
   pGraphics->RestoreGraphState();
 }
 
-void CFWL_WidgetTP::DrawAnnulusRect(CFX_Graphics* pGraphics,
-                                    FX_ARGB fillColor,
-                                    const CFX_RectF* pRect,
-                                    FX_FLOAT fRingWidth,
-                                    CFX_Matrix* pMatrix) {
-  if (!pGraphics)
-    return;
-  if (!pRect)
-    return;
-  pGraphics->SaveGraphState();
-  CFX_Color cr(fillColor);
-  pGraphics->SetFillColor(&cr);
-  CFX_Path path;
-  path.Create();
-  CFX_RectF rtInner(*pRect);
-  rtInner.Deflate(fRingWidth, fRingWidth);
-  path.AddRectangle(rtInner.left, rtInner.top, rtInner.width, rtInner.height);
-  path.AddRectangle(pRect->left, pRect->top, pRect->width, pRect->height);
-  pGraphics->FillPath(&path, FXFILL_ALTERNATE, pMatrix);
-  pGraphics->RestoreGraphState();
-}
-
-void CFWL_WidgetTP::DrawAnnulusCircle(CFX_Graphics* pGraphics,
-                                      FX_ARGB fillColor,
-                                      const CFX_RectF* pRect,
-                                      FX_FLOAT fWidth,
-                                      CFX_Matrix* pMatrix) {
-  if (!pGraphics)
-    return;
-  if (!pRect)
-    return;
-  if (fWidth > pRect->width / 2) {
-    return;
-  }
-  pGraphics->SaveGraphState();
-  CFX_Color cr(fillColor);
-  pGraphics->SetFillColor(&cr);
-  CFX_Path path;
-  path.Create();
-  path.AddEllipse(*pRect);
-  CFX_RectF rtIn(*pRect);
-  rtIn.Inflate(-fWidth, -fWidth);
-  path.AddEllipse(rtIn);
-  pGraphics->FillPath(&path, FXFILL_ALTERNATE, pMatrix);
-  pGraphics->RestoreGraphState();
-}
-
 void CFWL_WidgetTP::DrawFocus(CFX_Graphics* pGraphics,
                               const CFX_RectF* pRect,
                               CFX_Matrix* pMatrix) {
@@ -374,61 +179,6 @@ void CFWL_WidgetTP::DrawFocus(CFX_Graphics* pGraphics,
   path.Create();
   path.AddRectangle(pRect->left, pRect->top, pRect->width, pRect->height);
   pGraphics->StrokePath(&path, pMatrix);
-  pGraphics->RestoreGraphState();
-}
-#define FWLTHEME_ARROW_Denominator 3
-void CFWL_WidgetTP::DrawArrow(CFX_Graphics* pGraphics,
-                              const CFX_RectF* pRect,
-                              FWLTHEME_DIRECTION eDict,
-                              FX_ARGB argbFill,
-                              bool bPressed,
-                              CFX_Matrix* pMatrix) {
-  CFX_RectF rtArrow(*pRect);
-  CFX_Path path;
-  path.Create();
-  FX_FLOAT fBtn =
-      std::min(pRect->width, pRect->height) / FWLTHEME_ARROW_Denominator;
-  rtArrow.left = pRect->left + (pRect->width - fBtn) / 2;
-  rtArrow.top = pRect->top + (pRect->height - fBtn) / 2;
-  rtArrow.width = fBtn;
-  rtArrow.height = fBtn;
-  if (bPressed) {
-    rtArrow.Offset(1, 1);
-  }
-  switch (eDict) {
-    case FWLTHEME_DIRECTION_Up: {
-      path.MoveTo(rtArrow.left, rtArrow.bottom());
-      path.LineTo(rtArrow.right(), rtArrow.bottom());
-      path.LineTo(rtArrow.left + fBtn / 2, rtArrow.top);
-      path.LineTo(rtArrow.left, rtArrow.bottom());
-      break;
-    }
-    case FWLTHEME_DIRECTION_Left: {
-      path.MoveTo(rtArrow.right(), rtArrow.top);
-      path.LineTo(rtArrow.right(), rtArrow.bottom());
-      path.LineTo(rtArrow.left, rtArrow.top + fBtn / 2);
-      path.LineTo(rtArrow.right(), rtArrow.top);
-      break;
-    }
-    case FWLTHEME_DIRECTION_Right: {
-      path.MoveTo(rtArrow.left, rtArrow.top);
-      path.LineTo(rtArrow.left, rtArrow.bottom());
-      path.LineTo(rtArrow.right(), rtArrow.top + fBtn / 2);
-      path.LineTo(rtArrow.left, rtArrow.top);
-      break;
-    }
-    case FWLTHEME_DIRECTION_Down:
-    default: {
-      path.MoveTo(rtArrow.left, rtArrow.top);
-      path.LineTo(rtArrow.right(), rtArrow.top);
-      path.LineTo(rtArrow.left + fBtn / 2, rtArrow.bottom());
-      path.LineTo(rtArrow.left, rtArrow.top);
-    }
-  }
-  pGraphics->SaveGraphState();
-  CFX_Color cr(argbFill);
-  pGraphics->SetFillColor(&cr);
-  pGraphics->FillPath(&path, FXFILL_WINDING, pMatrix);
   pGraphics->RestoreGraphState();
 }
 
@@ -494,20 +244,19 @@ void CFWL_WidgetTP::DrawBtn(CFX_Graphics* pGraphics,
                             CFX_Matrix* pMatrix) {
   CFX_Path path;
   path.Create();
-  if (!CFWL_ArrowData::HasInstance())
-    CFWL_ArrowData::GetInstance();
 
-  CFWL_ArrowData::CColorData* pColorData =
-      CFWL_ArrowData::GetInstance()->m_pColorData.get();
+  InitializeArrowColorData();
+
   FX_FLOAT fRight = pRect->right();
   FX_FLOAT fBottom = pRect->bottom();
   path.AddRectangle(pRect->left, pRect->top, pRect->width, pRect->height);
   DrawAxialShading(pGraphics, pRect->left, pRect->top, fRight, fBottom,
-                   pColorData->clrStart[eState - 1],
-                   pColorData->clrEnd[eState - 1], &path, FXFILL_WINDING,
+                   m_pColorData->clrStart[eState - 1],
+                   m_pColorData->clrEnd[eState - 1], &path, FXFILL_WINDING,
                    pMatrix);
+
   CFX_Color rcStroke;
-  rcStroke.Set(pColorData->clrBorder[eState - 1]);
+  rcStroke.Set(m_pColorData->clrBorder[eState - 1]);
   pGraphics->SetStrokeColor(&rcStroke);
   pGraphics->StrokePath(&path, pMatrix);
 }
@@ -518,12 +267,10 @@ void CFWL_WidgetTP::DrawArrowBtn(CFX_Graphics* pGraphics,
                                  FWLTHEME_STATE eState,
                                  CFX_Matrix* pMatrix) {
   DrawBtn(pGraphics, pRect, eState, pMatrix);
-  if (!CFWL_ArrowData::HasInstance())
-    CFWL_ArrowData::GetInstance();
 
-  CFWL_ArrowData::CColorData* pColorData =
-      CFWL_ArrowData::GetInstance()->m_pColorData.get();
-  DrawArrow(pGraphics, pRect, eDict, pColorData->clrSign[eState - 1], pMatrix);
+  InitializeArrowColorData();
+  DrawArrow(pGraphics, pRect, eDict, m_pColorData->clrSign[eState - 1],
+            pMatrix);
 }
 
 CFWL_FontData::CFWL_FontData() : m_dwStyles(0), m_dwCodePage(0) {}
@@ -587,6 +334,5 @@ CFGAS_GEFont* CFWL_FontManager::FindFont(const CFX_WideStringC& wsFontFamily,
 }
 
 void FWLTHEME_Release() {
-  CFWL_ArrowData::DestroyInstance();
   CFWL_FontManager::DestroyInstance();
 }

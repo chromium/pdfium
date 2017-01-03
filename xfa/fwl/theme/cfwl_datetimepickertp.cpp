@@ -13,10 +13,6 @@ CFWL_DateTimePickerTP::CFWL_DateTimePickerTP() {}
 
 CFWL_DateTimePickerTP::~CFWL_DateTimePickerTP() {}
 
-bool CFWL_DateTimePickerTP::IsValidWidget(CFWL_Widget* pWidget) {
-  return pWidget && pWidget->GetClassID() == FWL_Type::DateTimePicker;
-}
-
 void CFWL_DateTimePickerTP::DrawBackground(CFWL_ThemeBackground* pParams) {
   if (!pParams)
     return;

@@ -15,10 +15,6 @@
 CFWL_CaretTP::CFWL_CaretTP() {}
 CFWL_CaretTP::~CFWL_CaretTP() {}
 
-bool CFWL_CaretTP::IsValidWidget(CFWL_Widget* pWidget) {
-  return pWidget && pWidget->GetClassID() == FWL_Type::Caret;
-}
-
 void CFWL_CaretTP::DrawBackground(CFWL_ThemeBackground* pParams) {
   if (!pParams)
     return;

@@ -1290,8 +1290,6 @@ if (pdf_enable_xfa) {
       "xfa/fwl/ifwl_themeprovider.h",
       "xfa/fwl/ifwl_widgetdelegate.h",
       "xfa/fwl/ifwl_widgetmgrdelegate.h",
-      "xfa/fwl/theme/cfwl_arrowdata.cpp",
-      "xfa/fwl/theme/cfwl_arrowdata.h",
       "xfa/fwl/theme/cfwl_barcodetp.cpp",
       "xfa/fwl/theme/cfwl_barcodetp.h",
       "xfa/fwl/theme/cfwl_carettp.cpp",

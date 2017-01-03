@@ -15,11 +15,8 @@
 #include "xfa/fxgraphics/cfx_path.h"
 
 CFWL_EditTP::CFWL_EditTP() {}
-CFWL_EditTP::~CFWL_EditTP() {}
 
-bool CFWL_EditTP::IsValidWidget(CFWL_Widget* pWidget) {
-  return pWidget && pWidget->GetClassID() == FWL_Type::Edit;
-}
+CFWL_EditTP::~CFWL_EditTP() {}
 
 void CFWL_EditTP::DrawBackground(CFWL_ThemeBackground* pParams) {
   if (CFWL_Part::CombTextLine == pParams->m_iPart) {
@@ -88,14 +85,4 @@ void CFWL_EditTP::DrawBackground(CFWL_ThemeBackground* pParams) {
     default:
       break;
   }
-}
-
-void CFWL_EditTP::Initialize() {
-  InitTTO();
-  CFWL_WidgetTP::Initialize();
-}
-
-void CFWL_EditTP::Finalize() {
-  FinalizeTTO();
-  CFWL_WidgetTP::Finalize();
 }

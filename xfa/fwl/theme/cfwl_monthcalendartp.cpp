@@ -21,8 +21,14 @@ CFWL_MonthCalendarTP::CFWL_MonthCalendarTP() : m_pThemeData(new MCThemeData) {
 
 CFWL_MonthCalendarTP::~CFWL_MonthCalendarTP() {}
 
-bool CFWL_MonthCalendarTP::IsValidWidget(CFWL_Widget* pWidget) {
-  return pWidget && pWidget->GetClassID() == FWL_Type::MonthCalendar;
+void CFWL_MonthCalendarTP::Initialize() {
+  CFWL_WidgetTP::Initialize();
+  InitTTO();
+}
+
+void CFWL_MonthCalendarTP::Finalize() {
+  FinalizeTTO();
+  CFWL_WidgetTP::Finalize();
 }
 
 void CFWL_MonthCalendarTP::DrawBackground(CFWL_ThemeBackground* pParams) {
@@ -94,16 +100,6 @@ void CFWL_MonthCalendarTP::DrawText(CFWL_ThemeText* pParams) {
     m_pTextOut->SetTextColor(0xFF000000);
   }
   CFWL_WidgetTP::DrawText(pParams);
-}
-
-void CFWL_MonthCalendarTP::Initialize() {
-  InitTTO();
-  CFWL_WidgetTP::Initialize();
-}
-
-void CFWL_MonthCalendarTP::Finalize() {
-  FinalizeTTO();
-  CFWL_WidgetTP::Finalize();
 }
 
 void CFWL_MonthCalendarTP::DrawTotalBK(CFWL_ThemeBackground* pParams,

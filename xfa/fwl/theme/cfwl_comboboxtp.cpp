@@ -17,10 +17,6 @@ CFWL_ComboBoxTP::CFWL_ComboBoxTP() {}
 
 CFWL_ComboBoxTP::~CFWL_ComboBoxTP() {}
 
-bool CFWL_ComboBoxTP::IsValidWidget(CFWL_Widget* pWidget) {
-  return pWidget && pWidget->GetClassID() == FWL_Type::ComboBox;
-}
-
 void CFWL_ComboBoxTP::DrawBackground(CFWL_ThemeBackground* pParams) {
   if (!pParams)
     return;

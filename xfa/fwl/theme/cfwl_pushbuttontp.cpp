@@ -21,10 +21,6 @@ CFWL_PushButtonTP::CFWL_PushButtonTP() : m_pThemeData(new PBThemeData) {
 
 CFWL_PushButtonTP::~CFWL_PushButtonTP() {}
 
-bool CFWL_PushButtonTP::IsValidWidget(CFWL_Widget* pWidget) {
-  return pWidget && pWidget->GetClassID() == FWL_Type::PushButton;
-}
-
 void CFWL_PushButtonTP::DrawBackground(CFWL_ThemeBackground* pParams) {
   switch (pParams->m_iPart) {
     case CFWL_Part::Border: {
@@ -81,16 +77,6 @@ void CFWL_PushButtonTP::DrawBackground(CFWL_ThemeBackground* pParams) {
     default:
       break;
   }
-}
-
-void CFWL_PushButtonTP::Initialize() {
-  InitTTO();
-  CFWL_WidgetTP::Initialize();
-}
-
-void CFWL_PushButtonTP::Finalize() {
-  FinalizeTTO();
-  CFWL_WidgetTP::Finalize();
 }
 
 void CFWL_PushButtonTP::SetThemeData() {

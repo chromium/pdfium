@@ -14,10 +14,6 @@ CFWL_BarcodeTP::CFWL_BarcodeTP() {}
 
 CFWL_BarcodeTP::~CFWL_BarcodeTP() {}
 
-bool CFWL_BarcodeTP::IsValidWidget(CFWL_Widget* pWidget) {
-  return pWidget && pWidget->GetClassID() == FWL_Type::Barcode;
-}
-
 void CFWL_BarcodeTP::DrawBackground(CFWL_ThemeBackground* pParams) {
   if (!pParams)
     return;

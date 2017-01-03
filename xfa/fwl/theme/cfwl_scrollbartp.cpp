@@ -25,10 +25,6 @@ CFWL_ScrollBarTP::CFWL_ScrollBarTP() : m_pThemeData(new SBThemeData) {
 
 CFWL_ScrollBarTP::~CFWL_ScrollBarTP() {}
 
-bool CFWL_ScrollBarTP::IsValidWidget(CFWL_Widget* pWidget) {
-  return pWidget && pWidget->GetClassID() == FWL_Type::ScrollBar;
-}
-
 void CFWL_ScrollBarTP::DrawBackground(CFWL_ThemeBackground* pParams) {
   if (!pParams)
     return;

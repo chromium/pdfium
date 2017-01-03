@@ -16,10 +16,6 @@ CFWL_ListBoxTP::CFWL_ListBoxTP() {}
 
 CFWL_ListBoxTP::~CFWL_ListBoxTP() {}
 
-bool CFWL_ListBoxTP::IsValidWidget(CFWL_Widget* pWidget) {
-  return pWidget && pWidget->GetClassID() == FWL_Type::ListBox;
-}
-
 void CFWL_ListBoxTP::DrawBackground(CFWL_ThemeBackground* pParams) {
   if (!pParams)
     return;
@@ -61,16 +57,6 @@ void CFWL_ListBoxTP::DrawBackground(CFWL_ThemeBackground* pParams) {
     default:
       break;
   }
-}
-
-void CFWL_ListBoxTP::Initialize() {
-  InitTTO();
-  CFWL_WidgetTP::Initialize();
-}
-
-void CFWL_ListBoxTP::Finalize() {
-  FinalizeTTO();
-  CFWL_WidgetTP::Finalize();
 }
 
 void CFWL_ListBoxTP::DrawListBoxItem(CFX_Graphics* pGraphics,

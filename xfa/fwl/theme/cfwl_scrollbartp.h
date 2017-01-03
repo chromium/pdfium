@@ -17,7 +17,6 @@ class CFWL_ScrollBarTP : public CFWL_WidgetTP {
   ~CFWL_ScrollBarTP() override;
 
   // CFWL_WidgetTP
-  bool IsValidWidget(CFWL_Widget* pWidget) override;
   void DrawBackground(CFWL_ThemeBackground* pParams) override;
 
  protected:

@@ -35,48 +35,25 @@ class CFWL_WidgetTP {
   virtual void Initialize();
   virtual void Finalize();
 
-  virtual bool IsValidWidget(CFWL_Widget* pWidget);
-
   virtual void DrawBackground(CFWL_ThemeBackground* pParams);
   virtual void DrawText(CFWL_ThemeText* pParams);
-  virtual void CalcTextRect(CFWL_ThemeText* pParams, CFX_RectF& rect);
 
   CFGAS_GEFont* GetFont() const { return m_pFDEFont; }
 
-  void SetFont(CFWL_Widget* pWidget,
-               const FX_WCHAR* strFont,
-               FX_FLOAT fFontSize,
-               FX_ARGB rgbFont);
-  void SetFont(CFWL_Widget* pWidget,
-               CFGAS_GEFont* pFont,
-               FX_FLOAT fFontSize,
-               FX_ARGB rgbFont);
-  CFGAS_GEFont* GetFont(CFWL_Widget* pWidget);
-
  protected:
+  struct CColorData {
+    FX_ARGB clrBorder[4];
+    FX_ARGB clrStart[4];
+    FX_ARGB clrEnd[4];
+    FX_ARGB clrSign[4];
+  };
+
   CFWL_WidgetTP();
 
+  void InitializeArrowColorData();
   void InitTTO();
   void FinalizeTTO();
 
-  void Draw3DRect(CFX_Graphics* pGraphics,
-                  FWLTHEME_EDGE eType,
-                  FX_FLOAT fWidth,
-                  const CFX_RectF* pRect,
-                  FX_ARGB cr1,
-                  FX_ARGB cr2,
-                  FX_ARGB cr3,
-                  FX_ARGB cr4,
-                  CFX_Matrix* pMatrix = nullptr);
-  void Draw3DCircle(CFX_Graphics* pGraphics,
-                    FWLTHEME_EDGE eType,
-                    FX_FLOAT fWidth,
-                    const CFX_RectF* pRect,
-                    FX_ARGB cr1,
-                    FX_ARGB cr2,
-                    FX_ARGB cr3,
-                    FX_ARGB cr4,
-                    CFX_Matrix* pMatrix = nullptr);
   void DrawBorder(CFX_Graphics* pGraphics,
                   const CFX_RectF* pRect,
                   CFX_Matrix* pMatrix = nullptr);
@@ -97,24 +74,8 @@ class CFWL_WidgetTP {
                         CFX_Path* path,
                         int32_t fillMode = FXFILL_WINDING,
                         CFX_Matrix* pMatrix = nullptr);
-  void DrawAnnulusRect(CFX_Graphics* pGraphics,
-                       FX_ARGB fillColor,
-                       const CFX_RectF* pRect,
-                       FX_FLOAT fRingWidth = 1,
-                       CFX_Matrix* pMatrix = nullptr);
-  void DrawAnnulusCircle(CFX_Graphics* pGraphics,
-                         FX_ARGB fillColor,
-                         const CFX_RectF* pRect,
-                         FX_FLOAT fWidth = 1,
-                         CFX_Matrix* pMatrix = nullptr);
   void DrawFocus(CFX_Graphics* pGraphics,
                  const CFX_RectF* pRect,
-                 CFX_Matrix* pMatrix = nullptr);
-  void DrawArrow(CFX_Graphics* pGraphics,
-                 const CFX_RectF* pRect,
-                 FWLTHEME_DIRECTION eDict,
-                 FX_ARGB argbFill,
-                 bool bPressed,
                  CFX_Matrix* pMatrix = nullptr);
   void DrawArrow(CFX_Graphics* pGraphics,
                  const CFX_RectF* pRect,
@@ -130,9 +91,11 @@ class CFWL_WidgetTP {
                     FWLTHEME_DIRECTION eDict,
                     FWLTHEME_STATE eState,
                     CFX_Matrix* pMatrix = nullptr);
+
   uint32_t m_dwRefCount;
   std::unique_ptr<CFDE_TextOut> m_pTextOut;
   CFGAS_GEFont* m_pFDEFont;
+  std::unique_ptr<CColorData> m_pColorData;
 };
 
 void FWLTHEME_Release();

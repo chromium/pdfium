@@ -14,10 +14,6 @@ CFWL_PictureBoxTP::CFWL_PictureBoxTP() {}
 
 CFWL_PictureBoxTP::~CFWL_PictureBoxTP() {}
 
-bool CFWL_PictureBoxTP::IsValidWidget(CFWL_Widget* pWidget) {
-  return pWidget && pWidget->GetClassID() == FWL_Type::PictureBox;
-}
-
 void CFWL_PictureBoxTP::DrawBackground(CFWL_ThemeBackground* pParams) {
   if (!pParams)
     return;

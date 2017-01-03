@@ -20,7 +20,6 @@ class CFWL_CheckBoxTP : public CFWL_WidgetTP {
   // CFWL_WidgeTP
   void Initialize() override;
   void Finalize() override;
-  bool IsValidWidget(CFWL_Widget* pWidget) override;
   void DrawText(CFWL_ThemeText* pParams) override;
   void DrawBackground(CFWL_ThemeBackground* pParams) override;
 

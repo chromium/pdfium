@@ -36,8 +36,14 @@ CFWL_CheckBoxTP::~CFWL_CheckBoxTP() {
     m_pCheckPath->Clear();
 }
 
-bool CFWL_CheckBoxTP::IsValidWidget(CFWL_Widget* pWidget) {
-  return pWidget && pWidget->GetClassID() == FWL_Type::CheckBox;
+void CFWL_CheckBoxTP::Initialize() {
+  CFWL_WidgetTP::Initialize();
+  InitTTO();
+}
+
+void CFWL_CheckBoxTP::Finalize() {
+  FinalizeTTO();
+  CFWL_WidgetTP::Finalize();
 }
 
 void CFWL_CheckBoxTP::DrawText(CFWL_ThemeText* pParams) {
@@ -48,16 +54,6 @@ void CFWL_CheckBoxTP::DrawText(CFWL_ThemeText* pParams) {
                                ? FWLTHEME_CAPACITY_TextDisColor
                                : FWLTHEME_CAPACITY_TextColor);
   CFWL_WidgetTP::DrawText(pParams);
-}
-
-void CFWL_CheckBoxTP::Initialize() {
-  InitTTO();
-  CFWL_WidgetTP::Initialize();
-}
-
-void CFWL_CheckBoxTP::Finalize() {
-  FinalizeTTO();
-  CFWL_WidgetTP::Finalize();
 }
 
 void CFWL_CheckBoxTP::DrawSignCheck(CFX_Graphics* pGraphics,
