@@ -8,6 +8,7 @@
 #define FPDFSDK_FXEDIT_FXET_EDIT_H_
 
 #include <memory>
+#include <vector>
 
 #include "core/fpdfdoc/cpvt_secprops.h"
 #include "core/fpdfdoc/cpvt_wordprops.h"
@@ -335,13 +336,12 @@ class CFX_Edit {
                        const CPVT_WordRange* pRange,
                        CFX_SystemHandler* pSystemHandler,
                        CFFL_FormFiller* pFFLData);
-  static void GeneratePageObjects(
-      CPDF_PageObjectHolder* pObjectHolder,
-      CFX_Edit* pEdit,
-      const CFX_FloatPoint& ptOffset,
-      const CPVT_WordRange* pRange,
-      FX_COLORREF crText,
-      CFX_ArrayTemplate<CPDF_TextObject*>& ObjArray);
+  static void GeneratePageObjects(CPDF_PageObjectHolder* pObjectHolder,
+                                  CFX_Edit* pEdit,
+                                  const CFX_FloatPoint& ptOffset,
+                                  const CPVT_WordRange* pRange,
+                                  FX_COLORREF crText,
+                                  std::vector<CPDF_TextObject*>* ObjArray);
 
   CFX_Edit();
   ~CFX_Edit();

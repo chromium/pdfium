@@ -875,10 +875,9 @@ CPVT_WordRange CPWL_Edit::GetSameWordsRange(const CPVT_WordPlace& place,
   return range;
 }
 
-void CPWL_Edit::GeneratePageObjects(
-    CPDF_PageObjectHolder* pObjectHolder,
-    const CFX_FloatPoint& ptOffset,
-    CFX_ArrayTemplate<CPDF_TextObject*>& ObjArray) {
+void CPWL_Edit::GeneratePageObjects(CPDF_PageObjectHolder* pObjectHolder,
+                                    const CFX_FloatPoint& ptOffset,
+                                    std::vector<CPDF_TextObject*>* ObjArray) {
   CFX_Edit::GeneratePageObjects(
       pObjectHolder, m_pEdit.get(), ptOffset, nullptr,
       CPWL_Utils::PWLColorToFXColor(GetTextColor(), GetTransparency()),
@@ -887,9 +886,9 @@ void CPWL_Edit::GeneratePageObjects(
 
 void CPWL_Edit::GeneratePageObjects(CPDF_PageObjectHolder* pObjectHolder,
                                     const CFX_FloatPoint& ptOffset) {
-  CFX_ArrayTemplate<CPDF_TextObject*> ObjArray;
+  std::vector<CPDF_TextObject*> ObjArray;
   CFX_Edit::GeneratePageObjects(
       pObjectHolder, m_pEdit.get(), ptOffset, nullptr,
       CPWL_Utils::PWLColorToFXColor(GetTextColor(), GetTransparency()),
-      ObjArray);
+      &ObjArray);
 }

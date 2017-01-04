@@ -8,6 +8,7 @@
 #define FPDFSDK_PDFWINDOW_PWL_FONTMAP_H_
 
 #include <memory>
+#include <vector>
 
 #include "core/fpdfdoc/ipvt_fontmap.h"
 #include "core/fxge/fx_font.h"
@@ -70,8 +71,8 @@ class CPWL_FontMap : public IPVT_FontMap {
                                  int32_t nCharset);
   CFX_ByteString EncodeFontAlias(const CFX_ByteString& sFontName);
 
-  CFX_ArrayTemplate<CPWL_FontMap_Data*> m_aData;
-  CFX_ArrayTemplate<CPWL_FontMap_Native*> m_aNativeFont;
+  std::vector<std::unique_ptr<CPWL_FontMap_Data>> m_Data;
+  std::vector<std::unique_ptr<CPWL_FontMap_Native>> m_NativeFont;
 
  private:
   int32_t FindFont(const CFX_ByteString& sFontName,

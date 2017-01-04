@@ -7,6 +7,8 @@
 #ifndef FPDFSDK_PDFWINDOW_PWL_EDIT_H_
 #define FPDFSDK_PDFWINDOW_PWL_EDIT_H_
 
+#include <vector>
+
 #include "core/fxcrt/fx_basic.h"
 #include "fpdfsdk/fxedit/fx_edit.h"
 #include "fpdfsdk/pdfwindow/PWL_EditCtrl.h"
@@ -105,7 +107,7 @@ class CPWL_Edit : public CPWL_EditCtrl {
 
   void GeneratePageObjects(CPDF_PageObjectHolder* pObjectHolder,
                            const CFX_FloatPoint& ptOffset,
-                           CFX_ArrayTemplate<CPDF_TextObject*>& ObjArray);
+                           std::vector<CPDF_TextObject*>* ObjArray);
   void GeneratePageObjects(CPDF_PageObjectHolder* pObjectHolder,
                            const CFX_FloatPoint& ptOffset);
 

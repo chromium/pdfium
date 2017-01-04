@@ -936,65 +936,60 @@ void CFX_Edit::DrawEdit(CFX_RenderDevice* pDevice,
 }
 
 // static
-void CFX_Edit::GeneratePageObjects(
-    CPDF_PageObjectHolder* pObjectHolder,
-    CFX_Edit* pEdit,
-    const CFX_FloatPoint& ptOffset,
-    const CPVT_WordRange* pRange,
-    FX_COLORREF crText,
-    CFX_ArrayTemplate<CPDF_TextObject*>& ObjArray) {
+void CFX_Edit::GeneratePageObjects(CPDF_PageObjectHolder* pObjectHolder,
+                                   CFX_Edit* pEdit,
+                                   const CFX_FloatPoint& ptOffset,
+                                   const CPVT_WordRange* pRange,
+                                   FX_COLORREF crText,
+                                   std::vector<CPDF_TextObject*>* ObjArray) {
+  ObjArray->clear();
+
+  IPVT_FontMap* pFontMap = pEdit->GetFontMap();
+  if (!pFontMap)
+    return;
+
   FX_FLOAT fFontSize = pEdit->GetFontSize();
-
   int32_t nOldFontIndex = -1;
-
   CFX_ByteTextBuf sTextBuf;
+  CPVT_WordPlace oldplace;
   CFX_FloatPoint ptBT(0.0f, 0.0f);
-
-  ObjArray.RemoveAll();
-
   CFX_Edit_Iterator* pIterator = pEdit->GetIterator();
-  if (IPVT_FontMap* pFontMap = pEdit->GetFontMap()) {
-    if (pRange)
-      pIterator->SetAt(pRange->BeginPos);
-    else
-      pIterator->SetAt(0);
+  if (pRange)
+    pIterator->SetAt(pRange->BeginPos);
+  else
+    pIterator->SetAt(0);
 
-    CPVT_WordPlace oldplace;
+  while (pIterator->NextWord()) {
+    CPVT_WordPlace place = pIterator->GetAt();
+    if (pRange && place.WordCmp(pRange->EndPos) > 0)
+      break;
 
-    while (pIterator->NextWord()) {
-      CPVT_WordPlace place = pIterator->GetAt();
-      if (pRange && place.WordCmp(pRange->EndPos) > 0)
-        break;
+    CPVT_Word word;
+    if (!pIterator->GetWord(word))
+      continue;
 
-      CPVT_Word word;
-      if (pIterator->GetWord(word)) {
-        if (place.LineCmp(oldplace) != 0 || nOldFontIndex != word.nFontIndex) {
-          if (sTextBuf.GetLength() > 0) {
-            ObjArray.Add(AddTextObjToPageObjects(
-                pObjectHolder, crText, pFontMap->GetPDFFont(nOldFontIndex),
-                fFontSize, 0.0f, 100,
-                CFX_FloatPoint(ptBT.x + ptOffset.x, ptBT.y + ptOffset.y),
-                sTextBuf.MakeString()));
+    if (place.LineCmp(oldplace) != 0 || nOldFontIndex != word.nFontIndex) {
+      if (sTextBuf.GetLength() > 0) {
+        ObjArray->push_back(AddTextObjToPageObjects(
+            pObjectHolder, crText, pFontMap->GetPDFFont(nOldFontIndex),
+            fFontSize, 0.0f, 100,
+            CFX_FloatPoint(ptBT.x + ptOffset.x, ptBT.y + ptOffset.y),
+            sTextBuf.MakeString()));
 
-            sTextBuf.Clear();
-          }
-
-          ptBT = word.ptWord;
-          nOldFontIndex = word.nFontIndex;
-        }
-
-        sTextBuf << GetPDFWordString(pFontMap, word.nFontIndex, word.Word, 0)
-                        .AsStringC();
-        oldplace = place;
+        sTextBuf.Clear();
       }
+      ptBT = word.ptWord;
+      nOldFontIndex = word.nFontIndex;
     }
-
-    if (sTextBuf.GetLength() > 0) {
-      ObjArray.Add(AddTextObjToPageObjects(
-          pObjectHolder, crText, pFontMap->GetPDFFont(nOldFontIndex), fFontSize,
-          0.0f, 100, CFX_FloatPoint(ptBT.x + ptOffset.x, ptBT.y + ptOffset.y),
-          sTextBuf.MakeString()));
-    }
+    sTextBuf << GetPDFWordString(pFontMap, word.nFontIndex, word.Word, 0)
+                    .AsStringC();
+    oldplace = place;
+  }
+  if (sTextBuf.GetLength() > 0) {
+    ObjArray->push_back(AddTextObjToPageObjects(
+        pObjectHolder, crText, pFontMap->GetPDFFont(nOldFontIndex), fFontSize,
+        0.0f, 100, CFX_FloatPoint(ptBT.x + ptOffset.x, ptBT.y + ptOffset.y),
+        sTextBuf.MakeString()));
   }
 }
 

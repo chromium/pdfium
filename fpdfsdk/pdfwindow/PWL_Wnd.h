@@ -413,16 +413,13 @@ class CPWL_Wnd : public CPWL_TimerHandler {
   CPWL_MsgControl* GetMsgControl() const;
 
  protected:
-  CFX_ArrayTemplate<CPWL_Wnd*> m_aChildren;
+  std::vector<CPWL_Wnd*> m_Children;
 
  private:
   PWL_CREATEPARAM m_sPrivateParam;
-
   CPWL_ScrollBar* m_pVScrollBar;
-
   CFX_FloatRect m_rcWindow;
   CFX_FloatRect m_rcClip;
-
   bool m_bCreated;
   bool m_bVisible;
   bool m_bNotifying;
