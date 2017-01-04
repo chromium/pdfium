@@ -40,7 +40,9 @@
 #include "xfa/fxbarcode/qrcode/BC_QRCoderMode.h"
 #include "xfa/fxbarcode/qrcode/BC_QRCoderVersion.h"
 
-const int32_t CBC_QRCoderEncoder::m_alphaNumbericTable[] = {
+namespace {
+
+const int8_t g_alphaNumericTable[] = {
     -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
     -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
     36, -1, -1, -1, 37, 38, -1, -1, -1, -1, 39, 40, -1, 41, 42, 43,
@@ -48,31 +50,12 @@ const int32_t CBC_QRCoderEncoder::m_alphaNumbericTable[] = {
     -1, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24,
     25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, -1, -1, -1, -1, -1};
 
+}  // namespace
+
 CBC_QRCoderEncoder::CBC_QRCoderEncoder() {}
 
 CBC_QRCoderEncoder::~CBC_QRCoderEncoder() {}
 
-class Make_Pair {
- public:
-  CBC_QRCoderMode* m_mode;
-  CFX_ByteString m_string;
-
- private:
-  Make_Pair(const Make_Pair& mode_string) {}
-  Make_Pair& operator=(Make_Pair& mode_string) {
-    if (this == &mode_string) {
-      return *this;
-    }
-    m_mode = mode_string.m_mode;
-    m_string = mode_string.m_string;
-    return *this;
-  }
-
- public:
-  Make_Pair(CBC_QRCoderMode* mode, const CFX_ByteString& str)
-      : m_mode(mode), m_string(str) {}
-  ~Make_Pair() {}
-};
 void CBC_QRCoderEncoder::Encode(const CFX_ByteString& content,
                                 CBC_QRCoderErrorCorrectionLevel* ecLevel,
                                 CBC_QRCoder* qrCode,
@@ -93,26 +76,27 @@ void CBC_QRCoderEncoder::Encode(const CFX_ByteString& content,
 void CBC_QRCoderEncoder::AppendECI(CBC_QRCoderBitVector* bits) {}
 
 void CBC_QRCoderEncoder::AppendDataModeLenghInfo(
-    const CFX_ArrayTemplate<Make_Pair*>& splitResult,
+    const std::vector<std::pair<CBC_QRCoderMode*, CFX_ByteString>>&
+        splitResults,
     CBC_QRCoderBitVector& headerAndDataBits,
     CBC_QRCoderMode* tempMode,
     CBC_QRCoder* qrCode,
     CFX_ByteString& encoding,
     int32_t& e) {
-  for (int32_t i = 0; i < splitResult.GetSize(); i++) {
-    tempMode = splitResult[i]->m_mode;
+  for (const auto& splitResult : splitResults) {
+    tempMode = splitResult.first;
     if (tempMode == CBC_QRCoderMode::sGBK) {
       AppendModeInfo(tempMode, &headerAndDataBits, e);
       BC_EXCEPTION_CHECK_ReturnVoid(e);
-      AppendLengthInfo(splitResult[i]->m_string.GetLength(),
-                       qrCode->GetVersion(), tempMode, &headerAndDataBits, e);
+      AppendLengthInfo(splitResult.second.GetLength(), qrCode->GetVersion(),
+                       tempMode, &headerAndDataBits, e);
       BC_EXCEPTION_CHECK_ReturnVoid(e);
-      AppendBytes(splitResult[i]->m_string, tempMode, &headerAndDataBits,
-                  encoding, e);
+      AppendBytes(splitResult.second, tempMode, &headerAndDataBits, encoding,
+                  e);
       BC_EXCEPTION_CHECK_ReturnVoid(e);
     } else if (tempMode == CBC_QRCoderMode::sBYTE) {
       CFX_ByteArray bytes;
-      CBC_UtilCodingConvert::LocaleToUtf8(splitResult[i]->m_string, bytes);
+      CBC_UtilCodingConvert::LocaleToUtf8(splitResult.second, bytes);
       AppendModeInfo(tempMode, &headerAndDataBits, e);
       BC_EXCEPTION_CHECK_ReturnVoid(e);
       AppendLengthInfo(bytes.GetSize(), qrCode->GetVersion(), tempMode,
@@ -123,20 +107,20 @@ void CBC_QRCoderEncoder::AppendDataModeLenghInfo(
     } else if (tempMode == CBC_QRCoderMode::sALPHANUMERIC) {
       AppendModeInfo(tempMode, &headerAndDataBits, e);
       BC_EXCEPTION_CHECK_ReturnVoid(e);
-      AppendLengthInfo(splitResult[i]->m_string.GetLength(),
-                       qrCode->GetVersion(), tempMode, &headerAndDataBits, e);
+      AppendLengthInfo(splitResult.second.GetLength(), qrCode->GetVersion(),
+                       tempMode, &headerAndDataBits, e);
       BC_EXCEPTION_CHECK_ReturnVoid(e);
-      AppendBytes(splitResult[i]->m_string, tempMode, &headerAndDataBits,
-                  encoding, e);
+      AppendBytes(splitResult.second, tempMode, &headerAndDataBits, encoding,
+                  e);
       BC_EXCEPTION_CHECK_ReturnVoid(e);
     } else if (tempMode == CBC_QRCoderMode::sNUMERIC) {
       AppendModeInfo(tempMode, &headerAndDataBits, e);
       BC_EXCEPTION_CHECK_ReturnVoid(e);
-      AppendLengthInfo(splitResult[i]->m_string.GetLength(),
-                       qrCode->GetVersion(), tempMode, &headerAndDataBits, e);
+      AppendLengthInfo(splitResult.second.GetLength(), qrCode->GetVersion(),
+                       tempMode, &headerAndDataBits, e);
       BC_EXCEPTION_CHECK_ReturnVoid(e);
-      AppendBytes(splitResult[i]->m_string, tempMode, &headerAndDataBits,
-                  encoding, e);
+      AppendBytes(splitResult.second, tempMode, &headerAndDataBits, encoding,
+                  e);
       BC_EXCEPTION_CHECK_ReturnVoid(e);
     } else {
       e = BCExceptionUnknown;
@@ -145,8 +129,9 @@ void CBC_QRCoderEncoder::AppendDataModeLenghInfo(
   }
 }
 
-void CBC_QRCoderEncoder::SplitString(const CFX_ByteString& content,
-                                     CFX_ArrayTemplate<Make_Pair*>* result) {
+void CBC_QRCoderEncoder::SplitString(
+    const CFX_ByteString& content,
+    std::vector<std::pair<CBC_QRCoderMode*, CFX_ByteString>>* result) {
   int32_t index = 0, flag = 0;
   while (
       (((uint8_t)content[index] >= 0xA1 && (uint8_t)content[index] <= 0xAA) ||
@@ -155,8 +140,7 @@ void CBC_QRCoderEncoder::SplitString(const CFX_ByteString& content,
     index += 2;
   }
   if (index != flag) {
-    result->Add(
-        new Make_Pair(CBC_QRCoderMode::sGBK, content.Mid(flag, index - flag)));
+    result->push_back({CBC_QRCoderMode::sGBK, content.Mid(flag, index - flag)});
   }
   flag = index;
   if (index >= content.GetLength()) {
@@ -179,8 +163,8 @@ void CBC_QRCoderEncoder::SplitString(const CFX_ByteString& content,
     }
   }
   if (index != flag) {
-    result->Add(
-        new Make_Pair(CBC_QRCoderMode::sBYTE, content.Mid(flag, index - flag)));
+    result->push_back(
+        {CBC_QRCoderMode::sBYTE, content.Mid(flag, index - flag)});
   }
   flag = index;
   if (index >= content.GetLength()) {
@@ -191,8 +175,8 @@ void CBC_QRCoderEncoder::SplitString(const CFX_ByteString& content,
     index++;
   }
   if (index != flag) {
-    result->Add(new Make_Pair(CBC_QRCoderMode::sNUMERIC,
-                              content.Mid(flag, index - flag)));
+    result->push_back(
+        {CBC_QRCoderMode::sNUMERIC, content.Mid(flag, index - flag)});
   }
   flag = index;
   if (index >= content.GetLength()) {
@@ -203,8 +187,8 @@ void CBC_QRCoderEncoder::SplitString(const CFX_ByteString& content,
     index++;
   }
   if (index != flag) {
-    result->Add(new Make_Pair(CBC_QRCoderMode::sALPHANUMERIC,
-                              content.Mid(flag, index - flag)));
+    result->push_back(
+        {CBC_QRCoderMode::sALPHANUMERIC, content.Mid(flag, index - flag)});
   }
   flag = index;
   if (index < content.GetLength())
@@ -258,59 +242,50 @@ int32_t CBC_QRCoderEncoder::GetSpanByVersion(CBC_QRCoderMode* modeFirst,
   return -1;
 }
 
-void CBC_QRCoderEncoder::MergeString(CFX_ArrayTemplate<Make_Pair*>* result,
-                                     int32_t versionNum,
-                                     int32_t& e) {
-  Make_Pair* first = nullptr;
-  Make_Pair* second = nullptr;
+void CBC_QRCoderEncoder::MergeString(
+    std::vector<std::pair<CBC_QRCoderMode*, CFX_ByteString>>* result,
+    int32_t versionNum,
+    int32_t& e) {
   size_t mergeNum = 0;
-  int32_t i;
-  for (i = 0; ((i < result->GetSize()) && (i + 1 < result->GetSize())); i++) {
-    first = (*result)[i];
-    second = (*result)[i + 1];
-    if (first->m_mode == CBC_QRCoderMode::sALPHANUMERIC) {
+  for (size_t i = 0; i + 1 < result->size(); i++) {
+    auto element1 = &(*result)[i];
+    auto element2 = &(*result)[i + 1];
+    if (element1->first == CBC_QRCoderMode::sALPHANUMERIC) {
       int32_t tmp = GetSpanByVersion(CBC_QRCoderMode::sALPHANUMERIC,
                                      CBC_QRCoderMode::sBYTE, versionNum, e);
       BC_EXCEPTION_CHECK_ReturnVoid(e);
-      if ((second->m_mode == CBC_QRCoderMode::sBYTE) &&
-          (first->m_string.GetLength() < tmp)) {
-        CFX_ByteString str = first->m_string + second->m_string;
-        second->m_string = str;
-        delete first;
-        result->RemoveAt(i);
+      if (element2->first == CBC_QRCoderMode::sBYTE &&
+          element1->second.GetLength() < tmp) {
+        element2->second = element1->second + element2->second;
+        result->erase(result->begin() + i);
         i--;
         mergeNum++;
       }
-    } else if (first->m_mode == CBC_QRCoderMode::sBYTE) {
-      if (second->m_mode == CBC_QRCoderMode::sBYTE) {
-        first->m_string += second->m_string;
-        delete second;
-        result->RemoveAt(i + 1);
+    } else if (element1->first == CBC_QRCoderMode::sBYTE) {
+      if (element2->first == CBC_QRCoderMode::sBYTE) {
+        element1->second += element2->second;
+        result->erase(result->begin() + i + 1);
         i--;
         mergeNum++;
       }
-    } else if (first->m_mode == CBC_QRCoderMode::sNUMERIC) {
+    } else if (element1->first == CBC_QRCoderMode::sNUMERIC) {
       int32_t tmp = GetSpanByVersion(CBC_QRCoderMode::sNUMERIC,
                                      CBC_QRCoderMode::sBYTE, versionNum, e);
       BC_EXCEPTION_CHECK_ReturnVoid(e);
-      if ((second->m_mode == CBC_QRCoderMode::sBYTE) &&
-          (first->m_string.GetLength() < tmp)) {
-        CFX_ByteString str = first->m_string + second->m_string;
-        second->m_string = str;
-        delete first;
-        result->RemoveAt(i);
+      if (element2->first == CBC_QRCoderMode::sBYTE &&
+          element1->second.GetLength() < tmp) {
+        element2->second = element1->second + element2->second;
+        result->erase(result->begin() + i);
         i--;
         mergeNum++;
       }
       tmp = GetSpanByVersion(CBC_QRCoderMode::sNUMERIC,
                              CBC_QRCoderMode::sALPHANUMERIC, versionNum, e);
       BC_EXCEPTION_CHECK_ReturnVoid(e);
-      if ((second->m_mode == CBC_QRCoderMode::sALPHANUMERIC) &&
-          (first->m_string.GetLength() < tmp)) {
-        CFX_ByteString str = first->m_string + second->m_string;
-        second->m_string = str;
-        delete first;
-        result->RemoveAt(i);
+      if (element2->first == CBC_QRCoderMode::sALPHANUMERIC &&
+          element1->second.GetLength() < tmp) {
+        element2->second = element1->second + element2->second;
+        result->erase(result->begin() + i);
         i--;
         mergeNum++;
       }
@@ -360,42 +335,31 @@ void CBC_QRCoderEncoder::EncodeWithSpecifyVersion(
     int32_t& e) {
   CFX_ByteString encoding = "utf8";
   CBC_QRCoderMode* mode = CBC_QRCoderMode::sBYTE;
-  CFX_ArrayTemplate<Make_Pair*> splitResult;
+  std::vector<std::pair<CBC_QRCoderMode*, CFX_ByteString>> splitResult;
   CBC_QRCoderBitVector dataBits;
   dataBits.Init();
   SplitString(content, &splitResult);
   MergeString(&splitResult, versionSpecify, e);
   BC_EXCEPTION_CHECK_ReturnVoid(e) CBC_QRCoderMode* tempMode = nullptr;
-  for (int32_t i = 0; i < splitResult.GetSize(); i++) {
-    AppendBytes(splitResult[i]->m_string, splitResult[i]->m_mode, &dataBits,
-                encoding, e);
-    if (e != BCExceptionNO) {
-      for (int32_t y = 0; y < splitResult.GetSize(); y++)
-        delete splitResult[y];
+  for (const auto& result : splitResult) {
+    AppendBytes(result.second, result.first, &dataBits, encoding, e);
+    if (e != BCExceptionNO)
       return;
-    }
   }
   int32_t numInputBytes = dataBits.sizeInBytes();
   CBC_QRCoderBitVector headerAndDataBits;
   headerAndDataBits.Init();
   InitQRCode(numInputBytes, versionSpecify, ecLevel, mode, qrCode, e);
-  if (e != BCExceptionNO) {
-    for (int32_t k = 0; k < splitResult.GetSize(); k++)
-      delete splitResult[k];
+  if (e != BCExceptionNO)
     return;
-  }
+
   AppendDataModeLenghInfo(splitResult, headerAndDataBits, tempMode, qrCode,
                           encoding, e);
-  if (e != BCExceptionNO) {
-    for (int32_t k = 0; k < splitResult.GetSize(); k++)
-      delete splitResult[k];
+  if (e != BCExceptionNO)
     return;
-  }
+
   numInputBytes = headerAndDataBits.sizeInBytes();
   TerminateBits(qrCode->GetNumDataBytes(), &headerAndDataBits, e);
-  for (int32_t j = 0; j < splitResult.GetSize(); j++) {
-    delete splitResult[j];
-  }
   if (e != BCExceptionNO)
     return;
 
@@ -430,21 +394,17 @@ void CBC_QRCoderEncoder::EncodeWithAutoVersion(
     int32_t& e) {
   CFX_ByteString encoding = "utf8";
   CBC_QRCoderMode* mode = CBC_QRCoderMode::sBYTE;
-  CFX_ArrayTemplate<Make_Pair*> splitResult;
+  std::vector<std::pair<CBC_QRCoderMode*, CFX_ByteString>> splitResult;
   CBC_QRCoderBitVector dataBits;
   dataBits.Init();
   SplitString(content, &splitResult);
   MergeString(&splitResult, 8, e);
   BC_EXCEPTION_CHECK_ReturnVoid(e);
   CBC_QRCoderMode* tempMode = nullptr;
-  for (int32_t i = 0; i < splitResult.GetSize(); i++) {
-    AppendBytes(splitResult[i]->m_string, splitResult[i]->m_mode, &dataBits,
-                encoding, e);
-    if (e != BCExceptionNO) {
-      for (int32_t l = 0; l < splitResult.GetSize(); l++)
-        delete splitResult[l];
+  for (const auto& result : splitResult) {
+    AppendBytes(result.second, result.first, &dataBits, encoding, e);
+    if (e != BCExceptionNO)
       return;
-    }
   }
   int32_t numInputBytes = dataBits.sizeInBytes();
   InitQRCode(numInputBytes, ecLevel, mode, qrCode, e);
@@ -477,13 +437,9 @@ catchException:
       e = BCExceptionNO;
       goto sign;
     } else {
-      for (int32_t j = 0; j < splitResult.GetSize(); j++)
-        delete splitResult[j];
       return;
     }
   }
-  for (int32_t k = 0; k < splitResult.GetSize(); k++)
-    delete splitResult[k];
 
   CBC_QRCoderBitVector finalBits;
   finalBits.Init();
@@ -655,10 +611,7 @@ CBC_QRCoderMode* CBC_QRCoderEncoder::ChooseMode(const CFX_ByteString& content,
 }
 
 int32_t CBC_QRCoderEncoder::GetAlphaNumericCode(int32_t code) {
-  if (code < 96 && code >= 0) {
-    return m_alphaNumbericTable[code];
-  }
-  return -1;
+  return (code >= 0 && code < 96) ? g_alphaNumericTable[code] : -1;
 }
 
 void CBC_QRCoderEncoder::AppendBytes(const CFX_ByteString& content,
