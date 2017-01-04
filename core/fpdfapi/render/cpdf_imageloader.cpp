@@ -8,10 +8,10 @@
 
 #include "core/fpdfapi/page/cpdf_image.h"
 #include "core/fpdfapi/page/cpdf_imageobject.h"
+#include "core/fpdfapi/render/cpdf_dibsource.h"
 #include "core/fpdfapi/render/cpdf_imagecacheentry.h"
 #include "core/fpdfapi/render/cpdf_pagerendercache.h"
 #include "core/fpdfapi/render/cpdf_renderstatus.h"
-#include "core/fpdfapi/render/render_int.h"
 #include "core/fxcrt/fx_basic.h"
 
 CPDF_ImageLoader::CPDF_ImageLoader()

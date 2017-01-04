@@ -546,6 +546,8 @@ static_library("fpdfapi") {
     "core/fpdfapi/render/cpdf_charposlist.h",
     "core/fpdfapi/render/cpdf_devicebuffer.cpp",
     "core/fpdfapi/render/cpdf_devicebuffer.h",
+    "core/fpdfapi/render/cpdf_dibsource.cpp",
+    "core/fpdfapi/render/cpdf_dibsource.h",
     "core/fpdfapi/render/cpdf_dibtransferfunc.cpp",
     "core/fpdfapi/render/cpdf_dibtransferfunc.h",
     "core/fpdfapi/render/cpdf_docrenderdata.cpp",
@@ -576,8 +578,6 @@ static_library("fpdfapi") {
     "core/fpdfapi/render/cpdf_type3cache.h",
     "core/fpdfapi/render/cpdf_type3glyphs.cpp",
     "core/fpdfapi/render/cpdf_type3glyphs.h",
-    "core/fpdfapi/render/fpdf_render_loadimage.cpp",
-    "core/fpdfapi/render/render_int.h",
   ]
   configs += [ ":pdfium_core_config" ]
   deps = [
