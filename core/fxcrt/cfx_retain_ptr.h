@@ -5,11 +5,13 @@
 #ifndef CORE_FXCRT_CFX_RETAIN_PTR_H_
 #define CORE_FXCRT_CFX_RETAIN_PTR_H_
 
+#include <functional>
 #include <memory>
 #include <utility>
 
 #include "core/fxcrt/fx_memory.h"
 
+// Analogous to base's scoped_refptr.
 template <class T>
 class CFX_RetainPtr {
  public:
@@ -50,8 +52,11 @@ class CFX_RetainPtr {
   bool operator==(const CFX_RetainPtr& that) const {
     return Get() == that.Get();
   }
-
   bool operator!=(const CFX_RetainPtr& that) const { return !(*this == that); }
+
+  bool operator<(const CFX_RetainPtr& that) const {
+    return std::less<T*>()(Get(), that.Get());
+  }
 
   explicit operator bool() const { return !!m_pObj; }
   T& operator*() const { return *m_pObj.get(); }

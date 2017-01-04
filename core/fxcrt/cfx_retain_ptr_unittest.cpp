@@ -225,6 +225,14 @@ TEST(fxcrt, RetainPtrNotEquals) {
   EXPECT_TRUE(obj1_ptr1 != obj2_ptr1);
 }
 
+TEST(fxcrt, RetainPtrLessThan) {
+  PseudoRetainable objs[2];
+  CFX_RetainPtr<PseudoRetainable> obj1_ptr(&objs[0]);
+  CFX_RetainPtr<PseudoRetainable> obj2_ptr(&objs[1]);
+  EXPECT_TRUE(obj1_ptr < obj2_ptr);
+  EXPECT_FALSE(obj2_ptr < obj1_ptr);
+}
+
 TEST(fxcrt, RetainPtrBool) {
   PseudoRetainable obj1;
   CFX_RetainPtr<PseudoRetainable> null_ptr;
