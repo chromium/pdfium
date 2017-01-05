@@ -74,8 +74,11 @@ typedef CFX_PSTemplate<int32_t> CFX_Point;
 typedef CFX_PSTemplate<FX_FLOAT> CFX_PointF;
 typedef CFX_PSTemplate<int32_t> CFX_Size;
 typedef CFX_PSTemplate<FX_FLOAT> CFX_SizeF;
+
+#ifdef PDF_ENABLE_XFA
 typedef CFX_ArrayTemplate<CFX_Point> CFX_Points;
 typedef CFX_ArrayTemplate<CFX_PointF> CFX_PointsF;
+#endif  // PDF_ENABLE_XFA
 
 template <class BaseType>
 class CFX_VTemplate : public CFX_PSTemplate<BaseType> {
@@ -432,7 +435,10 @@ class CFX_RTemplate {
 };
 typedef CFX_RTemplate<int32_t> CFX_Rect;
 typedef CFX_RTemplate<FX_FLOAT> CFX_RectF;
+
+#ifdef PDF_ENABLE_XFA
 typedef CFX_ArrayTemplate<CFX_RectF> CFX_RectFArray;
+#endif  // PDF_ENABLE_XFA
 
 class CFX_FloatRect {
  public:
