@@ -7,6 +7,8 @@
 #ifndef XFA_FXFA_PARSER_CXFA_DOCUMENT_H_
 #define XFA_FXFA_PARSER_CXFA_DOCUMENT_H_
 
+#include <map>
+
 #include "xfa/fxfa/fxfa.h"
 #include "xfa/fxfa/parser/xfa_localemgr.h"
 #include "xfa/fxfa/parser/xfa_object.h"
@@ -101,7 +103,7 @@ class CXFA_Document {
 
   void ClearLayoutData();
 
-  CFX_MapPtrTemplate<uint32_t, CXFA_Node*> m_rgGlobalBinding;
+  std::map<uint32_t, CXFA_Node*> m_rgGlobalBinding;
   CXFA_NodeArray m_pPendingPageSet;
 
  protected:

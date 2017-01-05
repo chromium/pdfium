@@ -9,6 +9,7 @@
 
 #include <iterator>
 #include <list>
+#include <map>
 
 #include "xfa/fxfa/parser/xfa_layout_itemlayout.h"
 
@@ -119,7 +120,7 @@ class CXFA_LayoutPageMgr {
   bool GetNextContentArea(CXFA_Node* pTargetContentArea);
   void InitPageSetMap();
   void ProcessLastPageSet();
-  inline bool IsPageSetRootOrderedOccurrence() {
+  bool IsPageSetRootOrderedOccurrence() const {
     return m_ePageSetMode == XFA_ATTRIBUTEENUM_OrderedOccurrence;
   }
   void ClearData();
@@ -127,6 +128,7 @@ class CXFA_LayoutPageMgr {
   void LayoutPageSetContents();
   void PrepareLayout();
   void SaveLayoutItem(CXFA_LayoutItem* pParentLayoutItem);
+
   CXFA_LayoutProcessor* m_pLayoutProcessor;
   CXFA_Node* m_pTemplatePageSetRoot;
   CXFA_ContainerLayoutItem* m_pPageSetLayoutItemRoot;
@@ -138,7 +140,7 @@ class CXFA_LayoutPageMgr {
   int32_t m_nCurPageCount;
   XFA_ATTRIBUTEENUM m_ePageSetMode;
   bool m_bCreateOverFlowPage;
-  CFX_MapPtrTemplate<CXFA_Node*, int32_t> m_pPageSetMap;
+  std::map<CXFA_Node*, int32_t> m_pPageSetMap;
   CFX_ArrayTemplate<CXFA_ContainerLayoutItem*> m_PageArray;
 };
 

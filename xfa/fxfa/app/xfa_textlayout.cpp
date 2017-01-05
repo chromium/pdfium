@@ -66,28 +66,22 @@ CXFA_TextParser::~CXFA_TextParser() {
   if (m_pUASheet)
     m_pUASheet->Release();
 
-  FX_POSITION ps = m_mapXMLNodeToParseContext.GetStartPosition();
-  while (ps) {
-    CFDE_XMLNode* pXMLNode;
-    CXFA_TextParseContext* pParseContext;
-    m_mapXMLNodeToParseContext.GetNextAssoc(ps, pXMLNode, pParseContext);
-    if (pParseContext)
+  for (auto& pair : m_mapXMLNodeToParseContext) {
+    if (pair.second) {
       FXTARGET_DeleteWith(CXFA_TextParseContext, m_pAllocator.get(),
-                          pParseContext);
+                          pair.second);
+    }
   }
-  m_mapXMLNodeToParseContext.RemoveAll();
 }
+
 void CXFA_TextParser::Reset() {
-  FX_POSITION ps = m_mapXMLNodeToParseContext.GetStartPosition();
-  while (ps) {
-    CFDE_XMLNode* pXMLNode;
-    CXFA_TextParseContext* pParseContext;
-    m_mapXMLNodeToParseContext.GetNextAssoc(ps, pXMLNode, pParseContext);
-    if (pParseContext)
+  for (auto& pair : m_mapXMLNodeToParseContext) {
+    if (pair.second) {
       FXTARGET_DeleteWith(CXFA_TextParseContext, m_pAllocator.get(),
-                          pParseContext);
+                          pair.second);
+    }
   }
-  m_mapXMLNodeToParseContext.RemoveAll();
+  m_mapXMLNodeToParseContext.clear();
   m_pAllocator.reset();
 }
 void CXFA_TextParser::InitCSSData(CXFA_TextProvider* pTextProvider) {
@@ -227,19 +221,26 @@ IFDE_CSSComputedStyle* CXFA_TextParser::CreateStyle(
   }
   return pNewStyle;
 }
+
 IFDE_CSSComputedStyle* CXFA_TextParser::ComputeStyle(
     CFDE_XMLNode* pXMLNode,
     IFDE_CSSComputedStyle* pParentStyle) {
-  CXFA_TextParseContext* pContext = static_cast<CXFA_TextParseContext*>(
-      m_mapXMLNodeToParseContext.GetValueAt(pXMLNode));
+  auto it = m_mapXMLNodeToParseContext.find(pXMLNode);
+  if (it == m_mapXMLNodeToParseContext.end())
+    return nullptr;
+
+  CXFA_TextParseContext* pContext = it->second;
   if (!pContext)
     return nullptr;
+
   pContext->m_pParentStyle = pParentStyle;
   pParentStyle->Retain();
+
   CXFA_CSSTagProvider tagProvider;
   ParseTagInfo(pXMLNode, tagProvider);
   if (tagProvider.m_bContent)
     return nullptr;
+
   IFDE_CSSComputedStyle* pStyle = CreateStyle(pParentStyle);
   CFDE_CSSAccelerator* pCSSAccel = m_pSelector->InitAccelerator();
   pCSSAccel->OnEnterTag(&tagProvider);
@@ -294,7 +295,7 @@ void CXFA_TextParser::ParseRichText(CFDE_XMLNode* pXMLNode,
       eDisplay = pNewStyle->GetPositionStyles()->GetDisplay();
     }
     pTextContext->SetDisplay(eDisplay);
-    m_mapXMLNodeToParseContext.SetAt(pXMLNode, pTextContext);
+    m_mapXMLNodeToParseContext[pXMLNode] = pTextContext;
   }
   for (CFDE_XMLNode* pXMLChild =
            pXMLNode->GetNodeItem(CFDE_XMLNode::FirstChild);
@@ -423,17 +424,18 @@ int32_t CXFA_TextParser::GetHorScale(CXFA_TextProvider* pTextProvider,
                                      CFDE_XMLNode* pXMLNode) const {
   if (pStyle) {
     CFX_WideString wsValue;
-    if (pStyle->GetCustomStyle(FX_WSTRC(L"xfa-font-horizontal-scale"),
-                               wsValue)) {
+    if (pStyle->GetCustomStyle(L"xfa-font-horizontal-scale", wsValue)) {
       return wsValue.GetInteger();
     }
     while (pXMLNode) {
-      CXFA_TextParseContext* pContext = static_cast<CXFA_TextParseContext*>(
-          m_mapXMLNodeToParseContext.GetValueAt(pXMLNode));
-      if (pContext && pContext->m_pParentStyle &&
-          pContext->m_pParentStyle->GetCustomStyle(
-              FX_WSTRC(L"xfa-font-horizontal-scale"), wsValue)) {
-        return wsValue.GetInteger();
+      auto it = m_mapXMLNodeToParseContext.find(pXMLNode);
+      if (it != m_mapXMLNodeToParseContext.end()) {
+        CXFA_TextParseContext* pContext = it->second;
+        if (pContext && pContext->m_pParentStyle &&
+            pContext->m_pParentStyle->GetCustomStyle(
+                L"xfa-font-horizontal-scale", wsValue)) {
+          return wsValue.GetInteger();
+        }
       }
       pXMLNode = pXMLNode->GetNodeItem(CFDE_XMLNode::Parent);
     }
@@ -587,11 +589,13 @@ bool CXFA_TextParser::GetEmbbedObj(CXFA_TextProvider* pTextProvider,
   }
   return bRet;
 }
+
 CXFA_TextParseContext* CXFA_TextParser::GetParseContextFromMap(
     CFDE_XMLNode* pXMLNode) {
-  return (CXFA_TextParseContext*)m_mapXMLNodeToParseContext.GetValueAt(
-      pXMLNode);
+  auto it = m_mapXMLNodeToParseContext.find(pXMLNode);
+  return it != m_mapXMLNodeToParseContext.end() ? it->second : nullptr;
 }
+
 enum XFA_TABSTOPSSTATUS {
   XFA_TABSTOPSSTATUS_Error,
   XFA_TABSTOPSSTATUS_EOS,

@@ -125,17 +125,12 @@ CXFA_ScriptContext::CXFA_ScriptContext(CXFA_Document* pDocument)
       m_eRunAtType(XFA_ATTRIBUTEENUM_Client) {}
 
 CXFA_ScriptContext::~CXFA_ScriptContext() {
-  FX_POSITION ps = m_mapVariableToContext.GetStartPosition();
-  while (ps) {
-    CXFA_Object* pScriptNode;
-    CFXJSE_Context* pVariableContext = nullptr;
-    m_mapVariableToContext.GetNextAssoc(ps, pScriptNode, pVariableContext);
-
+  for (const auto& pair : m_mapVariableToContext) {
+    CFXJSE_Context* pVariableContext = pair.second;
     delete ToThisProxy(pVariableContext->GetGlobalObject().get(), nullptr);
     delete pVariableContext;
   }
-  m_mapVariableToContext.RemoveAll();
-
+  m_mapVariableToContext.clear();
   m_upObjectArray.RemoveAll();
 }
 
@@ -461,7 +456,7 @@ CFXJSE_Context* CXFA_ScriptContext::CreateVariablesContext(
                              new CXFA_ThisProxy(pSubform, pScriptNode));
   RemoveBuiltInObjs(pVariablesContext);
   pVariablesContext->EnableCompatibleMode();
-  m_mapVariableToContext.SetAt(pScriptNode, pVariablesContext);
+  m_mapVariableToContext[pScriptNode] = pVariablesContext;
   return pVariablesContext;
 }
 CXFA_Object* CXFA_ScriptContext::GetVariablesThis(CXFA_Object* pObject,
@@ -484,7 +479,8 @@ bool CXFA_ScriptContext::RunVariablesScript(CXFA_Node* pScriptNode) {
   if (!pParent || pParent->GetElementType() != XFA_Element::Variables)
     return false;
 
-  if (m_mapVariableToContext.GetValueAt(pScriptNode))
+  auto it = m_mapVariableToContext.find(pScriptNode);
+  if (it != m_mapVariableToContext.end() && it->second)
     return true;
 
   CXFA_Node* pTextNode = pScriptNode->GetNodeItem(XFA_NODEITEM_FirstChild);
@@ -521,10 +517,11 @@ bool CXFA_ScriptContext::QueryVariableValue(CXFA_Node* pScriptNode,
       variablesNode->GetElementType() != XFA_Element::Variables)
     return false;
 
-  void* lpVariables = m_mapVariableToContext.GetValueAt(pScriptNode);
-  if (!lpVariables)
+  auto it = m_mapVariableToContext.find(pScriptNode);
+  if (it == m_mapVariableToContext.end() || !it->second)
     return false;
 
+  void* lpVariables = it->second;
   bool bRes = false;
   CFXJSE_Context* pVariableContext = static_cast<CFXJSE_Context*>(lpVariables);
   std::unique_ptr<CFXJSE_Value> pObject = pVariableContext->GetGlobalObject();

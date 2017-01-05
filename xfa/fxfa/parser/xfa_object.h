@@ -7,6 +7,7 @@
 #ifndef XFA_FXFA_PARSER_XFA_OBJECT_H_
 #define XFA_FXFA_PARSER_XFA_OBJECT_H_
 
+#include <map>
 #include <unordered_set>
 
 #include "fxjs/cfxjse_arguments.h"
@@ -144,8 +145,8 @@ struct XFA_MAPMODULEDATA {
   XFA_MAPMODULEDATA();
   ~XFA_MAPMODULEDATA();
 
-  CFX_MapPtrToPtr m_ValueMap;
-  CFX_MapPtrTemplate<void*, XFA_MAPDATABLOCK*> m_BufferMap;
+  std::map<void*, void*> m_ValueMap;
+  std::map<void*, XFA_MAPDATABLOCK*> m_BufferMap;
 };
 
 #define XFA_CalcRefCount (void*)(uintptr_t) FXBSTR_ID('X', 'F', 'A', 'R')
@@ -665,7 +666,7 @@ class CXFA_Node : public CXFA_Object {
                           bool bProtoAlso = true) const;
   bool HasMapModuleKey(void* pKey, bool bProtoAlso = false);
   void RemoveMapModuleKey(void* pKey = nullptr);
-  void MergeAllData(void* pDstModule, bool bUseSrcAttr = true);
+  void MergeAllData(void* pDstModule);
   void MoveBufferMapData(CXFA_Node* pDstModule, void* pKey);
   void MoveBufferMapData(CXFA_Node* pSrcModule,
                          CXFA_Node* pDstModule,

@@ -134,8 +134,7 @@ class CXFA_TextParser {
   std::unique_ptr<IFX_MemoryAllocator> m_pAllocator;
   std::unique_ptr<CFDE_CSSStyleSelector> m_pSelector;
   IFDE_CSSStyleSheet* m_pUASheet;
-  CFX_MapPtrTemplate<CFDE_XMLNode*, CXFA_TextParseContext*>
-      m_mapXMLNodeToParseContext;
+  std::map<CFDE_XMLNode*, CXFA_TextParseContext*> m_mapXMLNodeToParseContext;
 };
 
 class CXFA_LoaderContext {

@@ -4901,19 +4901,21 @@ XFA_MAPMODULEDATA* CXFA_Node::GetMapModuleData() const {
 
 void CXFA_Node::SetMapModuleValue(void* pKey, void* pValue) {
   XFA_MAPMODULEDATA* pModule = CreateMapModuleData();
-  pModule->m_ValueMap.SetAt(pKey, pValue);
+  pModule->m_ValueMap[pKey] = pValue;
 }
 
 bool CXFA_Node::GetMapModuleValue(void* pKey, void*& pValue) {
-  CXFA_Node* pNode = this;
-  while (pNode) {
+  for (CXFA_Node* pNode = this; pNode; pNode = pNode->GetTemplateNode()) {
     XFA_MAPMODULEDATA* pModule = pNode->GetMapModuleData();
-    if (pModule && pModule->m_ValueMap.Lookup(pKey, pValue)) {
-      return true;
+    if (pModule) {
+      auto it = pModule->m_ValueMap.find(pKey);
+      if (it != pModule->m_ValueMap.end()) {
+        pValue = it->second;
+        return true;
+      }
     }
-    pNode = pNode->GetPacketID() != XFA_XDPPACKET_Datasets
-                ? pNode->GetTemplateNode()
-                : nullptr;
+    if (pNode->GetPacketID() == XFA_XDPPACKET_Datasets)
+      break;
   }
   return false;
 }
@@ -4965,37 +4967,40 @@ bool CXFA_Node::GetMapModuleBuffer(void* pKey,
                                    int32_t& iBytes,
                                    bool bProtoAlso) const {
   XFA_MAPDATABLOCK* pBuffer = nullptr;
-  const CXFA_Node* pNode = this;
-  while (pNode) {
+  for (const CXFA_Node* pNode = this; pNode; pNode = pNode->GetTemplateNode()) {
     XFA_MAPMODULEDATA* pModule = pNode->GetMapModuleData();
-    if (pModule && pModule->m_BufferMap.Lookup(pKey, pBuffer)) {
-      break;
+    if (pModule) {
+      auto it = pModule->m_BufferMap.find(pKey);
+      if (it != pModule->m_BufferMap.end()) {
+        pBuffer = it->second;
+        break;
+      }
     }
-    pNode = (bProtoAlso && pNode->GetPacketID() != XFA_XDPPACKET_Datasets)
-                ? pNode->GetTemplateNode()
-                : nullptr;
+    if (!bProtoAlso || pNode->GetPacketID() == XFA_XDPPACKET_Datasets)
+      break;
   }
-  if (!pBuffer) {
+  if (!pBuffer)
     return false;
-  }
+
   pValue = pBuffer->GetData();
   iBytes = pBuffer->iBytes;
   return true;
 }
 
 bool CXFA_Node::HasMapModuleKey(void* pKey, bool bProtoAlso) {
-  CXFA_Node* pNode = this;
-  while (pNode) {
-    void* pVal;
+  for (CXFA_Node* pNode = this; pNode; pNode = pNode->GetTemplateNode()) {
     XFA_MAPMODULEDATA* pModule = pNode->GetMapModuleData();
-    if (pModule &&
-        (pModule->m_ValueMap.Lookup(pKey, pVal) ||
-         pModule->m_BufferMap.Lookup(pKey, (XFA_MAPDATABLOCK*&)pVal))) {
-      return true;
+    if (pModule) {
+      auto it1 = pModule->m_ValueMap.find(pKey);
+      if (it1 != pModule->m_ValueMap.end())
+        return true;
+
+      auto it2 = pModule->m_BufferMap.find(pKey);
+      if (it2 != pModule->m_BufferMap.end())
+        return true;
     }
-    pNode = (bProtoAlso && pNode->GetPacketID() != XFA_XDPPACKET_Datasets)
-                ? pNode->GetTemplateNode()
-                : nullptr;
+    if (!bProtoAlso || pNode->GetPacketID() == XFA_XDPPACKET_Datasets)
+      break;
   }
   return false;
 }
@@ -5006,87 +5011,75 @@ void CXFA_Node::RemoveMapModuleKey(void* pKey) {
     return;
 
   if (pKey) {
-    XFA_MAPDATABLOCK* pBuffer = nullptr;
-    pModule->m_BufferMap.Lookup(pKey, pBuffer);
-    if (pBuffer) {
-      if (pBuffer->pCallbackInfo && pBuffer->pCallbackInfo->pFree) {
-        pBuffer->pCallbackInfo->pFree(*(void**)pBuffer->GetData());
-      }
-      FX_Free(pBuffer);
-    }
-    pModule->m_BufferMap.RemoveKey(pKey);
-    pModule->m_ValueMap.RemoveKey(pKey);
-  } else {
-    XFA_MAPDATABLOCK* pBuffer;
-    FX_POSITION posBuffer = pModule->m_BufferMap.GetStartPosition();
-    while (posBuffer) {
-      pModule->m_BufferMap.GetNextAssoc(posBuffer, pKey, pBuffer);
+    auto it = pModule->m_BufferMap.find(pKey);
+    if (it != pModule->m_BufferMap.end()) {
+      XFA_MAPDATABLOCK* pBuffer = it->second;
       if (pBuffer) {
-        if (pBuffer->pCallbackInfo && pBuffer->pCallbackInfo->pFree) {
+        if (pBuffer->pCallbackInfo && pBuffer->pCallbackInfo->pFree)
           pBuffer->pCallbackInfo->pFree(*(void**)pBuffer->GetData());
-        }
         FX_Free(pBuffer);
       }
+      pModule->m_BufferMap.erase(it);
     }
-    pModule->m_BufferMap.RemoveAll();
-    pModule->m_ValueMap.RemoveAll();
-    delete pModule;
+    pModule->m_ValueMap.erase(pKey);
+    return;
   }
+
+  for (auto& pair : pModule->m_BufferMap) {
+    XFA_MAPDATABLOCK* pBuffer = pair.second;
+    if (pBuffer) {
+      if (pBuffer->pCallbackInfo && pBuffer->pCallbackInfo->pFree)
+        pBuffer->pCallbackInfo->pFree(*(void**)pBuffer->GetData());
+      FX_Free(pBuffer);
+    }
+  }
+  pModule->m_BufferMap.clear();
+  pModule->m_ValueMap.clear();
+  delete pModule;
 }
 
-void CXFA_Node::MergeAllData(void* pDstModule, bool bUseSrcAttr) {
+void CXFA_Node::MergeAllData(void* pDstModule) {
   XFA_MAPMODULEDATA* pDstModuleData =
       static_cast<CXFA_Node*>(pDstModule)->CreateMapModuleData();
   XFA_MAPMODULEDATA* pSrcModuleData = GetMapModuleData();
-  if (!pSrcModuleData) {
+  if (!pSrcModuleData)
     return;
-  }
-  FX_POSITION psValue = pSrcModuleData->m_ValueMap.GetStartPosition();
-  while (psValue) {
-    void* pKey;
-    void* pValue;
-    pSrcModuleData->m_ValueMap.GetNextAssoc(psValue, pKey, pValue);
-    if (bUseSrcAttr || !pDstModuleData->m_ValueMap.GetValueAt(pKey)) {
-      pDstModuleData->m_ValueMap.SetAt(pKey, pValue);
-    }
-  }
-  FX_POSITION psBuffer = pSrcModuleData->m_BufferMap.GetStartPosition();
-  while (psBuffer) {
-    void* pKey;
-    XFA_MAPDATABLOCK* pSrcBuffer;
-    pSrcModuleData->m_BufferMap.GetNextAssoc(psBuffer, pKey, pSrcBuffer);
-    XFA_MAPDATABLOCK*& pBuffer = pDstModuleData->m_BufferMap[pKey];
-    if (pBuffer && !bUseSrcAttr) {
-      continue;
-    }
+
+  for (const auto& pair : pSrcModuleData->m_ValueMap)
+    pDstModuleData->m_ValueMap[pair.first] = pair.second;
+
+  for (const auto& pair : pSrcModuleData->m_BufferMap) {
+    XFA_MAPDATABLOCK* pSrcBuffer = pair.second;
+    XFA_MAPDATABLOCK*& pDstBuffer = pDstModuleData->m_BufferMap[pair.first];
     if (pSrcBuffer->pCallbackInfo && pSrcBuffer->pCallbackInfo->pFree &&
         !pSrcBuffer->pCallbackInfo->pCopy) {
-      if (pBuffer) {
-        pBuffer->pCallbackInfo->pFree(*(void**)pBuffer->GetData());
-        pDstModuleData->m_BufferMap.RemoveKey(pKey);
+      if (pDstBuffer) {
+        pDstBuffer->pCallbackInfo->pFree(*(void**)pDstBuffer->GetData());
+        pDstModuleData->m_BufferMap.erase(pair.first);
       }
       continue;
     }
-    if (!pBuffer) {
-      pBuffer = (XFA_MAPDATABLOCK*)FX_Alloc(
+    if (!pDstBuffer) {
+      pDstBuffer = (XFA_MAPDATABLOCK*)FX_Alloc(
           uint8_t, sizeof(XFA_MAPDATABLOCK) + pSrcBuffer->iBytes);
-    } else if (pBuffer->iBytes != pSrcBuffer->iBytes) {
-      if (pBuffer->pCallbackInfo && pBuffer->pCallbackInfo->pFree) {
-        pBuffer->pCallbackInfo->pFree(*(void**)pBuffer->GetData());
+    } else if (pDstBuffer->iBytes != pSrcBuffer->iBytes) {
+      if (pDstBuffer->pCallbackInfo && pDstBuffer->pCallbackInfo->pFree) {
+        pDstBuffer->pCallbackInfo->pFree(*(void**)pDstBuffer->GetData());
       }
-      pBuffer = (XFA_MAPDATABLOCK*)FX_Realloc(
-          uint8_t, pBuffer, sizeof(XFA_MAPDATABLOCK) + pSrcBuffer->iBytes);
-    } else if (pBuffer->pCallbackInfo && pBuffer->pCallbackInfo->pFree) {
-      pBuffer->pCallbackInfo->pFree(*(void**)pBuffer->GetData());
+      pDstBuffer = (XFA_MAPDATABLOCK*)FX_Realloc(
+          uint8_t, pDstBuffer, sizeof(XFA_MAPDATABLOCK) + pSrcBuffer->iBytes);
+    } else if (pDstBuffer->pCallbackInfo && pDstBuffer->pCallbackInfo->pFree) {
+      pDstBuffer->pCallbackInfo->pFree(*(void**)pDstBuffer->GetData());
     }
-    if (!pBuffer) {
+    if (!pDstBuffer) {
       continue;
     }
-    pBuffer->pCallbackInfo = pSrcBuffer->pCallbackInfo;
-    pBuffer->iBytes = pSrcBuffer->iBytes;
-    FXSYS_memcpy(pBuffer->GetData(), pSrcBuffer->GetData(), pSrcBuffer->iBytes);
-    if (pBuffer->pCallbackInfo && pBuffer->pCallbackInfo->pCopy) {
-      pBuffer->pCallbackInfo->pCopy(*(void**)pBuffer->GetData());
+    pDstBuffer->pCallbackInfo = pSrcBuffer->pCallbackInfo;
+    pDstBuffer->iBytes = pSrcBuffer->iBytes;
+    FXSYS_memcpy(pDstBuffer->GetData(), pSrcBuffer->GetData(),
+                 pSrcBuffer->iBytes);
+    if (pDstBuffer->pCallbackInfo && pDstBuffer->pCallbackInfo->pCopy) {
+      pDstBuffer->pCallbackInfo->pCopy(*(void**)pDstBuffer->GetData());
     }
   }
 }
@@ -5112,12 +5105,13 @@ void CXFA_Node::MoveBufferMapData(CXFA_Node* pDstModule, void* pKey) {
     pDstModuleData = pDstModule->CreateMapModuleData();
   }
   if (bNeedMove) {
-    void* pBufferBlockData = pSrcModuleData->m_BufferMap.GetValueAt(pKey);
-    if (pBufferBlockData) {
-      pSrcModuleData->m_BufferMap.RemoveKey(pKey);
-      pDstModuleData->m_BufferMap.RemoveKey(pKey);
-      pDstModuleData->m_BufferMap.SetAt(pKey,
-                                        (XFA_MAPDATABLOCK*)pBufferBlockData);
+    auto it = pSrcModuleData->m_BufferMap.find(pKey);
+    if (it != pSrcModuleData->m_BufferMap.end()) {
+      XFA_MAPDATABLOCK* pBufferBlockData = it->second;
+      if (pBufferBlockData) {
+        pSrcModuleData->m_BufferMap.erase(pKey);
+        pDstModuleData->m_BufferMap[pKey] = pBufferBlockData;
+      }
     }
   }
   if (pDstModule->IsNodeV()) {

@@ -1120,7 +1120,9 @@ bool CXFA_LayoutPageMgr::FindPageAreaFromPageSet_Ordered(
     bool bQuery) {
   int32_t iPageSetCount = 0;
   if (!pStartChild && !bQuery) {
-    m_pPageSetMap.Lookup(pPageSet, iPageSetCount);
+    auto it = m_pPageSetMap.find(pPageSet);
+    if (it != m_pPageSetMap.end())
+      iPageSetCount = it->second;
     int32_t iMax = -1;
     CXFA_Node* pOccurNode = pPageSet->GetFirstChildByClass(XFA_Element::Occur);
     if (pOccurNode)
@@ -1128,7 +1130,6 @@ bool CXFA_LayoutPageMgr::FindPageAreaFromPageSet_Ordered(
     if (iMax >= 0 && iMax <= iPageSetCount)
       return false;
   }
-
   bool bRes = false;
   CXFA_Node* pCurrentNode =
       pStartChild ? pStartChild->GetNodeItem(XFA_NODEITEM_NextSibling)
@@ -1173,7 +1174,7 @@ bool CXFA_LayoutPageMgr::FindPageAreaFromPageSet_Ordered(
     }
   }
   if (!pStartChild && bRes && !bQuery)
-    m_pPageSetMap.SetAt(pPageSet, ++iPageSetCount);
+    m_pPageSetMap[pPageSet] = ++iPageSetCount;
   return bRes;
 }
 
@@ -1414,7 +1415,7 @@ void CXFA_LayoutPageMgr::InitPageSetMap() {
       XFA_ATTRIBUTEENUM eRelation =
           pPageSetNode->GetEnum(XFA_ATTRIBUTE_Relation);
       if (eRelation == XFA_ATTRIBUTEENUM_OrderedOccurrence)
-        m_pPageSetMap.SetAt(pPageSetNode, 0);
+        m_pPageSetMap[pPageSetNode] = 0;
     }
   }
 }
@@ -1452,9 +1453,11 @@ void CXFA_LayoutPageMgr::CreateMinPageSetRecord(CXFA_Node* pPageSet,
   if (!pPageSet)
     return;
 
-  int32_t iCurSetCount = 0;
-  if (!m_pPageSetMap.Lookup(pPageSet, iCurSetCount))
+  auto it = m_pPageSetMap.find(pPageSet);
+  if (it == m_pPageSetMap.end())
     return;
+
+  int32_t iCurSetCount = it->second;
   if (bCreateAll)
     iCurSetCount = 0;
 
@@ -1475,7 +1478,7 @@ void CXFA_LayoutPageMgr::CreateMinPageSetRecord(CXFA_Node* pPageSet,
           }
         }
       }
-      m_pPageSetMap.SetAt(pPageSet, iMin);
+      m_pPageSetMap[pPageSet] = iMin;
     }
   }
 }
@@ -1582,7 +1585,7 @@ void CXFA_LayoutPageMgr::ClearData() {
   m_pCurPageArea = nullptr;
   m_nCurPageCount = 0;
   m_bCreateOverFlowPage = false;
-  m_pPageSetMap.RemoveAll();
+  m_pPageSetMap.clear();
 }
 
 CXFA_LayoutItem* CXFA_LayoutPageMgr::FindOrCreateLayoutItem(

@@ -109,7 +109,7 @@ class CXFA_ScriptContext {
   CFXJSE_Class* m_pJsClass;
   XFA_SCRIPTLANGTYPE m_eScriptType;
   std::map<CXFA_Object*, std::unique_ptr<CFXJSE_Value>> m_mapObjectToValue;
-  CFX_MapPtrTemplate<CXFA_Object*, CFXJSE_Context*> m_mapVariableToContext;
+  std::map<CXFA_Object*, CFXJSE_Context*> m_mapVariableToContext;
   CXFA_EventParam m_eventParam;
   CXFA_NodeArray m_upObjectArray;
   // CacheList holds the NodeList items so we can clean them up when we're done.
