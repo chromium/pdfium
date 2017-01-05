@@ -7,6 +7,7 @@
 #ifndef XFA_FDE_CSS_FDE_CSSSTYLESELECTOR_H_
 #define XFA_FDE_CSS_FDE_CSSSTYLESELECTOR_H_
 
+#include <map>
 #include <memory>
 #include <vector>
 
@@ -41,28 +42,25 @@ class CFDE_CSSRuleCollection : public CFX_Target {
                     uint32_t dwMediaList,
                     CFGAS_FontMgr* pFontMgr);
   void Clear();
-
   int32_t CountSelectors() const { return m_iSelectors; }
+
   FDE_CSSRuleData* GetIDRuleData(uint32_t dwIDHash) {
-    void* pData;
-    return m_IDRules.Lookup((void*)(uintptr_t)dwIDHash, pData)
-               ? (FDE_CSSRuleData*)pData
-               : nullptr;
+    auto it = m_IDRules.find(dwIDHash);
+    return it != m_IDRules.end() ? it->second : nullptr;
   }
-  FDE_CSSRuleData* GetTagRuleData(uint32_t dwTagHasn) {
-    void* pData;
-    return m_TagRules.Lookup((void*)(uintptr_t)dwTagHasn, pData)
-               ? (FDE_CSSRuleData*)pData
-               : nullptr;
+
+  FDE_CSSRuleData* GetTagRuleData(uint32_t dwTagHash) {
+    auto it = m_TagRules.find(dwTagHash);
+    return it != m_TagRules.end() ? it->second : nullptr;
   }
+
   FDE_CSSRuleData* GetClassRuleData(uint32_t dwIDHash) {
-    void* pData;
-    return m_ClassRules.Lookup((void*)(uintptr_t)dwIDHash, pData)
-               ? (FDE_CSSRuleData*)pData
-               : nullptr;
+    auto it = m_ClassRules.find(dwIDHash);
+    return it != m_ClassRules.end() ? it->second : nullptr;
   }
+
   FDE_CSSRuleData* GetUniversalRuleData() { return m_pUniversalRules; }
-  FDE_CSSRuleData* GetPersudoRuleData() { return m_pPersudoRules; }
+  FDE_CSSRuleData* GetPseudoRuleData() { return m_pPseudoRules; }
 
   IFX_MemoryAllocator* m_pStaticStore;
 
@@ -71,18 +69,19 @@ class CFDE_CSSRuleCollection : public CFX_Target {
                     IFDE_CSSRule* pRule,
                     uint32_t dwMediaList,
                     CFGAS_FontMgr* pFontMgr);
-  void AddRuleTo(CFX_MapPtrToPtr& map,
+  void AddRuleTo(std::map<uint32_t, FDE_CSSRuleData*>* pMap,
                  uint32_t dwKey,
                  CFDE_CSSSelector* pSel,
                  CFDE_CSSDeclaration* pDecl);
-  bool AddRuleTo(FDE_CSSRuleData*& pList, FDE_CSSRuleData* pData);
+  bool AddRuleTo(FDE_CSSRuleData** pList, FDE_CSSRuleData* pData);
   FDE_CSSRuleData* NewRuleData(CFDE_CSSSelector* pSel,
                                CFDE_CSSDeclaration* pDecl);
-  CFX_MapPtrToPtr m_IDRules;
-  CFX_MapPtrToPtr m_TagRules;
-  CFX_MapPtrToPtr m_ClassRules;
+
+  std::map<uint32_t, FDE_CSSRuleData*> m_IDRules;
+  std::map<uint32_t, FDE_CSSRuleData*> m_TagRules;
+  std::map<uint32_t, FDE_CSSRuleData*> m_ClassRules;
   FDE_CSSRuleData* m_pUniversalRules;
-  FDE_CSSRuleData* m_pPersudoRules;
+  FDE_CSSRuleData* m_pPseudoRules;
   int32_t m_iSelectors;
 };
 
@@ -104,7 +103,7 @@ class CFDE_CSSStyleSelector : public CFX_Target {
       IFDE_CSSComputedStyle* pParentStyle);
   int32_t MatchDeclarations(CXFA_CSSTagProvider* pTag,
                             CFDE_CSSDeclarationArray& matchedDecls,
-                            FDE_CSSPERSUDO ePersudoType = FDE_CSSPERSUDO_NONE);
+                            FDE_CSSPSEUDO ePseudoType = FDE_CSSPSEUDO_NONE);
   void ComputeStyle(CXFA_CSSTagProvider* pTag,
                     const CFDE_CSSDeclaration** ppDeclArray,
                     int32_t iDeclCount,
@@ -114,10 +113,10 @@ class CFDE_CSSStyleSelector : public CFX_Target {
   void Reset();
   void MatchRules(FDE_CSSTagCache* pCache,
                   FDE_CSSRuleData* pList,
-                  FDE_CSSPERSUDO ePersudoType);
+                  FDE_CSSPSEUDO ePseudoType);
   bool MatchSelector(FDE_CSSTagCache* pCache,
                      CFDE_CSSSelector* pSel,
-                     FDE_CSSPERSUDO ePersudoType);
+                     FDE_CSSPSEUDO ePseudoType);
   void AppendInlineStyle(CFDE_CSSDeclaration* pDecl,
                          const FX_WCHAR* psz,
                          int32_t iLen);

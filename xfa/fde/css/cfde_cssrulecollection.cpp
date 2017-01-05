@@ -7,6 +7,7 @@
 #include "xfa/fde/css/fde_cssstyleselector.h"
 
 #include <algorithm>
+#include <map>
 #include <memory>
 
 #include "xfa/fde/css/fde_csscache.h"
@@ -18,9 +19,9 @@
 #define FDE_CSSUNIVERSALHASH ('*')
 
 void CFDE_CSSRuleCollection::Clear() {
-  m_IDRules.RemoveAll();
-  m_TagRules.RemoveAll();
-  m_ClassRules.RemoveAll();
+  m_IDRules.clear();
+  m_TagRules.clear();
+  m_ClassRules.clear();
   m_pUniversalRules = nullptr;
   m_pStaticStore = nullptr;
   m_iSelectors = 0;
@@ -29,7 +30,7 @@ void CFDE_CSSRuleCollection::Clear() {
 CFDE_CSSRuleCollection::CFDE_CSSRuleCollection()
     : m_pStaticStore(nullptr),
       m_pUniversalRules(nullptr),
-      m_pPersudoRules(nullptr),
+      m_pPseudoRules(nullptr),
       m_iSelectors(0) {}
 
 CFDE_CSSRuleCollection::~CFDE_CSSRuleCollection() {
@@ -62,33 +63,34 @@ void CFDE_CSSRuleCollection::AddRulesFrom(IFDE_CSSStyleSheet* pStyleSheet,
       int32_t iSelectors = pStyleRule->CountSelectorLists();
       for (int32_t i = 0; i < iSelectors; ++i) {
         CFDE_CSSSelector* pSelector = pStyleRule->GetSelectorList(i);
-        if (pSelector->GetType() == FDE_CSSSELECTORTYPE_Persudo) {
+        if (pSelector->GetType() == FDE_CSSSELECTORTYPE_Pseudo) {
           FDE_CSSRuleData* pData = NewRuleData(pSelector, pDeclaration);
-          AddRuleTo(m_pPersudoRules, pData);
+          AddRuleTo(&m_pPseudoRules, pData);
           continue;
         }
         if (pSelector->GetNameHash() != FDE_CSSUNIVERSALHASH) {
-          AddRuleTo(m_TagRules, pSelector->GetNameHash(), pSelector,
+          AddRuleTo(&m_TagRules, pSelector->GetNameHash(), pSelector,
                     pDeclaration);
           continue;
         }
         CFDE_CSSSelector* pNext = pSelector->GetNextSelector();
         if (!pNext) {
           FDE_CSSRuleData* pData = NewRuleData(pSelector, pDeclaration);
-          AddRuleTo(m_pUniversalRules, pData);
+          AddRuleTo(&m_pUniversalRules, pData);
           continue;
         }
         switch (pNext->GetType()) {
           case FDE_CSSSELECTORTYPE_ID:
-            AddRuleTo(m_IDRules, pNext->GetNameHash(), pSelector, pDeclaration);
+            AddRuleTo(&m_IDRules, pNext->GetNameHash(), pSelector,
+                      pDeclaration);
             break;
           case FDE_CSSSELECTORTYPE_Class:
-            AddRuleTo(m_ClassRules, pNext->GetNameHash(), pSelector,
+            AddRuleTo(&m_ClassRules, pNext->GetNameHash(), pSelector,
                       pDeclaration);
             break;
           case FDE_CSSSELECTORTYPE_Descendant:
           case FDE_CSSSELECTORTYPE_Element:
-            AddRuleTo(m_pUniversalRules, NewRuleData(pSelector, pDeclaration));
+            AddRuleTo(&m_pUniversalRules, NewRuleData(pSelector, pDeclaration));
             break;
           default:
             ASSERT(false);
@@ -111,29 +113,28 @@ void CFDE_CSSRuleCollection::AddRulesFrom(IFDE_CSSStyleSheet* pStyleSheet,
   }
 }
 
-void CFDE_CSSRuleCollection::AddRuleTo(CFX_MapPtrToPtr& map,
-                                       uint32_t dwKey,
-                                       CFDE_CSSSelector* pSel,
-                                       CFDE_CSSDeclaration* pDecl) {
-  void* pKey = (void*)(uintptr_t)dwKey;
+void CFDE_CSSRuleCollection::AddRuleTo(
+    std::map<uint32_t, FDE_CSSRuleData*>* pMap,
+    uint32_t dwKey,
+    CFDE_CSSSelector* pSel,
+    CFDE_CSSDeclaration* pDecl) {
   FDE_CSSRuleData* pData = NewRuleData(pSel, pDecl);
-  FDE_CSSRuleData* pList = nullptr;
-  if (!map.Lookup(pKey, (void*&)pList)) {
-    map.SetAt(pKey, pData);
-  } else if (AddRuleTo(pList, pData)) {
-    map.SetAt(pKey, pList);
+  FDE_CSSRuleData* pList = (*pMap)[dwKey];
+  if (!pList) {
+    (*pMap)[dwKey] = pData;
+  } else if (AddRuleTo(&pList, pData)) {
+    (*pMap)[dwKey] = pList;
   }
 }
 
-bool CFDE_CSSRuleCollection::AddRuleTo(FDE_CSSRuleData*& pList,
+bool CFDE_CSSRuleCollection::AddRuleTo(FDE_CSSRuleData** pList,
                                        FDE_CSSRuleData* pData) {
-  if (pList) {
-    pData->pNext = pList->pNext;
-    pList->pNext = pData;
+  if (*pList) {
+    pData->pNext = (*pList)->pNext;
+    (*pList)->pNext = pData;
     return false;
   }
-
-  pList = pData;
+  *pList = pData;
   return true;
 }
 

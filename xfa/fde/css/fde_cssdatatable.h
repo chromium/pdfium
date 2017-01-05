@@ -130,31 +130,33 @@ struct FDE_CSSMEDIATYPETABLE {
   uint16_t wHash;
   uint16_t wValue;
 };
-typedef FDE_CSSMEDIATYPETABLE const* FDE_LPCCSSMEDIATYPETABLE;
-FDE_LPCCSSMEDIATYPETABLE FDE_GetCSSMediaTypeByName(
+
+const FDE_CSSMEDIATYPETABLE* FDE_GetCSSMediaTypeByName(
     const CFX_WideStringC& wsName);
+
 struct FDE_CSSLENGTHUNITTABLE {
   uint16_t wHash;
   uint16_t wValue;
 };
-typedef FDE_CSSLENGTHUNITTABLE const* FDE_LPCCSSLENGTHUNITTABLE;
-FDE_LPCCSSLENGTHUNITTABLE FDE_GetCSSLengthUnitByName(
+
+const FDE_CSSLENGTHUNITTABLE* FDE_GetCSSLengthUnitByName(
     const CFX_WideStringC& wsName);
+
 struct FDE_CSSCOLORTABLE {
   uint32_t dwHash;
   FX_ARGB dwValue;
 };
-typedef FDE_CSSCOLORTABLE const* FDE_LPCCSSCOLORTABLE;
-FDE_LPCCSSCOLORTABLE FDE_GetCSSColorByName(const CFX_WideStringC& wsName);
 
-struct FDE_CSSPERSUDOTABLE {
-  FDE_CSSPERSUDO eName;
+const FDE_CSSCOLORTABLE* FDE_GetCSSColorByName(const CFX_WideStringC& wsName);
+
+struct FDE_CSSPSEUDOTABLE {
+  FDE_CSSPSEUDO eName;
   const FX_WCHAR* pszName;
   uint32_t dwHash;
 };
-typedef FDE_CSSPERSUDOTABLE const* FDE_LPCCSSPERSUDOTABLE;
 
-FDE_LPCCSSPERSUDOTABLE FDE_GetCSSPersudoByEnum(FDE_CSSPERSUDO ePersudo);
+const FDE_CSSPSEUDOTABLE* FDE_GetCSSPseudoByEnum(FDE_CSSPSEUDO ePseudo);
+
 bool FDE_ParseCSSNumber(const FX_WCHAR* pszValue,
                         int32_t iValueLen,
                         FX_FLOAT& fValue,

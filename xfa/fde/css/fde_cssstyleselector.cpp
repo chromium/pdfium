@@ -198,9 +198,8 @@ void CFDE_CSSStyleSelector::Reset() {
 int32_t CFDE_CSSStyleSelector::MatchDeclarations(
     CXFA_CSSTagProvider* pTag,
     CFDE_CSSDeclarationArray& matchedDecls,
-    FDE_CSSPERSUDO ePersudoType) {
-  ASSERT(m_pAccelerator && pTag);
-
+    FDE_CSSPSEUDO ePseudoType) {
+  ASSERT(pTag);
   FDE_CSSTagCache* pCache = m_pAccelerator->GetTopElement();
   ASSERT(pCache && pCache->GetTag() == pTag);
 
@@ -212,20 +211,20 @@ int32_t CFDE_CSSStyleSelector::MatchDeclarations(
     if (rules.CountSelectors() == 0)
       continue;
 
-    if (ePersudoType == FDE_CSSPERSUDO_NONE) {
-      MatchRules(pCache, rules.GetUniversalRuleData(), ePersudoType);
+    if (ePseudoType == FDE_CSSPSEUDO_NONE) {
+      MatchRules(pCache, rules.GetUniversalRuleData(), ePseudoType);
       if (pCache->HashTag()) {
         MatchRules(pCache, rules.GetTagRuleData(pCache->HashTag()),
-                   ePersudoType);
+                   ePseudoType);
       }
       int32_t iCount = pCache->CountHashClass();
       for (int32_t i = 0; i < iCount; i++) {
         pCache->SetClassIndex(i);
         MatchRules(pCache, rules.GetClassRuleData(pCache->HashClass()),
-                   ePersudoType);
+                   ePseudoType);
       }
     } else {
-      MatchRules(pCache, rules.GetPersudoRuleData(), ePersudoType);
+      MatchRules(pCache, rules.GetPseudoRuleData(), ePseudoType);
     }
 
     std::sort(m_MatchedRules.begin(), m_MatchedRules.end(),
@@ -241,9 +240,9 @@ int32_t CFDE_CSSStyleSelector::MatchDeclarations(
 
 void CFDE_CSSStyleSelector::MatchRules(FDE_CSSTagCache* pCache,
                                        FDE_CSSRuleData* pList,
-                                       FDE_CSSPERSUDO ePersudoType) {
+                                       FDE_CSSPSEUDO ePseudoType) {
   while (pList) {
-    if (MatchSelector(pCache, pList->pSelector, ePersudoType))
+    if (MatchSelector(pCache, pList->pSelector, ePseudoType))
       m_MatchedRules.push_back(pList);
     pList = pList->pNext;
   }
@@ -251,7 +250,7 @@ void CFDE_CSSStyleSelector::MatchRules(FDE_CSSTagCache* pCache,
 
 bool CFDE_CSSStyleSelector::MatchSelector(FDE_CSSTagCache* pCache,
                                           CFDE_CSSSelector* pSel,
-                                          FDE_CSSPERSUDO ePersudoType) {
+                                          FDE_CSSPSEUDO ePseudoType) {
   uint32_t dwHash;
   while (pSel && pCache) {
     switch (pSel->GetType()) {
@@ -261,7 +260,7 @@ bool CFDE_CSSStyleSelector::MatchSelector(FDE_CSSTagCache* pCache,
           if (dwHash != FDE_CSSUNIVERSALHASH && dwHash != pCache->HashTag()) {
             continue;
           }
-          if (MatchSelector(pCache, pSel->GetNextSelector(), ePersudoType)) {
+          if (MatchSelector(pCache, pSel->GetNextSelector(), ePseudoType)) {
             return true;
           }
         }
@@ -284,8 +283,8 @@ bool CFDE_CSSStyleSelector::MatchSelector(FDE_CSSTagCache* pCache,
           return false;
         }
         break;
-      case FDE_CSSSELECTORTYPE_Persudo:
-        dwHash = FDE_GetCSSPersudoByEnum(ePersudoType)->dwHash;
+      case FDE_CSSSELECTORTYPE_Pseudo:
+        dwHash = FDE_GetCSSPseudoByEnum(ePseudoType)->dwHash;
         if (dwHash != pSel->GetNameHash()) {
           return false;
         }

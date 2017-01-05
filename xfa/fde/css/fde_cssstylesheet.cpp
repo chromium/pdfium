@@ -209,7 +209,7 @@ FDE_CSSSYNTAXSTATUS CFDE_CSSStyleSheet::LoadMediaRule(
       case FDE_CSSSYNTAXSTATUS_MediaType: {
         int32_t iLen;
         const FX_WCHAR* psz = pSyntax->GetCurrentString(iLen);
-        FDE_LPCCSSMEDIATYPETABLE pMediaType =
+        const FDE_CSSMEDIATYPETABLE* pMediaType =
             FDE_GetCSSMediaTypeByName(CFX_WideStringC(psz, iLen));
         if (pMediaType)
           dwMediaList |= pMediaType->wValue;
@@ -438,7 +438,7 @@ bool FDE_IsCSSChar(FX_WCHAR wch) {
   return (wch >= 'a' && wch <= 'z') || (wch >= 'A' && wch <= 'Z');
 }
 
-int32_t FDE_GetCSSPersudoLen(const FX_WCHAR* psz, const FX_WCHAR* pEnd) {
+int32_t FDE_GetCSSPseudoLen(const FX_WCHAR* psz, const FX_WCHAR* pEnd) {
   ASSERT(*psz == ':');
   const FX_WCHAR* pStart = psz;
   while (psz < pEnd) {
@@ -504,8 +504,8 @@ CFDE_CSSSelector* CFDE_CSSSelector::FromString(
   }
   CFDE_CSSSelector* pFirst = nullptr;
   CFDE_CSSSelector* pLast = nullptr;
-  CFDE_CSSSelector* pPersudoFirst = nullptr;
-  CFDE_CSSSelector* pPersudoLast = nullptr;
+  CFDE_CSSSelector* pPseudoFirst = nullptr;
+  CFDE_CSSSelector* pPseudoLast = nullptr;
   for (psz = pStart; psz < pEnd;) {
     FX_WCHAR wch = *psz;
     if (wch == '.' || wch == '#') {
@@ -555,20 +555,20 @@ CFDE_CSSSelector* CFDE_CSSSelector::FromString(
       pLast = p;
       psz += iNameLen;
     } else if (wch == ':') {
-      int32_t iNameLen = FDE_GetCSSPersudoLen(psz, pEnd);
+      int32_t iNameLen = FDE_GetCSSPseudoLen(psz, pEnd);
       if (iNameLen == 0) {
         return nullptr;
       }
       CFDE_CSSSelector* p = FXTARGET_NewWith(pStaticStore)
-          CFDE_CSSSelector(FDE_CSSSELECTORTYPE_Persudo, psz, iNameLen, true);
+          CFDE_CSSSelector(FDE_CSSSELECTORTYPE_Pseudo, psz, iNameLen, true);
       if (!p)
         return nullptr;
 
-      if (pPersudoFirst)
-        pPersudoLast->SetNext(p);
+      if (pPseudoFirst)
+        pPseudoLast->SetNext(p);
       else
-        pPersudoFirst = p;
-      pPersudoLast = p;
+        pPseudoFirst = p;
+      pPseudoLast = p;
       psz += iNameLen;
     } else if (wch == ' ') {
       psz++;
@@ -576,11 +576,11 @@ CFDE_CSSSelector* CFDE_CSSSelector::FromString(
       return nullptr;
     }
   }
-  if (!pPersudoFirst)
+  if (!pPseudoFirst)
     return pFirst;
 
-  pPersudoLast->SetNext(pFirst);
-  return pPersudoFirst;
+  pPseudoLast->SetNext(pFirst);
+  return pPseudoFirst;
 }
 
 CFDE_CSSDeclaration* CFDE_CSSFontFaceRule::GetDeclaration() {

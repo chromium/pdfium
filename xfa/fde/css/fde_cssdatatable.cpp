@@ -553,13 +553,12 @@ static const FDE_CSSCOLORTABLE g_FDE_CSSColors[] = {
     {0xDB64391D, 0xff000000}, {0xF616D507, 0xff00ff00},
     {0xF6EFFF31, 0xff008000},
 };
-static const FDE_CSSPERSUDOTABLE g_FDE_CSSPersudoType[] = {
-    {FDE_CSSPERSUDO_After, L":after", 0x16EE1FEC},
-    {FDE_CSSPERSUDO_Before, L":before", 0x7DCDDE2D},
+static const FDE_CSSPSEUDOTABLE g_FDE_CSSPseudoType[] = {
+    {FDE_CSSPSEUDO_After, L":after", 0x16EE1FEC},
+    {FDE_CSSPSEUDO_Before, L":before", 0x7DCDDE2D},
 };
-FDE_LPCCSSPERSUDOTABLE FDE_GetCSSPersudoByEnum(FDE_CSSPERSUDO ePersudo) {
-  return (ePersudo < FDE_CSSPERSUDO_NONE) ? (g_FDE_CSSPersudoType + ePersudo)
-                                          : nullptr;
+const FDE_CSSPSEUDOTABLE* FDE_GetCSSPseudoByEnum(FDE_CSSPSEUDO ePseudo) {
+  return ePseudo < FDE_CSSPSEUDO_NONE ? g_FDE_CSSPseudoType + ePseudo : nullptr;
 }
 const FDE_CSSPROPERTYTABLE* FDE_GetCSSPropertyByName(
     const CFX_WideStringC& wsName) {
@@ -610,7 +609,7 @@ const FDE_CSSPROPERTYVALUETABLE* FDE_GetCSSPropertyValueByEnum(
   return (eName < FDE_CSSPROPERTYVALUE_MAX) ? (g_FDE_CSSPropertyValues + eName)
                                             : nullptr;
 }
-FDE_LPCCSSMEDIATYPETABLE FDE_GetCSSMediaTypeByName(
+const FDE_CSSMEDIATYPETABLE* FDE_GetCSSMediaTypeByName(
     const CFX_WideStringC& wsName) {
   ASSERT(!wsName.IsEmpty());
   uint16_t wHash = FX_HashCode_GetW(wsName, true);
@@ -631,7 +630,8 @@ FDE_LPCCSSMEDIATYPETABLE FDE_GetCSSMediaTypeByName(
   } while (iStart <= iEnd);
   return nullptr;
 }
-FDE_LPCCSSLENGTHUNITTABLE FDE_GetCSSLengthUnitByName(
+
+const FDE_CSSLENGTHUNITTABLE* FDE_GetCSSLengthUnitByName(
     const CFX_WideStringC& wsName) {
   ASSERT(!wsName.IsEmpty());
   uint16_t wHash = FX_HashCode_GetW(wsName, true);
@@ -652,7 +652,8 @@ FDE_LPCCSSLENGTHUNITTABLE FDE_GetCSSLengthUnitByName(
   } while (iStart <= iEnd);
   return nullptr;
 }
-FDE_LPCCSSCOLORTABLE FDE_GetCSSColorByName(const CFX_WideStringC& wsName) {
+
+const FDE_CSSCOLORTABLE* FDE_GetCSSColorByName(const CFX_WideStringC& wsName) {
   ASSERT(!wsName.IsEmpty());
   uint32_t dwHash = FX_HashCode_GetW(wsName, true);
   int32_t iEnd = sizeof(g_FDE_CSSColors) / sizeof(FDE_CSSCOLORTABLE) - 1;
@@ -688,7 +689,7 @@ bool FDE_ParseCSSNumber(const FX_WCHAR* pszValue,
   if (iValueLen >= 1 && *pszValue == '%') {
     eUnit = FDE_CSSPRIMITIVETYPE_Percent;
   } else if (iValueLen == 2) {
-    FDE_LPCCSSLENGTHUNITTABLE pUnit =
+    const FDE_CSSLENGTHUNITTABLE* pUnit =
         FDE_GetCSSLengthUnitByName(CFX_WideStringC(pszValue, 2));
     if (pUnit)
       eUnit = (FDE_CSSPRIMITIVETYPE)pUnit->wValue;
@@ -778,7 +779,7 @@ bool FDE_ParseCSSColor(const FX_WCHAR* pszValue,
     return true;
   }
 
-  FDE_LPCCSSCOLORTABLE pColor =
+  const FDE_CSSCOLORTABLE* pColor =
       FDE_GetCSSColorByName(CFX_WideStringC(pszValue, iValueLen));
   if (!pColor)
     return false;
