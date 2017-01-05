@@ -134,23 +134,15 @@ CPDF_DIBSource::~CPDF_DIBSource() {
   }
 }
 
-bool CPDF_DIBSource::Load(CPDF_Document* pDoc,
-                          const CPDF_Stream* pStream,
-                          CPDF_DIBSource** ppMask,
-                          uint32_t* pMatteColor,
-                          CPDF_Dictionary* pFormResources,
-                          CPDF_Dictionary* pPageResources,
-                          bool bStdCS,
-                          uint32_t GroupFamily,
-                          bool bLoadMask) {
-  if (!pStream) {
+bool CPDF_DIBSource::Load(CPDF_Document* pDoc, const CPDF_Stream* pStream) {
+  if (!pStream)
     return false;
-  }
+
   m_pDocument = pDoc;
   m_pDict = pStream->GetDict();
-  if (!m_pDict) {
+  if (!m_pDict)
     return false;
-  }
+
   m_pStream = pStream;
   m_Width = m_pDict->GetIntegerFor("Width");
   m_Height = m_pDict->GetIntegerFor("Height");
@@ -158,28 +150,27 @@ bool CPDF_DIBSource::Load(CPDF_Document* pDoc,
       m_Height > kMaxImageDimension) {
     return false;
   }
-  m_GroupFamily = GroupFamily;
-  m_bLoadMask = bLoadMask;
-  if (!LoadColorInfo(m_pStream->IsInline() ? pFormResources : nullptr,
-                     pPageResources)) {
+  m_GroupFamily = 0;
+  m_bLoadMask = false;
+  if (!LoadColorInfo(nullptr, nullptr))
     return false;
-  }
-  if (m_bDoBpcCheck && (m_bpc == 0 || m_nComponents == 0)) {
+
+  if (m_bDoBpcCheck && (m_bpc == 0 || m_nComponents == 0))
     return false;
-  }
+
   FX_SAFE_UINT32 src_size =
       CalculatePitch8(m_bpc, m_nComponents, m_Width) * m_Height;
-  if (!src_size.IsValid()) {
+  if (!src_size.IsValid())
     return false;
-  }
+
   m_pStreamAcc = pdfium::MakeUnique<CPDF_StreamAcc>();
   m_pStreamAcc->LoadAllData(pStream, false, src_size.ValueOrDie(), true);
-  if (m_pStreamAcc->GetSize() == 0 || !m_pStreamAcc->GetData()) {
+  if (m_pStreamAcc->GetSize() == 0 || !m_pStreamAcc->GetData())
     return false;
-  }
-  if (!CreateDecoder()) {
+
+  if (!CreateDecoder())
     return false;
-  }
+
   if (m_bImageMask) {
     m_bpp = 1;
     m_bpc = 1;
@@ -193,30 +184,21 @@ bool CPDF_DIBSource::Load(CPDF_Document* pDoc,
     m_bpp = 24;
   }
   FX_SAFE_UINT32 pitch = CalculatePitch32(m_bpp, m_Width);
-  if (!pitch.IsValid()) {
+  if (!pitch.IsValid())
     return false;
-  }
+
   m_pLineBuf = FX_Alloc(uint8_t, pitch.ValueOrDie());
-  if (m_pColorSpace && bStdCS) {
-    m_pColorSpace->EnableStdConversion(true);
-  }
   LoadPalette();
   if (m_bColorKey) {
     m_bpp = 32;
     m_AlphaFlag = 2;
     pitch = CalculatePitch32(m_bpp, m_Width);
-    if (!pitch.IsValid()) {
+    if (!pitch.IsValid())
       return false;
-    }
+
     m_pMaskedLine = FX_Alloc(uint8_t, pitch.ValueOrDie());
   }
   m_Pitch = pitch.ValueOrDie();
-  if (ppMask) {
-    *ppMask = LoadMask(*pMatteColor);
-  }
-  if (m_pColorSpace && bStdCS) {
-    m_pColorSpace->EnableStdConversion(false);
-  }
   return true;
 }
 
@@ -710,31 +692,6 @@ void CPDF_DIBSource::LoadJpxBitmap() {
   m_bpc = 8;
 }
 
-CPDF_DIBSource* CPDF_DIBSource::LoadMask(uint32_t& MatteColor) {
-  MatteColor = 0xFFFFFFFF;
-  CPDF_Stream* pSoftMask = m_pDict->GetStreamFor("SMask");
-  if (pSoftMask) {
-    CPDF_Array* pMatte = pSoftMask->GetDict()->GetArrayFor("Matte");
-    if (pMatte && m_pColorSpace &&
-        m_pColorSpace->CountComponents() <= m_nComponents) {
-      std::vector<FX_FLOAT> colors(m_nComponents);
-      for (uint32_t i = 0; i < m_nComponents; i++) {
-        colors[i] = pMatte->GetFloatAt(i);
-      }
-      FX_FLOAT R, G, B;
-      m_pColorSpace->GetRGB(colors.data(), R, G, B);
-      MatteColor = FXARGB_MAKE(0, FXSYS_round(R * 255), FXSYS_round(G * 255),
-                               FXSYS_round(B * 255));
-    }
-    return LoadMaskDIB(pSoftMask);
-  }
-
-  if (CPDF_Stream* pStream = ToStream(m_pDict->GetDirectObjectFor("Mask")))
-    return LoadMaskDIB(pStream);
-
-  return nullptr;
-}
-
 int CPDF_DIBSource::StratLoadMask() {
   m_MatteColor = 0XFFFFFFFF;
   m_pMaskStream = m_pDict->GetStreamFor("SMask");
@@ -781,16 +738,6 @@ CPDF_DIBSource* CPDF_DIBSource::DetachMask() {
   CPDF_DIBSource* pDIBSource = m_pMask;
   m_pMask = nullptr;
   return pDIBSource;
-}
-
-CPDF_DIBSource* CPDF_DIBSource::LoadMaskDIB(CPDF_Stream* pMask) {
-  CPDF_DIBSource* pMaskSource = new CPDF_DIBSource;
-  if (!pMaskSource->Load(m_pDocument, pMask, nullptr, nullptr, nullptr, nullptr,
-                         true)) {
-    delete pMaskSource;
-    return nullptr;
-  }
-  return pMaskSource;
 }
 
 int CPDF_DIBSource::StartLoadMaskDIB() {

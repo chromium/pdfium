@@ -24,8 +24,7 @@ TEST(CStretchEngine, OverflowInCtor) {
   std::unique_ptr<CPDF_Stream> stream =
       pdfium::MakeUnique<CPDF_Stream>(nullptr, 0, std::move(dict_obj));
   CPDF_DIBSource dib_source;
-  dib_source.Load(nullptr, stream.get(), nullptr, nullptr, nullptr, nullptr,
-                  false, 0, false);
+  dib_source.Load(nullptr, stream.get());
   CStretchEngine engine(nullptr, FXDIB_8bppRgb, 500, 500, clip_rect,
                         &dib_source, 0);
   EXPECT_EQ(FXDIB_INTERPOL, engine.m_Flags);

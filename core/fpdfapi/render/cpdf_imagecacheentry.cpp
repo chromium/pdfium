@@ -45,47 +45,6 @@ static uint32_t FPDF_ImageCache_EstimateImageSize(const CFX_DIBSource* pDIB) {
              : 0;
 }
 
-bool CPDF_ImageCacheEntry::GetCachedBitmap(CFX_DIBSource*& pBitmap,
-                                           CFX_DIBSource*& pMask,
-                                           uint32_t& MatteColor,
-                                           CPDF_Dictionary* pPageResources,
-                                           bool bStdCS,
-                                           uint32_t GroupFamily,
-                                           bool bLoadMask,
-                                           CPDF_RenderStatus* pRenderStatus,
-                                           int32_t downsampleWidth,
-                                           int32_t downsampleHeight) {
-  if (m_pCachedBitmap) {
-    pBitmap = m_pCachedBitmap.get();
-    pMask = m_pCachedMask.get();
-    MatteColor = m_MatteColor;
-    return true;
-  }
-  if (!pRenderStatus)
-    return false;
-
-  CPDF_RenderContext* pContext = pRenderStatus->GetContext();
-  CPDF_PageRenderCache* pPageRenderCache = pContext->GetPageCache();
-  m_dwTimeCount = pPageRenderCache->GetTimeCount();
-  std::unique_ptr<CPDF_DIBSource> pSrc = pdfium::MakeUnique<CPDF_DIBSource>();
-  CPDF_DIBSource* pMaskSrc = nullptr;
-  if (!pSrc->Load(m_pDocument, m_pStream, &pMaskSrc, &MatteColor,
-                  pRenderStatus->m_pFormResource, pPageResources, bStdCS,
-                  GroupFamily, bLoadMask)) {
-    pBitmap = nullptr;
-    return false;
-  }
-  m_MatteColor = MatteColor;
-  m_pCachedBitmap = std::move(pSrc);
-  if (pMaskSrc)
-    m_pCachedMask = pdfium::WrapUnique<CFX_DIBSource>(pMaskSrc);
-
-  pBitmap = m_pCachedBitmap.get();
-  pMask = m_pCachedMask.get();
-  CalcSize();
-  return false;
-}
-
 CFX_DIBSource* CPDF_ImageCacheEntry::DetachBitmap() {
   CFX_DIBSource* pDIBSource = m_pCurBitmap;
   m_pCurBitmap = nullptr;

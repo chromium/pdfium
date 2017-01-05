@@ -42,15 +42,7 @@ class CPDF_DIBSource : public CFX_DIBSource {
   CPDF_DIBSource();
   ~CPDF_DIBSource() override;
 
-  bool Load(CPDF_Document* pDoc,
-            const CPDF_Stream* pStream,
-            CPDF_DIBSource** ppMask,
-            uint32_t* pMatteColor,
-            CPDF_Dictionary* pFormResources,
-            CPDF_Dictionary* pPageResources,
-            bool bStdCS = false,
-            uint32_t GroupFamily = 0,
-            bool bLoadMask = false);
+  bool Load(CPDF_Document* pDoc, const CPDF_Stream* pStream);
 
   // CFX_DIBSource
   bool SkipToScanline(int line, IFX_Pause* pPause) const override;
@@ -85,8 +77,6 @@ class CPDF_DIBSource : public CFX_DIBSource {
   bool LoadColorInfo(const CPDF_Dictionary* pFormResources,
                      const CPDF_Dictionary* pPageResources);
   DIB_COMP_DATA* GetDecodeAndMaskArray(bool& bDefaultDecode, bool& bColorKey);
-  CPDF_DIBSource* LoadMask(uint32_t& MatteColor);
-  CPDF_DIBSource* LoadMaskDIB(CPDF_Stream* pMask);
   void LoadJpxBitmap();
   void LoadPalette();
   int CreateDecoder();

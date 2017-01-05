@@ -25,16 +25,6 @@ class CPDF_ImageCacheEntry {
   ~CPDF_ImageCacheEntry();
 
   void Reset(const CFX_DIBitmap* pBitmap);
-  bool GetCachedBitmap(CFX_DIBSource*& pBitmap,
-                       CFX_DIBSource*& pMask,
-                       uint32_t& MatteColor,
-                       CPDF_Dictionary* pPageResources,
-                       bool bStdCS,
-                       uint32_t GroupFamily,
-                       bool bLoadMask,
-                       CPDF_RenderStatus* pRenderStatus,
-                       int32_t downsampleWidth,
-                       int32_t downsampleHeight);
   uint32_t EstimateSize() const { return m_dwCacheSize; }
   uint32_t GetTimeCount() const { return m_dwTimeCount; }
   CPDF_Stream* GetStream() const { return m_pStream; }
@@ -56,6 +46,7 @@ class CPDF_ImageCacheEntry {
 
  private:
   void ContinueGetCachedBitmap();
+  void CalcSize();
 
   CPDF_RenderStatus* m_pRenderStatus;
   CPDF_Document* m_pDocument;
@@ -65,7 +56,6 @@ class CPDF_ImageCacheEntry {
   std::unique_ptr<CFX_DIBSource> m_pCachedBitmap;
   std::unique_ptr<CFX_DIBSource> m_pCachedMask;
   uint32_t m_dwCacheSize;
-  void CalcSize();
 };
 
 #endif  // CORE_FPDFAPI_RENDER_CPDF_IMAGECACHEENTRY_H_

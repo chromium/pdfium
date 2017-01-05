@@ -44,11 +44,7 @@ class CPDF_Image {
   bool IsMask() const { return m_bIsMask; }
   bool IsInterpol() const { return m_bInterpolate; }
 
-  std::unique_ptr<CFX_DIBSource> LoadDIBSource(CFX_DIBSource** ppMask = nullptr,
-                                               uint32_t* pMatteColor = nullptr,
-                                               bool bStdCS = false,
-                                               uint32_t GroupFamily = 0,
-                                               bool bLoadMask = false) const;
+  std::unique_ptr<CFX_DIBSource> LoadDIBSource() const;
 
   void SetImage(const CFX_DIBitmap* pDIBitmap);
   void SetJpegImage(const CFX_RetainPtr<IFX_SeekableReadStream>& pFile);
