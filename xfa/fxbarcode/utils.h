@@ -9,7 +9,6 @@
 
 #include "core/fxcrt/fx_basic.h"
 
-typedef CFX_MapPtrTemplate<void*, int32_t> CFX_PtrToInt32;
 bool BC_FX_ByteString_Replace(CFX_ByteString& dst,
                               uint32_t first,
                               uint32_t last,
