@@ -553,20 +553,19 @@ void CXFA_FM2JSContext::Avg(CFXJSE_Value* pThis,
       continue;
     }
 
-    std::unique_ptr<CFXJSE_Value> lengthValue(new CFXJSE_Value(pIsolate));
+    auto lengthValue = pdfium::MakeUnique<CFXJSE_Value>(pIsolate);
     argValue->GetObjectProperty("length", lengthValue.get());
     int32_t iLength = lengthValue->ToInteger();
 
     if (iLength > 2) {
-      std::unique_ptr<CFXJSE_Value> propertyValue(new CFXJSE_Value(pIsolate));
+      auto propertyValue = pdfium::MakeUnique<CFXJSE_Value>(pIsolate);
       argValue->GetObjectPropertyByIdx(1, propertyValue.get());
 
-      std::unique_ptr<CFXJSE_Value> jsObjectValue(new CFXJSE_Value(pIsolate));
+      auto jsObjectValue = pdfium::MakeUnique<CFXJSE_Value>(pIsolate);
       if (propertyValue->IsNull()) {
         for (int32_t j = 2; j < iLength; j++) {
           argValue->GetObjectPropertyByIdx(j, jsObjectValue.get());
-          std::unique_ptr<CFXJSE_Value> defaultPropValue(
-              new CFXJSE_Value(pIsolate));
+          auto defaultPropValue = pdfium::MakeUnique<CFXJSE_Value>(pIsolate);
           GetObjectDefaultValue(jsObjectValue.get(), defaultPropValue.get());
           if (defaultPropValue->IsNull())
             continue;
@@ -577,8 +576,7 @@ void CXFA_FM2JSContext::Avg(CFXJSE_Value* pThis,
       } else {
         for (int32_t j = 2; j < iLength; j++) {
           argValue->GetObjectPropertyByIdx(j, jsObjectValue.get());
-          std::unique_ptr<CFXJSE_Value> newPropertyValue(
-              new CFXJSE_Value(pIsolate));
+          auto newPropertyValue = pdfium::MakeUnique<CFXJSE_Value>(pIsolate);
           jsObjectValue->GetObjectProperty(
               propertyValue->ToString().AsStringC(), newPropertyValue.get());
           if (newPropertyValue->IsNull())
@@ -630,7 +628,7 @@ void CXFA_FM2JSContext::Count(CFXJSE_Value* pThis,
       continue;
 
     if (argValue->IsArray()) {
-      std::unique_ptr<CFXJSE_Value> lengthValue(new CFXJSE_Value(pIsolate));
+      auto lengthValue = pdfium::MakeUnique<CFXJSE_Value>(pIsolate);
       argValue->GetObjectProperty("length", lengthValue.get());
 
       int32_t iLength = lengthValue->ToInteger();
@@ -639,10 +637,9 @@ void CXFA_FM2JSContext::Count(CFXJSE_Value* pThis,
         return;
       }
 
-      std::unique_ptr<CFXJSE_Value> propertyValue(new CFXJSE_Value(pIsolate));
-      std::unique_ptr<CFXJSE_Value> jsObjectValue(new CFXJSE_Value(pIsolate));
-      std::unique_ptr<CFXJSE_Value> newPropertyValue(
-          new CFXJSE_Value(pIsolate));
+      auto propertyValue = pdfium::MakeUnique<CFXJSE_Value>(pIsolate);
+      auto jsObjectValue = pdfium::MakeUnique<CFXJSE_Value>(pIsolate);
+      auto newPropertyValue = pdfium::MakeUnique<CFXJSE_Value>(pIsolate);
       argValue->GetObjectPropertyByIdx(1, propertyValue.get());
       argValue->GetObjectPropertyByIdx(2, jsObjectValue.get());
       if (propertyValue->IsNull()) {
@@ -661,8 +658,7 @@ void CXFA_FM2JSContext::Count(CFXJSE_Value* pThis,
         }
       }
     } else if (argValue->IsObject()) {
-      std::unique_ptr<CFXJSE_Value> newPropertyValue(
-          new CFXJSE_Value(pIsolate));
+      auto newPropertyValue = pdfium::MakeUnique<CFXJSE_Value>(pIsolate);
       GetObjectDefaultValue(argValue.get(), newPropertyValue.get());
       if (!newPropertyValue->IsNull())
         iCount++;
@@ -706,7 +702,7 @@ void CXFA_FM2JSContext::Max(CFXJSE_Value* pThis,
       continue;
 
     if (argValue->IsArray()) {
-      std::unique_ptr<CFXJSE_Value> lengthValue(new CFXJSE_Value(pIsolate));
+      auto lengthValue = pdfium::MakeUnique<CFXJSE_Value>(pIsolate);
       argValue->GetObjectProperty("length", lengthValue.get());
       int32_t iLength = lengthValue->ToInteger();
       if (iLength <= 2) {
@@ -714,10 +710,9 @@ void CXFA_FM2JSContext::Max(CFXJSE_Value* pThis,
         return;
       }
 
-      std::unique_ptr<CFXJSE_Value> propertyValue(new CFXJSE_Value(pIsolate));
-      std::unique_ptr<CFXJSE_Value> jsObjectValue(new CFXJSE_Value(pIsolate));
-      std::unique_ptr<CFXJSE_Value> newPropertyValue(
-          new CFXJSE_Value(pIsolate));
+      auto propertyValue = pdfium::MakeUnique<CFXJSE_Value>(pIsolate);
+      auto jsObjectValue = pdfium::MakeUnique<CFXJSE_Value>(pIsolate);
+      auto newPropertyValue = pdfium::MakeUnique<CFXJSE_Value>(pIsolate);
       argValue->GetObjectPropertyByIdx(1, propertyValue.get());
       argValue->GetObjectPropertyByIdx(2, jsObjectValue.get());
       if (propertyValue->IsNull()) {
@@ -745,8 +740,7 @@ void CXFA_FM2JSContext::Max(CFXJSE_Value* pThis,
         }
       }
     } else if (argValue->IsObject()) {
-      std::unique_ptr<CFXJSE_Value> newPropertyValue(
-          new CFXJSE_Value(pIsolate));
+      auto newPropertyValue = pdfium::MakeUnique<CFXJSE_Value>(pIsolate);
       GetObjectDefaultValue(argValue.get(), newPropertyValue.get());
       if (newPropertyValue->IsNull())
         continue;
@@ -782,7 +776,7 @@ void CXFA_FM2JSContext::Min(CFXJSE_Value* pThis,
       continue;
 
     if (argValue->IsArray()) {
-      std::unique_ptr<CFXJSE_Value> lengthValue(new CFXJSE_Value(pIsolate));
+      auto lengthValue = pdfium::MakeUnique<CFXJSE_Value>(pIsolate);
       argValue->GetObjectProperty("length", lengthValue.get());
       int32_t iLength = lengthValue->ToInteger();
       if (iLength <= 2) {
@@ -790,10 +784,9 @@ void CXFA_FM2JSContext::Min(CFXJSE_Value* pThis,
         return;
       }
 
-      std::unique_ptr<CFXJSE_Value> propertyValue(new CFXJSE_Value(pIsolate));
-      std::unique_ptr<CFXJSE_Value> jsObjectValue(new CFXJSE_Value(pIsolate));
-      std::unique_ptr<CFXJSE_Value> newPropertyValue(
-          new CFXJSE_Value(pIsolate));
+      auto propertyValue = pdfium::MakeUnique<CFXJSE_Value>(pIsolate);
+      auto jsObjectValue = pdfium::MakeUnique<CFXJSE_Value>(pIsolate);
+      auto newPropertyValue = pdfium::MakeUnique<CFXJSE_Value>(pIsolate);
       argValue->GetObjectPropertyByIdx(1, propertyValue.get());
       argValue->GetObjectPropertyByIdx(2, jsObjectValue.get());
       if (propertyValue->IsNull()) {
@@ -821,8 +814,7 @@ void CXFA_FM2JSContext::Min(CFXJSE_Value* pThis,
         }
       }
     } else if (argValue->IsObject()) {
-      std::unique_ptr<CFXJSE_Value> newPropertyValue(
-          new CFXJSE_Value(pIsolate));
+      auto newPropertyValue = pdfium::MakeUnique<CFXJSE_Value>(pIsolate);
       GetObjectDefaultValue(argValue.get(), newPropertyValue.get());
       if (newPropertyValue->IsNull())
         continue;
@@ -947,7 +939,7 @@ void CXFA_FM2JSContext::Sum(CFXJSE_Value* pThis,
       continue;
 
     if (argValue->IsArray()) {
-      std::unique_ptr<CFXJSE_Value> lengthValue(new CFXJSE_Value(pIsolate));
+      auto lengthValue = pdfium::MakeUnique<CFXJSE_Value>(pIsolate);
       argValue->GetObjectProperty("length", lengthValue.get());
       int32_t iLength = lengthValue->ToInteger();
       if (iLength <= 2) {
@@ -955,11 +947,10 @@ void CXFA_FM2JSContext::Sum(CFXJSE_Value* pThis,
         return;
       }
 
-      std::unique_ptr<CFXJSE_Value> propertyValue(new CFXJSE_Value(pIsolate));
+      auto propertyValue = pdfium::MakeUnique<CFXJSE_Value>(pIsolate);
       argValue->GetObjectPropertyByIdx(1, propertyValue.get());
-      std::unique_ptr<CFXJSE_Value> jsObjectValue(new CFXJSE_Value(pIsolate));
-      std::unique_ptr<CFXJSE_Value> newPropertyValue(
-          new CFXJSE_Value(pIsolate));
+      auto jsObjectValue = pdfium::MakeUnique<CFXJSE_Value>(pIsolate);
+      auto newPropertyValue = pdfium::MakeUnique<CFXJSE_Value>(pIsolate);
       if (propertyValue->IsNull()) {
         for (int32_t j = 2; j < iLength; j++) {
           argValue->GetObjectPropertyByIdx(j, jsObjectValue.get());
@@ -983,8 +974,7 @@ void CXFA_FM2JSContext::Sum(CFXJSE_Value* pThis,
         }
       }
     } else if (argValue->IsObject()) {
-      std::unique_ptr<CFXJSE_Value> newPropertyValue(
-          new CFXJSE_Value(pIsolate));
+      auto newPropertyValue = pdfium::MakeUnique<CFXJSE_Value>(pIsolate);
       GetObjectDefaultValue(argValue.get(), newPropertyValue.get());
       if (newPropertyValue->IsNull())
         continue;
@@ -2795,7 +2785,7 @@ void CXFA_FM2JSContext::Choose(CFXJSE_Value* pThis,
   while (!bFound && !bStopCounterFlags && (iArgIndex < argc)) {
     std::unique_ptr<CFXJSE_Value> argIndexValue = args.GetValue(iArgIndex);
     if (argIndexValue->IsArray()) {
-      std::unique_ptr<CFXJSE_Value> lengthValue(new CFXJSE_Value(pIsolate));
+      auto lengthValue = pdfium::MakeUnique<CFXJSE_Value>(pIsolate);
       argIndexValue->GetObjectProperty("length", lengthValue.get());
       int32_t iLength = lengthValue->ToInteger();
       if (iLength > 3)
@@ -2803,10 +2793,9 @@ void CXFA_FM2JSContext::Choose(CFXJSE_Value* pThis,
 
       iValueIndex += (iLength - 2);
       if (iValueIndex >= iIndex) {
-        std::unique_ptr<CFXJSE_Value> propertyValue(new CFXJSE_Value(pIsolate));
-        std::unique_ptr<CFXJSE_Value> jsObjectValue(new CFXJSE_Value(pIsolate));
-        std::unique_ptr<CFXJSE_Value> newPropertyValue(
-            new CFXJSE_Value(pIsolate));
+        auto propertyValue = pdfium::MakeUnique<CFXJSE_Value>(pIsolate);
+        auto jsObjectValue = pdfium::MakeUnique<CFXJSE_Value>(pIsolate);
+        auto newPropertyValue = pdfium::MakeUnique<CFXJSE_Value>(pIsolate);
         argIndexValue->GetObjectPropertyByIdx(1, propertyValue.get());
         argIndexValue->GetObjectPropertyByIdx(
             (iLength - 1) - (iValueIndex - iIndex), jsObjectValue.get());
@@ -2973,7 +2962,7 @@ void CXFA_FM2JSContext::Eval(CFXJSE_Value* pThis,
   std::unique_ptr<CFXJSE_Context> pNewContext(
       CFXJSE_Context::Create(pIsolate, nullptr, nullptr));
 
-  std::unique_ptr<CFXJSE_Value> returnValue(new CFXJSE_Value(pIsolate));
+  auto returnValue = pdfium::MakeUnique<CFXJSE_Value>(pIsolate);
   CFX_WideString javaScript(wsJavaScriptBuf.AsStringC());
   pNewContext->ExecuteScript(
       FX_UTF8Encode(javaScript.c_str(), javaScript.GetLength()).c_str(),
@@ -3016,13 +3005,13 @@ void CXFA_FM2JSContext::Ref(CFXJSE_Value* pThis,
     rgValues[2]->SetNull();
   } else if (argOne->IsArray()) {
 #ifndef NDEBUG
-    std::unique_ptr<CFXJSE_Value> lengthValue(new CFXJSE_Value(pIsolate));
+    auto lengthValue = pdfium::MakeUnique<CFXJSE_Value>(pIsolate);
     argOne->GetObjectProperty("length", lengthValue.get());
     ASSERT(lengthValue->ToInteger() >= 3);
 #endif
 
-    std::unique_ptr<CFXJSE_Value> propertyValue(new CFXJSE_Value(pIsolate));
-    std::unique_ptr<CFXJSE_Value> jsObjectValue(new CFXJSE_Value(pIsolate));
+    auto propertyValue = pdfium::MakeUnique<CFXJSE_Value>(pIsolate);
+    auto jsObjectValue = pdfium::MakeUnique<CFXJSE_Value>(pIsolate);
     argOne->GetObjectPropertyByIdx(1, propertyValue.get());
     argOne->GetObjectPropertyByIdx(2, jsObjectValue.get());
     if (!propertyValue->IsNull() || jsObjectValue->IsNull()) {
@@ -5016,11 +5005,11 @@ void CXFA_FM2JSContext::assign_value_operator(CFXJSE_Value* pThis,
   std::unique_ptr<CFXJSE_Value> rValue = GetSimpleValue(pThis, args, 1);
   if (lValue->IsArray()) {
     v8::Isolate* pIsolate = pContext->GetScriptRuntime();
-    std::unique_ptr<CFXJSE_Value> leftLengthValue(new CFXJSE_Value(pIsolate));
+    auto leftLengthValue = pdfium::MakeUnique<CFXJSE_Value>(pIsolate);
     lValue->GetObjectProperty("length", leftLengthValue.get());
     int32_t iLeftLength = leftLengthValue->ToInteger();
-    std::unique_ptr<CFXJSE_Value> jsObjectValue(new CFXJSE_Value(pIsolate));
-    std::unique_ptr<CFXJSE_Value> propertyValue(new CFXJSE_Value(pIsolate));
+    auto jsObjectValue = pdfium::MakeUnique<CFXJSE_Value>(pIsolate);
+    auto propertyValue = pdfium::MakeUnique<CFXJSE_Value>(pIsolate);
     lValue->GetObjectPropertyByIdx(1, propertyValue.get());
     if (propertyValue->IsNull()) {
       for (int32_t i = 2; i < iLeftLength; i++) {
@@ -5163,15 +5152,15 @@ bool CXFA_FM2JSContext::fm_ref_equal(CFXJSE_Value* pThis,
     return false;
 
   v8::Isolate* pIsolate = ToJSContext(pThis, nullptr)->GetScriptRuntime();
-  std::unique_ptr<CFXJSE_Value> firstFlagValue(new CFXJSE_Value(pIsolate));
-  std::unique_ptr<CFXJSE_Value> secondFlagValue(new CFXJSE_Value(pIsolate));
+  auto firstFlagValue = pdfium::MakeUnique<CFXJSE_Value>(pIsolate);
+  auto secondFlagValue = pdfium::MakeUnique<CFXJSE_Value>(pIsolate);
   argFirst->GetObjectPropertyByIdx(0, firstFlagValue.get());
   argSecond->GetObjectPropertyByIdx(0, secondFlagValue.get());
   if (firstFlagValue->ToInteger() != 3 || secondFlagValue->ToInteger() != 3)
     return false;
 
-  std::unique_ptr<CFXJSE_Value> firstJSObject(new CFXJSE_Value(pIsolate));
-  std::unique_ptr<CFXJSE_Value> secondJSObject(new CFXJSE_Value(pIsolate));
+  auto firstJSObject = pdfium::MakeUnique<CFXJSE_Value>(pIsolate);
+  auto secondJSObject = pdfium::MakeUnique<CFXJSE_Value>(pIsolate);
   argFirst->GetObjectPropertyByIdx(2, firstJSObject.get());
   argSecond->GetObjectPropertyByIdx(2, secondJSObject.get());
   if (firstJSObject->IsNull() || secondJSObject->IsNull())
@@ -5461,7 +5450,7 @@ void CXFA_FM2JSContext::dot_accessor(CFXJSE_Value* pThis,
 
   std::unique_ptr<CFXJSE_Value> argAccessor = args.GetValue(0);
   if (argAccessor->IsArray()) {
-    std::unique_ptr<CFXJSE_Value> pLengthValue(new CFXJSE_Value(pIsolate));
+    auto pLengthValue = pdfium::MakeUnique<CFXJSE_Value>(pIsolate);
     argAccessor->GetObjectProperty("length", pLengthValue.get());
     int32_t iLength = pLengthValue->ToInteger();
     if (iLength < 3) {
@@ -5469,7 +5458,7 @@ void CXFA_FM2JSContext::dot_accessor(CFXJSE_Value* pThis,
       return;
     }
 
-    std::unique_ptr<CFXJSE_Value> hJSObjValue(new CFXJSE_Value(pIsolate));
+    auto hJSObjValue = pdfium::MakeUnique<CFXJSE_Value>(pIsolate);
     std::vector<std::vector<std::unique_ptr<CFXJSE_Value>>> resolveValues(
         iLength - 2);
     bool bAttribute = false;
@@ -5587,7 +5576,7 @@ void CXFA_FM2JSContext::dotdot_accessor(CFXJSE_Value* pThis,
 
   std::unique_ptr<CFXJSE_Value> argAccessor = args.GetValue(0);
   if (argAccessor->IsArray()) {
-    std::unique_ptr<CFXJSE_Value> pLengthValue(new CFXJSE_Value(pIsolate));
+    auto pLengthValue = pdfium::MakeUnique<CFXJSE_Value>(pIsolate);
     argAccessor->GetObjectProperty("length", pLengthValue.get());
     int32_t iLength = pLengthValue->ToInteger();
     if (iLength < 3) {
@@ -5599,7 +5588,7 @@ void CXFA_FM2JSContext::dotdot_accessor(CFXJSE_Value* pThis,
 
     std::vector<std::vector<std::unique_ptr<CFXJSE_Value>>> resolveValues(
         iLength - 2);
-    std::unique_ptr<CFXJSE_Value> hJSObjValue(new CFXJSE_Value(pIsolate));
+    auto hJSObjValue = pdfium::MakeUnique<CFXJSE_Value>(pIsolate);
     bool bAttribute = false;
     for (int32_t i = 2; i < iLength; i++) {
       argAccessor->GetObjectPropertyByIdx(i, hJSObjValue.get());
@@ -5759,8 +5748,8 @@ void CXFA_FM2JSContext::get_fm_value(CFXJSE_Value* pThis,
   std::unique_ptr<CFXJSE_Value> argOne = args.GetValue(0);
   if (argOne->IsArray()) {
     v8::Isolate* pIsolate = pContext->GetScriptRuntime();
-    std::unique_ptr<CFXJSE_Value> propertyValue(new CFXJSE_Value(pIsolate));
-    std::unique_ptr<CFXJSE_Value> jsObjectValue(new CFXJSE_Value(pIsolate));
+    auto propertyValue = pdfium::MakeUnique<CFXJSE_Value>(pIsolate);
+    auto jsObjectValue = pdfium::MakeUnique<CFXJSE_Value>(pIsolate);
     argOne->GetObjectPropertyByIdx(1, propertyValue.get());
     argOne->GetObjectPropertyByIdx(2, jsObjectValue.get());
     if (propertyValue->IsNull()) {
@@ -5799,7 +5788,7 @@ void CXFA_FM2JSContext::get_fm_jsobj(CFXJSE_Value* pThis,
 #ifndef NDEBUG
   CXFA_FM2JSContext* pContext = ToJSContext(pThis, nullptr);
   v8::Isolate* pIsolate = pContext->GetScriptRuntime();
-  std::unique_ptr<CFXJSE_Value> lengthValue(new CFXJSE_Value(pIsolate));
+  auto lengthValue = pdfium::MakeUnique<CFXJSE_Value>(pIsolate);
   argOne->GetObjectProperty("length", lengthValue.get());
   ASSERT(lengthValue->ToInteger() >= 3);
 #endif
@@ -5826,12 +5815,12 @@ void CXFA_FM2JSContext::fm_var_filter(CFXJSE_Value* pThis,
   }
 
 #ifndef NDEBUG
-  std::unique_ptr<CFXJSE_Value> lengthValue(new CFXJSE_Value(pIsolate));
+  auto lengthValue = pdfium::MakeUnique<CFXJSE_Value>(pIsolate);
   argOne->GetObjectProperty("length", lengthValue.get());
   ASSERT(lengthValue->ToInteger() >= 3);
 #endif
 
-  std::unique_ptr<CFXJSE_Value> flagsValue(new CFXJSE_Value(pIsolate));
+  auto flagsValue = pdfium::MakeUnique<CFXJSE_Value>(pIsolate);
   argOne->GetObjectPropertyByIdx(0, flagsValue.get());
   int32_t iFlags = flagsValue->ToInteger();
   if (iFlags != 3 && iFlags != 4) {
@@ -5855,7 +5844,7 @@ void CXFA_FM2JSContext::fm_var_filter(CFXJSE_Value* pThis,
     return;
   }
 
-  std::unique_ptr<CFXJSE_Value> objectValue(new CFXJSE_Value(pIsolate));
+  auto objectValue = pdfium::MakeUnique<CFXJSE_Value>(pIsolate);
   argOne->GetObjectPropertyByIdx(2, objectValue.get());
   if (objectValue->IsNull()) {
     pContext->ThrowCompilerErrorException();
@@ -5875,7 +5864,7 @@ void CXFA_FM2JSContext::concat_fm_object(CFXJSE_Value* pThis,
   for (int32_t i = 0; i < argc; i++) {
     argValues.push_back(args.GetValue(i));
     if (argValues[i]->IsArray()) {
-      std::unique_ptr<CFXJSE_Value> lengthValue(new CFXJSE_Value(pIsolate));
+      auto lengthValue = pdfium::MakeUnique<CFXJSE_Value>(pIsolate);
       argValues[i]->GetObjectProperty("length", lengthValue.get());
       int32_t length = lengthValue->ToInteger();
       iLength = iLength + ((length > 2) ? (length - 2) : 0);
@@ -5890,7 +5879,7 @@ void CXFA_FM2JSContext::concat_fm_object(CFXJSE_Value* pThis,
   int32_t index = 0;
   for (int32_t i = 0; i < argc; i++) {
     if (argValues[i]->IsArray()) {
-      std::unique_ptr<CFXJSE_Value> lengthValue(new CFXJSE_Value(pIsolate));
+      auto lengthValue = pdfium::MakeUnique<CFXJSE_Value>(pIsolate);
       argValues[i]->GetObjectProperty("length", lengthValue.get());
       int32_t length = lengthValue->ToInteger();
       for (int32_t j = 2; j < length; j++) {
@@ -5921,17 +5910,17 @@ std::unique_ptr<CFXJSE_Value> CXFA_FM2JSContext::GetSimpleValue(
     return argIndex;
 
   if (argIndex->IsArray()) {
-    std::unique_ptr<CFXJSE_Value> lengthValue(new CFXJSE_Value(pIsolate));
+    auto lengthValue = pdfium::MakeUnique<CFXJSE_Value>(pIsolate);
     argIndex->GetObjectProperty("length", lengthValue.get());
     int32_t iLength = lengthValue->ToInteger();
-    std::unique_ptr<CFXJSE_Value> simpleValue(new CFXJSE_Value(pIsolate));
+    auto simpleValue = pdfium::MakeUnique<CFXJSE_Value>(pIsolate);
     if (iLength < 3) {
       simpleValue.get()->SetUndefined();
       return simpleValue;
     }
 
-    std::unique_ptr<CFXJSE_Value> propertyValue(new CFXJSE_Value(pIsolate));
-    std::unique_ptr<CFXJSE_Value> jsObjectValue(new CFXJSE_Value(pIsolate));
+    auto propertyValue = pdfium::MakeUnique<CFXJSE_Value>(pIsolate);
+    auto jsObjectValue = pdfium::MakeUnique<CFXJSE_Value>(pIsolate);
     argIndex->GetObjectPropertyByIdx(1, propertyValue.get());
     argIndex->GetObjectPropertyByIdx(2, jsObjectValue.get());
     if (propertyValue->IsNull()) {
@@ -5944,7 +5933,7 @@ std::unique_ptr<CFXJSE_Value> CXFA_FM2JSContext::GetSimpleValue(
     return simpleValue;
   }
 
-  std::unique_ptr<CFXJSE_Value> defaultValue(new CFXJSE_Value(pIsolate));
+  auto defaultValue = pdfium::MakeUnique<CFXJSE_Value>(pIsolate);
   GetObjectDefaultValue(argIndex.get(), defaultValue.get());
   return defaultValue;
 }
@@ -5963,23 +5952,23 @@ bool CXFA_FM2JSContext::ValueIsNull(CFXJSE_Value* pThis, CFXJSE_Value* arg) {
     if (iLength < 3)
       return true;
 
-    std::unique_ptr<CFXJSE_Value> propertyValue(new CFXJSE_Value(pIsolate));
-    std::unique_ptr<CFXJSE_Value> jsObjectValue(new CFXJSE_Value(pIsolate));
+    auto propertyValue = pdfium::MakeUnique<CFXJSE_Value>(pIsolate);
+    auto jsObjectValue = pdfium::MakeUnique<CFXJSE_Value>(pIsolate);
     arg->GetObjectPropertyByIdx(1, propertyValue.get());
     arg->GetObjectPropertyByIdx(2, jsObjectValue.get());
     if (propertyValue->IsNull()) {
-      std::unique_ptr<CFXJSE_Value> defaultValue(new CFXJSE_Value(pIsolate));
+      auto defaultValue = pdfium::MakeUnique<CFXJSE_Value>(pIsolate);
       GetObjectDefaultValue(jsObjectValue.get(), defaultValue.get());
       return defaultValue->IsNull();
     }
 
-    std::unique_ptr<CFXJSE_Value> newPropertyValue(new CFXJSE_Value(pIsolate));
+    auto newPropertyValue = pdfium::MakeUnique<CFXJSE_Value>(pIsolate);
     jsObjectValue->GetObjectProperty(propertyValue->ToString().AsStringC(),
                                      newPropertyValue.get());
     return newPropertyValue->IsNull();
   }
 
-  std::unique_ptr<CFXJSE_Value> defaultValue(new CFXJSE_Value(pIsolate));
+  auto defaultValue = pdfium::MakeUnique<CFXJSE_Value>(pIsolate);
   GetObjectDefaultValue(arg, defaultValue.get());
   return defaultValue->IsNull();
 }
@@ -5991,7 +5980,7 @@ int32_t CXFA_FM2JSContext::hvalue_get_array_length(CFXJSE_Value* pThis,
     return 0;
 
   v8::Isolate* pIsolate = ToJSContext(pThis, nullptr)->GetScriptRuntime();
-  std::unique_ptr<CFXJSE_Value> lengthValue(new CFXJSE_Value(pIsolate));
+  auto lengthValue = pdfium::MakeUnique<CFXJSE_Value>(pIsolate);
   arg->GetObjectProperty("length", lengthValue.get());
   return lengthValue->ToInteger();
 }
@@ -6034,7 +6023,7 @@ void CXFA_FM2JSContext::unfoldArgs(CFXJSE_Value* pThis,
   for (int32_t i = 0; i < argc - iStart; i++) {
     argsValue.push_back(args.GetValue(i + iStart));
     if (argsValue[i]->IsArray()) {
-      std::unique_ptr<CFXJSE_Value> lengthValue(new CFXJSE_Value(pIsolate));
+      auto lengthValue = pdfium::MakeUnique<CFXJSE_Value>(pIsolate);
       argsValue[i]->GetObjectProperty("length", lengthValue.get());
       int32_t iLength = lengthValue->ToInteger();
       iCount += ((iLength > 2) ? (iLength - 2) : 0);
@@ -6049,14 +6038,14 @@ void CXFA_FM2JSContext::unfoldArgs(CFXJSE_Value* pThis,
   int32_t index = 0;
   for (int32_t i = 0; i < argc - iStart; i++) {
     if (argsValue[i]->IsArray()) {
-      std::unique_ptr<CFXJSE_Value> lengthValue(new CFXJSE_Value(pIsolate));
+      auto lengthValue = pdfium::MakeUnique<CFXJSE_Value>(pIsolate);
       argsValue[i]->GetObjectProperty("length", lengthValue.get());
       int32_t iLength = lengthValue->ToInteger();
       if (iLength < 3)
         continue;
 
-      std::unique_ptr<CFXJSE_Value> propertyValue(new CFXJSE_Value(pIsolate));
-      std::unique_ptr<CFXJSE_Value> jsObjectValue(new CFXJSE_Value(pIsolate));
+      auto propertyValue = pdfium::MakeUnique<CFXJSE_Value>(pIsolate);
+      auto jsObjectValue = pdfium::MakeUnique<CFXJSE_Value>(pIsolate);
       argsValue[i]->GetObjectPropertyByIdx(1, propertyValue.get());
       if (propertyValue->IsNull()) {
         for (int32_t j = 2; j < iLength; j++) {
@@ -6258,9 +6247,9 @@ int32_t CXFA_FM2JSContext::ValueToInteger(CFXJSE_Value* pThis,
 
   v8::Isolate* pIsolate = ToJSContext(pThis, nullptr)->GetScriptRuntime();
   if (pValue->IsArray()) {
-    std::unique_ptr<CFXJSE_Value> propertyValue(new CFXJSE_Value(pIsolate));
-    std::unique_ptr<CFXJSE_Value> jsObjectValue(new CFXJSE_Value(pIsolate));
-    std::unique_ptr<CFXJSE_Value> newPropertyValue(new CFXJSE_Value(pIsolate));
+    auto propertyValue = pdfium::MakeUnique<CFXJSE_Value>(pIsolate);
+    auto jsObjectValue = pdfium::MakeUnique<CFXJSE_Value>(pIsolate);
+    auto newPropertyValue = pdfium::MakeUnique<CFXJSE_Value>(pIsolate);
     pValue->GetObjectPropertyByIdx(1, propertyValue.get());
     pValue->GetObjectPropertyByIdx(2, jsObjectValue.get());
     if (propertyValue->IsNull()) {
@@ -6273,7 +6262,7 @@ int32_t CXFA_FM2JSContext::ValueToInteger(CFXJSE_Value* pThis,
     return ValueToInteger(pThis, newPropertyValue.get());
   }
   if (pValue->IsObject()) {
-    std::unique_ptr<CFXJSE_Value> newPropertyValue(new CFXJSE_Value(pIsolate));
+    auto newPropertyValue = pdfium::MakeUnique<CFXJSE_Value>(pIsolate);
     GetObjectDefaultValue(pValue, newPropertyValue.get());
     return ValueToInteger(pThis, newPropertyValue.get());
   }
@@ -6290,9 +6279,9 @@ FX_FLOAT CXFA_FM2JSContext::ValueToFloat(CFXJSE_Value* pThis,
 
   v8::Isolate* pIsolate = ToJSContext(pThis, nullptr)->GetScriptRuntime();
   if (arg->IsArray()) {
-    std::unique_ptr<CFXJSE_Value> propertyValue(new CFXJSE_Value(pIsolate));
-    std::unique_ptr<CFXJSE_Value> jsObjectValue(new CFXJSE_Value(pIsolate));
-    std::unique_ptr<CFXJSE_Value> newPropertyValue(new CFXJSE_Value(pIsolate));
+    auto propertyValue = pdfium::MakeUnique<CFXJSE_Value>(pIsolate);
+    auto jsObjectValue = pdfium::MakeUnique<CFXJSE_Value>(pIsolate);
+    auto newPropertyValue = pdfium::MakeUnique<CFXJSE_Value>(pIsolate);
     arg->GetObjectPropertyByIdx(1, propertyValue.get());
     arg->GetObjectPropertyByIdx(2, jsObjectValue.get());
     if (propertyValue->IsNull()) {
@@ -6304,7 +6293,7 @@ FX_FLOAT CXFA_FM2JSContext::ValueToFloat(CFXJSE_Value* pThis,
     return ValueToFloat(pThis, newPropertyValue.get());
   }
   if (arg->IsObject()) {
-    std::unique_ptr<CFXJSE_Value> newPropertyValue(new CFXJSE_Value(pIsolate));
+    auto newPropertyValue = pdfium::MakeUnique<CFXJSE_Value>(pIsolate);
     GetObjectDefaultValue(arg, newPropertyValue.get());
     return ValueToFloat(pThis, newPropertyValue.get());
   }
@@ -6324,9 +6313,9 @@ FX_DOUBLE CXFA_FM2JSContext::ValueToDouble(CFXJSE_Value* pThis,
 
   v8::Isolate* pIsolate = ToJSContext(pThis, nullptr)->GetScriptRuntime();
   if (arg->IsArray()) {
-    std::unique_ptr<CFXJSE_Value> propertyValue(new CFXJSE_Value(pIsolate));
-    std::unique_ptr<CFXJSE_Value> jsObjectValue(new CFXJSE_Value(pIsolate));
-    std::unique_ptr<CFXJSE_Value> newPropertyValue(new CFXJSE_Value(pIsolate));
+    auto propertyValue = pdfium::MakeUnique<CFXJSE_Value>(pIsolate);
+    auto jsObjectValue = pdfium::MakeUnique<CFXJSE_Value>(pIsolate);
+    auto newPropertyValue = pdfium::MakeUnique<CFXJSE_Value>(pIsolate);
     arg->GetObjectPropertyByIdx(1, propertyValue.get());
     arg->GetObjectPropertyByIdx(2, jsObjectValue.get());
     if (propertyValue->IsNull()) {
@@ -6338,7 +6327,7 @@ FX_DOUBLE CXFA_FM2JSContext::ValueToDouble(CFXJSE_Value* pThis,
     return ValueToDouble(pThis, newPropertyValue.get());
   }
   if (arg->IsObject()) {
-    std::unique_ptr<CFXJSE_Value> newPropertyValue(new CFXJSE_Value(pIsolate));
+    auto newPropertyValue = pdfium::MakeUnique<CFXJSE_Value>(pIsolate);
     GetObjectDefaultValue(arg, newPropertyValue.get());
     return ValueToDouble(pThis, newPropertyValue.get());
   }
@@ -6363,7 +6352,7 @@ double CXFA_FM2JSContext::ExtractDouble(CFXJSE_Value* pThis,
     return ValueToDouble(pThis, src);
 
   v8::Isolate* pIsolate = ToJSContext(pThis, nullptr)->GetScriptRuntime();
-  std::unique_ptr<CFXJSE_Value> lengthValue(new CFXJSE_Value(pIsolate));
+  auto lengthValue = pdfium::MakeUnique<CFXJSE_Value>(pIsolate);
   src->GetObjectProperty("length", lengthValue.get());
   int32_t iLength = lengthValue->ToInteger();
   if (iLength <= 2) {
@@ -6371,14 +6360,14 @@ double CXFA_FM2JSContext::ExtractDouble(CFXJSE_Value* pThis,
     return 0.0;
   }
 
-  std::unique_ptr<CFXJSE_Value> propertyValue(new CFXJSE_Value(pIsolate));
-  std::unique_ptr<CFXJSE_Value> jsObjectValue(new CFXJSE_Value(pIsolate));
+  auto propertyValue = pdfium::MakeUnique<CFXJSE_Value>(pIsolate);
+  auto jsObjectValue = pdfium::MakeUnique<CFXJSE_Value>(pIsolate);
   src->GetObjectPropertyByIdx(1, propertyValue.get());
   src->GetObjectPropertyByIdx(2, jsObjectValue.get());
   if (propertyValue->IsNull())
     return ValueToDouble(pThis, jsObjectValue.get());
 
-  std::unique_ptr<CFXJSE_Value> newPropertyValue(new CFXJSE_Value(pIsolate));
+  auto newPropertyValue = pdfium::MakeUnique<CFXJSE_Value>(pIsolate);
   jsObjectValue->GetObjectProperty(propertyValue->ToString().AsStringC(),
                                    newPropertyValue.get());
   return ValueToDouble(pThis, newPropertyValue.get());
