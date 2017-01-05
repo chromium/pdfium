@@ -5469,10 +5469,6 @@ void CXFA_FM2JSContext::dot_accessor(CFXJSE_Value* pThis,
       return;
     }
 
-    int32_t* iSizes = FX_Alloc(int32_t, iLength - 2);
-    for (int32_t i = 0; i < (iLength - 2); i++)
-      iSizes[i] = 0;
-
     std::unique_ptr<CFXJSE_Value> hJSObjValue(new CFXJSE_Value(pIsolate));
     std::vector<std::vector<std::unique_ptr<CFXJSE_Value>>> resolveValues(
         iLength - 2);
@@ -5486,8 +5482,7 @@ void CXFA_FM2JSContext::dot_accessor(CFXJSE_Value* pThis,
                          resoveNodeRS, true, szName.IsEmpty()) > 0) {
         ParseResolveResult(pThis, resoveNodeRS, hJSObjValue.get(),
                            &resolveValues[i - 2], &bAttribute);
-        iSizes[i - 2] = resolveValues[i - 2].size();
-        iCounter += iSizes[i - 2];
+        iCounter += resolveValues[i - 2].size();
       }
     }
     if (iCounter < 1) {
@@ -5509,7 +5504,7 @@ void CXFA_FM2JSContext::dot_accessor(CFXJSE_Value* pThis,
 
     int32_t iIndex = 2;
     for (int32_t i = 0; i < iLength - 2; i++) {
-      for (int32_t j = 0; j < iSizes[i]; j++) {
+      for (size_t j = 0; j < resolveValues[i].size(); j++) {
         rgValues[iIndex]->Assign(resolveValues[i][j].get());
         iIndex++;
       }
@@ -5520,8 +5515,6 @@ void CXFA_FM2JSContext::dot_accessor(CFXJSE_Value* pThis,
       delete rgValues[i];
 
     FX_Free(rgValues);
-    FX_Free(iSizes);
-
     return;
   }
 
@@ -5549,9 +5542,8 @@ void CXFA_FM2JSContext::dot_accessor(CFXJSE_Value* pThis,
   bool bAttribute = false;
   ParseResolveResult(pThis, resoveNodeRS, argAccessor.get(), &resolveValues,
                      &bAttribute);
-  int32_t iSize = resolveValues.size();
-  CFXJSE_Value** rgValues = FX_Alloc(CFXJSE_Value*, iSize + 2);
-  for (int32_t i = 0; i < (iSize + 2); i++)
+  CFXJSE_Value** rgValues = FX_Alloc(CFXJSE_Value*, resolveValues.size() + 2);
+  for (size_t i = 0; i < resolveValues.size() + 2; i++)
     rgValues[i] = new CFXJSE_Value(pIsolate);
 
   rgValues[0]->SetInteger(1);
@@ -5560,11 +5552,11 @@ void CXFA_FM2JSContext::dot_accessor(CFXJSE_Value* pThis,
   else
     rgValues[1]->SetNull();
 
-  for (int32_t i = 0; i < iSize; i++)
+  for (size_t i = 0; i < resolveValues.size(); i++)
     rgValues[i + 2]->Assign(resolveValues[i].get());
 
-  args.GetReturnValue()->SetArray(iSize + 2, rgValues);
-  for (int32_t i = 0; i < (iSize + 2); i++)
+  args.GetReturnValue()->SetArray(resolveValues.size() + 2, rgValues);
+  for (size_t i = 0; i < (resolveValues.size() + 2); i++)
     delete rgValues[i];
   FX_Free(rgValues);
 }
@@ -5607,7 +5599,6 @@ void CXFA_FM2JSContext::dotdot_accessor(CFXJSE_Value* pThis,
 
     std::vector<std::vector<std::unique_ptr<CFXJSE_Value>>> resolveValues(
         iLength - 2);
-    int32_t* iSizes = FX_Alloc(int32_t, iLength - 2);
     std::unique_ptr<CFXJSE_Value> hJSObjValue(new CFXJSE_Value(pIsolate));
     bool bAttribute = false;
     for (int32_t i = 2; i < iLength; i++) {
@@ -5617,8 +5608,7 @@ void CXFA_FM2JSContext::dotdot_accessor(CFXJSE_Value* pThis,
                          resoveNodeRS, false) > 0) {
         ParseResolveResult(pThis, resoveNodeRS, hJSObjValue.get(),
                            &resolveValues[i - 2], &bAttribute);
-        iSizes[i - 2] = resolveValues[i - 2].size();
-        iCounter += iSizes[i - 2];
+        iCounter += resolveValues[i - 2].size();
       }
     }
     if (iCounter < 1) {
@@ -5640,7 +5630,7 @@ void CXFA_FM2JSContext::dotdot_accessor(CFXJSE_Value* pThis,
 
     int32_t iIndex = 2;
     for (int32_t i = 0; i < iLength - 2; i++) {
-      for (int32_t j = 0; j < iSizes[i]; j++) {
+      for (size_t j = 0; j < resolveValues[i].size(); j++) {
         rgValues[iIndex]->Assign(resolveValues[i][j].get());
         iIndex++;
       }
@@ -5650,7 +5640,6 @@ void CXFA_FM2JSContext::dotdot_accessor(CFXJSE_Value* pThis,
       delete rgValues[i];
 
     FX_Free(rgValues);
-    FX_Free(iSizes);
     return;
   }
 
@@ -5678,9 +5667,8 @@ void CXFA_FM2JSContext::dotdot_accessor(CFXJSE_Value* pThis,
   bool bAttribute = false;
   ParseResolveResult(pThis, resoveNodeRS, argAccessor.get(), &resolveValues,
                      &bAttribute);
-  int32_t iSize = resolveValues.size();
-  CFXJSE_Value** rgValues = FX_Alloc(CFXJSE_Value*, iSize + 2);
-  for (int32_t i = 0; i < (iSize + 2); i++)
+  CFXJSE_Value** rgValues = FX_Alloc(CFXJSE_Value*, resolveValues.size() + 2);
+  for (size_t i = 0; i < (resolveValues.size() + 2); i++)
     rgValues[i] = new CFXJSE_Value(pIsolate);
 
   rgValues[0]->SetInteger(1);
@@ -5689,12 +5677,12 @@ void CXFA_FM2JSContext::dotdot_accessor(CFXJSE_Value* pThis,
   else
     rgValues[1]->SetNull();
 
-  for (int32_t i = 0; i < iSize; i++)
+  for (size_t i = 0; i < resolveValues.size(); i++)
     rgValues[i + 2]->Assign(resolveValues[i].get());
 
-  args.GetReturnValue()->SetArray(iSize + 2, rgValues);
+  args.GetReturnValue()->SetArray(resolveValues.size() + 2, rgValues);
 
-  for (int32_t i = 0; i < (iSize + 2); i++)
+  for (size_t i = 0; i < (resolveValues.size() + 2); i++)
     delete rgValues[i];
   FX_Free(rgValues);
 }
