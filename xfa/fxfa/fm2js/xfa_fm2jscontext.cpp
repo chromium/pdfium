@@ -9,13 +9,12 @@
 #include <time.h>
 
 #include <algorithm>
-#include <memory>
-#include <vector>
 
 #include "core/fxcrt/fx_ext.h"
 #include "fxjs/cfxjse_arguments.h"
 #include "fxjs/cfxjse_class.h"
 #include "fxjs/cfxjse_value.h"
+#include "third_party/base/ptr_util.h"
 #include "xfa/fgas/localization/fgas_locale.h"
 #include "xfa/fxfa/app/xfa_ffnotify.h"
 #include "xfa/fxfa/fm2js/xfa_program.h"
@@ -5465,12 +5464,18 @@ void CXFA_FM2JSContext::dot_accessor(CFXJSE_Value* pThis,
     std::unique_ptr<CFXJSE_Value> pLengthValue(new CFXJSE_Value(pIsolate));
     argAccessor->GetObjectProperty("length", pLengthValue.get());
     int32_t iLength = pLengthValue->ToInteger();
-    CFXJSE_Value*** hResolveValues = FX_Alloc(CFXJSE_Value**, iLength - 2);
+    if (iLength < 3) {
+      pContext->ThrowArgumentMismatchException();
+      return;
+    }
+
     int32_t* iSizes = FX_Alloc(int32_t, iLength - 2);
     for (int32_t i = 0; i < (iLength - 2); i++)
       iSizes[i] = 0;
 
     std::unique_ptr<CFXJSE_Value> hJSObjValue(new CFXJSE_Value(pIsolate));
+    std::vector<std::vector<std::unique_ptr<CFXJSE_Value>>> resolveValues(
+        iLength - 2);
     bool bAttribute = false;
     int32_t iCounter = 0;
     for (int32_t i = 2; i < iLength; i++) {
@@ -5480,7 +5485,8 @@ void CXFA_FM2JSContext::dot_accessor(CFXJSE_Value* pThis,
       if (ResolveObjects(pThis, hJSObjValue.get(), szSomExp.AsStringC(),
                          resoveNodeRS, true, szName.IsEmpty()) > 0) {
         ParseResolveResult(pThis, resoveNodeRS, hJSObjValue.get(),
-                           hResolveValues[i - 2], iSizes[i - 2], bAttribute);
+                           &resolveValues[i - 2], &bAttribute);
+        iSizes[i - 2] = resolveValues[i - 2].size();
         iCounter += iSizes[i - 2];
       }
     }
@@ -5504,7 +5510,7 @@ void CXFA_FM2JSContext::dot_accessor(CFXJSE_Value* pThis,
     int32_t iIndex = 2;
     for (int32_t i = 0; i < iLength - 2; i++) {
       for (int32_t j = 0; j < iSizes[i]; j++) {
-        rgValues[iIndex]->Assign(hResolveValues[i][j]);
+        rgValues[iIndex]->Assign(resolveValues[i][j].get());
         iIndex++;
       }
     }
@@ -5512,16 +5518,8 @@ void CXFA_FM2JSContext::dot_accessor(CFXJSE_Value* pThis,
 
     for (int32_t i = 0; i < (iCounter + 2); i++)
       delete rgValues[i];
+
     FX_Free(rgValues);
-
-    for (int32_t i = 0; i < iLength - 2; i++) {
-      for (int32_t j = 0; j < iSizes[i]; j++)
-        delete hResolveValues[i][j];
-
-      if (iSizes[i] > 0)
-        FX_Free(hResolveValues[i]);
-    }
-    FX_Free(hResolveValues);
     FX_Free(iSizes);
 
     return;
@@ -5547,11 +5545,11 @@ void CXFA_FM2JSContext::dot_accessor(CFXJSE_Value* pThis,
     return;
   }
 
-  CFXJSE_Value** hResolveValues;
-  int32_t iSize = 0;
+  std::vector<std::unique_ptr<CFXJSE_Value>> resolveValues;
   bool bAttribute = false;
-  ParseResolveResult(pThis, resoveNodeRS, argAccessor.get(), hResolveValues,
-                     iSize, bAttribute);
+  ParseResolveResult(pThis, resoveNodeRS, argAccessor.get(), &resolveValues,
+                     &bAttribute);
+  int32_t iSize = resolveValues.size();
   CFXJSE_Value** rgValues = FX_Alloc(CFXJSE_Value*, iSize + 2);
   for (int32_t i = 0; i < (iSize + 2); i++)
     rgValues[i] = new CFXJSE_Value(pIsolate);
@@ -5563,16 +5561,12 @@ void CXFA_FM2JSContext::dot_accessor(CFXJSE_Value* pThis,
     rgValues[1]->SetNull();
 
   for (int32_t i = 0; i < iSize; i++)
-    rgValues[i + 2]->Assign(hResolveValues[i]);
+    rgValues[i + 2]->Assign(resolveValues[i].get());
 
   args.GetReturnValue()->SetArray(iSize + 2, rgValues);
   for (int32_t i = 0; i < (iSize + 2); i++)
     delete rgValues[i];
   FX_Free(rgValues);
-
-  for (int32_t i = 0; i < iSize; i++)
-    delete hResolveValues[i];
-  FX_Free(hResolveValues);
 }
 
 // static
@@ -5604,9 +5598,15 @@ void CXFA_FM2JSContext::dotdot_accessor(CFXJSE_Value* pThis,
     std::unique_ptr<CFXJSE_Value> pLengthValue(new CFXJSE_Value(pIsolate));
     argAccessor->GetObjectProperty("length", pLengthValue.get());
     int32_t iLength = pLengthValue->ToInteger();
+    if (iLength < 3) {
+      pContext->ThrowArgumentMismatchException();
+      return;
+    }
+
     int32_t iCounter = 0;
 
-    CFXJSE_Value*** hResolveValues = FX_Alloc(CFXJSE_Value**, iLength - 2);
+    std::vector<std::vector<std::unique_ptr<CFXJSE_Value>>> resolveValues(
+        iLength - 2);
     int32_t* iSizes = FX_Alloc(int32_t, iLength - 2);
     std::unique_ptr<CFXJSE_Value> hJSObjValue(new CFXJSE_Value(pIsolate));
     bool bAttribute = false;
@@ -5616,7 +5616,8 @@ void CXFA_FM2JSContext::dotdot_accessor(CFXJSE_Value* pThis,
       if (ResolveObjects(pThis, hJSObjValue.get(), szSomExp.AsStringC(),
                          resoveNodeRS, false) > 0) {
         ParseResolveResult(pThis, resoveNodeRS, hJSObjValue.get(),
-                           hResolveValues[i - 2], iSizes[i - 2], bAttribute);
+                           &resolveValues[i - 2], &bAttribute);
+        iSizes[i - 2] = resolveValues[i - 2].size();
         iCounter += iSizes[i - 2];
       }
     }
@@ -5640,21 +5641,15 @@ void CXFA_FM2JSContext::dotdot_accessor(CFXJSE_Value* pThis,
     int32_t iIndex = 2;
     for (int32_t i = 0; i < iLength - 2; i++) {
       for (int32_t j = 0; j < iSizes[i]; j++) {
-        rgValues[iIndex]->Assign(hResolveValues[i][j]);
+        rgValues[iIndex]->Assign(resolveValues[i][j].get());
         iIndex++;
       }
     }
     args.GetReturnValue()->SetArray(iCounter + 2, rgValues);
     for (int32_t i = 0; i < (iCounter + 2); i++)
       delete rgValues[i];
-    FX_Free(rgValues);
 
-    for (int32_t i = 0; i < iLength - 2; i++) {
-      for (int32_t j = 0; j < iSizes[i]; j++)
-        delete hResolveValues[i][j];
-      FX_Free(hResolveValues[i]);
-    }
-    FX_Free(hResolveValues);
+    FX_Free(rgValues);
     FX_Free(iSizes);
     return;
   }
@@ -5679,11 +5674,11 @@ void CXFA_FM2JSContext::dotdot_accessor(CFXJSE_Value* pThis,
     return;
   }
 
-  CFXJSE_Value** hResolveValues;
-  int32_t iSize = 0;
+  std::vector<std::unique_ptr<CFXJSE_Value>> resolveValues;
   bool bAttribute = false;
-  ParseResolveResult(pThis, resoveNodeRS, argAccessor.get(), hResolveValues,
-                     iSize, bAttribute);
+  ParseResolveResult(pThis, resoveNodeRS, argAccessor.get(), &resolveValues,
+                     &bAttribute);
+  int32_t iSize = resolveValues.size();
   CFXJSE_Value** rgValues = FX_Alloc(CFXJSE_Value*, iSize + 2);
   for (int32_t i = 0; i < (iSize + 2); i++)
     rgValues[i] = new CFXJSE_Value(pIsolate);
@@ -5695,17 +5690,13 @@ void CXFA_FM2JSContext::dotdot_accessor(CFXJSE_Value* pThis,
     rgValues[1]->SetNull();
 
   for (int32_t i = 0; i < iSize; i++)
-    rgValues[i + 2]->Assign(hResolveValues[i]);
+    rgValues[i + 2]->Assign(resolveValues[i].get());
 
   args.GetReturnValue()->SetArray(iSize + 2, rgValues);
 
   for (int32_t i = 0; i < (iSize + 2); i++)
     delete rgValues[i];
   FX_Free(rgValues);
-
-  for (int32_t i = 0; i < iSize; i++)
-    delete hResolveValues[i];
-  FX_Free(hResolveValues);
 }
 
 // static
@@ -6232,21 +6223,20 @@ void CXFA_FM2JSContext::ParseResolveResult(
     CFXJSE_Value* pThis,
     const XFA_RESOLVENODE_RS& resoveNodeRS,
     CFXJSE_Value* pParentValue,
-    CFXJSE_Value**& resultValues,
-    int32_t& iSize,
-    bool& bAttribute) {
-  iSize = 0;
-  resultValues = nullptr;
+    std::vector<std::unique_ptr<CFXJSE_Value>>* resultValues,
+    bool* bAttribute) {
+  ASSERT(bAttribute);
+
+  resultValues->clear();
 
   CXFA_FM2JSContext* pContext = ToJSContext(pThis, nullptr);
   v8::Isolate* pIsolate = pContext->GetScriptRuntime();
+
   if (resoveNodeRS.dwFlags == XFA_RESOVENODE_RSTYPE_Nodes) {
-    bAttribute = false;
-    iSize = resoveNodeRS.nodes.GetSize();
-    resultValues = FX_Alloc(CFXJSE_Value*, iSize);
-    for (int32_t i = 0; i < iSize; i++) {
-      resultValues[i] = new CFXJSE_Value(pIsolate);
-      resultValues[i]->Assign(
+    *bAttribute = false;
+    for (int32_t i = 0; i < resoveNodeRS.nodes.GetSize(); i++) {
+      resultValues->push_back(pdfium::MakeUnique<CFXJSE_Value>(pIsolate));
+      resultValues->back()->Assign(
           pContext->GetDocument()->GetScriptContext()->GetJSValueFromMap(
               resoveNodeRS.nodes.GetAt(i)));
     }
@@ -6255,13 +6245,12 @@ void CXFA_FM2JSContext::ParseResolveResult(
 
   CXFA_ValueArray objectProperties(pIsolate);
   int32_t iRet = resoveNodeRS.GetAttributeResult(objectProperties);
-  bAttribute = (iRet == 0);
-  if (!bAttribute) {
-    iSize = iRet;
-    resultValues = FX_Alloc(CFXJSE_Value*, iSize);
-    for (int32_t i = 0; i < iSize; i++) {
-      resultValues[i] = new CFXJSE_Value(pIsolate);
-      resultValues[i]->Assign(objectProperties[i]);
+  *bAttribute = true;
+  if (iRet != 0) {
+    *bAttribute = false;
+    for (int32_t i = 0; i < iRet; i++) {
+      resultValues->push_back(pdfium::MakeUnique<CFXJSE_Value>(pIsolate));
+      resultValues->back()->Assign(objectProperties[i]);
     }
     return;
   }
@@ -6269,10 +6258,8 @@ void CXFA_FM2JSContext::ParseResolveResult(
   if (!pParentValue || !pParentValue->IsObject())
     return;
 
-  iSize = 1;
-  resultValues = FX_Alloc(CFXJSE_Value*, 1);
-  resultValues[0] = new CFXJSE_Value(pIsolate);
-  resultValues[0]->Assign(pParentValue);
+  resultValues->push_back(pdfium::MakeUnique<CFXJSE_Value>(pIsolate));
+  resultValues->back()->Assign(pParentValue);
 }
 
 // static

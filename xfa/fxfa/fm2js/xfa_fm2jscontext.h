@@ -8,6 +8,7 @@
 #define XFA_FXFA_FM2JS_XFA_FM2JSCONTEXT_H_
 
 #include <memory>
+#include <vector>
 
 #include "fxjs/cfxjse_arguments.h"
 #include "fxjs/cfxjse_context.h"
@@ -423,12 +424,12 @@ class CXFA_FM2JSContext : public CFXJSE_HostObject {
                                 XFA_RESOLVENODE_RS& resoveNodeRS,
                                 bool bdotAccessor = true,
                                 bool bHasNoResolveName = false);
-  static void ParseResolveResult(CFXJSE_Value* pThis,
-                                 const XFA_RESOLVENODE_RS& resoveNodeRS,
-                                 CFXJSE_Value* pParentValue,
-                                 CFXJSE_Value**& resultValues,
-                                 int32_t& iSize,
-                                 bool& bAttribute);
+  static void ParseResolveResult(
+      CFXJSE_Value* pThis,
+      const XFA_RESOLVENODE_RS& resoveNodeRS,
+      CFXJSE_Value* pParentValue,
+      std::vector<std::unique_ptr<CFXJSE_Value>>* resultValues,
+      bool* bAttribute);
 
   static std::unique_ptr<CFXJSE_Value> GetSimpleValue(CFXJSE_Value* pThis,
                                                       CFXJSE_Arguments& args,
