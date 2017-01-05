@@ -9,6 +9,7 @@
 
 #include <memory>
 
+#include "core/fxcrt/cfx_retain_ptr.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxge/fx_dib.h"
 #include "xfa/fxfa/parser/cxfa_box.h"
@@ -75,7 +76,7 @@ class CXFA_WidgetAcc : public CXFA_WidgetData {
   void UpdateUIDisplay(CXFA_FFWidget* pExcept = nullptr);
 
   CXFA_Node* GetDatasets();
-  CFGAS_GEFont* GetFDEFont();
+  CFX_RetainPtr<CFGAS_GEFont> GetFDEFont();
   FX_FLOAT GetFontSize();
   FX_ARGB GetTextColor();
   FX_FLOAT GetLineHeight();

@@ -10,8 +10,10 @@
 #include <memory>
 #include <vector>
 
+#include "core/fxcrt/cfx_retain_ptr.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_system.h"
+#include "xfa/fgas/font/cfgas_gefont.h"
 #include "xfa/fwl/fwl_error.h"
 #include "xfa/fwl/theme/cfwl_utils.h"
 #include "xfa/fxgraphics/cfx_graphics.h"
@@ -38,7 +40,7 @@ class CFWL_WidgetTP {
   virtual void DrawBackground(CFWL_ThemeBackground* pParams);
   virtual void DrawText(CFWL_ThemeText* pParams);
 
-  CFGAS_GEFont* GetFont() const { return m_pFDEFont; }
+  const CFX_RetainPtr<CFGAS_GEFont>& GetFont() const { return m_pFDEFont; }
 
  protected:
   struct CColorData {
@@ -94,7 +96,7 @@ class CFWL_WidgetTP {
 
   uint32_t m_dwRefCount;
   std::unique_ptr<CFDE_TextOut> m_pTextOut;
-  CFGAS_GEFont* m_pFDEFont;
+  CFX_RetainPtr<CFGAS_GEFont> m_pFDEFont;
   std::unique_ptr<CColorData> m_pColorData;
 };
 
@@ -111,7 +113,7 @@ class CFWL_FontData {
   bool LoadFont(const CFX_WideStringC& wsFontFamily,
                 uint32_t dwFontStyles,
                 uint16_t wCodePage);
-  CFGAS_GEFont* GetFont() const { return m_pFont.get(); }
+  CFX_RetainPtr<CFGAS_GEFont> GetFont() const { return m_pFont; }
 
  protected:
   CFX_WideString m_wsFamily;
@@ -121,7 +123,7 @@ class CFWL_FontData {
   std::unique_ptr<CFX_FontSourceEnum_File> m_pFontSource;
 #endif
   std::unique_ptr<CFGAS_FontMgr> m_pFontMgr;
-  std::unique_ptr<CFGAS_GEFont> m_pFont;
+  CFX_RetainPtr<CFGAS_GEFont> m_pFont;
 };
 
 class CFWL_FontManager {
@@ -129,9 +131,9 @@ class CFWL_FontManager {
   static CFWL_FontManager* GetInstance();
   static void DestroyInstance();
 
-  CFGAS_GEFont* FindFont(const CFX_WideStringC& wsFontFamily,
-                         uint32_t dwFontStyles,
-                         uint16_t dwCodePage);
+  CFX_RetainPtr<CFGAS_GEFont> FindFont(const CFX_WideStringC& wsFontFamily,
+                                       uint32_t dwFontStyles,
+                                       uint16_t dwCodePage);
 
  protected:
   CFWL_FontManager();

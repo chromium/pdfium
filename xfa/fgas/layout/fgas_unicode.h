@@ -18,11 +18,12 @@ typedef CFX_MassArrayTemplate<FX_TPO> CFX_TPOArray;
 
 void FX_TEXTLAYOUT_PieceSort(CFX_TPOArray& tpos, int32_t iStart, int32_t iEnd);
 
-typedef bool (*FX_AdjustCharDisplayPos)(FX_WCHAR wch,
-                                        bool bMBCSCode,
-                                        CFGAS_GEFont* pFont,
-                                        FX_FLOAT fFontSize,
-                                        bool bVertical,
-                                        CFX_PointF& ptOffset);
+typedef bool (*FX_AdjustCharDisplayPos)(
+    FX_WCHAR wch,
+    bool bMBCSCode,
+    const CFX_RetainPtr<CFGAS_GEFont>& pFont,
+    FX_FLOAT fFontSize,
+    bool bVertical,
+    CFX_PointF& ptOffset);
 
 #endif  // XFA_FGAS_LAYOUT_FGAS_UNICODE_H_

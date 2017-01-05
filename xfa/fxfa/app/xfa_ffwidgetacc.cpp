@@ -1498,19 +1498,18 @@ CXFA_WidgetLayoutData* CXFA_WidgetAcc::GetWidgetLayoutData() {
   return m_pLayoutData.get();
 }
 
-CFGAS_GEFont* CXFA_WidgetAcc::GetFDEFont() {
+CFX_RetainPtr<CFGAS_GEFont> CXFA_WidgetAcc::GetFDEFont() {
   CFX_WideStringC wsFontName = FX_WSTRC(L"Courier");
   uint32_t dwFontStyle = 0;
   if (CXFA_Font font = GetFont()) {
-    if (font.IsBold()) {
+    if (font.IsBold())
       dwFontStyle |= FX_FONTSTYLE_Bold;
-    }
-    if (font.IsItalic()) {
+    if (font.IsItalic())
       dwFontStyle |= FX_FONTSTYLE_Italic;
-    }
     font.GetTypeface(wsFontName);
   }
-  CXFA_FFDoc* pDoc = GetDoc();
+
+  auto pDoc = GetDoc();
   return pDoc->GetApp()->GetXFAFontMgr()->GetFont(pDoc, wsFontName,
                                                   dwFontStyle);
 }

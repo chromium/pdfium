@@ -26,7 +26,8 @@ class IFWL_ThemeProvider {
   virtual float GetCYBorderSize() const = 0;
   virtual CFX_RectF GetUIMargin(CFWL_ThemePart* pThemePart) const = 0;
   virtual float GetFontSize(CFWL_ThemePart* pThemePart) const = 0;
-  virtual CFGAS_GEFont* GetFont(CFWL_ThemePart* pThemePart) const = 0;
+  virtual CFX_RetainPtr<CFGAS_GEFont> GetFont(
+      CFWL_ThemePart* pThemePart) const = 0;
   virtual float GetLineHeight(CFWL_ThemePart* pThemePart) const = 0;
   virtual float GetScrollBarWidth() const = 0;
   virtual FX_COLORREF GetTextColor(CFWL_ThemePart* pThemePart) const = 0;

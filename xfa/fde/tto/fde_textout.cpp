@@ -46,7 +46,7 @@ CFDE_TextOut::~CFDE_TextOut() {
   m_ttoLines.RemoveAll(false);
 }
 
-void CFDE_TextOut::SetFont(CFGAS_GEFont* pFont) {
+void CFDE_TextOut::SetFont(const CFX_RetainPtr<CFGAS_GEFont>& pFont) {
   ASSERT(pFont);
   m_pFont = pFont;
   m_pTxtBreak->SetFont(pFont);

@@ -22,7 +22,7 @@ class CFDE_TxtEdtTextSet : public IFDE_TextSet {
 
   // IFDE_TextSet
   int32_t GetString(FDE_TEXTEDITPIECE* pPiece, CFX_WideString& wsText) override;
-  CFGAS_GEFont* GetFont() override;
+  CFX_RetainPtr<CFGAS_GEFont> GetFont() override;
   FX_FLOAT GetFontSize() override;
   FX_ARGB GetFontColor() override;
   int32_t GetDisplayPos(FDE_TEXTEDITPIECE* pPiece,

@@ -108,7 +108,7 @@ void CFDE_RenderContext::RenderText(IFDE_TextSet* pTextSet,
   ASSERT(m_pRenderDevice);
   ASSERT(pTextSet && pText);
 
-  CFGAS_GEFont* pFont = pTextSet->GetFont();
+  CFX_RetainPtr<CFGAS_GEFont> pFont = pTextSet->GetFont();
   if (!pFont)
     return;
 

@@ -67,11 +67,12 @@ class CFGAS_GEFont;
 
 struct FX_RTFTEXTOBJ {
   FX_RTFTEXTOBJ();
+  ~FX_RTFTEXTOBJ();
 
   const FX_WCHAR* pStr;
   int32_t* pWidths;
   int32_t iLength;
-  CFGAS_GEFont* pFont;
+  CFX_RetainPtr<CFGAS_GEFont> pFont;
   FX_FLOAT fFontSize;
   uint32_t dwLayoutStyles;
   int32_t iCharRotation;
@@ -222,7 +223,7 @@ class CFX_RTFBreak {
   void SetLineStartPos(FX_FLOAT fLinePos);
   uint32_t GetLayoutStyles() const { return m_dwLayoutStyles; }
   void SetLayoutStyles(uint32_t dwLayoutStyles);
-  void SetFont(CFGAS_GEFont* pFont);
+  void SetFont(const CFX_RetainPtr<CFGAS_GEFont>& pFont);
   void SetFontSize(FX_FLOAT fFontSize);
   void SetTabWidth(FX_FLOAT fTabWidth);
   void AddPositionedTab(FX_FLOAT fTabPos);
@@ -294,7 +295,7 @@ class CFX_RTFBreak {
   bool m_bVertical;
   bool m_bSingleLine;
   bool m_bCharCode;
-  CFGAS_GEFont* m_pFont;
+  CFX_RetainPtr<CFGAS_GEFont> m_pFont;
   int32_t m_iFontHeight;
   int32_t m_iFontSize;
   int32_t m_iTabWidth;

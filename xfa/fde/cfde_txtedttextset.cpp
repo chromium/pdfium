@@ -8,6 +8,7 @@
 
 #include "xfa/fde/cfde_txtedtengine.h"
 #include "xfa/fde/cfde_txtedtpage.h"
+#include "xfa/fgas/font/cfgas_gefont.h"
 
 CFDE_TxtEdtTextSet::CFDE_TxtEdtTextSet(CFDE_TxtEdtPage* pPage)
     : m_pPage(pPage) {}
@@ -25,14 +26,14 @@ void CFDE_TxtEdtTextSet::GetRect(FDE_TEXTEDITPIECE* pPiece, CFX_RectF& rt) {
 int32_t CFDE_TxtEdtTextSet::GetString(FDE_TEXTEDITPIECE* pPiece,
                                       CFX_WideString& wsText) {
   FX_WCHAR* pBuffer = wsText.GetBuffer(pPiece->nCount);
-  for (int32_t i = 0; i < pPiece->nCount; i++) {
+  for (int32_t i = 0; i < pPiece->nCount; i++)
     pBuffer[i] = m_pPage->GetChar(pPiece, i);
-  }
+
   wsText.ReleaseBuffer(pPiece->nCount);
   return pPiece->nCount;
 }
 
-CFGAS_GEFont* CFDE_TxtEdtTextSet::GetFont() {
+CFX_RetainPtr<CFGAS_GEFont> CFDE_TxtEdtTextSet::GetFont() {
   return m_pPage->GetEngine()->GetEditParams()->pFont;
 }
 

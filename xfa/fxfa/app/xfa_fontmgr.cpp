@@ -1740,18 +1740,16 @@ const XFA_FONTINFO* XFA_GetFontINFOByFontName(
 
 CXFA_DefFontMgr::CXFA_DefFontMgr() {}
 
-CXFA_DefFontMgr::~CXFA_DefFontMgr() {
-  for (int32_t i = 0; i < m_CacheFonts.GetSize(); i++)
-    m_CacheFonts[i]->Release();
-}
+CXFA_DefFontMgr::~CXFA_DefFontMgr() {}
 
-CFGAS_GEFont* CXFA_DefFontMgr::GetFont(CXFA_FFDoc* hDoc,
-                                       const CFX_WideStringC& wsFontFamily,
-                                       uint32_t dwFontStyles,
-                                       uint16_t wCodePage) {
+CFX_RetainPtr<CFGAS_GEFont> CXFA_DefFontMgr::GetFont(
+    CXFA_FFDoc* hDoc,
+    const CFX_WideStringC& wsFontFamily,
+    uint32_t dwFontStyles,
+    uint16_t wCodePage) {
   CFX_WideString wsFontName(wsFontFamily);
   CFGAS_FontMgr* pFDEFontMgr = hDoc->GetApp()->GetFDEFontMgr();
-  CFGAS_GEFont* pFont =
+  CFX_RetainPtr<CFGAS_GEFont> pFont =
       pFDEFontMgr->LoadFont(wsFontName.c_str(), dwFontStyles, wCodePage);
   if (!pFont) {
     const XFA_FONTINFO* pCurFont =
@@ -1785,56 +1783,50 @@ CFGAS_GEFont* CXFA_DefFontMgr::GetFont(CXFA_FFDoc* hDoc,
     }
   }
   if (pFont)
-    m_CacheFonts.Add(pFont);
+    m_CacheFonts.push_back(pFont);
   return pFont;
 }
 
-CFGAS_GEFont* CXFA_DefFontMgr::GetDefaultFont(
+CFX_RetainPtr<CFGAS_GEFont> CXFA_DefFontMgr::GetDefaultFont(
     CXFA_FFDoc* hDoc,
     const CFX_WideStringC& wsFontFamily,
     uint32_t dwFontStyles,
     uint16_t wCodePage) {
   CFGAS_FontMgr* pFDEFontMgr = hDoc->GetApp()->GetFDEFontMgr();
-  CFGAS_GEFont* pFont =
+  CFX_RetainPtr<CFGAS_GEFont> pFont =
       pFDEFontMgr->LoadFont(L"Arial Narrow", dwFontStyles, wCodePage);
   if (!pFont) {
     pFont = pFDEFontMgr->LoadFont(static_cast<const FX_WCHAR*>(nullptr),
                                   dwFontStyles, wCodePage);
   }
-
-  ASSERT(pFont);
   if (pFont)
-    m_CacheFonts.Add(pFont);
+    m_CacheFonts.push_back(pFont);
   return pFont;
 }
 
 CXFA_PDFFontMgr::CXFA_PDFFontMgr(CXFA_FFDoc* pDoc) : m_pDoc(pDoc) {}
 
-CXFA_PDFFontMgr::~CXFA_PDFFontMgr() {
-  for (const auto& pair : m_FontMap) {
-    if (pair.second)
-      pair.second->Release();
-  }
-}
+CXFA_PDFFontMgr::~CXFA_PDFFontMgr() {}
 
-CFGAS_GEFont* CXFA_PDFFontMgr::FindFont(const CFX_ByteString& strPsName,
-                                        bool bBold,
-                                        bool bItalic,
-                                        CPDF_Font** pDstPDFFont,
-                                        bool bStrictMatch) {
+CFX_RetainPtr<CFGAS_GEFont> CXFA_PDFFontMgr::FindFont(
+    const CFX_ByteString& strPsName,
+    bool bBold,
+    bool bItalic,
+    CPDF_Font** pDstPDFFont,
+    bool bStrictMatch) {
   CPDF_Document* pDoc = m_pDoc->GetPDFDoc();
-  if (!pDoc) {
+  if (!pDoc)
     return nullptr;
-  }
+
   CPDF_Dictionary* pFontSetDict =
       pDoc->GetRoot()->GetDictFor("AcroForm")->GetDictFor("DR");
-  if (!pFontSetDict) {
+  if (!pFontSetDict)
     return nullptr;
-  }
+
   pFontSetDict = pFontSetDict->GetDictFor("Font");
-  if (!pFontSetDict) {
+  if (!pFontSetDict)
     return nullptr;
-  }
+
   CFX_ByteString name = strPsName;
   name.Remove(' ');
   CFGAS_FontMgr* pFDEFontMgr = m_pDoc->GetApp()->GetFDEFontMgr();
@@ -1862,10 +1854,11 @@ CFGAS_GEFont* CXFA_PDFFontMgr::FindFont(const CFX_ByteString& strPsName,
   return nullptr;
 }
 
-CFGAS_GEFont* CXFA_PDFFontMgr::GetFont(const CFX_WideStringC& wsFontFamily,
-                                       uint32_t dwFontStyles,
-                                       CPDF_Font** pPDFFont,
-                                       bool bStrictMatch) {
+CFX_RetainPtr<CFGAS_GEFont> CXFA_PDFFontMgr::GetFont(
+    const CFX_WideStringC& wsFontFamily,
+    uint32_t dwFontStyles,
+    CPDF_Font** pPDFFont,
+    bool bStrictMatch) {
   uint32_t dwHashCode = FX_HashCode_GetW(wsFontFamily, false);
   CFX_ByteString strKey;
   strKey.Format("%u%u", dwHashCode, dwFontStyles);
@@ -1877,7 +1870,7 @@ CFGAS_GEFont* CXFA_PDFFontMgr::GetFont(const CFX_WideStringC& wsFontFamily,
   bool bBold = (dwFontStyles & FX_FONTSTYLE_Bold) == FX_FONTSTYLE_Bold;
   bool bItalic = (dwFontStyles & FX_FONTSTYLE_Italic) == FX_FONTSTYLE_Italic;
   CFX_ByteString strFontName = PsNameToFontName(bsPsName, bBold, bItalic);
-  CFGAS_GEFont* pFont =
+  CFX_RetainPtr<CFGAS_GEFont> pFont =
       FindFont(strFontName, bBold, bItalic, pPDFFont, bStrictMatch);
   if (pFont)
     m_FontMap[strKey] = pFont;
@@ -1975,7 +1968,7 @@ bool CXFA_PDFFontMgr::PsNameMatchDRFontName(const CFX_ByteStringC& bsPsName,
   return true;
 }
 
-bool CXFA_PDFFontMgr::GetCharWidth(const CFGAS_GEFont* pFont,
+bool CXFA_PDFFontMgr::GetCharWidth(const CFX_RetainPtr<CFGAS_GEFont>& pFont,
                                    FX_WCHAR wUnicode,
                                    bool bCharCode,
                                    int32_t* pWidth) {
@@ -1991,7 +1984,8 @@ bool CXFA_PDFFontMgr::GetCharWidth(const CFGAS_GEFont* pFont,
   return true;
 }
 
-void CXFA_PDFFontMgr::SetFont(const CFGAS_GEFont* pFont, CPDF_Font* pPDFFont) {
+void CXFA_PDFFontMgr::SetFont(const CFX_RetainPtr<CFGAS_GEFont>& pFont,
+                              CPDF_Font* pPDFFont) {
   m_FDE2PDFFont[pFont] = pPDFFont;
 }
 
@@ -1999,10 +1993,11 @@ CXFA_FontMgr::CXFA_FontMgr() {}
 
 CXFA_FontMgr::~CXFA_FontMgr() {}
 
-CFGAS_GEFont* CXFA_FontMgr::GetFont(CXFA_FFDoc* hDoc,
-                                    const CFX_WideStringC& wsFontFamily,
-                                    uint32_t dwFontStyles,
-                                    uint16_t wCodePage) {
+CFX_RetainPtr<CFGAS_GEFont> CXFA_FontMgr::GetFont(
+    CXFA_FFDoc* hDoc,
+    const CFX_WideStringC& wsFontFamily,
+    uint32_t dwFontStyles,
+    uint16_t wCodePage) {
   uint32_t dwHash = FX_HashCode_GetW(wsFontFamily, false);
   CFX_ByteString bsKey;
   bsKey.Format("%u%u%u", dwHash, dwFontStyles, wCodePage);
@@ -2015,7 +2010,7 @@ CFGAS_GEFont* CXFA_FontMgr::GetFont(CXFA_FFDoc* hDoc,
   CXFA_PDFFontMgr* pMgr =
       it != m_PDFFontMgrMap.end() ? it->second.get() : nullptr;
   CPDF_Font* pPDFFont = nullptr;
-  CFGAS_GEFont* pFont = nullptr;
+  CFX_RetainPtr<CFGAS_GEFont> pFont;
   if (pMgr) {
     pFont =
         pMgr->GetFont(wsEnglishName.AsStringC(), dwFontStyles, &pPDFFont, true);

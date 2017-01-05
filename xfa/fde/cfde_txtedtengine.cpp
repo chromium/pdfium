@@ -34,7 +34,6 @@ FDE_TXTEDTPARAMS::FDE_TXTEDTPARAMS()
       dwLayoutStyles(0),
       dwAlignment(0),
       dwMode(0),
-      pFont(nullptr),
       fFontSize(10.0f),
       dwFontColor(0xff000000),
       fLineSpace(10.0f),
@@ -47,6 +46,8 @@ FDE_TXTEDTPARAMS::FDE_TXTEDTPARAMS()
       nHorzScale(100),
       fCharSpace(0),
       pEventSink(nullptr) {}
+
+FDE_TXTEDTPARAMS::~FDE_TXTEDTPARAMS() {}
 
 FDE_TXTEDT_TEXTCHANGE_INFO::FDE_TXTEDT_TEXTCHANGE_INFO() {}
 

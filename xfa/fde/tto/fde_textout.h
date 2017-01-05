@@ -79,7 +79,7 @@ class CFDE_TextOut : public CFX_Target {
   CFDE_TextOut();
   ~CFDE_TextOut() override;
 
-  void SetFont(CFGAS_GEFont* pFont);
+  void SetFont(const CFX_RetainPtr<CFGAS_GEFont>& pFont);
   void SetFontSize(FX_FLOAT fFontSize);
   void SetTextColor(FX_ARGB color);
   void SetStyles(uint32_t dwStyles);
@@ -153,7 +153,7 @@ class CFDE_TextOut : public CFX_Target {
   void DrawLine(const FDE_TTOPIECE* pPiece, CFDE_Pen*& pPen);
 
   std::unique_ptr<CFX_TxtBreak> m_pTxtBreak;
-  CFGAS_GEFont* m_pFont;  // not owned.
+  CFX_RetainPtr<CFGAS_GEFont> m_pFont;
   FX_FLOAT m_fFontSize;
   FX_FLOAT m_fLineSpace;
   FX_FLOAT m_fLinePos;

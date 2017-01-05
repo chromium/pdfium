@@ -92,8 +92,8 @@ class CXFA_TextParser {
   bool IsSpaceRun(IFDE_CSSComputedStyle* pStyle) const;
   bool GetTabstops(IFDE_CSSComputedStyle* pStyle,
                    CXFA_TextTabstopsContext* pTabstopContext);
-  CFGAS_GEFont* GetFont(CXFA_TextProvider* pTextProvider,
-                        IFDE_CSSComputedStyle* pStyle) const;
+  CFX_RetainPtr<CFGAS_GEFont> GetFont(CXFA_TextProvider* pTextProvider,
+                                      IFDE_CSSComputedStyle* pStyle) const;
   FX_FLOAT GetFontSize(CXFA_TextProvider* pTextProvider,
                        IFDE_CSSComputedStyle* pStyle) const;
   int32_t GetHorScale(CXFA_TextProvider* pTextProvider,
@@ -210,7 +210,7 @@ class XFA_TextPiece : public CFX_Target {
   int32_t iUnderline;
   int32_t iPeriod;
   int32_t iLineThrough;
-  CFGAS_GEFont* pFont;
+  CFX_RetainPtr<CFGAS_GEFont> pFont;
   FX_ARGB dwColor;
   FX_FLOAT fFontSize;
   CFX_RectF rtPiece;

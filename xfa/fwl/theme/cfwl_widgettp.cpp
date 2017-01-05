@@ -298,8 +298,8 @@ bool CFWL_FontData::LoadFont(const CFX_WideStringC& wsFontFamily,
     m_pFontMgr = CFGAS_FontMgr::Create(m_pFontSource.get());
 #endif
   }
-  m_pFont.reset(CFGAS_GEFont::LoadFont(wsFontFamily.c_str(), dwFontStyles,
-                                       dwCodePage, m_pFontMgr.get()));
+  m_pFont = CFGAS_GEFont::LoadFont(wsFontFamily.c_str(), dwFontStyles,
+                                   dwCodePage, m_pFontMgr.get());
   return !!m_pFont;
 }
 
@@ -319,16 +319,18 @@ CFWL_FontManager::CFWL_FontManager() {}
 
 CFWL_FontManager::~CFWL_FontManager() {}
 
-CFGAS_GEFont* CFWL_FontManager::FindFont(const CFX_WideStringC& wsFontFamily,
-                                         uint32_t dwFontStyles,
-                                         uint16_t wCodePage) {
+CFX_RetainPtr<CFGAS_GEFont> CFWL_FontManager::FindFont(
+    const CFX_WideStringC& wsFontFamily,
+    uint32_t dwFontStyles,
+    uint16_t wCodePage) {
   for (const auto& pData : m_FontsArray) {
     if (pData->Equal(wsFontFamily, dwFontStyles, wCodePage))
       return pData->GetFont();
   }
-  std::unique_ptr<CFWL_FontData> pFontData(new CFWL_FontData);
+  auto pFontData = pdfium::MakeUnique<CFWL_FontData>();
   if (!pFontData->LoadFont(wsFontFamily, dwFontStyles, wCodePage))
     return nullptr;
+
   m_FontsArray.push_back(std::move(pFontData));
   return m_FontsArray.back()->GetFont();
 }

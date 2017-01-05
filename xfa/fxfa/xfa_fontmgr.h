@@ -9,7 +9,9 @@
 
 #include <map>
 #include <memory>
+#include <vector>
 
+#include "core/fxcrt/cfx_retain_ptr.h"
 #include "core/fxcrt/fx_ext.h"
 #include "core/fxcrt/fx_system.h"
 #include "xfa/fgas/font/cfgas_fontmgr.h"
@@ -30,17 +32,18 @@ class CXFA_DefFontMgr {
   CXFA_DefFontMgr();
   ~CXFA_DefFontMgr();
 
-  CFGAS_GEFont* GetFont(CXFA_FFDoc* hDoc,
-                        const CFX_WideStringC& wsFontFamily,
-                        uint32_t dwFontStyles,
-                        uint16_t wCodePage = 0xFFFF);
-  CFGAS_GEFont* GetDefaultFont(CXFA_FFDoc* hDoc,
-                               const CFX_WideStringC& wsFontFamily,
-                               uint32_t dwFontStyles,
-                               uint16_t wCodePage = 0xFFFF);
+  CFX_RetainPtr<CFGAS_GEFont> GetFont(CXFA_FFDoc* hDoc,
+                                      const CFX_WideStringC& wsFontFamily,
+                                      uint32_t dwFontStyles,
+                                      uint16_t wCodePage = 0xFFFF);
+  CFX_RetainPtr<CFGAS_GEFont> GetDefaultFont(
+      CXFA_FFDoc* hDoc,
+      const CFX_WideStringC& wsFontFamily,
+      uint32_t dwFontStyles,
+      uint16_t wCodePage = 0xFFFF);
 
  protected:
-  CFX_ArrayTemplate<CFGAS_GEFont*> m_CacheFonts;
+  std::vector<CFX_RetainPtr<CFGAS_GEFont>> m_CacheFonts;
 };
 
 class CXFA_PDFFontMgr {
@@ -48,22 +51,22 @@ class CXFA_PDFFontMgr {
   explicit CXFA_PDFFontMgr(CXFA_FFDoc* pDoc);
   ~CXFA_PDFFontMgr();
 
-  CFGAS_GEFont* GetFont(const CFX_WideStringC& wsFontFamily,
-                        uint32_t dwFontStyles,
-                        CPDF_Font** pPDFFont,
-                        bool bStrictMatch);
-  bool GetCharWidth(const CFGAS_GEFont* pFont,
+  CFX_RetainPtr<CFGAS_GEFont> GetFont(const CFX_WideStringC& wsFontFamily,
+                                      uint32_t dwFontStyles,
+                                      CPDF_Font** pPDFFont,
+                                      bool bStrictMatch);
+  bool GetCharWidth(const CFX_RetainPtr<CFGAS_GEFont>& pFont,
                     FX_WCHAR wUnicode,
                     bool bCharCode,
                     int32_t* pWidth);
-  void SetFont(const CFGAS_GEFont* pFont, CPDF_Font* pPDFFont);
+  void SetFont(const CFX_RetainPtr<CFGAS_GEFont>& pFont, CPDF_Font* pPDFFont);
 
  protected:
-  CFGAS_GEFont* FindFont(const CFX_ByteString& strFamilyName,
-                         bool bBold,
-                         bool bItalic,
-                         CPDF_Font** pPDFFont,
-                         bool bStrictMatch);
+  CFX_RetainPtr<CFGAS_GEFont> FindFont(const CFX_ByteString& strFamilyName,
+                                       bool bBold,
+                                       bool bItalic,
+                                       CPDF_Font** pPDFFont,
+                                       bool bStrictMatch);
   CFX_ByteString PsNameToFontName(const CFX_ByteString& strPsName,
                                   bool bBold,
                                   bool bItalic);
@@ -74,8 +77,8 @@ class CXFA_PDFFontMgr {
                              bool bStrictMatch);
 
   CXFA_FFDoc* const m_pDoc;
-  std::map<const CFGAS_GEFont*, CPDF_Font*> m_FDE2PDFFont;
-  std::map<CFX_ByteString, CFGAS_GEFont*> m_FontMap;
+  std::map<CFX_RetainPtr<CFGAS_GEFont>, CPDF_Font*> m_FDE2PDFFont;
+  std::map<CFX_ByteString, CFX_RetainPtr<CFGAS_GEFont>> m_FontMap;
 };
 
 class CXFA_FontMgr {
@@ -83,10 +86,10 @@ class CXFA_FontMgr {
   CXFA_FontMgr();
   ~CXFA_FontMgr();
 
-  CFGAS_GEFont* GetFont(CXFA_FFDoc* hDoc,
-                        const CFX_WideStringC& wsFontFamily,
-                        uint32_t dwFontStyles,
-                        uint16_t wCodePage = 0xFFFF);
+  CFX_RetainPtr<CFGAS_GEFont> GetFont(CXFA_FFDoc* hDoc,
+                                      const CFX_WideStringC& wsFontFamily,
+                                      uint32_t dwFontStyles,
+                                      uint16_t wCodePage = 0xFFFF);
   void LoadDocFonts(CXFA_FFDoc* hDoc);
   void ReleaseDocFonts(CXFA_FFDoc* hDoc);
   void SetDefFontMgr(std::unique_ptr<CXFA_DefFontMgr> pFontMgr);
@@ -94,7 +97,7 @@ class CXFA_FontMgr {
  protected:
   std::unique_ptr<CXFA_DefFontMgr> m_pDefFontMgr;
   std::map<CXFA_FFDoc*, std::unique_ptr<CXFA_PDFFontMgr>> m_PDFFontMgrMap;
-  std::map<CFX_ByteString, CFGAS_GEFont*> m_FontMap;
+  std::map<CFX_ByteString, CFX_RetainPtr<CFGAS_GEFont>> m_FontMap;
 };
 
 #endif  //  XFA_FXFA_XFA_FONTMGR_H_

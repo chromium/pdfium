@@ -75,10 +75,6 @@ CXFA_FWLTheme::CXFA_FWLTheme(CXFA_FFApp* pApp)
 
 CXFA_FWLTheme::~CXFA_FWLTheme() {
   m_pTextOut.reset();
-  if (m_pCalendarFont) {
-    m_pCalendarFont->Release();
-    m_pCalendarFont = nullptr;
-  }
   FWLTHEME_Release();
 }
 
@@ -193,7 +189,8 @@ float CXFA_FWLTheme::GetFontSize(CFWL_ThemePart* pThemePart) const {
   return FWLTHEME_CAPACITY_FontSize;
 }
 
-CFGAS_GEFont* CXFA_FWLTheme::GetFont(CFWL_ThemePart* pThemePart) const {
+CFX_RetainPtr<CFGAS_GEFont> CXFA_FWLTheme::GetFont(
+    CFWL_ThemePart* pThemePart) const {
   if (CXFA_FFWidget* pWidget = XFA_ThemeGetOuterWidget(pThemePart->m_pWidget))
     return pWidget->GetDataAcc()->GetFDEFont();
   return GetTheme(pThemePart->m_pWidget)->GetFont();

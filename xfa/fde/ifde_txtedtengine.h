@@ -72,6 +72,7 @@ enum FDE_TXTEDIT_LINEEND {
 
 struct FDE_TXTEDTPARAMS {
   FDE_TXTEDTPARAMS();
+  ~FDE_TXTEDTPARAMS();
 
   FX_FLOAT fPlateWidth;
   FX_FLOAT fPlateHeight;
@@ -79,7 +80,7 @@ struct FDE_TXTEDTPARAMS {
   uint32_t dwLayoutStyles;
   uint32_t dwAlignment;
   uint32_t dwMode;
-  CFGAS_GEFont* pFont;
+  CFX_RetainPtr<CFGAS_GEFont> pFont;
   FX_FLOAT fFontSize;
   FX_ARGB dwFontColor;
   FX_FLOAT fLineSpace;

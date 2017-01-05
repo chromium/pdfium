@@ -688,7 +688,7 @@ void CFWL_Edit::UpdateEditParams() {
   params.dwFontColor = theme->GetTextColor(&part);
   params.fLineSpace = theme->GetLineHeight(&part);
 
-  CFGAS_GEFont* pFont = theme->GetFont(&part);
+  CFX_RetainPtr<CFGAS_GEFont> pFont = theme->GetFont(&part);
   if (!pFont)
     return;
 

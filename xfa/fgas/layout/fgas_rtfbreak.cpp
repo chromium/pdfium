@@ -93,13 +93,10 @@ void CFX_RTFBreak::SetLayoutStyles(uint32_t dwLayoutStyles) {
   m_iRotation %= 4;
 }
 
-void CFX_RTFBreak::SetFont(CFGAS_GEFont* pFont) {
-  if (!pFont) {
+void CFX_RTFBreak::SetFont(const CFX_RetainPtr<CFGAS_GEFont>& pFont) {
+  if (!pFont || pFont == m_pFont)
     return;
-  }
-  if (m_pFont == pFont) {
-    return;
-  }
+
   SetBreakStatus();
   m_pFont = pFont;
   m_iDefChar = 0;
@@ -111,6 +108,7 @@ void CFX_RTFBreak::SetFont(CFGAS_GEFont* pFont) {
     }
   }
 }
+
 void CFX_RTFBreak::SetFontSize(FX_FLOAT fFontSize) {
   int32_t iFontSize = FXSYS_round(fFontSize * 20.0f);
   if (m_iFontSize == iFontSize) {
@@ -1184,7 +1182,7 @@ int32_t CFX_RTFBreak::GetDisplayPos(const FX_RTFTEXTOBJ* pText,
   const FX_WCHAR* pStr = pText->pStr;
   int32_t* pWidths = pText->pWidths;
   int32_t iLength = pText->iLength - 1;
-  CFGAS_GEFont* pFont = pText->pFont;
+  CFX_RetainPtr<CFGAS_GEFont> pFont = pText->pFont;
   uint32_t dwStyles = pText->dwLayoutStyles;
   CFX_RectF rtText(*pText->pRect);
   bool bRTLPiece = FX_IsOdd(pText->iBidiLevel);
@@ -1419,9 +1417,9 @@ int32_t CFX_RTFBreak::GetDisplayPos(const FX_RTFTEXTOBJ* pText,
 int32_t CFX_RTFBreak::GetCharRects(const FX_RTFTEXTOBJ* pText,
                                    CFX_RectFArray& rtArray,
                                    bool bCharBBox) const {
-  if (!pText || pText->iLength < 1) {
+  if (!pText || pText->iLength < 1)
     return 0;
-  }
+
   ASSERT(pText->pStr && pText->pWidths && pText->pFont && pText->pRect);
   const FX_WCHAR* pStr = pText->pStr;
   int32_t* pWidths = pText->pWidths;
@@ -1431,15 +1429,15 @@ int32_t CFX_RTFBreak::GetCharRects(const FX_RTFTEXTOBJ* pText,
   FX_FLOAT fFontSize = pText->fFontSize;
   int32_t iFontSize = FXSYS_round(fFontSize * 20.0f);
   FX_FLOAT fScale = fFontSize / 1000.0f;
-  CFGAS_GEFont* pFont = pText->pFont;
-  if (!pFont) {
+  CFX_RetainPtr<CFGAS_GEFont> pFont = pText->pFont;
+  if (!pFont)
     bCharBBox = false;
-  }
+
   CFX_Rect bbox;
   bbox.Set(0, 0, 0, 0);
-  if (bCharBBox) {
+  if (bCharBBox)
     bCharBBox = pFont->GetBBox(bbox);
-  }
+
   FX_FLOAT fLeft = std::max(0.0f, bbox.left * fScale);
   FX_FLOAT fHeight = FXSYS_fabs(bbox.height * fScale);
   rtArray.RemoveAll();
@@ -1566,3 +1564,5 @@ FX_RTFTEXTOBJ::FX_RTFTEXTOBJ()
       wLineBreakChar(L'\n'),
       iHorizontalScale(100),
       iVerticalScale(100) {}
+
+FX_RTFTEXTOBJ::~FX_RTFTEXTOBJ() {}

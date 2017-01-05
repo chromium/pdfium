@@ -93,7 +93,7 @@ struct FX_TXTRUN {
   CFX_WideString wsStr;
   int32_t* pWidths;
   int32_t iLength;
-  CFGAS_GEFont* pFont;
+  CFX_RetainPtr<CFGAS_GEFont> pFont;
   FX_FLOAT fFontSize;
   uint32_t dwStyles;
   int32_t iHorizontalScale;
@@ -206,7 +206,7 @@ class CFX_TxtBreak {
   void SetLinePos(FX_FLOAT fLinePos);
   uint32_t GetLayoutStyles() const { return m_dwLayoutStyles; }
   void SetLayoutStyles(uint32_t dwLayoutStyles);
-  void SetFont(CFGAS_GEFont* pFont);
+  void SetFont(const CFX_RetainPtr<CFGAS_GEFont>& pFont);
   void SetFontSize(FX_FLOAT fFontSize);
   void SetTabWidth(FX_FLOAT fTabWidth, bool bEquidistant);
   void SetDefaultChar(FX_WCHAR wch);
@@ -280,7 +280,7 @@ class CFX_TxtBreak {
   bool m_bCombText;
   int32_t m_iArabicContext;
   int32_t m_iCurArabicContext;
-  CFGAS_GEFont* m_pFont;
+  CFX_RetainPtr<CFGAS_GEFont> m_pFont;
   int32_t m_iFontSize;
   bool m_bEquidistant;
   int32_t m_iTabWidth;

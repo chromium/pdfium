@@ -105,7 +105,7 @@ bool CFDE_RenderDevice::DrawImage(CFX_DIBSource* pDib,
   return !!handle;
 }
 bool CFDE_RenderDevice::DrawString(CFDE_Brush* pBrush,
-                                   CFGAS_GEFont* pFont,
+                                   const CFX_RetainPtr<CFGAS_GEFont>& pFont,
                                    const FXTEXT_CHARPOS* pCharPos,
                                    int32_t iCount,
                                    FX_FLOAT fFontSize,
@@ -126,8 +126,8 @@ bool CFDE_RenderDevice::DrawString(CFDE_Brush* pBrush,
     }
   }
   FXTEXT_CHARPOS* pCP = (FXTEXT_CHARPOS*)pCharPos;
-  CFGAS_GEFont* pCurFont = nullptr;
-  CFGAS_GEFont* pSTFont = nullptr;
+  CFX_RetainPtr<CFGAS_GEFont> pCurFont;
+  CFX_RetainPtr<CFGAS_GEFont> pSTFont;
   FXTEXT_CHARPOS* pCurCP = nullptr;
   int32_t iCurCount = 0;
 

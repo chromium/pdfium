@@ -37,7 +37,8 @@ class CXFA_FWLTheme final : public IFWL_ThemeProvider {
   float GetCYBorderSize() const override;
   CFX_RectF GetUIMargin(CFWL_ThemePart* pThemePart) const override;
   float GetFontSize(CFWL_ThemePart* pThemePart) const override;
-  CFGAS_GEFont* GetFont(CFWL_ThemePart* pThemePart) const override;
+  CFX_RetainPtr<CFGAS_GEFont> GetFont(
+      CFWL_ThemePart* pThemePart) const override;
   float GetLineHeight(CFWL_ThemePart* pThemePart) const override;
   float GetScrollBarWidth() const override;
   FX_COLORREF GetTextColor(CFWL_ThemePart* pThemePart) const override;
@@ -58,7 +59,7 @@ class CXFA_FWLTheme final : public IFWL_ThemeProvider {
   std::unique_ptr<CFWL_CaretTP> m_pCaretTP;
   std::unique_ptr<CFWL_BarcodeTP> m_pBarcodeTP;
   std::unique_ptr<CFDE_TextOut> m_pTextOut;
-  CFGAS_GEFont* m_pCalendarFont;
+  CFX_RetainPtr<CFGAS_GEFont> m_pCalendarFont;
   CFX_WideString m_wsResource;
   CXFA_FFApp* const m_pApp;
   CFX_RectF m_Rect;

@@ -112,13 +112,10 @@ void CFX_TxtBreak::SetLayoutStyles(uint32_t dwLayoutStyles) {
   m_iRotation %= 4;
 }
 
-void CFX_TxtBreak::SetFont(CFGAS_GEFont* pFont) {
-  if (!pFont) {
+void CFX_TxtBreak::SetFont(const CFX_RetainPtr<CFGAS_GEFont>& pFont) {
+  if (!pFont || pFont == m_pFont)
     return;
-  }
-  if (m_pFont == pFont) {
-    return;
-  }
+
   SetBreakStatus();
   m_pFont = pFont;
   m_iDefChar = 0;
@@ -1214,7 +1211,7 @@ int32_t CFX_TxtBreak::GetDisplayPos(const FX_TXTRUN* pTxtRun,
   const FX_WCHAR* pStr = pTxtRun->wsStr.c_str();
   int32_t* pWidths = pTxtRun->pWidths;
   int32_t iLength = pTxtRun->iLength - 1;
-  CFGAS_GEFont* pFont = pTxtRun->pFont;
+  CFX_RetainPtr<CFGAS_GEFont> pFont = pTxtRun->pFont;
   uint32_t dwStyles = pTxtRun->dwStyles;
   CFX_RectF rtText(*pTxtRun->pRect);
   bool bRTLPiece = (pTxtRun->dwCharStyles & FX_TXTCHARSTYLE_OddBidiLevel) != 0;
@@ -1593,9 +1590,9 @@ int32_t CFX_TxtBreak::GetDisplayPos(const FX_TXTRUN* pTxtRun,
 int32_t CFX_TxtBreak::GetCharRects(const FX_TXTRUN* pTxtRun,
                                    CFX_RectFArray& rtArray,
                                    bool bCharBBox) const {
-  if (!pTxtRun || pTxtRun->iLength < 1) {
+  if (!pTxtRun || pTxtRun->iLength < 1)
     return 0;
-  }
+
   IFX_TxtAccess* pAccess = pTxtRun->pAccess;
   const FDE_TEXTEDITPIECE* pIdentity = pTxtRun->pIdentity;
   const FX_WCHAR* pStr = pTxtRun->wsStr.c_str();
@@ -1606,15 +1603,15 @@ int32_t CFX_TxtBreak::GetCharRects(const FX_TXTRUN* pTxtRun,
   FX_FLOAT fFontSize = pTxtRun->fFontSize;
   int32_t iFontSize = FXSYS_round(fFontSize * 20.0f);
   FX_FLOAT fScale = fFontSize / 1000.0f;
-  CFGAS_GEFont* pFont = pTxtRun->pFont;
-  if (!pFont) {
+  CFX_RetainPtr<CFGAS_GEFont> pFont = pTxtRun->pFont;
+  if (!pFont)
     bCharBBox = false;
-  }
+
   CFX_Rect bbox;
   bbox.Set(0, 0, 0, 0);
-  if (bCharBBox) {
+  if (bCharBBox)
     bCharBBox = pFont->GetBBox(bbox);
-  }
+
   FX_FLOAT fLeft = std::max(0.0f, bbox.left * fScale);
   FX_FLOAT fHeight = FXSYS_fabs(bbox.height * fScale);
   rtArray.RemoveAll();
