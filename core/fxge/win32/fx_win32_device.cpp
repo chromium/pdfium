@@ -500,6 +500,7 @@ void* CFX_Win32FallbackFontInfo::MapFont(int weight,
     case FXFONT_GB2312_CHARSET:
     case FXFONT_CHINESEBIG5_CHARSET:
     case FXFONT_HANGUL_CHARSET:
+      break;
     default:
       bCJK = false;
       break;
