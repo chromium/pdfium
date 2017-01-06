@@ -128,6 +128,8 @@ enum XFA_SOM_MESSAGETYPE {
 using CXFA_NodeArray = CFX_ArrayTemplate<CXFA_Node*>;
 using CXFA_NodeStack = CFX_StackTemplate<CXFA_Node*>;
 using CXFA_NodeSet = std::unordered_set<CXFA_Node*>;
+
+typedef void (*PD_CALLBACK_FREEDATA)(void* pData);
 typedef void (*PD_CALLBACK_DUPLICATEDATA)(void*& pData);
 
 struct XFA_MAPDATABLOCKCALLBACKINFO {

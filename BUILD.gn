@@ -730,7 +730,6 @@ static_library("fxcrt") {
     "core/fxcrt/fx_basic_coords.cpp",
     "core/fxcrt/fx_basic_gcc.cpp",
     "core/fxcrt/fx_basic_memmgr.cpp",
-    "core/fxcrt/fx_basic_plex.cpp",
     "core/fxcrt/fx_basic_utf.cpp",
     "core/fxcrt/fx_basic_util.cpp",
     "core/fxcrt/fx_basic_wstring.cpp",
@@ -755,7 +754,6 @@ static_library("fxcrt") {
     "core/fxcrt/fxcrt_stream.cpp",
     "core/fxcrt/fxcrt_windows.cpp",
     "core/fxcrt/fxcrt_windows.h",
-    "core/fxcrt/plex.h",
     "core/fxcrt/xml_int.h",
   ]
   configs += [ ":pdfium_core_config" ]
@@ -772,7 +770,6 @@ static_library("fxcrt") {
       "core/fxcrt/fx_arabic.cpp",
       "core/fxcrt/fx_arabic.h",
       "core/fxcrt/fx_arb.h",
-      "core/fxcrt/fx_basic_maps.cpp",
     ]
   }
 }
