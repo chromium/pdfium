@@ -1468,7 +1468,7 @@ int32_t CFX_TxtBreak::GetDisplayPos(const FX_TXTRUN* pTxtRun,
         if (chartype == FX_CHARTYPE_Combination) {
           CFX_Rect rtBBox;
           rtBBox.Reset();
-          if (pFont->GetCharBBox(wForm, rtBBox, false)) {
+          if (pFont->GetCharBBox(wForm, &rtBBox, false)) {
             pCharPos->m_OriginY =
                 fYBase + fFontSize -
                 fFontSize * (FX_FLOAT)rtBBox.height / (FX_FLOAT)iMaxHeight;
@@ -1479,7 +1479,7 @@ int32_t CFX_TxtBreak::GetDisplayPos(const FX_TXTRUN* pTxtRun,
                 FX_CHARTYPE_Combination) {
               CFX_Rect rtBox;
               rtBox.Reset();
-              if (pFont->GetCharBBox(wLast, rtBox, false)) {
+              if (pFont->GetCharBBox(wLast, &rtBox, false)) {
                 pCharPos->m_OriginY -= fFontSize * rtBox.height / iMaxHeight;
               }
             }
@@ -1494,7 +1494,7 @@ int32_t CFX_TxtBreak::GetDisplayPos(const FX_TXTRUN* pTxtRun,
         if (!bAdjusted && bVerticalChar && (dwProps & 0x00010000) != 0) {
           CFX_Rect rtBBox;
           rtBBox.Reset();
-          if (pFont->GetCharBBox(wForm, rtBBox, false)) {
+          if (pFont->GetCharBBox(wForm, &rtBBox, false)) {
             ptOffset.x = fFontSize * (850 - rtBBox.right()) / iMaxHeight;
             ptOffset.y = fFontSize * (iAscent - rtBBox.top - 150) / iMaxHeight;
           }
@@ -1610,7 +1610,7 @@ int32_t CFX_TxtBreak::GetCharRects(const FX_TXTRUN* pTxtRun,
   CFX_Rect bbox;
   bbox.Set(0, 0, 0, 0);
   if (bCharBBox)
-    bCharBBox = pFont->GetBBox(bbox);
+    bCharBBox = pFont->GetBBox(&bbox);
 
   FX_FLOAT fLeft = std::max(0.0f, bbox.left * fScale);
   FX_FLOAT fHeight = FXSYS_fabs(bbox.height * fScale);

@@ -249,7 +249,8 @@ class CFGAS_FontMgr {
       const CFX_ByteString& bsFaceName);
 
   CFX_FontDescriptors m_InstalledFonts;
-  CFX_MapPtrTemplate<uint32_t, CFX_FontDescriptorInfos*> m_Hash2CandidateList;
+  std::map<uint32_t, std::unique_ptr<CFX_FontDescriptorInfos>>
+      m_Hash2CandidateList;
   std::map<uint32_t, std::vector<CFX_RetainPtr<CFGAS_GEFont>>> m_Hash2Fonts;
   std::map<CFX_RetainPtr<CFGAS_GEFont>, CFX_RetainPtr<IFX_SeekableReadStream>>
       m_IFXFont2FileRead;

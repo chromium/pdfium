@@ -575,14 +575,6 @@ CFGAS_FontMgr::CFGAS_FontMgr(CFX_FontSourceEnum_File* pFontEnum)
 CFGAS_FontMgr::~CFGAS_FontMgr() {
   for (int32_t i = 0; i < m_InstalledFonts.GetSize(); i++)
     delete m_InstalledFonts[i];
-  FX_POSITION pos = m_Hash2CandidateList.GetStartPosition();
-  while (pos) {
-    uint32_t dwHash;
-    CFX_FontDescriptorInfos* pDescs;
-    m_Hash2CandidateList.GetNextAssoc(pos, dwHash, pDescs);
-    delete pDescs;
-  }
-  m_Hash2Fonts.clear();
 }
 
 bool CFGAS_FontMgr::EnumFontsFromFontMapper() {
@@ -645,12 +637,13 @@ CFX_RetainPtr<CFGAS_GEFont> CFGAS_FontMgr::GetFontByCodePage(
   if (!pFontArray->empty())
     return (*pFontArray)[0];
 
-  CFX_FontDescriptorInfos* sortedFonts = nullptr;
-  if (!m_Hash2CandidateList.Lookup(dwHash, sortedFonts)) {
-    sortedFonts = new CFX_FontDescriptorInfos;
+  CFX_FontDescriptorInfos* sortedFonts = m_Hash2CandidateList[dwHash].get();
+  if (!sortedFonts) {
+    auto pNewFonts = pdfium::MakeUnique<CFX_FontDescriptorInfos>();
+    sortedFonts = pNewFonts.get();
     MatchFonts(*sortedFonts, wCodePage, dwFontStyles,
                CFX_WideString(pszFontFamily), 0);
-    m_Hash2CandidateList.SetAt(dwHash, sortedFonts);
+    m_Hash2CandidateList[dwHash] = std::move(pNewFonts);
   }
   if (sortedFonts->GetSize() == 0)
     return nullptr;
@@ -688,12 +681,13 @@ CFX_RetainPtr<CFGAS_GEFont> CFGAS_FontMgr::GetFontByUnicode(
     if (VerifyUnicode((*pFonts)[i], wUnicode))
       return (*pFonts)[i];
   }
-  CFX_FontDescriptorInfos* sortedFonts = nullptr;
-  if (!m_Hash2CandidateList.Lookup(dwHash, sortedFonts)) {
-    sortedFonts = new CFX_FontDescriptorInfos;
+  CFX_FontDescriptorInfos* sortedFonts = m_Hash2CandidateList[dwHash].get();
+  if (!sortedFonts) {
+    auto pNewFonts = pdfium::MakeUnique<CFX_FontDescriptorInfos>();
+    sortedFonts = pNewFonts.get();
     MatchFonts(*sortedFonts, wCodePage, dwFontStyles,
                CFX_WideString(pszFontFamily), wUnicode);
-    m_Hash2CandidateList.SetAt(dwHash, sortedFonts);
+    m_Hash2CandidateList[dwHash] = std::move(pNewFonts);
   }
   for (int32_t i = 0; i < sortedFonts->GetSize(); ++i) {
     CFX_FontDescriptor* pDesc = sortedFonts->GetAt(i).pFont;

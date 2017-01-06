@@ -1319,7 +1319,7 @@ int32_t CFX_RTFBreak::GetDisplayPos(const FX_RTFTEXTOBJ* pText,
           if (!bAdjusted && bVerticalChar && (dwProps & 0x00010000) != 0) {
             CFX_Rect rtBBox;
             rtBBox.Reset();
-            if (pFont->GetCharBBox(wForm, rtBBox, bMBCSCode)) {
+            if (pFont->GetCharBBox(wForm, &rtBBox, bMBCSCode)) {
               ptOffset.x = fFontSize * (850 - rtBBox.right()) / 1000.0f;
               ptOffset.y = fFontSize * (1000 - rtBBox.height) / 2000.0f;
             }
@@ -1436,7 +1436,7 @@ int32_t CFX_RTFBreak::GetCharRects(const FX_RTFTEXTOBJ* pText,
   CFX_Rect bbox;
   bbox.Set(0, 0, 0, 0);
   if (bCharBBox)
-    bCharBBox = pFont->GetBBox(bbox);
+    bCharBBox = pFont->GetBBox(&bbox);
 
   FX_FLOAT fLeft = std::max(0.0f, bbox.left * fScale);
   FX_FLOAT fHeight = FXSYS_fabs(bbox.height * fScale);

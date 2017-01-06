@@ -214,6 +214,7 @@ bool CFGAS_GEFont::LoadFontInternal(std::unique_ptr<CFX_Font> pInternalFont) {
 bool CFGAS_GEFont::InitFont() {
   if (!m_pFont)
     return false;
+
   if (!m_pFontEncoding) {
     m_pFontEncoding.reset(FX_CreateFontEncodingEx(m_pFont));
     if (!m_pFontEncoding)
@@ -225,9 +226,6 @@ bool CFGAS_GEFont::InitFont() {
   }
   if (!m_pRectArray)
     m_pRectArray = pdfium::MakeUnique<CFX_MassArrayTemplate<CFX_Rect>>(16);
-  if (!m_pBBoxMap)
-    m_pBBoxMap = pdfium::MakeUnique<CFX_MapPtrToPtr>(16);
-
   return true;
 }
 
@@ -312,19 +310,19 @@ bool CFGAS_GEFont::GetCharWidthInternal(FX_WCHAR wUnicode,
 }
 
 bool CFGAS_GEFont::GetCharBBox(FX_WCHAR wUnicode,
-                               CFX_Rect& bbox,
+                               CFX_Rect* bbox,
                                bool bCharCode) {
   return GetCharBBoxInternal(wUnicode, bbox, true, bCharCode);
 }
 
 bool CFGAS_GEFont::GetCharBBoxInternal(FX_WCHAR wUnicode,
-                                       CFX_Rect& bbox,
+                                       CFX_Rect* bbox,
                                        bool bRecursive,
                                        bool bCharCode) {
   ASSERT(m_pRectArray);
-  ASSERT(m_pBBoxMap);
-  void* pRect = nullptr;
-  if (!m_pBBoxMap->Lookup((void*)(uintptr_t)wUnicode, pRect)) {
+  CFX_Rect* pRect = nullptr;
+  auto it = m_BBoxMap.find(wUnicode);
+  if (it == m_BBoxMap.end()) {
     CFX_RetainPtr<CFGAS_GEFont> pFont;
     int32_t iGlyph = GetGlyphIndex(wUnicode, true, &pFont, bCharCode);
     if (iGlyph != 0xFFFF && pFont) {
@@ -335,28 +333,31 @@ bool CFGAS_GEFont::GetCharBBoxInternal(FX_WCHAR wUnicode,
           rt.Set(rtBBox.left, rtBBox.top, rtBBox.Width(), rtBBox.Height());
           int32_t index = m_pRectArray->Add(rt);
           pRect = m_pRectArray->GetPtrAt(index);
-          m_pBBoxMap->SetAt((void*)(uintptr_t)wUnicode, pRect);
+          m_BBoxMap[wUnicode] = pRect;
         }
       } else if (pFont->GetCharBBoxInternal(wUnicode, bbox, false, bCharCode)) {
         return true;
       }
     }
+  } else {
+    pRect = it->second;
   }
   if (!pRect)
     return false;
 
-  bbox = *static_cast<const CFX_Rect*>(pRect);
+  *bbox = *pRect;
   return true;
 }
 
-bool CFGAS_GEFont::GetBBox(CFX_Rect& bbox) {
+bool CFGAS_GEFont::GetBBox(CFX_Rect* bbox) {
   FX_RECT rt(0, 0, 0, 0);
   if (!m_pFont->GetBBox(rt))
     return false;
-  bbox.left = rt.left;
-  bbox.width = rt.Width();
-  bbox.top = rt.bottom;
-  bbox.height = -rt.Height();
+
+  bbox->left = rt.left;
+  bbox->width = rt.Width();
+  bbox->top = rt.bottom;
+  bbox->height = -rt.Height();
   return true;
 }
 

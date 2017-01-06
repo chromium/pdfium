@@ -55,8 +55,8 @@ class CFGAS_GEFont : public CFX_Retainable {
   int32_t GetGlyphIndex(FX_WCHAR wUnicode, bool bCharCode = false);
   int32_t GetAscent() const;
   int32_t GetDescent() const;
-  bool GetCharBBox(FX_WCHAR wUnicode, CFX_Rect& bbox, bool bCharCode = false);
-  bool GetBBox(CFX_Rect& bbox);
+  bool GetCharBBox(FX_WCHAR wUnicode, CFX_Rect* bbox, bool bCharCode = false);
+  bool GetBBox(CFX_Rect* bbox);
   CFX_RetainPtr<CFGAS_GEFont> GetSubstFont(int32_t iGlyphIndex) const;
   CFX_Font* GetDevFont() const { return m_pFont; }
   void SetFontProvider(CXFA_PDFFontMgr* pProvider) { m_pProvider = pProvider; }
@@ -83,7 +83,7 @@ class CFGAS_GEFont : public CFX_Retainable {
   bool LoadFontInternal(std::unique_ptr<CFX_Font> pInternalFont);
   bool InitFont();
   bool GetCharBBoxInternal(FX_WCHAR wUnicode,
-                           CFX_Rect& bbox,
+                           CFX_Rect* bbox,
                            bool bRecursive,
                            bool bCharCode = false);
   bool GetCharWidthInternal(FX_WCHAR wUnicode,
@@ -109,7 +109,7 @@ class CFGAS_GEFont : public CFX_Retainable {
   std::unique_ptr<CFX_UnicodeEncoding> m_pFontEncoding;
   std::unique_ptr<CFX_DiscreteArrayTemplate<uint16_t>> m_pCharWidthMap;
   std::unique_ptr<CFX_MassArrayTemplate<CFX_Rect>> m_pRectArray;
-  std::unique_ptr<CFX_MapPtrToPtr> m_pBBoxMap;
+  std::map<FX_WCHAR, CFX_Rect*> m_BBoxMap;  // Rect owned by m_pRectArray.
   CXFA_PDFFontMgr* m_pProvider;  // not owned.
   std::vector<CFX_RetainPtr<CFGAS_GEFont>> m_SubstFonts;
   std::map<FX_WCHAR, CFX_RetainPtr<CFGAS_GEFont>> m_FontMapper;
