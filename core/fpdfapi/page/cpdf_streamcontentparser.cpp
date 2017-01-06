@@ -269,8 +269,6 @@ CPDF_StreamContentParser::CPDF_StreamContentParser(
       m_PathCurrentY(0.0f),
       m_PathClipType(0),
       m_pLastImage(nullptr),
-      m_pLastImageDict(nullptr),
-      m_pLastCloneImageDict(nullptr),
       m_bColored(false),
       m_bResourceMissing(false) {
   if (pmtContentToUser)
@@ -297,8 +295,6 @@ CPDF_StreamContentParser::CPDF_StreamContentParser(
 CPDF_StreamContentParser::~CPDF_StreamContentParser() {
   ClearAllParams();
   FX_Free(m_pPathPoints);
-  delete m_pLastImageDict;
-  delete m_pLastCloneImageDict;
 }
 
 int CPDF_StreamContentParser::GetNextParamPos() {

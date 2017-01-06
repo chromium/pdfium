@@ -216,8 +216,6 @@ class CPDF_StreamContentParser {
   uint8_t m_PathClipType;
   CFX_ByteString m_LastImageName;
   CPDF_Image* m_pLastImage;
-  CPDF_Dictionary* m_pLastImageDict;
-  CPDF_Dictionary* m_pLastCloneImageDict;
   bool m_bColored;
   FX_FLOAT m_Type3Data[6];
   bool m_bResourceMissing;
