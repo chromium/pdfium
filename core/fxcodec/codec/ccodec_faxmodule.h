@@ -9,6 +9,7 @@
 
 #include <memory>
 
+#include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_system.h"
 
 class CCodec_ScanlineDecoder;
@@ -25,6 +26,14 @@ class CCodec_FaxModule {
                                                         bool BlackIs1,
                                                         int Columns,
                                                         int Rows);
+#if _FX_OS_ == _FX_WIN32_DESKTOP_ || _FX_OS_ == _FX_WIN64_DESKTOP_
+  static void FaxEncode(const uint8_t* src_buf,
+                        int width,
+                        int height,
+                        int pitch,
+                        std::unique_ptr<uint8_t, FxFreeDeleter>* dest_buf,
+                        uint32_t* dest_size);
+#endif
 };
 
 #endif  // CORE_FXCODEC_CODEC_CCODEC_FAXMODULE_H_

@@ -9,8 +9,12 @@
 
 #include <windows.h>
 
+#include <memory>
+
 #include "core/fxge/cfx_pathdata.h"
 #include "core/fxge/ifx_renderdevicedriver.h"
+#include "core/fxge/win32/cfx_psrenderer.h"
+#include "core/fxge/win32/cpsoutput.h"
 #include "core/fxge/win32/dwrite_int.h"
 
 struct FXTEXT_CHARPOS;
@@ -258,6 +262,73 @@ class CGdiPrinterDriver : public CGdiDeviceDriver {
 
   const int m_HorzSize;
   const int m_VertSize;
+};
+
+class CPSPrinterDriver : public IFX_RenderDeviceDriver {
+ public:
+  CPSPrinterDriver(HDC hDC, int ps_level, bool bCmykOutput);
+  ~CPSPrinterDriver() override;
+
+ protected:
+  // IFX_RenderDeviceDriver
+  int GetDeviceCaps(int caps_id) const override;
+  bool StartRendering() override;
+  void EndRendering() override;
+  void SaveState() override;
+  void RestoreState(bool bKeepSaved) override;
+  bool SetClip_PathFill(const CFX_PathData* pPathData,
+                        const CFX_Matrix* pObject2Device,
+                        int fill_mode) override;
+  bool SetClip_PathStroke(const CFX_PathData* pPathData,
+                          const CFX_Matrix* pObject2Device,
+                          const CFX_GraphStateData* pGraphState) override;
+  bool DrawPath(const CFX_PathData* pPathData,
+                const CFX_Matrix* pObject2Device,
+                const CFX_GraphStateData* pGraphState,
+                uint32_t fill_color,
+                uint32_t stroke_color,
+                int fill_mode,
+                int blend_type) override;
+  bool GetClipBox(FX_RECT* pRect) override;
+  bool SetDIBits(const CFX_DIBSource* pBitmap,
+                 uint32_t color,
+                 const FX_RECT* pSrcRect,
+                 int left,
+                 int top,
+                 int blend_type) override;
+  bool StretchDIBits(const CFX_DIBSource* pBitmap,
+                     uint32_t color,
+                     int dest_left,
+                     int dest_top,
+                     int dest_width,
+                     int dest_height,
+                     const FX_RECT* pClipRect,
+                     uint32_t flags,
+                     int blend_type) override;
+  bool StartDIBits(const CFX_DIBSource* pBitmap,
+                   int bitmap_alpha,
+                   uint32_t color,
+                   const CFX_Matrix* pMatrix,
+                   uint32_t render_flags,
+                   void*& handle,
+                   int blend_type) override;
+  bool DrawDeviceText(int nChars,
+                      const FXTEXT_CHARPOS* pCharPos,
+                      CFX_Font* pFont,
+                      const CFX_Matrix* pObject2Device,
+                      FX_FLOAT font_size,
+                      uint32_t color) override;
+  void* GetPlatformSurface() const override;
+
+  HDC m_hDC;
+  bool m_bCmykOutput;
+  int m_Width;
+  int m_Height;
+  int m_nBitsPerPixel;
+  int m_HorzSize;
+  int m_VertSize;
+  std::unique_ptr<CPSOutput> m_pPSOutput;
+  CFX_PSRenderer m_PSRenderer;
 };
 
 #endif  // CORE_FXGE_WIN32_WIN32_INT_H_

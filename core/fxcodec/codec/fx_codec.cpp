@@ -97,6 +97,20 @@ uint8_t* CCodec_ScanlineDecoder::ReadNextLine() {
   return v_GetNextLine();
 }
 
+bool CCodec_BasicModule::RunLengthEncode(const uint8_t* src_buf,
+                                         uint32_t src_size,
+                                         uint8_t** dest_buf,
+                                         uint32_t* dest_size) {
+  return false;
+}
+
+bool CCodec_BasicModule::A85Encode(const uint8_t* src_buf,
+                                   uint32_t src_size,
+                                   uint8_t** dest_buf,
+                                   uint32_t* dest_size) {
+  return false;
+}
+
 #ifdef PDF_ENABLE_XFA
 CFX_DIBAttribute::CFX_DIBAttribute()
     : m_nXDPI(-1),

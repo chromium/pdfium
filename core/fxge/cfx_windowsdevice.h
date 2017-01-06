@@ -12,6 +12,8 @@
 #include <windows.h>
 #endif
 
+#include "core/fxge/cfx_renderdevice.h"
+
 class IFX_RenderDeviceDriver;
 
 #if defined(PDFIUM_PRINT_TEXT_WITH_GDI)

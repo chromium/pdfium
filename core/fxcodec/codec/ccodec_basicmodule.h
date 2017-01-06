@@ -22,6 +22,14 @@ class CCodec_BasicModule {
       int height,
       int nComps,
       int bpc);
+  bool RunLengthEncode(const uint8_t* src_buf,
+                       uint32_t src_size,
+                       uint8_t** dest_buf,
+                       uint32_t* dest_size);
+  bool A85Encode(const uint8_t* src_buf,
+                 uint32_t src_size,
+                 uint8_t** dest_buf,
+                 uint32_t* dest_size);
 };
 
 #endif  // CORE_FXCODEC_CODEC_CCODEC_BASICMODULE_H_

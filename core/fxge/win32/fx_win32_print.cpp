@@ -17,6 +17,7 @@
 #include "core/fxge/fx_freetype.h"
 #include "core/fxge/ge/fx_text_int.h"
 #include "core/fxge/win32/win32_int.h"
+#include "third_party/base/ptr_util.h"
 
 #if defined(PDFIUM_PRINT_TEXT_WITH_GDI)
 namespace {
@@ -325,4 +326,169 @@ bool CGdiPrinterDriver::DrawDeviceText(int nChars,
 #else
   return false;
 #endif
+}
+
+CPSPrinterDriver::CPSPrinterDriver(HDC hDC, int pslevel, bool bCmykOutput) {
+  m_hDC = hDC;
+  m_HorzSize = ::GetDeviceCaps(m_hDC, HORZSIZE);
+  m_VertSize = ::GetDeviceCaps(m_hDC, VERTSIZE);
+  m_Width = ::GetDeviceCaps(m_hDC, HORZRES);
+  m_Height = ::GetDeviceCaps(m_hDC, VERTRES);
+  m_nBitsPerPixel = ::GetDeviceCaps(m_hDC, BITSPIXEL);
+  m_pPSOutput = pdfium::MakeUnique<CPSOutput>(m_hDC);
+  m_PSRenderer.Init(m_pPSOutput.get(), pslevel, m_Width, m_Height, bCmykOutput);
+  m_bCmykOutput = bCmykOutput;
+  HRGN hRgn = ::CreateRectRgn(0, 0, 1, 1);
+  int ret = ::GetClipRgn(hDC, hRgn);
+  if (ret == 1) {
+    ret = ::GetRegionData(hRgn, 0, NULL);
+    if (ret) {
+      RGNDATA* pData = reinterpret_cast<RGNDATA*>(FX_Alloc(uint8_t, ret));
+      ret = ::GetRegionData(hRgn, ret, pData);
+      if (ret) {
+        CFX_PathData path;
+        path.AllocPointCount(pData->rdh.nCount * 5);
+        for (uint32_t i = 0; i < pData->rdh.nCount; i++) {
+          RECT* pRect =
+              reinterpret_cast<RECT*>(pData->Buffer + pData->rdh.nRgnSize * i);
+          path.AppendRect((FX_FLOAT)pRect->left, (FX_FLOAT)pRect->bottom,
+                          (FX_FLOAT)pRect->right, (FX_FLOAT)pRect->top);
+        }
+        m_PSRenderer.SetClip_PathFill(&path, NULL, FXFILL_WINDING);
+      }
+      FX_Free(pData);
+    }
+  }
+  ::DeleteObject(hRgn);
+}
+
+CPSPrinterDriver::~CPSPrinterDriver() {
+  EndRendering();
+}
+
+int CPSPrinterDriver::GetDeviceCaps(int caps_id) const {
+  switch (caps_id) {
+    case FXDC_DEVICE_CLASS:
+      return FXDC_PRINTER;
+    case FXDC_PIXEL_WIDTH:
+      return m_Width;
+    case FXDC_PIXEL_HEIGHT:
+      return m_Height;
+    case FXDC_BITS_PIXEL:
+      return m_nBitsPerPixel;
+    case FXDC_RENDER_CAPS:
+      return m_bCmykOutput ? FXRC_BIT_MASK | FXRC_CMYK_OUTPUT : FXRC_BIT_MASK;
+    case FXDC_HORZ_SIZE:
+      return m_HorzSize;
+    case FXDC_VERT_SIZE:
+      return m_VertSize;
+  }
+  return 0;
+}
+
+bool CPSPrinterDriver::StartRendering() {
+  return m_PSRenderer.StartRendering();
+}
+
+void CPSPrinterDriver::EndRendering() {
+  m_PSRenderer.EndRendering();
+}
+
+void CPSPrinterDriver::SaveState() {
+  m_PSRenderer.SaveState();
+}
+
+void CPSPrinterDriver::RestoreState(bool bKeepSaved) {
+  m_PSRenderer.RestoreState(bKeepSaved);
+}
+
+bool CPSPrinterDriver::SetClip_PathFill(const CFX_PathData* pPathData,
+                                        const CFX_Matrix* pObject2Device,
+                                        int fill_mode) {
+  m_PSRenderer.SetClip_PathFill(pPathData, pObject2Device, fill_mode);
+  return true;
+}
+
+bool CPSPrinterDriver::SetClip_PathStroke(
+    const CFX_PathData* pPathData,
+    const CFX_Matrix* pObject2Device,
+    const CFX_GraphStateData* pGraphState) {
+  m_PSRenderer.SetClip_PathStroke(pPathData, pObject2Device, pGraphState);
+  return true;
+}
+
+bool CPSPrinterDriver::DrawPath(const CFX_PathData* pPathData,
+                                const CFX_Matrix* pObject2Device,
+                                const CFX_GraphStateData* pGraphState,
+                                FX_ARGB fill_color,
+                                FX_ARGB stroke_color,
+                                int fill_mode,
+                                int blend_type) {
+  if (blend_type != FXDIB_BLEND_NORMAL) {
+    return false;
+  }
+  return m_PSRenderer.DrawPath(pPathData, pObject2Device, pGraphState,
+                               fill_color, stroke_color, fill_mode & 3);
+}
+
+bool CPSPrinterDriver::GetClipBox(FX_RECT* pRect) {
+  *pRect = m_PSRenderer.GetClipBox();
+  return true;
+}
+
+bool CPSPrinterDriver::SetDIBits(const CFX_DIBSource* pBitmap,
+                                 uint32_t color,
+                                 const FX_RECT* pSrcRect,
+                                 int left,
+                                 int top,
+                                 int blend_type) {
+  if (blend_type != FXDIB_BLEND_NORMAL)
+    return false;
+  return m_PSRenderer.SetDIBits(pBitmap, color, left, top);
+}
+
+bool CPSPrinterDriver::StretchDIBits(const CFX_DIBSource* pBitmap,
+                                     uint32_t color,
+                                     int dest_left,
+                                     int dest_top,
+                                     int dest_width,
+                                     int dest_height,
+                                     const FX_RECT* pClipRect,
+                                     uint32_t flags,
+                                     int blend_type) {
+  if (blend_type != FXDIB_BLEND_NORMAL)
+    return false;
+  return m_PSRenderer.StretchDIBits(pBitmap, color, dest_left, dest_top,
+                                    dest_width, dest_height, flags);
+}
+
+bool CPSPrinterDriver::StartDIBits(const CFX_DIBSource* pBitmap,
+                                   int bitmap_alpha,
+                                   uint32_t color,
+                                   const CFX_Matrix* pMatrix,
+                                   uint32_t render_flags,
+                                   void*& handle,
+                                   int blend_type) {
+  if (blend_type != FXDIB_BLEND_NORMAL)
+    return false;
+
+  if (bitmap_alpha < 255)
+    return false;
+
+  handle = nullptr;
+  return m_PSRenderer.DrawDIBits(pBitmap, color, pMatrix, render_flags);
+}
+
+bool CPSPrinterDriver::DrawDeviceText(int nChars,
+                                      const FXTEXT_CHARPOS* pCharPos,
+                                      CFX_Font* pFont,
+                                      const CFX_Matrix* pObject2Device,
+                                      FX_FLOAT font_size,
+                                      uint32_t color) {
+  return m_PSRenderer.DrawText(nChars, pCharPos, pFont, pObject2Device,
+                               font_size, color);
+}
+
+void* CPSPrinterDriver::GetPlatformSurface() const {
+  return m_hDC;
 }

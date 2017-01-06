@@ -893,6 +893,10 @@ static_library("fxge") {
 
   if (is_win) {
     sources += [
+      "core/fxge/win32/cfx_psrenderer.cpp",
+      "core/fxge/win32/cfx_psrenderer.h",
+      "core/fxge/win32/cpsoutput.cpp",
+      "core/fxge/win32/cpsoutput.h",
       "core/fxge/win32/dwrite_int.h",
       "core/fxge/win32/fx_win32_device.cpp",
       "core/fxge/win32/fx_win32_dib.cpp",
