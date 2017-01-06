@@ -301,6 +301,9 @@ void CAgg_PathData::BuildPath(const CFX_PathData* pPathData,
         pObject2Device->Transform(x2, y2);
         pObject2Device->Transform(x3, y3);
       }
+      HardClip(x0, y0);
+      HardClip(x2, y2);
+      HardClip(x3, y3);
       agg::curve4 curve(x0, y0, x, y, x2, y2, x3, y3);
       i += 2;
       m_PathData.add_path_curve(curve);
