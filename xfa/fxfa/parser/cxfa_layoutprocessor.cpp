@@ -6,6 +6,7 @@
 
 #include "xfa/fxfa/parser/cxfa_layoutprocessor.h"
 
+#include "third_party/base/ptr_util.h"
 #include "xfa/fxfa/parser/cxfa_contentlayoutitem.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_layoutpagemgr.h"
@@ -30,14 +31,10 @@ CXFA_LayoutProcessor* CXFA_Document::GetDocLayout() {
 
 CXFA_LayoutProcessor::CXFA_LayoutProcessor(CXFA_Document* pDocument)
     : m_pDocument(pDocument),
-      m_pRootItemLayoutProcessor(nullptr),
-      m_pLayoutPageMgr(nullptr),
       m_nProgressCounter(0),
       m_bNeeLayout(true) {}
 
-CXFA_LayoutProcessor::~CXFA_LayoutProcessor() {
-  ClearLayoutData();
-}
+CXFA_LayoutProcessor::~CXFA_LayoutProcessor() {}
 
 CXFA_Document* CXFA_LayoutProcessor::GetDocument() const {
   return m_pDocument;
@@ -47,8 +44,7 @@ int32_t CXFA_LayoutProcessor::StartLayout(bool bForceRestart) {
   if (!bForceRestart && !IsNeedLayout())
     return 100;
 
-  delete m_pRootItemLayoutProcessor;
-  m_pRootItemLayoutProcessor = nullptr;
+  m_pRootItemLayoutProcessor.reset();
   m_nProgressCounter = 0;
   CXFA_Node* pFormPacketNode =
       ToNode(m_pDocument->GetXFAObject(XFA_HASHCODE_Form));
@@ -59,14 +55,17 @@ int32_t CXFA_LayoutProcessor::StartLayout(bool bForceRestart) {
       pFormPacketNode->GetFirstChildByClass(XFA_Element::Subform);
   if (!pFormRoot)
     return -1;
+
   if (!m_pLayoutPageMgr)
-    m_pLayoutPageMgr = new CXFA_LayoutPageMgr(this);
+    m_pLayoutPageMgr = pdfium::MakeUnique<CXFA_LayoutPageMgr>(this);
   if (!m_pLayoutPageMgr->InitLayoutPage(pFormRoot))
     return -1;
+
   if (!m_pLayoutPageMgr->PrepareFirstPage(pFormRoot))
     return -1;
-  m_pRootItemLayoutProcessor =
-      new CXFA_ItemLayoutProcessor(pFormRoot, m_pLayoutPageMgr);
+
+  m_pRootItemLayoutProcessor = pdfium::MakeUnique<CXFA_ItemLayoutProcessor>(
+      pFormRoot, m_pLayoutPageMgr.get());
   m_nProgressCounter = 1;
   return 0;
 }
@@ -148,14 +147,6 @@ void CXFA_LayoutProcessor::AddChangedContainer(CXFA_Node* pContainer) {
 
 CXFA_ContainerLayoutItem* CXFA_LayoutProcessor::GetRootLayoutItem() const {
   return m_pLayoutPageMgr ? m_pLayoutPageMgr->GetRootLayoutItem() : nullptr;
-}
-
-void CXFA_LayoutProcessor::ClearLayoutData() {
-  delete m_pLayoutPageMgr;
-  m_pLayoutPageMgr = nullptr;
-  delete m_pRootItemLayoutProcessor;
-  m_pRootItemLayoutProcessor = nullptr;
-  m_nProgressCounter = 0;
 }
 
 bool CXFA_LayoutProcessor::IsNeedLayout() {
