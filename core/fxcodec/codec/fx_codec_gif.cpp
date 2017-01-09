@@ -147,9 +147,9 @@ int32_t CCodec_GifModule::LoadFrame(FXGIF_Context* ctx,
   if (ret == 1) {
     if (pAttribute) {
       pAttribute->m_nGifLeft =
-          ctx->gif_ptr->img_ptr_arr_ptr->GetAt(frame_num)->image_info_ptr->left;
+          (*ctx->gif_ptr->img_ptr_arr_ptr)[frame_num]->image_info_ptr->left;
       pAttribute->m_nGifTop =
-          ctx->gif_ptr->img_ptr_arr_ptr->GetAt(frame_num)->image_info_ptr->top;
+          (*ctx->gif_ptr->img_ptr_arr_ptr)[frame_num]->image_info_ptr->top;
       pAttribute->m_fAspectRatio = ctx->gif_ptr->pixel_aspect;
       if (ctx->gif_ptr->cmt_data_ptr) {
         const uint8_t* buf =

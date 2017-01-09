@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <memory>
 #include <utility>
+#include <vector>
 
 #include "core/fxcodec/fx_codec.h"
 #include "core/fxcrt/fx_ext.h"
@@ -567,37 +568,36 @@ void FlateUncompress(const uint8_t* src_buf,
     }
     dest_buf = guess_buf.release();
   } else {
-    CFX_ArrayTemplate<uint8_t*> result_tmp_bufs;
+    std::vector<uint8_t*> result_tmp_bufs;
     uint8_t* cur_buf = guess_buf.release();
     while (1) {
       int32_t ret = FPDFAPI_FlateOutput(context, cur_buf, buf_size);
       int32_t avail_buf_size = FPDFAPI_FlateGetAvailOut(context);
       if (ret != Z_OK) {
         last_buf_size = buf_size - avail_buf_size;
-        result_tmp_bufs.Add(cur_buf);
+        result_tmp_bufs.push_back(cur_buf);
         break;
       }
       if (avail_buf_size != 0) {
         last_buf_size = buf_size - avail_buf_size;
-        result_tmp_bufs.Add(cur_buf);
+        result_tmp_bufs.push_back(cur_buf);
         break;
       }
-
-      result_tmp_bufs.Add(cur_buf);
+      result_tmp_bufs.push_back(cur_buf);
       cur_buf = FX_Alloc(uint8_t, buf_size + 1);
       cur_buf[buf_size] = '\0';
     }
     dest_size = FPDFAPI_FlateGetTotalOut(context);
     offset = FPDFAPI_FlateGetTotalIn(context);
-    if (result_tmp_bufs.GetSize() == 1) {
+    if (result_tmp_bufs.size() == 1) {
       dest_buf = result_tmp_bufs[0];
     } else {
       uint8_t* result_buf = FX_Alloc(uint8_t, dest_size);
       uint32_t result_pos = 0;
-      for (int32_t i = 0; i < result_tmp_bufs.GetSize(); i++) {
+      for (size_t i = 0; i < result_tmp_bufs.size(); i++) {
         uint8_t* tmp_buf = result_tmp_bufs[i];
         uint32_t tmp_buf_size = buf_size;
-        if (i == result_tmp_bufs.GetSize() - 1) {
+        if (i == result_tmp_bufs.size() - 1) {
           tmp_buf_size = last_buf_size;
         }
         FXSYS_memcpy(result_buf + result_pos, tmp_buf, tmp_buf_size);

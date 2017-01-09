@@ -8,6 +8,7 @@
 #define CORE_FXCODEC_LGIF_FX_GIF_H_
 
 #include <setjmp.h>
+#include <vector>
 
 #include "core/fxcrt/fx_basic.h"
 
@@ -223,7 +224,7 @@ struct tag_gif_decompress_struct {
   uint32_t img_row_offset;
   uint32_t img_row_avail_size;
   uint8_t img_pass_num;
-  CFX_ArrayTemplate<GifImage*>* img_ptr_arr_ptr;
+  std::vector<GifImage*>* img_ptr_arr_ptr;
   uint8_t* (*gif_ask_buf_for_pal_fn)(gif_decompress_struct_p gif_ptr,
                                      int32_t pal_size);
   uint8_t* next_in;
@@ -250,7 +251,7 @@ struct tag_gif_decompress_struct {
                                      bool interlace);
   CFX_ByteString* cmt_data_ptr;
   GifGCE* gce_ptr;
-  CFX_ArrayTemplate<GifPlainText*>* pt_ptr_arr_ptr;
+  std::vector<GifPlainText*>* pt_ptr_arr_ptr;
 };
 typedef struct tag_gif_compress_struct gif_compress_struct;
 typedef gif_compress_struct* gif_compress_struct_p;

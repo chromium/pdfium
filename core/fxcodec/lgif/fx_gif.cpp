@@ -7,6 +7,7 @@
 #include "core/fxcodec/lgif/fx_gif.h"
 
 #include "core/fxcodec/lbmp/fx_bmp.h"
+#include "third_party/base/stl_util.h"
 
 void CGifLZWDecoder::Input(uint8_t* src_buf, uint32_t src_size) {
   next_in = src_buf;
@@ -372,16 +373,12 @@ void CGifLZWEncoder::Finish(uint8_t*& dst_buf,
   ClearTable();
 }
 gif_decompress_struct_p gif_create_decompress() {
-  gif_decompress_struct_p gif_ptr =
-      (gif_decompress_struct*)FX_Alloc(uint8_t, sizeof(gif_decompress_struct));
-  if (!gif_ptr)
-    return nullptr;
-
+  gif_decompress_struct_p gif_ptr = FX_Alloc(gif_decompress_struct, 1);
   FXSYS_memset(gif_ptr, 0, sizeof(gif_decompress_struct));
   gif_ptr->decode_status = GIF_D_STATUS_SIG;
-  gif_ptr->img_ptr_arr_ptr = new CFX_ArrayTemplate<GifImage*>;
+  gif_ptr->img_ptr_arr_ptr = new std::vector<GifImage*>;
   gif_ptr->cmt_data_ptr = new CFX_ByteString;
-  gif_ptr->pt_ptr_arr_ptr = new CFX_ArrayTemplate<GifPlainText*>;
+  gif_ptr->pt_ptr_arr_ptr = new std::vector<GifPlainText*>;
   return gif_ptr;
 }
 void gif_destroy_decompress(gif_decompress_struct_pp gif_ptr_ptr) {
@@ -393,9 +390,9 @@ void gif_destroy_decompress(gif_decompress_struct_pp gif_ptr_ptr) {
   FX_Free(gif_ptr->global_pal_ptr);
   delete gif_ptr->img_decoder_ptr;
   if (gif_ptr->img_ptr_arr_ptr) {
-    int32_t size_img_arr = gif_ptr->img_ptr_arr_ptr->GetSize();
-    for (int32_t i = 0; i < size_img_arr; i++) {
-      GifImage* p = gif_ptr->img_ptr_arr_ptr->GetAt(i);
+    size_t size_img_arr = gif_ptr->img_ptr_arr_ptr->size();
+    for (size_t i = 0; i < size_img_arr; i++) {
+      GifImage* p = (*gif_ptr->img_ptr_arr_ptr)[i];
       FX_Free(p->image_info_ptr);
       FX_Free(p->image_gce_ptr);
       FX_Free(p->image_row_buf);
@@ -404,31 +401,27 @@ void gif_destroy_decompress(gif_decompress_struct_pp gif_ptr_ptr) {
       }
       FX_Free(p);
     }
-    gif_ptr->img_ptr_arr_ptr->RemoveAll();
+    gif_ptr->img_ptr_arr_ptr->clear();
     delete gif_ptr->img_ptr_arr_ptr;
   }
   delete gif_ptr->cmt_data_ptr;
   FX_Free(gif_ptr->gce_ptr);
   if (gif_ptr->pt_ptr_arr_ptr) {
-    int32_t size_pt_arr = gif_ptr->pt_ptr_arr_ptr->GetSize();
-    for (int32_t i = 0; i < size_pt_arr; i++) {
-      GifPlainText* p = gif_ptr->pt_ptr_arr_ptr->GetAt(i);
+    size_t size_pt_arr = gif_ptr->pt_ptr_arr_ptr->size();
+    for (size_t i = 0; i < size_pt_arr; i++) {
+      GifPlainText* p = (*gif_ptr->pt_ptr_arr_ptr)[i];
       FX_Free(p->gce_ptr);
       FX_Free(p->pte_ptr);
       delete p->string_ptr;
       FX_Free(p);
     }
-    gif_ptr->pt_ptr_arr_ptr->RemoveAll();
+    gif_ptr->pt_ptr_arr_ptr->clear();
     delete gif_ptr->pt_ptr_arr_ptr;
   }
   FX_Free(gif_ptr);
 }
 gif_compress_struct_p gif_create_compress() {
-  gif_compress_struct_p gif_ptr =
-      (gif_compress_struct*)FX_Alloc(uint8_t, sizeof(gif_compress_struct));
-  if (!gif_ptr)
-    return nullptr;
-
+  gif_compress_struct_p gif_ptr = FX_Alloc(gif_compress_struct, 1);
   FXSYS_memset(gif_ptr, 0, sizeof(gif_compress_struct));
   gif_ptr->img_encoder_ptr = new CGifLZWEncoder;
   gif_ptr->header_ptr = (GifHeader*)FX_Alloc(uint8_t, sizeof(GifHeader));
@@ -724,7 +717,7 @@ int32_t gif_decode_extension(gif_decompress_struct_p gif_ptr) {
         *(gif_pt_ptr->string_ptr) +=
             CFX_ByteString((const FX_CHAR*)data_ptr, data_size);
       }
-      gif_ptr->pt_ptr_arr_ptr->Add(gif_pt_ptr);
+      gif_ptr->pt_ptr_arr_ptr->push_back(gif_pt_ptr);
     } break;
     case GIF_D_STATUS_EXT_GCE: {
       ASSERT(sizeof(GifGCE) == 5);
@@ -829,19 +822,19 @@ int32_t gif_decode_image_info(gif_decompress_struct_p gif_ptr) {
                                           &gif_image_ptr->image_data_pos);
   gif_image_ptr->image_data_pos += gif_ptr->skip_size;
   gif_takeover_gce_ptr(gif_ptr, &gif_image_ptr->image_gce_ptr);
-  gif_ptr->img_ptr_arr_ptr->Add(gif_image_ptr);
+  gif_ptr->img_ptr_arr_ptr->push_back(gif_image_ptr);
   gif_save_decoding_status(gif_ptr, GIF_D_STATUS_IMG_DATA);
   return 1;
 }
 int32_t gif_load_frame(gif_decompress_struct_p gif_ptr, int32_t frame_num) {
   if (!gif_ptr || frame_num < 0 ||
-      frame_num >= gif_ptr->img_ptr_arr_ptr->GetSize()) {
+      frame_num >= pdfium::CollectionSize<int>(*gif_ptr->img_ptr_arr_ptr)) {
     return 0;
   }
   uint8_t* data_size_ptr = nullptr;
   uint8_t* data_ptr = nullptr;
   uint32_t skip_size_org = gif_ptr->skip_size;
-  GifImage* gif_image_ptr = gif_ptr->img_ptr_arr_ptr->GetAt(frame_num);
+  GifImage* gif_image_ptr = (*gif_ptr->img_ptr_arr_ptr)[frame_num];
   uint32_t gif_img_row_bytes = gif_image_ptr->image_info_ptr->width;
   if (gif_ptr->decode_status == GIF_D_STATUS_TAIL) {
     if (gif_image_ptr->image_row_buf) {
@@ -1034,7 +1027,7 @@ uint32_t gif_get_avail_input(gif_decompress_struct_p gif_ptr,
   return gif_ptr->avail_in;
 }
 int32_t gif_get_frame_num(gif_decompress_struct_p gif_ptr) {
-  return gif_ptr->img_ptr_arr_ptr->GetSize();
+  return pdfium::CollectionSize<int32_t>(*gif_ptr->img_ptr_arr_ptr);
 }
 static bool gif_write_header(gif_compress_struct_p gif_ptr,
                              uint8_t*& dst_buf,
@@ -1068,12 +1061,11 @@ static bool gif_write_header(gif_compress_struct_p gif_ptr,
   return true;
 }
 void interlace_buf(const uint8_t* buf, uint32_t pitch, uint32_t height) {
-  CFX_ArrayTemplate<uint8_t*> pass[4];
-  int i, j;
-  uint32_t row;
-  row = 0;
+  std::vector<uint8_t*> pass[4];
+  uint32_t row = 0;
   uint8_t* temp;
   while (row < height) {
+    size_t j;
     if (row % 8 == 0) {
       j = 0;
     } else if (row % 4 == 0) {
@@ -1085,13 +1077,13 @@ void interlace_buf(const uint8_t* buf, uint32_t pitch, uint32_t height) {
     }
     temp = FX_Alloc(uint8_t, pitch);
     FXSYS_memcpy(temp, &buf[pitch * row], pitch);
-    pass[j].Add(temp);
+    pass[j].push_back(temp);
     row++;
   }
-  for (i = 0, row = 0; i < 4; i++) {
-    for (j = 0; j < pass[i].GetSize(); j++, row++) {
-      FXSYS_memcpy((uint8_t*)&buf[pitch * row], pass[i].GetAt(j), pitch);
-      FX_Free(pass[i].GetAt(j));
+  for (size_t i = 0, row = 0; i < 4; i++) {
+    for (size_t j = 0; j < pass[i].size(); j++, row++) {
+      FXSYS_memcpy((uint8_t*)&buf[pitch * row], pass[i][j], pitch);
+      FX_Free(pass[i][j]);
     }
   }
 }

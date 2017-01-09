@@ -589,10 +589,10 @@ void CPDF_TextPage::ProcessObject() {
       }
     }
   }
-  for (int i = 0; i < m_LineObj.GetSize(); i++)
-    ProcessTextObject(m_LineObj.GetAt(i));
+  for (const auto& obj : m_LineObj)
+    ProcessTextObject(obj);
 
-  m_LineObj.RemoveAll();
+  m_LineObj.clear();
   CloseTempLine();
 }
 
@@ -740,17 +740,17 @@ void CPDF_TextPage::ProcessTextObject(
                    pTextObj->m_Top);
   if (FXSYS_fabs(pTextObj->m_Right - pTextObj->m_Left) < 0.01f)
     return;
-  int count = m_LineObj.GetSize();
+  size_t count = m_LineObj.size();
   PDFTEXT_Obj Obj;
   Obj.m_pTextObj = pTextObj;
   Obj.m_formMatrix = formMatrix;
   if (count == 0) {
-    m_LineObj.Add(Obj);
+    m_LineObj.push_back(Obj);
     return;
   }
   if (IsSameAsPreTextObject(pTextObj, pObjList, ObjPos))
     return;
-  PDFTEXT_Obj prev_Obj = m_LineObj.GetAt(count - 1);
+  PDFTEXT_Obj prev_Obj = m_LineObj[count - 1];
   CPDF_TextObjectItem item;
   int nItem = prev_Obj.m_pTextObj->CountItems();
   prev_Obj.m_pTextObj->GetItemInfo(nItem - 1, &item);
@@ -781,29 +781,26 @@ void CPDF_TextPage::ProcessTextObject(
   formMatrix.Transform(this_x, this_y);
   m_DisplayMatrix.Transform(this_x, this_y);
   if (FXSYS_fabs(this_y - prev_y) > threshold * 2) {
-    for (int i = 0; i < count; i++)
-      ProcessTextObject(m_LineObj.GetAt(i));
-    m_LineObj.RemoveAll();
-    m_LineObj.Add(Obj);
+    for (size_t i = 0; i < count; i++)
+      ProcessTextObject(m_LineObj[i]);
+    m_LineObj.clear();
+    m_LineObj.push_back(Obj);
     return;
   }
-  int i = 0;
-  for (i = count - 1; i >= 0; i--) {
-    PDFTEXT_Obj prev_text_obj = m_LineObj.GetAt(i);
+  size_t i;
+  for (i = count; i > 0; --i) {
+    PDFTEXT_Obj prev_text_obj = m_LineObj[i - 1];
     FX_FLOAT Prev_x = prev_text_obj.m_pTextObj->GetPosX(),
              Prev_y = prev_text_obj.m_pTextObj->GetPosY();
     prev_text_obj.m_formMatrix.Transform(Prev_x, Prev_y);
     m_DisplayMatrix.Transform(Prev_x, Prev_y);
     if (this_x >= Prev_x) {
-      if (i == count - 1)
-        m_LineObj.Add(Obj);
-      else
-        m_LineObj.InsertAt(i + 1, Obj);
+      m_LineObj.insert(m_LineObj.begin() + i, Obj);
       break;
     }
   }
-  if (i < 0)
-    m_LineObj.InsertAt(0, Obj);
+  if (i == 0)
+    m_LineObj.insert(m_LineObj.begin(), Obj);
 }
 
 FPDFText_MarkedContent CPDF_TextPage::PreMarkedContent(PDFTEXT_Obj Obj) {

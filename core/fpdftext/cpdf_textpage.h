@@ -170,9 +170,8 @@ class CPDF_TextPage {
   CFX_Matrix m_perMatrix;
   bool m_bIsParsed;
   CFX_Matrix m_DisplayMatrix;
-  CFX_ArrayTemplate<FPDF_SEGMENT> m_Segments;
   std::vector<CFX_FloatRect> m_SelRects;
-  CFX_ArrayTemplate<PDFTEXT_Obj> m_LineObj;
+  std::vector<PDFTEXT_Obj> m_LineObj;
   TextOrientation m_TextlineDir;
   CFX_FloatRect m_CurlineRect;
 };
