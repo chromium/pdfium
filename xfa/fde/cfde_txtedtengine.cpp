@@ -675,10 +675,6 @@ void CFDE_TxtEdtEngine::EndLayout() {
   Unlock();
 }
 
-bool CFDE_TxtEdtEngine::Optimize(IFX_Pause* pPause) {
-  return m_pTxtBuf->Optimize(pPause);
-}
-
 CFDE_TxtEdtBuf* CFDE_TxtEdtEngine::GetTextBuf() const {
   return m_pTxtBuf.get();
 }

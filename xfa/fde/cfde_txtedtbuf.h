@@ -25,16 +25,15 @@ class CFDE_TxtEdtBuf {
   void SetText(const CFX_WideString& wsText);
   CFX_WideString GetText() const;
   FX_WCHAR GetCharByIndex(int32_t nIndex) const;
-  CFX_WideString GetRange(int32_t nBegin, int32_t nCount = -1) const;
+  CFX_WideString GetRange(int32_t nBegin, int32_t nCount) const;
 
-  void Insert(int32_t nPos, const FX_WCHAR* lpText, int32_t nLength = 1);
-  void Delete(int32_t nIndex, int32_t nLength = 1);
-  void Clear(bool bRelease = true);
-
-  bool Optimize(IFX_Pause* pPause = nullptr);
+  void Insert(int32_t nPos, const FX_WCHAR* lpText, int32_t nLength);
+  void Delete(int32_t nIndex, int32_t nLength);
+  void Clear(bool bRelease);
 
  private:
   friend class CFDE_TxtEdtBufIter;
+  friend class CFDE_TxtEdtBufTest;
 
   struct FDE_CHUNKHEADER {
     int32_t nUsed;
@@ -49,6 +48,8 @@ class CFDE_TxtEdtBuf {
   void ResetChunkBuffer(int32_t nDefChunkCount, int32_t nChunkSize);
   int32_t CP2Index(const FDE_CHUNKPLACE& cp) const;
   void Index2CP(int32_t nIndex, FDE_CHUNKPLACE& cp) const;
+
+  void SetChunkSizeForTesting(size_t size);
 
   int32_t m_nChunkSize;
 

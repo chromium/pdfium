@@ -69,7 +69,6 @@ class CFDE_TxtEdtEngine {
   int32_t DoLayout(IFX_Pause* pPause);
   void EndLayout();
 
-  bool Optimize(IFX_Pause* pPause = nullptr);
   int32_t CountParags() const;
   CFDE_TxtEdtParag* GetParag(int32_t nParagIndex) const;
   IFX_CharIter* CreateCharIter();
