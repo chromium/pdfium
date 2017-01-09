@@ -5,11 +5,13 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include <map>
+#include <vector>
 
 #include "fpdfsdk/pdfwindow/PWL_ScrollBar.h"
 #include "fpdfsdk/pdfwindow/PWL_Utils.h"
 #include "fpdfsdk/pdfwindow/PWL_Wnd.h"
 #include "third_party/base/ptr_util.h"
+#include "third_party/base/stl_util.h"
 
 static std::map<int32_t, CPWL_Timer*>& GetPWLTimeMap() {
   // Leak the object at shutdown.
@@ -111,8 +113,8 @@ class CPWL_MsgControl {
   ~CPWL_MsgControl() { Default(); }
 
   void Default() {
-    m_aMousePath.RemoveAll();
-    m_aKeyboardPath.RemoveAll();
+    m_aMousePath.clear();
+    m_aKeyboardPath.clear();
     m_pMainMouseWnd = nullptr;
     m_pMainKeyboardWnd = nullptr;
   }
@@ -126,14 +128,7 @@ class CPWL_MsgControl {
   }
 
   bool IsWndCaptureMouse(const CPWL_Wnd* pWnd) const {
-    if (pWnd) {
-      for (int32_t i = 0, sz = m_aMousePath.GetSize(); i < sz; i++) {
-        if (m_aMousePath.GetAt(i) == pWnd)
-          return true;
-      }
-    }
-
-    return false;
+    return pWnd && pdfium::ContainsValue(m_aMousePath, pWnd);
   }
 
   bool IsMainCaptureKeyboard(const CPWL_Wnd* pWnd) const {
@@ -141,50 +136,38 @@ class CPWL_MsgControl {
   }
 
   bool IsWndCaptureKeyboard(const CPWL_Wnd* pWnd) const {
-    if (pWnd) {
-      for (int32_t i = 0, sz = m_aKeyboardPath.GetSize(); i < sz; i++) {
-        if (m_aKeyboardPath.GetAt(i) == pWnd)
-          return true;
-      }
-    }
-
-    return false;
+    return pWnd && pdfium::ContainsValue(m_aKeyboardPath, pWnd);
   }
 
   void SetFocus(CPWL_Wnd* pWnd) {
-    m_aKeyboardPath.RemoveAll();
-
+    m_aKeyboardPath.clear();
     if (pWnd) {
       m_pMainKeyboardWnd = pWnd;
-
       CPWL_Wnd* pParent = pWnd;
       while (pParent) {
-        m_aKeyboardPath.Add(pParent);
+        m_aKeyboardPath.push_back(pParent);
         pParent = pParent->GetParentWindow();
       }
-
       pWnd->OnSetFocus();
     }
   }
 
   void KillFocus() {
-    if (m_aKeyboardPath.GetSize() > 0)
-      if (CPWL_Wnd* pWnd = m_aKeyboardPath.GetAt(0))
+    if (!m_aKeyboardPath.empty())
+      if (CPWL_Wnd* pWnd = m_aKeyboardPath[0])
         pWnd->OnKillFocus();
 
     m_pMainKeyboardWnd = nullptr;
-    m_aKeyboardPath.RemoveAll();
+    m_aKeyboardPath.clear();
   }
 
   void SetCapture(CPWL_Wnd* pWnd) {
-    m_aMousePath.RemoveAll();
-
+    m_aMousePath.clear();
     if (pWnd) {
       m_pMainMouseWnd = pWnd;
-
       CPWL_Wnd* pParent = pWnd;
       while (pParent) {
-        m_aMousePath.Add(pParent);
+        m_aMousePath.push_back(pParent);
         pParent = pParent->GetParentWindow();
       }
     }
@@ -192,12 +175,12 @@ class CPWL_MsgControl {
 
   void ReleaseCapture() {
     m_pMainMouseWnd = nullptr;
-    m_aMousePath.RemoveAll();
+    m_aMousePath.clear();
   }
 
  private:
-  CFX_ArrayTemplate<CPWL_Wnd*> m_aMousePath;
-  CFX_ArrayTemplate<CPWL_Wnd*> m_aKeyboardPath;
+  std::vector<CPWL_Wnd*> m_aMousePath;
+  std::vector<CPWL_Wnd*> m_aKeyboardPath;
   CPWL_Wnd* m_pCreatedWnd;
   CPWL_Wnd* m_pMainMouseWnd;
   CPWL_Wnd* m_pMainKeyboardWnd;
