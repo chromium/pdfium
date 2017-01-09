@@ -6,6 +6,7 @@
 
 #include "xfa/fgas/font/cfgas_fontmgr.h"
 
+#include <algorithm>
 #include <memory>
 #include <utility>
 
@@ -572,10 +573,7 @@ std::unique_ptr<CFGAS_FontMgr> CFGAS_FontMgr::Create(
 CFGAS_FontMgr::CFGAS_FontMgr(CFX_FontSourceEnum_File* pFontEnum)
     : m_pFontSource(pFontEnum) {}
 
-CFGAS_FontMgr::~CFGAS_FontMgr() {
-  for (int32_t i = 0; i < m_InstalledFonts.GetSize(); i++)
-    delete m_InstalledFonts[i];
-}
+CFGAS_FontMgr::~CFGAS_FontMgr() {}
 
 bool CFGAS_FontMgr::EnumFontsFromFontMapper() {
   CFX_FontMapper* pFontMapper =
@@ -598,7 +596,7 @@ bool CFGAS_FontMgr::EnumFontsFromFontMapper() {
         CFX_WideString::FromLocal(pFontMapper->GetFaceName(i).c_str());
     RegisterFaces(pFontStream, &wsFaceName);
   }
-  return m_InstalledFonts.GetSize() != 0;
+  return !m_InstalledFonts.empty();
 }
 
 bool CFGAS_FontMgr::EnumFontsFromFiles() {
@@ -611,7 +609,7 @@ bool CFGAS_FontMgr::EnumFontsFromFiles() {
     if (pFontStream)
       RegisterFaces(pFontStream, nullptr);
   }
-  return m_InstalledFonts.GetSize() != 0;
+  return !m_InstalledFonts.empty();
 }
 
 bool CFGAS_FontMgr::EnumFonts() {
@@ -637,18 +635,19 @@ CFX_RetainPtr<CFGAS_GEFont> CFGAS_FontMgr::GetFontByCodePage(
   if (!pFontArray->empty())
     return (*pFontArray)[0];
 
-  CFX_FontDescriptorInfos* sortedFonts = m_Hash2CandidateList[dwHash].get();
-  if (!sortedFonts) {
-    auto pNewFonts = pdfium::MakeUnique<CFX_FontDescriptorInfos>();
-    sortedFonts = pNewFonts.get();
-    MatchFonts(*sortedFonts, wCodePage, dwFontStyles,
+  std::vector<CFX_FontDescriptorInfo>* sortedFontInfos =
+      m_Hash2CandidateList[dwHash].get();
+  if (!sortedFontInfos) {
+    auto pNewFonts = pdfium::MakeUnique<std::vector<CFX_FontDescriptorInfo>>();
+    sortedFontInfos = pNewFonts.get();
+    MatchFonts(sortedFontInfos, wCodePage, dwFontStyles,
                CFX_WideString(pszFontFamily), 0);
     m_Hash2CandidateList[dwHash] = std::move(pNewFonts);
   }
-  if (sortedFonts->GetSize() == 0)
+  if (sortedFontInfos->empty())
     return nullptr;
 
-  CFX_FontDescriptor* pDesc = sortedFonts->GetAt(0).pFont;
+  CFX_FontDescriptor* pDesc = (*sortedFontInfos)[0].pFont;
   CFX_RetainPtr<CFGAS_GEFont> pFont =
       LoadFont(pDesc->m_wsFaceName, pDesc->m_nFaceIndex, nullptr);
   if (!pFont)
@@ -681,16 +680,17 @@ CFX_RetainPtr<CFGAS_GEFont> CFGAS_FontMgr::GetFontByUnicode(
     if (VerifyUnicode((*pFonts)[i], wUnicode))
       return (*pFonts)[i];
   }
-  CFX_FontDescriptorInfos* sortedFonts = m_Hash2CandidateList[dwHash].get();
-  if (!sortedFonts) {
-    auto pNewFonts = pdfium::MakeUnique<CFX_FontDescriptorInfos>();
-    sortedFonts = pNewFonts.get();
-    MatchFonts(*sortedFonts, wCodePage, dwFontStyles,
+  std::vector<CFX_FontDescriptorInfo>* sortedFontInfos =
+      m_Hash2CandidateList[dwHash].get();
+  if (!sortedFontInfos) {
+    auto pNewFonts = pdfium::MakeUnique<std::vector<CFX_FontDescriptorInfo>>();
+    sortedFontInfos = pNewFonts.get();
+    MatchFonts(sortedFontInfos, wCodePage, dwFontStyles,
                CFX_WideString(pszFontFamily), wUnicode);
     m_Hash2CandidateList[dwHash] = std::move(pNewFonts);
   }
-  for (int32_t i = 0; i < sortedFonts->GetSize(); ++i) {
-    CFX_FontDescriptor* pDesc = sortedFonts->GetAt(i).pFont;
+  for (const auto& info : *sortedFontInfos) {
+    CFX_FontDescriptor* pDesc = info.pFont;
     if (!VerifyUnicode(pDesc, wUnicode))
       continue;
     CFX_RetainPtr<CFGAS_GEFont> pFont =
@@ -874,36 +874,23 @@ CFX_RetainPtr<IFX_SeekableReadStream> CFGAS_FontMgr::CreateFontStream(
   return nullptr;
 }
 
-int32_t CFGAS_FontMgr::MatchFonts(CFX_FontDescriptorInfos& MatchedFonts,
-                                  uint16_t wCodePage,
-                                  uint32_t dwFontStyles,
-                                  const CFX_WideString& FontName,
-                                  FX_WCHAR wcUnicode) {
-  MatchedFonts.RemoveAll();
-  CFX_WideString wsNormalizedFontName = FontName;
-
-  CFX_FontDescriptor* pFont = nullptr;
-  int32_t nCount = m_InstalledFonts.GetSize();
-  for (int32_t i = 0; i < nCount; i++) {
-    pFont = m_InstalledFonts[i];
-    int32_t nPenalty = CalcPenalty(pFont, wCodePage, dwFontStyles,
-                                   wsNormalizedFontName, wcUnicode);
+void CFGAS_FontMgr::MatchFonts(
+    std::vector<CFX_FontDescriptorInfo>* pMatchedFonts,
+    uint16_t wCodePage,
+    uint32_t dwFontStyles,
+    const CFX_WideString& FontName,
+    FX_WCHAR wcUnicode) {
+  pMatchedFonts->clear();
+  for (const auto& pFont : m_InstalledFonts) {
+    int32_t nPenalty =
+        CalcPenalty(pFont.get(), wCodePage, dwFontStyles, FontName, wcUnicode);
     if (nPenalty >= 0xffff)
       continue;
-
-    FX_FontDescriptorInfo FontInfo;
-    FontInfo.pFont = pFont;
-    FontInfo.nPenalty = nPenalty;
-    MatchedFonts.Add(FontInfo);
-    if (MatchedFonts.GetSize() == 0xffff)
+    pMatchedFonts->push_back({pFont.get(), nPenalty});
+    if (pMatchedFonts->size() == 0xffff)
       break;
   }
-  if (MatchedFonts.GetSize() == 0)
-    return 0;
-
-  CFX_SSortTemplate<FX_FontDescriptorInfo> ssort;
-  ssort.ShellSort(MatchedFonts.GetData(), MatchedFonts.GetSize());
-  return MatchedFonts.GetSize();
+  std::sort(pMatchedFonts->begin(), pMatchedFonts->end());
 }
 
 int32_t CFGAS_FontMgr::CalcPenalty(CFX_FontDescriptor* pInstalled,
@@ -1003,7 +990,7 @@ void CFGAS_FontMgr::RegisterFace(FXFT_Face pFace,
   if ((pFace->face_flags & FT_FACE_FLAG_SCALABLE) == 0)
     return;
 
-  std::unique_ptr<CFX_FontDescriptor> pFont(new CFX_FontDescriptor);
+  auto pFont = pdfium::MakeUnique<CFX_FontDescriptor>();
   pFont->m_dwFontStyles |= FXFT_Is_Face_Bold(pFace) ? FX_FONTSTYLE_Bold : 0;
   pFont->m_dwFontStyles |= FXFT_Is_Face_Italic(pFace) ? FX_FONTSTYLE_Italic : 0;
   pFont->m_dwFontStyles |= GetFlags(pFace);
@@ -1029,7 +1016,7 @@ void CFGAS_FontMgr::RegisterFace(FXFT_Face pFace,
       pFaceName ? *pFaceName
                 : CFX_WideString::FromLocal(FXFT_Get_Postscript_Name(pFace));
   pFont->m_nFaceIndex = pFace->face_index;
-  m_InstalledFonts.Add(pFont.release());
+  m_InstalledFonts.push_back(std::move(pFont));
 }
 
 void CFGAS_FontMgr::RegisterFaces(

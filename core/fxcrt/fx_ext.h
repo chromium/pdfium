@@ -99,27 +99,4 @@ void FX_GUID_ToString(FX_LPCGUID pGUID,
                       bool bSeparator = true);
 #endif  // PDF_ENABLE_XFA
 
-template <class baseType>
-class CFX_SSortTemplate {
- public:
-  void ShellSort(baseType* pArray, int32_t iCount) {
-    ASSERT(pArray && iCount > 0);
-    int32_t i, j, gap;
-    baseType v1, v2;
-    gap = iCount >> 1;
-    while (gap > 0) {
-      for (i = gap; i < iCount; i++) {
-        j = i - gap;
-        v1 = pArray[i];
-        while (j > -1 && (v2 = pArray[j]) > v1) {
-          pArray[j + gap] = v2;
-          j -= gap;
-        }
-        pArray[j + gap] = v1;
-      }
-      gap >>= 1;
-    }
-  }
-};
-
 #endif  // CORE_FXCRT_FX_EXT_H_

@@ -146,25 +146,21 @@ class CFX_FontDescriptor {
   uint32_t m_dwCsb[2];
 };
 
-typedef CFX_ArrayTemplate<CFX_FontDescriptor*> CFX_FontDescriptors;
-
-struct FX_FontDescriptorInfo {
+class CFX_FontDescriptorInfo {
  public:
   CFX_FontDescriptor* pFont;
   int32_t nPenalty;
 
-  bool operator>(const FX_FontDescriptorInfo& other) const {
+  bool operator>(const CFX_FontDescriptorInfo& other) const {
     return nPenalty > other.nPenalty;
   }
-  bool operator<(const FX_FontDescriptorInfo& other) const {
+  bool operator<(const CFX_FontDescriptorInfo& other) const {
     return nPenalty < other.nPenalty;
   }
-  bool operator==(const FX_FontDescriptorInfo& other) const {
+  bool operator==(const CFX_FontDescriptorInfo& other) const {
     return nPenalty == other.nPenalty;
   }
 };
-
-typedef CFX_ArrayTemplate<FX_FontDescriptorInfo> CFX_FontDescriptorInfos;
 
 struct FX_HandleParentPath {
   FX_HandleParentPath() {}
@@ -226,11 +222,11 @@ class CFGAS_FontMgr {
   bool VerifyUnicode(const CFX_RetainPtr<CFGAS_GEFont>& pFont,
                      FX_WCHAR wcUnicode);
   int32_t IsPartName(const CFX_WideString& Name1, const CFX_WideString& Name2);
-  int32_t MatchFonts(CFX_FontDescriptorInfos& MatchedFonts,
-                     uint16_t wCodePage,
-                     uint32_t dwFontStyles,
-                     const CFX_WideString& FontName,
-                     FX_WCHAR wcUnicode = 0xFFFE);
+  void MatchFonts(std::vector<CFX_FontDescriptorInfo>* MatchedFonts,
+                  uint16_t wCodePage,
+                  uint32_t dwFontStyles,
+                  const CFX_WideString& FontName,
+                  FX_WCHAR wcUnicode = 0xFFFE);
   int32_t CalcPenalty(CFX_FontDescriptor* pInstalled,
                       uint16_t wCodePage,
                       uint32_t dwFontStyles,
@@ -248,14 +244,14 @@ class CFGAS_FontMgr {
   CFX_RetainPtr<IFX_SeekableReadStream> CreateFontStream(
       const CFX_ByteString& bsFaceName);
 
-  CFX_FontDescriptors m_InstalledFonts;
-  std::map<uint32_t, std::unique_ptr<CFX_FontDescriptorInfos>>
+  CFX_FontSourceEnum_File* const m_pFontSource;
+  std::vector<std::unique_ptr<CFX_FontDescriptor>> m_InstalledFonts;
+  std::map<uint32_t, std::unique_ptr<std::vector<CFX_FontDescriptorInfo>>>
       m_Hash2CandidateList;
   std::map<uint32_t, std::vector<CFX_RetainPtr<CFGAS_GEFont>>> m_Hash2Fonts;
   std::map<CFX_RetainPtr<CFGAS_GEFont>, CFX_RetainPtr<IFX_SeekableReadStream>>
       m_IFXFont2FileRead;
   std::set<FX_WCHAR> m_FailedUnicodesSet;
-  CFX_FontSourceEnum_File* const m_pFontSource;
 };
 #endif  // _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
 
