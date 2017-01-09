@@ -5,6 +5,7 @@
 #include <limits>
 #include <string>
 
+#include "core/fpdfapi/parser/cpdf_object.h"
 #include "core/fpdfapi/parser/cpdf_parser.h"
 #include "core/fpdfapi/parser/cpdf_syntax_parser.h"
 #include "core/fxcrt/fx_ext.h"
@@ -142,4 +143,14 @@ TEST(cpdf_syntax_parser, ReadHexString) {
     EXPECT_EQ("", parser.ReadHexString());
     EXPECT_EQ(1, parser.SavePos());
   }
+}
+
+TEST(cpdf_syntax_parser, GetInvalidReference) {
+  CPDF_SyntaxParser parser;
+  // Data with a reference with number CPDF_Object::kInvalidObjNum
+  uint8_t data[] = "4294967295 0 R";
+  parser.InitParser(IFX_MemoryStream::Create(data, 14, false), 0);
+  std::unique_ptr<CPDF_Object> ref =
+      parser.GetObject(nullptr, CPDF_Object::kInvalidObjNum, 0, false);
+  EXPECT_FALSE(ref);
 }

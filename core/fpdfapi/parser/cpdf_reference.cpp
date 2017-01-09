@@ -10,7 +10,7 @@
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 
-CPDF_Reference::CPDF_Reference(CPDF_IndirectObjectHolder* pDoc, int objnum)
+CPDF_Reference::CPDF_Reference(CPDF_IndirectObjectHolder* pDoc, uint32_t objnum)
     : m_pObjList(pDoc), m_RefObjNum(objnum) {}
 
 CPDF_Reference::~CPDF_Reference() {}

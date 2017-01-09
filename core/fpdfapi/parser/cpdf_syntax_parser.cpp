@@ -386,8 +386,10 @@ std::unique_ptr<CPDF_Object> CPDF_SyntaxParser::GetObject(
     if (bIsNumber) {
       CFX_ByteString nextword2 = GetNextWord(nullptr);
       if (nextword2 == "R") {
-        return pdfium::MakeUnique<CPDF_Reference>(pObjList,
-                                                  FXSYS_atoui(word.c_str()));
+        uint32_t objnum = FXSYS_atoui(word.c_str());
+        if (objnum == CPDF_Object::kInvalidObjNum)
+          return nullptr;
+        return pdfium::MakeUnique<CPDF_Reference>(pObjList, objnum);
       }
     }
     m_Pos = SavedPos;
@@ -505,8 +507,10 @@ std::unique_ptr<CPDF_Object> CPDF_SyntaxParser::GetObjectForStrict(
     if (bIsNumber) {
       CFX_ByteString nextword2 = GetNextWord(nullptr);
       if (nextword2 == "R") {
-        return pdfium::MakeUnique<CPDF_Reference>(pObjList,
-                                                  FXSYS_atoui(word.c_str()));
+        uint32_t objnum = FXSYS_atoui(word.c_str());
+        if (objnum == CPDF_Object::kInvalidObjNum)
+          return nullptr;
+        return pdfium::MakeUnique<CPDF_Reference>(pObjList, objnum);
       }
     }
     m_Pos = SavedPos;
