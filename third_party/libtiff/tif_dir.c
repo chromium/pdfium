@@ -426,6 +426,14 @@ _TIFFVSetField(TIFF* tif, uint32 tag, va_list ap)
 	case TIFFTAG_REFERENCEBLACKWHITE:
 		/* XXX should check for null range */
 		_TIFFsetFloatArray(&td->td_refblackwhite, va_arg(ap, float*), 6);
+		for (int i = 0; i < 6; i++) {
+			if (isnan(td->td_refblackwhite[i])) {
+				if (i % 2 == 0)
+					td->td_refblackwhite[i] = 0;
+				else
+					td->td_refblackwhite[i] = pow(2, td->td_bitspersample) - 1;
+			}
+		}
 		break;
 	case TIFFTAG_INKNAMES:
 		v = (uint16) va_arg(ap, uint16_vap);

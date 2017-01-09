@@ -22,3 +22,4 @@ Local Modifications:
 0010-fix-leak-imagebegin: Fix a leak when TIFFRGBAImageBegin fails
 0011-fix-leak-imagebegin2: Apply upstream fix related to our previous patch
 0012-initialize-tif-rawdata.patch: Initialize tif_rawdata to guard against unitialized access
+0013-validate-refblackwhite.patch: Make sure the refblackwhite values aren't nan.
