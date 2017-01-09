@@ -267,8 +267,13 @@ bool CCodec_TiffContext::LoadFrameInfo(int32_t frame,
     Tiff_Exif_GetStringInfo(m_tif_ctx, TIFFTAG_MAKE, pAttribute);
     Tiff_Exif_GetStringInfo(m_tif_ctx, TIFFTAG_MODEL, pAttribute);
   }
-  *width = pdfium::base::checked_cast<int32_t>(tif_width);
-  *height = pdfium::base::checked_cast<int32_t>(tif_height);
+  pdfium::base::CheckedNumeric<int32_t> checked_width = tif_width;
+  pdfium::base::CheckedNumeric<int32_t> checked_height = tif_height;
+  if (!checked_width.IsValid() || !checked_height.IsValid())
+    return false;
+
+  *width = checked_width.ValueOrDie();
+  *height = checked_height.ValueOrDie();
   *comps = tif_comps;
   *bpc = tif_bpc;
   if (tif_rps > tif_height) {
