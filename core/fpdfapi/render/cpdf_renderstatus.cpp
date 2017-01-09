@@ -55,6 +55,7 @@
 #include "core/fxge/ifx_renderdevicedriver.h"
 #include "third_party/base/numerics/safe_math.h"
 #include "third_party/base/ptr_util.h"
+#include "third_party/base/stl_util.h"
 
 #ifdef _SKIA_SUPPORT_
 #include "core/fxge/skia/fx_skia_device.h"
@@ -1782,10 +1783,8 @@ CPDF_Type3Cache* CPDF_RenderStatus::GetCachedType3(CPDF_Type3Font* pFont) {
 bool CPDF_RenderStatus::ProcessType3Text(CPDF_TextObject* textobj,
                                          const CFX_Matrix* pObj2Device) {
   CPDF_Type3Font* pType3Font = textobj->m_TextState.GetFont()->AsType3Font();
-  for (int i = 0; i < m_Type3FontCache.GetSize(); ++i) {
-    if (m_Type3FontCache.GetAt(i) == pType3Font)
-      return true;
-  }
+  if (pdfium::ContainsValue(m_Type3FontCache, pType3Font))
+    return true;
 
   CFX_Matrix dCTM = m_pDevice->GetCTM();
   FX_FLOAT sa = FXSYS_fabs(dCTM.a);
@@ -1851,8 +1850,8 @@ bool CPDF_RenderStatus::ProcessType3Text(CPDF_TextObject* textobj,
                           pStates, &Options,
                           pType3Char->m_pForm->m_Transparency, m_bDropObjects,
                           pFormResource, false, pType3Char, fill_argb);
-        status.m_Type3FontCache.Append(m_Type3FontCache);
-        status.m_Type3FontCache.Add(pType3Font);
+        status.m_Type3FontCache = m_Type3FontCache;
+        status.m_Type3FontCache.push_back(pType3Font);
         m_pDevice->SaveState();
         status.RenderObjectList(pType3Char->m_pForm.get(), &matrix);
         m_pDevice->RestoreState(false);
@@ -1872,8 +1871,8 @@ bool CPDF_RenderStatus::ProcessType3Text(CPDF_TextObject* textobj,
                           pStates, &Options,
                           pType3Char->m_pForm->m_Transparency, m_bDropObjects,
                           pFormResource, false, pType3Char, fill_argb);
-        status.m_Type3FontCache.Append(m_Type3FontCache);
-        status.m_Type3FontCache.Add(pType3Font);
+        status.m_Type3FontCache = m_Type3FontCache;
+        status.m_Type3FontCache.push_back(pType3Font);
         matrix.TranslateI(-rect.left, -rect.top);
         matrix.Scale(sa, sd);
         status.RenderObjectList(pType3Char->m_pForm.get(), &matrix);

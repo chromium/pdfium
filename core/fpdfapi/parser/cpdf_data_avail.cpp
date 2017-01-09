@@ -453,24 +453,21 @@ void CPDF_DataAvail::ResetFirstCheck(uint32_t dwPage) {
 }
 
 bool CPDF_DataAvail::CheckPage(DownloadHints* pHints) {
-  uint32_t iPageObjs = m_PageObjList.GetSize();
-  CFX_ArrayTemplate<uint32_t> UnavailObjList;
-  for (uint32_t i = 0; i < iPageObjs; ++i) {
-    uint32_t dwPageObjNum = m_PageObjList.GetAt(i);
-    bool bExist = false;
+  std::vector<uint32_t> UnavailObjList;
+  for (uint32_t dwPageObjNum : m_PageObjList) {
+    bool bExists = false;
     std::unique_ptr<CPDF_Object> pObj =
-        GetObject(dwPageObjNum, pHints, &bExist);
+        GetObject(dwPageObjNum, pHints, &bExists);
     if (!pObj) {
-      if (bExist)
-        UnavailObjList.Add(dwPageObjNum);
+      if (bExists)
+        UnavailObjList.push_back(dwPageObjNum);
       continue;
     }
-
     CPDF_Array* pArray = ToArray(pObj.get());
     if (pArray) {
       for (const auto& pArrayObj : *pArray) {
         if (CPDF_Reference* pRef = ToReference(pArrayObj.get()))
-          UnavailObjList.Add(pRef->GetRefObjNum());
+          UnavailObjList.push_back(pRef->GetRefObjNum());
       }
     }
     if (!pObj->IsDictionary())
@@ -482,15 +479,13 @@ bool CPDF_DataAvail::CheckPage(DownloadHints* pHints) {
       continue;
     }
   }
-
-  m_PageObjList.RemoveAll();
-  if (UnavailObjList.GetSize()) {
-    m_PageObjList.Append(UnavailObjList);
+  m_PageObjList.clear();
+  if (!UnavailObjList.empty()) {
+    m_PageObjList = std::move(UnavailObjList);
     return false;
   }
-
-  uint32_t iPages = m_PagesArray.size();
-  for (uint32_t i = 0; i < iPages; i++) {
+  size_t iPages = m_PagesArray.size();
+  for (size_t i = 0; i < iPages; ++i) {
     std::unique_ptr<CPDF_Object> pPages = std::move(m_PagesArray[i]);
     if (pPages && !GetPageKids(m_pCurrentParser, pPages.get())) {
       m_PagesArray.clear();
@@ -499,7 +494,7 @@ bool CPDF_DataAvail::CheckPage(DownloadHints* pHints) {
     }
   }
   m_PagesArray.clear();
-  if (!m_PageObjList.GetSize())
+  if (m_PageObjList.empty())
     m_docStatus = PDF_DATAAVAIL_DONE;
 
   return true;
@@ -518,13 +513,13 @@ bool CPDF_DataAvail::GetPageKids(CPDF_Parser* pParser, CPDF_Object* pPages) {
 
   switch (pKids->GetType()) {
     case CPDF_Object::REFERENCE:
-      m_PageObjList.Add(pKids->AsReference()->GetRefObjNum());
+      m_PageObjList.push_back(pKids->AsReference()->GetRefObjNum());
       break;
     case CPDF_Object::ARRAY: {
       CPDF_Array* pKidsArray = pKids->AsArray();
       for (size_t i = 0; i < pKidsArray->GetCount(); ++i) {
         if (CPDF_Reference* pRef = ToReference(pKidsArray->GetObjectAt(i)))
-          m_PageObjList.Add(pRef->GetRefObjNum());
+          m_PageObjList.push_back(pRef->GetRefObjNum());
       }
     } break;
     default:
@@ -535,10 +530,10 @@ bool CPDF_DataAvail::GetPageKids(CPDF_Parser* pParser, CPDF_Object* pPages) {
 }
 
 bool CPDF_DataAvail::CheckPages(DownloadHints* pHints) {
-  bool bExist = false;
+  bool bExists = false;
   std::unique_ptr<CPDF_Object> pPages =
-      GetObject(m_PagesObjNum, pHints, &bExist);
-  if (!bExist) {
+      GetObject(m_PagesObjNum, pHints, &bExists);
+  if (!bExists) {
     m_docStatus = PDF_DATAAVAIL_LOADALLFILE;
     return true;
   }
@@ -1121,9 +1116,9 @@ bool CPDF_DataAvail::CheckPage(uint32_t dwPage, DownloadHints* pHints) {
 bool CPDF_DataAvail::CheckArrayPageNode(uint32_t dwPageNo,
                                         PageNode* pPageNode,
                                         DownloadHints* pHints) {
-  bool bExist = false;
-  std::unique_ptr<CPDF_Object> pPages = GetObject(dwPageNo, pHints, &bExist);
-  if (!bExist) {
+  bool bExists = false;
+  std::unique_ptr<CPDF_Object> pPages = GetObject(dwPageNo, pHints, &bExists);
+  if (!bExists) {
     m_docStatus = PDF_DATAAVAIL_ERROR;
     return false;
   }
@@ -1158,9 +1153,9 @@ bool CPDF_DataAvail::CheckArrayPageNode(uint32_t dwPageNo,
 bool CPDF_DataAvail::CheckUnknownPageNode(uint32_t dwPageNo,
                                           PageNode* pPageNode,
                                           DownloadHints* pHints) {
-  bool bExist = false;
-  std::unique_ptr<CPDF_Object> pPage = GetObject(dwPageNo, pHints, &bExist);
-  if (!bExist) {
+  bool bExists = false;
+  std::unique_ptr<CPDF_Object> pPage = GetObject(dwPageNo, pHints, &bExists);
+  if (!bExists) {
     m_docStatus = PDF_DATAAVAIL_ERROR;
     return false;
   }
@@ -1292,14 +1287,13 @@ bool CPDF_DataAvail::LoadDocPage(uint32_t dwPage, DownloadHints* pHints) {
 }
 
 bool CPDF_DataAvail::CheckPageCount(DownloadHints* pHints) {
-  bool bExist = false;
+  bool bExists = false;
   std::unique_ptr<CPDF_Object> pPages =
-      GetObject(m_PagesObjNum, pHints, &bExist);
-  if (!bExist) {
+      GetObject(m_PagesObjNum, pHints, &bExists);
+  if (!bExists) {
     m_docStatus = PDF_DATAAVAIL_ERROR;
     return false;
   }
-
   if (!pPages)
     return false;
 
@@ -1308,7 +1302,6 @@ bool CPDF_DataAvail::CheckPageCount(DownloadHints* pHints) {
     m_docStatus = PDF_DATAAVAIL_ERROR;
     return false;
   }
-
   if (!pPagesDict->KeyExist("Kids"))
     return true;
 

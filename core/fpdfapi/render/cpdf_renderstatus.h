@@ -8,6 +8,7 @@
 #define CORE_FPDFAPI_RENDER_CPDF_RENDERSTATUS_H_
 
 #include <memory>
+#include <vector>
 
 #include "core/fpdfapi/page/cpdf_clippath.h"
 #include "core/fpdfapi/page/cpdf_graphicstates.h"
@@ -69,7 +70,7 @@ class CPDF_RenderStatus {
   CPDF_RenderOptions m_Options;
   CPDF_Dictionary* m_pFormResource;
   CPDF_Dictionary* m_pPageResource;
-  CFX_ArrayTemplate<CPDF_Type3Font*> m_Type3FontCache;
+  std::vector<CPDF_Type3Font*> m_Type3FontCache;
 
  private:
   friend class CPDF_ImageRenderer;

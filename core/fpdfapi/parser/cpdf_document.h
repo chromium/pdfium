@@ -147,7 +147,7 @@ class CPDF_Document : public CPDF_IndirectObjectHolder {
   std::unique_ptr<CPDF_DocRenderData> m_pDocRender;
   std::unique_ptr<JBig2_DocumentContext> m_pCodecContext;
   std::unique_ptr<CPDF_LinkList> m_pLinksContext;
-  CFX_ArrayTemplate<uint32_t> m_PageList;
+  std::vector<uint32_t> m_PageList;
 };
 
 #endif  // CORE_FPDFAPI_PARSER_CPDF_DOCUMENT_H_

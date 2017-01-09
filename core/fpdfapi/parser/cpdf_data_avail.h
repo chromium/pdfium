@@ -221,8 +221,8 @@ class CPDF_DataAvail final {
   uint32_t m_bufferSize;
   CFX_ByteString m_WordBuf;
   uint8_t m_bufferData[512];
-  CFX_ArrayTemplate<uint32_t> m_XRefStreamList;
-  CFX_ArrayTemplate<uint32_t> m_PageObjList;
+  std::vector<uint32_t> m_XRefStreamList;
+  std::vector<uint32_t> m_PageObjList;
   uint32_t m_PagesObjNum;
   bool m_bLinearedDataOK;
   bool m_bMainXRefLoadTried;

@@ -88,7 +88,7 @@ class CPDF_TestDocumentForPages : public CPDF_Document {
     m_pOwnedRootDict->SetNewFor<CPDF_Reference>("Pages", this,
                                                 pagesDict->GetObjNum());
     m_pRootDict = m_pOwnedRootDict.get();
-    m_PageList.SetSize(7);
+    m_PageList.resize(7);
   }
 
  private:
@@ -112,7 +112,7 @@ class CPDF_TestDocumentWithPageWithoutPageNum : public CPDF_Document {
     m_pOwnedRootDict->SetNewFor<CPDF_Reference>("Pages", this,
                                                 pagesDict->GetObjNum());
     m_pRootDict = m_pOwnedRootDict.get();
-    m_PageList.SetSize(3);
+    m_PageList.resize(3);
   }
 
  private:

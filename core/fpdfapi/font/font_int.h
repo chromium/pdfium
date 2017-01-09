@@ -9,6 +9,7 @@
 
 #include <map>
 #include <memory>
+#include <vector>
 
 #include "core/fpdfapi/font/cpdf_cidfont.h"
 #include "core/fxcrt/fx_basic.h"
@@ -107,7 +108,7 @@ class CPDF_CMapParser {
   int m_Status;
   int m_CodeSeq;
   uint32_t m_CodePoints[4];
-  CFX_ArrayTemplate<CMap_CodeRange> m_CodeRanges;
+  std::vector<CMap_CodeRange> m_CodeRanges;
   CFX_ByteString m_LastWord;
 };
 

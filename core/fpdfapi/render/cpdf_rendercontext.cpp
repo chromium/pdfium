@@ -44,12 +44,12 @@ void CPDF_RenderContext::GetBackground(CFX_DIBitmap* pBuffer,
 
 void CPDF_RenderContext::AppendLayer(CPDF_PageObjectHolder* pObjectHolder,
                                      const CFX_Matrix* pObject2Device) {
-  Layer* pLayer = m_Layers.AddSpace();
-  pLayer->m_pObjectHolder = pObjectHolder;
+  m_Layers.emplace_back();
+  m_Layers.back().m_pObjectHolder = pObjectHolder;
   if (pObject2Device)
-    pLayer->m_Matrix = *pObject2Device;
+    m_Layers.back().m_Matrix = *pObject2Device;
   else
-    pLayer->m_Matrix.SetIdentity();
+    m_Layers.back().m_Matrix.SetIdentity();
 }
 
 void CPDF_RenderContext::Render(CFX_RenderDevice* pDevice,
@@ -62,18 +62,16 @@ void CPDF_RenderContext::Render(CFX_RenderDevice* pDevice,
                                 const CPDF_PageObject* pStopObj,
                                 const CPDF_RenderOptions* pOptions,
                                 const CFX_Matrix* pLastMatrix) {
-  int count = m_Layers.GetSize();
-  for (int j = 0; j < count; j++) {
+  for (auto& layer : m_Layers) {
     pDevice->SaveState();
-    Layer* pLayer = m_Layers.GetDataPtr(j);
     if (pLastMatrix) {
-      CFX_Matrix FinalMatrix = pLayer->m_Matrix;
+      CFX_Matrix FinalMatrix = layer.m_Matrix;
       FinalMatrix.Concat(*pLastMatrix);
       CPDF_RenderStatus status;
       status.Initialize(this, pDevice, pLastMatrix, pStopObj, nullptr, nullptr,
-                        pOptions, pLayer->m_pObjectHolder->m_Transparency,
-                        false, nullptr);
-      status.RenderObjectList(pLayer->m_pObjectHolder, &FinalMatrix);
+                        pOptions, layer.m_pObjectHolder->m_Transparency, false,
+                        nullptr);
+      status.RenderObjectList(layer.m_pObjectHolder, &FinalMatrix);
       if (status.m_Options.m_Flags & RENDER_LIMITEDIMAGECACHE)
         m_pPageCache->CacheOptimization(status.m_Options.m_dwLimitCacheSize);
       if (status.m_bStopped) {
@@ -83,9 +81,9 @@ void CPDF_RenderContext::Render(CFX_RenderDevice* pDevice,
     } else {
       CPDF_RenderStatus status;
       status.Initialize(this, pDevice, nullptr, pStopObj, nullptr, nullptr,
-                        pOptions, pLayer->m_pObjectHolder->m_Transparency,
-                        false, nullptr);
-      status.RenderObjectList(pLayer->m_pObjectHolder, &pLayer->m_Matrix);
+                        pOptions, layer.m_pObjectHolder->m_Transparency, false,
+                        nullptr);
+      status.RenderObjectList(layer.m_pObjectHolder, &layer.m_Matrix);
       if (status.m_Options.m_Flags & RENDER_LIMITEDIMAGECACHE)
         m_pPageCache->CacheOptimization(status.m_Options.m_dwLimitCacheSize);
       if (status.m_bStopped) {

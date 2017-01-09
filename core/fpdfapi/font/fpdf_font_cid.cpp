@@ -15,6 +15,7 @@
 #include "core/fpdfapi/parser/cpdf_simple_parser.h"
 #include "core/fxcrt/fx_ext.h"
 #include "core/fxge/fx_freetype.h"
+#include "third_party/base/stl_util.h"
 
 namespace {
 
@@ -403,14 +404,14 @@ void CPDF_CMapParser::ParseWord(const CFX_ByteStringC& word) {
     m_Status = 0;
   } else if (m_Status == 7) {
     if (word == "endcodespacerange") {
-      int nSegs = m_CodeRanges.GetSize();
+      uint32_t nSegs = pdfium::CollectionSize<uint32_t>(m_CodeRanges);
       if (nSegs > 1) {
         m_pCMap->m_CodingScheme = CPDF_CMap::MixedFourBytes;
         m_pCMap->m_nCodeRanges = nSegs;
         FX_Free(m_pCMap->m_pLeadingBytes);
         m_pCMap->m_pLeadingBytes =
             FX_Alloc2D(uint8_t, nSegs, sizeof(CMap_CodeRange));
-        FXSYS_memcpy(m_pCMap->m_pLeadingBytes, m_CodeRanges.GetData(),
+        FXSYS_memcpy(m_pCMap->m_pLeadingBytes, m_CodeRanges.data(),
                      nSegs * sizeof(CMap_CodeRange));
       } else if (nSegs == 1) {
         m_pCMap->m_CodingScheme = (m_CodeRanges[0].m_CharSize == 2)
@@ -424,9 +425,8 @@ void CPDF_CMapParser::ParseWord(const CFX_ByteStringC& word) {
       }
       if (m_CodeSeq % 2) {
         CMap_CodeRange range;
-        if (CMap_GetCodeRange(range, m_LastWord.AsStringC(), word)) {
-          m_CodeRanges.Add(range);
-        }
+        if (CMap_GetCodeRange(range, m_LastWord.AsStringC(), word))
+          m_CodeRanges.push_back(range);
       }
       m_CodeSeq++;
     }

@@ -8,6 +8,7 @@
 #define CORE_FPDFAPI_FONT_CPDF_CIDFONT_H_
 
 #include <memory>
+#include <vector>
 
 #include "core/fpdfapi/font/cpdf_font.h"
 #include "core/fxcrt/fx_string.h"
@@ -65,7 +66,7 @@ class CPDF_CIDFont : public CPDF_Font {
   int GetGlyphIndex(uint32_t unicodeb, bool* pVertGlyph);
   int GetVerticalGlyph(int index, bool* pVertGlyph);
   void LoadMetricsArray(CPDF_Array* pArray,
-                        CFX_ArrayTemplate<uint32_t>& result,
+                        std::vector<uint32_t>* result,
                         int nElements);
   void LoadSubstFont();
   FX_WCHAR GetUnicodeFromCharCode(uint32_t charcode) const;
@@ -80,10 +81,10 @@ class CPDF_CIDFont : public CPDF_Font {
   std::unique_ptr<CPDF_StreamAcc> m_pStreamAcc;
   bool m_bAnsiWidthsFixed;
   FX_RECT m_CharBBox[256];
-  CFX_ArrayTemplate<uint32_t> m_WidthList;
+  std::vector<uint32_t> m_WidthList;
   short m_DefaultVY;
   short m_DefaultW1;
-  CFX_ArrayTemplate<uint32_t> m_VertMetrics;
+  std::vector<uint32_t> m_VertMetrics;
   bool m_bAdobeCourierStd;
   std::unique_ptr<CFX_CTTGSUBTable> m_pTTGSUBTable;
 };

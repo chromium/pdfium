@@ -381,20 +381,20 @@ void CPDF_Document::LoadDocInternal() {
 
 void CPDF_Document::LoadDoc() {
   LoadDocInternal();
-  m_PageList.SetSize(RetrievePageCount());
+  LoadPages();
 }
 
 void CPDF_Document::LoadLinearizedDoc(
     const CPDF_LinearizedHeader* pLinearizationParams) {
   m_bLinearized = true;
   LoadDocInternal();
-  m_PageList.SetSize(pLinearizationParams->GetPageCount());
+  m_PageList.resize(pLinearizationParams->GetPageCount());
   m_iFirstPageNo = pLinearizationParams->GetFirstPageNo();
   m_dwFirstPageObjNum = pLinearizationParams->GetFirstPageObjNum();
 }
 
 void CPDF_Document::LoadPages() {
-  m_PageList.SetSize(RetrievePageCount());
+  m_PageList.resize(RetrievePageCount());
 }
 
 CPDF_Dictionary* CPDF_Document::TraversePDFPages(int iPage,
@@ -402,21 +402,20 @@ CPDF_Dictionary* CPDF_Document::TraversePDFPages(int iPage,
                                                  size_t level) {
   if (*nPagesToGo < 0 || m_bReachedMaxPageLevel)
     return nullptr;
+
   CPDF_Dictionary* pPages = m_pTreeTraversal[level].first;
   CPDF_Array* pKidList = pPages->GetArrayFor("Kids");
   if (!pKidList) {
     if (*nPagesToGo != 1)
       return nullptr;
-    m_PageList.SetAt(iPage, pPages->GetObjNum());
+    m_PageList[iPage] = pPages->GetObjNum();
     return pPages;
   }
-
   if (level >= FX_MAX_PAGE_LEVEL) {
     m_pTreeTraversal.pop_back();
     m_bReachedMaxPageLevel = true;
     return nullptr;
   }
-
   CPDF_Dictionary* page = nullptr;
   for (size_t i = m_pTreeTraversal[level].second; i < pKidList->GetCount();
        i++) {
@@ -433,7 +432,7 @@ CPDF_Dictionary* CPDF_Document::TraversePDFPages(int iPage,
       continue;
     }
     if (!pKid->KeyExist("Kids")) {
-      m_PageList.SetAt(iPage - (*nPagesToGo) + 1, pKid->GetObjNum());
+      m_PageList[iPage - (*nPagesToGo) + 1] = pKid->GetObjNum();
       (*nPagesToGo)--;
       m_pTreeTraversal[level].second++;
       if (*nPagesToGo == 0) {
@@ -474,11 +473,11 @@ CPDF_Dictionary* CPDF_Document::GetPagesDict() const {
 }
 
 bool CPDF_Document::IsPageLoaded(int iPage) const {
-  return !!m_PageList.GetAt(iPage);
+  return !!m_PageList[iPage];
 }
 
 CPDF_Dictionary* CPDF_Document::GetPage(int iPage) {
-  if (iPage < 0 || iPage >= m_PageList.GetSize())
+  if (iPage < 0 || iPage >= pdfium::CollectionSize<int>(m_PageList))
     return nullptr;
 
   if (m_bLinearized && (iPage == m_iFirstPageNo)) {
@@ -487,13 +486,9 @@ CPDF_Dictionary* CPDF_Document::GetPage(int iPage) {
       return pDict;
     }
   }
-
-  int objnum = m_PageList.GetAt(iPage);
-  if (objnum) {
-    if (CPDF_Dictionary* pDict = ToDictionary(GetOrParseIndirectObject(objnum)))
-      return pDict;
-    return nullptr;
-  }
+  uint32_t objnum = m_PageList[iPage];
+  if (objnum)
+    return ToDictionary(GetOrParseIndirectObject(objnum));
 
   CPDF_Dictionary* pPages = GetPagesDict();
   if (!pPages)
@@ -517,7 +512,7 @@ CPDF_Dictionary* CPDF_Document::GetPage(int iPage) {
 }
 
 void CPDF_Document::SetPageObjNum(int iPage, uint32_t objNum) {
-  m_PageList.SetAt(iPage, objNum);
+  m_PageList[iPage] = objNum;
 }
 
 int CPDF_Document::FindPageIndex(CPDF_Dictionary* pNode,
@@ -554,7 +549,7 @@ int CPDF_Document::FindPageIndex(CPDF_Dictionary* pNode,
     for (size_t i = 0; i < count; i++) {
       if (CPDF_Reference* pKid = ToReference(pKidList->GetObjectAt(i))) {
         if (pKid->GetRefObjNum() == objnum) {
-          m_PageList.SetAt(index + i, objnum);
+          m_PageList[index + i] = objnum;
           return static_cast<int>(index + i);
         }
       }
@@ -574,15 +569,14 @@ int CPDF_Document::FindPageIndex(CPDF_Dictionary* pNode,
 }
 
 int CPDF_Document::GetPageIndex(uint32_t objnum) {
-  uint32_t nPages = m_PageList.GetSize();
+  uint32_t nPages = m_PageList.size();
   uint32_t skip_count = 0;
   bool bSkipped = false;
   for (uint32_t i = 0; i < nPages; i++) {
-    uint32_t objnum1 = m_PageList.GetAt(i);
-    if (objnum1 == objnum)
+    if (m_PageList[i] == objnum)
       return i;
 
-    if (!bSkipped && objnum1 == 0) {
+    if (!bSkipped && m_PageList[i] == 0) {
       skip_count = i;
       bSkipped = true;
     }
@@ -596,7 +590,7 @@ int CPDF_Document::GetPageIndex(uint32_t objnum) {
 }
 
 int CPDF_Document::GetPageCount() const {
-  return m_PageList.GetSize();
+  return pdfium::CollectionSize<int>(m_PageList);
 }
 
 int CPDF_Document::RetrievePageCount() const {
@@ -747,7 +741,7 @@ bool CPDF_Document::InsertNewPage(int iPage, CPDF_Dictionary* pPageDict) {
     if (!InsertDeletePDFPage(pPages, iPage, pPageDict, true, &stack))
       return false;
   }
-  m_PageList.InsertAt(iPage, pPageDict->GetObjNum());
+  m_PageList.insert(m_PageList.begin() + iPage, pPageDict->GetObjNum());
   return true;
 }
 
@@ -764,7 +758,7 @@ void CPDF_Document::DeletePage(int iPage) {
   if (!InsertDeletePDFPage(pPages, iPage, nullptr, false, &stack))
     return;
 
-  m_PageList.RemoveAt(iPage);
+  m_PageList.erase(m_PageList.begin() + iPage);
 }
 
 CPDF_Font* CPDF_Document::AddStandardFont(const FX_CHAR* font,
