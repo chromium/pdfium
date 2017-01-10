@@ -10,9 +10,8 @@
 #include <cstdint>
 
 #include "core/fxge/fx_dib.h"
-#include "xfa/fgas/crt/fgas_memory.h"
 
-class CFDE_Brush : public CFX_Target {
+class CFDE_Brush {
  public:
   CFDE_Brush() : m_Color(0xFF000000) {}
 
@@ -23,10 +22,10 @@ class CFDE_Brush : public CFX_Target {
   FX_ARGB m_Color;
 };
 
-class CFDE_Pen : public CFX_Target {
+class CFDE_Pen {
  public:
   CFDE_Pen() : m_Color(0) {}
-  ~CFDE_Pen() override {}
+  ~CFDE_Pen() {}
 
   FX_ARGB GetColor() const { return m_Color; }
   void SetColor(FX_ARGB color) { m_Color = color; }

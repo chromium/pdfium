@@ -21,7 +21,6 @@
 #include "xfa/fgas/crt/fgas_stream.h"
 
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
-#include "xfa/fgas/crt/fgas_memory.h"
 #include "xfa/fgas/crt/fgas_utils.h"
 #endif  // _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
 

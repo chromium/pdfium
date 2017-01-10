@@ -11,7 +11,6 @@
 
 #include "core/fxcrt/fx_basic.h"
 #include "core/fxcrt/fx_ucd.h"
-#include "xfa/fgas/crt/fgas_memory.h"
 #include "xfa/fgas/crt/fgas_utils.h"
 #include "xfa/fgas/layout/fgas_textbreak.h"
 #include "xfa/fgas/layout/fgas_unicode.h"
@@ -83,10 +82,10 @@ struct FX_RTFTEXTOBJ {
   int32_t iVerticalScale;
 };
 
-class CFX_RTFPiece : public CFX_Target {
+class CFX_RTFPiece {
  public:
   CFX_RTFPiece();
-  ~CFX_RTFPiece() override;
+  ~CFX_RTFPiece();
 
   void AppendChar(const CFX_RTFChar& tc) {
     ASSERT(m_pChars);

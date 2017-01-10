@@ -24,7 +24,6 @@ class CXFA_TextProvider;
 class CXFA_TextTabstopsContext;
 class IFDE_CSSComputedStyle;
 class IFDE_CSSStyleSheet;
-class IFX_MemoryAllocator;
 
 class CXFA_TextParser {
  public:
@@ -38,7 +37,7 @@ class CXFA_TextParser {
   IFDE_CSSComputedStyle* ComputeStyle(CFDE_XMLNode* pXMLNode,
                                       IFDE_CSSComputedStyle* pParentStyle);
 
-  bool IsParsed() const { return !!m_pAllocator; }
+  bool IsParsed() const { return m_bParsed; }
 
   int32_t GetVAlign(CXFA_TextProvider* pTextProvider) const;
 
@@ -92,10 +91,10 @@ class CXFA_TextParser {
   IFDE_CSSStyleSheet* LoadDefaultSheetStyle();
   IFDE_CSSComputedStyle* CreateStyle(IFDE_CSSComputedStyle* pParentStyle);
 
-  std::unique_ptr<IFX_MemoryAllocator> m_pAllocator;
   std::unique_ptr<CFDE_CSSStyleSelector> m_pSelector;
   IFDE_CSSStyleSheet* m_pUASheet;
   std::map<CFDE_XMLNode*, CXFA_TextParseContext*> m_mapXMLNodeToParseContext;
+  bool m_bParsed;
 };
 
 #endif  // XFA_FXFA_APP_CXFA_TEXTPARSER_H_

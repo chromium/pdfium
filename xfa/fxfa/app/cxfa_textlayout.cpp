@@ -50,18 +50,17 @@ void CXFA_TextLayout::Unload() {
     for (int32_t i = 0; i < pLine->m_textPieces.GetSize(); i++) {
       XFA_TextPiece* pPiece = pLine->m_textPieces.GetAt(i);
       // Release text and widths in a text piece.
-      m_pAllocator->Free(pPiece->pszText);
-      m_pAllocator->Free(pPiece->pWidths);
+      delete pPiece->pszText;
+      delete pPiece->pWidths;
       // Release text piece.
-      FXTARGET_DeleteWith(XFA_TextPiece, m_pAllocator.get(), pPiece);
+      delete pPiece;
     }
     pLine->m_textPieces.RemoveAll();
     // Release line.
-    FXTARGET_DeleteWith(CXFA_PieceLine, m_pAllocator.get(), pLine);
+    delete pLine;
   }
   m_pieceLines.RemoveAll();
   m_pBreak.reset();
-  m_pAllocator.reset();
 }
 
 const CFX_ArrayTemplate<CXFA_PieceLine*>* CXFA_TextLayout::GetPieceLines() {
@@ -669,9 +668,6 @@ void CXFA_TextLayout::UpdateAlign(FX_FLOAT fHeight, FX_FLOAT fBottom) {
 bool CXFA_TextLayout::Loader(const CFX_SizeF& szText,
                              FX_FLOAT& fLinePos,
                              bool bSavePieces) {
-  if (!m_pAllocator)
-    m_pAllocator = IFX_MemoryAllocator::Create(FX_ALLOCTYPE_Static, 256, 0);
-
   GetTextDataNode();
   if (!m_pTextDataNode)
     return true;
@@ -794,8 +790,7 @@ bool CXFA_TextLayout::LoadRichText(CFDE_XMLNode* pXMLNode,
           ASSERT(pElement);
           pElement->GetString(L"href", wsLinkContent);
           if (!wsLinkContent.IsEmpty()) {
-            pLinkData = FXTARGET_NewWith(m_pAllocator.get()) CXFA_LinkUserData(
-                m_pAllocator.get(),
+            pLinkData = new CXFA_LinkUserData(
                 wsLinkContent.GetBuffer(wsLinkContent.GetLength()));
             wsLinkContent.ReleaseBuffer(wsLinkContent.GetLength());
           }
@@ -852,10 +847,8 @@ bool CXFA_TextLayout::LoadRichText(CFDE_XMLNode* pXMLNode,
             if (pLinkData)
               pLinkData->Retain();
 
-            CXFA_TextUserData* pUserData = FXTARGET_NewWith(m_pAllocator.get())
-                CXFA_TextUserData(m_pAllocator.get(),
-                                  bContentNode ? pParentStyle : pStyle,
-                                  pLinkData);
+            CXFA_TextUserData* pUserData = new CXFA_TextUserData(
+                bContentNode ? pParentStyle : pStyle, pLinkData);
             m_pBreak->SetUserData(pUserData);
           }
 
@@ -1073,8 +1066,7 @@ void CXFA_TextLayout::AppendTextLine(uint32_t dwStatus,
 
   IFDE_CSSComputedStyle* pStyle = nullptr;
   if (bSavePieces) {
-    CXFA_PieceLine* pPieceLine =
-        FXTARGET_NewWith(m_pAllocator.get()) CXFA_PieceLine;
+    CXFA_PieceLine* pPieceLine = new CXFA_PieceLine;
     m_pieceLines.Add(pPieceLine);
     if (m_pTabstopContext)
       m_pTabstopContext->Reset();
@@ -1088,11 +1080,11 @@ void CXFA_TextLayout::AppendTextLine(uint32_t dwStatus,
         pStyle = pUserData->m_pStyle;
       FX_FLOAT fVerScale = pPiece->m_iVerticalScale / 100.0f;
 
-      XFA_TextPiece* pTP = FXTARGET_NewWith(m_pAllocator.get()) XFA_TextPiece();
+      XFA_TextPiece* pTP = new XFA_TextPiece();
       pTP->pszText =
-          (FX_WCHAR*)m_pAllocator->Alloc(pPiece->m_iChars * sizeof(FX_WCHAR));
+          (FX_WCHAR*)FX_Alloc(uint8_t, pPiece->m_iChars * sizeof(FX_WCHAR));
       pTP->pWidths =
-          (int32_t*)m_pAllocator->Alloc(pPiece->m_iChars * sizeof(int32_t));
+          (int32_t*)FX_Alloc(uint8_t, pPiece->m_iChars * sizeof(int32_t));
       pTP->iChars = pPiece->m_iChars;
       pPiece->GetString(pTP->pszText);
       pPiece->GetWidths(pTP->pWidths);

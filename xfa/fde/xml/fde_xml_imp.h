@@ -12,7 +12,6 @@
 
 #include "core/fxcrt/fx_system.h"
 #include "xfa/fde/xml/fde_xml.h"
-#include "xfa/fgas/crt/fgas_memory.h"
 #include "xfa/fgas/crt/fgas_stream.h"
 #include "xfa/fgas/crt/fgas_utils.h"
 
@@ -25,7 +24,7 @@ class CFDE_XMLDOMParser;
 class CFDE_XMLSyntaxParser;
 class IFDE_XMLParser;
 
-class CFDE_XMLNode : public CFX_Target {
+class CFDE_XMLNode {
  public:
   enum NodeItem {
     Root = 0,
@@ -43,7 +42,7 @@ class CFDE_XMLNode : public CFX_Target {
   };
 
   CFDE_XMLNode();
-  ~CFDE_XMLNode() override;
+  virtual ~CFDE_XMLNode();
 
   virtual void Release();
   virtual FDE_XMLNODETYPE GetType() const;
@@ -191,10 +190,10 @@ class CFDE_XMLCharData : public CFDE_XMLDeclaration {
   CFX_WideString m_wsCharData;
 };
 
-class CFDE_XMLDoc : public CFX_Target {
+class CFDE_XMLDoc {
  public:
   CFDE_XMLDoc();
-  ~CFDE_XMLDoc() override;
+  ~CFDE_XMLDoc();
 
   bool LoadXML(std::unique_ptr<IFDE_XMLParser> pXMLParser);
   int32_t DoLoad(IFX_Pause* pPause = nullptr);
@@ -221,10 +220,10 @@ class IFDE_XMLParser {
   virtual int32_t DoParser(IFX_Pause* pPause) = 0;
 };
 
-class CFDE_BlockBuffer : public CFX_Target {
+class CFDE_BlockBuffer {
  public:
   explicit CFDE_BlockBuffer(int32_t iAllocStep = 1024 * 1024);
-  ~CFDE_BlockBuffer() override;
+  ~CFDE_BlockBuffer();
 
   bool InitBuffer(int32_t iBufferSize = 1024 * 1024);
   bool IsInitialized() { return m_iBufferSize / m_iAllocStep >= 1; }
@@ -257,10 +256,10 @@ class CFDE_BlockBuffer : public CFX_Target {
   int32_t m_iStartPosition;
 };
 
-class CFDE_XMLSyntaxParser : public CFX_Target {
+class CFDE_XMLSyntaxParser {
  public:
   CFDE_XMLSyntaxParser();
-  ~CFDE_XMLSyntaxParser() override;
+  ~CFDE_XMLSyntaxParser();
 
   void Release() { delete this; }
   void Init(const CFX_RetainPtr<IFGAS_Stream>& pStream,

@@ -15,13 +15,12 @@
 #include "xfa/fde/css/fde_css.h"
 #include "xfa/fde/css/fde_csscache.h"
 #include "xfa/fde/css/fde_cssdeclaration.h"
-#include "xfa/fgas/crt/fgas_memory.h"
 
 class CFDE_CSSAccelerator;
 class CFDE_CSSComputedStyle;
 class CXFA_CSSTagProvider;
 
-class FDE_CSSRuleData : public CFX_Target {
+class FDE_CSSRuleData {
  public:
   FDE_CSSRuleData(CFDE_CSSSelector* pSel,
                   CFDE_CSSDeclaration* pDecl,
@@ -33,10 +32,10 @@ class FDE_CSSRuleData : public CFX_Target {
   FDE_CSSRuleData* pNext;
 };
 
-class CFDE_CSSRuleCollection : public CFX_Target {
+class CFDE_CSSRuleCollection {
  public:
   CFDE_CSSRuleCollection();
-  ~CFDE_CSSRuleCollection() override;
+  ~CFDE_CSSRuleCollection();
 
   void AddRulesFrom(const CFDE_CSSStyleSheetArray& sheets,
                     uint32_t dwMediaList,
@@ -62,8 +61,6 @@ class CFDE_CSSRuleCollection : public CFX_Target {
   FDE_CSSRuleData* GetUniversalRuleData() { return m_pUniversalRules; }
   FDE_CSSRuleData* GetPseudoRuleData() { return m_pPseudoRules; }
 
-  IFX_MemoryAllocator* m_pStaticStore;
-
  protected:
   void AddRulesFrom(IFDE_CSSStyleSheet* pStyleSheet,
                     IFDE_CSSRule* pRule,
@@ -85,10 +82,10 @@ class CFDE_CSSRuleCollection : public CFX_Target {
   int32_t m_iSelectors;
 };
 
-class CFDE_CSSStyleSelector : public CFX_Target {
+class CFDE_CSSStyleSelector {
  public:
   explicit CFDE_CSSStyleSelector(CFGAS_FontMgr* pFontMgr);
-  ~CFDE_CSSStyleSelector() override;
+  ~CFDE_CSSStyleSelector();
 
   void SetDefFontSize(FX_FLOAT fFontSize);
 
@@ -173,12 +170,9 @@ class CFDE_CSSStyleSelector : public CFX_Target {
 
   CFGAS_FontMgr* const m_pFontMgr;
   FX_FLOAT m_fDefFontSize;
-  std::unique_ptr<IFX_MemoryAllocator> m_pRuleDataStore;
   CFDE_CSSStyleSheetArray m_SheetGroups[FDE_CSSSTYLESHEETGROUP_MAX];
   CFDE_CSSRuleCollection m_RuleCollection[FDE_CSSSTYLESHEETGROUP_MAX];
   FDE_CSSSTYLESHEETGROUP m_ePriorities[FDE_CSSSTYLESHEETPRIORITY_MAX];
-  std::unique_ptr<IFX_MemoryAllocator> m_pInlineStyleStore;
-  std::unique_ptr<IFX_MemoryAllocator> m_pFixedStyleStore;
   std::unique_ptr<CFDE_CSSAccelerator> m_pAccelerator;
   std::vector<FDE_CSSRuleData*> m_MatchedRules;
 };
@@ -349,10 +343,9 @@ class CFDE_CSSComputedStyle : public IFDE_CSSComputedStyle,
                               public IFDE_CSSBoundaryStyle,
                               public IFDE_CSSFontStyle,
                               public IFDE_CSSPositionStyle,
-                              public IFDE_CSSParagraphStyle,
-                              public CFX_Target {
+                              public IFDE_CSSParagraphStyle {
  public:
-  explicit CFDE_CSSComputedStyle(IFX_MemoryAllocator* pAlloc);
+  CFDE_CSSComputedStyle();
   ~CFDE_CSSComputedStyle() override;
 
   // IFX_Retainable
@@ -410,7 +403,6 @@ class CFDE_CSSComputedStyle : public IFDE_CSSComputedStyle,
                       const CFX_WideString& wsValue);
 
   uint32_t m_dwRefCount;
-  IFX_MemoryAllocator* const m_pAllocator;
   CFDE_CSSInheritedData m_InheritedData;
   CFDE_CSSNonInheritedData m_NonInheritedData;
   std::vector<CFX_WideString> m_CustomProperties;

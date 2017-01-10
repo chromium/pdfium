@@ -8,14 +8,13 @@
 #define XFA_FXFA_APP_CXFA_PIECELINE_H_
 
 #include "core/fxcrt/fx_basic.h"
-#include "xfa/fgas/crt/fgas_memory.h"
 
 class XFA_TextPiece;
 
-class CXFA_PieceLine : public CFX_Target {
+class CXFA_PieceLine {
  public:
   CXFA_PieceLine();
-  ~CXFA_PieceLine() override;
+  ~CXFA_PieceLine();
 
   CFX_ArrayTemplate<XFA_TextPiece*> m_textPieces;
   CFX_ArrayTemplate<int32_t> m_charCounts;

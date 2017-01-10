@@ -9,7 +9,6 @@
 #include "third_party/base/ptr_util.h"
 #include "xfa/fde/fde_gedevice.h"
 #include "xfa/fde/fde_object.h"
-#include "xfa/fgas/crt/fgas_memory.h"
 
 #define FDE_PATHRENDER_Stroke 1
 #define FDE_PATHRENDER_Fill 2

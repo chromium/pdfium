@@ -9,9 +9,8 @@
 
 #include "core/fxcrt/fx_system.h"
 #include "xfa/fde/css/fde_css.h"
-#include "xfa/fgas/crt/fgas_memory.h"
 
-class CFDE_CSSFunction : public CFX_Target {
+class CFDE_CSSFunction {
  public:
   CFDE_CSSFunction(const FX_WCHAR* pszFuncName, IFDE_CSSValueList* pArgList)
       : m_pArgList(pArgList), m_pszFuncName(pszFuncName) {
@@ -28,8 +27,7 @@ class CFDE_CSSFunction : public CFX_Target {
   const FX_WCHAR* m_pszFuncName;
 };
 
-class CFDE_CSSPrimitiveValue : public IFDE_CSSPrimitiveValue,
-                               public CFX_Target {
+class CFDE_CSSPrimitiveValue : public IFDE_CSSPrimitiveValue {
  public:
   explicit CFDE_CSSPrimitiveValue(FX_ARGB color);
   explicit CFDE_CSSPrimitiveValue(FDE_CSSPROPERTYVALUE eValue);
@@ -61,10 +59,9 @@ class CFDE_CSSPrimitiveValue : public IFDE_CSSPrimitiveValue,
 typedef CFX_ArrayTemplate<IFDE_CSSPrimitiveValue*> CFDE_CSSPrimitiveArray;
 typedef CFX_ArrayTemplate<IFDE_CSSValue*> CFDE_CSSValueArray;
 
-class CFDE_CSSValueList : public IFDE_CSSValueList, public CFX_Target {
+class CFDE_CSSValueList : public IFDE_CSSValueList {
  public:
-  CFDE_CSSValueList(IFX_MemoryAllocator* pStaticStore,
-                    const CFDE_CSSValueArray& list);
+  explicit CFDE_CSSValueList(const CFDE_CSSValueArray& list);
 
   // IFDE_CSSValueList
   int32_t CountValues() const override;
@@ -75,7 +72,7 @@ class CFDE_CSSValueList : public IFDE_CSSValueList, public CFX_Target {
   int32_t m_iCount;
 };
 
-class CFDE_CSSValueListParser : public CFX_Target {
+class CFDE_CSSValueListParser {
  public:
   CFDE_CSSValueListParser(const FX_WCHAR* psz, int32_t iLen, FX_WCHAR separator)
       : m_Separator(separator), m_pCur(psz), m_pEnd(psz + iLen) {

@@ -6,9 +6,8 @@
 
 #include "xfa/fxfa/app/cxfa_linkuserdata.h"
 
-CXFA_LinkUserData::CXFA_LinkUserData(IFX_MemoryAllocator* pAllocator,
-                                     FX_WCHAR* pszText)
-    : m_pAllocator(pAllocator), m_dwRefCount(1), m_wsURLContent(pszText) {}
+CXFA_LinkUserData::CXFA_LinkUserData(FX_WCHAR* pszText)
+    : m_dwRefCount(1), m_wsURLContent(pszText) {}
 
 CXFA_LinkUserData::~CXFA_LinkUserData() {}
 
@@ -19,7 +18,7 @@ uint32_t CXFA_LinkUserData::Retain() {
 uint32_t CXFA_LinkUserData::Release() {
   uint32_t dwRefCount = --m_dwRefCount;
   if (dwRefCount <= 0)
-    FXTARGET_DeleteWith(CXFA_LinkUserData, m_pAllocator, this);
+    delete this;
   return dwRefCount;
 }
 

@@ -8,7 +8,6 @@
 #define XFA_FDE_FDE_ITERATOR_H_
 
 #include "xfa/fde/fde_visualset.h"
-#include "xfa/fgas/crt/fgas_memory.h"
 #include "xfa/fgas/crt/fgas_utils.h"
 
 struct FDE_CANVASITEM {
@@ -17,10 +16,10 @@ struct FDE_CANVASITEM {
   FX_POSITION hPos;
 };
 
-class CFDE_VisualSetIterator : public CFX_Target {
+class CFDE_VisualSetIterator {
  public:
   CFDE_VisualSetIterator();
-  ~CFDE_VisualSetIterator() override;
+  ~CFDE_VisualSetIterator();
 
   bool AttachCanvas(IFDE_CanvasSet* pCanvas);
   bool FilterObjects(uint32_t dwObjects = 0xFFFFFFFF);

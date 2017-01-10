@@ -24,10 +24,10 @@ enum FDE_RENDERSTATUS {
   FDE_RENDERSTATUS_Failed,
 };
 
-class CFDE_RenderContext : public CFX_Target {
+class CFDE_RenderContext {
  public:
   CFDE_RenderContext();
-  ~CFDE_RenderContext() override;
+  ~CFDE_RenderContext();
 
   bool StartRender(CFDE_RenderDevice* pRenderDevice,
                    IFDE_CanvasSet* pCanvasSet,

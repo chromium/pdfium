@@ -8,14 +8,13 @@
 #define XFA_FGAS_CRT_FGAS_UTILS_H_
 
 #include "core/fxcrt/fx_coordinates.h"
-#include "xfa/fgas/crt/fgas_memory.h"
 
 class FX_BASEARRAYDATA;
 
-class CFX_BaseArray : public CFX_Target {
+class CFX_BaseArray {
  protected:
   CFX_BaseArray(int32_t iGrowSize, int32_t iBlockSize);
-  ~CFX_BaseArray() override;
+  ~CFX_BaseArray();
 
   int32_t GetSize() const;
   int32_t GetBlockSize() const;
@@ -77,10 +76,10 @@ class CFX_BaseArrayTemplate : public CFX_BaseArray {
   void RemoveAll(bool bLeaveMemory) { CFX_BaseArray::RemoveAll(bLeaveMemory); }
 };
 
-class CFX_BaseMassArrayImp : public CFX_Target {
+class CFX_BaseMassArrayImp {
  public:
   CFX_BaseMassArrayImp(int32_t iChunkSize, int32_t iBlockSize);
-  ~CFX_BaseMassArrayImp() override;
+  ~CFX_BaseMassArrayImp();
 
   uint8_t* AddSpace() { return AddSpaceTo(m_iBlockCount); }
   uint8_t* AddSpaceTo(int32_t index);
@@ -105,10 +104,10 @@ class CFX_BaseMassArrayImp : public CFX_Target {
               int32_t iSrcCount);
 };
 
-class CFX_BaseMassArray : public CFX_Target {
+class CFX_BaseMassArray {
  protected:
   CFX_BaseMassArray(int32_t iChunkSize, int32_t iBlockSize);
-  ~CFX_BaseMassArray() override;
+  ~CFX_BaseMassArray();
 
   int32_t GetSize() const;
   uint8_t* AddSpaceTo(int32_t index);
@@ -251,10 +250,10 @@ class CFX_ObjectMassArrayTemplate : public CFX_BaseMassArray {
   }
 };
 
-class CFX_BaseDiscreteArray : public CFX_Target {
+class CFX_BaseDiscreteArray {
  protected:
   CFX_BaseDiscreteArray(int32_t iChunkSize, int32_t iBlockSize);
-  ~CFX_BaseDiscreteArray() override;
+  ~CFX_BaseDiscreteArray();
 
   uint8_t* AddSpaceTo(int32_t index);
   uint8_t* GetAt(int32_t index) const;
@@ -281,10 +280,10 @@ class CFX_DiscreteArrayTemplate : public CFX_BaseDiscreteArray {
   void RemoveAll() { CFX_BaseDiscreteArray::RemoveAll(); }
 };
 
-class CFX_BaseStack : public CFX_Target {
+class CFX_BaseStack {
  protected:
   CFX_BaseStack(int32_t iChunkSize, int32_t iBlockSize);
-  ~CFX_BaseStack() override;
+  ~CFX_BaseStack();
 
   uint8_t* Push();
   void Pop();

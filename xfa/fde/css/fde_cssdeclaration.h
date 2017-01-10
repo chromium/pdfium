@@ -11,7 +11,7 @@
 
 #include "xfa/fde/css/fde_cssdatatable.h"
 
-class FDE_CSSPropertyHolder : public CFX_Target {
+class FDE_CSSPropertyHolder {
  public:
   int16_t eProperty;
   bool bImportant;
@@ -19,7 +19,7 @@ class FDE_CSSPropertyHolder : public CFX_Target {
   FDE_CSSPropertyHolder* pNext;
 };
 
-class FDE_CSSCustomProperty : public CFX_Target {
+class FDE_CSSCustomProperty {
  public:
   const FX_WCHAR* pwsName;
   const FX_WCHAR* pwsValue;
@@ -27,12 +27,11 @@ class FDE_CSSCustomProperty : public CFX_Target {
 };
 
 struct FDE_CSSPROPERTYARGS {
-  IFX_MemoryAllocator* pStaticStore;
   std::unordered_map<uint32_t, FX_WCHAR*>* pStringCache;
   const FDE_CSSPROPERTYTABLE* pProperty;
 };
 
-class CFDE_CSSDeclaration : public CFX_Target {
+class CFDE_CSSDeclaration {
  public:
   CFDE_CSSDeclaration()
       : m_pFirstProperty(nullptr),
@@ -88,14 +87,12 @@ class CFDE_CSSDeclaration : public CFX_Target {
                               const FX_WCHAR* pszValue,
                               int32_t iValueLen,
                               bool bImportant);
-  bool ParseBorderPropoerty(IFX_MemoryAllocator* pStaticStore,
-                            const FX_WCHAR* pszValue,
+  bool ParseBorderPropoerty(const FX_WCHAR* pszValue,
                             int32_t iValueLen,
                             IFDE_CSSValue*& pColor,
                             IFDE_CSSValue*& pStyle,
                             IFDE_CSSValue*& pWidth) const;
-  void AddBorderProperty(IFX_MemoryAllocator* pStaticStore,
-                         IFDE_CSSValue* pColor,
+  void AddBorderProperty(IFDE_CSSValue* pColor,
                          IFDE_CSSValue* pStyle,
                          IFDE_CSSValue* pWidth,
                          bool bImportant,
@@ -114,8 +111,7 @@ class CFDE_CSSDeclaration : public CFX_Target {
                               const FX_WCHAR* pszValue,
                               int32_t iValueLen,
                               bool bImportant);
-  bool Add4ValuesProperty(IFX_MemoryAllocator* pStaticStore,
-                          const CFDE_CSSValueArray& list,
+  bool Add4ValuesProperty(const CFDE_CSSValueArray& list,
                           bool bImportant,
                           FDE_CSSPROPERTY eLeft,
                           FDE_CSSPROPERTY eTop,
@@ -142,15 +138,12 @@ class CFDE_CSSDeclaration : public CFX_Target {
   const FX_WCHAR* CopyToLocal(const FDE_CSSPROPERTYARGS* pArgs,
                               const FX_WCHAR* pszValue,
                               int32_t iValueLen);
-  void AddPropertyHolder(IFX_MemoryAllocator* pStaticStore,
-                         FDE_CSSPROPERTY eProperty,
+  void AddPropertyHolder(FDE_CSSPROPERTY eProperty,
                          IFDE_CSSValue* pValue,
                          bool bImportant);
-  IFDE_CSSPrimitiveValue* NewNumberValue(IFX_MemoryAllocator* pStaticStore,
-                                         FDE_CSSPRIMITIVETYPE eUnit,
+  IFDE_CSSPrimitiveValue* NewNumberValue(FDE_CSSPRIMITIVETYPE eUnit,
                                          FX_FLOAT fValue) const;
-  IFDE_CSSPrimitiveValue* NewEnumValue(IFX_MemoryAllocator* pStaticStore,
-                                       FDE_CSSPROPERTYVALUE eValue) const;
+  IFDE_CSSPrimitiveValue* NewEnumValue(FDE_CSSPROPERTYVALUE eValue) const;
 
   FDE_CSSPropertyHolder* m_pFirstProperty;
   FDE_CSSPropertyHolder* m_pLastProperty;

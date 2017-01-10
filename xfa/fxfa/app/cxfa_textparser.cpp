@@ -36,29 +36,25 @@ enum class TabStopStatus {
 
 }  // namespace
 
-CXFA_TextParser::CXFA_TextParser() : m_pUASheet(nullptr) {}
+CXFA_TextParser::CXFA_TextParser() : m_pUASheet(nullptr), m_bParsed(false) {}
 
 CXFA_TextParser::~CXFA_TextParser() {
   if (m_pUASheet)
     m_pUASheet->Release();
 
   for (auto& pair : m_mapXMLNodeToParseContext) {
-    if (pair.second) {
-      FXTARGET_DeleteWith(CXFA_TextParseContext, m_pAllocator.get(),
-                          pair.second);
-    }
+    if (pair.second)
+      delete pair.second;
   }
 }
 
 void CXFA_TextParser::Reset() {
   for (auto& pair : m_mapXMLNodeToParseContext) {
-    if (pair.second) {
-      FXTARGET_DeleteWith(CXFA_TextParseContext, m_pAllocator.get(),
-                          pair.second);
-    }
+    if (pair.second)
+      delete pair.second;
   }
   m_mapXMLNodeToParseContext.clear();
-  m_pAllocator.reset();
+  m_bParsed = false;
 }
 void CXFA_TextParser::InitCSSData(CXFA_TextProvider* pTextProvider) {
   if (!pTextProvider)
@@ -220,11 +216,10 @@ IFDE_CSSComputedStyle* CXFA_TextParser::ComputeStyle(
 
 void CXFA_TextParser::DoParse(CFDE_XMLNode* pXMLContainer,
                               CXFA_TextProvider* pTextProvider) {
-  if (!pXMLContainer || !pTextProvider || m_pAllocator)
+  if (!pXMLContainer || !pTextProvider || m_bParsed)
     return;
 
-  m_pAllocator = IFX_MemoryAllocator::Create(FX_ALLOCTYPE_Fixed, 32,
-                                             sizeof(CXFA_CSSTagProvider));
+  m_bParsed = true;
   InitCSSData(pTextProvider);
   IFDE_CSSComputedStyle* pRootStyle = CreateRootStyle(pTextProvider);
   ParseRichText(pXMLContainer, pRootStyle);
@@ -244,8 +239,7 @@ void CXFA_TextParser::ParseRichText(CFDE_XMLNode* pXMLNode,
   IFDE_CSSComputedStyle* pNewStyle = nullptr;
   if ((tagProvider.GetTagName() != FX_WSTRC(L"body")) ||
       (tagProvider.GetTagName() != FX_WSTRC(L"html"))) {
-    CXFA_TextParseContext* pTextContext =
-        FXTARGET_NewWith(m_pAllocator.get()) CXFA_TextParseContext;
+    CXFA_TextParseContext* pTextContext = new CXFA_TextParseContext;
     FDE_CSSDISPLAY eDisplay = FDE_CSSDISPLAY_Inline;
     if (!tagProvider.m_bContent) {
       pNewStyle = CreateStyle(pParentStyle);

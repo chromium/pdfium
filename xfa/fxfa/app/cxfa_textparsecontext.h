@@ -8,15 +8,14 @@
 #define XFA_FXFA_APP_CXFA_TEXTPARSECONTEXT_H_
 
 #include "xfa/fde/css/fde_css.h"
-#include "xfa/fgas/crt/fgas_memory.h"
 
 class CFDE_CSSDeclaration;
 class IFDE_CSSComputedStyle;
 
-class CXFA_TextParseContext : public CFX_Target {
+class CXFA_TextParseContext {
  public:
   CXFA_TextParseContext();
-  ~CXFA_TextParseContext() override;
+  ~CXFA_TextParseContext();
 
   void SetDisplay(FDE_CSSDISPLAY eDisplay) { m_eDisplay = eDisplay; }
   FDE_CSSDISPLAY GetDisplay() const { return m_eDisplay; }

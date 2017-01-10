@@ -28,7 +28,6 @@ class CXFA_PieceLine;
 class CXFA_TextProvider;
 class CXFA_TextTabstopsContext;
 class IFDE_CSSComputedStyle;
-class IFX_MemoryAllocator;
 class XFA_TextPiece;
 
 class CXFA_TextLayout {
@@ -121,7 +120,6 @@ class CXFA_TextLayout {
   CXFA_TextProvider* m_pTextProvider;
   CXFA_Node* m_pTextDataNode;
   bool m_bRichText;
-  std::unique_ptr<IFX_MemoryAllocator> m_pAllocator;
   std::unique_ptr<CFX_RTFBreak> m_pBreak;
   std::unique_ptr<CXFA_LoaderContext> m_pLoader;
   int32_t m_iLines;

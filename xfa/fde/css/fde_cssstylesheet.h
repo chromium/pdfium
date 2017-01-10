@@ -15,7 +15,7 @@
 
 class CFDE_CSSSyntaxParser;
 
-class CFDE_CSSSelector : public CFX_Target {
+class CFDE_CSSSelector {
  public:
   CFDE_CSSSelector(FDE_CSSSELECTORTYPE eType,
                    const FX_WCHAR* psz,
@@ -26,9 +26,7 @@ class CFDE_CSSSelector : public CFX_Target {
   virtual uint32_t GetNameHash() const;
   virtual CFDE_CSSSelector* GetNextSelector() const;
 
-  static CFDE_CSSSelector* FromString(IFX_MemoryAllocator* pStaticStore,
-                                      const FX_WCHAR* psz,
-                                      int32_t iLen);
+  static CFDE_CSSSelector* FromString(const FX_WCHAR* psz, int32_t iLen);
 
   void SetNext(CFDE_CSSSelector* pNext) { m_pNext = pNext; }
 
@@ -40,7 +38,7 @@ class CFDE_CSSSelector : public CFX_Target {
   CFDE_CSSSelector* m_pNext;
 };
 
-class CFDE_CSSStyleRule : public IFDE_CSSStyleRule, public CFX_Target {
+class CFDE_CSSStyleRule : public IFDE_CSSStyleRule {
  public:
   CFDE_CSSStyleRule();
 
@@ -50,8 +48,7 @@ class CFDE_CSSStyleRule : public IFDE_CSSStyleRule, public CFX_Target {
   CFDE_CSSDeclaration* GetDeclaration() override;
 
   CFDE_CSSDeclaration& GetDeclImp() { return m_Declaration; }
-  void SetSelector(IFX_MemoryAllocator* pStaticStore,
-                   const CFX_ArrayTemplate<CFDE_CSSSelector*>& list);
+  void SetSelector(const CFX_ArrayTemplate<CFDE_CSSSelector*>& list);
 
  protected:
   CFDE_CSSDeclaration m_Declaration;
@@ -59,7 +56,7 @@ class CFDE_CSSStyleRule : public IFDE_CSSStyleRule, public CFX_Target {
   int32_t m_iSelectors;
 };
 
-class CFDE_CSSMediaRule : public IFDE_CSSMediaRule, public CFX_Target {
+class CFDE_CSSMediaRule : public IFDE_CSSMediaRule {
  public:
   explicit CFDE_CSSMediaRule(uint32_t dwMediaList);
   ~CFDE_CSSMediaRule() override;
@@ -76,7 +73,7 @@ class CFDE_CSSMediaRule : public IFDE_CSSMediaRule, public CFX_Target {
   CFX_MassArrayTemplate<IFDE_CSSRule*> m_RuleArray;
 };
 
-class CFDE_CSSFontFaceRule : public IFDE_CSSFontFaceRule, public CFX_Target {
+class CFDE_CSSFontFaceRule : public IFDE_CSSFontFaceRule {
  public:
   // IFDE_CSSFontFaceRule
   CFDE_CSSDeclaration* GetDeclaration() override;
@@ -94,7 +91,7 @@ class CFDE_CSSFontFaceRule : public IFDE_CSSFontFaceRule, public CFX_Target {
   default:                          \
     return FDE_CSSSYNTAXSTATUS_Error;
 
-class CFDE_CSSStyleSheet : public IFDE_CSSStyleSheet, public CFX_Target {
+class CFDE_CSSStyleSheet : public IFDE_CSSStyleSheet {
  public:
   explicit CFDE_CSSStyleSheet(uint32_t dwMediaList);
   ~CFDE_CSSStyleSheet() override;
@@ -134,7 +131,6 @@ class CFDE_CSSStyleSheet : public IFDE_CSSStyleSheet, public CFX_Target {
   uint16_t m_wCodePage;
   uint16_t m_wRefCount;
   uint32_t m_dwMediaList;
-  std::unique_ptr<IFX_MemoryAllocator> m_pAllocator;
   CFX_MassArrayTemplate<IFDE_CSSRule*> m_RuleArray;
   CFX_WideString m_szUrl;
   CFX_ArrayTemplate<CFDE_CSSSelector*> m_Selectors;

@@ -105,7 +105,7 @@ struct FX_TXTRUN {
   bool bSkipSpace;
 };
 
-class CFX_TxtPiece : public CFX_Target {
+class CFX_TxtPiece {
  public:
   CFX_TxtPiece();
 

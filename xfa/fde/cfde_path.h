@@ -9,9 +9,8 @@
 
 #include "core/fxge/cfx_pathdata.h"
 #include "core/fxge/cfx_renderdevice.h"
-#include "xfa/fgas/crt/fgas_memory.h"
 
-class CFDE_Path : public CFX_Target {
+class CFDE_Path {
  public:
   bool StartFigure();
   bool CloseFigure();

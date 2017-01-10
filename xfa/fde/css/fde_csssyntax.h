@@ -9,13 +9,12 @@
 
 #include "core/fxcrt/cfx_retain_ptr.h"
 #include "xfa/fde/css/fde_css.h"
-#include "xfa/fgas/crt/fgas_memory.h"
 #include "xfa/fgas/crt/fgas_stream.h"
 
-class CFDE_CSSTextBuf : public CFX_Target {
+class CFDE_CSSTextBuf {
  public:
   CFDE_CSSTextBuf();
-  ~CFDE_CSSTextBuf() override;
+  ~CFDE_CSSTextBuf();
 
   bool AttachBuffer(const FX_WCHAR* pBuffer, int32_t iBufLen);
   bool EstimateSize(int32_t iAllocSize);
@@ -76,10 +75,10 @@ enum FDE_CSSSYNTAXMODE {
   FDE_CSSSYNTAXMODE_PropertyValue,
 };
 
-class CFDE_CSSSyntaxParser : public CFX_Target {
+class CFDE_CSSSyntaxParser {
  public:
   CFDE_CSSSyntaxParser();
-  ~CFDE_CSSSyntaxParser() override;
+  ~CFDE_CSSSyntaxParser();
 
   bool Init(const CFX_RetainPtr<IFGAS_Stream>& pStream,
             int32_t iCSSPlaneSize,

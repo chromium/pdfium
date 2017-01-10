@@ -8,18 +8,14 @@
 #define XFA_FXFA_APP_CXFA_TEXTUSERDATA_H_
 
 #include "core/fxcrt/fx_basic.h"
-#include "xfa/fgas/crt/fgas_memory.h"
 
 class CXFA_LinkUserData;
 class IFDE_CSSComputedStyle;
-class IFX_MemoryAllocator;
 
-class CXFA_TextUserData : public IFX_Retainable, public CFX_Target {
+class CXFA_TextUserData : public IFX_Retainable {
  public:
-  CXFA_TextUserData(IFX_MemoryAllocator* pAllocator,
-                    IFDE_CSSComputedStyle* pStyle);
-  CXFA_TextUserData(IFX_MemoryAllocator* pAllocator,
-                    IFDE_CSSComputedStyle* pStyle,
+  explicit CXFA_TextUserData(IFDE_CSSComputedStyle* pStyle);
+  CXFA_TextUserData(IFDE_CSSComputedStyle* pStyle,
                     CXFA_LinkUserData* pLinkData);
   ~CXFA_TextUserData() override;
 
@@ -31,7 +27,6 @@ class CXFA_TextUserData : public IFX_Retainable, public CFX_Target {
   CXFA_LinkUserData* m_pLinkData;
 
  protected:
-  IFX_MemoryAllocator* m_pAllocator;
   uint32_t m_dwRefCount;
 };
 

@@ -22,15 +22,11 @@ void CFDE_CSSRuleCollection::Clear() {
   m_TagRules.clear();
   m_ClassRules.clear();
   m_pUniversalRules = nullptr;
-  m_pStaticStore = nullptr;
   m_iSelectors = 0;
 }
 
 CFDE_CSSRuleCollection::CFDE_CSSRuleCollection()
-    : m_pStaticStore(nullptr),
-      m_pUniversalRules(nullptr),
-      m_pPseudoRules(nullptr),
-      m_iSelectors(0) {}
+    : m_pUniversalRules(nullptr), m_pPseudoRules(nullptr), m_iSelectors(0) {}
 
 CFDE_CSSRuleCollection::~CFDE_CSSRuleCollection() {
   Clear();
@@ -140,6 +136,5 @@ bool CFDE_CSSRuleCollection::AddRuleTo(FDE_CSSRuleData** pList,
 FDE_CSSRuleData* CFDE_CSSRuleCollection::NewRuleData(
     CFDE_CSSSelector* pSel,
     CFDE_CSSDeclaration* pDecl) {
-  return FXTARGET_NewWith(m_pStaticStore)
-      FDE_CSSRuleData(pSel, pDecl, ++m_iSelectors);
+  return new FDE_CSSRuleData(pSel, pDecl, ++m_iSelectors);
 }

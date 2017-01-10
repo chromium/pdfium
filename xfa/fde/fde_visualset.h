@@ -13,7 +13,6 @@
 #include "core/fxge/fx_dib.h"
 #include "xfa/fde/cfde_path.h"
 #include "xfa/fde/fde_object.h"
-#include "xfa/fgas/crt/fgas_memory.h"
 #include "xfa/fgas/font/cfgas_fontmgr.h"
 
 struct FXTEXT_CHARPOS;

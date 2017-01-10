@@ -9,25 +9,15 @@
 #include "xfa/fde/css/fde_css.h"
 #include "xfa/fxfa/app/cxfa_linkuserdata.h"
 
-CXFA_TextUserData::CXFA_TextUserData(IFX_MemoryAllocator* pAllocator,
-                                     IFDE_CSSComputedStyle* pStyle)
-    : m_pStyle(pStyle),
-      m_pLinkData(nullptr),
-      m_pAllocator(pAllocator),
-      m_dwRefCount(0) {
-  ASSERT(m_pAllocator);
+CXFA_TextUserData::CXFA_TextUserData(IFDE_CSSComputedStyle* pStyle)
+    : m_pStyle(pStyle), m_pLinkData(nullptr), m_dwRefCount(0) {
   if (m_pStyle)
     m_pStyle->Retain();
 }
 
-CXFA_TextUserData::CXFA_TextUserData(IFX_MemoryAllocator* pAllocator,
-                                     IFDE_CSSComputedStyle* pStyle,
+CXFA_TextUserData::CXFA_TextUserData(IFDE_CSSComputedStyle* pStyle,
                                      CXFA_LinkUserData* pLinkData)
-    : m_pStyle(pStyle),
-      m_pLinkData(pLinkData),
-      m_pAllocator(pAllocator),
-      m_dwRefCount(0) {
-  ASSERT(m_pAllocator);
+    : m_pStyle(pStyle), m_pLinkData(pLinkData), m_dwRefCount(0) {
   if (m_pStyle)
     m_pStyle->Retain();
 }
@@ -46,6 +36,6 @@ uint32_t CXFA_TextUserData::Retain() {
 uint32_t CXFA_TextUserData::Release() {
   uint32_t dwRefCount = --m_dwRefCount;
   if (dwRefCount == 0)
-    FXTARGET_DeleteWith(CXFA_TextUserData, m_pAllocator, this);
+    delete this;
   return dwRefCount;
 }

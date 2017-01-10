@@ -10,10 +10,10 @@
 
 #include "core/fxcrt/fx_basic.h"
 
-class FX_BASEARRAYDATA : public CFX_Target {
+class FX_BASEARRAYDATA {
  public:
   FX_BASEARRAYDATA(int32_t growsize, int32_t blocksize);
-  ~FX_BASEARRAYDATA() override;
+  ~FX_BASEARRAYDATA();
 
   int32_t iGrowSize;
   int32_t iBlockSize;

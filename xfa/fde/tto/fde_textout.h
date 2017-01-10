@@ -54,11 +54,11 @@ struct FDE_TTOPIECE {
 };
 typedef CFX_MassArrayTemplate<FDE_TTOPIECE> CFDE_TTOPieceArray;
 
-class CFDE_TTOLine : public CFX_Target {
+class CFDE_TTOLine {
  public:
   CFDE_TTOLine();
   CFDE_TTOLine(const CFDE_TTOLine& ttoLine);
-  ~CFDE_TTOLine() override;
+  ~CFDE_TTOLine();
 
   int32_t AddPiece(int32_t index, const FDE_TTOPIECE& ttoPiece);
   int32_t GetSize() const;
@@ -74,10 +74,10 @@ class CFDE_TTOLine : public CFX_Target {
 };
 typedef CFX_ObjectMassArrayTemplate<CFDE_TTOLine> CFDE_TTOLineArray;
 
-class CFDE_TextOut : public CFX_Target {
+class CFDE_TextOut {
  public:
   CFDE_TextOut();
-  ~CFDE_TextOut() override;
+  ~CFDE_TextOut();
 
   void SetFont(const CFX_RetainPtr<CFGAS_GEFont>& pFont);
   void SetFontSize(FX_FLOAT fFontSize);

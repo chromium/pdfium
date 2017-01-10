@@ -788,11 +788,10 @@ bool FDE_ParseCSSColor(const FX_WCHAR* pszValue,
   return true;
 }
 
-CFDE_CSSValueList::CFDE_CSSValueList(IFX_MemoryAllocator* pStaticStore,
-                                     const CFDE_CSSValueArray& list) {
+CFDE_CSSValueList::CFDE_CSSValueList(const CFDE_CSSValueArray& list) {
   m_iCount = list.GetSize();
   int32_t iByteCount = m_iCount * sizeof(IFDE_CSSValue*);
-  m_ppList = (IFDE_CSSValue**)pStaticStore->Alloc(iByteCount);
+  m_ppList = (IFDE_CSSValue**)FX_Alloc(uint8_t, iByteCount);
   FXSYS_memcpy(m_ppList, list.GetData(), iByteCount);
 }
 

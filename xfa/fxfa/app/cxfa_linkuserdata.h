@@ -10,13 +10,10 @@
 #include "core/fxcrt/fx_basic.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
-#include "xfa/fgas/crt/fgas_memory.h"
 
-class IFX_MemoryAllocator;
-
-class CXFA_LinkUserData : public IFX_Retainable, public CFX_Target {
+class CXFA_LinkUserData : public IFX_Retainable {
  public:
-  CXFA_LinkUserData(IFX_MemoryAllocator* pAllocator, FX_WCHAR* pszText);
+  explicit CXFA_LinkUserData(FX_WCHAR* pszText);
   ~CXFA_LinkUserData() override;
 
   // IFX_Retainable:
@@ -26,7 +23,6 @@ class CXFA_LinkUserData : public IFX_Retainable, public CFX_Target {
   const FX_WCHAR* GetLinkURL();
 
  protected:
-  IFX_MemoryAllocator* m_pAllocator;
   uint32_t m_dwRefCount;
   CFX_WideString m_wsURLContent;
 };

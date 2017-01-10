@@ -10,22 +10,21 @@
 #include <map>
 
 #include "xfa/fde/css/fde_css.h"
-#include "xfa/fgas/crt/fgas_memory.h"
 
-class FDE_CSSCacheItem : public CFX_Target {
+class FDE_CSSCacheItem {
  public:
   explicit FDE_CSSCacheItem(IFDE_CSSStyleSheet* p);
-  ~FDE_CSSCacheItem() override;
+  ~FDE_CSSCacheItem();
 
   IFDE_CSSStyleSheet* pStylesheet;
   uint32_t dwActivity;
 };
 
-class FDE_CSSTagCache : public CFX_Target {
+class FDE_CSSTagCache {
  public:
   FDE_CSSTagCache(FDE_CSSTagCache* parent, CXFA_CSSTagProvider* tag);
   FDE_CSSTagCache(const FDE_CSSTagCache& it);
-  ~FDE_CSSTagCache() override;
+  ~FDE_CSSTagCache();
 
   FDE_CSSTagCache* GetParent() const { return pParent; }
   CXFA_CSSTagProvider* GetTag() const { return pTag; }
@@ -50,10 +49,10 @@ class FDE_CSSTagCache : public CFX_Target {
   CFX_BaseArrayTemplate<uint32_t> dwClassHashs;
 };
 
-class CFDE_CSSAccelerator : public CFX_Target {
+class CFDE_CSSAccelerator {
  public:
   CFDE_CSSAccelerator();
-  ~CFDE_CSSAccelerator() override;
+  ~CFDE_CSSAccelerator();
 
   void OnEnterTag(CXFA_CSSTagProvider* pTag);
   void OnLeaveTag(CXFA_CSSTagProvider* pTag);

@@ -15,10 +15,10 @@
 
 class CXFA_LinkUserData;
 
-class XFA_TextPiece : public CFX_Target {
+class XFA_TextPiece {
  public:
   XFA_TextPiece();
-  ~XFA_TextPiece() override;
+  ~XFA_TextPiece();
 
   FX_WCHAR* pszText;
   int32_t iChars;
