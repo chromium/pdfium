@@ -669,9 +669,7 @@ CPDF_InterForm::CPDF_InterForm(CPDF_Document* pDocument)
 }
 
 CPDF_InterForm::~CPDF_InterForm() {
-  for (auto it : m_ControlMap)
-    delete it.second;
-
+  m_ControlMap.clear();
   size_t nCount = m_pFieldTree->m_Root.CountFields();
   for (size_t i = 0; i < nCount; ++i)
     delete m_pFieldTree->m_Root.GetFieldAtIndex(i);
@@ -919,7 +917,7 @@ CPDF_FormControl* CPDF_InterForm::GetControlAtPoint(CPDF_Page* pPage,
     if (it == m_ControlMap.end())
       continue;
 
-    CPDF_FormControl* pControl = it->second;
+    CPDF_FormControl* pControl = it->second.get();
     CFX_FloatRect rect = pControl->GetRect();
     if (!rect.Contains(pdf_x, pdf_y))
       continue;
@@ -934,7 +932,7 @@ CPDF_FormControl* CPDF_InterForm::GetControlAtPoint(CPDF_Page* pPage,
 CPDF_FormControl* CPDF_InterForm::GetControlByDict(
     const CPDF_Dictionary* pWidgetDict) const {
   const auto it = m_ControlMap.find(pWidgetDict);
-  return it != m_ControlMap.end() ? it->second : nullptr;
+  return it != m_ControlMap.end() ? it->second.get() : nullptr;
 }
 
 bool CPDF_InterForm::NeedConstructAP() const {
@@ -1150,11 +1148,12 @@ CPDF_FormControl* CPDF_InterForm::AddControl(CPDF_FormField* pField,
                                              CPDF_Dictionary* pWidgetDict) {
   const auto it = m_ControlMap.find(pWidgetDict);
   if (it != m_ControlMap.end())
-    return it->second;
+    return it->second.get();
 
-  CPDF_FormControl* pControl = new CPDF_FormControl(pField, pWidgetDict);
-  m_ControlMap[pWidgetDict] = pControl;
-  pField->m_ControlList.Add(pControl);
+  auto pNew = pdfium::MakeUnique<CPDF_FormControl>(pField, pWidgetDict);
+  CPDF_FormControl* pControl = pNew.get();
+  m_ControlMap[pWidgetDict] = std::move(pNew);
+  pField->m_ControlList.push_back(pControl);
   return pControl;
 }
 

@@ -245,11 +245,8 @@ int CPDF_FormField::GetControlIndex(const CPDF_FormControl* pControl) const {
   if (!pControl)
     return -1;
 
-  for (int i = 0; i < m_ControlList.GetSize(); i++) {
-    if (m_ControlList.GetAt(i) == pControl)
-      return i;
-  }
-  return -1;
+  auto it = std::find(m_ControlList.begin(), m_ControlList.end(), pControl);
+  return it != m_ControlList.end() ? it - m_ControlList.begin() : -1;
 }
 
 int CPDF_FormField::GetFieldType() const {
@@ -414,11 +411,9 @@ int CPDF_FormField::GetMaxLen() const {
   if (CPDF_Object* pObj = FPDF_GetFieldAttr(m_pDict, "MaxLen"))
     return pObj->GetInteger();
 
-  for (int i = 0; i < m_ControlList.GetSize(); i++) {
-    CPDF_FormControl* pControl = m_ControlList.GetAt(i);
+  for (const auto& pControl : m_ControlList) {
     if (!pControl)
       continue;
-
     CPDF_Dictionary* pWidgetDict = pControl->m_pWidgetDict;
     if (pWidgetDict->KeyExist("MaxLen"))
       return pWidgetDict->GetIntegerFor("MaxLen");

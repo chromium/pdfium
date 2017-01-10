@@ -112,7 +112,8 @@ class CPDF_InterForm {
 
   CPDF_Document* const m_pDocument;
   CPDF_Dictionary* m_pFormDict;
-  std::map<const CPDF_Dictionary*, CPDF_FormControl*> m_ControlMap;
+  std::map<const CPDF_Dictionary*, std::unique_ptr<CPDF_FormControl>>
+      m_ControlMap;
   std::unique_ptr<CFieldTree> m_pFieldTree;
   CFX_ByteString m_bsEncoding;
   IPDF_FormNotify* m_pFormNotify;

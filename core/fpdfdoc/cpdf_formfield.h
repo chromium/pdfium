@@ -7,11 +7,14 @@
 #ifndef CORE_FPDFDOC_CPDF_FORMFIELD_H_
 #define CORE_FPDFDOC_CPDF_FORMFIELD_H_
 
+#include <vector>
+
 #include "core/fpdfdoc/cpdf_aaction.h"
 #include "core/fpdfdoc/cpdf_formfield.h"
 #include "core/fxcrt/fx_basic.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
+#include "third_party/base/stl_util.h"
 
 #define FIELDTYPE_UNKNOWN 0
 #define FIELDTYPE_PUSHBUTTON 1
@@ -58,11 +61,11 @@ class CPDF_FormField {
 
   bool ResetField(bool bNotify = false);
 
-  int CountControls() const { return m_ControlList.GetSize(); }
-
-  CPDF_FormControl* GetControl(int index) const {
-    return m_ControlList.GetAt(index);
+  int CountControls() const {
+    return pdfium::CollectionSize<int>(m_ControlList);
   }
+
+  CPDF_FormControl* GetControl(int index) const { return m_ControlList[index]; }
 
   int GetControlIndex(const CPDF_FormControl* pControl) const;
   int GetFieldType() const;
@@ -150,9 +153,9 @@ class CPDF_FormField {
 
   CPDF_FormField::Type m_Type;
   uint32_t m_Flags;
-  CPDF_InterForm* m_pForm;
+  CPDF_InterForm* const m_pForm;
   CPDF_Dictionary* m_pDict;
-  CFX_ArrayTemplate<CPDF_FormControl*> m_ControlList;
+  std::vector<CPDF_FormControl*> m_ControlList;  // Owned by InterForm parent.
   FX_FLOAT m_FontSize;
   CPDF_Font* m_pFont;
 };

@@ -986,14 +986,14 @@ bool CPDF_Parser::LoadCrossRefV5(FX_FILESIZE* pos, bool bMainXRef) {
   if (!pArray)
     return false;
 
-  CFX_ArrayTemplate<uint32_t> WidthArray;
+  std::vector<uint32_t> WidthArray;
   FX_SAFE_UINT32 dwAccWidth = 0;
   for (size_t i = 0; i < pArray->GetCount(); ++i) {
-    WidthArray.Add(pArray->GetIntegerAt(i));
+    WidthArray.push_back(pArray->GetIntegerAt(i));
     dwAccWidth += WidthArray[i];
   }
 
-  if (!dwAccWidth.IsValid() || WidthArray.GetSize() < 3)
+  if (!dwAccWidth.IsValid() || WidthArray.size() < 3)
     return false;
 
   uint32_t totalWidth = dwAccWidth.ValueOrDie();
