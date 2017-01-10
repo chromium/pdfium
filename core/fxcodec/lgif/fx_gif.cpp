@@ -37,6 +37,7 @@ CGifLZWDecoder::~CGifLZWDecoder() {}
 
 void CGifLZWDecoder::InitTable(uint8_t code_len) {
   code_size = code_len;
+  ASSERT(code_size < 32);
   code_clear = 1 << code_size;
   code_end = code_clear + 1;
   bits_left = 0;
@@ -230,6 +231,7 @@ void CGifLZWEncoder::Start(uint8_t code_len,
                            uint8_t*& dst_buf,
                            uint32_t& offset) {
   code_size = code_len + 1;
+  ASSERT(code_size < 32);
   src_bit_cut = code_size;
   if (code_len == 0) {
     src_bit_cut = 1;
@@ -889,6 +891,12 @@ int32_t gif_load_frame(gif_decompress_struct_p gif_ptr, int32_t frame_num) {
         return 0;
       }
     }
+    if (gif_image_ptr->image_code_size >= 32) {
+      FX_Free(gif_image_ptr->image_row_buf);
+      gif_image_ptr->image_row_buf = nullptr;
+      gif_error(gif_ptr, "Error Invalid Code Size");
+      return 0;
+    }
     if (!gif_ptr->img_decoder_ptr)
       gif_ptr->img_decoder_ptr = new CGifLZWDecoder(gif_ptr->err_ptr);
     gif_ptr->img_decoder_ptr->InitTable(gif_image_ptr->image_code_size);
@@ -1156,6 +1164,8 @@ static bool gif_write_data(gif_compress_struct_p gif_ptr,
     GifGF& gf = (GifGF&)gif_ptr->lsd_ptr->global_flag;
     code_bit = gf.pal_bits;
   }
+  if (code_bit >= 31)
+    return false;
   gif_ptr->img_encoder_ptr->Start(code_bit, gif_ptr->src_buf, dst_buf,
                                   gif_ptr->cur_offset);
   uint32_t i;
