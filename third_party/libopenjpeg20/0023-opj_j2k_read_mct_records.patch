@@ -1,0 +1,34 @@
+diff --git a/third_party/libopenjpeg20/j2k.c b/third_party/libopenjpeg20/j2k.c
+index 6346c2190..d4dd65827 100644
+--- a/third_party/libopenjpeg20/j2k.c
++++ b/third_party/libopenjpeg20/j2k.c
+@@ -5170,10 +5170,11 @@ static OPJ_BOOL opj_j2k_read_mct (      opj_j2k_t *p_j2k,
+                 ++l_mct_data;
+         }
+ 
++        opj_mct_data_t *new_mct_records = NULL;
++
+         /* NOT FOUND */
+         if (i == l_tcp->m_nb_mct_records) {
+                 if (l_tcp->m_nb_mct_records == l_tcp->m_nb_max_mct_records) {
+-                        opj_mct_data_t *new_mct_records;
+                         l_tcp->m_nb_max_mct_records += OPJ_J2K_MCT_DEFAULT_NB_RECORDS;
+ 
+                         new_mct_records = (opj_mct_data_t *) opj_realloc(l_tcp->m_mct_records, l_tcp->m_nb_max_mct_records * sizeof(opj_mct_data_t));
+@@ -5191,7 +5192,6 @@ static OPJ_BOOL opj_j2k_read_mct (      opj_j2k_t *p_j2k,
+                 }
+ 
+                 l_mct_data = l_tcp->m_mct_records + l_tcp->m_nb_mct_records;
+-                ++l_tcp->m_nb_mct_records;
+         }
+ 
+         if (l_mct_data->m_data) {
+@@ -5221,6 +5221,9 @@ static OPJ_BOOL opj_j2k_read_mct (      opj_j2k_t *p_j2k,
+ 
+         l_mct_data->m_data_size = p_header_size;
+ 
++        if (new_mct_records) {
++                ++l_tcp->m_nb_mct_records;
++        }
+         return OPJ_TRUE;
+ }
