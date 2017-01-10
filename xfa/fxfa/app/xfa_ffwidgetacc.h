@@ -7,7 +7,14 @@
 #ifndef XFA_FXFA_APP_XFA_FFWIDGETACC_H_
 #define XFA_FXFA_APP_XFA_FFWIDGETACC_H_
 
-#include "xfa/fxfa/app/xfa_textlayout.h"
+#include "core/fxcrt/fx_string.h"
+#include "xfa/fxfa/app/cxfa_textlayout.h"
+#include "xfa/fxfa/fxfa_widget.h"
+#include "xfa/fxfa/parser/cxfa_font.h"
+#include "xfa/fxfa/parser/cxfa_para.h"
+
+class CXFA_FFDoc;
+class CXFA_Node;
 
 enum XFA_TEXTPROVIDERTYPE {
   XFA_TEXTPROVIDERTYPE_Text,

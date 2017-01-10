@@ -8,8 +8,11 @@
 
 #include "xfa/fwl/fwl_widgetdef.h"
 #include "xfa/fwl/fwl_widgethit.h"
+#include "xfa/fxfa/app/cxfa_linkuserdata.h"
+#include "xfa/fxfa/app/cxfa_pieceline.h"
+#include "xfa/fxfa/app/cxfa_textlayout.h"
 #include "xfa/fxfa/app/xfa_ffdraw.h"
-#include "xfa/fxfa/app/xfa_textlayout.h"
+#include "xfa/fxfa/app/xfa_textpiece.h"
 #include "xfa/fxfa/xfa_ffapp.h"
 #include "xfa/fxfa/xfa_ffdoc.h"
 #include "xfa/fxfa/xfa_ffpageview.h"
@@ -155,7 +158,8 @@ const FX_WCHAR* CXFA_FFText::GetLinkURLAtPoint(FX_FLOAT fx, FX_FLOAT fy) {
   }
   FX_FLOAT x(fx), y(fy);
   FWLToClient(x, y);
-  const CXFA_PieceLineArray* pPieceLines = pTextLayout->GetPieceLines();
+  const CFX_ArrayTemplate<CXFA_PieceLine*>* pPieceLines =
+      pTextLayout->GetPieceLines();
   int32_t iCount = pPieceLines->GetSize();
   for (int32_t i = 0; i < iCount; i++) {
     CXFA_PieceLine* pPieceLine = pPieceLines->GetAt(i);

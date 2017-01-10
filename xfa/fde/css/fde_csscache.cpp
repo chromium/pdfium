@@ -9,7 +9,7 @@
 #include <algorithm>
 
 #include "core/fxcrt/fx_ext.h"
-#include "xfa/fxfa/app/xfa_textlayout.h"
+#include "xfa/fxfa/app/cxfa_csstagprovider.h"
 
 FDE_CSSCacheItem::FDE_CSSCacheItem(IFDE_CSSStyleSheet* p)
     : pStylesheet(p), dwActivity(0) {

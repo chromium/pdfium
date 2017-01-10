@@ -15,7 +15,7 @@
 #include "xfa/fde/css/fde_cssdeclaration.h"
 #include "xfa/fde/css/fde_cssstylesheet.h"
 #include "xfa/fde/css/fde_csssyntax.h"
-#include "xfa/fxfa/app/xfa_textlayout.h"
+#include "xfa/fxfa/app/cxfa_csstagprovider.h"
 
 #define FDE_CSSUNIVERSALHASH ('*')
 
