@@ -14,7 +14,7 @@ class CFDE_TxtEdtBufTest : public testing::Test {
     buf_ = pdfium::MakeUnique<CFDE_TxtEdtBuf>();
     buf_->SetChunkSizeForTesting(5);
   }
-  size_t ChunkCount() const { return buf_->m_Chunks.GetSize(); }
+  size_t ChunkCount() const { return buf_->m_chunks.size(); }
 
   std::unique_ptr<CFDE_TxtEdtBuf> buf_;
 };

@@ -10,7 +10,6 @@
 
 #include "third_party/base/ptr_util.h"
 #include "xfa/fde/cfde_txtedtbuf.h"
-#include "xfa/fde/cfde_txtedtbufiter.h"
 #include "xfa/fde/cfde_txtedtengine.h"
 #include "xfa/fde/cfde_txtedtparag.h"
 #include "xfa/fde/cfde_txtedttextset.h"
@@ -239,7 +238,7 @@ int32_t CFDE_TxtEdtPage::SelectWord(const CFX_PointF& fPoint, int32_t& nCount) {
     return -1;
   }
   std::unique_ptr<CFX_WordBreak> pIter(new CFX_WordBreak);
-  pIter->Attach(new CFDE_TxtEdtBufIter(pBuf));
+  pIter->Attach(new CFDE_TxtEdtBuf::Iterator(pBuf));
   pIter->SetAt(nIndex);
   nCount = pIter->GetWordLength();
   return pIter->GetWordPos();
@@ -261,8 +260,8 @@ int32_t CFDE_TxtEdtPage::LoadPage(const CFX_RectF* pClipBox,
   if (pParams->dwMode & FDE_TEXTEDITMODE_Password) {
     wcAlias = m_pEditEngine->GetAliasChar();
   }
-  m_pIter.reset(
-      new CFDE_TxtEdtBufIter(static_cast<CFDE_TxtEdtBuf*>(pBuf), wcAlias));
+  m_pIter.reset(new CFDE_TxtEdtBuf::Iterator(static_cast<CFDE_TxtEdtBuf*>(pBuf),
+                                             wcAlias));
   CFX_TxtBreak* pBreak = m_pEditEngine->GetTextBreak();
   pBreak->EndBreak(FX_TXTBREAK_ParagraphBreak);
   pBreak->ClearBreakPieces();

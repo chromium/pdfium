@@ -1118,8 +1118,6 @@ if (pdf_enable_xfa) {
       "xfa/fde/cfde_path.h",
       "xfa/fde/cfde_txtedtbuf.cpp",
       "xfa/fde/cfde_txtedtbuf.h",
-      "xfa/fde/cfde_txtedtbufiter.cpp",
-      "xfa/fde/cfde_txtedtbufiter.h",
       "xfa/fde/cfde_txtedtdorecord_deleterange.cpp",
       "xfa/fde/cfde_txtedtdorecord_deleterange.h",
       "xfa/fde/cfde_txtedtdorecord_insert.cpp",

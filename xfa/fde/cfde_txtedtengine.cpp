@@ -10,7 +10,6 @@
 
 #include "third_party/base/ptr_util.h"
 #include "xfa/fde/cfde_txtedtbuf.h"
-#include "xfa/fde/cfde_txtedtbufiter.h"
 #include "xfa/fde/cfde_txtedtdorecord_deleterange.h"
 #include "xfa/fde/cfde_txtedtdorecord_insert.h"
 #include "xfa/fde/cfde_txtedtpage.h"
@@ -706,7 +705,7 @@ CFDE_TxtEdtParag* CFDE_TxtEdtEngine::GetParag(int32_t nParagIndex) const {
 IFX_CharIter* CFDE_TxtEdtEngine::CreateCharIter() {
   if (!m_pTxtBuf)
     return nullptr;
-  return new CFDE_TxtEdtBufIter(m_pTxtBuf.get());
+  return new CFDE_TxtEdtBuf::Iterator(m_pTxtBuf.get());
 }
 
 int32_t CFDE_TxtEdtEngine::Line2Parag(int32_t nStartParag,
@@ -932,7 +931,8 @@ void CFDE_TxtEdtEngine::RebuildParagraphs() {
   FX_WCHAR wChar = L' ';
   int32_t nParagStart = 0;
   int32_t nIndex = 0;
-  std::unique_ptr<IFX_CharIter> pIter(new CFDE_TxtEdtBufIter(m_pTxtBuf.get()));
+  std::unique_ptr<IFX_CharIter> pIter(
+      new CFDE_TxtEdtBuf::Iterator(m_pTxtBuf.get()));
   pIter->SetAt(0);
   do {
     wChar = pIter->GetChar();

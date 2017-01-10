@@ -9,7 +9,6 @@
 #include <memory>
 
 #include "xfa/fde/cfde_txtedtbuf.h"
-#include "xfa/fde/cfde_txtedtbufiter.h"
 #include "xfa/fde/cfde_txtedtengine.h"
 #include "xfa/fde/ifde_txtedtengine.h"
 #include "xfa/fde/ifx_chariter.h"
@@ -41,8 +40,8 @@ void CFDE_TxtEdtParag::LoadParag() {
   if (pParam->dwMode & FDE_TEXTEDITMODE_Password) {
     wcAlias = m_pEngine->GetAliasChar();
   }
-  std::unique_ptr<IFX_CharIter> pIter(
-      new CFDE_TxtEdtBufIter(static_cast<CFDE_TxtEdtBuf*>(pTxtBuf), wcAlias));
+  std::unique_ptr<IFX_CharIter> pIter(new CFDE_TxtEdtBuf::Iterator(
+      static_cast<CFDE_TxtEdtBuf*>(pTxtBuf), wcAlias));
   pIter->SetAt(m_nCharStart);
   int32_t nEndIndex = m_nCharStart + m_nCharCount;
   CFX_ArrayTemplate<int32_t> LineBaseArr;
@@ -110,7 +109,7 @@ void CFDE_TxtEdtParag::CalcLines() {
   uint32_t dwBreakStatus = FX_TXTBREAK_None;
   int32_t nEndIndex = m_nCharStart + m_nCharCount;
   std::unique_ptr<IFX_CharIter> pIter(
-      new CFDE_TxtEdtBufIter(static_cast<CFDE_TxtEdtBuf*>(pTxtBuf)));
+      new CFDE_TxtEdtBuf::Iterator(static_cast<CFDE_TxtEdtBuf*>(pTxtBuf)));
   pIter->SetAt(m_nCharStart);
   bool bReload = false;
   do {
