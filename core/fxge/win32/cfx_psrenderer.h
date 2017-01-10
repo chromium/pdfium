@@ -7,6 +7,9 @@
 #ifndef CORE_FXGE_WIN32_CFX_PSRENDERER_H_
 #define CORE_FXGE_WIN32_CFX_PSRENDERER_H_
 
+#include <memory>
+#include <vector>
+
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxge/cfx_graphstatedata.h"
@@ -90,8 +93,8 @@ class CFX_PSRenderer {
   bool m_bColorSet;
   uint32_t m_LastColor;
   FX_RECT m_ClipBox;
-  CFX_ArrayTemplate<CPSFont*> m_PSFontList;
-  CFX_ArrayTemplate<FX_RECT> m_ClipBoxStack;
+  std::vector<std::unique_ptr<CPSFont>> m_PSFontList;
+  std::vector<FX_RECT> m_ClipBoxStack;
   bool m_bInited;
 };
 

@@ -16,6 +16,7 @@
 #include "core/fxge/cfx_renderdevice.h"
 #include "core/fxge/ge/fx_text_int.h"
 #include "core/fxge/win32/cpsoutput.h"
+#include "third_party/base/ptr_util.h"
 
 struct PSGlyph {
   CFX_Font* m_pFont;
@@ -36,12 +37,7 @@ CFX_PSRenderer::CFX_PSRenderer() {
   m_bInited = false;
 }
 
-CFX_PSRenderer::~CFX_PSRenderer() {
-  for (int i = 0; i < static_cast<int>(m_PSFontList.GetSize()); i++) {
-    CPSFont* pFont = m_PSFontList[i];
-    delete pFont;
-  }
-}
+CFX_PSRenderer::~CFX_PSRenderer() {}
 
 #define OUTPUT_PS(str) m_pOutput->OutputPS(str, sizeof str - 1)
 
@@ -84,32 +80,31 @@ bool CFX_PSRenderer::StartRendering() {
 void CFX_PSRenderer::EndRendering() {
   if (m_bInited) {
     OUTPUT_PS("\nrestore\n");
+    m_bInited = false;
   }
-  m_bInited = false;
 }
 
 void CFX_PSRenderer::SaveState() {
   StartRendering();
   OUTPUT_PS("q\n");
-  m_ClipBoxStack.Add(m_ClipBox);
+  m_ClipBoxStack.push_back(m_ClipBox);
 }
 
 void CFX_PSRenderer::RestoreState(bool bKeepSaved) {
   StartRendering();
-  if (bKeepSaved) {
+  if (bKeepSaved)
     OUTPUT_PS("Q\nq\n");
-  } else {
+  else
     OUTPUT_PS("Q\n");
-  }
+
   m_bColorSet = false;
   m_bGraphStateSet = false;
-  int size = m_ClipBoxStack.GetSize();
-  if (!size)
+  if (m_ClipBoxStack.empty())
     return;
 
-  m_ClipBox = m_ClipBoxStack.GetAt(size - 1);
+  m_ClipBox = m_ClipBoxStack.back();
   if (!bKeepSaved)
-    m_ClipBoxStack.RemoveAt(size - 1);
+    m_ClipBoxStack.pop_back();
 }
 
 void CFX_PSRenderer::OutputPath(const CFX_PathData* pPathData,
@@ -537,32 +532,31 @@ void CFX_PSRenderer::FindPSFontGlyph(CFX_FaceCache* pFaceCache,
                                      const FXTEXT_CHARPOS& charpos,
                                      int* ps_fontnum,
                                      int* ps_glyphindex) {
-  for (int i = 0; i < m_PSFontList.GetSize(); i++) {
-    CPSFont* pPSFont = m_PSFontList[i];
-    for (int j = 0; j < pPSFont->m_nGlyphs; j++)
+  int i = 0;
+  for (const auto& pPSFont : m_PSFontList) {
+    for (int j = 0; j < pPSFont->m_nGlyphs; j++) {
       if (pPSFont->m_Glyphs[j].m_pFont == pFont &&
-          pPSFont->m_Glyphs[j].m_GlyphIndex == charpos.m_GlyphIndex) {
-        if ((!pPSFont->m_Glyphs[j].m_bGlyphAdjust && !charpos.m_bGlyphAdjust) ||
-            (pPSFont->m_Glyphs[j].m_bGlyphAdjust && charpos.m_bGlyphAdjust &&
-             (FXSYS_fabs(pPSFont->m_Glyphs[j].m_AdjustMatrix[0] -
-                         charpos.m_AdjustMatrix[0]) < 0.01 &&
-              FXSYS_fabs(pPSFont->m_Glyphs[j].m_AdjustMatrix[1] -
-                         charpos.m_AdjustMatrix[1]) < 0.01 &&
-              FXSYS_fabs(pPSFont->m_Glyphs[j].m_AdjustMatrix[2] -
-                         charpos.m_AdjustMatrix[2]) < 0.01 &&
-              FXSYS_fabs(pPSFont->m_Glyphs[j].m_AdjustMatrix[3] -
-                         charpos.m_AdjustMatrix[3]) < 0.01))) {
-          *ps_fontnum = i;
-          *ps_glyphindex = j;
-          return;
-        }
+          pPSFont->m_Glyphs[j].m_GlyphIndex == charpos.m_GlyphIndex &&
+          ((!pPSFont->m_Glyphs[j].m_bGlyphAdjust && !charpos.m_bGlyphAdjust) ||
+           (pPSFont->m_Glyphs[j].m_bGlyphAdjust && charpos.m_bGlyphAdjust &&
+            (FXSYS_fabs(pPSFont->m_Glyphs[j].m_AdjustMatrix[0] -
+                        charpos.m_AdjustMatrix[0]) < 0.01 &&
+             FXSYS_fabs(pPSFont->m_Glyphs[j].m_AdjustMatrix[1] -
+                        charpos.m_AdjustMatrix[1]) < 0.01 &&
+             FXSYS_fabs(pPSFont->m_Glyphs[j].m_AdjustMatrix[2] -
+                        charpos.m_AdjustMatrix[2]) < 0.01 &&
+             FXSYS_fabs(pPSFont->m_Glyphs[j].m_AdjustMatrix[3] -
+                        charpos.m_AdjustMatrix[3]) < 0.01)))) {
+        *ps_fontnum = i;
+        *ps_glyphindex = j;
+        return;
       }
+    }
+    ++i;
   }
-  if (m_PSFontList.GetSize() == 0 ||
-      m_PSFontList[m_PSFontList.GetSize() - 1]->m_nGlyphs == 256) {
-    CPSFont* pPSFont = new CPSFont;
-    pPSFont->m_nGlyphs = 0;
-    m_PSFontList.Add(pPSFont);
+  if (m_PSFontList.empty() || m_PSFontList.back()->m_nGlyphs == 256) {
+    m_PSFontList.push_back(pdfium::MakeUnique<CPSFont>());
+    m_PSFontList.back()->m_nGlyphs = 0;
     CFX_ByteTextBuf buf;
     buf << "8 dict begin/FontType 3 def/FontMatrix[1 0 0 1 0 0]def\n"
            "/FontBBox[0 0 0 0]def/Encoding 256 array def 0 1 255{Encoding "
@@ -573,12 +567,13 @@ void CFX_PSRenderer::FindPSFontGlyph(CFX_FaceCache* pFaceCache,
            "/BuildChar{1 index/Encoding get exch get 1 index/BuildGlyph get "
            "exec}bind def\n"
            "currentdict end\n";
-    buf << "/X" << m_PSFontList.GetSize() - 1 << " exch definefont pop\n";
+    buf << "/X" << static_cast<uint32_t>(m_PSFontList.size() - 1)
+        << " exch definefont pop\n";
     m_pOutput->OutputPS((const FX_CHAR*)buf.GetBuffer(), buf.GetSize());
     buf.Clear();
   }
-  *ps_fontnum = m_PSFontList.GetSize() - 1;
-  CPSFont* pPSFont = m_PSFontList[*ps_fontnum];
+  *ps_fontnum = m_PSFontList.size() - 1;
+  CPSFont* pPSFont = m_PSFontList[*ps_fontnum].get();
   int glyphindex = pPSFont->m_nGlyphs;
   *ps_glyphindex = glyphindex;
   pPSFont->m_Glyphs[glyphindex].m_GlyphIndex = charpos.m_GlyphIndex;
