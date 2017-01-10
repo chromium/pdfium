@@ -86,15 +86,14 @@ void FX_Random_GenerateMT(uint32_t* pBuffer, int32_t iCount);
 void FX_Random_GenerateCrypto(uint32_t* pBuffer, int32_t iCount);
 
 #ifdef PDF_ENABLE_XFA
-typedef struct FX_GUID {
+struct FX_GUID {
   uint32_t data1;
   uint16_t data2;
   uint16_t data3;
   uint8_t data4[8];
-} FX_GUID, *FX_LPGUID;
-typedef FX_GUID const* FX_LPCGUID;
-void FX_GUID_CreateV4(FX_LPGUID pGUID);
-void FX_GUID_ToString(FX_LPCGUID pGUID,
+};
+void FX_GUID_CreateV4(FX_GUID* pGUID);
+void FX_GUID_ToString(const FX_GUID* pGUID,
                       CFX_ByteString& bsStr,
                       bool bSeparator = true);
 #endif  // PDF_ENABLE_XFA

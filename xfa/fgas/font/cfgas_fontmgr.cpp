@@ -47,7 +47,7 @@ int32_t GetSimilarityScore(FX_FONTDESCRIPTOR const* pFont,
   return iValue;
 }
 
-FX_FONTDESCRIPTOR const* MatchDefaultFont(FX_LPFONTMATCHPARAMS pParams,
+FX_FONTDESCRIPTOR const* MatchDefaultFont(FX_FONTMATCHPARAMS* pParams,
                                           const CFX_FontDescriptors& fonts) {
   FX_FONTDESCRIPTOR const* pBestFont = nullptr;
   int32_t iBestSimilar = 0;

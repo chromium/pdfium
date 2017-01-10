@@ -92,7 +92,7 @@ const XFA_BARCODETYPEENUMINFO g_XFABarCodeTypeEnumData[] = {
 const int32_t g_iXFABarcodeTypeCount =
     sizeof(g_XFABarCodeTypeEnumData) / sizeof(XFA_BARCODETYPEENUMINFO);
 
-XFA_LPCBARCODETYPEENUMINFO XFA_GetBarcodeTypeByName(
+const XFA_BARCODETYPEENUMINFO* XFA_GetBarcodeTypeByName(
     const CFX_WideStringC& wsName) {
   if (wsName.IsEmpty())
     return nullptr;
@@ -102,7 +102,7 @@ XFA_LPCBARCODETYPEENUMINFO XFA_GetBarcodeTypeByName(
   int32_t iEnd = g_iXFABarcodeTypeCount - 1;
   do {
     int32_t iMid = (iStart + iEnd) / 2;
-    XFA_LPCBARCODETYPEENUMINFO pInfo = g_XFABarCodeTypeEnumData + iMid;
+    const XFA_BARCODETYPEENUMINFO* pInfo = g_XFABarCodeTypeEnumData + iMid;
     if (uHash == pInfo->uHash) {
       return pInfo;
     } else if (uHash < pInfo->uHash) {
@@ -168,7 +168,7 @@ void CXFA_FFBarcode::UpdateWidgetProperty() {
   CXFA_FFTextEdit::UpdateWidgetProperty();
   CFWL_Barcode* pBarCodeWidget = (CFWL_Barcode*)m_pNormalWidget;
   CFX_WideString wsType = GetDataAcc()->GetBarcodeType();
-  XFA_LPCBARCODETYPEENUMINFO pBarcodeTypeInfo =
+  const XFA_BARCODETYPEENUMINFO* pBarcodeTypeInfo =
       XFA_GetBarcodeTypeByName(wsType.AsStringC());
   if (!pBarcodeTypeInfo)
     return;

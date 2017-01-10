@@ -652,13 +652,13 @@ void FX_Random_GenerateCrypto(uint32_t* pBuffer, int32_t iCount) {
 }
 
 #ifdef PDF_ENABLE_XFA
-void FX_GUID_CreateV4(FX_LPGUID pGUID) {
+static const FX_CHAR gs_FX_pHexChars[] = "0123456789ABCDEF";
+void FX_GUID_CreateV4(FX_GUID* pGUID) {
   FX_Random_GenerateMT((uint32_t*)pGUID, 4);
   uint8_t& b = ((uint8_t*)pGUID)[6];
   b = (b & 0x0F) | 0x40;
 }
-const FX_CHAR* gs_FX_pHexChars = "0123456789ABCDEF";
-void FX_GUID_ToString(FX_LPCGUID pGUID,
+void FX_GUID_ToString(const FX_GUID* pGUID,
                       CFX_ByteString& bsStr,
                       bool bSeparator) {
   FX_CHAR* pBuf = bsStr.GetBuffer(40);

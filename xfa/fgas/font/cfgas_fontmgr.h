@@ -52,8 +52,6 @@ struct FX_FONTMATCHPARAMS {
   uint16_t wCodePage;
 };
 
-typedef FX_FONTMATCHPARAMS* FX_LPFONTMATCHPARAMS;
-
 struct FX_FONTSIGNATURE {
   uint32_t fsUsb[4];
   uint32_t fsCsb[2];
