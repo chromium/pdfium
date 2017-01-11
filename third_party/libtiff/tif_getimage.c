@@ -1281,7 +1281,7 @@ DECLAREContigPutFunc(putagreytile)
     while (h-- > 0) {
 	for (x = w; x-- > 0;)
         {
-            *cp++ = BWmap[*pp][0] & (*(pp+1) << 24 | ~A1);
+            *cp++ = BWmap[*pp][0] & ((uint32)*(pp+1) << 24 | ~A1);
             pp += samplesperpixel;
         }
 	cp += toskew;
