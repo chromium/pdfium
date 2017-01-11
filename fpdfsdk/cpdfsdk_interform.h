@@ -15,6 +15,7 @@
 #include "core/fpdfdoc/ipdf_formnotify.h"
 #include "core/fxcrt/fx_basic.h"
 #include "core/fxge/fx_dib.h"
+#include "fpdfsdk/cpdfsdk_widget.h"
 
 class CPDF_Dictionary;
 class CPDF_FormControl;
@@ -22,7 +23,6 @@ class CPDF_FormField;
 class CPDF_InterForm;
 class CPDF_Object;
 class CPDFSDK_FormFillEnvironment;
-class CPDFSDK_Widget;
 
 #ifdef PDF_ENABLE_XFA
 class CPDFSDK_XFAWidget;
@@ -42,9 +42,9 @@ class CPDFSDK_InterForm : public IPDF_FormNotify {
   CPDFSDK_Widget* GetSibling(CPDFSDK_Widget* pWidget, bool bNext) const;
   CPDFSDK_Widget* GetWidget(CPDF_FormControl* pControl) const;
   void GetWidgets(const CFX_WideString& sFieldName,
-                  std::vector<CPDFSDK_Widget*>* widgets) const;
+                  std::vector<CPDFSDK_Annot::ObservedPtr>* widgets) const;
   void GetWidgets(CPDF_FormField* pField,
-                  std::vector<CPDFSDK_Widget*>* widgets) const;
+                  std::vector<CPDFSDK_Annot::ObservedPtr>* widgets) const;
 
   void AddMap(CPDF_FormControl* pControl, CPDFSDK_Widget* pWidget);
   void RemoveMap(CPDF_FormControl* pControl);

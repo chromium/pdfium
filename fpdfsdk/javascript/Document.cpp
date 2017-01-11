@@ -506,12 +506,16 @@ bool Document::removeField(IJS_Context* cc,
   CJS_Runtime* pRuntime = pContext->GetJSRuntime();
   CFX_WideString sFieldName = params[0].ToCFXWideString(pRuntime);
   CPDFSDK_InterForm* pInterForm = m_pFormFillEnv->GetInterForm();
-  std::vector<CPDFSDK_Widget*> widgets;
+  std::vector<CPDFSDK_Annot::ObservedPtr> widgets;
   pInterForm->GetWidgets(sFieldName, &widgets);
   if (widgets.empty())
     return true;
 
-  for (CPDFSDK_Widget* pWidget : widgets) {
+  for (const auto& pAnnot : widgets) {
+    CPDFSDK_Widget* pWidget = static_cast<CPDFSDK_Widget*>(pAnnot.Get());
+    if (!pWidget)
+      continue;
+
     CFX_FloatRect rcAnnot = pWidget->GetRect();
     --rcAnnot.left;
     --rcAnnot.bottom;

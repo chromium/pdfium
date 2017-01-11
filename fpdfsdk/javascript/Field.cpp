@@ -265,24 +265,28 @@ void Field::UpdateFormField(CPDFSDK_FormFillEnvironment* pFormFillEnv,
   CPDFSDK_InterForm* pInterForm = pFormFillEnv->GetInterForm();
 
   if (bResetAP) {
-    std::vector<CPDFSDK_Widget*> widgets;
+    std::vector<CPDFSDK_Annot::ObservedPtr> widgets;
     pInterForm->GetWidgets(pFormField, &widgets);
 
     int nFieldType = pFormField->GetFieldType();
     if (nFieldType == FIELDTYPE_COMBOBOX || nFieldType == FIELDTYPE_TEXTFIELD) {
-      for (CPDFSDK_Annot* pAnnot : widgets) {
-        bool bFormatted = false;
-        CPDFSDK_Annot::ObservedPtr pObserved(pAnnot);
-        CFX_WideString sValue =
-            static_cast<CPDFSDK_Widget*>(pObserved.Get())->OnFormat(bFormatted);
+      for (auto& pObserved : widgets) {
         if (pObserved) {
-          static_cast<CPDFSDK_Widget*>(pObserved.Get())
-              ->ResetAppearance(bFormatted ? &sValue : nullptr, false);
+          bool bFormatted = false;
+          CFX_WideString sValue = static_cast<CPDFSDK_Widget*>(pObserved.Get())
+                                      ->OnFormat(bFormatted);
+          if (pObserved) {  // Not redundant, may be clobbered by OnFormat.
+            static_cast<CPDFSDK_Widget*>(pObserved.Get())
+                ->ResetAppearance(bFormatted ? &sValue : nullptr, false);
+          }
         }
       }
     } else {
-      for (CPDFSDK_Widget* pWidget : widgets) {
-        pWidget->ResetAppearance(nullptr, false);
+      for (auto& pObserved : widgets) {
+        if (pObserved) {
+          static_cast<CPDFSDK_Widget*>(pObserved.Get())
+              ->ResetAppearance(nullptr, false);
+        }
       }
     }
   }
@@ -291,16 +295,18 @@ void Field::UpdateFormField(CPDFSDK_FormFillEnvironment* pFormFillEnv,
     // Refresh the widget list. The calls in |bResetAP| may have caused widgets
     // to be removed from the list. We need to call |GetWidgets| again to be
     // sure none of the widgets have been deleted.
-    std::vector<CPDFSDK_Widget*> widgets;
+    std::vector<CPDFSDK_Annot::ObservedPtr> widgets;
     pInterForm->GetWidgets(pFormField, &widgets);
 
     // TODO(dsinclair): Determine if all widgets share the same
     // CPDFSDK_InterForm. If that's the case, we can move the code to
     // |GetFormFillEnv| out of the loop.
-    for (CPDFSDK_Widget* pWidget : widgets) {
-      pWidget->GetInterForm()
-          ->GetFormFillEnv()
-          ->UpdateAllViews(nullptr, pWidget);
+    for (auto& pObserved : widgets) {
+      if (pObserved) {
+        CPDFSDK_Widget* pWidget = static_cast<CPDFSDK_Widget*>(pObserved.Get());
+        pWidget->GetInterForm()->GetFormFillEnv()->UpdateAllViews(nullptr,
+                                                                  pWidget);
+      }
     }
   }
 
@@ -1803,8 +1809,10 @@ bool Field::numItems(IJS_Context* cc,
 }
 
 bool Field::page(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError) {
-  if (!vp.IsGetting())
+  if (!vp.IsGetting()) {
+    sError = JSGetStringFromID(IDS_STRING_JSREADONLY);
     return false;
+  }
 
   std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
   if (FieldArray.empty())
@@ -1814,9 +1822,8 @@ bool Field::page(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError) {
   if (!pFormField)
     return false;
 
-  std::vector<CPDFSDK_Widget*> widgets;
+  std::vector<CPDFSDK_Annot::ObservedPtr> widgets;
   m_pFormFillEnv->GetInterForm()->GetWidgets(pFormField, &widgets);
-
   if (widgets.empty()) {
     vp << (int32_t)-1;
     return true;
@@ -1824,13 +1831,21 @@ bool Field::page(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError) {
 
   CJS_Runtime* pRuntime = CJS_Runtime::FromContext(cc);
   CJS_Array PageArray;
-  for (size_t i = 0; i < widgets.size(); ++i) {
-    CPDFSDK_PageView* pPageView = widgets[i]->GetPageView();
+  int i = 0;
+  for (const auto& pObserved : widgets) {
+    if (!pObserved) {
+      sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
+      return false;
+    }
+
+    auto pWidget = static_cast<CPDFSDK_Widget*>(pObserved.Get());
+    CPDFSDK_PageView* pPageView = pWidget->GetPageView();
     if (!pPageView)
       return false;
 
     PageArray.SetElement(
         pRuntime, i, CJS_Value(pRuntime, (int32_t)pPageView->GetPageIndex()));
+    ++i;
   }
 
   vp << PageArray;

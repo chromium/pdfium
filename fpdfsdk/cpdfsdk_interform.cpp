@@ -117,7 +117,7 @@ CPDFSDK_Widget* CPDFSDK_InterForm::GetWidget(CPDF_FormControl* pControl) const {
 
 void CPDFSDK_InterForm::GetWidgets(
     const CFX_WideString& sFieldName,
-    std::vector<CPDFSDK_Widget*>* widgets) const {
+    std::vector<CPDFSDK_Annot::ObservedPtr>* widgets) const {
   for (int i = 0, sz = m_pInterForm->CountFields(sFieldName); i < sz; ++i) {
     CPDF_FormField* pFormField = m_pInterForm->GetField(i, sFieldName);
     ASSERT(pFormField);
@@ -127,13 +127,13 @@ void CPDFSDK_InterForm::GetWidgets(
 
 void CPDFSDK_InterForm::GetWidgets(
     CPDF_FormField* pField,
-    std::vector<CPDFSDK_Widget*>* widgets) const {
+    std::vector<CPDFSDK_Annot::ObservedPtr>* widgets) const {
   for (int i = 0, sz = pField->CountControls(); i < sz; ++i) {
     CPDF_FormControl* pFormCtrl = pField->GetControl(i);
     ASSERT(pFormCtrl);
     CPDFSDK_Widget* pWidget = GetWidget(pFormCtrl);
     if (pWidget)
-      widgets->push_back(pWidget);
+      widgets->emplace_back(pWidget);
   }
 }
 
