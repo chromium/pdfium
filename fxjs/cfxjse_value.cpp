@@ -102,16 +102,14 @@ void CFXJSE_Value::SetHostObject(CFXJSE_HostObject* lpObject,
   m_hValue.Reset(m_pIsolate, hObject);
 }
 
-void CFXJSE_Value::SetArray(uint32_t uValueCount, CFXJSE_Value** rgValues) {
+void CFXJSE_Value::SetArray(
+    const std::vector<std::unique_ptr<CFXJSE_Value>>& values) {
   CFXJSE_ScopeUtil_IsolateHandleRootContext scope(m_pIsolate);
-  v8::Local<v8::Array> hArrayObject = v8::Array::New(m_pIsolate, uValueCount);
-  if (rgValues) {
-    for (uint32_t i = 0; i < uValueCount; i++) {
-      if (rgValues[i]) {
-        hArrayObject->Set(i, v8::Local<v8::Value>::New(
-                                 m_pIsolate, rgValues[i]->DirectGetValue()));
-      }
-    }
+  v8::Local<v8::Array> hArrayObject = v8::Array::New(m_pIsolate, values.size());
+  uint32_t count = 0;
+  for (auto& v : values) {
+    hArrayObject->Set(count++, v8::Local<v8::Value>::New(
+                                   m_pIsolate, v.get()->DirectGetValue()));
   }
   m_hValue.Reset(m_pIsolate, hArrayObject);
 }

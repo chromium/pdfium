@@ -401,11 +401,11 @@ class CXFA_FM2JSContext : public CFXJSE_HostObject {
   static bool simpleValueCompare(CFXJSE_Value* pThis,
                                  CFXJSE_Value* firstValue,
                                  CFXJSE_Value* secondValue);
-  static void unfoldArgs(CFXJSE_Value* pThis,
-                         CFXJSE_Arguments& args,
-                         CFXJSE_Value**& resultValues,
-                         int32_t& iCount,
-                         int32_t iStart = 0);
+  static void unfoldArgs(
+      CFXJSE_Value* pThis,
+      CFXJSE_Arguments& args,
+      std::vector<std::unique_ptr<CFXJSE_Value>>* resultValues,
+      int32_t iStart = 0);
   static void GetObjectDefaultValue(CFXJSE_Value* pObjectValue,
                                     CFXJSE_Value* pDefaultValue);
   static bool SetObjectDefaultValue(CFXJSE_Value* pObjectValue,
