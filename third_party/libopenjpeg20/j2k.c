@@ -5129,6 +5129,7 @@ static OPJ_BOOL opj_j2k_read_mct (      opj_j2k_t *p_j2k,
         OPJ_UINT32 l_tmp;
         OPJ_UINT32 l_indix;
         opj_mct_data_t * l_mct_data;
+        OPJ_BOOL new_mct = OPJ_FALSE;
 
         /* preconditions */
         assert(p_header_data != 00);
@@ -5170,11 +5171,10 @@ static OPJ_BOOL opj_j2k_read_mct (      opj_j2k_t *p_j2k,
                 ++l_mct_data;
         }
 
-        opj_mct_data_t *new_mct_records = NULL;
-
         /* NOT FOUND */
         if (i == l_tcp->m_nb_mct_records) {
                 if (l_tcp->m_nb_mct_records == l_tcp->m_nb_max_mct_records) {
+                        opj_mct_data_t *new_mct_records;
                         l_tcp->m_nb_max_mct_records += OPJ_J2K_MCT_DEFAULT_NB_RECORDS;
 
                         new_mct_records = (opj_mct_data_t *) opj_realloc(l_tcp->m_mct_records, l_tcp->m_nb_max_mct_records * sizeof(opj_mct_data_t));
@@ -5192,6 +5192,7 @@ static OPJ_BOOL opj_j2k_read_mct (      opj_j2k_t *p_j2k,
                 }
 
                 l_mct_data = l_tcp->m_mct_records + l_tcp->m_nb_mct_records;
+                new_mct = OPJ_TRUE;
         }
 
         if (l_mct_data->m_data) {
@@ -5221,7 +5222,7 @@ static OPJ_BOOL opj_j2k_read_mct (      opj_j2k_t *p_j2k,
 
         l_mct_data->m_data_size = p_header_size;
 
-        if (new_mct_records) {
+        if (new_mct) {
                 ++l_tcp->m_nb_mct_records;
         }
         return OPJ_TRUE;
