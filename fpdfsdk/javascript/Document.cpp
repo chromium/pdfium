@@ -17,7 +17,7 @@
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
 #include "core/fpdfdoc/cpdf_interform.h"
 #include "core/fpdfdoc/cpdf_nametree.h"
-#include "fpdfsdk/cpdfsdk_annotiterator.h"
+#include "fpdfsdk/cpdfsdk_annotiteration.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_interform.h"
 #include "fpdfsdk/cpdfsdk_pageview.h"
@@ -1112,16 +1112,16 @@ bool Document::getAnnot(IJS_Context* cc,
   if (!pPageView)
     return false;
 
-  CPDFSDK_AnnotIterator annotIterator(pPageView, false);
+  CPDFSDK_AnnotIteration annotIteration(pPageView, false);
   CPDFSDK_BAAnnot* pSDKBAAnnot = nullptr;
-  while (CPDFSDK_Annot* pSDKAnnotCur = annotIterator.Next()) {
-    CPDFSDK_BAAnnot* pBAAnnot = static_cast<CPDFSDK_BAAnnot*>(pSDKAnnotCur);
+  for (const auto& pSDKAnnotCur : annotIteration) {
+    CPDFSDK_BAAnnot* pBAAnnot =
+        static_cast<CPDFSDK_BAAnnot*>(pSDKAnnotCur.Get());
     if (pBAAnnot && pBAAnnot->GetAnnotName() == swAnnotName) {
       pSDKBAAnnot = pBAAnnot;
       break;
     }
   }
-
   if (!pSDKBAAnnot)
     return false;
 
@@ -1140,7 +1140,6 @@ bool Document::getAnnot(IJS_Context* cc,
     return false;
 
   pAnnot->SetSDKAnnot(pSDKBAAnnot);
-
   vRet = CJS_Value(pRuntime, pJS_Annot);
   return true;
 }
@@ -1167,13 +1166,12 @@ bool Document::getAnnots(IJS_Context* cc,
     if (!pPageView)
       return false;
 
-    CPDFSDK_AnnotIterator annotIterator(pPageView, false);
-    while (CPDFSDK_Annot* pSDKAnnotCur = annotIterator.Next()) {
-      CPDFSDK_BAAnnot* pSDKBAAnnot =
-          static_cast<CPDFSDK_BAAnnot*>(pSDKAnnotCur);
-      if (!pSDKBAAnnot)
+    CPDFSDK_AnnotIteration annotIteration(pPageView, false);
+    for (const auto& pSDKAnnotCur : annotIteration) {
+      if (!pSDKAnnotCur) {
+        sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
         return false;
-
+      }
       v8::Local<v8::Object> pObj =
           pRuntime->NewFxDynamicObj(CJS_Annot::g_nObjDefnID);
       if (pObj.IsEmpty())
@@ -1188,11 +1186,10 @@ bool Document::getAnnots(IJS_Context* cc,
       if (!pAnnot)
         return false;
 
-      pAnnot->SetSDKAnnot(pSDKBAAnnot);
+      pAnnot->SetSDKAnnot(static_cast<CPDFSDK_BAAnnot*>(pSDKAnnotCur.Get()));
       annots.SetElement(pRuntime, i, CJS_Value(pRuntime, pJS_Annot));
     }
   }
-
   vRet = CJS_Value(pRuntime, annots);
   return true;
 }

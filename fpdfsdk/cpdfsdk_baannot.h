@@ -100,7 +100,7 @@ class CPDFSDK_BAAnnot : public CPDFSDK_Annot {
   void SetOpenState(bool bState);
 
  protected:
-  CPDF_Annot* m_pAnnot;
+  CPDF_Annot* const m_pAnnot;
 };
 
 #endif  // FPDFSDK_CPDFSDK_BAANNOT_H_

@@ -15,7 +15,7 @@
 #include "core/fpdfdoc/cpdf_interform.h"
 #include "fpdfsdk/cpdfsdk_annot.h"
 #include "fpdfsdk/cpdfsdk_annothandlermgr.h"
-#include "fpdfsdk/cpdfsdk_annotiterator.h"
+#include "fpdfsdk/cpdfsdk_annotiteration.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_interform.h"
 #include "third_party/base/ptr_util.h"
@@ -124,48 +124,44 @@ void CPDFSDK_PageView::PageView_OnDraw(CFX_RenderDevice* pDevice,
 #endif  // PDF_ENABLE_XFA
 
   // for pdf/static xfa.
-  CPDFSDK_AnnotIterator annotIterator(this, true);
-  while (CPDFSDK_Annot* pSDKAnnot = annotIterator.Next()) {
-    CPDFSDK_AnnotHandlerMgr* pAnnotHandlerMgr =
-        m_pFormFillEnv->GetAnnotHandlerMgr();
-    pAnnotHandlerMgr->Annot_OnDraw(this, pSDKAnnot, pDevice, pUser2Device,
-                                   pOptions->m_bDrawAnnots);
+  CPDFSDK_AnnotIteration annotIteration(this, true);
+  for (const auto& pSDKAnnot : annotIteration) {
+    m_pFormFillEnv->GetAnnotHandlerMgr()->Annot_OnDraw(
+        this, pSDKAnnot.Get(), pDevice, pUser2Device, pOptions->m_bDrawAnnots);
   }
 }
 
 CPDFSDK_Annot* CPDFSDK_PageView::GetFXAnnotAtPoint(FX_FLOAT pageX,
                                                    FX_FLOAT pageY) {
   CPDFSDK_AnnotHandlerMgr* pAnnotMgr = m_pFormFillEnv->GetAnnotHandlerMgr();
-  CPDFSDK_AnnotIterator annotIterator(this, false);
-  while (CPDFSDK_Annot* pSDKAnnot = annotIterator.Next()) {
-    CFX_FloatRect rc = pAnnotMgr->Annot_OnGetViewBBox(this, pSDKAnnot);
+  CPDFSDK_AnnotIteration annotIteration(this, false);
+  for (const auto& pSDKAnnot : annotIteration) {
+    CFX_FloatRect rc = pAnnotMgr->Annot_OnGetViewBBox(this, pSDKAnnot.Get());
     if (pSDKAnnot->GetAnnotSubtype() == CPDF_Annot::Subtype::POPUP)
       continue;
     if (rc.Contains(pageX, pageY))
-      return pSDKAnnot;
+      return pSDKAnnot.Get();
   }
-
   return nullptr;
 }
 
 CPDFSDK_Annot* CPDFSDK_PageView::GetFXWidgetAtPoint(FX_FLOAT pageX,
                                                     FX_FLOAT pageY) {
   CPDFSDK_AnnotHandlerMgr* pAnnotMgr = m_pFormFillEnv->GetAnnotHandlerMgr();
-  CPDFSDK_AnnotIterator annotIterator(this, false);
-  while (CPDFSDK_Annot* pSDKAnnot = annotIterator.Next()) {
+  CPDFSDK_AnnotIteration annotIteration(this, false);
+  for (const auto& pSDKAnnot : annotIteration) {
     bool bHitTest = pSDKAnnot->GetAnnotSubtype() == CPDF_Annot::Subtype::WIDGET;
 #ifdef PDF_ENABLE_XFA
     bHitTest = bHitTest ||
                pSDKAnnot->GetAnnotSubtype() == CPDF_Annot::Subtype::XFAWIDGET;
 #endif  // PDF_ENABLE_XFA
     if (bHitTest) {
-      pAnnotMgr->Annot_OnGetViewBBox(this, pSDKAnnot);
+      pAnnotMgr->Annot_OnGetViewBBox(this, pSDKAnnot.Get());
       CFX_FloatPoint point(pageX, pageY);
-      if (pAnnotMgr->Annot_OnHitTest(this, pSDKAnnot, point))
-        return pSDKAnnot;
+      if (pAnnotMgr->Annot_OnHitTest(this, pSDKAnnot.Get(), point))
+        return pSDKAnnot.Get();
     }
   }
-
   return nullptr;
 }
 
