@@ -88,7 +88,7 @@ class CFDE_CSSSyntaxParser {
             int32_t iBufferSize,
             int32_t iTextDatSize = 32,
             bool bOnlyDeclaration = false);
-  FDE_CSSSYNTAXSTATUS DoSyntaxParse();
+  FDE_CSSSyntaxStatus DoSyntaxParse();
   const FX_WCHAR* GetCurrentString(int32_t& iLength) const;
 
  protected:
@@ -114,7 +114,7 @@ class CFDE_CSSSyntaxParser {
   int32_t m_iTextDatLen;
   uint32_t m_dwCheck;
   FDE_CSSSYNTAXMODE m_eMode;
-  FDE_CSSSYNTAXSTATUS m_eStatus;
+  FDE_CSSSyntaxStatus m_eStatus;
   CFX_StackTemplate<FDE_CSSSYNTAXMODE> m_ModeStack;
 };
 

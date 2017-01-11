@@ -12,7 +12,7 @@ CXFA_TextParseContext::CXFA_TextParseContext()
     : m_pParentStyle(nullptr),
       m_ppMatchedDecls(nullptr),
       m_dwMatchedDecls(0),
-      m_eDisplay(FDE_CSSDISPLAY_None) {}
+      m_eDisplay(FDE_CSSDisplay::None) {}
 
 CXFA_TextParseContext::~CXFA_TextParseContext() {
   if (m_pParentStyle)

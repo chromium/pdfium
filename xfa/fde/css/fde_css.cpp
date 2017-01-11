@@ -14,14 +14,14 @@ FDE_CSSVALUETYPE IFDE_CSSValueList::GetType() const {
   return FDE_CSSVALUETYPE_List;
 }
 
-FDE_CSSRULETYPE IFDE_CSSStyleRule::GetType() const {
-  return FDE_CSSRULETYPE_Style;
+FDE_CSSRuleType IFDE_CSSStyleRule::GetType() const {
+  return FDE_CSSRuleType::Style;
 }
 
-FDE_CSSRULETYPE IFDE_CSSMediaRule::GetType() const {
-  return FDE_CSSRULETYPE_Media;
+FDE_CSSRuleType IFDE_CSSMediaRule::GetType() const {
+  return FDE_CSSRuleType::Media;
 }
 
-FDE_CSSRULETYPE IFDE_CSSFontFaceRule::GetType() const {
-  return FDE_CSSRULETYPE_FontFace;
+FDE_CSSRuleType IFDE_CSSFontFaceRule::GetType() const {
+  return FDE_CSSRuleType::FontFace;
 }

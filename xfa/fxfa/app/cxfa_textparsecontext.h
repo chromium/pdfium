@@ -17,8 +17,8 @@ class CXFA_TextParseContext {
   CXFA_TextParseContext();
   ~CXFA_TextParseContext();
 
-  void SetDisplay(FDE_CSSDISPLAY eDisplay) { m_eDisplay = eDisplay; }
-  FDE_CSSDISPLAY GetDisplay() const { return m_eDisplay; }
+  void SetDisplay(FDE_CSSDisplay eDisplay) { m_eDisplay = eDisplay; }
+  FDE_CSSDisplay GetDisplay() const { return m_eDisplay; }
 
   void SetDecls(const CFDE_CSSDeclaration** ppDeclArray, int32_t iDeclCount);
   const CFDE_CSSDeclaration** GetDecls() {
@@ -31,7 +31,7 @@ class CXFA_TextParseContext {
  protected:
   CFDE_CSSDeclaration** m_ppMatchedDecls;
   uint32_t m_dwMatchedDecls;
-  FDE_CSSDISPLAY m_eDisplay;
+  FDE_CSSDisplay m_eDisplay;
 };
 
 #endif  // XFA_FXFA_APP_CXFA_TEXTPARSECONTEXT_H_

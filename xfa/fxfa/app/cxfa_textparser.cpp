@@ -75,7 +75,7 @@ void CXFA_TextParser::InitCSSData(CXFA_TextProvider* pTextProvider) {
 
   if (!m_pUASheet) {
     m_pUASheet = LoadDefaultSheetStyle();
-    m_pSelector->SetStyleSheet(FDE_CSSSTYLESHEETGROUP_UserAgent, m_pUASheet);
+    m_pSelector->SetStyleSheet(FDE_CSSStyleSheetGroup::UserAgent, m_pUASheet);
     m_pSelector->UpdateStyleIndex(FDE_CSSMEDIATYPE_ALL);
   }
 }
@@ -107,42 +107,42 @@ IFDE_CSSComputedStyle* CXFA_TextParser::CreateRootStyle(
   if (para) {
     fLineHeight = para.GetLineHeight();
     FDE_CSSLENGTH indent;
-    indent.Set(FDE_CSSLENGTHUNIT_Point, para.GetTextIndent());
+    indent.Set(FDE_CSSLengthUnit::Point, para.GetTextIndent());
     pParaStyle->SetTextIndent(indent);
-    FDE_CSSTEXTALIGN hAlign = FDE_CSSTEXTALIGN_Left;
+    FDE_CSSTextAlign hAlign = FDE_CSSTextAlign::Left;
     switch (para.GetHorizontalAlign()) {
       case XFA_ATTRIBUTEENUM_Center:
-        hAlign = FDE_CSSTEXTALIGN_Center;
+        hAlign = FDE_CSSTextAlign::Center;
         break;
       case XFA_ATTRIBUTEENUM_Right:
-        hAlign = FDE_CSSTEXTALIGN_Right;
+        hAlign = FDE_CSSTextAlign::Right;
         break;
       case XFA_ATTRIBUTEENUM_Justify:
-        hAlign = FDE_CSSTEXTALIGN_Justify;
+        hAlign = FDE_CSSTextAlign::Justify;
         break;
       case XFA_ATTRIBUTEENUM_JustifyAll:
-        hAlign = FDE_CSSTEXTALIGN_JustifyAll;
+        hAlign = FDE_CSSTextAlign::JustifyAll;
         break;
     }
     pParaStyle->SetTextAlign(hAlign);
     FDE_CSSRECT rtMarginWidth;
-    rtMarginWidth.left.Set(FDE_CSSLENGTHUNIT_Point, para.GetMarginLeft());
-    rtMarginWidth.top.Set(FDE_CSSLENGTHUNIT_Point, para.GetSpaceAbove());
-    rtMarginWidth.right.Set(FDE_CSSLENGTHUNIT_Point, para.GetMarginRight());
-    rtMarginWidth.bottom.Set(FDE_CSSLENGTHUNIT_Point, para.GetSpaceBelow());
+    rtMarginWidth.left.Set(FDE_CSSLengthUnit::Point, para.GetMarginLeft());
+    rtMarginWidth.top.Set(FDE_CSSLengthUnit::Point, para.GetSpaceAbove());
+    rtMarginWidth.right.Set(FDE_CSSLengthUnit::Point, para.GetMarginRight());
+    rtMarginWidth.bottom.Set(FDE_CSSLengthUnit::Point, para.GetSpaceBelow());
     pStyle->GetBoundaryStyles()->SetMarginWidth(rtMarginWidth);
   }
 
   if (font) {
     pFontStyle->SetColor(font.GetColor());
-    pFontStyle->SetFontStyle(font.IsItalic() ? FDE_CSSFONTSTYLE_Italic
-                                             : FDE_CSSFONTSTYLE_Normal);
+    pFontStyle->SetFontStyle(font.IsItalic() ? FDE_CSSFontStyle::Italic
+                                             : FDE_CSSFontStyle::Normal);
     pFontStyle->SetFontWeight(font.IsBold() ? FXFONT_FW_BOLD
                                             : FXFONT_FW_NORMAL);
     pParaStyle->SetNumberVerticalAlign(-font.GetBaselineShift());
     fFontSize = font.GetFontSize();
     FDE_CSSLENGTH letterSpacing;
-    letterSpacing.Set(FDE_CSSLENGTHUNIT_Point, font.GetLetterSpacing());
+    letterSpacing.Set(FDE_CSSLengthUnit::Point, font.GetLetterSpacing());
     pParaStyle->SetLetterSpacing(letterSpacing);
     uint32_t dwDecoration = 0;
     if (font.GetLineThrough() > 0)
@@ -170,7 +170,7 @@ IFDE_CSSComputedStyle* CXFA_TextParser::CreateStyle(
   IFDE_CSSParagraphStyle* pParaStyle = pParentStyle->GetParagraphStyles();
   uint32_t dwDecoration = pParaStyle->GetTextDecoration();
   FX_FLOAT fBaseLine = 0;
-  if (pParaStyle->GetVerticalAlign() == FDE_CSSVERTICALALIGN_Number)
+  if (pParaStyle->GetVerticalAlign() == FDE_CSSVerticalAlign::Number)
     fBaseLine = pParaStyle->GetNumberVerticalAlign();
 
   pParaStyle = pNewStyle->GetParagraphStyles();
@@ -240,7 +240,7 @@ void CXFA_TextParser::ParseRichText(CFDE_XMLNode* pXMLNode,
   if ((tagProvider.GetTagName() != FX_WSTRC(L"body")) ||
       (tagProvider.GetTagName() != FX_WSTRC(L"html"))) {
     CXFA_TextParseContext* pTextContext = new CXFA_TextParseContext;
-    FDE_CSSDISPLAY eDisplay = FDE_CSSDISPLAY_Inline;
+    FDE_CSSDisplay eDisplay = FDE_CSSDisplay::Inline;
     if (!tagProvider.m_bContent) {
       pNewStyle = CreateStyle(pParentStyle);
       CFDE_CSSAccelerator* pCSSAccel = m_pSelector->InitAccelerator();
@@ -364,7 +364,7 @@ CFX_RetainPtr<CFGAS_GEFont> CXFA_TextParser::GetFont(
     dwStyle = 0;
     if (pFontStyle->GetFontWeight() > FXFONT_FW_NORMAL)
       dwStyle |= FX_FONTSTYLE_Bold;
-    if (pFontStyle->GetFontStyle() == FDE_CSSFONTSTYLE_Italic)
+    if (pFontStyle->GetFontStyle() == FDE_CSSFontStyle::Italic)
       dwStyle |= FX_FONTSTYLE_Italic;
   }
 
@@ -482,7 +482,7 @@ FX_FLOAT CXFA_TextParser::GetBaseline(CXFA_TextProvider* pTextProvider,
                                       IFDE_CSSComputedStyle* pStyle) const {
   if (pStyle) {
     IFDE_CSSParagraphStyle* pParaStyle = pStyle->GetParagraphStyles();
-    if (pParaStyle->GetVerticalAlign() == FDE_CSSVERTICALALIGN_Number)
+    if (pParaStyle->GetVerticalAlign() == FDE_CSSVerticalAlign::Number)
       return pParaStyle->GetNumberVerticalAlign();
   } else if (CXFA_Font font = pTextProvider->GetFontNode()) {
     return font.GetBaselineShift();

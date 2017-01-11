@@ -22,10 +22,10 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   CFDE_CSSSyntaxParser parser;
   parser.Init(stream, 1024);
 
-  FDE_CSSSYNTAXSTATUS status = parser.DoSyntaxParse();
-  while (status != FDE_CSSSYNTAXSTATUS_Error &&
-         status != FDE_CSSSYNTAXSTATUS_EOS)
+  FDE_CSSSyntaxStatus status;
+  do {
     status = parser.DoSyntaxParse();
-
+  } while (status != FDE_CSSSyntaxStatus::Error &&
+           status != FDE_CSSSyntaxStatus::EOS);
   return 0;
 }

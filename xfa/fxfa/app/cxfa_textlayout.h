@@ -65,7 +65,7 @@ class CXFA_TextLayout {
   CFX_RTFBreak* CreateBreak(bool bDefault);
   void InitBreak(FX_FLOAT fLineWidth);
   void InitBreak(IFDE_CSSComputedStyle* pStyle,
-                 FDE_CSSDISPLAY eDisplay,
+                 FDE_CSSDisplay eDisplay,
                  FX_FLOAT fLineWidth,
                  CFDE_XMLNode* pXMLNode,
                  IFDE_CSSComputedStyle* pParentStyle = nullptr);

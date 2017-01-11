@@ -30,28 +30,28 @@ class CFDE_CSSFunction {
 class CFDE_CSSPrimitiveValue : public IFDE_CSSPrimitiveValue {
  public:
   explicit CFDE_CSSPrimitiveValue(FX_ARGB color);
-  explicit CFDE_CSSPrimitiveValue(FDE_CSSPROPERTYVALUE eValue);
+  explicit CFDE_CSSPrimitiveValue(FDE_CSSPropertyValue eValue);
   explicit CFDE_CSSPrimitiveValue(CFDE_CSSFunction* pFunction);
-  CFDE_CSSPrimitiveValue(FDE_CSSPRIMITIVETYPE eType, FX_FLOAT fValue);
-  CFDE_CSSPrimitiveValue(FDE_CSSPRIMITIVETYPE eType, const FX_WCHAR* pValue);
+  CFDE_CSSPrimitiveValue(FDE_CSSPrimitiveType eType, FX_FLOAT fValue);
+  CFDE_CSSPrimitiveValue(FDE_CSSPrimitiveType eType, const FX_WCHAR* pValue);
   CFDE_CSSPrimitiveValue(const CFDE_CSSPrimitiveValue& src);
 
   // IFDE_CSSPrimitiveValue
-  FDE_CSSPRIMITIVETYPE GetPrimitiveType() const override;
+  FDE_CSSPrimitiveType GetPrimitiveType() const override;
   FX_ARGB GetRGBColor() const override;
   FX_FLOAT GetFloat() const override;
   const FX_WCHAR* GetString(int32_t& iLength) const override;
-  FDE_CSSPROPERTYVALUE GetEnum() const override;
+  FDE_CSSPropertyValue GetEnum() const override;
   const FX_WCHAR* GetFuncName() const override;
   int32_t CountArgs() const override;
   IFDE_CSSValue* GetArgs(int32_t index) const override;
 
-  FDE_CSSPRIMITIVETYPE m_eType;
+  FDE_CSSPrimitiveType m_eType;
   union {
     FX_ARGB m_dwColor;
     FX_FLOAT m_fNumber;
     const FX_WCHAR* m_pString;
-    FDE_CSSPROPERTYVALUE m_eEnum;
+    FDE_CSSPropertyValue m_eEnum;
     CFDE_CSSFunction* m_pFunction;
   };
 };
@@ -78,7 +78,7 @@ class CFDE_CSSValueListParser {
       : m_Separator(separator), m_pCur(psz), m_pEnd(psz + iLen) {
     ASSERT(psz && iLen > 0);
   }
-  bool NextValue(FDE_CSSPRIMITIVETYPE& eType,
+  bool NextValue(FDE_CSSPrimitiveType& eType,
                  const FX_WCHAR*& pStart,
                  int32_t& iLength);
   FX_WCHAR m_Separator;
@@ -92,36 +92,30 @@ class CFDE_CSSValueListParser {
   const FX_WCHAR* m_pEnd;
 };
 
-#define FDE_CSSVALUETYPE_MaybeNumber 0x0100
-#define FDE_CSSVALUETYPE_MaybeEnum 0x0200
-#define FDE_CSSVALUETYPE_MaybeURI 0x0400
-#define FDE_CSSVALUETYPE_MaybeString 0x0800
-#define FDE_CSSVALUETYPE_MaybeColor 0x1000
-#define FDE_CSSVALUETYPE_MaybeFunction 0x2000
 #define FDE_IsOnlyValue(type, enum) \
   (((type) & ~(enum)) == FDE_CSSVALUETYPE_Primitive)
 
-struct FDE_CSSPROPERTYTABLE {
-  FDE_CSSPROPERTY eName;
+struct FDE_CSSPropertyTable {
+  FDE_CSSProperty eName;
   const FX_WCHAR* pszName;
   uint32_t dwHash;
   uint32_t dwType;
 };
 
-const FDE_CSSPROPERTYTABLE* FDE_GetCSSPropertyByName(
+const FDE_CSSPropertyTable* FDE_GetCSSPropertyByName(
     const CFX_WideStringC& wsName);
-const FDE_CSSPROPERTYTABLE* FDE_GetCSSPropertyByEnum(FDE_CSSPROPERTY eName);
+const FDE_CSSPropertyTable* FDE_GetCSSPropertyByEnum(FDE_CSSProperty eName);
 
-struct FDE_CSSPROPERTYVALUETABLE {
-  FDE_CSSPROPERTYVALUE eName;
+struct FDE_CSSPropertyValueTable {
+  FDE_CSSPropertyValue eName;
   const FX_WCHAR* pszName;
   uint32_t dwHash;
 };
 
-const FDE_CSSPROPERTYVALUETABLE* FDE_GetCSSPropertyValueByName(
+const FDE_CSSPropertyValueTable* FDE_GetCSSPropertyValueByName(
     const CFX_WideStringC& wsName);
-const FDE_CSSPROPERTYVALUETABLE* FDE_GetCSSPropertyValueByEnum(
-    FDE_CSSPROPERTYVALUE eName);
+const FDE_CSSPropertyValueTable* FDE_GetCSSPropertyValueByEnum(
+    FDE_CSSPropertyValue eName);
 
 struct FDE_CSSMEDIATYPETABLE {
   uint16_t wHash;
@@ -131,12 +125,12 @@ struct FDE_CSSMEDIATYPETABLE {
 const FDE_CSSMEDIATYPETABLE* FDE_GetCSSMediaTypeByName(
     const CFX_WideStringC& wsName);
 
-struct FDE_CSSLENGTHUNITTABLE {
+struct FDE_CSSLengthUnitTable {
   uint16_t wHash;
-  uint16_t wValue;
+  FDE_CSSPrimitiveType wValue;
 };
 
-const FDE_CSSLENGTHUNITTABLE* FDE_GetCSSLengthUnitByName(
+const FDE_CSSLengthUnitTable* FDE_GetCSSLengthUnitByName(
     const CFX_WideStringC& wsName);
 
 struct FDE_CSSCOLORTABLE {
@@ -146,18 +140,18 @@ struct FDE_CSSCOLORTABLE {
 
 const FDE_CSSCOLORTABLE* FDE_GetCSSColorByName(const CFX_WideStringC& wsName);
 
-struct FDE_CSSPSEUDOTABLE {
-  FDE_CSSPSEUDO eName;
+struct FDE_CSSPseudoTable {
+  FDE_CSSPseudo eName;
   const FX_WCHAR* pszName;
   uint32_t dwHash;
 };
 
-const FDE_CSSPSEUDOTABLE* FDE_GetCSSPseudoByEnum(FDE_CSSPSEUDO ePseudo);
+const FDE_CSSPseudoTable* FDE_GetCSSPseudoByEnum(FDE_CSSPseudo ePseudo);
 
 bool FDE_ParseCSSNumber(const FX_WCHAR* pszValue,
                         int32_t iValueLen,
                         FX_FLOAT& fValue,
-                        FDE_CSSPRIMITIVETYPE& eUnit);
+                        FDE_CSSPrimitiveType& eUnit);
 bool FDE_ParseCSSString(const FX_WCHAR* pszValue,
                         int32_t iValueLen,
                         int32_t* iOffset,

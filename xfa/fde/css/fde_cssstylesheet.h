@@ -17,12 +17,12 @@ class CFDE_CSSSyntaxParser;
 
 class CFDE_CSSSelector {
  public:
-  CFDE_CSSSelector(FDE_CSSSELECTORTYPE eType,
+  CFDE_CSSSelector(FDE_CSSSelectorType eType,
                    const FX_WCHAR* psz,
                    int32_t iLen,
                    bool bIgnoreCase);
 
-  virtual FDE_CSSSELECTORTYPE GetType() const;
+  virtual FDE_CSSSelectorType GetType() const;
   virtual uint32_t GetNameHash() const;
   virtual CFDE_CSSSelector* GetNextSelector() const;
 
@@ -31,9 +31,9 @@ class CFDE_CSSSelector {
   void SetNext(CFDE_CSSSelector* pNext) { m_pNext = pNext; }
 
  protected:
-  void SetType(FDE_CSSSELECTORTYPE eType) { m_eType = eType; }
+  void SetType(FDE_CSSSelectorType eType) { m_eType = eType; }
 
-  FDE_CSSSELECTORTYPE m_eType;
+  FDE_CSSSelectorType m_eType;
   uint32_t m_dwHash;
   CFDE_CSSSelector* m_pNext;
 };
@@ -84,13 +84,6 @@ class CFDE_CSSFontFaceRule : public IFDE_CSSFontFaceRule {
   CFDE_CSSDeclaration m_Declaration;
 };
 
-#define FDE_CSSSWITCHDEFAULTS()     \
-  case FDE_CSSSYNTAXSTATUS_EOS:     \
-    return FDE_CSSSYNTAXSTATUS_EOS; \
-  case FDE_CSSSYNTAXSTATUS_Error:   \
-  default:                          \
-    return FDE_CSSSYNTAXSTATUS_Error;
-
 class CFDE_CSSStyleSheet : public IFDE_CSSStyleSheet {
  public:
   explicit CFDE_CSSStyleSheet(uint32_t dwMediaList);
@@ -118,16 +111,16 @@ class CFDE_CSSStyleSheet : public IFDE_CSSStyleSheet {
  protected:
   void Reset();
   bool LoadFromSyntax(CFDE_CSSSyntaxParser* pSyntax);
-  FDE_CSSSYNTAXSTATUS LoadStyleRule(
+  FDE_CSSSyntaxStatus LoadStyleRule(
       CFDE_CSSSyntaxParser* pSyntax,
       CFX_MassArrayTemplate<IFDE_CSSRule*>& ruleArray);
-  FDE_CSSSYNTAXSTATUS LoadImportRule(CFDE_CSSSyntaxParser* pSyntax);
-  FDE_CSSSYNTAXSTATUS LoadPageRule(CFDE_CSSSyntaxParser* pSyntax);
-  FDE_CSSSYNTAXSTATUS LoadMediaRule(CFDE_CSSSyntaxParser* pSyntax);
-  FDE_CSSSYNTAXSTATUS LoadFontFaceRule(
+  FDE_CSSSyntaxStatus LoadImportRule(CFDE_CSSSyntaxParser* pSyntax);
+  FDE_CSSSyntaxStatus LoadPageRule(CFDE_CSSSyntaxParser* pSyntax);
+  FDE_CSSSyntaxStatus LoadMediaRule(CFDE_CSSSyntaxParser* pSyntax);
+  FDE_CSSSyntaxStatus LoadFontFaceRule(
       CFDE_CSSSyntaxParser* pSyntax,
       CFX_MassArrayTemplate<IFDE_CSSRule*>& ruleArray);
-  FDE_CSSSYNTAXSTATUS SkipRuleSet(CFDE_CSSSyntaxParser* pSyntax);
+  FDE_CSSSyntaxStatus SkipRuleSet(CFDE_CSSSyntaxParser* pSyntax);
   uint16_t m_wCodePage;
   uint16_t m_wRefCount;
   uint32_t m_dwMediaList;
