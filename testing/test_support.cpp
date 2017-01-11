@@ -63,12 +63,12 @@ void InitializeV8Common(const char* exe_path, v8::Platform** platform) {
 
   *platform = v8::platform::CreateDefaultPlatform();
   v8::V8::InitializePlatform(*platform);
-  v8::V8::Initialize();
 
   // By enabling predictable mode, V8 won't post any background tasks.
-  const char predictable_flag[] = "--predictable";
-  v8::V8::SetFlagsFromString(predictable_flag,
-                             static_cast<int>(strlen(predictable_flag)));
+  // By enabling GC, it makes it easier to chase use-after-free.
+  const char v8_flags[] = "--predictable --expose-gc";
+  v8::V8::SetFlagsFromString(v8_flags, static_cast<int>(strlen(v8_flags)));
+  v8::V8::Initialize();
 }
 #endif  // PDF_ENABLE_V8
 
