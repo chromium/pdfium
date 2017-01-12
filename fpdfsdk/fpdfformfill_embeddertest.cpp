@@ -179,4 +179,21 @@ TEST_F(FPDFFormFillEmbeddertest, BUG_634716) {
   EXPECT_EQ(2U, alerts.size());
 }
 
+TEST_F(FPDFFormFillEmbeddertest, BUG_679649) {
+  EmbedderTestTimerHandlingDelegate delegate;
+  SetDelegate(&delegate);
+
+  EXPECT_TRUE(OpenDocument("bug_679649.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  EXPECT_TRUE(page);
+
+  delegate.SetFailNextTimer();
+  DoOpenActions();
+  delegate.AdvanceTime(2000);
+  UnloadPage(page);
+
+  const auto& alerts = delegate.GetAlerts();
+  EXPECT_EQ(0u, alerts.size());
+}
+
 #endif  // PDF_ENABLE_V8

@@ -75,7 +75,8 @@ GlobalTimer::GlobalTimer(app* pObj,
       m_pFormFillEnv(pFormFillEnv) {
   CFX_SystemHandler* pHandler = m_pFormFillEnv->GetSysHandler();
   m_nTimerID = pHandler->SetTimer(dwElapse, Trigger);
-  (*GetGlobalTimerMap())[m_nTimerID] = this;
+  if (m_nTimerID)
+    (*GetGlobalTimerMap())[m_nTimerID] = this;
 }
 
 GlobalTimer::~GlobalTimer() {
