@@ -92,6 +92,7 @@ class CJS_PropValue {
   CJS_Runtime* GetJSRuntime() const { return m_pJSRuntime; }
   CJS_Value* GetJSValue() { return &m_Value; }
 
+  // These calls may re-enter JS (and hence invalidate objects).
   void operator<<(int val);
   void operator>>(int&) const;
   void operator<<(bool val);
@@ -127,13 +128,15 @@ class CJS_Array {
   virtual ~CJS_Array();
 
   void Attach(v8::Local<v8::Array> pArray);
+  int GetLength(CJS_Runtime* pRuntime) const;
+
+  // These two calls may re-enter JS (and hence invalidate objects).
   void GetElement(CJS_Runtime* pRuntime,
                   unsigned index,
                   CJS_Value& value) const;
   void SetElement(CJS_Runtime* pRuntime,
                   unsigned index,
                   const CJS_Value& value);
-  int GetLength(CJS_Runtime* pRuntime) const;
 
   v8::Local<v8::Array> ToV8Array(CJS_Runtime* pRuntime) const;
 
