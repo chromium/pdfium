@@ -105,6 +105,12 @@ pdfium_fuzzer("pdf_cmap_fuzzer") {
   ]
 }
 
+pdfium_fuzzer("pdf_codec_a85_fuzzer") {
+  sources = [
+    "pdf_codec_a85_fuzzer.cc",
+  ]
+}
+
 pdfium_fuzzer("pdf_codec_fax_fuzzer") {
   sources = [
     "pdf_codec_fax_fuzzer.cc",
@@ -120,6 +126,12 @@ pdfium_fuzzer("pdf_codec_icc_fuzzer") {
 pdfium_fuzzer("pdf_codec_jbig2_fuzzer") {
   sources = [
     "pdf_codec_jbig2_fuzzer.cc",
+  ]
+}
+
+pdfium_fuzzer("pdf_codec_rle_fuzzer") {
+  sources = [
+    "pdf_codec_rle_fuzzer.cc",
   ]
 }
 

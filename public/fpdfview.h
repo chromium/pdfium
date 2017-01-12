@@ -213,7 +213,8 @@ DLLEXPORT void STDCALL FPDF_DestroyLibrary();
 DLLEXPORT void STDCALL FPDF_SetSandBoxPolicy(FPDF_DWORD policy,
                                              FPDF_BOOL enable);
 
-#if defined(_WIN32) && defined(PDFIUM_PRINT_TEXT_WITH_GDI)
+#if defined(_WIN32)
+#if defined(PDFIUM_PRINT_TEXT_WITH_GDI)
 // Pointer to a helper function to make |font| with |text| of |text_length|
 // accessible when printing text with GDI. This is useful in sandboxed
 // environments where PDFium's access to GDI may be restricted.
@@ -239,7 +240,20 @@ FPDF_SetTypefaceAccessibleFunc(PDFiumEnsureTypefaceCharactersAccessible func);
 // Return value:
 //          None.
 DLLEXPORT void STDCALL FPDF_SetPrintTextWithGDI(FPDF_BOOL use_gdi);
-#endif
+#endif  // PDFIUM_PRINT_TEXT_WITH_GDI
+
+// Function: FPDF_SetPrintPostscriptLevel
+//          Set postscript printing level when printing on Windows.
+//          Experimental API.
+// Parameters:
+//          postscript_level -  0 to disable postscript printing,
+//                              2 to print with postscript level 2,
+//                              3 to print with postscript level 3.
+//                              All other values are invalid.
+// Return value:
+//          True if successful, false if unsucessful (typically invalid input).
+DLLEXPORT FPDF_BOOL STDCALL FPDF_SetPrintPostscriptLevel(FPDF_BOOL use_gdi);
+#endif  // defined(_WIN32)
 
 // Function: FPDF_LoadDocument
 //          Open and load a PDF document.

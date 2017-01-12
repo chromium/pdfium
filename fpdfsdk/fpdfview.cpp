@@ -429,7 +429,8 @@ DLLEXPORT void STDCALL FPDF_SetSandBoxPolicy(FPDF_DWORD policy,
   return FSDK_SetSandBoxPolicy(policy, enable);
 }
 
-#if defined(_WIN32) && defined(PDFIUM_PRINT_TEXT_WITH_GDI)
+#if defined(_WIN32)
+#if defined(PDFIUM_PRINT_TEXT_WITH_GDI)
 DLLEXPORT void STDCALL
 FPDF_SetTypefaceAccessibleFunc(PDFiumEnsureTypefaceCharactersAccessible func) {
   g_pdfium_typeface_accessible_func = func;
@@ -438,7 +439,15 @@ FPDF_SetTypefaceAccessibleFunc(PDFiumEnsureTypefaceCharactersAccessible func) {
 DLLEXPORT void STDCALL FPDF_SetPrintTextWithGDI(FPDF_BOOL use_gdi) {
   g_pdfium_print_text_with_gdi = !!use_gdi;
 }
-#endif
+#endif  // PDFIUM_PRINT_TEXT_WITH_GDI
+
+DLLEXPORT FPDF_BOOL STDCALL FPDF_SetPrintPostscriptLevel(int postscript_level) {
+  if (postscript_level != 0 && postscript_level != 2 && postscript_level != 3)
+    return FALSE;
+  g_pdfium_print_postscript_level = postscript_level;
+  return TRUE;
+}
+#endif  // defined(_WIN32)
 
 DLLEXPORT FPDF_DOCUMENT STDCALL FPDF_LoadDocument(FPDF_STRING file_path,
                                                   FPDF_BYTESTRING password) {
@@ -656,6 +665,9 @@ DLLEXPORT void STDCALL FPDF_RenderPage(HDC dc,
   pPage->SetRenderContext(pdfium::WrapUnique(pContext));
 
   std::unique_ptr<CFX_DIBitmap> pBitmap;
+  // TODO: This results in unnecessary rasterization of some PDFs due to
+  // HasImageMask() returning true. If any image on the page is a mask, the
+  // entire page gets rasterized and the spool size gets huge.
   const bool bNewBitmap =
       pPage->BackgroundAlphaNeeded() || pPage->HasImageMask();
   if (bNewBitmap) {

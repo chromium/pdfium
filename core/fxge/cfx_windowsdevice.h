@@ -25,6 +25,7 @@ extern bool g_pdfium_print_text_with_gdi;
 extern PDFiumEnsureTypefaceCharactersAccessible
     g_pdfium_typeface_accessible_func;
 #endif
+extern int g_pdfium_print_postscript_level;
 
 class CFX_WindowsDevice : public CFX_RenderDevice {
  public:

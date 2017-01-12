@@ -11,11 +11,11 @@
 #include <vector>
 
 #include "core/fxcrt/fx_system.h"
-#include "core/fxge/cfx_renderdevice.h"
 #include "core/fxge/cfx_windowsdevice.h"
 #include "core/fxge/dib/dib_int.h"
 #include "core/fxge/fx_freetype.h"
 #include "core/fxge/ge/fx_text_int.h"
+#include "core/fxge/win32/cpsoutput.h"
 #include "core/fxge/win32/win32_int.h"
 #include "third_party/base/ptr_util.h"
 
@@ -328,8 +328,8 @@ bool CGdiPrinterDriver::DrawDeviceText(int nChars,
 #endif
 }
 
-CPSPrinterDriver::CPSPrinterDriver(HDC hDC, int pslevel, bool bCmykOutput) {
-  m_hDC = hDC;
+CPSPrinterDriver::CPSPrinterDriver(HDC hDC, int pslevel, bool bCmykOutput)
+    : m_hDC(hDC), m_bCmykOutput(bCmykOutput) {
   m_HorzSize = ::GetDeviceCaps(m_hDC, HORZSIZE);
   m_VertSize = ::GetDeviceCaps(m_hDC, VERTSIZE);
   m_Width = ::GetDeviceCaps(m_hDC, HORZRES);
@@ -337,7 +337,6 @@ CPSPrinterDriver::CPSPrinterDriver(HDC hDC, int pslevel, bool bCmykOutput) {
   m_nBitsPerPixel = ::GetDeviceCaps(m_hDC, BITSPIXEL);
   m_pPSOutput = pdfium::MakeUnique<CPSOutput>(m_hDC);
   m_PSRenderer.Init(m_pPSOutput.get(), pslevel, m_Width, m_Height, bCmykOutput);
-  m_bCmykOutput = bCmykOutput;
   HRGN hRgn = ::CreateRectRgn(0, 0, 1, 1);
   int ret = ::GetClipRgn(hDC, hRgn);
   if (ret == 1) {
@@ -354,7 +353,7 @@ CPSPrinterDriver::CPSPrinterDriver(HDC hDC, int pslevel, bool bCmykOutput) {
           path.AppendRect((FX_FLOAT)pRect->left, (FX_FLOAT)pRect->bottom,
                           (FX_FLOAT)pRect->right, (FX_FLOAT)pRect->top);
         }
-        m_PSRenderer.SetClip_PathFill(&path, NULL, FXFILL_WINDING);
+        m_PSRenderer.SetClip_PathFill(&path, nullptr, FXFILL_WINDING);
       }
       FX_Free(pData);
     }

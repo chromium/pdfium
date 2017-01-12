@@ -39,7 +39,7 @@ CFX_PSRenderer::CFX_PSRenderer() {
 
 CFX_PSRenderer::~CFX_PSRenderer() {}
 
-#define OUTPUT_PS(str) m_pOutput->OutputPS(str, sizeof str - 1)
+#define OUTPUT_PS(str) m_pOutput->OutputPS(str, sizeof(str) - 1)
 
 void CFX_PSRenderer::Init(CPSOutput* pOutput,
                           int pslevel,
@@ -125,11 +125,9 @@ void CFX_PSRenderer::OutputPath(const CFX_PathData* pPathData,
         buf << " m ";
         break;
       case FXPT_LINETO:
-        if (flag & FXPT_CLOSEFIGURE) {
-          buf << " l h ";
-        } else {
-          buf << " l ";
-        }
+        buf << " l ";
+        if (flag & FXPT_CLOSEFIGURE)
+          buf << "h ";
         break;
       case FXPT_BEZIERTO: {
         FX_FLOAT x1 = pPathData->GetPointX(i + 1);
@@ -140,12 +138,10 @@ void CFX_PSRenderer::OutputPath(const CFX_PathData* pPathData,
           pObject2Device->Transform(x1, y1);
           pObject2Device->Transform(x2, y2);
         }
-        buf << " " << x1 << " " << y1 << " " << x2 << " " << y2;
-        if (flag & FXPT_CLOSEFIGURE) {
-          buf << " c h\n";
-        } else {
-          buf << " c\n";
-        }
+        buf << " " << x1 << " " << y1 << " " << x2 << " " << y2 << " c";
+        if (flag & FXPT_CLOSEFIGURE)
+          buf << " h";
+        buf << "\n";
         i += 2;
         break;
       }
@@ -160,10 +156,12 @@ void CFX_PSRenderer::SetClip_PathFill(const CFX_PathData* pPathData,
   StartRendering();
   OutputPath(pPathData, pObject2Device);
   CFX_FloatRect rect = pPathData->GetBoundingBox();
-  if (pObject2Device) {
+  if (pObject2Device)
     rect.Transform(pObject2Device);
-  }
-  m_ClipBox.Intersect(rect.GetOuterRect());
+  m_ClipBox.left = static_cast<int>(rect.left);
+  m_ClipBox.right = static_cast<int>(rect.left + rect.right);
+  m_ClipBox.top = static_cast<int>(rect.top + rect.bottom);
+  m_ClipBox.bottom = static_cast<int>(rect.bottom);
   if ((fill_mode & 3) == FXFILL_WINDING) {
     OUTPUT_PS("W n\n");
   } else {
@@ -263,7 +261,7 @@ void CFX_PSRenderer::SetGraphState(const CFX_GraphStateData* pGraphState) {
       FXSYS_memcmp(m_CurGraphState.m_DashArray, pGraphState->m_DashArray,
                    sizeof(FX_FLOAT) * m_CurGraphState.m_DashCount)) {
     buf << "[";
-    for (int i = 0; i < pGraphState->m_DashCount; i++) {
+    for (int i = 0; i < pGraphState->m_DashCount; ++i) {
       buf << pGraphState->m_DashArray[i] << " ";
     }
     buf << "]" << pGraphState->m_DashPhase << " d\n";
@@ -281,7 +279,7 @@ void CFX_PSRenderer::SetGraphState(const CFX_GraphStateData* pGraphState) {
     buf << pGraphState->m_MiterLimit << " M\n";
   }
   m_CurGraphState.Copy(*pGraphState);
-  m_bGraphStateSet = TRUE;
+  m_bGraphStateSet = true;
   if (buf.GetSize()) {
     m_pOutput->OutputPS((const FX_CHAR*)buf.GetBuffer(), buf.GetSize());
   }
@@ -297,7 +295,7 @@ static void FaxCompressData(uint8_t* src_buf,
                                 dest_buf, dest_size);
     FX_Free(src_buf);
   } else {
-    (*dest_buf).reset(src_buf);
+    dest_buf->reset(src_buf);
     *dest_size = (width + 7) / 8 * height;
   }
 }
@@ -315,7 +313,7 @@ static void PSCompressData(int PSLevel,
     return;
   }
   CCodec_ModuleMgr* pEncoders = CFX_GEModule::Get()->GetCodecModule();
-  uint8_t* dest_buf = NULL;
+  uint8_t* dest_buf = nullptr;
   uint32_t dest_size = src_size;
   if (PSLevel >= 3) {
     if (pEncoders &&
@@ -334,7 +332,7 @@ static void PSCompressData(int PSLevel,
     *output_buf = dest_buf;
     *output_size = dest_size;
   } else {
-    *filter = NULL;
+    *filter = nullptr;
     FX_Free(dest_buf);
   }
 }
@@ -407,9 +405,10 @@ bool CFX_PSRenderer::DrawDIBits(const CFX_DIBSource* pSource,
     }
     buf << width << " 0 0 -" << height << " 0 " << height
         << "]currentfile/ASCII85Decode filter ";
-    if (output_buf.get() != src_buf)
+    if (output_buf.get() != src_buf) {
       buf << "<</K -1/EndOfBlock false/Columns " << width << "/Rows " << height
           << ">>/CCITTFaxDecode filter ";
+    }
     if (pSource->IsAlphaMask()) {
       buf << "iM\n";
     } else {
@@ -419,23 +418,26 @@ bool CFX_PSRenderer::DrawDIBits(const CFX_DIBSource* pSource,
     WritePSBinary(output_buf.get(), output_size);
     output_buf.release();
   } else {
-    CFX_MaybeOwned<CFX_DIBSource> pConverted((CFX_DIBSource*)pSource);
+    CFX_DIBExtractor source_extractor(pSource);
+    CFX_MaybeOwned<CFX_DIBSource> pConverted(source_extractor.GetBitmap());
+    if (!pConverted.Get())
+      return false;
     switch (pSource->GetFormat()) {
       case FXDIB_1bppRgb:
       case FXDIB_Rgb32:
-        pConverted = pSource->CloneConvert(FXDIB_Rgb);
+        pConverted = pConverted->CloneConvert(FXDIB_Rgb).release();
         break;
       case FXDIB_8bppRgb:
         if (pSource->GetPalette()) {
-          pConverted = pSource->CloneConvert(FXDIB_Rgb);
+          pConverted = pConverted->CloneConvert(FXDIB_Rgb).release();
         }
         break;
       case FXDIB_1bppCmyk:
-        pConverted = pSource->CloneConvert(FXDIB_Cmyk);
+        pConverted = pConverted->CloneConvert(FXDIB_Cmyk).release();
         break;
       case FXDIB_8bppCmyk:
         if (pSource->GetPalette()) {
-          pConverted = pSource->CloneConvert(FXDIB_Cmyk);
+          pConverted = pConverted->CloneConvert(FXDIB_Cmyk).release();
         }
         break;
       default:
@@ -445,26 +447,23 @@ bool CFX_PSRenderer::DrawDIBits(const CFX_DIBSource* pSource,
       OUTPUT_PS("\nQ\n");
       return false;
     }
-    int Bpp = pConverted->GetBPP() / 8;
+    int bpp = pConverted->GetBPP() / 8;
     uint8_t* output_buf = nullptr;
     FX_STRSIZE output_size = 0;
     const FX_CHAR* filter = nullptr;
-    if (flags & FXRENDER_IMAGE_LOSSY) {
-      CCodec_ModuleMgr* pEncoders = CFX_GEModule::Get()->GetCodecModule();
-      if (pEncoders &&
-          pEncoders->GetJpegModule()->JpegEncode(pConverted.Get(), &output_buf,
-                                                 &output_size)) {
-        filter = "/DCTDecode filter ";
-      }
+    if ((m_PSLevel == 2 || flags & FXRENDER_IMAGE_LOSSY) &&
+        CCodec_JpegModule::JpegEncode(pConverted.Get(), &output_buf,
+                                      &output_size)) {
+      filter = "/DCTDecode filter ";
     }
     if (!filter) {
-      int src_pitch = width * Bpp;
+      int src_pitch = width * bpp;
       output_size = height * src_pitch;
       output_buf = FX_Alloc(uint8_t, output_size);
       for (int row = 0; row < height; row++) {
         const uint8_t* src_scan = pConverted->GetScanline(row);
         uint8_t* dest_scan = output_buf + row * src_pitch;
-        if (Bpp == 3) {
+        if (bpp == 3) {
           for (int col = 0; col < width; col++) {
             *dest_scan++ = src_scan[2];
             *dest_scan++ = src_scan[1];
@@ -485,18 +484,13 @@ bool CFX_PSRenderer::DrawDIBits(const CFX_DIBSource* pSource,
       output_buf = compressed_buf;
       output_size = compressed_size;
     }
-    CFX_DIBSource* converted = pConverted.Get();
-    if (converted != pSource) {
-      delete converted;
-      pConverted.Reset();
-    }
     buf << " 8[";
     buf << width << " 0 0 -" << height << " 0 " << height << "]";
     buf << "currentfile/ASCII85Decode filter ";
     if (filter) {
       buf << filter;
     }
-    buf << "false " << Bpp;
+    buf << "false " << bpp;
     buf << " colorimage\n";
     m_pOutput->OutputPS((const FX_CHAR*)buf.GetBuffer(), buf.GetSize());
     WritePSBinary(output_buf, output_size);

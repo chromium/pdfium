@@ -14,10 +14,6 @@
 #include "core/fxcrt/cfx_maybe_owned.h"
 #include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_system.h"
-#include "core/fxge/cfx_fontmapper.h"
-#include "core/fxge/cfx_gemodule.h"
-#include "core/fxge/cfx_graphstatedata.h"
-#include "core/fxge/cfx_pathdata.h"
 #include "core/fxge/cfx_windowsdevice.h"
 #include "core/fxge/dib/dib_int.h"
 #include "core/fxge/fx_font.h"
@@ -696,6 +692,8 @@ bool CFX_Win32FontInfo::GetFontCharset(void* hFont, int& charset) {
 }
 
 }  // namespace
+
+int g_pdfium_print_postscript_level = 0;
 
 std::unique_ptr<IFX_SystemFontInfo> IFX_SystemFontInfo::CreateDefault(
     const char** pUnused) {
@@ -1387,7 +1385,13 @@ IFX_RenderDeviceDriver* CFX_WindowsDevice::CreateDriver(HDC hDC) {
   int obj_type = ::GetObjectType(hDC);
   bool use_printer = device_type == DT_RASPRINTER ||
                      device_type == DT_PLOTTER || obj_type == OBJ_ENHMETADC;
-  if (use_printer)
-    return new CGdiPrinterDriver(hDC);
-  return new CGdiDisplayDriver(hDC);
+
+  if (!use_printer)
+    return new CGdiDisplayDriver(hDC);
+
+  if (g_pdfium_print_postscript_level == 2 ||
+      g_pdfium_print_postscript_level == 3) {
+    return new CPSPrinterDriver(hDC, g_pdfium_print_postscript_level, false);
+  }
+  return new CGdiPrinterDriver(hDC);
 }

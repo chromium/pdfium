@@ -6,6 +6,7 @@
 
 #include "core/fxcodec/fx_codec.h"
 
+#include <algorithm>
 #include <cmath>
 #include <memory>
 #include <utility>
@@ -101,14 +102,151 @@ bool CCodec_BasicModule::RunLengthEncode(const uint8_t* src_buf,
                                          uint32_t src_size,
                                          uint8_t** dest_buf,
                                          uint32_t* dest_size) {
-  return false;
+  // Check inputs
+  if (!src_buf || !dest_buf || !dest_size || src_size == 0)
+    return false;
+
+  // Edge case
+  if (src_size == 1) {
+    *dest_buf = FX_Alloc(uint8_t, 3);
+    (*dest_buf)[0] = 0;
+    (*dest_buf)[1] = src_buf[0];
+    (*dest_buf)[2] = 128;
+    *dest_size = 3;
+    return true;
+  }
+
+  // Worst case: 1 nonmatch, 2 match, 1 nonmatch, 2 match, etc. This becomes
+  // 4 output chars for every 3 input, plus up to 4 more for the 1-2 chars
+  // rounded off plus the terminating character.
+  uint32_t est_size = 4 * ((src_size + 2) / 3) + 1;
+  *dest_buf = FX_Alloc(uint8_t, est_size);
+
+  // Set up pointers.
+  uint8_t* out = *dest_buf;
+  uint32_t run_start = 0;
+  uint32_t run_end = 1;
+  uint8_t x = src_buf[run_start];
+  uint8_t y = src_buf[run_end];
+  while (run_end < src_size) {
+    uint32_t max_len = std::min((uint32_t)128, src_size - run_start);
+    while (x == y && (run_end - run_start < max_len - 1))
+      y = src_buf[++run_end];
+
+    // Reached end with matched run. Update variables to expected values.
+    if (x == y) {
+      run_end++;
+      if (run_end < src_size)
+        y = src_buf[run_end];
+    }
+    if (run_end - run_start > 1) {  // Matched run but not at end of input.
+      out[0] = 257 - (run_end - run_start);
+      out[1] = x;
+      x = y;
+      run_start = run_end;
+      run_end++;
+      if (run_end < src_size)
+        y = src_buf[run_end];
+      out += 2;
+      continue;
+    }
+    // Mismatched run
+    while (x != y && run_end <= run_start + max_len) {
+      out[run_end - run_start] = x;
+      x = y;
+      run_end++;
+      if (run_end == src_size) {
+        if (run_end <= run_start + max_len) {
+          out[run_end - run_start] = x;
+          run_end++;
+        }
+        break;
+      }
+      y = src_buf[run_end];
+    }
+    out[0] = run_end - run_start - 2;
+    out += run_end - run_start;
+    run_start = run_end - 1;
+  }
+  if (run_start < src_size) {  // 1 leftover character
+    out[0] = 0;
+    out[1] = x;
+    out += 2;
+  }
+  *out = 128;
+  *dest_size = out + 1 - *dest_buf;
+  return true;
 }
 
 bool CCodec_BasicModule::A85Encode(const uint8_t* src_buf,
                                    uint32_t src_size,
                                    uint8_t** dest_buf,
                                    uint32_t* dest_size) {
-  return false;
+  // Check inputs.
+  if (!src_buf || !dest_buf || !dest_size)
+    return false;
+
+  if (src_size == 0) {
+    *dest_size = 0;
+    return false;
+  }
+
+  // Worst case: 5 output for each 4 input (plus up to 4 from leftover), plus
+  // 2 character new lines each 75 output chars plus 2 termination chars. May
+  // have fewer if there are special "z" chars.
+  uint32_t est_size = 5 * (src_size / 4) + 4 + src_size / 30 + 2;
+  *dest_buf = FX_Alloc(uint8_t, est_size);
+
+  // Set up pointers.
+  uint8_t* out = *dest_buf;
+  uint32_t pos = 0;
+  uint32_t line_length = 0;
+  while (src_size >= 4 && pos < src_size - 3) {
+    uint32_t val = ((uint32_t)(src_buf[pos]) << 24) +
+                   ((uint32_t)(src_buf[pos + 1]) << 16) +
+                   ((uint32_t)(src_buf[pos + 2]) << 8) +
+                   (uint32_t)(src_buf[pos + 3]);
+    pos += 4;
+    if (val == 0) {  // All zero special case
+      *out = 'z';
+      out++;
+      line_length++;
+    } else {  // Compute base 85 characters and add 33.
+      for (int i = 4; i >= 0; i--) {
+        out[i] = (uint8_t)(val % 85) + 33;
+        val = val / 85;
+      }
+      out += 5;
+      line_length += 5;
+    }
+    if (line_length >= 75) {  // Add a return.
+      *out++ = '\r';
+      *out++ = '\n';
+      line_length = 0;
+    }
+  }
+  if (pos < src_size) {  // Leftover bytes
+    uint32_t val = 0;
+    int count = 0;
+    while (pos < src_size) {
+      val += (uint32_t)(src_buf[pos] << (8 * (3 - pos)));
+      count++;
+      pos++;
+    }
+    for (int i = 4; i >= 0; i--) {
+      if (i <= count)
+        out[i] = (uint8_t)(val % 85) + 33;
+      val = val / 85;
+    }
+    out += count + 1;
+  }
+
+  // Terminating characters.
+  out[0] = '~';
+  out[1] = '>';
+  out += 2;
+  *dest_size = out - *dest_buf;
+  return true;
 }
 
 #ifdef PDF_ENABLE_XFA
