@@ -98,9 +98,10 @@ class CFDE_CSSStyleSelector {
   CFDE_CSSAccelerator* InitAccelerator();
   IFDE_CSSComputedStyle* CreateComputedStyle(
       IFDE_CSSComputedStyle* pParentStyle);
-  int32_t MatchDeclarations(CXFA_CSSTagProvider* pTag,
-                            CFDE_CSSDeclarationArray& matchedDecls,
-                            FDE_CSSPseudo ePseudoType = FDE_CSSPseudo::NONE);
+  int32_t MatchDeclarations(
+      CXFA_CSSTagProvider* pTag,
+      CFX_ArrayTemplate<CFDE_CSSDeclaration*>& matchedDecls,
+      FDE_CSSPseudo ePseudoType = FDE_CSSPseudo::NONE);
   void ComputeStyle(CXFA_CSSTagProvider* pTag,
                     const CFDE_CSSDeclaration** ppDeclArray,
                     int32_t iDeclCount,

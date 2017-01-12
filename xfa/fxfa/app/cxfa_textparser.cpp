@@ -245,7 +245,7 @@ void CXFA_TextParser::ParseRichText(CFDE_XMLNode* pXMLNode,
       pNewStyle = CreateStyle(pParentStyle);
       CFDE_CSSAccelerator* pCSSAccel = m_pSelector->InitAccelerator();
       pCSSAccel->OnEnterTag(&tagProvider);
-      CFDE_CSSDeclarationArray DeclArray;
+      CFX_ArrayTemplate<CFDE_CSSDeclaration*> DeclArray;
       int32_t iMatchedDecls =
           m_pSelector->MatchDeclarations(&tagProvider, DeclArray);
       const CFDE_CSSDeclaration** ppMatchDecls =

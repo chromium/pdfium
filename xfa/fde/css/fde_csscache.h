@@ -11,15 +11,6 @@
 
 #include "xfa/fde/css/fde_css.h"
 
-class FDE_CSSCacheItem {
- public:
-  explicit FDE_CSSCacheItem(IFDE_CSSStyleSheet* p);
-  ~FDE_CSSCacheItem();
-
-  IFDE_CSSStyleSheet* pStylesheet;
-  uint32_t dwActivity;
-};
-
 class FDE_CSSTagCache {
  public:
   FDE_CSSTagCache(FDE_CSSTagCache* parent, CXFA_CSSTagProvider* tag);
@@ -28,11 +19,9 @@ class FDE_CSSTagCache {
 
   FDE_CSSTagCache* GetParent() const { return pParent; }
   CXFA_CSSTagProvider* GetTag() const { return pTag; }
-
   uint32_t HashID() const { return dwIDHash; }
   uint32_t HashTag() const { return dwTagHash; }
   int32_t CountHashClass() const { return dwClassHashs.GetSize(); }
-
   void SetClassIndex(int32_t index) { iClassIndex = index; }
   uint32_t HashClass() const {
     return iClassIndex < dwClassHashs.GetSize()
@@ -40,7 +29,7 @@ class FDE_CSSTagCache {
                : 0;
   }
 
- protected:
+ private:
   CXFA_CSSTagProvider* pTag;
   FDE_CSSTagCache* pParent;
   uint32_t dwIDHash;
@@ -61,7 +50,7 @@ class CFDE_CSSAccelerator {
 
   FDE_CSSTagCache* GetTopElement() const { return m_Stack.GetTopElement(); }
 
- protected:
+ private:
   CFX_ObjectStackTemplate<FDE_CSSTagCache> m_Stack;
 };
 

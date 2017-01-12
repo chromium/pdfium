@@ -13,54 +13,6 @@
 #include "xfa/fde/css/fde_csssyntax.h"
 #include "xfa/fgas/crt/fgas_codepage.h"
 
-IFDE_CSSStyleSheet* IFDE_CSSStyleSheet::LoadHTMLStandardStyleSheet() {
-  static const FX_WCHAR s_pStyle[] =
-      L"html,address,blockquote,body,dd,div,dl,dt,fieldset,form,frame,frameset,"
-      L"h1,h2,h3,h4,h5,h6,noframes,ol,p,ul,center,dir,hr,menu,pre{display:"
-      L"block}"
-      L"li{display:list-item}head{display:none}table{display:table}tr{display:"
-      L"table-row}thead{display:table-header-group}tbody{display:table-row-"
-      L"group}tfoot{display:table-footer-group}"
-      L"col{display:table-column}colgroup{display:table-column-group}td,th{"
-      L"display:table-cell}caption{display:table-caption}th{font-weight:bolder;"
-      L"text-align:center}caption{text-align:center}"
-      L"body{margin:0}h1{font-size:2em;margin:.67em "
-      L"0}h2{font-size:1.5em;margin:.75em 0}h3{font-size:1.17em;margin:.83em "
-      L"0}h4,p,blockquote,ul,fieldset,form,ol,dl,dir,menu{margin:1.12em 0}"
-      L"h5{font-size:.83em;margin:1.5em 0}h6{font-size:.75em;margin:1.67em "
-      L"0}h1,h2,h3,h4,h5,h6,b,strong{font-weight:bolder}blockquote{margin-left:"
-      L"40px;margin-right:40px}i,cite,em,var,address{font-style:italic}"
-      L"pre,tt,code,kbd,samp{font-family:monospace}pre{white-space:pre}button,"
-      L"textarea,input,select{display:inline-block}big{font-size:1.17em}small,"
-      L"sub,sup{font-size:.83em}sub{vertical-align:sub}"
-      L"sup{vertical-align:super}table{border-spacing:2px}thead,tbody,tfoot{"
-      L"vertical-align:middle}td,th,tr{vertical-align:inherit}s,strike,del{"
-      L"text-decoration:line-through}hr{border:1px inset silver}"
-      L"ol,ul,dir,menu,dd{margin-left:40px}ol{list-style-type:decimal}ol ul,ul "
-      L"ol,ul ul,ol "
-      L"ol{margin-top:0;margin-bottom:0}u,ins{text-decoration:underline}center{"
-      L"text-align:center}"
-      L"ruby{display:ruby}rt{display:ruby-text;font-size:.5em}rb{display:ruby-"
-      L"base}rbc{display:ruby-base-group}rtc{display:ruby-text-group}"
-      L"q:before{content:open-quote}q:after{content:close-quote}"
-      L"rp{display:none}";
-  return IFDE_CSSStyleSheet::LoadFromBuffer(
-      CFX_WideString(), s_pStyle, FXSYS_wcslen(s_pStyle), FX_CODEPAGE_UTF8);
-}
-
-IFDE_CSSStyleSheet* IFDE_CSSStyleSheet::LoadFromStream(
-    const CFX_WideString& szUrl,
-    const CFX_RetainPtr<IFGAS_Stream>& pStream,
-    uint16_t wCodePage,
-    uint32_t dwMediaList) {
-  CFDE_CSSStyleSheet* pStyleSheet = new CFDE_CSSStyleSheet(dwMediaList);
-  if (!pStyleSheet->LoadFromStream(szUrl, pStream, wCodePage)) {
-    pStyleSheet->Release();
-    pStyleSheet = nullptr;
-  }
-  return pStyleSheet;
-}
-
 IFDE_CSSStyleSheet* IFDE_CSSStyleSheet::LoadFromBuffer(
     const CFX_WideString& szUrl,
     const FX_WCHAR* pBuffer,
@@ -141,20 +93,6 @@ int32_t CFDE_CSSStyleSheet::CountRules() const {
 
 IFDE_CSSRule* CFDE_CSSStyleSheet::GetRule(int32_t index) {
   return m_RuleArray.GetAt(index);
-}
-
-bool CFDE_CSSStyleSheet::LoadFromStream(
-    const CFX_WideString& szUrl,
-    const CFX_RetainPtr<IFGAS_Stream>& pStream,
-    uint16_t wCodePage) {
-  auto pSyntax = pdfium::MakeUnique<CFDE_CSSSyntaxParser>();
-  if (pStream->GetCodePage() != wCodePage)
-    pStream->SetCodePage(wCodePage);
-
-  bool bRet = pSyntax->Init(pStream, 4096) && LoadFromSyntax(pSyntax.get());
-  m_wCodePage = wCodePage;
-  m_szUrl = szUrl;
-  return bRet;
 }
 
 bool CFDE_CSSStyleSheet::LoadFromBuffer(const CFX_WideString& szUrl,

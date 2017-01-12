@@ -100,9 +100,6 @@ class CFDE_CSSStyleSheet : public IFDE_CSSStyleSheet {
   int32_t CountRules() const override;
   IFDE_CSSRule* GetRule(int32_t index) override;
 
-  bool LoadFromStream(const CFX_WideString& szUrl,
-                      const CFX_RetainPtr<IFGAS_Stream>& pStream,
-                      uint16_t wCodePage);
   bool LoadFromBuffer(const CFX_WideString& szUrl,
                       const FX_WCHAR* pBuffer,
                       int32_t iBufSize,
@@ -121,6 +118,7 @@ class CFDE_CSSStyleSheet : public IFDE_CSSStyleSheet {
       CFDE_CSSSyntaxParser* pSyntax,
       CFX_MassArrayTemplate<IFDE_CSSRule*>& ruleArray);
   FDE_CSSSyntaxStatus SkipRuleSet(CFDE_CSSSyntaxParser* pSyntax);
+
   uint16_t m_wCodePage;
   uint16_t m_wRefCount;
   uint32_t m_dwMediaList;

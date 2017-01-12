@@ -117,7 +117,7 @@ void CFDE_CSSStyleSelector::Reset() {
 
 int32_t CFDE_CSSStyleSelector::MatchDeclarations(
     CXFA_CSSTagProvider* pTag,
-    CFDE_CSSDeclarationArray& matchedDecls,
+    CFX_ArrayTemplate<CFDE_CSSDeclaration*>& matchedDecls,
     FDE_CSSPseudo ePseudoType) {
   ASSERT(pTag);
   FDE_CSSTagCache* pCache = m_pAccelerator->GetTopElement();
@@ -253,7 +253,7 @@ void CFDE_CSSStyleSelector::ComputeStyle(
     }
 
     if (pDecl) {
-      CFDE_CSSDeclarationArray decls;
+      CFX_ArrayTemplate<CFDE_CSSDeclaration*> decls;
       decls.SetSize(iDeclCount + 1);
       CFDE_CSSDeclaration** ppInline = decls.GetData();
       FXSYS_memcpy(ppInline, ppDeclArray,
@@ -305,7 +305,7 @@ void CFDE_CSSStyleSelector::ApplyDeclarations(
       ApplyProperty(FDE_CSSProperty::FontSize, pLastest, pComputedStyle);
     }
   } else {
-    CFDE_CSSDeclarationArray importants;
+    CFX_ArrayTemplate<CFDE_CSSDeclaration*> importants;
     const CFDE_CSSDeclaration* pDecl = nullptr;
     FDE_CSSProperty eProp;
     FX_POSITION pos;
@@ -602,55 +602,6 @@ void CFDE_CSSStyleSelector::ApplyProperty(
                              pPrimitive,
                              pComputedStyle->m_InheritedData.m_fFontSize);
         break;
-      case FDE_CSSProperty::BorderLeftStyle:
-      case FDE_CSSProperty::BorderTopStyle:
-      case FDE_CSSProperty::BorderRightStyle:
-      case FDE_CSSProperty::BorderBottomStyle:
-      case FDE_CSSProperty::BorderLeftColor:
-      case FDE_CSSProperty::BorderTopColor:
-      case FDE_CSSProperty::BorderRightColor:
-      case FDE_CSSProperty::BorderBottomColor:
-      case FDE_CSSProperty::ListStyleType:
-      case FDE_CSSProperty::ListStylePosition:
-      case FDE_CSSProperty::BackgroundColor:
-      case FDE_CSSProperty::Visibility:
-      case FDE_CSSProperty::Width:
-      case FDE_CSSProperty::Height:
-      case FDE_CSSProperty::MinWidth:
-      case FDE_CSSProperty::MinHeight:
-      case FDE_CSSProperty::MaxWidth:
-      case FDE_CSSProperty::MaxHeight:
-      case FDE_CSSProperty::WhiteSpace:
-      case FDE_CSSProperty::TextTransform:
-      case FDE_CSSProperty::Float:
-      case FDE_CSSProperty::Clear:
-      case FDE_CSSProperty::WritingMode:
-      case FDE_CSSProperty::WordBreak:
-      case FDE_CSSProperty::Widows:
-      case FDE_CSSProperty::Orphans:
-      case FDE_CSSProperty::TextEmphasisColor:
-      case FDE_CSSProperty::PageBreakBefore:
-      case FDE_CSSProperty::PageBreakAfter:
-      case FDE_CSSProperty::PageBreakInside:
-      case FDE_CSSProperty::OverflowX:
-      case FDE_CSSProperty::OverflowY:
-      case FDE_CSSProperty::LineBreak:
-      case FDE_CSSProperty::ColumnCount:
-      case FDE_CSSProperty::ColumnGap:
-      case FDE_CSSProperty::ColumnRuleColor:
-      case FDE_CSSProperty::ColumnRuleStyle:
-      case FDE_CSSProperty::ColumnRuleWidth:
-      case FDE_CSSProperty::ColumnWidth:
-      case FDE_CSSProperty::BackgroundImage:
-      case FDE_CSSProperty::Position:
-      case FDE_CSSProperty::ListStyleImage:
-      case FDE_CSSProperty::CaptionSide:
-      case FDE_CSSProperty::BackgroundRepeat:
-      case FDE_CSSProperty::BackgroundAttachment:
-      case FDE_CSSProperty::RubyAlign:
-      case FDE_CSSProperty::RubyOverhang:
-      case FDE_CSSProperty::RubyPosition:
-      case FDE_CSSProperty::RubySpan:
       default:
         break;
     }
@@ -666,12 +617,6 @@ void CFDE_CSSStyleSelector::ApplyProperty(
           pComputedStyle->m_NonInheritedData.m_dwTextDecoration =
               ToTextDecoration(pList);
           break;
-        case FDE_CSSProperty::CounterIncrement:
-        case FDE_CSSProperty::CounterReset:
-        case FDE_CSSProperty::Content:
-        case FDE_CSSProperty::Quotes:
-        case FDE_CSSProperty::TextCombine:
-        case FDE_CSSProperty::TextEmphasisStyle:
         default:
           break;
       }

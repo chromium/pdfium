@@ -11,15 +11,6 @@
 #include "core/fxcrt/fx_ext.h"
 #include "xfa/fxfa/app/cxfa_csstagprovider.h"
 
-FDE_CSSCacheItem::FDE_CSSCacheItem(IFDE_CSSStyleSheet* p)
-    : pStylesheet(p), dwActivity(0) {
-  pStylesheet->Retain();
-}
-
-FDE_CSSCacheItem::~FDE_CSSCacheItem() {
-  pStylesheet->Release();
-}
-
 FDE_CSSTagCache::FDE_CSSTagCache(FDE_CSSTagCache* parent,
                                  CXFA_CSSTagProvider* tag)
     : pTag(tag),

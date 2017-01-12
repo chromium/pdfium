@@ -59,54 +59,13 @@ class CFDE_CSSDeclaration {
                    int32_t iValueLen);
 
  protected:
-  bool ParseTextEmphasisProperty(FDE_CSSPropertyArgs* pArgs,
-                                 const FX_WCHAR* pszValue,
-                                 int32_t iValueLen,
-                                 bool bImportant);
-  bool ParseColumnsProperty(const FDE_CSSPropertyArgs* pArgs,
-                            const FX_WCHAR* pszValue,
-                            int32_t iValueLen,
-                            bool bImportant);
-  bool ParseColumnRuleProperty(const FDE_CSSPropertyArgs* pArgs,
-                               const FX_WCHAR* pszValue,
-                               int32_t iValueLen,
-                               bool bImportant);
-  bool ParseOverflowProperty(const FDE_CSSPropertyArgs* pArgs,
-                             const FX_WCHAR* pszValue,
-                             int32_t iValueLen,
-                             bool bImportant);
   bool ParseFontProperty(const FDE_CSSPropertyArgs* pArgs,
                          const FX_WCHAR* pszValue,
                          int32_t iValueLen,
                          bool bImportant);
-  bool ParseBackgroundProperty(const FDE_CSSPropertyArgs* pArgs,
-                               const FX_WCHAR* pszValue,
-                               int32_t iValueLen,
-                               bool bImportant);
-  bool ParseListStyleProperty(const FDE_CSSPropertyArgs* pArgs,
-                              const FX_WCHAR* pszValue,
-                              int32_t iValueLen,
-                              bool bImportant);
-  bool ParseBorderPropoerty(const FX_WCHAR* pszValue,
-                            int32_t iValueLen,
-                            IFDE_CSSValue*& pColor,
-                            IFDE_CSSValue*& pStyle,
-                            IFDE_CSSValue*& pWidth) const;
-  void AddBorderProperty(IFDE_CSSValue* pColor,
-                         IFDE_CSSValue* pStyle,
-                         IFDE_CSSValue* pWidth,
-                         bool bImportant,
-                         FDE_CSSProperty eColor,
-                         FDE_CSSProperty eStyle,
-                         FDE_CSSProperty eWidth);
-  bool ParseContentProperty(const FDE_CSSPropertyArgs* pArgs,
-                            const FX_WCHAR* pszValue,
-                            int32_t iValueLen,
-                            bool bImportant);
-  bool ParseCounterProperty(const FDE_CSSPropertyArgs* pArgs,
-                            const FX_WCHAR* pszValue,
-                            int32_t iValueLen,
-                            bool bImportant);
+  bool ParseBorderProperty(const FX_WCHAR* pszValue,
+                           int32_t iValueLen,
+                           IFDE_CSSValue*& pWidth) const;
   bool ParseValueListProperty(const FDE_CSSPropertyArgs* pArgs,
                               const FX_WCHAR* pszValue,
                               int32_t iValueLen,
@@ -150,6 +109,5 @@ class CFDE_CSSDeclaration {
   FDE_CSSCustomProperty* m_pFirstCustom;
   FDE_CSSCustomProperty* m_pLastCustom;
 };
-using CFDE_CSSDeclarationArray = CFX_ArrayTemplate<CFDE_CSSDeclaration*>;
 
 #endif  // XFA_FDE_CSS_FDE_CSSDECLARATION_H_
