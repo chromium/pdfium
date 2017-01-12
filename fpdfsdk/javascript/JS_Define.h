@@ -261,7 +261,6 @@ void JSMethod(const char* method_name_string,
                                    v8::Local<v8::Object> obj) {              \
     js_class_name* pObj =                                                    \
         static_cast<js_class_name*>(pEngine->GetObjectPrivate(obj));         \
-    pObj->ExitInstance();                                                    \
     delete pObj;                                                             \
   }                                                                          \
   void js_class_name::DefineProps(CFXJS_Engine* pEngine) {                   \
