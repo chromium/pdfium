@@ -127,10 +127,11 @@ class TestRunner:
   def HandleResult(self, input_filename, input_path, result):
     if self.gold_results:
       success, image_paths = result
-      for img_path, md5_hash in image_paths:
-        # the output filename (without extension becomes the test name)
-        test_name = os.path.splitext(os.path.split(img_path)[1])[0]
-        self.gold_results.AddTestResult(test_name, md5_hash, img_path)
+      if image_paths:
+        for img_path, md5_hash in image_paths:
+          # the output filename (without extension becomes the test name)
+          test_name = os.path.splitext(os.path.split(img_path)[1])[0]
+          self.gold_results.AddTestResult(test_name, md5_hash, img_path)
 
     if self.test_suppressor.IsResultSuppressed(input_filename):
       if result:

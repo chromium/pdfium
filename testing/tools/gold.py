@@ -67,6 +67,10 @@ class GoldResults(object):
     self._results =  []
     self._outputDir = outputDir
 
+    # make sure the output directory exists.
+    if not os.path.exists(outputDir):
+      os.makedirs(outputDir)
+
   def AddTestResult(self, testName, md5Hash, outputImagePath):
     # Copy the image to <output_dir>/<md5Hash>.<image_extension>
     imgExt = os.path.splitext(outputImagePath)[1].lstrip(".")
