@@ -10,24 +10,9 @@
 #include "core/fxcrt/fx_system.h"
 #include "xfa/fde/css/fde_css.h"
 
-class CFDE_CSSFunction {
- public:
-  CFDE_CSSFunction(const FX_WCHAR* pszFuncName, IFDE_CSSValueList* pArgList)
-      : m_pArgList(pArgList), m_pszFuncName(pszFuncName) {
-    ASSERT(pArgList);
-  }
-  int32_t CountArgs() const { return m_pArgList->CountValues(); }
-  IFDE_CSSValue* GetArgs(int32_t index) const {
-    return m_pArgList->GetValue(index);
-  }
-  const FX_WCHAR* GetFuncName() const { return m_pszFuncName; }
+class CFDE_CSSFunction;
 
- protected:
-  IFDE_CSSValueList* m_pArgList;
-  const FX_WCHAR* m_pszFuncName;
-};
-
-class CFDE_CSSPrimitiveValue : public IFDE_CSSPrimitiveValue {
+class CFDE_CSSPrimitiveValue : public IFDE_CSSValue {
  public:
   explicit CFDE_CSSPrimitiveValue(FX_ARGB color);
   explicit CFDE_CSSPrimitiveValue(FDE_CSSPropertyValue eValue);
@@ -36,15 +21,17 @@ class CFDE_CSSPrimitiveValue : public IFDE_CSSPrimitiveValue {
   CFDE_CSSPrimitiveValue(FDE_CSSPrimitiveType eType, const FX_WCHAR* pValue);
   CFDE_CSSPrimitiveValue(const CFDE_CSSPrimitiveValue& src);
 
-  // IFDE_CSSPrimitiveValue
-  FDE_CSSPrimitiveType GetPrimitiveType() const override;
-  FX_ARGB GetRGBColor() const override;
-  FX_FLOAT GetFloat() const override;
-  const FX_WCHAR* GetString(int32_t& iLength) const override;
-  FDE_CSSPropertyValue GetEnum() const override;
-  const FX_WCHAR* GetFuncName() const override;
-  int32_t CountArgs() const override;
-  IFDE_CSSValue* GetArgs(int32_t index) const override;
+  // IFDE_CSSValue
+  FDE_CSSVALUETYPE GetType() const override;
+
+  FDE_CSSPrimitiveType GetPrimitiveType() const;
+  FX_ARGB GetRGBColor() const;
+  FX_FLOAT GetFloat() const;
+  const FX_WCHAR* GetString(int32_t& iLength) const;
+  FDE_CSSPropertyValue GetEnum() const;
+  const FX_WCHAR* GetFuncName() const;
+  int32_t CountArgs() const;
+  IFDE_CSSValue* GetArgs(int32_t index) const;
 
   FDE_CSSPrimitiveType m_eType;
   union {
@@ -56,16 +43,18 @@ class CFDE_CSSPrimitiveValue : public IFDE_CSSPrimitiveValue {
   };
 };
 
-typedef CFX_ArrayTemplate<IFDE_CSSPrimitiveValue*> CFDE_CSSPrimitiveArray;
+typedef CFX_ArrayTemplate<CFDE_CSSPrimitiveValue*> CFDE_CSSPrimitiveArray;
 typedef CFX_ArrayTemplate<IFDE_CSSValue*> CFDE_CSSValueArray;
 
-class CFDE_CSSValueList : public IFDE_CSSValueList {
+class CFDE_CSSValueList : public IFDE_CSSValue {
  public:
   explicit CFDE_CSSValueList(const CFDE_CSSValueArray& list);
 
-  // IFDE_CSSValueList
-  int32_t CountValues() const override;
-  IFDE_CSSValue* GetValue(int32_t index) const override;
+  // IFDE_CSSValue
+  FDE_CSSVALUETYPE GetType() const override;
+
+  int32_t CountValues() const;
+  IFDE_CSSValue* GetValue(int32_t index) const;
 
  protected:
   IFDE_CSSValue** m_ppList;
@@ -90,6 +79,23 @@ class CFDE_CSSValueListParser {
 
   const FX_WCHAR* m_pCur;
   const FX_WCHAR* m_pEnd;
+};
+
+class CFDE_CSSFunction {
+ public:
+  CFDE_CSSFunction(const FX_WCHAR* pszFuncName, CFDE_CSSValueList* pArgList)
+      : m_pArgList(pArgList), m_pszFuncName(pszFuncName) {
+    ASSERT(pArgList);
+  }
+  int32_t CountArgs() const { return m_pArgList->CountValues(); }
+  IFDE_CSSValue* GetArgs(int32_t index) const {
+    return m_pArgList->GetValue(index);
+  }
+  const FX_WCHAR* GetFuncName() const { return m_pszFuncName; }
+
+ protected:
+  CFDE_CSSValueList* m_pArgList;
+  const FX_WCHAR* m_pszFuncName;
 };
 
 #define FDE_IsOnlyValue(type, enum) \

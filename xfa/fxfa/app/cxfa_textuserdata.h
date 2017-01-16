@@ -9,13 +9,13 @@
 
 #include "core/fxcrt/fx_basic.h"
 
+class CFDE_CSSComputedStyle;
 class CXFA_LinkUserData;
-class IFDE_CSSComputedStyle;
 
 class CXFA_TextUserData : public IFX_Retainable {
  public:
-  explicit CXFA_TextUserData(IFDE_CSSComputedStyle* pStyle);
-  CXFA_TextUserData(IFDE_CSSComputedStyle* pStyle,
+  explicit CXFA_TextUserData(CFDE_CSSComputedStyle* pStyle);
+  CXFA_TextUserData(CFDE_CSSComputedStyle* pStyle,
                     CXFA_LinkUserData* pLinkData);
   ~CXFA_TextUserData() override;
 
@@ -23,7 +23,7 @@ class CXFA_TextUserData : public IFX_Retainable {
   uint32_t Retain() override;
   uint32_t Release() override;
 
-  IFDE_CSSComputedStyle* m_pStyle;
+  CFDE_CSSComputedStyle* m_pStyle;
   CXFA_LinkUserData* m_pLinkData;
 
  protected:

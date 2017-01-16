@@ -7,6 +7,7 @@
 #include "xfa/fde/css/fde_cssdatatable.h"
 
 #include "core/fxcrt/fx_ext.h"
+#include "xfa/fde/css/fde_cssstyleselector.h"
 #include "xfa/fgas/crt/fgas_codepage.h"
 
 namespace {
@@ -31,7 +32,7 @@ bool FDE_CSSLengthToFloat(const FDE_CSSLENGTH& len,
       return false;
   }
 }
-CFX_FloatRect FDE_CSSBoundaryToRect(IFDE_CSSBoundaryStyle* pBoundStyle,
+CFX_FloatRect FDE_CSSBoundaryToRect(CFDE_CSSComputedStyle* pBoundStyle,
                                     FX_FLOAT fContainerWidth,
                                     bool bPadding,
                                     bool bBorder,
@@ -92,7 +93,7 @@ CFX_FloatRect FDE_CSSBoundaryToRect(IFDE_CSSBoundaryStyle* pBoundStyle,
   }
   return rect;
 }
-uint32_t FDE_CSSFontStyleToFDE(IFDE_CSSFontStyle* pFontStyle) {
+uint32_t FDE_CSSFontStyleToFDE(CFDE_CSSComputedStyle* pFontStyle) {
   uint32_t dwFontStyle = FX_FONTSTYLE_Normal;
   if (pFontStyle->GetFontStyle() == FDE_CSSFontStyle::Italic) {
     dwFontStyle |= FX_FONTSTYLE_Italic;
@@ -544,6 +545,10 @@ int32_t CFDE_CSSValueList::CountValues() const {
   return m_iCount;
 }
 
+FDE_CSSVALUETYPE CFDE_CSSValueList::GetType() const {
+  return FDE_CSSVALUETYPE_List;
+}
+
 IFDE_CSSValue* CFDE_CSSValueList::GetValue(int32_t index) const {
   return m_ppList[index];
 }
@@ -670,6 +675,10 @@ CFDE_CSSPrimitiveValue::CFDE_CSSPrimitiveValue(FDE_CSSPrimitiveType eType,
 
 CFDE_CSSPrimitiveValue::CFDE_CSSPrimitiveValue(CFDE_CSSFunction* pFunction)
     : m_eType(FDE_CSSPrimitiveType::Function), m_pFunction(pFunction) {}
+
+FDE_CSSVALUETYPE CFDE_CSSPrimitiveValue::GetType() const {
+  return FDE_CSSVALUETYPE_Primitive;
+}
 
 FDE_CSSPrimitiveType CFDE_CSSPrimitiveValue::GetPrimitiveType() const {
   return m_eType;

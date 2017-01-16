@@ -17,6 +17,7 @@
 #include "xfa/fxfa/app/cxfa_textparser.h"
 
 class CFDE_Brush;
+class CFDE_CSSComputedStyle;
 class CFDE_Pen;
 class CFDE_RenderDevice;
 class CFDE_XMLNode;
@@ -27,7 +28,6 @@ class CXFA_Node;
 class CXFA_PieceLine;
 class CXFA_TextProvider;
 class CXFA_TextTabstopsContext;
-class IFDE_CSSComputedStyle;
 class XFA_TextPiece;
 
 class CXFA_TextLayout {
@@ -64,11 +64,11 @@ class CXFA_TextLayout {
   CFDE_XMLNode* GetXMLContainerNode();
   CFX_RTFBreak* CreateBreak(bool bDefault);
   void InitBreak(FX_FLOAT fLineWidth);
-  void InitBreak(IFDE_CSSComputedStyle* pStyle,
+  void InitBreak(CFDE_CSSComputedStyle* pStyle,
                  FDE_CSSDisplay eDisplay,
                  FX_FLOAT fLineWidth,
                  CFDE_XMLNode* pXMLNode,
-                 IFDE_CSSComputedStyle* pParentStyle = nullptr);
+                 CFDE_CSSComputedStyle* pParentStyle = nullptr);
   bool Loader(const CFX_SizeF& szText,
               FX_FLOAT& fLinePos,
               bool bSavePieces = true);
@@ -79,7 +79,7 @@ class CXFA_TextLayout {
   bool LoadRichText(CFDE_XMLNode* pXMLNode,
                     const CFX_SizeF& szText,
                     FX_FLOAT& fLinePos,
-                    IFDE_CSSComputedStyle* pParentStyle,
+                    CFDE_CSSComputedStyle* pParentStyle,
                     bool bSavePieces,
                     CXFA_LinkUserData* pLinkData = nullptr,
                     bool bEndBreak = true,
@@ -113,7 +113,7 @@ class CXFA_TextLayout {
                         FXTEXT_CHARPOS* pCharPos,
                         bool bCharCode = false);
   bool ToRun(const XFA_TextPiece* pPiece, FX_RTFTEXTOBJ& tr);
-  void DoTabstops(IFDE_CSSComputedStyle* pStyle, CXFA_PieceLine* pPieceLine);
+  void DoTabstops(CFDE_CSSComputedStyle* pStyle, CXFA_PieceLine* pPieceLine);
   bool Layout(int32_t iBlock);
   int32_t CountBlocks() const;
 

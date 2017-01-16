@@ -10,7 +10,7 @@
 #include "xfa/fde/css/fde_css.h"
 
 class CFDE_CSSDeclaration;
-class IFDE_CSSComputedStyle;
+class CFDE_CSSComputedStyle;
 
 class CXFA_TextParseContext {
  public:
@@ -26,7 +26,7 @@ class CXFA_TextParseContext {
   }
   uint32_t CountDecls() const { return m_dwMatchedDecls; }
 
-  IFDE_CSSComputedStyle* m_pParentStyle;
+  CFDE_CSSComputedStyle* m_pParentStyle;
 
  protected:
   CFDE_CSSDeclaration** m_ppMatchedDecls;

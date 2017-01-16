@@ -67,7 +67,7 @@ const FX_WCHAR* CFDE_CSSDeclaration::CopyToLocal(
 
   return psz;
 }
-IFDE_CSSPrimitiveValue* CFDE_CSSDeclaration::NewNumberValue(
+CFDE_CSSPrimitiveValue* CFDE_CSSDeclaration::NewNumberValue(
     FDE_CSSPrimitiveType eUnit,
     FX_FLOAT fValue) const {
   static CFDE_CSSPrimitiveValue s_ZeroValue(FDE_CSSPrimitiveType::Number, 0.0f);
@@ -76,7 +76,7 @@ IFDE_CSSPrimitiveValue* CFDE_CSSDeclaration::NewNumberValue(
   }
   return new CFDE_CSSPrimitiveValue(eUnit, fValue);
 }
-inline IFDE_CSSPrimitiveValue* CFDE_CSSDeclaration::NewEnumValue(
+CFDE_CSSPrimitiveValue* CFDE_CSSDeclaration::NewEnumValue(
     FDE_CSSPropertyValue eValue) const {
   return new CFDE_CSSPrimitiveValue(eValue);
 }
@@ -345,7 +345,7 @@ IFDE_CSSValue* CFDE_CSSDeclaration::ParseFunction(
         break;
     }
   }
-  IFDE_CSSValueList* pArgumentList = new CFDE_CSSValueList(argumentArr);
+  CFDE_CSSValueList* pArgumentList = new CFDE_CSSValueList(argumentArr);
   CFDE_CSSFunction* pFunction =
       new CFDE_CSSFunction(pszFuncName, pArgumentList);
   return new CFDE_CSSPrimitiveValue(pFunction);
@@ -525,11 +525,11 @@ bool CFDE_CSSDeclaration::ParseFontProperty(const FDE_CSSPropertyArgs* pArgs,
                                             int32_t iValueLen,
                                             bool bImportant) {
   CFDE_CSSValueListParser parser(pszValue, iValueLen, '/');
-  IFDE_CSSPrimitiveValue* pStyle = nullptr;
-  IFDE_CSSPrimitiveValue* pVariant = nullptr;
-  IFDE_CSSPrimitiveValue* pWeight = nullptr;
-  IFDE_CSSPrimitiveValue* pFontSize = nullptr;
-  IFDE_CSSPrimitiveValue* pLineHeight = nullptr;
+  CFDE_CSSPrimitiveValue* pStyle = nullptr;
+  CFDE_CSSPrimitiveValue* pVariant = nullptr;
+  CFDE_CSSPrimitiveValue* pWeight = nullptr;
+  CFDE_CSSPrimitiveValue* pFontSize = nullptr;
+  CFDE_CSSPrimitiveValue* pLineHeight = nullptr;
   CFDE_CSSValueArray familyList;
   FDE_CSSPrimitiveType eType;
   while (parser.NextValue(eType, pszValue, iValueLen)) {

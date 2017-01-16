@@ -13,24 +13,10 @@
 #include "xfa/fde/css/fde_csssyntax.h"
 #include "xfa/fgas/crt/fgas_codepage.h"
 
-IFDE_CSSStyleSheet* IFDE_CSSStyleSheet::LoadFromBuffer(
-    const CFX_WideString& szUrl,
-    const FX_WCHAR* pBuffer,
-    int32_t iBufSize,
-    uint16_t wCodePage,
-    uint32_t dwMediaList) {
-  CFDE_CSSStyleSheet* pStyleSheet = new CFDE_CSSStyleSheet(dwMediaList);
-  if (!pStyleSheet->LoadFromBuffer(szUrl, pBuffer, iBufSize, wCodePage)) {
-    pStyleSheet->Release();
-    pStyleSheet = nullptr;
-  }
-  return pStyleSheet;
-}
-
-CFDE_CSSStyleSheet::CFDE_CSSStyleSheet(uint32_t dwMediaList)
+CFDE_CSSStyleSheet::CFDE_CSSStyleSheet()
     : m_wCodePage(FX_CODEPAGE_UTF8),
       m_wRefCount(1),
-      m_dwMediaList(dwMediaList),
+      m_dwMediaList(FDE_CSSMEDIATYPE_ALL),
       m_RuleArray(100) {
   ASSERT(m_dwMediaList > 0);
 }
@@ -68,9 +54,8 @@ uint32_t CFDE_CSSStyleSheet::Retain() {
 
 uint32_t CFDE_CSSStyleSheet::Release() {
   uint32_t dwRefCount = --m_wRefCount;
-  if (dwRefCount == 0) {
+  if (dwRefCount == 0)
     delete this;
-  }
   return dwRefCount;
 }
 
@@ -95,16 +80,15 @@ IFDE_CSSRule* CFDE_CSSStyleSheet::GetRule(int32_t index) {
   return m_RuleArray.GetAt(index);
 }
 
-bool CFDE_CSSStyleSheet::LoadFromBuffer(const CFX_WideString& szUrl,
-                                        const FX_WCHAR* pBuffer,
-                                        int32_t iBufSize,
-                                        uint16_t wCodePage) {
+bool CFDE_CSSStyleSheet::LoadFromBuffer(const FX_WCHAR* pBuffer,
+                                        int32_t iBufSize) {
   ASSERT(pBuffer && iBufSize > 0);
-  std::unique_ptr<CFDE_CSSSyntaxParser> pSyntax(new CFDE_CSSSyntaxParser);
-  bool bRet = pSyntax->Init(pBuffer, iBufSize) && LoadFromSyntax(pSyntax.get());
-  m_wCodePage = wCodePage;
-  m_szUrl = szUrl;
-  return bRet;
+
+  m_wCodePage = FX_CODEPAGE_UTF8;
+  m_szUrl = CFX_WideString();
+
+  auto pSyntax = pdfium::MakeUnique<CFDE_CSSSyntaxParser>();
+  return pSyntax->Init(pBuffer, iBufSize) && LoadFromSyntax(pSyntax.get());
 }
 
 bool CFDE_CSSStyleSheet::LoadFromSyntax(CFDE_CSSSyntaxParser* pSyntax) {
@@ -333,6 +317,10 @@ FDE_CSSSyntaxStatus CFDE_CSSStyleSheet::SkipRuleSet(
 CFDE_CSSStyleRule::CFDE_CSSStyleRule()
     : m_ppSelector(nullptr), m_iSelectors(0) {}
 
+FDE_CSSRuleType CFDE_CSSStyleRule::GetType() const {
+  return FDE_CSSRuleType::Style;
+}
+
 int32_t CFDE_CSSStyleRule::CountSelectorLists() const {
   return m_iSelectors;
 }
@@ -371,6 +359,10 @@ CFDE_CSSMediaRule::~CFDE_CSSMediaRule() {
         break;
     }
   }
+}
+
+FDE_CSSRuleType CFDE_CSSMediaRule::GetType() const {
+  return FDE_CSSRuleType::Media;
 }
 
 uint32_t CFDE_CSSMediaRule::GetMediaList() const {
@@ -532,6 +524,6 @@ CFDE_CSSSelector* CFDE_CSSSelector::FromString(
   return pPseudoFirst;
 }
 
-CFDE_CSSDeclaration* CFDE_CSSFontFaceRule::GetDeclaration() {
-  return &m_Declaration;
+FDE_CSSRuleType CFDE_CSSFontFaceRule::GetType() const {
+  return FDE_CSSRuleType::FontFace;
 }

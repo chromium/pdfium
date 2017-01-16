@@ -60,19 +60,17 @@ CFDE_CSSAccelerator* CFDE_CSSStyleSelector::InitAccelerator() {
   return m_pAccelerator.get();
 }
 
-IFDE_CSSComputedStyle* CFDE_CSSStyleSelector::CreateComputedStyle(
-    IFDE_CSSComputedStyle* pParentStyle) {
+CFDE_CSSComputedStyle* CFDE_CSSStyleSelector::CreateComputedStyle(
+    CFDE_CSSComputedStyle* pParentStyle) {
   CFDE_CSSComputedStyle* pStyle = new CFDE_CSSComputedStyle();
-  if (pParentStyle) {
-    pStyle->m_InheritedData =
-        static_cast<CFDE_CSSComputedStyle*>(pParentStyle)->m_InheritedData;
-  }
+  if (pParentStyle)
+    pStyle->m_InheritedData = pParentStyle->m_InheritedData;
   return pStyle;
 }
 
 bool CFDE_CSSStyleSelector::SetStyleSheet(FDE_CSSStyleSheetGroup eType,
-                                          IFDE_CSSStyleSheet* pSheet) {
-  CFX_ArrayTemplate<IFDE_CSSStyleSheet*>& dest =
+                                          CFDE_CSSStyleSheet* pSheet) {
+  CFX_ArrayTemplate<CFDE_CSSStyleSheet*>& dest =
       m_SheetGroups[static_cast<int32_t>(eType)];
   dest.RemoveAt(0, dest.GetSize());
   if (pSheet)
@@ -82,8 +80,8 @@ bool CFDE_CSSStyleSelector::SetStyleSheet(FDE_CSSStyleSheetGroup eType,
 
 bool CFDE_CSSStyleSelector::SetStyleSheets(
     FDE_CSSStyleSheetGroup eType,
-    const CFX_ArrayTemplate<IFDE_CSSStyleSheet*>* pArray) {
-  CFX_ArrayTemplate<IFDE_CSSStyleSheet*>& dest =
+    const CFX_ArrayTemplate<CFDE_CSSStyleSheet*>* pArray) {
+  CFX_ArrayTemplate<CFDE_CSSStyleSheet*>& dest =
       m_SheetGroups[static_cast<int32_t>(eType)];
   if (pArray)
     dest.Copy(*pArray);
@@ -223,7 +221,7 @@ void CFDE_CSSStyleSelector::ComputeStyle(
     CXFA_CSSTagProvider* pTag,
     const CFDE_CSSDeclaration** ppDeclArray,
     int32_t iDeclCount,
-    IFDE_CSSComputedStyle* pDestStyle) {
+    CFDE_CSSComputedStyle* pDestStyle) {
   ASSERT(iDeclCount >= 0);
   ASSERT(pDestStyle);
 
@@ -280,9 +278,8 @@ void CFDE_CSSStyleSelector::ApplyDeclarations(
     bool bPriority,
     const CFDE_CSSDeclaration** ppDeclArray,
     int32_t iDeclCount,
-    IFDE_CSSComputedStyle* pDestStyle) {
-  CFDE_CSSComputedStyle* pComputedStyle =
-      static_cast<CFDE_CSSComputedStyle*>(pDestStyle);
+    CFDE_CSSComputedStyle* pDestStyle) {
+  CFDE_CSSComputedStyle* pComputedStyle = pDestStyle;
   IFDE_CSSValue* pVal;
   bool bImportant;
   int32_t i;
@@ -388,8 +385,8 @@ void CFDE_CSSStyleSelector::ApplyProperty(
     IFDE_CSSValue* pValue,
     CFDE_CSSComputedStyle* pComputedStyle) {
   if (pValue->GetType() == FDE_CSSVALUETYPE_Primitive) {
-    IFDE_CSSPrimitiveValue* pPrimitive =
-        static_cast<IFDE_CSSPrimitiveValue*>(pValue);
+    CFDE_CSSPrimitiveValue* pPrimitive =
+        static_cast<CFDE_CSSPrimitiveValue*>(pValue);
     FDE_CSSPrimitiveType eType = pPrimitive->GetPrimitiveType();
     switch (eProperty) {
       case FDE_CSSProperty::Display:
@@ -606,7 +603,7 @@ void CFDE_CSSStyleSelector::ApplyProperty(
         break;
     }
   } else if (pValue->GetType() == FDE_CSSVALUETYPE_List) {
-    IFDE_CSSValueList* pList = static_cast<IFDE_CSSValueList*>(pValue);
+    CFDE_CSSValueList* pList = static_cast<CFDE_CSSValueList*>(pValue);
     int32_t iCount = pList->CountValues();
     if (iCount > 0) {
       switch (eProperty) {
@@ -713,7 +710,7 @@ FDE_CSSFontStyle CFDE_CSSStyleSelector::ToFontStyle(
 bool CFDE_CSSStyleSelector::SetLengthWithPercent(
     FDE_CSSLENGTH& width,
     FDE_CSSPrimitiveType eType,
-    IFDE_CSSPrimitiveValue* pPrimitive,
+    CFDE_CSSPrimitiveValue* pPrimitive,
     FX_FLOAT fFontSize) {
   if (eType == FDE_CSSPrimitiveType::Percent) {
     width.Set(FDE_CSSLengthUnit::Percent, pPrimitive->GetFloat() / 100.0f);
@@ -796,11 +793,11 @@ FDE_CSSVerticalAlign CFDE_CSSStyleSelector::ToVerticalAlign(
   }
 }
 
-uint32_t CFDE_CSSStyleSelector::ToTextDecoration(IFDE_CSSValueList* pValue) {
+uint32_t CFDE_CSSStyleSelector::ToTextDecoration(CFDE_CSSValueList* pValue) {
   uint32_t dwDecoration = 0;
   for (int32_t i = pValue->CountValues() - 1; i >= 0; --i) {
-    IFDE_CSSPrimitiveValue* pPrimitive =
-        static_cast<IFDE_CSSPrimitiveValue*>(pValue->GetValue(i));
+    CFDE_CSSPrimitiveValue* pPrimitive =
+        static_cast<CFDE_CSSPrimitiveValue*>(pValue->GetValue(i));
     if (pPrimitive->GetPrimitiveType() == FDE_CSSPrimitiveType::Enum) {
       switch (pPrimitive->GetEnum()) {
         case FDE_CSSPropertyValue::Underline:
@@ -848,22 +845,6 @@ uint32_t CFDE_CSSComputedStyle::Release() {
   return dwRefCount;
 }
 
-IFDE_CSSFontStyle* CFDE_CSSComputedStyle::GetFontStyles() {
-  return static_cast<IFDE_CSSFontStyle*>(this);
-}
-
-IFDE_CSSBoundaryStyle* CFDE_CSSComputedStyle::GetBoundaryStyles() {
-  return static_cast<IFDE_CSSBoundaryStyle*>(this);
-}
-
-IFDE_CSSPositionStyle* CFDE_CSSComputedStyle::GetPositionStyles() {
-  return static_cast<IFDE_CSSPositionStyle*>(this);
-}
-
-IFDE_CSSParagraphStyle* CFDE_CSSComputedStyle::GetParagraphStyles() {
-  return static_cast<IFDE_CSSParagraphStyle*>(this);
-}
-
 bool CFDE_CSSComputedStyle::GetCustomStyle(const CFX_WideStringC& wsName,
                                            CFX_WideString& wsValue) const {
   for (int32_t i = pdfium::CollectionSize<int32_t>(m_CustomProperties) - 2;
@@ -883,7 +864,7 @@ int32_t CFDE_CSSComputedStyle::CountFontFamilies() const {
 }
 
 const FX_WCHAR* CFDE_CSSComputedStyle::GetFontFamily(int32_t index) const {
-  return (static_cast<IFDE_CSSPrimitiveValue*>(
+  return (static_cast<CFDE_CSSPrimitiveValue*>(
               m_InheritedData.m_pFontFamily->GetValue(index)))
       ->GetString(index);
 }
@@ -893,11 +874,11 @@ uint16_t CFDE_CSSComputedStyle::GetFontWeight() const {
 }
 
 FDE_CSSFontVariant CFDE_CSSComputedStyle::GetFontVariant() const {
-  return static_cast<FDE_CSSFontVariant>(m_InheritedData.m_eFontVariant);
+  return m_InheritedData.m_eFontVariant;
 }
 
 FDE_CSSFontStyle CFDE_CSSComputedStyle::GetFontStyle() const {
-  return static_cast<FDE_CSSFontStyle>(m_InheritedData.m_eFontStyle);
+  return m_InheritedData.m_eFontStyle;
 }
 
 FX_FLOAT CFDE_CSSComputedStyle::GetFontSize() const {
@@ -954,7 +935,7 @@ void CFDE_CSSComputedStyle::SetPaddingWidth(const FDE_CSSRECT& rect) {
 }
 
 FDE_CSSDisplay CFDE_CSSComputedStyle::GetDisplay() const {
-  return static_cast<FDE_CSSDisplay>(m_NonInheritedData.m_eDisplay);
+  return m_NonInheritedData.m_eDisplay;
 }
 
 FX_FLOAT CFDE_CSSComputedStyle::GetLineHeight() const {
@@ -966,11 +947,11 @@ const FDE_CSSLENGTH& CFDE_CSSComputedStyle::GetTextIndent() const {
 }
 
 FDE_CSSTextAlign CFDE_CSSComputedStyle::GetTextAlign() const {
-  return static_cast<FDE_CSSTextAlign>(m_InheritedData.m_eTextAlign);
+  return m_InheritedData.m_eTextAlign;
 }
 
 FDE_CSSVerticalAlign CFDE_CSSComputedStyle::GetVerticalAlign() const {
-  return static_cast<FDE_CSSVerticalAlign>(m_NonInheritedData.m_eVerticalAlign);
+  return m_NonInheritedData.m_eVerticalAlign;
 }
 
 FX_FLOAT CFDE_CSSComputedStyle::GetNumberVerticalAlign() const {

@@ -14,7 +14,7 @@
 
 class CFDE_XMLNode;
 class CXFA_Node;
-class IFDE_CSSComputedStyle;
+class CFDE_CSSComputedStyle;
 
 class CXFA_LoaderContext {
  public:
@@ -31,7 +31,7 @@ class CXFA_LoaderContext {
   int32_t m_iTotalLines;
   CFDE_XMLNode* m_pXMLNode;
   CXFA_Node* m_pNode;
-  IFDE_CSSComputedStyle* m_pParentStyle;
+  CFDE_CSSComputedStyle* m_pParentStyle;
   CFX_ArrayTemplate<FX_FLOAT> m_lineHeights;
   uint32_t m_dwFlags;
   std::vector<FX_FLOAT> m_BlocksHeight;

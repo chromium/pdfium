@@ -100,9 +100,9 @@ class CFDE_CSSDeclaration {
   void AddPropertyHolder(FDE_CSSProperty eProperty,
                          IFDE_CSSValue* pValue,
                          bool bImportant);
-  IFDE_CSSPrimitiveValue* NewNumberValue(FDE_CSSPrimitiveType eUnit,
+  CFDE_CSSPrimitiveValue* NewNumberValue(FDE_CSSPrimitiveType eUnit,
                                          FX_FLOAT fValue) const;
-  IFDE_CSSPrimitiveValue* NewEnumValue(FDE_CSSPropertyValue eValue) const;
+  CFDE_CSSPrimitiveValue* NewEnumValue(FDE_CSSPropertyValue eValue) const;
 
   FDE_CSSPropertyHolder* m_pFirstProperty;
   FDE_CSSPropertyHolder* m_pLastProperty;

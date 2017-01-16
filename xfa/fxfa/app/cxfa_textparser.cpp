@@ -11,6 +11,7 @@
 #include "third_party/base/ptr_util.h"
 #include "xfa/fde/css/fde_css.h"
 #include "xfa/fde/css/fde_cssstyleselector.h"
+#include "xfa/fde/css/fde_cssstylesheet.h"
 #include "xfa/fgas/crt/fgas_codepage.h"
 #include "xfa/fgas/font/cfgas_fontmgr.h"
 #include "xfa/fxfa/app/cxfa_csstagprovider.h"
@@ -80,7 +81,7 @@ void CXFA_TextParser::InitCSSData(CXFA_TextProvider* pTextProvider) {
   }
 }
 
-IFDE_CSSStyleSheet* CXFA_TextParser::LoadDefaultSheetStyle() {
+CFDE_CSSStyleSheet* CXFA_TextParser::LoadDefaultSheetStyle() {
   static const FX_WCHAR s_pStyle[] =
       L"html,body,ol,p,ul{display:block}"
       L"li{display:list-item}"
@@ -90,17 +91,20 @@ IFDE_CSSStyleSheet* CXFA_TextParser::LoadDefaultSheetStyle() {
       L"style:italic}"
       L"sup{vertical-align:+15em;font-size:.66em}sub{vertical-align:-15em;font-"
       L"size:.66em}";
-  return IFDE_CSSStyleSheet::LoadFromBuffer(
-      CFX_WideString(), s_pStyle, FXSYS_wcslen(s_pStyle), FX_CODEPAGE_UTF8);
+
+  CFDE_CSSStyleSheet* pStyleSheet = new CFDE_CSSStyleSheet();
+  if (!pStyleSheet->LoadFromBuffer(s_pStyle, FXSYS_wcslen(s_pStyle))) {
+    pStyleSheet->Release();
+    pStyleSheet = nullptr;
+  }
+  return pStyleSheet;
 }
 
-IFDE_CSSComputedStyle* CXFA_TextParser::CreateRootStyle(
+CFDE_CSSComputedStyle* CXFA_TextParser::CreateRootStyle(
     CXFA_TextProvider* pTextProvider) {
   CXFA_Font font = pTextProvider->GetFontNode();
   CXFA_Para para = pTextProvider->GetParaNode();
-  IFDE_CSSComputedStyle* pStyle = m_pSelector->CreateComputedStyle(nullptr);
-  IFDE_CSSFontStyle* pFontStyle = pStyle->GetFontStyles();
-  IFDE_CSSParagraphStyle* pParaStyle = pStyle->GetParagraphStyles();
+  CFDE_CSSComputedStyle* pStyle = m_pSelector->CreateComputedStyle(nullptr);
   FX_FLOAT fLineHeight = 0;
   FX_FLOAT fFontSize = 10;
 
@@ -108,7 +112,7 @@ IFDE_CSSComputedStyle* CXFA_TextParser::CreateRootStyle(
     fLineHeight = para.GetLineHeight();
     FDE_CSSLENGTH indent;
     indent.Set(FDE_CSSLengthUnit::Point, para.GetTextIndent());
-    pParaStyle->SetTextIndent(indent);
+    pStyle->SetTextIndent(indent);
     FDE_CSSTextAlign hAlign = FDE_CSSTextAlign::Left;
     switch (para.GetHorizontalAlign()) {
       case XFA_ATTRIBUTEENUM_Center:
@@ -124,26 +128,25 @@ IFDE_CSSComputedStyle* CXFA_TextParser::CreateRootStyle(
         hAlign = FDE_CSSTextAlign::JustifyAll;
         break;
     }
-    pParaStyle->SetTextAlign(hAlign);
+    pStyle->SetTextAlign(hAlign);
     FDE_CSSRECT rtMarginWidth;
     rtMarginWidth.left.Set(FDE_CSSLengthUnit::Point, para.GetMarginLeft());
     rtMarginWidth.top.Set(FDE_CSSLengthUnit::Point, para.GetSpaceAbove());
     rtMarginWidth.right.Set(FDE_CSSLengthUnit::Point, para.GetMarginRight());
     rtMarginWidth.bottom.Set(FDE_CSSLengthUnit::Point, para.GetSpaceBelow());
-    pStyle->GetBoundaryStyles()->SetMarginWidth(rtMarginWidth);
+    pStyle->SetMarginWidth(rtMarginWidth);
   }
 
   if (font) {
-    pFontStyle->SetColor(font.GetColor());
-    pFontStyle->SetFontStyle(font.IsItalic() ? FDE_CSSFontStyle::Italic
-                                             : FDE_CSSFontStyle::Normal);
-    pFontStyle->SetFontWeight(font.IsBold() ? FXFONT_FW_BOLD
-                                            : FXFONT_FW_NORMAL);
-    pParaStyle->SetNumberVerticalAlign(-font.GetBaselineShift());
+    pStyle->SetColor(font.GetColor());
+    pStyle->SetFontStyle(font.IsItalic() ? FDE_CSSFontStyle::Italic
+                                         : FDE_CSSFontStyle::Normal);
+    pStyle->SetFontWeight(font.IsBold() ? FXFONT_FW_BOLD : FXFONT_FW_NORMAL);
+    pStyle->SetNumberVerticalAlign(-font.GetBaselineShift());
     fFontSize = font.GetFontSize();
     FDE_CSSLENGTH letterSpacing;
     letterSpacing.Set(FDE_CSSLengthUnit::Point, font.GetLetterSpacing());
-    pParaStyle->SetLetterSpacing(letterSpacing);
+    pStyle->SetLetterSpacing(letterSpacing);
     uint32_t dwDecoration = 0;
     if (font.GetLineThrough() > 0)
       dwDecoration |= FDE_CSSTEXTDECORATION_LineThrough;
@@ -152,43 +155,38 @@ IFDE_CSSComputedStyle* CXFA_TextParser::CreateRootStyle(
     else if (font.GetUnderline() > 0)
       dwDecoration |= FDE_CSSTEXTDECORATION_Underline;
 
-    pParaStyle->SetTextDecoration(dwDecoration);
+    pStyle->SetTextDecoration(dwDecoration);
   }
-  pParaStyle->SetLineHeight(fLineHeight);
-  pFontStyle->SetFontSize(fFontSize);
+  pStyle->SetLineHeight(fLineHeight);
+  pStyle->SetFontSize(fFontSize);
   return pStyle;
 }
 
-IFDE_CSSComputedStyle* CXFA_TextParser::CreateStyle(
-    IFDE_CSSComputedStyle* pParentStyle) {
-  IFDE_CSSComputedStyle* pNewStyle =
+CFDE_CSSComputedStyle* CXFA_TextParser::CreateStyle(
+    CFDE_CSSComputedStyle* pParentStyle) {
+  CFDE_CSSComputedStyle* pNewStyle =
       m_pSelector->CreateComputedStyle(pParentStyle);
   ASSERT(pNewStyle);
   if (!pParentStyle)
     return pNewStyle;
 
-  IFDE_CSSParagraphStyle* pParaStyle = pParentStyle->GetParagraphStyles();
-  uint32_t dwDecoration = pParaStyle->GetTextDecoration();
+  uint32_t dwDecoration = pParentStyle->GetTextDecoration();
   FX_FLOAT fBaseLine = 0;
-  if (pParaStyle->GetVerticalAlign() == FDE_CSSVerticalAlign::Number)
-    fBaseLine = pParaStyle->GetNumberVerticalAlign();
+  if (pParentStyle->GetVerticalAlign() == FDE_CSSVerticalAlign::Number)
+    fBaseLine = pParentStyle->GetNumberVerticalAlign();
 
-  pParaStyle = pNewStyle->GetParagraphStyles();
-  pParaStyle->SetTextDecoration(dwDecoration);
-  pParaStyle->SetNumberVerticalAlign(fBaseLine);
+  pNewStyle->SetTextDecoration(dwDecoration);
+  pNewStyle->SetNumberVerticalAlign(fBaseLine);
 
-  IFDE_CSSBoundaryStyle* pBoundarytyle = pParentStyle->GetBoundaryStyles();
-  const FDE_CSSRECT* pRect = pBoundarytyle->GetMarginWidth();
-  if (pRect) {
-    pBoundarytyle = pNewStyle->GetBoundaryStyles();
-    pBoundarytyle->SetMarginWidth(*pRect);
-  }
+  const FDE_CSSRECT* pRect = pParentStyle->GetMarginWidth();
+  if (pRect)
+    pNewStyle->SetMarginWidth(*pRect);
   return pNewStyle;
 }
 
-IFDE_CSSComputedStyle* CXFA_TextParser::ComputeStyle(
+CFDE_CSSComputedStyle* CXFA_TextParser::ComputeStyle(
     CFDE_XMLNode* pXMLNode,
-    IFDE_CSSComputedStyle* pParentStyle) {
+    CFDE_CSSComputedStyle* pParentStyle) {
   auto it = m_mapXMLNodeToParseContext.find(pXMLNode);
   if (it == m_mapXMLNodeToParseContext.end())
     return nullptr;
@@ -205,7 +203,7 @@ IFDE_CSSComputedStyle* CXFA_TextParser::ComputeStyle(
   if (tagProvider.m_bContent)
     return nullptr;
 
-  IFDE_CSSComputedStyle* pStyle = CreateStyle(pParentStyle);
+  CFDE_CSSComputedStyle* pStyle = CreateStyle(pParentStyle);
   CFDE_CSSAccelerator* pCSSAccel = m_pSelector->InitAccelerator();
   pCSSAccel->OnEnterTag(&tagProvider);
   m_pSelector->ComputeStyle(&tagProvider, pContext->GetDecls(),
@@ -221,13 +219,13 @@ void CXFA_TextParser::DoParse(CFDE_XMLNode* pXMLContainer,
 
   m_bParsed = true;
   InitCSSData(pTextProvider);
-  IFDE_CSSComputedStyle* pRootStyle = CreateRootStyle(pTextProvider);
+  CFDE_CSSComputedStyle* pRootStyle = CreateRootStyle(pTextProvider);
   ParseRichText(pXMLContainer, pRootStyle);
   pRootStyle->Release();
 }
 
 void CXFA_TextParser::ParseRichText(CFDE_XMLNode* pXMLNode,
-                                    IFDE_CSSComputedStyle* pParentStyle) {
+                                    CFDE_CSSComputedStyle* pParentStyle) {
   if (!pXMLNode)
     return;
 
@@ -236,7 +234,7 @@ void CXFA_TextParser::ParseRichText(CFDE_XMLNode* pXMLNode,
   if (!tagProvider.m_bTagAvailable)
     return;
 
-  IFDE_CSSComputedStyle* pNewStyle = nullptr;
+  CFDE_CSSComputedStyle* pNewStyle = nullptr;
   if ((tagProvider.GetTagName() != FX_WSTRC(L"body")) ||
       (tagProvider.GetTagName() != FX_WSTRC(L"html"))) {
     CXFA_TextParseContext* pTextContext = new CXFA_TextParseContext;
@@ -256,7 +254,7 @@ void CXFA_TextParser::ParseRichText(CFDE_XMLNode* pXMLNode,
       if (iMatchedDecls > 0)
         pTextContext->SetDecls(ppMatchDecls, iMatchedDecls);
 
-      eDisplay = pNewStyle->GetPositionStyles()->GetDisplay();
+      eDisplay = pNewStyle->GetDisplay();
     }
     pTextContext->SetDisplay(eDisplay);
     m_mapXMLNodeToParseContext[pXMLNode] = pTextContext;
@@ -318,21 +316,21 @@ int32_t CXFA_TextParser::GetVAlign(CXFA_TextProvider* pTextProvider) const {
   return para ? para.GetVerticalAlign() : XFA_ATTRIBUTEENUM_Top;
 }
 
-FX_FLOAT CXFA_TextParser::GetTabInterval(IFDE_CSSComputedStyle* pStyle) const {
+FX_FLOAT CXFA_TextParser::GetTabInterval(CFDE_CSSComputedStyle* pStyle) const {
   CFX_WideString wsValue;
   if (pStyle && pStyle->GetCustomStyle(FX_WSTRC(L"tab-interval"), wsValue))
     return CXFA_Measurement(wsValue.AsStringC()).ToUnit(XFA_UNIT_Pt);
   return 36;
 }
 
-int32_t CXFA_TextParser::CountTabs(IFDE_CSSComputedStyle* pStyle) const {
+int32_t CXFA_TextParser::CountTabs(CFDE_CSSComputedStyle* pStyle) const {
   CFX_WideString wsValue;
   if (pStyle && pStyle->GetCustomStyle(FX_WSTRC(L"xfa-tab-count"), wsValue))
     return wsValue.GetInteger();
   return 0;
 }
 
-bool CXFA_TextParser::IsSpaceRun(IFDE_CSSComputedStyle* pStyle) const {
+bool CXFA_TextParser::IsSpaceRun(CFDE_CSSComputedStyle* pStyle) const {
   CFX_WideString wsValue;
   if (pStyle && pStyle->GetCustomStyle(FX_WSTRC(L"xfa-spacerun"), wsValue)) {
     wsValue.MakeLower();
@@ -343,7 +341,7 @@ bool CXFA_TextParser::IsSpaceRun(IFDE_CSSComputedStyle* pStyle) const {
 
 CFX_RetainPtr<CFGAS_GEFont> CXFA_TextParser::GetFont(
     CXFA_TextProvider* pTextProvider,
-    IFDE_CSSComputedStyle* pStyle) const {
+    CFDE_CSSComputedStyle* pStyle) const {
   CFX_WideStringC wsFamily = FX_WSTRC(L"Courier");
   uint32_t dwStyle = 0;
   CXFA_Font font = pTextProvider->GetFontNode();
@@ -356,15 +354,14 @@ CFX_RetainPtr<CFGAS_GEFont> CXFA_TextParser::GetFont(
   }
 
   if (pStyle) {
-    IFDE_CSSFontStyle* pFontStyle = pStyle->GetFontStyles();
-    int32_t iCount = pFontStyle->CountFontFamilies();
+    int32_t iCount = pStyle->CountFontFamilies();
     if (iCount > 0)
-      wsFamily = pFontStyle->GetFontFamily(iCount - 1);
+      wsFamily = pStyle->GetFontFamily(iCount - 1);
 
     dwStyle = 0;
-    if (pFontStyle->GetFontWeight() > FXFONT_FW_NORMAL)
+    if (pStyle->GetFontWeight() > FXFONT_FW_NORMAL)
       dwStyle |= FX_FONTSTYLE_Bold;
-    if (pFontStyle->GetFontStyle() == FDE_CSSFontStyle::Italic)
+    if (pStyle->GetFontStyle() == FDE_CSSFontStyle::Italic)
       dwStyle |= FX_FONTSTYLE_Italic;
   }
 
@@ -374,9 +371,9 @@ CFX_RetainPtr<CFGAS_GEFont> CXFA_TextParser::GetFont(
 }
 
 FX_FLOAT CXFA_TextParser::GetFontSize(CXFA_TextProvider* pTextProvider,
-                                      IFDE_CSSComputedStyle* pStyle) const {
+                                      CFDE_CSSComputedStyle* pStyle) const {
   if (pStyle)
-    return pStyle->GetFontStyles()->GetFontSize();
+    return pStyle->GetFontSize();
 
   CXFA_Font font = pTextProvider->GetFontNode();
   if (font)
@@ -385,7 +382,7 @@ FX_FLOAT CXFA_TextParser::GetFontSize(CXFA_TextProvider* pTextProvider,
 }
 
 int32_t CXFA_TextParser::GetHorScale(CXFA_TextProvider* pTextProvider,
-                                     IFDE_CSSComputedStyle* pStyle,
+                                     CFDE_CSSComputedStyle* pStyle,
                                      CFDE_XMLNode* pXMLNode) const {
   if (pStyle) {
     CFX_WideString wsValue;
@@ -412,7 +409,7 @@ int32_t CXFA_TextParser::GetHorScale(CXFA_TextProvider* pTextProvider,
 }
 
 int32_t CXFA_TextParser::GetVerScale(CXFA_TextProvider* pTextProvider,
-                                     IFDE_CSSComputedStyle* pStyle) const {
+                                     CFDE_CSSComputedStyle* pStyle) const {
   if (pStyle) {
     CFX_WideString wsValue;
     if (pStyle->GetCustomStyle(FX_WSTRC(L"xfa-font-vertical-scale"), wsValue))
@@ -425,7 +422,7 @@ int32_t CXFA_TextParser::GetVerScale(CXFA_TextProvider* pTextProvider,
 }
 
 void CXFA_TextParser::GetUnderline(CXFA_TextProvider* pTextProvider,
-                                   IFDE_CSSComputedStyle* pStyle,
+                                   CFDE_CSSComputedStyle* pStyle,
                                    int32_t& iUnderline,
                                    int32_t& iPeriod) const {
   iUnderline = 0;
@@ -439,7 +436,7 @@ void CXFA_TextParser::GetUnderline(CXFA_TextProvider* pTextProvider,
     return;
   }
 
-  uint32_t dwDecoration = pStyle->GetParagraphStyles()->GetTextDecoration();
+  uint32_t dwDecoration = pStyle->GetTextDecoration();
   if (dwDecoration & FDE_CSSTEXTDECORATION_Double)
     iUnderline = 2;
   else if (dwDecoration & FDE_CSSTEXTDECORATION_Underline)
@@ -455,10 +452,10 @@ void CXFA_TextParser::GetUnderline(CXFA_TextProvider* pTextProvider,
 }
 
 void CXFA_TextParser::GetLinethrough(CXFA_TextProvider* pTextProvider,
-                                     IFDE_CSSComputedStyle* pStyle,
+                                     CFDE_CSSComputedStyle* pStyle,
                                      int32_t& iLinethrough) const {
   if (pStyle) {
-    uint32_t dwDecoration = pStyle->GetParagraphStyles()->GetTextDecoration();
+    uint32_t dwDecoration = pStyle->GetTextDecoration();
     iLinethrough = (dwDecoration & FDE_CSSTEXTDECORATION_LineThrough) ? 1 : 0;
     return;
   }
@@ -469,9 +466,9 @@ void CXFA_TextParser::GetLinethrough(CXFA_TextProvider* pTextProvider,
 }
 
 FX_ARGB CXFA_TextParser::GetColor(CXFA_TextProvider* pTextProvider,
-                                  IFDE_CSSComputedStyle* pStyle) const {
+                                  CFDE_CSSComputedStyle* pStyle) const {
   if (pStyle)
-    return pStyle->GetFontStyles()->GetColor();
+    return pStyle->GetColor();
   if (CXFA_Font font = pTextProvider->GetFontNode())
     return font.GetColor();
 
@@ -479,11 +476,10 @@ FX_ARGB CXFA_TextParser::GetColor(CXFA_TextProvider* pTextProvider,
 }
 
 FX_FLOAT CXFA_TextParser::GetBaseline(CXFA_TextProvider* pTextProvider,
-                                      IFDE_CSSComputedStyle* pStyle) const {
+                                      CFDE_CSSComputedStyle* pStyle) const {
   if (pStyle) {
-    IFDE_CSSParagraphStyle* pParaStyle = pStyle->GetParagraphStyles();
-    if (pParaStyle->GetVerticalAlign() == FDE_CSSVerticalAlign::Number)
-      return pParaStyle->GetNumberVerticalAlign();
+    if (pStyle->GetVerticalAlign() == FDE_CSSVerticalAlign::Number)
+      return pStyle->GetNumberVerticalAlign();
   } else if (CXFA_Font font = pTextProvider->GetFontNode()) {
     return font.GetBaselineShift();
   }
@@ -491,12 +487,12 @@ FX_FLOAT CXFA_TextParser::GetBaseline(CXFA_TextProvider* pTextProvider,
 }
 
 FX_FLOAT CXFA_TextParser::GetLineHeight(CXFA_TextProvider* pTextProvider,
-                                        IFDE_CSSComputedStyle* pStyle,
+                                        CFDE_CSSComputedStyle* pStyle,
                                         bool bFirst,
                                         FX_FLOAT fVerScale) const {
   FX_FLOAT fLineHeight = 0;
   if (pStyle)
-    fLineHeight = pStyle->GetParagraphStyles()->GetLineHeight();
+    fLineHeight = pStyle->GetLineHeight();
   else if (CXFA_Para para = pTextProvider->GetParaNode())
     fLineHeight = para.GetLineHeight();
 
@@ -563,7 +559,7 @@ CXFA_TextParseContext* CXFA_TextParser::GetParseContextFromMap(
   return it != m_mapXMLNodeToParseContext.end() ? it->second : nullptr;
 }
 
-bool CXFA_TextParser::GetTabstops(IFDE_CSSComputedStyle* pStyle,
+bool CXFA_TextParser::GetTabstops(CFDE_CSSComputedStyle* pStyle,
                                   CXFA_TextTabstopsContext* pTabstopContext) {
   if (!pStyle || !pTabstopContext)
     return false;

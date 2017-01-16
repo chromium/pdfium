@@ -14,17 +14,12 @@
 
 class CFDE_CSSAccelerator;
 class CFDE_CSSDeclaration;
+class CFDE_CSSComputedStyle;
 class CFDE_CSSSelector;
+class CFDE_CSSStyleSheet;
 class CXFA_CSSTagProvider;
-class IFDE_CSSBoundaryStyle;
-class IFDE_CSSComputedStyle;
-class IFDE_CSSFontStyle;
-class IFDE_CSSParagraphStyle;
-class IFDE_CSSPositionStyle;
 class IFDE_CSSRule;
-class IFDE_CSSStyleSheet;
 class IFDE_CSSValue;
-class IFDE_CSSValueList;
 
 enum FDE_CSSMEDIATYPE {
   FDE_CSSMEDIATYPE_Braille = 0x01,
@@ -268,78 +263,10 @@ class IFDE_CSSValue {
   virtual FDE_CSSVALUETYPE GetType() const = 0;
 };
 
-class IFDE_CSSPrimitiveValue : public IFDE_CSSValue {
- public:
-  // IFDE_CSSValue
-  FDE_CSSVALUETYPE GetType() const override;
-
-  virtual FDE_CSSPrimitiveType GetPrimitiveType() const = 0;
-  virtual FX_ARGB GetRGBColor() const = 0;
-  virtual FX_FLOAT GetFloat() const = 0;
-  virtual const FX_WCHAR* GetString(int32_t& iLength) const = 0;
-  virtual FDE_CSSPropertyValue GetEnum() const = 0;
-  virtual const FX_WCHAR* GetFuncName() const = 0;
-  virtual int32_t CountArgs() const = 0;
-  virtual IFDE_CSSValue* GetArgs(int32_t index) const = 0;
-};
-
-class IFDE_CSSValueList : public IFDE_CSSValue {
- public:
-  // IFDE_CSSValue
-  FDE_CSSVALUETYPE GetType() const override;
-
-  virtual int32_t CountValues() const = 0;
-  virtual IFDE_CSSValue* GetValue(int32_t index) const = 0;
-};
-
 class IFDE_CSSRule {
  public:
   virtual ~IFDE_CSSRule() {}
   virtual FDE_CSSRuleType GetType() const = 0;
-};
-
-class IFDE_CSSStyleRule : public IFDE_CSSRule {
- public:
-  // IFDE_CSSValue
-  FDE_CSSRuleType GetType() const override;
-
-  virtual int32_t CountSelectorLists() const = 0;
-  virtual CFDE_CSSSelector* GetSelectorList(int32_t index) const = 0;
-  virtual CFDE_CSSDeclaration* GetDeclaration() = 0;
-};
-
-class IFDE_CSSMediaRule : public IFDE_CSSRule {
- public:
-  // IFDE_CSSValue
-  FDE_CSSRuleType GetType() const override;
-
-  virtual uint32_t GetMediaList() const = 0;
-  virtual int32_t CountRules() const = 0;
-  virtual IFDE_CSSRule* GetRule(int32_t index) = 0;
-};
-
-class IFDE_CSSFontFaceRule : public IFDE_CSSRule {
- public:
-  // IFDE_CSSValue
-  FDE_CSSRuleType GetType() const override;
-
-  virtual CFDE_CSSDeclaration* GetDeclaration() = 0;
-};
-
-class IFDE_CSSStyleSheet : public IFX_Retainable {
- public:
-  static IFDE_CSSStyleSheet* LoadFromBuffer(
-      const CFX_WideString& szUrl,
-      const FX_WCHAR* pBuffer,
-      int32_t iBufSize,
-      uint16_t wCodePage,
-      uint32_t dwMediaList = FDE_CSSMEDIATYPE_ALL);
-  virtual bool GetUrl(CFX_WideString& szUrl) = 0;
-  virtual uint32_t GetMediaList() const = 0;
-  virtual uint16_t GetCodePage() const = 0;
-
-  virtual int32_t CountRules() const = 0;
-  virtual IFDE_CSSRule* GetRule(int32_t index) = 0;
 };
 
 struct FDE_CSSLENGTH {
@@ -396,70 +323,6 @@ struct FDE_CSSRECT {
   }
 
   FDE_CSSLENGTH left, top, right, bottom;
-};
-
-class IFDE_CSSFontStyle {
- public:
-  virtual ~IFDE_CSSFontStyle() {}
-
-  virtual int32_t CountFontFamilies() const = 0;
-  virtual const FX_WCHAR* GetFontFamily(int32_t index) const = 0;
-  virtual uint16_t GetFontWeight() const = 0;
-  virtual FDE_CSSFontVariant GetFontVariant() const = 0;
-  virtual FDE_CSSFontStyle GetFontStyle() const = 0;
-  virtual FX_FLOAT GetFontSize() const = 0;
-  virtual FX_ARGB GetColor() const = 0;
-  virtual void SetFontWeight(uint16_t wFontWeight) = 0;
-  virtual void SetFontVariant(FDE_CSSFontVariant eFontVariant) = 0;
-  virtual void SetFontStyle(FDE_CSSFontStyle eFontStyle) = 0;
-  virtual void SetFontSize(FX_FLOAT fFontSize) = 0;
-  virtual void SetColor(FX_ARGB dwFontColor) = 0;
-};
-
-class IFDE_CSSBoundaryStyle {
- public:
-  virtual ~IFDE_CSSBoundaryStyle() {}
-
-  virtual const FDE_CSSRECT* GetBorderWidth() const = 0;
-  virtual const FDE_CSSRECT* GetMarginWidth() const = 0;
-  virtual const FDE_CSSRECT* GetPaddingWidth() const = 0;
-  virtual void SetMarginWidth(const FDE_CSSRECT& rect) = 0;
-  virtual void SetPaddingWidth(const FDE_CSSRECT& rect) = 0;
-};
-
-class IFDE_CSSPositionStyle {
- public:
-  virtual ~IFDE_CSSPositionStyle() {}
-  virtual FDE_CSSDisplay GetDisplay() const = 0;
-};
-
-class IFDE_CSSParagraphStyle {
- public:
-  virtual ~IFDE_CSSParagraphStyle() {}
-
-  virtual FX_FLOAT GetLineHeight() const = 0;
-  virtual const FDE_CSSLENGTH& GetTextIndent() const = 0;
-  virtual FDE_CSSTextAlign GetTextAlign() const = 0;
-  virtual FDE_CSSVerticalAlign GetVerticalAlign() const = 0;
-  virtual FX_FLOAT GetNumberVerticalAlign() const = 0;
-  virtual uint32_t GetTextDecoration() const = 0;
-  virtual const FDE_CSSLENGTH& GetLetterSpacing() const = 0;
-  virtual void SetLineHeight(FX_FLOAT fLineHeight) = 0;
-  virtual void SetTextIndent(const FDE_CSSLENGTH& textIndent) = 0;
-  virtual void SetTextAlign(FDE_CSSTextAlign eTextAlign) = 0;
-  virtual void SetNumberVerticalAlign(FX_FLOAT fAlign) = 0;
-  virtual void SetTextDecoration(uint32_t dwTextDecoration) = 0;
-  virtual void SetLetterSpacing(const FDE_CSSLENGTH& letterSpacing) = 0;
-};
-
-class IFDE_CSSComputedStyle : public IFX_Retainable {
- public:
-  virtual IFDE_CSSFontStyle* GetFontStyles() = 0;
-  virtual IFDE_CSSBoundaryStyle* GetBoundaryStyles() = 0;
-  virtual IFDE_CSSPositionStyle* GetPositionStyles() = 0;
-  virtual IFDE_CSSParagraphStyle* GetParagraphStyles() = 0;
-  virtual bool GetCustomStyle(const CFX_WideStringC& wsName,
-                              CFX_WideString& wsValue) const = 0;
 };
 
 #endif  // XFA_FDE_CSS_FDE_CSS_H_

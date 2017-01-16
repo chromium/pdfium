@@ -33,12 +33,12 @@ CFDE_CSSRuleCollection::~CFDE_CSSRuleCollection() {
 }
 
 void CFDE_CSSRuleCollection::AddRulesFrom(
-    const CFX_ArrayTemplate<IFDE_CSSStyleSheet*>& sheets,
+    const CFX_ArrayTemplate<CFDE_CSSStyleSheet*>& sheets,
     uint32_t dwMediaList,
     CFGAS_FontMgr* pFontMgr) {
   int32_t iSheets = sheets.GetSize();
   for (int32_t i = 0; i < iSheets; ++i) {
-    IFDE_CSSStyleSheet* pSheet = sheets.GetAt(i);
+    CFDE_CSSStyleSheet* pSheet = sheets.GetAt(i);
     if (uint32_t dwMatchMedia = pSheet->GetMediaList() & dwMediaList) {
       int32_t iRules = pSheet->CountRules();
       for (int32_t j = 0; j < iRules; j++) {
@@ -48,13 +48,13 @@ void CFDE_CSSRuleCollection::AddRulesFrom(
   }
 }
 
-void CFDE_CSSRuleCollection::AddRulesFrom(IFDE_CSSStyleSheet* pStyleSheet,
+void CFDE_CSSRuleCollection::AddRulesFrom(CFDE_CSSStyleSheet* pStyleSheet,
                                           IFDE_CSSRule* pRule,
                                           uint32_t dwMediaList,
                                           CFGAS_FontMgr* pFontMgr) {
   switch (pRule->GetType()) {
     case FDE_CSSRuleType::Style: {
-      IFDE_CSSStyleRule* pStyleRule = static_cast<IFDE_CSSStyleRule*>(pRule);
+      CFDE_CSSStyleRule* pStyleRule = static_cast<CFDE_CSSStyleRule*>(pRule);
       CFDE_CSSDeclaration* pDeclaration = pStyleRule->GetDeclaration();
       int32_t iSelectors = pStyleRule->CountSelectorLists();
       for (int32_t i = 0; i < iSelectors; ++i) {
@@ -95,7 +95,7 @@ void CFDE_CSSRuleCollection::AddRulesFrom(IFDE_CSSStyleSheet* pStyleSheet,
       }
     } break;
     case FDE_CSSRuleType::Media: {
-      IFDE_CSSMediaRule* pMediaRule = static_cast<IFDE_CSSMediaRule*>(pRule);
+      CFDE_CSSMediaRule* pMediaRule = static_cast<CFDE_CSSMediaRule*>(pRule);
       if (pMediaRule->GetMediaList() & dwMediaList) {
         int32_t iRules = pMediaRule->CountRules();
         for (int32_t i = 0; i < iRules; ++i) {
