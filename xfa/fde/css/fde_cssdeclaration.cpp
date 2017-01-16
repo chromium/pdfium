@@ -8,7 +8,7 @@
 
 #include "core/fxcrt/fx_ext.h"
 
-IFDE_CSSValue* CFDE_CSSDeclaration::GetProperty(FDE_CSSProperty eProperty,
+CFDE_CSSValue* CFDE_CSSDeclaration::GetProperty(FDE_CSSProperty eProperty,
                                                 bool& bImportant) const {
   for (const FDE_CSSPropertyHolder* pHolder = m_pFirstProperty; pHolder;
        pHolder = pHolder->pNext) {
@@ -24,7 +24,7 @@ FX_POSITION CFDE_CSSDeclaration::GetStartPosition() const {
 }
 void CFDE_CSSDeclaration::GetNextProperty(FX_POSITION& pos,
                                           FDE_CSSProperty& eProperty,
-                                          IFDE_CSSValue*& pValue,
+                                          CFDE_CSSValue*& pValue,
                                           bool& bImportant) const {
   const FDE_CSSPropertyHolder* pHolder = (const FDE_CSSPropertyHolder*)pos;
   bImportant = pHolder->bImportant;
@@ -81,7 +81,7 @@ CFDE_CSSPrimitiveValue* CFDE_CSSDeclaration::NewEnumValue(
   return new CFDE_CSSPrimitiveValue(eValue);
 }
 void CFDE_CSSDeclaration::AddPropertyHolder(FDE_CSSProperty eProperty,
-                                            IFDE_CSSValue* pValue,
+                                            CFDE_CSSValue* pValue,
                                             bool bImportant) {
   FDE_CSSPropertyHolder* pHolder = new FDE_CSSPropertyHolder;
   pHolder->bImportant = bImportant;
@@ -121,7 +121,7 @@ bool CFDE_CSSDeclaration::AddProperty(const FDE_CSSPropertyArgs* pArgs,
         if (dwMatch == 0) {
           continue;
         }
-        IFDE_CSSValue* pCSSValue = nullptr;
+        CFDE_CSSValue* pCSSValue = nullptr;
         switch (dwMatch) {
           case FDE_CSSVALUETYPE_MaybeFunction:
             pCSSValue = ParseFunction(pArgs, pszValue, iValueLen);
@@ -154,7 +154,7 @@ bool CFDE_CSSDeclaration::AddProperty(const FDE_CSSPropertyArgs* pArgs,
       }
     } break;
     case FDE_CSSVALUETYPE_Shorthand: {
-      IFDE_CSSValue* pWidth;
+      CFDE_CSSValue* pWidth;
       switch (pArgs->pProperty->eName) {
         case FDE_CSSProperty::Font:
           return ParseFontProperty(pArgs, pszValue, iValueLen, bImportant);
@@ -227,7 +227,7 @@ bool CFDE_CSSDeclaration::AddProperty(const FDE_CSSPropertyArgs* pArgs,
   m_pLastCustom = pProperty;
   return true;
 }
-IFDE_CSSValue* CFDE_CSSDeclaration::ParseNumber(
+CFDE_CSSValue* CFDE_CSSDeclaration::ParseNumber(
     const FDE_CSSPropertyArgs* pArgs,
     const FX_WCHAR* pszValue,
     int32_t iValueLen) {
@@ -238,14 +238,14 @@ IFDE_CSSValue* CFDE_CSSDeclaration::ParseNumber(
   }
   return NewNumberValue(eUnit, fValue);
 }
-IFDE_CSSValue* CFDE_CSSDeclaration::ParseEnum(const FDE_CSSPropertyArgs* pArgs,
+CFDE_CSSValue* CFDE_CSSDeclaration::ParseEnum(const FDE_CSSPropertyArgs* pArgs,
                                               const FX_WCHAR* pszValue,
                                               int32_t iValueLen) {
   const FDE_CSSPropertyValueTable* pValue =
       FDE_GetCSSPropertyValueByName(CFX_WideStringC(pszValue, iValueLen));
   return pValue ? NewEnumValue(pValue->eName) : nullptr;
 }
-IFDE_CSSValue* CFDE_CSSDeclaration::ParseColor(const FDE_CSSPropertyArgs* pArgs,
+CFDE_CSSValue* CFDE_CSSDeclaration::ParseColor(const FDE_CSSPropertyArgs* pArgs,
                                                const FX_WCHAR* pszValue,
                                                int32_t iValueLen) {
   FX_ARGB dwColor;
@@ -255,7 +255,7 @@ IFDE_CSSValue* CFDE_CSSDeclaration::ParseColor(const FDE_CSSPropertyArgs* pArgs,
   return new CFDE_CSSPrimitiveValue(dwColor);
 }
 
-IFDE_CSSValue* CFDE_CSSDeclaration::ParseURI(const FDE_CSSPropertyArgs* pArgs,
+CFDE_CSSValue* CFDE_CSSDeclaration::ParseURI(const FDE_CSSPropertyArgs* pArgs,
                                              const FX_WCHAR* pszValue,
                                              int32_t iValueLen) {
   int32_t iOffset;
@@ -271,7 +271,7 @@ IFDE_CSSValue* CFDE_CSSDeclaration::ParseURI(const FDE_CSSPropertyArgs* pArgs,
              : nullptr;
 }
 
-IFDE_CSSValue* CFDE_CSSDeclaration::ParseString(
+CFDE_CSSValue* CFDE_CSSDeclaration::ParseString(
     const FDE_CSSPropertyArgs* pArgs,
     const FX_WCHAR* pszValue,
     int32_t iValueLen) {
@@ -287,7 +287,7 @@ IFDE_CSSValue* CFDE_CSSDeclaration::ParseString(
                                                pszValue)
                   : nullptr;
 }
-IFDE_CSSValue* CFDE_CSSDeclaration::ParseFunction(
+CFDE_CSSValue* CFDE_CSSDeclaration::ParseFunction(
     const FDE_CSSPropertyArgs* pArgs,
     const FX_WCHAR* pszValue,
     int32_t iValueLen) {
@@ -308,7 +308,7 @@ IFDE_CSSValue* CFDE_CSSDeclaration::ParseFunction(
   const FX_WCHAR* pszFuncName = CopyToLocal(pArgs, pszValue, iStartBracket);
   pszValue += (iStartBracket + 1);
   iValueLen -= (iStartBracket + 2);
-  CFDE_CSSValueArray argumentArr;
+  CFX_ArrayTemplate<CFDE_CSSValue*> argumentArr;
   CFDE_CSSValueListParser parser(pszValue, iValueLen, ',');
   FDE_CSSPrimitiveType ePrimitiveType;
   while (parser.NextValue(ePrimitiveType, pszValue, iValueLen)) {
@@ -321,7 +321,7 @@ IFDE_CSSValue* CFDE_CSSDeclaration::ParseFunction(
           continue;
         }
 
-        IFDE_CSSValue* pFunctionValue =
+        CFDE_CSSValue* pFunctionValue =
             ParseFunction(pArgs, pszValue, iValueLen);
         if (pFunctionValue) {
           argumentArr.Add(pFunctionValue);
@@ -361,7 +361,7 @@ bool CFDE_CSSDeclaration::ParseValueListProperty(
   CFDE_CSSValueListParser parser(pszValue, iValueLen, separator);
   const uint32_t dwType = pArgs->pProperty->dwType;
   FDE_CSSPrimitiveType eType;
-  CFDE_CSSValueArray list;
+  CFX_ArrayTemplate<CFDE_CSSValue*> list;
   while (parser.NextValue(eType, pszValue, iValueLen)) {
     switch (eType) {
       case FDE_CSSPrimitiveType::Number:
@@ -434,12 +434,13 @@ bool CFDE_CSSDeclaration::ParseValueListProperty(
   return false;
 }
 
-bool CFDE_CSSDeclaration::Add4ValuesProperty(const CFDE_CSSValueArray& list,
-                                             bool bImportant,
-                                             FDE_CSSProperty eLeft,
-                                             FDE_CSSProperty eTop,
-                                             FDE_CSSProperty eRight,
-                                             FDE_CSSProperty eBottom) {
+bool CFDE_CSSDeclaration::Add4ValuesProperty(
+    const CFX_ArrayTemplate<CFDE_CSSValue*>& list,
+    bool bImportant,
+    FDE_CSSProperty eLeft,
+    FDE_CSSProperty eTop,
+    FDE_CSSProperty eRight,
+    FDE_CSSProperty eBottom) {
   switch (list.GetSize()) {
     case 1:
       AddPropertyHolder(eLeft, list[0], bImportant);
@@ -472,7 +473,7 @@ bool CFDE_CSSDeclaration::Add4ValuesProperty(const CFDE_CSSValueArray& list,
 }
 bool CFDE_CSSDeclaration::ParseBorderProperty(const FX_WCHAR* pszValue,
                                               int32_t iValueLen,
-                                              IFDE_CSSValue*& pWidth) const {
+                                              CFDE_CSSValue*& pWidth) const {
   pWidth = nullptr;
   CFDE_CSSValueListParser parser(pszValue, iValueLen, ' ');
   FDE_CSSPrimitiveType eType;
@@ -530,7 +531,7 @@ bool CFDE_CSSDeclaration::ParseFontProperty(const FDE_CSSPropertyArgs* pArgs,
   CFDE_CSSPrimitiveValue* pWeight = nullptr;
   CFDE_CSSPrimitiveValue* pFontSize = nullptr;
   CFDE_CSSPrimitiveValue* pLineHeight = nullptr;
-  CFDE_CSSValueArray familyList;
+  CFX_ArrayTemplate<CFDE_CSSValue*> familyList;
   FDE_CSSPrimitiveType eType;
   while (parser.NextValue(eType, pszValue, iValueLen)) {
     switch (eType) {

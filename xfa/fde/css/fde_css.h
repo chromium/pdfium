@@ -12,15 +12,6 @@
 #include "xfa/fgas/crt/fgas_utils.h"
 #include "xfa/fgas/font/cfgas_fontmgr.h"
 
-class CFDE_CSSAccelerator;
-class CFDE_CSSDeclaration;
-class CFDE_CSSComputedStyle;
-class CFDE_CSSSelector;
-class CFDE_CSSStyleSheet;
-class CXFA_CSSTagProvider;
-class IFDE_CSSRule;
-class IFDE_CSSValue;
-
 enum FDE_CSSMEDIATYPE {
   FDE_CSSMEDIATYPE_Braille = 0x01,
   FDE_CSSMEDIATYPE_Emboss = 0x02,
@@ -255,18 +246,6 @@ enum class FDE_CSSStyleSheetPriority : uint8_t {
   High = 0,
   Mid,
   Low,
-};
-
-class IFDE_CSSValue {
- public:
-  virtual ~IFDE_CSSValue() {}
-  virtual FDE_CSSVALUETYPE GetType() const = 0;
-};
-
-class IFDE_CSSRule {
- public:
-  virtual ~IFDE_CSSRule() {}
-  virtual FDE_CSSRuleType GetType() const = 0;
 };
 
 struct FDE_CSSLENGTH {

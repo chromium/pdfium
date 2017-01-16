@@ -27,7 +27,7 @@ CFDE_CSSStyleSheet::~CFDE_CSSStyleSheet() {
 
 void CFDE_CSSStyleSheet::Reset() {
   for (int32_t i = m_RuleArray.GetSize() - 1; i >= 0; --i) {
-    IFDE_CSSRule* pRule = m_RuleArray.GetAt(i);
+    CFDE_CSSRule* pRule = m_RuleArray.GetAt(i);
     switch (pRule->GetType()) {
       case FDE_CSSRuleType::Style:
         static_cast<CFDE_CSSStyleRule*>(pRule)->~CFDE_CSSStyleRule();
@@ -76,7 +76,7 @@ int32_t CFDE_CSSStyleSheet::CountRules() const {
   return m_RuleArray.GetSize();
 }
 
-IFDE_CSSRule* CFDE_CSSStyleSheet::GetRule(int32_t index) {
+CFDE_CSSRule* CFDE_CSSStyleSheet::GetRule(int32_t index) {
   return m_RuleArray.GetAt(index);
 }
 
@@ -164,7 +164,7 @@ FDE_CSSSyntaxStatus CFDE_CSSStyleSheet::LoadMediaRule(
 
 FDE_CSSSyntaxStatus CFDE_CSSStyleSheet::LoadStyleRule(
     CFDE_CSSSyntaxParser* pSyntax,
-    CFX_MassArrayTemplate<IFDE_CSSRule*>& ruleArray) {
+    CFX_MassArrayTemplate<CFDE_CSSRule*>& ruleArray) {
   m_Selectors.RemoveAt(0, m_Selectors.GetSize());
   CFDE_CSSStyleRule* pStyleRule = nullptr;
   const FX_WCHAR* pszValue = nullptr;
@@ -232,7 +232,7 @@ FDE_CSSSyntaxStatus CFDE_CSSStyleSheet::LoadStyleRule(
 
 FDE_CSSSyntaxStatus CFDE_CSSStyleSheet::LoadFontFaceRule(
     CFDE_CSSSyntaxParser* pSyntax,
-    CFX_MassArrayTemplate<IFDE_CSSRule*>& ruleArray) {
+    CFX_MassArrayTemplate<CFDE_CSSRule*>& ruleArray) {
   CFDE_CSSFontFaceRule* pFontFaceRule = nullptr;
   const FX_WCHAR* pszValue = nullptr;
   int32_t iValueLen = 0;
@@ -315,11 +315,9 @@ FDE_CSSSyntaxStatus CFDE_CSSStyleSheet::SkipRuleSet(
 }
 
 CFDE_CSSStyleRule::CFDE_CSSStyleRule()
-    : m_ppSelector(nullptr), m_iSelectors(0) {}
-
-FDE_CSSRuleType CFDE_CSSStyleRule::GetType() const {
-  return FDE_CSSRuleType::Style;
-}
+    : CFDE_CSSRule(FDE_CSSRuleType::Style),
+      m_ppSelector(nullptr),
+      m_iSelectors(0) {}
 
 int32_t CFDE_CSSStyleRule::CountSelectorLists() const {
   return m_iSelectors;
@@ -345,11 +343,13 @@ void CFDE_CSSStyleRule::SetSelector(
 }
 
 CFDE_CSSMediaRule::CFDE_CSSMediaRule(uint32_t dwMediaList)
-    : m_dwMediaList(dwMediaList), m_RuleArray(100) {}
+    : CFDE_CSSRule(FDE_CSSRuleType::Media),
+      m_dwMediaList(dwMediaList),
+      m_RuleArray(100) {}
 
 CFDE_CSSMediaRule::~CFDE_CSSMediaRule() {
   for (int32_t i = m_RuleArray.GetSize() - 1; i >= 0; --i) {
-    IFDE_CSSRule* pRule = m_RuleArray.GetAt(i);
+    CFDE_CSSRule* pRule = m_RuleArray.GetAt(i);
     switch (pRule->GetType()) {
       case FDE_CSSRuleType::Style:
         static_cast<CFDE_CSSStyleRule*>(pRule)->~CFDE_CSSStyleRule();
@@ -361,10 +361,6 @@ CFDE_CSSMediaRule::~CFDE_CSSMediaRule() {
   }
 }
 
-FDE_CSSRuleType CFDE_CSSMediaRule::GetType() const {
-  return FDE_CSSRuleType::Media;
-}
-
 uint32_t CFDE_CSSMediaRule::GetMediaList() const {
   return m_dwMediaList;
 }
@@ -373,7 +369,7 @@ int32_t CFDE_CSSMediaRule::CountRules() const {
   return m_RuleArray.GetSize();
 }
 
-IFDE_CSSRule* CFDE_CSSMediaRule::GetRule(int32_t index) {
+CFDE_CSSRule* CFDE_CSSMediaRule::GetRule(int32_t index) {
   return m_RuleArray.GetAt(index);
 }
 
@@ -524,6 +520,7 @@ CFDE_CSSSelector* CFDE_CSSSelector::FromString(
   return pPseudoFirst;
 }
 
-FDE_CSSRuleType CFDE_CSSFontFaceRule::GetType() const {
-  return FDE_CSSRuleType::FontFace;
-}
+CFDE_CSSFontFaceRule::CFDE_CSSFontFaceRule()
+    : CFDE_CSSRule(FDE_CSSRuleType::FontFace) {}
+
+CFDE_CSSFontFaceRule::~CFDE_CSSFontFaceRule() {}

@@ -49,7 +49,7 @@ void CFDE_CSSRuleCollection::AddRulesFrom(
 }
 
 void CFDE_CSSRuleCollection::AddRulesFrom(CFDE_CSSStyleSheet* pStyleSheet,
-                                          IFDE_CSSRule* pRule,
+                                          CFDE_CSSRule* pRule,
                                           uint32_t dwMediaList,
                                           CFGAS_FontMgr* pFontMgr) {
   switch (pRule->GetType()) {

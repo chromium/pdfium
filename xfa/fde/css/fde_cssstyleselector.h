@@ -18,6 +18,9 @@
 
 class CFDE_CSSAccelerator;
 class CFDE_CSSComputedStyle;
+class CFDE_CSSRule;
+class CFDE_CSSSelector;
+class CFDE_CSSStyleSheet;
 class CXFA_CSSTagProvider;
 
 class FDE_CSSRuleData {
@@ -63,7 +66,7 @@ class CFDE_CSSRuleCollection {
 
  protected:
   void AddRulesFrom(CFDE_CSSStyleSheet* pStyleSheet,
-                    IFDE_CSSRule* pRule,
+                    CFDE_CSSRule* pRule,
                     uint32_t dwMediaList,
                     CFGAS_FontMgr* pFontMgr);
   void AddRuleTo(std::map<uint32_t, FDE_CSSRuleData*>* pMap,
@@ -123,7 +126,7 @@ class CFDE_CSSStyleSelector {
                          int32_t iDeclCount,
                          CFDE_CSSComputedStyle* pDestStyle);
   void ApplyProperty(FDE_CSSProperty eProperty,
-                     IFDE_CSSValue* pValue,
+                     CFDE_CSSValue* pValue,
                      CFDE_CSSComputedStyle* pComputedStyle);
 
   FX_FLOAT ApplyNumber(FDE_CSSPrimitiveType eUnit,

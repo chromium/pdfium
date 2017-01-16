@@ -280,12 +280,12 @@ void CFDE_CSSStyleSelector::ApplyDeclarations(
     int32_t iDeclCount,
     CFDE_CSSComputedStyle* pDestStyle) {
   CFDE_CSSComputedStyle* pComputedStyle = pDestStyle;
-  IFDE_CSSValue* pVal;
+  CFDE_CSSValue* pVal;
   bool bImportant;
   int32_t i;
   if (bPriority) {
-    IFDE_CSSValue* pLastest = nullptr;
-    IFDE_CSSValue* pImportant = nullptr;
+    CFDE_CSSValue* pLastest = nullptr;
+    CFDE_CSSValue* pImportant = nullptr;
     for (i = 0; i < iDeclCount; ++i) {
       pVal = ppDeclArray[i]->GetProperty(FDE_CSSProperty::FontSize, bImportant);
       if (!pVal)
@@ -382,7 +382,7 @@ void CFDE_CSSStyleSelector::AppendInlineStyle(CFDE_CSSDeclaration* pDecl,
 
 void CFDE_CSSStyleSelector::ApplyProperty(
     FDE_CSSProperty eProperty,
-    IFDE_CSSValue* pValue,
+    CFDE_CSSValue* pValue,
     CFDE_CSSComputedStyle* pComputedStyle) {
   if (pValue->GetType() == FDE_CSSVALUETYPE_Primitive) {
     CFDE_CSSPrimitiveValue* pPrimitive =

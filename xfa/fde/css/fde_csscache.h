@@ -11,6 +11,8 @@
 
 #include "xfa/fde/css/fde_css.h"
 
+class CXFA_CSSTagProvider;
+
 class FDE_CSSTagCache {
  public:
   FDE_CSSTagCache(FDE_CSSTagCache* parent, CXFA_CSSTagProvider* tag);
