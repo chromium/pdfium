@@ -426,7 +426,7 @@ gif_compress_struct_p gif_create_compress() {
   gif_compress_struct_p gif_ptr = FX_Alloc(gif_compress_struct, 1);
   FXSYS_memset(gif_ptr, 0, sizeof(gif_compress_struct));
   gif_ptr->img_encoder_ptr = new CGifLZWEncoder;
-  gif_ptr->header_ptr = (GifHeader*)FX_Alloc(uint8_t, sizeof(GifHeader));
+  gif_ptr->header_ptr = FX_Alloc(GifHeader, 1);
   if (!gif_ptr->header_ptr) {
     delete (gif_ptr->img_encoder_ptr);
     FX_Free(gif_ptr);
@@ -434,7 +434,7 @@ gif_compress_struct_p gif_create_compress() {
   }
   FXSYS_memcpy(gif_ptr->header_ptr->signature, GIF_SIGNATURE, 3);
   FXSYS_memcpy(gif_ptr->header_ptr->version, "89a", 3);
-  gif_ptr->lsd_ptr = (GifLSD*)FX_Alloc(uint8_t, sizeof(GifLSD));
+  gif_ptr->lsd_ptr = FX_Alloc(GifLSD, 1);
   if (!gif_ptr->lsd_ptr) {
     FX_Free(gif_ptr->header_ptr);
     delete (gif_ptr->img_encoder_ptr);
@@ -442,8 +442,7 @@ gif_compress_struct_p gif_create_compress() {
     return nullptr;
   }
   FXSYS_memset(gif_ptr->lsd_ptr, 0, sizeof(GifLSD));
-  gif_ptr->image_info_ptr =
-      (GifImageInfo*)FX_Alloc(uint8_t, sizeof(GifImageInfo));
+  gif_ptr->image_info_ptr = FX_Alloc(GifImageInfo, 1);
   if (!gif_ptr->image_info_ptr) {
     FX_Free(gif_ptr->lsd_ptr);
     FX_Free(gif_ptr->header_ptr);
@@ -452,7 +451,7 @@ gif_compress_struct_p gif_create_compress() {
     return nullptr;
   }
   FXSYS_memset(gif_ptr->image_info_ptr, 0, sizeof(GifImageInfo));
-  gif_ptr->gce_ptr = (GifGCE*)FX_Alloc(uint8_t, sizeof(GifGCE));
+  gif_ptr->gce_ptr = FX_Alloc(GifGCE, 1);
   if (!gif_ptr->gce_ptr) {
     FX_Free(gif_ptr->image_info_ptr);
     FX_Free(gif_ptr->lsd_ptr);
@@ -461,7 +460,7 @@ gif_compress_struct_p gif_create_compress() {
     FX_Free(gif_ptr);
     return nullptr;
   }
-  gif_ptr->pte_ptr = (GifPTE*)FX_Alloc(uint8_t, sizeof(GifPTE));
+  gif_ptr->pte_ptr = FX_Alloc(GifPTE, 1);
   if (!gif_ptr->pte_ptr) {
     FX_Free(gif_ptr->gce_ptr);
     FX_Free(gif_ptr->image_info_ptr);
@@ -678,7 +677,7 @@ int32_t gif_decode_extension(gif_decompress_struct_p gif_ptr) {
       GifPlainText* gif_pt_ptr = FX_Alloc(GifPlainText, 1);
       FXSYS_memset(gif_pt_ptr, 0, sizeof(GifPlainText));
       gif_takeover_gce_ptr(gif_ptr, &gif_pt_ptr->gce_ptr);
-      gif_pt_ptr->pte_ptr = (GifPTE*)FX_Alloc(uint8_t, sizeof(GifPTE));
+      gif_pt_ptr->pte_ptr = FX_Alloc(GifPTE, 1);
       gif_pt_ptr->string_ptr = new CFX_ByteString;
       gif_pt_ptr->pte_ptr->block_size = gif_pte_ptr->block_size;
       gif_pt_ptr->pte_ptr->grid_left =
@@ -728,7 +727,7 @@ int32_t gif_decode_extension(gif_decompress_struct_p gif_ptr) {
         return 2;
 
       if (!gif_ptr->gce_ptr)
-        gif_ptr->gce_ptr = (GifGCE*)FX_Alloc(uint8_t, sizeof(GifGCE));
+        gif_ptr->gce_ptr = FX_Alloc(GifGCE, 1);
       gif_ptr->gce_ptr->block_size = gif_gce_ptr->block_size;
       gif_ptr->gce_ptr->gce_flag = gif_gce_ptr->gce_flag;
       gif_ptr->gce_ptr->delay_time =
@@ -766,10 +765,9 @@ int32_t gif_decode_image_info(gif_decompress_struct_p gif_ptr) {
   if (!gif_read_data(gif_ptr, (uint8_t**)&gif_img_info_ptr, 9))
     return 2;
 
-  GifImage* gif_image_ptr = (GifImage*)FX_Alloc(uint8_t, sizeof(GifImage));
+  GifImage* gif_image_ptr = FX_Alloc(GifImage, 1);
   FXSYS_memset(gif_image_ptr, 0, sizeof(GifImage));
-  gif_image_ptr->image_info_ptr =
-      (GifImageInfo*)FX_Alloc(uint8_t, sizeof(GifImageInfo));
+  gif_image_ptr->image_info_ptr = FX_Alloc(GifImageInfo, 1);
   gif_image_ptr->image_info_ptr->left =
       GetWord_LSBFirst((uint8_t*)&gif_img_info_ptr->left);
   gif_image_ptr->image_info_ptr->top =
