@@ -708,7 +708,7 @@ FDE_CSSFontStyle CFDE_CSSStyleSelector::ToFontStyle(
 }
 
 bool CFDE_CSSStyleSelector::SetLengthWithPercent(
-    FDE_CSSLENGTH& width,
+    FDE_CSSLength& width,
     FDE_CSSPrimitiveType eType,
     CFDE_CSSPrimitiveValue* pPrimitive,
     FX_FLOAT fFontSize) {
@@ -909,27 +909,27 @@ void CFDE_CSSComputedStyle::SetColor(FX_ARGB dwFontColor) {
   m_InheritedData.m_dwFontColor = dwFontColor;
 }
 
-const FDE_CSSRECT* CFDE_CSSComputedStyle::GetBorderWidth() const {
+const FDE_CSSRect* CFDE_CSSComputedStyle::GetBorderWidth() const {
   return m_NonInheritedData.m_bHasBorder ? &(m_NonInheritedData.m_BorderWidth)
                                          : nullptr;
 }
 
-const FDE_CSSRECT* CFDE_CSSComputedStyle::GetMarginWidth() const {
+const FDE_CSSRect* CFDE_CSSComputedStyle::GetMarginWidth() const {
   return m_NonInheritedData.m_bHasMargin ? &(m_NonInheritedData.m_MarginWidth)
                                          : nullptr;
 }
 
-const FDE_CSSRECT* CFDE_CSSComputedStyle::GetPaddingWidth() const {
+const FDE_CSSRect* CFDE_CSSComputedStyle::GetPaddingWidth() const {
   return m_NonInheritedData.m_bHasPadding ? &(m_NonInheritedData.m_PaddingWidth)
                                           : nullptr;
 }
 
-void CFDE_CSSComputedStyle::SetMarginWidth(const FDE_CSSRECT& rect) {
+void CFDE_CSSComputedStyle::SetMarginWidth(const FDE_CSSRect& rect) {
   m_NonInheritedData.m_MarginWidth = rect;
   m_NonInheritedData.m_bHasMargin = true;
 }
 
-void CFDE_CSSComputedStyle::SetPaddingWidth(const FDE_CSSRECT& rect) {
+void CFDE_CSSComputedStyle::SetPaddingWidth(const FDE_CSSRect& rect) {
   m_NonInheritedData.m_PaddingWidth = rect;
   m_NonInheritedData.m_bHasPadding = true;
 }
@@ -942,7 +942,7 @@ FX_FLOAT CFDE_CSSComputedStyle::GetLineHeight() const {
   return m_InheritedData.m_fLineHeight;
 }
 
-const FDE_CSSLENGTH& CFDE_CSSComputedStyle::GetTextIndent() const {
+const FDE_CSSLength& CFDE_CSSComputedStyle::GetTextIndent() const {
   return m_InheritedData.m_TextIndent;
 }
 
@@ -962,7 +962,7 @@ uint32_t CFDE_CSSComputedStyle::GetTextDecoration() const {
   return m_NonInheritedData.m_dwTextDecoration;
 }
 
-const FDE_CSSLENGTH& CFDE_CSSComputedStyle::GetLetterSpacing() const {
+const FDE_CSSLength& CFDE_CSSComputedStyle::GetLetterSpacing() const {
   return m_InheritedData.m_LetterSpacing;
 }
 
@@ -970,7 +970,7 @@ void CFDE_CSSComputedStyle::SetLineHeight(FX_FLOAT fLineHeight) {
   m_InheritedData.m_fLineHeight = fLineHeight;
 }
 
-void CFDE_CSSComputedStyle::SetTextIndent(const FDE_CSSLENGTH& textIndent) {
+void CFDE_CSSComputedStyle::SetTextIndent(const FDE_CSSLength& textIndent) {
   m_InheritedData.m_TextIndent = textIndent;
 }
 
@@ -988,7 +988,7 @@ void CFDE_CSSComputedStyle::SetTextDecoration(uint32_t dwTextDecoration) {
 }
 
 void CFDE_CSSComputedStyle::SetLetterSpacing(
-    const FDE_CSSLENGTH& letterSpacing) {
+    const FDE_CSSLength& letterSpacing) {
   m_InheritedData.m_LetterSpacing = letterSpacing;
 }
 

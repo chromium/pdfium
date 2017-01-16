@@ -248,20 +248,21 @@ enum class FDE_CSSStyleSheetPriority : uint8_t {
   Low,
 };
 
-struct FDE_CSSLENGTH {
-  FDE_CSSLENGTH() {}
+class FDE_CSSLength {
+ public:
+  FDE_CSSLength() {}
 
-  explicit FDE_CSSLENGTH(FDE_CSSLengthUnit eUnit) : m_unit(eUnit) {}
+  explicit FDE_CSSLength(FDE_CSSLengthUnit eUnit) : m_unit(eUnit) {}
 
-  FDE_CSSLENGTH(FDE_CSSLengthUnit eUnit, FX_FLOAT fValue)
+  FDE_CSSLength(FDE_CSSLengthUnit eUnit, FX_FLOAT fValue)
       : m_unit(eUnit), m_fValue(fValue) {}
 
-  FDE_CSSLENGTH& Set(FDE_CSSLengthUnit eUnit) {
+  FDE_CSSLength& Set(FDE_CSSLengthUnit eUnit) {
     m_unit = eUnit;
     return *this;
   }
 
-  FDE_CSSLENGTH& Set(FDE_CSSLengthUnit eUnit, FX_FLOAT fValue) {
+  FDE_CSSLength& Set(FDE_CSSLengthUnit eUnit, FX_FLOAT fValue) {
     m_unit = eUnit;
     m_fValue = fValue;
     return *this;
@@ -277,23 +278,24 @@ struct FDE_CSSLENGTH {
   FX_FLOAT m_fValue;
 };
 
-struct FDE_CSSRECT {
-  FDE_CSSRECT() {}
+class FDE_CSSRect {
+ public:
+  FDE_CSSRect() {}
 
-  FDE_CSSRECT(FDE_CSSLengthUnit eUnit, FX_FLOAT val)
+  FDE_CSSRect(FDE_CSSLengthUnit eUnit, FX_FLOAT val)
       : left(eUnit, val),
         top(eUnit, val),
         right(eUnit, val),
         bottom(eUnit, val) {}
 
-  FDE_CSSRECT& Set(FDE_CSSLengthUnit eUnit) {
+  FDE_CSSRect& Set(FDE_CSSLengthUnit eUnit) {
     left.Set(eUnit);
     top.Set(eUnit);
     right.Set(eUnit);
     bottom.Set(eUnit);
     return *this;
   }
-  FDE_CSSRECT& Set(FDE_CSSLengthUnit eUnit, FX_FLOAT fValue) {
+  FDE_CSSRect& Set(FDE_CSSLengthUnit eUnit, FX_FLOAT fValue) {
     left.Set(eUnit, fValue);
     top.Set(eUnit, fValue);
     right.Set(eUnit, fValue);
@@ -301,7 +303,7 @@ struct FDE_CSSRECT {
     return *this;
   }
 
-  FDE_CSSLENGTH left, top, right, bottom;
+  FDE_CSSLength left, top, right, bottom;
 };
 
 #endif  // XFA_FDE_CSS_FDE_CSS_H_

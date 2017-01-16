@@ -203,8 +203,8 @@ void CXFA_TextLayout::InitBreak(CFDE_CSSComputedStyle* pStyle,
     }
     m_pBreak->SetAlignment(iAlign);
     FX_FLOAT fStart = 0;
-    const FDE_CSSRECT* pRect = pStyle->GetMarginWidth();
-    const FDE_CSSRECT* pPaddingRect = pStyle->GetPaddingWidth();
+    const FDE_CSSRect* pRect = pStyle->GetMarginWidth();
+    const FDE_CSSRect* pPaddingRect = pStyle->GetPaddingWidth();
     if (pRect) {
       fStart = pRect->left.GetValue();
       fLineWidth -= pRect->right.GetValue();
@@ -213,8 +213,8 @@ void CXFA_TextLayout::InitBreak(CFDE_CSSComputedStyle* pStyle,
         fLineWidth -= pPaddingRect->right.GetValue();
       }
       if (eDisplay == FDE_CSSDisplay::ListItem) {
-        const FDE_CSSRECT* pParRect = pParentStyle->GetMarginWidth();
-        const FDE_CSSRECT* pParPaddingRect = pParentStyle->GetPaddingWidth();
+        const FDE_CSSRect* pParRect = pParentStyle->GetMarginWidth();
+        const FDE_CSSRect* pParPaddingRect = pParentStyle->GetPaddingWidth();
         if (pParRect) {
           fStart += pParRect->left.GetValue();
           fLineWidth -= pParRect->right.GetValue();
@@ -223,7 +223,7 @@ void CXFA_TextLayout::InitBreak(CFDE_CSSComputedStyle* pStyle,
             fLineWidth -= pParPaddingRect->right.GetValue();
           }
         }
-        FDE_CSSRECT pNewRect;
+        FDE_CSSRect pNewRect;
         pNewRect.left.Set(FDE_CSSLengthUnit::Point, fStart);
         pNewRect.right.Set(FDE_CSSLengthUnit::Point, pRect->right.GetValue());
         pNewRect.top.Set(FDE_CSSLengthUnit::Point, pRect->top.GetValue());
@@ -775,7 +775,7 @@ bool CXFA_TextLayout::LoadRichText(CFDE_XMLNode* pXMLNode,
             (wsName.IsEmpty() ||
              (wsName != FX_WSTRC(L"body") && wsName != FX_WSTRC(L"html") &&
               wsName != FX_WSTRC(L"ol") && wsName != FX_WSTRC(L"ul")))) {
-          const FDE_CSSRECT* pRect = pStyle->GetMarginWidth();
+          const FDE_CSSRect* pRect = pStyle->GetMarginWidth();
           if (pRect) {
             fLinePos += pRect->top.GetValue();
             fSpaceBelow = pRect->bottom.GetValue();
@@ -1186,7 +1186,7 @@ void CXFA_TextLayout::AppendTextLine(uint32_t dwStatus,
 
   if (pStyle) {
     FX_FLOAT fStart = 0;
-    const FDE_CSSRECT* pRect = pStyle->GetMarginWidth();
+    const FDE_CSSRect* pRect = pStyle->GetMarginWidth();
     if (pRect)
       fStart = pRect->left.GetValue();
 

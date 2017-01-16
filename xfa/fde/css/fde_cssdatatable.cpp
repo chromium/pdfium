@@ -18,7 +18,7 @@ uint8_t Hex2Dec(uint8_t hexHigh, uint8_t hexLow) {
 
 }  // namespace
 
-bool FDE_CSSLengthToFloat(const FDE_CSSLENGTH& len,
+bool FDE_CSSLengthToFloat(const FDE_CSSLength& len,
                           FX_FLOAT fPercentBase,
                           FX_FLOAT& fResult) {
   switch (len.GetUnit()) {
@@ -38,7 +38,7 @@ CFX_FloatRect FDE_CSSBoundaryToRect(CFDE_CSSComputedStyle* pBoundStyle,
                                     bool bBorder,
                                     bool bMargin) {
   FX_FLOAT fResult;
-  const FDE_CSSRECT* pRect;
+  const FDE_CSSRect* pRect;
   CFX_FloatRect rect(0, 0, 0, 0);
   if (bPadding) {
     pRect = pBoundStyle->GetPaddingWidth();

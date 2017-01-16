@@ -110,7 +110,7 @@ CFDE_CSSComputedStyle* CXFA_TextParser::CreateRootStyle(
 
   if (para) {
     fLineHeight = para.GetLineHeight();
-    FDE_CSSLENGTH indent;
+    FDE_CSSLength indent;
     indent.Set(FDE_CSSLengthUnit::Point, para.GetTextIndent());
     pStyle->SetTextIndent(indent);
     FDE_CSSTextAlign hAlign = FDE_CSSTextAlign::Left;
@@ -129,7 +129,7 @@ CFDE_CSSComputedStyle* CXFA_TextParser::CreateRootStyle(
         break;
     }
     pStyle->SetTextAlign(hAlign);
-    FDE_CSSRECT rtMarginWidth;
+    FDE_CSSRect rtMarginWidth;
     rtMarginWidth.left.Set(FDE_CSSLengthUnit::Point, para.GetMarginLeft());
     rtMarginWidth.top.Set(FDE_CSSLengthUnit::Point, para.GetSpaceAbove());
     rtMarginWidth.right.Set(FDE_CSSLengthUnit::Point, para.GetMarginRight());
@@ -144,7 +144,7 @@ CFDE_CSSComputedStyle* CXFA_TextParser::CreateRootStyle(
     pStyle->SetFontWeight(font.IsBold() ? FXFONT_FW_BOLD : FXFONT_FW_NORMAL);
     pStyle->SetNumberVerticalAlign(-font.GetBaselineShift());
     fFontSize = font.GetFontSize();
-    FDE_CSSLENGTH letterSpacing;
+    FDE_CSSLength letterSpacing;
     letterSpacing.Set(FDE_CSSLengthUnit::Point, font.GetLetterSpacing());
     pStyle->SetLetterSpacing(letterSpacing);
     uint32_t dwDecoration = 0;
@@ -178,7 +178,7 @@ CFDE_CSSComputedStyle* CXFA_TextParser::CreateStyle(
   pNewStyle->SetTextDecoration(dwDecoration);
   pNewStyle->SetNumberVerticalAlign(fBaseLine);
 
-  const FDE_CSSRECT* pRect = pParentStyle->GetMarginWidth();
+  const FDE_CSSRect* pRect = pParentStyle->GetMarginWidth();
   if (pRect)
     pNewStyle->SetMarginWidth(*pRect);
   return pNewStyle;

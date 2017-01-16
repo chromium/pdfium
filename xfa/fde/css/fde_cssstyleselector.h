@@ -132,7 +132,7 @@ class CFDE_CSSStyleSelector {
   FX_FLOAT ApplyNumber(FDE_CSSPrimitiveType eUnit,
                        FX_FLOAT fValue,
                        FX_FLOAT fPercentBase);
-  bool SetLengthWithPercent(FDE_CSSLENGTH& width,
+  bool SetLengthWithPercent(FDE_CSSLength& width,
                             FDE_CSSPrimitiveType eType,
                             CFDE_CSSPrimitiveValue* pPrimitive,
                             FX_FLOAT fFontSize);
@@ -158,9 +158,9 @@ class CFDE_CSSInheritedData {
  public:
   CFDE_CSSInheritedData();
 
-  FDE_CSSLENGTH m_LetterSpacing;
-  FDE_CSSLENGTH m_WordSpacing;
-  FDE_CSSLENGTH m_TextIndent;
+  FDE_CSSLength m_LetterSpacing;
+  FDE_CSSLength m_WordSpacing;
+  FDE_CSSLength m_TextIndent;
   CFDE_CSSValueList* m_pFontFamily;
   FX_FLOAT m_fFontSize;
   FX_FLOAT m_fLineHeight;
@@ -175,13 +175,13 @@ class CFDE_CSSNonInheritedData {
  public:
   CFDE_CSSNonInheritedData();
 
-  FDE_CSSRECT m_MarginWidth;
-  FDE_CSSRECT m_BorderWidth;
-  FDE_CSSRECT m_PaddingWidth;
-  FDE_CSSLENGTH m_Top;
-  FDE_CSSLENGTH m_Bottom;
-  FDE_CSSLENGTH m_Left;
-  FDE_CSSLENGTH m_Right;
+  FDE_CSSRect m_MarginWidth;
+  FDE_CSSRect m_BorderWidth;
+  FDE_CSSRect m_PaddingWidth;
+  FDE_CSSLength m_Top;
+  FDE_CSSLength m_Bottom;
+  FDE_CSSLength m_Left;
+  FDE_CSSLength m_Right;
   FX_FLOAT m_fVerticalAlign;
   FDE_CSSDisplay m_eDisplay;
   FDE_CSSVerticalAlign m_eVerticalAlign;
@@ -213,27 +213,27 @@ class CFDE_CSSComputedStyle : public IFX_Retainable {
   void SetFontSize(FX_FLOAT fFontSize);
   void SetColor(FX_ARGB dwFontColor);
 
-  const FDE_CSSRECT* GetBorderWidth() const;
-  const FDE_CSSRECT* GetMarginWidth() const;
-  const FDE_CSSRECT* GetPaddingWidth() const;
-  void SetMarginWidth(const FDE_CSSRECT& rect);
-  void SetPaddingWidth(const FDE_CSSRECT& rect);
+  const FDE_CSSRect* GetBorderWidth() const;
+  const FDE_CSSRect* GetMarginWidth() const;
+  const FDE_CSSRect* GetPaddingWidth() const;
+  void SetMarginWidth(const FDE_CSSRect& rect);
+  void SetPaddingWidth(const FDE_CSSRect& rect);
 
   FDE_CSSDisplay GetDisplay() const;
 
   FX_FLOAT GetLineHeight() const;
-  const FDE_CSSLENGTH& GetTextIndent() const;
+  const FDE_CSSLength& GetTextIndent() const;
   FDE_CSSTextAlign GetTextAlign() const;
   FDE_CSSVerticalAlign GetVerticalAlign() const;
   FX_FLOAT GetNumberVerticalAlign() const;
   uint32_t GetTextDecoration() const;
-  const FDE_CSSLENGTH& GetLetterSpacing() const;
+  const FDE_CSSLength& GetLetterSpacing() const;
   void SetLineHeight(FX_FLOAT fLineHeight);
-  void SetTextIndent(const FDE_CSSLENGTH& textIndent);
+  void SetTextIndent(const FDE_CSSLength& textIndent);
   void SetTextAlign(FDE_CSSTextAlign eTextAlign);
   void SetNumberVerticalAlign(FX_FLOAT fAlign);
   void SetTextDecoration(uint32_t dwTextDecoration);
-  void SetLetterSpacing(const FDE_CSSLENGTH& letterSpacing);
+  void SetLetterSpacing(const FDE_CSSLength& letterSpacing);
   void AddCustomStyle(const CFX_WideString& wsName,
                       const CFX_WideString& wsValue);
 
