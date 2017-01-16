@@ -841,6 +841,10 @@ int32_t gif_load_frame(gif_decompress_struct_p gif_ptr, int32_t frame_num) {
   uint32_t skip_size_org = gif_ptr->skip_size;
   GifImage* gif_image_ptr = (*gif_ptr->img_ptr_arr_ptr)[frame_num];
   uint32_t gif_img_row_bytes = gif_image_ptr->image_info_ptr->width;
+  if (gif_img_row_bytes == 0) {
+    gif_error(gif_ptr, "Error Invalid Number of Row Bytes");
+    return 0;
+  }
   if (gif_ptr->decode_status == GIF_D_STATUS_TAIL) {
     if (gif_image_ptr->image_row_buf) {
       FX_Free(gif_image_ptr->image_row_buf);
