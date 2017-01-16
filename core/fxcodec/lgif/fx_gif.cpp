@@ -109,6 +109,11 @@ int32_t CGifLZWDecoder::Decode(uint8_t* des_buf, uint32_t& des_size) {
       return 0;
     }
     if (avail_in > 0) {
+      if (bits_left > 31) {
+        if (err_msg_ptr)
+          FXSYS_strncpy(err_msg_ptr, "Decode Error", GIF_MAX_ERROR_SIZE - 1);
+        return 0;
+      }
       code_store |= (*next_in++) << bits_left;
       avail_in--;
       bits_left += 8;
