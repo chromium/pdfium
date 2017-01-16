@@ -358,6 +358,8 @@ int32_t bmp_decode_rgb(bmp_decompress_struct_p bmp_ptr) {
         }
         green_bits += blue_bits;
         red_bits += green_bits;
+        if (blue_bits > 8 || green_bits < 8 || red_bits < 8)
+          return 2;
         blue_bits = 8 - blue_bits;
         green_bits -= 8;
         red_bits -= 8;
