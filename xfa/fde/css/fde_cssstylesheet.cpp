@@ -62,7 +62,6 @@ CFDE_CSSStyleSheet::~CFDE_CSSStyleSheet() {
 
 void CFDE_CSSStyleSheet::Reset() {
   m_RuleArray.clear();
-  m_Selectors.clear();
   m_StringCache.clear();
 }
 
@@ -133,7 +132,7 @@ bool CFDE_CSSStyleSheet::LoadFromSyntax(CFDE_CSSSyntaxParser* pSyntax) {
         break;
     }
   } while (eStatus >= FDE_CSSSyntaxStatus::None);
-  m_Selectors.clear();
+
   m_StringCache.clear();
   return eStatus != FDE_CSSSyntaxStatus::Error;
 }
@@ -185,7 +184,7 @@ FDE_CSSSyntaxStatus CFDE_CSSStyleSheet::LoadMediaRule(
 FDE_CSSSyntaxStatus CFDE_CSSStyleSheet::LoadStyleRule(
     CFDE_CSSSyntaxParser* pSyntax,
     std::vector<std::unique_ptr<CFDE_CSSRule>>* ruleArray) {
-  m_Selectors.clear();
+  std::vector<std::unique_ptr<CFDE_CSSSelector>> selectors;
 
   CFDE_CSSStyleRule* pStyleRule = nullptr;
   const FX_WCHAR* pszValue = nullptr;
@@ -200,8 +199,9 @@ FDE_CSSSyntaxStatus CFDE_CSSStyleSheet::LoadStyleRule(
         pszValue = pSyntax->GetCurrentString(iValueLen);
         auto pSelector = CFDE_CSSSelector::FromString(pszValue, iValueLen);
         if (pSelector)
-          m_Selectors.push_back(std::move(pSelector));
-      } break;
+          selectors.push_back(std::move(pSelector));
+        break;
+      }
       case FDE_CSSSyntaxStatus::PropertyName:
         pszValue = pSyntax->GetCurrentString(iValueLen);
         propertyArgs.pProperty =
@@ -226,10 +226,10 @@ FDE_CSSSyntaxStatus CFDE_CSSStyleSheet::LoadStyleRule(
         }
         break;
       case FDE_CSSSyntaxStatus::DeclOpen:
-        if (!pStyleRule && !m_Selectors.empty()) {
+        if (!pStyleRule && !selectors.empty()) {
           auto rule = pdfium::MakeUnique<CFDE_CSSStyleRule>();
           pStyleRule = rule.get();
-          pStyleRule->SetSelector(m_Selectors);
+          pStyleRule->SetSelector(&selectors);
           ruleArray->push_back(std::move(rule));
         } else {
           SkipRuleSet(pSyntax);
@@ -336,18 +336,16 @@ FDE_CSSSyntaxStatus CFDE_CSSStyleSheet::SkipRuleSet(
   }
 }
 
-CFDE_CSSStyleRule::CFDE_CSSStyleRule()
-    : CFDE_CSSRule(FDE_CSSRuleType::Style),
-      m_iSelectors(0) {}
+CFDE_CSSStyleRule::CFDE_CSSStyleRule() : CFDE_CSSRule(FDE_CSSRuleType::Style) {}
 
 CFDE_CSSStyleRule::~CFDE_CSSStyleRule() {}
 
-int32_t CFDE_CSSStyleRule::CountSelectorLists() const {
-  return m_iSelectors;
+size_t CFDE_CSSStyleRule::CountSelectorLists() const {
+  return m_ppSelector.size();
 }
 
 CFDE_CSSSelector* CFDE_CSSStyleRule::GetSelectorList(int32_t index) const {
-  return m_ppSelector[index];
+  return m_ppSelector[index].get();
 }
 
 CFDE_CSSDeclaration* CFDE_CSSStyleRule::GetDeclaration() {
@@ -355,11 +353,10 @@ CFDE_CSSDeclaration* CFDE_CSSStyleRule::GetDeclaration() {
 }
 
 void CFDE_CSSStyleRule::SetSelector(
-    const std::vector<std::unique_ptr<CFDE_CSSSelector>>& list) {
+    std::vector<std::unique_ptr<CFDE_CSSSelector>>* list) {
   ASSERT(m_ppSelector.empty());
 
-  for (const auto& item : list)
-    m_ppSelector.push_back(item.get());
+  m_ppSelector.swap(*list);
 }
 
 CFDE_CSSMediaRule::CFDE_CSSMediaRule(uint32_t dwMediaList)

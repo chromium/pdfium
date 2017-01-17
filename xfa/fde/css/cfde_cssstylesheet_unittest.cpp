@@ -7,9 +7,11 @@
 #include "xfa/fde/css/fde_cssstylesheet.h"
 
 #include <memory>
+#include <vector>
 
 #include "testing/gtest/include/gtest/gtest.h"
 #include "third_party/base/ptr_util.h"
+#include "third_party/base/stl_util.h"
 
 class CFDE_CSSStyleSheetTest : public testing::Test {
  public:
@@ -20,18 +22,27 @@ class CFDE_CSSStyleSheetTest : public testing::Test {
 
   void TearDown() override { decl_ = nullptr; }
 
-  void LoadAndVerifyDecl(const FX_WCHAR* buf, size_t decl_count) {
+  void LoadAndVerifyDecl(const FX_WCHAR* buf,
+                         const std::vector<CFX_WideString>& selectors,
+                         size_t decl_count) {
     ASSERT(sheet_);
 
     EXPECT_TRUE(sheet_->LoadFromBuffer(buf, FXSYS_wcslen(buf)));
-    EXPECT_EQ(1, sheet_->CountRules());
+    EXPECT_EQ(sheet_->CountRules(), 1);
 
     CFDE_CSSRule* rule = sheet_->GetRule(0);
-    EXPECT_EQ(FDE_CSSRuleType::Style, rule->GetType());
+    EXPECT_EQ(rule->GetType(), FDE_CSSRuleType::Style);
 
     CFDE_CSSStyleRule* style = static_cast<CFDE_CSSStyleRule*>(rule);
+    EXPECT_EQ(selectors.size(), style->CountSelectorLists());
+
+    for (size_t i = 0; i < selectors.size(); i++) {
+      uint32_t hash = FX_HashCode_GetW(selectors[i].AsStringC(), true);
+      EXPECT_EQ(hash, style->GetSelectorList(i)->GetNameHash());
+    }
+
     decl_ = style->GetDeclaration();
-    EXPECT_EQ(decl_count, decl_->PropertyCountForTesting());
+    EXPECT_EQ(decl_->PropertyCountForTesting(), decl_count);
   }
 
   void VerifyFloat(FDE_CSSProperty prop, float val, FDE_CSSPrimitiveType type) {
@@ -40,8 +51,8 @@ class CFDE_CSSStyleSheetTest : public testing::Test {
     bool important;
     CFDE_CSSValue* v = decl_->GetProperty(prop, important);
     CFDE_CSSPrimitiveValue* pval = static_cast<CFDE_CSSPrimitiveValue*>(v);
-    EXPECT_EQ(type, pval->GetPrimitiveType());
-    EXPECT_EQ(val, pval->GetFloat());
+    EXPECT_EQ(pval->GetPrimitiveType(), type);
+    EXPECT_EQ(pval->GetFloat(), val);
   }
 
   void VerifyEnum(FDE_CSSProperty prop, FDE_CSSPropertyValue val) {
@@ -50,16 +61,105 @@ class CFDE_CSSStyleSheetTest : public testing::Test {
     bool important;
     CFDE_CSSValue* v = decl_->GetProperty(prop, important);
     CFDE_CSSPrimitiveValue* pval = static_cast<CFDE_CSSPrimitiveValue*>(v);
-    EXPECT_EQ(FDE_CSSPrimitiveType::Enum, pval->GetPrimitiveType());
-    EXPECT_EQ(val, pval->GetEnum());
+    EXPECT_EQ(pval->GetPrimitiveType(), FDE_CSSPrimitiveType::Enum);
+    EXPECT_EQ(pval->GetEnum(), val);
+  }
+
+  void VerifyList(FDE_CSSProperty prop,
+                  std::vector<FDE_CSSPropertyValue> values) {
+    ASSERT(decl_);
+
+    bool important;
+    CFDE_CSSValue* v = decl_->GetProperty(prop, important);
+    CFDE_CSSValueList* list = static_cast<CFDE_CSSValueList*>(v);
+    EXPECT_EQ(list->CountValues(), pdfium::CollectionSize<int32_t>(values));
+
+    for (size_t i = 0; i < values.size(); i++) {
+      CFDE_CSSValue* val = list->GetValue(i);
+      CFDE_CSSPrimitiveValue* pval = static_cast<CFDE_CSSPrimitiveValue*>(val);
+      EXPECT_EQ(pval->GetPrimitiveType(), FDE_CSSPrimitiveType::Enum);
+      EXPECT_EQ(pval->GetEnum(), values[i]);
+    }
   }
 
   std::unique_ptr<CFDE_CSSStyleSheet> sheet_;
   CFDE_CSSDeclaration* decl_;
 };
 
+TEST_F(CFDE_CSSStyleSheetTest, ParseMultipleSelectors) {
+  const FX_WCHAR* buf =
+      L"a { border: 10px; }\nb { text-decoration: underline; }";
+  EXPECT_TRUE(sheet_->LoadFromBuffer(buf, FXSYS_wcslen(buf)));
+  EXPECT_EQ(2, sheet_->CountRules());
+
+  CFDE_CSSRule* rule = sheet_->GetRule(0);
+  EXPECT_EQ(FDE_CSSRuleType::Style, rule->GetType());
+
+  CFDE_CSSStyleRule* style = static_cast<CFDE_CSSStyleRule*>(rule);
+  EXPECT_EQ(1UL, style->CountSelectorLists());
+
+  bool found_selector = false;
+  uint32_t hash = FX_HashCode_GetW(L"a", true);
+  for (size_t i = 0; i < style->CountSelectorLists(); i++) {
+    if (style->GetSelectorList(i)->GetNameHash() == hash) {
+      found_selector = true;
+      break;
+    }
+  }
+  EXPECT_TRUE(found_selector);
+
+  decl_ = style->GetDeclaration();
+  EXPECT_EQ(4UL, decl_->PropertyCountForTesting());
+
+  VerifyFloat(FDE_CSSProperty::BorderLeftWidth, 10.0,
+              FDE_CSSPrimitiveType::Pixels);
+  VerifyFloat(FDE_CSSProperty::BorderRightWidth, 10.0,
+              FDE_CSSPrimitiveType::Pixels);
+  VerifyFloat(FDE_CSSProperty::BorderTopWidth, 10.0,
+              FDE_CSSPrimitiveType::Pixels);
+  VerifyFloat(FDE_CSSProperty::BorderBottomWidth, 10.0,
+              FDE_CSSPrimitiveType::Pixels);
+
+  rule = sheet_->GetRule(1);
+  EXPECT_EQ(FDE_CSSRuleType::Style, rule->GetType());
+
+  style = static_cast<CFDE_CSSStyleRule*>(rule);
+  EXPECT_EQ(1UL, style->CountSelectorLists());
+
+  found_selector = false;
+  hash = FX_HashCode_GetW(L"b", true);
+  for (size_t i = 0; i < style->CountSelectorLists(); i++) {
+    if (style->GetSelectorList(i)->GetNameHash() == hash) {
+      found_selector = true;
+      break;
+    }
+  }
+  EXPECT_TRUE(found_selector);
+
+  decl_ = style->GetDeclaration();
+  EXPECT_EQ(1UL, decl_->PropertyCountForTesting());
+  VerifyList(FDE_CSSProperty::TextDecoration,
+             {FDE_CSSPropertyValue::Underline});
+}
+
+TEST_F(CFDE_CSSStyleSheetTest, ParseMultipleSelectorsCombined) {
+  LoadAndVerifyDecl(L"a, b, c { border: 5px; }", {L"a", L"b", L"c"}, 4);
+}
+
+TEST_F(CFDE_CSSStyleSheetTest, ParseWithPseudo) {
+  // TODO(dsinclair): I think this is wrong, as the selector just becomes
+  // :before and we lose the a?
+  LoadAndVerifyDecl(L"a:before { border: 10px; }", {L":before"}, 4);
+}
+
+TEST_F(CFDE_CSSStyleSheetTest, ParseWithSelectorsAndPseudo) {
+  // TODO(dsinclair): I think this is wrong as we lose the b on the b:before
+  LoadAndVerifyDecl(L"a, b:before, c { border: 1px; }",
+                    {L"a", L":before", L"c"}, 4);
+}
+
 TEST_F(CFDE_CSSStyleSheetTest, ParseBorder) {
-  LoadAndVerifyDecl(L"a { border: 5px; }", 4);
+  LoadAndVerifyDecl(L"a { border: 5px; }", {L"a"}, 4);
   VerifyFloat(FDE_CSSProperty::BorderLeftWidth, 5.0,
               FDE_CSSPrimitiveType::Pixels);
   VerifyFloat(FDE_CSSProperty::BorderRightWidth, 5.0,
@@ -71,7 +171,7 @@ TEST_F(CFDE_CSSStyleSheetTest, ParseBorder) {
 }
 
 TEST_F(CFDE_CSSStyleSheetTest, ParseBorderFull) {
-  LoadAndVerifyDecl(L"a { border: 5px solid red; }", 4);
+  LoadAndVerifyDecl(L"a { border: 5px solid red; }", {L"a"}, 4);
   VerifyFloat(FDE_CSSProperty::BorderLeftWidth, 5.0,
               FDE_CSSPrimitiveType::Pixels);
   VerifyFloat(FDE_CSSProperty::BorderRightWidth, 5.0,
@@ -83,30 +183,30 @@ TEST_F(CFDE_CSSStyleSheetTest, ParseBorderFull) {
 }
 
 TEST_F(CFDE_CSSStyleSheetTest, ParseBorderLeft) {
-  LoadAndVerifyDecl(L"a { border-left: 2.5pc; }", 1);
+  LoadAndVerifyDecl(L"a { border-left: 2.5pc; }", {L"a"}, 1);
   VerifyFloat(FDE_CSSProperty::BorderLeftWidth, 2.5,
               FDE_CSSPrimitiveType::Picas);
 }
 
 TEST_F(CFDE_CSSStyleSheetTest, ParseBorderLeftThick) {
-  LoadAndVerifyDecl(L"a { border-left: thick; }", 1);
+  LoadAndVerifyDecl(L"a { border-left: thick; }", {L"a"}, 1);
   VerifyEnum(FDE_CSSProperty::BorderLeftWidth, FDE_CSSPropertyValue::Thick);
 }
 
 TEST_F(CFDE_CSSStyleSheetTest, ParseBorderRight) {
-  LoadAndVerifyDecl(L"a { border-right: 2.5pc; }", 1);
+  LoadAndVerifyDecl(L"a { border-right: 2.5pc; }", {L"a"}, 1);
   VerifyFloat(FDE_CSSProperty::BorderRightWidth, 2.5,
               FDE_CSSPrimitiveType::Picas);
 }
 
 TEST_F(CFDE_CSSStyleSheetTest, ParseBorderTop) {
-  LoadAndVerifyDecl(L"a { border-top: 2.5pc; }", 1);
+  LoadAndVerifyDecl(L"a { border-top: 2.5pc; }", {L"a"}, 1);
   VerifyFloat(FDE_CSSProperty::BorderTopWidth, 2.5,
               FDE_CSSPrimitiveType::Picas);
 }
 
 TEST_F(CFDE_CSSStyleSheetTest, ParseBorderBottom) {
-  LoadAndVerifyDecl(L"a { border-bottom: 2.5pc; }", 1);
+  LoadAndVerifyDecl(L"a { border-bottom: 2.5pc; }", {L"a"}, 1);
   VerifyFloat(FDE_CSSProperty::BorderBottomWidth, 2.5,
               FDE_CSSPrimitiveType::Picas);
 }

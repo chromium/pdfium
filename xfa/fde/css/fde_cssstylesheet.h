@@ -51,16 +51,16 @@ class CFDE_CSSStyleRule : public CFDE_CSSRule {
   CFDE_CSSStyleRule();
   ~CFDE_CSSStyleRule() override;
 
-  int32_t CountSelectorLists() const;
+  size_t CountSelectorLists() const;
   CFDE_CSSSelector* GetSelectorList(int32_t index) const;
   CFDE_CSSDeclaration* GetDeclaration();
   CFDE_CSSDeclaration& GetDeclImp() { return m_Declaration; }
-  void SetSelector(const std::vector<std::unique_ptr<CFDE_CSSSelector>>& list);
+
+  void SetSelector(std::vector<std::unique_ptr<CFDE_CSSSelector>>* list);
 
  private:
   CFDE_CSSDeclaration m_Declaration;
-  std::vector<CFDE_CSSSelector*> m_ppSelector;  // Owned by the stylessheet.
-  int32_t m_iSelectors;
+  std::vector<std::unique_ptr<CFDE_CSSSelector>> m_ppSelector;
 };
 
 class CFDE_CSSMediaRule : public CFDE_CSSRule {
@@ -126,7 +126,6 @@ class CFDE_CSSStyleSheet : public IFX_Retainable {
   uint32_t m_dwMediaList;
   std::vector<std::unique_ptr<CFDE_CSSRule>> m_RuleArray;
   CFX_WideString m_szUrl;
-  std::vector<std::unique_ptr<CFDE_CSSSelector>> m_Selectors;
   std::unordered_map<uint32_t, FX_WCHAR*> m_StringCache;
 };
 
