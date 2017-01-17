@@ -28,4 +28,7 @@ declare_args() {
 
   # Build PDFium standalone
   pdf_is_standalone = false
+
+  # Enable coverage information
+  use_coverage = false
 }

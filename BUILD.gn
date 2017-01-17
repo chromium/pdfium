@@ -42,6 +42,7 @@ config("pdfium_common_config") {
 
 config("pdfium_core_config") {
   cflags = []
+  ldflags = []
   configs = [ ":pdfium_common_config" ]
   defines = [ "V8_DEPRECATION_WARNINGS" ]
   if (is_linux) {
@@ -54,6 +55,14 @@ config("pdfium_core_config") {
   }
   if (is_win) {
     cflags += [ "/wd4267" ]
+  }
+  if (use_coverage && is_clang) {
+    cflags += [
+      "--coverage",
+      "-g",
+      "-O0",
+    ]
+    ldflags += [ "--coverage" ]
   }
 }
 
