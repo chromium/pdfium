@@ -72,18 +72,8 @@ bool CPDF_Type3Font::Load() {
   }
   m_pCharProcs = m_pFontDict->GetDictFor("CharProcs");
   CPDF_Object* pEncoding = m_pFontDict->GetDirectObjectFor("Encoding");
-  if (pEncoding) {
+  if (pEncoding)
     LoadPDFEncoding(pEncoding, m_BaseEncoding, &m_CharNames, false, false);
-    if (!m_CharNames.empty()) {
-      for (int i = 0; i < 256; i++) {
-        m_Encoding.m_Unicodes[i] =
-            PDF_UnicodeFromAdobeName(m_CharNames[i].c_str());
-        if (m_Encoding.m_Unicodes[i] == 0) {
-          m_Encoding.m_Unicodes[i] = i;
-        }
-      }
-    }
-  }
   return true;
 }
 
