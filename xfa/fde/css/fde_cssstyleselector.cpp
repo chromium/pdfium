@@ -280,14 +280,15 @@ void CFDE_CSSStyleSelector::ApplyDeclarations(
     int32_t iDeclCount,
     CFDE_CSSComputedStyle* pDestStyle) {
   CFDE_CSSComputedStyle* pComputedStyle = pDestStyle;
-  CFDE_CSSValue* pVal;
-  bool bImportant;
+
   int32_t i;
   if (bPriority) {
     CFDE_CSSValue* pLastest = nullptr;
     CFDE_CSSValue* pImportant = nullptr;
     for (i = 0; i < iDeclCount; ++i) {
-      pVal = ppDeclArray[i]->GetProperty(FDE_CSSProperty::FontSize, bImportant);
+      bool bImportant;
+      CFDE_CSSValue* pVal =
+          ppDeclArray[i]->GetProperty(FDE_CSSProperty::FontSize, bImportant);
       if (!pVal)
         continue;
 
@@ -304,39 +305,33 @@ void CFDE_CSSStyleSelector::ApplyDeclarations(
   } else {
     CFX_ArrayTemplate<CFDE_CSSDeclaration*> importants;
     const CFDE_CSSDeclaration* pDecl = nullptr;
-    FDE_CSSProperty eProp;
-    FX_POSITION pos;
+
     for (i = 0; i < iDeclCount; ++i) {
       pDecl = ppDeclArray[i];
-      pos = pDecl->GetStartPosition();
-      while (pos) {
-        pDecl->GetNextProperty(pos, eProp, pVal, bImportant);
-        if (eProp == FDE_CSSProperty::FontSize) {
+      for (auto it = pDecl->begin(); it != pDecl->end(); it++) {
+        if ((*it)->eProperty == FDE_CSSProperty::FontSize)
           continue;
-        } else if (!bImportant) {
-          ApplyProperty(eProp, pVal, pComputedStyle);
+        if (!(*it)->bImportant) {
+          ApplyProperty((*it)->eProperty, (*it)->pValue.Get(), pComputedStyle);
         } else if (importants.GetSize() == 0 ||
                    importants[importants.GetUpperBound()] != pDecl) {
           importants.Add(const_cast<CFDE_CSSDeclaration*>(pDecl));
         }
       }
     }
+
     iDeclCount = importants.GetSize();
     for (i = 0; i < iDeclCount; ++i) {
       pDecl = importants[i];
-      pos = pDecl->GetStartPosition();
-      while (pos) {
-        pDecl->GetNextProperty(pos, eProp, pVal, bImportant);
-        if (bImportant && eProp != FDE_CSSProperty::FontSize) {
-          ApplyProperty(eProp, pVal, pComputedStyle);
-        }
+
+      for (auto it = pDecl->begin(); it != pDecl->end(); it++) {
+        if ((*it)->bImportant && (*it)->eProperty != FDE_CSSProperty::FontSize)
+          ApplyProperty((*it)->eProperty, (*it)->pValue.Get(), pComputedStyle);
       }
     }
-    CFX_WideString wsName, wsValue;
-    pos = pDecl->GetStartCustom();
-    while (pos) {
-      pDecl->GetNextCustom(pos, wsName, wsValue);
-      pComputedStyle->AddCustomStyle(wsName, wsValue);
+
+    for (auto it = pDecl->custom_begin(); it != pDecl->custom_end(); it++) {
+      pComputedStyle->AddCustomStyle((*it)->pwsName, (*it)->pwsValue);
     }
   }
 }

@@ -7,6 +7,9 @@
 #ifndef XFA_FDE_CSS_FDE_CSSDATATABLE_H_
 #define XFA_FDE_CSS_FDE_CSSDATATABLE_H_
 
+#include <memory>
+#include <vector>
+
 #include "core/fxcrt/fx_system.h"
 #include "xfa/fde/css/cfde_cssvalue.h"
 #include "xfa/fde/css/fde_css.h"
@@ -17,10 +20,11 @@ class CFDE_CSSPrimitiveValue : public CFDE_CSSValue {
  public:
   explicit CFDE_CSSPrimitiveValue(FX_ARGB color);
   explicit CFDE_CSSPrimitiveValue(FDE_CSSPropertyValue eValue);
-  explicit CFDE_CSSPrimitiveValue(CFDE_CSSFunction* pFunction);
+  explicit CFDE_CSSPrimitiveValue(std::unique_ptr<CFDE_CSSFunction> pFunction);
   CFDE_CSSPrimitiveValue(FDE_CSSPrimitiveType eType, FX_FLOAT fValue);
   CFDE_CSSPrimitiveValue(FDE_CSSPrimitiveType eType, const FX_WCHAR* pValue);
   CFDE_CSSPrimitiveValue(const CFDE_CSSPrimitiveValue& src);
+  ~CFDE_CSSPrimitiveValue() override;
 
   FDE_CSSPrimitiveType GetPrimitiveType() const;
   FX_ARGB GetRGBColor() const;
@@ -37,20 +41,20 @@ class CFDE_CSSPrimitiveValue : public CFDE_CSSValue {
     FX_FLOAT m_fNumber;
     const FX_WCHAR* m_pString;
     FDE_CSSPropertyValue m_eEnum;
-    CFDE_CSSFunction* m_pFunction;
   };
+  std::unique_ptr<CFDE_CSSFunction> m_pFunction;
 };
 
 class CFDE_CSSValueList : public CFDE_CSSValue {
  public:
-  explicit CFDE_CSSValueList(const CFX_ArrayTemplate<CFDE_CSSValue*>& list);
+  explicit CFDE_CSSValueList(std::vector<CFX_RetainPtr<CFDE_CSSValue>>& list);
+  ~CFDE_CSSValueList() override;
 
   int32_t CountValues() const;
   CFDE_CSSValue* GetValue(int32_t index) const;
 
  protected:
-  CFDE_CSSValue** m_ppList;
-  int32_t m_iCount;
+  std::vector<CFX_RetainPtr<CFDE_CSSValue>> m_ppList;
 };
 
 class CFDE_CSSValueListParser {
@@ -75,10 +79,10 @@ class CFDE_CSSValueListParser {
 
 class CFDE_CSSFunction {
  public:
-  CFDE_CSSFunction(const FX_WCHAR* pszFuncName, CFDE_CSSValueList* pArgList)
-      : m_pArgList(pArgList), m_pszFuncName(pszFuncName) {
-    ASSERT(pArgList);
-  }
+  CFDE_CSSFunction(const FX_WCHAR* pszFuncName,
+                   CFX_RetainPtr<CFDE_CSSValueList> pArgList);
+  ~CFDE_CSSFunction();
+
   int32_t CountArgs() const { return m_pArgList->CountValues(); }
   CFDE_CSSValue* GetArgs(int32_t index) const {
     return m_pArgList->GetValue(index);
@@ -86,7 +90,7 @@ class CFDE_CSSFunction {
   const FX_WCHAR* GetFuncName() const { return m_pszFuncName; }
 
  protected:
-  CFDE_CSSValueList* m_pArgList;
+  CFX_RetainPtr<CFDE_CSSValueList> m_pArgList;
   const FX_WCHAR* m_pszFuncName;
 };
 

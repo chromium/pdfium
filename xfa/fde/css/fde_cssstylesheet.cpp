@@ -9,15 +9,50 @@
 #include <memory>
 
 #include "third_party/base/ptr_util.h"
+#include "third_party/base/stl_util.h"
 #include "xfa/fde/css/fde_cssdatatable.h"
 #include "xfa/fde/css/fde_csssyntax.h"
 #include "xfa/fgas/crt/fgas_codepage.h"
 
+namespace {
+
+bool IsCSSChar(FX_WCHAR wch) {
+  return (wch >= 'a' && wch <= 'z') || (wch >= 'A' && wch <= 'Z');
+}
+
+int32_t GetCSSPseudoLen(const FX_WCHAR* psz, const FX_WCHAR* pEnd) {
+  ASSERT(*psz == ':');
+  const FX_WCHAR* pStart = psz;
+  while (psz < pEnd) {
+    FX_WCHAR wch = *psz;
+    if (IsCSSChar(wch) || wch == ':')
+      ++psz;
+    else
+      break;
+  }
+  return psz - pStart;
+}
+
+int32_t GetCSSNameLen(const FX_WCHAR* psz, const FX_WCHAR* pEnd) {
+  const FX_WCHAR* pStart = psz;
+  while (psz < pEnd) {
+    FX_WCHAR wch = *psz;
+    if (IsCSSChar(wch) || (wch >= '0' && wch <= '9') || wch == '_' ||
+        wch == '-') {
+      ++psz;
+    } else {
+      break;
+    }
+  }
+  return psz - pStart;
+}
+
+}  // namespace
+
 CFDE_CSSStyleSheet::CFDE_CSSStyleSheet()
     : m_wCodePage(FX_CODEPAGE_UTF8),
       m_wRefCount(1),
-      m_dwMediaList(FDE_CSSMEDIATYPE_ALL),
-      m_RuleArray(100) {
+      m_dwMediaList(FDE_CSSMEDIATYPE_ALL) {
   ASSERT(m_dwMediaList > 0);
 }
 
@@ -26,25 +61,8 @@ CFDE_CSSStyleSheet::~CFDE_CSSStyleSheet() {
 }
 
 void CFDE_CSSStyleSheet::Reset() {
-  for (int32_t i = m_RuleArray.GetSize() - 1; i >= 0; --i) {
-    CFDE_CSSRule* pRule = m_RuleArray.GetAt(i);
-    switch (pRule->GetType()) {
-      case FDE_CSSRuleType::Style:
-        static_cast<CFDE_CSSStyleRule*>(pRule)->~CFDE_CSSStyleRule();
-        break;
-      case FDE_CSSRuleType::Media:
-        static_cast<CFDE_CSSMediaRule*>(pRule)->~CFDE_CSSMediaRule();
-        break;
-      case FDE_CSSRuleType::FontFace:
-        static_cast<CFDE_CSSFontFaceRule*>(pRule)->~CFDE_CSSFontFaceRule();
-        break;
-      default:
-        ASSERT(false);
-        break;
-    }
-  }
-  m_RuleArray.RemoveAll(false);
-  m_Selectors.RemoveAll();
+  m_RuleArray.clear();
+  m_Selectors.clear();
   m_StringCache.clear();
 }
 
@@ -73,11 +91,11 @@ uint16_t CFDE_CSSStyleSheet::GetCodePage() const {
 }
 
 int32_t CFDE_CSSStyleSheet::CountRules() const {
-  return m_RuleArray.GetSize();
+  return pdfium::CollectionSize<int32_t>(m_RuleArray);
 }
 
 CFDE_CSSRule* CFDE_CSSStyleSheet::GetRule(int32_t index) {
-  return m_RuleArray.GetAt(index);
+  return m_RuleArray[index].get();
 }
 
 bool CFDE_CSSStyleSheet::LoadFromBuffer(const FX_WCHAR* pBuffer,
@@ -97,13 +115,13 @@ bool CFDE_CSSStyleSheet::LoadFromSyntax(CFDE_CSSSyntaxParser* pSyntax) {
   do {
     switch (eStatus = pSyntax->DoSyntaxParse()) {
       case FDE_CSSSyntaxStatus::StyleRule:
-        eStatus = LoadStyleRule(pSyntax, m_RuleArray);
+        eStatus = LoadStyleRule(pSyntax, &m_RuleArray);
         break;
       case FDE_CSSSyntaxStatus::MediaRule:
         eStatus = LoadMediaRule(pSyntax);
         break;
       case FDE_CSSSyntaxStatus::FontFaceRule:
-        eStatus = LoadFontFaceRule(pSyntax, m_RuleArray);
+        eStatus = LoadFontFaceRule(pSyntax, &m_RuleArray);
         break;
       case FDE_CSSSyntaxStatus::ImportRule:
         eStatus = LoadImportRule(pSyntax);
@@ -115,7 +133,7 @@ bool CFDE_CSSStyleSheet::LoadFromSyntax(CFDE_CSSSyntaxParser* pSyntax) {
         break;
     }
   } while (eStatus >= FDE_CSSSyntaxStatus::None);
-  m_Selectors.RemoveAll();
+  m_Selectors.clear();
   m_StringCache.clear();
   return eStatus != FDE_CSSSyntaxStatus::Error;
 }
@@ -137,7 +155,7 @@ FDE_CSSSyntaxStatus CFDE_CSSStyleSheet::LoadMediaRule(
       case FDE_CSSSyntaxStatus::StyleRule:
         if (pMediaRule) {
           FDE_CSSSyntaxStatus eStatus =
-              LoadStyleRule(pSyntax, pMediaRule->GetArray());
+              LoadStyleRule(pSyntax, &pMediaRule->GetArray());
           if (eStatus < FDE_CSSSyntaxStatus::None) {
             return eStatus;
           }
@@ -147,8 +165,10 @@ FDE_CSSSyntaxStatus CFDE_CSSStyleSheet::LoadMediaRule(
         break;
       case FDE_CSSSyntaxStatus::DeclOpen:
         if ((dwMediaList & m_dwMediaList) > 0 && !pMediaRule) {
-          pMediaRule = new CFDE_CSSMediaRule(dwMediaList);
-          m_RuleArray.Add(pMediaRule);
+          m_RuleArray.push_back(
+              pdfium::MakeUnique<CFDE_CSSMediaRule>(dwMediaList));
+          pMediaRule =
+              static_cast<CFDE_CSSMediaRule*>(m_RuleArray.back().get());
         }
         break;
       case FDE_CSSSyntaxStatus::DeclClose:
@@ -164,8 +184,9 @@ FDE_CSSSyntaxStatus CFDE_CSSStyleSheet::LoadMediaRule(
 
 FDE_CSSSyntaxStatus CFDE_CSSStyleSheet::LoadStyleRule(
     CFDE_CSSSyntaxParser* pSyntax,
-    CFX_MassArrayTemplate<CFDE_CSSRule*>& ruleArray) {
-  m_Selectors.RemoveAt(0, m_Selectors.GetSize());
+    std::vector<std::unique_ptr<CFDE_CSSRule>>* ruleArray) {
+  m_Selectors.clear();
+
   CFDE_CSSStyleRule* pStyleRule = nullptr;
   const FX_WCHAR* pszValue = nullptr;
   int32_t iValueLen = 0;
@@ -177,10 +198,9 @@ FDE_CSSSyntaxStatus CFDE_CSSStyleSheet::LoadStyleRule(
     switch (pSyntax->DoSyntaxParse()) {
       case FDE_CSSSyntaxStatus::Selector: {
         pszValue = pSyntax->GetCurrentString(iValueLen);
-        CFDE_CSSSelector* pSelector =
-            CFDE_CSSSelector::FromString(pszValue, iValueLen);
+        auto pSelector = CFDE_CSSSelector::FromString(pszValue, iValueLen);
         if (pSelector)
-          m_Selectors.Add(pSelector);
+          m_Selectors.push_back(std::move(pSelector));
       } break;
       case FDE_CSSSyntaxStatus::PropertyName:
         pszValue = pSyntax->GetCurrentString(iValueLen);
@@ -206,19 +226,20 @@ FDE_CSSSyntaxStatus CFDE_CSSStyleSheet::LoadStyleRule(
         }
         break;
       case FDE_CSSSyntaxStatus::DeclOpen:
-        if (!pStyleRule && m_Selectors.GetSize() > 0) {
-          pStyleRule = new CFDE_CSSStyleRule;
+        if (!pStyleRule && !m_Selectors.empty()) {
+          auto rule = pdfium::MakeUnique<CFDE_CSSStyleRule>();
+          pStyleRule = rule.get();
           pStyleRule->SetSelector(m_Selectors);
-          ruleArray.Add(pStyleRule);
+          ruleArray->push_back(std::move(rule));
         } else {
           SkipRuleSet(pSyntax);
           return FDE_CSSSyntaxStatus::None;
         }
         break;
       case FDE_CSSSyntaxStatus::DeclClose:
-        if (pStyleRule && !pStyleRule->GetDeclImp().GetStartPosition()) {
-          pStyleRule->~CFDE_CSSStyleRule();
-          ruleArray.RemoveLast(1);
+        if (pStyleRule && pStyleRule->GetDeclImp().empty()) {
+          ruleArray->pop_back();
+          pStyleRule = nullptr;
         }
         return FDE_CSSSyntaxStatus::None;
       case FDE_CSSSyntaxStatus::EOS:
@@ -232,7 +253,7 @@ FDE_CSSSyntaxStatus CFDE_CSSStyleSheet::LoadStyleRule(
 
 FDE_CSSSyntaxStatus CFDE_CSSStyleSheet::LoadFontFaceRule(
     CFDE_CSSSyntaxParser* pSyntax,
-    CFX_MassArrayTemplate<CFDE_CSSRule*>& ruleArray) {
+    std::vector<std::unique_ptr<CFDE_CSSRule>>* ruleArray) {
   CFDE_CSSFontFaceRule* pFontFaceRule = nullptr;
   const FX_WCHAR* pszValue = nullptr;
   int32_t iValueLen = 0;
@@ -257,8 +278,9 @@ FDE_CSSSyntaxStatus CFDE_CSSStyleSheet::LoadFontFaceRule(
         break;
       case FDE_CSSSyntaxStatus::DeclOpen:
         if (!pFontFaceRule) {
-          pFontFaceRule = new CFDE_CSSFontFaceRule;
-          ruleArray.Add(pFontFaceRule);
+          auto rule = pdfium::MakeUnique<CFDE_CSSFontFaceRule>();
+          pFontFaceRule = rule.get();
+          ruleArray->push_back(std::move(rule));
         }
         break;
       case FDE_CSSSyntaxStatus::DeclClose:
@@ -316,8 +338,9 @@ FDE_CSSSyntaxStatus CFDE_CSSStyleSheet::SkipRuleSet(
 
 CFDE_CSSStyleRule::CFDE_CSSStyleRule()
     : CFDE_CSSRule(FDE_CSSRuleType::Style),
-      m_ppSelector(nullptr),
       m_iSelectors(0) {}
+
+CFDE_CSSStyleRule::~CFDE_CSSStyleRule() {}
 
 int32_t CFDE_CSSStyleRule::CountSelectorLists() const {
   return m_iSelectors;
@@ -332,77 +355,28 @@ CFDE_CSSDeclaration* CFDE_CSSStyleRule::GetDeclaration() {
 }
 
 void CFDE_CSSStyleRule::SetSelector(
-    const CFX_ArrayTemplate<CFDE_CSSSelector*>& list) {
-  ASSERT(!m_ppSelector);
-  m_iSelectors = list.GetSize();
-  m_ppSelector = static_cast<CFDE_CSSSelector**>(
-      FX_Alloc(CFDE_CSSSelector*, m_iSelectors));
-  for (int32_t i = 0; i < m_iSelectors; ++i) {
-    m_ppSelector[i] = list.GetAt(i);
-  }
+    const std::vector<std::unique_ptr<CFDE_CSSSelector>>& list) {
+  ASSERT(m_ppSelector.empty());
+
+  for (const auto& item : list)
+    m_ppSelector.push_back(item.get());
 }
 
 CFDE_CSSMediaRule::CFDE_CSSMediaRule(uint32_t dwMediaList)
-    : CFDE_CSSRule(FDE_CSSRuleType::Media),
-      m_dwMediaList(dwMediaList),
-      m_RuleArray(100) {}
+    : CFDE_CSSRule(FDE_CSSRuleType::Media), m_dwMediaList(dwMediaList) {}
 
-CFDE_CSSMediaRule::~CFDE_CSSMediaRule() {
-  for (int32_t i = m_RuleArray.GetSize() - 1; i >= 0; --i) {
-    CFDE_CSSRule* pRule = m_RuleArray.GetAt(i);
-    switch (pRule->GetType()) {
-      case FDE_CSSRuleType::Style:
-        static_cast<CFDE_CSSStyleRule*>(pRule)->~CFDE_CSSStyleRule();
-        break;
-      default:
-        ASSERT(false);
-        break;
-    }
-  }
-}
+CFDE_CSSMediaRule::~CFDE_CSSMediaRule() {}
 
 uint32_t CFDE_CSSMediaRule::GetMediaList() const {
   return m_dwMediaList;
 }
 
 int32_t CFDE_CSSMediaRule::CountRules() const {
-  return m_RuleArray.GetSize();
+  return pdfium::CollectionSize<int32_t>(m_RuleArray);
 }
 
 CFDE_CSSRule* CFDE_CSSMediaRule::GetRule(int32_t index) {
-  return m_RuleArray.GetAt(index);
-}
-
-bool FDE_IsCSSChar(FX_WCHAR wch) {
-  return (wch >= 'a' && wch <= 'z') || (wch >= 'A' && wch <= 'Z');
-}
-
-int32_t FDE_GetCSSPseudoLen(const FX_WCHAR* psz, const FX_WCHAR* pEnd) {
-  ASSERT(*psz == ':');
-  const FX_WCHAR* pStart = psz;
-  while (psz < pEnd) {
-    FX_WCHAR wch = *psz;
-    if (FDE_IsCSSChar(wch) || wch == ':') {
-      ++psz;
-    } else {
-      break;
-    }
-  }
-  return psz - pStart;
-}
-
-int32_t FDE_GetCSSNameLen(const FX_WCHAR* psz, const FX_WCHAR* pEnd) {
-  const FX_WCHAR* pStart = psz;
-  while (psz < pEnd) {
-    FX_WCHAR wch = *psz;
-    if (FDE_IsCSSChar(wch) || (wch >= '0' && wch <= '9') || wch == '_' ||
-        wch == '-') {
-      ++psz;
-    } else {
-      break;
-    }
-  }
-  return psz - pStart;
+  return m_RuleArray[index].get();
 }
 
 CFDE_CSSSelector::CFDE_CSSSelector(FDE_CSSSelectorType eType,
@@ -410,8 +384,9 @@ CFDE_CSSSelector::CFDE_CSSSelector(FDE_CSSSelectorType eType,
                                    int32_t iLen,
                                    bool bIgnoreCase)
     : m_eType(eType),
-      m_dwHash(FX_HashCode_GetW(CFX_WideStringC(psz, iLen), bIgnoreCase)),
-      m_pNext(nullptr) {}
+      m_dwHash(FX_HashCode_GetW(CFX_WideStringC(psz, iLen), bIgnoreCase)) {}
+
+CFDE_CSSSelector::~CFDE_CSSSelector() {}
 
 FDE_CSSSelectorType CFDE_CSSSelector::GetType() const {
   return m_eType;
@@ -422,10 +397,14 @@ uint32_t CFDE_CSSSelector::GetNameHash() const {
 }
 
 CFDE_CSSSelector* CFDE_CSSSelector::GetNextSelector() const {
-  return m_pNext;
+  return m_pNext.get();
 }
 
-CFDE_CSSSelector* CFDE_CSSSelector::FromString(
+std::unique_ptr<CFDE_CSSSelector> CFDE_CSSSelector::ReleaseNextSelector() {
+  return std::move(m_pNext);
+}
+
+std::unique_ptr<CFDE_CSSSelector> CFDE_CSSSelector::FromString(
     const FX_WCHAR* psz,
     int32_t iLen) {
   ASSERT(psz && iLen > 0);
@@ -440,72 +419,68 @@ CFDE_CSSSelector* CFDE_CSSSelector::FromString(
         return nullptr;
     }
   }
-  CFDE_CSSSelector* pFirst = nullptr;
+
+  std::unique_ptr<CFDE_CSSSelector> pFirst = nullptr;
   CFDE_CSSSelector* pLast = nullptr;
-  CFDE_CSSSelector* pPseudoFirst = nullptr;
+  std::unique_ptr<CFDE_CSSSelector> pPseudoFirst = nullptr;
   CFDE_CSSSelector* pPseudoLast = nullptr;
+
   for (psz = pStart; psz < pEnd;) {
     FX_WCHAR wch = *psz;
     if (wch == '.' || wch == '#') {
       if (psz == pStart || psz[-1] == ' ') {
-        CFDE_CSSSelector* p =
-            new CFDE_CSSSelector(FDE_CSSSelectorType::Element, L"*", 1, true);
-        if (!p)
-          return nullptr;
+        auto p = pdfium::MakeUnique<CFDE_CSSSelector>(
+            FDE_CSSSelectorType::Element, L"*", 1, true);
 
         if (pFirst) {
           pFirst->SetType(FDE_CSSSelectorType::Descendant);
-          p->SetNext(pFirst);
+          p->SetNext(std::move(pFirst));
         }
-        pFirst = pLast = p;
+        pFirst = std::move(p);
+        pLast = pFirst.get();
       }
       ASSERT(pLast);
-      int32_t iNameLen = FDE_GetCSSNameLen(++psz, pEnd);
-      if (iNameLen == 0) {
+
+      int32_t iNameLen = GetCSSNameLen(++psz, pEnd);
+      if (iNameLen == 0)
         return nullptr;
-      }
+
       FDE_CSSSelectorType eType =
           wch == '.' ? FDE_CSSSelectorType::Class : FDE_CSSSelectorType::ID;
-      CFDE_CSSSelector* p = new CFDE_CSSSelector(eType, psz, iNameLen, false);
-      if (!p)
-        return nullptr;
+      auto p =
+          pdfium::MakeUnique<CFDE_CSSSelector>(eType, psz, iNameLen, false);
 
-      p->SetNext(pLast->GetNextSelector());
-      pLast->SetNext(p);
-      pLast = p;
+      p->SetNext(pLast->ReleaseNextSelector());
+      pLast->SetNext(std::move(p));
+      pLast = pLast->GetNextSelector();
       psz += iNameLen;
-    } else if (FDE_IsCSSChar(wch) || wch == '*') {
-      int32_t iNameLen = wch == '*' ? 1 : FDE_GetCSSNameLen(psz, pEnd);
-      if (iNameLen == 0) {
-        return nullptr;
-      }
-      CFDE_CSSSelector* p = new CFDE_CSSSelector(FDE_CSSSelectorType::Element,
-                                                 psz, iNameLen, true);
-      if (!p)
+    } else if (IsCSSChar(wch) || wch == '*') {
+      int32_t iNameLen = wch == '*' ? 1 : GetCSSNameLen(psz, pEnd);
+      if (iNameLen == 0)
         return nullptr;
 
+      auto p = pdfium::MakeUnique<CFDE_CSSSelector>(
+          FDE_CSSSelectorType::Element, psz, iNameLen, true);
       if (pFirst) {
         pFirst->SetType(FDE_CSSSelectorType::Descendant);
-        p->SetNext(pFirst);
+        p->SetNext(std::move(pFirst));
       }
-      pFirst = p;
-      pLast = p;
+      pFirst = std::move(p);
+      pLast = pFirst.get();
       psz += iNameLen;
     } else if (wch == ':') {
-      int32_t iNameLen = FDE_GetCSSPseudoLen(psz, pEnd);
-      if (iNameLen == 0) {
-        return nullptr;
-      }
-      CFDE_CSSSelector* p = new CFDE_CSSSelector(FDE_CSSSelectorType::Pseudo,
-                                                 psz, iNameLen, true);
-      if (!p)
+      int32_t iNameLen = GetCSSPseudoLen(psz, pEnd);
+      if (iNameLen == 0)
         return nullptr;
 
+      auto p = pdfium::MakeUnique<CFDE_CSSSelector>(FDE_CSSSelectorType::Pseudo,
+                                                    psz, iNameLen, true);
+      CFDE_CSSSelector* ptr = p.get();
       if (pPseudoFirst)
-        pPseudoLast->SetNext(p);
+        pPseudoLast->SetNext(std::move(p));
       else
-        pPseudoFirst = p;
-      pPseudoLast = p;
+        pPseudoFirst = std::move(p);
+      pPseudoLast = ptr;
       psz += iNameLen;
     } else if (wch == ' ') {
       psz++;
@@ -516,7 +491,7 @@ CFDE_CSSSelector* CFDE_CSSSelector::FromString(
   if (!pPseudoFirst)
     return pFirst;
 
-  pPseudoLast->SetNext(pFirst);
+  pPseudoLast->SetNext(std::move(pFirst));
   return pPseudoFirst;
 }
 

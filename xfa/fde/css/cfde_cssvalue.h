@@ -9,10 +9,8 @@
 
 #include "xfa/fde/css/fde_css.h"
 
-class CFDE_CSSValue {
+class CFDE_CSSValue : public CFX_Retainable {
  public:
-  virtual ~CFDE_CSSValue();
-
   FDE_CSSVALUETYPE GetType() const { return m_value; }
 
  protected:

@@ -7,45 +7,23 @@
 #include "xfa/fde/css/fde_cssdeclaration.h"
 
 #include "core/fxcrt/fx_ext.h"
+#include "third_party/base/ptr_util.h"
+
+CFDE_CSSDeclaration::CFDE_CSSDeclaration() {}
+
+CFDE_CSSDeclaration::~CFDE_CSSDeclaration() {}
 
 CFDE_CSSValue* CFDE_CSSDeclaration::GetProperty(FDE_CSSProperty eProperty,
                                                 bool& bImportant) const {
-  for (const FDE_CSSPropertyHolder* pHolder = m_pFirstProperty; pHolder;
-       pHolder = pHolder->pNext) {
-    if (pHolder->eProperty == eProperty) {
-      bImportant = pHolder->bImportant;
-      return pHolder->pValue;
+  for (const auto& p : properties_) {
+    if (p->eProperty == eProperty) {
+      bImportant = p->bImportant;
+      return p->pValue.Get();
     }
   }
   return nullptr;
 }
-FX_POSITION CFDE_CSSDeclaration::GetStartPosition() const {
-  return (FX_POSITION)m_pFirstProperty;
-}
-void CFDE_CSSDeclaration::GetNextProperty(FX_POSITION& pos,
-                                          FDE_CSSProperty& eProperty,
-                                          CFDE_CSSValue*& pValue,
-                                          bool& bImportant) const {
-  const FDE_CSSPropertyHolder* pHolder = (const FDE_CSSPropertyHolder*)pos;
-  bImportant = pHolder->bImportant;
-  eProperty = pHolder->eProperty;
-  pValue = pHolder->pValue;
-  pos = (FX_POSITION)pHolder->pNext;
-}
-FX_POSITION CFDE_CSSDeclaration::GetStartCustom() const {
-  return (FX_POSITION)m_pFirstCustom;
-}
-void CFDE_CSSDeclaration::GetNextCustom(FX_POSITION& pos,
-                                        CFX_WideString& wsName,
-                                        CFX_WideString& wsValue) const {
-  const FDE_CSSCustomProperty* pProperty = (const FDE_CSSCustomProperty*)pos;
-  if (!pProperty)
-    return;
 
-  wsName = pProperty->pwsName;
-  wsValue = pProperty->pwsValue;
-  pos = (FX_POSITION)pProperty->pNext;
-}
 const FX_WCHAR* CFDE_CSSDeclaration::CopyToLocal(
     const FDE_CSSPropertyArgs* pArgs,
     const FX_WCHAR* pszValue,
@@ -67,43 +45,40 @@ const FX_WCHAR* CFDE_CSSDeclaration::CopyToLocal(
 
   return psz;
 }
-CFDE_CSSPrimitiveValue* CFDE_CSSDeclaration::NewNumberValue(
+
+CFX_RetainPtr<CFDE_CSSPrimitiveValue> CFDE_CSSDeclaration::NewNumberValue(
     FDE_CSSPrimitiveType eUnit,
     FX_FLOAT fValue) const {
-  static CFDE_CSSPrimitiveValue s_ZeroValue(FDE_CSSPrimitiveType::Number, 0.0f);
-  if (eUnit == FDE_CSSPrimitiveType::Number && FXSYS_fabs(fValue) < 0.001f) {
-    return &s_ZeroValue;
-  }
-  return new CFDE_CSSPrimitiveValue(eUnit, fValue);
+  if (eUnit == FDE_CSSPrimitiveType::Number && FXSYS_fabs(fValue) < 0.001f)
+    fValue = 0.0f;
+  return pdfium::MakeRetain<CFDE_CSSPrimitiveValue>(eUnit, fValue);
 }
-CFDE_CSSPrimitiveValue* CFDE_CSSDeclaration::NewEnumValue(
+
+CFX_RetainPtr<CFDE_CSSPrimitiveValue> CFDE_CSSDeclaration::NewEnumValue(
     FDE_CSSPropertyValue eValue) const {
-  return new CFDE_CSSPrimitiveValue(eValue);
+  return pdfium::MakeRetain<CFDE_CSSPrimitiveValue>(eValue);
 }
+
 void CFDE_CSSDeclaration::AddPropertyHolder(FDE_CSSProperty eProperty,
-                                            CFDE_CSSValue* pValue,
+                                            CFX_RetainPtr<CFDE_CSSValue> pValue,
                                             bool bImportant) {
-  FDE_CSSPropertyHolder* pHolder = new FDE_CSSPropertyHolder;
+  auto pHolder = pdfium::MakeUnique<FDE_CSSPropertyHolder>();
   pHolder->bImportant = bImportant;
   pHolder->eProperty = eProperty;
   pHolder->pValue = pValue;
-  pHolder->pNext = nullptr;
-  if (m_pLastProperty)
-    m_pLastProperty->pNext = pHolder;
-  else
-    m_pFirstProperty = pHolder;
-  m_pLastProperty = pHolder;
+  properties_.push_back(std::move(pHolder));
 }
-bool CFDE_CSSDeclaration::AddProperty(const FDE_CSSPropertyArgs* pArgs,
+
+void CFDE_CSSDeclaration::AddProperty(const FDE_CSSPropertyArgs* pArgs,
                                       const FX_WCHAR* pszValue,
                                       int32_t iValueLen) {
   ASSERT(iValueLen > 0);
   bool bImportant = false;
   if (iValueLen >= 10 && pszValue[iValueLen - 10] == '!' &&
       FXSYS_wcsnicmp(L"important", pszValue + iValueLen - 9, 9) == 0) {
-    if ((iValueLen -= 10) == 0) {
-      return false;
-    }
+    if ((iValueLen -= 10) == 0)
+      return;
+
     bImportant = true;
   }
   const uint32_t dwType = pArgs->pProperty->dwType;
@@ -121,7 +96,7 @@ bool CFDE_CSSDeclaration::AddProperty(const FDE_CSSPropertyArgs* pArgs,
         if (dwMatch == 0) {
           continue;
         }
-        CFDE_CSSValue* pCSSValue = nullptr;
+        CFX_RetainPtr<CFDE_CSSValue> pCSSValue;
         switch (dwMatch) {
           case FDE_CSSVALUETYPE_MaybeFunction:
             pCSSValue = ParseFunction(pArgs, pszValue, iValueLen);
@@ -146,18 +121,19 @@ bool CFDE_CSSDeclaration::AddProperty(const FDE_CSSPropertyArgs* pArgs,
         }
         if (pCSSValue) {
           AddPropertyHolder(pArgs->pProperty->eName, pCSSValue, bImportant);
-          return true;
+          return;
         }
-        if (FDE_IsOnlyValue(dwType, g_ValueGuessOrder[i])) {
-          return false;
-        }
+        if (FDE_IsOnlyValue(dwType, g_ValueGuessOrder[i]))
+          return;
       }
-    } break;
+      break;
+    }
     case FDE_CSSVALUETYPE_Shorthand: {
-      CFDE_CSSValue* pWidth;
+      CFX_RetainPtr<CFDE_CSSValue> pWidth;
       switch (pArgs->pProperty->eName) {
         case FDE_CSSProperty::Font:
-          return ParseFontProperty(pArgs, pszValue, iValueLen, bImportant);
+          ParseFontProperty(pArgs, pszValue, iValueLen, bImportant);
+          return;
         case FDE_CSSProperty::Border:
           if (ParseBorderProperty(pszValue, iValueLen, pWidth)) {
             AddPropertyHolder(FDE_CSSProperty::BorderLeftWidth, pWidth,
@@ -168,35 +144,35 @@ bool CFDE_CSSDeclaration::AddProperty(const FDE_CSSPropertyArgs* pArgs,
                               bImportant);
             AddPropertyHolder(FDE_CSSProperty::BorderBottomWidth, pWidth,
                               bImportant);
-            return true;
+            return;
           }
           break;
         case FDE_CSSProperty::BorderLeft:
           if (ParseBorderProperty(pszValue, iValueLen, pWidth)) {
             AddPropertyHolder(FDE_CSSProperty::BorderLeftWidth, pWidth,
                               bImportant);
-            return true;
+            return;
           }
           break;
         case FDE_CSSProperty::BorderTop:
           if (ParseBorderProperty(pszValue, iValueLen, pWidth)) {
             AddPropertyHolder(FDE_CSSProperty::BorderTopWidth, pWidth,
                               bImportant);
-            return true;
+            return;
           }
           break;
         case FDE_CSSProperty::BorderRight:
           if (ParseBorderProperty(pszValue, iValueLen, pWidth)) {
             AddPropertyHolder(FDE_CSSProperty::BorderRightWidth, pWidth,
                               bImportant);
-            return true;
+            return;
           }
           break;
         case FDE_CSSProperty::BorderBottom:
           if (ParseBorderProperty(pszValue, iValueLen, pWidth)) {
             AddPropertyHolder(FDE_CSSProperty::BorderBottomWidth, pWidth,
                               bImportant);
-            return true;
+            return;
           }
           break;
         default:
@@ -204,60 +180,59 @@ bool CFDE_CSSDeclaration::AddProperty(const FDE_CSSPropertyArgs* pArgs,
       }
     } break;
     case FDE_CSSVALUETYPE_List:
-      return ParseValueListProperty(pArgs, pszValue, iValueLen, bImportant);
+      ParseValueListProperty(pArgs, pszValue, iValueLen, bImportant);
+      return;
     default:
       ASSERT(false);
       break;
   }
-  return false;
 }
-bool CFDE_CSSDeclaration::AddProperty(const FDE_CSSPropertyArgs* pArgs,
+
+void CFDE_CSSDeclaration::AddProperty(const FDE_CSSPropertyArgs* pArgs,
                                       const FX_WCHAR* pszName,
                                       int32_t iNameLen,
                                       const FX_WCHAR* pszValue,
                                       int32_t iValueLen) {
-  FDE_CSSCustomProperty* pProperty = new FDE_CSSCustomProperty;
+  auto pProperty = pdfium::MakeUnique<FDE_CSSCustomProperty>();
   pProperty->pwsName = CopyToLocal(pArgs, pszName, iNameLen);
   pProperty->pwsValue = CopyToLocal(pArgs, pszValue, iValueLen);
-  pProperty->pNext = nullptr;
-  if (m_pLastCustom)
-    m_pLastCustom->pNext = pProperty;
-  else
-    m_pFirstCustom = pProperty;
-  m_pLastCustom = pProperty;
-  return true;
+  custom_properties_.push_back(std::move(pProperty));
 }
-CFDE_CSSValue* CFDE_CSSDeclaration::ParseNumber(
+
+CFX_RetainPtr<CFDE_CSSValue> CFDE_CSSDeclaration::ParseNumber(
     const FDE_CSSPropertyArgs* pArgs,
     const FX_WCHAR* pszValue,
     int32_t iValueLen) {
   FX_FLOAT fValue;
   FDE_CSSPrimitiveType eUnit;
-  if (!FDE_ParseCSSNumber(pszValue, iValueLen, fValue, eUnit)) {
+  if (!FDE_ParseCSSNumber(pszValue, iValueLen, fValue, eUnit))
     return nullptr;
-  }
   return NewNumberValue(eUnit, fValue);
 }
-CFDE_CSSValue* CFDE_CSSDeclaration::ParseEnum(const FDE_CSSPropertyArgs* pArgs,
-                                              const FX_WCHAR* pszValue,
-                                              int32_t iValueLen) {
+
+CFX_RetainPtr<CFDE_CSSValue> CFDE_CSSDeclaration::ParseEnum(
+    const FDE_CSSPropertyArgs* pArgs,
+    const FX_WCHAR* pszValue,
+    int32_t iValueLen) {
   const FDE_CSSPropertyValueTable* pValue =
       FDE_GetCSSPropertyValueByName(CFX_WideStringC(pszValue, iValueLen));
   return pValue ? NewEnumValue(pValue->eName) : nullptr;
 }
-CFDE_CSSValue* CFDE_CSSDeclaration::ParseColor(const FDE_CSSPropertyArgs* pArgs,
-                                               const FX_WCHAR* pszValue,
-                                               int32_t iValueLen) {
+
+CFX_RetainPtr<CFDE_CSSValue> CFDE_CSSDeclaration::ParseColor(
+    const FDE_CSSPropertyArgs* pArgs,
+    const FX_WCHAR* pszValue,
+    int32_t iValueLen) {
   FX_ARGB dwColor;
-  if (!FDE_ParseCSSColor(pszValue, iValueLen, dwColor)) {
+  if (!FDE_ParseCSSColor(pszValue, iValueLen, dwColor))
     return nullptr;
-  }
-  return new CFDE_CSSPrimitiveValue(dwColor);
+  return pdfium::MakeRetain<CFDE_CSSPrimitiveValue>(dwColor);
 }
 
-CFDE_CSSValue* CFDE_CSSDeclaration::ParseURI(const FDE_CSSPropertyArgs* pArgs,
-                                             const FX_WCHAR* pszValue,
-                                             int32_t iValueLen) {
+CFX_RetainPtr<CFDE_CSSValue> CFDE_CSSDeclaration::ParseURI(
+    const FDE_CSSPropertyArgs* pArgs,
+    const FX_WCHAR* pszValue,
+    int32_t iValueLen) {
   int32_t iOffset;
   if (!FDE_ParseCSSURI(pszValue, &iOffset, &iValueLen))
     return nullptr;
@@ -266,12 +241,12 @@ CFDE_CSSValue* CFDE_CSSDeclaration::ParseURI(const FDE_CSSPropertyArgs* pArgs,
     return nullptr;
 
   pszValue = CopyToLocal(pArgs, pszValue + iOffset, iValueLen);
-  return pszValue
-             ? new CFDE_CSSPrimitiveValue(FDE_CSSPrimitiveType::URI, pszValue)
-             : nullptr;
+  return pszValue ? pdfium::MakeRetain<CFDE_CSSPrimitiveValue>(
+                        FDE_CSSPrimitiveType::URI, pszValue)
+                  : nullptr;
 }
 
-CFDE_CSSValue* CFDE_CSSDeclaration::ParseString(
+CFX_RetainPtr<CFDE_CSSValue> CFDE_CSSDeclaration::ParseString(
     const FDE_CSSPropertyArgs* pArgs,
     const FX_WCHAR* pszValue,
     int32_t iValueLen) {
@@ -283,32 +258,31 @@ CFDE_CSSValue* CFDE_CSSDeclaration::ParseString(
     return nullptr;
 
   pszValue = CopyToLocal(pArgs, pszValue + iOffset, iValueLen);
-  return pszValue ? new CFDE_CSSPrimitiveValue(FDE_CSSPrimitiveType::String,
-                                               pszValue)
+  return pszValue ? pdfium::MakeRetain<CFDE_CSSPrimitiveValue>(
+                        FDE_CSSPrimitiveType::String, pszValue)
                   : nullptr;
 }
-CFDE_CSSValue* CFDE_CSSDeclaration::ParseFunction(
+
+CFX_RetainPtr<CFDE_CSSValue> CFDE_CSSDeclaration::ParseFunction(
     const FDE_CSSPropertyArgs* pArgs,
     const FX_WCHAR* pszValue,
     int32_t iValueLen) {
-  if (pszValue[iValueLen - 1] != ')') {
+  if (pszValue[iValueLen - 1] != ')')
     return nullptr;
-  }
+
   int32_t iStartBracket = 0;
   while (pszValue[iStartBracket] != '(') {
-    if (iStartBracket < iValueLen) {
-      iStartBracket++;
-    } else {
+    if (iStartBracket >= iValueLen)
       return nullptr;
-    }
+    iStartBracket++;
   }
-  if (iStartBracket == 0) {
+  if (iStartBracket == 0)
     return nullptr;
-  }
+
   const FX_WCHAR* pszFuncName = CopyToLocal(pArgs, pszValue, iStartBracket);
   pszValue += (iStartBracket + 1);
   iValueLen -= (iStartBracket + 2);
-  CFX_ArrayTemplate<CFDE_CSSValue*> argumentArr;
+  std::vector<CFX_RetainPtr<CFDE_CSSValue>> argumentArr;
   CFDE_CSSValueListParser parser(pszValue, iValueLen, ',');
   FDE_CSSPrimitiveType ePrimitiveType;
   while (parser.NextValue(ePrimitiveType, pszValue, iValueLen)) {
@@ -317,17 +291,16 @@ CFDE_CSSValue* CFDE_CSSDeclaration::ParseFunction(
         const FDE_CSSPropertyValueTable* pPropertyValue =
             FDE_GetCSSPropertyValueByName(CFX_WideStringC(pszValue, iValueLen));
         if (pPropertyValue) {
-          argumentArr.Add(NewEnumValue(pPropertyValue->eName));
+          argumentArr.push_back(NewEnumValue(pPropertyValue->eName));
           continue;
         }
 
-        CFDE_CSSValue* pFunctionValue =
-            ParseFunction(pArgs, pszValue, iValueLen);
+        auto pFunctionValue = ParseFunction(pArgs, pszValue, iValueLen);
         if (pFunctionValue) {
-          argumentArr.Add(pFunctionValue);
+          argumentArr.push_back(pFunctionValue);
           continue;
         }
-        argumentArr.Add(new CFDE_CSSPrimitiveValue(
+        argumentArr.push_back(pdfium::MakeRetain<CFDE_CSSPrimitiveValue>(
             FDE_CSSPrimitiveType::String,
             CopyToLocal(pArgs, pszValue, iValueLen)));
         break;
@@ -335,23 +308,24 @@ CFDE_CSSValue* CFDE_CSSDeclaration::ParseFunction(
       case FDE_CSSPrimitiveType::Number: {
         FX_FLOAT fValue;
         if (FDE_ParseCSSNumber(pszValue, iValueLen, fValue, ePrimitiveType))
-          argumentArr.Add(NewNumberValue(ePrimitiveType, fValue));
+          argumentArr.push_back(NewNumberValue(ePrimitiveType, fValue));
         break;
       }
       default:
-        argumentArr.Add(new CFDE_CSSPrimitiveValue(
+        argumentArr.push_back(pdfium::MakeRetain<CFDE_CSSPrimitiveValue>(
             FDE_CSSPrimitiveType::String,
             CopyToLocal(pArgs, pszValue, iValueLen)));
         break;
     }
   }
-  CFDE_CSSValueList* pArgumentList = new CFDE_CSSValueList(argumentArr);
-  CFDE_CSSFunction* pFunction =
-      new CFDE_CSSFunction(pszFuncName, pArgumentList);
-  return new CFDE_CSSPrimitiveValue(pFunction);
+
+  auto pArgumentList = pdfium::MakeRetain<CFDE_CSSValueList>(argumentArr);
+  auto pFunction =
+      pdfium::MakeUnique<CFDE_CSSFunction>(pszFuncName, pArgumentList);
+  return pdfium::MakeRetain<CFDE_CSSPrimitiveValue>(std::move(pFunction));
 }
 
-bool CFDE_CSSDeclaration::ParseValueListProperty(
+void CFDE_CSSDeclaration::ParseValueListProperty(
     const FDE_CSSPropertyArgs* pArgs,
     const FX_WCHAR* pszValue,
     int32_t iValueLen,
@@ -359,23 +333,24 @@ bool CFDE_CSSDeclaration::ParseValueListProperty(
   FX_WCHAR separator =
       (pArgs->pProperty->eName == FDE_CSSProperty::FontFamily) ? ',' : ' ';
   CFDE_CSSValueListParser parser(pszValue, iValueLen, separator);
+
   const uint32_t dwType = pArgs->pProperty->dwType;
   FDE_CSSPrimitiveType eType;
-  CFX_ArrayTemplate<CFDE_CSSValue*> list;
+  std::vector<CFX_RetainPtr<CFDE_CSSValue>> list;
   while (parser.NextValue(eType, pszValue, iValueLen)) {
     switch (eType) {
       case FDE_CSSPrimitiveType::Number:
         if (dwType & FDE_CSSVALUETYPE_MaybeNumber) {
           FX_FLOAT fValue;
           if (FDE_ParseCSSNumber(pszValue, iValueLen, fValue, eType))
-            list.Add(NewNumberValue(eType, fValue));
+            list.push_back(NewNumberValue(eType, fValue));
         }
         break;
       case FDE_CSSPrimitiveType::String:
         if (dwType & FDE_CSSVALUETYPE_MaybeColor) {
           FX_ARGB dwColor;
           if (FDE_ParseCSSColor(pszValue, iValueLen, dwColor)) {
-            list.Add(new CFDE_CSSPrimitiveValue(dwColor));
+            list.push_back(pdfium::MakeRetain<CFDE_CSSPrimitiveValue>(dwColor));
             continue;
           }
         }
@@ -384,21 +359,21 @@ bool CFDE_CSSDeclaration::ParseValueListProperty(
               FDE_GetCSSPropertyValueByName(
                   CFX_WideStringC(pszValue, iValueLen));
           if (pValue) {
-            list.Add(NewEnumValue(pValue->eName));
+            list.push_back(NewEnumValue(pValue->eName));
             continue;
           }
         }
         if (dwType & FDE_CSSVALUETYPE_MaybeString) {
           pszValue = CopyToLocal(pArgs, pszValue, iValueLen);
-          list.Add(new CFDE_CSSPrimitiveValue(FDE_CSSPrimitiveType::String,
-                                              pszValue));
+          list.push_back(pdfium::MakeRetain<CFDE_CSSPrimitiveValue>(
+              FDE_CSSPrimitiveType::String, pszValue));
         }
         break;
       case FDE_CSSPrimitiveType::RGB:
         if (dwType & FDE_CSSVALUETYPE_MaybeColor) {
           FX_ARGB dwColor;
           if (FDE_ParseCSSColor(pszValue, iValueLen, dwColor)) {
-            list.Add(new CFDE_CSSPrimitiveValue(dwColor));
+            list.push_back(pdfium::MakeRetain<CFDE_CSSPrimitiveValue>(dwColor));
           }
         }
         break;
@@ -406,75 +381,79 @@ bool CFDE_CSSDeclaration::ParseValueListProperty(
         break;
     }
   }
-  if (list.GetSize() == 0) {
-    return false;
-  }
+  if (list.empty())
+    return;
+
   switch (pArgs->pProperty->eName) {
     case FDE_CSSProperty::BorderWidth:
-      return Add4ValuesProperty(
-          list, bImportant, FDE_CSSProperty::BorderLeftWidth,
-          FDE_CSSProperty::BorderTopWidth, FDE_CSSProperty::BorderRightWidth,
-          FDE_CSSProperty::BorderBottomWidth);
+      Add4ValuesProperty(list, bImportant, FDE_CSSProperty::BorderLeftWidth,
+                         FDE_CSSProperty::BorderTopWidth,
+                         FDE_CSSProperty::BorderRightWidth,
+                         FDE_CSSProperty::BorderBottomWidth);
+      return;
     case FDE_CSSProperty::Margin:
-      return Add4ValuesProperty(list, bImportant, FDE_CSSProperty::MarginLeft,
-                                FDE_CSSProperty::MarginTop,
-                                FDE_CSSProperty::MarginRight,
-                                FDE_CSSProperty::MarginBottom);
+      Add4ValuesProperty(list, bImportant, FDE_CSSProperty::MarginLeft,
+                         FDE_CSSProperty::MarginTop,
+                         FDE_CSSProperty::MarginRight,
+                         FDE_CSSProperty::MarginBottom);
+      return;
     case FDE_CSSProperty::Padding:
-      return Add4ValuesProperty(list, bImportant, FDE_CSSProperty::PaddingLeft,
-                                FDE_CSSProperty::PaddingTop,
-                                FDE_CSSProperty::PaddingRight,
-                                FDE_CSSProperty::PaddingBottom);
+      Add4ValuesProperty(list, bImportant, FDE_CSSProperty::PaddingLeft,
+                         FDE_CSSProperty::PaddingTop,
+                         FDE_CSSProperty::PaddingRight,
+                         FDE_CSSProperty::PaddingBottom);
+      return;
     default: {
-      CFDE_CSSValueList* pList = new CFDE_CSSValueList(list);
+      auto pList = pdfium::MakeRetain<CFDE_CSSValueList>(list);
       AddPropertyHolder(pArgs->pProperty->eName, pList, bImportant);
-      return true;
-    } break;
+      return;
+    }
   }
-  return false;
 }
 
-bool CFDE_CSSDeclaration::Add4ValuesProperty(
-    const CFX_ArrayTemplate<CFDE_CSSValue*>& list,
+void CFDE_CSSDeclaration::Add4ValuesProperty(
+    const std::vector<CFX_RetainPtr<CFDE_CSSValue>>& list,
     bool bImportant,
     FDE_CSSProperty eLeft,
     FDE_CSSProperty eTop,
     FDE_CSSProperty eRight,
     FDE_CSSProperty eBottom) {
-  switch (list.GetSize()) {
+  switch (list.size()) {
     case 1:
       AddPropertyHolder(eLeft, list[0], bImportant);
       AddPropertyHolder(eTop, list[0], bImportant);
       AddPropertyHolder(eRight, list[0], bImportant);
       AddPropertyHolder(eBottom, list[0], bImportant);
-      return true;
+      return;
     case 2:
       AddPropertyHolder(eLeft, list[1], bImportant);
       AddPropertyHolder(eTop, list[0], bImportant);
       AddPropertyHolder(eRight, list[1], bImportant);
       AddPropertyHolder(eBottom, list[0], bImportant);
-      return true;
+      return;
     case 3:
       AddPropertyHolder(eLeft, list[1], bImportant);
       AddPropertyHolder(eTop, list[0], bImportant);
       AddPropertyHolder(eRight, list[1], bImportant);
       AddPropertyHolder(eBottom, list[2], bImportant);
-      return true;
+      return;
     case 4:
       AddPropertyHolder(eLeft, list[3], bImportant);
       AddPropertyHolder(eTop, list[0], bImportant);
       AddPropertyHolder(eRight, list[1], bImportant);
       AddPropertyHolder(eBottom, list[2], bImportant);
-      return true;
+      return;
     default:
       break;
   }
-  return false;
 }
-bool CFDE_CSSDeclaration::ParseBorderProperty(const FX_WCHAR* pszValue,
-                                              int32_t iValueLen,
-                                              CFDE_CSSValue*& pWidth) const {
-  pWidth = nullptr;
+
+bool CFDE_CSSDeclaration::ParseBorderProperty(
+    const FX_WCHAR* pszValue,
+    int32_t iValueLen,
+    CFX_RetainPtr<CFDE_CSSValue>& pWidth) const {
+  pWidth.Reset(nullptr);
+
   CFDE_CSSValueListParser parser(pszValue, iValueLen, ' ');
   FDE_CSSPrimitiveType eType;
   while (parser.NextValue(eType, pszValue, iValueLen)) {
@@ -521,17 +500,17 @@ bool CFDE_CSSDeclaration::ParseBorderProperty(const FX_WCHAR* pszValue,
   return true;
 }
 
-bool CFDE_CSSDeclaration::ParseFontProperty(const FDE_CSSPropertyArgs* pArgs,
+void CFDE_CSSDeclaration::ParseFontProperty(const FDE_CSSPropertyArgs* pArgs,
                                             const FX_WCHAR* pszValue,
                                             int32_t iValueLen,
                                             bool bImportant) {
   CFDE_CSSValueListParser parser(pszValue, iValueLen, '/');
-  CFDE_CSSPrimitiveValue* pStyle = nullptr;
-  CFDE_CSSPrimitiveValue* pVariant = nullptr;
-  CFDE_CSSPrimitiveValue* pWeight = nullptr;
-  CFDE_CSSPrimitiveValue* pFontSize = nullptr;
-  CFDE_CSSPrimitiveValue* pLineHeight = nullptr;
-  CFX_ArrayTemplate<CFDE_CSSValue*> familyList;
+  CFX_RetainPtr<CFDE_CSSPrimitiveValue> pStyle;
+  CFX_RetainPtr<CFDE_CSSPrimitiveValue> pVariant;
+  CFX_RetainPtr<CFDE_CSSPrimitiveValue> pWeight;
+  CFX_RetainPtr<CFDE_CSSPrimitiveValue> pFontSize;
+  CFX_RetainPtr<CFDE_CSSPrimitiveValue> pLineHeight;
+  std::vector<CFX_RetainPtr<CFDE_CSSValue>> familyList;
   FDE_CSSPrimitiveType eType;
   while (parser.NextValue(eType, pszValue, iValueLen)) {
     switch (eType) {
@@ -584,16 +563,16 @@ bool CFDE_CSSDeclaration::ParseFontProperty(const FDE_CSSPropertyArgs* pArgs,
           }
         }
         if (pFontSize) {
-          familyList.Add(new CFDE_CSSPrimitiveValue(
+          familyList.push_back(pdfium::MakeRetain<CFDE_CSSPrimitiveValue>(
               eType, CopyToLocal(pArgs, pszValue, iValueLen)));
         }
         parser.m_Separator = ',';
-      } break;
+        break;
+      }
       case FDE_CSSPrimitiveType::Number: {
         FX_FLOAT fValue;
-        if (!FDE_ParseCSSNumber(pszValue, iValueLen, fValue, eType)) {
+        if (!FDE_ParseCSSNumber(pszValue, iValueLen, fValue, eType))
           break;
-        }
         if (eType == FDE_CSSPrimitiveType::Number) {
           switch ((int32_t)fValue) {
             case 100:
@@ -605,9 +584,8 @@ bool CFDE_CSSDeclaration::ParseFontProperty(const FDE_CSSPropertyArgs* pArgs,
             case 700:
             case 800:
             case 900:
-              if (!pWeight) {
+              if (!pWeight)
                 pWeight = NewNumberValue(FDE_CSSPrimitiveType::Number, fValue);
-              }
               continue;
           }
         }
@@ -615,11 +593,13 @@ bool CFDE_CSSDeclaration::ParseFontProperty(const FDE_CSSPropertyArgs* pArgs,
           pFontSize = NewNumberValue(eType, fValue);
         else if (!pLineHeight)
           pLineHeight = NewNumberValue(eType, fValue);
-      } break;
+        break;
+      }
       default:
         break;
     }
   }
+
   if (!pStyle)
     pStyle = NewEnumValue(FDE_CSSPropertyValue::Normal);
   if (!pVariant)
@@ -636,9 +616,16 @@ bool CFDE_CSSDeclaration::ParseFontProperty(const FDE_CSSPropertyArgs* pArgs,
   AddPropertyHolder(FDE_CSSProperty::FontWeight, pWeight, bImportant);
   AddPropertyHolder(FDE_CSSProperty::FontSize, pFontSize, bImportant);
   AddPropertyHolder(FDE_CSSProperty::LineHeight, pLineHeight, bImportant);
-  if (familyList.GetSize() > 0) {
-    CFDE_CSSValueList* pList = new CFDE_CSSValueList(familyList);
+  if (!familyList.empty()) {
+    auto pList = pdfium::MakeRetain<CFDE_CSSValueList>(familyList);
     AddPropertyHolder(FDE_CSSProperty::FontFamily, pList, bImportant);
   }
-  return true;
 }
+
+size_t CFDE_CSSDeclaration::PropertyCountForTesting() const {
+  return properties_.size();
+}
+
+FDE_CSSPropertyHolder::FDE_CSSPropertyHolder() {}
+
+FDE_CSSPropertyHolder::~FDE_CSSPropertyHolder() {}

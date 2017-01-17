@@ -6,6 +6,8 @@
 
 #include "xfa/fde/css/fde_cssdatatable.h"
 
+#include <utility>
+
 #include "core/fxcrt/fx_ext.h"
 #include "xfa/fde/css/fde_cssstyleselector.h"
 #include "xfa/fgas/crt/fgas_codepage.h"
@@ -535,20 +537,19 @@ bool FDE_ParseCSSColor(const FX_WCHAR* pszValue,
 }
 
 CFDE_CSSValueList::CFDE_CSSValueList(
-    const CFX_ArrayTemplate<CFDE_CSSValue*>& list)
-    : CFDE_CSSValue(FDE_CSSVALUETYPE_List) {
-  m_iCount = list.GetSize();
-  m_ppList = FX_Alloc(CFDE_CSSValue*, m_iCount);
-  FXSYS_memcpy(m_ppList, list.GetData(), m_iCount * sizeof(CFDE_CSSValue*));
-}
+    std::vector<CFX_RetainPtr<CFDE_CSSValue>>& list)
+    : CFDE_CSSValue(FDE_CSSVALUETYPE_List), m_ppList(std::move(list)) {}
+
+CFDE_CSSValueList::~CFDE_CSSValueList() {}
 
 int32_t CFDE_CSSValueList::CountValues() const {
-  return m_iCount;
+  return m_ppList.size();
 }
 
 CFDE_CSSValue* CFDE_CSSValueList::GetValue(int32_t index) const {
-  return m_ppList[index];
+  return m_ppList[index].Get();
 }
+
 bool CFDE_CSSValueListParser::NextValue(FDE_CSSPrimitiveType& eType,
                                         const FX_WCHAR*& pStart,
                                         int32_t& iLength) {
@@ -651,9 +652,6 @@ int32_t CFDE_CSSValueListParser::SkipTo(FX_WCHAR wch,
   return m_pCur - pStart;
 }
 
-CFDE_CSSPrimitiveValue::CFDE_CSSPrimitiveValue(
-    const CFDE_CSSPrimitiveValue& src) = default;
-
 CFDE_CSSPrimitiveValue::CFDE_CSSPrimitiveValue(FX_ARGB color)
     : CFDE_CSSValue(FDE_CSSVALUETYPE_Primitive),
       m_eType(FDE_CSSPrimitiveType::RGB),
@@ -678,10 +676,13 @@ CFDE_CSSPrimitiveValue::CFDE_CSSPrimitiveValue(FDE_CSSPrimitiveType eType,
   ASSERT(m_pString);
 }
 
-CFDE_CSSPrimitiveValue::CFDE_CSSPrimitiveValue(CFDE_CSSFunction* pFunction)
+CFDE_CSSPrimitiveValue::CFDE_CSSPrimitiveValue(
+    std::unique_ptr<CFDE_CSSFunction> pFunction)
     : CFDE_CSSValue(FDE_CSSVALUETYPE_Primitive),
       m_eType(FDE_CSSPrimitiveType::Function),
-      m_pFunction(pFunction) {}
+      m_pFunction(std::move(pFunction)) {}
+
+CFDE_CSSPrimitiveValue::~CFDE_CSSPrimitiveValue() {}
 
 FDE_CSSPrimitiveType CFDE_CSSPrimitiveValue::GetPrimitiveType() const {
   return m_eType;
@@ -724,3 +725,11 @@ CFDE_CSSValue* CFDE_CSSPrimitiveValue::GetArgs(int32_t index) const {
   ASSERT(m_eType == FDE_CSSPrimitiveType::Function);
   return m_pFunction->GetArgs(index);
 }
+
+CFDE_CSSFunction::CFDE_CSSFunction(const FX_WCHAR* pszFuncName,
+                                   CFX_RetainPtr<CFDE_CSSValueList> pArgList)
+    : m_pArgList(pArgList), m_pszFuncName(pszFuncName) {
+  ASSERT(pArgList);
+}
+
+CFDE_CSSFunction::~CFDE_CSSFunction() {}

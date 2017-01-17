@@ -7,5 +7,3 @@
 #include "xfa/fde/css/cfde_cssvalue.h"
 
 CFDE_CSSValue::CFDE_CSSValue(FDE_CSSVALUETYPE type) : m_value(type) {}
-
-CFDE_CSSValue::~CFDE_CSSValue() {}

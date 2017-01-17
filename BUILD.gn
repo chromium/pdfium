@@ -1757,6 +1757,7 @@ test("pdfium_unittests") {
   if (pdf_enable_xfa) {
     sources += [
       "xfa/fde/cfde_txtedtbuf_unittest.cpp",
+      "xfa/fde/css/cfde_cssstylesheet_unittest.cpp",
       "xfa/fde/css/fde_cssdatatable_unittest.cpp",
       "xfa/fde/xml/fde_xml_imp_unittest.cpp",
       "xfa/fxbarcode/pdf417/BC_PDF417HighLevelEncoder_unittest.cpp",

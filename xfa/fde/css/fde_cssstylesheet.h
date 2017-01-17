@@ -9,6 +9,8 @@
 
 #include <memory>
 #include <unordered_map>
+#include <utility>
+#include <vector>
 
 #include "core/fxcrt/fx_ext.h"
 #include "xfa/fde/css/cfde_cssrule.h"
@@ -18,40 +20,46 @@ class CFDE_CSSSyntaxParser;
 
 class CFDE_CSSSelector {
  public:
+  static std::unique_ptr<CFDE_CSSSelector> FromString(const FX_WCHAR* psz,
+                                                      int32_t iLen);
+
   CFDE_CSSSelector(FDE_CSSSelectorType eType,
                    const FX_WCHAR* psz,
                    int32_t iLen,
                    bool bIgnoreCase);
+  ~CFDE_CSSSelector();
 
-  virtual FDE_CSSSelectorType GetType() const;
-  virtual uint32_t GetNameHash() const;
-  virtual CFDE_CSSSelector* GetNextSelector() const;
+  FDE_CSSSelectorType GetType() const;
+  uint32_t GetNameHash() const;
+  CFDE_CSSSelector* GetNextSelector() const;
+  std::unique_ptr<CFDE_CSSSelector> ReleaseNextSelector();
 
-  static CFDE_CSSSelector* FromString(const FX_WCHAR* psz, int32_t iLen);
-
-  void SetNext(CFDE_CSSSelector* pNext) { m_pNext = pNext; }
+  void SetNext(std::unique_ptr<CFDE_CSSSelector> pNext) {
+    m_pNext = std::move(pNext);
+  }
 
  protected:
   void SetType(FDE_CSSSelectorType eType) { m_eType = eType; }
 
   FDE_CSSSelectorType m_eType;
   uint32_t m_dwHash;
-  CFDE_CSSSelector* m_pNext;
+  std::unique_ptr<CFDE_CSSSelector> m_pNext;
 };
 
 class CFDE_CSSStyleRule : public CFDE_CSSRule {
  public:
   CFDE_CSSStyleRule();
+  ~CFDE_CSSStyleRule() override;
 
   int32_t CountSelectorLists() const;
   CFDE_CSSSelector* GetSelectorList(int32_t index) const;
   CFDE_CSSDeclaration* GetDeclaration();
   CFDE_CSSDeclaration& GetDeclImp() { return m_Declaration; }
-  void SetSelector(const CFX_ArrayTemplate<CFDE_CSSSelector*>& list);
+  void SetSelector(const std::vector<std::unique_ptr<CFDE_CSSSelector>>& list);
 
  private:
   CFDE_CSSDeclaration m_Declaration;
-  CFDE_CSSSelector** m_ppSelector;
+  std::vector<CFDE_CSSSelector*> m_ppSelector;  // Owned by the stylessheet.
   int32_t m_iSelectors;
 };
 
@@ -64,11 +72,11 @@ class CFDE_CSSMediaRule : public CFDE_CSSRule {
   int32_t CountRules() const;
   CFDE_CSSRule* GetRule(int32_t index);
 
-  CFX_MassArrayTemplate<CFDE_CSSRule*>& GetArray() { return m_RuleArray; }
+  std::vector<std::unique_ptr<CFDE_CSSRule>>& GetArray() { return m_RuleArray; }
 
  protected:
   uint32_t m_dwMediaList;
-  CFX_MassArrayTemplate<CFDE_CSSRule*> m_RuleArray;
+  std::vector<std::unique_ptr<CFDE_CSSRule>> m_RuleArray;
 };
 
 class CFDE_CSSFontFaceRule : public CFDE_CSSRule {
@@ -104,21 +112,21 @@ class CFDE_CSSStyleSheet : public IFX_Retainable {
   bool LoadFromSyntax(CFDE_CSSSyntaxParser* pSyntax);
   FDE_CSSSyntaxStatus LoadStyleRule(
       CFDE_CSSSyntaxParser* pSyntax,
-      CFX_MassArrayTemplate<CFDE_CSSRule*>& ruleArray);
+      std::vector<std::unique_ptr<CFDE_CSSRule>>* ruleArray);
   FDE_CSSSyntaxStatus LoadImportRule(CFDE_CSSSyntaxParser* pSyntax);
   FDE_CSSSyntaxStatus LoadPageRule(CFDE_CSSSyntaxParser* pSyntax);
   FDE_CSSSyntaxStatus LoadMediaRule(CFDE_CSSSyntaxParser* pSyntax);
   FDE_CSSSyntaxStatus LoadFontFaceRule(
       CFDE_CSSSyntaxParser* pSyntax,
-      CFX_MassArrayTemplate<CFDE_CSSRule*>& ruleArray);
+      std::vector<std::unique_ptr<CFDE_CSSRule>>* ruleArray);
   FDE_CSSSyntaxStatus SkipRuleSet(CFDE_CSSSyntaxParser* pSyntax);
 
   uint16_t m_wCodePage;
   uint16_t m_wRefCount;
   uint32_t m_dwMediaList;
-  CFX_MassArrayTemplate<CFDE_CSSRule*> m_RuleArray;
+  std::vector<std::unique_ptr<CFDE_CSSRule>> m_RuleArray;
   CFX_WideString m_szUrl;
-  CFX_ArrayTemplate<CFDE_CSSSelector*> m_Selectors;
+  std::vector<std::unique_ptr<CFDE_CSSSelector>> m_Selectors;
   std::unordered_map<uint32_t, FX_WCHAR*> m_StringCache;
 };
 
