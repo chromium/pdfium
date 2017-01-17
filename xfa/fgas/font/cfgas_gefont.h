@@ -24,6 +24,8 @@ class CXFA_PDFFontMgr;
 
 class CFGAS_GEFont : public CFX_Retainable {
  public:
+  template <typename T>
+  friend class CFX_RetainPtr;
   template <typename T, typename... Args>
   friend CFX_RetainPtr<T> pdfium::MakeRetain(Args&&... args);
 
@@ -46,8 +48,6 @@ class CFGAS_GEFont : public CFX_Retainable {
       bool bSaveStream);
 #endif
 
-  ~CFGAS_GEFont() override;
-
   CFX_RetainPtr<CFGAS_GEFont> Derive(uint32_t dwFontStyles,
                                      uint16_t wCodePage = 0);
   uint32_t GetFontStyles() const;
@@ -57,7 +57,7 @@ class CFGAS_GEFont : public CFX_Retainable {
   int32_t GetDescent() const;
   bool GetCharBBox(FX_WCHAR wUnicode, CFX_Rect* bbox, bool bCharCode = false);
   bool GetBBox(CFX_Rect* bbox);
-  CFX_RetainPtr<CFGAS_GEFont> GetSubstFont(int32_t iGlyphIndex) const;
+  CFX_RetainPtr<CFGAS_GEFont> GetSubstFont(int32_t iGlyphIndex);
   CFX_Font* GetDevFont() const { return m_pFont; }
   void SetFontProvider(CXFA_PDFFontMgr* pProvider) { m_pProvider = pProvider; }
 #if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
@@ -70,6 +70,7 @@ class CFGAS_GEFont : public CFX_Retainable {
  private:
   explicit CFGAS_GEFont(CFGAS_FontMgr* pFontMgr);
   CFGAS_GEFont(const CFX_RetainPtr<CFGAS_GEFont>& src, uint32_t dwFontStyles);
+  ~CFGAS_GEFont() override;
 
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
   bool LoadFontInternal(const FX_WCHAR* pszFontFamily,

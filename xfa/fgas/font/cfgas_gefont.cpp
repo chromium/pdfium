@@ -27,8 +27,7 @@ CFX_RetainPtr<CFGAS_GEFont> CFGAS_GEFont::LoadFont(
   if (!pFontMgr)
     return nullptr;
 
-  return CFX_RetainPtr<CFGAS_GEFont>(
-      pFontMgr->GetFontByCodePage(wCodePage, dwFontStyles, pszFontFamily));
+  return pFontMgr->GetFontByCodePage(wCodePage, dwFontStyles, pszFontFamily);
 #else
   auto pFont = pdfium::MakeRetain<CFGAS_GEFont>(pFontMgr);
   if (!pFont->LoadFontInternal(pszFontFamily, dwFontStyles, wCodePage))
@@ -119,9 +118,6 @@ CFGAS_GEFont::CFGAS_GEFont(const CFX_RetainPtr<CFGAS_GEFont>& src,
 }
 
 CFGAS_GEFont::~CFGAS_GEFont() {
-  if (m_pFontMgr)
-    m_pFontMgr->RemoveFont(CFX_RetainPtr<CFGAS_GEFont>(this));
-
   if (!m_bExternalFont)
     delete m_pFont;
 }
@@ -429,10 +425,9 @@ int32_t CFGAS_GEFont::GetDescent() const {
   return m_pFont->GetDescent();
 }
 
-CFX_RetainPtr<CFGAS_GEFont> CFGAS_GEFont::GetSubstFont(
-    int32_t iGlyphIndex) const {
+CFX_RetainPtr<CFGAS_GEFont> CFGAS_GEFont::GetSubstFont(int32_t iGlyphIndex) {
   iGlyphIndex = static_cast<uint32_t>(iGlyphIndex) >> 24;
   if (iGlyphIndex == 0)
-    return CFX_RetainPtr<CFGAS_GEFont>(const_cast<CFGAS_GEFont*>(this));
+    return CFX_RetainPtr<CFGAS_GEFont>(this);
   return m_SubstFonts[iGlyphIndex - 1];
 }

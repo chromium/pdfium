@@ -7,6 +7,9 @@
 #ifndef XFA_FXFA_APP_CXFA_PIECELINE_H_
 #define XFA_FXFA_APP_CXFA_PIECELINE_H_
 
+#include <memory>
+#include <vector>
+
 #include "core/fxcrt/fx_basic.h"
 
 class XFA_TextPiece;
@@ -16,7 +19,7 @@ class CXFA_PieceLine {
   CXFA_PieceLine();
   ~CXFA_PieceLine();
 
-  CFX_ArrayTemplate<XFA_TextPiece*> m_textPieces;
+  std::vector<std::unique_ptr<XFA_TextPiece>> m_textPieces;
   CFX_ArrayTemplate<int32_t> m_charCounts;
 };
 

@@ -83,6 +83,7 @@ class CFX_Retainable {
 
   void Retain() { ++m_nRefCount; }
   void Release() {
+    ASSERT(m_nRefCount > 0);
     if (--m_nRefCount == 0)
       delete this;
   }

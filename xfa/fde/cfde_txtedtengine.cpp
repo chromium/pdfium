@@ -84,7 +84,7 @@ void CFDE_TxtEdtEngine::SetEditParams(const FDE_TXTEDTPARAMS& params) {
   if (!m_pTextBreak)
     m_pTextBreak = pdfium::MakeUnique<CFX_TxtBreak>(FX_TXTBREAKPOLICY_None);
 
-  FXSYS_memcpy(&m_Param, &params, sizeof(FDE_TXTEDTPARAMS));
+  m_Param = params;
   m_wLineEnd = params.wLineBreakChar;
   m_bAutoLineEnd = (m_Param.nLineEnd == FDE_TXTEDIT_LINEEND_Auto);
   UpdateTxtBreak();

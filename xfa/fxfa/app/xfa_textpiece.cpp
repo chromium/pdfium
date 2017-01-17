@@ -9,9 +9,12 @@
 #include "xfa/fxfa/app/cxfa_linkuserdata.h"
 
 XFA_TextPiece::XFA_TextPiece()
-    : pszText(nullptr), pFont(nullptr), pLinkData(nullptr) {}
+    : pszText(nullptr), pWidths(nullptr), pFont(nullptr), pLinkData(nullptr) {}
 
 XFA_TextPiece::~XFA_TextPiece() {
   if (pLinkData)
     pLinkData->Release();
+
+  FX_Free(pszText);
+  FX_Free(pWidths);
 }
