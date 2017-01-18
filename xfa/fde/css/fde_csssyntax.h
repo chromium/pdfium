@@ -7,6 +7,8 @@
 #ifndef XFA_FDE_CSS_FDE_CSSSYNTAX_H_
 #define XFA_FDE_CSS_FDE_CSSSYNTAX_H_
 
+#include <stack>
+
 #include "core/fxcrt/cfx_retain_ptr.h"
 #include "xfa/fde/css/fde_css.h"
 #include "xfa/fgas/crt/fgas_stream.h"
@@ -66,19 +68,19 @@ class CFDE_CSSTextBuf {
 #define FDE_CSSSYNTAXCHECK_AllowCharset 1
 #define FDE_CSSSYNTAXCHECK_AllowImport 2
 
-enum FDE_CSSSYNTAXMODE {
-  FDE_CSSSYNTAXMODE_RuleSet,
-  FDE_CSSSYNTAXMODE_Comment,
-  FDE_CSSSYNTAXMODE_AtRule,
-  FDE_CSSSYNTAXMODE_UnknownRule,
-  FDE_CSSSYNTAXMODE_Charset,
-  FDE_CSSSYNTAXMODE_Import,
-  FDE_CSSSYNTAXMODE_MediaRule,
-  FDE_CSSSYNTAXMODE_URI,
-  FDE_CSSSYNTAXMODE_MediaType,
-  FDE_CSSSYNTAXMODE_Selector,
-  FDE_CSSSYNTAXMODE_PropertyName,
-  FDE_CSSSYNTAXMODE_PropertyValue,
+enum class FDE_CSSSyntaxMode {
+  RuleSet,
+  Comment,
+  AtRule,
+  UnknownRule,
+  Charset,
+  Import,
+  MediaRule,
+  URI,
+  MediaType,
+  Selector,
+  PropertyName,
+  PropertyValue,
 };
 
 class CFDE_CSSSyntaxParser {
@@ -95,7 +97,7 @@ class CFDE_CSSSyntaxParser {
 
  protected:
   void Reset(bool bOnlyDeclaration);
-  void SwitchMode(FDE_CSSSYNTAXMODE eMode);
+  void SwitchMode(FDE_CSSSyntaxMode eMode);
   int32_t SwitchToComment();
 
   bool RestoreMode();
@@ -112,9 +114,9 @@ class CFDE_CSSSyntaxParser {
   CFDE_CSSTextBuf m_TextPlane;
   int32_t m_iTextDatLen;
   uint32_t m_dwCheck;
-  FDE_CSSSYNTAXMODE m_eMode;
+  FDE_CSSSyntaxMode m_eMode;
   FDE_CSSSyntaxStatus m_eStatus;
-  CFX_StackTemplate<FDE_CSSSYNTAXMODE> m_ModeStack;
+  std::stack<FDE_CSSSyntaxMode> m_ModeStack;
 };
 
 #endif  // XFA_FDE_CSS_FDE_CSSSYNTAX_H_
