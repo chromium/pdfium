@@ -801,15 +801,18 @@ bool Document::info(IJS_Context* cc,
   CJS_Runtime* pRuntime = pContext->GetJSRuntime();
 
   v8::Local<v8::Object> pObj = pRuntime->NewFxDynamicObj(-1);
-  pRuntime->PutObjectString(pObj, L"Author", cwAuthor);
-  pRuntime->PutObjectString(pObj, L"Title", cwTitle);
-  pRuntime->PutObjectString(pObj, L"Subject", cwSubject);
-  pRuntime->PutObjectString(pObj, L"Keywords", cwKeywords);
-  pRuntime->PutObjectString(pObj, L"Creator", cwCreator);
-  pRuntime->PutObjectString(pObj, L"Producer", cwProducer);
-  pRuntime->PutObjectString(pObj, L"CreationDate", cwCreationDate);
-  pRuntime->PutObjectString(pObj, L"ModDate", cwModDate);
-  pRuntime->PutObjectString(pObj, L"Trapped", cwTrapped);
+  pRuntime->PutObjectProperty(pObj, L"Author", pRuntime->NewString(cwAuthor));
+  pRuntime->PutObjectProperty(pObj, L"Title", pRuntime->NewString(cwTitle));
+  pRuntime->PutObjectProperty(pObj, L"Subject", pRuntime->NewString(cwSubject));
+  pRuntime->PutObjectProperty(pObj, L"Keywords",
+                              pRuntime->NewString(cwKeywords));
+  pRuntime->PutObjectProperty(pObj, L"Creator", pRuntime->NewString(cwCreator));
+  pRuntime->PutObjectProperty(pObj, L"Producer",
+                              pRuntime->NewString(cwProducer));
+  pRuntime->PutObjectProperty(pObj, L"CreationDate",
+                              pRuntime->NewString(cwCreationDate));
+  pRuntime->PutObjectProperty(pObj, L"ModDate", pRuntime->NewString(cwModDate));
+  pRuntime->PutObjectProperty(pObj, L"Trapped", pRuntime->NewString(cwTrapped));
 
   // It's to be compatible to non-standard info dictionary.
   for (const auto& it : *pDictionary) {
@@ -817,11 +820,14 @@ bool Document::info(IJS_Context* cc,
     CPDF_Object* pValueObj = it.second.get();
     CFX_WideString wsKey = CFX_WideString::FromUTF8(bsKey.AsStringC());
     if (pValueObj->IsString() || pValueObj->IsName()) {
-      pRuntime->PutObjectString(pObj, wsKey, pValueObj->GetUnicodeText());
+      pRuntime->PutObjectProperty(
+          pObj, wsKey, pRuntime->NewString(pValueObj->GetUnicodeText()));
     } else if (pValueObj->IsNumber()) {
-      pRuntime->PutObjectNumber(pObj, wsKey, (float)pValueObj->GetNumber());
+      pRuntime->PutObjectProperty(pObj, wsKey,
+                                  pRuntime->NewNumber(pValueObj->GetNumber()));
     } else if (pValueObj->IsBoolean()) {
-      pRuntime->PutObjectBoolean(pObj, wsKey, !!pValueObj->GetInteger());
+      pRuntime->PutObjectProperty(
+          pObj, wsKey, pRuntime->NewBoolean(!!pValueObj->GetInteger()));
     }
   }
   vp << pObj;

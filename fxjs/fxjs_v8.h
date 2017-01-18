@@ -176,6 +176,7 @@ class CFXJS_Engine {
 
   v8::Local<v8::Context> NewLocalContext();
   v8::Local<v8::Context> GetPersistentContext();
+  v8::Local<v8::Object> GetThisObj();
 
   v8::Local<v8::Value> NewNull();
   v8::Local<v8::Array> NewArray();
@@ -183,18 +184,18 @@ class CFXJS_Engine {
   v8::Local<v8::Value> NewNumber(double number);
   v8::Local<v8::Value> NewNumber(float number);
   v8::Local<v8::Value> NewBoolean(bool b);
-  v8::Local<v8::Value> NewString(const wchar_t* str);
+  v8::Local<v8::Value> NewString(const CFX_WideString& str);
   v8::Local<v8::Date> NewDate(double d);
   v8::Local<v8::Object> NewFxDynamicObj(int nObjDefnID, bool bStatic = false);
 
-  v8::Local<v8::Object> GetThisObj();
   int ToInt32(v8::Local<v8::Value> pValue);
   bool ToBoolean(v8::Local<v8::Value> pValue);
-  double ToNumber(v8::Local<v8::Value> pValue);
-  CFX_WideString ToString(v8::Local<v8::Value> pValue);
+  double ToDouble(v8::Local<v8::Value> pValue);
+  CFX_WideString ToWideString(v8::Local<v8::Value> pValue);
   v8::Local<v8::Object> ToObject(v8::Local<v8::Value> pValue);
   v8::Local<v8::Array> ToArray(v8::Local<v8::Value> pValue);
 
+  // Arrays.
   unsigned GetArrayLength(v8::Local<v8::Array> pArray);
   v8::Local<v8::Value> GetArrayElement(v8::Local<v8::Array> pArray,
                                        unsigned index);
@@ -202,31 +203,14 @@ class CFXJS_Engine {
                            unsigned index,
                            v8::Local<v8::Value> pValue);
 
+  // Objects.
   std::vector<CFX_WideString> GetObjectPropertyNames(
       v8::Local<v8::Object> pObj);
   v8::Local<v8::Value> GetObjectProperty(v8::Local<v8::Object> pObj,
                                          const CFX_WideString& PropertyName);
-
-  void PutObjectString(v8::Local<v8::Object> pObj,
-                       const CFX_WideString& wsPropertyName,
-                       const CFX_WideString& wsValue);
-  void PutObjectNumber(v8::Local<v8::Object> pObj,
-                       const CFX_WideString& PropertyName,
-                       int nValue);
-  void PutObjectNumber(v8::Local<v8::Object> pObj,
-                       const CFX_WideString& PropertyName,
-                       float fValue);
-  void PutObjectNumber(v8::Local<v8::Object> pObj,
-                       const CFX_WideString& PropertyName,
-                       double dValue);
-  void PutObjectBoolean(v8::Local<v8::Object> pObj,
-                        const CFX_WideString& PropertyName,
-                        bool bValue);
-  void PutObjectObject(v8::Local<v8::Object> pObj,
-                       const CFX_WideString& PropertyName,
-                       v8::Local<v8::Object> pPut);
-  void PutObjectNull(v8::Local<v8::Object> pObj,
-                     const CFX_WideString& PropertyName);
+  void PutObjectProperty(v8::Local<v8::Object> pObj,
+                         const CFX_WideString& PropertyName,
+                         v8::Local<v8::Value> pValue);
 
   // Native object binding.
   void SetObjectPrivate(v8::Local<v8::Object> pObj, void* p);
