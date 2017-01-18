@@ -4,6 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fde/css/cfde_cssvalue.h"
+#include "xfa/fde/css/cfde_cssenumvalue.h"
 
-CFDE_CSSValue::CFDE_CSSValue(FDE_CSSPrimitiveType type) : m_value(type) {}
+CFDE_CSSEnumValue::CFDE_CSSEnumValue(FDE_CSSPropertyValue value)
+    : CFDE_CSSValue(FDE_CSSPrimitiveType::Enum), value_(value) {}
+
+CFDE_CSSEnumValue::~CFDE_CSSEnumValue() {}

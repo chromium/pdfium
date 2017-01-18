@@ -11,13 +11,13 @@
 
 class CFDE_CSSValue : public CFX_Retainable {
  public:
-  FDE_CSSVALUETYPE GetType() const { return m_value; }
+  FDE_CSSPrimitiveType GetType() const { return m_value; }
 
  protected:
-  explicit CFDE_CSSValue(FDE_CSSVALUETYPE type);
+  explicit CFDE_CSSValue(FDE_CSSPrimitiveType type);
 
  private:
-  FDE_CSSVALUETYPE m_value;
+  FDE_CSSPrimitiveType m_value;
 };
 
 #endif  // XFA_FDE_CSS_CFDE_CSSVALUE_H_

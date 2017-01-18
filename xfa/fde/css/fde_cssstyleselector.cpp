@@ -11,11 +11,29 @@
 
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
+#include "xfa/fde/css/cfde_csscolorvalue.h"
+#include "xfa/fde/css/cfde_cssenumvalue.h"
+#include "xfa/fde/css/cfde_cssstringvalue.h"
+#include "xfa/fde/css/cfde_cssvaluelist.h"
 #include "xfa/fde/css/fde_csscache.h"
 #include "xfa/fde/css/fde_cssdeclaration.h"
 #include "xfa/fde/css/fde_cssstylesheet.h"
 #include "xfa/fde/css/fde_csssyntax.h"
 #include "xfa/fxfa/app/cxfa_csstagprovider.h"
+
+namespace {
+
+template <class T>
+T* ToValue(CFDE_CSSValue* val) {
+  return static_cast<T*>(val);
+}
+
+template <class T>
+const T* ToValue(const CFDE_CSSValue* val) {
+  return static_cast<T*>(val);
+}
+
+}  // namespace
 
 #define FDE_CSSUNIVERSALHASH ('*')
 
@@ -379,55 +397,54 @@ void CFDE_CSSStyleSelector::ApplyProperty(
     FDE_CSSProperty eProperty,
     CFDE_CSSValue* pValue,
     CFDE_CSSComputedStyle* pComputedStyle) {
-  if (pValue->GetType() == FDE_CSSVALUETYPE_Primitive) {
-    CFDE_CSSPrimitiveValue* pPrimitive =
-        static_cast<CFDE_CSSPrimitiveValue*>(pValue);
-    FDE_CSSPrimitiveType eType = pPrimitive->GetPrimitiveType();
+  if (pValue->GetType() != FDE_CSSPrimitiveType::List) {
+    FDE_CSSPrimitiveType eType = pValue->GetType();
     switch (eProperty) {
       case FDE_CSSProperty::Display:
         if (eType == FDE_CSSPrimitiveType::Enum) {
           pComputedStyle->m_NonInheritedData.m_eDisplay =
-              ToDisplay(pPrimitive->GetEnum());
+              ToDisplay(ToValue<CFDE_CSSEnumValue>(pValue)->Value());
         }
         break;
       case FDE_CSSProperty::FontSize: {
         FX_FLOAT& fFontSize = pComputedStyle->m_InheritedData.m_fFontSize;
-        if (eType >= FDE_CSSPrimitiveType::Number &&
-            eType <= FDE_CSSPrimitiveType::Picas) {
-          fFontSize = ApplyNumber(eType, pPrimitive->GetFloat(), fFontSize);
+        if (eType == FDE_CSSPrimitiveType::Number) {
+          fFontSize = ToValue<CFDE_CSSNumberValue>(pValue)->Apply(fFontSize);
         } else if (eType == FDE_CSSPrimitiveType::Enum) {
-          fFontSize = ToFontSize(pPrimitive->GetEnum(), fFontSize);
+          fFontSize = ToFontSize(ToValue<CFDE_CSSEnumValue>(pValue)->Value(),
+                                 fFontSize);
         }
       } break;
       case FDE_CSSProperty::LineHeight:
         if (eType == FDE_CSSPrimitiveType::Number) {
-          pComputedStyle->m_InheritedData.m_fLineHeight =
-              pPrimitive->GetFloat() *
-              pComputedStyle->m_InheritedData.m_fFontSize;
-        } else if (eType > FDE_CSSPrimitiveType::Number &&
-                   eType <= FDE_CSSPrimitiveType::Picas) {
-          pComputedStyle->m_InheritedData.m_fLineHeight =
-              ApplyNumber(eType, pPrimitive->GetFloat(),
-                          pComputedStyle->m_InheritedData.m_fFontSize);
+          const CFDE_CSSNumberValue* v = ToValue<CFDE_CSSNumberValue>(pValue);
+          if (v->Kind() == FDE_CSSNumberType::Number) {
+            pComputedStyle->m_InheritedData.m_fLineHeight =
+                v->Value() * pComputedStyle->m_InheritedData.m_fFontSize;
+          } else {
+            pComputedStyle->m_InheritedData.m_fLineHeight =
+                v->Apply(pComputedStyle->m_InheritedData.m_fFontSize);
+          }
         }
         break;
       case FDE_CSSProperty::TextAlign:
         if (eType == FDE_CSSPrimitiveType::Enum) {
           pComputedStyle->m_InheritedData.m_eTextAlign =
-              ToTextAlign(pPrimitive->GetEnum());
+              ToTextAlign(ToValue<CFDE_CSSEnumValue>(pValue)->Value());
         }
         break;
       case FDE_CSSProperty::TextIndent:
         SetLengthWithPercent(pComputedStyle->m_InheritedData.m_TextIndent,
-                             eType, pPrimitive,
+                             eType, pValue,
                              pComputedStyle->m_InheritedData.m_fFontSize);
         break;
       case FDE_CSSProperty::FontWeight:
         if (eType == FDE_CSSPrimitiveType::Enum) {
           pComputedStyle->m_InheritedData.m_wFontWeight =
-              ToFontWeight(pPrimitive->GetEnum());
+              ToFontWeight(ToValue<CFDE_CSSEnumValue>(pValue)->Value());
         } else if (eType == FDE_CSSPrimitiveType::Number) {
-          int32_t iValue = (int32_t)pPrimitive->GetFloat() / 100;
+          int32_t iValue =
+              (int32_t)ToValue<CFDE_CSSNumberValue>(pValue)->Value() / 100;
           if (iValue >= 1 && iValue <= 9) {
             pComputedStyle->m_InheritedData.m_wFontWeight = iValue * 100;
           }
@@ -436,169 +453,171 @@ void CFDE_CSSStyleSelector::ApplyProperty(
       case FDE_CSSProperty::FontStyle:
         if (eType == FDE_CSSPrimitiveType::Enum) {
           pComputedStyle->m_InheritedData.m_eFontStyle =
-              ToFontStyle(pPrimitive->GetEnum());
+              ToFontStyle(ToValue<CFDE_CSSEnumValue>(pValue)->Value());
         }
         break;
       case FDE_CSSProperty::Color:
         if (eType == FDE_CSSPrimitiveType::RGB) {
           pComputedStyle->m_InheritedData.m_dwFontColor =
-              pPrimitive->GetRGBColor();
+              ToValue<CFDE_CSSColorValue>(pValue)->Value();
         }
         break;
       case FDE_CSSProperty::MarginLeft:
         if (SetLengthWithPercent(
                 pComputedStyle->m_NonInheritedData.m_MarginWidth.left, eType,
-                pPrimitive, pComputedStyle->m_InheritedData.m_fFontSize)) {
+                pValue, pComputedStyle->m_InheritedData.m_fFontSize)) {
           pComputedStyle->m_NonInheritedData.m_bHasMargin = true;
         }
         break;
       case FDE_CSSProperty::MarginTop:
         if (SetLengthWithPercent(
                 pComputedStyle->m_NonInheritedData.m_MarginWidth.top, eType,
-                pPrimitive, pComputedStyle->m_InheritedData.m_fFontSize)) {
+                pValue, pComputedStyle->m_InheritedData.m_fFontSize)) {
           pComputedStyle->m_NonInheritedData.m_bHasMargin = true;
         }
         break;
       case FDE_CSSProperty::MarginRight:
         if (SetLengthWithPercent(
                 pComputedStyle->m_NonInheritedData.m_MarginWidth.right, eType,
-                pPrimitive, pComputedStyle->m_InheritedData.m_fFontSize)) {
+                pValue, pComputedStyle->m_InheritedData.m_fFontSize)) {
           pComputedStyle->m_NonInheritedData.m_bHasMargin = true;
         }
         break;
       case FDE_CSSProperty::MarginBottom:
         if (SetLengthWithPercent(
                 pComputedStyle->m_NonInheritedData.m_MarginWidth.bottom, eType,
-                pPrimitive, pComputedStyle->m_InheritedData.m_fFontSize)) {
+                pValue, pComputedStyle->m_InheritedData.m_fFontSize)) {
           pComputedStyle->m_NonInheritedData.m_bHasMargin = true;
         }
         break;
       case FDE_CSSProperty::PaddingLeft:
         if (SetLengthWithPercent(
                 pComputedStyle->m_NonInheritedData.m_PaddingWidth.left, eType,
-                pPrimitive, pComputedStyle->m_InheritedData.m_fFontSize)) {
+                pValue, pComputedStyle->m_InheritedData.m_fFontSize)) {
           pComputedStyle->m_NonInheritedData.m_bHasPadding = true;
         }
         break;
       case FDE_CSSProperty::PaddingTop:
         if (SetLengthWithPercent(
                 pComputedStyle->m_NonInheritedData.m_PaddingWidth.top, eType,
-                pPrimitive, pComputedStyle->m_InheritedData.m_fFontSize)) {
+                pValue, pComputedStyle->m_InheritedData.m_fFontSize)) {
           pComputedStyle->m_NonInheritedData.m_bHasPadding = true;
         }
         break;
       case FDE_CSSProperty::PaddingRight:
         if (SetLengthWithPercent(
                 pComputedStyle->m_NonInheritedData.m_PaddingWidth.right, eType,
-                pPrimitive, pComputedStyle->m_InheritedData.m_fFontSize)) {
+                pValue, pComputedStyle->m_InheritedData.m_fFontSize)) {
           pComputedStyle->m_NonInheritedData.m_bHasPadding = true;
         }
         break;
       case FDE_CSSProperty::PaddingBottom:
         if (SetLengthWithPercent(
                 pComputedStyle->m_NonInheritedData.m_PaddingWidth.bottom, eType,
-                pPrimitive, pComputedStyle->m_InheritedData.m_fFontSize)) {
+                pValue, pComputedStyle->m_InheritedData.m_fFontSize)) {
           pComputedStyle->m_NonInheritedData.m_bHasPadding = true;
         }
         break;
       case FDE_CSSProperty::BorderLeftWidth:
         if (SetLengthWithPercent(
                 pComputedStyle->m_NonInheritedData.m_BorderWidth.left, eType,
-                pPrimitive, pComputedStyle->m_InheritedData.m_fFontSize)) {
+                pValue, pComputedStyle->m_InheritedData.m_fFontSize)) {
           pComputedStyle->m_NonInheritedData.m_bHasBorder = true;
         }
         break;
       case FDE_CSSProperty::BorderTopWidth:
         if (SetLengthWithPercent(
                 pComputedStyle->m_NonInheritedData.m_BorderWidth.top, eType,
-                pPrimitive, pComputedStyle->m_InheritedData.m_fFontSize)) {
+                pValue, pComputedStyle->m_InheritedData.m_fFontSize)) {
           pComputedStyle->m_NonInheritedData.m_bHasBorder = true;
         }
         break;
       case FDE_CSSProperty::BorderRightWidth:
         if (SetLengthWithPercent(
                 pComputedStyle->m_NonInheritedData.m_BorderWidth.right, eType,
-                pPrimitive, pComputedStyle->m_InheritedData.m_fFontSize)) {
+                pValue, pComputedStyle->m_InheritedData.m_fFontSize)) {
           pComputedStyle->m_NonInheritedData.m_bHasBorder = true;
         }
         break;
       case FDE_CSSProperty::BorderBottomWidth:
         if (SetLengthWithPercent(
                 pComputedStyle->m_NonInheritedData.m_BorderWidth.bottom, eType,
-                pPrimitive, pComputedStyle->m_InheritedData.m_fFontSize)) {
+                pValue, pComputedStyle->m_InheritedData.m_fFontSize)) {
           pComputedStyle->m_NonInheritedData.m_bHasBorder = true;
         }
         break;
       case FDE_CSSProperty::VerticalAlign:
         if (eType == FDE_CSSPrimitiveType::Enum) {
           pComputedStyle->m_NonInheritedData.m_eVerticalAlign =
-              ToVerticalAlign(pPrimitive->GetEnum());
-        } else if (eType >= FDE_CSSPrimitiveType::Number &&
-                   eType <= FDE_CSSPrimitiveType::Picas) {
+              ToVerticalAlign(ToValue<CFDE_CSSEnumValue>(pValue)->Value());
+        } else if (eType == FDE_CSSPrimitiveType::Number) {
           pComputedStyle->m_NonInheritedData.m_eVerticalAlign =
               FDE_CSSVerticalAlign::Number;
           pComputedStyle->m_NonInheritedData.m_fVerticalAlign =
-              ApplyNumber(eType, pPrimitive->GetFloat(),
-                          pComputedStyle->m_InheritedData.m_fFontSize);
+              ToValue<CFDE_CSSNumberValue>(pValue)->Apply(
+                  pComputedStyle->m_InheritedData.m_fFontSize);
         }
         break;
       case FDE_CSSProperty::FontVariant:
         if (eType == FDE_CSSPrimitiveType::Enum) {
           pComputedStyle->m_InheritedData.m_eFontVariant =
-              ToFontVariant(pPrimitive->GetEnum());
+              ToFontVariant(ToValue<CFDE_CSSEnumValue>(pValue)->Value());
         }
         break;
       case FDE_CSSProperty::LetterSpacing:
-        if (eType == FDE_CSSPrimitiveType::Percent) {
-          break;
-        } else if (eType == FDE_CSSPrimitiveType::Enum) {
+        if (eType == FDE_CSSPrimitiveType::Enum) {
           pComputedStyle->m_InheritedData.m_LetterSpacing.Set(
               FDE_CSSLengthUnit::Normal);
-        } else if (eType >= FDE_CSSPrimitiveType::Number &&
-                   eType <= FDE_CSSPrimitiveType::Picas) {
+        } else if (eType == FDE_CSSPrimitiveType::Number) {
+          if (ToValue<CFDE_CSSNumberValue>(pValue)->Kind() ==
+              FDE_CSSNumberType::Percent) {
+            break;
+          }
+
           SetLengthWithPercent(pComputedStyle->m_InheritedData.m_LetterSpacing,
-                               eType, pPrimitive,
+                               eType, pValue,
                                pComputedStyle->m_InheritedData.m_fFontSize);
         }
         break;
       case FDE_CSSProperty::WordSpacing:
-        if (eType == FDE_CSSPrimitiveType::Percent) {
-          break;
-        } else if (eType == FDE_CSSPrimitiveType::Enum) {
+        if (eType == FDE_CSSPrimitiveType::Enum) {
           pComputedStyle->m_InheritedData.m_WordSpacing.Set(
               FDE_CSSLengthUnit::Normal);
-        } else if (eType >= FDE_CSSPrimitiveType::Number &&
-                   eType <= FDE_CSSPrimitiveType::Picas) {
+        } else if (eType == FDE_CSSPrimitiveType::Number) {
+          if (ToValue<CFDE_CSSNumberValue>(pValue)->Kind() ==
+              FDE_CSSNumberType::Percent) {
+            break;
+          }
           SetLengthWithPercent(pComputedStyle->m_InheritedData.m_WordSpacing,
-                               eType, pPrimitive,
+                               eType, pValue,
                                pComputedStyle->m_InheritedData.m_fFontSize);
         }
         break;
       case FDE_CSSProperty::Top:
         SetLengthWithPercent(pComputedStyle->m_NonInheritedData.m_Top, eType,
-                             pPrimitive,
+                             pValue,
                              pComputedStyle->m_InheritedData.m_fFontSize);
         break;
       case FDE_CSSProperty::Bottom:
         SetLengthWithPercent(pComputedStyle->m_NonInheritedData.m_Bottom, eType,
-                             pPrimitive,
+                             pValue,
                              pComputedStyle->m_InheritedData.m_fFontSize);
         break;
       case FDE_CSSProperty::Left:
         SetLengthWithPercent(pComputedStyle->m_NonInheritedData.m_Left, eType,
-                             pPrimitive,
+                             pValue,
                              pComputedStyle->m_InheritedData.m_fFontSize);
         break;
       case FDE_CSSProperty::Right:
         SetLengthWithPercent(pComputedStyle->m_NonInheritedData.m_Right, eType,
-                             pPrimitive,
+                             pValue,
                              pComputedStyle->m_InheritedData.m_fFontSize);
         break;
       default:
         break;
     }
-  } else if (pValue->GetType() == FDE_CSSVALUETYPE_List) {
-    CFDE_CSSValueList* pList = static_cast<CFDE_CSSValueList*>(pValue);
+  } else if (pValue->GetType() == FDE_CSSPrimitiveType::List) {
+    CFDE_CSSValueList* pList = ToValue<CFDE_CSSValueList>(pValue);
     int32_t iCount = pList->CountValues();
     if (iCount > 0) {
       switch (eProperty) {
@@ -615,32 +634,6 @@ void CFDE_CSSStyleSelector::ApplyProperty(
     }
   } else {
     ASSERT(false);
-  }
-}
-
-FX_FLOAT CFDE_CSSStyleSelector::ApplyNumber(FDE_CSSPrimitiveType eUnit,
-                                            FX_FLOAT fValue,
-                                            FX_FLOAT fPercentBase) {
-  switch (eUnit) {
-    case FDE_CSSPrimitiveType::Pixels:
-    case FDE_CSSPrimitiveType::Number:
-      return fValue * 72 / 96;
-    case FDE_CSSPrimitiveType::EMS:
-    case FDE_CSSPrimitiveType::EXS:
-      return fValue * fPercentBase;
-    case FDE_CSSPrimitiveType::Percent:
-      return fValue * fPercentBase / 100.0f;
-    case FDE_CSSPrimitiveType::CentiMeters:
-      return fValue * 28.3464f;
-    case FDE_CSSPrimitiveType::MilliMeters:
-      return fValue * 2.8346f;
-    case FDE_CSSPrimitiveType::Inches:
-      return fValue * 72.0f;
-    case FDE_CSSPrimitiveType::Picas:
-      return fValue / 12.0f;
-    case FDE_CSSPrimitiveType::Points:
-    default:
-      return fValue;
   }
 }
 
@@ -702,21 +695,23 @@ FDE_CSSFontStyle CFDE_CSSStyleSelector::ToFontStyle(
   }
 }
 
-bool CFDE_CSSStyleSelector::SetLengthWithPercent(
-    FDE_CSSLength& width,
-    FDE_CSSPrimitiveType eType,
-    CFDE_CSSPrimitiveValue* pPrimitive,
-    FX_FLOAT fFontSize) {
-  if (eType == FDE_CSSPrimitiveType::Percent) {
-    width.Set(FDE_CSSLengthUnit::Percent, pPrimitive->GetFloat() / 100.0f);
-    return width.NonZero();
-  } else if (eType >= FDE_CSSPrimitiveType::Number &&
-             eType <= FDE_CSSPrimitiveType::Picas) {
-    FX_FLOAT fValue = ApplyNumber(eType, pPrimitive->GetFloat(), fFontSize);
+bool CFDE_CSSStyleSelector::SetLengthWithPercent(FDE_CSSLength& width,
+                                                 FDE_CSSPrimitiveType eType,
+                                                 CFDE_CSSValue* pValue,
+                                                 FX_FLOAT fFontSize) {
+  if (eType == FDE_CSSPrimitiveType::Number) {
+    const CFDE_CSSNumberValue* v = ToValue<CFDE_CSSNumberValue>(pValue);
+    if (v->Kind() == FDE_CSSNumberType::Percent) {
+      width.Set(FDE_CSSLengthUnit::Percent,
+                ToValue<CFDE_CSSNumberValue>(pValue)->Value() / 100.0f);
+      return width.NonZero();
+    }
+
+    FX_FLOAT fValue = v->Apply(fFontSize);
     width.Set(FDE_CSSLengthUnit::Point, fValue);
     return width.NonZero();
   } else if (eType == FDE_CSSPrimitiveType::Enum) {
-    switch (pPrimitive->GetEnum()) {
+    switch (ToValue<CFDE_CSSEnumValue>(pValue)->Value()) {
       case FDE_CSSPropertyValue::Auto:
         width.Set(FDE_CSSLengthUnit::Auto);
         return true;
@@ -791,28 +786,28 @@ FDE_CSSVerticalAlign CFDE_CSSStyleSelector::ToVerticalAlign(
 uint32_t CFDE_CSSStyleSelector::ToTextDecoration(CFDE_CSSValueList* pValue) {
   uint32_t dwDecoration = 0;
   for (int32_t i = pValue->CountValues() - 1; i >= 0; --i) {
-    CFDE_CSSPrimitiveValue* pPrimitive =
-        static_cast<CFDE_CSSPrimitiveValue*>(pValue->GetValue(i));
-    if (pPrimitive->GetPrimitiveType() == FDE_CSSPrimitiveType::Enum) {
-      switch (pPrimitive->GetEnum()) {
-        case FDE_CSSPropertyValue::Underline:
-          dwDecoration |= FDE_CSSTEXTDECORATION_Underline;
-          break;
-        case FDE_CSSPropertyValue::LineThrough:
-          dwDecoration |= FDE_CSSTEXTDECORATION_LineThrough;
-          break;
-        case FDE_CSSPropertyValue::Overline:
-          dwDecoration |= FDE_CSSTEXTDECORATION_Overline;
-          break;
-        case FDE_CSSPropertyValue::Blink:
-          dwDecoration |= FDE_CSSTEXTDECORATION_Blink;
-          break;
-        case FDE_CSSPropertyValue::Double:
-          dwDecoration |= FDE_CSSTEXTDECORATION_Double;
-          break;
-        default:
-          break;
-      }
+    CFDE_CSSValue* pVal = pValue->GetValue(i);
+    if (pVal->GetType() != FDE_CSSPrimitiveType::Enum)
+      continue;
+
+    switch (ToValue<CFDE_CSSEnumValue>(pVal)->Value()) {
+      case FDE_CSSPropertyValue::Underline:
+        dwDecoration |= FDE_CSSTEXTDECORATION_Underline;
+        break;
+      case FDE_CSSPropertyValue::LineThrough:
+        dwDecoration |= FDE_CSSTEXTDECORATION_LineThrough;
+        break;
+      case FDE_CSSPropertyValue::Overline:
+        dwDecoration |= FDE_CSSTEXTDECORATION_Overline;
+        break;
+      case FDE_CSSPropertyValue::Blink:
+        dwDecoration |= FDE_CSSTEXTDECORATION_Blink;
+        break;
+      case FDE_CSSPropertyValue::Double:
+        dwDecoration |= FDE_CSSTEXTDECORATION_Double;
+        break;
+      default:
+        break;
     }
   }
   return dwDecoration;
@@ -858,10 +853,10 @@ int32_t CFDE_CSSComputedStyle::CountFontFamilies() const {
              : 0;
 }
 
-const FX_WCHAR* CFDE_CSSComputedStyle::GetFontFamily(int32_t index) const {
-  return (static_cast<CFDE_CSSPrimitiveValue*>(
-              m_InheritedData.m_pFontFamily->GetValue(index)))
-      ->GetString(index);
+const CFX_WideString CFDE_CSSComputedStyle::GetFontFamily(int32_t index) const {
+  return ToValue<CFDE_CSSStringValue>(
+             m_InheritedData.m_pFontFamily->GetValue(index))
+      ->Value();
 }
 
 uint16_t CFDE_CSSComputedStyle::GetFontWeight() const {

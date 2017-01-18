@@ -95,26 +95,15 @@ class CFDE_CSSDeclaration {
   CFX_RetainPtr<CFDE_CSSValue> ParseColor(const FDE_CSSPropertyArgs* pArgs,
                                           const FX_WCHAR* pszValue,
                                           int32_t iValueLen);
-  CFX_RetainPtr<CFDE_CSSValue> ParseURI(const FDE_CSSPropertyArgs* pArgs,
-                                        const FX_WCHAR* pszValue,
-                                        int32_t iValueLen);
   CFX_RetainPtr<CFDE_CSSValue> ParseString(const FDE_CSSPropertyArgs* pArgs,
                                            const FX_WCHAR* pszValue,
                                            int32_t iValueLen);
-  CFX_RetainPtr<CFDE_CSSValue> ParseFunction(const FDE_CSSPropertyArgs* pArgs,
-                                             const FX_WCHAR* pszValue,
-                                             int32_t iValueLen);
   const FX_WCHAR* CopyToLocal(const FDE_CSSPropertyArgs* pArgs,
                               const FX_WCHAR* pszValue,
                               int32_t iValueLen);
   void AddPropertyHolder(FDE_CSSProperty eProperty,
                          CFX_RetainPtr<CFDE_CSSValue> pValue,
                          bool bImportant);
-  CFX_RetainPtr<CFDE_CSSPrimitiveValue> NewNumberValue(
-      FDE_CSSPrimitiveType eUnit,
-      FX_FLOAT fValue) const;
-  CFX_RetainPtr<CFDE_CSSPrimitiveValue> NewEnumValue(
-      FDE_CSSPropertyValue eValue) const;
 
   std::vector<std::unique_ptr<FDE_CSSPropertyHolder>> properties_;
   std::vector<std::unique_ptr<FDE_CSSCustomProperty>> custom_properties_;

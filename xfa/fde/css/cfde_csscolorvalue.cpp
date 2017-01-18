@@ -4,6 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fde/css/cfde_cssvalue.h"
+#include "xfa/fde/css/cfde_csscolorvalue.h"
 
-CFDE_CSSValue::CFDE_CSSValue(FDE_CSSPrimitiveType type) : m_value(type) {}
+CFDE_CSSColorValue::CFDE_CSSColorValue(FX_ARGB value)
+    : CFDE_CSSValue(FDE_CSSPrimitiveType::RGB), value_(value) {}
+
+CFDE_CSSColorValue::~CFDE_CSSColorValue() {}

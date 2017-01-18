@@ -9,6 +9,7 @@
 #include <utility>
 
 #include "core/fxcrt/fx_ext.h"
+#include "xfa/fde/css/cfde_cssvaluelistparser.h"
 #include "xfa/fde/css/fde_cssstyleselector.h"
 #include "xfa/fgas/crt/fgas_codepage.h"
 
@@ -275,14 +276,14 @@ static const FDE_CSSMEDIATYPETABLE g_FDE_CSSMediaTypes[] = {
 };
 
 static const FDE_CSSLengthUnitTable g_FDE_CSSLengthUnits[] = {
-    {0x0672, FDE_CSSPrimitiveType::EMS},
-    {0x067D, FDE_CSSPrimitiveType::EXS},
-    {0x1AF7, FDE_CSSPrimitiveType::Inches},
-    {0x2F7A, FDE_CSSPrimitiveType::MilliMeters},
-    {0x3ED3, FDE_CSSPrimitiveType::Picas},
-    {0x3EE4, FDE_CSSPrimitiveType::Points},
-    {0x3EE8, FDE_CSSPrimitiveType::Pixels},
-    {0xFC30, FDE_CSSPrimitiveType::CentiMeters},
+    {0x0672, FDE_CSSNumberType::EMS},
+    {0x067D, FDE_CSSNumberType::EXS},
+    {0x1AF7, FDE_CSSNumberType::Inches},
+    {0x2F7A, FDE_CSSNumberType::MilliMeters},
+    {0x3ED3, FDE_CSSNumberType::Picas},
+    {0x3EE4, FDE_CSSNumberType::Points},
+    {0x3EE8, FDE_CSSNumberType::Pixels},
+    {0xFC30, FDE_CSSNumberType::CentiMeters},
 };
 
 static const FDE_CSSCOLORTABLE g_FDE_CSSColors[] = {
@@ -424,7 +425,7 @@ const FDE_CSSCOLORTABLE* FDE_GetCSSColorByName(const CFX_WideStringC& wsName) {
 bool FDE_ParseCSSNumber(const FX_WCHAR* pszValue,
                         int32_t iValueLen,
                         FX_FLOAT& fValue,
-                        FDE_CSSPrimitiveType& eUnit) {
+                        FDE_CSSNumberType& eUnit) {
   ASSERT(pszValue && iValueLen > 0);
   int32_t iUsedLen = 0;
   fValue = FXSYS_wcstof(pszValue, iValueLen, &iUsedLen);
@@ -433,9 +434,9 @@ bool FDE_ParseCSSNumber(const FX_WCHAR* pszValue,
 
   iValueLen -= iUsedLen;
   pszValue += iUsedLen;
-  eUnit = FDE_CSSPrimitiveType::Number;
+  eUnit = FDE_CSSNumberType::Number;
   if (iValueLen >= 1 && *pszValue == '%') {
-    eUnit = FDE_CSSPrimitiveType::Percent;
+    eUnit = FDE_CSSNumberType::Percent;
   } else if (iValueLen == 2) {
     const FDE_CSSLengthUnitTable* pUnit =
         FDE_GetCSSLengthUnitByName(CFX_WideStringC(pszValue, 2));
@@ -516,10 +517,11 @@ bool FDE_ParseCSSColor(const FX_WCHAR* pszValue,
         return false;
       if (eType != FDE_CSSPrimitiveType::Number)
         return false;
-      if (!FDE_ParseCSSNumber(pszValue, iValueLen, fValue, eType))
+      FDE_CSSNumberType eNumType;
+      if (!FDE_ParseCSSNumber(pszValue, iValueLen, fValue, eNumType))
         return false;
 
-      rgb[i] = eType == FDE_CSSPrimitiveType::Percent
+      rgb[i] = eNumType == FDE_CSSNumberType::Percent
                    ? FXSYS_round(fValue * 2.55f)
                    : FXSYS_round(fValue);
     }
@@ -536,200 +538,3 @@ bool FDE_ParseCSSColor(const FX_WCHAR* pszValue,
   return true;
 }
 
-CFDE_CSSValueList::CFDE_CSSValueList(
-    std::vector<CFX_RetainPtr<CFDE_CSSValue>>& list)
-    : CFDE_CSSValue(FDE_CSSVALUETYPE_List), m_ppList(std::move(list)) {}
-
-CFDE_CSSValueList::~CFDE_CSSValueList() {}
-
-int32_t CFDE_CSSValueList::CountValues() const {
-  return m_ppList.size();
-}
-
-CFDE_CSSValue* CFDE_CSSValueList::GetValue(int32_t index) const {
-  return m_ppList[index].Get();
-}
-
-bool CFDE_CSSValueListParser::NextValue(FDE_CSSPrimitiveType& eType,
-                                        const FX_WCHAR*& pStart,
-                                        int32_t& iLength) {
-  while (m_pCur < m_pEnd && (*m_pCur <= ' ' || *m_pCur == m_Separator)) {
-    ++m_pCur;
-  }
-  if (m_pCur >= m_pEnd) {
-    return false;
-  }
-  eType = FDE_CSSPrimitiveType::Unknown;
-  pStart = m_pCur;
-  iLength = 0;
-  FX_WCHAR wch = *m_pCur;
-  if (wch == '#') {
-    iLength = SkipTo(' ');
-    if (iLength == 4 || iLength == 7) {
-      eType = FDE_CSSPrimitiveType::RGB;
-    }
-  } else if ((wch >= '0' && wch <= '9') || wch == '.' || wch == '-' ||
-             wch == '+') {
-    while (m_pCur < m_pEnd && (*m_pCur > ' ' && *m_pCur != m_Separator)) {
-      ++m_pCur;
-    }
-    iLength = m_pCur - pStart;
-    if (iLength > 0) {
-      eType = FDE_CSSPrimitiveType::Number;
-    }
-  } else if (wch == '\"' || wch == '\'') {
-    pStart++;
-    iLength = SkipTo(wch) - 1;
-    m_pCur++;
-    eType = FDE_CSSPrimitiveType::String;
-  } else if (m_pEnd - m_pCur > 5 && m_pCur[3] == '(') {
-    if (FXSYS_wcsnicmp(L"url", m_pCur, 3) == 0) {
-      wch = m_pCur[4];
-      if (wch == '\"' || wch == '\'') {
-        pStart += 5;
-        iLength = SkipTo(wch) - 6;
-        m_pCur += 2;
-      } else {
-        pStart += 4;
-        iLength = SkipTo(')') - 4;
-        m_pCur++;
-      }
-      eType = FDE_CSSPrimitiveType::URI;
-    } else if (FXSYS_wcsnicmp(L"rgb", m_pCur, 3) == 0) {
-      iLength = SkipTo(')') + 1;
-      m_pCur++;
-      eType = FDE_CSSPrimitiveType::RGB;
-    }
-  } else {
-    iLength = SkipTo(m_Separator, true, true);
-    eType = FDE_CSSPrimitiveType::String;
-  }
-  return m_pCur <= m_pEnd && iLength > 0;
-}
-int32_t CFDE_CSSValueListParser::SkipTo(FX_WCHAR wch,
-                                        bool bWSSeparator,
-                                        bool bBrContinue) {
-  const FX_WCHAR* pStart = m_pCur;
-  if (!bBrContinue) {
-    if (bWSSeparator) {
-      while ((++m_pCur < m_pEnd) && (*m_pCur != wch) && (*m_pCur > ' ')) {
-        continue;
-      }
-    } else {
-      while (++m_pCur < m_pEnd && *m_pCur != wch) {
-        continue;
-      }
-    }
-
-  } else {
-    int32_t iBracketCount = 0;
-    if (bWSSeparator) {
-      while ((m_pCur < m_pEnd) && (*m_pCur != wch) && (*m_pCur > ' ')) {
-        if (*m_pCur == '(') {
-          iBracketCount++;
-        } else if (*m_pCur == ')') {
-          iBracketCount--;
-        }
-        m_pCur++;
-      }
-    } else {
-      while (m_pCur < m_pEnd && *m_pCur != wch) {
-        if (*m_pCur == '(') {
-          iBracketCount++;
-        } else if (*m_pCur == ')') {
-          iBracketCount--;
-        }
-        m_pCur++;
-      }
-    }
-    while (iBracketCount > 0 && m_pCur < m_pEnd) {
-      if (*m_pCur == ')') {
-        iBracketCount--;
-      }
-      m_pCur++;
-    }
-  }
-  return m_pCur - pStart;
-}
-
-CFDE_CSSPrimitiveValue::CFDE_CSSPrimitiveValue(FX_ARGB color)
-    : CFDE_CSSValue(FDE_CSSVALUETYPE_Primitive),
-      m_eType(FDE_CSSPrimitiveType::RGB),
-      m_dwColor(color) {}
-
-CFDE_CSSPrimitiveValue::CFDE_CSSPrimitiveValue(FDE_CSSPropertyValue eValue)
-    : CFDE_CSSValue(FDE_CSSVALUETYPE_Primitive),
-      m_eType(FDE_CSSPrimitiveType::Enum),
-      m_eEnum(eValue) {}
-
-CFDE_CSSPrimitiveValue::CFDE_CSSPrimitiveValue(FDE_CSSPrimitiveType eType,
-                                               FX_FLOAT fValue)
-    : CFDE_CSSValue(FDE_CSSVALUETYPE_Primitive),
-      m_eType(eType),
-      m_fNumber(fValue) {}
-
-CFDE_CSSPrimitiveValue::CFDE_CSSPrimitiveValue(FDE_CSSPrimitiveType eType,
-                                               const FX_WCHAR* pValue)
-    : CFDE_CSSValue(FDE_CSSVALUETYPE_Primitive),
-      m_eType(eType),
-      m_pString(pValue) {
-  ASSERT(m_pString);
-}
-
-CFDE_CSSPrimitiveValue::CFDE_CSSPrimitiveValue(
-    std::unique_ptr<CFDE_CSSFunction> pFunction)
-    : CFDE_CSSValue(FDE_CSSVALUETYPE_Primitive),
-      m_eType(FDE_CSSPrimitiveType::Function),
-      m_pFunction(std::move(pFunction)) {}
-
-CFDE_CSSPrimitiveValue::~CFDE_CSSPrimitiveValue() {}
-
-FDE_CSSPrimitiveType CFDE_CSSPrimitiveValue::GetPrimitiveType() const {
-  return m_eType;
-}
-
-FX_ARGB CFDE_CSSPrimitiveValue::GetRGBColor() const {
-  ASSERT(m_eType == FDE_CSSPrimitiveType::RGB);
-  return m_dwColor;
-}
-
-FX_FLOAT CFDE_CSSPrimitiveValue::GetFloat() const {
-  ASSERT(m_eType >= FDE_CSSPrimitiveType::Number &&
-         m_eType <= FDE_CSSPrimitiveType::Picas);
-  return m_fNumber;
-}
-
-const FX_WCHAR* CFDE_CSSPrimitiveValue::GetString(int32_t& iLength) const {
-  ASSERT(m_eType >= FDE_CSSPrimitiveType::String &&
-         m_eType <= FDE_CSSPrimitiveType::URI);
-  iLength = FXSYS_wcslen(m_pString);
-  return m_pString;
-}
-
-FDE_CSSPropertyValue CFDE_CSSPrimitiveValue::GetEnum() const {
-  ASSERT(m_eType == FDE_CSSPrimitiveType::Enum);
-  return m_eEnum;
-}
-
-const FX_WCHAR* CFDE_CSSPrimitiveValue::GetFuncName() const {
-  ASSERT(m_eType == FDE_CSSPrimitiveType::Function);
-  return m_pFunction->GetFuncName();
-}
-
-int32_t CFDE_CSSPrimitiveValue::CountArgs() const {
-  ASSERT(m_eType == FDE_CSSPrimitiveType::Function);
-  return m_pFunction->CountArgs();
-}
-
-CFDE_CSSValue* CFDE_CSSPrimitiveValue::GetArgs(int32_t index) const {
-  ASSERT(m_eType == FDE_CSSPrimitiveType::Function);
-  return m_pFunction->GetArgs(index);
-}
-
-CFDE_CSSFunction::CFDE_CSSFunction(const FX_WCHAR* pszFuncName,
-                                   CFX_RetainPtr<CFDE_CSSValueList> pArgList)
-    : m_pArgList(pArgList), m_pszFuncName(pszFuncName) {
-  ASSERT(pArgList);
-}
-
-CFDE_CSSFunction::~CFDE_CSSFunction() {}

@@ -342,7 +342,7 @@ bool CXFA_TextParser::IsSpaceRun(CFDE_CSSComputedStyle* pStyle) const {
 CFX_RetainPtr<CFGAS_GEFont> CXFA_TextParser::GetFont(
     CXFA_TextProvider* pTextProvider,
     CFDE_CSSComputedStyle* pStyle) const {
-  CFX_WideStringC wsFamily = FX_WSTRC(L"Courier");
+  CFX_WideStringC wsFamily = L"Courier";
   uint32_t dwStyle = 0;
   CXFA_Font font = pTextProvider->GetFontNode();
   if (font) {
@@ -356,7 +356,7 @@ CFX_RetainPtr<CFGAS_GEFont> CXFA_TextParser::GetFont(
   if (pStyle) {
     int32_t iCount = pStyle->CountFontFamilies();
     if (iCount > 0)
-      wsFamily = pStyle->GetFontFamily(iCount - 1);
+      wsFamily = pStyle->GetFontFamily(iCount - 1).AsStringC();
 
     dwStyle = 0;
     if (pStyle->GetFontWeight() > FXFONT_FW_NORMAL)

@@ -12,6 +12,9 @@
 #include "testing/gtest/include/gtest/gtest.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
+#include "xfa/fde/css/cfde_cssenumvalue.h"
+#include "xfa/fde/css/cfde_cssnumbervalue.h"
+#include "xfa/fde/css/cfde_cssvaluelist.h"
 
 class CFDE_CSSStyleSheetTest : public testing::Test {
  public:
@@ -45,14 +48,14 @@ class CFDE_CSSStyleSheetTest : public testing::Test {
     EXPECT_EQ(decl_->PropertyCountForTesting(), decl_count);
   }
 
-  void VerifyFloat(FDE_CSSProperty prop, float val, FDE_CSSPrimitiveType type) {
+  void VerifyFloat(FDE_CSSProperty prop, float val, FDE_CSSNumberType type) {
     ASSERT(decl_);
 
     bool important;
     CFDE_CSSValue* v = decl_->GetProperty(prop, important);
-    CFDE_CSSPrimitiveValue* pval = static_cast<CFDE_CSSPrimitiveValue*>(v);
-    EXPECT_EQ(pval->GetPrimitiveType(), type);
-    EXPECT_EQ(pval->GetFloat(), val);
+    EXPECT_EQ(v->GetType(), FDE_CSSPrimitiveType::Number);
+    EXPECT_EQ(static_cast<CFDE_CSSNumberValue*>(v)->Kind(), type);
+    EXPECT_EQ(static_cast<CFDE_CSSNumberValue*>(v)->Value(), val);
   }
 
   void VerifyEnum(FDE_CSSProperty prop, FDE_CSSPropertyValue val) {
@@ -60,9 +63,8 @@ class CFDE_CSSStyleSheetTest : public testing::Test {
 
     bool important;
     CFDE_CSSValue* v = decl_->GetProperty(prop, important);
-    CFDE_CSSPrimitiveValue* pval = static_cast<CFDE_CSSPrimitiveValue*>(v);
-    EXPECT_EQ(pval->GetPrimitiveType(), FDE_CSSPrimitiveType::Enum);
-    EXPECT_EQ(pval->GetEnum(), val);
+    EXPECT_EQ(v->GetType(), FDE_CSSPrimitiveType::Enum);
+    EXPECT_EQ(static_cast<CFDE_CSSEnumValue*>(v)->Value(), val);
   }
 
   void VerifyList(FDE_CSSProperty prop,
@@ -76,9 +78,8 @@ class CFDE_CSSStyleSheetTest : public testing::Test {
 
     for (size_t i = 0; i < values.size(); i++) {
       CFDE_CSSValue* val = list->GetValue(i);
-      CFDE_CSSPrimitiveValue* pval = static_cast<CFDE_CSSPrimitiveValue*>(val);
-      EXPECT_EQ(pval->GetPrimitiveType(), FDE_CSSPrimitiveType::Enum);
-      EXPECT_EQ(pval->GetEnum(), values[i]);
+      EXPECT_EQ(val->GetType(), FDE_CSSPrimitiveType::Enum);
+      EXPECT_EQ(static_cast<CFDE_CSSEnumValue*>(val)->Value(), values[i]);
     }
   }
 
@@ -112,13 +113,12 @@ TEST_F(CFDE_CSSStyleSheetTest, ParseMultipleSelectors) {
   EXPECT_EQ(4UL, decl_->PropertyCountForTesting());
 
   VerifyFloat(FDE_CSSProperty::BorderLeftWidth, 10.0,
-              FDE_CSSPrimitiveType::Pixels);
+              FDE_CSSNumberType::Pixels);
   VerifyFloat(FDE_CSSProperty::BorderRightWidth, 10.0,
-              FDE_CSSPrimitiveType::Pixels);
-  VerifyFloat(FDE_CSSProperty::BorderTopWidth, 10.0,
-              FDE_CSSPrimitiveType::Pixels);
+              FDE_CSSNumberType::Pixels);
+  VerifyFloat(FDE_CSSProperty::BorderTopWidth, 10.0, FDE_CSSNumberType::Pixels);
   VerifyFloat(FDE_CSSProperty::BorderBottomWidth, 10.0,
-              FDE_CSSPrimitiveType::Pixels);
+              FDE_CSSNumberType::Pixels);
 
   rule = sheet_->GetRule(1);
   EXPECT_EQ(FDE_CSSRuleType::Style, rule->GetType());
@@ -160,32 +160,27 @@ TEST_F(CFDE_CSSStyleSheetTest, ParseWithSelectorsAndPseudo) {
 
 TEST_F(CFDE_CSSStyleSheetTest, ParseBorder) {
   LoadAndVerifyDecl(L"a { border: 5px; }", {L"a"}, 4);
-  VerifyFloat(FDE_CSSProperty::BorderLeftWidth, 5.0,
-              FDE_CSSPrimitiveType::Pixels);
+  VerifyFloat(FDE_CSSProperty::BorderLeftWidth, 5.0, FDE_CSSNumberType::Pixels);
   VerifyFloat(FDE_CSSProperty::BorderRightWidth, 5.0,
-              FDE_CSSPrimitiveType::Pixels);
-  VerifyFloat(FDE_CSSProperty::BorderTopWidth, 5.0,
-              FDE_CSSPrimitiveType::Pixels);
+              FDE_CSSNumberType::Pixels);
+  VerifyFloat(FDE_CSSProperty::BorderTopWidth, 5.0, FDE_CSSNumberType::Pixels);
   VerifyFloat(FDE_CSSProperty::BorderBottomWidth, 5.0,
-              FDE_CSSPrimitiveType::Pixels);
+              FDE_CSSNumberType::Pixels);
 }
 
 TEST_F(CFDE_CSSStyleSheetTest, ParseBorderFull) {
   LoadAndVerifyDecl(L"a { border: 5px solid red; }", {L"a"}, 4);
-  VerifyFloat(FDE_CSSProperty::BorderLeftWidth, 5.0,
-              FDE_CSSPrimitiveType::Pixels);
+  VerifyFloat(FDE_CSSProperty::BorderLeftWidth, 5.0, FDE_CSSNumberType::Pixels);
   VerifyFloat(FDE_CSSProperty::BorderRightWidth, 5.0,
-              FDE_CSSPrimitiveType::Pixels);
-  VerifyFloat(FDE_CSSProperty::BorderTopWidth, 5.0,
-              FDE_CSSPrimitiveType::Pixels);
+              FDE_CSSNumberType::Pixels);
+  VerifyFloat(FDE_CSSProperty::BorderTopWidth, 5.0, FDE_CSSNumberType::Pixels);
   VerifyFloat(FDE_CSSProperty::BorderBottomWidth, 5.0,
-              FDE_CSSPrimitiveType::Pixels);
+              FDE_CSSNumberType::Pixels);
 }
 
 TEST_F(CFDE_CSSStyleSheetTest, ParseBorderLeft) {
   LoadAndVerifyDecl(L"a { border-left: 2.5pc; }", {L"a"}, 1);
-  VerifyFloat(FDE_CSSProperty::BorderLeftWidth, 2.5,
-              FDE_CSSPrimitiveType::Picas);
+  VerifyFloat(FDE_CSSProperty::BorderLeftWidth, 2.5, FDE_CSSNumberType::Picas);
 }
 
 TEST_F(CFDE_CSSStyleSheetTest, ParseBorderLeftThick) {
@@ -195,18 +190,16 @@ TEST_F(CFDE_CSSStyleSheetTest, ParseBorderLeftThick) {
 
 TEST_F(CFDE_CSSStyleSheetTest, ParseBorderRight) {
   LoadAndVerifyDecl(L"a { border-right: 2.5pc; }", {L"a"}, 1);
-  VerifyFloat(FDE_CSSProperty::BorderRightWidth, 2.5,
-              FDE_CSSPrimitiveType::Picas);
+  VerifyFloat(FDE_CSSProperty::BorderRightWidth, 2.5, FDE_CSSNumberType::Picas);
 }
 
 TEST_F(CFDE_CSSStyleSheetTest, ParseBorderTop) {
   LoadAndVerifyDecl(L"a { border-top: 2.5pc; }", {L"a"}, 1);
-  VerifyFloat(FDE_CSSProperty::BorderTopWidth, 2.5,
-              FDE_CSSPrimitiveType::Picas);
+  VerifyFloat(FDE_CSSProperty::BorderTopWidth, 2.5, FDE_CSSNumberType::Picas);
 }
 
 TEST_F(CFDE_CSSStyleSheetTest, ParseBorderBottom) {
   LoadAndVerifyDecl(L"a { border-bottom: 2.5pc; }", {L"a"}, 1);
   VerifyFloat(FDE_CSSProperty::BorderBottomWidth, 2.5,
-              FDE_CSSPrimitiveType::Picas);
+              FDE_CSSNumberType::Picas);
 }

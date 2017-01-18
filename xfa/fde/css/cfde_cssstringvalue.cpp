@@ -4,6 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fde/css/cfde_cssvalue.h"
+#include "xfa/fde/css/cfde_cssstringvalue.h"
 
-CFDE_CSSValue::CFDE_CSSValue(FDE_CSSPrimitiveType type) : m_value(type) {}
+CFDE_CSSStringValue::CFDE_CSSStringValue(const CFX_WideString& value)
+    : CFDE_CSSValue(FDE_CSSPrimitiveType::String), value_(value) {}
+
+CFDE_CSSStringValue::~CFDE_CSSStringValue() {}

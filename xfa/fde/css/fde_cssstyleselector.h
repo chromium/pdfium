@@ -21,6 +21,7 @@ class CFDE_CSSComputedStyle;
 class CFDE_CSSRule;
 class CFDE_CSSSelector;
 class CFDE_CSSStyleSheet;
+class CFDE_CSSValueList;
 class CXFA_CSSTagProvider;
 
 class FDE_CSSRuleData {
@@ -129,12 +130,9 @@ class CFDE_CSSStyleSelector {
                      CFDE_CSSValue* pValue,
                      CFDE_CSSComputedStyle* pComputedStyle);
 
-  FX_FLOAT ApplyNumber(FDE_CSSPrimitiveType eUnit,
-                       FX_FLOAT fValue,
-                       FX_FLOAT fPercentBase);
   bool SetLengthWithPercent(FDE_CSSLength& width,
                             FDE_CSSPrimitiveType eType,
-                            CFDE_CSSPrimitiveValue* pPrimitive,
+                            CFDE_CSSValue* pValue,
                             FX_FLOAT fFontSize);
   FX_FLOAT ToFontSize(FDE_CSSPropertyValue eValue, FX_FLOAT fCurFontSize);
   FDE_CSSDisplay ToDisplay(FDE_CSSPropertyValue eValue);
@@ -201,7 +199,7 @@ class CFDE_CSSComputedStyle : public IFX_Retainable {
   uint32_t Release() override;
 
   int32_t CountFontFamilies() const;
-  const FX_WCHAR* GetFontFamily(int32_t index) const;
+  const CFX_WideString GetFontFamily(int32_t index) const;
   uint16_t GetFontWeight() const;
   FDE_CSSFontVariant GetFontVariant() const;
   FDE_CSSFontStyle GetFontStyle() const;
