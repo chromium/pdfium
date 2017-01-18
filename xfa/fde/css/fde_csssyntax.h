@@ -28,8 +28,10 @@ class CFDE_CSSTextBuf {
     m_pBuffer[m_iDatLen++] = wch;
     return true;
   }
+
   void Clear() { m_iDatPos = m_iDatLen = 0; }
   void Reset();
+
   int32_t TrimEnd() {
     while (m_iDatLen > 0 && m_pBuffer[m_iDatLen - 1] <= ' ') {
       --m_iDatLen;
@@ -37,14 +39,18 @@ class CFDE_CSSTextBuf {
     AppendChar(0);
     return --m_iDatLen;
   }
+
   void Subtract(int32_t iStart, int32_t iLength);
   bool IsEOF() const { return m_iDatPos >= m_iDatLen; }
+
   FX_WCHAR GetAt(int32_t index) const { return m_pBuffer[index]; }
   FX_WCHAR GetChar() const { return m_pBuffer[m_iDatPos]; }
   FX_WCHAR GetNextChar() const {
     return (m_iDatPos + 1 >= m_iDatLen) ? 0 : m_pBuffer[m_iDatPos + 1];
   }
+
   void MoveNext() { m_iDatPos++; }
+
   int32_t GetLength() const { return m_iDatLen; }
   const FX_WCHAR* GetBuffer() const { return m_pBuffer; }
 
@@ -80,10 +86,6 @@ class CFDE_CSSSyntaxParser {
   CFDE_CSSSyntaxParser();
   ~CFDE_CSSSyntaxParser();
 
-  bool Init(const CFX_RetainPtr<IFGAS_Stream>& pStream,
-            int32_t iCSSPlaneSize,
-            int32_t iTextDataSize = 32,
-            bool bOnlyDeclaration = false);
   bool Init(const FX_WCHAR* pBuffer,
             int32_t iBufferSize,
             int32_t iTextDatSize = 32,
@@ -106,9 +108,6 @@ class CFDE_CSSSyntaxParser {
   bool IsImportEnabled() const;
   void DisableImport() { m_dwCheck = 0; }
 
-  CFX_RetainPtr<IFGAS_Stream> m_pStream;
-  int32_t m_iStreamPos;
-  int32_t m_iPlaneSize;
   CFDE_CSSTextBuf m_TextData;
   CFDE_CSSTextBuf m_TextPlane;
   int32_t m_iTextDatLen;

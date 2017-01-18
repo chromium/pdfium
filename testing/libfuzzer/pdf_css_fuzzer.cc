@@ -15,12 +15,8 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   CFX_WideString input = CFX_WideString::FromUTF8(
       CFX_ByteStringC(data, static_cast<FX_STRSIZE>(size)));
 
-  auto stream = pdfium::MakeRetain<CXFA_WideTextRead>(input);
-  if (!stream)
-    return 0;
-
   CFDE_CSSSyntaxParser parser;
-  parser.Init(stream, 1024);
+  parser.Init(input.c_str(), size);
 
   FDE_CSSSyntaxStatus status;
   do {
