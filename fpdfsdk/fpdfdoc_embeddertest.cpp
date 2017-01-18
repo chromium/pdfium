@@ -68,6 +68,16 @@ TEST_F(FPDFDocEmbeddertest, DestGetLocationInPage) {
   EXPECT_EQ(1, zoom);
 }
 
+TEST_F(FPDFDocEmbeddertest, BUG_680376) {
+  EXPECT_TRUE(OpenDocument("bug_680376.pdf"));
+
+  // Page number directly in item from Dests NameTree.
+  FPDF_DEST dest = FPDF_GetNamedDestByName(document(), "First");
+  EXPECT_TRUE(dest);
+  EXPECT_EQ(static_cast<unsigned long>(-1),
+            FPDFDest_GetPageIndex(document(), dest));
+}
+
 TEST_F(FPDFDocEmbeddertest, ActionGetFilePath) {
   EXPECT_TRUE(OpenDocument("launch_action.pdf"));
 

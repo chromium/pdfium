@@ -516,18 +516,18 @@ void CPDF_Document::SetPageObjNum(int iPage, uint32_t objNum) {
 }
 
 int CPDF_Document::FindPageIndex(CPDF_Dictionary* pNode,
-                                 uint32_t& skip_count,
+                                 uint32_t* skip_count,
                                  uint32_t objnum,
-                                 int& index,
+                                 int* index,
                                  int level) {
   if (!pNode->KeyExist("Kids")) {
     if (objnum == pNode->GetObjNum())
-      return index;
+      return *index;
 
-    if (skip_count)
-      skip_count--;
+    if (*skip_count)
+      (*skip_count)--;
 
-    index++;
+    (*index)++;
     return -1;
   }
 
@@ -539,20 +539,17 @@ int CPDF_Document::FindPageIndex(CPDF_Dictionary* pNode,
     return -1;
 
   size_t count = pNode->GetIntegerFor("Count");
-  if (count <= skip_count) {
-    skip_count -= count;
-    index += count;
+  if (count <= *skip_count) {
+    (*skip_count) -= count;
+    (*index) += count;
     return -1;
   }
 
   if (count && count == pKidList->GetCount()) {
     for (size_t i = 0; i < count; i++) {
-      if (CPDF_Reference* pKid = ToReference(pKidList->GetObjectAt(i))) {
-        if (pKid->GetRefObjNum() == objnum) {
-          m_PageList[index + i] = objnum;
-          return static_cast<int>(index + i);
-        }
-      }
+      CPDF_Reference* pKid = ToReference(pKidList->GetObjectAt(i));
+      if (pKid && pKid->GetRefObjNum() == objnum)
+        return static_cast<int>(*index + i);
     }
   }
 
@@ -585,8 +582,15 @@ int CPDF_Document::GetPageIndex(uint32_t objnum) {
   if (!pPages)
     return -1;
 
-  int index = 0;
-  return FindPageIndex(pPages, skip_count, objnum, index);
+  int start_index = 0;
+  int found_index = FindPageIndex(pPages, &skip_count, objnum, &start_index);
+
+  // Corrupt page tree may yield out-of-range results.
+  if (found_index < 0 || found_index >= pdfium::CollectionSize<int>(m_PageList))
+    return -1;
+
+  m_PageList[found_index] = objnum;
+  return found_index;
 }
 
 int CPDF_Document::GetPageCount() const {

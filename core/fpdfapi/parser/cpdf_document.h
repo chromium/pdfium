@@ -106,9 +106,9 @@ class CPDF_Document : public CPDF_IndirectObjectHolder {
   // When this method is called, m_pTreeTraversal[level] exists.
   CPDF_Dictionary* TraversePDFPages(int iPage, int* nPagesToGo, size_t level);
   int FindPageIndex(CPDF_Dictionary* pNode,
-                    uint32_t& skip_count,
+                    uint32_t* skip_count,
                     uint32_t objnum,
-                    int& index,
+                    int* index,
                     int level = 0);
   std::unique_ptr<CPDF_Object> ParseIndirectObject(uint32_t objnum) override;
   void LoadDocInternal();
