@@ -7,6 +7,8 @@
 #ifndef XFA_FXFA_XFA_CHECKSUM_H_
 #define XFA_FXFA_XFA_CHECKSUM_H_
 
+#include <memory>
+
 #include "core/fdrm/crypto/fx_crypt.h"
 #include "xfa/fde/xml/cfx_saxreader.h"
 #include "xfa/fxfa/fxfa.h"
@@ -70,8 +72,8 @@ class CXFA_ChecksumContext {
   CFX_ByteString GetChecksum() const;
 
  protected:
-  CFX_SAXReader* m_pSAXReader;
-  CRYPT_sha1_context* m_pByteContext;
+  std::unique_ptr<CFX_SAXReader> m_pSAXReader;
+  std::unique_ptr<CRYPT_sha1_context> m_pByteContext;
   CFX_ByteString m_bsChecksum;
 };
 

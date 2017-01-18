@@ -7,6 +7,7 @@
 #include "xfa/fxfa/xfa_checksum.h"
 
 #include "core/fdrm/crypto/fx_crypt.h"
+#include "third_party/base/ptr_util.h"
 
 namespace {
 
@@ -210,19 +211,16 @@ void CXFA_SAXReaderHandler::UpdateChecksum(bool bCheckSpace) {
   m_SAXContext.m_TextBuf.Clear();
 }
 
-CXFA_ChecksumContext::CXFA_ChecksumContext()
-    : m_pSAXReader(nullptr), m_pByteContext(nullptr) {}
+CXFA_ChecksumContext::CXFA_ChecksumContext() {}
 
-CXFA_ChecksumContext::~CXFA_ChecksumContext() {
-  FinishChecksum();
-}
+CXFA_ChecksumContext::~CXFA_ChecksumContext() {}
 
 void CXFA_ChecksumContext::StartChecksum() {
   FinishChecksum();
-  m_pByteContext = FX_Alloc(CRYPT_sha1_context, 1);
-  CRYPT_SHA1Start(m_pByteContext);
+  m_pByteContext = pdfium::MakeUnique<CRYPT_sha1_context>();
+  CRYPT_SHA1Start(m_pByteContext.get());
   m_bsChecksum.clear();
-  m_pSAXReader = new CFX_SAXReader;
+  m_pSAXReader = pdfium::MakeUnique<CFX_SAXReader>();
 }
 
 bool CXFA_ChecksumContext::UpdateChecksum(
@@ -248,18 +246,16 @@ bool CXFA_ChecksumContext::UpdateChecksum(
 }
 
 void CXFA_ChecksumContext::FinishChecksum() {
-  delete m_pSAXReader;
-  m_pSAXReader = nullptr;
+  m_pSAXReader.reset();
   if (m_pByteContext) {
     uint8_t digest[20];
     FXSYS_memset(digest, 0, 20);
-    CRYPT_SHA1Finish(m_pByteContext, digest);
+    CRYPT_SHA1Finish(m_pByteContext.get(), digest);
     int32_t nLen = Base64EncodeA(digest, 20, nullptr);
     FX_CHAR* pBuffer = m_bsChecksum.GetBuffer(nLen);
     Base64EncodeA(digest, 20, pBuffer);
     m_bsChecksum.ReleaseBuffer(nLen);
-    FX_Free(m_pByteContext);
-    m_pByteContext = nullptr;
+    m_pByteContext.reset();
   }
 }
 
@@ -268,7 +264,8 @@ CFX_ByteString CXFA_ChecksumContext::GetChecksum() const {
 }
 
 void CXFA_ChecksumContext::Update(const CFX_ByteStringC& bsText) {
-  if (m_pByteContext) {
-    CRYPT_SHA1Update(m_pByteContext, bsText.raw_str(), bsText.GetLength());
-  }
+  if (!m_pByteContext)
+    return;
+
+  CRYPT_SHA1Update(m_pByteContext.get(), bsText.raw_str(), bsText.GetLength());
 }
