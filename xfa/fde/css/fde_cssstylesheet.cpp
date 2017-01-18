@@ -50,9 +50,7 @@ int32_t GetCSSNameLen(const FX_WCHAR* psz, const FX_WCHAR* pEnd) {
 }  // namespace
 
 CFDE_CSSStyleSheet::CFDE_CSSStyleSheet()
-    : m_wCodePage(FX_CODEPAGE_UTF8),
-      m_wRefCount(1),
-      m_dwMediaList(FDE_CSSMEDIATYPE_ALL) {
+    : m_wRefCount(1), m_dwMediaList(FDE_CSSMEDIATYPE_ALL) {
   ASSERT(m_dwMediaList > 0);
 }
 
@@ -76,17 +74,8 @@ uint32_t CFDE_CSSStyleSheet::Release() {
   return dwRefCount;
 }
 
-bool CFDE_CSSStyleSheet::GetUrl(CFX_WideString& szUrl) {
-  szUrl = m_szUrl;
-  return szUrl.GetLength() > 0;
-}
-
 uint32_t CFDE_CSSStyleSheet::GetMediaList() const {
   return m_dwMediaList;
-}
-
-uint16_t CFDE_CSSStyleSheet::GetCodePage() const {
-  return m_wCodePage;
 }
 
 int32_t CFDE_CSSStyleSheet::CountRules() const {
@@ -100,9 +89,6 @@ CFDE_CSSRule* CFDE_CSSStyleSheet::GetRule(int32_t index) {
 bool CFDE_CSSStyleSheet::LoadFromBuffer(const FX_WCHAR* pBuffer,
                                         int32_t iBufSize) {
   ASSERT(pBuffer && iBufSize > 0);
-
-  m_wCodePage = FX_CODEPAGE_UTF8;
-  m_szUrl = CFX_WideString();
 
   auto pSyntax = pdfium::MakeUnique<CFDE_CSSSyntaxParser>();
   return pSyntax->Init(pBuffer, iBufSize) && LoadFromSyntax(pSyntax.get());

@@ -100,9 +100,7 @@ class CFDE_CSSStyleSheet : public IFX_Retainable {
 
   bool LoadFromBuffer(const FX_WCHAR* pBuffer, int32_t iBufSize);
 
-  bool GetUrl(CFX_WideString& szUrl);
   uint32_t GetMediaList() const;
-  uint16_t GetCodePage() const;
   int32_t CountRules() const;
   CFDE_CSSRule* GetRule(int32_t index);
 
@@ -120,11 +118,9 @@ class CFDE_CSSStyleSheet : public IFX_Retainable {
       std::vector<std::unique_ptr<CFDE_CSSRule>>* ruleArray);
   FDE_CSSSyntaxStatus SkipRuleSet(CFDE_CSSSyntaxParser* pSyntax);
 
-  uint16_t m_wCodePage;
   uint16_t m_wRefCount;
   uint32_t m_dwMediaList;
   std::vector<std::unique_ptr<CFDE_CSSRule>> m_RuleArray;
-  CFX_WideString m_szUrl;
   std::unordered_map<uint32_t, FX_WCHAR*> m_StringCache;
 };
 
