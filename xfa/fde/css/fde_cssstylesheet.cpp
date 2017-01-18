@@ -213,15 +213,15 @@ FDE_CSSSyntaxStatus CFDE_CSSStyleSheet::LoadStyleRule(
         if (propertyArgs.pProperty) {
           pszValue = pSyntax->GetCurrentString(iValueLen);
           if (iValueLen > 0) {
-            pStyleRule->GetDeclImp().AddProperty(&propertyArgs, pszValue,
-                                                 iValueLen);
+            pStyleRule->GetDeclaration()->AddProperty(&propertyArgs, pszValue,
+                                                      iValueLen);
           }
         } else if (iValueLen > 0) {
           pszValue = pSyntax->GetCurrentString(iValueLen);
           if (iValueLen > 0) {
-            pStyleRule->GetDeclImp().AddProperty(&propertyArgs, wsName.c_str(),
-                                                 wsName.GetLength(), pszValue,
-                                                 iValueLen);
+            pStyleRule->GetDeclaration()->AddProperty(
+                &propertyArgs, wsName.c_str(), wsName.GetLength(), pszValue,
+                iValueLen);
           }
         }
         break;
@@ -237,7 +237,7 @@ FDE_CSSSyntaxStatus CFDE_CSSStyleSheet::LoadStyleRule(
         }
         break;
       case FDE_CSSSyntaxStatus::DeclClose:
-        if (pStyleRule && pStyleRule->GetDeclImp().empty()) {
+        if (pStyleRule && pStyleRule->GetDeclaration()->empty()) {
           ruleArray->pop_back();
           pStyleRule = nullptr;
         }
@@ -271,8 +271,8 @@ FDE_CSSSyntaxStatus CFDE_CSSStyleSheet::LoadFontFaceRule(
         if (propertyArgs.pProperty) {
           pszValue = pSyntax->GetCurrentString(iValueLen);
           if (iValueLen > 0) {
-            pFontFaceRule->GetDeclImp().AddProperty(&propertyArgs, pszValue,
-                                                    iValueLen);
+            pFontFaceRule->GetDeclaration()->AddProperty(&propertyArgs,
+                                                         pszValue, iValueLen);
           }
         }
         break;

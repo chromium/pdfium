@@ -54,7 +54,6 @@ class CFDE_CSSStyleRule : public CFDE_CSSRule {
   size_t CountSelectorLists() const;
   CFDE_CSSSelector* GetSelectorList(int32_t index) const;
   CFDE_CSSDeclaration* GetDeclaration();
-  CFDE_CSSDeclaration& GetDeclImp() { return m_Declaration; }
 
   void SetSelector(std::vector<std::unique_ptr<CFDE_CSSSelector>>* list);
 
@@ -84,7 +83,7 @@ class CFDE_CSSFontFaceRule : public CFDE_CSSRule {
   CFDE_CSSFontFaceRule();
   ~CFDE_CSSFontFaceRule() override;
 
-  CFDE_CSSDeclaration& GetDeclImp() { return m_Declaration; }
+  CFDE_CSSDeclaration* GetDeclaration() { return &m_Declaration; }
 
  private:
   CFDE_CSSDeclaration m_Declaration;
