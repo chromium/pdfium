@@ -1,16 +1,15 @@
-// Copyright 2014 PDFium Authors. All rights reserved.
+// Copyright 2017 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FDE_CSS_FDE_CSSSYNTAX_H_
-#define XFA_FDE_CSS_FDE_CSSSYNTAX_H_
-
-#include <stack>
+#ifndef XFA_FDE_CSS_CFDE_CSSTEXTBUF_H_
+#define XFA_FDE_CSS_CFDE_CSSTEXTBUF_H_
 
 #include "core/fxcrt/cfx_retain_ptr.h"
-#include "xfa/fde/css/fde_css.h"
+#include "core/fxcrt/fx_memory.h"
+#include "core/fxcrt/fx_system.h"
 #include "xfa/fgas/crt/fgas_stream.h"
 
 class CFDE_CSSTextBuf {
@@ -35,9 +34,8 @@ class CFDE_CSSTextBuf {
   void Reset();
 
   int32_t TrimEnd() {
-    while (m_iDatLen > 0 && m_pBuffer[m_iDatLen - 1] <= ' ') {
+    while (m_iDatLen > 0 && m_pBuffer[m_iDatLen - 1] <= ' ')
       --m_iDatLen;
-    }
     AppendChar(0);
     return --m_iDatLen;
   }
@@ -65,58 +63,4 @@ class CFDE_CSSTextBuf {
   int32_t m_iDatPos;
 };
 
-#define FDE_CSSSYNTAXCHECK_AllowCharset 1
-#define FDE_CSSSYNTAXCHECK_AllowImport 2
-
-enum class FDE_CSSSyntaxMode {
-  RuleSet,
-  Comment,
-  AtRule,
-  UnknownRule,
-  Charset,
-  Import,
-  MediaRule,
-  URI,
-  MediaType,
-  Selector,
-  PropertyName,
-  PropertyValue,
-};
-
-class CFDE_CSSSyntaxParser {
- public:
-  CFDE_CSSSyntaxParser();
-  ~CFDE_CSSSyntaxParser();
-
-  bool Init(const FX_WCHAR* pBuffer,
-            int32_t iBufferSize,
-            int32_t iTextDatSize = 32,
-            bool bOnlyDeclaration = false);
-  FDE_CSSSyntaxStatus DoSyntaxParse();
-  const FX_WCHAR* GetCurrentString(int32_t& iLength) const;
-
- protected:
-  void Reset(bool bOnlyDeclaration);
-  void SwitchMode(FDE_CSSSyntaxMode eMode);
-  int32_t SwitchToComment();
-
-  bool RestoreMode();
-  bool AppendChar(FX_WCHAR wch);
-  int32_t SaveTextData();
-  bool IsCharsetEnabled() const {
-    return (m_dwCheck & FDE_CSSSYNTAXCHECK_AllowCharset) != 0;
-  }
-  void DisableCharset() { m_dwCheck = FDE_CSSSYNTAXCHECK_AllowImport; }
-  bool IsImportEnabled() const;
-  void DisableImport() { m_dwCheck = 0; }
-
-  CFDE_CSSTextBuf m_TextData;
-  CFDE_CSSTextBuf m_TextPlane;
-  int32_t m_iTextDatLen;
-  uint32_t m_dwCheck;
-  FDE_CSSSyntaxMode m_eMode;
-  FDE_CSSSyntaxStatus m_eStatus;
-  std::stack<FDE_CSSSyntaxMode> m_ModeStack;
-};
-
-#endif  // XFA_FDE_CSS_FDE_CSSSYNTAX_H_
+#endif  // XFA_FDE_CSS_CFDE_CSSTEXTBUF_H_

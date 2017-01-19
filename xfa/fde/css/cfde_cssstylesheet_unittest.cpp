@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fde/css/fde_cssstylesheet.h"
+#include "xfa/fde/css/cfde_cssstylesheet.h"
 
 #include <memory>
 #include <vector>
@@ -12,8 +12,11 @@
 #include "testing/gtest/include/gtest/gtest.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
+#include "xfa/fde/css/cfde_cssdeclaration.h"
 #include "xfa/fde/css/cfde_cssenumvalue.h"
 #include "xfa/fde/css/cfde_cssnumbervalue.h"
+#include "xfa/fde/css/cfde_cssrule.h"
+#include "xfa/fde/css/cfde_cssstylerule.h"
 #include "xfa/fde/css/cfde_cssvaluelist.h"
 
 class CFDE_CSSStyleSheetTest : public testing::Test {

@@ -149,26 +149,6 @@ enum class FDE_CSSSelectorType : uint8_t {
 
 enum class FDE_CSSRuleType : uint8_t { Style, Media, FontFace };
 
-enum class FDE_CSSSyntaxStatus : uint8_t {
-  Error,
-  EOS,
-  None,
-  Charset,
-  ImportRule,
-  ImportClose,
-  PageRule,
-  StyleRule,
-  FontFaceRule,
-  MediaRule,
-  MediaType,
-  URI,
-  Selector,
-  DeclOpen,
-  DeclClose,
-  PropertyName,
-  PropertyValue,
-};
-
 enum class FDE_CSSLengthUnit : uint8_t {
   Auto,
   None,

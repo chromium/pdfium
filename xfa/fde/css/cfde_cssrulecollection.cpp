@@ -4,16 +4,20 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fde/css/fde_cssstyleselector.h"
+#include "xfa/fde/css/cfde_cssrulecollection.h"
 
 #include <algorithm>
 #include <map>
 #include <memory>
 
-#include "xfa/fde/css/fde_csscache.h"
-#include "xfa/fde/css/fde_cssdeclaration.h"
-#include "xfa/fde/css/fde_cssstylesheet.h"
-#include "xfa/fde/css/fde_csssyntax.h"
+#include "xfa/fde/css/cfde_cssdeclaration.h"
+#include "xfa/fde/css/cfde_cssmediarule.h"
+#include "xfa/fde/css/cfde_cssrule.h"
+#include "xfa/fde/css/cfde_cssselector.h"
+#include "xfa/fde/css/cfde_cssstylerule.h"
+#include "xfa/fde/css/cfde_cssstylesheet.h"
+#include "xfa/fde/css/cfde_csssyntaxparser.h"
+#include "xfa/fde/css/cfde_csstagcache.h"
 
 #define FDE_CSSUNIVERSALHASH ('*')
 
@@ -60,7 +64,7 @@ void CFDE_CSSRuleCollection::AddRulesFrom(CFDE_CSSStyleSheet* pStyleSheet,
       for (int32_t i = 0; i < iSelectors; ++i) {
         CFDE_CSSSelector* pSelector = pStyleRule->GetSelectorList(i);
         if (pSelector->GetType() == FDE_CSSSelectorType::Pseudo) {
-          FDE_CSSRuleData* pData = NewRuleData(pSelector, pDeclaration);
+          Data* pData = NewRuleData(pSelector, pDeclaration);
           AddRuleTo(&m_pPseudoRules, pData);
           continue;
         }
@@ -71,7 +75,7 @@ void CFDE_CSSRuleCollection::AddRulesFrom(CFDE_CSSStyleSheet* pStyleSheet,
         }
         CFDE_CSSSelector* pNext = pSelector->GetNextSelector();
         if (!pNext) {
-          FDE_CSSRuleData* pData = NewRuleData(pSelector, pDeclaration);
+          Data* pData = NewRuleData(pSelector, pDeclaration);
           AddRuleTo(&m_pUniversalRules, pData);
           continue;
         }
@@ -109,13 +113,12 @@ void CFDE_CSSRuleCollection::AddRulesFrom(CFDE_CSSStyleSheet* pStyleSheet,
   }
 }
 
-void CFDE_CSSRuleCollection::AddRuleTo(
-    std::map<uint32_t, FDE_CSSRuleData*>* pMap,
-    uint32_t dwKey,
-    CFDE_CSSSelector* pSel,
-    CFDE_CSSDeclaration* pDecl) {
-  FDE_CSSRuleData* pData = NewRuleData(pSel, pDecl);
-  FDE_CSSRuleData* pList = (*pMap)[dwKey];
+void CFDE_CSSRuleCollection::AddRuleTo(std::map<uint32_t, Data*>* pMap,
+                                       uint32_t dwKey,
+                                       CFDE_CSSSelector* pSel,
+                                       CFDE_CSSDeclaration* pDecl) {
+  Data* pData = NewRuleData(pSel, pDecl);
+  Data* pList = (*pMap)[dwKey];
   if (!pList) {
     (*pMap)[dwKey] = pData;
   } else if (AddRuleTo(&pList, pData)) {
@@ -123,8 +126,7 @@ void CFDE_CSSRuleCollection::AddRuleTo(
   }
 }
 
-bool CFDE_CSSRuleCollection::AddRuleTo(FDE_CSSRuleData** pList,
-                                       FDE_CSSRuleData* pData) {
+bool CFDE_CSSRuleCollection::AddRuleTo(Data** pList, Data* pData) {
   if (*pList) {
     pData->pNext = (*pList)->pNext;
     (*pList)->pNext = pData;
@@ -134,8 +136,23 @@ bool CFDE_CSSRuleCollection::AddRuleTo(FDE_CSSRuleData** pList,
   return true;
 }
 
-FDE_CSSRuleData* CFDE_CSSRuleCollection::NewRuleData(
+CFDE_CSSRuleCollection::Data* CFDE_CSSRuleCollection::NewRuleData(
     CFDE_CSSSelector* pSel,
     CFDE_CSSDeclaration* pDecl) {
-  return new FDE_CSSRuleData(pSel, pDecl, ++m_iSelectors);
+  return new Data(pSel, pDecl, ++m_iSelectors);
+}
+
+CFDE_CSSRuleCollection::Data::Data(CFDE_CSSSelector* pSel,
+                                   CFDE_CSSDeclaration* pDecl,
+                                   uint32_t dwPos)
+    : pSelector(pSel), pDeclaration(pDecl), dwPriority(dwPos), pNext(nullptr) {
+  static const uint32_t s_Specific[5] = {0x00010000, 0x00010000, 0x00100000,
+                                         0x00100000, 0x01000000};
+  for (; pSel; pSel = pSel->GetNextSelector()) {
+    FDE_CSSSelectorType eType = pSel->GetType();
+    if (eType > FDE_CSSSelectorType::Descendant ||
+        pSel->GetNameHash() != FDE_CSSUNIVERSALHASH) {
+      dwPriority += s_Specific[static_cast<int>(eType)];
+    }
+  }
 }

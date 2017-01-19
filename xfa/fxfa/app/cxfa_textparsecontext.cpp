@@ -6,8 +6,9 @@
 
 #include "xfa/fxfa/app/cxfa_textparsecontext.h"
 
-#include "xfa/fde/css/fde_cssdeclaration.h"
-#include "xfa/fde/css/fde_cssstyleselector.h"
+#include "xfa/fde/css/cfde_csscomputedstyle.h"
+#include "xfa/fde/css/cfde_cssdeclaration.h"
+#include "xfa/fde/css/cfde_cssstyleselector.h"
 
 CXFA_TextParseContext::CXFA_TextParseContext()
     : m_pParentStyle(nullptr),

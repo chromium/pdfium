@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FDE_CSS_FDE_CSSDECLARATION_H_
-#define XFA_FDE_CSS_FDE_CSSDECLARATION_H_
+#ifndef XFA_FDE_CSS_CFDE_CSSDECLARATION_H_
+#define XFA_FDE_CSS_CFDE_CSSDECLARATION_H_
 
 #include <memory>
 #include <unordered_map>
@@ -14,33 +14,28 @@
 
 #include "xfa/fde/css/fde_cssdatatable.h"
 
-class FDE_CSSPropertyHolder {
- public:
-  FDE_CSSPropertyHolder();
-  ~FDE_CSSPropertyHolder();
-
-  FDE_CSSProperty eProperty;
-  bool bImportant;
-  CFX_RetainPtr<CFDE_CSSValue> pValue;
-};
-
-class FDE_CSSCustomProperty {
- public:
-  const FX_WCHAR* pwsName;
-  const FX_WCHAR* pwsValue;
-};
-
 struct FDE_CSSPropertyArgs {
   std::unordered_map<uint32_t, FX_WCHAR*>* pStringCache;
   const FDE_CSSPropertyTable* pProperty;
 };
 
+class CFDE_CSSPropertyHolder;
+class CFDE_CSSCustomProperty;
+
 class CFDE_CSSDeclaration {
  public:
   using const_prop_iterator =
-      std::vector<std::unique_ptr<FDE_CSSPropertyHolder>>::const_iterator;
+      std::vector<std::unique_ptr<CFDE_CSSPropertyHolder>>::const_iterator;
   using const_custom_iterator =
-      std::vector<std::unique_ptr<FDE_CSSCustomProperty>>::const_iterator;
+      std::vector<std::unique_ptr<CFDE_CSSCustomProperty>>::const_iterator;
+
+  static bool ParseCSSString(const FX_WCHAR* pszValue,
+                             int32_t iValueLen,
+                             int32_t* iOffset,
+                             int32_t* iLength);
+  static bool ParseCSSColor(const FX_WCHAR* pszValue,
+                            int32_t iValueLen,
+                            FX_ARGB* dwColor);
 
   CFDE_CSSDeclaration();
   ~CFDE_CSSDeclaration();
@@ -68,7 +63,11 @@ class CFDE_CSSDeclaration {
 
   size_t PropertyCountForTesting() const;
 
- protected:
+  FX_ARGB ParseColorForTest(const FX_WCHAR* pszValue,
+                            int32_t iValueLen,
+                            FX_ARGB* dwColor) const;
+
+ private:
   void ParseFontProperty(const FDE_CSSPropertyArgs* pArgs,
                          const FX_WCHAR* pszValue,
                          int32_t iValueLen,
@@ -105,8 +104,8 @@ class CFDE_CSSDeclaration {
                          CFX_RetainPtr<CFDE_CSSValue> pValue,
                          bool bImportant);
 
-  std::vector<std::unique_ptr<FDE_CSSPropertyHolder>> properties_;
-  std::vector<std::unique_ptr<FDE_CSSCustomProperty>> custom_properties_;
+  std::vector<std::unique_ptr<CFDE_CSSPropertyHolder>> properties_;
+  std::vector<std::unique_ptr<CFDE_CSSCustomProperty>> custom_properties_;
 };
 
-#endif  // XFA_FDE_CSS_FDE_CSSDECLARATION_H_
+#endif  // XFA_FDE_CSS_CFDE_CSSDECLARATION_H_

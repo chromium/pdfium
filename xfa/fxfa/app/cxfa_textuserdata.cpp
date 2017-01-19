@@ -6,8 +6,9 @@
 
 #include "xfa/fxfa/app/cxfa_textuserdata.h"
 
+#include "xfa/fde/css/cfde_csscomputedstyle.h"
+#include "xfa/fde/css/cfde_cssstyleselector.h"
 #include "xfa/fde/css/fde_css.h"
-#include "xfa/fde/css/fde_cssstyleselector.h"
 #include "xfa/fxfa/app/cxfa_linkuserdata.h"
 
 CXFA_TextUserData::CXFA_TextUserData(CFDE_CSSComputedStyle* pStyle)

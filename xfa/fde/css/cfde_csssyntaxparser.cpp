@@ -4,18 +4,33 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fde/css/fde_csssyntax.h"
+#include "xfa/fde/css/cfde_csssyntaxparser.h"
 
 #include <algorithm>
 
+#include "xfa/fde/css/cfde_cssdeclaration.h"
 #include "xfa/fde/css/fde_cssdatatable.h"
 #include "xfa/fgas/crt/fgas_codepage.h"
 
 namespace {
 
-bool FDE_IsSelectorStart(FX_WCHAR wch) {
+bool IsSelectorStart(FX_WCHAR wch) {
   return wch == '.' || wch == '#' || wch == '*' || (wch >= 'a' && wch <= 'z') ||
          (wch >= 'A' && wch <= 'Z');
+}
+
+bool ParseCSSURI(const FX_WCHAR* pszValue, int32_t* iOffset, int32_t* iLength) {
+  ASSERT(pszValue && *iLength > 0);
+  if (*iLength < 6 || pszValue[*iLength - 1] != ')' ||
+      FXSYS_wcsnicmp(L"url(", pszValue, 4)) {
+    return false;
+  }
+  if (CFDE_CSSDeclaration::ParseCSSString(pszValue + 4, *iLength - 5, iOffset,
+                                          iLength)) {
+    *iOffset += 4;
+    return true;
+  }
+  return false;
 }
 
 }  // namespace
@@ -90,7 +105,7 @@ FDE_CSSSyntaxStatus CFDE_CSSSyntaxParser::DoSyntaxParse() {
             default:
               if (wch <= ' ') {
                 m_TextPlane.MoveNext();
-              } else if (FDE_IsSelectorStart(wch)) {
+              } else if (IsSelectorStart(wch)) {
                 SwitchMode(FDE_CSSSyntaxMode::Selector);
                 return FDE_CSSSyntaxStatus::StyleRule;
               } else {
@@ -248,8 +263,8 @@ FDE_CSSSyntaxStatus CFDE_CSSSyntaxParser::DoSyntaxParse() {
 
           if (wch <= ' ' || wch == ';') {
             int32_t iURIStart, iURILength = m_TextData.GetLength();
-            if (iURILength > 0 && FDE_ParseCSSURI(m_TextData.GetBuffer(),
-                                                  &iURIStart, &iURILength)) {
+            if (iURILength > 0 &&
+                ParseCSSURI(m_TextData.GetBuffer(), &iURIStart, &iURILength)) {
               m_TextData.Subtract(iURIStart, iURILength);
               SwitchMode(FDE_CSSSyntaxMode::MediaType);
               if (IsImportEnabled())
@@ -362,81 +377,4 @@ bool CFDE_CSSSyntaxParser::RestoreMode() {
 const FX_WCHAR* CFDE_CSSSyntaxParser::GetCurrentString(int32_t& iLength) const {
   iLength = m_iTextDatLen;
   return m_TextData.GetBuffer();
-}
-
-CFDE_CSSTextBuf::CFDE_CSSTextBuf()
-    : m_bExtBuf(false),
-      m_pBuffer(nullptr),
-      m_iBufLen(0),
-      m_iDatLen(0),
-      m_iDatPos(0) {}
-
-CFDE_CSSTextBuf::~CFDE_CSSTextBuf() {
-  Reset();
-}
-
-void CFDE_CSSTextBuf::Reset() {
-  if (!m_bExtBuf) {
-    FX_Free(m_pBuffer);
-    m_pBuffer = nullptr;
-  }
-  m_iDatPos = m_iDatLen = m_iBufLen;
-}
-
-bool CFDE_CSSTextBuf::AttachBuffer(const FX_WCHAR* pBuffer, int32_t iBufLen) {
-  Reset();
-  m_pBuffer = const_cast<FX_WCHAR*>(pBuffer);
-  m_iDatLen = m_iBufLen = iBufLen;
-  return m_bExtBuf = true;
-}
-
-bool CFDE_CSSTextBuf::EstimateSize(int32_t iAllocSize) {
-  ASSERT(iAllocSize > 0);
-  Clear();
-  m_bExtBuf = false;
-  return ExpandBuf(iAllocSize);
-}
-
-int32_t CFDE_CSSTextBuf::LoadFromStream(
-    const CFX_RetainPtr<IFGAS_Stream>& pTxtStream,
-    int32_t iStreamOffset,
-    int32_t iMaxChars,
-    bool& bEOS) {
-  ASSERT(iStreamOffset >= 0 && iMaxChars > 0);
-  Clear();
-  m_bExtBuf = false;
-  if (!ExpandBuf(iMaxChars))
-    return 0;
-
-  if (pTxtStream->GetPosition() != iStreamOffset)
-    pTxtStream->Seek(FX_STREAMSEEK_Begin, iStreamOffset);
-
-  m_iDatLen = pTxtStream->ReadString(m_pBuffer, iMaxChars, bEOS);
-  return m_iDatLen;
-}
-
-bool CFDE_CSSTextBuf::ExpandBuf(int32_t iDesiredSize) {
-  if (m_bExtBuf)
-    return false;
-  if (!m_pBuffer)
-    m_pBuffer = FX_Alloc(FX_WCHAR, iDesiredSize);
-  else if (m_iBufLen != iDesiredSize)
-    m_pBuffer = FX_Realloc(FX_WCHAR, m_pBuffer, iDesiredSize);
-  else
-    return true;
-
-  if (!m_pBuffer) {
-    m_iBufLen = 0;
-    return false;
-  }
-  m_iBufLen = iDesiredSize;
-  return true;
-}
-
-void CFDE_CSSTextBuf::Subtract(int32_t iStart, int32_t iLength) {
-  ASSERT(iStart >= 0 && iLength >= 0);
-
-  iLength = std::max(std::min(iLength, m_iDatLen - iStart), 0);
-  FXSYS_memmove(m_pBuffer, m_pBuffer + iStart, iLength * sizeof(FX_WCHAR));
-  m_iDatLen = iLength;
 }

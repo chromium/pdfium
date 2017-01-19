@@ -9,10 +9,10 @@
 #include <utility>
 
 #include "core/fxcrt/fx_ext.h"
-#include "third_party/base/ptr_util.h"
 #include "fxjs/cfxjse_arguments.h"
 #include "fxjs/cfxjse_class.h"
 #include "fxjs/cfxjse_value.h"
+#include "third_party/base/ptr_util.h"
 #include "xfa/fxfa/app/xfa_ffnotify.h"
 #include "xfa/fxfa/cxfa_eventparam.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
