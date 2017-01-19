@@ -33,4 +33,5 @@ Local Modifications:
 0021-tcd_init_tile_negative.patch: Prevent negative x, y values in opj_tcd_init_tile.
 0022-jp2_apply_pclr_overflow.patch: Prevent integer overflow in opj_jp2_apply_pclr.
 0023-opj_j2k_read_mct_records.patch: Fix opj_j2k_read to prevent heap-use-after-free.
+0024-l_marker_size_check.patch: Return error before overflow in opj_j2k_read_header_procedure.
 TODO(thestig): List all the other patches.
