@@ -11,10 +11,12 @@
 #include <vector>
 
 #include "core/fpdfdoc/cpdf_formcontrol.h"
+#include "core/fxcrt/cfx_observable.h"
 #include "core/fxcrt/fx_basic.h"
 #include "fpdfsdk/cfx_systemhandler.h"
+#include "fpdfsdk/cpdfsdk_widget.h"
+#include "fpdfsdk/pdfwindow/cpwl_color.h"
 
-class CPDFSDK_Widget;
 class CPWL_MsgControl;
 class CPWL_ScrollBar;
 class CPWL_Timer;
@@ -91,40 +93,15 @@ struct CPWL_Dash {
   CPWL_Dash(int32_t dash, int32_t gap, int32_t phase)
       : nDash(dash), nGap(gap), nPhase(phase) {}
 
+  void Reset() {
+    nDash = 0;
+    nGap = 0;
+    nPhase = 0;
+  }
+
   int32_t nDash;
   int32_t nGap;
   int32_t nPhase;
-};
-
-struct CPWL_Color {
-  CPWL_Color(int32_t type = COLORTYPE_TRANSPARENT,
-             FX_FLOAT color1 = 0.0f,
-             FX_FLOAT color2 = 0.0f,
-             FX_FLOAT color3 = 0.0f,
-             FX_FLOAT color4 = 0.0f)
-      : nColorType(type),
-        fColor1(color1),
-        fColor2(color2),
-        fColor3(color3),
-        fColor4(color4) {}
-
-  CPWL_Color(int32_t r, int32_t g, int32_t b)
-      : nColorType(COLORTYPE_RGB),
-        fColor1(r / 255.0f),
-        fColor2(g / 255.0f),
-        fColor3(b / 255.0f),
-        fColor4(0) {}
-
-  void ConvertColorType(int32_t other_nColorType);
-
-  /*
-  COLORTYPE_TRANSPARENT
-  COLORTYPE_RGB
-  COLORTYPE_CMYK
-  COLORTYPE_GRAY
-  */
-  int32_t nColorType;
-  FX_FLOAT fColor1, fColor2, fColor3, fColor4;
 };
 
 inline bool operator==(const CPWL_Color& c1, const CPWL_Color& c2) {
@@ -161,7 +138,7 @@ inline bool operator!=(const CPWL_Color& c1, const CPWL_Color& c2) {
 #define PWL_CBBUTTON_TRIANGLE_HALFLEN 3.0f
 #define PWL_INVALIDATE_INFLATE 2
 
-class IPWL_Provider {
+class IPWL_Provider : public CFX_Observable<IPWL_Provider> {
  public:
   virtual ~IPWL_Provider() {}
 
@@ -191,14 +168,38 @@ struct PWL_CREATEPARAM {
   PWL_CREATEPARAM();
   PWL_CREATEPARAM(const PWL_CREATEPARAM& other);
 
+  void Reset() {
+    rcRectWnd.Reset();
+    pSystemHandler = nullptr;
+    pFontMap = nullptr;
+    pProvider.Reset();
+    pFocusHandler = nullptr;
+    dwFlags = 0;
+    sBackgroundColor.Reset();
+    pAttachedWidget.Reset();
+    nBorderStyle = BorderStyle::SOLID;
+    dwBorderWidth = 0;
+    sBorderColor.Reset();
+    sTextColor.Reset();
+    sTextStrokeColor.Reset();
+    nTransparency = 0;
+    fFontSize = 0.0f;
+    sDash.Reset();
+    pAttachedData = nullptr;
+    pParentWnd = nullptr;
+    pMsgControl = nullptr;
+    eCursorType = 0;
+    mtChild.SetIdentity();
+  }
+
   CFX_FloatRect rcRectWnd;            // required
   CFX_SystemHandler* pSystemHandler;  // required
-  IPVT_FontMap* pFontMap;             // required for text window
-  IPWL_Provider* pProvider;           // required for self coordinate
+  IPVT_FontMap* pFontMap;             // required
+  IPWL_Provider::ObservedPtr pProvider;  // required
   IPWL_FocusHandler* pFocusHandler;   // optional
   uint32_t dwFlags;                   // optional
   CPWL_Color sBackgroundColor;        // optional
-  CPDFSDK_Widget* pAttachedWidget;    // required for no-reader framework
+  CPDFSDK_Widget::ObservedPtr pAttachedWidget;  // required
   BorderStyle nBorderStyle;           // optional
   int32_t dwBorderWidth;              // optional
   CPWL_Color sBorderColor;            // optional
