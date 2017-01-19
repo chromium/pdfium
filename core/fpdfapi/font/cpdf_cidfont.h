@@ -11,6 +11,7 @@
 #include <vector>
 
 #include "core/fpdfapi/font/cpdf_font.h"
+#include "core/fxcrt/cfx_maybe_owned.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
 
@@ -71,8 +72,7 @@ class CPDF_CIDFont : public CPDF_Font {
   void LoadSubstFont();
   FX_WCHAR GetUnicodeFromCharCode(uint32_t charcode) const;
 
-  CPDF_CMap* m_pCMap;
-  std::unique_ptr<CPDF_CMap> m_pAllocatedCMap;
+  CFX_MaybeOwned<CPDF_CMap> m_pCMap;
   CPDF_CID2UnicodeMap* m_pCID2UnicodeMap;
   CIDSet m_Charset;
   bool m_bType1;

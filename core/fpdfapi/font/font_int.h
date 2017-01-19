@@ -12,6 +12,7 @@
 #include <vector>
 
 #include "core/fpdfapi/font/cpdf_cidfont.h"
+#include "core/fxcrt/cfx_maybe_owned.h"
 #include "core/fxcrt/fx_basic.h"
 
 class CPDF_CID2UnicodeMap;
@@ -30,15 +31,18 @@ class CPDF_CMapManager {
   CPDF_CMapManager();
   ~CPDF_CMapManager();
 
-  CPDF_CMap* GetPredefinedCMap(const CFX_ByteString& name, bool bPromptCJK);
+  CFX_MaybeOwned<CPDF_CMap> GetPredefinedCMap(const CFX_ByteString& name,
+                                              bool bPromptCJK);
   CPDF_CID2UnicodeMap* GetCID2UnicodeMap(CIDSet charset, bool bPromptCJK);
 
  private:
-  CPDF_CMap* LoadPredefinedCMap(const CFX_ByteString& name, bool bPromptCJK);
-  CPDF_CID2UnicodeMap* LoadCID2UnicodeMap(CIDSet charset, bool bPromptCJK);
+  std::unique_ptr<CPDF_CMap> LoadPredefinedCMap(const CFX_ByteString& name,
+                                                bool bPromptCJK);
+  std::unique_ptr<CPDF_CID2UnicodeMap> LoadCID2UnicodeMap(CIDSet charset,
+                                                          bool bPromptCJK);
 
-  std::map<CFX_ByteString, CPDF_CMap*> m_CMaps;
-  CPDF_CID2UnicodeMap* m_CID2UnicodeMaps[6];
+  std::map<CFX_ByteString, std::unique_ptr<CPDF_CMap>> m_CMaps;
+  std::unique_ptr<CPDF_CID2UnicodeMap> m_CID2UnicodeMaps[6];
 };
 
 class CFX_StockFontArray {

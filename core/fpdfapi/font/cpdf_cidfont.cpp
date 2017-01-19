@@ -200,8 +200,7 @@ bool IsMetricForCID(const uint32_t* pEntry, uint16_t CID) {
 }  // namespace
 
 CPDF_CIDFont::CPDF_CIDFont()
-    : m_pCMap(nullptr),
-      m_pCID2UnicodeMap(nullptr),
+    : m_pCID2UnicodeMap(nullptr),
       m_bCIDIsGID(false),
       m_bAnsiWidthsFixed(false),
       m_bAdobeCourierStd(false) {
@@ -360,8 +359,7 @@ bool CPDF_CIDFont::Load() {
     if (!m_pCMap)
       return false;
   } else if (CPDF_Stream* pStream = pEncoding->AsStream()) {
-    m_pCMap = new CPDF_CMap;
-    m_pAllocatedCMap.reset(m_pCMap);
+    m_pCMap = pdfium::MakeUnique<CPDF_CMap>();
     CPDF_StreamAcc acc;
     acc.LoadAllData(pStream, false);
     m_pCMap->LoadEmbedded(acc.GetData(), acc.GetSize());
