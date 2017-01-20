@@ -85,7 +85,7 @@ void CBC_CommonByteArray::Set(uint8_t* source, int32_t offset, int32_t count) {
   FXSYS_memcpy(m_bytes, source + offset, count);
   m_index = count;
 }
-void CBC_CommonByteArray::Set(CFX_ByteArray* source,
+void CBC_CommonByteArray::Set(CFX_ArrayTemplate<uint8_t>* source,
                               int32_t offset,
                               int32_t count) {
   FX_Free(m_bytes);

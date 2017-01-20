@@ -410,7 +410,7 @@ void CBC_PDF417::generateBarcodeLogic(CFX_WideString msg,
       CBC_PDF417HighLevelEncoder::encodeHighLevel(msg, m_compaction, e);
   BC_EXCEPTION_CHECK_ReturnVoid(e);
   int32_t sourceCodeWords = highLevel.GetLength();
-  CFX_Int32Array* dimension =
+  CFX_ArrayTemplate<int32_t>* dimension =
       determineDimensions(sourceCodeWords, errorCorrectionCodeWords, e);
   BC_EXCEPTION_CHECK_ReturnVoid(e);
   int32_t cols = dimension->GetAt(0);
@@ -532,12 +532,12 @@ void CBC_PDF417::encodeLowLevel(CFX_WideString fullCodewords,
   }
 }
 
-CFX_Int32Array* CBC_PDF417::determineDimensions(
+CFX_ArrayTemplate<int32_t>* CBC_PDF417::determineDimensions(
     int32_t sourceCodeWords,
     int32_t errorCorrectionCodeWords,
     int32_t& e) {
   FX_FLOAT ratio = 0.0f;
-  CFX_Int32Array* dimension = nullptr;
+  CFX_ArrayTemplate<int32_t>* dimension = nullptr;
   for (int32_t cols = m_minCols; cols <= m_maxCols; cols++) {
     int32_t rows =
         calculateNumberOfRows(sourceCodeWords, errorCorrectionCodeWords, cols);
@@ -555,7 +555,7 @@ CFX_Int32Array* CBC_PDF417::determineDimensions(
     }
     ratio = newRatio;
     delete dimension;
-    dimension = new CFX_Int32Array;
+    dimension = new CFX_ArrayTemplate<int32_t>;
     dimension->Add(cols);
     dimension->Add(rows);
   }
@@ -563,11 +563,11 @@ CFX_Int32Array* CBC_PDF417::determineDimensions(
     int32_t rows = calculateNumberOfRows(sourceCodeWords,
                                          errorCorrectionCodeWords, m_minCols);
     if (rows < m_minRows) {
-      dimension = new CFX_Int32Array;
+      dimension = new CFX_ArrayTemplate<int32_t>;
       dimension->Add(m_minCols);
       dimension->Add(m_minRows);
     } else if (rows >= 3 && rows <= 90) {
-      dimension = new CFX_Int32Array;
+      dimension = new CFX_ArrayTemplate<int32_t>;
       dimension->Add(m_minCols);
       dimension->Add(rows);
     }

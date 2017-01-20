@@ -51,9 +51,10 @@ class CBC_PDF417 {
                       int32_t r,
                       int32_t errorCorrectionLevel,
                       CBC_BarcodeMatrix* logic);
-  CFX_Int32Array* determineDimensions(int32_t sourceCodeWords,
-                                      int32_t errorCorrectionCodeWords,
-                                      int32_t& e);
+  CFX_ArrayTemplate<int32_t>* determineDimensions(
+      int32_t sourceCodeWords,
+      int32_t errorCorrectionCodeWords,
+      int32_t& e);
 
   std::unique_ptr<CBC_BarcodeMatrix> m_barcodeMatrix;
   bool m_compact;

@@ -102,7 +102,7 @@ class CXFA_WidgetData : public CXFA_Data {
                           bool bSaveValue = false);
   int32_t CountSelectedItems();
   int32_t GetSelectedItem(int32_t nIndex = 0);
-  void GetSelectedItems(CFX_Int32Array& iSelArray);
+  void GetSelectedItems(CFX_ArrayTemplate<int32_t>& iSelArray);
   void GetSelectedItemsValue(std::vector<CFX_WideString>& wsSelTextArray);
   bool GetItemState(int32_t nIndex);
   void SetItemState(int32_t nIndex,
@@ -110,7 +110,7 @@ class CXFA_WidgetData : public CXFA_Data {
                     bool bNotify,
                     bool bScriptModify,
                     bool bSyncData);
-  void SetSelectedItems(CFX_Int32Array& iSelArray,
+  void SetSelectedItems(CFX_ArrayTemplate<int32_t>& iSelArray,
                         bool bNotify,
                         bool bScriptModify,
                         bool bSyncData);

@@ -41,7 +41,7 @@ CBC_CommonBitArray::~CBC_CommonBitArray() {
 int32_t CBC_CommonBitArray::GetSize() {
   return m_size;
 }
-CFX_Int32Array& CBC_CommonBitArray::GetBits() {
+CFX_ArrayTemplate<int32_t>& CBC_CommonBitArray::GetBits() {
   return m_bits;
 }
 int32_t CBC_CommonBitArray::GetSizeInBytes() {

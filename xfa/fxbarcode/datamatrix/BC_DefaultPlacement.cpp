@@ -43,7 +43,7 @@ int32_t CBC_DefaultPlacement::getNumrows() {
 int32_t CBC_DefaultPlacement::getNumcols() {
   return m_numcols;
 }
-CFX_ByteArray& CBC_DefaultPlacement::getBits() {
+CFX_ArrayTemplate<uint8_t>& CBC_DefaultPlacement::getBits() {
   return m_bits;
 }
 bool CBC_DefaultPlacement::getBit(int32_t col, int32_t row) {

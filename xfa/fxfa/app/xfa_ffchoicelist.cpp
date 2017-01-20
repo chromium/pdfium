@@ -65,7 +65,7 @@ bool CXFA_FFListBox::LoadWidget() {
   }
   dwExtendedStyle |= GetAlignment();
   m_pNormalWidget->ModifyStylesEx(dwExtendedStyle, 0xFFFFFFFF);
-  CFX_Int32Array iSelArray;
+  CFX_ArrayTemplate<int32_t> iSelArray;
   m_pDataAcc->GetSelectedItems(iSelArray);
   int32_t iSelCount = iSelArray.GetSize();
   for (int32_t j = 0; j < iSelCount; j++) {
@@ -86,7 +86,7 @@ bool CXFA_FFListBox::OnKillFocus(CXFA_FFWidget* pNewFocus) {
 bool CXFA_FFListBox::CommitData() {
   CFWL_ListBox* pListBox = static_cast<CFWL_ListBox*>(m_pNormalWidget);
   int32_t iSels = pListBox->CountSelItems();
-  CFX_Int32Array iSelArray;
+  CFX_ArrayTemplate<int32_t> iSelArray;
   for (int32_t i = 0; i < iSels; ++i)
     iSelArray.Add(pListBox->GetSelIndex(i));
   m_pDataAcc->SetSelectedItems(iSelArray, true, false, true);
@@ -94,7 +94,7 @@ bool CXFA_FFListBox::CommitData() {
 }
 
 bool CXFA_FFListBox::IsDataChanged() {
-  CFX_Int32Array iSelArray;
+  CFX_ArrayTemplate<int32_t> iSelArray;
   m_pDataAcc->GetSelectedItems(iSelArray);
   int32_t iOldSels = iSelArray.GetSize();
   CFWL_ListBox* pListBox = (CFWL_ListBox*)m_pNormalWidget;
@@ -140,7 +140,7 @@ bool CXFA_FFListBox::UpdateFWLData() {
   }
   CFWL_ListBox* pListBox = ((CFWL_ListBox*)m_pNormalWidget);
   CFX_ArrayTemplate<CFWL_ListItem*> selItemArray;
-  CFX_Int32Array iSelArray;
+  CFX_ArrayTemplate<int32_t> iSelArray;
   m_pDataAcc->GetSelectedItems(iSelArray);
   int32_t iSelCount = iSelArray.GetSize();
   for (int32_t j = 0; j < iSelCount; j++) {
@@ -154,8 +154,9 @@ bool CXFA_FFListBox::UpdateFWLData() {
   m_pNormalWidget->Update();
   return true;
 }
-void CXFA_FFListBox::OnSelectChanged(CFWL_Widget* pWidget,
-                                     const CFX_Int32Array& arrSels) {
+void CXFA_FFListBox::OnSelectChanged(
+    CFWL_Widget* pWidget,
+    const CFX_ArrayTemplate<int32_t>& arrSels) {
   CXFA_EventParam eParam;
   eParam.m_eType = XFA_EVENT_Change;
   eParam.m_pTarget = m_pDataAcc;
@@ -201,7 +202,7 @@ void CXFA_FFListBox::OnProcessEvent(CFWL_Event* pEvent) {
   CXFA_FFField::OnProcessEvent(pEvent);
   switch (pEvent->GetType()) {
     case CFWL_Event::Type::SelectChanged: {
-      CFX_Int32Array arrSels;
+      CFX_ArrayTemplate<int32_t> arrSels;
       OnSelectChanged(m_pNormalWidget, arrSels);
       break;
     }
@@ -256,7 +257,7 @@ bool CXFA_FFComboBox::LoadWidget() {
   for (int32_t i = 0; i < iItems; i++) {
     pComboBox->AddString(wsLabelArray[i].AsStringC());
   }
-  CFX_Int32Array iSelArray;
+  CFX_ArrayTemplate<int32_t> iSelArray;
   m_pDataAcc->GetSelectedItems(iSelArray);
   int32_t iSelCount = iSelArray.GetSize();
   if (iSelCount > 0) {
@@ -383,7 +384,7 @@ bool CXFA_FFComboBox::UpdateFWLData() {
   if (!m_pNormalWidget) {
     return false;
   }
-  CFX_Int32Array iSelArray;
+  CFX_ArrayTemplate<int32_t> iSelArray;
   m_pDataAcc->GetSelectedItems(iSelArray);
   int32_t iSelCount = iSelArray.GetSize();
   if (iSelCount > 0) {

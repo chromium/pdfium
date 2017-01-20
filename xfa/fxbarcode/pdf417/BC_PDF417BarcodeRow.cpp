@@ -41,10 +41,10 @@ void CBC_BarcodeRow::addBar(bool black, int32_t width) {
     set(m_currentLocation++, black);
   }
 }
-CFX_ByteArray& CBC_BarcodeRow::getRow() {
+CFX_ArrayTemplate<uint8_t>& CBC_BarcodeRow::getRow() {
   return m_row;
 }
-CFX_ByteArray& CBC_BarcodeRow::getScaledRow(int32_t scale) {
+CFX_ArrayTemplate<uint8_t>& CBC_BarcodeRow::getScaledRow(int32_t scale) {
   m_output.SetSize(m_row.GetSize() * scale);
   for (int32_t i = 0; i < m_output.GetSize(); i++) {
     m_output[i] = (m_row[i / scale]);

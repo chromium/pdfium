@@ -17,7 +17,9 @@ class CBC_ReedSolomonEncoder {
   explicit CBC_ReedSolomonEncoder(CBC_ReedSolomonGF256* field);
   virtual ~CBC_ReedSolomonEncoder();
 
-  void Encode(CFX_Int32Array* toEncode, int32_t ecBytes, int32_t& e);
+  void Encode(CFX_ArrayTemplate<int32_t>* toEncode,
+              int32_t ecBytes,
+              int32_t& e);
   virtual void Init();
 
  private:

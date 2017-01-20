@@ -43,7 +43,7 @@ TEST(PDF417HighLevelEncoder, EncodeBinary) {
   CBC_PDF417HighLevelEncoder::Initialize();
   for (size_t i = 0; i < FX_ArraySize(encode_binary_cases); ++i) {
     EncodeBinaryCase* ptr = &encode_binary_cases[i];
-    CFX_ByteArray input_array;
+    CFX_ArrayTemplate<uint8_t> input_array;
     size_t input_length = strlen(ptr->input);
     input_array.SetSize(input_length);
     for (size_t j = 0; j < input_length; ++j) {

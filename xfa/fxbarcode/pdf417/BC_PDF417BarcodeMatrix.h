@@ -21,15 +21,15 @@ class CBC_BarcodeMatrix {
   void setMatrix(int32_t x, int32_t y, bool black);
   void startRow();
   CBC_BarcodeRow* getCurrentRow();
-  CFX_ByteArray& getMatrix();
-  CFX_ByteArray& getScaledMatrix(int32_t scale);
-  CFX_ByteArray& getScaledMatrix(int32_t xScale, int32_t yScale);
+  CFX_ArrayTemplate<uint8_t>& getMatrix();
+  CFX_ArrayTemplate<uint8_t>& getScaledMatrix(int32_t scale);
+  CFX_ArrayTemplate<uint8_t>& getScaledMatrix(int32_t xScale, int32_t yScale);
   int32_t getWidth();
   int32_t getHeight();
 
  private:
   CFX_ArrayTemplate<CBC_BarcodeRow*> m_matrix;
-  CFX_ByteArray m_matrixOut;
+  CFX_ArrayTemplate<uint8_t> m_matrixOut;
   int32_t m_currentRow;
   int32_t m_height;
   int32_t m_width;

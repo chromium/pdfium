@@ -374,7 +374,7 @@ int32_t FX_BidiGetResolvedNeutrals(int32_t iAction) {
 
 int32_t FX_BidiReorderLevel(int32_t iBaseLevel,
                             CFX_WideString& wsText,
-                            const CFX_Int32Array& levels,
+                            const CFX_ArrayTemplate<int32_t>& levels,
                             int32_t iStart,
                             bool bReverse) {
   ASSERT(iBaseLevel >= 0 && iBaseLevel <= FX_BIDIMAXLEVEL);
@@ -403,7 +403,7 @@ int32_t FX_BidiReorderLevel(int32_t iBaseLevel,
 }
 void FX_BidiReorder(int32_t iBaseLevel,
                     CFX_WideString& wsText,
-                    const CFX_Int32Array& levels) {
+                    const CFX_ArrayTemplate<int32_t>& levels) {
   ASSERT(iBaseLevel >= 0 && iBaseLevel <= FX_BIDIMAXLEVEL);
   ASSERT(wsText.GetLength() == levels.GetSize());
   int32_t iSize = wsText.GetLength();

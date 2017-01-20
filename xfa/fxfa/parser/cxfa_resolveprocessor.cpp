@@ -497,7 +497,8 @@ int32_t CXFA_ResolveProcessor::ResolveAsterisk(CXFA_ResolveNodesData& rnd) {
   nodes.Append((CXFA_ObjArray&)array);
   return nodes.GetSize();
 }
-int32_t CXFA_ResolveProcessor::ResolvePopStack(CFX_Int32Array& stack) {
+int32_t CXFA_ResolveProcessor::ResolvePopStack(
+    CFX_ArrayTemplate<int32_t>& stack) {
   int32_t nType = -1;
   int32_t iSize = stack.GetSize() - 1;
   if (iSize > -1) {
@@ -520,7 +521,7 @@ int32_t CXFA_ResolveProcessor::GetFilter(const CFX_WideStringC& wsExpression,
   FX_WCHAR* pConditionBuf = wsCondition.GetBuffer(iLength - nStart);
   int32_t nNameCount = 0;
   int32_t nConditionCount = 0;
-  CFX_Int32Array stack;
+  CFX_ArrayTemplate<int32_t> stack;
   int32_t nType = -1;
   const FX_WCHAR* pSrc = wsExpression.c_str();
   FX_WCHAR wPrev = 0, wCur;

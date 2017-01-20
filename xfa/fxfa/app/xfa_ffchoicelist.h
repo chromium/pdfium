@@ -23,7 +23,8 @@ class CXFA_FFListBox : public CXFA_FFField {
   void OnDrawWidget(CFX_Graphics* pGraphics,
                     const CFX_Matrix* pMatrix = nullptr) override;
 
-  void OnSelectChanged(CFWL_Widget* pWidget, const CFX_Int32Array& arrSels);
+  void OnSelectChanged(CFWL_Widget* pWidget,
+                       const CFX_ArrayTemplate<int32_t>& arrSels);
   void SetItemState(int32_t nIndex, bool bSelected);
   void InsertItem(const CFX_WideStringC& wsLabel, int32_t nIndex = -1);
   void DeleteItem(int32_t nIndex);

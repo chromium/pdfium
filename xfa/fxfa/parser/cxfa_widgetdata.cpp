@@ -874,7 +874,7 @@ int32_t CXFA_WidgetData::GetSelectedItem(int32_t nIndex) {
   return -1;
 }
 
-void CXFA_WidgetData::GetSelectedItems(CFX_Int32Array& iSelArray) {
+void CXFA_WidgetData::GetSelectedItems(CFX_ArrayTemplate<int32_t>& iSelArray) {
   std::vector<CFX_WideString> wsValueArray;
   GetSelectedItemsValue(wsValueArray);
   int32_t iValues = pdfium::CollectionSize<int32_t>(wsValueArray);
@@ -973,7 +973,7 @@ void CXFA_WidgetData::SetItemState(int32_t nIndex,
                             bSyncData);
       }
     } else if (iSel >= 0) {
-      CFX_Int32Array iSelArray;
+      CFX_ArrayTemplate<int32_t> iSelArray;
       GetSelectedItems(iSelArray);
       for (int32_t i = 0; i < iSelArray.GetSize(); i++) {
         if (iSelArray[i] == nIndex) {
@@ -999,7 +999,7 @@ void CXFA_WidgetData::SetItemState(int32_t nIndex,
   }
 }
 
-void CXFA_WidgetData::SetSelectedItems(CFX_Int32Array& iSelArray,
+void CXFA_WidgetData::SetSelectedItems(CFX_ArrayTemplate<int32_t>& iSelArray,
                                        bool bNotify,
                                        bool bScriptModify,
                                        bool bSyncData) {

@@ -39,7 +39,7 @@ class CBC_PDF417HighLevelEncoder {
                             int32_t count,
                             CFX_WideString& sb,
                             int32_t initialSubmode);
-  static void encodeBinary(CFX_ByteArray* bytes,
+  static void encodeBinary(CFX_ArrayTemplate<uint8_t>* bytes,
                            int32_t startpos,
                            int32_t count,
                            int32_t startmode,
@@ -58,10 +58,11 @@ class CBC_PDF417HighLevelEncoder {
                                                 int32_t startpos);
   static int32_t determineConsecutiveTextCount(CFX_WideString msg,
                                                int32_t startpos);
-  static int32_t determineConsecutiveBinaryCount(CFX_WideString msg,
-                                                 CFX_ByteArray* bytes,
-                                                 int32_t startpos,
-                                                 int32_t& e);
+  static int32_t determineConsecutiveBinaryCount(
+      CFX_WideString msg,
+      CFX_ArrayTemplate<uint8_t>* bytes,
+      int32_t startpos,
+      int32_t& e);
 
   friend class PDF417HighLevelEncoder_EncodeNumeric_Test;
   friend class PDF417HighLevelEncoder_EncodeBinary_Test;

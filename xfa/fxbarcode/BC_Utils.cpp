@@ -26,7 +26,8 @@ void BC_FX_ByteString_Append(CFX_ByteString& dst, int32_t count, FX_CHAR c) {
     dst += c;
   }
 }
-void BC_FX_ByteString_Append(CFX_ByteString& dst, const CFX_ByteArray& ba) {
+void BC_FX_ByteString_Append(CFX_ByteString& dst,
+                             const CFX_ArrayTemplate<uint8_t>& ba) {
   for (int32_t i = 0; i < ba.GetSize(); i++) {
     dst += ba[i];
   }

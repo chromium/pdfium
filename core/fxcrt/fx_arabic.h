@@ -30,17 +30,17 @@ FX_WCHAR GetFormChar(const CFX_Char* cur,
 void FX_BidiReverseString(CFX_WideString& wsText,
                           int32_t iStart,
                           int32_t iCount);
-void FX_BidiSetDeferredRun(CFX_Int32Array& values,
+void FX_BidiSetDeferredRun(CFX_ArrayTemplate<int32_t>& values,
                            int32_t iStart,
                            int32_t iCount,
                            int32_t iValue);
 void FX_BidiClassify(const CFX_WideString& wsText,
-                     CFX_Int32Array& classes,
+                     CFX_ArrayTemplate<int32_t>& classes,
                      bool bWS = false);
 int32_t FX_BidiResolveExplicit(int32_t iBaseLevel,
                                int32_t iDirection,
-                               CFX_Int32Array& classes,
-                               CFX_Int32Array& levels,
+                               CFX_ArrayTemplate<int32_t>& classes,
+                               CFX_ArrayTemplate<int32_t>& levels,
                                int32_t iStart,
                                int32_t iCount,
                                int32_t iNest = 0);
@@ -136,8 +136,8 @@ enum FX_BIDIWEAKACTION {
 #define FX_BWALxx FX_BIDIWEAKACTION_Lxx
 
 void FX_BidiResolveWeak(int32_t iBaseLevel,
-                        CFX_Int32Array& classes,
-                        CFX_Int32Array& levels);
+                        CFX_ArrayTemplate<int32_t>& classes,
+                        CFX_ArrayTemplate<int32_t>& levels);
 enum FX_BIDINEUTRALSTATE {
   FX_BIDINEUTRALSTATE_r = 0,
   FX_BIDINEUTRALSTATE_l,
@@ -169,20 +169,20 @@ enum FX_BIDINEUTRALACTION {
 int32_t FX_BidiGetDeferredNeutrals(int32_t iAction, int32_t iLevel);
 int32_t FX_BidiGetResolvedNeutrals(int32_t iAction);
 void FX_BidiResolveNeutrals(int32_t iBaseLevel,
-                            CFX_Int32Array& classes,
-                            const CFX_Int32Array& levels);
-void FX_BidiResolveImplicit(const CFX_Int32Array& classes,
-                            CFX_Int32Array& levels);
+                            CFX_ArrayTemplate<int32_t>& classes,
+                            const CFX_ArrayTemplate<int32_t>& levels);
+void FX_BidiResolveImplicit(const CFX_ArrayTemplate<int32_t>& classes,
+                            CFX_ArrayTemplate<int32_t>& levels);
 void FX_BidiResolveWhitespace(int32_t iBaseLevel,
-                              const CFX_Int32Array& classes,
-                              CFX_Int32Array& levels);
+                              const CFX_ArrayTemplate<int32_t>& classes,
+                              CFX_ArrayTemplate<int32_t>& levels);
 int32_t FX_BidiReorderLevel(int32_t iBaseLevel,
                             CFX_WideString& wsText,
-                            const CFX_Int32Array& levels,
+                            const CFX_ArrayTemplate<int32_t>& levels,
                             int32_t iStart,
                             bool bReverse = false);
 void FX_BidiReorder(int32_t iBaseLevel,
                     CFX_WideString& wsText,
-                    const CFX_Int32Array& levels);
+                    const CFX_ArrayTemplate<int32_t>& levels);
 
 #endif  // CORE_FXCRT_FX_ARABIC_H_

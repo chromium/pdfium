@@ -132,11 +132,11 @@ CFX_WideString CBC_ErrorCorrection::encodeECC200(CFX_WideString codewords,
     BC_EXCEPTION_CHECK_ReturnValue(e, CFX_WideString());
     sb += ecc;
   } else {
-    CFX_Int32Array dataSizes;
+    CFX_ArrayTemplate<int32_t> dataSizes;
     dataSizes.SetSize(blockCount);
-    CFX_Int32Array errorSizes;
+    CFX_ArrayTemplate<int32_t> errorSizes;
     errorSizes.SetSize(blockCount);
-    CFX_Int32Array startPos;
+    CFX_ArrayTemplate<int32_t> startPos;
     startPos.SetSize(blockCount);
     for (int32_t i = 0; i < blockCount; i++) {
       dataSizes[i] = symbolInfo->getDataLengthForInterleavedBlock(i + 1);

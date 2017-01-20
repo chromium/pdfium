@@ -17,7 +17,7 @@ class CBC_CommonBitArray {
   virtual ~CBC_CommonBitArray();
 
   int32_t GetSize();
-  CFX_Int32Array& GetBits();
+  CFX_ArrayTemplate<int32_t>& GetBits();
   int32_t GetSizeInBytes();
   bool Get(int32_t i);
   void Set(int32_t i);
@@ -30,7 +30,7 @@ class CBC_CommonBitArray {
 
  private:
   int32_t m_size;
-  CFX_Int32Array m_bits;
+  CFX_ArrayTemplate<int32_t> m_bits;
 };
 
 #endif  // XFA_FXBARCODE_COMMON_BC_COMMONBITARRAY_H_

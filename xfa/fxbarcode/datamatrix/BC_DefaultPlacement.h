@@ -18,7 +18,7 @@ class CBC_DefaultPlacement {
 
   int32_t getNumrows();
   int32_t getNumcols();
-  CFX_ByteArray& getBits();
+  CFX_ArrayTemplate<uint8_t>& getBits();
   bool getBit(int32_t col, int32_t row);
   void setBit(int32_t col, int32_t row, bool bit);
   bool hasBit(int32_t col, int32_t row);
@@ -28,7 +28,7 @@ class CBC_DefaultPlacement {
   CFX_WideString m_codewords;
   int32_t m_numrows;
   int32_t m_numcols;
-  CFX_ByteArray m_bits;
+  CFX_ArrayTemplate<uint8_t> m_bits;
   void module(int32_t row, int32_t col, int32_t pos, int32_t bit);
   void utah(int32_t row, int32_t col, int32_t pos);
   void corner1(int32_t pos);

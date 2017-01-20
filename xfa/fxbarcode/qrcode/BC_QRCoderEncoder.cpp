@@ -95,7 +95,7 @@ void CBC_QRCoderEncoder::AppendDataModeLenghInfo(
                   e);
       BC_EXCEPTION_CHECK_ReturnVoid(e);
     } else if (tempMode == CBC_QRCoderMode::sBYTE) {
-      CFX_ByteArray bytes;
+      CFX_ArrayTemplate<uint8_t> bytes;
       CBC_UtilCodingConvert::LocaleToUtf8(splitResult.second, bytes);
       AppendModeInfo(tempMode, &headerAndDataBits, e);
       BC_EXCEPTION_CHECK_ReturnVoid(e);
@@ -722,7 +722,7 @@ void CBC_QRCoderEncoder::Append8BitBytes(const CFX_ByteString& content,
   }
 }
 
-void CBC_QRCoderEncoder::Append8BitBytes(CFX_ByteArray& bytes,
+void CBC_QRCoderEncoder::Append8BitBytes(CFX_ArrayTemplate<uint8_t>& bytes,
                                          CBC_QRCoderBitVector* bits,
                                          int32_t& e) {
   for (int32_t i = 0; i < bytes.GetSize(); i++) {
@@ -734,7 +734,7 @@ void CBC_QRCoderEncoder::Append8BitBytes(CFX_ByteArray& bytes,
 void CBC_QRCoderEncoder::AppendKanjiBytes(const CFX_ByteString& content,
                                           CBC_QRCoderBitVector* bits,
                                           int32_t& e) {
-  CFX_ByteArray bytes;
+  CFX_ArrayTemplate<uint8_t> bytes;
   uint32_t value = 0;
   for (int32_t i = 0; i < bytes.GetSize(); i += 2) {
     value = (uint32_t)((uint8_t)(content[i] << 8) | (uint8_t)content[i + 1]);
@@ -907,7 +907,7 @@ CBC_CommonByteArray* CBC_QRCoderEncoder::GenerateECBytes(
     int32_t numEcBytesInBlock,
     int32_t& e) {
   int32_t numDataBytes = dataBytes->Size();
-  CFX_Int32Array toEncode;
+  CFX_ArrayTemplate<int32_t> toEncode;
   toEncode.SetSize(numDataBytes + numEcBytesInBlock);
   for (int32_t i = 0; i < numDataBytes; i++) {
     toEncode[i] = (dataBytes->At(i));

@@ -313,11 +313,6 @@ class CFX_ArrayTemplate : public CFX_BasicArray {
   }
 };
 
-#ifdef PDF_ENABLE_XFA
-typedef CFX_ArrayTemplate<uint8_t> CFX_ByteArray;
-typedef CFX_ArrayTemplate<int32_t> CFX_Int32Array;
-#endif  // PDF_ENABLE_XFA
-
 template <class DataType, int FixedSize>
 class CFX_FixedBufGrow {
  public:

@@ -23,7 +23,7 @@ class CBC_QRCoderVersion {
   int32_t GetTotalCodeWords();
   int32_t GetDimensionForVersion();
   CBC_CommonBitMatrix* BuildFunctionPattern(int32_t& e);
-  CFX_Int32Array* GetAlignmentPatternCenters();
+  CFX_ArrayTemplate<int32_t>* GetAlignmentPatternCenters();
   CBC_QRCoderECBlocks* GetECBlocksForLevel(
       CBC_QRCoderErrorCorrectionLevel* ecLevel);
   static CBC_QRCoderVersion* GetVersionForNumber(int32_t versionNumber,
@@ -48,7 +48,7 @@ class CBC_QRCoderVersion {
 
   int32_t m_versionNumber;
   int32_t m_totalCodeWords;
-  CFX_Int32Array m_alignmentPatternCenters;
+  CFX_ArrayTemplate<int32_t> m_alignmentPatternCenters;
   CFX_ArrayTemplate<CBC_QRCoderECBlocks*> m_ecBlocksArray;
 };
 

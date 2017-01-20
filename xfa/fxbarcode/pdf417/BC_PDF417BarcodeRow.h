@@ -17,12 +17,12 @@ class CBC_BarcodeRow {
   void set(int32_t x, uint8_t value);
   void set(int32_t x, bool black);
   void addBar(bool black, int32_t width);
-  CFX_ByteArray& getRow();
-  CFX_ByteArray& getScaledRow(int32_t scale);
+  CFX_ArrayTemplate<uint8_t>& getRow();
+  CFX_ArrayTemplate<uint8_t>& getScaledRow(int32_t scale);
 
  private:
-  CFX_ByteArray m_row;
-  CFX_ByteArray m_output;
+  CFX_ArrayTemplate<uint8_t> m_row;
+  CFX_ArrayTemplate<uint8_t> m_output;
   int32_t m_currentLocation;
 };
 

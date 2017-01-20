@@ -85,7 +85,7 @@ CBC_ReedSolomonGF256Poly* CBC_ReedSolomonGF256::BuildMonomial(
     BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
     return temp;
   }
-  CFX_Int32Array coefficients;
+  CFX_ArrayTemplate<int32_t> coefficients;
   coefficients.SetSize(degree + 1);
   coefficients[0] = coefficient;
   CBC_ReedSolomonGF256Poly* temp = new CBC_ReedSolomonGF256Poly();

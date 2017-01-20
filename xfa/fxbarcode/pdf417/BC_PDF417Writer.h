@@ -27,7 +27,9 @@ class CBC_PDF417Writer : public CBC_TwoDimWriter {
   void SetTruncated(bool truncated);
 
  private:
-  void rotateArray(CFX_ByteArray& bitarray, int32_t width, int32_t height);
+  void rotateArray(CFX_ArrayTemplate<uint8_t>& bitarray,
+                   int32_t width,
+                   int32_t height);
   bool m_bTruncated;
 };
 

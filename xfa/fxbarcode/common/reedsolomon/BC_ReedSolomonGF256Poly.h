@@ -17,11 +17,11 @@ class CBC_ReedSolomonGF256Poly final {
   CBC_ReedSolomonGF256Poly();
   ~CBC_ReedSolomonGF256Poly();
   void Init(CBC_ReedSolomonGF256* field,
-            CFX_Int32Array* coefficients,
+            CFX_ArrayTemplate<int32_t>* coefficients,
             int32_t& e);
 
   int32_t GetCoefficients(int32_t degree);
-  CFX_Int32Array* GetCoefficients();
+  CFX_ArrayTemplate<int32_t>* GetCoefficients();
   int32_t GetDegree();
   bool IsZero();
   int32_t EvaluateAt(int32_t a);
@@ -41,7 +41,7 @@ class CBC_ReedSolomonGF256Poly final {
 
  private:
   CBC_ReedSolomonGF256* m_field;
-  CFX_Int32Array m_coefficients;
+  CFX_ArrayTemplate<int32_t> m_coefficients;
 };
 
 #endif  // XFA_FXBARCODE_COMMON_REEDSOLOMON_BC_REEDSOLOMONGF256POLY_H_

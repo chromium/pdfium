@@ -38,7 +38,7 @@ CBC_ReedSolomonGF256Poly::CBC_ReedSolomonGF256Poly() {
   m_field = nullptr;
 }
 void CBC_ReedSolomonGF256Poly::Init(CBC_ReedSolomonGF256* field,
-                                    CFX_Int32Array* coefficients,
+                                    CFX_ArrayTemplate<int32_t>* coefficients,
                                     int32_t& e) {
   if (!coefficients || coefficients->GetSize() == 0) {
     e = BCExceptionCoefficientsSizeIsNull;
@@ -64,7 +64,7 @@ void CBC_ReedSolomonGF256Poly::Init(CBC_ReedSolomonGF256* field,
     m_coefficients.Copy(*coefficients);
   }
 }
-CFX_Int32Array* CBC_ReedSolomonGF256Poly::GetCoefficients() {
+CFX_ArrayTemplate<int32_t>* CBC_ReedSolomonGF256Poly::GetCoefficients() {
   return &m_coefficients;
 }
 int32_t CBC_ReedSolomonGF256Poly::GetDegree() {
@@ -109,17 +109,17 @@ CBC_ReedSolomonGF256Poly* CBC_ReedSolomonGF256Poly::AddOrSubtract(
   if (other->IsZero())
     return Clone(e);
 
-  CFX_Int32Array smallerCoefficients;
+  CFX_ArrayTemplate<int32_t> smallerCoefficients;
   smallerCoefficients.Copy(m_coefficients);
-  CFX_Int32Array largerCoefficients;
+  CFX_ArrayTemplate<int32_t> largerCoefficients;
   largerCoefficients.Copy(*(other->GetCoefficients()));
   if (smallerCoefficients.GetSize() > largerCoefficients.GetSize()) {
-    CFX_Int32Array temp;
+    CFX_ArrayTemplate<int32_t> temp;
     temp.Copy(smallerCoefficients);
     smallerCoefficients.Copy(largerCoefficients);
     largerCoefficients.Copy(temp);
   }
-  CFX_Int32Array sumDiff;
+  CFX_ArrayTemplate<int32_t> sumDiff;
   sumDiff.SetSize(largerCoefficients.GetSize());
   int32_t lengthDiff =
       largerCoefficients.GetSize() - smallerCoefficients.GetSize();
@@ -141,13 +141,13 @@ CBC_ReedSolomonGF256Poly* CBC_ReedSolomonGF256Poly::Multiply(
   if (IsZero() || other->IsZero())
     return m_field->GetZero()->Clone(e);
 
-  CFX_Int32Array aCoefficients;
+  CFX_ArrayTemplate<int32_t> aCoefficients;
   aCoefficients.Copy(m_coefficients);
   int32_t aLength = m_coefficients.GetSize();
-  CFX_Int32Array bCoefficients;
+  CFX_ArrayTemplate<int32_t> bCoefficients;
   bCoefficients.Copy(*(other->GetCoefficients()));
   int32_t bLength = other->GetCoefficients()->GetSize();
-  CFX_Int32Array product;
+  CFX_ArrayTemplate<int32_t> product;
   product.SetSize(aLength + bLength - 1);
   for (int32_t i = 0; i < aLength; i++) {
     int32_t aCoeff = m_coefficients[i];
@@ -170,7 +170,7 @@ CBC_ReedSolomonGF256Poly* CBC_ReedSolomonGF256Poly::Multiply(int32_t scalar,
     return Clone(e);
 
   int32_t size = m_coefficients.GetSize();
-  CFX_Int32Array product;
+  CFX_ArrayTemplate<int32_t> product;
   product.SetSize(size);
   for (int32_t i = 0; i < size; i++) {
     product[i] = m_field->Multiply(m_coefficients[i], scalar);
@@ -192,7 +192,7 @@ CBC_ReedSolomonGF256Poly* CBC_ReedSolomonGF256Poly::MultiplyByMonomial(
     return m_field->GetZero()->Clone(e);
 
   int32_t size = m_coefficients.GetSize();
-  CFX_Int32Array product;
+  CFX_ArrayTemplate<int32_t> product;
   product.SetSize(size + degree);
   for (int32_t i = 0; i < size; i++) {
     product[i] = (m_field->Multiply(m_coefficients[i], coefficient));

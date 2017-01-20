@@ -354,7 +354,7 @@ CBC_QRCoderVersion::~CBC_QRCoderVersion() {
 int32_t CBC_QRCoderVersion::GetVersionNumber() {
   return m_versionNumber;
 }
-CFX_Int32Array* CBC_QRCoderVersion::GetAlignmentPatternCenters() {
+CFX_ArrayTemplate<int32_t>* CBC_QRCoderVersion::GetAlignmentPatternCenters() {
   return &m_alignmentPatternCenters;
 }
 int32_t CBC_QRCoderVersion::GetTotalCodeWords() {
