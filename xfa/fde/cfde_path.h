@@ -7,6 +7,8 @@
 #ifndef XFA_FDE_CFDE_PATH_H_
 #define XFA_FDE_CFDE_PATH_H_
 
+#include <vector>
+
 #include "core/fxge/cfx_pathdata.h"
 #include "core/fxge/cfx_renderdevice.h"
 
@@ -15,16 +17,16 @@ class CFDE_Path {
   bool StartFigure();
   bool CloseFigure();
 
-  void AddBezier(const CFX_PointsF& points);
-  void AddBeziers(const CFX_PointsF& points);
-  void AddCurve(const CFX_PointsF& points,
+  void AddBezier(const std::vector<CFX_PointF>& points);
+  void AddBeziers(const std::vector<CFX_PointF>& points);
+  void AddCurve(const std::vector<CFX_PointF>& points,
                 bool bClosed,
                 FX_FLOAT fTension = 0.5f);
   void AddEllipse(const CFX_RectF& rect);
-  void AddLines(const CFX_PointsF& points);
+  void AddLines(const std::vector<CFX_PointF>& points);
   void AddLine(const CFX_PointF& pt1, const CFX_PointF& pt2);
   void AddPath(const CFDE_Path* pSrc, bool bConnect);
-  void AddPolygon(const CFX_PointsF& points);
+  void AddPolygon(const std::vector<CFX_PointF>& points);
   void AddRectangle(const CFX_RectF& rect);
   void GetBBox(CFX_RectF& bbox) const;
   void GetBBox(CFX_RectF& bbox,
@@ -44,8 +46,8 @@ class CFDE_Path {
              FX_FLOAT endAngle);
   void MoveTo(const CFX_PointF& p0) { MoveTo(p0.x, p0.y); }
   void LineTo(const CFX_PointF& p1) { LineTo(p1.x, p1.y); }
-  void GetCurveTangents(const CFX_PointsF& points,
-                        CFX_PointsF& tangents,
+  void GetCurveTangents(const std::vector<CFX_PointF>& points,
+                        std::vector<CFX_PointF>* tangents,
                         bool bClosed,
                         FX_FLOAT fTension) const;
   CFX_PathData m_Path;

@@ -75,11 +75,6 @@ typedef CFX_PSTemplate<FX_FLOAT> CFX_PointF;
 typedef CFX_PSTemplate<int32_t> CFX_Size;
 typedef CFX_PSTemplate<FX_FLOAT> CFX_SizeF;
 
-#ifdef PDF_ENABLE_XFA
-typedef CFX_ArrayTemplate<CFX_Point> CFX_Points;
-typedef CFX_ArrayTemplate<CFX_PointF> CFX_PointsF;
-#endif  // PDF_ENABLE_XFA
-
 template <class BaseType>
 class CFX_VTemplate : public CFX_PSTemplate<BaseType> {
  public:

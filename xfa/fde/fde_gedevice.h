@@ -7,6 +7,8 @@
 #ifndef XFA_FDE_FDE_GEDEVICE_H_
 #define XFA_FDE_FDE_GEDEVICE_H_
 
+#include <vector>
+
 #include "core/fxge/cfx_renderdevice.h"
 #include "xfa/fgas/font/cfgas_gefont.h"
 
@@ -52,7 +54,7 @@ class CFDE_RenderDevice {
                   const CFX_Matrix* pMatrix = nullptr);
   bool DrawCurve(CFDE_Pen* pPen,
                  FX_FLOAT fPenWidth,
-                 const CFX_PointsF& points,
+                 const std::vector<CFX_PointF>& points,
                  bool bClosed,
                  FX_FLOAT fTension = 0.5f,
                  const CFX_Matrix* pMatrix = nullptr);
@@ -62,7 +64,7 @@ class CFDE_RenderDevice {
                    const CFX_Matrix* pMatrix = nullptr);
   bool DrawLines(CFDE_Pen* pPen,
                  FX_FLOAT fPenWidth,
-                 const CFX_PointsF& points,
+                 const std::vector<CFX_PointF>& points,
                  const CFX_Matrix* pMatrix = nullptr);
   bool DrawLine(CFDE_Pen* pPen,
                 FX_FLOAT fPenWidth,
@@ -75,14 +77,14 @@ class CFDE_RenderDevice {
                 const CFX_Matrix* pMatrix = nullptr);
   bool DrawPolygon(CFDE_Pen* pPen,
                    FX_FLOAT fPenWidth,
-                   const CFX_PointsF& points,
+                   const std::vector<CFX_PointF>& points,
                    const CFX_Matrix* pMatrix = nullptr);
   bool DrawRectangle(CFDE_Pen* pPen,
                      FX_FLOAT fPenWidth,
                      const CFX_RectF& rect,
                      const CFX_Matrix* pMatrix = nullptr);
   bool FillClosedCurve(CFDE_Brush* pBrush,
-                       const CFX_PointsF& points,
+                       const std::vector<CFX_PointF>& points,
                        FX_FLOAT fTension = 0.5f,
                        const CFX_Matrix* pMatrix = nullptr);
   bool FillEllipse(CFDE_Brush* pBrush,
@@ -92,7 +94,7 @@ class CFDE_RenderDevice {
                 const CFDE_Path* pPath,
                 const CFX_Matrix* pMatrix = nullptr);
   bool FillPolygon(CFDE_Brush* pBrush,
-                   const CFX_PointsF& points,
+                   const std::vector<CFX_PointF>& points,
                    const CFX_Matrix* pMatrix = nullptr);
   bool FillRectangle(CFDE_Brush* pBrush,
                      const CFX_RectF& rect,

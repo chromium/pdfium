@@ -198,18 +198,18 @@ bool CFDE_RenderDevice::DrawBezier(CFDE_Pen* pPen,
                                    const CFX_PointF& pt3,
                                    const CFX_PointF& pt4,
                                    const CFX_Matrix* pMatrix) {
-  CFX_PointsF points;
-  points.Add(pt1);
-  points.Add(pt2);
-  points.Add(pt3);
-  points.Add(pt4);
+  std::vector<CFX_PointF> points;
+  points.push_back(pt1);
+  points.push_back(pt2);
+  points.push_back(pt3);
+  points.push_back(pt4);
   CFDE_Path path;
   path.AddBezier(points);
   return DrawPath(pPen, fPenWidth, &path, pMatrix);
 }
 bool CFDE_RenderDevice::DrawCurve(CFDE_Pen* pPen,
                                   FX_FLOAT fPenWidth,
-                                  const CFX_PointsF& points,
+                                  const std::vector<CFX_PointF>& points,
                                   bool bClosed,
                                   FX_FLOAT fTension,
                                   const CFX_Matrix* pMatrix) {
@@ -227,7 +227,7 @@ bool CFDE_RenderDevice::DrawEllipse(CFDE_Pen* pPen,
 }
 bool CFDE_RenderDevice::DrawLines(CFDE_Pen* pPen,
                                   FX_FLOAT fPenWidth,
-                                  const CFX_PointsF& points,
+                                  const std::vector<CFX_PointF>& points,
                                   const CFX_Matrix* pMatrix) {
   CFDE_Path path;
   path.AddLines(points);
@@ -259,7 +259,7 @@ bool CFDE_RenderDevice::DrawPath(CFDE_Pen* pPen,
 }
 bool CFDE_RenderDevice::DrawPolygon(CFDE_Pen* pPen,
                                     FX_FLOAT fPenWidth,
-                                    const CFX_PointsF& points,
+                                    const std::vector<CFX_PointF>& points,
                                     const CFX_Matrix* pMatrix) {
   CFDE_Path path;
   path.AddPolygon(points);
@@ -274,7 +274,7 @@ bool CFDE_RenderDevice::DrawRectangle(CFDE_Pen* pPen,
   return DrawPath(pPen, fPenWidth, &path, pMatrix);
 }
 bool CFDE_RenderDevice::FillClosedCurve(CFDE_Brush* pBrush,
-                                        const CFX_PointsF& points,
+                                        const std::vector<CFX_PointF>& points,
                                         FX_FLOAT fTension,
                                         const CFX_Matrix* pMatrix) {
   CFDE_Path path;
@@ -289,7 +289,7 @@ bool CFDE_RenderDevice::FillEllipse(CFDE_Brush* pBrush,
   return FillPath(pBrush, &path, pMatrix);
 }
 bool CFDE_RenderDevice::FillPolygon(CFDE_Brush* pBrush,
-                                    const CFX_PointsF& points,
+                                    const std::vector<CFX_PointF>& points,
                                     const CFX_Matrix* pMatrix) {
   CFDE_Path path;
   path.AddPolygon(points);

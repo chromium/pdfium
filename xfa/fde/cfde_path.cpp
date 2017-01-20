@@ -6,6 +6,7 @@
 
 #include "xfa/fde/cfde_path.h"
 
+#include "third_party/base/stl_util.h"
 #include "xfa/fde/fde_object.h"
 
 bool CFDE_Path::StartFigure() {
@@ -106,39 +107,38 @@ void CFDE_Path::ArcTo(bool bStart,
            CFX_PointF(cx + rx * cos_beta, cy + ry * sin_beta));
 }
 
-void CFDE_Path::AddBezier(const CFX_PointsF& points) {
-  if (points.GetSize() != 4)
+void CFDE_Path::AddBezier(const std::vector<CFX_PointF>& points) {
+  if (points.size() != 4)
     return;
 
-  const CFX_PointF* p = points.GetData();
-  MoveTo(p[0]);
-  BezierTo(p[1], p[2], p[3]);
+  MoveTo(points[0]);
+  BezierTo(points[1], points[2], points[3]);
 }
 
-void CFDE_Path::AddBeziers(const CFX_PointsF& points) {
-  int32_t iCount = points.GetSize();
+void CFDE_Path::AddBeziers(const std::vector<CFX_PointF>& points) {
+  int32_t iCount = points.size();
   if (iCount < 4)
     return;
 
-  const CFX_PointF* p = points.GetData();
+  const CFX_PointF* p = points.data();
   const CFX_PointF* pEnd = p + iCount;
   MoveTo(p[0]);
   for (++p; p <= pEnd - 3; p += 3)
     BezierTo(p[0], p[1], p[2]);
 }
 
-void CFDE_Path::GetCurveTangents(const CFX_PointsF& points,
-                                 CFX_PointsF& tangents,
+void CFDE_Path::GetCurveTangents(const std::vector<CFX_PointF>& points,
+                                 std::vector<CFX_PointF>* tangents,
                                  bool bClosed,
                                  FX_FLOAT fTension) const {
-  int32_t iCount = points.GetSize();
-  tangents.SetSize(iCount);
+  int32_t iCount = pdfium::CollectionSize<int32_t>(points);
+  tangents->resize(iCount);
   if (iCount < 3)
     return;
 
   FX_FLOAT fCoefficient = fTension / 3.0f;
-  const CFX_PointF* pPoints = points.GetData();
-  CFX_PointF* pTangents = tangents.GetData();
+  const CFX_PointF* pPoints = points.data();
+  CFX_PointF* pTangents = tangents->data();
   for (int32_t i = 0; i < iCount; ++i) {
     int32_t r = i + 1;
     int32_t s = i - 1;
@@ -152,17 +152,17 @@ void CFDE_Path::GetCurveTangents(const CFX_PointsF& points,
   }
 }
 
-void CFDE_Path::AddCurve(const CFX_PointsF& points,
+void CFDE_Path::AddCurve(const std::vector<CFX_PointF>& points,
                          bool bClosed,
                          FX_FLOAT fTension) {
-  int32_t iLast = points.GetUpperBound();
+  int32_t iLast = pdfium::CollectionSize<int32_t>(points) - 1;
   if (iLast < 1)
     return;
 
-  CFX_PointsF tangents;
-  GetCurveTangents(points, tangents, bClosed, fTension);
-  const CFX_PointF* pPoints = points.GetData();
-  CFX_PointF* pTangents = tangents.GetData();
+  std::vector<CFX_PointF> tangents;
+  GetCurveTangents(points, &tangents, bClosed, fTension);
+  const CFX_PointF* pPoints = points.data();
+  CFX_PointF* pTangents = tangents.data();
   MoveTo(pPoints[0]);
   for (int32_t i = 0; i < iLast; ++i) {
     BezierTo(CFX_PointF(pPoints[i].x + pTangents[i].x,
@@ -214,13 +214,13 @@ void CFDE_Path::AddPath(const CFDE_Path* pSrc, bool bConnect) {
   m_Path.Append(&pSrc->m_Path, nullptr);
 }
 
-void CFDE_Path::AddPolygon(const CFX_PointsF& points) {
-  int32_t iCount = points.GetSize();
+void CFDE_Path::AddPolygon(const std::vector<CFX_PointF>& points) {
+  size_t iCount = points.size();
   if (iCount < 2)
     return;
 
   AddLines(points);
-  const CFX_PointF* p = points.GetData();
+  const CFX_PointF* p = points.data();
   if (FXSYS_fabs(p[0].x - p[iCount - 1].x) < 0.01f ||
       FXSYS_fabs(p[0].y - p[iCount - 1].y) < 0.01f) {
     LineTo(p[0]);
@@ -228,12 +228,12 @@ void CFDE_Path::AddPolygon(const CFX_PointsF& points) {
   CloseFigure();
 }
 
-void CFDE_Path::AddLines(const CFX_PointsF& points) {
-  int32_t iCount = points.GetSize();
+void CFDE_Path::AddLines(const std::vector<CFX_PointF>& points) {
+  size_t iCount = points.size();
   if (iCount < 2)
     return;
 
-  const CFX_PointF* p = points.GetData();
+  const CFX_PointF* p = points.data();
   const CFX_PointF* pEnd = p + iCount;
   MoveTo(p[0]);
   for (++p; p < pEnd; ++p)
