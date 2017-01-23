@@ -38,7 +38,7 @@ class CFDE_CSSStyleSelector {
                       const CFX_ArrayTemplate<CFDE_CSSStyleSheet*>* pArray);
   void SetStylePriority(FDE_CSSStyleSheetGroup eType,
                         FDE_CSSStyleSheetPriority ePriority);
-  void UpdateStyleIndex(uint32_t dwMediaList);
+  void UpdateStyleIndex();
   CFDE_CSSAccelerator* InitAccelerator();
   CFDE_CSSComputedStyle* CreateComputedStyle(
       CFDE_CSSComputedStyle* pParentStyle);

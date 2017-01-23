@@ -12,8 +12,8 @@
 #include "core/fxcrt/fx_basic.h"
 
 class CFDE_CSSDeclaration;
-class CFDE_CSSRule;
 class CFDE_CSSSelector;
+class CFDE_CSSStyleRule;
 class CFDE_CSSStyleSheet;
 class CFGAS_FontMgr;
 
@@ -33,7 +33,6 @@ class CFDE_CSSRuleCollection {
   ~CFDE_CSSRuleCollection();
 
   void AddRulesFrom(const CFX_ArrayTemplate<CFDE_CSSStyleSheet*>& sheets,
-                    uint32_t dwMediaList,
                     CFGAS_FontMgr* pFontMgr);
   void Clear();
   int32_t CountSelectors() const { return m_iSelectors; }
@@ -58,8 +57,7 @@ class CFDE_CSSRuleCollection {
 
  protected:
   void AddRulesFrom(CFDE_CSSStyleSheet* pStyleSheet,
-                    CFDE_CSSRule* pRule,
-                    uint32_t dwMediaList,
+                    CFDE_CSSStyleRule* pRule,
                     CFGAS_FontMgr* pFontMgr);
   void AddRuleTo(std::map<uint32_t, Data*>* pMap,
                  uint32_t dwKey,

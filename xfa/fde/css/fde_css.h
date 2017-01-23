@@ -12,18 +12,6 @@
 #include "xfa/fgas/crt/fgas_utils.h"
 #include "xfa/fgas/font/cfgas_fontmgr.h"
 
-enum FDE_CSSMEDIATYPE {
-  FDE_CSSMEDIATYPE_Braille = 0x01,
-  FDE_CSSMEDIATYPE_Emboss = 0x02,
-  FDE_CSSMEDIATYPE_Handheld = 0x04,
-  FDE_CSSMEDIATYPE_Print = 0x08,
-  FDE_CSSMEDIATYPE_Projection = 0x10,
-  FDE_CSSMEDIATYPE_Screen = 0x20,
-  FDE_CSSMEDIATYPE_TTY = 0x40,
-  FDE_CSSMEDIATYPE_TV = 0x80,
-  FDE_CSSMEDIATYPE_ALL = 0xFF,
-};
-
 enum FDE_CSSVALUETYPE {
   FDE_CSSVALUETYPE_Primitive = 1 << 0,
   FDE_CSSVALUETYPE_List = 1 << 1,
@@ -146,8 +134,6 @@ enum class FDE_CSSSelectorType : uint8_t {
   Pseudo,
   ID,
 };
-
-enum class FDE_CSSRuleType : uint8_t { Style, Media, FontFace };
 
 enum class FDE_CSSLengthUnit : uint8_t {
   Auto,

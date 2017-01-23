@@ -100,13 +100,13 @@ void CFDE_CSSStyleSelector::SetStylePriority(
   m_ePriorities[static_cast<int32_t>(ePriority)] = eType;
 }
 
-void CFDE_CSSStyleSelector::UpdateStyleIndex(uint32_t dwMediaList) {
+void CFDE_CSSStyleSelector::UpdateStyleIndex() {
   Reset();
 
   // TODO(dsinclair): Hard coded size bad. This should probably just be a map.
   for (int32_t iGroup = 0; iGroup < 3; ++iGroup) {
     CFDE_CSSRuleCollection& rules = m_RuleCollection[iGroup];
-    rules.AddRulesFrom(m_SheetGroups[iGroup], dwMediaList, m_pFontMgr);
+    rules.AddRulesFrom(m_SheetGroups[iGroup], m_pFontMgr);
   }
 }
 

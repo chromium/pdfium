@@ -6,7 +6,7 @@
 
 #include "xfa/fde/css/cfde_cssstylerule.h"
 
-CFDE_CSSStyleRule::CFDE_CSSStyleRule() : CFDE_CSSRule(FDE_CSSRuleType::Style) {}
+CFDE_CSSStyleRule::CFDE_CSSStyleRule() {}
 
 CFDE_CSSStyleRule::~CFDE_CSSStyleRule() {}
 

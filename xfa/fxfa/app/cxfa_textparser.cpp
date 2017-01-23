@@ -79,7 +79,7 @@ void CXFA_TextParser::InitCSSData(CXFA_TextProvider* pTextProvider) {
   if (!m_pUASheet) {
     m_pUASheet = LoadDefaultSheetStyle();
     m_pSelector->SetStyleSheet(FDE_CSSStyleSheetGroup::UserAgent, m_pUASheet);
-    m_pSelector->UpdateStyleIndex(FDE_CSSMEDIATYPE_ALL);
+    m_pSelector->UpdateStyleIndex();
   }
 }
 
@@ -87,15 +87,16 @@ CFDE_CSSStyleSheet* CXFA_TextParser::LoadDefaultSheetStyle() {
   static const FX_WCHAR s_pStyle[] =
       L"html,body,ol,p,ul{display:block}"
       L"li{display:list-item}"
-      L"ol,ul{padding-left:33px}ol{list-style-type:decimal}ol,ul{margin-top:0;"
-      L"margin-bottom:0}ul,ol{margin:1.12em 0}"
-      L"a{color:#0000ff;text-decoration:underline}b{font-weight:bolder}i{font-"
-      L"style:italic}"
-      L"sup{vertical-align:+15em;font-size:.66em}sub{vertical-align:-15em;font-"
-      L"size:.66em}";
+      L"ol,ul{padding-left:33px;margin:1.12em 0}"
+      L"ol{list-style-type:decimal}"
+      L"a{color:#0000ff;text-decoration:underline}"
+      L"b{font-weight:bolder}"
+      L"i{font-style:italic}"
+      L"sup{vertical-align:+15em;font-size:.66em}"
+      L"sub{vertical-align:-15em;font-size:.66em}";
 
   CFDE_CSSStyleSheet* pStyleSheet = new CFDE_CSSStyleSheet();
-  if (!pStyleSheet->LoadFromBuffer(s_pStyle, FXSYS_wcslen(s_pStyle))) {
+  if (!pStyleSheet->LoadBuffer(s_pStyle, FXSYS_wcslen(s_pStyle))) {
     pStyleSheet->Release();
     pStyleSheet = nullptr;
   }

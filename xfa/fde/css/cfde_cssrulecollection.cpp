@@ -11,8 +11,6 @@
 #include <memory>
 
 #include "xfa/fde/css/cfde_cssdeclaration.h"
-#include "xfa/fde/css/cfde_cssmediarule.h"
-#include "xfa/fde/css/cfde_cssrule.h"
 #include "xfa/fde/css/cfde_cssselector.h"
 #include "xfa/fde/css/cfde_cssstylerule.h"
 #include "xfa/fde/css/cfde_cssstylesheet.h"
@@ -38,78 +36,54 @@ CFDE_CSSRuleCollection::~CFDE_CSSRuleCollection() {
 
 void CFDE_CSSRuleCollection::AddRulesFrom(
     const CFX_ArrayTemplate<CFDE_CSSStyleSheet*>& sheets,
-    uint32_t dwMediaList,
     CFGAS_FontMgr* pFontMgr) {
   int32_t iSheets = sheets.GetSize();
   for (int32_t i = 0; i < iSheets; ++i) {
     CFDE_CSSStyleSheet* pSheet = sheets.GetAt(i);
-    if (uint32_t dwMatchMedia = pSheet->GetMediaList() & dwMediaList) {
-      int32_t iRules = pSheet->CountRules();
-      for (int32_t j = 0; j < iRules; j++) {
-        AddRulesFrom(pSheet, pSheet->GetRule(j), dwMatchMedia, pFontMgr);
-      }
+    int32_t iRules = pSheet->CountRules();
+    for (int32_t j = 0; j < iRules; j++) {
+      AddRulesFrom(pSheet, pSheet->GetRule(j), pFontMgr);
     }
   }
 }
 
 void CFDE_CSSRuleCollection::AddRulesFrom(CFDE_CSSStyleSheet* pStyleSheet,
-                                          CFDE_CSSRule* pRule,
-                                          uint32_t dwMediaList,
+                                          CFDE_CSSStyleRule* pStyleRule,
                                           CFGAS_FontMgr* pFontMgr) {
-  switch (pRule->GetType()) {
-    case FDE_CSSRuleType::Style: {
-      CFDE_CSSStyleRule* pStyleRule = static_cast<CFDE_CSSStyleRule*>(pRule);
-      CFDE_CSSDeclaration* pDeclaration = pStyleRule->GetDeclaration();
-      int32_t iSelectors = pStyleRule->CountSelectorLists();
-      for (int32_t i = 0; i < iSelectors; ++i) {
-        CFDE_CSSSelector* pSelector = pStyleRule->GetSelectorList(i);
-        if (pSelector->GetType() == FDE_CSSSelectorType::Pseudo) {
-          Data* pData = NewRuleData(pSelector, pDeclaration);
-          AddRuleTo(&m_pPseudoRules, pData);
-          continue;
-        }
-        if (pSelector->GetNameHash() != FDE_CSSUNIVERSALHASH) {
-          AddRuleTo(&m_TagRules, pSelector->GetNameHash(), pSelector,
-                    pDeclaration);
-          continue;
-        }
-        CFDE_CSSSelector* pNext = pSelector->GetNextSelector();
-        if (!pNext) {
-          Data* pData = NewRuleData(pSelector, pDeclaration);
-          AddRuleTo(&m_pUniversalRules, pData);
-          continue;
-        }
-        switch (pNext->GetType()) {
-          case FDE_CSSSelectorType::ID:
-            AddRuleTo(&m_IDRules, pNext->GetNameHash(), pSelector,
-                      pDeclaration);
-            break;
-          case FDE_CSSSelectorType::Class:
-            AddRuleTo(&m_ClassRules, pNext->GetNameHash(), pSelector,
-                      pDeclaration);
-            break;
-          case FDE_CSSSelectorType::Descendant:
-          case FDE_CSSSelectorType::Element:
-            AddRuleTo(&m_pUniversalRules, NewRuleData(pSelector, pDeclaration));
-            break;
-          default:
-            ASSERT(false);
-            break;
-        }
-      }
-    } break;
-    case FDE_CSSRuleType::Media: {
-      CFDE_CSSMediaRule* pMediaRule = static_cast<CFDE_CSSMediaRule*>(pRule);
-      if (pMediaRule->GetMediaList() & dwMediaList) {
-        int32_t iRules = pMediaRule->CountRules();
-        for (int32_t i = 0; i < iRules; ++i) {
-          AddRulesFrom(pStyleSheet, pMediaRule->GetRule(i), dwMediaList,
-                       pFontMgr);
-        }
-      }
-    } break;
-    default:
-      break;
+  CFDE_CSSDeclaration* pDeclaration = pStyleRule->GetDeclaration();
+  int32_t iSelectors = pStyleRule->CountSelectorLists();
+  for (int32_t i = 0; i < iSelectors; ++i) {
+    CFDE_CSSSelector* pSelector = pStyleRule->GetSelectorList(i);
+    if (pSelector->GetType() == FDE_CSSSelectorType::Pseudo) {
+      Data* pData = NewRuleData(pSelector, pDeclaration);
+      AddRuleTo(&m_pPseudoRules, pData);
+      continue;
+    }
+    if (pSelector->GetNameHash() != FDE_CSSUNIVERSALHASH) {
+      AddRuleTo(&m_TagRules, pSelector->GetNameHash(), pSelector, pDeclaration);
+      continue;
+    }
+    CFDE_CSSSelector* pNext = pSelector->GetNextSelector();
+    if (!pNext) {
+      Data* pData = NewRuleData(pSelector, pDeclaration);
+      AddRuleTo(&m_pUniversalRules, pData);
+      continue;
+    }
+    switch (pNext->GetType()) {
+      case FDE_CSSSelectorType::ID:
+        AddRuleTo(&m_IDRules, pNext->GetNameHash(), pSelector, pDeclaration);
+        break;
+      case FDE_CSSSelectorType::Class:
+        AddRuleTo(&m_ClassRules, pNext->GetNameHash(), pSelector, pDeclaration);
+        break;
+      case FDE_CSSSelectorType::Descendant:
+      case FDE_CSSSelectorType::Element:
+        AddRuleTo(&m_pUniversalRules, NewRuleData(pSelector, pDeclaration));
+        break;
+      default:
+        ASSERT(false);
+        break;
+    }
   }
 }
 

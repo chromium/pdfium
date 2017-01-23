@@ -15,7 +15,6 @@
 #include "xfa/fde/css/cfde_cssdeclaration.h"
 #include "xfa/fde/css/cfde_cssenumvalue.h"
 #include "xfa/fde/css/cfde_cssnumbervalue.h"
-#include "xfa/fde/css/cfde_cssrule.h"
 #include "xfa/fde/css/cfde_cssstylerule.h"
 #include "xfa/fde/css/cfde_cssvaluelist.h"
 
@@ -33,13 +32,10 @@ class CFDE_CSSStyleSheetTest : public testing::Test {
                          size_t decl_count) {
     ASSERT(sheet_);
 
-    EXPECT_TRUE(sheet_->LoadFromBuffer(buf, FXSYS_wcslen(buf)));
+    EXPECT_TRUE(sheet_->LoadBuffer(buf, FXSYS_wcslen(buf)));
     EXPECT_EQ(sheet_->CountRules(), 1);
 
-    CFDE_CSSRule* rule = sheet_->GetRule(0);
-    EXPECT_EQ(rule->GetType(), FDE_CSSRuleType::Style);
-
-    CFDE_CSSStyleRule* style = static_cast<CFDE_CSSStyleRule*>(rule);
+    CFDE_CSSStyleRule* style = sheet_->GetRule(0);
     EXPECT_EQ(selectors.size(), style->CountSelectorLists());
 
     for (size_t i = 0; i < selectors.size(); i++) {
@@ -93,13 +89,10 @@ class CFDE_CSSStyleSheetTest : public testing::Test {
 TEST_F(CFDE_CSSStyleSheetTest, ParseMultipleSelectors) {
   const FX_WCHAR* buf =
       L"a { border: 10px; }\nb { text-decoration: underline; }";
-  EXPECT_TRUE(sheet_->LoadFromBuffer(buf, FXSYS_wcslen(buf)));
+  EXPECT_TRUE(sheet_->LoadBuffer(buf, FXSYS_wcslen(buf)));
   EXPECT_EQ(2, sheet_->CountRules());
 
-  CFDE_CSSRule* rule = sheet_->GetRule(0);
-  EXPECT_EQ(FDE_CSSRuleType::Style, rule->GetType());
-
-  CFDE_CSSStyleRule* style = static_cast<CFDE_CSSStyleRule*>(rule);
+  CFDE_CSSStyleRule* style = sheet_->GetRule(0);
   EXPECT_EQ(1UL, style->CountSelectorLists());
 
   bool found_selector = false;
@@ -123,10 +116,7 @@ TEST_F(CFDE_CSSStyleSheetTest, ParseMultipleSelectors) {
   VerifyFloat(FDE_CSSProperty::BorderBottomWidth, 10.0,
               FDE_CSSNumberType::Pixels);
 
-  rule = sheet_->GetRule(1);
-  EXPECT_EQ(FDE_CSSRuleType::Style, rule->GetType());
-
-  style = static_cast<CFDE_CSSStyleRule*>(rule);
+  style = sheet_->GetRule(1);
   EXPECT_EQ(1UL, style->CountSelectorLists());
 
   found_selector = false;

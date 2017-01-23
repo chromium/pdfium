@@ -11,13 +11,12 @@
 #include <vector>
 
 #include "xfa/fde/css/cfde_cssdeclaration.h"
-#include "xfa/fde/css/cfde_cssrule.h"
 #include "xfa/fde/css/cfde_cssselector.h"
 
-class CFDE_CSSStyleRule : public CFDE_CSSRule {
+class CFDE_CSSStyleRule {
  public:
   CFDE_CSSStyleRule();
-  ~CFDE_CSSStyleRule() override;
+  ~CFDE_CSSStyleRule();
 
   size_t CountSelectorLists() const;
   CFDE_CSSSelector* GetSelectorList(int32_t index) const;

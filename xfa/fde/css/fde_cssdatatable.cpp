@@ -173,14 +173,6 @@ static_assert(g_iCSSPropertyValueCount ==
                   static_cast<int32_t>(FDE_CSSPropertyValue::LAST_MARKER),
               "Property value table differs in size from property value enum");
 
-static const FDE_CSSMEDIATYPETABLE g_FDE_CSSMediaTypes[] = {
-    {0xF09, FDE_CSSMEDIATYPE_Emboss},    {FDE_CSSMEDIATYPE_Screen},
-    {0x536A, FDE_CSSMEDIATYPE_TV},       {0x741D, FDE_CSSMEDIATYPE_Projection},
-    {0x76ED, FDE_CSSMEDIATYPE_Print},    {0x7CFB, FDE_CSSMEDIATYPE_Braille},
-    {0x9578, FDE_CSSMEDIATYPE_Handheld}, {0xC8E1, FDE_CSSMEDIATYPE_TTY},
-    {0xD0F9, FDE_CSSMEDIATYPE_ALL},
-};
-
 static const FDE_CSSLengthUnitTable g_FDE_CSSLengthUnits[] = {
     {0x0672, FDE_CSSNumberType::EMS},
     {0x067D, FDE_CSSNumberType::EXS},
@@ -251,28 +243,6 @@ const FDE_CSSPropertyValueTable* FDE_GetCSSPropertyValueByName(
     if (dwHash == dwMid) {
       return g_FDE_CSSPropertyValues + iMid;
     } else if (dwHash > dwMid) {
-      iStart = iMid + 1;
-    } else {
-      iEnd = iMid - 1;
-    }
-  } while (iStart <= iEnd);
-  return nullptr;
-}
-
-const FDE_CSSMEDIATYPETABLE* FDE_GetCSSMediaTypeByName(
-    const CFX_WideStringC& wsName) {
-  ASSERT(!wsName.IsEmpty());
-  uint16_t wHash = FX_HashCode_GetW(wsName, true);
-  int32_t iEnd =
-      sizeof(g_FDE_CSSMediaTypes) / sizeof(FDE_CSSMEDIATYPETABLE) - 1;
-  int32_t iMid, iStart = 0;
-  uint16_t uMid;
-  do {
-    iMid = (iStart + iEnd) / 2;
-    uMid = g_FDE_CSSMediaTypes[iMid].wHash;
-    if (wHash == uMid) {
-      return g_FDE_CSSMediaTypes + iMid;
-    } else if (wHash > uMid) {
       iStart = iMid + 1;
     } else {
       iEnd = iMid - 1;
