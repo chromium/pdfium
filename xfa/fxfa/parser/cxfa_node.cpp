@@ -511,7 +511,7 @@ CXFA_Node::~CXFA_Node() {
     pNode = pNext;
   }
   if (m_pXMLNode && IsOwnXMLNode())
-    m_pXMLNode->Release();
+    delete m_pXMLNode;
 }
 
 CXFA_Node* CXFA_Node::Clone(bool bRecursive) {
@@ -1406,10 +1406,8 @@ void CXFA_Node::Script_NodeClass_LoadXML(CFXJSE_Arguments* pArguments) {
     }
     pFakeRoot->SetFlag(XFA_NodeFlag_HasRemovedChildren, false);
   } else {
-    if (pFakeXMLRoot) {
-      pFakeXMLRoot->Release();
-      pFakeXMLRoot = nullptr;
-    }
+    delete pFakeXMLRoot;
+    pFakeXMLRoot = nullptr;
   }
 }
 

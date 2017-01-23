@@ -747,7 +747,7 @@ CXFA_Node* CXFA_SimpleParser::ParseAsXDPPacket_Data(
         m_pFactory->CreateNode(XFA_XDPPACKET_Datasets, XFA_Element::DataGroup);
     if (!pNode) {
       if (pDataXMLNode != pXMLDocumentNode)
-        pDataXMLNode->Release();
+        delete pDataXMLNode;
       return nullptr;
     }
     CFX_WideString wsLocalName;

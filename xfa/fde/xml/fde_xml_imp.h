@@ -44,7 +44,6 @@ class CFDE_XMLNode {
   CFDE_XMLNode();
   virtual ~CFDE_XMLNode();
 
-  virtual void Release();
   virtual FDE_XMLNODETYPE GetType() const;
   virtual CFDE_XMLNode* Clone(bool bRecursive);
 
@@ -79,7 +78,6 @@ class CFDE_XMLInstruction : public CFDE_XMLNode {
   ~CFDE_XMLInstruction() override;
 
   // CFDE_XMLNode
-  void Release() override;
   FDE_XMLNODETYPE GetType() const override;
   CFDE_XMLNode* Clone(bool bRecursive) override;
 
@@ -115,7 +113,6 @@ class CFDE_XMLElement : public CFDE_XMLNode {
   ~CFDE_XMLElement() override;
 
   // CFDE_XMLNode
-  void Release() override;
   FDE_XMLNODETYPE GetType() const override;
   CFDE_XMLNode* Clone(bool bRecursive) override;
 
@@ -157,7 +154,6 @@ class CFDE_XMLText : public CFDE_XMLNode {
   ~CFDE_XMLText() override;
 
   // CFDE_XMLNode
-  void Release() override;
   FDE_XMLNODETYPE GetType() const override;
   CFDE_XMLNode* Clone(bool bRecursive) override;
 
@@ -178,7 +174,6 @@ class CFDE_XMLCharData : public CFDE_XMLDeclaration {
   explicit CFDE_XMLCharData(const CFX_WideString& wsCData);
   ~CFDE_XMLCharData() override;
 
-  void Release() override;
   FDE_XMLNODETYPE GetType() const override;
   CFDE_XMLNode* Clone(bool bRecursive) override;
 
@@ -210,7 +205,6 @@ class CFDE_XMLDoc {
   CFX_RetainPtr<IFGAS_Stream> m_pStream;
   int32_t m_iStatus;
   CFDE_XMLNode* m_pRoot;
-  CFDE_XMLSyntaxParser* m_pSyntaxParser;
   std::unique_ptr<IFDE_XMLParser> m_pXMLParser;
 };
 
@@ -227,7 +221,6 @@ class CFDE_BlockBuffer {
 
   bool InitBuffer(int32_t iBufferSize = 1024 * 1024);
   bool IsInitialized() { return m_iBufferSize / m_iAllocStep >= 1; }
-  void ReleaseBuffer() { delete this; }
   FX_WCHAR* GetAvailableBlock(int32_t& iIndexInBlock);
   inline int32_t GetAllocStep() const { return m_iAllocStep; }
   inline int32_t& GetDataLengthRef() { return m_iDataLength; }
@@ -261,7 +254,6 @@ class CFDE_XMLSyntaxParser {
   CFDE_XMLSyntaxParser();
   ~CFDE_XMLSyntaxParser();
 
-  void Release() { delete this; }
   void Init(const CFX_RetainPtr<IFGAS_Stream>& pStream,
             int32_t iXMLPlaneSize,
             int32_t iTextDataSize = 256);

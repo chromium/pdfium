@@ -32,8 +32,7 @@ class CXFA_XMLParser : public IFDE_XMLParser {
  protected:
   CFDE_XMLNode* m_pRoot;
   CFX_RetainPtr<IFGAS_Stream> m_pStream;
-  std::unique_ptr<CFDE_XMLSyntaxParser, ReleaseDeleter<CFDE_XMLSyntaxParser>>
-      m_pParser;
+  std::unique_ptr<CFDE_XMLSyntaxParser> m_pParser;
   CFDE_XMLNode* m_pParent;
   CFDE_XMLNode* m_pChild;
   CFX_StackTemplate<CFDE_XMLNode*> m_NodeStack;
