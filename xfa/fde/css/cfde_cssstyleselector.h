@@ -48,8 +48,10 @@ class CFDE_CSSStyleSelector {
                     CFDE_CSSComputedStyle* pDestStyle);
 
  private:
-  void MatchRules(CFDE_CSSTagCache* pCache,
-                  CFDE_CSSRuleCollection::Data* pList);
+  void MatchRules(
+      std::vector<CFDE_CSSRuleCollection::Data*>* matchedRules,
+      CFDE_CSSTagCache* pCache,
+      const std::vector<std::unique_ptr<CFDE_CSSRuleCollection::Data>>* pList);
   bool MatchSelector(CFDE_CSSTagCache* pCache, CFDE_CSSSelector* pSel);
   void AppendInlineStyle(CFDE_CSSDeclaration* pDecl,
                          const FX_WCHAR* psz,
@@ -80,7 +82,6 @@ class CFDE_CSSStyleSelector {
   std::unique_ptr<CFDE_CSSStyleSheet> m_UAStyles;
   CFDE_CSSRuleCollection m_UARules;
   std::unique_ptr<CFDE_CSSAccelerator> m_pAccelerator;
-  std::vector<CFDE_CSSRuleCollection::Data*> m_MatchedRules;
 };
 
 #endif  // XFA_FDE_CSS_CFDE_CSSSTYLESELECTOR_H_

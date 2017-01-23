@@ -85,27 +85,30 @@ int32_t CFDE_CSSStyleSelector::MatchDeclarations(
   if (m_UARules.CountSelectors() == 0)
     return 0;
 
-  if (pCache->HashTag())
-    MatchRules(pCache, m_UARules.GetTagRuleData(pCache->HashTag()));
+  // The ::Data is owned by the m_RuleCollection.
+  std::vector<CFDE_CSSRuleCollection::Data*> matchedRules;
 
-  std::sort(m_MatchedRules.begin(), m_MatchedRules.end(),
-            [](const CFDE_CSSRuleCollection::Data* p1,
-               const CFDE_CSSRuleCollection::Data* p2) {
-              return p1->dwPriority < p2->dwPriority;
-            });
-  for (const auto& rule : m_MatchedRules)
+  if (pCache->HashTag()) {
+    MatchRules(&matchedRules, pCache,
+               m_UARules.GetTagRuleData(pCache->HashTag()));
+  }
+
+  for (const auto& rule : matchedRules)
     matchedDecls.Add(rule->pDeclaration);
-  m_MatchedRules.clear();
 
   return matchedDecls.GetSize();
 }
 
-void CFDE_CSSStyleSelector::MatchRules(CFDE_CSSTagCache* pCache,
-                                       CFDE_CSSRuleCollection::Data* pList) {
-  while (pList) {
-    if (MatchSelector(pCache, pList->pSelector))
-      m_MatchedRules.push_back(pList);
-    pList = pList->pNext;
+void CFDE_CSSStyleSelector::MatchRules(
+    std::vector<CFDE_CSSRuleCollection::Data*>* matchedRules,
+    CFDE_CSSTagCache* pCache,
+    const std::vector<std::unique_ptr<CFDE_CSSRuleCollection::Data>>* pList) {
+  if (!pList)
+    return;
+
+  for (const auto& d : *pList) {
+    if (MatchSelector(pCache, d->pSelector))
+      matchedRules->push_back(d.get());
   }
 }
 

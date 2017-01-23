@@ -8,6 +8,8 @@
 #define XFA_FDE_CSS_CFDE_CSSRULECOLLECTION_H_
 
 #include <map>
+#include <memory>
+#include <vector>
 
 #include "core/fxcrt/fx_basic.h"
 
@@ -21,12 +23,10 @@ class CFDE_CSSRuleCollection {
  public:
   class Data {
    public:
-    Data(CFDE_CSSSelector* pSel, CFDE_CSSDeclaration* pDecl, uint32_t dwPos);
+    Data(CFDE_CSSSelector* pSel, CFDE_CSSDeclaration* pDecl);
 
     CFDE_CSSSelector* const pSelector;
     CFDE_CSSDeclaration* const pDeclaration;
-    uint32_t dwPriority;
-    Data* pNext;
   };
 
   CFDE_CSSRuleCollection();
@@ -36,23 +36,15 @@ class CFDE_CSSRuleCollection {
   void Clear();
   int32_t CountSelectors() const { return m_iSelectors; }
 
-  Data* GetTagRuleData(uint32_t dwTagHash) {
-    auto it = m_TagRules.find(dwTagHash);
-    return it != m_TagRules.end() ? it->second : nullptr;
-  }
+  const std::vector<std::unique_ptr<Data>>* GetTagRuleData(
+      uint32_t dwTagHash) const;
 
  private:
   void AddRulesFrom(const CFDE_CSSStyleSheet* pStyleSheet,
                     CFDE_CSSStyleRule* pRule,
                     CFGAS_FontMgr* pFontMgr);
-  void AddRuleTo(std::map<uint32_t, Data*>* pMap,
-                 uint32_t dwKey,
-                 CFDE_CSSSelector* pSel,
-                 CFDE_CSSDeclaration* pDecl);
-  bool AddRuleTo(Data** pList, Data* pData);
-  Data* NewRuleData(CFDE_CSSSelector* pSel, CFDE_CSSDeclaration* pDecl);
 
-  std::map<uint32_t, Data*> m_TagRules;
+  std::map<uint32_t, std::vector<std::unique_ptr<Data>>> m_TagRules;
   int32_t m_iSelectors;
 };
 
