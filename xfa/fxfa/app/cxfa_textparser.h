@@ -33,9 +33,11 @@ class CXFA_TextParser {
   void Reset();
   void DoParse(CFDE_XMLNode* pXMLContainer, CXFA_TextProvider* pTextProvider);
 
-  CFDE_CSSComputedStyle* CreateRootStyle(CXFA_TextProvider* pTextProvider);
-  CFDE_CSSComputedStyle* ComputeStyle(CFDE_XMLNode* pXMLNode,
-                                      CFDE_CSSComputedStyle* pParentStyle);
+  CFX_RetainPtr<CFDE_CSSComputedStyle> CreateRootStyle(
+      CXFA_TextProvider* pTextProvider);
+  CFX_RetainPtr<CFDE_CSSComputedStyle> ComputeStyle(
+      CFDE_XMLNode* pXMLNode,
+      CFDE_CSSComputedStyle* pParentStyle);
 
   bool IsParsed() const { return m_bParsed; }
 
@@ -89,7 +91,8 @@ class CXFA_TextParser {
                      CFDE_CSSComputedStyle* pParentStyle);
   void ParseTagInfo(CFDE_XMLNode* pXMLNode, CXFA_CSSTagProvider& tagProvider);
   std::unique_ptr<CFDE_CSSStyleSheet> LoadDefaultSheetStyle();
-  CFDE_CSSComputedStyle* CreateStyle(CFDE_CSSComputedStyle* pParentStyle);
+  CFX_RetainPtr<CFDE_CSSComputedStyle> CreateStyle(
+      CFDE_CSSComputedStyle* pParentStyle);
 
   std::unique_ptr<CFDE_CSSStyleSelector> m_pSelector;
   std::map<CFDE_XMLNode*, CXFA_TextParseContext*> m_mapXMLNodeToParseContext;

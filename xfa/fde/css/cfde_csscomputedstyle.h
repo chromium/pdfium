@@ -15,7 +15,7 @@
 
 class CFDE_CSSValueList;
 
-class CFDE_CSSComputedStyle : public IFX_Retainable {
+class CFDE_CSSComputedStyle : public CFX_Retainable {
  public:
   class InheritedData {
    public:
@@ -53,13 +53,6 @@ class CFDE_CSSComputedStyle : public IFX_Retainable {
     bool m_bHasBorder;
     bool m_bHasPadding;
   };
-
-  CFDE_CSSComputedStyle();
-  ~CFDE_CSSComputedStyle() override;
-
-  // IFX_Retainable
-  uint32_t Retain() override;
-  uint32_t Release() override;
 
   int32_t CountFontFamilies() const;
   const CFX_WideString GetFontFamily(int32_t index) const;
@@ -105,7 +98,12 @@ class CFDE_CSSComputedStyle : public IFX_Retainable {
   NonInheritedData m_NonInheritedData;
 
  private:
-  uint32_t m_dwRefCount;
+  template <typename T, typename... Args>
+  friend CFX_RetainPtr<T> pdfium::MakeRetain(Args&&... args);
+
+  CFDE_CSSComputedStyle();
+  ~CFDE_CSSComputedStyle() override;
+
   std::vector<CFX_WideString> m_CustomProperties;
 };
 

@@ -37,7 +37,7 @@ class CFDE_CSSStyleSelector {
 
   void UpdateStyleIndex();
   CFDE_CSSAccelerator* InitAccelerator();
-  CFDE_CSSComputedStyle* CreateComputedStyle(
+  CFX_RetainPtr<CFDE_CSSComputedStyle> CreateComputedStyle(
       CFDE_CSSComputedStyle* pParentStyle);
   int32_t MatchDeclarations(
       CXFA_CSSTagProvider* pTag,

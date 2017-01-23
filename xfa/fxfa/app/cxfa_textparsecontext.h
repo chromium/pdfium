@@ -26,7 +26,7 @@ class CXFA_TextParseContext {
   }
   uint32_t CountDecls() const { return m_dwMatchedDecls; }
 
-  CFDE_CSSComputedStyle* m_pParentStyle;
+  CFX_RetainPtr<CFDE_CSSComputedStyle> m_pParentStyle;
 
  protected:
   CFDE_CSSDeclaration** m_ppMatchedDecls;

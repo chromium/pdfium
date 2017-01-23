@@ -11,22 +11,16 @@
 #include "xfa/fde/css/fde_css.h"
 #include "xfa/fxfa/app/cxfa_linkuserdata.h"
 
-CXFA_TextUserData::CXFA_TextUserData(CFDE_CSSComputedStyle* pStyle)
-    : m_pStyle(pStyle), m_pLinkData(nullptr), m_dwRefCount(0) {
-  if (m_pStyle)
-    m_pStyle->Retain();
-}
+CXFA_TextUserData::CXFA_TextUserData(
+    const CFX_RetainPtr<CFDE_CSSComputedStyle>& pStyle)
+    : m_pStyle(pStyle), m_pLinkData(nullptr), m_dwRefCount(0) {}
 
-CXFA_TextUserData::CXFA_TextUserData(CFDE_CSSComputedStyle* pStyle,
-                                     CXFA_LinkUserData* pLinkData)
-    : m_pStyle(pStyle), m_pLinkData(pLinkData), m_dwRefCount(0) {
-  if (m_pStyle)
-    m_pStyle->Retain();
-}
+CXFA_TextUserData::CXFA_TextUserData(
+    const CFX_RetainPtr<CFDE_CSSComputedStyle>& pStyle,
+    CXFA_LinkUserData* pLinkData)
+    : m_pStyle(pStyle), m_pLinkData(pLinkData), m_dwRefCount(0) {}
 
 CXFA_TextUserData::~CXFA_TextUserData() {
-  if (m_pStyle)
-    m_pStyle->Release();
   if (m_pLinkData)
     m_pLinkData->Release();
 }

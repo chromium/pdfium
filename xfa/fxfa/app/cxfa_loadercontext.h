@@ -11,10 +11,10 @@
 
 #include "core/fxcrt/fx_basic.h"
 #include "core/fxcrt/fx_system.h"
+#include "xfa/fde/css/cfde_csscomputedstyle.h"
 
 class CFDE_XMLNode;
 class CXFA_Node;
-class CFDE_CSSComputedStyle;
 
 class CXFA_LoaderContext {
  public:
@@ -31,7 +31,7 @@ class CXFA_LoaderContext {
   int32_t m_iTotalLines;
   CFDE_XMLNode* m_pXMLNode;
   CXFA_Node* m_pNode;
-  CFDE_CSSComputedStyle* m_pParentStyle;
+  CFX_RetainPtr<CFDE_CSSComputedStyle> m_pParentStyle;
   CFX_ArrayTemplate<FX_FLOAT> m_lineHeights;
   uint32_t m_dwFlags;
   std::vector<FX_FLOAT> m_BlocksHeight;

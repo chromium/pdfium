@@ -16,7 +16,6 @@ CXFA_LoaderContext::CXFA_LoaderContext()
       m_iTotalLines(-1),
       m_pXMLNode(nullptr),
       m_pNode(nullptr),
-      m_pParentStyle(nullptr),
       m_dwFlags(0) {}
 
 CXFA_LoaderContext::~CXFA_LoaderContext() {}

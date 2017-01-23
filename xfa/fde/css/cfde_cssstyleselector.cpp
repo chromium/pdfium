@@ -55,9 +55,9 @@ CFDE_CSSAccelerator* CFDE_CSSStyleSelector::InitAccelerator() {
   return m_pAccelerator.get();
 }
 
-CFDE_CSSComputedStyle* CFDE_CSSStyleSelector::CreateComputedStyle(
+CFX_RetainPtr<CFDE_CSSComputedStyle> CFDE_CSSStyleSelector::CreateComputedStyle(
     CFDE_CSSComputedStyle* pParentStyle) {
-  CFDE_CSSComputedStyle* pStyle = new CFDE_CSSComputedStyle();
+  auto pStyle = pdfium::MakeRetain<CFDE_CSSComputedStyle>();
   if (pParentStyle)
     pStyle->m_InheritedData = pParentStyle->m_InheritedData;
   return pStyle;
@@ -77,6 +77,7 @@ int32_t CFDE_CSSStyleSelector::MatchDeclarations(
     CXFA_CSSTagProvider* pTag,
     CFX_ArrayTemplate<CFDE_CSSDeclaration*>& matchedDecls) {
   ASSERT(pTag);
+
   CFDE_CSSTagCache* pCache = m_pAccelerator->top();
   ASSERT(pCache && pCache->GetTag() == pTag);
 

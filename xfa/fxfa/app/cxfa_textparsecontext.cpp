@@ -17,8 +17,6 @@ CXFA_TextParseContext::CXFA_TextParseContext()
       m_eDisplay(FDE_CSSDisplay::None) {}
 
 CXFA_TextParseContext::~CXFA_TextParseContext() {
-  if (m_pParentStyle)
-    m_pParentStyle->Release();
   FX_Free(m_ppMatchedDecls);
 }
 

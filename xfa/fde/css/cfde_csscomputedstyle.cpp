@@ -10,20 +10,9 @@
 #include "xfa/fde/css/cfde_cssstringvalue.h"
 #include "xfa/fde/css/cfde_cssvaluelist.h"
 
-CFDE_CSSComputedStyle::CFDE_CSSComputedStyle() : m_dwRefCount(1) {}
+CFDE_CSSComputedStyle::CFDE_CSSComputedStyle() {}
 
 CFDE_CSSComputedStyle::~CFDE_CSSComputedStyle() {}
-
-uint32_t CFDE_CSSComputedStyle::Retain() {
-  return ++m_dwRefCount;
-}
-
-uint32_t CFDE_CSSComputedStyle::Release() {
-  uint32_t dwRefCount = --m_dwRefCount;
-  if (dwRefCount == 0)
-    delete this;
-  return dwRefCount;
-}
 
 bool CFDE_CSSComputedStyle::GetCustomStyle(const CFX_WideStringC& wsName,
                                            CFX_WideString& wsValue) const {
