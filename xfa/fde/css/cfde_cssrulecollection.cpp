@@ -34,20 +34,14 @@ CFDE_CSSRuleCollection::~CFDE_CSSRuleCollection() {
   Clear();
 }
 
-void CFDE_CSSRuleCollection::AddRulesFrom(
-    const CFX_ArrayTemplate<CFDE_CSSStyleSheet*>& sheets,
-    CFGAS_FontMgr* pFontMgr) {
-  int32_t iSheets = sheets.GetSize();
-  for (int32_t i = 0; i < iSheets; ++i) {
-    CFDE_CSSStyleSheet* pSheet = sheets.GetAt(i);
-    int32_t iRules = pSheet->CountRules();
-    for (int32_t j = 0; j < iRules; j++) {
-      AddRulesFrom(pSheet, pSheet->GetRule(j), pFontMgr);
-    }
-  }
+void CFDE_CSSRuleCollection::AddRulesFrom(const CFDE_CSSStyleSheet* sheet,
+                                          CFGAS_FontMgr* pFontMgr) {
+  int32_t iRules = sheet->CountRules();
+  for (int32_t j = 0; j < iRules; j++)
+    AddRulesFrom(sheet, sheet->GetRule(j), pFontMgr);
 }
 
-void CFDE_CSSRuleCollection::AddRulesFrom(CFDE_CSSStyleSheet* pStyleSheet,
+void CFDE_CSSRuleCollection::AddRulesFrom(const CFDE_CSSStyleSheet* pStyleSheet,
                                           CFDE_CSSStyleRule* pStyleRule,
                                           CFGAS_FontMgr* pFontMgr) {
   CFDE_CSSDeclaration* pDeclaration = pStyleRule->GetDeclaration();

@@ -32,8 +32,7 @@ class CFDE_CSSRuleCollection {
   CFDE_CSSRuleCollection();
   ~CFDE_CSSRuleCollection();
 
-  void AddRulesFrom(const CFX_ArrayTemplate<CFDE_CSSStyleSheet*>& sheets,
-                    CFGAS_FontMgr* pFontMgr);
+  void AddRulesFrom(const CFDE_CSSStyleSheet* sheet, CFGAS_FontMgr* pFontMgr);
   void Clear();
   int32_t CountSelectors() const { return m_iSelectors; }
 
@@ -55,8 +54,8 @@ class CFDE_CSSRuleCollection {
   Data* GetUniversalRuleData() { return m_pUniversalRules; }
   Data* GetPseudoRuleData() { return m_pPseudoRules; }
 
- protected:
-  void AddRulesFrom(CFDE_CSSStyleSheet* pStyleSheet,
+ private:
+  void AddRulesFrom(const CFDE_CSSStyleSheet* pStyleSheet,
                     CFDE_CSSStyleRule* pRule,
                     CFGAS_FontMgr* pFontMgr);
   void AddRuleTo(std::map<uint32_t, Data*>* pMap,

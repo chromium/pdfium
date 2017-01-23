@@ -7,6 +7,7 @@
 #include "xfa/fde/css/cfde_cssstyleselector.h"
 
 #include <algorithm>
+#include <utility>
 
 #include "third_party/base/ptr_util.h"
 #include "xfa/fde/css/cfde_cssaccelerator.h"
@@ -17,6 +18,7 @@
 #include "xfa/fde/css/cfde_cssenumvalue.h"
 #include "xfa/fde/css/cfde_csspropertyholder.h"
 #include "xfa/fde/css/cfde_cssselector.h"
+#include "xfa/fde/css/cfde_cssstylesheet.h"
 #include "xfa/fde/css/cfde_csssyntaxparser.h"
 #include "xfa/fde/css/cfde_csstagcache.h"
 #include "xfa/fde/css/cfde_cssvaluelist.h"
@@ -39,18 +41,9 @@ const T* ToValue(const CFDE_CSSValue* val) {
 #define FDE_CSSUNIVERSALHASH ('*')
 
 CFDE_CSSStyleSelector::CFDE_CSSStyleSelector(CFGAS_FontMgr* pFontMgr)
-    : m_pFontMgr(pFontMgr), m_fDefFontSize(12.0f) {
-  m_ePriorities[static_cast<int32_t>(FDE_CSSStyleSheetPriority::High)] =
-      FDE_CSSStyleSheetGroup::Author;
-  m_ePriorities[static_cast<int32_t>(FDE_CSSStyleSheetPriority::Mid)] =
-      FDE_CSSStyleSheetGroup::User;
-  m_ePriorities[static_cast<int32_t>(FDE_CSSStyleSheetPriority::Low)] =
-      FDE_CSSStyleSheetGroup::UserAgent;
-}
+    : m_pFontMgr(pFontMgr), m_fDefFontSize(12.0f) {}
 
-CFDE_CSSStyleSelector::~CFDE_CSSStyleSelector() {
-  Reset();
-}
+CFDE_CSSStyleSelector::~CFDE_CSSStyleSelector() {}
 
 void CFDE_CSSStyleSelector::SetDefFontSize(FX_FLOAT fFontSize) {
   ASSERT(fFontSize > 0);
@@ -72,49 +65,14 @@ CFDE_CSSComputedStyle* CFDE_CSSStyleSelector::CreateComputedStyle(
   return pStyle;
 }
 
-bool CFDE_CSSStyleSelector::SetStyleSheet(FDE_CSSStyleSheetGroup eType,
-                                          CFDE_CSSStyleSheet* pSheet) {
-  CFX_ArrayTemplate<CFDE_CSSStyleSheet*>& dest =
-      m_SheetGroups[static_cast<int32_t>(eType)];
-  dest.RemoveAt(0, dest.GetSize());
-  if (pSheet)
-    dest.Add(pSheet);
-  return true;
-}
-
-bool CFDE_CSSStyleSelector::SetStyleSheets(
-    FDE_CSSStyleSheetGroup eType,
-    const CFX_ArrayTemplate<CFDE_CSSStyleSheet*>* pArray) {
-  CFX_ArrayTemplate<CFDE_CSSStyleSheet*>& dest =
-      m_SheetGroups[static_cast<int32_t>(eType)];
-  if (pArray)
-    dest.Copy(*pArray);
-  else
-    dest.RemoveAt(0, dest.GetSize());
-  return true;
-}
-
-void CFDE_CSSStyleSelector::SetStylePriority(
-    FDE_CSSStyleSheetGroup eType,
-    FDE_CSSStyleSheetPriority ePriority) {
-  m_ePriorities[static_cast<int32_t>(ePriority)] = eType;
+void CFDE_CSSStyleSelector::SetUAStyleSheet(
+    std::unique_ptr<CFDE_CSSStyleSheet> pSheet) {
+  m_UAStyles = std::move(pSheet);
 }
 
 void CFDE_CSSStyleSelector::UpdateStyleIndex() {
-  Reset();
-
-  // TODO(dsinclair): Hard coded size bad. This should probably just be a map.
-  for (int32_t iGroup = 0; iGroup < 3; ++iGroup) {
-    CFDE_CSSRuleCollection& rules = m_RuleCollection[iGroup];
-    rules.AddRulesFrom(m_SheetGroups[iGroup], m_pFontMgr);
-  }
-}
-
-void CFDE_CSSStyleSelector::Reset() {
-  // TODO(dsinclair): Hard coded size bad. This should probably just be a map.
-  for (int32_t iGroup = 0; iGroup < 3; ++iGroup) {
-    m_RuleCollection[iGroup].Clear();
-  }
+  m_UARules.Clear();
+  m_UARules.AddRulesFrom(m_UAStyles.get(), m_pFontMgr);
 }
 
 int32_t CFDE_CSSStyleSelector::MatchDeclarations(
@@ -126,39 +84,35 @@ int32_t CFDE_CSSStyleSelector::MatchDeclarations(
   ASSERT(pCache && pCache->GetTag() == pTag);
 
   matchedDecls.RemoveAt(0, matchedDecls.GetSize());
-  // TODO(dsinclair): Hard coded size bad ...
-  for (int32_t ePriority = 2; ePriority >= 0; --ePriority) {
-    FDE_CSSStyleSheetGroup eGroup = m_ePriorities[ePriority];
-    CFDE_CSSRuleCollection& rules =
-        m_RuleCollection[static_cast<int32_t>(eGroup)];
-    if (rules.CountSelectors() == 0)
-      continue;
 
-    if (ePseudoType == FDE_CSSPseudo::NONE) {
-      MatchRules(pCache, rules.GetUniversalRuleData(), ePseudoType);
-      if (pCache->HashTag()) {
-        MatchRules(pCache, rules.GetTagRuleData(pCache->HashTag()),
-                   ePseudoType);
-      }
-      int32_t iCount = pCache->CountHashClass();
-      for (int32_t i = 0; i < iCount; i++) {
-        pCache->SetClassIndex(i);
-        MatchRules(pCache, rules.GetClassRuleData(pCache->HashClass()),
-                   ePseudoType);
-      }
-    } else {
-      MatchRules(pCache, rules.GetPseudoRuleData(), ePseudoType);
+  if (m_UARules.CountSelectors() == 0)
+    return 0;
+
+  if (ePseudoType == FDE_CSSPseudo::NONE) {
+    MatchRules(pCache, m_UARules.GetUniversalRuleData(), ePseudoType);
+    if (pCache->HashTag()) {
+      MatchRules(pCache, m_UARules.GetTagRuleData(pCache->HashTag()),
+                 ePseudoType);
     }
-
-    std::sort(m_MatchedRules.begin(), m_MatchedRules.end(),
-              [](const CFDE_CSSRuleCollection::Data* p1,
-                 const CFDE_CSSRuleCollection::Data* p2) {
-                return p1->dwPriority < p2->dwPriority;
-              });
-    for (const auto& rule : m_MatchedRules)
-      matchedDecls.Add(rule->pDeclaration);
-    m_MatchedRules.clear();
+    int32_t iCount = pCache->CountHashClass();
+    for (int32_t i = 0; i < iCount; i++) {
+      pCache->SetClassIndex(i);
+      MatchRules(pCache, m_UARules.GetClassRuleData(pCache->HashClass()),
+                 ePseudoType);
+    }
+  } else {
+    MatchRules(pCache, m_UARules.GetPseudoRuleData(), ePseudoType);
   }
+
+  std::sort(m_MatchedRules.begin(), m_MatchedRules.end(),
+            [](const CFDE_CSSRuleCollection::Data* p1,
+               const CFDE_CSSRuleCollection::Data* p2) {
+              return p1->dwPriority < p2->dwPriority;
+            });
+  for (const auto& rule : m_MatchedRules)
+    matchedDecls.Add(rule->pDeclaration);
+  m_MatchedRules.clear();
+
   return matchedDecls.GetSize();
 }
 

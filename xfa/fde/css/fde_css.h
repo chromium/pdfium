@@ -191,18 +191,6 @@ enum FDE_CSSTEXTDECORATION {
   FDE_CSSTEXTDECORATION_Double = 1 << 4,
 };
 
-enum class FDE_CSSStyleSheetGroup : uint8_t {
-  UserAgent = 0,
-  User,
-  Author,
-};
-
-enum class FDE_CSSStyleSheetPriority : uint8_t {
-  High = 0,
-  Mid,
-  Low,
-};
-
 class FDE_CSSLength {
  public:
   FDE_CSSLength() {}

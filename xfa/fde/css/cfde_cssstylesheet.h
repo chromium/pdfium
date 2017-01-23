@@ -11,25 +11,20 @@
 #include <unordered_map>
 #include <vector>
 
-#include "core/fxcrt/fx_basic.h"
 #include "core/fxcrt/fx_string.h"
 #include "xfa/fde/css/cfde_csssyntaxparser.h"
 
 class CFDE_CSSStyleRule;
 
-class CFDE_CSSStyleSheet : public IFX_Retainable {
+class CFDE_CSSStyleSheet {
  public:
   CFDE_CSSStyleSheet();
-  ~CFDE_CSSStyleSheet() override;
-
-  // IFX_Retainable:
-  uint32_t Retain() override;
-  uint32_t Release() override;
+  ~CFDE_CSSStyleSheet();
 
   bool LoadBuffer(const FX_WCHAR* pBuffer, int32_t iBufSize);
 
   int32_t CountRules() const;
-  CFDE_CSSStyleRule* GetRule(int32_t index);
+  CFDE_CSSStyleRule* GetRule(int32_t index) const;
 
  private:
   void Reset();
@@ -38,7 +33,6 @@ class CFDE_CSSStyleSheet : public IFX_Retainable {
       std::vector<std::unique_ptr<CFDE_CSSStyleRule>>* ruleArray);
   void SkipRuleSet(CFDE_CSSSyntaxParser* pSyntax);
 
-  uint16_t m_wRefCount;
   std::vector<std::unique_ptr<CFDE_CSSStyleRule>> m_RuleArray;
   std::unordered_map<uint32_t, FX_WCHAR*> m_StringCache;
 };

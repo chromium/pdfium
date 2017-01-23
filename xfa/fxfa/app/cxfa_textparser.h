@@ -88,13 +88,13 @@ class CXFA_TextParser {
   void ParseRichText(CFDE_XMLNode* pXMLNode,
                      CFDE_CSSComputedStyle* pParentStyle);
   void ParseTagInfo(CFDE_XMLNode* pXMLNode, CXFA_CSSTagProvider& tagProvider);
-  CFDE_CSSStyleSheet* LoadDefaultSheetStyle();
+  std::unique_ptr<CFDE_CSSStyleSheet> LoadDefaultSheetStyle();
   CFDE_CSSComputedStyle* CreateStyle(CFDE_CSSComputedStyle* pParentStyle);
 
   std::unique_ptr<CFDE_CSSStyleSelector> m_pSelector;
-  CFDE_CSSStyleSheet* m_pUASheet;
   std::map<CFDE_XMLNode*, CXFA_TextParseContext*> m_mapXMLNodeToParseContext;
   bool m_bParsed;
+  bool m_cssInitialized;
 };
 
 #endif  // XFA_FXFA_APP_CXFA_TEXTPARSER_H_

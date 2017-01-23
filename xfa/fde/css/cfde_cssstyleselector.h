@@ -33,11 +33,8 @@ class CFDE_CSSStyleSelector {
 
   void SetDefFontSize(FX_FLOAT fFontSize);
 
-  bool SetStyleSheet(FDE_CSSStyleSheetGroup eType, CFDE_CSSStyleSheet* pSheet);
-  bool SetStyleSheets(FDE_CSSStyleSheetGroup eType,
-                      const CFX_ArrayTemplate<CFDE_CSSStyleSheet*>* pArray);
-  void SetStylePriority(FDE_CSSStyleSheetGroup eType,
-                        FDE_CSSStyleSheetPriority ePriority);
+  void SetUAStyleSheet(std::unique_ptr<CFDE_CSSStyleSheet> pSheet);
+
   void UpdateStyleIndex();
   CFDE_CSSAccelerator* InitAccelerator();
   CFDE_CSSComputedStyle* CreateComputedStyle(
@@ -51,8 +48,7 @@ class CFDE_CSSStyleSelector {
                     int32_t iDeclCount,
                     CFDE_CSSComputedStyle* pDestStyle);
 
- protected:
-  void Reset();
+ private:
   void MatchRules(CFDE_CSSTagCache* pCache,
                   CFDE_CSSRuleCollection::Data* pList,
                   FDE_CSSPseudo ePseudoType);
@@ -85,9 +81,8 @@ class CFDE_CSSStyleSelector {
 
   CFGAS_FontMgr* const m_pFontMgr;
   FX_FLOAT m_fDefFontSize;
-  CFX_ArrayTemplate<CFDE_CSSStyleSheet*> m_SheetGroups[3];
-  CFDE_CSSRuleCollection m_RuleCollection[3];
-  FDE_CSSStyleSheetGroup m_ePriorities[3];
+  std::unique_ptr<CFDE_CSSStyleSheet> m_UAStyles;
+  CFDE_CSSRuleCollection m_UARules;
   std::unique_ptr<CFDE_CSSAccelerator> m_pAccelerator;
   std::vector<CFDE_CSSRuleCollection::Data*> m_MatchedRules;
 };

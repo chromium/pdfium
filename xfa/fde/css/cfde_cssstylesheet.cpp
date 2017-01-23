@@ -15,7 +15,7 @@
 #include "xfa/fde/css/fde_cssdatatable.h"
 #include "xfa/fgas/crt/fgas_codepage.h"
 
-CFDE_CSSStyleSheet::CFDE_CSSStyleSheet() : m_wRefCount(1) {}
+CFDE_CSSStyleSheet::CFDE_CSSStyleSheet() {}
 
 CFDE_CSSStyleSheet::~CFDE_CSSStyleSheet() {
   Reset();
@@ -26,22 +26,11 @@ void CFDE_CSSStyleSheet::Reset() {
   m_StringCache.clear();
 }
 
-uint32_t CFDE_CSSStyleSheet::Retain() {
-  return ++m_wRefCount;
-}
-
-uint32_t CFDE_CSSStyleSheet::Release() {
-  uint32_t dwRefCount = --m_wRefCount;
-  if (dwRefCount == 0)
-    delete this;
-  return dwRefCount;
-}
-
 int32_t CFDE_CSSStyleSheet::CountRules() const {
   return pdfium::CollectionSize<int32_t>(m_RuleArray);
 }
 
-CFDE_CSSStyleRule* CFDE_CSSStyleSheet::GetRule(int32_t index) {
+CFDE_CSSStyleRule* CFDE_CSSStyleSheet::GetRule(int32_t index) const {
   return m_RuleArray[index].get();
 }
 

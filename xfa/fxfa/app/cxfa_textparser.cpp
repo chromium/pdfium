@@ -7,6 +7,7 @@
 #include "xfa/fxfa/app/cxfa_textparser.h"
 
 #include <algorithm>
+#include <utility>
 
 #include "third_party/base/ptr_util.h"
 #include "xfa/fde/css/cfde_cssaccelerator.h"
@@ -39,12 +40,10 @@ enum class TabStopStatus {
 
 }  // namespace
 
-CXFA_TextParser::CXFA_TextParser() : m_pUASheet(nullptr), m_bParsed(false) {}
+CXFA_TextParser::CXFA_TextParser()
+    : m_bParsed(false), m_cssInitialized(false) {}
 
 CXFA_TextParser::~CXFA_TextParser() {
-  if (m_pUASheet)
-    m_pUASheet->Release();
-
   for (auto& pair : m_mapXMLNodeToParseContext) {
     if (pair.second)
       delete pair.second;
@@ -76,14 +75,16 @@ void CXFA_TextParser::InitCSSData(CXFA_TextProvider* pTextProvider) {
     m_pSelector->SetDefFontSize(fFontSize);
   }
 
-  if (!m_pUASheet) {
-    m_pUASheet = LoadDefaultSheetStyle();
-    m_pSelector->SetStyleSheet(FDE_CSSStyleSheetGroup::UserAgent, m_pUASheet);
-    m_pSelector->UpdateStyleIndex();
-  }
+  if (m_cssInitialized)
+    return;
+
+  m_cssInitialized = true;
+  auto uaSheet = LoadDefaultSheetStyle();
+  m_pSelector->SetUAStyleSheet(std::move(uaSheet));
+  m_pSelector->UpdateStyleIndex();
 }
 
-CFDE_CSSStyleSheet* CXFA_TextParser::LoadDefaultSheetStyle() {
+std::unique_ptr<CFDE_CSSStyleSheet> CXFA_TextParser::LoadDefaultSheetStyle() {
   static const FX_WCHAR s_pStyle[] =
       L"html,body,ol,p,ul{display:block}"
       L"li{display:list-item}"
@@ -95,12 +96,9 @@ CFDE_CSSStyleSheet* CXFA_TextParser::LoadDefaultSheetStyle() {
       L"sup{vertical-align:+15em;font-size:.66em}"
       L"sub{vertical-align:-15em;font-size:.66em}";
 
-  CFDE_CSSStyleSheet* pStyleSheet = new CFDE_CSSStyleSheet();
-  if (!pStyleSheet->LoadBuffer(s_pStyle, FXSYS_wcslen(s_pStyle))) {
-    pStyleSheet->Release();
-    pStyleSheet = nullptr;
-  }
-  return pStyleSheet;
+  auto sheet = pdfium::MakeUnique<CFDE_CSSStyleSheet>();
+  return sheet->LoadBuffer(s_pStyle, FXSYS_wcslen(s_pStyle)) ? std::move(sheet)
+                                                             : nullptr;
 }
 
 CFDE_CSSComputedStyle* CXFA_TextParser::CreateRootStyle(
