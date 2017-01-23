@@ -28,7 +28,7 @@ void CFDE_CSSRuleCollection::Clear() {
 }
 
 CFDE_CSSRuleCollection::CFDE_CSSRuleCollection()
-    : m_pUniversalRules(nullptr), m_pPseudoRules(nullptr), m_iSelectors(0) {}
+    : m_pUniversalRules(nullptr), m_iSelectors(0) {}
 
 CFDE_CSSRuleCollection::~CFDE_CSSRuleCollection() {
   Clear();
@@ -48,11 +48,6 @@ void CFDE_CSSRuleCollection::AddRulesFrom(const CFDE_CSSStyleSheet* pStyleSheet,
   int32_t iSelectors = pStyleRule->CountSelectorLists();
   for (int32_t i = 0; i < iSelectors; ++i) {
     CFDE_CSSSelector* pSelector = pStyleRule->GetSelectorList(i);
-    if (pSelector->GetType() == FDE_CSSSelectorType::Pseudo) {
-      Data* pData = NewRuleData(pSelector, pDeclaration);
-      AddRuleTo(&m_pPseudoRules, pData);
-      continue;
-    }
     if (pSelector->GetNameHash() != FDE_CSSUNIVERSALHASH) {
       AddRuleTo(&m_TagRules, pSelector->GetNameHash(), pSelector, pDeclaration);
       continue;

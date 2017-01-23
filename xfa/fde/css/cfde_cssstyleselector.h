@@ -41,8 +41,7 @@ class CFDE_CSSStyleSelector {
       CFDE_CSSComputedStyle* pParentStyle);
   int32_t MatchDeclarations(
       CXFA_CSSTagProvider* pTag,
-      CFX_ArrayTemplate<CFDE_CSSDeclaration*>& matchedDecls,
-      FDE_CSSPseudo ePseudoType = FDE_CSSPseudo::NONE);
+      CFX_ArrayTemplate<CFDE_CSSDeclaration*>& matchedDecls);
   void ComputeStyle(CXFA_CSSTagProvider* pTag,
                     const CFDE_CSSDeclaration** ppDeclArray,
                     int32_t iDeclCount,
@@ -50,11 +49,8 @@ class CFDE_CSSStyleSelector {
 
  private:
   void MatchRules(CFDE_CSSTagCache* pCache,
-                  CFDE_CSSRuleCollection::Data* pList,
-                  FDE_CSSPseudo ePseudoType);
-  bool MatchSelector(CFDE_CSSTagCache* pCache,
-                     CFDE_CSSSelector* pSel,
-                     FDE_CSSPseudo ePseudoType);
+                  CFDE_CSSRuleCollection::Data* pList);
+  bool MatchSelector(CFDE_CSSTagCache* pCache, CFDE_CSSSelector* pSel);
   void AppendInlineStyle(CFDE_CSSDeclaration* pDecl,
                          const FX_WCHAR* psz,
                          int32_t iLen);

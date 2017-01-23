@@ -52,7 +52,6 @@ class CFDE_CSSRuleCollection {
   }
 
   Data* GetUniversalRuleData() { return m_pUniversalRules; }
-  Data* GetPseudoRuleData() { return m_pPseudoRules; }
 
  private:
   void AddRulesFrom(const CFDE_CSSStyleSheet* pStyleSheet,
@@ -69,7 +68,6 @@ class CFDE_CSSRuleCollection {
   std::map<uint32_t, Data*> m_TagRules;
   std::map<uint32_t, Data*> m_ClassRules;
   Data* m_pUniversalRules;
-  Data* m_pPseudoRules;
   int32_t m_iSelectors;
 };
 

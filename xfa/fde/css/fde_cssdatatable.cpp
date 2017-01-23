@@ -196,15 +196,6 @@ static const FDE_CSSCOLORTABLE g_FDE_CSSColors[] = {
     {0xF6EFFF31, 0xff008000},
 };
 
-static const FDE_CSSPseudoTable g_FDE_CSSPseudoType[] = {
-    {FDE_CSSPseudo::After, L":after", 0x16EE1FEC},
-    {FDE_CSSPseudo::Before, L":before", 0x7DCDDE2D},
-};
-
-const FDE_CSSPseudoTable* FDE_GetCSSPseudoByEnum(FDE_CSSPseudo ePseudo) {
-  return g_FDE_CSSPseudoType + static_cast<int>(ePseudo);
-}
-
 const FDE_CSSPropertyTable* FDE_GetCSSPropertyByName(
     const CFX_WideStringC& wsName) {
   ASSERT(!wsName.IsEmpty());

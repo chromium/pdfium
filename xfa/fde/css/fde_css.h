@@ -125,13 +125,10 @@ enum class FDE_CSSProperty : uint8_t {
   LAST_MARKER
 };
 
-enum class FDE_CSSPseudo : uint8_t { After, Before, NONE };
-
 enum class FDE_CSSSelectorType : uint8_t {
   Element = 0,
   Descendant,
   Class,
-  Pseudo,
   ID,
 };
 

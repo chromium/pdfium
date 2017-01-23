@@ -77,8 +77,7 @@ void CFDE_CSSStyleSelector::UpdateStyleIndex() {
 
 int32_t CFDE_CSSStyleSelector::MatchDeclarations(
     CXFA_CSSTagProvider* pTag,
-    CFX_ArrayTemplate<CFDE_CSSDeclaration*>& matchedDecls,
-    FDE_CSSPseudo ePseudoType) {
+    CFX_ArrayTemplate<CFDE_CSSDeclaration*>& matchedDecls) {
   ASSERT(pTag);
   CFDE_CSSTagCache* pCache = m_pAccelerator->top();
   ASSERT(pCache && pCache->GetTag() == pTag);
@@ -88,21 +87,15 @@ int32_t CFDE_CSSStyleSelector::MatchDeclarations(
   if (m_UARules.CountSelectors() == 0)
     return 0;
 
-  if (ePseudoType == FDE_CSSPseudo::NONE) {
-    MatchRules(pCache, m_UARules.GetUniversalRuleData(), ePseudoType);
-    if (pCache->HashTag()) {
-      MatchRules(pCache, m_UARules.GetTagRuleData(pCache->HashTag()),
-                 ePseudoType);
+  MatchRules(pCache, m_UARules.GetUniversalRuleData());
+  if (pCache->HashTag()) {
+    MatchRules(pCache, m_UARules.GetTagRuleData(pCache->HashTag()));
     }
     int32_t iCount = pCache->CountHashClass();
     for (int32_t i = 0; i < iCount; i++) {
       pCache->SetClassIndex(i);
-      MatchRules(pCache, m_UARules.GetClassRuleData(pCache->HashClass()),
-                 ePseudoType);
+      MatchRules(pCache, m_UARules.GetClassRuleData(pCache->HashClass()));
     }
-  } else {
-    MatchRules(pCache, m_UARules.GetPseudoRuleData(), ePseudoType);
-  }
 
   std::sort(m_MatchedRules.begin(), m_MatchedRules.end(),
             [](const CFDE_CSSRuleCollection::Data* p1,
@@ -117,18 +110,16 @@ int32_t CFDE_CSSStyleSelector::MatchDeclarations(
 }
 
 void CFDE_CSSStyleSelector::MatchRules(CFDE_CSSTagCache* pCache,
-                                       CFDE_CSSRuleCollection::Data* pList,
-                                       FDE_CSSPseudo ePseudoType) {
+                                       CFDE_CSSRuleCollection::Data* pList) {
   while (pList) {
-    if (MatchSelector(pCache, pList->pSelector, ePseudoType))
+    if (MatchSelector(pCache, pList->pSelector))
       m_MatchedRules.push_back(pList);
     pList = pList->pNext;
   }
 }
 
 bool CFDE_CSSStyleSelector::MatchSelector(CFDE_CSSTagCache* pCache,
-                                          CFDE_CSSSelector* pSel,
-                                          FDE_CSSPseudo ePseudoType) {
+                                          CFDE_CSSSelector* pSel) {
   uint32_t dwHash;
   while (pSel && pCache) {
     switch (pSel->GetType()) {
@@ -138,7 +129,7 @@ bool CFDE_CSSStyleSelector::MatchSelector(CFDE_CSSTagCache* pCache,
           if (dwHash != FDE_CSSUNIVERSALHASH && dwHash != pCache->HashTag()) {
             continue;
           }
-          if (MatchSelector(pCache, pSel->GetNextSelector(), ePseudoType)) {
+          if (MatchSelector(pCache, pSel->GetNextSelector())) {
             return true;
           }
         }
@@ -158,12 +149,6 @@ bool CFDE_CSSStyleSelector::MatchSelector(CFDE_CSSTagCache* pCache,
       case FDE_CSSSelectorType::Element:
         dwHash = pSel->GetNameHash();
         if (dwHash != FDE_CSSUNIVERSALHASH && dwHash != pCache->HashTag()) {
-          return false;
-        }
-        break;
-      case FDE_CSSSelectorType::Pseudo:
-        dwHash = FDE_GetCSSPseudoByEnum(ePseudoType)->dwHash;
-        if (dwHash != pSel->GetNameHash()) {
           return false;
         }
         break;

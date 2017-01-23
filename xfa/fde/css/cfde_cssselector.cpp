@@ -16,19 +16,6 @@ bool IsCSSChar(FX_WCHAR wch) {
   return (wch >= 'a' && wch <= 'z') || (wch >= 'A' && wch <= 'Z');
 }
 
-int32_t GetCSSPseudoLen(const FX_WCHAR* psz, const FX_WCHAR* pEnd) {
-  ASSERT(*psz == ':');
-  const FX_WCHAR* pStart = psz;
-  while (psz < pEnd) {
-    FX_WCHAR wch = *psz;
-    if (IsCSSChar(wch) || wch == ':')
-      ++psz;
-    else
-      break;
-  }
-  return psz - pStart;
-}
-
 int32_t GetCSSNameLen(const FX_WCHAR* psz, const FX_WCHAR* pEnd) {
   const FX_WCHAR* pStart = psz;
   while (psz < pEnd) {
@@ -88,8 +75,6 @@ std::unique_ptr<CFDE_CSSSelector> CFDE_CSSSelector::FromString(
 
   std::unique_ptr<CFDE_CSSSelector> pFirst = nullptr;
   CFDE_CSSSelector* pLast = nullptr;
-  std::unique_ptr<CFDE_CSSSelector> pPseudoFirst = nullptr;
-  CFDE_CSSSelector* pPseudoLast = nullptr;
 
   for (psz = pStart; psz < pEnd;) {
     FX_WCHAR wch = *psz;
@@ -134,29 +119,11 @@ std::unique_ptr<CFDE_CSSSelector> CFDE_CSSSelector::FromString(
       pFirst = std::move(p);
       pLast = pFirst.get();
       psz += iNameLen;
-    } else if (wch == ':') {
-      int32_t iNameLen = GetCSSPseudoLen(psz, pEnd);
-      if (iNameLen == 0)
-        return nullptr;
-
-      auto p = pdfium::MakeUnique<CFDE_CSSSelector>(FDE_CSSSelectorType::Pseudo,
-                                                    psz, iNameLen, true);
-      CFDE_CSSSelector* ptr = p.get();
-      if (pPseudoFirst)
-        pPseudoLast->SetNext(std::move(p));
-      else
-        pPseudoFirst = std::move(p);
-      pPseudoLast = ptr;
-      psz += iNameLen;
     } else if (wch == ' ') {
       psz++;
     } else {
       return nullptr;
     }
   }
-  if (!pPseudoFirst)
-    return pFirst;
-
-  pPseudoLast->SetNext(std::move(pFirst));
-  return pPseudoFirst;
+  return pFirst;
 }

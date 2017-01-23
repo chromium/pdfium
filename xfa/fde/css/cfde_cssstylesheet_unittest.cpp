@@ -139,18 +139,6 @@ TEST_F(CFDE_CSSStyleSheetTest, ParseMultipleSelectorsCombined) {
   LoadAndVerifyDecl(L"a, b, c { border: 5px; }", {L"a", L"b", L"c"}, 4);
 }
 
-TEST_F(CFDE_CSSStyleSheetTest, ParseWithPseudo) {
-  // TODO(dsinclair): I think this is wrong, as the selector just becomes
-  // :before and we lose the a?
-  LoadAndVerifyDecl(L"a:before { border: 10px; }", {L":before"}, 4);
-}
-
-TEST_F(CFDE_CSSStyleSheetTest, ParseWithSelectorsAndPseudo) {
-  // TODO(dsinclair): I think this is wrong as we lose the b on the b:before
-  LoadAndVerifyDecl(L"a, b:before, c { border: 1px; }",
-                    {L"a", L":before", L"c"}, 4);
-}
-
 TEST_F(CFDE_CSSStyleSheetTest, ParseBorder) {
   LoadAndVerifyDecl(L"a { border: 5px; }", {L"a"}, 4);
   VerifyFloat(FDE_CSSProperty::BorderLeftWidth, 5.0, FDE_CSSNumberType::Pixels);
