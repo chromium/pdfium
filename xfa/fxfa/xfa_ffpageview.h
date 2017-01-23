@@ -1,4 +1,4 @@
-// Copyright 2014 PDFium Authors. All rights reserved.
+// Copyrig 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -6,6 +6,8 @@
 
 #ifndef XFA_FXFA_XFA_FFPAGEVIEW_H_
 #define XFA_FXFA_XFA_FFPAGEVIEW_H_
+
+#include <vector>
 
 #include "xfa/fxfa/parser/cxfa_containerlayoutitem.h"
 #include "xfa/fxfa/parser/cxfa_contentlayoutitem.h"
@@ -59,7 +61,6 @@ class CXFA_FFPageWidgetIterator : public IXFA_WidgetIterator {
   bool m_bIgnorerelevant;
   CXFA_LayoutItemIterator m_sIterator;
 };
-typedef CFX_ArrayTemplate<CXFA_FFWidget*> CXFA_WidgetArray;
 
 class CXFA_TabParam {
  public:
@@ -67,7 +68,7 @@ class CXFA_TabParam {
   ~CXFA_TabParam();
 
   CXFA_FFWidget* m_pWidget;
-  CXFA_WidgetArray m_Children;
+  std::vector<CXFA_FFWidget*> m_Children;
 };
 
 class CXFA_FFTabOrderPageWidgetIterator : public IXFA_WidgetIterator {
@@ -89,7 +90,7 @@ class CXFA_FFTabOrderPageWidgetIterator : public IXFA_WidgetIterator {
   CXFA_FFWidget* FindWidgetByName(const CFX_WideString& wsWidgetName,
                                   CXFA_FFWidget* pRefWidget);
   void CreateTabOrderWidgetArray();
-  void CreateSpaceOrderWidgetArray(CXFA_WidgetArray& WidgetArray);
+  void CreateSpaceOrderWidgetArray(std::vector<CXFA_FFWidget*>* WidgetArray);
   CXFA_FFWidget* GetWidget(CXFA_LayoutItem* pLayoutItem);
   void OrderContainer(CXFA_LayoutItemIterator* sIterator,
                       CXFA_LayoutItem* pContainerItem,
@@ -98,7 +99,7 @@ class CXFA_FFTabOrderPageWidgetIterator : public IXFA_WidgetIterator {
                       bool& bContentArea,
                       bool bMarsterPage = false);
 
-  CXFA_WidgetArray m_TabOrderWidgetArray;
+  std::vector<CXFA_FFWidget*> m_TabOrderWidgetArray;
   CXFA_FFPageView* m_pPageView;
   uint32_t m_dwFilter;
   int32_t m_iCurWidget;

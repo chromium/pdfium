@@ -7,6 +7,8 @@
 #ifndef XFA_FXFA_PARSER_CXFA_BOX_H_
 #define XFA_FXFA_PARSER_CXFA_BOX_H_
 
+#include <vector>
+
 #include "core/fxcrt/fx_system.h"
 #include "xfa/fxfa/parser/cxfa_data.h"
 #include "xfa/fxfa/parser/cxfa_edge.h"
@@ -28,7 +30,7 @@ class CXFA_Box : public CXFA_Data {
   int32_t GetPresence() const;
   int32_t CountEdges() const;
   CXFA_Edge GetEdge(int32_t nIndex = 0) const;
-  void GetStrokes(CXFA_StrokeArray& strokes) const;
+  void GetStrokes(std::vector<CXFA_Stroke>* strokes) const;
   bool IsCircular() const;
   bool GetStartAngle(FX_FLOAT& fStartAngle) const;
   FX_FLOAT GetStartAngle() const {

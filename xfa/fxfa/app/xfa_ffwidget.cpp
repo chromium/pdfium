@@ -1217,7 +1217,7 @@ static void XFA_BOX_GetPath_Arc(CXFA_Box box,
                   startAngle, sweepAngle);
 }
 static void XFA_BOX_GetPath(CXFA_Box box,
-                            const CXFA_StrokeArray& strokes,
+                            const std::vector<CXFA_Stroke>& strokes,
                             CFX_RectF rtWidget,
                             CFX_Path& path,
                             int32_t nIndex,
@@ -1385,7 +1385,7 @@ static void XFA_BOX_GetPath(CXFA_Box box,
   }
 }
 static void XFA_BOX_GetFillPath(CXFA_Box box,
-                                const CXFA_StrokeArray& strokes,
+                                const std::vector<CXFA_Stroke>& strokes,
                                 CFX_RectF rtWidget,
                                 CFX_Path& fillPath,
                                 uint16_t dwFlags) {
@@ -1631,7 +1631,7 @@ static void XFA_BOX_Fill_Linear(CXFA_Box box,
   pGS->FillPath(&fillPath, FXFILL_WINDING, pMatrix);
 }
 static void XFA_BOX_Fill(CXFA_Box box,
-                         const CXFA_StrokeArray& strokes,
+                         const std::vector<CXFA_Stroke>& strokes,
                          CFX_Graphics* pGS,
                          const CFX_RectF& rtWidget,
                          CFX_Matrix* pMatrix,
@@ -1870,7 +1870,7 @@ static void XFA_BOX_Stroke_3DRect_Embossed(CFX_Graphics* pGS,
   XFA_Draw3DRect(pGS, rtInner, fHalfWidth, pMatrix, 0xFF000000, 0xFF808080);
 }
 static void XFA_BOX_Stroke_Rect(CXFA_Box box,
-                                const CXFA_StrokeArray& strokes,
+                                const std::vector<CXFA_Stroke>& strokes,
                                 CFX_Graphics* pGS,
                                 CFX_RectF rtWidget,
                                 CFX_Matrix* pMatrix) {
@@ -1961,7 +1961,7 @@ static void XFA_BOX_Stroke_Rect(CXFA_Box box,
   }
 }
 static void XFA_BOX_Stroke(CXFA_Box box,
-                           const CXFA_StrokeArray& strokes,
+                           const std::vector<CXFA_Stroke>& strokes,
                            CFX_Graphics* pGS,
                            CFX_RectF rtWidget,
                            CFX_Matrix* pMatrix,
@@ -2038,10 +2038,10 @@ void XFA_DrawBox(CXFA_Box box,
       eType != XFA_Element::Rectangle) {
     return;
   }
-  CXFA_StrokeArray strokes;
-  if (!(dwFlags & XFA_DRAWBOX_ForceRound) && eType != XFA_Element::Arc) {
-    box.GetStrokes(strokes);
-  }
+  std::vector<CXFA_Stroke> strokes;
+  if (!(dwFlags & XFA_DRAWBOX_ForceRound) && eType != XFA_Element::Arc)
+    box.GetStrokes(&strokes);
+
   XFA_BOX_Fill(box, strokes, pGS, rtWidget, pMatrix, dwFlags);
   XFA_BOX_Stroke(box, strokes, pGS, rtWidget, pMatrix, dwFlags);
 }

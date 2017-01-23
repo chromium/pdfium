@@ -13,53 +13,47 @@
 namespace {
 
 void GetStrokesInternal(CXFA_Node* pNode,
-                        CXFA_StrokeArray& strokes,
+                        std::vector<CXFA_Stroke>* strokes,
                         bool bNull) {
-  strokes.RemoveAll();
+  strokes->clear();
   if (!pNode)
     return;
 
-  strokes.SetSize(8);
+  strokes->resize(8);
   int32_t i, j;
   for (i = 0, j = 0; i < 4; i++) {
     CXFA_Corner corner =
         CXFA_Corner(pNode->GetProperty(i, XFA_Element::Corner, i == 0));
-    if (corner || i == 0)
-      strokes.SetAt(j, corner);
-    else if (bNull)
-      strokes.SetAt(j, CXFA_Stroke(nullptr));
-    else if (i == 1)
-      strokes.SetAt(j, strokes[0]);
-    else if (i == 2)
-      strokes.SetAt(j, strokes[0]);
-    else
-      strokes.SetAt(j, strokes[2]);
-
+    if (corner || i == 0) {
+      (*strokes)[j] = corner;
+    } else if (!bNull) {
+      if (i == 1 || i == 2)
+        (*strokes)[j] = (*strokes)[0];
+      else
+        (*strokes)[j] = (*strokes)[2];
+    }
     j++;
     CXFA_Edge edge =
         CXFA_Edge(pNode->GetProperty(i, XFA_Element::Edge, i == 0));
-    if (edge || i == 0)
-      strokes.SetAt(j, edge);
-    else if (bNull)
-      strokes.SetAt(j, CXFA_Stroke(nullptr));
-    else if (i == 1)
-      strokes.SetAt(j, strokes[1]);
-    else if (i == 2)
-      strokes.SetAt(j, strokes[1]);
-    else
-      strokes.SetAt(j, strokes[3]);
-
+    if (edge || i == 0) {
+      (*strokes)[j] = edge;
+    } else if (!bNull) {
+      if (i == 1 || i == 2)
+        (*strokes)[j] = (*strokes)[1];
+      else
+        (*strokes)[j] = (*strokes)[3];
+    }
     j++;
   }
 }
 
-static int32_t Style3D(const CXFA_StrokeArray& strokes, CXFA_Stroke& stroke) {
-  int32_t iCount = strokes.GetSize();
-  if (iCount < 1)
+static int32_t Style3D(const std::vector<CXFA_Stroke>& strokes,
+                       CXFA_Stroke& stroke) {
+  if (strokes.empty())
     return 0;
 
   stroke = strokes[0];
-  for (int32_t i = 1; i < iCount; i++) {
+  for (size_t i = 1; i < strokes.size(); i++) {
     CXFA_Stroke find = strokes[i];
     if (!find)
       continue;
@@ -105,7 +99,7 @@ CXFA_Edge CXFA_Box::GetEdge(int32_t nIndex) const {
               : nullptr);
 }
 
-void CXFA_Box::GetStrokes(CXFA_StrokeArray& strokes) const {
+void CXFA_Box::GetStrokes(std::vector<CXFA_Stroke>* strokes) const {
   GetStrokesInternal(m_pNode, strokes, false);
 }
 
@@ -158,8 +152,8 @@ int32_t CXFA_Box::Get3DStyle(bool& bVisible, FX_FLOAT& fThickness) const {
   if (IsArc())
     return 0;
 
-  CXFA_StrokeArray strokes;
-  GetStrokesInternal(m_pNode, strokes, true);
+  std::vector<CXFA_Stroke> strokes;
+  GetStrokesInternal(m_pNode, &strokes, true);
   CXFA_Stroke stroke(nullptr);
   int32_t iType = Style3D(strokes, stroke);
   if (iType) {

@@ -18,7 +18,7 @@
 
 namespace {
 
-FX_FLOAT GetEdgeThickness(const CXFA_StrokeArray& strokes,
+FX_FLOAT GetEdgeThickness(const std::vector<CXFA_Stroke>& strokes,
                           bool b3DStyle,
                           int32_t nIndex) {
   FX_FLOAT fThickness = 0;
@@ -431,8 +431,8 @@ CFX_RectF CXFA_WidgetData::GetUIMargin() {
     FX_FLOAT fThickness = 0;
     border.Get3DStyle(bVisible, fThickness);
     if (!bLeft || !bTop || !bRight || !bBottom) {
-      CXFA_StrokeArray strokes;
-      border.GetStrokes(strokes);
+      std::vector<CXFA_Stroke> strokes;
+      border.GetStrokes(&strokes);
       if (!bTop)
         fTopInset = GetEdgeThickness(strokes, bVisible, 0);
       if (!bRight)

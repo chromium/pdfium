@@ -21,6 +21,7 @@ class CXFA_Node;
 
 class CXFA_Stroke : public CXFA_Data {
  public:
+  CXFA_Stroke() : CXFA_Stroke(nullptr) {}
   explicit CXFA_Stroke(CXFA_Node* pNode) : CXFA_Data(pNode) {}
 
   bool IsCorner() const { return GetElementType() == XFA_Element::Corner; }
@@ -39,7 +40,5 @@ class CXFA_Stroke : public CXFA_Data {
   FX_FLOAT GetRadius() const;
   bool SameStyles(CXFA_Stroke stroke, uint32_t dwFlags = 0) const;
 };
-
-typedef CFX_ArrayTemplate<CXFA_Stroke> CXFA_StrokeArray;
 
 #endif  // XFA_FXFA_PARSER_CXFA_STROKE_H_
