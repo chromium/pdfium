@@ -1157,7 +1157,7 @@ CPDF_FormControl* CPDF_InterForm::AddControl(CPDF_FormField* pField,
   return pControl;
 }
 
-CPDF_FormField* CPDF_InterForm::CheckRequiredFields(
+bool CPDF_InterForm::CheckRequiredFields(
     const std::vector<CPDF_FormField*>* fields,
     bool bIncludeOrExclude) const {
   size_t nCount = m_pFieldTree->m_Root.CountFields();
@@ -1173,7 +1173,7 @@ CPDF_FormField* CPDF_InterForm::CheckRequiredFields(
     }
     uint32_t dwFlags = pField->GetFieldFlags();
     // TODO(thestig): Look up these magic numbers and add constants for them.
-    if (dwFlags & 0x04)
+    if (dwFlags & FORMFLAG_NOEXPORT)
       continue;
 
     bool bFind = true;
@@ -1181,11 +1181,13 @@ CPDF_FormField* CPDF_InterForm::CheckRequiredFields(
       bFind = pdfium::ContainsValue(*fields, pField);
     if (bIncludeOrExclude == bFind) {
       CPDF_Dictionary* pFieldDict = pField->m_pDict;
-      if ((dwFlags & 0x02) != 0 && pFieldDict->GetStringFor("V").IsEmpty())
-        return pField;
+      if ((dwFlags & FORMFLAG_REQUIRED) != 0 &&
+          pFieldDict->GetStringFor("V").IsEmpty()) {
+        return false;
+      }
     }
   }
-  return nullptr;
+  return true;
 }
 
 std::unique_ptr<CFDF_Document> CPDF_InterForm::ExportToFDF(

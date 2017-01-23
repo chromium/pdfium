@@ -25,6 +25,10 @@
 #define FIELDTYPE_TEXTFIELD 6
 #define FIELDTYPE_SIGNATURE 7
 
+#define FORMFLAG_READONLY 0x01
+#define FORMFLAG_REQUIRED 0x02
+#define FORMFLAG_NOEXPORT 0x04
+
 class CPDF_Dictionary;
 class CPDF_Font;
 class CPDF_FormControl;

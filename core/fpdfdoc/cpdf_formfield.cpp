@@ -31,10 +31,6 @@ const int kFormListMultiSelect = 0x100;
 
 const int kFormComboEdit = 0x100;
 
-const int kFormFieldReadOnly = 0x01;
-const int kFormFieldRequired = 0x02;
-const int kFormFieldNoExport = 0x04;
-
 const int kFormRadioNoToggleOff = 0x100;
 const int kFormRadioUnison = 0x200;
 
@@ -108,12 +104,12 @@ void CPDF_FormField::SyncFieldFlags() {
                        ? FPDF_GetFieldAttr(m_pDict, "Ff")->GetInteger()
                        : 0;
   m_Flags = 0;
-  if (flags & 1)
-    m_Flags |= kFormFieldReadOnly;
-  if (flags & 2)
-    m_Flags |= kFormFieldRequired;
-  if (flags & 4)
-    m_Flags |= kFormFieldNoExport;
+  if (flags & FORMFLAG_READONLY)
+    m_Flags |= FORMFLAG_READONLY;
+  if (flags & FORMFLAG_REQUIRED)
+    m_Flags |= FORMFLAG_REQUIRED;
+  if (flags & FORMFLAG_NOEXPORT)
+    m_Flags |= FORMFLAG_NOEXPORT;
 
   if (type_name == "Btn") {
     if (flags & 0x8000) {

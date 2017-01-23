@@ -427,13 +427,13 @@ bool CPDFSDK_InterForm::DoAction_SubmitForm(const CPDF_Action& action) {
     std::vector<CPDF_FormField*> fields = GetFieldFromObjects(fieldObjects);
     if (!fields.empty()) {
       bool bIncludeOrExclude = !(dwFlags & 0x01);
-      if (m_pInterForm->CheckRequiredFields(&fields, bIncludeOrExclude))
+      if (!m_pInterForm->CheckRequiredFields(&fields, bIncludeOrExclude))
         return false;
 
       return SubmitFields(sDestination, fields, bIncludeOrExclude, false);
     }
   }
-  if (m_pInterForm->CheckRequiredFields(nullptr, true))
+  if (!m_pInterForm->CheckRequiredFields(nullptr, true))
     return false;
 
   return SubmitForm(sDestination, false);

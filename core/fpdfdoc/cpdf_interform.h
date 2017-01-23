@@ -69,9 +69,8 @@ class CPDF_InterForm {
   CPDF_DefaultAppearance GetDefaultAppearance() const;
   int GetFormAlignment() const;
 
-  CPDF_FormField* CheckRequiredFields(
-      const std::vector<CPDF_FormField*>* fields,
-      bool bIncludeOrExclude) const;
+  bool CheckRequiredFields(const std::vector<CPDF_FormField*>* fields,
+                           bool bIncludeOrExclude) const;
 
   std::unique_ptr<CFDF_Document> ExportToFDF(const CFX_WideStringC& pdf_path,
                                              bool bSimpleFileSpec) const;
