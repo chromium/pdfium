@@ -1287,7 +1287,8 @@ void CFDE_XMLSyntaxParser::Init(const CFX_RetainPtr<IFGAS_Stream>& pStream,
     return;
   }
 
-  m_pBuffer = FX_Alloc(FX_WCHAR, alloc_size_safe.ValueOrDie());
+  m_pBuffer = FX_Alloc(
+      FX_WCHAR, pdfium::base::ValueOrDieForType<size_t>(alloc_size_safe));
   m_pStart = m_pEnd = m_pBuffer;
   ASSERT(!m_BlockBuffer.IsInitialized());
   m_BlockBuffer.InitBuffer();

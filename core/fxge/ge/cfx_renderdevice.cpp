@@ -1022,13 +1022,15 @@ bool CFX_RenderDevice::DrawNormalText(int nChars,
     bool bBGRStripe = !!(text_flags & FXTEXT_BGR_STRIPE);
     ncols /= 3;
     int x_subpixel = (int)(glyph.m_fOriginX * 3) % 3;
-    int start_col = std::max(left.ValueOrDie(), 0);
+    int start_col =
+        pdfium::base::ValueOrDieForType<int>(pdfium::base::CheckMax(left, 0));
     pdfium::base::CheckedNumeric<int> end_col_safe = left;
     end_col_safe += ncols;
     if (!end_col_safe.IsValid())
       return false;
 
-    int end_col = std::min(end_col_safe.ValueOrDie(), dest_width);
+    int end_col =
+        std::min(static_cast<int>(end_col_safe.ValueOrDie<int>()), dest_width);
     if (start_col >= end_col)
       continue;
 

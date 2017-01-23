@@ -30,7 +30,8 @@ class CFX_StringDataTemplate {
     // where we can save a re-alloc when adding a few characters to a string
     // by using this otherwise wasted space.
     nSize += 7;
-    int totalSize = nSize.ValueOrDie() & ~7;
+    nSize &= ~7;
+    int totalSize = nSize.ValueOrDie();
     int usableLen = (totalSize - overhead) / sizeof(CharType);
     ASSERT(usableLen >= nLen);
 

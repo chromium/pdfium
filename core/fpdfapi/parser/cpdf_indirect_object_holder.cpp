@@ -11,6 +11,7 @@
 
 #include "core/fpdfapi/parser/cpdf_object.h"
 #include "core/fpdfapi/parser/cpdf_parser.h"
+#include "third_party/base/logging.h"
 
 CPDF_IndirectObjectHolder::CPDF_IndirectObjectHolder()
     : m_LastObjNum(0),

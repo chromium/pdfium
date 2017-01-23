@@ -12,12 +12,6 @@
 #include <limits>
 #include <memory>
 
-namespace {
-
-const int kDefaultIntValue = 0;
-
-}  // namespace
-
 bool FX_atonum(const CFX_ByteStringC& strc, void* pData) {
   if (strc.Find('.') != -1) {
     FX_FLOAT* pFloat = static_cast<FX_FLOAT*>(pData);
@@ -54,18 +48,19 @@ bool FX_atonum(const CFX_ByteStringC& strc, void* pData) {
   // we've overflowed, reset to the default value.
   if (bSigned) {
     if (bNegative) {
-      if (integer.ValueOrDefault(kDefaultIntValue) >
+      if (integer.ValueOrDefault(0) >
           static_cast<uint32_t>(std::numeric_limits<int>::max()) + 1) {
-        integer = kDefaultIntValue;
+        integer = 0;
       }
-    } else if (integer.ValueOrDefault(kDefaultIntValue) >
+    } else if (integer.ValueOrDefault(0) >
                static_cast<uint32_t>(std::numeric_limits<int>::max())) {
-      integer = kDefaultIntValue;
+      integer = 0;
     }
   }
 
   // Switch back to the int space so we can flip to a negative if we need.
-  int value = static_cast<int>(integer.ValueOrDefault(kDefaultIntValue));
+  uint32_t uValue = integer.ValueOrDefault(0);
+  int32_t value = static_cast<int>(uValue);
   if (bNegative)
     value = -value;
 

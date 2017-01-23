@@ -2,140 +2,268 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef PDFIUM_THIRD_PARTY_BASE_SAFE_MATH_H_
-#define PDFIUM_THIRD_PARTY_BASE_SAFE_MATH_H_
+#ifndef PDFIUM_THIRD_PARTY_BASE_NUMERICS_SAFE_MATH_H_
+#define PDFIUM_THIRD_PARTY_BASE_NUMERICS_SAFE_MATH_H_
 
-#include "safe_math_impl.h"
+#include <stddef.h>
+
+#include <limits>
+#include <type_traits>
+
+#include "third_party/base/numerics/safe_math_impl.h"
 
 namespace pdfium {
 namespace base {
 namespace internal {
 
-// CheckedNumeric implements all the logic and operators for detecting integer
+// CheckedNumeric<> implements all the logic and operators for detecting integer
 // boundary conditions such as overflow, underflow, and invalid conversions.
 // The CheckedNumeric type implicitly converts from floating point and integer
 // data types, and contains overloads for basic arithmetic operations (i.e.: +,
-// -, *, /, %).
+// -, *, / for all types and %, <<, >>, &, |, ^ for integers). Type promotions
+// are a slightly modified version of the standard C arithmetic rules with the
+// two differences being that there is no default promotion to int and bitwise
+// logical operations always return an unsigned of the wider type.
+//
+// You may also use one of the variadic convenience functions, which accept
+// standard arithmetic or CheckedNumeric types, perform arithmetic operations,
+// and return a CheckedNumeric result. The supported functions are:
+//  CheckAdd() - Addition.
+//  CheckSub() - Subtraction.
+//  CheckMul() - Multiplication.
+//  CheckDiv() - Division.
+//  CheckMod() - Modulous (integer only).
+//  CheckLsh() - Left integer shift (integer only).
+//  CheckRsh() - Right integer shift (integer only).
+//  CheckAnd() - Bitwise AND (integer only with unsigned result).
+//  CheckOr()  - Bitwise OR (integer only with unsigned result).
+//  CheckXor() - Bitwise XOR (integer only with unsigned result).
+//  CheckMax() - Maximum of supplied arguments.
+//  CheckMin() - Minimum of supplied arguments.
+//
+// The unary negation, increment, and decrement operators are supported, along
+// with the following unary arithmetic methods, which return a new
+// CheckedNumeric as a result of the operation:
+//  Abs() - Absolute value.
+//  UnsignedAbs() - Absolute value as an equal-width unsigned underlying type
+//          (valid for only integral types).
+//  Max() - Returns whichever is greater of the current instance or argument.
+//          The underlying return type is whichever has the greatest magnitude.
+//  Min() - Returns whichever is lowest of the current instance or argument.
+//          The underlying return type is whichever has can represent the lowest
+//          number in the smallest width (e.g. int8_t over unsigned, int over
+//          int8_t, and float over int).
 //
 // The following methods convert from CheckedNumeric to standard numeric values:
-// IsValid() - Returns true if the underlying numeric value is valid (i.e. has
-//             has not wrapped and is not the result of an invalid conversion).
-// ValueOrDie() - Returns the underlying value. If the state is not valid this
-//                call will crash on a CHECK.
-// ValueOrDefault() - Returns the current value, or the supplied default if the
-//                    state is not valid.
-// ValueFloating() - Returns the underlying floating point value (valid only
-//                   only for floating point CheckedNumeric types).
+//  AssignIfValid() - Assigns the underlying value to the supplied destination
+//          pointer if the value is currently valid and within the range
+//          supported by the destination type. Returns true on success.
+//  ****************************************************************************
+//  *  WARNING: All of the following functions return a StrictNumeric, which   *
+//  *  is valid for comparison and assignment operations, but will trigger a   *
+//  *  compile failure on attempts to assign to a type of insufficient range.  *
+//  ****************************************************************************
+//  IsValid() - Returns true if the underlying numeric value is valid (i.e. has
+//          has not wrapped and is not the result of an invalid conversion).
+//  ValueOrDie() - Returns the underlying value. If the state is not valid this
+//          call will crash on a CHECK.
+//  ValueOrDefault() - Returns the current value, or the supplied default if the
+//          state is not valid (will not trigger a CHECK).
 //
-// Bitwise operations are explicitly not supported, because correct
-// handling of some cases (e.g. sign manipulation) is ambiguous. Comparison
-// operations are explicitly not supported because they could result in a crash
-// on a CHECK condition. You should use patterns like the following for these
-// operations:
-// Bitwise operation:
-//     CheckedNumeric<int> checked_int = untrusted_input_value;
-//     int x = checked_int.ValueOrDefault(0) | kFlagValues;
-// Comparison:
-//   CheckedNumeric<size_t> checked_size;
-//   CheckedNumeric<int> checked_size = untrusted_input_value;
-//   checked_size = checked_size + HEADER LENGTH;
+// The following wrapper functions can be used to avoid the template
+// disambiguator syntax when converting a destination type.
+//   IsValidForType<>() in place of: a.template IsValid<Dst>()
+//   ValueOrDieForType<>() in place of: a.template ValueOrDie()
+//   ValueOrDefaultForType<>() in place of: a.template ValueOrDefault(default)
+//
+// The following are general utility methods that are useful for converting
+// between arithmetic types and CheckedNumeric types:
+//  CheckedNumeric::Cast<Dst>() - Instance method returning a CheckedNumeric
+//          derived from casting the current instance to a CheckedNumeric of
+//          the supplied destination type.
+//  MakeCheckedNum() - Creates a new CheckedNumeric from the underlying type of
+//          the supplied arithmetic, CheckedNumeric, or StrictNumeric type.
+//
+// Comparison operations are explicitly not supported because they could result
+// in a crash on an unexpected CHECK condition. You should use patterns like the
+// following for comparisons:
+//   CheckedNumeric<size_t> checked_size = untrusted_input_value;
+//   checked_size += HEADER LENGTH;
 //   if (checked_size.IsValid() && checked_size.ValueOrDie() < buffer_size)
 //     Do stuff...
+
 template <typename T>
 class CheckedNumeric {
- public:
-  typedef T type;
+  static_assert(std::is_arithmetic<T>::value,
+                "CheckedNumeric<T>: T must be a numeric type.");
 
-  CheckedNumeric() {}
+ public:
+  using type = T;
+
+  constexpr CheckedNumeric() {}
 
   // Copy constructor.
   template <typename Src>
-  CheckedNumeric(const CheckedNumeric<Src>& rhs)
-      : state_(rhs.ValueUnsafe(), rhs.validity()) {}
+  constexpr CheckedNumeric(const CheckedNumeric<Src>& rhs)
+      : state_(rhs.state_.value(), rhs.IsValid()) {}
 
   template <typename Src>
-  CheckedNumeric(Src value, RangeConstraint validity)
-      : state_(value, validity) {}
+  friend class CheckedNumeric;
 
   // This is not an explicit constructor because we implicitly upgrade regular
   // numerics to CheckedNumerics to make them easier to use.
   template <typename Src>
-  CheckedNumeric(Src value)
+  constexpr CheckedNumeric(Src value)  // NOLINT(runtime/explicit)
       : state_(value) {
-    COMPILE_ASSERT(std::numeric_limits<Src>::is_specialized,
-                   argument_must_be_numeric);
+    static_assert(std::is_arithmetic<Src>::value, "Argument must be numeric.");
   }
 
-  // IsValid() is the public API to test if a CheckedNumeric is currently valid.
-  bool IsValid() const { return validity() == RANGE_VALID; }
+  // This is not an explicit constructor because we want a seamless conversion
+  // from StrictNumeric types.
+  template <typename Src>
+  constexpr CheckedNumeric(
+      StrictNumeric<Src> value)  // NOLINT(runtime/explicit)
+      : state_(static_cast<Src>(value)) {}
 
-  // ValueOrDie() The primary accessor for the underlying value. If the current
-  // state is not valid it will CHECK and crash.
-  T ValueOrDie() const {
-    CHECK(IsValid());
-    return state_.value();
+  // IsValid() - The public API to test if a CheckedNumeric is currently valid.
+  // A range checked destination type can be supplied using the Dst template
+  // parameter.
+  template <typename Dst = T>
+  constexpr bool IsValid() const {
+    return state_.is_valid() &&
+           IsValueInRangeForNumericType<Dst>(state_.value());
   }
 
-  // ValueOrDefault(T default_value) A convenience method that returns the
+  // AssignIfValid(Dst) - Assigns the underlying value if it is currently valid
+  // and is within the range supported by the destination type. Returns true if
+  // successful and false otherwise.
+  template <typename Dst>
+  constexpr bool AssignIfValid(Dst* result) const {
+    return IsValid<Dst>() ? ((*result = static_cast<Dst>(state_.value())), true)
+                          : false;
+  }
+
+  // ValueOrDie() - The primary accessor for the underlying value. If the
+  // current state is not valid it will CHECK and crash.
+  // A range checked destination type can be supplied using the Dst template
+  // parameter, which will trigger a CHECK if the value is not in bounds for
+  // the destination.
+  // The CHECK behavior can be overridden by supplying a handler as a
+  // template parameter, for test code, etc. However, the handler cannot access
+  // the underlying value, and it is not available through other means.
+  template <typename Dst = T, class CheckHandler = CheckOnFailure>
+  constexpr StrictNumeric<Dst> ValueOrDie() const {
+    return IsValid<Dst>() ? static_cast<Dst>(state_.value())
+                          : CheckHandler::template HandleFailure<Dst>();
+  }
+
+  // ValueOrDefault(T default_value) - A convenience method that returns the
   // current value if the state is valid, and the supplied default_value for
   // any other state.
-  T ValueOrDefault(T default_value) const {
-    return IsValid() ? state_.value() : default_value;
+  // A range checked destination type can be supplied using the Dst template
+  // parameter. WARNING: This function may fail to compile or CHECK at runtime
+  // if the supplied default_value is not within range of the destination type.
+  template <typename Dst = T, typename Src>
+  constexpr StrictNumeric<Dst> ValueOrDefault(const Src default_value) const {
+    return IsValid<Dst>() ? static_cast<Dst>(state_.value())
+                          : checked_cast<Dst>(default_value);
   }
 
-  // ValueFloating() - Since floating point values include their validity state,
-  // we provide an easy method for extracting them directly, without a risk of
-  // crashing on a CHECK.
-  T ValueFloating() const {
-    COMPILE_ASSERT(std::numeric_limits<T>::is_iec559, argument_must_be_float);
-    return CheckedNumeric<T>::cast(*this).ValueUnsafe();
+  // Returns a checked numeric of the specified type, cast from the current
+  // CheckedNumeric. If the current state is invalid or the destination cannot
+  // represent the result then the returned CheckedNumeric will be invalid.
+  template <typename Dst>
+  constexpr CheckedNumeric<typename UnderlyingType<Dst>::type> Cast() const {
+    return *this;
   }
 
-  // validity() - DO NOT USE THIS IN EXTERNAL CODE - It is public right now for
-  // tests and to avoid a big matrix of friend operator overloads. But the
-  // values it returns are likely to change in the future.
-  // Returns: current validity state (i.e. valid, overflow, underflow, nan).
-  // TODO(jschuh): crbug.com/332611 Figure out and implement semantics for
-  // saturation/wrapping so we can expose this state consistently and implement
-  // saturated arithmetic.
-  RangeConstraint validity() const { return state_.validity(); }
-
-  // ValueUnsafe() - DO NOT USE THIS IN EXTERNAL CODE - It is public right now
-  // for tests and to avoid a big matrix of friend operator overloads. But the
-  // values it returns are likely to change in the future.
-  // Returns: the raw numeric value, regardless of the current state.
-  // TODO(jschuh): crbug.com/332611 Figure out and implement semantics for
-  // saturation/wrapping so we can expose this state consistently and implement
-  // saturated arithmetic.
-  T ValueUnsafe() const { return state_.value(); }
+  // This friend method is available solely for providing more detailed logging
+  // in the the tests. Do not implement it in production code, because the
+  // underlying values may change at any time.
+  template <typename U>
+  friend U GetNumericValueForTest(const CheckedNumeric<U>& src);
 
   // Prototypes for the supported arithmetic operator overloads.
-  template <typename Src> CheckedNumeric& operator+=(Src rhs);
-  template <typename Src> CheckedNumeric& operator-=(Src rhs);
-  template <typename Src> CheckedNumeric& operator*=(Src rhs);
-  template <typename Src> CheckedNumeric& operator/=(Src rhs);
-  template <typename Src> CheckedNumeric& operator%=(Src rhs);
+  template <typename Src>
+  CheckedNumeric& operator+=(const Src rhs);
+  template <typename Src>
+  CheckedNumeric& operator-=(const Src rhs);
+  template <typename Src>
+  CheckedNumeric& operator*=(const Src rhs);
+  template <typename Src>
+  CheckedNumeric& operator/=(const Src rhs);
+  template <typename Src>
+  CheckedNumeric& operator%=(const Src rhs);
+  template <typename Src>
+  CheckedNumeric& operator<<=(const Src rhs);
+  template <typename Src>
+  CheckedNumeric& operator>>=(const Src rhs);
+  template <typename Src>
+  CheckedNumeric& operator&=(const Src rhs);
+  template <typename Src>
+  CheckedNumeric& operator|=(const Src rhs);
+  template <typename Src>
+  CheckedNumeric& operator^=(const Src rhs);
 
-  CheckedNumeric operator-() const {
-    RangeConstraint validity;
-    T value = CheckedNeg(state_.value(), &validity);
-    // Negation is always valid for floating point.
-    if (std::numeric_limits<T>::is_iec559)
-      return CheckedNumeric<T>(value);
-
-    validity = GetRangeConstraint(state_.validity() | validity);
-    return CheckedNumeric<T>(value, validity);
+  constexpr CheckedNumeric operator-() const {
+    return CheckedNumeric<T>(
+        NegateWrapper(state_.value()),
+        IsValid() &&
+            (!std::is_signed<T>::value || std::is_floating_point<T>::value ||
+             NegateWrapper(state_.value()) !=
+                 std::numeric_limits<T>::lowest()));
   }
 
-  CheckedNumeric Abs() const {
-    RangeConstraint validity;
-    T value = CheckedAbs(state_.value(), &validity);
-    // Absolute value is always valid for floating point.
-    if (std::numeric_limits<T>::is_iec559)
-      return CheckedNumeric<T>(value);
+  constexpr CheckedNumeric operator~() const {
+    return CheckedNumeric<decltype(InvertWrapper(T()))>(
+        InvertWrapper(state_.value()), IsValid());
+  }
 
-    validity = GetRangeConstraint(state_.validity() | validity);
-    return CheckedNumeric<T>(value, validity);
+  constexpr CheckedNumeric Abs() const {
+    return CheckedNumeric<T>(
+        AbsWrapper(state_.value()),
+        IsValid() &&
+            (!std::is_signed<T>::value || std::is_floating_point<T>::value ||
+             AbsWrapper(state_.value()) != std::numeric_limits<T>::lowest()));
+  }
+
+  template <typename U>
+  constexpr CheckedNumeric<typename MathWrapper<CheckedMaxOp, T, U>::type> Max(
+      const U rhs) const {
+    using R = typename UnderlyingType<U>::type;
+    using result_type = typename MathWrapper<CheckedMaxOp, T, U>::type;
+    // TODO(jschuh): This can be converted to the MathOp version and remain
+    // constexpr once we have C++14 support.
+    return CheckedNumeric<result_type>(
+        static_cast<result_type>(
+            IsGreater<T, R>::Test(state_.value(), Wrapper<U>::value(rhs))
+                ? state_.value()
+                : Wrapper<U>::value(rhs)),
+        state_.is_valid() && Wrapper<U>::is_valid(rhs));
+  }
+
+  template <typename U>
+  constexpr CheckedNumeric<typename MathWrapper<CheckedMinOp, T, U>::type> Min(
+      const U rhs) const {
+    using R = typename UnderlyingType<U>::type;
+    using result_type = typename MathWrapper<CheckedMinOp, T, U>::type;
+    // TODO(jschuh): This can be converted to the MathOp version and remain
+    // constexpr once we have C++14 support.
+    return CheckedNumeric<result_type>(
+        static_cast<result_type>(
+            IsLess<T, R>::Test(state_.value(), Wrapper<U>::value(rhs))
+                ? state_.value()
+                : Wrapper<U>::value(rhs)),
+        state_.is_valid() && Wrapper<U>::is_valid(rhs));
+  }
+
+  // This function is available only for integral types. It returns an unsigned
+  // integer of the same width as the source type, containing the absolute value
+  // of the source, and properly handling signed min.
+  constexpr CheckedNumeric<typename UnsignedOrFloatForSize<T>::type>
+  UnsignedAbs() const {
+    return CheckedNumeric<typename UnsignedOrFloatForSize<T>::type>(
+        SafeUnsignedAbs(state_.value()), state_.is_valid());
   }
 
   CheckedNumeric& operator++() {
@@ -160,113 +288,223 @@ class CheckedNumeric {
     return value;
   }
 
-  // These static methods behave like a convenience cast operator targeting
-  // the desired CheckedNumeric type. As an optimization, a reference is
-  // returned when Src is the same type as T.
-  template <typename Src>
-  static CheckedNumeric<T> cast(
-      Src u,
-      typename std::enable_if<std::numeric_limits<Src>::is_specialized,
-                              int>::type = 0) {
-    return u;
-  }
+  // These perform the actual math operations on the CheckedNumerics.
+  // Binary arithmetic operations.
+  template <template <typename, typename, typename> class M,
+            typename L,
+            typename R>
+  static CheckedNumeric MathOp(const L lhs, const R rhs) {
+    using Math = typename MathWrapper<M, L, R>::math;
+    T result = 0;
+    bool is_valid =
+        Wrapper<L>::is_valid(lhs) && Wrapper<R>::is_valid(rhs) &&
+        Math::Do(Wrapper<L>::value(lhs), Wrapper<R>::value(rhs), &result);
+    return CheckedNumeric<T>(result, is_valid);
+  };
 
-  template <typename Src>
-  static CheckedNumeric<T> cast(
-      const CheckedNumeric<Src>& u,
-      typename std::enable_if<!std::is_same<Src, T>::value, int>::type = 0) {
-    return u;
-  }
-
-  static const CheckedNumeric<T>& cast(const CheckedNumeric<T>& u) { return u; }
+  // Assignment arithmetic operations.
+  template <template <typename, typename, typename> class M, typename R>
+  CheckedNumeric& MathOp(const R rhs) {
+    using Math = typename MathWrapper<M, T, R>::math;
+    T result = 0;  // Using T as the destination saves a range check.
+    bool is_valid = state_.is_valid() && Wrapper<R>::is_valid(rhs) &&
+                    Math::Do(state_.value(), Wrapper<R>::value(rhs), &result);
+    *this = CheckedNumeric<T>(result, is_valid);
+    return *this;
+  };
 
  private:
   CheckedNumericState<T> state_;
+
+  template <typename Src>
+  constexpr CheckedNumeric(Src value, bool is_valid)
+      : state_(value, is_valid) {}
+
+  // These wrappers allow us to handle state the same way for both
+  // CheckedNumeric and POD arithmetic types.
+  template <typename Src>
+  struct Wrapper {
+    static constexpr bool is_valid(Src) { return true; }
+    static constexpr Src value(Src value) { return value; }
+  };
+
+  template <typename Src>
+  struct Wrapper<CheckedNumeric<Src>> {
+    static constexpr bool is_valid(const CheckedNumeric<Src> v) {
+      return v.IsValid();
+    }
+    static constexpr Src value(const CheckedNumeric<Src> v) {
+      return v.state_.value();
+    }
+  };
+
+  template <typename Src>
+  struct Wrapper<StrictNumeric<Src>> {
+    static constexpr bool is_valid(const StrictNumeric<Src>) { return true; }
+    static constexpr Src value(const StrictNumeric<Src> v) {
+      return static_cast<Src>(v);
+    }
+  };
 };
 
-// This is the boilerplate for the standard arithmetic operator overloads. A
-// macro isn't the prettiest solution, but it beats rewriting these five times.
-// Some details worth noting are:
-//  * We apply the standard arithmetic promotions.
-//  * We skip range checks for floating points.
-//  * We skip range checks for destination integers with sufficient range.
-// TODO(jschuh): extract these out into templates.
-#define BASE_NUMERIC_ARITHMETIC_OPERATORS(NAME, OP, COMPOUND_OP)              \
-  /* Binary arithmetic operator for CheckedNumerics of the same type. */      \
-  template <typename T>                                                       \
-  CheckedNumeric<typename ArithmeticPromotion<T>::type> operator OP(          \
-      const CheckedNumeric<T>& lhs, const CheckedNumeric<T>& rhs) {           \
-    typedef typename ArithmeticPromotion<T>::type Promotion;                  \
-    /* Floating point always takes the fast path */                           \
-    if (std::numeric_limits<T>::is_iec559)                                    \
-      return CheckedNumeric<T>(lhs.ValueUnsafe() OP rhs.ValueUnsafe());       \
-    if (IsIntegerArithmeticSafe<Promotion, T, T>::value)                      \
-      return CheckedNumeric<Promotion>(                                       \
-          lhs.ValueUnsafe() OP rhs.ValueUnsafe(),                             \
-          GetRangeConstraint(rhs.validity() | lhs.validity()));               \
-    RangeConstraint validity = RANGE_VALID;                                   \
-    T result = Checked##NAME(static_cast<Promotion>(lhs.ValueUnsafe()),       \
-                             static_cast<Promotion>(rhs.ValueUnsafe()),       \
-                             &validity);                                      \
-    return CheckedNumeric<Promotion>(                                         \
-        result,                                                               \
-        GetRangeConstraint(validity | lhs.validity() | rhs.validity()));      \
-  }                                                                           \
-  /* Assignment arithmetic operator implementation from CheckedNumeric. */    \
-  template <typename T>                                                       \
-  template <typename Src>                                                     \
-  CheckedNumeric<T>& CheckedNumeric<T>::operator COMPOUND_OP(Src rhs) {       \
-    *this = CheckedNumeric<T>::cast(*this) OP CheckedNumeric<Src>::cast(rhs); \
-    return *this;                                                             \
-  }                                                                           \
-  /* Binary arithmetic operator for CheckedNumeric of different type. */      \
-  template <typename T, typename Src>                                         \
-  CheckedNumeric<typename ArithmeticPromotion<T, Src>::type> operator OP(     \
-      const CheckedNumeric<Src>& lhs, const CheckedNumeric<T>& rhs) {         \
-    typedef typename ArithmeticPromotion<T, Src>::type Promotion;             \
-    if (IsIntegerArithmeticSafe<Promotion, T, Src>::value)                    \
-      return CheckedNumeric<Promotion>(                                       \
-          lhs.ValueUnsafe() OP rhs.ValueUnsafe(),                             \
-          GetRangeConstraint(rhs.validity() | lhs.validity()));               \
-    return CheckedNumeric<Promotion>::cast(lhs)                               \
-        OP CheckedNumeric<Promotion>::cast(rhs);                              \
-  }                                                                           \
-  /* Binary arithmetic operator for left CheckedNumeric and right numeric. */ \
-  template <typename T, typename Src>                                         \
-  CheckedNumeric<typename ArithmeticPromotion<T, Src>::type> operator OP(     \
-      const CheckedNumeric<T>& lhs, Src rhs) {                                \
-    typedef typename ArithmeticPromotion<T, Src>::type Promotion;             \
-    if (IsIntegerArithmeticSafe<Promotion, T, Src>::value)                    \
-      return CheckedNumeric<Promotion>(lhs.ValueUnsafe() OP rhs,              \
-                                       lhs.validity());                       \
-    return CheckedNumeric<Promotion>::cast(lhs)                               \
-        OP CheckedNumeric<Promotion>::cast(rhs);                              \
-  }                                                                           \
-  /* Binary arithmetic operator for right numeric and left CheckedNumeric. */ \
-  template <typename T, typename Src>                                         \
-  CheckedNumeric<typename ArithmeticPromotion<T, Src>::type> operator OP(     \
-      Src lhs, const CheckedNumeric<T>& rhs) {                                \
-    typedef typename ArithmeticPromotion<T, Src>::type Promotion;             \
-    if (IsIntegerArithmeticSafe<Promotion, T, Src>::value)                    \
-      return CheckedNumeric<Promotion>(lhs OP rhs.ValueUnsafe(),              \
-                                       rhs.validity());                       \
-    return CheckedNumeric<Promotion>::cast(lhs)                               \
-        OP CheckedNumeric<Promotion>::cast(rhs);                              \
+// Convenience functions to avoid the ugly template disambiguator syntax.
+template <typename Dst, typename Src>
+constexpr bool IsValidForType(const CheckedNumeric<Src> value) {
+  return value.template IsValid<Dst>();
+}
+
+template <typename Dst, typename Src>
+constexpr StrictNumeric<Dst> ValueOrDieForType(
+    const CheckedNumeric<Src> value) {
+  return value.template ValueOrDie<Dst>();
+}
+
+template <typename Dst, typename Src, typename Default>
+constexpr StrictNumeric<Dst> ValueOrDefaultForType(
+    const CheckedNumeric<Src> value,
+    const Default default_value) {
+  return value.template ValueOrDefault<Dst>(default_value);
+}
+
+// These variadic templates work out the return types.
+// TODO(jschuh): Rip all this out once we have C++14 non-trailing auto support.
+template <template <typename, typename, typename> class M,
+          typename L,
+          typename R,
+          typename... Args>
+struct ResultType;
+
+template <template <typename, typename, typename> class M,
+          typename L,
+          typename R>
+struct ResultType<M, L, R> {
+  using type = typename MathWrapper<M, L, R>::type;
+};
+
+template <template <typename, typename, typename> class M,
+          typename L,
+          typename R,
+          typename... Args>
+struct ResultType {
+  using type =
+      typename ResultType<M, typename ResultType<M, L, R>::type, Args...>::type;
+};
+
+// Convience wrapper to return a new CheckedNumeric from the provided arithmetic
+// or CheckedNumericType.
+template <typename T>
+constexpr CheckedNumeric<typename UnderlyingType<T>::type> MakeCheckedNum(
+    const T value) {
+  return value;
+}
+
+// These implement the variadic wrapper for the math operations.
+template <template <typename, typename, typename> class M,
+          typename L,
+          typename R>
+CheckedNumeric<typename MathWrapper<M, L, R>::type> ChkMathOp(const L lhs,
+                                                              const R rhs) {
+  using Math = typename MathWrapper<M, L, R>::math;
+  return CheckedNumeric<typename Math::result_type>::template MathOp<M>(lhs,
+                                                                        rhs);
+}
+
+// General purpose wrapper template for arithmetic operations.
+template <template <typename, typename, typename> class M,
+          typename L,
+          typename R,
+          typename... Args>
+CheckedNumeric<typename ResultType<M, L, R, Args...>::type>
+ChkMathOp(const L lhs, const R rhs, const Args... args) {
+  auto tmp = ChkMathOp<M>(lhs, rhs);
+  return tmp.IsValid() ? ChkMathOp<M>(tmp, args...)
+                       : decltype(ChkMathOp<M>(tmp, args...))(tmp);
+};
+
+// The following macros are just boilerplate for the standard arithmetic
+// operator overloads and variadic function templates. A macro isn't the nicest
+// solution, but it beats rewriting these over and over again.
+#define BASE_NUMERIC_ARITHMETIC_VARIADIC(NAME)                                \
+  template <typename L, typename R, typename... Args>                         \
+  CheckedNumeric<typename ResultType<Checked##NAME##Op, L, R, Args...>::type> \
+      Check##NAME(const L lhs, const R rhs, const Args... args) {             \
+    return ChkMathOp<Checked##NAME##Op, L, R, Args...>(lhs, rhs, args...);    \
   }
 
-BASE_NUMERIC_ARITHMETIC_OPERATORS(Add, +, += )
-BASE_NUMERIC_ARITHMETIC_OPERATORS(Sub, -, -= )
-BASE_NUMERIC_ARITHMETIC_OPERATORS(Mul, *, *= )
-BASE_NUMERIC_ARITHMETIC_OPERATORS(Div, /, /= )
-BASE_NUMERIC_ARITHMETIC_OPERATORS(Mod, %, %= )
+#define BASE_NUMERIC_ARITHMETIC_OPERATORS(NAME, OP, COMPOUND_OP)               \
+  /* Binary arithmetic operator for all CheckedNumeric operations. */          \
+  template <typename L, typename R,                                            \
+            typename std::enable_if<IsCheckedOp<L, R>::value>::type* =         \
+                nullptr>                                                       \
+  CheckedNumeric<typename MathWrapper<Checked##NAME##Op, L, R>::type>          \
+  operator OP(const L lhs, const R rhs) {                                      \
+    return decltype(lhs OP rhs)::template MathOp<Checked##NAME##Op>(lhs, rhs); \
+  }                                                                            \
+  /* Assignment arithmetic operator implementation from CheckedNumeric. */     \
+  template <typename L>                                                        \
+  template <typename R>                                                        \
+  CheckedNumeric<L>& CheckedNumeric<L>::operator COMPOUND_OP(const R rhs) {    \
+    return MathOp<Checked##NAME##Op>(rhs);                                     \
+  }                                                                            \
+  /* Variadic arithmetic functions that return CheckedNumeric. */              \
+  BASE_NUMERIC_ARITHMETIC_VARIADIC(NAME)
 
+BASE_NUMERIC_ARITHMETIC_OPERATORS(Add, +, +=)
+BASE_NUMERIC_ARITHMETIC_OPERATORS(Sub, -, -=)
+BASE_NUMERIC_ARITHMETIC_OPERATORS(Mul, *, *=)
+BASE_NUMERIC_ARITHMETIC_OPERATORS(Div, /, /=)
+BASE_NUMERIC_ARITHMETIC_OPERATORS(Mod, %, %=)
+BASE_NUMERIC_ARITHMETIC_OPERATORS(Lsh, <<, <<=)
+BASE_NUMERIC_ARITHMETIC_OPERATORS(Rsh, >>, >>=)
+BASE_NUMERIC_ARITHMETIC_OPERATORS(And, &, &=)
+BASE_NUMERIC_ARITHMETIC_OPERATORS(Or, |, |=)
+BASE_NUMERIC_ARITHMETIC_OPERATORS(Xor, ^, ^=)
+BASE_NUMERIC_ARITHMETIC_VARIADIC(Max)
+BASE_NUMERIC_ARITHMETIC_VARIADIC(Min)
+
+#undef BASE_NUMERIC_ARITHMETIC_VARIADIC
 #undef BASE_NUMERIC_ARITHMETIC_OPERATORS
+
+// These are some extra StrictNumeric operators to support simple pointer
+// arithmetic with our result types. Since wrapping on a pointer is always
+// bad, we trigger the CHECK condition here.
+template <typename L, typename R>
+L* operator+(L* lhs, const StrictNumeric<R> rhs) {
+  uintptr_t result = CheckAdd(reinterpret_cast<uintptr_t>(lhs),
+                              CheckMul(sizeof(L), static_cast<R>(rhs)))
+                         .template ValueOrDie<uintptr_t>();
+  return reinterpret_cast<L*>(result);
+}
+
+template <typename L, typename R>
+L* operator-(L* lhs, const StrictNumeric<R> rhs) {
+  uintptr_t result = CheckSub(reinterpret_cast<uintptr_t>(lhs),
+                              CheckMul(sizeof(L), static_cast<R>(rhs)))
+                         .template ValueOrDie<uintptr_t>();
+  return reinterpret_cast<L*>(result);
+}
 
 }  // namespace internal
 
 using internal::CheckedNumeric;
+using internal::IsValidForType;
+using internal::ValueOrDieForType;
+using internal::ValueOrDefaultForType;
+using internal::MakeCheckedNum;
+using internal::CheckMax;
+using internal::CheckMin;
+using internal::CheckAdd;
+using internal::CheckSub;
+using internal::CheckMul;
+using internal::CheckDiv;
+using internal::CheckMod;
+using internal::CheckLsh;
+using internal::CheckRsh;
+using internal::CheckAnd;
+using internal::CheckOr;
+using internal::CheckXor;
 
 }  // namespace base
 }  // namespace pdfium
 
-#endif  // PDFIUM_THIRD_PARTY_BASE_SAFE_MATH_H_
+#endif  // PDFIUM_THIRD_PARTY_BASE_NUMERICS_SAFE_MATH_H_

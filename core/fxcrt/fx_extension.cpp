@@ -204,7 +204,7 @@ FX_FILESIZE CFX_MemoryStream::GetPosition() {
 bool CFX_MemoryStream::ReadBlock(void* buffer,
                                  FX_FILESIZE offset,
                                  size_t size) {
-  if (!buffer || !size)
+  if (!buffer || !size || offset < 0)
     return false;
 
   FX_SAFE_SIZE_T newPos = size;

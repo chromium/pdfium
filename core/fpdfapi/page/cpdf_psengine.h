@@ -88,7 +88,6 @@ class CPDF_PSEngine {
   bool DoOperator(PDF_PSOP op);
   void Reset() { m_StackCount = 0; }
   void Push(FX_FLOAT value);
-  void Push(int value) { Push((FX_FLOAT)value); }
   FX_FLOAT Pop();
   uint32_t GetStackSize() const { return m_StackCount; }
 

@@ -79,10 +79,14 @@ FX_RECT FXGE_GetGlyphsBBox(const std::vector<FXTEXT_GLYPHPOS>& glyphs,
       continue;
 
     if (bStarted) {
-      rect.left = std::min(rect.left, char_left.ValueOrDie());
-      rect.right = std::max(rect.right, char_right.ValueOrDie());
-      rect.top = std::min(rect.top, char_top.ValueOrDie());
-      rect.bottom = std::max(rect.bottom, char_bottom.ValueOrDie());
+      rect.left = pdfium::base::ValueOrDieForType<int32_t>(
+          pdfium::base::CheckMin(rect.left, char_left));
+      rect.right = pdfium::base::ValueOrDieForType<int32_t>(
+          pdfium::base::CheckMax(rect.right, char_right));
+      rect.top = pdfium::base::ValueOrDieForType<int32_t>(
+          pdfium::base::CheckMin(rect.top, char_top));
+      rect.bottom = pdfium::base::ValueOrDieForType<int32_t>(
+          pdfium::base::CheckMax(rect.bottom, char_bottom));
       continue;
     }
 

@@ -257,7 +257,7 @@ bool CPDF_HintTables::ReadSharedObjHintTable(CFX_BitStream* hStream,
   bit_offset *= 8;
   if (!bit_offset.IsValid() || hStream->GetPos() > bit_offset.ValueOrDie())
     return false;
-  hStream->SkipBits(bit_offset.ValueOrDie() - hStream->GetPos());
+  hStream->SkipBits((bit_offset - hStream->GetPos()).ValueOrDie());
 
   const uint32_t kHeaderSize = 192;
   if (hStream->BitsRemaining() < kHeaderSize)

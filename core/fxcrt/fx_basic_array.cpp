@@ -33,7 +33,8 @@ bool CFX_BasicArray::SetSize(int nNewSize) {
       m_nSize = m_nMaxSize = 0;
       return false;
     }
-    m_pData = FX_Alloc(uint8_t, totalSize.ValueOrDie());
+    m_pData =
+        FX_Alloc(uint8_t, pdfium::base::ValueOrDieForType<size_t>(totalSize));
     m_nSize = m_nMaxSize = nNewSize;
   } else if (nNewSize <= m_nMaxSize) {
     if (nNewSize > m_nSize) {
@@ -48,7 +49,8 @@ bool CFX_BasicArray::SetSize(int nNewSize) {
     if (!totalSize.IsValid() || nNewMax < m_nSize) {
       return false;
     }
-    uint8_t* pNewData = FX_Realloc(uint8_t, m_pData, totalSize.ValueOrDie());
+    uint8_t* pNewData = FX_Realloc(
+        uint8_t, m_pData, pdfium::base::ValueOrDieForType<size_t>(totalSize));
     if (!pNewData) {
       return false;
     }
