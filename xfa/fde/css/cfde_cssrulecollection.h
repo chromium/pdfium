@@ -36,22 +36,10 @@ class CFDE_CSSRuleCollection {
   void Clear();
   int32_t CountSelectors() const { return m_iSelectors; }
 
-  Data* GetIDRuleData(uint32_t dwIDHash) {
-    auto it = m_IDRules.find(dwIDHash);
-    return it != m_IDRules.end() ? it->second : nullptr;
-  }
-
   Data* GetTagRuleData(uint32_t dwTagHash) {
     auto it = m_TagRules.find(dwTagHash);
     return it != m_TagRules.end() ? it->second : nullptr;
   }
-
-  Data* GetClassRuleData(uint32_t dwIDHash) {
-    auto it = m_ClassRules.find(dwIDHash);
-    return it != m_ClassRules.end() ? it->second : nullptr;
-  }
-
-  Data* GetUniversalRuleData() { return m_pUniversalRules; }
 
  private:
   void AddRulesFrom(const CFDE_CSSStyleSheet* pStyleSheet,
@@ -64,10 +52,7 @@ class CFDE_CSSRuleCollection {
   bool AddRuleTo(Data** pList, Data* pData);
   Data* NewRuleData(CFDE_CSSSelector* pSel, CFDE_CSSDeclaration* pDecl);
 
-  std::map<uint32_t, Data*> m_IDRules;
   std::map<uint32_t, Data*> m_TagRules;
-  std::map<uint32_t, Data*> m_ClassRules;
-  Data* m_pUniversalRules;
   int32_t m_iSelectors;
 };
 

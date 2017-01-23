@@ -17,18 +17,12 @@
 #include "xfa/fde/css/cfde_csssyntaxparser.h"
 #include "xfa/fde/css/cfde_csstagcache.h"
 
-#define FDE_CSSUNIVERSALHASH ('*')
-
 void CFDE_CSSRuleCollection::Clear() {
-  m_IDRules.clear();
   m_TagRules.clear();
-  m_ClassRules.clear();
-  m_pUniversalRules = nullptr;
   m_iSelectors = 0;
 }
 
-CFDE_CSSRuleCollection::CFDE_CSSRuleCollection()
-    : m_pUniversalRules(nullptr), m_iSelectors(0) {}
+CFDE_CSSRuleCollection::CFDE_CSSRuleCollection() : m_iSelectors(0) {}
 
 CFDE_CSSRuleCollection::~CFDE_CSSRuleCollection() {
   Clear();
@@ -48,31 +42,7 @@ void CFDE_CSSRuleCollection::AddRulesFrom(const CFDE_CSSStyleSheet* pStyleSheet,
   int32_t iSelectors = pStyleRule->CountSelectorLists();
   for (int32_t i = 0; i < iSelectors; ++i) {
     CFDE_CSSSelector* pSelector = pStyleRule->GetSelectorList(i);
-    if (pSelector->GetNameHash() != FDE_CSSUNIVERSALHASH) {
-      AddRuleTo(&m_TagRules, pSelector->GetNameHash(), pSelector, pDeclaration);
-      continue;
-    }
-    CFDE_CSSSelector* pNext = pSelector->GetNextSelector();
-    if (!pNext) {
-      Data* pData = NewRuleData(pSelector, pDeclaration);
-      AddRuleTo(&m_pUniversalRules, pData);
-      continue;
-    }
-    switch (pNext->GetType()) {
-      case FDE_CSSSelectorType::ID:
-        AddRuleTo(&m_IDRules, pNext->GetNameHash(), pSelector, pDeclaration);
-        break;
-      case FDE_CSSSelectorType::Class:
-        AddRuleTo(&m_ClassRules, pNext->GetNameHash(), pSelector, pDeclaration);
-        break;
-      case FDE_CSSSelectorType::Descendant:
-      case FDE_CSSSelectorType::Element:
-        AddRuleTo(&m_pUniversalRules, NewRuleData(pSelector, pDeclaration));
-        break;
-      default:
-        ASSERT(false);
-        break;
-    }
+    AddRuleTo(&m_TagRules, pSelector->GetNameHash(), pSelector, pDeclaration);
   }
 }
 
@@ -112,10 +82,6 @@ CFDE_CSSRuleCollection::Data::Data(CFDE_CSSSelector* pSel,
   static const uint32_t s_Specific[5] = {0x00010000, 0x00010000, 0x00100000,
                                          0x00100000, 0x01000000};
   for (; pSel; pSel = pSel->GetNextSelector()) {
-    FDE_CSSSelectorType eType = pSel->GetType();
-    if (eType > FDE_CSSSelectorType::Descendant ||
-        pSel->GetNameHash() != FDE_CSSUNIVERSALHASH) {
-      dwPriority += s_Specific[static_cast<int>(eType)];
-    }
+    dwPriority += s_Specific[static_cast<int>(pSel->GetType())];
   }
 }

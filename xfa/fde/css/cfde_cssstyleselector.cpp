@@ -38,8 +38,6 @@ const T* ToValue(const CFDE_CSSValue* val) {
 
 }  // namespace
 
-#define FDE_CSSUNIVERSALHASH ('*')
-
 CFDE_CSSStyleSelector::CFDE_CSSStyleSelector(CFGAS_FontMgr* pFontMgr)
     : m_pFontMgr(pFontMgr), m_fDefFontSize(12.0f) {}
 
@@ -87,15 +85,8 @@ int32_t CFDE_CSSStyleSelector::MatchDeclarations(
   if (m_UARules.CountSelectors() == 0)
     return 0;
 
-  MatchRules(pCache, m_UARules.GetUniversalRuleData());
-  if (pCache->HashTag()) {
+  if (pCache->HashTag())
     MatchRules(pCache, m_UARules.GetTagRuleData(pCache->HashTag()));
-    }
-    int32_t iCount = pCache->CountHashClass();
-    for (int32_t i = 0; i < iCount; i++) {
-      pCache->SetClassIndex(i);
-      MatchRules(pCache, m_UARules.GetClassRuleData(pCache->HashClass()));
-    }
 
   std::sort(m_MatchedRules.begin(), m_MatchedRules.end(),
             [](const CFDE_CSSRuleCollection::Data* p1,
@@ -126,31 +117,16 @@ bool CFDE_CSSStyleSelector::MatchSelector(CFDE_CSSTagCache* pCache,
       case FDE_CSSSelectorType::Descendant:
         dwHash = pSel->GetNameHash();
         while ((pCache = pCache->GetParent()) != nullptr) {
-          if (dwHash != FDE_CSSUNIVERSALHASH && dwHash != pCache->HashTag()) {
+          if (dwHash != pCache->HashTag())
             continue;
-          }
-          if (MatchSelector(pCache, pSel->GetNextSelector())) {
+          if (MatchSelector(pCache, pSel->GetNextSelector()))
             return true;
-          }
         }
         return false;
-      case FDE_CSSSelectorType::ID:
-        dwHash = pCache->HashID();
-        if (dwHash != pSel->GetNameHash()) {
-          return false;
-        }
-        break;
-      case FDE_CSSSelectorType::Class:
-        dwHash = pCache->HashClass();
-        if (dwHash != pSel->GetNameHash()) {
-          return false;
-        }
-        break;
       case FDE_CSSSelectorType::Element:
         dwHash = pSel->GetNameHash();
-        if (dwHash != FDE_CSSUNIVERSALHASH && dwHash != pCache->HashTag()) {
+        if (dwHash != pCache->HashTag())
           return false;
-        }
         break;
       default:
         ASSERT(false);
