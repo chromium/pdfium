@@ -12,6 +12,7 @@
 
 #include "core/fxcrt/fx_ucd.h"
 #include "core/fxge/cfx_renderdevice.h"
+#include "third_party/base/stl_util.h"
 #include "xfa/fgas/crt/fgas_utils.h"
 #include "xfa/fgas/layout/fgas_unicode.h"
 
@@ -117,16 +118,13 @@ class CFX_TxtPiece {
   int32_t GetEndChar() const { return m_iStartChar + m_iChars; }
   CFX_TxtChar* GetCharPtr(int32_t index) const {
     ASSERT(index > -1 && index < m_iChars && m_pChars);
-    return m_pChars->GetDataPtr(m_iStartChar + index);
+    return &(*m_pChars)[m_iStartChar + index];
   }
   void GetString(FX_WCHAR* pText) const {
     ASSERT(pText);
     int32_t iEndChar = m_iStartChar + m_iChars;
-    CFX_Char* pChar;
-    for (int32_t i = m_iStartChar; i < iEndChar; i++) {
-      pChar = m_pChars->GetDataPtr(i);
-      *pText++ = (FX_WCHAR)pChar->m_wCharCode;
-    }
+    for (int32_t i = m_iStartChar; i < iEndChar; i++)
+      *pText++ = static_cast<FX_WCHAR>((*m_pChars)[i].m_wCharCode);
   }
   void GetString(CFX_WideString& wsText) const {
     FX_WCHAR* pText = wsText.GetBuffer(m_iChars);
@@ -136,11 +134,8 @@ class CFX_TxtPiece {
   void GetWidths(int32_t* pWidths) const {
     ASSERT(pWidths);
     int32_t iEndChar = m_iStartChar + m_iChars;
-    CFX_Char* pChar;
-    for (int32_t i = m_iStartChar; i < iEndChar; i++) {
-      pChar = m_pChars->GetDataPtr(i);
-      *pWidths++ = pChar->m_iCharWidth;
-    }
+    for (int32_t i = m_iStartChar; i < iEndChar; i++)
+      *pWidths++ = (*m_pChars)[i].m_iCharWidth;
   }
 
   uint32_t m_dwStatus;
@@ -153,7 +148,7 @@ class CFX_TxtPiece {
   int32_t m_iHorizontalScale;
   int32_t m_iVerticalScale;
   uint32_t m_dwCharStyles;
-  CFX_TxtCharArray* m_pChars;
+  std::vector<CFX_TxtChar>* m_pChars;
   void* m_pUserData;
 };
 
@@ -164,34 +159,38 @@ class CFX_TxtLine {
   explicit CFX_TxtLine(int32_t iBlockSize);
   ~CFX_TxtLine();
 
-  int32_t CountChars() const { return m_pLineChars->GetSize(); }
-  CFX_TxtChar* GetCharPtr(int32_t index) const {
-    ASSERT(index > -1 && index < m_pLineChars->GetSize());
-    return m_pLineChars->GetDataPtr(index);
+  int32_t CountChars() const {
+    return pdfium::CollectionSize<int32_t>(*m_pLineChars);
   }
+
+  CFX_TxtChar* GetCharPtr(int32_t index) const {
+    ASSERT(index >= 0 &&
+           index < pdfium::CollectionSize<int32_t>(*m_pLineChars));
+    return &(*m_pLineChars)[index];
+  }
+
   int32_t CountPieces() const { return m_pLinePieces->GetSize(); }
   CFX_TxtPiece* GetPiecePtr(int32_t index) const {
     ASSERT(index > -1 && index < m_pLinePieces->GetSize());
     return m_pLinePieces->GetPtrAt(index);
   }
+
   void GetString(CFX_WideString& wsStr) const {
-    int32_t iCount = m_pLineChars->GetSize();
+    int32_t iCount = pdfium::CollectionSize<int32_t>(*m_pLineChars);
     FX_WCHAR* pBuf = wsStr.GetBuffer(iCount);
-    CFX_Char* pChar;
-    for (int32_t i = 0; i < iCount; i++) {
-      pChar = m_pLineChars->GetDataPtr(i);
-      *pBuf++ = (FX_WCHAR)pChar->m_wCharCode;
-    }
+    for (int32_t i = 0; i < iCount; i++)
+      *pBuf++ = static_cast<FX_WCHAR>((*m_pLineChars)[i].m_wCharCode);
     wsStr.ReleaseBuffer(iCount);
   }
+
   void RemoveAll(bool bLeaveMemory = false) {
-    m_pLineChars->RemoveAll();
+    m_pLineChars->clear();
     m_pLinePieces->RemoveAll(bLeaveMemory);
     m_iWidth = 0;
     m_iArabicChars = 0;
   }
 
-  std::unique_ptr<CFX_TxtCharArray> m_pLineChars;
+  std::unique_ptr<std::vector<CFX_TxtChar>> m_pLineChars;
   std::unique_ptr<CFX_TxtPieceArray> m_pLinePieces;
   int32_t m_iStart;
   int32_t m_iWidth;
@@ -261,7 +260,7 @@ class CFX_TxtBreak {
   void EndBreak_Alignment(CFX_TPOArray& tpos,
                           bool bAllChars,
                           uint32_t dwStatus);
-  int32_t GetBreakPos(CFX_TxtCharArray& ca,
+  int32_t GetBreakPos(std::vector<CFX_TxtChar>& ca,
                       int32_t& iEndPos,
                       bool bAllChars = false,
                       bool bOnlyBrk = false);

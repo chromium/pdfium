@@ -148,7 +148,7 @@ class CFX_Char {
   int32_t m_iHorizontalScale;
   int32_t m_iVertialScale;
 };
-typedef CFX_ArrayTemplate<CFX_Char> CFX_CharArray;
+
 class CFX_TxtChar : public CFX_Char {
  public:
   CFX_TxtChar()
@@ -165,7 +165,7 @@ class CFX_TxtChar : public CFX_Char {
   int16_t m_iBidiOrder;
   void* m_pUserData;
 };
-typedef CFX_ArrayTemplate<CFX_TxtChar> CFX_TxtCharArray;
+
 class CFX_RTFChar : public CFX_Char {
  public:
   CFX_RTFChar();
@@ -196,7 +196,6 @@ inline CFX_RTFChar::CFX_RTFChar()
 
 inline CFX_RTFChar::CFX_RTFChar(const CFX_RTFChar& other) = default;
 
-typedef CFX_ArrayTemplate<CFX_RTFChar> CFX_RTFCharArray;
 #endif  // PDF_ENABLE_XFA
 
 #endif  // CORE_FXCRT_FX_UCD_H_

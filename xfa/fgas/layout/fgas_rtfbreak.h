@@ -89,7 +89,7 @@ class CFX_RTFPiece {
 
   void AppendChar(const CFX_RTFChar& tc) {
     ASSERT(m_pChars);
-    m_pChars->Add(tc);
+    m_pChars->push_back(tc);
     if (m_iWidth < 0) {
       m_iWidth = tc.m_iCharWidth;
     } else {
@@ -97,42 +97,44 @@ class CFX_RTFPiece {
     }
     m_iChars++;
   }
+
   int32_t GetEndPos() const {
     return m_iWidth < 0 ? m_iStartPos : m_iStartPos + m_iWidth;
   }
+
   int32_t GetLength() const { return m_iChars; }
   int32_t GetEndChar() const { return m_iStartChar + m_iChars; }
+
   CFX_RTFChar& GetChar(int32_t index) {
     ASSERT(index > -1 && index < m_iChars && m_pChars);
-    return *m_pChars->GetDataPtr(m_iStartChar + index);
+    return (*m_pChars)[m_iStartChar + index];
   }
+
   CFX_RTFChar* GetCharPtr(int32_t index) const {
     ASSERT(index > -1 && index < m_iChars && m_pChars);
-    return m_pChars->GetDataPtr(m_iStartChar + index);
+    return &(*m_pChars)[m_iStartChar + index];
   }
+
   void GetString(FX_WCHAR* pText) const {
     ASSERT(pText);
     int32_t iEndChar = m_iStartChar + m_iChars;
-    CFX_RTFChar* pChar;
-    for (int32_t i = m_iStartChar; i < iEndChar; i++) {
-      pChar = m_pChars->GetDataPtr(i);
-      *pText++ = (FX_WCHAR)pChar->m_wCharCode;
-    }
+    for (int32_t i = m_iStartChar; i < iEndChar; i++)
+      *pText++ = static_cast<FX_WCHAR>((*m_pChars)[i].m_wCharCode);
   }
+
   void GetString(CFX_WideString& wsText) const {
     FX_WCHAR* pText = wsText.GetBuffer(m_iChars);
     GetString(pText);
     wsText.ReleaseBuffer(m_iChars);
   }
+
   void GetWidths(int32_t* pWidths) const {
     ASSERT(pWidths);
     int32_t iEndChar = m_iStartChar + m_iChars;
-    CFX_RTFChar* pChar;
-    for (int32_t i = m_iStartChar; i < iEndChar; i++) {
-      pChar = m_pChars->GetDataPtr(i);
-      *pWidths++ = pChar->m_iCharWidth;
-    }
+    for (int32_t i = m_iStartChar; i < iEndChar; i++)
+      *pWidths++ = (*m_pChars)[i].m_iCharWidth;
   }
+
   void Reset() {
     m_dwStatus = FX_RTFBREAK_PieceBreak;
     if (m_iWidth > -1) {
@@ -160,7 +162,7 @@ class CFX_RTFPiece {
   int32_t m_iVerticalScale;
   uint32_t m_dwLayoutStyles;
   uint32_t m_dwIdentity;
-  CFX_RTFCharArray* m_pChars;
+  std::vector<CFX_RTFChar>* m_pChars;  // not owned.
   IFX_Retainable* m_pUserData;
 };
 
@@ -171,14 +173,16 @@ class CFX_RTFLine {
   CFX_RTFLine();
   ~CFX_RTFLine();
 
-  int32_t CountChars() const { return m_LineChars.GetSize(); }
+  int32_t CountChars() const {
+    return pdfium::CollectionSize<int32_t>(m_LineChars);
+  }
   CFX_RTFChar& GetChar(int32_t index) {
-    ASSERT(index > -1 && index < m_LineChars.GetSize());
-    return *m_LineChars.GetDataPtr(index);
+    ASSERT(index >= 0 && index < pdfium::CollectionSize<int32_t>(m_LineChars));
+    return m_LineChars[index];
   }
   CFX_RTFChar* GetCharPtr(int32_t index) {
-    ASSERT(index > -1 && index < m_LineChars.GetSize());
-    return m_LineChars.GetDataPtr(index);
+    ASSERT(index > -1 && index < pdfium::CollectionSize<int32_t>(m_LineChars));
+    return &m_LineChars[index];
   }
   int32_t CountPieces() const { return m_LinePieces.GetSize(); }
   CFX_RTFPiece& GetPiece(int32_t index) const {
@@ -191,21 +195,20 @@ class CFX_RTFLine {
   }
   int32_t GetLineEnd() const { return m_iStart + m_iWidth; }
   void RemoveAll(bool bLeaveMemory = false) {
-    CFX_RTFChar* pChar;
-    int32_t iCount = m_LineChars.GetSize();
+    int32_t iCount = pdfium::CollectionSize<int32_t>(m_LineChars);
     for (int32_t i = 0; i < iCount; i++) {
-      pChar = m_LineChars.GetDataPtr(i);
+      CFX_RTFChar* pChar = &m_LineChars[i];
       if (pChar->m_pUserData)
         pChar->m_pUserData->Release();
     }
-    m_LineChars.RemoveAll();
+    m_LineChars.clear();
     m_LinePieces.RemoveAll(bLeaveMemory);
     m_iWidth = 0;
     m_iArabicChars = 0;
     m_iMBCSChars = 0;
   }
 
-  CFX_RTFCharArray m_LineChars;
+  std::vector<CFX_RTFChar> m_LineChars;
   CFX_RTFPieceArray m_LinePieces;
   int32_t m_iStart;
   int32_t m_iWidth;
@@ -271,7 +274,7 @@ class CFX_RTFBreak {
   int32_t GetLastPositionedTab() const;
   bool GetPositionedTab(int32_t& iTabPos) const;
 
-  int32_t GetBreakPos(CFX_RTFCharArray& tca,
+  int32_t GetBreakPos(std::vector<CFX_RTFChar>& tca,
                       int32_t& iEndPos,
                       bool bAllChars = false,
                       bool bOnlyBrk = false);

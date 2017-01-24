@@ -7,6 +7,8 @@
 #ifndef CORE_FXCRT_FX_ARB_H_
 #define CORE_FXCRT_FX_ARB_H_
 
+#include <vector>
+
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/fx_ucd.h"
 
@@ -39,10 +41,10 @@ enum FX_ARBPOSITION {
 };
 
 void FX_BidiLine(CFX_WideString& wsText, int32_t iBaseLevel = 0);
-void FX_BidiLine(CFX_TxtCharArray& chars,
+void FX_BidiLine(std::vector<CFX_TxtChar>& chars,
                  int32_t iCount,
                  int32_t iBaseLevel = 0);
-void FX_BidiLine(CFX_RTFCharArray& chars,
+void FX_BidiLine(std::vector<CFX_RTFChar>& chars,
                  int32_t iCount,
                  int32_t iBaseLevel = 0);
 
