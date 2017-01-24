@@ -8,6 +8,7 @@
 #define XFA_FGAS_LAYOUT_FGAS_TEXTBREAK_H_
 
 #include <memory>
+#include <vector>
 
 #include "core/fxcrt/fx_ucd.h"
 #include "core/fxge/cfx_renderdevice.h"
@@ -234,7 +235,7 @@ class CFX_TxtBreak {
                         CFX_WideString* pWSForms = nullptr,
                         FX_AdjustCharDisplayPos pAdjustPos = nullptr) const;
   int32_t GetCharRects(const FX_TXTRUN* pTxtRun,
-                       CFX_RectFArray& rtArray,
+                       std::vector<CFX_RectF>* rtArray,
                        bool bCharBBox = false) const;
   void AppendChar_PageLoad(CFX_TxtChar* pCurChar, uint32_t dwProps);
   uint32_t AppendChar_Combination(CFX_TxtChar* pCurChar, int32_t iRotation);

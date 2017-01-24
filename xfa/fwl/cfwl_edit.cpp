@@ -168,15 +168,14 @@ void CFWL_Edit::AddSpellCheckObj(CFX_Path& PathData,
   FX_FLOAT fY = 0.0f;
   FX_FLOAT fStep = 0.0f;
   IFDE_TxtEdtPage* pPage = m_EdtEngine.GetPage(0);
-  CFX_RectFArray rectArray;
-  CFX_RectF rectText;
   const FDE_TXTEDTPARAMS* txtEdtParams = m_EdtEngine.GetEditParams();
   FX_FLOAT fAsent = static_cast<FX_FLOAT>(txtEdtParams->pFont->GetAscent()) *
                     txtEdtParams->fFontSize / 1000;
-  pPage->CalcRangeRectArray(nStart, nCount, rectArray);
 
-  for (int i = 0; i < rectArray.GetSize(); i++) {
-    rectText = rectArray.GetAt(i);
+  std::vector<CFX_RectF> rectArray;
+  pPage->CalcRangeRectArray(nStart, nCount, &rectArray);
+
+  for (const auto& rectText : rectArray) {
     fY = rectText.top + fAsent + fOffSetY;
     fStep = txtEdtParams->fFontSize / 16.0f;
     fStartX = rectText.left + fOffSetX;
@@ -541,9 +540,8 @@ void CFWL_Edit::DrawContent(CFX_Graphics* pGraphics,
     int32_t nPageCharEnd = nPageCharStart + nPageCharCount - 1;
     int32_t nCharCount;
     int32_t nCharStart;
-    CFX_RectFArray rectArr;
-    int32_t i = 0;
-    for (i = 0; i < nSelCount; i++) {
+    std::vector<CFX_RectF> rectArr;
+    for (int32_t i = 0; i < nSelCount; i++) {
       nCharCount = m_EdtEngine.GetSelRange(i, &nCharStart);
       int32_t nCharEnd = nCharStart + nCharCount - 1;
       if (nCharEnd < nPageCharStart || nCharStart > nPageCharEnd)
@@ -552,17 +550,15 @@ void CFWL_Edit::DrawContent(CFX_Graphics* pGraphics,
       int32_t nBgn = std::max(nCharStart, nPageCharStart);
       int32_t nEnd = std::min(nCharEnd, nPageCharEnd);
       pPage->CalcRangeRectArray(nBgn - nPageCharStart, nEnd - nBgn + 1,
-                                rectArr);
+                                &rectArr);
     }
 
-    int32_t nCount = rectArr.GetSize();
     CFX_Path path;
     path.Create();
-    for (i = 0; i < nCount; i++) {
-      rectArr[i].left += fOffSetX;
-      rectArr[i].top += fOffSetY;
-      path.AddRectangle(rectArr[i].left, rectArr[i].top, rectArr[i].width,
-                        rectArr[i].height);
+    for (auto& rect : rectArr) {
+      rect.left += fOffSetX;
+      rect.top += fOffSetY;
+      path.AddRectangle(rect.left, rect.top, rect.width, rect.height);
     }
     pGraphics->SetClipRect(rtClip);
 

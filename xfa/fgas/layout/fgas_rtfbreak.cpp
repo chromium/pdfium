@@ -1415,7 +1415,7 @@ int32_t CFX_RTFBreak::GetDisplayPos(const FX_RTFTEXTOBJ* pText,
   return iCount;
 }
 int32_t CFX_RTFBreak::GetCharRects(const FX_RTFTEXTOBJ* pText,
-                                   CFX_RectFArray& rtArray,
+                                   std::vector<CFX_RectF>* rtArray,
                                    bool bCharBBox) const {
   if (!pText || pText->iLength < 1)
     return 0;
@@ -1440,8 +1440,8 @@ int32_t CFX_RTFBreak::GetCharRects(const FX_RTFTEXTOBJ* pText,
 
   FX_FLOAT fLeft = std::max(0.0f, bbox.left * fScale);
   FX_FLOAT fHeight = FXSYS_fabs(bbox.height * fScale);
-  rtArray.RemoveAll();
-  rtArray.SetSize(iLength);
+  rtArray->clear();
+  rtArray->resize(iLength);
   uint32_t dwStyles = pText->dwLayoutStyles;
   bool bVertical = (dwStyles & FX_RTFLAYOUTSTYLE_VerticalLayout) != 0;
   bool bSingleLine = (dwStyles & FX_RTFLAYOUTSTYLE_SingleLine) != 0;
@@ -1511,10 +1511,10 @@ int32_t CFX_RTFBreak::GetCharRects(const FX_RTFTEXTOBJ* pText,
         rtBBoxF.height = fHeight;
         rtBBoxF.top = std::max(rtBBoxF.top, 0.0f);
       }
-      rtArray.SetAt(i, rtBBoxF);
+      (*rtArray)[i] = rtBBoxF;
       continue;
     }
-    rtArray.SetAt(i, rect);
+    (*rtArray)[i] = rect;
   }
   return iLength;
 }

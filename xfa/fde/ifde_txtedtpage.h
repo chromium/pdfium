@@ -7,6 +7,8 @@
 #ifndef XFA_FDE_IFDE_TXTEDTPAGE_H_
 #define XFA_FDE_IFDE_TXTEDTPAGE_H_
 
+#include <vector>
+
 #include "xfa/fde/fde_visualset.h"
 #include "xfa/fgas/layout/fgas_textbreak.h"
 
@@ -24,7 +26,7 @@ class IFDE_TxtEdtPage : public IFDE_CanvasSet, public IFX_TxtAccess {
   virtual int32_t GetCharIndex(const CFX_PointF& fPoint, bool& bBefore) = 0;
   virtual void CalcRangeRectArray(int32_t nStart,
                                   int32_t nCount,
-                                  CFX_RectFArray& RectFArr) const = 0;
+                                  std::vector<CFX_RectF>* RectFArr) const = 0;
   virtual int32_t SelectWord(const CFX_PointF& fPoint, int32_t& nCount) = 0;
   virtual int32_t GetCharStart() const = 0;
   virtual int32_t GetCharCount() const = 0;

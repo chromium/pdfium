@@ -7,6 +7,8 @@
 #ifndef XFA_FDE_FDE_VISUALSET_H_
 #define XFA_FDE_FDE_VISUALSET_H_
 
+#include <vector>
+
 #include "core/fxcrt/cfx_retain_ptr.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_system.h"
@@ -56,7 +58,7 @@ class IFDE_TextSet : public IFDE_VisualSet {
                                 bool bCharCode = false,
                                 CFX_WideString* pWSForms = nullptr) = 0;
   virtual int32_t GetCharRects(const FDE_TEXTEDITPIECE* hText,
-                               CFX_RectFArray& rtArray,
+                               std::vector<CFX_RectF>* rtArray,
                                bool bbox) = 0;
 };
 

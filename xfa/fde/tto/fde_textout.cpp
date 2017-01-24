@@ -814,8 +814,8 @@ int32_t CFDE_TextOut::GetDisplayPos(FDE_TTOPIECE* pPiece) {
 
 int32_t CFDE_TextOut::GetCharRects(const FDE_TTOPIECE* pPiece) {
   FX_TXTRUN tr = ToTextRun(pPiece);
-  m_rectArray.RemoveAll();
-  return m_pTxtBreak->GetCharRects(&tr, m_rectArray);
+  m_rectArray.clear();
+  return m_pTxtBreak->GetCharRects(&tr, &m_rectArray);
 }
 
 FX_TXTRUN CFDE_TextOut::ToTextRun(const FDE_TTOPIECE* pPiece) {
@@ -886,7 +886,7 @@ void CFDE_TextOut::DrawLine(const FDE_TTOPIECE* pPiece, CFDE_Pen*& pPen) {
         int32_t iCharIndex = m_hotKeys.GetAt(i);
         if (iCharIndex >= pPiece->iStartChar &&
             iCharIndex < pPiece->iStartChar + pPiece->iChars) {
-          CFX_RectF rect = m_rectArray.GetAt(iCharIndex - pPiece->iStartChar);
+          CFX_RectF rect = m_rectArray[iCharIndex - pPiece->iStartChar];
           if (bVertical) {
             pt1.x = rect.left;
             pt1.y = rect.top;

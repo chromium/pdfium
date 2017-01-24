@@ -1588,7 +1588,7 @@ int32_t CFX_TxtBreak::GetDisplayPos(const FX_TXTRUN* pTxtRun,
 }
 
 int32_t CFX_TxtBreak::GetCharRects(const FX_TXTRUN* pTxtRun,
-                                   CFX_RectFArray& rtArray,
+                                   std::vector<CFX_RectF>* rtArray,
                                    bool bCharBBox) const {
   if (!pTxtRun || pTxtRun->iLength < 1)
     return 0;
@@ -1614,8 +1614,8 @@ int32_t CFX_TxtBreak::GetCharRects(const FX_TXTRUN* pTxtRun,
 
   FX_FLOAT fLeft = std::max(0.0f, bbox.left * fScale);
   FX_FLOAT fHeight = FXSYS_fabs(bbox.height * fScale);
-  rtArray.RemoveAll();
-  rtArray.SetSize(iLength);
+  rtArray->clear();
+  rtArray->resize(iLength);
   bool bVertical = (pTxtRun->dwStyles & FX_TXTLAYOUTSTYLE_VerticalLayout) != 0;
   bool bSingleLine = (pTxtRun->dwStyles & FX_TXTLAYOUTSTYLE_SingleLine) != 0;
   bool bCombText = (pTxtRun->dwStyles & FX_TXTLAYOUTSTYLE_CombText) != 0;
@@ -1689,10 +1689,10 @@ int32_t CFX_TxtBreak::GetCharRects(const FX_TXTRUN* pTxtRun,
         rtBBoxF.height = fHeight;
         rtBBoxF.top = std::max(rtBBoxF.top, 0.0f);
       }
-      rtArray.SetAt(i, rtBBoxF);
+      (*rtArray)[i] = rtBBoxF;
       continue;
     }
-    rtArray.SetAt(i, rect);
+    (*rtArray)[i] = rect;
   }
   return iLength;
 }

@@ -252,7 +252,7 @@ class CFX_RTFBreak {
                         CFX_WideString* pWSForms = nullptr,
                         FX_AdjustCharDisplayPos pAdjustPos = nullptr) const;
   int32_t GetCharRects(const FX_RTFTEXTOBJ* pText,
-                       CFX_RectFArray& rtArray,
+                       std::vector<CFX_RectF>* rtArray,
                        bool bCharBBox = false) const;
   uint32_t AppendChar_CharCode(FX_WCHAR wch);
   uint32_t AppendChar_Combination(CFX_RTFChar* pCurChar, int32_t iRotation);

@@ -9,6 +9,7 @@
 #include <algorithm>
 
 #include "third_party/base/ptr_util.h"
+#include "third_party/base/stl_util.h"
 #include "xfa/fde/cfde_txtedtbuf.h"
 #include "xfa/fde/cfde_txtedtengine.h"
 #include "xfa/fde/cfde_txtedtparag.h"
@@ -71,8 +72,8 @@ int32_t CFDE_TxtEdtPage::GetCharRect(int32_t nIndex,
     const FDE_TEXTEDITPIECE* pPiece = m_PieceMassArr.GetPtrAt(i);
     if (nIndex >= pPiece->nStart &&
         nIndex < (pPiece->nStart + pPiece->nCount)) {
-      CFX_RectFArray rectArr;
-      m_pTextSet->GetCharRects(pPiece, rectArr, bBBox);
+      std::vector<CFX_RectF> rectArr;
+      m_pTextSet->GetCharRects(pPiece, &rectArr, bBBox);
       rect = rectArr[nIndex - pPiece->nStart];
       return pPiece->nBidiLevel;
     }
@@ -113,9 +114,9 @@ int32_t CFDE_TxtEdtPage::GetCharIndex(const CFX_PointF& fPoint, bool& bBefore) {
     pPiece = m_PieceMassArr.GetPtrAt(i);
     nCaret = m_nPageStart + pPiece->nStart;
     if (pPiece->rtPiece.Contains(ptF)) {
-      CFX_RectFArray rectArr;
-      m_pTextSet->GetCharRects(pPiece, rectArr, false);
-      int32_t nRtCount = rectArr.GetSize();
+      std::vector<CFX_RectF> rectArr;
+      m_pTextSet->GetCharRects(pPiece, &rectArr, false);
+      int32_t nRtCount = pdfium::CollectionSize<int32_t>(rectArr);
       for (int32_t j = 0; j < nRtCount; j++) {
         if (rectArr[j].Contains(ptF)) {
           nCaret = m_nPageStart + pPiece->nStart + j;
@@ -184,9 +185,10 @@ int32_t CFDE_TxtEdtPage::GetDisplayPos(const CFX_RectF& rtClip,
   return nCharPosCount;
 }
 
-void CFDE_TxtEdtPage::CalcRangeRectArray(int32_t nStart,
-                                         int32_t nCount,
-                                         CFX_RectFArray& RectFArr) const {
+void CFDE_TxtEdtPage::CalcRangeRectArray(
+    int32_t nStart,
+    int32_t nCount,
+    std::vector<CFX_RectF>* pRectFArr) const {
   int32_t nPieceCount = m_PieceMassArr.GetSize();
   int32_t nEnd = nStart + nCount - 1;
   bool bInRange = false;
@@ -200,26 +202,26 @@ void CFDE_TxtEdtPage::CalcRangeRectArray(int32_t nStart,
           nRangeEnd = nEnd - piece->nStart;
           bEnd = true;
         }
-        CFX_RectFArray rcArr;
-        m_pTextSet->GetCharRects(piece, rcArr, false);
+        std::vector<CFX_RectF> rcArr;
+        m_pTextSet->GetCharRects(piece, &rcArr, false);
         CFX_RectF rectPiece = rcArr[nStart - piece->nStart];
         rectPiece.Union(rcArr[nRangeEnd]);
-        RectFArr.Add(rectPiece);
-        if (bEnd) {
+        pRectFArr->push_back(rectPiece);
+        if (bEnd)
           return;
-        }
+
         bInRange = true;
       }
     } else {
       if (nEnd >= piece->nStart && nEnd < (piece->nStart + piece->nCount)) {
-        CFX_RectFArray rcArr;
-        m_pTextSet->GetCharRects(piece, rcArr, false);
+        std::vector<CFX_RectF> rcArr;
+        m_pTextSet->GetCharRects(piece, &rcArr, false);
         CFX_RectF rectPiece = rcArr[0];
         rectPiece.Union(rcArr[nEnd - piece->nStart]);
-        RectFArr.Add(rectPiece);
+        pRectFArr->push_back(rectPiece);
         return;
       }
-      RectFArr.Add(piece->rtPiece);
+      pRectFArr->push_back(piece->rtPiece);
     }
   }
 }

@@ -7,6 +7,8 @@
 #ifndef XFA_FDE_CFDE_TXTEDTTEXTSET_H_
 #define XFA_FDE_CFDE_TXTEDTTEXTSET_H_
 
+#include <vector>
+
 #include "xfa/fde/fde_visualset.h"
 
 class CFDE_TxtEdtPage;
@@ -30,7 +32,7 @@ class CFDE_TxtEdtTextSet : public IFDE_TextSet {
                         bool bCharCode = false,
                         CFX_WideString* pWSForms = nullptr) override;
   int32_t GetCharRects(const FDE_TEXTEDITPIECE* pPiece,
-                       CFX_RectFArray& rtArray,
+                       std::vector<CFX_RectF>* rtArray,
                        bool bBBox) override;
 
  private:

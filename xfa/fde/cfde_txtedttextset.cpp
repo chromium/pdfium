@@ -76,7 +76,7 @@ int32_t CFDE_TxtEdtTextSet::GetDisplayPos(FDE_TEXTEDITPIECE* pPiece,
 }
 
 int32_t CFDE_TxtEdtTextSet::GetCharRects(const FDE_TEXTEDITPIECE* pPiece,
-                                         CFX_RectFArray& rtArray,
+                                         std::vector<CFX_RectF>* rtArray,
                                          bool bBBox) {
   if (!pPiece)
     return 0;

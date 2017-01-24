@@ -30,7 +30,7 @@ class CFDE_TxtEdtPage : public IFDE_TxtEdtPage {
   int32_t GetCharIndex(const CFX_PointF& fPoint, bool& bBefore) override;
   void CalcRangeRectArray(int32_t nStart,
                           int32_t nCount,
-                          CFX_RectFArray& RectFArr) const override;
+                          std::vector<CFX_RectF>* RectFArr) const override;
   int32_t SelectWord(const CFX_PointF& fPoint, int32_t& nCount) override;
   int32_t GetCharStart() const override;
   int32_t GetCharCount() const override;

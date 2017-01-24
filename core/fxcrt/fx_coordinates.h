@@ -431,10 +431,6 @@ class CFX_RTemplate {
 typedef CFX_RTemplate<int32_t> CFX_Rect;
 typedef CFX_RTemplate<FX_FLOAT> CFX_RectF;
 
-#ifdef PDF_ENABLE_XFA
-typedef CFX_ArrayTemplate<CFX_RectF> CFX_RectFArray;
-#endif  // PDF_ENABLE_XFA
-
 class CFX_FloatRect {
  public:
   CFX_FloatRect() : CFX_FloatRect(0.0f, 0.0f, 0.0f, 0.0f) {}

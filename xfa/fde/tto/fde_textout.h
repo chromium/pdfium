@@ -180,7 +180,7 @@ class CFDE_TextOut {
   std::vector<FXTEXT_CHARPOS> m_CharPos;
   std::unique_ptr<CFDE_RenderDevice> m_pRenderDevice;
   CFX_ArrayTemplate<int32_t> m_hotKeys;
-  CFX_RectFArray m_rectArray;
+  std::vector<CFX_RectF> m_rectArray;
 };
 
 #endif  // XFA_FDE_TTO_FDE_TEXTOUT_H_
