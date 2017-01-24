@@ -5715,7 +5715,7 @@ static OPJ_BOOL opj_j2k_add_mct(opj_tcp_t * p_tcp, opj_image_t * p_image, OPJ_UI
 
         if (l_deco_array) {
                 l_data_size = MCT_ELEMENT_SIZE[l_deco_array->m_element_type] * p_image->numcomps * p_image->numcomps;
-                if (l_deco_array->m_data_size != l_data_size) {
+                if (l_deco_array->m_data_size != l_data_size || ! l_deco_array->m_data) {
                         return OPJ_FALSE;
                 }
 
@@ -5734,7 +5734,7 @@ static OPJ_BOOL opj_j2k_add_mct(opj_tcp_t * p_tcp, opj_image_t * p_image, OPJ_UI
 
         if (l_offset_array) {
                 l_data_size = MCT_ELEMENT_SIZE[l_offset_array->m_element_type] * p_image->numcomps;
-                if (l_offset_array->m_data_size != l_data_size) {
+                if (l_offset_array->m_data_size != l_data_size || ! l_offset_array->m_data) {
                         return OPJ_FALSE;
                 }
 

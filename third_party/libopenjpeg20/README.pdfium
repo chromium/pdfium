@@ -34,4 +34,5 @@ Local Modifications:
 0022-jp2_apply_pclr_overflow.patch: Prevent integer overflow in opj_jp2_apply_pclr.
 0023-opj_j2k_read_mct_records.patch: Fix opj_j2k_read to prevent heap-use-after-free.
 0024-l_marker_size_check.patch: Return error before overflow in opj_j2k_read_header_procedure.
+0025-opj_j2k_add_mct_null_data.patch: Check m_data != null before trying to read from it.
 TODO(thestig): List all the other patches.
