@@ -57,8 +57,6 @@ CFX_RTFBreak::CFX_RTFBreak(uint32_t dwPolicies)
 CFX_RTFBreak::~CFX_RTFBreak() {
   Reset();
   m_PositionedTabs.RemoveAll();
-  if (m_pUserData)
-    m_pUserData->Release();
 }
 
 void CFX_RTFBreak::SetLineBoundary(FX_FLOAT fLineStart, FX_FLOAT fLineEnd) {
@@ -244,20 +242,17 @@ void CFX_RTFBreak::SetAlignment(int32_t iAlignment) {
          iAlignment <= FX_RTFLINEALIGNMENT_Distributed);
   m_iAlignment = iAlignment;
 }
-void CFX_RTFBreak::SetUserData(IFX_Retainable* pUserData) {
-  if (m_pUserData == pUserData) {
+
+void CFX_RTFBreak::SetUserData(const CFX_RetainPtr<CFX_Retainable>& pUserData) {
+  if (m_pUserData == pUserData)
     return;
-  }
+
   SetBreakStatus();
-  if (m_pUserData) {
-    m_pUserData->Release();
-  }
   m_pUserData = pUserData;
-  if (m_pUserData) {
-    m_pUserData->Retain();
-  }
 }
+
 static const int32_t gs_FX_RTFLineRotations[8] = {0, 3, 1, 0, 2, 1, 3, 2};
+
 int32_t CFX_RTFBreak::GetLineRotation(uint32_t dwStyles) const {
   return gs_FX_RTFLineRotations[(dwStyles & 0x0E) >> 1];
 }
@@ -362,9 +357,6 @@ uint32_t CFX_RTFBreak::AppendChar(FX_WCHAR wch) {
   pCurChar->m_nRotation = m_iCharRotation;
   pCurChar->m_iCharWidth = 0;
   pCurChar->m_dwIdentity = m_dwIdentity;
-  if (m_pUserData) {
-    m_pUserData->Retain();
-  }
   pCurChar->m_pUserData = m_pUserData;
   uint32_t dwRet1 = FX_RTFBREAK_None;
   if (chartype != FX_CHARTYPE_Combination &&
@@ -410,9 +402,6 @@ uint32_t CFX_RTFBreak::AppendChar_CharCode(FX_WCHAR wch) {
   pCurChar->m_nRotation = m_iCharRotation;
   pCurChar->m_iCharWidth = 0;
   pCurChar->m_dwIdentity = m_dwIdentity;
-  if (m_pUserData)
-    m_pUserData->Retain();
-
   pCurChar->m_pUserData = m_pUserData;
   int32_t iCharWidth = 0;
   if (m_bVertical != FX_IsOdd(m_iRotation)) {

@@ -476,7 +476,7 @@ bool CXFA_TextLayout::Layout(int32_t iBlock) {
       for (; pXMLNode;
            pXMLNode = pXMLNode->GetNodeItem(CFDE_XMLNode::NextSibling)) {
         if (!LoadRichText(pXMLNode, szText, fLinePos, m_pLoader->m_pParentStyle,
-                          true)) {
+                          true, nullptr)) {
           break;
         }
       }
@@ -495,7 +495,7 @@ bool CXFA_TextLayout::Layout(int32_t iBlock) {
         for (; pXMLNode;
              pXMLNode = pXMLNode->GetNodeItem(CFDE_XMLNode::NextSibling)) {
           if (!LoadRichText(pXMLNode, szText, fLinePos,
-                            m_pLoader->m_pParentStyle, true)) {
+                            m_pLoader->m_pParentStyle, true, nullptr)) {
             break;
           }
         }
@@ -655,7 +655,8 @@ bool CXFA_TextLayout::Loader(const CFX_SizeF& szText,
         m_textParser.DoParse(pXMLContainer, m_pTextProvider);
 
       auto pRootStyle = m_textParser.CreateRootStyle(m_pTextProvider);
-      LoadRichText(pXMLContainer, szText, fLinePos, pRootStyle, bSavePieces);
+      LoadRichText(pXMLContainer, szText, fLinePos, pRootStyle, bSavePieces,
+                   nullptr);
     }
   } else {
     LoadText(m_pTextDataNode, szText, fLinePos, bSavePieces);
@@ -702,7 +703,7 @@ bool CXFA_TextLayout::LoadRichText(
     FX_FLOAT& fLinePos,
     const CFX_RetainPtr<CFDE_CSSComputedStyle>& pParentStyle,
     bool bSavePieces,
-    CXFA_LinkUserData* pLinkData,
+    CFX_RetainPtr<CXFA_LinkUserData> pLinkData,
     bool bEndBreak,
     bool bIsOl,
     int32_t iLiCount) {
@@ -764,7 +765,7 @@ bool CXFA_TextLayout::LoadRichText(
           ASSERT(pElement);
           pElement->GetString(L"href", wsLinkContent);
           if (!wsLinkContent.IsEmpty()) {
-            pLinkData = new CXFA_LinkUserData(
+            pLinkData = pdfium::MakeRetain<CXFA_LinkUserData>(
                 wsLinkContent.GetBuffer(wsLinkContent.GetLength()));
             wsLinkContent.ReleaseBuffer(wsLinkContent.GetLength());
           }
@@ -818,10 +819,7 @@ bool CXFA_TextLayout::LoadRichText(
 
         if (wsText.GetLength() > 0) {
           if (!m_pLoader || m_pLoader->m_iChar == 0) {
-            if (pLinkData)
-              pLinkData->Retain();
-
-            CXFA_TextUserData* pUserData = new CXFA_TextUserData(
+            auto pUserData = pdfium::MakeRetain<CXFA_TextUserData>(
                 bContentNode ? pParentStyle : pStyle, pLinkData);
             m_pBreak->SetUserData(pUserData);
           }
@@ -876,12 +874,6 @@ bool CXFA_TextLayout::LoadRichText(
         fLinePos += fSpaceBelow;
         if (m_pTabstopContext)
           m_pTabstopContext->RemoveAll();
-      }
-      if (wsName == FX_WSTRC(L"a")) {
-        if (pLinkData) {
-          pLinkData->Release();
-          pLinkData = nullptr;
-        }
       }
       if (IsEnd(bSavePieces)) {
         if (m_pLoader && m_pLoader->m_iTotalLines > -1) {
@@ -1042,7 +1034,8 @@ void CXFA_TextLayout::AppendTextLine(uint32_t dwStatus,
     int32_t i = 0;
     for (i = 0; i < iPieces; i++) {
       const CFX_RTFPiece* pPiece = m_pBreak->GetBreakPiece(i);
-      CXFA_TextUserData* pUserData = (CXFA_TextUserData*)pPiece->m_pUserData;
+      CXFA_TextUserData* pUserData =
+          static_cast<CXFA_TextUserData*>(pPiece->m_pUserData.Get());
       if (pUserData)
         pStyle = pUserData->m_pStyle;
       FX_FLOAT fVerScale = pPiece->m_iVerticalScale / 100.0f;
@@ -1082,12 +1075,7 @@ void CXFA_TextLayout::AppendTextLine(uint32_t dwStatus,
         fBaseLine = -fBaseLineTemp;
       }
       fLineStep = std::max(fLineStep, fLineHeight);
-      if (pUserData && pUserData->m_pLinkData) {
-        pUserData->m_pLinkData->Retain();
-        pTP->pLinkData = pUserData->m_pLinkData;
-      } else {
-        pTP->pLinkData = nullptr;
-      }
+      pTP->pLinkData = pUserData ? pUserData->m_pLinkData : nullptr;
       pPieceLine->m_textPieces.push_back(std::move(pTP));
       DoTabstops(pStyle.Get(), pPieceLine);
     }
@@ -1103,7 +1091,8 @@ void CXFA_TextLayout::AppendTextLine(uint32_t dwStatus,
     FX_FLOAT fLineWidth = 0;
     for (int32_t i = 0; i < iPieces; i++) {
       const CFX_RTFPiece* pPiece = m_pBreak->GetBreakPiece(i);
-      CXFA_TextUserData* pUserData = (CXFA_TextUserData*)pPiece->m_pUserData;
+      CXFA_TextUserData* pUserData =
+          static_cast<CXFA_TextUserData*>(pPiece->m_pUserData.Get());
       if (pUserData)
         pStyle = pUserData->m_pStyle;
       FX_FLOAT fVerScale = pPiece->m_iVerticalScale / 100.0f;

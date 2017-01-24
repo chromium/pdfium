@@ -7,6 +7,7 @@
 #ifndef CORE_FXCRT_FX_UCD_H_
 #define CORE_FXCRT_FX_UCD_H_
 
+#include "core/fxcrt/cfx_retain_ptr.h"
 #include "core/fxcrt/fx_basic.h"
 
 #define FX_BIDICLASSBITS 6
@@ -170,6 +171,7 @@ class CFX_RTFChar : public CFX_Char {
  public:
   CFX_RTFChar();
   CFX_RTFChar(const CFX_RTFChar& other);
+  ~CFX_RTFChar();
 
   uint32_t m_dwStatus;
   int32_t m_iFontSize;
@@ -180,7 +182,7 @@ class CFX_RTFChar : public CFX_Char {
   int16_t m_iBidiOrder;
   uint32_t m_dwLayoutStyles;
   uint32_t m_dwIdentity;
-  IFX_Retainable* m_pUserData;
+  CFX_RetainPtr<CFX_Retainable> m_pUserData;
 };
 
 inline CFX_RTFChar::CFX_RTFChar()
@@ -195,6 +197,7 @@ inline CFX_RTFChar::CFX_RTFChar()
       m_pUserData(nullptr) {}
 
 inline CFX_RTFChar::CFX_RTFChar(const CFX_RTFChar& other) = default;
+inline CFX_RTFChar::~CFX_RTFChar() = default;
 
 #endif  // PDF_ENABLE_XFA
 

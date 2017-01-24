@@ -16,6 +16,10 @@
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
 
+#ifdef PDF_ENABLE_XFA
+#define FX_IsOdd(a) ((a)&1)
+#endif  // PDF_ENABLE_XFA
+
 class CFX_BinaryBuf {
  public:
   CFX_BinaryBuf();
@@ -352,9 +356,7 @@ class CFX_BitStream {
 
  protected:
   uint32_t m_BitPos;
-
   uint32_t m_BitSize;
-
   const uint8_t* m_pData;
 };
 
@@ -499,18 +501,6 @@ class CFX_ListArrayTemplate {
 typedef CFX_ListArrayTemplate<CFX_SortListArray<sizeof(FX_FILESIZE)>,
                               FX_FILESIZE>
     CFX_FileSizeListArray;
-
-#ifdef PDF_ENABLE_XFA
-class IFX_Retainable {
- public:
-  virtual uint32_t Retain() = 0;
-  virtual uint32_t Release() = 0;
-
- protected:
-  virtual ~IFX_Retainable() {}
-};
-#define FX_IsOdd(a) ((a)&1)
-#endif  // PDF_ENABLE_XFA
 
 class CFX_Vector_3by1 {
  public:

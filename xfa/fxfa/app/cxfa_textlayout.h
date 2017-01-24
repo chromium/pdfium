@@ -84,7 +84,7 @@ class CXFA_TextLayout {
                     FX_FLOAT& fLinePos,
                     const CFX_RetainPtr<CFDE_CSSComputedStyle>& pParentStyle,
                     bool bSavePieces,
-                    CXFA_LinkUserData* pLinkData = nullptr,
+                    CFX_RetainPtr<CXFA_LinkUserData> pLinkData,
                     bool bEndBreak = true,
                     bool bIsOl = false,
                     int32_t iLiCount = 0);

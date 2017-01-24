@@ -29,11 +29,11 @@ class XFA_TextPiece {
   int32_t iUnderline;
   int32_t iPeriod;
   int32_t iLineThrough;
-  CFX_RetainPtr<CFGAS_GEFont> pFont;
   FX_ARGB dwColor;
   FX_FLOAT fFontSize;
   CFX_RectF rtPiece;
-  CXFA_LinkUserData* pLinkData;
+  CFX_RetainPtr<CFGAS_GEFont> pFont;
+  CFX_RetainPtr<CXFA_LinkUserData> pLinkData;
 };
 
 #endif  // XFA_FXFA_APP_XFA_TEXTPIECE_H_

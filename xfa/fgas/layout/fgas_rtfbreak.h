@@ -9,6 +9,7 @@
 
 #include <vector>
 
+#include "core/fxcrt/cfx_retain_ptr.h"
 #include "core/fxcrt/fx_basic.h"
 #include "core/fxcrt/fx_ucd.h"
 #include "xfa/fgas/crt/fgas_utils.h"
@@ -163,7 +164,7 @@ class CFX_RTFPiece {
   uint32_t m_dwLayoutStyles;
   uint32_t m_dwIdentity;
   std::vector<CFX_RTFChar>* m_pChars;  // not owned.
-  IFX_Retainable* m_pUserData;
+  CFX_RetainPtr<CFX_Retainable> m_pUserData;
 };
 
 typedef CFX_BaseArrayTemplate<CFX_RTFPiece> CFX_RTFPieceArray;
@@ -195,12 +196,6 @@ class CFX_RTFLine {
   }
   int32_t GetLineEnd() const { return m_iStart + m_iWidth; }
   void RemoveAll(bool bLeaveMemory = false) {
-    int32_t iCount = pdfium::CollectionSize<int32_t>(m_LineChars);
-    for (int32_t i = 0; i < iCount; i++) {
-      CFX_RTFChar* pChar = &m_LineChars[i];
-      if (pChar->m_pUserData)
-        pChar->m_pUserData->Release();
-    }
     m_LineChars.clear();
     m_LinePieces.RemoveAll(bLeaveMemory);
     m_iWidth = 0;
@@ -241,7 +236,7 @@ class CFX_RTFBreak {
   void SetWordSpace(bool bDefault, FX_FLOAT fWordSpace);
   void SetReadingOrder(bool bRTL = false);
   void SetAlignment(int32_t iAlignment = FX_RTFLINEALIGNMENT_Left);
-  void SetUserData(IFX_Retainable* pUserData);
+  void SetUserData(const CFX_RetainPtr<CFX_Retainable>& pUserData);
   uint32_t AppendChar(FX_WCHAR wch);
   uint32_t EndBreak(uint32_t dwStatus = FX_RTFBREAK_PieceBreak);
   int32_t CountBreakPieces() const;
@@ -316,7 +311,7 @@ class CFX_RTFBreak {
   int32_t m_iWordSpace;
   bool m_bRTL;
   int32_t m_iAlignment;
-  IFX_Retainable* m_pUserData;
+  CFX_RetainPtr<CFX_Retainable> m_pUserData;
   FX_CHARTYPE m_eCharType;
   uint32_t m_dwIdentity;
   CFX_RTFLine m_RTFLine1;

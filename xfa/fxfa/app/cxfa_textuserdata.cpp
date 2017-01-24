@@ -13,25 +13,11 @@
 
 CXFA_TextUserData::CXFA_TextUserData(
     const CFX_RetainPtr<CFDE_CSSComputedStyle>& pStyle)
-    : m_pStyle(pStyle), m_pLinkData(nullptr), m_dwRefCount(0) {}
+    : m_pStyle(pStyle) {}
 
 CXFA_TextUserData::CXFA_TextUserData(
     const CFX_RetainPtr<CFDE_CSSComputedStyle>& pStyle,
-    CXFA_LinkUserData* pLinkData)
-    : m_pStyle(pStyle), m_pLinkData(pLinkData), m_dwRefCount(0) {}
+    const CFX_RetainPtr<CXFA_LinkUserData>& pLinkData)
+    : m_pStyle(pStyle), m_pLinkData(pLinkData) {}
 
-CXFA_TextUserData::~CXFA_TextUserData() {
-  if (m_pLinkData)
-    m_pLinkData->Release();
-}
-
-uint32_t CXFA_TextUserData::Retain() {
-  return ++m_dwRefCount;
-}
-
-uint32_t CXFA_TextUserData::Release() {
-  uint32_t dwRefCount = --m_dwRefCount;
-  if (dwRefCount == 0)
-    delete this;
-  return dwRefCount;
-}
+CXFA_TextUserData::~CXFA_TextUserData() {}
