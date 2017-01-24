@@ -410,12 +410,15 @@ bool CPDF_PSEngine::DoOperator(PDF_PSOP op) {
       break;
     case PSOP_BITSHIFT: {
       int shift = (int)Pop();
-      int i = (int)Pop();
+      result = (int)Pop();
       if (shift > 0) {
-        Push(i << shift);
+        result <<= shift;
       } else {
-        Push(i >> -shift);
+        // Avoids unsafe negation of INT_MIN.
+        FX_SAFE_INT32 safe_shift = shift;
+        result >>= (-safe_shift).ValueOrDefault(0);
       }
+      Push(result.ValueOrDefault(0));
       break;
     }
     case PSOP_TRUE:
