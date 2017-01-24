@@ -229,7 +229,7 @@ bool CCodec_BasicModule::A85Encode(const uint8_t* src_buf,
     uint32_t val = 0;
     int count = 0;
     while (pos < src_size) {
-      val += (uint32_t)(src_buf[pos] << (8 * (3 - pos)));
+      val += (uint32_t)(src_buf[pos]) << (8 * (3 - count));
       count++;
       pos++;
     }
