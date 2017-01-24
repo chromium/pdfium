@@ -14,6 +14,8 @@ group("samples") {
 }
 
 config("pdfium_samples_config") {
+  cflags = []
+  ldflags = []
   defines = [
     "PNG_PREFIX",
     "PNG_USE_READ_MACROS",
@@ -27,6 +29,14 @@ config("pdfium_samples_config") {
   }
   if (pdf_use_skia) {
     defines += [ "PDF_ENABLE_SKIA" ]
+  }
+  if (use_coverage && is_clang) {
+    cflags += [
+      "--coverage",
+      "-g",
+      "-O0",
+    ]
+    ldflags += [ "--coverage" ]
   }
 }
 

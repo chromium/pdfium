@@ -7,6 +7,7 @@ import("pdfium.gni")
 
 config("pdfium_common_config") {
   cflags = []
+  ldflags = []
   include_dirs = [
     ".",
     "third_party/freetype/include",
@@ -37,11 +38,19 @@ config("pdfium_common_config") {
   if (pdf_use_win32_gdi) {
     defines += [ "PDFIUM_PRINT_TEXT_WITH_GDI" ]
   }
+
+  if (use_coverage && is_clang) {
+    cflags += [
+      "--coverage",
+      "-g",
+      "-O0",
+    ]
+    ldflags += [ "--coverage" ]
+  }
 }
 
 config("pdfium_core_config") {
   cflags = []
-  ldflags = []
   configs = [ ":pdfium_common_config" ]
   defines = [ "V8_DEPRECATION_WARNINGS" ]
   if (is_linux) {
@@ -54,14 +63,6 @@ config("pdfium_core_config") {
   }
   if (is_win) {
     cflags += [ "/wd4267" ]
-  }
-  if (use_coverage && is_clang) {
-    cflags += [
-      "--coverage",
-      "-g",
-      "-O0",
-    ]
-    ldflags += [ "--coverage" ]
   }
 }
 
