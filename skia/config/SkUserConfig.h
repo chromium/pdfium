@@ -127,9 +127,6 @@
 
 // ===== Begin Chrome-specific definitions =====
 
-#define SK_SCALAR_IS_FLOAT
-#undef SK_SCALAR_IS_FIXED
-
 #define SK_MSCALAR_IS_FLOAT
 #undef SK_MSCALAR_IS_DOUBLE
 
