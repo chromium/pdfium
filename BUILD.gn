@@ -929,6 +929,7 @@ static_library("pdfwindow") {
     "fpdfsdk/pdfwindow/PWL_Utils.h",
     "fpdfsdk/pdfwindow/PWL_Wnd.cpp",
     "fpdfsdk/pdfwindow/PWL_Wnd.h",
+    "fpdfsdk/pdfwindow/cpwl_color.h",
   ]
   configs += [ ":pdfium_core_config" ]
   deps = [

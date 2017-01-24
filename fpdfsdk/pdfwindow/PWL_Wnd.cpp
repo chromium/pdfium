@@ -264,8 +264,8 @@ void CPWL_Wnd::InvalidateFocusHandler(IPWL_FocusHandler* handler) {
 }
 
 void CPWL_Wnd::InvalidateProvider(IPWL_Provider* provider) {
-  if (m_sPrivateParam.pProvider == provider)
-    m_sPrivateParam.pProvider = nullptr;
+  if (m_sPrivateParam.pProvider.Get() == provider)
+    m_sPrivateParam.pProvider.Reset();
 }
 
 void CPWL_Wnd::Destroy() {
@@ -289,7 +289,7 @@ void CPWL_Wnd::Destroy() {
 
   DestroyMsgControl();
 
-  FXSYS_memset(&m_sPrivateParam, 0, sizeof(PWL_CREATEPARAM));
+  m_sPrivateParam.Reset();
   m_aChildren.RemoveAll();
   m_pVScrollBar = nullptr;
 }
@@ -420,8 +420,10 @@ void CPWL_Wnd::InvalidateRect(CFX_FloatRect* pRect) {
     rcWin.bottom += PWL_INVALIDATE_INFLATE;
 
     if (CFX_SystemHandler* pSH = GetSystemHandler()) {
-      if (CPDFSDK_Widget* widget = m_sPrivateParam.pAttachedWidget)
+      if (CPDFSDK_Widget* widget = static_cast<CPDFSDK_Widget*>(
+              m_sPrivateParam.pAttachedWidget.Get())) {
         pSH->InvalidateRect(widget, rcWin);
+      }
     }
   }
 }
@@ -832,7 +834,7 @@ IPWL_FocusHandler* CPWL_Wnd::GetFocusHandler() const {
 }
 
 IPWL_Provider* CPWL_Wnd::GetProvider() const {
-  return m_sPrivateParam.pProvider;
+  return m_sPrivateParam.pProvider.Get();
 }
 
 IPVT_FontMap* CPWL_Wnd::GetFontMap() const {
@@ -880,9 +882,7 @@ CFX_Matrix CPWL_Wnd::GetWindowMatrix() const {
 
   if (IPWL_Provider* pProvider = GetProvider()) {
     mt.Concat(pProvider->GetWindowMatrix(GetAttachedData()));
-    return mt;
   }
-
   return mt;
 }
 

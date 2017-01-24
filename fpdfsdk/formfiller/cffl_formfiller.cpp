@@ -289,7 +289,7 @@ PWL_CREATEPARAM CFFL_FormFiller::GetCreateParam() {
 
   PWL_CREATEPARAM cp;
   cp.pParentWnd = nullptr;
-  cp.pProvider = this;
+  cp.pProvider.Reset(this);
   cp.rcRectWnd = GetPDFWindowRect();
 
   uint32_t dwCreateFlags = PWS_BORDER | PWS_BACKGROUND | PWS_VISIBLE;
@@ -359,7 +359,7 @@ CPWL_Wnd* CFFL_FormFiller::GetPDFWindow(CPDFSDK_PageView* pPageView,
     }
   } else {
     PWL_CREATEPARAM cp = GetCreateParam();
-    cp.pAttachedWidget = m_pWidget;
+    cp.pAttachedWidget.Reset(m_pWidget);
 
     CFFL_PrivateData* pPrivateData = new CFFL_PrivateData;
     pPrivateData->pWidget = m_pWidget;

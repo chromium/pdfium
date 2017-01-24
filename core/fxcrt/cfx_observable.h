@@ -20,7 +20,7 @@ class CFX_Observable {
       if (m_pObservedPtr)
         m_pObservedPtr->AddObservedPtr(this);
     }
-    ObservedPtr(const ObservedPtr& that) = delete;
+    ObservedPtr(const ObservedPtr& that) : ObservedPtr(that.Get()) {}
     ~ObservedPtr() {
       if (m_pObservedPtr)
         m_pObservedPtr->RemoveObservedPtr(this);
@@ -36,7 +36,10 @@ class CFX_Observable {
       ASSERT(m_pObservedPtr);
       m_pObservedPtr = nullptr;
     }
-    ObservedPtr& operator=(const ObservedPtr& that) = delete;
+    ObservedPtr& operator=(const ObservedPtr& that) {
+      Reset(that.Get());
+      return *this;
+    }
     bool operator==(const ObservedPtr& that) const {
       return m_pObservedPtr == that.m_pObservedPtr;
     }
