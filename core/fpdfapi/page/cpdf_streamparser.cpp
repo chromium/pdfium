@@ -209,8 +209,7 @@ std::unique_ptr<CPDF_Stream> CPDF_StreamParser::ReadInlineStream(
         dwStreamSize += m_Pos - dwPrevPos;
         continue;
       }
-      if (GetWordSize() == 2 && GetWordBuf()[0] == 'E' &&
-          GetWordBuf()[1] == 'I') {
+      if (GetWord() == "EI") {
         m_Pos = dwPrevPos;
         break;
       }

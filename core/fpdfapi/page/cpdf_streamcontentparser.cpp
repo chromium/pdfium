@@ -316,18 +316,17 @@ int CPDF_StreamContentParser::GetNextParamPos() {
   return index;
 }
 
-void CPDF_StreamContentParser::AddNameParam(const FX_CHAR* name, int len) {
-  CFX_ByteStringC bsName(name, len);
+void CPDF_StreamContentParser::AddNameParam(const CFX_ByteStringC& bsName) {
   ContentParam& param = m_ParamBuf[GetNextParamPos()];
-  if (len > 32) {
+  if (bsName.GetLength() > 32) {
     param.m_Type = ContentParam::OBJECT;
     param.m_pObject = pdfium::MakeUnique<CPDF_Name>(
         m_pDocument->GetByteStringPool(), PDF_NameDecode(bsName));
   } else {
     param.m_Type = ContentParam::NAME;
     if (bsName.Find('#') == -1) {
-      FXSYS_memcpy(param.m_Name.m_Buffer, name, len);
-      param.m_Name.m_Len = len;
+      FXSYS_memcpy(param.m_Name.m_Buffer, bsName.raw_str(), bsName.GetLength());
+      param.m_Name.m_Len = bsName.GetLength();
     } else {
       CFX_ByteString str = PDF_NameDecode(bsName);
       FXSYS_memcpy(param.m_Name.m_Buffer, str.c_str(), str.GetLength());
@@ -336,11 +335,10 @@ void CPDF_StreamContentParser::AddNameParam(const FX_CHAR* name, int len) {
   }
 }
 
-void CPDF_StreamContentParser::AddNumberParam(const FX_CHAR* str, int len) {
+void CPDF_StreamContentParser::AddNumberParam(const CFX_ByteStringC& str) {
   ContentParam& param = m_ParamBuf[GetNextParamPos()];
   param.m_Type = ContentParam::NUMBER;
-  param.m_Number.m_bInteger =
-      FX_atonum(CFX_ByteStringC(str, len), &param.m_Number.m_Integer);
+  param.m_Number.m_bInteger = FX_atonum(str, &param.m_Number.m_Integer);
 }
 
 void CPDF_StreamContentParser::AddObjectParam(
@@ -570,21 +568,10 @@ CPDF_StreamContentParser::InitializeOpCodes() {
   });
 }
 
-void CPDF_StreamContentParser::OnOperator(const FX_CHAR* op) {
-  int i = 0;
-  uint32_t opid = 0;
-  while (i < 4 && op[i]) {
-    opid = (opid << 8) + op[i];
-    i++;
-  }
-  while (i < 4) {
-    opid <<= 8;
-    i++;
-  }
-
+void CPDF_StreamContentParser::OnOperator(const CFX_ByteStringC& op) {
   static const OpCodes s_OpCodes = InitializeOpCodes();
 
-  auto it = s_OpCodes.find(opid);
+  auto it = s_OpCodes.find(op.GetID());
   if (it != s_OpCodes.end())
     (this->*it->second)();
 }
@@ -632,9 +619,7 @@ void CPDF_StreamContentParser::Handle_BeginImage() {
   while (1) {
     CPDF_StreamParser::SyntaxType type = m_pSyntax->ParseNextElement();
     if (type == CPDF_StreamParser::Keyword) {
-      CFX_ByteString bsKeyword(m_pSyntax->GetWordBuf(),
-                               m_pSyntax->GetWordSize());
-      if (bsKeyword != "ID") {
+      if (m_pSyntax->GetWord() != "ID") {
         m_pSyntax->SetPos(savePos);
         return;
       }
@@ -642,8 +627,7 @@ void CPDF_StreamContentParser::Handle_BeginImage() {
     if (type != CPDF_StreamParser::Name) {
       break;
     }
-    CFX_ByteString key((const FX_CHAR*)m_pSyntax->GetWordBuf() + 1,
-                       m_pSyntax->GetWordSize() - 1);
+    CFX_ByteString key(m_pSyntax->GetWord().Mid(1));
     auto pObj = m_pSyntax->ReadNextObject(false, 0);
     if (!key.IsEmpty()) {
       uint32_t dwObjNum = pObj ? pObj->GetObjNum() : 0;
@@ -677,8 +661,7 @@ void CPDF_StreamContentParser::Handle_BeginImage() {
     if (type != CPDF_StreamParser::Keyword) {
       continue;
     }
-    if (m_pSyntax->GetWordSize() == 2 && m_pSyntax->GetWordBuf()[0] == 'E' &&
-        m_pSyntax->GetWordBuf()[1] == 'I') {
+    if (m_pSyntax->GetWord() == "EI") {
       break;
     }
   }
@@ -1561,15 +1544,14 @@ uint32_t CPDF_StreamContentParser::Parse(const uint8_t* pData,
       case CPDF_StreamParser::EndOfData:
         return m_pSyntax->GetPos();
       case CPDF_StreamParser::Keyword:
-        OnOperator((char*)syntax.GetWordBuf());
+        OnOperator(syntax.GetWord());
         ClearAllParams();
         break;
       case CPDF_StreamParser::Number:
-        AddNumberParam((char*)syntax.GetWordBuf(), syntax.GetWordSize());
+        AddNumberParam(syntax.GetWord());
         break;
       case CPDF_StreamParser::Name:
-        AddNameParam((const FX_CHAR*)syntax.GetWordBuf() + 1,
-                     syntax.GetWordSize() - 1);
+        AddNameParam(syntax.GetWord().Mid(1));
         break;
       default:
         AddObjectParam(syntax.GetObject());
@@ -1589,9 +1571,10 @@ void CPDF_StreamContentParser::ParsePathObject() {
       case CPDF_StreamParser::EndOfData:
         return;
       case CPDF_StreamParser::Keyword: {
-        int len = m_pSyntax->GetWordSize();
+        CFX_ByteStringC strc = m_pSyntax->GetWord();
+        int len = strc.GetLength();
         if (len == 1) {
-          switch (m_pSyntax->GetWordBuf()[0]) {
+          switch (strc[0]) {
             case kPathOperatorSubpath:
               AddPathPoint(params[0], params[1], FXPT_MOVETO);
               nParams = 0;
@@ -1627,8 +1610,8 @@ void CPDF_StreamContentParser::ParsePathObject() {
               break;
           }
         } else if (len == 2) {
-          if (m_pSyntax->GetWordBuf()[0] == kPathOperatorRectangle[0] &&
-              m_pSyntax->GetWordBuf()[1] == kPathOperatorRectangle[1]) {
+          if (strc[0] == kPathOperatorRectangle[0] &&
+              strc[1] == kPathOperatorRectangle[1]) {
             AddPathRect(params[0], params[1], params[2], params[3]);
             nParams = 0;
           } else {
@@ -1647,9 +1630,7 @@ void CPDF_StreamContentParser::ParsePathObject() {
           break;
 
         int value;
-        bool bInteger = FX_atonum(
-            CFX_ByteStringC(m_pSyntax->GetWordBuf(), m_pSyntax->GetWordSize()),
-            &value);
+        bool bInteger = FX_atonum(m_pSyntax->GetWord(), &value);
         params[nParams++] = bInteger ? (FX_FLOAT)value : *(FX_FLOAT*)&value;
         break;
       }

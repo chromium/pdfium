@@ -28,8 +28,9 @@ class CPDF_StreamParser {
   ~CPDF_StreamParser();
 
   SyntaxType ParseNextElement();
-  const uint8_t* GetWordBuf() const { return m_WordBuffer; }
-  uint32_t GetWordSize() const { return m_WordSize; }
+  CFX_ByteStringC GetWord() const {
+    return CFX_ByteStringC(m_WordBuffer, m_WordSize);
+  }
   uint32_t GetPos() const { return m_Pos; }
   void SetPos(uint32_t pos) { m_Pos = pos; }
   std::unique_ptr<CPDF_Object> GetObject() { return std::move(m_pLastObj); }
