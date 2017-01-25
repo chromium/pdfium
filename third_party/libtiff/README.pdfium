@@ -26,3 +26,4 @@ Local Modifications:
 0014-cast-to-unsigned-in-putagreytile.patch: casting to avoid undefined shifts.
 0015-fix-leaks-in-tif_ojpeg.patch: fix direct leaks in tif_ojpeg.c methods
 0016-fix-leak-in-pixarlogsetupdecode.patch: Free sp->tbuf if setup fails
+0017-safe_skews_in_gtTileContig.patch: return error if to/from skews overflow from int32.
