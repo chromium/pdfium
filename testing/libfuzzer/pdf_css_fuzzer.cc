@@ -15,8 +15,12 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   CFX_WideString input = CFX_WideString::FromUTF8(
       CFX_ByteStringC(data, static_cast<FX_STRSIZE>(size)));
 
+  // If we convert the input into an empty string bail out.
+  if (input.GetLength() == 0)
+    return 0;
+
   CFDE_CSSSyntaxParser parser;
-  parser.Init(input.c_str(), size);
+  parser.Init(input.c_str(), input.GetLength());
 
   FDE_CSSSyntaxStatus status;
   do {
