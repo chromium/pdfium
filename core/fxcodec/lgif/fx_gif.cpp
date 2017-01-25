@@ -114,7 +114,17 @@ int32_t CGifLZWDecoder::Decode(uint8_t* des_buf, uint32_t& des_size) {
           FXSYS_strncpy(err_msg_ptr, "Decode Error", GIF_MAX_ERROR_SIZE - 1);
         return 0;
       }
-      code_store |= (*next_in++) << bits_left;
+      pdfium::base::CheckedNumeric<uint32_t> safe_code = *next_in++;
+      safe_code <<= bits_left;
+      safe_code |= code_store;
+      if (!safe_code.IsValid()) {
+        if (err_msg_ptr) {
+          FXSYS_strncpy(err_msg_ptr, "Code Store Out Of Range",
+                        GIF_MAX_ERROR_SIZE - 1);
+        }
+        return 0;
+      }
+      code_store = safe_code.ValueOrDie();
       avail_in--;
       bits_left += 8;
     }
