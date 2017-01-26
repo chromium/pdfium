@@ -163,6 +163,9 @@ class TestRunner:
     parser.add_option('--gold_output_dir', default='', dest="gold_output_dir",
                       help='Path of where to write the JSON output to be uploaded to Gold.')
 
+    parser.add_option('--gold_ignore_hashes', default='', dest="gold_ignore_hashes",
+                      help='Path to a file with MD5 hashes we wish to ignore.')
+
     parser.add_option('--ignore_errors', action="store_true", dest="ignore_errors",
                       help='Prevents the return value from being non-zero when image comparison fails.')
 
@@ -227,7 +230,8 @@ class TestRunner:
       self.gold_results = gold.GoldResults("pdfium",
                                            options.gold_output_dir,
                                            options.gold_properties,
-                                           options.gold_key)
+                                           options.gold_key,
+                                           options.gold_ignore_hashes)
 
     if options.num_workers > 1 and len(test_cases) > 1:
       try:

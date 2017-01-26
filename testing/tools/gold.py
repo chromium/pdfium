@@ -51,7 +51,8 @@ import shutil
 # }
 #
 class GoldResults(object):
-  def __init__(self, source_type, outputDir, propertiesStr, keyStr):
+  def __init__(self, source_type, outputDir, propertiesStr, keyStr,
+               ignore_hashes_file):
     """
     source_type is the source_type (=corpus) field used for all results.
     output_dir is the directory where the resulting images are copied and
@@ -60,6 +61,8 @@ class GoldResults(object):
                is used to set the top level fields in the output JSON file.
     keyStr is a string with space separated key/value pairs that
                is used to set the 'key' field in the output JSON file.
+    ignore_hashes_file is a file that contains a list of image hashes
+               that should be ignored.
     """
     self._source_type = source_type
     self._properties = self._parseKeyValuePairs(propertiesStr)
@@ -71,13 +74,22 @@ class GoldResults(object):
     if not os.path.exists(outputDir):
       os.makedirs(outputDir)
 
+    self._ignore_hashes = set()
+    if ignore_hashes_file:
+      with open(ignore_hashes_file, 'r') as ig_file:
+        hashes=[x.strip() for x in ig_file.readlines() if x.strip()]
+        self._ignore_hashes = set(hashes)
+
   def AddTestResult(self, testName, md5Hash, outputImagePath):
-    # Copy the image to <output_dir>/<md5Hash>.<image_extension>
+    # If the hash is in the list of hashes to ignore then we don'try
+    # make a copy, but add it to the result.
     imgExt = os.path.splitext(outputImagePath)[1].lstrip(".")
-    if not imgExt:
-      raise ValueError("File %s does not have an extension" % outputImagePath)
-    newFilePath = os.path.join(self._outputDir, md5Hash + '.' + imgExt)
-    shutil.copy2(outputImagePath, newFilePath)
+    if md5Hash not in self._ignore_hashes:
+      # Copy the image to <output_dir>/<md5Hash>.<image_extension>
+      if not imgExt:
+        raise ValueError("File %s does not have an extension" % outputImagePath)
+      newFilePath = os.path.join(self._outputDir, md5Hash + '.' + imgExt)
+      shutil.copy2(outputImagePath, newFilePath)
 
     # Add an entry to the list of test results
     self._results.append({
@@ -123,7 +135,11 @@ if __name__ == "__main__":
 
   keyStr = "arch arm64 compiler Clang configuration Debug"
 
-  gr = GoldResults("pdfium", testDir, propStr, keyStr)
+  hash_file = os.path.join(testDir, "ignore_hashes.txt")
+  with open(hash_file, 'wb') as f:
+    f.write("\n".join(["hash-1","hash-4"]) + "\n")
+
+  gr = GoldResults("pdfium", testDir, propStr, keyStr, hash_file)
   gr.AddTestResult("test-1", "hash-1", os.path.join(testDir, "image1.png"))
   gr.AddTestResult("test-2", "hash-2", os.path.join(testDir, "image2.png"))
   gr.AddTestResult("test-3", "hash-3", os.path.join(testDir, "image3.png"))
