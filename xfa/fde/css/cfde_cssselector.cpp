@@ -53,10 +53,6 @@ CFDE_CSSSelector* CFDE_CSSSelector::GetNextSelector() const {
   return m_pNext.get();
 }
 
-std::unique_ptr<CFDE_CSSSelector> CFDE_CSSSelector::ReleaseNextSelector() {
-  return std::move(m_pNext);
-}
-
 std::unique_ptr<CFDE_CSSSelector> CFDE_CSSSelector::FromString(
     const FX_WCHAR* psz,
     int32_t iLen) {
@@ -74,15 +70,10 @@ std::unique_ptr<CFDE_CSSSelector> CFDE_CSSSelector::FromString(
   }
 
   std::unique_ptr<CFDE_CSSSelector> pFirst = nullptr;
-  CFDE_CSSSelector* pLast = nullptr;
-
   for (psz = pStart; psz < pEnd;) {
     FX_WCHAR wch = *psz;
     if (IsCSSChar(wch) || wch == '*') {
       int32_t iNameLen = wch == '*' ? 1 : GetCSSNameLen(psz, pEnd);
-      if (iNameLen == 0)
-        return nullptr;
-
       auto p = pdfium::MakeUnique<CFDE_CSSSelector>(
           FDE_CSSSelectorType::Element, psz, iNameLen, true);
       if (pFirst) {
@@ -90,7 +81,6 @@ std::unique_ptr<CFDE_CSSSelector> CFDE_CSSSelector::FromString(
         p->SetNext(std::move(pFirst));
       }
       pFirst = std::move(p);
-      pLast = pFirst.get();
       psz += iNameLen;
     } else if (wch == ' ') {
       psz++;

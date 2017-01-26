@@ -27,7 +27,6 @@ class CFDE_CSSSelector {
   FDE_CSSSelectorType GetType() const;
   uint32_t GetNameHash() const;
   CFDE_CSSSelector* GetNextSelector() const;
-  std::unique_ptr<CFDE_CSSSelector> ReleaseNextSelector();
 
   void SetNext(std::unique_ptr<CFDE_CSSSelector> pNext) {
     m_pNext = std::move(pNext);

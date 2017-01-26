@@ -135,6 +135,59 @@ TEST_F(CFDE_CSSStyleSheetTest, ParseMultipleSelectors) {
              {FDE_CSSPropertyValue::Underline});
 }
 
+TEST_F(CFDE_CSSStyleSheetTest, ParseChildSelectors) {
+  const FX_WCHAR* buf = L"a b c { border: 10px; }";
+  EXPECT_TRUE(sheet_->LoadBuffer(buf, FXSYS_wcslen(buf)));
+  EXPECT_EQ(1, sheet_->CountRules());
+
+  CFDE_CSSStyleRule* style = sheet_->GetRule(0);
+  EXPECT_EQ(1UL, style->CountSelectorLists());
+
+  auto sel = style->GetSelectorList(0);
+  EXPECT_TRUE(sel != nullptr);
+  EXPECT_EQ(FX_HashCode_GetW(L"c", true), sel->GetNameHash());
+
+  sel = sel->GetNextSelector();
+  EXPECT_TRUE(sel != nullptr);
+  EXPECT_EQ(FX_HashCode_GetW(L"b", true), sel->GetNameHash());
+
+  sel = sel->GetNextSelector();
+  EXPECT_TRUE(sel != nullptr);
+  EXPECT_EQ(FX_HashCode_GetW(L"a", true), sel->GetNameHash());
+
+  sel = sel->GetNextSelector();
+  EXPECT_TRUE(sel == nullptr);
+
+  decl_ = style->GetDeclaration();
+  EXPECT_EQ(4UL, decl_->PropertyCountForTesting());
+
+  VerifyFloat(FDE_CSSProperty::BorderLeftWidth, 10.0,
+              FDE_CSSNumberType::Pixels);
+  VerifyFloat(FDE_CSSProperty::BorderRightWidth, 10.0,
+              FDE_CSSNumberType::Pixels);
+  VerifyFloat(FDE_CSSProperty::BorderTopWidth, 10.0, FDE_CSSNumberType::Pixels);
+  VerifyFloat(FDE_CSSProperty::BorderBottomWidth, 10.0,
+              FDE_CSSNumberType::Pixels);
+}
+
+TEST_F(CFDE_CSSStyleSheetTest, ParseUnhandledSelectors) {
+  const FX_WCHAR* buf = L"a > b { padding: 0; }";
+  EXPECT_TRUE(sheet_->LoadBuffer(buf, FXSYS_wcslen(buf)));
+  EXPECT_EQ(0, sheet_->CountRules());
+
+  buf = L"a[first] { padding: 0; }";
+  EXPECT_TRUE(sheet_->LoadBuffer(buf, FXSYS_wcslen(buf)));
+  EXPECT_EQ(0, sheet_->CountRules());
+
+  buf = L"a+b { padding: 0; }";
+  EXPECT_TRUE(sheet_->LoadBuffer(buf, FXSYS_wcslen(buf)));
+  EXPECT_EQ(0, sheet_->CountRules());
+
+  buf = L"a ^ b { padding: 0; }";
+  EXPECT_TRUE(sheet_->LoadBuffer(buf, FXSYS_wcslen(buf)));
+  EXPECT_EQ(0, sheet_->CountRules());
+}
+
 TEST_F(CFDE_CSSStyleSheetTest, ParseMultipleSelectorsCombined) {
   LoadAndVerifyDecl(L"a, b, c { border: 5px; }", {L"a", L"b", L"c"}, 4);
 }
