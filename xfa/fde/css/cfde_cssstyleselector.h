@@ -17,7 +17,9 @@
 
 class CFDE_CSSAccelerator;
 class CFDE_CSSComputedStyle;
+class CFDE_CSSCustomProperty;
 class CFDE_CSSDeclaration;
+class CFDE_CSSPropertyHolder;
 class CFDE_CSSSelector;
 class CFDE_CSSStyleSheet;
 class CFDE_CSSTagCache;
@@ -31,38 +33,38 @@ class CFDE_CSSStyleSelector {
   explicit CFDE_CSSStyleSelector(CFGAS_FontMgr* pFontMgr);
   ~CFDE_CSSStyleSelector();
 
-  void SetDefFontSize(FX_FLOAT fFontSize);
-
-  void SetUAStyleSheet(std::unique_ptr<CFDE_CSSStyleSheet> pSheet);
-
-  void UpdateStyleIndex();
   CFDE_CSSAccelerator* InitAccelerator();
+
+  void SetDefFontSize(FX_FLOAT fFontSize);
+  void SetUAStyleSheet(std::unique_ptr<CFDE_CSSStyleSheet> pSheet);
+  void UpdateStyleIndex();
+
   CFX_RetainPtr<CFDE_CSSComputedStyle> CreateComputedStyle(
       CFDE_CSSComputedStyle* pParentStyle);
-  int32_t MatchDeclarations(
-      CXFA_CSSTagProvider* pTag,
-      CFX_ArrayTemplate<CFDE_CSSDeclaration*>& matchedDecls);
   void ComputeStyle(CXFA_CSSTagProvider* pTag,
-                    const CFDE_CSSDeclaration** ppDeclArray,
-                    int32_t iDeclCount,
+                    const std::vector<const CFDE_CSSDeclaration*>& declArray,
                     CFDE_CSSComputedStyle* pDestStyle);
 
+  std::vector<const CFDE_CSSDeclaration*> MatchDeclarations(
+      CXFA_CSSTagProvider* pTag);
+
  private:
-  void MatchRules(
-      std::vector<CFDE_CSSRuleCollection::Data*>* matchedRules,
-      CFDE_CSSTagCache* pCache,
-      const std::vector<std::unique_ptr<CFDE_CSSRuleCollection::Data>>* pList);
   bool MatchSelector(CFDE_CSSTagCache* pCache, CFDE_CSSSelector* pSel);
+
   void AppendInlineStyle(CFDE_CSSDeclaration* pDecl,
                          const FX_WCHAR* psz,
                          int32_t iLen);
-  void ApplyDeclarations(bool bPriority,
-                         const CFDE_CSSDeclaration** ppDeclArray,
-                         int32_t iDeclCount,
-                         CFDE_CSSComputedStyle* pDestStyle);
+  void ApplyDeclarations(
+      const std::vector<const CFDE_CSSDeclaration*>& declArray,
+      const CFDE_CSSDeclaration* extraDecl,
+      CFDE_CSSComputedStyle* pDestStyle);
   void ApplyProperty(FDE_CSSProperty eProperty,
                      CFDE_CSSValue* pValue,
                      CFDE_CSSComputedStyle* pComputedStyle);
+  void ExtractValues(const CFDE_CSSDeclaration* decl,
+                     std::vector<const CFDE_CSSPropertyHolder*>* importants,
+                     std::vector<const CFDE_CSSPropertyHolder*>* normals,
+                     std::vector<const CFDE_CSSCustomProperty*>* custom);
 
   bool SetLengthWithPercent(FDE_CSSLength& width,
                             FDE_CSSPrimitiveType eType,

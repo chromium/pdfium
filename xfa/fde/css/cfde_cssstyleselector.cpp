@@ -73,44 +73,26 @@ void CFDE_CSSStyleSelector::UpdateStyleIndex() {
   m_UARules.AddRulesFrom(m_UAStyles.get(), m_pFontMgr);
 }
 
-int32_t CFDE_CSSStyleSelector::MatchDeclarations(
-    CXFA_CSSTagProvider* pTag,
-    CFX_ArrayTemplate<CFDE_CSSDeclaration*>& matchedDecls) {
+std::vector<const CFDE_CSSDeclaration*>
+CFDE_CSSStyleSelector::MatchDeclarations(CXFA_CSSTagProvider* pTag) {
   ASSERT(pTag);
 
   CFDE_CSSTagCache* pCache = m_pAccelerator->top();
   ASSERT(pCache && pCache->GetTag() == pTag);
 
-  matchedDecls.RemoveAt(0, matchedDecls.GetSize());
+  std::vector<const CFDE_CSSDeclaration*> matchedDecls;
+  if (m_UARules.CountSelectors() == 0 || !pCache->HashTag())
+    return matchedDecls;
 
-  if (m_UARules.CountSelectors() == 0)
-    return 0;
+  auto rules = m_UARules.GetTagRuleData(pCache->HashTag());
+  if (!rules)
+    return matchedDecls;
 
-  // The ::Data is owned by the m_RuleCollection.
-  std::vector<CFDE_CSSRuleCollection::Data*> matchedRules;
-
-  if (pCache->HashTag()) {
-    MatchRules(&matchedRules, pCache,
-               m_UARules.GetTagRuleData(pCache->HashTag()));
-  }
-
-  for (const auto& rule : matchedRules)
-    matchedDecls.Add(rule->pDeclaration);
-
-  return matchedDecls.GetSize();
-}
-
-void CFDE_CSSStyleSelector::MatchRules(
-    std::vector<CFDE_CSSRuleCollection::Data*>* matchedRules,
-    CFDE_CSSTagCache* pCache,
-    const std::vector<std::unique_ptr<CFDE_CSSRuleCollection::Data>>* pList) {
-  if (!pList)
-    return;
-
-  for (const auto& d : *pList) {
+  for (const auto& d : *rules) {
     if (MatchSelector(pCache, d->pSelector))
-      matchedRules->push_back(d.get());
+      matchedDecls.push_back(d->pDeclaration);
   }
+  return matchedDecls;
 }
 
 bool CFDE_CSSStyleSelector::MatchSelector(CFDE_CSSTagCache* pCache,
@@ -143,29 +125,27 @@ bool CFDE_CSSStyleSelector::MatchSelector(CFDE_CSSTagCache* pCache,
 
 void CFDE_CSSStyleSelector::ComputeStyle(
     CXFA_CSSTagProvider* pTag,
-    const CFDE_CSSDeclaration** ppDeclArray,
-    int32_t iDeclCount,
+    const std::vector<const CFDE_CSSDeclaration*>& declArray,
     CFDE_CSSComputedStyle* pDestStyle) {
-  ASSERT(iDeclCount >= 0);
   ASSERT(pDestStyle);
 
   static const uint32_t s_dwStyleHash = FX_HashCode_GetW(L"style", true);
   static const uint32_t s_dwAlignHash = FX_HashCode_GetW(L"align", true);
 
   if (!pTag->empty()) {
-    CFDE_CSSDeclaration* pDecl = nullptr;
+    std::unique_ptr<CFDE_CSSDeclaration> pDecl;
     for (auto it : *pTag) {
       CFX_WideString wsAttri = it.first;
       CFX_WideString wsValue = it.second;
       uint32_t dwAttriHash = FX_HashCode_GetW(wsAttri.AsStringC(), true);
       if (dwAttriHash == s_dwStyleHash) {
         if (!pDecl)
-          pDecl = new CFDE_CSSDeclaration;
+          pDecl = pdfium::MakeUnique<CFDE_CSSDeclaration>();
 
-        AppendInlineStyle(pDecl, wsValue.c_str(), wsValue.GetLength());
+        AppendInlineStyle(pDecl.get(), wsValue.c_str(), wsValue.GetLength());
       } else if (dwAttriHash == s_dwAlignHash) {
         if (!pDecl)
-          pDecl = new CFDE_CSSDeclaration;
+          pDecl = pdfium::MakeUnique<CFDE_CSSDeclaration>();
 
         FDE_CSSPropertyArgs args;
         args.pStringCache = nullptr;
@@ -175,89 +155,53 @@ void CFDE_CSSStyleSelector::ComputeStyle(
     }
 
     if (pDecl) {
-      CFX_ArrayTemplate<CFDE_CSSDeclaration*> decls;
-      decls.SetSize(iDeclCount + 1);
-      CFDE_CSSDeclaration** ppInline = decls.GetData();
-      FXSYS_memcpy(ppInline, ppDeclArray,
-                   iDeclCount * sizeof(CFDE_CSSDeclaration*));
-      ppInline[iDeclCount++] = pDecl;
-      ApplyDeclarations(true, const_cast<const CFDE_CSSDeclaration**>(ppInline),
-                        iDeclCount, pDestStyle);
-      ApplyDeclarations(false,
-                        const_cast<const CFDE_CSSDeclaration**>(ppInline),
-                        iDeclCount, pDestStyle);
+      ApplyDeclarations(declArray, pDecl.get(), pDestStyle);
       return;
     }
   }
 
-  if (iDeclCount > 0) {
-    ASSERT(ppDeclArray);
+  if (declArray.empty())
+    return;
 
-    ApplyDeclarations(true, ppDeclArray, iDeclCount, pDestStyle);
-    ApplyDeclarations(false, ppDeclArray, iDeclCount, pDestStyle);
-  }
+  ApplyDeclarations(declArray, nullptr, pDestStyle);
 }
 
 void CFDE_CSSStyleSelector::ApplyDeclarations(
-    bool bPriority,
-    const CFDE_CSSDeclaration** ppDeclArray,
-    int32_t iDeclCount,
+    const std::vector<const CFDE_CSSDeclaration*>& declArray,
+    const CFDE_CSSDeclaration* extraDecl,
     CFDE_CSSComputedStyle* pDestStyle) {
   CFDE_CSSComputedStyle* pComputedStyle = pDestStyle;
 
-  int32_t i;
-  if (bPriority) {
-    CFDE_CSSValue* pLastest = nullptr;
-    CFDE_CSSValue* pImportant = nullptr;
-    for (i = 0; i < iDeclCount; ++i) {
-      bool bImportant;
-      CFDE_CSSValue* pVal =
-          ppDeclArray[i]->GetProperty(FDE_CSSProperty::FontSize, bImportant);
-      if (!pVal)
-        continue;
+  std::vector<const CFDE_CSSPropertyHolder*> importants;
+  std::vector<const CFDE_CSSPropertyHolder*> normals;
+  std::vector<const CFDE_CSSCustomProperty*> customs;
 
-      if (bImportant)
-        pImportant = pVal;
-      else
-        pLastest = pVal;
-    }
-    if (pImportant) {
-      ApplyProperty(FDE_CSSProperty::FontSize, pImportant, pComputedStyle);
-    } else if (pLastest) {
-      ApplyProperty(FDE_CSSProperty::FontSize, pLastest, pComputedStyle);
-    }
-  } else {
-    CFX_ArrayTemplate<CFDE_CSSDeclaration*> importants;
-    const CFDE_CSSDeclaration* pDecl = nullptr;
+  for (auto& decl : declArray)
+    ExtractValues(decl, &importants, &normals, &customs);
+  if (extraDecl)
+    ExtractValues(extraDecl, &importants, &normals, &customs);
 
-    for (i = 0; i < iDeclCount; ++i) {
-      pDecl = ppDeclArray[i];
-      for (auto it = pDecl->begin(); it != pDecl->end(); it++) {
-        if ((*it)->eProperty == FDE_CSSProperty::FontSize)
-          continue;
-        if (!(*it)->bImportant) {
-          ApplyProperty((*it)->eProperty, (*it)->pValue.Get(), pComputedStyle);
-        } else if (importants.GetSize() == 0 ||
-                   importants[importants.GetUpperBound()] != pDecl) {
-          importants.Add(const_cast<CFDE_CSSDeclaration*>(pDecl));
-        }
-      }
-    }
+  for (auto& prop : normals)
+    ApplyProperty(prop->eProperty, prop->pValue.Get(), pComputedStyle);
+  for (auto& prop : customs)
+    pComputedStyle->AddCustomStyle(prop->pwsName, prop->pwsValue);
+  for (auto& prop : importants)
+    ApplyProperty(prop->eProperty, prop->pValue.Get(), pComputedStyle);
+}
 
-    iDeclCount = importants.GetSize();
-    for (i = 0; i < iDeclCount; ++i) {
-      pDecl = importants[i];
-
-      for (auto it = pDecl->begin(); it != pDecl->end(); it++) {
-        if ((*it)->bImportant && (*it)->eProperty != FDE_CSSProperty::FontSize)
-          ApplyProperty((*it)->eProperty, (*it)->pValue.Get(), pComputedStyle);
-      }
-    }
-
-    for (auto it = pDecl->custom_begin(); it != pDecl->custom_end(); it++) {
-      pComputedStyle->AddCustomStyle((*it)->pwsName, (*it)->pwsValue);
-    }
+void CFDE_CSSStyleSelector::ExtractValues(
+    const CFDE_CSSDeclaration* decl,
+    std::vector<const CFDE_CSSPropertyHolder*>* importants,
+    std::vector<const CFDE_CSSPropertyHolder*>* normals,
+    std::vector<const CFDE_CSSCustomProperty*>* custom) {
+  for (const auto& holder : *decl) {
+    if (holder->bImportant)
+      importants->push_back(holder.get());
+    else
+      normals->push_back(holder.get());
   }
+  for (auto it = decl->custom_begin(); it != decl->custom_end(); it++)
+    custom->push_back(it->get());
 }
 
 void CFDE_CSSStyleSelector::AppendInlineStyle(CFDE_CSSDeclaration* pDecl,

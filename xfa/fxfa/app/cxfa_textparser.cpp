@@ -8,6 +8,7 @@
 
 #include <algorithm>
 #include <utility>
+#include <vector>
 
 #include "third_party/base/ptr_util.h"
 #include "xfa/fde/css/cfde_cssaccelerator.h"
@@ -205,8 +206,8 @@ CFX_RetainPtr<CFDE_CSSComputedStyle> CXFA_TextParser::ComputeStyle(
   auto pStyle = CreateStyle(pParentStyle);
   CFDE_CSSAccelerator* pCSSAccel = m_pSelector->InitAccelerator();
   pCSSAccel->OnEnterTag(&tagProvider);
-  m_pSelector->ComputeStyle(&tagProvider, pContext->GetDecls(),
-                            pContext->CountDecls(), pStyle.Get());
+
+  m_pSelector->ComputeStyle(&tagProvider, pContext->GetDecls(), pStyle.Get());
   pCSSAccel->OnLeaveTag(&tagProvider);
   return pStyle;
 }
@@ -241,16 +242,13 @@ void CXFA_TextParser::ParseRichText(CFDE_XMLNode* pXMLNode,
       pNewStyle = CreateStyle(pParentStyle);
       CFDE_CSSAccelerator* pCSSAccel = m_pSelector->InitAccelerator();
       pCSSAccel->OnEnterTag(&tagProvider);
-      CFX_ArrayTemplate<CFDE_CSSDeclaration*> DeclArray;
-      int32_t iMatchedDecls =
-          m_pSelector->MatchDeclarations(&tagProvider, DeclArray);
-      const CFDE_CSSDeclaration** ppMatchDecls =
-          const_cast<const CFDE_CSSDeclaration**>(DeclArray.GetData());
-      m_pSelector->ComputeStyle(&tagProvider, ppMatchDecls, iMatchedDecls,
-                                pNewStyle.Get());
+
+      auto declArray = m_pSelector->MatchDeclarations(&tagProvider);
+      m_pSelector->ComputeStyle(&tagProvider, declArray, pNewStyle.Get());
+
       pCSSAccel->OnLeaveTag(&tagProvider);
-      if (iMatchedDecls > 0)
-        pTextContext->SetDecls(ppMatchDecls, iMatchedDecls);
+      if (!declArray.empty())
+        pTextContext->SetDecls(std::move(declArray));
 
       eDisplay = pNewStyle->GetDisplay();
     }

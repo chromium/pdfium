@@ -7,9 +7,13 @@
 #ifndef XFA_FXFA_APP_CXFA_TEXTPARSECONTEXT_H_
 #define XFA_FXFA_APP_CXFA_TEXTPARSECONTEXT_H_
 
+#include <utility>
+#include <vector>
+
+#include "third_party/base/stl_util.h"
+#include "xfa/fde/css/cfde_cssdeclaration.h"
 #include "xfa/fde/css/fde_css.h"
 
-class CFDE_CSSDeclaration;
 class CFDE_CSSComputedStyle;
 
 class CXFA_TextParseContext {
@@ -20,17 +24,15 @@ class CXFA_TextParseContext {
   void SetDisplay(FDE_CSSDisplay eDisplay) { m_eDisplay = eDisplay; }
   FDE_CSSDisplay GetDisplay() const { return m_eDisplay; }
 
-  void SetDecls(const CFDE_CSSDeclaration** ppDeclArray, int32_t iDeclCount);
-  const CFDE_CSSDeclaration** GetDecls() {
-    return const_cast<const CFDE_CSSDeclaration**>(m_ppMatchedDecls);
+  void SetDecls(std::vector<const CFDE_CSSDeclaration*>&& decl) {
+    decls_ = std::move(decl);
   }
-  uint32_t CountDecls() const { return m_dwMatchedDecls; }
+  const std::vector<const CFDE_CSSDeclaration*>& GetDecls() { return decls_; }
 
   CFX_RetainPtr<CFDE_CSSComputedStyle> m_pParentStyle;
 
  protected:
-  CFDE_CSSDeclaration** m_ppMatchedDecls;
-  uint32_t m_dwMatchedDecls;
+  std::vector<const CFDE_CSSDeclaration*> decls_;
   FDE_CSSDisplay m_eDisplay;
 };
 

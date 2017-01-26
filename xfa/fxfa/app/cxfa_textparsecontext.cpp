@@ -12,21 +12,6 @@
 
 CXFA_TextParseContext::CXFA_TextParseContext()
     : m_pParentStyle(nullptr),
-      m_ppMatchedDecls(nullptr),
-      m_dwMatchedDecls(0),
       m_eDisplay(FDE_CSSDisplay::None) {}
 
-CXFA_TextParseContext::~CXFA_TextParseContext() {
-  FX_Free(m_ppMatchedDecls);
-}
-
-void CXFA_TextParseContext::SetDecls(const CFDE_CSSDeclaration** ppDeclArray,
-                                     int32_t iDeclCount) {
-  if (iDeclCount <= 0 || !ppDeclArray)
-    return;
-
-  m_dwMatchedDecls = iDeclCount;
-  m_ppMatchedDecls = FX_Alloc(CFDE_CSSDeclaration*, iDeclCount);
-  FXSYS_memcpy(m_ppMatchedDecls, ppDeclArray,
-               iDeclCount * sizeof(CFDE_CSSDeclaration*));
-}
+CXFA_TextParseContext::~CXFA_TextParseContext() {}
