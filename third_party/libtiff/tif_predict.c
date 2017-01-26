@@ -109,7 +109,10 @@ PredictorSetupDecode(TIFF* tif)
 	TIFFDirectory* td = &tif->tif_dir;
 
 	if (!(*sp->setupdecode)(tif) || !PredictorSetup(tif))
+	{
+		(*tif->tif_cleanup)(tif);
 		return 0;
+	}
 
 	if (sp->predictor == 2) {
 		switch (td->td_bitspersample) {

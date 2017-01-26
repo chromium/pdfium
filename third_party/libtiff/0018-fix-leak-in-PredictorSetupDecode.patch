@@ -1,0 +1,39 @@
+diff --git a/third_party/libtiff/tif_pixarlog.c b/third_party/libtiff/tif_pixarlog.c
+index 80006d5b1..29535d31e 100644
+--- a/third_party/libtiff/tif_pixarlog.c
++++ b/third_party/libtiff/tif_pixarlog.c
+@@ -697,9 +697,6 @@ PixarLogSetupDecode(TIFF* tif)
+        if (sp->user_datafmt == PIXARLOGDATAFMT_UNKNOWN)
+                sp->user_datafmt = PixarLogGuessDataFmt(td);
+        if (sp->user_datafmt == PIXARLOGDATAFMT_UNKNOWN) {
+-               _TIFFfree(sp->tbuf);
+-               sp->tbuf = NULL;
+-               sp->tbuf_size = 0;
+                TIFFErrorExt(tif->tif_clientdata, module,
+                        "PixarLog compression can't handle bits depth/data format combination (depth: %d)", 
+                        td->td_bitspersample);
+@@ -707,9 +704,6 @@ PixarLogSetupDecode(TIFF* tif)
+        }
+ 
+        if (inflateInit(&sp->stream) != Z_OK) {
+-               _TIFFfree(sp->tbuf);
+-               sp->tbuf = NULL;
+-               sp->tbuf_size = 0;
+                TIFFErrorExt(tif->tif_clientdata, module, "%s", sp->stream.msg);
+                return (0);
+        } else {
+diff --git a/third_party/libtiff/tif_predict.c b/third_party/libtiff/tif_predict.c
+index 1388dde59..8975672ae 100644
+--- a/third_party/libtiff/tif_predict.c
++++ b/third_party/libtiff/tif_predict.c
+@@ -109,7 +109,10 @@ PredictorSetupDecode(TIFF* tif)
+        TIFFDirectory* td = &tif->tif_dir;
+ 
+        if (!(*sp->setupdecode)(tif) || !PredictorSetup(tif))
++       {
++               (*tif->tif_cleanup)(tif);
+                return 0;
++       }
+ 
+        if (sp->predictor == 2) {
+                switch (td->td_bitspersample) {
