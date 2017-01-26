@@ -27,30 +27,6 @@ class IPDF_StructTree {
   virtual IPDF_StructElement* GetTopElement(int i) const = 0;
 };
 
-struct CPDF_StructKid {
-  enum { Invalid, Element, PageContent, StreamContent, Object } m_Type;
-
-  union {
-    struct {
-      IPDF_StructElement* m_pElement;
-      CPDF_Dictionary* m_pDict;
-    } m_Element;
-    struct {
-      uint32_t m_PageObjNum;
-      uint32_t m_ContentId;
-    } m_PageContent;
-    struct {
-      uint32_t m_PageObjNum;
-      uint32_t m_ContentId;
-      uint32_t m_RefObjNum;
-    } m_StreamContent;
-    struct {
-      uint32_t m_PageObjNum;
-      uint32_t m_RefObjNum;
-    } m_Object;
-  };
-};
-
 class IPDF_StructElement {
  public:
   virtual ~IPDF_StructElement() {}
@@ -60,7 +36,7 @@ class IPDF_StructElement {
   virtual IPDF_StructElement* GetParent() const = 0;
   virtual CPDF_Dictionary* GetDict() const = 0;
   virtual int CountKids() const = 0;
-  virtual const CPDF_StructKid& GetKid(int index) const = 0;
+  virtual IPDF_StructElement* GetKidIfElement(int index) const = 0;
 
   virtual CPDF_Object* GetAttr(const CFX_ByteStringC& owner,
                                const CFX_ByteStringC& name,
