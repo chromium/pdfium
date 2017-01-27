@@ -19,6 +19,7 @@
 #include "fpdfsdk/javascript/ijs_runtime.h"
 #include "public/fpdf_formfill.h"
 #include "third_party/base/ptr_util.h"
+#include "third_party/base/stl_util.h"
 #include "xfa/fxfa/cxfa_eventparam.h"
 #include "xfa/fxfa/xfa_ffapp.h"
 #include "xfa/fxfa/xfa_ffdoc.h"
@@ -82,11 +83,10 @@ void CPDFXFA_Context::SetFormFillEnv(
 
 bool CPDFXFA_Context::LoadXFADoc() {
   m_nLoadStatus = FXFA_LOADSTATUS_LOADING;
-
   if (!m_pPDFDoc)
     return false;
 
-  m_XFAPageList.RemoveAll();
+  m_XFAPageList.clear();
 
   CXFA_FFApp* pApp = GetXFAApp();
   if (!pApp)
@@ -155,24 +155,27 @@ CPDFXFA_Page* CPDFXFA_Context::GetXFAPage(int page_index) {
     return nullptr;
 
   CPDFXFA_Page* pPage = nullptr;
-  int nCount = m_XFAPageList.GetSize();
+  int nCount = pdfium::CollectionSize<int>(m_XFAPageList);
   if (nCount > 0 && page_index < nCount) {
-    pPage = m_XFAPageList.GetAt(page_index);
-    if (pPage)
+    pPage = m_XFAPageList[page_index];
+    if (pPage) {
       pPage->Retain();
+      return pPage;
+    }
   } else {
     m_nPageCount = GetPageCount();
-    m_XFAPageList.SetSize(m_nPageCount);
+    m_XFAPageList.resize(m_nPageCount);
   }
-  if (pPage)
-    return pPage;
 
   pPage = new CPDFXFA_Page(this, page_index);
   if (!pPage->LoadPage()) {
     pPage->Release();
     return nullptr;
   }
-  m_XFAPageList.SetAt(page_index, pPage);
+  if (page_index >= 0 &&
+      page_index < pdfium::CollectionSize<int>(m_XFAPageList)) {
+    m_XFAPageList[page_index] = pPage;
+  }
   return pPage;
 }
 
@@ -186,15 +189,10 @@ CPDFXFA_Page* CPDFXFA_Context::GetXFAPage(CXFA_FFPageView* pPage) const {
   if (m_iDocType != DOCTYPE_DYNAMIC_XFA)
     return nullptr;
 
-  int nSize = m_XFAPageList.GetSize();
-  for (int i = 0; i < nSize; i++) {
-    CPDFXFA_Page* pTempPage = m_XFAPageList.GetAt(i);
-    if (!pTempPage)
-      continue;
-    if (pTempPage->GetXFAPageView() && pTempPage->GetXFAPageView() == pPage)
+  for (CPDFXFA_Page* pTempPage : m_XFAPageList) {
+    if (pTempPage && pTempPage->GetXFAPageView() == pPage)
       return pTempPage;
   }
-
   return nullptr;
 }
 
@@ -205,15 +203,20 @@ void CPDFXFA_Context::DeletePage(int page_index) {
   if (m_pPDFDoc)
     m_pPDFDoc->DeletePage(page_index);
 
-  if (page_index < 0 || page_index >= m_XFAPageList.GetSize())
+  if (page_index < 0 ||
+      page_index >= pdfium::CollectionSize<int>(m_XFAPageList)) {
     return;
-
-  if (CPDFXFA_Page* pPage = m_XFAPageList.GetAt(page_index))
+  }
+  if (CPDFXFA_Page* pPage = m_XFAPageList[page_index])
     pPage->Release();
 }
 
 void CPDFXFA_Context::RemovePage(CPDFXFA_Page* page) {
-  m_XFAPageList.SetAt(page->GetPageIndex(), nullptr);
+  int page_index = page->GetPageIndex();
+  if (page_index >= 0 &&
+      page_index < pdfium::CollectionSize<int>(m_XFAPageList)) {
+    m_XFAPageList[page_index] = nullptr;
+  }
 }
 
 void CPDFXFA_Context::ClearChangeMark() {

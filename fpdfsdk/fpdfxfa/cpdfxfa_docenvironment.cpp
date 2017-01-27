@@ -277,7 +277,7 @@ void CPDFXFA_DocEnvironment::PageViewEvent(CXFA_FFPageView* pPageView,
 
   for (int iPageIter = 0; iPageIter < m_pContext->GetOriginalPageCount();
        iPageIter++) {
-    CPDFXFA_Page* pPage = m_pContext->GetXFAPageList()->GetAt(iPageIter);
+    CPDFXFA_Page* pPage = (*m_pContext->GetXFAPageList())[iPageIter];
     if (!pPage)
       continue;
 

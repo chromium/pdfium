@@ -8,6 +8,7 @@
 #define FPDFSDK_FPDFXFA_CPDFXFA_CONTEXT_H_
 
 #include <memory>
+#include <vector>
 
 #include "fpdfsdk/fpdfxfa/cpdfxfa_docenvironment.h"
 #include "xfa/fxfa/xfa_ffdoc.h"
@@ -88,12 +89,11 @@ class CPDFXFA_Context : public IXFA_AppProvider {
   int GetOriginalPageCount() const { return m_nPageCount; }
   void SetOriginalPageCount(int count) {
     m_nPageCount = count;
-    m_XFAPageList.SetSize(count);
+    m_XFAPageList.resize(count);
   }
 
   LoadStatus GetLoadStatus() const { return m_nLoadStatus; }
-
-  CFX_ArrayTemplate<CPDFXFA_Page*>* GetXFAPageList() { return &m_XFAPageList; }
+  std::vector<CPDFXFA_Page*>* GetXFAPageList() { return &m_XFAPageList; }
 
  private:
   void CloseXFADoc();
@@ -106,7 +106,7 @@ class CPDFXFA_Context : public IXFA_AppProvider {
   CXFA_FFDocView* m_pXFADocView;                // not owned.
   std::unique_ptr<CXFA_FFApp> m_pXFAApp;
   std::unique_ptr<CJS_Runtime> m_pRuntime;
-  CFX_ArrayTemplate<CPDFXFA_Page*> m_XFAPageList;
+  std::vector<CPDFXFA_Page*> m_XFAPageList;
   LoadStatus m_nLoadStatus;
   int m_nPageCount;
 
