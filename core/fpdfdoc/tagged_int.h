@@ -18,27 +18,17 @@
 class CPDF_StructElement;
 
 struct CPDF_StructKid {
+  CPDF_StructKid();
+  CPDF_StructKid(const CPDF_StructKid& that);
+  ~CPDF_StructKid();
+
   enum { Invalid, Element, PageContent, StreamContent, Object } m_Type;
 
-  union {
-    struct {
-      CPDF_StructElement* m_pElement;
-      CPDF_Dictionary* m_pDict;
-    } m_Element;
-    struct {
-      uint32_t m_PageObjNum;
-      uint32_t m_ContentId;
-    } m_PageContent;
-    struct {
-      uint32_t m_PageObjNum;
-      uint32_t m_ContentId;
-      uint32_t m_RefObjNum;
-    } m_StreamContent;
-    struct {
-      uint32_t m_PageObjNum;
-      uint32_t m_RefObjNum;
-    } m_Object;
-  };
+  CFX_RetainPtr<CPDF_StructElement> m_pElement;  // For Element.
+  CPDF_Dictionary* m_pDict;                      // For Element.
+  uint32_t m_PageObjNum;  // For PageContent, StreamContent, Object.
+  uint32_t m_RefObjNum;   // For StreamContent, Object.
+  uint32_t m_ContentId;   // For PageContent, StreamContent.
 };
 
 class CPDF_StructTree final : public IPDF_StructTree {
@@ -51,11 +41,12 @@ class CPDF_StructTree final : public IPDF_StructTree {
   IPDF_StructElement* GetTopElement(int i) const override;
 
   void LoadPageTree(const CPDF_Dictionary* pPageDict);
-  CPDF_StructElement* AddPageNode(
+  CFX_RetainPtr<CPDF_StructElement> AddPageNode(
       CPDF_Dictionary* pElement,
-      std::map<CPDF_Dictionary*, CPDF_StructElement*>& map,
+      std::map<CPDF_Dictionary*, CFX_RetainPtr<CPDF_StructElement>>* map,
       int nLevel = 0);
-  bool AddTopLevelNode(CPDF_Dictionary* pDict, CPDF_StructElement* pElement);
+  bool AddTopLevelNode(CPDF_Dictionary* pDict,
+                       const CFX_RetainPtr<CPDF_StructElement>& pElement);
 
  protected:
   const CPDF_Dictionary* const m_pTreeRoot;
@@ -66,11 +57,11 @@ class CPDF_StructTree final : public IPDF_StructTree {
   friend class CPDF_StructElement;
 };
 
-class CPDF_StructElement final : public IPDF_StructElement {
+class CPDF_StructElement final : public CFX_Retainable,
+                                 public IPDF_StructElement {
  public:
-  CPDF_StructElement(CPDF_StructTree* pTree,
-                     CPDF_StructElement* pParent,
-                     CPDF_Dictionary* pDict);
+  template <typename T, typename... Args>
+  friend CFX_RetainPtr<T> pdfium::MakeRetain(Args&&... args);
 
   // IPDF_StructElement
   IPDF_StructTree* GetTree() const override;
@@ -112,13 +103,12 @@ class CPDF_StructElement final : public IPDF_StructElement {
                        bool bInheritable,
                        int subindex);
 
-  CPDF_StructElement* Retain();
-  void Release();
-
- protected:
+ private:
+  CPDF_StructElement(CPDF_StructTree* pTree,
+                     CPDF_StructElement* pParent,
+                     CPDF_Dictionary* pDict);
   ~CPDF_StructElement() override;
 
-  int m_RefCount;
   CPDF_StructTree* const m_pTree;
   CPDF_StructElement* const m_pParent;
   CPDF_Dictionary* const m_pDict;

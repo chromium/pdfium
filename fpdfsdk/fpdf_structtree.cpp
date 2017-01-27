@@ -4,6 +4,8 @@
 
 #include "public/fpdf_structtree.h"
 
+#include <memory>
+
 #include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfdoc/fpdf_tagged.h"
@@ -30,7 +32,7 @@ DLLEXPORT FPDF_STRUCTTREE STDCALL FPDF_StructTree_GetForPage(FPDF_PAGE page) {
 }
 
 DLLEXPORT void STDCALL FPDF_StructTree_Close(FPDF_STRUCTTREE struct_tree) {
-  delete ToStructTree(struct_tree);
+  std::unique_ptr<IPDF_StructTree>(ToStructTree(struct_tree));
 }
 
 DLLEXPORT int STDCALL
