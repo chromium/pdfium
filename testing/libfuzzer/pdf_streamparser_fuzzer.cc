@@ -10,7 +10,8 @@
 
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   CPDF_StreamParser parser(data, size);
-  while (std::unique_ptr<CPDF_Object> pObj = parser.ReadNextObject(true, 0))
+  while (std::unique_ptr<CPDF_Object> pObj =
+             parser.ReadNextObject(true, false, 0))
     continue;
 
   return 0;

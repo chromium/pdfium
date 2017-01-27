@@ -29,7 +29,7 @@
 
 namespace {
 
-const uint32_t kMaxNestedArrayLevel = 512;
+const uint32_t kMaxNestedParsingLevel = 512;
 const uint32_t kMaxWordBuffer = 256;
 const FX_STRSIZE kMaxStringLength = 32767;
 
@@ -255,7 +255,7 @@ CPDF_StreamParser::SyntaxType CPDF_StreamParser::ParseNextElement() {
 
   if (PDFCharIsDelimiter(ch) && ch != '/') {
     m_Pos--;
-    m_pLastObj = ReadNextObject(false, 0);
+    m_pLastObj = ReadNextObject(false, false, 0);
     return Others;
   }
 
@@ -305,10 +305,12 @@ CPDF_StreamParser::SyntaxType CPDF_StreamParser::ParseNextElement() {
 
 std::unique_ptr<CPDF_Object> CPDF_StreamParser::ReadNextObject(
     bool bAllowNestedArray,
-    uint32_t dwInArrayLevel) {
+    bool bInArray,
+    uint32_t dwRecursionLevel) {
   bool bIsNumber;
+  // Must get the next word before returning to avoid infinite loops.
   GetNextWord(bIsNumber);
-  if (!m_WordSize)
+  if (!m_WordSize || dwRecursionLevel > kMaxNestedParsingLevel)
     return nullptr;
 
   if (bIsNumber) {
@@ -344,7 +346,8 @@ std::unique_ptr<CPDF_Object> CPDF_StreamParser::ReadNextObject(
 
       CFX_ByteString key =
           PDF_NameDecode(CFX_ByteStringC(m_WordBuffer + 1, m_WordSize - 1));
-      std::unique_ptr<CPDF_Object> pObj = ReadNextObject(true, 0);
+      std::unique_ptr<CPDF_Object> pObj =
+          ReadNextObject(true, bInArray, dwRecursionLevel + 1);
       if (!pObj)
         return nullptr;
 
@@ -355,15 +358,13 @@ std::unique_ptr<CPDF_Object> CPDF_StreamParser::ReadNextObject(
   }
 
   if (first_char == '[') {
-    if ((!bAllowNestedArray && dwInArrayLevel) ||
-        dwInArrayLevel > kMaxNestedArrayLevel) {
+    if ((!bAllowNestedArray && bInArray))
       return nullptr;
-    }
 
     auto pArray = pdfium::MakeUnique<CPDF_Array>();
     while (1) {
       std::unique_ptr<CPDF_Object> pObj =
-          ReadNextObject(bAllowNestedArray, dwInArrayLevel + 1);
+          ReadNextObject(bAllowNestedArray, true, dwRecursionLevel + 1);
       if (pObj) {
         pArray->Add(std::move(pObj));
         continue;

@@ -35,7 +35,8 @@ class CPDF_StreamParser {
   void SetPos(uint32_t pos) { m_Pos = pos; }
   std::unique_ptr<CPDF_Object> GetObject() { return std::move(m_pLastObj); }
   std::unique_ptr<CPDF_Object> ReadNextObject(bool bAllowNestedArray,
-                                              uint32_t dwInArrayLevel);
+                                              bool bInArray,
+                                              uint32_t dwRecursionLevel);
   std::unique_ptr<CPDF_Stream> ReadInlineStream(
       CPDF_Document* pDoc,
       std::unique_ptr<CPDF_Dictionary> pDict,
