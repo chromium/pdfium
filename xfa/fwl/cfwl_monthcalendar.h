@@ -8,6 +8,7 @@
 #define XFA_FWL_CFWL_MONTHCALENDAR_H_
 
 #include <memory>
+#include <vector>
 
 #include "xfa/fgas/localization/fgas_datetime.h"
 #include "xfa/fwl/cfwl_event.h"
@@ -165,7 +166,7 @@ class CFWL_MonthCalendar : public CFWL_Widget {
   CFX_WideString m_wsHead;
   CFX_WideString m_wsToday;
   std::unique_ptr<CFX_DateTime> m_pDateTime;
-  CFX_ArrayTemplate<DATEINFO*> m_arrDates;
+  std::vector<std::unique_ptr<DATEINFO>> m_arrDates;
   int32_t m_iCurYear;
   int32_t m_iCurMonth;
   int32_t m_iYear;
@@ -179,7 +180,7 @@ class CFWL_MonthCalendar : public CFWL_Widget {
   CFX_SizeF m_szHead;
   CFX_SizeF m_szCell;
   CFX_SizeF m_szToday;
-  CFX_ArrayTemplate<int32_t> m_arrSelDays;
+  std::vector<int32_t> m_arrSelDays;
   CFX_RectF m_rtClient;
   bool m_bFlag;
 };

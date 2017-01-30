@@ -320,17 +320,18 @@ CFWL_Widget* CFWL_WidgetMgr::GetRadioButtonGroupHeader(
   return nullptr;
 }
 
-void CFWL_WidgetMgr::GetSameGroupRadioButton(
-    CFWL_Widget* pRadioButton,
-    CFX_ArrayTemplate<CFWL_Widget*>& group) const {
+std::vector<CFWL_Widget*> CFWL_WidgetMgr::GetSameGroupRadioButton(
+    CFWL_Widget* pRadioButton) const {
   CFWL_Widget* pFirst = GetFirstSiblingWidget(pRadioButton);
   if (!pFirst)
     pFirst = pRadioButton;
 
-  int32_t iGroup = CountRadioButtonGroup(pFirst);
-  if (iGroup < 2)
-    return;
-  group.Add(GetRadioButtonGroupHeader(pRadioButton));
+  if (CountRadioButtonGroup(pFirst) < 2)
+    return std::vector<CFWL_Widget*>();
+
+  std::vector<CFWL_Widget*> group;
+  group.push_back(GetRadioButtonGroupHeader(pRadioButton));
+  return group;
 }
 
 CFWL_Widget* CFWL_WidgetMgr::GetDefaultButton(CFWL_Widget* pParent) const {

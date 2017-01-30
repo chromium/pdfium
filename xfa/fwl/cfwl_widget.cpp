@@ -8,7 +8,9 @@
 
 #include <algorithm>
 #include <utility>
+#include <vector>
 
+#include "third_party/base/stl_util.h"
 #include "xfa/fde/tto/fde_textout.h"
 #include "xfa/fwl/cfwl_app.h"
 #include "xfa/fwl/cfwl_combobox.h"
@@ -220,19 +222,18 @@ CFX_Matrix CFWL_Widget::GetMatrix() {
     return CFX_Matrix();
 
   CFWL_Widget* parent = GetParent();
-  CFX_ArrayTemplate<CFWL_Widget*> parents;
+  std::vector<CFWL_Widget*> parents;
   while (parent) {
-    parents.Add(parent);
+    parents.push_back(parent);
     parent = parent->GetParent();
   }
 
   CFX_Matrix matrix;
   CFX_Matrix ctmOnParent;
   CFX_RectF rect;
-  int32_t count = parents.GetSize();
+  int32_t count = pdfium::CollectionSize<int32_t>(parents);
   for (int32_t i = count - 2; i >= 0; i--) {
-    parent = parents.GetAt(i);
-
+    parent = parents[i];
     if (parent->m_pProperties)
       ctmOnParent.SetIdentity();
     rect = parent->GetWidgetRect();
@@ -242,8 +243,7 @@ CFX_Matrix CFWL_Widget::GetMatrix() {
   CFX_Matrix m;
   m.SetIdentity();
   matrix.Concat(m, true);
-  parents.RemoveAll();
-
+  parents.clear();
   return matrix;
 }
 

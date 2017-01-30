@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <memory>
 #include <utility>
+#include <vector>
 
 #include "third_party/base/ptr_util.h"
 #include "xfa/fde/tto/fde_textout.h"
@@ -187,12 +188,10 @@ void CFWL_CheckBox::NextStates() {
         FWL_STATE_CKB_Unchecked) {
       CFWL_WidgetMgr* pWidgetMgr = GetOwnerApp()->GetWidgetMgr();
       if (!pWidgetMgr->IsFormDisabled()) {
-        CFX_ArrayTemplate<CFWL_Widget*> radioarr;
-        pWidgetMgr->GetSameGroupRadioButton(this, radioarr);
-        CFWL_CheckBox* pCheckBox = nullptr;
-        int32_t iCount = radioarr.GetSize();
-        for (int32_t i = 0; i < iCount; i++) {
-          pCheckBox = static_cast<CFWL_CheckBox*>(radioarr[i]);
+        std::vector<CFWL_Widget*> radioarr =
+            pWidgetMgr->GetSameGroupRadioButton(this);
+        for (const auto& pWidget : radioarr) {
+          CFWL_CheckBox* pCheckBox = static_cast<CFWL_CheckBox*>(pWidget);
           if (pCheckBox != this &&
               pCheckBox->GetStates() & FWL_STATE_CKB_Checked) {
             pCheckBox->SetCheckState(0);
