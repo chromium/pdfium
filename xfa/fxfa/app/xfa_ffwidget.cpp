@@ -2048,6 +2048,4 @@ void XFA_DrawBox(CXFA_Box box,
 
 CXFA_CalcData::CXFA_CalcData() : m_iRefCount(0) {}
 
-CXFA_CalcData::~CXFA_CalcData() {
-  m_Globals.RemoveAll();
-}
+CXFA_CalcData::~CXFA_CalcData() {}

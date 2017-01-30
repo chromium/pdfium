@@ -678,9 +678,8 @@ int32_t CXFA_WidgetAcc::ExecuteScript(CXFA_Script script,
           pRefNode->SetUserData(XFA_CalcData, pGlobalData,
                                 &gs_XFADeleteCalcData);
         }
-        if (pGlobalData->m_Globals.Find(this) < 0) {
-          pGlobalData->m_Globals.Add(this);
-        }
+        if (!pdfium::ContainsValue(pGlobalData->m_Globals, this))
+          pGlobalData->m_Globals.push_back(this);
       }
     }
   }

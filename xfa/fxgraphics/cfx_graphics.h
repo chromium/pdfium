@@ -8,6 +8,7 @@
 #define XFA_FXGRAPHICS_CFX_GRAPHICS_H_
 
 #include <memory>
+#include <vector>
 
 #include "core/fxcrt/fx_system.h"
 #include "core/fxge/cfx_fxgedevice.h"
@@ -233,7 +234,7 @@ class CFX_Graphics {
                          CFX_RectF& rect);
 
   CFX_RenderDevice* m_renderDevice;
-  CFX_ArrayTemplate<TInfo*> m_infoStack;
+  std::vector<std::unique_ptr<TInfo>> m_infoStack;
   std::unique_ptr<CAGG_Graphics> m_aggGraphics;
   friend class CAGG_Graphics;
 };

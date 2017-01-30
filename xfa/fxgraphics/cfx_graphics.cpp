@@ -630,30 +630,25 @@ FWL_Error CFX_Graphics::EnableAntialiasing(bool isAntialiasing) {
 }
 
 FWL_Error CFX_Graphics::SaveGraphState() {
-  if (m_type == FX_CONTEXT_Device && m_renderDevice) {
-    m_renderDevice->SaveState();
-    m_infoStack.Add(new TInfo(m_info));
-    return FWL_Error::Succeeded;
-  }
-  return FWL_Error::PropertyInvalid;
+  if (m_type != FX_CONTEXT_Device || !m_renderDevice)
+    return FWL_Error::PropertyInvalid;
+
+  m_renderDevice->SaveState();
+  m_infoStack.push_back(pdfium::MakeUnique<TInfo>(m_info));
+  return FWL_Error::Succeeded;
 }
 
 FWL_Error CFX_Graphics::RestoreGraphState() {
-  if (m_type == FX_CONTEXT_Device && m_renderDevice) {
-    m_renderDevice->RestoreState(false);
-    int32_t size = m_infoStack.GetSize();
-    if (size <= 0) {
-      return FWL_Error::IntermediateValueInvalid;
-    }
-    int32_t topIndex = size - 1;
-    std::unique_ptr<TInfo> info(m_infoStack.GetAt(topIndex));
-    if (!info)
-      return FWL_Error::IntermediateValueInvalid;
-    m_info = *info;
-    m_infoStack.RemoveAt(topIndex);
-    return FWL_Error::Succeeded;
-  }
-  return FWL_Error::PropertyInvalid;
+  if (m_type != FX_CONTEXT_Device || !m_renderDevice)
+    return FWL_Error::PropertyInvalid;
+
+  m_renderDevice->RestoreState(false);
+  if (m_infoStack.empty() || !m_infoStack.back())
+    return FWL_Error::IntermediateValueInvalid;
+
+  m_info = *m_infoStack.back();
+  m_infoStack.pop_back();
+  return FWL_Error::Succeeded;
 }
 
 FWL_Error CFX_Graphics::GetLineCap(CFX_GraphStateData::LineCap& lineCap) const {

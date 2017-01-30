@@ -636,11 +636,12 @@ void CXFA_FFDocView::AddCalculateWidgetAcc(CXFA_WidgetAcc* pWidgetAcc) {
 }
 
 void CXFA_FFDocView::AddCalculateNodeNotify(CXFA_Node* pNodeChange) {
-  CXFA_CalcData* pGlobalData =
-      (CXFA_CalcData*)pNodeChange->GetUserData(XFA_CalcData);
-  int32_t iCount = pGlobalData ? pGlobalData->m_Globals.GetSize() : 0;
-  for (int32_t i = 0; i < iCount; i++) {
-    CXFA_WidgetAcc* pResultAcc = pGlobalData->m_Globals[i];
+  auto pGlobalData =
+      static_cast<CXFA_CalcData*>(pNodeChange->GetUserData(XFA_CalcData));
+  if (!pGlobalData)
+    return;
+
+  for (const auto& pResultAcc : pGlobalData->m_Globals) {
     if (!pResultAcc->GetNode()->HasRemovedChildren())
       AddCalculateWidgetAcc(pResultAcc);
   }

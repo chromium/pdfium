@@ -37,7 +37,7 @@ class CXFA_CalcData {
   CXFA_CalcData();
   ~CXFA_CalcData();
 
-  CFX_ArrayTemplate<CXFA_WidgetAcc*> m_Globals;
+  std::vector<CXFA_WidgetAcc*> m_Globals;
   int32_t m_iRefCount;
 };
 
