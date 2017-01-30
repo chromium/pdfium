@@ -7,10 +7,10 @@
 #ifndef CORE_FPDFAPI_RENDER_CPDF_RENDEROPTIONS_H_
 #define CORE_FPDFAPI_RENDER_CPDF_RENDEROPTIONS_H_
 
+#include "core/fpdfdoc/cpdf_occontext.h"
+#include "core/fxcrt/cfx_retain_ptr.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxge/fx_dib.h"
-
-class CPDF_OCContext;
 
 #define RENDER_COLOR_NORMAL 0
 #define RENDER_COLOR_GRAY 1
@@ -37,6 +37,8 @@ class CPDF_RenderOptions {
  public:
   CPDF_RenderOptions();
   CPDF_RenderOptions(const CPDF_RenderOptions& rhs);
+  ~CPDF_RenderOptions();
+
   FX_ARGB TranslateColor(FX_ARGB argb) const;
 
   int m_ColorMode;
@@ -45,10 +47,10 @@ class CPDF_RenderOptions {
   uint32_t m_Flags;
   int m_Interpolation;
   uint32_t m_AddFlags;
-  CPDF_OCContext* m_pOCContext;
   uint32_t m_dwLimitCacheSize;
   int m_HalftoneLimit;
   bool m_bDrawAnnots;
+  CFX_RetainPtr<CPDF_OCContext> m_pOCContext;
 };
 
 #endif  // CORE_FPDFAPI_RENDER_CPDF_RENDEROPTIONS_H_

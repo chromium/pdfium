@@ -94,7 +94,7 @@ void RenderPageImpl(CPDF_PageRenderContext* pContext,
       (flags & FPDF_PRINTING) ? CPDF_OCContext::Print : CPDF_OCContext::View;
   pContext->m_pOptions->m_AddFlags = flags >> 8;
   pContext->m_pOptions->m_pOCContext =
-      new CPDF_OCContext(pPage->m_pDocument, usage);
+      pdfium::MakeRetain<CPDF_OCContext>(pPage->m_pDocument, usage);
 
   pContext->m_pDevice->SaveState();
   pContext->m_pDevice->SetClip_Rect(clipping_rect);

@@ -15,7 +15,4 @@
 
 CPDF_PageRenderContext::CPDF_PageRenderContext() {}
 
-CPDF_PageRenderContext::~CPDF_PageRenderContext() {
-  if (m_pOptions)
-    delete m_pOptions->m_pOCContext;
-}
+CPDF_PageRenderContext::~CPDF_PageRenderContext() {}

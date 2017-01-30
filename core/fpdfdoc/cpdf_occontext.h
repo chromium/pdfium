@@ -9,6 +9,7 @@
 
 #include <unordered_map>
 
+#include "core/fxcrt/cfx_retain_ptr.h"
 #include "core/fxcrt/fx_string.h"
 
 class CPDF_Array;
@@ -16,17 +17,20 @@ class CPDF_Dictionary;
 class CPDF_Document;
 class CPDF_PageObject;
 
-class CPDF_OCContext {
+class CPDF_OCContext : public CFX_Retainable {
  public:
-  enum UsageType { View = 0, Design, Print, Export };
+  template <typename T, typename... Args>
+  friend CFX_RetainPtr<T> pdfium::MakeRetain(Args&&... args);
 
-  CPDF_OCContext(CPDF_Document* pDoc, UsageType eUsageType);
-  ~CPDF_OCContext();
+  enum UsageType { View = 0, Design, Print, Export };
 
   bool CheckOCGVisible(const CPDF_Dictionary* pOCGDict);
   bool CheckObjectVisible(const CPDF_PageObject* pObj);
 
  private:
+  CPDF_OCContext(CPDF_Document* pDoc, UsageType eUsageType);
+  ~CPDF_OCContext() override;
+
   bool LoadOCGStateFromConfig(const CFX_ByteString& csConfig,
                               const CPDF_Dictionary* pOCGDict) const;
   bool LoadOCGState(const CPDF_Dictionary* pOCGDict) const;

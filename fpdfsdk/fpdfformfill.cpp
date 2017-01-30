@@ -127,12 +127,13 @@ void FFLCommon(FPDF_FORMHANDLE hHandle,
   options.m_bDrawAnnots = flags & FPDF_ANNOT;
 
 #ifdef PDF_ENABLE_XFA
-  options.m_pOCContext = new CPDF_OCContext(pPDFDoc, CPDF_OCContext::View);
+  options.m_pOCContext =
+      pdfium::MakeRetain<CPDF_OCContext>(pPDFDoc, CPDF_OCContext::View);
   if (CPDFSDK_PageView* pPageView = pFormFillEnv->GetPageView(pPage, true))
     pPageView->PageView_OnDraw(pDevice.get(), &matrix, &options, clip);
 #else   // PDF_ENABLE_XFA
-  options.m_pOCContext =
-      new CPDF_OCContext(pPage->m_pDocument, CPDF_OCContext::View);
+  options.m_pOCContext = pdfium::MakeRetain<CPDF_OCContext>(
+      pPage->m_pDocument, CPDF_OCContext::View);
   if (CPDFSDK_PageView* pPageView = FormHandleToPageView(hHandle, pPage))
     pPageView->PageView_OnDraw(pDevice.get(), &matrix, &options);
 #endif  // PDF_ENABLE_XFA
@@ -142,8 +143,6 @@ void FFLCommon(FPDF_FORMHANDLE hHandle,
   pDevice->Flush();
   CFXBitmapFromFPDFBitmap(bitmap)->UnPreMultiply();
 #endif
-  delete options.m_pOCContext;
-  options.m_pOCContext = nullptr;
 }
 
 }  // namespace

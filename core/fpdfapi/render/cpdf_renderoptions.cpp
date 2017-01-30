@@ -11,7 +11,6 @@ CPDF_RenderOptions::CPDF_RenderOptions()
       m_Flags(RENDER_CLEARTYPE),
       m_Interpolation(0),
       m_AddFlags(0),
-      m_pOCContext(nullptr),
       m_dwLimitCacheSize(1024 * 1024 * 100),
       m_HalftoneLimit(-1),
       m_bDrawAnnots(false) {}
@@ -23,10 +22,12 @@ CPDF_RenderOptions::CPDF_RenderOptions(const CPDF_RenderOptions& rhs)
       m_Flags(rhs.m_Flags),
       m_Interpolation(rhs.m_Interpolation),
       m_AddFlags(rhs.m_AddFlags),
-      m_pOCContext(rhs.m_pOCContext),
       m_dwLimitCacheSize(rhs.m_dwLimitCacheSize),
       m_HalftoneLimit(rhs.m_HalftoneLimit),
-      m_bDrawAnnots(rhs.m_bDrawAnnots) {}
+      m_bDrawAnnots(rhs.m_bDrawAnnots),
+      m_pOCContext(rhs.m_pOCContext) {}
+
+CPDF_RenderOptions::~CPDF_RenderOptions() {}
 
 FX_ARGB CPDF_RenderOptions::TranslateColor(FX_ARGB argb) const {
   if (m_ColorMode == RENDER_COLOR_NORMAL)
