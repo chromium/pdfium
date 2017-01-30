@@ -9,6 +9,7 @@
 
 #include <memory>
 #include <set>
+#include <vector>
 
 #include "fpdfsdk/formfiller/cffl_formfiller.h"
 
@@ -37,7 +38,7 @@ class CFFL_ListBox : public CFFL_FormFiller {
  private:
   std::unique_ptr<CBA_FontMap> m_pFontMap;
   std::set<int> m_OriginSelections;
-  CFX_ArrayTemplate<int> m_State;
+  std::vector<int> m_State;
 };
 
 #endif  // FPDFSDK_FORMFILLER_CFFL_LISTBOX_H_

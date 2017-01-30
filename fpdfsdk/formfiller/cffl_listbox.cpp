@@ -167,20 +167,25 @@ void CFFL_ListBox::GetActionData(CPDFSDK_PageView* pPageView,
 void CFFL_ListBox::SaveState(CPDFSDK_PageView* pPageView) {
   ASSERT(pPageView);
 
-  if (CPWL_ListBox* pListBox = (CPWL_ListBox*)GetPDFWindow(pPageView, false)) {
-    for (int32_t i = 0, sz = pListBox->GetCount(); i < sz; i++) {
-      if (pListBox->IsItemSelected(i)) {
-        m_State.Add(i);
-      }
-    }
+  CPWL_ListBox* pListBox =
+      static_cast<CPWL_ListBox*>(GetPDFWindow(pPageView, false));
+  if (!pListBox)
+    return;
+
+  for (int32_t i = 0, sz = pListBox->GetCount(); i < sz; i++) {
+    if (pListBox->IsItemSelected(i))
+      m_State.push_back(i);
   }
 }
 
 void CFFL_ListBox::RestoreState(CPDFSDK_PageView* pPageView) {
-  if (CPWL_ListBox* pListBox = (CPWL_ListBox*)GetPDFWindow(pPageView, false)) {
-    for (int i = 0, sz = m_State.GetSize(); i < sz; i++)
-      pListBox->Select(m_State[i]);
-  }
+  CPWL_ListBox* pListBox =
+      static_cast<CPWL_ListBox*>(GetPDFWindow(pPageView, false));
+  if (!pListBox)
+    return;
+
+  for (const auto& item : m_State)
+    pListBox->Select(item);
 }
 
 CPWL_Wnd* CFFL_ListBox::ResetPDFWindow(CPDFSDK_PageView* pPageView,
