@@ -29,6 +29,7 @@
 #include "fpdfsdk/pdfwindow/PWL_Edit.h"
 #include "fpdfsdk/pdfwindow/PWL_EditCtrl.h"
 #include "third_party/base/ptr_util.h"
+#include "third_party/base/stl_util.h"
 
 namespace {
 
@@ -274,8 +275,8 @@ CFX_Edit_Refresh::CFX_Edit_Refresh() {}
 CFX_Edit_Refresh::~CFX_Edit_Refresh() {}
 
 void CFX_Edit_Refresh::BeginRefresh() {
-  m_RefreshRects.Empty();
-  m_OldLineRects = m_NewLineRects;
+  m_RefreshRects.Clear();
+  m_OldLineRects = std::move(m_NewLineRects);
 }
 
 void CFX_Edit_Refresh::Push(const CPVT_WordRange& linerange,
@@ -306,7 +307,7 @@ const CFX_Edit_RectArray* CFX_Edit_Refresh::GetRefreshRects() const {
 }
 
 void CFX_Edit_Refresh::EndRefresh() {
-  m_RefreshRects.Empty();
+  m_RefreshRects.Clear();
 }
 
 CFX_Edit_Undo::CFX_Edit_Undo(int32_t nBufsize)
@@ -326,55 +327,43 @@ bool CFX_Edit_Undo::CanUndo() const {
 
 void CFX_Edit_Undo::Undo() {
   m_bWorking = true;
-
   if (m_nCurUndoPos > 0) {
-    IFX_Edit_UndoItem* pItem = m_UndoItemStack.GetAt(m_nCurUndoPos - 1);
-    pItem->Undo();
-
+    m_UndoItemStack[m_nCurUndoPos - 1]->Undo();
     m_nCurUndoPos--;
     m_bModified = (m_nCurUndoPos != 0);
   }
-
   m_bWorking = false;
 }
 
 bool CFX_Edit_Undo::CanRedo() const {
-  return m_nCurUndoPos < m_UndoItemStack.GetSize();
+  return m_nCurUndoPos < m_UndoItemStack.size();
 }
 
 void CFX_Edit_Undo::Redo() {
   m_bWorking = true;
-
-  int32_t nStackSize = m_UndoItemStack.GetSize();
-
-  if (m_nCurUndoPos < nStackSize) {
-    IFX_Edit_UndoItem* pItem = m_UndoItemStack.GetAt(m_nCurUndoPos);
-    pItem->Redo();
-
+  if (m_nCurUndoPos < m_UndoItemStack.size()) {
+    m_UndoItemStack[m_nCurUndoPos]->Redo();
     m_nCurUndoPos++;
-    m_bModified = (m_nCurUndoPos != 0);
+    m_bModified = true;
   }
-
   m_bWorking = false;
 }
 
-void CFX_Edit_Undo::AddItem(IFX_Edit_UndoItem* pItem) {
+void CFX_Edit_Undo::AddItem(std::unique_ptr<IFX_Edit_UndoItem> pItem) {
   ASSERT(!m_bWorking);
   ASSERT(pItem);
   ASSERT(m_nBufSize > 1);
-
-  if (m_nCurUndoPos < m_UndoItemStack.GetSize())
+  if (m_nCurUndoPos < m_UndoItemStack.size())
     RemoveTails();
 
-  if (m_UndoItemStack.GetSize() >= m_nBufSize) {
+  if (m_UndoItemStack.size() >= m_nBufSize) {
     RemoveHeads();
     m_bVirgin = false;
   }
 
-  m_UndoItemStack.Add(pItem);
-  m_nCurUndoPos = m_UndoItemStack.GetSize();
-
-  m_bModified = (m_nCurUndoPos != 0);
+  m_UndoItemStack.push_back(std::move(pItem));
+  m_nCurUndoPos = m_UndoItemStack.size();
+  m_bModified = true;
 }
 
 bool CFX_Edit_Undo::IsModified() const {
@@ -382,33 +371,26 @@ bool CFX_Edit_Undo::IsModified() const {
 }
 
 void CFX_Edit_Undo::RemoveHeads() {
-  ASSERT(m_UndoItemStack.GetSize() > 1);
-
-  delete m_UndoItemStack.GetAt(0);
-  m_UndoItemStack.RemoveAt(0);
+  ASSERT(m_UndoItemStack.size() > 1);
+  m_UndoItemStack.pop_front();
 }
 
 void CFX_Edit_Undo::RemoveTails() {
-  for (int32_t i = m_UndoItemStack.GetSize() - 1; i >= m_nCurUndoPos; i--) {
-    delete m_UndoItemStack.GetAt(i);
-    m_UndoItemStack.RemoveAt(i);
-  }
+  while (m_UndoItemStack.size() > m_nCurUndoPos)
+    m_UndoItemStack.pop_back();
 }
 
 void CFX_Edit_Undo::Reset() {
-  for (int32_t i = 0, sz = m_UndoItemStack.GetSize(); i < sz; i++) {
-    delete m_UndoItemStack.GetAt(i);
-  }
+  m_UndoItemStack.clear();
   m_nCurUndoPos = 0;
-  m_UndoItemStack.RemoveAll();
 }
 
 CFX_Edit_UndoItem::CFX_Edit_UndoItem() : m_bFirst(true), m_bLast(true) {}
 
 CFX_Edit_UndoItem::~CFX_Edit_UndoItem() {}
 
-CFX_WideString CFX_Edit_UndoItem::GetUndoTitle() {
-  return L"";
+CFX_WideString CFX_Edit_UndoItem::GetUndoTitle() const {
+  return CFX_WideString();
 }
 
 void CFX_Edit_UndoItem::SetFirst(bool bFirst) {
@@ -426,49 +408,36 @@ bool CFX_Edit_UndoItem::IsLast() {
 CFX_Edit_GroupUndoItem::CFX_Edit_GroupUndoItem(const CFX_WideString& sTitle)
     : m_sTitle(sTitle) {}
 
-CFX_Edit_GroupUndoItem::~CFX_Edit_GroupUndoItem() {
-  for (int i = 0, sz = m_Items.GetSize(); i < sz; i++) {
-    delete m_Items[i];
-  }
+CFX_Edit_GroupUndoItem::~CFX_Edit_GroupUndoItem() {}
 
-  m_Items.RemoveAll();
-}
-
-void CFX_Edit_GroupUndoItem::AddUndoItem(CFX_Edit_UndoItem* pUndoItem) {
+void CFX_Edit_GroupUndoItem::AddUndoItem(
+    std::unique_ptr<CFX_Edit_UndoItem> pUndoItem) {
   pUndoItem->SetFirst(false);
   pUndoItem->SetLast(false);
-
-  m_Items.Add(pUndoItem);
-
   if (m_sTitle.IsEmpty())
     m_sTitle = pUndoItem->GetUndoTitle();
+
+  m_Items.push_back(std::move(pUndoItem));
 }
 
 void CFX_Edit_GroupUndoItem::UpdateItems() {
-  if (m_Items.GetSize() > 0) {
-    CFX_Edit_UndoItem* pFirstItem = m_Items[0];
-    pFirstItem->SetFirst(true);
-
-    CFX_Edit_UndoItem* pLastItem = m_Items[m_Items.GetSize() - 1];
-    pLastItem->SetLast(true);
+  if (!m_Items.empty()) {
+    m_Items.front()->SetFirst(true);
+    m_Items.back()->SetLast(true);
   }
 }
 
 void CFX_Edit_GroupUndoItem::Undo() {
-  for (int i = m_Items.GetSize() - 1; i >= 0; i--) {
-    CFX_Edit_UndoItem* pUndoItem = m_Items[i];
-    pUndoItem->Undo();
-  }
+  for (auto iter = m_Items.rbegin(); iter != m_Items.rend(); ++iter)
+    (*iter)->Undo();
 }
 
 void CFX_Edit_GroupUndoItem::Redo() {
-  for (int i = 0, sz = m_Items.GetSize(); i < sz; i++) {
-    CFX_Edit_UndoItem* pUndoItem = m_Items[i];
-    pUndoItem->Redo();
-  }
+  for (auto iter = m_Items.begin(); iter != m_Items.end(); ++iter)
+    (*iter)->Redo();
 }
 
-CFX_WideString CFX_Edit_GroupUndoItem::GetUndoTitle() {
+CFX_WideString CFX_Edit_GroupUndoItem::GetUndoTitle() const {
   return m_sTitle;
 }
 
@@ -2020,167 +1989,139 @@ bool CFX_Edit::InsertWord(uint16_t word,
                           const CPVT_WordProps* pWordProps,
                           bool bAddUndo,
                           bool bPaint) {
-  if (IsTextOverflow())
+  if (IsTextOverflow() || !m_pVT->IsValid())
     return false;
 
-  if (m_pVT->IsValid()) {
-    m_pVT->UpdateWordPlace(m_wpCaret);
+  m_pVT->UpdateWordPlace(m_wpCaret);
+  SetCaret(m_pVT->InsertWord(m_wpCaret, word,
+                             GetCharSetFromUnicode(word, charset), pWordProps));
+  m_SelState.Set(m_wpCaret, m_wpCaret);
+  if (m_wpCaret == m_wpOldCaret)
+    return false;
 
-    SetCaret(m_pVT->InsertWord(
-        m_wpCaret, word, GetCharSetFromUnicode(word, charset), pWordProps));
-    m_SelState.Set(m_wpCaret, m_wpCaret);
-
-    if (m_wpCaret != m_wpOldCaret) {
-      if (bAddUndo && m_bEnableUndo) {
-        AddEditUndoItem(new CFXEU_InsertWord(this, m_wpOldCaret, m_wpCaret,
-                                             word, charset, pWordProps));
-      }
-
-      if (bPaint)
-        PaintInsertText(m_wpOldCaret, m_wpCaret);
-
-      if (m_bOprNotify && m_pOprNotify)
-        m_pOprNotify->OnInsertWord(m_wpCaret, m_wpOldCaret);
-
-      return true;
-    }
+  if (bAddUndo && m_bEnableUndo) {
+    AddEditUndoItem(pdfium::MakeUnique<CFXEU_InsertWord>(
+        this, m_wpOldCaret, m_wpCaret, word, charset, pWordProps));
   }
+  if (bPaint)
+    PaintInsertText(m_wpOldCaret, m_wpCaret);
 
-  return false;
+  if (m_bOprNotify && m_pOprNotify)
+    m_pOprNotify->OnInsertWord(m_wpCaret, m_wpOldCaret);
+
+  return true;
 }
 
 bool CFX_Edit::InsertReturn(const CPVT_SecProps* pSecProps,
                             const CPVT_WordProps* pWordProps,
                             bool bAddUndo,
                             bool bPaint) {
-  if (IsTextOverflow())
+  if (IsTextOverflow() || !m_pVT->IsValid())
     return false;
 
-  if (m_pVT->IsValid()) {
-    m_pVT->UpdateWordPlace(m_wpCaret);
-    SetCaret(m_pVT->InsertSection(m_wpCaret, pSecProps, pWordProps));
-    m_SelState.Set(m_wpCaret, m_wpCaret);
+  m_pVT->UpdateWordPlace(m_wpCaret);
+  SetCaret(m_pVT->InsertSection(m_wpCaret, pSecProps, pWordProps));
+  m_SelState.Set(m_wpCaret, m_wpCaret);
+  if (m_wpCaret == m_wpOldCaret)
+    return false;
 
-    if (m_wpCaret != m_wpOldCaret) {
-      if (bAddUndo && m_bEnableUndo) {
-        AddEditUndoItem(new CFXEU_InsertReturn(this, m_wpOldCaret, m_wpCaret,
-                                               pSecProps, pWordProps));
-      }
-
-      if (bPaint) {
-        RearrangePart(CPVT_WordRange(m_wpOldCaret, m_wpCaret));
-        ScrollToCaret();
-        Refresh();
-        SetCaretOrigin();
-        SetCaretInfo();
-      }
-
-      if (m_bOprNotify && m_pOprNotify)
-        m_pOprNotify->OnInsertReturn(m_wpCaret, m_wpOldCaret);
-
-      return true;
-    }
+  if (bAddUndo && m_bEnableUndo) {
+    AddEditUndoItem(pdfium::MakeUnique<CFXEU_InsertReturn>(
+        this, m_wpOldCaret, m_wpCaret, pSecProps, pWordProps));
   }
+  if (bPaint) {
+    RearrangePart(CPVT_WordRange(m_wpOldCaret, m_wpCaret));
+    ScrollToCaret();
+    Refresh();
+    SetCaretOrigin();
+    SetCaretInfo();
+  }
+  if (m_bOprNotify && m_pOprNotify)
+    m_pOprNotify->OnInsertReturn(m_wpCaret, m_wpOldCaret);
 
-  return false;
+  return true;
 }
 
 bool CFX_Edit::Backspace(bool bAddUndo, bool bPaint) {
-  if (m_pVT->IsValid()) {
-    if (m_wpCaret == m_pVT->GetBeginWordPlace())
-      return false;
+  if (!m_pVT->IsValid() || m_wpCaret == m_pVT->GetBeginWordPlace())
+    return false;
 
-    CPVT_Section section;
-    CPVT_Word word;
+  CPVT_Section section;
+  CPVT_Word word;
+  if (bAddUndo) {
+    CPDF_VariableText::Iterator* pIterator = m_pVT->GetIterator();
+    pIterator->SetAt(m_wpCaret);
+    pIterator->GetSection(section);
+    pIterator->GetWord(word);
+  }
+  m_pVT->UpdateWordPlace(m_wpCaret);
+  SetCaret(m_pVT->BackSpaceWord(m_wpCaret));
+  m_SelState.Set(m_wpCaret, m_wpCaret);
+  if (m_wpCaret == m_wpOldCaret)
+    return false;
 
-    if (bAddUndo) {
-      CPDF_VariableText::Iterator* pIterator = m_pVT->GetIterator();
-      pIterator->SetAt(m_wpCaret);
-      pIterator->GetSection(section);
-      pIterator->GetWord(word);
-    }
-
-    m_pVT->UpdateWordPlace(m_wpCaret);
-    SetCaret(m_pVT->BackSpaceWord(m_wpCaret));
-    m_SelState.Set(m_wpCaret, m_wpCaret);
-
-    if (m_wpCaret != m_wpOldCaret) {
-      if (bAddUndo && m_bEnableUndo) {
-        if (m_wpCaret.SecCmp(m_wpOldCaret) != 0)
-          AddEditUndoItem(new CFXEU_Backspace(
-              this, m_wpOldCaret, m_wpCaret, word.Word, word.nCharset,
-              section.SecProps, section.WordProps));
-        else
-          AddEditUndoItem(new CFXEU_Backspace(
-              this, m_wpOldCaret, m_wpCaret, word.Word, word.nCharset,
-              section.SecProps, word.WordProps));
-      }
-
-      if (bPaint) {
-        RearrangePart(CPVT_WordRange(m_wpCaret, m_wpOldCaret));
-        ScrollToCaret();
-        Refresh();
-        SetCaretOrigin();
-        SetCaretInfo();
-      }
-
-      if (m_bOprNotify && m_pOprNotify)
-        m_pOprNotify->OnBackSpace(m_wpCaret, m_wpOldCaret);
-
-      return true;
+  if (bAddUndo && m_bEnableUndo) {
+    if (m_wpCaret.SecCmp(m_wpOldCaret) != 0) {
+      AddEditUndoItem(pdfium::MakeUnique<CFXEU_Backspace>(
+          this, m_wpOldCaret, m_wpCaret, word.Word, word.nCharset,
+          section.SecProps, section.WordProps));
+    } else {
+      AddEditUndoItem(pdfium::MakeUnique<CFXEU_Backspace>(
+          this, m_wpOldCaret, m_wpCaret, word.Word, word.nCharset,
+          section.SecProps, word.WordProps));
     }
   }
+  if (bPaint) {
+    RearrangePart(CPVT_WordRange(m_wpCaret, m_wpOldCaret));
+    ScrollToCaret();
+    Refresh();
+    SetCaretOrigin();
+    SetCaretInfo();
+  }
+  if (m_bOprNotify && m_pOprNotify)
+    m_pOprNotify->OnBackSpace(m_wpCaret, m_wpOldCaret);
 
-  return false;
+  return true;
 }
 
 bool CFX_Edit::Delete(bool bAddUndo, bool bPaint) {
-  if (m_pVT->IsValid()) {
-    if (m_wpCaret == m_pVT->GetEndWordPlace())
-      return false;
+  if (!m_pVT->IsValid() || m_wpCaret == m_pVT->GetEndWordPlace())
+    return false;
 
-    CPVT_Section section;
-    CPVT_Word word;
-
-    if (bAddUndo) {
-      CPDF_VariableText::Iterator* pIterator = m_pVT->GetIterator();
-      pIterator->SetAt(m_pVT->GetNextWordPlace(m_wpCaret));
-      pIterator->GetSection(section);
-      pIterator->GetWord(word);
-    }
-
-    m_pVT->UpdateWordPlace(m_wpCaret);
-    bool bSecEnd = (m_wpCaret == m_pVT->GetSectionEndPlace(m_wpCaret));
-
-    SetCaret(m_pVT->DeleteWord(m_wpCaret));
-    m_SelState.Set(m_wpCaret, m_wpCaret);
-
-    if (bAddUndo && m_bEnableUndo) {
-      if (bSecEnd)
-        AddEditUndoItem(new CFXEU_Delete(
-            this, m_wpOldCaret, m_wpCaret, word.Word, word.nCharset,
-            section.SecProps, section.WordProps, bSecEnd));
-      else
-        AddEditUndoItem(new CFXEU_Delete(
-            this, m_wpOldCaret, m_wpCaret, word.Word, word.nCharset,
-            section.SecProps, word.WordProps, bSecEnd));
-    }
-
-    if (bPaint) {
-      RearrangePart(CPVT_WordRange(m_wpOldCaret, m_wpCaret));
-      ScrollToCaret();
-      Refresh();
-      SetCaretOrigin();
-      SetCaretInfo();
-    }
-
-    if (m_bOprNotify && m_pOprNotify)
-      m_pOprNotify->OnDelete(m_wpCaret, m_wpOldCaret);
-
-    return true;
+  CPVT_Section section;
+  CPVT_Word word;
+  if (bAddUndo) {
+    CPDF_VariableText::Iterator* pIterator = m_pVT->GetIterator();
+    pIterator->SetAt(m_pVT->GetNextWordPlace(m_wpCaret));
+    pIterator->GetSection(section);
+    pIterator->GetWord(word);
   }
+  m_pVT->UpdateWordPlace(m_wpCaret);
+  bool bSecEnd = (m_wpCaret == m_pVT->GetSectionEndPlace(m_wpCaret));
+  SetCaret(m_pVT->DeleteWord(m_wpCaret));
+  m_SelState.Set(m_wpCaret, m_wpCaret);
+  if (bAddUndo && m_bEnableUndo) {
+    if (bSecEnd) {
+      AddEditUndoItem(pdfium::MakeUnique<CFXEU_Delete>(
+          this, m_wpOldCaret, m_wpCaret, word.Word, word.nCharset,
+          section.SecProps, section.WordProps, bSecEnd));
+    } else {
+      AddEditUndoItem(pdfium::MakeUnique<CFXEU_Delete>(
+          this, m_wpOldCaret, m_wpCaret, word.Word, word.nCharset,
+          section.SecProps, word.WordProps, bSecEnd));
+    }
+  }
+  if (bPaint) {
+    RearrangePart(CPVT_WordRange(m_wpOldCaret, m_wpCaret));
+    ScrollToCaret();
+    Refresh();
+    SetCaretOrigin();
+    SetCaretInfo();
+  }
+  if (m_bOprNotify && m_pOprNotify)
+    m_pOprNotify->OnDelete(m_wpCaret, m_wpOldCaret);
 
-  return false;
+  return true;
 }
 
 bool CFX_Edit::Empty() {
@@ -2195,21 +2136,16 @@ bool CFX_Edit::Empty() {
 }
 
 bool CFX_Edit::Clear(bool bAddUndo, bool bPaint) {
-  if (!m_pVT->IsValid())
-    return false;
-
-  if (!m_SelState.IsExist())
+  if (!m_pVT->IsValid() || !m_SelState.IsExist())
     return false;
 
   CPVT_WordRange range = m_SelState.ConvertToWordRange();
-
   if (bAddUndo && m_bEnableUndo)
-    AddEditUndoItem(new CFXEU_Clear(this, range, GetSelText()));
+    AddEditUndoItem(pdfium::MakeUnique<CFXEU_Clear>(this, range, GetSelText()));
 
   SelectNone();
   SetCaret(m_pVT->DeleteWords(range));
   m_SelState.Set(m_wpCaret, m_wpCaret);
-
   if (bPaint) {
     RearrangePart(range);
     ScrollToCaret();
@@ -2217,7 +2153,6 @@ bool CFX_Edit::Clear(bool bAddUndo, bool bPaint) {
     SetCaretOrigin();
     SetCaretInfo();
   }
-
   if (m_bOprNotify && m_pOprNotify)
     m_pOprNotify->OnClear(m_wpCaret, m_wpOldCaret);
 
@@ -2238,10 +2173,9 @@ bool CFX_Edit::InsertText(const CFX_WideString& sText,
     return false;
 
   if (bAddUndo && m_bEnableUndo) {
-    AddEditUndoItem(
-        new CFXEU_InsertText(this, m_wpOldCaret, m_wpCaret, sText, charset));
+    AddEditUndoItem(pdfium::MakeUnique<CFXEU_InsertText>(
+        this, m_wpOldCaret, m_wpCaret, sText, charset));
   }
-
   if (bPaint)
     PaintInsertText(m_wpOldCaret, m_wpCaret);
 
@@ -2407,53 +2341,36 @@ int32_t CFX_Edit::GetCharSetFromUnicode(uint16_t word, int32_t nOldCharset) {
   return nOldCharset;
 }
 
-void CFX_Edit::AddEditUndoItem(CFX_Edit_UndoItem* pEditUndoItem) {
-  if (m_pGroupUndoItem) {
-    m_pGroupUndoItem->AddUndoItem(pEditUndoItem);
-  } else {
-    m_Undo.AddItem(pEditUndoItem);
-  }
+void CFX_Edit::AddEditUndoItem(
+    std::unique_ptr<CFX_Edit_UndoItem> pEditUndoItem) {
+  if (m_pGroupUndoItem)
+    m_pGroupUndoItem->AddUndoItem(std::move(pEditUndoItem));
+  else
+    m_Undo.AddItem(std::move(pEditUndoItem));
 }
 
 CFX_Edit_LineRectArray::CFX_Edit_LineRectArray() {}
 
-CFX_Edit_LineRectArray::~CFX_Edit_LineRectArray() {
-  Empty();
-}
+CFX_Edit_LineRectArray::~CFX_Edit_LineRectArray() {}
 
-void CFX_Edit_LineRectArray::Empty() {
-  for (int32_t i = 0, sz = m_LineRects.GetSize(); i < sz; i++)
-    delete m_LineRects.GetAt(i);
-
-  m_LineRects.RemoveAll();
-}
-
-void CFX_Edit_LineRectArray::RemoveAll() {
-  m_LineRects.RemoveAll();
-}
-
-void CFX_Edit_LineRectArray::operator=(CFX_Edit_LineRectArray& rects) {
-  Empty();
-  for (int32_t i = 0, sz = rects.GetSize(); i < sz; i++)
-    m_LineRects.Add(rects.GetAt(i));
-
-  rects.RemoveAll();
+void CFX_Edit_LineRectArray::operator=(CFX_Edit_LineRectArray&& that) {
+  m_LineRects = std::move(that.m_LineRects);
 }
 
 void CFX_Edit_LineRectArray::Add(const CPVT_WordRange& wrLine,
                                  const CFX_FloatRect& rcLine) {
-  m_LineRects.Add(new CFX_Edit_LineRect(wrLine, rcLine));
+  m_LineRects.push_back(pdfium::MakeUnique<CFX_Edit_LineRect>(wrLine, rcLine));
 }
 
 int32_t CFX_Edit_LineRectArray::GetSize() const {
-  return m_LineRects.GetSize();
+  return pdfium::CollectionSize<int32_t>(m_LineRects);
 }
 
 CFX_Edit_LineRect* CFX_Edit_LineRectArray::GetAt(int32_t nIndex) const {
-  if (nIndex < 0 || nIndex >= m_LineRects.GetSize())
+  if (nIndex < 0 || nIndex >= GetSize())
     return nullptr;
 
-  return m_LineRects.GetAt(nIndex);
+  return m_LineRects[nIndex].get();
 }
 
 CFX_Edit_Select::CFX_Edit_Select() {}
@@ -2496,35 +2413,28 @@ bool CFX_Edit_Select::IsExist() const {
 
 CFX_Edit_RectArray::CFX_Edit_RectArray() {}
 
-CFX_Edit_RectArray::~CFX_Edit_RectArray() {
-  Empty();
-}
+CFX_Edit_RectArray::~CFX_Edit_RectArray() {}
 
-void CFX_Edit_RectArray::Empty() {
-  for (int32_t i = 0, sz = m_Rects.GetSize(); i < sz; i++)
-    delete m_Rects.GetAt(i);
-
-  m_Rects.RemoveAll();
+void CFX_Edit_RectArray::Clear() {
+  m_Rects.clear();
 }
 
 void CFX_Edit_RectArray::Add(const CFX_FloatRect& rect) {
   // check for overlapped area
-  for (int32_t i = 0, sz = m_Rects.GetSize(); i < sz; i++) {
-    CFX_FloatRect* pRect = m_Rects.GetAt(i);
+  for (const auto& pRect : m_Rects) {
     if (pRect && pRect->Contains(rect))
       return;
   }
-
-  m_Rects.Add(new CFX_FloatRect(rect));
+  m_Rects.push_back(pdfium::MakeUnique<CFX_FloatRect>(rect));
 }
 
 int32_t CFX_Edit_RectArray::GetSize() const {
-  return m_Rects.GetSize();
+  return pdfium::CollectionSize<int32_t>(m_Rects);
 }
 
 CFX_FloatRect* CFX_Edit_RectArray::GetAt(int32_t nIndex) const {
-  if (nIndex < 0 || nIndex >= m_Rects.GetSize())
+  if (nIndex < 0 || nIndex >= GetSize())
     return nullptr;
 
-  return m_Rects.GetAt(nIndex);
+  return m_Rects[nIndex].get();
 }

@@ -7,6 +7,7 @@
 #ifndef FPDFSDK_FXEDIT_FXET_EDIT_H_
 #define FPDFSDK_FXEDIT_FXET_EDIT_H_
 
+#include <deque>
 #include <memory>
 #include <vector>
 
@@ -40,16 +41,14 @@ class CFX_Edit_LineRectArray {
   CFX_Edit_LineRectArray();
   virtual ~CFX_Edit_LineRectArray();
 
-  void Empty();
-  void RemoveAll();
-  void operator=(CFX_Edit_LineRectArray& rects);
+  void operator=(CFX_Edit_LineRectArray&& rects);
   void Add(const CPVT_WordRange& wrLine, const CFX_FloatRect& rcLine);
 
   int32_t GetSize() const;
   CFX_Edit_LineRect* GetAt(int32_t nIndex) const;
 
  private:
-  CFX_ArrayTemplate<CFX_Edit_LineRect*> m_LineRects;
+  std::vector<std::unique_ptr<CFX_Edit_LineRect>> m_LineRects;
 };
 
 class CFX_Edit_RectArray {
@@ -57,14 +56,14 @@ class CFX_Edit_RectArray {
   CFX_Edit_RectArray();
   virtual ~CFX_Edit_RectArray();
 
-  void Empty();
+  void Clear();
   void Add(const CFX_FloatRect& rect);
 
   int32_t GetSize() const;
   CFX_FloatRect* GetAt(int32_t nIndex) const;
 
  private:
-  CFX_ArrayTemplate<CFX_FloatRect*> m_Rects;
+  std::vector<std::unique_ptr<CFX_FloatRect>> m_Rects;
 };
 
 class CFX_Edit_Refresh {
@@ -99,7 +98,8 @@ class CFX_Edit_Select {
   CPVT_WordRange ConvertToWordRange() const;
   bool IsExist() const;
 
-  CPVT_WordPlace BeginPos, EndPos;
+  CPVT_WordPlace BeginPos;
+  CPVT_WordPlace EndPos;
 };
 
 class CFX_Edit_Undo {
@@ -107,26 +107,21 @@ class CFX_Edit_Undo {
   explicit CFX_Edit_Undo(int32_t nBufsize);
   virtual ~CFX_Edit_Undo();
 
+  void AddItem(std::unique_ptr<IFX_Edit_UndoItem> pItem);
   void Undo();
   void Redo();
-
-  void AddItem(IFX_Edit_UndoItem* pItem);
-
   bool CanUndo() const;
   bool CanRedo() const;
   bool IsModified() const;
-
   void Reset();
 
  private:
   void RemoveHeads();
   void RemoveTails();
 
- private:
-  CFX_ArrayTemplate<IFX_Edit_UndoItem*> m_UndoItemStack;
-
-  int32_t m_nCurUndoPos;
-  int32_t m_nBufSize;
+  std::deque<std::unique_ptr<IFX_Edit_UndoItem>> m_UndoItemStack;
+  size_t m_nCurUndoPos;
+  size_t m_nBufSize;
   bool m_bModified;
   bool m_bVirgin;
   bool m_bWorking;
@@ -138,7 +133,7 @@ class IFX_Edit_UndoItem {
 
   virtual void Undo() = 0;
   virtual void Redo() = 0;
-  virtual CFX_WideString GetUndoTitle() = 0;
+  virtual CFX_WideString GetUndoTitle() const = 0;
 };
 
 class CFX_Edit_UndoItem : public IFX_Edit_UndoItem {
@@ -146,7 +141,7 @@ class CFX_Edit_UndoItem : public IFX_Edit_UndoItem {
   CFX_Edit_UndoItem();
   ~CFX_Edit_UndoItem() override;
 
-  CFX_WideString GetUndoTitle() override;
+  CFX_WideString GetUndoTitle() const override;
 
   void SetFirst(bool bFirst);
   void SetLast(bool bLast);
@@ -165,14 +160,14 @@ class CFX_Edit_GroupUndoItem : public IFX_Edit_UndoItem {
   // IFX_Edit_UndoItem
   void Undo() override;
   void Redo() override;
-  CFX_WideString GetUndoTitle() override;
+  CFX_WideString GetUndoTitle() const override;
 
-  void AddUndoItem(CFX_Edit_UndoItem* pUndoItem);
+  void AddUndoItem(std::unique_ptr<CFX_Edit_UndoItem> pUndoItem);
   void UpdateItems();
 
  private:
   CFX_WideString m_sTitle;
-  CFX_ArrayTemplate<CFX_Edit_UndoItem*> m_Items;
+  std::vector<std::unique_ptr<CFX_Edit_UndoItem>> m_Items;
 };
 
 class CFXEU_InsertWord : public CFX_Edit_UndoItem {
@@ -488,7 +483,7 @@ class CFX_Edit {
   void SetCaretInfo();
   void SetCaretOrigin();
 
-  void AddEditUndoItem(CFX_Edit_UndoItem* pEditUndoItem);
+  void AddEditUndoItem(std::unique_ptr<CFX_Edit_UndoItem> pEditUndoItem);
 
  private:
   std::unique_ptr<CPDF_VariableText> m_pVT;
