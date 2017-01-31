@@ -893,6 +893,11 @@ static void ShowConfig() {
   config.append("XFA");
   maybe_comma = ",";
 #endif  // PDF_ENABLE_XFA
+#ifdef PDF_ENABLE_ASAN
+  config.append(maybe_comma);
+  config.append("ASAN");
+  maybe_comma = ",";
+#endif  // PDF_ENABLE_ASAN
   printf("%s\n", config.c_str());
 }
 

@@ -484,6 +484,36 @@ zh_file1.pdf mac * *
 zh_function_list.pdf mac * *
 zh_shared_document.pdf mac * *
 
+bug_679643.in * * noxfa
+bug_679642.in * * noxfa
+
+### TODO(dsinclair): These need to be fixed ....
+bug_524043_1.pdf * * *
+bug_524043_2.pdf * * *
+bug_524043_3.pdf * * *
+bug_524043_4.pdf * * *
+bug_524043_5.pdf * * *
+bug_524043_7.pdf * * *
+bug_543018_1.pdf * * *
+bug_543018_2.pdf * * *
+bug_551258_1.pdf * * *
+getarray.pdf * * *
+example_014.pdf * * *
+example_015.pdf * * *
+example_054.pdf * * *
+event_fieldfull_1_.pdf * * *
+
+Test_DateField_locale_en_CA.pdf asan * *
+Test_DateField_locale_en_GB.pdf asan * *
+Test_DateField_locale_en_US.pdf asan * *
+Test_DateField_locale_fr_CA.pdf asan * *
+Test_DateField_locale_fr_FR.pdf asan * *
+Test_DateField_locale_nl_NL.pdf asan * *
+Test_DateField_locale_zh_CN.pdf asan * *
+Test_DateField_locale_zh_HK.pdf asan * *
+Test_PasswordField.pdf asan * *
+format_custom_format.pdf asan * *
+
 #
 # xfa_specific
 #

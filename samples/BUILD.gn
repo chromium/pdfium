@@ -30,6 +30,9 @@ config("pdfium_samples_config") {
   if (pdf_use_skia) {
     defines += [ "PDF_ENABLE_SKIA" ]
   }
+  if (is_asan) {
+    defines += [ "PDF_ENABLE_ASAN" ]
+  }
   if (use_coverage && is_clang) {
     cflags += [
       "--coverage",

@@ -125,8 +125,8 @@ class TestRunner:
     return common.RunCommandExtractHashedFiles(cmd_to_run)
 
   def HandleResult(self, input_filename, input_path, result):
+    success, image_paths = result
     if self.gold_results:
-      success, image_paths = result
       if image_paths:
         for img_path, md5_hash in image_paths:
           # the output filename (without extension becomes the test name)
@@ -134,10 +134,10 @@ class TestRunner:
           self.gold_results.AddTestResult(test_name, md5_hash, img_path)
 
     if self.test_suppressor.IsResultSuppressed(input_filename):
-      if result:
+      if success:
         self.surprises.append(input_path)
     else:
-      if not result:
+      if not success:
         self.failures.append(input_path)
 
 
@@ -271,6 +271,7 @@ class TestRunner:
       print '\n\nSummary of Failures:'
       for failure in self.failures:
         print failure
-        if not options.ignore_errors:
-          return 1
+
+      if not options.ignore_errors:
+        return 1
     return 0
