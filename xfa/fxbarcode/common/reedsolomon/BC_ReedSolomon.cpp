@@ -44,10 +44,12 @@ CBC_ReedSolomonGF256Poly* CBC_ReedSolomonEncoder::BuildGenerator(int32_t degree,
       temp.Add(m_field->Exp(d - 1));
       CBC_ReedSolomonGF256Poly temp_poly;
       temp_poly.Init(m_field, &temp, e);
-      BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
+      if (e != BCExceptionNO)
+        return nullptr;
       CBC_ReedSolomonGF256Poly* nextGenerator =
           lastGenerator->Multiply(&temp_poly, e);
-      BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
+      if (e != BCExceptionNO)
+        return nullptr;
       m_cachedGenerators.Add(nextGenerator);
       lastGenerator = nextGenerator;
     }
@@ -59,15 +61,18 @@ void CBC_ReedSolomonEncoder::Encode(CFX_ArrayTemplate<int32_t>* toEncode,
                                     int32_t& e) {
   if (ecBytes == 0) {
     e = BCExceptionNoCorrectionBytes;
-    BC_EXCEPTION_CHECK_ReturnVoid(e);
+    if (e != BCExceptionNO)
+      return;
   }
   int32_t dataBytes = toEncode->GetSize() - ecBytes;
   if (dataBytes <= 0) {
     e = BCExceptionNoDataBytesProvided;
-    BC_EXCEPTION_CHECK_ReturnVoid(e);
+    if (e != BCExceptionNO)
+      return;
   }
   CBC_ReedSolomonGF256Poly* generator = BuildGenerator(ecBytes, e);
-  BC_EXCEPTION_CHECK_ReturnVoid(e);
+  if (e != BCExceptionNO)
+    return;
   CFX_ArrayTemplate<int32_t> infoCoefficients;
   infoCoefficients.SetSize(dataBytes);
   for (int32_t x = 0; x < dataBytes; x++) {
@@ -75,13 +80,16 @@ void CBC_ReedSolomonEncoder::Encode(CFX_ArrayTemplate<int32_t>* toEncode,
   }
   CBC_ReedSolomonGF256Poly info;
   info.Init(m_field, &infoCoefficients, e);
-  BC_EXCEPTION_CHECK_ReturnVoid(e);
+  if (e != BCExceptionNO)
+    return;
   std::unique_ptr<CBC_ReedSolomonGF256Poly> infoTemp(
       info.MultiplyByMonomial(ecBytes, 1, e));
-  BC_EXCEPTION_CHECK_ReturnVoid(e);
+  if (e != BCExceptionNO)
+    return;
   std::unique_ptr<CFX_ArrayTemplate<CBC_ReedSolomonGF256Poly*>> temp(
       infoTemp->Divide(generator, e));
-  BC_EXCEPTION_CHECK_ReturnVoid(e);
+  if (e != BCExceptionNO)
+    return;
   CBC_ReedSolomonGF256Poly* remainder = (*temp)[1];
   CFX_ArrayTemplate<int32_t>* coefficients = remainder->GetCoefficients();
   int32_t numZeroCoefficients = ecBytes - coefficients->GetSize();

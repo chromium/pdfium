@@ -169,11 +169,5 @@ enum BCFORMAT {
 #define THREE_DIGIT_DATA_LENGTH_SIZE 23
 #define THREE_DIGIT_PLUS_DIGIT_DATA_LENGTH_SIZE 57
 #define FOUR_DIGIT_DATA_LENGTH_SIZE 17
-#define BC_EXCEPTION_CHECK_ReturnVoid(e) \
-  if (e != BCExceptionNO)                \
-    return;
-#define BC_EXCEPTION_CHECK_ReturnValue(e, v) \
-  if (e != BCExceptionNO)                    \
-    return v;
 
 #endif  // XFA_FXBARCODE_UTILS_H_

@@ -108,7 +108,8 @@ CFX_WideString CBC_PDF417HighLevelEncoder::encodeHighLevel(
           p += t;
         } else {
           int32_t b = determineConsecutiveBinaryCount(msg, &byteArr, p, e);
-          BC_EXCEPTION_CHECK_ReturnValue(e, (FX_WCHAR)' ');
+          if (e != BCExceptionNO)
+            return L" ";
           if (b == 0) {
             b = 1;
           }

@@ -90,7 +90,8 @@ int32_t CBC_TextEncoder::encodeChar(FX_WCHAR c,
     sb += (FX_WCHAR)0x001e;
     int32_t len = 2;
     len += encodeChar((FX_WCHAR)(c - 128), sb, e);
-    BC_EXCEPTION_CHECK_ReturnValue(e, -1);
+    if (e != BCExceptionNO)
+      return -1;
     return len;
   }
   CBC_HighLevelEncoder::illegalCharacter(c, e);

@@ -100,7 +100,8 @@ void CBC_EncoderContext::updateSymbolInfo(int32_t len, int32_t& e) {
   if (!m_symbolInfo || len > m_symbolInfo->m_dataCapacity) {
     m_symbolInfo =
         CBC_SymbolInfo::lookup(len, m_shape, m_minSize, m_maxSize, true, e);
-    BC_EXCEPTION_CHECK_ReturnVoid(e);
+    if (e != BCExceptionNO)
+      return;
   }
 }
 void CBC_EncoderContext::resetSymbolInfo() {

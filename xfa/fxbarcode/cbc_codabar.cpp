@@ -70,11 +70,13 @@ bool CBC_Codabar::Encode(const CFX_WideStringC& contents,
   m_renderContents = filtercontents;
   uint8_t* data = static_cast<CBC_OnedCodaBarWriter*>(m_pBCWriter.get())
                       ->Encode(byteString, format, outWidth, outHeight, e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, false);
+  if (e != BCExceptionNO)
+    return false;
   static_cast<CBC_OneDimWriter*>(m_pBCWriter.get())
       ->RenderResult(filtercontents.AsStringC(), data, outWidth, isDevice, e);
   FX_Free(data);
-  BC_EXCEPTION_CHECK_ReturnValue(e, false);
+  if (e != BCExceptionNO)
+    return false;
   return true;
 }
 
@@ -86,7 +88,8 @@ bool CBC_Codabar::RenderDevice(CFX_RenderDevice* device,
           ->encodedContents(m_renderContents.AsStringC());
   static_cast<CBC_OneDimWriter*>(m_pBCWriter.get())
       ->RenderDeviceResult(device, matrix, renderCon.AsStringC(), e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, false);
+  if (e != BCExceptionNO)
+    return false;
   return true;
 }
 
@@ -96,7 +99,8 @@ bool CBC_Codabar::RenderBitmap(CFX_DIBitmap*& pOutBitmap, int32_t& e) {
           ->encodedContents(m_renderContents.AsStringC());
   static_cast<CBC_OneDimWriter*>(m_pBCWriter.get())
       ->RenderBitmapResult(pOutBitmap, renderCon.AsStringC(), e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, false);
+  if (e != BCExceptionNO)
+    return false;
   return true;
 }
 

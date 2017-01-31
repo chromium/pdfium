@@ -161,7 +161,8 @@ CFX_WideString CBC_PDF417ErrorCorrection::generateErrorCorrection(
     int32_t errorCorrectionLevel,
     int32_t& e) {
   int32_t k = getErrorCorrectionCodewordCount(errorCorrectionLevel, e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, (FX_WCHAR)' ');
+  if (e != BCExceptionNO)
+    return L" ";
   FX_WCHAR* ech = FX_Alloc(FX_WCHAR, k);
   FXSYS_memset(ech, 0, k * sizeof(FX_WCHAR));
   int32_t sld = dataCodewords.GetLength();

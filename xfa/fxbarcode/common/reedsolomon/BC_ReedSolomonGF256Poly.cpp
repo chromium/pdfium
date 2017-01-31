@@ -42,7 +42,8 @@ void CBC_ReedSolomonGF256Poly::Init(CBC_ReedSolomonGF256* field,
                                     int32_t& e) {
   if (!coefficients || coefficients->GetSize() == 0) {
     e = BCExceptionCoefficientsSizeIsNull;
-    BC_EXCEPTION_CHECK_ReturnVoid(e);
+    if (e != BCExceptionNO)
+      return;
   }
   m_field = field;
   int32_t coefficientsLength = coefficients->GetSize();
@@ -98,7 +99,8 @@ int32_t CBC_ReedSolomonGF256Poly::EvaluateAt(int32_t a) {
 CBC_ReedSolomonGF256Poly* CBC_ReedSolomonGF256Poly::Clone(int32_t& e) {
   CBC_ReedSolomonGF256Poly* temp = new CBC_ReedSolomonGF256Poly();
   temp->Init(m_field, &m_coefficients, e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
+  if (e != BCExceptionNO)
+    return nullptr;
   return temp;
 }
 CBC_ReedSolomonGF256Poly* CBC_ReedSolomonGF256Poly::AddOrSubtract(
@@ -132,7 +134,8 @@ CBC_ReedSolomonGF256Poly* CBC_ReedSolomonGF256Poly::AddOrSubtract(
   }
   CBC_ReedSolomonGF256Poly* temp = new CBC_ReedSolomonGF256Poly();
   temp->Init(m_field, &sumDiff, e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
+  if (e != BCExceptionNO)
+    return nullptr;
   return temp;
 }
 CBC_ReedSolomonGF256Poly* CBC_ReedSolomonGF256Poly::Multiply(
@@ -159,7 +162,8 @@ CBC_ReedSolomonGF256Poly* CBC_ReedSolomonGF256Poly::Multiply(
   }
   CBC_ReedSolomonGF256Poly* temp = new CBC_ReedSolomonGF256Poly();
   temp->Init(m_field, &product, e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
+  if (e != BCExceptionNO)
+    return nullptr;
   return temp;
 }
 CBC_ReedSolomonGF256Poly* CBC_ReedSolomonGF256Poly::Multiply(int32_t scalar,
@@ -177,7 +181,8 @@ CBC_ReedSolomonGF256Poly* CBC_ReedSolomonGF256Poly::Multiply(int32_t scalar,
   }
   CBC_ReedSolomonGF256Poly* temp = new CBC_ReedSolomonGF256Poly();
   temp->Init(m_field, &product, e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
+  if (e != BCExceptionNO)
+    return nullptr;
   return temp;
 }
 CBC_ReedSolomonGF256Poly* CBC_ReedSolomonGF256Poly::MultiplyByMonomial(
@@ -199,7 +204,8 @@ CBC_ReedSolomonGF256Poly* CBC_ReedSolomonGF256Poly::MultiplyByMonomial(
   }
   CBC_ReedSolomonGF256Poly* temp = new CBC_ReedSolomonGF256Poly();
   temp->Init(m_field, &product, e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
+  if (e != BCExceptionNO)
+    return nullptr;
   return temp;
 }
 
@@ -212,13 +218,16 @@ CFX_ArrayTemplate<CBC_ReedSolomonGF256Poly*>* CBC_ReedSolomonGF256Poly::Divide(
   }
   std::unique_ptr<CBC_ReedSolomonGF256Poly> quotient(
       m_field->GetZero()->Clone(e));
-  BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
+  if (e != BCExceptionNO)
+    return nullptr;
   std::unique_ptr<CBC_ReedSolomonGF256Poly> remainder(Clone(e));
-  BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
+  if (e != BCExceptionNO)
+    return nullptr;
   int32_t denominatorLeadingTerm = other->GetCoefficients(other->GetDegree());
   int32_t inverseDenominatorLeadingTeam =
       m_field->Inverse(denominatorLeadingTerm, e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
+  if (e != BCExceptionNO)
+    return nullptr;
   while (remainder->GetDegree() >= other->GetDegree() && !remainder->IsZero()) {
     int32_t degreeDifference = remainder->GetDegree() - other->GetDegree();
     int32_t scale =
@@ -226,14 +235,18 @@ CFX_ArrayTemplate<CBC_ReedSolomonGF256Poly*>* CBC_ReedSolomonGF256Poly::Divide(
                           inverseDenominatorLeadingTeam);
     std::unique_ptr<CBC_ReedSolomonGF256Poly> term(
         other->MultiplyByMonomial(degreeDifference, scale, e));
-    BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
+    if (e != BCExceptionNO)
+      return nullptr;
     std::unique_ptr<CBC_ReedSolomonGF256Poly> iteratorQuotient(
         m_field->BuildMonomial(degreeDifference, scale, e));
-    BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
+    if (e != BCExceptionNO)
+      return nullptr;
     quotient.reset(quotient->AddOrSubtract(iteratorQuotient.get(), e));
-    BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
+    if (e != BCExceptionNO)
+      return nullptr;
     remainder.reset(remainder->AddOrSubtract(term.get(), e));
-    BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
+    if (e != BCExceptionNO)
+      return nullptr;
   }
   CFX_ArrayTemplate<CBC_ReedSolomonGF256Poly*>* tempPtrA =
       new CFX_ArrayTemplate<CBC_ReedSolomonGF256Poly*>();

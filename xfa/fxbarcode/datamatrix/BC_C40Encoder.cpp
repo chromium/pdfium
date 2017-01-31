@@ -163,7 +163,8 @@ int32_t CBC_C40Encoder::encodeChar(FX_WCHAR c, CFX_WideString& sb, int32_t& e) {
     sb += (FX_WCHAR)0x001e;
     int32_t len = 2;
     len += encodeChar((c - 128), sb, e);
-    BC_EXCEPTION_CHECK_ReturnValue(e, 0);
+    if (e != BCExceptionNO)
+      return 0;
     return len;
   } else {
     e = BCExceptionIllegalArgument;
@@ -180,7 +181,8 @@ int32_t CBC_C40Encoder::backtrackOneCharacter(CBC_EncoderContext& context,
   context.m_pos--;
   FX_WCHAR c = context.getCurrentChar();
   lastCharSize = encodeChar(c, removed, e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, -1);
+  if (e != BCExceptionNO)
+    return -1;
   context.resetSymbolInfo();
   return lastCharSize;
 }

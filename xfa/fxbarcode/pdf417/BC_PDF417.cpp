@@ -405,14 +405,17 @@ void CBC_PDF417::generateBarcodeLogic(CFX_WideString msg,
   int32_t errorCorrectionCodeWords =
       CBC_PDF417ErrorCorrection::getErrorCorrectionCodewordCount(
           errorCorrectionLevel, e);
-  BC_EXCEPTION_CHECK_ReturnVoid(e);
+  if (e != BCExceptionNO)
+    return;
   CFX_WideString highLevel =
       CBC_PDF417HighLevelEncoder::encodeHighLevel(msg, m_compaction, e);
-  BC_EXCEPTION_CHECK_ReturnVoid(e);
+  if (e != BCExceptionNO)
+    return;
   int32_t sourceCodeWords = highLevel.GetLength();
   CFX_ArrayTemplate<int32_t>* dimension =
       determineDimensions(sourceCodeWords, errorCorrectionCodeWords, e);
-  BC_EXCEPTION_CHECK_ReturnVoid(e);
+  if (e != BCExceptionNO)
+    return;
   int32_t cols = dimension->GetAt(0);
   int32_t rows = dimension->GetAt(1);
   delete dimension;
@@ -432,7 +435,8 @@ void CBC_PDF417::generateBarcodeLogic(CFX_WideString msg,
   CFX_WideString dataCodewords(sb);
   CFX_WideString ec = CBC_PDF417ErrorCorrection::generateErrorCorrection(
       dataCodewords, errorCorrectionLevel, e);
-  BC_EXCEPTION_CHECK_ReturnVoid(e);
+  if (e != BCExceptionNO)
+    return;
   CFX_WideString fullCodewords = dataCodewords + ec;
   m_barcodeMatrix = pdfium::MakeUnique<CBC_BarcodeMatrix>(rows, cols);
   encodeLowLevel(fullCodewords, cols, rows, errorCorrectionLevel,

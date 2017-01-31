@@ -151,12 +151,14 @@ CBC_SymbolInfo* CBC_SymbolInfo::lookup(int32_t dataCodewords,
     }
     if (minSize && (symbol->getSymbolWidth(e) < minSize->getWidth() ||
                     symbol->getSymbolHeight(e) < minSize->getHeight())) {
-      BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
+      if (e != BCExceptionNO)
+        return nullptr;
       continue;
     }
     if (maxSize && (symbol->getSymbolWidth(e) > maxSize->getWidth() ||
                     symbol->getSymbolHeight(e) > maxSize->getHeight())) {
-      BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
+      if (e != BCExceptionNO)
+        return nullptr;
       continue;
     }
     if (dataCodewords <= symbol->m_dataCapacity) {

@@ -128,7 +128,8 @@ bool CBC_QRCoderMaskUtil::GetDataMaskBit(int32_t maskPattern,
                                          int32_t& e) {
   if (!CBC_QRCoder::IsValidMaskPattern(maskPattern)) {
     e = (BCExceptionInvalidateMaskPattern);
-    BC_EXCEPTION_CHECK_ReturnValue(e, false);
+    if (e != BCExceptionNO)
+      return false;
   }
   int32_t intermediate = 0, temp = 0;
   switch (maskPattern) {
@@ -161,7 +162,8 @@ bool CBC_QRCoderMaskUtil::GetDataMaskBit(int32_t maskPattern,
       break;
     default: {
       e = BCExceptionInvalidateMaskPattern;
-      BC_EXCEPTION_CHECK_ReturnValue(e, false);
+      if (e != BCExceptionNO)
+        return false;
     }
   }
   return intermediate == 0;

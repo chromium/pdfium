@@ -145,7 +145,8 @@ void CBC_TwoDimWriter::RenderResult(uint8_t* code,
          inputX++, outputX += multiX) {
       if (code[inputX + inputY * inputWidth] == 1) {
         m_output->SetRegion(outputX, outputY, multiX, multiY, e);
-        BC_EXCEPTION_CHECK_ReturnVoid(e);
+        if (e != BCExceptionNO)
+          return;
       }
     }
   }

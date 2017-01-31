@@ -100,7 +100,8 @@ CBC_QRCoderMode* CBC_QRCoderMode::ForBits(int32_t bits, int32_t& e) {
       return sGBK;
     default: {
       e = BCExceptionUnsupportedMode;
-      BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
+      if (e != BCExceptionNO)
+        return nullptr;
     }
   }
   return nullptr;
@@ -118,7 +119,8 @@ int32_t CBC_QRCoderMode::GetCharacterCountBits(CBC_QRCoderVersion* version,
                                                int32_t& e) const {
   if (m_characterCountBitsForVersions.empty()) {
     e = BCExceptionCharacterNotThisMode;
-    BC_EXCEPTION_CHECK_ReturnValue(e, 0);
+    if (e != BCExceptionNO)
+      return 0;
   }
   int32_t number = version->GetVersionNumber();
   int32_t offset;

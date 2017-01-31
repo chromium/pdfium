@@ -130,7 +130,8 @@ uint8_t* CBC_OnedCode39Writer::Encode(const CFX_ByteString& contents,
                                       int32_t& outHeight,
                                       int32_t& e) {
   uint8_t* ret = Encode(contents, format, outWidth, outHeight, 0, e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
+  if (e != BCExceptionNO)
+    return nullptr;
   return ret;
 }
 uint8_t* CBC_OnedCode39Writer::Encode(const CFX_ByteString& contents,
@@ -145,7 +146,8 @@ uint8_t* CBC_OnedCode39Writer::Encode(const CFX_ByteString& contents,
   }
   uint8_t* ret =
       CBC_OneDimWriter::Encode(contents, format, outWidth, outHeight, hints, e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
+  if (e != BCExceptionNO)
+    return nullptr;
   return ret;
 }
 void CBC_OnedCode39Writer::ToIntArray(int32_t a, int32_t* toReturn) {
@@ -263,7 +265,8 @@ CFX_WideString CBC_OnedCode39Writer::encodedContents(
     CFX_ByteString str = checksumContent.UTF8Encode();
     FX_CHAR checksum;
     checksum = CalcCheckSum(str, e);
-    BC_EXCEPTION_CHECK_ReturnValue(e, CFX_WideString());
+    if (e != BCExceptionNO)
+      return CFX_WideString();
     str += checksum;
     encodedContents += checksum;
   }
@@ -275,7 +278,8 @@ void CBC_OnedCode39Writer::RenderResult(const CFX_WideStringC& contents,
                                         bool isDevice,
                                         int32_t& e) {
   CFX_WideString encodedCon = encodedContents(contents, e);
-  BC_EXCEPTION_CHECK_ReturnVoid(e);
+  if (e != BCExceptionNO)
+    return;
   CBC_OneDimWriter::RenderResult(encodedCon.AsStringC(), code, codeLength,
                                  isDevice, e);
 }

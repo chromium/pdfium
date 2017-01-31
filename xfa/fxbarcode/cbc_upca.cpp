@@ -66,11 +66,13 @@ bool CBC_UPCA::Encode(const CFX_WideStringC& contents,
 
   pWriter->Init();
   uint8_t* data = pWriter->Encode(byteString, format, outWidth, outHeight, e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, false);
+  if (e != BCExceptionNO)
+    return false;
   pWriter->RenderResult(encodeContents.AsStringC(), data, outWidth, isDevice,
                         e);
   FX_Free(data);
-  BC_EXCEPTION_CHECK_ReturnValue(e, false);
+  if (e != BCExceptionNO)
+    return false;
   return true;
 }
 
@@ -79,14 +81,16 @@ bool CBC_UPCA::RenderDevice(CFX_RenderDevice* device,
                             int32_t& e) {
   static_cast<CBC_OneDimWriter*>(m_pBCWriter.get())
       ->RenderDeviceResult(device, matrix, m_renderContents.AsStringC(), e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, false);
+  if (e != BCExceptionNO)
+    return false;
   return true;
 }
 
 bool CBC_UPCA::RenderBitmap(CFX_DIBitmap*& pOutBitmap, int32_t& e) {
   static_cast<CBC_OneDimWriter*>(m_pBCWriter.get())
       ->RenderBitmapResult(pOutBitmap, m_renderContents.AsStringC(), e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, false);
+  if (e != BCExceptionNO)
+    return false;
   return true;
 }
 

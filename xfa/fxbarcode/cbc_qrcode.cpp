@@ -52,10 +52,12 @@ bool CBC_QRCode::Encode(const CFX_WideStringC& contents,
   uint8_t* data = pWriter->Encode(CFX_WideString(contents),
                                   pWriter->GetErrorCorrectionLevel(), outWidth,
                                   outHeight, e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, false);
+  if (e != BCExceptionNO)
+    return false;
   pWriter->RenderResult(data, outWidth, outHeight, e);
   FX_Free(data);
-  BC_EXCEPTION_CHECK_ReturnValue(e, false);
+  if (e != BCExceptionNO)
+    return false;
   return true;
 }
 
@@ -70,7 +72,8 @@ bool CBC_QRCode::RenderDevice(CFX_RenderDevice* device,
 bool CBC_QRCode::RenderBitmap(CFX_DIBitmap*& pOutBitmap, int32_t& e) {
   static_cast<CBC_TwoDimWriter*>(m_pBCWriter.get())
       ->RenderBitmapResult(pOutBitmap, e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, false);
+  if (e != BCExceptionNO)
+    return false;
   return true;
 }
 

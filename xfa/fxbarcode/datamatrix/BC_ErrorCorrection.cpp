@@ -129,7 +129,8 @@ CFX_WideString CBC_ErrorCorrection::encodeECC200(CFX_WideString codewords,
   if (blockCount == 1) {
     CFX_WideString ecc =
         createECCBlock(codewords, symbolInfo->m_errorCodewords, e);
-    BC_EXCEPTION_CHECK_ReturnValue(e, CFX_WideString());
+    if (e != BCExceptionNO)
+      return CFX_WideString();
     sb += ecc;
   } else {
     CFX_ArrayTemplate<int32_t> dataSizes;
@@ -152,7 +153,8 @@ CFX_WideString CBC_ErrorCorrection::encodeECC200(CFX_WideString codewords,
         temp += (FX_WCHAR)codewords.GetAt(d);
       }
       CFX_WideString ecc = createECCBlock(temp, errorSizes[block], e);
-      BC_EXCEPTION_CHECK_ReturnValue(e, CFX_WideString());
+      if (e != BCExceptionNO)
+        return CFX_WideString();
       int32_t pos = 0;
       for (int32_t l = block; l < errorSizes[block] * blockCount;
            l += blockCount) {

@@ -63,11 +63,13 @@ bool CBC_EAN13::Encode(const CFX_WideStringC& contents,
   m_renderContents = encodeContents;
   uint8_t* data = static_cast<CBC_OnedEAN13Writer*>(m_pBCWriter.get())
                       ->Encode(byteString, format, outWidth, outHeight, e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, false);
+  if (e != BCExceptionNO)
+    return false;
   static_cast<CBC_OneDimWriter*>(m_pBCWriter.get())
       ->RenderResult(encodeContents.AsStringC(), data, outWidth, isDevice, e);
   FX_Free(data);
-  BC_EXCEPTION_CHECK_ReturnValue(e, false);
+  if (e != BCExceptionNO)
+    return false;
   return true;
 }
 
@@ -76,14 +78,16 @@ bool CBC_EAN13::RenderDevice(CFX_RenderDevice* device,
                              int32_t& e) {
   static_cast<CBC_OneDimWriter*>(m_pBCWriter.get())
       ->RenderDeviceResult(device, matrix, m_renderContents.AsStringC(), e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, false);
+  if (e != BCExceptionNO)
+    return false;
   return true;
 }
 
 bool CBC_EAN13::RenderBitmap(CFX_DIBitmap*& pOutBitmap, int32_t& e) {
   static_cast<CBC_OneDimWriter*>(m_pBCWriter.get())
       ->RenderBitmapResult(pOutBitmap, m_renderContents.AsStringC(), e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, false);
+  if (e != BCExceptionNO)
+    return false;
   return true;
 }
 

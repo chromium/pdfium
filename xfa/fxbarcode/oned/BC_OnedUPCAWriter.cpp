@@ -87,7 +87,8 @@ uint8_t* CBC_OnedUPCAWriter::Encode(const CFX_ByteString& contents,
                                     int32_t& outHeight,
                                     int32_t& e) {
   uint8_t* ret = Encode(contents, format, outWidth, outHeight, 0, e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
+  if (e != BCExceptionNO)
+    return nullptr;
   return ret;
 }
 
@@ -105,7 +106,8 @@ uint8_t* CBC_OnedUPCAWriter::Encode(const CFX_ByteString& contents,
   m_iDataLenth = 13;
   uint8_t* ret = m_subWriter->Encode(toEAN13String, BCFORMAT_EAN_13, outWidth,
                                      outHeight, hints, e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
+  if (e != BCExceptionNO)
+    return nullptr;
   return ret;
 }
 

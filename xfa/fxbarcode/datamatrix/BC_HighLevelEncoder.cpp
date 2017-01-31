@@ -79,7 +79,8 @@ CFX_WideString CBC_HighLevelEncoder::encodeHighLevel(CFX_WideString msg,
                                                      CBC_Dimension* maxSize,
                                                      int32_t& e) {
   CBC_EncoderContext context(msg, ecLevel, e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, CFX_WideString());
+  if (e != BCExceptionNO)
+    return CFX_WideString();
   context.setSymbolShape(shape);
   context.setSizeConstraints(minSize, maxSize);
   if ((msg.Mid(0, 6) == MACRO_05_HEADER) &&

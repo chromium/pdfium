@@ -58,11 +58,13 @@ bool CBC_Code128::Encode(const CFX_WideStringC& contents,
   CFX_ByteString byteString = encodeContents.UTF8Encode();
   uint8_t* data = static_cast<CBC_OnedCode128Writer*>(m_pBCWriter.get())
                       ->Encode(byteString, format, outWidth, outHeight, e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, false);
+  if (e != BCExceptionNO)
+    return false;
   static_cast<CBC_OneDimWriter*>(m_pBCWriter.get())
       ->RenderResult(encodeContents.AsStringC(), data, outWidth, isDevice, e);
   FX_Free(data);
-  BC_EXCEPTION_CHECK_ReturnValue(e, false);
+  if (e != BCExceptionNO)
+    return false;
   return true;
 }
 
@@ -71,14 +73,16 @@ bool CBC_Code128::RenderDevice(CFX_RenderDevice* device,
                                int32_t& e) {
   static_cast<CBC_OneDimWriter*>(m_pBCWriter.get())
       ->RenderDeviceResult(device, matrix, m_renderContents.AsStringC(), e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, false);
+  if (e != BCExceptionNO)
+    return false;
   return true;
 }
 
 bool CBC_Code128::RenderBitmap(CFX_DIBitmap*& pOutBitmap, int32_t& e) {
   static_cast<CBC_OneDimWriter*>(m_pBCWriter.get())
       ->RenderBitmapResult(pOutBitmap, m_renderContents.AsStringC(), e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, false);
+  if (e != BCExceptionNO)
+    return false;
   return true;
 }
 

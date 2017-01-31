@@ -94,7 +94,8 @@ int32_t CBC_X12Encoder::encodeChar(FX_WCHAR c, CFX_WideString& sb, int32_t& e) {
     sb += (FX_WCHAR)(c - 65 + 14);
   } else {
     CBC_HighLevelEncoder::illegalCharacter(c, e);
-    BC_EXCEPTION_CHECK_ReturnValue(e, -1);
+    if (e != BCExceptionNO)
+      return -1;
   }
   return 1;
 }

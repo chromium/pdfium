@@ -47,11 +47,13 @@ bool CBC_Code39::Encode(const CFX_WideStringC& contents,
   CFX_ByteString byteString = filtercontents.UTF8Encode();
   uint8_t* data = static_cast<CBC_OnedCode39Writer*>(m_pBCWriter.get())
                       ->Encode(byteString, format, outWidth, outHeight, e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, false);
+  if (e != BCExceptionNO)
+    return false;
   static_cast<CBC_OneDimWriter*>(m_pBCWriter.get())
       ->RenderResult(renderContents.AsStringC(), data, outWidth, isDevice, e);
   FX_Free(data);
-  BC_EXCEPTION_CHECK_ReturnValue(e, false);
+  if (e != BCExceptionNO)
+    return false;
   return true;
 }
 
@@ -63,7 +65,8 @@ bool CBC_Code39::RenderDevice(CFX_RenderDevice* device,
           ->encodedContents(m_renderContents.AsStringC(), e);
   static_cast<CBC_OneDimWriter*>(m_pBCWriter.get())
       ->RenderDeviceResult(device, matrix, renderCon.AsStringC(), e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, false);
+  if (e != BCExceptionNO)
+    return false;
   return true;
 }
 
@@ -73,7 +76,8 @@ bool CBC_Code39::RenderBitmap(CFX_DIBitmap*& pOutBitmap, int32_t& e) {
           ->encodedContents(m_renderContents.AsStringC(), e);
   static_cast<CBC_OneDimWriter*>(m_pBCWriter.get())
       ->RenderBitmapResult(pOutBitmap, renderCon.AsStringC(), e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, false);
+  if (e != BCExceptionNO)
+    return false;
   return true;
 }
 

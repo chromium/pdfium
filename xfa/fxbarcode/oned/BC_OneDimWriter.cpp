@@ -103,7 +103,8 @@ uint8_t* CBC_OneDimWriter::Encode(const CFX_ByteString& contents,
   } else {
     ret = Encode(contents, outWidth, e);
   }
-  BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
+  if (e != BCExceptionNO)
+    return nullptr;
   return ret;
 }
 
@@ -113,7 +114,8 @@ uint8_t* CBC_OneDimWriter::Encode(const CFX_ByteString& contents,
                                   int32_t& outHeight,
                                   int32_t& e) {
   uint8_t* ret = Encode(contents, format, outWidth, outHeight, 0, e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, nullptr);
+  if (e != BCExceptionNO)
+    return nullptr;
   return ret;
 }
 
@@ -319,7 +321,8 @@ void CBC_OneDimWriter::RenderBitmapResult(CFX_DIBitmap*& pOutBitmap,
                                           const CFX_WideStringC& contents,
                                           int32_t& e) {
   if (!m_output)
-    BC_EXCEPTION_CHECK_ReturnVoid(e);
+    if (e != BCExceptionNO)
+      return;
 
   pOutBitmap = CreateDIBitmap(m_output->GetWidth(), m_output->GetHeight());
   pOutBitmap->Clear(m_backgroundColor);
@@ -342,7 +345,8 @@ void CBC_OneDimWriter::RenderBitmapResult(CFX_DIBitmap*& pOutBitmap,
   if (m_locTextLoc != BC_TEXT_LOC_NONE && i < contents.GetLength()) {
     ShowChars(contents, pOutBitmap, nullptr, nullptr, m_barWidth, m_multiple,
               e);
-    BC_EXCEPTION_CHECK_ReturnVoid(e);
+    if (e != BCExceptionNO)
+      return;
   }
   std::unique_ptr<CFX_DIBitmap> pStretchBitmap =
       pOutBitmap->StretchTo(m_Width, m_Height);
@@ -355,7 +359,8 @@ void CBC_OneDimWriter::RenderDeviceResult(CFX_RenderDevice* device,
                                           const CFX_WideStringC& contents,
                                           int32_t& e) {
   if (!m_output)
-    BC_EXCEPTION_CHECK_ReturnVoid(e);
+    if (e != BCExceptionNO)
+      return;
 
   CFX_GraphStateData stateData;
   CFX_PathData path;
@@ -382,7 +387,8 @@ void CBC_OneDimWriter::RenderDeviceResult(CFX_RenderDevice* device,
     }
   if (m_locTextLoc != BC_TEXT_LOC_NONE && i < contents.GetLength()) {
     ShowChars(contents, nullptr, device, matrix, m_barWidth, m_multiple, e);
-    BC_EXCEPTION_CHECK_ReturnVoid(e);
+    if (e != BCExceptionNO)
+      return;
   }
 }
 
@@ -392,7 +398,8 @@ void CBC_OneDimWriter::RenderResult(const CFX_WideStringC& contents,
                                     bool isDevice,
                                     int32_t& e) {
   if (codeLength < 1) {
-    BC_EXCEPTION_CHECK_ReturnVoid(e);
+    if (e != BCExceptionNO)
+      return;
   }
   if (m_ModuleHeight < 20.0) {
     m_ModuleHeight = 20;
@@ -456,7 +463,8 @@ void CBC_OneDimWriter::RenderResult(const CFX_WideStringC& contents,
         break;
       }
       m_output->SetRegion(outputX, 0, m_multiple, outputHeight, e);
-      BC_EXCEPTION_CHECK_ReturnVoid(e);
+      if (e != BCExceptionNO)
+        return;
     }
     outputX += m_multiple;
   }

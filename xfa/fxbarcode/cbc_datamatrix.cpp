@@ -35,11 +35,13 @@ bool CBC_DataMatrix::Encode(const CFX_WideStringC& contents,
   uint8_t* data =
       static_cast<CBC_DataMatrixWriter*>(m_pBCWriter.get())
           ->Encode(CFX_WideString(contents), outWidth, outHeight, e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, false);
+  if (e != BCExceptionNO)
+    return false;
   static_cast<CBC_TwoDimWriter*>(m_pBCWriter.get())
       ->RenderResult(data, outWidth, outHeight, e);
   FX_Free(data);
-  BC_EXCEPTION_CHECK_ReturnValue(e, false);
+  if (e != BCExceptionNO)
+    return false;
   return true;
 }
 
@@ -54,7 +56,8 @@ bool CBC_DataMatrix::RenderDevice(CFX_RenderDevice* device,
 bool CBC_DataMatrix::RenderBitmap(CFX_DIBitmap*& pOutBitmap, int32_t& e) {
   static_cast<CBC_TwoDimWriter*>(m_pBCWriter.get())
       ->RenderBitmapResult(pOutBitmap, e);
-  BC_EXCEPTION_CHECK_ReturnValue(e, false);
+  if (e != BCExceptionNO)
+    return false;
   return true;
 }
 
