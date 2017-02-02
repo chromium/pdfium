@@ -15,7 +15,6 @@
 #include "xfa/fde/css/cfde_cssstylerule.h"
 #include "xfa/fde/css/cfde_cssstylesheet.h"
 #include "xfa/fde/css/cfde_csssyntaxparser.h"
-#include "xfa/fde/css/cfde_csstagcache.h"
 
 CFDE_CSSRuleCollection::CFDE_CSSRuleCollection() : m_iSelectors(0) {}
 
@@ -29,8 +28,8 @@ void CFDE_CSSRuleCollection::Clear() {
 }
 
 const std::vector<std::unique_ptr<CFDE_CSSRuleCollection::Data>>*
-CFDE_CSSRuleCollection::GetTagRuleData(uint32_t dwTagHash) const {
-  auto it = m_TagRules.find(dwTagHash);
+CFDE_CSSRuleCollection::GetTagRuleData(const CFX_WideString& tagname) const {
+  auto it = m_TagRules.find(FX_HashCode_GetW(tagname.c_str(), true));
   return it != m_TagRules.end() ? &it->second : nullptr;
 }
 

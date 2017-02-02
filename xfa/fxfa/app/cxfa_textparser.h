@@ -89,7 +89,7 @@ class CXFA_TextParser {
   void InitCSSData(CXFA_TextProvider* pTextProvider);
   void ParseRichText(CFDE_XMLNode* pXMLNode,
                      CFDE_CSSComputedStyle* pParentStyle);
-  void ParseTagInfo(CFDE_XMLNode* pXMLNode, CXFA_CSSTagProvider& tagProvider);
+  std::unique_ptr<CXFA_CSSTagProvider> ParseTagInfo(CFDE_XMLNode* pXMLNode);
   std::unique_ptr<CFDE_CSSStyleSheet> LoadDefaultSheetStyle();
   CFX_RetainPtr<CFDE_CSSComputedStyle> CreateStyle(
       CFDE_CSSComputedStyle* pParentStyle);

@@ -11,7 +11,6 @@
 #include <vector>
 
 #include "third_party/base/ptr_util.h"
-#include "xfa/fde/css/cfde_cssaccelerator.h"
 #include "xfa/fde/css/cfde_csscomputedstyle.h"
 #include "xfa/fde/css/cfde_cssstyleselector.h"
 #include "xfa/fde/css/cfde_cssstylesheet.h"
@@ -198,17 +197,14 @@ CFX_RetainPtr<CFDE_CSSComputedStyle> CXFA_TextParser::ComputeStyle(
 
   pContext->m_pParentStyle.Reset(pParentStyle);
 
-  CXFA_CSSTagProvider tagProvider;
-  ParseTagInfo(pXMLNode, tagProvider);
-  if (tagProvider.m_bContent)
+  auto tagProvider = ParseTagInfo(pXMLNode);
+  if (tagProvider->m_bContent)
     return nullptr;
 
   auto pStyle = CreateStyle(pParentStyle);
-  CFDE_CSSAccelerator* pCSSAccel = m_pSelector->InitAccelerator();
-  pCSSAccel->OnEnterTag(&tagProvider);
-
-  m_pSelector->ComputeStyle(&tagProvider, pContext->GetDecls(), pStyle.Get());
-  pCSSAccel->OnLeaveTag(&tagProvider);
+  m_pSelector->ComputeStyle(pContext->GetDecls(),
+                            tagProvider->GetAttribute(L"style"),
+                            tagProvider->GetAttribute(L"align"), pStyle.Get());
   return pStyle;
 }
 
@@ -228,25 +224,23 @@ void CXFA_TextParser::ParseRichText(CFDE_XMLNode* pXMLNode,
   if (!pXMLNode)
     return;
 
-  CXFA_CSSTagProvider tagProvider;
-  ParseTagInfo(pXMLNode, tagProvider);
-  if (!tagProvider.m_bTagAvailable)
+  auto tagProvider = ParseTagInfo(pXMLNode);
+  if (!tagProvider->m_bTagAvailable)
     return;
 
   CFX_RetainPtr<CFDE_CSSComputedStyle> pNewStyle;
-  if ((tagProvider.GetTagName() != FX_WSTRC(L"body")) ||
-      (tagProvider.GetTagName() != FX_WSTRC(L"html"))) {
+  if ((tagProvider->GetTagName() != L"body") ||
+      (tagProvider->GetTagName() != L"html")) {
     CXFA_TextParseContext* pTextContext = new CXFA_TextParseContext;
     FDE_CSSDisplay eDisplay = FDE_CSSDisplay::Inline;
-    if (!tagProvider.m_bContent) {
+    if (!tagProvider->m_bContent) {
+      auto declArray =
+          m_pSelector->MatchDeclarations(tagProvider->GetTagName());
       pNewStyle = CreateStyle(pParentStyle);
-      CFDE_CSSAccelerator* pCSSAccel = m_pSelector->InitAccelerator();
-      pCSSAccel->OnEnterTag(&tagProvider);
+      m_pSelector->ComputeStyle(declArray, tagProvider->GetAttribute(L"style"),
+                                tagProvider->GetAttribute(L"align"),
+                                pNewStyle.Get());
 
-      auto declArray = m_pSelector->MatchDeclarations(&tagProvider);
-      m_pSelector->ComputeStyle(&tagProvider, declArray, pNewStyle.Get());
-
-      pCSSAccel->OnLeaveTag(&tagProvider);
       if (!declArray.empty())
         pTextContext->SetDecls(std::move(declArray));
 
@@ -286,23 +280,26 @@ bool CXFA_TextParser::TagValidate(const CFX_WideString& wsName) const {
                             FX_HashCode_GetW(wsName.AsStringC(), true));
 }
 
-void CXFA_TextParser::ParseTagInfo(CFDE_XMLNode* pXMLNode,
-                                   CXFA_CSSTagProvider& tagProvider) {
+std::unique_ptr<CXFA_CSSTagProvider> CXFA_TextParser::ParseTagInfo(
+    CFDE_XMLNode* pXMLNode) {
+  auto tagProvider = pdfium::MakeUnique<CXFA_CSSTagProvider>();
+
   CFX_WideString wsName;
   if (pXMLNode->GetType() == FDE_XMLNODE_Element) {
     CFDE_XMLElement* pXMLElement = static_cast<CFDE_XMLElement*>(pXMLNode);
     pXMLElement->GetLocalTagName(wsName);
-    tagProvider.SetTagNameObj(wsName);
-    tagProvider.m_bTagAvailable = TagValidate(wsName);
+    tagProvider->SetTagName(wsName);
+    tagProvider->m_bTagAvailable = TagValidate(wsName);
 
     CFX_WideString wsValue;
     pXMLElement->GetString(L"style", wsValue);
     if (!wsValue.IsEmpty())
-      tagProvider.SetAttribute(L"style", wsValue);
+      tagProvider->SetAttribute(L"style", wsValue);
   } else if (pXMLNode->GetType() == FDE_XMLNODE_Text) {
-    tagProvider.m_bTagAvailable = true;
-    tagProvider.m_bContent = true;
+    tagProvider->m_bTagAvailable = true;
+    tagProvider->m_bContent = true;
   }
+  return tagProvider;
 }
 
 int32_t CXFA_TextParser::GetVAlign(CXFA_TextProvider* pTextProvider) const {
@@ -312,23 +309,23 @@ int32_t CXFA_TextParser::GetVAlign(CXFA_TextProvider* pTextProvider) const {
 
 FX_FLOAT CXFA_TextParser::GetTabInterval(CFDE_CSSComputedStyle* pStyle) const {
   CFX_WideString wsValue;
-  if (pStyle && pStyle->GetCustomStyle(FX_WSTRC(L"tab-interval"), wsValue))
+  if (pStyle && pStyle->GetCustomStyle(L"tab-interval", wsValue))
     return CXFA_Measurement(wsValue.AsStringC()).ToUnit(XFA_UNIT_Pt);
   return 36;
 }
 
 int32_t CXFA_TextParser::CountTabs(CFDE_CSSComputedStyle* pStyle) const {
   CFX_WideString wsValue;
-  if (pStyle && pStyle->GetCustomStyle(FX_WSTRC(L"xfa-tab-count"), wsValue))
+  if (pStyle && pStyle->GetCustomStyle(L"xfa-tab-count", wsValue))
     return wsValue.GetInteger();
   return 0;
 }
 
 bool CXFA_TextParser::IsSpaceRun(CFDE_CSSComputedStyle* pStyle) const {
   CFX_WideString wsValue;
-  if (pStyle && pStyle->GetCustomStyle(FX_WSTRC(L"xfa-spacerun"), wsValue)) {
+  if (pStyle && pStyle->GetCustomStyle(L"xfa-spacerun", wsValue)) {
     wsValue.MakeLower();
-    return wsValue == FX_WSTRC(L"yes");
+    return wsValue == L"yes";
   }
   return false;
 }
@@ -406,7 +403,7 @@ int32_t CXFA_TextParser::GetVerScale(CXFA_TextProvider* pTextProvider,
                                      CFDE_CSSComputedStyle* pStyle) const {
   if (pStyle) {
     CFX_WideString wsValue;
-    if (pStyle->GetCustomStyle(FX_WSTRC(L"xfa-font-vertical-scale"), wsValue))
+    if (pStyle->GetCustomStyle(L"xfa-font-vertical-scale", wsValue))
       return wsValue.GetInteger();
   }
 
@@ -437,8 +434,8 @@ void CXFA_TextParser::GetUnderline(CXFA_TextProvider* pTextProvider,
     iUnderline = 1;
 
   CFX_WideString wsValue;
-  if (pStyle->GetCustomStyle(FX_WSTRC(L"underlinePeriod"), wsValue)) {
-    if (wsValue == FX_WSTRC(L"word"))
+  if (pStyle->GetCustomStyle(L"underlinePeriod", wsValue)) {
+    if (wsValue == L"word")
       iPeriod = XFA_ATTRIBUTEENUM_Word;
   } else if (CXFA_Font font = pTextProvider->GetFontNode()) {
     iPeriod = font.GetUnderlinePeriod();
@@ -527,8 +524,8 @@ bool CXFA_TextParser::GetEmbbedObj(CXFA_TextProvider* pTextProvider,
     else
       ws.MakeLower();
 
-    bool bURI = (ws == FX_WSTRC(L"uri"));
-    if (!bURI && ws != FX_WSTRC(L"som"))
+    bool bURI = (ws == L"uri");
+    if (!bURI && ws != L"som")
       return false;
 
     ws.clear();
@@ -538,8 +535,8 @@ bool CXFA_TextParser::GetEmbbedObj(CXFA_TextProvider* pTextProvider,
     else
       ws.MakeLower();
 
-    bool bRaw = (ws == FX_WSTRC(L"raw"));
-    if (!bRaw && ws != FX_WSTRC(L"formatted"))
+    bool bRaw = (ws == L"raw");
+    if (!bRaw && ws != L"formatted")
       return false;
 
     bRet = pTextProvider->GetEmbbedObj(bURI, bRaw, wsAttr, wsValue);
@@ -559,8 +556,8 @@ bool CXFA_TextParser::GetTabstops(CFDE_CSSComputedStyle* pStyle,
     return false;
 
   CFX_WideString wsValue;
-  if (!pStyle->GetCustomStyle(FX_WSTRC(L"xfa-tab-stops"), wsValue) &&
-      !pStyle->GetCustomStyle(FX_WSTRC(L"tab-stops"), wsValue)) {
+  if (!pStyle->GetCustomStyle(L"xfa-tab-stops", wsValue) &&
+      !pStyle->GetCustomStyle(L"tab-stops", wsValue)) {
     return false;
   }
 

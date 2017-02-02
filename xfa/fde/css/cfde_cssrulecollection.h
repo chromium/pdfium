@@ -37,7 +37,7 @@ class CFDE_CSSRuleCollection {
   int32_t CountSelectors() const { return m_iSelectors; }
 
   const std::vector<std::unique_ptr<Data>>* GetTagRuleData(
-      uint32_t dwTagHash) const;
+      const CFX_WideString& tagname) const;
 
  private:
   void AddRulesFrom(const CFDE_CSSStyleSheet* pStyleSheet,

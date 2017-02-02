@@ -13,30 +13,27 @@
 
 class CXFA_CSSTagProvider {
  public:
-  using AttributeMap = std::map<CFX_WideString, CFX_WideString>;
-
   CXFA_CSSTagProvider();
   ~CXFA_CSSTagProvider();
 
   CFX_WideString GetTagName() { return m_wsTagName; }
 
-  AttributeMap::iterator begin() { return m_Attributes.begin(); }
-  AttributeMap::iterator end() { return m_Attributes.end(); }
-
-  bool empty() const { return m_Attributes.empty(); }
-
-  void SetTagNameObj(const CFX_WideString& wsName) { m_wsTagName = wsName; }
+  void SetTagName(const CFX_WideString& wsName) { m_wsTagName = wsName; }
   void SetAttribute(const CFX_WideString& wsAttr,
                     const CFX_WideString& wsValue) {
     m_Attributes.insert({wsAttr, wsValue});
   }
 
+  CFX_WideString GetAttribute(const CFX_WideString& wsAttr) {
+    return m_Attributes[wsAttr];
+  }
+
   bool m_bTagAvailable;
   bool m_bContent;
 
- protected:
+ private:
   CFX_WideString m_wsTagName;
-  AttributeMap m_Attributes;
+  std::map<CFX_WideString, CFX_WideString> m_Attributes;
 };
 
 #endif  // XFA_FXFA_APP_CXFA_CSSTAGPROVIDER_H_

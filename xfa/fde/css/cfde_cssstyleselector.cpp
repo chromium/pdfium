@@ -10,7 +10,6 @@
 #include <utility>
 
 #include "third_party/base/ptr_util.h"
-#include "xfa/fde/css/cfde_cssaccelerator.h"
 #include "xfa/fde/css/cfde_csscolorvalue.h"
 #include "xfa/fde/css/cfde_csscomputedstyle.h"
 #include "xfa/fde/css/cfde_csscustomproperty.h"
@@ -20,7 +19,6 @@
 #include "xfa/fde/css/cfde_cssselector.h"
 #include "xfa/fde/css/cfde_cssstylesheet.h"
 #include "xfa/fde/css/cfde_csssyntaxparser.h"
-#include "xfa/fde/css/cfde_csstagcache.h"
 #include "xfa/fde/css/cfde_cssvaluelist.h"
 #include "xfa/fxfa/app/cxfa_csstagprovider.h"
 
@@ -48,13 +46,6 @@ void CFDE_CSSStyleSelector::SetDefFontSize(FX_FLOAT fFontSize) {
   m_fDefFontSize = fFontSize;
 }
 
-CFDE_CSSAccelerator* CFDE_CSSStyleSelector::InitAccelerator() {
-  if (!m_pAccelerator)
-    m_pAccelerator = pdfium::MakeUnique<CFDE_CSSAccelerator>();
-  m_pAccelerator->Clear();
-  return m_pAccelerator.get();
-}
-
 CFX_RetainPtr<CFDE_CSSComputedStyle> CFDE_CSSStyleSelector::CreateComputedStyle(
     CFDE_CSSComputedStyle* pParentStyle) {
   auto pStyle = pdfium::MakeRetain<CFDE_CSSComputedStyle>();
@@ -74,104 +65,59 @@ void CFDE_CSSStyleSelector::UpdateStyleIndex() {
 }
 
 std::vector<const CFDE_CSSDeclaration*>
-CFDE_CSSStyleSelector::MatchDeclarations(CXFA_CSSTagProvider* pTag) {
-  ASSERT(pTag);
-
-  CFDE_CSSTagCache* pCache = m_pAccelerator->top();
-  ASSERT(pCache && pCache->GetTag() == pTag);
-
+CFDE_CSSStyleSelector::MatchDeclarations(const CFX_WideString& tagname) {
   std::vector<const CFDE_CSSDeclaration*> matchedDecls;
-  if (m_UARules.CountSelectors() == 0 || !pCache->HashTag())
+  if (m_UARules.CountSelectors() == 0 || tagname.IsEmpty())
     return matchedDecls;
 
-  auto rules = m_UARules.GetTagRuleData(pCache->HashTag());
+  auto rules = m_UARules.GetTagRuleData(tagname);
   if (!rules)
     return matchedDecls;
 
   for (const auto& d : *rules) {
-    if (MatchSelector(pCache, d->pSelector))
+    if (MatchSelector(tagname, d->pSelector))
       matchedDecls.push_back(d->pDeclaration);
   }
   return matchedDecls;
 }
 
-bool CFDE_CSSStyleSelector::MatchSelector(CFDE_CSSTagCache* pCache,
+bool CFDE_CSSStyleSelector::MatchSelector(const CFX_WideString& tagname,
                                           CFDE_CSSSelector* pSel) {
-  uint32_t dwHash;
-  while (pSel && pCache) {
-    switch (pSel->GetType()) {
-      case FDE_CSSSelectorType::Descendant:
-        dwHash = pSel->GetNameHash();
-        while ((pCache = pCache->GetParent()) != nullptr) {
-          if (dwHash != pCache->HashTag())
-            continue;
-          if (MatchSelector(pCache, pSel->GetNextSelector()))
-            return true;
-        }
-        return false;
-      case FDE_CSSSelectorType::Element:
-        dwHash = pSel->GetNameHash();
-        if (dwHash != pCache->HashTag())
-          return false;
-        break;
-      default:
-        ASSERT(false);
-        break;
-    }
-    pSel = pSel->GetNextSelector();
+  // TODO(dsinclair): The code only supports a single level of selector at this
+  // point. None of the code using selectors required the complexity so lets
+  // just say we don't support them to simplify the code for now.
+  if (!pSel || pSel->GetNextSelector() ||
+      pSel->GetType() == FDE_CSSSelectorType::Descendant) {
+    return false;
   }
-  return !pSel && pCache;
+  return pSel->GetNameHash() == FX_HashCode_GetW(tagname.c_str(), true);
 }
 
 void CFDE_CSSStyleSelector::ComputeStyle(
-    CXFA_CSSTagProvider* pTag,
     const std::vector<const CFDE_CSSDeclaration*>& declArray,
-    CFDE_CSSComputedStyle* pDestStyle) {
-  ASSERT(pDestStyle);
+    const CFX_WideString& styleString,
+    const CFX_WideString& alignString,
+    CFDE_CSSComputedStyle* pDest) {
+  std::unique_ptr<CFDE_CSSDeclaration> pDecl;
+  if (!styleString.IsEmpty() || !alignString.IsEmpty()) {
+    pDecl = pdfium::MakeUnique<CFDE_CSSDeclaration>();
 
-  static const uint32_t s_dwStyleHash = FX_HashCode_GetW(L"style", true);
-  static const uint32_t s_dwAlignHash = FX_HashCode_GetW(L"align", true);
-
-  if (!pTag->empty()) {
-    std::unique_ptr<CFDE_CSSDeclaration> pDecl;
-    for (auto it : *pTag) {
-      CFX_WideString wsAttri = it.first;
-      CFX_WideString wsValue = it.second;
-      uint32_t dwAttriHash = FX_HashCode_GetW(wsAttri.AsStringC(), true);
-      if (dwAttriHash == s_dwStyleHash) {
-        if (!pDecl)
-          pDecl = pdfium::MakeUnique<CFDE_CSSDeclaration>();
-
-        AppendInlineStyle(pDecl.get(), wsValue.c_str(), wsValue.GetLength());
-      } else if (dwAttriHash == s_dwAlignHash) {
-        if (!pDecl)
-          pDecl = pdfium::MakeUnique<CFDE_CSSDeclaration>();
-
-        FDE_CSSPropertyArgs args;
-        args.pStringCache = nullptr;
-        args.pProperty = FDE_GetCSSPropertyByEnum(FDE_CSSProperty::TextAlign);
-        pDecl->AddProperty(&args, wsValue.c_str(), wsValue.GetLength());
-      }
-    }
-
-    if (pDecl) {
-      ApplyDeclarations(declArray, pDecl.get(), pDestStyle);
-      return;
+    if (!styleString.IsEmpty())
+      AppendInlineStyle(pDecl.get(), styleString);
+    if (!alignString.IsEmpty()) {
+      FDE_CSSPropertyArgs args;
+      args.pStringCache = nullptr;
+      args.pProperty = FDE_GetCSSPropertyByEnum(FDE_CSSProperty::TextAlign);
+      pDecl->AddProperty(&args, alignString.c_str(), alignString.GetLength());
     }
   }
-
-  if (declArray.empty())
-    return;
-
-  ApplyDeclarations(declArray, nullptr, pDestStyle);
+  ApplyDeclarations(declArray, pDecl.get(), pDest);
 }
 
 void CFDE_CSSStyleSelector::ApplyDeclarations(
     const std::vector<const CFDE_CSSDeclaration*>& declArray,
     const CFDE_CSSDeclaration* extraDecl,
-    CFDE_CSSComputedStyle* pDestStyle) {
-  CFDE_CSSComputedStyle* pComputedStyle = pDestStyle;
-
+    CFDE_CSSComputedStyle* pComputedStyle) {
   std::vector<const CFDE_CSSPropertyHolder*> importants;
   std::vector<const CFDE_CSSPropertyHolder*> normals;
   std::vector<const CFDE_CSSCustomProperty*> customs;
@@ -205,11 +151,11 @@ void CFDE_CSSStyleSelector::ExtractValues(
 }
 
 void CFDE_CSSStyleSelector::AppendInlineStyle(CFDE_CSSDeclaration* pDecl,
-                                              const FX_WCHAR* psz,
-                                              int32_t iLen) {
-  ASSERT(pDecl && psz && iLen > 0);
+                                              const CFX_WideString& style) {
+  ASSERT(pDecl && !style.IsEmpty());
+
   auto pSyntax = pdfium::MakeUnique<CFDE_CSSSyntaxParser>();
-  if (!pSyntax->Init(psz, iLen, 32, true))
+  if (!pSyntax->Init(style.c_str(), style.GetLength(), 32, true))
     return;
 
   int32_t iLen2 = 0;
