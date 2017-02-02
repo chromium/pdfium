@@ -80,7 +80,7 @@ CFDE_XMLNode* CXFA_TextLayout::GetXMLContainerNode() {
       CFDE_XMLElement* pXMLElement = static_cast<CFDE_XMLElement*>(pXMLChild);
       CFX_WideString wsTag;
       pXMLElement->GetLocalTagName(wsTag);
-      if (wsTag == FX_WSTRC(L"body") || wsTag == FX_WSTRC(L"html")) {
+      if (wsTag == L"body" || wsTag == L"html") {
         pXMLContainer = pXMLChild;
         break;
       }
@@ -732,7 +732,7 @@ bool CXFA_TextLayout::LoadRichText(
         pElement = static_cast<CFDE_XMLElement*>(pXMLNode);
         pElement->GetLocalTagName(wsName);
       }
-      if (wsName == FX_WSTRC(L"ol")) {
+      if (wsName == L"ol") {
         bIsOl = true;
         bCurOl = true;
       }
@@ -750,9 +750,8 @@ bool CXFA_TextLayout::LoadRichText(
         if ((eDisplay == FDE_CSSDisplay::Block ||
              eDisplay == FDE_CSSDisplay::ListItem) &&
             pStyle &&
-            (wsName.IsEmpty() ||
-             (wsName != FX_WSTRC(L"body") && wsName != FX_WSTRC(L"html") &&
-              wsName != FX_WSTRC(L"ol") && wsName != FX_WSTRC(L"ul")))) {
+            (wsName.IsEmpty() || (wsName != L"body" && wsName != L"html" &&
+                                  wsName != L"ol" && wsName != L"ul"))) {
           const FDE_CSSRect* pRect = pStyle->GetMarginWidth();
           if (pRect) {
             fLinePos += pRect->top.GetValue();
@@ -760,7 +759,7 @@ bool CXFA_TextLayout::LoadRichText(
           }
         }
 
-        if (wsName == FX_WSTRC(L"a")) {
+        if (wsName == L"a") {
           CFX_WideString wsLinkContent;
           ASSERT(pElement);
           pElement->GetString(L"href", wsLinkContent);
@@ -778,14 +777,14 @@ bool CXFA_TextLayout::LoadRichText(
         CFX_WideString wsText;
         if (bContentNode && iTabCount == 0) {
           static_cast<CFDE_XMLText*>(pXMLNode)->GetText(wsText);
-        } else if (wsName == FX_WSTRC(L"br")) {
+        } else if (wsName == L"br") {
           wsText = L'\n';
-        } else if (wsName == FX_WSTRC(L"li")) {
+        } else if (wsName == L"li") {
           bCurLi = true;
           if (bIsOl)
             wsText.Format(L"%d.  ", iLiCount);
           else
-            wsText = 0x00B7 + FX_WSTRC(L"  ");
+            wsText = 0x00B7 + CFX_WideStringC(L"  ", 1);
         } else if (!bContentNode) {
           if (iTabCount > 0) {
             while (iTabCount-- > 0)

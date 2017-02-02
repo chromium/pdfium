@@ -89,9 +89,9 @@ bool FormValueNode_SetChildContent(CXFA_Node* pValueNode,
           CFX_WideString wsContentType;
           pChildNode->GetAttribute(XFA_ATTRIBUTE_ContentType, wsContentType,
                                    false);
-          if (wsContentType == FX_WSTRC(L"text/html"))
+          if (wsContentType == L"text/html")
             element = XFA_Element::SharpxHTML;
-          else if (wsContentType == FX_WSTRC(L"text/xml"))
+          else if (wsContentType == L"text/xml")
             element = XFA_Element::Sharpxml;
         }
         pContentRawDataNode = pChildNode->CreateSamePacketNode(element);
@@ -305,7 +305,7 @@ void CreateDataBinding(CXFA_Node* pFormNode,
           CFX_WideString wsItem;
           for (int32_t i = 0; i < iCounts; i++) {
             items[i]->TryContent(wsItem);
-            wsItem = (iCounts == 1) ? wsItem : wsItem + FX_WSTRC(L"\n");
+            wsItem = (iCounts == 1) ? wsItem : wsItem + L"\n";
             wsNormalizeValue += wsItem;
           }
           CXFA_ExData exData = defValue.GetExData();
@@ -456,7 +456,7 @@ CXFA_Node* FindDataRefDataNode(CXFA_Document* pDocument,
                                bool bForceBind,
                                bool bUpLevel) {
   uint32_t dFlags = XFA_RESOLVENODE_Children | XFA_RESOLVENODE_BindNew;
-  if (bUpLevel || wsRef != FX_WSTRC(L"name"))
+  if (bUpLevel || wsRef != L"name")
     dFlags |= (XFA_RESOLVENODE_Parent | XFA_RESOLVENODE_Siblings);
 
   XFA_RESOLVENODE_RS rs;
@@ -494,7 +494,7 @@ CXFA_Node* CloneOrMergeInstanceManager(CXFA_Document* pDocument,
                                        CXFA_Node* pTemplateNode,
                                        CXFA_NodeArray& subforms) {
   CFX_WideStringC wsSubformName = pTemplateNode->GetCData(XFA_ATTRIBUTE_Name);
-  CFX_WideString wsInstMgrNodeName = FX_WSTRC(L"_") + wsSubformName;
+  CFX_WideString wsInstMgrNodeName = L"_" + wsSubformName;
   uint32_t dwInstNameHash =
       FX_HashCode_GetW(wsInstMgrNodeName.AsStringC(), false);
   CXFA_Node* pExistingNode = XFA_DataMerge_FindFormDOMInstance(
@@ -530,8 +530,7 @@ CXFA_Node* CloneOrMergeInstanceManager(CXFA_Document* pDocument,
 
   CXFA_Node* pNewNode =
       pDocument->CreateNode(XFA_XDPPACKET_Form, XFA_Element::InstanceManager);
-  wsInstMgrNodeName =
-      FX_WSTRC(L"_") + pTemplateNode->GetCData(XFA_ATTRIBUTE_Name);
+  wsInstMgrNodeName = L"_" + pTemplateNode->GetCData(XFA_ATTRIBUTE_Name);
   pNewNode->SetCData(XFA_ATTRIBUTE_Name, wsInstMgrNodeName);
   pFormParent->InsertChild(pNewNode, nullptr);
   pNewNode->SetTemplateNode(pTemplateNode);
@@ -1040,7 +1039,7 @@ CXFA_Node* MaybeCreateDataNode(CXFA_Document* pDocument,
 
       CFX_WideString wsNamespace;
       if (!pDDGroupNode->TryNamespace(wsNamespace) ||
-          wsNamespace != FX_WSTRC(L"http://ns.adobe.com/data-description/")) {
+          wsNamespace != L"http://ns.adobe.com/data-description/") {
         continue;
       }
     }
@@ -1214,7 +1213,7 @@ void UpdateDataRelation(CXFA_Node* pDataNode, CXFA_Node* pDataDescriptionNode) {
 
         CFX_WideString wsNamespace;
         if (!pDDGroupNode->TryNamespace(wsNamespace) ||
-            wsNamespace != FX_WSTRC(L"http://ns.adobe.com/data-description/")) {
+            wsNamespace != L"http://ns.adobe.com/data-description/") {
           continue;
         }
       }
@@ -1390,7 +1389,7 @@ void CXFA_Document::DoDataMerge() {
     if (!pDDRoot && pChildNode->GetNameHash() == XFA_HASHCODE_DataDescription) {
       if (!pChildNode->TryNamespace(wsNamespaceURI))
         continue;
-      if (wsNamespaceURI == FX_WSTRC(L"http://ns.adobe.com/data-description/"))
+      if (wsNamespaceURI == L"http://ns.adobe.com/data-description/")
         pDDRoot = pChildNode;
     } else if (!pDataRoot && pChildNode->GetNameHash() == XFA_HASHCODE_Data) {
       if (!pChildNode->TryNamespace(wsNamespaceURI))

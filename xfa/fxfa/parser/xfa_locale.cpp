@@ -35,31 +35,31 @@ void CXFA_XMLLocale::GetNumbericSymbol(FX_LOCALENUMSYMBOL eType,
   switch (eType) {
     case FX_LOCALENUMSYMBOL_Decimal:
       bsSymbols = "numberSymbols";
-      wsName = FX_WSTRC(L"decimal");
+      wsName = L"decimal";
       break;
     case FX_LOCALENUMSYMBOL_Grouping:
       bsSymbols = "numberSymbols";
-      wsName = FX_WSTRC(L"grouping");
+      wsName = L"grouping";
       break;
     case FX_LOCALENUMSYMBOL_Percent:
       bsSymbols = "numberSymbols";
-      wsName = FX_WSTRC(L"percent");
+      wsName = L"percent";
       break;
     case FX_LOCALENUMSYMBOL_Minus:
       bsSymbols = "numberSymbols";
-      wsName = FX_WSTRC(L"minus");
+      wsName = L"minus";
       break;
     case FX_LOCALENUMSYMBOL_Zero:
       bsSymbols = "numberSymbols";
-      wsName = FX_WSTRC(L"zero");
+      wsName = L"zero";
       break;
     case FX_LOCALENUMSYMBOL_CurrencySymbol:
       bsSymbols = "currencySymbols";
-      wsName = FX_WSTRC(L"symbol");
+      wsName = L"symbol";
       break;
     case FX_LOCALENUMSYMBOL_CurrencyName:
       bsSymbols = "currencySymbols";
-      wsName = FX_WSTRC(L"isoname");
+      wsName = L"isoname";
       break;
     default:
       return;
@@ -238,28 +238,25 @@ void CXFA_NodeLocale::GetNumbericSymbol(FX_LOCALENUMSYMBOL eType,
                                         CFX_WideString& wsNumSymbol) const {
   switch (eType) {
     case FX_LOCALENUMSYMBOL_Decimal:
-      wsNumSymbol = GetSymbol(XFA_Element::NumberSymbols, FX_WSTRC(L"decimal"));
+      wsNumSymbol = GetSymbol(XFA_Element::NumberSymbols, L"decimal");
       break;
     case FX_LOCALENUMSYMBOL_Grouping:
-      wsNumSymbol =
-          GetSymbol(XFA_Element::NumberSymbols, FX_WSTRC(L"grouping"));
+      wsNumSymbol = GetSymbol(XFA_Element::NumberSymbols, L"grouping");
       break;
     case FX_LOCALENUMSYMBOL_Percent:
-      wsNumSymbol = GetSymbol(XFA_Element::NumberSymbols, FX_WSTRC(L"percent"));
+      wsNumSymbol = GetSymbol(XFA_Element::NumberSymbols, L"percent");
       break;
     case FX_LOCALENUMSYMBOL_Minus:
-      wsNumSymbol = GetSymbol(XFA_Element::NumberSymbols, FX_WSTRC(L"minus"));
+      wsNumSymbol = GetSymbol(XFA_Element::NumberSymbols, L"minus");
       break;
     case FX_LOCALENUMSYMBOL_Zero:
-      wsNumSymbol = GetSymbol(XFA_Element::NumberSymbols, FX_WSTRC(L"zero"));
+      wsNumSymbol = GetSymbol(XFA_Element::NumberSymbols, L"zero");
       break;
     case FX_LOCALENUMSYMBOL_CurrencySymbol:
-      wsNumSymbol =
-          GetSymbol(XFA_Element::CurrencySymbols, FX_WSTRC(L"symbol"));
+      wsNumSymbol = GetSymbol(XFA_Element::CurrencySymbols, L"symbol");
       break;
     case FX_LOCALENUMSYMBOL_CurrencyName:
-      wsNumSymbol =
-          GetSymbol(XFA_Element::CurrencySymbols, FX_WSTRC(L"isoname"));
+      wsNumSymbol = GetSymbol(XFA_Element::CurrencySymbols, L"isoname");
       break;
   }
 }
@@ -302,17 +299,17 @@ void CXFA_NodeLocale::GetDatePattern(FX_LOCALEDATETIMESUBCATEGORY eType,
                                      CFX_WideString& wsPattern) const {
   switch (eType) {
     case FX_LOCALEDATETIMESUBCATEGORY_Short:
-      wsPattern = GetSymbol(XFA_Element::DatePatterns, FX_WSTRC(L"short"));
+      wsPattern = GetSymbol(XFA_Element::DatePatterns, L"short");
       break;
     case FX_LOCALEDATETIMESUBCATEGORY_Medium:
     case FX_LOCALEDATETIMESUBCATEGORY_Default:
-      wsPattern = GetSymbol(XFA_Element::DatePatterns, FX_WSTRC(L"med"));
+      wsPattern = GetSymbol(XFA_Element::DatePatterns, L"med");
       break;
     case FX_LOCALEDATETIMESUBCATEGORY_Full:
-      wsPattern = GetSymbol(XFA_Element::DatePatterns, FX_WSTRC(L"full"));
+      wsPattern = GetSymbol(XFA_Element::DatePatterns, L"full");
       break;
     case FX_LOCALEDATETIMESUBCATEGORY_Long:
-      wsPattern = GetSymbol(XFA_Element::DatePatterns, FX_WSTRC(L"long"));
+      wsPattern = GetSymbol(XFA_Element::DatePatterns, L"long");
       break;
   }
 }
@@ -321,17 +318,17 @@ void CXFA_NodeLocale::GetTimePattern(FX_LOCALEDATETIMESUBCATEGORY eType,
                                      CFX_WideString& wsPattern) const {
   switch (eType) {
     case FX_LOCALEDATETIMESUBCATEGORY_Short:
-      wsPattern = GetSymbol(XFA_Element::TimePatterns, FX_WSTRC(L"short"));
+      wsPattern = GetSymbol(XFA_Element::TimePatterns, L"short");
       break;
     case FX_LOCALEDATETIMESUBCATEGORY_Medium:
     case FX_LOCALEDATETIMESUBCATEGORY_Default:
-      wsPattern = GetSymbol(XFA_Element::TimePatterns, FX_WSTRC(L"med"));
+      wsPattern = GetSymbol(XFA_Element::TimePatterns, L"med");
       break;
     case FX_LOCALEDATETIMESUBCATEGORY_Full:
-      wsPattern = GetSymbol(XFA_Element::TimePatterns, FX_WSTRC(L"full"));
+      wsPattern = GetSymbol(XFA_Element::TimePatterns, L"full");
       break;
     case FX_LOCALEDATETIMESUBCATEGORY_Long:
-      wsPattern = GetSymbol(XFA_Element::TimePatterns, FX_WSTRC(L"long"));
+      wsPattern = GetSymbol(XFA_Element::TimePatterns, L"long");
       break;
   }
 }

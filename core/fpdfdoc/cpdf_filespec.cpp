@@ -143,7 +143,7 @@ CFX_WideString CPDF_FileSpec::EncodeFileName(const CFX_WideStringC& filepath) {
   }
   return ChangeSlashToPDF(filepath.c_str());
 #elif _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
-  if (filepath.Left(sizeof("Mac") - 1) == FX_WSTRC(L"Mac")) {
+  if (filepath.Left(sizeof("Mac") - 1) == L"Mac") {
     CFX_WideString result;
     result = '/';
     result += ChangeSlashToPDF(filepath.c_str());

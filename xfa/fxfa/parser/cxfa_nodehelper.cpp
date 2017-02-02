@@ -330,7 +330,7 @@ bool CXFA_NodeHelper::CreateNode_ForCondition(CFX_WideString& wsCondition) {
       }
     }
     if (bAll) {
-      wsIndex = FX_WSTRC(L"1");
+      wsIndex = L"1";
       m_iCreateFlag = XFA_RESOLVENODE_RSTYPE_CreateNodeAll;
     } else {
       m_iCreateFlag = XFA_RESOLVENODE_RSTYPE_CreateNodeOne;

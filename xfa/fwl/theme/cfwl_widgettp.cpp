@@ -84,8 +84,7 @@ void CFWL_WidgetTP::InitTTO() {
   if (m_pTextOut)
     return;
 
-  m_pFDEFont =
-      CFWL_FontManager::GetInstance()->FindFont(FX_WSTRC(L"Helvetica"), 0, 0);
+  m_pFDEFont = CFWL_FontManager::GetInstance()->FindFont(L"Helvetica", 0, 0);
   m_pTextOut = pdfium::MakeUnique<CFDE_TextOut>();
   m_pTextOut->SetFont(m_pFDEFont);
   m_pTextOut->SetFontSize(FWLTHEME_CAPACITY_FontSize);

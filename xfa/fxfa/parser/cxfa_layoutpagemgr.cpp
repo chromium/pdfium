@@ -63,9 +63,9 @@ uint32_t GetRelevant(CXFA_Node* pFormItem, uint32_t dwParentRelvant) {
   uint32_t dwRelevant = XFA_WidgetStatus_Viewable | XFA_WidgetStatus_Printable;
   CFX_WideStringC wsRelevant;
   if (pFormItem->TryCData(XFA_ATTRIBUTE_Relevant, wsRelevant)) {
-    if (wsRelevant == FX_WSTRC(L"+print") || wsRelevant == FX_WSTRC(L"print"))
+    if (wsRelevant == L"+print" || wsRelevant == L"print")
       dwRelevant &= ~XFA_WidgetStatus_Viewable;
-    else if (wsRelevant == FX_WSTRC(L"-print"))
+    else if (wsRelevant == L"-print")
       dwRelevant &= ~XFA_WidgetStatus_Printable;
   }
 
@@ -163,8 +163,7 @@ CXFA_Node* ResolveBreakTarget(CXFA_Node* pPageSetRoot,
         return pNode;
     } else if (bNewExprStyle) {
       CFX_WideString wsProcessedTarget = wsExpr;
-      if (wsExpr.Left(4) == FX_WSTRC(L"som(") &&
-          wsExpr.Right(1) == FX_WSTRC(L")")) {
+      if (wsExpr.Left(4) == L"som(" && wsExpr.Right(1) == L")") {
         wsProcessedTarget = wsExpr.Mid(4, wsExpr.GetLength() - 5);
       }
       XFA_RESOLVENODE_RS rs;

@@ -119,21 +119,21 @@ bool CXFA_Measurement::ToUnit(XFA_UNIT eUnit, FX_FLOAT& fValue) const {
 }
 
 XFA_UNIT CXFA_Measurement::GetUnit(const CFX_WideStringC& wsUnit) {
-  if (wsUnit == FX_WSTRC(L"mm"))
+  if (wsUnit == L"mm")
     return XFA_UNIT_Mm;
-  if (wsUnit == FX_WSTRC(L"pt"))
+  if (wsUnit == L"pt")
     return XFA_UNIT_Pt;
-  if (wsUnit == FX_WSTRC(L"in"))
+  if (wsUnit == L"in")
     return XFA_UNIT_In;
-  if (wsUnit == FX_WSTRC(L"cm"))
+  if (wsUnit == L"cm")
     return XFA_UNIT_Cm;
-  if (wsUnit == FX_WSTRC(L"pc"))
+  if (wsUnit == L"pc")
     return XFA_UNIT_Pc;
-  if (wsUnit == FX_WSTRC(L"mp"))
+  if (wsUnit == L"mp")
     return XFA_UNIT_Mp;
-  if (wsUnit == FX_WSTRC(L"em"))
+  if (wsUnit == L"em")
     return XFA_UNIT_Em;
-  if (wsUnit == FX_WSTRC(L"%"))
+  if (wsUnit == L"%")
     return XFA_UNIT_Percent;
   return XFA_UNIT_Unknown;
 }

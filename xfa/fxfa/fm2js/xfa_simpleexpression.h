@@ -14,9 +14,8 @@
 #include "xfa/fxfa/fm2js/xfa_lexer.h"
 
 #define RUNTIMEFUNCTIONRETURNVALUE \
-  (FX_WSTRC(L"foxit_xfa_formcalc_runtime_func_return_value"))
-#define EXCLAMATION_IN_IDENTIFIER \
-  (FX_WSTRC(L"foxit_xfa_formcalc__exclamation__"))
+  (L"foxit_xfa_formcalc_runtime_func_return_value")
+#define EXCLAMATION_IN_IDENTIFIER (L"foxit_xfa_formcalc__exclamation__")
 
 enum XFA_FM_SimpleExpressionType {
   ASSIGN,

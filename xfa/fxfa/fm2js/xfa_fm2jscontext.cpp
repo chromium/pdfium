@@ -409,30 +409,30 @@ void AlternateDateTimeSymbols(CFX_WideString& wsPattern,
 bool PatternStringType(const CFX_ByteStringC& szPattern,
                        uint32_t& patternType) {
   CFX_WideString wsPattern = CFX_WideString::FromUTF8(szPattern);
-  if (FX_WSTRC(L"datetime") == wsPattern.Left(8)) {
+  if (L"datetime" == wsPattern.Left(8)) {
     patternType = XFA_VT_DATETIME;
     return true;
   }
-  if (FX_WSTRC(L"date") == wsPattern.Left(4)) {
+  if (L"date" == wsPattern.Left(4)) {
     patternType = wsPattern.Find(L"time") > 0 ? XFA_VT_DATETIME : XFA_VT_DATE;
     return true;
   }
-  if (FX_WSTRC(L"time") == wsPattern.Left(4)) {
+  if (L"time" == wsPattern.Left(4)) {
     patternType = XFA_VT_TIME;
     return true;
   }
-  if (FX_WSTRC(L"text") == wsPattern.Left(4)) {
+  if (L"text" == wsPattern.Left(4)) {
     patternType = XFA_VT_TEXT;
     return true;
   }
-  if (FX_WSTRC(L"num") == wsPattern.Left(3)) {
-    if (FX_WSTRC(L"integer") == wsPattern.Mid(4, 7)) {
+  if (L"num" == wsPattern.Left(3)) {
+    if (L"integer" == wsPattern.Mid(4, 7)) {
       patternType = XFA_VT_INTEGER;
-    } else if (FX_WSTRC(L"decimal") == wsPattern.Mid(4, 7)) {
+    } else if (L"decimal" == wsPattern.Mid(4, 7)) {
       patternType = XFA_VT_DECIMAL;
-    } else if (FX_WSTRC(L"currency") == wsPattern.Mid(4, 8)) {
+    } else if (L"currency" == wsPattern.Mid(4, 8)) {
       patternType = XFA_VT_FLOAT;
-    } else if (FX_WSTRC(L"percent") == wsPattern.Mid(4, 7)) {
+    } else if (L"percent" == wsPattern.Mid(4, 7)) {
       patternType = XFA_VT_FLOAT;
     } else {
       patternType = XFA_VT_FLOAT;
@@ -3685,7 +3685,7 @@ void CXFA_FM2JSContext::EncodeURL(const CFX_ByteStringC& szURLString,
         int32_t iIndex = ch / 16;
         strEncode[1] = strCode[iIndex];
         strEncode[2] = strCode[ch - iIndex * 16];
-        wsResultBuf << FX_WSTRC(strEncode);
+        wsResultBuf << strEncode;
         break;
       }
       ++i;
@@ -3700,7 +3700,7 @@ void CXFA_FM2JSContext::EncodeURL(const CFX_ByteStringC& szURLString,
         int32_t iIndex = ch / 16;
         strEncode[1] = strCode[iIndex];
         strEncode[2] = strCode[ch - iIndex * 16];
-        wsResultBuf << FX_WSTRC(strEncode);
+        wsResultBuf << strEncode;
         break;
       }
       ++i;
@@ -3724,7 +3724,7 @@ void CXFA_FM2JSContext::EncodeURL(const CFX_ByteStringC& szURLString,
       int32_t iIndex = ch / 16;
       strEncode[1] = strCode[iIndex];
       strEncode[2] = strCode[ch - iIndex * 16];
-      wsResultBuf << FX_WSTRC(strEncode);
+      wsResultBuf << strEncode;
     } else if (ch >= 0x20 && ch <= 0x7e) {
       wsResultBuf.AppendChar(ch);
     } else {
@@ -3750,12 +3750,12 @@ void CXFA_FM2JSContext::EncodeURL(const CFX_ByteStringC& szURLString,
         strEncode[2] = strTmp.GetAt(iLen - 2);
         iIndex = iLen - 3;
       }
-      wsResultBuf << FX_WSTRC(strEncode);
+      wsResultBuf << strEncode;
       while (iIndex > 0) {
         strEncode[1] = strTmp.GetAt(iIndex);
         strEncode[2] = strTmp.GetAt(iIndex - 1);
         iIndex -= 2;
-        wsResultBuf << FX_WSTRC(strEncode);
+        wsResultBuf << strEncode;
       }
     }
   }
@@ -3799,7 +3799,7 @@ void CXFA_FM2JSContext::EncodeHTML(const CFX_ByteStringC& szHTMLString,
       strEncode[4] = strCode[ch - iIndex * 16];
       strEncode[5] = ';';
       strEncode[6] = 0;
-      wsResultBuf << FX_WSTRC(strEncode);
+      wsResultBuf << strEncode;
     } else {
       int32_t iBigByte = ch / 256;
       int32_t iLittleByte = ch % 256;
@@ -3807,7 +3807,7 @@ void CXFA_FM2JSContext::EncodeHTML(const CFX_ByteStringC& szHTMLString,
       strEncode[4] = strCode[iBigByte % 16];
       strEncode[5] = strCode[iLittleByte / 16];
       strEncode[6] = strCode[iLittleByte % 16];
-      wsResultBuf << FX_WSTRC(strEncode);
+      wsResultBuf << strEncode;
     }
     ++i;
   }
@@ -3870,7 +3870,7 @@ void CXFA_FM2JSContext::EncodeXML(const CFX_ByteStringC& szXMLString,
           strEncode[4] = strCode[ch - iIndex * 16];
           strEncode[5] = ';';
           strEncode[6] = 0;
-          wsResultBuf << FX_WSTRC(strEncode);
+          wsResultBuf << strEncode;
         } else {
           int32_t iBigByte = ch / 256;
           int32_t iLittleByte = ch % 256;
@@ -3878,7 +3878,7 @@ void CXFA_FM2JSContext::EncodeXML(const CFX_ByteStringC& szXMLString,
           strEncode[4] = strCode[iBigByte % 16];
           strEncode[5] = strCode[iLittleByte / 16];
           strEncode[6] = strCode[iLittleByte % 16];
-          wsResultBuf << FX_WSTRC(strEncode);
+          wsResultBuf << strEncode;
         }
         break;
       }
@@ -6149,7 +6149,7 @@ int32_t CXFA_FM2JSContext::ResolveObjects(CFXJSE_Value* pThis,
         if (CXFA_Node* pXFANode = pNode->AsNode())
           pXFANode->GetAttribute(XFA_ATTRIBUTE_Name, wsName, false);
         if (wsName.IsEmpty())
-          wsName = FX_WSTRC(L"#") + pNode->GetClassName();
+          wsName = L"#" + pNode->GetClassName();
 
         wsSomExpression = wsName + wsSomExpression;
         dFlags = XFA_RESOLVENODE_Siblings;

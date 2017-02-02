@@ -293,7 +293,7 @@ void CXFA_ScriptContext::NormalPropertyGetter(CFXJSE_Value* pOriginalValue,
   CXFA_ScriptContext* lpScriptContext =
       pOriginalObject->GetDocument()->GetScriptContext();
   CXFA_Object* pObject = lpScriptContext->GetVariablesThis(pOriginalObject);
-  if (wsPropName == FX_WSTRC(L"xfa")) {
+  if (wsPropName == L"xfa") {
     CFXJSE_Value* pValue = lpScriptContext->GetJSValueFromMap(
         lpScriptContext->GetDocument()->GetRoot());
     pReturnValue->Assign(pValue);

@@ -217,13 +217,13 @@ void CScript_LayoutPseudoModel::GetObjArray(CXFA_LayoutProcessor* pDocLayout,
   if (!pLayoutPage) {
     return;
   }
-  if (wsType == FX_WSTRC(L"pageArea")) {
+  if (wsType == L"pageArea") {
     if (CXFA_Node* pMasterPage = pLayoutPage->m_pFormNode) {
       retArray.Add(pMasterPage);
     }
     return;
   }
-  if (wsType == FX_WSTRC(L"contentArea")) {
+  if (wsType == L"contentArea") {
     for (CXFA_LayoutItem* pItem = pLayoutPage->m_pFirstChild; pItem;
          pItem = pItem->m_pNextSibling) {
       if (pItem->m_pFormNode->GetElementType() == XFA_Element::ContentArea) {
@@ -288,13 +288,13 @@ void CScript_LayoutPseudoModel::GetObjArray(CXFA_LayoutProcessor* pDocLayout,
     return;
   }
   XFA_Element eType = XFA_Element::Unknown;
-  if (wsType == FX_WSTRC(L"field")) {
+  if (wsType == L"field") {
     eType = XFA_Element::Field;
-  } else if (wsType == FX_WSTRC(L"draw")) {
+  } else if (wsType == L"draw") {
     eType = XFA_Element::Draw;
-  } else if (wsType == FX_WSTRC(L"subform")) {
+  } else if (wsType == L"subform") {
     eType = XFA_Element::Subform;
-  } else if (wsType == FX_WSTRC(L"area")) {
+  } else if (wsType == L"area") {
     eType = XFA_Element::Area;
   }
   if (eType != XFA_Element::Unknown) {

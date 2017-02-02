@@ -1020,21 +1020,16 @@ FX_CHAR* XFA_Base64Encode(const uint8_t* buf, int32_t buf_len) {
 FXCODEC_IMAGE_TYPE XFA_GetImageType(const CFX_WideString& wsType) {
   CFX_WideString wsContentType(wsType);
   wsContentType.MakeLower();
-  if (wsContentType == FX_WSTRC(L"image/jpg")) {
+  if (wsContentType == L"image/jpg")
     return FXCODEC_IMAGE_JPG;
-  }
-  if (wsContentType == FX_WSTRC(L"image/png")) {
+  if (wsContentType == L"image/png")
     return FXCODEC_IMAGE_PNG;
-  }
-  if (wsContentType == FX_WSTRC(L"image/gif")) {
+  if (wsContentType == L"image/gif")
     return FXCODEC_IMAGE_GIF;
-  }
-  if (wsContentType == FX_WSTRC(L"image/bmp")) {
+  if (wsContentType == L"image/bmp")
     return FXCODEC_IMAGE_BMP;
-  }
-  if (wsContentType == FX_WSTRC(L"image/tif")) {
+  if (wsContentType == L"image/tif")
     return FXCODEC_IMAGE_TIF;
-  }
   return FXCODEC_IMAGE_UNKNOWN;
 }
 CFX_DIBitmap* XFA_LoadImageData(CXFA_FFDoc* pDoc,
@@ -1073,8 +1068,7 @@ CFX_DIBitmap* XFA_LoadImageData(CXFA_FFDoc* pDoc,
     }
   } else {
     CFX_WideString wsURL = wsHref;
-    if (wsURL.Left(7) != FX_WSTRC(L"http://") &&
-        wsURL.Left(6) != FX_WSTRC(L"ftp://")) {
+    if (wsURL.Left(7) != L"http://" && wsURL.Left(6) != L"ftp://") {
       CFX_DIBitmap* pBitmap =
           pDoc->GetPDFNamedImage(wsURL.AsStringC(), iImageXDpi, iImageYDpi);
       if (pBitmap) {

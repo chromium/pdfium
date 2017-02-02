@@ -183,7 +183,7 @@ bool XFA_GetPDFContentsFromPDFXML(CFDE_XMLNode* pPDFElement,
       CFX_WideString wsTagName;
       CFDE_XMLElement* pXMLElement = static_cast<CFDE_XMLElement*>(pXMLNode);
       pXMLElement->GetTagName(wsTagName);
-      if (wsTagName == FX_WSTRC(L"document")) {
+      if (wsTagName == L"document") {
         pDocumentElement = pXMLElement;
         break;
       }
@@ -200,7 +200,7 @@ bool XFA_GetPDFContentsFromPDFXML(CFDE_XMLNode* pPDFElement,
       CFX_WideString wsTagName;
       CFDE_XMLElement* pXMLElement = static_cast<CFDE_XMLElement*>(pXMLNode);
       pXMLElement->GetTagName(wsTagName);
-      if (wsTagName == FX_WSTRC(L"chunk")) {
+      if (wsTagName == L"chunk") {
         pChunkElement = pXMLElement;
         break;
       }
@@ -265,7 +265,7 @@ void CXFA_FFDoc::StopLoad() {
     return;
   }
   CFX_WideString wsType;
-  if (pDynamicRender->TryContent(wsType) && wsType == FX_WSTRC(L"required")) {
+  if (pDynamicRender->TryContent(wsType) && wsType == L"required") {
     m_dwDocType = XFA_DOCTYPE_Dynamic;
   }
 }

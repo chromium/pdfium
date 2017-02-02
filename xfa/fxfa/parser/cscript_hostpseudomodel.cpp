@@ -519,7 +519,7 @@ bool CScript_HostPseudoModel::ValidateArgsForMsg(CFXJSE_Arguments* pArguments,
     return false;
   }
   if (pValueArg->IsNull()) {
-    wsValue = FX_WSTRC(L"");
+    wsValue = L"";
   } else {
     wsValue = pValueArg->ToWideString();
   }

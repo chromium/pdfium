@@ -462,7 +462,7 @@ bool CXFA_WidgetData::GetButtonRollover(CFX_WideString& wsRollover,
     while (pText) {
       CFX_WideStringC wsName;
       pText->TryCData(XFA_ATTRIBUTE_Name, wsName);
-      if (wsName == FX_WSTRC(L"rollover")) {
+      if (wsName == L"rollover") {
         pText->TryContent(wsRollover);
         bRichText = pText->GetElementType() == XFA_Element::ExData;
         return !wsRollover.IsEmpty();
@@ -479,7 +479,7 @@ bool CXFA_WidgetData::GetButtonDown(CFX_WideString& wsDown, bool& bRichText) {
     while (pText) {
       CFX_WideStringC wsName;
       pText->TryCData(XFA_ATTRIBUTE_Name, wsName);
-      if (wsName == FX_WSTRC(L"down")) {
+      if (wsName == L"down") {
         pText->TryContent(wsDown);
         bRichText = pText->GetElementType() == XFA_Element::ExData;
         return !wsDown.IsEmpty();
@@ -1010,9 +1010,8 @@ void CXFA_WidgetData::SetSelectedItems(CFX_ArrayTemplate<int32_t>& iSelArray,
     GetChoiceListItems(wsSaveTextArray, true);
     CFX_WideString wsItemValue;
     for (int32_t i = 0; i < iSize; i++) {
-      wsItemValue = (iSize == 1)
-                        ? wsSaveTextArray[iSelArray[i]]
-                        : wsSaveTextArray[iSelArray[i]] + FX_WSTRC(L"\n");
+      wsItemValue = (iSize == 1) ? wsSaveTextArray[iSelArray[i]]
+                                 : wsSaveTextArray[iSelArray[i]] + L"\n";
       wsValue += wsItemValue;
     }
   }
@@ -1522,7 +1521,7 @@ bool CXFA_WidgetData::SetValue(const CFX_WideString& wsValue,
     }
   } else {
     if (eType == XFA_Element::NumericEdit) {
-      if (wsNewText != FX_WSTRC(L"0")) {
+      if (wsNewText != L"0") {
         int32_t iLeadDigits = 0;
         int32_t iFracDigits = 0;
         GetLeadDigits(iLeadDigits);
@@ -1572,7 +1571,7 @@ bool CXFA_WidgetData::GetPictureContent(CFX_WideString& wsPicture,
                                   wsDataPicture);
           pLocale->GetTimePattern(FX_LOCALEDATETIMESUBCATEGORY_Medium,
                                   wsTimePicture);
-          wsPicture = wsDataPicture + FX_WSTRC(L"T") + wsTimePicture;
+          wsPicture = wsDataPicture + L"T" + wsTimePicture;
           break;
         case XFA_VT_DECIMAL:
         case XFA_VT_FLOAT:
@@ -1640,7 +1639,7 @@ IFX_Locale* CXFA_WidgetData::GetLocal() {
   CFX_WideString wsLocaleName;
   if (!m_pNode->GetLocaleName(wsLocaleName))
     return nullptr;
-  if (wsLocaleName == FX_WSTRC(L"ambient"))
+  if (wsLocaleName == L"ambient")
     return m_pNode->GetDocument()->GetLocalMgr()->GetDefLocale();
   return m_pNode->GetDocument()->GetLocalMgr()->GetLocaleByName(wsLocaleName);
 }

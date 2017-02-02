@@ -155,7 +155,7 @@ void CXFA_FFDocView::ShowNullTestMsg() {
     iCount -= iRemain;
     CFX_WideString wsMsg;
     for (int32_t i = 0; i < iCount; i++) {
-      wsMsg += m_arrNullTestMsg[i] + FX_WSTRC(L"\n");
+      wsMsg += m_arrNullTestMsg[i] + L"\n";
     }
     if (iRemain > 0) {
       CFX_WideString wsTemp;
@@ -163,7 +163,7 @@ void CXFA_FFDocView::ShowNullTestMsg() {
           L"Message limit exceeded. Remaining %d "
           L"validation errors not reported.",
           iRemain);
-      wsMsg += FX_WSTRC(L"\n") + wsTemp;
+      wsMsg += L"\n" + wsTemp;
     }
     pAppProvider->MsgBox(wsMsg, pAppProvider->GetAppTitle(), XFA_MBICON_Status,
                          XFA_MB_OK);
@@ -755,10 +755,8 @@ void CXFA_FFDocView::RunBindItems() {
     binditems.GetValueRef(wsValueRef);
     binditems.GetLabelRef(wsLabelRef);
     const bool bUseValue = wsLabelRef.IsEmpty() || wsLabelRef == wsValueRef;
-    const bool bLabelUseContent =
-        wsLabelRef.IsEmpty() || wsLabelRef == FX_WSTRC(L"$");
-    const bool bValueUseContent =
-        wsValueRef.IsEmpty() || wsValueRef == FX_WSTRC(L"$");
+    const bool bLabelUseContent = wsLabelRef.IsEmpty() || wsLabelRef == L"$";
+    const bool bValueUseContent = wsValueRef.IsEmpty() || wsValueRef == L"$";
     CFX_WideString wsValue;
     CFX_WideString wsLabel;
     uint32_t uValueHash = FX_HashCode_GetW(wsValueRef, false);

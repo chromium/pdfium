@@ -28,8 +28,6 @@ using CFX_WideStringC = CFX_StringCTemplate<FX_WCHAR>;
   (((uint32_t)c1 << 24) | ((uint32_t)c2 << 16) | ((uint32_t)c3 << 8) | \
    ((uint32_t)c4))
 
-#define FX_WSTRC(wstr) CFX_WideStringC(wstr, FX_ArraySize(wstr) - 1)
-
 // A mutable string with shared buffers using copy-on-write semantics that
 // avoids the cost of std::string's iterator stability guarantees.
 class CFX_ByteString {

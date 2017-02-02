@@ -373,7 +373,7 @@ CFWL_WidgetMgr::Item* CFWL_WidgetMgr::GetWidgetMgrItem(
 bool CFWL_WidgetMgr::IsAbleNative(CFWL_Widget* pWidget) const {
   if (!pWidget)
     return false;
-  if (!pWidget->IsInstance(FX_WSTRC(FWL_CLASS_Form)))
+  if (!pWidget->IsInstance(FWL_CLASS_Form))
     return false;
 
   uint32_t dwStyles = pWidget->GetStyles();

@@ -183,7 +183,7 @@ bool CXFA_WidgetAcc::GetName(CFX_WideString& wsName, int32_t iNameType) {
   }
   m_pNode->GetSOMExpression(wsName);
   if (iNameType == 2 && wsName.GetLength() >= 15) {
-    CFX_WideStringC wsPre = FX_WSTRC(L"xfa[0].form[0].");
+    CFX_WideStringC wsPre = L"xfa[0].form[0].";
     if (wsPre == CFX_WideStringC(wsName.c_str(), wsPre.GetLength())) {
       wsName.Delete(0, wsPre.GetLength());
     }
@@ -1497,7 +1497,7 @@ CXFA_WidgetLayoutData* CXFA_WidgetAcc::GetWidgetLayoutData() {
 }
 
 CFX_RetainPtr<CFGAS_GEFont> CXFA_WidgetAcc::GetFDEFont() {
-  CFX_WideStringC wsFontName = FX_WSTRC(L"Courier");
+  CFX_WideStringC wsFontName = L"Courier";
   uint32_t dwFontStyle = 0;
   if (CXFA_Font font = GetFont()) {
     if (font.IsBold())
@@ -1541,7 +1541,7 @@ CXFA_Node* CXFA_TextProvider::GetTextNode(bool& bRichText) {
       CFX_WideString wsContentType;
       m_pTextNode->GetAttribute(XFA_ATTRIBUTE_ContentType, wsContentType,
                                 false);
-      if (wsContentType == FX_WSTRC(L"text/html")) {
+      if (wsContentType == L"text/html") {
         bRichText = true;
       }
     }
@@ -1557,7 +1557,7 @@ CXFA_Node* CXFA_TextProvider::GetTextNode(bool& bRichText) {
     if (pChildNode && pChildNode->GetElementType() == XFA_Element::ExData) {
       CFX_WideString wsContentType;
       pChildNode->GetAttribute(XFA_ATTRIBUTE_ContentType, wsContentType, false);
-      if (wsContentType == FX_WSTRC(L"text/html")) {
+      if (wsContentType == L"text/html") {
         bRichText = true;
       }
     }
@@ -1592,7 +1592,7 @@ CXFA_Node* CXFA_TextProvider::GetTextNode(bool& bRichText) {
     if (pChildNode && pChildNode->GetElementType() == XFA_Element::ExData) {
       CFX_WideString wsContentType;
       pChildNode->GetAttribute(XFA_ATTRIBUTE_ContentType, wsContentType, false);
-      if (wsContentType == FX_WSTRC(L"text/html")) {
+      if (wsContentType == L"text/html") {
         bRichText = true;
       }
     }
@@ -1607,11 +1607,10 @@ CXFA_Node* CXFA_TextProvider::GetTextNode(bool& bRichText) {
   while (pNode) {
     CFX_WideStringC wsName;
     pNode->TryCData(XFA_ATTRIBUTE_Name, wsName);
-    if (m_eType == XFA_TEXTPROVIDERTYPE_Rollover &&
-        wsName == FX_WSTRC(L"rollover")) {
+    if (m_eType == XFA_TEXTPROVIDERTYPE_Rollover && wsName == L"rollover") {
       return pNode;
     }
-    if (m_eType == XFA_TEXTPROVIDERTYPE_Down && wsName == FX_WSTRC(L"down")) {
+    if (m_eType == XFA_TEXTPROVIDERTYPE_Down && wsName == L"down") {
       return pNode;
     }
     pNode = pNode->GetNodeItem(XFA_NODEITEM_NextSibling);

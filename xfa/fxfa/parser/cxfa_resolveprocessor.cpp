@@ -681,11 +681,9 @@ void CXFA_ResolveProcessor::DoPredicateFilter(int32_t iCurIndex,
   ASSERT(iFoundCount == findNodes.GetSize());
   CFX_WideString wsExpression;
   XFA_SCRIPTLANGTYPE eLangType = XFA_SCRIPTLANGTYPE_Unkown;
-  if (wsCondition.Left(2) == FX_WSTRC(L".[") &&
-      wsCondition.Right(1) == FX_WSTRC(L"]")) {
+  if (wsCondition.Left(2) == L".[" && wsCondition.Right(1) == L"]") {
     eLangType = XFA_SCRIPTLANGTYPE_Formcalc;
-  } else if (wsCondition.Left(2) == FX_WSTRC(L".(") &&
-             wsCondition.Right(1) == FX_WSTRC(L")")) {
+  } else if (wsCondition.Left(2) == L".(" && wsCondition.Right(1) == L")") {
     eLangType = XFA_SCRIPTLANGTYPE_Javascript;
   } else {
     return;

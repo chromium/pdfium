@@ -847,7 +847,7 @@ std::unique_ptr<CXFA_FMExpression> CXFA_FMParse::ParseIfExpression() {
     m_lexer->SetCurrentLine(line);
     m_pToken = new CXFA_FMToken(line);
     m_pToken->m_type = TOKidentifier;
-    m_pToken->m_wstring = FX_WSTRC(L"if");
+    m_pToken->m_wstring = L"if";
     m_lexer->SetToken(m_pToken);
     m_lexer->RestorePos(pStartPos);
     return ParseExpExpression();

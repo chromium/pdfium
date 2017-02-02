@@ -85,8 +85,7 @@ int32_t CXFA_XMLParser::DoParser(IFX_Pause* pPause) {
         break;
       case FDE_XmlSyntaxResult::TargetName:
         m_pParser->GetTargetName(m_ws1);
-        if (m_ws1 == FX_WSTRC(L"originalXFAVersion") ||
-            m_ws1 == FX_WSTRC(L"acrobat")) {
+        if (m_ws1 == L"originalXFAVersion" || m_ws1 == L"acrobat") {
           m_pChild = new CFDE_XMLInstruction(m_ws1);
           m_pParent->InsertChildNode(m_pChild);
         } else {
@@ -104,12 +103,12 @@ int32_t CXFA_XMLParser::DoParser(IFX_Pause* pPause) {
         if (m_dwCheckStatus != 0x03 && m_NodeStack.GetSize() == 3) {
           CFX_WideString wsTag;
           static_cast<CFDE_XMLElement*>(m_pChild)->GetLocalTagName(wsTag);
-          if (wsTag == FX_WSTRC(L"template")) {
+          if (wsTag == L"template") {
             m_dwCheckStatus |= 0x01;
             m_dwCurrentCheckStatus = 0x01;
             m_nStart[0] = m_pParser->GetCurrentBinaryPos() -
                           (m_pParser->GetCurrentPos() - m_nElementStart);
-          } else if (wsTag == FX_WSTRC(L"datasets")) {
+          } else if (wsTag == L"datasets") {
             m_dwCheckStatus |= 0x02;
             m_dwCurrentCheckStatus = 0x02;
             m_nStart[1] = m_pParser->GetCurrentBinaryPos() -

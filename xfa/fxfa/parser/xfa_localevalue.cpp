@@ -128,7 +128,7 @@ bool CXFA_LocaleValue::ValidateValue(const CFX_WideString& wsValue,
       case FX_LOCALECATEGORY_Zero:
         bRet = pFormat->ParseZero(wsValue, wsFormat);
         if (!bRet) {
-          bRet = wsValue == FX_WSTRC(L"0");
+          bRet = wsValue == L"0";
         }
         break;
       case FX_LOCALECATEGORY_Num: {
@@ -498,7 +498,7 @@ bool CXFA_LocaleValue::FormatSinglePattern(CFX_WideString& wsResult,
       }
       break;
     case FX_LOCALECATEGORY_Zero:
-      if (m_wsValue == FX_WSTRC(L"0")) {
+      if (m_wsValue == L"0") {
         bRet = pFormat->FormatZero(wsFormat, wsResult);
       }
       break;
@@ -813,9 +813,8 @@ bool CXFA_LocaleValue::ParsePatternValue(const CFX_WideString& wsValue,
         break;
       case FX_LOCALECATEGORY_Zero:
         bRet = pFormat->ParseZero(wsValue, wsFormat);
-        if (bRet) {
-          m_wsValue = FX_WSTRC(L"0");
-        }
+        if (bRet)
+          m_wsValue = L"0";
         break;
       case FX_LOCALECATEGORY_Num: {
         CFX_WideString fNum;

@@ -542,7 +542,7 @@ IFX_Locale* CFX_FormatString::GetNumericFormat(const CFX_WideString& wsPattern,
         wsCategory += pStr[ccf];
         ccf++;
       }
-      if (wsCategory != FX_WSTRC(L"num")) {
+      if (wsCategory != L"num") {
         bBrackOpen = true;
         ccf = 0;
         continue;
@@ -652,7 +652,7 @@ bool CFX_FormatString::ParseText(const CFX_WideString& wsSrcText,
     return false;
   }
   CFX_WideString wsTextFormat;
-  GetTextFormat(wsPattern, FX_WSTRC(L"text"), wsTextFormat);
+  GetTextFormat(wsPattern, L"text", wsTextFormat);
   if (wsTextFormat.IsEmpty()) {
     return false;
   }
@@ -1942,16 +1942,16 @@ FX_DATETIMETYPE CFX_FormatString::GetDateTimeFormat(
         wsCategory += pStr[ccf];
         ccf++;
       }
-      if (!(iFindCategory & 1) && wsCategory == FX_WSTRC(L"date")) {
+      if (!(iFindCategory & 1) && wsCategory == L"date") {
         iFindCategory |= 1;
         eCategory = FX_LOCALECATEGORY_Date;
         if (iFindCategory & 2) {
           iFindCategory = 4;
         }
-      } else if (!(iFindCategory & 2) && wsCategory == FX_WSTRC(L"time")) {
+      } else if (!(iFindCategory & 2) && wsCategory == L"time") {
         iFindCategory |= 2;
         eCategory = FX_LOCALECATEGORY_Time;
-      } else if (wsCategory == FX_WSTRC(L"datetime")) {
+      } else if (wsCategory == L"datetime") {
         iFindCategory = 3;
         eCategory = FX_LOCALECATEGORY_DateTime;
       } else {
@@ -2506,7 +2506,7 @@ bool CFX_FormatString::ParseDateTime(const CFX_WideString& wsSrcDateTime,
 bool CFX_FormatString::ParseZero(const CFX_WideString& wsSrcText,
                                  const CFX_WideString& wsPattern) {
   CFX_WideString wsTextFormat;
-  GetTextFormat(wsPattern, FX_WSTRC(L"zero"), wsTextFormat);
+  GetTextFormat(wsPattern, L"zero", wsTextFormat);
   int32_t iText = 0, iPattern = 0;
   const FX_WCHAR* pStrText = wsSrcText.c_str();
   int32_t iLenText = wsSrcText.GetLength();
@@ -2536,7 +2536,7 @@ bool CFX_FormatString::ParseZero(const CFX_WideString& wsSrcText,
 bool CFX_FormatString::ParseNull(const CFX_WideString& wsSrcText,
                                  const CFX_WideString& wsPattern) {
   CFX_WideString wsTextFormat;
-  GetTextFormat(wsPattern, FX_WSTRC(L"null"), wsTextFormat);
+  GetTextFormat(wsPattern, L"null", wsTextFormat);
   int32_t iText = 0, iPattern = 0;
   const FX_WCHAR* pStrText = wsSrcText.c_str();
   int32_t iLenText = wsSrcText.GetLength();
@@ -2574,7 +2574,7 @@ bool CFX_FormatString::FormatText(const CFX_WideString& wsSrcText,
     return false;
   }
   CFX_WideString wsTextFormat;
-  GetTextFormat(wsPattern, FX_WSTRC(L"text"), wsTextFormat);
+  GetTextFormat(wsPattern, L"text", wsTextFormat);
   int32_t iText = 0, iPattern = 0;
   const FX_WCHAR* pStrText = wsSrcText.c_str();
   const FX_WCHAR* pStrPattern = wsTextFormat.c_str();
@@ -3926,14 +3926,14 @@ static bool FX_TimeFormat(const CFX_WideString& wsTimePattern,
       pLocale->GetMeridiemName(wsMeridiem, !bPM);
       wsResult += wsMeridiem;
     } else if (dwSymbol == FXBSTR_ID(0, 0, 'Z', '1')) {
-      wsResult += FX_WSTRC(L"GMT");
+      wsResult += L"GMT";
       FX_TIMEZONE tz;
       pLocale->GetTimeZone(&tz);
       if (!bGMT && (tz.tzHour != 0 || tz.tzMinute != 0)) {
         if (tz.tzHour < 0) {
-          wsResult += FX_WSTRC(L"-");
+          wsResult += L"-";
         } else {
-          wsResult += FX_WSTRC(L"+");
+          wsResult += L"+";
         }
         CFX_WideString wsTimezone;
         wsTimezone.Format(L"%02d:%02d", FXSYS_abs(tz.tzHour), tz.tzMinute);
@@ -3944,9 +3944,9 @@ static bool FX_TimeFormat(const CFX_WideString& wsTimePattern,
       pLocale->GetTimeZone(&tz);
       if (!bGMT && tz.tzHour != 0 && tz.tzMinute != 0) {
         if (tz.tzHour < 0) {
-          wsResult += FX_WSTRC(L"-");
+          wsResult += L"-";
         } else {
-          wsResult += FX_WSTRC(L"+");
+          wsResult += L"+";
         }
         CFX_WideString wsTimezone;
         wsTimezone.Format(L"%02d:%02d", FXSYS_abs(tz.tzHour), tz.tzMinute);
@@ -4079,7 +4079,7 @@ bool CFX_FormatString::FormatZero(const CFX_WideString& wsPattern,
     return false;
   }
   CFX_WideString wsTextFormat;
-  GetTextFormat(wsPattern, FX_WSTRC(L"zero"), wsTextFormat);
+  GetTextFormat(wsPattern, L"zero", wsTextFormat);
   int32_t iPattern = 0;
   const FX_WCHAR* pStrPattern = wsTextFormat.c_str();
   int32_t iLenPattern = wsTextFormat.GetLength();
@@ -4101,7 +4101,7 @@ bool CFX_FormatString::FormatNull(const CFX_WideString& wsPattern,
     return false;
   }
   CFX_WideString wsTextFormat;
-  GetTextFormat(wsPattern, FX_WSTRC(L"null"), wsTextFormat);
+  GetTextFormat(wsPattern, L"null", wsTextFormat);
   int32_t iPattern = 0;
   const FX_WCHAR* pStrPattern = wsTextFormat.c_str();
   int32_t iLenPattern = wsTextFormat.GetLength();
