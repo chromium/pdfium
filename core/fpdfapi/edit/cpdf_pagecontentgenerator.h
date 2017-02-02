@@ -16,6 +16,7 @@ class CPDF_Document;
 class CPDF_ImageObject;
 class CPDF_Page;
 class CPDF_PageObject;
+class CPDF_PathObject;
 
 class CPDF_PageContentGenerator {
  public:
@@ -25,6 +26,10 @@ class CPDF_PageContentGenerator {
   void GenerateContent();
 
  private:
+  friend class cpdf_pagecontentgenerator_ProcessRect_Test;
+  friend class cpdf_pagecontentgenerator_ProcessPath_Test;
+
+  void ProcessPath(CFX_ByteTextBuf* buf, CPDF_PathObject* pPathObj);
   void ProcessImage(CFX_ByteTextBuf* buf, CPDF_ImageObject* pImageObj);
   CFX_ByteString RealizeResource(uint32_t dwResourceObjNum,
                                  const CFX_ByteString& bsType);

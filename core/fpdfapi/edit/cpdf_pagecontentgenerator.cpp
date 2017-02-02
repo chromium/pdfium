@@ -10,6 +10,8 @@
 #include "core/fpdfapi/page/cpdf_image.h"
 #include "core/fpdfapi/page/cpdf_imageobject.h"
 #include "core/fpdfapi/page/cpdf_page.h"
+#include "core/fpdfapi/page/cpdf_path.h"
+#include "core/fpdfapi/page/cpdf_pathobject.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfapi/parser/cpdf_name.h"
@@ -40,9 +42,10 @@ CPDF_PageContentGenerator::~CPDF_PageContentGenerator() {}
 void CPDF_PageContentGenerator::GenerateContent() {
   CFX_ByteTextBuf buf;
   for (CPDF_PageObject* pPageObj : m_pageObjects) {
-    CPDF_ImageObject* pImageObject = pPageObj->AsImage();
-    if (pImageObject)
+    if (CPDF_ImageObject* pImageObject = pPageObj->AsImage())
       ProcessImage(&buf, pImageObject);
+    else if (CPDF_PathObject* pPathObj = pPageObj->AsPath())
+      ProcessPath(&buf, pPathObj);
   }
   CPDF_Dictionary* pPageDict = m_pPage->m_pFormDict;
   CPDF_Object* pContent =
@@ -108,4 +111,60 @@ void CPDF_PageContentGenerator::ProcessImage(CFX_ByteTextBuf* buf,
     pImageObj->SetUnownedImage(m_pDocument->GetPageData()->GetImage(dwObjNum));
 
   *buf << "/" << PDF_NameEncode(name) << " Do Q\n";
+}
+
+// Processing path with operators from Tables 4.9 and 4.10 of PDF spec 1.7:
+// "re" appends a rectangle (here, used only if the whole path is a rectangle)
+// "m" moves current point to the given coordinates
+// "l" creates a line from current point to the new point
+// "c" adds a Bezier curve from current to last point, using the two other
+// points as the Bezier control points
+// Note: "l", "c" change the current point
+// "h" closes the subpath (appends a line from current to starting point)
+// Path painting operators: "S", "n", "B", "f", "B*", "f*", depending on
+// the filling mode and whether we want stroking the path or not.
+void CPDF_PageContentGenerator::ProcessPath(CFX_ByteTextBuf* buf,
+                                            CPDF_PathObject* pPathObj) {
+  const FX_PATHPOINT* pPoints = pPathObj->m_Path.GetPoints();
+  if (pPathObj->m_Path.IsRect()) {
+    *buf << pPoints[0].m_PointX << " " << pPoints[0].m_PointY << " "
+         << (pPoints[2].m_PointX - pPoints[0].m_PointX) << " "
+         << (pPoints[2].m_PointY - pPoints[0].m_PointY) << " re";
+  } else {
+    int numPoints = pPathObj->m_Path.GetPointCount();
+    for (int i = 0; i < numPoints; i++) {
+      if (i > 0)
+        *buf << " ";
+      *buf << pPoints[i].m_PointX << " " << pPoints[i].m_PointY;
+      int pointFlag = pPoints[i].m_Flag;
+      if (pointFlag == FXPT_MOVETO) {
+        *buf << " m";
+      } else if (pointFlag & FXPT_LINETO) {
+        *buf << " l";
+      } else if (pointFlag & FXPT_BEZIERTO) {
+        if (i + 2 >= numPoints || pPoints[i].m_Flag != FXPT_BEZIERTO ||
+            pPoints[i + 1].m_Flag != FXPT_BEZIERTO ||
+            (pPoints[i + 2].m_Flag & FXPT_BEZIERTO) == 0) {
+          // If format is not supported, close the path and paint
+          *buf << " h";
+          break;
+        }
+        *buf << " " << pPoints[i + 1].m_PointX << " " << pPoints[i + 1].m_PointY
+             << " " << pPoints[i + 2].m_PointX << " " << pPoints[i + 2].m_PointY
+             << " c";
+        if (pPoints[i + 2].m_Flag & FXPT_CLOSEFIGURE)
+          *buf << " h";
+        i += 2;
+      }
+      if (pointFlag & FXPT_CLOSEFIGURE)
+        *buf << " h";
+    }
+  }
+  if (pPathObj->m_FillType == 0)
+    *buf << (pPathObj->m_bStroke ? " S" : " n");
+  else if (pPathObj->m_FillType == FXFILL_WINDING)
+    *buf << (pPathObj->m_bStroke ? " B" : " f");
+  else if (pPathObj->m_FillType == FXFILL_ALTERNATE)
+    *buf << (pPathObj->m_bStroke ? " B*" : " f*");
+  *buf << "\n";
 }
