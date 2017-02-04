@@ -102,62 +102,62 @@ CXFA_LayoutItem* CXFA_FFNotify::OnCreateLayoutItem(CXFA_Node* pNode) {
   CXFA_FFWidget* pWidget;
   switch (pAcc->GetUIType()) {
     case XFA_Element::Barcode:
-      pWidget = new CXFA_FFBarcode(nullptr, pAcc);
+      pWidget = new CXFA_FFBarcode(pAcc);
       break;
     case XFA_Element::Button:
-      pWidget = new CXFA_FFPushButton(nullptr, pAcc);
+      pWidget = new CXFA_FFPushButton(pAcc);
       break;
     case XFA_Element::CheckButton:
-      pWidget = new CXFA_FFCheckButton(nullptr, pAcc);
+      pWidget = new CXFA_FFCheckButton(pAcc);
       break;
     case XFA_Element::ChoiceList: {
       if (pAcc->IsListBox()) {
-        pWidget = new CXFA_FFListBox(nullptr, pAcc);
+        pWidget = new CXFA_FFListBox(pAcc);
       } else {
-        pWidget = new CXFA_FFComboBox(nullptr, pAcc);
+        pWidget = new CXFA_FFComboBox(pAcc);
       }
     } break;
     case XFA_Element::DateTimeEdit:
-      pWidget = new CXFA_FFDateTimeEdit(nullptr, pAcc);
+      pWidget = new CXFA_FFDateTimeEdit(pAcc);
       break;
     case XFA_Element::ImageEdit:
-      pWidget = new CXFA_FFImageEdit(nullptr, pAcc);
+      pWidget = new CXFA_FFImageEdit(pAcc);
       break;
     case XFA_Element::NumericEdit:
-      pWidget = new CXFA_FFNumericEdit(nullptr, pAcc);
+      pWidget = new CXFA_FFNumericEdit(pAcc);
       break;
     case XFA_Element::PasswordEdit:
-      pWidget = new CXFA_FFPasswordEdit(nullptr, pAcc);
+      pWidget = new CXFA_FFPasswordEdit(pAcc);
       break;
     case XFA_Element::Signature:
-      pWidget = new CXFA_FFSignature(nullptr, pAcc);
+      pWidget = new CXFA_FFSignature(pAcc);
       break;
     case XFA_Element::TextEdit:
-      pWidget = new CXFA_FFTextEdit(nullptr, pAcc);
+      pWidget = new CXFA_FFTextEdit(pAcc);
       break;
     case XFA_Element::Arc:
-      pWidget = new CXFA_FFArc(nullptr, pAcc);
+      pWidget = new CXFA_FFArc(pAcc);
       break;
     case XFA_Element::Line:
-      pWidget = new CXFA_FFLine(nullptr, pAcc);
+      pWidget = new CXFA_FFLine(pAcc);
       break;
     case XFA_Element::Rectangle:
-      pWidget = new CXFA_FFRectangle(nullptr, pAcc);
+      pWidget = new CXFA_FFRectangle(pAcc);
       break;
     case XFA_Element::Text:
-      pWidget = new CXFA_FFText(nullptr, pAcc);
+      pWidget = new CXFA_FFText(pAcc);
       break;
     case XFA_Element::Image:
-      pWidget = new CXFA_FFImage(nullptr, pAcc);
+      pWidget = new CXFA_FFImage(pAcc);
       break;
     case XFA_Element::Draw:
-      pWidget = new CXFA_FFDraw(nullptr, pAcc);
+      pWidget = new CXFA_FFDraw(pAcc);
       break;
     case XFA_Element::Subform:
-      pWidget = new CXFA_FFSubForm(nullptr, pAcc);
+      pWidget = new CXFA_FFSubForm(pAcc);
       break;
     case XFA_Element::ExclGroup:
-      pWidget = new CXFA_FFExclGroup(nullptr, pAcc);
+      pWidget = new CXFA_FFExclGroup(pAcc);
       break;
     case XFA_Element::DefaultUi:
     default:

@@ -18,17 +18,18 @@
 #include "xfa/fxgraphics/cfx_color.h"
 #include "xfa/fxgraphics/cfx_path.h"
 
-CXFA_FFPushButton::CXFA_FFPushButton(CXFA_FFPageView* pPageView,
-                                     CXFA_WidgetAcc* pDataAcc)
-    : CXFA_FFField(pPageView, pDataAcc),
+CXFA_FFPushButton::CXFA_FFPushButton(CXFA_WidgetAcc* pDataAcc)
+    : CXFA_FFField(pDataAcc),
       m_pRolloverTextLayout(nullptr),
       m_pDownTextLayout(nullptr),
       m_pDownProvider(nullptr),
       m_pRollProvider(nullptr),
       m_pOldDelegate(nullptr) {}
+
 CXFA_FFPushButton::~CXFA_FFPushButton() {
   CXFA_FFPushButton::UnloadWidget();
 }
+
 void CXFA_FFPushButton::RenderWidget(CFX_Graphics* pGS,
                                      CFX_Matrix* pMatrix,
                                      uint32_t dwStatus) {

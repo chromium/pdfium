@@ -11,7 +11,7 @@
 
 class CXFA_FFImageEdit : public CXFA_FFField {
  public:
-  CXFA_FFImageEdit(CXFA_FFPageView* pPageView, CXFA_WidgetAcc* pDataAcc);
+  explicit CXFA_FFImageEdit(CXFA_WidgetAcc* pDataAcc);
   ~CXFA_FFImageEdit() override;
 
   // CXFA_FFField

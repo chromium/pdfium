@@ -13,7 +13,7 @@
 
 class CXFA_FFTextEdit : public CXFA_FFField {
  public:
-  CXFA_FFTextEdit(CXFA_FFPageView* pPageView, CXFA_WidgetAcc* pDataAcc);
+  explicit CXFA_FFTextEdit(CXFA_WidgetAcc* pDataAcc);
   ~CXFA_FFTextEdit() override;
 
   // CXFA_FFField
@@ -48,7 +48,7 @@ class CXFA_FFTextEdit : public CXFA_FFField {
 
 class CXFA_FFNumericEdit : public CXFA_FFTextEdit {
  public:
-  CXFA_FFNumericEdit(CXFA_FFPageView* pPageView, CXFA_WidgetAcc* pDataAcc);
+  explicit CXFA_FFNumericEdit(CXFA_WidgetAcc* pDataAcc);
   ~CXFA_FFNumericEdit() override;
 
   // CXFA_FFTextEdit
@@ -62,7 +62,7 @@ class CXFA_FFNumericEdit : public CXFA_FFTextEdit {
 
 class CXFA_FFPasswordEdit : public CXFA_FFTextEdit {
  public:
-  CXFA_FFPasswordEdit(CXFA_FFPageView* pPageView, CXFA_WidgetAcc* pDataAcc);
+  explicit CXFA_FFPasswordEdit(CXFA_WidgetAcc* pDataAcc);
   ~CXFA_FFPasswordEdit() override;
 
   // CXFA_FFTextEdit
@@ -80,7 +80,7 @@ enum XFA_DATETIMETYPE {
 
 class CXFA_FFDateTimeEdit : public CXFA_FFTextEdit {
  public:
-  CXFA_FFDateTimeEdit(CXFA_FFPageView* pPageView, CXFA_WidgetAcc* pDataAcc);
+  explicit CXFA_FFDateTimeEdit(CXFA_WidgetAcc* pDataAcc);
   ~CXFA_FFDateTimeEdit() override;
 
   // CXFA_FFTextEdit

@@ -16,12 +16,13 @@
 #include "xfa/fxfa/xfa_ffpageview.h"
 #include "xfa/fxfa/xfa_ffwidget.h"
 
-CXFA_FFImageEdit::CXFA_FFImageEdit(CXFA_FFPageView* pPageView,
-                                   CXFA_WidgetAcc* pDataAcc)
-    : CXFA_FFField(pPageView, pDataAcc), m_pOldDelegate(nullptr) {}
+CXFA_FFImageEdit::CXFA_FFImageEdit(CXFA_WidgetAcc* pDataAcc)
+    : CXFA_FFField(pDataAcc), m_pOldDelegate(nullptr) {}
+
 CXFA_FFImageEdit::~CXFA_FFImageEdit() {
   CXFA_FFImageEdit::UnloadWidget();
 }
+
 bool CXFA_FFImageEdit::LoadWidget() {
   CFWL_PictureBox* pPictureBox = new CFWL_PictureBox(GetFWLApp());
   m_pNormalWidget = pPictureBox;

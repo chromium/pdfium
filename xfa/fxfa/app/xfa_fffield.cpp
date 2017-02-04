@@ -25,8 +25,8 @@
 #include "xfa/fxgraphics/cfx_color.h"
 #include "xfa/fxgraphics/cfx_path.h"
 
-CXFA_FFField::CXFA_FFField(CXFA_FFPageView* pPageView, CXFA_WidgetAcc* pDataAcc)
-    : CXFA_FFWidget(pPageView, pDataAcc), m_pNormalWidget(nullptr) {
+CXFA_FFField::CXFA_FFField(CXFA_WidgetAcc* pDataAcc)
+    : CXFA_FFWidget(pDataAcc), m_pNormalWidget(nullptr) {
   m_rtUI.Set(0, 0, 0, 0);
   m_rtCaption.Set(0, 0, 0, 0);
 }

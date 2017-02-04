@@ -32,20 +32,14 @@
 #include "xfa/fxgraphics/cfx_pattern.h"
 #include "xfa/fxgraphics/cfx_shading.h"
 
-CXFA_FFWidget::CXFA_FFWidget(CXFA_FFPageView* pPageView,
-                             CXFA_WidgetAcc* pDataAcc)
+CXFA_FFWidget::CXFA_FFWidget(CXFA_WidgetAcc* pDataAcc)
     : CXFA_ContentLayoutItem(pDataAcc->GetNode()),
-      m_pPageView(pPageView),
+      m_pPageView(nullptr),
       m_pDataAcc(pDataAcc) {
   m_rtWidget.Set(0, 0, 0, 0);
 }
+
 CXFA_FFWidget::~CXFA_FFWidget() {}
-CXFA_FFPageView* CXFA_FFWidget::GetPageView() {
-  return m_pPageView;
-}
-void CXFA_FFWidget::SetPageView(CXFA_FFPageView* pPageView) {
-  m_pPageView = pPageView;
-}
 
 const CFWL_App* CXFA_FFWidget::GetFWLApp() {
   return GetPageView()->GetDocView()->GetDoc()->GetApp()->GetFWLApp();

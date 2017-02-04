@@ -25,9 +25,8 @@
 #include "xfa/fxfa/xfa_ffpageview.h"
 #include "xfa/fxfa/xfa_ffwidget.h"
 
-CXFA_FFListBox::CXFA_FFListBox(CXFA_FFPageView* pPageView,
-                               CXFA_WidgetAcc* pDataAcc)
-    : CXFA_FFField(pPageView, pDataAcc), m_pOldDelegate(nullptr) {}
+CXFA_FFListBox::CXFA_FFListBox(CXFA_WidgetAcc* pDataAcc)
+    : CXFA_FFField(pDataAcc), m_pOldDelegate(nullptr) {}
 
 CXFA_FFListBox::~CXFA_FFListBox() {
   if (m_pNormalWidget) {
@@ -216,9 +215,8 @@ void CXFA_FFListBox::OnDrawWidget(CFX_Graphics* pGraphics,
   m_pOldDelegate->OnDrawWidget(pGraphics, pMatrix);
 }
 
-CXFA_FFComboBox::CXFA_FFComboBox(CXFA_FFPageView* pPageView,
-                                 CXFA_WidgetAcc* pDataAcc)
-    : CXFA_FFField(pPageView, pDataAcc), m_pOldDelegate(nullptr) {}
+CXFA_FFComboBox::CXFA_FFComboBox(CXFA_WidgetAcc* pDataAcc)
+    : CXFA_FFField(pDataAcc), m_pOldDelegate(nullptr) {}
 
 CXFA_FFComboBox::~CXFA_FFComboBox() {}
 

@@ -11,10 +11,11 @@
 #include "xfa/fxfa/xfa_ffpageview.h"
 #include "xfa/fxfa/xfa_ffwidget.h"
 
-CXFA_FFExclGroup::CXFA_FFExclGroup(CXFA_FFPageView* pPageView,
-                                   CXFA_WidgetAcc* pDataAcc)
-    : CXFA_FFWidget(pPageView, pDataAcc) {}
+CXFA_FFExclGroup::CXFA_FFExclGroup(CXFA_WidgetAcc* pDataAcc)
+    : CXFA_FFWidget(pDataAcc) {}
+
 CXFA_FFExclGroup::~CXFA_FFExclGroup() {}
+
 void CXFA_FFExclGroup::RenderWidget(CFX_Graphics* pGS,
                                     CFX_Matrix* pMatrix,
                                     uint32_t dwStatus) {

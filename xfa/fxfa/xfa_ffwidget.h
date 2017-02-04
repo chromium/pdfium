@@ -24,7 +24,9 @@ enum class FWL_WidgetHit;
 inline FX_FLOAT XFA_UnitPx2Pt(FX_FLOAT fPx, FX_FLOAT fDpi) {
   return fPx * 72.0f / fDpi;
 }
+
 #define XFA_FLOAT_PERCISION 0.001f
+
 enum XFA_WIDGETITEM {
   XFA_WIDGETITEM_Parent,
   XFA_WIDGETITEM_FirstChild,
@@ -43,7 +45,7 @@ class CXFA_CalcData {
 
 class CXFA_FFWidget : public CXFA_ContentLayoutItem {
  public:
-  CXFA_FFWidget(CXFA_FFPageView* pPageView, CXFA_WidgetAcc* pDataAcc);
+  explicit CXFA_FFWidget(CXFA_WidgetAcc* pDataAcc);
   ~CXFA_FFWidget() override;
 
   virtual bool GetBBox(CFX_RectF& rtBox,
@@ -100,8 +102,8 @@ class CXFA_FFWidget : public CXFA_ContentLayoutItem {
   virtual bool ReplaceSpellCheckWord(CFX_PointF pointf,
                                      const CFX_ByteStringC& bsReplace);
 
-  CXFA_FFPageView* GetPageView();
-  void SetPageView(CXFA_FFPageView* pPageView);
+  CXFA_FFPageView* GetPageView() const { return m_pPageView; }
+  void SetPageView(CXFA_FFPageView* pPageView) { m_pPageView = pPageView; }
   void GetWidgetRect(CFX_RectF& rtWidget);
   CFX_RectF ReCacheWidgetRect();
   uint32_t GetStatus();

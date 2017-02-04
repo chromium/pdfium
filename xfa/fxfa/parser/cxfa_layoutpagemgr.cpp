@@ -1587,11 +1587,6 @@ void CXFA_LayoutPageMgr::ClearData() {
   m_pPageSetMap.clear();
 }
 
-CXFA_LayoutItem* CXFA_LayoutPageMgr::FindOrCreateLayoutItem(
-    CXFA_Node* pFormNode) {
-  return pFormNode->GetDocument()->GetNotify()->OnCreateLayoutItem(pFormNode);
-}
-
 void CXFA_LayoutPageMgr::SaveLayoutItem(CXFA_LayoutItem* pParentLayoutItem) {
   CXFA_LayoutItem* pNextLayoutItem;
   CXFA_LayoutItem* pCurLayoutItem = pParentLayoutItem->m_pFirstChild;

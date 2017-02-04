@@ -11,7 +11,7 @@
 
 class CXFA_FFLine : public CXFA_FFDraw {
  public:
-  CXFA_FFLine(CXFA_FFPageView* pPageView, CXFA_WidgetAcc* pDataAcc);
+  explicit CXFA_FFLine(CXFA_WidgetAcc* pDataAcc);
   ~CXFA_FFLine() override;
 
   // CXFA_FFWidget
@@ -22,9 +22,10 @@ class CXFA_FFLine : public CXFA_FFDraw {
  private:
   void GetRectFromHand(CFX_RectF& rect, int32_t iHand, FX_FLOAT fLineWidth);
 };
+
 class CXFA_FFArc : public CXFA_FFDraw {
  public:
-  CXFA_FFArc(CXFA_FFPageView* pPageView, CXFA_WidgetAcc* pDataAcc);
+  explicit CXFA_FFArc(CXFA_WidgetAcc* pDataAcc);
   ~CXFA_FFArc() override;
 
   // CXFA_FFWidget
@@ -35,7 +36,7 @@ class CXFA_FFArc : public CXFA_FFDraw {
 
 class CXFA_FFRectangle : public CXFA_FFDraw {
  public:
-  CXFA_FFRectangle(CXFA_FFPageView* pPageView, CXFA_WidgetAcc* pDataAcc);
+  explicit CXFA_FFRectangle(CXFA_WidgetAcc* pDataAcc);
   ~CXFA_FFRectangle() override;
 
   // CXFA_FFWidget

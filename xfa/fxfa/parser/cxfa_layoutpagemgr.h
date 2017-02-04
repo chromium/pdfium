@@ -50,7 +50,6 @@ class CXFA_LayoutPageMgr {
   bool ProcessBookendLeaderOrTrailer(CXFA_Node* pBookendNode,
                                      bool bLeader,
                                      CXFA_Node*& pBookendAppendNode);
-  CXFA_LayoutItem* FindOrCreateLayoutItem(CXFA_Node* pFormNode);
 
  protected:
   bool AppendNewPage(bool bFirstTemPage = false);

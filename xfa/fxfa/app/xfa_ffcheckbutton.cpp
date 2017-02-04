@@ -18,9 +18,8 @@
 #include "xfa/fxfa/xfa_ffpageview.h"
 #include "xfa/fxfa/xfa_ffwidget.h"
 
-CXFA_FFCheckButton::CXFA_FFCheckButton(CXFA_FFPageView* pPageView,
-                                       CXFA_WidgetAcc* pDataAcc)
-    : CXFA_FFField(pPageView, pDataAcc), m_pOldDelegate(nullptr) {
+CXFA_FFCheckButton::CXFA_FFCheckButton(CXFA_WidgetAcc* pDataAcc)
+    : CXFA_FFField(pDataAcc), m_pOldDelegate(nullptr) {
   m_rtCheckBox.Set(0, 0, 0, 0);
 }
 

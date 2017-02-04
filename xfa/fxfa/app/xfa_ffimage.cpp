@@ -12,11 +12,12 @@
 #include "xfa/fxfa/xfa_ffpageview.h"
 #include "xfa/fxfa/xfa_ffwidget.h"
 
-CXFA_FFImage::CXFA_FFImage(CXFA_FFPageView* pPageView, CXFA_WidgetAcc* pDataAcc)
-    : CXFA_FFDraw(pPageView, pDataAcc) {}
+CXFA_FFImage::CXFA_FFImage(CXFA_WidgetAcc* pDataAcc) : CXFA_FFDraw(pDataAcc) {}
+
 CXFA_FFImage::~CXFA_FFImage() {
   CXFA_FFImage::UnloadWidget();
 }
+
 bool CXFA_FFImage::IsLoaded() {
   return !!GetDataAcc()->GetImageImage();
 }

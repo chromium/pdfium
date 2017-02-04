@@ -11,13 +11,15 @@
 #include "xfa/fxfa/xfa_ffpageview.h"
 #include "xfa/fxfa/xfa_ffwidget.h"
 
-CXFA_FFSignature::CXFA_FFSignature(CXFA_FFPageView* pPageView,
-                                   CXFA_WidgetAcc* pDataAcc)
-    : CXFA_FFField(pPageView, pDataAcc) {}
+CXFA_FFSignature::CXFA_FFSignature(CXFA_WidgetAcc* pDataAcc)
+    : CXFA_FFField(pDataAcc) {}
+
 CXFA_FFSignature::~CXFA_FFSignature() {}
+
 bool CXFA_FFSignature::LoadWidget() {
   return CXFA_FFField::LoadWidget();
 }
+
 void CXFA_FFSignature::RenderWidget(CFX_Graphics* pGS,
                                     CFX_Matrix* pMatrix,
                                     uint32_t dwStatus) {

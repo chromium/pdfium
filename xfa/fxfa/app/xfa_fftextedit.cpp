@@ -28,9 +28,8 @@
 #include "xfa/fxfa/xfa_ffpageview.h"
 #include "xfa/fxfa/xfa_ffwidget.h"
 
-CXFA_FFTextEdit::CXFA_FFTextEdit(CXFA_FFPageView* pPageView,
-                                 CXFA_WidgetAcc* pDataAcc)
-    : CXFA_FFField(pPageView, pDataAcc), m_pOldDelegate(nullptr) {}
+CXFA_FFTextEdit::CXFA_FFTextEdit(CXFA_WidgetAcc* pDataAcc)
+    : CXFA_FFField(pDataAcc), m_pOldDelegate(nullptr) {}
 
 CXFA_FFTextEdit::~CXFA_FFTextEdit() {
   if (m_pNormalWidget) {
@@ -360,10 +359,11 @@ void CXFA_FFTextEdit::OnDrawWidget(CFX_Graphics* pGraphics,
   m_pOldDelegate->OnDrawWidget(pGraphics, pMatrix);
 }
 
-CXFA_FFNumericEdit::CXFA_FFNumericEdit(CXFA_FFPageView* pPageView,
-                                       CXFA_WidgetAcc* pDataAcc)
-    : CXFA_FFTextEdit(pPageView, pDataAcc) {}
+CXFA_FFNumericEdit::CXFA_FFNumericEdit(CXFA_WidgetAcc* pDataAcc)
+    : CXFA_FFTextEdit(pDataAcc) {}
+
 CXFA_FFNumericEdit::~CXFA_FFNumericEdit() {}
+
 bool CXFA_FFNumericEdit::LoadWidget() {
   CFWL_Edit* pWidget = new CFWL_Edit(
       GetFWLApp(), pdfium::MakeUnique<CFWL_WidgetProperties>(), nullptr);
@@ -437,9 +437,9 @@ bool CXFA_FFNumericEdit::OnValidate(CFWL_Widget* pWidget,
   return widgetValue.ValidateNumericTemp(wsText, wsFormat,
                                          m_pDataAcc->GetLocal());
 }
-CXFA_FFPasswordEdit::CXFA_FFPasswordEdit(CXFA_FFPageView* pPageView,
-                                         CXFA_WidgetAcc* pDataAcc)
-    : CXFA_FFTextEdit(pPageView, pDataAcc) {}
+
+CXFA_FFPasswordEdit::CXFA_FFPasswordEdit(CXFA_WidgetAcc* pDataAcc)
+    : CXFA_FFTextEdit(pDataAcc) {}
 
 CXFA_FFPasswordEdit::~CXFA_FFPasswordEdit() {}
 
@@ -488,9 +488,8 @@ void CXFA_FFPasswordEdit::UpdateWidgetProperty() {
   dwExtendedStyle |= GetAlignment();
   m_pNormalWidget->ModifyStylesEx(dwExtendedStyle, 0xFFFFFFFF);
 }
-CXFA_FFDateTimeEdit::CXFA_FFDateTimeEdit(CXFA_FFPageView* pPageView,
-                                         CXFA_WidgetAcc* pDataAcc)
-    : CXFA_FFTextEdit(pPageView, pDataAcc) {}
+CXFA_FFDateTimeEdit::CXFA_FFDateTimeEdit(CXFA_WidgetAcc* pDataAcc)
+    : CXFA_FFTextEdit(pDataAcc) {}
 
 CXFA_FFDateTimeEdit::~CXFA_FFDateTimeEdit() {}
 

@@ -12,7 +12,7 @@
 
 class CXFA_FFDraw : public CXFA_FFWidget {
  public:
-  CXFA_FFDraw(CXFA_FFPageView* pPageView, CXFA_WidgetAcc* pDataAcc);
+  explicit CXFA_FFDraw(CXFA_WidgetAcc* pDataAcc);
   ~CXFA_FFDraw() override;
 };
 

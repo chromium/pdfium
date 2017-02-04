@@ -12,7 +12,7 @@
 
 class CXFA_FFListBox : public CXFA_FFField {
  public:
-  CXFA_FFListBox(CXFA_FFPageView* pPageView, CXFA_WidgetAcc* pDataAcc);
+  explicit CXFA_FFListBox(CXFA_WidgetAcc* pDataAcc);
   ~CXFA_FFListBox() override;
 
   // CXFA_FFField
@@ -41,7 +41,7 @@ class CXFA_FFListBox : public CXFA_FFField {
 
 class CXFA_FFComboBox : public CXFA_FFField {
  public:
-  CXFA_FFComboBox(CXFA_FFPageView* pPageView, CXFA_WidgetAcc* pDataAcc);
+  explicit CXFA_FFComboBox(CXFA_WidgetAcc* pDataAcc);
   ~CXFA_FFComboBox() override;
 
   // CXFA_FFField

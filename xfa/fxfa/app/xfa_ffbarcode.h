@@ -13,7 +13,7 @@
 
 class CXFA_FFBarcode : public CXFA_FFTextEdit {
  public:
-  CXFA_FFBarcode(CXFA_FFPageView* pPageView, CXFA_WidgetAcc* pDataAcc);
+  explicit CXFA_FFBarcode(CXFA_WidgetAcc* pDataAcc);
   ~CXFA_FFBarcode() override;
 
   // CXFA_FFTextEdit

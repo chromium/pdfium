@@ -14,9 +14,10 @@
 #include "xfa/fxgraphics/cfx_color.h"
 #include "xfa/fxgraphics/cfx_path.h"
 
-CXFA_FFLine::CXFA_FFLine(CXFA_FFPageView* pPageView, CXFA_WidgetAcc* pDataAcc)
-    : CXFA_FFDraw(pPageView, pDataAcc) {}
+CXFA_FFLine::CXFA_FFLine(CXFA_WidgetAcc* pDataAcc) : CXFA_FFDraw(pDataAcc) {}
+
 CXFA_FFLine::~CXFA_FFLine() {}
+
 void CXFA_FFLine::GetRectFromHand(CFX_RectF& rect,
                                   int32_t iHand,
                                   FX_FLOAT fLineWidth) {
@@ -49,6 +50,7 @@ void CXFA_FFLine::GetRectFromHand(CFX_RectF& rect,
     }
   }
 }
+
 void CXFA_FFLine::RenderWidget(CFX_Graphics* pGS,
                                CFX_Matrix* pMatrix,
                                uint32_t dwStatus) {
@@ -102,9 +104,11 @@ void CXFA_FFLine::RenderWidget(CFX_Graphics* pGS,
   pGS->StrokePath(&linePath, &mtRotate);
   pGS->RestoreGraphState();
 }
-CXFA_FFArc::CXFA_FFArc(CXFA_FFPageView* pPageView, CXFA_WidgetAcc* pDataAcc)
-    : CXFA_FFDraw(pPageView, pDataAcc) {}
+
+CXFA_FFArc::CXFA_FFArc(CXFA_WidgetAcc* pDataAcc) : CXFA_FFDraw(pDataAcc) {}
+
 CXFA_FFArc::~CXFA_FFArc() {}
+
 void CXFA_FFArc::RenderWidget(CFX_Graphics* pGS,
                               CFX_Matrix* pMatrix,
                               uint32_t dwStatus) {
@@ -128,10 +132,12 @@ void CXFA_FFArc::RenderWidget(CFX_Graphics* pGS,
   }
   DrawBorder(pGS, arcObj, rtArc, &mtRotate);
 }
-CXFA_FFRectangle::CXFA_FFRectangle(CXFA_FFPageView* pPageView,
-                                   CXFA_WidgetAcc* pDataAcc)
-    : CXFA_FFDraw(pPageView, pDataAcc) {}
+
+CXFA_FFRectangle::CXFA_FFRectangle(CXFA_WidgetAcc* pDataAcc)
+    : CXFA_FFDraw(pDataAcc) {}
+
 CXFA_FFRectangle::~CXFA_FFRectangle() {}
+
 void CXFA_FFRectangle::RenderWidget(CFX_Graphics* pGS,
                                     CFX_Matrix* pMatrix,
                                     uint32_t dwStatus) {

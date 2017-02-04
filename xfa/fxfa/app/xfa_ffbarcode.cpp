@@ -116,9 +116,8 @@ const XFA_BARCODETYPEENUMINFO* XFA_GetBarcodeTypeByName(
 
 }  // namespace.
 
-CXFA_FFBarcode::CXFA_FFBarcode(CXFA_FFPageView* pPageView,
-                               CXFA_WidgetAcc* pDataAcc)
-    : CXFA_FFTextEdit(pPageView, pDataAcc) {}
+CXFA_FFBarcode::CXFA_FFBarcode(CXFA_WidgetAcc* pDataAcc)
+    : CXFA_FFTextEdit(pDataAcc) {}
 
 CXFA_FFBarcode::~CXFA_FFBarcode() {}
 
