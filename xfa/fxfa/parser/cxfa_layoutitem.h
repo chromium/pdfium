@@ -25,15 +25,13 @@ class CXFA_LayoutItem {
   CXFA_ContentLayoutItem* AsContentLayoutItem();
 
   CXFA_ContainerLayoutItem* GetPage() const;
-  CXFA_Node* GetFormNode() const;
+  CXFA_Node* GetFormNode() const { return m_pFormNode; }
   void GetRect(CFX_RectF& rtLayout, bool bRelative = false) const;
   int32_t GetIndex() const;
   int32_t GetCount() const;
-  CXFA_LayoutItem* GetParent() const;
-  const CXFA_LayoutItem* GetFirst() const;
+  CXFA_LayoutItem* GetParent() const { return m_pParent; }
   CXFA_LayoutItem* GetFirst();
   const CXFA_LayoutItem* GetLast() const;
-  CXFA_LayoutItem* GetLast();
   CXFA_LayoutItem* GetPrev() const;
   CXFA_LayoutItem* GetNext() const;
 

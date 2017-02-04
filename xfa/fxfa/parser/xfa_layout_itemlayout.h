@@ -60,8 +60,24 @@ class CXFA_LayoutContext {
   CXFA_Node* m_pOverflowNode;
 };
 
+bool XFA_ItemLayoutProcessor_IsTakingSpace(CXFA_Node* pNode);
+
 class CXFA_ItemLayoutProcessor {
  public:
+  static bool IncrementRelayoutNode(CXFA_LayoutProcessor* pLayoutProcessor,
+                                    CXFA_Node* pNode,
+                                    CXFA_Node* pParentNode);
+  static void CalculatePositionedContainerPos(CXFA_Node* pNode,
+                                              FX_FLOAT fWidth,
+                                              FX_FLOAT fHeight,
+                                              FX_FLOAT& fAbsoluteX,
+                                              FX_FLOAT& fAbsoluteY);
+  static bool FindLayoutItemSplitPos(CXFA_ContentLayoutItem* pLayoutItem,
+                                     FX_FLOAT fCurVerticalOffset,
+                                     FX_FLOAT& fProposedSplitPos,
+                                     bool& bAppChange,
+                                     bool bCalculateMargin);
+
   CXFA_ItemLayoutProcessor(CXFA_Node* pNode, CXFA_LayoutPageMgr* pPageMgr);
   ~CXFA_ItemLayoutProcessor();
 
@@ -82,19 +98,6 @@ class CXFA_ItemLayoutProcessor {
   bool HasLayoutItem() { return !!m_pLayoutItem; }
   CXFA_ContentLayoutItem* ExtractLayoutItem();
 
-  static bool IncrementRelayoutNode(CXFA_LayoutProcessor* pLayoutProcessor,
-                                    CXFA_Node* pNode,
-                                    CXFA_Node* pParentNode);
-  static void CalculatePositionedContainerPos(CXFA_Node* pNode,
-                                              FX_FLOAT fWidth,
-                                              FX_FLOAT fHeight,
-                                              FX_FLOAT& fAbsoluteX,
-                                              FX_FLOAT& fAbsoluteY);
-  static bool FindLayoutItemSplitPos(CXFA_ContentLayoutItem* pLayoutItem,
-                                     FX_FLOAT fCurVerticalOffset,
-                                     FX_FLOAT& fProposedSplitPos,
-                                     bool& bAppChange,
-                                     bool bCalculateMargin = true);
   FX_FLOAT FindSplitPos(FX_FLOAT fProposedSplitPos);
   void SplitLayoutItem(CXFA_ContentLayoutItem* pLayoutItem,
                        CXFA_ContentLayoutItem* pSecondParent,
@@ -137,7 +140,7 @@ class CXFA_ItemLayoutProcessor {
   bool JudgeLeaderOrTrailerForOccur(CXFA_Node* pFormNode);
   CXFA_ContentLayoutItem* CreateContentLayoutItem(CXFA_Node* pFormNode);
 
- protected:
+ private:
   void DoLayoutPositionedContainer(CXFA_LayoutContext* pContext = nullptr);
   void DoLayoutTableContainer(CXFA_Node* pLayoutNode);
   XFA_ItemLayoutProcessorResult DoLayoutFlowedContainer(
@@ -148,11 +151,10 @@ class CXFA_ItemLayoutProcessor {
       CXFA_LayoutContext* pContext = nullptr,
       bool bRootForceTb = false);
   void DoLayoutField();
-  void XFA_ItemLayoutProcessor_GotoNextContainerNode(
-      CXFA_Node*& pCurActionNode,
-      XFA_ItemLayoutProcessorStages& nCurStage,
-      CXFA_Node* pParentContainer,
-      bool bUsePageBreak);
+  void GotoNextContainerNode(CXFA_Node*& pCurActionNode,
+                             XFA_ItemLayoutProcessorStages& nCurStage,
+                             CXFA_Node* pParentContainer,
+                             bool bUsePageBreak);
 
   bool ProcessKeepNodesForCheckNext(CXFA_Node*& pCurActionNode,
                                     XFA_ItemLayoutProcessorStages& nCurStage,
@@ -190,6 +192,5 @@ class CXFA_ItemLayoutProcessor {
   XFA_ItemLayoutProcessorResult m_ePreProcessRs;
   bool m_bHasAvailHeight;
 };
-bool XFA_ItemLayoutProcessor_IsTakingSpace(CXFA_Node* pNode);
 
 #endif  // XFA_FXFA_PARSER_XFA_LAYOUT_ITEMLAYOUT_H_
