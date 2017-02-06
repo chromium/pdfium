@@ -25,12 +25,17 @@ enum FDE_VISUALOBJTYPE {
 };
 
 struct FDE_TEXTEDITPIECE {
+  FDE_TEXTEDITPIECE();
+  ~FDE_TEXTEDITPIECE();
+
   int32_t nStart;
   int32_t nCount;
   int32_t nBidiLevel;
   CFX_RectF rtPiece;
   uint32_t dwCharStyles;
 };
+inline FDE_TEXTEDITPIECE::FDE_TEXTEDITPIECE() = default;
+inline FDE_TEXTEDITPIECE::~FDE_TEXTEDITPIECE() = default;
 
 class IFDE_VisualSet {
  public:

@@ -47,11 +47,16 @@ class CFX_TxtBreak;
 struct FX_TXTRUN;
 
 struct FDE_TTOPIECE {
+  FDE_TTOPIECE();
+  ~FDE_TTOPIECE();
+
   int32_t iStartChar;
   int32_t iChars;
   uint32_t dwCharStyles;
   CFX_RectF rtPiece;
 };
+inline FDE_TTOPIECE::FDE_TTOPIECE() = default;
+inline FDE_TTOPIECE::~FDE_TTOPIECE() = default;
 typedef CFX_MassArrayTemplate<FDE_TTOPIECE> CFDE_TTOPieceArray;
 
 class CFDE_TTOLine {
