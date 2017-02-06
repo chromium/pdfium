@@ -17,18 +17,6 @@
 #include "xfa/fxfa/parser/xfa_object.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
 
-CXFA_LayoutProcessor* CXFA_Document::GetLayoutProcessor() {
-  if (!m_pLayoutProcessor) {
-    m_pLayoutProcessor = new CXFA_LayoutProcessor(this);
-    ASSERT(m_pLayoutProcessor);
-  }
-  return m_pLayoutProcessor;
-}
-
-CXFA_LayoutProcessor* CXFA_Document::GetDocLayout() {
-  return GetLayoutProcessor();
-}
-
 CXFA_LayoutProcessor::CXFA_LayoutProcessor(CXFA_Document* pDocument)
     : m_pDocument(pDocument),
       m_nProgressCounter(0),
@@ -80,9 +68,9 @@ int32_t CXFA_LayoutProcessor::DoLayout(IFX_Pause* pPause) {
   FX_FLOAT fPosY = pFormNode->GetMeasure(XFA_ATTRIBUTE_Y).ToUnit(XFA_UNIT_Pt);
   do {
     FX_FLOAT fAvailHeight = m_pLayoutPageMgr->GetAvailHeight();
-    eStatus =
-        m_pRootItemLayoutProcessor->DoLayout(true, fAvailHeight, fAvailHeight);
-    if (eStatus != XFA_ItemLayoutProcessorResult_Done)
+    eStatus = m_pRootItemLayoutProcessor->DoLayout(true, fAvailHeight,
+                                                   fAvailHeight, nullptr);
+    if (eStatus != XFA_ItemLayoutProcessorResult::Done)
       m_nProgressCounter++;
 
     CXFA_ContentLayoutItem* pLayoutItem =
@@ -91,16 +79,16 @@ int32_t CXFA_LayoutProcessor::DoLayout(IFX_Pause* pPause) {
       pLayoutItem->m_sPos = CFX_PointF(fPosX, fPosY);
 
     m_pLayoutPageMgr->SubmitContentItem(pLayoutItem, eStatus);
-  } while (eStatus != XFA_ItemLayoutProcessorResult_Done &&
+  } while (eStatus != XFA_ItemLayoutProcessorResult::Done &&
            (!pPause || !pPause->NeedToPauseNow()));
 
-  if (eStatus == XFA_ItemLayoutProcessorResult_Done) {
+  if (eStatus == XFA_ItemLayoutProcessorResult::Done) {
     m_pLayoutPageMgr->FinishPaginatedPageSets();
     m_pLayoutPageMgr->SyncLayoutData();
     m_bNeeLayout = false;
     m_rgChangedContainers.RemoveAll();
   }
-  return 100 * (eStatus == XFA_ItemLayoutProcessorResult_Done
+  return 100 * (eStatus == XFA_ItemLayoutProcessorResult::Done
                     ? m_nProgressCounter
                     : m_nProgressCounter - 1) /
          m_nProgressCounter;

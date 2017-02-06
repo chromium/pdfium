@@ -444,8 +444,8 @@ void CXFA_LayoutPageMgr::SubmitContentItem(
     m_bCreateOverFlowPage = false;
   }
 
-  if (eStatus != XFA_ItemLayoutProcessorResult_Done) {
-    if (eStatus == XFA_ItemLayoutProcessorResult_PageFullBreak &&
+  if (eStatus != XFA_ItemLayoutProcessorResult::Done) {
+    if (eStatus == XFA_ItemLayoutProcessorResult::PageFullBreak &&
         m_CurrentContainerRecordIter == GetTailPosition()) {
       AppendNewPage();
     }
@@ -466,7 +466,7 @@ FX_FLOAT CXFA_LayoutPageMgr::GetAvailHeight() {
     return fAvailHeight;
   if (m_CurrentContainerRecordIter == m_ProposedContainerRecords.begin())
     return 0.0f;
-  return XFA_LAYOUT_FLOAT_MAX;
+  return FLT_MAX;
 }
 
 bool XFA_LayoutPageMgr_RunBreakTestScript(CXFA_Node* pTestScript) {

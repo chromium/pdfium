@@ -105,6 +105,16 @@ CXFA_Document::~CXFA_Document() {
   PurgeNodes();
 }
 
+CXFA_LayoutProcessor* CXFA_Document::GetLayoutProcessor() {
+  if (!m_pLayoutProcessor)
+    m_pLayoutProcessor = new CXFA_LayoutProcessor(this);
+  return m_pLayoutProcessor;
+}
+
+CXFA_LayoutProcessor* CXFA_Document::GetDocLayout() {
+  return GetLayoutProcessor();
+}
+
 void CXFA_Document::ClearLayoutData() {
   delete m_pLayoutProcessor;
   m_pLayoutProcessor = nullptr;
