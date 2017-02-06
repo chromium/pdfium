@@ -113,7 +113,7 @@ void CPDF_Stream::SetData(const uint8_t* pData, uint32_t size) {
 bool CPDF_Stream::ReadRawData(FX_FILESIZE offset,
                               uint8_t* buf,
                               uint32_t size) const {
-  if (m_bMemoryBased && m_pFile)
+  if (!m_bMemoryBased && m_pFile)
     return m_pFile->ReadBlock(buf, offset, size);
 
   if (m_pDataBuf)
