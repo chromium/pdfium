@@ -85,8 +85,7 @@ uint8_t* CBC_QRCodeWriter::Encode(const CFX_WideString& contents,
       break;
     default: {
       e = BCExceptionUnSupportEclevel;
-      if (e != BCExceptionNO)
-        return nullptr;
+      return nullptr;
     }
   }
   CBC_QRCoder qr;

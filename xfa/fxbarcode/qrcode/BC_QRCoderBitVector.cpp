@@ -43,8 +43,7 @@ void CBC_QRCoderBitVector::Clear() {
 int32_t CBC_QRCoderBitVector::At(int32_t index, int32_t& e) {
   if (index < 0 || index >= m_sizeInBits) {
     e = BCExceptionBadIndexException;
-    if (e != BCExceptionNO)
-      return 0;
+    return 0;
   }
   int32_t value = m_array[index >> 3] & 0xff;
   return (value >> (7 - (index & 0x7))) & 1;
@@ -58,8 +57,7 @@ int32_t CBC_QRCoderBitVector::Size() {
 void CBC_QRCoderBitVector::AppendBit(int32_t bit, int32_t& e) {
   if (!(bit == 0 || bit == 1)) {
     e = BCExceptionBadValueException;
-    if (e != BCExceptionNO)
-      return;
+    return;
   }
   int32_t numBitsInLastByte = m_sizeInBits & 0x7;
   if (numBitsInLastByte == 0) {
@@ -74,8 +72,7 @@ void CBC_QRCoderBitVector::AppendBits(int32_t value,
                                       int32_t& e) {
   if (numBits < 0 || numBits > 32) {
     e = BCExceptionBadNumBitsException;
-    if (e != BCExceptionNO)
-      return;
+    return;
   }
   int32_t numBitsLeft = numBits;
   while (numBitsLeft > 0) {
@@ -107,8 +104,7 @@ void CBC_QRCoderBitVector::AppendBitVector(CBC_QRCoderBitVector* bits,
 void CBC_QRCoderBitVector::XOR(CBC_QRCoderBitVector* other, int32_t& e) {
   if (m_sizeInBits != other->Size()) {
     e = BCExceptioncanNotOperatexorOperator;
-    if (e != BCExceptionNO)
-      return;
+    return;
   }
   int32_t sizeInBytes = (m_sizeInBits + 7) >> 3;
   for (int32_t i = 0; i < sizeInBytes; ++i) {

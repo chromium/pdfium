@@ -61,14 +61,12 @@ void CBC_ReedSolomonEncoder::Encode(CFX_ArrayTemplate<int32_t>* toEncode,
                                     int32_t& e) {
   if (ecBytes == 0) {
     e = BCExceptionNoCorrectionBytes;
-    if (e != BCExceptionNO)
-      return;
+    return;
   }
   int32_t dataBytes = toEncode->GetSize() - ecBytes;
   if (dataBytes <= 0) {
     e = BCExceptionNoDataBytesProvided;
-    if (e != BCExceptionNO)
-      return;
+    return;
   }
   CBC_ReedSolomonGF256Poly* generator = BuildGenerator(ecBytes, e);
   if (e != BCExceptionNO)

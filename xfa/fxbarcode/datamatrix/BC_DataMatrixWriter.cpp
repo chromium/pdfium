@@ -54,8 +54,7 @@ uint8_t* CBC_DataMatrixWriter::Encode(const CFX_WideString& contents,
                                       int32_t& e) {
   if (outWidth < 0 || outHeight < 0) {
     e = BCExceptionHeightAndWidthMustBeAtLeast1;
-    if (e != BCExceptionNO)
-      return nullptr;
+    return nullptr;
   }
   CBC_SymbolShapeHint::SymbolShapeHint shape =
       CBC_SymbolShapeHint::FORCE_SQUARE;

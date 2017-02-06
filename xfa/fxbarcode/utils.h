@@ -165,9 +165,5 @@ enum BCFORMAT {
 #define BCExceptiontNotFoundInstance 104
 #define BCExceptionNotFoundInstance 105
 #define BCExceptionCannotMetadata 106
-#define TWO_DIGIT_DATA_LENGTH_SIZE 24
-#define THREE_DIGIT_DATA_LENGTH_SIZE 23
-#define THREE_DIGIT_PLUS_DIGIT_DATA_LENGTH_SIZE 57
-#define FOUR_DIGIT_DATA_LENGTH_SIZE 17
 
 #endif  // XFA_FXBARCODE_UTILS_H_

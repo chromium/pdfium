@@ -42,8 +42,7 @@ void CBC_ReedSolomonGF256Poly::Init(CBC_ReedSolomonGF256* field,
                                     int32_t& e) {
   if (!coefficients || coefficients->GetSize() == 0) {
     e = BCExceptionCoefficientsSizeIsNull;
-    if (e != BCExceptionNO)
-      return;
+    return;
   }
   m_field = field;
   int32_t coefficientsLength = coefficients->GetSize();

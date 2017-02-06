@@ -85,8 +85,7 @@ int32_t CBC_QRCoder::At(int32_t x, int32_t y, int32_t& e) {
   int32_t value = m_matrix->Get(x, y);
   if (!(value == 0 || value == 1)) {
     e = BCExceptionValueMustBeEither0or1;
-    if (e != BCExceptionNO)
-      return 0;
+    return 0;
   }
   return value;
 }

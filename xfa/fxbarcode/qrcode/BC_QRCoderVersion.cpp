@@ -372,8 +372,7 @@ CBC_QRCoderVersion* CBC_QRCoderVersion::GetProvisionalVersionForDimension(
     int32_t& e) {
   if ((dimension % 4) != 1) {
     e = BCExceptionRead;
-    if (e != BCExceptionNO)
-      return nullptr;
+    return nullptr;
   }
   CBC_QRCoderVersion* qcv = GetVersionForNumber((dimension - 17) >> 2, e);
   if (e != BCExceptionNO)
@@ -783,8 +782,7 @@ CBC_QRCoderVersion* CBC_QRCoderVersion::GetVersionForNumber(
   }
   if (versionNumber < 1 || versionNumber > 40) {
     e = BCExceptionIllegalArgument;
-    if (e != BCExceptionNO)
-      return nullptr;
+    return nullptr;
   }
   return (*VERSION)[versionNumber - 1];
 }
