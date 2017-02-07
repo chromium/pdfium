@@ -140,14 +140,14 @@ CXFA_Node* ResolveBreakTarget(CXFA_Node* pPageSetRoot,
   CFX_WideString wsTargetAll(wsTargetExpr);
   wsTargetAll.TrimLeft();
   wsTargetAll.TrimRight();
-  int32_t iSpliteIndex = 0;
+  int32_t iSplitIndex = 0;
   bool bTargetAllFind = true;
-  while (iSpliteIndex != -1) {
+  while (iSplitIndex != -1) {
     CFX_WideString wsExpr;
-    int32_t iSpliteNextIndex = 0;
+    int32_t iSplitNextIndex = 0;
     if (!bTargetAllFind) {
-      iSpliteNextIndex = wsTargetAll.Find(' ', iSpliteIndex);
-      wsExpr = wsTargetAll.Mid(iSpliteIndex, iSpliteNextIndex - iSpliteIndex);
+      iSplitNextIndex = wsTargetAll.Find(' ', iSplitIndex);
+      wsExpr = wsTargetAll.Mid(iSplitIndex, iSplitNextIndex - iSplitIndex);
     } else {
       wsExpr = wsTargetAll;
     }
@@ -175,7 +175,7 @@ CXFA_Node* ResolveBreakTarget(CXFA_Node* pPageSetRoot,
       if (iCount > 0 && rs.nodes[0]->IsNode())
         return rs.nodes[0]->AsNode();
     }
-    iSpliteIndex = iSpliteNextIndex;
+    iSplitIndex = iSplitNextIndex;
   }
   return nullptr;
 }

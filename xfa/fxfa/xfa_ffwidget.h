@@ -105,7 +105,7 @@ class CXFA_FFWidget : public CXFA_ContentLayoutItem {
   CXFA_FFPageView* GetPageView() const { return m_pPageView; }
   void SetPageView(CXFA_FFPageView* pPageView) { m_pPageView = pPageView; }
   void GetWidgetRect(CFX_RectF& rtWidget);
-  CFX_RectF ReCacheWidgetRect();
+  CFX_RectF RecacheWidgetRect();
   uint32_t GetStatus();
   void ModifyStatus(uint32_t dwAdded, uint32_t dwRemoved);
 

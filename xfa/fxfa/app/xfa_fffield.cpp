@@ -30,6 +30,7 @@ CXFA_FFField::CXFA_FFField(CXFA_WidgetAcc* pDataAcc)
   m_rtUI.Set(0, 0, 0, 0);
   m_rtCaption.Set(0, 0, 0, 0);
 }
+
 CXFA_FFField::~CXFA_FFField() {
   CXFA_FFField::UnloadWidget();
 }
@@ -196,12 +197,10 @@ void CXFA_FFField::CapPlacement() {
                         rtWidget.height);
       } else {
         pItem = pItem->GetFirst();
-        pItem->GetRect(m_rtCaption);
+        m_rtCaption = pItem->GetRect(false);
         pItem = pItem->GetNext();
         while (pItem) {
-          CFX_RectF rtRect;
-          pItem->GetRect(rtRect);
-          m_rtCaption.height += rtRect.Height();
+          m_rtCaption.height += pItem->GetRect(false).Height();
           pItem = pItem->GetNext();
         }
         XFA_RectWidthoutMargin(m_rtCaption, mgWidget);

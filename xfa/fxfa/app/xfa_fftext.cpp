@@ -86,8 +86,7 @@ bool CXFA_FFText::PerformLayout() {
   }
   pItem = pItem->GetFirst();
   while (pItem) {
-    CFX_RectF rtText;
-    pItem->GetRect(rtText);
+    CFX_RectF rtText = pItem->GetRect(false);
     if (CXFA_Margin mgWidget = m_pDataAcc->GetMargin()) {
       if (!pItem->GetPrev()) {
         FX_FLOAT fTopInset;

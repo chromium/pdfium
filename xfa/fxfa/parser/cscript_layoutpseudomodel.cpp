@@ -90,7 +90,7 @@ void CScript_LayoutPseudoModel::HWXY(CFXJSE_Arguments* pArguments,
   if (!pDocLayout) {
     return;
   }
-  CFX_RectF rtRect;
+
   CXFA_Measurement measure;
   CXFA_LayoutItem* pLayoutItem = pDocLayout->GetLayoutItem(pNode);
   if (!pLayoutItem) {
@@ -105,7 +105,8 @@ void CScript_LayoutPseudoModel::HWXY(CFXJSE_Arguments* pArguments,
     pValue->SetFloat(0);
     return;
   }
-  pLayoutItem->GetRect(rtRect, true);
+
+  CFX_RectF rtRect = pLayoutItem->GetRect(true);
   switch (layoutModel) {
     case XFA_LAYOUTMODEL_H:
       measure.Set(rtRect.height, XFA_UNIT_Pt);

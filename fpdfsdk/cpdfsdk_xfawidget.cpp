@@ -29,8 +29,7 @@ CPDF_Annot::Subtype CPDFSDK_XFAWidget::GetAnnotSubtype() const {
 }
 
 CFX_FloatRect CPDFSDK_XFAWidget::GetRect() const {
-  CFX_RectF rcBBox;
-  GetXFAWidget()->GetRect(rcBBox);
+  CFX_RectF rcBBox = GetXFAWidget()->GetRect(false);
   return CFX_FloatRect(rcBBox.left, rcBBox.top, rcBBox.left + rcBBox.width,
                        rcBBox.top + rcBBox.height);
 }
