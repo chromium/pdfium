@@ -1782,6 +1782,7 @@ test("pdfium_unittests") {
       "xfa/fde/cfde_txtedtbuf_unittest.cpp",
       "xfa/fde/css/cfde_cssdeclaration_unittest.cpp",
       "xfa/fde/css/cfde_cssstylesheet_unittest.cpp",
+      "xfa/fde/css/cfde_cssvaluelistparser_unittest.cpp",
       "xfa/fde/xml/fde_xml_imp_unittest.cpp",
       "xfa/fxbarcode/pdf417/BC_PDF417HighLevelEncoder_unittest.cpp",
       "xfa/fxfa/app/cxfa_textparser_unittest.cpp",

@@ -19,12 +19,11 @@ class CFDE_CSSValueListParser {
   bool NextValue(FDE_CSSPrimitiveType& eType,
                  const FX_WCHAR*& pStart,
                  int32_t& iLength);
+
   FX_WCHAR m_Separator;
 
- protected:
-  int32_t SkipTo(FX_WCHAR wch,
-                 bool bWSSeparator = false,
-                 bool bBrContinue = false);
+ private:
+  int32_t SkipTo(FX_WCHAR wch, bool breakOnSpace, bool matchBrackets);
 
   const FX_WCHAR* m_pCur;
   const FX_WCHAR* m_pEnd;
