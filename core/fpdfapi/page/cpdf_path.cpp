@@ -67,3 +67,13 @@ void CPDF_Path::AppendRect(FX_FLOAT left,
                            FX_FLOAT top) {
   m_Ref.GetPrivateCopy()->AppendRect(left, bottom, right, top);
 }
+
+void CPDF_Path::AppendPoint(FX_FLOAT x,
+                            FX_FLOAT y,
+                            FXPT_TYPE type,
+                            bool close) {
+  CFX_PathData data;
+  data.SetPointCount(1);
+  data.SetPoint(0, x, y, type, close);
+  Append(&data, nullptr);
+}
