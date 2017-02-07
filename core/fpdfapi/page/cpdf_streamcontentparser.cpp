@@ -586,7 +586,7 @@ void CPDF_StreamContentParser::Handle_FillStrokePath() {
 }
 
 void CPDF_StreamContentParser::Handle_CloseEOFillStrokePath() {
-  AddPathPoint(m_PathStartX, m_PathStartY, FXPT_LINETO | FXPT_CLOSEFIGURE);
+  AddPathPoint(m_PathStartX, m_PathStartY, FXPT_TYPE::LineTo, true);
   AddPathObject(FXFILL_ALTERNATE, true);
 }
 
@@ -682,9 +682,9 @@ void CPDF_StreamContentParser::Handle_BeginText() {
 }
 
 void CPDF_StreamContentParser::Handle_CurveTo_123() {
-  AddPathPoint(GetNumber(5), GetNumber(4), FXPT_BEZIERTO);
-  AddPathPoint(GetNumber(3), GetNumber(2), FXPT_BEZIERTO);
-  AddPathPoint(GetNumber(1), GetNumber(0), FXPT_BEZIERTO);
+  AddPathPoint(GetNumber(5), GetNumber(4), FXPT_TYPE::BezierTo, false);
+  AddPathPoint(GetNumber(3), GetNumber(2), FXPT_TYPE::BezierTo, false);
+  AddPathPoint(GetNumber(1), GetNumber(0), FXPT_TYPE::BezierTo, false);
 }
 
 void CPDF_StreamContentParser::Handle_ConcatMatrix() {
@@ -887,9 +887,9 @@ void CPDF_StreamContentParser::Handle_ClosePath() {
     return;
   }
   if (m_PathStartX != m_PathCurrentX || m_PathStartY != m_PathCurrentY) {
-    AddPathPoint(m_PathStartX, m_PathStartY, FXPT_LINETO | FXPT_CLOSEFIGURE);
-  } else if (m_pPathPoints[m_PathPointCount - 1].m_Flag != FXPT_MOVETO) {
-    m_pPathPoints[m_PathPointCount - 1].m_Flag |= FXPT_CLOSEFIGURE;
+    AddPathPoint(m_PathStartX, m_PathStartY, FXPT_TYPE::LineTo, true);
+  } else if (m_pPathPoints[m_PathPointCount - 1].m_Type != FXPT_TYPE::MoveTo) {
+    m_pPathPoints[m_PathPointCount - 1].m_CloseFigure = true;
   }
 }
 
@@ -937,14 +937,14 @@ void CPDF_StreamContentParser::Handle_LineTo() {
   if (m_ParamCount != 2)
     return;
 
-  AddPathPoint(GetNumber(1), GetNumber(0), FXPT_LINETO);
+  AddPathPoint(GetNumber(1), GetNumber(0), FXPT_TYPE::LineTo, false);
 }
 
 void CPDF_StreamContentParser::Handle_MoveTo() {
   if (m_ParamCount != 2)
     return;
 
-  AddPathPoint(GetNumber(1), GetNumber(0), FXPT_MOVETO);
+  AddPathPoint(GetNumber(1), GetNumber(0), FXPT_TYPE::MoveTo, false);
   ParsePathObject();
 }
 
@@ -982,11 +982,11 @@ void CPDF_StreamContentParser::AddPathRect(FX_FLOAT x,
                                            FX_FLOAT y,
                                            FX_FLOAT w,
                                            FX_FLOAT h) {
-  AddPathPoint(x, y, FXPT_MOVETO);
-  AddPathPoint(x + w, y, FXPT_LINETO);
-  AddPathPoint(x + w, y + h, FXPT_LINETO);
-  AddPathPoint(x, y + h, FXPT_LINETO);
-  AddPathPoint(x, y, FXPT_LINETO | FXPT_CLOSEFIGURE);
+  AddPathPoint(x, y, FXPT_TYPE::MoveTo, false);
+  AddPathPoint(x + w, y, FXPT_TYPE::LineTo, false);
+  AddPathPoint(x + w, y + h, FXPT_TYPE::LineTo, false);
+  AddPathPoint(x, y + h, FXPT_TYPE::LineTo, false);
+  AddPathPoint(x, y, FXPT_TYPE::LineTo, true);
 }
 
 void CPDF_StreamContentParser::Handle_SetRGBColor_Fill() {
@@ -1416,9 +1416,9 @@ void CPDF_StreamContentParser::Handle_MoveToNextLine() {
 }
 
 void CPDF_StreamContentParser::Handle_CurveTo_23() {
-  AddPathPoint(m_PathCurrentX, m_PathCurrentY, FXPT_BEZIERTO);
-  AddPathPoint(GetNumber(3), GetNumber(2), FXPT_BEZIERTO);
-  AddPathPoint(GetNumber(1), GetNumber(0), FXPT_BEZIERTO);
+  AddPathPoint(m_PathCurrentX, m_PathCurrentY, FXPT_TYPE::BezierTo, false);
+  AddPathPoint(GetNumber(3), GetNumber(2), FXPT_TYPE::BezierTo, false);
+  AddPathPoint(GetNumber(1), GetNumber(0), FXPT_TYPE::BezierTo, false);
 }
 
 void CPDF_StreamContentParser::Handle_SetLineWidth() {
@@ -1434,9 +1434,9 @@ void CPDF_StreamContentParser::Handle_EOClip() {
 }
 
 void CPDF_StreamContentParser::Handle_CurveTo_13() {
-  AddPathPoint(GetNumber(3), GetNumber(2), FXPT_BEZIERTO);
-  AddPathPoint(GetNumber(1), GetNumber(0), FXPT_BEZIERTO);
-  AddPathPoint(GetNumber(1), GetNumber(0), FXPT_BEZIERTO);
+  AddPathPoint(GetNumber(3), GetNumber(2), FXPT_TYPE::BezierTo, false);
+  AddPathPoint(GetNumber(1), GetNumber(0), FXPT_TYPE::BezierTo, false);
+  AddPathPoint(GetNumber(1), GetNumber(0), FXPT_TYPE::BezierTo, false);
 }
 
 void CPDF_StreamContentParser::Handle_NextLineShowText() {
@@ -1452,14 +1452,17 @@ void CPDF_StreamContentParser::Handle_NextLineShowText_Space() {
 
 void CPDF_StreamContentParser::Handle_Invalid() {}
 
-void CPDF_StreamContentParser::AddPathPoint(FX_FLOAT x, FX_FLOAT y, int flag) {
+void CPDF_StreamContentParser::AddPathPoint(FX_FLOAT x,
+                                            FX_FLOAT y,
+                                            FXPT_TYPE type,
+                                            bool close) {
   m_PathCurrentX = x;
   m_PathCurrentY = y;
-  if (flag == FXPT_MOVETO) {
+  if (type == FXPT_TYPE::MoveTo && !close) {
     m_PathStartX = x;
     m_PathStartY = y;
     if (m_PathPointCount &&
-        m_pPathPoints[m_PathPointCount - 1].m_Flag == FXPT_MOVETO) {
+        m_pPathPoints[m_PathPointCount - 1].IsTypeAndOpen(FXPT_TYPE::MoveTo)) {
       m_pPathPoints[m_PathPointCount - 1].m_PointX = x;
       m_pPathPoints[m_PathPointCount - 1].m_PointY = y;
       return;
@@ -1479,7 +1482,8 @@ void CPDF_StreamContentParser::AddPathPoint(FX_FLOAT x, FX_FLOAT y, int flag) {
     m_pPathPoints = pNewPoints;
     m_PathAllocSize = newsize;
   }
-  m_pPathPoints[m_PathPointCount - 1].m_Flag = flag;
+  m_pPathPoints[m_PathPointCount - 1].m_Type = type;
+  m_pPathPoints[m_PathPointCount - 1].m_CloseFigure = close;
   m_pPathPoints[m_PathPointCount - 1].m_PointX = x;
   m_pPathPoints[m_PathPointCount - 1].m_PointY = y;
 }
@@ -1498,7 +1502,7 @@ void CPDF_StreamContentParser::AddPathObject(int FillType, bool bStroke) {
     return;
   }
   if (PathPointCount &&
-      m_pPathPoints[PathPointCount - 1].m_Flag == FXPT_MOVETO) {
+      m_pPathPoints[PathPointCount - 1].IsTypeAndOpen(FXPT_TYPE::MoveTo)) {
     PathPointCount--;
   }
   CPDF_Path Path;
@@ -1576,29 +1580,30 @@ void CPDF_StreamContentParser::ParsePathObject() {
         if (len == 1) {
           switch (strc[0]) {
             case kPathOperatorSubpath:
-              AddPathPoint(params[0], params[1], FXPT_MOVETO);
+              AddPathPoint(params[0], params[1], FXPT_TYPE::MoveTo, false);
               nParams = 0;
               break;
             case kPathOperatorLine:
-              AddPathPoint(params[0], params[1], FXPT_LINETO);
+              AddPathPoint(params[0], params[1], FXPT_TYPE::LineTo, false);
               nParams = 0;
               break;
             case kPathOperatorCubicBezier1:
-              AddPathPoint(params[0], params[1], FXPT_BEZIERTO);
-              AddPathPoint(params[2], params[3], FXPT_BEZIERTO);
-              AddPathPoint(params[4], params[5], FXPT_BEZIERTO);
+              AddPathPoint(params[0], params[1], FXPT_TYPE::BezierTo, false);
+              AddPathPoint(params[2], params[3], FXPT_TYPE::BezierTo, false);
+              AddPathPoint(params[4], params[5], FXPT_TYPE::BezierTo, false);
               nParams = 0;
               break;
             case kPathOperatorCubicBezier2:
-              AddPathPoint(m_PathCurrentX, m_PathCurrentY, FXPT_BEZIERTO);
-              AddPathPoint(params[0], params[1], FXPT_BEZIERTO);
-              AddPathPoint(params[2], params[3], FXPT_BEZIERTO);
+              AddPathPoint(m_PathCurrentX, m_PathCurrentY, FXPT_TYPE::BezierTo,
+                           false);
+              AddPathPoint(params[0], params[1], FXPT_TYPE::BezierTo, false);
+              AddPathPoint(params[2], params[3], FXPT_TYPE::BezierTo, false);
               nParams = 0;
               break;
             case kPathOperatorCubicBezier3:
-              AddPathPoint(params[0], params[1], FXPT_BEZIERTO);
-              AddPathPoint(params[2], params[3], FXPT_BEZIERTO);
-              AddPathPoint(params[2], params[3], FXPT_BEZIERTO);
+              AddPathPoint(params[0], params[1], FXPT_TYPE::BezierTo, false);
+              AddPathPoint(params[2], params[3], FXPT_TYPE::BezierTo, false);
+              AddPathPoint(params[2], params[3], FXPT_TYPE::BezierTo, false);
               nParams = 0;
               break;
             case kPathOperatorClosePath:

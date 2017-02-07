@@ -281,18 +281,19 @@ void CAgg_PathData::BuildPath(const CFX_PathData* pPathData,
       pObject2Device->Transform(x, y);
     }
     HardClip(x, y);
-    int point_type = pPoints[i].m_Flag & FXPT_TYPE;
-    if (point_type == FXPT_MOVETO) {
+    FXPT_TYPE point_type = pPoints[i].m_Type;
+    if (point_type == FXPT_TYPE::MoveTo) {
       m_PathData.move_to(x, y);
-    } else if (point_type == FXPT_LINETO) {
-      if (pPoints[i - 1].m_Flag == FXPT_MOVETO &&
-          (i == nPoints - 1 || pPoints[i + 1].m_Flag == FXPT_MOVETO) &&
+    } else if (point_type == FXPT_TYPE::LineTo) {
+      if (pPoints[i - 1].IsTypeAndOpen(FXPT_TYPE::MoveTo) &&
+          (i == nPoints - 1 ||
+           pPoints[i + 1].IsTypeAndOpen(FXPT_TYPE::MoveTo)) &&
           pPoints[i].m_PointX == pPoints[i - 1].m_PointX &&
           pPoints[i].m_PointY == pPoints[i - 1].m_PointY) {
         x += 1;
       }
       m_PathData.line_to(x, y);
-    } else if (point_type == FXPT_BEZIERTO) {
+    } else if (point_type == FXPT_TYPE::BezierTo) {
       FX_FLOAT x0 = pPoints[i - 1].m_PointX, y0 = pPoints[i - 1].m_PointY;
       FX_FLOAT x2 = pPoints[i + 1].m_PointX, y2 = pPoints[i + 1].m_PointY;
       FX_FLOAT x3 = pPoints[i + 2].m_PointX, y3 = pPoints[i + 2].m_PointY;
@@ -308,7 +309,7 @@ void CAgg_PathData::BuildPath(const CFX_PathData* pPathData,
       i += 2;
       m_PathData.add_path_curve(curve);
     }
-    if (pPoints[i].m_Flag & FXPT_CLOSEFIGURE) {
+    if (pPoints[i].m_CloseFigure) {
       m_PathData.end_poly();
     }
   }

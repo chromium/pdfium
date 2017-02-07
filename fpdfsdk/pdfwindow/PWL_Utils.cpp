@@ -54,15 +54,15 @@ void CPWL_Utils::GetPathDataFromArray(CFX_PathData& path,
     switch (pPathData[i].type) {
       case PWLPT_MOVETO:
         path.SetPoint(i, pPathData[i].point.x, pPathData[i].point.y,
-                      FXPT_MOVETO);
+                      FXPT_TYPE::MoveTo, false);
         break;
       case PWLPT_LINETO:
         path.SetPoint(i, pPathData[i].point.x, pPathData[i].point.y,
-                      FXPT_LINETO);
+                      FXPT_TYPE::LineTo, false);
         break;
       case PWLPT_BEZIERTO:
         path.SetPoint(i, pPathData[i].point.x, pPathData[i].point.y,
-                      FXPT_BEZIERTO);
+                      FXPT_TYPE::BezierTo, false);
         break;
       default:
         break;
@@ -1236,9 +1236,9 @@ void CPWL_Utils::DrawFillArea(CFX_RenderDevice* pDevice,
   CFX_PathData path;
   path.SetPointCount(nCount);
 
-  path.SetPoint(0, pPts[0].x, pPts[0].y, FXPT_MOVETO);
+  path.SetPoint(0, pPts[0].x, pPts[0].y, FXPT_TYPE::MoveTo, false);
   for (int32_t i = 1; i < nCount; i++)
-    path.SetPoint(i, pPts[i].x, pPts[i].y, FXPT_LINETO);
+    path.SetPoint(i, pPts[i].x, pPts[i].y, FXPT_TYPE::LineTo, false);
 
   pDevice->DrawPath(&path, pUser2Device, nullptr, color, 0, FXFILL_ALTERNATE);
 }
@@ -1266,8 +1266,8 @@ void CPWL_Utils::DrawStrokeLine(CFX_RenderDevice* pDevice,
                                 FX_FLOAT fWidth) {
   CFX_PathData path;
   path.SetPointCount(2);
-  path.SetPoint(0, ptMoveTo.x, ptMoveTo.y, FXPT_MOVETO);
-  path.SetPoint(1, ptLineTo.x, ptLineTo.y, FXPT_LINETO);
+  path.SetPoint(0, ptMoveTo.x, ptMoveTo.y, FXPT_TYPE::MoveTo, false);
+  path.SetPoint(1, ptLineTo.x, ptLineTo.y, FXPT_TYPE::LineTo, false);
 
   CFX_GraphStateData gsd;
   gsd.m_LineWidth = fWidth;
@@ -1353,15 +1353,15 @@ void CPWL_Utils::DrawBorder(CFX_RenderDevice* pDevice,
 
         path.SetPointCount(5);
         path.SetPoint(0, fLeft + fWidth / 2.0f, fBottom + fWidth / 2.0f,
-                      FXPT_MOVETO);
+                      FXPT_TYPE::MoveTo, false);
         path.SetPoint(1, fLeft + fWidth / 2.0f, fTop - fWidth / 2.0f,
-                      FXPT_LINETO);
+                      FXPT_TYPE::LineTo, false);
         path.SetPoint(2, fRight - fWidth / 2.0f, fTop - fWidth / 2.0f,
-                      FXPT_LINETO);
+                      FXPT_TYPE::LineTo, false);
         path.SetPoint(3, fRight - fWidth / 2.0f, fBottom + fWidth / 2.0f,
-                      FXPT_LINETO);
+                      FXPT_TYPE::LineTo, false);
         path.SetPoint(4, fLeft + fWidth / 2.0f, fBottom + fWidth / 2.0f,
-                      FXPT_LINETO);
+                      FXPT_TYPE::LineTo, false);
 
         CFX_GraphStateData gsd;
         gsd.SetDashCount(2);
@@ -1384,17 +1384,19 @@ void CPWL_Utils::DrawBorder(CFX_RenderDevice* pDevice,
 
         pathLT.SetPointCount(7);
         pathLT.SetPoint(0, fLeft + fHalfWidth, fBottom + fHalfWidth,
-                        FXPT_MOVETO);
-        pathLT.SetPoint(1, fLeft + fHalfWidth, fTop - fHalfWidth, FXPT_LINETO);
-        pathLT.SetPoint(2, fRight - fHalfWidth, fTop - fHalfWidth, FXPT_LINETO);
+                        FXPT_TYPE::MoveTo, false);
+        pathLT.SetPoint(1, fLeft + fHalfWidth, fTop - fHalfWidth,
+                        FXPT_TYPE::LineTo, false);
+        pathLT.SetPoint(2, fRight - fHalfWidth, fTop - fHalfWidth,
+                        FXPT_TYPE::LineTo, false);
         pathLT.SetPoint(3, fRight - fHalfWidth * 2, fTop - fHalfWidth * 2,
-                        FXPT_LINETO);
+                        FXPT_TYPE::LineTo, false);
         pathLT.SetPoint(4, fLeft + fHalfWidth * 2, fTop - fHalfWidth * 2,
-                        FXPT_LINETO);
+                        FXPT_TYPE::LineTo, false);
         pathLT.SetPoint(5, fLeft + fHalfWidth * 2, fBottom + fHalfWidth * 2,
-                        FXPT_LINETO);
+                        FXPT_TYPE::LineTo, false);
         pathLT.SetPoint(6, fLeft + fHalfWidth, fBottom + fHalfWidth,
-                        FXPT_LINETO);
+                        FXPT_TYPE::LineTo, false);
 
         pDevice->DrawPath(&pathLT, pUser2Device, &gsd,
                           PWLColorToFXColor(crLeftTop, nTransparancy), 0,
@@ -1403,18 +1405,20 @@ void CPWL_Utils::DrawBorder(CFX_RenderDevice* pDevice,
         CFX_PathData pathRB;
 
         pathRB.SetPointCount(7);
-        pathRB.SetPoint(0, fRight - fHalfWidth, fTop - fHalfWidth, FXPT_MOVETO);
+        pathRB.SetPoint(0, fRight - fHalfWidth, fTop - fHalfWidth,
+                        FXPT_TYPE::MoveTo, false);
         pathRB.SetPoint(1, fRight - fHalfWidth, fBottom + fHalfWidth,
-                        FXPT_LINETO);
+                        FXPT_TYPE::LineTo, false);
         pathRB.SetPoint(2, fLeft + fHalfWidth, fBottom + fHalfWidth,
-                        FXPT_LINETO);
+                        FXPT_TYPE::LineTo, false);
         pathRB.SetPoint(3, fLeft + fHalfWidth * 2, fBottom + fHalfWidth * 2,
-                        FXPT_LINETO);
+                        FXPT_TYPE::LineTo, false);
         pathRB.SetPoint(4, fRight - fHalfWidth * 2, fBottom + fHalfWidth * 2,
-                        FXPT_LINETO);
+                        FXPT_TYPE::LineTo, false);
         pathRB.SetPoint(5, fRight - fHalfWidth * 2, fTop - fHalfWidth * 2,
-                        FXPT_LINETO);
-        pathRB.SetPoint(6, fRight - fHalfWidth, fTop - fHalfWidth, FXPT_LINETO);
+                        FXPT_TYPE::LineTo, false);
+        pathRB.SetPoint(6, fRight - fHalfWidth, fTop - fHalfWidth,
+                        FXPT_TYPE::LineTo, false);
 
         pDevice->DrawPath(&pathRB, pUser2Device, &gsd,
                           PWLColorToFXColor(crRightBottom, nTransparancy), 0,
@@ -1435,8 +1439,9 @@ void CPWL_Utils::DrawBorder(CFX_RenderDevice* pDevice,
         CFX_PathData path;
 
         path.SetPointCount(2);
-        path.SetPoint(0, fLeft, fBottom + fWidth / 2, FXPT_MOVETO);
-        path.SetPoint(1, fRight, fBottom + fWidth / 2, FXPT_LINETO);
+        path.SetPoint(0, fLeft, fBottom + fWidth / 2, FXPT_TYPE::MoveTo, false);
+        path.SetPoint(1, fRight, fBottom + fWidth / 2, FXPT_TYPE::LineTo,
+                      false);
 
         CFX_GraphStateData gsd;
         gsd.m_LineWidth = fWidth;

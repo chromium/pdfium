@@ -71,11 +71,14 @@ void CFFL_InteractiveFormFiller::OnDraw(CPDFSDK_PageView* pPageView,
         if (!rcFocus.IsEmpty()) {
           CFX_PathData path;
           path.SetPointCount(5);
-          path.SetPoint(0, rcFocus.left, rcFocus.top, FXPT_MOVETO);
-          path.SetPoint(1, rcFocus.left, rcFocus.bottom, FXPT_LINETO);
-          path.SetPoint(2, rcFocus.right, rcFocus.bottom, FXPT_LINETO);
-          path.SetPoint(3, rcFocus.right, rcFocus.top, FXPT_LINETO);
-          path.SetPoint(4, rcFocus.left, rcFocus.top, FXPT_LINETO);
+          path.SetPoint(0, rcFocus.left, rcFocus.top, FXPT_TYPE::MoveTo, false);
+          path.SetPoint(1, rcFocus.left, rcFocus.bottom, FXPT_TYPE::LineTo,
+                        false);
+          path.SetPoint(2, rcFocus.right, rcFocus.bottom, FXPT_TYPE::LineTo,
+                        false);
+          path.SetPoint(3, rcFocus.right, rcFocus.top, FXPT_TYPE::LineTo,
+                        false);
+          path.SetPoint(4, rcFocus.left, rcFocus.top, FXPT_TYPE::LineTo, false);
 
           CFX_GraphStateData gsd;
           gsd.SetDashCount(1);

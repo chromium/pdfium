@@ -33,12 +33,14 @@ void CFX_PathGenerator::AddPathData(FX_PATHPOINT* pPoints, int nCount) {
 
 void CFX_PathGenerator::MoveTo(FX_FLOAT x, FX_FLOAT y) {
   m_pPathData->AddPointCount(1);
-  m_pPathData->SetPoint(m_pPathData->GetPointCount() - 1, x, y, FXPT_MOVETO);
+  m_pPathData->SetPoint(m_pPathData->GetPointCount() - 1, x, y,
+                        FXPT_TYPE::MoveTo, false);
 }
 
 void CFX_PathGenerator::LineTo(FX_FLOAT x, FX_FLOAT y) {
   m_pPathData->AddPointCount(1);
-  m_pPathData->SetPoint(m_pPathData->GetPointCount() - 1, x, y, FXPT_LINETO);
+  m_pPathData->SetPoint(m_pPathData->GetPointCount() - 1, x, y,
+                        FXPT_TYPE::LineTo, false);
 }
 
 void CFX_PathGenerator::BezierTo(FX_FLOAT ctrl_x1,
@@ -49,16 +51,18 @@ void CFX_PathGenerator::BezierTo(FX_FLOAT ctrl_x1,
                                  FX_FLOAT to_y) {
   int old_count = m_pPathData->GetPointCount();
   m_pPathData->AddPointCount(3);
-  m_pPathData->SetPoint(old_count, ctrl_x1, ctrl_y1, FXPT_BEZIERTO);
-  m_pPathData->SetPoint(old_count + 1, ctrl_x2, ctrl_y2, FXPT_BEZIERTO);
-  m_pPathData->SetPoint(old_count + 2, to_x, to_y, FXPT_BEZIERTO);
+  m_pPathData->SetPoint(old_count, ctrl_x1, ctrl_y1, FXPT_TYPE::BezierTo,
+                        false);
+  m_pPathData->SetPoint(old_count + 1, ctrl_x2, ctrl_y2, FXPT_TYPE::BezierTo,
+                        false);
+  m_pPathData->SetPoint(old_count + 2, to_x, to_y, FXPT_TYPE::BezierTo, false);
 }
 
 void CFX_PathGenerator::Close() {
   if (m_pPathData->GetPointCount() > 0) {
     int index = m_pPathData->GetPointCount() - 1;
     FX_PATHPOINT* pPoints = m_pPathData->GetPoints();
-    pPoints[index].m_Flag |= FXPT_CLOSEFIGURE;
+    pPoints[index].m_CloseFigure = true;
   }
 }
 
@@ -68,8 +72,8 @@ void CFX_PathGenerator::AddLine(FX_FLOAT x1,
                                 FX_FLOAT y2) {
   int old_count = m_pPathData->GetPointCount();
   m_pPathData->AddPointCount(2);
-  m_pPathData->SetPoint(old_count, x1, y1, FXPT_MOVETO);
-  m_pPathData->SetPoint(old_count + 1, x2, y2, FXPT_LINETO);
+  m_pPathData->SetPoint(old_count, x1, y1, FXPT_TYPE::MoveTo, false);
+  m_pPathData->SetPoint(old_count + 1, x2, y2, FXPT_TYPE::LineTo, false);
 }
 
 void CFX_PathGenerator::AddBezier(FX_FLOAT start_x,
@@ -82,10 +86,13 @@ void CFX_PathGenerator::AddBezier(FX_FLOAT start_x,
                                   FX_FLOAT end_y) {
   int old_count = m_pPathData->GetPointCount();
   m_pPathData->AddPointCount(4);
-  m_pPathData->SetPoint(old_count, start_x, start_y, FXPT_MOVETO);
-  m_pPathData->SetPoint(old_count + 1, ctrl_x1, ctrl_y1, FXPT_BEZIERTO);
-  m_pPathData->SetPoint(old_count + 2, ctrl_x2, ctrl_y2, FXPT_BEZIERTO);
-  m_pPathData->SetPoint(old_count + 3, end_x, end_y, FXPT_BEZIERTO);
+  m_pPathData->SetPoint(old_count, start_x, start_y, FXPT_TYPE::MoveTo, false);
+  m_pPathData->SetPoint(old_count + 1, ctrl_x1, ctrl_y1, FXPT_TYPE::BezierTo,
+                        false);
+  m_pPathData->SetPoint(old_count + 2, ctrl_x2, ctrl_y2, FXPT_TYPE::BezierTo,
+                        false);
+  m_pPathData->SetPoint(old_count + 3, end_x, end_y, FXPT_TYPE::BezierTo,
+                        false);
 }
 
 void CFX_PathGenerator::AddRectangle(FX_FLOAT x1,
@@ -124,13 +131,16 @@ void CFX_PathGenerator::ArcTo(FX_FLOAT x,
   FX_FLOAT bezier_x, bezier_y;
   bezier_x = x + (width * ((px[0] * cs) - (py[0] * sn)));
   bezier_y = y + (height * ((px[0] * sn) + (py[0] * cs)));
-  m_pPathData->SetPoint(old_count, bezier_x, bezier_y, FXPT_BEZIERTO);
+  m_pPathData->SetPoint(old_count, bezier_x, bezier_y, FXPT_TYPE::BezierTo,
+                        false);
   bezier_x = x + (width * ((px[1] * cs) - (py[1] * sn)));
   bezier_y = y + (height * ((px[1] * sn) + (py[1] * cs)));
-  m_pPathData->SetPoint(old_count + 1, bezier_x, bezier_y, FXPT_BEZIERTO);
+  m_pPathData->SetPoint(old_count + 1, bezier_x, bezier_y, FXPT_TYPE::BezierTo,
+                        false);
   bezier_x = x + (width * FXSYS_cos(start_angle + sweep_angle));
   bezier_y = y + (height * FXSYS_sin(start_angle + sweep_angle));
-  m_pPathData->SetPoint(old_count + 2, bezier_x, bezier_y, FXPT_BEZIERTO);
+  m_pPathData->SetPoint(old_count + 2, bezier_x, bezier_y, FXPT_TYPE::BezierTo,
+                        false);
 }
 
 void CFX_PathGenerator::AddArc(FX_FLOAT x,
@@ -157,9 +167,9 @@ void CFX_PathGenerator::AddArc(FX_FLOAT x,
     sweep_angle = -FX_PI * 2;
   }
   m_pPathData->AddPointCount(1);
-  m_pPathData->SetPoint(m_pPathData->GetPointCount() - 1,
-                        x + (width * FXSYS_cos(start_angle)),
-                        y + (height * FXSYS_sin(start_angle)), FXPT_MOVETO);
+  m_pPathData->SetPoint(
+      m_pPathData->GetPointCount() - 1, x + (width * FXSYS_cos(start_angle)),
+      y + (height * FXSYS_sin(start_angle)), FXPT_TYPE::MoveTo, false);
   FX_FLOAT total_sweep = 0, local_sweep = 0, prev_sweep = 0;
   bool done = false;
   do {
@@ -194,13 +204,14 @@ void CFX_PathGenerator::AddPie(FX_FLOAT x,
   if (sweep_angle == 0) {
     int old_count = m_pPathData->GetPointCount();
     m_pPathData->AddPointCount(2);
-    m_pPathData->SetPoint(old_count, x, y, FXPT_MOVETO);
+    m_pPathData->SetPoint(old_count, x, y, FXPT_TYPE::MoveTo, false);
     m_pPathData->SetPoint(old_count + 1, x + (width * FXSYS_cos(start_angle)),
-                          y + (height * FXSYS_sin(start_angle)), FXPT_LINETO);
+                          y + (height * FXSYS_sin(start_angle)),
+                          FXPT_TYPE::LineTo, false);
     return;
   }
   AddArc(x, y, width, height, start_angle, sweep_angle);
   m_pPathData->AddPointCount(1);
   m_pPathData->SetPoint(m_pPathData->GetPointCount() - 1, x, y,
-                        FXPT_LINETO | FXPT_CLOSEFIGURE);
+                        FXPT_TYPE::LineTo, true);
 }

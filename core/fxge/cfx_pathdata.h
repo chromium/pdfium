@@ -12,9 +12,14 @@
 #include "core/fxge/cfx_renderdevice.h"
 
 struct FX_PATHPOINT {
+  bool IsTypeAndOpen(FXPT_TYPE type) const {
+    return m_Type == type && !m_CloseFigure;
+  }
+
   FX_FLOAT m_PointX;
   FX_FLOAT m_PointY;
-  int m_Flag;
+  FXPT_TYPE m_Type;
+  bool m_CloseFigure;
 };
 
 class CFX_PathData {
@@ -24,7 +29,10 @@ class CFX_PathData {
   ~CFX_PathData();
 
   int GetPointCount() const { return m_PointCount; }
-  int GetFlag(int index) const { return m_pPoints[index].m_Flag; }
+  FXPT_TYPE GetType(int index) const { return m_pPoints[index].m_Type; }
+  bool IsClosingFigure(int index) const {
+    return m_pPoints[index].m_CloseFigure;
+  }
   FX_FLOAT GetPointX(int index) const { return m_pPoints[index].m_PointX; }
   FX_FLOAT GetPointY(int index) const { return m_pPoints[index].m_PointY; }
   FX_PATHPOINT* GetPoints() const { return m_pPoints; }
@@ -43,7 +51,11 @@ class CFX_PathData {
   bool IsRect(const CFX_Matrix* pMatrix, CFX_FloatRect* rect) const;
   void Append(const CFX_PathData* pSrc, const CFX_Matrix* pMatrix);
   void AppendRect(FX_FLOAT left, FX_FLOAT bottom, FX_FLOAT right, FX_FLOAT top);
-  void SetPoint(int index, FX_FLOAT x, FX_FLOAT y, int flag);
+  void SetPoint(int index,
+                FX_FLOAT x,
+                FX_FLOAT y,
+                FXPT_TYPE type,
+                bool closeFigure);
   void TrimPoints(int nPoints);
   void Copy(const CFX_PathData& src);
 

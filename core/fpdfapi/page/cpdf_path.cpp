@@ -28,10 +28,6 @@ FX_PATHPOINT* CPDF_Path::GetMutablePoints() {
   return m_Ref.GetPrivateCopy()->GetPoints();
 }
 
-int CPDF_Path::GetFlag(int index) const {
-  return m_Ref.GetObject()->GetFlag(index);
-}
-
 FX_FLOAT CPDF_Path::GetPointX(int index) const {
   return m_Ref.GetObject()->GetPointX(index);
 }

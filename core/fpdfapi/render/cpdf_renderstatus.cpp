@@ -816,9 +816,12 @@ void DrawCoonPatchMeshes(
   patch.fill_mode = fill_mode;
   patch.path.SetPointCount(13);
   FX_PATHPOINT* pPoints = patch.path.GetPoints();
-  pPoints[0].m_Flag = FXPT_MOVETO;
-  for (int i = 1; i < 13; i++)
-    pPoints[i].m_Flag = FXPT_BEZIERTO;
+  pPoints[0].m_Type = FXPT_TYPE::MoveTo;
+  pPoints[0].m_CloseFigure = false;
+  for (int i = 1; i < 13; i++) {
+    pPoints[i].m_Type = FXPT_TYPE::BezierTo;
+    pPoints[i].m_CloseFigure = false;
+  }
   CFX_PointF coords[16];
   int point_count = type == kTensorProductPatchMeshShading ? 16 : 12;
   while (!stream.BitStream()->IsEOF()) {

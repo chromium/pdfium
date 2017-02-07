@@ -247,20 +247,20 @@ void OutputPath(CFX_ByteTextBuf& buf, CPDF_Path path) {
   CFX_ByteString temp;
   for (int i = 0; i < pPathData->GetPointCount(); i++) {
     buf << (pPoints[i].m_PointX) << " " << (pPoints[i].m_PointY);
-    int point_type = pPoints[i].m_Flag & FXPT_TYPE;
-    if (point_type == FXPT_MOVETO) {
+    FXPT_TYPE point_type = pPoints[i].m_Type;
+    if (point_type == FXPT_TYPE::MoveTo) {
       buf << " m\n";
-    } else if (point_type == FXPT_BEZIERTO) {
+    } else if (point_type == FXPT_TYPE::BezierTo) {
       buf << " " << (pPoints[i + 1].m_PointX) << " "
           << (pPoints[i + 1].m_PointY) << " " << (pPoints[i + 2].m_PointX)
           << " " << (pPoints[i + 2].m_PointY);
-      if (pPoints[i + 2].m_Flag & FXPT_CLOSEFIGURE)
+      if (pPoints[i + 2].m_CloseFigure)
         buf << " c h\n";
       else
         buf << " c\n";
       i += 2;
-    } else if (point_type == FXPT_LINETO) {
-      if (pPoints[i].m_Flag & FXPT_CLOSEFIGURE)
+    } else if (point_type == FXPT_TYPE::LineTo) {
+      if (pPoints[i].m_CloseFigure)
         buf << " l h\n";
       else
         buf << " l\n";

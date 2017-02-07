@@ -42,14 +42,14 @@ void CPWL_Caret::DrawThisAppearance(CFX_RenderDevice* pDevice,
       if (!rcRect.IsEmpty()) {
         fCaretTop = rcRect.top;
         fCaretBottom = rcRect.bottom;
-        path.SetPoint(0, fCaretX, fCaretBottom, FXPT_MOVETO);
-        path.SetPoint(1, fCaretX, fCaretTop, FXPT_LINETO);
+        path.SetPoint(0, fCaretX, fCaretBottom, FXPT_TYPE::MoveTo, false);
+        path.SetPoint(1, fCaretX, fCaretTop, FXPT_TYPE::LineTo, false);
       } else {
         return;
       }
     } else {
-      path.SetPoint(0, fCaretX, fCaretBottom, FXPT_MOVETO);
-      path.SetPoint(1, fCaretX, fCaretTop, FXPT_LINETO);
+      path.SetPoint(0, fCaretX, fCaretBottom, FXPT_TYPE::MoveTo, false);
+      path.SetPoint(1, fCaretX, fCaretTop, FXPT_TYPE::LineTo, false);
     }
 
     CFX_GraphStateData gsd;

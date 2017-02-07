@@ -289,18 +289,18 @@ SkPath BuildPath(const CFX_PathData* pPathData) {
   for (int i = 0; i < nPoints; i++) {
     FX_FLOAT x = pPoints[i].m_PointX;
     FX_FLOAT y = pPoints[i].m_PointY;
-    int point_type = pPoints[i].m_Flag & FXPT_TYPE;
-    if (point_type == FXPT_MOVETO) {
+    FXPT_TYPE point_type = pPoints[i].m_Type;
+    if (point_type == FXPT_TYPE::MoveTo) {
       skPath.moveTo(x, y);
-    } else if (point_type == FXPT_LINETO) {
+    } else if (point_type == FXPT_TYPE::LineTo) {
       skPath.lineTo(x, y);
-    } else if (point_type == FXPT_BEZIERTO) {
+    } else if (point_type == FXPT_TYPE::BezierTo) {
       FX_FLOAT x2 = pPoints[i + 1].m_PointX, y2 = pPoints[i + 1].m_PointY;
       FX_FLOAT x3 = pPoints[i + 2].m_PointX, y3 = pPoints[i + 2].m_PointY;
       skPath.cubicTo(x, y, x2, y2, x3, y3);
       i += 2;
     }
-    if (pPoints[i].m_Flag & FXPT_CLOSEFIGURE)
+    if (pPoints[i].m_CloseFigure)
       skPath.close();
   }
   return skPath;

@@ -87,7 +87,8 @@ FXFT_Face FT_LoadFont(const uint8_t* pData, int size) {
 
 void Outline_CheckEmptyContour(OUTLINE_PARAMS* param) {
   if (param->m_PointCount >= 2 &&
-      param->m_pPoints[param->m_PointCount - 2].m_Flag == FXPT_MOVETO &&
+      param->m_pPoints[param->m_PointCount - 2].IsTypeAndOpen(
+          FXPT_TYPE::MoveTo) &&
       param->m_pPoints[param->m_PointCount - 2].m_PointX ==
           param->m_pPoints[param->m_PointCount - 1].m_PointX &&
       param->m_pPoints[param->m_PointCount - 2].m_PointY ==
@@ -95,8 +96,10 @@ void Outline_CheckEmptyContour(OUTLINE_PARAMS* param) {
     param->m_PointCount -= 2;
   }
   if (param->m_PointCount >= 4 &&
-      param->m_pPoints[param->m_PointCount - 4].m_Flag == FXPT_MOVETO &&
-      param->m_pPoints[param->m_PointCount - 3].m_Flag == FXPT_BEZIERTO &&
+      param->m_pPoints[param->m_PointCount - 4].IsTypeAndOpen(
+          FXPT_TYPE::MoveTo) &&
+      param->m_pPoints[param->m_PointCount - 3].IsTypeAndOpen(
+          FXPT_TYPE::BezierTo) &&
       param->m_pPoints[param->m_PointCount - 3].m_PointX ==
           param->m_pPoints[param->m_PointCount - 4].m_PointX &&
       param->m_pPoints[param->m_PointCount - 3].m_PointY ==
@@ -119,11 +122,12 @@ int Outline_MoveTo(const FXFT_Vector* to, void* user) {
     Outline_CheckEmptyContour(param);
     param->m_pPoints[param->m_PointCount].m_PointX = to->x / param->m_CoordUnit;
     param->m_pPoints[param->m_PointCount].m_PointY = to->y / param->m_CoordUnit;
-    param->m_pPoints[param->m_PointCount].m_Flag = FXPT_MOVETO;
+    param->m_pPoints[param->m_PointCount].m_Type = FXPT_TYPE::MoveTo;
+    param->m_pPoints[param->m_PointCount].m_CloseFigure = false;
     param->m_CurX = to->x;
     param->m_CurY = to->y;
     if (param->m_PointCount)
-      param->m_pPoints[param->m_PointCount - 1].m_Flag |= FXPT_CLOSEFIGURE;
+      param->m_pPoints[param->m_PointCount - 1].m_CloseFigure = true;
   }
   param->m_PointCount++;
   return 0;
@@ -134,7 +138,8 @@ int Outline_LineTo(const FXFT_Vector* to, void* user) {
   if (!param->m_bCount) {
     param->m_pPoints[param->m_PointCount].m_PointX = to->x / param->m_CoordUnit;
     param->m_pPoints[param->m_PointCount].m_PointY = to->y / param->m_CoordUnit;
-    param->m_pPoints[param->m_PointCount].m_Flag = FXPT_LINETO;
+    param->m_pPoints[param->m_PointCount].m_Type = FXPT_TYPE::LineTo;
+    param->m_pPoints[param->m_PointCount].m_CloseFigure = false;
     param->m_CurX = to->x;
     param->m_CurY = to->y;
   }
@@ -153,17 +158,20 @@ int Outline_ConicTo(const FXFT_Vector* control,
     param->m_pPoints[param->m_PointCount].m_PointY =
         (param->m_CurY + (control->y - param->m_CurY) * 2 / 3) /
         param->m_CoordUnit;
-    param->m_pPoints[param->m_PointCount].m_Flag = FXPT_BEZIERTO;
+    param->m_pPoints[param->m_PointCount].m_Type = FXPT_TYPE::BezierTo;
+    param->m_pPoints[param->m_PointCount].m_CloseFigure = false;
     param->m_pPoints[param->m_PointCount + 1].m_PointX =
         (control->x + (to->x - control->x) / 3) / param->m_CoordUnit;
     param->m_pPoints[param->m_PointCount + 1].m_PointY =
         (control->y + (to->y - control->y) / 3) / param->m_CoordUnit;
-    param->m_pPoints[param->m_PointCount + 1].m_Flag = FXPT_BEZIERTO;
+    param->m_pPoints[param->m_PointCount + 1].m_Type = FXPT_TYPE::BezierTo;
+    param->m_pPoints[param->m_PointCount + 1].m_CloseFigure = false;
     param->m_pPoints[param->m_PointCount + 2].m_PointX =
         to->x / param->m_CoordUnit;
     param->m_pPoints[param->m_PointCount + 2].m_PointY =
         to->y / param->m_CoordUnit;
-    param->m_pPoints[param->m_PointCount + 2].m_Flag = FXPT_BEZIERTO;
+    param->m_pPoints[param->m_PointCount + 2].m_Type = FXPT_TYPE::BezierTo;
+    param->m_pPoints[param->m_PointCount + 2].m_CloseFigure = false;
     param->m_CurX = to->x;
     param->m_CurY = to->y;
   }
@@ -181,17 +189,20 @@ int Outline_CubicTo(const FXFT_Vector* control1,
         control1->x / param->m_CoordUnit;
     param->m_pPoints[param->m_PointCount].m_PointY =
         control1->y / param->m_CoordUnit;
-    param->m_pPoints[param->m_PointCount].m_Flag = FXPT_BEZIERTO;
+    param->m_pPoints[param->m_PointCount].m_Type = FXPT_TYPE::BezierTo;
+    param->m_pPoints[param->m_PointCount].m_CloseFigure = false;
     param->m_pPoints[param->m_PointCount + 1].m_PointX =
         control2->x / param->m_CoordUnit;
     param->m_pPoints[param->m_PointCount + 1].m_PointY =
         control2->y / param->m_CoordUnit;
-    param->m_pPoints[param->m_PointCount + 1].m_Flag = FXPT_BEZIERTO;
+    param->m_pPoints[param->m_PointCount + 1].m_Type = FXPT_TYPE::BezierTo;
+    param->m_pPoints[param->m_PointCount + 1].m_CloseFigure = false;
     param->m_pPoints[param->m_PointCount + 2].m_PointX =
         to->x / param->m_CoordUnit;
     param->m_pPoints[param->m_PointCount + 2].m_PointY =
         to->y / param->m_CoordUnit;
-    param->m_pPoints[param->m_PointCount + 2].m_Flag = FXPT_BEZIERTO;
+    param->m_pPoints[param->m_PointCount + 2].m_Type = FXPT_TYPE::BezierTo;
+    param->m_pPoints[param->m_PointCount + 2].m_CloseFigure = false;
     param->m_CurX = to->x;
     param->m_CurY = to->y;
   }
@@ -696,7 +707,7 @@ CFX_PathData* CFX_Font::LoadGlyphPathImpl(uint32_t glyph_index,
   Outline_CheckEmptyContour(&params);
   pPath->TrimPoints(params.m_PointCount);
   if (params.m_PointCount)
-    pPath->GetPoints()[params.m_PointCount - 1].m_Flag |= FXPT_CLOSEFIGURE;
+    pPath->GetPoints()[params.m_PointCount - 1].m_CloseFigure = true;
   return pPath;
 }
 

@@ -155,15 +155,16 @@ void CPDF_PageContentGenerator::ProcessPath(CFX_ByteTextBuf* buf,
       if (i > 0)
         *buf << " ";
       *buf << pPoints[i].m_PointX << " " << pPoints[i].m_PointY;
-      int pointFlag = pPoints[i].m_Flag;
-      if (pointFlag == FXPT_MOVETO) {
+      FXPT_TYPE pointType = pPoints[i].m_Type;
+      if (pointType == FXPT_TYPE::MoveTo) {
         *buf << " m";
-      } else if (pointFlag & FXPT_LINETO) {
+      } else if (pointType == FXPT_TYPE::LineTo) {
         *buf << " l";
-      } else if (pointFlag & FXPT_BEZIERTO) {
-        if (i + 2 >= numPoints || pPoints[i].m_Flag != FXPT_BEZIERTO ||
-            pPoints[i + 1].m_Flag != FXPT_BEZIERTO ||
-            (pPoints[i + 2].m_Flag & FXPT_BEZIERTO) == 0) {
+      } else if (pointType == FXPT_TYPE::BezierTo) {
+        if (i + 2 >= numPoints ||
+            !pPoints[i].IsTypeAndOpen(FXPT_TYPE::BezierTo) ||
+            !pPoints[i + 1].IsTypeAndOpen(FXPT_TYPE::BezierTo) ||
+            pPoints[i + 2].m_Type != FXPT_TYPE::BezierTo) {
           // If format is not supported, close the path and paint
           *buf << " h";
           break;
@@ -171,11 +172,9 @@ void CPDF_PageContentGenerator::ProcessPath(CFX_ByteTextBuf* buf,
         *buf << " " << pPoints[i + 1].m_PointX << " " << pPoints[i + 1].m_PointY
              << " " << pPoints[i + 2].m_PointX << " " << pPoints[i + 2].m_PointY
              << " c";
-        if (pPoints[i + 2].m_Flag & FXPT_CLOSEFIGURE)
-          *buf << " h";
         i += 2;
       }
-      if (pointFlag & FXPT_CLOSEFIGURE)
+      if (pPoints[i].m_CloseFigure)
         *buf << " h";
     }
   }

@@ -264,10 +264,10 @@ void CPWL_SBButton::DrawThisAppearance(CFX_RenderDevice* pDevice,
             CFX_PathData path;
 
             path.SetPointCount(4);
-            path.SetPoint(0, pt1.x, pt1.y, FXPT_MOVETO);
-            path.SetPoint(1, pt2.x, pt2.y, FXPT_LINETO);
-            path.SetPoint(2, pt3.x, pt3.y, FXPT_LINETO);
-            path.SetPoint(3, pt1.x, pt1.y, FXPT_LINETO);
+            path.SetPoint(0, pt1.x, pt1.y, FXPT_TYPE::MoveTo, false);
+            path.SetPoint(1, pt2.x, pt2.y, FXPT_TYPE::LineTo, false);
+            path.SetPoint(2, pt3.x, pt3.y, FXPT_TYPE::LineTo, false);
+            path.SetPoint(3, pt1.x, pt1.y, FXPT_TYPE::LineTo, false);
 
             pDevice->DrawPath(&path, pUser2Device, nullptr,
                               CPWL_Utils::PWLColorToFXColor(
@@ -288,10 +288,10 @@ void CPWL_SBButton::DrawThisAppearance(CFX_RenderDevice* pDevice,
             CFX_PathData path;
 
             path.SetPointCount(4);
-            path.SetPoint(0, pt1.x, pt1.y, FXPT_MOVETO);
-            path.SetPoint(1, pt2.x, pt2.y, FXPT_LINETO);
-            path.SetPoint(2, pt3.x, pt3.y, FXPT_LINETO);
-            path.SetPoint(3, pt1.x, pt1.y, FXPT_LINETO);
+            path.SetPoint(0, pt1.x, pt1.y, FXPT_TYPE::MoveTo, false);
+            path.SetPoint(1, pt2.x, pt2.y, FXPT_TYPE::LineTo, false);
+            path.SetPoint(2, pt3.x, pt3.y, FXPT_TYPE::LineTo, false);
+            path.SetPoint(3, pt1.x, pt1.y, FXPT_TYPE::LineTo, false);
 
             pDevice->DrawPath(&path, pUser2Device, nullptr,
                               CPWL_Utils::PWLColorToFXColor(

@@ -16,7 +16,7 @@ bool CFDE_Path::StartFigure() {
 bool CFDE_Path::CloseFigure() {
   FX_PATHPOINT* pPoint = GetLastPoint();
   if (pPoint)
-    pPoint->m_Flag |= FXPT_CLOSEFIGURE;
+    pPoint->m_CloseFigure = true;
   return true;
 }
 
@@ -32,7 +32,7 @@ FX_PATHPOINT* CFDE_Path::GetLastPoint(int32_t iCount) const {
 
 bool CFDE_Path::FigureClosed() const {
   FX_PATHPOINT* pPoint = GetLastPoint();
-  return pPoint ? (pPoint->m_Flag & FXPT_CLOSEFIGURE) : true;
+  return pPoint ? pPoint->m_CloseFigure : true;
 }
 
 FX_PATHPOINT* CFDE_Path::AddPoints(int32_t iCount) {
@@ -48,14 +48,16 @@ void CFDE_Path::MoveTo(FX_FLOAT fx, FX_FLOAT fy) {
   FX_PATHPOINT* pPoint = AddPoints(1);
   pPoint->m_PointX = fx;
   pPoint->m_PointY = fy;
-  pPoint->m_Flag = FXPT_MOVETO;
+  pPoint->m_Type = FXPT_TYPE::MoveTo;
+  pPoint->m_CloseFigure = false;
 }
 
 void CFDE_Path::LineTo(FX_FLOAT fx, FX_FLOAT fy) {
   FX_PATHPOINT* pPoint = AddPoints(1);
   pPoint->m_PointX = fx;
   pPoint->m_PointY = fy;
-  pPoint->m_Flag = FXPT_LINETO;
+  pPoint->m_Type = FXPT_TYPE::LineTo;
+  pPoint->m_CloseFigure = false;
 }
 
 void CFDE_Path::BezierTo(const CFX_PointF& p1,
@@ -64,13 +66,16 @@ void CFDE_Path::BezierTo(const CFX_PointF& p1,
   FX_PATHPOINT* p = AddPoints(3);
   p[0].m_PointX = p1.x;
   p[0].m_PointY = p1.y;
-  p[0].m_Flag = FXPT_BEZIERTO;
+  p[0].m_Type = FXPT_TYPE::BezierTo;
+  p[0].m_CloseFigure = false;
   p[1].m_PointX = p2.x;
   p[1].m_PointY = p2.y;
-  p[1].m_Flag = FXPT_BEZIERTO;
+  p[1].m_Type = FXPT_TYPE::BezierTo;
+  p[1].m_CloseFigure = false;
   p[2].m_PointX = p3.x;
   p[2].m_PointY = p3.y;
-  p[2].m_Flag = FXPT_BEZIERTO;
+  p[2].m_Type = FXPT_TYPE::BezierTo;
+  p[2].m_CloseFigure = false;
 }
 
 void CFDE_Path::ArcTo(bool bStart,

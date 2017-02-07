@@ -676,8 +676,8 @@ bool CFX_RenderDevice::DrawCosmeticLine(FX_FLOAT x1,
   CFX_GraphStateData graph_state;
   CFX_PathData path;
   path.SetPointCount(2);
-  path.SetPoint(0, x1, y1, FXPT_MOVETO);
-  path.SetPoint(1, x2, y2, FXPT_LINETO);
+  path.SetPoint(0, x1, y1, FXPT_TYPE::MoveTo, false);
+  path.SetPoint(1, x2, y2, FXPT_TYPE::LineTo, false);
   return m_pDeviceDriver->DrawPath(&path, nullptr, &graph_state, 0, color,
                                    fill_mode, blend_type);
 }

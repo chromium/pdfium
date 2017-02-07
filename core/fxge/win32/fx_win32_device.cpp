@@ -174,16 +174,16 @@ void SetPathToDC(HDC hDC,
       pMatrix->Transform(posx, posy);
     }
     int screen_x = FXSYS_round(posx), screen_y = FXSYS_round(posy);
-    int point_type = pPoints[i].m_Flag & FXPT_TYPE;
-    if (point_type == PT_MOVETO) {
+    FXPT_TYPE point_type = pPoints[i].m_Type;
+    if (point_type == FXPT_TYPE::MoveTo) {
       MoveToEx(hDC, screen_x, screen_y, nullptr);
-    } else if (point_type == PT_LINETO) {
+    } else if (point_type == FXPT_TYPE::LineTo) {
       if (pPoints[i].m_PointY == pPoints[i - 1].m_PointY &&
           pPoints[i].m_PointX == pPoints[i - 1].m_PointX) {
         screen_x++;
       }
       LineTo(hDC, screen_x, screen_y);
-    } else if (point_type == PT_BEZIERTO) {
+    } else if (point_type == FXPT_TYPE::BezierTo) {
       POINT lppt[3];
       lppt[0].x = screen_x;
       lppt[0].y = screen_y;
@@ -204,7 +204,7 @@ void SetPathToDC(HDC hDC,
       PolyBezierTo(hDC, lppt, 3);
       i += 2;
     }
-    if (pPoints[i].m_Flag & PT_CLOSEFIGURE) {
+    if (pPoints[i].m_CloseFigure) {
       CloseFigure(hDC);
     }
   }

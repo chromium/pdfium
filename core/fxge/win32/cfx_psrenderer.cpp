@@ -113,23 +113,24 @@ void CFX_PSRenderer::OutputPath(const CFX_PathData* pPathData,
   CFX_ByteTextBuf buf;
   buf.EstimateSize(nPoints * 10);
   for (int i = 0; i < nPoints; i++) {
-    uint8_t flag = pPathData->GetFlag(i);
+    FXPT_TYPE type = pPathData->GetType(i);
+    bool closing = pPathData->IsClosingFigure(i);
     FX_FLOAT x = pPathData->GetPointX(i);
     FX_FLOAT y = pPathData->GetPointY(i);
     if (pObject2Device) {
       pObject2Device->Transform(x, y);
     }
     buf << x << " " << y;
-    switch (flag & FXPT_TYPE) {
-      case FXPT_MOVETO:
+    switch (type) {
+      case FXPT_TYPE::MoveTo:
         buf << " m ";
         break;
-      case FXPT_LINETO:
+      case FXPT_TYPE::LineTo:
         buf << " l ";
-        if (flag & FXPT_CLOSEFIGURE)
+        if (closing)
           buf << "h ";
         break;
-      case FXPT_BEZIERTO: {
+      case FXPT_TYPE::BezierTo: {
         FX_FLOAT x1 = pPathData->GetPointX(i + 1);
         FX_FLOAT x2 = pPathData->GetPointX(i + 2);
         FX_FLOAT y1 = pPathData->GetPointY(i + 1);
@@ -139,7 +140,7 @@ void CFX_PSRenderer::OutputPath(const CFX_PathData* pPathData,
           pObject2Device->Transform(x2, y2);
         }
         buf << " " << x1 << " " << y1 << " " << x2 << " " << y2 << " c";
-        if (flag & FXPT_CLOSEFIGURE)
+        if (closing)
           buf << " h";
         buf << "\n";
         i += 2;
@@ -599,16 +600,16 @@ void CFX_PSRenderer::FindPSFontGlyph(CFX_FaceCache* pFaceCache,
       << "{n ";
   for (int p = 0; p < TransformedPath.GetPointCount(); p++) {
     FX_FLOAT x = TransformedPath.GetPointX(p), y = TransformedPath.GetPointY(p);
-    switch (TransformedPath.GetFlag(p) & FXPT_TYPE) {
-      case FXPT_MOVETO: {
+    switch (TransformedPath.GetType(p)) {
+      case FXPT_TYPE::MoveTo: {
         buf << x << " " << y << " m\n";
         break;
       }
-      case FXPT_LINETO: {
+      case FXPT_TYPE::LineTo: {
         buf << x << " " << y << " l\n";
         break;
       }
-      case FXPT_BEZIERTO: {
+      case FXPT_TYPE::BezierTo: {
         buf << x << " " << y << " " << TransformedPath.GetPointX(p + 1) << " "
             << TransformedPath.GetPointY(p + 1) << " "
             << TransformedPath.GetPointX(p + 2) << " "

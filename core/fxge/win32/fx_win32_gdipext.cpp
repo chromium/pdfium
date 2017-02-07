@@ -1151,16 +1151,17 @@ bool CGdiplusExt::DrawPath(HDC hDC,
     if (y < -50000 * 1.0f) {
       points[i].Y = -50000 * 1.0f;
     }
-    int point_type = pPoints[i].m_Flag & FXPT_TYPE;
-    if (point_type == FXPT_MOVETO) {
+    FXPT_TYPE point_type = pPoints[i].m_Type;
+    if (point_type == FXPT_TYPE::MoveTo) {
       types[i] = PathPointTypeStart;
       nSubPathes++;
       bSubClose = false;
       startpoint = i;
-    } else if (point_type == FXPT_LINETO) {
+    } else if (point_type == FXPT_TYPE::LineTo) {
       types[i] = PathPointTypeLine;
-      if (pPoints[i - 1].m_Flag == FXPT_MOVETO &&
-          (i == nPoints - 1 || pPoints[i + 1].m_Flag == FXPT_MOVETO) &&
+      if (pPoints[i - 1].IsTypeAndOpen(FXPT_TYPE::MoveTo) &&
+          (i == nPoints - 1 ||
+           pPoints[i + 1].IsTypeAndOpen(FXPT_TYPE::MoveTo)) &&
           points[i].Y == points[i - 1].Y && points[i].X == points[i - 1].X) {
         points[i].X += 0.01f;
         continue;
@@ -1169,11 +1170,11 @@ bool CGdiplusExt::DrawPath(HDC hDC,
           points[i].Y != points[i - 1].Y) {
         bSmooth = true;
       }
-    } else if (point_type == FXPT_BEZIERTO) {
+    } else if (point_type == FXPT_TYPE::BezierTo) {
       types[i] = PathPointTypeBezier;
       bSmooth = true;
     }
-    if (pPoints[i].m_Flag & FXPT_CLOSEFIGURE) {
+    if (pPoints[i].m_CloseFigure) {
       if (bSubClose) {
         types[pos_subclose] &= ~PathPointTypeCloseSubpath;
       } else {

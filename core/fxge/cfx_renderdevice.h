@@ -27,12 +27,6 @@ class IFX_RenderDeviceDriver;
 #define FXDC_DISPLAY 1
 #define FXDC_PRINTER 2
 
-#define FXPT_CLOSEFIGURE 0x01
-#define FXPT_LINETO 0x02
-#define FXPT_BEZIERTO 0x04
-#define FXPT_MOVETO 0x06
-#define FXPT_TYPE 0x06
-
 #define FXRC_GET_BITS 0x01
 #define FXRC_BIT_MASK 0x02
 #define FXRC_ALPHA_MASK 0x04
@@ -65,6 +59,8 @@ class IFX_RenderDeviceDriver;
 #define FXTEXT_NO_NATIVETEXT 0x08
 #define FXTEXT_PRINTIMAGETEXT 0x10
 #define FXTEXT_NOSMOOTH 0x20
+
+enum class FXPT_TYPE : uint8_t { LineTo, BezierTo, MoveTo };
 
 struct FXTEXT_CHARPOS {
   FX_FLOAT m_AdjustMatrix[4];
