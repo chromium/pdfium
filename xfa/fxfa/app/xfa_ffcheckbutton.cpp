@@ -19,9 +19,7 @@
 #include "xfa/fxfa/xfa_ffwidget.h"
 
 CXFA_FFCheckButton::CXFA_FFCheckButton(CXFA_WidgetAcc* pDataAcc)
-    : CXFA_FFField(pDataAcc), m_pOldDelegate(nullptr) {
-  m_rtCheckBox.Set(0, 0, 0, 0);
-}
+    : CXFA_FFField(pDataAcc), m_pOldDelegate(nullptr) {}
 
 CXFA_FFCheckButton::~CXFA_FFCheckButton() {}
 
@@ -99,8 +97,7 @@ bool CXFA_FFCheckButton::PerformLayout() {
   FX_FLOAT fCapReserve = 0;
   CXFA_Caption caption = m_pDataAcc->GetCaption();
   if (caption && caption.GetPresence()) {
-    m_rtCaption.Set(rtWidget.left, rtWidget.top, rtWidget.width,
-                    rtWidget.height);
+    m_rtCaption = rtWidget;
     iCapPlacement = caption.GetPlacementType();
     fCapReserve = caption.GetReserve();
     if (fCapReserve <= 0) {
@@ -232,8 +229,7 @@ void CXFA_FFCheckButton::RenderWidget(CFX_Graphics* pGS,
   RenderCaption(pGS, &mtRotate);
   DrawHighlight(pGS, &mtRotate, dwStatus,
                 m_pDataAcc->GetCheckButtonShape() == XFA_ATTRIBUTEENUM_Round);
-  CFX_Matrix mt;
-  mt.Set(1, 0, 0, 1, m_rtCheckBox.left, m_rtCheckBox.top);
+  CFX_Matrix mt(1, 0, 0, 1, m_rtCheckBox.left, m_rtCheckBox.top);
   mt.Concat(mtRotate);
   GetApp()->GetWidgetMgrDelegate()->OnDrawWidget(m_pNormalWidget, pGS, &mt);
 }

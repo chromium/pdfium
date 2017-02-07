@@ -24,10 +24,7 @@ CFWL_PushButton::CFWL_PushButton(const CFWL_App* app)
     : CFWL_Widget(app, pdfium::MakeUnique<CFWL_WidgetProperties>(), nullptr),
       m_bBtnDown(false),
       m_dwTTOStyles(FDE_TTOSTYLE_SingleLine),
-      m_iTTOAlign(FDE_TTOALIGNMENT_Center) {
-  m_rtClient.Set(0, 0, 0, 0);
-  m_rtCaption.Set(0, 0, 0, 0);
-}
+      m_iTTOAlign(FDE_TTOALIGNMENT_Center) {}
 
 CFWL_PushButton::~CFWL_PushButton() {}
 

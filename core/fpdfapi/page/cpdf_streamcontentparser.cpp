@@ -673,7 +673,7 @@ void CPDF_StreamContentParser::Handle_BeginMarkedContent() {
 }
 
 void CPDF_StreamContentParser::Handle_BeginText() {
-  m_pCurStates->m_TextMatrix.Set(1.0f, 0, 0, 1.0f, 0, 0);
+  m_pCurStates->m_TextMatrix = CFX_Matrix();
   OnChangeTextMatrix();
   m_pCurStates->m_TextX = 0;
   m_pCurStates->m_TextY = 0;
@@ -1365,8 +1365,9 @@ void CPDF_StreamContentParser::Handle_SetTextLeading() {
 }
 
 void CPDF_StreamContentParser::Handle_SetTextMatrix() {
-  m_pCurStates->m_TextMatrix.Set(GetNumber(5), GetNumber(4), GetNumber(3),
-                                 GetNumber(2), GetNumber(1), GetNumber(0));
+  m_pCurStates->m_TextMatrix =
+      CFX_Matrix(GetNumber(5), GetNumber(4), GetNumber(3), GetNumber(2),
+                 GetNumber(1), GetNumber(0));
   OnChangeTextMatrix();
   m_pCurStates->m_TextX = 0;
   m_pCurStates->m_TextY = 0;

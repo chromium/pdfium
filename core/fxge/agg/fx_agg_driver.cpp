@@ -1501,14 +1501,16 @@ bool CFX_AggDeviceDriver::DrawPath(const CFX_PathData* pPathData,
     matrix1.a =
         std::max(FXSYS_fabs(pObject2Device->a), FXSYS_fabs(pObject2Device->b));
     matrix1.d = matrix1.a;
-    matrix2.Set(pObject2Device->a / matrix1.a, pObject2Device->b / matrix1.a,
-                pObject2Device->c / matrix1.d, pObject2Device->d / matrix1.d, 0,
-                0);
+    matrix2 = CFX_Matrix(
+        pObject2Device->a / matrix1.a, pObject2Device->b / matrix1.a,
+        pObject2Device->c / matrix1.d, pObject2Device->d / matrix1.d, 0, 0);
+
     CFX_Matrix mtRervese;
     mtRervese.SetReverse(matrix2);
     matrix1 = *pObject2Device;
     matrix1.Concat(mtRervese);
   }
+
   CAgg_PathData path_data;
   path_data.BuildPath(pPathData, &matrix1);
   agg::rasterizer_scanline_aa rasterizer;

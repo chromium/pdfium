@@ -33,8 +33,7 @@ void GetPageMatrix(CFX_Matrix& pageMatrix,
   ASSERT(iRotate >= 0 && iRotate <= 3);
   bool bFlipX = (dwCoordinatesType & 0x01) != 0;
   bool bFlipY = (dwCoordinatesType & 0x02) != 0;
-  CFX_Matrix m;
-  m.Set((bFlipX ? -1.0f : 1.0f), 0, 0, (bFlipY ? -1.0f : 1.0f), 0, 0);
+  CFX_Matrix m((bFlipX ? -1.0f : 1.0f), 0, 0, (bFlipY ? -1.0f : 1.0f), 0, 0);
   if (iRotate == 0 || iRotate == 2) {
     m.a *= (FX_FLOAT)devicePageRect.width / docPageRect.width;
     m.d *= (FX_FLOAT)devicePageRect.height / docPageRect.height;
@@ -126,16 +125,14 @@ CXFA_FFDocView* CXFA_FFPageView::GetDocView() const {
 }
 
 void CXFA_FFPageView::GetPageViewRect(CFX_RectF& rtPage) const {
-  rtPage.Set(0, 0, GetPageSize());
+  rtPage = CFX_RectF(0, 0, GetPageSize());
 }
 
 void CXFA_FFPageView::GetDisplayMatrix(CFX_Matrix& mt,
                                        const CFX_Rect& rtDisp,
                                        int32_t iRotate) const {
   CFX_SizeF sz = GetPageSize();
-  CFX_RectF fdePage;
-  fdePage.Set(0, 0, sz.x, sz.y);
-  GetPageMatrix(mt, fdePage, rtDisp, iRotate, 0);
+  GetPageMatrix(mt, CFX_RectF(0, 0, sz.x, sz.y), rtDisp, iRotate, 0);
 }
 
 IXFA_WidgetIterator* CXFA_FFPageView::CreateWidgetIterator(
@@ -370,8 +367,10 @@ static int32_t XFA_TabOrderWidgetComparator(const void* phWidget1,
                                             const void* phWidget2) {
   CXFA_FFWidget* pWidget1 = (*(CXFA_TabParam**)phWidget1)->m_pWidget;
   CXFA_FFWidget* pWidget2 = (*(CXFA_TabParam**)phWidget2)->m_pWidget;
-  CFX_RectF rt1, rt2;
+  CFX_RectF rt1;
   pWidget1->GetWidgetRect(rt1);
+
+  CFX_RectF rt2;
   pWidget2->GetWidgetRect(rt2);
   FX_FLOAT x1 = rt1.left, y1 = rt1.top, x2 = rt2.left, y2 = rt2.top;
   if (y1 < y2 || (y1 - y2 < XFA_FLOAT_PERCISION && x1 < x2)) {

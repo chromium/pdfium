@@ -162,8 +162,12 @@ const CPDF_TextObject* CPDF_TextObject::AsText() const {
 
 void CPDF_TextObject::GetTextMatrix(CFX_Matrix* pMatrix) const {
   const FX_FLOAT* pTextMatrix = m_TextState.GetMatrix();
-  pMatrix->Set(pTextMatrix[0], pTextMatrix[2], pTextMatrix[1], pTextMatrix[3],
-               m_PosX, m_PosY);
+  pMatrix->a = pTextMatrix[0];
+  pMatrix->b = pTextMatrix[2];
+  pMatrix->c = pTextMatrix[1];
+  pMatrix->d = pTextMatrix[3];
+  pMatrix->e = m_PosX;
+  pMatrix->f = m_PosY;
 }
 
 void CPDF_TextObject::SetSegments(const CFX_ByteString* pStrs,

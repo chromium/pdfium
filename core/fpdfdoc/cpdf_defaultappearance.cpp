@@ -209,16 +209,15 @@ CFX_ByteString CPDF_DefaultAppearance::GetTextMatrixString() {
 }
 
 CFX_Matrix CPDF_DefaultAppearance::GetTextMatrix() {
-  CFX_Matrix tm;
   if (m_csDA.IsEmpty())
-    return tm;
+    return CFX_Matrix();
 
   CPDF_SimpleParser syntax(m_csDA.AsStringC());
-  if (syntax.FindTagParamFromStart("Tm", 6)) {
-    FX_FLOAT f[6];
-    for (int i = 0; i < 6; i++)
-      f[i] = FX_atof(syntax.GetWord());
-    tm.Set(f[0], f[1], f[2], f[3], f[4], f[5]);
-  }
-  return tm;
+  if (!syntax.FindTagParamFromStart("Tm", 6))
+    return CFX_Matrix();
+
+  FX_FLOAT f[6];
+  for (int i = 0; i < 6; i++)
+    f[i] = FX_atof(syntax.GetWord());
+  return CFX_Matrix(f);
 }

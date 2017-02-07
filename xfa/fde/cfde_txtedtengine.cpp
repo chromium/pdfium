@@ -69,7 +69,6 @@ CFDE_TxtEdtEngine::CFDE_TxtEdtEngine()
       m_nFirstLineEnd(FDE_TXTEDIT_LINEEND_Auto),
       m_bAutoLineEnd(true),
       m_wLineEnd(kUnicodeParagraphSeparator) {
-  FXSYS_memset(&m_rtCaret, 0, sizeof(CFX_RectF));
   m_bAutoLineEnd = (m_Param.nLineEnd == FDE_TXTEDIT_LINEEND_Auto);
 }
 
@@ -663,14 +662,14 @@ int32_t CFDE_TxtEdtEngine::DoLayout(IFX_Pause* pPause) {
 void CFDE_TxtEdtEngine::EndLayout() {
   UpdatePages();
   int32_t nLength = GetTextLength();
-  if (m_nCaret > nLength) {
+  if (m_nCaret > nLength)
     m_nCaret = nLength;
-  }
+
   int32_t nIndex = m_nCaret;
-  if (!m_bBefore) {
+  if (!m_bBefore)
     nIndex--;
-  }
-  m_rtCaret.Set(0, 0, 1, m_Param.fFontSize);
+
+  m_rtCaret = CFX_RectF(0, 0, 1, m_Param.fFontSize);
   Unlock();
 }
 
@@ -1381,12 +1380,11 @@ bool CFDE_TxtEdtEngine::IsFitArea(CFX_WideString& wsText) {
   pTextOut->SetLineSpace(m_Param.fLineSpace);
   pTextOut->SetFont(m_Param.pFont);
   pTextOut->SetFontSize(m_Param.fFontSize);
-  CFX_RectF rcText;
-  FXSYS_memset(&rcText, 0, sizeof(rcText));
   uint32_t dwStyle = 0;
   if (!(m_Param.dwMode & FDE_TEXTEDITMODE_MultiLines))
     dwStyle |= FDE_TTOSTYLE_SingleLine;
 
+  CFX_RectF rcText;
   if (m_Param.dwMode & FDE_TEXTEDITMODE_AutoLineWrap) {
     dwStyle |= FDE_TTOSTYLE_LineWrap;
     rcText.width = m_Param.fPlateWidth;

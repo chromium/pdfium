@@ -46,7 +46,9 @@ void CommonTest(CFX_SkiaDeviceDriver* driver, const State& state) {
   driver->SaveState();
   CFX_PathData path1;
   path1.AppendRect(0, 0, 1, 2);
-  CFX_Matrix matrix, matrix2;
+
+  CFX_Matrix matrix;
+  CFX_Matrix matrix2;
   matrix2.Translate(1, 0);
   CFX_GraphStateData graphState;
   if (state.m_save == State::Save::kYes)

@@ -76,13 +76,10 @@ void CFWL_Caret::DrawCaretBK(CFX_Graphics* pGraphics,
   if (!(m_pProperties->m_dwStates & FWL_STATE_CAT_HightLight))
     return;
 
-  CFX_RectF rect = GetWidgetRect();
-  rect.Set(0, 0, rect.width, rect.height);
-
   CFWL_ThemeBackground param;
   param.m_pWidget = this;
   param.m_pGraphics = pGraphics;
-  param.m_rtPart = rect;
+  param.m_rtPart = CFX_RectF(0, 0, GetWidgetRect().Size());
   param.m_iPart = CFWL_Part::Background;
   param.m_dwStates = CFWL_PartState_HightLight;
   if (pMatrix)
@@ -107,6 +104,5 @@ void CFWL_Caret::Timer::Run(CFWL_TimerInfo* pTimerInfo) {
     pCaret->RemoveStates(FWL_STATE_CAT_HightLight);
 
   CFX_RectF rt = pCaret->GetWidgetRect();
-  rt.Set(0, 0, rt.width + 1, rt.height);
-  pCaret->RepaintRect(rt);
+  pCaret->RepaintRect(CFX_RectF(0, 0, rt.width + 1, rt.height));
 }

@@ -56,9 +56,7 @@ void CPDFSDK_XFAWidgetHandler::OnDraw(CPDFSDK_PageView* pPageView,
   CFX_Graphics gs;
   gs.Create(pDevice);
 
-  CFX_Matrix mt;
-  mt = *pUser2Device;
-
+  CFX_Matrix mt = *pUser2Device;
   bool bIsHighlight = false;
   if (pPageView->GetFormFillEnv()->GetFocusAnnot() != pAnnot)
     bIsHighlight = true;

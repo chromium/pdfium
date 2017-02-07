@@ -45,8 +45,8 @@ void CXFA_FFPushButton::RenderWidget(CFX_Graphics* pGS,
   RenderHighlightCaption(pGS, &mtRotate);
   CFX_RectF rtWidget;
   GetRectWithoutRotate(rtWidget);
-  CFX_Matrix mt;
-  mt.Set(1, 0, 0, 1, rtWidget.left, rtWidget.top);
+
+  CFX_Matrix mt(1, 0, 0, 1, rtWidget.left, rtWidget.top);
   mt.Concat(mtRotate);
   GetApp()->GetWidgetMgrDelegate()->OnDrawWidget(m_pNormalWidget, pGS, &mt);
 }
@@ -102,20 +102,21 @@ bool CXFA_FFPushButton::PerformLayout() {
   CXFA_FFWidget::PerformLayout();
   CFX_RectF rtWidget;
   GetRectWithoutRotate(rtWidget);
+
   m_rtUI = rtWidget;
-  if (CXFA_Margin mgWidget = m_pDataAcc->GetMargin()) {
+  if (CXFA_Margin mgWidget = m_pDataAcc->GetMargin())
     XFA_RectWidthoutMargin(rtWidget, mgWidget);
-  }
+
   CXFA_Caption caption = m_pDataAcc->GetCaption();
-  m_rtCaption.Set(rtWidget.left, rtWidget.top, rtWidget.width, rtWidget.height);
-  if (CXFA_Margin mgCap = caption.GetMargin()) {
+  m_rtCaption = rtWidget;
+  if (CXFA_Margin mgCap = caption.GetMargin())
     XFA_RectWidthoutMargin(m_rtCaption, mgCap);
-  }
+
   LayoutHighlightCaption();
   SetFWLRect();
-  if (m_pNormalWidget) {
+  if (m_pNormalWidget)
     m_pNormalWidget->Update();
-  }
+
   return true;
 }
 FX_FLOAT CXFA_FFPushButton::GetLineWidth() {
@@ -176,8 +177,7 @@ void CXFA_FFPushButton::RenderHighlightCaption(CFX_Graphics* pGS,
     GetRectWithoutRotate(rtWidget);
     CFX_RectF rtClip = m_rtCaption;
     rtClip.Intersect(rtWidget);
-    CFX_Matrix mt;
-    mt.Set(1, 0, 0, 1, m_rtCaption.left, m_rtCaption.top);
+    CFX_Matrix mt(1, 0, 0, 1, m_rtCaption.left, m_rtCaption.top);
     if (pMatrix) {
       pMatrix->TransformRect(rtClip);
       mt.Concat(*pMatrix);
@@ -215,8 +215,7 @@ void CXFA_FFPushButton::OnDrawWidget(CFX_Graphics* pGraphics,
   if (m_pNormalWidget->GetStylesEx() & XFA_FWL_PSBSTYLEEXT_HiliteInverted) {
     if ((m_pNormalWidget->GetStates() & FWL_STATE_PSB_Pressed) &&
         (m_pNormalWidget->GetStates() & FWL_STATE_PSB_Hovered)) {
-      CFX_RectF rtFill = m_pNormalWidget->GetWidgetRect();
-      rtFill.left = rtFill.top = 0;
+      CFX_RectF rtFill(0, 0, m_pNormalWidget->GetWidgetRect().Size());
       FX_FLOAT fLineWith = GetLineWidth();
       rtFill.Deflate(fLineWith, fLineWith);
       CFX_Color cr(FXARGB_MAKE(128, 128, 255, 255));

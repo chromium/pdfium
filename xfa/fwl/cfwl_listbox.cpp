@@ -475,7 +475,6 @@ CFX_SizeF CFWL_ListBox::CalcSize(bool bAutoSize) {
   m_rtClient = GetClientRect();
   m_rtConent = m_rtClient;
   CFX_RectF rtUIMargin;
-  rtUIMargin.Set(0, 0, 0, 0);
   if (!m_pOuter) {
     CFWL_ThemePart part;
     part.m_pWidget = this;
@@ -514,9 +513,9 @@ CFX_SizeF CFWL_ListBox::CalcSize(bool bAutoSize) {
     if (!m_pVertScrollBar)
       InitVerticalScrollBar();
 
-    CFX_RectF rtScrollBar;
-    rtScrollBar.Set(m_rtClient.right() - m_fScorllBarWidth, m_rtClient.top,
-                    m_fScorllBarWidth, m_rtClient.height - 1);
+    CFX_RectF rtScrollBar(m_rtClient.right() - m_fScorllBarWidth,
+                          m_rtClient.top, m_fScorllBarWidth,
+                          m_rtClient.height - 1);
     if (bShowHorzScr)
       rtScrollBar.height -= m_fScorllBarWidth;
 
@@ -547,9 +546,9 @@ CFX_SizeF CFWL_ListBox::CalcSize(bool bAutoSize) {
     if (!m_pHorzScrollBar)
       InitHorizontalScrollBar();
 
-    CFX_RectF rtScrollBar;
-    rtScrollBar.Set(m_rtClient.left, m_rtClient.bottom() - m_fScorllBarWidth,
-                    m_rtClient.width, m_fScorllBarWidth);
+    CFX_RectF rtScrollBar(m_rtClient.left,
+                          m_rtClient.bottom() - m_fScorllBarWidth,
+                          m_rtClient.width, m_fScorllBarWidth);
     if (bShowVertScr)
       rtScrollBar.width -= m_fScorllBarWidth;
 
@@ -575,9 +574,9 @@ CFX_SizeF CFWL_ListBox::CalcSize(bool bAutoSize) {
     m_pHorzScrollBar->SetStates(FWL_WGTSTATE_Invisible);
   }
   if (bShowVertScr && bShowHorzScr) {
-    m_rtStatic.Set(m_rtClient.right() - m_fScorllBarWidth,
-                   m_rtClient.bottom() - m_fScorllBarWidth, m_fScorllBarWidth,
-                   m_fScorllBarWidth);
+    m_rtStatic = CFX_RectF(m_rtClient.right() - m_fScorllBarWidth,
+                           m_rtClient.bottom() - m_fScorllBarWidth,
+                           m_fScorllBarWidth, m_fScorllBarWidth);
   }
   return fs;
 }
@@ -588,8 +587,7 @@ void CFWL_ListBox::UpdateItemSize(CFWL_ListItem* pItem,
                                   FX_FLOAT fItemHeight,
                                   bool bAutoSize) const {
   if (!bAutoSize && pItem) {
-    CFX_RectF rtItem;
-    rtItem.Set(0, size.y, fWidth, fItemHeight);
+    CFX_RectF rtItem(0, size.y, fWidth, fItemHeight);
     pItem->SetRect(rtItem);
   }
   size.x = fWidth;
@@ -833,10 +831,8 @@ void CFWL_ListBox::OnVK(CFWL_ListItem* pItem, bool bShift, bool bCtrl) {
   SetFocusItem(pItem);
   ScrollToVisible(pItem);
 
-  CFX_RectF rtInvalidate;
-  rtInvalidate.Set(0, 0, m_pProperties->m_rtWidget.width,
-                   m_pProperties->m_rtWidget.height);
-  RepaintRect(rtInvalidate);
+  RepaintRect(CFX_RectF(0, 0, m_pProperties->m_rtWidget.width,
+                        m_pProperties->m_rtWidget.height));
 }
 
 bool CFWL_ListBox::OnScroll(CFWL_ScrollBar* pScrollBar,

@@ -12,8 +12,6 @@ CFWL_WidgetProperties::CFWL_WidgetProperties()
       m_dwStates(0),
       m_pThemeProvider(nullptr),
       m_pParent(nullptr),
-      m_pOwner(nullptr) {
-  m_rtWidget.Set(0, 0, 0, 0);
-}
+      m_pOwner(nullptr) {}
 
 CFWL_WidgetProperties::~CFWL_WidgetProperties() {}

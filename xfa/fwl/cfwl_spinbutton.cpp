@@ -52,15 +52,17 @@ void CFWL_SpinButton::Update() {
 
   m_rtClient = GetClientRect();
   if (m_pProperties->m_dwStyleExes & FWL_STYLEEXE_SPB_Vert) {
-    m_rtUpButton.Set(m_rtClient.top, m_rtClient.left, m_rtClient.width,
-                     m_rtClient.height / 2);
-    m_rtDnButton.Set(m_rtClient.left, m_rtClient.top + m_rtClient.height / 2,
-                     m_rtClient.width, m_rtClient.height / 2);
+    m_rtUpButton = CFX_RectF(m_rtClient.top, m_rtClient.left, m_rtClient.width,
+                             m_rtClient.height / 2);
+    m_rtDnButton =
+        CFX_RectF(m_rtClient.left, m_rtClient.top + m_rtClient.height / 2,
+                  m_rtClient.width, m_rtClient.height / 2);
   } else {
-    m_rtUpButton.Set(m_rtClient.left, m_rtClient.top, m_rtClient.width / 2,
-                     m_rtClient.height);
-    m_rtDnButton.Set(m_rtClient.left + m_rtClient.width / 2, m_rtClient.top,
-                     m_rtClient.width / 2, m_rtClient.height);
+    m_rtUpButton = CFX_RectF(m_rtClient.TopLeft(), m_rtClient.width / 2,
+                             m_rtClient.height);
+    m_rtDnButton =
+        CFX_RectF(m_rtClient.left + m_rtClient.width / 2, m_rtClient.top,
+                  m_rtClient.width / 2, m_rtClient.height);
   }
 }
 
@@ -253,7 +255,6 @@ void CFWL_SpinButton::OnMouseMove(CFWL_MessageMouse* pMsg) {
 
   bool bRepaint = false;
   CFX_RectF rtInvlidate;
-  rtInvlidate.Reset();
   if (m_rtUpButton.Contains(pMsg->m_fx, pMsg->m_fy)) {
     if (IsUpButtonEnabled()) {
       if (m_dwUpState == CFWL_PartState_Hovered) {

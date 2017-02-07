@@ -156,12 +156,12 @@ void CPDFXFA_Page::DeviceToPage(int start_x,
   if (!m_pPDFPage && !m_pXFAPageView)
     return;
 
-  CFX_Matrix page2device;
-  CFX_Matrix device2page;
   FX_FLOAT page_x_f, page_y_f;
 
+  CFX_Matrix page2device;
   GetDisplayMatrix(page2device, start_x, start_y, size_x, size_y, rotate);
 
+  CFX_Matrix device2page;
   device2page.SetReverse(page2device);
   device2page.Transform((FX_FLOAT)(device_x), (FX_FLOAT)(device_y), page_x_f,
                         page_y_f);
@@ -182,9 +182,9 @@ void CPDFXFA_Page::PageToDevice(int start_x,
   if (!m_pPDFPage && !m_pXFAPageView)
     return;
 
-  CFX_Matrix page2device;
   FX_FLOAT device_x_f, device_y_f;
 
+  CFX_Matrix page2device;
   GetDisplayMatrix(page2device, start_x, start_y, size_x, size_y, rotate);
 
   page2device.Transform(((FX_FLOAT)page_x), ((FX_FLOAT)page_y), device_x_f,
@@ -207,8 +207,7 @@ void CPDFXFA_Page::GetDisplayMatrix(CFX_Matrix& matrix,
   switch (nDocType) {
     case DOCTYPE_DYNAMIC_XFA: {
       if (m_pXFAPageView) {
-        CFX_Rect rect;
-        rect.Set(xPos, yPos, xSize, ySize);
+        CFX_Rect rect(xPos, yPos, xSize, ySize);
         m_pXFAPageView->GetDisplayMatrix(matrix, rect, iRotate);
       }
     } break;

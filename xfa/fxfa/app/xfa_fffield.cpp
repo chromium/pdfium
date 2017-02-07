@@ -26,10 +26,7 @@
 #include "xfa/fxgraphics/cfx_path.h"
 
 CXFA_FFField::CXFA_FFField(CXFA_WidgetAcc* pDataAcc)
-    : CXFA_FFWidget(pDataAcc), m_pNormalWidget(nullptr) {
-  m_rtUI.Set(0, 0, 0, 0);
-  m_rtCaption.Set(0, 0, 0, 0);
-}
+    : CXFA_FFWidget(pDataAcc), m_pNormalWidget(nullptr) {}
 
 CXFA_FFField::~CXFA_FFField() {
   CXFA_FFField::UnloadWidget();
@@ -72,8 +69,7 @@ void CXFA_FFField::RenderWidget(CFX_Graphics* pGS,
   DrawHighlight(pGS, &mtRotate, dwStatus, false);
 
   CFX_RectF rtWidget = m_pNormalWidget->GetWidgetRect();
-  CFX_Matrix mt;
-  mt.Set(1, 0, 0, 1, rtWidget.left, rtWidget.top);
+  CFX_Matrix mt(1, 0, 0, 1, rtWidget.left, rtWidget.top);
   mt.Concat(mtRotate);
   GetApp()->GetWidgetMgrDelegate()->OnDrawWidget(m_pNormalWidget, pGS, &mt);
 }
@@ -186,15 +182,14 @@ void CXFA_FFField::CapPlacement() {
   if (caption && caption.GetPresence() != XFA_ATTRIBUTEENUM_Hidden) {
     iCapPlacement = (XFA_ATTRIBUTEENUM)caption.GetPlacementType();
     if (iCapPlacement == XFA_ATTRIBUTEENUM_Top && GetPrev()) {
-      m_rtCaption.Set(0, 0, 0, 0);
+      m_rtCaption.Reset();
     } else if (iCapPlacement == XFA_ATTRIBUTEENUM_Bottom && GetNext()) {
-      m_rtCaption.Set(0, 0, 0, 0);
+      m_rtCaption.Reset();
     } else {
       fCapReserve = caption.GetReserve();
       CXFA_LayoutItem* pItem = this;
       if (!pItem->GetPrev() && !pItem->GetNext()) {
-        m_rtCaption.Set(rtWidget.left, rtWidget.top, rtWidget.width,
-                        rtWidget.height);
+        m_rtCaption = rtWidget;
       } else {
         pItem = pItem->GetFirst();
         m_rtCaption = pItem->GetRect(false);
@@ -617,8 +612,7 @@ void CXFA_FFField::RenderCaption(CFX_Graphics* pGS, CFX_Matrix* pMatrix) {
     CFX_RectF rtClip = m_rtCaption;
     rtClip.Intersect(rtWidget);
     CFX_RenderDevice* pRenderDevice = pGS->GetRenderDevice();
-    CFX_Matrix mt;
-    mt.Set(1, 0, 0, 1, m_rtCaption.left, m_rtCaption.top);
+    CFX_Matrix mt(1, 0, 0, 1, m_rtCaption.left, m_rtCaption.top);
     if (pMatrix) {
       pMatrix->TransformRect(rtClip);
       mt.Concat(*pMatrix);

@@ -132,8 +132,7 @@ void CFWL_MonthCalendarTP::DrawLButton(CFWL_ThemeBackground* pParams,
                                        CFX_Matrix* pMatrix) {
   CFX_Path path;
   path.Create();
-  CFX_RectF rtLBtn;
-  rtLBtn = pParams->m_rtPart;
+  CFX_RectF rtLBtn = pParams->m_rtPart;
   path.AddRectangle(rtLBtn.left, rtLBtn.top, rtLBtn.width, rtLBtn.height);
   pParams->m_pGraphics->SaveGraphState();
   CFX_Color clrLBtnEdge(ArgbEncode(0xff, 205, 219, 243));
@@ -164,8 +163,7 @@ void CFWL_MonthCalendarTP::DrawRButton(CFWL_ThemeBackground* pParams,
                                        CFX_Matrix* pMatrix) {
   CFX_Path path;
   path.Create();
-  CFX_RectF rtRBtn;
-  rtRBtn = pParams->m_rtPart;
+  CFX_RectF rtRBtn = pParams->m_rtPart;
   path.AddRectangle(rtRBtn.left, rtRBtn.top, rtRBtn.width, rtRBtn.height);
   pParams->m_pGraphics->SaveGraphState();
   CFX_Color clrRBtnEdge(ArgbEncode(0xff, 205, 219, 243));
@@ -196,8 +194,7 @@ void CFWL_MonthCalendarTP::DrawHSeperator(CFWL_ThemeBackground* pParams,
                                           CFX_Matrix* pMatrix) {
   CFX_Path path;
   path.Create();
-  CFX_RectF rtHSep;
-  rtHSep = pParams->m_rtPart;
+  CFX_RectF rtHSep = pParams->m_rtPart;
   path.MoveTo(rtHSep.left, rtHSep.top + rtHSep.height / 2);
   path.LineTo(rtHSep.right(), rtHSep.top + rtHSep.height / 2);
   pParams->m_pGraphics->SaveGraphState();
@@ -211,8 +208,7 @@ void CFWL_MonthCalendarTP::DrawWeekNumSep(CFWL_ThemeBackground* pParams,
                                           CFX_Matrix* pMatrix) {
   CFX_Path path;
   path.Create();
-  CFX_RectF rtWeekSep;
-  rtWeekSep = pParams->m_rtPart;
+  CFX_RectF rtWeekSep = pParams->m_rtPart;
   path.MoveTo(rtWeekSep.left, rtWeekSep.top);
   path.LineTo(rtWeekSep.left, rtWeekSep.bottom());
   pParams->m_pGraphics->SaveGraphState();
@@ -228,8 +224,7 @@ void CFWL_MonthCalendarTP::DrawDatesInBK(CFWL_ThemeBackground* pParams,
   if (pParams->m_dwStates & CFWL_PartState_Selected) {
     CFX_Path path;
     path.Create();
-    CFX_RectF rtSelDay;
-    rtSelDay = pParams->m_rtPart;
+    CFX_RectF rtSelDay = pParams->m_rtPart;
     path.AddRectangle(rtSelDay.left, rtSelDay.top, rtSelDay.width,
                       rtSelDay.height);
     CFX_Color clrSelDayBK(m_pThemeData->clrDatesSelectedBK);
@@ -238,8 +233,7 @@ void CFWL_MonthCalendarTP::DrawDatesInBK(CFWL_ThemeBackground* pParams,
   } else if (pParams->m_dwStates & CFWL_PartState_Hovered) {
     CFX_Path path;
     path.Create();
-    CFX_RectF rtSelDay;
-    rtSelDay = pParams->m_rtPart;
+    CFX_RectF rtSelDay = pParams->m_rtPart;
     path.AddRectangle(rtSelDay.left, rtSelDay.top, rtSelDay.width,
                       rtSelDay.height);
     CFX_Color clrSelDayBK(m_pThemeData->clrDatesHoverBK);
@@ -253,8 +247,7 @@ void CFWL_MonthCalendarTP::DrawDatesInCircle(CFWL_ThemeBackground* pParams,
                                              CFX_Matrix* pMatrix) {
   CFX_Path path;
   path.Create();
-  CFX_RectF rtSelDay;
-  rtSelDay = pParams->m_rtPart;
+  CFX_RectF rtSelDay = pParams->m_rtPart;
   path.AddRectangle(rtSelDay.left, rtSelDay.top, rtSelDay.width,
                     rtSelDay.height);
   pParams->m_pGraphics->SaveGraphState();
@@ -268,8 +261,7 @@ void CFWL_MonthCalendarTP::DrawTodayCircle(CFWL_ThemeBackground* pParams,
                                            CFX_Matrix* pMatrix) {
   CFX_Path path;
   path.Create();
-  CFX_RectF rtTodayCircle;
-  rtTodayCircle = pParams->m_rtPart;
+  CFX_RectF rtTodayCircle = pParams->m_rtPart;
   path.AddRectangle(rtTodayCircle.left, rtTodayCircle.top, rtTodayCircle.width,
                     rtTodayCircle.height);
   pParams->m_pGraphics->SaveGraphState();

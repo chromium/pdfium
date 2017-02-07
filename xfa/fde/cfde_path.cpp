@@ -255,7 +255,7 @@ void CFDE_Path::AddRectangle(const CFX_RectF& rect) {
 
 void CFDE_Path::GetBBox(CFX_RectF& bbox) const {
   CFX_FloatRect rect = m_Path.GetBoundingBox();
-  bbox.Set(rect.left, rect.top, rect.Width(), rect.Height());
+  bbox = CFX_RectF(rect.left, rect.top, rect.Width(), rect.Height());
   bbox.Normalize();
 }
 
@@ -263,6 +263,6 @@ void CFDE_Path::GetBBox(CFX_RectF& bbox,
                         FX_FLOAT fLineWidth,
                         FX_FLOAT fMiterLimit) const {
   CFX_FloatRect rect = m_Path.GetBoundingBox(fLineWidth, fMiterLimit);
-  bbox.Set(rect.left, rect.top, rect.Width(), rect.Height());
+  bbox = CFX_RectF(rect.left, rect.top, rect.Width(), rect.Height());
   bbox.Normalize();
 }

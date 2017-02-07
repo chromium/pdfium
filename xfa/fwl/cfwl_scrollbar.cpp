@@ -176,30 +176,22 @@ void CFWL_ScrollBar::CalcButtonLen() {
 }
 
 CFX_RectF CFWL_ScrollBar::CalcMinButtonRect() {
-  CFX_RectF rect;
   if (IsVertical())
-    rect.Set(m_rtClient.left, m_rtClient.top, m_rtClient.width, m_fButtonLen);
-  else
-    rect.Set(m_rtClient.left, m_rtClient.top, m_fButtonLen, m_rtClient.height);
-  return rect;
+    return CFX_RectF(m_rtClient.TopLeft(), m_rtClient.width, m_fButtonLen);
+  return CFX_RectF(m_rtClient.TopLeft(), m_fButtonLen, m_rtClient.height);
 }
 
 CFX_RectF CFWL_ScrollBar::CalcMaxButtonRect() {
-  CFX_RectF rect;
   if (IsVertical()) {
-    rect.Set(m_rtClient.left, m_rtClient.bottom() - m_fButtonLen,
-             m_rtClient.width, m_fButtonLen);
-  } else {
-    rect.Set(m_rtClient.right() - m_fButtonLen, m_rtClient.top, m_fButtonLen,
-             m_rtClient.height);
+    return CFX_RectF(m_rtClient.left, m_rtClient.bottom() - m_fButtonLen,
+                     m_rtClient.width, m_fButtonLen);
   }
-  return rect;
+  return CFX_RectF(m_rtClient.right() - m_fButtonLen, m_rtClient.top,
+                   m_fButtonLen, m_rtClient.height);
 }
 
 CFX_RectF CFWL_ScrollBar::CalcThumbButtonRect(const CFX_RectF& rtThumb) {
   CFX_RectF rect;
-  rect.Reset();
-
   if (!IsEnabled())
     return rect;
 
@@ -211,11 +203,11 @@ CFX_RectF CFWL_ScrollBar::CalcThumbButtonRect(const CFX_RectF& rtThumb) {
 
   FX_FLOAT fRange = m_fRangeMax - m_fRangeMin;
   if (fRange < 0) {
-    if (IsVertical())
-      rect.Set(m_rtClient.left, m_rtMaxBtn.bottom(), m_rtClient.width, 0);
-    else
-      rect.Set(m_rtMaxBtn.right(), m_rtClient.top, 0, m_rtClient.height);
-    return rect;
+    if (IsVertical()) {
+      return CFX_RectF(m_rtClient.left, m_rtMaxBtn.bottom(), m_rtClient.width,
+                       0);
+    }
+    return CFX_RectF(m_rtMaxBtn.right(), m_rtClient.top, 0, m_rtClient.height);
   }
 
   CFX_RectF rtClient = m_rtClient;
@@ -251,8 +243,6 @@ CFX_RectF CFWL_ScrollBar::CalcThumbButtonRect(const CFX_RectF& rtThumb) {
 
 CFX_RectF CFWL_ScrollBar::CalcMinTrackRect(const CFX_RectF& rtMinRect) {
   CFX_RectF rect;
-  rect.Reset();
-
   if (m_bMinSize) {
     rect.left = rtMinRect.left;
     rect.top = rtMinRect.top;
@@ -272,20 +262,18 @@ CFX_RectF CFWL_ScrollBar::CalcMinTrackRect(const CFX_RectF& rtMinRect) {
 }
 
 CFX_RectF CFWL_ScrollBar::CalcMaxTrackRect(const CFX_RectF& rtMaxRect) {
-  CFX_RectF rect;
-  if (m_bMinSize) {
-    rect.Set(rtMaxRect.left, rtMaxRect.top, 0, 0);
-    return rect;
-  }
+  if (m_bMinSize)
+    return CFX_RectF(rtMaxRect.TopLeft(), 0, 0);
 
   if (IsVertical()) {
     FX_FLOAT iy = (m_rtThumb.top + m_rtThumb.bottom()) / 2;
-    rect.Set(m_rtClient.left, iy, m_rtClient.width, m_rtClient.bottom() - iy);
-  } else {
-    FX_FLOAT ix = (m_rtThumb.left + m_rtThumb.right()) / 2;
-    rect.Set(ix, m_rtClient.top, m_rtClient.height - ix, m_rtClient.height);
+    return CFX_RectF(m_rtClient.left, iy, m_rtClient.width,
+                     m_rtClient.bottom() - iy);
   }
-  return rect;
+
+  FX_FLOAT ix = (m_rtThumb.left + m_rtThumb.right()) / 2;
+  return CFX_RectF(ix, m_rtClient.top, m_rtClient.height - ix,
+                   m_rtClient.height);
 }
 
 FX_FLOAT CFWL_ScrollBar::GetTrackPointPos(FX_FLOAT fx, FX_FLOAT fy) {

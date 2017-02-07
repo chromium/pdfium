@@ -97,11 +97,10 @@ void CPDFSDK_PageView::PageView_OnDraw(CFX_RenderDevice* pDevice,
   if (pPage->GetContext()->GetDocType() == DOCTYPE_DYNAMIC_XFA) {
     CFX_Graphics gs;
     gs.Create(pDevice);
-    CFX_RectF rectClip;
-    rectClip.Set(static_cast<FX_FLOAT>(pClip.left),
-                 static_cast<FX_FLOAT>(pClip.top),
-                 static_cast<FX_FLOAT>(pClip.Width()),
-                 static_cast<FX_FLOAT>(pClip.Height()));
+    CFX_RectF rectClip(static_cast<FX_FLOAT>(pClip.left),
+                       static_cast<FX_FLOAT>(pClip.top),
+                       static_cast<FX_FLOAT>(pClip.Width()),
+                       static_cast<FX_FLOAT>(pClip.Height()));
     gs.SetClipRect(rectClip);
     std::unique_ptr<CXFA_RenderContext> pRenderContext(new CXFA_RenderContext);
     CXFA_RenderOptions renderOptions;

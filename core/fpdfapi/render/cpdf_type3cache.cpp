@@ -122,10 +122,10 @@ CFX_GlyphBitmap* CPDF_Type3Cache::RenderGlyph(CPDF_Type3Glyphs* pSize,
     return nullptr;
 
   CFX_DIBitmap* pBitmap = pChar->m_pBitmap.get();
-  CFX_Matrix image_matrix, text_matrix;
-  image_matrix = pChar->m_ImageMatrix;
-  text_matrix.Set(pMatrix->a, pMatrix->b, pMatrix->c, pMatrix->d, 0, 0);
+  CFX_Matrix image_matrix = pChar->m_ImageMatrix;
+  CFX_Matrix text_matrix(pMatrix->a, pMatrix->b, pMatrix->c, pMatrix->d, 0, 0);
   image_matrix.Concat(text_matrix);
+
   std::unique_ptr<CFX_DIBitmap> pResBitmap;
   int left = 0;
   int top = 0;

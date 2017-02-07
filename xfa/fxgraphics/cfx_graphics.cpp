@@ -969,9 +969,8 @@ FWL_Error CFX_Graphics::Transfer(CFX_Graphics* graphics,
                                  const CFX_Matrix* matrix) {
   if (!graphics || !graphics->m_renderDevice)
     return FWL_Error::ParameterInvalid;
-  CFX_Matrix m;
-  m.Set(m_info.CTM.a, m_info.CTM.b, m_info.CTM.c, m_info.CTM.d, m_info.CTM.e,
-        m_info.CTM.f);
+  CFX_Matrix m(m_info.CTM.a, m_info.CTM.b, m_info.CTM.c, m_info.CTM.d,
+               m_info.CTM.e, m_info.CTM.f);
   if (matrix) {
     m.Concat(*matrix);
   }
@@ -992,9 +991,8 @@ FWL_Error CFX_Graphics::Transfer(CFX_Graphics* graphics,
                                  const CFX_Matrix* matrix) {
   if (!graphics || !graphics->m_renderDevice)
     return FWL_Error::ParameterInvalid;
-  CFX_Matrix m;
-  m.Set(m_info.CTM.a, m_info.CTM.b, m_info.CTM.c, m_info.CTM.d, m_info.CTM.e,
-        m_info.CTM.f);
+  CFX_Matrix m(m_info.CTM.a, m_info.CTM.b, m_info.CTM.c, m_info.CTM.d,
+               m_info.CTM.e, m_info.CTM.f);
   if (matrix) {
     m.Concat(*matrix);
   }
@@ -1030,8 +1028,7 @@ FWL_Error CFX_Graphics::InverseRect(const CFX_RectF& rect) {
     return FWL_Error::PropertyInvalid;
   CFX_RectF temp(rect);
   m_info.CTM.TransformRect(temp);
-  CFX_RectF r;
-  r.Set(0, 0, (FX_FLOAT)bitmap->GetWidth(), (FX_FLOAT)bitmap->GetWidth());
+  CFX_RectF r(0, 0, (FX_FLOAT)bitmap->GetWidth(), (FX_FLOAT)bitmap->GetWidth());
   r.Intersect(temp);
   if (r.IsEmpty()) {
     return FWL_Error::ParameterInvalid;
@@ -1060,8 +1057,7 @@ FWL_Error CFX_Graphics::XorDIBitmap(const CFX_DIBitmap* srcBitmap,
     return FWL_Error::PropertyInvalid;
   CFX_RectF temp(rect);
   m_info.CTM.TransformRect(temp);
-  CFX_RectF r;
-  r.Set(0, 0, (FX_FLOAT)dst->GetWidth(), (FX_FLOAT)dst->GetWidth());
+  CFX_RectF r(0, 0, (FX_FLOAT)dst->GetWidth(), (FX_FLOAT)dst->GetWidth());
   r.Intersect(temp);
   if (r.IsEmpty()) {
     return FWL_Error::ParameterInvalid;
@@ -1096,8 +1092,7 @@ FWL_Error CFX_Graphics::EqvDIBitmap(const CFX_DIBitmap* srcBitmap,
     return FWL_Error::PropertyInvalid;
   CFX_RectF temp(rect);
   m_info.CTM.TransformRect(temp);
-  CFX_RectF r;
-  r.Set(0, 0, (FX_FLOAT)dst->GetWidth(), (FX_FLOAT)dst->GetWidth());
+  CFX_RectF r(0, 0, (FX_FLOAT)dst->GetWidth(), (FX_FLOAT)dst->GetWidth());
   r.Intersect(temp);
   if (r.IsEmpty()) {
     return FWL_Error::ParameterInvalid;
@@ -1158,9 +1153,8 @@ FWL_Error CFX_Graphics::RenderDeviceStrokePath(CFX_Path* path,
                                                CFX_Matrix* matrix) {
   if (!m_info.strokeColor)
     return FWL_Error::PropertyInvalid;
-  CFX_Matrix m;
-  m.Set(m_info.CTM.a, m_info.CTM.b, m_info.CTM.c, m_info.CTM.d, m_info.CTM.e,
-        m_info.CTM.f);
+  CFX_Matrix m(m_info.CTM.a, m_info.CTM.b, m_info.CTM.c, m_info.CTM.d,
+               m_info.CTM.e, m_info.CTM.f);
   if (matrix) {
     m.Concat(*matrix);
   }
@@ -1187,9 +1181,8 @@ FWL_Error CFX_Graphics::RenderDeviceFillPath(CFX_Path* path,
                                              CFX_Matrix* matrix) {
   if (!m_info.fillColor)
     return FWL_Error::PropertyInvalid;
-  CFX_Matrix m;
-  m.Set(m_info.CTM.a, m_info.CTM.b, m_info.CTM.c, m_info.CTM.d, m_info.CTM.e,
-        m_info.CTM.f);
+  CFX_Matrix m(m_info.CTM.a, m_info.CTM.b, m_info.CTM.c, m_info.CTM.d,
+               m_info.CTM.e, m_info.CTM.f);
   if (matrix) {
     m.Concat(*matrix);
   }
@@ -1214,15 +1207,13 @@ FWL_Error CFX_Graphics::RenderDeviceFillPath(CFX_Path* path,
 FWL_Error CFX_Graphics::RenderDeviceDrawImage(CFX_DIBSource* source,
                                               const CFX_PointF& point,
                                               CFX_Matrix* matrix) {
-  CFX_Matrix m1;
-  m1.Set(m_info.CTM.a, m_info.CTM.b, m_info.CTM.c, m_info.CTM.d, m_info.CTM.e,
-         m_info.CTM.f);
+  CFX_Matrix m1(m_info.CTM.a, m_info.CTM.b, m_info.CTM.c, m_info.CTM.d,
+                m_info.CTM.e, m_info.CTM.f);
   if (matrix) {
     m1.Concat(*matrix);
   }
-  CFX_Matrix m2;
-  m2.Set((FX_FLOAT)source->GetWidth(), 0.0, 0.0, (FX_FLOAT)source->GetHeight(),
-         point.x, point.y);
+  CFX_Matrix m2((FX_FLOAT)source->GetWidth(), 0.0, 0.0,
+                (FX_FLOAT)source->GetHeight(), point.x, point.y);
   m2.Concat(m1);
   int32_t left, top;
   std::unique_ptr<CFX_DIBitmap> bmp1 = source->FlipImage(false, true);
@@ -1246,18 +1237,18 @@ FWL_Error CFX_Graphics::RenderDeviceDrawImage(CFX_DIBSource* source,
 FWL_Error CFX_Graphics::RenderDeviceStretchImage(CFX_DIBSource* source,
                                                  const CFX_RectF& rect,
                                                  CFX_Matrix* matrix) {
-  CFX_Matrix m1;
-  m1.Set(m_info.CTM.a, m_info.CTM.b, m_info.CTM.c, m_info.CTM.d, m_info.CTM.e,
-         m_info.CTM.f);
+  CFX_Matrix m1(m_info.CTM.a, m_info.CTM.b, m_info.CTM.c, m_info.CTM.d,
+                m_info.CTM.e, m_info.CTM.f);
   if (matrix) {
     m1.Concat(*matrix);
   }
   std::unique_ptr<CFX_DIBitmap> bmp1 =
       source->StretchTo((int32_t)rect.Width(), (int32_t)rect.Height());
-  CFX_Matrix m2;
-  m2.Set(rect.Width(), 0.0, 0.0, rect.Height(), rect.left, rect.top);
+  CFX_Matrix m2(rect.Width(), 0.0, 0.0, rect.Height(), rect.left, rect.top);
   m2.Concat(m1);
-  int32_t left, top;
+
+  int32_t left;
+  int32_t top;
   std::unique_ptr<CFX_DIBitmap> bmp2 = bmp1->FlipImage(false, true);
   std::unique_ptr<CFX_DIBitmap> bmp3 = bmp2->TransformTo(&m2, left, top);
   CFX_RectF r;
@@ -1278,12 +1269,10 @@ FWL_Error CFX_Graphics::RenderDeviceShowText(const CFX_PointF& point,
   int32_t length = text.GetLength();
   uint32_t* charCodes = FX_Alloc(uint32_t, length);
   FXTEXT_CHARPOS* charPos = FX_Alloc(FXTEXT_CHARPOS, length);
-  CFX_RectF rect;
-  rect.Set(point.x, point.y, 0, 0);
+  CFX_RectF rect(point.x, point.y, 0, 0);
   CalcTextInfo(text, charCodes, charPos, rect);
-  CFX_Matrix m;
-  m.Set(m_info.CTM.a, m_info.CTM.b, m_info.CTM.c, m_info.CTM.d, m_info.CTM.e,
-        m_info.CTM.f);
+  CFX_Matrix m(m_info.CTM.a, m_info.CTM.b, m_info.CTM.c, m_info.CTM.d,
+               m_info.CTM.e, m_info.CTM.f);
   m.Translate(0, m_info.fontSize * m_info.fontHScale);
   if (matrix) {
     m.Concat(*matrix);
@@ -1477,11 +1466,11 @@ FWL_Error CFX_Graphics::SetDIBitsWithMatrix(CFX_DIBSource* source,
   if (matrix->IsIdentity()) {
     m_renderDevice->SetDIBits(source, 0, 0);
   } else {
-    CFX_Matrix m;
-    m.Set((FX_FLOAT)source->GetWidth(), 0, 0, (FX_FLOAT)source->GetHeight(), 0,
-          0);
+    CFX_Matrix m((FX_FLOAT)source->GetWidth(), 0, 0,
+                 (FX_FLOAT)source->GetHeight(), 0, 0);
     m.Concat(*matrix);
-    int32_t left, top;
+    int32_t left;
+    int32_t top;
     std::unique_ptr<CFX_DIBitmap> bmp1 = source->FlipImage(false, true);
     std::unique_ptr<CFX_DIBitmap> bmp2 = bmp1->TransformTo(&m, left, top);
     m_renderDevice->SetDIBits(bmp2.get(), left, top);

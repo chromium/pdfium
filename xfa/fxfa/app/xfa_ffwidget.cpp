@@ -35,9 +35,7 @@
 CXFA_FFWidget::CXFA_FFWidget(CXFA_WidgetAcc* pDataAcc)
     : CXFA_ContentLayoutItem(pDataAcc->GetNode()),
       m_pPageView(nullptr),
-      m_pDataAcc(pDataAcc) {
-  m_rtWidget.Set(0, 0, 0, 0);
-}
+      m_pDataAcc(pDataAcc) {}
 
 CXFA_FFWidget::~CXFA_FFWidget() {}
 
@@ -380,7 +378,7 @@ static void XFA_GetMatrix(CFX_Matrix& m,
   }
 }
 void CXFA_FFWidget::GetRotateMatrix(CFX_Matrix& mt) {
-  mt.Set(1, 0, 0, 1, 0, 0);
+  mt = CFX_Matrix();
   int32_t iRotate = m_pDataAcc->GetRotate();
   if (!iRotate) {
     return;
@@ -831,18 +829,15 @@ void XFA_DrawImage(CFX_Graphics* pGS,
                    int32_t iImageYDpi,
                    int32_t iHorzAlign,
                    int32_t iVertAlign) {
-  if (rtImage.IsEmpty()) {
+  if (rtImage.IsEmpty())
     return;
-  }
-  if (!pDIBitmap || !pDIBitmap->GetBuffer()) {
+  if (!pDIBitmap || !pDIBitmap->GetBuffer())
     return;
-  }
-  FX_FLOAT fWidth =
-      XFA_UnitPx2Pt((FX_FLOAT)pDIBitmap->GetWidth(), (FX_FLOAT)iImageXDpi);
-  FX_FLOAT fHeight =
-      XFA_UnitPx2Pt((FX_FLOAT)pDIBitmap->GetHeight(), (FX_FLOAT)iImageYDpi);
-  CFX_RectF rtFit;
-  rtFit.Set(rtImage.left, rtImage.top, fWidth, fHeight);
+
+  CFX_RectF rtFit(
+      rtImage.TopLeft(),
+      XFA_UnitPx2Pt((FX_FLOAT)pDIBitmap->GetWidth(), (FX_FLOAT)iImageXDpi),
+      XFA_UnitPx2Pt((FX_FLOAT)pDIBitmap->GetHeight(), (FX_FLOAT)iImageYDpi));
   switch (iAspect) {
     case XFA_ATTRIBUTEENUM_Fit: {
       FX_FLOAT f1 = rtImage.height / rtFit.height;
@@ -1348,10 +1343,9 @@ static void XFA_BOX_GetPath(CXFA_Box box,
     if (bInverted) {
       sy *= -1;
     }
-    CFX_RectF rtRadius;
-    rtRadius.Set(cp1.x + offsetX * 2, cp1.y + offsetY * 2,
-                 fRadius1 * 2 * vx - offsetX * 2,
-                 fRadius1 * 2 * vy - offsetY * 2);
+    CFX_RectF rtRadius(cp1.x + offsetX * 2, cp1.y + offsetY * 2,
+                       fRadius1 * 2 * vx - offsetX * 2,
+                       fRadius1 * 2 * vy - offsetY * 2);
     rtRadius.Normalize();
     if (bInverted) {
       rtRadius.Offset(-fRadius1 * vx, -fRadius1 * vy);
@@ -1501,8 +1495,7 @@ static void XFA_BOX_GetFillPath(CXFA_Box box,
       if (bInverted) {
         sy *= -1;
       }
-      CFX_RectF rtRadius;
-      rtRadius.Set(cp1.x, cp1.y, fRadius1 * 2 * vx, fRadius1 * 2 * vy);
+      CFX_RectF rtRadius(cp1.x, cp1.y, fRadius1 * 2 * vx, fRadius1 * 2 * vy);
       rtRadius.Normalize();
       if (bInverted) {
         rtRadius.Offset(-fRadius1 * vx, -fRadius1 * vy);

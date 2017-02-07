@@ -36,7 +36,7 @@ int32_t CXFA_RenderContext::StartRender(CXFA_FFPageView* pPageView,
   pGS->GetClipRect(rtPage);
   CFX_Matrix mtRes;
   mtRes.SetReverse(matrix);
-  m_rtClipRect.Set(rtPage.left, rtPage.top, rtPage.width, rtPage.height);
+  m_rtClipRect = rtPage;
   mtRes.TransformRect(m_rtClipRect);
   m_dwStatus = m_options.m_bHighlight ? XFA_WidgetStatus_Highlight : 0;
   uint32_t dwFilterType = XFA_WidgetStatus_Visible |

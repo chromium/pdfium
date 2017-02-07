@@ -756,14 +756,8 @@ DLLEXPORT void STDCALL FPDF_RenderPageBitmapWithMatrix(FPDF_BITMAP bitmap,
 
   CFX_Matrix transform_matrix = pPage->GetPageMatrix();
   if (matrix) {
-    CFX_Matrix cmatrix;
-    cmatrix.a = matrix->a;
-    cmatrix.b = matrix->b;
-    cmatrix.c = matrix->c;
-    cmatrix.d = matrix->d;
-    cmatrix.e = matrix->e;
-    cmatrix.f = matrix->f;
-    transform_matrix.Concat(cmatrix);
+    transform_matrix.Concat(CFX_Matrix(matrix->a, matrix->b, matrix->c,
+                                       matrix->d, matrix->e, matrix->f));
   }
 
   CFX_FloatRect clipping_rect;

@@ -326,9 +326,8 @@ void CFWL_ComboBox::ShowDropList(bool bActivate) {
   m_pListBox->ModifyStylesEx(dwStyleAdd, 0);
   m_rtList = m_pListBox->GetAutosizedWidgetRect();
 
-  CFX_RectF rtAnchor;
-  rtAnchor.Set(0, 0, m_pProperties->m_rtWidget.width,
-               m_pProperties->m_rtWidget.height);
+  CFX_RectF rtAnchor(0, 0, m_pProperties->m_rtWidget.width,
+                     m_pProperties->m_rtWidget.height);
 
   m_rtList.width = std::max(m_rtList.width, m_rtClient.width);
   m_rtProxy = m_rtList;
@@ -378,14 +377,13 @@ void CFWL_ComboBox::Layout() {
     return;
 
   FX_FLOAT fBtn = theme->GetScrollBarWidth();
-  m_rtBtn.Set(m_rtClient.right() - fBtn, m_rtClient.top, fBtn,
-              m_rtClient.height);
+  m_rtBtn = CFX_RectF(m_rtClient.right() - fBtn, m_rtClient.top, fBtn,
+                      m_rtClient.height);
   if (!IsDropDownStyle() || !m_pEdit)
     return;
 
-  CFX_RectF rtEdit;
-  rtEdit.Set(m_rtClient.left, m_rtClient.top, m_rtClient.width - fBtn,
-             m_rtClient.height);
+  CFX_RectF rtEdit(m_rtClient.left, m_rtClient.top, m_rtClient.width - fBtn,
+                   m_rtClient.height);
   m_pEdit->SetWidgetRect(rtEdit);
 
   if (m_iCurSel >= 0) {
@@ -552,11 +550,7 @@ void CFWL_ComboBox::DisForm_ShowDropList(bool bActivate) {
       fPopupMin = fItemHeight * 3 + fBorder * 2;
 
     FX_FLOAT fPopupMax = fItemHeight * iItems + fBorder * 2;
-    CFX_RectF rtList;
-    rtList.left = m_rtClient.left;
-    rtList.width = m_pProperties->m_rtWidget.width;
-    rtList.top = 0;
-    rtList.height = 0;
+    CFX_RectF rtList(m_rtClient.left, 0, m_pProperties->m_rtWidget.width, 0);
     GetPopupPos(fPopupMin, fPopupMax, m_pProperties->m_rtWidget, rtList);
 
     m_pListBox->SetWidgetRect(rtList);
@@ -606,9 +600,8 @@ void CFWL_ComboBox::DisForm_Update() {
 }
 
 FWL_WidgetHit CFWL_ComboBox::DisForm_HitTest(FX_FLOAT fx, FX_FLOAT fy) {
-  CFX_RectF rect;
-  rect.Set(0, 0, m_pProperties->m_rtWidget.width - m_rtBtn.width,
-           m_pProperties->m_rtWidget.height);
+  CFX_RectF rect(0, 0, m_pProperties->m_rtWidget.width - m_rtBtn.width,
+                 m_pProperties->m_rtWidget.height);
   if (rect.Contains(fx, fy))
     return FWL_WidgetHit::Edit;
   if (m_rtBtn.Contains(fx, fy))
@@ -624,8 +617,7 @@ FWL_WidgetHit CFWL_ComboBox::DisForm_HitTest(FX_FLOAT fx, FX_FLOAT fy) {
 void CFWL_ComboBox::DisForm_DrawWidget(CFX_Graphics* pGraphics,
                                        const CFX_Matrix* pMatrix) {
   IFWL_ThemeProvider* pTheme = m_pProperties->m_pThemeProvider;
-  CFX_Matrix mtOrg;
-  mtOrg.Set(1, 0, 0, 1, 0, 0);
+  CFX_Matrix mtOrg(1, 0, 0, 1, 0, 0);
   if (pMatrix)
     mtOrg = *pMatrix;
 
@@ -644,15 +636,13 @@ void CFWL_ComboBox::DisForm_DrawWidget(CFX_Graphics* pGraphics,
 
   if (m_pEdit) {
     CFX_RectF rtEdit = m_pEdit->GetWidgetRect();
-    CFX_Matrix mt;
-    mt.Set(1, 0, 0, 1, rtEdit.left, rtEdit.top);
+    CFX_Matrix mt(1, 0, 0, 1, rtEdit.left, rtEdit.top);
     mt.Concat(mtOrg);
     m_pEdit->DrawWidget(pGraphics, &mt);
   }
   if (m_pListBox && DisForm_IsDropListVisible()) {
     CFX_RectF rtList = m_pListBox->GetWidgetRect();
-    CFX_Matrix mt;
-    mt.Set(1, 0, 0, 1, rtList.left, rtList.top);
+    CFX_Matrix mt(1, 0, 0, 1, rtList.left, rtList.top);
     mt.Concat(mtOrg);
     m_pListBox->DrawWidget(pGraphics, &mt);
   }
@@ -679,8 +669,9 @@ void CFWL_ComboBox::DisForm_Layout() {
   FX_FLOAT borderWidth = 1;
   FX_FLOAT fBtn = theme->GetScrollBarWidth();
   if (!(GetStylesEx() & FWL_STYLEEXT_CMB_ReadOnly)) {
-    m_rtBtn.Set(m_rtClient.right() - fBtn, m_rtClient.top + borderWidth,
-                fBtn - borderWidth, m_rtClient.height - 2 * borderWidth);
+    m_rtBtn =
+        CFX_RectF(m_rtClient.right() - fBtn, m_rtClient.top + borderWidth,
+                  fBtn - borderWidth, m_rtClient.height - 2 * borderWidth);
   }
 
   CFWL_ThemePart part;
@@ -692,9 +683,8 @@ void CFWL_ComboBox::DisForm_Layout() {
   if (!IsDropDownStyle() || !m_pEdit)
     return;
 
-  CFX_RectF rtEdit;
-  rtEdit.Set(m_rtContent.left, m_rtContent.top, m_rtContent.width - fBtn,
-             m_rtContent.height);
+  CFX_RectF rtEdit(m_rtContent.left, m_rtContent.top, m_rtContent.width - fBtn,
+                   m_rtContent.height);
   m_pEdit->SetWidgetRect(rtEdit);
 
   if (m_iCurSel >= 0) {

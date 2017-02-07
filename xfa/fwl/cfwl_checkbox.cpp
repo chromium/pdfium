@@ -129,27 +129,21 @@ void CFWL_CheckBox::Layout() {
       FXSYS_round(m_pProperties->m_rtWidget.height);
   m_rtClient = GetClientRect();
 
-  FX_FLOAT fBoxTop = m_rtClient.top;
-  FX_FLOAT fBoxLeft = m_rtClient.left;
-  FX_FLOAT fTextLeft = fBoxLeft + m_fBoxHeight;
-  FX_FLOAT fTextRight = m_rtClient.right();
-  m_rtBox.Set(fBoxLeft, fBoxTop, m_fBoxHeight, m_fBoxHeight);
-  m_rtCaption.Set(fTextLeft, m_rtClient.top, fTextRight - fTextLeft,
-                  m_rtClient.height);
+  FX_FLOAT fTextLeft = m_rtClient.left + m_fBoxHeight;
+  m_rtBox = CFX_RectF(m_rtClient.TopLeft(), m_fBoxHeight, m_fBoxHeight);
+  m_rtCaption = CFX_RectF(fTextLeft, m_rtClient.top,
+                          m_rtClient.right() - fTextLeft, m_rtClient.height);
   m_rtCaption.Inflate(-kCaptionMargin, -kCaptionMargin);
 
-  CFX_RectF rtFocus;
-  rtFocus.Set(m_rtCaption.left, m_rtCaption.top, m_rtCaption.width,
-              m_rtCaption.height);
+  CFX_RectF rtFocus(m_rtCaption.left, m_rtCaption.top, m_rtCaption.width,
+                    m_rtCaption.height);
 
   CalcTextRect(L"Check box", m_pProperties->m_pThemeProvider, m_dwTTOStyles,
                m_iTTOAlign, rtFocus);
 
-  FX_FLOAT fWidth = std::max(m_rtCaption.width, rtFocus.width);
-  FX_FLOAT fHeight = std::min(m_rtCaption.height, rtFocus.height);
-  FX_FLOAT fLeft = m_rtCaption.left;
-  FX_FLOAT fTop = m_rtCaption.top;
-  m_rtFocus.Set(fLeft, fTop, fWidth, fHeight);
+  m_rtFocus = CFX_RectF(m_rtCaption.TopLeft(),
+                        std::max(m_rtCaption.width, rtFocus.width),
+                        std::min(m_rtCaption.height, rtFocus.height));
   m_rtFocus.Inflate(1, 1);
 }
 
@@ -195,9 +189,8 @@ void CFWL_CheckBox::NextStates() {
           if (pCheckBox != this &&
               pCheckBox->GetStates() & FWL_STATE_CKB_Checked) {
             pCheckBox->SetCheckState(0);
-            CFX_RectF rt = pCheckBox->GetWidgetRect();
-            rt.left = rt.top = 0;
-            m_pWidgetMgr->RepaintWidget(pCheckBox, rt);
+            m_pWidgetMgr->RepaintWidget(
+                pCheckBox, CFX_RectF(0, 0, pCheckBox->GetWidgetRect().Size()));
             break;
           }
         }

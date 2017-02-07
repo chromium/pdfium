@@ -325,8 +325,7 @@ bool CFGAS_GEFont::GetCharBBoxInternal(FX_WCHAR wUnicode,
       if (pFont.Get() == this) {
         FX_RECT rtBBox;
         if (m_pFont->GetGlyphBBox(iGlyph, rtBBox)) {
-          CFX_Rect rt;
-          rt.Set(rtBBox.left, rtBBox.top, rtBBox.Width(), rtBBox.Height());
+          CFX_Rect rt(rtBBox.left, rtBBox.top, rtBBox.Width(), rtBBox.Height());
           int32_t index = m_pRectArray->Add(rt);
           pRect = m_pRectArray->GetPtrAt(index);
           m_BBoxMap[wUnicode] = pRect;

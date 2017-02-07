@@ -78,11 +78,10 @@ CFX_FloatRect CPDF_Array::GetRect() {
 CFX_Matrix CPDF_Array::GetMatrix() {
   CFX_Matrix matrix;
   if (!IsArray() || m_Objects.size() != 6)
-    return matrix;
+    return CFX_Matrix();
 
-  matrix.Set(GetNumberAt(0), GetNumberAt(1), GetNumberAt(2), GetNumberAt(3),
-             GetNumberAt(4), GetNumberAt(5));
-  return matrix;
+  return CFX_Matrix(GetNumberAt(0), GetNumberAt(1), GetNumberAt(2),
+                    GetNumberAt(3), GetNumberAt(4), GetNumberAt(5));
 }
 
 CPDF_Object* CPDF_Array::GetObjectAt(size_t i) const {

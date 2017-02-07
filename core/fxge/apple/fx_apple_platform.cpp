@@ -35,12 +35,12 @@ bool CGDrawGlyphRun(CGContextRef pContext,
   if (nChars == 0)
     return true;
 
-  CFX_Matrix new_matrix;
   bool bNegSize = font_size < 0;
   if (bNegSize)
     font_size = -font_size;
 
   FX_FLOAT ori_x = pCharPos[0].m_OriginX, ori_y = pCharPos[0].m_OriginY;
+  CFX_Matrix new_matrix;
   new_matrix.Transform(ori_x, ori_y);
   if (pObject2Device)
     new_matrix.Concat(*pObject2Device);

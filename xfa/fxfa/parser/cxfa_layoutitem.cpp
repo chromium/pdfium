@@ -67,11 +67,8 @@ CFX_RectF CXFA_LayoutItem::GetRect(bool bRelative) const {
   auto pThis = static_cast<const CXFA_ContentLayoutItem*>(this);
   CFX_PointF sPos = pThis->m_sPos;
   CFX_SizeF sSize = pThis->m_sSize;
-  if (bRelative) {
-    CFX_RectF rtLayout;
-    rtLayout.Set(sPos.x, sPos.y, sSize.x, sSize.y);
-    return rtLayout;
-  }
+  if (bRelative)
+    return CFX_RectF(sPos, sSize);
 
   for (CXFA_LayoutItem* pLayoutItem = pThis->m_pParent; pLayoutItem;
        pLayoutItem = pLayoutItem->m_pParent) {
@@ -99,10 +96,7 @@ CFX_RectF CXFA_LayoutItem::GetRect(bool bRelative) const {
     if (pLayoutItem->m_pFormNode->GetElementType() == XFA_Element::PageArea)
       break;
   }
-
-  CFX_RectF rtLayout;
-  rtLayout.Set(sPos.x, sPos.y, sSize.x, sSize.y);
-  return rtLayout;
+  return CFX_RectF(sPos, sSize);
 }
 
 CXFA_LayoutItem* CXFA_LayoutItem::GetFirst() {

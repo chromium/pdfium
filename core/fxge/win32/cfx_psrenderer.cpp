@@ -581,10 +581,13 @@ void CFX_PSRenderer::FindPSFontGlyph(CFX_FaceCache* pFaceCache,
     pPSFont->m_Glyphs[glyphindex].m_AdjustMatrix[3] = charpos.m_AdjustMatrix[3];
   }
   pPSFont->m_nGlyphs++;
+
   CFX_Matrix matrix;
-  if (charpos.m_bGlyphAdjust)
-    matrix.Set(charpos.m_AdjustMatrix[0], charpos.m_AdjustMatrix[1],
-               charpos.m_AdjustMatrix[2], charpos.m_AdjustMatrix[3], 0, 0);
+  if (charpos.m_bGlyphAdjust) {
+    matrix =
+        CFX_Matrix(charpos.m_AdjustMatrix[0], charpos.m_AdjustMatrix[1],
+                   charpos.m_AdjustMatrix[2], charpos.m_AdjustMatrix[3], 0, 0);
+  }
   matrix.Concat(1.0f, 0, 0, 1.0f, 0, 0);
   const CFX_PathData* pPathData = pFaceCache->LoadGlyphPath(
       pFont, charpos.m_GlyphIndex, charpos.m_FontCharWidth);

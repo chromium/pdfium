@@ -14,13 +14,10 @@ CFX_Pattern::CFX_Pattern(FX_HatchStyle hatchStyle,
   ASSERT(m_hatchStyle >= FX_HATCHSTYLE_Horizontal &&
          m_hatchStyle <= FX_HATCHSTYLE_SolidDiamond);
 
-  if (matrix) {
-    // TODO(dsinclair): Add a Set(const CFX_Matrix&) method. pdfium:436
-    m_matrix.Set(matrix->a, matrix->b, matrix->c, matrix->d, matrix->e,
-                 matrix->f);
-  } else {
+  if (matrix)
+    m_matrix = *matrix;
+  else
     m_matrix.SetIdentity();
-  }
 }
 
 CFX_Pattern::~CFX_Pattern() {}

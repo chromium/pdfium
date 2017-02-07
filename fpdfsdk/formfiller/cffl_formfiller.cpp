@@ -395,6 +395,7 @@ CFX_Matrix CFFL_FormFiller::GetWindowMatrix(void* pAttachedData) {
     if (pPrivateData->pPageView) {
       CFX_Matrix mtPageView;
       pPrivateData->pPageView->GetCurrentMatrix(mtPageView);
+
       CFX_Matrix mt = GetCurMatrix();
       mt.Concat(mtPageView);
 

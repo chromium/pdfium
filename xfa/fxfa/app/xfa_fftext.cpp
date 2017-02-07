@@ -57,8 +57,8 @@ void CXFA_FFText::RenderWidget(CFX_Graphics* pGS,
           rtText.Deflate(fLeftInset, fTopInset, fRightInset, fBottomInset);
         }
       }
-      CFX_Matrix mt;
-      mt.Set(1, 0, 0, 1, rtText.left, rtText.top);
+
+      CFX_Matrix mt(1, 0, 0, 1, rtText.left, rtText.top);
       CFX_RectF rtClip = rtText;
       mtRotate.TransformRect(rtClip);
       mt.Concat(mtRotate);

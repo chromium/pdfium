@@ -281,8 +281,8 @@ bool CFWL_Widget::IsChild() const {
 }
 
 CFX_RectF CFWL_Widget::GetEdgeRect() {
-  CFX_RectF rtEdge = m_pProperties->m_rtWidget;
-  rtEdge.left = rtEdge.top = 0;
+  CFX_RectF rtEdge(0, 0, m_pProperties->m_rtWidget.width,
+                   m_pProperties->m_rtWidget.height);
   if (HasBorder()) {
     FX_FLOAT fCX = GetBorderSize(true);
     FX_FLOAT fCY = GetBorderSize(false);
@@ -299,10 +299,8 @@ FX_FLOAT CFWL_Widget::GetBorderSize(bool bCX) {
 }
 
 CFX_RectF CFWL_Widget::GetRelativeRect() {
-  CFX_RectF rect = m_pProperties->m_rtWidget;
-  rect.left = 0;
-  rect.top = 0;
-  return rect;
+  return CFX_RectF(0, 0, m_pProperties->m_rtWidget.width,
+                   m_pProperties->m_rtWidget.height);
 }
 
 IFWL_ThemeProvider* CFWL_Widget::GetAvailableTheme() {
@@ -345,10 +343,9 @@ CFX_SizeF CFWL_Widget::CalcTextSize(const CFX_WideString& wsText,
   calPart.m_dwTTOStyles =
       bMultiLine ? FDE_TTOSTYLE_LineWrap : FDE_TTOSTYLE_SingleLine;
   calPart.m_iTTOAlign = FDE_TTOALIGNMENT_TopLeft;
-  CFX_RectF rect;
   FX_FLOAT fWidth =
       bMultiLine ? FWL_WGT_CalcMultiLineDefWidth : FWL_WGT_CalcWidth;
-  rect.Set(0, 0, fWidth, FWL_WGT_CalcHeight);
+  CFX_RectF rect(0, 0, fWidth, FWL_WGT_CalcHeight);
   pTheme->CalcTextRect(&calPart, rect);
   return CFX_SizeF(rect.width, rect.height);
 }
@@ -430,21 +427,21 @@ bool CFWL_Widget::GetPopupPosMenu(FX_FLOAT fMinHeight,
     FX_FLOAT fRight = rtAnchor.right() + rtPopup.width;
     TransformTo(nullptr, fx, fy);
     if (fRight + fx > 0.0f || bLeft) {
-      rtPopup.Set(rtAnchor.left - rtPopup.width, rtAnchor.top, rtPopup.width,
-                  rtPopup.height);
+      rtPopup = CFX_RectF(rtAnchor.left - rtPopup.width, rtAnchor.top,
+                          rtPopup.width, rtPopup.height);
     } else {
-      rtPopup.Set(rtAnchor.right(), rtAnchor.top, rtPopup.width,
-                  rtPopup.height);
+      rtPopup = CFX_RectF(rtAnchor.right(), rtAnchor.top, rtPopup.width,
+                          rtPopup.height);
     }
   } else {
     FX_FLOAT fBottom = rtAnchor.bottom() + rtPopup.height;
     TransformTo(nullptr, fx, fy);
     if (fBottom + fy > 0.0f) {
-      rtPopup.Set(rtAnchor.left, rtAnchor.top - rtPopup.height, rtPopup.width,
-                  rtPopup.height);
+      rtPopup = CFX_RectF(rtAnchor.left, rtAnchor.top - rtPopup.height,
+                          rtPopup.width, rtPopup.height);
     } else {
-      rtPopup.Set(rtAnchor.left, rtAnchor.bottom(), rtPopup.width,
-                  rtPopup.height);
+      rtPopup = CFX_RectF(rtAnchor.left, rtAnchor.bottom(), rtPopup.width,
+                          rtPopup.height);
     }
   }
   rtPopup.Offset(fx, fy);
@@ -467,10 +464,12 @@ bool CFWL_Widget::GetPopupPosComboBox(FX_FLOAT fMinHeight,
   FX_FLOAT fWidth = std::max(rtAnchor.width, rtPopup.width);
   FX_FLOAT fBottom = rtAnchor.bottom() + fPopHeight;
   TransformTo(nullptr, fx, fy);
-  if (fBottom + fy > 0.0f)
-    rtPopup.Set(rtAnchor.left, rtAnchor.top - fPopHeight, fWidth, fPopHeight);
-  else
-    rtPopup.Set(rtAnchor.left, rtAnchor.bottom(), fWidth, fPopHeight);
+  if (fBottom + fy > 0.0f) {
+    rtPopup =
+        CFX_RectF(rtAnchor.left, rtAnchor.top - fPopHeight, fWidth, fPopHeight);
+  } else {
+    rtPopup = CFX_RectF(rtAnchor.left, rtAnchor.bottom(), fWidth, fPopHeight);
+  }
 
   rtPopup.Offset(fx, fy);
   return true;
@@ -485,11 +484,11 @@ bool CFWL_Widget::GetPopupPosGeneral(FX_FLOAT fMinHeight,
 
   TransformTo(nullptr, fx, fy);
   if (rtAnchor.bottom() + fy > 0.0f) {
-    rtPopup.Set(rtAnchor.left, rtAnchor.top - rtPopup.height, rtPopup.width,
-                rtPopup.height);
+    rtPopup = CFX_RectF(rtAnchor.left, rtAnchor.top - rtPopup.height,
+                        rtPopup.width, rtPopup.height);
   } else {
-    rtPopup.Set(rtAnchor.left, rtAnchor.bottom(), rtPopup.width,
-                rtPopup.height);
+    rtPopup = CFX_RectF(rtAnchor.left, rtAnchor.bottom(), rtPopup.width,
+                        rtPopup.height);
   }
   rtPopup.Offset(fx, fy);
   return true;
@@ -535,11 +534,8 @@ void CFWL_Widget::DispatchEvent(CFWL_Event* pEvent) {
 }
 
 void CFWL_Widget::Repaint() {
-  CFX_RectF rect;
-  rect = m_pProperties->m_rtWidget;
-  rect.left = 0;
-  rect.top = 0;
-  RepaintRect(rect);
+  RepaintRect(CFX_RectF(0, 0, m_pProperties->m_rtWidget.width,
+                        m_pProperties->m_rtWidget.height));
 }
 
 void CFWL_Widget::RepaintRect(const CFX_RectF& pRect) {

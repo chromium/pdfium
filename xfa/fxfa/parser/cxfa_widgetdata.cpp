@@ -407,19 +407,17 @@ CXFA_Border CXFA_WidgetData::GetUIBorder() {
 }
 
 CFX_RectF CXFA_WidgetData::GetUIMargin() {
-  CFX_RectF rtUIMargin;
-  rtUIMargin.Reset();
-
   CXFA_Node* pUIChild = GetUIChild();
   CXFA_Margin mgUI = CXFA_Margin(
       pUIChild ? pUIChild->GetProperty(0, XFA_Element::Margin, false)
                : nullptr);
+
   if (!mgUI)
-    return rtUIMargin;
+    return CFX_RectF();
 
   CXFA_Border border = GetUIBorder();
   if (border && border.GetPresence() != XFA_ATTRIBUTEENUM_Visible)
-    return rtUIMargin;
+    return CFX_RectF();
 
   FX_FLOAT fLeftInset, fTopInset, fRightInset, fBottomInset;
   bool bLeft = mgUI.GetLeftInset(fLeftInset);
@@ -443,8 +441,7 @@ CFX_RectF CXFA_WidgetData::GetUIMargin() {
         fLeftInset = GetEdgeThickness(strokes, bVisible, 3);
     }
   }
-  rtUIMargin.Set(fLeftInset, fTopInset, fRightInset, fBottomInset);
-  return rtUIMargin;
+  return CFX_RectF(fLeftInset, fTopInset, fRightInset, fBottomInset);
 }
 
 int32_t CXFA_WidgetData::GetButtonHighlight() {

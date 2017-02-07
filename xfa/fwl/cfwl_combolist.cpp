@@ -231,9 +231,8 @@ void CFWL_ComboList::OnDropListKeyDown(CFWL_MessageKey* pKey) {
 
       SetSelection(hItem, hItem, true);
       ScrollToVisible(hItem);
-      CFX_RectF rtInvalidate;
-      rtInvalidate.Set(0, 0, m_pProperties->m_rtWidget.width,
-                       m_pProperties->m_rtWidget.height);
+      CFX_RectF rtInvalidate(0, 0, m_pProperties->m_rtWidget.width,
+                             m_pProperties->m_rtWidget.height);
       RepaintRect(rtInvalidate);
       break;
     }

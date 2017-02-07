@@ -275,8 +275,7 @@ void CFWL_CheckBoxTP::InitCheckPath(FX_FLOAT fCheckLen) {
                            pt1.x + px2 * FX_BEZIER, pt1.y + py2 * FX_BEZIER,
                            pt1.x, pt1.y);
     FX_FLOAT fScale = fCheckLen / kSignPath;
-    CFX_Matrix mt;
-    mt.Set(1, 0, 0, 1, 0, 0);
+    CFX_Matrix mt(1, 0, 0, 1, 0, 0);
     mt.Scale(fScale, fScale);
     CFX_PathData* pData = m_pCheckPath->GetPathData();
     pData->Transform(&mt);

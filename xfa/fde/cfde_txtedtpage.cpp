@@ -39,10 +39,6 @@ CFDE_TxtEdtPage::CFDE_TxtEdtPage(CFDE_TxtEdtEngine* pEngine, int32_t nPageIndex)
       m_nCharCount(0),
       m_nPageIndex(nPageIndex),
       m_bLoaded(false) {
-  FXSYS_memset(&m_rtPage, 0, sizeof(CFX_RectF));
-  FXSYS_memset(&m_rtPageMargin, 0, sizeof(CFX_RectF));
-  FXSYS_memset(&m_rtPageContents, 0, sizeof(CFX_RectF));
-  FXSYS_memset(&m_rtPageCanvas, 0, sizeof(CFX_RectF));
 }
 
 CFDE_TxtEdtPage::~CFDE_TxtEdtPage() {

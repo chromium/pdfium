@@ -239,9 +239,11 @@ std::vector<CFX_FloatRect> CPDF_TextPage::GetRectArray(int start,
     }
     if (bFlagNewRect) {
       FX_FLOAT orgX = info_curchar.m_OriginX, orgY = info_curchar.m_OriginY;
-      CFX_Matrix matrix, matrix_reverse;
+      CFX_Matrix matrix;
       info_curchar.m_pTextObj->GetTextMatrix(&matrix);
       matrix.Concat(info_curchar.m_Matrix);
+
+      CFX_Matrix matrix_reverse;
       matrix_reverse.SetReverse(matrix);
       matrix_reverse.Transform(orgX, orgY);
       rect.left = info_curchar.m_CharBox.left;
@@ -766,6 +768,7 @@ void CPDF_TextPage::ProcessTextObject(
   FX_FLOAT this_width = GetCharWidth(item.m_CharCode, pTextObj->GetFont()) *
                         pTextObj->GetFontSize() / 1000;
   this_width = FXSYS_fabs(this_width);
+
   CFX_Matrix this_matrix;
   pTextObj->GetTextMatrix(&this_matrix);
   this_width = FXSYS_fabs(this_width);
@@ -1218,6 +1221,7 @@ CPDF_TextPage::TextOrientation CPDF_TextPage::GetTextObjectWritingMode(
   CPDF_TextObjectItem first, last;
   pTextObj->GetCharInfo(0, &first);
   pTextObj->GetCharInfo(nChars - 1, &last);
+
   CFX_Matrix textMatrix;
   pTextObj->GetTextMatrix(&textMatrix);
   textMatrix.TransformPoint(first.m_OriginX, first.m_OriginY);
@@ -1327,9 +1331,12 @@ CPDF_TextPage::GenerateCharacter CPDF_TextPage::ProcessInsertObject(
   this_width = FXSYS_fabs(this_width);
   FX_FLOAT threshold =
       last_width > this_width ? last_width / 4 : this_width / 4;
-  CFX_Matrix prev_matrix, prev_reverse;
+
+  CFX_Matrix prev_matrix;
   m_pPreTextObj->GetTextMatrix(&prev_matrix);
   prev_matrix.Concat(m_perMatrix);
+
+  CFX_Matrix prev_reverse;
   prev_reverse.SetReverse(prev_matrix);
   FX_FLOAT x = pObj->GetPosX();
   FX_FLOAT y = pObj->GetPosY();

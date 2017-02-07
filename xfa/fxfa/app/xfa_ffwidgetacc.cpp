@@ -927,16 +927,15 @@ bool CXFA_WidgetAcc::CalculateImageAutoSize(CFX_SizeF& size) {
   }
   size.clear();
   if (CFX_DIBitmap* pBitmap = GetImageImage()) {
-    CFX_RectF rtImage, rtFit;
-    rtImage.Set(0, 0, 0, 0);
-    rtFit.Set(0, 0, 0, 0);
     int32_t iImageXDpi = 0;
     int32_t iImageYDpi = 0;
     GetImageDpi(iImageXDpi, iImageYDpi);
-    rtImage.width =
-        XFA_UnitPx2Pt((FX_FLOAT)pBitmap->GetWidth(), (FX_FLOAT)iImageXDpi);
-    rtImage.height =
-        XFA_UnitPx2Pt((FX_FLOAT)pBitmap->GetHeight(), (FX_FLOAT)iImageYDpi);
+    CFX_RectF rtImage(
+        0, 0,
+        XFA_UnitPx2Pt((FX_FLOAT)pBitmap->GetWidth(), (FX_FLOAT)iImageXDpi),
+        XFA_UnitPx2Pt((FX_FLOAT)pBitmap->GetHeight(), (FX_FLOAT)iImageYDpi));
+
+    CFX_RectF rtFit;
     if (GetWidth(rtFit.width)) {
       GetWidthWithoutMargin(rtFit.width);
     } else {
@@ -958,16 +957,15 @@ bool CXFA_WidgetAcc::CalculateImageEditAutoSize(CFX_SizeF& size) {
   }
   size.clear();
   if (CFX_DIBitmap* pBitmap = GetImageEditImage()) {
-    CFX_RectF rtImage, rtFit;
-    rtImage.Set(0, 0, 0, 0);
-    rtFit.Set(0, 0, 0, 0);
     int32_t iImageXDpi = 0;
     int32_t iImageYDpi = 0;
     GetImageEditDpi(iImageXDpi, iImageYDpi);
-    rtImage.width =
-        XFA_UnitPx2Pt((FX_FLOAT)pBitmap->GetWidth(), (FX_FLOAT)iImageXDpi);
-    rtImage.height =
-        XFA_UnitPx2Pt((FX_FLOAT)pBitmap->GetHeight(), (FX_FLOAT)iImageYDpi);
+    CFX_RectF rtImage(
+        0, 0,
+        XFA_UnitPx2Pt((FX_FLOAT)pBitmap->GetWidth(), (FX_FLOAT)iImageXDpi),
+        XFA_UnitPx2Pt((FX_FLOAT)pBitmap->GetHeight(), (FX_FLOAT)iImageYDpi));
+
+    CFX_RectF rtFit;
     if (GetWidth(rtFit.width)) {
       GetWidthWithoutMargin(rtFit.width);
     } else {

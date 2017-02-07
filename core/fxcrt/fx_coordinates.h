@@ -270,48 +270,22 @@ class CFX_RTemplate {
       : left(p.x), top(p.y), width(dst_width), height(dst_height) {}
   CFX_RTemplate(const PointType& p1, const SizeType& s2)
       : left(p1.x), top(p1.y), width(s2.x), height(s2.y) {}
+  CFX_RTemplate(const PointType& p1, const PointType& p2)
+      : left(p1.x), top(p1.y), width(p2.x - p1.x), height(p2.y - p1.y) {
+    Normalize();
+  }
+  CFX_RTemplate(const PointType& p, const VectorType& v)
+      : left(p.x), top(p.y), width(v.x), height(v.y) {
+    Normalize();
+  }
 
-  void Set(BaseType dst_left,
-           BaseType dst_top,
-           BaseType dst_width,
-           BaseType dst_height) {
-    left = dst_left;
-    top = dst_top;
-    width = dst_width;
-    height = dst_height;
-  }
-  void Set(BaseType dst_left, BaseType dst_top, const SizeType& dst_size) {
-    left = dst_left;
-    top = dst_top;
-    width = dst_size.x;
-    height = dst_size.y;
-  }
-  void Set(const PointType& p, BaseType dst_width, BaseType dst_height) {
-    left = p.x;
-    top = p.y;
-    width = dst_width;
-    height = dst_height;
-  }
-  void Set(const PointType& p, const SizeType& s) {
-    left = p.x;
-    top = p.y;
-    width = s.x;
-    height = s.y;
-  }
-  void Set(const PointType& p1, const PointType& p2) {
-    left = p1.x;
-    top = p1.y;
-    width = p2.x - p1.x;
-    height = p2.y - p1.y;
-    Normalize();
-  }
-  void Set(const PointType& p, const VectorType& v) {
-    left = p.x;
-    top = p.y;
-    width = v.x;
-    height = v.y;
-    Normalize();
-  }
+  // NOLINTNEXTLINE(runtime/explicit)
+  CFX_RTemplate(const RectType& other)
+      : left(other.left),
+        top(other.top),
+        width(other.width),
+        height(other.height) {}
+
   void Reset() {
     left = 0;
     top = 0;
@@ -595,31 +569,40 @@ class CFX_Matrix {
  public:
   CFX_Matrix() { SetIdentity(); }
 
+  explicit CFX_Matrix(const FX_FLOAT n[6])
+      : a(n[0]), b(n[1]), c(n[2]), d(n[3]), e(n[4]), f(n[5]) {}
+
+  CFX_Matrix(const CFX_Matrix& other)
+      : a(other.a),
+        b(other.b),
+        c(other.c),
+        d(other.d),
+        e(other.e),
+        f(other.f) {}
   CFX_Matrix(FX_FLOAT a1,
              FX_FLOAT b1,
              FX_FLOAT c1,
              FX_FLOAT d1,
              FX_FLOAT e1,
-             FX_FLOAT f1) {
-    a = a1;
-    b = b1;
-    c = c1;
-    d = d1;
-    e = e1;
-    f = f1;
+             FX_FLOAT f1)
+      : a(a1), b(b1), c(c1), d(d1), e(e1), f(f1) {}
+
+  void operator=(const CFX_Matrix& other) {
+    a = other.a;
+    b = other.b;
+    c = other.c;
+    d = other.d;
+    e = other.e;
+    f = other.f;
   }
 
-  void Set(FX_FLOAT a,
-           FX_FLOAT b,
-           FX_FLOAT c,
-           FX_FLOAT d,
-           FX_FLOAT e,
-           FX_FLOAT f);
-  void Set(const FX_FLOAT n[6]);
-
   void SetIdentity() {
-    a = d = 1;
-    b = c = e = f = 0;
+    a = 1;
+    b = 0;
+    c = 0;
+    d = 1;
+    e = 0;
+    f = 0;
   }
 
   void SetReverse(const CFX_Matrix& m);

@@ -239,27 +239,7 @@ CFX_FloatRect CFX_FloatRect::GetBBox(const CFX_PointF* pPoints, int nPoints) {
   }
   return CFX_FloatRect(min_x, min_y, max_x, max_y);
 }
-void CFX_Matrix::Set(FX_FLOAT other_a,
-                     FX_FLOAT other_b,
-                     FX_FLOAT other_c,
-                     FX_FLOAT other_d,
-                     FX_FLOAT other_e,
-                     FX_FLOAT other_f) {
-  a = other_a;
-  b = other_b;
-  c = other_c;
-  d = other_d;
-  e = other_e;
-  f = other_f;
-}
-void CFX_Matrix::Set(const FX_FLOAT n[6]) {
-  a = n[0];
-  b = n[1];
-  c = n[2];
-  d = n[3];
-  e = n[4];
-  f = n[5];
-}
+
 void CFX_Matrix::SetReverse(const CFX_Matrix& m) {
   FX_FLOAT i = m.a * m.d - m.b * m.c;
   if (FXSYS_fabs(i) == 0) {
@@ -284,6 +264,7 @@ static void FXCRT_Matrix_Concat(CFX_Matrix& m,
   FX_FLOAT ff = m1.e * m2.b + m1.f * m2.d + m2.f;
   m.a = aa, m.b = bb, m.c = cc, m.d = dd, m.e = ee, m.f = ff;
 }
+
 void CFX_Matrix::Concat(FX_FLOAT a_in,
                         FX_FLOAT b_in,
                         FX_FLOAT c_in,
@@ -291,10 +272,9 @@ void CFX_Matrix::Concat(FX_FLOAT a_in,
                         FX_FLOAT e_in,
                         FX_FLOAT f_in,
                         bool bPrepended) {
-  CFX_Matrix m;
-  m.Set(a_in, b_in, c_in, d_in, e_in, f_in);
-  Concat(m, bPrepended);
+  Concat(CFX_Matrix(a_in, b_in, c_in, d_in, e_in, f_in), bPrepended);
 }
+
 void CFX_Matrix::Concat(const CFX_Matrix& m, bool bPrepended) {
   if (bPrepended) {
     FXCRT_Matrix_Concat(*this, m, *this);
@@ -338,17 +318,17 @@ void CFX_Matrix::Scale(FX_FLOAT sx, FX_FLOAT sy, bool bPrepended) {
     f *= sy;
   }
 }
+
 void CFX_Matrix::Rotate(FX_FLOAT fRadian, bool bPrepended) {
   FX_FLOAT cosValue = FXSYS_cos(fRadian);
   FX_FLOAT sinValue = FXSYS_sin(fRadian);
-  CFX_Matrix m;
-  m.Set(cosValue, sinValue, -sinValue, cosValue, 0, 0);
-  if (bPrepended) {
+  CFX_Matrix m(cosValue, sinValue, -sinValue, cosValue, 0, 0);
+  if (bPrepended)
     FXCRT_Matrix_Concat(*this, m, *this);
-  } else {
+  else
     FXCRT_Matrix_Concat(*this, *this, m);
-  }
 }
+
 void CFX_Matrix::RotateAt(FX_FLOAT fRadian,
                           FX_FLOAT dx,
                           FX_FLOAT dy,
@@ -357,17 +337,17 @@ void CFX_Matrix::RotateAt(FX_FLOAT fRadian,
   Rotate(fRadian, bPrepended);
   Translate(-dx, -dy, bPrepended);
 }
+
 void CFX_Matrix::Shear(FX_FLOAT fAlphaRadian,
                        FX_FLOAT fBetaRadian,
                        bool bPrepended) {
-  CFX_Matrix m;
-  m.Set(1, FXSYS_tan(fAlphaRadian), FXSYS_tan(fBetaRadian), 1, 0, 0);
-  if (bPrepended) {
+  CFX_Matrix m(1, FXSYS_tan(fAlphaRadian), FXSYS_tan(fBetaRadian), 1, 0, 0);
+  if (bPrepended)
     FXCRT_Matrix_Concat(*this, m, *this);
-  } else {
+  else
     FXCRT_Matrix_Concat(*this, *this, m);
-  }
 }
+
 void CFX_Matrix::MatchRect(const CFX_FloatRect& dest,
                            const CFX_FloatRect& src) {
   FX_FLOAT fDiff = src.left - src.right;

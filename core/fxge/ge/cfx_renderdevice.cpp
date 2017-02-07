@@ -1060,8 +1060,9 @@ bool CFX_RenderDevice::DrawTextPath(int nChars,
     const FXTEXT_CHARPOS& charpos = pCharPos[iChar];
     CFX_Matrix matrix;
     if (charpos.m_bGlyphAdjust) {
-      matrix.Set(charpos.m_AdjustMatrix[0], charpos.m_AdjustMatrix[1],
-                 charpos.m_AdjustMatrix[2], charpos.m_AdjustMatrix[3], 0, 0);
+      matrix = CFX_Matrix(charpos.m_AdjustMatrix[0], charpos.m_AdjustMatrix[1],
+                          charpos.m_AdjustMatrix[2], charpos.m_AdjustMatrix[3],
+                          0, 0);
     }
     matrix.Concat(font_size, 0, 0, font_size, charpos.m_OriginX,
                   charpos.m_OriginY);

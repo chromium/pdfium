@@ -149,8 +149,6 @@ void CXFA_FWLTheme::DrawText(CFWL_ThemeText* pParams) {
 
 CFX_RectF CXFA_FWLTheme::GetUIMargin(CFWL_ThemePart* pThemePart) const {
   CFX_RectF rect;
-  rect.Reset();
-
   CXFA_FFWidget* pWidget = XFA_ThemeGetOuterWidget(pThemePart->m_pWidget);
   if (!pWidget)
     return rect;
