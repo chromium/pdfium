@@ -14,12 +14,12 @@ CFDE_CSSComputedStyle::CFDE_CSSComputedStyle() {}
 
 CFDE_CSSComputedStyle::~CFDE_CSSComputedStyle() {}
 
-bool CFDE_CSSComputedStyle::GetCustomStyle(const CFX_WideStringC& wsName,
+bool CFDE_CSSComputedStyle::GetCustomStyle(const CFX_WideString& wsName,
                                            CFX_WideString& wsValue) const {
-  for (int32_t i = pdfium::CollectionSize<int32_t>(m_CustomProperties) - 2;
-       i > -1; i -= 2) {
-    if (wsName == m_CustomProperties[i]) {
-      wsValue = m_CustomProperties[i + 1];
+  for (auto iter = m_CustomProperties.rbegin();
+       iter != m_CustomProperties.rend(); iter++) {
+    if (wsName == iter->name()) {
+      wsValue = iter->value();
       return true;
     }
   }
@@ -161,10 +161,10 @@ void CFDE_CSSComputedStyle::SetLetterSpacing(
   m_InheritedData.m_LetterSpacing = letterSpacing;
 }
 
-void CFDE_CSSComputedStyle::AddCustomStyle(const CFX_WideString& wsName,
-                                           const CFX_WideString& wsValue) {
-  m_CustomProperties.push_back(wsName);
-  m_CustomProperties.push_back(wsValue);
+void CFDE_CSSComputedStyle::AddCustomStyle(const CFDE_CSSCustomProperty& prop) {
+  // Force the property to be copied so we aren't dependent on the lifetime
+  // of whatever currently owns it.
+  m_CustomProperties.push_back(prop);
 }
 
 CFDE_CSSComputedStyle::InheritedData::InheritedData()

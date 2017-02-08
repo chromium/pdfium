@@ -1149,6 +1149,7 @@ if (pdf_enable_xfa) {
       "xfa/fde/css/cfde_csscolorvalue.h",
       "xfa/fde/css/cfde_csscomputedstyle.cpp",
       "xfa/fde/css/cfde_csscomputedstyle.h",
+      "xfa/fde/css/cfde_csscustomproperty.cpp",
       "xfa/fde/css/cfde_csscustomproperty.h",
       "xfa/fde/css/cfde_cssdeclaration.cpp",
       "xfa/fde/css/cfde_cssdeclaration.h",

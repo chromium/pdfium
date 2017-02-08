@@ -11,8 +11,17 @@
 
 class CFDE_CSSCustomProperty {
  public:
-  const FX_WCHAR* pwsName;
-  const FX_WCHAR* pwsValue;
+  CFDE_CSSCustomProperty(const CFX_WideString& name,
+                         const CFX_WideString& value);
+  CFDE_CSSCustomProperty(const CFDE_CSSCustomProperty& prop);
+  ~CFDE_CSSCustomProperty();
+
+  CFX_WideString name() const { return name_; }
+  CFX_WideString value() const { return value_; }
+
+ private:
+  CFX_WideString name_;
+  CFX_WideString value_;
 };
 
 #endif  // XFA_FDE_CSS_CFDE_CSSCUSTOMPROPERTY_H_

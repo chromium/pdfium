@@ -53,13 +53,14 @@ CFDE_CSSSelector* CFDE_CSSSelector::GetNextSelector() const {
   return m_pNext.get();
 }
 
+// static.
 std::unique_ptr<CFDE_CSSSelector> CFDE_CSSSelector::FromString(
-    const FX_WCHAR* psz,
-    int32_t iLen) {
-  ASSERT(psz && iLen > 0);
+    const CFX_WideStringC& str) {
+  ASSERT(!str.IsEmpty());
 
+  const FX_WCHAR* psz = str.c_str();
   const FX_WCHAR* pStart = psz;
-  const FX_WCHAR* pEnd = psz + iLen;
+  const FX_WCHAR* pEnd = psz + str.GetLength();
   for (; psz < pEnd; ++psz) {
     switch (*psz) {
       case '>':

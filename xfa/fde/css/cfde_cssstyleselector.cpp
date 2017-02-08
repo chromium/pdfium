@@ -105,10 +105,8 @@ void CFDE_CSSStyleSelector::ComputeStyle(
     if (!styleString.IsEmpty())
       AppendInlineStyle(pDecl.get(), styleString);
     if (!alignString.IsEmpty()) {
-      FDE_CSSPropertyArgs args;
-      args.pStringCache = nullptr;
-      args.pProperty = FDE_GetCSSPropertyByEnum(FDE_CSSProperty::TextAlign);
-      pDecl->AddProperty(&args, alignString.c_str(), alignString.GetLength());
+      pDecl->AddProperty(FDE_GetCSSPropertyByEnum(FDE_CSSProperty::TextAlign),
+                         alignString.AsStringC());
     }
   }
   ApplyDeclarations(declArray, pDecl.get(), pDest);
@@ -130,7 +128,7 @@ void CFDE_CSSStyleSelector::ApplyDeclarations(
   for (auto& prop : normals)
     ApplyProperty(prop->eProperty, prop->pValue.Get(), pComputedStyle);
   for (auto& prop : customs)
-    pComputedStyle->AddCustomStyle(prop->pwsName, prop->pwsValue);
+    pComputedStyle->AddCustomStyle(*prop);
   for (auto& prop : importants)
     ApplyProperty(prop->eProperty, prop->pValue.Get(), pComputedStyle);
 }
@@ -159,28 +157,23 @@ void CFDE_CSSStyleSelector::AppendInlineStyle(CFDE_CSSDeclaration* pDecl,
     return;
 
   int32_t iLen2 = 0;
-  const FX_WCHAR* psz2;
-  FDE_CSSPropertyArgs args;
-  args.pStringCache = nullptr;
-  args.pProperty = nullptr;
+  const FDE_CSSPropertyTable* table = nullptr;
   CFX_WideString wsName;
   while (1) {
     FDE_CSSSyntaxStatus eStatus = pSyntax->DoSyntaxParse();
     if (eStatus == FDE_CSSSyntaxStatus::PropertyName) {
-      psz2 = pSyntax->GetCurrentString(iLen2);
-      args.pProperty = FDE_GetCSSPropertyByName(CFX_WideStringC(psz2, iLen2));
-      if (!args.pProperty)
-        wsName = CFX_WideStringC(psz2, iLen2);
+      CFX_WideStringC strValue = pSyntax->GetCurrentString();
+      table = FDE_GetCSSPropertyByName(strValue);
+      if (!table)
+        wsName = CFX_WideString(strValue);
     } else if (eStatus == FDE_CSSSyntaxStatus::PropertyValue) {
-      if (args.pProperty) {
-        psz2 = pSyntax->GetCurrentString(iLen2);
-        if (iLen2 > 0)
-          pDecl->AddProperty(&args, psz2, iLen2);
-      } else if (iLen2 > 0) {
-        psz2 = pSyntax->GetCurrentString(iLen2);
-        if (iLen2 > 0) {
-          pDecl->AddProperty(&args, wsName.c_str(), wsName.GetLength(), psz2,
-                             iLen2);
+      if (table || iLen2 > 0) {
+        CFX_WideStringC strValue = pSyntax->GetCurrentString();
+        if (!strValue.IsEmpty()) {
+          if (table)
+            pDecl->AddProperty(table, strValue);
+          else if (iLen2 > 0)
+            pDecl->AddProperty(wsName, CFX_WideString(strValue));
         }
       }
     } else {

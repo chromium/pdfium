@@ -15,8 +15,8 @@
 
 class CFDE_CSSSelector {
  public:
-  static std::unique_ptr<CFDE_CSSSelector> FromString(const FX_WCHAR* psz,
-                                                      int32_t iLen);
+  static std::unique_ptr<CFDE_CSSSelector> FromString(
+      const CFX_WideStringC& str);
 
   CFDE_CSSSelector(FDE_CSSSelectorType eType,
                    const FX_WCHAR* psz,

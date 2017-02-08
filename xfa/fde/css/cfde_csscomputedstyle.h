@@ -11,6 +11,7 @@
 
 #include "core/fxcrt/fx_basic.h"
 #include "core/fxcrt/fx_string.h"
+#include "xfa/fde/css/cfde_csscustomproperty.h"
 #include "xfa/fde/css/fde_css.h"
 
 class CFDE_CSSValueList;
@@ -88,10 +89,9 @@ class CFDE_CSSComputedStyle : public CFX_Retainable {
   void SetNumberVerticalAlign(FX_FLOAT fAlign);
   void SetTextDecoration(uint32_t dwTextDecoration);
   void SetLetterSpacing(const FDE_CSSLength& letterSpacing);
-  void AddCustomStyle(const CFX_WideString& wsName,
-                      const CFX_WideString& wsValue);
+  void AddCustomStyle(const CFDE_CSSCustomProperty& prop);
 
-  bool GetCustomStyle(const CFX_WideStringC& wsName,
+  bool GetCustomStyle(const CFX_WideString& wsName,
                       CFX_WideString& wsValue) const;
 
   InheritedData m_InheritedData;
@@ -104,7 +104,7 @@ class CFDE_CSSComputedStyle : public CFX_Retainable {
   CFDE_CSSComputedStyle();
   ~CFDE_CSSComputedStyle() override;
 
-  std::vector<CFX_WideString> m_CustomProperties;
+  std::vector<CFDE_CSSCustomProperty> m_CustomProperties;
 };
 
 #endif  // XFA_FDE_CSS_CFDE_CSSCOMPUTEDSTYLE_H_

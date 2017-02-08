@@ -8,16 +8,10 @@
 #define XFA_FDE_CSS_CFDE_CSSDECLARATION_H_
 
 #include <memory>
-#include <unordered_map>
 #include <utility>
 #include <vector>
 
 #include "xfa/fde/css/fde_cssdatatable.h"
-
-struct FDE_CSSPropertyArgs {
-  std::unordered_map<uint32_t, FX_WCHAR*>* pStringCache;
-  const FDE_CSSPropertyTable* pProperty;
-};
 
 class CFDE_CSSPropertyHolder;
 class CFDE_CSSCustomProperty;
@@ -52,14 +46,9 @@ class CFDE_CSSDeclaration {
 
   bool empty() const { return properties_.empty(); }
 
-  void AddProperty(const FDE_CSSPropertyArgs* pArgs,
-                   const FX_WCHAR* pszValue,
-                   int32_t iValueLen);
-  void AddProperty(const FDE_CSSPropertyArgs* pArgs,
-                   const FX_WCHAR* pszName,
-                   int32_t iNameLen,
-                   const FX_WCHAR* pszValue,
-                   int32_t iValueLen);
+  void AddProperty(const FDE_CSSPropertyTable* pTable,
+                   const CFX_WideStringC& value);
+  void AddProperty(const CFX_WideString& prop, const CFX_WideString& value);
 
   size_t PropertyCountForTesting() const;
 
@@ -68,14 +57,13 @@ class CFDE_CSSDeclaration {
                             FX_ARGB* dwColor) const;
 
  private:
-  void ParseFontProperty(const FDE_CSSPropertyArgs* pArgs,
-                         const FX_WCHAR* pszValue,
+  void ParseFontProperty(const FX_WCHAR* pszValue,
                          int32_t iValueLen,
                          bool bImportant);
   bool ParseBorderProperty(const FX_WCHAR* pszValue,
                            int32_t iValueLen,
                            CFX_RetainPtr<CFDE_CSSValue>& pWidth) const;
-  void ParseValueListProperty(const FDE_CSSPropertyArgs* pArgs,
+  void ParseValueListProperty(const FDE_CSSPropertyTable* pTable,
                               const FX_WCHAR* pszValue,
                               int32_t iValueLen,
                               bool bImportant);
@@ -85,21 +73,14 @@ class CFDE_CSSDeclaration {
                           FDE_CSSProperty eTop,
                           FDE_CSSProperty eRight,
                           FDE_CSSProperty eBottom);
-  CFX_RetainPtr<CFDE_CSSValue> ParseNumber(const FDE_CSSPropertyArgs* pArgs,
-                                           const FX_WCHAR* pszValue,
+  CFX_RetainPtr<CFDE_CSSValue> ParseNumber(const FX_WCHAR* pszValue,
                                            int32_t iValueLen);
-  CFX_RetainPtr<CFDE_CSSValue> ParseEnum(const FDE_CSSPropertyArgs* pArgs,
-                                         const FX_WCHAR* pszValue,
+  CFX_RetainPtr<CFDE_CSSValue> ParseEnum(const FX_WCHAR* pszValue,
                                          int32_t iValueLen);
-  CFX_RetainPtr<CFDE_CSSValue> ParseColor(const FDE_CSSPropertyArgs* pArgs,
-                                          const FX_WCHAR* pszValue,
+  CFX_RetainPtr<CFDE_CSSValue> ParseColor(const FX_WCHAR* pszValue,
                                           int32_t iValueLen);
-  CFX_RetainPtr<CFDE_CSSValue> ParseString(const FDE_CSSPropertyArgs* pArgs,
-                                           const FX_WCHAR* pszValue,
+  CFX_RetainPtr<CFDE_CSSValue> ParseString(const FX_WCHAR* pszValue,
                                            int32_t iValueLen);
-  const FX_WCHAR* CopyToLocal(const FDE_CSSPropertyArgs* pArgs,
-                              const FX_WCHAR* pszValue,
-                              int32_t iValueLen);
   void AddPropertyHolder(FDE_CSSProperty eProperty,
                          CFX_RetainPtr<CFDE_CSSValue> pValue,
                          bool bImportant);

@@ -22,7 +22,7 @@ bool IsSelectorStart(FX_WCHAR wch) {
 }  // namespace
 
 CFDE_CSSSyntaxParser::CFDE_CSSSyntaxParser()
-    : m_iTextDatLen(0),
+    : m_iTextDataLen(0),
       m_dwCheck((uint32_t)-1),
       m_eMode(FDE_CSSSyntaxMode::RuleSet),
       m_eStatus(FDE_CSSSyntaxStatus::None) {}
@@ -46,7 +46,7 @@ bool CFDE_CSSSyntaxParser::Init(const FX_WCHAR* pBuffer,
 void CFDE_CSSSyntaxParser::Reset(bool bOnlyDeclaration) {
   m_TextPlane.Reset();
   m_TextData.Reset();
-  m_iTextDatLen = 0;
+  m_iTextDataLen = 0;
   m_dwCheck = (uint32_t)-1;
   m_eStatus = FDE_CSSSyntaxStatus::None;
   m_eMode = bOnlyDeclaration ? FDE_CSSSyntaxMode::PropertyName
@@ -102,7 +102,7 @@ FDE_CSSSyntaxStatus CFDE_CSSSyntaxParser::DoSyntaxParse() {
             case ',':
               m_TextPlane.MoveNext();
               SwitchMode(FDE_CSSSyntaxMode::Selector);
-              if (m_iTextDatLen > 0)
+              if (m_iTextDataLen > 0)
                 return FDE_CSSSyntaxStatus::Selector;
               break;
             case '{':
@@ -208,9 +208,9 @@ bool CFDE_CSSSyntaxParser::AppendChar(FX_WCHAR wch) {
 }
 
 int32_t CFDE_CSSSyntaxParser::SaveTextData() {
-  m_iTextDatLen = m_TextData.TrimEnd();
+  m_iTextDataLen = m_TextData.TrimEnd();
   m_TextData.Clear();
-  return m_iTextDatLen;
+  return m_iTextDataLen;
 }
 
 void CFDE_CSSSyntaxParser::SwitchMode(FDE_CSSSyntaxMode eMode) {
@@ -234,7 +234,6 @@ bool CFDE_CSSSyntaxParser::RestoreMode() {
   return true;
 }
 
-const FX_WCHAR* CFDE_CSSSyntaxParser::GetCurrentString(int32_t& iLength) const {
-  iLength = m_iTextDatLen;
-  return m_TextData.GetBuffer();
+CFX_WideStringC CFDE_CSSSyntaxParser::GetCurrentString() const {
+  return CFX_WideStringC(m_TextData.GetBuffer(), m_iTextDataLen);
 }

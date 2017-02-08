@@ -63,45 +63,40 @@ FDE_CSSSyntaxStatus CFDE_CSSStyleSheet::LoadStyleRule(
   std::vector<std::unique_ptr<CFDE_CSSSelector>> selectors;
 
   CFDE_CSSStyleRule* pStyleRule = nullptr;
-  const FX_WCHAR* pszValue = nullptr;
   int32_t iValueLen = 0;
-  FDE_CSSPropertyArgs propertyArgs;
-  propertyArgs.pStringCache = &m_StringCache;
-  propertyArgs.pProperty = nullptr;
+  const FDE_CSSPropertyTable* propertyTable = nullptr;
   CFX_WideString wsName;
   while (1) {
     switch (pSyntax->DoSyntaxParse()) {
       case FDE_CSSSyntaxStatus::Selector: {
-        pszValue = pSyntax->GetCurrentString(iValueLen);
-        auto pSelector = CFDE_CSSSelector::FromString(pszValue, iValueLen);
+        CFX_WideStringC strValue = pSyntax->GetCurrentString();
+        auto pSelector = CFDE_CSSSelector::FromString(strValue);
         if (pSelector)
           selectors.push_back(std::move(pSelector));
         break;
       }
-      case FDE_CSSSyntaxStatus::PropertyName:
-        pszValue = pSyntax->GetCurrentString(iValueLen);
-        propertyArgs.pProperty =
-            FDE_GetCSSPropertyByName(CFX_WideStringC(pszValue, iValueLen));
-        if (!propertyArgs.pProperty)
-          wsName = CFX_WideStringC(pszValue, iValueLen);
+      case FDE_CSSSyntaxStatus::PropertyName: {
+        CFX_WideStringC strValue = pSyntax->GetCurrentString();
+        propertyTable = FDE_GetCSSPropertyByName(strValue);
+        if (!propertyTable)
+          wsName = CFX_WideString(strValue);
         break;
-      case FDE_CSSSyntaxStatus::PropertyValue:
-        if (propertyArgs.pProperty) {
-          pszValue = pSyntax->GetCurrentString(iValueLen);
-          if (iValueLen > 0) {
-            pStyleRule->GetDeclaration()->AddProperty(&propertyArgs, pszValue,
-                                                      iValueLen);
-          }
-        } else if (iValueLen > 0) {
-          pszValue = pSyntax->GetCurrentString(iValueLen);
-          if (iValueLen > 0) {
-            pStyleRule->GetDeclaration()->AddProperty(
-                &propertyArgs, wsName.c_str(), wsName.GetLength(), pszValue,
-                iValueLen);
+      }
+      case FDE_CSSSyntaxStatus::PropertyValue: {
+        if (propertyTable || iValueLen > 0) {
+          CFX_WideStringC strValue = pSyntax->GetCurrentString();
+          auto decl = pStyleRule->GetDeclaration();
+          if (!strValue.IsEmpty()) {
+            if (propertyTable) {
+              decl->AddProperty(propertyTable, strValue);
+            } else {
+              decl->AddProperty(wsName, CFX_WideString(strValue));
+            }
           }
         }
         break;
-      case FDE_CSSSyntaxStatus::DeclOpen:
+      }
+      case FDE_CSSSyntaxStatus::DeclOpen: {
         if (!pStyleRule && !selectors.empty()) {
           auto rule = pdfium::MakeUnique<CFDE_CSSStyleRule>();
           pStyleRule = rule.get();
@@ -112,12 +107,14 @@ FDE_CSSSyntaxStatus CFDE_CSSStyleSheet::LoadStyleRule(
           return FDE_CSSSyntaxStatus::None;
         }
         break;
-      case FDE_CSSSyntaxStatus::DeclClose:
+      }
+      case FDE_CSSSyntaxStatus::DeclClose: {
         if (pStyleRule && pStyleRule->GetDeclaration()->empty()) {
           ruleArray->pop_back();
           pStyleRule = nullptr;
         }
         return FDE_CSSSyntaxStatus::None;
+      }
       case FDE_CSSSyntaxStatus::EOS:
         return FDE_CSSSyntaxStatus::EOS;
       case FDE_CSSSyntaxStatus::Error:
