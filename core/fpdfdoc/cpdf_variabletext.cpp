@@ -1010,10 +1010,10 @@ bool CPDF_VariableText::IsBigger(FX_FLOAT fFontSize) const {
   for (int32_t s = 0, sz = m_SectionArray.GetSize(); s < sz; s++) {
     if (CSection* pSection = m_SectionArray.GetAt(s)) {
       CFX_SizeF size = pSection->GetSectionSize(fFontSize);
-      szTotal.x = std::max(size.x, szTotal.x);
-      szTotal.y += size.y;
-      if (IsFloatBigger(szTotal.x, GetPlateWidth()) ||
-          IsFloatBigger(szTotal.y, GetPlateHeight())) {
+      szTotal.width = std::max(size.width, szTotal.width);
+      szTotal.height += size.height;
+      if (IsFloatBigger(szTotal.width, GetPlateWidth()) ||
+          IsFloatBigger(szTotal.height, GetPlateHeight())) {
         return true;
       }
     }

@@ -396,10 +396,11 @@ bool CFX_ImageTransformer::Start() {
   CFX_Matrix stretch2dest(1.0f, 0.0f, 0.0f, -1.0f, 0.0f,
                           (FX_FLOAT)(stretch_height));
   stretch2dest.Concat(
-      m_pMatrix->a / stretch_width, m_pMatrix->b / stretch_width,
-      m_pMatrix->c / stretch_height, m_pMatrix->d / stretch_height,
-      m_pMatrix->e, m_pMatrix->f);
+      CFX_Matrix(m_pMatrix->a / stretch_width, m_pMatrix->b / stretch_width,
+                 m_pMatrix->c / stretch_height, m_pMatrix->d / stretch_height,
+                 m_pMatrix->e, m_pMatrix->f));
   m_dest2stretch.SetReverse(stretch2dest);
+
   CFX_FloatRect clip_rect_f(result_clip);
   clip_rect_f.Transform(&m_dest2stretch);
   m_StretchClip = clip_rect_f.GetOuterRect();

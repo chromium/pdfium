@@ -664,7 +664,7 @@ void CXFA_LayoutPageMgr::FinishPaginatedPageSets() {
                      pContentChildLayoutItem->m_pNextSibling) {
               if (CXFA_ContentLayoutItem* pContent =
                       pContentChildLayoutItem->AsContentLayoutItem()) {
-                fUsedHeight += pContent->m_sSize.y;
+                fUsedHeight += pContent->m_sSize.height;
               }
             }
             rgUsedHeights.Add(fUsedHeight);

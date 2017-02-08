@@ -265,16 +265,6 @@ static void FXCRT_Matrix_Concat(CFX_Matrix& m,
   m.a = aa, m.b = bb, m.c = cc, m.d = dd, m.e = ee, m.f = ff;
 }
 
-void CFX_Matrix::Concat(FX_FLOAT a_in,
-                        FX_FLOAT b_in,
-                        FX_FLOAT c_in,
-                        FX_FLOAT d_in,
-                        FX_FLOAT e_in,
-                        FX_FLOAT f_in,
-                        bool bPrepended) {
-  Concat(CFX_Matrix(a_in, b_in, c_in, d_in, e_in, f_in), bPrepended);
-}
-
 void CFX_Matrix::Concat(const CFX_Matrix& m, bool bPrepended) {
   if (bPrepended) {
     FXCRT_Matrix_Concat(*this, m, *this);

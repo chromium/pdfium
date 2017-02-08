@@ -506,7 +506,7 @@ CFX_SizeF CFWL_ListBox::CalcSize(bool bAutoSize) {
   bool bShowVertScr = false;
   bool bShowHorzScr = false;
   if (!bShowVertScr && (m_pProperties->m_dwStyles & FWL_WGTSTYLE_VScroll))
-    bShowVertScr = (fs.y > iHeight);
+    bShowVertScr = (fs.height > iHeight);
 
   CFX_SizeF szRange;
   if (bShowVertScr) {
@@ -520,15 +520,15 @@ CFX_SizeF CFWL_ListBox::CalcSize(bool bAutoSize) {
       rtScrollBar.height -= m_fScorllBarWidth;
 
     m_pVertScrollBar->SetWidgetRect(rtScrollBar);
-    szRange.x = 0, szRange.y = fs.y - m_rtConent.height;
-    szRange.y = std::max(szRange.y, m_fItemHeight);
+    szRange.width = 0;
+    szRange.height = std::max(fs.height - m_rtConent.height, m_fItemHeight);
 
-    m_pVertScrollBar->SetRange(szRange.x, szRange.y);
+    m_pVertScrollBar->SetRange(szRange.width, szRange.height);
     m_pVertScrollBar->SetPageSize(rtScrollBar.height * 9 / 10);
     m_pVertScrollBar->SetStepSize(m_fItemHeight);
 
     FX_FLOAT fPos =
-        std::min(std::max(m_pVertScrollBar->GetPos(), 0.f), szRange.y);
+        std::min(std::max(m_pVertScrollBar->GetPos(), 0.f), szRange.height);
     m_pVertScrollBar->SetPos(fPos);
     m_pVertScrollBar->SetTrackPos(fPos);
     if ((m_pProperties->m_dwStyleExes & FWL_STYLEEXT_LTB_ShowScrollBarFocus) ==
@@ -553,13 +553,14 @@ CFX_SizeF CFWL_ListBox::CalcSize(bool bAutoSize) {
       rtScrollBar.width -= m_fScorllBarWidth;
 
     m_pHorzScrollBar->SetWidgetRect(rtScrollBar);
-    szRange.x = 0, szRange.y = fs.x - rtScrollBar.width;
-    m_pHorzScrollBar->SetRange(szRange.x, szRange.y);
+    szRange.width = 0;
+    szRange.height = fs.width - rtScrollBar.width;
+    m_pHorzScrollBar->SetRange(szRange.width, szRange.height);
     m_pHorzScrollBar->SetPageSize(fWidth * 9 / 10);
     m_pHorzScrollBar->SetStepSize(fWidth / 10);
 
     FX_FLOAT fPos =
-        std::min(std::max(m_pHorzScrollBar->GetPos(), 0.f), szRange.y);
+        std::min(std::max(m_pHorzScrollBar->GetPos(), 0.f), szRange.height);
     m_pHorzScrollBar->SetPos(fPos);
     m_pHorzScrollBar->SetTrackPos(fPos);
     if ((m_pProperties->m_dwStyleExes & FWL_STYLEEXT_LTB_ShowScrollBarFocus) ==
@@ -587,11 +588,11 @@ void CFWL_ListBox::UpdateItemSize(CFWL_ListItem* pItem,
                                   FX_FLOAT fItemHeight,
                                   bool bAutoSize) const {
   if (!bAutoSize && pItem) {
-    CFX_RectF rtItem(0, size.y, fWidth, fItemHeight);
+    CFX_RectF rtItem(0, size.height, fWidth, fItemHeight);
     pItem->SetRect(rtItem);
   }
-  size.x = fWidth;
-  size.y += fItemHeight;
+  size.width = fWidth;
+  size.height += fItemHeight;
 }
 
 FX_FLOAT CFWL_ListBox::GetMaxTextWidth() {
@@ -604,7 +605,7 @@ FX_FLOAT CFWL_ListBox::GetMaxTextWidth() {
 
     CFX_SizeF sz =
         CalcTextSize(pItem->GetText(), m_pProperties->m_pThemeProvider, false);
-    fRet = std::max(fRet, sz.x);
+    fRet = std::max(fRet, sz.width);
   }
   return fRet;
 }
@@ -839,40 +840,40 @@ bool CFWL_ListBox::OnScroll(CFWL_ScrollBar* pScrollBar,
                             CFWL_EventScroll::Code dwCode,
                             FX_FLOAT fPos) {
   CFX_SizeF fs;
-  pScrollBar->GetRange(&fs.x, &fs.y);
+  pScrollBar->GetRange(&fs.width, &fs.height);
   FX_FLOAT iCurPos = pScrollBar->GetPos();
   FX_FLOAT fStep = pScrollBar->GetStepSize();
   switch (dwCode) {
     case CFWL_EventScroll::Code::Min: {
-      fPos = fs.x;
+      fPos = fs.width;
       break;
     }
     case CFWL_EventScroll::Code::Max: {
-      fPos = fs.y;
+      fPos = fs.height;
       break;
     }
     case CFWL_EventScroll::Code::StepBackward: {
       fPos -= fStep;
-      if (fPos < fs.x + fStep / 2)
-        fPos = fs.x;
+      if (fPos < fs.width + fStep / 2)
+        fPos = fs.width;
       break;
     }
     case CFWL_EventScroll::Code::StepForward: {
       fPos += fStep;
-      if (fPos > fs.y - fStep / 2)
-        fPos = fs.y;
+      if (fPos > fs.height - fStep / 2)
+        fPos = fs.height;
       break;
     }
     case CFWL_EventScroll::Code::PageBackward: {
       fPos -= pScrollBar->GetPageSize();
-      if (fPos < fs.x)
-        fPos = fs.x;
+      if (fPos < fs.width)
+        fPos = fs.width;
       break;
     }
     case CFWL_EventScroll::Code::PageForward: {
       fPos += pScrollBar->GetPageSize();
-      if (fPos > fs.y)
-        fPos = fs.y;
+      if (fPos > fs.height)
+        fPos = fs.height;
       break;
     }
     case CFWL_EventScroll::Code::Pos:

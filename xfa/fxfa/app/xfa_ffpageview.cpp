@@ -132,7 +132,7 @@ void CXFA_FFPageView::GetDisplayMatrix(CFX_Matrix& mt,
                                        const CFX_Rect& rtDisp,
                                        int32_t iRotate) const {
   CFX_SizeF sz = GetPageSize();
-  GetPageMatrix(mt, CFX_RectF(0, 0, sz.x, sz.y), rtDisp, iRotate, 0);
+  GetPageMatrix(mt, CFX_RectF(0, 0, sz), rtDisp, iRotate, 0);
 }
 
 IXFA_WidgetIterator* CXFA_FFPageView::CreateWidgetIterator(

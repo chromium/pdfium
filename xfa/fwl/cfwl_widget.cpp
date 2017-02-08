@@ -168,11 +168,11 @@ void CFWL_Widget::TransformTo(CFWL_Widget* pWidget,
       szOffset = GetOffsetFromParent(pWidget);
     } else {
       szOffset = pWidget->GetOffsetFromParent(this);
-      szOffset.x = -szOffset.x;
-      szOffset.y = -szOffset.y;
+      szOffset.width = -szOffset.width;
+      szOffset.height = -szOffset.height;
     }
-    fx += szOffset.x;
-    fy += szOffset.y;
+    fx += szOffset.width;
+    fy += szOffset.height;
     return;
   }
   CFX_RectF r;

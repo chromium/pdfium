@@ -875,18 +875,22 @@ void XFA_DrawImage(CFX_Graphics* pGS,
   }
   CFX_RenderDevice* pRenderDevice = pGS->GetRenderDevice();
   pRenderDevice->SaveState();
+
   CFX_PathData path;
   path.AppendRect(rtImage.left, rtImage.bottom(), rtImage.right(), rtImage.top);
   pRenderDevice->SetClip_PathFill(&path, pMatrix, FXFILL_WINDING);
+
   CFX_Matrix mtImage(1, 0, 0, -1, 0, 1);
-  mtImage.Concat(rtFit.width, 0, 0, rtFit.height, rtFit.left, rtFit.top);
+  mtImage.Concat(
+      CFX_Matrix(rtFit.width, 0, 0, rtFit.height, rtFit.left, rtFit.top));
   mtImage.Concat(*pMatrix);
+
   CXFA_ImageRenderer imageRender;
   bool bRet = imageRender.Start(pRenderDevice, pDIBitmap, 0, 255, &mtImage,
                                 FXDIB_INTERPOL);
-  while (bRet) {
+  while (bRet)
     bRet = imageRender.Continue(nullptr);
-  }
+
   pRenderDevice->RestoreState(false);
 }
 

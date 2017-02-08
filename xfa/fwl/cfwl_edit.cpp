@@ -778,8 +778,8 @@ void CFWL_Edit::UpdateVAlignment() {
     part.m_pWidget = this;
 
     CFX_SizeF pSpace = theme->GetSpaceAboveBelow(&part);
-    fSpaceAbove = pSpace.x;
-    fSpaceBelow = pSpace.y;
+    fSpaceAbove = pSpace.width;
+    fSpaceBelow = pSpace.height;
   }
   if (fSpaceAbove < 0.1f)
     fSpaceAbove = 0;
@@ -1500,43 +1500,43 @@ bool CFWL_Edit::OnScroll(CFWL_ScrollBar* pScrollBar,
                          CFWL_EventScroll::Code dwCode,
                          FX_FLOAT fPos) {
   CFX_SizeF fs;
-  pScrollBar->GetRange(&fs.x, &fs.y);
+  pScrollBar->GetRange(&fs.width, &fs.height);
   FX_FLOAT iCurPos = pScrollBar->GetPos();
   FX_FLOAT fStep = pScrollBar->GetStepSize();
   switch (dwCode) {
     case CFWL_EventScroll::Code::Min: {
-      fPos = fs.x;
+      fPos = fs.width;
       break;
     }
     case CFWL_EventScroll::Code::Max: {
-      fPos = fs.y;
+      fPos = fs.height;
       break;
     }
     case CFWL_EventScroll::Code::StepBackward: {
       fPos -= fStep;
-      if (fPos < fs.x + fStep / 2) {
-        fPos = fs.x;
+      if (fPos < fs.width + fStep / 2) {
+        fPos = fs.width;
       }
       break;
     }
     case CFWL_EventScroll::Code::StepForward: {
       fPos += fStep;
-      if (fPos > fs.y - fStep / 2) {
-        fPos = fs.y;
+      if (fPos > fs.height - fStep / 2) {
+        fPos = fs.height;
       }
       break;
     }
     case CFWL_EventScroll::Code::PageBackward: {
       fPos -= pScrollBar->GetPageSize();
-      if (fPos < fs.x) {
-        fPos = fs.x;
+      if (fPos < fs.width) {
+        fPos = fs.width;
       }
       break;
     }
     case CFWL_EventScroll::Code::PageForward: {
       fPos += pScrollBar->GetPageSize();
-      if (fPos > fs.y) {
-        fPos = fs.y;
+      if (fPos > fs.height) {
+        fPos = fs.height;
       }
       break;
     }

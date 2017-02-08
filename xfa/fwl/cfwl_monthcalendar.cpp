@@ -125,7 +125,7 @@ FWL_Type CFWL_MonthCalendar::GetClassID() const {
 
 CFX_RectF CFWL_MonthCalendar::GetAutosizedWidgetRect() {
   CFX_SizeF fs = CalcSize();
-  CFX_RectF rect(0, 0, fs.x, fs.y);
+  CFX_RectF rect(0, 0, fs.width, fs.height);
   InflateWidgetRect(rect);
   return rect;
 }
@@ -314,8 +314,9 @@ void CFWL_MonthCalendar::DrawWeek(CFX_Graphics* pGraphics,
 
   for (int32_t i = 0; i < 7; i++) {
     rtDayOfWeek =
-        CFX_RectF(m_rtWeek.left + i * (m_szCell.x + MONTHCAL_HMARGIN * 2),
-                  m_rtWeek.top, m_szCell.x, m_szCell.y);
+        CFX_RectF(m_rtWeek.left + i * (m_szCell.width + MONTHCAL_HMARGIN * 2),
+                  m_rtWeek.top, m_szCell);
+
     params.m_rtPart = rtDayOfWeek;
     params.m_wsText = GetCapacityForDay(pTheme, params, i);
     params.m_dwTTOStyles = FDE_TTOSTYLE_SingleLine;
@@ -411,7 +412,6 @@ CFX_SizeF CFWL_MonthCalendar::CalcSize() {
   if (!m_pProperties->m_pThemeProvider)
     return CFX_SizeF();
 
-  CFX_SizeF fs;
   CFWL_ThemePart params;
   params.m_pWidget = this;
   IFWL_ThemeProvider* pTheme = m_pProperties->m_pThemeProvider;
@@ -421,8 +421,8 @@ CFX_SizeF CFWL_MonthCalendar::CalcSize() {
   for (uint32_t i = 0; i < 7; ++i) {
     CFX_SizeF sz = CalcTextSize(GetCapacityForDay(pTheme, params, i),
                                 m_pProperties->m_pThemeProvider, false);
-    fMaxWeekW = (fMaxWeekW >= sz.x) ? fMaxWeekW : sz.x;
-    fMaxWeekH = (fMaxWeekH >= sz.y) ? fMaxWeekH : sz.y;
+    fMaxWeekW = (fMaxWeekW >= sz.width) ? fMaxWeekW : sz.width;
+    fMaxWeekH = (fMaxWeekH >= sz.height) ? fMaxWeekH : sz.height;
   }
 
   FX_FLOAT fDayMaxW = 0.0f;
@@ -431,60 +431,65 @@ CFX_SizeF CFWL_MonthCalendar::CalcSize() {
     CFX_WideString wsDay;
     wsDay.Format(L"%d", day);
     CFX_SizeF sz = CalcTextSize(wsDay, m_pProperties->m_pThemeProvider, false);
-    fDayMaxW = (fDayMaxW >= sz.x) ? fDayMaxW : sz.x;
-    fDayMaxH = (fDayMaxH >= sz.y) ? fDayMaxH : sz.y;
+    fDayMaxW = (fDayMaxW >= sz.width) ? fDayMaxW : sz.width;
+    fDayMaxH = (fDayMaxH >= sz.height) ? fDayMaxH : sz.height;
   }
-  m_szCell.x = FX_FLOAT((fMaxWeekW >= fDayMaxW) ? (int)(fMaxWeekW + 0.5)
-                                                : (int)(fDayMaxW + 0.5));
-  m_szCell.y = (fMaxWeekH >= fDayMaxH) ? fMaxWeekH : fDayMaxH;
-  fs.x = m_szCell.x * MONTHCAL_COLUMNS +
-         MONTHCAL_HMARGIN * MONTHCAL_COLUMNS * 2 +
-         MONTHCAL_HEADER_BTN_HMARGIN * 2;
+  m_szCell.width = FX_FLOAT((fMaxWeekW >= fDayMaxW) ? (int)(fMaxWeekW + 0.5)
+                                                    : (int)(fDayMaxW + 0.5));
+  m_szCell.height = (fMaxWeekH >= fDayMaxH) ? fMaxWeekH : fDayMaxH;
+
+  CFX_SizeF fs;
+  fs.width = m_szCell.width * MONTHCAL_COLUMNS +
+             MONTHCAL_HMARGIN * MONTHCAL_COLUMNS * 2 +
+             MONTHCAL_HEADER_BTN_HMARGIN * 2;
   FX_FLOAT fMonthMaxW = 0.0f;
   FX_FLOAT fMonthMaxH = 0.0f;
 
   for (uint32_t i = 0; i < 12; ++i) {
     CFX_SizeF sz = CalcTextSize(GetCapacityForMonth(pTheme, params, i),
                                 m_pProperties->m_pThemeProvider, false);
-    fMonthMaxW = (fMonthMaxW >= sz.x) ? fMonthMaxW : sz.x;
-    fMonthMaxH = (fMonthMaxH >= sz.y) ? fMonthMaxH : sz.y;
+    fMonthMaxW = (fMonthMaxW >= sz.width) ? fMonthMaxW : sz.width;
+    fMonthMaxH = (fMonthMaxH >= sz.height) ? fMonthMaxH : sz.height;
   }
 
   CFX_SizeF szYear = CalcTextSize(GetHeadText(m_iYear, m_iMonth),
                                   m_pProperties->m_pThemeProvider, false);
-  fMonthMaxH = std::max(fMonthMaxH, szYear.y);
-  m_szHead = CFX_SizeF(fMonthMaxW + szYear.x, fMonthMaxH);
-  fMonthMaxW = m_szHead.x + MONTHCAL_HEADER_BTN_HMARGIN * 2 + m_szCell.x * 2;
-  fs.x = std::max(fs.x, fMonthMaxW);
+  fMonthMaxH = std::max(fMonthMaxH, szYear.height);
+  m_szHead = CFX_SizeF(fMonthMaxW + szYear.width, fMonthMaxH);
+  fMonthMaxW =
+      m_szHead.width + MONTHCAL_HEADER_BTN_HMARGIN * 2 + m_szCell.width * 2;
+  fs.width = std::max(fs.width, fMonthMaxW);
 
   CFX_WideString wsToday = GetTodayText(m_iYear, m_iMonth, m_iDay);
   m_wsToday = L"Today" + wsToday;
   m_szToday = CalcTextSize(wsToday, m_pProperties->m_pThemeProvider, false);
-  m_szToday.y = (m_szToday.y >= m_szCell.y) ? m_szToday.y : m_szCell.y;
-  fs.y = m_szCell.x + m_szCell.y * (MONTHCAL_ROWS - 2) + m_szToday.y +
-         MONTHCAL_VMARGIN * MONTHCAL_ROWS * 2 + MONTHCAL_HEADER_BTN_VMARGIN * 4;
+  m_szToday.height = (m_szToday.height >= m_szCell.height) ? m_szToday.height
+                                                           : m_szCell.height;
+  fs.height = m_szCell.width + m_szCell.height * (MONTHCAL_ROWS - 2) +
+              m_szToday.height + MONTHCAL_VMARGIN * MONTHCAL_ROWS * 2 +
+              MONTHCAL_HEADER_BTN_VMARGIN * 4;
   return fs;
 }
 
 void CFWL_MonthCalendar::CalcHeadSize() {
-  FX_FLOAT fHeadHMargin = (m_rtClient.width - m_szHead.x) / 2;
-  FX_FLOAT fHeadVMargin = (m_szCell.x - m_szHead.y) / 2;
+  FX_FLOAT fHeadHMargin = (m_rtClient.width - m_szHead.width) / 2;
+  FX_FLOAT fHeadVMargin = (m_szCell.width - m_szHead.height) / 2;
   m_rtHeadText = CFX_RectF(m_rtClient.left + fHeadHMargin,
                            m_rtClient.top + MONTHCAL_HEADER_BTN_VMARGIN +
                                MONTHCAL_VMARGIN + fHeadVMargin,
-                           m_szHead.x, m_szHead.y);
+                           m_szHead);
 }
 
 void CFWL_MonthCalendar::CalcTodaySize() {
   m_rtTodayFlag = CFX_RectF(
       m_rtClient.left + MONTHCAL_HEADER_BTN_HMARGIN + MONTHCAL_HMARGIN,
       m_rtDates.bottom() + MONTHCAL_HEADER_BTN_VMARGIN + MONTHCAL_VMARGIN,
-      m_szCell.x, m_szToday.y);
+      m_szCell.width, m_szToday.height);
   m_rtToday = CFX_RectF(
-      m_rtClient.left + MONTHCAL_HEADER_BTN_HMARGIN + m_szCell.x +
+      m_rtClient.left + MONTHCAL_HEADER_BTN_HMARGIN + m_szCell.width +
           MONTHCAL_HMARGIN * 2,
       m_rtDates.bottom() + MONTHCAL_HEADER_BTN_VMARGIN + MONTHCAL_VMARGIN,
-      m_szToday.x, m_szToday.y);
+      m_szToday);
 }
 
 void CFWL_MonthCalendar::Layout() {
@@ -493,18 +498,18 @@ void CFWL_MonthCalendar::Layout() {
   m_rtHead = CFX_RectF(
       m_rtClient.left + MONTHCAL_HEADER_BTN_HMARGIN, m_rtClient.top,
       m_rtClient.width - MONTHCAL_HEADER_BTN_HMARGIN * 2,
-      m_szCell.x + (MONTHCAL_HEADER_BTN_VMARGIN + MONTHCAL_VMARGIN) * 2);
+      m_szCell.width + (MONTHCAL_HEADER_BTN_VMARGIN + MONTHCAL_VMARGIN) * 2);
   m_rtWeek = CFX_RectF(m_rtClient.left + MONTHCAL_HEADER_BTN_HMARGIN,
                        m_rtHead.bottom(),
                        m_rtClient.width - MONTHCAL_HEADER_BTN_HMARGIN * 2,
-                       m_szCell.y + MONTHCAL_VMARGIN * 2);
+                       m_szCell.height + MONTHCAL_VMARGIN * 2);
   m_rtLBtn = CFX_RectF(m_rtClient.left + MONTHCAL_HEADER_BTN_HMARGIN,
-                       m_rtClient.top + MONTHCAL_HEADER_BTN_VMARGIN, m_szCell.x,
-                       m_szCell.x);
+                       m_rtClient.top + MONTHCAL_HEADER_BTN_VMARGIN,
+                       m_szCell.width, m_szCell.width);
   m_rtRBtn = CFX_RectF(m_rtClient.left + m_rtClient.width -
-                           MONTHCAL_HEADER_BTN_HMARGIN - m_szCell.x,
-                       m_rtClient.top + MONTHCAL_HEADER_BTN_VMARGIN, m_szCell.x,
-                       m_szCell.x);
+                           MONTHCAL_HEADER_BTN_HMARGIN - m_szCell.width,
+                       m_rtClient.top + MONTHCAL_HEADER_BTN_VMARGIN,
+                       m_szCell.width, m_szCell.width);
   m_rtHSep = CFX_RectF(
       m_rtClient.left + MONTHCAL_HEADER_BTN_HMARGIN + MONTHCAL_HMARGIN,
       m_rtWeek.bottom() - MONTHCAL_VMARGIN,
@@ -513,7 +518,7 @@ void CFWL_MonthCalendar::Layout() {
   m_rtDates = CFX_RectF(m_rtClient.left + MONTHCAL_HEADER_BTN_HMARGIN,
                         m_rtWeek.bottom(),
                         m_rtClient.width - MONTHCAL_HEADER_BTN_HMARGIN * 2,
-                        m_szCell.y * (MONTHCAL_ROWS - 3) +
+                        m_szCell.height * (MONTHCAL_ROWS - 3) +
                             MONTHCAL_VMARGIN * (MONTHCAL_ROWS - 3) * 2);
 
   CalDateItem();
@@ -530,10 +535,11 @@ void CFWL_MonthCalendar::CalDateItem() {
       bNewWeek = false;
     }
     pDateInfo->rect = CFX_RectF(
-        fLeft + pDateInfo->iDayOfWeek * (m_szCell.x + (MONTHCAL_HMARGIN * 2)),
-        fTop + iWeekOfMonth * (m_szCell.y + (MONTHCAL_VMARGIN * 2)),
-        m_szCell.x + (MONTHCAL_HMARGIN * 2),
-        m_szCell.y + (MONTHCAL_VMARGIN * 2));
+        fLeft +
+            pDateInfo->iDayOfWeek * (m_szCell.width + (MONTHCAL_HMARGIN * 2)),
+        fTop + iWeekOfMonth * (m_szCell.height + (MONTHCAL_VMARGIN * 2)),
+        m_szCell.width + (MONTHCAL_HMARGIN * 2),
+        m_szCell.height + (MONTHCAL_VMARGIN * 2));
     if (pDateInfo->iDayOfWeek >= 6)
       bNewWeek = true;
   }

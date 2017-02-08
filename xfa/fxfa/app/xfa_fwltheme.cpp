@@ -215,8 +215,8 @@ CFX_SizeF CXFA_FWLTheme::GetSpaceAboveBelow(CFWL_ThemePart* pThemePart) const {
   if (CXFA_FFWidget* pWidget = XFA_ThemeGetOuterWidget(pThemePart->m_pWidget)) {
     CXFA_WidgetAcc* pWidgetAcc = pWidget->GetDataAcc();
     if (CXFA_Para para = pWidgetAcc->GetPara()) {
-      sizeAboveBelow.x = para.GetSpaceAbove();
-      sizeAboveBelow.y = para.GetSpaceBelow();
+      sizeAboveBelow.width = para.GetSpaceAbove();
+      sizeAboveBelow.height = para.GetSpaceBelow();
     }
   }
   return sizeAboveBelow;

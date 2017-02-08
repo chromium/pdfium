@@ -99,10 +99,6 @@ class CFDE_TextOut {
   void SetClipRect(const CFX_RectF& rtClip);
   void SetMatrix(const CFX_Matrix& matrix);
   void SetLineBreakTolerance(FX_FLOAT fTolerance);
-  void CalcSize(const FX_WCHAR* pwsStr, int32_t iLength, CFX_Size& size);
-  void CalcSize(const FX_WCHAR* pwsStr, int32_t iLength, CFX_SizeF& size);
-  void CalcSize(const FX_WCHAR* pwsStr, int32_t iLength, CFX_Rect& rect);
-  void CalcSize(const FX_WCHAR* pwsStr, int32_t iLength, CFX_RectF& rect);
 
   void DrawText(const FX_WCHAR* pwsStr, int32_t iLength, int32_t x, int32_t y);
   void DrawText(const FX_WCHAR* pwsStr,

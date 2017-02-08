@@ -138,10 +138,7 @@ void CFDE_TextOut::SetRenderDevice(CFX_RenderDevice* pDevice) {
 }
 
 void CFDE_TextOut::SetClipRect(const CFX_Rect& rtClip) {
-  m_rtClip = CFX_RectF(static_cast<FX_FLOAT>(rtClip.left),
-                       static_cast<FX_FLOAT>(rtClip.top),
-                       static_cast<FX_FLOAT>(rtClip.Width()),
-                       static_cast<FX_FLOAT>(rtClip.Height()));
+  m_rtClip = rtClip.As<FX_FLOAT>();
 }
 
 void CFDE_TextOut::SetClipRect(const CFX_RectF& rtClip) {
@@ -165,61 +162,12 @@ int32_t CFDE_TextOut::GetTotalLines() {
   return m_iTotalLines;
 }
 
-void CFDE_TextOut::CalcSize(const FX_WCHAR* pwsStr,
-                            int32_t iLength,
-                            CFX_Size& size) {
-  CFX_RectF rtText(0.0f, 0.0f, static_cast<FX_FLOAT>(size.x),
-                   static_cast<FX_FLOAT>(size.y));
-  CalcSize(pwsStr, iLength, rtText);
-  size.x = (int32_t)rtText.Width();
-  size.y = (int32_t)rtText.Height();
-}
-
-void CFDE_TextOut::CalcSize(const FX_WCHAR* pwsStr,
-                            int32_t iLength,
-                            CFX_SizeF& size) {
-  CFX_RectF rtText(0.0f, 0.0f, size.x, size.y);
-  CalcSize(pwsStr, iLength, rtText);
-  size.x = rtText.Width();
-  size.y = rtText.Height();
-}
-
-void CFDE_TextOut::CalcSize(const FX_WCHAR* pwsStr,
-                            int32_t iLength,
-                            CFX_Rect& rect) {
-  CFX_RectF rtText(static_cast<FX_FLOAT>(rect.left),
-                   static_cast<FX_FLOAT>(rect.top),
-                   static_cast<FX_FLOAT>(rect.Width()),
-                   static_cast<FX_FLOAT>(rect.Height()));
-  CalcSize(pwsStr, iLength, rtText);
-  rect = CFX_Rect(static_cast<int32_t>(rtText.left),
-                  static_cast<int32_t>(rtText.top),
-                  static_cast<int32_t>(rtText.Width()),
-                  static_cast<int32_t>(rtText.Height()));
-}
-
-void CFDE_TextOut::CalcSize(const FX_WCHAR* pwsStr,
-                            int32_t iLength,
-                            CFX_RectF& rect) {
-  if (!pwsStr || iLength < 1) {
-    rect.width = 0.0f;
-    rect.height = 0.0f;
-  } else {
-    CFX_Matrix rm;
-    rm.SetReverse(m_Matrix);
-    rm.TransformRect(rect);
-    CalcTextSize(pwsStr, iLength, rect);
-    m_Matrix.TransformRect(rect);
-  }
-}
-
 void CFDE_TextOut::CalcLogicSize(const FX_WCHAR* pwsStr,
                                  int32_t iLength,
                                  CFX_SizeF& size) {
-  CFX_RectF rtText(0.0f, 0.0f, size.x, size.y);
+  CFX_RectF rtText(0.0f, 0.0f, size.width, size.height);
   CalcLogicSize(pwsStr, iLength, rtText);
-  size.x = rtText.Width();
-  size.y = rtText.Height();
+  size = rtText.Size();
 }
 
 void CFDE_TextOut::CalcLogicSize(const FX_WCHAR* pwsStr,
@@ -358,17 +306,14 @@ void CFDE_TextOut::DrawText(const FX_WCHAR* pwsStr,
                             int32_t iLength,
                             FX_FLOAT x,
                             FX_FLOAT y) {
-  CFX_RectF rtText(x, y, m_fFontSize * 1000.0f, m_fFontSize * 1000.0f);
-  DrawText(pwsStr, iLength, rtText);
+  DrawText(pwsStr, iLength,
+           CFX_RectF(x, y, m_fFontSize * 1000.0f, m_fFontSize * 1000.0f));
 }
 
 void CFDE_TextOut::DrawText(const FX_WCHAR* pwsStr,
                             int32_t iLength,
                             const CFX_Rect& rect) {
-  CFX_RectF rtText(
-      static_cast<FX_FLOAT>(rect.left), static_cast<FX_FLOAT>(rect.top),
-      static_cast<FX_FLOAT>(rect.width), static_cast<FX_FLOAT>(rect.height));
-  DrawText(pwsStr, iLength, rtText);
+  DrawText(pwsStr, iLength, rect.As<FX_FLOAT>());
 }
 
 void CFDE_TextOut::DrawText(const FX_WCHAR* pwsStr,

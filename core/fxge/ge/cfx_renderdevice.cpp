@@ -613,7 +613,7 @@ bool CFX_RenderDevice::DrawFillStrokePath(const CFX_PathData* pPathData,
   if (pObject2Device)
     matrix = *pObject2Device;
   matrix.TranslateI(-rect.left, -rect.top);
-  matrix.Concat(fScaleX, 0, 0, fScaleY, 0, 0);
+  matrix.Concat(CFX_Matrix(fScaleX, 0, 0, fScaleY, 0, 0));
   if (!bitmap_device.GetDeviceDriver()->DrawPath(
           pPathData, &matrix, pGraphState, fill_color, stroke_color, fill_mode,
           blend_type)) {
@@ -902,8 +902,10 @@ bool CFX_RenderDevice::DrawNormalText(int nChars,
   FX_FLOAT scale_x = FXSYS_fabs(matrixCTM.a);
   FX_FLOAT scale_y = FXSYS_fabs(matrixCTM.d);
   CFX_Matrix deviceCtm = char2device;
-  deviceCtm.Concat(scale_x, 0, 0, scale_y, 0, 0);
-  text2Device.Concat(scale_x, 0, 0, scale_y, 0, 0);
+  CFX_Matrix m(scale_x, 0, 0, scale_y, 0, 0);
+  deviceCtm.Concat(m);
+  text2Device.Concat(m);
+
   for (size_t i = 0; i < glyphs.size(); ++i) {
     FXTEXT_GLYPHPOS& glyph = glyphs[i];
     const FXTEXT_CHARPOS& charpos = pCharPos[i];
@@ -1064,8 +1066,8 @@ bool CFX_RenderDevice::DrawTextPath(int nChars,
                           charpos.m_AdjustMatrix[2], charpos.m_AdjustMatrix[3],
                           0, 0);
     }
-    matrix.Concat(font_size, 0, 0, font_size, charpos.m_OriginX,
-                  charpos.m_OriginY);
+    matrix.Concat(CFX_Matrix(font_size, 0, 0, font_size, charpos.m_OriginX,
+                             charpos.m_OriginY));
     const CFX_PathData* pPath =
         pFont->LoadGlyphPath(charpos.m_GlyphIndex, charpos.m_FontCharWidth);
     if (!pPath)

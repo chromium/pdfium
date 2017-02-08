@@ -208,9 +208,9 @@ void CXFA_FFField::CapPlacement() {
         pCapTextLayout->CalcSize(minSize, maxSize, size);
         if (iCapPlacement == XFA_ATTRIBUTEENUM_Top ||
             iCapPlacement == XFA_ATTRIBUTEENUM_Bottom) {
-          fCapReserve = size.y;
+          fCapReserve = size.height;
         } else {
-          fCapReserve = size.x;
+          fCapReserve = size.width;
         }
       }
     }

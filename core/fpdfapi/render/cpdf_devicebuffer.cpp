@@ -44,11 +44,11 @@ bool CPDF_DeviceBuffer::Initialize(CPDF_RenderContext* pContext,
   }
 #endif
   CFX_Matrix ctm = m_pDevice->GetCTM();
-  FX_FLOAT fScaleX = FXSYS_fabs(ctm.a);
-  FX_FLOAT fScaleY = FXSYS_fabs(ctm.d);
-  m_Matrix.Concat(fScaleX, 0, 0, fScaleY, 0, 0);
+  m_Matrix.Concat(CFX_Matrix(FXSYS_fabs(ctm.a), 0, 0, FXSYS_fabs(ctm.d), 0, 0));
+
   CFX_FloatRect rect(*pRect);
   m_Matrix.TransformRect(rect);
+
   FX_RECT bitmap_rect = rect.GetOuterRect();
   m_pBitmap = pdfium::MakeUnique<CFX_DIBitmap>();
   m_pBitmap->Create(bitmap_rect.Width(), bitmap_rect.Height(), FXDIB_Argb);

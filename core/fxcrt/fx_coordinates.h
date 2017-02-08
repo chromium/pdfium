@@ -76,61 +76,72 @@ using CFX_PointF = CFX_PTemplate<FX_FLOAT>;
 template <class BaseType>
 class CFX_STemplate {
  public:
-  CFX_STemplate() : x(0), y(0) {}
-  CFX_STemplate(BaseType new_x, BaseType new_y) : x(new_x), y(new_y) {}
-  CFX_STemplate(const CFX_STemplate& other) : x(other.x), y(other.y) {}
+  CFX_STemplate() : width(0), height(0) {}
+
+  CFX_STemplate(BaseType new_width, BaseType new_height)
+      : width(new_width), height(new_height) {}
+
+  CFX_STemplate(const CFX_STemplate& other)
+      : width(other.width), height(other.height) {}
+
+  template <typename OtherType>
+  CFX_STemplate<OtherType> As() const {
+    return CFX_STemplate<OtherType>(static_cast<OtherType>(width),
+                                    static_cast<OtherType>(height));
+  }
+
   void clear() {
-    x = 0;
-    y = 0;
+    width = 0;
+    height = 0;
   }
   CFX_STemplate operator=(const CFX_STemplate& other) {
     if (this != &other) {
-      x = other.x;
-      y = other.y;
+      width = other.width;
+      height = other.height;
     }
     return *this;
   }
   bool operator==(const CFX_STemplate& other) const {
-    return x == other.x && y == other.y;
+    return width == other.width && height == other.height;
   }
   bool operator!=(const CFX_STemplate& other) const {
     return !(*this == other);
   }
   CFX_STemplate& operator+=(const CFX_STemplate<BaseType>& obj) {
-    x += obj.x;
-    y += obj.y;
+    width += obj.width;
+    height += obj.height;
     return *this;
   }
   CFX_STemplate& operator-=(const CFX_STemplate<BaseType>& obj) {
-    x -= obj.x;
-    y -= obj.y;
+    width -= obj.width;
+    height -= obj.height;
     return *this;
   }
   CFX_STemplate& operator*=(BaseType factor) {
-    x *= factor;
-    y *= factor;
+    width *= factor;
+    height *= factor;
     return *this;
   }
   CFX_STemplate& operator/=(BaseType divisor) {
-    x /= divisor;
-    y /= divisor;
+    width /= divisor;
+    height /= divisor;
     return *this;
   }
   CFX_STemplate operator+(const CFX_STemplate& other) {
-    return CFX_STemplate(x + other.x, y + other.y);
+    return CFX_STemplate(width + other.width, height + other.height);
   }
   CFX_STemplate operator-(const CFX_STemplate& other) {
-    return CFX_STemplate(x - other.x, y - other.y);
+    return CFX_STemplate(width - other.width, height - other.height);
   }
   CFX_STemplate operator*(BaseType factor) {
-    return CFX_STemplate(x * factor, y * factor);
+    return CFX_STemplate(width * factor, height * factor);
   }
   CFX_STemplate operator/(BaseType divisor) {
-    return CFX_STemplate(x / divisor, y / divisor);
+    return CFX_STemplate(width / divisor, height / divisor);
   }
 
-  BaseType x;
-  BaseType y;
+  BaseType width;
+  BaseType height;
 };
 using CFX_Size = CFX_STemplate<int32_t>;
 using CFX_SizeF = CFX_STemplate<FX_FLOAT>;
@@ -265,13 +276,19 @@ class CFX_RTemplate {
                 BaseType dst_height)
       : left(dst_left), top(dst_top), width(dst_width), height(dst_height) {}
   CFX_RTemplate(BaseType dst_left, BaseType dst_top, const SizeType& dst_size)
-      : left(dst_left), top(dst_top), width(dst_size.x), height(dst_size.y) {}
+      : left(dst_left),
+        top(dst_top),
+        width(dst_size.width),
+        height(dst_size.height) {}
   CFX_RTemplate(const PointType& p, BaseType dst_width, BaseType dst_height)
       : left(p.x), top(p.y), width(dst_width), height(dst_height) {}
   CFX_RTemplate(const PointType& p1, const SizeType& s2)
-      : left(p1.x), top(p1.y), width(s2.x), height(s2.y) {}
+      : left(p1.x), top(p1.y), width(s2.width), height(s2.height) {}
   CFX_RTemplate(const PointType& p1, const PointType& p2)
-      : left(p1.x), top(p1.y), width(p2.x - p1.x), height(p2.y - p1.y) {
+      : left(p1.x),
+        top(p1.y),
+        width(p2.width - p1.width),
+        height(p2.height - p1.height) {
     Normalize();
   }
   CFX_RTemplate(const PointType& p, const VectorType& v)
@@ -285,6 +302,13 @@ class CFX_RTemplate {
         top(other.top),
         width(other.width),
         height(other.height) {}
+
+  template <typename OtherType>
+  CFX_RTemplate<OtherType> As() const {
+    return CFX_RTemplate<OtherType>(
+        static_cast<OtherType>(left), static_cast<OtherType>(top),
+        static_cast<OtherType>(width), static_cast<OtherType>(height));
+  }
 
   void Reset() {
     left = 0;
@@ -607,13 +631,6 @@ class CFX_Matrix {
 
   void SetReverse(const CFX_Matrix& m);
 
-  void Concat(FX_FLOAT a,
-              FX_FLOAT b,
-              FX_FLOAT c,
-              FX_FLOAT d,
-              FX_FLOAT e,
-              FX_FLOAT f,
-              bool bPrepended = false);
   void Concat(const CFX_Matrix& m, bool bPrepended = false);
   void ConcatInverse(const CFX_Matrix& m, bool bPrepended = false);
 
