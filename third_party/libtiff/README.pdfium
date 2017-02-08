@@ -29,3 +29,4 @@ Local Modifications:
 0017-safe_skews_in_gtTileContig.patch: return error if to/from skews overflow from int32.
 0018-fix-leak-in-PredictorSetupDecode.patch: call tif->tif_cleanup if the setup fails.
 0019-fix-invalid-reads-TIFFFetchNormalTag.patch: upstream security fix in tif_dirread.
+0020-unreasonable-td-bitspersample.patch: upstream patch ignoring large td_bitspersample.
