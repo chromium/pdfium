@@ -11,6 +11,7 @@
 DLLEXPORT FPDF_PAGEOBJECT STDCALL FPDFPageObj_CreateNewPath(float x, float y) {
   CPDF_PathObject* pPathObj = new CPDF_PathObject;
   pPathObj->m_Path.AppendPoint(x, y, FXPT_TYPE::MoveTo, false);
+  pPathObj->DefaultStates();
   return pPathObj;
 }
 
@@ -20,6 +21,7 @@ DLLEXPORT FPDF_PAGEOBJECT STDCALL FPDFPageObj_CreateNewRect(float x,
                                                             float h) {
   CPDF_PathObject* pPathObj = new CPDF_PathObject;
   pPathObj->m_Path.AppendRect(x, y, x + w, y + h);
+  pPathObj->DefaultStates();
   return pPathObj;
 }
 

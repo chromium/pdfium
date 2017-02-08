@@ -5,6 +5,7 @@
 #include <memory>
 #include <string>
 
+#include "core/fxcrt/fx_system.h"
 #include "public/fpdf_edit.h"
 #include "public/fpdfview.h"
 #include "testing/embedder_test.h"
@@ -140,16 +141,129 @@ TEST_F(FPDFEditEmbeddertest, RasterizePDF) {
     EXPECT_EQ(1, FPDF_GetPageCount(document_));
     FPDF_PAGE new_page = FPDF_LoadPage(new_doc, 0);
     EXPECT_NE(nullptr, new_page);
-    int width = static_cast<int>(FPDF_GetPageWidth(new_page));
-    int height = static_cast<int>(FPDF_GetPageHeight(new_page));
-    int alpha = FPDFPage_HasTransparency(new_page) ? 1 : 0;
-    FPDF_BITMAP new_bitmap = FPDFBitmap_Create(width, height, alpha);
-    FPDF_DWORD fill_color = alpha ? 0x00000000 : 0xFFFFFFFF;
-    FPDFBitmap_FillRect(new_bitmap, 0, 0, width, height, fill_color);
-    FPDF_RenderPageBitmap(new_bitmap, new_page, 0, 0, width, height, 0, 0);
+    FPDF_BITMAP new_bitmap = RenderPage(new_page);
     CompareBitmap(new_bitmap, 612, 792, kAllBlackMd5sum);
     FPDF_ClosePage(new_page);
     FPDF_CloseDocument(new_doc);
     FPDFBitmap_Destroy(new_bitmap);
   }
+}
+
+TEST_F(FPDFEditEmbeddertest, AddPaths) {
+  // Start with a blank page
+  FPDF_DOCUMENT doc = FPDF_CreateNewDocument();
+  FPDF_PAGE page = FPDFPage_New(doc, 0, 612, 792);
+
+  // We will first add a red rectangle
+  FPDF_PAGEOBJECT red_rect = FPDFPageObj_CreateNewRect(10, 10, 20, 20);
+  ASSERT_NE(nullptr, red_rect);
+  // Expect false when trying to set colors out of range
+  EXPECT_FALSE(FPDFPath_SetStrokeColor(red_rect, 100, 100, 100, 300));
+  EXPECT_FALSE(FPDFPath_SetFillColor(red_rect, 200, 256, 200, 0));
+
+  // Fill rectangle with red and insert to the page
+  EXPECT_TRUE(FPDFPath_SetFillColor(red_rect, 255, 0, 0, 255));
+  EXPECT_TRUE(FPDFPath_SetDrawMode(red_rect, FPDF_FILLMODE_ALTERNATE, 0));
+  FPDFPage_InsertObject(page, red_rect);
+  EXPECT_TRUE(FPDFPage_GenerateContent(page));
+  FPDF_BITMAP page_bitmap = RenderPage(page);
+  CompareBitmap(page_bitmap, 612, 792, "66d02eaa6181e2c069ce2ea99beda497");
+  FPDFBitmap_Destroy(page_bitmap);
+
+  // Now add to that a green rectangle with some medium alpha
+  FPDF_PAGEOBJECT green_rect = FPDFPageObj_CreateNewRect(100, 100, 40, 40);
+  EXPECT_TRUE(FPDFPath_SetFillColor(green_rect, 0, 255, 0, 128));
+  EXPECT_TRUE(FPDFPath_SetDrawMode(green_rect, FPDF_FILLMODE_WINDING, 0));
+  FPDFPage_InsertObject(page, green_rect);
+  EXPECT_TRUE(FPDFPage_GenerateContent(page));
+  page_bitmap = RenderPage(page);
+  CompareBitmap(page_bitmap, 612, 792, "7b0b87604594e773add528fae567a558");
+  FPDFBitmap_Destroy(page_bitmap);
+
+  // Add a black triangle.
+  FPDF_PAGEOBJECT black_path = FPDFPageObj_CreateNewPath(400, 100);
+  EXPECT_TRUE(FPDFPath_SetFillColor(black_path, 0, 0, 0, 200));
+  EXPECT_TRUE(FPDFPath_SetDrawMode(black_path, FPDF_FILLMODE_ALTERNATE, 0));
+  EXPECT_TRUE(FPDFPath_LineTo(black_path, 400, 200));
+  EXPECT_TRUE(FPDFPath_LineTo(black_path, 300, 100));
+  EXPECT_TRUE(FPDFPath_Close(black_path));
+  FPDFPage_InsertObject(page, black_path);
+  EXPECT_TRUE(FPDFPage_GenerateContent(page));
+  page_bitmap = RenderPage(page);
+  CompareBitmap(page_bitmap, 612, 792, "eadc8020a14dfcf091da2688733d8806");
+  FPDFBitmap_Destroy(page_bitmap);
+
+  // Now add a more complex blue path.
+  FPDF_PAGEOBJECT blue_path = FPDFPageObj_CreateNewPath(200, 200);
+  EXPECT_TRUE(FPDFPath_SetFillColor(blue_path, 0, 0, 255, 255));
+  EXPECT_TRUE(FPDFPath_SetDrawMode(blue_path, FPDF_FILLMODE_WINDING, 0));
+  EXPECT_TRUE(FPDFPath_LineTo(blue_path, 230, 230));
+  EXPECT_TRUE(FPDFPath_BezierTo(blue_path, 250, 250, 280, 280, 300, 300));
+  EXPECT_TRUE(FPDFPath_LineTo(blue_path, 325, 325));
+  EXPECT_TRUE(FPDFPath_LineTo(blue_path, 350, 325));
+  EXPECT_TRUE(FPDFPath_BezierTo(blue_path, 375, 330, 390, 360, 400, 400));
+  EXPECT_TRUE(FPDFPath_Close(blue_path));
+  FPDFPage_InsertObject(page, blue_path);
+  EXPECT_TRUE(FPDFPage_GenerateContent(page));
+  page_bitmap = RenderPage(page);
+  CompareBitmap(page_bitmap, 612, 792, "9823e1a21bd9b72b6a442ba4f12af946");
+  FPDFBitmap_Destroy(page_bitmap);
+
+  // Now save the result, closing the page and document
+  EXPECT_TRUE(FPDF_SaveAsCopy(doc, this, 0));
+  FPDF_ClosePage(page);
+  FPDF_CloseDocument(doc);
+  std::string new_file = GetString();
+
+  // Render the saved result
+  FPDF_FILEACCESS file_access;
+  memset(&file_access, 0, sizeof(file_access));
+  file_access.m_FileLen = new_file.size();
+  file_access.m_GetBlock = GetBlockFromString;
+  file_access.m_Param = &new_file;
+  FPDF_DOCUMENT new_doc = FPDF_LoadCustomDocument(&file_access, nullptr);
+  ASSERT_NE(nullptr, new_doc);
+  EXPECT_EQ(1, FPDF_GetPageCount(new_doc));
+  FPDF_PAGE new_page = FPDF_LoadPage(new_doc, 0);
+  ASSERT_NE(nullptr, new_page);
+  FPDF_BITMAP new_bitmap = RenderPage(new_page);
+  CompareBitmap(new_bitmap, 612, 792, "9823e1a21bd9b72b6a442ba4f12af946");
+  FPDFBitmap_Destroy(new_bitmap);
+  FPDF_ClosePage(new_page);
+  FPDF_CloseDocument(new_doc);
+}
+
+TEST_F(FPDFEditEmbeddertest, PathOnTopOfText) {
+  // Load document with some text
+  EXPECT_TRUE(OpenDocument("hello_world.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  EXPECT_NE(nullptr, page);
+
+  // Add an opaque rectangle on top of some of the text.
+  FPDF_PAGEOBJECT red_rect = FPDFPageObj_CreateNewRect(20, 100, 50, 50);
+  EXPECT_TRUE(FPDFPath_SetFillColor(red_rect, 255, 0, 0, 255));
+  EXPECT_TRUE(FPDFPath_SetDrawMode(red_rect, FPDF_FILLMODE_ALTERNATE, 0));
+  FPDFPage_InsertObject(page, red_rect);
+  EXPECT_TRUE(FPDFPage_GenerateContent(page));
+
+  // Add a transparent triangle on top of other part of the text.
+  FPDF_PAGEOBJECT black_path = FPDFPageObj_CreateNewPath(20, 50);
+  EXPECT_TRUE(FPDFPath_SetFillColor(black_path, 0, 0, 0, 100));
+  EXPECT_TRUE(FPDFPath_SetDrawMode(black_path, FPDF_FILLMODE_ALTERNATE, 0));
+  EXPECT_TRUE(FPDFPath_LineTo(black_path, 30, 80));
+  EXPECT_TRUE(FPDFPath_LineTo(black_path, 40, 10));
+  EXPECT_TRUE(FPDFPath_Close(black_path));
+  FPDFPage_InsertObject(page, black_path);
+  EXPECT_TRUE(FPDFPage_GenerateContent(page));
+
+  // Render and check the result. Text is slightly different on Mac.
+  FPDF_BITMAP bitmap = RenderPage(page);
+#if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
+  const char md5[] = "2f7c0deee10a9490538e195af64beb67";
+#else
+  const char md5[] = "17c942c76ff229200f2c98073bb60d85";
+#endif
+  CompareBitmap(bitmap, 200, 200, md5);
+  FPDFBitmap_Destroy(bitmap);
+  UnloadPage(page);
 }

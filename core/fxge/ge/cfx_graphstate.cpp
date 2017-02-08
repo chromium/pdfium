@@ -30,7 +30,7 @@ void CFX_GraphState::SetLineDash(CPDF_Array* pArray,
 }
 
 FX_FLOAT CFX_GraphState::GetLineWidth() const {
-  return m_Ref.GetObject()->m_LineWidth;
+  return m_Ref.GetObject() ? m_Ref.GetObject()->m_LineWidth : 1.f;
 }
 
 void CFX_GraphState::SetLineWidth(FX_FLOAT width) {
@@ -53,7 +53,7 @@ void CFX_GraphState::SetLineJoin(CFX_GraphStateData::LineJoin join) {
 }
 
 FX_FLOAT CFX_GraphState::GetMiterLimit() const {
-  return m_Ref.GetObject()->m_MiterLimit;
+  return m_Ref.GetObject() ? m_Ref.GetObject()->m_MiterLimit : 10.f;
 }
 
 void CFX_GraphState::SetMiterLimit(FX_FLOAT limit) {
