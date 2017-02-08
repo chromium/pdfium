@@ -28,3 +28,4 @@ Local Modifications:
 0016-fix-leak-in-pixarlogsetupdecode.patch: Free sp->tbuf if setup fails
 0017-safe_skews_in_gtTileContig.patch: return error if to/from skews overflow from int32.
 0018-fix-leak-in-PredictorSetupDecode.patch: call tif->tif_cleanup if the setup fails.
+0019-fix-invalid-reads-TIFFFetchNormalTag.patch: upstream security fix in tif_dirread.
