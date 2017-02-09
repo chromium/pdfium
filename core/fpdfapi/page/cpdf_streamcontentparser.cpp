@@ -1230,13 +1230,13 @@ CPDF_Pattern* CPDF_StreamContentParser::FindPattern(const CFX_ByteString& name,
 }
 
 void CPDF_StreamContentParser::ConvertTextSpace(FX_FLOAT& x, FX_FLOAT& y) {
-  m_pCurStates->m_TextMatrix.Transform(x, y, x, y);
+  m_pCurStates->m_TextMatrix.TransformPoint(x, y);
   ConvertUserSpace(x, y);
 }
 
 void CPDF_StreamContentParser::ConvertUserSpace(FX_FLOAT& x, FX_FLOAT& y) {
-  m_pCurStates->m_CTM.Transform(x, y, x, y);
-  m_mtContentToUser.Transform(x, y, x, y);
+  m_pCurStates->m_CTM.TransformPoint(x, y);
+  m_mtContentToUser.TransformPoint(x, y);
 }
 
 void CPDF_StreamContentParser::AddTextObject(CFX_ByteString* pStrs,

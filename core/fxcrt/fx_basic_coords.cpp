@@ -6,6 +6,8 @@
 
 #include <limits.h>
 
+#include <algorithm>
+
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_ext.h"
 
@@ -457,33 +459,19 @@ void CFX_Matrix::TransformRect(FX_FLOAT& left,
                                FX_FLOAT& right,
                                FX_FLOAT& top,
                                FX_FLOAT& bottom) const {
-  FX_FLOAT x[4], y[4];
-  x[0] = left;
-  y[0] = top;
-  x[1] = left;
-  y[1] = bottom;
-  x[2] = right;
-  y[2] = top;
-  x[3] = right;
-  y[3] = bottom;
-  int i;
-  for (i = 0; i < 4; i++) {
-    Transform(x[i], y[i], x[i], y[i]);
-  }
-  right = left = x[0];
-  top = bottom = y[0];
-  for (i = 1; i < 4; i++) {
-    if (right < x[i]) {
-      right = x[i];
-    }
-    if (left > x[i]) {
-      left = x[i];
-    }
-    if (top < y[i]) {
-      top = y[i];
-    }
-    if (bottom > y[i]) {
-      bottom = y[i];
-    }
+  FX_FLOAT x[4] = {left, left, right, right};
+  FX_FLOAT y[4] = {top, bottom, top, bottom};
+  for (int i = 0; i < 4; i++)
+    TransformPoint(x[i], y[i]);
+
+  right = x[0];
+  left = x[0];
+  top = y[0];
+  bottom = y[0];
+  for (int i = 1; i < 4; i++) {
+    right = std::max(right, x[i]);
+    left = std::min(left, x[i]);
+    top = std::max(top, y[i]);
+    bottom = std::min(bottom, y[i]);
   }
 }

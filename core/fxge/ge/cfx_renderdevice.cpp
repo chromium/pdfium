@@ -475,21 +475,18 @@ bool CFX_RenderDevice::DrawPathWithBlend(const CFX_PathData* pPathData,
   uint8_t fill_alpha = (fill_mode & 3) ? FXARGB_A(fill_color) : 0;
   if (stroke_alpha == 0 && pPathData->GetPointCount() == 2) {
     FX_PATHPOINT* pPoints = pPathData->GetPoints();
-    FX_FLOAT x1, x2, y1, y2;
+    FX_FLOAT x1 = pPoints[0].m_PointX;
+    FX_FLOAT y1 = pPoints[0].m_PointY;
+    FX_FLOAT x2 = pPoints[1].m_PointX;
+    FX_FLOAT y2 = pPoints[1].m_PointY;
     if (pObject2Device) {
-      pObject2Device->Transform(pPoints[0].m_PointX, pPoints[0].m_PointY, x1,
-                                y1);
-      pObject2Device->Transform(pPoints[1].m_PointX, pPoints[1].m_PointY, x2,
-                                y2);
-    } else {
-      x1 = pPoints[0].m_PointX;
-      y1 = pPoints[0].m_PointY;
-      x2 = pPoints[1].m_PointX;
-      y2 = pPoints[1].m_PointY;
+      pObject2Device->TransformPoint(x1, y1);
+      pObject2Device->TransformPoint(x2, y2);
     }
     DrawCosmeticLine(x1, y1, x2, y2, fill_color, fill_mode, blend_type);
     return true;
   }
+
   if ((pPathData->GetPointCount() == 5 || pPathData->GetPointCount() == 4) &&
       stroke_alpha == 0) {
     CFX_FloatRect rect_f;
@@ -913,7 +910,7 @@ bool CFX_RenderDevice::DrawNormalText(int nChars,
     const FXTEXT_CHARPOS& charpos = pCharPos[i];
     glyph.m_fOriginX = charpos.m_OriginX;
     glyph.m_fOriginY = charpos.m_OriginY;
-    text2Device.Transform(glyph.m_fOriginX, glyph.m_fOriginY);
+    text2Device.TransformPoint(glyph.m_fOriginX, glyph.m_fOriginY);
     if (anti_alias < FXFT_RENDER_MODE_LCD)
       glyph.m_OriginX = FXSYS_round(glyph.m_fOriginX);
     else

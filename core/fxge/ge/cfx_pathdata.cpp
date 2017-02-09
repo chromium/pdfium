@@ -65,8 +65,8 @@ void CFX_PathData::Append(const CFX_PathData* pSrc, const CFX_Matrix* pMatrix) {
                pSrc->m_PointCount * sizeof(FX_PATHPOINT));
   if (pMatrix) {
     for (int i = 0; i < pSrc->m_PointCount; i++) {
-      pMatrix->Transform(m_pPoints[old_count + i].m_PointX,
-                         m_pPoints[old_count + i].m_PointY);
+      pMatrix->TransformPoint(m_pPoints[old_count + i].m_PointX,
+                              m_pPoints[old_count + i].m_PointY);
     }
   }
 }
@@ -316,7 +316,7 @@ void CFX_PathData::Transform(const CFX_Matrix* pMatrix) {
     return;
   }
   for (int i = 0; i < m_PointCount; i++) {
-    pMatrix->Transform(m_pPoints[i].m_PointX, m_pPoints[i].m_PointY);
+    pMatrix->TransformPoint(m_pPoints[i].m_PointX, m_pPoints[i].m_PointY);
   }
 }
 
@@ -497,9 +497,9 @@ bool CFX_PathData::IsRect() const {
 bool CFX_PathData::IsRect(const CFX_Matrix* pMatrix,
                           CFX_FloatRect* pRect) const {
   if (!pMatrix) {
-    if (!IsRect()) {
+    if (!IsRect())
       return false;
-    }
+
     if (pRect) {
       pRect->left = m_pPoints[0].m_PointX;
       pRect->right = m_pPoints[2].m_PointX;
@@ -509,9 +509,10 @@ bool CFX_PathData::IsRect(const CFX_Matrix* pMatrix,
     }
     return true;
   }
-  if (m_PointCount != 5 && m_PointCount != 4) {
+
+  if (m_PointCount != 5 && m_PointCount != 4)
     return false;
-  }
+
   if ((m_PointCount == 5 && (m_pPoints[0].m_PointX != m_pPoints[4].m_PointX ||
                              m_pPoints[0].m_PointY != m_pPoints[4].m_PointY)) ||
       (m_pPoints[1].m_PointX == m_pPoints[3].m_PointX &&
@@ -522,19 +523,21 @@ bool CFX_PathData::IsRect(const CFX_Matrix* pMatrix,
       m_pPoints[0].m_PointY != m_pPoints[3].m_PointY) {
     return false;
   }
-  FX_FLOAT x[5], y[5];
+
+  FX_FLOAT x[5];
+  FX_FLOAT y[5];
   for (int i = 0; i < m_PointCount; i++) {
-    pMatrix->Transform(m_pPoints[i].m_PointX, m_pPoints[i].m_PointY, x[i],
-                       y[i]);
+    x[i] = m_pPoints[i].m_PointX;
+    y[i] = m_pPoints[i].m_PointY;
+    pMatrix->TransformPoint(x[i], y[i]);
     if (i) {
-      if (m_pPoints[i].m_Type != FXPT_TYPE::LineTo) {
+      if (m_pPoints[i].m_Type != FXPT_TYPE::LineTo)
         return false;
-      }
-      if (x[i] != x[i - 1] && y[i] != y[i - 1]) {
+      if (x[i] != x[i - 1] && y[i] != y[i - 1])
         return false;
-      }
     }
   }
+
   if (pRect) {
     pRect->left = x[0];
     pRect->right = x[2];

@@ -41,7 +41,7 @@ bool CGDrawGlyphRun(CGContextRef pContext,
 
   FX_FLOAT ori_x = pCharPos[0].m_OriginX, ori_y = pCharPos[0].m_OriginY;
   CFX_Matrix new_matrix;
-  new_matrix.Transform(ori_x, ori_y);
+  new_matrix.TransformPoint(ori_x, ori_y);
   if (pObject2Device)
     new_matrix.Concat(*pObject2Device);
 

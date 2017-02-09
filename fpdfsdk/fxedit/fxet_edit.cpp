@@ -66,7 +66,7 @@ void DrawTextString(CFX_RenderDevice* pDevice,
                     FX_ARGB crTextStroke,
                     int32_t nHorzScale) {
   FX_FLOAT x = pt.x, y = pt.y;
-  pUser2Device->Transform(x, y);
+  pUser2Device->TransformPoint(x, y);
 
   if (pFont) {
     if (nHorzScale != 100) {
@@ -80,8 +80,8 @@ void DrawTextString(CFX_RenderDevice* pDevice,
       if (crTextStroke != 0) {
         CFX_FloatPoint pt1;
         CFX_FloatPoint pt2;
-        pUser2Device->Transform(pt1.x, pt1.y);
-        pUser2Device->Transform(pt2.x, pt2.y);
+        pUser2Device->TransformPoint(pt1.x, pt1.y);
+        pUser2Device->TransformPoint(pt2.x, pt2.y);
         CFX_GraphStateData gsd;
         gsd.m_LineWidth =
             (FX_FLOAT)FXSYS_fabs((pt2.x + pt2.y) - (pt1.x + pt1.y));
@@ -101,8 +101,8 @@ void DrawTextString(CFX_RenderDevice* pDevice,
       if (crTextStroke != 0) {
         CFX_FloatPoint pt1;
         CFX_FloatPoint pt2;
-        pUser2Device->Transform(pt1.x, pt1.y);
-        pUser2Device->Transform(pt2.x, pt2.y);
+        pUser2Device->TransformPoint(pt1.x, pt1.y);
+        pUser2Device->TransformPoint(pt2.x, pt2.y);
         CFX_GraphStateData gsd;
         gsd.m_LineWidth =
             (FX_FLOAT)FXSYS_fabs((pt2.x + pt2.y) - (pt1.x + pt1.y));

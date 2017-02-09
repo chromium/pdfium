@@ -278,7 +278,7 @@ void CAgg_PathData::BuildPath(const CFX_PathData* pPathData,
   for (int i = 0; i < nPoints; i++) {
     FX_FLOAT x = pPoints[i].m_PointX, y = pPoints[i].m_PointY;
     if (pObject2Device) {
-      pObject2Device->Transform(x, y);
+      pObject2Device->TransformPoint(x, y);
     }
     HardClip(x, y);
     FXPT_TYPE point_type = pPoints[i].m_Type;
@@ -298,9 +298,9 @@ void CAgg_PathData::BuildPath(const CFX_PathData* pPathData,
       FX_FLOAT x2 = pPoints[i + 1].m_PointX, y2 = pPoints[i + 1].m_PointY;
       FX_FLOAT x3 = pPoints[i + 2].m_PointX, y3 = pPoints[i + 2].m_PointY;
       if (pObject2Device) {
-        pObject2Device->Transform(x0, y0);
-        pObject2Device->Transform(x2, y2);
-        pObject2Device->Transform(x3, y3);
+        pObject2Device->TransformPoint(x0, y0);
+        pObject2Device->TransformPoint(x2, y2);
+        pObject2Device->TransformPoint(x3, y3);
       }
       HardClip(x0, y0);
       HardClip(x2, y2);

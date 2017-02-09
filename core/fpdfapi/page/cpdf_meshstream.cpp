@@ -195,7 +195,7 @@ uint32_t CPDF_MeshStream::GetVertex(CPDF_MeshVertex& vertex,
                                     CFX_Matrix* pObject2Bitmap) {
   uint32_t flag = GetFlag();
   GetCoords(vertex.x, vertex.y);
-  pObject2Bitmap->Transform(vertex.x, vertex.y);
+  pObject2Bitmap->TransformPoint(vertex.x, vertex.y);
   GetColor(vertex.r, vertex.g, vertex.b);
   m_BitStream.ByteAlign();
   return flag;
@@ -209,7 +209,7 @@ bool CPDF_MeshStream::GetVertexRow(CPDF_MeshVertex* vertex,
       return false;
 
     GetCoords(vertex[i].x, vertex[i].y);
-    pObject2Bitmap->Transform(vertex[i].x, vertex[i].y);
+    pObject2Bitmap->TransformPoint(vertex[i].x, vertex[i].y);
     GetColor(vertex[i].r, vertex[i].g, vertex[i].b);
     m_BitStream.ByteAlign();
   }

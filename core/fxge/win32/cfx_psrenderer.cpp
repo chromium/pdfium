@@ -117,9 +117,9 @@ void CFX_PSRenderer::OutputPath(const CFX_PathData* pPathData,
     bool closing = pPathData->IsClosingFigure(i);
     FX_FLOAT x = pPathData->GetPointX(i);
     FX_FLOAT y = pPathData->GetPointY(i);
-    if (pObject2Device) {
-      pObject2Device->Transform(x, y);
-    }
+    if (pObject2Device)
+      pObject2Device->TransformPoint(x, y);
+
     buf << x << " " << y;
     switch (type) {
       case FXPT_TYPE::MoveTo:
@@ -136,8 +136,8 @@ void CFX_PSRenderer::OutputPath(const CFX_PathData* pPathData,
         FX_FLOAT y1 = pPathData->GetPointY(i + 1);
         FX_FLOAT y2 = pPathData->GetPointY(i + 2);
         if (pObject2Device) {
-          pObject2Device->Transform(x1, y1);
-          pObject2Device->Transform(x2, y2);
+          pObject2Device->TransformPoint(x1, y1);
+          pObject2Device->TransformPoint(x2, y2);
         }
         buf << " " << x1 << " " << y1 << " " << x2 << " " << y2 << " c";
         if (closing)

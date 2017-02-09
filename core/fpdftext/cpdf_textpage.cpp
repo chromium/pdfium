@@ -245,7 +245,7 @@ std::vector<CFX_FloatRect> CPDF_TextPage::GetRectArray(int start,
 
       CFX_Matrix matrix_reverse;
       matrix_reverse.SetReverse(matrix);
-      matrix_reverse.Transform(orgX, orgY);
+      matrix_reverse.TransformPoint(orgX, orgY);
       rect.left = info_curchar.m_CharBox.left;
       rect.right = info_curchar.m_CharBox.right;
       if (pCurObj->GetFont()->GetTypeDescent()) {
@@ -253,7 +253,7 @@ std::vector<CFX_FloatRect> CPDF_TextPage::GetRectArray(int start,
                       pCurObj->GetFont()->GetTypeDescent() *
                           pCurObj->GetFontSize() / 1000;
         FX_FLOAT xPosTemp = orgX;
-        matrix.Transform(xPosTemp, rect.bottom);
+        matrix.TransformPoint(xPosTemp, rect.bottom);
       } else {
         rect.bottom = info_curchar.m_CharBox.bottom;
       }
@@ -265,7 +265,7 @@ std::vector<CFX_FloatRect> CPDF_TextPage::GetRectArray(int start,
             orgX +
             GetCharWidth(info_curchar.m_CharCode, pCurObj->GetFont()) *
                 pCurObj->GetFontSize() / 1000;
-        matrix.Transform(xPosTemp, rect.top);
+        matrix.TransformPoint(xPosTemp, rect.top);
       } else {
         rect.top = info_curchar.m_CharBox.top;
       }
@@ -778,11 +778,11 @@ void CPDF_TextPage::ProcessTextObject(
       prev_width > this_width ? prev_width / 4 : this_width / 4;
   FX_FLOAT prev_x = prev_Obj.m_pTextObj->GetPosX(),
            prev_y = prev_Obj.m_pTextObj->GetPosY();
-  prev_Obj.m_formMatrix.Transform(prev_x, prev_y);
-  m_DisplayMatrix.Transform(prev_x, prev_y);
+  prev_Obj.m_formMatrix.TransformPoint(prev_x, prev_y);
+  m_DisplayMatrix.TransformPoint(prev_x, prev_y);
   FX_FLOAT this_x = pTextObj->GetPosX(), this_y = pTextObj->GetPosY();
-  formMatrix.Transform(this_x, this_y);
-  m_DisplayMatrix.Transform(this_x, this_y);
+  formMatrix.TransformPoint(this_x, this_y);
+  m_DisplayMatrix.TransformPoint(this_x, this_y);
   if (FXSYS_fabs(this_y - prev_y) > threshold * 2) {
     for (size_t i = 0; i < count; i++)
       ProcessTextObject(m_LineObj[i]);
@@ -795,8 +795,8 @@ void CPDF_TextPage::ProcessTextObject(
     PDFTEXT_Obj prev_text_obj = m_LineObj[i - 1];
     FX_FLOAT Prev_x = prev_text_obj.m_pTextObj->GetPosX(),
              Prev_y = prev_text_obj.m_pTextObj->GetPosY();
-    prev_text_obj.m_formMatrix.Transform(Prev_x, Prev_y);
-    m_DisplayMatrix.Transform(Prev_x, Prev_y);
+    prev_text_obj.m_formMatrix.TransformPoint(Prev_x, Prev_y);
+    m_DisplayMatrix.TransformPoint(Prev_x, Prev_y);
     if (this_x >= Prev_x) {
       m_LineObj.insert(m_LineObj.begin() + i, Obj);
       break;
@@ -1117,8 +1117,10 @@ void CPDF_TextPage::ProcessTextObject(PDFTEXT_Obj Obj) {
         m_TempTextBuf.AppendChar(TEXT_SPACE_CHAR);
         charinfo.m_CharCode = CPDF_Font::kInvalidCharCode;
         charinfo.m_Matrix = formMatrix;
-        matrix.Transform(item.m_OriginX, item.m_OriginY, charinfo.m_OriginX,
-                         charinfo.m_OriginY);
+
+        charinfo.m_OriginX = item.m_OriginX;
+        charinfo.m_OriginY = item.m_OriginY;
+        matrix.TransformPoint(charinfo.m_OriginX, charinfo.m_OriginY);
         charinfo.m_CharBox =
             CFX_FloatRect(charinfo.m_OriginX, charinfo.m_OriginY,
                           charinfo.m_OriginX, charinfo.m_OriginY);
@@ -1140,10 +1142,12 @@ void CPDF_TextPage::ProcessTextObject(PDFTEXT_Obj Obj) {
       charinfo.m_Flag = FPDFTEXT_CHAR_UNUNICODE;
     else
       charinfo.m_Flag = FPDFTEXT_CHAR_NORMAL;
+
     charinfo.m_pTextObj = pTextObj;
-    charinfo.m_OriginX = 0, charinfo.m_OriginY = 0;
-    matrix.Transform(item.m_OriginX, item.m_OriginY, charinfo.m_OriginX,
-                     charinfo.m_OriginY);
+    charinfo.m_OriginX = item.m_OriginX;
+    charinfo.m_OriginY = item.m_OriginY;
+    matrix.TransformPoint(charinfo.m_OriginX, charinfo.m_OriginY);
+
     FX_RECT rect =
         charinfo.m_pTextObj->GetFont()->GetCharBBox(charinfo.m_CharCode);
     charinfo.m_CharBox.top =
@@ -1338,8 +1342,8 @@ CPDF_TextPage::GenerateCharacter CPDF_TextPage::ProcessInsertObject(
   prev_reverse.SetReverse(prev_matrix);
   FX_FLOAT x = pObj->GetPosX();
   FX_FLOAT y = pObj->GetPosY();
-  formMatrix.Transform(x, y);
-  prev_reverse.Transform(x, y);
+  formMatrix.TransformPoint(x, y);
+  prev_reverse.TransformPoint(x, y);
   if (last_width < this_width)
     threshold = prev_reverse.TransformDistance(threshold);
   bool bNewline = false;

@@ -170,9 +170,9 @@ void SetPathToDC(HDC hDC,
   FX_PATHPOINT* pPoints = pPathData->GetPoints();
   for (int i = 0; i < nPoints; i++) {
     FX_FLOAT posx = pPoints[i].m_PointX, posy = pPoints[i].m_PointY;
-    if (pMatrix) {
-      pMatrix->Transform(posx, posy);
-    }
+    if (pMatrix)
+      pMatrix->TransformPoint(posx, posy);
+
     int screen_x = FXSYS_round(posx), screen_y = FXSYS_round(posy);
     FXPT_TYPE point_type = pPoints[i].m_Type;
     if (point_type == FXPT_TYPE::MoveTo) {
@@ -189,16 +189,16 @@ void SetPathToDC(HDC hDC,
       lppt[0].y = screen_y;
       posx = pPoints[i + 1].m_PointX;
       posy = pPoints[i + 1].m_PointY;
-      if (pMatrix) {
-        pMatrix->Transform(posx, posy);
-      }
+      if (pMatrix)
+        pMatrix->TransformPoint(posx, posy);
+
       lppt[1].x = FXSYS_round(posx);
       lppt[1].y = FXSYS_round(posy);
       posx = pPoints[i + 2].m_PointX;
       posy = pPoints[i + 2].m_PointY;
-      if (pMatrix) {
-        pMatrix->Transform(posx, posy);
-      }
+      if (pMatrix)
+        pMatrix->TransformPoint(posx, posy);
+
       lppt[2].x = FXSYS_round(posx);
       lppt[2].y = FXSYS_round(posy);
       PolyBezierTo(hDC, lppt, 3);
@@ -1056,8 +1056,8 @@ bool CGdiDeviceDriver::DrawPath(const CFX_PathData* pPathData,
     FX_FLOAT x2 = pPathData->GetPointX(1);
     FX_FLOAT y2 = pPathData->GetPointY(1);
     if (pMatrix) {
-      pMatrix->Transform(x1, y1);
-      pMatrix->Transform(x2, y2);
+      pMatrix->TransformPoint(x1, y1);
+      pMatrix->TransformPoint(x2, y2);
     }
     DrawLine(x1, y1, x2, y2);
   } else {

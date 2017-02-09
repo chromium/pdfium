@@ -841,24 +841,18 @@ void CPDFSDK_Widget::DrawShadow(CFX_RenderDevice* pDevice,
   if (!m_pInterForm->IsNeedHighLight(nFieldType))
     return;
 
-  CFX_FloatRect rc = GetRect();
-  FX_COLORREF color = m_pInterForm->GetHighlightColor(nFieldType);
-  uint8_t alpha = m_pInterForm->GetHighlightAlpha();
-
-  CFX_FloatRect rcDevice;
   CFX_Matrix page2device;
   pPageView->GetCurrentMatrix(page2device);
-  page2device.Transform(((FX_FLOAT)rc.left), ((FX_FLOAT)rc.bottom),
-                        rcDevice.left, rcDevice.bottom);
-  page2device.Transform(((FX_FLOAT)rc.right), ((FX_FLOAT)rc.top),
-                        rcDevice.right, rcDevice.top);
 
+  CFX_FloatRect rcDevice = GetRect();
+  page2device.TransformPoint(rcDevice.left, rcDevice.bottom);
+  page2device.TransformPoint(rcDevice.right, rcDevice.top);
   rcDevice.Normalize();
 
-  FX_ARGB argb = ArgbEncode((int)alpha, color);
-  FX_RECT rcDev((int)rcDevice.left, (int)rcDevice.top, (int)rcDevice.right,
-                (int)rcDevice.bottom);
-  pDevice->FillRect(&rcDev, argb);
+  FX_RECT rcDev = rcDevice.ToFxRect();
+  pDevice->FillRect(
+      &rcDev, ArgbEncode(static_cast<int>(m_pInterForm->GetHighlightAlpha()),
+                         m_pInterForm->GetHighlightColor(nFieldType)));
 }
 
 void CPDFSDK_Widget::ResetAppearance_PushButton() {

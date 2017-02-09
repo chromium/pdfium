@@ -160,7 +160,7 @@ void DrawAxialShading(CFX_DIBitmap* pBitmap,
     uint32_t* dib_buf = (uint32_t*)(pBitmap->GetBuffer() + row * pitch);
     for (int column = 0; column < width; column++) {
       FX_FLOAT x = (FX_FLOAT)column, y = (FX_FLOAT)row;
-      matrix.Transform(x, y);
+      matrix.TransformPoint(x, y);
       FX_FLOAT scale = (((x - start_x) * x_span) + ((y - start_y) * y_span)) /
                        axis_len_square;
       int index = (int32_t)(scale * (SHADING_STEPS - 1));
@@ -253,7 +253,7 @@ void DrawRadialShading(CFX_DIBitmap* pBitmap,
     uint32_t* dib_buf = (uint32_t*)(pBitmap->GetBuffer() + row * pitch);
     for (int column = 0; column < width; column++) {
       FX_FLOAT x = (FX_FLOAT)column, y = (FX_FLOAT)row;
-      matrix.Transform(x, y);
+      matrix.TransformPoint(x, y);
       FX_FLOAT b = -2 * (((x - start_x) * (end_x - start_x)) +
                          ((y - start_y) * (end_y - start_y)) +
                          (start_r * (end_r - start_r)));
@@ -345,7 +345,7 @@ void DrawFuncShading(CFX_DIBitmap* pBitmap,
     uint32_t* dib_buf = (uint32_t*)(pBitmap->GetBuffer() + row * pitch);
     for (int column = 0; column < width; column++) {
       FX_FLOAT x = (FX_FLOAT)column, y = (FX_FLOAT)row;
-      matrix.Transform(x, y);
+      matrix.TransformPoint(x, y);
       if (x < xmin || x > xmax || y < ymin || y > ymax) {
         continue;
       }
@@ -844,7 +844,7 @@ void DrawCoonPatchMeshes(
     }
     for (i = iStartPoint; i < point_count; i++) {
       stream.GetCoords(coords[i].x, coords[i].y);
-      pObject2Bitmap->Transform(coords[i].x, coords[i].y);
+      pObject2Bitmap->TransformPoint(coords[i].x, coords[i].y);
     }
     for (i = iStartColor; i < 4; i++) {
       FX_FLOAT r = 0.0f, g = 0.0f, b = 0.0f;
@@ -2233,7 +2233,7 @@ void CPDF_RenderStatus::DrawTilingPattern(CPDF_TilingPattern* pPattern,
         FX_FLOAT orig_x, orig_y;
         orig_x = col * pPattern->x_step();
         orig_y = row * pPattern->y_step();
-        mtPattern2Device.Transform(orig_x, orig_y);
+        mtPattern2Device.TransformPoint(orig_x, orig_y);
         CFX_Matrix matrix = *pObj2Device;
         matrix.Translate(orig_x - mtPattern2Device.e,
                          orig_y - mtPattern2Device.f);
@@ -2308,7 +2308,7 @@ void CPDF_RenderStatus::DrawTilingPattern(CPDF_TilingPattern* pPattern,
       } else {
         FX_FLOAT orig_x = col * pPattern->x_step();
         FX_FLOAT orig_y = row * pPattern->y_step();
-        mtPattern2Device.Transform(orig_x, orig_y);
+        mtPattern2Device.TransformPoint(orig_x, orig_y);
 
         pdfium::base::CheckedNumeric<int> safeStartX =
             FXSYS_round(orig_x + left_offset);

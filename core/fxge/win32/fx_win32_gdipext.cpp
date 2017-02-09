@@ -1083,8 +1083,8 @@ static bool IsSmallTriangle(PointF* points,
     FX_FLOAT x1 = points[pair1].X, x2 = points[pair2].X;
     FX_FLOAT y1 = points[pair1].Y, y2 = points[pair2].Y;
     if (pMatrix) {
-      pMatrix->Transform(x1, y1);
-      pMatrix->Transform(x2, y2);
+      pMatrix->TransformPoint(x1, y1);
+      pMatrix->TransformPoint(x2, y2);
     }
     FX_FLOAT dx = x1 - x2;
     FX_FLOAT dy = y1 - y2;
@@ -1132,25 +1132,20 @@ bool CGdiplusExt::DrawPath(HDC hDC,
   for (int i = 0; i < nPoints; i++) {
     points[i].X = pPoints[i].m_PointX;
     points[i].Y = pPoints[i].m_PointY;
-    FX_FLOAT x, y;
-    if (pObject2Device) {
-      pObject2Device->Transform(pPoints[i].m_PointX, pPoints[i].m_PointY, x, y);
-    } else {
-      x = pPoints[i].m_PointX;
-      y = pPoints[i].m_PointY;
-    }
-    if (x > 50000 * 1.0f) {
+    FX_FLOAT x = pPoints[i].m_PointX;
+    FX_FLOAT y = pPoints[i].m_PointY;
+    if (pObject2Device)
+      pObject2Device->TransformPoint(x, y);
+
+    if (x > 50000 * 1.0f)
       points[i].X = 50000 * 1.0f;
-    }
-    if (x < -50000 * 1.0f) {
+    if (x < -50000 * 1.0f)
       points[i].X = -50000 * 1.0f;
-    }
-    if (y > 50000 * 1.0f) {
+    if (y > 50000 * 1.0f)
       points[i].Y = 50000 * 1.0f;
-    }
-    if (y < -50000 * 1.0f) {
+    if (y < -50000 * 1.0f)
       points[i].Y = -50000 * 1.0f;
-    }
+
     FXPT_TYPE point_type = pPoints[i].m_Type;
     if (point_type == FXPT_TYPE::MoveTo) {
       types[i] = PathPointTypeStart;

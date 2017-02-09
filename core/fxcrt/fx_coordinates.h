@@ -675,12 +675,6 @@ class CFX_Matrix {
   void TransformPoint(FX_FLOAT& x, FX_FLOAT& y) const;
   void TransformPoint(int32_t& x, int32_t& y) const;
 
-  void Transform(FX_FLOAT& x, FX_FLOAT& y) const { TransformPoint(x, y); }
-  void Transform(FX_FLOAT x, FX_FLOAT y, FX_FLOAT& x1, FX_FLOAT& y1) const {
-    x1 = x, y1 = y;
-    TransformPoint(x1, y1);
-  }
-
   void TransformVector(CFX_VectorF& v) const;
   void TransformVector(CFX_Vector& v) const;
   void TransformRect(CFX_RectF& rect) const;
