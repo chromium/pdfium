@@ -20,14 +20,11 @@ bool CFDE_Path::CloseFigure() {
   return true;
 }
 
-FX_PATHPOINT* CFDE_Path::GetLastPoint(int32_t iCount) const {
-  if (iCount < 1)
-    return nullptr;
-
+FX_PATHPOINT* CFDE_Path::GetLastPoint() const {
   int32_t iPoints = m_Path.GetPointCount();
-  if (iCount > iPoints)
+  if (iPoints == 0)
     return nullptr;
-  return m_Path.GetPoints() + iPoints - iCount;
+  return m_Path.GetPoints() + iPoints - 1;
 }
 
 bool CFDE_Path::FigureClosed() const {
@@ -253,16 +250,16 @@ void CFDE_Path::AddRectangle(const CFX_RectF& rect) {
   CloseFigure();
 }
 
-void CFDE_Path::GetBBox(CFX_RectF& bbox) const {
+CFX_RectF CFDE_Path::GetBBox() const {
   CFX_FloatRect rect = m_Path.GetBoundingBox();
-  bbox = CFX_RectF(rect.left, rect.top, rect.Width(), rect.Height());
+  CFX_RectF bbox = CFX_RectF(rect.left, rect.top, rect.Width(), rect.Height());
   bbox.Normalize();
+  return bbox;
 }
 
-void CFDE_Path::GetBBox(CFX_RectF& bbox,
-                        FX_FLOAT fLineWidth,
-                        FX_FLOAT fMiterLimit) const {
+CFX_RectF CFDE_Path::GetBBox(FX_FLOAT fLineWidth, FX_FLOAT fMiterLimit) const {
   CFX_FloatRect rect = m_Path.GetBoundingBox(fLineWidth, fMiterLimit);
-  bbox = CFX_RectF(rect.left, rect.top, rect.Width(), rect.Height());
+  CFX_RectF bbox = CFX_RectF(rect.left, rect.top, rect.Width(), rect.Height());
   bbox.Normalize();
+  return bbox;
 }

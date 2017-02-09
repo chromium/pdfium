@@ -31,12 +31,11 @@ class CPDF_Page : public CPDF_PageObjectHolder {
 
   void ParseContent();
 
-  void GetDisplayMatrix(CFX_Matrix& matrix,
-                        int xPos,
-                        int yPos,
-                        int xSize,
-                        int ySize,
-                        int iRotate) const;
+  CFX_Matrix GetDisplayMatrix(int xPos,
+                              int yPos,
+                              int xSize,
+                              int ySize,
+                              int iRotate) const;
 
   FX_FLOAT GetPageWidth() const { return m_PageWidth; }
   FX_FLOAT GetPageHeight() const { return m_PageHeight; }

@@ -88,8 +88,7 @@ bool CXFA_FFCheckButton::PerformLayout() {
   CXFA_FFWidget::PerformLayout();
   FX_FLOAT fCheckSize = m_pDataAcc->GetCheckButtonSize();
   CXFA_Margin mgWidget = m_pDataAcc->GetMargin();
-  CFX_RectF rtWidget;
-  GetRectWithoutRotate(rtWidget);
+  CFX_RectF rtWidget = GetRectWithoutRotate();
   if (mgWidget) {
     XFA_RectWidthoutMargin(rtWidget, mgWidget);
   }
@@ -212,14 +211,13 @@ void CXFA_FFCheckButton::AddUIMargin(int32_t iCapPlacement) {
 void CXFA_FFCheckButton::RenderWidget(CFX_Graphics* pGS,
                                       CFX_Matrix* pMatrix,
                                       uint32_t dwStatus) {
-  if (!IsMatchVisibleStatus(dwStatus)) {
+  if (!IsMatchVisibleStatus(dwStatus))
     return;
-  }
-  CFX_Matrix mtRotate;
-  GetRotateMatrix(mtRotate);
-  if (pMatrix) {
+
+  CFX_Matrix mtRotate = GetRotateMatrix();
+  if (pMatrix)
     mtRotate.Concat(*pMatrix);
-  }
+
   CXFA_FFWidget::RenderWidget(pGS, &mtRotate, dwStatus);
   CXFA_Border borderUI = m_pDataAcc->GetUIBorder();
   DrawBorder(pGS, borderUI, m_rtUI, &mtRotate,

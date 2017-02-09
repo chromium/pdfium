@@ -43,18 +43,20 @@ const CFWL_App* CXFA_FFWidget::GetFWLApp() {
   return GetPageView()->GetDocView()->GetDoc()->GetApp()->GetFWLApp();
 }
 
-void CXFA_FFWidget::GetWidgetRect(CFX_RectF& rtWidget) {
+CFX_RectF CXFA_FFWidget::GetWidgetRect() {
   if ((m_dwStatus & XFA_WidgetStatus_RectCached) == 0)
     RecacheWidgetRect();
-  rtWidget = m_rtWidget;
+  return m_rtWidget;
 }
+
 CFX_RectF CXFA_FFWidget::RecacheWidgetRect() {
   m_dwStatus |= XFA_WidgetStatus_RectCached;
   m_rtWidget = GetRect(false);
   return m_rtWidget;
 }
-void CXFA_FFWidget::GetRectWithoutRotate(CFX_RectF& rtWidget) {
-  GetWidgetRect(rtWidget);
+
+CFX_RectF CXFA_FFWidget::GetRectWithoutRotate() {
+  CFX_RectF rtWidget = GetWidgetRect();
   FX_FLOAT fValue = 0;
   switch (m_pDataAcc->GetRotate()) {
     case 90:
@@ -74,7 +76,9 @@ void CXFA_FFWidget::GetRectWithoutRotate(CFX_RectF& rtWidget) {
       rtWidget.height = fValue;
       break;
   }
+  return rtWidget;
 }
+
 uint32_t CXFA_FFWidget::GetStatus() {
   return m_dwStatus;
 }
@@ -83,14 +87,10 @@ void CXFA_FFWidget::ModifyStatus(uint32_t dwAdded, uint32_t dwRemoved) {
   m_dwStatus = (m_dwStatus & ~dwRemoved) | dwAdded;
 }
 
-bool CXFA_FFWidget::GetBBox(CFX_RectF& rtBox,
-                            uint32_t dwStatus,
-                            bool bDrawFocus) {
-  if (bDrawFocus)
-    return false;
-  if (m_pPageView)
-    m_pPageView->GetPageViewRect(rtBox);
-  return true;
+CFX_RectF CXFA_FFWidget::GetBBox(uint32_t dwStatus, bool bDrawFocus) {
+  if (bDrawFocus || !m_pPageView)
+    return CFX_RectF();
+  return m_pPageView->GetPageViewRect();
 }
 
 CXFA_WidgetAcc* CXFA_FFWidget::GetDataAcc() {
@@ -105,24 +105,26 @@ bool CXFA_FFWidget::GetToolTip(CFX_WideString& wsToolTip) {
   }
   return GetCaptionText(wsToolTip);
 }
+
 void CXFA_FFWidget::RenderWidget(CFX_Graphics* pGS,
                                  CFX_Matrix* pMatrix,
                                  uint32_t dwStatus) {
-  if (!IsMatchVisibleStatus(dwStatus)) {
+  if (!IsMatchVisibleStatus(dwStatus))
     return;
-  }
+
   CXFA_Border border = m_pDataAcc->GetBorder();
-  if (border) {
-    CFX_RectF rtBorder;
-    GetRectWithoutRotate(rtBorder);
-    CXFA_Margin margin = border.GetMargin();
-    if (margin) {
-      XFA_RectWidthoutMargin(rtBorder, margin);
-    }
-    rtBorder.Normalize();
-    DrawBorder(pGS, border, rtBorder, pMatrix);
-  }
+  if (!border)
+    return;
+
+  CFX_RectF rtBorder = GetRectWithoutRotate();
+  CXFA_Margin margin = border.GetMargin();
+  if (margin)
+    XFA_RectWidthoutMargin(rtBorder, margin);
+
+  rtBorder.Normalize();
+  DrawBorder(pGS, border, rtBorder, pMatrix);
 }
+
 bool CXFA_FFWidget::IsLoaded() {
   return !!m_pPageView;
 }
@@ -146,28 +148,31 @@ void CXFA_FFWidget::DrawBorder(CFX_Graphics* pGS,
                                uint32_t dwFlags) {
   XFA_DrawBox(box, pGS, rtBorder, pMatrix, dwFlags);
 }
+
 void CXFA_FFWidget::InvalidateWidget(const CFX_RectF* pRect) {
-  if (!pRect) {
-    CFX_RectF rtWidget;
-    GetBBox(rtWidget, XFA_WidgetStatus_Focused);
-    rtWidget.Inflate(2, 2);
-    GetDoc()->GetDocEnvironment()->InvalidateRect(m_pPageView, rtWidget,
-                                                  XFA_INVALIDATE_CurrentPage);
-  } else {
+  if (pRect) {
     GetDoc()->GetDocEnvironment()->InvalidateRect(m_pPageView, *pRect,
                                                   XFA_INVALIDATE_CurrentPage);
+    return;
   }
+
+  CFX_RectF rtWidget = GetBBox(XFA_WidgetStatus_Focused);
+  rtWidget.Inflate(2, 2);
+  GetDoc()->GetDocEnvironment()->InvalidateRect(m_pPageView, rtWidget,
+                                                XFA_INVALIDATE_CurrentPage);
 }
+
 void CXFA_FFWidget::AddInvalidateRect(const CFX_RectF* pRect) {
   CFX_RectF rtWidget;
   if (pRect) {
     rtWidget = *pRect;
   } else {
-    GetBBox(rtWidget, XFA_WidgetStatus_Focused);
+    rtWidget = GetBBox(XFA_WidgetStatus_Focused);
     rtWidget.Inflate(2, 2);
   }
   m_pDocView->AddInvalidateRect(m_pPageView, rtWidget);
 }
+
 bool CXFA_FFWidget::GetCaptionText(CFX_WideString& wsCap) {
   CXFA_TextLayout* pCapTextlayout = m_pDataAcc->GetCaptionTextLayout();
   if (!pCapTextlayout) {
@@ -312,8 +317,7 @@ bool CXFA_FFWidget::ReplaceSpellCheckWord(CFX_PointF pointf,
   return false;
 }
 void CXFA_FFWidget::Rotate2Normal(FX_FLOAT& fx, FX_FLOAT& fy) {
-  CFX_Matrix mt;
-  GetRotateMatrix(mt);
+  CFX_Matrix mt = GetRotateMatrix();
   if (mt.IsIdentity()) {
     return;
   }
@@ -377,20 +381,22 @@ static void XFA_GetMatrix(CFX_Matrix& m,
       break;
   }
 }
-void CXFA_FFWidget::GetRotateMatrix(CFX_Matrix& mt) {
-  mt = CFX_Matrix();
+
+CFX_Matrix CXFA_FFWidget::GetRotateMatrix() {
+  CFX_Matrix mt;
   int32_t iRotate = m_pDataAcc->GetRotate();
-  if (!iRotate) {
-    return;
-  }
-  CFX_RectF rcWidget;
-  GetRectWithoutRotate(rcWidget);
+  if (!iRotate)
+    return mt;
+
+  CFX_RectF rcWidget = GetRectWithoutRotate();
   XFA_ATTRIBUTEENUM at = XFA_ATTRIBUTEENUM_TopLeft;
   XFA_GetMatrix(mt, iRotate, at, rcWidget);
+
+  return mt;
 }
+
 bool CXFA_FFWidget::IsLayoutRectEmpty() {
-  CFX_RectF rtLayout;
-  GetRectWithoutRotate(rtLayout);
+  CFX_RectF rtLayout = GetRectWithoutRotate();
   return rtLayout.width < 0.1f && rtLayout.height < 0.1f;
 }
 CXFA_FFWidget* CXFA_FFWidget::GetParent() {
@@ -405,62 +411,44 @@ CXFA_FFWidget* CXFA_FFWidget::GetParent() {
   }
   return nullptr;
 }
+
 bool CXFA_FFWidget::IsAncestorOf(CXFA_FFWidget* pWidget) {
-  if (!pWidget) {
+  if (!pWidget)
     return false;
-  }
+
   CXFA_Node* pNode = m_pDataAcc->GetNode();
   CXFA_Node* pChildNode = pWidget->GetDataAcc()->GetNode();
   while (pChildNode) {
-    if (pChildNode == pNode) {
+    if (pChildNode == pNode)
       return true;
-    }
+
     pChildNode = pChildNode->GetNodeItem(XFA_NODEITEM_Parent);
   }
   return false;
 }
+
 bool CXFA_FFWidget::PtInActiveRect(FX_FLOAT fx, FX_FLOAT fy) {
-  CFX_RectF rtWidget;
-  GetWidgetRect(rtWidget);
-  if (rtWidget.Contains(fx, fy)) {
-    return true;
-  }
-  return false;
+  return GetWidgetRect().Contains(fx, fy);
 }
+
 CXFA_FFDocView* CXFA_FFWidget::GetDocView() {
   return m_pDocView;
 }
+
 void CXFA_FFWidget::SetDocView(CXFA_FFDocView* pDocView) {
   m_pDocView = pDocView;
 }
+
 CXFA_FFDoc* CXFA_FFWidget::GetDoc() {
   return m_pDocView->GetDoc();
 }
+
 CXFA_FFApp* CXFA_FFWidget::GetApp() {
   return GetDoc()->GetApp();
 }
+
 IXFA_AppProvider* CXFA_FFWidget::GetAppProvider() {
   return GetApp()->GetAppProvider();
-}
-void CXFA_FFWidget::GetMinMaxWidth(FX_FLOAT fMinWidth, FX_FLOAT fMaxWidth) {
-  fMinWidth = fMaxWidth = 0;
-  FX_FLOAT fWidth = 0;
-  if (m_pDataAcc->GetWidth(fWidth)) {
-    fMinWidth = fMaxWidth = fWidth;
-  } else {
-    m_pDataAcc->GetMinWidth(fMinWidth);
-    m_pDataAcc->GetMaxWidth(fMaxWidth);
-  }
-}
-void CXFA_FFWidget::GetMinMaxHeight(FX_FLOAT fMinHeight, FX_FLOAT fMaxHeight) {
-  fMinHeight = fMaxHeight = 0;
-  FX_FLOAT fHeight = 0;
-  if (m_pDataAcc->GetHeight(fHeight)) {
-    fMinHeight = fMaxHeight = fHeight;
-  } else {
-    m_pDataAcc->GetMinHeight(fMinHeight);
-    m_pDataAcc->GetMaxHeight(fMaxHeight);
-  }
 }
 
 bool CXFA_FFWidget::IsMatchVisibleStatus(uint32_t dwStatus) {

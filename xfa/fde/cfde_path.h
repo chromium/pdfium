@@ -28,12 +28,11 @@ class CFDE_Path {
   void AddPath(const CFDE_Path* pSrc, bool bConnect);
   void AddPolygon(const std::vector<CFX_PointF>& points);
   void AddRectangle(const CFX_RectF& rect);
-  void GetBBox(CFX_RectF& bbox) const;
-  void GetBBox(CFX_RectF& bbox,
-               FX_FLOAT fLineWidth,
-               FX_FLOAT fMiterLimit) const;
   FX_PATHPOINT* AddPoints(int32_t iCount);
-  FX_PATHPOINT* GetLastPoint(int32_t iCount = 1) const;
+
+  CFX_RectF GetBBox() const;
+  CFX_RectF GetBBox(FX_FLOAT fLineWidth, FX_FLOAT fMiterLimit) const;
+
   bool FigureClosed() const;
   void MoveTo(FX_FLOAT fx, FX_FLOAT fy);
   void LineTo(FX_FLOAT fx, FX_FLOAT fy);
@@ -46,6 +45,8 @@ class CFDE_Path {
              FX_FLOAT endAngle);
   void MoveTo(const CFX_PointF& p0) { MoveTo(p0.x, p0.y); }
   void LineTo(const CFX_PointF& p1) { LineTo(p1.x, p1.y); }
+
+  FX_PATHPOINT* GetLastPoint() const;
   void GetCurveTangents(const std::vector<CFX_PointF>& points,
                         std::vector<CFX_PointF>* tangents,
                         bool bClosed,

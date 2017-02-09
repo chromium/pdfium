@@ -134,8 +134,7 @@ CPDF_PageObject::Type CPDF_TextObject::GetType() const {
 }
 
 void CPDF_TextObject::Transform(const CFX_Matrix& matrix) {
-  CFX_Matrix text_matrix;
-  GetTextMatrix(&text_matrix);
+  CFX_Matrix text_matrix = GetTextMatrix();
   text_matrix.Concat(matrix);
 
   FX_FLOAT* pTextMatrix = m_TextState.GetMutableMatrix();
@@ -160,14 +159,10 @@ const CPDF_TextObject* CPDF_TextObject::AsText() const {
   return this;
 }
 
-void CPDF_TextObject::GetTextMatrix(CFX_Matrix* pMatrix) const {
+CFX_Matrix CPDF_TextObject::GetTextMatrix() const {
   const FX_FLOAT* pTextMatrix = m_TextState.GetMatrix();
-  pMatrix->a = pTextMatrix[0];
-  pMatrix->b = pTextMatrix[2];
-  pMatrix->c = pTextMatrix[1];
-  pMatrix->d = pTextMatrix[3];
-  pMatrix->e = m_PosX;
-  pMatrix->f = m_PosY;
+  return CFX_Matrix(pTextMatrix[0], pTextMatrix[2], pTextMatrix[1],
+                    pTextMatrix[3], m_PosX, m_PosY);
 }
 
 void CPDF_TextObject::SetSegments(const CFX_ByteString* pStrs,
@@ -361,13 +356,12 @@ void CPDF_TextObject::CalcPositionData(FX_FLOAT* pTextAdvanceX,
     min_y = min_y * fontsize / 1000;
     max_y = max_y * fontsize / 1000;
   }
-  CFX_Matrix matrix;
-  GetTextMatrix(&matrix);
+
   m_Left = min_x;
   m_Right = max_x;
   m_Bottom = min_y;
   m_Top = max_y;
-  matrix.TransformRect(m_Left, m_Right, m_Top, m_Bottom);
+  GetTextMatrix().TransformRect(m_Left, m_Right, m_Top, m_Bottom);
   if (TextRenderingModeIsStrokeMode(m_TextState.GetTextMode())) {
     FX_FLOAT half_width = m_GraphState.GetLineWidth() / 2;
     m_Left -= half_width;

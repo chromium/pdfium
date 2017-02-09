@@ -22,10 +22,8 @@ class CXFA_FFPageView : public CXFA_ContainerLayoutItem {
   ~CXFA_FFPageView() override;
 
   CXFA_FFDocView* GetDocView() const;
-  void GetPageViewRect(CFX_RectF& rtPage) const;
-  void GetDisplayMatrix(CFX_Matrix& mt,
-                        const CFX_Rect& rtDisp,
-                        int32_t iRotate) const;
+  CFX_RectF GetPageViewRect() const;
+  CFX_Matrix GetDisplayMatrix(const CFX_Rect& rtDisp, int32_t iRotate) const;
   IXFA_WidgetIterator* CreateWidgetIterator(
       uint32_t dwTraverseWay = XFA_TRAVERSEWAY_Form,
       uint32_t dwWidgetFilter = XFA_WidgetStatus_Visible |

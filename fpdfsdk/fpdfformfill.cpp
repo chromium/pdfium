@@ -98,9 +98,8 @@ void FFLCommon(FPDF_FORMHANDLE hHandle,
     return;
 #endif  // PDF_ENABLE_XFA
 
-  CFX_Matrix matrix;
-  pPage->GetDisplayMatrix(matrix, start_x, start_y, size_x, size_y, rotate);
-
+  CFX_Matrix matrix =
+      pPage->GetDisplayMatrix(start_x, start_y, size_x, size_y, rotate);
   FX_RECT clip(start_x, start_y, start_x + size_x, start_y + size_y);
 
   std::unique_ptr<CFX_FxgeDevice> pDevice(new CFX_FxgeDevice);
@@ -190,8 +189,7 @@ DLLEXPORT int STDCALL FPDFPage_HasFormFieldAtPoint(FPDF_FORMHANDLE hHandle,
 
   CXFA_FFWidget* pXFAAnnot = pWidgetIterator->MoveToNext();
   while (pXFAAnnot) {
-    CFX_RectF rcBBox;
-    pXFAAnnot->GetBBox(rcBBox, 0);
+    CFX_RectF rcBBox = pXFAAnnot->GetBBox(0);
     CFX_FloatRect rcWidget(rcBBox.left, rcBBox.top, rcBBox.left + rcBBox.width,
                            rcBBox.top + rcBBox.height);
     rcWidget.left -= 1.0f;

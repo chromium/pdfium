@@ -1115,11 +1115,8 @@ void CFWL_Edit::ShowCaret(CFX_RectF* pRect) {
   if (!pDocEnvironment)
     return;
 
-  CFX_Matrix mt;
-  pXFAWidget->GetRotateMatrix(mt);
-
   CFX_RectF rt(*pRect);
-  mt.TransformRect(rt);
+  pXFAWidget->GetRotateMatrix().TransformRect(rt);
   pDocEnvironment->DisplayCaret(pXFAWidget, true, &rt);
 }
 

@@ -49,38 +49,40 @@ void CXFA_FFImageEdit::UnloadWidget() {
 void CXFA_FFImageEdit::RenderWidget(CFX_Graphics* pGS,
                                     CFX_Matrix* pMatrix,
                                     uint32_t dwStatus) {
-  if (!IsMatchVisibleStatus(dwStatus)) {
+  if (!IsMatchVisibleStatus(dwStatus))
     return;
-  }
-  CFX_Matrix mtRotate;
-  GetRotateMatrix(mtRotate);
-  if (pMatrix) {
+
+  CFX_Matrix mtRotate = GetRotateMatrix();
+  if (pMatrix)
     mtRotate.Concat(*pMatrix);
-  }
+
   CXFA_FFWidget::RenderWidget(pGS, &mtRotate, dwStatus);
   CXFA_Border borderUI = m_pDataAcc->GetUIBorder();
   DrawBorder(pGS, borderUI, m_rtUI, &mtRotate);
   RenderCaption(pGS, &mtRotate);
-  if (CFX_DIBitmap* pDIBitmap = m_pDataAcc->GetImageEditImage()) {
-    CFX_RectF rtImage = m_pNormalWidget->GetWidgetRect();
-    int32_t iHorzAlign = XFA_ATTRIBUTEENUM_Left;
-    int32_t iVertAlign = XFA_ATTRIBUTEENUM_Top;
-    if (CXFA_Para para = m_pDataAcc->GetPara()) {
-      iHorzAlign = para.GetHorizontalAlign();
-      iVertAlign = para.GetVerticalAlign();
-    }
-    int32_t iAspect = XFA_ATTRIBUTEENUM_Fit;
-    if (CXFA_Value value = m_pDataAcc->GetFormValue()) {
-      if (CXFA_Image imageObj = value.GetImage()) {
-        iAspect = imageObj.GetAspect();
-      }
-    }
-    int32_t iImageXDpi = 0;
-    int32_t iImageYDpi = 0;
-    m_pDataAcc->GetImageEditDpi(iImageXDpi, iImageYDpi);
-    XFA_DrawImage(pGS, rtImage, &mtRotate, pDIBitmap, iAspect, iImageXDpi,
-                  iImageYDpi, iHorzAlign, iVertAlign);
+  CFX_DIBitmap* pDIBitmap = m_pDataAcc->GetImageEditImage();
+  if (!pDIBitmap)
+    return;
+
+  CFX_RectF rtImage = m_pNormalWidget->GetWidgetRect();
+  int32_t iHorzAlign = XFA_ATTRIBUTEENUM_Left;
+  int32_t iVertAlign = XFA_ATTRIBUTEENUM_Top;
+  if (CXFA_Para para = m_pDataAcc->GetPara()) {
+    iHorzAlign = para.GetHorizontalAlign();
+    iVertAlign = para.GetVerticalAlign();
   }
+
+  int32_t iAspect = XFA_ATTRIBUTEENUM_Fit;
+  if (CXFA_Value value = m_pDataAcc->GetFormValue()) {
+    if (CXFA_Image imageObj = value.GetImage())
+      iAspect = imageObj.GetAspect();
+  }
+
+  int32_t iImageXDpi = 0;
+  int32_t iImageYDpi = 0;
+  m_pDataAcc->GetImageEditDpi(iImageXDpi, iImageYDpi);
+  XFA_DrawImage(pGS, rtImage, &mtRotate, pDIBitmap, iAspect, iImageXDpi,
+                iImageYDpi, iHorzAlign, iVertAlign);
 }
 
 bool CXFA_FFImageEdit::OnLButtonDown(uint32_t dwFlags,

@@ -40,7 +40,7 @@ class CPDF_TextObject : public CPDF_PageObject {
   FX_FLOAT GetCharWidth(uint32_t charcode) const;
   FX_FLOAT GetPosX() const;
   FX_FLOAT GetPosY() const;
-  void GetTextMatrix(CFX_Matrix* pMatrix) const;
+  CFX_Matrix GetTextMatrix() const;
   CPDF_Font* GetFont() const;
   FX_FLOAT GetFontSize() const;
 

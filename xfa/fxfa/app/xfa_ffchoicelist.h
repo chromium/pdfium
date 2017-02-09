@@ -45,9 +45,7 @@ class CXFA_FFComboBox : public CXFA_FFField {
   ~CXFA_FFComboBox() override;
 
   // CXFA_FFField
-  bool GetBBox(CFX_RectF& rtBox,
-               uint32_t dwStatus,
-               bool bDrawFocus = false) override;
+  CFX_RectF GetBBox(uint32_t dwStatus, bool bDrawFocus = false) override;
   bool LoadWidget() override;
   void UpdateWidgetProperty() override;
   bool OnRButtonUp(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) override;

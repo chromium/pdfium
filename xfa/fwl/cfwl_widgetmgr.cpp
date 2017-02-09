@@ -432,16 +432,15 @@ void CFWL_WidgetMgr::OnDrawWidget(CFWL_Widget* pWidget,
   CFX_RectF clipCopy(0, 0, pWidget->GetWidgetRect().Size());
   CFX_RectF clipBounds;
 
-#if _FX_OS_ == _FX_WIN32_DESKTOP_ || _FX_OS_ == _FX_WIN64_ || \
-    _FX_OS_ == _FX_LINUX_DESKTOP_ || _FX_OS_ == _FX_ANDROID_
-  pWidget->GetDelegate()->OnDrawWidget(pGraphics, pMatrix);
-  pGraphics->GetClipRect(clipBounds);
-  clipCopy = clipBounds;
-#elif _FX_OS_ == _FX_MACOSX_
+#if _FX_OS_ == _FX_MACOSX_
   if (IsFormDisabled()) {
+#endif  // _FX_OS_ == _FX_MACOSX_
+
     pWidget->GetDelegate()->OnDrawWidget(pGraphics, pMatrix);
-    pGraphics->GetClipRect(clipBounds);
+    clipBounds = pGraphics->GetClipRect();
     clipCopy = clipBounds;
+
+#if _FX_OS_ == _FX_MACOSX_
   } else {
     clipBounds = CFX_RectF(pMatrix->a, pMatrix->b, pMatrix->c, pMatrix->d);
     const_cast<CFX_Matrix*>(pMatrix)->SetIdentity();  // FIXME: const cast.

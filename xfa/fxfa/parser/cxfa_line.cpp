@@ -12,9 +12,8 @@ int32_t CXFA_Line::GetHand() {
   return m_pNode->GetEnum(XFA_ATTRIBUTE_Hand);
 }
 
-bool CXFA_Line::GetSlop() {
-  XFA_ATTRIBUTEENUM eSlop = m_pNode->GetEnum(XFA_ATTRIBUTE_Slope);
-  return eSlop == XFA_ATTRIBUTEENUM_Slash;
+bool CXFA_Line::GetSlope() {
+  return m_pNode->GetEnum(XFA_ATTRIBUTE_Slope) == XFA_ATTRIBUTEENUM_Slash;
 }
 
 CXFA_Edge CXFA_Line::GetEdge() {

@@ -23,15 +23,15 @@ bool CXFA_FFSignature::LoadWidget() {
 void CXFA_FFSignature::RenderWidget(CFX_Graphics* pGS,
                                     CFX_Matrix* pMatrix,
                                     uint32_t dwStatus) {
-  if (!IsMatchVisibleStatus(dwStatus)) {
+  if (!IsMatchVisibleStatus(dwStatus))
     return;
-  }
-  CFX_Matrix mtRotate;
-  GetRotateMatrix(mtRotate);
-  if (pMatrix) {
+
+  CFX_Matrix mtRotate = GetRotateMatrix();
+  if (pMatrix)
     mtRotate.Concat(*pMatrix);
-  }
+
   CXFA_FFWidget::RenderWidget(pGS, &mtRotate, dwStatus);
+
   CXFA_Border borderUI = m_pDataAcc->GetUIBorder();
   DrawBorder(pGS, borderUI, m_rtUI, &mtRotate);
   RenderCaption(pGS, &mtRotate);
@@ -88,6 +88,7 @@ bool CXFA_FFSignature::OnKeyUp(uint32_t dwKeyCode, uint32_t dwFlags) {
 bool CXFA_FFSignature::OnChar(uint32_t dwChar, uint32_t dwFlags) {
   return false;
 }
+
 FWL_WidgetHit CXFA_FFSignature::OnHitTest(FX_FLOAT fx, FX_FLOAT fy) {
   if (m_pNormalWidget) {
     FX_FLOAT ffx = fx, ffy = fy;
@@ -95,14 +96,14 @@ FWL_WidgetHit CXFA_FFSignature::OnHitTest(FX_FLOAT fx, FX_FLOAT fy) {
     if (m_pNormalWidget->HitTest(ffx, ffy) != FWL_WidgetHit::Unknown)
       return FWL_WidgetHit::Client;
   }
-  CFX_RectF rtBox;
-  GetRectWithoutRotate(rtBox);
-  if (!rtBox.Contains(fx, fy))
+
+  if (!GetRectWithoutRotate().Contains(fx, fy))
     return FWL_WidgetHit::Unknown;
   if (m_rtCaption.Contains(fx, fy))
     return FWL_WidgetHit::Titlebar;
   return FWL_WidgetHit::Client;
 }
+
 bool CXFA_FFSignature::OnSetCursor(FX_FLOAT fx, FX_FLOAT fy) {
   return false;
 }

@@ -850,16 +850,17 @@ DLLEXPORT void STDCALL FPDF_DeviceToPage(FPDF_PAGE page,
   pPage->DeviceToPage(start_x, start_y, size_x, size_y, rotate, device_x,
                       device_y, page_x, page_y);
 #else   // PDF_ENABLE_XFA
-  CFX_Matrix page2device;
-  pPage->GetDisplayMatrix(page2device, start_x, start_y, size_x, size_y,
-                          rotate);
+  CFX_Matrix page2device =
+      pPage->GetDisplayMatrix(start_x, start_y, size_x, size_y, rotate);
   CFX_Matrix device2page;
   device2page.SetReverse(page2device);
-  FX_FLOAT page_x_f, page_y_f;
-  device2page.Transform((FX_FLOAT)(device_x), (FX_FLOAT)(device_y), page_x_f,
-                        page_y_f);
-  *page_x = (page_x_f);
-  *page_y = (page_y_f);
+
+  FX_FLOAT page_x_f;
+  FX_FLOAT page_y_f;
+  device2page.Transform(static_cast<FX_FLOAT>(device_x),
+                        static_cast<FX_FLOAT>(device_y), page_x_f, page_y_f);
+  *page_x = page_x_f;
+  *page_y = page_y_f;
 #endif  // PDF_ENABLE_XFA
 }
 
@@ -882,12 +883,12 @@ DLLEXPORT void STDCALL FPDF_PageToDevice(FPDF_PAGE page,
   pPage->PageToDevice(start_x, start_y, size_x, size_y, rotate, page_x, page_y,
                       device_x, device_y);
 #else   // PDF_ENABLE_XFA
-  CFX_Matrix page2device;
-  pPage->GetDisplayMatrix(page2device, start_x, start_y, size_x, size_y,
-                          rotate);
-  FX_FLOAT device_x_f, device_y_f;
-  page2device.Transform(((FX_FLOAT)page_x), ((FX_FLOAT)page_y), device_x_f,
-                        device_y_f);
+  CFX_Matrix page2device =
+      pPage->GetDisplayMatrix(start_x, start_y, size_x, size_y, rotate);
+  FX_FLOAT device_x_f;
+  FX_FLOAT device_y_f;
+  page2device.Transform(static_cast<FX_FLOAT>(page_x),
+                        static_cast<FX_FLOAT>(page_y), device_x_f, device_y_f);
   *device_x = FXSYS_round(device_x_f);
   *device_y = FXSYS_round(device_y_f);
 #endif  // PDF_ENABLE_XFA
@@ -982,10 +983,10 @@ void FPDF_RenderPage_Retail(CPDF_PageRenderContext* pContext,
   if (!pPage)
     return;
 
-  CFX_Matrix matrix;
-  pPage->GetDisplayMatrix(matrix, start_x, start_y, size_x, size_y, rotate);
-  FX_RECT rect(start_x, start_y, start_x + size_x, start_y + size_y);
-  RenderPageImpl(pContext, pPage, matrix, rect, flags, bNeedToRestore, pause);
+  RenderPageImpl(pContext, pPage, pPage->GetDisplayMatrix(
+                                      start_x, start_y, size_x, size_y, rotate),
+                 FX_RECT(start_x, start_y, start_x + size_x, start_y + size_y),
+                 flags, bNeedToRestore, pause);
 }
 
 DLLEXPORT int STDCALL FPDF_GetPageSizeByIndex(FPDF_DOCUMENT document,

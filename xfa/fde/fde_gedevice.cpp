@@ -168,12 +168,10 @@ bool CFDE_RenderDevice::DrawString(CFDE_Brush* pBrush,
 #if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
         FxFont.SetFace(pFxFont->GetFace());
         m_pDevice->DrawNormalText(iCurCount, pCurCP, &FxFont, -fFontSize,
-                                  (const CFX_Matrix*)pMatrix, argb,
-                                  FXTEXT_CLEARTYPE);
+                                  pMatrix, argb, FXTEXT_CLEARTYPE);
 #else
         m_pDevice->DrawNormalText(iCurCount, pCurCP, pFxFont, -fFontSize,
-                                  (const CFX_Matrix*)pMatrix, argb,
-                                  FXTEXT_CLEARTYPE);
+                                  pMatrix, argb, FXTEXT_CLEARTYPE);
 #endif  // _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
       }
       pCurFont = pSTFont;
@@ -188,15 +186,14 @@ bool CFDE_RenderDevice::DrawString(CFDE_Brush* pBrush,
     pFxFont = pCurFont->GetDevFont();
 #if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
     FxFont.SetFace(pFxFont->GetFace());
-    bool bRet = m_pDevice->DrawNormalText(
-        iCurCount, pCurCP, &FxFont, -fFontSize, (const CFX_Matrix*)pMatrix,
-        argb, FXTEXT_CLEARTYPE);
+    bool bRet =
+        m_pDevice->DrawNormalText(iCurCount, pCurCP, &FxFont, -fFontSize,
+                                  pMatrix, argb, FXTEXT_CLEARTYPE);
     FxFont.SetFace(nullptr);
     return bRet;
 #else
     return m_pDevice->DrawNormalText(iCurCount, pCurCP, pFxFont, -fFontSize,
-                                     (const CFX_Matrix*)pMatrix, argb,
-                                     FXTEXT_CLEARTYPE);
+                                     pMatrix, argb, FXTEXT_CLEARTYPE);
 #endif  // _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
   }
 

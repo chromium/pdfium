@@ -18,7 +18,7 @@ class CXFA_Line : public CXFA_Data {
   explicit CXFA_Line(CXFA_Node* pNode) : CXFA_Data(pNode) {}
 
   int32_t GetHand();
-  bool GetSlop();
+  bool GetSlope();
   CXFA_Edge GetEdge();
 };
 

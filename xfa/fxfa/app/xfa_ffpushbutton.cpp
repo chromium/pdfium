@@ -33,23 +33,22 @@ CXFA_FFPushButton::~CXFA_FFPushButton() {
 void CXFA_FFPushButton::RenderWidget(CFX_Graphics* pGS,
                                      CFX_Matrix* pMatrix,
                                      uint32_t dwStatus) {
-  if (!IsMatchVisibleStatus(dwStatus)) {
+  if (!IsMatchVisibleStatus(dwStatus))
     return;
-  }
-  CFX_Matrix mtRotate;
-  GetRotateMatrix(mtRotate);
-  if (pMatrix) {
+
+  CFX_Matrix mtRotate = GetRotateMatrix();
+  if (pMatrix)
     mtRotate.Concat(*pMatrix);
-  }
+
   CXFA_FFWidget::RenderWidget(pGS, &mtRotate, dwStatus);
   RenderHighlightCaption(pGS, &mtRotate);
-  CFX_RectF rtWidget;
-  GetRectWithoutRotate(rtWidget);
 
+  CFX_RectF rtWidget = GetRectWithoutRotate();
   CFX_Matrix mt(1, 0, 0, 1, rtWidget.left, rtWidget.top);
   mt.Concat(mtRotate);
   GetApp()->GetWidgetMgrDelegate()->OnDrawWidget(m_pNormalWidget, pGS, &mt);
 }
+
 bool CXFA_FFPushButton::LoadWidget() {
   ASSERT(!m_pNormalWidget);
   CFWL_PushButton* pPushButton = new CFWL_PushButton(GetFWLApp());
@@ -100,8 +99,7 @@ void CXFA_FFPushButton::UnloadWidget() {
 
 bool CXFA_FFPushButton::PerformLayout() {
   CXFA_FFWidget::PerformLayout();
-  CFX_RectF rtWidget;
-  GetRectWithoutRotate(rtWidget);
+  CFX_RectF rtWidget = GetRectWithoutRotate();
 
   m_rtUI = rtWidget;
   if (CXFA_Margin mgWidget = m_pDataAcc->GetMargin())
@@ -171,34 +169,30 @@ void CXFA_FFPushButton::RenderHighlightCaption(CFX_Graphics* pGS,
                                                CFX_Matrix* pMatrix) {
   CXFA_TextLayout* pCapTextLayout = m_pDataAcc->GetCaptionTextLayout();
   CXFA_Caption caption = m_pDataAcc->GetCaption();
-  if (caption && caption.GetPresence() == XFA_ATTRIBUTEENUM_Visible) {
-    CFX_RenderDevice* pRenderDevice = pGS->GetRenderDevice();
-    CFX_RectF rtWidget;
-    GetRectWithoutRotate(rtWidget);
-    CFX_RectF rtClip = m_rtCaption;
-    rtClip.Intersect(rtWidget);
-    CFX_Matrix mt(1, 0, 0, 1, m_rtCaption.left, m_rtCaption.top);
-    if (pMatrix) {
-      pMatrix->TransformRect(rtClip);
-      mt.Concat(*pMatrix);
-    }
-    {
-      uint32_t dwState = m_pNormalWidget->GetStates();
-      if (m_pDownTextLayout && (dwState & FWL_STATE_PSB_Pressed) &&
-          (dwState & FWL_STATE_PSB_Hovered)) {
-        if (m_pDownTextLayout->DrawString(pRenderDevice, mt, rtClip)) {
-          return;
-        }
-      } else if (m_pRolloverTextLayout && (dwState & FWL_STATE_PSB_Hovered)) {
-        if (m_pRolloverTextLayout->DrawString(pRenderDevice, mt, rtClip)) {
-          return;
-        }
-      }
-    }
-    if (pCapTextLayout) {
-      pCapTextLayout->DrawString(pRenderDevice, mt, rtClip);
-    }
+  if (!caption || caption.GetPresence() != XFA_ATTRIBUTEENUM_Visible)
+    return;
+
+  CFX_RenderDevice* pRenderDevice = pGS->GetRenderDevice();
+  CFX_RectF rtClip = m_rtCaption;
+  rtClip.Intersect(GetRectWithoutRotate());
+  CFX_Matrix mt(1, 0, 0, 1, m_rtCaption.left, m_rtCaption.top);
+  if (pMatrix) {
+    pMatrix->TransformRect(rtClip);
+    mt.Concat(*pMatrix);
   }
+
+  uint32_t dwState = m_pNormalWidget->GetStates();
+  if (m_pDownTextLayout && (dwState & FWL_STATE_PSB_Pressed) &&
+      (dwState & FWL_STATE_PSB_Hovered)) {
+    if (m_pDownTextLayout->DrawString(pRenderDevice, mt, rtClip))
+      return;
+  } else if (m_pRolloverTextLayout && (dwState & FWL_STATE_PSB_Hovered)) {
+    if (m_pRolloverTextLayout->DrawString(pRenderDevice, mt, rtClip))
+      return;
+  }
+
+  if (pCapTextLayout)
+    pCapTextLayout->DrawString(pRenderDevice, mt, rtClip);
 }
 
 void CXFA_FFPushButton::OnProcessMessage(CFWL_Message* pMessage) {

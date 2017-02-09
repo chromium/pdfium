@@ -860,6 +860,7 @@ bool CFX_RenderDevice::DrawNormalText(int nChars,
     char2device = *pText2Device;
     text2Device = *pText2Device;
   }
+
   char2device.Scale(font_size, -font_size);
   if (FXSYS_fabs(char2device.a) + FXSYS_fabs(char2device.b) > 50 * 1.0f ||
       ((m_DeviceClass == FXDC_PRINTER) &&
@@ -1072,7 +1073,9 @@ bool CFX_RenderDevice::DrawTextPath(int nChars,
         pFont->LoadGlyphPath(charpos.m_GlyphIndex, charpos.m_FontCharWidth);
     if (!pPath)
       continue;
+
     matrix.Concat(*pText2User);
+
     CFX_PathData TransformedPath(*pPath);
     TransformedPath.Transform(&matrix);
     if (fill_color || stroke_color) {

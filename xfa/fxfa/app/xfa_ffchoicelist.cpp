@@ -220,12 +220,10 @@ CXFA_FFComboBox::CXFA_FFComboBox(CXFA_WidgetAcc* pDataAcc)
 
 CXFA_FFComboBox::~CXFA_FFComboBox() {}
 
-bool CXFA_FFComboBox::GetBBox(CFX_RectF& rtBox,
-                              uint32_t dwStatus,
-                              bool bDrawFocus) {
+CFX_RectF CXFA_FFComboBox::GetBBox(uint32_t dwStatus, bool bDrawFocus) {
   if (bDrawFocus)
-    return false;
-  return CXFA_FFWidget::GetBBox(rtBox, dwStatus);
+    return CFX_RectF();
+  return CXFA_FFWidget::GetBBox(dwStatus);
 }
 
 bool CXFA_FFComboBox::PtInActiveRect(FX_FLOAT fx, FX_FLOAT fy) {

@@ -32,11 +32,10 @@ int32_t CXFA_RenderContext::StartRender(CXFA_FFPageView* pPageView,
   m_pGS = pGS;
   m_matrix = matrix;
   m_options = options;
-  CFX_RectF rtPage;
-  pGS->GetClipRect(rtPage);
+
   CFX_Matrix mtRes;
   mtRes.SetReverse(matrix);
-  m_rtClipRect = rtPage;
+  m_rtClipRect = pGS->GetClipRect();
   mtRes.TransformRect(m_rtClipRect);
   m_dwStatus = m_options.m_bHighlight ? XFA_WidgetStatus_Highlight : 0;
   uint32_t dwFilterType = XFA_WidgetStatus_Visible |
@@ -52,12 +51,12 @@ int32_t CXFA_RenderContext::DoRender(IFX_Pause* pPause) {
   int32_t iCount = 0;
   while (m_pWidget) {
     CXFA_FFWidget* pWidget = m_pWidget;
-    CFX_RectF rtWidgetBox;
-    pWidget->GetBBox(rtWidgetBox, XFA_WidgetStatus_Visible);
+    CFX_RectF rtWidgetBox = pWidget->GetBBox(XFA_WidgetStatus_Visible);
     rtWidgetBox.width += 1;
     rtWidgetBox.height += 1;
     if (rtWidgetBox.IntersectWith(m_rtClipRect))
       pWidget->RenderWidget(m_pGS, &m_matrix, m_dwStatus);
+
     m_pWidget = m_pWidgetIterator->MoveToNext();
     iCount++;
     if (iCount > kMaxCount && pPause && pPause->NeedToPauseNow())

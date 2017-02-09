@@ -84,9 +84,7 @@ class CXFA_FFDateTimeEdit : public CXFA_FFTextEdit {
   ~CXFA_FFDateTimeEdit() override;
 
   // CXFA_FFTextEdit
-  bool GetBBox(CFX_RectF& rtBox,
-               uint32_t dwStatus,
-               bool bDrawFocus = false) override;
+  CFX_RectF GetBBox(uint32_t dwStatus, bool bDrawFocus = false) override;
   bool LoadWidget() override;
   void UpdateWidgetProperty() override;
   void OnProcessEvent(CFWL_Event* pEvent) override;

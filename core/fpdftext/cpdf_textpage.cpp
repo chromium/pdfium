@@ -115,8 +115,9 @@ CPDF_TextPage::CPDF_TextPage(const CPDF_Page* pPage, FPDFText_Direction flags)
       m_bIsParsed(false),
       m_TextlineDir(TextOrientation::Unknown) {
   m_TextBuf.EstimateSize(0, 10240);
-  pPage->GetDisplayMatrix(m_DisplayMatrix, 0, 0, (int)pPage->GetPageWidth(),
-                          (int)pPage->GetPageHeight(), 0);
+  m_DisplayMatrix =
+      pPage->GetDisplayMatrix(0, 0, static_cast<int>(pPage->GetPageWidth()),
+                              static_cast<int>(pPage->GetPageHeight()), 0);
 }
 
 CPDF_TextPage::~CPDF_TextPage() {}
@@ -239,8 +240,7 @@ std::vector<CFX_FloatRect> CPDF_TextPage::GetRectArray(int start,
     }
     if (bFlagNewRect) {
       FX_FLOAT orgX = info_curchar.m_OriginX, orgY = info_curchar.m_OriginY;
-      CFX_Matrix matrix;
-      info_curchar.m_pTextObj->GetTextMatrix(&matrix);
+      CFX_Matrix matrix = info_curchar.m_pTextObj->GetTextMatrix();
       matrix.Concat(info_curchar.m_Matrix);
 
       CFX_Matrix matrix_reverse;
@@ -759,8 +759,8 @@ void CPDF_TextPage::ProcessTextObject(
   FX_FLOAT prev_width =
       GetCharWidth(item.m_CharCode, prev_Obj.m_pTextObj->GetFont()) *
       prev_Obj.m_pTextObj->GetFontSize() / 1000;
-  CFX_Matrix prev_matrix;
-  prev_Obj.m_pTextObj->GetTextMatrix(&prev_matrix);
+
+  CFX_Matrix prev_matrix = prev_Obj.m_pTextObj->GetTextMatrix();
   prev_width = FXSYS_fabs(prev_width);
   prev_matrix.Concat(prev_Obj.m_formMatrix);
   prev_width = prev_matrix.TransformDistance(prev_width);
@@ -769,11 +769,11 @@ void CPDF_TextPage::ProcessTextObject(
                         pTextObj->GetFontSize() / 1000;
   this_width = FXSYS_fabs(this_width);
 
-  CFX_Matrix this_matrix;
-  pTextObj->GetTextMatrix(&this_matrix);
+  CFX_Matrix this_matrix = pTextObj->GetTextMatrix();
   this_width = FXSYS_fabs(this_width);
   this_matrix.Concat(formMatrix);
   this_width = this_matrix.TransformDistance(this_width);
+
   FX_FLOAT threshold =
       prev_width > this_width ? prev_width / 4 : this_width / 4;
   FX_FLOAT prev_x = prev_Obj.m_pTextObj->GetPosX(),
@@ -890,10 +890,9 @@ void CPDF_TextPage::ProcessMarkedContent(PDFTEXT_Obj Obj) {
     return;
 
   CPDF_Font* pFont = pTextObj->GetFont();
-  CFX_Matrix formMatrix = Obj.m_formMatrix;
-  CFX_Matrix matrix;
-  pTextObj->GetTextMatrix(&matrix);
-  matrix.Concat(formMatrix);
+  CFX_Matrix matrix = pTextObj->GetTextMatrix();
+  matrix.Concat(Obj.m_formMatrix);
+
   FX_FLOAT fPosX = pTextObj->GetPosX();
   FX_FLOAT fPosY = pTextObj->GetPosY();
   int nCharInfoIndex = m_TextBuf.GetLength();
@@ -908,6 +907,7 @@ void CPDF_TextPage::ProcessMarkedContent(PDFTEXT_Obj Obj) {
       wChar = 0x20;
     if (wChar >= 0xFFFD)
       continue;
+
     PAGECHAR_INFO charinfo;
     charinfo.m_OriginX = fPosX;
     charinfo.m_OriginY = fPosY;
@@ -977,9 +977,9 @@ void CPDF_TextPage::ProcessTextObject(PDFTEXT_Obj Obj) {
     return;
   CFX_Matrix formMatrix = Obj.m_formMatrix;
   CPDF_Font* pFont = pTextObj->GetFont();
-  CFX_Matrix matrix;
-  pTextObj->GetTextMatrix(&matrix);
+  CFX_Matrix matrix = pTextObj->GetTextMatrix();
   matrix.Concat(formMatrix);
+
   FPDFText_MarkedContent ePreMKC = PreMarkedContent(Obj);
   if (ePreMKC == FPDFText_MarkedContent::Done) {
     m_pPreTextObj = pTextObj;
@@ -1222,8 +1222,7 @@ CPDF_TextPage::TextOrientation CPDF_TextPage::GetTextObjectWritingMode(
   pTextObj->GetCharInfo(0, &first);
   pTextObj->GetCharInfo(nChars - 1, &last);
 
-  CFX_Matrix textMatrix;
-  pTextObj->GetTextMatrix(&textMatrix);
+  CFX_Matrix textMatrix = pTextObj->GetTextMatrix();
   textMatrix.TransformPoint(first.m_OriginX, first.m_OriginY);
   textMatrix.TransformPoint(last.m_OriginX, last.m_OriginY);
   FX_FLOAT dX = FXSYS_fabs(last.m_OriginX - first.m_OriginX);
@@ -1332,8 +1331,7 @@ CPDF_TextPage::GenerateCharacter CPDF_TextPage::ProcessInsertObject(
   FX_FLOAT threshold =
       last_width > this_width ? last_width / 4 : this_width / 4;
 
-  CFX_Matrix prev_matrix;
-  m_pPreTextObj->GetTextMatrix(&prev_matrix);
+  CFX_Matrix prev_matrix = m_pPreTextObj->GetTextMatrix();
   prev_matrix.Concat(m_perMatrix);
 
   CFX_Matrix prev_reverse;
@@ -1359,8 +1357,7 @@ CPDF_TextPage::GenerateCharacter CPDF_TextPage::ProcessInsertObject(
       if (nItem > 1) {
         CPDF_TextObjectItem tempItem;
         m_pPreTextObj->GetItemInfo(0, &tempItem);
-        CFX_Matrix m;
-        m_pPreTextObj->GetTextMatrix(&m);
+        CFX_Matrix m = m_pPreTextObj->GetTextMatrix();
         if (PrevItem.m_OriginX > tempItem.m_OriginX &&
             m_DisplayMatrix.a > 0.9 && m_DisplayMatrix.b < 0.1 &&
             m_DisplayMatrix.c < 0.1 && m_DisplayMatrix.d < -0.9 && m.b < 0.1 &&
@@ -1393,9 +1390,9 @@ CPDF_TextPage::GenerateCharacter CPDF_TextPage::ProcessInsertObject(
   CFX_WideString PrevStr =
       m_pPreTextObj->GetFont()->UnicodeFromCharCode(PrevItem.m_CharCode);
   FX_WCHAR preChar = PrevStr.GetAt(PrevStr.GetLength() - 1);
-  CFX_Matrix matrix;
-  pObj->GetTextMatrix(&matrix);
+  CFX_Matrix matrix = pObj->GetTextMatrix();
   matrix.Concat(formMatrix);
+
   threshold = (FX_FLOAT)(nLastWidth > nThisWidth ? nLastWidth : nThisWidth);
   threshold = threshold > 400
                   ? (threshold < 700

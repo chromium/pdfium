@@ -60,12 +60,11 @@ class CPDFXFA_Page {
                     int* device_x,
                     int* device_y);
 
-  void GetDisplayMatrix(CFX_Matrix& matrix,
-                        int xPos,
-                        int yPos,
-                        int xSize,
-                        int ySize,
-                        int iRotate) const;
+  CFX_Matrix GetDisplayMatrix(int xPos,
+                              int yPos,
+                              int xSize,
+                              int ySize,
+                              int iRotate) const;
 
  protected:
   // Refcounted class.

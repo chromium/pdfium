@@ -487,9 +487,7 @@ void CXFA_FFNotify::OnLayoutItemAdded(CXFA_LayoutProcessor* pLayout,
     return;
   }
   if (pWidget->IsLoaded()) {
-    CFX_RectF rtOld;
-    pWidget->GetWidgetRect(rtOld);
-    if (rtOld != pWidget->RecacheWidgetRect())
+    if (pWidget->GetWidgetRect() != pWidget->RecacheWidgetRect())
       pWidget->PerformLayout();
   } else {
     pWidget->LoadWidget();

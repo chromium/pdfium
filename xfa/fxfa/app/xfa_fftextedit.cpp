@@ -493,12 +493,10 @@ CXFA_FFDateTimeEdit::CXFA_FFDateTimeEdit(CXFA_WidgetAcc* pDataAcc)
 
 CXFA_FFDateTimeEdit::~CXFA_FFDateTimeEdit() {}
 
-bool CXFA_FFDateTimeEdit::GetBBox(CFX_RectF& rtBox,
-                                  uint32_t dwStatus,
-                                  bool bDrawFocus) {
+CFX_RectF CXFA_FFDateTimeEdit::GetBBox(uint32_t dwStatus, bool bDrawFocus) {
   if (bDrawFocus)
-    return false;
-  return CXFA_FFWidget::GetBBox(rtBox, dwStatus);
+    return CFX_RectF();
+  return CXFA_FFWidget::GetBBox(dwStatus);
 }
 
 bool CXFA_FFDateTimeEdit::PtInActiveRect(FX_FLOAT fx, FX_FLOAT fy) {

@@ -48,9 +48,7 @@ class CXFA_FFWidget : public CXFA_ContentLayoutItem {
   explicit CXFA_FFWidget(CXFA_WidgetAcc* pDataAcc);
   ~CXFA_FFWidget() override;
 
-  virtual bool GetBBox(CFX_RectF& rtBox,
-                       uint32_t dwStatus,
-                       bool bDrawFocus = false);
+  virtual CFX_RectF GetBBox(uint32_t dwStatus, bool bDrawFocus = false);
   virtual void RenderWidget(CFX_Graphics* pGS,
                             CFX_Matrix* pMatrix,
                             uint32_t dwStatus);
@@ -104,7 +102,7 @@ class CXFA_FFWidget : public CXFA_ContentLayoutItem {
 
   CXFA_FFPageView* GetPageView() const { return m_pPageView; }
   void SetPageView(CXFA_FFPageView* pPageView) { m_pPageView = pPageView; }
-  void GetWidgetRect(CFX_RectF& rtWidget);
+  CFX_RectF GetWidgetRect();
   CFX_RectF RecacheWidgetRect();
   uint32_t GetStatus();
   void ModifyStatus(uint32_t dwAdded, uint32_t dwRemoved);
@@ -122,7 +120,7 @@ class CXFA_FFWidget : public CXFA_ContentLayoutItem {
   bool GetCaptionText(CFX_WideString& wsCap);
   bool IsFocused();
   void Rotate2Normal(FX_FLOAT& fx, FX_FLOAT& fy);
-  void GetRotateMatrix(CFX_Matrix& mt);
+  CFX_Matrix GetRotateMatrix();
   bool IsLayoutRectEmpty();
   CXFA_FFWidget* GetParent();
   bool IsAncestorOf(CXFA_FFWidget* pWidget);
@@ -136,9 +134,8 @@ class CXFA_FFWidget : public CXFA_ContentLayoutItem {
                   const CFX_RectF& rtBorder,
                   CFX_Matrix* pMatrix,
                   uint32_t dwFlags = 0);
-  void GetMinMaxWidth(FX_FLOAT fMinWidth, FX_FLOAT fMaxWidth);
-  void GetMinMaxHeight(FX_FLOAT fMinHeight, FX_FLOAT fMaxHeight);
-  void GetRectWithoutRotate(CFX_RectF& rtWidget);
+
+  CFX_RectF GetRectWithoutRotate();
   bool IsMatchVisibleStatus(uint32_t dwStatus);
   void EventKillFocus();
   bool IsButtonDown();

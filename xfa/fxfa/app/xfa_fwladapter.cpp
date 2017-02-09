@@ -30,10 +30,8 @@ bool CXFA_FWLAdapterWidgetMgr::GetPopupPos(CFWL_Widget* pWidget,
                                            const CFX_RectF& rtAnchor,
                                            CFX_RectF& rtPopup) {
   CXFA_FFWidget* pFFWidget = pWidget->GetLayoutItem();
-  CFX_Matrix mt;
-  pFFWidget->GetRotateMatrix(mt);
   CFX_RectF rtRotateAnchor(rtAnchor);
-  mt.TransformRect(rtRotateAnchor);
+  pFFWidget->GetRotateMatrix().TransformRect(rtRotateAnchor);
   pFFWidget->GetDoc()->GetDocEnvironment()->GetPopupPos(
       pFFWidget, fMinHeight, fMaxHeight, rtRotateAnchor, rtPopup);
   return true;

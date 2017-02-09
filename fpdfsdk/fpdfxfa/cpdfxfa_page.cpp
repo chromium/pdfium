@@ -101,17 +101,16 @@ FX_FLOAT CPDFXFA_Page::GetPageWidth() const {
   int nDocType = m_pContext->GetDocType();
   switch (nDocType) {
     case DOCTYPE_DYNAMIC_XFA: {
-      if (m_pXFAPageView) {
-        CFX_RectF rect;
-        m_pXFAPageView->GetPageViewRect(rect);
-        return rect.width;
-      }
-    } break;
+      if (m_pXFAPageView)
+        return m_pXFAPageView->GetPageViewRect().width;
+      break;
+    }
     case DOCTYPE_STATIC_XFA:
     case DOCTYPE_PDF: {
       if (m_pPDFPage)
         return m_pPDFPage->GetPageWidth();
-    } break;
+      break;
+    }
     default:
       return 0.0f;
   }
@@ -129,14 +128,13 @@ FX_FLOAT CPDFXFA_Page::GetPageHeight() const {
     case DOCTYPE_STATIC_XFA: {
       if (m_pPDFPage)
         return m_pPDFPage->GetPageHeight();
-    } break;
+      break;
+    }
     case DOCTYPE_DYNAMIC_XFA: {
-      if (m_pXFAPageView) {
-        CFX_RectF rect;
-        m_pXFAPageView->GetPageViewRect(rect);
-        return rect.height;
-      }
-    } break;
+      if (m_pXFAPageView)
+        return m_pXFAPageView->GetPageViewRect().height;
+      break;
+    }
     default:
       return 0.0f;
   }
@@ -158,16 +156,14 @@ void CPDFXFA_Page::DeviceToPage(int start_x,
 
   FX_FLOAT page_x_f, page_y_f;
 
-  CFX_Matrix page2device;
-  GetDisplayMatrix(page2device, start_x, start_y, size_x, size_y, rotate);
-
   CFX_Matrix device2page;
-  device2page.SetReverse(page2device);
-  device2page.Transform((FX_FLOAT)(device_x), (FX_FLOAT)(device_y), page_x_f,
-                        page_y_f);
+  device2page.SetReverse(
+      GetDisplayMatrix(start_x, start_y, size_x, size_y, rotate));
+  device2page.Transform(static_cast<FX_FLOAT>(device_x),
+                        static_cast<FX_FLOAT>(device_y), page_x_f, page_y_f);
 
-  *page_x = (page_x_f);
-  *page_y = (page_y_f);
+  *page_x = page_x_f;
+  *page_y = page_y_f;
 }
 
 void CPDFXFA_Page::PageToDevice(int start_x,
@@ -182,42 +178,43 @@ void CPDFXFA_Page::PageToDevice(int start_x,
   if (!m_pPDFPage && !m_pXFAPageView)
     return;
 
-  FX_FLOAT device_x_f, device_y_f;
+  FX_FLOAT device_x_f;
+  FX_FLOAT device_y_f;
 
-  CFX_Matrix page2device;
-  GetDisplayMatrix(page2device, start_x, start_y, size_x, size_y, rotate);
-
-  page2device.Transform(((FX_FLOAT)page_x), ((FX_FLOAT)page_y), device_x_f,
-                        device_y_f);
+  CFX_Matrix page2device =
+      GetDisplayMatrix(start_x, start_y, size_x, size_y, rotate);
+  page2device.Transform(static_cast<FX_FLOAT>(page_x),
+                        static_cast<FX_FLOAT>(page_y), device_x_f, device_y_f);
 
   *device_x = FXSYS_round(device_x_f);
   *device_y = FXSYS_round(device_y_f);
 }
 
-void CPDFXFA_Page::GetDisplayMatrix(CFX_Matrix& matrix,
-                                    int xPos,
-                                    int yPos,
-                                    int xSize,
-                                    int ySize,
-                                    int iRotate) const {
+CFX_Matrix CPDFXFA_Page::GetDisplayMatrix(int xPos,
+                                          int yPos,
+                                          int xSize,
+                                          int ySize,
+                                          int iRotate) const {
   if (!m_pPDFPage && !m_pXFAPageView)
-    return;
+    return CFX_Matrix();
 
   int nDocType = m_pContext->GetDocType();
   switch (nDocType) {
     case DOCTYPE_DYNAMIC_XFA: {
       if (m_pXFAPageView) {
-        CFX_Rect rect(xPos, yPos, xSize, ySize);
-        m_pXFAPageView->GetDisplayMatrix(matrix, rect, iRotate);
+        return m_pXFAPageView->GetDisplayMatrix(
+            CFX_Rect(xPos, yPos, xSize, ySize), iRotate);
       }
-    } break;
+      break;
+    }
     case DOCTYPE_PDF:
     case DOCTYPE_STATIC_XFA: {
-      if (m_pPDFPage) {
-        m_pPDFPage->GetDisplayMatrix(matrix, xPos, yPos, xSize, ySize, iRotate);
-      }
-    } break;
+      if (m_pPDFPage)
+        return m_pPDFPage->GetDisplayMatrix(xPos, yPos, xSize, ySize, iRotate);
+      break;
+    }
     default:
-      return;
+      return CFX_Matrix();
   }
+  return CFX_Matrix();
 }

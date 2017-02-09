@@ -27,7 +27,6 @@ class CXFA_FFText : public CXFA_FFDraw {
 
  private:
   const FX_WCHAR* GetLinkURLAtPoint(FX_FLOAT fx, FX_FLOAT fy);
-  void FWLToClient(FX_FLOAT& fx, FX_FLOAT& fy);
 };
 
 #endif  // XFA_FXFA_APP_XFA_FFTEXT_H_

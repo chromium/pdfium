@@ -120,15 +120,14 @@ CPDF_Object* CPDF_Page::GetPageAttr(const CFX_ByteString& name) const {
   return nullptr;
 }
 
-void CPDF_Page::GetDisplayMatrix(CFX_Matrix& matrix,
-                                 int xPos,
-                                 int yPos,
-                                 int xSize,
-                                 int ySize,
-                                 int iRotate) const {
-  if (m_PageWidth == 0 || m_PageHeight == 0) {
-    return;
-  }
+CFX_Matrix CPDF_Page::GetDisplayMatrix(int xPos,
+                                       int yPos,
+                                       int xSize,
+                                       int ySize,
+                                       int iRotate) const {
+  if (m_PageWidth == 0 || m_PageHeight == 0)
+    return CFX_Matrix();
+
   float x0 = 0;
   float y0 = 0;
   float x1 = 0;
@@ -170,8 +169,9 @@ void CPDF_Page::GetDisplayMatrix(CFX_Matrix& matrix,
       y2 = yPos;
       break;
   }
-  matrix = m_PageMatrix;
+  CFX_Matrix matrix = m_PageMatrix;
   matrix.Concat(CFX_Matrix((x2 - x0) / m_PageWidth, (y2 - y0) / m_PageWidth,
                            (x1 - x0) / m_PageHeight, (y1 - y0) / m_PageHeight,
                            x0, y0));
+  return matrix;
 }

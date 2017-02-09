@@ -25,12 +25,12 @@
 
 namespace {
 
-void GetPageMatrix(CFX_Matrix& pageMatrix,
-                   const CFX_RectF& docPageRect,
-                   const CFX_Rect& devicePageRect,
-                   int32_t iRotate,
-                   uint32_t dwCoordinatesType) {
+CFX_Matrix GetPageMatrix(const CFX_RectF& docPageRect,
+                         const CFX_Rect& devicePageRect,
+                         int32_t iRotate,
+                         uint32_t dwCoordinatesType) {
   ASSERT(iRotate >= 0 && iRotate <= 3);
+
   bool bFlipX = (dwCoordinatesType & 0x01) != 0;
   bool bFlipY = (dwCoordinatesType & 0x02) != 0;
   CFX_Matrix m((bFlipX ? -1.0f : 1.0f), 0, 0, (bFlipY ? -1.0f : 1.0f), 0, 0);
@@ -70,7 +70,7 @@ void GetPageMatrix(CFX_Matrix& pageMatrix,
     default:
       break;
   }
-  pageMatrix = m;
+  return m;
 }
 
 bool PageWidgetFilter(CXFA_FFWidget* pWidget,
@@ -124,15 +124,13 @@ CXFA_FFDocView* CXFA_FFPageView::GetDocView() const {
   return m_pDocView;
 }
 
-void CXFA_FFPageView::GetPageViewRect(CFX_RectF& rtPage) const {
-  rtPage = CFX_RectF(0, 0, GetPageSize());
+CFX_RectF CXFA_FFPageView::GetPageViewRect() const {
+  return CFX_RectF(0, 0, GetPageSize());
 }
 
-void CXFA_FFPageView::GetDisplayMatrix(CFX_Matrix& mt,
-                                       const CFX_Rect& rtDisp,
-                                       int32_t iRotate) const {
-  CFX_SizeF sz = GetPageSize();
-  GetPageMatrix(mt, CFX_RectF(0, 0, sz), rtDisp, iRotate, 0);
+CFX_Matrix CXFA_FFPageView::GetDisplayMatrix(const CFX_Rect& rtDisp,
+                                             int32_t iRotate) const {
+  return GetPageMatrix(CFX_RectF(0, 0, GetPageSize()), rtDisp, iRotate, 0);
 }
 
 IXFA_WidgetIterator* CXFA_FFPageView::CreateWidgetIterator(
@@ -365,19 +363,16 @@ void CXFA_FFTabOrderPageWidgetIterator::CreateTabOrderWidgetArray() {
 
 static int32_t XFA_TabOrderWidgetComparator(const void* phWidget1,
                                             const void* phWidget2) {
-  CXFA_FFWidget* pWidget1 = (*(CXFA_TabParam**)phWidget1)->m_pWidget;
-  CXFA_FFWidget* pWidget2 = (*(CXFA_TabParam**)phWidget2)->m_pWidget;
-  CFX_RectF rt1;
-  pWidget1->GetWidgetRect(rt1);
-
-  CFX_RectF rt2;
-  pWidget2->GetWidgetRect(rt2);
+  auto param1 = *static_cast<CXFA_TabParam**>(const_cast<void*>(phWidget1));
+  auto param2 = *static_cast<CXFA_TabParam**>(const_cast<void*>(phWidget2));
+  CFX_RectF rt1 = param1->m_pWidget->GetWidgetRect();
+  CFX_RectF rt2 = param2->m_pWidget->GetWidgetRect();
   FX_FLOAT x1 = rt1.left, y1 = rt1.top, x2 = rt2.left, y2 = rt2.top;
-  if (y1 < y2 || (y1 - y2 < XFA_FLOAT_PERCISION && x1 < x2)) {
+  if (y1 < y2 || (y1 - y2 < XFA_FLOAT_PERCISION && x1 < x2))
     return -1;
-  }
   return 1;
 }
+
 void CXFA_FFTabOrderPageWidgetIterator::OrderContainer(
     CXFA_LayoutItemIterator* sIterator,
     CXFA_LayoutItem* pContainerItem,

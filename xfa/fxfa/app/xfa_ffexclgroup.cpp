@@ -22,8 +22,7 @@ void CXFA_FFExclGroup::RenderWidget(CFX_Graphics* pGS,
   if (!IsMatchVisibleStatus(dwStatus))
     return;
 
-  CFX_Matrix mtRotate;
-  GetRotateMatrix(mtRotate);
+  CFX_Matrix mtRotate = GetRotateMatrix();
   if (pMatrix)
     mtRotate.Concat(*pMatrix);
 

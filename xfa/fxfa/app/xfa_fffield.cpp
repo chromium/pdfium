@@ -32,36 +32,32 @@ CXFA_FFField::~CXFA_FFField() {
   CXFA_FFField::UnloadWidget();
 }
 
-bool CXFA_FFField::GetBBox(CFX_RectF& rtBox,
-                           uint32_t dwStatus,
-                           bool bDrawFocus) {
+CFX_RectF CXFA_FFField::GetBBox(uint32_t dwStatus, bool bDrawFocus) {
   if (!bDrawFocus)
-    return CXFA_FFWidget::GetBBox(rtBox, dwStatus);
+    return CXFA_FFWidget::GetBBox(dwStatus);
 
   XFA_Element type = m_pDataAcc->GetUIType();
-  if (type == XFA_Element::Button || type == XFA_Element::CheckButton ||
-      type == XFA_Element::ImageEdit || type == XFA_Element::Signature ||
-      type == XFA_Element::ChoiceList) {
-    rtBox = m_rtUI;
-    CFX_Matrix mt;
-    GetRotateMatrix(mt);
-    mt.TransformRect(rtBox);
-    return true;
+  if (type != XFA_Element::Button && type != XFA_Element::CheckButton &&
+      type != XFA_Element::ImageEdit && type != XFA_Element::Signature &&
+      type != XFA_Element::ChoiceList) {
+    return CFX_RectF();
   }
-  return false;
+
+  CFX_RectF rtBox = m_rtUI;
+  GetRotateMatrix().TransformRect(rtBox);
+  return rtBox;
 }
 
 void CXFA_FFField::RenderWidget(CFX_Graphics* pGS,
                                 CFX_Matrix* pMatrix,
                                 uint32_t dwStatus) {
-  if (!IsMatchVisibleStatus(dwStatus)) {
+  if (!IsMatchVisibleStatus(dwStatus))
     return;
-  }
-  CFX_Matrix mtRotate;
-  GetRotateMatrix(mtRotate);
-  if (pMatrix) {
+
+  CFX_Matrix mtRotate = GetRotateMatrix();
+  if (pMatrix)
     mtRotate.Concat(*pMatrix);
-  }
+
   CXFA_FFWidget::RenderWidget(pGS, &mtRotate, dwStatus);
   CXFA_Border borderUI = m_pDataAcc->GetUIBorder();
   DrawBorder(pGS, borderUI, m_rtUI, &mtRotate);
@@ -154,8 +150,7 @@ bool CXFA_FFField::PerformLayout() {
   return true;
 }
 void CXFA_FFField::CapPlacement() {
-  CFX_RectF rtWidget;
-  GetRectWithoutRotate(rtWidget);
+  CFX_RectF rtWidget = GetRectWithoutRotate();
   CXFA_Margin mgWidget = m_pDataAcc->GetMargin();
   if (mgWidget) {
     CXFA_LayoutItem* pItem = this;
@@ -167,15 +162,15 @@ void CXFA_FFField::CapPlacement() {
     if (!pItem->GetPrev() && !pItem->GetNext()) {
       rtWidget.Deflate(fLeftInset, fTopInset, fRightInset, fBottomInset);
     } else {
-      if (!pItem->GetPrev()) {
+      if (!pItem->GetPrev())
         rtWidget.Deflate(fLeftInset, fTopInset, fRightInset, 0);
-      } else if (!pItem->GetNext()) {
+      else if (!pItem->GetNext())
         rtWidget.Deflate(fLeftInset, 0, fRightInset, fBottomInset);
-      } else {
+      else
         rtWidget.Deflate(fLeftInset, 0, fRightInset, 0);
-      }
     }
   }
+
   XFA_ATTRIBUTEENUM iCapPlacement = XFA_ATTRIBUTEENUM_Unknown;
   FX_FLOAT fCapReserve = 0;
   CXFA_Caption caption = m_pDataAcc->GetCaption();
@@ -569,9 +564,8 @@ FWL_WidgetHit CXFA_FFField::OnHitTest(FX_FLOAT fx, FX_FLOAT fy) {
     if (m_pNormalWidget->HitTest(ffx, ffy) != FWL_WidgetHit::Unknown)
       return FWL_WidgetHit::Client;
   }
-  CFX_RectF rtBox;
-  GetRectWithoutRotate(rtBox);
-  if (!rtBox.Contains(fx, fy))
+
+  if (!GetRectWithoutRotate().Contains(fx, fy))
     return FWL_WidgetHit::Unknown;
   if (m_rtCaption.Contains(fx, fy))
     return FWL_WidgetHit::Titlebar;
@@ -597,46 +591,45 @@ void CXFA_FFField::LayoutCaption() {
   if (m_rtCaption.height < fHeight)
     m_rtCaption.height = fHeight;
 }
+
 void CXFA_FFField::RenderCaption(CFX_Graphics* pGS, CFX_Matrix* pMatrix) {
   CXFA_TextLayout* pCapTextLayout = m_pDataAcc->GetCaptionTextLayout();
-  if (!pCapTextLayout) {
+  if (!pCapTextLayout)
     return;
-  }
+
   CXFA_Caption caption = m_pDataAcc->GetCaption();
-  if (caption && caption.GetPresence() == XFA_ATTRIBUTEENUM_Visible) {
-    if (!pCapTextLayout->IsLoaded()) {
-      pCapTextLayout->Layout(CFX_SizeF(m_rtCaption.width, m_rtCaption.height));
-    }
-    CFX_RectF rtWidget;
-    GetRectWithoutRotate(rtWidget);
-    CFX_RectF rtClip = m_rtCaption;
-    rtClip.Intersect(rtWidget);
-    CFX_RenderDevice* pRenderDevice = pGS->GetRenderDevice();
-    CFX_Matrix mt(1, 0, 0, 1, m_rtCaption.left, m_rtCaption.top);
-    if (pMatrix) {
-      pMatrix->TransformRect(rtClip);
-      mt.Concat(*pMatrix);
-    }
-    pCapTextLayout->DrawString(pRenderDevice, mt, rtClip);
+  if (!caption || caption.GetPresence() != XFA_ATTRIBUTEENUM_Visible)
+    return;
+
+  if (!pCapTextLayout->IsLoaded())
+    pCapTextLayout->Layout(CFX_SizeF(m_rtCaption.width, m_rtCaption.height));
+
+  CFX_RectF rtClip = m_rtCaption;
+  rtClip.Intersect(GetRectWithoutRotate());
+  CFX_RenderDevice* pRenderDevice = pGS->GetRenderDevice();
+  CFX_Matrix mt(1, 0, 0, 1, m_rtCaption.left, m_rtCaption.top);
+  if (pMatrix) {
+    pMatrix->TransformRect(rtClip);
+    mt.Concat(*pMatrix);
   }
+  pCapTextLayout->DrawString(pRenderDevice, mt, rtClip);
 }
+
 bool CXFA_FFField::ProcessCommittedData() {
-  if (m_pDataAcc->GetAccess() != XFA_ATTRIBUTEENUM_Open) {
+  if (m_pDataAcc->GetAccess() != XFA_ATTRIBUTEENUM_Open)
     return false;
-  }
-  if (!IsDataChanged()) {
+  if (!IsDataChanged())
     return false;
-  }
-  if (CalculateOverride() != 1) {
+  if (CalculateOverride() != 1)
     return false;
-  }
-  if (!CommitData()) {
+  if (!CommitData())
     return false;
-  }
+
   m_pDocView->SetChangeMark();
   m_pDocView->AddValidateWidget(m_pDataAcc);
   return true;
 }
+
 int32_t CXFA_FFField::CalculateOverride() {
   CXFA_WidgetAcc* pAcc = m_pDataAcc->GetExclGroup();
   if (!pAcc) {

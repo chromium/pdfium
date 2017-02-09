@@ -872,16 +872,12 @@ CFX_Matrix* CFX_Graphics::GetMatrix() {
   return nullptr;
 }
 
-FWL_Error CFX_Graphics::GetClipRect(CFX_RectF& rect) const {
-  if (m_type == FX_CONTEXT_Device && m_renderDevice) {
-    FX_RECT r = m_renderDevice->GetClipBox();
-    rect.left = (FX_FLOAT)r.left;
-    rect.top = (FX_FLOAT)r.top;
-    rect.width = (FX_FLOAT)r.Width();
-    rect.height = (FX_FLOAT)r.Height();
-    return FWL_Error::Succeeded;
-  }
-  return FWL_Error::PropertyInvalid;
+CFX_RectF CFX_Graphics::GetClipRect() const {
+  if (m_type != FX_CONTEXT_Device || !m_renderDevice)
+    return CFX_RectF();
+
+  FX_RECT r = m_renderDevice->GetClipBox();
+  return CFX_Rect(r.left, r.top, r.Width(), r.Height()).As<FX_FLOAT>();
 }
 
 FWL_Error CFX_Graphics::SetClipRect(const CFX_RectF& rect) {
@@ -1218,8 +1214,7 @@ FWL_Error CFX_Graphics::RenderDeviceDrawImage(CFX_DIBSource* source,
   int32_t left, top;
   std::unique_ptr<CFX_DIBitmap> bmp1 = source->FlipImage(false, true);
   std::unique_ptr<CFX_DIBitmap> bmp2 = bmp1->TransformTo(&m2, left, top);
-  CFX_RectF r;
-  GetClipRect(r);
+  CFX_RectF r = GetClipRect();
   CFX_DIBitmap* bitmap = m_renderDevice->GetBitmap();
   CFX_DIBitmap bmp;
   if (bmp.Create(bitmap->GetWidth(), bitmap->GetHeight(), FXDIB_Argb) &&
@@ -1251,8 +1246,7 @@ FWL_Error CFX_Graphics::RenderDeviceStretchImage(CFX_DIBSource* source,
   int32_t top;
   std::unique_ptr<CFX_DIBitmap> bmp2 = bmp1->FlipImage(false, true);
   std::unique_ptr<CFX_DIBitmap> bmp3 = bmp2->TransformTo(&m2, left, top);
-  CFX_RectF r;
-  GetClipRect(r);
+  CFX_RectF r = GetClipRect();
   CFX_DIBitmap* bitmap = m_renderDevice->GetBitmap();
   if (bitmap->CompositeBitmap(FXSYS_round(r.left), FXSYS_round(r.top),
                               FXSYS_round(r.Width()), FXSYS_round(r.Height()),

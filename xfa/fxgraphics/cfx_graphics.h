@@ -125,7 +125,7 @@ class CFX_Graphics {
   FWL_Error GetMiterLimit(FX_FLOAT& miterLimit) const;
   FWL_Error GetLineWidth(FX_FLOAT& lineWidth) const;
   FWL_Error GetStrokeAlignment(FX_StrokeAlignment& strokeAlignment) const;
-  FWL_Error GetClipRect(CFX_RectF& rect) const;
+  CFX_RectF GetClipRect() const;
   CFX_Matrix* GetMatrix();
   CFX_RenderDevice* GetRenderDevice();
 
