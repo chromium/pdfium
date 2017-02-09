@@ -167,4 +167,17 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessGraphics) {
   ASSERT_TRUE(externalGS);
   EXPECT_EQ(0.5f, externalGS->GetNumberFor("ca"));
   EXPECT_EQ(0.8f, externalGS->GetNumberFor("CA"));
+
+  // Same path, now with a stroke.
+  pPathObj->m_GraphState.SetLineWidth(10.5f);
+  buf.Clear();
+  TestProcessPath(&generator, &buf, pPathObj.get());
+  CFX_ByteString pathString2 = buf.MakeString();
+  EXPECT_EQ("q 0.501961 0.701961 0.34902 rg 1 0.901961 0 RG 10.5 w /",
+            pathString2.Left(55));
+  EXPECT_EQ(" gs 1 2 m 3 4 l 5 6 l h B Q\n", pathString2.Right(28));
+  // Compare with the previous (should use same dictionary for gs)
+  EXPECT_EQ(pathString.GetLength() + 7, pathString2.GetLength());
+  EXPECT_EQ(pathString.Mid(48, pathString.GetLength() - 76),
+            pathString2.Mid(55, pathString2.GetLength() - 83));
 }

@@ -192,6 +192,7 @@ void CPDF_PageContentGenerator::ProcessPath(CFX_ByteTextBuf* buf,
 // values cannot be obtained. The method also adds an external graphics
 // dictionary, as described in Section 4.3.4.
 // "rg" sets the fill color, "RG" sets the stroke color (using DefaultRGB)
+// "w" sets the stroke line width.
 // "ca" sets the fill alpha, "CA" sets the stroke alpha.
 // "q" saves the graphics state, so that the settings can later be reversed
 void CPDF_PageContentGenerator::ProcessGraphics(CFX_ByteTextBuf* buf,
@@ -207,6 +208,9 @@ void CPDF_PageContentGenerator::ProcessGraphics(CFX_ByteTextBuf* buf,
     *buf << strokeColor[0] << " " << strokeColor[1] << " " << strokeColor[2]
          << " RG ";
   }
+  FX_FLOAT lineWidth = pPageObj->m_GraphState.GetLineWidth();
+  if (lineWidth != 1.0f)
+    *buf << lineWidth << " w ";
 
   GraphicsData graphD;
   graphD.fillAlpha = pPageObj->m_GeneralState.GetFillAlpha();

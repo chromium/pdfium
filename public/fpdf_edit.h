@@ -299,6 +299,14 @@ DLLEXPORT FPDF_BOOL FPDFPath_SetStrokeColor(FPDF_PAGEOBJECT path,
                                             unsigned int B,
                                             unsigned int A);
 
+// Set the stroke width of a path.
+//
+// path   - the handle to the path object.
+// width  - the width of the stroke.
+//
+// Returns TRUE on success
+DLLEXPORT FPDF_BOOL FPDFPath_SetStrokeWidth(FPDF_PAGEOBJECT path, float width);
+
 // Set the fill RGBA of a path. Range of values: 0 - 255.
 //
 // path   - the handle to the path object.

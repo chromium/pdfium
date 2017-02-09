@@ -267,3 +267,54 @@ TEST_F(FPDFEditEmbeddertest, PathOnTopOfText) {
   FPDFBitmap_Destroy(bitmap);
   UnloadPage(page);
 }
+
+TEST_F(FPDFEditEmbeddertest, AddStrokedPaths) {
+  // Start with a blank page
+  FPDF_DOCUMENT doc = FPDF_CreateNewDocument();
+  FPDF_PAGE page = FPDFPage_New(doc, 0, 612, 792);
+
+  // Add a large stroked rectangle (fill color should not affect it).
+  FPDF_PAGEOBJECT rect = FPDFPageObj_CreateNewRect(20, 20, 200, 400);
+  EXPECT_TRUE(FPDFPath_SetFillColor(rect, 255, 0, 0, 255));
+  EXPECT_TRUE(FPDFPath_SetStrokeColor(rect, 0, 255, 0, 255));
+  EXPECT_TRUE(FPDFPath_SetStrokeWidth(rect, 15.0f));
+  EXPECT_TRUE(FPDFPath_SetDrawMode(rect, 0, 1));
+  FPDFPage_InsertObject(page, rect);
+  EXPECT_TRUE(FPDFPage_GenerateContent(page));
+  FPDF_BITMAP page_bitmap = RenderPage(page);
+  CompareBitmap(page_bitmap, 612, 792, "64bd31f862a89e0a9e505a5af6efd506");
+  FPDFBitmap_Destroy(page_bitmap);
+
+  // Add crossed-checkmark
+  FPDF_PAGEOBJECT check = FPDFPageObj_CreateNewPath(300, 500);
+  EXPECT_TRUE(FPDFPath_LineTo(check, 400, 400));
+  EXPECT_TRUE(FPDFPath_LineTo(check, 600, 600));
+  EXPECT_TRUE(FPDFPath_MoveTo(check, 400, 600));
+  EXPECT_TRUE(FPDFPath_LineTo(check, 600, 400));
+  EXPECT_TRUE(FPDFPath_SetStrokeColor(check, 128, 128, 128, 180));
+  EXPECT_TRUE(FPDFPath_SetStrokeWidth(check, 8.35f));
+  EXPECT_TRUE(FPDFPath_SetDrawMode(check, 0, 1));
+  FPDFPage_InsertObject(page, check);
+  EXPECT_TRUE(FPDFPage_GenerateContent(page));
+  page_bitmap = RenderPage(page);
+  CompareBitmap(page_bitmap, 612, 792, "4b6f3b9d25c4e194821217d5016c3724");
+  FPDFBitmap_Destroy(page_bitmap);
+
+  // Add stroked and filled oval-ish path.
+  FPDF_PAGEOBJECT path = FPDFPageObj_CreateNewPath(250, 100);
+  EXPECT_TRUE(FPDFPath_BezierTo(path, 180, 166, 180, 233, 250, 300));
+  EXPECT_TRUE(FPDFPath_LineTo(path, 255, 305));
+  EXPECT_TRUE(FPDFPath_BezierTo(path, 325, 233, 325, 166, 255, 105));
+  EXPECT_TRUE(FPDFPath_Close(path));
+  EXPECT_TRUE(FPDFPath_SetFillColor(path, 200, 128, 128, 100));
+  EXPECT_TRUE(FPDFPath_SetStrokeColor(path, 128, 200, 128, 150));
+  EXPECT_TRUE(FPDFPath_SetStrokeWidth(path, 10.5f));
+  EXPECT_TRUE(FPDFPath_SetDrawMode(path, FPDF_FILLMODE_ALTERNATE, 1));
+  FPDFPage_InsertObject(page, path);
+  EXPECT_TRUE(FPDFPage_GenerateContent(page));
+  page_bitmap = RenderPage(page);
+  CompareBitmap(page_bitmap, 612, 792, "ff3e6a22326754944cc6e56609acd73b");
+  FPDFBitmap_Destroy(page_bitmap);
+  FPDF_ClosePage(page);
+  FPDF_CloseDocument(doc);
+}

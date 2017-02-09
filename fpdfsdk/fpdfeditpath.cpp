@@ -41,6 +41,15 @@ DLLEXPORT FPDF_BOOL FPDFPath_SetStrokeColor(FPDF_PAGEOBJECT path,
   return true;
 }
 
+DLLEXPORT FPDF_BOOL FPDFPath_SetStrokeWidth(FPDF_PAGEOBJECT path, float width) {
+  if (!path || width < 0.0f)
+    return false;
+
+  auto pPathObj = reinterpret_cast<CPDF_PathObject*>(path);
+  pPathObj->m_GraphState.SetLineWidth(width);
+  return true;
+}
+
 DLLEXPORT FPDF_BOOL FPDFPath_SetFillColor(FPDF_PAGEOBJECT path,
                                           unsigned int R,
                                           unsigned int G,
