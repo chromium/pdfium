@@ -205,6 +205,7 @@ component("skia") {
     #pdfium
     "//third_party/skia/src/ports/SkDiscardableMemory_none.cpp",
     "//third_party/skia/src/ports/SkFontMgr_custom.cpp",
+    "//third_party/skia/src/ports/SkFontMgr_custom_empty.cpp",
     "//third_party/skia/src/ports/SkFontMgr_custom_empty_factory.cpp",
     "//third_party/skia/src/ports/SkMemory_malloc.cpp",
   ]
