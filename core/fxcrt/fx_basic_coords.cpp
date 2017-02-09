@@ -105,9 +105,7 @@ void CFX_FloatRect::Union(const CFX_FloatRect& other_rect) {
   bottom = bottom < other.bottom ? bottom : other.bottom;
   top = top > other.top ? top : other.top;
 }
-void CFX_FloatRect::Transform(const CFX_Matrix* pMatrix) {
-  pMatrix->TransformRect(left, right, top, bottom);
-}
+
 int CFX_FloatRect::Substract4(CFX_FloatRect& s, CFX_FloatRect* pRects) {
   Normalize();
   s.Normalize();
@@ -374,7 +372,7 @@ void CFX_Matrix::GetUnitRect(CFX_RectF& rect) const {
 }
 CFX_FloatRect CFX_Matrix::GetUnitRect() const {
   CFX_FloatRect rect(0, 0, 1, 1);
-  rect.Transform((const CFX_Matrix*)this);
+  TransformRect(rect);
   return rect;
 }
 FX_FLOAT CFX_Matrix::GetUnitArea() const {
@@ -434,23 +432,27 @@ void CFX_Matrix::TransformPoint(int32_t& x, int32_t& y) const {
   x = FXSYS_round(fx);
   y = FXSYS_round(fy);
 }
+
 void CFX_Matrix::TransformRect(CFX_RectF& rect) const {
   FX_FLOAT right = rect.right(), bottom = rect.bottom();
   TransformRect(rect.left, right, bottom, rect.top);
   rect.width = right - rect.left;
   rect.height = bottom - rect.top;
 }
+
 void CFX_Matrix::TransformRect(CFX_Rect& rect) const {
   FX_FLOAT left = (FX_FLOAT)rect.left;
   FX_FLOAT top = (FX_FLOAT)rect.bottom();
   FX_FLOAT right = (FX_FLOAT)rect.right();
   FX_FLOAT bottom = (FX_FLOAT)rect.top;
+
   TransformRect(left, right, top, bottom);
   rect.left = FXSYS_round(left);
   rect.top = FXSYS_round(bottom);
   rect.width = FXSYS_round(right - left);
   rect.height = FXSYS_round(top - bottom);
 }
+
 void CFX_Matrix::TransformRect(FX_FLOAT& left,
                                FX_FLOAT& right,
                                FX_FLOAT& top,

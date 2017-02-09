@@ -41,7 +41,8 @@ void CPDF_PathObject::CalcBoundingBox() {
   } else {
     rect = m_Path.GetBoundingBox();
   }
-  rect.Transform(&m_Matrix);
+  m_Matrix.TransformRect(rect);
+
   if (width == 0 && m_bStroke) {
     rect.left += -0.5f;
     rect.right += 0.5f;

@@ -996,9 +996,9 @@ bool CGdiDeviceDriver::DrawPath(const CFX_PathData* pPathData,
   if (!(pGraphState || stroke_color == 0) &&
       !pPlatform->m_GdiplusExt.IsAvailable()) {
     CFX_FloatRect bbox_f = pPathData->GetBoundingBox();
-    if (pMatrix) {
-      bbox_f.Transform(pMatrix);
-    }
+    if (pMatrix)
+      pMatrix->TransformRect(bbox_f);
+
     FX_RECT bbox = bbox_f.GetInnerRect();
     if (bbox.Width() <= 0) {
       return DrawCosmeticLine(

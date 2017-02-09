@@ -289,7 +289,7 @@ DLLEXPORT void STDCALL FPDFPage_TransformAnnots(FPDF_PAGE page,
     CFX_FloatRect rect = pAnnot->GetRect();  // transformAnnots Rectangle
     CFX_Matrix matrix((FX_FLOAT)a, (FX_FLOAT)b, (FX_FLOAT)c, (FX_FLOAT)d,
                       (FX_FLOAT)e, (FX_FLOAT)f);
-    rect.Transform(&matrix);
+    matrix.TransformRect(rect);
 
     CPDF_Array* pRectArray = pAnnot->GetAnnotDict()->GetArrayFor("Rect");
     if (!pRectArray)

@@ -402,7 +402,7 @@ bool CFX_ImageTransformer::Start() {
   m_dest2stretch.SetReverse(stretch2dest);
 
   CFX_FloatRect clip_rect_f(result_clip);
-  clip_rect_f.Transform(&m_dest2stretch);
+  m_dest2stretch.TransformRect(clip_rect_f);
   m_StretchClip = clip_rect_f.GetOuterRect();
   m_StretchClip.Intersect(0, 0, stretch_width, stretch_height);
   m_Stretcher = pdfium::MakeUnique<CFX_ImageStretcher>(

@@ -41,8 +41,10 @@ const CPDF_ImageObject* CPDF_ImageObject::AsImage() const {
 }
 
 void CPDF_ImageObject::CalcBoundingBox() {
-  m_Left = m_Bottom = 0;
-  m_Right = m_Top = 1.0f;
+  m_Left = 0;
+  m_Bottom = 0;
+  m_Right = 1.0f;
+  m_Top = 1.0f;
   m_Matrix.TransformRect(m_Left, m_Right, m_Top, m_Bottom);
 }
 

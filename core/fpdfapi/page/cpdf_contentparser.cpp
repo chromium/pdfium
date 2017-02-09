@@ -90,10 +90,12 @@ void CPDF_ContentParser::Start(CPDF_Form* pForm,
     ClipPath.Transform(&form_matrix);
     if (pParentMatrix)
       ClipPath.Transform(pParentMatrix);
-    form_bbox.Transform(&form_matrix);
+
+    form_matrix.TransformRect(form_bbox);
     if (pParentMatrix)
-      form_bbox.Transform(pParentMatrix);
+      pParentMatrix->TransformRect(form_bbox);
   }
+
   CPDF_Dictionary* pResources = pForm->m_pFormDict->GetDictFor("Resources");
   m_pParser = pdfium::MakeUnique<CPDF_StreamContentParser>(
       pForm->m_pDocument, pForm->m_pPageResources, pForm->m_pResources,

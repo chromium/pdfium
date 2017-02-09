@@ -1312,9 +1312,9 @@ FWL_Error CFX_Graphics::FillPathWithPattern(CFX_Path* path,
   mask.Create(data.width, data.height, FXDIB_1bppMask);
   FXSYS_memcpy(mask.GetBuffer(), data.maskBits, mask.GetPitch() * data.height);
   CFX_FloatRect rectf = path->GetPathData()->GetBoundingBox();
-  if (matrix) {
-    rectf.Transform(matrix);
-  }
+  if (matrix)
+    matrix->TransformRect(rectf);
+
   FX_RECT rect(FXSYS_round(rectf.left), FXSYS_round(rectf.top),
                FXSYS_round(rectf.right), FXSYS_round(rectf.bottom));
   CFX_FxgeDevice device;

@@ -1860,7 +1860,8 @@ bool CPDF_RenderStatus::ProcessType3Text(CPDF_TextObject* textobj,
         m_pDevice->RestoreState(false);
       } else {
         CFX_FloatRect rect_f = pType3Char->m_pForm->CalcBoundingBox();
-        rect_f.Transform(&matrix);
+        matrix.TransformRect(rect_f);
+
         FX_RECT rect = rect_f.GetOuterRect();
         CFX_FxgeDevice bitmap_device;
         if (!bitmap_device.Create((int)(rect.Width() * sa),
@@ -2038,7 +2039,7 @@ void CPDF_RenderStatus::DrawShading(CPDF_ShadingPattern* pPattern,
   }
   if (pDict->KeyExist("BBox")) {
     CFX_FloatRect rect = pDict->GetRectFor("BBox");
-    rect.Transform(pMatrix);
+    pMatrix->TransformRect(rect);
     clip_rect.Intersect(rect.GetOuterRect());
   }
   if (m_pDevice->GetDeviceCaps(FXDC_RENDER_CAPS) & FXRC_SHADING &&
@@ -2204,8 +2205,9 @@ void CPDF_RenderStatus::DrawTilingPattern(CPDF_TilingPattern* pPattern,
   int min_col, max_col, min_row, max_row;
   CFX_Matrix mtDevice2Pattern;
   mtDevice2Pattern.SetReverse(mtPattern2Device);
+
   CFX_FloatRect clip_box_p(clip_box);
-  clip_box_p.Transform(&mtDevice2Pattern);
+  mtDevice2Pattern.TransformRect(clip_box_p);
 
   min_col = (int)FXSYS_ceil((clip_box_p.left - pPattern->bbox().right) /
                             pPattern->x_step());

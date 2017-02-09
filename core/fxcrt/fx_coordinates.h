@@ -498,7 +498,6 @@ class CFX_FloatRect {
   bool Contains(const CFX_FloatRect& other_rect) const;
   bool Contains(FX_FLOAT x, FX_FLOAT y) const;
 
-  void Transform(const CFX_Matrix* pMatrix);
   void Intersect(const CFX_FloatRect& other_rect);
   void Union(const CFX_FloatRect& other_rect);
 
@@ -701,7 +700,6 @@ class CFX_Matrix {
   FX_FLOAT GetE() const { return e; }
   FX_FLOAT GetF() const { return f; }
 
- public:
   FX_FLOAT a;
   FX_FLOAT b;
   FX_FLOAT c;

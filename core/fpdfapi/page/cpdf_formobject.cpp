@@ -35,7 +35,7 @@ CPDF_PageObject::Type CPDF_FormObject::GetType() const {
 
 void CPDF_FormObject::CalcBoundingBox() {
   CFX_FloatRect form_rect = m_pForm->CalcBoundingBox();
-  form_rect.Transform(&m_FormMatrix);
+  m_FormMatrix.TransformRect(form_rect);
   m_Left = form_rect.left;
   m_Bottom = form_rect.bottom;
   m_Right = form_rect.right;
