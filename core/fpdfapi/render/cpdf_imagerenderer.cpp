@@ -239,7 +239,7 @@ FX_RECT CPDF_ImageRenderer::GetDrawRect() const {
 
 CFX_Matrix CPDF_ImageRenderer::GetDrawMatrix(const FX_RECT& rect) const {
   CFX_Matrix new_matrix = m_ImageMatrix;
-  new_matrix.TranslateI(-rect.left, -rect.top);
+  new_matrix.Translate(-rect.left, -rect.top);
   return new_matrix;
 }
 

@@ -1531,7 +1531,7 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
   CFX_DIBitmap* bitmap = bitmap_device.GetBitmap();
   bitmap->Clear(0);
   CFX_Matrix new_matrix = *pObj2Device;
-  new_matrix.TranslateI(-rect.left, -rect.top);
+  new_matrix.Translate(-rect.left, -rect.top);
   new_matrix.Scale(scaleX, scaleY);
   std::unique_ptr<CFX_DIBitmap> pTextMask;
   if (bTextClip) {
@@ -1633,7 +1633,7 @@ std::unique_ptr<CFX_DIBitmap> CPDF_RenderStatus::GetBackdrop(
   }
 
   CFX_Matrix FinalMatrix = m_DeviceMatrix;
-  FinalMatrix.TranslateI(-left, -top);
+  FinalMatrix.Translate(-left, -top);
   FinalMatrix.Scale(scaleX, scaleY);
   pBackdrop->Clear(pBackdrop->HasAlpha() ? 0 : 0xffffffff);
   CFX_FxgeDevice device;
@@ -1877,7 +1877,7 @@ bool CPDF_RenderStatus::ProcessType3Text(CPDF_TextObject* textobj,
                           pFormResource, false, pType3Char, fill_argb);
         status.m_Type3FontCache = m_Type3FontCache;
         status.m_Type3FontCache.push_back(pType3Font);
-        matrix.TranslateI(-rect.left, -rect.top);
+        matrix.Translate(-rect.left, -rect.top);
         matrix.Scale(sa, sd);
         status.RenderObjectList(pType3Char->m_pForm.get(), &matrix);
         m_pDevice->SetDIBits(bitmap_device.GetBitmap(), rect.left, rect.top);
@@ -2524,7 +2524,7 @@ std::unique_ptr<CFX_DIBitmap> CPDF_RenderStatus::LoadSMask(
     pFunc = CPDF_Function::Load(pFuncObj);
 
   CFX_Matrix matrix = *pMatrix;
-  matrix.TranslateI(-pClipRect->left, -pClipRect->top);
+  matrix.Translate(-pClipRect->left, -pClipRect->top);
 
   CPDF_Form form(m_pContext->GetDocument(), m_pContext->GetPageResources(),
                  pGroup);

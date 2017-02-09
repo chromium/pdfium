@@ -316,11 +316,6 @@ unsigned clip_liang_barsky(FX_FLOAT x1,
 }
 #endif  // _SKIA_SUPPORT_
 
-bool MatrixNoScaled(const CFX_Matrix* pMatrix) {
-  return pMatrix->GetA() == 1.0f && pMatrix->GetB() == 0 &&
-         pMatrix->GetC() == 0 && pMatrix->GetD() == 1.0f;
-}
-
 class CFX_Win32FallbackFontInfo final : public CFX_FolderFontInfo {
  public:
   CFX_Win32FallbackFontInfo() {}
@@ -1022,7 +1017,7 @@ bool CGdiDeviceDriver::DrawPath(const CFX_PathData* pPathData,
     if (bDrawAlpha ||
         ((m_DeviceClass != FXDC_PRINTER && !(fill_mode & FXFILL_FULLCOVER)) ||
          (pGraphState && pGraphState->m_DashCount))) {
-      if (!((!pMatrix || MatrixNoScaled(pMatrix)) && pGraphState &&
+      if (!((!pMatrix || !pMatrix->WillScale()) && pGraphState &&
             pGraphState->m_LineWidth == 1.f &&
             (pPathData->GetPointCount() == 5 ||
              pPathData->GetPointCount() == 4) &&

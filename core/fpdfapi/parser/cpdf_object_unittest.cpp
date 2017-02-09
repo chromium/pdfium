@@ -397,12 +397,12 @@ TEST(PDFArrayTest, GetMatrix) {
     for (size_t j = 0; j < 6; ++j)
       arr->AddNew<CPDF_Number>(elems[i][j]);
     CFX_Matrix arr_matrix = arr->GetMatrix();
-    EXPECT_EQ(matrix.GetA(), arr_matrix.GetA());
-    EXPECT_EQ(matrix.GetB(), arr_matrix.GetB());
-    EXPECT_EQ(matrix.GetC(), arr_matrix.GetC());
-    EXPECT_EQ(matrix.GetD(), arr_matrix.GetD());
-    EXPECT_EQ(matrix.GetE(), arr_matrix.GetE());
-    EXPECT_EQ(matrix.GetF(), arr_matrix.GetF());
+    EXPECT_EQ(matrix.a, arr_matrix.a);
+    EXPECT_EQ(matrix.b, arr_matrix.b);
+    EXPECT_EQ(matrix.c, arr_matrix.c);
+    EXPECT_EQ(matrix.d, arr_matrix.d);
+    EXPECT_EQ(matrix.e, arr_matrix.e);
+    EXPECT_EQ(matrix.f, arr_matrix.f);
   }
 }
 

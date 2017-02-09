@@ -31,7 +31,7 @@ bool CPDF_ScaledRenderBuffer::Initialize(CPDF_RenderContext* pContext,
   m_pContext = pContext;
   m_Rect = pRect;
   m_pObject = pObj;
-  m_Matrix.TranslateI(-pRect.left, -pRect.top);
+  m_Matrix.Translate(-pRect.left, -pRect.top);
   int horz_size = pDevice->GetDeviceCaps(FXDC_HORZ_SIZE);
   int vert_size = pDevice->GetDeviceCaps(FXDC_VERT_SIZE);
   if (horz_size && vert_size && max_dpi) {

@@ -610,7 +610,7 @@ bool CFX_RenderDevice::DrawFillStrokePath(const CFX_PathData* pPathData,
   CFX_Matrix matrix;
   if (pObject2Device)
     matrix = *pObject2Device;
-  matrix.TranslateI(-rect.left, -rect.top);
+  matrix.Translate(-rect.left, -rect.top);
   matrix.Concat(CFX_Matrix(fScaleX, 0, 0, fScaleY, 0, 0));
   if (!bitmap_device.GetDeviceDriver()->DrawPath(
           pPathData, &matrix, pGraphState, fill_color, stroke_color, fill_mode,

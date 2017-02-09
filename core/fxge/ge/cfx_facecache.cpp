@@ -101,10 +101,10 @@ CFX_GlyphBitmap* CFX_FaceCache::RenderGlyph(const CFX_Font* pFont,
     return nullptr;
 
   FXFT_Matrix ft_matrix;
-  ft_matrix.xx = (signed long)(pMatrix->GetA() / 64 * 65536);
-  ft_matrix.xy = (signed long)(pMatrix->GetC() / 64 * 65536);
-  ft_matrix.yx = (signed long)(pMatrix->GetB() / 64 * 65536);
-  ft_matrix.yy = (signed long)(pMatrix->GetD() / 64 * 65536);
+  ft_matrix.xx = (signed long)(pMatrix->a / 64 * 65536);
+  ft_matrix.xy = (signed long)(pMatrix->c / 64 * 65536);
+  ft_matrix.yx = (signed long)(pMatrix->b / 64 * 65536);
+  ft_matrix.yy = (signed long)(pMatrix->d / 64 * 65536);
   bool bUseCJKSubFont = false;
   const CFX_SubstFont* pSubstFont = pFont->GetSubstFont();
   if (pSubstFont) {

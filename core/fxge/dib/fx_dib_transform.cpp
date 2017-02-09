@@ -456,7 +456,7 @@ bool CFX_ImageTransformer::Continue(IFX_Pause* pPause) {
   CFX_Matrix result2stretch(1.0f, 0.0f, 0.0f, 1.0f, (FX_FLOAT)(m_result.left),
                             (FX_FLOAT)(m_result.top));
   result2stretch.Concat(m_dest2stretch);
-  result2stretch.TranslateI(-m_StretchClip.left, -m_StretchClip.top);
+  result2stretch.Translate(-m_StretchClip.left, -m_StretchClip.top);
   if (!stretch_buf_mask && pTransformed->m_pAlphaMask) {
     pTransformed->m_pAlphaMask->Clear(0xff000000);
   } else if (pTransformed->m_pAlphaMask) {

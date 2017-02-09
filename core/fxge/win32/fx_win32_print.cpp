@@ -269,12 +269,12 @@ bool CGdiPrinterDriver::DrawDeviceText(int nChars,
   // Transforms
   SetGraphicsMode(m_hDC, GM_ADVANCED);
   XFORM xform;
-  xform.eM11 = pObject2Device->GetA() / kScaleFactor;
-  xform.eM12 = pObject2Device->GetB() / kScaleFactor;
-  xform.eM21 = -pObject2Device->GetC() / kScaleFactor;
-  xform.eM22 = -pObject2Device->GetD() / kScaleFactor;
-  xform.eDx = pObject2Device->GetE();
-  xform.eDy = pObject2Device->GetF();
+  xform.eM11 = pObject2Device->a / kScaleFactor;
+  xform.eM12 = pObject2Device->b / kScaleFactor;
+  xform.eM21 = -pObject2Device->c / kScaleFactor;
+  xform.eM22 = -pObject2Device->d / kScaleFactor;
+  xform.eDx = pObject2Device->e;
+  xform.eDy = pObject2Device->f;
   ModifyWorldTransform(m_hDC, &xform, MWT_LEFTMULTIPLY);
 
   // Color

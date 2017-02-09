@@ -39,8 +39,8 @@ CFX_ByteString CPWL_Image::GetImageAppStream() {
 
     sAppStream << fHScale << " 0 0 " << fVScale << " " << rcPlate.left + fx
                << " " << rcPlate.bottom + fy << " cm\n";
-    sAppStream << mt.GetA() << " " << mt.GetB() << " " << mt.GetC() << " "
-               << mt.GetD() << " " << mt.GetE() << " " << mt.GetF() << " cm\n";
+    sAppStream << mt.a << " " << mt.b << " " << mt.c << " " << mt.d << " "
+               << mt.e << " " << mt.f << " cm\n";
 
     sAppStream << "0 g 0 G 1 w /" << sAlias.AsStringC() << " Do\n"
                << "Q\n";

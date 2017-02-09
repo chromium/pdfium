@@ -1267,7 +1267,7 @@ FWL_Error CFX_Graphics::RenderDeviceShowText(const CFX_PointF& point,
   CalcTextInfo(text, charCodes, charPos, rect);
   CFX_Matrix m(m_info.CTM.a, m_info.CTM.b, m_info.CTM.c, m_info.CTM.d,
                m_info.CTM.e, m_info.CTM.f);
-  m.Translate(0, m_info.fontSize * m_info.fontHScale);
+  m.Translate(0.0f, m_info.fontSize * m_info.fontHScale);
   if (matrix) {
     m.Concat(*matrix);
   }

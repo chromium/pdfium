@@ -602,6 +602,7 @@ class CFX_Matrix {
         d(other.d),
         e(other.e),
         f(other.f) {}
+
   CFX_Matrix(FX_FLOAT a1,
              FX_FLOAT b1,
              FX_FLOAT c1,
@@ -637,13 +638,13 @@ class CFX_Matrix {
     return a == 1 && b == 0 && c == 0 && d == 1 && e == 0 && f == 0;
   }
 
-  bool IsInvertible() const;
   bool Is90Rotated() const;
   bool IsScaled() const;
+  bool WillScale() const { return a != 1.0f || b != 0 || c != 0 || d != 1.0f; }
 
   void Translate(FX_FLOAT x, FX_FLOAT y, bool bPrepended = false);
-  void TranslateI(int32_t x, int32_t y, bool bPrepended = false) {
-    Translate((FX_FLOAT)x, (FX_FLOAT)y, bPrepended);
+  void Translate(int32_t x, int32_t y, bool bPrepended = false) {
+    Translate(static_cast<FX_FLOAT>(x), static_cast<FX_FLOAT>(y), bPrepended);
   }
 
   void Scale(FX_FLOAT sx, FX_FLOAT sy, bool bPrepended = false);
@@ -658,27 +659,18 @@ class CFX_Matrix {
              bool bPrepended = false);
 
   void MatchRect(const CFX_FloatRect& dest, const CFX_FloatRect& src);
+
   FX_FLOAT GetXUnit() const;
   FX_FLOAT GetYUnit() const;
-  void GetUnitRect(CFX_RectF& rect) const;
   CFX_FloatRect GetUnitRect() const;
 
-  FX_FLOAT GetUnitArea() const;
   FX_FLOAT TransformXDistance(FX_FLOAT dx) const;
-  int32_t TransformXDistance(int32_t dx) const;
-  FX_FLOAT TransformYDistance(FX_FLOAT dy) const;
-  int32_t TransformYDistance(int32_t dy) const;
   FX_FLOAT TransformDistance(FX_FLOAT dx, FX_FLOAT dy) const;
-  int32_t TransformDistance(int32_t dx, int32_t dy) const;
   FX_FLOAT TransformDistance(FX_FLOAT distance) const;
 
   void TransformPoint(FX_FLOAT& x, FX_FLOAT& y) const;
-  void TransformPoint(int32_t& x, int32_t& y) const;
 
-  void TransformVector(CFX_VectorF& v) const;
-  void TransformVector(CFX_Vector& v) const;
   void TransformRect(CFX_RectF& rect) const;
-  void TransformRect(CFX_Rect& rect) const;
   void TransformRect(FX_FLOAT& left,
                      FX_FLOAT& right,
                      FX_FLOAT& top,
@@ -687,19 +679,15 @@ class CFX_Matrix {
     TransformRect(rect.left, rect.right, rect.top, rect.bottom);
   }
 
-  FX_FLOAT GetA() const { return a; }
-  FX_FLOAT GetB() const { return b; }
-  FX_FLOAT GetC() const { return c; }
-  FX_FLOAT GetD() const { return d; }
-  FX_FLOAT GetE() const { return e; }
-  FX_FLOAT GetF() const { return f; }
-
   FX_FLOAT a;
   FX_FLOAT b;
   FX_FLOAT c;
   FX_FLOAT d;
   FX_FLOAT e;
   FX_FLOAT f;
+
+ private:
+  void ConcatInternal(const CFX_Matrix& other, bool prepend);
 };
 
 #endif  // CORE_FXCRT_FX_COORDINATES_H_

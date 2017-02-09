@@ -138,12 +138,12 @@ void CPDF_TextObject::Transform(const CFX_Matrix& matrix) {
   text_matrix.Concat(matrix);
 
   FX_FLOAT* pTextMatrix = m_TextState.GetMutableMatrix();
-  pTextMatrix[0] = text_matrix.GetA();
-  pTextMatrix[1] = text_matrix.GetC();
-  pTextMatrix[2] = text_matrix.GetB();
-  pTextMatrix[3] = text_matrix.GetD();
-  m_PosX = text_matrix.GetE();
-  m_PosY = text_matrix.GetF();
+  pTextMatrix[0] = text_matrix.a;
+  pTextMatrix[1] = text_matrix.c;
+  pTextMatrix[2] = text_matrix.b;
+  pTextMatrix[3] = text_matrix.d;
+  m_PosX = text_matrix.e;
+  m_PosY = text_matrix.f;
   CalcPositionData(nullptr, nullptr, 0);
 }
 

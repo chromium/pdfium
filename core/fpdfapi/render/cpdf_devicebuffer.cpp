@@ -28,7 +28,7 @@ bool CPDF_DeviceBuffer::Initialize(CPDF_RenderContext* pContext,
   m_pContext = pContext;
   m_Rect = *pRect;
   m_pObject = pObj;
-  m_Matrix.TranslateI(-pRect->left, -pRect->top);
+  m_Matrix.Translate(-pRect->left, -pRect->top);
 #if _FXM_PLATFORM_ != _FXM_PLATFORM_APPLE_
   int horz_size = pDevice->GetDeviceCaps(FXDC_HORZ_SIZE);
   int vert_size = pDevice->GetDeviceCaps(FXDC_VERT_SIZE);
