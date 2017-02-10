@@ -11,6 +11,7 @@
 
 CPDF_CharPosList::CPDF_CharPosList() {
   m_pCharPos = nullptr;
+  m_nChars = 0;
 }
 
 CPDF_CharPosList::~CPDF_CharPosList() {

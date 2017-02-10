@@ -4014,6 +4014,7 @@ CFX_ScanlineCompositor::CFX_ScanlineCompositor() {
   m_CacheSize = 0;
   m_bRgbByteOrder = false;
   m_BlendType = FXDIB_BLEND_NORMAL;
+  m_pIccTransform = nullptr;
 }
 
 CFX_ScanlineCompositor::~CFX_ScanlineCompositor() {

@@ -1471,6 +1471,7 @@ void CFX_FilteredDIB::DownSampleScanline(int line,
 
 CFX_ImageRenderer::CFX_ImageRenderer() {
   m_Status = 0;
+  m_pIccTransform = nullptr;
   m_bRgbByteOrder = false;
   m_BlendType = FXDIB_BLEND_NORMAL;
 }

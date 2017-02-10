@@ -265,6 +265,8 @@ CPDF_StreamContentParser::CPDF_StreamContentParser(
       m_pPathPoints(nullptr),
       m_PathPointCount(0),
       m_PathAllocSize(0),
+      m_PathStartX(0.0f),
+      m_PathStartY(0.0f),
       m_PathCurrentX(0.0f),
       m_PathCurrentY(0.0f),
       m_PathClipType(0),
