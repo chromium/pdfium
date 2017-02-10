@@ -644,7 +644,7 @@ void CPDF_StreamContentParser::Handle_BeginImage() {
     }
     CFX_ByteString key((const FX_CHAR*)m_pSyntax->GetWordBuf() + 1,
                        m_pSyntax->GetWordSize() - 1);
-    auto pObj = m_pSyntax->ReadNextObject(false, 0);
+    auto pObj = m_pSyntax->ReadNextObject(false, false, 0);
     if (!key.IsEmpty()) {
       uint32_t dwObjNum = pObj ? pObj->GetObjNum() : 0;
       if (dwObjNum)
