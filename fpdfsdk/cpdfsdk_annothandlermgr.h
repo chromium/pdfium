@@ -58,32 +58,32 @@ class CPDFSDK_AnnotHandlerMgr {
   bool Annot_OnLButtonDown(CPDFSDK_PageView* pPageView,
                            CPDFSDK_Annot::ObservedPtr* pAnnot,
                            uint32_t nFlags,
-                           const CFX_FloatPoint& point);
+                           const CFX_PointF& point);
   bool Annot_OnLButtonUp(CPDFSDK_PageView* pPageView,
                          CPDFSDK_Annot::ObservedPtr* pAnnot,
                          uint32_t nFlags,
-                         const CFX_FloatPoint& point);
+                         const CFX_PointF& point);
   bool Annot_OnLButtonDblClk(CPDFSDK_PageView* pPageView,
                              CPDFSDK_Annot::ObservedPtr* pAnnot,
                              uint32_t nFlags,
-                             const CFX_FloatPoint& point);
+                             const CFX_PointF& point);
   bool Annot_OnMouseMove(CPDFSDK_PageView* pPageView,
                          CPDFSDK_Annot::ObservedPtr* pAnnot,
                          uint32_t nFlags,
-                         const CFX_FloatPoint& point);
+                         const CFX_PointF& point);
   bool Annot_OnMouseWheel(CPDFSDK_PageView* pPageView,
                           CPDFSDK_Annot::ObservedPtr* pAnnot,
                           uint32_t nFlags,
                           short zDelta,
-                          const CFX_FloatPoint& point);
+                          const CFX_PointF& point);
   bool Annot_OnRButtonDown(CPDFSDK_PageView* pPageView,
                            CPDFSDK_Annot::ObservedPtr* pAnnot,
                            uint32_t nFlags,
-                           const CFX_FloatPoint& point);
+                           const CFX_PointF& point);
   bool Annot_OnRButtonUp(CPDFSDK_PageView* pPageView,
                          CPDFSDK_Annot::ObservedPtr* pAnnot,
                          uint32_t nFlags,
-                         const CFX_FloatPoint& point);
+                         const CFX_PointF& point);
   bool Annot_OnChar(CPDFSDK_Annot* pAnnot, uint32_t nChar, uint32_t nFlags);
   bool Annot_OnKeyDown(CPDFSDK_Annot* pAnnot, int nKeyCode, int nFlag);
   bool Annot_OnKeyUp(CPDFSDK_Annot* pAnnot, int nKeyCode, int nFlag);
@@ -100,7 +100,7 @@ class CPDFSDK_AnnotHandlerMgr {
                                     CPDFSDK_Annot* pAnnot);
   bool Annot_OnHitTest(CPDFSDK_PageView* pPageView,
                        CPDFSDK_Annot* pAnnot,
-                       const CFX_FloatPoint& point);
+                       const CFX_PointF& point);
 
  private:
   IPDFSDK_AnnotHandler* GetAnnotHandler(CPDF_Annot::Subtype nSubtype) const;

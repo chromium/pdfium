@@ -37,7 +37,7 @@ bool CPWL_CheckBox::IsChecked() const {
   return m_bChecked;
 }
 
-bool CPWL_CheckBox::OnLButtonUp(const CFX_FloatPoint& point, uint32_t nFlag) {
+bool CPWL_CheckBox::OnLButtonUp(const CFX_PointF& point, uint32_t nFlag) {
   if (IsReadOnly())
     return false;
 
@@ -58,8 +58,7 @@ CFX_ByteString CPWL_RadioButton::GetClassName() const {
   return "CPWL_RadioButton";
 }
 
-bool CPWL_RadioButton::OnLButtonUp(const CFX_FloatPoint& point,
-                                   uint32_t nFlag) {
+bool CPWL_RadioButton::OnLButtonUp(const CFX_PointF& point, uint32_t nFlag) {
   if (IsReadOnly())
     return false;
 

@@ -72,7 +72,7 @@ bool CFFL_RadioButton::OnChar(CPDFSDK_Annot* pAnnot,
 bool CFFL_RadioButton::OnLButtonUp(CPDFSDK_PageView* pPageView,
                                    CPDFSDK_Annot* pAnnot,
                                    uint32_t nFlags,
-                                   const CFX_FloatPoint& point) {
+                                   const CFX_PointF& point) {
   CFFL_Button::OnLButtonUp(pPageView, pAnnot, nFlags, point);
 
   if (IsValid()) {

@@ -11,15 +11,19 @@
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_system.h"
 
-struct CPVT_Line {
-  CPVT_Line() : fLineWidth(0.0f), fLineAscent(0.0f), fLineDescent(0.0f) {}
+class CPVT_Line {
+ public:
+  CPVT_Line();
 
   CPVT_WordPlace lineplace;
   CPVT_WordPlace lineEnd;
-  CFX_FloatPoint ptLine;
+  CFX_PointF ptLine;
   FX_FLOAT fLineWidth;
   FX_FLOAT fLineAscent;
   FX_FLOAT fLineDescent;
 };
+
+inline CPVT_Line::CPVT_Line()
+    : fLineWidth(0.0f), fLineAscent(0.0f), fLineDescent(0.0f) {}
 
 #endif  // CORE_FPDFDOC_CPVT_LINE_H_

@@ -27,7 +27,7 @@ class CFFL_InteractiveFormFiller : public IPWL_Filler_Notify {
 
   bool Annot_HitTest(CPDFSDK_PageView* pPageView,
                      CPDFSDK_Annot* pAnnot,
-                     CFX_FloatPoint point);
+                     const CFX_PointF& point);
   FX_RECT GetViewBBox(CPDFSDK_PageView* pPageView, CPDFSDK_Annot* pAnnot);
   void OnDraw(CPDFSDK_PageView* pPageView,
               CPDFSDK_Annot* pAnnot,
@@ -45,32 +45,32 @@ class CFFL_InteractiveFormFiller : public IPWL_Filler_Notify {
   bool OnLButtonDown(CPDFSDK_PageView* pPageView,
                      CPDFSDK_Annot::ObservedPtr* pAnnot,
                      uint32_t nFlags,
-                     const CFX_FloatPoint& point);
+                     const CFX_PointF& point);
   bool OnLButtonUp(CPDFSDK_PageView* pPageView,
                    CPDFSDK_Annot::ObservedPtr* pAnnot,
                    uint32_t nFlags,
-                   const CFX_FloatPoint& point);
+                   const CFX_PointF& point);
   bool OnLButtonDblClk(CPDFSDK_PageView* pPageView,
                        CPDFSDK_Annot::ObservedPtr* pAnnot,
                        uint32_t nFlags,
-                       const CFX_FloatPoint& point);
+                       const CFX_PointF& point);
   bool OnMouseMove(CPDFSDK_PageView* pPageView,
                    CPDFSDK_Annot::ObservedPtr* pAnnot,
                    uint32_t nFlags,
-                   const CFX_FloatPoint& point);
+                   const CFX_PointF& point);
   bool OnMouseWheel(CPDFSDK_PageView* pPageView,
                     CPDFSDK_Annot::ObservedPtr* pAnnot,
                     uint32_t nFlags,
                     short zDelta,
-                    const CFX_FloatPoint& point);
+                    const CFX_PointF& point);
   bool OnRButtonDown(CPDFSDK_PageView* pPageView,
                      CPDFSDK_Annot::ObservedPtr* pAnnot,
                      uint32_t nFlags,
-                     const CFX_FloatPoint& point);
+                     const CFX_PointF& point);
   bool OnRButtonUp(CPDFSDK_PageView* pPageView,
                    CPDFSDK_Annot::ObservedPtr* pAnnot,
                    uint32_t nFlags,
-                   const CFX_FloatPoint& point);
+                   const CFX_PointF& point);
 
   bool OnKeyDown(CPDFSDK_Annot* pAnnot, uint32_t nKeyCode, uint32_t nFlags);
   bool OnChar(CPDFSDK_Annot* pAnnot, uint32_t nChar, uint32_t nFlags);

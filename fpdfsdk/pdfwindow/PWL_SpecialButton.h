@@ -26,7 +26,7 @@ class CPWL_CheckBox : public CPWL_Button {
 
   // CPWL_Button
   CFX_ByteString GetClassName() const override;
-  bool OnLButtonUp(const CFX_FloatPoint& point, uint32_t nFlag) override;
+  bool OnLButtonUp(const CFX_PointF& point, uint32_t nFlag) override;
   bool OnChar(uint16_t nChar, uint32_t nFlag) override;
 
   void SetCheck(bool bCheck);
@@ -43,7 +43,7 @@ class CPWL_RadioButton : public CPWL_Button {
 
   // CPWL_Button
   CFX_ByteString GetClassName() const override;
-  bool OnLButtonUp(const CFX_FloatPoint& point, uint32_t nFlag) override;
+  bool OnLButtonUp(const CFX_PointF& point, uint32_t nFlag) override;
   bool OnChar(uint16_t nChar, uint32_t nFlag) override;
 
   void SetCheck(bool bCheck);

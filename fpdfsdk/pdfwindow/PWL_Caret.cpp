@@ -14,6 +14,8 @@
 
 #define PWL_CARET_FLASHINTERVAL 500
 
+PWL_CARET_INFO::PWL_CARET_INFO() : bVisible(false) {}
+
 CPWL_Caret::CPWL_Caret() : m_bFlash(false), m_fWidth(0.4f), m_nDelay(0) {}
 
 CPWL_Caret::~CPWL_Caret() {}
@@ -23,7 +25,7 @@ CFX_ByteString CPWL_Caret::GetClassName() const {
 }
 
 void CPWL_Caret::GetThisAppearanceStream(CFX_ByteTextBuf& sAppStream) {
-  GetCaretApp(sAppStream, CFX_FloatPoint(0.0f, 0.0f));
+  GetCaretApp(sAppStream, CFX_PointF());
 }
 
 void CPWL_Caret::DrawThisAppearance(CFX_RenderDevice* pDevice,
@@ -60,7 +62,7 @@ void CPWL_Caret::DrawThisAppearance(CFX_RenderDevice* pDevice,
 }
 
 void CPWL_Caret::GetCaretApp(CFX_ByteTextBuf& sAppStream,
-                             const CFX_FloatPoint& ptOffset) {
+                             const CFX_PointF& ptOffset) {
   if (IsVisible() && m_bFlash) {
     CFX_ByteTextBuf sCaret;
 
@@ -85,7 +87,7 @@ void CPWL_Caret::GetCaretApp(CFX_ByteTextBuf& sAppStream,
 }
 
 CFX_ByteString CPWL_Caret::GetCaretAppearanceStream(
-    const CFX_FloatPoint& ptOffset) {
+    const CFX_PointF& ptOffset) {
   CFX_ByteTextBuf sCaret;
   GetCaretApp(sCaret, ptOffset);
   return sCaret.MakeString();
@@ -106,8 +108,8 @@ CFX_FloatRect CPWL_Caret::GetCaretRect() const {
 }
 
 void CPWL_Caret::SetCaret(bool bVisible,
-                          const CFX_FloatPoint& ptHead,
-                          const CFX_FloatPoint& ptFoot) {
+                          const CFX_PointF& ptHead,
+                          const CFX_PointF& ptFoot) {
   if (bVisible) {
     if (IsVisible()) {
       if (m_ptHead != ptHead || m_ptFoot != ptFoot) {
@@ -126,8 +128,8 @@ void CPWL_Caret::SetCaret(bool bVisible,
       Move(m_rcInvalid, false, true);
     }
   } else {
-    m_ptHead = CFX_FloatPoint();
-    m_ptFoot = CFX_FloatPoint();
+    m_ptHead = CFX_PointF();
+    m_ptFoot = CFX_PointF();
     m_bFlash = false;
     if (IsVisible()) {
       EndTimer();

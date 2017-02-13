@@ -146,7 +146,7 @@ void CSection::UpdateWordPlace(CPVT_WordPlace& place) const {
   }
 }
 
-CPVT_WordPlace CSection::SearchWordPlace(const CFX_FloatPoint& point) const {
+CPVT_WordPlace CSection::SearchWordPlace(const CFX_PointF& point) const {
   ASSERT(m_pVT);
   CPVT_WordPlace place = GetBeginWordPlace();
   bool bUp = true;
