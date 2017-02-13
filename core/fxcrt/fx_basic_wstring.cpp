@@ -343,12 +343,10 @@ void CFX_WideString::Concat(const FX_WCHAR* pSrcData, FX_STRSIZE nSrcLen) {
   m_pData.Swap(pNewData);
 }
 
-// static
 CFX_ByteString CFX_WideString::UTF8Encode() const {
-  return FX_UTF8Encode(*this);
+  return FX_UTF8Encode(AsStringC());
 }
 
-// static
 CFX_ByteString CFX_WideString::UTF16LE_Encode() const {
   if (!m_pData) {
     return CFX_ByteString("\0\0", 2);

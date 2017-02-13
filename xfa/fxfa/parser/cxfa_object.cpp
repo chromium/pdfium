@@ -42,9 +42,7 @@ void CXFA_Object::Script_ObjectClass_ClassName(CFXJSE_Value* pValue,
     ThrowInvalidPropertyException();
     return;
   }
-  CFX_WideStringC className = GetClassName();
-  pValue->SetString(
-      FX_UTF8Encode(className.c_str(), className.GetLength()).AsStringC());
+  pValue->SetString(FX_UTF8Encode(GetClassName()).AsStringC());
 }
 
 void CXFA_Object::ThrowInvalidPropertyException() const {
@@ -71,6 +69,5 @@ void CXFA_Object::ThrowException(const FX_WCHAR* str, ...) const {
   va_start(arg_ptr, str);
   wsMessage.FormatV(str, arg_ptr);
   va_end(arg_ptr);
-  FXJSE_ThrowMessage(
-      FX_UTF8Encode(wsMessage.c_str(), wsMessage.GetLength()).AsStringC());
+  FXJSE_ThrowMessage(wsMessage.UTF8Encode().AsStringC());
 }

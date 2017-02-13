@@ -25,7 +25,7 @@ void StringProperty(CFXJSE_Value* pValue,
     wsValue = pValue->ToWideString();
     return;
   }
-  pValue->SetString(FX_UTF8Encode(wsValue).AsStringC());
+  pValue->SetString(wsValue.UTF8Encode().AsStringC());
 }
 
 void InterProperty(CFXJSE_Value* pValue, int32_t& iValue, bool bSetting) {

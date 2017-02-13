@@ -161,10 +161,9 @@ bool CXFA_ScriptContext::RunScript(XFA_SCRIPTLANGTYPE eScriptType,
       hRetValue->SetUndefined();
       return false;
     }
-    btScript =
-        FX_UTF8Encode(wsJavaScript.GetBuffer(), wsJavaScript.GetLength());
+    btScript = FX_UTF8Encode(wsJavaScript.AsStringC());
   } else {
-    btScript = FX_UTF8Encode(wsScript.c_str(), wsScript.GetLength());
+    btScript = FX_UTF8Encode(wsScript);
   }
   CXFA_Object* pOriginalObject = m_pThisObject;
   m_pThisObject = pThisObject;
@@ -491,8 +490,7 @@ bool CXFA_ScriptContext::RunVariablesScript(CXFA_Node* pScriptNode) {
   if (!pTextNode->TryCData(XFA_ATTRIBUTE_Value, wsScript))
     return false;
 
-  CFX_ByteString btScript =
-      FX_UTF8Encode(wsScript.c_str(), wsScript.GetLength());
+  CFX_ByteString btScript = FX_UTF8Encode(wsScript);
   std::unique_ptr<CFXJSE_Value> hRetValue(new CFXJSE_Value(m_pIsolate));
   CXFA_Node* pThisObject = pParent->GetNodeItem(XFA_NODEITEM_Parent);
   CFXJSE_Context* pVariablesContext =

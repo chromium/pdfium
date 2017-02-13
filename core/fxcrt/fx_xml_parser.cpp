@@ -773,7 +773,7 @@ CFX_ByteString CXML_Element::GetNamespaceURI(
     }
     pElement = pElement->GetParent();
   } while (pElement);
-  return pwsSpace ? FX_UTF8Encode(*pwsSpace) : CFX_ByteString();
+  return pwsSpace ? pwsSpace->UTF8Encode() : CFX_ByteString();
 }
 void CXML_Element::GetAttrByIndex(int index,
                                   CFX_ByteString& space,

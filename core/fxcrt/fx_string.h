@@ -424,17 +424,10 @@ inline bool operator!=(const CFX_WideStringC& lhs, const CFX_WideString& rhs) {
   return rhs != lhs;
 }
 
-CFX_ByteString FX_UTF8Encode(const FX_WCHAR* pwsStr, FX_STRSIZE len);
-inline CFX_ByteString FX_UTF8Encode(const CFX_WideStringC& wsStr) {
-  return FX_UTF8Encode(wsStr.c_str(), wsStr.GetLength());
-}
-inline CFX_ByteString FX_UTF8Encode(const CFX_WideString& wsStr) {
-  return FX_UTF8Encode(wsStr.c_str(), wsStr.GetLength());
-}
-
+CFX_ByteString FX_UTF8Encode(const CFX_WideStringC& wsStr);
 FX_FLOAT FX_atof(const CFX_ByteStringC& str);
 inline FX_FLOAT FX_atof(const CFX_WideStringC& wsStr) {
-  return FX_atof(FX_UTF8Encode(wsStr.c_str(), wsStr.GetLength()).c_str());
+  return FX_atof(FX_UTF8Encode(wsStr).c_str());
 }
 bool FX_atonum(const CFX_ByteStringC& str, void* pData);
 FX_STRSIZE FX_ftoa(FX_FLOAT f, FX_CHAR* buf);

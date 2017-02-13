@@ -274,7 +274,7 @@ void CFXJS_Engine::DefineObjMethod(int nObjDefnID,
                                    v8::FunctionCallback pMethodCall) {
   v8::Isolate::Scope isolate_scope(m_isolate);
   v8::HandleScope handle_scope(m_isolate);
-  CFX_ByteString bsMethodName = CFX_WideString(sMethodName).UTF8Encode();
+  CFX_ByteString bsMethodName = FX_UTF8Encode(CFX_WideStringC(sMethodName));
   CFXJS_ObjDefinition* pObjDef =
       CFXJS_ObjDefinition::ForID(m_isolate, nObjDefnID);
   v8::Local<v8::FunctionTemplate> fun = v8::FunctionTemplate::New(
@@ -293,7 +293,7 @@ void CFXJS_Engine::DefineObjProperty(int nObjDefnID,
                                      v8::AccessorSetterCallback pPropPut) {
   v8::Isolate::Scope isolate_scope(m_isolate);
   v8::HandleScope handle_scope(m_isolate);
-  CFX_ByteString bsPropertyName = CFX_WideString(sPropName).UTF8Encode();
+  CFX_ByteString bsPropertyName = FX_UTF8Encode(CFX_WideStringC(sPropName));
   CFXJS_ObjDefinition* pObjDef =
       CFXJS_ObjDefinition::ForID(m_isolate, nObjDefnID);
   pObjDef->GetInstanceTemplate()->SetAccessor(
@@ -322,7 +322,7 @@ void CFXJS_Engine::DefineObjConst(int nObjDefnID,
                                   v8::Local<v8::Value> pDefault) {
   v8::Isolate::Scope isolate_scope(m_isolate);
   v8::HandleScope handle_scope(m_isolate);
-  CFX_ByteString bsConstName = CFX_WideString(sConstName).UTF8Encode();
+  CFX_ByteString bsConstName = FX_UTF8Encode(CFX_WideStringC(sConstName));
   CFXJS_ObjDefinition* pObjDef =
       CFXJS_ObjDefinition::ForID(m_isolate, nObjDefnID);
   pObjDef->GetInstanceTemplate()->Set(m_isolate, bsConstName.c_str(), pDefault);
@@ -332,7 +332,7 @@ void CFXJS_Engine::DefineGlobalMethod(const wchar_t* sMethodName,
                                       v8::FunctionCallback pMethodCall) {
   v8::Isolate::Scope isolate_scope(m_isolate);
   v8::HandleScope handle_scope(m_isolate);
-  CFX_ByteString bsMethodName = CFX_WideString(sMethodName).UTF8Encode();
+  CFX_ByteString bsMethodName = FX_UTF8Encode(CFX_WideStringC(sMethodName));
   v8::Local<v8::FunctionTemplate> fun =
       v8::FunctionTemplate::New(m_isolate, pMethodCall);
   fun->RemovePrototype();
@@ -347,7 +347,7 @@ void CFXJS_Engine::DefineGlobalConst(const wchar_t* sConstName,
                                      v8::FunctionCallback pConstGetter) {
   v8::Isolate::Scope isolate_scope(m_isolate);
   v8::HandleScope handle_scope(m_isolate);
-  CFX_ByteString bsConst = CFX_WideString(sConstName).UTF8Encode();
+  CFX_ByteString bsConst = FX_UTF8Encode(CFX_WideStringC(sConstName));
   v8::Local<v8::FunctionTemplate> fun =
       v8::FunctionTemplate::New(m_isolate, pConstGetter);
   fun->RemovePrototype();
@@ -392,7 +392,7 @@ void CFXJS_Engine::InitializeEngine() {
                                           ->ToObject(v8Context)
                                           .ToLocalChecked());
     } else if (pObjDef->m_ObjType == FXJSOBJTYPE_STATIC) {
-      CFX_ByteString bs = CFX_WideString(pObjDef->m_ObjName).UTF8Encode();
+      CFX_ByteString bs = FX_UTF8Encode(CFX_WideStringC(pObjDef->m_ObjName));
       v8::Local<v8::String> m_ObjName =
           v8::String::NewFromUtf8(m_isolate, bs.c_str(),
                                   v8::NewStringType::kNormal, bs.GetLength())
