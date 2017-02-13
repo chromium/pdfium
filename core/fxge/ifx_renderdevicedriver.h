@@ -16,8 +16,8 @@ class CFX_GraphStateData;
 class CFX_Matrix;
 class CFX_PathData;
 class CPDF_ShadingPattern;
+class FXTEXT_CHARPOS;
 class IFX_Pause;
-struct FXTEXT_CHARPOS;
 struct FX_RECT;
 
 class IFX_RenderDeviceDriver {

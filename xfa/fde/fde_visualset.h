@@ -17,7 +17,7 @@
 #include "xfa/fde/fde_object.h"
 #include "xfa/fgas/font/cfgas_fontmgr.h"
 
-struct FXTEXT_CHARPOS;
+class FXTEXT_CHARPOS;
 
 enum FDE_VISUALOBJTYPE {
   FDE_VISUALOBJ_Canvas = 0x00,

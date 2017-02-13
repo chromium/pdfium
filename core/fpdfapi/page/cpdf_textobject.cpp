@@ -10,6 +10,10 @@
 #include "core/fpdfapi/font/cpdf_font.h"
 #include "third_party/base/ptr_util.h"
 
+CPDF_TextObjectItem::CPDF_TextObjectItem() : m_CharCode(0) {}
+
+CPDF_TextObjectItem::~CPDF_TextObjectItem() {}
+
 CPDF_TextObject::CPDF_TextObject()
     : m_PosX(0),
       m_PosY(0),
@@ -31,26 +35,26 @@ int CPDF_TextObject::CountItems() const {
 void CPDF_TextObject::GetItemInfo(int index, CPDF_TextObjectItem* pInfo) const {
   pInfo->m_CharCode =
       m_nChars == 1 ? (uint32_t)(uintptr_t)m_pCharCodes : m_pCharCodes[index];
-  pInfo->m_OriginX = index ? m_pCharPos[index - 1] : 0;
-  pInfo->m_OriginY = 0;
-  if (pInfo->m_CharCode == CPDF_Font::kInvalidCharCode) {
+  pInfo->m_Origin = CFX_PointF(index ? m_pCharPos[index - 1] : 0, 0);
+  if (pInfo->m_CharCode == CPDF_Font::kInvalidCharCode)
     return;
-  }
+
   CPDF_Font* pFont = m_TextState.GetFont();
-  if (!pFont->IsCIDFont()) {
+  if (!pFont->IsCIDFont())
     return;
-  }
-  if (!pFont->AsCIDFont()->IsVertWriting()) {
+  if (!pFont->AsCIDFont()->IsVertWriting())
     return;
-  }
+
   uint16_t CID = pFont->AsCIDFont()->CIDFromCharCode(pInfo->m_CharCode);
-  pInfo->m_OriginY = pInfo->m_OriginX;
-  pInfo->m_OriginX = 0;
-  short vx, vy;
+  pInfo->m_Origin = CFX_PointF(0, pInfo->m_Origin.x);
+
+  short vx;
+  short vy;
   pFont->AsCIDFont()->GetVertOrigin(CID, vx, vy);
+
   FX_FLOAT fontsize = m_TextState.GetFontSize();
-  pInfo->m_OriginX -= fontsize * vx / 1000;
-  pInfo->m_OriginY -= fontsize * vy / 1000;
+  pInfo->m_Origin.x -= fontsize * vx / 1000;
+  pInfo->m_Origin.y -= fontsize * vy / 1000;
 }
 
 int CPDF_TextObject::CountChars() const {
@@ -223,12 +227,12 @@ FX_FLOAT CPDF_TextObject::GetCharWidth(uint32_t charcode) const {
   return pCIDFont->GetVertWidth(CID) * fontsize;
 }
 
-FX_FLOAT CPDF_TextObject::GetPosX() const {
-  return m_PosX;
+CFX_FloatRect CPDF_TextObject::GetRect() const {
+  return CFX_FloatRect(m_Left, m_Bottom, m_Right, m_Top);
 }
 
-FX_FLOAT CPDF_TextObject::GetPosY() const {
-  return m_PosY;
+CFX_PointF CPDF_TextObject::GetPos() const {
+  return CFX_PointF(m_PosX, m_PosY);
 }
 
 CPDF_Font* CPDF_TextObject::GetFont() const {

@@ -22,7 +22,7 @@ class CFX_FontCache;
 class CFX_Matrix;
 class CFX_PathData;
 class CPSFont;
-struct FXTEXT_CHARPOS;
+class FXTEXT_CHARPOS;
 
 class CFX_PSRenderer {
  public:

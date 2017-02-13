@@ -222,12 +222,15 @@ class CFX_GlyphBitmap {
   CFX_DIBitmap m_Bitmap;
 };
 
-struct FXTEXT_GLYPHPOS {
+class FXTEXT_GLYPHPOS {
+ public:
+  FXTEXT_GLYPHPOS();
+  FXTEXT_GLYPHPOS(const FXTEXT_GLYPHPOS&);
+  ~FXTEXT_GLYPHPOS();
+
   const CFX_GlyphBitmap* m_pGlyph;
-  int m_OriginX;
-  int m_OriginY;
-  FX_FLOAT m_fOriginX;
-  FX_FLOAT m_fOriginY;
+  CFX_Point m_Origin;
+  CFX_PointF m_fOrigin;
 };
 
 FX_RECT FXGE_GetGlyphsBBox(const std::vector<FXTEXT_GLYPHPOS>& glyphs,

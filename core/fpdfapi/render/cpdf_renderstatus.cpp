@@ -1832,8 +1832,8 @@ bool CPDF_RenderStatus::ProcessType3Text(CPDF_TextObject* textobj,
             continue;
 
           m_pDevice->SetBitMask(&glyph.m_pGlyph->m_Bitmap,
-                                glyph.m_OriginX + glyph.m_pGlyph->m_Left,
-                                glyph.m_OriginY - glyph.m_pGlyph->m_Top,
+                                glyph.m_Origin.x + glyph.m_pGlyph->m_Left,
+                                glyph.m_Origin.y - glyph.m_pGlyph->m_Top,
                                 fill_argb);
         }
         glyphs.clear();
@@ -1898,8 +1898,7 @@ bool CPDF_RenderStatus::ProcessType3Text(CPDF_TextObject* textobj,
                                 origin_y - pBitmap->m_Top, fill_argb);
         } else {
           glyphs[iChar].m_pGlyph = pBitmap;
-          glyphs[iChar].m_OriginX = origin_x;
-          glyphs[iChar].m_OriginY = origin_y;
+          glyphs[iChar].m_Origin = CFX_Point(origin_x, origin_y);
         }
       } else {
         CFX_Matrix image_matrix = pType3Char->m_ImageMatrix;
@@ -1929,14 +1928,14 @@ bool CPDF_RenderStatus::ProcessType3Text(CPDF_TextObject* textobj,
     if (!glyph.m_pGlyph)
       continue;
 
-    pdfium::base::CheckedNumeric<int> left = glyph.m_OriginX;
+    pdfium::base::CheckedNumeric<int> left = glyph.m_Origin.x;
     left += glyph.m_pGlyph->m_Left;
     left -= rect.left;
     left *= sa;
     if (!left.IsValid())
       continue;
 
-    pdfium::base::CheckedNumeric<int> top = glyph.m_OriginY;
+    pdfium::base::CheckedNumeric<int> top = glyph.m_Origin.y;
     top -= glyph.m_pGlyph->m_Top;
     top -= rect.top;
     top *= sd;
@@ -2001,8 +2000,8 @@ void CPDF_RenderStatus::DrawTextPathWithPattern(const CPDF_TextObject* textobj,
                           charpos.m_AdjustMatrix[2], charpos.m_AdjustMatrix[3],
                           0, 0);
     }
-    matrix.Concat(CFX_Matrix(font_size, 0, 0, font_size, charpos.m_OriginX,
-                             charpos.m_OriginY));
+    matrix.Concat(CFX_Matrix(font_size, 0, 0, font_size, charpos.m_Origin.x,
+                             charpos.m_Origin.y));
     path.m_Path.Append(pPath, &matrix);
     path.m_Matrix = *pTextMatrix;
     path.m_bStroke = bStroke;

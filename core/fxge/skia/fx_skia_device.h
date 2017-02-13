@@ -13,13 +13,13 @@
 #include "core/fxge/cfx_pathdata.h"
 #include "core/fxge/ifx_renderdevicedriver.h"
 
+class FXTEXT_CHARPOS;
 class SkCanvas;
 class SkMatrix;
 class SkPaint;
 class SkPath;
 class SkPictureRecorder;
 class SkiaState;
-struct FXTEXT_CHARPOS;
 struct SkIRect;
 
 class CFX_SkiaDeviceDriver : public IFX_RenderDeviceDriver {

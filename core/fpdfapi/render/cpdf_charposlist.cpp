@@ -56,20 +56,20 @@ void CPDF_CharPosList::Load(int nChars,
     } else {
       charpos.m_FontCharWidth = 0;
     }
-    charpos.m_OriginX = iChar ? pCharPos[iChar - 1] : 0;
-    charpos.m_OriginY = 0;
+    charpos.m_Origin = CFX_PointF(iChar ? pCharPos[iChar - 1] : 0, 0);
     charpos.m_bGlyphAdjust = false;
     if (!pCIDFont) {
       continue;
     }
     uint16_t CID = pCIDFont->CIDFromCharCode(CharCode);
     if (bVertWriting) {
-      charpos.m_OriginY = charpos.m_OriginX;
-      charpos.m_OriginX = 0;
-      short vx, vy;
+      charpos.m_Origin = CFX_PointF(0, charpos.m_Origin.x);
+
+      short vx;
+      short vy;
       pCIDFont->GetVertOrigin(CID, vx, vy);
-      charpos.m_OriginX -= FontSize * vx / 1000;
-      charpos.m_OriginY -= FontSize * vy / 1000;
+      charpos.m_Origin.x -= FontSize * vx / 1000;
+      charpos.m_Origin.y -= FontSize * vy / 1000;
     }
     const uint8_t* pTransform = pCIDFont->GetCIDTransform(CID);
     if (pTransform && !bVert) {
@@ -77,9 +77,9 @@ void CPDF_CharPosList::Load(int nChars,
       charpos.m_AdjustMatrix[2] = pCIDFont->CIDTransformToFloat(pTransform[2]);
       charpos.m_AdjustMatrix[1] = pCIDFont->CIDTransformToFloat(pTransform[1]);
       charpos.m_AdjustMatrix[3] = pCIDFont->CIDTransformToFloat(pTransform[3]);
-      charpos.m_OriginX +=
+      charpos.m_Origin.x +=
           pCIDFont->CIDTransformToFloat(pTransform[4]) * FontSize;
-      charpos.m_OriginY +=
+      charpos.m_Origin.y +=
           pCIDFont->CIDTransformToFloat(pTransform[5]) * FontSize;
       charpos.m_bGlyphAdjust = true;
     }
