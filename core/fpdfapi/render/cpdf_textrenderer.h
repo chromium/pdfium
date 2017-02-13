@@ -7,6 +7,8 @@
 #ifndef CORE_FPDFAPI_RENDER_CPDF_TEXTRENDERER_H_
 #define CORE_FPDFAPI_RENDER_CPDF_TEXTRENDERER_H_
 
+#include <vector>
+
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
@@ -33,9 +35,8 @@ class CPDF_TextRenderer {
                              const CPDF_RenderOptions* pOptions);
 
   static bool DrawTextPath(CFX_RenderDevice* pDevice,
-                           int nChars,
-                           uint32_t* pCharCodes,
-                           FX_FLOAT* pCharPos,
+                           const std::vector<uint32_t>& charCodes,
+                           const std::vector<FX_FLOAT>& charPos,
                            CPDF_Font* pFont,
                            FX_FLOAT font_size,
                            const CFX_Matrix* pText2User,
@@ -47,9 +48,8 @@ class CPDF_TextRenderer {
                            int nFlag);
 
   static bool DrawNormalText(CFX_RenderDevice* pDevice,
-                             int nChars,
-                             uint32_t* pCharCodes,
-                             FX_FLOAT* pCharPos,
+                             const std::vector<uint32_t>& charCodes,
+                             const std::vector<FX_FLOAT>& charPos,
                              CPDF_Font* pFont,
                              FX_FLOAT font_size,
                              const CFX_Matrix* pText2Device,

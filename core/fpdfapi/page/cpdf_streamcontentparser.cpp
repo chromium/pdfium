@@ -1276,9 +1276,9 @@ void CPDF_StreamContentParser::AddTextObject(CFX_ByteString* pStrs,
       pCTM[3] = m_pCurStates->m_CTM.d;
     }
     pText->SetSegments(pStrs, pKerning, nsegs);
-    pText->m_PosX = m_pCurStates->m_TextX;
-    pText->m_PosY = m_pCurStates->m_TextY + m_pCurStates->m_TextRise;
-    ConvertTextSpace(pText->m_PosX, pText->m_PosY);
+    pText->m_Pos = CFX_PointF(m_pCurStates->m_TextX,
+                              m_pCurStates->m_TextY + m_pCurStates->m_TextRise);
+    ConvertTextSpace(pText->m_Pos.x, pText->m_Pos.y);
     FX_FLOAT x_advance;
     FX_FLOAT y_advance;
     pText->CalcPositionData(&x_advance, &y_advance,

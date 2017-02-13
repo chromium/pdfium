@@ -8,6 +8,7 @@
 #define CORE_FPDFAPI_PAGE_CPDF_TEXTOBJECT_H_
 
 #include <memory>
+#include <vector>
 
 #include "core/fpdfapi/page/cpdf_pageobject.h"
 #include "core/fxcrt/fx_string.h"
@@ -38,7 +39,7 @@ class CPDF_TextObject : public CPDF_PageObject {
   int CountItems() const;
   void GetItemInfo(int index, CPDF_TextObjectItem* pInfo) const;
   int CountChars() const;
-  void GetCharInfo(int index, uint32_t& charcode, FX_FLOAT& kerning) const;
+  void GetCharInfo(int index, uint32_t* charcode, FX_FLOAT* kerning) const;
   void GetCharInfo(int index, CPDF_TextObjectItem* pInfo) const;
   FX_FLOAT GetCharWidth(uint32_t charcode) const;
 
@@ -53,22 +54,22 @@ class CPDF_TextObject : public CPDF_PageObject {
 
   void RecalcPositionData();
 
- protected:
+ private:
   friend class CPDF_RenderStatus;
   friend class CPDF_StreamContentParser;
   friend class CPDF_TextRenderer;
 
-  void SetSegments(const CFX_ByteString* pStrs, FX_FLOAT* pKerning, int nSegs);
+  void SetSegments(const CFX_ByteString* pStrs,
+                   const FX_FLOAT* pKerning,
+                   int nSegs);
 
   void CalcPositionData(FX_FLOAT* pTextAdvanceX,
                         FX_FLOAT* pTextAdvanceY,
                         FX_FLOAT horz_scale);
 
-  FX_FLOAT m_PosX;
-  FX_FLOAT m_PosY;
-  int m_nChars;
-  uint32_t* m_pCharCodes;
-  FX_FLOAT* m_pCharPos;
+  CFX_PointF m_Pos;
+  std::vector<uint32_t> m_CharCodes;
+  std::vector<FX_FLOAT> m_CharPos;
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_TEXTOBJECT_H_

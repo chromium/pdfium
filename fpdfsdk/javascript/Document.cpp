@@ -1543,7 +1543,7 @@ int Document::CountWords(CPDF_TextObject* pTextObj) {
     uint32_t charcode = CPDF_Font::kInvalidCharCode;
     FX_FLOAT kerning;
 
-    pTextObj->GetCharInfo(i, charcode, kerning);
+    pTextObj->GetCharInfo(i, &charcode, &kerning);
     CFX_WideString swUnicode = pFont->UnicodeFromCharCode(charcode);
 
     uint16_t unicode = 0;
@@ -1576,7 +1576,7 @@ CFX_WideString Document::GetObjWordStr(CPDF_TextObject* pTextObj,
     uint32_t charcode = CPDF_Font::kInvalidCharCode;
     FX_FLOAT kerning;
 
-    pTextObj->GetCharInfo(i, charcode, kerning);
+    pTextObj->GetCharInfo(i, &charcode, &kerning);
     CFX_WideString swUnicode = pFont->UnicodeFromCharCode(charcode);
 
     uint16_t unicode = 0;

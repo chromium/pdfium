@@ -8,6 +8,7 @@
 
 #include "core/fpdfapi/font/cpdf_cidfont.h"
 #include "core/fpdfapi/font/cpdf_font.h"
+#include "third_party/base/stl_util.h"
 
 CPDF_CharPosList::CPDF_CharPosList() {
   m_pCharPos = nullptr;
@@ -18,26 +19,23 @@ CPDF_CharPosList::~CPDF_CharPosList() {
   FX_Free(m_pCharPos);
 }
 
-void CPDF_CharPosList::Load(int nChars,
-                            uint32_t* pCharCodes,
-                            FX_FLOAT* pCharPos,
+void CPDF_CharPosList::Load(const std::vector<uint32_t>& charCodes,
+                            const std::vector<FX_FLOAT>& charPos,
                             CPDF_Font* pFont,
                             FX_FLOAT FontSize) {
+  int nChars = pdfium::CollectionSize<int>(charCodes);
   m_pCharPos = FX_Alloc(FXTEXT_CHARPOS, nChars);
   m_nChars = 0;
   CPDF_CIDFont* pCIDFont = pFont->AsCIDFont();
   bool bVertWriting = pCIDFont && pCIDFont->IsVertWriting();
   for (int iChar = 0; iChar < nChars; iChar++) {
-    uint32_t CharCode =
-        nChars == 1 ? (uint32_t)(uintptr_t)pCharCodes : pCharCodes[iChar];
-    if (CharCode == (uint32_t)-1) {
+    uint32_t CharCode = charCodes[iChar];
+    if (CharCode == static_cast<uint32_t>(-1))
       continue;
-    }
     bool bVert = false;
     FXTEXT_CHARPOS& charpos = m_pCharPos[m_nChars++];
-    if (pCIDFont) {
+    if (pCIDFont)
       charpos.m_bFontStyle = true;
-    }
     charpos.m_GlyphIndex = pFont->GlyphFromCharCode(CharCode, &bVert);
     if (charpos.m_GlyphIndex != static_cast<uint32_t>(-1)) {
       charpos.m_FallbackFontPosition = -1;
@@ -56,7 +54,7 @@ void CPDF_CharPosList::Load(int nChars,
     } else {
       charpos.m_FontCharWidth = 0;
     }
-    charpos.m_Origin = CFX_PointF(iChar ? pCharPos[iChar - 1] : 0, 0);
+    charpos.m_Origin = CFX_PointF(iChar ? charPos[iChar - 1] : 0, 0);
     charpos.m_bGlyphAdjust = false;
     if (!pCIDFont) {
       continue;
