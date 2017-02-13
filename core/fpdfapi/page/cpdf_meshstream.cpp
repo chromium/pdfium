@@ -83,6 +83,12 @@ bool IsValidBitsPerFlag(uint32_t x) {
 
 }  // namespace
 
+CPDF_MeshVertex::CPDF_MeshVertex() = default;
+
+CPDF_MeshVertex::CPDF_MeshVertex(const CPDF_MeshVertex&) = default;
+
+CPDF_MeshVertex::~CPDF_MeshVertex() = default;
+
 CPDF_MeshStream::CPDF_MeshStream(
     ShadingType type,
     const std::vector<std::unique_ptr<CPDF_Function>>& funcs,
@@ -148,37 +154,47 @@ bool CPDF_MeshStream::Load() {
   return true;
 }
 
-uint32_t CPDF_MeshStream::GetFlag() {
+uint32_t CPDF_MeshStream::ReadFlag() {
   ASSERT(ShouldCheckBitsPerFlag(m_type));
   return m_BitStream.GetBits(m_nFlagBits) & 0x03;
 }
 
-void CPDF_MeshStream::GetCoords(FX_FLOAT& x, FX_FLOAT& y) {
+CFX_PointF CPDF_MeshStream::ReadCoords() {
   ASSERT(ShouldCheckBPC(m_type));
+
+  CFX_PointF pos;
   if (m_nCoordBits == 32) {
-    x = m_xmin + (FX_FLOAT)(m_BitStream.GetBits(m_nCoordBits) *
-                            (m_xmax - m_xmin) / (double)m_CoordMax);
-    y = m_ymin + (FX_FLOAT)(m_BitStream.GetBits(m_nCoordBits) *
-                            (m_ymax - m_ymin) / (double)m_CoordMax);
+    pos.x = m_xmin +
+            m_BitStream.GetBits(m_nCoordBits) * (m_xmax - m_xmin) /
+                static_cast<double>(m_CoordMax);
+    pos.y = m_ymin +
+            m_BitStream.GetBits(m_nCoordBits) * (m_ymax - m_ymin) /
+                static_cast<double>(m_CoordMax);
   } else {
-    x = m_xmin +
-        m_BitStream.GetBits(m_nCoordBits) * (m_xmax - m_xmin) / m_CoordMax;
-    y = m_ymin +
-        m_BitStream.GetBits(m_nCoordBits) * (m_ymax - m_ymin) / m_CoordMax;
+    pos.x = m_xmin +
+            m_BitStream.GetBits(m_nCoordBits) * (m_xmax - m_xmin) / m_CoordMax;
+    pos.y = m_ymin +
+            m_BitStream.GetBits(m_nCoordBits) * (m_ymax - m_ymin) / m_CoordMax;
   }
+  return pos;
 }
 
-void CPDF_MeshStream::GetColor(FX_FLOAT& r, FX_FLOAT& g, FX_FLOAT& b) {
+std::tuple<FX_FLOAT, FX_FLOAT, FX_FLOAT> CPDF_MeshStream::ReadColor() {
   ASSERT(ShouldCheckBPC(m_type));
+
   FX_FLOAT color_value[kMaxComponents];
   for (uint32_t i = 0; i < m_nComponents; ++i) {
     color_value[i] = m_ColorMin[i] +
                      m_BitStream.GetBits(m_nComponentBits) *
                          (m_ColorMax[i] - m_ColorMin[i]) / m_ComponentMax;
   }
+
+  FX_FLOAT r;
+  FX_FLOAT g;
+  FX_FLOAT b;
   if (m_funcs.empty()) {
     m_pCS->GetRGB(color_value, r, g, b);
-    return;
+    return std::tuple<FX_FLOAT, FX_FLOAT, FX_FLOAT>(r, g, b);
   }
 
   FX_FLOAT result[kMaxComponents];
@@ -188,29 +204,32 @@ void CPDF_MeshStream::GetColor(FX_FLOAT& r, FX_FLOAT& g, FX_FLOAT& b) {
     if (func && func->CountOutputs() <= kMaxComponents)
       func->Call(color_value, 1, result, nResults);
   }
+
   m_pCS->GetRGB(result, r, g, b);
+  return std::tuple<FX_FLOAT, FX_FLOAT, FX_FLOAT>(r, g, b);
 }
 
-uint32_t CPDF_MeshStream::GetVertex(CPDF_MeshVertex& vertex,
-                                    CFX_Matrix* pObject2Bitmap) {
-  uint32_t flag = GetFlag();
-  GetCoords(vertex.x, vertex.y);
-  pObject2Bitmap->TransformPoint(vertex.x, vertex.y);
-  GetColor(vertex.r, vertex.g, vertex.b);
+CPDF_MeshVertex CPDF_MeshStream::ReadVertex(const CFX_Matrix& pObject2Bitmap,
+                                            uint32_t* flag) {
+  *flag = ReadFlag();
+
+  CPDF_MeshVertex vertex;
+  vertex.position = pObject2Bitmap.Transform(ReadCoords());
+  std::tie(vertex.r, vertex.g, vertex.b) = ReadColor();
   m_BitStream.ByteAlign();
-  return flag;
+
+  return vertex;
 }
 
-bool CPDF_MeshStream::GetVertexRow(CPDF_MeshVertex* vertex,
-                                   int count,
-                                   CFX_Matrix* pObject2Bitmap) {
+bool CPDF_MeshStream::ReadVertexRow(const CFX_Matrix& pObject2Bitmap,
+                                    int count,
+                                    CPDF_MeshVertex* vertex) {
   for (int i = 0; i < count; i++) {
     if (m_BitStream.IsEOF())
       return false;
 
-    GetCoords(vertex[i].x, vertex[i].y);
-    pObject2Bitmap->TransformPoint(vertex[i].x, vertex[i].y);
-    GetColor(vertex[i].r, vertex[i].g, vertex[i].b);
+    vertex[i].position = pObject2Bitmap.Transform(ReadCoords());
+    std::tie(vertex[i].r, vertex[i].g, vertex[i].b) = ReadColor();
     m_BitStream.ByteAlign();
   }
   return true;
