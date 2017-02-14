@@ -119,44 +119,6 @@ void DrawTextString(CFX_RenderDevice* pDevice,
   }
 }
 
-CPDF_TextObject* AddTextObjToPageObjects(CPDF_PageObjectHolder* pObjectHolder,
-                                         FX_COLORREF crText,
-                                         CPDF_Font* pFont,
-                                         FX_FLOAT fFontSize,
-                                         FX_FLOAT fCharSpace,
-                                         int32_t nHorzScale,
-                                         const CFX_FloatPoint& point,
-                                         const CFX_ByteString& text) {
-  std::unique_ptr<CPDF_TextObject> pTxtObj(new CPDF_TextObject);
-  pTxtObj->m_TextState.SetFont(pFont);
-  pTxtObj->m_TextState.SetFontSize(fFontSize);
-  pTxtObj->m_TextState.SetCharSpace(fCharSpace);
-  pTxtObj->m_TextState.SetWordSpace(0);
-  pTxtObj->m_TextState.SetTextMode(TextRenderingMode::MODE_FILL);
-
-  FX_FLOAT* matrix = pTxtObj->m_TextState.GetMutableMatrix();
-  matrix[0] = nHorzScale / 100.0f;
-  matrix[1] = 0;
-  matrix[2] = 0;
-  matrix[3] = 1;
-
-  FX_FLOAT rgb[3];
-  rgb[0] = FXARGB_R(crText) / 255.0f;
-  rgb[1] = FXARGB_G(crText) / 255.0f;
-  rgb[2] = FXARGB_B(crText) / 255.0f;
-  pTxtObj->m_ColorState.SetFillColor(
-      CPDF_ColorSpace::GetStockCS(PDFCS_DEVICERGB), rgb, 3);
-  pTxtObj->m_ColorState.SetStrokeColor(
-      CPDF_ColorSpace::GetStockCS(PDFCS_DEVICERGB), rgb, 3);
-
-  pTxtObj->SetPosition(point.x, point.y);
-  pTxtObj->SetText(text);
-
-  CPDF_TextObject* pRet = pTxtObj.get();
-  pObjectHolder->GetPageObjectList()->push_back(std::move(pTxtObj));
-  return pRet;
-}
-
 }  // namespace
 
 CFX_Edit_Iterator::CFX_Edit_Iterator(CFX_Edit* pEdit,
@@ -902,64 +864,6 @@ void CFX_Edit::DrawEdit(CFX_RenderDevice* pDevice,
   }
 
   pDevice->RestoreState(false);
-}
-
-// static
-void CFX_Edit::GeneratePageObjects(CPDF_PageObjectHolder* pObjectHolder,
-                                   CFX_Edit* pEdit,
-                                   const CFX_FloatPoint& ptOffset,
-                                   const CPVT_WordRange* pRange,
-                                   FX_COLORREF crText,
-                                   std::vector<CPDF_TextObject*>* ObjArray) {
-  ObjArray->clear();
-
-  IPVT_FontMap* pFontMap = pEdit->GetFontMap();
-  if (!pFontMap)
-    return;
-
-  FX_FLOAT fFontSize = pEdit->GetFontSize();
-  int32_t nOldFontIndex = -1;
-  CFX_ByteTextBuf sTextBuf;
-  CPVT_WordPlace oldplace;
-  CFX_FloatPoint ptBT(0.0f, 0.0f);
-  CFX_Edit_Iterator* pIterator = pEdit->GetIterator();
-  if (pRange)
-    pIterator->SetAt(pRange->BeginPos);
-  else
-    pIterator->SetAt(0);
-
-  while (pIterator->NextWord()) {
-    CPVT_WordPlace place = pIterator->GetAt();
-    if (pRange && place.WordCmp(pRange->EndPos) > 0)
-      break;
-
-    CPVT_Word word;
-    if (!pIterator->GetWord(word))
-      continue;
-
-    if (place.LineCmp(oldplace) != 0 || nOldFontIndex != word.nFontIndex) {
-      if (sTextBuf.GetLength() > 0) {
-        ObjArray->push_back(AddTextObjToPageObjects(
-            pObjectHolder, crText, pFontMap->GetPDFFont(nOldFontIndex),
-            fFontSize, 0.0f, 100,
-            CFX_FloatPoint(ptBT.x + ptOffset.x, ptBT.y + ptOffset.y),
-            sTextBuf.MakeString()));
-
-        sTextBuf.Clear();
-      }
-      ptBT = word.ptWord;
-      nOldFontIndex = word.nFontIndex;
-    }
-    sTextBuf << GetPDFWordString(pFontMap, word.nFontIndex, word.Word, 0)
-                    .AsStringC();
-    oldplace = place;
-  }
-  if (sTextBuf.GetLength() > 0) {
-    ObjArray->push_back(AddTextObjToPageObjects(
-        pObjectHolder, crText, pFontMap->GetPDFFont(nOldFontIndex), fFontSize,
-        0.0f, 100, CFX_FloatPoint(ptBT.x + ptOffset.x, ptBT.y + ptOffset.y),
-        sTextBuf.MakeString()));
-  }
 }
 
 CFX_Edit::CFX_Edit()

@@ -105,12 +105,6 @@ class CPWL_Edit : public CPWL_EditCtrl {
     m_pFillerNotify = pNotify;
   }
 
-  void GeneratePageObjects(CPDF_PageObjectHolder* pObjectHolder,
-                           const CFX_FloatPoint& ptOffset,
-                           std::vector<CPDF_TextObject*>* ObjArray);
-  void GeneratePageObjects(CPDF_PageObjectHolder* pObjectHolder,
-                           const CFX_FloatPoint& ptOffset);
-
   bool IsProceedtoOnChar(uint16_t nKeyCode, uint32_t nFlag);
   void AttachFFLData(CFFL_FormFiller* pData) { m_pFormFiller = pData; }
 

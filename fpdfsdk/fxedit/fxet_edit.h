@@ -331,12 +331,6 @@ class CFX_Edit {
                        const CPVT_WordRange* pRange,
                        CFX_SystemHandler* pSystemHandler,
                        CFFL_FormFiller* pFFLData);
-  static void GeneratePageObjects(CPDF_PageObjectHolder* pObjectHolder,
-                                  CFX_Edit* pEdit,
-                                  const CFX_FloatPoint& ptOffset,
-                                  const CPVT_WordRange* pRange,
-                                  FX_COLORREF crText,
-                                  std::vector<CPDF_TextObject*>* ObjArray);
 
   CFX_Edit();
   ~CFX_Edit();

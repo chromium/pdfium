@@ -874,21 +874,3 @@ CPVT_WordRange CPWL_Edit::GetSameWordsRange(const CPVT_WordPlace& place,
   range.Set(wpStart, wpEnd);
   return range;
 }
-
-void CPWL_Edit::GeneratePageObjects(CPDF_PageObjectHolder* pObjectHolder,
-                                    const CFX_FloatPoint& ptOffset,
-                                    std::vector<CPDF_TextObject*>* ObjArray) {
-  CFX_Edit::GeneratePageObjects(
-      pObjectHolder, m_pEdit.get(), ptOffset, nullptr,
-      CPWL_Utils::PWLColorToFXColor(GetTextColor(), GetTransparency()),
-      ObjArray);
-}
-
-void CPWL_Edit::GeneratePageObjects(CPDF_PageObjectHolder* pObjectHolder,
-                                    const CFX_FloatPoint& ptOffset) {
-  std::vector<CPDF_TextObject*> ObjArray;
-  CFX_Edit::GeneratePageObjects(
-      pObjectHolder, m_pEdit.get(), ptOffset, nullptr,
-      CPWL_Utils::PWLColorToFXColor(GetTextColor(), GetTransparency()),
-      &ObjArray);
-}
