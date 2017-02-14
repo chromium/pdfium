@@ -53,8 +53,8 @@ class CPWL_EditCtrl : public CPWL_Wnd {
   void Paint();
 
   void EnableRefresh(bool bRefresh);
-  CFX_PointF GetScrollPos() const;
-  void SetScrollPos(const CFX_PointF& point);
+  CFX_FloatPoint GetScrollPos() const;
+  void SetScrollPos(const CFX_FloatPoint& point);
 
   void SetCharSet(uint8_t nCharSet) { m_nCharSet = nCharSet; }
   int32_t GetCharSet() const;
@@ -77,9 +77,9 @@ class CPWL_EditCtrl : public CPWL_Wnd {
   void OnCreated() override;
   bool OnKeyDown(uint16_t nChar, uint32_t nFlag) override;
   bool OnChar(uint16_t nChar, uint32_t nFlag) override;
-  bool OnLButtonDown(const CFX_PointF& point, uint32_t nFlag) override;
-  bool OnLButtonUp(const CFX_PointF& point, uint32_t nFlag) override;
-  bool OnMouseMove(const CFX_PointF& point, uint32_t nFlag) override;
+  bool OnLButtonDown(const CFX_FloatPoint& point, uint32_t nFlag) override;
+  bool OnLButtonUp(const CFX_FloatPoint& point, uint32_t nFlag) override;
+  bool OnMouseMove(const CFX_FloatPoint& point, uint32_t nFlag) override;
   void OnNotify(CPWL_Wnd* pWnd,
                 uint32_t msg,
                 intptr_t wParam = 0,
@@ -98,8 +98,8 @@ class CPWL_EditCtrl : public CPWL_Wnd {
                          FX_FLOAT fBigStep);
   void IOnSetScrollPosY(FX_FLOAT fy);
   void IOnSetCaret(bool bVisible,
-                   const CFX_PointF& ptHead,
-                   const CFX_PointF& ptFoot,
+                   const CFX_FloatPoint& ptHead,
+                   const CFX_FloatPoint& ptFoot,
                    const CPVT_WordPlace& place);
   void IOnCaretChange(const CPVT_SecProps& secProps,
                       const CPVT_WordProps& wordProps);
@@ -121,10 +121,10 @@ class CPWL_EditCtrl : public CPWL_Wnd {
   void Delete();
   void Backspace();
 
-  void GetCaretInfo(CFX_PointF& ptHead, CFX_PointF& ptFoot) const;
+  void GetCaretInfo(CFX_FloatPoint& ptHead, CFX_FloatPoint& ptFoot) const;
   void SetCaret(bool bVisible,
-                const CFX_PointF& ptHead,
-                const CFX_PointF& ptFoot);
+                const CFX_FloatPoint& ptHead,
+                const CFX_FloatPoint& ptFoot);
 
   void SetEditCaret(bool bVisible);
 

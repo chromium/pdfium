@@ -264,17 +264,17 @@ class CPWL_Wnd : public CPWL_TimerHandler {
   virtual bool OnKeyDown(uint16_t nChar, uint32_t nFlag);
   virtual bool OnKeyUp(uint16_t nChar, uint32_t nFlag);
   virtual bool OnChar(uint16_t nChar, uint32_t nFlag);
-  virtual bool OnLButtonDblClk(const CFX_PointF& point, uint32_t nFlag);
-  virtual bool OnLButtonDown(const CFX_PointF& point, uint32_t nFlag);
-  virtual bool OnLButtonUp(const CFX_PointF& point, uint32_t nFlag);
-  virtual bool OnMButtonDblClk(const CFX_PointF& point, uint32_t nFlag);
-  virtual bool OnMButtonDown(const CFX_PointF& point, uint32_t nFlag);
-  virtual bool OnMButtonUp(const CFX_PointF& point, uint32_t nFlag);
-  virtual bool OnRButtonDown(const CFX_PointF& point, uint32_t nFlag);
-  virtual bool OnRButtonUp(const CFX_PointF& point, uint32_t nFlag);
-  virtual bool OnMouseMove(const CFX_PointF& point, uint32_t nFlag);
+  virtual bool OnLButtonDblClk(const CFX_FloatPoint& point, uint32_t nFlag);
+  virtual bool OnLButtonDown(const CFX_FloatPoint& point, uint32_t nFlag);
+  virtual bool OnLButtonUp(const CFX_FloatPoint& point, uint32_t nFlag);
+  virtual bool OnMButtonDblClk(const CFX_FloatPoint& point, uint32_t nFlag);
+  virtual bool OnMButtonDown(const CFX_FloatPoint& point, uint32_t nFlag);
+  virtual bool OnMButtonUp(const CFX_FloatPoint& point, uint32_t nFlag);
+  virtual bool OnRButtonDown(const CFX_FloatPoint& point, uint32_t nFlag);
+  virtual bool OnRButtonUp(const CFX_FloatPoint& point, uint32_t nFlag);
+  virtual bool OnMouseMove(const CFX_FloatPoint& point, uint32_t nFlag);
   virtual bool OnMouseWheel(short zDelta,
-                            const CFX_PointF& point,
+                            const CFX_FloatPoint& point,
                             uint32_t nFlag);
 
   virtual void SetFocus();
@@ -308,7 +308,7 @@ class CPWL_Wnd : public CPWL_TimerHandler {
 
   virtual CFX_FloatRect GetWindowRect() const;
   virtual CFX_FloatRect GetClientRect() const;
-  CFX_PointF GetCenterPoint() const;
+  CFX_FloatPoint GetCenterPoint() const;
   int32_t GetBorderWidth() const;
   bool IsVisible() const { return m_bVisible; }
   bool HasFlag(uint32_t dwFlags) const;
@@ -320,8 +320,8 @@ class CPWL_Wnd : public CPWL_TimerHandler {
   const CPWL_Dash& GetBorderDash() const;
   void* GetAttachedData() const;
 
-  bool WndHitTest(const CFX_PointF& point) const;
-  bool ClientHitTest(const CFX_PointF& point) const;
+  bool WndHitTest(const CFX_FloatPoint& point) const;
+  bool ClientHitTest(const CFX_FloatPoint& point) const;
   bool IsCaptureMouse() const;
 
   const CPWL_Wnd* GetFocused() const;
@@ -341,9 +341,9 @@ class CPWL_Wnd : public CPWL_TimerHandler {
   void SetChildMatrix(const CFX_Matrix& mt);
   CFX_Matrix GetWindowMatrix() const;
 
-  virtual CFX_PointF ChildToParent(const CFX_PointF& point) const;
+  virtual CFX_FloatPoint ChildToParent(const CFX_FloatPoint& point) const;
   virtual CFX_FloatRect ChildToParent(const CFX_FloatRect& rect) const;
-  virtual CFX_PointF ParentToChild(const CFX_PointF& point) const;
+  virtual CFX_FloatPoint ParentToChild(const CFX_FloatPoint& point) const;
   virtual CFX_FloatRect ParentToChild(const CFX_FloatRect& rect) const;
 
   // those methods only implemented by listctrl item
@@ -389,7 +389,7 @@ class CPWL_Wnd : public CPWL_TimerHandler {
   void InvalidateRectMove(const CFX_FloatRect& rcOld,
                           const CFX_FloatRect& rcNew);
 
-  void PWLtoWnd(const CFX_PointF& point, int32_t& x, int32_t& y) const;
+  void PWLtoWnd(const CFX_FloatPoint& point, int32_t& x, int32_t& y) const;
   FX_RECT PWLtoWnd(const CFX_FloatRect& rect) const;
 
   bool IsWndCaptureMouse(const CPWL_Wnd* pWnd) const;

@@ -59,20 +59,20 @@ class CPDFSDK_PageView final : public CPDF_Page::View {
   CPDF_Page* GetPDFPage() const;
   CPDF_Document* GetPDFDocument();
   CPDFSDK_FormFillEnvironment* GetFormFillEnv() const { return m_pFormFillEnv; }
-  bool OnLButtonDown(const CFX_PointF& point, uint32_t nFlag);
-  bool OnLButtonUp(const CFX_PointF& point, uint32_t nFlag);
+  bool OnLButtonDown(const CFX_FloatPoint& point, uint32_t nFlag);
+  bool OnLButtonUp(const CFX_FloatPoint& point, uint32_t nFlag);
 #ifdef PDF_ENABLE_XFA
-  bool OnRButtonDown(const CFX_PointF& point, uint32_t nFlag);
-  bool OnRButtonUp(const CFX_PointF& point, uint32_t nFlag);
+  bool OnRButtonDown(const CFX_FloatPoint& point, uint32_t nFlag);
+  bool OnRButtonUp(const CFX_FloatPoint& point, uint32_t nFlag);
 #endif  // PDF_ENABLE_XFA
   bool OnChar(int nChar, uint32_t nFlag);
   bool OnKeyDown(int nKeyCode, int nFlag);
   bool OnKeyUp(int nKeyCode, int nFlag);
 
-  bool OnMouseMove(const CFX_PointF& point, int nFlag);
+  bool OnMouseMove(const CFX_FloatPoint& point, int nFlag);
   bool OnMouseWheel(double deltaX,
                     double deltaY,
-                    const CFX_PointF& point,
+                    const CFX_FloatPoint& point,
                     int nFlag);
 
   void GetCurrentMatrix(CFX_Matrix& matrix) { matrix = m_curMatrix; }

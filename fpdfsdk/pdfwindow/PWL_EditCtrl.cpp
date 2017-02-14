@@ -40,8 +40,8 @@ void CPWL_EditCtrl::OnCreated() {
 
 bool CPWL_EditCtrl::IsWndHorV() {
   CFX_Matrix mt = GetWindowMatrix();
-  CFX_PointF point1(0, 1);
-  CFX_PointF point2(1, 1);
+  CFX_FloatPoint point1(0, 1);
+  CFX_FloatPoint point2(1, 1);
 
   mt.TransformPoint(point1.x, point1.y);
   mt.TransformPoint(point2.x, point2.y);
@@ -93,7 +93,8 @@ void CPWL_EditCtrl::OnNotify(CPWL_Wnd* pWnd,
       FX_FLOAT fPos = *(FX_FLOAT*)lParam;
       switch (wParam) {
         case SBT_VSCROLL:
-          m_pEdit->SetScrollPos(CFX_PointF(m_pEdit->GetScrollPos().x, fPos));
+          m_pEdit->SetScrollPos(
+              CFX_FloatPoint(m_pEdit->GetScrollPos().x, fPos));
           break;
       }
     } break;
@@ -280,7 +281,7 @@ bool CPWL_EditCtrl::OnChar(uint16_t nChar, uint32_t nFlag) {
   return true;
 }
 
-bool CPWL_EditCtrl::OnLButtonDown(const CFX_PointF& point, uint32_t nFlag) {
+bool CPWL_EditCtrl::OnLButtonDown(const CFX_FloatPoint& point, uint32_t nFlag) {
   CPWL_Wnd::OnLButtonDown(point, nFlag);
 
   if (ClientHitTest(point)) {
@@ -296,7 +297,7 @@ bool CPWL_EditCtrl::OnLButtonDown(const CFX_PointF& point, uint32_t nFlag) {
   return true;
 }
 
-bool CPWL_EditCtrl::OnLButtonUp(const CFX_PointF& point, uint32_t nFlag) {
+bool CPWL_EditCtrl::OnLButtonUp(const CFX_FloatPoint& point, uint32_t nFlag) {
   CPWL_Wnd::OnLButtonUp(point, nFlag);
 
   if (m_bMouseDown) {
@@ -311,7 +312,7 @@ bool CPWL_EditCtrl::OnLButtonUp(const CFX_PointF& point, uint32_t nFlag) {
   return true;
 }
 
-bool CPWL_EditCtrl::OnMouseMove(const CFX_PointF& point, uint32_t nFlag) {
+bool CPWL_EditCtrl::OnMouseMove(const CFX_FloatPoint& point, uint32_t nFlag) {
   CPWL_Wnd::OnMouseMove(point, nFlag);
 
   if (m_bMouseDown)
@@ -325,8 +326,8 @@ CFX_FloatRect CPWL_EditCtrl::GetContentRect() const {
 }
 
 void CPWL_EditCtrl::SetEditCaret(bool bVisible) {
-  CFX_PointF ptHead;
-  CFX_PointF ptFoot;
+  CFX_FloatPoint ptHead;
+  CFX_FloatPoint ptFoot;
   if (bVisible)
     GetCaretInfo(ptHead, ptFoot);
 
@@ -334,7 +335,8 @@ void CPWL_EditCtrl::SetEditCaret(bool bVisible) {
   IOnSetCaret(bVisible, ptHead, ptFoot, wpTemp);
 }
 
-void CPWL_EditCtrl::GetCaretInfo(CFX_PointF& ptHead, CFX_PointF& ptFoot) const {
+void CPWL_EditCtrl::GetCaretInfo(CFX_FloatPoint& ptHead,
+                                 CFX_FloatPoint& ptFoot) const {
   CFX_Edit_Iterator* pIterator = m_pEdit->GetIterator();
   pIterator->SetAt(m_pEdit->GetCaret());
   CPVT_Word word;
@@ -353,15 +355,15 @@ void CPWL_EditCtrl::GetCaretInfo(CFX_PointF& ptHead, CFX_PointF& ptFoot) const {
 }
 
 void CPWL_EditCtrl::GetCaretPos(int32_t& x, int32_t& y) const {
-  CFX_PointF ptHead;
-  CFX_PointF ptFoot;
+  CFX_FloatPoint ptHead;
+  CFX_FloatPoint ptFoot;
   GetCaretInfo(ptHead, ptFoot);
   PWLtoWnd(ptHead, x, y);
 }
 
 void CPWL_EditCtrl::SetCaret(bool bVisible,
-                             const CFX_PointF& ptHead,
-                             const CFX_PointF& ptFoot) {
+                             const CFX_FloatPoint& ptHead,
+                             const CFX_FloatPoint& ptFoot) {
   if (m_pEditCaret) {
     if (!IsFocused() || m_pEdit->IsSelected())
       bVisible = false;
@@ -411,11 +413,11 @@ int32_t CPWL_EditCtrl::GetTotalWords() const {
   return m_pEdit->GetTotalWords();
 }
 
-void CPWL_EditCtrl::SetScrollPos(const CFX_PointF& point) {
+void CPWL_EditCtrl::SetScrollPos(const CFX_FloatPoint& point) {
   m_pEdit->SetScrollPos(point);
 }
 
-CFX_PointF CPWL_EditCtrl::GetScrollPos() const {
+CFX_FloatPoint CPWL_EditCtrl::GetScrollPos() const {
   return m_pEdit->GetScrollPos();
 }
 
@@ -542,8 +544,8 @@ void CPWL_EditCtrl::IOnSetScrollPosY(FX_FLOAT fy) {
 }
 
 void CPWL_EditCtrl::IOnSetCaret(bool bVisible,
-                                const CFX_PointF& ptHead,
-                                const CFX_PointF& ptFoot,
+                                const CFX_FloatPoint& ptHead,
+                                const CFX_FloatPoint& ptFoot,
                                 const CPVT_WordPlace& place) {
   PWL_CARET_INFO cInfo;
   cInfo.bVisible = bVisible;
@@ -570,9 +572,9 @@ void CPWL_EditCtrl::GetTextRange(const CFX_FloatRect& rect,
                                  int32_t& nStartChar,
                                  int32_t& nEndChar) const {
   nStartChar = m_pEdit->WordPlaceToWordIndex(
-      m_pEdit->SearchWordPlace(CFX_PointF(rect.left, rect.top)));
+      m_pEdit->SearchWordPlace(CFX_FloatPoint(rect.left, rect.top)));
   nEndChar = m_pEdit->WordPlaceToWordIndex(
-      m_pEdit->SearchWordPlace(CFX_PointF(rect.right, rect.bottom)));
+      m_pEdit->SearchWordPlace(CFX_FloatPoint(rect.right, rect.bottom)));
 }
 
 CFX_WideString CPWL_EditCtrl::GetText(int32_t& nStartChar,

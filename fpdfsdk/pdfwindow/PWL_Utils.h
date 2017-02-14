@@ -74,11 +74,11 @@ T PWL_MAX(const T& i, const T& j) {
 #define PPBL_LABELLEFTICONRIGHT 5
 #define PPBL_LABELOVERICON 6
 
-class CPWL_Point : public CFX_PointF {
+class CPWL_Point : public CFX_FloatPoint {
  public:
   CPWL_Point() {}
-  CPWL_Point(FX_FLOAT fx, FX_FLOAT fy) : CFX_PointF(fx, fy) {}
-  CPWL_Point(const CPWL_Point& point) : CFX_PointF(point.x, point.y) {}
+  CPWL_Point(FX_FLOAT fx, FX_FLOAT fy) : CFX_FloatPoint(fx, fy) {}
+  CPWL_Point(const CPWL_Point& point) : CFX_FloatPoint(point.x, point.y) {}
 };
 
 enum PWL_PATHDATA_TYPE {
@@ -121,9 +121,9 @@ class CPWL_Utils {
   static CFX_FloatRect OffsetRect(const CFX_FloatRect& rect,
                                   FX_FLOAT x,
                                   FX_FLOAT y);
-  static CFX_PointF OffsetPoint(const CFX_PointF& point,
-                                FX_FLOAT x,
-                                FX_FLOAT y);
+  static CFX_FloatPoint OffsetPoint(const CFX_FloatPoint& point,
+                                    FX_FLOAT x,
+                                    FX_FLOAT y);
   static FX_COLORREF PWLColorToFXColor(const CPWL_Color& color,
                                        int32_t nTransparancy = 255);
   static bool IsBlackOrWhite(const CPWL_Color& color);
@@ -167,13 +167,13 @@ class CPWL_Utils {
                                                 const CPWL_Color& crText);
 
   static CFX_ByteString GetEditAppStream(CFX_Edit* pEdit,
-                                         const CFX_PointF& ptOffset,
+                                         const CFX_FloatPoint& ptOffset,
                                          const CPVT_WordRange* pRange = nullptr,
                                          bool bContinuous = true,
                                          uint16_t SubWord = 0);
   static CFX_ByteString GetEditSelAppStream(
       CFX_Edit* pEdit,
-      const CFX_PointF& ptOffset,
+      const CFX_FloatPoint& ptOffset,
       const CPVT_WordRange* pRange = nullptr);
   static CFX_ByteString GetTextAppStream(const CFX_FloatRect& rcBBox,
                                          IPVT_FontMap* pFontMap,
@@ -202,8 +202,8 @@ class CPWL_Utils {
                              FX_FLOAT fWidth);
   static void DrawStrokeLine(CFX_RenderDevice* pDevice,
                              CFX_Matrix* pUser2Device,
-                             const CFX_PointF& ptMoveTo,
-                             const CFX_PointF& ptLineTo,
+                             const CFX_FloatPoint& ptMoveTo,
+                             const CFX_FloatPoint& ptLineTo,
                              const FX_COLORREF& color,
                              FX_FLOAT fWidth);
   static void DrawBorder(CFX_RenderDevice* pDevice,
@@ -217,7 +217,7 @@ class CPWL_Utils {
                          int32_t nTransparancy);
   static void DrawFillArea(CFX_RenderDevice* pDevice,
                            CFX_Matrix* pUser2Device,
-                           const CFX_PointF* pPts,
+                           const CFX_FloatPoint* pPts,
                            int32_t nCount,
                            const FX_COLORREF& color);
   static void DrawShadow(CFX_RenderDevice* pDevice,

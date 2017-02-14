@@ -41,32 +41,32 @@ class CFFL_FormFiller : public IPWL_Provider, public CPWL_TimerHandler {
   virtual bool OnLButtonDown(CPDFSDK_PageView* pPageView,
                              CPDFSDK_Annot* pAnnot,
                              uint32_t nFlags,
-                             const CFX_PointF& point);
+                             const CFX_FloatPoint& point);
   virtual bool OnLButtonUp(CPDFSDK_PageView* pPageView,
                            CPDFSDK_Annot* pAnnot,
                            uint32_t nFlags,
-                           const CFX_PointF& point);
+                           const CFX_FloatPoint& point);
   virtual bool OnLButtonDblClk(CPDFSDK_PageView* pPageView,
                                CPDFSDK_Annot* pAnnot,
                                uint32_t nFlags,
-                               const CFX_PointF& point);
+                               const CFX_FloatPoint& point);
   virtual bool OnMouseMove(CPDFSDK_PageView* pPageView,
                            CPDFSDK_Annot* pAnnot,
                            uint32_t nFlags,
-                           const CFX_PointF& point);
+                           const CFX_FloatPoint& point);
   virtual bool OnMouseWheel(CPDFSDK_PageView* pPageView,
                             CPDFSDK_Annot* pAnnot,
                             uint32_t nFlags,
                             short zDelta,
-                            const CFX_PointF& point);
+                            const CFX_FloatPoint& point);
   virtual bool OnRButtonDown(CPDFSDK_PageView* pPageView,
                              CPDFSDK_Annot* pAnnot,
                              uint32_t nFlags,
-                             const CFX_PointF& point);
+                             const CFX_FloatPoint& point);
   virtual bool OnRButtonUp(CPDFSDK_PageView* pPageView,
                            CPDFSDK_Annot* pAnnot,
                            uint32_t nFlags,
-                           const CFX_PointF& point);
+                           const CFX_FloatPoint& point);
 
   virtual bool OnKeyDown(CPDFSDK_Annot* pAnnot,
                          uint32_t nKeyCode,
@@ -104,10 +104,11 @@ class CFFL_FormFiller : public IPWL_Provider, public CPWL_TimerHandler {
 
   CFX_FloatRect FFLtoPWL(const CFX_FloatRect& rect);
   CFX_FloatRect PWLtoFFL(const CFX_FloatRect& rect);
-  CFX_PointF FFLtoPWL(const CFX_PointF& point);
-  CFX_PointF PWLtoFFL(const CFX_PointF& point);
+  CFX_FloatPoint FFLtoPWL(const CFX_FloatPoint& point);
+  CFX_FloatPoint PWLtoFFL(const CFX_FloatPoint& point);
 
-  CFX_PointF WndtoPWL(CPDFSDK_PageView* pPageView, const CFX_PointF& pt);
+  CFX_FloatPoint WndtoPWL(CPDFSDK_PageView* pPageView,
+                          const CFX_FloatPoint& pt);
   CFX_FloatRect FFLtoWnd(CPDFSDK_PageView* pPageView,
                          const CFX_FloatRect& rect);
 
@@ -158,9 +159,10 @@ class CFFL_FormFiller : public IPWL_Provider, public CPWL_TimerHandler {
   CPDFSDK_FormFillEnvironment* m_pFormFillEnv;
   CPDFSDK_Widget* m_pWidget;
   CPDFSDK_Annot* m_pAnnot;
+
   bool m_bValid;
   CFFL_PageView2PDFWindow m_Maps;
-  CFX_PointF m_ptOldPos;
+  CFX_FloatPoint m_ptOldPos;
 };
 
 class CFFL_Button : public CFFL_FormFiller {
@@ -176,15 +178,15 @@ class CFFL_Button : public CFFL_FormFiller {
   bool OnLButtonDown(CPDFSDK_PageView* pPageView,
                      CPDFSDK_Annot* pAnnot,
                      uint32_t nFlags,
-                     const CFX_PointF& point) override;
+                     const CFX_FloatPoint& point) override;
   bool OnLButtonUp(CPDFSDK_PageView* pPageView,
                    CPDFSDK_Annot* pAnnot,
                    uint32_t nFlags,
-                   const CFX_PointF& point) override;
+                   const CFX_FloatPoint& point) override;
   bool OnMouseMove(CPDFSDK_PageView* pPageView,
                    CPDFSDK_Annot* pAnnot,
                    uint32_t nFlags,
-                   const CFX_PointF& point) override;
+                   const CFX_FloatPoint& point) override;
   void OnDraw(CPDFSDK_PageView* pPageView,
               CPDFSDK_Annot* pAnnot,
               CFX_RenderDevice* pDevice,

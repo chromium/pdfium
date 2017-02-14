@@ -106,7 +106,7 @@ void CPWL_ListBox::GetThisAppearanceStream(CFX_ByteTextBuf& sAppStream) {
     if (rcItem.bottom > rcPlate.top || rcItem.top < rcPlate.bottom)
       continue;
 
-    CFX_PointF ptOffset(rcItem.left, (rcItem.top + rcItem.bottom) * 0.5f);
+    CFX_FloatPoint ptOffset(rcItem.left, (rcItem.top + rcItem.bottom) * 0.5f);
     if (m_pList->IsItemSelected(i)) {
       sListItems << CPWL_Utils::GetRectFillAppStream(rcItem,
                                                      PWL_DEFAULT_SELBACKCOLOR)
@@ -158,7 +158,7 @@ void CPWL_ListBox::DrawThisAppearance(CFX_RenderDevice* pDevice,
     if (rcItem.bottom > rcPlate.top || rcItem.top < rcPlate.bottom)
       continue;
 
-    CFX_PointF ptOffset(rcItem.left, (rcItem.top + rcItem.bottom) * 0.5f);
+    CFX_FloatPoint ptOffset(rcItem.left, (rcItem.top + rcItem.bottom) * 0.5f);
     if (CFX_Edit* pEdit = m_pList->GetItemEdit(i)) {
       CFX_FloatRect rcContent = pEdit->GetContentRect();
       if (rcContent.Width() > rcClient.Width())
@@ -249,7 +249,7 @@ bool CPWL_ListBox::OnChar(uint16_t nChar, uint32_t nFlag) {
   return true;
 }
 
-bool CPWL_ListBox::OnLButtonDown(const CFX_PointF& point, uint32_t nFlag) {
+bool CPWL_ListBox::OnLButtonDown(const CFX_FloatPoint& point, uint32_t nFlag) {
   CPWL_Wnd::OnLButtonDown(point, nFlag);
 
   if (ClientHitTest(point)) {
@@ -263,7 +263,7 @@ bool CPWL_ListBox::OnLButtonDown(const CFX_PointF& point, uint32_t nFlag) {
   return true;
 }
 
-bool CPWL_ListBox::OnLButtonUp(const CFX_PointF& point, uint32_t nFlag) {
+bool CPWL_ListBox::OnLButtonUp(const CFX_FloatPoint& point, uint32_t nFlag) {
   CPWL_Wnd::OnLButtonUp(point, nFlag);
 
   if (m_bMouseDown) {
@@ -281,7 +281,7 @@ void CPWL_ListBox::SetHoverSel(bool bHoverSel) {
   m_bHoverSel = bHoverSel;
 }
 
-bool CPWL_ListBox::OnMouseMove(const CFX_PointF& point, uint32_t nFlag) {
+bool CPWL_ListBox::OnMouseMove(const CFX_FloatPoint& point, uint32_t nFlag) {
   CPWL_Wnd::OnMouseMove(point, nFlag);
 
   if (m_bHoverSel && !IsCaptureMouse() && ClientHitTest(point))
@@ -323,7 +323,7 @@ void CPWL_ListBox::OnNotify(CPWL_Wnd* pWnd,
       fPos = *(FX_FLOAT*)lParam;
       switch (wParam) {
         case SBT_VSCROLL:
-          m_pList->SetScrollPos(CFX_PointF(0, fPos));
+          m_pList->SetScrollPos(CFX_FloatPoint(0, fPos));
           break;
       }
       break;
@@ -449,7 +449,7 @@ CFX_FloatRect CPWL_ListBox::GetListRect() const {
 }
 
 bool CPWL_ListBox::OnMouseWheel(short zDelta,
-                                const CFX_PointF& point,
+                                const CFX_FloatPoint& point,
                                 uint32_t nFlag) {
   if (zDelta < 0)
     m_pList->OnVK_DOWN(IsSHIFTpressed(nFlag), IsCTRLpressed(nFlag));

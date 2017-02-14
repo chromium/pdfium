@@ -100,7 +100,7 @@ CFX_FloatRect CPDFSDK_XFAWidgetHandler::GetViewBBox(CPDFSDK_PageView* pPageView,
 
 bool CPDFSDK_XFAWidgetHandler::HitTest(CPDFSDK_PageView* pPageView,
                                        CPDFSDK_Annot* pAnnot,
-                                       const CFX_PointF& point) {
+                                       const CFX_FloatPoint& point) {
   if (!pPageView || !pAnnot)
     return false;
 
@@ -147,7 +147,7 @@ void CPDFSDK_XFAWidgetHandler::OnMouseExit(CPDFSDK_PageView* pPageView,
 bool CPDFSDK_XFAWidgetHandler::OnLButtonDown(CPDFSDK_PageView* pPageView,
                                              CPDFSDK_Annot::ObservedPtr* pAnnot,
                                              uint32_t nFlags,
-                                             const CFX_PointF& point) {
+                                             const CFX_FloatPoint& point) {
   if (!pPageView || !(*pAnnot))
     return false;
 
@@ -159,7 +159,7 @@ bool CPDFSDK_XFAWidgetHandler::OnLButtonDown(CPDFSDK_PageView* pPageView,
 bool CPDFSDK_XFAWidgetHandler::OnLButtonUp(CPDFSDK_PageView* pPageView,
                                            CPDFSDK_Annot::ObservedPtr* pAnnot,
                                            uint32_t nFlags,
-                                           const CFX_PointF& point) {
+                                           const CFX_FloatPoint& point) {
   if (!pPageView || !(*pAnnot))
     return false;
 
@@ -172,7 +172,7 @@ bool CPDFSDK_XFAWidgetHandler::OnLButtonDblClk(
     CPDFSDK_PageView* pPageView,
     CPDFSDK_Annot::ObservedPtr* pAnnot,
     uint32_t nFlags,
-    const CFX_PointF& point) {
+    const CFX_FloatPoint& point) {
   if (!pPageView || !(*pAnnot))
     return false;
 
@@ -184,7 +184,7 @@ bool CPDFSDK_XFAWidgetHandler::OnLButtonDblClk(
 bool CPDFSDK_XFAWidgetHandler::OnMouseMove(CPDFSDK_PageView* pPageView,
                                            CPDFSDK_Annot::ObservedPtr* pAnnot,
                                            uint32_t nFlags,
-                                           const CFX_PointF& point) {
+                                           const CFX_FloatPoint& point) {
   if (!pPageView || !(*pAnnot))
     return false;
 
@@ -197,7 +197,7 @@ bool CPDFSDK_XFAWidgetHandler::OnMouseWheel(CPDFSDK_PageView* pPageView,
                                             CPDFSDK_Annot::ObservedPtr* pAnnot,
                                             uint32_t nFlags,
                                             short zDelta,
-                                            const CFX_PointF& point) {
+                                            const CFX_FloatPoint& point) {
   if (!pPageView || !(*pAnnot))
     return false;
 
@@ -209,7 +209,7 @@ bool CPDFSDK_XFAWidgetHandler::OnMouseWheel(CPDFSDK_PageView* pPageView,
 bool CPDFSDK_XFAWidgetHandler::OnRButtonDown(CPDFSDK_PageView* pPageView,
                                              CPDFSDK_Annot::ObservedPtr* pAnnot,
                                              uint32_t nFlags,
-                                             const CFX_PointF& point) {
+                                             const CFX_FloatPoint& point) {
   if (!pPageView || !(*pAnnot))
     return false;
 
@@ -221,7 +221,7 @@ bool CPDFSDK_XFAWidgetHandler::OnRButtonDown(CPDFSDK_PageView* pPageView,
 bool CPDFSDK_XFAWidgetHandler::OnRButtonUp(CPDFSDK_PageView* pPageView,
                                            CPDFSDK_Annot::ObservedPtr* pAnnot,
                                            uint32_t nFlags,
-                                           const CFX_PointF& point) {
+                                           const CFX_FloatPoint& point) {
   if (!pPageView || !(*pAnnot))
     return false;
 
@@ -234,7 +234,7 @@ bool CPDFSDK_XFAWidgetHandler::OnRButtonDblClk(
     CPDFSDK_PageView* pPageView,
     CPDFSDK_Annot::ObservedPtr* pAnnot,
     uint32_t nFlags,
-    const CFX_PointF& point) {
+    const CFX_FloatPoint& point) {
   if (!pPageView || !(*pAnnot))
     return false;
 

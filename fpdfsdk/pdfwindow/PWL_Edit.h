@@ -60,11 +60,11 @@ class CPWL_Edit : public CPWL_EditCtrl {
   void GetThisAppearanceStream(CFX_ByteTextBuf& sAppStream) override;
   void DrawThisAppearance(CFX_RenderDevice* pDevice,
                           CFX_Matrix* pUser2Device) override;
-  bool OnLButtonDown(const CFX_PointF& point, uint32_t nFlag) override;
-  bool OnLButtonDblClk(const CFX_PointF& point, uint32_t nFlag) override;
-  bool OnRButtonUp(const CFX_PointF& point, uint32_t nFlag) override;
+  bool OnLButtonDown(const CFX_FloatPoint& point, uint32_t nFlag) override;
+  bool OnLButtonDblClk(const CFX_FloatPoint& point, uint32_t nFlag) override;
+  bool OnRButtonUp(const CFX_FloatPoint& point, uint32_t nFlag) override;
   bool OnMouseWheel(short zDelta,
-                    const CFX_PointF& point,
+                    const CFX_FloatPoint& point,
                     uint32_t nFlag) override;
   bool OnKeyDown(uint16_t nChar, uint32_t nFlag) override;
   bool OnChar(uint16_t nChar, uint32_t nFlag) override;
@@ -90,9 +90,10 @@ class CPWL_Edit : public CPWL_EditCtrl {
   void SetText(const CFX_WideString& csText);
   void ReplaceSel(const CFX_WideString& csText);
 
-  CFX_ByteString GetTextAppearanceStream(const CFX_PointF& ptOffset) const;
-  CFX_ByteString GetCaretAppearanceStream(const CFX_PointF& ptOffset) const;
-  CFX_ByteString GetSelectAppearanceStream(const CFX_PointF& ptOffset) const;
+  CFX_ByteString GetTextAppearanceStream(const CFX_FloatPoint& ptOffset) const;
+  CFX_ByteString GetCaretAppearanceStream(const CFX_FloatPoint& ptOffset) const;
+  CFX_ByteString GetSelectAppearanceStream(
+      const CFX_FloatPoint& ptOffset) const;
 
   bool IsTextFull() const;
 
@@ -105,10 +106,10 @@ class CPWL_Edit : public CPWL_EditCtrl {
   }
 
   void GeneratePageObjects(CPDF_PageObjectHolder* pObjectHolder,
-                           const CFX_PointF& ptOffset,
+                           const CFX_FloatPoint& ptOffset,
                            std::vector<CPDF_TextObject*>* ObjArray);
   void GeneratePageObjects(CPDF_PageObjectHolder* pObjectHolder,
-                           const CFX_PointF& ptOffset);
+                           const CFX_FloatPoint& ptOffset);
 
   bool IsProceedtoOnChar(uint16_t nKeyCode, uint32_t nFlag);
   void AttachFFLData(CFFL_FormFiller* pData) { m_pFormFiller = pData; }
@@ -130,11 +131,11 @@ class CPWL_Edit : public CPWL_EditCtrl {
   void SetParamByFlag();
 
   FX_FLOAT GetCharArrayAutoFontSize(int32_t nCharArray);
-  CFX_PointF GetWordRightBottomPoint(const CPVT_WordPlace& wpWord);
+  CFX_FloatPoint GetWordRightBottomPoint(const CPVT_WordPlace& wpWord);
 
   CPVT_WordRange CombineWordRange(const CPVT_WordRange& wr1,
                                   const CPVT_WordRange& wr2);
-  CPVT_WordRange GetLatinWordsRange(const CFX_PointF& point) const;
+  CPVT_WordRange GetLatinWordsRange(const CFX_FloatPoint& point) const;
   CPVT_WordRange GetLatinWordsRange(const CPVT_WordPlace& place) const;
   CPVT_WordRange GetArabicWordsRange(const CPVT_WordPlace& place) const;
   CPVT_WordRange GetSameWordsRange(const CPVT_WordPlace& place,

@@ -313,26 +313,27 @@ class CFXEU_InsertText : public CFX_Edit_UndoItem {
 class CFX_Edit {
  public:
   static CFX_ByteString GetEditAppearanceStream(CFX_Edit* pEdit,
-                                                const CFX_PointF& ptOffset,
+                                                const CFX_FloatPoint& ptOffset,
                                                 const CPVT_WordRange* pRange,
                                                 bool bContinuous,
                                                 uint16_t SubWord);
-  static CFX_ByteString GetSelectAppearanceStream(CFX_Edit* pEdit,
-                                                  const CFX_PointF& ptOffset,
-                                                  const CPVT_WordRange* pRange);
+  static CFX_ByteString GetSelectAppearanceStream(
+      CFX_Edit* pEdit,
+      const CFX_FloatPoint& ptOffset,
+      const CPVT_WordRange* pRange);
   static void DrawEdit(CFX_RenderDevice* pDevice,
                        CFX_Matrix* pUser2Device,
                        CFX_Edit* pEdit,
                        FX_COLORREF crTextFill,
                        FX_COLORREF crTextStroke,
                        const CFX_FloatRect& rcClip,
-                       const CFX_PointF& ptOffset,
+                       const CFX_FloatPoint& ptOffset,
                        const CPVT_WordRange* pRange,
                        CFX_SystemHandler* pSystemHandler,
                        CFFL_FormFiller* pFFLData);
   static void GeneratePageObjects(CPDF_PageObjectHolder* pObjectHolder,
                                   CFX_Edit* pEdit,
-                                  const CFX_PointF& ptOffset,
+                                  const CFX_FloatPoint& ptOffset,
                                   const CPVT_WordRange* pRange,
                                   FX_COLORREF crText,
                                   std::vector<CPDF_TextObject*>* ObjArray);
@@ -351,7 +352,7 @@ class CFX_Edit {
 
   // Set the bounding box of the text area.
   void SetPlateRect(const CFX_FloatRect& rect);
-  void SetScrollPos(const CFX_PointF& point);
+  void SetScrollPos(const CFX_FloatPoint& point);
 
   // Set the horizontal text alignment. (nFormat [0:left, 1:middle, 2:right])
   void SetAlignmentH(int32_t nFormat, bool bPaint);
@@ -371,8 +372,8 @@ class CFX_Edit {
   void SetAutoScroll(bool bAuto, bool bPaint);
   void SetFontSize(FX_FLOAT fFontSize);
   void SetTextOverflow(bool bAllowed, bool bPaint);
-  void OnMouseDown(const CFX_PointF& point, bool bShift, bool bCtrl);
-  void OnMouseMove(const CFX_PointF& point, bool bShift, bool bCtrl);
+  void OnMouseDown(const CFX_FloatPoint& point, bool bShift, bool bCtrl);
+  void OnMouseMove(const CFX_FloatPoint& point, bool bShift, bool bCtrl);
   void OnVK_UP(bool bShift, bool bCtrl);
   void OnVK_DOWN(bool bShift, bool bCtrl);
   void OnVK_LEFT(bool bShift, bool bCtrl);
@@ -390,14 +391,14 @@ class CFX_Edit {
   bool Undo();
   int32_t WordPlaceToWordIndex(const CPVT_WordPlace& place) const;
   CPVT_WordPlace WordIndexToWordPlace(int32_t index) const;
-  CPVT_WordPlace SearchWordPlace(const CFX_PointF& point) const;
+  CPVT_WordPlace SearchWordPlace(const CFX_FloatPoint& point) const;
   int32_t GetCaret() const;
   CPVT_WordPlace GetCaretWordPlace() const;
   CFX_WideString GetSelText() const;
   CFX_WideString GetText() const;
   FX_FLOAT GetFontSize() const;
   uint16_t GetPasswordChar() const;
-  CFX_PointF GetScrollPos() const;
+  CFX_FloatPoint GetScrollPos() const;
   int32_t GetCharArray() const;
   CFX_FloatRect GetContentRect() const;
   CFX_WideString GetRangeText(const CPVT_WordRange& range) const;
@@ -471,8 +472,8 @@ class CFX_Edit {
   void PaintInsertText(const CPVT_WordPlace& wpOld,
                        const CPVT_WordPlace& wpNew);
 
-  inline CFX_PointF VTToEdit(const CFX_PointF& point) const;
-  inline CFX_PointF EditToVT(const CFX_PointF& point) const;
+  inline CFX_FloatPoint VTToEdit(const CFX_FloatPoint& point) const;
+  inline CFX_FloatPoint EditToVT(const CFX_FloatPoint& point) const;
   inline CFX_FloatRect VTToEdit(const CFX_FloatRect& rect) const;
 
   void Refresh();
@@ -489,15 +490,17 @@ class CFX_Edit {
   CPWL_EditCtrl* m_pNotify;
   CPWL_Edit* m_pOprNotify;
   std::unique_ptr<CFX_Edit_Provider> m_pVTProvider;
+
   CPVT_WordPlace m_wpCaret;
   CPVT_WordPlace m_wpOldCaret;
   CFX_Edit_Select m_SelState;
-  CFX_PointF m_ptScrollPos;
-  CFX_PointF m_ptRefreshScrollPos;
+
+  CFX_FloatPoint m_ptScrollPos;
+  CFX_FloatPoint m_ptRefreshScrollPos;
   bool m_bEnableScroll;
   std::unique_ptr<CFX_Edit_Iterator> m_pIterator;
   CFX_Edit_Refresh m_Refresh;
-  CFX_PointF m_ptCaret;
+  CFX_FloatPoint m_ptCaret;
   CFX_Edit_Undo m_Undo;
   int32_t m_nAlignment;
   bool m_bNotifyFlag;

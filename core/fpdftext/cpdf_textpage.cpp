@@ -300,7 +300,7 @@ std::vector<CFX_FloatRect> CPDF_TextPage::GetRectArray(int start,
   return rectArray;
 }
 
-int CPDF_TextPage::GetIndexAtPos(const CFX_PointF& point,
+int CPDF_TextPage::GetIndexAtPos(CFX_FloatPoint point,
                                  FX_FLOAT xTolerance,
                                  FX_FLOAT yTolerance) const {
   if (!m_bIsParsed)
@@ -382,7 +382,7 @@ int CPDF_TextPage::GetIndexAtPos(FX_FLOAT x,
                                  FX_FLOAT y,
                                  FX_FLOAT xTolerance,
                                  FX_FLOAT yTolerance) const {
-  CFX_PointF point(x, y);
+  CFX_FloatPoint point(x, y);
   return GetIndexAtPos(point, xTolerance, yTolerance);
 }
 

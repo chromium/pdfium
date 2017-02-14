@@ -11,14 +11,13 @@
 #include "core/fpdfdoc/cpvt_wordprops.h"
 #include "core/fxcrt/fx_system.h"
 
-class CPVT_Word {
- public:
+struct CPVT_Word {
   CPVT_Word();
 
   uint16_t Word;
   int32_t nCharset;
   CPVT_WordPlace WordPlace;
-  CFX_PointF ptWord;
+  CFX_FloatPoint ptWord;
   FX_FLOAT fAscent;
   FX_FLOAT fDescent;
   FX_FLOAT fWidth;

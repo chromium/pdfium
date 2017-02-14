@@ -18,7 +18,7 @@
 
 #define PWLCB_DEFAULTFONTSIZE 12.0f
 
-bool CPWL_CBListBox::OnLButtonUp(const CFX_PointF& point, uint32_t nFlag) {
+bool CPWL_CBListBox::OnLButtonUp(const CFX_FloatPoint& point, uint32_t nFlag) {
   CPWL_Wnd::OnLButtonUp(point, nFlag);
 
   if (!m_bMouseDown)
@@ -102,14 +102,14 @@ void CPWL_CBButton::GetThisAppearanceStream(CFX_ByteTextBuf& sAppStream) {
   if (IsVisible() && !rectWnd.IsEmpty()) {
     CFX_ByteTextBuf sButton;
 
-    CFX_PointF ptCenter = GetCenterPoint();
+    CFX_FloatPoint ptCenter = GetCenterPoint();
 
-    CFX_PointF pt1(ptCenter.x - PWL_CBBUTTON_TRIANGLE_HALFLEN,
-                   ptCenter.y + PWL_CBBUTTON_TRIANGLE_HALFLEN * 0.5f);
-    CFX_PointF pt2(ptCenter.x + PWL_CBBUTTON_TRIANGLE_HALFLEN,
-                   ptCenter.y + PWL_CBBUTTON_TRIANGLE_HALFLEN * 0.5f);
-    CFX_PointF pt3(ptCenter.x,
-                   ptCenter.y - PWL_CBBUTTON_TRIANGLE_HALFLEN * 0.5f);
+    CFX_FloatPoint pt1(ptCenter.x - PWL_CBBUTTON_TRIANGLE_HALFLEN,
+                       ptCenter.y + PWL_CBBUTTON_TRIANGLE_HALFLEN * 0.5f);
+    CFX_FloatPoint pt2(ptCenter.x + PWL_CBBUTTON_TRIANGLE_HALFLEN,
+                       ptCenter.y + PWL_CBBUTTON_TRIANGLE_HALFLEN * 0.5f);
+    CFX_FloatPoint pt3(ptCenter.x,
+                       ptCenter.y - PWL_CBBUTTON_TRIANGLE_HALFLEN * 0.5f);
 
     if (IsFloatBigger(rectWnd.right - rectWnd.left,
                       PWL_CBBUTTON_TRIANGLE_HALFLEN * 2) &&
@@ -133,14 +133,14 @@ void CPWL_CBButton::DrawThisAppearance(CFX_RenderDevice* pDevice,
   CFX_FloatRect rectWnd = CPWL_Wnd::GetWindowRect();
 
   if (IsVisible() && !rectWnd.IsEmpty()) {
-    CFX_PointF ptCenter = GetCenterPoint();
+    CFX_FloatPoint ptCenter = GetCenterPoint();
 
-    CFX_PointF pt1(ptCenter.x - PWL_CBBUTTON_TRIANGLE_HALFLEN,
-                   ptCenter.y + PWL_CBBUTTON_TRIANGLE_HALFLEN * 0.5f);
-    CFX_PointF pt2(ptCenter.x + PWL_CBBUTTON_TRIANGLE_HALFLEN,
-                   ptCenter.y + PWL_CBBUTTON_TRIANGLE_HALFLEN * 0.5f);
-    CFX_PointF pt3(ptCenter.x,
-                   ptCenter.y - PWL_CBBUTTON_TRIANGLE_HALFLEN * 0.5f);
+    CFX_FloatPoint pt1(ptCenter.x - PWL_CBBUTTON_TRIANGLE_HALFLEN,
+                       ptCenter.y + PWL_CBBUTTON_TRIANGLE_HALFLEN * 0.5f);
+    CFX_FloatPoint pt2(ptCenter.x + PWL_CBBUTTON_TRIANGLE_HALFLEN,
+                       ptCenter.y + PWL_CBBUTTON_TRIANGLE_HALFLEN * 0.5f);
+    CFX_FloatPoint pt3(ptCenter.x,
+                       ptCenter.y - PWL_CBBUTTON_TRIANGLE_HALFLEN * 0.5f);
 
     if (IsFloatBigger(rectWnd.right - rectWnd.left,
                       PWL_CBBUTTON_TRIANGLE_HALFLEN * 2) &&
@@ -162,7 +162,7 @@ void CPWL_CBButton::DrawThisAppearance(CFX_RenderDevice* pDevice,
   }
 }
 
-bool CPWL_CBButton::OnLButtonDown(const CFX_PointF& point, uint32_t nFlag) {
+bool CPWL_CBButton::OnLButtonDown(const CFX_FloatPoint& point, uint32_t nFlag) {
   CPWL_Wnd::OnLButtonDown(point, nFlag);
 
   SetCapture();
@@ -175,7 +175,7 @@ bool CPWL_CBButton::OnLButtonDown(const CFX_PointF& point, uint32_t nFlag) {
   return true;
 }
 
-bool CPWL_CBButton::OnLButtonUp(const CFX_PointF& point, uint32_t nFlag) {
+bool CPWL_CBButton::OnLButtonUp(const CFX_FloatPoint& point, uint32_t nFlag) {
   CPWL_Wnd::OnLButtonUp(point, nFlag);
 
   ReleaseCapture();
