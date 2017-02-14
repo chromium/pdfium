@@ -1749,7 +1749,7 @@ bool CFX_SkiaDeviceDriver::DrawShading(const CPDF_ShadingPattern* pPattern,
       m_pCanvas->clipPath(skClip, SkClipOp::kIntersect, true);
     m_pCanvas->concat(skMatrix);
     while (!stream.BitStream()->IsEOF()) {
-      uint32_t flag = stream.GetFlag();
+      uint32_t flag = stream.ReadFlag();
       int iStartPoint = flag ? 4 : 0;
       int iStartColor = flag ? 2 : 0;
       if (flag) {
@@ -1762,11 +1762,16 @@ bool CFX_SkiaDeviceDriver::DrawShading(const CPDF_ShadingPattern* pPattern,
         tempColors[1] = colors[(flag + 1) % 4];
         FXSYS_memcpy(colors, tempColors, sizeof(tempColors));
       }
-      for (int i = iStartPoint; i < (int)SK_ARRAY_COUNT(cubics); i++)
-        stream.GetCoords(cubics[i].fX, cubics[i].fY);
+      for (int i = iStartPoint; i < (int)SK_ARRAY_COUNT(cubics); i++) {
+        CFX_PointF point = stream.ReadCoords();
+        cubics[i].fX = point.x;
+        cubics[i].fY = point.y;
+      }
       for (int i = iStartColor; i < (int)SK_ARRAY_COUNT(colors); i++) {
-        FX_FLOAT r = 0.0f, g = 0.0f, b = 0.0f;
-        stream.GetColor(r, g, b);
+        FX_FLOAT r;
+        FX_FLOAT g;
+        FX_FLOAT b;
+        std::tie(r, g, b) = stream.ReadColor();
         colors[i] = SkColorSetARGBInline(0xFF, (U8CPU)(r * 255),
                                          (U8CPU)(g * 255), (U8CPU)(b * 255));
       }

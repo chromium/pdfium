@@ -369,67 +369,65 @@ void DrawFuncShading(CFX_DIBitmap* pBitmap,
 }
 
 bool GetScanlineIntersect(int y,
-                          FX_FLOAT x1,
-                          FX_FLOAT y1,
-                          FX_FLOAT x2,
-                          FX_FLOAT y2,
+                          const CFX_PointF& first,
+                          const CFX_PointF& second,
                           FX_FLOAT* x) {
-  if (y1 == y2)
+  if (first.y == second.y)
     return false;
 
-  if (y1 < y2) {
-    if (y < y1 || y > y2)
+  if (first.y < second.y) {
+    if (y < first.y || y > second.y)
       return false;
-  } else {
-    if (y < y2 || y > y1)
-      return false;
+  } else if (y < second.y || y > first.y) {
+    return false;
   }
-  *x = x1 + ((x2 - x1) * (y - y1) / (y2 - y1));
+  *x = first.x + ((second.x - first.x) * (y - first.y) / (second.y - first.y));
   return true;
 }
 
 void DrawGouraud(CFX_DIBitmap* pBitmap,
                  int alpha,
                  CPDF_MeshVertex triangle[3]) {
-  FX_FLOAT min_y = triangle[0].y, max_y = triangle[0].y;
+  FX_FLOAT min_y = triangle[0].position.y;
+  FX_FLOAT max_y = triangle[0].position.y;
   for (int i = 1; i < 3; i++) {
-    if (min_y > triangle[i].y) {
-      min_y = triangle[i].y;
-    }
-    if (max_y < triangle[i].y) {
-      max_y = triangle[i].y;
-    }
+    min_y = std::min(min_y, triangle[i].position.y);
+    max_y = std::max(max_y, triangle[i].position.y);
   }
-  if (min_y == max_y) {
+  if (min_y == max_y)
     return;
-  }
-  int min_yi = (int)FXSYS_floor(min_y), max_yi = (int)FXSYS_ceil(max_y);
-  if (min_yi < 0) {
-    min_yi = 0;
-  }
-  if (max_yi >= pBitmap->GetHeight()) {
+
+  int min_yi = std::max(static_cast<int>(FXSYS_floor(min_y)), 0);
+  int max_yi = static_cast<int>(FXSYS_ceil(max_y));
+
+  if (max_yi >= pBitmap->GetHeight())
     max_yi = pBitmap->GetHeight() - 1;
-  }
+
   for (int y = min_yi; y <= max_yi; y++) {
     int nIntersects = 0;
-    FX_FLOAT inter_x[3], r[3], g[3], b[3];
+    FX_FLOAT inter_x[3];
+    FX_FLOAT r[3];
+    FX_FLOAT g[3];
+    FX_FLOAT b[3];
     for (int i = 0; i < 3; i++) {
       CPDF_MeshVertex& vertex1 = triangle[i];
       CPDF_MeshVertex& vertex2 = triangle[(i + 1) % 3];
-      bool bIntersect = GetScanlineIntersect(y, vertex1.x, vertex1.y, vertex2.x,
-                                             vertex2.y, &inter_x[nIntersects]);
+      CFX_PointF& position1 = vertex1.position;
+      CFX_PointF& position2 = vertex2.position;
+      bool bIntersect =
+          GetScanlineIntersect(y, position1, position2, &inter_x[nIntersects]);
       if (!bIntersect)
         continue;
 
-      FX_FLOAT y_dist = (y - vertex1.y) / (vertex2.y - vertex1.y);
+      FX_FLOAT y_dist = (y - position1.y) / (position2.y - position1.y);
       r[nIntersects] = vertex1.r + ((vertex2.r - vertex1.r) * y_dist);
       g[nIntersects] = vertex1.g + ((vertex2.g - vertex1.g) * y_dist);
       b[nIntersects] = vertex1.b + ((vertex2.b - vertex1.b) * y_dist);
       nIntersects++;
     }
-    if (nIntersects != 2) {
+    if (nIntersects != 2)
       continue;
-    }
+
     int min_x, max_x, start_index, end_index;
     if (inter_x[0] < inter_x[1]) {
       min_x = (int)FXSYS_floor(inter_x[0]);
@@ -442,13 +440,12 @@ void DrawGouraud(CFX_DIBitmap* pBitmap,
       start_index = 1;
       end_index = 0;
     }
-    int start_x = min_x, end_x = max_x;
-    if (start_x < 0) {
-      start_x = 0;
-    }
-    if (end_x > pBitmap->GetWidth()) {
+
+    int start_x = std::max(min_x, 0);
+    int end_x = max_x;
+    if (end_x > pBitmap->GetWidth())
       end_x = pBitmap->GetWidth();
-    }
+
     uint8_t* dib_buf =
         pBitmap->GetBuffer() + y * pBitmap->GetPitch() + start_x * 4;
     FX_FLOAT r_unit = (r[end_index] - r[start_index]) / (max_x - min_x);
@@ -487,17 +484,18 @@ void DrawFreeGouraudShading(
   FXSYS_memset(triangle, 0, sizeof(triangle));
 
   while (!stream.BitStream()->IsEOF()) {
-    CPDF_MeshVertex vertex;
-    uint32_t flag = stream.GetVertex(vertex, pObject2Bitmap);
+    uint32_t flag;
+    CPDF_MeshVertex vertex = stream.ReadVertex(*pObject2Bitmap, &flag);
     if (flag == 0) {
       triangle[0] = vertex;
       for (int j = 1; j < 3; j++) {
-        stream.GetVertex(triangle[j], pObject2Bitmap);
+        uint32_t tflag;
+        triangle[j] = stream.ReadVertex(*pObject2Bitmap, &tflag);
       }
     } else {
-      if (flag == 1) {
+      if (flag == 1)
         triangle[0] = triangle[1];
-      }
+
       triangle[1] = triangle[2];
       triangle[2] = vertex;
     }
@@ -525,14 +523,14 @@ void DrawLatticeGouraudShading(
 
   std::unique_ptr<CPDF_MeshVertex, FxFreeDeleter> vertex(
       FX_Alloc2D(CPDF_MeshVertex, row_verts, 2));
-  if (!stream.GetVertexRow(vertex.get(), row_verts, pObject2Bitmap))
+  if (!stream.ReadVertexRow(*pObject2Bitmap, row_verts, vertex.get()))
     return;
 
   int last_index = 0;
   while (1) {
     CPDF_MeshVertex* last_row = vertex.get() + last_index * row_verts;
     CPDF_MeshVertex* this_row = vertex.get() + (1 - last_index) * row_verts;
-    if (!stream.GetVertexRow(this_row, row_verts, pObject2Bitmap))
+    if (!stream.ReadVertexRow(*pObject2Bitmap, row_verts, this_row))
       return;
 
     CPDF_MeshVertex triangle[3];
@@ -827,7 +825,7 @@ void DrawCoonPatchMeshes(
   CFX_PointF coords[16];
   int point_count = type == kTensorProductPatchMeshShading ? 16 : 12;
   while (!stream.BitStream()->IsEOF()) {
-    uint32_t flag = stream.GetFlag();
+    uint32_t flag = stream.ReadFlag();
     int iStartPoint = 0, iStartColor = 0, i = 0;
     if (flag) {
       iStartPoint = 4;
@@ -843,12 +841,16 @@ void DrawCoonPatchMeshes(
       FXSYS_memcpy(patch.patch_colors, tempColors, sizeof(Coon_Color) * 2);
     }
     for (i = iStartPoint; i < point_count; i++) {
-      stream.GetCoords(coords[i].x, coords[i].y);
+      coords[i] = stream.ReadCoords();
       pObject2Bitmap->TransformPoint(coords[i].x, coords[i].y);
     }
+
     for (i = iStartColor; i < 4; i++) {
-      FX_FLOAT r = 0.0f, g = 0.0f, b = 0.0f;
-      stream.GetColor(r, g, b);
+      FX_FLOAT r;
+      FX_FLOAT g;
+      FX_FLOAT b;
+      std::tie(r, g, b) = stream.ReadColor();
+
       patch.patch_colors[i].comp[0] = (int32_t)(r * 255);
       patch.patch_colors[i].comp[1] = (int32_t)(g * 255);
       patch.patch_colors[i].comp[2] = (int32_t)(b * 255);

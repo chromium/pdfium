@@ -35,7 +35,12 @@ void EmptyTest(CFX_SkiaDeviceDriver* driver, const State&) {
 }
 
 void CommonTest(CFX_SkiaDeviceDriver* driver, const State& state) {
-  FXTEXT_CHARPOS charPos[] = {{{0, 0, 0, 0}, 0, 1, 1, 4, false, false}};
+  FXTEXT_CHARPOS charPos[1];
+  charPos[0].m_OriginX = 0;
+  charPos[0].m_OriginY = 1;
+  charPos[0].m_GlyphIndex = 1;
+  charPos[0].m_FontCharWidth = 4;
+
   CFX_Font font;
   FX_FLOAT fontSize = 1;
   CFX_PathData clipPath, clipPath2;
