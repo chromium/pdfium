@@ -1484,7 +1484,8 @@ FWL_Error CFX_Graphics::CalcTextInfo(const CFX_WideString& text,
   FX_FLOAT left = (FX_FLOAT)(0);
   FX_FLOAT top = (FX_FLOAT)(0);
   charCodes[0] = text.GetAt(0);
-  charPos[0].m_Origin = CFX_PointF(penX + left, penY + top);
+  charPos[0].m_OriginX = penX + left;
+  charPos[0].m_OriginY = penY + top;
   charPos[0].m_GlyphIndex = encoding->GlyphFromCharCode(charCodes[0]);
   charPos[0].m_FontCharWidth = FXSYS_round(
       m_info.font->GetGlyphWidth(charPos[0].m_GlyphIndex) * m_info.fontHScale);
@@ -1497,7 +1498,8 @@ FWL_Error CFX_Graphics::CalcTextInfo(const CFX_WideString& text,
           m_info.fontSpacing;
   for (int32_t i = 1; i < length; i++) {
     charCodes[i] = text.GetAt(i);
-    charPos[i].m_Origin = CFX_PointF(penX + left, penY + top);
+    charPos[i].m_OriginX = penX + left;
+    charPos[i].m_OriginY = penY + top;
     charPos[i].m_GlyphIndex = encoding->GlyphFromCharCode(charCodes[i]);
     charPos[i].m_FontCharWidth =
         FXSYS_round(m_info.font->GetGlyphWidth(charPos[i].m_GlyphIndex) *

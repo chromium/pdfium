@@ -1187,11 +1187,11 @@ void CXFA_TextLayout::RenderPath(CFDE_RenderDevice* pDevice,
   int32_t iChars = GetDisplayPos(pPiece, pCharPos);
   if (iChars > 0) {
     CFX_PointF pt1, pt2;
-    FX_FLOAT fEndY = pCharPos[0].m_Origin.y + 1.05f;
+    FX_FLOAT fEndY = pCharPos[0].m_OriginY + 1.05f;
     if (pPiece->iPeriod == XFA_ATTRIBUTEENUM_Word) {
       for (int32_t i = 0; i < pPiece->iUnderline; i++) {
         for (int32_t j = 0; j < iChars; j++) {
-          pt1.x = pCharPos[j].m_Origin.x;
+          pt1.x = pCharPos[j].m_OriginX;
           pt2.x =
               pt1.x + pCharPos[j].m_FontCharWidth * pPiece->fFontSize / 1000.0f;
           pt1.y = pt2.y = fEndY;
@@ -1200,9 +1200,9 @@ void CXFA_TextLayout::RenderPath(CFDE_RenderDevice* pDevice,
         fEndY += 2.0f;
       }
     } else {
-      pt1.x = pCharPos[0].m_Origin.x;
+      pt1.x = pCharPos[0].m_OriginX;
       pt2.x =
-          pCharPos[iChars - 1].m_Origin.x +
+          pCharPos[iChars - 1].m_OriginX +
           pCharPos[iChars - 1].m_FontCharWidth * pPiece->fFontSize / 1000.0f;
       for (int32_t i = 0; i < pPiece->iUnderline; i++) {
         pt1.y = pt2.y = fEndY;
@@ -1210,9 +1210,9 @@ void CXFA_TextLayout::RenderPath(CFDE_RenderDevice* pDevice,
         fEndY += 2.0f;
       }
     }
-    fEndY = pCharPos[0].m_Origin.y - pPiece->rtPiece.height * 0.25f;
-    pt1.x = pCharPos[0].m_Origin.x;
-    pt2.x = pCharPos[iChars - 1].m_Origin.x +
+    fEndY = pCharPos[0].m_OriginY - pPiece->rtPiece.height * 0.25f;
+    pt1.x = pCharPos[0].m_OriginX;
+    pt2.x = pCharPos[iChars - 1].m_OriginX +
             pCharPos[iChars - 1].m_FontCharWidth * pPiece->fFontSize / 1000.0f;
     for (int32_t i = 0; i < pPiece->iLineThrough; i++) {
       pt1.y = pt2.y = fEndY;
@@ -1253,23 +1253,23 @@ void CXFA_TextLayout::RenderPath(CFDE_RenderDevice* pDevice,
     if (iChars < 1)
       return;
 
-    fOrgX = pCharPos[iChars - 1].m_Origin.x +
+    fOrgX = pCharPos[iChars - 1].m_OriginX +
             pCharPos[iChars - 1].m_FontCharWidth * pPiece->fFontSize / 1000.0f;
     pPiece = pPieceLine->m_textPieces[iPieceNext].get();
     iChars = GetDisplayPos(pPiece, pCharPos);
     if (iChars < 1)
       return;
 
-    fEndX = pCharPos[0].m_Origin.x;
+    fEndX = pCharPos[0].m_OriginX;
     CFX_PointF pt1, pt2;
     pt1.x = fOrgX, pt2.x = fEndX;
-    FX_FLOAT fEndY = pCharPos[0].m_Origin.y + 1.05f;
+    FX_FLOAT fEndY = pCharPos[0].m_OriginY + 1.05f;
     for (int32_t i = 0; i < pPiece->iUnderline; i++) {
       pt1.y = pt2.y = fEndY;
       pPath->AddLine(pt1, pt2);
       fEndY += 2.0f;
     }
-    fEndY = pCharPos[0].m_Origin.y - pPiece->rtPiece.height * 0.25f;
+    fEndY = pCharPos[0].m_OriginY - pPiece->rtPiece.height * 0.25f;
     for (int32_t i = 0; i < pPiece->iLineThrough; i++) {
       pt1.y = pt2.y = fEndY;
       pPath->AddLine(pt1, pt2);

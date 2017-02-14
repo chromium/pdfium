@@ -177,7 +177,8 @@ void CBC_OneDimWriter::CalcTextInfo(const CFX_ByteString& text,
       (FX_FLOAT)FXSYS_abs(cFont->GetDescent()) * (FX_FLOAT)fontSize / 1000.0f;
   FX_FLOAT left = leftPositon;
   FX_FLOAT top = 0.0;
-  charPos[0].m_Origin = CFX_PointF(penX + left, penY + top);
+  charPos[0].m_OriginX = penX + left;
+  charPos[0].m_OriginY = penY + top;
   charPos[0].m_GlyphIndex = encoding->GlyphFromCharCode(pCharCode[0]);
   charPos[0].m_FontCharWidth = cFont->GetGlyphWidth(charPos[0].m_GlyphIndex);
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
@@ -185,7 +186,8 @@ void CBC_OneDimWriter::CalcTextInfo(const CFX_ByteString& text,
 #endif
   penX += (FX_FLOAT)(charPos[0].m_FontCharWidth) * (FX_FLOAT)fontSize / 1000.0f;
   for (int32_t i = 1; i < length; i++) {
-    charPos[i].m_Origin = CFX_PointF(penX + left, penY + top);
+    charPos[i].m_OriginX = penX + left;
+    charPos[i].m_OriginY = penY + top;
     charPos[i].m_GlyphIndex = encoding->GlyphFromCharCode(pCharCode[i]);
     charPos[i].m_FontCharWidth = cFont->GetGlyphWidth(charPos[i].m_GlyphIndex);
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_

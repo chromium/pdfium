@@ -296,11 +296,11 @@ bool CGdiPrinterDriver::DrawDeviceText(int nChars,
     ASSERT(charpos.m_AdjustMatrix[1] == 0);
     ASSERT(charpos.m_AdjustMatrix[2] == 0);
     ASSERT(charpos.m_AdjustMatrix[3] == 0);
-    ASSERT(charpos.m_Origin.y == 0);
+    ASSERT(charpos.m_OriginY == 0);
 
     // Round the spacing to the nearest integer, but keep track of the rounding
     // error for calculating the next spacing value.
-    FX_FLOAT fOriginX = charpos.m_Origin.x * kScaleFactor;
+    FX_FLOAT fOriginX = charpos.m_OriginX * kScaleFactor;
     FX_FLOAT fPixelSpacing = fOriginX - fPreviousOriginX;
     spacing[i] = FXSYS_round(fPixelSpacing);
     fPreviousOriginX = fOriginX - (fPixelSpacing - spacing[i]);

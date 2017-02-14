@@ -14,13 +14,10 @@
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
 
-class CPDF_TextObjectItem {
- public:
-  CPDF_TextObjectItem();
-  ~CPDF_TextObjectItem();
-
+struct CPDF_TextObjectItem {
   uint32_t m_CharCode;
-  CFX_PointF m_Origin;
+  FX_FLOAT m_OriginX;
+  FX_FLOAT m_OriginY;
 };
 
 class CPDF_TextObject : public CPDF_PageObject {
@@ -42,9 +39,8 @@ class CPDF_TextObject : public CPDF_PageObject {
   void GetCharInfo(int index, uint32_t* charcode, FX_FLOAT* kerning) const;
   void GetCharInfo(int index, CPDF_TextObjectItem* pInfo) const;
   FX_FLOAT GetCharWidth(uint32_t charcode) const;
-
-  CFX_FloatRect GetRect() const;
-  CFX_PointF GetPos() const;
+  FX_FLOAT GetPosX() const;
+  FX_FLOAT GetPosY() const;
   CFX_Matrix GetTextMatrix() const;
   CPDF_Font* GetFont() const;
   FX_FLOAT GetFontSize() const;

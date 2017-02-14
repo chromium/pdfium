@@ -197,14 +197,6 @@ FX_RECT CFX_FloatRect::GetClosestRect() const {
   return rect;
 }
 
-bool CFX_FloatRect::Contains(const CFX_FloatPoint& point) const {
-  return Contains(point.x, point.y);
-}
-
-bool CFX_FloatRect::Contains(const CFX_PointF& point) const {
-  return Contains(point.x, point.y);
-}
-
 bool CFX_FloatRect::Contains(const CFX_FloatRect& other_rect) const {
   CFX_FloatRect n1(*this);
   CFX_FloatRect n2(other_rect);
@@ -383,13 +375,6 @@ void CFX_Matrix::TransformPoint(FX_FLOAT& x, FX_FLOAT& y) const {
   FX_FLOAT fy = b * x + d * y + f;
   x = fx;
   y = fy;
-}
-
-CFX_PointF CFX_Matrix::Transform(const CFX_PointF& p) const {
-  FX_FLOAT x = p.x;
-  FX_FLOAT y = p.y;
-  TransformPoint(x, y);
-  return CFX_PointF(x, y);
 }
 
 void CFX_Matrix::TransformRect(CFX_RectF& rect) const {

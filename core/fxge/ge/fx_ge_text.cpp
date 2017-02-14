@@ -28,12 +28,6 @@ void ResetTransform(FT_Face face) {
 
 }  // namespace
 
-FXTEXT_GLYPHPOS::FXTEXT_GLYPHPOS() : m_pGlyph(nullptr) {}
-
-FXTEXT_GLYPHPOS::FXTEXT_GLYPHPOS(const FXTEXT_GLYPHPOS&) = default;
-
-FXTEXT_GLYPHPOS::~FXTEXT_GLYPHPOS(){};
-
 ScopedFontTransform::ScopedFontTransform(FT_Face face, FXFT_Matrix* matrix)
     : m_Face(face) {
   FXFT_Set_Transform(m_Face, matrix, 0);
@@ -54,7 +48,7 @@ FX_RECT FXGE_GetGlyphsBBox(const std::vector<FXTEXT_GLYPHPOS>& glyphs,
     if (!pGlyph)
       continue;
 
-    FX_SAFE_INT32 char_left = glyph.m_Origin.x;
+    FX_SAFE_INT32 char_left = glyph.m_OriginX;
     char_left += pGlyph->m_Left;
     if (!char_left.IsValid())
       continue;
@@ -70,7 +64,7 @@ FX_RECT FXGE_GetGlyphsBBox(const std::vector<FXTEXT_GLYPHPOS>& glyphs,
     if (!char_right.IsValid())
       continue;
 
-    FX_SAFE_INT32 char_top = glyph.m_Origin.y;
+    FX_SAFE_INT32 char_top = glyph.m_OriginY;
     char_top -= pGlyph->m_Top;
     if (!char_top.IsValid())
       continue;

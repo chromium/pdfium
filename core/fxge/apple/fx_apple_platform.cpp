@@ -39,7 +39,9 @@ bool CGDrawGlyphRun(CGContextRef pContext,
   if (bNegSize)
     font_size = -font_size;
 
+  FX_FLOAT ori_x = pCharPos[0].m_OriginX, ori_y = pCharPos[0].m_OriginY;
   CFX_Matrix new_matrix;
+  new_matrix.TransformPoint(ori_x, ori_y);
   if (pObject2Device)
     new_matrix.Concat(*pObject2Device);
 
@@ -55,20 +57,17 @@ bool CGDrawGlyphRun(CGContextRef pContext,
     if (!pFont->GetPlatformFont())
       return false;
   }
-
   CFX_FixedBufGrow<uint16_t, 32> glyph_indices(nChars);
   CFX_FixedBufGrow<CGPoint, 32> glyph_positions(nChars);
   for (int i = 0; i < nChars; i++) {
     glyph_indices[i] =
         pCharPos[i].m_ExtGID ? pCharPos[i].m_ExtGID : pCharPos[i].m_GlyphIndex;
-
     if (bNegSize)
-      glyph_positions[i].x = -pCharPos[i].m_Origin.x;
+      glyph_positions[i].x = -pCharPos[i].m_OriginX;
     else
-      glyph_positions[i].x = pCharPos[i].m_Origin.x;
-    glyph_positions[i].y = pCharPos[i].m_Origin.y;
+      glyph_positions[i].x = pCharPos[i].m_OriginX;
+    glyph_positions[i].y = pCharPos[i].m_OriginY;
   }
-
   if (bNegSize) {
     new_matrix.a = -new_matrix.a;
     new_matrix.c = -new_matrix.c;

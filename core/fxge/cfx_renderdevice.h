@@ -62,14 +62,10 @@ class IFX_RenderDeviceDriver;
 
 enum class FXPT_TYPE : uint8_t { LineTo, BezierTo, MoveTo };
 
-class FXTEXT_CHARPOS {
- public:
-  FXTEXT_CHARPOS();
-  FXTEXT_CHARPOS(const FXTEXT_CHARPOS&);
-  ~FXTEXT_CHARPOS();
-
+struct FXTEXT_CHARPOS {
   FX_FLOAT m_AdjustMatrix[4];
-  CFX_PointF m_Origin;
+  FX_FLOAT m_OriginX;
+  FX_FLOAT m_OriginY;
   uint32_t m_GlyphIndex;
   int32_t m_FontCharWidth;
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
