@@ -9,20 +9,12 @@
 
 #include "core/fpdfdoc/cpvt_wordrange.h"
 #include "fpdfsdk/pdfwindow/PWL_Wnd.h"
+#include "fpdfsdk/pdfwindow/cpwl_pathdata.h"
 
 class CFX_Edit;
 class CFX_PathData;
 
 struct CPWL_Color;
-
-template <class T>
-T PWL_MIN(const T& i, const T& j) {
-  return ((i < j) ? i : j);
-}
-template <class T>
-T PWL_MAX(const T& i, const T& j) {
-  return ((i > j) ? i : j);
-}
 
 #define PWL_PDF2WIN(color) (uint8_t(color * 255))
 #define PWL_WIN2PDF(color) ((FX_FLOAT)((FX_FLOAT)color / 255.0f))
@@ -74,31 +66,7 @@ T PWL_MAX(const T& i, const T& j) {
 #define PPBL_LABELLEFTICONRIGHT 5
 #define PPBL_LABELOVERICON 6
 
-class CPWL_Point : public CFX_PointF {
- public:
-  CPWL_Point() {}
-  CPWL_Point(FX_FLOAT fx, FX_FLOAT fy) : CFX_PointF(fx, fy) {}
-  CPWL_Point(const CPWL_Point& point) : CFX_PointF(point.x, point.y) {}
-};
-
-enum PWL_PATHDATA_TYPE {
-  PWLPT_MOVETO,
-  PWLPT_LINETO,
-  PWLPT_BEZIERTO,
-  PWLPT_UNKNOWN
-};
-
 enum PWL_PATH_TYPE { PWLPT_PATHDATA, PWLPT_STREAM };
-
-class CPWL_PathData {
- public:
-  CPWL_PathData() : point(), type(PWLPT_UNKNOWN) {}
-  CPWL_PathData(const CPWL_Point& pt, PWL_PATHDATA_TYPE tp)
-      : point(pt), type(tp) {}
-
-  CPWL_Point point;
-  PWL_PATHDATA_TYPE type;
-};
 
 class CPWL_Utils {
  public:

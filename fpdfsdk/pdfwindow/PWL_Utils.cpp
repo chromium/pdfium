@@ -74,10 +74,10 @@ CFX_FloatRect CPWL_Utils::MaxRect(const CFX_FloatRect& rect1,
                                   const CFX_FloatRect& rect2) {
   CFX_FloatRect rcRet;
 
-  rcRet.left = PWL_MIN(rect1.left, rect2.left);
-  rcRet.bottom = PWL_MIN(rect1.bottom, rect2.bottom);
-  rcRet.right = PWL_MAX(rect1.right, rect2.right);
-  rcRet.top = PWL_MAX(rect1.top, rect2.top);
+  rcRet.left = std::min(rect1.left, rect2.left);
+  rcRet.bottom = std::min(rect1.bottom, rect2.bottom);
+  rcRet.right = std::max(rect1.right, rect2.right);
+  rcRet.top = std::max(rect1.top, rect2.top);
 
   return rcRet;
 }
@@ -141,22 +141,22 @@ CFX_ByteString CPWL_Utils::GetAP_Check(const CFX_FloatRect& crBBox) {
   const FX_FLOAT fWidth = crBBox.right - crBBox.left;
   const FX_FLOAT fHeight = crBBox.top - crBBox.bottom;
 
-  CPWL_Point pts[8][3] = {{CPWL_Point(0.28f, 0.52f), CPWL_Point(0.27f, 0.48f),
-                           CPWL_Point(0.29f, 0.40f)},
-                          {CPWL_Point(0.30f, 0.33f), CPWL_Point(0.31f, 0.29f),
-                           CPWL_Point(0.31f, 0.28f)},
-                          {CPWL_Point(0.39f, 0.28f), CPWL_Point(0.49f, 0.29f),
-                           CPWL_Point(0.77f, 0.67f)},
-                          {CPWL_Point(0.76f, 0.68f), CPWL_Point(0.78f, 0.69f),
-                           CPWL_Point(0.76f, 0.75f)},
-                          {CPWL_Point(0.76f, 0.75f), CPWL_Point(0.73f, 0.80f),
-                           CPWL_Point(0.68f, 0.75f)},
-                          {CPWL_Point(0.68f, 0.74f), CPWL_Point(0.68f, 0.74f),
-                           CPWL_Point(0.44f, 0.47f)},
-                          {CPWL_Point(0.43f, 0.47f), CPWL_Point(0.40f, 0.47f),
-                           CPWL_Point(0.41f, 0.58f)},
-                          {CPWL_Point(0.40f, 0.60f), CPWL_Point(0.28f, 0.66f),
-                           CPWL_Point(0.30f, 0.56f)}};
+  CFX_PointF pts[8][3] = {{CFX_PointF(0.28f, 0.52f), CFX_PointF(0.27f, 0.48f),
+                           CFX_PointF(0.29f, 0.40f)},
+                          {CFX_PointF(0.30f, 0.33f), CFX_PointF(0.31f, 0.29f),
+                           CFX_PointF(0.31f, 0.28f)},
+                          {CFX_PointF(0.39f, 0.28f), CFX_PointF(0.49f, 0.29f),
+                           CFX_PointF(0.77f, 0.67f)},
+                          {CFX_PointF(0.76f, 0.68f), CFX_PointF(0.78f, 0.69f),
+                           CFX_PointF(0.76f, 0.75f)},
+                          {CFX_PointF(0.76f, 0.75f), CFX_PointF(0.73f, 0.80f),
+                           CFX_PointF(0.68f, 0.75f)},
+                          {CFX_PointF(0.68f, 0.74f), CFX_PointF(0.68f, 0.74f),
+                           CFX_PointF(0.44f, 0.47f)},
+                          {CFX_PointF(0.43f, 0.47f), CFX_PointF(0.40f, 0.47f),
+                           CFX_PointF(0.41f, 0.58f)},
+                          {CFX_PointF(0.40f, 0.60f), CFX_PointF(0.28f, 0.66f),
+                           CFX_PointF(0.30f, 0.56f)}};
 
   for (size_t i = 0; i < FX_ArraySize(pts); ++i) {
     for (size_t j = 0; j < FX_ArraySize(pts[0]); ++j) {
@@ -928,17 +928,17 @@ CPWL_Color CPWL_Utils::SubstractColor(const CPWL_Color& sColor,
   switch (sColor.nColorType) {
     case COLORTYPE_TRANSPARENT:
       sRet.nColorType = COLORTYPE_RGB;
-      sRet.fColor1 = PWL_MAX(1 - fColorSub, 0.0f);
-      sRet.fColor2 = PWL_MAX(1 - fColorSub, 0.0f);
-      sRet.fColor3 = PWL_MAX(1 - fColorSub, 0.0f);
+      sRet.fColor1 = std::max(1 - fColorSub, 0.0f);
+      sRet.fColor2 = std::max(1 - fColorSub, 0.0f);
+      sRet.fColor3 = std::max(1 - fColorSub, 0.0f);
       break;
     case COLORTYPE_RGB:
     case COLORTYPE_GRAY:
     case COLORTYPE_CMYK:
-      sRet.fColor1 = PWL_MAX(sColor.fColor1 - fColorSub, 0.0f);
-      sRet.fColor2 = PWL_MAX(sColor.fColor2 - fColorSub, 0.0f);
-      sRet.fColor3 = PWL_MAX(sColor.fColor3 - fColorSub, 0.0f);
-      sRet.fColor4 = PWL_MAX(sColor.fColor4 - fColorSub, 0.0f);
+      sRet.fColor1 = std::max(sColor.fColor1 - fColorSub, 0.0f);
+      sRet.fColor2 = std::max(sColor.fColor2 - fColorSub, 0.0f);
+      sRet.fColor3 = std::max(sColor.fColor3 - fColorSub, 0.0f);
+      sRet.fColor4 = std::max(sColor.fColor4 - fColorSub, 0.0f);
       break;
   }
 
@@ -1667,83 +1667,69 @@ void CPWL_Utils::GetGraphics_Checkmark(CFX_ByteString& sPathData,
   FX_FLOAT fHeight = crBBox.top - crBBox.bottom;
 
   CPWL_PathData PathArray[] = {
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth / 15.0f,
-                               crBBox.bottom + fHeight * 2 / 5.0f),
-                    PWLPT_MOVETO),
-      CPWL_PathData(
-          CPWL_Point(crBBox.left + fWidth / 15.0f +
-                         FX_BEZIER * (fWidth / 7.0f - fWidth / 15.0f),
-                     crBBox.bottom + fHeight * 2 / 5.0f +
-                         FX_BEZIER * (fHeight * 2 / 7.0f - fHeight * 2 / 5.0f)),
-          PWLPT_BEZIERTO),
-      CPWL_PathData(
-          CPWL_Point(crBBox.left + fWidth / 4.5f +
-                         FX_BEZIER * (fWidth / 5.0f - fWidth / 4.5f),
-                     crBBox.bottom + fHeight / 16.0f +
-                         FX_BEZIER * (fHeight / 5.0f - fHeight / 16.0f)),
-          PWLPT_BEZIERTO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth / 4.5f,
-                               crBBox.bottom + fHeight / 16.0f),
-                    PWLPT_BEZIERTO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth / 4.5f +
-                                   FX_BEZIER * (fWidth / 4.4f - fWidth / 4.5f),
-                               crBBox.bottom + fHeight / 16.0f -
-                                   FX_BEZIER * fHeight / 16.0f),
-                    PWLPT_BEZIERTO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth / 3.0f +
-                                   FX_BEZIER * (fWidth / 4.0f - fWidth / 3.0f),
-                               crBBox.bottom),
-                    PWLPT_BEZIERTO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth / 3.0f, crBBox.bottom),
-                    PWLPT_BEZIERTO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth / 3.0f +
-                                   FX_BEZIER * fWidth * (1 / 7.0f + 2 / 15.0f),
-                               crBBox.bottom + FX_BEZIER * fHeight * 4 / 5.0f),
-                    PWLPT_BEZIERTO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth * 14 / 15.0f +
-                                   FX_BEZIER * fWidth * (1 / 7.0f - 7 / 15.0f),
-                               crBBox.bottom + fHeight * 15 / 16.0f +
-                                   FX_BEZIER * (fHeight * 4 / 5.0f -
-                                                fHeight * 15 / 16.0f)),
-                    PWLPT_BEZIERTO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth * 14 / 15.0f,
-                               crBBox.bottom + fHeight * 15 / 16.0f),
-                    PWLPT_BEZIERTO),
-      CPWL_PathData(
-          CPWL_Point(
-              crBBox.left + fWidth * 14 / 15.0f +
-                  FX_BEZIER * (fWidth * 7 / 15.0f - fWidth * 14 / 15.0f),
-              crBBox.bottom + fHeight * 15 / 16.0f +
-                  FX_BEZIER * (fHeight * 8 / 7.0f - fHeight * 15 / 16.0f)),
-          PWLPT_BEZIERTO),
-      CPWL_PathData(
-          CPWL_Point(crBBox.left + fWidth / 3.6f +
-                         FX_BEZIER * (fWidth / 3.4f - fWidth / 3.6f),
-                     crBBox.bottom + fHeight / 3.5f +
-                         FX_BEZIER * (fHeight / 3.5f - fHeight / 3.5f)),
-          PWLPT_BEZIERTO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth / 3.6f,
-                               crBBox.bottom + fHeight / 3.5f),
-                    PWLPT_BEZIERTO),
-      CPWL_PathData(
-          CPWL_Point(crBBox.left + fWidth / 3.6f,
-                     crBBox.bottom + fHeight / 3.5f +
-                         FX_BEZIER * (fHeight / 4.0f - fHeight / 3.5f)),
-          PWLPT_BEZIERTO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth / 15.0f +
-                                   FX_BEZIER * (fWidth / 3.5f - fWidth / 15.0f),
-                               crBBox.bottom + fHeight * 2 / 5.0f +
-                                   FX_BEZIER * (fHeight * 3.5f / 5.0f -
-                                                fHeight * 2 / 5.0f)),
-                    PWLPT_BEZIERTO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth / 15.0f,
-                               crBBox.bottom + fHeight * 2 / 5.0f),
-                    PWLPT_BEZIERTO)};
+      {{crBBox.left + fWidth / 15.0f, crBBox.bottom + fHeight * 2 / 5.0f},
+       PWLPT_MOVETO},
+      {{crBBox.left + fWidth / 15.0f +
+            FX_BEZIER * (fWidth / 7.0f - fWidth / 15.0f),
+        crBBox.bottom + fHeight * 2 / 5.0f +
+            FX_BEZIER * (fHeight * 2 / 7.0f - fHeight * 2 / 5.0f)},
+       PWLPT_BEZIERTO},
+      {{crBBox.left + fWidth / 4.5f +
+            FX_BEZIER * (fWidth / 5.0f - fWidth / 4.5f),
+        crBBox.bottom + fHeight / 16.0f +
+            FX_BEZIER * (fHeight / 5.0f - fHeight / 16.0f)},
+       PWLPT_BEZIERTO},
+      {{crBBox.left + fWidth / 4.5f, crBBox.bottom + fHeight / 16.0f},
+       PWLPT_BEZIERTO},
+      {{crBBox.left + fWidth / 4.5f +
+            FX_BEZIER * (fWidth / 4.4f - fWidth / 4.5f),
+        crBBox.bottom + fHeight / 16.0f - FX_BEZIER * fHeight / 16.0f},
+       PWLPT_BEZIERTO},
+      {{crBBox.left + fWidth / 3.0f +
+            FX_BEZIER * (fWidth / 4.0f - fWidth / 3.0f),
+        crBBox.bottom},
+       PWLPT_BEZIERTO},
+      {{crBBox.left + fWidth / 3.0f, crBBox.bottom}, PWLPT_BEZIERTO},
+      {{crBBox.left + fWidth / 3.0f +
+            FX_BEZIER * fWidth * (1 / 7.0f + 2 / 15.0f),
+        crBBox.bottom + FX_BEZIER * fHeight * 4 / 5.0f},
+       PWLPT_BEZIERTO},
+      {{crBBox.left + fWidth * 14 / 15.0f +
+            FX_BEZIER * fWidth * (1 / 7.0f - 7 / 15.0f),
+        crBBox.bottom + fHeight * 15 / 16.0f +
+            FX_BEZIER * (fHeight * 4 / 5.0f - fHeight * 15 / 16.0f)},
+       PWLPT_BEZIERTO},
+      {{crBBox.left + fWidth * 14 / 15.0f,
+        crBBox.bottom + fHeight * 15 / 16.0f},
+       PWLPT_BEZIERTO},
+      {{crBBox.left + fWidth * 14 / 15.0f +
+            FX_BEZIER * (fWidth * 7 / 15.0f - fWidth * 14 / 15.0f),
+        crBBox.bottom + fHeight * 15 / 16.0f +
+            FX_BEZIER * (fHeight * 8 / 7.0f - fHeight * 15 / 16.0f)},
+       PWLPT_BEZIERTO},
+      {{crBBox.left + fWidth / 3.6f +
+            FX_BEZIER * (fWidth / 3.4f - fWidth / 3.6f),
+        crBBox.bottom + fHeight / 3.5f +
+            FX_BEZIER * (fHeight / 3.5f - fHeight / 3.5f)},
+       PWLPT_BEZIERTO},
+      {{crBBox.left + fWidth / 3.6f, crBBox.bottom + fHeight / 3.5f},
+       PWLPT_BEZIERTO},
+      {{crBBox.left + fWidth / 3.6f,
+        crBBox.bottom + fHeight / 3.5f +
+            FX_BEZIER * (fHeight / 4.0f - fHeight / 3.5f)},
+       PWLPT_BEZIERTO},
+      {{crBBox.left + fWidth / 15.0f +
+            FX_BEZIER * (fWidth / 3.5f - fWidth / 15.0f),
+        crBBox.bottom + fHeight * 2 / 5.0f +
+            FX_BEZIER * (fHeight * 3.5f / 5.0f - fHeight * 2 / 5.0f)},
+       PWLPT_BEZIERTO},
+      {{crBBox.left + fWidth / 15.0f, crBBox.bottom + fHeight * 2 / 5.0f},
+       PWLPT_BEZIERTO}};
 
   if (type == PWLPT_STREAM)
-    sPathData = GetAppStreamFromArray(PathArray, 16);
+    sPathData = GetAppStreamFromArray(PathArray, FX_ArraySize(PathArray));
   else
-    GetPathDataFromArray(path, PathArray, 16);
+    GetPathDataFromArray(path, PathArray, FX_ArraySize(PathArray));
 }
 
 void CPWL_Utils::GetGraphics_Circle(CFX_ByteString& sPathData,
@@ -1754,119 +1740,95 @@ void CPWL_Utils::GetGraphics_Circle(CFX_ByteString& sPathData,
   FX_FLOAT fHeight = crBBox.top - crBBox.bottom;
 
   CPWL_PathData PathArray[] = {
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth / 15.0f,
-                               crBBox.bottom + fHeight / 2.0f),
-                    PWLPT_MOVETO),
-      CPWL_PathData(
-          CPWL_Point(crBBox.left + fWidth / 15.0f,
-                     crBBox.bottom + fHeight / 2.0f +
-                         FX_BEZIER * (fHeight * 14 / 15.0f - fHeight / 2.0f)),
-          PWLPT_BEZIERTO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth / 2.0f -
-                                   FX_BEZIER * (fWidth / 2.0f - fWidth / 15.0f),
-                               crBBox.top - fHeight / 15.0f),
-                    PWLPT_BEZIERTO),
-      CPWL_PathData(
-          CPWL_Point(crBBox.left + fWidth / 2.0f, crBBox.top - fHeight / 15.0f),
-          PWLPT_BEZIERTO),
-      CPWL_PathData(
-          CPWL_Point(crBBox.left + fWidth / 2.0f +
-                         FX_BEZIER * (fWidth * 14 / 15.0f - fWidth / 2.0f),
-                     crBBox.top - fHeight / 15.0f),
-          PWLPT_BEZIERTO),
-      CPWL_PathData(
-          CPWL_Point(crBBox.right - fWidth / 15.0f,
-                     crBBox.bottom + fHeight / 2.0f +
-                         FX_BEZIER * (fHeight * 14 / 15.0f - fHeight / 2.0f)),
-          PWLPT_BEZIERTO),
-      CPWL_PathData(CPWL_Point(crBBox.right - fWidth / 15.0f,
-                               crBBox.bottom + fHeight / 2.0f),
-                    PWLPT_BEZIERTO),
-      CPWL_PathData(
-          CPWL_Point(crBBox.right - fWidth / 15.0f,
-                     crBBox.bottom + fHeight / 2.0f -
-                         FX_BEZIER * (fHeight / 2.0f - fHeight / 15.0f)),
-          PWLPT_BEZIERTO),
-      CPWL_PathData(
-          CPWL_Point(crBBox.left + fWidth / 2.0f +
-                         FX_BEZIER * (fWidth * 14 / 15.0f - fWidth / 2.0f),
-                     crBBox.bottom + fHeight / 15.0f),
-          PWLPT_BEZIERTO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth / 2.0f,
-                               crBBox.bottom + fHeight / 15.0f),
-                    PWLPT_BEZIERTO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth / 2.0f -
-                                   FX_BEZIER * (fWidth / 2.0f - fWidth / 15.0f),
-                               crBBox.bottom + fHeight / 15.0f),
-                    PWLPT_BEZIERTO),
-      CPWL_PathData(
-          CPWL_Point(crBBox.left + fWidth / 15.0f,
-                     crBBox.bottom + fHeight / 2.0f -
-                         FX_BEZIER * (fHeight / 2.0f - fHeight / 15.0f)),
-          PWLPT_BEZIERTO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth / 15.0f,
-                               crBBox.bottom + fHeight / 2.0f),
-                    PWLPT_BEZIERTO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth * 3 / 15.0f,
-                               crBBox.bottom + fHeight / 2.0f),
-                    PWLPT_MOVETO),
-      CPWL_PathData(
-          CPWL_Point(crBBox.left + fWidth * 3 / 15.0f,
-                     crBBox.bottom + fHeight / 2.0f +
-                         FX_BEZIER * (fHeight * 4 / 5.0f - fHeight / 2.0f)),
-          PWLPT_BEZIERTO),
-      CPWL_PathData(
-          CPWL_Point(crBBox.left + fWidth / 2.0f -
-                         FX_BEZIER * (fWidth / 2.0f - fWidth * 3 / 15.0f),
-                     crBBox.top - fHeight * 3 / 15.0f),
-          PWLPT_BEZIERTO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth / 2.0f,
-                               crBBox.top - fHeight * 3 / 15.0f),
-                    PWLPT_BEZIERTO),
-      CPWL_PathData(
-          CPWL_Point(crBBox.left + fWidth / 2.0f +
-                         FX_BEZIER * (fWidth * 4 / 5.0f - fWidth / 2.0f),
-                     crBBox.top - fHeight * 3 / 15.0f),
-          PWLPT_BEZIERTO),
-      CPWL_PathData(
-          CPWL_Point(crBBox.right - fWidth * 3 / 15.0f,
-                     crBBox.bottom + fHeight / 2.0f +
-                         FX_BEZIER * (fHeight * 4 / 5.0f - fHeight / 2.0f)),
-          PWLPT_BEZIERTO),
-      CPWL_PathData(CPWL_Point(crBBox.right - fWidth * 3 / 15.0f,
-                               crBBox.bottom + fHeight / 2.0f),
-                    PWLPT_BEZIERTO),
-      CPWL_PathData(
-          CPWL_Point(crBBox.right - fWidth * 3 / 15.0f,
-                     crBBox.bottom + fHeight / 2.0f -
-                         FX_BEZIER * (fHeight * 4 / 5.0f - fHeight / 2.0f)),
-          PWLPT_BEZIERTO),
-      CPWL_PathData(
-          CPWL_Point(crBBox.left + fWidth / 2.0f +
-                         FX_BEZIER * (fWidth * 4 / 5.0f - fWidth / 2.0f),
-                     crBBox.bottom + fHeight * 3 / 15.0f),
-          PWLPT_BEZIERTO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth / 2.0f,
-                               crBBox.bottom + fHeight * 3 / 15.0f),
-                    PWLPT_BEZIERTO),
-      CPWL_PathData(
-          CPWL_Point(crBBox.left + fWidth / 2.0f -
-                         FX_BEZIER * (fWidth * 4 / 5.0f - fWidth / 2.0f),
-                     crBBox.bottom + fHeight * 3 / 15.0f),
-          PWLPT_BEZIERTO),
-      CPWL_PathData(
-          CPWL_Point(crBBox.left + fWidth * 3 / 15.0f,
-                     crBBox.bottom + fHeight / 2.0f -
-                         FX_BEZIER * (fHeight * 4 / 5.0f - fHeight / 2.0f)),
-          PWLPT_BEZIERTO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth * 3 / 15.0f,
-                               crBBox.bottom + fHeight / 2.0f),
-                    PWLPT_BEZIERTO)};
+      {{crBBox.left + fWidth / 15.0f, crBBox.bottom + fHeight / 2.0f},
+       PWLPT_MOVETO},
+      {{crBBox.left + fWidth / 15.0f,
+        crBBox.bottom + fHeight / 2.0f +
+            FX_BEZIER * (fHeight * 14 / 15.0f - fHeight / 2.0f)},
+       PWLPT_BEZIERTO},
+      {{crBBox.left + fWidth / 2.0f -
+            FX_BEZIER * (fWidth / 2.0f - fWidth / 15.0f),
+        crBBox.top - fHeight / 15.0f},
+       PWLPT_BEZIERTO},
+      {{crBBox.left + fWidth / 2.0f, crBBox.top - fHeight / 15.0f},
+       PWLPT_BEZIERTO},
+      {{crBBox.left + fWidth / 2.0f +
+            FX_BEZIER * (fWidth * 14 / 15.0f - fWidth / 2.0f),
+        crBBox.top - fHeight / 15.0f},
+       PWLPT_BEZIERTO},
+      {{crBBox.right - fWidth / 15.0f,
+        crBBox.bottom + fHeight / 2.0f +
+            FX_BEZIER * (fHeight * 14 / 15.0f - fHeight / 2.0f)},
+       PWLPT_BEZIERTO},
+      {{crBBox.right - fWidth / 15.0f, crBBox.bottom + fHeight / 2.0f},
+       PWLPT_BEZIERTO},
+      {{crBBox.right - fWidth / 15.0f,
+        crBBox.bottom + fHeight / 2.0f -
+            FX_BEZIER * (fHeight / 2.0f - fHeight / 15.0f)},
+       PWLPT_BEZIERTO},
+      {{crBBox.left + fWidth / 2.0f +
+            FX_BEZIER * (fWidth * 14 / 15.0f - fWidth / 2.0f),
+        crBBox.bottom + fHeight / 15.0f},
+       PWLPT_BEZIERTO},
+      {{crBBox.left + fWidth / 2.0f, crBBox.bottom + fHeight / 15.0f},
+       PWLPT_BEZIERTO},
+      {{crBBox.left + fWidth / 2.0f -
+            FX_BEZIER * (fWidth / 2.0f - fWidth / 15.0f),
+        crBBox.bottom + fHeight / 15.0f},
+       PWLPT_BEZIERTO},
+      {{crBBox.left + fWidth / 15.0f,
+        crBBox.bottom + fHeight / 2.0f -
+            FX_BEZIER * (fHeight / 2.0f - fHeight / 15.0f)},
+       PWLPT_BEZIERTO},
+      {{crBBox.left + fWidth / 15.0f, crBBox.bottom + fHeight / 2.0f},
+       PWLPT_BEZIERTO},
+      {{crBBox.left + fWidth * 3 / 15.0f, crBBox.bottom + fHeight / 2.0f},
+       PWLPT_MOVETO},
+      {{crBBox.left + fWidth * 3 / 15.0f,
+        crBBox.bottom + fHeight / 2.0f +
+            FX_BEZIER * (fHeight * 4 / 5.0f - fHeight / 2.0f)},
+       PWLPT_BEZIERTO},
+      {{crBBox.left + fWidth / 2.0f -
+            FX_BEZIER * (fWidth / 2.0f - fWidth * 3 / 15.0f),
+        crBBox.top - fHeight * 3 / 15.0f},
+       PWLPT_BEZIERTO},
+      {{crBBox.left + fWidth / 2.0f, crBBox.top - fHeight * 3 / 15.0f},
+       PWLPT_BEZIERTO},
+      {{crBBox.left + fWidth / 2.0f +
+            FX_BEZIER * (fWidth * 4 / 5.0f - fWidth / 2.0f),
+        crBBox.top - fHeight * 3 / 15.0f},
+       PWLPT_BEZIERTO},
+      {{crBBox.right - fWidth * 3 / 15.0f,
+        crBBox.bottom + fHeight / 2.0f +
+            FX_BEZIER * (fHeight * 4 / 5.0f - fHeight / 2.0f)},
+       PWLPT_BEZIERTO},
+      {{crBBox.right - fWidth * 3 / 15.0f, crBBox.bottom + fHeight / 2.0f},
+       PWLPT_BEZIERTO},
+      {{crBBox.right - fWidth * 3 / 15.0f,
+        crBBox.bottom + fHeight / 2.0f -
+            FX_BEZIER * (fHeight * 4 / 5.0f - fHeight / 2.0f)},
+       PWLPT_BEZIERTO},
+      {{crBBox.left + fWidth / 2.0f +
+            FX_BEZIER * (fWidth * 4 / 5.0f - fWidth / 2.0f),
+        crBBox.bottom + fHeight * 3 / 15.0f},
+       PWLPT_BEZIERTO},
+      {{crBBox.left + fWidth / 2.0f, crBBox.bottom + fHeight * 3 / 15.0f},
+       PWLPT_BEZIERTO},
+      {{crBBox.left + fWidth / 2.0f -
+            FX_BEZIER * (fWidth * 4 / 5.0f - fWidth / 2.0f),
+        crBBox.bottom + fHeight * 3 / 15.0f},
+       PWLPT_BEZIERTO},
+      {{crBBox.left + fWidth * 3 / 15.0f,
+        crBBox.bottom + fHeight / 2.0f -
+            FX_BEZIER * (fHeight * 4 / 5.0f - fHeight / 2.0f)},
+       PWLPT_BEZIERTO},
+      {{crBBox.left + fWidth * 3 / 15.0f, crBBox.bottom + fHeight / 2.0f},
+       PWLPT_BEZIERTO}};
 
   if (type == PWLPT_STREAM)
-    sPathData = GetAppStreamFromArray(PathArray, 26);
+    sPathData = GetAppStreamFromArray(PathArray, FX_ArraySize(PathArray));
   else
-    GetPathDataFromArray(path, PathArray, 26);
+    GetPathDataFromArray(path, PathArray, FX_ArraySize(PathArray));
 }
 
 void CPWL_Utils::GetGraphics_Comment(CFX_ByteString& sPathData,
@@ -1877,115 +1839,85 @@ void CPWL_Utils::GetGraphics_Comment(CFX_ByteString& sPathData,
   FX_FLOAT fHeight = crBBox.top - crBBox.bottom;
 
   CPWL_PathData PathArray[] = {
-      CPWL_PathData(
-          CPWL_Point(crBBox.left + fWidth / 15.0f, crBBox.top - fHeight / 6.0f),
-          PWLPT_MOVETO),
-      CPWL_PathData(
-          CPWL_Point(crBBox.left + fWidth / 15.0f,
-                     crBBox.top - fHeight / 6.0f +
-                         FX_BEZIER * (fHeight / 6.0f - fHeight / 10.0f)),
-          PWLPT_BEZIERTO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth * 2 / 15.0f -
-                                   FX_BEZIER * fWidth / 15.0f,
-                               crBBox.top - fHeight / 10.0f),
-                    PWLPT_BEZIERTO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth * 2 / 15.0f,
-                               crBBox.top - fHeight / 10.0f),
-                    PWLPT_BEZIERTO),
-      CPWL_PathData(CPWL_Point(crBBox.right - fWidth * 2 / 15.0f,
-                               crBBox.top - fHeight / 10.0f),
-                    PWLPT_LINETO),
-      CPWL_PathData(CPWL_Point(crBBox.right - fWidth * 2 / 15.0f +
-                                   FX_BEZIER * fWidth / 15.0f,
-                               crBBox.top - fHeight / 10.0f),
-                    PWLPT_BEZIERTO),
-      CPWL_PathData(
-          CPWL_Point(crBBox.right - fWidth / 15.0f,
-                     crBBox.top - fHeight / 6 +
-                         FX_BEZIER * (fHeight / 6.0f - fHeight / 10.0f)),
-          PWLPT_BEZIERTO),
-      CPWL_PathData(CPWL_Point(crBBox.right - fWidth / 15.0f,
-                               crBBox.top - fHeight / 6.0f),
-                    PWLPT_BEZIERTO),
-      CPWL_PathData(CPWL_Point(crBBox.right - fWidth / 15.0f,
-                               crBBox.bottom + fHeight / 3.0f),
-                    PWLPT_LINETO),
-      CPWL_PathData(CPWL_Point(crBBox.right - fWidth / 15.0f,
-                               crBBox.bottom + fHeight * 4 / 15.0f +
-                                   FX_BEZIER * fHeight / 15.0f),
-                    PWLPT_BEZIERTO),
-      CPWL_PathData(CPWL_Point(crBBox.right - fWidth * 2 / 15.0f +
-                                   FX_BEZIER * fWidth / 15.0f,
-                               crBBox.bottom + fHeight * 4 / 15.0f),
-                    PWLPT_BEZIERTO),
-      CPWL_PathData(CPWL_Point(crBBox.right - fWidth * 2 / 15.0f,
-                               crBBox.bottom + fHeight * 4 / 15.0f),
-                    PWLPT_BEZIERTO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth * 5 / 15.0f,
-                               crBBox.bottom + fHeight * 4 / 15.0f),
-                    PWLPT_LINETO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth * 5 / 15.0f,
-                               crBBox.bottom + fHeight * 2 / 15 +
-                                   FX_BEZIER * fHeight * 2 / 15.0f),
-                    PWLPT_BEZIERTO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth * 5 / 15.0f -
-                                   FX_BEZIER * fWidth * 2 / 15.0f,
-                               crBBox.bottom + fHeight * 2 / 15.0f),
-                    PWLPT_BEZIERTO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth * 6 / 30.0f,
-                               crBBox.bottom + fHeight * 2 / 15.0f),
-                    PWLPT_BEZIERTO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth * 7 / 30.0f +
-                                   FX_BEZIER * fWidth / 30.0f,
-                               crBBox.bottom + fHeight * 2 / 15.0f),
-                    PWLPT_BEZIERTO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth * 7 / 30.0f,
-                               crBBox.bottom + fHeight * 2 / 15.0f +
-                                   FX_BEZIER * fHeight * 2 / 15.0f),
-                    PWLPT_BEZIERTO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth * 7 / 30.0f,
-                               crBBox.bottom + fHeight * 4 / 15.0f),
-                    PWLPT_BEZIERTO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth * 2 / 15.0f,
-                               crBBox.bottom + fHeight * 4 / 15.0f),
-                    PWLPT_LINETO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth * 2 / 15.0f -
-                                   FX_BEZIER * fWidth / 15.0f,
-                               crBBox.bottom + fHeight * 4 / 15.0f),
-                    PWLPT_BEZIERTO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth / 15.0f,
-                               crBBox.bottom + fHeight / 3.0f -
-                                   FX_BEZIER * fHeight / 15.0f),
-                    PWLPT_BEZIERTO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth / 15.0f,
-                               crBBox.bottom + fHeight / 3.0f),
-                    PWLPT_BEZIERTO),
-      CPWL_PathData(
-          CPWL_Point(crBBox.left + fWidth / 15.0f, crBBox.top - fHeight / 6.0f),
-          PWLPT_LINETO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth * 2 / 15.0f,
-                               crBBox.top - fHeight * 8 / 30.0f),
-                    PWLPT_MOVETO),
-      CPWL_PathData(CPWL_Point(crBBox.right - fWidth * 2 / 15.0f,
-                               crBBox.top - fHeight * 8 / 30.0f),
-                    PWLPT_LINETO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth * 2 / 15,
-                               crBBox.top - fHeight * 25 / 60.0f),
-                    PWLPT_MOVETO),
-      CPWL_PathData(CPWL_Point(crBBox.right - fWidth * 2 / 15.0f,
-                               crBBox.top - fHeight * 25 / 60.0f),
-                    PWLPT_LINETO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth * 2 / 15.0f,
-                               crBBox.top - fHeight * 17 / 30.0f),
-                    PWLPT_MOVETO),
-      CPWL_PathData(CPWL_Point(crBBox.right - fWidth * 4 / 15.0f,
-                               crBBox.top - fHeight * 17 / 30.0f),
-                    PWLPT_LINETO)};
+      {{crBBox.left + fWidth / 15.0f, crBBox.top - fHeight / 6.0f},
+       PWLPT_MOVETO},
+      {{crBBox.left + fWidth / 15.0f,
+        crBBox.top - fHeight / 6.0f +
+            FX_BEZIER * (fHeight / 6.0f - fHeight / 10.0f)},
+       PWLPT_BEZIERTO},
+      {{crBBox.left + fWidth * 2 / 15.0f - FX_BEZIER * fWidth / 15.0f,
+        crBBox.top - fHeight / 10.0f},
+       PWLPT_BEZIERTO},
+      {{crBBox.left + fWidth * 2 / 15.0f, crBBox.top - fHeight / 10.0f},
+       PWLPT_BEZIERTO},
+      {{crBBox.right - fWidth * 2 / 15.0f, crBBox.top - fHeight / 10.0f},
+       PWLPT_LINETO},
+      {{crBBox.right - fWidth * 2 / 15.0f + FX_BEZIER * fWidth / 15.0f,
+        crBBox.top - fHeight / 10.0f},
+       PWLPT_BEZIERTO},
+      {{crBBox.right - fWidth / 15.0f,
+        crBBox.top - fHeight / 6 +
+            FX_BEZIER * (fHeight / 6.0f - fHeight / 10.0f)},
+       PWLPT_BEZIERTO},
+      {{crBBox.right - fWidth / 15.0f, crBBox.top - fHeight / 6.0f},
+       PWLPT_BEZIERTO},
+      {{crBBox.right - fWidth / 15.0f, crBBox.bottom + fHeight / 3.0f},
+       PWLPT_LINETO},
+      {{crBBox.right - fWidth / 15.0f,
+        crBBox.bottom + fHeight * 4 / 15.0f + FX_BEZIER * fHeight / 15.0f},
+       PWLPT_BEZIERTO},
+      {{crBBox.right - fWidth * 2 / 15.0f + FX_BEZIER * fWidth / 15.0f,
+        crBBox.bottom + fHeight * 4 / 15.0f},
+       PWLPT_BEZIERTO},
+      {{crBBox.right - fWidth * 2 / 15.0f, crBBox.bottom + fHeight * 4 / 15.0f},
+       PWLPT_BEZIERTO},
+      {{crBBox.left + fWidth * 5 / 15.0f, crBBox.bottom + fHeight * 4 / 15.0f},
+       PWLPT_LINETO},
+      {{crBBox.left + fWidth * 5 / 15.0f,
+        crBBox.bottom + fHeight * 2 / 15 + FX_BEZIER * fHeight * 2 / 15.0f},
+       PWLPT_BEZIERTO},
+      {{crBBox.left + fWidth * 5 / 15.0f - FX_BEZIER * fWidth * 2 / 15.0f,
+        crBBox.bottom + fHeight * 2 / 15.0f},
+       PWLPT_BEZIERTO},
+      {{crBBox.left + fWidth * 6 / 30.0f, crBBox.bottom + fHeight * 2 / 15.0f},
+       PWLPT_BEZIERTO},
+      {{crBBox.left + fWidth * 7 / 30.0f + FX_BEZIER * fWidth / 30.0f,
+        crBBox.bottom + fHeight * 2 / 15.0f},
+       PWLPT_BEZIERTO},
+      {{crBBox.left + fWidth * 7 / 30.0f,
+        crBBox.bottom + fHeight * 2 / 15.0f + FX_BEZIER * fHeight * 2 / 15.0f},
+       PWLPT_BEZIERTO},
+      {{crBBox.left + fWidth * 7 / 30.0f, crBBox.bottom + fHeight * 4 / 15.0f},
+       PWLPT_BEZIERTO},
+      {{crBBox.left + fWidth * 2 / 15.0f, crBBox.bottom + fHeight * 4 / 15.0f},
+       PWLPT_LINETO},
+      {{crBBox.left + fWidth * 2 / 15.0f - FX_BEZIER * fWidth / 15.0f,
+        crBBox.bottom + fHeight * 4 / 15.0f},
+       PWLPT_BEZIERTO},
+      {{crBBox.left + fWidth / 15.0f,
+        crBBox.bottom + fHeight / 3.0f - FX_BEZIER * fHeight / 15.0f},
+       PWLPT_BEZIERTO},
+      {{crBBox.left + fWidth / 15.0f, crBBox.bottom + fHeight / 3.0f},
+       PWLPT_BEZIERTO},
+      {{crBBox.left + fWidth / 15.0f, crBBox.top - fHeight / 6.0f},
+       PWLPT_LINETO},
+      {{crBBox.left + fWidth * 2 / 15.0f, crBBox.top - fHeight * 8 / 30.0f},
+       PWLPT_MOVETO},
+      {{crBBox.right - fWidth * 2 / 15.0f, crBBox.top - fHeight * 8 / 30.0f},
+       PWLPT_LINETO},
+      {{crBBox.left + fWidth * 2 / 15, crBBox.top - fHeight * 25 / 60.0f},
+       PWLPT_MOVETO},
+      {{crBBox.right - fWidth * 2 / 15.0f, crBBox.top - fHeight * 25 / 60.0f},
+       PWLPT_LINETO},
+      {{crBBox.left + fWidth * 2 / 15.0f, crBBox.top - fHeight * 17 / 30.0f},
+       PWLPT_MOVETO},
+      {{crBBox.right - fWidth * 4 / 15.0f, crBBox.top - fHeight * 17 / 30.0f},
+       PWLPT_LINETO}};
 
   if (type == PWLPT_STREAM)
-    sPathData = GetAppStreamFromArray(PathArray, 30);
+    sPathData = GetAppStreamFromArray(PathArray, FX_ArraySize(PathArray));
   else
-    GetPathDataFromArray(path, PathArray, 30);
+    GetPathDataFromArray(path, PathArray, FX_ArraySize(PathArray));
 }
 
 void CPWL_Utils::GetGraphics_Cross(CFX_ByteString& sPathData,
@@ -1994,55 +1926,44 @@ void CPWL_Utils::GetGraphics_Cross(CFX_ByteString& sPathData,
                                    const PWL_PATH_TYPE type) {
   FX_FLOAT fWidth = crBBox.right - crBBox.left;
   FX_FLOAT fHeight = crBBox.top - crBBox.bottom;
-  CPWL_Point center_point(crBBox.left + fWidth / 2,
+  CFX_PointF center_point(crBBox.left + fWidth / 2,
                           crBBox.bottom + fHeight / 2);
 
   CPWL_PathData PathArray[] = {
-      CPWL_PathData(
-          CPWL_Point(center_point.x, center_point.y + fHeight / 10.0f),
-          PWLPT_MOVETO),
-      CPWL_PathData(
-          CPWL_Point(center_point.x + fWidth * 0.3f,
-                     center_point.y + fHeight / 10.0f + fWidth * 0.3f),
-          PWLPT_LINETO),
-      CPWL_PathData(CPWL_Point(center_point.x + fWidth / 10.0f + fWidth * 0.3f,
-                               center_point.y + fHeight * 0.3f),
-                    PWLPT_LINETO),
-      CPWL_PathData(CPWL_Point(center_point.x + fWidth / 10.0f, center_point.y),
-                    PWLPT_LINETO),
-      CPWL_PathData(CPWL_Point(center_point.x + fWidth / 10.0f + fWidth * 0.3f,
-                               center_point.y - fHeight * 0.3f),
-                    PWLPT_LINETO),
-      CPWL_PathData(
-          CPWL_Point(center_point.x + fWidth * 0.3f,
-                     center_point.y - fHeight / 10.0f - fHeight * 0.3f),
-          PWLPT_LINETO),
-      CPWL_PathData(
-          CPWL_Point(center_point.x, center_point.y - fHeight / 10.0f),
-          PWLPT_LINETO),
-      CPWL_PathData(CPWL_Point(center_point.x - fWidth * 0.3f,
-                               center_point.y - fHeight / 10 - fHeight * 0.3f),
-                    PWLPT_LINETO),
-      CPWL_PathData(CPWL_Point(center_point.x - fWidth / 10.0f - fWidth * 0.3f,
-                               center_point.y - fHeight * 0.3f),
-                    PWLPT_LINETO),
-      CPWL_PathData(CPWL_Point(center_point.x - fWidth / 10, center_point.y),
-                    PWLPT_LINETO),
-      CPWL_PathData(CPWL_Point(center_point.x - fWidth / 10 - fWidth * 0.3f,
-                               center_point.y + fHeight * 0.3f),
-                    PWLPT_LINETO),
-      CPWL_PathData(
-          CPWL_Point(center_point.x - fWidth * 0.3f,
-                     center_point.y + fHeight / 10.0f + fHeight * 0.3f),
-          PWLPT_LINETO),
-      CPWL_PathData(
-          CPWL_Point(center_point.x, center_point.y + fHeight / 10.0f),
-          PWLPT_LINETO)};
+      {{center_point.x, center_point.y + fHeight / 10.0f}, PWLPT_MOVETO},
+      {{center_point.x + fWidth * 0.3f,
+        center_point.y + fHeight / 10.0f + fWidth * 0.3f},
+       PWLPT_LINETO},
+      {{center_point.x + fWidth / 10.0f + fWidth * 0.3f,
+        center_point.y + fHeight * 0.3f},
+       PWLPT_LINETO},
+      {{center_point.x + fWidth / 10.0f, center_point.y}, PWLPT_LINETO},
+      {{center_point.x + fWidth / 10.0f + fWidth * 0.3f,
+        center_point.y - fHeight * 0.3f},
+       PWLPT_LINETO},
+      {{center_point.x + fWidth * 0.3f,
+        center_point.y - fHeight / 10.0f - fHeight * 0.3f},
+       PWLPT_LINETO},
+      {{center_point.x, center_point.y - fHeight / 10.0f}, PWLPT_LINETO},
+      {{center_point.x - fWidth * 0.3f,
+        center_point.y - fHeight / 10 - fHeight * 0.3f},
+       PWLPT_LINETO},
+      {{center_point.x - fWidth / 10.0f - fWidth * 0.3f,
+        center_point.y - fHeight * 0.3f},
+       PWLPT_LINETO},
+      {{center_point.x - fWidth / 10, center_point.y}, PWLPT_LINETO},
+      {{center_point.x - fWidth / 10 - fWidth * 0.3f,
+        center_point.y + fHeight * 0.3f},
+       PWLPT_LINETO},
+      {{center_point.x - fWidth * 0.3f,
+        center_point.y + fHeight / 10.0f + fHeight * 0.3f},
+       PWLPT_LINETO},
+      {{center_point.x, center_point.y + fHeight / 10.0f}, PWLPT_LINETO}};
 
   if (type == PWLPT_STREAM)
-    sPathData = GetAppStreamFromArray(PathArray, 13);
+    sPathData = GetAppStreamFromArray(PathArray, FX_ArraySize(PathArray));
   else
-    GetPathDataFromArray(path, PathArray, 13);
+    GetPathDataFromArray(path, PathArray, FX_ArraySize(PathArray));
 }
 
 void CPWL_Utils::GetGraphics_Help(CFX_ByteString& sPathData,
@@ -2053,226 +1974,168 @@ void CPWL_Utils::GetGraphics_Help(CFX_ByteString& sPathData,
   FX_FLOAT fHeight = crBBox.top - crBBox.bottom;
 
   CPWL_PathData PathArray[] = {
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth / 60.0f,
-                               crBBox.bottom + fHeight / 2.0f),
-                    PWLPT_MOVETO),
-      CPWL_PathData(
-          CPWL_Point(crBBox.left + fWidth / 60.0f,
-                     crBBox.bottom + fHeight / 2.0f +
-                         FX_BEZIER * (fHeight / 60.0f - fHeight / 2.0f)),
-          PWLPT_BEZIERTO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth / 2.0f -
-                                   FX_BEZIER * (fWidth / 2.0f - fWidth / 60.0f),
-                               crBBox.bottom + fHeight / 60.0f),
-                    PWLPT_BEZIERTO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth / 2.0f,
-                               crBBox.bottom + fHeight / 60.0f),
-                    PWLPT_BEZIERTO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth / 2.0f +
-                                   FX_BEZIER * fWidth * 29 / 60.0f,
-                               crBBox.bottom + fHeight / 60.0f),
-                    PWLPT_BEZIERTO),
-      CPWL_PathData(
-          CPWL_Point(crBBox.right - fWidth / 60.0f,
-                     crBBox.bottom + fHeight / 2.0f +
-                         FX_BEZIER * (fHeight / 60.0f - fHeight / 2.0f)),
-          PWLPT_BEZIERTO),
-      CPWL_PathData(CPWL_Point(crBBox.right - fWidth / 60.0f,
-                               crBBox.bottom + fHeight / 2.0f),
-                    PWLPT_BEZIERTO),
-      CPWL_PathData(CPWL_Point(crBBox.right - fWidth / 60.0f,
-                               crBBox.bottom + fHeight / 2.0f +
-                                   FX_BEZIER * fHeight * 29 / 60.0f),
-                    PWLPT_BEZIERTO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth / 2.0f +
-                                   FX_BEZIER * fWidth * 29 / 60.0f,
-                               crBBox.top - fHeight / 60.0f),
-                    PWLPT_BEZIERTO),
-      CPWL_PathData(
-          CPWL_Point(crBBox.left + fWidth / 2.0f, crBBox.top - fHeight / 60.0f),
-          PWLPT_BEZIERTO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth / 2.0f -
-                                   FX_BEZIER * fWidth * 29 / 60.0f,
-                               crBBox.top - fHeight / 60.0f),
-                    PWLPT_BEZIERTO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth / 60.0f,
-                               crBBox.bottom + fHeight / 2.0f +
-                                   FX_BEZIER * fHeight * 29 / 60.0f),
-                    PWLPT_BEZIERTO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth / 60.0f,
-                               crBBox.bottom + fHeight / 2.0f),
-                    PWLPT_BEZIERTO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth * 0.27f,
-                               crBBox.top - fHeight * 0.36f),
-                    PWLPT_MOVETO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth * 0.27f,
-                               crBBox.top - fHeight * 0.36f +
-                                   FX_BEZIER * fHeight * 0.23f),
-                    PWLPT_BEZIERTO),
-      CPWL_PathData(
-          CPWL_Point(crBBox.left + fWidth * 0.5f - FX_BEZIER * fWidth * 0.23f,
-                     crBBox.bottom + fHeight * 0.87f),
-          PWLPT_BEZIERTO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth * 0.5f,
-                               crBBox.bottom + fHeight * 0.87f),
-                    PWLPT_BEZIERTO),
-      CPWL_PathData(
-          CPWL_Point(crBBox.left + fWidth * 0.5f + FX_BEZIER * fWidth * 0.23f,
-                     crBBox.bottom + fHeight * 0.87f),
-          PWLPT_BEZIERTO),
-      CPWL_PathData(CPWL_Point(crBBox.right - fWidth * 0.27f,
-                               crBBox.top - fHeight * 0.36f +
-                                   FX_BEZIER * fHeight * 0.23f),
-                    PWLPT_BEZIERTO),
-      CPWL_PathData(CPWL_Point(crBBox.right - fWidth * 0.27f,
-                               crBBox.top - fHeight * 0.36f),
-                    PWLPT_BEZIERTO),
-      CPWL_PathData(
-          CPWL_Point(crBBox.right - fWidth * 0.27f - fWidth * 0.08f * 0.2f,
-                     crBBox.top - fHeight * 0.36f - fHeight * 0.15f * 0.7f),
-          PWLPT_BEZIERTO),
-      CPWL_PathData(
-          CPWL_Point(crBBox.right - fWidth * 0.35f + fWidth * 0.08f * 0.2f,
-                     crBBox.top - fHeight * 0.51f + fHeight * 0.15f * 0.2f),
-          PWLPT_BEZIERTO),
-      CPWL_PathData(CPWL_Point(crBBox.right - fWidth * 0.35f,
-                               crBBox.top - fHeight * 0.51f),
-                    PWLPT_BEZIERTO),
-      CPWL_PathData(
-          CPWL_Point(crBBox.right - fWidth * 0.35f - fWidth * 0.1f * 0.5f,
-                     crBBox.top - fHeight * 0.51f - fHeight * 0.15f * 0.3f),
-          PWLPT_BEZIERTO),
-      CPWL_PathData(
-          CPWL_Point(crBBox.right - fWidth * 0.45f - fWidth * 0.1f * 0.5f,
-                     crBBox.top - fHeight * 0.68f + fHeight * 0.15f * 0.5f),
-          PWLPT_BEZIERTO),
-      CPWL_PathData(CPWL_Point(crBBox.right - fWidth * 0.45f,
-                               crBBox.top - fHeight * 0.68f),
-                    PWLPT_BEZIERTO),
-      CPWL_PathData(CPWL_Point(crBBox.right - fWidth * 0.45f,
-                               crBBox.bottom + fHeight * 0.30f),
-                    PWLPT_LINETO),
-      CPWL_PathData(
-          CPWL_Point(crBBox.right - fWidth * 0.45f,
-                     crBBox.bottom + fHeight * 0.30f - fWidth * 0.1f * 0.7f),
-          PWLPT_BEZIERTO),
-      CPWL_PathData(
-          CPWL_Point(crBBox.right - fWidth * 0.55f,
-                     crBBox.bottom + fHeight * 0.30f - fWidth * 0.1f * 0.7f),
-          PWLPT_BEZIERTO),
-      CPWL_PathData(CPWL_Point(crBBox.right - fWidth * 0.55f,
-                               crBBox.bottom + fHeight * 0.30f),
-                    PWLPT_BEZIERTO),
-      CPWL_PathData(CPWL_Point(crBBox.right - fWidth * 0.55f,
-                               crBBox.top - fHeight * 0.66f),
-                    PWLPT_LINETO),
-      CPWL_PathData(
-          CPWL_Point(crBBox.right - fWidth * 0.55f - fWidth * 0.1f * 0.05f,
-                     crBBox.top - fHeight * 0.66f + fHeight * 0.18f * 0.5f),
-          PWLPT_BEZIERTO),
-      CPWL_PathData(
-          CPWL_Point(crBBox.right - fWidth * 0.45f - fWidth * 0.1f * 0.05f,
-                     crBBox.top - fHeight * 0.48f - fHeight * 0.18f * 0.3f),
-          PWLPT_BEZIERTO),
-      CPWL_PathData(CPWL_Point(crBBox.right - fWidth * 0.45f,
-                               crBBox.top - fHeight * 0.48f),
-                    PWLPT_BEZIERTO),
-      CPWL_PathData(
-          CPWL_Point(crBBox.right - fWidth * 0.45f + fWidth * 0.08f * 0.2f,
-                     crBBox.top - fHeight * 0.48f + fHeight * 0.18f * 0.2f),
-          PWLPT_BEZIERTO),
-      CPWL_PathData(
-          CPWL_Point(crBBox.right - fWidth * 0.37f - fWidth * 0.08f * 0.2f,
-                     crBBox.top - fHeight * 0.36f - fHeight * 0.18f * 0.7f),
-          PWLPT_BEZIERTO),
-      CPWL_PathData(CPWL_Point(crBBox.right - fWidth * 0.37f,
-                               crBBox.top - fHeight * 0.36f),
-                    PWLPT_BEZIERTO),
-      CPWL_PathData(CPWL_Point(crBBox.right - fWidth * 0.37f,
-                               crBBox.top - fHeight * 0.36f +
-                                   FX_BEZIER * fHeight * 0.13f),
-                    PWLPT_BEZIERTO),
-      CPWL_PathData(
-          CPWL_Point(crBBox.left + fWidth * 0.5f + FX_BEZIER * fWidth * 0.13f,
-                     crBBox.bottom + fHeight * 0.77f),
-          PWLPT_BEZIERTO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth * 0.5f,
-                               crBBox.bottom + fHeight * 0.77f),
-                    PWLPT_BEZIERTO),
-      CPWL_PathData(
-          CPWL_Point(crBBox.left + fWidth * 0.5f - FX_BEZIER * fWidth * 0.13f,
-                     crBBox.bottom + fHeight * 0.77f),
-          PWLPT_BEZIERTO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth * 0.37f,
-                               crBBox.top - fHeight * 0.36f +
-                                   FX_BEZIER * fHeight * 0.13f),
-                    PWLPT_BEZIERTO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth * 0.37f,
-                               crBBox.top - fHeight * 0.36f),
-                    PWLPT_BEZIERTO),
-      CPWL_PathData(
-          CPWL_Point(crBBox.left + fWidth * 0.37f,
-                     crBBox.top - fHeight * 0.36f - fWidth * 0.1f * 0.6f),
-          PWLPT_BEZIERTO),
-      CPWL_PathData(
-          CPWL_Point(crBBox.left + fWidth * 0.27f,
-                     crBBox.top - fHeight * 0.36f - fWidth * 0.1f * 0.6f),
-          PWLPT_BEZIERTO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth * 0.27f,
-                               crBBox.top - fHeight * 0.36f),
-                    PWLPT_BEZIERTO),
-      CPWL_PathData(CPWL_Point(crBBox.right - fWidth * 0.56f,
-                               crBBox.bottom + fHeight * 0.13f),
-                    PWLPT_MOVETO),
-      CPWL_PathData(CPWL_Point(crBBox.right - fWidth * 0.56f,
-                               crBBox.bottom + fHeight * 0.13f +
-                                   FX_BEZIER * fHeight * 0.055f),
-                    PWLPT_BEZIERTO),
-      CPWL_PathData(CPWL_Point(crBBox.right - fWidth * 0.505f -
-                                   FX_BEZIER * fWidth * 0.095f,
-                               crBBox.bottom + fHeight * 0.185f),
-                    PWLPT_BEZIERTO),
-      CPWL_PathData(CPWL_Point(crBBox.right - fWidth * 0.505f,
-                               crBBox.bottom + fHeight * 0.185f),
-                    PWLPT_BEZIERTO),
-      CPWL_PathData(CPWL_Point(crBBox.right - fWidth * 0.505f +
-                                   FX_BEZIER * fWidth * 0.065f,
-                               crBBox.bottom + fHeight * 0.185f),
-                    PWLPT_BEZIERTO),
-      CPWL_PathData(CPWL_Point(crBBox.right - fWidth * 0.44f,
-                               crBBox.bottom + fHeight * 0.13f +
-                                   FX_BEZIER * fHeight * 0.055f),
-                    PWLPT_BEZIERTO),
-      CPWL_PathData(CPWL_Point(crBBox.right - fWidth * 0.44f,
-                               crBBox.bottom + fHeight * 0.13f),
-                    PWLPT_BEZIERTO),
-      CPWL_PathData(CPWL_Point(crBBox.right - fWidth * 0.44f,
-                               crBBox.bottom + fHeight * 0.13f -
-                                   FX_BEZIER * fHeight * 0.055f),
-                    PWLPT_BEZIERTO),
-      CPWL_PathData(CPWL_Point(crBBox.right - fWidth * 0.505f +
-                                   FX_BEZIER * fWidth * 0.065f,
-                               crBBox.bottom + fHeight * 0.075f),
-                    PWLPT_BEZIERTO),
-      CPWL_PathData(CPWL_Point(crBBox.right - fWidth * 0.505f,
-                               crBBox.bottom + fHeight * 0.075f),
-                    PWLPT_BEZIERTO),
-      CPWL_PathData(CPWL_Point(crBBox.right - fWidth * 0.505f -
-                                   FX_BEZIER * fWidth * 0.065f,
-                               crBBox.bottom + fHeight * 0.075f),
-                    PWLPT_BEZIERTO),
-      CPWL_PathData(CPWL_Point(crBBox.right - fWidth * 0.56f,
-                               crBBox.bottom + fHeight * 0.13f -
-                                   FX_BEZIER * fHeight * 0.055f),
-                    PWLPT_BEZIERTO),
-      CPWL_PathData(CPWL_Point(crBBox.right - fWidth * 0.56f,
-                               crBBox.bottom + fHeight * 0.13f),
-                    PWLPT_BEZIERTO)};
+      {{crBBox.left + fWidth / 60.0f, crBBox.bottom + fHeight / 2.0f},
+       PWLPT_MOVETO},
+      {{crBBox.left + fWidth / 60.0f,
+        crBBox.bottom + fHeight / 2.0f +
+            FX_BEZIER * (fHeight / 60.0f - fHeight / 2.0f)},
+       PWLPT_BEZIERTO},
+      {{crBBox.left + fWidth / 2.0f -
+            FX_BEZIER * (fWidth / 2.0f - fWidth / 60.0f),
+        crBBox.bottom + fHeight / 60.0f},
+       PWLPT_BEZIERTO},
+      {{crBBox.left + fWidth / 2.0f, crBBox.bottom + fHeight / 60.0f},
+       PWLPT_BEZIERTO},
+      {{crBBox.left + fWidth / 2.0f + FX_BEZIER * fWidth * 29 / 60.0f,
+        crBBox.bottom + fHeight / 60.0f},
+       PWLPT_BEZIERTO},
+      {{crBBox.right - fWidth / 60.0f,
+        crBBox.bottom + fHeight / 2.0f +
+            FX_BEZIER * (fHeight / 60.0f - fHeight / 2.0f)},
+       PWLPT_BEZIERTO},
+      {{crBBox.right - fWidth / 60.0f, crBBox.bottom + fHeight / 2.0f},
+       PWLPT_BEZIERTO},
+      {{crBBox.right - fWidth / 60.0f,
+        crBBox.bottom + fHeight / 2.0f + FX_BEZIER * fHeight * 29 / 60.0f},
+       PWLPT_BEZIERTO},
+      {{crBBox.left + fWidth / 2.0f + FX_BEZIER * fWidth * 29 / 60.0f,
+        crBBox.top - fHeight / 60.0f},
+       PWLPT_BEZIERTO},
+      {{crBBox.left + fWidth / 2.0f, crBBox.top - fHeight / 60.0f},
+       PWLPT_BEZIERTO},
+      {{crBBox.left + fWidth / 2.0f - FX_BEZIER * fWidth * 29 / 60.0f,
+        crBBox.top - fHeight / 60.0f},
+       PWLPT_BEZIERTO},
+      {{crBBox.left + fWidth / 60.0f,
+        crBBox.bottom + fHeight / 2.0f + FX_BEZIER * fHeight * 29 / 60.0f},
+       PWLPT_BEZIERTO},
+      {{crBBox.left + fWidth / 60.0f, crBBox.bottom + fHeight / 2.0f},
+       PWLPT_BEZIERTO},
+      {{crBBox.left + fWidth * 0.27f, crBBox.top - fHeight * 0.36f},
+       PWLPT_MOVETO},
+      {{crBBox.left + fWidth * 0.27f,
+        crBBox.top - fHeight * 0.36f + FX_BEZIER * fHeight * 0.23f},
+       PWLPT_BEZIERTO},
+      {{crBBox.left + fWidth * 0.5f - FX_BEZIER * fWidth * 0.23f,
+        crBBox.bottom + fHeight * 0.87f},
+       PWLPT_BEZIERTO},
+      {{crBBox.left + fWidth * 0.5f, crBBox.bottom + fHeight * 0.87f},
+       PWLPT_BEZIERTO},
+      {{crBBox.left + fWidth * 0.5f + FX_BEZIER * fWidth * 0.23f,
+        crBBox.bottom + fHeight * 0.87f},
+       PWLPT_BEZIERTO},
+      {{crBBox.right - fWidth * 0.27f,
+        crBBox.top - fHeight * 0.36f + FX_BEZIER * fHeight * 0.23f},
+       PWLPT_BEZIERTO},
+      {{crBBox.right - fWidth * 0.27f, crBBox.top - fHeight * 0.36f},
+       PWLPT_BEZIERTO},
+      {{crBBox.right - fWidth * 0.27f - fWidth * 0.08f * 0.2f,
+        crBBox.top - fHeight * 0.36f - fHeight * 0.15f * 0.7f},
+       PWLPT_BEZIERTO},
+      {{crBBox.right - fWidth * 0.35f + fWidth * 0.08f * 0.2f,
+        crBBox.top - fHeight * 0.51f + fHeight * 0.15f * 0.2f},
+       PWLPT_BEZIERTO},
+      {{crBBox.right - fWidth * 0.35f, crBBox.top - fHeight * 0.51f},
+       PWLPT_BEZIERTO},
+      {{crBBox.right - fWidth * 0.35f - fWidth * 0.1f * 0.5f,
+        crBBox.top - fHeight * 0.51f - fHeight * 0.15f * 0.3f},
+       PWLPT_BEZIERTO},
+      {{crBBox.right - fWidth * 0.45f - fWidth * 0.1f * 0.5f,
+        crBBox.top - fHeight * 0.68f + fHeight * 0.15f * 0.5f},
+       PWLPT_BEZIERTO},
+      {{crBBox.right - fWidth * 0.45f, crBBox.top - fHeight * 0.68f},
+       PWLPT_BEZIERTO},
+      {{crBBox.right - fWidth * 0.45f, crBBox.bottom + fHeight * 0.30f},
+       PWLPT_LINETO},
+      {{crBBox.right - fWidth * 0.45f,
+        crBBox.bottom + fHeight * 0.30f - fWidth * 0.1f * 0.7f},
+       PWLPT_BEZIERTO},
+      {{crBBox.right - fWidth * 0.55f,
+        crBBox.bottom + fHeight * 0.30f - fWidth * 0.1f * 0.7f},
+       PWLPT_BEZIERTO},
+      {{crBBox.right - fWidth * 0.55f, crBBox.bottom + fHeight * 0.30f},
+       PWLPT_BEZIERTO},
+      {{crBBox.right - fWidth * 0.55f, crBBox.top - fHeight * 0.66f},
+       PWLPT_LINETO},
+      {{crBBox.right - fWidth * 0.55f - fWidth * 0.1f * 0.05f,
+        crBBox.top - fHeight * 0.66f + fHeight * 0.18f * 0.5f},
+       PWLPT_BEZIERTO},
+      {{crBBox.right - fWidth * 0.45f - fWidth * 0.1f * 0.05f,
+        crBBox.top - fHeight * 0.48f - fHeight * 0.18f * 0.3f},
+       PWLPT_BEZIERTO},
+      {{crBBox.right - fWidth * 0.45f, crBBox.top - fHeight * 0.48f},
+       PWLPT_BEZIERTO},
+      {{crBBox.right - fWidth * 0.45f + fWidth * 0.08f * 0.2f,
+        crBBox.top - fHeight * 0.48f + fHeight * 0.18f * 0.2f},
+       PWLPT_BEZIERTO},
+      {{crBBox.right - fWidth * 0.37f - fWidth * 0.08f * 0.2f,
+        crBBox.top - fHeight * 0.36f - fHeight * 0.18f * 0.7f},
+       PWLPT_BEZIERTO},
+      {{crBBox.right - fWidth * 0.37f, crBBox.top - fHeight * 0.36f},
+       PWLPT_BEZIERTO},
+      {{crBBox.right - fWidth * 0.37f,
+        crBBox.top - fHeight * 0.36f + FX_BEZIER * fHeight * 0.13f},
+       PWLPT_BEZIERTO},
+      {{crBBox.left + fWidth * 0.5f + FX_BEZIER * fWidth * 0.13f,
+        crBBox.bottom + fHeight * 0.77f},
+       PWLPT_BEZIERTO},
+      {{crBBox.left + fWidth * 0.5f, crBBox.bottom + fHeight * 0.77f},
+       PWLPT_BEZIERTO},
+      {{crBBox.left + fWidth * 0.5f - FX_BEZIER * fWidth * 0.13f,
+        crBBox.bottom + fHeight * 0.77f},
+       PWLPT_BEZIERTO},
+      {{crBBox.left + fWidth * 0.37f,
+        crBBox.top - fHeight * 0.36f + FX_BEZIER * fHeight * 0.13f},
+       PWLPT_BEZIERTO},
+      {{crBBox.left + fWidth * 0.37f, crBBox.top - fHeight * 0.36f},
+       PWLPT_BEZIERTO},
+      {{crBBox.left + fWidth * 0.37f,
+        crBBox.top - fHeight * 0.36f - fWidth * 0.1f * 0.6f},
+       PWLPT_BEZIERTO},
+      {{crBBox.left + fWidth * 0.27f,
+        crBBox.top - fHeight * 0.36f - fWidth * 0.1f * 0.6f},
+       PWLPT_BEZIERTO},
+      {{crBBox.left + fWidth * 0.27f, crBBox.top - fHeight * 0.36f},
+       PWLPT_BEZIERTO},
+      {{crBBox.right - fWidth * 0.56f, crBBox.bottom + fHeight * 0.13f},
+       PWLPT_MOVETO},
+      {{crBBox.right - fWidth * 0.56f,
+        crBBox.bottom + fHeight * 0.13f + FX_BEZIER * fHeight * 0.055f},
+       PWLPT_BEZIERTO},
+      {{crBBox.right - fWidth * 0.505f - FX_BEZIER * fWidth * 0.095f,
+        crBBox.bottom + fHeight * 0.185f},
+       PWLPT_BEZIERTO},
+      {{crBBox.right - fWidth * 0.505f, crBBox.bottom + fHeight * 0.185f},
+       PWLPT_BEZIERTO},
+      {{crBBox.right - fWidth * 0.505f + FX_BEZIER * fWidth * 0.065f,
+        crBBox.bottom + fHeight * 0.185f},
+       PWLPT_BEZIERTO},
+      {{crBBox.right - fWidth * 0.44f,
+        crBBox.bottom + fHeight * 0.13f + FX_BEZIER * fHeight * 0.055f},
+       PWLPT_BEZIERTO},
+      {{crBBox.right - fWidth * 0.44f, crBBox.bottom + fHeight * 0.13f},
+       PWLPT_BEZIERTO},
+      {{crBBox.right - fWidth * 0.44f,
+        crBBox.bottom + fHeight * 0.13f - FX_BEZIER * fHeight * 0.055f},
+       PWLPT_BEZIERTO},
+      {{crBBox.right - fWidth * 0.505f + FX_BEZIER * fWidth * 0.065f,
+        crBBox.bottom + fHeight * 0.075f},
+       PWLPT_BEZIERTO},
+      {{crBBox.right - fWidth * 0.505f, crBBox.bottom + fHeight * 0.075f},
+       PWLPT_BEZIERTO},
+      {{crBBox.right - fWidth * 0.505f - FX_BEZIER * fWidth * 0.065f,
+        crBBox.bottom + fHeight * 0.075f},
+       PWLPT_BEZIERTO},
+      {{crBBox.right - fWidth * 0.56f,
+        crBBox.bottom + fHeight * 0.13f - FX_BEZIER * fHeight * 0.055f},
+       PWLPT_BEZIERTO},
+      {{crBBox.right - fWidth * 0.56f, crBBox.bottom + fHeight * 0.13f},
+       PWLPT_BEZIERTO}};
 
   if (type == PWLPT_STREAM)
-    sPathData = GetAppStreamFromArray(PathArray, 59);
+    sPathData = GetAppStreamFromArray(PathArray, FX_ArraySize(PathArray));
   else
-    GetPathDataFromArray(path, PathArray, 59);
+    GetPathDataFromArray(path, PathArray, FX_ArraySize(PathArray));
 }
 
 void CPWL_Utils::GetGraphics_InsertText(CFX_ByteString& sPathData,
@@ -2283,23 +2146,17 @@ void CPWL_Utils::GetGraphics_InsertText(CFX_ByteString& sPathData,
   FX_FLOAT fHeight = crBBox.top - crBBox.bottom;
 
   CPWL_PathData PathArray[] = {
-      CPWL_PathData(
-          CPWL_Point(crBBox.left + fWidth / 10, crBBox.bottom + fHeight / 10),
-          PWLPT_MOVETO),
-      CPWL_PathData(
-          CPWL_Point(crBBox.left + fWidth / 2, crBBox.top - fHeight * 2 / 15),
-          PWLPT_LINETO),
-      CPWL_PathData(
-          CPWL_Point(crBBox.right - fWidth / 10, crBBox.bottom + fHeight / 10),
-          PWLPT_LINETO),
-      CPWL_PathData(
-          CPWL_Point(crBBox.left + fWidth / 10, crBBox.bottom + fHeight / 10),
-          PWLPT_LINETO)};
+      {{crBBox.left + fWidth / 10, crBBox.bottom + fHeight / 10}, PWLPT_MOVETO},
+      {{crBBox.left + fWidth / 2, crBBox.top - fHeight * 2 / 15}, PWLPT_LINETO},
+      {{crBBox.right - fWidth / 10, crBBox.bottom + fHeight / 10},
+       PWLPT_LINETO},
+      {{crBBox.left + fWidth / 10, crBBox.bottom + fHeight / 10},
+       PWLPT_LINETO}};
 
   if (type == PWLPT_STREAM)
-    sPathData = GetAppStreamFromArray(PathArray, 4);
+    sPathData = GetAppStreamFromArray(PathArray, FX_ArraySize(PathArray));
   else
-    GetPathDataFromArray(path, PathArray, 4);
+    GetPathDataFromArray(path, PathArray, FX_ArraySize(PathArray));
 }
 
 void CPWL_Utils::GetGraphics_Key(CFX_ByteString& sPathData,
@@ -2309,128 +2166,96 @@ void CPWL_Utils::GetGraphics_Key(CFX_ByteString& sPathData,
   FX_FLOAT fWidth = crBBox.right - crBBox.left;
   FX_FLOAT fHeight = crBBox.top - crBBox.bottom;
   FX_FLOAT k = -fHeight / fWidth;
-  CPWL_Point tail;
-  CPWL_Point CicleCenter;
+  CFX_PointF tail;
+  CFX_PointF CicleCenter;
   tail.x = crBBox.left + fWidth * 0.9f;
   tail.y = k * (tail.x - crBBox.right) + crBBox.bottom;
   CicleCenter.x = crBBox.left + fWidth * 0.15f;
   CicleCenter.y = k * (CicleCenter.x - crBBox.right) + crBBox.bottom;
 
   CPWL_PathData PathArray[] = {
-      CPWL_PathData(
-          CPWL_Point(tail.x + fWidth / 30.0f, -fWidth / 30.0f / k + tail.y),
-          PWLPT_MOVETO),
-      CPWL_PathData(CPWL_Point(tail.x + fWidth / 30.0f - fWidth * 0.18f,
-                               -k * fWidth * 0.18f - fWidth / 30 / k + tail.y),
-                    PWLPT_LINETO),
-      CPWL_PathData(
-          CPWL_Point(tail.x + fWidth / 30 - fWidth * 0.18f + fWidth * 0.07f,
-                     -fWidth * 0.07f / k - k * fWidth * 0.18f -
-                         fWidth / 30 / k + tail.y),
-          PWLPT_LINETO),
-      CPWL_PathData(
-          CPWL_Point(tail.x + fWidth / 30 - fWidth * 0.18f - fWidth / 20 +
-                         fWidth * 0.07f,
-                     -fWidth * 0.07f / k - k * fWidth / 20 -
-                         k * fWidth * 0.18f - fWidth / 30 / k + tail.y),
-          PWLPT_LINETO),
-      CPWL_PathData(
-          CPWL_Point(
-              tail.x + fWidth / 30 - fWidth * 0.18f - fWidth / 20,
-              -k * fWidth / 20 - k * fWidth * 0.18f - fWidth / 30 / k + tail.y),
-          PWLPT_LINETO),
-      CPWL_PathData(
-          CPWL_Point(
-              tail.x + fWidth / 30 - fWidth * 0.18f - fWidth / 20 - fWidth / 15,
-              -k * fWidth / 15 - k * fWidth / 20 - k * fWidth * 0.18f -
-                  fWidth / 30 / k + tail.y),
-          PWLPT_LINETO),
-      CPWL_PathData(
-          CPWL_Point(tail.x + fWidth / 30 - fWidth * 0.18f - fWidth / 20 -
-                         fWidth / 15 + fWidth * 0.07f,
-                     -fWidth * 0.07f / k - k * fWidth / 15 - k * fWidth / 20 -
-                         k * fWidth * 0.18f - fWidth / 30 / k + tail.y),
-          PWLPT_LINETO),
-      CPWL_PathData(
-          CPWL_Point(tail.x + fWidth / 30 - fWidth * 0.18f - fWidth / 20 -
-                         fWidth / 15 - fWidth / 20 + fWidth * 0.07f,
-                     -fWidth * 0.07f / k + -k * fWidth / 20 + -k * fWidth / 15 -
-                         k * fWidth / 20 - k * fWidth * 0.18f -
-                         fWidth / 30 / k + tail.y),
-          PWLPT_LINETO),
-      CPWL_PathData(
-          CPWL_Point(tail.x + fWidth / 30 - fWidth * 0.18f - fWidth / 20 -
-                         fWidth / 15 - fWidth / 20,
-                     -k * fWidth / 20 + -k * fWidth / 15 - k * fWidth / 20 -
-                         k * fWidth * 0.18f - fWidth / 30 / k + tail.y),
-          PWLPT_LINETO),
-      CPWL_PathData(CPWL_Point(tail.x + fWidth / 30 - fWidth * 0.45f,
-                               -k * fWidth * 0.45f - fWidth / 30 / k + tail.y),
-                    PWLPT_LINETO),
-      CPWL_PathData(
-          CPWL_Point(tail.x + fWidth / 30 - fWidth * 0.45f + fWidth * 0.2f,
-                     -fWidth * 0.4f / k - k * fWidth * 0.45f - fWidth / 30 / k +
-                         tail.y),
-          PWLPT_BEZIERTO),
-      CPWL_PathData(CPWL_Point(CicleCenter.x + fWidth * 0.2f,
-                               -fWidth * 0.1f / k + CicleCenter.y),
-                    PWLPT_BEZIERTO),
-      CPWL_PathData(CPWL_Point(CicleCenter.x, CicleCenter.y), PWLPT_BEZIERTO),
-      CPWL_PathData(CPWL_Point(CicleCenter.x - fWidth / 60.0f,
-                               -k * fWidth / 60 + CicleCenter.y),
-                    PWLPT_BEZIERTO),
-      CPWL_PathData(CPWL_Point(CicleCenter.x - fWidth / 60,
-                               -k * fWidth / 60 + CicleCenter.y),
-                    PWLPT_BEZIERTO),
-      CPWL_PathData(CPWL_Point(CicleCenter.x, CicleCenter.y), PWLPT_BEZIERTO),
-      CPWL_PathData(
-          CPWL_Point(CicleCenter.x - fWidth * 0.22f,
-                     fWidth * 0.35f / k + CicleCenter.y - fHeight * 0.05f),
-          PWLPT_BEZIERTO),
-      CPWL_PathData(
-          CPWL_Point(tail.x - fWidth / 30 - fWidth * 0.45f - fWidth * 0.18f,
-                     fWidth * 0.05f / k - k * fWidth * 0.45f + fWidth / 30 / k +
-                         tail.y - fHeight * 0.05f),
-          PWLPT_BEZIERTO),
-      CPWL_PathData(
-          CPWL_Point(tail.x - fWidth / 30.0f - fWidth * 0.45f,
-                     -k * fWidth * 0.45f + fWidth / 30.0f / k + tail.y),
-          PWLPT_BEZIERTO),
-      CPWL_PathData(
-          CPWL_Point(tail.x - fWidth / 30.0f, fWidth / 30.0f / k + tail.y),
-          PWLPT_LINETO),
-      CPWL_PathData(CPWL_Point(tail.x + fWidth / 30, -fWidth / 30 / k + tail.y),
-                    PWLPT_LINETO),
-      CPWL_PathData(CPWL_Point(CicleCenter.x + fWidth * 0.08f,
-                               k * fWidth * 0.08f + CicleCenter.y),
-                    PWLPT_MOVETO),
-      CPWL_PathData(
-          CPWL_Point(CicleCenter.x + fWidth * 0.08f + fWidth * 0.1f,
-                     -fWidth * 0.1f / k + k * fWidth * 0.08f + CicleCenter.y),
-          PWLPT_BEZIERTO),
-      CPWL_PathData(
-          CPWL_Point(CicleCenter.x + fWidth * 0.22f + fWidth * 0.1f,
-                     k * fWidth * 0.22f + CicleCenter.y - fWidth * 0.1f / k),
-          PWLPT_BEZIERTO),
-      CPWL_PathData(CPWL_Point(CicleCenter.x + fWidth * 0.22f,
-                               k * fWidth * 0.22f + CicleCenter.y),
-                    PWLPT_BEZIERTO),
-      CPWL_PathData(
-          CPWL_Point(CicleCenter.x + fWidth * 0.22f - fWidth * 0.1f,
-                     fWidth * 0.1f / k + k * fWidth * 0.22f + CicleCenter.y),
-          PWLPT_BEZIERTO),
-      CPWL_PathData(
-          CPWL_Point(CicleCenter.x + fWidth * 0.08f - fWidth * 0.1f,
-                     fWidth * 0.1f / k + k * fWidth * 0.08f + CicleCenter.y),
-          PWLPT_BEZIERTO),
-      CPWL_PathData(CPWL_Point(CicleCenter.x + fWidth * 0.08f,
-                               k * fWidth * 0.08f + CicleCenter.y),
-                    PWLPT_BEZIERTO)};
+      {{tail.x + fWidth / 30.0f, -fWidth / 30.0f / k + tail.y}, PWLPT_MOVETO},
+      {{tail.x + fWidth / 30.0f - fWidth * 0.18f,
+        -k * fWidth * 0.18f - fWidth / 30 / k + tail.y},
+       PWLPT_LINETO},
+      {{tail.x + fWidth / 30 - fWidth * 0.18f + fWidth * 0.07f,
+        -fWidth * 0.07f / k - k * fWidth * 0.18f - fWidth / 30 / k + tail.y},
+       PWLPT_LINETO},
+      {{tail.x + fWidth / 30 - fWidth * 0.18f - fWidth / 20 + fWidth * 0.07f,
+        -fWidth * 0.07f / k - k * fWidth / 20 - k * fWidth * 0.18f -
+            fWidth / 30 / k + tail.y},
+       PWLPT_LINETO},
+      {{tail.x + fWidth / 30 - fWidth * 0.18f - fWidth / 20,
+        -k * fWidth / 20 - k * fWidth * 0.18f - fWidth / 30 / k + tail.y},
+       PWLPT_LINETO},
+      {{tail.x + fWidth / 30 - fWidth * 0.18f - fWidth / 20 - fWidth / 15,
+        -k * fWidth / 15 - k * fWidth / 20 - k * fWidth * 0.18f -
+            fWidth / 30 / k + tail.y},
+       PWLPT_LINETO},
+      {{tail.x + fWidth / 30 - fWidth * 0.18f - fWidth / 20 - fWidth / 15 +
+            fWidth * 0.07f,
+        -fWidth * 0.07f / k - k * fWidth / 15 - k * fWidth / 20 -
+            k * fWidth * 0.18f - fWidth / 30 / k + tail.y},
+       PWLPT_LINETO},
+      {{tail.x + fWidth / 30 - fWidth * 0.18f - fWidth / 20 - fWidth / 15 -
+            fWidth / 20 + fWidth * 0.07f,
+        -fWidth * 0.07f / k + -k * fWidth / 20 + -k * fWidth / 15 -
+            k * fWidth / 20 - k * fWidth * 0.18f - fWidth / 30 / k + tail.y},
+       PWLPT_LINETO},
+      {{tail.x + fWidth / 30 - fWidth * 0.18f - fWidth / 20 - fWidth / 15 -
+            fWidth / 20,
+        -k * fWidth / 20 + -k * fWidth / 15 - k * fWidth / 20 -
+            k * fWidth * 0.18f - fWidth / 30 / k + tail.y},
+       PWLPT_LINETO},
+      {{tail.x + fWidth / 30 - fWidth * 0.45f,
+        -k * fWidth * 0.45f - fWidth / 30 / k + tail.y},
+       PWLPT_LINETO},
+      {{tail.x + fWidth / 30 - fWidth * 0.45f + fWidth * 0.2f,
+        -fWidth * 0.4f / k - k * fWidth * 0.45f - fWidth / 30 / k + tail.y},
+       PWLPT_BEZIERTO},
+      {{CicleCenter.x + fWidth * 0.2f, -fWidth * 0.1f / k + CicleCenter.y},
+       PWLPT_BEZIERTO},
+      {{CicleCenter.x, CicleCenter.y}, PWLPT_BEZIERTO},
+      {{CicleCenter.x - fWidth / 60.0f, -k * fWidth / 60 + CicleCenter.y},
+       PWLPT_BEZIERTO},
+      {{CicleCenter.x - fWidth / 60, -k * fWidth / 60 + CicleCenter.y},
+       PWLPT_BEZIERTO},
+      {{CicleCenter.x, CicleCenter.y}, PWLPT_BEZIERTO},
+      {{CicleCenter.x - fWidth * 0.22f,
+        fWidth * 0.35f / k + CicleCenter.y - fHeight * 0.05f},
+       PWLPT_BEZIERTO},
+      {{tail.x - fWidth / 30 - fWidth * 0.45f - fWidth * 0.18f,
+        fWidth * 0.05f / k - k * fWidth * 0.45f + fWidth / 30 / k + tail.y -
+            fHeight * 0.05f},
+       PWLPT_BEZIERTO},
+      {{tail.x - fWidth / 30.0f - fWidth * 0.45f,
+        -k * fWidth * 0.45f + fWidth / 30.0f / k + tail.y},
+       PWLPT_BEZIERTO},
+      {{tail.x - fWidth / 30.0f, fWidth / 30.0f / k + tail.y}, PWLPT_LINETO},
+      {{tail.x + fWidth / 30, -fWidth / 30 / k + tail.y}, PWLPT_LINETO},
+      {{CicleCenter.x + fWidth * 0.08f, k * fWidth * 0.08f + CicleCenter.y},
+       PWLPT_MOVETO},
+      {{CicleCenter.x + fWidth * 0.08f + fWidth * 0.1f,
+        -fWidth * 0.1f / k + k * fWidth * 0.08f + CicleCenter.y},
+       PWLPT_BEZIERTO},
+      {{CicleCenter.x + fWidth * 0.22f + fWidth * 0.1f,
+        k * fWidth * 0.22f + CicleCenter.y - fWidth * 0.1f / k},
+       PWLPT_BEZIERTO},
+      {{CicleCenter.x + fWidth * 0.22f, k * fWidth * 0.22f + CicleCenter.y},
+       PWLPT_BEZIERTO},
+      {{CicleCenter.x + fWidth * 0.22f - fWidth * 0.1f,
+        fWidth * 0.1f / k + k * fWidth * 0.22f + CicleCenter.y},
+       PWLPT_BEZIERTO},
+      {{CicleCenter.x + fWidth * 0.08f - fWidth * 0.1f,
+        fWidth * 0.1f / k + k * fWidth * 0.08f + CicleCenter.y},
+       PWLPT_BEZIERTO},
+      {{CicleCenter.x + fWidth * 0.08f, k * fWidth * 0.08f + CicleCenter.y},
+       PWLPT_BEZIERTO}};
 
   if (type == PWLPT_STREAM)
-    sPathData = GetAppStreamFromArray(PathArray, 28);
+    sPathData = GetAppStreamFromArray(PathArray, FX_ArraySize(PathArray));
   else
-    GetPathDataFromArray(path, PathArray, 28);
+    GetPathDataFromArray(path, PathArray, FX_ArraySize(PathArray));
 }
 
 void CPWL_Utils::GetGraphics_NewParagraph(CFX_ByteString& sPathData,
@@ -2441,100 +2266,75 @@ void CPWL_Utils::GetGraphics_NewParagraph(CFX_ByteString& sPathData,
   FX_FLOAT fHeight = crBBox.top - crBBox.bottom;
 
   CPWL_PathData PathArray[] = {
-      CPWL_PathData(
-          CPWL_Point(crBBox.left + fWidth / 2.0f, crBBox.top - fHeight / 20.0f),
-          PWLPT_MOVETO),
-      CPWL_PathData(
-          CPWL_Point(crBBox.left + fWidth / 10.0f, crBBox.top - fHeight / 2.0f),
-          PWLPT_LINETO),
-      CPWL_PathData(CPWL_Point(crBBox.right - fWidth / 10.0f,
-                               crBBox.top - fHeight / 2.0f),
-                    PWLPT_LINETO),
-      CPWL_PathData(
-          CPWL_Point(crBBox.left + fWidth / 2.0f, crBBox.top - fHeight / 20.0f),
-          PWLPT_LINETO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth * 0.12f,
-                               crBBox.top - fHeight * 17 / 30.0f),
-                    PWLPT_MOVETO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth * 0.12f,
-                               crBBox.bottom + fHeight / 10.0f),
-                    PWLPT_LINETO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth * 0.22f,
-                               crBBox.bottom + fHeight / 10.0f),
-                    PWLPT_LINETO),
-      CPWL_PathData(
-          CPWL_Point(crBBox.left + fWidth * 0.22f,
-                     crBBox.top - fHeight * 17 / 30.0f - fWidth * 0.14f),
-          PWLPT_LINETO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth * 0.38f,
-                               crBBox.bottom + fHeight / 10.0f),
-                    PWLPT_LINETO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth * 0.48f,
-                               crBBox.bottom + fHeight / 10.0f),
-                    PWLPT_LINETO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth * 0.48f,
-                               crBBox.top - fHeight * 17 / 30.0f),
-                    PWLPT_LINETO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth * 0.38f,
-                               crBBox.top - fHeight * 17 / 30.0f),
-                    PWLPT_LINETO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth * 0.38f,
-                               crBBox.bottom + fWidth * 0.24f),
-                    PWLPT_LINETO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth * 0.22f,
-                               crBBox.top - fHeight * 17 / 30.0f),
-                    PWLPT_LINETO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth * 0.12f,
-                               crBBox.top - fHeight * 17 / 30.0f),
-                    PWLPT_LINETO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth * 0.6f,
-                               crBBox.bottom + fHeight / 10.0f),
-                    PWLPT_MOVETO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth * 0.7f,
-                               crBBox.bottom + fHeight / 10.0f),
-                    PWLPT_LINETO),
-      CPWL_PathData(
-          CPWL_Point(crBBox.left + fWidth * 0.7f,
-                     crBBox.bottom + fHeight / 10.0f + fHeight / 7.0f),
-          PWLPT_LINETO),
-      CPWL_PathData(
-          CPWL_Point(crBBox.left + fWidth * 0.97f,
-                     crBBox.bottom + fHeight / 10.0f + fHeight / 7.0f),
-          PWLPT_BEZIERTO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth * 0.97f,
-                               crBBox.top - fHeight * 17 / 30.0f),
-                    PWLPT_BEZIERTO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth * 0.7f,
-                               crBBox.top - fHeight * 17 / 30.0f),
-                    PWLPT_BEZIERTO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth * 0.6f,
-                               crBBox.top - fHeight * 17 / 30.0f),
-                    PWLPT_LINETO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth * 0.6f,
-                               crBBox.bottom + fHeight / 10.0f),
-                    PWLPT_LINETO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth * 0.7f,
-                               crBBox.bottom + fHeight / 7 + fHeight * 0.18f),
-                    PWLPT_MOVETO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth * 0.85f,
-                               crBBox.bottom + fHeight / 7 + fHeight * 0.18f),
-                    PWLPT_BEZIERTO),
-      CPWL_PathData(
-          CPWL_Point(crBBox.left + fWidth * 0.85f,
-                     crBBox.top - fHeight * 17 / 30.0f - fHeight * 0.08f),
-          PWLPT_BEZIERTO),
-      CPWL_PathData(
-          CPWL_Point(crBBox.left + fWidth * 0.7f,
-                     crBBox.top - fHeight * 17 / 30.0f - fHeight * 0.08f),
-          PWLPT_BEZIERTO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth * 0.7f,
-                               crBBox.bottom + fHeight / 7 + fHeight * 0.18f),
-                    PWLPT_LINETO)};
+      {{crBBox.left + fWidth / 2.0f, crBBox.top - fHeight / 20.0f},
+       PWLPT_MOVETO},
+      {{crBBox.left + fWidth / 10.0f, crBBox.top - fHeight / 2.0f},
+       PWLPT_LINETO},
+      {{crBBox.right - fWidth / 10.0f, crBBox.top - fHeight / 2.0f},
+       PWLPT_LINETO},
+      {{crBBox.left + fWidth / 2.0f, crBBox.top - fHeight / 20.0f},
+       PWLPT_LINETO},
+      {{crBBox.left + fWidth * 0.12f, crBBox.top - fHeight * 17 / 30.0f},
+       PWLPT_MOVETO},
+      {{crBBox.left + fWidth * 0.12f, crBBox.bottom + fHeight / 10.0f},
+       PWLPT_LINETO},
+      {{crBBox.left + fWidth * 0.22f, crBBox.bottom + fHeight / 10.0f},
+       PWLPT_LINETO},
+      {{crBBox.left + fWidth * 0.22f,
+        crBBox.top - fHeight * 17 / 30.0f - fWidth * 0.14f},
+       PWLPT_LINETO},
+      {{crBBox.left + fWidth * 0.38f, crBBox.bottom + fHeight / 10.0f},
+       PWLPT_LINETO},
+      {{crBBox.left + fWidth * 0.48f, crBBox.bottom + fHeight / 10.0f},
+       PWLPT_LINETO},
+      {{crBBox.left + fWidth * 0.48f, crBBox.top - fHeight * 17 / 30.0f},
+       PWLPT_LINETO},
+      {{crBBox.left + fWidth * 0.38f, crBBox.top - fHeight * 17 / 30.0f},
+       PWLPT_LINETO},
+      {{crBBox.left + fWidth * 0.38f, crBBox.bottom + fWidth * 0.24f},
+       PWLPT_LINETO},
+      {{crBBox.left + fWidth * 0.22f, crBBox.top - fHeight * 17 / 30.0f},
+       PWLPT_LINETO},
+      {{crBBox.left + fWidth * 0.12f, crBBox.top - fHeight * 17 / 30.0f},
+       PWLPT_LINETO},
+      {{crBBox.left + fWidth * 0.6f, crBBox.bottom + fHeight / 10.0f},
+       PWLPT_MOVETO},
+      {{crBBox.left + fWidth * 0.7f, crBBox.bottom + fHeight / 10.0f},
+       PWLPT_LINETO},
+      {{crBBox.left + fWidth * 0.7f,
+        crBBox.bottom + fHeight / 10.0f + fHeight / 7.0f},
+       PWLPT_LINETO},
+      {{crBBox.left + fWidth * 0.97f,
+        crBBox.bottom + fHeight / 10.0f + fHeight / 7.0f},
+       PWLPT_BEZIERTO},
+      {{crBBox.left + fWidth * 0.97f, crBBox.top - fHeight * 17 / 30.0f},
+       PWLPT_BEZIERTO},
+      {{crBBox.left + fWidth * 0.7f, crBBox.top - fHeight * 17 / 30.0f},
+       PWLPT_BEZIERTO},
+      {{crBBox.left + fWidth * 0.6f, crBBox.top - fHeight * 17 / 30.0f},
+       PWLPT_LINETO},
+      {{crBBox.left + fWidth * 0.6f, crBBox.bottom + fHeight / 10.0f},
+       PWLPT_LINETO},
+      {{crBBox.left + fWidth * 0.7f,
+        crBBox.bottom + fHeight / 7 + fHeight * 0.18f},
+       PWLPT_MOVETO},
+      {{crBBox.left + fWidth * 0.85f,
+        crBBox.bottom + fHeight / 7 + fHeight * 0.18f},
+       PWLPT_BEZIERTO},
+      {{crBBox.left + fWidth * 0.85f,
+        crBBox.top - fHeight * 17 / 30.0f - fHeight * 0.08f},
+       PWLPT_BEZIERTO},
+      {{crBBox.left + fWidth * 0.7f,
+        crBBox.top - fHeight * 17 / 30.0f - fHeight * 0.08f},
+       PWLPT_BEZIERTO},
+      {{crBBox.left + fWidth * 0.7f,
+        crBBox.bottom + fHeight / 7 + fHeight * 0.18f},
+       PWLPT_LINETO}};
 
   if (type == PWLPT_STREAM)
-    sPathData = GetAppStreamFromArray(PathArray, 28);
+    sPathData = GetAppStreamFromArray(PathArray, FX_ArraySize(PathArray));
   else
-    GetPathDataFromArray(path, PathArray, 28);
+    GetPathDataFromArray(path, PathArray, FX_ArraySize(PathArray));
 }
 
 void CPWL_Utils::GetGraphics_TextNote(CFX_ByteString& sPathData,
@@ -2545,62 +2345,45 @@ void CPWL_Utils::GetGraphics_TextNote(CFX_ByteString& sPathData,
   FX_FLOAT fHeight = crBBox.top - crBBox.bottom;
 
   CPWL_PathData PathArray[] = {
-      CPWL_PathData(CPWL_Point(crBBox.right - fWidth * 3 / 10.0f,
-                               crBBox.bottom + fHeight / 15.0f),
-                    PWLPT_MOVETO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth * 7 / 10.0f,
-                               crBBox.bottom + fHeight * 4 / 15.0f),
-                    PWLPT_LINETO),
-      CPWL_PathData(CPWL_Point(crBBox.right - fWidth / 10.0f,
-                               crBBox.bottom + fHeight * 4 / 15.0f),
-                    PWLPT_LINETO),
-      CPWL_PathData(CPWL_Point(crBBox.right - fWidth / 10.0f,
-                               crBBox.top - fHeight / 15.0f),
-                    PWLPT_LINETO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth / 10.0f,
-                               crBBox.top - fHeight / 15.0f),
-                    PWLPT_LINETO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth / 10.0f,
-                               crBBox.bottom + fHeight / 15.0f),
-                    PWLPT_LINETO),
-      CPWL_PathData(CPWL_Point(crBBox.right - fWidth * 3 / 10.0f,
-                               crBBox.bottom + fHeight / 15.0f),
-                    PWLPT_LINETO),
-      CPWL_PathData(CPWL_Point(crBBox.right - fWidth / 10.0f,
-                               crBBox.bottom + fHeight * 4 / 15.0f),
-                    PWLPT_LINETO),
-      CPWL_PathData(CPWL_Point(crBBox.right - fWidth * 3 / 10.0f,
-                               crBBox.bottom + fHeight / 15.0f),
-                    PWLPT_LINETO),
-      CPWL_PathData(CPWL_Point(crBBox.right - fWidth * 3 / 10.0f,
-                               crBBox.bottom + fHeight * 4 / 15.0f),
-                    PWLPT_LINETO),
-      CPWL_PathData(CPWL_Point(crBBox.right - fWidth / 10.0f,
-                               crBBox.bottom + fHeight * 4 / 15.0f),
-                    PWLPT_LINETO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth / 5.0f,
-                               crBBox.top - fHeight * 4 / 15.0f),
-                    PWLPT_MOVETO),
-      CPWL_PathData(CPWL_Point(crBBox.right - fWidth / 5.0f,
-                               crBBox.top - fHeight * 4 / 15.0f),
-                    PWLPT_LINETO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth / 5.0f,
-                               crBBox.top - fHeight * 7 / 15.0f),
-                    PWLPT_MOVETO),
-      CPWL_PathData(CPWL_Point(crBBox.right - fWidth / 5.0f,
-                               crBBox.top - fHeight * 7 / 15.0f),
-                    PWLPT_LINETO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth / 5.0f,
-                               crBBox.top - fHeight * 10 / 15.0f),
-                    PWLPT_MOVETO),
-      CPWL_PathData(CPWL_Point(crBBox.right - fWidth * 3 / 10.0f,
-                               crBBox.top - fHeight * 10 / 15.0f),
-                    PWLPT_LINETO)};
+      {{crBBox.right - fWidth * 3 / 10.0f, crBBox.bottom + fHeight / 15.0f},
+       PWLPT_MOVETO},
+      {{crBBox.left + fWidth * 7 / 10.0f, crBBox.bottom + fHeight * 4 / 15.0f},
+       PWLPT_LINETO},
+      {{crBBox.right - fWidth / 10.0f, crBBox.bottom + fHeight * 4 / 15.0f},
+       PWLPT_LINETO},
+      {{crBBox.right - fWidth / 10.0f, crBBox.top - fHeight / 15.0f},
+       PWLPT_LINETO},
+      {{crBBox.left + fWidth / 10.0f, crBBox.top - fHeight / 15.0f},
+       PWLPT_LINETO},
+      {{crBBox.left + fWidth / 10.0f, crBBox.bottom + fHeight / 15.0f},
+       PWLPT_LINETO},
+      {{crBBox.right - fWidth * 3 / 10.0f, crBBox.bottom + fHeight / 15.0f},
+       PWLPT_LINETO},
+      {{crBBox.right - fWidth / 10.0f, crBBox.bottom + fHeight * 4 / 15.0f},
+       PWLPT_LINETO},
+      {{crBBox.right - fWidth * 3 / 10.0f, crBBox.bottom + fHeight / 15.0f},
+       PWLPT_LINETO},
+      {{crBBox.right - fWidth * 3 / 10.0f, crBBox.bottom + fHeight * 4 / 15.0f},
+       PWLPT_LINETO},
+      {{crBBox.right - fWidth / 10.0f, crBBox.bottom + fHeight * 4 / 15.0f},
+       PWLPT_LINETO},
+      {{crBBox.left + fWidth / 5.0f, crBBox.top - fHeight * 4 / 15.0f},
+       PWLPT_MOVETO},
+      {{crBBox.right - fWidth / 5.0f, crBBox.top - fHeight * 4 / 15.0f},
+       PWLPT_LINETO},
+      {{crBBox.left + fWidth / 5.0f, crBBox.top - fHeight * 7 / 15.0f},
+       PWLPT_MOVETO},
+      {{crBBox.right - fWidth / 5.0f, crBBox.top - fHeight * 7 / 15.0f},
+       PWLPT_LINETO},
+      {{crBBox.left + fWidth / 5.0f, crBBox.top - fHeight * 10 / 15.0f},
+       PWLPT_MOVETO},
+      {{crBBox.right - fWidth * 3 / 10.0f, crBBox.top - fHeight * 10 / 15.0f},
+       PWLPT_LINETO}};
 
   if (type == PWLPT_STREAM)
-    sPathData = GetAppStreamFromArray(PathArray, 17);
+    sPathData = GetAppStreamFromArray(PathArray, FX_ArraySize(PathArray));
   else
-    GetPathDataFromArray(path, PathArray, 17);
+    GetPathDataFromArray(path, PathArray, FX_ArraySize(PathArray));
 }
 
 void CPWL_Utils::GetGraphics_Paragraph(CFX_ByteString& sPathData,
@@ -2611,47 +2394,37 @@ void CPWL_Utils::GetGraphics_Paragraph(CFX_ByteString& sPathData,
   FX_FLOAT fHeight = crBBox.top - crBBox.bottom;
 
   CPWL_PathData PathArray[] = {
-      CPWL_PathData(
-          CPWL_Point(crBBox.left + fWidth / 2.0f, crBBox.top - fHeight / 15.0f),
-          PWLPT_MOVETO),
-      CPWL_PathData(
-          CPWL_Point(crBBox.left + fWidth * 0.7f, crBBox.top - fHeight / 15.0f),
-          PWLPT_LINETO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth * 0.7f,
-                               crBBox.bottom + fHeight / 15.0f),
-                    PWLPT_LINETO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth * 0.634f,
-                               crBBox.bottom + fHeight / 15.0f),
-                    PWLPT_LINETO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth * 0.634f,
-                               crBBox.top - fHeight * 2 / 15.0f),
-                    PWLPT_LINETO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth * 0.566f,
-                               crBBox.top - fHeight * 2 / 15.0f),
-                    PWLPT_LINETO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth * 0.566f,
-                               crBBox.bottom + fHeight / 15.0f),
-                    PWLPT_LINETO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth / 2.0f,
-                               crBBox.bottom + fHeight / 15.0f),
-                    PWLPT_LINETO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth / 2.0f,
-                               crBBox.top - fHeight / 15.0f - fHeight * 0.4f),
-                    PWLPT_LINETO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth * 0.2f,
-                               crBBox.top - fHeight / 15.0f - fHeight * 0.4f),
-                    PWLPT_BEZIERTO),
-      CPWL_PathData(
-          CPWL_Point(crBBox.left + fWidth * 0.2f, crBBox.top - fHeight / 15.0f),
-          PWLPT_BEZIERTO),
-      CPWL_PathData(
-          CPWL_Point(crBBox.left + fWidth / 2.0f, crBBox.top - fHeight / 15.0f),
-          PWLPT_BEZIERTO)};
+      {{crBBox.left + fWidth / 2.0f, crBBox.top - fHeight / 15.0f},
+       PWLPT_MOVETO},
+      {{crBBox.left + fWidth * 0.7f, crBBox.top - fHeight / 15.0f},
+       PWLPT_LINETO},
+      {{crBBox.left + fWidth * 0.7f, crBBox.bottom + fHeight / 15.0f},
+       PWLPT_LINETO},
+      {{crBBox.left + fWidth * 0.634f, crBBox.bottom + fHeight / 15.0f},
+       PWLPT_LINETO},
+      {{crBBox.left + fWidth * 0.634f, crBBox.top - fHeight * 2 / 15.0f},
+       PWLPT_LINETO},
+      {{crBBox.left + fWidth * 0.566f, crBBox.top - fHeight * 2 / 15.0f},
+       PWLPT_LINETO},
+      {{crBBox.left + fWidth * 0.566f, crBBox.bottom + fHeight / 15.0f},
+       PWLPT_LINETO},
+      {{crBBox.left + fWidth / 2.0f, crBBox.bottom + fHeight / 15.0f},
+       PWLPT_LINETO},
+      {{crBBox.left + fWidth / 2.0f,
+        crBBox.top - fHeight / 15.0f - fHeight * 0.4f},
+       PWLPT_LINETO},
+      {{crBBox.left + fWidth * 0.2f,
+        crBBox.top - fHeight / 15.0f - fHeight * 0.4f},
+       PWLPT_BEZIERTO},
+      {{crBBox.left + fWidth * 0.2f, crBBox.top - fHeight / 15.0f},
+       PWLPT_BEZIERTO},
+      {{crBBox.left + fWidth / 2.0f, crBBox.top - fHeight / 15.0f},
+       PWLPT_BEZIERTO}};
 
   if (type == PWLPT_STREAM)
-    sPathData = GetAppStreamFromArray(PathArray, 12);
+    sPathData = GetAppStreamFromArray(PathArray, FX_ArraySize(PathArray));
   else
-    GetPathDataFromArray(path, PathArray, 12);
+    GetPathDataFromArray(path, PathArray, FX_ArraySize(PathArray));
 }
 
 void CPWL_Utils::GetGraphics_RightArrow(CFX_ByteString& sPathData,
@@ -2662,41 +2435,37 @@ void CPWL_Utils::GetGraphics_RightArrow(CFX_ByteString& sPathData,
   FX_FLOAT fHeight = crBBox.top - crBBox.bottom;
 
   CPWL_PathData PathArray[] = {
-      CPWL_PathData(CPWL_Point(crBBox.right - fWidth / 15.0f,
-                               crBBox.top - fHeight / 2.0f),
-                    PWLPT_MOVETO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth / 2.0f + fWidth / 8.0f,
-                               crBBox.bottom + fHeight / 5.0f),
-                    PWLPT_LINETO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth / 2.0f,
-                               crBBox.bottom + fHeight / 5.0f),
-                    PWLPT_LINETO),
-      CPWL_PathData(CPWL_Point(crBBox.right - fWidth / 15.0f - fWidth * 0.15f,
-                               crBBox.top - fHeight / 2.0f - fWidth / 25.0f),
-                    PWLPT_LINETO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth * 0.1f,
-                               crBBox.top - fHeight / 2.0f - fWidth / 25.0f),
-                    PWLPT_LINETO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth * 0.1f,
-                               crBBox.top - fHeight / 2.0f + fWidth / 25.0f),
-                    PWLPT_LINETO),
-      CPWL_PathData(CPWL_Point(crBBox.right - fWidth / 15.0f - fWidth * 0.15f,
-                               crBBox.top - fHeight / 2.0f + fWidth / 25.0f),
-                    PWLPT_LINETO),
-      CPWL_PathData(
-          CPWL_Point(crBBox.left + fWidth / 2.0f, crBBox.top - fHeight / 5.0f),
-          PWLPT_LINETO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth / 2.0f + fWidth / 8.0f,
-                               crBBox.top - fHeight / 5.0f),
-                    PWLPT_LINETO),
-      CPWL_PathData(CPWL_Point(crBBox.right - fWidth / 15.0f,
-                               crBBox.top - fHeight / 2.0f),
-                    PWLPT_LINETO)};
+      {{crBBox.right - fWidth / 15.0f, crBBox.top - fHeight / 2.0f},
+       PWLPT_MOVETO},
+      {{crBBox.left + fWidth / 2.0f + fWidth / 8.0f,
+        crBBox.bottom + fHeight / 5.0f},
+       PWLPT_LINETO},
+      {{crBBox.left + fWidth / 2.0f, crBBox.bottom + fHeight / 5.0f},
+       PWLPT_LINETO},
+      {{crBBox.right - fWidth / 15.0f - fWidth * 0.15f,
+        crBBox.top - fHeight / 2.0f - fWidth / 25.0f},
+       PWLPT_LINETO},
+      {{crBBox.left + fWidth * 0.1f,
+        crBBox.top - fHeight / 2.0f - fWidth / 25.0f},
+       PWLPT_LINETO},
+      {{crBBox.left + fWidth * 0.1f,
+        crBBox.top - fHeight / 2.0f + fWidth / 25.0f},
+       PWLPT_LINETO},
+      {{crBBox.right - fWidth / 15.0f - fWidth * 0.15f,
+        crBBox.top - fHeight / 2.0f + fWidth / 25.0f},
+       PWLPT_LINETO},
+      {{crBBox.left + fWidth / 2.0f, crBBox.top - fHeight / 5.0f},
+       PWLPT_LINETO},
+      {{crBBox.left + fWidth / 2.0f + fWidth / 8.0f,
+        crBBox.top - fHeight / 5.0f},
+       PWLPT_LINETO},
+      {{crBBox.right - fWidth / 15.0f, crBBox.top - fHeight / 2.0f},
+       PWLPT_LINETO}};
 
   if (type == PWLPT_STREAM)
-    sPathData = GetAppStreamFromArray(PathArray, 10);
+    sPathData = GetAppStreamFromArray(PathArray, FX_ArraySize(PathArray));
   else
-    GetPathDataFromArray(path, PathArray, 10);
+    GetPathDataFromArray(path, PathArray, FX_ArraySize(PathArray));
 }
 
 void CPWL_Utils::GetGraphics_RightPointer(CFX_ByteString& sPathData,
@@ -2707,26 +2476,21 @@ void CPWL_Utils::GetGraphics_RightPointer(CFX_ByteString& sPathData,
   FX_FLOAT fHeight = crBBox.top - crBBox.bottom;
 
   CPWL_PathData PathArray[] = {
-      CPWL_PathData(CPWL_Point(crBBox.right - fWidth / 30.0f,
-                               crBBox.top - fHeight / 2.0f),
-                    PWLPT_MOVETO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth / 30.0f,
-                               crBBox.bottom + fHeight / 6.0f),
-                    PWLPT_LINETO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth * 4 / 15.0f,
-                               crBBox.top - fHeight / 2.0f),
-                    PWLPT_LINETO),
-      CPWL_PathData(
-          CPWL_Point(crBBox.left + fWidth / 30.0f, crBBox.top - fHeight / 6.0f),
-          PWLPT_LINETO),
-      CPWL_PathData(CPWL_Point(crBBox.right - fWidth / 30.0f,
-                               crBBox.top - fHeight / 2.0f),
-                    PWLPT_LINETO)};
+      {{crBBox.right - fWidth / 30.0f, crBBox.top - fHeight / 2.0f},
+       PWLPT_MOVETO},
+      {{crBBox.left + fWidth / 30.0f, crBBox.bottom + fHeight / 6.0f},
+       PWLPT_LINETO},
+      {{crBBox.left + fWidth * 4 / 15.0f, crBBox.top - fHeight / 2.0f},
+       PWLPT_LINETO},
+      {{crBBox.left + fWidth / 30.0f, crBBox.top - fHeight / 6.0f},
+       PWLPT_LINETO},
+      {{crBBox.right - fWidth / 30.0f, crBBox.top - fHeight / 2.0f},
+       PWLPT_LINETO}};
 
   if (type == PWLPT_STREAM)
-    sPathData = GetAppStreamFromArray(PathArray, 5);
+    sPathData = GetAppStreamFromArray(PathArray, FX_ArraySize(PathArray));
   else
-    GetPathDataFromArray(path, PathArray, 5);
+    GetPathDataFromArray(path, PathArray, FX_ArraySize(PathArray));
 }
 
 void CPWL_Utils::GetGraphics_Star(CFX_ByteString& sPathData,
@@ -2762,22 +2526,20 @@ void CPWL_Utils::GetGraphics_Star(CFX_ByteString& sPathData,
   }
 
   CPWL_PathData PathArray[11];
-  PathArray[0] = CPWL_PathData(CPWL_Point(px1[0], py1[0]), PWLPT_MOVETO);
-  PathArray[1] = CPWL_PathData(CPWL_Point(px2[0], py2[0]), PWLPT_LINETO);
+  PathArray[0] = {{px1[0], py1[0]}, PWLPT_MOVETO};
+  PathArray[1] = {{px2[0], py2[0]}, PWLPT_LINETO};
 
   for (int32_t k = 0; k < 4; k++) {
-    PathArray[(k + 1) * 2] =
-        CPWL_PathData(CPWL_Point(px1[k + 1], py1[k + 1]), PWLPT_LINETO);
-    PathArray[(k + 1) * 2 + 1] =
-        CPWL_PathData(CPWL_Point(px2[k + 1], py2[k + 1]), PWLPT_LINETO);
+    PathArray[(k + 1) * 2] = {{px1[k + 1], py1[k + 1]}, PWLPT_LINETO};
+    PathArray[(k + 1) * 2 + 1] = {{px2[k + 1], py2[k + 1]}, PWLPT_LINETO};
   }
 
-  PathArray[10] = CPWL_PathData(CPWL_Point(px1[0], py1[0]), PWLPT_LINETO);
+  PathArray[10] = {{px1[0], py1[0]}, PWLPT_LINETO};
 
   if (type == PWLPT_STREAM)
-    sPathData = GetAppStreamFromArray(PathArray, 11);
+    sPathData = GetAppStreamFromArray(PathArray, FX_ArraySize(PathArray));
   else
-    GetPathDataFromArray(path, PathArray, 11);
+    GetPathDataFromArray(path, PathArray, FX_ArraySize(PathArray));
 }
 
 void CPWL_Utils::GetGraphics_UpArrow(CFX_ByteString& sPathData,
@@ -2788,35 +2550,27 @@ void CPWL_Utils::GetGraphics_UpArrow(CFX_ByteString& sPathData,
   FX_FLOAT fHeight = crBBox.top - crBBox.bottom;
 
   CPWL_PathData PathArray[] = {
-      CPWL_PathData(
-          CPWL_Point(crBBox.left + fWidth / 2.0f, crBBox.top - fHeight / 15.0f),
-          PWLPT_MOVETO),
-      CPWL_PathData(CPWL_Point(crBBox.right - fWidth / 10.0f,
-                               crBBox.top - fWidth * 3 / 5.0f),
-                    PWLPT_LINETO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth * 0.6f,
-                               crBBox.top - fWidth * 3 / 5.0f),
-                    PWLPT_LINETO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth * 0.6f,
-                               crBBox.bottom + fHeight / 15.0f),
-                    PWLPT_LINETO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth * 0.4f,
-                               crBBox.bottom + fHeight / 15.0f),
-                    PWLPT_LINETO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth * 0.4f,
-                               crBBox.top - fWidth * 3 / 5.0f),
-                    PWLPT_LINETO),
-      CPWL_PathData(
-          CPWL_Point(crBBox.left + fWidth / 10, crBBox.top - fWidth * 3 / 5.0f),
-          PWLPT_LINETO),
-      CPWL_PathData(
-          CPWL_Point(crBBox.left + fWidth / 2.0f, crBBox.top - fHeight / 15.0f),
-          PWLPT_LINETO)};
+      {{crBBox.left + fWidth / 2.0f, crBBox.top - fHeight / 15.0f},
+       PWLPT_MOVETO},
+      {{crBBox.right - fWidth / 10.0f, crBBox.top - fWidth * 3 / 5.0f},
+       PWLPT_LINETO},
+      {{crBBox.left + fWidth * 0.6f, crBBox.top - fWidth * 3 / 5.0f},
+       PWLPT_LINETO},
+      {{crBBox.left + fWidth * 0.6f, crBBox.bottom + fHeight / 15.0f},
+       PWLPT_LINETO},
+      {{crBBox.left + fWidth * 0.4f, crBBox.bottom + fHeight / 15.0f},
+       PWLPT_LINETO},
+      {{crBBox.left + fWidth * 0.4f, crBBox.top - fWidth * 3 / 5.0f},
+       PWLPT_LINETO},
+      {{crBBox.left + fWidth / 10, crBBox.top - fWidth * 3 / 5.0f},
+       PWLPT_LINETO},
+      {{crBBox.left + fWidth / 2.0f, crBBox.top - fHeight / 15.0f},
+       PWLPT_LINETO}};
 
   if (type == PWLPT_STREAM)
-    sPathData = GetAppStreamFromArray(PathArray, 8);
+    sPathData = GetAppStreamFromArray(PathArray, FX_ArraySize(PathArray));
   else
-    GetPathDataFromArray(path, PathArray, 8);
+    GetPathDataFromArray(path, PathArray, FX_ArraySize(PathArray));
 }
 
 void CPWL_Utils::GetGraphics_UpLeftArrow(CFX_ByteString& sPathData,
@@ -2825,53 +2579,40 @@ void CPWL_Utils::GetGraphics_UpLeftArrow(CFX_ByteString& sPathData,
                                          const PWL_PATH_TYPE type) {
   FX_FLOAT fWidth = crBBox.right - crBBox.left;
   FX_FLOAT fHeight = crBBox.top - crBBox.bottom;
-  CPWL_Point leftup(crBBox.left, crBBox.top);
-  CPWL_Point rightdown(crBBox.right, crBBox.bottom);
+  CFX_PointF leftup(crBBox.left, crBBox.top);
+  CFX_PointF rightdown(crBBox.right, crBBox.bottom);
   FX_FLOAT k = -fHeight / fWidth;
-  CPWL_Point tail;
+  CFX_PointF tail;
   tail.x = crBBox.left + fWidth * 4 / 5.0f;
   tail.y = k * (tail.x - crBBox.right) + rightdown.y;
 
   CPWL_PathData PathArray[] = {
-      CPWL_PathData(
-          CPWL_Point(
-              crBBox.left + fWidth / 20.0f,
-              k * (crBBox.left + fWidth / 20.0f - rightdown.x) + rightdown.y),
-          PWLPT_MOVETO),
-      CPWL_PathData(CPWL_Point(fHeight * 17 / 60.0f / k + tail.x +
-                                   fWidth / 10.0f + fWidth / 5.0f,
-                               -fWidth / 5.0f / k + tail.y -
-                                   fWidth / 10.0f / k + fHeight * 17 / 60.0f),
-                    PWLPT_LINETO),
-      CPWL_PathData(
-          CPWL_Point(fHeight * 17 / 60.0f / k + tail.x + fWidth / 10.0f,
-                     tail.y - fWidth / 10.0f / k + fHeight * 17 / 60.0f),
-          PWLPT_LINETO),
-      CPWL_PathData(
-          CPWL_Point(tail.x + fWidth / 10.0f, tail.y - fWidth / 10.0f / k),
-          PWLPT_LINETO),
-      CPWL_PathData(
-          CPWL_Point(tail.x - fWidth / 10.0f, tail.y + fWidth / 10.0f / k),
-          PWLPT_LINETO),
-      CPWL_PathData(
-          CPWL_Point(fHeight * 17 / 60.0f / k + tail.x - fWidth / 10.0f,
-                     tail.y + fWidth / 10.0f / k + fHeight * 17 / 60.0f),
-          PWLPT_LINETO),
-      CPWL_PathData(CPWL_Point(fHeight * 17 / 60.0f / k + tail.x -
-                                   fWidth / 10.0f - fWidth / 5.0f,
-                               fWidth / 5.0f / k + tail.y + fWidth / 10.0f / k +
-                                   fHeight * 17 / 60.0f),
-                    PWLPT_LINETO),
-      CPWL_PathData(
-          CPWL_Point(
-              crBBox.left + fWidth / 20.0f,
-              k * (crBBox.left + fWidth / 20.0f - rightdown.x) + rightdown.y),
-          PWLPT_LINETO)};
+      {{crBBox.left + fWidth / 20.0f,
+        k * (crBBox.left + fWidth / 20.0f - rightdown.x) + rightdown.y},
+       PWLPT_MOVETO},
+      {{fHeight * 17 / 60.0f / k + tail.x + fWidth / 10.0f + fWidth / 5.0f,
+        -fWidth / 5.0f / k + tail.y - fWidth / 10.0f / k +
+            fHeight * 17 / 60.0f},
+       PWLPT_LINETO},
+      {{fHeight * 17 / 60.0f / k + tail.x + fWidth / 10.0f,
+        tail.y - fWidth / 10.0f / k + fHeight * 17 / 60.0f},
+       PWLPT_LINETO},
+      {{tail.x + fWidth / 10.0f, tail.y - fWidth / 10.0f / k}, PWLPT_LINETO},
+      {{tail.x - fWidth / 10.0f, tail.y + fWidth / 10.0f / k}, PWLPT_LINETO},
+      {{fHeight * 17 / 60.0f / k + tail.x - fWidth / 10.0f,
+        tail.y + fWidth / 10.0f / k + fHeight * 17 / 60.0f},
+       PWLPT_LINETO},
+      {{fHeight * 17 / 60.0f / k + tail.x - fWidth / 10.0f - fWidth / 5.0f,
+        fWidth / 5.0f / k + tail.y + fWidth / 10.0f / k + fHeight * 17 / 60.0f},
+       PWLPT_LINETO},
+      {{crBBox.left + fWidth / 20.0f,
+        k * (crBBox.left + fWidth / 20.0f - rightdown.x) + rightdown.y},
+       PWLPT_LINETO}};
 
   if (type == PWLPT_STREAM)
-    sPathData = GetAppStreamFromArray(PathArray, 8);
+    sPathData = GetAppStreamFromArray(PathArray, FX_ArraySize(PathArray));
   else
-    GetPathDataFromArray(path, PathArray, 8);
+    GetPathDataFromArray(path, PathArray, FX_ArraySize(PathArray));
 }
 
 void CPWL_Utils::GetGraphics_Graph(CFX_ByteString& sPathData,
@@ -2882,74 +2623,54 @@ void CPWL_Utils::GetGraphics_Graph(CFX_ByteString& sPathData,
   FX_FLOAT fHeight = crBBox.top - crBBox.bottom;
 
   CPWL_PathData PathArray[] = {
-      CPWL_PathData(
-          CPWL_Point(crBBox.left + fWidth * 0.05f, crBBox.top - fWidth * 0.15f),
-          PWLPT_MOVETO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth * 0.25f,
-                               crBBox.top - fHeight * 0.15f),
-                    PWLPT_LINETO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth * 0.275f,
-                               crBBox.bottom + fHeight * 0.08f),
-                    PWLPT_LINETO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth * 0.05f,
-                               crBBox.bottom + fHeight * 0.08f),
-                    PWLPT_LINETO),
-      CPWL_PathData(
-          CPWL_Point(crBBox.left + fWidth * 0.05f, crBBox.top - fWidth * 0.15f),
-          PWLPT_LINETO),
+      {{crBBox.left + fWidth * 0.05f, crBBox.top - fWidth * 0.15f},
+       PWLPT_MOVETO},
+      {{crBBox.left + fWidth * 0.25f, crBBox.top - fHeight * 0.15f},
+       PWLPT_LINETO},
+      {{crBBox.left + fWidth * 0.275f, crBBox.bottom + fHeight * 0.08f},
+       PWLPT_LINETO},
+      {{crBBox.left + fWidth * 0.05f, crBBox.bottom + fHeight * 0.08f},
+       PWLPT_LINETO},
+      {{crBBox.left + fWidth * 0.05f, crBBox.top - fWidth * 0.15f},
+       PWLPT_LINETO},
 
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth * 0.275f,
-                               crBBox.top - fWidth * 0.45f),
-                    PWLPT_MOVETO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth * 0.475f,
-                               crBBox.top - fWidth * 0.45f),
-                    PWLPT_LINETO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth * 0.475f,
-                               crBBox.bottom + fHeight * 0.08f),
-                    PWLPT_LINETO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth * 0.275f,
-                               crBBox.bottom + fHeight * 0.08f),
-                    PWLPT_LINETO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth * 0.275f,
-                               crBBox.top - fWidth * 0.45f),
-                    PWLPT_LINETO),
+      {{crBBox.left + fWidth * 0.275f, crBBox.top - fWidth * 0.45f},
+       PWLPT_MOVETO},
+      {{crBBox.left + fWidth * 0.475f, crBBox.top - fWidth * 0.45f},
+       PWLPT_LINETO},
+      {{crBBox.left + fWidth * 0.475f, crBBox.bottom + fHeight * 0.08f},
+       PWLPT_LINETO},
+      {{crBBox.left + fWidth * 0.275f, crBBox.bottom + fHeight * 0.08f},
+       PWLPT_LINETO},
+      {{crBBox.left + fWidth * 0.275f, crBBox.top - fWidth * 0.45f},
+       PWLPT_LINETO},
 
-      CPWL_PathData(
-          CPWL_Point(crBBox.left + fWidth * 0.5f, crBBox.top - fHeight * 0.05f),
-          PWLPT_MOVETO),
-      CPWL_PathData(
-          CPWL_Point(crBBox.left + fWidth * 0.7f, crBBox.top - fHeight * 0.05f),
-          PWLPT_LINETO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth * 0.7f,
-                               crBBox.bottom + fHeight * 0.08f),
-                    PWLPT_LINETO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth * 0.5f,
-                               crBBox.bottom + fHeight * 0.08f),
-                    PWLPT_LINETO),
-      CPWL_PathData(
-          CPWL_Point(crBBox.left + fWidth * 0.5f, crBBox.top - fHeight * 0.05f),
-          PWLPT_LINETO),
+      {{crBBox.left + fWidth * 0.5f, crBBox.top - fHeight * 0.05f},
+       PWLPT_MOVETO},
+      {{crBBox.left + fWidth * 0.7f, crBBox.top - fHeight * 0.05f},
+       PWLPT_LINETO},
+      {{crBBox.left + fWidth * 0.7f, crBBox.bottom + fHeight * 0.08f},
+       PWLPT_LINETO},
+      {{crBBox.left + fWidth * 0.5f, crBBox.bottom + fHeight * 0.08f},
+       PWLPT_LINETO},
+      {{crBBox.left + fWidth * 0.5f, crBBox.top - fHeight * 0.05f},
+       PWLPT_LINETO},
 
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth * 0.725f,
-                               crBBox.top - fWidth * 0.35f),
-                    PWLPT_MOVETO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth * 0.925f,
-                               crBBox.top - fWidth * 0.35f),
-                    PWLPT_LINETO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth * 0.925f,
-                               crBBox.bottom + fHeight * 0.08f),
-                    PWLPT_LINETO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth * 0.725f,
-                               crBBox.bottom + fHeight * 0.08f),
-                    PWLPT_LINETO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth * 0.725f,
-                               crBBox.top - fWidth * 0.35f),
-                    PWLPT_LINETO)};
+      {{crBBox.left + fWidth * 0.725f, crBBox.top - fWidth * 0.35f},
+       PWLPT_MOVETO},
+      {{crBBox.left + fWidth * 0.925f, crBBox.top - fWidth * 0.35f},
+       PWLPT_LINETO},
+      {{crBBox.left + fWidth * 0.925f, crBBox.bottom + fHeight * 0.08f},
+       PWLPT_LINETO},
+      {{crBBox.left + fWidth * 0.725f, crBBox.bottom + fHeight * 0.08f},
+       PWLPT_LINETO},
+      {{crBBox.left + fWidth * 0.725f, crBBox.top - fWidth * 0.35f},
+       PWLPT_LINETO}};
 
   if (type == PWLPT_STREAM)
-    sPathData = GetAppStreamFromArray(PathArray, 20);
+    sPathData = GetAppStreamFromArray(PathArray, FX_ArraySize(PathArray));
   else
-    GetPathDataFromArray(path, PathArray, 20);
+    GetPathDataFromArray(path, PathArray, FX_ArraySize(PathArray));
 }
 
 void CPWL_Utils::GetGraphics_Paperclip(CFX_ByteString& sPathData,
@@ -2960,139 +2681,113 @@ void CPWL_Utils::GetGraphics_Paperclip(CFX_ByteString& sPathData,
   FX_FLOAT fHeight = crBBox.top - crBBox.bottom;
 
   CPWL_PathData PathArray[] = {
-      CPWL_PathData(
-          CPWL_Point(crBBox.left + fWidth / 60, crBBox.top - fHeight * 0.25f),
-          PWLPT_MOVETO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth / 60,
-                               crBBox.bottom + fHeight * 0.25f),
-                    PWLPT_LINETO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth / 60,
-                               crBBox.bottom + fHeight * 0.25f -
-                                   fWidth * 57 / 60.0f * 0.35f),
-                    PWLPT_BEZIERTO),
-      CPWL_PathData(CPWL_Point(crBBox.right - fWidth / 30,
-                               crBBox.bottom + fHeight * 0.25f -
-                                   fWidth * 57 / 60.0f * 0.35f),
-                    PWLPT_BEZIERTO),
-      CPWL_PathData(CPWL_Point(crBBox.right - fWidth / 30,
-                               crBBox.bottom + fHeight * 0.25f),
-                    PWLPT_BEZIERTO),
+      {{crBBox.left + fWidth / 60, crBBox.top - fHeight * 0.25f}, PWLPT_MOVETO},
+      {{crBBox.left + fWidth / 60, crBBox.bottom + fHeight * 0.25f},
+       PWLPT_LINETO},
+      {{crBBox.left + fWidth / 60,
+        crBBox.bottom + fHeight * 0.25f - fWidth * 57 / 60.0f * 0.35f},
+       PWLPT_BEZIERTO},
+      {{crBBox.right - fWidth / 30,
+        crBBox.bottom + fHeight * 0.25f - fWidth * 57 / 60.0f * 0.35f},
+       PWLPT_BEZIERTO},
+      {{crBBox.right - fWidth / 30, crBBox.bottom + fHeight * 0.25f},
+       PWLPT_BEZIERTO},
 
-      CPWL_PathData(
-          CPWL_Point(crBBox.right - fWidth / 30, crBBox.top - fHeight * 0.33f),
-          PWLPT_LINETO),
-      CPWL_PathData(
-          CPWL_Point(crBBox.right - fWidth / 30,
-                     crBBox.top - fHeight * 0.33f + fHeight / 15 * 0.5f),
-          PWLPT_BEZIERTO),
-      CPWL_PathData(
-          CPWL_Point(crBBox.right - fWidth / 30 - fWidth * 0.12f,
-                     crBBox.top - fHeight * 0.33f + fHeight / 15 * 0.5f),
-          PWLPT_BEZIERTO),
-      CPWL_PathData(CPWL_Point(crBBox.right - fWidth / 30 - fWidth * 0.12f,
-                               crBBox.top - fHeight * 0.33f),
-                    PWLPT_BEZIERTO),
+      {{crBBox.right - fWidth / 30, crBBox.top - fHeight * 0.33f},
+       PWLPT_LINETO},
+      {{crBBox.right - fWidth / 30,
+        crBBox.top - fHeight * 0.33f + fHeight / 15 * 0.5f},
+       PWLPT_BEZIERTO},
+      {{crBBox.right - fWidth / 30 - fWidth * 0.12f,
+        crBBox.top - fHeight * 0.33f + fHeight / 15 * 0.5f},
+       PWLPT_BEZIERTO},
+      {{crBBox.right - fWidth / 30 - fWidth * 0.12f,
+        crBBox.top - fHeight * 0.33f},
+       PWLPT_BEZIERTO},
 
-      CPWL_PathData(CPWL_Point(crBBox.right - fWidth / 30 - fWidth * 0.12f,
-                               crBBox.bottom + fHeight * 0.2f),
-                    PWLPT_LINETO),
-      CPWL_PathData(
-          CPWL_Point(crBBox.right - fWidth / 30 - fWidth * 0.12f,
-                     crBBox.bottom + fHeight * 0.2f -
-                         (fWidth * 57 / 60.0f - fWidth * 0.24f) * 0.25f),
-          PWLPT_BEZIERTO),
-      CPWL_PathData(
-          CPWL_Point(crBBox.left + fWidth / 60 + fWidth * 0.12f,
-                     crBBox.bottom + fHeight * 0.2f -
-                         (fWidth * 57 / 60.0f - fWidth * 0.24f) * 0.25f),
-          PWLPT_BEZIERTO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth / 60 + fWidth * 0.12f,
-                               crBBox.bottom + fHeight * 0.2f),
-                    PWLPT_BEZIERTO),
+      {{crBBox.right - fWidth / 30 - fWidth * 0.12f,
+        crBBox.bottom + fHeight * 0.2f},
+       PWLPT_LINETO},
+      {{crBBox.right - fWidth / 30 - fWidth * 0.12f,
+        crBBox.bottom + fHeight * 0.2f -
+            (fWidth * 57 / 60.0f - fWidth * 0.24f) * 0.25f},
+       PWLPT_BEZIERTO},
+      {{crBBox.left + fWidth / 60 + fWidth * 0.12f,
+        crBBox.bottom + fHeight * 0.2f -
+            (fWidth * 57 / 60.0f - fWidth * 0.24f) * 0.25f},
+       PWLPT_BEZIERTO},
+      {{crBBox.left + fWidth / 60 + fWidth * 0.12f,
+        crBBox.bottom + fHeight * 0.2f},
+       PWLPT_BEZIERTO},
 
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth / 60 + fWidth * 0.12f,
-                               crBBox.top - fHeight * 0.2f),
-                    PWLPT_LINETO),
-      CPWL_PathData(
-          CPWL_Point(crBBox.left + fWidth / 60 + fWidth * 0.12f,
-                     crBBox.top - fHeight * 0.2f +
-                         (fWidth * 11 / 12.0f - fWidth * 0.36f) * 0.25f),
-          PWLPT_BEZIERTO),
-      CPWL_PathData(
-          CPWL_Point(crBBox.right - fWidth / 15 - fWidth * 0.24f,
-                     crBBox.top - fHeight * 0.2f +
-                         (fWidth * 11 / 12.0f - fWidth * 0.36f) * 0.25f),
-          PWLPT_BEZIERTO),
-      CPWL_PathData(CPWL_Point(crBBox.right - fWidth / 15 - fWidth * 0.24f,
-                               crBBox.top - fHeight * 0.2f),
-                    PWLPT_BEZIERTO),
+      {{crBBox.left + fWidth / 60 + fWidth * 0.12f,
+        crBBox.top - fHeight * 0.2f},
+       PWLPT_LINETO},
+      {{crBBox.left + fWidth / 60 + fWidth * 0.12f,
+        crBBox.top - fHeight * 0.2f +
+            (fWidth * 11 / 12.0f - fWidth * 0.36f) * 0.25f},
+       PWLPT_BEZIERTO},
+      {{crBBox.right - fWidth / 15 - fWidth * 0.24f,
+        crBBox.top - fHeight * 0.2f +
+            (fWidth * 11 / 12.0f - fWidth * 0.36f) * 0.25f},
+       PWLPT_BEZIERTO},
+      {{crBBox.right - fWidth / 15 - fWidth * 0.24f,
+        crBBox.top - fHeight * 0.2f},
+       PWLPT_BEZIERTO},
 
-      CPWL_PathData(CPWL_Point(crBBox.right - fWidth / 15 - fWidth * 0.24f,
-                               crBBox.bottom + fHeight * 0.25f),
-                    PWLPT_LINETO),
-      CPWL_PathData(
-          CPWL_Point(crBBox.right - fWidth / 15 - fWidth * 0.24f,
-                     crBBox.bottom + fHeight * 0.25f -
-                         (fWidth * 14 / 15.0f - fWidth * 0.53f) * 0.25f),
-          PWLPT_BEZIERTO),
-      CPWL_PathData(
-          CPWL_Point(crBBox.left + fWidth * 0.29f,
-                     crBBox.bottom + fHeight * 0.25f -
-                         (fWidth * 14 / 15.0f - fWidth * 0.53f) * 0.25f),
-          PWLPT_BEZIERTO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth * 0.29f,
-                               crBBox.bottom + fHeight * 0.25f),
-                    PWLPT_BEZIERTO),
+      {{crBBox.right - fWidth / 15 - fWidth * 0.24f,
+        crBBox.bottom + fHeight * 0.25f},
+       PWLPT_LINETO},
+      {{crBBox.right - fWidth / 15 - fWidth * 0.24f,
+        crBBox.bottom + fHeight * 0.25f -
+            (fWidth * 14 / 15.0f - fWidth * 0.53f) * 0.25f},
+       PWLPT_BEZIERTO},
+      {{crBBox.left + fWidth * 0.29f,
+        crBBox.bottom + fHeight * 0.25f -
+            (fWidth * 14 / 15.0f - fWidth * 0.53f) * 0.25f},
+       PWLPT_BEZIERTO},
+      {{crBBox.left + fWidth * 0.29f, crBBox.bottom + fHeight * 0.25f},
+       PWLPT_BEZIERTO},
 
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth * 0.29f,
-                               crBBox.top - fHeight * 0.33f),
-                    PWLPT_LINETO),
-      CPWL_PathData(
-          CPWL_Point(crBBox.left + fWidth * 0.29f,
-                     crBBox.top - fHeight * 0.33f + fWidth * 0.12f * 0.35f),
-          PWLPT_BEZIERTO),
-      CPWL_PathData(
-          CPWL_Point(crBBox.left + fWidth * 0.17f,
-                     crBBox.top - fHeight * 0.33f + fWidth * 0.12f * 0.35f),
-          PWLPT_BEZIERTO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth * 0.17f,
-                               crBBox.top - fHeight * 0.33f),
-                    PWLPT_BEZIERTO),
+      {{crBBox.left + fWidth * 0.29f, crBBox.top - fHeight * 0.33f},
+       PWLPT_LINETO},
+      {{crBBox.left + fWidth * 0.29f,
+        crBBox.top - fHeight * 0.33f + fWidth * 0.12f * 0.35f},
+       PWLPT_BEZIERTO},
+      {{crBBox.left + fWidth * 0.17f,
+        crBBox.top - fHeight * 0.33f + fWidth * 0.12f * 0.35f},
+       PWLPT_BEZIERTO},
+      {{crBBox.left + fWidth * 0.17f, crBBox.top - fHeight * 0.33f},
+       PWLPT_BEZIERTO},
 
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth * 0.17f,
-                               crBBox.bottom + fHeight * 0.3f),
-                    PWLPT_LINETO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth * 0.17f,
-                               crBBox.bottom + fHeight * 0.3f -
-                                   fWidth * (14 / 15.0f - 0.29f) * 0.35f),
-                    PWLPT_BEZIERTO),
-      CPWL_PathData(CPWL_Point(crBBox.right - fWidth / 15 - fWidth * 0.12f,
-                               crBBox.bottom + fHeight * 0.3f -
-                                   fWidth * (14 / 15.0f - 0.29f) * 0.35f),
-                    PWLPT_BEZIERTO),
-      CPWL_PathData(CPWL_Point(crBBox.right - fWidth / 15 - fWidth * 0.12f,
-                               crBBox.bottom + fHeight * 0.3f),
-                    PWLPT_BEZIERTO),
+      {{crBBox.left + fWidth * 0.17f, crBBox.bottom + fHeight * 0.3f},
+       PWLPT_LINETO},
+      {{crBBox.left + fWidth * 0.17f,
+        crBBox.bottom + fHeight * 0.3f - fWidth * (14 / 15.0f - 0.29f) * 0.35f},
+       PWLPT_BEZIERTO},
+      {{crBBox.right - fWidth / 15 - fWidth * 0.12f,
+        crBBox.bottom + fHeight * 0.3f - fWidth * (14 / 15.0f - 0.29f) * 0.35f},
+       PWLPT_BEZIERTO},
+      {{crBBox.right - fWidth / 15 - fWidth * 0.12f,
+        crBBox.bottom + fHeight * 0.3f},
+       PWLPT_BEZIERTO},
 
-      CPWL_PathData(CPWL_Point(crBBox.right - fWidth / 15 - fWidth * 0.12f,
-                               crBBox.top - fHeight * 0.25f),
-                    PWLPT_LINETO),
-      CPWL_PathData(CPWL_Point(crBBox.right - fWidth / 15 - fWidth * 0.12f,
-                               crBBox.top - fHeight * 0.25f +
-                                   fWidth * 0.35f * (11 / 12.0f - 0.12f)),
-                    PWLPT_BEZIERTO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth / 60,
-                               crBBox.top - fHeight * 0.25f +
-                                   fWidth * 0.35f * (11 / 12.0f - 0.12f)),
-                    PWLPT_BEZIERTO),
-      CPWL_PathData(
-          CPWL_Point(crBBox.left + fWidth / 60, crBBox.top - fHeight * 0.25f),
-          PWLPT_BEZIERTO)};
+      {{crBBox.right - fWidth / 15 - fWidth * 0.12f,
+        crBBox.top - fHeight * 0.25f},
+       PWLPT_LINETO},
+      {{crBBox.right - fWidth / 15 - fWidth * 0.12f,
+        crBBox.top - fHeight * 0.25f + fWidth * 0.35f * (11 / 12.0f - 0.12f)},
+       PWLPT_BEZIERTO},
+      {{crBBox.left + fWidth / 60,
+        crBBox.top - fHeight * 0.25f + fWidth * 0.35f * (11 / 12.0f - 0.12f)},
+       PWLPT_BEZIERTO},
+      {{crBBox.left + fWidth / 60, crBBox.top - fHeight * 0.25f},
+       PWLPT_BEZIERTO}};
 
   if (type == PWLPT_STREAM)
-    sPathData = GetAppStreamFromArray(PathArray, 33);
+    sPathData = GetAppStreamFromArray(PathArray, FX_ArraySize(PathArray));
   else
-    GetPathDataFromArray(path, PathArray, 33);
+    GetPathDataFromArray(path, PathArray, FX_ArraySize(PathArray));
 }
 
 void CPWL_Utils::GetGraphics_Attachment(CFX_ByteString& sPathData,
@@ -3103,92 +2798,72 @@ void CPWL_Utils::GetGraphics_Attachment(CFX_ByteString& sPathData,
   FX_FLOAT fHeight = crBBox.top - crBBox.bottom;
 
   CPWL_PathData PathArray[] = {
-      CPWL_PathData(
-          CPWL_Point(crBBox.left + fWidth * 0.25f, crBBox.top - fHeight * 0.1f),
-          PWLPT_MOVETO),
-      CPWL_PathData(
-          CPWL_Point(crBBox.left + fWidth * 0.4f, crBBox.top - fHeight * 0.23f),
-          PWLPT_LINETO),
-      CPWL_PathData(
-          CPWL_Point(crBBox.left + fWidth * 0.4f, crBBox.top - fHeight * 0.5f),
-          PWLPT_LINETO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth * 0.4f,
-                               crBBox.top - fHeight * 0.5f + fWidth * 0.04f),
-                    PWLPT_BEZIERTO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth * 0.6f,
-                               crBBox.top - fHeight * 0.5f + fWidth * 0.04f),
-                    PWLPT_BEZIERTO),
-      CPWL_PathData(
-          CPWL_Point(crBBox.left + fWidth * 0.6f, crBBox.top - fHeight * 0.5f),
-          PWLPT_BEZIERTO),
+      {{crBBox.left + fWidth * 0.25f, crBBox.top - fHeight * 0.1f},
+       PWLPT_MOVETO},
+      {{crBBox.left + fWidth * 0.4f, crBBox.top - fHeight * 0.23f},
+       PWLPT_LINETO},
+      {{crBBox.left + fWidth * 0.4f, crBBox.top - fHeight * 0.5f},
+       PWLPT_LINETO},
+      {{crBBox.left + fWidth * 0.4f,
+        crBBox.top - fHeight * 0.5f + fWidth * 0.04f},
+       PWLPT_BEZIERTO},
+      {{crBBox.left + fWidth * 0.6f,
+        crBBox.top - fHeight * 0.5f + fWidth * 0.04f},
+       PWLPT_BEZIERTO},
+      {{crBBox.left + fWidth * 0.6f, crBBox.top - fHeight * 0.5f},
+       PWLPT_BEZIERTO},
 
-      CPWL_PathData(
-          CPWL_Point(crBBox.left + fWidth * 0.6f, crBBox.top - fHeight * 0.23f),
-          PWLPT_LINETO),
-      CPWL_PathData(CPWL_Point(crBBox.right - fWidth * 0.25f,
-                               crBBox.top - fHeight * 0.1f),
-                    PWLPT_LINETO),
-      CPWL_PathData(
-          CPWL_Point(crBBox.left + fWidth * 0.25f, crBBox.top - fHeight * 0.1f),
-          PWLPT_LINETO),
-      CPWL_PathData(
-          CPWL_Point(crBBox.left + fWidth * 0.4f, crBBox.top - fHeight * 0.23f),
-          PWLPT_LINETO),
-      CPWL_PathData(
-          CPWL_Point(crBBox.left + fWidth * 0.6f, crBBox.top - fHeight * 0.23f),
-          PWLPT_LINETO),
+      {{crBBox.left + fWidth * 0.6f, crBBox.top - fHeight * 0.23f},
+       PWLPT_LINETO},
+      {{crBBox.right - fWidth * 0.25f, crBBox.top - fHeight * 0.1f},
+       PWLPT_LINETO},
+      {{crBBox.left + fWidth * 0.25f, crBBox.top - fHeight * 0.1f},
+       PWLPT_LINETO},
+      {{crBBox.left + fWidth * 0.4f, crBBox.top - fHeight * 0.23f},
+       PWLPT_LINETO},
+      {{crBBox.left + fWidth * 0.6f, crBBox.top - fHeight * 0.23f},
+       PWLPT_LINETO},
 
-      CPWL_PathData(
-          CPWL_Point(crBBox.left + fWidth * 0.4f, crBBox.top - fHeight * 0.5f),
-          PWLPT_MOVETO),
-      CPWL_PathData(
-          CPWL_Point(crBBox.left + fWidth * 0.4f - fWidth * 0.25f * 0.4f,
-                     crBBox.top - fHeight * 0.5f),
-          PWLPT_BEZIERTO),
-      CPWL_PathData(
-          CPWL_Point(crBBox.left + fWidth * 0.15f,
-                     crBBox.top - fHeight * 0.65f + fHeight * 0.15f * 0.4f),
-          PWLPT_BEZIERTO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth * 0.15f,
-                               crBBox.top - fHeight * 0.65f),
-                    PWLPT_BEZIERTO),
+      {{crBBox.left + fWidth * 0.4f, crBBox.top - fHeight * 0.5f},
+       PWLPT_MOVETO},
+      {{crBBox.left + fWidth * 0.4f - fWidth * 0.25f * 0.4f,
+        crBBox.top - fHeight * 0.5f},
+       PWLPT_BEZIERTO},
+      {{crBBox.left + fWidth * 0.15f,
+        crBBox.top - fHeight * 0.65f + fHeight * 0.15f * 0.4f},
+       PWLPT_BEZIERTO},
+      {{crBBox.left + fWidth * 0.15f, crBBox.top - fHeight * 0.65f},
+       PWLPT_BEZIERTO},
 
-      CPWL_PathData(CPWL_Point(crBBox.right - fWidth * 0.15f,
-                               crBBox.top - fHeight * 0.65f),
-                    PWLPT_LINETO),
-      CPWL_PathData(
-          CPWL_Point(crBBox.right - fWidth * 0.15f,
-                     crBBox.top - fHeight * 0.65f + fHeight * 0.15f * 0.4f),
-          PWLPT_BEZIERTO),
-      CPWL_PathData(
-          CPWL_Point(crBBox.left + fWidth * 0.6f + fWidth * 0.25f * 0.4f,
-                     crBBox.top - fHeight * 0.5f),
-          PWLPT_BEZIERTO),
-      CPWL_PathData(
-          CPWL_Point(crBBox.left + fWidth * 0.6f, crBBox.top - fHeight * 0.5f),
-          PWLPT_BEZIERTO),
+      {{crBBox.right - fWidth * 0.15f, crBBox.top - fHeight * 0.65f},
+       PWLPT_LINETO},
+      {{crBBox.right - fWidth * 0.15f,
+        crBBox.top - fHeight * 0.65f + fHeight * 0.15f * 0.4f},
+       PWLPT_BEZIERTO},
+      {{crBBox.left + fWidth * 0.6f + fWidth * 0.25f * 0.4f,
+        crBBox.top - fHeight * 0.5f},
+       PWLPT_BEZIERTO},
+      {{crBBox.left + fWidth * 0.6f, crBBox.top - fHeight * 0.5f},
+       PWLPT_BEZIERTO},
 
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth * 0.6f,
-                               crBBox.top - fHeight * 0.5f + fWidth * 0.04f),
-                    PWLPT_BEZIERTO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth * 0.4f,
-                               crBBox.top - fHeight * 0.5f + fWidth * 0.04f),
-                    PWLPT_BEZIERTO),
-      CPWL_PathData(
-          CPWL_Point(crBBox.left + fWidth * 0.4f, crBBox.top - fHeight * 0.5f),
-          PWLPT_BEZIERTO),
+      {{crBBox.left + fWidth * 0.6f,
+        crBBox.top - fHeight * 0.5f + fWidth * 0.04f},
+       PWLPT_BEZIERTO},
+      {{crBBox.left + fWidth * 0.4f,
+        crBBox.top - fHeight * 0.5f + fWidth * 0.04f},
+       PWLPT_BEZIERTO},
+      {{crBBox.left + fWidth * 0.4f, crBBox.top - fHeight * 0.5f},
+       PWLPT_BEZIERTO},
 
-      CPWL_PathData(
-          CPWL_Point(crBBox.left + fWidth * 0.5f, crBBox.top - fHeight * 0.65f),
-          PWLPT_MOVETO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth * 0.5f,
-                               crBBox.bottom + fHeight * 0.1f),
-                    PWLPT_LINETO)};
+      {{crBBox.left + fWidth * 0.5f, crBBox.top - fHeight * 0.65f},
+       PWLPT_MOVETO},
+      {{crBBox.left + fWidth * 0.5f, crBBox.bottom + fHeight * 0.1f},
+       PWLPT_LINETO}};
 
   if (type == PWLPT_STREAM)
-    sPathData = GetAppStreamFromArray(PathArray, 24);
+    sPathData = GetAppStreamFromArray(PathArray, FX_ArraySize(PathArray));
   else
-    GetPathDataFromArray(path, PathArray, 24);
+    GetPathDataFromArray(path, PathArray, FX_ArraySize(PathArray));
 }
 
 void CPWL_Utils::GetGraphics_Tag(CFX_ByteString& sPathData,
@@ -3199,47 +2874,35 @@ void CPWL_Utils::GetGraphics_Tag(CFX_ByteString& sPathData,
   FX_FLOAT fHeight = crBBox.top - crBBox.bottom;
 
   CPWL_PathData PathArray[] = {
-      CPWL_PathData(
-          CPWL_Point(crBBox.left + fWidth * 0.4f, crBBox.top - fHeight * 0.1f),
-          PWLPT_MOVETO),
-      CPWL_PathData(
-          CPWL_Point(crBBox.left + fWidth * 0.1f, crBBox.top - fHeight * 0.5f),
-          PWLPT_LINETO),
-      CPWL_PathData(CPWL_Point(crBBox.left + fWidth * 0.3f,
-                               crBBox.bottom + fHeight * 0.1f),
-                    PWLPT_LINETO),
-      CPWL_PathData(CPWL_Point(crBBox.right - fWidth * 0.1f,
-                               crBBox.bottom + fHeight * 0.1f),
-                    PWLPT_LINETO),
-      CPWL_PathData(
-          CPWL_Point(crBBox.right - fWidth * 0.1f, crBBox.top - fHeight * 0.1f),
-          PWLPT_LINETO),
-      CPWL_PathData(
-          CPWL_Point(crBBox.left + fWidth * 0.4f, crBBox.top - fHeight * 0.1f),
-          PWLPT_LINETO),
-      CPWL_PathData(
-          CPWL_Point(crBBox.left + fWidth * 0.4f, crBBox.top - fHeight * 0.3f),
-          PWLPT_MOVETO),
-      CPWL_PathData(
-          CPWL_Point(crBBox.right - fWidth * 0.2f, crBBox.top - fHeight * 0.3f),
-          PWLPT_LINETO),
-      CPWL_PathData(
-          CPWL_Point(crBBox.left + fWidth * 0.4f, crBBox.top - fHeight * 0.5f),
-          PWLPT_MOVETO),
-      CPWL_PathData(
-          CPWL_Point(crBBox.right - fWidth * 0.2f, crBBox.top - fHeight * 0.5f),
-          PWLPT_LINETO),
-      CPWL_PathData(
-          CPWL_Point(crBBox.left + fWidth * 0.4f, crBBox.top - fHeight * 0.7f),
-          PWLPT_MOVETO),
-      CPWL_PathData(
-          CPWL_Point(crBBox.right - fWidth * 0.2f, crBBox.top - fHeight * 0.7f),
-          PWLPT_LINETO)};
+      {{crBBox.left + fWidth * 0.4f, crBBox.top - fHeight * 0.1f},
+       PWLPT_MOVETO},
+      {{crBBox.left + fWidth * 0.1f, crBBox.top - fHeight * 0.5f},
+       PWLPT_LINETO},
+      {{crBBox.left + fWidth * 0.3f, crBBox.bottom + fHeight * 0.1f},
+       PWLPT_LINETO},
+      {{crBBox.right - fWidth * 0.1f, crBBox.bottom + fHeight * 0.1f},
+       PWLPT_LINETO},
+      {{crBBox.right - fWidth * 0.1f, crBBox.top - fHeight * 0.1f},
+       PWLPT_LINETO},
+      {{crBBox.left + fWidth * 0.4f, crBBox.top - fHeight * 0.1f},
+       PWLPT_LINETO},
+      {{crBBox.left + fWidth * 0.4f, crBBox.top - fHeight * 0.3f},
+       PWLPT_MOVETO},
+      {{crBBox.right - fWidth * 0.2f, crBBox.top - fHeight * 0.3f},
+       PWLPT_LINETO},
+      {{crBBox.left + fWidth * 0.4f, crBBox.top - fHeight * 0.5f},
+       PWLPT_MOVETO},
+      {{crBBox.right - fWidth * 0.2f, crBBox.top - fHeight * 0.5f},
+       PWLPT_LINETO},
+      {{crBBox.left + fWidth * 0.4f, crBBox.top - fHeight * 0.7f},
+       PWLPT_MOVETO},
+      {{crBBox.right - fWidth * 0.2f, crBBox.top - fHeight * 0.7f},
+       PWLPT_LINETO}};
 
   if (type == PWLPT_STREAM)
-    sPathData = GetAppStreamFromArray(PathArray, 12);
+    sPathData = GetAppStreamFromArray(PathArray, FX_ArraySize(PathArray));
   else
-    GetPathDataFromArray(path, PathArray, 12);
+    GetPathDataFromArray(path, PathArray, FX_ArraySize(PathArray));
 }
 
 void CPWL_Utils::GetGraphics_Foxit(CFX_ByteString& sPathData,
@@ -3259,66 +2922,53 @@ void CPWL_Utils::GetGraphics_Foxit(CFX_ByteString& sPathData,
   FX_FLOAT fHeight = crInBox.top - crInBox.bottom;
 
   CPWL_PathData PathArray[] = {
-      CPWL_PathData(CPWL_Point(crInBox.left, crInBox.top), PWLPT_MOVETO),
-      CPWL_PathData(CPWL_Point(crInBox.left + fWidth * 0.45f, crInBox.top),
-                    PWLPT_LINETO),
-      CPWL_PathData(CPWL_Point(crInBox.left + fWidth * 0.45f,
-                               crInBox.top - FX_BEZIER * fHeight * 0.4f),
-                    PWLPT_BEZIERTO),
-      CPWL_PathData(
-          CPWL_Point(crInBox.left + fWidth * 0.45f - FX_BEZIER * fWidth * 0.45f,
-                     crInBox.top - fHeight * 0.4f),
-          PWLPT_BEZIERTO),
-      CPWL_PathData(CPWL_Point(crInBox.left, crInBox.top - fHeight * 0.4f),
-                    PWLPT_BEZIERTO),
-      CPWL_PathData(CPWL_Point(crInBox.left, crInBox.top), PWLPT_LINETO),
+      {{crInBox.left, crInBox.top}, PWLPT_MOVETO},
+      {{crInBox.left + fWidth * 0.45f, crInBox.top}, PWLPT_LINETO},
+      {{crInBox.left + fWidth * 0.45f,
+        crInBox.top - FX_BEZIER * fHeight * 0.4f},
+       PWLPT_BEZIERTO},
+      {{crInBox.left + fWidth * 0.45f - FX_BEZIER * fWidth * 0.45f,
+        crInBox.top - fHeight * 0.4f},
+       PWLPT_BEZIERTO},
+      {{crInBox.left, crInBox.top - fHeight * 0.4f}, PWLPT_BEZIERTO},
+      {{crInBox.left, crInBox.top}, PWLPT_LINETO},
 
-      CPWL_PathData(CPWL_Point(crInBox.left + fWidth * 0.60f, crInBox.top),
-                    PWLPT_MOVETO),
-      CPWL_PathData(CPWL_Point(crInBox.left + fWidth * 0.75f, crInBox.top),
-                    PWLPT_LINETO),
-      CPWL_PathData(CPWL_Point(crInBox.left + fWidth * 0.75f,
-                               crInBox.top - FX_BEZIER * fHeight * 0.7f),
-                    PWLPT_BEZIERTO),
-      CPWL_PathData(
-          CPWL_Point(crInBox.left + fWidth * 0.75f - FX_BEZIER * fWidth * 0.75f,
-                     crInBox.top - fHeight * 0.7f),
-          PWLPT_BEZIERTO),
-      CPWL_PathData(CPWL_Point(crInBox.left, crInBox.top - fHeight * 0.7f),
-                    PWLPT_BEZIERTO),
-      CPWL_PathData(CPWL_Point(crInBox.left, crInBox.top - fHeight * 0.55f),
-                    PWLPT_LINETO),
-      CPWL_PathData(CPWL_Point(crInBox.left + FX_BEZIER * fWidth * 0.60f,
-                               crInBox.top - fHeight * 0.55f),
-                    PWLPT_BEZIERTO),
-      CPWL_PathData(CPWL_Point(crInBox.left + fWidth * 0.60f,
-                               crInBox.top - FX_BEZIER * fHeight * 0.55f),
-                    PWLPT_BEZIERTO),
-      CPWL_PathData(CPWL_Point(crInBox.left + fWidth * 0.60f, crInBox.top),
-                    PWLPT_BEZIERTO),
+      {{crInBox.left + fWidth * 0.60f, crInBox.top}, PWLPT_MOVETO},
+      {{crInBox.left + fWidth * 0.75f, crInBox.top}, PWLPT_LINETO},
+      {{crInBox.left + fWidth * 0.75f,
+        crInBox.top - FX_BEZIER * fHeight * 0.7f},
+       PWLPT_BEZIERTO},
+      {{crInBox.left + fWidth * 0.75f - FX_BEZIER * fWidth * 0.75f,
+        crInBox.top - fHeight * 0.7f},
+       PWLPT_BEZIERTO},
+      {{crInBox.left, crInBox.top - fHeight * 0.7f}, PWLPT_BEZIERTO},
+      {{crInBox.left, crInBox.top - fHeight * 0.55f}, PWLPT_LINETO},
+      {{crInBox.left + FX_BEZIER * fWidth * 0.60f,
+        crInBox.top - fHeight * 0.55f},
+       PWLPT_BEZIERTO},
+      {{crInBox.left + fWidth * 0.60f,
+        crInBox.top - FX_BEZIER * fHeight * 0.55f},
+       PWLPT_BEZIERTO},
+      {{crInBox.left + fWidth * 0.60f, crInBox.top}, PWLPT_BEZIERTO},
 
-      CPWL_PathData(CPWL_Point(crInBox.left + fWidth * 0.90f, crInBox.top),
-                    PWLPT_MOVETO),
-      CPWL_PathData(CPWL_Point(crInBox.left + fWidth * 0.90f,
-                               crInBox.top - FX_BEZIER * fHeight * 0.85f),
-                    PWLPT_BEZIERTO),
-      CPWL_PathData(
-          CPWL_Point(crInBox.left + fWidth * 0.90f - FX_BEZIER * fWidth * 0.90f,
-                     crInBox.top - fHeight * 0.85f),
-          PWLPT_BEZIERTO),
-      CPWL_PathData(CPWL_Point(crInBox.left, crInBox.top - fHeight * 0.85f),
-                    PWLPT_BEZIERTO),
-      CPWL_PathData(CPWL_Point(crInBox.left, crInBox.bottom), PWLPT_LINETO),
-      CPWL_PathData(CPWL_Point(crInBox.right, crInBox.bottom), PWLPT_LINETO),
-      CPWL_PathData(CPWL_Point(crInBox.right, crInBox.top), PWLPT_LINETO),
-      CPWL_PathData(CPWL_Point(crInBox.left + fWidth * 0.90f, crInBox.top),
-                    PWLPT_LINETO),
+      {{crInBox.left + fWidth * 0.90f, crInBox.top}, PWLPT_MOVETO},
+      {{crInBox.left + fWidth * 0.90f,
+        crInBox.top - FX_BEZIER * fHeight * 0.85f},
+       PWLPT_BEZIERTO},
+      {{crInBox.left + fWidth * 0.90f - FX_BEZIER * fWidth * 0.90f,
+        crInBox.top - fHeight * 0.85f},
+       PWLPT_BEZIERTO},
+      {{crInBox.left, crInBox.top - fHeight * 0.85f}, PWLPT_BEZIERTO},
+      {{crInBox.left, crInBox.bottom}, PWLPT_LINETO},
+      {{crInBox.right, crInBox.bottom}, PWLPT_LINETO},
+      {{crInBox.right, crInBox.top}, PWLPT_LINETO},
+      {{crInBox.left + fWidth * 0.90f, crInBox.top}, PWLPT_LINETO},
   };
 
   if (type == PWLPT_STREAM)
-    sPathData = GetAppStreamFromArray(PathArray, 23);
+    sPathData = GetAppStreamFromArray(PathArray, FX_ArraySize(PathArray));
   else
-    GetPathDataFromArray(path, PathArray, 23);
+    GetPathDataFromArray(path, PathArray, FX_ArraySize(PathArray));
 }
 
 void CPWL_Color::ConvertColorType(int32_t nConvertColorType) {

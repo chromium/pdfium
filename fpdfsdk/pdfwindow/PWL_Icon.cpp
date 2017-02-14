@@ -6,6 +6,8 @@
 
 #include "fpdfsdk/pdfwindow/PWL_Icon.h"
 
+#include <algorithm>
+
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "fpdfsdk/pdfwindow/PWL_Utils.h"
@@ -169,20 +171,20 @@ void CPWL_Icon::GetScale(FX_FLOAT& fHScale, FX_FLOAT& fVScale) {
     switch (nScaleMethod) {
       default:
       case 0:
-        fHScale = fPlateWidth / PWL_MAX(fImageWidth, 1.0f);
-        fVScale = fPlateHeight / PWL_MAX(fImageHeight, 1.0f);
+        fHScale = fPlateWidth / std::max(fImageWidth, 1.0f);
+        fVScale = fPlateHeight / std::max(fImageHeight, 1.0f);
         break;
       case 1:
         if (fPlateWidth < fImageWidth)
-          fHScale = fPlateWidth / PWL_MAX(fImageWidth, 1.0f);
+          fHScale = fPlateWidth / std::max(fImageWidth, 1.0f);
         if (fPlateHeight < fImageHeight)
-          fVScale = fPlateHeight / PWL_MAX(fImageHeight, 1.0f);
+          fVScale = fPlateHeight / std::max(fImageHeight, 1.0f);
         break;
       case 2:
         if (fPlateWidth > fImageWidth)
-          fHScale = fPlateWidth / PWL_MAX(fImageWidth, 1.0f);
+          fHScale = fPlateWidth / std::max(fImageWidth, 1.0f);
         if (fPlateHeight > fImageHeight)
-          fVScale = fPlateHeight / PWL_MAX(fImageHeight, 1.0f);
+          fVScale = fPlateHeight / std::max(fImageHeight, 1.0f);
         break;
       case 3:
         break;
@@ -190,7 +192,7 @@ void CPWL_Icon::GetScale(FX_FLOAT& fHScale, FX_FLOAT& fVScale) {
 
     FX_FLOAT fMinScale;
     if (IsProportionalScale()) {
-      fMinScale = PWL_MIN(fHScale, fVScale);
+      fMinScale = std::min(fHScale, fVScale);
       fHScale = fMinScale;
       fVScale = fMinScale;
     }
