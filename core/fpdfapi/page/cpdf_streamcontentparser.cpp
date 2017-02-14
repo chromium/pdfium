@@ -99,7 +99,7 @@ CFX_FloatRect GetShadingBBox(CPDF_ShadingPattern* pShading,
   while (!stream.BitStream()->IsEOF()) {
     uint32_t flag = 0;
     if (type != kLatticeFormGouraudTriangleMeshShading)
-      flag = stream.ReadFlag();
+      flag = stream.GetFlag();
 
     if (!bGouraud && flag) {
       point_count -= 4;
@@ -107,11 +107,13 @@ CFX_FloatRect GetShadingBBox(CPDF_ShadingPattern* pShading,
     }
 
     for (int i = 0; i < point_count; i++) {
-      CFX_PointF origin = stream.ReadCoords();
+      FX_FLOAT x;
+      FX_FLOAT y;
+      stream.GetCoords(x, y);
       if (bStarted) {
-        rect.UpdateRect(origin.x, origin.y);
+        rect.UpdateRect(x, y);
       } else {
-        rect.InitRect(origin.x, origin.y);
+        rect.InitRect(x, y);
         bStarted = true;
       }
     }
