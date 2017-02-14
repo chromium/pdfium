@@ -318,3 +318,63 @@ TEST_F(FPDFEditEmbeddertest, AddStrokedPaths) {
   FPDF_ClosePage(page);
   FPDF_CloseDocument(doc);
 }
+
+TEST_F(FPDFEditEmbeddertest, AddStandardFontText) {
+  // Start with a blank page
+  FPDF_DOCUMENT doc = FPDF_CreateNewDocument();
+  FPDF_PAGE page = FPDFPage_New(doc, 0, 612, 792);
+
+  // Add some text to the page
+  FPDF_PAGEOBJECT text1 = FPDFPageObj_NewTextObj(doc, "Arial", 12.0f);
+  EXPECT_TRUE(text1);
+  EXPECT_TRUE(FPDFText_SetText(text1, "I'm at the bottom of the page"));
+  FPDFPageObj_Transform(text1, 1, 0, 0, 1, 20, 20);
+  FPDFPage_InsertObject(page, text1);
+  EXPECT_TRUE(FPDFPage_GenerateContent(page));
+  FPDF_BITMAP page_bitmap = RenderPage(page);
+#if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
+  const char md5[] = "e19c90395d73cb9f37a6c3b0e8b18a9e";
+#else
+  const char md5[] = "7c3a36ba7cec01688a16a14bfed9ecfc";
+#endif
+  CompareBitmap(page_bitmap, 612, 792, md5);
+  FPDFBitmap_Destroy(page_bitmap);
+
+  // Try another font
+  FPDF_PAGEOBJECT text2 =
+      FPDFPageObj_NewTextObj(doc, "TimesNewRomanBold", 15.0f);
+  EXPECT_TRUE(text2);
+  EXPECT_TRUE(FPDFText_SetText(text2, "Hi, I'm Bold. Times New Roman Bold."));
+  FPDFPageObj_Transform(text2, 1, 0, 0, 1, 100, 600);
+  FPDFPage_InsertObject(page, text2);
+  EXPECT_TRUE(FPDFPage_GenerateContent(page));
+  page_bitmap = RenderPage(page);
+#if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
+  const char md5_2[] = "8e1c43dca6be68d364dbc283f5521041";
+#else
+  const char md5_2[] = "e0e0873e3a2634a6394a431a51ce90ff";
+#endif
+  CompareBitmap(page_bitmap, 612, 792, md5_2);
+  FPDFBitmap_Destroy(page_bitmap);
+
+  // And some randomly transformed text
+  FPDF_PAGEOBJECT text3 = FPDFPageObj_NewTextObj(doc, "Courier-Bold", 20.0f);
+  EXPECT_TRUE(text3);
+  EXPECT_TRUE(FPDFText_SetText(text3, "Can you read me? <:)>"));
+  FPDFPageObj_Transform(text3, 1, 1.5, 2, 0.5, 200, 200);
+  FPDFPage_InsertObject(page, text3);
+  EXPECT_TRUE(FPDFPage_GenerateContent(page));
+  page_bitmap = RenderPage(page);
+#if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
+  const char md5_3[] = "c6e5df448428793c7e4b0c820bd8c85e";
+#else
+  const char md5_3[] = "903ee10b6a9f0be51ecad0a1a0eeb171";
+#endif
+  CompareBitmap(page_bitmap, 612, 792, md5_3);
+  FPDFBitmap_Destroy(page_bitmap);
+
+  // TODO(npm): Why are there issues with text rotated by 90 degrees?
+  // TODO(npm): FPDF_SaveAsCopy not giving the desired result after this.
+  FPDF_ClosePage(page);
+  FPDF_CloseDocument(doc);
+}

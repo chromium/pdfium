@@ -386,6 +386,26 @@ DLLEXPORT FPDF_BOOL FPDFPath_SetDrawMode(FPDF_PAGEOBJECT path,
                                          int fillmode,
                                          FPDF_BOOL stroke);
 
+// Create a new text object using one of the standard PDF fonts.
+//
+// document   - handle to the document.
+// font       - string containing the font name, without spaces.
+// font_size  - the font size for the new text object.
+//
+// Returns a handle to a new text object, or NULL on failure
+DLLEXPORT FPDF_PAGEOBJECT STDCALL FPDFPageObj_NewTextObj(FPDF_DOCUMENT document,
+                                                         FPDF_BYTESTRING font,
+                                                         float font_size);
+
+// Set the text for a textobject. If it had text, it will be replaced.
+//
+// text_object  - handle to the text object.
+// text         - string containing the text to be added.
+//
+// Returns TRUE on success
+DLLEXPORT FPDF_BOOL STDCALL FPDFText_SetText(FPDF_PAGEOBJECT text_object,
+                                             FPDF_BYTESTRING text);
+
 #ifdef __cplusplus
 }  // extern "C"
 #endif  // __cplusplus
