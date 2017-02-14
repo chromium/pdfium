@@ -18,6 +18,7 @@ class CPDF_ImageObject;
 class CPDF_Page;
 class CPDF_PageObject;
 class CPDF_PathObject;
+class CPDF_TextObject;
 
 class CPDF_PageContentGenerator {
  public:
@@ -32,6 +33,7 @@ class CPDF_PageContentGenerator {
   void ProcessPath(CFX_ByteTextBuf* buf, CPDF_PathObject* pPathObj);
   void ProcessImage(CFX_ByteTextBuf* buf, CPDF_ImageObject* pImageObj);
   void ProcessGraphics(CFX_ByteTextBuf* buf, CPDF_PageObject* pPageObj);
+  void ProcessText(CFX_ByteTextBuf* buf, CPDF_TextObject* pTextObj);
   CFX_ByteString RealizeResource(uint32_t dwResourceObjNum,
                                  const CFX_ByteString& bsType);
 
@@ -41,7 +43,13 @@ class CPDF_PageContentGenerator {
     bool operator<(const GraphicsData& other) const;
   };
 
+  struct FontData {
+    CFX_ByteString baseFont;
+    bool operator<(const FontData& other) const;
+  };
+
   std::map<GraphicsData, CFX_ByteString> m_GraphicsMap;
+  std::map<FontData, CFX_ByteString> m_FontsMap;
   CPDF_Page* const m_pPage;
   CPDF_Document* const m_pDocument;
   std::vector<CPDF_PageObject*> m_pageObjects;

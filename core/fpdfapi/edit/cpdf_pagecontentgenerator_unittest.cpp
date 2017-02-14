@@ -5,8 +5,10 @@
 #include "core/fpdfapi/edit/cpdf_pagecontentgenerator.h"
 
 #include "core/fpdfapi/cpdf_modulemgr.h"
+#include "core/fpdfapi/font/cpdf_font.h"
 #include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fpdfapi/page/cpdf_pathobject.h"
+#include "core/fpdfapi/page/cpdf_textobject.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfapi/parser/cpdf_parser.h"
 #include "testing/gtest/include/gtest/gtest.h"
@@ -24,10 +26,16 @@ class CPDF_PageContentGeneratorTest : public testing::Test {
     pGen->ProcessPath(buf, pPathObj);
   }
 
-  CPDF_Dictionary* TestGetGS(CPDF_PageContentGenerator* pGen,
-                             const CFX_ByteString& name) {
-    return pGen->m_pPage->m_pResources->GetDictFor("ExtGState")
-        ->GetDictFor(name);
+  CPDF_Dictionary* TestGetResource(CPDF_PageContentGenerator* pGen,
+                                   const CFX_ByteString& type,
+                                   const CFX_ByteString& name) {
+    return pGen->m_pPage->m_pResources->GetDictFor(type)->GetDictFor(name);
+  }
+
+  void TestProcessText(CPDF_PageContentGenerator* pGen,
+                       CFX_ByteTextBuf* buf,
+                       CPDF_TextObject* pTextObj) {
+    pGen->ProcessText(buf, pTextObj);
   }
 };
 
@@ -162,8 +170,8 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessGraphics) {
             pathString.Left(48));
   EXPECT_EQ(" gs 1 2 m 3 4 l 5 6 l h B Q\n", pathString.Right(28));
   ASSERT_TRUE(pathString.GetLength() > 76);
-  CPDF_Dictionary* externalGS =
-      TestGetGS(&generator, pathString.Mid(48, pathString.GetLength() - 76));
+  CPDF_Dictionary* externalGS = TestGetResource(
+      &generator, "ExtGState", pathString.Mid(48, pathString.GetLength() - 76));
   ASSERT_TRUE(externalGS);
   EXPECT_EQ(0.5f, externalGS->GetNumberFor("ca"));
   EXPECT_EQ(0.8f, externalGS->GetNumberFor("CA"));
@@ -180,4 +188,30 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessGraphics) {
   EXPECT_EQ(pathString.GetLength() + 7, pathString2.GetLength());
   EXPECT_EQ(pathString.Mid(48, pathString.GetLength() - 76),
             pathString2.Mid(55, pathString2.GetLength() - 83));
+}
+
+TEST_F(CPDF_PageContentGeneratorTest, ProcessText) {
+  auto pDoc = pdfium::MakeUnique<CPDF_Document>(nullptr);
+  pDoc->CreateNewDoc();
+  CPDF_Dictionary* pPageDict = pDoc->CreateNewPage(0);
+  auto pTestPage = pdfium::MakeUnique<CPDF_Page>(pDoc.get(), pPageDict, false);
+  CPDF_PageContentGenerator generator(pTestPage.get());
+  auto pTextObj = pdfium::MakeUnique<CPDF_TextObject>();
+  CPDF_Font* pFont = CPDF_Font::GetStockFont(pDoc.get(), "Times-Roman");
+  pTextObj->m_TextState.SetFont(pFont);
+  pTextObj->m_TextState.SetFontSize(10.0f);
+  pTextObj->Transform(CFX_Matrix(1, 0, 0, 1, 100, 100));
+  pTextObj->SetText("Hello World");
+  CFX_ByteTextBuf buf;
+  TestProcessText(&generator, &buf, pTextObj.get());
+  CFX_ByteString textString = buf.MakeString();
+  EXPECT_LT(61, textString.GetLength());
+  EXPECT_EQ("BT 1 0 0 1 100 100 Tm /", textString.Left(23));
+  EXPECT_EQ(" 10 Tf <48656C6C6F20576F726C64> Tj ET\n", textString.Right(38));
+  CPDF_Dictionary* fontDict = TestGetResource(
+      &generator, "Font", textString.Mid(23, textString.GetLength() - 61));
+  ASSERT_TRUE(fontDict);
+  EXPECT_EQ("Font", fontDict->GetStringFor("Type"));
+  EXPECT_EQ("Type1", fontDict->GetStringFor("Subtype"));
+  EXPECT_EQ("Times-Roman", fontDict->GetStringFor("BaseFont"));
 }

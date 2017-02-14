@@ -9,12 +9,14 @@
 #include <tuple>
 #include <utility>
 
+#include "core/fpdfapi/font/cpdf_font.h"
 #include "core/fpdfapi/page/cpdf_docpagedata.h"
 #include "core/fpdfapi/page/cpdf_image.h"
 #include "core/fpdfapi/page/cpdf_imageobject.h"
 #include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fpdfapi/page/cpdf_path.h"
 #include "core/fpdfapi/page/cpdf_pathobject.h"
+#include "core/fpdfapi/page/cpdf_textobject.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfapi/parser/cpdf_name.h"
@@ -63,6 +65,8 @@ void CPDF_PageContentGenerator::GenerateContent() {
       ProcessImage(&buf, pImageObject);
     else if (CPDF_PathObject* pPathObj = pPageObj->AsPath())
       ProcessPath(&buf, pPathObj);
+    else if (CPDF_TextObject* pTextObj = pPageObj->AsText())
+      ProcessText(&buf, pTextObj);
   }
   CPDF_Dictionary* pPageDict = m_pPage->m_pFormDict;
   CPDF_Object* pContent =
@@ -239,4 +243,47 @@ bool CPDF_PageContentGenerator::GraphicsData::operator<(
   if (fillAlpha != other.fillAlpha)
     return fillAlpha < other.fillAlpha;
   return strokeAlpha < other.strokeAlpha;
+}
+
+bool CPDF_PageContentGenerator::FontData::operator<(
+    const FontData& other) const {
+  return baseFont < other.baseFont;
+}
+
+// This method adds text to the buffer, BT begins the text object, ET ends it.
+// Tm sets the text matrix (allows positioning and transforming text).
+// Tf sets the font name (from Font in Resources) and font size.
+// Tj sets the actual text, <####...> is used when specifying charcodes.
+void CPDF_PageContentGenerator::ProcessText(CFX_ByteTextBuf* buf,
+                                            CPDF_TextObject* pTextObj) {
+  // TODO(npm): Add support for something other than standard type1 fonts.
+  *buf << "BT " << pTextObj->GetTextMatrix() << " Tm ";
+  CPDF_Font* pFont = pTextObj->GetFont();
+  if (!pFont)
+    pFont = CPDF_Font::GetStockFont(m_pDocument, "Helvetica");
+  FontData fontD;
+  fontD.baseFont = pFont->GetBaseFont();
+  auto it = m_FontsMap.find(fontD);
+  CFX_ByteString dictName;
+  if (it != m_FontsMap.end()) {
+    dictName = it->second;
+  } else {
+    auto fontDict = pdfium::MakeUnique<CPDF_Dictionary>();
+    fontDict->SetNewFor<CPDF_Name>("Type", "Font");
+    fontDict->SetNewFor<CPDF_Name>("Subtype", "Type1");
+    fontDict->SetNewFor<CPDF_Name>("BaseFont", fontD.baseFont);
+    CPDF_Object* pDict = m_pDocument->AddIndirectObject(std::move(fontDict));
+    uint32_t dwObjNum = pDict->GetObjNum();
+    dictName = RealizeResource(dwObjNum, "Font");
+    m_FontsMap[fontD] = dictName;
+  }
+  *buf << "/" << PDF_NameEncode(dictName) << " " << pTextObj->GetFontSize()
+       << " Tf ";
+  CFX_ByteString text;
+  for (uint32_t charcode : pTextObj->m_CharCodes) {
+    if (charcode == CPDF_Font::kInvalidCharCode)
+      continue;
+    pFont->AppendChar(text, charcode);
+  }
+  *buf << PDF_EncodeString(text, true) << " Tj ET\n";
 }
