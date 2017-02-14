@@ -17,8 +17,8 @@ class CPWL_Button : public CPWL_Wnd {
   // CPWL_Wnd
   CFX_ByteString GetClassName() const override;
   void OnCreate(PWL_CREATEPARAM& cp) override;
-  bool OnLButtonDown(const CFX_FloatPoint& point, uint32_t nFlag) override;
-  bool OnLButtonUp(const CFX_FloatPoint& point, uint32_t nFlag) override;
+  bool OnLButtonDown(const CFX_PointF& point, uint32_t nFlag) override;
+  bool OnLButtonUp(const CFX_PointF& point, uint32_t nFlag) override;
 
  protected:
   bool m_bMouseDown;

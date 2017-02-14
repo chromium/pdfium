@@ -48,7 +48,7 @@ class CPVT_GenerateAP {
                                   CPDF_Dictionary* pAnnotDict);
   static CFX_ByteString GenerateEditAP(IPVT_FontMap* pFontMap,
                                        CPDF_VariableText::Iterator* pIterator,
-                                       const CFX_FloatPoint& ptOffset,
+                                       const CFX_PointF& ptOffset,
                                        bool bContinuous,
                                        uint16_t SubWord);
   static CFX_ByteString GenerateBorderAP(const CFX_FloatRect& rect,

@@ -35,8 +35,8 @@ class CPWL_List_Notify {
   void IOnInvalidateRect(CFX_FloatRect* pRect);
 
   void IOnSetCaret(bool bVisible,
-                   const CFX_FloatPoint& ptHead,
-                   const CFX_FloatPoint& ptFoot,
+                   const CFX_PointF& ptHead,
+                   const CFX_PointF& ptFoot,
                    const CPVT_WordPlace& place);
 
  private:
@@ -57,11 +57,11 @@ class CPWL_ListBox : public CPWL_Wnd {
                           CFX_Matrix* pUser2Device) override;
   bool OnKeyDown(uint16_t nChar, uint32_t nFlag) override;
   bool OnChar(uint16_t nChar, uint32_t nFlag) override;
-  bool OnLButtonDown(const CFX_FloatPoint& point, uint32_t nFlag) override;
-  bool OnLButtonUp(const CFX_FloatPoint& point, uint32_t nFlag) override;
-  bool OnMouseMove(const CFX_FloatPoint& point, uint32_t nFlag) override;
+  bool OnLButtonDown(const CFX_PointF& point, uint32_t nFlag) override;
+  bool OnLButtonUp(const CFX_PointF& point, uint32_t nFlag) override;
+  bool OnMouseMove(const CFX_PointF& point, uint32_t nFlag) override;
   bool OnMouseWheel(short zDelta,
-                    const CFX_FloatPoint& point,
+                    const CFX_PointF& point,
                     uint32_t nFlag) override;
   void KillFocus() override;
   void OnNotify(CPWL_Wnd* pWnd,

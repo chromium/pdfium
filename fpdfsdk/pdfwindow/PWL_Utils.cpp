@@ -105,10 +105,10 @@ bool CPWL_Utils::IntersectRect(const CFX_FloatRect& rect1,
   return left < right && bottom < top;
 }
 
-CFX_FloatPoint CPWL_Utils::OffsetPoint(const CFX_FloatPoint& point,
-                                       FX_FLOAT x,
-                                       FX_FLOAT y) {
-  return CFX_FloatPoint(point.x + x, point.y + y);
+CFX_PointF CPWL_Utils::OffsetPoint(const CFX_PointF& point,
+                                   FX_FLOAT x,
+                                   FX_FLOAT y) {
+  return CFX_PointF(point.x + x, point.y + y);
 }
 
 CPVT_WordRange CPWL_Utils::OverlapWordRange(const CPVT_WordRange& wr1,
@@ -192,10 +192,10 @@ CFX_ByteString CPWL_Utils::GetAP_Circle(const CFX_FloatRect& crBBox) {
   FX_FLOAT fWidth = crBBox.right - crBBox.left;
   FX_FLOAT fHeight = crBBox.top - crBBox.bottom;
 
-  CFX_FloatPoint pt1(crBBox.left, crBBox.bottom + fHeight / 2);
-  CFX_FloatPoint pt2(crBBox.left + fWidth / 2, crBBox.top);
-  CFX_FloatPoint pt3(crBBox.right, crBBox.bottom + fHeight / 2);
-  CFX_FloatPoint pt4(crBBox.left + fWidth / 2, crBBox.bottom);
+  CFX_PointF pt1(crBBox.left, crBBox.bottom + fHeight / 2);
+  CFX_PointF pt2(crBBox.left + fWidth / 2, crBBox.top);
+  CFX_PointF pt3(crBBox.right, crBBox.bottom + fHeight / 2);
+  CFX_PointF pt4(crBBox.left + fWidth / 2, crBBox.bottom);
 
   csAP << pt1.x << " " << pt1.y << " m\n";
 
@@ -245,10 +245,10 @@ CFX_ByteString CPWL_Utils::GetAP_Diamond(const CFX_FloatRect& crBBox) {
   FX_FLOAT fWidth = crBBox.right - crBBox.left;
   FX_FLOAT fHeight = crBBox.top - crBBox.bottom;
 
-  CFX_FloatPoint pt1(crBBox.left, crBBox.bottom + fHeight / 2);
-  CFX_FloatPoint pt2(crBBox.left + fWidth / 2, crBBox.top);
-  CFX_FloatPoint pt3(crBBox.right, crBBox.bottom + fHeight / 2);
-  CFX_FloatPoint pt4(crBBox.left + fWidth / 2, crBBox.bottom);
+  CFX_PointF pt1(crBBox.left, crBBox.bottom + fHeight / 2);
+  CFX_PointF pt2(crBBox.left + fWidth / 2, crBBox.top);
+  CFX_PointF pt3(crBBox.right, crBBox.bottom + fHeight / 2);
+  CFX_PointF pt4(crBBox.left + fWidth / 2, crBBox.bottom);
 
   csAP << pt1.x << " " << pt1.y << " m\n";
   csAP << pt2.x << " " << pt2.y << " l\n";
@@ -276,8 +276,8 @@ CFX_ByteString CPWL_Utils::GetAP_Star(const CFX_FloatRect& crBBox) {
 
   FX_FLOAT fRadius =
       (crBBox.top - crBBox.bottom) / (1 + (FX_FLOAT)cos(FX_PI / 5.0f));
-  CFX_FloatPoint ptCenter = CFX_FloatPoint((crBBox.left + crBBox.right) / 2.0f,
-                                           (crBBox.top + crBBox.bottom) / 2.0f);
+  CFX_PointF ptCenter = CFX_PointF((crBBox.left + crBBox.right) / 2.0f,
+                                   (crBBox.top + crBBox.bottom) / 2.0f);
 
   FX_FLOAT px[5], py[5];
 
@@ -310,9 +310,9 @@ CFX_ByteString CPWL_Utils::GetAP_HalfCircle(const CFX_FloatRect& crBBox,
   FX_FLOAT fWidth = crBBox.right - crBBox.left;
   FX_FLOAT fHeight = crBBox.top - crBBox.bottom;
 
-  CFX_FloatPoint pt1(-fWidth / 2, 0);
-  CFX_FloatPoint pt2(0, fHeight / 2);
-  CFX_FloatPoint pt3(fWidth / 2, 0);
+  CFX_PointF pt1(-fWidth / 2, 0);
+  CFX_PointF pt2(0, fHeight / 2);
+  CFX_PointF pt3(fWidth / 2, 0);
 
   FX_FLOAT px, py;
 
@@ -365,8 +365,8 @@ CFX_FloatRect CPWL_Utils::ScaleRect(const CFX_FloatRect& rcRect,
   FX_FLOAT fHalfWidth = (rcRect.right - rcRect.left) / 2.0f;
   FX_FLOAT fHalfHeight = (rcRect.top - rcRect.bottom) / 2.0f;
 
-  CFX_FloatPoint ptCenter = CFX_FloatPoint((rcRect.left + rcRect.right) / 2,
-                                           (rcRect.top + rcRect.bottom) / 2);
+  CFX_PointF ptCenter = CFX_PointF((rcRect.left + rcRect.right) / 2,
+                                   (rcRect.top + rcRect.bottom) / 2);
 
   return CFX_FloatRect(
       ptCenter.x - fHalfWidth * fScale, ptCenter.y - fHalfHeight * fScale,
@@ -411,7 +411,7 @@ CFX_FloatRect CPWL_Utils::GetCenterSquare(const CFX_FloatRect& rect) {
 }
 
 CFX_ByteString CPWL_Utils::GetEditAppStream(CFX_Edit* pEdit,
-                                            const CFX_FloatPoint& ptOffset,
+                                            const CFX_PointF& ptOffset,
                                             const CPVT_WordRange* pRange,
                                             bool bContinuous,
                                             uint16_t SubWord) {
@@ -420,7 +420,7 @@ CFX_ByteString CPWL_Utils::GetEditAppStream(CFX_Edit* pEdit,
 }
 
 CFX_ByteString CPWL_Utils::GetEditSelAppStream(CFX_Edit* pEdit,
-                                               const CFX_FloatPoint& ptOffset,
+                                               const CFX_PointF& ptOffset,
                                                const CPVT_WordRange* pRange) {
   return CFX_Edit::GetSelectAppearanceStream(pEdit, ptOffset, pRange);
 }
@@ -452,7 +452,7 @@ CFX_ByteString CPWL_Utils::GetTextAppStream(const CFX_FloatRect& rcBBox,
   pEdit->SetText(sText);
 
   CFX_ByteString sEdit =
-      CPWL_Utils::GetEditAppStream(pEdit.get(), CFX_FloatPoint(0.0f, 0.0f));
+      CPWL_Utils::GetEditAppStream(pEdit.get(), CFX_PointF(0.0f, 0.0f));
   if (sEdit.GetLength() > 0)
     sRet << "BT\n" << CPWL_Utils::GetColorAppStream(crText) << sEdit << "ET\n";
 
@@ -664,7 +664,7 @@ CFX_ByteString CPWL_Utils::GetPushButtonAppStream(const CFX_FloatRect& rcBBox,
   if (!rcLabel.IsEmpty()) {
     pEdit->SetPlateRect(rcLabel);
     CFX_ByteString sEdit =
-        CPWL_Utils::GetEditAppStream(pEdit.get(), CFX_FloatPoint(0.0f, 0.0f));
+        CPWL_Utils::GetEditAppStream(pEdit.get(), CFX_PointF(0.0f, 0.0f));
     if (sEdit.GetLength() > 0) {
       sTemp << "BT\n"
             << CPWL_Utils::GetColorAppStream(crText) << sEdit << "ET\n";
@@ -1089,8 +1089,8 @@ CFX_ByteString CPWL_Utils::GetDropButtonAppStream(const CFX_FloatRect& rcBBox) {
                       CPWL_Dash(3, 0, 0))
                << "Q\n";
 
-    CFX_FloatPoint ptCenter = CFX_FloatPoint((rcBBox.left + rcBBox.right) / 2,
-                                             (rcBBox.top + rcBBox.bottom) / 2);
+    CFX_PointF ptCenter = CFX_PointF((rcBBox.left + rcBBox.right) / 2,
+                                     (rcBBox.top + rcBBox.bottom) / 2);
     if (IsFloatBigger(rcBBox.right - rcBBox.left, 6) &&
         IsFloatBigger(rcBBox.top - rcBBox.bottom, 6)) {
       sAppStream << "q\n"
@@ -1230,7 +1230,7 @@ void CPWL_Utils::DrawFillRect(CFX_RenderDevice* pDevice,
 
 void CPWL_Utils::DrawFillArea(CFX_RenderDevice* pDevice,
                               CFX_Matrix* pUser2Device,
-                              const CFX_FloatPoint* pPts,
+                              const CFX_PointF* pPts,
                               int32_t nCount,
                               const FX_COLORREF& color) {
   CFX_PathData path;
@@ -1260,8 +1260,8 @@ void CPWL_Utils::DrawStrokeRect(CFX_RenderDevice* pDevice,
 
 void CPWL_Utils::DrawStrokeLine(CFX_RenderDevice* pDevice,
                                 CFX_Matrix* pUser2Device,
-                                const CFX_FloatPoint& ptMoveTo,
-                                const CFX_FloatPoint& ptLineTo,
+                                const CFX_PointF& ptMoveTo,
+                                const CFX_PointF& ptLineTo,
                                 const FX_COLORREF& color,
                                 FX_FLOAT fWidth) {
   CFX_PathData path;
@@ -1300,8 +1300,8 @@ void CPWL_Utils::DrawShadow(CFX_RenderDevice* pDevice,
     for (FX_FLOAT fy = rect.bottom + 0.5f; fy <= rect.top - 0.5f; fy += 1.0f) {
       int32_t nGray = nStartGray + (int32_t)(fStepGray * (fy - rect.bottom));
       CPWL_Utils::DrawStrokeLine(
-          pDevice, pUser2Device, CFX_FloatPoint(rect.left, fy),
-          CFX_FloatPoint(rect.right, fy),
+          pDevice, pUser2Device, CFX_PointF(rect.left, fy),
+          CFX_PointF(rect.right, fy),
           ArgbEncode(nTransparancy, nGray, nGray, nGray), 1.5f);
     }
   }
@@ -1312,8 +1312,8 @@ void CPWL_Utils::DrawShadow(CFX_RenderDevice* pDevice,
     for (FX_FLOAT fx = rect.left + 0.5f; fx <= rect.right - 0.5f; fx += 1.0f) {
       int32_t nGray = nStartGray + (int32_t)(fStepGray * (fx - rect.left));
       CPWL_Utils::DrawStrokeLine(
-          pDevice, pUser2Device, CFX_FloatPoint(fx, rect.bottom),
-          CFX_FloatPoint(fx, rect.top),
+          pDevice, pUser2Device, CFX_PointF(fx, rect.bottom),
+          CFX_PointF(fx, rect.top),
           ArgbEncode(nTransparancy, nGray, nGray, nGray), 1.5f);
     }
   }
@@ -2737,8 +2737,8 @@ void CPWL_Utils::GetGraphics_Star(CFX_ByteString& sPathData,
       (crBBox.top - crBBox.bottom) / (1 + (FX_FLOAT)cos(FX_PI / 5.0f));
   fLongRadius = fLongRadius * 0.7f;
   FX_FLOAT fShortRadius = fLongRadius * 0.55f;
-  CFX_FloatPoint ptCenter = CFX_FloatPoint((crBBox.left + crBBox.right) / 2.0f,
-                                           (crBBox.top + crBBox.bottom) / 2.0f);
+  CFX_PointF ptCenter = CFX_PointF((crBBox.left + crBBox.right) / 2.0f,
+                                   (crBBox.top + crBBox.bottom) / 2.0f);
 
   FX_FLOAT px1[5], py1[5];
   FX_FLOAT px2[5], py2[5];

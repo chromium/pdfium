@@ -426,8 +426,7 @@ PWL_IMPLEMENT_KEY_METHOD(OnChar)
 #undef PWL_IMPLEMENT_KEY_METHOD
 
 #define PWL_IMPLEMENT_MOUSE_METHOD(mouse_method_name)                          \
-  bool CPWL_Wnd::mouse_method_name(const CFX_FloatPoint& point,                \
-                                   uint32_t nFlag) {                           \
+  bool CPWL_Wnd::mouse_method_name(const CFX_PointF& point, uint32_t nFlag) {  \
     if (!IsValid() || !IsVisible() || !IsEnabled())                            \
       return false;                                                            \
     if (IsWndCaptureMouse(this)) {                                             \
@@ -462,7 +461,7 @@ PWL_IMPLEMENT_MOUSE_METHOD(OnMouseMove)
 #undef PWL_IMPLEMENT_MOUSE_METHOD
 
 bool CPWL_Wnd::OnMouseWheel(short zDelta,
-                            const CFX_FloatPoint& point,
+                            const CFX_PointF& point,
                             uint32_t nFlag) {
   if (!IsValid() || !IsVisible() || !IsEnabled())
     return false;
@@ -534,10 +533,10 @@ CFX_FloatRect CPWL_Wnd::GetClientRect() const {
   return rcWindow.Contains(rcClient) ? rcClient : CFX_FloatRect();
 }
 
-CFX_FloatPoint CPWL_Wnd::GetCenterPoint() const {
+CFX_PointF CPWL_Wnd::GetCenterPoint() const {
   CFX_FloatRect rcClient = GetClientRect();
-  return CFX_FloatPoint((rcClient.left + rcClient.right) * 0.5f,
-                        (rcClient.top + rcClient.bottom) * 0.5f);
+  return CFX_PointF((rcClient.left + rcClient.right) * 0.5f,
+                    (rcClient.top + rcClient.bottom) * 0.5f);
 }
 
 bool CPWL_Wnd::HasFlag(uint32_t dwFlags) const {
@@ -673,11 +672,11 @@ void CPWL_Wnd::OnSetFocus() {}
 
 void CPWL_Wnd::OnKillFocus() {}
 
-bool CPWL_Wnd::WndHitTest(const CFX_FloatPoint& point) const {
+bool CPWL_Wnd::WndHitTest(const CFX_PointF& point) const {
   return IsValid() && IsVisible() && GetWindowRect().Contains(point.x, point.y);
 }
 
-bool CPWL_Wnd::ClientHitTest(const CFX_FloatPoint& point) const {
+bool CPWL_Wnd::ClientHitTest(const CFX_PointF& point) const {
   return IsValid() && IsVisible() && GetClientRect().Contains(point.x, point.y);
 }
 
@@ -850,11 +849,9 @@ CFX_Matrix CPWL_Wnd::GetWindowMatrix() const {
   return mt;
 }
 
-void CPWL_Wnd::PWLtoWnd(const CFX_FloatPoint& point,
-                        int32_t& x,
-                        int32_t& y) const {
+void CPWL_Wnd::PWLtoWnd(const CFX_PointF& point, int32_t& x, int32_t& y) const {
   CFX_Matrix mt = GetWindowMatrix();
-  CFX_FloatPoint pt = point;
+  CFX_PointF pt = point;
   mt.TransformPoint(pt.x, pt.y);
   x = (int32_t)(pt.x + 0.5);
   y = (int32_t)(pt.y + 0.5);
@@ -868,12 +865,12 @@ FX_RECT CPWL_Wnd::PWLtoWnd(const CFX_FloatRect& rect) const {
                  (int32_t)(rcTemp.right + 0.5), (int32_t)(rcTemp.top + 0.5));
 }
 
-CFX_FloatPoint CPWL_Wnd::ChildToParent(const CFX_FloatPoint& point) const {
+CFX_PointF CPWL_Wnd::ChildToParent(const CFX_PointF& point) const {
   CFX_Matrix mt = GetChildMatrix();
   if (mt.IsIdentity())
     return point;
 
-  CFX_FloatPoint pt = point;
+  CFX_PointF pt = point;
   mt.TransformPoint(pt.x, pt.y);
   return pt;
 }
@@ -888,13 +885,13 @@ CFX_FloatRect CPWL_Wnd::ChildToParent(const CFX_FloatRect& rect) const {
   return rc;
 }
 
-CFX_FloatPoint CPWL_Wnd::ParentToChild(const CFX_FloatPoint& point) const {
+CFX_PointF CPWL_Wnd::ParentToChild(const CFX_PointF& point) const {
   CFX_Matrix mt = GetChildMatrix();
   if (mt.IsIdentity())
     return point;
 
   mt.SetReverse(mt);
-  CFX_FloatPoint pt = point;
+  CFX_PointF pt = point;
   mt.TransformPoint(pt.x, pt.y);
   return pt;
 }

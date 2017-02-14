@@ -11,11 +11,11 @@
 
 struct PWL_CARET_INFO {
  public:
-  PWL_CARET_INFO() : bVisible(false) {}
+  PWL_CARET_INFO();
 
   bool bVisible;
-  CFX_FloatPoint ptHead;
-  CFX_FloatPoint ptFoot;
+  CFX_PointF ptHead;
+  CFX_PointF ptFoot;
 };
 
 class CPWL_Caret : public CPWL_Wnd {
@@ -33,18 +33,18 @@ class CPWL_Caret : public CPWL_Wnd {
   void TimerProc() override;
 
   void SetCaret(bool bVisible,
-                const CFX_FloatPoint& ptHead,
-                const CFX_FloatPoint& ptFoot);
-  CFX_ByteString GetCaretAppearanceStream(const CFX_FloatPoint& ptOffset);
+                const CFX_PointF& ptHead,
+                const CFX_PointF& ptFoot);
+  CFX_ByteString GetCaretAppearanceStream(const CFX_PointF& ptOffset);
   void SetInvalidRect(CFX_FloatRect rc) { m_rcInvalid = rc; }
 
  private:
-  void GetCaretApp(CFX_ByteTextBuf& sAppStream, const CFX_FloatPoint& ptOffset);
+  void GetCaretApp(CFX_ByteTextBuf& sAppStream, const CFX_PointF& ptOffset);
   CFX_FloatRect GetCaretRect() const;
 
   bool m_bFlash;
-  CFX_FloatPoint m_ptHead;
-  CFX_FloatPoint m_ptFoot;
+  CFX_PointF m_ptHead;
+  CFX_PointF m_ptFoot;
   FX_FLOAT m_fWidth;
   int32_t m_nDelay;
   CFX_FloatRect m_rcInvalid;

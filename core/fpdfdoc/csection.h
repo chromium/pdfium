@@ -14,8 +14,7 @@
 #include "core/fxcrt/fx_system.h"
 
 class CPDF_VariableText;
-
-struct CPVT_LineInfo;
+class CPVT_LineInfo;
 struct CPVT_WordLine;
 struct CPVT_WordPlace;
 
@@ -40,7 +39,7 @@ class CSection final {
   CPVT_WordPlace GetPrevWordPlace(const CPVT_WordPlace& place) const;
   CPVT_WordPlace GetNextWordPlace(const CPVT_WordPlace& place) const;
   void UpdateWordPlace(CPVT_WordPlace& place) const;
-  CPVT_WordPlace SearchWordPlace(const CFX_FloatPoint& point) const;
+  CPVT_WordPlace SearchWordPlace(const CFX_PointF& point) const;
   CPVT_WordPlace SearchWordPlace(FX_FLOAT fx,
                                  const CPVT_WordPlace& lineplace) const;
   CPVT_WordPlace SearchWordPlace(FX_FLOAT fx,

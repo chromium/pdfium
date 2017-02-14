@@ -39,7 +39,7 @@ class CPDFSDK_BAAnnotHandler : public IPDFSDK_AnnotHandler {
                             CPDFSDK_Annot* pAnnot) override;
   bool HitTest(CPDFSDK_PageView* pPageView,
                CPDFSDK_Annot* pAnnot,
-               const CFX_FloatPoint& point) override;
+               const CFX_PointF& point) override;
   void OnDraw(CPDFSDK_PageView* pPageView,
               CPDFSDK_Annot* pAnnot,
               CFX_RenderDevice* pDevice,
@@ -56,36 +56,36 @@ class CPDFSDK_BAAnnotHandler : public IPDFSDK_AnnotHandler {
   bool OnLButtonDown(CPDFSDK_PageView* pPageView,
                      CPDFSDK_Annot::ObservedPtr* pAnnot,
                      uint32_t nFlags,
-                     const CFX_FloatPoint& point) override;
+                     const CFX_PointF& point) override;
   bool OnLButtonUp(CPDFSDK_PageView* pPageView,
                    CPDFSDK_Annot::ObservedPtr* pAnnot,
                    uint32_t nFlags,
-                   const CFX_FloatPoint& point) override;
+                   const CFX_PointF& point) override;
   bool OnLButtonDblClk(CPDFSDK_PageView* pPageView,
                        CPDFSDK_Annot::ObservedPtr* pAnnot,
                        uint32_t nFlags,
-                       const CFX_FloatPoint& point) override;
+                       const CFX_PointF& point) override;
   bool OnMouseMove(CPDFSDK_PageView* pPageView,
                    CPDFSDK_Annot::ObservedPtr* pAnnot,
                    uint32_t nFlags,
-                   const CFX_FloatPoint& point) override;
+                   const CFX_PointF& point) override;
   bool OnMouseWheel(CPDFSDK_PageView* pPageView,
                     CPDFSDK_Annot::ObservedPtr* pAnnot,
                     uint32_t nFlags,
                     short zDelta,
-                    const CFX_FloatPoint& point) override;
+                    const CFX_PointF& point) override;
   bool OnRButtonDown(CPDFSDK_PageView* pPageView,
                      CPDFSDK_Annot::ObservedPtr* pAnnot,
                      uint32_t nFlags,
-                     const CFX_FloatPoint& point) override;
+                     const CFX_PointF& point) override;
   bool OnRButtonUp(CPDFSDK_PageView* pPageView,
                    CPDFSDK_Annot::ObservedPtr* pAnnot,
                    uint32_t nFlags,
-                   const CFX_FloatPoint& point) override;
+                   const CFX_PointF& point) override;
   bool OnRButtonDblClk(CPDFSDK_PageView* pPageView,
                        CPDFSDK_Annot::ObservedPtr* pAnnot,
                        uint32_t nFlags,
-                       const CFX_FloatPoint& point) override;
+                       const CFX_PointF& point) override;
   bool OnChar(CPDFSDK_Annot* pAnnot, uint32_t nChar, uint32_t nFlags) override;
   bool OnKeyDown(CPDFSDK_Annot* pAnnot, int nKeyCode, int nFlag) override;
   bool OnKeyUp(CPDFSDK_Annot* pAnnot, int nKeyCode, int nFlag) override;

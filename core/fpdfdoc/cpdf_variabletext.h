@@ -20,13 +20,13 @@
 #include "core/fxcrt/fx_system.h"
 #include "core/fxge/fx_font.h"
 
+class CPVT_Word;
 class CSection;
 class IPVT_FontMap;
-
 struct CPVT_SecProps;
 struct CPVT_Section;
 struct CPVT_SectionInfo;
-struct CPVT_Word;
+
 struct CPVT_WordInfo;
 struct CPVT_WordProps;
 
@@ -132,11 +132,11 @@ class CPDF_VariableText {
   CPVT_WordPlace GetEndWordPlace() const;
   CPVT_WordPlace GetPrevWordPlace(const CPVT_WordPlace& place) const;
   CPVT_WordPlace GetNextWordPlace(const CPVT_WordPlace& place) const;
-  CPVT_WordPlace SearchWordPlace(const CFX_FloatPoint& point) const;
+  CPVT_WordPlace SearchWordPlace(const CFX_PointF& point) const;
   CPVT_WordPlace GetUpWordPlace(const CPVT_WordPlace& place,
-                                const CFX_FloatPoint& point) const;
+                                const CFX_PointF& point) const;
   CPVT_WordPlace GetDownWordPlace(const CPVT_WordPlace& place,
-                                  const CFX_FloatPoint& point) const;
+                                  const CFX_PointF& point) const;
   CPVT_WordPlace GetLineBeginPlace(const CPVT_WordPlace& place) const;
   CPVT_WordPlace GetLineEndPlace(const CPVT_WordPlace& place) const;
   CPVT_WordPlace GetSectionBeginPlace(const CPVT_WordPlace& place) const;
@@ -152,11 +152,11 @@ class CPDF_VariableText {
   FX_FLOAT GetPlateWidth() const { return m_rcPlate.right - m_rcPlate.left; }
   FX_FLOAT GetPlateHeight() const { return m_rcPlate.top - m_rcPlate.bottom; }
   CFX_SizeF GetPlateSize() const;
-  CFX_FloatPoint GetBTPoint() const;
-  CFX_FloatPoint GetETPoint() const;
+  CFX_PointF GetBTPoint() const;
+  CFX_PointF GetETPoint() const;
 
-  CFX_FloatPoint InToOut(const CFX_FloatPoint& point) const;
-  CFX_FloatPoint OutToIn(const CFX_FloatPoint& point) const;
+  CFX_PointF InToOut(const CFX_PointF& point) const;
+  CFX_PointF OutToIn(const CFX_PointF& point) const;
   CFX_FloatRect InToOut(const CPVT_FloatRect& rect) const;
   CPVT_FloatRect OutToIn(const CFX_FloatRect& rect) const;
 

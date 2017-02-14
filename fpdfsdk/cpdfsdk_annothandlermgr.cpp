@@ -106,7 +106,7 @@ bool CPDFSDK_AnnotHandlerMgr::Annot_OnLButtonDown(
     CPDFSDK_PageView* pPageView,
     CPDFSDK_Annot::ObservedPtr* pAnnot,
     uint32_t nFlags,
-    const CFX_FloatPoint& point) {
+    const CFX_PointF& point) {
   ASSERT(*pAnnot);
   return GetAnnotHandler(pAnnot->Get())
       ->OnLButtonDown(pPageView, pAnnot, nFlags, point);
@@ -116,7 +116,7 @@ bool CPDFSDK_AnnotHandlerMgr::Annot_OnLButtonUp(
     CPDFSDK_PageView* pPageView,
     CPDFSDK_Annot::ObservedPtr* pAnnot,
     uint32_t nFlags,
-    const CFX_FloatPoint& point) {
+    const CFX_PointF& point) {
   ASSERT(*pAnnot);
   return GetAnnotHandler(pAnnot->Get())
       ->OnLButtonUp(pPageView, pAnnot, nFlags, point);
@@ -126,7 +126,7 @@ bool CPDFSDK_AnnotHandlerMgr::Annot_OnLButtonDblClk(
     CPDFSDK_PageView* pPageView,
     CPDFSDK_Annot::ObservedPtr* pAnnot,
     uint32_t nFlags,
-    const CFX_FloatPoint& point) {
+    const CFX_PointF& point) {
   ASSERT(*pAnnot);
   return GetAnnotHandler(pAnnot->Get())
       ->OnLButtonDblClk(pPageView, pAnnot, nFlags, point);
@@ -136,7 +136,7 @@ bool CPDFSDK_AnnotHandlerMgr::Annot_OnMouseMove(
     CPDFSDK_PageView* pPageView,
     CPDFSDK_Annot::ObservedPtr* pAnnot,
     uint32_t nFlags,
-    const CFX_FloatPoint& point) {
+    const CFX_PointF& point) {
   ASSERT(*pAnnot);
   return GetAnnotHandler(pAnnot->Get())
       ->OnMouseMove(pPageView, pAnnot, nFlags, point);
@@ -147,7 +147,7 @@ bool CPDFSDK_AnnotHandlerMgr::Annot_OnMouseWheel(
     CPDFSDK_Annot::ObservedPtr* pAnnot,
     uint32_t nFlags,
     short zDelta,
-    const CFX_FloatPoint& point) {
+    const CFX_PointF& point) {
   ASSERT(*pAnnot);
   return GetAnnotHandler(pAnnot->Get())
       ->OnMouseWheel(pPageView, pAnnot, nFlags, zDelta, point);
@@ -157,7 +157,7 @@ bool CPDFSDK_AnnotHandlerMgr::Annot_OnRButtonDown(
     CPDFSDK_PageView* pPageView,
     CPDFSDK_Annot::ObservedPtr* pAnnot,
     uint32_t nFlags,
-    const CFX_FloatPoint& point) {
+    const CFX_PointF& point) {
   ASSERT(*pAnnot);
   return GetAnnotHandler(pAnnot->Get())
       ->OnRButtonDown(pPageView, pAnnot, nFlags, point);
@@ -167,7 +167,7 @@ bool CPDFSDK_AnnotHandlerMgr::Annot_OnRButtonUp(
     CPDFSDK_PageView* pPageView,
     CPDFSDK_Annot::ObservedPtr* pAnnot,
     uint32_t nFlags,
-    const CFX_FloatPoint& point) {
+    const CFX_PointF& point) {
   ASSERT(*pAnnot);
   return GetAnnotHandler(pAnnot->Get())
       ->OnRButtonUp(pPageView, pAnnot, nFlags, point);
@@ -263,7 +263,7 @@ CFX_FloatRect CPDFSDK_AnnotHandlerMgr::Annot_OnGetViewBBox(
 
 bool CPDFSDK_AnnotHandlerMgr::Annot_OnHitTest(CPDFSDK_PageView* pPageView,
                                               CPDFSDK_Annot* pAnnot,
-                                              const CFX_FloatPoint& point) {
+                                              const CFX_PointF& point) {
   ASSERT(pAnnot);
   IPDFSDK_AnnotHandler* pAnnotHandler = GetAnnotHandler(pAnnot);
   if (pAnnotHandler->CanAnswer(pAnnot))

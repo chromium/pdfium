@@ -1389,7 +1389,7 @@ void CPDFSDK_Widget::ResetAppearance_ComboBox(const CFX_WideString* sValue) {
   CFX_FloatRect rcContent = pEdit->GetContentRect();
 
   CFX_ByteString sEdit =
-      CPWL_Utils::GetEditAppStream(pEdit.get(), CFX_FloatPoint());
+      CPWL_Utils::GetEditAppStream(pEdit.get(), CFX_PointF());
   if (sEdit.GetLength() > 0) {
     sBody << "/Tx BMC\n"
           << "q\n";
@@ -1469,15 +1469,13 @@ void CPDFSDK_Widget::ResetAppearance_ListBox() {
       sList << "BT\n"
             << CPWL_Utils::GetColorAppStream(CPWL_Color(COLORTYPE_GRAY, 1),
                                              true)
-            << CPWL_Utils::GetEditAppStream(pEdit.get(),
-                                            CFX_FloatPoint(0.0f, fy))
+            << CPWL_Utils::GetEditAppStream(pEdit.get(), CFX_PointF(0.0f, fy))
             << "ET\n";
     } else {
       CPWL_Color crText = GetTextPWLColor();
       sList << "BT\n"
             << CPWL_Utils::GetColorAppStream(crText, true)
-            << CPWL_Utils::GetEditAppStream(pEdit.get(),
-                                            CFX_FloatPoint(0.0f, fy))
+            << CPWL_Utils::GetEditAppStream(pEdit.get(), CFX_PointF(0.0f, fy))
             << "ET\n";
     }
 
@@ -1566,7 +1564,7 @@ void CPDFSDK_Widget::ResetAppearance_TextField(const CFX_WideString* sValue) {
 
   CFX_FloatRect rcContent = pEdit->GetContentRect();
   CFX_ByteString sEdit = CPWL_Utils::GetEditAppStream(
-      pEdit.get(), CFX_FloatPoint(), nullptr, !bCharArray, subWord);
+      pEdit.get(), CFX_PointF(), nullptr, !bCharArray, subWord);
 
   if (sEdit.GetLength() > 0) {
     sBody << "/Tx BMC\n"

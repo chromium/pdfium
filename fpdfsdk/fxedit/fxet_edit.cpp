@@ -57,7 +57,7 @@ CFX_ByteString GetFontSetString(IPVT_FontMap* pFontMap,
 }
 
 void DrawTextString(CFX_RenderDevice* pDevice,
-                    const CFX_FloatPoint& pt,
+                    const CFX_PointF& pt,
                     CPDF_Font* pFont,
                     FX_FLOAT fFontSize,
                     CFX_Matrix* pUser2Device,
@@ -78,8 +78,8 @@ void DrawTextString(CFX_RenderDevice* pDevice,
       ro.m_ColorMode = RENDER_COLOR_NORMAL;
 
       if (crTextStroke != 0) {
-        CFX_FloatPoint pt1;
-        CFX_FloatPoint pt2;
+        CFX_PointF pt1;
+        CFX_PointF pt2;
         pUser2Device->TransformPoint(pt1.x, pt1.y);
         pUser2Device->TransformPoint(pt2.x, pt2.y);
         CFX_GraphStateData gsd;
@@ -99,8 +99,8 @@ void DrawTextString(CFX_RenderDevice* pDevice,
       ro.m_ColorMode = RENDER_COLOR_NORMAL;
 
       if (crTextStroke != 0) {
-        CFX_FloatPoint pt1;
-        CFX_FloatPoint pt2;
+        CFX_PointF pt1;
+        CFX_PointF pt2;
         pUser2Device->TransformPoint(pt1.x, pt1.y);
         pUser2Device->TransformPoint(pt2.x, pt2.y);
         CFX_GraphStateData gsd;
@@ -602,7 +602,7 @@ void CFXEU_InsertText::Undo() {
 
 // static
 CFX_ByteString CFX_Edit::GetEditAppearanceStream(CFX_Edit* pEdit,
-                                                 const CFX_FloatPoint& ptOffset,
+                                                 const CFX_PointF& ptOffset,
                                                  const CPVT_WordRange* pRange,
                                                  bool bContinuous,
                                                  uint16_t SubWord) {
@@ -615,8 +615,8 @@ CFX_ByteString CFX_Edit::GetEditAppearanceStream(CFX_Edit* pEdit,
   CFX_ByteTextBuf sEditStream;
   CFX_ByteTextBuf sWords;
   int32_t nCurFontIndex = -1;
-  CFX_FloatPoint ptOld;
-  CFX_FloatPoint ptNew;
+  CFX_PointF ptOld;
+  CFX_PointF ptNew;
   CPVT_WordPlace oldplace;
 
   while (pIterator->NextWord()) {
@@ -633,13 +633,13 @@ CFX_ByteString CFX_Edit::GetEditAppearanceStream(CFX_Edit* pEdit,
 
         CPVT_Word word;
         if (pIterator->GetWord(word)) {
-          ptNew = CFX_FloatPoint(word.ptWord.x + ptOffset.x,
-                                 word.ptWord.y + ptOffset.y);
+          ptNew = CFX_PointF(word.ptWord.x + ptOffset.x,
+                             word.ptWord.y + ptOffset.y);
         } else {
           CPVT_Line line;
           pIterator->GetLine(line);
-          ptNew = CFX_FloatPoint(line.ptLine.x + ptOffset.x,
-                                 line.ptLine.y + ptOffset.y);
+          ptNew = CFX_PointF(line.ptLine.x + ptOffset.x,
+                             line.ptLine.y + ptOffset.y);
         }
 
         if (ptNew.x != ptOld.x || ptNew.y != ptOld.y) {
@@ -670,8 +670,8 @@ CFX_ByteString CFX_Edit::GetEditAppearanceStream(CFX_Edit* pEdit,
     } else {
       CPVT_Word word;
       if (pIterator->GetWord(word)) {
-        ptNew = CFX_FloatPoint(word.ptWord.x + ptOffset.x,
-                               word.ptWord.y + ptOffset.y);
+        ptNew =
+            CFX_PointF(word.ptWord.x + ptOffset.x, word.ptWord.y + ptOffset.y);
 
         if (ptNew.x != ptOld.x || ptNew.y != ptOld.y) {
           sEditStream << ptNew.x - ptOld.x << " " << ptNew.y - ptOld.y
@@ -717,7 +717,7 @@ CFX_ByteString CFX_Edit::GetEditAppearanceStream(CFX_Edit* pEdit,
 // static
 CFX_ByteString CFX_Edit::GetSelectAppearanceStream(
     CFX_Edit* pEdit,
-    const CFX_FloatPoint& ptOffset,
+    const CFX_PointF& ptOffset,
     const CPVT_WordRange* pRange) {
   if (!pRange || !pRange->IsExist())
     return CFX_ByteString();
@@ -750,7 +750,7 @@ void CFX_Edit::DrawEdit(CFX_RenderDevice* pDevice,
                         FX_COLORREF crTextFill,
                         FX_COLORREF crTextStroke,
                         const CFX_FloatRect& rcClip,
-                        const CFX_FloatPoint& ptOffset,
+                        const CFX_PointF& ptOffset,
                         const CPVT_WordRange* pRange,
                         CFX_SystemHandler* pSystemHandler,
                         CFFL_FormFiller* pFFLData) {
@@ -770,7 +770,7 @@ void CFX_Edit::DrawEdit(CFX_RenderDevice* pDevice,
 
   CFX_ByteTextBuf sTextBuf;
   int32_t nFontIndex = -1;
-  CFX_FloatPoint ptBT;
+  CFX_PointF ptBT;
   pDevice->SaveState();
   if (!rcClip.IsEmpty()) {
     CFX_FloatRect rcTemp = rcClip;
@@ -828,8 +828,7 @@ void CFX_Edit::DrawEdit(CFX_RenderDevice* pDevice,
               crOldFill != crCurFill) {
             if (sTextBuf.GetLength() > 0) {
               DrawTextString(
-                  pDevice,
-                  CFX_FloatPoint(ptBT.x + ptOffset.x, ptBT.y + ptOffset.y),
+                  pDevice, CFX_PointF(ptBT.x + ptOffset.x, ptBT.y + ptOffset.y),
                   pFontMap->GetPDFFont(nFontIndex), fFontSize, pUser2Device,
                   sTextBuf.MakeString(), crOldFill, crTextStroke, nHorzScale);
 
@@ -845,8 +844,8 @@ void CFX_Edit::DrawEdit(CFX_RenderDevice* pDevice,
                           .AsStringC();
         } else {
           DrawTextString(
-              pDevice, CFX_FloatPoint(word.ptWord.x + ptOffset.x,
-                                      word.ptWord.y + ptOffset.y),
+              pDevice, CFX_PointF(word.ptWord.x + ptOffset.x,
+                                  word.ptWord.y + ptOffset.y),
               pFontMap->GetPDFFont(word.nFontIndex), fFontSize, pUser2Device,
               GetPDFWordString(pFontMap, word.nFontIndex, word.Word, SubWord),
               crCurFill, crTextStroke, nHorzScale);
@@ -857,7 +856,7 @@ void CFX_Edit::DrawEdit(CFX_RenderDevice* pDevice,
 
     if (sTextBuf.GetLength() > 0) {
       DrawTextString(
-          pDevice, CFX_FloatPoint(ptBT.x + ptOffset.x, ptBT.y + ptOffset.y),
+          pDevice, CFX_PointF(ptBT.x + ptOffset.x, ptBT.y + ptOffset.y),
           pFontMap->GetPDFFont(nFontIndex), fFontSize, pUser2Device,
           sTextBuf.MakeString(), crOldFill, crTextStroke, nHorzScale);
     }
@@ -921,7 +920,7 @@ IPVT_FontMap* CFX_Edit::GetFontMap() {
 
 void CFX_Edit::SetPlateRect(const CFX_FloatRect& rect) {
   m_pVT->SetPlateRect(rect);
-  m_ptScrollPos = CFX_FloatPoint(rect.left, rect.top);
+  m_ptScrollPos = CFX_PointF(rect.left, rect.top);
   Paint();
 }
 
@@ -1209,10 +1208,10 @@ CPVT_WordRange CFX_Edit::GetVisibleWordRange() const {
   if (m_pVT->IsValid()) {
     CFX_FloatRect rcPlate = m_pVT->GetPlateRect();
 
-    CPVT_WordPlace place1 = m_pVT->SearchWordPlace(
-        EditToVT(CFX_FloatPoint(rcPlate.left, rcPlate.top)));
+    CPVT_WordPlace place1 =
+        m_pVT->SearchWordPlace(EditToVT(CFX_PointF(rcPlate.left, rcPlate.top)));
     CPVT_WordPlace place2 = m_pVT->SearchWordPlace(
-        EditToVT(CFX_FloatPoint(rcPlate.right, rcPlate.bottom)));
+        EditToVT(CFX_PointF(rcPlate.right, rcPlate.bottom)));
 
     return CPVT_WordRange(place1, place2);
   }
@@ -1220,7 +1219,7 @@ CPVT_WordRange CFX_Edit::GetVisibleWordRange() const {
   return CPVT_WordRange();
 }
 
-CPVT_WordPlace CFX_Edit::SearchWordPlace(const CFX_FloatPoint& point) const {
+CPVT_WordPlace CFX_Edit::SearchWordPlace(const CFX_PointF& point) const {
   if (m_pVT->IsValid()) {
     return m_pVT->SearchWordPlace(EditToVT(point));
   }
@@ -1297,7 +1296,7 @@ bool CFX_Edit::IsSelected() const {
   return m_SelState.IsExist();
 }
 
-CFX_FloatPoint CFX_Edit::VTToEdit(const CFX_FloatPoint& point) const {
+CFX_PointF CFX_Edit::VTToEdit(const CFX_PointF& point) const {
   CFX_FloatRect rcContent = m_pVT->GetContentRect();
   CFX_FloatRect rcPlate = m_pVT->GetPlateRect();
 
@@ -1315,11 +1314,11 @@ CFX_FloatPoint CFX_Edit::VTToEdit(const CFX_FloatPoint& point) const {
       break;
   }
 
-  return CFX_FloatPoint(point.x - (m_ptScrollPos.x - rcPlate.left),
-                        point.y - (m_ptScrollPos.y + fPadding - rcPlate.top));
+  return CFX_PointF(point.x - (m_ptScrollPos.x - rcPlate.left),
+                    point.y - (m_ptScrollPos.y + fPadding - rcPlate.top));
 }
 
-CFX_FloatPoint CFX_Edit::EditToVT(const CFX_FloatPoint& point) const {
+CFX_PointF CFX_Edit::EditToVT(const CFX_PointF& point) const {
   CFX_FloatRect rcContent = m_pVT->GetContentRect();
   CFX_FloatRect rcPlate = m_pVT->GetPlateRect();
 
@@ -1337,14 +1336,13 @@ CFX_FloatPoint CFX_Edit::EditToVT(const CFX_FloatPoint& point) const {
       break;
   }
 
-  return CFX_FloatPoint(point.x + (m_ptScrollPos.x - rcPlate.left),
-                        point.y + (m_ptScrollPos.y + fPadding - rcPlate.top));
+  return CFX_PointF(point.x + (m_ptScrollPos.x - rcPlate.left),
+                    point.y + (m_ptScrollPos.y + fPadding - rcPlate.top));
 }
 
 CFX_FloatRect CFX_Edit::VTToEdit(const CFX_FloatRect& rect) const {
-  CFX_FloatPoint ptLeftBottom =
-      VTToEdit(CFX_FloatPoint(rect.left, rect.bottom));
-  CFX_FloatPoint ptRightTop = VTToEdit(CFX_FloatPoint(rect.right, rect.top));
+  CFX_PointF ptLeftBottom = VTToEdit(CFX_PointF(rect.left, rect.bottom));
+  CFX_PointF ptRightTop = VTToEdit(CFX_PointF(rect.right, rect.top));
 
   return CFX_FloatRect(ptLeftBottom.x, ptLeftBottom.y, ptRightTop.x,
                        ptRightTop.y);
@@ -1397,14 +1395,14 @@ void CFX_Edit::SetScrollPosY(FX_FLOAT fy) {
   }
 }
 
-void CFX_Edit::SetScrollPos(const CFX_FloatPoint& point) {
+void CFX_Edit::SetScrollPos(const CFX_PointF& point) {
   SetScrollPosX(point.x);
   SetScrollPosY(point.y);
   SetScrollLimit();
   SetCaretInfo();
 }
 
-CFX_FloatPoint CFX_Edit::GetScrollPos() const {
+CFX_PointF CFX_Edit::GetScrollPos() const {
   return m_ptScrollPos;
 }
 
@@ -1446,8 +1444,8 @@ void CFX_Edit::ScrollToCaret() {
   CPDF_VariableText::Iterator* pIterator = m_pVT->GetIterator();
   pIterator->SetAt(m_wpCaret);
 
-  CFX_FloatPoint ptHead;
-  CFX_FloatPoint ptFoot;
+  CFX_PointF ptHead;
+  CFX_PointF ptFoot;
   CPVT_Word word;
   CPVT_Line line;
   if (pIterator->GetWord(word)) {
@@ -1462,8 +1460,8 @@ void CFX_Edit::ScrollToCaret() {
     ptFoot.y = line.ptLine.y + line.fLineDescent;
   }
 
-  CFX_FloatPoint ptHeadEdit = VTToEdit(ptHead);
-  CFX_FloatPoint ptFootEdit = VTToEdit(ptFoot);
+  CFX_PointF ptHeadEdit = VTToEdit(ptHead);
+  CFX_PointF ptFootEdit = VTToEdit(ptFoot);
   CFX_FloatRect rcPlate = m_pVT->GetPlateRect();
   if (!IsFloatEqual(rcPlate.left, rcPlate.right)) {
     if (IsFloatSmaller(ptHeadEdit.x, rcPlate.left) ||
@@ -1605,8 +1603,8 @@ void CFX_Edit::SetCaretInfo() {
       CPDF_VariableText::Iterator* pIterator = m_pVT->GetIterator();
       pIterator->SetAt(m_wpCaret);
 
-      CFX_FloatPoint ptHead;
-      CFX_FloatPoint ptFoot;
+      CFX_PointF ptHead;
+      CFX_PointF ptFoot;
       CPVT_Word word;
       CPVT_Line line;
       if (pIterator->GetWord(word)) {
@@ -1641,9 +1639,7 @@ void CFX_Edit::SetCaret(int32_t nPos) {
   }
 }
 
-void CFX_Edit::OnMouseDown(const CFX_FloatPoint& point,
-                           bool bShift,
-                           bool bCtrl) {
+void CFX_Edit::OnMouseDown(const CFX_PointF& point, bool bShift, bool bCtrl) {
   if (m_pVT->IsValid()) {
     SelectNone();
     SetCaret(m_pVT->SearchWordPlace(EditToVT(point)));
@@ -1655,9 +1651,7 @@ void CFX_Edit::OnMouseDown(const CFX_FloatPoint& point,
   }
 }
 
-void CFX_Edit::OnMouseMove(const CFX_FloatPoint& point,
-                           bool bShift,
-                           bool bCtrl) {
+void CFX_Edit::OnMouseMove(const CFX_PointF& point, bool bShift, bool bCtrl) {
   if (m_pVT->IsValid()) {
     SetCaret(m_pVT->SearchWordPlace(EditToVT(point)));
 

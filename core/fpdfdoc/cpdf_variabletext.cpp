@@ -172,8 +172,8 @@ bool CPDF_VariableText::Iterator::GetWord(CPVT_Word& word) const {
         word.nCharset = pWord->nCharset;
         word.fWidth = m_pVT->GetWordWidth(*pWord);
         word.ptWord = m_pVT->InToOut(
-            CFX_FloatPoint(pWord->fWordX + pSection->m_SecInfo.rcSection.left,
-                           pWord->fWordY + pSection->m_SecInfo.rcSection.top));
+            CFX_PointF(pWord->fWordX + pSection->m_SecInfo.rcSection.left,
+                       pWord->fWordY + pSection->m_SecInfo.rcSection.top));
         word.fAscent = m_pVT->GetWordAscent(*pWord);
         word.fDescent = m_pVT->GetWordDescent(*pWord);
         if (pWord->pWordProps)
@@ -205,7 +205,7 @@ bool CPDF_VariableText::Iterator::GetLine(CPVT_Line& line) const {
   line.lineplace = CPVT_WordPlace(m_CurPos.nSecIndex, m_CurPos.nLineIndex, -1);
   if (CSection* pSection = m_pVT->m_SectionArray.GetAt(m_CurPos.nSecIndex)) {
     if (CLine* pLine = pSection->m_LineArray.GetAt(m_CurPos.nLineIndex)) {
-      line.ptLine = m_pVT->InToOut(CFX_FloatPoint(
+      line.ptLine = m_pVT->InToOut(CFX_PointF(
           pLine->m_LineInfo.fLineX + pSection->m_SecInfo.rcSection.left,
           pLine->m_LineInfo.fLineY + pSection->m_SecInfo.rcSection.top));
       line.fLineWidth = pLine->m_LineInfo.fLineWidth;
@@ -548,8 +548,8 @@ CPVT_WordPlace CPDF_VariableText::GetNextWordPlace(
 }
 
 CPVT_WordPlace CPDF_VariableText::SearchWordPlace(
-    const CFX_FloatPoint& point) const {
-  CFX_FloatPoint pt = OutToIn(point);
+    const CFX_PointF& point) const {
+  CFX_PointF pt = OutToIn(point);
   CPVT_WordPlace place = GetBeginWordPlace();
   int32_t nLeft = 0;
   int32_t nRight = m_SectionArray.GetSize() - 1;
@@ -574,8 +574,8 @@ CPVT_WordPlace CPDF_VariableText::SearchWordPlace(
         continue;
       } else {
         place = pSection->SearchWordPlace(
-            CFX_FloatPoint(pt.x - pSection->m_SecInfo.rcSection.left,
-                           pt.y - pSection->m_SecInfo.rcSection.top));
+            CFX_PointF(pt.x - pSection->m_SecInfo.rcSection.left,
+                       pt.y - pSection->m_SecInfo.rcSection.top));
         place.nSecIndex = nMid;
         return place;
       }
@@ -592,10 +592,10 @@ CPVT_WordPlace CPDF_VariableText::SearchWordPlace(
 
 CPVT_WordPlace CPDF_VariableText::GetUpWordPlace(
     const CPVT_WordPlace& place,
-    const CFX_FloatPoint& point) const {
+    const CFX_PointF& point) const {
   if (CSection* pSection = m_SectionArray.GetAt(place.nSecIndex)) {
     CPVT_WordPlace temp = place;
-    CFX_FloatPoint pt = OutToIn(point);
+    CFX_PointF pt = OutToIn(point);
     if (temp.nLineIndex-- > 0) {
       return pSection->SearchWordPlace(
           pt.x - pSection->m_SecInfo.rcSection.left, temp);
@@ -613,10 +613,10 @@ CPVT_WordPlace CPDF_VariableText::GetUpWordPlace(
 
 CPVT_WordPlace CPDF_VariableText::GetDownWordPlace(
     const CPVT_WordPlace& place,
-    const CFX_FloatPoint& point) const {
+    const CFX_PointF& point) const {
   if (CSection* pSection = m_SectionArray.GetAt(place.nSecIndex)) {
     CPVT_WordPlace temp = place;
-    CFX_FloatPoint pt = OutToIn(point);
+    CFX_PointF pt = OutToIn(point);
     if (temp.nLineIndex++ < pSection->m_LineArray.GetSize() - 1) {
       return pSection->SearchWordPlace(
           pt.x - pSection->m_SecInfo.rcSection.left, temp);
@@ -1109,34 +1109,32 @@ CFX_SizeF CPDF_VariableText::GetPlateSize() const {
   return CFX_SizeF(GetPlateWidth(), GetPlateHeight());
 }
 
-CFX_FloatPoint CPDF_VariableText::GetBTPoint() const {
-  return CFX_FloatPoint(m_rcPlate.left, m_rcPlate.top);
+CFX_PointF CPDF_VariableText::GetBTPoint() const {
+  return CFX_PointF(m_rcPlate.left, m_rcPlate.top);
 }
 
-CFX_FloatPoint CPDF_VariableText::GetETPoint() const {
-  return CFX_FloatPoint(m_rcPlate.right, m_rcPlate.bottom);
+CFX_PointF CPDF_VariableText::GetETPoint() const {
+  return CFX_PointF(m_rcPlate.right, m_rcPlate.bottom);
 }
 
-CFX_FloatPoint CPDF_VariableText::InToOut(const CFX_FloatPoint& point) const {
-  return CFX_FloatPoint(point.x + GetBTPoint().x, GetBTPoint().y - point.y);
+CFX_PointF CPDF_VariableText::InToOut(const CFX_PointF& point) const {
+  return CFX_PointF(point.x + GetBTPoint().x, GetBTPoint().y - point.y);
 }
 
-CFX_FloatPoint CPDF_VariableText::OutToIn(const CFX_FloatPoint& point) const {
-  return CFX_FloatPoint(point.x - GetBTPoint().x, GetBTPoint().y - point.y);
+CFX_PointF CPDF_VariableText::OutToIn(const CFX_PointF& point) const {
+  return CFX_PointF(point.x - GetBTPoint().x, GetBTPoint().y - point.y);
 }
 
 CFX_FloatRect CPDF_VariableText::InToOut(const CPVT_FloatRect& rect) const {
-  CFX_FloatPoint ptLeftTop = InToOut(CFX_FloatPoint(rect.left, rect.top));
-  CFX_FloatPoint ptRightBottom =
-      InToOut(CFX_FloatPoint(rect.right, rect.bottom));
+  CFX_PointF ptLeftTop = InToOut(CFX_PointF(rect.left, rect.top));
+  CFX_PointF ptRightBottom = InToOut(CFX_PointF(rect.right, rect.bottom));
   return CFX_FloatRect(ptLeftTop.x, ptRightBottom.y, ptRightBottom.x,
                        ptLeftTop.y);
 }
 
 CPVT_FloatRect CPDF_VariableText::OutToIn(const CFX_FloatRect& rect) const {
-  CFX_FloatPoint ptLeftTop = OutToIn(CFX_FloatPoint(rect.left, rect.top));
-  CFX_FloatPoint ptRightBottom =
-      OutToIn(CFX_FloatPoint(rect.right, rect.bottom));
+  CFX_PointF ptLeftTop = OutToIn(CFX_PointF(rect.left, rect.top));
+  CFX_PointF ptRightBottom = OutToIn(CFX_PointF(rect.right, rect.bottom));
   return CPVT_FloatRect(ptLeftTop.x, ptLeftTop.y, ptRightBottom.x,
                         ptRightBottom.y);
 }

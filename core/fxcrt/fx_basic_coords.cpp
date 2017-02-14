@@ -197,6 +197,10 @@ FX_RECT CFX_FloatRect::GetClosestRect() const {
   return rect;
 }
 
+bool CFX_FloatRect::Contains(const CFX_PointF& point) const {
+  return Contains(point.x, point.y);
+}
+
 bool CFX_FloatRect::Contains(const CFX_FloatRect& other_rect) const {
   CFX_FloatRect n1(*this);
   CFX_FloatRect n2(other_rect);

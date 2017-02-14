@@ -64,11 +64,11 @@ class CLST_Rect : public CFX_FloatRect {
     return bottom - top;
   }
 
-  CFX_FloatPoint LeftTop() const { return CFX_FloatPoint(left, top); }
+  CFX_PointF LeftTop() const { return CFX_PointF(left, top); }
 
-  CFX_FloatPoint RightBottom() const { return CFX_FloatPoint(right, bottom); }
+  CFX_PointF RightBottom() const { return CFX_PointF(right, bottom); }
 
-  const CLST_Rect operator+=(const CFX_FloatPoint& point) {
+  const CLST_Rect operator+=(const CFX_PointF& point) {
     left += point.x;
     right += point.x;
     top += point.y;
@@ -77,7 +77,7 @@ class CLST_Rect : public CFX_FloatRect {
     return *this;
   }
 
-  const CLST_Rect operator-=(const CFX_FloatPoint& point) {
+  const CLST_Rect operator-=(const CFX_PointF& point) {
     left -= point.x;
     right -= point.x;
     top -= point.y;
@@ -86,12 +86,12 @@ class CLST_Rect : public CFX_FloatRect {
     return *this;
   }
 
-  CLST_Rect operator+(const CFX_FloatPoint& point) const {
+  CLST_Rect operator+(const CFX_PointF& point) const {
     return CLST_Rect(left + point.x, top + point.y, right + point.x,
                      bottom + point.y);
   }
 
-  CLST_Rect operator-(const CFX_FloatPoint& point) const {
+  CLST_Rect operator-(const CFX_PointF& point) const {
     return CLST_Rect(left - point.x, top - point.y, right - point.x,
                      bottom - point.y);
   }
@@ -134,33 +134,31 @@ class CFX_ListContainer {
   CFX_FloatRect GetPlateRect() const { return m_rcPlate; }
   void SetContentRect(const CLST_Rect& rect) { m_rcContent = rect; }
   CLST_Rect GetContentRect() const { return m_rcContent; }
-  CFX_FloatPoint GetBTPoint() const {
-    return CFX_FloatPoint(m_rcPlate.left, m_rcPlate.top);
+  CFX_PointF GetBTPoint() const {
+    return CFX_PointF(m_rcPlate.left, m_rcPlate.top);
   }
-  CFX_FloatPoint GetETPoint() const {
-    return CFX_FloatPoint(m_rcPlate.right, m_rcPlate.bottom);
+  CFX_PointF GetETPoint() const {
+    return CFX_PointF(m_rcPlate.right, m_rcPlate.bottom);
   }
 
  public:
-  CFX_FloatPoint InnerToOuter(const CFX_FloatPoint& point) const {
-    return CFX_FloatPoint(point.x + GetBTPoint().x, GetBTPoint().y - point.y);
+  CFX_PointF InnerToOuter(const CFX_PointF& point) const {
+    return CFX_PointF(point.x + GetBTPoint().x, GetBTPoint().y - point.y);
   }
-  CFX_FloatPoint OuterToInner(const CFX_FloatPoint& point) const {
-    return CFX_FloatPoint(point.x - GetBTPoint().x, GetBTPoint().y - point.y);
+  CFX_PointF OuterToInner(const CFX_PointF& point) const {
+    return CFX_PointF(point.x - GetBTPoint().x, GetBTPoint().y - point.y);
   }
   CFX_FloatRect InnerToOuter(const CLST_Rect& rect) const {
-    CFX_FloatPoint ptLeftTop =
-        InnerToOuter(CFX_FloatPoint(rect.left, rect.top));
-    CFX_FloatPoint ptRightBottom =
-        InnerToOuter(CFX_FloatPoint(rect.right, rect.bottom));
+    CFX_PointF ptLeftTop = InnerToOuter(CFX_PointF(rect.left, rect.top));
+    CFX_PointF ptRightBottom =
+        InnerToOuter(CFX_PointF(rect.right, rect.bottom));
     return CFX_FloatRect(ptLeftTop.x, ptRightBottom.y, ptRightBottom.x,
                          ptLeftTop.y);
   }
   CLST_Rect OuterToInner(const CFX_FloatRect& rect) const {
-    CFX_FloatPoint ptLeftTop =
-        OuterToInner(CFX_FloatPoint(rect.left, rect.top));
-    CFX_FloatPoint ptRightBottom =
-        OuterToInner(CFX_FloatPoint(rect.right, rect.bottom));
+    CFX_PointF ptLeftTop = OuterToInner(CFX_PointF(rect.left, rect.top));
+    CFX_PointF ptRightBottom =
+        OuterToInner(CFX_PointF(rect.right, rect.bottom));
     return CLST_Rect(ptLeftTop.x, ptLeftTop.y, ptRightBottom.x,
                      ptRightBottom.y);
   }
@@ -226,8 +224,8 @@ class CFX_ListCtrl : protected CFX_ListContainer {
   void SetPlateRect(const CFX_FloatRect& rect) override;
 
   void SetNotify(CPWL_List_Notify* pNotify);
-  void OnMouseDown(const CFX_FloatPoint& point, bool bShift, bool bCtrl);
-  void OnMouseMove(const CFX_FloatPoint& point, bool bShift, bool bCtrl);
+  void OnMouseDown(const CFX_PointF& point, bool bShift, bool bCtrl);
+  void OnMouseMove(const CFX_PointF& point, bool bShift, bool bCtrl);
   void OnVK_UP(bool bShift, bool bCtrl);
   void OnVK_DOWN(bool bShift, bool bCtrl);
   void OnVK_LEFT(bool bShift, bool bCtrl);
@@ -237,14 +235,14 @@ class CFX_ListCtrl : protected CFX_ListContainer {
   void OnVK(int32_t nItemIndex, bool bShift, bool bCtrl);
   bool OnChar(uint16_t nChar, bool bShift, bool bCtrl);
 
-  void SetScrollPos(const CFX_FloatPoint& point);
+  void SetScrollPos(const CFX_PointF& point);
   void ScrollToListItem(int32_t nItemIndex);
   CFX_FloatRect GetItemRect(int32_t nIndex) const;
   int32_t GetCaret() const;
   int32_t GetSelect() const;
   int32_t GetTopItem() const;
   CFX_FloatRect GetContentRect() const;
-  int32_t GetItemIndex(const CFX_FloatPoint& point) const;
+  int32_t GetItemIndex(const CFX_PointF& point) const;
   void AddString(const CFX_WideString& str);
   void SetTopItem(int32_t nIndex);
   void Select(int32_t nItemIndex);
@@ -267,8 +265,8 @@ class CFX_ListCtrl : protected CFX_ListContainer {
   int32_t FindNext(int32_t nIndex, FX_WCHAR nChar) const;
   int32_t GetFirstSelected() const;
 
-  CFX_FloatPoint InToOut(const CFX_FloatPoint& point) const;
-  CFX_FloatPoint OutToIn(const CFX_FloatPoint& point) const;
+  CFX_PointF InToOut(const CFX_PointF& point) const;
+  CFX_PointF OutToIn(const CFX_PointF& point) const;
   CFX_FloatRect InToOut(const CFX_FloatRect& rect) const;
   CFX_FloatRect OutToIn(const CFX_FloatRect& rect) const;
 
@@ -291,7 +289,7 @@ class CFX_ListCtrl : protected CFX_ListContainer {
 
   CPWL_List_Notify* m_pNotify;
   bool m_bNotifyFlag;
-  CFX_FloatPoint m_ptScrollPos;
+  CFX_PointF m_ptScrollPos;
   CPLST_Select m_aSelItems;  // for multiple
   int32_t m_nSelItem;        // for single
   int32_t m_nFootIndex;      // for multiple
