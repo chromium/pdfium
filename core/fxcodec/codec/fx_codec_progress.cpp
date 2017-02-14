@@ -663,11 +663,10 @@ bool CCodec_ProgressiveDecoder::GifInputRecordPositionBufCallback(
     pal_num = pCodec->m_GifPltNumber;
     pPalette = pCodec->m_pGifPalette;
   }
-  if (!pCodec->m_pSrcPalette) {
+  if (!pCodec->m_pSrcPalette)
     pCodec->m_pSrcPalette = FX_Alloc(FX_ARGB, pal_num);
-  } else if (pal_num > pCodec->m_SrcPaletteNumber) {
+  else if (pal_num > pCodec->m_SrcPaletteNumber)
     pCodec->m_pSrcPalette = FX_Realloc(FX_ARGB, pCodec->m_pSrcPalette, pal_num);
-  }
   if (!pCodec->m_pSrcPalette)
     return false;
 
@@ -682,15 +681,16 @@ bool CCodec_ProgressiveDecoder::GifInputRecordPositionBufCallback(
   pCodec->m_SrcPassNumber = interlace ? 4 : 1;
   int32_t pal_index = pCodec->m_GifBgIndex;
   CFX_DIBitmap* pDevice = pCodec->m_pDeviceBitmap;
-  if (trans_index >= pal_num) {
+  if (trans_index >= pal_num)
     trans_index = -1;
-  }
   if (trans_index != -1) {
     pCodec->m_pSrcPalette[trans_index] &= 0x00ffffff;
-    if (pDevice->HasAlpha()) {
+    if (pDevice->HasAlpha())
       pal_index = trans_index;
-    }
   }
+  if (pal_index >= pal_num)
+    return false;
+
   int startX = pCodec->m_startX;
   int startY = pCodec->m_startY;
   int sizeX = pCodec->m_sizeX;
