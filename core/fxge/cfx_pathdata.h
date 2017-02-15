@@ -47,10 +47,11 @@ class CFX_PathData {
 
   void Transform(const CFX_Matrix* pMatrix);
   bool IsRect() const;
-  bool GetZeroAreaPath(CFX_PathData* NewPath,
-                       CFX_Matrix* pMatrix,
-                       bool& bThin,
-                       bool bAdjust) const;
+  bool GetZeroAreaPath(const CFX_Matrix* pMatrix,
+                       bool bAdjust,
+                       CFX_PathData* NewPath,
+                       bool* bThin,
+                       bool* setIdentity) const;
   bool IsRect(const CFX_Matrix* pMatrix, CFX_FloatRect* rect) const;
 
   void Append(const CFX_PathData& data);

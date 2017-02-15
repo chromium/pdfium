@@ -535,19 +535,25 @@ bool CFX_RenderDevice::DrawPathWithBlend(const CFX_PathData* pPathData,
       !(fill_mode & FX_FILL_TEXT_MODE)) {
     CFX_PathData newPath;
     bool bThin = false;
-    if (pPathData->GetZeroAreaPath(&newPath, (CFX_Matrix*)pObject2Device, bThin,
-                                   !!m_pDeviceDriver->GetDriverType())) {
+    bool setIdentity = false;
+    if (pPathData->GetZeroAreaPath(pObject2Device,
+                                   !!m_pDeviceDriver->GetDriverType(), &newPath,
+                                   &bThin, &setIdentity)) {
       CFX_GraphStateData graphState;
       graphState.m_LineWidth = 0.0f;
+
       uint32_t strokecolor = fill_color;
       if (bThin)
         strokecolor = (((fill_alpha >> 2) << 24) | (strokecolor & 0x00ffffff));
-      CFX_Matrix* pMatrix = nullptr;
-      if (pObject2Device && !pObject2Device->IsIdentity())
-        pMatrix = (CFX_Matrix*)pObject2Device;
+
+      const CFX_Matrix* pMatrix = nullptr;
+      if (pObject2Device && !pObject2Device->IsIdentity() && !setIdentity)
+        pMatrix = pObject2Device;
+
       int smooth_path = FX_ZEROAREA_FILL;
       if (fill_mode & FXFILL_NOPATHSMOOTH)
         smooth_path |= FXFILL_NOPATHSMOOTH;
+
       m_pDeviceDriver->DrawPath(&newPath, pMatrix, &graphState, 0, strokecolor,
                                 smooth_path, blend_type);
     }
