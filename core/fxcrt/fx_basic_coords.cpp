@@ -50,15 +50,7 @@ void FX_RECT::Intersect(const FX_RECT& src) {
     left = top = right = bottom = 0;
   }
 }
-void FX_RECT::Union(const FX_RECT& other_rect) {
-  Normalize();
-  FX_RECT other = other_rect;
-  other.Normalize();
-  left = left < other.left ? left : other.left;
-  right = right > other.right ? right : other.right;
-  bottom = bottom > other.bottom ? bottom : other.bottom;
-  top = top < other.top ? top : other.top;
-}
+
 bool GetIntersection(FX_FLOAT low1,
                      FX_FLOAT high1,
                      FX_FLOAT low2,

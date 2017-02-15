@@ -195,7 +195,6 @@ using CFX_VectorF = CFX_VTemplate<FX_FLOAT>;
 // LTRB rectangles (y-axis runs downwards).
 struct FX_RECT {
   FX_RECT() : left(0), top(0), right(0), bottom(0) {}
-
   FX_RECT(int l, int t, int r, int b) : left(l), top(t), right(r), bottom(b) {}
 
   int Width() const { return right - left; }
@@ -215,9 +214,6 @@ struct FX_RECT {
   void Intersect(const FX_RECT& src);
   void Intersect(int l, int t, int r, int b) { Intersect(FX_RECT(l, t, r, b)); }
 
-  void Union(const FX_RECT& other_rect);
-  void Union(int l, int t, int r, int b) { Union(FX_RECT(l, t, r, b)); }
-
   void Offset(int dx, int dy) {
     left += dx;
     right += dx;
@@ -228,11 +224,6 @@ struct FX_RECT {
   bool operator==(const FX_RECT& src) const {
     return left == src.left && right == src.right && top == src.top &&
            bottom == src.bottom;
-  }
-
-  bool Contains(const FX_RECT& other_rect) const {
-    return other_rect.left >= left && other_rect.right <= right &&
-           other_rect.top >= top && other_rect.bottom <= bottom;
   }
 
   bool Contains(int x, int y) const {
