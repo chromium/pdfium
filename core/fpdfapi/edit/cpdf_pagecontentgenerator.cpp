@@ -148,14 +148,13 @@ void CPDF_PageContentGenerator::ProcessImage(CFX_ByteTextBuf* buf,
 void CPDF_PageContentGenerator::ProcessPath(CFX_ByteTextBuf* buf,
                                             CPDF_PathObject* pPathObj) {
   ProcessGraphics(buf, pPathObj);
-  const FX_PATHPOINT* pPoints = pPathObj->m_Path.GetPoints();
+  auto& pPoints = pPathObj->m_Path.GetPoints();
   if (pPathObj->m_Path.IsRect()) {
     *buf << pPoints[0].m_PointX << " " << pPoints[0].m_PointY << " "
          << (pPoints[2].m_PointX - pPoints[0].m_PointX) << " "
          << (pPoints[2].m_PointY - pPoints[0].m_PointY) << " re";
   } else {
-    int numPoints = pPathObj->m_Path.GetPointCount();
-    for (int i = 0; i < numPoints; i++) {
+    for (size_t i = 0; i < pPoints.size(); i++) {
       if (i > 0)
         *buf << " ";
       *buf << pPoints[i].m_PointX << " " << pPoints[i].m_PointY;
@@ -165,7 +164,7 @@ void CPDF_PageContentGenerator::ProcessPath(CFX_ByteTextBuf* buf,
       } else if (pointType == FXPT_TYPE::LineTo) {
         *buf << " l";
       } else if (pointType == FXPT_TYPE::BezierTo) {
-        if (i + 2 >= numPoints ||
+        if (i + 2 >= pPoints.size() ||
             !pPoints[i].IsTypeAndOpen(FXPT_TYPE::BezierTo) ||
             !pPoints[i + 1].IsTypeAndOpen(FXPT_TYPE::BezierTo) ||
             pPoints[i + 2].m_Type != FXPT_TYPE::BezierTo) {

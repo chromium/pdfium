@@ -6,6 +6,8 @@
 
 #include "public/fpdf_transformpage.h"
 
+#include <vector>
+
 #include "core/fpdfapi/page/cpdf_clippath.h"
 #include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fpdfapi/page/cpdf_pageobject.h"
@@ -235,8 +237,7 @@ void OutputPath(CFX_ByteTextBuf& buf, CPDF_Path path) {
   if (!pPathData)
     return;
 
-  FX_PATHPOINT* pPoints = pPathData->GetPoints();
-
+  const std::vector<FX_PATHPOINT>& pPoints = pPathData->GetPoints();
   if (path.IsRect()) {
     buf << (pPoints[0].m_PointX) << " " << (pPoints[0].m_PointY) << " "
         << (pPoints[2].m_PointX - pPoints[0].m_PointX) << " "
@@ -245,7 +246,7 @@ void OutputPath(CFX_ByteTextBuf& buf, CPDF_Path path) {
   }
 
   CFX_ByteString temp;
-  for (int i = 0; i < pPathData->GetPointCount(); i++) {
+  for (size_t i = 0; i < pPoints.size(); i++) {
     buf << (pPoints[i].m_PointX) << " " << (pPoints[i].m_PointY);
     FXPT_TYPE point_type = pPoints[i].m_Type;
     if (point_type == FXPT_TYPE::MoveTo) {
@@ -288,7 +289,7 @@ DLLEXPORT void STDCALL FPDFPage_InsertClipPath(FPDF_PAGE page,
   for (i = 0; i < pClipPath->GetPathCount(); i++) {
     CPDF_Path path = pClipPath->GetPath(i);
     int iClipType = pClipPath->GetClipType(i);
-    if (path.GetPointCount() == 0) {
+    if (path.GetPoints().empty()) {
       // Empty clipping (totally clipped out)
       strClip << "0 0 m W n ";
     } else {

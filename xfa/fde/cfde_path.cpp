@@ -9,70 +9,29 @@
 #include "third_party/base/stl_util.h"
 #include "xfa/fde/fde_object.h"
 
-bool CFDE_Path::StartFigure() {
-  return CloseFigure();
-}
-
-bool CFDE_Path::CloseFigure() {
-  FX_PATHPOINT* pPoint = GetLastPoint();
-  if (pPoint)
-    pPoint->m_CloseFigure = true;
-  return true;
-}
-
-FX_PATHPOINT* CFDE_Path::GetLastPoint() const {
-  int32_t iPoints = m_Path.GetPointCount();
-  if (iPoints == 0)
-    return nullptr;
-  return m_Path.GetPoints() + iPoints - 1;
+void CFDE_Path::CloseFigure() {
+  m_Path.ClosePath();
 }
 
 bool CFDE_Path::FigureClosed() const {
-  FX_PATHPOINT* pPoint = GetLastPoint();
-  return pPoint ? pPoint->m_CloseFigure : true;
-}
-
-FX_PATHPOINT* CFDE_Path::AddPoints(int32_t iCount) {
-  if (iCount < 1)
-    return nullptr;
-
-  int32_t iPoints = m_Path.GetPointCount();
-  m_Path.AddPointCount(iCount);
-  return m_Path.GetPoints() + iPoints;
+  const std::vector<FX_PATHPOINT>& points = m_Path.GetPoints();
+  return points.empty() ? true : points.back().m_CloseFigure;
 }
 
 void CFDE_Path::MoveTo(FX_FLOAT fx, FX_FLOAT fy) {
-  FX_PATHPOINT* pPoint = AddPoints(1);
-  pPoint->m_PointX = fx;
-  pPoint->m_PointY = fy;
-  pPoint->m_Type = FXPT_TYPE::MoveTo;
-  pPoint->m_CloseFigure = false;
+  m_Path.AppendPoint(fx, fy, FXPT_TYPE::MoveTo, false);
 }
 
 void CFDE_Path::LineTo(FX_FLOAT fx, FX_FLOAT fy) {
-  FX_PATHPOINT* pPoint = AddPoints(1);
-  pPoint->m_PointX = fx;
-  pPoint->m_PointY = fy;
-  pPoint->m_Type = FXPT_TYPE::LineTo;
-  pPoint->m_CloseFigure = false;
+  m_Path.AppendPoint(fx, fy, FXPT_TYPE::LineTo, false);
 }
 
 void CFDE_Path::BezierTo(const CFX_PointF& p1,
                          const CFX_PointF& p2,
                          const CFX_PointF& p3) {
-  FX_PATHPOINT* p = AddPoints(3);
-  p[0].m_PointX = p1.x;
-  p[0].m_PointY = p1.y;
-  p[0].m_Type = FXPT_TYPE::BezierTo;
-  p[0].m_CloseFigure = false;
-  p[1].m_PointX = p2.x;
-  p[1].m_PointY = p2.y;
-  p[1].m_Type = FXPT_TYPE::BezierTo;
-  p[1].m_CloseFigure = false;
-  p[2].m_PointX = p3.x;
-  p[2].m_PointY = p3.y;
-  p[2].m_Type = FXPT_TYPE::BezierTo;
-  p[2].m_CloseFigure = false;
+  m_Path.AppendPoint(p1.x, p1.y, FXPT_TYPE::BezierTo, false);
+  m_Path.AppendPoint(p2.x, p2.y, FXPT_TYPE::BezierTo, false);
+  m_Path.AppendPoint(p3.x, p3.y, FXPT_TYPE::BezierTo, false);
 }
 
 void CFDE_Path::ArcTo(bool bStart,
@@ -195,9 +154,9 @@ void CFDE_Path::AddEllipse(const CFX_RectF& rect) {
 }
 
 void CFDE_Path::AddLine(const CFX_PointF& pt1, const CFX_PointF& pt2) {
-  FX_PATHPOINT* pLast = GetLastPoint();
-  if (!pLast || FXSYS_fabs(pLast->m_PointX - pt1.x) > 0.001 ||
-      FXSYS_fabs(pLast->m_PointY - pt1.y) > 0.001) {
+  std::vector<FX_PATHPOINT>& points = m_Path.GetPoints();
+  if (points.empty() || FXSYS_fabs(points.back().m_PointX - pt1.x) > 0.001 ||
+      FXSYS_fabs(points.back().m_PointY - pt1.y) > 0.001) {
     MoveTo(pt1);
   }
   LineTo(pt2);
@@ -207,8 +166,7 @@ void CFDE_Path::AddPath(const CFDE_Path* pSrc, bool bConnect) {
   if (!pSrc)
     return;
 
-  int32_t iCount = pSrc->m_Path.GetPointCount();
-  if (iCount < 1)
+  if (pSrc->m_Path.GetPoints().empty())
     return;
   if (bConnect)
     LineTo(pSrc->m_Path.GetPointX(0), pSrc->m_Path.GetPointY(0));

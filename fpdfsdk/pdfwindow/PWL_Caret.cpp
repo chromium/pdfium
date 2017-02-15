@@ -34,7 +34,6 @@ void CPWL_Caret::DrawThisAppearance(CFX_RenderDevice* pDevice,
     CFX_FloatRect rcRect = GetCaretRect();
     CFX_FloatRect rcClip = GetClipRect();
     CFX_PathData path;
-    path.SetPointCount(2);
 
     FX_FLOAT fCaretX = rcRect.left + m_fWidth * 0.5f;
     FX_FLOAT fCaretTop = rcRect.top;
@@ -44,14 +43,14 @@ void CPWL_Caret::DrawThisAppearance(CFX_RenderDevice* pDevice,
       if (!rcRect.IsEmpty()) {
         fCaretTop = rcRect.top;
         fCaretBottom = rcRect.bottom;
-        path.SetPoint(0, fCaretX, fCaretBottom, FXPT_TYPE::MoveTo, false);
-        path.SetPoint(1, fCaretX, fCaretTop, FXPT_TYPE::LineTo, false);
+        path.AppendPoint(fCaretX, fCaretBottom, FXPT_TYPE::MoveTo, false);
+        path.AppendPoint(fCaretX, fCaretTop, FXPT_TYPE::LineTo, false);
       } else {
         return;
       }
     } else {
-      path.SetPoint(0, fCaretX, fCaretBottom, FXPT_TYPE::MoveTo, false);
-      path.SetPoint(1, fCaretX, fCaretTop, FXPT_TYPE::LineTo, false);
+      path.AppendPoint(fCaretX, fCaretBottom, FXPT_TYPE::MoveTo, false);
+      path.AppendPoint(fCaretX, fCaretTop, FXPT_TYPE::LineTo, false);
     }
 
     CFX_GraphStateData gsd;

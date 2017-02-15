@@ -44,6 +44,7 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessRect) {
   pPathObj->m_Path.AppendRect(10, 5, 13, 30);
   pPathObj->m_FillType = FXFILL_ALTERNATE;
   pPathObj->m_bStroke = true;
+
   auto pTestPage = pdfium::MakeUnique<CPDF_Page>(nullptr, nullptr, false);
   CPDF_PageContentGenerator generator(pTestPage.get());
   CFX_ByteTextBuf buf;
@@ -51,77 +52,33 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessRect) {
   EXPECT_EQ("q 10 5 3 25 re B* Q\n", buf.MakeString());
 
   pPathObj = pdfium::MakeUnique<CPDF_PathObject>();
-  pPathObj->m_Path.SetPointCount(4);
-  FX_PATHPOINT* pPoints = pPathObj->m_Path.GetMutablePoints();
-  pPoints[0].m_PointX = 0;
-  pPoints[0].m_PointY = 0;
-  pPoints[0].m_Type = FXPT_TYPE::MoveTo;
-  pPoints[0].m_CloseFigure = false;
-  pPoints[1].m_PointX = 5.2f;
-  pPoints[1].m_PointY = 0;
-  pPoints[1].m_Type = FXPT_TYPE::LineTo;
-  pPoints[1].m_CloseFigure = false;
-  pPoints[2].m_PointX = 5.2f;
-  pPoints[2].m_PointY = 3.78f;
-  pPoints[2].m_Type = FXPT_TYPE::LineTo;
-  pPoints[2].m_CloseFigure = false;
-  pPoints[3].m_PointX = 0;
-  pPoints[3].m_PointY = 3.78f;
-  pPoints[3].m_Type = FXPT_TYPE::LineTo;
-  pPoints[3].m_CloseFigure = true;
+  pPathObj->m_Path.AppendPoint(0, 0, FXPT_TYPE::MoveTo, false);
+  pPathObj->m_Path.AppendPoint(5.2f, 0, FXPT_TYPE::LineTo, false);
+  pPathObj->m_Path.AppendPoint(5.2f, 3.78f, FXPT_TYPE::LineTo, false);
+  pPathObj->m_Path.AppendPoint(0, 3.78f, FXPT_TYPE::LineTo, true);
   pPathObj->m_FillType = 0;
   pPathObj->m_bStroke = false;
   buf.Clear();
+
   TestProcessPath(&generator, &buf, pPathObj.get());
   EXPECT_EQ("q 0 0 5.2 3.78 re n Q\n", buf.MakeString());
 }
 
 TEST_F(CPDF_PageContentGeneratorTest, ProcessPath) {
   auto pPathObj = pdfium::MakeUnique<CPDF_PathObject>();
-  pPathObj->m_Path.SetPointCount(10);
-  FX_PATHPOINT* pPoints = pPathObj->m_Path.GetMutablePoints();
-  pPoints[0].m_PointX = 3.102f;
-  pPoints[0].m_PointY = 4.67f;
-  pPoints[0].m_Type = FXPT_TYPE::MoveTo;
-  pPoints[0].m_CloseFigure = false;
-  pPoints[1].m_PointX = 5.45f;
-  pPoints[1].m_PointY = 0.29f;
-  pPoints[1].m_Type = FXPT_TYPE::LineTo;
-  pPoints[1].m_CloseFigure = false;
-  pPoints[2].m_PointX = 4.24f;
-  pPoints[2].m_PointY = 3.15f;
-  pPoints[2].m_Type = FXPT_TYPE::BezierTo;
-  pPoints[2].m_CloseFigure = false;
-  pPoints[3].m_PointX = 4.65f;
-  pPoints[3].m_PointY = 2.98f;
-  pPoints[3].m_Type = FXPT_TYPE::BezierTo;
-  pPoints[3].m_CloseFigure = false;
-  pPoints[4].m_PointX = 3.456f;
-  pPoints[4].m_PointY = 0.24f;
-  pPoints[4].m_Type = FXPT_TYPE::BezierTo;
-  pPoints[4].m_CloseFigure = false;
-  pPoints[5].m_PointX = 10.6f;
-  pPoints[5].m_PointY = 11.15f;
-  pPoints[5].m_Type = FXPT_TYPE::LineTo;
-  pPoints[5].m_CloseFigure = false;
-  pPoints[6].m_PointX = 11;
-  pPoints[6].m_PointY = 12.5f;
-  pPoints[6].m_Type = FXPT_TYPE::LineTo;
-  pPoints[6].m_CloseFigure = false;
-  pPoints[7].m_PointX = 11.46f;
-  pPoints[7].m_PointY = 12.67f;
-  pPoints[7].m_Type = FXPT_TYPE::BezierTo;
-  pPoints[7].m_CloseFigure = false;
-  pPoints[8].m_PointX = 11.84f;
-  pPoints[8].m_PointY = 12.96f;
-  pPoints[8].m_Type = FXPT_TYPE::BezierTo;
-  pPoints[8].m_CloseFigure = false;
-  pPoints[9].m_PointX = 12;
-  pPoints[9].m_PointY = 13.64f;
-  pPoints[9].m_Type = FXPT_TYPE::BezierTo;
-  pPoints[9].m_CloseFigure = true;
+  pPathObj->m_Path.AppendPoint(3.102f, 4.67f, FXPT_TYPE::MoveTo, false);
+  pPathObj->m_Path.AppendPoint(5.45f, 0.29f, FXPT_TYPE::LineTo, false);
+  pPathObj->m_Path.AppendPoint(4.24f, 3.15f, FXPT_TYPE::BezierTo, false);
+  pPathObj->m_Path.AppendPoint(4.65f, 2.98f, FXPT_TYPE::BezierTo, false);
+  pPathObj->m_Path.AppendPoint(3.456f, 0.24f, FXPT_TYPE::BezierTo, false);
+  pPathObj->m_Path.AppendPoint(10.6f, 11.15f, FXPT_TYPE::LineTo, false);
+  pPathObj->m_Path.AppendPoint(11, 12.5f, FXPT_TYPE::LineTo, false);
+  pPathObj->m_Path.AppendPoint(11.46f, 12.67f, FXPT_TYPE::BezierTo, false);
+  pPathObj->m_Path.AppendPoint(11.84f, 12.96f, FXPT_TYPE::BezierTo, false);
+  pPathObj->m_Path.AppendPoint(12, 13.64f, FXPT_TYPE::BezierTo, true);
   pPathObj->m_FillType = FXFILL_WINDING;
   pPathObj->m_bStroke = false;
+
   auto pTestPage = pdfium::MakeUnique<CPDF_Page>(nullptr, nullptr, false);
   CPDF_PageContentGenerator generator(pTestPage.get());
   CFX_ByteTextBuf buf;
@@ -134,29 +91,21 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessPath) {
 
 TEST_F(CPDF_PageContentGeneratorTest, ProcessGraphics) {
   auto pPathObj = pdfium::MakeUnique<CPDF_PathObject>();
-  pPathObj->m_Path.SetPointCount(3);
-  FX_PATHPOINT* pPoints = pPathObj->m_Path.GetMutablePoints();
-  pPoints[0].m_PointX = 1;
-  pPoints[0].m_PointY = 2;
-  pPoints[0].m_Type = FXPT_TYPE::MoveTo;
-  pPoints[0].m_CloseFigure = false;
-  pPoints[1].m_PointX = 3;
-  pPoints[1].m_PointY = 4;
-  pPoints[1].m_Type = FXPT_TYPE::LineTo;
-  pPoints[1].m_CloseFigure = false;
-  pPoints[2].m_PointX = 5;
-  pPoints[2].m_PointY = 6;
-  pPoints[2].m_Type = FXPT_TYPE::LineTo;
-  pPoints[2].m_CloseFigure = true;
+  pPathObj->m_Path.AppendPoint(1, 2, FXPT_TYPE::MoveTo, false);
+  pPathObj->m_Path.AppendPoint(3, 4, FXPT_TYPE::LineTo, false);
+  pPathObj->m_Path.AppendPoint(5, 6, FXPT_TYPE::LineTo, true);
   pPathObj->m_FillType = FXFILL_WINDING;
   pPathObj->m_bStroke = true;
+
   FX_FLOAT rgb[3] = {0.5f, 0.7f, 0.35f};
   CPDF_ColorSpace* pCS = CPDF_ColorSpace::GetStockCS(PDFCS_DEVICERGB);
   pPathObj->m_ColorState.SetFillColor(pCS, rgb, 3);
+
   FX_FLOAT rgb2[3] = {1, 0.9f, 0};
   pPathObj->m_ColorState.SetStrokeColor(pCS, rgb2, 3);
   pPathObj->m_GeneralState.SetFillAlpha(0.5f);
   pPathObj->m_GeneralState.SetStrokeAlpha(0.8f);
+
   auto pDoc = pdfium::MakeUnique<CPDF_Document>(nullptr);
   pDoc->CreateNewDoc();
   CPDF_Dictionary* pPageDict = pDoc->CreateNewPage(0);
@@ -165,6 +114,7 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessGraphics) {
   CFX_ByteTextBuf buf;
   TestProcessPath(&generator, &buf, pPathObj.get());
   CFX_ByteString pathString = buf.MakeString();
+
   // Color RGB values used are integers divided by 255.
   EXPECT_EQ("q 0.501961 0.701961 0.34902 rg 1 0.901961 0 RG /",
             pathString.Left(48));
@@ -184,6 +134,7 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessGraphics) {
   EXPECT_EQ("q 0.501961 0.701961 0.34902 rg 1 0.901961 0 RG 10.5 w /",
             pathString2.Left(55));
   EXPECT_EQ(" gs 1 2 m 3 4 l 5 6 l h B Q\n", pathString2.Right(28));
+
   // Compare with the previous (should use same dictionary for gs)
   EXPECT_EQ(pathString.GetLength() + 7, pathString2.GetLength());
   EXPECT_EQ(pathString.Mid(48, pathString.GetLength() - 76),

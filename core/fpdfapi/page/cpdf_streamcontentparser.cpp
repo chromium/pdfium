@@ -1506,10 +1506,14 @@ void CPDF_StreamContentParser::AddPathObject(int FillType, bool bStroke) {
       m_pPathPoints[PathPointCount - 1].IsTypeAndOpen(FXPT_TYPE::MoveTo)) {
     PathPointCount--;
   }
+
   CPDF_Path Path;
-  Path.SetPointCount(PathPointCount);
-  FXSYS_memcpy(Path.GetMutablePoints(), m_pPathPoints,
-               sizeof(FX_PATHPOINT) * PathPointCount);
+  for (int i = 0; i < PathPointCount; i++) {
+    FX_PATHPOINT& point = m_pPathPoints[i];
+    Path.AppendPoint(point.m_PointX, point.m_PointY, point.m_Type,
+                     point.m_CloseFigure);
+  }
+
   CFX_Matrix matrix = m_pCurStates->m_CTM;
   matrix.Concat(m_mtContentToUser);
   if (bStroke || FillType) {

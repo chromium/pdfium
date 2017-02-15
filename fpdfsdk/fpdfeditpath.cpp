@@ -106,15 +106,10 @@ DLLEXPORT FPDF_BOOL FPDFPath_Close(FPDF_PAGEOBJECT path) {
     return false;
 
   auto pPathObj = reinterpret_cast<CPDF_PathObject*>(path);
-  int numPoints = pPathObj->m_Path.GetPointCount();
-  if (numPoints == 0)
+  if (pPathObj->m_Path.GetPoints().empty())
     return false;
 
-  FX_PATHPOINT* pPoints = pPathObj->m_Path.GetMutablePoints();
-  if (pPoints[numPoints - 1].m_CloseFigure)
-    return true;
-
-  pPoints[numPoints - 1].m_CloseFigure = true;
+  pPathObj->m_Path.ClosePath();
   return true;
 }
 

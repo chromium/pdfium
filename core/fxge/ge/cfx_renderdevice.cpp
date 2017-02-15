@@ -473,8 +473,8 @@ bool CFX_RenderDevice::DrawPathWithBlend(const CFX_PathData* pPathData,
                                          int blend_type) {
   uint8_t stroke_alpha = pGraphState ? FXARGB_A(stroke_color) : 0;
   uint8_t fill_alpha = (fill_mode & 3) ? FXARGB_A(fill_color) : 0;
-  if (stroke_alpha == 0 && pPathData->GetPointCount() == 2) {
-    FX_PATHPOINT* pPoints = pPathData->GetPoints();
+  const std::vector<FX_PATHPOINT>& pPoints = pPathData->GetPoints();
+  if (stroke_alpha == 0 && pPoints.size() == 2) {
     FX_FLOAT x1 = pPoints[0].m_PointX;
     FX_FLOAT y1 = pPoints[0].m_PointY;
     FX_FLOAT x2 = pPoints[1].m_PointX;
@@ -487,8 +487,7 @@ bool CFX_RenderDevice::DrawPathWithBlend(const CFX_PathData* pPathData,
     return true;
   }
 
-  if ((pPathData->GetPointCount() == 5 || pPathData->GetPointCount() == 4) &&
-      stroke_alpha == 0) {
+  if ((pPoints.size() == 5 || pPoints.size() == 4) && stroke_alpha == 0) {
     CFX_FloatRect rect_f;
     if (!(fill_mode & FXFILL_RECT_AA) &&
         pPathData->IsRect(pObject2Device, &rect_f)) {
@@ -536,7 +535,7 @@ bool CFX_RenderDevice::DrawPathWithBlend(const CFX_PathData* pPathData,
       !(fill_mode & FX_FILL_TEXT_MODE)) {
     CFX_PathData newPath;
     bool bThin = false;
-    if (pPathData->GetZeroAreaPath(newPath, (CFX_Matrix*)pObject2Device, bThin,
+    if (pPathData->GetZeroAreaPath(&newPath, (CFX_Matrix*)pObject2Device, bThin,
                                    !!m_pDeviceDriver->GetDriverType())) {
       CFX_GraphStateData graphState;
       graphState.m_LineWidth = 0.0f;
@@ -673,9 +672,8 @@ bool CFX_RenderDevice::DrawCosmeticLine(FX_FLOAT x1,
   }
   CFX_GraphStateData graph_state;
   CFX_PathData path;
-  path.SetPointCount(2);
-  path.SetPoint(0, x1, y1, FXPT_TYPE::MoveTo, false);
-  path.SetPoint(1, x2, y2, FXPT_TYPE::LineTo, false);
+  path.AppendPoint(x1, y1, FXPT_TYPE::MoveTo, false);
+  path.AppendPoint(x2, y2, FXPT_TYPE::LineTo, false);
   return m_pDeviceDriver->DrawPath(&path, nullptr, &graph_state, 0, color,
                                    fill_mode, blend_type);
 }

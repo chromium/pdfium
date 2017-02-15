@@ -14,8 +14,7 @@
 
 class CFDE_Path {
  public:
-  bool StartFigure();
-  bool CloseFigure();
+  void CloseFigure();
 
   void AddBezier(const std::vector<CFX_PointF>& points);
   void AddBeziers(const std::vector<CFX_PointF>& points);
@@ -28,7 +27,6 @@ class CFDE_Path {
   void AddPath(const CFDE_Path* pSrc, bool bConnect);
   void AddPolygon(const std::vector<CFX_PointF>& points);
   void AddRectangle(const CFX_RectF& rect);
-  FX_PATHPOINT* AddPoints(int32_t iCount);
 
   CFX_RectF GetBBox() const;
   CFX_RectF GetBBox(FX_FLOAT fLineWidth, FX_FLOAT fMiterLimit) const;
@@ -46,7 +44,6 @@ class CFDE_Path {
   void MoveTo(const CFX_PointF& p0) { MoveTo(p0.x, p0.y); }
   void LineTo(const CFX_PointF& p1) { LineTo(p1.x, p1.y); }
 
-  FX_PATHPOINT* GetLastPoint() const;
   void GetCurveTangents(const std::vector<CFX_PointF>& points,
                         std::vector<CFX_PointF>* tangents,
                         bool bClosed,

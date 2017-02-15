@@ -611,18 +611,21 @@ struct Coon_Bezier {
     x.FromPoints(x0, x1, x2, x3);
     y.FromPoints(y0, y1, y2, y3);
   }
+
   Coon_Bezier first_half() {
     Coon_Bezier result;
     result.x = x.first_half();
     result.y = y.first_half();
     return result;
   }
+
   Coon_Bezier second_half() {
     Coon_Bezier result;
     result.x = x.second_half();
     result.y = y.second_half();
     return result;
   }
+
   void BezierInterpol(Coon_Bezier& C1,
                       Coon_Bezier& C2,
                       Coon_Bezier& D1,
@@ -630,30 +633,31 @@ struct Coon_Bezier {
     x.BezierInterpol(C1.x, C2.x, D1.x, D2.x);
     y.BezierInterpol(C1.y, C2.y, D1.y, D2.y);
   }
-  void GetPoints(FX_PATHPOINT* pPoints) {
+
+  void GetPoints(std::vector<FX_PATHPOINT>& pPoints, size_t start_idx) {
     float p[4];
     int i;
     x.GetPoints(p);
-    for (i = 0; i < 4; i++) {
-      pPoints[i].m_PointX = p[i];
-    }
+    for (i = 0; i < 4; i++)
+      pPoints[start_idx + i].m_PointX = p[i];
+
     y.GetPoints(p);
-    for (i = 0; i < 4; i++) {
-      pPoints[i].m_PointY = p[i];
-    }
+    for (i = 0; i < 4; i++)
+      pPoints[start_idx + i].m_PointY = p[i];
   }
-  void GetPointsReverse(FX_PATHPOINT* pPoints) {
+
+  void GetPointsReverse(std::vector<FX_PATHPOINT>& pPoints, size_t start_idx) {
     float p[4];
     int i;
     x.GetPointsReverse(p);
-    for (i = 0; i < 4; i++) {
-      pPoints[i].m_PointX = p[i];
-    }
+    for (i = 0; i < 4; i++)
+      pPoints[i + start_idx].m_PointX = p[i];
+
     y.GetPointsReverse(p);
-    for (i = 0; i < 4; i++) {
-      pPoints[i].m_PointY = p[i];
-    }
+    for (i = 0; i < 4; i++)
+      pPoints[i + start_idx].m_PointY = p[i];
   }
+
   float Distance() { return x.Distance() + y.Distance(); }
 };
 
@@ -693,6 +697,7 @@ struct Coon_Color {
   }
 };
 
+#define COONCOLOR_THRESHOLD 4
 struct CPDF_PatchDrawer {
   Coon_Color patch_colors[4];
   int max_delta;
@@ -728,15 +733,15 @@ struct CPDF_PatchDrawer {
       d_top = div_colors[1].Distance(div_colors[2]);
       d_right = div_colors[2].Distance(div_colors[3]);
     }
-#define COONCOLOR_THRESHOLD 4
+
     if (bSmall ||
         (d_bottom < COONCOLOR_THRESHOLD && d_left < COONCOLOR_THRESHOLD &&
          d_top < COONCOLOR_THRESHOLD && d_right < COONCOLOR_THRESHOLD)) {
-      FX_PATHPOINT* pPoints = path.GetPoints();
-      C1.GetPoints(pPoints);
-      D2.GetPoints(pPoints + 3);
-      C2.GetPointsReverse(pPoints + 6);
-      D1.GetPointsReverse(pPoints + 9);
+      std::vector<FX_PATHPOINT>& pPoints = path.GetPoints();
+      C1.GetPoints(pPoints, 0);
+      D2.GetPoints(pPoints, 3);
+      C2.GetPointsReverse(pPoints, 6);
+      D1.GetPointsReverse(pPoints, 9);
       int fillFlags = FXFILL_WINDING | FXFILL_FULLCOVER;
       if (fill_mode & RENDER_NOPATHSMOOTH) {
         fillFlags |= FXFILL_NOPATHSMOOTH;
@@ -814,14 +819,12 @@ void DrawCoonPatchMeshes(
   patch.alpha = alpha;
   patch.pDevice = &device;
   patch.fill_mode = fill_mode;
-  patch.path.SetPointCount(13);
-  FX_PATHPOINT* pPoints = patch.path.GetPoints();
-  pPoints[0].m_Type = FXPT_TYPE::MoveTo;
-  pPoints[0].m_CloseFigure = false;
-  for (int i = 1; i < 13; i++) {
-    pPoints[i].m_Type = FXPT_TYPE::BezierTo;
-    pPoints[i].m_CloseFigure = false;
+
+  for (int i = 0; i < 13; i++) {
+    patch.path.AppendPoint(
+        0, 0, i == 0 ? FXPT_TYPE::MoveTo : FXPT_TYPE::BezierTo, false);
   }
+
   CFX_PointF coords[16];
   int point_count = type == kTensorProductPatchMeshShading ? 16 : 12;
   while (!stream.BitStream()->IsEOF()) {
@@ -1368,7 +1371,7 @@ void CPDF_RenderStatus::ProcessClipPath(CPDF_ClipPath ClipPath,
     if (!pPathData)
       continue;
 
-    if (pPathData->GetPointCount() == 0) {
+    if (pPathData->GetPoints().empty()) {
       CFX_PathData EmptyPath;
       EmptyPath.AppendRect(-1, -1, 0, 0);
       int fill_mode = FXFILL_WINDING;

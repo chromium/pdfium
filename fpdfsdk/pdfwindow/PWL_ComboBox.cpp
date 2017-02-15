@@ -147,12 +147,10 @@ void CPWL_CBButton::DrawThisAppearance(CFX_RenderDevice* pDevice,
         IsFloatBigger(rectWnd.top - rectWnd.bottom,
                       PWL_CBBUTTON_TRIANGLE_HALFLEN)) {
       CFX_PathData path;
-
-      path.SetPointCount(4);
-      path.SetPoint(0, pt1.x, pt1.y, FXPT_TYPE::MoveTo, false);
-      path.SetPoint(1, pt2.x, pt2.y, FXPT_TYPE::LineTo, false);
-      path.SetPoint(2, pt3.x, pt3.y, FXPT_TYPE::LineTo, false);
-      path.SetPoint(3, pt1.x, pt1.y, FXPT_TYPE::LineTo, false);
+      path.AppendPoint(pt1.x, pt1.y, FXPT_TYPE::MoveTo, false);
+      path.AppendPoint(pt2.x, pt2.y, FXPT_TYPE::LineTo, false);
+      path.AppendPoint(pt3.x, pt3.y, FXPT_TYPE::LineTo, false);
+      path.AppendPoint(pt1.x, pt1.y, FXPT_TYPE::LineTo, false);
 
       pDevice->DrawPath(&path, pUser2Device, nullptr,
                         CPWL_Utils::PWLColorToFXColor(PWL_DEFAULT_BLACKCOLOR,

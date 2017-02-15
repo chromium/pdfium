@@ -1104,11 +1104,10 @@ bool CGdiplusExt::DrawPath(HDC hDC,
                            uint32_t fill_argb,
                            uint32_t stroke_argb,
                            int fill_mode) {
-  int nPoints = pPathData->GetPointCount();
-  if (nPoints == 0) {
+  auto& pPoints = pPathData->GetPoints();
+  if (pPoints.empty())
     return true;
-  }
-  FX_PATHPOINT* pPoints = pPathData->GetPoints();
+
   GpGraphics* pGraphics = nullptr;
   CGdiplusExt& GdiplusExt =
       ((CWin32Platform*)CFX_GEModule::Get()->GetPlatformData())->m_GdiplusExt;
@@ -1122,14 +1121,14 @@ bool CGdiplusExt::DrawPath(HDC hDC,
                                 pObject2Device->e, pObject2Device->f, &pMatrix);
     CallFunc(GdipSetWorldTransform)(pGraphics, pMatrix);
   }
-  PointF* points = FX_Alloc(PointF, nPoints);
-  BYTE* types = FX_Alloc(BYTE, nPoints);
+  PointF* points = FX_Alloc(PointF, pPoints.size());
+  BYTE* types = FX_Alloc(BYTE, pPoints.size());
   int nSubPathes = 0;
   bool bSubClose = false;
   int pos_subclose = 0;
   bool bSmooth = false;
   int startpoint = 0;
-  for (int i = 0; i < nPoints; i++) {
+  for (size_t i = 0; i < pPoints.size(); i++) {
     points[i].X = pPoints[i].m_PointX;
     points[i].Y = pPoints[i].m_PointY;
     FX_FLOAT x = pPoints[i].m_PointX;
@@ -1155,7 +1154,7 @@ bool CGdiplusExt::DrawPath(HDC hDC,
     } else if (point_type == FXPT_TYPE::LineTo) {
       types[i] = PathPointTypeLine;
       if (pPoints[i - 1].IsTypeAndOpen(FXPT_TYPE::MoveTo) &&
-          (i == nPoints - 1 ||
+          (i == pPoints.size() - 1 ||
            pPoints[i + 1].IsTypeAndOpen(FXPT_TYPE::MoveTo)) &&
           points[i].Y == points[i - 1].Y && points[i].X == points[i - 1].X) {
         points[i].X += 0.01f;
@@ -1195,7 +1194,7 @@ bool CGdiplusExt::DrawPath(HDC hDC,
     }
   }
   int new_fill_mode = fill_mode & 3;
-  if (nPoints == 4 && !pGraphState) {
+  if (pPoints.size() == 4 && !pGraphState) {
     int v1, v2;
     if (IsSmallTriangle(points, pObject2Device, v1, v2)) {
       GpPen* pPen = nullptr;
@@ -1208,12 +1207,12 @@ bool CGdiplusExt::DrawPath(HDC hDC,
     }
   }
   GpPath* pGpPath = nullptr;
-  CallFunc(GdipCreatePath2)(points, types, nPoints,
+  CallFunc(GdipCreatePath2)(points, types, pPoints.size(),
                             GdiFillType2Gdip(new_fill_mode), &pGpPath);
   if (!pGpPath) {
-    if (pMatrix) {
+    if (pMatrix)
       CallFunc(GdipDeleteMatrix)(pMatrix);
-    }
+
     FX_Free(points);
     FX_Free(types);
     CallFunc(GdipDeleteGraphics)(pGraphics);
@@ -1232,8 +1231,8 @@ bool CGdiplusExt::DrawPath(HDC hDC,
       CallFunc(GdipDrawPath)(pGraphics, pPen, pGpPath);
     } else {
       int iStart = 0;
-      for (int i = 0; i < nPoints; i++) {
-        if (i == nPoints - 1 || types[i + 1] == PathPointTypeStart) {
+      for (size_t i = 0; i < pPoints.size(); i++) {
+        if (i == pPoints.size() - 1 || types[i + 1] == PathPointTypeStart) {
           GpPath* pSubPath;
           CallFunc(GdipCreatePath2)(points + iStart, types + iStart,
                                     i - iStart + 1,

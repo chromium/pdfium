@@ -323,21 +323,18 @@ void CPWL_Edit::DrawThisAppearance(CFX_RenderDevice* pDevice,
         gsd.m_LineWidth = (FX_FLOAT)GetBorderWidth();
 
         CFX_PathData path;
-        path.SetPointCount(nCharArraySafe.ValueOrDie());
 
         for (int32_t i = 0; i < nCharArray - 1; i++) {
-          path.SetPoint(
-              i * 2,
+          path.AppendPoint(
               rcClient.left +
                   ((rcClient.right - rcClient.left) / nCharArray) * (i + 1),
               rcClient.bottom, FXPT_TYPE::MoveTo, false);
-          path.SetPoint(
-              i * 2 + 1,
+          path.AppendPoint(
               rcClient.left +
                   ((rcClient.right - rcClient.left) / nCharArray) * (i + 1),
               rcClient.top, FXPT_TYPE::LineTo, false);
         }
-        if (path.GetPointCount() > 0) {
+        if (!path.GetPoints().empty()) {
           pDevice->DrawPath(
               &path, pUser2Device, &gsd, 0,
               CPWL_Utils::PWLColorToFXColor(GetBorderColor(), 255),
@@ -355,21 +352,17 @@ void CPWL_Edit::DrawThisAppearance(CFX_RenderDevice* pDevice,
         gsd.m_DashPhase = (FX_FLOAT)GetBorderDash().nPhase;
 
         CFX_PathData path;
-        path.SetPointCount(nCharArraySafe.ValueOrDie());
-
         for (int32_t i = 0; i < nCharArray - 1; i++) {
-          path.SetPoint(
-              i * 2,
+          path.AppendPoint(
               rcClient.left +
                   ((rcClient.right - rcClient.left) / nCharArray) * (i + 1),
               rcClient.bottom, FXPT_TYPE::MoveTo, false);
-          path.SetPoint(
-              i * 2 + 1,
+          path.AppendPoint(
               rcClient.left +
                   ((rcClient.right - rcClient.left) / nCharArray) * (i + 1),
               rcClient.top, FXPT_TYPE::LineTo, false);
         }
-        if (path.GetPointCount() > 0) {
+        if (!path.GetPoints().empty()) {
           pDevice->DrawPath(
               &path, pUser2Device, &gsd, 0,
               CPWL_Utils::PWLColorToFXColor(GetBorderColor(), 255),

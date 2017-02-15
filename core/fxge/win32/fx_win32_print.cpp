@@ -346,12 +346,13 @@ CPSPrinterDriver::CPSPrinterDriver(HDC hDC, int pslevel, bool bCmykOutput)
       ret = ::GetRegionData(hRgn, ret, pData);
       if (ret) {
         CFX_PathData path;
-        path.AllocPointCount(pData->rdh.nCount * 5);
         for (uint32_t i = 0; i < pData->rdh.nCount; i++) {
           RECT* pRect =
               reinterpret_cast<RECT*>(pData->Buffer + pData->rdh.nRgnSize * i);
-          path.AppendRect((FX_FLOAT)pRect->left, (FX_FLOAT)pRect->bottom,
-                          (FX_FLOAT)pRect->right, (FX_FLOAT)pRect->top);
+          path.AppendRect(static_cast<FX_FLOAT>(pRect->left),
+                          static_cast<FX_FLOAT>(pRect->bottom),
+                          static_cast<FX_FLOAT>(pRect->right),
+                          static_cast<FX_FLOAT>(pRect->top));
         }
         m_PSRenderer.SetClip_PathFill(&path, nullptr, FXFILL_WINDING);
       }

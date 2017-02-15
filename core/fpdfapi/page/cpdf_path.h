@@ -7,6 +7,8 @@
 #ifndef CORE_FPDFAPI_PAGE_CPDF_PATH_H_
 #define CORE_FPDFAPI_PAGE_CPDF_PATH_H_
 
+#include <vector>
+
 #include "core/fxcrt/cfx_shared_copy_on_write.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxge/cfx_fxgedevice.h"
@@ -22,10 +24,8 @@ class CPDF_Path {
   void Emplace() { m_Ref.Emplace(); }
   explicit operator bool() const { return !!m_Ref; }
 
-  int GetPointCount() const;
-  void SetPointCount(int count);
-  const FX_PATHPOINT* GetPoints() const;
-  FX_PATHPOINT* GetMutablePoints();
+  const std::vector<FX_PATHPOINT>& GetPoints() const;
+  void ClosePath();
 
   FX_FLOAT GetPointX(int index) const;
   FX_FLOAT GetPointY(int index) const;

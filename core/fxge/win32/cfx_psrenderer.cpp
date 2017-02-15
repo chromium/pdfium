@@ -109,10 +109,11 @@ void CFX_PSRenderer::RestoreState(bool bKeepSaved) {
 
 void CFX_PSRenderer::OutputPath(const CFX_PathData* pPathData,
                                 const CFX_Matrix* pObject2Device) {
-  int nPoints = pPathData->GetPointCount();
   CFX_ByteTextBuf buf;
-  buf.EstimateSize(nPoints * 10);
-  for (int i = 0; i < nPoints; i++) {
+  size_t size = pPathData->GetPoints().size();
+  buf.EstimateSize(size * 10);
+
+  for (size_t i = 0; i < size; i++) {
     FXPT_TYPE type = pPathData->GetType(i);
     bool closing = pPathData->IsClosingFigure(i);
     FX_FLOAT x = pPathData->GetPointX(i);
@@ -592,17 +593,17 @@ void CFX_PSRenderer::FindPSFontGlyph(CFX_FaceCache* pFaceCache,
   matrix.Concat(CFX_Matrix(1.0f, 0, 0, 1.0f, 0, 0));
   const CFX_PathData* pPathData = pFaceCache->LoadGlyphPath(
       pFont, charpos.m_GlyphIndex, charpos.m_FontCharWidth);
-  if (!pPathData) {
+  if (!pPathData)
     return;
-  }
+
   CFX_PathData TransformedPath(*pPathData);
-  if (charpos.m_bGlyphAdjust) {
+  if (charpos.m_bGlyphAdjust)
     TransformedPath.Transform(&matrix);
-  }
+
   CFX_ByteTextBuf buf;
   buf << "/X" << *ps_fontnum << " Ff/CharProcs get begin/" << glyphindex
       << "{n ";
-  for (int p = 0; p < TransformedPath.GetPointCount(); p++) {
+  for (size_t p = 0; p < TransformedPath.GetPoints().size(); p++) {
     FX_FLOAT x = TransformedPath.GetPointX(p), y = TransformedPath.GetPointY(p);
     switch (TransformedPath.GetType(p)) {
       case FXPT_TYPE::MoveTo: {

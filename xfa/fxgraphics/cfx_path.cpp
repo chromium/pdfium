@@ -159,14 +159,14 @@ FWL_Error CFX_Path::AddSubpath(CFX_Path* path) {
 FWL_Error CFX_Path::Clear() {
   if (!m_generator)
     return FWL_Error::PropertyInvalid;
-  m_generator->GetPathData()->SetPointCount(0);
+  m_generator->GetPathData()->Clear();
   return FWL_Error::Succeeded;
 }
 
 bool CFX_Path::IsEmpty() const {
   if (!m_generator)
     return false;
-  if (m_generator->GetPathData()->GetPointCount() == 0)
+  if (m_generator->GetPathData()->GetPoints().empty())
     return true;
   return false;
 }

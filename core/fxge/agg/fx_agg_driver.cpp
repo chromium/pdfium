@@ -273,20 +273,20 @@ bool DibSetPixel(CFX_DIBitmap* pDevice,
 
 void CAgg_PathData::BuildPath(const CFX_PathData* pPathData,
                               const CFX_Matrix* pObject2Device) {
-  int nPoints = pPathData->GetPointCount();
-  FX_PATHPOINT* pPoints = pPathData->GetPoints();
-  for (int i = 0; i < nPoints; i++) {
-    FX_FLOAT x = pPoints[i].m_PointX, y = pPoints[i].m_PointY;
-    if (pObject2Device) {
+  const std::vector<FX_PATHPOINT>& pPoints = pPathData->GetPoints();
+  for (size_t i = 0; i < pPoints.size(); i++) {
+    FX_FLOAT x = pPoints[i].m_PointX;
+    FX_FLOAT y = pPoints[i].m_PointY;
+    if (pObject2Device)
       pObject2Device->TransformPoint(x, y);
-    }
+
     HardClip(x, y);
     FXPT_TYPE point_type = pPoints[i].m_Type;
     if (point_type == FXPT_TYPE::MoveTo) {
       m_PathData.move_to(x, y);
     } else if (point_type == FXPT_TYPE::LineTo) {
       if (pPoints[i - 1].IsTypeAndOpen(FXPT_TYPE::MoveTo) &&
-          (i == nPoints - 1 ||
+          (i == pPoints.size() - 1 ||
            pPoints[i + 1].IsTypeAndOpen(FXPT_TYPE::MoveTo)) &&
           pPoints[i].m_PointX == pPoints[i - 1].m_PointX &&
           pPoints[i].m_PointY == pPoints[i - 1].m_PointY) {
@@ -553,7 +553,8 @@ bool CFX_AggDeviceDriver::SetClip_PathFill(const CFX_PathData* pPathData,
     m_pClipRgn = pdfium::MakeUnique<CFX_ClipRgn>(
         GetDeviceCaps(FXDC_PIXEL_WIDTH), GetDeviceCaps(FXDC_PIXEL_HEIGHT));
   }
-  if (pPathData->GetPointCount() == 5 || pPathData->GetPointCount() == 4) {
+  size_t size = pPathData->GetPoints().size();
+  if (size == 5 || size == 4) {
     CFX_FloatRect rectf;
     if (pPathData->IsRect(pObject2Device, &rectf)) {
       rectf.Intersect(

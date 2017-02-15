@@ -12,20 +12,12 @@ CPDF_Path::CPDF_Path(const CPDF_Path& that) : m_Ref(that.m_Ref) {}
 
 CPDF_Path::~CPDF_Path() {}
 
-int CPDF_Path::GetPointCount() const {
-  return m_Ref.GetObject()->GetPointCount();
-}
-
-void CPDF_Path::SetPointCount(int count) {
-  m_Ref.GetPrivateCopy()->SetPointCount(count);
-}
-
-const FX_PATHPOINT* CPDF_Path::GetPoints() const {
+const std::vector<FX_PATHPOINT>& CPDF_Path::GetPoints() const {
   return m_Ref.GetObject()->GetPoints();
 }
 
-FX_PATHPOINT* CPDF_Path::GetMutablePoints() {
-  return m_Ref.GetPrivateCopy()->GetPoints();
+void CPDF_Path::ClosePath() {
+  m_Ref.GetPrivateCopy()->ClosePath();
 }
 
 FX_FLOAT CPDF_Path::GetPointX(int index) const {
@@ -73,7 +65,6 @@ void CPDF_Path::AppendPoint(FX_FLOAT x,
                             FXPT_TYPE type,
                             bool close) {
   CFX_PathData data;
-  data.SetPointCount(1);
-  data.SetPoint(0, x, y, type, close);
+  data.AppendPoint(x, y, type, close);
   Append(&data, nullptr);
 }

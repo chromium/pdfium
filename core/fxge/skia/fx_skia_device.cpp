@@ -278,9 +278,8 @@ static void DebugValidate(const CFX_DIBitmap* bitmap,
 SkPath BuildPath(const CFX_PathData* pPathData) {
   SkPath skPath;
   const CFX_PathData* pFPath = pPathData;
-  int nPoints = pFPath->GetPointCount();
-  FX_PATHPOINT* pPoints = pFPath->GetPoints();
-  for (int i = 0; i < nPoints; i++) {
+  const std::vector<FX_PATHPOINT>& pPoints = pFPath->GetPoints();
+  for (size_t i = 0; i < pPoints.size(); i++) {
     FX_FLOAT x = pPoints[i].m_PointX;
     FX_FLOAT y = pPoints[i].m_PointY;
     FXPT_TYPE point_type = pPoints[i].m_Type;
@@ -306,7 +305,7 @@ SkMatrix ToSkMatrix(const CFX_Matrix& m) {
   return skMatrix;
 }
 
-// use when pdf's y-axis points up insead of down
+// use when pdf's y-axis points up instead of down
 SkMatrix ToFlippedSkMatrix(const CFX_Matrix& m, SkScalar flip) {
   SkMatrix skMatrix;
   skMatrix.setAll(m.a * flip, -m.c * flip, m.e, m.b * flip, -m.d * flip, m.f, 0,
@@ -1432,7 +1431,8 @@ bool CFX_SkiaDeviceDriver::SetClip_PathFill(
         GetDeviceCaps(FXDC_PIXEL_WIDTH), GetDeviceCaps(FXDC_PIXEL_HEIGHT));
   }
 #endif  // _SKIA_SUPPORT_PATHS_
-  if (pPathData->GetPointCount() == 5 || pPathData->GetPointCount() == 4) {
+  if (pPathData->GetPoints().size() == 5 ||
+      pPathData->GetPoints().size() == 4) {
     CFX_FloatRect rectf;
     if (pPathData->IsRect(deviceMatrix, &rectf)) {
       rectf.Intersect(

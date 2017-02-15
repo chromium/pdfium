@@ -166,10 +166,11 @@ void SetPathToDC(HDC hDC,
                  const CFX_PathData* pPathData,
                  const CFX_Matrix* pMatrix) {
   BeginPath(hDC);
-  int nPoints = pPathData->GetPointCount();
-  FX_PATHPOINT* pPoints = pPathData->GetPoints();
-  for (int i = 0; i < nPoints; i++) {
-    FX_FLOAT posx = pPoints[i].m_PointX, posy = pPoints[i].m_PointY;
+
+  const std::vector<FX_PATHPOINT>& pPoints = pPathData->GetPoints();
+  for (size_t i = 0; i < pPoints.size(); i++) {
+    FX_FLOAT posx = pPoints[i].m_PointX;
+    FX_FLOAT posy = pPoints[i].m_PointY;
     if (pMatrix)
       pMatrix->TransformPoint(posx, posy);
 
@@ -1019,8 +1020,8 @@ bool CGdiDeviceDriver::DrawPath(const CFX_PathData* pPathData,
          (pGraphState && pGraphState->m_DashCount))) {
       if (!((!pMatrix || !pMatrix->WillScale()) && pGraphState &&
             pGraphState->m_LineWidth == 1.f &&
-            (pPathData->GetPointCount() == 5 ||
-             pPathData->GetPointCount() == 4) &&
+            (pPathData->GetPoints().size() == 5 ||
+             pPathData->GetPoints().size() == 4) &&
             pPathData->IsRect())) {
         if (pPlatform->m_GdiplusExt.DrawPath(m_hDC, pPathData, pMatrix,
                                              pGraphState, fill_color,
@@ -1044,7 +1045,7 @@ bool CGdiDeviceDriver::DrawPath(const CFX_PathData* pPathData,
     hBrush = CreateBrush(fill_color);
     hBrush = (HBRUSH)SelectObject(m_hDC, hBrush);
   }
-  if (pPathData->GetPointCount() == 2 && pGraphState &&
+  if (pPathData->GetPoints().size() == 2 && pGraphState &&
       pGraphState->m_DashCount) {
     FX_FLOAT x1 = pPathData->GetPointX(0);
     FX_FLOAT y1 = pPathData->GetPointY(0);
@@ -1108,7 +1109,7 @@ bool CGdiDeviceDriver::FillRectWithBlend(const FX_RECT* pRect,
 bool CGdiDeviceDriver::SetClip_PathFill(const CFX_PathData* pPathData,
                                         const CFX_Matrix* pMatrix,
                                         int fill_mode) {
-  if (pPathData->GetPointCount() == 5) {
+  if (pPathData->GetPoints().size() == 5) {
     CFX_FloatRect rectf;
     if (pPathData->IsRect(pMatrix, &rectf)) {
       FX_RECT rect = rectf.GetOuterRect();

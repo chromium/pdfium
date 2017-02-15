@@ -19,7 +19,6 @@ class CFX_PathGenerator {
   CFX_PathData* GetPathData() const { return m_pPathData.get(); }
 
   void AddPathData(CFX_PathData* path_data);
-  void AddPathData(FX_PATHPOINT* points, int count);
 
   void MoveTo(FX_FLOAT x, FX_FLOAT y);
   void LineTo(FX_FLOAT x, FX_FLOAT y);
