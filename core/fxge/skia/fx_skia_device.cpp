@@ -45,10 +45,6 @@
 #include "third_party/skia/include/core/SkPictureRecorder.h"
 #endif  // _SKIA_SUPPORT_
 
-#ifdef SK_DEBUG
-#include "third_party/skia/include/core/SkClipStack.h"
-#endif  // SK_DEBUG
-
 namespace {
 
 #ifdef _SKIA_SUPPORT_PATHS_
@@ -195,8 +191,6 @@ void DebugShowCanvasClip(const SkCanvas* canvas) {
   canvas->getClipDeviceBounds(&device);
   printf("device bounds %d %d %d %d\n", device.fLeft, device.fTop,
          device.fRight, device.fBottom);
-  const SkClipStack* clipStack = canvas->getClipStack();
-  clipStack->dump();
 #endif  // SHOW_SKIA_PATH
 }
 
@@ -1086,7 +1080,6 @@ class SkiaState {
 #if SHOW_SKIA_PATH
     printf("\n%s\nSkia Save Count %d:\n", where,
            m_pDriver->m_pCanvas->getSaveCount());
-    m_pDriver->m_pCanvas->getClipStack()->dump();
     printf("Cache:\n");
     for (int index = 0; index < m_commands.count(); ++index) {
       DumpPrefix(index);
