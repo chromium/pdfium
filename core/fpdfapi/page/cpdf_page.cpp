@@ -175,3 +175,13 @@ CFX_Matrix CPDF_Page::GetDisplayMatrix(int xPos,
                            x0, y0));
   return matrix;
 }
+
+bool GraphicsData::operator<(const GraphicsData& other) const {
+  if (fillAlpha != other.fillAlpha)
+    return fillAlpha < other.fillAlpha;
+  return strokeAlpha < other.strokeAlpha;
+}
+
+bool FontData::operator<(const FontData& other) const {
+  return baseFont < other.baseFont;
+}

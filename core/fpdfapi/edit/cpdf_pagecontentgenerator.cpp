@@ -222,8 +222,8 @@ void CPDF_PageContentGenerator::ProcessGraphics(CFX_ByteTextBuf* buf,
     return;
 
   CFX_ByteString name;
-  auto it = m_GraphicsMap.find(graphD);
-  if (it != m_GraphicsMap.end()) {
+  auto it = m_pPage->m_GraphicsMap.find(graphD);
+  if (it != m_pPage->m_GraphicsMap.end()) {
     name = it->second;
   } else {
     auto gsDict = pdfium::MakeUnique<CPDF_Dictionary>();
@@ -232,21 +232,9 @@ void CPDF_PageContentGenerator::ProcessGraphics(CFX_ByteTextBuf* buf,
     CPDF_Object* pDict = m_pDocument->AddIndirectObject(std::move(gsDict));
     uint32_t dwObjNum = pDict->GetObjNum();
     name = RealizeResource(dwObjNum, "ExtGState");
-    m_GraphicsMap[graphD] = name;
+    m_pPage->m_GraphicsMap[graphD] = name;
   }
   *buf << "/" << PDF_NameEncode(name) << " gs ";
-}
-
-bool CPDF_PageContentGenerator::GraphicsData::operator<(
-    const GraphicsData& other) const {
-  if (fillAlpha != other.fillAlpha)
-    return fillAlpha < other.fillAlpha;
-  return strokeAlpha < other.strokeAlpha;
-}
-
-bool CPDF_PageContentGenerator::FontData::operator<(
-    const FontData& other) const {
-  return baseFont < other.baseFont;
 }
 
 // This method adds text to the buffer, BT begins the text object, ET ends it.
@@ -262,9 +250,9 @@ void CPDF_PageContentGenerator::ProcessText(CFX_ByteTextBuf* buf,
     pFont = CPDF_Font::GetStockFont(m_pDocument, "Helvetica");
   FontData fontD;
   fontD.baseFont = pFont->GetBaseFont();
-  auto it = m_FontsMap.find(fontD);
+  auto it = m_pPage->m_FontsMap.find(fontD);
   CFX_ByteString dictName;
-  if (it != m_FontsMap.end()) {
+  if (it != m_pPage->m_FontsMap.end()) {
     dictName = it->second;
   } else {
     auto fontDict = pdfium::MakeUnique<CPDF_Dictionary>();
@@ -274,7 +262,7 @@ void CPDF_PageContentGenerator::ProcessText(CFX_ByteTextBuf* buf,
     CPDF_Object* pDict = m_pDocument->AddIndirectObject(std::move(fontDict));
     uint32_t dwObjNum = pDict->GetObjNum();
     dictName = RealizeResource(dwObjNum, "Font");
-    m_FontsMap[fontD] = dictName;
+    m_pPage->m_FontsMap[fontD] = dictName;
   }
   *buf << "/" << PDF_NameEncode(dictName) << " " << pTextObj->GetFontSize()
        << " Tf ";

@@ -5,7 +5,10 @@
 #include <memory>
 #include <string>
 
+#include "core/fpdfapi/page/cpdf_page.h"
+#include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fxcrt/fx_system.h"
+#include "fpdfsdk/fsdk_define.h"
 #include "public/fpdf_edit.h"
 #include "public/fpdfview.h"
 #include "testing/embedder_test.h"
@@ -375,6 +378,65 @@ TEST_F(FPDFEditEmbeddertest, AddStandardFontText) {
 
   // TODO(npm): Why are there issues with text rotated by 90 degrees?
   // TODO(npm): FPDF_SaveAsCopy not giving the desired result after this.
+  FPDF_ClosePage(page);
+  FPDF_CloseDocument(doc);
+}
+
+TEST_F(FPDFEditEmbeddertest, DoubleGenerating) {
+  // Start with a blank page
+  FPDF_DOCUMENT doc = FPDF_CreateNewDocument();
+  FPDF_PAGE page = FPDFPage_New(doc, 0, 612, 792);
+
+  // Add a red rectangle with some non-default alpha
+  FPDF_PAGEOBJECT rect = FPDFPageObj_CreateNewRect(10, 10, 100, 100);
+  EXPECT_TRUE(FPDFPath_SetFillColor(rect, 255, 0, 0, 128));
+  EXPECT_TRUE(FPDFPath_SetDrawMode(rect, FPDF_FILLMODE_WINDING, 0));
+  FPDFPage_InsertObject(page, rect);
+  EXPECT_TRUE(FPDFPage_GenerateContent(page));
+
+  // Check the ExtGState
+  CPDF_Page* the_page = CPDFPageFromFPDFPage(page);
+  CPDF_Dictionary* graphics_dict =
+      the_page->m_pResources->GetDictFor("ExtGState");
+  ASSERT_TRUE(graphics_dict);
+  EXPECT_EQ(1, static_cast<int>(graphics_dict->GetCount()));
+
+  // Check the bitmap
+  FPDF_BITMAP page_bitmap = RenderPage(page);
+  CompareBitmap(page_bitmap, 612, 792, "5384da3406d62360ffb5cac4476fff1c");
+  FPDFBitmap_Destroy(page_bitmap);
+
+  // Never mind, my new favorite color is blue, increase alpha
+  EXPECT_TRUE(FPDFPath_SetFillColor(rect, 0, 0, 255, 180));
+  EXPECT_TRUE(FPDFPage_GenerateContent(page));
+  EXPECT_EQ(2, static_cast<int>(graphics_dict->GetCount()));
+
+  // Check that bitmap displays changed content
+  page_bitmap = RenderPage(page);
+  CompareBitmap(page_bitmap, 612, 792, "2e51656f5073b0bee611d9cd086aa09c");
+  FPDFBitmap_Destroy(page_bitmap);
+
+  // And now generate, without changes
+  EXPECT_TRUE(FPDFPage_GenerateContent(page));
+  EXPECT_EQ(2, static_cast<int>(graphics_dict->GetCount()));
+  page_bitmap = RenderPage(page);
+  CompareBitmap(page_bitmap, 612, 792, "2e51656f5073b0bee611d9cd086aa09c");
+  FPDFBitmap_Destroy(page_bitmap);
+
+  // Add some text to the page
+  FPDF_PAGEOBJECT text = FPDFPageObj_NewTextObj(doc, "Arial", 12.0f);
+  EXPECT_TRUE(FPDFText_SetText(text, "Something something #text# something"));
+  FPDFPageObj_Transform(text, 1, 0, 0, 1, 300, 300);
+  FPDFPage_InsertObject(page, text);
+  EXPECT_TRUE(FPDFPage_GenerateContent(page));
+  CPDF_Dictionary* font_dict = the_page->m_pResources->GetDictFor("Font");
+  ASSERT_TRUE(font_dict);
+  EXPECT_EQ(1, static_cast<int>(font_dict->GetCount()));
+
+  // Generate yet again, check dicts are reasonably sized
+  EXPECT_TRUE(FPDFPage_GenerateContent(page));
+  EXPECT_EQ(2, static_cast<int>(graphics_dict->GetCount()));
+  EXPECT_EQ(1, static_cast<int>(font_dict->GetCount()));
   FPDF_ClosePage(page);
   FPDF_CloseDocument(doc);
 }
