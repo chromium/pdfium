@@ -1833,8 +1833,8 @@ bool CPDF_RenderStatus::ProcessType3Text(CPDF_TextObject* textobj,
             continue;
 
           m_pDevice->SetBitMask(&glyph.m_pGlyph->m_Bitmap,
-                                glyph.m_OriginX + glyph.m_pGlyph->m_Left,
-                                glyph.m_OriginY - glyph.m_pGlyph->m_Top,
+                                glyph.m_Origin.x + glyph.m_pGlyph->m_Left,
+                                glyph.m_Origin.y - glyph.m_pGlyph->m_Top,
                                 fill_argb);
         }
         glyphs.clear();
@@ -1892,15 +1892,13 @@ bool CPDF_RenderStatus::ProcessType3Text(CPDF_TextObject* textobj,
         if (!pBitmap)
           continue;
 
-        int origin_x = FXSYS_round(matrix.e);
-        int origin_y = FXSYS_round(matrix.f);
+        CFX_Point origin(FXSYS_round(matrix.e), FXSYS_round(matrix.f));
         if (glyphs.empty()) {
-          m_pDevice->SetBitMask(&pBitmap->m_Bitmap, origin_x + pBitmap->m_Left,
-                                origin_y - pBitmap->m_Top, fill_argb);
+          m_pDevice->SetBitMask(&pBitmap->m_Bitmap, origin.x + pBitmap->m_Left,
+                                origin.y - pBitmap->m_Top, fill_argb);
         } else {
           glyphs[iChar].m_pGlyph = pBitmap;
-          glyphs[iChar].m_OriginX = origin_x;
-          glyphs[iChar].m_OriginY = origin_y;
+          glyphs[iChar].m_Origin = origin;
         }
       } else {
         CFX_Matrix image_matrix = pType3Char->m_ImageMatrix;
@@ -1930,14 +1928,14 @@ bool CPDF_RenderStatus::ProcessType3Text(CPDF_TextObject* textobj,
     if (!glyph.m_pGlyph)
       continue;
 
-    pdfium::base::CheckedNumeric<int> left = glyph.m_OriginX;
+    pdfium::base::CheckedNumeric<int> left = glyph.m_Origin.x;
     left += glyph.m_pGlyph->m_Left;
     left -= rect.left;
     left *= sa;
     if (!left.IsValid())
       continue;
 
-    pdfium::base::CheckedNumeric<int> top = glyph.m_OriginY;
+    pdfium::base::CheckedNumeric<int> top = glyph.m_Origin.y;
     top -= glyph.m_pGlyph->m_Top;
     top -= rect.top;
     top *= sd;

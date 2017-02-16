@@ -27,19 +27,19 @@ namespace {
 void AdjustGlyphSpace(std::vector<FXTEXT_GLYPHPOS>* pGlyphAndPos) {
   ASSERT(pGlyphAndPos->size() > 1);
   std::vector<FXTEXT_GLYPHPOS>& glyphs = *pGlyphAndPos;
-  bool bVertical = glyphs.back().m_OriginX == glyphs.front().m_OriginX;
-  if (!bVertical && (glyphs.back().m_OriginY != glyphs.front().m_OriginY))
+  bool bVertical = glyphs.back().m_Origin.x == glyphs.front().m_Origin.x;
+  if (!bVertical && (glyphs.back().m_Origin.y != glyphs.front().m_Origin.y))
     return;
 
   for (size_t i = glyphs.size() - 1; i > 1; --i) {
     FXTEXT_GLYPHPOS& next = glyphs[i];
-    int next_origin = bVertical ? next.m_OriginY : next.m_OriginX;
-    FX_FLOAT next_origin_f = bVertical ? next.m_fOriginY : next.m_fOriginX;
+    int next_origin = bVertical ? next.m_Origin.y : next.m_Origin.x;
+    FX_FLOAT next_origin_f = bVertical ? next.m_fOrigin.y : next.m_fOrigin.x;
 
     FXTEXT_GLYPHPOS& current = glyphs[i - 1];
-    int& current_origin = bVertical ? current.m_OriginY : current.m_OriginX;
+    int& current_origin = bVertical ? current.m_Origin.y : current.m_Origin.x;
     FX_FLOAT current_origin_f =
-        bVertical ? current.m_fOriginY : current.m_fOriginX;
+        bVertical ? current.m_fOrigin.y : current.m_fOrigin.x;
 
     int space = next_origin - current_origin;
     FX_FLOAT space_f = next_origin_f - current_origin_f;
@@ -927,15 +927,14 @@ bool CFX_RenderDevice::DrawNormalText(int nChars,
   for (size_t i = 0; i < glyphs.size(); ++i) {
     FXTEXT_GLYPHPOS& glyph = glyphs[i];
     const FXTEXT_CHARPOS& charpos = pCharPos[i];
-    glyph.m_fOriginX = charpos.m_Origin.x;
-    glyph.m_fOriginY = charpos.m_Origin.y;
 
-    text2Device.TransformPoint(glyph.m_fOriginX, glyph.m_fOriginY);
+    glyph.m_fOrigin = text2Device.Transform(charpos.m_Origin);
     if (anti_alias < FXFT_RENDER_MODE_LCD)
-      glyph.m_OriginX = FXSYS_round(glyph.m_fOriginX);
+      glyph.m_Origin.x = FXSYS_round(glyph.m_fOrigin.x);
     else
-      glyph.m_OriginX = (int)FXSYS_floor(glyph.m_fOriginX);
-    glyph.m_OriginY = FXSYS_round(glyph.m_fOriginY);
+      glyph.m_Origin.x = static_cast<int>(FXSYS_floor(glyph.m_fOrigin.x));
+    glyph.m_Origin.y = FXSYS_round(glyph.m_fOrigin.y);
+
     if (charpos.m_bGlyphAdjust) {
       CFX_Matrix new_matrix(
           charpos.m_AdjustMatrix[0], charpos.m_AdjustMatrix[1],
@@ -981,8 +980,8 @@ bool CFX_RenderDevice::DrawNormalText(int nChars,
         continue;
       const CFX_DIBitmap* pGlyph = &glyph.m_pGlyph->m_Bitmap;
       bitmap.TransferBitmap(
-          glyph.m_OriginX + glyph.m_pGlyph->m_Left - pixel_left,
-          glyph.m_OriginY - glyph.m_pGlyph->m_Top - pixel_top,
+          glyph.m_Origin.x + glyph.m_pGlyph->m_Left - pixel_left,
+          glyph.m_Origin.y - glyph.m_pGlyph->m_Top - pixel_top,
           pGlyph->GetWidth(), pGlyph->GetHeight(), pGlyph, 0, 0);
     }
     return SetBitMask(&bitmap, bmp_rect.left, bmp_rect.top, fill_color);
@@ -1016,13 +1015,13 @@ bool CFX_RenderDevice::DrawNormalText(int nChars,
     if (!glyph.m_pGlyph)
       continue;
 
-    pdfium::base::CheckedNumeric<int> left = glyph.m_OriginX;
+    pdfium::base::CheckedNumeric<int> left = glyph.m_Origin.x;
     left += glyph.m_pGlyph->m_Left;
     left -= pixel_left;
     if (!left.IsValid())
       return false;
 
-    pdfium::base::CheckedNumeric<int> top = glyph.m_OriginY;
+    pdfium::base::CheckedNumeric<int> top = glyph.m_Origin.y;
     top -= glyph.m_pGlyph->m_Top;
     top -= pixel_top;
     if (!top.IsValid())
@@ -1042,7 +1041,7 @@ bool CFX_RenderDevice::DrawNormalText(int nChars,
     }
     bool bBGRStripe = !!(text_flags & FXTEXT_BGR_STRIPE);
     ncols /= 3;
-    int x_subpixel = (int)(glyph.m_fOriginX * 3) % 3;
+    int x_subpixel = static_cast<int>(glyph.m_fOrigin.x * 3) % 3;
     int start_col =
         pdfium::base::ValueOrDieForType<int>(pdfium::base::CheckMax(left, 0));
     pdfium::base::CheckedNumeric<int> end_col_safe = left;
