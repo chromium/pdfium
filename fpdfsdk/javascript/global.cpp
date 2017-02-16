@@ -14,7 +14,7 @@
 #include "fpdfsdk/javascript/JS_GlobalData.h"
 #include "fpdfsdk/javascript/JS_Object.h"
 #include "fpdfsdk/javascript/JS_Value.h"
-#include "fpdfsdk/javascript/cjs_context.h"
+#include "fpdfsdk/javascript/cjs_event_context.h"
 #include "fpdfsdk/javascript/resource.h"
 
 BEGIN_JS_STATIC_CONST(CJS_Global)
@@ -66,7 +66,7 @@ bool JSGlobalAlternate::QueryProperty(const FX_WCHAR* propname) {
   return CFX_WideString(propname) != L"setPersistent";
 }
 
-bool JSGlobalAlternate::DelProperty(IJS_Context* cc,
+bool JSGlobalAlternate::DelProperty(IJS_EventContext* cc,
                                     const FX_WCHAR* propname,
                                     CFX_WideString& sError) {
   auto it = m_mapGlobal.find(CFX_ByteString::FromUnicode(propname));
@@ -77,11 +77,11 @@ bool JSGlobalAlternate::DelProperty(IJS_Context* cc,
   return true;
 }
 
-bool JSGlobalAlternate::DoProperty(IJS_Context* cc,
+bool JSGlobalAlternate::DoProperty(IJS_EventContext* cc,
                                    const FX_WCHAR* propname,
                                    CJS_PropValue& vp,
                                    CFX_WideString& sError) {
-  CJS_Runtime* pRuntime = CJS_Runtime::FromContext(cc);
+  CJS_Runtime* pRuntime = CJS_Runtime::FromEventContext(cc);
   if (vp.IsSetting()) {
     CFX_ByteString sPropName = CFX_ByteString::FromUnicode(propname);
     switch (vp.GetJSValue()->GetType()) {
@@ -157,7 +157,7 @@ bool JSGlobalAlternate::DoProperty(IJS_Context* cc,
   return false;
 }
 
-bool JSGlobalAlternate::setPersistent(IJS_Context* cc,
+bool JSGlobalAlternate::setPersistent(IJS_EventContext* cc,
                                       const std::vector<CJS_Value>& params,
                                       CJS_Value& vRet,
                                       CFX_WideString& sError) {
@@ -166,7 +166,7 @@ bool JSGlobalAlternate::setPersistent(IJS_Context* cc,
     return false;
   }
 
-  CJS_Runtime* pRuntime = CJS_Runtime::FromContext(cc);
+  CJS_Runtime* pRuntime = CJS_Runtime::FromEventContext(cc);
   auto it = m_mapGlobal.find(params[0].ToCFXByteString(pRuntime));
   if (it != m_mapGlobal.end()) {
     JSGlobalData* pData = it->second;
@@ -232,7 +232,7 @@ void JSGlobalAlternate::UpdateGlobalPersistentVariables() {
   }
 }
 
-void JSGlobalAlternate::CommitGlobalPersisitentVariables(IJS_Context* cc) {
+void JSGlobalAlternate::CommitGlobalPersisitentVariables(IJS_EventContext* cc) {
   for (auto it = m_mapGlobal.begin(); it != m_mapGlobal.end(); ++it) {
     CFX_ByteString name = it->first;
     JSGlobalData* pData = it->second;
@@ -269,10 +269,10 @@ void JSGlobalAlternate::CommitGlobalPersisitentVariables(IJS_Context* cc) {
   }
 }
 
-void JSGlobalAlternate::ObjectToArray(IJS_Context* cc,
+void JSGlobalAlternate::ObjectToArray(IJS_EventContext* cc,
                                       v8::Local<v8::Object> pObj,
                                       CJS_GlobalVariableArray& array) {
-  CJS_Runtime* pRuntime = CJS_Runtime::FromContext(cc);
+  CJS_Runtime* pRuntime = CJS_Runtime::FromEventContext(cc);
   std::vector<CFX_WideString> pKeyList = pRuntime->GetObjectPropertyNames(pObj);
   for (const auto& ws : pKeyList) {
     CFX_ByteString sKey = ws.UTF8Encode();

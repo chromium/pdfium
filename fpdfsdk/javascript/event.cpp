@@ -11,7 +11,7 @@
 #include "fpdfsdk/javascript/JS_EventHandler.h"
 #include "fpdfsdk/javascript/JS_Object.h"
 #include "fpdfsdk/javascript/JS_Value.h"
-#include "fpdfsdk/javascript/cjs_context.h"
+#include "fpdfsdk/javascript/cjs_event_context.h"
 
 BEGIN_JS_STATIC_CONST(CJS_Event)
 END_JS_STATIC_CONST()
@@ -48,50 +48,52 @@ event::event(CJS_Object* pJsObject) : CJS_EmbedObj(pJsObject) {}
 
 event::~event() {}
 
-bool event::change(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError) {
-  CJS_Context* pContext = (CJS_Context*)cc;
-  CJS_EventHandler* pEvent = pContext->GetEventHandler();
+bool event::change(IJS_EventContext* cc,
+                   CJS_PropValue& vp,
+                   CFX_WideString& sError) {
+  CJS_EventHandler* pEvent =
+      static_cast<CJS_EventContext*>(cc)->GetEventHandler();
   CFX_WideString& wChange = pEvent->Change();
   if (vp.IsSetting()) {
     if (vp.GetJSValue()->GetType() == CJS_Value::VT_string)
       vp >> wChange;
-  } else {
-    vp << wChange;
+    return true;
   }
+  vp << wChange;
   return true;
 }
 
-bool event::changeEx(IJS_Context* cc,
+bool event::changeEx(IJS_EventContext* cc,
                      CJS_PropValue& vp,
                      CFX_WideString& sError) {
   if (!vp.IsGetting())
     return false;
 
-  CJS_Context* pContext = (CJS_Context*)cc;
-  CJS_EventHandler* pEvent = pContext->GetEventHandler();
+  CJS_EventHandler* pEvent =
+      static_cast<CJS_EventContext*>(cc)->GetEventHandler();
 
   vp << pEvent->ChangeEx();
   return true;
 }
 
-bool event::commitKey(IJS_Context* cc,
+bool event::commitKey(IJS_EventContext* cc,
                       CJS_PropValue& vp,
                       CFX_WideString& sError) {
   if (!vp.IsGetting())
     return false;
 
-  CJS_Context* pContext = (CJS_Context*)cc;
-  CJS_EventHandler* pEvent = pContext->GetEventHandler();
+  CJS_EventHandler* pEvent =
+      static_cast<CJS_EventContext*>(cc)->GetEventHandler();
 
   vp << pEvent->CommitKey();
   return true;
 }
 
-bool event::fieldFull(IJS_Context* cc,
+bool event::fieldFull(IJS_EventContext* cc,
                       CJS_PropValue& vp,
                       CFX_WideString& sError) {
-  CJS_Context* pContext = (CJS_Context*)cc;
-  CJS_EventHandler* pEvent = pContext->GetEventHandler();
+  CJS_EventHandler* pEvent =
+      static_cast<CJS_EventContext*>(cc)->GetEventHandler();
 
   if (!vp.IsGetting() &&
       wcscmp((const wchar_t*)pEvent->Name(), L"Keystroke") != 0)
@@ -104,14 +106,14 @@ bool event::fieldFull(IJS_Context* cc,
   return true;
 }
 
-bool event::keyDown(IJS_Context* cc,
+bool event::keyDown(IJS_EventContext* cc,
                     CJS_PropValue& vp,
                     CFX_WideString& sError) {
   if (!vp.IsGetting())
     return false;
 
-  CJS_Context* pContext = (CJS_Context*)cc;
-  CJS_EventHandler* pEvent = pContext->GetEventHandler();
+  CJS_EventHandler* pEvent =
+      static_cast<CJS_EventContext*>(cc)->GetEventHandler();
 
   if (pEvent->KeyDown())
     vp << true;
@@ -120,14 +122,14 @@ bool event::keyDown(IJS_Context* cc,
   return true;
 }
 
-bool event::modifier(IJS_Context* cc,
+bool event::modifier(IJS_EventContext* cc,
                      CJS_PropValue& vp,
                      CFX_WideString& sError) {
   if (!vp.IsGetting())
     return false;
 
-  CJS_Context* pContext = (CJS_Context*)cc;
-  CJS_EventHandler* pEvent = pContext->GetEventHandler();
+  CJS_EventHandler* pEvent =
+      static_cast<CJS_EventContext*>(cc)->GetEventHandler();
 
   if (pEvent->Modifier())
     vp << true;
@@ -136,89 +138,96 @@ bool event::modifier(IJS_Context* cc,
   return true;
 }
 
-bool event::name(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError) {
+bool event::name(IJS_EventContext* cc,
+                 CJS_PropValue& vp,
+                 CFX_WideString& sError) {
   if (!vp.IsGetting())
     return false;
 
-  CJS_Context* pContext = (CJS_Context*)cc;
-  CJS_EventHandler* pEvent = pContext->GetEventHandler();
+  CJS_EventHandler* pEvent =
+      static_cast<CJS_EventContext*>(cc)->GetEventHandler();
 
   vp << pEvent->Name();
   return true;
 }
 
-bool event::rc(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError) {
-  CJS_Context* pContext = (CJS_Context*)cc;
-  CJS_EventHandler* pEvent = pContext->GetEventHandler();
+bool event::rc(IJS_EventContext* cc,
+               CJS_PropValue& vp,
+               CFX_WideString& sError) {
+  CJS_EventHandler* pEvent =
+      static_cast<CJS_EventContext*>(cc)->GetEventHandler();
 
   bool& bRc = pEvent->Rc();
-  if (vp.IsSetting()) {
+  if (vp.IsSetting())
     vp >> bRc;
-  } else {
+  else
     vp << bRc;
-  }
+
   return true;
 }
 
-bool event::richChange(IJS_Context* cc,
+bool event::richChange(IJS_EventContext* cc,
                        CJS_PropValue& vp,
                        CFX_WideString& sError) {
   return true;
 }
 
-bool event::richChangeEx(IJS_Context* cc,
+bool event::richChangeEx(IJS_EventContext* cc,
                          CJS_PropValue& vp,
                          CFX_WideString& sError) {
   return true;
 }
 
-bool event::richValue(IJS_Context* cc,
+bool event::richValue(IJS_EventContext* cc,
                       CJS_PropValue& vp,
                       CFX_WideString& sError) {
   return true;
 }
 
-bool event::selEnd(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError) {
-  CJS_Context* pContext = (CJS_Context*)cc;
-  CJS_EventHandler* pEvent = pContext->GetEventHandler();
+bool event::selEnd(IJS_EventContext* cc,
+                   CJS_PropValue& vp,
+                   CFX_WideString& sError) {
+  CJS_EventHandler* pEvent =
+      static_cast<CJS_EventContext*>(cc)->GetEventHandler();
 
-  if (wcscmp((const wchar_t*)pEvent->Name(), L"Keystroke") != 0) {
+  if (wcscmp((const wchar_t*)pEvent->Name(), L"Keystroke") != 0)
     return true;
-  }
 
   int& iSelEnd = pEvent->SelEnd();
-  if (vp.IsSetting()) {
+  if (vp.IsSetting())
     vp >> iSelEnd;
-  } else {
+  else
     vp << iSelEnd;
-  }
+
   return true;
 }
 
-bool event::selStart(IJS_Context* cc,
+bool event::selStart(IJS_EventContext* cc,
                      CJS_PropValue& vp,
                      CFX_WideString& sError) {
-  CJS_Context* pContext = (CJS_Context*)cc;
-  CJS_EventHandler* pEvent = pContext->GetEventHandler();
+  CJS_EventHandler* pEvent =
+      static_cast<CJS_EventContext*>(cc)->GetEventHandler();
 
-  if (wcscmp((const wchar_t*)pEvent->Name(), L"Keystroke") != 0) {
+  if (wcscmp((const wchar_t*)pEvent->Name(), L"Keystroke") != 0)
     return true;
-  }
+
   int& iSelStart = pEvent->SelStart();
-  if (vp.IsSetting()) {
+  if (vp.IsSetting())
     vp >> iSelStart;
-  } else {
+  else
     vp << iSelStart;
-  }
+
   return true;
 }
 
-bool event::shift(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError) {
+bool event::shift(IJS_EventContext* cc,
+                  CJS_PropValue& vp,
+                  CFX_WideString& sError) {
   if (!vp.IsGetting())
     return false;
 
-  CJS_Context* pContext = (CJS_Context*)cc;
-  CJS_EventHandler* pEvent = pContext->GetEventHandler();
+  CJS_EventHandler* pEvent =
+      static_cast<CJS_EventContext*>(cc)->GetEventHandler();
 
   if (pEvent->Shift())
     vp << true;
@@ -227,81 +236,92 @@ bool event::shift(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError) {
   return true;
 }
 
-bool event::source(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError) {
+bool event::source(IJS_EventContext* cc,
+                   CJS_PropValue& vp,
+                   CFX_WideString& sError) {
   if (!vp.IsGetting())
     return false;
 
-  CJS_Context* pContext = (CJS_Context*)cc;
-  CJS_EventHandler* pEvent = pContext->GetEventHandler();
+  CJS_EventHandler* pEvent =
+      static_cast<CJS_EventContext*>(cc)->GetEventHandler();
 
   vp << pEvent->Source()->GetJSObject();
   return true;
 }
 
-bool event::target(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError) {
+bool event::target(IJS_EventContext* cc,
+                   CJS_PropValue& vp,
+                   CFX_WideString& sError) {
   if (!vp.IsGetting())
     return false;
 
-  CJS_Context* pContext = (CJS_Context*)cc;
-  CJS_EventHandler* pEvent = pContext->GetEventHandler();
+  CJS_EventHandler* pEvent =
+      static_cast<CJS_EventContext*>(cc)->GetEventHandler();
 
   vp << pEvent->Target_Field()->GetJSObject();
   return true;
 }
 
-bool event::targetName(IJS_Context* cc,
+bool event::targetName(IJS_EventContext* cc,
                        CJS_PropValue& vp,
                        CFX_WideString& sError) {
   if (!vp.IsGetting())
     return false;
 
-  CJS_Context* pContext = (CJS_Context*)cc;
+  CJS_EventContext* pContext = (CJS_EventContext*)cc;
   CJS_EventHandler* pEvent = pContext->GetEventHandler();
 
   vp << pEvent->TargetName();
   return true;
 }
 
-bool event::type(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError) {
+bool event::type(IJS_EventContext* cc,
+                 CJS_PropValue& vp,
+                 CFX_WideString& sError) {
   if (!vp.IsGetting())
     return false;
 
-  CJS_Context* pContext = (CJS_Context*)cc;
-  CJS_EventHandler* pEvent = pContext->GetEventHandler();
+  CJS_EventHandler* pEvent =
+      static_cast<CJS_EventContext*>(cc)->GetEventHandler();
 
   vp << pEvent->Type();
   return true;
 }
 
-bool event::value(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError) {
-  CJS_Context* pContext = (CJS_Context*)cc;
-  CJS_EventHandler* pEvent = pContext->GetEventHandler();
+bool event::value(IJS_EventContext* cc,
+                  CJS_PropValue& vp,
+                  CFX_WideString& sError) {
+  CJS_EventHandler* pEvent =
+      static_cast<CJS_EventContext*>(cc)->GetEventHandler();
 
   if (wcscmp((const wchar_t*)pEvent->Type(), L"Field") != 0)
     return false;
+
   if (!pEvent->m_pValue)
     return false;
+
   CFX_WideString& val = pEvent->Value();
-  if (vp.IsSetting()) {
+  if (vp.IsSetting())
     vp >> val;
-  } else {
+  else
     vp << val;
-  }
+
   return true;
 }
 
-bool event::willCommit(IJS_Context* cc,
+bool event::willCommit(IJS_EventContext* cc,
                        CJS_PropValue& vp,
                        CFX_WideString& sError) {
   if (!vp.IsGetting())
     return false;
 
-  CJS_Context* pContext = (CJS_Context*)cc;
-  CJS_EventHandler* pEvent = pContext->GetEventHandler();
+  CJS_EventHandler* pEvent =
+      static_cast<CJS_EventContext*>(cc)->GetEventHandler();
 
   if (pEvent->WillCommit())
     vp << true;
   else
     vp << false;
+
   return true;
 }

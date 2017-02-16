@@ -17,11 +17,11 @@ class Report : public CJS_EmbedObj {
   ~Report() override;
 
  public:
-  bool save(IJS_Context* cc,
+  bool save(IJS_EventContext* cc,
             const std::vector<CJS_Value>& params,
             CJS_Value& vRet,
             CFX_WideString& sError);
-  bool writeText(IJS_Context* cc,
+  bool writeText(IJS_EventContext* cc,
                  const std::vector<CJS_Value>& params,
                  CJS_Value& vRet,
                  CFX_WideString& sError);

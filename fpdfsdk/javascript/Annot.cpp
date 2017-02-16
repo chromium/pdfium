@@ -9,7 +9,7 @@
 #include "fpdfsdk/javascript/JS_Define.h"
 #include "fpdfsdk/javascript/JS_Object.h"
 #include "fpdfsdk/javascript/JS_Value.h"
-#include "fpdfsdk/javascript/cjs_context.h"
+#include "fpdfsdk/javascript/cjs_event_context.h"
 
 namespace {
 
@@ -37,7 +37,9 @@ Annot::Annot(CJS_Object* pJSObject) : CJS_EmbedObj(pJSObject) {}
 
 Annot::~Annot() {}
 
-bool Annot::hidden(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError) {
+bool Annot::hidden(IJS_EventContext* cc,
+                   CJS_PropValue& vp,
+                   CFX_WideString& sError) {
   if (vp.IsGetting()) {
     if (!m_pAnnot) {
       sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
@@ -71,7 +73,9 @@ bool Annot::hidden(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError) {
   return true;
 }
 
-bool Annot::name(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError) {
+bool Annot::name(IJS_EventContext* cc,
+                 CJS_PropValue& vp,
+                 CFX_WideString& sError) {
   if (vp.IsGetting()) {
     if (!m_pAnnot) {
       sError = JSGetStringFromID(IDS_STRING_JSBADOBJECT);
@@ -92,7 +96,9 @@ bool Annot::name(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError) {
   return true;
 }
 
-bool Annot::type(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError) {
+bool Annot::type(IJS_EventContext* cc,
+                 CJS_PropValue& vp,
+                 CFX_WideString& sError) {
   if (vp.IsSetting()) {
     sError = JSGetStringFromID(IDS_STRING_JSREADONLY);
     return false;

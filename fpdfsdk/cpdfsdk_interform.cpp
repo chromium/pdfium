@@ -30,7 +30,7 @@
 #include "fpdfsdk/fsdk_define.h"
 #include "fpdfsdk/fxedit/fxet_edit.h"
 #include "fpdfsdk/ipdfsdk_annothandler.h"
-#include "fpdfsdk/javascript/ijs_context.h"
+#include "fpdfsdk/javascript/ijs_event_context.h"
 #include "fpdfsdk/javascript/ijs_runtime.h"
 #include "fpdfsdk/pdfwindow/PWL_Utils.h"
 #include "third_party/base/stl_util.h"
@@ -253,7 +253,7 @@ void CPDFSDK_InterForm::OnCalculate(CPDF_FormField* pFormField) {
     if (csJS.IsEmpty())
       continue;
 
-    IJS_Context* pContext = pRuntime->NewContext();
+    IJS_EventContext* pContext = pRuntime->NewEventContext();
     CFX_WideString sOldValue = pField->GetValue();
     CFX_WideString sValue = sOldValue;
     bool bRC = true;
@@ -261,12 +261,10 @@ void CPDFSDK_InterForm::OnCalculate(CPDF_FormField* pFormField) {
 
     CFX_WideString sInfo;
     bool bRet = pContext->RunScript(csJS, &sInfo);
-    pRuntime->ReleaseContext(pContext);
-
+    pRuntime->ReleaseEventContext(pContext);
     if (bRet && bRC && sValue.Compare(sOldValue) != 0)
       pField->SetValue(sValue, true);
   }
-
   m_bBusy = false;
 }
 
@@ -296,12 +294,11 @@ CFX_WideString CPDFSDK_InterForm::OnFormat(CPDF_FormField* pFormField,
       if (!script.IsEmpty()) {
         CFX_WideString Value = sValue;
 
-        IJS_Context* pContext = pRuntime->NewContext();
+        IJS_EventContext* pContext = pRuntime->NewEventContext();
         pContext->OnField_Format(pFormField, Value, true);
         CFX_WideString sInfo;
         bool bRet = pContext->RunScript(script, &sInfo);
-        pRuntime->ReleaseContext(pContext);
-
+        pRuntime->ReleaseEventContext(pContext);
         if (bRet) {
           sValue = Value;
           bFormatted = true;
@@ -309,7 +306,6 @@ CFX_WideString CPDFSDK_InterForm::OnFormat(CPDF_FormField* pFormField,
       }
     }
   }
-
   return sValue;
 }
 

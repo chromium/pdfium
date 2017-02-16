@@ -14,7 +14,7 @@
 #include "fpdfsdk/javascript/cjs_runtime.h"
 #include "fxjs/fxjs_v8.h"
 
-class CJS_Context;
+class CJS_EventContext;
 class CJS_Object;
 class CPDFSDK_FormFillEnvironment;
 

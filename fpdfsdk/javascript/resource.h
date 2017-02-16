@@ -9,7 +9,7 @@
 
 #include "core/fxcrt/fx_string.h"
 
-class CJS_Context;
+class CJS_EventContext;
 
 #define IDS_STRING_JSALERT 25613
 #define IDS_STRING_JSPARAMERROR 25614

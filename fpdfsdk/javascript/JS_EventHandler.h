@@ -10,7 +10,7 @@
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
 
-class CJS_Context;
+class CJS_EventContext;
 class CPDFSDK_Annot;
 class CPDFSDK_FormFillEnvironment;
 class CPDF_Bookmark;
@@ -60,7 +60,7 @@ enum JS_EVENT_T {
 
 class CJS_EventHandler {
  public:
-  explicit CJS_EventHandler(CJS_Context* pContext);
+  explicit CJS_EventHandler(CJS_EventContext* pContext);
   virtual ~CJS_EventHandler();
 
   void OnApp_Init();
@@ -165,7 +165,7 @@ class CJS_EventHandler {
   JS_EVENT_T EventType() { return m_eEventType; }
 
  public:
-  CJS_Context* m_pJSContext;
+  CJS_EventContext* const m_pJSEventContext;  // Not Owned.
   JS_EVENT_T m_eEventType;
   bool m_bValid;
 

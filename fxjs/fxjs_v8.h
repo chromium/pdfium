@@ -33,7 +33,7 @@ class CFXJS_ObjDefinition;
 
 // FXJS_V8 places no restrictions on this class; it merely passes it
 // on to caller-provided methods.
-class IJS_Context;  // A description of the event that caused JS execution.
+class IJS_EventContext;  // A description of the event that caused JS execution.
 
 enum FXJSOBJTYPE {
   FXJSOBJTYPE_DYNAMIC = 0,  // Created by native method and returned to JS.

@@ -12,7 +12,7 @@
 #include "xfa/fxfa/fxfa.h"
 
 class CPDFXFA_Context;
-class IJS_Context;
+class IJS_EventContext;
 
 class CPDFXFA_DocEnvironment : public IXFA_DocEnvironment {
  public:
@@ -107,8 +107,8 @@ class CPDFXFA_DocEnvironment : public IXFA_DocEnvironment {
                         FPDF_DWORD flag);
   void ToXFAContentFlags(CFX_WideString csSrcContent, FPDF_DWORD& flag);
 
-  CPDFXFA_Context* const m_pContext;  // Not owned;
-  IJS_Context* m_pJSContext;
+  CPDFXFA_Context* const m_pContext;    // Not owned.
+  IJS_EventContext* m_pJSEventContext;  // Not owned.
 };
 
 #endif  // FPDFSDK_FPDFXFA_CPDFXFA_DOCENVIRONMENT_H_

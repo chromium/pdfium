@@ -7,7 +7,7 @@
 #include "fpdfsdk/javascript/JS_Object.h"
 
 #include "fpdfsdk/javascript/JS_Define.h"
-#include "fpdfsdk/javascript/cjs_context.h"
+#include "fpdfsdk/javascript/cjs_event_context.h"
 
 CJS_EmbedObj::CJS_EmbedObj(CJS_Object* pJSObject) : m_pJSObject(pJSObject) {}
 

@@ -1,28 +1,28 @@
-// Copyright 2014 PDFium Authors. All rights reserved.
+// Copyright 2017 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FPDFSDK_JAVASCRIPT_CJS_CONTEXT_H_
-#define FPDFSDK_JAVASCRIPT_CJS_CONTEXT_H_
+#ifndef FPDFSDK_JAVASCRIPT_CJS_EVENT_CONTEXT_H_
+#define FPDFSDK_JAVASCRIPT_CJS_EVENT_CONTEXT_H_
 
 #include <memory>
 
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
-#include "fpdfsdk/javascript/ijs_context.h"
+#include "fpdfsdk/javascript/ijs_event_context.h"
 
 class CJS_EventHandler;
 class CJS_Runtime;
 class CPDFSDK_FormFillEnvironment;
 
-class CJS_Context : public IJS_Context {
+class CJS_EventContext : public IJS_EventContext {
  public:
-  explicit CJS_Context(CJS_Runtime* pRuntime);
-  ~CJS_Context() override;
+  explicit CJS_EventContext(CJS_Runtime* pRuntime);
+  ~CJS_EventContext() override;
 
-  // IJS_Context
+  // IJS_EventContext
   bool RunScript(const CFX_WideString& script, CFX_WideString* info) override;
   void OnApp_Init() override;
   void OnDoc_Open(CPDFSDK_FormFillEnvironment* pFormFillEnv,
@@ -132,4 +132,4 @@ class CJS_Context : public IJS_Context {
   bool m_bBusy;
 };
 
-#endif  // FPDFSDK_JAVASCRIPT_CJS_CONTEXT_H_
+#endif  // FPDFSDK_JAVASCRIPT_CJS_EVENT_CONTEXT_H_

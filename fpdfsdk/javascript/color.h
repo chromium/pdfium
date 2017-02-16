@@ -17,24 +17,26 @@ class color : public CJS_EmbedObj {
   explicit color(CJS_Object* pJSObject);
   ~color() override;
 
-  bool black(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-  bool blue(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-  bool cyan(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-  bool dkGray(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-  bool gray(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-  bool green(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-  bool ltGray(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-  bool magenta(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-  bool red(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-  bool transparent(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-  bool white(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-  bool yellow(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
+  bool black(IJS_EventContext* cc, CJS_PropValue& vp, CFX_WideString& sError);
+  bool blue(IJS_EventContext* cc, CJS_PropValue& vp, CFX_WideString& sError);
+  bool cyan(IJS_EventContext* cc, CJS_PropValue& vp, CFX_WideString& sError);
+  bool dkGray(IJS_EventContext* cc, CJS_PropValue& vp, CFX_WideString& sError);
+  bool gray(IJS_EventContext* cc, CJS_PropValue& vp, CFX_WideString& sError);
+  bool green(IJS_EventContext* cc, CJS_PropValue& vp, CFX_WideString& sError);
+  bool ltGray(IJS_EventContext* cc, CJS_PropValue& vp, CFX_WideString& sError);
+  bool magenta(IJS_EventContext* cc, CJS_PropValue& vp, CFX_WideString& sError);
+  bool red(IJS_EventContext* cc, CJS_PropValue& vp, CFX_WideString& sError);
+  bool transparent(IJS_EventContext* cc,
+                   CJS_PropValue& vp,
+                   CFX_WideString& sError);
+  bool white(IJS_EventContext* cc, CJS_PropValue& vp, CFX_WideString& sError);
+  bool yellow(IJS_EventContext* cc, CJS_PropValue& vp, CFX_WideString& sError);
 
-  bool convert(IJS_Context* cc,
+  bool convert(IJS_EventContext* cc,
                const std::vector<CJS_Value>& params,
                CJS_Value& vRet,
                CFX_WideString& sError);
-  bool equal(IJS_Context* cc,
+  bool equal(IJS_EventContext* cc,
              const std::vector<CJS_Value>& params,
              CJS_Value& vRet,
              CFX_WideString& sError);

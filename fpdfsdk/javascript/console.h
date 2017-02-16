@@ -17,19 +17,19 @@ class console : public CJS_EmbedObj {
   ~console() override;
 
  public:
-  bool clear(IJS_Context* cc,
+  bool clear(IJS_EventContext* cc,
              const std::vector<CJS_Value>& params,
              CJS_Value& vRet,
              CFX_WideString& sError);
-  bool hide(IJS_Context* cc,
+  bool hide(IJS_EventContext* cc,
             const std::vector<CJS_Value>& params,
             CJS_Value& vRet,
             CFX_WideString& sError);
-  bool println(IJS_Context* cc,
+  bool println(IJS_EventContext* cc,
                const std::vector<CJS_Value>& params,
                CJS_Value& vRet,
                CFX_WideString& sError);
-  bool show(IJS_Context* cc,
+  bool show(IJS_EventContext* cc,
             const std::vector<CJS_Value>& params,
             CJS_Value& vRet,
             CFX_WideString& sError);

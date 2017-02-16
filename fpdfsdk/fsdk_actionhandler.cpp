@@ -14,7 +14,7 @@
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_interform.h"
 #include "fpdfsdk/fsdk_define.h"
-#include "fpdfsdk/javascript/ijs_context.h"
+#include "fpdfsdk/javascript/ijs_event_context.h"
 #include "fpdfsdk/javascript/ijs_runtime.h"
 #include "third_party/base/stl_util.h"
 
@@ -157,16 +157,15 @@ bool CPDFSDK_ActionHandler::ExecuteLinkAction(
       CFX_WideString swJS = action.GetJavaScript();
       if (!swJS.IsEmpty()) {
         IJS_Runtime* pRuntime = pFormFillEnv->GetJSRuntime();
-        IJS_Context* pContext = pRuntime->NewContext();
+        IJS_EventContext* pContext = pRuntime->NewEventContext();
         pContext->OnLink_MouseUp(pFormFillEnv);
 
         CFX_WideString csInfo;
         bool bRet = pContext->RunScript(swJS, &csInfo);
+        pRuntime->ReleaseEventContext(pContext);
         if (!bRet) {
           // FIXME: return error.
         }
-
-        pRuntime->ReleaseContext(pContext);
       }
     }
   } else {
@@ -282,14 +281,13 @@ bool CPDFSDK_ActionHandler::ExecuteScreenAction(
       CFX_WideString swJS = action.GetJavaScript();
       if (!swJS.IsEmpty()) {
         IJS_Runtime* pRuntime = pFormFillEnv->GetJSRuntime();
-        IJS_Context* pContext = pRuntime->NewContext();
+        IJS_EventContext* pContext = pRuntime->NewEventContext();
         CFX_WideString csInfo;
         bool bRet = pContext->RunScript(swJS, &csInfo);
+        pRuntime->ReleaseEventContext(pContext);
         if (!bRet) {
           // FIXME: return error.
         }
-
-        pRuntime->ReleaseContext(pContext);
       }
     }
   } else {
@@ -322,16 +320,15 @@ bool CPDFSDK_ActionHandler::ExecuteBookMark(
       CFX_WideString swJS = action.GetJavaScript();
       if (!swJS.IsEmpty()) {
         IJS_Runtime* pRuntime = pFormFillEnv->GetJSRuntime();
-        IJS_Context* pContext = pRuntime->NewContext();
+        IJS_EventContext* pContext = pRuntime->NewEventContext();
         pContext->OnBookmark_MouseUp(pBookmark);
 
         CFX_WideString csInfo;
         bool bRet = pContext->RunScript(swJS, &csInfo);
+        pRuntime->ReleaseEventContext(pContext);
         if (!bRet) {
           // FIXME: return error.
         }
-
-        pRuntime->ReleaseContext(pContext);
       }
     }
   } else {
@@ -478,7 +475,7 @@ void CPDFSDK_ActionHandler::RunFieldJavaScript(
   ASSERT(type != CPDF_AAction::Format);
 
   IJS_Runtime* pRuntime = pFormFillEnv->GetJSRuntime();
-  IJS_Context* pContext = pRuntime->NewContext();
+  IJS_EventContext* pContext = pRuntime->NewEventContext();
   switch (type) {
     case CPDF_AAction::CursorEnter:
       pContext->OnField_MouseEnter(data.bModifier, data.bShift, pFormField);
@@ -518,11 +515,10 @@ void CPDFSDK_ActionHandler::RunFieldJavaScript(
 
   CFX_WideString csInfo;
   bool bRet = pContext->RunScript(script, &csInfo);
+  pRuntime->ReleaseEventContext(pContext);
   if (!bRet) {
     // FIXME: return error.
   }
-
-  pRuntime->ReleaseContext(pContext);
 }
 
 void CPDFSDK_ActionHandler::RunDocumentOpenJavaScript(
@@ -530,16 +526,15 @@ void CPDFSDK_ActionHandler::RunDocumentOpenJavaScript(
     const CFX_WideString& sScriptName,
     const CFX_WideString& script) {
   IJS_Runtime* pRuntime = pFormFillEnv->GetJSRuntime();
-  IJS_Context* pContext = pRuntime->NewContext();
+  IJS_EventContext* pContext = pRuntime->NewEventContext();
   pContext->OnDoc_Open(pFormFillEnv, sScriptName);
 
   CFX_WideString csInfo;
   bool bRet = pContext->RunScript(script, &csInfo);
+  pRuntime->ReleaseEventContext(pContext);
   if (!bRet) {
     // FIXME: return error.
   }
-
-  pRuntime->ReleaseContext(pContext);
 }
 
 void CPDFSDK_ActionHandler::RunDocumentPageJavaScript(
@@ -547,7 +542,7 @@ void CPDFSDK_ActionHandler::RunDocumentPageJavaScript(
     CPDF_AAction::AActionType type,
     const CFX_WideString& script) {
   IJS_Runtime* pRuntime = pFormFillEnv->GetJSRuntime();
-  IJS_Context* pContext = pRuntime->NewContext();
+  IJS_EventContext* pContext = pRuntime->NewEventContext();
   switch (type) {
     case CPDF_AAction::OpenPage:
       pContext->OnPage_Open(pFormFillEnv);
@@ -583,11 +578,10 @@ void CPDFSDK_ActionHandler::RunDocumentPageJavaScript(
 
   CFX_WideString csInfo;
   bool bRet = pContext->RunScript(script, &csInfo);
+  pRuntime->ReleaseEventContext(pContext);
   if (!bRet) {
     // FIXME: return error.
   }
-
-  pRuntime->ReleaseContext(pContext);
 }
 
 bool CPDFSDK_ActionHandler::DoAction_Hide(

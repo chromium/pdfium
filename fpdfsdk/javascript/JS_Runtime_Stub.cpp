@@ -6,16 +6,16 @@
 
 #include <memory>
 
-#include "fpdfsdk/javascript/ijs_context.h"
+#include "fpdfsdk/javascript/ijs_event_context.h"
 #include "fpdfsdk/javascript/ijs_runtime.h"
 #include "third_party/base/ptr_util.h"
 
-class CJS_ContextStub final : public IJS_Context {
+class CJS_EventContextStub final : public IJS_EventContext {
  public:
-  CJS_ContextStub() {}
-  ~CJS_ContextStub() override {}
+  CJS_EventContextStub() {}
+  ~CJS_EventContextStub() override {}
 
-  // IJS_Context:
+  // IJS_EventContext:
   bool RunScript(const CFX_WideString& script, CFX_WideString* info) override {
     return false;
   }
@@ -124,14 +124,16 @@ class CJS_RuntimeStub final : public IJS_Runtime {
       : m_pFormFillEnv(pFormFillEnv) {}
   ~CJS_RuntimeStub() override {}
 
-  IJS_Context* NewContext() override {
+  IJS_EventContext* NewEventContext() override {
     if (!m_pContext)
-      m_pContext = pdfium::MakeUnique<CJS_ContextStub>();
-    return GetCurrentContext();
+      m_pContext = pdfium::MakeUnique<CJS_EventContextStub>();
+    return GetCurrentEventContext();
   }
 
-  IJS_Context* GetCurrentContext() override { return m_pContext.get(); }
-  void ReleaseContext(IJS_Context* pContext) override {}
+  IJS_EventContext* GetCurrentEventContext() override {
+    return m_pContext.get();
+  }
+  void ReleaseEventContext(IJS_EventContext* pContext) override {}
 
   CPDFSDK_FormFillEnvironment* GetFormFillEnv() const override {
     return m_pFormFillEnv;
@@ -154,7 +156,7 @@ class CJS_RuntimeStub final : public IJS_Runtime {
 
  protected:
   CPDFSDK_FormFillEnvironment* m_pFormFillEnv;
-  std::unique_ptr<CJS_ContextStub> m_pContext;
+  std::unique_ptr<CJS_EventContextStub> m_pContext;
 };
 
 // static

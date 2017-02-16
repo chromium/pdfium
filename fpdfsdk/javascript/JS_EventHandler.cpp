@@ -11,11 +11,11 @@
 #include "fpdfsdk/javascript/JS_Define.h"
 #include "fpdfsdk/javascript/JS_Object.h"
 #include "fpdfsdk/javascript/JS_Value.h"
-#include "fpdfsdk/javascript/cjs_context.h"
+#include "fpdfsdk/javascript/cjs_event_context.h"
 #include "fpdfsdk/javascript/cjs_runtime.h"
 
-CJS_EventHandler::CJS_EventHandler(CJS_Context* pContext)
-    : m_pJSContext(pContext),
+CJS_EventHandler::CJS_EventHandler(CJS_EventContext* pContext)
+    : m_pJSEventContext(pContext),
       m_eEventType(JET_UNKNOWN),
       m_bValid(false),
       m_pWideStrChange(nullptr),
@@ -590,7 +590,7 @@ bool CJS_EventHandler::Shift() {
 }
 
 Field* CJS_EventHandler::Source() {
-  CJS_Runtime* pRuntime = m_pJSContext->GetJSRuntime();
+  CJS_Runtime* pRuntime = m_pJSEventContext->GetJSRuntime();
   v8::Local<v8::Object> pDocObj =
       pRuntime->NewFxDynamicObj(CJS_Document::g_nObjDefnID);
   ASSERT(!pDocObj.IsEmpty());
@@ -604,7 +604,7 @@ Field* CJS_EventHandler::Source() {
   Document* pDocument = (Document*)pJSDocument->GetEmbedObject();
   pDocument->SetFormFillEnv(m_pTargetFormFillEnv
                                 ? m_pTargetFormFillEnv
-                                : m_pJSContext->GetFormFillEnv());
+                                : m_pJSEventContext->GetFormFillEnv());
 
   CJS_Field* pJSField =
       static_cast<CJS_Field*>(pRuntime->GetObjectPrivate(pFieldObj));
@@ -614,7 +614,7 @@ Field* CJS_EventHandler::Source() {
 }
 
 Field* CJS_EventHandler::Target_Field() {
-  CJS_Runtime* pRuntime = m_pJSContext->GetJSRuntime();
+  CJS_Runtime* pRuntime = m_pJSEventContext->GetJSRuntime();
   v8::Local<v8::Object> pDocObj =
       pRuntime->NewFxDynamicObj(CJS_Document::g_nObjDefnID);
   ASSERT(!pDocObj.IsEmpty());
@@ -628,7 +628,7 @@ Field* CJS_EventHandler::Target_Field() {
   Document* pDocument = (Document*)pJSDocument->GetEmbedObject();
   pDocument->SetFormFillEnv(m_pTargetFormFillEnv
                                 ? m_pTargetFormFillEnv
-                                : m_pJSContext->GetFormFillEnv());
+                                : m_pJSEventContext->GetFormFillEnv());
 
   CJS_Field* pJSField =
       static_cast<CJS_Field*>(pRuntime->GetObjectPrivate(pFieldObj));

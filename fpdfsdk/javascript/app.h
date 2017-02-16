@@ -41,106 +41,120 @@ class app : public CJS_EmbedObj {
   explicit app(CJS_Object* pJSObject);
   ~app() override;
 
-  bool activeDocs(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-  bool calculate(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-  bool formsVersion(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-  bool fs(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-  bool fullscreen(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-  bool language(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-  bool media(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-  bool platform(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-  bool runtimeHighlight(IJS_Context* cc,
+  bool activeDocs(IJS_EventContext* cc,
+                  CJS_PropValue& vp,
+                  CFX_WideString& sError);
+  bool calculate(IJS_EventContext* cc,
+                 CJS_PropValue& vp,
+                 CFX_WideString& sError);
+  bool formsVersion(IJS_EventContext* cc,
+                    CJS_PropValue& vp,
+                    CFX_WideString& sError);
+  bool fs(IJS_EventContext* cc, CJS_PropValue& vp, CFX_WideString& sError);
+  bool fullscreen(IJS_EventContext* cc,
+                  CJS_PropValue& vp,
+                  CFX_WideString& sError);
+  bool language(IJS_EventContext* cc,
+                CJS_PropValue& vp,
+                CFX_WideString& sError);
+  bool media(IJS_EventContext* cc, CJS_PropValue& vp, CFX_WideString& sError);
+  bool platform(IJS_EventContext* cc,
+                CJS_PropValue& vp,
+                CFX_WideString& sError);
+  bool runtimeHighlight(IJS_EventContext* cc,
                         CJS_PropValue& vp,
                         CFX_WideString& sError);
-  bool viewerType(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
-  bool viewerVariation(IJS_Context* cc,
+  bool viewerType(IJS_EventContext* cc,
+                  CJS_PropValue& vp,
+                  CFX_WideString& sError);
+  bool viewerVariation(IJS_EventContext* cc,
                        CJS_PropValue& vp,
                        CFX_WideString& sError);
-  bool viewerVersion(IJS_Context* cc,
+  bool viewerVersion(IJS_EventContext* cc,
                      CJS_PropValue& vp,
                      CFX_WideString& sError);
 
-  bool alert(IJS_Context* cc,
+  bool alert(IJS_EventContext* cc,
              const std::vector<CJS_Value>& params,
              CJS_Value& vRet,
              CFX_WideString& sError);
-  bool beep(IJS_Context* cc,
+  bool beep(IJS_EventContext* cc,
             const std::vector<CJS_Value>& params,
             CJS_Value& vRet,
             CFX_WideString& sError);
-  bool browseForDoc(IJS_Context* cc,
+  bool browseForDoc(IJS_EventContext* cc,
                     const std::vector<CJS_Value>& params,
                     CJS_Value& vRet,
                     CFX_WideString& sError);
-  bool clearInterval(IJS_Context* cc,
+  bool clearInterval(IJS_EventContext* cc,
                      const std::vector<CJS_Value>& params,
                      CJS_Value& vRet,
                      CFX_WideString& sError);
-  bool clearTimeOut(IJS_Context* cc,
+  bool clearTimeOut(IJS_EventContext* cc,
                     const std::vector<CJS_Value>& params,
                     CJS_Value& vRet,
                     CFX_WideString& sError);
-  bool execDialog(IJS_Context* cc,
+  bool execDialog(IJS_EventContext* cc,
                   const std::vector<CJS_Value>& params,
                   CJS_Value& vRet,
                   CFX_WideString& sError);
-  bool execMenuItem(IJS_Context* cc,
+  bool execMenuItem(IJS_EventContext* cc,
                     const std::vector<CJS_Value>& params,
                     CJS_Value& vRet,
                     CFX_WideString& sError);
-  bool findComponent(IJS_Context* cc,
+  bool findComponent(IJS_EventContext* cc,
                      const std::vector<CJS_Value>& params,
                      CJS_Value& vRet,
                      CFX_WideString& sError);
-  bool goBack(IJS_Context* cc,
+  bool goBack(IJS_EventContext* cc,
               const std::vector<CJS_Value>& params,
               CJS_Value& vRet,
               CFX_WideString& sError);
-  bool goForward(IJS_Context* cc,
+  bool goForward(IJS_EventContext* cc,
                  const std::vector<CJS_Value>& params,
                  CJS_Value& vRet,
                  CFX_WideString& sError);
-  bool launchURL(IJS_Context* cc,
+  bool launchURL(IJS_EventContext* cc,
                  const std::vector<CJS_Value>& params,
                  CJS_Value& vRet,
                  CFX_WideString& sError);
-  bool mailMsg(IJS_Context* cc,
+  bool mailMsg(IJS_EventContext* cc,
                const std::vector<CJS_Value>& params,
                CJS_Value& vRet,
                CFX_WideString& sError);
-  bool newFDF(IJS_Context* cc,
+  bool newFDF(IJS_EventContext* cc,
               const std::vector<CJS_Value>& params,
               CJS_Value& vRet,
               CFX_WideString& sError);
-  bool newDoc(IJS_Context* cc,
+  bool newDoc(IJS_EventContext* cc,
               const std::vector<CJS_Value>& params,
               CJS_Value& vRet,
               CFX_WideString& sError);
-  bool openDoc(IJS_Context* cc,
+  bool openDoc(IJS_EventContext* cc,
                const std::vector<CJS_Value>& params,
                CJS_Value& vRet,
                CFX_WideString& sError);
-  bool openFDF(IJS_Context* cc,
+  bool openFDF(IJS_EventContext* cc,
                const std::vector<CJS_Value>& params,
                CJS_Value& vRet,
                CFX_WideString& sError);
-  bool popUpMenuEx(IJS_Context* cc,
+  bool popUpMenuEx(IJS_EventContext* cc,
                    const std::vector<CJS_Value>& params,
                    CJS_Value& vRet,
                    CFX_WideString& sError);
-  bool popUpMenu(IJS_Context* cc,
+  bool popUpMenu(IJS_EventContext* cc,
                  const std::vector<CJS_Value>& params,
                  CJS_Value& vRet,
                  CFX_WideString& sError);
-  bool response(IJS_Context* cc,
+  bool response(IJS_EventContext* cc,
                 const std::vector<CJS_Value>& params,
                 CJS_Value& vRet,
                 CFX_WideString& sError);
-  bool setInterval(IJS_Context* cc,
+  bool setInterval(IJS_EventContext* cc,
                    const std::vector<CJS_Value>& params,
                    CJS_Value& vRet,
                    CFX_WideString& sError);
-  bool setTimeOut(IJS_Context* cc,
+  bool setTimeOut(IJS_EventContext* cc,
                   const std::vector<CJS_Value>& params,
                   CJS_Value& vRet,
                   CFX_WideString& sError);

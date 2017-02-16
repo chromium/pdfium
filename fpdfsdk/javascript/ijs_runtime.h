@@ -15,7 +15,7 @@
 #endif  // PDF_ENABLE_XFA
 
 class CPDFSDK_FormFillEnvironment;
-class IJS_Context;
+class IJS_EventContext;
 
 // Owns the FJXS objects needed to actually execute JS.
 class IJS_Runtime {
@@ -25,12 +25,10 @@ class IJS_Runtime {
   static IJS_Runtime* Create(CPDFSDK_FormFillEnvironment* pFormFillEnv);
   virtual ~IJS_Runtime() {}
 
-  virtual IJS_Context* NewContext() = 0;
-  virtual void ReleaseContext(IJS_Context* pContext) = 0;
-  virtual IJS_Context* GetCurrentContext() = 0;
-
+  virtual IJS_EventContext* NewEventContext() = 0;
+  virtual void ReleaseEventContext(IJS_EventContext* pContext) = 0;
+  virtual IJS_EventContext* GetCurrentEventContext() = 0;
   virtual CPDFSDK_FormFillEnvironment* GetFormFillEnv() const = 0;
-
   virtual int ExecuteScript(const CFX_WideString& script,
                             CFX_WideString* info) = 0;
 
