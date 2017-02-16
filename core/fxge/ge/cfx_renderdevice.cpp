@@ -346,6 +346,21 @@ bool ShouldDrawDeviceText(const CFX_Font* pFont, uint32_t text_flags) {
 
 }  // namespace
 
+FXTEXT_CHARPOS::FXTEXT_CHARPOS()
+    : m_GlyphIndex(0),
+      m_FontCharWidth(0),
+#if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
+      m_ExtGID(0),
+#endif
+      m_FallbackFontPosition(0),
+      m_bGlyphAdjust(false),
+      m_bFontStyle(false) {
+}
+
+FXTEXT_CHARPOS::FXTEXT_CHARPOS(const FXTEXT_CHARPOS&) = default;
+
+FXTEXT_CHARPOS::~FXTEXT_CHARPOS(){};
+
 CFX_RenderDevice::CFX_RenderDevice()
     : m_pBitmap(nullptr),
       m_Width(0),
@@ -912,8 +927,9 @@ bool CFX_RenderDevice::DrawNormalText(int nChars,
   for (size_t i = 0; i < glyphs.size(); ++i) {
     FXTEXT_GLYPHPOS& glyph = glyphs[i];
     const FXTEXT_CHARPOS& charpos = pCharPos[i];
-    glyph.m_fOriginX = charpos.m_OriginX;
-    glyph.m_fOriginY = charpos.m_OriginY;
+    glyph.m_fOriginX = charpos.m_Origin.x;
+    glyph.m_fOriginY = charpos.m_Origin.y;
+
     text2Device.TransformPoint(glyph.m_fOriginX, glyph.m_fOriginY);
     if (anti_alias < FXFT_RENDER_MODE_LCD)
       glyph.m_OriginX = FXSYS_round(glyph.m_fOriginX);
@@ -1069,8 +1085,8 @@ bool CFX_RenderDevice::DrawTextPath(int nChars,
                           charpos.m_AdjustMatrix[2], charpos.m_AdjustMatrix[3],
                           0, 0);
     }
-    matrix.Concat(CFX_Matrix(font_size, 0, 0, font_size, charpos.m_OriginX,
-                             charpos.m_OriginY));
+    matrix.Concat(CFX_Matrix(font_size, 0, 0, font_size, charpos.m_Origin.x,
+                             charpos.m_Origin.y));
     const CFX_PathData* pPath =
         pFont->LoadGlyphPath(charpos.m_GlyphIndex, charpos.m_FontCharWidth);
     if (!pPath)

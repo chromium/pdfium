@@ -1447,22 +1447,21 @@ int32_t CFX_TxtBreak::GetDisplayPos(const FX_TXTRUN* pTxtRun,
         }
       }
       if (!bEmptyChar || (bEmptyChar && !bSkipSpace)) {
-        pCharPos->m_OriginX = fX;
-        pCharPos->m_OriginY = fY;
+        pCharPos->m_Origin = CFX_PointF(fX, fY);
         if ((dwStyles & FX_TXTLAYOUTSTYLE_CombText) != 0) {
           int32_t iFormWidth = iCharWidth;
           pFont->GetCharWidth(wForm, iFormWidth, false);
           FX_FLOAT fOffset = fFontSize * (iCharWidth - iFormWidth) / 2000.0f;
-          if (bVerticalDoc) {
-            pCharPos->m_OriginY += fOffset;
-          } else {
-            pCharPos->m_OriginX += fOffset;
-          }
+          if (bVerticalDoc)
+            pCharPos->m_Origin.y += fOffset;
+          else
+            pCharPos->m_Origin.x += fOffset;
         }
+
         if (chartype == FX_CHARTYPE_Combination) {
           CFX_Rect rtBBox;
           if (pFont->GetCharBBox(wForm, &rtBBox, false)) {
-            pCharPos->m_OriginY =
+            pCharPos->m_Origin.y =
                 fYBase + fFontSize -
                 fFontSize * (FX_FLOAT)rtBBox.height / (FX_FLOAT)iMaxHeight;
           }
@@ -1471,9 +1470,8 @@ int32_t CFX_TxtBreak::GetDisplayPos(const FX_TXTRUN* pTxtRun,
             if ((dwLastProps & FX_CHARTYPEBITSMASK) ==
                 FX_CHARTYPE_Combination) {
               CFX_Rect rtBox;
-              if (pFont->GetCharBBox(wLast, &rtBox, false)) {
-                pCharPos->m_OriginY -= fFontSize * rtBox.height / iMaxHeight;
-              }
+              if (pFont->GetCharBBox(wLast, &rtBox, false))
+                pCharPos->m_Origin.y -= fFontSize * rtBox.height / iMaxHeight;
             }
           }
         }
@@ -1490,8 +1488,8 @@ int32_t CFX_TxtBreak::GetDisplayPos(const FX_TXTRUN* pTxtRun,
             ptOffset.y = fFontSize * (iAscent - rtBBox.top - 150) / iMaxHeight;
           }
         }
-        pCharPos->m_OriginX += ptOffset.x;
-        pCharPos->m_OriginY -= ptOffset.y;
+        pCharPos->m_Origin.x += ptOffset.x;
+        pCharPos->m_Origin.y -= ptOffset.y;
       }
       if (!bRTLPiece && chartype != FX_CHARTYPE_Combination) {
         if (bVerticalDoc) {
@@ -1508,26 +1506,26 @@ int32_t CFX_TxtBreak::GetDisplayPos(const FX_TXTRUN* pTxtRun,
             pCharPos->m_AdjustMatrix[1] = 0;
             pCharPos->m_AdjustMatrix[2] = 0;
             pCharPos->m_AdjustMatrix[3] = 1;
-            pCharPos->m_OriginY += fAscent;
+            pCharPos->m_Origin.y += fAscent;
           } else if (iCharRotation == 1) {
             pCharPos->m_AdjustMatrix[0] = 0;
             pCharPos->m_AdjustMatrix[1] = -1;
             pCharPos->m_AdjustMatrix[2] = -1;
             pCharPos->m_AdjustMatrix[3] = 0;
-            pCharPos->m_OriginX -= fDescent;
+            pCharPos->m_Origin.x -= fDescent;
           } else if (iCharRotation == 2) {
             pCharPos->m_AdjustMatrix[0] = 1;
             pCharPos->m_AdjustMatrix[1] = 0;
             pCharPos->m_AdjustMatrix[2] = 0;
             pCharPos->m_AdjustMatrix[3] = -1;
-            pCharPos->m_OriginX += fCharWidth;
-            pCharPos->m_OriginY += fAscent;
+            pCharPos->m_Origin.x += fCharWidth;
+            pCharPos->m_Origin.y += fAscent;
           } else {
             pCharPos->m_AdjustMatrix[0] = 0;
             pCharPos->m_AdjustMatrix[1] = 1;
             pCharPos->m_AdjustMatrix[2] = 1;
             pCharPos->m_AdjustMatrix[3] = 0;
-            pCharPos->m_OriginX += fAscent;
+            pCharPos->m_Origin.x += fAscent;
           }
         } else {
           if (iCharRotation == 0) {
@@ -1540,21 +1538,21 @@ int32_t CFX_TxtBreak::GetDisplayPos(const FX_TXTRUN* pTxtRun,
             pCharPos->m_AdjustMatrix[1] = -1;
             pCharPos->m_AdjustMatrix[2] = -1;
             pCharPos->m_AdjustMatrix[3] = 0;
-            pCharPos->m_OriginX -= fDescent;
-            pCharPos->m_OriginY -= fAscent + fDescent;
+            pCharPos->m_Origin.x -= fDescent;
+            pCharPos->m_Origin.y -= fAscent + fDescent;
           } else if (iCharRotation == 2) {
             pCharPos->m_AdjustMatrix[0] = 1;
             pCharPos->m_AdjustMatrix[1] = 0;
             pCharPos->m_AdjustMatrix[2] = 0;
             pCharPos->m_AdjustMatrix[3] = -1;
-            pCharPos->m_OriginX += fCharWidth;
-            pCharPos->m_OriginY -= fAscent;
+            pCharPos->m_Origin.x += fCharWidth;
+            pCharPos->m_Origin.y -= fAscent;
           } else {
             pCharPos->m_AdjustMatrix[0] = 0;
             pCharPos->m_AdjustMatrix[1] = 1;
             pCharPos->m_AdjustMatrix[2] = 1;
             pCharPos->m_AdjustMatrix[3] = 0;
-            pCharPos->m_OriginX += fAscent;
+            pCharPos->m_Origin.x += fAscent;
           }
         }
         if (iHorScale != 100 || iVerScale != 100) {

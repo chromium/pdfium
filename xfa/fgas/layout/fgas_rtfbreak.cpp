@@ -1307,76 +1307,62 @@ int32_t CFX_RTFBreak::GetDisplayPos(const FX_RTFTEXTOBJ* pText,
               ptOffset.y = fFontSize * (1000 - rtBBox.height) / 2000.0f;
             }
           }
-          pCharPos->m_OriginX = fX + ptOffset.x;
-          pCharPos->m_OriginY = fY - ptOffset.y;
+          pCharPos->m_Origin = CFX_PointF(fX + ptOffset.x, fY - ptOffset.y);
         }
         if (!bRTLPiece && dwCharType != FX_CHARTYPE_Combination) {
-          if (bVerticalDoc) {
+          if (bVerticalDoc)
             fY += fCharHeight;
-          } else {
+          else
             fX += fCharWidth;
-          }
         }
         if (!bEmptyChar) {
           pCharPos->m_bGlyphAdjust = true;
+
+          if (iCharRotation == 0) {
+            pCharPos->m_AdjustMatrix[0] = -1;
+            pCharPos->m_AdjustMatrix[1] = 0;
+            pCharPos->m_AdjustMatrix[2] = 0;
+            pCharPos->m_AdjustMatrix[3] = 1;
+            pCharPos->m_Origin.y += fAscent * iVerScale / 100.0f;
+          } else if (iCharRotation == 1) {
+            pCharPos->m_AdjustMatrix[0] = 0;
+            pCharPos->m_AdjustMatrix[1] = -1;
+            pCharPos->m_AdjustMatrix[2] = -1;
+            pCharPos->m_AdjustMatrix[3] = 0;
+            pCharPos->m_Origin.x -= fDescent;
+          } else if (iCharRotation == 2) {
+            pCharPos->m_AdjustMatrix[0] = 1;
+            pCharPos->m_AdjustMatrix[1] = 0;
+            pCharPos->m_AdjustMatrix[2] = 0;
+            pCharPos->m_AdjustMatrix[3] = -1;
+            pCharPos->m_Origin.x += fCharWidth;
+          } else {
+            pCharPos->m_AdjustMatrix[0] = 0;
+            pCharPos->m_AdjustMatrix[1] = 1;
+            pCharPos->m_AdjustMatrix[2] = 1;
+            pCharPos->m_AdjustMatrix[3] = 0;
+          }
+
           if (bVerticalDoc) {
-            if (iCharRotation == 0) {
-              pCharPos->m_AdjustMatrix[0] = -1;
-              pCharPos->m_AdjustMatrix[1] = 0;
-              pCharPos->m_AdjustMatrix[2] = 0;
-              pCharPos->m_AdjustMatrix[3] = 1;
-              pCharPos->m_OriginY += fAscent * iVerScale / 100.0f;
-            } else if (iCharRotation == 1) {
-              pCharPos->m_AdjustMatrix[0] = 0;
-              pCharPos->m_AdjustMatrix[1] = -1;
-              pCharPos->m_AdjustMatrix[2] = -1;
-              pCharPos->m_AdjustMatrix[3] = 0;
-              pCharPos->m_OriginX -=
-                  fDescent + fAscent * iVerScale / 100.0f - fAscent;
+            if (iCharRotation == 1) {
+              pCharPos->m_Origin.x -= fAscent * iVerScale / 100.0f - fAscent;
             } else if (iCharRotation == 2) {
-              pCharPos->m_AdjustMatrix[0] = 1;
-              pCharPos->m_AdjustMatrix[1] = 0;
-              pCharPos->m_AdjustMatrix[2] = 0;
-              pCharPos->m_AdjustMatrix[3] = -1;
-              pCharPos->m_OriginX += fCharWidth;
-              pCharPos->m_OriginY += fAscent;
-            } else {
-              pCharPos->m_AdjustMatrix[0] = 0;
-              pCharPos->m_AdjustMatrix[1] = 1;
-              pCharPos->m_AdjustMatrix[2] = 1;
-              pCharPos->m_AdjustMatrix[3] = 0;
-              pCharPos->m_OriginX += fAscent;
-              pCharPos->m_OriginY += fCharWidth;
+              pCharPos->m_Origin.y += fAscent;
+            } else if (iCharRotation != 0) {
+              pCharPos->m_Origin.x += fAscent;
+              pCharPos->m_Origin.y += fCharWidth;
             }
           } else {
-            if (iCharRotation == 0) {
-              pCharPos->m_AdjustMatrix[0] = -1;
-              pCharPos->m_AdjustMatrix[1] = 0;
-              pCharPos->m_AdjustMatrix[2] = 0;
-              pCharPos->m_AdjustMatrix[3] = 1;
-              pCharPos->m_OriginY += fAscent * iVerScale / 100.0f - fAscent;
-            } else if (iCharRotation == 1) {
-              pCharPos->m_AdjustMatrix[0] = 0;
-              pCharPos->m_AdjustMatrix[1] = -1;
-              pCharPos->m_AdjustMatrix[2] = -1;
-              pCharPos->m_AdjustMatrix[3] = 0;
-              pCharPos->m_OriginX -= fDescent;
-              pCharPos->m_OriginY -= fAscent + fDescent;
-            } else if (iCharRotation == 2) {
-              pCharPos->m_AdjustMatrix[0] = 1;
-              pCharPos->m_AdjustMatrix[1] = 0;
-              pCharPos->m_AdjustMatrix[2] = 0;
-              pCharPos->m_AdjustMatrix[3] = -1;
-              pCharPos->m_OriginX += fCharWidth;
-              pCharPos->m_OriginY -= fAscent;
-            } else {
-              pCharPos->m_AdjustMatrix[0] = 0;
-              pCharPos->m_AdjustMatrix[1] = 1;
-              pCharPos->m_AdjustMatrix[2] = 1;
-              pCharPos->m_AdjustMatrix[3] = 0;
-              pCharPos->m_OriginX += fAscent * iVerScale / 100.0f;
-            }
+            if (iCharRotation == 0)
+              pCharPos->m_Origin.y -= fAscent;
+            else if (iCharRotation == 1)
+              pCharPos->m_Origin.y -= fAscent + fDescent;
+            else if (iCharRotation == 2)
+              pCharPos->m_Origin.y -= fAscent;
+            else
+              pCharPos->m_Origin.x += fAscent * iVerScale / 100.0f;
           }
+
           if (iHorScale != 100 || iVerScale != 100) {
             pCharPos->m_AdjustMatrix[0] =
                 pCharPos->m_AdjustMatrix[0] * iHorScale / 100.0f;

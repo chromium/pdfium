@@ -32,10 +32,12 @@ void CPDF_CharPosList::Load(const std::vector<uint32_t>& charCodes,
     uint32_t CharCode = charCodes[iChar];
     if (CharCode == static_cast<uint32_t>(-1))
       continue;
+
     bool bVert = false;
     FXTEXT_CHARPOS& charpos = m_pCharPos[m_nChars++];
     if (pCIDFont)
       charpos.m_bFontStyle = true;
+
     charpos.m_GlyphIndex = pFont->GlyphFromCharCode(CharCode, &bVert);
     if (charpos.m_GlyphIndex != static_cast<uint32_t>(-1)) {
       charpos.m_FallbackFontPosition = -1;
@@ -45,39 +47,41 @@ void CPDF_CharPosList::Load(const std::vector<uint32_t>& charCodes,
       charpos.m_GlyphIndex = pFont->FallbackGlyphFromCharcode(
           charpos.m_FallbackFontPosition, CharCode);
     }
+
 // TODO(npm): Figure out how this affects m_ExtGID
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
     charpos.m_ExtGID = pFont->GlyphFromCharCodeExt(CharCode);
 #endif
-    if (!pFont->IsEmbedded() && !pFont->IsCIDFont()) {
+    if (!pFont->IsEmbedded() && !pFont->IsCIDFont())
       charpos.m_FontCharWidth = pFont->GetCharWidthF(CharCode);
-    } else {
+    else
       charpos.m_FontCharWidth = 0;
-    }
-    charpos.m_OriginX = iChar ? charPos[iChar - 1] : 0;
-    charpos.m_OriginY = 0;
+
+    charpos.m_Origin = CFX_PointF(iChar ? charPos[iChar - 1] : 0, 0);
     charpos.m_bGlyphAdjust = false;
-    if (!pCIDFont) {
+    if (!pCIDFont)
       continue;
-    }
+
     uint16_t CID = pCIDFont->CIDFromCharCode(CharCode);
     if (bVertWriting) {
-      charpos.m_OriginY = charpos.m_OriginX;
-      charpos.m_OriginX = 0;
-      short vx, vy;
+      charpos.m_Origin = CFX_PointF(0, charpos.m_Origin.x);
+
+      short vx;
+      short vy;
       pCIDFont->GetVertOrigin(CID, vx, vy);
-      charpos.m_OriginX -= FontSize * vx / 1000;
-      charpos.m_OriginY -= FontSize * vy / 1000;
+      charpos.m_Origin.x -= FontSize * vx / 1000;
+      charpos.m_Origin.y -= FontSize * vy / 1000;
     }
+
     const uint8_t* pTransform = pCIDFont->GetCIDTransform(CID);
     if (pTransform && !bVert) {
       charpos.m_AdjustMatrix[0] = pCIDFont->CIDTransformToFloat(pTransform[0]);
       charpos.m_AdjustMatrix[2] = pCIDFont->CIDTransformToFloat(pTransform[2]);
       charpos.m_AdjustMatrix[1] = pCIDFont->CIDTransformToFloat(pTransform[1]);
       charpos.m_AdjustMatrix[3] = pCIDFont->CIDTransformToFloat(pTransform[3]);
-      charpos.m_OriginX +=
+      charpos.m_Origin.x +=
           pCIDFont->CIDTransformToFloat(pTransform[4]) * FontSize;
-      charpos.m_OriginY +=
+      charpos.m_Origin.y +=
           pCIDFont->CIDTransformToFloat(pTransform[5]) * FontSize;
       charpos.m_bGlyphAdjust = true;
     }

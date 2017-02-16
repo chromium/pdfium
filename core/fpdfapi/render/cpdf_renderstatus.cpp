@@ -2001,8 +2001,8 @@ void CPDF_RenderStatus::DrawTextPathWithPattern(const CPDF_TextObject* textobj,
                           charpos.m_AdjustMatrix[2], charpos.m_AdjustMatrix[3],
                           0, 0);
     }
-    matrix.Concat(CFX_Matrix(font_size, 0, 0, font_size, charpos.m_OriginX,
-                             charpos.m_OriginY));
+    matrix.Concat(CFX_Matrix(font_size, 0, 0, font_size, charpos.m_Origin.x,
+                             charpos.m_Origin.y));
     path.m_Path.Append(pPath, &matrix);
     path.m_Matrix = *pTextMatrix;
     path.m_bStroke = bStroke;

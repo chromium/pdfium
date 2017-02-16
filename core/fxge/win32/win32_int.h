@@ -17,7 +17,7 @@
 #include "core/fxge/win32/cpsoutput.h"
 #include "core/fxge/win32/dwrite_int.h"
 
-struct FXTEXT_CHARPOS;
+class FXTEXT_CHARPOS;
 struct WINDIB_Open_Args_;
 
 typedef HANDLE(__stdcall* FuncType_GdiAddFontMemResourceEx)(PVOID pbFont,

@@ -802,8 +802,9 @@ class SkiaState {
       vFlip *= -1;
     for (int index = 0; index < nChars; ++index) {
       const FXTEXT_CHARPOS& cp = pCharPos[index];
-      m_positions[index + count] = {cp.m_OriginX * flip, cp.m_OriginY * vFlip};
-      m_glyphs[index + count] = (uint16_t)cp.m_GlyphIndex;
+      m_positions[index + count] = {cp.m_Origin.x * flip,
+                                    cp.m_Origin.y * vFlip};
+      m_glyphs[index + count] = static_cast<uint16_t>(cp.m_GlyphIndex);
     }
     SkPoint delta;
     if (MatrixOffset(pMatrix, &delta)) {
@@ -1289,8 +1290,8 @@ bool CFX_SkiaDeviceDriver::DrawDeviceText(int nChars,
   glyphs.setCount(nChars);
   for (int index = 0; index < nChars; ++index) {
     const FXTEXT_CHARPOS& cp = pCharPos[index];
-    positions[index] = {cp.m_OriginX * flip, cp.m_OriginY * vFlip};
-    glyphs[index] = (uint16_t)cp.m_GlyphIndex;
+    positions[index] = {cp.m_Origin.x * flip, cp.m_Origin.y * vFlip};
+    glyphs[index] = static_cast<uint16_t>(cp.m_GlyphIndex);
   }
 #ifdef _SKIA_SUPPORT_PATHS_
   m_pBitmap->PreMultiply();
