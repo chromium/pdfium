@@ -51,6 +51,10 @@ class CPDF_PageObject : public CPDF_GraphicStates {
 
   void TransformClipPath(CFX_Matrix& matrix);
   void TransformGeneralState(CFX_Matrix& matrix);
+
+  CFX_FloatRect GetRect() const {
+    return CFX_FloatRect(m_Left, m_Bottom, m_Right, m_Top);
+  }
   FX_RECT GetBBox(const CFX_Matrix* pMatrix) const;
 
   FX_FLOAT m_Left;
