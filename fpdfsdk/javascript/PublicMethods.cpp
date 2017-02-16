@@ -30,30 +30,30 @@
 
 #define DOUBLE_CORRECT 0.000000000000001
 
-BEGIN_JS_STATIC_GLOBAL_FUN(CJS_PublicMethods)
-JS_STATIC_GLOBAL_FUN_ENTRY(AFNumber_Format)
-JS_STATIC_GLOBAL_FUN_ENTRY(AFNumber_Keystroke)
-JS_STATIC_GLOBAL_FUN_ENTRY(AFPercent_Format)
-JS_STATIC_GLOBAL_FUN_ENTRY(AFPercent_Keystroke)
-JS_STATIC_GLOBAL_FUN_ENTRY(AFDate_FormatEx)
-JS_STATIC_GLOBAL_FUN_ENTRY(AFDate_KeystrokeEx)
-JS_STATIC_GLOBAL_FUN_ENTRY(AFDate_Format)
-JS_STATIC_GLOBAL_FUN_ENTRY(AFDate_Keystroke)
-JS_STATIC_GLOBAL_FUN_ENTRY(AFTime_FormatEx)
-JS_STATIC_GLOBAL_FUN_ENTRY(AFTime_KeystrokeEx)
-JS_STATIC_GLOBAL_FUN_ENTRY(AFTime_Format)
-JS_STATIC_GLOBAL_FUN_ENTRY(AFTime_Keystroke)
-JS_STATIC_GLOBAL_FUN_ENTRY(AFSpecial_Format)
-JS_STATIC_GLOBAL_FUN_ENTRY(AFSpecial_Keystroke)
-JS_STATIC_GLOBAL_FUN_ENTRY(AFSpecial_KeystrokeEx)
-JS_STATIC_GLOBAL_FUN_ENTRY(AFSimple)
-JS_STATIC_GLOBAL_FUN_ENTRY(AFMakeNumber)
-JS_STATIC_GLOBAL_FUN_ENTRY(AFSimple_Calculate)
-JS_STATIC_GLOBAL_FUN_ENTRY(AFRange_Validate)
-JS_STATIC_GLOBAL_FUN_ENTRY(AFMergeChange)
-JS_STATIC_GLOBAL_FUN_ENTRY(AFParseDateEx)
-JS_STATIC_GLOBAL_FUN_ENTRY(AFExtractNums)
-END_JS_STATIC_GLOBAL_FUN()
+JSMethodSpec CJS_PublicMethods::GlobalFunctionSpecs[] = {
+    {L"AFNumber_Format", AFNumber_Format_static},
+    {L"AFNumber_Keystroke", AFNumber_Keystroke_static},
+    {L"AFPercent_Format", AFPercent_Format_static},
+    {L"AFPercent_Keystroke", AFPercent_Keystroke_static},
+    {L"AFDate_FormatEx", AFDate_FormatEx_static},
+    {L"AFDate_KeystrokeEx", AFDate_KeystrokeEx_static},
+    {L"AFDate_Format", AFDate_Format_static},
+    {L"AFDate_Keystroke", AFDate_Keystroke_static},
+    {L"AFTime_FormatEx", AFTime_FormatEx_static},
+    {L"AFTime_KeystrokeEx", AFTime_KeystrokeEx_static},
+    {L"AFTime_Format", AFTime_Format_static},
+    {L"AFTime_Keystroke", AFTime_Keystroke_static},
+    {L"AFSpecial_Format", AFSpecial_Format_static},
+    {L"AFSpecial_Keystroke", AFSpecial_Keystroke_static},
+    {L"AFSpecial_KeystrokeEx", AFSpecial_KeystrokeEx_static},
+    {L"AFSimple", AFSimple_static},
+    {L"AFMakeNumber", AFMakeNumber_static},
+    {L"AFSimple_Calculate", AFSimple_Calculate_static},
+    {L"AFRange_Validate", AFRange_Validate_static},
+    {L"AFMergeChange", AFMergeChange_static},
+    {L"AFParseDateEx", AFParseDateEx_static},
+    {L"AFExtractNums", AFExtractNums_static},
+    {0, 0}};
 
 IMPLEMENT_JS_STATIC_GLOBAL_FUN(CJS_PublicMethods)
 

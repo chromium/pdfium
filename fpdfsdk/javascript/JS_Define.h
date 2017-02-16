@@ -15,10 +15,12 @@
 #include "fxjs/fxjs_v8.h"
 
 struct JSConstSpec {
+  enum Type { Number = 0, String = 1 };
+
   const wchar_t* pName;
+  Type eType;
   double number;
-  const wchar_t* str;
-  uint8_t t;              // 0:double 1:str
+  const wchar_t* pStr;
 };
 
 struct JSPropertySpec {
@@ -33,42 +35,6 @@ struct JSMethodSpec {
 };
 
 #define JS_WIDESTRING(widestring) L## #widestring
-#define BEGIN_JS_STATIC_CONST(js_class_name) \
-  JSConstSpec js_class_name::JS_Class_Consts[] = {
-#define JS_STATIC_CONST_ENTRY_NUMBER(const_name, pValue) \
-  { const_name, pValue, L"", 0 }                         \
-  ,
-
-#define JS_STATIC_CONST_ENTRY_STRING(const_name, pValue) \
-  { const_name, 0, pValue, 1 }                           \
-  ,
-
-#define END_JS_STATIC_CONST() \
-  { 0, 0, 0, 0 }              \
-  }                           \
-  ;  // NOLINT
-
-#define BEGIN_JS_STATIC_PROP(js_class_name) \
-  JSPropertySpec js_class_name::JS_Class_Properties[] = {
-#define JS_STATIC_PROP_ENTRY(prop_name)                \
-  {JS_WIDESTRING(prop_name), get_##prop_name##_static, \
-   set_##prop_name##_static},  // NOLINT
-
-#define END_JS_STATIC_PROP() \
-  { 0, 0, 0 }                \
-  }                          \
-  ;  // NOLINT
-
-#define BEGIN_JS_STATIC_METHOD(js_class_name) \
-  JSMethodSpec js_class_name::JS_Class_Methods[] = {
-#define JS_STATIC_METHOD_ENTRY(method_name)            \
-  { JS_WIDESTRING(method_name), method_name##_static } \
-  ,
-
-#define END_JS_STATIC_METHOD() \
-  { 0, 0 }                     \
-  }                            \
-  ;  // NOLINT
 
 template <class C, bool (C::*M)(CJS_Runtime*, CJS_PropValue&, CFX_WideString&)>
 void JSPropGetter(const char* prop_name_string,
@@ -199,19 +165,18 @@ void JSMethod(const char* method_name_string,
     DefineConsts(pEngine);                                                   \
   }
 
-#define DECLARE_JS_CLASS_CONST_PART()   \
-  static JSConstSpec JS_Class_Consts[]; \
+#define DECLARE_JS_CLASS_CONST_PART() \
+  static JSConstSpec ConstSpecs[];    \
   static void DefineConsts(CFXJS_Engine* pEngine);
 
-#define IMPLEMENT_JS_CLASS_CONST_PART(js_class_name, class_name)     \
-  void js_class_name::DefineConsts(CFXJS_Engine* pEngine) {          \
-    for (size_t i = 0; i < FX_ArraySize(JS_Class_Consts) - 1; ++i) { \
-      pEngine->DefineObjConst(                                       \
-          g_nObjDefnID, JS_Class_Consts[i].pName,                    \
-          JS_Class_Consts[i].t == 0                                  \
-              ? pEngine->NewNumber(JS_Class_Consts[i].number)        \
-              : pEngine->NewString(JS_Class_Consts[i].str));         \
-    }                                                                \
+#define IMPLEMENT_JS_CLASS_CONST_PART(js_class_name, class_name)             \
+  void js_class_name::DefineConsts(CFXJS_Engine* pEngine) {                  \
+    for (size_t i = 0; i < FX_ArraySize(ConstSpecs) - 1; ++i) {              \
+      pEngine->DefineObjConst(g_nObjDefnID, ConstSpecs[i].pName,             \
+                              ConstSpecs[i].eType == JSConstSpec::Number     \
+                                  ? pEngine->NewNumber(ConstSpecs[i].number) \
+                                  : pEngine->NewString(ConstSpecs[i].pStr)); \
+    }                                                                        \
   }
 
 // Convenience macros for declaring classes without an alternate.
@@ -244,36 +209,36 @@ void JSMethod(const char* method_name_string,
   static void JSDestructor(CFXJS_Engine* pEngine, v8::Local<v8::Object> obj);  \
   static void DefineProps(CFXJS_Engine* pEngine);                              \
   static void DefineMethods(CFXJS_Engine* pEngine);                            \
-  static JSPropertySpec JS_Class_Properties[];                                 \
-  static JSMethodSpec JS_Class_Methods[];
+  static JSPropertySpec PropertySpecs[];                                       \
+  static JSMethodSpec MethodSpecs[];
 
-#define IMPLEMENT_JS_CLASS_RICH_PART(js_class_name, class_alternate,         \
-                                     class_name)                             \
-  void js_class_name::JSConstructor(CFXJS_Engine* pEngine,                   \
-                                    v8::Local<v8::Object> obj) {             \
-    CJS_Object* pObj = new js_class_name(obj);                               \
-    pObj->SetEmbedObject(new class_alternate(pObj));                         \
-    pEngine->SetObjectPrivate(obj, (void*)pObj);                             \
-    pObj->InitInstance(static_cast<CJS_Runtime*>(pEngine));                  \
-  }                                                                          \
-  void js_class_name::JSDestructor(CFXJS_Engine* pEngine,                    \
-                                   v8::Local<v8::Object> obj) {              \
-    js_class_name* pObj =                                                    \
-        static_cast<js_class_name*>(pEngine->GetObjectPrivate(obj));         \
-    delete pObj;                                                             \
-  }                                                                          \
-  void js_class_name::DefineProps(CFXJS_Engine* pEngine) {                   \
-    for (size_t i = 0; i < FX_ArraySize(JS_Class_Properties) - 1; ++i) {     \
-      pEngine->DefineObjProperty(g_nObjDefnID, JS_Class_Properties[i].pName, \
-                                 JS_Class_Properties[i].pPropGet,            \
-                                 JS_Class_Properties[i].pPropPut);           \
-    }                                                                        \
-  }                                                                          \
-  void js_class_name::DefineMethods(CFXJS_Engine* pEngine) {                 \
-    for (size_t i = 0; i < FX_ArraySize(JS_Class_Methods) - 1; ++i) {        \
-      pEngine->DefineObjMethod(g_nObjDefnID, JS_Class_Methods[i].pName,      \
-                               JS_Class_Methods[i].pMethodCall);             \
-    }                                                                        \
+#define IMPLEMENT_JS_CLASS_RICH_PART(js_class_name, class_alternate,   \
+                                     class_name)                       \
+  void js_class_name::JSConstructor(CFXJS_Engine* pEngine,             \
+                                    v8::Local<v8::Object> obj) {       \
+    CJS_Object* pObj = new js_class_name(obj);                         \
+    pObj->SetEmbedObject(new class_alternate(pObj));                   \
+    pEngine->SetObjectPrivate(obj, (void*)pObj);                       \
+    pObj->InitInstance(static_cast<CJS_Runtime*>(pEngine));            \
+  }                                                                    \
+  void js_class_name::JSDestructor(CFXJS_Engine* pEngine,              \
+                                   v8::Local<v8::Object> obj) {        \
+    js_class_name* pObj =                                              \
+        static_cast<js_class_name*>(pEngine->GetObjectPrivate(obj));   \
+    delete pObj;                                                       \
+  }                                                                    \
+  void js_class_name::DefineProps(CFXJS_Engine* pEngine) {             \
+    for (size_t i = 0; i < FX_ArraySize(PropertySpecs) - 1; ++i) {     \
+      pEngine->DefineObjProperty(g_nObjDefnID, PropertySpecs[i].pName, \
+                                 PropertySpecs[i].pPropGet,            \
+                                 PropertySpecs[i].pPropPut);           \
+    }                                                                  \
+  }                                                                    \
+  void js_class_name::DefineMethods(CFXJS_Engine* pEngine) {           \
+    for (size_t i = 0; i < FX_ArraySize(MethodSpecs) - 1; ++i) {       \
+      pEngine->DefineObjMethod(g_nObjDefnID, MethodSpecs[i].pName,     \
+                               MethodSpecs[i].pMethodCall);            \
+    }                                                                  \
   }
 
 // Special JS classes implement methods, props, and queries, but not consts.
@@ -455,24 +420,17 @@ void JSGlobalFunc(const char* func_name_string,
     JSGlobalFunc<fun_name>(#fun_name, info);             \
   }
 
-#define JS_STATIC_DECLARE_GLOBAL_FUN()  \
-  static JSMethodSpec global_methods[]; \
+#define JS_STATIC_DECLARE_GLOBAL_FUN()       \
+  static JSMethodSpec GlobalFunctionSpecs[]; \
   static void DefineJSObjects(CFXJS_Engine* pEngine)
 
-#define BEGIN_JS_STATIC_GLOBAL_FUN(js_class_name) \
-  JSMethodSpec js_class_name::global_methods[] = {
-#define JS_STATIC_GLOBAL_FUN_ENTRY(method_name) \
-  JS_STATIC_METHOD_ENTRY(method_name)
-
-#define END_JS_STATIC_GLOBAL_FUN() END_JS_STATIC_METHOD()
-
-#define IMPLEMENT_JS_STATIC_GLOBAL_FUN(js_class_name)               \
-  void js_class_name::DefineJSObjects(CFXJS_Engine* pEngine) {      \
-    for (size_t i = 0; i < FX_ArraySize(global_methods) - 1; ++i) { \
-      pEngine->DefineGlobalMethod(                                  \
-          js_class_name::global_methods[i].pName,                   \
-          js_class_name::global_methods[i].pMethodCall);            \
-    }                                                               \
+#define IMPLEMENT_JS_STATIC_GLOBAL_FUN(js_class_name)                    \
+  void js_class_name::DefineJSObjects(CFXJS_Engine* pEngine) {           \
+    for (size_t i = 0; i < FX_ArraySize(GlobalFunctionSpecs) - 1; ++i) { \
+      pEngine->DefineGlobalMethod(                                       \
+          js_class_name::GlobalFunctionSpecs[i].pName,                   \
+          js_class_name::GlobalFunctionSpecs[i].pMethodCall);            \
+    }                                                                    \
   }
 
 #endif  // FPDFSDK_JAVASCRIPT_JS_DEFINE_H_

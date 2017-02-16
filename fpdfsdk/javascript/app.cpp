@@ -131,14 +131,11 @@ GlobalTimer::TimerMap* GlobalTimer::GetGlobalTimerMap() {
   return s_TimerMap;
 }
 
-BEGIN_JS_STATIC_CONST(CJS_TimerObj)
-END_JS_STATIC_CONST()
+JSConstSpec CJS_TimerObj::ConstSpecs[] = {{0, JSConstSpec::Number, 0, 0}};
 
-BEGIN_JS_STATIC_PROP(CJS_TimerObj)
-END_JS_STATIC_PROP()
+JSPropertySpec CJS_TimerObj::PropertySpecs[] = {{0, 0, 0}};
 
-BEGIN_JS_STATIC_METHOD(CJS_TimerObj)
-END_JS_STATIC_METHOD()
+JSMethodSpec CJS_TimerObj::MethodSpecs[] = {{0, 0}};
 
 IMPLEMENT_JS_CLASS(CJS_TimerObj, TimerObj)
 
@@ -161,47 +158,47 @@ void TimerObj::SetTimer(GlobalTimer* pTimer) {
 #endif  // PDF_ENABLE_XFA
 #define JS_NUM_FORMSVERSION 7
 
-BEGIN_JS_STATIC_CONST(CJS_App)
-END_JS_STATIC_CONST()
+JSConstSpec CJS_App::ConstSpecs[] = {{0, JSConstSpec::Number, 0, 0}};
 
-BEGIN_JS_STATIC_PROP(CJS_App)
-JS_STATIC_PROP_ENTRY(activeDocs)
-JS_STATIC_PROP_ENTRY(calculate)
-JS_STATIC_PROP_ENTRY(formsVersion)
-JS_STATIC_PROP_ENTRY(fs)
-JS_STATIC_PROP_ENTRY(fullscreen)
-JS_STATIC_PROP_ENTRY(language)
-JS_STATIC_PROP_ENTRY(media)
-JS_STATIC_PROP_ENTRY(platform)
-JS_STATIC_PROP_ENTRY(runtimeHighlight)
-JS_STATIC_PROP_ENTRY(viewerType)
-JS_STATIC_PROP_ENTRY(viewerVariation)
-JS_STATIC_PROP_ENTRY(viewerVersion)
-END_JS_STATIC_PROP()
+JSPropertySpec CJS_App::PropertySpecs[] = {
+    {L"activeDocs", get_activeDocs_static, set_activeDocs_static},
+    {L"calculate", get_calculate_static, set_calculate_static},
+    {L"formsVersion", get_formsVersion_static, set_formsVersion_static},
+    {L"fs", get_fs_static, set_fs_static},
+    {L"fullscreen", get_fullscreen_static, set_fullscreen_static},
+    {L"language", get_language_static, set_language_static},
+    {L"media", get_media_static, set_media_static},
+    {L"platform", get_platform_static, set_platform_static},
+    {L"runtimeHighlight", get_runtimeHighlight_static,
+     set_runtimeHighlight_static},
+    {L"viewerType", get_viewerType_static, set_viewerType_static},
+    {L"viewerVariation", get_viewerVariation_static,
+     set_viewerVariation_static},
+    {L"viewerVersion", get_viewerVersion_static, set_viewerVersion_static},
+    {0, 0, 0}};
 
-BEGIN_JS_STATIC_METHOD(CJS_App)
-JS_STATIC_METHOD_ENTRY(alert)
-JS_STATIC_METHOD_ENTRY(beep)
-JS_STATIC_METHOD_ENTRY(browseForDoc)
-JS_STATIC_METHOD_ENTRY(clearInterval)
-JS_STATIC_METHOD_ENTRY(clearTimeOut)
-JS_STATIC_METHOD_ENTRY(execDialog)
-JS_STATIC_METHOD_ENTRY(execMenuItem)
-JS_STATIC_METHOD_ENTRY(findComponent)
-JS_STATIC_METHOD_ENTRY(goBack)
-JS_STATIC_METHOD_ENTRY(goForward)
-JS_STATIC_METHOD_ENTRY(launchURL)
-JS_STATIC_METHOD_ENTRY(mailMsg)
-JS_STATIC_METHOD_ENTRY(newFDF)
-JS_STATIC_METHOD_ENTRY(newDoc)
-JS_STATIC_METHOD_ENTRY(openDoc)
-JS_STATIC_METHOD_ENTRY(openFDF)
-JS_STATIC_METHOD_ENTRY(popUpMenuEx)
-JS_STATIC_METHOD_ENTRY(popUpMenu)
-JS_STATIC_METHOD_ENTRY(response)
-JS_STATIC_METHOD_ENTRY(setInterval)
-JS_STATIC_METHOD_ENTRY(setTimeOut)
-END_JS_STATIC_METHOD()
+JSMethodSpec CJS_App::MethodSpecs[] = {{L"alert", alert_static},
+                                       {L"beep", beep_static},
+                                       {L"browseForDoc", browseForDoc_static},
+                                       {L"clearInterval", clearInterval_static},
+                                       {L"clearTimeOut", clearTimeOut_static},
+                                       {L"execDialog", execDialog_static},
+                                       {L"execMenuItem", execMenuItem_static},
+                                       {L"findComponent", findComponent_static},
+                                       {L"goBack", goBack_static},
+                                       {L"goForward", goForward_static},
+                                       {L"launchURL", launchURL_static},
+                                       {L"mailMsg", mailMsg_static},
+                                       {L"newFDF", newFDF_static},
+                                       {L"newDoc", newDoc_static},
+                                       {L"openDoc", openDoc_static},
+                                       {L"openFDF", openFDF_static},
+                                       {L"popUpMenuEx", popUpMenuEx_static},
+                                       {L"popUpMenu", popUpMenu_static},
+                                       {L"response", response_static},
+                                       {L"setInterval", setInterval_static},
+                                       {L"setTimeOut", setTimeOut_static},
+                                       {0, 0}};
 
 IMPLEMENT_JS_CLASS(CJS_App, app)
 

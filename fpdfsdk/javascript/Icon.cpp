@@ -10,15 +10,13 @@
 #include "fpdfsdk/javascript/JS_Object.h"
 #include "fpdfsdk/javascript/JS_Value.h"
 
-BEGIN_JS_STATIC_CONST(CJS_Icon)
-END_JS_STATIC_CONST()
+JSConstSpec CJS_Icon::ConstSpecs[] = {{0, JSConstSpec::Number, 0, 0}};
 
-BEGIN_JS_STATIC_PROP(CJS_Icon)
-JS_STATIC_PROP_ENTRY(name)
-END_JS_STATIC_PROP()
+JSPropertySpec CJS_Icon::PropertySpecs[] = {
+    {L"name", get_name_static, set_name_static},
+    {0, 0, 0}};
 
-BEGIN_JS_STATIC_METHOD(CJS_Icon)
-END_JS_STATIC_METHOD()
+JSMethodSpec CJS_Icon::MethodSpecs[] = {{0, 0}};
 
 IMPLEMENT_JS_CLASS(CJS_Icon, Icon)
 

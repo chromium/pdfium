@@ -17,15 +17,13 @@
 #include "fpdfsdk/javascript/cjs_event_context.h"
 #include "fpdfsdk/javascript/resource.h"
 
-BEGIN_JS_STATIC_CONST(CJS_Global)
-END_JS_STATIC_CONST()
+JSConstSpec CJS_Global::ConstSpecs[] = {{0, JSConstSpec::Number, 0, 0}};
 
-BEGIN_JS_STATIC_PROP(CJS_Global)
-END_JS_STATIC_PROP()
+JSPropertySpec CJS_Global::PropertySpecs[] = {{0, 0, 0}};
 
-BEGIN_JS_STATIC_METHOD(CJS_Global)
-JS_STATIC_METHOD_ENTRY(setPersistent)
-END_JS_STATIC_METHOD()
+JSMethodSpec CJS_Global::MethodSpecs[] = {
+    {L"setPersistent", setPersistent_static},
+    {0, 0}};
 
 IMPLEMENT_SPECIAL_JS_CLASS(CJS_Global, JSGlobalAlternate, global);
 

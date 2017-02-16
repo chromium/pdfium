@@ -15,28 +15,26 @@
 #include "fpdfsdk/javascript/cjs_event_context.h"
 #include "fpdfsdk/javascript/cjs_runtime.h"
 
-BEGIN_JS_STATIC_CONST(CJS_Color)
-END_JS_STATIC_CONST()
+JSConstSpec CJS_Color::ConstSpecs[] = {{0, JSConstSpec::Number, 0, 0}};
 
-BEGIN_JS_STATIC_PROP(CJS_Color)
-JS_STATIC_PROP_ENTRY(black)
-JS_STATIC_PROP_ENTRY(blue)
-JS_STATIC_PROP_ENTRY(cyan)
-JS_STATIC_PROP_ENTRY(dkGray)
-JS_STATIC_PROP_ENTRY(gray)
-JS_STATIC_PROP_ENTRY(green)
-JS_STATIC_PROP_ENTRY(ltGray)
-JS_STATIC_PROP_ENTRY(magenta)
-JS_STATIC_PROP_ENTRY(red)
-JS_STATIC_PROP_ENTRY(transparent)
-JS_STATIC_PROP_ENTRY(white)
-JS_STATIC_PROP_ENTRY(yellow)
-END_JS_STATIC_PROP()
+JSPropertySpec CJS_Color::PropertySpecs[] = {
+    {L"black", get_black_static, set_black_static},
+    {L"blue", get_blue_static, set_blue_static},
+    {L"cyan", get_cyan_static, set_cyan_static},
+    {L"dkGray", get_dkGray_static, set_dkGray_static},
+    {L"gray", get_gray_static, set_gray_static},
+    {L"green", get_green_static, set_green_static},
+    {L"ltGray", get_ltGray_static, set_ltGray_static},
+    {L"magenta", get_magenta_static, set_magenta_static},
+    {L"red", get_red_static, set_red_static},
+    {L"transparent", get_transparent_static, set_transparent_static},
+    {L"white", get_white_static, set_white_static},
+    {L"yellow", get_yellow_static, set_yellow_static},
+    {0, 0, 0}};
 
-BEGIN_JS_STATIC_METHOD(CJS_Color)
-JS_STATIC_METHOD_ENTRY(convert)
-JS_STATIC_METHOD_ENTRY(equal)
-END_JS_STATIC_METHOD()
+JSMethodSpec CJS_Color::MethodSpecs[] = {{L"convert", convert_static},
+                                         {L"equal", equal_static},
+                                         {0, 0}};
 
 IMPLEMENT_JS_CLASS(CJS_Color, color)
 

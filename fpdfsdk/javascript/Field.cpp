@@ -72,92 +72,97 @@ bool SetWidgetDisplayStatus(CPDFSDK_Widget* pWidget, int value) {
 
 }  // namespace
 
-BEGIN_JS_STATIC_CONST(CJS_Field)
-END_JS_STATIC_CONST()
+JSConstSpec CJS_Field::ConstSpecs[] = {{0, JSConstSpec::Number, 0, 0}};
 
-BEGIN_JS_STATIC_PROP(CJS_Field)
-JS_STATIC_PROP_ENTRY(alignment)
-JS_STATIC_PROP_ENTRY(borderStyle)
-JS_STATIC_PROP_ENTRY(buttonAlignX)
-JS_STATIC_PROP_ENTRY(buttonAlignY)
-JS_STATIC_PROP_ENTRY(buttonFitBounds)
-JS_STATIC_PROP_ENTRY(buttonPosition)
-JS_STATIC_PROP_ENTRY(buttonScaleHow)
-JS_STATIC_PROP_ENTRY(buttonScaleWhen)
-JS_STATIC_PROP_ENTRY(calcOrderIndex)
-JS_STATIC_PROP_ENTRY(charLimit)
-JS_STATIC_PROP_ENTRY(comb)
-JS_STATIC_PROP_ENTRY(commitOnSelChange)
-JS_STATIC_PROP_ENTRY(currentValueIndices)
-JS_STATIC_PROP_ENTRY(defaultStyle)
-JS_STATIC_PROP_ENTRY(defaultValue)
-JS_STATIC_PROP_ENTRY(doNotScroll)
-JS_STATIC_PROP_ENTRY(doNotSpellCheck)
-JS_STATIC_PROP_ENTRY(delay)
-JS_STATIC_PROP_ENTRY(display)
-JS_STATIC_PROP_ENTRY(doc)
-JS_STATIC_PROP_ENTRY(editable)
-JS_STATIC_PROP_ENTRY(exportValues)
-JS_STATIC_PROP_ENTRY(hidden)
-JS_STATIC_PROP_ENTRY(fileSelect)
-JS_STATIC_PROP_ENTRY(fillColor)
-JS_STATIC_PROP_ENTRY(lineWidth)
-JS_STATIC_PROP_ENTRY(highlight)
-JS_STATIC_PROP_ENTRY(multiline)
-JS_STATIC_PROP_ENTRY(multipleSelection)
-JS_STATIC_PROP_ENTRY(name)
-JS_STATIC_PROP_ENTRY(numItems)
-JS_STATIC_PROP_ENTRY(page)
-JS_STATIC_PROP_ENTRY(password)
-JS_STATIC_PROP_ENTRY(print)
-JS_STATIC_PROP_ENTRY(radiosInUnison)
-JS_STATIC_PROP_ENTRY(readonly)
-JS_STATIC_PROP_ENTRY(rect)
-JS_STATIC_PROP_ENTRY(required)
-JS_STATIC_PROP_ENTRY(richText)
-JS_STATIC_PROP_ENTRY(richValue)
-JS_STATIC_PROP_ENTRY(rotation)
-JS_STATIC_PROP_ENTRY(strokeColor)
-JS_STATIC_PROP_ENTRY(style)
-JS_STATIC_PROP_ENTRY(submitName)
-JS_STATIC_PROP_ENTRY(textColor)
-JS_STATIC_PROP_ENTRY(textFont)
-JS_STATIC_PROP_ENTRY(textSize)
-JS_STATIC_PROP_ENTRY(type)
-JS_STATIC_PROP_ENTRY(userName)
-JS_STATIC_PROP_ENTRY(value)
-JS_STATIC_PROP_ENTRY(valueAsString)
-JS_STATIC_PROP_ENTRY(source)
-END_JS_STATIC_PROP()
+JSPropertySpec CJS_Field::PropertySpecs[] = {
+    {L"alignment", get_alignment_static, set_alignment_static},
+    {L"borderStyle", get_borderStyle_static, set_borderStyle_static},
+    {L"buttonAlignX", get_buttonAlignX_static, set_buttonAlignX_static},
+    {L"buttonAlignY", get_buttonAlignY_static, set_buttonAlignY_static},
+    {L"buttonFitBounds", get_buttonFitBounds_static,
+     set_buttonFitBounds_static},
+    {L"buttonPosition", get_buttonPosition_static, set_buttonPosition_static},
+    {L"buttonScaleHow", get_buttonScaleHow_static, set_buttonScaleHow_static},
+    {L"buttonScaleWhen", get_buttonScaleWhen_static,
+     set_buttonScaleWhen_static},
+    {L"calcOrderIndex", get_calcOrderIndex_static, set_calcOrderIndex_static},
+    {L"charLimit", get_charLimit_static, set_charLimit_static},
+    {L"comb", get_comb_static, set_comb_static},
+    {L"commitOnSelChange", get_commitOnSelChange_static,
+     set_commitOnSelChange_static},
+    {L"currentValueIndices", get_currentValueIndices_static,
+     set_currentValueIndices_static},
+    {L"defaultStyle", get_defaultStyle_static, set_defaultStyle_static},
+    {L"defaultValue", get_defaultValue_static, set_defaultValue_static},
+    {L"doNotScroll", get_doNotScroll_static, set_doNotScroll_static},
+    {L"doNotSpellCheck", get_doNotSpellCheck_static,
+     set_doNotSpellCheck_static},
+    {L"delay", get_delay_static, set_delay_static},
+    {L"display", get_display_static, set_display_static},
+    {L"doc", get_doc_static, set_doc_static},
+    {L"editable", get_editable_static, set_editable_static},
+    {L"exportValues", get_exportValues_static, set_exportValues_static},
+    {L"hidden", get_hidden_static, set_hidden_static},
+    {L"fileSelect", get_fileSelect_static, set_fileSelect_static},
+    {L"fillColor", get_fillColor_static, set_fillColor_static},
+    {L"lineWidth", get_lineWidth_static, set_lineWidth_static},
+    {L"highlight", get_highlight_static, set_highlight_static},
+    {L"multiline", get_multiline_static, set_multiline_static},
+    {L"multipleSelection", get_multipleSelection_static,
+     set_multipleSelection_static},
+    {L"name", get_name_static, set_name_static},
+    {L"numItems", get_numItems_static, set_numItems_static},
+    {L"page", get_page_static, set_page_static},
+    {L"password", get_password_static, set_password_static},
+    {L"print", get_print_static, set_print_static},
+    {L"radiosInUnison", get_radiosInUnison_static, set_radiosInUnison_static},
+    {L"readonly", get_readonly_static, set_readonly_static},
+    {L"rect", get_rect_static, set_rect_static},
+    {L"required", get_required_static, set_required_static},
+    {L"richText", get_richText_static, set_richText_static},
+    {L"richValue", get_richValue_static, set_richValue_static},
+    {L"rotation", get_rotation_static, set_rotation_static},
+    {L"strokeColor", get_strokeColor_static, set_strokeColor_static},
+    {L"style", get_style_static, set_style_static},
+    {L"submitName", get_submitName_static, set_submitName_static},
+    {L"textColor", get_textColor_static, set_textColor_static},
+    {L"textFont", get_textFont_static, set_textFont_static},
+    {L"textSize", get_textSize_static, set_textSize_static},
+    {L"type", get_type_static, set_type_static},
+    {L"userName", get_userName_static, set_userName_static},
+    {L"value", get_value_static, set_value_static},
+    {L"valueAsString", get_valueAsString_static, set_valueAsString_static},
+    {L"source", get_source_static, set_source_static},
+    {0, 0, 0}};
 
-BEGIN_JS_STATIC_METHOD(CJS_Field)
-JS_STATIC_METHOD_ENTRY(browseForFileToSubmit)
-JS_STATIC_METHOD_ENTRY(buttonGetCaption)
-JS_STATIC_METHOD_ENTRY(buttonGetIcon)
-JS_STATIC_METHOD_ENTRY(buttonImportIcon)
-JS_STATIC_METHOD_ENTRY(buttonSetCaption)
-JS_STATIC_METHOD_ENTRY(buttonSetIcon)
-JS_STATIC_METHOD_ENTRY(checkThisBox)
-JS_STATIC_METHOD_ENTRY(clearItems)
-JS_STATIC_METHOD_ENTRY(defaultIsChecked)
-JS_STATIC_METHOD_ENTRY(deleteItemAt)
-JS_STATIC_METHOD_ENTRY(getArray)
-JS_STATIC_METHOD_ENTRY(getItemAt)
-JS_STATIC_METHOD_ENTRY(getLock)
-JS_STATIC_METHOD_ENTRY(insertItemAt)
-JS_STATIC_METHOD_ENTRY(isBoxChecked)
-JS_STATIC_METHOD_ENTRY(isDefaultChecked)
-JS_STATIC_METHOD_ENTRY(setAction)
-JS_STATIC_METHOD_ENTRY(setFocus)
-JS_STATIC_METHOD_ENTRY(setItems)
-JS_STATIC_METHOD_ENTRY(setLock)
-JS_STATIC_METHOD_ENTRY(signatureGetModifications)
-JS_STATIC_METHOD_ENTRY(signatureGetSeedValue)
-JS_STATIC_METHOD_ENTRY(signatureInfo)
-JS_STATIC_METHOD_ENTRY(signatureSetSeedValue)
-JS_STATIC_METHOD_ENTRY(signatureSign)
-JS_STATIC_METHOD_ENTRY(signatureValidate)
-END_JS_STATIC_METHOD()
+JSMethodSpec CJS_Field::MethodSpecs[] = {
+    {L"browseForFileToSubmit", browseForFileToSubmit_static},
+    {L"buttonGetCaption", buttonGetCaption_static},
+    {L"buttonGetIcon", buttonGetIcon_static},
+    {L"buttonImportIcon", buttonImportIcon_static},
+    {L"buttonSetCaption", buttonSetCaption_static},
+    {L"buttonSetIcon", buttonSetIcon_static},
+    {L"checkThisBox", checkThisBox_static},
+    {L"clearItems", clearItems_static},
+    {L"defaultIsChecked", defaultIsChecked_static},
+    {L"deleteItemAt", deleteItemAt_static},
+    {L"getArray", getArray_static},
+    {L"getItemAt", getItemAt_static},
+    {L"getLock", getLock_static},
+    {L"insertItemAt", insertItemAt_static},
+    {L"isBoxChecked", isBoxChecked_static},
+    {L"isDefaultChecked", isDefaultChecked_static},
+    {L"setAction", setAction_static},
+    {L"setFocus", setFocus_static},
+    {L"setItems", setItems_static},
+    {L"setLock", setLock_static},
+    {L"signatureGetModifications", signatureGetModifications_static},
+    {L"signatureGetSeedValue", signatureGetSeedValue_static},
+    {L"signatureInfo", signatureInfo_static},
+    {L"signatureSetSeedValue", signatureSetSeedValue_static},
+    {L"signatureSign", signatureSign_static},
+    {L"signatureValidate", signatureValidate_static},
+    {0, 0}};
 
 IMPLEMENT_JS_CLASS(CJS_Field, Field)
 

@@ -19,17 +19,15 @@ CPDFSDK_BAAnnot* ToBAAnnot(CPDFSDK_Annot* annot) {
 
 }  // namespace
 
-BEGIN_JS_STATIC_CONST(CJS_Annot)
-END_JS_STATIC_CONST()
+JSConstSpec CJS_Annot::ConstSpecs[] = {{0, JSConstSpec::Number, 0, 0}};
 
-BEGIN_JS_STATIC_PROP(CJS_Annot)
-JS_STATIC_PROP_ENTRY(hidden)
-JS_STATIC_PROP_ENTRY(name)
-JS_STATIC_PROP_ENTRY(type)
-END_JS_STATIC_PROP()
+JSPropertySpec CJS_Annot::PropertySpecs[] = {
+    {L"hidden", get_hidden_static, set_hidden_static},
+    {L"name", get_name_static, set_name_static},
+    {L"type", get_type_static, set_type_static},
+    {0, 0, 0}};
 
-BEGIN_JS_STATIC_METHOD(CJS_Annot)
-END_JS_STATIC_METHOD()
+JSMethodSpec CJS_Annot::MethodSpecs[] = {{0, 0}};
 
 IMPLEMENT_JS_CLASS(CJS_Annot, Annot)
 

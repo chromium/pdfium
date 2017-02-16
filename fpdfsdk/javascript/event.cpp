@@ -13,34 +13,32 @@
 #include "fpdfsdk/javascript/JS_Value.h"
 #include "fpdfsdk/javascript/cjs_event_context.h"
 
-BEGIN_JS_STATIC_CONST(CJS_Event)
-END_JS_STATIC_CONST()
+JSConstSpec CJS_Event::ConstSpecs[] = {{0, JSConstSpec::Number, 0, 0}};
 
-BEGIN_JS_STATIC_PROP(CJS_Event)
-JS_STATIC_PROP_ENTRY(change)
-JS_STATIC_PROP_ENTRY(changeEx)
-JS_STATIC_PROP_ENTRY(commitKey)
-JS_STATIC_PROP_ENTRY(fieldFull)
-JS_STATIC_PROP_ENTRY(keyDown)
-JS_STATIC_PROP_ENTRY(modifier)
-JS_STATIC_PROP_ENTRY(name)
-JS_STATIC_PROP_ENTRY(rc)
-JS_STATIC_PROP_ENTRY(richChange)
-JS_STATIC_PROP_ENTRY(richChangeEx)
-JS_STATIC_PROP_ENTRY(richValue)
-JS_STATIC_PROP_ENTRY(selEnd)
-JS_STATIC_PROP_ENTRY(selStart)
-JS_STATIC_PROP_ENTRY(shift)
-JS_STATIC_PROP_ENTRY(source)
-JS_STATIC_PROP_ENTRY(target)
-JS_STATIC_PROP_ENTRY(targetName)
-JS_STATIC_PROP_ENTRY(type)
-JS_STATIC_PROP_ENTRY(value)
-JS_STATIC_PROP_ENTRY(willCommit)
-END_JS_STATIC_PROP()
+JSPropertySpec CJS_Event::PropertySpecs[] = {
+    {L"change", get_change_static, set_change_static},
+    {L"changeEx", get_changeEx_static, set_changeEx_static},
+    {L"commitKey", get_commitKey_static, set_commitKey_static},
+    {L"fieldFull", get_fieldFull_static, set_fieldFull_static},
+    {L"keyDown", get_keyDown_static, set_keyDown_static},
+    {L"modifier", get_modifier_static, set_modifier_static},
+    {L"name", get_name_static, set_name_static},
+    {L"rc", get_rc_static, set_rc_static},
+    {L"richChange", get_richChange_static, set_richChange_static},
+    {L"richChangeEx", get_richChangeEx_static, set_richChangeEx_static},
+    {L"richValue", get_richValue_static, set_richValue_static},
+    {L"selEnd", get_selEnd_static, set_selEnd_static},
+    {L"selStart", get_selStart_static, set_selStart_static},
+    {L"shift", get_shift_static, set_shift_static},
+    {L"source", get_source_static, set_source_static},
+    {L"target", get_target_static, set_target_static},
+    {L"targetName", get_targetName_static, set_targetName_static},
+    {L"type", get_type_static, set_type_static},
+    {L"value", get_value_static, set_value_static},
+    {L"willCommit", get_willCommit_static, set_willCommit_static},
+    {0, 0, 0}};
 
-BEGIN_JS_STATIC_METHOD(CJS_Event)
-END_JS_STATIC_METHOD()
+JSMethodSpec CJS_Event::MethodSpecs[] = {{0, 0}};
 
 IMPLEMENT_JS_CLASS(CJS_Event, event)
 

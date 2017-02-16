@@ -36,14 +36,11 @@
 #include "third_party/base/numerics/safe_math.h"
 #include "third_party/base/ptr_util.h"
 
-BEGIN_JS_STATIC_CONST(CJS_PrintParamsObj)
-END_JS_STATIC_CONST()
+JSConstSpec CJS_PrintParamsObj::ConstSpecs[] = {{0, JSConstSpec::Number, 0, 0}};
 
-BEGIN_JS_STATIC_PROP(CJS_PrintParamsObj)
-END_JS_STATIC_PROP()
+JSPropertySpec CJS_PrintParamsObj::PropertySpecs[] = {{0, 0, 0}};
 
-BEGIN_JS_STATIC_METHOD(CJS_PrintParamsObj)
-END_JS_STATIC_METHOD()
+JSMethodSpec CJS_PrintParamsObj::MethodSpecs[] = {{0, 0}};
 
 IMPLEMENT_JS_CLASS(CJS_PrintParamsObj, PrintParamsObj)
 
@@ -62,88 +59,88 @@ PrintParamsObj::PrintParamsObj(CJS_Object* pJSObject)
 #define MINWIDTH 5.0f
 #define MINHEIGHT 5.0f
 
-BEGIN_JS_STATIC_CONST(CJS_Document)
-END_JS_STATIC_CONST()
+JSConstSpec CJS_Document::ConstSpecs[] = {{0, JSConstSpec::Number, 0, 0}};
 
-BEGIN_JS_STATIC_PROP(CJS_Document)
-JS_STATIC_PROP_ENTRY(ADBE)
-JS_STATIC_PROP_ENTRY(author)
-JS_STATIC_PROP_ENTRY(baseURL)
-JS_STATIC_PROP_ENTRY(bookmarkRoot)
-JS_STATIC_PROP_ENTRY(calculate)
-JS_STATIC_PROP_ENTRY(Collab)
-JS_STATIC_PROP_ENTRY(creationDate)
-JS_STATIC_PROP_ENTRY(creator)
-JS_STATIC_PROP_ENTRY(delay)
-JS_STATIC_PROP_ENTRY(dirty)
-JS_STATIC_PROP_ENTRY(documentFileName)
-JS_STATIC_PROP_ENTRY(external)
-JS_STATIC_PROP_ENTRY(filesize)
-JS_STATIC_PROP_ENTRY(icons)
-JS_STATIC_PROP_ENTRY(info)
-JS_STATIC_PROP_ENTRY(keywords)
-JS_STATIC_PROP_ENTRY(layout)
-JS_STATIC_PROP_ENTRY(media)
-JS_STATIC_PROP_ENTRY(modDate)
-JS_STATIC_PROP_ENTRY(mouseX)
-JS_STATIC_PROP_ENTRY(mouseY)
-JS_STATIC_PROP_ENTRY(numFields)
-JS_STATIC_PROP_ENTRY(numPages)
-JS_STATIC_PROP_ENTRY(pageNum)
-JS_STATIC_PROP_ENTRY(pageWindowRect)
-JS_STATIC_PROP_ENTRY(path)
-JS_STATIC_PROP_ENTRY(producer)
-JS_STATIC_PROP_ENTRY(subject)
-JS_STATIC_PROP_ENTRY(title)
-JS_STATIC_PROP_ENTRY(URL)
-JS_STATIC_PROP_ENTRY(zoom)
-JS_STATIC_PROP_ENTRY(zoomType)
-END_JS_STATIC_PROP()
+JSPropertySpec CJS_Document::PropertySpecs[] = {
+    {L"ADBE", get_ADBE_static, set_ADBE_static},
+    {L"author", get_author_static, set_author_static},
+    {L"baseURL", get_baseURL_static, set_baseURL_static},
+    {L"bookmarkRoot", get_bookmarkRoot_static, set_bookmarkRoot_static},
+    {L"calculate", get_calculate_static, set_calculate_static},
+    {L"Collab", get_Collab_static, set_Collab_static},
+    {L"creationDate", get_creationDate_static, set_creationDate_static},
+    {L"creator", get_creator_static, set_creator_static},
+    {L"delay", get_delay_static, set_delay_static},
+    {L"dirty", get_dirty_static, set_dirty_static},
+    {L"documentFileName", get_documentFileName_static,
+     set_documentFileName_static},
+    {L"external", get_external_static, set_external_static},
+    {L"filesize", get_filesize_static, set_filesize_static},
+    {L"icons", get_icons_static, set_icons_static},
+    {L"info", get_info_static, set_info_static},
+    {L"keywords", get_keywords_static, set_keywords_static},
+    {L"layout", get_layout_static, set_layout_static},
+    {L"media", get_media_static, set_media_static},
+    {L"modDate", get_modDate_static, set_modDate_static},
+    {L"mouseX", get_mouseX_static, set_mouseX_static},
+    {L"mouseY", get_mouseY_static, set_mouseY_static},
+    {L"numFields", get_numFields_static, set_numFields_static},
+    {L"numPages", get_numPages_static, set_numPages_static},
+    {L"pageNum", get_pageNum_static, set_pageNum_static},
+    {L"pageWindowRect", get_pageWindowRect_static, set_pageWindowRect_static},
+    {L"path", get_path_static, set_path_static},
+    {L"producer", get_producer_static, set_producer_static},
+    {L"subject", get_subject_static, set_subject_static},
+    {L"title", get_title_static, set_title_static},
+    {L"URL", get_URL_static, set_URL_static},
+    {L"zoom", get_zoom_static, set_zoom_static},
+    {L"zoomType", get_zoomType_static, set_zoomType_static},
+    {0, 0, 0}};
 
-BEGIN_JS_STATIC_METHOD(CJS_Document)
-JS_STATIC_METHOD_ENTRY(addAnnot)
-JS_STATIC_METHOD_ENTRY(addField)
-JS_STATIC_METHOD_ENTRY(addLink)
-JS_STATIC_METHOD_ENTRY(addIcon)
-JS_STATIC_METHOD_ENTRY(calculateNow)
-JS_STATIC_METHOD_ENTRY(closeDoc)
-JS_STATIC_METHOD_ENTRY(createDataObject)
-JS_STATIC_METHOD_ENTRY(deletePages)
-JS_STATIC_METHOD_ENTRY(exportAsText)
-JS_STATIC_METHOD_ENTRY(exportAsFDF)
-JS_STATIC_METHOD_ENTRY(exportAsXFDF)
-JS_STATIC_METHOD_ENTRY(extractPages)
-JS_STATIC_METHOD_ENTRY(getAnnot)
-JS_STATIC_METHOD_ENTRY(getAnnots)
-JS_STATIC_METHOD_ENTRY(getAnnot3D)
-JS_STATIC_METHOD_ENTRY(getAnnots3D)
-JS_STATIC_METHOD_ENTRY(getField)
-JS_STATIC_METHOD_ENTRY(getIcon)
-JS_STATIC_METHOD_ENTRY(getLinks)
-JS_STATIC_METHOD_ENTRY(getNthFieldName)
-JS_STATIC_METHOD_ENTRY(getOCGs)
-JS_STATIC_METHOD_ENTRY(getPageBox)
-JS_STATIC_METHOD_ENTRY(getPageNthWord)
-JS_STATIC_METHOD_ENTRY(getPageNthWordQuads)
-JS_STATIC_METHOD_ENTRY(getPageNumWords)
-JS_STATIC_METHOD_ENTRY(getPrintParams)
-JS_STATIC_METHOD_ENTRY(getURL)
-JS_STATIC_METHOD_ENTRY(gotoNamedDest)
-JS_STATIC_METHOD_ENTRY(importAnFDF)
-JS_STATIC_METHOD_ENTRY(importAnXFDF)
-JS_STATIC_METHOD_ENTRY(importTextData)
-JS_STATIC_METHOD_ENTRY(insertPages)
-JS_STATIC_METHOD_ENTRY(mailForm)
-JS_STATIC_METHOD_ENTRY(print)
-JS_STATIC_METHOD_ENTRY(removeField)
-JS_STATIC_METHOD_ENTRY(replacePages)
-JS_STATIC_METHOD_ENTRY(resetForm)
-JS_STATIC_METHOD_ENTRY(removeIcon)
-JS_STATIC_METHOD_ENTRY(saveAs)
-JS_STATIC_METHOD_ENTRY(submitForm)
-JS_STATIC_METHOD_ENTRY(syncAnnotScan)
-JS_STATIC_METHOD_ENTRY(mailDoc)
-END_JS_STATIC_METHOD()
+JSMethodSpec CJS_Document::MethodSpecs[] = {
+    {L"addAnnot", addAnnot_static},
+    {L"addField", addField_static},
+    {L"addLink", addLink_static},
+    {L"addIcon", addIcon_static},
+    {L"calculateNow", calculateNow_static},
+    {L"closeDoc", closeDoc_static},
+    {L"createDataObject", createDataObject_static},
+    {L"deletePages", deletePages_static},
+    {L"exportAsText", exportAsText_static},
+    {L"exportAsFDF", exportAsFDF_static},
+    {L"exportAsXFDF", exportAsXFDF_static},
+    {L"extractPages", extractPages_static},
+    {L"getAnnot", getAnnot_static},
+    {L"getAnnots", getAnnots_static},
+    {L"getAnnot3D", getAnnot3D_static},
+    {L"getAnnots3D", getAnnots3D_static},
+    {L"getField", getField_static},
+    {L"getIcon", getIcon_static},
+    {L"getLinks", getLinks_static},
+    {L"getNthFieldName", getNthFieldName_static},
+    {L"getOCGs", getOCGs_static},
+    {L"getPageBox", getPageBox_static},
+    {L"getPageNthWord", getPageNthWord_static},
+    {L"getPageNthWordQuads", getPageNthWordQuads_static},
+    {L"getPageNumWords", getPageNumWords_static},
+    {L"getPrintParams", getPrintParams_static},
+    {L"getURL", getURL_static},
+    {L"gotoNamedDest", gotoNamedDest_static},
+    {L"importAnFDF", importAnFDF_static},
+    {L"importAnXFDF", importAnXFDF_static},
+    {L"importTextData", importTextData_static},
+    {L"insertPages", insertPages_static},
+    {L"mailForm", mailForm_static},
+    {L"print", print_static},
+    {L"removeField", removeField_static},
+    {L"replacePages", replacePages_static},
+    {L"resetForm", resetForm_static},
+    {L"removeIcon", removeIcon_static},
+    {L"saveAs", saveAs_static},
+    {L"submitForm", submitForm_static},
+    {L"syncAnnotScan", syncAnnotScan_static},
+    {L"mailDoc", mailDoc_static},
+    {0, 0}};
 
 IMPLEMENT_JS_CLASS(CJS_Document, Document)
 

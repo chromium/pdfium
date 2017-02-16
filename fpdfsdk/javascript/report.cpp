@@ -12,16 +12,13 @@
 #include "fpdfsdk/javascript/JS_Object.h"
 #include "fpdfsdk/javascript/JS_Value.h"
 
-BEGIN_JS_STATIC_CONST(CJS_Report)
-END_JS_STATIC_CONST()
+JSConstSpec CJS_Report::ConstSpecs[] = {{0, JSConstSpec::Number, 0, 0}};
 
-BEGIN_JS_STATIC_PROP(CJS_Report)
-END_JS_STATIC_PROP()
+JSPropertySpec CJS_Report::PropertySpecs[] = {{0, 0, 0}};
 
-BEGIN_JS_STATIC_METHOD(CJS_Report)
-JS_STATIC_METHOD_ENTRY(save)
-JS_STATIC_METHOD_ENTRY(writeText)
-END_JS_STATIC_METHOD()
+JSMethodSpec CJS_Report::MethodSpecs[] = {{L"save", save_static},
+                                          {L"writeText", writeText_static},
+                                          {0, 0}};
 
 IMPLEMENT_JS_CLASS(CJS_Report, Report)
 

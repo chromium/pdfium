@@ -26,19 +26,14 @@
 #include <ctype.h>
 #endif
 
-BEGIN_JS_STATIC_CONST(CJS_Util)
-END_JS_STATIC_CONST()
+JSConstSpec CJS_Util::ConstSpecs[] = {{0, JSConstSpec::Number, 0, 0}};
 
-BEGIN_JS_STATIC_PROP(CJS_Util)
-END_JS_STATIC_PROP()
+JSPropertySpec CJS_Util::PropertySpecs[] = {{0, 0, 0}};
 
-BEGIN_JS_STATIC_METHOD(CJS_Util)
-JS_STATIC_METHOD_ENTRY(printd)
-JS_STATIC_METHOD_ENTRY(printf)
-JS_STATIC_METHOD_ENTRY(printx)
-JS_STATIC_METHOD_ENTRY(scand)
-JS_STATIC_METHOD_ENTRY(byteToChar)
-END_JS_STATIC_METHOD()
+JSMethodSpec CJS_Util::MethodSpecs[] = {
+    {L"printd", printd_static},         {L"printf", printf_static},
+    {L"printx", printx_static},         {L"scand", scand_static},
+    {L"byteToChar", byteToChar_static}, {0, 0}};
 
 IMPLEMENT_JS_CLASS(CJS_Util, util)
 

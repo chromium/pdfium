@@ -10,93 +10,93 @@
 #include "fpdfsdk/javascript/JS_Object.h"
 #include "fpdfsdk/javascript/JS_Value.h"
 
-BEGIN_JS_STATIC_CONST(CJS_Border)
-JS_STATIC_CONST_ENTRY_STRING(L"s", L"solid")
-JS_STATIC_CONST_ENTRY_STRING(L"b", L"beveled")
-JS_STATIC_CONST_ENTRY_STRING(L"d", L"dashed")
-JS_STATIC_CONST_ENTRY_STRING(L"i", L"inset")
-JS_STATIC_CONST_ENTRY_STRING(L"u", L"underline")
-END_JS_STATIC_CONST()
+JSConstSpec CJS_Border::ConstSpecs[] = {
+    {L"s", JSConstSpec::String, 0, L"solid"},
+    {L"b", JSConstSpec::String, 0, L"beveled"},
+    {L"d", JSConstSpec::String, 0, L"dashed"},
+    {L"i", JSConstSpec::String, 0, L"inset"},
+    {L"u", JSConstSpec::String, 0, L"underline"},
+    {0, JSConstSpec::Number, 0, 0}};
 IMPLEMENT_JS_CLASS_CONST(CJS_Border, border)
 
-BEGIN_JS_STATIC_CONST(CJS_Display)
-JS_STATIC_CONST_ENTRY_NUMBER(L"visible", 0)
-JS_STATIC_CONST_ENTRY_NUMBER(L"hidden", 1)
-JS_STATIC_CONST_ENTRY_NUMBER(L"noPrint", 2)
-JS_STATIC_CONST_ENTRY_NUMBER(L"noView", 3)
-END_JS_STATIC_CONST()
+JSConstSpec CJS_Display::ConstSpecs[] = {
+    {L"visible", JSConstSpec::Number, 0, 0},
+    {L"hidden", JSConstSpec::Number, 1, 0},
+    {L"noPrint", JSConstSpec::Number, 2, 0},
+    {L"noView", JSConstSpec::Number, 3, 0},
+    {0, JSConstSpec::Number, 0, 0}};
 IMPLEMENT_JS_CLASS_CONST(CJS_Display, display)
 
-BEGIN_JS_STATIC_CONST(CJS_Font)
-JS_STATIC_CONST_ENTRY_STRING(L"Times", L"Times-Roman")
-JS_STATIC_CONST_ENTRY_STRING(L"TimesB", L"Times-Bold")
-JS_STATIC_CONST_ENTRY_STRING(L"TimesI", L"Times-Italic")
-JS_STATIC_CONST_ENTRY_STRING(L"TimesBI", L"Times-BoldItalic")
-JS_STATIC_CONST_ENTRY_STRING(L"Helv", L"Helvetica")
-JS_STATIC_CONST_ENTRY_STRING(L"HelvB", L"Helvetica-Bold")
-JS_STATIC_CONST_ENTRY_STRING(L"HelvI", L"Helvetica-Oblique")
-JS_STATIC_CONST_ENTRY_STRING(L"HelvBI", L"Helvetica-BoldOblique")
-JS_STATIC_CONST_ENTRY_STRING(L"Cour", L"Courier")
-JS_STATIC_CONST_ENTRY_STRING(L"CourB", L"Courier-Bold")
-JS_STATIC_CONST_ENTRY_STRING(L"CourI", L"Courier-Oblique")
-JS_STATIC_CONST_ENTRY_STRING(L"CourBI", L"Courier-BoldOblique")
-JS_STATIC_CONST_ENTRY_STRING(L"Symbol", L"Symbol")
-JS_STATIC_CONST_ENTRY_STRING(L"ZapfD", L"ZapfDingbats")
-END_JS_STATIC_CONST()
+JSConstSpec CJS_Font::ConstSpecs[] = {
+    {L"Times", JSConstSpec::String, 0, L"Times-Roman"},
+    {L"TimesB", JSConstSpec::String, 0, L"Times-Bold"},
+    {L"TimesI", JSConstSpec::String, 0, L"Times-Italic"},
+    {L"TimesBI", JSConstSpec::String, 0, L"Times-BoldItalic"},
+    {L"Helv", JSConstSpec::String, 0, L"Helvetica"},
+    {L"HelvB", JSConstSpec::String, 0, L"Helvetica-Bold"},
+    {L"HelvI", JSConstSpec::String, 0, L"Helvetica-Oblique"},
+    {L"HelvBI", JSConstSpec::String, 0, L"Helvetica-BoldOblique"},
+    {L"Cour", JSConstSpec::String, 0, L"Courier"},
+    {L"CourB", JSConstSpec::String, 0, L"Courier-Bold"},
+    {L"CourI", JSConstSpec::String, 0, L"Courier-Oblique"},
+    {L"CourBI", JSConstSpec::String, 0, L"Courier-BoldOblique"},
+    {L"Symbol", JSConstSpec::String, 0, L"Symbol"},
+    {L"ZapfD", JSConstSpec::String, 0, L"ZapfDingbats"},
+    {0, JSConstSpec::Number, 0, 0}};
 IMPLEMENT_JS_CLASS_CONST(CJS_Font, font)
 
-BEGIN_JS_STATIC_CONST(CJS_Highlight)
-JS_STATIC_CONST_ENTRY_STRING(L"n", L"none")
-JS_STATIC_CONST_ENTRY_STRING(L"i", L"invert")
-JS_STATIC_CONST_ENTRY_STRING(L"p", L"push")
-JS_STATIC_CONST_ENTRY_STRING(L"o", L"outline")
-END_JS_STATIC_CONST()
+JSConstSpec CJS_Highlight::ConstSpecs[] = {
+    {L"n", JSConstSpec::String, 0, L"none"},
+    {L"i", JSConstSpec::String, 0, L"invert"},
+    {L"p", JSConstSpec::String, 0, L"push"},
+    {L"o", JSConstSpec::String, 0, L"outline"},
+    {0, JSConstSpec::Number, 0, 0}};
 IMPLEMENT_JS_CLASS_CONST(CJS_Highlight, highlight)
 
-BEGIN_JS_STATIC_CONST(CJS_Position)
-JS_STATIC_CONST_ENTRY_NUMBER(L"textOnly", 0)
-JS_STATIC_CONST_ENTRY_NUMBER(L"iconOnly", 1)
-JS_STATIC_CONST_ENTRY_NUMBER(L"iconTextV", 2)
-JS_STATIC_CONST_ENTRY_NUMBER(L"textIconV", 3)
-JS_STATIC_CONST_ENTRY_NUMBER(L"iconTextH", 4)
-JS_STATIC_CONST_ENTRY_NUMBER(L"textIconH", 5)
-JS_STATIC_CONST_ENTRY_NUMBER(L"overlay", 6)
-END_JS_STATIC_CONST()
+JSConstSpec CJS_Position::ConstSpecs[] = {
+    {L"textOnly", JSConstSpec::Number, 0, 0},
+    {L"iconOnly", JSConstSpec::Number, 1, 0},
+    {L"iconTextV", JSConstSpec::Number, 2, 0},
+    {L"textIconV", JSConstSpec::Number, 3, 0},
+    {L"iconTextH", JSConstSpec::Number, 4, 0},
+    {L"textIconH", JSConstSpec::Number, 5, 0},
+    {L"overlay", JSConstSpec::Number, 6, 0},
+    {0, JSConstSpec::Number, 0, 0}};
 IMPLEMENT_JS_CLASS_CONST(CJS_Position, position)
 
-BEGIN_JS_STATIC_CONST(CJS_ScaleHow)
-JS_STATIC_CONST_ENTRY_NUMBER(L"proportional", 0)
-JS_STATIC_CONST_ENTRY_NUMBER(L"anamorphic", 1)
-END_JS_STATIC_CONST()
+JSConstSpec CJS_ScaleHow::ConstSpecs[] = {
+    {L"proportional", JSConstSpec::Number, 0, 0},
+    {L"anamorphic", JSConstSpec::Number, 1, 0},
+    {0, JSConstSpec::Number, 0, 0}};
 IMPLEMENT_JS_CLASS_CONST(CJS_ScaleHow, scaleHow)
 
-BEGIN_JS_STATIC_CONST(CJS_ScaleWhen)
-JS_STATIC_CONST_ENTRY_NUMBER(L"always", 0)
-JS_STATIC_CONST_ENTRY_NUMBER(L"never", 1)
-JS_STATIC_CONST_ENTRY_NUMBER(L"tooBig", 2)
-JS_STATIC_CONST_ENTRY_NUMBER(L"tooSmall", 3)
-END_JS_STATIC_CONST()
+JSConstSpec CJS_ScaleWhen::ConstSpecs[] = {
+    {L"always", JSConstSpec::Number, 0, 0},
+    {L"never", JSConstSpec::Number, 1, 0},
+    {L"tooBig", JSConstSpec::Number, 2, 0},
+    {L"tooSmall", JSConstSpec::Number, 3, 0},
+    {0, JSConstSpec::Number, 0, 0}};
 IMPLEMENT_JS_CLASS_CONST(CJS_ScaleWhen, scaleWhen)
 
-BEGIN_JS_STATIC_CONST(CJS_Style)
-JS_STATIC_CONST_ENTRY_STRING(L"ch", L"check")
-JS_STATIC_CONST_ENTRY_STRING(L"cr", L"cross")
-JS_STATIC_CONST_ENTRY_STRING(L"di", L"diamond")
-JS_STATIC_CONST_ENTRY_STRING(L"ci", L"circle")
-JS_STATIC_CONST_ENTRY_STRING(L"st", L"star")
-JS_STATIC_CONST_ENTRY_STRING(L"sq", L"square")
-END_JS_STATIC_CONST()
+JSConstSpec CJS_Style::ConstSpecs[] = {
+    {L"ch", JSConstSpec::String, 0, L"check"},
+    {L"cr", JSConstSpec::String, 0, L"cross"},
+    {L"di", JSConstSpec::String, 0, L"diamond"},
+    {L"ci", JSConstSpec::String, 0, L"circle"},
+    {L"st", JSConstSpec::String, 0, L"star"},
+    {L"sq", JSConstSpec::String, 0, L"square"},
+    {0, JSConstSpec::Number, 0, 0}};
 IMPLEMENT_JS_CLASS_CONST(CJS_Style, style)
 
-BEGIN_JS_STATIC_CONST(CJS_Zoomtype)
-JS_STATIC_CONST_ENTRY_STRING(L"none", L"NoVary")
-JS_STATIC_CONST_ENTRY_STRING(L"fitP", L"FitPage")
-JS_STATIC_CONST_ENTRY_STRING(L"fitW", L"FitWidth")
-JS_STATIC_CONST_ENTRY_STRING(L"fitH", L"FitHeight")
-JS_STATIC_CONST_ENTRY_STRING(L"fitV", L"FitVisibleWidth")
-JS_STATIC_CONST_ENTRY_STRING(L"pref", L"Preferred")
-JS_STATIC_CONST_ENTRY_STRING(L"refW", L"ReflowWidth")
-END_JS_STATIC_CONST()
+JSConstSpec CJS_Zoomtype::ConstSpecs[] = {
+    {L"none", JSConstSpec::String, 0, L"NoVary"},
+    {L"fitP", JSConstSpec::String, 0, L"FitPage"},
+    {L"fitW", JSConstSpec::String, 0, L"FitWidth"},
+    {L"fitH", JSConstSpec::String, 0, L"FitHeight"},
+    {L"fitV", JSConstSpec::String, 0, L"FitVisibleWidth"},
+    {L"pref", JSConstSpec::String, 0, L"Preferred"},
+    {L"refW", JSConstSpec::String, 0, L"ReflowWidth"},
+    {0, JSConstSpec::Number, 0, 0}};
 IMPLEMENT_JS_CLASS_CONST(CJS_Zoomtype, zoomtype)
 
 #define GLOBAL_STRING(rt, name, value)                                \
