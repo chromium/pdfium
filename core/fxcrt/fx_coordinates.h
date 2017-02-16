@@ -54,16 +54,16 @@ class CFX_PTemplate {
     y /= divisor;
     return *this;
   }
-  CFX_PTemplate operator+(const CFX_PTemplate& other) {
+  CFX_PTemplate operator+(const CFX_PTemplate& other) const {
     return CFX_PTemplate(x + other.x, y + other.y);
   }
-  CFX_PTemplate operator-(const CFX_PTemplate& other) {
+  CFX_PTemplate operator-(const CFX_PTemplate& other) const {
     return CFX_PTemplate(x - other.x, y - other.y);
   }
-  CFX_PTemplate operator*(BaseType factor) {
+  CFX_PTemplate operator*(BaseType factor) const {
     return CFX_PTemplate(x * factor, y * factor);
   }
-  CFX_PTemplate operator/(BaseType divisor) {
+  CFX_PTemplate operator/(BaseType divisor) const {
     return CFX_PTemplate(x / divisor, y / divisor);
   }
 
