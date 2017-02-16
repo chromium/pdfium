@@ -11,6 +11,7 @@
 #include <memory>
 #include <type_traits>
 #include <utility>
+#include <vector>
 
 #include "core/fpdfapi/parser/cpdf_object.h"
 #include "core/fxcrt/cfx_string_pool_template.h"
@@ -70,6 +71,7 @@ class CPDF_IndirectObjectHolder {
  private:
   uint32_t m_LastObjNum;
   std::map<uint32_t, std::unique_ptr<CPDF_Object>> m_IndirectObjs;
+  std::vector<std::unique_ptr<CPDF_Object>> m_OrphanObjs;
   CFX_WeakPtr<CFX_ByteStringPool> m_pByteStringPool;
 };
 
