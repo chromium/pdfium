@@ -29,7 +29,7 @@ Report::Report(CJS_Object* pJSObject) : CJS_EmbedObj(pJSObject) {}
 
 Report::~Report() {}
 
-bool Report::writeText(IJS_EventContext* cc,
+bool Report::writeText(CJS_Runtime* pRuntime,
                        const std::vector<CJS_Value>& params,
                        CJS_Value& vRet,
                        CFX_WideString& sError) {
@@ -37,7 +37,7 @@ bool Report::writeText(IJS_EventContext* cc,
   return true;
 }
 
-bool Report::save(IJS_EventContext* cc,
+bool Report::save(CJS_Runtime* pRuntime,
                   const std::vector<CJS_Value>& params,
                   CJS_Value& vRet,
                   CFX_WideString& sError) {

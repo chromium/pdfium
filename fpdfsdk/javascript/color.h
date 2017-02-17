@@ -17,26 +17,28 @@ class color : public CJS_EmbedObj {
   explicit color(CJS_Object* pJSObject);
   ~color() override;
 
-  bool black(IJS_EventContext* cc, CJS_PropValue& vp, CFX_WideString& sError);
-  bool blue(IJS_EventContext* cc, CJS_PropValue& vp, CFX_WideString& sError);
-  bool cyan(IJS_EventContext* cc, CJS_PropValue& vp, CFX_WideString& sError);
-  bool dkGray(IJS_EventContext* cc, CJS_PropValue& vp, CFX_WideString& sError);
-  bool gray(IJS_EventContext* cc, CJS_PropValue& vp, CFX_WideString& sError);
-  bool green(IJS_EventContext* cc, CJS_PropValue& vp, CFX_WideString& sError);
-  bool ltGray(IJS_EventContext* cc, CJS_PropValue& vp, CFX_WideString& sError);
-  bool magenta(IJS_EventContext* cc, CJS_PropValue& vp, CFX_WideString& sError);
-  bool red(IJS_EventContext* cc, CJS_PropValue& vp, CFX_WideString& sError);
-  bool transparent(IJS_EventContext* cc,
+  bool black(CJS_Runtime* pRuntime, CJS_PropValue& vp, CFX_WideString& sError);
+  bool blue(CJS_Runtime* pRuntime, CJS_PropValue& vp, CFX_WideString& sError);
+  bool cyan(CJS_Runtime* pRuntime, CJS_PropValue& vp, CFX_WideString& sError);
+  bool dkGray(CJS_Runtime* pRuntime, CJS_PropValue& vp, CFX_WideString& sError);
+  bool gray(CJS_Runtime* pRuntime, CJS_PropValue& vp, CFX_WideString& sError);
+  bool green(CJS_Runtime* pRuntime, CJS_PropValue& vp, CFX_WideString& sError);
+  bool ltGray(CJS_Runtime* pRuntime, CJS_PropValue& vp, CFX_WideString& sError);
+  bool magenta(CJS_Runtime* pRuntime,
+               CJS_PropValue& vp,
+               CFX_WideString& sError);
+  bool red(CJS_Runtime* pRuntime, CJS_PropValue& vp, CFX_WideString& sError);
+  bool transparent(CJS_Runtime* pRuntime,
                    CJS_PropValue& vp,
                    CFX_WideString& sError);
-  bool white(IJS_EventContext* cc, CJS_PropValue& vp, CFX_WideString& sError);
-  bool yellow(IJS_EventContext* cc, CJS_PropValue& vp, CFX_WideString& sError);
+  bool white(CJS_Runtime* pRuntime, CJS_PropValue& vp, CFX_WideString& sError);
+  bool yellow(CJS_Runtime* pRuntime, CJS_PropValue& vp, CFX_WideString& sError);
 
-  bool convert(IJS_EventContext* cc,
+  bool convert(CJS_Runtime* pRuntime,
                const std::vector<CJS_Value>& params,
                CJS_Value& vRet,
                CFX_WideString& sError);
-  bool equal(IJS_EventContext* cc,
+  bool equal(CJS_Runtime* pRuntime,
              const std::vector<CJS_Value>& params,
              CJS_Value& vRet,
              CFX_WideString& sError);

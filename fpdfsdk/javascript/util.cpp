@@ -114,11 +114,10 @@ util::util(CJS_Object* pJSObject) : CJS_EmbedObj(pJSObject) {}
 
 util::~util() {}
 
-bool util::printf(IJS_EventContext* cc,
+bool util::printf(CJS_Runtime* pRuntime,
                   const std::vector<CJS_Value>& params,
                   CJS_Value& vRet,
                   CFX_WideString& sError) {
-  CJS_Runtime* pRuntime = CJS_Runtime::FromEventContext(cc);
   int iSize = params.size();
   if (iSize < 1)
     return false;
@@ -177,7 +176,7 @@ bool util::printf(IJS_EventContext* cc,
   return true;
 }
 
-bool util::printd(IJS_EventContext* cc,
+bool util::printd(CJS_Runtime* pRuntime,
                   const std::vector<CJS_Value>& params,
                   CJS_Value& vRet,
                   CFX_WideString& sError) {
@@ -185,7 +184,6 @@ bool util::printd(IJS_EventContext* cc,
   if (iSize < 2)
     return false;
 
-  CJS_Runtime* pRuntime = CJS_Runtime::FromEventContext(cc);
   CJS_Value p1 = params[0];
   CJS_Value p2 = params[1];
   CJS_Date jsDate;
@@ -307,7 +305,7 @@ bool util::printd(IJS_EventContext* cc,
   return false;
 }
 
-bool util::printx(IJS_EventContext* cc,
+bool util::printx(CJS_Runtime* pRuntime,
                   const std::vector<CJS_Value>& params,
                   CJS_Value& vRet,
                   CFX_WideString& sError) {
@@ -316,7 +314,6 @@ bool util::printx(IJS_EventContext* cc,
     return false;
   }
 
-  CJS_Runtime* pRuntime = CJS_Runtime::FromEventContext(cc);
   vRet = CJS_Value(pRuntime, printx(params[0].ToCFXWideString(pRuntime),
                                     params[1].ToCFXWideString(pRuntime))
                                  .c_str());
@@ -425,11 +422,10 @@ CFX_WideString util::printx(const CFX_WideString& wsFormat,
   return wsResult;
 }
 
-bool util::scand(IJS_EventContext* cc,
+bool util::scand(CJS_Runtime* pRuntime,
                  const std::vector<CJS_Value>& params,
                  CJS_Value& vRet,
                  CFX_WideString& sError) {
-  CJS_Runtime* pRuntime = CJS_Runtime::FromEventContext(cc);
   int iSize = params.size();
   if (iSize < 2)
     return false;
@@ -450,7 +446,7 @@ bool util::scand(IJS_EventContext* cc,
   return true;
 }
 
-bool util::byteToChar(IJS_EventContext* cc,
+bool util::byteToChar(CJS_Runtime* pRuntime,
                       const std::vector<CJS_Value>& params,
                       CJS_Value& vRet,
                       CFX_WideString& sError) {
@@ -459,7 +455,6 @@ bool util::byteToChar(IJS_EventContext* cc,
     return false;
   }
 
-  CJS_Runtime* pRuntime = CJS_Runtime::FromEventContext(cc);
   int arg = params[0].ToInt(pRuntime);
   if (arg < 0 || arg > 255) {
     sError = JSGetStringFromID(IDS_STRING_JSVALUEERROR);

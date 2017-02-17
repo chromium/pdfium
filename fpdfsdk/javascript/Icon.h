@@ -16,7 +16,7 @@ class Icon : public CJS_EmbedObj {
   explicit Icon(CJS_Object* pJSObject);
   ~Icon() override;
 
-  bool name(IJS_EventContext* cc, CJS_PropValue& vp, CFX_WideString& sError);
+  bool name(CJS_Runtime* pRuntime, CJS_PropValue& vp, CFX_WideString& sError);
   void SetStream(CPDF_Stream* pIconStream);
   CPDF_Stream* GetStream();
   void SetIconName(CFX_WideString name);

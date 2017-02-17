@@ -66,7 +66,7 @@ bool JSGlobalAlternate::QueryProperty(const FX_WCHAR* propname) {
   return CFX_WideString(propname) != L"setPersistent";
 }
 
-bool JSGlobalAlternate::DelProperty(IJS_EventContext* cc,
+bool JSGlobalAlternate::DelProperty(CJS_Runtime* pRuntime,
                                     const FX_WCHAR* propname,
                                     CFX_WideString& sError) {
   auto it = m_mapGlobal.find(CFX_ByteString::FromUnicode(propname));
@@ -77,11 +77,10 @@ bool JSGlobalAlternate::DelProperty(IJS_EventContext* cc,
   return true;
 }
 
-bool JSGlobalAlternate::DoProperty(IJS_EventContext* cc,
+bool JSGlobalAlternate::DoProperty(CJS_Runtime* pRuntime,
                                    const FX_WCHAR* propname,
                                    CJS_PropValue& vp,
                                    CFX_WideString& sError) {
-  CJS_Runtime* pRuntime = CJS_Runtime::FromEventContext(cc);
   if (vp.IsSetting()) {
     CFX_ByteString sPropName = CFX_ByteString::FromUnicode(propname);
     switch (vp.GetJSValue()->GetType()) {
@@ -114,7 +113,7 @@ bool JSGlobalAlternate::DoProperty(IJS_EventContext* cc,
                                   false, "", v8::Local<v8::Object>(), false);
       }
       case CJS_Value::VT_undefined: {
-        DelProperty(cc, propname, sError);
+        DelProperty(pRuntime, propname, sError);
         return true;
       }
       default:
@@ -157,7 +156,7 @@ bool JSGlobalAlternate::DoProperty(IJS_EventContext* cc,
   return false;
 }
 
-bool JSGlobalAlternate::setPersistent(IJS_EventContext* cc,
+bool JSGlobalAlternate::setPersistent(CJS_Runtime* pRuntime,
                                       const std::vector<CJS_Value>& params,
                                       CJS_Value& vRet,
                                       CFX_WideString& sError) {
@@ -166,7 +165,6 @@ bool JSGlobalAlternate::setPersistent(IJS_EventContext* cc,
     return false;
   }
 
-  CJS_Runtime* pRuntime = CJS_Runtime::FromEventContext(cc);
   auto it = m_mapGlobal.find(params[0].ToCFXByteString(pRuntime));
   if (it != m_mapGlobal.end()) {
     JSGlobalData* pData = it->second;
@@ -232,7 +230,8 @@ void JSGlobalAlternate::UpdateGlobalPersistentVariables() {
   }
 }
 
-void JSGlobalAlternate::CommitGlobalPersisitentVariables(IJS_EventContext* cc) {
+void JSGlobalAlternate::CommitGlobalPersisitentVariables(
+    CJS_Runtime* pRuntime) {
   for (auto it = m_mapGlobal.begin(); it != m_mapGlobal.end(); ++it) {
     CFX_ByteString name = it->first;
     JSGlobalData* pData = it->second;
@@ -256,7 +255,7 @@ void JSGlobalAlternate::CommitGlobalPersisitentVariables(IJS_EventContext* cc) {
           CJS_GlobalVariableArray array;
           v8::Local<v8::Object> obj = v8::Local<v8::Object>::New(
               GetJSObject()->GetIsolate(), pData->pData);
-          ObjectToArray(cc, obj, array);
+          ObjectToArray(pRuntime, obj, array);
           m_pGlobalData->SetGlobalVariableObject(name, array);
           m_pGlobalData->SetGlobalVariablePersistent(name, pData->bPersistent);
         } break;
@@ -269,10 +268,9 @@ void JSGlobalAlternate::CommitGlobalPersisitentVariables(IJS_EventContext* cc) {
   }
 }
 
-void JSGlobalAlternate::ObjectToArray(IJS_EventContext* cc,
+void JSGlobalAlternate::ObjectToArray(CJS_Runtime* pRuntime,
                                       v8::Local<v8::Object> pObj,
                                       CJS_GlobalVariableArray& array) {
-  CJS_Runtime* pRuntime = CJS_Runtime::FromEventContext(cc);
   std::vector<CFX_WideString> pKeyList = pRuntime->GetObjectPropertyNames(pObj);
   for (const auto& ws : pKeyList) {
     CFX_ByteString sKey = ws.UTF8Encode();
@@ -305,7 +303,7 @@ void JSGlobalAlternate::ObjectToArray(IJS_EventContext* cc,
         CJS_KeyValue* pObjElement = new CJS_KeyValue;
         pObjElement->nType = JS_GlobalDataType::OBJECT;
         pObjElement->sKey = sKey;
-        ObjectToArray(cc, pRuntime->ToObject(v), pObjElement->objData);
+        ObjectToArray(pRuntime, pRuntime->ToObject(v), pObjElement->objData);
         array.Add(pObjElement);
       } break;
       case CJS_Value::VT_null: {

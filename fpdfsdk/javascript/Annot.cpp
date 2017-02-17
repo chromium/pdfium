@@ -37,7 +37,7 @@ Annot::Annot(CJS_Object* pJSObject) : CJS_EmbedObj(pJSObject) {}
 
 Annot::~Annot() {}
 
-bool Annot::hidden(IJS_EventContext* cc,
+bool Annot::hidden(CJS_Runtime* pRuntime,
                    CJS_PropValue& vp,
                    CFX_WideString& sError) {
   if (vp.IsGetting()) {
@@ -73,7 +73,7 @@ bool Annot::hidden(IJS_EventContext* cc,
   return true;
 }
 
-bool Annot::name(IJS_EventContext* cc,
+bool Annot::name(CJS_Runtime* pRuntime,
                  CJS_PropValue& vp,
                  CFX_WideString& sError) {
   if (vp.IsGetting()) {
@@ -96,7 +96,7 @@ bool Annot::name(IJS_EventContext* cc,
   return true;
 }
 
-bool Annot::type(IJS_EventContext* cc,
+bool Annot::type(CJS_Runtime* pRuntime,
                  CJS_PropValue& vp,
                  CFX_WideString& sError) {
   if (vp.IsSetting()) {

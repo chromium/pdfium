@@ -44,7 +44,7 @@ CFX_WideString Icon::GetIconName() {
   return m_swIconName;
 }
 
-bool Icon::name(IJS_EventContext* cc,
+bool Icon::name(CJS_Runtime* pRuntime,
                 CJS_PropValue& vp,
                 CFX_WideString& sError) {
   if (!vp.IsGetting())

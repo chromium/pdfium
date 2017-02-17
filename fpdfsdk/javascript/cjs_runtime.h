@@ -27,7 +27,6 @@ class CJS_Runtime : public IJS_Runtime,
  public:
   using FieldEvent = std::pair<CFX_WideString, JS_EVENT_T>;
 
-  static CJS_Runtime* FromEventContext(const IJS_EventContext* cc);
   static CJS_Runtime* CurrentRuntimeFromIsolate(v8::Isolate* pIsolate);
 
   explicit CJS_Runtime(CPDFSDK_FormFillEnvironment* pFormFillEnv);
@@ -36,10 +35,11 @@ class CJS_Runtime : public IJS_Runtime,
   // IJS_Runtime
   IJS_EventContext* NewEventContext() override;
   void ReleaseEventContext(IJS_EventContext* pContext) override;
-  IJS_EventContext* GetCurrentEventContext() override;
   CPDFSDK_FormFillEnvironment* GetFormFillEnv() const override;
   int ExecuteScript(const CFX_WideString& script,
                     CFX_WideString* info) override;
+
+  CJS_EventContext* GetCurrentEventContext() const;
 
   // Returns true if the event isn't already found in the set.
   bool AddEventToSet(const FieldEvent& event);

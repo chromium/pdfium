@@ -375,7 +375,7 @@ CPDF_FormControl* Field::GetSmartFieldControl(CPDF_FormField* pFormField) {
   return pFormField->GetControl(m_nFormControlIndex);
 }
 
-bool Field::alignment(IJS_EventContext* cc,
+bool Field::alignment(CJS_Runtime* pRuntime,
                       CJS_PropValue& vp,
                       CFX_WideString& sError) {
   ASSERT(m_pFormFillEnv);
@@ -431,7 +431,7 @@ void Field::SetAlignment(CPDFSDK_FormFillEnvironment* pFormFillEnv,
   // Not supported.
 }
 
-bool Field::borderStyle(IJS_EventContext* cc,
+bool Field::borderStyle(CJS_Runtime* pRuntime,
                         CJS_PropValue& vp,
                         CFX_WideString& sError) {
   ASSERT(m_pFormFillEnv);
@@ -540,7 +540,7 @@ void Field::SetBorderStyle(CPDFSDK_FormFillEnvironment* pFormFillEnv,
   }
 }
 
-bool Field::buttonAlignX(IJS_EventContext* cc,
+bool Field::buttonAlignX(CJS_Runtime* pRuntime,
                          CJS_PropValue& vp,
                          CFX_WideString& sError) {
   ASSERT(m_pFormFillEnv);
@@ -589,7 +589,7 @@ void Field::SetButtonAlignX(CPDFSDK_FormFillEnvironment* pFormFillEnv,
   // Not supported.
 }
 
-bool Field::buttonAlignY(IJS_EventContext* cc,
+bool Field::buttonAlignY(CJS_Runtime* pRuntime,
                          CJS_PropValue& vp,
                          CFX_WideString& sError) {
   ASSERT(m_pFormFillEnv);
@@ -638,7 +638,7 @@ void Field::SetButtonAlignY(CPDFSDK_FormFillEnvironment* pFormFillEnv,
   // Not supported.
 }
 
-bool Field::buttonFitBounds(IJS_EventContext* cc,
+bool Field::buttonFitBounds(CJS_Runtime* pRuntime,
                             CJS_PropValue& vp,
                             CFX_WideString& sError) {
   ASSERT(m_pFormFillEnv);
@@ -682,7 +682,7 @@ void Field::SetButtonFitBounds(CPDFSDK_FormFillEnvironment* pFormFillEnv,
   // Not supported.
 }
 
-bool Field::buttonPosition(IJS_EventContext* cc,
+bool Field::buttonPosition(CJS_Runtime* pRuntime,
                            CJS_PropValue& vp,
                            CFX_WideString& sError) {
   ASSERT(m_pFormFillEnv);
@@ -725,7 +725,7 @@ void Field::SetButtonPosition(CPDFSDK_FormFillEnvironment* pFormFillEnv,
   // Not supported.
 }
 
-bool Field::buttonScaleHow(IJS_EventContext* cc,
+bool Field::buttonScaleHow(CJS_Runtime* pRuntime,
                            CJS_PropValue& vp,
                            CFX_WideString& sError) {
   ASSERT(m_pFormFillEnv);
@@ -773,7 +773,7 @@ void Field::SetButtonScaleHow(CPDFSDK_FormFillEnvironment* pFormFillEnv,
   // Not supported.
 }
 
-bool Field::buttonScaleWhen(IJS_EventContext* cc,
+bool Field::buttonScaleWhen(CJS_Runtime* pRuntime,
                             CJS_PropValue& vp,
                             CFX_WideString& sError) {
   ASSERT(m_pFormFillEnv);
@@ -832,7 +832,7 @@ void Field::SetButtonScaleWhen(CPDFSDK_FormFillEnvironment* pFormFillEnv,
   // Not supported.
 }
 
-bool Field::calcOrderIndex(IJS_EventContext* cc,
+bool Field::calcOrderIndex(CJS_Runtime* pRuntime,
                            CJS_PropValue& vp,
                            CFX_WideString& sError) {
   ASSERT(m_pFormFillEnv);
@@ -876,7 +876,7 @@ void Field::SetCalcOrderIndex(CPDFSDK_FormFillEnvironment* pFormFillEnv,
   // Not supported.
 }
 
-bool Field::charLimit(IJS_EventContext* cc,
+bool Field::charLimit(CJS_Runtime* pRuntime,
                       CJS_PropValue& vp,
                       CFX_WideString& sError) {
   ASSERT(m_pFormFillEnv);
@@ -915,7 +915,7 @@ void Field::SetCharLimit(CPDFSDK_FormFillEnvironment* pFormFillEnv,
   // Not supported.
 }
 
-bool Field::comb(IJS_EventContext* cc,
+bool Field::comb(CJS_Runtime* pRuntime,
                  CJS_PropValue& vp,
                  CFX_WideString& sError) {
   ASSERT(m_pFormFillEnv);
@@ -958,7 +958,7 @@ void Field::SetComb(CPDFSDK_FormFillEnvironment* pFormFillEnv,
   // Not supported.
 }
 
-bool Field::commitOnSelChange(IJS_EventContext* cc,
+bool Field::commitOnSelChange(CJS_Runtime* pRuntime,
                               CJS_PropValue& vp,
                               CFX_WideString& sError) {
   ASSERT(m_pFormFillEnv);
@@ -1003,11 +1003,9 @@ void Field::SetCommitOnSelChange(CPDFSDK_FormFillEnvironment* pFormFillEnv,
   // Not supported.
 }
 
-bool Field::currentValueIndices(IJS_EventContext* cc,
+bool Field::currentValueIndices(CJS_Runtime* pRuntime,
                                 CJS_PropValue& vp,
                                 CFX_WideString& sError) {
-  CJS_Runtime* pRuntime = CJS_Runtime::FromEventContext(cc);
-
   if (vp.IsSetting()) {
     if (!m_bCanSet)
       return false;
@@ -1089,7 +1087,7 @@ void Field::SetCurrentValueIndices(CPDFSDK_FormFillEnvironment* pFormFillEnv,
   }
 }
 
-bool Field::defaultStyle(IJS_EventContext* cc,
+bool Field::defaultStyle(CJS_Runtime* pRuntime,
                          CJS_PropValue& vp,
                          CFX_WideString& sError) {
   return false;
@@ -1101,7 +1099,7 @@ void Field::SetDefaultStyle(CPDFSDK_FormFillEnvironment* pFormFillEnv,
   // Not supported.
 }
 
-bool Field::defaultValue(IJS_EventContext* cc,
+bool Field::defaultValue(CJS_Runtime* pRuntime,
                          CJS_PropValue& vp,
                          CFX_WideString& sError) {
   ASSERT(m_pFormFillEnv);
@@ -1142,7 +1140,7 @@ void Field::SetDefaultValue(CPDFSDK_FormFillEnvironment* pFormFillEnv,
   // Not supported.
 }
 
-bool Field::doNotScroll(IJS_EventContext* cc,
+bool Field::doNotScroll(CJS_Runtime* pRuntime,
                         CJS_PropValue& vp,
                         CFX_WideString& sError) {
   ASSERT(m_pFormFillEnv);
@@ -1185,7 +1183,7 @@ void Field::SetDoNotScroll(CPDFSDK_FormFillEnvironment* pFormFillEnv,
   // Not supported.
 }
 
-bool Field::doNotSpellCheck(IJS_EventContext* cc,
+bool Field::doNotSpellCheck(CJS_Runtime* pRuntime,
                             CJS_PropValue& vp,
                             CFX_WideString& sError) {
   ASSERT(m_pFormFillEnv);
@@ -1225,7 +1223,7 @@ void Field::SetDelay(bool bDelay) {
   }
 }
 
-bool Field::delay(IJS_EventContext* cc,
+bool Field::delay(CJS_Runtime* pRuntime,
                   CJS_PropValue& vp,
                   CFX_WideString& sError) {
   if (!vp.IsSetting()) {
@@ -1241,7 +1239,7 @@ bool Field::delay(IJS_EventContext* cc,
   return true;
 }
 
-bool Field::display(IJS_EventContext* cc,
+bool Field::display(CJS_Runtime* pRuntime,
                     CJS_PropValue& vp,
                     CFX_WideString& sError) {
   if (vp.IsSetting()) {
@@ -1323,7 +1321,7 @@ void Field::SetDisplay(CPDFSDK_FormFillEnvironment* pFormFillEnv,
   }
 }
 
-bool Field::doc(IJS_EventContext* cc,
+bool Field::doc(CJS_Runtime* pRuntime,
                 CJS_PropValue& vp,
                 CFX_WideString& sError) {
   if (!vp.IsGetting())
@@ -1333,7 +1331,7 @@ bool Field::doc(IJS_EventContext* cc,
   return true;
 }
 
-bool Field::editable(IJS_EventContext* cc,
+bool Field::editable(CJS_Runtime* pRuntime,
                      CJS_PropValue& vp,
                      CFX_WideString& sError) {
   if (vp.IsSetting()) {
@@ -1356,7 +1354,7 @@ bool Field::editable(IJS_EventContext* cc,
   return true;
 }
 
-bool Field::exportValues(IJS_EventContext* cc,
+bool Field::exportValues(CJS_Runtime* pRuntime,
                          CJS_PropValue& vp,
                          CFX_WideString& sError) {
   std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
@@ -1371,7 +1369,6 @@ bool Field::exportValues(IJS_EventContext* cc,
   if (vp.IsSetting())
     return m_bCanSet && vp.GetJSValue()->IsArrayObject();
 
-  CJS_Runtime* pRuntime = CJS_Runtime::FromEventContext(cc);
   CJS_Array ExportValusArray;
   if (m_nFormControlIndex < 0) {
     for (int i = 0, sz = pFormField->CountControls(); i < sz; i++) {
@@ -1397,7 +1394,7 @@ bool Field::exportValues(IJS_EventContext* cc,
   return true;
 }
 
-bool Field::fileSelect(IJS_EventContext* cc,
+bool Field::fileSelect(CJS_Runtime* pRuntime,
                        CJS_PropValue& vp,
                        CFX_WideString& sError) {
   std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
@@ -1420,10 +1417,9 @@ bool Field::fileSelect(IJS_EventContext* cc,
   return true;
 }
 
-bool Field::fillColor(IJS_EventContext* cc,
+bool Field::fillColor(CJS_Runtime* pRuntime,
                       CJS_PropValue& vp,
                       CFX_WideString& sError) {
-  CJS_Runtime* pRuntime = CJS_Runtime::FromEventContext(cc);
   CJS_Array crArray;
   std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
   if (FieldArray.empty())
@@ -1489,7 +1485,7 @@ void Field::SetFillColor(CPDFSDK_FormFillEnvironment* pFormFillEnv,
   // Not supported.
 }
 
-bool Field::hidden(IJS_EventContext* cc,
+bool Field::hidden(CJS_Runtime* pRuntime,
                    CJS_PropValue& vp,
                    CFX_WideString& sError) {
   if (vp.IsSetting()) {
@@ -1535,7 +1531,7 @@ void Field::SetHidden(CPDFSDK_FormFillEnvironment* pFormFillEnv,
   SetDisplay(pFormFillEnv, swFieldName, nControlIndex, display);
 }
 
-bool Field::highlight(IJS_EventContext* cc,
+bool Field::highlight(CJS_Runtime* pRuntime,
                       CJS_PropValue& vp,
                       CFX_WideString& sError) {
   ASSERT(m_pFormFillEnv);
@@ -1594,7 +1590,7 @@ void Field::SetHighlight(CPDFSDK_FormFillEnvironment* pFormFillEnv,
   // Not supported.
 }
 
-bool Field::lineWidth(IJS_EventContext* cc,
+bool Field::lineWidth(CJS_Runtime* pRuntime,
                       CJS_PropValue& vp,
                       CFX_WideString& sError) {
   if (vp.IsSetting()) {
@@ -1673,7 +1669,7 @@ void Field::SetLineWidth(CPDFSDK_FormFillEnvironment* pFormFillEnv,
   }
 }
 
-bool Field::multiline(IJS_EventContext* cc,
+bool Field::multiline(CJS_Runtime* pRuntime,
                       CJS_PropValue& vp,
                       CFX_WideString& sError) {
   ASSERT(m_pFormFillEnv);
@@ -1716,7 +1712,7 @@ void Field::SetMultiline(CPDFSDK_FormFillEnvironment* pFormFillEnv,
   // Not supported.
 }
 
-bool Field::multipleSelection(IJS_EventContext* cc,
+bool Field::multipleSelection(CJS_Runtime* pRuntime,
                               CJS_PropValue& vp,
                               CFX_WideString& sError) {
   ASSERT(m_pFormFillEnv);
@@ -1753,7 +1749,7 @@ void Field::SetMultipleSelection(CPDFSDK_FormFillEnvironment* pFormFillEnv,
   // Not supported.
 }
 
-bool Field::name(IJS_EventContext* cc,
+bool Field::name(CJS_Runtime* pRuntime,
                  CJS_PropValue& vp,
                  CFX_WideString& sError) {
   if (!vp.IsGetting())
@@ -1767,7 +1763,7 @@ bool Field::name(IJS_EventContext* cc,
   return true;
 }
 
-bool Field::numItems(IJS_EventContext* cc,
+bool Field::numItems(CJS_Runtime* pRuntime,
                      CJS_PropValue& vp,
                      CFX_WideString& sError) {
   if (!vp.IsGetting())
@@ -1787,7 +1783,7 @@ bool Field::numItems(IJS_EventContext* cc,
   return true;
 }
 
-bool Field::page(IJS_EventContext* cc,
+bool Field::page(CJS_Runtime* pRuntime,
                  CJS_PropValue& vp,
                  CFX_WideString& sError) {
   if (!vp.IsGetting()) {
@@ -1810,7 +1806,6 @@ bool Field::page(IJS_EventContext* cc,
     return true;
   }
 
-  CJS_Runtime* pRuntime = CJS_Runtime::FromEventContext(cc);
   CJS_Array PageArray;
   int i = 0;
   for (const auto& pObserved : widgets) {
@@ -1833,7 +1828,7 @@ bool Field::page(IJS_EventContext* cc,
   return true;
 }
 
-bool Field::password(IJS_EventContext* cc,
+bool Field::password(CJS_Runtime* pRuntime,
                      CJS_PropValue& vp,
                      CFX_WideString& sError) {
   ASSERT(m_pFormFillEnv);
@@ -1872,7 +1867,7 @@ void Field::SetPassword(CPDFSDK_FormFillEnvironment* pFormFillEnv,
   // Not supported.
 }
 
-bool Field::print(IJS_EventContext* cc,
+bool Field::print(CJS_Runtime* pRuntime,
                   CJS_PropValue& vp,
                   CFX_WideString& sError) {
   CPDFSDK_InterForm* pInterForm = m_pFormFillEnv->GetInterForm();
@@ -1943,7 +1938,7 @@ bool Field::print(IJS_EventContext* cc,
   return true;
 }
 
-bool Field::radiosInUnison(IJS_EventContext* cc,
+bool Field::radiosInUnison(CJS_Runtime* pRuntime,
                            CJS_PropValue& vp,
                            CFX_WideString& sError) {
   std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
@@ -1966,7 +1961,7 @@ bool Field::radiosInUnison(IJS_EventContext* cc,
   return true;
 }
 
-bool Field::readonly(IJS_EventContext* cc,
+bool Field::readonly(CJS_Runtime* pRuntime,
                      CJS_PropValue& vp,
                      CFX_WideString& sError) {
   std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
@@ -1985,10 +1980,9 @@ bool Field::readonly(IJS_EventContext* cc,
   return true;
 }
 
-bool Field::rect(IJS_EventContext* cc,
+bool Field::rect(CJS_Runtime* pRuntime,
                  CJS_PropValue& vp,
                  CFX_WideString& sError) {
-  CJS_Runtime* pRuntime = CJS_Runtime::FromEventContext(cc);
   CJS_Value Upper_Leftx(pRuntime);
   CJS_Value Upper_Lefty(pRuntime);
   CJS_Value Lower_Rightx(pRuntime);
@@ -2106,7 +2100,7 @@ void Field::SetRect(CPDFSDK_FormFillEnvironment* pFormFillEnv,
   }
 }
 
-bool Field::required(IJS_EventContext* cc,
+bool Field::required(CJS_Runtime* pRuntime,
                      CJS_PropValue& vp,
                      CFX_WideString& sError) {
   std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
@@ -2129,7 +2123,7 @@ bool Field::required(IJS_EventContext* cc,
   return true;
 }
 
-bool Field::richText(IJS_EventContext* cc,
+bool Field::richText(CJS_Runtime* pRuntime,
                      CJS_PropValue& vp,
                      CFX_WideString& sError) {
   ASSERT(m_pFormFillEnv);
@@ -2158,13 +2152,13 @@ bool Field::richText(IJS_EventContext* cc,
   return true;
 }
 
-bool Field::richValue(IJS_EventContext* cc,
+bool Field::richValue(CJS_Runtime* pRuntime,
                       CJS_PropValue& vp,
                       CFX_WideString& sError) {
   return true;
 }
 
-bool Field::rotation(IJS_EventContext* cc,
+bool Field::rotation(CJS_Runtime* pRuntime,
                      CJS_PropValue& vp,
                      CFX_WideString& sError) {
   ASSERT(m_pFormFillEnv);
@@ -2203,10 +2197,9 @@ void Field::SetRotation(CPDFSDK_FormFillEnvironment* pFormFillEnv,
   // Not supported.
 }
 
-bool Field::strokeColor(IJS_EventContext* cc,
+bool Field::strokeColor(CJS_Runtime* pRuntime,
                         CJS_PropValue& vp,
                         CFX_WideString& sError) {
-  CJS_Runtime* pRuntime = CJS_Runtime::FromEventContext(cc);
   CJS_Array crArray;
 
   if (vp.IsSetting()) {
@@ -2270,7 +2263,7 @@ void Field::SetStrokeColor(CPDFSDK_FormFillEnvironment* pFormFillEnv,
   // Not supported.
 }
 
-bool Field::style(IJS_EventContext* cc,
+bool Field::style(CJS_Runtime* pRuntime,
                   CJS_PropValue& vp,
                   CFX_WideString& sError) {
   ASSERT(m_pFormFillEnv);
@@ -2338,16 +2331,15 @@ void Field::SetStyle(CPDFSDK_FormFillEnvironment* pFormFillEnv,
   // Not supported.
 }
 
-bool Field::submitName(IJS_EventContext* cc,
+bool Field::submitName(CJS_Runtime* pRuntime,
                        CJS_PropValue& vp,
                        CFX_WideString& sError) {
   return true;
 }
 
-bool Field::textColor(IJS_EventContext* cc,
+bool Field::textColor(CJS_Runtime* pRuntime,
                       CJS_PropValue& vp,
                       CFX_WideString& sError) {
-  CJS_Runtime* pRuntime = CJS_Runtime::FromEventContext(cc);
   CJS_Array crArray;
 
   if (vp.IsSetting()) {
@@ -2407,7 +2399,7 @@ void Field::SetTextColor(CPDFSDK_FormFillEnvironment* pFormFillEnv,
   // Not supported.
 }
 
-bool Field::textFont(IJS_EventContext* cc,
+bool Field::textFont(CJS_Runtime* pRuntime,
                      CJS_PropValue& vp,
                      CFX_WideString& sError) {
   ASSERT(m_pFormFillEnv);
@@ -2459,7 +2451,7 @@ void Field::SetTextFont(CPDFSDK_FormFillEnvironment* pFormFillEnv,
   // Not supported.
 }
 
-bool Field::textSize(IJS_EventContext* cc,
+bool Field::textSize(CJS_Runtime* pRuntime,
                      CJS_PropValue& vp,
                      CFX_WideString& sError) {
   ASSERT(m_pFormFillEnv);
@@ -2504,7 +2496,7 @@ void Field::SetTextSize(CPDFSDK_FormFillEnvironment* pFormFillEnv,
   // Not supported.
 }
 
-bool Field::type(IJS_EventContext* cc,
+bool Field::type(CJS_Runtime* pRuntime,
                  CJS_PropValue& vp,
                  CFX_WideString& sError) {
   if (!vp.IsGetting())
@@ -2547,7 +2539,7 @@ bool Field::type(IJS_EventContext* cc,
   return true;
 }
 
-bool Field::userName(IJS_EventContext* cc,
+bool Field::userName(CJS_Runtime* pRuntime,
                      CJS_PropValue& vp,
                      CFX_WideString& sError) {
   ASSERT(m_pFormFillEnv);
@@ -2582,11 +2574,9 @@ void Field::SetUserName(CPDFSDK_FormFillEnvironment* pFormFillEnv,
   // Not supported.
 }
 
-bool Field::value(IJS_EventContext* cc,
+bool Field::value(CJS_Runtime* pRuntime,
                   CJS_PropValue& vp,
                   CFX_WideString& sError) {
-  CJS_Runtime* pRuntime = CJS_Runtime::FromEventContext(cc);
-
   if (vp.IsSetting()) {
     if (!m_bCanSet)
       return false;
@@ -2723,7 +2713,7 @@ void Field::SetValue(CPDFSDK_FormFillEnvironment* pFormFillEnv,
   }
 }
 
-bool Field::valueAsString(IJS_EventContext* cc,
+bool Field::valueAsString(CJS_Runtime* pRuntime,
                           CJS_PropValue& vp,
                           CFX_WideString& sError) {
   if (!vp.IsGetting())
@@ -2765,7 +2755,7 @@ bool Field::valueAsString(IJS_EventContext* cc,
   return true;
 }
 
-bool Field::browseForFileToSubmit(IJS_EventContext* cc,
+bool Field::browseForFileToSubmit(CJS_Runtime* pRuntime,
                                   const std::vector<CJS_Value>& params,
                                   CJS_Value& vRet,
                                   CFX_WideString& sError) {
@@ -2786,12 +2776,10 @@ bool Field::browseForFileToSubmit(IJS_EventContext* cc,
   return false;
 }
 
-bool Field::buttonGetCaption(IJS_EventContext* cc,
+bool Field::buttonGetCaption(CJS_Runtime* pRuntime,
                              const std::vector<CJS_Value>& params,
                              CJS_Value& vRet,
                              CFX_WideString& sError) {
-  CJS_Runtime* pRuntime = CJS_Runtime::FromEventContext(cc);
-
   int nface = 0;
   int iSize = params.size();
   if (iSize >= 1)
@@ -2821,13 +2809,10 @@ bool Field::buttonGetCaption(IJS_EventContext* cc,
   return true;
 }
 
-bool Field::buttonGetIcon(IJS_EventContext* cc,
+bool Field::buttonGetIcon(CJS_Runtime* pRuntime,
                           const std::vector<CJS_Value>& params,
                           CJS_Value& vRet,
                           CFX_WideString& sError) {
-  CJS_EventContext* pContext = static_cast<CJS_EventContext*>(cc);
-  CJS_Runtime* pRuntime = pContext->GetJSRuntime();
-
   int nface = 0;
   int iSize = params.size();
   if (iSize >= 1)
@@ -2867,28 +2852,28 @@ bool Field::buttonGetIcon(IJS_EventContext* cc,
   return true;
 }
 
-bool Field::buttonImportIcon(IJS_EventContext* cc,
+bool Field::buttonImportIcon(CJS_Runtime* pRuntime,
                              const std::vector<CJS_Value>& params,
                              CJS_Value& vRet,
                              CFX_WideString& sError) {
   return true;
 }
 
-bool Field::buttonSetCaption(IJS_EventContext* cc,
+bool Field::buttonSetCaption(CJS_Runtime* pRuntime,
                              const std::vector<CJS_Value>& params,
                              CJS_Value& vRet,
                              CFX_WideString& sError) {
   return false;
 }
 
-bool Field::buttonSetIcon(IJS_EventContext* cc,
+bool Field::buttonSetIcon(CJS_Runtime* pRuntime,
                           const std::vector<CJS_Value>& params,
                           CJS_Value& vRet,
                           CFX_WideString& sError) {
   return false;
 }
 
-bool Field::checkThisBox(IJS_EventContext* cc,
+bool Field::checkThisBox(CJS_Runtime* pRuntime,
                          const std::vector<CJS_Value>& params,
                          CJS_Value& vRet,
                          CFX_WideString& sError) {
@@ -2899,9 +2884,7 @@ bool Field::checkThisBox(IJS_EventContext* cc,
   if (!m_bCanSet)
     return false;
 
-  CJS_Runtime* pRuntime = CJS_Runtime::FromEventContext(cc);
   int nWidget = params[0].ToInt(pRuntime);
-
   bool bCheckit = true;
   if (iSize >= 2)
     bCheckit = params[1].ToBool(pRuntime);
@@ -2927,14 +2910,14 @@ bool Field::checkThisBox(IJS_EventContext* cc,
   return true;
 }
 
-bool Field::clearItems(IJS_EventContext* cc,
+bool Field::clearItems(CJS_Runtime* pRuntime,
                        const std::vector<CJS_Value>& params,
                        CJS_Value& vRet,
                        CFX_WideString& sError) {
   return true;
 }
 
-bool Field::defaultIsChecked(IJS_EventContext* cc,
+bool Field::defaultIsChecked(CJS_Runtime* pRuntime,
                              const std::vector<CJS_Value>& params,
                              CJS_Value& vRet,
                              CFX_WideString& sError) {
@@ -2945,9 +2928,7 @@ bool Field::defaultIsChecked(IJS_EventContext* cc,
   if (iSize < 1)
     return false;
 
-  CJS_Runtime* pRuntime = CJS_Runtime::FromEventContext(cc);
   int nWidget = params[0].ToInt(pRuntime);
-
   std::vector<CPDF_FormField*> FieldArray = GetFormFields(m_FieldName);
   if (FieldArray.empty())
     return false;
@@ -2963,14 +2944,14 @@ bool Field::defaultIsChecked(IJS_EventContext* cc,
   return true;
 }
 
-bool Field::deleteItemAt(IJS_EventContext* cc,
+bool Field::deleteItemAt(CJS_Runtime* pRuntime,
                          const std::vector<CJS_Value>& params,
                          CJS_Value& vRet,
                          CFX_WideString& sError) {
   return true;
 }
 
-bool Field::getArray(IJS_EventContext* cc,
+bool Field::getArray(CJS_Runtime* pRuntime,
                      const std::vector<CJS_Value>& params,
                      CJS_Value& vRet,
                      CFX_WideString& sError) {
@@ -2989,8 +2970,6 @@ bool Field::getArray(IJS_EventContext* cc,
       [](const std::unique_ptr<CFX_WideString>& p1,
          const std::unique_ptr<CFX_WideString>& p2) { return *p1 < *p2; });
 
-  CJS_EventContext* pContext = (CJS_EventContext*)cc;
-  CJS_Runtime* pRuntime = pContext->GetJSRuntime();
   CJS_Array FormFieldArray;
 
   int j = 0;
@@ -3010,12 +2989,10 @@ bool Field::getArray(IJS_EventContext* cc,
   return true;
 }
 
-bool Field::getItemAt(IJS_EventContext* cc,
+bool Field::getItemAt(CJS_Runtime* pRuntime,
                       const std::vector<CJS_Value>& params,
                       CJS_Value& vRet,
                       CFX_WideString& sError) {
-  CJS_Runtime* pRuntime = CJS_Runtime::FromEventContext(cc);
-
   int iSize = params.size();
   int nIdx = -1;
   if (iSize >= 1)
@@ -3050,26 +3027,24 @@ bool Field::getItemAt(IJS_EventContext* cc,
   return true;
 }
 
-bool Field::getLock(IJS_EventContext* cc,
+bool Field::getLock(CJS_Runtime* pRuntime,
                     const std::vector<CJS_Value>& params,
                     CJS_Value& vRet,
                     CFX_WideString& sError) {
   return false;
 }
 
-bool Field::insertItemAt(IJS_EventContext* cc,
+bool Field::insertItemAt(CJS_Runtime* pRuntime,
                          const std::vector<CJS_Value>& params,
                          CJS_Value& vRet,
                          CFX_WideString& sError) {
   return true;
 }
 
-bool Field::isBoxChecked(IJS_EventContext* cc,
+bool Field::isBoxChecked(CJS_Runtime* pRuntime,
                          const std::vector<CJS_Value>& params,
                          CJS_Value& vRet,
                          CFX_WideString& sError) {
-  CJS_Runtime* pRuntime = CJS_Runtime::FromEventContext(cc);
-
   int nIndex = -1;
   if (params.size() >= 1)
     nIndex = params[0].ToInt(pRuntime);
@@ -3090,12 +3065,10 @@ bool Field::isBoxChecked(IJS_EventContext* cc,
   return true;
 }
 
-bool Field::isDefaultChecked(IJS_EventContext* cc,
+bool Field::isDefaultChecked(CJS_Runtime* pRuntime,
                              const std::vector<CJS_Value>& params,
                              CJS_Value& vRet,
                              CFX_WideString& sError) {
-  CJS_Runtime* pRuntime = CJS_Runtime::FromEventContext(cc);
-
   int nIndex = -1;
   if (params.size() >= 1)
     nIndex = params[0].ToInt(pRuntime);
@@ -3115,14 +3088,14 @@ bool Field::isDefaultChecked(IJS_EventContext* cc,
   return true;
 }
 
-bool Field::setAction(IJS_EventContext* cc,
+bool Field::setAction(CJS_Runtime* pRuntime,
                       const std::vector<CJS_Value>& params,
                       CJS_Value& vRet,
                       CFX_WideString& sError) {
   return true;
 }
 
-bool Field::setFocus(IJS_EventContext* cc,
+bool Field::setFocus(CJS_Runtime* pRuntime,
                      const std::vector<CJS_Value>& params,
                      CJS_Value& vRet,
                      CFX_WideString& sError) {
@@ -3167,63 +3140,63 @@ bool Field::setFocus(IJS_EventContext* cc,
   return true;
 }
 
-bool Field::setItems(IJS_EventContext* cc,
+bool Field::setItems(CJS_Runtime* pRuntime,
                      const std::vector<CJS_Value>& params,
                      CJS_Value& vRet,
                      CFX_WideString& sError) {
   return true;
 }
 
-bool Field::setLock(IJS_EventContext* cc,
+bool Field::setLock(CJS_Runtime* pRuntime,
                     const std::vector<CJS_Value>& params,
                     CJS_Value& vRet,
                     CFX_WideString& sError) {
   return false;
 }
 
-bool Field::signatureGetModifications(IJS_EventContext* cc,
+bool Field::signatureGetModifications(CJS_Runtime* pRuntime,
                                       const std::vector<CJS_Value>& params,
                                       CJS_Value& vRet,
                                       CFX_WideString& sError) {
   return false;
 }
 
-bool Field::signatureGetSeedValue(IJS_EventContext* cc,
+bool Field::signatureGetSeedValue(CJS_Runtime* pRuntime,
                                   const std::vector<CJS_Value>& params,
                                   CJS_Value& vRet,
                                   CFX_WideString& sError) {
   return false;
 }
 
-bool Field::signatureInfo(IJS_EventContext* cc,
+bool Field::signatureInfo(CJS_Runtime* pRuntime,
                           const std::vector<CJS_Value>& params,
                           CJS_Value& vRet,
                           CFX_WideString& sError) {
   return false;
 }
 
-bool Field::signatureSetSeedValue(IJS_EventContext* cc,
+bool Field::signatureSetSeedValue(CJS_Runtime* pRuntime,
                                   const std::vector<CJS_Value>& params,
                                   CJS_Value& vRet,
                                   CFX_WideString& sError) {
   return false;
 }
 
-bool Field::signatureSign(IJS_EventContext* cc,
+bool Field::signatureSign(CJS_Runtime* pRuntime,
                           const std::vector<CJS_Value>& params,
                           CJS_Value& vRet,
                           CFX_WideString& sError) {
   return false;
 }
 
-bool Field::signatureValidate(IJS_EventContext* cc,
+bool Field::signatureValidate(CJS_Runtime* pRuntime,
                               const std::vector<CJS_Value>& params,
                               CJS_Value& vRet,
                               CFX_WideString& sError) {
   return false;
 }
 
-bool Field::source(IJS_EventContext* cc,
+bool Field::source(CJS_Runtime* pRuntime,
                    CJS_PropValue& vp,
                    CFX_WideString& sError) {
   if (vp.IsGetting()) {

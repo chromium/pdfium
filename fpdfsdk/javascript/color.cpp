@@ -133,20 +133,19 @@ void color::ConvertArrayToPWLColor(CJS_Runtime* pRuntime,
   }
 }
 
-#define JS_IMPLEMENT_COLORPROP(prop, var)                      \
-  bool color::prop(IJS_EventContext* cc, CJS_PropValue& vp,    \
-                   CFX_WideString& sError) {                   \
-    CJS_Runtime* pRuntime = CJS_Runtime::FromEventContext(cc); \
-    CJS_Array array;                                           \
-    if (vp.IsGetting()) {                                      \
-      ConvertPWLColorToArray(pRuntime, var, &array);           \
-      vp << array;                                             \
-    } else {                                                   \
-      if (!vp.GetJSValue()->ConvertToArray(pRuntime, array))   \
-        return false;                                          \
-      ConvertArrayToPWLColor(pRuntime, array, &var);           \
-    }                                                          \
-    return true;                                               \
+#define JS_IMPLEMENT_COLORPROP(prop, var)                    \
+  bool color::prop(CJS_Runtime* pRuntime, CJS_PropValue& vp, \
+                   CFX_WideString& sError) {                 \
+    CJS_Array array;                                         \
+    if (vp.IsGetting()) {                                    \
+      ConvertPWLColorToArray(pRuntime, var, &array);         \
+      vp << array;                                           \
+    } else {                                                 \
+      if (!vp.GetJSValue()->ConvertToArray(pRuntime, array)) \
+        return false;                                        \
+      ConvertArrayToPWLColor(pRuntime, array, &var);         \
+    }                                                        \
+    return true;                                             \
   }
 
 JS_IMPLEMENT_COLORPROP(transparent, m_crTransparent)
@@ -162,7 +161,7 @@ JS_IMPLEMENT_COLORPROP(dkGray, m_crDKGray)
 JS_IMPLEMENT_COLORPROP(gray, m_crGray)
 JS_IMPLEMENT_COLORPROP(ltGray, m_crLTGray)
 
-bool color::convert(IJS_EventContext* cc,
+bool color::convert(CJS_Runtime* pRuntime,
                     const std::vector<CJS_Value>& params,
                     CJS_Value& vRet,
                     CFX_WideString& sError) {
@@ -170,7 +169,6 @@ bool color::convert(IJS_EventContext* cc,
   if (iSize < 2)
     return false;
 
-  CJS_Runtime* pRuntime = CJS_Runtime::FromEventContext(cc);
   CJS_Array aSource;
   if (!params[0].ConvertToArray(pRuntime, aSource))
     return false;
@@ -200,14 +198,13 @@ bool color::convert(IJS_EventContext* cc,
   return true;
 }
 
-bool color::equal(IJS_EventContext* cc,
+bool color::equal(CJS_Runtime* pRuntime,
                   const std::vector<CJS_Value>& params,
                   CJS_Value& vRet,
                   CFX_WideString& sError) {
   if (params.size() < 2)
     return false;
 
-  CJS_Runtime* pRuntime = CJS_Runtime::FromEventContext(cc);
   CJS_Array array1;
   CJS_Array array2;
   if (!params[0].ConvertToArray(pRuntime, array1))

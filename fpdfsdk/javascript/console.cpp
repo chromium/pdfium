@@ -33,21 +33,21 @@ console::console(CJS_Object* pJSObject) : CJS_EmbedObj(pJSObject) {}
 
 console::~console() {}
 
-bool console::clear(IJS_EventContext* cc,
+bool console::clear(CJS_Runtime* pRuntime,
                     const std::vector<CJS_Value>& params,
                     CJS_Value& vRet,
                     CFX_WideString& sError) {
   return true;
 }
 
-bool console::hide(IJS_EventContext* cc,
+bool console::hide(CJS_Runtime* pRuntime,
                    const std::vector<CJS_Value>& params,
                    CJS_Value& vRet,
                    CFX_WideString& sError) {
   return true;
 }
 
-bool console::println(IJS_EventContext* cc,
+bool console::println(CJS_Runtime* pRuntime,
                       const std::vector<CJS_Value>& params,
                       CJS_Value& vRet,
                       CFX_WideString& sError) {
@@ -57,7 +57,7 @@ bool console::println(IJS_EventContext* cc,
   return true;
 }
 
-bool console::show(IJS_EventContext* cc,
+bool console::show(CJS_Runtime* pRuntime,
                    const std::vector<CJS_Value>& params,
                    CJS_Value& vRet,
                    CFX_WideString& sError) {

@@ -27,7 +27,6 @@ class IJS_Runtime {
 
   virtual IJS_EventContext* NewEventContext() = 0;
   virtual void ReleaseEventContext(IJS_EventContext* pContext) = 0;
-  virtual IJS_EventContext* GetCurrentEventContext() = 0;
   virtual CPDFSDK_FormFillEnvironment* GetFormFillEnv() const = 0;
   virtual int ExecuteScript(const CFX_WideString& script,
                             CFX_WideString* info) = 0;

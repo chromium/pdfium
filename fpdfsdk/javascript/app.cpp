@@ -211,14 +211,12 @@ app::app(CJS_Object* pJSObject)
 app::~app() {
 }
 
-bool app::activeDocs(IJS_EventContext* cc,
+bool app::activeDocs(CJS_Runtime* pRuntime,
                      CJS_PropValue& vp,
                      CFX_WideString& sError) {
   if (!vp.IsGetting())
     return false;
 
-  CJS_EventContext* pContext = static_cast<CJS_EventContext*>(cc);
-  CJS_Runtime* pRuntime = pContext->GetJSRuntime();
   CJS_Document* pJSDocument = nullptr;
   v8::Local<v8::Object> pObj = pRuntime->GetThisObj();
   if (CFXJS_Engine::GetObjDefnID(pObj) == CJS_Document::g_nObjDefnID) {
@@ -236,16 +234,14 @@ bool app::activeDocs(IJS_EventContext* cc,
   return true;
 }
 
-bool app::calculate(IJS_EventContext* cc,
+bool app::calculate(CJS_Runtime* pRuntime,
                     CJS_PropValue& vp,
                     CFX_WideString& sError) {
   if (vp.IsSetting()) {
     bool bVP;
     vp >> bVP;
     m_bCalculate = (bool)bVP;
-
-    CJS_EventContext* pContext = static_cast<CJS_EventContext*>(cc);
-    pContext->GetFormFillEnv()->GetInterForm()->EnableCalculate(
+    pRuntime->GetFormFillEnv()->GetInterForm()->EnableCalculate(
         (bool)m_bCalculate);
   } else {
     vp << (bool)m_bCalculate;
@@ -253,7 +249,7 @@ bool app::calculate(IJS_EventContext* cc,
   return true;
 }
 
-bool app::formsVersion(IJS_EventContext* cc,
+bool app::formsVersion(CJS_Runtime* pRuntime,
                        CJS_PropValue& vp,
                        CFX_WideString& sError) {
   if (vp.IsGetting()) {
@@ -264,7 +260,7 @@ bool app::formsVersion(IJS_EventContext* cc,
   return false;
 }
 
-bool app::viewerType(IJS_EventContext* cc,
+bool app::viewerType(CJS_Runtime* pRuntime,
                      CJS_PropValue& vp,
                      CFX_WideString& sError) {
   if (vp.IsGetting()) {
@@ -275,7 +271,7 @@ bool app::viewerType(IJS_EventContext* cc,
   return false;
 }
 
-bool app::viewerVariation(IJS_EventContext* cc,
+bool app::viewerVariation(CJS_Runtime* pRuntime,
                           CJS_PropValue& vp,
                           CFX_WideString& sError) {
   if (vp.IsGetting()) {
@@ -286,14 +282,13 @@ bool app::viewerVariation(IJS_EventContext* cc,
   return false;
 }
 
-bool app::viewerVersion(IJS_EventContext* cc,
+bool app::viewerVersion(CJS_Runtime* pRuntime,
                         CJS_PropValue& vp,
                         CFX_WideString& sError) {
   if (!vp.IsGetting())
     return false;
 #ifdef PDF_ENABLE_XFA
-  CJS_EventContext* pJSContext = static_cast<CJS_EventContext*>(cc);
-  CPDFXFA_Context* pXFAContext = pJSContext->GetFormFillEnv()->GetXFAContext();
+  CPDFXFA_Context* pXFAContext = pRuntime->GetFormFillEnv()->GetXFAContext();
   if (pXFAContext->GetDocType() == 1 || pXFAContext->GetDocType() == 2) {
     vp << JS_NUM_VIEWERVERSION_XFA;
     return true;
@@ -303,14 +298,13 @@ bool app::viewerVersion(IJS_EventContext* cc,
   return true;
 }
 
-bool app::platform(IJS_EventContext* cc,
+bool app::platform(CJS_Runtime* pRuntime,
                    CJS_PropValue& vp,
                    CFX_WideString& sError) {
   if (!vp.IsGetting())
     return false;
 #ifdef PDF_ENABLE_XFA
-  CPDFSDK_FormFillEnvironment* pFormFillEnv =
-      CJS_Runtime::FromEventContext(cc)->GetFormFillEnv();
+  CPDFSDK_FormFillEnvironment* pFormFillEnv = pRuntime->GetFormFillEnv();
   if (!pFormFillEnv)
     return false;
   CFX_WideString platfrom = pFormFillEnv->GetPlatform();
@@ -323,14 +317,13 @@ bool app::platform(IJS_EventContext* cc,
   return true;
 }
 
-bool app::language(IJS_EventContext* cc,
+bool app::language(CJS_Runtime* pRuntime,
                    CJS_PropValue& vp,
                    CFX_WideString& sError) {
   if (!vp.IsGetting())
     return false;
 #ifdef PDF_ENABLE_XFA
-  CPDFSDK_FormFillEnvironment* pFormFillEnv =
-      CJS_Runtime::FromEventContext(cc)->GetFormFillEnv();
+  CPDFSDK_FormFillEnvironment* pFormFillEnv = pRuntime->GetFormFillEnv();
   if (!pFormFillEnv)
     return false;
   CFX_WideString language = pFormFillEnv->GetLanguage();
@@ -347,7 +340,7 @@ bool app::language(IJS_EventContext* cc,
 // comment: need reader support
 // note:
 // CFDF_Document * CPDFSDK_FormFillEnvironment::NewFDF();
-bool app::newFDF(IJS_EventContext* cc,
+bool app::newFDF(CJS_Runtime* pRuntime,
                  const std::vector<CJS_Value>& params,
                  CJS_Value& vRet,
                  CFX_WideString& sError) {
@@ -360,18 +353,17 @@ bool app::newFDF(IJS_EventContext* cc,
 // CFDF_Document * CPDFSDK_FormFillEnvironment::OpenFDF(string strPath,bool
 // bUserConv);
 
-bool app::openFDF(IJS_EventContext* cc,
+bool app::openFDF(CJS_Runtime* pRuntime,
                   const std::vector<CJS_Value>& params,
                   CJS_Value& vRet,
                   CFX_WideString& sError) {
   return true;
 }
 
-bool app::alert(IJS_EventContext* cc,
+bool app::alert(CJS_Runtime* pRuntime,
                 const std::vector<CJS_Value>& params,
                 CJS_Value& vRet,
                 CFX_WideString& sError) {
-  CJS_Runtime* pRuntime = CJS_Runtime::FromEventContext(cc);
   std::vector<CJS_Value> newParams = JS_ExpandKeywordParams(
       pRuntime, params, 4, L"cMsg", L"nIcon", L"nType", L"cTitle");
 
@@ -429,12 +421,11 @@ bool app::alert(IJS_EventContext* cc,
   return true;
 }
 
-bool app::beep(IJS_EventContext* cc,
+bool app::beep(CJS_Runtime* pRuntime,
                const std::vector<CJS_Value>& params,
                CJS_Value& vRet,
                CFX_WideString& sError) {
   if (params.size() == 1) {
-    CJS_Runtime* pRuntime = CJS_Runtime::FromEventContext(cc);
     pRuntime->GetFormFillEnv()->JS_appBeep(params[0].ToInt(pRuntime));
     return true;
   }
@@ -443,25 +434,25 @@ bool app::beep(IJS_EventContext* cc,
   return false;
 }
 
-bool app::findComponent(IJS_EventContext* cc,
+bool app::findComponent(CJS_Runtime* pRuntime,
                         const std::vector<CJS_Value>& params,
                         CJS_Value& vRet,
                         CFX_WideString& sError) {
   return true;
 }
 
-bool app::popUpMenuEx(IJS_EventContext* cc,
+bool app::popUpMenuEx(CJS_Runtime* pRuntime,
                       const std::vector<CJS_Value>& params,
                       CJS_Value& vRet,
                       CFX_WideString& sError) {
   return false;
 }
 
-bool app::fs(IJS_EventContext* cc, CJS_PropValue& vp, CFX_WideString& sError) {
+bool app::fs(CJS_Runtime* pRuntime, CJS_PropValue& vp, CFX_WideString& sError) {
   return false;
 }
 
-bool app::setInterval(IJS_EventContext* cc,
+bool app::setInterval(CJS_Runtime* pRuntime,
                       const std::vector<CJS_Value>& params,
                       CJS_Value& vRet,
                       CFX_WideString& sError) {
@@ -470,7 +461,6 @@ bool app::setInterval(IJS_EventContext* cc,
     return false;
   }
 
-  CJS_Runtime* pRuntime = CJS_Runtime::FromEventContext(cc);
   CFX_WideString script =
       params.size() > 0 ? params[0].ToCFXWideString(pRuntime) : L"";
   if (script.IsEmpty()) {
@@ -495,7 +485,7 @@ bool app::setInterval(IJS_EventContext* cc,
   return true;
 }
 
-bool app::setTimeOut(IJS_EventContext* cc,
+bool app::setTimeOut(CJS_Runtime* pRuntime,
                      const std::vector<CJS_Value>& params,
                      CJS_Value& vRet,
                      CFX_WideString& sError) {
@@ -504,7 +494,6 @@ bool app::setTimeOut(IJS_EventContext* cc,
     return false;
   }
 
-  CJS_Runtime* pRuntime = CJS_Runtime::FromEventContext(cc);
   CFX_WideString script = params[0].ToCFXWideString(pRuntime);
   if (script.IsEmpty()) {
     sError = JSGetStringFromID(IDS_STRING_JSAFNUMBER_KEYSTROKE);
@@ -530,7 +519,7 @@ bool app::setTimeOut(IJS_EventContext* cc,
   return true;
 }
 
-bool app::clearTimeOut(IJS_EventContext* cc,
+bool app::clearTimeOut(CJS_Runtime* pRuntime,
                        const std::vector<CJS_Value>& params,
                        CJS_Value& vRet,
                        CFX_WideString& sError) {
@@ -539,11 +528,11 @@ bool app::clearTimeOut(IJS_EventContext* cc,
     return false;
   }
 
-  app::ClearTimerCommon(CJS_Runtime::FromEventContext(cc), params[0]);
+  app::ClearTimerCommon(pRuntime, params[0]);
   return true;
 }
 
-bool app::clearInterval(IJS_EventContext* cc,
+bool app::clearInterval(CJS_Runtime* pRuntime,
                         const std::vector<CJS_Value>& params,
                         CJS_Value& vRet,
                         CFX_WideString& sError) {
@@ -552,7 +541,7 @@ bool app::clearInterval(IJS_EventContext* cc,
     return false;
   }
 
-  app::ClearTimerCommon(CJS_Runtime::FromEventContext(cc), params[0]);
+  app::ClearTimerCommon(pRuntime, params[0]);
   return true;
 }
 
@@ -575,7 +564,7 @@ void app::ClearTimerCommon(CJS_Runtime* pRuntime, const CJS_Value& param) {
   GlobalTimer::Cancel(pTimerObj->GetTimerID());
 }
 
-bool app::execMenuItem(IJS_EventContext* cc,
+bool app::execMenuItem(CJS_Runtime* pRuntime,
                        const std::vector<CJS_Value>& params,
                        CJS_Value& vRet,
                        CFX_WideString& sError) {
@@ -602,7 +591,7 @@ void app::RunJsScript(CJS_Runtime* pRuntime, const CFX_WideString& wsScript) {
   }
 }
 
-bool app::goBack(IJS_EventContext* cc,
+bool app::goBack(CJS_Runtime* pRuntime,
                  const std::vector<CJS_Value>& params,
                  CJS_Value& vRet,
                  CFX_WideString& sError) {
@@ -610,7 +599,7 @@ bool app::goBack(IJS_EventContext* cc,
   return true;
 }
 
-bool app::goForward(IJS_EventContext* cc,
+bool app::goForward(CJS_Runtime* pRuntime,
                     const std::vector<CJS_Value>& params,
                     CJS_Value& vRet,
                     CFX_WideString& sError) {
@@ -618,11 +607,10 @@ bool app::goForward(IJS_EventContext* cc,
   return true;
 }
 
-bool app::mailMsg(IJS_EventContext* cc,
+bool app::mailMsg(CJS_Runtime* pRuntime,
                   const std::vector<CJS_Value>& params,
                   CJS_Value& vRet,
                   CFX_WideString& sError) {
-  CJS_Runtime* pRuntime = CJS_Runtime::FromEventContext(cc);
   std::vector<CJS_Value> newParams =
       JS_ExpandKeywordParams(pRuntime, params, 6, L"bUI", L"cTo", L"cCc",
                              L"cBcc", L"cSubject", L"cMsg");
@@ -661,15 +649,14 @@ bool app::mailMsg(IJS_EventContext* cc,
     cMsg = newParams[5].ToCFXWideString(pRuntime);
 
   pRuntime->BeginBlock();
-  CJS_EventContext* pContext = static_cast<CJS_EventContext*>(cc);
-  pContext->GetFormFillEnv()->JS_docmailForm(nullptr, 0, bUI, cTo.c_str(),
+  pRuntime->GetFormFillEnv()->JS_docmailForm(nullptr, 0, bUI, cTo.c_str(),
                                              cSubject.c_str(), cCc.c_str(),
                                              cBcc.c_str(), cMsg.c_str());
   pRuntime->EndBlock();
   return true;
 }
 
-bool app::launchURL(IJS_EventContext* cc,
+bool app::launchURL(CJS_Runtime* pRuntime,
                     const std::vector<CJS_Value>& params,
                     CJS_Value& vRet,
                     CFX_WideString& sError) {
@@ -677,7 +664,7 @@ bool app::launchURL(IJS_EventContext* cc,
   return true;
 }
 
-bool app::runtimeHighlight(IJS_EventContext* cc,
+bool app::runtimeHighlight(CJS_Runtime* pRuntime,
                            CJS_PropValue& vp,
                            CFX_WideString& sError) {
   if (vp.IsSetting()) {
@@ -688,20 +675,20 @@ bool app::runtimeHighlight(IJS_EventContext* cc,
   return true;
 }
 
-bool app::fullscreen(IJS_EventContext* cc,
+bool app::fullscreen(CJS_Runtime* pRuntime,
                      CJS_PropValue& vp,
                      CFX_WideString& sError) {
   return false;
 }
 
-bool app::popUpMenu(IJS_EventContext* cc,
+bool app::popUpMenu(CJS_Runtime* pRuntime,
                     const std::vector<CJS_Value>& params,
                     CJS_Value& vRet,
                     CFX_WideString& sError) {
   return false;
 }
 
-bool app::browseForDoc(IJS_EventContext* cc,
+bool app::browseForDoc(CJS_Runtime* pRuntime,
                        const std::vector<CJS_Value>& params,
                        CJS_Value& vRet,
                        CFX_WideString& sError) {
@@ -727,25 +714,24 @@ CFX_WideString app::SysPathToPDFPath(const CFX_WideString& sOldPath) {
   return sRet;
 }
 
-bool app::newDoc(IJS_EventContext* cc,
+bool app::newDoc(CJS_Runtime* pRuntime,
                  const std::vector<CJS_Value>& params,
                  CJS_Value& vRet,
                  CFX_WideString& sError) {
   return false;
 }
 
-bool app::openDoc(IJS_EventContext* cc,
+bool app::openDoc(CJS_Runtime* pRuntime,
                   const std::vector<CJS_Value>& params,
                   CJS_Value& vRet,
                   CFX_WideString& sError) {
   return false;
 }
 
-bool app::response(IJS_EventContext* cc,
+bool app::response(CJS_Runtime* pRuntime,
                    const std::vector<CJS_Value>& params,
                    CJS_Value& vRet,
                    CFX_WideString& sError) {
-  CJS_Runtime* pRuntime = CJS_Runtime::FromEventContext(cc);
   std::vector<CJS_Value> newParams =
       JS_ExpandKeywordParams(pRuntime, params, 5, L"cQuestion", L"cTitle",
                              L"cDefault", L"bPassword", L"cLabel");
@@ -776,8 +762,7 @@ bool app::response(IJS_EventContext* cc,
   std::unique_ptr<char[]> pBuff(new char[MAX_INPUT_BYTES + 2]);
   memset(pBuff.get(), 0, MAX_INPUT_BYTES + 2);
 
-  CJS_EventContext* pContext = static_cast<CJS_EventContext*>(cc);
-  int nLengthBytes = pContext->GetFormFillEnv()->JS_appResponse(
+  int nLengthBytes = pRuntime->GetFormFillEnv()->JS_appResponse(
       swQuestion.c_str(), swTitle.c_str(), swDefault.c_str(), swLabel.c_str(),
       bPassword, pBuff.get(), MAX_INPUT_BYTES);
 
@@ -794,13 +779,13 @@ bool app::response(IJS_EventContext* cc,
   return true;
 }
 
-bool app::media(IJS_EventContext* cc,
+bool app::media(CJS_Runtime* pRuntime,
                 CJS_PropValue& vp,
                 CFX_WideString& sError) {
   return false;
 }
 
-bool app::execDialog(IJS_EventContext* cc,
+bool app::execDialog(CJS_Runtime* pRuntime,
                      const std::vector<CJS_Value>& params,
                      CJS_Value& vRet,
                      CFX_WideString& sError) {

@@ -750,7 +750,7 @@ CFX_WideString CJS_PublicMethods::MakeFormatDate(double dDate,
 
 // function AFNumber_Format(nDec, sepStyle, negStyle, currStyle, strCurrency,
 // bCurrencyPrepend)
-bool CJS_PublicMethods::AFNumber_Format(IJS_EventContext* cc,
+bool CJS_PublicMethods::AFNumber_Format(CJS_Runtime* pRuntime,
                                         const std::vector<CJS_Value>& params,
                                         CJS_Value& vRet,
                                         CFX_WideString& sError) {
@@ -760,9 +760,8 @@ bool CJS_PublicMethods::AFNumber_Format(IJS_EventContext* cc,
     return false;
   }
 
-  CJS_EventContext* pContext = static_cast<CJS_EventContext*>(cc);
-  CJS_Runtime* pRuntime = pContext->GetJSRuntime();
-  CJS_EventHandler* pEvent = pContext->GetEventHandler();
+  CJS_EventHandler* pEvent =
+      pRuntime->GetCurrentEventContext()->GetEventHandler();
   if (!pEvent->m_pValue)
     return false;
 
@@ -855,7 +854,7 @@ bool CJS_PublicMethods::AFNumber_Format(IJS_EventContext* cc,
         vProp.StartGetting();
         vProp << arColor;
         vProp.StartSetting();
-        fTarget->textColor(cc, vProp, sError);  // red
+        fTarget->textColor(pRuntime, vProp, sError);  // red
       }
     }
   } else {
@@ -872,7 +871,7 @@ bool CJS_PublicMethods::AFNumber_Format(IJS_EventContext* cc,
 
         CJS_PropValue vProp(pRuntime);
         vProp.StartGetting();
-        fTarget->textColor(cc, vProp, sError);
+        fTarget->textColor(pRuntime, vProp, sError);
 
         CJS_Array aProp;
         vProp.GetJSValue()->ConvertToArray(pRuntime, aProp);
@@ -887,7 +886,7 @@ bool CJS_PublicMethods::AFNumber_Format(IJS_EventContext* cc,
           vProp2.StartGetting();
           vProp2 << arColor;
           vProp2.StartSetting();
-          fTarget->textColor(cc, vProp2, sError);
+          fTarget->textColor(pRuntime, vProp2, sError);
         }
       }
     }
@@ -898,16 +897,15 @@ bool CJS_PublicMethods::AFNumber_Format(IJS_EventContext* cc,
 
 // function AFNumber_Keystroke(nDec, sepStyle, negStyle, currStyle, strCurrency,
 // bCurrencyPrepend)
-bool CJS_PublicMethods::AFNumber_Keystroke(IJS_EventContext* cc,
+bool CJS_PublicMethods::AFNumber_Keystroke(CJS_Runtime* pRuntime,
                                            const std::vector<CJS_Value>& params,
                                            CJS_Value& vRet,
                                            CFX_WideString& sError) {
-  CJS_EventContext* pContext = static_cast<CJS_EventContext*>(cc);
-  CJS_EventHandler* pEvent = pContext->GetEventHandler();
-
   if (params.size() < 2)
     return false;
 
+  CJS_EventContext* pContext = pRuntime->GetCurrentEventContext();
+  CJS_EventHandler* pEvent = pContext->GetEventHandler();
   if (!pEvent->m_pValue)
     return false;
 
@@ -945,7 +943,6 @@ bool CJS_PublicMethods::AFNumber_Keystroke(IJS_EventContext* cc,
     }
   }
 
-  CJS_Runtime* pRuntime = CJS_Runtime::FromEventContext(cc);
   int iSepStyle = params[1].ToInt(pRuntime);
   if (iSepStyle < 0 || iSepStyle > 3)
     iSepStyle = 0;
@@ -999,19 +996,18 @@ bool CJS_PublicMethods::AFNumber_Keystroke(IJS_EventContext* cc,
 }
 
 // function AFPercent_Format(nDec, sepStyle)
-bool CJS_PublicMethods::AFPercent_Format(IJS_EventContext* cc,
+bool CJS_PublicMethods::AFPercent_Format(CJS_Runtime* pRuntime,
                                          const std::vector<CJS_Value>& params,
                                          CJS_Value& vRet,
                                          CFX_WideString& sError) {
 #if _FX_OS_ != _FX_ANDROID_
-  CJS_EventContext* pContext = static_cast<CJS_EventContext*>(cc);
-  CJS_Runtime* pRuntime = CJS_Runtime::FromEventContext(cc);
-  CJS_EventHandler* pEvent = pContext->GetEventHandler();
-
   if (params.size() != 2) {
     sError = JSGetStringFromID(IDS_STRING_JSPARAMERROR);
     return false;
   }
+
+  CJS_EventHandler* pEvent =
+      pRuntime->GetCurrentEventContext()->GetEventHandler();
   if (!pEvent->m_pValue)
     return false;
 
@@ -1092,26 +1088,25 @@ bool CJS_PublicMethods::AFPercent_Format(IJS_EventContext* cc,
 }
 // AFPercent_Keystroke(nDec, sepStyle)
 bool CJS_PublicMethods::AFPercent_Keystroke(
-    IJS_EventContext* cc,
+    CJS_Runtime* pRuntime,
     const std::vector<CJS_Value>& params,
     CJS_Value& vRet,
     CFX_WideString& sError) {
-  return AFNumber_Keystroke(cc, params, vRet, sError);
+  return AFNumber_Keystroke(pRuntime, params, vRet, sError);
 }
 
 // function AFDate_FormatEx(cFormat)
-bool CJS_PublicMethods::AFDate_FormatEx(IJS_EventContext* cc,
+bool CJS_PublicMethods::AFDate_FormatEx(CJS_Runtime* pRuntime,
                                         const std::vector<CJS_Value>& params,
                                         CJS_Value& vRet,
                                         CFX_WideString& sError) {
-  CJS_EventContext* pContext = static_cast<CJS_EventContext*>(cc);
-  CJS_Runtime* pRuntime = CJS_Runtime::FromEventContext(cc);
-  CJS_EventHandler* pEvent = pContext->GetEventHandler();
-
   if (params.size() != 1) {
     sError = JSGetStringFromID(IDS_STRING_JSPARAMERROR);
     return false;
   }
+
+  CJS_EventContext* pContext = pRuntime->GetCurrentEventContext();
+  CJS_EventHandler* pEvent = pContext->GetEventHandler();
   if (!pEvent->m_pValue)
     return false;
 
@@ -1200,22 +1195,21 @@ double CJS_PublicMethods::MakeInterDate(const CFX_WideString& strValue) {
 }
 
 // AFDate_KeystrokeEx(cFormat)
-bool CJS_PublicMethods::AFDate_KeystrokeEx(IJS_EventContext* cc,
+bool CJS_PublicMethods::AFDate_KeystrokeEx(CJS_Runtime* pRuntime,
                                            const std::vector<CJS_Value>& params,
                                            CJS_Value& vRet,
                                            CFX_WideString& sError) {
-  CJS_EventContext* pContext = (CJS_EventContext*)cc;
-  CJS_Runtime* pRuntime = CJS_Runtime::FromEventContext(cc);
-  CJS_EventHandler* pEvent = pContext->GetEventHandler();
-
   if (params.size() != 1) {
     sError = L"AFDate_KeystrokeEx's parameters' size r not correct";
     return false;
   }
 
+  CJS_EventContext* pContext = pRuntime->GetCurrentEventContext();
+  CJS_EventHandler* pEvent = pContext->GetEventHandler();
   if (pEvent->WillCommit()) {
     if (!pEvent->m_pValue)
       return false;
+
     CFX_WideString strValue = pEvent->Value();
     if (strValue.IsEmpty())
       return true;
@@ -1235,7 +1229,7 @@ bool CJS_PublicMethods::AFDate_KeystrokeEx(IJS_EventContext* cc,
   return true;
 }
 
-bool CJS_PublicMethods::AFDate_Format(IJS_EventContext* cc,
+bool CJS_PublicMethods::AFDate_Format(CJS_Runtime* pRuntime,
                                       const std::vector<CJS_Value>& params,
                                       CJS_Value& vRet,
                                       CFX_WideString& sError) {
@@ -1244,7 +1238,6 @@ bool CJS_PublicMethods::AFDate_Format(IJS_EventContext* cc,
     return false;
   }
 
-  CJS_Runtime* pRuntime = CJS_Runtime::FromEventContext(cc);
   int iIndex = params[0].ToInt(pRuntime);
   const FX_WCHAR* cFormats[] = {L"m/d",
                                 L"m/d/yy",
@@ -1265,13 +1258,12 @@ bool CJS_PublicMethods::AFDate_Format(IJS_EventContext* cc,
     iIndex = 0;
 
   std::vector<CJS_Value> newParams;
-  newParams.push_back(
-      CJS_Value(CJS_Runtime::FromEventContext(cc), cFormats[iIndex]));
-  return AFDate_FormatEx(cc, newParams, vRet, sError);
+  newParams.push_back(CJS_Value(pRuntime, cFormats[iIndex]));
+  return AFDate_FormatEx(pRuntime, newParams, vRet, sError);
 }
 
 // AFDate_KeystrokeEx(cFormat)
-bool CJS_PublicMethods::AFDate_Keystroke(IJS_EventContext* cc,
+bool CJS_PublicMethods::AFDate_Keystroke(CJS_Runtime* pRuntime,
                                          const std::vector<CJS_Value>& params,
                                          CJS_Value& vRet,
                                          CFX_WideString& sError) {
@@ -1280,7 +1272,6 @@ bool CJS_PublicMethods::AFDate_Keystroke(IJS_EventContext* cc,
     return false;
   }
 
-  CJS_Runtime* pRuntime = CJS_Runtime::FromEventContext(cc);
   int iIndex = params[0].ToInt(pRuntime);
   const FX_WCHAR* cFormats[] = {L"m/d",
                                 L"m/d/yy",
@@ -1301,13 +1292,12 @@ bool CJS_PublicMethods::AFDate_Keystroke(IJS_EventContext* cc,
     iIndex = 0;
 
   std::vector<CJS_Value> newParams;
-  newParams.push_back(
-      CJS_Value(CJS_Runtime::FromEventContext(cc), cFormats[iIndex]));
-  return AFDate_KeystrokeEx(cc, newParams, vRet, sError);
+  newParams.push_back(CJS_Value(pRuntime, cFormats[iIndex]));
+  return AFDate_KeystrokeEx(pRuntime, newParams, vRet, sError);
 }
 
 // function AFTime_Format(ptf)
-bool CJS_PublicMethods::AFTime_Format(IJS_EventContext* cc,
+bool CJS_PublicMethods::AFTime_Format(CJS_Runtime* pRuntime,
                                       const std::vector<CJS_Value>& params,
                                       CJS_Value& vRet,
                                       CFX_WideString& sError) {
@@ -1316,7 +1306,6 @@ bool CJS_PublicMethods::AFTime_Format(IJS_EventContext* cc,
     return false;
   }
 
-  CJS_Runtime* pRuntime = CJS_Runtime::FromEventContext(cc);
   int iIndex = params[0].ToInt(pRuntime);
   const FX_WCHAR* cFormats[] = {L"HH:MM", L"h:MM tt", L"HH:MM:ss",
                                 L"h:MM:ss tt"};
@@ -1325,12 +1314,11 @@ bool CJS_PublicMethods::AFTime_Format(IJS_EventContext* cc,
     iIndex = 0;
 
   std::vector<CJS_Value> newParams;
-  newParams.push_back(
-      CJS_Value(CJS_Runtime::FromEventContext(cc), cFormats[iIndex]));
-  return AFDate_FormatEx(cc, newParams, vRet, sError);
+  newParams.push_back(CJS_Value(pRuntime, cFormats[iIndex]));
+  return AFDate_FormatEx(pRuntime, newParams, vRet, sError);
 }
 
-bool CJS_PublicMethods::AFTime_Keystroke(IJS_EventContext* cc,
+bool CJS_PublicMethods::AFTime_Keystroke(CJS_Runtime* pRuntime,
                                          const std::vector<CJS_Value>& params,
                                          CJS_Value& vRet,
                                          CFX_WideString& sError) {
@@ -1339,7 +1327,6 @@ bool CJS_PublicMethods::AFTime_Keystroke(IJS_EventContext* cc,
     return false;
   }
 
-  CJS_Runtime* pRuntime = CJS_Runtime::FromEventContext(cc);
   int iIndex = params[0].ToInt(pRuntime);
   const FX_WCHAR* cFormats[] = {L"HH:MM", L"h:MM tt", L"HH:MM:ss",
                                 L"h:MM:ss tt"};
@@ -1348,27 +1335,26 @@ bool CJS_PublicMethods::AFTime_Keystroke(IJS_EventContext* cc,
     iIndex = 0;
 
   std::vector<CJS_Value> newParams;
-  newParams.push_back(
-      CJS_Value(CJS_Runtime::FromEventContext(cc), cFormats[iIndex]));
-  return AFDate_KeystrokeEx(cc, newParams, vRet, sError);
+  newParams.push_back(CJS_Value(pRuntime, cFormats[iIndex]));
+  return AFDate_KeystrokeEx(pRuntime, newParams, vRet, sError);
 }
 
-bool CJS_PublicMethods::AFTime_FormatEx(IJS_EventContext* cc,
+bool CJS_PublicMethods::AFTime_FormatEx(CJS_Runtime* pRuntime,
                                         const std::vector<CJS_Value>& params,
                                         CJS_Value& vRet,
                                         CFX_WideString& sError) {
-  return AFDate_FormatEx(cc, params, vRet, sError);
+  return AFDate_FormatEx(pRuntime, params, vRet, sError);
 }
 
-bool CJS_PublicMethods::AFTime_KeystrokeEx(IJS_EventContext* cc,
+bool CJS_PublicMethods::AFTime_KeystrokeEx(CJS_Runtime* pRuntime,
                                            const std::vector<CJS_Value>& params,
                                            CJS_Value& vRet,
                                            CFX_WideString& sError) {
-  return AFDate_KeystrokeEx(cc, params, vRet, sError);
+  return AFDate_KeystrokeEx(pRuntime, params, vRet, sError);
 }
 
 // function AFSpecial_Format(psf)
-bool CJS_PublicMethods::AFSpecial_Format(IJS_EventContext* cc,
+bool CJS_PublicMethods::AFSpecial_Format(CJS_Runtime* pRuntime,
                                          const std::vector<CJS_Value>& params,
                                          CJS_Value& vRet,
                                          CFX_WideString& sError) {
@@ -1377,12 +1363,11 @@ bool CJS_PublicMethods::AFSpecial_Format(IJS_EventContext* cc,
     return false;
   }
 
-  CJS_EventContext* pContext = static_cast<CJS_EventContext*>(cc);
-  CJS_EventHandler* pEvent = pContext->GetEventHandler();
+  CJS_EventHandler* pEvent =
+      pRuntime->GetCurrentEventContext()->GetEventHandler();
   if (!pEvent->m_pValue)
     return false;
 
-  CJS_Runtime* pRuntime = CJS_Runtime::FromEventContext(cc);
   CFX_WideString wsSource = pEvent->Value();
   CFX_WideString wsFormat;
   switch (params[0].ToInt(pRuntime)) {
@@ -1409,19 +1394,17 @@ bool CJS_PublicMethods::AFSpecial_Format(IJS_EventContext* cc,
 
 // function AFSpecial_KeystrokeEx(mask)
 bool CJS_PublicMethods::AFSpecial_KeystrokeEx(
-    IJS_EventContext* cc,
+    CJS_Runtime* pRuntime,
     const std::vector<CJS_Value>& params,
     CJS_Value& vRet,
     CFX_WideString& sError) {
-  CJS_EventContext* pContext = (CJS_EventContext*)cc;
-  CJS_Runtime* pRuntime = CJS_Runtime::FromEventContext(cc);
-  CJS_EventHandler* pEvent = pContext->GetEventHandler();
-
   if (params.size() < 1) {
     sError = JSGetStringFromID(IDS_STRING_JSPARAMERROR);
     return false;
   }
 
+  CJS_EventContext* pContext = pRuntime->GetCurrentEventContext();
+  CJS_EventHandler* pEvent = pContext->GetEventHandler();
   if (!pEvent->m_pValue)
     return false;
 
@@ -1494,7 +1477,7 @@ bool CJS_PublicMethods::AFSpecial_KeystrokeEx(
 
 // function AFSpecial_Keystroke(psf)
 bool CJS_PublicMethods::AFSpecial_Keystroke(
-    IJS_EventContext* cc,
+    CJS_Runtime* pRuntime,
     const std::vector<CJS_Value>& params,
     CJS_Value& vRet,
     CFX_WideString& sError) {
@@ -1503,13 +1486,12 @@ bool CJS_PublicMethods::AFSpecial_Keystroke(
     return false;
   }
 
-  CJS_EventContext* pContext = static_cast<CJS_EventContext*>(cc);
-  CJS_EventHandler* pEvent = pContext->GetEventHandler();
+  CJS_EventHandler* pEvent =
+      pRuntime->GetCurrentEventContext()->GetEventHandler();
   if (!pEvent->m_pValue)
     return false;
 
   const char* cFormat = "";
-  CJS_Runtime* pRuntime = CJS_Runtime::FromEventContext(cc);
   switch (params[0].ToInt(pRuntime)) {
     case 0:
       cFormat = "99999";
@@ -1529,11 +1511,11 @@ bool CJS_PublicMethods::AFSpecial_Keystroke(
   }
 
   std::vector<CJS_Value> params2;
-  params2.push_back(CJS_Value(CJS_Runtime::FromEventContext(cc), cFormat));
-  return AFSpecial_KeystrokeEx(cc, params2, vRet, sError);
+  params2.push_back(CJS_Value(pRuntime, cFormat));
+  return AFSpecial_KeystrokeEx(pRuntime, params2, vRet, sError);
 }
 
-bool CJS_PublicMethods::AFMergeChange(IJS_EventContext* cc,
+bool CJS_PublicMethods::AFMergeChange(CJS_Runtime* pRuntime,
                                       const std::vector<CJS_Value>& params,
                                       CJS_Value& vRet,
                                       CFX_WideString& sError) {
@@ -1542,9 +1524,8 @@ bool CJS_PublicMethods::AFMergeChange(IJS_EventContext* cc,
     return false;
   }
 
-  CJS_EventContext* pContext = static_cast<CJS_EventContext*>(cc);
-  CJS_Runtime* pRuntime = CJS_Runtime::FromEventContext(cc);
-  CJS_EventHandler* pEventHandler = pContext->GetEventHandler();
+  CJS_EventHandler* pEventHandler =
+      pRuntime->GetCurrentEventContext()->GetEventHandler();
 
   CFX_WideString swValue;
   if (pEventHandler->m_pValue)
@@ -1574,7 +1555,7 @@ bool CJS_PublicMethods::AFMergeChange(IJS_EventContext* cc,
   return true;
 }
 
-bool CJS_PublicMethods::AFParseDateEx(IJS_EventContext* cc,
+bool CJS_PublicMethods::AFParseDateEx(CJS_Runtime* pRuntime,
                                       const std::vector<CJS_Value>& params,
                                       CJS_Value& vRet,
                                       CFX_WideString& sError) {
@@ -1583,8 +1564,6 @@ bool CJS_PublicMethods::AFParseDateEx(IJS_EventContext* cc,
     return false;
   }
 
-  CJS_EventContext* pContext = static_cast<CJS_EventContext*>(cc);
-  CJS_Runtime* pRuntime = pContext->GetJSRuntime();
   CFX_WideString sValue = params[0].ToCFXWideString(pRuntime);
   CFX_WideString sFormat = params[1].ToCFXWideString(pRuntime);
   double dDate = MakeRegularDate(sValue, sFormat, nullptr);
@@ -1592,7 +1571,7 @@ bool CJS_PublicMethods::AFParseDateEx(IJS_EventContext* cc,
     CFX_WideString swMsg;
     swMsg.Format(JSGetStringFromID(IDS_STRING_JSPARSEDATE).c_str(),
                  sFormat.c_str());
-    AlertIfPossible(pContext, swMsg.c_str());
+    AlertIfPossible(pRuntime->GetCurrentEventContext(), swMsg.c_str());
     return false;
   }
 
@@ -1600,7 +1579,7 @@ bool CJS_PublicMethods::AFParseDateEx(IJS_EventContext* cc,
   return true;
 }
 
-bool CJS_PublicMethods::AFSimple(IJS_EventContext* cc,
+bool CJS_PublicMethods::AFSimple(CJS_Runtime* pRuntime,
                                  const std::vector<CJS_Value>& params,
                                  CJS_Value& vRet,
                                  CFX_WideString& sError) {
@@ -1609,7 +1588,6 @@ bool CJS_PublicMethods::AFSimple(IJS_EventContext* cc,
     return false;
   }
 
-  CJS_Runtime* pRuntime = CJS_Runtime::FromEventContext(cc);
   vRet = CJS_Value(pRuntime, static_cast<double>(AF_Simple(
                                  params[0].ToCFXWideString(pRuntime).c_str(),
                                  params[1].ToDouble(pRuntime),
@@ -1618,7 +1596,7 @@ bool CJS_PublicMethods::AFSimple(IJS_EventContext* cc,
   return true;
 }
 
-bool CJS_PublicMethods::AFMakeNumber(IJS_EventContext* cc,
+bool CJS_PublicMethods::AFMakeNumber(CJS_Runtime* pRuntime,
                                      const std::vector<CJS_Value>& params,
                                      CJS_Value& vRet,
                                      CFX_WideString& sError) {
@@ -1627,7 +1605,6 @@ bool CJS_PublicMethods::AFMakeNumber(IJS_EventContext* cc,
     return false;
   }
 
-  CJS_Runtime* pRuntime = CJS_Runtime::FromEventContext(cc);
   CFX_WideString ws = params[0].ToCFXWideString(pRuntime);
   ws.Replace(L",", L".");
   vRet = CJS_Value(pRuntime, ws.c_str());
@@ -1637,7 +1614,7 @@ bool CJS_PublicMethods::AFMakeNumber(IJS_EventContext* cc,
   return true;
 }
 
-bool CJS_PublicMethods::AFSimple_Calculate(IJS_EventContext* cc,
+bool CJS_PublicMethods::AFSimple_Calculate(CJS_Runtime* pRuntime,
                                            const std::vector<CJS_Value>& params,
                                            CJS_Value& vRet,
                                            CFX_WideString& sError) {
@@ -1652,10 +1629,8 @@ bool CJS_PublicMethods::AFSimple_Calculate(IJS_EventContext* cc,
     return false;
   }
 
-  CJS_EventContext* pContext = static_cast<CJS_EventContext*>(cc);
-  CJS_Runtime* pRuntime = CJS_Runtime::FromEventContext(cc);
   CPDFSDK_InterForm* pReaderInterForm =
-      pContext->GetFormFillEnv()->GetInterForm();
+      pRuntime->GetFormFillEnv()->GetInterForm();
   CPDF_InterForm* pInterForm = pReaderInterForm->GetInterForm();
 
   CFX_WideString sFunction = params[0].ToCFXWideString(pRuntime);
@@ -1726,7 +1701,9 @@ bool CJS_PublicMethods::AFSimple_Calculate(IJS_EventContext* cc,
 
   dValue = (double)floor(dValue * FXSYS_pow((double)10, (double)6) + 0.49) /
            FXSYS_pow((double)10, (double)6);
+
   CJS_Value jsValue(pRuntime, dValue);
+  CJS_EventContext* pContext = pRuntime->GetCurrentEventContext();
   if (pContext->GetEventHandler()->m_pValue)
     pContext->GetEventHandler()->Value() = jsValue.ToCFXWideString(pRuntime);
 
@@ -1736,7 +1713,7 @@ bool CJS_PublicMethods::AFSimple_Calculate(IJS_EventContext* cc,
 /* This function validates the current event to ensure that its value is
 ** within the specified range. */
 
-bool CJS_PublicMethods::AFRange_Validate(IJS_EventContext* cc,
+bool CJS_PublicMethods::AFRange_Validate(CJS_Runtime* pRuntime,
                                          const std::vector<CJS_Value>& params,
                                          CJS_Value& vRet,
                                          CFX_WideString& sError) {
@@ -1744,8 +1721,7 @@ bool CJS_PublicMethods::AFRange_Validate(IJS_EventContext* cc,
     sError = JSGetStringFromID(IDS_STRING_JSPARAMERROR);
     return false;
   }
-  CJS_EventContext* pContext = static_cast<CJS_EventContext*>(cc);
-  CJS_Runtime* pRuntime = CJS_Runtime::FromEventContext(cc);
+  CJS_EventContext* pContext = pRuntime->GetCurrentEventContext();
   CJS_EventHandler* pEvent = pContext->GetEventHandler();
   if (!pEvent->m_pValue)
     return false;
@@ -1783,7 +1759,7 @@ bool CJS_PublicMethods::AFRange_Validate(IJS_EventContext* cc,
   return true;
 }
 
-bool CJS_PublicMethods::AFExtractNums(IJS_EventContext* cc,
+bool CJS_PublicMethods::AFExtractNums(CJS_Runtime* pRuntime,
                                       const std::vector<CJS_Value>& params,
                                       CJS_Value& vRet,
                                       CFX_WideString& sError) {
@@ -1792,14 +1768,12 @@ bool CJS_PublicMethods::AFExtractNums(IJS_EventContext* cc,
     return false;
   }
 
-  CJS_Runtime* pRuntime = CJS_Runtime::FromEventContext(cc);
   CFX_WideString str = params[0].ToCFXWideString(pRuntime);
-  CFX_WideString sPart;
-  CJS_Array nums;
-
   if (str.GetAt(0) == L'.' || str.GetAt(0) == L',')
     str = L"0" + str;
 
+  CFX_WideString sPart;
+  CJS_Array nums;
   int nIndex = 0;
   for (int i = 0, sz = str.GetLength(); i < sz; i++) {
     FX_WCHAR wc = str.GetAt(i);

@@ -127,12 +127,9 @@ class CJS_RuntimeStub final : public IJS_Runtime {
   IJS_EventContext* NewEventContext() override {
     if (!m_pContext)
       m_pContext = pdfium::MakeUnique<CJS_EventContextStub>();
-    return GetCurrentEventContext();
-  }
-
-  IJS_EventContext* GetCurrentEventContext() override {
     return m_pContext.get();
   }
+
   void ReleaseEventContext(IJS_EventContext* pContext) override {}
 
   CPDFSDK_FormFillEnvironment* GetFormFillEnv() const override {

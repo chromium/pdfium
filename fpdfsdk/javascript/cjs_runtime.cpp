@@ -51,11 +51,6 @@ IJS_Runtime* IJS_Runtime::Create(CPDFSDK_FormFillEnvironment* pFormFillEnv) {
 }
 
 // static
-CJS_Runtime* CJS_Runtime::FromEventContext(const IJS_EventContext* cc) {
-  return static_cast<const CJS_EventContext*>(cc)->GetJSRuntime();
-}
-
-// static
 CJS_Runtime* CJS_Runtime::CurrentRuntimeFromIsolate(v8::Isolate* pIsolate) {
   return static_cast<CJS_Runtime*>(
       CFXJS_Engine::CurrentEngineFromIsolate(pIsolate));
@@ -165,7 +160,7 @@ void CJS_Runtime::ReleaseEventContext(IJS_EventContext* pContext) {
     m_EventContextArray.erase(it);
 }
 
-IJS_EventContext* CJS_Runtime::GetCurrentEventContext() {
+CJS_EventContext* CJS_Runtime::GetCurrentEventContext() const {
   return m_EventContextArray.empty() ? nullptr
                                      : m_EventContextArray.back().get();
 }

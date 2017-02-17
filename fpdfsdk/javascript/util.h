@@ -17,23 +17,23 @@ class util : public CJS_EmbedObj {
   explicit util(CJS_Object* pJSObject);
   ~util() override;
 
-  bool printd(IJS_EventContext* cc,
+  bool printd(CJS_Runtime* pRuntime,
               const std::vector<CJS_Value>& params,
               CJS_Value& vRet,
               CFX_WideString& sError);
-  bool printf(IJS_EventContext* cc,
+  bool printf(CJS_Runtime* pRuntime,
               const std::vector<CJS_Value>& params,
               CJS_Value& vRet,
               CFX_WideString& sError);
-  bool printx(IJS_EventContext* cc,
+  bool printx(CJS_Runtime* pRuntime,
               const std::vector<CJS_Value>& params,
               CJS_Value& vRet,
               CFX_WideString& sError);
-  bool scand(IJS_EventContext* cc,
+  bool scand(CJS_Runtime* pRuntime,
              const std::vector<CJS_Value>& params,
              CJS_Value& vRet,
              CFX_WideString& sError);
-  bool byteToChar(IJS_EventContext* cc,
+  bool byteToChar(CJS_Runtime* pRuntime,
                   const std::vector<CJS_Value>& params,
                   CJS_Value& vRet,
                   CFX_WideString& sError);
