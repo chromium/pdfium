@@ -452,26 +452,24 @@ bool CFX_PathData::IsRect(const CFX_Matrix* pMatrix,
     return false;
   }
 
-  FX_FLOAT x[5];
-  FX_FLOAT y[5];
+  CFX_PointF points[5];
   for (size_t i = 0; i < m_Points.size(); i++) {
-    x[i] = m_Points[i].m_PointX;
-    y[i] = m_Points[i].m_PointY;
-    pMatrix->TransformPoint(x[i], y[i]);
+    points[i] = pMatrix->Transform(
+        CFX_PointF(m_Points[i].m_PointX, m_Points[i].m_PointY));
 
     if (i == 0)
       continue;
     if (m_Points[i].m_Type != FXPT_TYPE::LineTo)
       return false;
-    if (x[i] != x[i - 1] && y[i] != y[i - 1])
+    if (points[i].x != points[i - 1].x && points[i].y != points[i - 1].y)
       return false;
   }
 
   if (pRect) {
-    pRect->left = x[0];
-    pRect->right = x[2];
-    pRect->bottom = y[0];
-    pRect->top = y[2];
+    pRect->left = points[0].x;
+    pRect->right = points[2].x;
+    pRect->bottom = points[0].y;
+    pRect->top = points[2].y;
     pRect->Normalize();
   }
   return true;

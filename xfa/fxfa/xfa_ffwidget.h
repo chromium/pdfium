@@ -119,7 +119,7 @@ class CXFA_FFWidget : public CXFA_ContentLayoutItem {
   void AddInvalidateRect(const CFX_RectF* pRect = nullptr);
   bool GetCaptionText(CFX_WideString& wsCap);
   bool IsFocused();
-  void Rotate2Normal(FX_FLOAT& fx, FX_FLOAT& fy);
+  CFX_PointF Rotate2Normal(const CFX_PointF& point);
   CFX_Matrix GetRotateMatrix();
   bool IsLayoutRectEmpty();
   CXFA_FFWidget* GetParent();

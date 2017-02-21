@@ -160,7 +160,10 @@ void CFWL_WidgetMgr::RepaintWidget(CFWL_Widget* pWidget,
     if (!pNative)
       return;
 
-    pWidget->TransformTo(pNative, transformedRect.left, transformedRect.top);
+    CFX_PointF pos = pWidget->TransformTo(
+        pNative, CFX_PointF(transformedRect.left, transformedRect.top));
+    transformedRect.left = pos.x;
+    transformedRect.top = pos.y;
   }
   AddRedrawCounts(pNative);
   m_pAdapter->RepaintWidget(pNative);
@@ -260,24 +263,21 @@ CFWL_Widget* CFWL_WidgetMgr::GetWidgetAtPoint(CFWL_Widget* parent,
   if (!parent)
     return nullptr;
 
-  FX_FLOAT x1;
-  FX_FLOAT y1;
+  CFX_PointF pos;
   CFWL_Widget* child = GetLastChildWidget(parent);
   while (child) {
     if ((child->GetStates() & FWL_WGTSTATE_Invisible) == 0) {
-      x1 = x;
-      y1 = y;
       CFX_Matrix m;
       m.SetIdentity();
 
       CFX_Matrix matrixOnParent;
       m.SetReverse(matrixOnParent);
-      m.TransformPoint(x1, y1);
+      pos = m.Transform(CFX_PointF(x, y));
+
       CFX_RectF bounds = child->GetWidgetRect();
-      if (bounds.Contains(x1, y1)) {
-        x1 -= bounds.left;
-        y1 -= bounds.top;
-        return GetWidgetAtPoint(child, x1, y1);
+      if (bounds.Contains(pos.x, pos.y)) {
+        pos -= bounds.TopLeft();
+        return GetWidgetAtPoint(child, pos.x, pos.y);
       }
     }
     child = GetPriorSiblingWidget(child);
@@ -484,7 +484,9 @@ void CFWL_WidgetMgr::DrawChild(CFWL_Widget* parent,
       widgetMatrix.Concat(*pMatrix);
 
     if (!bFormDisable) {
-      widgetMatrix.TransformPoint(clipBounds.left, clipBounds.top);
+      CFX_PointF pos = widgetMatrix.Transform(clipBounds.TopLeft());
+      clipBounds.left = pos.x;
+      clipBounds.top = pos.y;
       clipBounds.Intersect(rtClip);
       if (clipBounds.IsEmpty())
         continue;

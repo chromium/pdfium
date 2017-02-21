@@ -214,8 +214,7 @@ CPDF_MeshVertex CPDF_MeshStream::ReadVertex(const CFX_Matrix& pObject2Bitmap,
   *flag = ReadFlag();
 
   CPDF_MeshVertex vertex;
-  vertex.position = ReadCoords();
-  pObject2Bitmap.TransformPoint(vertex.position.x, vertex.position.y);
+  vertex.position = pObject2Bitmap.Transform(ReadCoords());
   std::tie(vertex.r, vertex.g, vertex.b) = ReadColor();
   m_BitStream.ByteAlign();
 
@@ -229,8 +228,7 @@ bool CPDF_MeshStream::ReadVertexRow(const CFX_Matrix& pObject2Bitmap,
     if (m_BitStream.IsEOF())
       return false;
 
-    vertex[i].position = ReadCoords();
-    pObject2Bitmap.TransformPoint(vertex[i].position.x, vertex[i].position.y);
+    vertex[i].position = pObject2Bitmap.Transform(ReadCoords());
     std::tie(vertex[i].r, vertex[i].g, vertex[i].b) = ReadColor();
     m_BitStream.ByteAlign();
   }

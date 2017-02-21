@@ -34,7 +34,6 @@ class CPWL_EditCtrl : public CPWL_Wnd {
   ~CPWL_EditCtrl() override;
 
   CFX_FloatRect GetContentRect() const;
-  void GetCaretPos(int32_t& x, int32_t& y) const;
 
   CFX_WideString GetText() const;
   void SetSel(int32_t nStartChar, int32_t nEndChar);
@@ -121,7 +120,7 @@ class CPWL_EditCtrl : public CPWL_Wnd {
   void Delete();
   void Backspace();
 
-  void GetCaretInfo(CFX_PointF& ptHead, CFX_PointF& ptFoot) const;
+  void GetCaretInfo(CFX_PointF* ptHead, CFX_PointF* ptFoot) const;
   void SetCaret(bool bVisible,
                 const CFX_PointF& ptHead,
                 const CFX_PointF& ptFoot);

@@ -341,8 +341,12 @@ bool CFWL_NoteDriver::DoMouse(CFWL_Message* pMessage,
       pMsg->m_dwCmd == FWL_MouseCommand::Enter) {
     return !!pMsg->m_pDstTarget;
   }
-  if (pMsg->m_pDstTarget != pMessageForm)
-    pMsg->m_pDstTarget->TransformTo(pMessageForm, pMsg->m_fx, pMsg->m_fy);
+  if (pMsg->m_pDstTarget != pMessageForm) {
+    CFX_PointF point = pMsg->m_pDstTarget->TransformTo(
+        pMessageForm, CFX_PointF(pMsg->m_fx, pMsg->m_fy));
+    pMsg->m_fx = point.x;
+    pMsg->m_fy = point.y;
+  }
   if (!DoMouseEx(pMsg, pMessageForm))
     pMsg->m_pDstTarget = pMessageForm;
   return true;
@@ -360,7 +364,10 @@ bool CFWL_NoteDriver::DoWheel(CFWL_Message* pMessage,
   if (!pDst)
     return false;
 
-  pMessageForm->TransformTo(pDst, pMsg->m_fx, pMsg->m_fy);
+  CFX_PointF point =
+      pMessageForm->TransformTo(pDst, CFX_PointF(pMsg->m_fx, pMsg->m_fy));
+  pMsg->m_fx = point.x;
+  pMsg->m_fy = point.y;
   pMsg->m_pDstTarget = pDst;
   return true;
 }
@@ -380,8 +387,12 @@ bool CFWL_NoteDriver::DoMouseEx(CFWL_Message* pMessage,
         pWidgetMgr->GetWidgetAtPoint(pMessageForm, pMsg->m_fx, pMsg->m_fy);
   }
   if (pTarget) {
-    if (pMessageForm != pTarget)
-      pMessageForm->TransformTo(pTarget, pMsg->m_fx, pMsg->m_fy);
+    if (pMessageForm != pTarget) {
+      CFX_PointF point = pMessageForm->TransformTo(
+          pTarget, CFX_PointF(pMsg->m_fx, pMsg->m_fy));
+      pMsg->m_fx = point.x;
+      pMsg->m_fy = point.y;
+    }
   }
   if (!pTarget)
     return false;
@@ -398,10 +409,10 @@ void CFWL_NoteDriver::MouseSecondary(CFWL_Message* pMessage) {
   CFWL_MessageMouse* pMsg = static_cast<CFWL_MessageMouse*>(pMessage);
   if (m_pHover) {
     CFWL_MessageMouse msLeave(nullptr, m_pHover);
-    msLeave.m_fx = pMsg->m_fx;
-    msLeave.m_fy = pMsg->m_fy;
-    pTarget->TransformTo(m_pHover, msLeave.m_fx, msLeave.m_fy);
-
+    CFX_PointF point =
+        pTarget->TransformTo(m_pHover, CFX_PointF(pMsg->m_fx, pMsg->m_fy));
+    msLeave.m_fx = point.x;
+    msLeave.m_fy = point.y;
     msLeave.m_dwFlags = 0;
     msLeave.m_dwCmd = FWL_MouseCommand::Leave;
     DispatchMessage(&msLeave, nullptr);

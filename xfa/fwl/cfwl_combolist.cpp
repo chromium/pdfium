@@ -63,12 +63,11 @@ void CFWL_ComboList::ChangeSelected(int32_t iSel) {
     RepaintRect(rtInvalidate);
 }
 
-void CFWL_ComboList::ClientToOuter(FX_FLOAT& fx, FX_FLOAT& fy) {
-  fx += m_pProperties->m_rtWidget.left, fy += m_pProperties->m_rtWidget.top;
+CFX_PointF CFWL_ComboList::ClientToOuter(const CFX_PointF& point) {
+  CFX_PointF ret = point + CFX_PointF(m_pProperties->m_rtWidget.left,
+                                      m_pProperties->m_rtWidget.top);
   CFWL_Widget* pOwner = GetOwner();
-  if (!pOwner)
-    return;
-  pOwner->TransformTo(m_pOuter, fx, fy);
+  return pOwner ? pOwner->TransformTo(m_pOuter, ret) : ret;
 }
 
 void CFWL_ComboList::OnProcessMessage(CFWL_Message* pMessage) {
@@ -148,7 +147,10 @@ void CFWL_ComboList::OnDropListMouseMove(CFWL_MessageMouse* pMsg) {
 
     ChangeSelected(GetItemIndex(this, hItem));
   } else if (m_bNotifyOwner) {
-    ClientToOuter(pMsg->m_fx, pMsg->m_fy);
+    CFX_PointF point = ClientToOuter(CFX_PointF(pMsg->m_fx, pMsg->m_fy));
+    pMsg->m_fx = point.x;
+    pMsg->m_fy = point.y;
+
     CFWL_ComboBox* pOuter = static_cast<CFWL_ComboBox*>(m_pOuter);
     pOuter->GetDelegate()->OnProcessMessage(pMsg);
   }
@@ -165,7 +167,9 @@ void CFWL_ComboList::OnDropListLButtonDown(CFWL_MessageMouse* pMsg) {
 void CFWL_ComboList::OnDropListLButtonUp(CFWL_MessageMouse* pMsg) {
   CFWL_ComboBox* pOuter = static_cast<CFWL_ComboBox*>(m_pOuter);
   if (m_bNotifyOwner) {
-    ClientToOuter(pMsg->m_fx, pMsg->m_fy);
+    CFX_PointF point = ClientToOuter(CFX_PointF(pMsg->m_fx, pMsg->m_fy));
+    pMsg->m_fx = point.x;
+    pMsg->m_fy = point.y;
     pOuter->GetDelegate()->OnProcessMessage(pMsg);
     return;
   }

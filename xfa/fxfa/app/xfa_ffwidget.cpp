@@ -316,15 +316,17 @@ bool CXFA_FFWidget::ReplaceSpellCheckWord(CFX_PointF pointf,
                                           const CFX_ByteStringC& bsReplace) {
   return false;
 }
-void CXFA_FFWidget::Rotate2Normal(FX_FLOAT& fx, FX_FLOAT& fy) {
+
+CFX_PointF CXFA_FFWidget::Rotate2Normal(const CFX_PointF& point) {
   CFX_Matrix mt = GetRotateMatrix();
-  if (mt.IsIdentity()) {
-    return;
-  }
+  if (mt.IsIdentity())
+    return point;
+
   CFX_Matrix mtReverse;
   mtReverse.SetReverse(mt);
-  mtReverse.TransformPoint(fx, fy);
+  return mtReverse.Transform(point);
 }
+
 static void XFA_GetMatrix(CFX_Matrix& m,
                           int32_t iRotate,
                           XFA_ATTRIBUTEENUM at,

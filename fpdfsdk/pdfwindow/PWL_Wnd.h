@@ -389,9 +389,6 @@ class CPWL_Wnd : public CPWL_TimerHandler {
   void InvalidateRectMove(const CFX_FloatRect& rcOld,
                           const CFX_FloatRect& rcNew);
 
-  void PWLtoWnd(const CFX_PointF& point, int32_t& x, int32_t& y) const;
-  FX_RECT PWLtoWnd(const CFX_FloatRect& rect) const;
-
   bool IsWndCaptureMouse(const CPWL_Wnd* pWnd) const;
   bool IsWndCaptureKeyboard(const CPWL_Wnd* pWnd) const;
   const CPWL_Wnd* GetRootWnd() const;
@@ -401,6 +398,8 @@ class CPWL_Wnd : public CPWL_TimerHandler {
   bool IsALTpressed(uint32_t nFlag) const;
 
  private:
+  FX_RECT PWLtoWnd(const CFX_FloatRect& rect) const;
+
   void AddChild(CPWL_Wnd* pWnd);
   void RemoveChild(CPWL_Wnd* pWnd);
 

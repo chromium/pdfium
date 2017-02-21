@@ -116,12 +116,11 @@ void CFX_PSRenderer::OutputPath(const CFX_PathData* pPathData,
   for (size_t i = 0; i < size; i++) {
     FXPT_TYPE type = pPathData->GetType(i);
     bool closing = pPathData->IsClosingFigure(i);
-    FX_FLOAT x = pPathData->GetPointX(i);
-    FX_FLOAT y = pPathData->GetPointY(i);
+    CFX_PointF pos(pPathData->GetPointX(i), pPathData->GetPointY(i));
     if (pObject2Device)
-      pObject2Device->TransformPoint(x, y);
+      pos = pObject2Device->Transform(pos);
 
-    buf << x << " " << y;
+    buf << pos.x << " " << pos.y;
     switch (type) {
       case FXPT_TYPE::MoveTo:
         buf << " m ";
@@ -132,15 +131,16 @@ void CFX_PSRenderer::OutputPath(const CFX_PathData* pPathData,
           buf << "h ";
         break;
       case FXPT_TYPE::BezierTo: {
-        FX_FLOAT x1 = pPathData->GetPointX(i + 1);
-        FX_FLOAT x2 = pPathData->GetPointX(i + 2);
-        FX_FLOAT y1 = pPathData->GetPointY(i + 1);
-        FX_FLOAT y2 = pPathData->GetPointY(i + 2);
+        CFX_PointF pos1(pPathData->GetPointX(i + 1),
+                        pPathData->GetPointY(i + 1));
+        CFX_PointF pos2(pPathData->GetPointX(i + 2),
+                        pPathData->GetPointY(i + 2));
         if (pObject2Device) {
-          pObject2Device->TransformPoint(x1, y1);
-          pObject2Device->TransformPoint(x2, y2);
+          pos1 = pObject2Device->Transform(pos1);
+          pos2 = pObject2Device->Transform(pos2);
         }
-        buf << " " << x1 << " " << y1 << " " << x2 << " " << y2 << " c";
+        buf << " " << pos1.x << " " << pos1.y << " " << pos2.x << " " << pos2.y
+            << " c";
         if (closing)
           buf << " h";
         buf << "\n";

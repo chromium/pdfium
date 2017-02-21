@@ -40,13 +40,7 @@ void CPWL_EditCtrl::OnCreated() {
 
 bool CPWL_EditCtrl::IsWndHorV() {
   CFX_Matrix mt = GetWindowMatrix();
-  CFX_PointF point1(0, 1);
-  CFX_PointF point2(1, 1);
-
-  mt.TransformPoint(point1.x, point1.y);
-  mt.TransformPoint(point2.x, point2.y);
-
-  return point2.y == point1.y;
+  return mt.Transform(CFX_PointF(1, 1)).y == mt.Transform(CFX_PointF(0, 1)).y;
 }
 
 void CPWL_EditCtrl::SetCursor() {
@@ -328,35 +322,28 @@ void CPWL_EditCtrl::SetEditCaret(bool bVisible) {
   CFX_PointF ptHead;
   CFX_PointF ptFoot;
   if (bVisible)
-    GetCaretInfo(ptHead, ptFoot);
+    GetCaretInfo(&ptHead, &ptFoot);
 
   CPVT_WordPlace wpTemp = m_pEdit->GetCaretWordPlace();
   IOnSetCaret(bVisible, ptHead, ptFoot, wpTemp);
 }
 
-void CPWL_EditCtrl::GetCaretInfo(CFX_PointF& ptHead, CFX_PointF& ptFoot) const {
+void CPWL_EditCtrl::GetCaretInfo(CFX_PointF* ptHead, CFX_PointF* ptFoot) const {
   CFX_Edit_Iterator* pIterator = m_pEdit->GetIterator();
   pIterator->SetAt(m_pEdit->GetCaret());
   CPVT_Word word;
   CPVT_Line line;
   if (pIterator->GetWord(word)) {
-    ptHead.x = word.ptWord.x + word.fWidth;
-    ptHead.y = word.ptWord.y + word.fAscent;
-    ptFoot.x = word.ptWord.x + word.fWidth;
-    ptFoot.y = word.ptWord.y + word.fDescent;
+    ptHead->x = word.ptWord.x + word.fWidth;
+    ptHead->y = word.ptWord.y + word.fAscent;
+    ptFoot->x = word.ptWord.x + word.fWidth;
+    ptFoot->y = word.ptWord.y + word.fDescent;
   } else if (pIterator->GetLine(line)) {
-    ptHead.x = line.ptLine.x;
-    ptHead.y = line.ptLine.y + line.fLineAscent;
-    ptFoot.x = line.ptLine.x;
-    ptFoot.y = line.ptLine.y + line.fLineDescent;
+    ptHead->x = line.ptLine.x;
+    ptHead->y = line.ptLine.y + line.fLineAscent;
+    ptFoot->x = line.ptLine.x;
+    ptFoot->y = line.ptLine.y + line.fLineDescent;
   }
-}
-
-void CPWL_EditCtrl::GetCaretPos(int32_t& x, int32_t& y) const {
-  CFX_PointF ptHead;
-  CFX_PointF ptFoot;
-  GetCaretInfo(ptHead, ptFoot);
-  PWLtoWnd(ptHead, x, y);
 }
 
 void CPWL_EditCtrl::SetCaret(bool bVisible,

@@ -390,20 +390,20 @@ void CFX_Matrix::TransformRect(FX_FLOAT& left,
                                FX_FLOAT& right,
                                FX_FLOAT& top,
                                FX_FLOAT& bottom) const {
-  FX_FLOAT x[4] = {left, left, right, right};
-  FX_FLOAT y[4] = {top, bottom, top, bottom};
+  CFX_PointF points[] = {
+      {left, top}, {left, bottom}, {right, top}, {right, bottom}};
   for (int i = 0; i < 4; i++)
-    TransformPoint(x[i], y[i]);
+    points[i] = Transform(points[i]);
 
-  right = x[0];
-  left = x[0];
-  top = y[0];
-  bottom = y[0];
+  right = points[0].x;
+  left = points[0].x;
+  top = points[0].y;
+  bottom = points[0].y;
   for (int i = 1; i < 4; i++) {
-    right = std::max(right, x[i]);
-    left = std::min(left, x[i]);
-    top = std::max(top, y[i]);
-    bottom = std::min(bottom, y[i]);
+    right = std::max(right, points[i].x);
+    left = std::min(left, points[i].x);
+    top = std::max(top, points[i].y);
+    bottom = std::min(bottom, points[i].y);
   }
 }
 

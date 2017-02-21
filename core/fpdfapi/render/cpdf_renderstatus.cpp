@@ -2228,13 +2228,11 @@ void CPDF_RenderStatus::DrawTilingPattern(CPDF_TilingPattern* pPattern,
 
     for (int col = min_col; col <= max_col; col++)
       for (int row = min_row; row <= max_row; row++) {
-        FX_FLOAT orig_x, orig_y;
-        orig_x = col * pPattern->x_step();
-        orig_y = row * pPattern->y_step();
-        mtPattern2Device.TransformPoint(orig_x, orig_y);
+        CFX_PointF original = mtPattern2Device.Transform(
+            CFX_PointF(col * pPattern->x_step(), row * pPattern->y_step()));
         CFX_Matrix matrix = *pObj2Device;
-        matrix.Translate(orig_x - mtPattern2Device.e,
-                         orig_y - mtPattern2Device.f);
+        matrix.Translate(original.x - mtPattern2Device.e,
+                         original.y - mtPattern2Device.f);
         m_pDevice->SaveState();
         CPDF_RenderStatus status;
         status.Initialize(m_pContext, m_pDevice, nullptr, nullptr, this,

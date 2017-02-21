@@ -849,14 +849,6 @@ CFX_Matrix CPWL_Wnd::GetWindowMatrix() const {
   return mt;
 }
 
-void CPWL_Wnd::PWLtoWnd(const CFX_PointF& point, int32_t& x, int32_t& y) const {
-  CFX_Matrix mt = GetWindowMatrix();
-  CFX_PointF pt = point;
-  mt.TransformPoint(pt.x, pt.y);
-  x = (int32_t)(pt.x + 0.5);
-  y = (int32_t)(pt.y + 0.5);
-}
-
 FX_RECT CPWL_Wnd::PWLtoWnd(const CFX_FloatRect& rect) const {
   CFX_FloatRect rcTemp = rect;
   CFX_Matrix mt = GetWindowMatrix();
@@ -867,12 +859,7 @@ FX_RECT CPWL_Wnd::PWLtoWnd(const CFX_FloatRect& rect) const {
 
 CFX_PointF CPWL_Wnd::ChildToParent(const CFX_PointF& point) const {
   CFX_Matrix mt = GetChildMatrix();
-  if (mt.IsIdentity())
-    return point;
-
-  CFX_PointF pt = point;
-  mt.TransformPoint(pt.x, pt.y);
-  return pt;
+  return mt.IsIdentity() ? point : mt.Transform(point);
 }
 
 CFX_FloatRect CPWL_Wnd::ChildToParent(const CFX_FloatRect& rect) const {
@@ -891,9 +878,7 @@ CFX_PointF CPWL_Wnd::ParentToChild(const CFX_PointF& point) const {
     return point;
 
   mt.SetReverse(mt);
-  CFX_PointF pt = point;
-  mt.TransformPoint(pt.x, pt.y);
-  return pt;
+  return mt.Transform(point);
 }
 
 CFX_FloatRect CPWL_Wnd::ParentToChild(const CFX_FloatRect& rect) const {

@@ -29,7 +29,7 @@ class CFWL_ComboList : public CFWL_ListBox {
   void SetNotifyOwner(bool notify) { m_bNotifyOwner = notify; }
 
  private:
-  void ClientToOuter(FX_FLOAT& fx, FX_FLOAT& fy);
+  CFX_PointF ClientToOuter(const CFX_PointF& point);
   void OnDropListFocusChanged(CFWL_Message* pMsg, bool bSet);
   void OnDropListMouseMove(CFWL_MessageMouse* pMsg);
   void OnDropListLButtonDown(CFWL_MessageMouse* pMsg);

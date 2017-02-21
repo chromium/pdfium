@@ -90,7 +90,7 @@ class CFWL_Widget : public IFWL_WidgetDelegate {
       m_iLock--;
   }
 
-  void TransformTo(CFWL_Widget* pWidget, FX_FLOAT& fx, FX_FLOAT& fy);
+  CFX_PointF TransformTo(CFWL_Widget* pWidget, const CFX_PointF& point);
   CFX_Matrix GetMatrix();
   IFWL_ThemeProvider* GetThemeProvider() const;
 

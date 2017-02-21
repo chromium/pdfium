@@ -159,9 +159,8 @@ FWL_WidgetHit CFWL_Widget::HitTest(FX_FLOAT fx, FX_FLOAT fy) {
   return FWL_WidgetHit::Unknown;
 }
 
-void CFWL_Widget::TransformTo(CFWL_Widget* pWidget,
-                              FX_FLOAT& fx,
-                              FX_FLOAT& fy) {
+CFX_PointF CFWL_Widget::TransformTo(CFWL_Widget* pWidget,
+                                    const CFX_PointF& point) {
   if (m_pWidgetMgr->IsFormDisabled()) {
     CFX_SizeF szOffset;
     if (IsParent(pWidget)) {
@@ -171,50 +170,36 @@ void CFWL_Widget::TransformTo(CFWL_Widget* pWidget,
       szOffset.width = -szOffset.width;
       szOffset.height = -szOffset.height;
     }
-    fx += szOffset.width;
-    fy += szOffset.height;
-    return;
+    return point + CFX_PointF(szOffset.width, szOffset.height);
   }
-  CFX_RectF r;
-  CFX_Matrix m;
+
+  CFX_PointF ret = point;
   CFWL_Widget* parent = GetParent();
-  if (parent) {
-    r = GetWidgetRect();
-    fx += r.left;
-    fy += r.top;
-    m = GetMatrix();
-    m.TransformPoint(fx, fy);
-  }
+  if (parent)
+    ret = GetMatrix().Transform(ret + GetWidgetRect().TopLeft());
+
   CFWL_Widget* form1 = m_pWidgetMgr->GetSystemFormWidget(this);
   if (!form1)
-    return;
+    return ret;
 
-  if (!pWidget) {
-    r = form1->GetWidgetRect();
-    fx += r.left;
-    fy += r.top;
-    return;
-  }
+  if (!pWidget)
+    return ret + form1->GetWidgetRect().TopLeft();
+
   CFWL_Widget* form2 = m_pWidgetMgr->GetSystemFormWidget(pWidget);
   if (!form2)
-    return;
+    return ret;
   if (form1 != form2) {
-    r = form1->GetWidgetRect();
-    fx += r.left;
-    fy += r.top;
-    r = form2->GetWidgetRect();
-    fx -= r.left;
-    fy -= r.top;
+    ret += form1->GetWidgetRect().TopLeft();
+    ret -= form2->GetWidgetRect().TopLeft();
   }
+
   parent = pWidget->GetParent();
-  if (parent) {
-    CFX_Matrix m1;
-    m1.SetReverse(pWidget->GetMatrix());
-    m1.TransformPoint(fx, fy);
-    r = pWidget->GetWidgetRect();
-    fx -= r.left;
-    fy -= r.top;
-  }
+  if (!parent)
+    return ret;
+
+  CFX_Matrix m;
+  m.SetReverse(pWidget->GetMatrix());
+  return m.Transform(ret) - pWidget->GetWidgetRect().TopLeft();
 }
 
 CFX_Matrix CFWL_Widget::GetMatrix() {
@@ -419,32 +404,31 @@ bool CFWL_Widget::GetPopupPosMenu(FX_FLOAT fMinHeight,
                                   FX_FLOAT fMaxHeight,
                                   const CFX_RectF& rtAnchor,
                                   CFX_RectF& rtPopup) {
-  FX_FLOAT fx = 0;
-  FX_FLOAT fy = 0;
-
   if (GetStylesEx() & FWL_STYLEEXT_MNU_Vert) {
     bool bLeft = m_pProperties->m_rtWidget.left < 0;
     FX_FLOAT fRight = rtAnchor.right() + rtPopup.width;
-    TransformTo(nullptr, fx, fy);
-    if (fRight + fx > 0.0f || bLeft) {
+    CFX_PointF point = TransformTo(nullptr, CFX_PointF());
+    if (fRight + point.x > 0.0f || bLeft) {
       rtPopup = CFX_RectF(rtAnchor.left - rtPopup.width, rtAnchor.top,
                           rtPopup.width, rtPopup.height);
     } else {
       rtPopup = CFX_RectF(rtAnchor.right(), rtAnchor.top, rtPopup.width,
                           rtPopup.height);
     }
-  } else {
-    FX_FLOAT fBottom = rtAnchor.bottom() + rtPopup.height;
-    TransformTo(nullptr, fx, fy);
-    if (fBottom + fy > 0.0f) {
-      rtPopup = CFX_RectF(rtAnchor.left, rtAnchor.top - rtPopup.height,
-                          rtPopup.width, rtPopup.height);
-    } else {
-      rtPopup = CFX_RectF(rtAnchor.left, rtAnchor.bottom(), rtPopup.width,
-                          rtPopup.height);
-    }
+    rtPopup.Offset(point.x, point.y);
+    return true;
   }
-  rtPopup.Offset(fx, fy);
+
+  FX_FLOAT fBottom = rtAnchor.bottom() + rtPopup.height;
+  CFX_PointF point = TransformTo(nullptr, point);
+  if (fBottom + point.y > 0.0f) {
+    rtPopup = CFX_RectF(rtAnchor.left, rtAnchor.top - rtPopup.height,
+                        rtPopup.width, rtPopup.height);
+  } else {
+    rtPopup = CFX_RectF(rtAnchor.left, rtAnchor.bottom(), rtPopup.width,
+                        rtPopup.height);
+  }
+  rtPopup.Offset(point.x, point.y);
   return true;
 }
 
@@ -452,9 +436,6 @@ bool CFWL_Widget::GetPopupPosComboBox(FX_FLOAT fMinHeight,
                                       FX_FLOAT fMaxHeight,
                                       const CFX_RectF& rtAnchor,
                                       CFX_RectF& rtPopup) {
-  FX_FLOAT fx = 0;
-  FX_FLOAT fy = 0;
-
   FX_FLOAT fPopHeight = rtPopup.height;
   if (rtPopup.height > fMaxHeight)
     fPopHeight = fMaxHeight;
@@ -463,15 +444,15 @@ bool CFWL_Widget::GetPopupPosComboBox(FX_FLOAT fMinHeight,
 
   FX_FLOAT fWidth = std::max(rtAnchor.width, rtPopup.width);
   FX_FLOAT fBottom = rtAnchor.bottom() + fPopHeight;
-  TransformTo(nullptr, fx, fy);
-  if (fBottom + fy > 0.0f) {
+  CFX_PointF point = TransformTo(nullptr, CFX_PointF());
+  if (fBottom + point.y > 0.0f) {
     rtPopup =
         CFX_RectF(rtAnchor.left, rtAnchor.top - fPopHeight, fWidth, fPopHeight);
   } else {
     rtPopup = CFX_RectF(rtAnchor.left, rtAnchor.bottom(), fWidth, fPopHeight);
   }
 
-  rtPopup.Offset(fx, fy);
+  rtPopup.Offset(point.x, point.y);
   return true;
 }
 
@@ -479,18 +460,15 @@ bool CFWL_Widget::GetPopupPosGeneral(FX_FLOAT fMinHeight,
                                      FX_FLOAT fMaxHeight,
                                      const CFX_RectF& rtAnchor,
                                      CFX_RectF& rtPopup) {
-  FX_FLOAT fx = 0;
-  FX_FLOAT fy = 0;
-
-  TransformTo(nullptr, fx, fy);
-  if (rtAnchor.bottom() + fy > 0.0f) {
+  CFX_PointF point = TransformTo(nullptr, CFX_PointF());
+  if (rtAnchor.bottom() + point.y > 0.0f) {
     rtPopup = CFX_RectF(rtAnchor.left, rtAnchor.top - rtPopup.height,
                         rtPopup.width, rtPopup.height);
   } else {
     rtPopup = CFX_RectF(rtAnchor.left, rtAnchor.bottom(), rtPopup.width,
                         rtPopup.height);
   }
-  rtPopup.Offset(fx, fy);
+  rtPopup.Offset(point.x, point.y);
   return true;
 }
 
