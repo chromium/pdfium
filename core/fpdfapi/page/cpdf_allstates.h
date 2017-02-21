@@ -27,10 +27,8 @@ class CPDF_AllStates : public CPDF_GraphicStates {
   CFX_Matrix m_TextMatrix;
   CFX_Matrix m_CTM;
   CFX_Matrix m_ParentMatrix;
-  FX_FLOAT m_TextX;
-  FX_FLOAT m_TextY;
-  FX_FLOAT m_TextLineX;
-  FX_FLOAT m_TextLineY;
+  CFX_PointF m_TextPos;
+  CFX_PointF m_TextLinePos;
   FX_FLOAT m_TextLeading;
   FX_FLOAT m_TextRise;
   FX_FLOAT m_TextHorzScale;

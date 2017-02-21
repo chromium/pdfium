@@ -62,9 +62,7 @@ class CPDF_TextObject : public CPDF_PageObject {
                    const FX_FLOAT* pKerning,
                    int nSegs);
 
-  void CalcPositionData(FX_FLOAT* pTextAdvanceX,
-                        FX_FLOAT* pTextAdvanceY,
-                        FX_FLOAT horz_scale);
+  CFX_PointF CalcPositionData(FX_FLOAT horz_scale);
 
   CFX_PointF m_Pos;
   std::vector<uint32_t> m_CharCodes;

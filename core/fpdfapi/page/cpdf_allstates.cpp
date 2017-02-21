@@ -23,12 +23,8 @@ FX_FLOAT ClipFloat(FX_FLOAT f) {
 
 }  // namespace
 
-CPDF_AllStates::CPDF_AllStates() {
-  m_TextX = m_TextY = m_TextLineX = m_TextLineY = 0;
-  m_TextLeading = 0;
-  m_TextRise = 0;
-  m_TextHorzScale = 1.0f;
-}
+CPDF_AllStates::CPDF_AllStates()
+    : m_TextLeading(0), m_TextRise(0), m_TextHorzScale(1.0f) {}
 
 CPDF_AllStates::~CPDF_AllStates() {}
 
@@ -37,10 +33,8 @@ void CPDF_AllStates::Copy(const CPDF_AllStates& src) {
   m_TextMatrix = src.m_TextMatrix;
   m_ParentMatrix = src.m_ParentMatrix;
   m_CTM = src.m_CTM;
-  m_TextX = src.m_TextX;
-  m_TextY = src.m_TextY;
-  m_TextLineX = src.m_TextLineX;
-  m_TextLineY = src.m_TextLineY;
+  m_TextPos = src.m_TextPos;
+  m_TextLinePos = src.m_TextLinePos;
   m_TextLeading = src.m_TextLeading;
   m_TextRise = src.m_TextRise;
   m_TextHorzScale = src.m_TextHorzScale;

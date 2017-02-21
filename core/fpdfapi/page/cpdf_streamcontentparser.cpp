@@ -675,10 +675,8 @@ void CPDF_StreamContentParser::Handle_BeginMarkedContent() {
 void CPDF_StreamContentParser::Handle_BeginText() {
   m_pCurStates->m_TextMatrix = CFX_Matrix();
   OnChangeTextMatrix();
-  m_pCurStates->m_TextX = 0;
-  m_pCurStates->m_TextY = 0;
-  m_pCurStates->m_TextLineX = 0;
-  m_pCurStates->m_TextLineY = 0;
+  m_pCurStates->m_TextPos = CFX_PointF();
+  m_pCurStates->m_TextLinePos = CFX_PointF();
 }
 
 void CPDF_StreamContentParser::Handle_CurveTo_123() {
@@ -1136,10 +1134,8 @@ void CPDF_StreamContentParser::Handle_SetCharSpace() {
 }
 
 void CPDF_StreamContentParser::Handle_MoveTextPoint() {
-  m_pCurStates->m_TextLineX += GetNumber(1);
-  m_pCurStates->m_TextLineY += GetNumber(0);
-  m_pCurStates->m_TextX = m_pCurStates->m_TextLineX;
-  m_pCurStates->m_TextY = m_pCurStates->m_TextLineY;
+  m_pCurStates->m_TextLinePos += CFX_PointF(GetNumber(1), GetNumber(0));
+  m_pCurStates->m_TextPos = m_pCurStates->m_TextLinePos;
 }
 
 void CPDF_StreamContentParser::Handle_MoveTextPoint_SetLeading() {
@@ -1239,12 +1235,12 @@ void CPDF_StreamContentParser::AddTextObject(CFX_ByteString* pStrs,
   }
   if (fInitKerning != 0) {
     if (!pFont->IsVertWriting()) {
-      m_pCurStates->m_TextX -=
+      m_pCurStates->m_TextPos.x -=
           (fInitKerning * m_pCurStates->m_TextState.GetFontSize() *
            m_pCurStates->m_TextHorzScale) /
           1000;
     } else {
-      m_pCurStates->m_TextY -=
+      m_pCurStates->m_TextPos.y -=
           (fInitKerning * m_pCurStates->m_TextState.GetFontSize()) / 1000;
     }
   }
@@ -1268,15 +1264,11 @@ void CPDF_StreamContentParser::AddTextObject(CFX_ByteString* pStrs,
     pText->SetSegments(pStrs, pKerning, nsegs);
     pText->m_Pos = m_mtContentToUser.Transform(
         m_pCurStates->m_CTM.Transform(m_pCurStates->m_TextMatrix.Transform(
-            CFX_PointF(m_pCurStates->m_TextX,
-                       m_pCurStates->m_TextY + m_pCurStates->m_TextRise))));
+            CFX_PointF(m_pCurStates->m_TextPos.x,
+                       m_pCurStates->m_TextPos.y + m_pCurStates->m_TextRise))));
 
-    FX_FLOAT x_advance;
-    FX_FLOAT y_advance;
-    pText->CalcPositionData(&x_advance, &y_advance,
-                            m_pCurStates->m_TextHorzScale);
-    m_pCurStates->m_TextX += x_advance;
-    m_pCurStates->m_TextY += y_advance;
+    m_pCurStates->m_TextPos +=
+        pText->CalcPositionData(m_pCurStates->m_TextHorzScale);
     if (TextRenderingModeIsClipMode(text_mode)) {
       m_ClipTextList.push_back(
           std::unique_ptr<CPDF_TextObject>(pText->Clone()));
@@ -1285,12 +1277,12 @@ void CPDF_StreamContentParser::AddTextObject(CFX_ByteString* pStrs,
   }
   if (pKerning && pKerning[nsegs - 1] != 0) {
     if (!pFont->IsVertWriting()) {
-      m_pCurStates->m_TextX -=
+      m_pCurStates->m_TextPos.x -=
           (pKerning[nsegs - 1] * m_pCurStates->m_TextState.GetFontSize() *
            m_pCurStates->m_TextHorzScale) /
           1000;
     } else {
-      m_pCurStates->m_TextY -=
+      m_pCurStates->m_TextPos.y -=
           (pKerning[nsegs - 1] * m_pCurStates->m_TextState.GetFontSize()) /
           1000;
     }
@@ -1318,7 +1310,7 @@ void CPDF_StreamContentParser::Handle_ShowText_Positioning() {
   }
   if (nsegs == 0) {
     for (size_t i = 0; i < n; i++) {
-      m_pCurStates->m_TextX -=
+      m_pCurStates->m_TextPos.x -=
           (pArray->GetNumberAt(i) * m_pCurStates->m_TextState.GetFontSize() *
            m_pCurStates->m_TextHorzScale) /
           1000;
@@ -1361,10 +1353,8 @@ void CPDF_StreamContentParser::Handle_SetTextMatrix() {
       CFX_Matrix(GetNumber(5), GetNumber(4), GetNumber(3), GetNumber(2),
                  GetNumber(1), GetNumber(0));
   OnChangeTextMatrix();
-  m_pCurStates->m_TextX = 0;
-  m_pCurStates->m_TextY = 0;
-  m_pCurStates->m_TextLineX = 0;
-  m_pCurStates->m_TextLineY = 0;
+  m_pCurStates->m_TextPos = CFX_PointF();
+  m_pCurStates->m_TextLinePos = CFX_PointF();
 }
 
 void CPDF_StreamContentParser::OnChangeTextMatrix() {
@@ -1403,9 +1393,8 @@ void CPDF_StreamContentParser::Handle_SetHorzScale() {
 }
 
 void CPDF_StreamContentParser::Handle_MoveToNextLine() {
-  m_pCurStates->m_TextLineY -= m_pCurStates->m_TextLeading;
-  m_pCurStates->m_TextX = m_pCurStates->m_TextLineX;
-  m_pCurStates->m_TextY = m_pCurStates->m_TextLineY;
+  m_pCurStates->m_TextLinePos.y -= m_pCurStates->m_TextLeading;
+  m_pCurStates->m_TextPos = m_pCurStates->m_TextLinePos;
 }
 
 void CPDF_StreamContentParser::Handle_CurveTo_23() {

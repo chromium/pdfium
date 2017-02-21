@@ -114,7 +114,7 @@ void CPDF_TextObject::Transform(const CFX_Matrix& matrix) {
   pTextMatrix[2] = text_matrix.b;
   pTextMatrix[3] = text_matrix.d;
   m_Pos = CFX_PointF(text_matrix.e, text_matrix.f);
-  CalcPositionData(nullptr, nullptr, 0);
+  CalcPositionData(0);
 }
 
 bool CPDF_TextObject::IsText() const {
@@ -188,9 +188,7 @@ FX_FLOAT CPDF_TextObject::GetFontSize() const {
   return m_TextState.GetFontSize();
 }
 
-void CPDF_TextObject::CalcPositionData(FX_FLOAT* pTextAdvanceX,
-                                       FX_FLOAT* pTextAdvanceY,
-                                       FX_FLOAT horz_scale) {
+CFX_PointF CPDF_TextObject::CalcPositionData(FX_FLOAT horz_scale) {
   FX_FLOAT curpos = 0;
   FX_FLOAT min_x = 10000 * 1.0f;
   FX_FLOAT max_x = -10000 * 1.0f;
@@ -201,6 +199,7 @@ void CPDF_TextObject::CalcPositionData(FX_FLOAT* pTextAdvanceX,
   CPDF_CIDFont* pCIDFont = pFont->AsCIDFont();
   if (pCIDFont)
     bVertWriting = pCIDFont->IsVertWriting();
+
   FX_FLOAT fontsize = m_TextState.GetFontSize();
   for (int i = 0; i < pdfium::CollectionSize<int>(m_CharCodes); ++i) {
     uint32_t charcode = m_CharCodes[i];
@@ -211,6 +210,7 @@ void CPDF_TextObject::CalcPositionData(FX_FLOAT* pTextAdvanceX,
       }
       m_CharPos[i - 1] = curpos;
     }
+
     FX_RECT char_rect = pFont->GetCharBBox(charcode);
     FX_FLOAT charwidth;
     if (!bVertWriting) {
@@ -245,20 +245,17 @@ void CPDF_TextObject::CalcPositionData(FX_FLOAT* pTextAdvanceX,
     curpos += charwidth;
     if (charcode == ' ' && (!pCIDFont || pCIDFont->GetCharSize(' ') == 1))
       curpos += m_TextState.GetWordSpace();
+
     curpos += m_TextState.GetCharSpace();
   }
+
+  CFX_PointF ret;
   if (bVertWriting) {
-    if (pTextAdvanceX)
-      *pTextAdvanceX = 0;
-    if (pTextAdvanceY)
-      *pTextAdvanceY = curpos;
+    ret.y = curpos;
     min_x = min_x * fontsize / 1000;
     max_x = max_x * fontsize / 1000;
   } else {
-    if (pTextAdvanceX)
-      *pTextAdvanceX = curpos * horz_scale;
-    if (pTextAdvanceY)
-      *pTextAdvanceY = 0;
+    ret.x = curpos * horz_scale;
     min_y = min_y * fontsize / 1000;
     max_y = max_y * fontsize / 1000;
   }
@@ -268,14 +265,17 @@ void CPDF_TextObject::CalcPositionData(FX_FLOAT* pTextAdvanceX,
   m_Bottom = min_y;
   m_Top = max_y;
   GetTextMatrix().TransformRect(m_Left, m_Right, m_Top, m_Bottom);
+
   if (!TextRenderingModeIsStrokeMode(m_TextState.GetTextMode()))
-    return;
+    return ret;
 
   FX_FLOAT half_width = m_GraphState.GetLineWidth() / 2;
   m_Left -= half_width;
   m_Right += half_width;
   m_Top += half_width;
   m_Bottom -= half_width;
+
+  return ret;
 }
 
 void CPDF_TextObject::SetPosition(FX_FLOAT x, FX_FLOAT y) {
@@ -290,5 +290,5 @@ void CPDF_TextObject::SetPosition(FX_FLOAT x, FX_FLOAT y) {
 }
 
 void CPDF_TextObject::RecalcPositionData() {
-  CalcPositionData(nullptr, nullptr, 1);
+  CalcPositionData(1);
 }
