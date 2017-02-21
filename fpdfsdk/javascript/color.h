@@ -51,6 +51,10 @@ class color : public CJS_EmbedObj {
                                      CPWL_Color* color);
 
  private:
+  bool PropertyHelper(CJS_Runtime* pRuntime,
+                      CJS_PropValue& vp,
+                      CPWL_Color* val);
+
   CPWL_Color m_crTransparent;
   CPWL_Color m_crBlack;
   CPWL_Color m_crWhite;

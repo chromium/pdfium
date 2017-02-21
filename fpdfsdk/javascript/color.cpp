@@ -131,33 +131,93 @@ void color::ConvertArrayToPWLColor(CJS_Runtime* pRuntime,
   }
 }
 
-#define JS_IMPLEMENT_COLORPROP(prop, var)                    \
-  bool color::prop(CJS_Runtime* pRuntime, CJS_PropValue& vp, \
-                   CFX_WideString& sError) {                 \
-    CJS_Array array;                                         \
-    if (vp.IsGetting()) {                                    \
-      ConvertPWLColorToArray(pRuntime, var, &array);         \
-      vp << array;                                           \
-    } else {                                                 \
-      if (!vp.GetJSValue()->ConvertToArray(pRuntime, array)) \
-        return false;                                        \
-      ConvertArrayToPWLColor(pRuntime, array, &var);         \
-    }                                                        \
-    return true;                                             \
-  }
+bool color::transparent(CJS_Runtime* pRuntime,
+                        CJS_PropValue& vp,
+                        CFX_WideString& sError) {
+  return PropertyHelper(pRuntime, vp, &m_crTransparent);
+}
 
-JS_IMPLEMENT_COLORPROP(transparent, m_crTransparent)
-JS_IMPLEMENT_COLORPROP(black, m_crBlack)
-JS_IMPLEMENT_COLORPROP(white, m_crWhite)
-JS_IMPLEMENT_COLORPROP(red, m_crRed)
-JS_IMPLEMENT_COLORPROP(green, m_crGreen)
-JS_IMPLEMENT_COLORPROP(blue, m_crBlue)
-JS_IMPLEMENT_COLORPROP(cyan, m_crCyan)
-JS_IMPLEMENT_COLORPROP(magenta, m_crMagenta)
-JS_IMPLEMENT_COLORPROP(yellow, m_crYellow)
-JS_IMPLEMENT_COLORPROP(dkGray, m_crDKGray)
-JS_IMPLEMENT_COLORPROP(gray, m_crGray)
-JS_IMPLEMENT_COLORPROP(ltGray, m_crLTGray)
+bool color::black(CJS_Runtime* pRuntime,
+                  CJS_PropValue& vp,
+                  CFX_WideString& sError) {
+  return PropertyHelper(pRuntime, vp, &m_crBlack);
+}
+
+bool color::white(CJS_Runtime* pRuntime,
+                  CJS_PropValue& vp,
+                  CFX_WideString& sError) {
+  return PropertyHelper(pRuntime, vp, &m_crWhite);
+}
+
+bool color::red(CJS_Runtime* pRuntime,
+                CJS_PropValue& vp,
+                CFX_WideString& sError) {
+  return PropertyHelper(pRuntime, vp, &m_crRed);
+}
+
+bool color::green(CJS_Runtime* pRuntime,
+                  CJS_PropValue& vp,
+                  CFX_WideString& sError) {
+  return PropertyHelper(pRuntime, vp, &m_crGreen);
+}
+
+bool color::blue(CJS_Runtime* pRuntime,
+                 CJS_PropValue& vp,
+                 CFX_WideString& sError) {
+  return PropertyHelper(pRuntime, vp, &m_crBlue);
+}
+
+bool color::cyan(CJS_Runtime* pRuntime,
+                 CJS_PropValue& vp,
+                 CFX_WideString& sError) {
+  return PropertyHelper(pRuntime, vp, &m_crCyan);
+}
+
+bool color::magenta(CJS_Runtime* pRuntime,
+                    CJS_PropValue& vp,
+                    CFX_WideString& sError) {
+  return PropertyHelper(pRuntime, vp, &m_crMagenta);
+}
+
+bool color::yellow(CJS_Runtime* pRuntime,
+                   CJS_PropValue& vp,
+                   CFX_WideString& sError) {
+  return PropertyHelper(pRuntime, vp, &m_crYellow);
+}
+
+bool color::dkGray(CJS_Runtime* pRuntime,
+                   CJS_PropValue& vp,
+                   CFX_WideString& sError) {
+  return PropertyHelper(pRuntime, vp, &m_crDKGray);
+}
+
+bool color::gray(CJS_Runtime* pRuntime,
+                 CJS_PropValue& vp,
+                 CFX_WideString& sError) {
+  return PropertyHelper(pRuntime, vp, &m_crGray);
+}
+
+bool color::ltGray(CJS_Runtime* pRuntime,
+                   CJS_PropValue& vp,
+                   CFX_WideString& sError) {
+  return PropertyHelper(pRuntime, vp, &m_crLTGray);
+}
+
+bool color::PropertyHelper(CJS_Runtime* pRuntime,
+                           CJS_PropValue& vp,
+                           CPWL_Color* var) {
+  CJS_Array array;
+  if (vp.IsGetting()) {
+    ConvertPWLColorToArray(pRuntime, *var, &array);
+    vp << array;
+    return true;
+  }
+  if (!vp.GetJSValue()->ConvertToArray(pRuntime, array))
+    return false;
+
+  ConvertArrayToPWLColor(pRuntime, array, var);
+  return true;
+}
 
 bool color::convert(CJS_Runtime* pRuntime,
                     const std::vector<CJS_Value>& params,
