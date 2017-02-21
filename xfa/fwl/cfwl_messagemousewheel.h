@@ -9,20 +9,20 @@
 
 #include <memory>
 
+#include "core/fxcrt/fx_coordinates.h"
 #include "xfa/fwl/cfwl_message.h"
 
 class CFWL_MessageMouseWheel : public CFWL_Message {
  public:
   CFWL_MessageMouseWheel(CFWL_Widget* pSrcTarget, CFWL_Widget* pDstTarget);
+  CFWL_MessageMouseWheel(const CFWL_MessageMouseWheel&);
   ~CFWL_MessageMouseWheel() override;
 
   // CFWL_Message
   std::unique_ptr<CFWL_Message> Clone() override;
 
-  FX_FLOAT m_fx;
-  FX_FLOAT m_fy;
-  FX_FLOAT m_fDeltaX;
-  FX_FLOAT m_fDeltaY;
+  CFX_PointF m_pos;
+  CFX_PointF m_delta;
   uint32_t m_dwFlags;
 };
 

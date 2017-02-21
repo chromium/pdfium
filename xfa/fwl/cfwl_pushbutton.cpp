@@ -170,14 +170,14 @@ void CFWL_PushButton::OnLButtonDown(CFWL_MessageMouse* pMsg) {
 
 void CFWL_PushButton::OnLButtonUp(CFWL_MessageMouse* pMsg) {
   m_bBtnDown = false;
-  if (m_rtClient.Contains(pMsg->m_fx, pMsg->m_fy)) {
+  if (m_rtClient.Contains(pMsg->m_pos)) {
     m_pProperties->m_dwStates &= ~FWL_STATE_PSB_Pressed;
     m_pProperties->m_dwStates |= FWL_STATE_PSB_Hovered;
   } else {
     m_pProperties->m_dwStates &= ~FWL_STATE_PSB_Hovered;
     m_pProperties->m_dwStates &= ~FWL_STATE_PSB_Pressed;
   }
-  if (m_rtClient.Contains(pMsg->m_fx, pMsg->m_fy)) {
+  if (m_rtClient.Contains(pMsg->m_pos)) {
     CFWL_Event wmClick(CFWL_Event::Type::Click, this);
     DispatchEvent(&wmClick);
   }
@@ -187,7 +187,7 @@ void CFWL_PushButton::OnLButtonUp(CFWL_MessageMouse* pMsg) {
 void CFWL_PushButton::OnMouseMove(CFWL_MessageMouse* pMsg) {
   bool bRepaint = false;
   if (m_bBtnDown) {
-    if (m_rtClient.Contains(pMsg->m_fx, pMsg->m_fy)) {
+    if (m_rtClient.Contains(pMsg->m_pos)) {
       if ((m_pProperties->m_dwStates & FWL_STATE_PSB_Pressed) == 0) {
         m_pProperties->m_dwStates |= FWL_STATE_PSB_Pressed;
         bRepaint = true;
@@ -207,7 +207,7 @@ void CFWL_PushButton::OnMouseMove(CFWL_MessageMouse* pMsg) {
       }
     }
   } else {
-    if (!m_rtClient.Contains(pMsg->m_fx, pMsg->m_fy))
+    if (!m_rtClient.Contains(pMsg->m_pos))
       return;
     if ((m_pProperties->m_dwStates & FWL_STATE_PSB_Hovered) == 0) {
       m_pProperties->m_dwStates |= FWL_STATE_PSB_Hovered;

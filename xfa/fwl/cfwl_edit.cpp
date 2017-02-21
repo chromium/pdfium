@@ -142,18 +142,18 @@ void CFWL_Edit::Update() {
   InitCaret();
 }
 
-FWL_WidgetHit CFWL_Edit::HitTest(FX_FLOAT fx, FX_FLOAT fy) {
+FWL_WidgetHit CFWL_Edit::HitTest(const CFX_PointF& point) {
   if (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_OuterScrollbar) {
     if (IsShowScrollBar(true)) {
-      if (m_pVertScrollBar->GetWidgetRect().Contains(fx, fy))
+      if (m_pVertScrollBar->GetWidgetRect().Contains(point))
         return FWL_WidgetHit::VScrollBar;
     }
     if (IsShowScrollBar(false)) {
-      if (m_pHorzScrollBar->GetWidgetRect().Contains(fx, fy))
+      if (m_pHorzScrollBar->GetWidgetRect().Contains(point))
         return FWL_WidgetHit::HScrollBar;
     }
   }
-  if (m_rtClient.Contains(fx, fy))
+  if (m_rtClient.Contains(point))
     return FWL_WidgetHit::Edit;
   return FWL_WidgetHit::Unknown;
 }
@@ -1057,9 +1057,9 @@ void CFWL_Edit::LayoutScrollBar() {
     UpdateScroll();
 }
 
-void CFWL_Edit::DeviceToEngine(CFX_PointF& pt) {
-  pt.x += m_fScrollOffsetX - m_rtEngine.left;
-  pt.y += m_fScrollOffsetY - m_rtEngine.top - m_fVAlignOffset;
+CFX_PointF CFWL_Edit::DeviceToEngine(const CFX_PointF& pt) {
+  return pt + CFX_PointF(m_fScrollOffsetX - m_rtEngine.left,
+                         m_fScrollOffsetY - m_rtEngine.top - m_fVAlignOffset);
 }
 
 void CFWL_Edit::InitVerticalScrollBar() {
@@ -1268,10 +1268,8 @@ void CFWL_Edit::DoButtonDown(CFWL_MessageMouse* pMsg) {
   if (!pPage)
     return;
 
-  CFX_PointF pt(pMsg->m_fx, pMsg->m_fy);
-  DeviceToEngine(pt);
   bool bBefore = true;
-  int32_t nIndex = pPage->GetCharIndex(pt, bBefore);
+  int32_t nIndex = pPage->GetCharIndex(DeviceToEngine(pMsg->m_pos), bBefore);
   if (nIndex < 0)
     nIndex = 0;
 
@@ -1346,10 +1344,8 @@ void CFWL_Edit::OnButtonDblClk(CFWL_MessageMouse* pMsg) {
   if (!pPage)
     return;
 
-  CFX_PointF pt(pMsg->m_fx, pMsg->m_fy);
-  DeviceToEngine(pt);
   int32_t nCount = 0;
-  int32_t nIndex = pPage->SelectWord(pt, nCount);
+  int32_t nIndex = pPage->SelectWord(DeviceToEngine(pMsg->m_pos), nCount);
   if (nIndex < 0)
     return;
 
@@ -1366,10 +1362,8 @@ void CFWL_Edit::OnMouseMove(CFWL_MessageMouse* pMsg) {
   if (!pPage)
     return;
 
-  CFX_PointF pt(pMsg->m_fx, pMsg->m_fy);
-  DeviceToEngine(pt);
   bool bBefore = true;
-  int32_t nIndex = pPage->GetCharIndex(pt, bBefore);
+  int32_t nIndex = pPage->GetCharIndex(DeviceToEngine(pMsg->m_pos), bBefore);
   m_EdtEngine.SetCaretPos(nIndex, bBefore);
   nIndex = m_EdtEngine.GetCaretPos();
   m_EdtEngine.ClearSelection();

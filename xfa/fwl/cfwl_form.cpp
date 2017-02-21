@@ -67,12 +67,12 @@ void CFWL_Form::Update() {
   Layout();
 }
 
-FWL_WidgetHit CFWL_Form::HitTest(FX_FLOAT fx, FX_FLOAT fy) {
+FWL_WidgetHit CFWL_Form::HitTest(const CFX_PointF& point) {
   GetAvailableTheme();
 
   CFX_RectF rtCap(m_fCYBorder, m_fCXBorder, -2 * m_fCYBorder, 0 - m_fCXBorder);
-  return rtCap.Contains(fx, fy) ? FWL_WidgetHit::Titlebar
-                                : FWL_WidgetHit::Client;
+  return rtCap.Contains(point) ? FWL_WidgetHit::Titlebar
+                               : FWL_WidgetHit::Client;
 }
 
 void CFWL_Form::DrawWidget(CFX_Graphics* pGraphics, const CFX_Matrix* pMatrix) {

@@ -478,17 +478,15 @@ int32_t CFDE_TxtEdtPage::GetWidth(const FDE_TEXTEDITPIECE* pIdentity,
 void CFDE_TxtEdtPage::NormalizePt2Rect(CFX_PointF& ptF,
                                        const CFX_RectF& rtF,
                                        FX_FLOAT fTolerance) const {
-  if (rtF.Contains(ptF.x, ptF.y)) {
+  if (rtF.Contains(ptF))
     return;
-  }
-  if (ptF.x < rtF.left) {
+  if (ptF.x < rtF.left)
     ptF.x = rtF.left;
-  } else if (ptF.x >= rtF.right()) {
+  else if (ptF.x >= rtF.right())
     ptF.x = rtF.right() - fTolerance;
-  }
-  if (ptF.y < rtF.top) {
+
+  if (ptF.y < rtF.top)
     ptF.y = rtF.top;
-  } else if (ptF.y >= rtF.bottom()) {
+  else if (ptF.y >= rtF.bottom())
     ptF.y = rtF.bottom() - fTolerance;
-  }
 }

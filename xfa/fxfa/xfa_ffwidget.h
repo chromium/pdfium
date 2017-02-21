@@ -60,25 +60,24 @@ class CXFA_FFWidget : public CXFA_ContentLayoutItem {
   virtual void UpdateWidgetProperty();
   virtual bool OnMouseEnter();
   virtual bool OnMouseExit();
-  virtual bool OnLButtonDown(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy);
-  virtual bool OnLButtonUp(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy);
-  virtual bool OnLButtonDblClk(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy);
-  virtual bool OnMouseMove(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy);
+  virtual bool OnLButtonDown(uint32_t dwFlags, const CFX_PointF& point);
+  virtual bool OnLButtonUp(uint32_t dwFlags, const CFX_PointF& point);
+  virtual bool OnLButtonDblClk(uint32_t dwFlags, const CFX_PointF& point);
+  virtual bool OnMouseMove(uint32_t dwFlags, const CFX_PointF& point);
   virtual bool OnMouseWheel(uint32_t dwFlags,
                             int16_t zDelta,
-                            FX_FLOAT fx,
-                            FX_FLOAT fy);
-  virtual bool OnRButtonDown(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy);
-  virtual bool OnRButtonUp(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy);
-  virtual bool OnRButtonDblClk(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy);
+                            const CFX_PointF& point);
+  virtual bool OnRButtonDown(uint32_t dwFlags, const CFX_PointF& point);
+  virtual bool OnRButtonUp(uint32_t dwFlags, const CFX_PointF& point);
+  virtual bool OnRButtonDblClk(uint32_t dwFlags, const CFX_PointF& point);
 
   virtual bool OnSetFocus(CXFA_FFWidget* pOldWidget);
   virtual bool OnKillFocus(CXFA_FFWidget* pNewWidget);
   virtual bool OnKeyDown(uint32_t dwKeyCode, uint32_t dwFlags);
   virtual bool OnKeyUp(uint32_t dwKeyCode, uint32_t dwFlags);
   virtual bool OnChar(uint32_t dwChar, uint32_t dwFlags);
-  virtual FWL_WidgetHit OnHitTest(FX_FLOAT fx, FX_FLOAT fy);
-  virtual bool OnSetCursor(FX_FLOAT fx, FX_FLOAT fy);
+  virtual FWL_WidgetHit OnHitTest(const CFX_PointF& point);
+  virtual bool OnSetCursor(const CFX_PointF& point);
   virtual bool CanUndo();
   virtual bool CanRedo();
   virtual bool Undo();
@@ -127,7 +126,7 @@ class CXFA_FFWidget : public CXFA_ContentLayoutItem {
   const CFWL_App* GetFWLApp();
 
  protected:
-  virtual bool PtInActiveRect(FX_FLOAT fx, FX_FLOAT fy);
+  virtual bool PtInActiveRect(const CFX_PointF& point);
 
   void DrawBorder(CFX_Graphics* pGS,
                   CXFA_Box box,

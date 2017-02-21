@@ -19,9 +19,9 @@ class CXFA_FFTextEdit : public CXFA_FFField {
   // CXFA_FFField
   bool LoadWidget() override;
   void UpdateWidgetProperty() override;
-  bool OnLButtonDown(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) override;
-  bool OnRButtonDown(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) override;
-  bool OnRButtonUp(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) override;
+  bool OnLButtonDown(uint32_t dwFlags, const CFX_PointF& point) override;
+  bool OnRButtonDown(uint32_t dwFlags, const CFX_PointF& point) override;
+  bool OnRButtonUp(uint32_t dwFlags, const CFX_PointF& point) override;
   bool OnSetFocus(CXFA_FFWidget* pOldWidget) override;
   bool OnKillFocus(CXFA_FFWidget* pNewWidget) override;
   void OnProcessMessage(CFWL_Message* pMessage) override;
@@ -95,7 +95,7 @@ class CXFA_FFDateTimeEdit : public CXFA_FFTextEdit {
                        int32_t iDay);
 
  protected:
-  bool PtInActiveRect(FX_FLOAT fx, FX_FLOAT fy) override;
+  bool PtInActiveRect(const CFX_PointF& point) override;
   bool CommitData() override;
   bool UpdateFWLData() override;
   bool IsDataChanged() override;

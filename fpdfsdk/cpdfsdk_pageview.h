@@ -35,9 +35,6 @@ class CPDFSDK_PageView final : public CPDF_Page::View {
                        CPDF_RenderOptions* pOptions);
 #endif  // PDF_ENABLE_XFA
 
-  CPDFSDK_Annot* GetFXAnnotAtPoint(FX_FLOAT pageX, FX_FLOAT pageY);
-  CPDFSDK_Annot* GetFXWidgetAtPoint(FX_FLOAT pageX, FX_FLOAT pageY);
-
   void LoadFXAnnots();
   CPDFSDK_Annot* GetFocusAnnot();
   bool IsValidAnnot(const CPDF_Annot* p) const;
@@ -96,6 +93,9 @@ class CPDFSDK_PageView final : public CPDF_Page::View {
 #endif  // PDF_ENABLE_XFA
 
  private:
+  CPDFSDK_Annot* GetFXAnnotAtPoint(const CFX_PointF& point);
+  CPDFSDK_Annot* GetFXWidgetAtPoint(const CFX_PointF& point);
+
   int GetPageIndexForStaticPDF() const;
 
   CFX_Matrix m_curMatrix;

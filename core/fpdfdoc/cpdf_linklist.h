@@ -22,8 +22,7 @@ class CPDF_LinkList {
   ~CPDF_LinkList();
 
   CPDF_Link GetLinkAtPoint(CPDF_Page* pPage,
-                           FX_FLOAT pdf_x,
-                           FX_FLOAT pdf_y,
+                           const CFX_PointF& point,
                            int* z_order);
 
  private:

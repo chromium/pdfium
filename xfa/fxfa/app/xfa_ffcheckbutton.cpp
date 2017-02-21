@@ -232,8 +232,7 @@ void CXFA_FFCheckButton::RenderWidget(CFX_Graphics* pGS,
   GetApp()->GetWidgetMgrDelegate()->OnDrawWidget(m_pNormalWidget, pGS, &mt);
 }
 bool CXFA_FFCheckButton::OnLButtonUp(uint32_t dwFlags,
-                                     FX_FLOAT fx,
-                                     FX_FLOAT fy) {
+                                     const CFX_PointF& point) {
   if (!m_pNormalWidget || !IsButtonDown())
     return false;
 
@@ -241,9 +240,7 @@ bool CXFA_FFCheckButton::OnLButtonUp(uint32_t dwFlags,
   CFWL_MessageMouse ms(nullptr, m_pNormalWidget);
   ms.m_dwCmd = FWL_MouseCommand::LeftButtonUp;
   ms.m_dwFlags = dwFlags;
-  ms.m_fx = fx;
-  ms.m_fy = fy;
-  FWLToClient(ms.m_fx, ms.m_fy);
+  ms.m_pos = FWLToClient(point);
   TranslateFWLMessage(&ms);
   return true;
 }

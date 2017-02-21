@@ -14,6 +14,8 @@ CFWL_MessageMouse::CFWL_MessageMouse(CFWL_Widget* pSrcTarget,
                                      CFWL_Widget* pDstTarget)
     : CFWL_Message(CFWL_Message::Type::Mouse, pSrcTarget, pDstTarget) {}
 
+CFWL_MessageMouse::CFWL_MessageMouse(const CFWL_MessageMouse& other) = default;
+
 CFWL_MessageMouse::~CFWL_MessageMouse() {}
 
 std::unique_ptr<CFWL_Message> CFWL_MessageMouse::Clone() {

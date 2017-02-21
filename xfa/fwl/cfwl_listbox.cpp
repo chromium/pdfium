@@ -75,18 +75,18 @@ void CFWL_ListBox::Update() {
   CalcSize(false);
 }
 
-FWL_WidgetHit CFWL_ListBox::HitTest(FX_FLOAT fx, FX_FLOAT fy) {
+FWL_WidgetHit CFWL_ListBox::HitTest(const CFX_PointF& point) {
   if (IsShowScrollBar(false)) {
     CFX_RectF rect = m_pHorzScrollBar->GetWidgetRect();
-    if (rect.Contains(fx, fy))
+    if (rect.Contains(point))
       return FWL_WidgetHit::HScrollBar;
   }
   if (IsShowScrollBar(true)) {
     CFX_RectF rect = m_pVertScrollBar->GetWidgetRect();
-    if (rect.Contains(fx, fy))
+    if (rect.Contains(point))
       return FWL_WidgetHit::VScrollBar;
   }
-  if (m_rtClient.Contains(fx, fy))
+  if (m_rtClient.Contains(point))
     return FWL_WidgetHit::Client;
   return FWL_WidgetHit::Unknown;
 }
@@ -304,8 +304,8 @@ void CFWL_ListBox::SetFocusItem(CFWL_ListItem* pItem) {
   }
 }
 
-CFWL_ListItem* CFWL_ListBox::GetItemAtPoint(FX_FLOAT fx, FX_FLOAT fy) {
-  fx -= m_rtConent.left, fy -= m_rtConent.top;
+CFWL_ListItem* CFWL_ListBox::GetItemAtPoint(const CFX_PointF& point) {
+  CFX_PointF pos = point - m_rtConent.TopLeft();
   FX_FLOAT fPosX = 0.0f;
   if (m_pHorzScrollBar)
     fPosX = m_pHorzScrollBar->GetPos();
@@ -322,7 +322,7 @@ CFWL_ListItem* CFWL_ListBox::GetItemAtPoint(FX_FLOAT fx, FX_FLOAT fy) {
 
     CFX_RectF rtItem = pItem->GetRect();
     rtItem.Offset(-fPosX, -fPosY);
-    if (rtItem.Contains(fx, fy))
+    if (rtItem.Contains(pos))
       return pItem;
   }
   return nullptr;
@@ -748,7 +748,7 @@ void CFWL_ListBox::OnLButtonDown(CFWL_MessageMouse* pMsg) {
   if ((m_pProperties->m_dwStates & FWL_WGTSTATE_Focused) == 0)
     SetFocus(true);
 
-  CFWL_ListItem* pItem = GetItemAtPoint(pMsg->m_fx, pMsg->m_fy);
+  CFWL_ListItem* pItem = GetItemAtPoint(pMsg->m_pos);
   if (!pItem)
     return;
 

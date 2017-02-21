@@ -40,11 +40,9 @@ bool CXFA_FFWidgetHandler::OnMouseExit(CXFA_FFWidget* hWidget) {
 
 bool CXFA_FFWidgetHandler::OnLButtonDown(CXFA_FFWidget* hWidget,
                                          uint32_t dwFlags,
-                                         FX_FLOAT fx,
-                                         FX_FLOAT fy) {
+                                         const CFX_PointF& point) {
   m_pDocView->LockUpdate();
-  CFX_PointF pos = hWidget->Rotate2Normal(CFX_PointF(fx, fy));
-  bool bRet = hWidget->OnLButtonDown(dwFlags, pos.x, pos.y);
+  bool bRet = hWidget->OnLButtonDown(dwFlags, hWidget->Rotate2Normal(point));
   if (bRet && m_pDocView->SetFocus(hWidget)) {
     m_pDocView->GetDoc()->GetDocEnvironment()->SetFocusWidget(
         m_pDocView->GetDoc(), hWidget);
@@ -56,12 +54,10 @@ bool CXFA_FFWidgetHandler::OnLButtonDown(CXFA_FFWidget* hWidget,
 
 bool CXFA_FFWidgetHandler::OnLButtonUp(CXFA_FFWidget* hWidget,
                                        uint32_t dwFlags,
-                                       FX_FLOAT fx,
-                                       FX_FLOAT fy) {
+                                       const CFX_PointF& point) {
   m_pDocView->LockUpdate();
-  CFX_PointF pos = hWidget->Rotate2Normal(CFX_PointF(fx, fy));
   m_pDocView->m_bLayoutEvent = true;
-  bool bRet = hWidget->OnLButtonUp(dwFlags, pos.x, pos.y);
+  bool bRet = hWidget->OnLButtonUp(dwFlags, hWidget->Rotate2Normal(point));
   m_pDocView->UnlockUpdate();
   m_pDocView->UpdateDocView();
   return bRet;
@@ -69,20 +65,16 @@ bool CXFA_FFWidgetHandler::OnLButtonUp(CXFA_FFWidget* hWidget,
 
 bool CXFA_FFWidgetHandler::OnLButtonDblClk(CXFA_FFWidget* hWidget,
                                            uint32_t dwFlags,
-                                           FX_FLOAT fx,
-                                           FX_FLOAT fy) {
-  CFX_PointF pos = hWidget->Rotate2Normal(CFX_PointF(fx, fy));
-  bool bRet = hWidget->OnLButtonDblClk(dwFlags, pos.x, pos.y);
+                                           const CFX_PointF& point) {
+  bool bRet = hWidget->OnLButtonDblClk(dwFlags, hWidget->Rotate2Normal(point));
   m_pDocView->RunInvalidate();
   return bRet;
 }
 
 bool CXFA_FFWidgetHandler::OnMouseMove(CXFA_FFWidget* hWidget,
                                        uint32_t dwFlags,
-                                       FX_FLOAT fx,
-                                       FX_FLOAT fy) {
-  CFX_PointF pos = hWidget->Rotate2Normal(CFX_PointF(fx, fy));
-  bool bRet = hWidget->OnMouseMove(dwFlags, pos.x, pos.y);
+                                       const CFX_PointF& point) {
+  bool bRet = hWidget->OnMouseMove(dwFlags, hWidget->Rotate2Normal(point));
   m_pDocView->RunInvalidate();
   return bRet;
 }
@@ -90,20 +82,17 @@ bool CXFA_FFWidgetHandler::OnMouseMove(CXFA_FFWidget* hWidget,
 bool CXFA_FFWidgetHandler::OnMouseWheel(CXFA_FFWidget* hWidget,
                                         uint32_t dwFlags,
                                         int16_t zDelta,
-                                        FX_FLOAT fx,
-                                        FX_FLOAT fy) {
-  CFX_PointF pos = hWidget->Rotate2Normal(CFX_PointF(fx, fy));
-  bool bRet = hWidget->OnMouseWheel(dwFlags, zDelta, pos.x, pos.y);
+                                        const CFX_PointF& point) {
+  bool bRet =
+      hWidget->OnMouseWheel(dwFlags, zDelta, hWidget->Rotate2Normal(point));
   m_pDocView->RunInvalidate();
   return bRet;
 }
 
 bool CXFA_FFWidgetHandler::OnRButtonDown(CXFA_FFWidget* hWidget,
                                          uint32_t dwFlags,
-                                         FX_FLOAT fx,
-                                         FX_FLOAT fy) {
-  CFX_PointF pos = hWidget->Rotate2Normal(CFX_PointF(fx, fy));
-  bool bRet = hWidget->OnRButtonDown(dwFlags, pos.x, pos.y);
+                                         const CFX_PointF& point) {
+  bool bRet = hWidget->OnRButtonDown(dwFlags, hWidget->Rotate2Normal(point));
   if (bRet && m_pDocView->SetFocus(hWidget)) {
     m_pDocView->GetDoc()->GetDocEnvironment()->SetFocusWidget(
         m_pDocView->GetDoc(), hWidget);
@@ -114,20 +103,16 @@ bool CXFA_FFWidgetHandler::OnRButtonDown(CXFA_FFWidget* hWidget,
 
 bool CXFA_FFWidgetHandler::OnRButtonUp(CXFA_FFWidget* hWidget,
                                        uint32_t dwFlags,
-                                       FX_FLOAT fx,
-                                       FX_FLOAT fy) {
-  CFX_PointF pos = hWidget->Rotate2Normal(CFX_PointF(fx, fy));
-  bool bRet = hWidget->OnRButtonUp(dwFlags, pos.x, pos.y);
+                                       const CFX_PointF& point) {
+  bool bRet = hWidget->OnRButtonUp(dwFlags, hWidget->Rotate2Normal(point));
   m_pDocView->RunInvalidate();
   return bRet;
 }
 
 bool CXFA_FFWidgetHandler::OnRButtonDblClk(CXFA_FFWidget* hWidget,
                                            uint32_t dwFlags,
-                                           FX_FLOAT fx,
-                                           FX_FLOAT fy) {
-  CFX_PointF pos = hWidget->Rotate2Normal(CFX_PointF(fx, fy));
-  bool bRet = hWidget->OnRButtonDblClk(dwFlags, pos.x, pos.y);
+                                           const CFX_PointF& point) {
+  bool bRet = hWidget->OnRButtonDblClk(dwFlags, hWidget->Rotate2Normal(point));
   m_pDocView->RunInvalidate();
   return bRet;
 }
@@ -158,20 +143,15 @@ bool CXFA_FFWidgetHandler::OnChar(CXFA_FFWidget* hWidget,
 }
 
 FWL_WidgetHit CXFA_FFWidgetHandler::OnHitTest(CXFA_FFWidget* hWidget,
-                                              FX_FLOAT fx,
-                                              FX_FLOAT fy) {
+                                              const CFX_PointF& point) {
   if (!(hWidget->GetStatus() & XFA_WidgetStatus_Visible))
     return FWL_WidgetHit::Unknown;
-
-  CFX_PointF pos = hWidget->Rotate2Normal(CFX_PointF(fx, fy));
-  return hWidget->OnHitTest(pos.x, pos.y);
+  return hWidget->OnHitTest(hWidget->Rotate2Normal(point));
 }
 
 bool CXFA_FFWidgetHandler::OnSetCursor(CXFA_FFWidget* hWidget,
-                                       FX_FLOAT fx,
-                                       FX_FLOAT fy) {
-  CFX_PointF pos = hWidget->Rotate2Normal(CFX_PointF(fx, fy));
-  return hWidget->OnSetCursor(pos.x, pos.y);
+                                       const CFX_PointF& point) {
+  return hWidget->OnSetCursor(hWidget->Rotate2Normal(point));
 }
 
 void CXFA_FFWidgetHandler::RenderWidget(CXFA_FFWidget* hWidget,

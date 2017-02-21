@@ -101,14 +101,14 @@ void CFWL_DateTimePicker::Update() {
   return;
 }
 
-FWL_WidgetHit CFWL_DateTimePicker::HitTest(FX_FLOAT fx, FX_FLOAT fy) {
+FWL_WidgetHit CFWL_DateTimePicker::HitTest(const CFX_PointF& point) {
   if (m_pWidgetMgr->IsFormDisabled())
-    return DisForm_HitTest(fx, fy);
-  if (m_rtClient.Contains(fx, fy))
+    return DisForm_HitTest(point);
+  if (m_rtClient.Contains(point))
     return FWL_WidgetHit::Client;
   if (IsMonthCalendarVisible()) {
     CFX_RectF rect = m_pMonthCal->GetWidgetRect();
-    if (rect.Contains(fx, fy))
+    if (rect.Contains(point))
       return FWL_WidgetHit::Client;
   }
   return FWL_WidgetHit::Unknown;
@@ -380,18 +380,18 @@ void CFWL_DateTimePicker::DisForm_ShowMonthCalendar(bool bActivate) {
   RepaintRect(rtInvalidate);
 }
 
-FWL_WidgetHit CFWL_DateTimePicker::DisForm_HitTest(FX_FLOAT fx,
-                                                   FX_FLOAT fy) const {
+FWL_WidgetHit CFWL_DateTimePicker::DisForm_HitTest(
+    const CFX_PointF& point) const {
   CFX_RectF rect(0, 0, m_pProperties->m_rtWidget.width,
                  m_pProperties->m_rtWidget.height);
-  if (rect.Contains(fx, fy))
+  if (rect.Contains(point))
     return FWL_WidgetHit::Edit;
   if (DisForm_IsNeedShowButton())
     rect.width += m_fBtn;
-  if (rect.Contains(fx, fy))
+  if (rect.Contains(point))
     return FWL_WidgetHit::Client;
   if (IsMonthCalendarVisible()) {
-    if (m_pMonthCal->GetWidgetRect().Contains(fx, fy))
+    if (m_pMonthCal->GetWidgetRect().Contains(point))
       return FWL_WidgetHit::Client;
   }
   return FWL_WidgetHit::Unknown;
@@ -539,7 +539,7 @@ void CFWL_DateTimePicker::OnLButtonDown(CFWL_MessageMouse* pMsg) {
     return;
   if ((m_pProperties->m_dwStates & FWL_WGTSTATE_Focused) == 0)
     SetFocus(true);
-  if (!m_rtBtn.Contains(pMsg->m_fx, pMsg->m_fy))
+  if (!m_rtBtn.Contains(pMsg->m_pos))
     return;
 
   if (IsMonthCalendarVisible()) {
@@ -557,7 +557,7 @@ void CFWL_DateTimePicker::OnLButtonUp(CFWL_MessageMouse* pMsg) {
     return;
 
   m_bLBtnDown = false;
-  if (m_rtBtn.Contains(pMsg->m_fx, pMsg->m_fy))
+  if (m_rtBtn.Contains(pMsg->m_pos))
     m_iBtnState = CFWL_PartState_Hovered;
   else
     m_iBtnState = CFWL_PartState_Normal;
@@ -565,7 +565,7 @@ void CFWL_DateTimePicker::OnLButtonUp(CFWL_MessageMouse* pMsg) {
 }
 
 void CFWL_DateTimePicker::OnMouseMove(CFWL_MessageMouse* pMsg) {
-  if (!m_rtBtn.Contains(pMsg->m_fx, pMsg->m_fy))
+  if (!m_rtBtn.Contains(pMsg->m_pos))
     m_iBtnState = CFWL_PartState_Normal;
   RepaintRect(m_rtBtn);
 }

@@ -31,25 +31,24 @@ class CXFA_FFField : public CXFA_FFWidget, public IFWL_WidgetDelegate {
   bool PerformLayout() override;
   bool OnMouseEnter() override;
   bool OnMouseExit() override;
-  bool OnLButtonDown(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) override;
-  bool OnLButtonUp(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) override;
-  bool OnLButtonDblClk(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) override;
-  bool OnMouseMove(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) override;
+  bool OnLButtonDown(uint32_t dwFlags, const CFX_PointF& point) override;
+  bool OnLButtonUp(uint32_t dwFlags, const CFX_PointF& point) override;
+  bool OnLButtonDblClk(uint32_t dwFlags, const CFX_PointF& point) override;
+  bool OnMouseMove(uint32_t dwFlags, const CFX_PointF& point) override;
   bool OnMouseWheel(uint32_t dwFlags,
                     int16_t zDelta,
-                    FX_FLOAT fx,
-                    FX_FLOAT fy) override;
-  bool OnRButtonDown(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) override;
-  bool OnRButtonUp(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) override;
-  bool OnRButtonDblClk(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) override;
+                    const CFX_PointF& point) override;
+  bool OnRButtonDown(uint32_t dwFlags, const CFX_PointF& point) override;
+  bool OnRButtonUp(uint32_t dwFlags, const CFX_PointF& point) override;
+  bool OnRButtonDblClk(uint32_t dwFlags, const CFX_PointF& point) override;
 
   bool OnSetFocus(CXFA_FFWidget* pOldWidget) override;
   bool OnKillFocus(CXFA_FFWidget* pNewWidget) override;
   bool OnKeyDown(uint32_t dwKeyCode, uint32_t dwFlags) override;
   bool OnKeyUp(uint32_t dwKeyCode, uint32_t dwFlags) override;
   bool OnChar(uint32_t dwChar, uint32_t dwFlags) override;
-  FWL_WidgetHit OnHitTest(FX_FLOAT fx, FX_FLOAT fy) override;
-  bool OnSetCursor(FX_FLOAT fx, FX_FLOAT fy) override;
+  FWL_WidgetHit OnHitTest(const CFX_PointF& point) override;
+  bool OnSetCursor(const CFX_PointF& point) override;
 
   // IFWL_WidgetDelegate
   void OnProcessMessage(CFWL_Message* pMessage) override;
@@ -61,12 +60,12 @@ class CXFA_FFField : public CXFA_FFWidget, public IFWL_WidgetDelegate {
   uint32_t UpdateUIProperty();
 
  protected:
-  bool PtInActiveRect(FX_FLOAT fx, FX_FLOAT fy) override;
+  bool PtInActiveRect(const CFX_PointF& point) override;
 
   virtual void SetFWLRect();
   void SetFWLThemeProvider();
   CFWL_Widget* GetNormalWidget() { return m_pNormalWidget; }
-  void FWLToClient(FX_FLOAT& fx, FX_FLOAT& fy);
+  CFX_PointF FWLToClient(const CFX_PointF& point);
   void LayoutCaption();
   void RenderCaption(CFX_Graphics* pGS, CFX_Matrix* pMatrix = nullptr);
 

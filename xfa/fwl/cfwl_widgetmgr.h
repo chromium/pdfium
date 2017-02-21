@@ -50,7 +50,8 @@ class CFWL_WidgetMgr : public CFWL_WidgetMgrDelegate {
   void SetOwner(CFWL_Widget* pOwner, CFWL_Widget* pOwned);
   void SetParent(CFWL_Widget* pParent, CFWL_Widget* pChild);
 
-  CFWL_Widget* GetWidgetAtPoint(CFWL_Widget* pParent, FX_FLOAT fx, FX_FLOAT fy);
+  CFWL_Widget* GetWidgetAtPoint(CFWL_Widget* pParent,
+                                const CFX_PointF& point) const;
   CFWL_Widget* NextTab(CFWL_Widget* parent, CFWL_Widget* focus, bool& bFind);
 
   std::vector<CFWL_Widget*> GetSameGroupRadioButton(

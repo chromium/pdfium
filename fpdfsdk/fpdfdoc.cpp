@@ -257,7 +257,10 @@ DLLEXPORT FPDF_LINK STDCALL FPDFLink_GetLinkAtPoint(FPDF_PAGE page,
   if (!pLinkList)
     return nullptr;
 
-  return pLinkList->GetLinkAtPoint(pPage, (FX_FLOAT)x, (FX_FLOAT)y, nullptr)
+  return pLinkList
+      ->GetLinkAtPoint(
+          pPage, CFX_PointF(static_cast<FX_FLOAT>(x), static_cast<FX_FLOAT>(y)),
+          nullptr)
       .GetDict();
 }
 
@@ -273,7 +276,9 @@ DLLEXPORT int STDCALL FPDFLink_GetLinkZOrderAtPoint(FPDF_PAGE page,
     return -1;
 
   int z_order = -1;
-  pLinkList->GetLinkAtPoint(pPage, (FX_FLOAT)x, (FX_FLOAT)y, &z_order);
+  pLinkList->GetLinkAtPoint(
+      pPage, CFX_PointF(static_cast<FX_FLOAT>(x), static_cast<FX_FLOAT>(y)),
+      &z_order);
   return z_order;
 }
 

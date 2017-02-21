@@ -151,10 +151,10 @@ void CFWL_Widget::RemoveStates(uint32_t dwStates) {
   m_pProperties->m_dwStates &= ~dwStates;
 }
 
-FWL_WidgetHit CFWL_Widget::HitTest(FX_FLOAT fx, FX_FLOAT fy) {
-  if (GetClientRect().Contains(fx, fy))
+FWL_WidgetHit CFWL_Widget::HitTest(const CFX_PointF& point) {
+  if (GetClientRect().Contains(point))
     return FWL_WidgetHit::Client;
-  if (HasBorder() && GetRelativeRect().Contains(fx, fy))
+  if (HasBorder() && GetRelativeRect().Contains(point))
     return FWL_WidgetHit::Border;
   return FWL_WidgetHit::Unknown;
 }

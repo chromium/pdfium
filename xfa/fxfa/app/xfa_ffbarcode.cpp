@@ -221,20 +221,18 @@ void CXFA_FFBarcode::UpdateWidgetProperty() {
   }
 }
 
-bool CXFA_FFBarcode::OnLButtonDown(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) {
+bool CXFA_FFBarcode::OnLButtonDown(uint32_t dwFlags, const CFX_PointF& point) {
   CFWL_Barcode* pBarCodeWidget = (CFWL_Barcode*)m_pNormalWidget;
-  if (!pBarCodeWidget || pBarCodeWidget->IsProtectedType()) {
+  if (!pBarCodeWidget || pBarCodeWidget->IsProtectedType())
     return false;
-  }
-  if (m_pDataAcc->GetAccess() != XFA_ATTRIBUTEENUM_Open) {
+  if (m_pDataAcc->GetAccess() != XFA_ATTRIBUTEENUM_Open)
     return false;
-  }
-  return CXFA_FFTextEdit::OnLButtonDown(dwFlags, fx, fy);
+  return CXFA_FFTextEdit::OnLButtonDown(dwFlags, point);
 }
-bool CXFA_FFBarcode::OnRButtonDown(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) {
+
+bool CXFA_FFBarcode::OnRButtonDown(uint32_t dwFlags, const CFX_PointF& point) {
   CFWL_Barcode* pBarCodeWidget = (CFWL_Barcode*)m_pNormalWidget;
-  if (!pBarCodeWidget || pBarCodeWidget->IsProtectedType()) {
+  if (!pBarCodeWidget || pBarCodeWidget->IsProtectedType())
     return false;
-  }
-  return CXFA_FFTextEdit::OnRButtonDown(dwFlags, fx, fy);
+  return CXFA_FFTextEdit::OnRButtonDown(dwFlags, point);
 }

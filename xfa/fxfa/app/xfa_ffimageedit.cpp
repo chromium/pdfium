@@ -86,12 +86,10 @@ void CXFA_FFImageEdit::RenderWidget(CFX_Graphics* pGS,
 }
 
 bool CXFA_FFImageEdit::OnLButtonDown(uint32_t dwFlags,
-                                     FX_FLOAT fx,
-                                     FX_FLOAT fy) {
+                                     const CFX_PointF& point) {
   if (m_pDataAcc->GetAccess() != XFA_ATTRIBUTEENUM_Open)
     return false;
-
-  if (!PtInActiveRect(fx, fy))
+  if (!PtInActiveRect(point))
     return false;
 
   SetButtonDown(true);
@@ -99,9 +97,7 @@ bool CXFA_FFImageEdit::OnLButtonDown(uint32_t dwFlags,
   CFWL_MessageMouse ms(nullptr, m_pNormalWidget);
   ms.m_dwCmd = FWL_MouseCommand::LeftButtonDown;
   ms.m_dwFlags = dwFlags;
-  ms.m_fx = fx;
-  ms.m_fy = fy;
-  FWLToClient(ms.m_fx, ms.m_fy);
+  ms.m_pos = FWLToClient(point);
   TranslateFWLMessage(&ms);
   return true;
 }

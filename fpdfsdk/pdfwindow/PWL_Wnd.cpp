@@ -673,11 +673,11 @@ void CPWL_Wnd::OnSetFocus() {}
 void CPWL_Wnd::OnKillFocus() {}
 
 bool CPWL_Wnd::WndHitTest(const CFX_PointF& point) const {
-  return IsValid() && IsVisible() && GetWindowRect().Contains(point.x, point.y);
+  return IsValid() && IsVisible() && GetWindowRect().Contains(point);
 }
 
 bool CPWL_Wnd::ClientHitTest(const CFX_PointF& point) const {
-  return IsValid() && IsVisible() && GetClientRect().Contains(point.x, point.y);
+  return IsValid() && IsVisible() && GetClientRect().Contains(point);
 }
 
 const CPWL_Wnd* CPWL_Wnd::GetRootWnd() const {

@@ -51,7 +51,7 @@ class CFWL_ComboBox : public CFWL_Widget {
   void SetStates(uint32_t dwStates) override;
   void RemoveStates(uint32_t dwStates) override;
   void Update() override;
-  FWL_WidgetHit HitTest(FX_FLOAT fx, FX_FLOAT fy) override;
+  FWL_WidgetHit HitTest(const CFX_PointF& point) override;
   void DrawWidget(CFX_Graphics* pGraphics, const CFX_Matrix* pMatrix) override;
   void SetThemeProvider(IFWL_ThemeProvider* pThemeProvider) override;
   void OnProcessMessage(CFWL_Message* pMessage) override;
@@ -135,7 +135,7 @@ class CFWL_ComboBox : public CFWL_Widget {
   void DisForm_ModifyStylesEx(uint32_t dwStylesExAdded,
                               uint32_t dwStylesExRemoved);
   void DisForm_Update();
-  FWL_WidgetHit DisForm_HitTest(FX_FLOAT fx, FX_FLOAT fy);
+  FWL_WidgetHit DisForm_HitTest(const CFX_PointF& point);
   void DisForm_DrawWidget(CFX_Graphics* pGraphics, const CFX_Matrix* pMatrix);
   CFX_RectF DisForm_GetBBox() const;
   void DisForm_Layout();

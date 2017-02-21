@@ -41,7 +41,7 @@ class CFWL_ListBox : public CFWL_Widget {
   // CFWL_Widget
   FWL_Type GetClassID() const override;
   void Update() override;
-  FWL_WidgetHit HitTest(FX_FLOAT fx, FX_FLOAT fy) override;
+  FWL_WidgetHit HitTest(const CFX_PointF& point) override;
   void DrawWidget(CFX_Graphics* pGraphics, const CFX_Matrix* pMatrix) override;
   void SetThemeProvider(IFWL_ThemeProvider* pThemeProvider) override;
   void OnProcessMessage(CFWL_Message* pMessage) override;
@@ -69,7 +69,7 @@ class CFWL_ListBox : public CFWL_Widget {
  protected:
   CFWL_ListItem* GetListItem(CFWL_ListItem* hItem, uint32_t dwKeyCode);
   void SetSelection(CFWL_ListItem* hStart, CFWL_ListItem* hEnd, bool bSelected);
-  CFWL_ListItem* GetItemAtPoint(FX_FLOAT fx, FX_FLOAT fy);
+  CFWL_ListItem* GetItemAtPoint(const CFX_PointF& point);
   bool ScrollToVisible(CFWL_ListItem* hItem);
   void InitVerticalScrollBar();
   void InitHorizontalScrollBar();

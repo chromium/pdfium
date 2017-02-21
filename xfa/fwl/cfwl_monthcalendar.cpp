@@ -691,10 +691,10 @@ CFX_WideString CFWL_MonthCalendar::GetTodayText(int32_t iYear,
   return wsToday;
 }
 
-int32_t CFWL_MonthCalendar::GetDayAtPoint(FX_FLOAT x, FX_FLOAT y) {
+int32_t CFWL_MonthCalendar::GetDayAtPoint(const CFX_PointF& point) const {
   int i = 1;  // one-based day values.
   for (const auto& pDateInfo : m_arrDates) {
-    if (pDateInfo->rect.Contains(x, y))
+    if (pDateInfo->rect.Contains(point))
       return i;
     ++i;
   }
@@ -752,15 +752,15 @@ void CFWL_MonthCalendar::OnDrawWidget(CFX_Graphics* pGraphics,
 }
 
 void CFWL_MonthCalendar::OnLButtonDown(CFWL_MessageMouse* pMsg) {
-  if (m_rtLBtn.Contains(pMsg->m_fx, pMsg->m_fy)) {
+  if (m_rtLBtn.Contains(pMsg->m_pos)) {
     m_iLBtnPartStates = CFWL_PartState_Pressed;
     PrevMonth();
     RepaintRect(m_rtClient);
-  } else if (m_rtRBtn.Contains(pMsg->m_fx, pMsg->m_fy)) {
+  } else if (m_rtRBtn.Contains(pMsg->m_pos)) {
     m_iRBtnPartStates |= CFWL_PartState_Pressed;
     NextMonth();
     RepaintRect(m_rtClient);
-  } else if (m_rtToday.Contains(pMsg->m_fx, pMsg->m_fy)) {
+  } else if (m_rtToday.Contains(pMsg->m_pos)) {
     JumpToToday();
     RepaintRect(m_rtClient);
   } else {
@@ -774,24 +774,24 @@ void CFWL_MonthCalendar::OnLButtonUp(CFWL_MessageMouse* pMsg) {
   if (m_pWidgetMgr->IsFormDisabled())
     return DisForm_OnLButtonUp(pMsg);
 
-  if (m_rtLBtn.Contains(pMsg->m_fx, pMsg->m_fy)) {
+  if (m_rtLBtn.Contains(pMsg->m_pos)) {
     m_iLBtnPartStates = 0;
     RepaintRect(m_rtLBtn);
     return;
   }
-  if (m_rtRBtn.Contains(pMsg->m_fx, pMsg->m_fy)) {
+  if (m_rtRBtn.Contains(pMsg->m_pos)) {
     m_iRBtnPartStates = 0;
     RepaintRect(m_rtRBtn);
     return;
   }
-  if (m_rtToday.Contains(pMsg->m_fx, pMsg->m_fy))
+  if (m_rtToday.Contains(pMsg->m_pos))
     return;
 
   int32_t iOldSel = 0;
   if (!m_arrSelDays.empty())
     iOldSel = m_arrSelDays[0];
 
-  int32_t iCurSel = GetDayAtPoint(pMsg->m_fx, pMsg->m_fy);
+  int32_t iCurSel = GetDayAtPoint(pMsg->m_pos);
   CFWL_DateTimePicker* pIPicker = static_cast<CFWL_DateTimePicker*>(m_pOuter);
   if (iCurSel > 0) {
     DATEINFO* lpDatesInfo = m_arrDates[iCurSel - 1].get();
@@ -808,31 +808,31 @@ void CFWL_MonthCalendar::OnLButtonUp(CFWL_MessageMouse* pMsg) {
     pIPicker->ShowMonthCalendar(false);
   } else if (m_bFlag &&
              (!CFX_RectF(0, 0, pIPicker->GetFormProxy()->GetWidgetRect().Size())
-                   .Contains(pMsg->m_fx, pMsg->m_fy))) {
+                   .Contains(pMsg->m_pos))) {
     pIPicker->ShowMonthCalendar(false);
   }
   m_bFlag = false;
 }
 
 void CFWL_MonthCalendar::DisForm_OnLButtonUp(CFWL_MessageMouse* pMsg) {
-  if (m_rtLBtn.Contains(pMsg->m_fx, pMsg->m_fy)) {
+  if (m_rtLBtn.Contains(pMsg->m_pos)) {
     m_iLBtnPartStates = 0;
     RepaintRect(m_rtLBtn);
     return;
   }
-  if (m_rtRBtn.Contains(pMsg->m_fx, pMsg->m_fy)) {
+  if (m_rtRBtn.Contains(pMsg->m_pos)) {
     m_iRBtnPartStates = 0;
     RepaintRect(m_rtRBtn);
     return;
   }
-  if (m_rtToday.Contains(pMsg->m_fx, pMsg->m_fy))
+  if (m_rtToday.Contains(pMsg->m_pos))
     return;
 
   int32_t iOldSel = 0;
   if (!m_arrSelDays.empty())
     iOldSel = m_arrSelDays[0];
 
-  int32_t iCurSel = GetDayAtPoint(pMsg->m_fx, pMsg->m_fy);
+  int32_t iCurSel = GetDayAtPoint(pMsg->m_pos);
   if (iCurSel > 0) {
     DATEINFO* lpDatesInfo = m_arrDates[iCurSel - 1].get();
     CFX_RectF rtInvalidate(lpDatesInfo->rect);
@@ -851,8 +851,8 @@ void CFWL_MonthCalendar::DisForm_OnLButtonUp(CFWL_MessageMouse* pMsg) {
 void CFWL_MonthCalendar::OnMouseMove(CFWL_MessageMouse* pMsg) {
   bool bRepaint = false;
   CFX_RectF rtInvalidate;
-  if (m_rtDates.Contains(pMsg->m_fx, pMsg->m_fy)) {
-    int32_t iHover = GetDayAtPoint(pMsg->m_fx, pMsg->m_fy);
+  if (m_rtDates.Contains(pMsg->m_pos)) {
+    int32_t iHover = GetDayAtPoint(pMsg->m_pos);
     bRepaint = m_iHovered != iHover;
     if (bRepaint) {
       if (m_iHovered > 0)

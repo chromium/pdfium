@@ -9,6 +9,7 @@
 
 #include <memory>
 
+#include "core/fxcrt/fx_coordinates.h"
 #include "xfa/fwl/cfwl_message.h"
 
 enum class FWL_MouseCommand {
@@ -27,13 +28,13 @@ enum class FWL_MouseCommand {
 class CFWL_MessageMouse : public CFWL_Message {
  public:
   CFWL_MessageMouse(CFWL_Widget* pSrcTarget, CFWL_Widget* pDstTarget);
+  CFWL_MessageMouse(const CFWL_MessageMouse& other);
   ~CFWL_MessageMouse() override;
 
   // CFWL_Message
   std::unique_ptr<CFWL_Message> Clone() override;
 
-  FX_FLOAT m_fx;
-  FX_FLOAT m_fy;
+  CFX_PointF m_pos;
   uint32_t m_dwFlags;
   FWL_MouseCommand m_dwCmd;
 };

@@ -98,6 +98,7 @@ void CXFA_FFField::DrawFocus(CFX_Graphics* pGS, CFX_Matrix* pMatrix) {
     FX_FLOAT DashPattern[2] = {1, 1};
     pGS->SetLineDash(0.0f, DashPattern, 2);
     pGS->SetLineWidth(0, false);
+
     CFX_Path path;
     path.Create();
     path.AddRectangle(m_rtUI.left, m_rtUI.top, m_rtUI.width, m_rtUI.height);
@@ -350,145 +351,126 @@ bool CXFA_FFField::OnMouseExit() {
   return true;
 }
 
-void CXFA_FFField::FWLToClient(FX_FLOAT& fx, FX_FLOAT& fy) {
-  if (!m_pNormalWidget)
-    return;
-
-  CFX_RectF rtWidget = m_pNormalWidget->GetWidgetRect();
-  fx -= rtWidget.left;
-  fy -= rtWidget.top;
+CFX_PointF CXFA_FFField::FWLToClient(const CFX_PointF& point) {
+  return m_pNormalWidget ? point - m_pNormalWidget->GetWidgetRect().TopLeft()
+                         : point;
 }
 
-bool CXFA_FFField::OnLButtonDown(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) {
-  if (!m_pNormalWidget) {
+bool CXFA_FFField::OnLButtonDown(uint32_t dwFlags, const CFX_PointF& point) {
+  if (!m_pNormalWidget)
     return false;
-  }
   if (m_pDataAcc->GetAccess() != XFA_ATTRIBUTEENUM_Open ||
       !m_pDataAcc->GetDoc()->GetXFADoc()->IsInteractive()) {
     return false;
   }
-  if (!PtInActiveRect(fx, fy)) {
+  if (!PtInActiveRect(point))
     return false;
-  }
+
   SetButtonDown(true);
   CFWL_MessageMouse ms(nullptr, m_pNormalWidget);
   ms.m_dwCmd = FWL_MouseCommand::LeftButtonDown;
   ms.m_dwFlags = dwFlags;
-  ms.m_fx = fx;
-  ms.m_fy = fy;
-  FWLToClient(ms.m_fx, ms.m_fy);
+  ms.m_pos = FWLToClient(point);
   TranslateFWLMessage(&ms);
   return true;
 }
-bool CXFA_FFField::OnLButtonUp(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) {
-  if (!m_pNormalWidget) {
+
+bool CXFA_FFField::OnLButtonUp(uint32_t dwFlags, const CFX_PointF& point) {
+  if (!m_pNormalWidget)
     return false;
-  }
-  if (!IsButtonDown()) {
+  if (!IsButtonDown())
     return false;
-  }
+
   SetButtonDown(false);
   CFWL_MessageMouse ms(nullptr, m_pNormalWidget);
   ms.m_dwCmd = FWL_MouseCommand::LeftButtonUp;
   ms.m_dwFlags = dwFlags;
-  ms.m_fx = fx;
-  ms.m_fy = fy;
-  FWLToClient(ms.m_fx, ms.m_fy);
+  ms.m_pos = FWLToClient(point);
   TranslateFWLMessage(&ms);
   return true;
 }
-bool CXFA_FFField::OnLButtonDblClk(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) {
-  if (!m_pNormalWidget) {
+
+bool CXFA_FFField::OnLButtonDblClk(uint32_t dwFlags, const CFX_PointF& point) {
+  if (!m_pNormalWidget)
     return false;
-  }
+
   CFWL_MessageMouse ms(nullptr, m_pNormalWidget);
   ms.m_dwCmd = FWL_MouseCommand::LeftButtonDblClk;
   ms.m_dwFlags = dwFlags;
-  ms.m_fx = fx;
-  ms.m_fy = fy;
-  FWLToClient(ms.m_fx, ms.m_fy);
+  ms.m_pos = FWLToClient(point);
   TranslateFWLMessage(&ms);
   return true;
 }
-bool CXFA_FFField::OnMouseMove(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) {
-  if (!m_pNormalWidget) {
+
+bool CXFA_FFField::OnMouseMove(uint32_t dwFlags, const CFX_PointF& point) {
+  if (!m_pNormalWidget)
     return false;
-  }
+
   CFWL_MessageMouse ms(nullptr, m_pNormalWidget);
   ms.m_dwCmd = FWL_MouseCommand::Move;
   ms.m_dwFlags = dwFlags;
-  ms.m_fx = fx;
-  ms.m_fy = fy;
-  FWLToClient(ms.m_fx, ms.m_fy);
+  ms.m_pos = FWLToClient(point);
   TranslateFWLMessage(&ms);
   return true;
 }
+
 bool CXFA_FFField::OnMouseWheel(uint32_t dwFlags,
                                 int16_t zDelta,
-                                FX_FLOAT fx,
-                                FX_FLOAT fy) {
-  if (!m_pNormalWidget) {
+                                const CFX_PointF& point) {
+  if (!m_pNormalWidget)
     return false;
-  }
+
   CFWL_MessageMouseWheel ms(nullptr, m_pNormalWidget);
   ms.m_dwFlags = dwFlags;
-  ms.m_fx = fx;
-  ms.m_fy = fy;
-  FWLToClient(ms.m_fx, ms.m_fy);
-  ms.m_fDeltaX = zDelta;
-  ms.m_fDeltaY = 0;
+  ms.m_pos = FWLToClient(point);
+  ms.m_delta = CFX_PointF(zDelta, 0);
   TranslateFWLMessage(&ms);
   return true;
 }
-bool CXFA_FFField::OnRButtonDown(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) {
-  if (!m_pNormalWidget) {
+
+bool CXFA_FFField::OnRButtonDown(uint32_t dwFlags, const CFX_PointF& point) {
+  if (!m_pNormalWidget)
     return false;
-  }
   if (m_pDataAcc->GetAccess() != XFA_ATTRIBUTEENUM_Open ||
       !m_pDataAcc->GetDoc()->GetXFADoc()->IsInteractive()) {
     return false;
   }
-  if (!PtInActiveRect(fx, fy)) {
+  if (!PtInActiveRect(point))
     return false;
-  }
+
   SetButtonDown(true);
 
   CFWL_MessageMouse ms(nullptr, m_pNormalWidget);
   ms.m_dwCmd = FWL_MouseCommand::RightButtonDown;
   ms.m_dwFlags = dwFlags;
-  ms.m_fx = fx;
-  ms.m_fy = fy;
-  FWLToClient(ms.m_fx, ms.m_fy);
+  ms.m_pos = FWLToClient(point);
   TranslateFWLMessage(&ms);
   return true;
 }
-bool CXFA_FFField::OnRButtonUp(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) {
-  if (!m_pNormalWidget) {
+
+bool CXFA_FFField::OnRButtonUp(uint32_t dwFlags, const CFX_PointF& point) {
+  if (!m_pNormalWidget)
     return false;
-  }
-  if (!IsButtonDown()) {
+  if (!IsButtonDown())
     return false;
-  }
+
   SetButtonDown(false);
   CFWL_MessageMouse ms(nullptr, m_pNormalWidget);
   ms.m_dwCmd = FWL_MouseCommand::RightButtonUp;
   ms.m_dwFlags = dwFlags;
-  ms.m_fx = fx;
-  ms.m_fy = fy;
-  FWLToClient(ms.m_fx, ms.m_fy);
+  ms.m_pos = FWLToClient(point);
   TranslateFWLMessage(&ms);
   return true;
 }
-bool CXFA_FFField::OnRButtonDblClk(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) {
-  if (!m_pNormalWidget) {
+
+bool CXFA_FFField::OnRButtonDblClk(uint32_t dwFlags, const CFX_PointF& point) {
+  if (!m_pNormalWidget)
     return false;
-  }
+
   CFWL_MessageMouse ms(nullptr, m_pNormalWidget);
   ms.m_dwCmd = FWL_MouseCommand::RightButtonDblClk;
   ms.m_dwFlags = dwFlags;
-  ms.m_fx = fx;
-  ms.m_fy = fy;
-  FWLToClient(ms.m_fx, ms.m_fy);
+  ms.m_pos = FWLToClient(point);
   TranslateFWLMessage(&ms);
   return true;
 }
@@ -557,27 +539,25 @@ bool CXFA_FFField::OnChar(uint32_t dwChar, uint32_t dwFlags) {
   TranslateFWLMessage(&ms);
   return true;
 }
-FWL_WidgetHit CXFA_FFField::OnHitTest(FX_FLOAT fx, FX_FLOAT fy) {
-  if (m_pNormalWidget) {
-    FX_FLOAT ffx = fx, ffy = fy;
-    FWLToClient(ffx, ffy);
-    if (m_pNormalWidget->HitTest(ffx, ffy) != FWL_WidgetHit::Unknown)
-      return FWL_WidgetHit::Client;
+FWL_WidgetHit CXFA_FFField::OnHitTest(const CFX_PointF& point) {
+  if (m_pNormalWidget &&
+      m_pNormalWidget->HitTest(FWLToClient(point)) != FWL_WidgetHit::Unknown) {
+    return FWL_WidgetHit::Client;
   }
 
-  if (!GetRectWithoutRotate().Contains(fx, fy))
+  if (!GetRectWithoutRotate().Contains(point))
     return FWL_WidgetHit::Unknown;
-  if (m_rtCaption.Contains(fx, fy))
+  if (m_rtCaption.Contains(point))
     return FWL_WidgetHit::Titlebar;
   return FWL_WidgetHit::Border;
 }
 
-bool CXFA_FFField::OnSetCursor(FX_FLOAT fx, FX_FLOAT fy) {
+bool CXFA_FFField::OnSetCursor(const CFX_PointF& point) {
   return true;
 }
 
-bool CXFA_FFField::PtInActiveRect(FX_FLOAT fx, FX_FLOAT fy) {
-  return m_pNormalWidget && m_pNormalWidget->GetWidgetRect().Contains(fx, fy);
+bool CXFA_FFField::PtInActiveRect(const CFX_PointF& point) {
+  return m_pNormalWidget && m_pNormalWidget->GetWidgetRect().Contains(point);
 }
 
 void CXFA_FFField::LayoutCaption() {

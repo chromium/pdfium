@@ -723,13 +723,13 @@ bool CPWL_ScrollBar::OnLButtonDown(const CFX_PointF& point, uint32_t nFlag) {
     rcMinArea.Normalize();
     rcMaxArea.Normalize();
 
-    if (rcMinArea.Contains(point.x, point.y)) {
+    if (rcMinArea.Contains(point)) {
       m_sData.SubBig();
       MovePosButton(true);
       NotifyScrollWindow();
     }
 
-    if (rcMaxArea.Contains(point.x, point.y)) {
+    if (rcMaxArea.Contains(point)) {
       m_sData.AddBig();
       MovePosButton(true);
       NotifyScrollWindow();

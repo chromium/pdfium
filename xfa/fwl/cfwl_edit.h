@@ -59,7 +59,7 @@ class CFWL_Edit : public CFWL_Widget {
   CFX_RectF GetAutosizedWidgetRect() override;
   CFX_RectF GetWidgetRect() override;
   void Update() override;
-  FWL_WidgetHit HitTest(FX_FLOAT fx, FX_FLOAT fy) override;
+  FWL_WidgetHit HitTest(const CFX_PointF& point) override;
   void SetStates(uint32_t dwStates) override;
   void DrawWidget(CFX_Graphics* pGraphics, const CFX_Matrix* pMatrix) override;
   void SetThemeProvider(IFWL_ThemeProvider* pThemeProvider) override;
@@ -127,7 +127,7 @@ class CFWL_Edit : public CFWL_Widget {
   CFWL_ScrollBar* UpdateScroll();
   void Layout();
   void LayoutScrollBar();
-  void DeviceToEngine(CFX_PointF& pt);
+  CFX_PointF DeviceToEngine(const CFX_PointF& pt);
   void InitVerticalScrollBar();
   void InitHorizontalScrollBar();
   void InitEngine();

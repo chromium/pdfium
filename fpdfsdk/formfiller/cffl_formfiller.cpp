@@ -634,8 +634,7 @@ bool CFFL_Button::OnLButtonDown(CPDFSDK_PageView* pPageView,
                                 CPDFSDK_Annot* pAnnot,
                                 uint32_t nFlags,
                                 const CFX_PointF& point) {
-  CFX_FloatRect rcAnnot = pAnnot->GetRect();
-  if (!rcAnnot.Contains(point))
+  if (!pAnnot->GetRect().Contains(point))
     return false;
 
   m_bMouseDown = true;
@@ -649,8 +648,7 @@ bool CFFL_Button::OnLButtonUp(CPDFSDK_PageView* pPageView,
                               CPDFSDK_Annot* pAnnot,
                               uint32_t nFlags,
                               const CFX_PointF& point) {
-  CFX_FloatRect rcAnnot = pAnnot->GetRect();
-  if (!rcAnnot.Contains(point.x, point.y))
+  if (!pAnnot->GetRect().Contains(point))
     return false;
 
   m_bMouseDown = false;

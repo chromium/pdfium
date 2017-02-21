@@ -107,11 +107,11 @@ bool CXFA_FFText::PerformLayout() {
   return true;
 }
 
-bool CXFA_FFText::OnLButtonDown(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) {
-  if (!GetRectWithoutRotate().Contains(fx, fy))
+bool CXFA_FFText::OnLButtonDown(uint32_t dwFlags, const CFX_PointF& point) {
+  if (!GetRectWithoutRotate().Contains(point))
     return false;
 
-  const FX_WCHAR* wsURLContent = GetLinkURLAtPoint(fx, fy);
+  const FX_WCHAR* wsURLContent = GetLinkURLAtPoint(point);
   if (!wsURLContent)
     return false;
 
@@ -119,33 +119,33 @@ bool CXFA_FFText::OnLButtonDown(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) {
   return true;
 }
 
-bool CXFA_FFText::OnMouseMove(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) {
-  return GetRectWithoutRotate().Contains(fx, fy) && !!GetLinkURLAtPoint(fx, fy);
+bool CXFA_FFText::OnMouseMove(uint32_t dwFlags, const CFX_PointF& point) {
+  return GetRectWithoutRotate().Contains(point) && !!GetLinkURLAtPoint(point);
 }
 
-bool CXFA_FFText::OnLButtonUp(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) {
-  if (!IsButtonDown()) {
+bool CXFA_FFText::OnLButtonUp(uint32_t dwFlags, const CFX_PointF& point) {
+  if (!IsButtonDown())
     return false;
-  }
+
   SetButtonDown(false);
-  const FX_WCHAR* wsURLContent = GetLinkURLAtPoint(fx, fy);
-  if (!wsURLContent) {
+  const FX_WCHAR* wsURLContent = GetLinkURLAtPoint(point);
+  if (!wsURLContent)
     return false;
-  }
+
   CXFA_FFDoc* pDoc = GetDoc();
   pDoc->GetDocEnvironment()->GotoURL(pDoc, wsURLContent);
   return true;
 }
 
-FWL_WidgetHit CXFA_FFText::OnHitTest(FX_FLOAT fx, FX_FLOAT fy) {
-  if (!GetRectWithoutRotate().Contains(fx, fy))
+FWL_WidgetHit CXFA_FFText::OnHitTest(const CFX_PointF& point) {
+  if (!GetRectWithoutRotate().Contains(point))
     return FWL_WidgetHit::Unknown;
-  if (!GetLinkURLAtPoint(fx, fy))
+  if (!GetLinkURLAtPoint(point))
     return FWL_WidgetHit::Unknown;
   return FWL_WidgetHit::HyperLink;
 }
 
-const FX_WCHAR* CXFA_FFText::GetLinkURLAtPoint(FX_FLOAT fx, FX_FLOAT fy) {
+const FX_WCHAR* CXFA_FFText::GetLinkURLAtPoint(const CFX_PointF& point) {
   CXFA_TextLayout* pTextLayout = m_pDataAcc->GetTextLayout();
   if (!pTextLayout)
     return nullptr;
@@ -154,7 +154,7 @@ const FX_WCHAR* CXFA_FFText::GetLinkURLAtPoint(FX_FLOAT fx, FX_FLOAT fy) {
   for (const auto& pPieceLine : *pTextLayout->GetPieceLines()) {
     for (const auto& pPiece : pPieceLine->m_textPieces) {
       if (pPiece->pLinkData &&
-          pPiece->rtPiece.Contains(fx - rect.left, fy - rect.top)) {
+          pPiece->rtPiece.Contains(point - rect.TopLeft())) {
         return pPiece->pLinkData->GetLinkURL();
       }
     }

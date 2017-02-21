@@ -226,12 +226,9 @@ CFX_RectF CXFA_FFComboBox::GetBBox(uint32_t dwStatus, bool bDrawFocus) {
   return CXFA_FFWidget::GetBBox(dwStatus);
 }
 
-bool CXFA_FFComboBox::PtInActiveRect(FX_FLOAT fx, FX_FLOAT fy) {
-  if (!m_pNormalWidget)
-    return false;
-  return static_cast<CFWL_ComboBox*>(m_pNormalWidget)
-      ->GetBBox()
-      .Contains(fx, fy);
+bool CXFA_FFComboBox::PtInActiveRect(const CFX_PointF& point) {
+  auto pComboBox = static_cast<CFWL_ComboBox*>(m_pNormalWidget);
+  return pComboBox && pComboBox->GetBBox().Contains(point);
 }
 
 bool CXFA_FFComboBox::LoadWidget() {
@@ -292,13 +289,15 @@ void CXFA_FFComboBox::UpdateWidgetProperty() {
   }
   pComboBox->EditModifyStylesEx(dwEditStyles, 0xFFFFFFFF);
 }
-bool CXFA_FFComboBox::OnRButtonUp(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) {
-  if (!CXFA_FFField::OnRButtonUp(dwFlags, fx, fy))
+
+bool CXFA_FFComboBox::OnRButtonUp(uint32_t dwFlags, const CFX_PointF& point) {
+  if (!CXFA_FFField::OnRButtonUp(dwFlags, point))
     return false;
 
-  GetDoc()->GetDocEnvironment()->PopupMenu(this, CFX_PointF(fx, fy));
+  GetDoc()->GetDocEnvironment()->PopupMenu(this, point);
   return true;
 }
+
 bool CXFA_FFComboBox::OnKillFocus(CXFA_FFWidget* pNewWidget) {
   bool flag = ProcessCommittedData();
   if (!flag) {

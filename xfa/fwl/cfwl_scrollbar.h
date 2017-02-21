@@ -84,35 +84,28 @@ class CFWL_ScrollBar : public CFWL_Widget {
   CFX_RectF CalcThumbButtonRect(const CFX_RectF& rtThumbRect);
   CFX_RectF CalcMinTrackRect(const CFX_RectF& rtMinRect);
   CFX_RectF CalcMaxTrackRect(const CFX_RectF& rtMaxRect);
-  FX_FLOAT GetTrackPointPos(FX_FLOAT fx, FX_FLOAT fy);
+  FX_FLOAT GetTrackPointPos(const CFX_PointF& point);
 
   bool SendEvent();
   bool OnScroll(CFWL_EventScroll::Code dwCode, FX_FLOAT fPos);
-  void OnLButtonDown(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy);
-  void OnLButtonUp(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy);
-  void OnMouseMove(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy);
+  void OnLButtonDown(const CFX_PointF& point);
+  void OnLButtonUp(const CFX_PointF& point);
+  void OnMouseMove(const CFX_PointF& point);
   void OnMouseLeave();
-  void OnMouseWheel(FX_FLOAT fx,
-                    FX_FLOAT fy,
-                    uint32_t dwFlags,
-                    FX_FLOAT fDeltaX,
-                    FX_FLOAT fDeltaY);
+  void OnMouseWheel(const CFX_PointF& delta);
   bool DoScroll(CFWL_EventScroll::Code dwCode, FX_FLOAT fPos);
   void DoMouseDown(int32_t iItem,
                    const CFX_RectF& rtItem,
                    int32_t& iState,
-                   FX_FLOAT fx,
-                   FX_FLOAT fy);
+                   const CFX_PointF& point);
   void DoMouseUp(int32_t iItem,
                  const CFX_RectF& rtItem,
                  int32_t& iState,
-                 FX_FLOAT fx,
-                 FX_FLOAT fy);
+                 const CFX_PointF& point);
   void DoMouseMove(int32_t iItem,
                    const CFX_RectF& rtItem,
                    int32_t& iState,
-                   FX_FLOAT fx,
-                   FX_FLOAT fy);
+                   const CFX_PointF& point);
   void DoMouseLeave(int32_t iItem, const CFX_RectF& rtItem, int32_t& iState);
   void DoMouseHover(int32_t iItem, const CFX_RectF& rtItem, int32_t& iState);
 
@@ -129,8 +122,7 @@ class CFWL_ScrollBar : public CFWL_Widget {
   int32_t m_iMinTrackState;
   int32_t m_iMaxTrackState;
   FX_FLOAT m_fLastTrackPos;
-  FX_FLOAT m_cpTrackPointX;
-  FX_FLOAT m_cpTrackPointY;
+  CFX_PointF m_cpTrackPoint;
   int32_t m_iMouseWheel;
   bool m_bMouseDown;
   FX_FLOAT m_fButtonLen;

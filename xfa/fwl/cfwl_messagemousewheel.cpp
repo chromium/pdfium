@@ -14,6 +14,9 @@ CFWL_MessageMouseWheel::CFWL_MessageMouseWheel(CFWL_Widget* pSrcTarget,
                                                CFWL_Widget* pDstTarget)
     : CFWL_Message(CFWL_Message::Type::MouseWheel, pSrcTarget, pDstTarget) {}
 
+CFWL_MessageMouseWheel::CFWL_MessageMouseWheel(const CFWL_MessageMouseWheel&) =
+    default;
+
 CFWL_MessageMouseWheel::~CFWL_MessageMouseWheel() {}
 
 std::unique_ptr<CFWL_Message> CFWL_MessageMouseWheel::Clone() {

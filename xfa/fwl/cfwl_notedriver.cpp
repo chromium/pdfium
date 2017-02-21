@@ -341,12 +341,8 @@ bool CFWL_NoteDriver::DoMouse(CFWL_Message* pMessage,
       pMsg->m_dwCmd == FWL_MouseCommand::Enter) {
     return !!pMsg->m_pDstTarget;
   }
-  if (pMsg->m_pDstTarget != pMessageForm) {
-    CFX_PointF point = pMsg->m_pDstTarget->TransformTo(
-        pMessageForm, CFX_PointF(pMsg->m_fx, pMsg->m_fy));
-    pMsg->m_fx = point.x;
-    pMsg->m_fy = point.y;
-  }
+  if (pMsg->m_pDstTarget != pMessageForm)
+    pMsg->m_pos = pMsg->m_pDstTarget->TransformTo(pMessageForm, pMsg->m_pos);
   if (!DoMouseEx(pMsg, pMessageForm))
     pMsg->m_pDstTarget = pMessageForm;
   return true;
@@ -359,15 +355,11 @@ bool CFWL_NoteDriver::DoWheel(CFWL_Message* pMessage,
     return false;
 
   CFWL_MessageMouseWheel* pMsg = static_cast<CFWL_MessageMouseWheel*>(pMessage);
-  CFWL_Widget* pDst =
-      pWidgetMgr->GetWidgetAtPoint(pMessageForm, pMsg->m_fx, pMsg->m_fy);
+  CFWL_Widget* pDst = pWidgetMgr->GetWidgetAtPoint(pMessageForm, pMsg->m_pos);
   if (!pDst)
     return false;
 
-  CFX_PointF point =
-      pMessageForm->TransformTo(pDst, CFX_PointF(pMsg->m_fx, pMsg->m_fy));
-  pMsg->m_fx = point.x;
-  pMsg->m_fy = point.y;
+  pMsg->m_pos = pMessageForm->TransformTo(pDst, pMsg->m_pos);
   pMsg->m_pDstTarget = pDst;
   return true;
 }
@@ -382,20 +374,12 @@ bool CFWL_NoteDriver::DoMouseEx(CFWL_Message* pMessage,
     pTarget = m_pGrab;
 
   CFWL_MessageMouse* pMsg = static_cast<CFWL_MessageMouse*>(pMessage);
-  if (!pTarget) {
-    pTarget =
-        pWidgetMgr->GetWidgetAtPoint(pMessageForm, pMsg->m_fx, pMsg->m_fy);
-  }
-  if (pTarget) {
-    if (pMessageForm != pTarget) {
-      CFX_PointF point = pMessageForm->TransformTo(
-          pTarget, CFX_PointF(pMsg->m_fx, pMsg->m_fy));
-      pMsg->m_fx = point.x;
-      pMsg->m_fy = point.y;
-    }
-  }
+  if (!pTarget)
+    pTarget = pWidgetMgr->GetWidgetAtPoint(pMessageForm, pMsg->m_pos);
   if (!pTarget)
     return false;
+  if (pTarget && pMessageForm != pTarget)
+    pMsg->m_pos = pMessageForm->TransformTo(pTarget, pMsg->m_pos);
 
   pMsg->m_pDstTarget = pTarget;
   return true;
@@ -409,10 +393,7 @@ void CFWL_NoteDriver::MouseSecondary(CFWL_Message* pMessage) {
   CFWL_MessageMouse* pMsg = static_cast<CFWL_MessageMouse*>(pMessage);
   if (m_pHover) {
     CFWL_MessageMouse msLeave(nullptr, m_pHover);
-    CFX_PointF point =
-        pTarget->TransformTo(m_pHover, CFX_PointF(pMsg->m_fx, pMsg->m_fy));
-    msLeave.m_fx = point.x;
-    msLeave.m_fy = point.y;
+    msLeave.m_pos = pTarget->TransformTo(m_pHover, pMsg->m_pos);
     msLeave.m_dwFlags = 0;
     msLeave.m_dwCmd = FWL_MouseCommand::Leave;
     DispatchMessage(&msLeave, nullptr);
@@ -424,8 +405,7 @@ void CFWL_NoteDriver::MouseSecondary(CFWL_Message* pMessage) {
   m_pHover = pTarget;
 
   CFWL_MessageMouse msHover(nullptr, pTarget);
-  msHover.m_fx = pMsg->m_fx;
-  msHover.m_fy = pMsg->m_fy;
+  msHover.m_pos = pMsg->m_pos;
   msHover.m_dwFlags = 0;
   msHover.m_dwCmd = FWL_MouseCommand::Hover;
   DispatchMessage(&msHover, nullptr);

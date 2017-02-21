@@ -55,8 +55,7 @@ class CPDF_InterForm {
   CPDF_FormField* GetFieldByDict(CPDF_Dictionary* pFieldDict) const;
 
   CPDF_FormControl* GetControlAtPoint(CPDF_Page* pPage,
-                                      FX_FLOAT pdf_x,
-                                      FX_FLOAT pdf_y,
+                                      const CFX_PointF& point,
                                       int* z_order) const;
   CPDF_FormControl* GetControlByDict(const CPDF_Dictionary* pWidgetDict) const;
 

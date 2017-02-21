@@ -24,7 +24,7 @@ class CXFA_FFCheckButton : public CXFA_FFField {
   bool PerformLayout() override;
   bool UpdateFWLData() override;
   void UpdateWidgetProperty() override;
-  bool OnLButtonUp(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) override;
+  bool OnLButtonUp(uint32_t dwFlags, const CFX_PointF& point) override;
   void OnProcessMessage(CFWL_Message* pMessage) override;
   void OnProcessEvent(CFWL_Event* pEvent) override;
   void OnDrawWidget(CFX_Graphics* pGraphics,

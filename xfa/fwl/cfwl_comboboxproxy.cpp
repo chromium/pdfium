@@ -71,8 +71,7 @@ void CFWL_ComboBoxProxy::OnLButtonDown(CFWL_Message* pMessage) {
   CFWL_NoteDriver* pDriver =
       static_cast<CFWL_NoteDriver*>(pApp->GetNoteDriver());
   CFWL_MessageMouse* pMsg = static_cast<CFWL_MessageMouse*>(pMessage);
-  if (CFX_RectF(0, 0, GetWidgetRect().Size())
-          .Contains(pMsg->m_fx, pMsg->m_fy)) {
+  if (CFX_RectF(0, 0, GetWidgetRect().Size()).Contains(pMsg->m_pos)) {
     m_bLButtonDown = true;
     pDriver->SetGrab(this, true);
   } else {
@@ -97,8 +96,7 @@ void CFWL_ComboBoxProxy::OnLButtonUp(CFWL_Message* pMessage) {
   }
 
   CFWL_MessageMouse* pMsg = static_cast<CFWL_MessageMouse*>(pMessage);
-  if (!CFX_RectF(0, 0, GetWidgetRect().Size())
-           .Contains(pMsg->m_fx, pMsg->m_fy) &&
+  if (!CFX_RectF(0, 0, GetWidgetRect().Size()).Contains(pMsg->m_pos) &&
       m_pComboBox->IsDropListVisible()) {
     m_pComboBox->ShowDropList(false);
   }

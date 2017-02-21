@@ -118,10 +118,10 @@ void CFWL_ComboBox::Update() {
   Layout();
 }
 
-FWL_WidgetHit CFWL_ComboBox::HitTest(FX_FLOAT fx, FX_FLOAT fy) {
+FWL_WidgetHit CFWL_ComboBox::HitTest(const CFX_PointF& point) {
   if (m_pWidgetMgr->IsFormDisabled())
-    return DisForm_HitTest(fx, fy);
-  return CFWL_Widget::HitTest(fx, fy);
+    return DisForm_HitTest(point);
+  return CFWL_Widget::HitTest(point);
 }
 
 void CFWL_ComboBox::DrawWidget(CFX_Graphics* pGraphics,
@@ -599,16 +599,16 @@ void CFWL_ComboBox::DisForm_Update() {
   Layout();
 }
 
-FWL_WidgetHit CFWL_ComboBox::DisForm_HitTest(FX_FLOAT fx, FX_FLOAT fy) {
+FWL_WidgetHit CFWL_ComboBox::DisForm_HitTest(const CFX_PointF& point) {
   CFX_RectF rect(0, 0, m_pProperties->m_rtWidget.width - m_rtBtn.width,
                  m_pProperties->m_rtWidget.height);
-  if (rect.Contains(fx, fy))
+  if (rect.Contains(point))
     return FWL_WidgetHit::Edit;
-  if (m_rtBtn.Contains(fx, fy))
+  if (m_rtBtn.Contains(point))
     return FWL_WidgetHit::Client;
   if (DisForm_IsDropListVisible()) {
     rect = m_pListBox->GetWidgetRect();
-    if (rect.Contains(fx, fy))
+    if (rect.Contains(point))
       return FWL_WidgetHit::Client;
   }
   return FWL_WidgetHit::Unknown;
@@ -791,7 +791,7 @@ void CFWL_ComboBox::OnLButtonDown(CFWL_MessageMouse* pMsg) {
     return;
 
   CFX_RectF& rtBtn = IsDropDownStyle() ? m_rtBtn : m_rtClient;
-  if (!rtBtn.Contains(pMsg->m_fx, pMsg->m_fy))
+  if (!rtBtn.Contains(pMsg->m_pos))
     return;
 
   if (IsDropDownStyle() && m_pEdit)
@@ -808,7 +808,7 @@ void CFWL_ComboBox::OnLButtonDown(CFWL_MessageMouse* pMsg) {
 
 void CFWL_ComboBox::OnLButtonUp(CFWL_MessageMouse* pMsg) {
   m_bLButtonDown = false;
-  if (m_rtBtn.Contains(pMsg->m_fx, pMsg->m_fy))
+  if (m_rtBtn.Contains(pMsg->m_pos))
     m_iBtnState = CFWL_PartState_Hovered;
   else
     m_iBtnState = CFWL_PartState_Normal;
@@ -818,7 +818,7 @@ void CFWL_ComboBox::OnLButtonUp(CFWL_MessageMouse* pMsg) {
 
 void CFWL_ComboBox::OnMouseMove(CFWL_MessageMouse* pMsg) {
   int32_t iOldState = m_iBtnState;
-  if (m_rtBtn.Contains(pMsg->m_fx, pMsg->m_fy)) {
+  if (m_rtBtn.Contains(pMsg->m_pos)) {
     m_iBtnState =
         m_bLButtonDown ? CFWL_PartState_Pressed : CFWL_PartState_Hovered;
   } else {
@@ -950,7 +950,7 @@ void CFWL_ComboBox::DisForm_OnProcessMessage(CFWL_Message* pMessage) {
 void CFWL_ComboBox::DisForm_OnLButtonDown(CFWL_MessageMouse* pMsg) {
   bool bDropDown = DisForm_IsDropListVisible();
   CFX_RectF& rtBtn = bDropDown ? m_rtBtn : m_rtClient;
-  if (!rtBtn.Contains(pMsg->m_fx, pMsg->m_fy))
+  if (!rtBtn.Contains(pMsg->m_pos))
     return;
 
   if (DisForm_IsDropListVisible()) {

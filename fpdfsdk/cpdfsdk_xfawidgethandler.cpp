@@ -121,7 +121,7 @@ bool CPDFSDK_XFAWidgetHandler::HitTest(CPDFSDK_PageView* pPageView,
     return false;
 
   FWL_WidgetHit dwHitTest =
-      pWidgetHandler->OnHitTest(pAnnot->GetXFAWidget(), point.x, point.y);
+      pWidgetHandler->OnHitTest(pAnnot->GetXFAWidget(), point);
   return dwHitTest != FWL_WidgetHit::Unknown;
 }
 
@@ -153,7 +153,7 @@ bool CPDFSDK_XFAWidgetHandler::OnLButtonDown(CPDFSDK_PageView* pPageView,
 
   CXFA_FFWidgetHandler* pWidgetHandler = GetXFAWidgetHandler(pAnnot->Get());
   return pWidgetHandler->OnLButtonDown((*pAnnot)->GetXFAWidget(),
-                                       GetFWLFlags(nFlags), point.x, point.y);
+                                       GetFWLFlags(nFlags), point);
 }
 
 bool CPDFSDK_XFAWidgetHandler::OnLButtonUp(CPDFSDK_PageView* pPageView,
@@ -165,7 +165,7 @@ bool CPDFSDK_XFAWidgetHandler::OnLButtonUp(CPDFSDK_PageView* pPageView,
 
   CXFA_FFWidgetHandler* pWidgetHandler = GetXFAWidgetHandler(pAnnot->Get());
   return pWidgetHandler->OnLButtonUp((*pAnnot)->GetXFAWidget(),
-                                     GetFWLFlags(nFlags), point.x, point.y);
+                                     GetFWLFlags(nFlags), point);
 }
 
 bool CPDFSDK_XFAWidgetHandler::OnLButtonDblClk(
@@ -178,7 +178,7 @@ bool CPDFSDK_XFAWidgetHandler::OnLButtonDblClk(
 
   CXFA_FFWidgetHandler* pWidgetHandler = GetXFAWidgetHandler(pAnnot->Get());
   return pWidgetHandler->OnLButtonDblClk((*pAnnot)->GetXFAWidget(),
-                                         GetFWLFlags(nFlags), point.x, point.y);
+                                         GetFWLFlags(nFlags), point);
 }
 
 bool CPDFSDK_XFAWidgetHandler::OnMouseMove(CPDFSDK_PageView* pPageView,
@@ -190,7 +190,7 @@ bool CPDFSDK_XFAWidgetHandler::OnMouseMove(CPDFSDK_PageView* pPageView,
 
   CXFA_FFWidgetHandler* pWidgetHandler = GetXFAWidgetHandler(pAnnot->Get());
   return pWidgetHandler->OnMouseMove((*pAnnot)->GetXFAWidget(),
-                                     GetFWLFlags(nFlags), point.x, point.y);
+                                     GetFWLFlags(nFlags), point);
 }
 
 bool CPDFSDK_XFAWidgetHandler::OnMouseWheel(CPDFSDK_PageView* pPageView,
@@ -202,8 +202,8 @@ bool CPDFSDK_XFAWidgetHandler::OnMouseWheel(CPDFSDK_PageView* pPageView,
     return false;
 
   CXFA_FFWidgetHandler* pWidgetHandler = GetXFAWidgetHandler(pAnnot->Get());
-  return pWidgetHandler->OnMouseWheel(
-      (*pAnnot)->GetXFAWidget(), GetFWLFlags(nFlags), zDelta, point.x, point.y);
+  return pWidgetHandler->OnMouseWheel((*pAnnot)->GetXFAWidget(),
+                                      GetFWLFlags(nFlags), zDelta, point);
 }
 
 bool CPDFSDK_XFAWidgetHandler::OnRButtonDown(CPDFSDK_PageView* pPageView,
@@ -215,7 +215,7 @@ bool CPDFSDK_XFAWidgetHandler::OnRButtonDown(CPDFSDK_PageView* pPageView,
 
   CXFA_FFWidgetHandler* pWidgetHandler = GetXFAWidgetHandler(pAnnot->Get());
   return pWidgetHandler->OnRButtonDown((*pAnnot)->GetXFAWidget(),
-                                       GetFWLFlags(nFlags), point.x, point.y);
+                                       GetFWLFlags(nFlags), point);
 }
 
 bool CPDFSDK_XFAWidgetHandler::OnRButtonUp(CPDFSDK_PageView* pPageView,
@@ -227,7 +227,7 @@ bool CPDFSDK_XFAWidgetHandler::OnRButtonUp(CPDFSDK_PageView* pPageView,
 
   CXFA_FFWidgetHandler* pWidgetHandler = GetXFAWidgetHandler(pAnnot->Get());
   return pWidgetHandler->OnRButtonUp((*pAnnot)->GetXFAWidget(),
-                                     GetFWLFlags(nFlags), point.x, point.y);
+                                     GetFWLFlags(nFlags), point);
 }
 
 bool CPDFSDK_XFAWidgetHandler::OnRButtonDblClk(
@@ -240,7 +240,7 @@ bool CPDFSDK_XFAWidgetHandler::OnRButtonDblClk(
 
   CXFA_FFWidgetHandler* pWidgetHandler = GetXFAWidgetHandler(pAnnot->Get());
   return pWidgetHandler->OnRButtonDblClk((*pAnnot)->GetXFAWidget(),
-                                         GetFWLFlags(nFlags), point.x, point.y);
+                                         GetFWLFlags(nFlags), point);
 }
 
 bool CPDFSDK_XFAWidgetHandler::OnChar(CPDFSDK_Annot* pAnnot,

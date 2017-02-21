@@ -282,7 +282,5 @@ bool CPDFSDK_WidgetHandler::HitTest(CPDFSDK_PageView* pPageView,
                                     const CFX_PointF& point) {
   ASSERT(pPageView);
   ASSERT(pAnnot);
-
-  CFX_FloatRect rect = GetViewBBox(pPageView, pAnnot);
-  return rect.Contains(point.x, point.y);
+  return GetViewBBox(pPageView, pAnnot).Contains(point);
 }

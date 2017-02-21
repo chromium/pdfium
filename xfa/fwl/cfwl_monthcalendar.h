@@ -143,7 +143,7 @@ class CFWL_MonthCalendar : public CFWL_Widget {
   void JumpToToday();
   CFX_WideString GetHeadText(int32_t iYear, int32_t iMonth);
   CFX_WideString GetTodayText(int32_t iYear, int32_t iMonth, int32_t iDay);
-  int32_t GetDayAtPoint(FX_FLOAT x, FX_FLOAT y);
+  int32_t GetDayAtPoint(const CFX_PointF& point) const;
   CFX_RectF GetDayRect(int32_t iDay);
   void OnLButtonDown(CFWL_MessageMouse* pMsg);
   void OnLButtonUp(CFWL_MessageMouse* pMsg);

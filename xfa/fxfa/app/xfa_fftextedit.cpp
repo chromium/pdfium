@@ -103,58 +103,53 @@ void CXFA_FFTextEdit::UpdateWidgetProperty() {
   m_pNormalWidget->ModifyStyles(dwStyle, 0xFFFFFFFF);
   m_pNormalWidget->ModifyStylesEx(dwExtendedStyle, 0xFFFFFFFF);
 }
-bool CXFA_FFTextEdit::OnLButtonDown(uint32_t dwFlags,
-                                    FX_FLOAT fx,
-                                    FX_FLOAT fy) {
-  if (!PtInActiveRect(fx, fy)) {
+
+bool CXFA_FFTextEdit::OnLButtonDown(uint32_t dwFlags, const CFX_PointF& point) {
+  if (!PtInActiveRect(point))
     return false;
-  }
   if (!IsFocused()) {
     m_dwStatus |= XFA_WidgetStatus_Focused;
     UpdateFWLData();
     AddInvalidateRect();
   }
+
   SetButtonDown(true);
   CFWL_MessageMouse ms(nullptr, m_pNormalWidget);
   ms.m_dwCmd = FWL_MouseCommand::LeftButtonDown;
   ms.m_dwFlags = dwFlags;
-  ms.m_fx = fx;
-  ms.m_fy = fy;
-  FWLToClient(ms.m_fx, ms.m_fy);
+  ms.m_pos = FWLToClient(point);
   TranslateFWLMessage(&ms);
   return true;
 }
-bool CXFA_FFTextEdit::OnRButtonDown(uint32_t dwFlags,
-                                    FX_FLOAT fx,
-                                    FX_FLOAT fy) {
-  if (m_pDataAcc->GetAccess() != XFA_ATTRIBUTEENUM_Open) {
+
+bool CXFA_FFTextEdit::OnRButtonDown(uint32_t dwFlags, const CFX_PointF& point) {
+  if (m_pDataAcc->GetAccess() != XFA_ATTRIBUTEENUM_Open)
     return false;
-  }
-  if (!PtInActiveRect(fx, fy)) {
+  if (!PtInActiveRect(point))
     return false;
-  }
   if (!IsFocused()) {
     m_dwStatus |= XFA_WidgetStatus_Focused;
     UpdateFWLData();
     AddInvalidateRect();
   }
+
   SetButtonDown(true);
   CFWL_MessageMouse ms(nullptr, nullptr);
   ms.m_dwCmd = FWL_MouseCommand::RightButtonDown;
   ms.m_dwFlags = dwFlags;
-  ms.m_fx = fx;
-  ms.m_fy = fy;
-  FWLToClient(ms.m_fx, ms.m_fy);
+  ms.m_pos = FWLToClient(point);
   TranslateFWLMessage(&ms);
   return true;
 }
-bool CXFA_FFTextEdit::OnRButtonUp(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) {
-  if (!CXFA_FFField::OnRButtonUp(dwFlags, fx, fy))
+
+bool CXFA_FFTextEdit::OnRButtonUp(uint32_t dwFlags, const CFX_PointF& point) {
+  if (!CXFA_FFField::OnRButtonUp(dwFlags, point))
     return false;
 
-  GetDoc()->GetDocEnvironment()->PopupMenu(this, CFX_PointF(fx, fy));
+  GetDoc()->GetDocEnvironment()->PopupMenu(this, point);
   return true;
 }
+
 bool CXFA_FFTextEdit::OnSetFocus(CXFA_FFWidget* pOldWidget) {
   m_dwStatus &= ~XFA_WidgetStatus_TextEditValueChanged;
   if (!IsFocused()) {
@@ -499,11 +494,11 @@ CFX_RectF CXFA_FFDateTimeEdit::GetBBox(uint32_t dwStatus, bool bDrawFocus) {
   return CXFA_FFWidget::GetBBox(dwStatus);
 }
 
-bool CXFA_FFDateTimeEdit::PtInActiveRect(FX_FLOAT fx, FX_FLOAT fy) {
+bool CXFA_FFDateTimeEdit::PtInActiveRect(const CFX_PointF& point) {
   return m_pNormalWidget &&
          static_cast<CFWL_DateTimePicker*>(m_pNormalWidget)
              ->GetBBox()
-             .Contains(fx, fy);
+             .Contains(point);
 }
 
 bool CXFA_FFDateTimeEdit::LoadWidget() {

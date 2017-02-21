@@ -138,8 +138,6 @@ class CPDFSDK_Widget : public CPDFSDK_BAAnnot {
                       CPDF_Annot::AppearanceMode mode,
                       const CPDF_RenderOptions* pOptions) override;
 
-  bool HitTest(FX_FLOAT pageX, FX_FLOAT pageY);
-
  private:
   void ResetAppearance_PushButton();
   void ResetAppearance_CheckBox();

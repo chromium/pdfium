@@ -35,8 +35,7 @@ CFFL_InteractiveFormFiller::~CFFL_InteractiveFormFiller() {}
 bool CFFL_InteractiveFormFiller::Annot_HitTest(CPDFSDK_PageView* pPageView,
                                                CPDFSDK_Annot* pAnnot,
                                                const CFX_PointF& point) {
-  CFX_FloatRect rc = pAnnot->GetRect();
-  return rc.Contains(point.x, point.y);
+  return pAnnot->GetRect().Contains(point);
 }
 
 FX_RECT CFFL_InteractiveFormFiller::GetViewBBox(CPDFSDK_PageView* pPageView,

@@ -258,8 +258,7 @@ void CFWL_WidgetMgr::SetParent(CFWL_Widget* pParent, CFWL_Widget* pChild) {
 }
 
 CFWL_Widget* CFWL_WidgetMgr::GetWidgetAtPoint(CFWL_Widget* parent,
-                                              FX_FLOAT x,
-                                              FX_FLOAT y) {
+                                              const CFX_PointF& point) const {
   if (!parent)
     return nullptr;
 
@@ -272,12 +271,12 @@ CFWL_Widget* CFWL_WidgetMgr::GetWidgetAtPoint(CFWL_Widget* parent,
 
       CFX_Matrix matrixOnParent;
       m.SetReverse(matrixOnParent);
-      pos = m.Transform(CFX_PointF(x, y));
+      pos = m.Transform(point);
 
       CFX_RectF bounds = child->GetWidgetRect();
-      if (bounds.Contains(pos.x, pos.y)) {
+      if (bounds.Contains(pos)) {
         pos -= bounds.TopLeft();
-        return GetWidgetAtPoint(child, pos.x, pos.y);
+        return GetWidgetAtPoint(child, pos);
       }
     }
     child = GetPriorSiblingWidget(child);
@@ -531,8 +530,7 @@ bool CFWL_WidgetMgr::IsNeedRepaint(CFWL_Widget* pWidget,
   CFX_RectF rtChilds;
   bool bChildIntersectWithDirty = false;
   bool bOrginPtIntersectWidthChild = false;
-  bool bOrginPtIntersectWidthDirty =
-      rtDirty.Contains(rtWidget.left, rtWidget.top);
+  bool bOrginPtIntersectWidthDirty = rtDirty.Contains(rtWidget.TopLeft());
   static FWL_NEEDREPAINTHITDATA hitPoint[kNeedRepaintHitPoints];
   FXSYS_memset(hitPoint, 0, sizeof(hitPoint));
   FX_FLOAT fxPiece = rtWidget.width / kNeedRepaintHitPiece;
@@ -562,7 +560,7 @@ bool CFWL_WidgetMgr::IsNeedRepaint(CFWL_Widget* pWidget,
     if (!bChildIntersectWithDirty && r.IntersectWith(rtDirty))
       bChildIntersectWithDirty = true;
     if (bOrginPtIntersectWidthDirty && !bOrginPtIntersectWidthChild)
-      bOrginPtIntersectWidthChild = rect.Contains(0, 0);
+      bOrginPtIntersectWidthChild = rect.Contains(CFX_PointF(0, 0));
 
     if (rtChilds.IsEmpty())
       rtChilds = rect;

@@ -189,38 +189,42 @@ bool CXFA_FFWidget::IsFocused() {
 bool CXFA_FFWidget::OnMouseEnter() {
   return false;
 }
+
 bool CXFA_FFWidget::OnMouseExit() {
   return false;
 }
-bool CXFA_FFWidget::OnLButtonDown(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) {
+
+bool CXFA_FFWidget::OnLButtonDown(uint32_t dwFlags, const CFX_PointF& point) {
   return false;
 }
-bool CXFA_FFWidget::OnLButtonUp(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) {
+
+bool CXFA_FFWidget::OnLButtonUp(uint32_t dwFlags, const CFX_PointF& point) {
   return false;
 }
-bool CXFA_FFWidget::OnLButtonDblClk(uint32_t dwFlags,
-                                    FX_FLOAT fx,
-                                    FX_FLOAT fy) {
+
+bool CXFA_FFWidget::OnLButtonDblClk(uint32_t dwFlags, const CFX_PointF& point) {
   return false;
 }
-bool CXFA_FFWidget::OnMouseMove(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) {
+
+bool CXFA_FFWidget::OnMouseMove(uint32_t dwFlags, const CFX_PointF& point) {
   return false;
 }
+
 bool CXFA_FFWidget::OnMouseWheel(uint32_t dwFlags,
                                  int16_t zDelta,
-                                 FX_FLOAT fx,
-                                 FX_FLOAT fy) {
+                                 const CFX_PointF& point) {
   return false;
 }
-bool CXFA_FFWidget::OnRButtonDown(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) {
+
+bool CXFA_FFWidget::OnRButtonDown(uint32_t dwFlags, const CFX_PointF& point) {
   return false;
 }
-bool CXFA_FFWidget::OnRButtonUp(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) {
+
+bool CXFA_FFWidget::OnRButtonUp(uint32_t dwFlags, const CFX_PointF& point) {
   return false;
 }
-bool CXFA_FFWidget::OnRButtonDblClk(uint32_t dwFlags,
-                                    FX_FLOAT fx,
-                                    FX_FLOAT fy) {
+
+bool CXFA_FFWidget::OnRButtonDblClk(uint32_t dwFlags, const CFX_PointF& point) {
   return false;
 }
 
@@ -236,6 +240,7 @@ bool CXFA_FFWidget::OnSetFocus(CXFA_FFWidget* pOldWidget) {
   m_pDataAcc->ProcessEvent(XFA_ATTRIBUTEENUM_Enter, &eParam);
   return true;
 }
+
 bool CXFA_FFWidget::OnKillFocus(CXFA_FFWidget* pNewWidget) {
   m_dwStatus &= ~XFA_WidgetStatus_Focused;
   EventKillFocus();
@@ -247,57 +252,75 @@ bool CXFA_FFWidget::OnKillFocus(CXFA_FFWidget* pNewWidget) {
   }
   return true;
 }
+
 bool CXFA_FFWidget::OnKeyDown(uint32_t dwKeyCode, uint32_t dwFlags) {
   return false;
 }
+
 bool CXFA_FFWidget::OnKeyUp(uint32_t dwKeyCode, uint32_t dwFlags) {
   return false;
 }
+
 bool CXFA_FFWidget::OnChar(uint32_t dwChar, uint32_t dwFlags) {
   return false;
 }
-FWL_WidgetHit CXFA_FFWidget::OnHitTest(FX_FLOAT fx, FX_FLOAT fy) {
+
+FWL_WidgetHit CXFA_FFWidget::OnHitTest(const CFX_PointF& point) {
   return FWL_WidgetHit::Unknown;
 }
-bool CXFA_FFWidget::OnSetCursor(FX_FLOAT fx, FX_FLOAT fy) {
+
+bool CXFA_FFWidget::OnSetCursor(const CFX_PointF& point) {
   return false;
 }
+
 bool CXFA_FFWidget::CanUndo() {
   return false;
 }
+
 bool CXFA_FFWidget::CanRedo() {
   return false;
 }
+
 bool CXFA_FFWidget::Undo() {
   return false;
 }
+
 bool CXFA_FFWidget::Redo() {
   return false;
 }
+
 bool CXFA_FFWidget::CanCopy() {
   return false;
 }
+
 bool CXFA_FFWidget::CanCut() {
   return false;
 }
+
 bool CXFA_FFWidget::CanPaste() {
   return false;
 }
+
 bool CXFA_FFWidget::CanSelectAll() {
   return false;
 }
+
 bool CXFA_FFWidget::CanDelete() {
   return CanCut();
 }
+
 bool CXFA_FFWidget::CanDeSelect() {
   return CanCopy();
 }
+
 bool CXFA_FFWidget::Copy(CFX_WideString& wsCopy) {
   return false;
 }
+
 bool CXFA_FFWidget::Cut(CFX_WideString& wsCut) {
   return false;
 }
+
 bool CXFA_FFWidget::Paste(const CFX_WideString& wsPaste) {
   return false;
 }
@@ -429,8 +452,8 @@ bool CXFA_FFWidget::IsAncestorOf(CXFA_FFWidget* pWidget) {
   return false;
 }
 
-bool CXFA_FFWidget::PtInActiveRect(FX_FLOAT fx, FX_FLOAT fy) {
-  return GetWidgetRect().Contains(fx, fy);
+bool CXFA_FFWidget::PtInActiveRect(const CFX_PointF& point) {
+  return GetWidgetRect().Contains(point);
 }
 
 CXFA_FFDocView* CXFA_FFWidget::GetDocView() {

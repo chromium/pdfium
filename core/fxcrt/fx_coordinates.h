@@ -361,10 +361,10 @@ class CFX_RTemplate {
     return width <= fEpsilon || height <= fEpsilon;
   }
   void Empty() { width = height = 0; }
-  bool Contains(BaseType x, BaseType y) const {
-    return x >= left && x < left + width && y >= top && y < top + height;
+  bool Contains(const PointType& p) const {
+    return p.x >= left && p.x < left + width && p.y >= top &&
+           p.y < top + height;
   }
-  bool Contains(const PointType& p) const { return Contains(p.x, p.y); }
   bool Contains(const RectType& rt) const {
     return rt.left >= left && rt.right() <= right() && rt.top >= top &&
            rt.bottom() <= bottom();
@@ -474,7 +474,6 @@ class CFX_FloatRect {
 
   bool Contains(const CFX_PointF& point) const;
   bool Contains(const CFX_FloatRect& other_rect) const;
-  bool Contains(FX_FLOAT x, FX_FLOAT y) const;
 
   void Intersect(const CFX_FloatRect& other_rect);
   void Union(const CFX_FloatRect& other_rect);

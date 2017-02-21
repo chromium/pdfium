@@ -29,43 +29,35 @@ class CXFA_FFWidgetHandler {
   bool OnMouseExit(CXFA_FFWidget* hWidget);
   bool OnLButtonDown(CXFA_FFWidget* hWidget,
                      uint32_t dwFlags,
-                     FX_FLOAT fx,
-                     FX_FLOAT fy);
+                     const CFX_PointF& point);
   bool OnLButtonUp(CXFA_FFWidget* hWidget,
                    uint32_t dwFlags,
-                   FX_FLOAT fx,
-                   FX_FLOAT fy);
+                   const CFX_PointF& point);
   bool OnLButtonDblClk(CXFA_FFWidget* hWidget,
                        uint32_t dwFlags,
-                       FX_FLOAT fx,
-                       FX_FLOAT fy);
+                       const CFX_PointF& point);
   bool OnMouseMove(CXFA_FFWidget* hWidget,
                    uint32_t dwFlags,
-                   FX_FLOAT fx,
-                   FX_FLOAT fy);
+                   const CFX_PointF& point);
   bool OnMouseWheel(CXFA_FFWidget* hWidget,
                     uint32_t dwFlags,
                     int16_t zDelta,
-                    FX_FLOAT fx,
-                    FX_FLOAT fy);
+                    const CFX_PointF& point);
   bool OnRButtonDown(CXFA_FFWidget* hWidget,
                      uint32_t dwFlags,
-                     FX_FLOAT fx,
-                     FX_FLOAT fy);
+                     const CFX_PointF& point);
   bool OnRButtonUp(CXFA_FFWidget* hWidget,
                    uint32_t dwFlags,
-                   FX_FLOAT fx,
-                   FX_FLOAT fy);
+                   const CFX_PointF& point);
   bool OnRButtonDblClk(CXFA_FFWidget* hWidget,
                        uint32_t dwFlags,
-                       FX_FLOAT fx,
-                       FX_FLOAT fy);
+                       const CFX_PointF& point);
 
   bool OnKeyDown(CXFA_FFWidget* hWidget, uint32_t dwKeyCode, uint32_t dwFlags);
   bool OnKeyUp(CXFA_FFWidget* hWidget, uint32_t dwKeyCode, uint32_t dwFlags);
   bool OnChar(CXFA_FFWidget* hWidget, uint32_t dwChar, uint32_t dwFlags);
-  FWL_WidgetHit OnHitTest(CXFA_FFWidget* hWidget, FX_FLOAT fx, FX_FLOAT fy);
-  bool OnSetCursor(CXFA_FFWidget* hWidget, FX_FLOAT fx, FX_FLOAT fy);
+  FWL_WidgetHit OnHitTest(CXFA_FFWidget* hWidget, const CFX_PointF& point);
+  bool OnSetCursor(CXFA_FFWidget* hWidget, const CFX_PointF& point);
   void RenderWidget(CXFA_FFWidget* hWidget,
                     CFX_Graphics* pGS,
                     CFX_Matrix* pMatrix,

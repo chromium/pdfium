@@ -297,7 +297,7 @@ void CFWL_CheckBox::OnLButtonUp(CFWL_MessageMouse* pMsg) {
     return;
 
   m_bBtnDown = false;
-  if (!m_rtClient.Contains(pMsg->m_fx, pMsg->m_fy))
+  if (!m_rtClient.Contains(pMsg->m_pos))
     return;
 
   m_pProperties->m_dwStates |= FWL_STATE_CKB_Hovered;
@@ -311,7 +311,7 @@ void CFWL_CheckBox::OnMouseMove(CFWL_MessageMouse* pMsg) {
 
   bool bRepaint = false;
   if (m_bBtnDown) {
-    if (m_rtClient.Contains(pMsg->m_fx, pMsg->m_fy)) {
+    if (m_rtClient.Contains(pMsg->m_pos)) {
       if ((m_pProperties->m_dwStates & FWL_STATE_CKB_Pressed) == 0) {
         bRepaint = true;
         m_pProperties->m_dwStates |= FWL_STATE_CKB_Pressed;
@@ -331,7 +331,7 @@ void CFWL_CheckBox::OnMouseMove(CFWL_MessageMouse* pMsg) {
       }
     }
   } else {
-    if (m_rtClient.Contains(pMsg->m_fx, pMsg->m_fy)) {
+    if (m_rtClient.Contains(pMsg->m_pos)) {
       if ((m_pProperties->m_dwStates & FWL_STATE_CKB_Hovered) == 0) {
         bRepaint = true;
         m_pProperties->m_dwStates |= FWL_STATE_CKB_Hovered;

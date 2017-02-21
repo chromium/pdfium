@@ -48,7 +48,7 @@ class CXFA_FFComboBox : public CXFA_FFField {
   CFX_RectF GetBBox(uint32_t dwStatus, bool bDrawFocus = false) override;
   bool LoadWidget() override;
   void UpdateWidgetProperty() override;
-  bool OnRButtonUp(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) override;
+  bool OnRButtonUp(uint32_t dwFlags, const CFX_PointF& point) override;
   bool OnKillFocus(CXFA_FFWidget* pNewWidget) override;
   bool CanUndo() override;
   bool CanRedo() override;
@@ -84,7 +84,7 @@ class CXFA_FFComboBox : public CXFA_FFField {
 
  protected:
   // CXFA_FFField
-  bool PtInActiveRect(FX_FLOAT fx, FX_FLOAT fy) override;
+  bool PtInActiveRect(const CFX_PointF& point) override;
   bool CommitData() override;
   bool UpdateFWLData() override;
   bool IsDataChanged() override;

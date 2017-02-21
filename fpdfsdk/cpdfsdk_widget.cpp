@@ -1907,18 +1907,3 @@ int32_t CPDFSDK_Widget::GetAppearanceAge() const {
 int32_t CPDFSDK_Widget::GetValueAge() const {
   return m_nValueAge;
 }
-
-bool CPDFSDK_Widget::HitTest(FX_FLOAT pageX, FX_FLOAT pageY) {
-  CPDF_Annot* pAnnot = GetPDFAnnot();
-  CFX_FloatRect annotRect = pAnnot->GetRect();
-  if (!annotRect.Contains(pageX, pageY))
-    return false;
-
-  if (!IsVisible())
-    return false;
-
-  if ((GetFieldFlags() & FIELDFLAG_READONLY) == FIELDFLAG_READONLY)
-    return false;
-
-  return true;
-}
