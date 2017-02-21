@@ -68,7 +68,8 @@ void CFX_SystemHandler::OutputSelectedRect(CFFL_FormFiller* pFormFiller,
   UnderlyingPageType* pPage = pAnnot->GetUnderlyingPage();
   ASSERT(pPage);
 
-  m_pFormFillEnv->OutputSelectedRect(pPage, ptA.x, ptB.y, ptB.x, ptA.y);
+  m_pFormFillEnv->OutputSelectedRect(pPage,
+                                     CFX_FloatRect(ptA.x, ptA.y, ptB.x, ptB.y));
 }
 
 bool CFX_SystemHandler::IsSelectionImplemented() const {
