@@ -287,17 +287,15 @@ void CFXJS_Engine::DefineObjMethod(int nObjDefnID,
 }
 
 void CFXJS_Engine::DefineObjProperty(int nObjDefnID,
-                                     const wchar_t* sPropName,
+                                     const char* sPropName,
                                      v8::AccessorGetterCallback pPropGet,
                                      v8::AccessorSetterCallback pPropPut) {
   v8::Isolate::Scope isolate_scope(m_isolate);
   v8::HandleScope handle_scope(m_isolate);
-  CFX_ByteString bsPropertyName = FX_UTF8Encode(CFX_WideStringC(sPropName));
   CFXJS_ObjDefinition* pObjDef =
       CFXJS_ObjDefinition::ForID(m_isolate, nObjDefnID);
   pObjDef->GetInstanceTemplate()->SetAccessor(
-      v8::String::NewFromUtf8(m_isolate, bsPropertyName.c_str(),
-                              v8::NewStringType::kNormal)
+      v8::String::NewFromUtf8(m_isolate, sPropName, v8::NewStringType::kNormal)
           .ToLocalChecked(),
       pPropGet, pPropPut);
 }

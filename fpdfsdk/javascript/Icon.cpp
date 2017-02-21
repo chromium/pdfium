@@ -13,7 +13,7 @@
 JSConstSpec CJS_Icon::ConstSpecs[] = {{0, JSConstSpec::Number, 0, 0}};
 
 JSPropertySpec CJS_Icon::PropertySpecs[] = {
-    {L"name", get_name_static, set_name_static},
+    {"name", get_name_static, set_name_static},
     {0, 0, 0}};
 
 JSMethodSpec CJS_Icon::MethodSpecs[] = {{0, 0}};

@@ -22,9 +22,9 @@ CPDFSDK_BAAnnot* ToBAAnnot(CPDFSDK_Annot* annot) {
 JSConstSpec CJS_Annot::ConstSpecs[] = {{0, JSConstSpec::Number, 0, 0}};
 
 JSPropertySpec CJS_Annot::PropertySpecs[] = {
-    {L"hidden", get_hidden_static, set_hidden_static},
-    {L"name", get_name_static, set_name_static},
-    {L"type", get_type_static, set_type_static},
+    {"hidden", get_hidden_static, set_hidden_static},
+    {"name", get_name_static, set_name_static},
+    {"type", get_type_static, set_type_static},
     {0, 0, 0}};
 
 JSMethodSpec CJS_Annot::MethodSpecs[] = {{0, 0}};

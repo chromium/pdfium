@@ -24,7 +24,7 @@ struct JSConstSpec {
 };
 
 struct JSPropertySpec {
-  const wchar_t* pName;
+  const char* pName;
   v8::AccessorGetterCallback pPropGet;
   v8::AccessorSetterCallback pPropPut;
 };

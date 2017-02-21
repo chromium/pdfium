@@ -161,20 +161,19 @@ void TimerObj::SetTimer(GlobalTimer* pTimer) {
 JSConstSpec CJS_App::ConstSpecs[] = {{0, JSConstSpec::Number, 0, 0}};
 
 JSPropertySpec CJS_App::PropertySpecs[] = {
-    {L"activeDocs", get_activeDocs_static, set_activeDocs_static},
-    {L"calculate", get_calculate_static, set_calculate_static},
-    {L"formsVersion", get_formsVersion_static, set_formsVersion_static},
-    {L"fs", get_fs_static, set_fs_static},
-    {L"fullscreen", get_fullscreen_static, set_fullscreen_static},
-    {L"language", get_language_static, set_language_static},
-    {L"media", get_media_static, set_media_static},
-    {L"platform", get_platform_static, set_platform_static},
-    {L"runtimeHighlight", get_runtimeHighlight_static,
+    {"activeDocs", get_activeDocs_static, set_activeDocs_static},
+    {"calculate", get_calculate_static, set_calculate_static},
+    {"formsVersion", get_formsVersion_static, set_formsVersion_static},
+    {"fs", get_fs_static, set_fs_static},
+    {"fullscreen", get_fullscreen_static, set_fullscreen_static},
+    {"language", get_language_static, set_language_static},
+    {"media", get_media_static, set_media_static},
+    {"platform", get_platform_static, set_platform_static},
+    {"runtimeHighlight", get_runtimeHighlight_static,
      set_runtimeHighlight_static},
-    {L"viewerType", get_viewerType_static, set_viewerType_static},
-    {L"viewerVariation", get_viewerVariation_static,
-     set_viewerVariation_static},
-    {L"viewerVersion", get_viewerVersion_static, set_viewerVersion_static},
+    {"viewerType", get_viewerType_static, set_viewerType_static},
+    {"viewerVariation", get_viewerVariation_static, set_viewerVariation_static},
+    {"viewerVersion", get_viewerVersion_static, set_viewerVersion_static},
     {0, 0, 0}};
 
 JSMethodSpec CJS_App::MethodSpecs[] = {{"alert", alert_static},

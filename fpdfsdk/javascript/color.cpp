@@ -18,18 +18,18 @@
 JSConstSpec CJS_Color::ConstSpecs[] = {{0, JSConstSpec::Number, 0, 0}};
 
 JSPropertySpec CJS_Color::PropertySpecs[] = {
-    {L"black", get_black_static, set_black_static},
-    {L"blue", get_blue_static, set_blue_static},
-    {L"cyan", get_cyan_static, set_cyan_static},
-    {L"dkGray", get_dkGray_static, set_dkGray_static},
-    {L"gray", get_gray_static, set_gray_static},
-    {L"green", get_green_static, set_green_static},
-    {L"ltGray", get_ltGray_static, set_ltGray_static},
-    {L"magenta", get_magenta_static, set_magenta_static},
-    {L"red", get_red_static, set_red_static},
-    {L"transparent", get_transparent_static, set_transparent_static},
-    {L"white", get_white_static, set_white_static},
-    {L"yellow", get_yellow_static, set_yellow_static},
+    {"black", get_black_static, set_black_static},
+    {"blue", get_blue_static, set_blue_static},
+    {"cyan", get_cyan_static, set_cyan_static},
+    {"dkGray", get_dkGray_static, set_dkGray_static},
+    {"gray", get_gray_static, set_gray_static},
+    {"green", get_green_static, set_green_static},
+    {"ltGray", get_ltGray_static, set_ltGray_static},
+    {"magenta", get_magenta_static, set_magenta_static},
+    {"red", get_red_static, set_red_static},
+    {"transparent", get_transparent_static, set_transparent_static},
+    {"white", get_white_static, set_white_static},
+    {"yellow", get_yellow_static, set_yellow_static},
     {0, 0, 0}};
 
 JSMethodSpec CJS_Color::MethodSpecs[] = {{"convert", convert_static},
