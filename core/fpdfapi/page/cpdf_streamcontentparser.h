@@ -92,8 +92,6 @@ class CPDF_StreamContentParser {
                      FX_FLOAT* pKerning,
                      int count);
 
-  void ConvertUserSpace(FX_FLOAT& x, FX_FLOAT& y);
-  void ConvertTextSpace(FX_FLOAT& x, FX_FLOAT& y);
   void OnChangeTextMatrix();
   void ParsePathObject();
   void AddPathPoint(FX_FLOAT x, FX_FLOAT y, FXPT_TYPE type, bool close);
