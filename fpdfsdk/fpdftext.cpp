@@ -133,8 +133,10 @@ DLLEXPORT int STDCALL FPDFText_GetCharIndexAtPos(FPDF_TEXTPAGE text_page,
     return -3;
 
   CPDF_TextPage* textpage = CPDFTextPageFromFPDFTextPage(text_page);
-  return textpage->GetIndexAtPos((FX_FLOAT)x, (FX_FLOAT)y, (FX_FLOAT)xTolerance,
-                                 (FX_FLOAT)yTolerance);
+  return textpage->GetIndexAtPos(
+      CFX_PointF(static_cast<FX_FLOAT>(x), static_cast<FX_FLOAT>(y)),
+      CFX_SizeF(static_cast<FX_FLOAT>(xTolerance),
+                static_cast<FX_FLOAT>(yTolerance)));
 }
 
 DLLEXPORT int STDCALL FPDFText_GetText(FPDF_TEXTPAGE text_page,

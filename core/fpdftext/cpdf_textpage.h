@@ -98,13 +98,7 @@ class CPDF_TextPage {
   int CountChars() const;
   void GetCharInfo(int index, FPDF_CHAR_INFO* info) const;
   std::vector<CFX_FloatRect> GetRectArray(int start, int nCount) const;
-  int GetIndexAtPos(const CFX_PointF& point,
-                    FX_FLOAT xTolerance,
-                    FX_FLOAT yTolerance) const;
-  int GetIndexAtPos(FX_FLOAT x,
-                    FX_FLOAT y,
-                    FX_FLOAT xTolerance,
-                    FX_FLOAT yTolerance) const;
+  int GetIndexAtPos(const CFX_PointF& point, const CFX_SizeF& tolerance) const;
   CFX_WideString GetTextByRect(const CFX_FloatRect& rect) const;
   CFX_WideString GetPageText(int start = 0, int nCount = -1) const;
   int CountRects(int start, int nCount);

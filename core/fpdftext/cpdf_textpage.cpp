@@ -301,8 +301,7 @@ std::vector<CFX_FloatRect> CPDF_TextPage::GetRectArray(int start,
 }
 
 int CPDF_TextPage::GetIndexAtPos(const CFX_PointF& point,
-                                 FX_FLOAT xTolerance,
-                                 FX_FLOAT yTolerance) const {
+                                 const CFX_SizeF& tolerance) const {
   if (!m_bIsParsed)
     return -3;
 
@@ -315,13 +314,13 @@ int CPDF_TextPage::GetIndexAtPos(const CFX_PointF& point,
     CFX_FloatRect charrect = charinfo.m_CharBox;
     if (charrect.Contains(point))
       break;
-    if (xTolerance > 0 || yTolerance > 0) {
+    if (tolerance.width > 0 || tolerance.height > 0) {
       CFX_FloatRect charRectExt;
       charrect.Normalize();
-      charRectExt.left = charrect.left - xTolerance / 2;
-      charRectExt.right = charrect.right + xTolerance / 2;
-      charRectExt.top = charrect.top + yTolerance / 2;
-      charRectExt.bottom = charrect.bottom - yTolerance / 2;
+      charRectExt.left = charrect.left - tolerance.width / 2;
+      charRectExt.right = charrect.right + tolerance.width / 2;
+      charRectExt.top = charrect.top + tolerance.height / 2;
+      charRectExt.bottom = charrect.bottom - tolerance.height / 2;
       if (charRectExt.Contains(point)) {
         double curXdif, curYdif;
         curXdif = FXSYS_fabs(point.x - charrect.left) <
@@ -376,14 +375,6 @@ CFX_WideString CPDF_TextPage::GetTextByRect(const CFX_FloatRect& rect) const {
     }
   }
   return strText;
-}
-
-int CPDF_TextPage::GetIndexAtPos(FX_FLOAT x,
-                                 FX_FLOAT y,
-                                 FX_FLOAT xTolerance,
-                                 FX_FLOAT yTolerance) const {
-  CFX_PointF point(x, y);
-  return GetIndexAtPos(point, xTolerance, yTolerance);
 }
 
 void CPDF_TextPage::GetCharInfo(int index, FPDF_CHAR_INFO* info) const {
