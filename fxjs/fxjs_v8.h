@@ -142,7 +142,7 @@ class CFXJS_Engine {
   v8::Isolate* GetIsolate() const { return m_isolate; }
 
   // Always returns a valid, newly-created objDefnID.
-  int DefineObj(const wchar_t* sObjName,
+  int DefineObj(const char* sObjName,
                 FXJSOBJTYPE eObjType,
                 Constructor pConstructor,
                 Destructor pDestructor);

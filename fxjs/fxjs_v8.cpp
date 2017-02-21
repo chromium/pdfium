@@ -42,7 +42,7 @@ class CFXJS_ObjDefinition {
   }
 
   CFXJS_ObjDefinition(v8::Isolate* isolate,
-                      const wchar_t* sObjName,
+                      const char* sObjName,
                       FXJSOBJTYPE eObjType,
                       CFXJS_Engine::Constructor pConstructor,
                       CFXJS_Engine::Destructor pDestructor)
@@ -86,7 +86,7 @@ class CFXJS_ObjDefinition {
     return scope.Escape(m_Signature.Get(m_pIsolate));
   }
 
-  const wchar_t* const m_ObjName;
+  const char* const m_ObjName;
   const FXJSOBJTYPE m_ObjType;
   const CFXJS_Engine::Constructor m_pConstructor;
   const CFXJS_Engine::Destructor m_pDestructor;
@@ -257,7 +257,7 @@ void CFXJS_Engine::FreeObjectPrivate(v8::Local<v8::Object> pObj) {
   pObj->SetAlignedPointerInInternalField(0, nullptr);
 }
 
-int CFXJS_Engine::DefineObj(const wchar_t* sObjName,
+int CFXJS_Engine::DefineObj(const char* sObjName,
                             FXJSOBJTYPE eObjType,
                             CFXJS_Engine::Constructor pConstructor,
                             CFXJS_Engine::Destructor pDestructor) {
@@ -392,14 +392,14 @@ void CFXJS_Engine::InitializeEngine() {
                                           ->ToObject(v8Context)
                                           .ToLocalChecked());
     } else if (pObjDef->m_ObjType == FXJSOBJTYPE_STATIC) {
-      CFX_ByteString bs = FX_UTF8Encode(CFX_WideStringC(pObjDef->m_ObjName));
-      v8::Local<v8::String> m_ObjName =
-          v8::String::NewFromUtf8(m_isolate, bs.c_str(),
-                                  v8::NewStringType::kNormal, bs.GetLength())
+      v8::Local<v8::String> pObjName =
+          v8::String::NewFromUtf8(m_isolate, pObjDef->m_ObjName,
+                                  v8::NewStringType::kNormal,
+                                  strlen(pObjDef->m_ObjName))
               .ToLocalChecked();
 
       v8::Local<v8::Object> obj = NewFxDynamicObj(i, true);
-      v8Context->Global()->Set(v8Context, m_ObjName, obj).FromJust();
+      v8Context->Global()->Set(v8Context, pObjName, obj).FromJust();
       m_StaticObjects[i] = new v8::Global<v8::Object>(m_isolate, obj);
     }
   }

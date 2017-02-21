@@ -34,8 +34,6 @@ struct JSMethodSpec {
   v8::FunctionCallback pMethodCall;
 };
 
-#define JS_WIDESTRING(widestring) L## #widestring
-
 template <class C, bool (C::*M)(CJS_Runtime*, CJS_PropValue&, CFX_WideString&)>
 void JSPropGetter(const char* prop_name_string,
                   const char* class_name_string,
@@ -141,13 +139,13 @@ void JSMethod(const char* method_name_string,
 // All JS classes have a name, an object defintion ID, and the ability to
 // register themselves with FXJS_V8. We never make a BASE class on its own
 // because it can't really do anything.
-#define DECLARE_JS_CLASS_BASE_PART()  \
-  static const wchar_t* g_pClassName; \
-  static int g_nObjDefnID;            \
+#define DECLARE_JS_CLASS_BASE_PART() \
+  static const char* g_pClassName;   \
+  static int g_nObjDefnID;           \
   static void DefineJSObjects(CFXJS_Engine* pEngine, FXJSOBJTYPE eObjType);
 
-#define IMPLEMENT_JS_CLASS_BASE_PART(js_class_name, class_name)           \
-  const wchar_t* js_class_name::g_pClassName = JS_WIDESTRING(class_name); \
+#define IMPLEMENT_JS_CLASS_BASE_PART(js_class_name, class_name) \
+  const char* js_class_name::g_pClassName = #class_name;        \
   int js_class_name::g_nObjDefnID = -1;
 
 // CONST classes provide constants, but not constructors, methods, or props.
