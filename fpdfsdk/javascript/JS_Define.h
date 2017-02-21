@@ -17,7 +17,7 @@
 struct JSConstSpec {
   enum Type { Number = 0, String = 1 };
 
-  const wchar_t* pName;
+  const char* pName;
   Type eType;
   double number;
   const wchar_t* pStr;

@@ -315,14 +315,13 @@ void CFXJS_Engine::DefineObjAllProperties(
 }
 
 void CFXJS_Engine::DefineObjConst(int nObjDefnID,
-                                  const wchar_t* sConstName,
+                                  const char* sConstName,
                                   v8::Local<v8::Value> pDefault) {
   v8::Isolate::Scope isolate_scope(m_isolate);
   v8::HandleScope handle_scope(m_isolate);
-  CFX_ByteString bsConstName = FX_UTF8Encode(CFX_WideStringC(sConstName));
   CFXJS_ObjDefinition* pObjDef =
       CFXJS_ObjDefinition::ForID(m_isolate, nObjDefnID);
-  pObjDef->GetInstanceTemplate()->Set(m_isolate, bsConstName.c_str(), pDefault);
+  pObjDef->GetInstanceTemplate()->Set(m_isolate, sConstName, pDefault);
 }
 
 void CFXJS_Engine::DefineGlobalMethod(const char* sMethodName,

@@ -160,7 +160,7 @@ class CFXJS_Engine {
                               v8::NamedPropertySetterCallback pPropPut,
                               v8::NamedPropertyDeleterCallback pPropDel);
   void DefineObjConst(int nObjDefnID,
-                      const wchar_t* sConstName,
+                      const char* sConstName,
                       v8::Local<v8::Value> pDefault);
   void DefineGlobalMethod(const char* sMethodName,
                           v8::FunctionCallback pMethodCall);
