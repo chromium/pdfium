@@ -114,9 +114,8 @@ bool CFFL_TextField::OnChar(CPDFSDK_Annot* pAnnot,
         CPDFSDK_PageView* pPageView = GetCurPageView(true);
         ASSERT(pPageView);
         m_bValid = !m_bValid;
-        CFX_FloatRect rcAnnot = pAnnot->GetRect();
-        m_pFormFillEnv->Invalidate(pAnnot->GetUnderlyingPage(), rcAnnot.left,
-                                   rcAnnot.top, rcAnnot.right, rcAnnot.bottom);
+        m_pFormFillEnv->Invalidate(pAnnot->GetUnderlyingPage(),
+                                   pAnnot->GetRect().ToFxRect());
 
         if (m_bValid) {
           if (CPWL_Wnd* pWnd = GetPDFWindow(pPageView, true))

@@ -68,11 +68,7 @@ class CPDFSDK_FormFillEnvironment
   void ProcJavascriptFun();
   bool ProcOpenAction();
 
-  void Invalidate(FPDF_PAGE page,
-                  double left,
-                  double top,
-                  double right,
-                  double bottom);
+  void Invalidate(FPDF_PAGE page, const FX_RECT& rect);
   void OutputSelectedRect(FPDF_PAGE page,
                           double left,
                           double top,

@@ -233,12 +233,11 @@ CPDFSDK_FormFillEnvironment::GetInteractiveFormFiller() {
 }
 
 void CPDFSDK_FormFillEnvironment::Invalidate(FPDF_PAGE page,
-                                             double left,
-                                             double top,
-                                             double right,
-                                             double bottom) {
-  if (m_pInfo && m_pInfo->FFI_Invalidate)
-    m_pInfo->FFI_Invalidate(m_pInfo, page, left, top, right, bottom);
+                                             const FX_RECT& rect) {
+  if (m_pInfo && m_pInfo->FFI_Invalidate) {
+    m_pInfo->FFI_Invalidate(m_pInfo, page, rect.left, rect.top, rect.right,
+                            rect.bottom);
+  }
 }
 
 void CPDFSDK_FormFillEnvironment::OutputSelectedRect(FPDF_PAGE page,

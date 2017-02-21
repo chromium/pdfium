@@ -71,9 +71,8 @@ void CPDFXFA_DocEnvironment::InvalidateRect(CXFA_FFPageView* pPageView,
   if (!pFormFillEnv)
     return;
 
-  CFX_FloatRect rcPage = CFX_FloatRect::FromCFXRectF(rt);
-  pFormFillEnv->Invalidate((FPDF_PAGE)pPage, rcPage.left, rcPage.bottom,
-                           rcPage.right, rcPage.top);
+  pFormFillEnv->Invalidate(static_cast<FPDF_PAGE>(pPage),
+                           CFX_FloatRect::FromCFXRectF(rt).ToFxRect());
 }
 
 void CPDFXFA_DocEnvironment::DisplayCaret(CXFA_FFWidget* hWidget,

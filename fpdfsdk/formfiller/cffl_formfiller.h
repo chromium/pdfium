@@ -138,10 +138,7 @@ class CFFL_FormFiller : public IPWL_Provider, public CPWL_TimerHandler {
   CPDFSDK_PageView* GetCurPageView(bool renew);
   void SetChangeMark();
 
-  virtual void InvalidateRect(double left,
-                              double top,
-                              double right,
-                              double bottom);
+  virtual void InvalidateRect(const FX_RECT& rect);
   CPDFSDK_Annot* GetSDKAnnot() { return m_pAnnot; }
 
  protected:

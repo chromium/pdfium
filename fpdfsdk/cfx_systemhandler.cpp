@@ -53,9 +53,7 @@ void CFX_SystemHandler::InvalidateRect(CPDFSDK_Widget* widget, FX_RECT rect) {
 
   CFX_FloatRect rcPDF(left_top.x, right_bottom.y, right_bottom.x, left_top.y);
   rcPDF.Normalize();
-
-  m_pFormFillEnv->Invalidate(pPage, rcPDF.left, rcPDF.top, rcPDF.right,
-                             rcPDF.bottom);
+  m_pFormFillEnv->Invalidate(pPage, rcPDF.ToFxRect());
 }
 
 void CFX_SystemHandler::OutputSelectedRect(CFFL_FormFiller* pFormFiller,
