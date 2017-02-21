@@ -32,8 +32,8 @@ JSPropertySpec CJS_Color::PropertySpecs[] = {
     {L"yellow", get_yellow_static, set_yellow_static},
     {0, 0, 0}};
 
-JSMethodSpec CJS_Color::MethodSpecs[] = {{L"convert", convert_static},
-                                         {L"equal", equal_static},
+JSMethodSpec CJS_Color::MethodSpecs[] = {{"convert", convert_static},
+                                         {"equal", equal_static},
                                          {0, 0}};
 
 IMPLEMENT_JS_CLASS(CJS_Color, color)

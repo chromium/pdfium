@@ -148,7 +148,7 @@ class CFXJS_Engine {
                 Destructor pDestructor);
 
   void DefineObjMethod(int nObjDefnID,
-                       const wchar_t* sMethodName,
+                       const char* sMethodName,
                        v8::FunctionCallback pMethodCall);
   void DefineObjProperty(int nObjDefnID,
                          const wchar_t* sPropName,
@@ -162,7 +162,7 @@ class CFXJS_Engine {
   void DefineObjConst(int nObjDefnID,
                       const wchar_t* sConstName,
                       v8::Local<v8::Value> pDefault);
-  void DefineGlobalMethod(const wchar_t* sMethodName,
+  void DefineGlobalMethod(const char* sMethodName,
                           v8::FunctionCallback pMethodCall);
   void DefineGlobalConst(const wchar_t* sConstName,
                          v8::FunctionCallback pConstGetter);

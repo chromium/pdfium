@@ -16,8 +16,8 @@ JSConstSpec CJS_Report::ConstSpecs[] = {{0, JSConstSpec::Number, 0, 0}};
 
 JSPropertySpec CJS_Report::PropertySpecs[] = {{0, 0, 0}};
 
-JSMethodSpec CJS_Report::MethodSpecs[] = {{L"save", save_static},
-                                          {L"writeText", writeText_static},
+JSMethodSpec CJS_Report::MethodSpecs[] = {{"save", save_static},
+                                          {"writeText", writeText_static},
                                           {0, 0}};
 
 IMPLEMENT_JS_CLASS(CJS_Report, Report)

@@ -22,7 +22,7 @@ JSConstSpec CJS_Global::ConstSpecs[] = {{0, JSConstSpec::Number, 0, 0}};
 JSPropertySpec CJS_Global::PropertySpecs[] = {{0, 0, 0}};
 
 JSMethodSpec CJS_Global::MethodSpecs[] = {
-    {L"setPersistent", setPersistent_static},
+    {"setPersistent", setPersistent_static},
     {0, 0}};
 
 IMPLEMENT_SPECIAL_JS_CLASS(CJS_Global, JSGlobalAlternate, global);

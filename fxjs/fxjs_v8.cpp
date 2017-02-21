@@ -270,18 +270,17 @@ int CFXJS_Engine::DefineObj(const char* sObjName,
 }
 
 void CFXJS_Engine::DefineObjMethod(int nObjDefnID,
-                                   const wchar_t* sMethodName,
+                                   const char* sMethodName,
                                    v8::FunctionCallback pMethodCall) {
   v8::Isolate::Scope isolate_scope(m_isolate);
   v8::HandleScope handle_scope(m_isolate);
-  CFX_ByteString bsMethodName = FX_UTF8Encode(CFX_WideStringC(sMethodName));
   CFXJS_ObjDefinition* pObjDef =
       CFXJS_ObjDefinition::ForID(m_isolate, nObjDefnID);
   v8::Local<v8::FunctionTemplate> fun = v8::FunctionTemplate::New(
       m_isolate, pMethodCall, v8::Local<v8::Value>(), pObjDef->GetSignature());
   fun->RemovePrototype();
   pObjDef->GetInstanceTemplate()->Set(
-      v8::String::NewFromUtf8(m_isolate, bsMethodName.c_str(),
+      v8::String::NewFromUtf8(m_isolate, sMethodName,
                               v8::NewStringType::kNormal)
           .ToLocalChecked(),
       fun, v8::ReadOnly);
@@ -328,16 +327,15 @@ void CFXJS_Engine::DefineObjConst(int nObjDefnID,
   pObjDef->GetInstanceTemplate()->Set(m_isolate, bsConstName.c_str(), pDefault);
 }
 
-void CFXJS_Engine::DefineGlobalMethod(const wchar_t* sMethodName,
+void CFXJS_Engine::DefineGlobalMethod(const char* sMethodName,
                                       v8::FunctionCallback pMethodCall) {
   v8::Isolate::Scope isolate_scope(m_isolate);
   v8::HandleScope handle_scope(m_isolate);
-  CFX_ByteString bsMethodName = FX_UTF8Encode(CFX_WideStringC(sMethodName));
   v8::Local<v8::FunctionTemplate> fun =
       v8::FunctionTemplate::New(m_isolate, pMethodCall);
   fun->RemovePrototype();
   GetGlobalObjectTemplate(m_isolate)->Set(
-      v8::String::NewFromUtf8(m_isolate, bsMethodName.c_str(),
+      v8::String::NewFromUtf8(m_isolate, sMethodName,
                               v8::NewStringType::kNormal)
           .ToLocalChecked(),
       fun, v8::ReadOnly);

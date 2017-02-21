@@ -31,9 +31,9 @@ JSConstSpec CJS_Util::ConstSpecs[] = {{0, JSConstSpec::Number, 0, 0}};
 JSPropertySpec CJS_Util::PropertySpecs[] = {{0, 0, 0}};
 
 JSMethodSpec CJS_Util::MethodSpecs[] = {
-    {L"printd", printd_static},         {L"printf", printf_static},
-    {L"printx", printx_static},         {L"scand", scand_static},
-    {L"byteToChar", byteToChar_static}, {0, 0}};
+    {"printd", printd_static},         {"printf", printf_static},
+    {"printx", printx_static},         {"scand", scand_static},
+    {"byteToChar", byteToChar_static}, {0, 0}};
 
 IMPLEMENT_JS_CLASS(CJS_Util, util)
 

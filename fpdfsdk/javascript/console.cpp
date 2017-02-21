@@ -18,10 +18,10 @@ JSConstSpec CJS_Console::ConstSpecs[] = {{0, JSConstSpec::Number, 0, 0}};
 
 JSPropertySpec CJS_Console::PropertySpecs[] = {{0, 0, 0}};
 
-JSMethodSpec CJS_Console::MethodSpecs[] = {{L"clear", clear_static},
-                                           {L"hide", hide_static},
-                                           {L"println", println_static},
-                                           {L"show", show_static},
+JSMethodSpec CJS_Console::MethodSpecs[] = {{"clear", clear_static},
+                                           {"hide", hide_static},
+                                           {"println", println_static},
+                                           {"show", show_static},
                                            {0, 0}};
 
 IMPLEMENT_JS_CLASS(CJS_Console, console)

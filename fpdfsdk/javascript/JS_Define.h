@@ -30,7 +30,7 @@ struct JSPropertySpec {
 };
 
 struct JSMethodSpec {
-  const wchar_t* pName;
+  const char* pName;
   v8::FunctionCallback pMethodCall;
 };
 
