@@ -1255,21 +1255,39 @@ cmsStage* CMSEXPORT cmsStageDup(cmsStage* mpe)
 // ***********************************************************************************************************
 
 // This function sets up the channel count
-
 static
-void BlessLUT(cmsPipeline* lut)
+cmsBool BlessLUT(cmsPipeline* lut)
 {
     // We can set the input/ouput channels only if we have elements.
     if (lut ->Elements != NULL) {
 
-        cmsStage *First, *Last;
+        cmsStage* prev;
+        cmsStage* next;
+        cmsStage* First;
+        cmsStage* Last;
 
         First  = cmsPipelineGetPtrToFirstStage(lut);
         Last   = cmsPipelineGetPtrToLastStage(lut);
 
-        if (First != NULL)lut ->InputChannels = First ->InputChannels;
-        if (Last != NULL) lut ->OutputChannels = Last ->OutputChannels;
+        if (First == NULL || Last == NULL) return FALSE;
+
+        lut->InputChannels = First->InputChannels;
+        lut->OutputChannels = Last->OutputChannels;
+
+        // Check chain consistency
+        prev = First;
+        next = prev->Next;
+
+        while (next != NULL)
+        {
+            if (next->InputChannels != prev->OutputChannels)
+                return FALSE;
+
+            next = next->Next;
+            prev = prev->Next;
+        }
     }
+    return TRUE;    
 }
 
 
@@ -1331,6 +1349,7 @@ cmsPipeline* CMSEXPORT cmsPipelineAlloc(cmsContext ContextID, cmsUInt32Number In
 {
        cmsPipeline* NewLUT;
 
+       // A value of zero in channels is allowed as placeholder
        if (InputChannels >= cmsMAXCHANNELS ||
            OutputChannels >= cmsMAXCHANNELS) return NULL;
 
@@ -1348,7 +1367,11 @@ cmsPipeline* CMSEXPORT cmsPipelineAlloc(cmsContext ContextID, cmsUInt32Number In
        NewLUT ->Data        = NewLUT;
        NewLUT ->ContextID   = ContextID;
 
-       BlessLUT(NewLUT);
+       if (!BlessLUT(NewLUT))
+       {
+           _cmsFree(ContextID, NewLUT);
+           return NULL;
+       }
 
        return NewLUT;
 }
@@ -1454,7 +1477,12 @@ cmsPipeline* CMSEXPORT cmsPipelineDup(const cmsPipeline* lut)
 
     NewLUT ->SaveAs8Bits    = lut ->SaveAs8Bits;
 
-    BlessLUT(NewLUT);
+    if (!BlessLUT(NewLUT))
+    {
+        _cmsFree(lut->ContextID, NewLUT);
+        return NULL;
+    }
+
     return NewLUT;
 }
 
@@ -1491,8 +1519,7 @@ int CMSEXPORT cmsPipelineInsertStage(cmsPipeline* lut, cmsStageLoc loc, cmsStage
             return FALSE;
     }
 
-    BlessLUT(lut);
-    return TRUE;
+    return BlessLUT(lut);    
 }
 
 // Unlink an element and return the pointer to it
@@ -1547,6 +1574,7 @@ void CMSEXPORT cmsPipelineUnlinkStage(cmsPipeline* lut, cmsStageLoc loc, cmsStag
     else
         cmsStageFree(Unlinked);
 
+    // May fail, but we ignore it
     BlessLUT(lut);
 }
 
@@ -1573,8 +1601,7 @@ cmsBool  CMSEXPORT cmsPipelineCat(cmsPipeline* l1, const cmsPipeline* l2)
                 return FALSE;
     }
 
-    BlessLUT(l1);
-    return TRUE;
+    return BlessLUT(l1);    
 }
 
 
