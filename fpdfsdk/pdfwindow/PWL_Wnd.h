@@ -243,82 +243,83 @@ class CPWL_TimerHandler {
 };
 
 class CPWL_Wnd : public CPWL_TimerHandler {
-  friend class CPWL_MsgControl;
-
  public:
   CPWL_Wnd();
   ~CPWL_Wnd() override;
 
-  void Create(const PWL_CREATEPARAM& cp);
   virtual CFX_ByteString GetClassName() const;
-  void InvalidateFocusHandler(IPWL_FocusHandler* handler);
-  void InvalidateProvider(IPWL_Provider* provider);
-  void Destroy();
-  void Move(const CFX_FloatRect& rcNew, bool bReset, bool bRefresh);
   virtual void InvalidateRect(CFX_FloatRect* pRect = nullptr);
 
-  void DrawAppearance(CFX_RenderDevice* pDevice, CFX_Matrix* pUser2Device);
-
   virtual bool OnKeyDown(uint16_t nChar, uint32_t nFlag);
-  virtual bool OnKeyUp(uint16_t nChar, uint32_t nFlag);
   virtual bool OnChar(uint16_t nChar, uint32_t nFlag);
   virtual bool OnLButtonDblClk(const CFX_PointF& point, uint32_t nFlag);
   virtual bool OnLButtonDown(const CFX_PointF& point, uint32_t nFlag);
   virtual bool OnLButtonUp(const CFX_PointF& point, uint32_t nFlag);
-  virtual bool OnMButtonDblClk(const CFX_PointF& point, uint32_t nFlag);
-  virtual bool OnMButtonDown(const CFX_PointF& point, uint32_t nFlag);
-  virtual bool OnMButtonUp(const CFX_PointF& point, uint32_t nFlag);
   virtual bool OnRButtonDown(const CFX_PointF& point, uint32_t nFlag);
   virtual bool OnRButtonUp(const CFX_PointF& point, uint32_t nFlag);
   virtual bool OnMouseMove(const CFX_PointF& point, uint32_t nFlag);
   virtual bool OnMouseWheel(short zDelta,
                             const CFX_PointF& point,
                             uint32_t nFlag);
-
-  virtual void SetFocus();
-  virtual void KillFocus();
-  void SetCapture();
-  void ReleaseCapture();
-
   virtual void OnNotify(CPWL_Wnd* pWnd,
                         uint32_t msg,
                         intptr_t wParam = 0,
                         intptr_t lParam = 0);
+  virtual void SetFocus();
+  virtual void KillFocus();
+  virtual void SetCursor();
   virtual void SetVisible(bool bVisible);
+  virtual void SetFontSize(FX_FLOAT fFontSize);
+  virtual FX_FLOAT GetFontSize() const;
 
   virtual CFX_FloatRect GetFocusRect() const;
-  virtual CPWL_Color GetBackgroundColor() const;
-  virtual CPWL_Color GetBorderColor() const;
-  virtual CPWL_Color GetTextColor() const;
-  virtual FX_FLOAT GetFontSize() const;
-  virtual int32_t GetInnerBorderWidth() const;
-  virtual CPWL_Color GetBorderLeftTopColor(BorderStyle nBorderStyle) const;
-  virtual CPWL_Color GetBorderRightBottomColor(BorderStyle nBorderStyle) const;
-
-  virtual void SetFontSize(FX_FLOAT fFontSize);
-
-  void SetBackgroundColor(const CPWL_Color& color);
-  void SetClipRect(const CFX_FloatRect& rect);
-  void SetBorderStyle(BorderStyle eBorderStyle);
-
-  virtual CFX_FloatRect GetWindowRect() const;
   virtual CFX_FloatRect GetClientRect() const;
-  CFX_PointF GetCenterPoint() const;
+
+  void InvalidateFocusHandler(IPWL_FocusHandler* handler);
+  void InvalidateProvider(IPWL_Provider* provider);
+  void Create(const PWL_CREATEPARAM& cp);
+  void Destroy();
+  void Move(const CFX_FloatRect& rcNew, bool bReset, bool bRefresh);
+
+  void SetCapture();
+  void ReleaseCapture();
+
+  void DrawAppearance(CFX_RenderDevice* pDevice, CFX_Matrix* pUser2Device);
+
+  CPWL_Color GetBackgroundColor() const;
+  void SetBackgroundColor(const CPWL_Color& color);
+  CPWL_Color GetBorderColor() const;
+  CPWL_Color GetTextColor() const;
+  void SetTextColor(const CPWL_Color& color);
+  CPWL_Color GetBorderLeftTopColor(BorderStyle nBorderStyle) const;
+  CPWL_Color GetBorderRightBottomColor(BorderStyle nBorderStyle) const;
+
+  void SetBorderStyle(BorderStyle eBorderStyle);
+  BorderStyle GetBorderStyle() const;
+  const CPWL_Dash& GetBorderDash() const;
+
   int32_t GetBorderWidth() const;
+  int32_t GetInnerBorderWidth() const;
+  CFX_FloatRect GetWindowRect() const;
+  CFX_PointF GetCenterPoint() const;
+
   bool IsVisible() const { return m_bVisible; }
   bool HasFlag(uint32_t dwFlags) const;
   void AddFlag(uint32_t dwFlags);
   void RemoveFlag(uint32_t dwFlags);
+
+  void SetClipRect(const CFX_FloatRect& rect);
   const CFX_FloatRect& GetClipRect() const;
+
   CPWL_Wnd* GetParentWindow() const;
-  BorderStyle GetBorderStyle() const;
-  const CPWL_Dash& GetBorderDash() const;
   void* GetAttachedData() const;
 
   bool WndHitTest(const CFX_PointF& point) const;
   bool ClientHitTest(const CFX_PointF& point) const;
   bool IsCaptureMouse() const;
 
+  void EnableWindow(bool bEnable);
+  bool IsEnabled() const { return m_bEnabled; }
   const CPWL_Wnd* GetFocused() const;
   bool IsFocused() const;
   bool IsReadOnly() const;
@@ -336,34 +337,18 @@ class CPWL_Wnd : public CPWL_TimerHandler {
   void SetChildMatrix(const CFX_Matrix& mt);
   CFX_Matrix GetWindowMatrix() const;
 
-  virtual CFX_PointF ChildToParent(const CFX_PointF& point) const;
-  virtual CFX_FloatRect ChildToParent(const CFX_FloatRect& rect) const;
-  virtual CFX_PointF ParentToChild(const CFX_PointF& point) const;
-  virtual CFX_FloatRect ParentToChild(const CFX_FloatRect& rect) const;
-
-  // those methods only implemented by listctrl item
-  virtual FX_FLOAT GetItemHeight(FX_FLOAT fLimitWidth);
-  virtual FX_FLOAT GetItemLeftMargin();
-  virtual FX_FLOAT GetItemRightMargin();
-
-  void EnableWindow(bool bEnable);
-  bool IsEnabled();
-  virtual void SetCursor();
-
  protected:
+  friend class CPWL_MsgControl;
+
   // CPWL_TimerHandler
   CFX_SystemHandler* GetSystemHandler() const override;
 
   virtual void CreateChildWnd(const PWL_CREATEPARAM& cp);
   virtual void RePosChildWnd();
-  void GetAppearanceStream(CFX_ByteTextBuf& sAppStream);
   virtual void GetThisAppearanceStream(CFX_ByteTextBuf& sAppStream);
-  virtual void GetChildAppearanceStream(CFX_ByteTextBuf& sAppStream);
 
   virtual void DrawThisAppearance(CFX_RenderDevice* pDevice,
                                   CFX_Matrix* pUser2Device);
-  virtual void DrawChildAppearance(CFX_RenderDevice* pDevice,
-                                   CFX_Matrix* pUser2Device);
 
   virtual void OnCreate(PWL_CREATEPARAM& cp);
   virtual void OnCreated();
@@ -372,9 +357,7 @@ class CPWL_Wnd : public CPWL_TimerHandler {
   virtual void OnSetFocus();
   virtual void OnKillFocus();
 
-  virtual void OnEnabled();
-  virtual void OnDisabled();
-
+  void GetAppearanceStream(CFX_ByteTextBuf& sAppStream);
   void SetNotifyFlag(bool bNotifying = true) { m_bNotifying = bNotifying; }
 
   bool IsValid() const;
@@ -393,6 +376,12 @@ class CPWL_Wnd : public CPWL_TimerHandler {
   bool IsALTpressed(uint32_t nFlag) const;
 
  private:
+  CFX_PointF ParentToChild(const CFX_PointF& point) const;
+  CFX_FloatRect ParentToChild(const CFX_FloatRect& rect) const;
+
+  void GetChildAppearanceStream(CFX_ByteTextBuf& sAppStream);
+  void DrawChildAppearance(CFX_RenderDevice* pDevice, CFX_Matrix* pUser2Device);
+
   FX_RECT PWLtoWnd(const CFX_FloatRect& rect) const;
 
   void AddChild(CPWL_Wnd* pWnd);
@@ -407,10 +396,7 @@ class CPWL_Wnd : public CPWL_TimerHandler {
 
   CPWL_MsgControl* GetMsgControl() const;
 
- protected:
   std::vector<CPWL_Wnd*> m_Children;
-
- private:
   PWL_CREATEPARAM m_sPrivateParam;
   CPWL_ScrollBar* m_pVScrollBar;
   CFX_FloatRect m_rcWindow;

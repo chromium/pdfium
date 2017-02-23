@@ -420,7 +420,6 @@ void CPWL_Wnd::InvalidateRect(CFX_FloatRect* pRect) {
   }
 
 PWL_IMPLEMENT_KEY_METHOD(OnKeyDown)
-PWL_IMPLEMENT_KEY_METHOD(OnKeyUp)
 PWL_IMPLEMENT_KEY_METHOD(OnChar)
 #undef PWL_IMPLEMENT_KEY_METHOD
 
@@ -451,9 +450,6 @@ PWL_IMPLEMENT_KEY_METHOD(OnChar)
 PWL_IMPLEMENT_MOUSE_METHOD(OnLButtonDblClk)
 PWL_IMPLEMENT_MOUSE_METHOD(OnLButtonDown)
 PWL_IMPLEMENT_MOUSE_METHOD(OnLButtonUp)
-PWL_IMPLEMENT_MOUSE_METHOD(OnMButtonDblClk)
-PWL_IMPLEMENT_MOUSE_METHOD(OnMButtonDown)
-PWL_IMPLEMENT_MOUSE_METHOD(OnMButtonUp)
 PWL_IMPLEMENT_MOUSE_METHOD(OnRButtonDown)
 PWL_IMPLEMENT_MOUSE_METHOD(OnRButtonUp)
 PWL_IMPLEMENT_MOUSE_METHOD(OnMouseMove)
@@ -844,21 +840,6 @@ FX_RECT CPWL_Wnd::PWLtoWnd(const CFX_FloatRect& rect) const {
                  (int32_t)(rcTemp.right + 0.5), (int32_t)(rcTemp.top + 0.5));
 }
 
-CFX_PointF CPWL_Wnd::ChildToParent(const CFX_PointF& point) const {
-  CFX_Matrix mt = GetChildMatrix();
-  return mt.IsIdentity() ? point : mt.Transform(point);
-}
-
-CFX_FloatRect CPWL_Wnd::ChildToParent(const CFX_FloatRect& rect) const {
-  CFX_Matrix mt = GetChildMatrix();
-  if (mt.IsIdentity())
-    return rect;
-
-  CFX_FloatRect rc = rect;
-  mt.TransformRect(rc);
-  return rc;
-}
-
 CFX_PointF CPWL_Wnd::ParentToChild(const CFX_PointF& point) const {
   CFX_Matrix mt = GetChildMatrix();
   if (mt.IsIdentity())
@@ -877,18 +858,6 @@ CFX_FloatRect CPWL_Wnd::ParentToChild(const CFX_FloatRect& rect) const {
   CFX_FloatRect rc = rect;
   mt.TransformRect(rc);
   return rc;
-}
-
-FX_FLOAT CPWL_Wnd::GetItemHeight(FX_FLOAT fLimitWidth) {
-  return 0;
-}
-
-FX_FLOAT CPWL_Wnd::GetItemLeftMargin() {
-  return 0;
-}
-
-FX_FLOAT CPWL_Wnd::GetItemRightMargin() {
-  return 0;
 }
 
 CFX_Matrix CPWL_Wnd::GetChildToRoot() const {
@@ -928,40 +897,19 @@ void CPWL_Wnd::EnableWindow(bool bEnable) {
       pChild->EnableWindow(bEnable);
   }
   m_bEnabled = bEnable;
-  if (bEnable)
-    OnEnabled();
-  else
-    OnDisabled();
 }
-
-bool CPWL_Wnd::IsEnabled() {
-  return m_bEnabled;
-}
-
-void CPWL_Wnd::OnEnabled() {}
-
-void CPWL_Wnd::OnDisabled() {}
 
 bool CPWL_Wnd::IsCTRLpressed(uint32_t nFlag) const {
-  if (CFX_SystemHandler* pSystemHandler = GetSystemHandler()) {
-    return pSystemHandler->IsCTRLKeyDown(nFlag);
-  }
-
-  return false;
+  CFX_SystemHandler* pSystemHandler = GetSystemHandler();
+  return pSystemHandler && pSystemHandler->IsCTRLKeyDown(nFlag);
 }
 
 bool CPWL_Wnd::IsSHIFTpressed(uint32_t nFlag) const {
-  if (CFX_SystemHandler* pSystemHandler = GetSystemHandler()) {
-    return pSystemHandler->IsSHIFTKeyDown(nFlag);
-  }
-
-  return false;
+  CFX_SystemHandler* pSystemHandler = GetSystemHandler();
+  return pSystemHandler && pSystemHandler->IsSHIFTKeyDown(nFlag);
 }
 
 bool CPWL_Wnd::IsALTpressed(uint32_t nFlag) const {
-  if (CFX_SystemHandler* pSystemHandler = GetSystemHandler()) {
-    return pSystemHandler->IsALTKeyDown(nFlag);
-  }
-
-  return false;
+  CFX_SystemHandler* pSystemHandler = GetSystemHandler();
+  return pSystemHandler && pSystemHandler->IsALTKeyDown(nFlag);
 }
