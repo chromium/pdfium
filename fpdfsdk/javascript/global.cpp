@@ -55,7 +55,7 @@ JSGlobalAlternate::~JSGlobalAlternate() {
 }
 
 void JSGlobalAlternate::Initial(CPDFSDK_FormFillEnvironment* pFormFillEnv) {
-  m_pFormFillEnv = pFormFillEnv;
+  m_pFormFillEnv.Reset(pFormFillEnv);
   m_pGlobalData = CJS_GlobalData::GetRetainedInstance(pFormFillEnv);
   UpdateGlobalPersistentVariables();
 }

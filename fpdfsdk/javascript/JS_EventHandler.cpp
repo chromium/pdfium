@@ -45,60 +45,60 @@ void CJS_EventHandler::OnApp_Init() {
 void CJS_EventHandler::OnDoc_Open(CPDFSDK_FormFillEnvironment* pFormFillEnv,
                                   const CFX_WideString& strTargetName) {
   Initial(JET_DOC_OPEN);
-  m_pTargetFormFillEnv = pFormFillEnv;
+  m_pTargetFormFillEnv.Reset(pFormFillEnv);
   m_strTargetName = strTargetName;
 }
 
 void CJS_EventHandler::OnDoc_WillPrint(
     CPDFSDK_FormFillEnvironment* pFormFillEnv) {
   Initial(JET_DOC_WILLPRINT);
-  m_pTargetFormFillEnv = pFormFillEnv;
+  m_pTargetFormFillEnv.Reset(pFormFillEnv);
 }
 
 void CJS_EventHandler::OnDoc_DidPrint(
     CPDFSDK_FormFillEnvironment* pFormFillEnv) {
   Initial(JET_DOC_DIDPRINT);
-  m_pTargetFormFillEnv = pFormFillEnv;
+  m_pTargetFormFillEnv.Reset(pFormFillEnv);
 }
 
 void CJS_EventHandler::OnDoc_WillSave(
     CPDFSDK_FormFillEnvironment* pFormFillEnv) {
   Initial(JET_DOC_WILLSAVE);
-  m_pTargetFormFillEnv = pFormFillEnv;
+  m_pTargetFormFillEnv.Reset(pFormFillEnv);
 }
 
 void CJS_EventHandler::OnDoc_DidSave(
     CPDFSDK_FormFillEnvironment* pFormFillEnv) {
   Initial(JET_DOC_DIDSAVE);
-  m_pTargetFormFillEnv = pFormFillEnv;
+  m_pTargetFormFillEnv.Reset(pFormFillEnv);
 }
 
 void CJS_EventHandler::OnDoc_WillClose(
     CPDFSDK_FormFillEnvironment* pFormFillEnv) {
   Initial(JET_DOC_WILLCLOSE);
-  m_pTargetFormFillEnv = pFormFillEnv;
+  m_pTargetFormFillEnv.Reset(pFormFillEnv);
 }
 
 void CJS_EventHandler::OnPage_Open(CPDFSDK_FormFillEnvironment* pFormFillEnv) {
   Initial(JET_PAGE_OPEN);
-  m_pTargetFormFillEnv = pFormFillEnv;
+  m_pTargetFormFillEnv.Reset(pFormFillEnv);
 }
 
 void CJS_EventHandler::OnPage_Close(CPDFSDK_FormFillEnvironment* pFormFillEnv) {
   Initial(JET_PAGE_CLOSE);
-  m_pTargetFormFillEnv = pFormFillEnv;
+  m_pTargetFormFillEnv.Reset(pFormFillEnv);
 }
 
 void CJS_EventHandler::OnPage_InView(
     CPDFSDK_FormFillEnvironment* pFormFillEnv) {
   Initial(JET_PAGE_INVIEW);
-  m_pTargetFormFillEnv = pFormFillEnv;
+  m_pTargetFormFillEnv.Reset(pFormFillEnv);
 }
 
 void CJS_EventHandler::OnPage_OutView(
     CPDFSDK_FormFillEnvironment* pFormFillEnv) {
   Initial(JET_PAGE_OUTVIEW);
-  m_pTargetFormFillEnv = pFormFillEnv;
+  m_pTargetFormFillEnv.Reset(pFormFillEnv);
 }
 
 void CJS_EventHandler::OnField_MouseEnter(bool bModifier,
@@ -247,7 +247,7 @@ void CJS_EventHandler::OnScreen_Focus(bool bModifier,
 
   m_bModifier = bModifier;
   m_bShift = bShift;
-  m_pTargetAnnot = pScreen;
+  m_pTargetAnnot.Reset(pScreen);
 }
 
 void CJS_EventHandler::OnScreen_Blur(bool bModifier,
@@ -257,7 +257,7 @@ void CJS_EventHandler::OnScreen_Blur(bool bModifier,
 
   m_bModifier = bModifier;
   m_bShift = bShift;
-  m_pTargetAnnot = pScreen;
+  m_pTargetAnnot.Reset(pScreen);
 }
 
 void CJS_EventHandler::OnScreen_Open(bool bModifier,
@@ -267,7 +267,7 @@ void CJS_EventHandler::OnScreen_Open(bool bModifier,
 
   m_bModifier = bModifier;
   m_bShift = bShift;
-  m_pTargetAnnot = pScreen;
+  m_pTargetAnnot.Reset(pScreen);
 }
 
 void CJS_EventHandler::OnScreen_Close(bool bModifier,
@@ -277,7 +277,7 @@ void CJS_EventHandler::OnScreen_Close(bool bModifier,
 
   m_bModifier = bModifier;
   m_bShift = bShift;
-  m_pTargetAnnot = pScreen;
+  m_pTargetAnnot.Reset(pScreen);
 }
 
 void CJS_EventHandler::OnScreen_MouseDown(bool bModifier,
@@ -287,7 +287,7 @@ void CJS_EventHandler::OnScreen_MouseDown(bool bModifier,
 
   m_bModifier = bModifier;
   m_bShift = bShift;
-  m_pTargetAnnot = pScreen;
+  m_pTargetAnnot.Reset(pScreen);
 }
 
 void CJS_EventHandler::OnScreen_MouseUp(bool bModifier,
@@ -297,7 +297,7 @@ void CJS_EventHandler::OnScreen_MouseUp(bool bModifier,
 
   m_bModifier = bModifier;
   m_bShift = bShift;
-  m_pTargetAnnot = pScreen;
+  m_pTargetAnnot.Reset(pScreen);
 }
 
 void CJS_EventHandler::OnScreen_MouseEnter(bool bModifier,
@@ -307,7 +307,7 @@ void CJS_EventHandler::OnScreen_MouseEnter(bool bModifier,
 
   m_bModifier = bModifier;
   m_bShift = bShift;
-  m_pTargetAnnot = pScreen;
+  m_pTargetAnnot.Reset(pScreen);
 }
 
 void CJS_EventHandler::OnScreen_MouseExit(bool bModifier,
@@ -317,38 +317,35 @@ void CJS_EventHandler::OnScreen_MouseExit(bool bModifier,
 
   m_bModifier = bModifier;
   m_bShift = bShift;
-  m_pTargetAnnot = pScreen;
+  m_pTargetAnnot.Reset(pScreen);
 }
 
 void CJS_EventHandler::OnScreen_InView(bool bModifier,
                                        bool bShift,
                                        CPDFSDK_Annot* pScreen) {
   Initial(JET_SCREEN_INVIEW);
-
   m_bModifier = bModifier;
   m_bShift = bShift;
-  m_pTargetAnnot = pScreen;
+  m_pTargetAnnot.Reset(pScreen);
 }
 
 void CJS_EventHandler::OnScreen_OutView(bool bModifier,
                                         bool bShift,
                                         CPDFSDK_Annot* pScreen) {
   Initial(JET_SCREEN_OUTVIEW);
-
   m_bModifier = bModifier;
   m_bShift = bShift;
-  m_pTargetAnnot = pScreen;
+  m_pTargetAnnot.Reset(pScreen);
 }
 
 void CJS_EventHandler::OnLink_MouseUp(
     CPDFSDK_FormFillEnvironment* pTargetFormFillEnv) {
   Initial(JET_LINK_MOUSEUP);
-  m_pTargetFormFillEnv = pTargetFormFillEnv;
+  m_pTargetFormFillEnv.Reset(pTargetFormFillEnv);
 }
 
 void CJS_EventHandler::OnBookmark_MouseUp(CPDF_Bookmark* pBookMark) {
   Initial(JET_BOOKMARK_MOUSEUP);
-
   m_pTargetBookMark = pBookMark;
 }
 
@@ -356,7 +353,7 @@ void CJS_EventHandler::OnMenu_Exec(
     CPDFSDK_FormFillEnvironment* pTargetFormFillEnv,
     const CFX_WideString& strTargetName) {
   Initial(JET_MENU_EXEC);
-  m_pTargetFormFillEnv = pTargetFormFillEnv;
+  m_pTargetFormFillEnv.Reset(pTargetFormFillEnv);
   m_strTargetName = strTargetName;
 }
 
@@ -367,7 +364,7 @@ void CJS_EventHandler::OnExternal_Exec() {
 void CJS_EventHandler::OnBatchExec(
     CPDFSDK_FormFillEnvironment* pTargetFormFillEnv) {
   Initial(JET_BATCH_EXEC);
-  m_pTargetFormFillEnv = pTargetFormFillEnv;
+  m_pTargetFormFillEnv.Reset(pTargetFormFillEnv);
 }
 
 void CJS_EventHandler::OnConsole_Exec() {
@@ -397,8 +394,8 @@ void CJS_EventHandler::Initial(JS_EVENT_T type) {
   m_bRcDu = false;
 
   m_pTargetBookMark = nullptr;
-  m_pTargetFormFillEnv = nullptr;
-  m_pTargetAnnot = nullptr;
+  m_pTargetFormFillEnv.Reset();
+  m_pTargetAnnot.Reset();
 
   m_bValid = true;
 }
@@ -603,7 +600,7 @@ Field* CJS_EventHandler::Source() {
       static_cast<CJS_Document*>(pRuntime->GetObjectPrivate(pDocObj));
   Document* pDocument = (Document*)pJSDocument->GetEmbedObject();
   pDocument->SetFormFillEnv(m_pTargetFormFillEnv
-                                ? m_pTargetFormFillEnv
+                                ? m_pTargetFormFillEnv.Get()
                                 : m_pJSEventContext->GetFormFillEnv());
 
   CJS_Field* pJSField =
@@ -627,7 +624,7 @@ Field* CJS_EventHandler::Target_Field() {
       static_cast<CJS_Document*>(pRuntime->GetObjectPrivate(pDocObj));
   Document* pDocument = (Document*)pJSDocument->GetEmbedObject();
   pDocument->SetFormFillEnv(m_pTargetFormFillEnv
-                                ? m_pTargetFormFillEnv
+                                ? m_pTargetFormFillEnv.Get()
                                 : m_pJSEventContext->GetFormFillEnv());
 
   CJS_Field* pJSField =

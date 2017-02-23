@@ -55,7 +55,7 @@ class GlobalTimer {
   const uint32_t m_dwTimeOut;
   const CFX_WideString m_swJScript;
   CJS_Runtime::ObservedPtr m_pRuntime;
-  CPDFSDK_FormFillEnvironment* const m_pFormFillEnv;
+  CPDFSDK_FormFillEnvironment::ObservedPtr m_pFormFillEnv;
 };
 
 GlobalTimer::GlobalTimer(app* pObj,

@@ -68,7 +68,7 @@ class JSGlobalAlternate : public CJS_EmbedObj {
   std::map<CFX_ByteString, JSGlobalData*> m_mapGlobal;
   CFX_WideString m_sFilePath;
   CJS_GlobalData* m_pGlobalData;
-  CPDFSDK_FormFillEnvironment* m_pFormFillEnv;
+  CPDFSDK_FormFillEnvironment::ObservedPtr m_pFormFillEnv;
 };
 
 class CJS_Global : public CJS_Object {

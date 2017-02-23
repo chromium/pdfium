@@ -9,10 +9,10 @@
 
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
+#include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 
 class CJS_EventContext;
 class CPDFSDK_Annot;
-class CPDFSDK_FormFillEnvironment;
 class CPDF_Bookmark;
 class CPDF_FormField;
 class Field;
@@ -189,8 +189,8 @@ class CJS_EventHandler {
   bool m_bRcDu;
 
   CPDF_Bookmark* m_pTargetBookMark;
-  CPDFSDK_FormFillEnvironment* m_pTargetFormFillEnv;
-  CPDFSDK_Annot* m_pTargetAnnot;
+  CPDFSDK_FormFillEnvironment::ObservedPtr m_pTargetFormFillEnv;
+  CPDFSDK_Annot::ObservedPtr m_pTargetAnnot;
 };
 
 #endif  // FPDFSDK_JAVASCRIPT_JS_EVENTHANDLER_H_

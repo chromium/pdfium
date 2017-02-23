@@ -187,11 +187,11 @@ void CJS_Runtime::SetFormFillEnvToDocument() {
   if (!pDocument)
     return;
 
-  pDocument->SetFormFillEnv(m_pFormFillEnv);
+  pDocument->SetFormFillEnv(m_pFormFillEnv.Get());
 }
 
 CPDFSDK_FormFillEnvironment* CJS_Runtime::GetFormFillEnv() const {
-  return m_pFormFillEnv;
+  return m_pFormFillEnv.Get();
 }
 
 int CJS_Runtime::ExecuteScript(const CFX_WideString& script,

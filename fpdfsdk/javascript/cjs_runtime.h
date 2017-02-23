@@ -15,6 +15,7 @@
 
 #include "core/fxcrt/cfx_observable.h"
 #include "core/fxcrt/fx_basic.h"
+#include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/javascript/JS_EventHandler.h"
 #include "fpdfsdk/javascript/ijs_runtime.h"
 #include "fxjs/fxjs_v8.h"
@@ -61,7 +62,7 @@ class CJS_Runtime : public IJS_Runtime,
   void SetFormFillEnvToDocument();
 
   std::vector<std::unique_ptr<CJS_EventContext>> m_EventContextArray;
-  CPDFSDK_FormFillEnvironment* const m_pFormFillEnv;
+  CPDFSDK_FormFillEnvironment::ObservedPtr m_pFormFillEnv;
   bool m_bBlocking;
   bool m_isolateManaged;
   std::set<FieldEvent> m_FieldEventSet;
