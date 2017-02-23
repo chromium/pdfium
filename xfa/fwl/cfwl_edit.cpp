@@ -192,15 +192,11 @@ void CFWL_Edit::DrawSpellCheck(CFX_Graphics* pGraphics,
 
   CFX_Color crLine(0xFFFF0000);
   CFWL_EventCheckWord checkWordEvent(this);
-
   CFX_ByteString sLatinWord;
   CFX_Path pathSpell;
-  pathSpell.Create();
-
   int32_t nStart = 0;
   FX_FLOAT fOffSetX = m_rtEngine.left - m_fScrollOffsetX;
   FX_FLOAT fOffSetY = m_rtEngine.top - m_fScrollOffsetY + m_fVAlignOffset;
-
   CFX_WideString wsSpell = GetText();
   int32_t nContentLen = wsSpell.GetLength();
   for (int i = 0; i < nContentLen; i++) {
@@ -550,7 +546,6 @@ void CFWL_Edit::DrawContent(CFX_Graphics* pGraphics,
     }
 
     CFX_Path path;
-    path.Create();
     for (auto& rect : rectArr) {
       rect.left += fOffSetX;
       rect.top += fOffSetY;
@@ -581,7 +576,6 @@ void CFWL_Edit::DrawContent(CFX_Graphics* pGraphics,
   if (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_CombText) {
     pGraphics->RestoreGraphState();
     CFX_Path path;
-    path.Create();
     int32_t iLimit = m_nLimit > 0 ? m_nLimit : 1;
     FX_FLOAT fStep = m_rtEngine.width / iLimit;
     FX_FLOAT fLeft = m_rtEngine.left + 1;

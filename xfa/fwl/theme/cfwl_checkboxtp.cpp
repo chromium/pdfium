@@ -79,7 +79,6 @@ void CFWL_CheckBoxTP::DrawSignCircle(CFX_Graphics* pGraphics,
                                      FX_ARGB argbFill,
                                      CFX_Matrix* pMatrix) {
   CFX_Path path;
-  path.Create();
   path.AddEllipse(*pRtSign);
   CFX_Color crFill(argbFill);
   pGraphics->SaveGraphState();
@@ -93,8 +92,6 @@ void CFWL_CheckBoxTP::DrawSignCross(CFX_Graphics* pGraphics,
                                     FX_ARGB argbFill,
                                     CFX_Matrix* pMatrix) {
   CFX_Path path;
-  path.Create();
-
   FX_FLOAT fRight = pRtSign->right();
   FX_FLOAT fBottom = pRtSign->bottom();
   path.AddLine(pRtSign->TopLeft(), CFX_PointF(fRight, fBottom));
@@ -114,8 +111,6 @@ void CFWL_CheckBoxTP::DrawSignDiamond(CFX_Graphics* pGraphics,
                                       FX_ARGB argbFill,
                                       CFX_Matrix* pMatrix) {
   CFX_Path path;
-  path.Create();
-
   FX_FLOAT fWidth = pRtSign->width;
   FX_FLOAT fHeight = pRtSign->height;
   FX_FLOAT fBottom = pRtSign->bottom();
@@ -137,7 +132,6 @@ void CFWL_CheckBoxTP::DrawSignSquare(CFX_Graphics* pGraphics,
                                      FX_ARGB argbFill,
                                      CFX_Matrix* pMatrix) {
   CFX_Path path;
-  path.Create();
   path.AddRectangle(pRtSign->left, pRtSign->top, pRtSign->width,
                     pRtSign->height);
   CFX_Color crFill(argbFill);
@@ -152,8 +146,6 @@ void CFWL_CheckBoxTP::DrawSignStar(CFX_Graphics* pGraphics,
                                    FX_ARGB argbFill,
                                    CFX_Matrix* pMatrix) {
   CFX_Path path;
-  path.Create();
-
   FX_FLOAT fBottom = pRtSign->bottom();
   FX_FLOAT fRadius =
       (pRtSign->top - fBottom) / (1 + static_cast<FX_FLOAT>(cos(FX_PI / 5.0f)));
@@ -227,7 +219,6 @@ void CFWL_CheckBoxTP::SetThemeData() {
 void CFWL_CheckBoxTP::InitCheckPath(FX_FLOAT fCheckLen) {
   if (!m_pCheckPath) {
     m_pCheckPath = pdfium::MakeUnique<CFX_Path>();
-    m_pCheckPath->Create();
 
     FX_FLOAT fWidth = kSignPath;
     FX_FLOAT fHeight = -kSignPath;
@@ -275,8 +266,7 @@ void CFWL_CheckBoxTP::InitCheckPath(FX_FLOAT fCheckLen) {
     CFX_Matrix mt(1, 0, 0, 1, 0, 0);
     mt.Scale(fScale, fScale);
 
-    CFX_PathData* pData = m_pCheckPath->GetPathData();
-    pData->Transform(&mt);
+    m_pCheckPath->TransformBy(mt);
   }
 }
 

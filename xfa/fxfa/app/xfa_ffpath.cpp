@@ -87,7 +87,6 @@ void CXFA_FFLine::RenderWidget(CFX_Graphics* pGS,
 
   GetRectFromHand(rtLine, lineObj.GetHand(), fLineWidth);
   CFX_Path linePath;
-  linePath.Create();
   if (lineObj.GetSlope() && rtLine.right() > 0.0f && rtLine.bottom() > 0.0f)
     linePath.AddLine(rtLine.TopRight(), rtLine.BottomLeft());
   else

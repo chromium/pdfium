@@ -33,7 +33,6 @@ void CFWL_PushButtonTP::DrawBackground(CFWL_ThemeBackground* pParams) {
       FX_FLOAT fBottom = rect.bottom();
 
       CFX_Path strokePath;
-      strokePath.Create();
       strokePath.MoveTo(
           CFX_PointF(rect.left + PUSHBUTTON_SIZE_Corner, rect.top));
       strokePath.LineTo(CFX_PointF(fRight - PUSHBUTTON_SIZE_Corner, rect.top));
@@ -50,7 +49,6 @@ void CFWL_PushButtonTP::DrawBackground(CFWL_ThemeBackground* pParams) {
           CFX_PointF(rect.left + PUSHBUTTON_SIZE_Corner, rect.top));
 
       CFX_Path fillPath;
-      fillPath.Create();
       fillPath.AddSubpath(&strokePath);
 
       CFX_Graphics* pGraphics = pParams->m_pGraphics;

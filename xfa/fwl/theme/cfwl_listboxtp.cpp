@@ -70,7 +70,6 @@ void CFWL_ListBoxTP::DrawListBoxItem(CFX_Graphics* pGraphics,
     pGraphics->SetFillColor(&crFill);
     CFX_RectF rt(*prtItem);
     CFX_Path path;
-    path.Create();
 #if (_FX_OS_ == _FX_MACOSX_)
     path.AddRectangle(rt.left, rt.top, rt.width - 1, rt.height - 1);
 #else

@@ -40,7 +40,6 @@ void CFWL_CaretTP::DrawCaretBK(CFX_Graphics* pGraphics,
                                CFX_Color* crFill,
                                CFX_Matrix* pMatrix) {
   CFX_Path path;
-  path.Create();
   CFX_RectF rect = *pRect;
   path.AddRectangle(rect.left, rect.top, rect.width, rect.height);
   if (crFill) {

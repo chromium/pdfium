@@ -104,7 +104,6 @@ void CFWL_WidgetTP::DrawBorder(CFX_Graphics* pGraphics,
   if (!pRect)
     return;
   CFX_Path path;
-  path.Create();
   path.AddRectangle(pRect->left, pRect->top, pRect->width, pRect->height);
   path.AddRectangle(pRect->left + 1, pRect->top + 1, pRect->width - 2,
                     pRect->height - 2);
@@ -133,7 +132,6 @@ void CFWL_WidgetTP::FillSoildRect(CFX_Graphics* pGraphics,
   CFX_Color crFill(fillColor);
   pGraphics->SetFillColor(&crFill);
   CFX_Path path;
-  path.Create();
   path.AddRectangle(pRect->left, pRect->top, pRect->width, pRect->height);
   pGraphics->FillPath(&path, FXFILL_WINDING, pMatrix);
   pGraphics->RestoreGraphState();
@@ -175,7 +173,6 @@ void CFWL_WidgetTP::DrawFocus(CFX_Graphics* pGraphics,
   FX_FLOAT DashPattern[2] = {1, 1};
   pGraphics->SetLineDash(0.0f, DashPattern, 2);
   CFX_Path path;
-  path.Create();
   path.AddRectangle(pRect->left, pRect->top, pRect->width, pRect->height);
   pGraphics->StrokePath(&path, pMatrix);
   pGraphics->RestoreGraphState();
@@ -193,7 +190,6 @@ void CFWL_WidgetTP::DrawArrow(CFX_Graphics* pGraphics,
   FX_FLOAT fTop =
       (FX_FLOAT)(((pRect->height - (bVert ? 6 : 9)) / 2 + pRect->top) + 0.5);
   CFX_Path path;
-  path.Create();
   switch (eDict) {
     case FWLTHEME_DIRECTION_Down: {
       path.MoveTo(CFX_PointF(fLeft, fTop + 1));
@@ -242,8 +238,6 @@ void CFWL_WidgetTP::DrawBtn(CFX_Graphics* pGraphics,
                             FWLTHEME_STATE eState,
                             CFX_Matrix* pMatrix) {
   CFX_Path path;
-  path.Create();
-
   InitializeArrowColorData();
 
   FX_FLOAT fRight = pRect->right();

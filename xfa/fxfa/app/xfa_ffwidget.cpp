@@ -1635,12 +1635,11 @@ static void XFA_BOX_Fill(CXFA_Box box,
                          CFX_Matrix* pMatrix,
                          uint32_t dwFlags) {
   CXFA_Fill fill = box.GetFill();
-  if (!fill || fill.GetPresence() != XFA_ATTRIBUTEENUM_Visible) {
+  if (!fill || fill.GetPresence() != XFA_ATTRIBUTEENUM_Visible)
     return;
-  }
+
   pGS->SaveGraphState();
   CFX_Path fillPath;
-  fillPath.Create();
   XFA_BOX_GetFillPath(box, strokes, rtWidget, fillPath,
                       (dwFlags & XFA_DRAWBOX_ForceRound) != 0);
   fillPath.Close();
@@ -1729,11 +1728,10 @@ static void XFA_BOX_StrokeArc(CXFA_Box box,
   }
   if ((dwFlags & XFA_DRAWBOX_ForceRound) == 0 ||
       (dwFlags & XFA_DRAWBOX_Lowered3D) == 0) {
-    if (fHalf < 0.001f) {
+    if (fHalf < 0.001f)
       return;
-    }
+
     CFX_Path arcPath;
-    arcPath.Create();
     XFA_BOX_GetPath_Arc(box, rtWidget, arcPath, dwFlags);
     XFA_BOX_StrokePath(edge, &arcPath, pGS, pMatrix);
     return;
@@ -1760,7 +1758,6 @@ static void XFA_BOX_StrokeArc(CXFA_Box box,
   sweepAngle = -sweepAngle * FX_PI / 180.0f;
 
   CFX_Path arcPath;
-  arcPath.Create();
   arcPath.AddArc(rtWidget.TopLeft(), rtWidget.Size(), 3.0f * FX_PI / 4.0f,
                  FX_PI);
 
@@ -1802,7 +1799,6 @@ static void XFA_Draw3DRect(CFX_Graphics* pGraphic,
   FX_FLOAT fBottom = rt.bottom();
   FX_FLOAT fRight = rt.right();
   CFX_Path pathLT;
-  pathLT.Create();
   pathLT.MoveTo(CFX_PointF(rt.left, fBottom));
   pathLT.LineTo(CFX_PointF(rt.left, rt.top));
   pathLT.LineTo(CFX_PointF(fRight, rt.top));
@@ -1816,7 +1812,6 @@ static void XFA_Draw3DRect(CFX_Graphics* pGraphic,
   pGraphic->SetFillColor(&crRB);
 
   CFX_Path pathRB;
-  pathRB.Create();
   pathRB.MoveTo(CFX_PointF(fRight, rt.top));
   pathRB.LineTo(CFX_PointF(fRight, fBottom));
   pathRB.LineTo(CFX_PointF(rt.left, fBottom));
@@ -1836,7 +1831,6 @@ static void XFA_BOX_Stroke_3DRect_Lowered(CFX_Graphics* pGS,
   CFX_Color cr(0xFF000000);
   pGS->SetFillColor(&cr);
   CFX_Path path;
-  path.Create();
   path.AddRectangle(rt.left, rt.top, rt.width, rt.height);
   path.AddRectangle(rtInner.left, rtInner.top, rtInner.width, rtInner.height);
   pGS->FillPath(&path, FXFILL_ALTERNATE, pMatrix);
@@ -1852,7 +1846,6 @@ static void XFA_BOX_Stroke_3DRect_Raised(CFX_Graphics* pGS,
   CFX_Color cr(0xFF000000);
   pGS->SetFillColor(&cr);
   CFX_Path path;
-  path.Create();
   path.AddRectangle(rt.left, rt.top, rt.width, rt.height);
   path.AddRectangle(rtInner.left, rtInner.top, rtInner.width, rtInner.height);
   pGS->FillPath(&path, FXFILL_ALTERNATE, pMatrix);
@@ -1931,17 +1924,14 @@ static void XFA_BOX_Stroke_Rect(CXFA_Box box,
     }
     if (bSameStyles) {
       stroke1 = strokes[0];
-      if (stroke1.IsInverted()) {
+      if (stroke1.IsInverted())
         bSameStyles = false;
-      }
-      if (stroke1.GetJoinType() != XFA_ATTRIBUTEENUM_Square) {
+      if (stroke1.GetJoinType() != XFA_ATTRIBUTEENUM_Square)
         bSameStyles = false;
-      }
     }
   }
   bool bStart = true;
   CFX_Path path;
-  path.Create();
   for (int32_t i = 0; i < 8; i++) {
     CXFA_Stroke stroke = strokes[i];
     if ((i % 1) == 0 && stroke.GetRadius() < 0) {

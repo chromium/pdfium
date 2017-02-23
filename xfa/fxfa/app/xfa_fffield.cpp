@@ -82,12 +82,11 @@ void CXFA_FFField::DrawHighlight(CFX_Graphics* pGS,
     CFX_Color crHighlight(pDoc->GetDocEnvironment()->GetHighlightColor(pDoc));
     pGS->SetFillColor(&crHighlight);
     CFX_Path path;
-    path.Create();
-    if (bEllipse) {
+    if (bEllipse)
       path.AddEllipse(m_rtUI);
-    } else {
+    else
       path.AddRectangle(m_rtUI.left, m_rtUI.top, m_rtUI.width, m_rtUI.height);
-    }
+
     pGS->FillPath(&path, FXFILL_WINDING, pMatrix);
   }
 }
@@ -100,7 +99,6 @@ void CXFA_FFField::DrawFocus(CFX_Graphics* pGS, CFX_Matrix* pMatrix) {
     pGS->SetLineWidth(0, false);
 
     CFX_Path path;
-    path.Create();
     path.AddRectangle(m_rtUI.left, m_rtUI.top, m_rtUI.width, m_rtUI.height);
     pGS->StrokePath(&path, pMatrix);
   }

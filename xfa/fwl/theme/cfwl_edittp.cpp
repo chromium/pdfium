@@ -53,7 +53,6 @@ void CFWL_EditTP::DrawBackground(CFWL_ThemeBackground* pParams) {
         pGraphics->RestoreGraphState();
       } else {
         CFX_Path path;
-        path.Create();
         path.AddRectangle(pParams->m_rtPart.left, pParams->m_rtPart.top,
                           pParams->m_rtPart.width, pParams->m_rtPart.height);
         CFX_Color cr(FWLTHEME_COLOR_Background);

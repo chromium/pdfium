@@ -105,8 +105,6 @@ void CFWL_MonthCalendarTP::DrawText(CFWL_ThemeText* pParams) {
 void CFWL_MonthCalendarTP::DrawTotalBK(CFWL_ThemeBackground* pParams,
                                        CFX_Matrix* pMatrix) {
   CFX_Path path;
-  path.Create();
-
   CFX_RectF rtTotal(pParams->m_rtPart);
   path.AddRectangle(rtTotal.left, rtTotal.top, rtTotal.width, rtTotal.height);
   pParams->m_pGraphics->SaveGraphState();
@@ -120,8 +118,6 @@ void CFWL_MonthCalendarTP::DrawTotalBK(CFWL_ThemeBackground* pParams,
 void CFWL_MonthCalendarTP::DrawHeadBk(CFWL_ThemeBackground* pParams,
                                       CFX_Matrix* pMatrix) {
   CFX_Path path;
-  path.Create();
-
   CFX_RectF rtHead = pParams->m_rtPart;
   path.AddRectangle(rtHead.left, rtHead.top, rtHead.width, rtHead.height);
   pParams->m_pGraphics->SaveGraphState();
@@ -135,8 +131,6 @@ void CFWL_MonthCalendarTP::DrawHeadBk(CFWL_ThemeBackground* pParams,
 void CFWL_MonthCalendarTP::DrawLButton(CFWL_ThemeBackground* pParams,
                                        CFX_Matrix* pMatrix) {
   CFX_Path path;
-  path.Create();
-
   CFX_RectF rtLBtn = pParams->m_rtPart;
   path.AddRectangle(rtLBtn.left, rtLBtn.top, rtLBtn.width, rtLBtn.height);
   pParams->m_pGraphics->SaveGraphState();
@@ -171,8 +165,6 @@ void CFWL_MonthCalendarTP::DrawLButton(CFWL_ThemeBackground* pParams,
 void CFWL_MonthCalendarTP::DrawRButton(CFWL_ThemeBackground* pParams,
                                        CFX_Matrix* pMatrix) {
   CFX_Path path;
-  path.Create();
-
   CFX_RectF rtRBtn = pParams->m_rtPart;
   path.AddRectangle(rtRBtn.left, rtRBtn.top, rtRBtn.width, rtRBtn.height);
   pParams->m_pGraphics->SaveGraphState();
@@ -207,7 +199,6 @@ void CFWL_MonthCalendarTP::DrawRButton(CFWL_ThemeBackground* pParams,
 void CFWL_MonthCalendarTP::DrawHSeperator(CFWL_ThemeBackground* pParams,
                                           CFX_Matrix* pMatrix) {
   CFX_Path path;
-  path.Create();
   CFX_RectF rtHSep = pParams->m_rtPart;
   path.MoveTo(CFX_PointF(rtHSep.left, rtHSep.top + rtHSep.height / 2));
   path.LineTo(CFX_PointF(rtHSep.right(), rtHSep.top + rtHSep.height / 2));
@@ -222,7 +213,6 @@ void CFWL_MonthCalendarTP::DrawHSeperator(CFWL_ThemeBackground* pParams,
 void CFWL_MonthCalendarTP::DrawWeekNumSep(CFWL_ThemeBackground* pParams,
                                           CFX_Matrix* pMatrix) {
   CFX_Path path;
-  path.Create();
   CFX_RectF rtWeekSep = pParams->m_rtPart;
   path.MoveTo(rtWeekSep.TopLeft());
   path.LineTo(rtWeekSep.BottomLeft());
@@ -239,7 +229,6 @@ void CFWL_MonthCalendarTP::DrawDatesInBK(CFWL_ThemeBackground* pParams,
   pParams->m_pGraphics->SaveGraphState();
   if (pParams->m_dwStates & CFWL_PartState_Selected) {
     CFX_Path path;
-    path.Create();
     CFX_RectF rtSelDay = pParams->m_rtPart;
     path.AddRectangle(rtSelDay.left, rtSelDay.top, rtSelDay.width,
                       rtSelDay.height);
@@ -248,7 +237,6 @@ void CFWL_MonthCalendarTP::DrawDatesInBK(CFWL_ThemeBackground* pParams,
     pParams->m_pGraphics->FillPath(&path, FXFILL_WINDING, pMatrix);
   } else if (pParams->m_dwStates & CFWL_PartState_Hovered) {
     CFX_Path path;
-    path.Create();
     CFX_RectF rtSelDay = pParams->m_rtPart;
     path.AddRectangle(rtSelDay.left, rtSelDay.top, rtSelDay.width,
                       rtSelDay.height);
@@ -262,7 +250,6 @@ void CFWL_MonthCalendarTP::DrawDatesInBK(CFWL_ThemeBackground* pParams,
 void CFWL_MonthCalendarTP::DrawDatesInCircle(CFWL_ThemeBackground* pParams,
                                              CFX_Matrix* pMatrix) {
   CFX_Path path;
-  path.Create();
   CFX_RectF rtSelDay = pParams->m_rtPart;
   path.AddRectangle(rtSelDay.left, rtSelDay.top, rtSelDay.width,
                     rtSelDay.height);
@@ -276,7 +263,6 @@ void CFWL_MonthCalendarTP::DrawDatesInCircle(CFWL_ThemeBackground* pParams,
 void CFWL_MonthCalendarTP::DrawTodayCircle(CFWL_ThemeBackground* pParams,
                                            CFX_Matrix* pMatrix) {
   CFX_Path path;
-  path.Create();
   CFX_RectF rtTodayCircle = pParams->m_rtPart;
   path.AddRectangle(rtTodayCircle.left, rtTodayCircle.top, rtTodayCircle.width,
                     rtTodayCircle.height);

@@ -28,7 +28,6 @@ void CFWL_ComboBoxTP::DrawBackground(CFWL_ThemeBackground* pParams) {
     }
     case CFWL_Part::Background: {
       CFX_Path path;
-      path.Create();
       CFX_RectF& rect = pParams->m_rtPart;
       path.AddRectangle(rect.left, rect.top, rect.width, rect.height);
       FX_ARGB argb_color;
@@ -66,7 +65,6 @@ void CFWL_ComboBoxTP::DrawStrethHandler(CFWL_ThemeBackground* pParams,
                                         uint32_t dwStates,
                                         CFX_Matrix* pMatrix) {
   CFX_Path path;
-  path.Create();
   path.AddRectangle(pParams->m_rtPart.left, pParams->m_rtPart.top,
                     pParams->m_rtPart.width - 1, pParams->m_rtPart.height);
   CFX_Color cr(ArgbEncode(0xff, 0xff, 0, 0));

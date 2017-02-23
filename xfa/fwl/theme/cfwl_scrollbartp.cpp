@@ -81,7 +81,6 @@ void CFWL_ScrollBarTP::DrawThumbBtn(CFX_Graphics* pGraphics,
     return;
 
   CFX_Path path;
-  path.Create();
   CFX_RectF rect(*pRect);
   if (bVert) {
     rect.Deflate(1, 0);
@@ -124,7 +123,6 @@ void CFWL_ScrollBarTP::DrawPaw(CFX_Graphics* pGraphics,
                                FWLTHEME_STATE eState,
                                CFX_Matrix* pMatrix) {
   CFX_Path path;
-  path.Create();
   if (bVert) {
     FX_FLOAT fPawLen = kPawLength;
     if (pRect->width / 2 <= fPawLen) {
@@ -214,7 +212,6 @@ void CFWL_ScrollBarTP::DrawTrack(CFX_Graphics* pGraphics,
   pGraphics->SaveGraphState();
   CFX_Color colorLine(ArgbEncode(255, 238, 237, 229));
   CFX_Path path;
-  path.Create();
   FX_FLOAT fRight = pRect->right();
   FX_FLOAT fBottom = pRect->bottom();
   if (bVert) {

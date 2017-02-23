@@ -1712,8 +1712,6 @@ if (pdf_enable_xfa) {
       "xfa/fxgraphics/cfx_graphics.h",
       "xfa/fxgraphics/cfx_path.cpp",
       "xfa/fxgraphics/cfx_path.h",
-      "xfa/fxgraphics/cfx_path_generator.cpp",
-      "xfa/fxgraphics/cfx_path_generator.h",
       "xfa/fxgraphics/cfx_pattern.cpp",
       "xfa/fxgraphics/cfx_pattern.h",
       "xfa/fxgraphics/cfx_shading.cpp",
