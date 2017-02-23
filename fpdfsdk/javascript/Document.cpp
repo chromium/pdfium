@@ -1265,7 +1265,6 @@ bool Document::icons(CJS_Runtime* pRuntime,
     if (!pIcon)
       return false;
 
-    pIcon->SetStream(pIconElement->IconStream->GetStream());
     pIcon->SetIconName(pIconElement->IconName);
     Icons.SetElement(pRuntime, i++, CJS_Value(pRuntime, pJS_Icon));
   }
@@ -1306,8 +1305,6 @@ bool Document::getIcon(CJS_Runtime* pRuntime,
       return false;
 
     pIcon->SetIconName(swIconName);
-    pIcon->SetStream(pIconElement->IconStream->GetStream());
-
     vRet = CJS_Value(pRuntime, pJS_Icon);
     return true;
   }

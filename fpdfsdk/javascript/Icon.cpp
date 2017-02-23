@@ -21,26 +21,9 @@ JSMethodSpec CJS_Icon::MethodSpecs[] = {{0, 0}};
 IMPLEMENT_JS_CLASS(CJS_Icon, Icon)
 
 Icon::Icon(CJS_Object* pJSObject)
-    : CJS_EmbedObj(pJSObject), m_pIconStream(nullptr), m_swIconName(L"") {}
+    : CJS_EmbedObj(pJSObject), m_swIconName(L"") {}
 
 Icon::~Icon() {}
-
-void Icon::SetStream(CPDF_Stream* pIconStream) {
-  if (pIconStream)
-    m_pIconStream = pIconStream;
-}
-
-CPDF_Stream* Icon::GetStream() {
-  return m_pIconStream;
-}
-
-void Icon::SetIconName(CFX_WideString name) {
-  m_swIconName = name;
-}
-
-CFX_WideString Icon::GetIconName() {
-  return m_swIconName;
-}
 
 bool Icon::name(CJS_Runtime* pRuntime,
                 CJS_PropValue& vp,
