@@ -9,7 +9,6 @@
 
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_system.h"
-#include "xfa/fwl/fwl_error.h"
 
 class CFWL_Widget;
 

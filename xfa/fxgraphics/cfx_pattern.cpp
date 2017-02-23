@@ -11,9 +11,6 @@ CFX_Pattern::CFX_Pattern(FX_HatchStyle hatchStyle,
                          const FX_ARGB backArgb,
                          CFX_Matrix* matrix)
     : m_hatchStyle(hatchStyle), m_foreArgb(foreArgb), m_backArgb(backArgb) {
-  ASSERT(m_hatchStyle >= FX_HATCHSTYLE_Horizontal &&
-         m_hatchStyle <= FX_HATCHSTYLE_SolidDiamond);
-
   if (matrix)
     m_matrix = *matrix;
   else

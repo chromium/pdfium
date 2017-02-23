@@ -95,8 +95,7 @@ void CPDFSDK_PageView::PageView_OnDraw(CFX_RenderDevice* pDevice,
     return;
 
   if (pPage->GetContext()->GetDocType() == DOCTYPE_DYNAMIC_XFA) {
-    CFX_Graphics gs;
-    gs.Create(pDevice);
+    CFX_Graphics gs(pDevice);
     CFX_RectF rectClip(static_cast<FX_FLOAT>(pClip.left),
                        static_cast<FX_FLOAT>(pClip.top),
                        static_cast<FX_FLOAT>(pClip.Width()),

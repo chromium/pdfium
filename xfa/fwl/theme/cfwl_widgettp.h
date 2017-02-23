@@ -14,7 +14,6 @@
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_system.h"
 #include "xfa/fgas/font/cfgas_gefont.h"
-#include "xfa/fwl/fwl_error.h"
 #include "xfa/fwl/theme/cfwl_utils.h"
 #include "xfa/fxgraphics/cfx_graphics.h"
 

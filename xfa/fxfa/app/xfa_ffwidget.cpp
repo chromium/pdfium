@@ -1566,22 +1566,22 @@ static void XFA_BOX_Fill_Pattern(CXFA_Box box,
   FX_ARGB crStart, crEnd;
   crStart = fill.GetColor();
   int32_t iType = fill.GetPattern(crEnd);
-  FX_HatchStyle iHatch = FX_HATCHSTYLE_Cross;
+  FX_HatchStyle iHatch = FX_HatchStyle::Cross;
   switch (iType) {
     case XFA_ATTRIBUTEENUM_CrossDiagonal:
-      iHatch = FX_HATCHSTYLE_DiagonalCross;
+      iHatch = FX_HatchStyle::DiagonalCross;
       break;
     case XFA_ATTRIBUTEENUM_DiagonalLeft:
-      iHatch = FX_HATCHSTYLE_ForwardDiagonal;
+      iHatch = FX_HatchStyle::ForwardDiagonal;
       break;
     case XFA_ATTRIBUTEENUM_DiagonalRight:
-      iHatch = FX_HATCHSTYLE_BackwardDiagonal;
+      iHatch = FX_HatchStyle::BackwardDiagonal;
       break;
     case XFA_ATTRIBUTEENUM_Horizontal:
-      iHatch = FX_HATCHSTYLE_Horizontal;
+      iHatch = FX_HatchStyle::Horizontal;
       break;
     case XFA_ATTRIBUTEENUM_Vertical:
-      iHatch = FX_HATCHSTYLE_Vertical;
+      iHatch = FX_HatchStyle::Vertical;
       break;
     default:
       break;

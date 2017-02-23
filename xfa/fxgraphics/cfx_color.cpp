@@ -24,26 +24,23 @@ CFX_Color::~CFX_Color() {
   m_type = FX_COLOR_None;
 }
 
-FWL_Error CFX_Color::Set(const FX_ARGB argb) {
+void CFX_Color::Set(const FX_ARGB argb) {
   m_type = FX_COLOR_Solid;
   m_info.argb = argb;
   m_info.pattern = nullptr;
-  return FWL_Error::Succeeded;
 }
 
-FWL_Error CFX_Color::Set(CFX_Pattern* pattern, const FX_ARGB argb) {
+void CFX_Color::Set(CFX_Pattern* pattern, const FX_ARGB argb) {
   if (!pattern)
-    return FWL_Error::ParameterInvalid;
+    return;
   m_type = FX_COLOR_Pattern;
   m_info.argb = argb;
   m_info.pattern = pattern;
-  return FWL_Error::Succeeded;
 }
 
-FWL_Error CFX_Color::Set(CFX_Shading* shading) {
+void CFX_Color::Set(CFX_Shading* shading) {
   if (!shading)
-    return FWL_Error::ParameterInvalid;
+    return;
   m_type = FX_COLOR_Shading;
   m_shading = shading;
-  return FWL_Error::Succeeded;
 }

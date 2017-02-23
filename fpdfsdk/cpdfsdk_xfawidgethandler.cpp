@@ -53,8 +53,7 @@ void CPDFSDK_XFAWidgetHandler::OnDraw(CPDFSDK_PageView* pPageView,
   ASSERT(pPageView);
   ASSERT(pAnnot);
 
-  CFX_Graphics gs;
-  gs.Create(pDevice);
+  CFX_Graphics gs(pDevice);
 
   CFX_Matrix mt = *pUser2Device;
   bool bIsHighlight = false;

@@ -12,7 +12,6 @@
 #include "xfa/fwl/cfwl_edit.h"
 #include "xfa/fwl/cfwl_widget.h"
 #include "xfa/fwl/cfwl_widgetproperties.h"
-#include "xfa/fwl/fwl_error.h"
 
 class CFWL_DateTimeEdit : public CFWL_Edit {
  public:

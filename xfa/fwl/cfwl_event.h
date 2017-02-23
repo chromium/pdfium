@@ -12,7 +12,6 @@
 #include "core/fxcrt/fx_system.h"
 #include "xfa/fwl/cfwl_messagekey.h"
 #include "xfa/fwl/cfwl_messagemouse.h"
-#include "xfa/fwl/fwl_error.h"
 
 class CFX_Graphics;
 class CFWL_Widget;
