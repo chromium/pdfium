@@ -206,7 +206,7 @@ void JSGlobalAlternate::UpdateGlobalPersistentVariables() {
                            pData->bPersistent == 1);
         pRuntime->PutObjectProperty(
             m_pJSObject->ToV8Object(), pData->data.sKey.UTF8Decode(),
-            pRuntime->NewString(pData->data.sData.UTF8Decode()));
+            pRuntime->NewString(pData->data.sData.UTF8Decode().AsStringC()));
         break;
       case JS_GlobalDataType::OBJECT: {
         v8::Local<v8::Object> pObj = pRuntime->NewFxDynamicObj(-1);
@@ -335,7 +335,7 @@ void JSGlobalAlternate::PutObjectProperty(v8::Local<v8::Object> pObj,
       case JS_GlobalDataType::STRING:
         pRuntime->PutObjectProperty(
             pObj, pObjData->sKey.UTF8Decode(),
-            pRuntime->NewString(pObjData->sData.UTF8Decode()));
+            pRuntime->NewString(pObjData->sData.UTF8Decode().AsStringC()));
         break;
       case JS_GlobalDataType::OBJECT: {
         v8::Local<v8::Object> pNewObj = pRuntime->NewFxDynamicObj(-1);

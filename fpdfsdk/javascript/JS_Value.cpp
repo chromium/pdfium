@@ -677,8 +677,9 @@ double JS_DateParse(const CFX_WideString& str) {
     if (v->IsFunction()) {
       v8::Local<v8::Function> funC = v8::Local<v8::Function>::Cast(v);
       const int argc = 1;
-      v8::Local<v8::String> timeStr =
-          CJS_Runtime::CurrentRuntimeFromIsolate(pIsolate)->WSToJSString(str);
+      v8::Local<v8::Value> timeStr =
+          CJS_Runtime::CurrentRuntimeFromIsolate(pIsolate)->NewString(
+              str.AsStringC());
       v8::Local<v8::Value> argv[argc] = {timeStr};
       v = funC->Call(context, context->Global(), argc, argv).ToLocalChecked();
       if (v->IsNumber()) {

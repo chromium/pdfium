@@ -11,11 +11,11 @@
 #include "fpdfsdk/javascript/JS_Value.h"
 
 JSConstSpec CJS_Border::ConstSpecs[] = {
-    {"s", JSConstSpec::String, 0, L"solid"},
-    {"b", JSConstSpec::String, 0, L"beveled"},
-    {"d", JSConstSpec::String, 0, L"dashed"},
-    {"i", JSConstSpec::String, 0, L"inset"},
-    {"u", JSConstSpec::String, 0, L"underline"},
+    {"s", JSConstSpec::String, 0, "solid"},
+    {"b", JSConstSpec::String, 0, "beveled"},
+    {"d", JSConstSpec::String, 0, "dashed"},
+    {"i", JSConstSpec::String, 0, "inset"},
+    {"u", JSConstSpec::String, 0, "underline"},
     {0, JSConstSpec::Number, 0, 0}};
 IMPLEMENT_JS_CLASS_CONST(CJS_Border, border)
 
@@ -27,28 +27,28 @@ JSConstSpec CJS_Display::ConstSpecs[] = {{"visible", JSConstSpec::Number, 0, 0},
 IMPLEMENT_JS_CLASS_CONST(CJS_Display, display)
 
 JSConstSpec CJS_Font::ConstSpecs[] = {
-    {"Times", JSConstSpec::String, 0, L"Times-Roman"},
-    {"TimesB", JSConstSpec::String, 0, L"Times-Bold"},
-    {"TimesI", JSConstSpec::String, 0, L"Times-Italic"},
-    {"TimesBI", JSConstSpec::String, 0, L"Times-BoldItalic"},
-    {"Helv", JSConstSpec::String, 0, L"Helvetica"},
-    {"HelvB", JSConstSpec::String, 0, L"Helvetica-Bold"},
-    {"HelvI", JSConstSpec::String, 0, L"Helvetica-Oblique"},
-    {"HelvBI", JSConstSpec::String, 0, L"Helvetica-BoldOblique"},
-    {"Cour", JSConstSpec::String, 0, L"Courier"},
-    {"CourB", JSConstSpec::String, 0, L"Courier-Bold"},
-    {"CourI", JSConstSpec::String, 0, L"Courier-Oblique"},
-    {"CourBI", JSConstSpec::String, 0, L"Courier-BoldOblique"},
-    {"Symbol", JSConstSpec::String, 0, L"Symbol"},
-    {"ZapfD", JSConstSpec::String, 0, L"ZapfDingbats"},
+    {"Times", JSConstSpec::String, 0, "Times-Roman"},
+    {"TimesB", JSConstSpec::String, 0, "Times-Bold"},
+    {"TimesI", JSConstSpec::String, 0, "Times-Italic"},
+    {"TimesBI", JSConstSpec::String, 0, "Times-BoldItalic"},
+    {"Helv", JSConstSpec::String, 0, "Helvetica"},
+    {"HelvB", JSConstSpec::String, 0, "Helvetica-Bold"},
+    {"HelvI", JSConstSpec::String, 0, "Helvetica-Oblique"},
+    {"HelvBI", JSConstSpec::String, 0, "Helvetica-BoldOblique"},
+    {"Cour", JSConstSpec::String, 0, "Courier"},
+    {"CourB", JSConstSpec::String, 0, "Courier-Bold"},
+    {"CourI", JSConstSpec::String, 0, "Courier-Oblique"},
+    {"CourBI", JSConstSpec::String, 0, "Courier-BoldOblique"},
+    {"Symbol", JSConstSpec::String, 0, "Symbol"},
+    {"ZapfD", JSConstSpec::String, 0, "ZapfDingbats"},
     {0, JSConstSpec::Number, 0, 0}};
 IMPLEMENT_JS_CLASS_CONST(CJS_Font, font)
 
 JSConstSpec CJS_Highlight::ConstSpecs[] = {
-    {"n", JSConstSpec::String, 0, L"none"},
-    {"i", JSConstSpec::String, 0, L"invert"},
-    {"p", JSConstSpec::String, 0, L"push"},
-    {"o", JSConstSpec::String, 0, L"outline"},
+    {"n", JSConstSpec::String, 0, "none"},
+    {"i", JSConstSpec::String, 0, "invert"},
+    {"p", JSConstSpec::String, 0, "push"},
+    {"o", JSConstSpec::String, 0, "outline"},
     {0, JSConstSpec::Number, 0, 0}};
 IMPLEMENT_JS_CLASS_CONST(CJS_Highlight, highlight)
 
@@ -78,23 +78,23 @@ JSConstSpec CJS_ScaleWhen::ConstSpecs[] = {
 IMPLEMENT_JS_CLASS_CONST(CJS_ScaleWhen, scaleWhen)
 
 JSConstSpec CJS_Style::ConstSpecs[] = {
-    {"ch", JSConstSpec::String, 0, L"check"},
-    {"cr", JSConstSpec::String, 0, L"cross"},
-    {"di", JSConstSpec::String, 0, L"diamond"},
-    {"ci", JSConstSpec::String, 0, L"circle"},
-    {"st", JSConstSpec::String, 0, L"star"},
-    {"sq", JSConstSpec::String, 0, L"square"},
+    {"ch", JSConstSpec::String, 0, "check"},
+    {"cr", JSConstSpec::String, 0, "cross"},
+    {"di", JSConstSpec::String, 0, "diamond"},
+    {"ci", JSConstSpec::String, 0, "circle"},
+    {"st", JSConstSpec::String, 0, "star"},
+    {"sq", JSConstSpec::String, 0, "square"},
     {0, JSConstSpec::Number, 0, 0}};
 IMPLEMENT_JS_CLASS_CONST(CJS_Style, style)
 
 JSConstSpec CJS_Zoomtype::ConstSpecs[] = {
-    {"none", JSConstSpec::String, 0, L"NoVary"},
-    {"fitP", JSConstSpec::String, 0, L"FitPage"},
-    {"fitW", JSConstSpec::String, 0, L"FitWidth"},
-    {"fitH", JSConstSpec::String, 0, L"FitHeight"},
-    {"fitV", JSConstSpec::String, 0, L"FitVisibleWidth"},
-    {"pref", JSConstSpec::String, 0, L"Preferred"},
-    {"refW", JSConstSpec::String, 0, L"ReflowWidth"},
+    {"none", JSConstSpec::String, 0, "NoVary"},
+    {"fitP", JSConstSpec::String, 0, "FitPage"},
+    {"fitW", JSConstSpec::String, 0, "FitWidth"},
+    {"fitH", JSConstSpec::String, 0, "FitHeight"},
+    {"fitV", JSConstSpec::String, 0, "FitVisibleWidth"},
+    {"pref", JSConstSpec::String, 0, "Preferred"},
+    {"refW", JSConstSpec::String, 0, "ReflowWidth"},
     {0, JSConstSpec::Number, 0, 0}};
 IMPLEMENT_JS_CLASS_CONST(CJS_Zoomtype, zoomtype)
 

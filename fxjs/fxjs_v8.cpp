@@ -558,22 +558,14 @@ void* CFXJS_Engine::GetObjectPrivate(v8::Local<v8::Object> pObj) {
   return pPerObjectData ? pPerObjectData->m_pPrivate : nullptr;
 }
 
-v8::Local<v8::String> CFXJS_Engine::WSToJSString(
-    const CFX_WideString& wsPropertyName) {
-  v8::Isolate* pIsolate = m_isolate ? m_isolate : v8::Isolate::GetCurrent();
-  CFX_ByteString bs = wsPropertyName.UTF8Encode();
-  return v8::String::NewFromUtf8(pIsolate, bs.c_str(),
-                                 v8::NewStringType::kNormal, bs.GetLength())
-      .ToLocalChecked();
-}
-
 v8::Local<v8::Value> CFXJS_Engine::GetObjectProperty(
     v8::Local<v8::Object> pObj,
     const CFX_WideString& wsPropertyName) {
   if (pObj.IsEmpty())
     return v8::Local<v8::Value>();
   v8::Local<v8::Value> val;
-  if (!pObj->Get(m_isolate->GetCurrentContext(), WSToJSString(wsPropertyName))
+  if (!pObj->Get(m_isolate->GetCurrentContext(),
+                 NewString(wsPropertyName.AsStringC()))
            .ToLocal(&val))
     return v8::Local<v8::Value>();
   return val;
@@ -602,7 +594,8 @@ void CFXJS_Engine::PutObjectProperty(v8::Local<v8::Object> pObj,
                                      v8::Local<v8::Value> pPut) {
   if (pObj.IsEmpty())
     return;
-  pObj->Set(m_isolate->GetCurrentContext(), WSToJSString(wsPropertyName), pPut)
+  pObj->Set(m_isolate->GetCurrentContext(),
+            NewString(wsPropertyName.AsStringC()), pPut)
       .FromJust();
 }
 
@@ -661,8 +654,15 @@ v8::Local<v8::Value> CFXJS_Engine::NewBoolean(bool b) {
   return v8::Boolean::New(m_isolate, b);
 }
 
-v8::Local<v8::Value> CFXJS_Engine::NewString(const CFX_WideString& str) {
-  return WSToJSString(str.c_str());
+v8::Local<v8::Value> CFXJS_Engine::NewString(const CFX_ByteStringC& str) {
+  v8::Isolate* pIsolate = m_isolate ? m_isolate : v8::Isolate::GetCurrent();
+  return v8::String::NewFromUtf8(pIsolate, str.c_str(),
+                                 v8::NewStringType::kNormal, str.GetLength())
+      .ToLocalChecked();
+}
+
+v8::Local<v8::Value> CFXJS_Engine::NewString(const CFX_WideStringC& str) {
+  return NewString(FX_UTF8Encode(str).AsStringC());
 }
 
 v8::Local<v8::Value> CFXJS_Engine::NewNull() {

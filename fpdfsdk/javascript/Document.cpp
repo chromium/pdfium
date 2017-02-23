@@ -766,18 +766,24 @@ bool Document::info(CJS_Runtime* pRuntime,
   CFX_WideString cwTrapped = pDictionary->GetUnicodeTextFor("Trapped");
 
   v8::Local<v8::Object> pObj = pRuntime->NewFxDynamicObj(-1);
-  pRuntime->PutObjectProperty(pObj, L"Author", pRuntime->NewString(cwAuthor));
-  pRuntime->PutObjectProperty(pObj, L"Title", pRuntime->NewString(cwTitle));
-  pRuntime->PutObjectProperty(pObj, L"Subject", pRuntime->NewString(cwSubject));
+  pRuntime->PutObjectProperty(pObj, L"Author",
+                              pRuntime->NewString(cwAuthor.AsStringC()));
+  pRuntime->PutObjectProperty(pObj, L"Title",
+                              pRuntime->NewString(cwTitle.AsStringC()));
+  pRuntime->PutObjectProperty(pObj, L"Subject",
+                              pRuntime->NewString(cwSubject.AsStringC()));
   pRuntime->PutObjectProperty(pObj, L"Keywords",
-                              pRuntime->NewString(cwKeywords));
-  pRuntime->PutObjectProperty(pObj, L"Creator", pRuntime->NewString(cwCreator));
+                              pRuntime->NewString(cwKeywords.AsStringC()));
+  pRuntime->PutObjectProperty(pObj, L"Creator",
+                              pRuntime->NewString(cwCreator.AsStringC()));
   pRuntime->PutObjectProperty(pObj, L"Producer",
-                              pRuntime->NewString(cwProducer));
+                              pRuntime->NewString(cwProducer.AsStringC()));
   pRuntime->PutObjectProperty(pObj, L"CreationDate",
-                              pRuntime->NewString(cwCreationDate));
-  pRuntime->PutObjectProperty(pObj, L"ModDate", pRuntime->NewString(cwModDate));
-  pRuntime->PutObjectProperty(pObj, L"Trapped", pRuntime->NewString(cwTrapped));
+                              pRuntime->NewString(cwCreationDate.AsStringC()));
+  pRuntime->PutObjectProperty(pObj, L"ModDate",
+                              pRuntime->NewString(cwModDate.AsStringC()));
+  pRuntime->PutObjectProperty(pObj, L"Trapped",
+                              pRuntime->NewString(cwTrapped.AsStringC()));
 
   // It's to be compatible to non-standard info dictionary.
   for (const auto& it : *pDictionary) {
@@ -786,7 +792,8 @@ bool Document::info(CJS_Runtime* pRuntime,
     CFX_WideString wsKey = CFX_WideString::FromUTF8(bsKey.AsStringC());
     if (pValueObj->IsString() || pValueObj->IsName()) {
       pRuntime->PutObjectProperty(
-          pObj, wsKey, pRuntime->NewString(pValueObj->GetUnicodeText()));
+          pObj, wsKey,
+          pRuntime->NewString(pValueObj->GetUnicodeText().AsStringC()));
     } else if (pValueObj->IsNumber()) {
       pRuntime->PutObjectProperty(pObj, wsKey,
                                   pRuntime->NewNumber(pValueObj->GetNumber()));

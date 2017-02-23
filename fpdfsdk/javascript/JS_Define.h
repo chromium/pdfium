@@ -20,7 +20,7 @@ struct JSConstSpec {
   const char* pName;
   Type eType;
   double number;
-  const wchar_t* pStr;
+  const char* pStr;
 };
 
 struct JSPropertySpec {
