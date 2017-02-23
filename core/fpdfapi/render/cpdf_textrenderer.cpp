@@ -72,7 +72,6 @@ void CPDF_TextRenderer::DrawTextString(CFX_RenderDevice* pDevice,
                                        const CFX_Matrix* pMatrix,
                                        const CFX_ByteString& str,
                                        FX_ARGB fill_argb,
-                                       FX_ARGB stroke_argb,
                                        const CFX_GraphStateData* pGraphState,
                                        const CPDF_RenderOptions* pOptions) {
   if (pFont->IsType3Font())
@@ -101,13 +100,8 @@ void CPDF_TextRenderer::DrawTextString(CFX_RenderDevice* pDevice,
   matrix.e = origin_x;
   matrix.f = origin_y;
 
-  if (stroke_argb == 0) {
-    DrawNormalText(pDevice, codes, positions, pFont, font_size, &matrix,
-                   fill_argb, pOptions);
-  } else {
-    DrawTextPath(pDevice, codes, positions, pFont, font_size, &matrix, nullptr,
-                 pGraphState, fill_argb, stroke_argb, nullptr, 0);
-  }
+  DrawNormalText(pDevice, codes, positions, pFont, font_size, &matrix,
+                 fill_argb, pOptions);
 }
 
 // static

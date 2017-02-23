@@ -324,7 +324,6 @@ class CFX_Edit {
                        CFX_Matrix* pUser2Device,
                        CFX_Edit* pEdit,
                        FX_COLORREF crTextFill,
-                       FX_COLORREF crTextStroke,
                        const CFX_FloatRect& rcClip,
                        const CFX_PointF& ptOffset,
                        const CPVT_WordRange* pRange,

@@ -845,8 +845,14 @@ void CPDFSDK_Widget::DrawShadow(CFX_RenderDevice* pDevice,
   pPageView->GetCurrentMatrix(page2device);
 
   CFX_FloatRect rcDevice = GetRect();
-  page2device.TransformPoint(rcDevice.left, rcDevice.bottom);
-  page2device.TransformPoint(rcDevice.right, rcDevice.top);
+  CFX_PointF tmp =
+      page2device.Transform(CFX_PointF(rcDevice.left, rcDevice.bottom));
+  rcDevice.left = tmp.x;
+  rcDevice.bottom = tmp.y;
+
+  tmp = page2device.Transform(CFX_PointF(rcDevice.right, rcDevice.top));
+  rcDevice.right = tmp.x;
+  rcDevice.top = tmp.y;
   rcDevice.Normalize();
 
   FX_RECT rcDev = rcDevice.ToFxRect();

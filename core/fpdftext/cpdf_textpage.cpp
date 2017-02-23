@@ -268,8 +268,8 @@ std::vector<CFX_FloatRect> CPDF_TextPage::GetRectArray(int start,
         rect.bottom = origin.y +
                       pCurObj->GetFont()->GetTypeDescent() *
                           pCurObj->GetFontSize() / 1000;
-        FX_FLOAT xPosTemp = origin.x;
-        matrix.TransformPoint(xPosTemp, rect.bottom);
+
+        rect.bottom = matrix.Transform(CFX_PointF(origin.x, rect.bottom)).y;
       } else {
         rect.bottom = info_curchar.m_CharBox.bottom;
       }
@@ -281,7 +281,7 @@ std::vector<CFX_FloatRect> CPDF_TextPage::GetRectArray(int start,
             origin.x +
             GetCharWidth(info_curchar.m_CharCode, pCurObj->GetFont()) *
                 pCurObj->GetFontSize() / 1000;
-        matrix.TransformPoint(xPosTemp, rect.top);
+        rect.top = matrix.Transform(CFX_PointF(xPosTemp, rect.top)).y;
       } else {
         rect.top = info_curchar.m_CharBox.top;
       }

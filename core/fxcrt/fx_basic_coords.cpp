@@ -363,17 +363,9 @@ FX_FLOAT CFX_Matrix::TransformDistance(FX_FLOAT distance) const {
   return distance * (GetXUnit() + GetYUnit()) / 2;
 }
 
-void CFX_Matrix::TransformPoint(FX_FLOAT& x, FX_FLOAT& y) const {
-  FX_FLOAT fx = a * x + c * y + e;
-  FX_FLOAT fy = b * x + d * y + f;
-  x = fx;
-  y = fy;
-}
-
 CFX_PointF CFX_Matrix::Transform(const CFX_PointF& point) const {
-  CFX_PointF ret = point;
-  TransformPoint(ret.x, ret.y);
-  return ret;
+  return CFX_PointF(a * point.x + c * point.y + e,
+                    b * point.x + d * point.y + f);
 }
 
 void CFX_Matrix::TransformRect(CFX_RectF& rect) const {

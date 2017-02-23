@@ -1080,15 +1080,16 @@ static bool IsSmallTriangle(PointF* points,
   for (int i = 0; i < 3; i++) {
     int pair1 = pairs[i * 2];
     int pair2 = pairs[i * 2 + 1];
-    FX_FLOAT x1 = points[pair1].X, x2 = points[pair2].X;
-    FX_FLOAT y1 = points[pair1].Y, y2 = points[pair2].Y;
+
+    CFX_PointF p1(points[pair1].X, points[pair1].Y);
+    CFX_PointF p2(points[pair2].X, points[pair2].Y);
     if (pMatrix) {
-      pMatrix->TransformPoint(x1, y1);
-      pMatrix->TransformPoint(x2, y2);
+      p1 = pMatrix->Transform(p1);
+      p2 = pMatrix->Transform(p2);
     }
-    FX_FLOAT dx = x1 - x2;
-    FX_FLOAT dy = y1 - y2;
-    FX_FLOAT distance_square = (dx * dx) + (dy * dy);
+
+    CFX_PointF diff = p1 - p2;
+    FX_FLOAT distance_square = (diff.x * diff.x) + (diff.y * diff.y);
     if (distance_square < (1.0f * 2 + 1.0f / 4)) {
       v1 = i;
       v2 = pair1;

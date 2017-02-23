@@ -158,12 +158,11 @@ void CPDFXFA_Page::DeviceToPage(int start_x,
   device2page.SetReverse(
       GetDisplayMatrix(start_x, start_y, size_x, size_y, rotate));
 
-  FX_FLOAT page_x_f = static_cast<FX_FLOAT>(device_x);
-  FX_FLOAT page_y_f = static_cast<FX_FLOAT>(device_y);
-  device2page.TransformPoint(page_x_f, page_y_f);
+  CFX_PointF pos = device2page.Transform(CFX_PointF(
+      static_cast<FX_FLOAT>(device_x), static_cast<FX_FLOAT>(device_y)));
 
-  *page_x = page_x_f;
-  *page_y = page_y_f;
+  *page_x = pos.x;
+  *page_y = pos.y;
 }
 
 void CPDFXFA_Page::PageToDevice(int start_x,
@@ -181,12 +180,11 @@ void CPDFXFA_Page::PageToDevice(int start_x,
   CFX_Matrix page2device =
       GetDisplayMatrix(start_x, start_y, size_x, size_y, rotate);
 
-  FX_FLOAT device_x_f = static_cast<FX_FLOAT>(page_x);
-  FX_FLOAT device_y_f = static_cast<FX_FLOAT>(page_y);
-  page2device.TransformPoint(device_x_f, device_y_f);
+  CFX_PointF pos = page2device.Transform(
+      CFX_PointF(static_cast<FX_FLOAT>(page_x), static_cast<FX_FLOAT>(page_y)));
 
-  *device_x = FXSYS_round(device_x_f);
-  *device_y = FXSYS_round(device_y_f);
+  *device_x = FXSYS_round(pos.x);
+  *device_y = FXSYS_round(pos.y);
 }
 
 CFX_Matrix CPDFXFA_Page::GetDisplayMatrix(int xPos,

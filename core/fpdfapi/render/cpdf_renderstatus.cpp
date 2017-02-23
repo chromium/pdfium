@@ -159,10 +159,11 @@ void DrawAxialShading(CFX_DIBitmap* pBitmap,
   for (int row = 0; row < height; row++) {
     uint32_t* dib_buf = (uint32_t*)(pBitmap->GetBuffer() + row * pitch);
     for (int column = 0; column < width; column++) {
-      FX_FLOAT x = (FX_FLOAT)column, y = (FX_FLOAT)row;
-      matrix.TransformPoint(x, y);
-      FX_FLOAT scale = (((x - start_x) * x_span) + ((y - start_y) * y_span)) /
-                       axis_len_square;
+      CFX_PointF pos = matrix.Transform(CFX_PointF(
+          static_cast<FX_FLOAT>(column), static_cast<FX_FLOAT>(row)));
+      FX_FLOAT scale =
+          (((pos.x - start_x) * x_span) + ((pos.y - start_y) * y_span)) /
+          axis_len_square;
       int index = (int32_t)(scale * (SHADING_STEPS - 1));
       if (index < 0) {
         if (!bStartExtend)
@@ -252,13 +253,14 @@ void DrawRadialShading(CFX_DIBitmap* pBitmap,
   for (int row = 0; row < height; row++) {
     uint32_t* dib_buf = (uint32_t*)(pBitmap->GetBuffer() + row * pitch);
     for (int column = 0; column < width; column++) {
-      FX_FLOAT x = (FX_FLOAT)column, y = (FX_FLOAT)row;
-      matrix.TransformPoint(x, y);
-      FX_FLOAT b = -2 * (((x - start_x) * (end_x - start_x)) +
-                         ((y - start_y) * (end_y - start_y)) +
+      CFX_PointF pos = matrix.Transform(CFX_PointF(
+          static_cast<FX_FLOAT>(column), static_cast<FX_FLOAT>(row)));
+      FX_FLOAT b = -2 * (((pos.x - start_x) * (end_x - start_x)) +
+                         ((pos.y - start_y) * (end_y - start_y)) +
                          (start_r * (end_r - start_r)));
-      FX_FLOAT c = ((x - start_x) * (x - start_x)) +
-                   ((y - start_y) * (y - start_y)) - (start_r * start_r);
+      FX_FLOAT c = ((pos.x - start_x) * (pos.x - start_x)) +
+                   ((pos.y - start_y) * (pos.y - start_y)) -
+                   (start_r * start_r);
       FX_FLOAT s;
       if (a == 0) {
         s = -c / b;
@@ -344,15 +346,13 @@ void DrawFuncShading(CFX_DIBitmap* pBitmap,
   for (int row = 0; row < height; row++) {
     uint32_t* dib_buf = (uint32_t*)(pBitmap->GetBuffer() + row * pitch);
     for (int column = 0; column < width; column++) {
-      FX_FLOAT x = (FX_FLOAT)column, y = (FX_FLOAT)row;
-      matrix.TransformPoint(x, y);
-      if (x < xmin || x > xmax || y < ymin || y > ymax) {
+      CFX_PointF pos = matrix.Transform(CFX_PointF(
+          static_cast<FX_FLOAT>(column), static_cast<FX_FLOAT>(row)));
+      if (pos.x < xmin || pos.x > xmax || pos.y < ymin || pos.y > ymax)
         continue;
-      }
-      FX_FLOAT input[2];
+
+      FX_FLOAT input[] = {pos.x, pos.y};
       int offset = 0;
-      input[0] = x;
-      input[1] = y;
       for (const auto& func : funcs) {
         if (func) {
           int nresults;
@@ -360,7 +360,10 @@ void DrawFuncShading(CFX_DIBitmap* pBitmap,
             offset += nresults;
         }
       }
-      FX_FLOAT R = 0.0f, G = 0.0f, B = 0.0f;
+
+      FX_FLOAT R = 0.0f;
+      FX_FLOAT G = 0.0f;
+      FX_FLOAT B = 0.0f;
       pCS->GetRGB(pResults, R, G, B);
       dib_buf[column] = FXARGB_TODIB(FXARGB_MAKE(
           alpha, (int32_t)(R * 255), (int32_t)(G * 255), (int32_t)(B * 255)));
@@ -843,10 +846,8 @@ void DrawCoonPatchMeshes(
       tempColors[1] = patch.patch_colors[(flag + 1) % 4];
       FXSYS_memcpy(patch.patch_colors, tempColors, sizeof(Coon_Color) * 2);
     }
-    for (i = iStartPoint; i < point_count; i++) {
-      coords[i] = stream.ReadCoords();
-      pObject2Bitmap->TransformPoint(coords[i].x, coords[i].y);
-    }
+    for (i = iStartPoint; i < point_count; i++)
+      coords[i] = pObject2Bitmap->Transform(stream.ReadCoords());
 
     for (i = iStartColor; i < 4; i++) {
       FX_FLOAT r;
@@ -2302,14 +2303,13 @@ void CPDF_RenderStatus::DrawTilingPattern(CPDF_TilingPattern* pPattern,
         start_x = FXSYS_round(mtPattern2Device.e) + col * width - clip_box.left;
         start_y = FXSYS_round(mtPattern2Device.f) + row * height - clip_box.top;
       } else {
-        FX_FLOAT orig_x = col * pPattern->x_step();
-        FX_FLOAT orig_y = row * pPattern->y_step();
-        mtPattern2Device.TransformPoint(orig_x, orig_y);
+        CFX_PointF original = mtPattern2Device.Transform(
+            CFX_PointF(col * pPattern->x_step(), row * pPattern->y_step()));
 
         pdfium::base::CheckedNumeric<int> safeStartX =
-            FXSYS_round(orig_x + left_offset);
+            FXSYS_round(original.x + left_offset);
         pdfium::base::CheckedNumeric<int> safeStartY =
-            FXSYS_round(orig_y + top_offset);
+            FXSYS_round(original.y + top_offset);
 
         safeStartX -= clip_box.left;
         safeStartY -= clip_box.top;

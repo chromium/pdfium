@@ -30,7 +30,6 @@ class CPDF_TextRenderer {
                              const CFX_Matrix* matrix,
                              const CFX_ByteString& str,
                              FX_ARGB fill_argb,
-                             FX_ARGB stroke_argb,
                              const CFX_GraphStateData* pGraphState,
                              const CPDF_RenderOptions* pOptions);
 

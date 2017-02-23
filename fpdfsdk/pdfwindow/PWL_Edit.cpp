@@ -266,7 +266,8 @@ void CPWL_Edit::GetThisAppearanceStream(CFX_ByteTextBuf& sAppStream) {
       m_pEdit->GetPasswordChar());
 
   if (sEditBefore.GetLength() > 0)
-    sText << "BT\n" << CPWL_Utils::GetColorAppStream(GetTextColor()).AsStringC()
+    sText << "BT\n"
+          << CPWL_Utils::GetColorAppStream(GetTextColor()).AsStringC()
           << sEditBefore.AsStringC() << "ET\n";
 
   wrTemp = CPWL_Utils::OverlapWordRange(wrVisible, wrSelect);
@@ -286,7 +287,8 @@ void CPWL_Edit::GetThisAppearanceStream(CFX_ByteTextBuf& sAppStream) {
       m_pEdit->GetPasswordChar());
 
   if (sEditAfter.GetLength() > 0)
-    sText << "BT\n" << CPWL_Utils::GetColorAppStream(GetTextColor()).AsStringC()
+    sText << "BT\n"
+          << CPWL_Utils::GetColorAppStream(GetTextColor()).AsStringC()
           << sEditAfter.AsStringC() << "ET\n";
 
   if (sText.GetLength() > 0) {
@@ -394,9 +396,8 @@ void CPWL_Edit::DrawThisAppearance(CFX_RenderDevice* pDevice,
   CFX_SystemHandler* pSysHandler = GetSystemHandler();
   CFX_Edit::DrawEdit(
       pDevice, pUser2Device, m_pEdit.get(),
-      CPWL_Utils::PWLColorToFXColor(GetTextColor(), GetTransparency()),
-      CPWL_Utils::PWLColorToFXColor(GetTextStrokeColor(), GetTransparency()),
-      rcClip, CFX_PointF(), pRange, pSysHandler, m_pFormFiller);
+      CPWL_Utils::PWLColorToFXColor(GetTextColor(), GetTransparency()), rcClip,
+      CFX_PointF(), pRange, pSysHandler, m_pFormFiller);
 }
 
 bool CPWL_Edit::OnLButtonDown(const CFX_PointF& point, uint32_t nFlag) {
@@ -491,7 +492,8 @@ CFX_ByteString CPWL_Edit::GetTextAppearanceStream(
   CFX_ByteTextBuf sRet;
   CFX_ByteString sEdit = CPWL_Utils::GetEditAppStream(m_pEdit.get(), ptOffset);
   if (sEdit.GetLength() > 0) {
-    sRet << "BT\n" << CPWL_Utils::GetColorAppStream(GetTextColor()).AsStringC()
+    sRet << "BT\n"
+         << CPWL_Utils::GetColorAppStream(GetTextColor()).AsStringC()
          << sEdit.AsStringC() << "ET\n";
   }
   return sRet.MakeString();

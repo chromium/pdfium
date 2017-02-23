@@ -181,7 +181,6 @@ struct PWL_CREATEPARAM {
     dwBorderWidth = 0;
     sBorderColor.Reset();
     sTextColor.Reset();
-    sTextStrokeColor.Reset();
     nTransparency = 0;
     fFontSize = 0.0f;
     sDash.Reset();
@@ -204,7 +203,6 @@ struct PWL_CREATEPARAM {
   int32_t dwBorderWidth;              // optional
   CPWL_Color sBorderColor;            // optional
   CPWL_Color sTextColor;              // optional
-  CPWL_Color sTextStrokeColor;        // optional
   int32_t nTransparency;              // optional
   FX_FLOAT fFontSize;                 // optional
   CPWL_Dash sDash;                    // optional
@@ -286,15 +284,12 @@ class CPWL_Wnd : public CPWL_TimerHandler {
                         uint32_t msg,
                         intptr_t wParam = 0,
                         intptr_t lParam = 0);
-  virtual void SetTextColor(const CPWL_Color& color);
-  virtual void SetTextStrokeColor(const CPWL_Color& color);
   virtual void SetVisible(bool bVisible);
 
   virtual CFX_FloatRect GetFocusRect() const;
   virtual CPWL_Color GetBackgroundColor() const;
   virtual CPWL_Color GetBorderColor() const;
   virtual CPWL_Color GetTextColor() const;
-  virtual CPWL_Color GetTextStrokeColor() const;
   virtual FX_FLOAT GetFontSize() const;
   virtual int32_t GetInnerBorderWidth() const;
   virtual CPWL_Color GetBorderLeftTopColor(BorderStyle nBorderStyle) const;

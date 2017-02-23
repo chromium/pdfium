@@ -483,18 +483,11 @@ CFX_FloatRect CFFL_FormFiller::PWLtoFFL(const CFX_FloatRect& rect) {
 CFX_PointF CFFL_FormFiller::FFLtoPWL(const CFX_PointF& point) {
   CFX_Matrix mt;
   mt.SetReverse(GetCurMatrix());
-
-  CFX_PointF pt = point;
-  mt.TransformPoint(pt.x, pt.y);
-  return pt;
+  return mt.Transform(point);
 }
 
 CFX_PointF CFFL_FormFiller::PWLtoFFL(const CFX_PointF& point) {
-  CFX_Matrix mt = GetCurMatrix();
-
-  CFX_PointF pt = point;
-  mt.TransformPoint(pt.x, pt.y);
-  return pt;
+  return GetCurMatrix().Transform(point);
 }
 
 CFX_PointF CFFL_FormFiller::WndtoPWL(CPDFSDK_PageView* pPageView,
