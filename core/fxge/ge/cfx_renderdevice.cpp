@@ -490,8 +490,8 @@ bool CFX_RenderDevice::DrawPathWithBlend(const CFX_PathData* pPathData,
   uint8_t fill_alpha = (fill_mode & 3) ? FXARGB_A(fill_color) : 0;
   const std::vector<FX_PATHPOINT>& pPoints = pPathData->GetPoints();
   if (stroke_alpha == 0 && pPoints.size() == 2) {
-    CFX_PointF pos1(pPoints[0].m_PointX, pPoints[0].m_PointY);
-    CFX_PointF pos2(pPoints[1].m_PointX, pPoints[1].m_PointY);
+    CFX_PointF pos1 = pPoints[0].m_Point;
+    CFX_PointF pos2 = pPoints[1].m_Point;
     if (pObject2Device) {
       pos1 = pObject2Device->Transform(pos1);
       pos2 = pObject2Device->Transform(pos2);
@@ -692,8 +692,8 @@ bool CFX_RenderDevice::DrawCosmeticLine(FX_FLOAT x1,
   }
   CFX_GraphStateData graph_state;
   CFX_PathData path;
-  path.AppendPoint(x1, y1, FXPT_TYPE::MoveTo, false);
-  path.AppendPoint(x2, y2, FXPT_TYPE::LineTo, false);
+  path.AppendPoint(CFX_PointF(x1, y1), FXPT_TYPE::MoveTo, false);
+  path.AppendPoint(CFX_PointF(x2, y2), FXPT_TYPE::LineTo, false);
   return m_pDeviceDriver->DrawPath(&path, nullptr, &graph_state, 0, color,
                                    fill_mode, blend_type);
 }

@@ -32,8 +32,6 @@ class CFDE_Path {
   CFX_RectF GetBBox(FX_FLOAT fLineWidth, FX_FLOAT fMiterLimit) const;
 
   bool FigureClosed() const;
-  void MoveTo(FX_FLOAT fx, FX_FLOAT fy);
-  void LineTo(FX_FLOAT fx, FX_FLOAT fy);
   void BezierTo(const CFX_PointF& p1,
                 const CFX_PointF& p2,
                 const CFX_PointF& p3);
@@ -41,8 +39,8 @@ class CFDE_Path {
              const CFX_RectF& rect,
              FX_FLOAT startAngle,
              FX_FLOAT endAngle);
-  void MoveTo(const CFX_PointF& p0) { MoveTo(p0.x, p0.y); }
-  void LineTo(const CFX_PointF& p1) { LineTo(p1.x, p1.y); }
+  void MoveTo(const CFX_PointF& p);
+  void LineTo(const CFX_PointF& p);
 
   void GetCurveTangents(const std::vector<CFX_PointF>& points,
                         std::vector<CFX_PointF>* tangents,

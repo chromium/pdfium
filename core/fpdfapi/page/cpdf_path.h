@@ -27,8 +27,7 @@ class CPDF_Path {
   const std::vector<FX_PATHPOINT>& GetPoints() const;
   void ClosePath();
 
-  FX_FLOAT GetPointX(int index) const;
-  FX_FLOAT GetPointY(int index) const;
+  CFX_PointF GetPoint(int index) const;
   CFX_FloatRect GetBoundingBox() const;
   CFX_FloatRect GetBoundingBox(FX_FLOAT line_width, FX_FLOAT miter_limit) const;
 
@@ -38,7 +37,7 @@ class CPDF_Path {
   void Append(const CPDF_Path& other, const CFX_Matrix* pMatrix);
   void Append(const CFX_PathData* pData, const CFX_Matrix* pMatrix);
   void AppendRect(FX_FLOAT left, FX_FLOAT bottom, FX_FLOAT right, FX_FLOAT top);
-  void AppendPoint(FX_FLOAT x, FX_FLOAT y, FXPT_TYPE type, bool close);
+  void AppendPoint(const CFX_PointF& point, FXPT_TYPE type, bool close);
 
   // TODO(tsepez): Remove when all access thru this class.
   const CFX_PathData* GetObject() const { return m_Ref.GetObject(); }

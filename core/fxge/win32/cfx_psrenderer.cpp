@@ -116,7 +116,7 @@ void CFX_PSRenderer::OutputPath(const CFX_PathData* pPathData,
   for (size_t i = 0; i < size; i++) {
     FXPT_TYPE type = pPathData->GetType(i);
     bool closing = pPathData->IsClosingFigure(i);
-    CFX_PointF pos(pPathData->GetPointX(i), pPathData->GetPointY(i));
+    CFX_PointF pos = pPathData->GetPoint(i);
     if (pObject2Device)
       pos = pObject2Device->Transform(pos);
 
@@ -131,10 +131,8 @@ void CFX_PSRenderer::OutputPath(const CFX_PathData* pPathData,
           buf << "h ";
         break;
       case FXPT_TYPE::BezierTo: {
-        CFX_PointF pos1(pPathData->GetPointX(i + 1),
-                        pPathData->GetPointY(i + 1));
-        CFX_PointF pos2(pPathData->GetPointX(i + 2),
-                        pPathData->GetPointY(i + 2));
+        CFX_PointF pos1 = pPathData->GetPoint(i + 1);
+        CFX_PointF pos2 = pPathData->GetPoint(i + 2);
         if (pObject2Device) {
           pos1 = pObject2Device->Transform(pos1);
           pos2 = pObject2Device->Transform(pos2);
@@ -604,21 +602,21 @@ void CFX_PSRenderer::FindPSFontGlyph(CFX_FaceCache* pFaceCache,
   buf << "/X" << *ps_fontnum << " Ff/CharProcs get begin/" << glyphindex
       << "{n ";
   for (size_t p = 0; p < TransformedPath.GetPoints().size(); p++) {
-    FX_FLOAT x = TransformedPath.GetPointX(p), y = TransformedPath.GetPointY(p);
+    CFX_PointF point = TransformedPath.GetPoint(p);
     switch (TransformedPath.GetType(p)) {
       case FXPT_TYPE::MoveTo: {
-        buf << x << " " << y << " m\n";
+        buf << point.x << " " << point.y << " m\n";
         break;
       }
       case FXPT_TYPE::LineTo: {
-        buf << x << " " << y << " l\n";
+        buf << point.x << " " << point.y << " l\n";
         break;
       }
       case FXPT_TYPE::BezierTo: {
-        buf << x << " " << y << " " << TransformedPath.GetPointX(p + 1) << " "
-            << TransformedPath.GetPointY(p + 1) << " "
-            << TransformedPath.GetPointX(p + 2) << " "
-            << TransformedPath.GetPointY(p + 2) << " c\n";
+        CFX_PointF point1 = TransformedPath.GetPoint(p + 1);
+        CFX_PointF point2 = TransformedPath.GetPoint(p + 2);
+        buf << point.x << " " << point.y << " " << point1.x << " " << point1.y
+            << " " << point2.x << " " << point2.y << " c\n";
         p += 2;
         break;
       }

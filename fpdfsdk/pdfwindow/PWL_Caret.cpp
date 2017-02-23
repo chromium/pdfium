@@ -40,18 +40,16 @@ void CPWL_Caret::DrawThisAppearance(CFX_RenderDevice* pDevice,
     FX_FLOAT fCaretBottom = rcRect.bottom;
     if (!rcClip.IsEmpty()) {
       rcRect.Intersect(rcClip);
-      if (!rcRect.IsEmpty()) {
-        fCaretTop = rcRect.top;
-        fCaretBottom = rcRect.bottom;
-        path.AppendPoint(fCaretX, fCaretBottom, FXPT_TYPE::MoveTo, false);
-        path.AppendPoint(fCaretX, fCaretTop, FXPT_TYPE::LineTo, false);
-      } else {
+      if (rcRect.IsEmpty())
         return;
-      }
-    } else {
-      path.AppendPoint(fCaretX, fCaretBottom, FXPT_TYPE::MoveTo, false);
-      path.AppendPoint(fCaretX, fCaretTop, FXPT_TYPE::LineTo, false);
+
+      fCaretTop = rcRect.top;
+      fCaretBottom = rcRect.bottom;
     }
+
+    path.AppendPoint(CFX_PointF(fCaretX, fCaretBottom), FXPT_TYPE::MoveTo,
+                     false);
+    path.AppendPoint(CFX_PointF(fCaretX, fCaretTop), FXPT_TYPE::LineTo, false);
 
     CFX_GraphStateData gsd;
     gsd.m_LineWidth = m_fWidth;

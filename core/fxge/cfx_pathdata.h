@@ -13,13 +13,18 @@
 #include "core/fxcrt/fx_system.h"
 #include "core/fxge/cfx_renderdevice.h"
 
-struct FX_PATHPOINT {
+class FX_PATHPOINT {
+ public:
+  FX_PATHPOINT();
+  FX_PATHPOINT(const CFX_PointF& point, FXPT_TYPE type, bool close);
+  FX_PATHPOINT(const FX_PATHPOINT& other);
+  ~FX_PATHPOINT();
+
   bool IsTypeAndOpen(FXPT_TYPE type) const {
     return m_Type == type && !m_CloseFigure;
   }
 
-  FX_FLOAT m_PointX;
-  FX_FLOAT m_PointY;
+  CFX_PointF m_Point;
   FXPT_TYPE m_Type;
   bool m_CloseFigure;
 };
@@ -37,8 +42,7 @@ class CFX_PathData {
     return m_Points[index].m_CloseFigure;
   }
 
-  FX_FLOAT GetPointX(int index) const { return m_Points[index].m_PointX; }
-  FX_FLOAT GetPointY(int index) const { return m_Points[index].m_PointY; }
+  CFX_PointF GetPoint(int index) const { return m_Points[index].m_Point; }
   const std::vector<FX_PATHPOINT>& GetPoints() const { return m_Points; }
   std::vector<FX_PATHPOINT>& GetPoints() { return m_Points; }
 
@@ -57,7 +61,7 @@ class CFX_PathData {
   void Append(const CFX_PathData& data);
   void Append(const CFX_PathData* pSrc, const CFX_Matrix* pMatrix);
   void AppendRect(FX_FLOAT left, FX_FLOAT bottom, FX_FLOAT right, FX_FLOAT top);
-  void AppendPoint(FX_FLOAT x, FX_FLOAT y, FXPT_TYPE type, bool closeFigure);
+  void AppendPoint(const CFX_PointF& pos, FXPT_TYPE type, bool closeFigure);
   void ClosePath();
 
  private:

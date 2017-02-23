@@ -22,42 +22,38 @@ FWL_Error CFX_Path::Create() {
 
 CFX_Path::~CFX_Path() {}
 
-FWL_Error CFX_Path::MoveTo(FX_FLOAT x, FX_FLOAT y) {
+FWL_Error CFX_Path::MoveTo(const CFX_PointF& point) {
   if (!m_generator)
     return FWL_Error::PropertyInvalid;
-  m_generator->MoveTo(x, y);
+  m_generator->MoveTo(point);
   return FWL_Error::Succeeded;
 }
 
-FWL_Error CFX_Path::LineTo(FX_FLOAT x, FX_FLOAT y) {
+FWL_Error CFX_Path::LineTo(const CFX_PointF& point) {
   if (!m_generator)
     return FWL_Error::PropertyInvalid;
-  m_generator->LineTo(x, y);
+  m_generator->LineTo(point);
   return FWL_Error::Succeeded;
 }
 
-FWL_Error CFX_Path::BezierTo(FX_FLOAT ctrlX1,
-                             FX_FLOAT ctrlY1,
-                             FX_FLOAT ctrlX2,
-                             FX_FLOAT ctrlY2,
-                             FX_FLOAT toX,
-                             FX_FLOAT toY) {
+FWL_Error CFX_Path::BezierTo(const CFX_PointF& c1,
+                             const CFX_PointF& c2,
+                             const CFX_PointF& to) {
   if (!m_generator)
     return FWL_Error::PropertyInvalid;
-  m_generator->BezierTo(ctrlX1, ctrlY1, ctrlX2, ctrlY2, toX, toY);
+  m_generator->BezierTo(c1, c2, to);
   return FWL_Error::Succeeded;
 }
 
-FWL_Error CFX_Path::ArcTo(FX_FLOAT left,
-                          FX_FLOAT top,
-                          FX_FLOAT width,
-                          FX_FLOAT height,
+FWL_Error CFX_Path::ArcTo(const CFX_PointF& pos,
+                          const CFX_SizeF& size,
                           FX_FLOAT startAngle,
                           FX_FLOAT sweepAngle) {
   if (!m_generator)
     return FWL_Error::PropertyInvalid;
-  m_generator->ArcTo(left + width / 2, top + height / 2, width / 2, height / 2,
-                     startAngle, sweepAngle);
+  CFX_SizeF newSize = size / 2.0f;
+  m_generator->ArcTo(CFX_PointF(pos.x + newSize.width, pos.y + newSize.height),
+                     newSize, startAngle, sweepAngle);
   return FWL_Error::Succeeded;
 }
 
@@ -68,28 +64,20 @@ FWL_Error CFX_Path::Close() {
   return FWL_Error::Succeeded;
 }
 
-FWL_Error CFX_Path::AddLine(FX_FLOAT x1,
-                            FX_FLOAT y1,
-                            FX_FLOAT x2,
-                            FX_FLOAT y2) {
+FWL_Error CFX_Path::AddLine(const CFX_PointF& p1, const CFX_PointF& p2) {
   if (!m_generator)
     return FWL_Error::PropertyInvalid;
-  m_generator->AddLine(x1, y1, x2, y2);
+  m_generator->AddLine(p1, p2);
   return FWL_Error::Succeeded;
 }
 
-FWL_Error CFX_Path::AddBezier(FX_FLOAT startX,
-                              FX_FLOAT startY,
-                              FX_FLOAT ctrlX1,
-                              FX_FLOAT ctrlY1,
-                              FX_FLOAT ctrlX2,
-                              FX_FLOAT ctrlY2,
-                              FX_FLOAT endX,
-                              FX_FLOAT endY) {
+FWL_Error CFX_Path::AddBezier(const CFX_PointF& p1,
+                              const CFX_PointF& c1,
+                              const CFX_PointF& c2,
+                              const CFX_PointF& p2) {
   if (!m_generator)
     return FWL_Error::PropertyInvalid;
-  m_generator->AddBezier(startX, startY, ctrlX1, ctrlY1, ctrlX2, ctrlY2, endX,
-                         endY);
+  m_generator->AddBezier(p1, c1, c2, p2);
   return FWL_Error::Succeeded;
 }
 
@@ -103,49 +91,45 @@ FWL_Error CFX_Path::AddRectangle(FX_FLOAT left,
   return FWL_Error::Succeeded;
 }
 
-FWL_Error CFX_Path::AddEllipse(FX_FLOAT left,
-                               FX_FLOAT top,
-                               FX_FLOAT width,
-                               FX_FLOAT height) {
+FWL_Error CFX_Path::AddEllipse(const CFX_PointF& pos, const CFX_SizeF& size) {
   if (!m_generator)
     return FWL_Error::PropertyInvalid;
-  m_generator->AddEllipse(left + width / 2, top + height / 2, width / 2,
-                          height / 2);
+  CFX_SizeF newSize = size / 2.0f;
+  m_generator->AddEllipse(
+      CFX_PointF(pos.x + newSize.width, pos.y + newSize.height), newSize);
   return FWL_Error::Succeeded;
 }
 
 FWL_Error CFX_Path::AddEllipse(const CFX_RectF& rect) {
   if (!m_generator)
     return FWL_Error::PropertyInvalid;
-  m_generator->AddEllipse(rect.left + rect.Width() / 2,
-                          rect.top + rect.Height() / 2, rect.Width() / 2,
-                          rect.Height() / 2);
+  m_generator->AddEllipse(
+      CFX_PointF(rect.left + rect.Width() / 2, rect.top + rect.Height() / 2),
+      CFX_SizeF(rect.Width() / 2, rect.Height() / 2));
   return FWL_Error::Succeeded;
 }
 
-FWL_Error CFX_Path::AddArc(FX_FLOAT left,
-                           FX_FLOAT top,
-                           FX_FLOAT width,
-                           FX_FLOAT height,
+FWL_Error CFX_Path::AddArc(const CFX_PointF& pos,
+                           const CFX_SizeF& size,
                            FX_FLOAT startAngle,
                            FX_FLOAT sweepAngle) {
   if (!m_generator)
     return FWL_Error::PropertyInvalid;
-  m_generator->AddArc(left + width / 2, top + height / 2, width / 2, height / 2,
-                      startAngle, sweepAngle);
+  CFX_SizeF newSize = size / 2;
+  m_generator->AddArc(CFX_PointF(pos.x + newSize.width, pos.y + newSize.height),
+                      newSize, startAngle, sweepAngle);
   return FWL_Error::Succeeded;
 }
 
-FWL_Error CFX_Path::AddPie(FX_FLOAT left,
-                           FX_FLOAT top,
-                           FX_FLOAT width,
-                           FX_FLOAT height,
+FWL_Error CFX_Path::AddPie(const CFX_PointF& pos,
+                           const CFX_SizeF& size,
                            FX_FLOAT startAngle,
                            FX_FLOAT sweepAngle) {
   if (!m_generator)
     return FWL_Error::PropertyInvalid;
-  m_generator->AddPie(left + width / 2, top + height / 2, width / 2, height / 2,
-                      startAngle, sweepAngle);
+  CFX_SizeF newSize = size / 2;
+  m_generator->AddPie(CFX_PointF(pos.x + newSize.width, pos.y + newSize.height),
+                      newSize, startAngle, sweepAngle);
   return FWL_Error::Succeeded;
 }
 

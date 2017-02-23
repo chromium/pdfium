@@ -1445,8 +1445,7 @@ void CPDF_StreamContentParser::AddPathPoint(FX_FLOAT x,
     m_PathStartY = y;
     if (m_PathPointCount &&
         m_pPathPoints[m_PathPointCount - 1].IsTypeAndOpen(FXPT_TYPE::MoveTo)) {
-      m_pPathPoints[m_PathPointCount - 1].m_PointX = x;
-      m_pPathPoints[m_PathPointCount - 1].m_PointY = y;
+      m_pPathPoints[m_PathPointCount - 1].m_Point = CFX_PointF(x, y);
       return;
     }
   } else if (m_PathPointCount == 0) {
@@ -1466,8 +1465,7 @@ void CPDF_StreamContentParser::AddPathPoint(FX_FLOAT x,
   }
   m_pPathPoints[m_PathPointCount - 1].m_Type = type;
   m_pPathPoints[m_PathPointCount - 1].m_CloseFigure = close;
-  m_pPathPoints[m_PathPointCount - 1].m_PointX = x;
-  m_pPathPoints[m_PathPointCount - 1].m_PointY = y;
+  m_pPathPoints[m_PathPointCount - 1].m_Point = CFX_PointF(x, y);
 }
 
 void CPDF_StreamContentParser::AddPathObject(int FillType, bool bStroke) {
@@ -1491,8 +1489,7 @@ void CPDF_StreamContentParser::AddPathObject(int FillType, bool bStroke) {
   CPDF_Path Path;
   for (int i = 0; i < PathPointCount; i++) {
     FX_PATHPOINT& point = m_pPathPoints[i];
-    Path.AppendPoint(point.m_PointX, point.m_PointY, point.m_Type,
-                     point.m_CloseFigure);
+    Path.AppendPoint(point.m_Point, point.m_Type, point.m_CloseFigure);
   }
 
   CFX_Matrix matrix = m_pCurStates->m_CTM;

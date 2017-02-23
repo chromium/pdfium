@@ -1129,20 +1129,20 @@ bool CGdiplusExt::DrawPath(HDC hDC,
   bool bSmooth = false;
   int startpoint = 0;
   for (size_t i = 0; i < pPoints.size(); i++) {
-    points[i].X = pPoints[i].m_PointX;
-    points[i].Y = pPoints[i].m_PointY;
-    FX_FLOAT x = pPoints[i].m_PointX;
-    FX_FLOAT y = pPoints[i].m_PointY;
-    if (pObject2Device)
-      pObject2Device->TransformPoint(x, y);
+    points[i].X = pPoints[i].m_Point.x;
+    points[i].Y = pPoints[i].m_Point.y;
 
-    if (x > 50000 * 1.0f)
+    CFX_PointF pos = pPoints[i].m_Point;
+    if (pObject2Device)
+      pos = pObject2Device->Transform(pos);
+
+    if (pos.x > 50000 * 1.0f)
       points[i].X = 50000 * 1.0f;
-    if (x < -50000 * 1.0f)
+    if (pos.x < -50000 * 1.0f)
       points[i].X = -50000 * 1.0f;
-    if (y > 50000 * 1.0f)
+    if (pos.y > 50000 * 1.0f)
       points[i].Y = 50000 * 1.0f;
-    if (y < -50000 * 1.0f)
+    if (pos.y < -50000 * 1.0f)
       points[i].Y = -50000 * 1.0f;
 
     FXPT_TYPE point_type = pPoints[i].m_Type;

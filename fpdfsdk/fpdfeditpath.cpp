@@ -10,7 +10,7 @@
 
 DLLEXPORT FPDF_PAGEOBJECT STDCALL FPDFPageObj_CreateNewPath(float x, float y) {
   CPDF_PathObject* pPathObj = new CPDF_PathObject;
-  pPathObj->m_Path.AppendPoint(x, y, FXPT_TYPE::MoveTo, false);
+  pPathObj->m_Path.AppendPoint(CFX_PointF(x, y), FXPT_TYPE::MoveTo, false);
   pPathObj->DefaultStates();
   return pPathObj;
 }
@@ -71,7 +71,7 @@ DLLEXPORT FPDF_BOOL FPDFPath_MoveTo(FPDF_PAGEOBJECT path, float x, float y) {
     return false;
 
   auto pPathObj = reinterpret_cast<CPDF_PathObject*>(path);
-  pPathObj->m_Path.AppendPoint(x, y, FXPT_TYPE::MoveTo, false);
+  pPathObj->m_Path.AppendPoint(CFX_PointF(x, y), FXPT_TYPE::MoveTo, false);
   return true;
 }
 
@@ -80,7 +80,7 @@ DLLEXPORT FPDF_BOOL FPDFPath_LineTo(FPDF_PAGEOBJECT path, float x, float y) {
     return false;
 
   auto pPathObj = reinterpret_cast<CPDF_PathObject*>(path);
-  pPathObj->m_Path.AppendPoint(x, y, FXPT_TYPE::LineTo, false);
+  pPathObj->m_Path.AppendPoint(CFX_PointF(x, y), FXPT_TYPE::LineTo, false);
   return true;
 }
 
@@ -95,9 +95,9 @@ DLLEXPORT FPDF_BOOL FPDFPath_BezierTo(FPDF_PAGEOBJECT path,
     return false;
 
   auto pPathObj = reinterpret_cast<CPDF_PathObject*>(path);
-  pPathObj->m_Path.AppendPoint(x1, y1, FXPT_TYPE::BezierTo, false);
-  pPathObj->m_Path.AppendPoint(x2, y2, FXPT_TYPE::BezierTo, false);
-  pPathObj->m_Path.AppendPoint(x3, y3, FXPT_TYPE::BezierTo, false);
+  pPathObj->m_Path.AppendPoint(CFX_PointF(x1, y1), FXPT_TYPE::BezierTo, false);
+  pPathObj->m_Path.AppendPoint(CFX_PointF(x2, y2), FXPT_TYPE::BezierTo, false);
+  pPathObj->m_Path.AppendPoint(CFX_PointF(x3, y3), FXPT_TYPE::BezierTo, false);
   return true;
 }
 

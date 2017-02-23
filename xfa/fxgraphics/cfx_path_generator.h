@@ -20,43 +20,30 @@ class CFX_PathGenerator {
 
   void AddPathData(CFX_PathData* path_data);
 
-  void MoveTo(FX_FLOAT x, FX_FLOAT y);
-  void LineTo(FX_FLOAT x, FX_FLOAT y);
-  void BezierTo(FX_FLOAT ctrl_x1,
-                FX_FLOAT ctrl_y1,
-                FX_FLOAT ctrl_x2,
-                FX_FLOAT ctrl_y2,
-                FX_FLOAT to_x,
-                FX_FLOAT to_y);
+  void MoveTo(const CFX_PointF& point);
+  void LineTo(const CFX_PointF& point);
+  void BezierTo(const CFX_PointF& c1,
+                const CFX_PointF& c2,
+                const CFX_PointF& to);
   void Close();
-  void ArcTo(FX_FLOAT x,
-             FX_FLOAT y,
-             FX_FLOAT width,
-             FX_FLOAT height,
+  void ArcTo(const CFX_PointF& point,
+             const CFX_SizeF& size,
              FX_FLOAT start_angle,
              FX_FLOAT sweep_angle);
 
-  void AddLine(FX_FLOAT x1, FX_FLOAT y1, FX_FLOAT x2, FX_FLOAT y2);
-  void AddBezier(FX_FLOAT start_x,
-                 FX_FLOAT start_y,
-                 FX_FLOAT ctrl_x1,
-                 FX_FLOAT ctrl_y1,
-                 FX_FLOAT ctrl_x2,
-                 FX_FLOAT ctrl_y2,
-                 FX_FLOAT end_x,
-                 FX_FLOAT end_y);
+  void AddLine(const CFX_PointF& p1, const CFX_PointF& p2);
+  void AddBezier(const CFX_PointF& p1,
+                 const CFX_PointF& c1,
+                 const CFX_PointF& c2,
+                 const CFX_PointF& p2);
   void AddRectangle(FX_FLOAT x1, FX_FLOAT y1, FX_FLOAT x2, FX_FLOAT y2);
-  void AddEllipse(FX_FLOAT x, FX_FLOAT y, FX_FLOAT width, FX_FLOAT height);
-  void AddArc(FX_FLOAT x,
-              FX_FLOAT y,
-              FX_FLOAT width,
-              FX_FLOAT height,
+  void AddEllipse(const CFX_PointF& point, const CFX_SizeF& size);
+  void AddArc(const CFX_PointF& point,
+              const CFX_SizeF& size,
               FX_FLOAT start_angle,
               FX_FLOAT sweep_angle);
-  void AddPie(FX_FLOAT x,
-              FX_FLOAT y,
-              FX_FLOAT width,
-              FX_FLOAT height,
+  void AddPie(const CFX_PointF& point,
+              const CFX_SizeF& size,
               FX_FLOAT start_angle,
               FX_FLOAT sweep_angle);
 

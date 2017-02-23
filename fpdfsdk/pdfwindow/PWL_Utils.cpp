@@ -51,16 +51,13 @@ void CPWL_Utils::GetPathDataFromArray(CFX_PathData& path,
   for (int32_t i = 0; i < nCount; i++) {
     switch (pPathData[i].type) {
       case PWLPT_MOVETO:
-        path.AppendPoint(pPathData[i].point.x, pPathData[i].point.y,
-                         FXPT_TYPE::MoveTo, false);
+        path.AppendPoint(pPathData[i].point, FXPT_TYPE::MoveTo, false);
         break;
       case PWLPT_LINETO:
-        path.AppendPoint(pPathData[i].point.x, pPathData[i].point.y,
-                         FXPT_TYPE::LineTo, false);
+        path.AppendPoint(pPathData[i].point, FXPT_TYPE::LineTo, false);
         break;
       case PWLPT_BEZIERTO:
-        path.AppendPoint(pPathData[i].point.x, pPathData[i].point.y,
-                         FXPT_TYPE::BezierTo, false);
+        path.AppendPoint(pPathData[i].point, FXPT_TYPE::BezierTo, false);
         break;
       default:
         break;
@@ -1232,9 +1229,9 @@ void CPWL_Utils::DrawFillArea(CFX_RenderDevice* pDevice,
                               int32_t nCount,
                               const FX_COLORREF& color) {
   CFX_PathData path;
-  path.AppendPoint(pPts[0].x, pPts[0].y, FXPT_TYPE::MoveTo, false);
+  path.AppendPoint(pPts[0], FXPT_TYPE::MoveTo, false);
   for (int32_t i = 1; i < nCount; i++)
-    path.AppendPoint(pPts[i].x, pPts[i].y, FXPT_TYPE::LineTo, false);
+    path.AppendPoint(pPts[i], FXPT_TYPE::LineTo, false);
 
   pDevice->DrawPath(&path, pUser2Device, nullptr, color, 0, FXFILL_ALTERNATE);
 }
@@ -1261,8 +1258,8 @@ void CPWL_Utils::DrawStrokeLine(CFX_RenderDevice* pDevice,
                                 const FX_COLORREF& color,
                                 FX_FLOAT fWidth) {
   CFX_PathData path;
-  path.AppendPoint(ptMoveTo.x, ptMoveTo.y, FXPT_TYPE::MoveTo, false);
-  path.AppendPoint(ptLineTo.x, ptLineTo.y, FXPT_TYPE::LineTo, false);
+  path.AppendPoint(ptMoveTo, FXPT_TYPE::MoveTo, false);
+  path.AppendPoint(ptLineTo, FXPT_TYPE::LineTo, false);
 
   CFX_GraphStateData gsd;
   gsd.m_LineWidth = fWidth;
@@ -1345,16 +1342,21 @@ void CPWL_Utils::DrawBorder(CFX_RenderDevice* pDevice,
       }
       case BorderStyle::DASH: {
         CFX_PathData path;
-        path.AppendPoint(fLeft + fWidth / 2.0f, fBottom + fWidth / 2.0f,
-                         FXPT_TYPE::MoveTo, false);
-        path.AppendPoint(fLeft + fWidth / 2.0f, fTop - fWidth / 2.0f,
-                         FXPT_TYPE::LineTo, false);
-        path.AppendPoint(fRight - fWidth / 2.0f, fTop - fWidth / 2.0f,
-                         FXPT_TYPE::LineTo, false);
-        path.AppendPoint(fRight - fWidth / 2.0f, fBottom + fWidth / 2.0f,
-                         FXPT_TYPE::LineTo, false);
-        path.AppendPoint(fLeft + fWidth / 2.0f, fBottom + fWidth / 2.0f,
-                         FXPT_TYPE::LineTo, false);
+        path.AppendPoint(
+            CFX_PointF(fLeft + fWidth / 2.0f, fBottom + fWidth / 2.0f),
+            FXPT_TYPE::MoveTo, false);
+        path.AppendPoint(
+            CFX_PointF(fLeft + fWidth / 2.0f, fTop - fWidth / 2.0f),
+            FXPT_TYPE::LineTo, false);
+        path.AppendPoint(
+            CFX_PointF(fRight - fWidth / 2.0f, fTop - fWidth / 2.0f),
+            FXPT_TYPE::LineTo, false);
+        path.AppendPoint(
+            CFX_PointF(fRight - fWidth / 2.0f, fBottom + fWidth / 2.0f),
+            FXPT_TYPE::LineTo, false);
+        path.AppendPoint(
+            CFX_PointF(fLeft + fWidth / 2.0f, fBottom + fWidth / 2.0f),
+            FXPT_TYPE::LineTo, false);
 
         CFX_GraphStateData gsd;
         gsd.SetDashCount(2);
@@ -1375,19 +1377,22 @@ void CPWL_Utils::DrawBorder(CFX_RenderDevice* pDevice,
 
         CFX_PathData pathLT;
 
-        pathLT.AppendPoint(fLeft + fHalfWidth, fBottom + fHalfWidth,
+        pathLT.AppendPoint(CFX_PointF(fLeft + fHalfWidth, fBottom + fHalfWidth),
                            FXPT_TYPE::MoveTo, false);
-        pathLT.AppendPoint(fLeft + fHalfWidth, fTop - fHalfWidth,
+        pathLT.AppendPoint(CFX_PointF(fLeft + fHalfWidth, fTop - fHalfWidth),
                            FXPT_TYPE::LineTo, false);
-        pathLT.AppendPoint(fRight - fHalfWidth, fTop - fHalfWidth,
+        pathLT.AppendPoint(CFX_PointF(fRight - fHalfWidth, fTop - fHalfWidth),
                            FXPT_TYPE::LineTo, false);
-        pathLT.AppendPoint(fRight - fHalfWidth * 2, fTop - fHalfWidth * 2,
-                           FXPT_TYPE::LineTo, false);
-        pathLT.AppendPoint(fLeft + fHalfWidth * 2, fTop - fHalfWidth * 2,
-                           FXPT_TYPE::LineTo, false);
-        pathLT.AppendPoint(fLeft + fHalfWidth * 2, fBottom + fHalfWidth * 2,
-                           FXPT_TYPE::LineTo, false);
-        pathLT.AppendPoint(fLeft + fHalfWidth, fBottom + fHalfWidth,
+        pathLT.AppendPoint(
+            CFX_PointF(fRight - fHalfWidth * 2, fTop - fHalfWidth * 2),
+            FXPT_TYPE::LineTo, false);
+        pathLT.AppendPoint(
+            CFX_PointF(fLeft + fHalfWidth * 2, fTop - fHalfWidth * 2),
+            FXPT_TYPE::LineTo, false);
+        pathLT.AppendPoint(
+            CFX_PointF(fLeft + fHalfWidth * 2, fBottom + fHalfWidth * 2),
+            FXPT_TYPE::LineTo, false);
+        pathLT.AppendPoint(CFX_PointF(fLeft + fHalfWidth, fBottom + fHalfWidth),
                            FXPT_TYPE::LineTo, false);
 
         pDevice->DrawPath(&pathLT, pUser2Device, &gsd,
@@ -1395,19 +1400,23 @@ void CPWL_Utils::DrawBorder(CFX_RenderDevice* pDevice,
                           FXFILL_ALTERNATE);
 
         CFX_PathData pathRB;
-        pathRB.AppendPoint(fRight - fHalfWidth, fTop - fHalfWidth,
+        pathRB.AppendPoint(CFX_PointF(fRight - fHalfWidth, fTop - fHalfWidth),
                            FXPT_TYPE::MoveTo, false);
-        pathRB.AppendPoint(fRight - fHalfWidth, fBottom + fHalfWidth,
+        pathRB.AppendPoint(
+            CFX_PointF(fRight - fHalfWidth, fBottom + fHalfWidth),
+            FXPT_TYPE::LineTo, false);
+        pathRB.AppendPoint(CFX_PointF(fLeft + fHalfWidth, fBottom + fHalfWidth),
                            FXPT_TYPE::LineTo, false);
-        pathRB.AppendPoint(fLeft + fHalfWidth, fBottom + fHalfWidth,
-                           FXPT_TYPE::LineTo, false);
-        pathRB.AppendPoint(fLeft + fHalfWidth * 2, fBottom + fHalfWidth * 2,
-                           FXPT_TYPE::LineTo, false);
-        pathRB.AppendPoint(fRight - fHalfWidth * 2, fBottom + fHalfWidth * 2,
-                           FXPT_TYPE::LineTo, false);
-        pathRB.AppendPoint(fRight - fHalfWidth * 2, fTop - fHalfWidth * 2,
-                           FXPT_TYPE::LineTo, false);
-        pathRB.AppendPoint(fRight - fHalfWidth, fTop - fHalfWidth,
+        pathRB.AppendPoint(
+            CFX_PointF(fLeft + fHalfWidth * 2, fBottom + fHalfWidth * 2),
+            FXPT_TYPE::LineTo, false);
+        pathRB.AppendPoint(
+            CFX_PointF(fRight - fHalfWidth * 2, fBottom + fHalfWidth * 2),
+            FXPT_TYPE::LineTo, false);
+        pathRB.AppendPoint(
+            CFX_PointF(fRight - fHalfWidth * 2, fTop - fHalfWidth * 2),
+            FXPT_TYPE::LineTo, false);
+        pathRB.AppendPoint(CFX_PointF(fRight - fHalfWidth, fTop - fHalfWidth),
                            FXPT_TYPE::LineTo, false);
 
         pDevice->DrawPath(&pathRB, pUser2Device, &gsd,
@@ -1427,9 +1436,10 @@ void CPWL_Utils::DrawBorder(CFX_RenderDevice* pDevice,
       }
       case BorderStyle::UNDERLINE: {
         CFX_PathData path;
-        path.AppendPoint(fLeft, fBottom + fWidth / 2, FXPT_TYPE::MoveTo, false);
-        path.AppendPoint(fRight, fBottom + fWidth / 2, FXPT_TYPE::LineTo,
-                         false);
+        path.AppendPoint(CFX_PointF(fLeft, fBottom + fWidth / 2),
+                         FXPT_TYPE::MoveTo, false);
+        path.AppendPoint(CFX_PointF(fRight, fBottom + fWidth / 2),
+                         FXPT_TYPE::LineTo, false);
 
         CFX_GraphStateData gsd;
         gsd.m_LineWidth = fWidth;

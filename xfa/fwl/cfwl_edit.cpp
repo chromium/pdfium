@@ -49,10 +49,10 @@ void AddSquigglyPath(CFX_Path* pPathData,
                      FX_FLOAT fEndX,
                      FX_FLOAT fY,
                      FX_FLOAT fStep) {
-  pPathData->MoveTo(fStartX, fY);
+  pPathData->MoveTo(CFX_PointF(fStartX, fY));
   int i = 1;
   for (FX_FLOAT fx = fStartX + fStep; fx < fEndX; fx += fStep, ++i)
-    pPathData->LineTo(fx, fY + (i & 1) * fStep);
+    pPathData->LineTo(CFX_PointF(fx, fY + (i & 1) * fStep));
 }
 
 }  // namespace
@@ -587,7 +587,8 @@ void CFWL_Edit::DrawContent(CFX_Graphics* pGraphics,
     FX_FLOAT fLeft = m_rtEngine.left + 1;
     for (int32_t i = 1; i < iLimit; i++) {
       fLeft += fStep;
-      path.AddLine(fLeft, m_rtClient.top, fLeft, m_rtClient.bottom());
+      path.AddLine(CFX_PointF(fLeft, m_rtClient.top),
+                   CFX_PointF(fLeft, m_rtClient.bottom()));
     }
 
     CFWL_ThemeBackground param;

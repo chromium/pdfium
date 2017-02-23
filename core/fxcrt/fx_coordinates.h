@@ -127,16 +127,16 @@ class CFX_STemplate {
     height /= divisor;
     return *this;
   }
-  CFX_STemplate operator+(const CFX_STemplate& other) {
+  CFX_STemplate operator+(const CFX_STemplate& other) const {
     return CFX_STemplate(width + other.width, height + other.height);
   }
-  CFX_STemplate operator-(const CFX_STemplate& other) {
+  CFX_STemplate operator-(const CFX_STemplate& other) const {
     return CFX_STemplate(width - other.width, height - other.height);
   }
-  CFX_STemplate operator*(BaseType factor) {
+  CFX_STemplate operator*(BaseType factor) const {
     return CFX_STemplate(width * factor, height * factor);
   }
-  CFX_STemplate operator/(BaseType divisor) {
+  CFX_STemplate operator/(BaseType divisor) const {
     return CFX_STemplate(width / divisor, height / divisor);
   }
 
@@ -191,50 +191,6 @@ using CFX_VectorF = CFX_VTemplate<FX_FLOAT>;
 
 // Rectangles.
 // TODO(tsepez): Consolidate all these different rectangle classes.
-
-// LTRB rectangles (y-axis runs downwards).
-struct FX_RECT {
-  FX_RECT() : left(0), top(0), right(0), bottom(0) {}
-  FX_RECT(int l, int t, int r, int b) : left(l), top(t), right(r), bottom(b) {}
-
-  int Width() const { return right - left; }
-  int Height() const { return bottom - top; }
-  bool IsEmpty() const { return right <= left || bottom <= top; }
-
-  bool Valid() const {
-    pdfium::base::CheckedNumeric<int> w = right;
-    pdfium::base::CheckedNumeric<int> h = bottom;
-    w -= left;
-    h -= top;
-    return w.IsValid() && h.IsValid();
-  }
-
-  void Normalize();
-
-  void Intersect(const FX_RECT& src);
-  void Intersect(int l, int t, int r, int b) { Intersect(FX_RECT(l, t, r, b)); }
-
-  void Offset(int dx, int dy) {
-    left += dx;
-    right += dx;
-    top += dy;
-    bottom += dy;
-  }
-
-  bool operator==(const FX_RECT& src) const {
-    return left == src.left && right == src.right && top == src.top &&
-           bottom == src.bottom;
-  }
-
-  bool Contains(int x, int y) const {
-    return x >= left && x < right && y >= top && y < bottom;
-  }
-
-  int32_t left;
-  int32_t top;
-  int32_t right;
-  int32_t bottom;
-};
 
 // LTWH rectangles (y-axis runs downwards).
 template <class BaseType>
@@ -450,6 +406,51 @@ class CFX_RTemplate {
 using CFX_Rect = CFX_RTemplate<int32_t>;
 using CFX_RectF = CFX_RTemplate<FX_FLOAT>;
 
+// LTRB rectangles (y-axis runs downwards).
+struct FX_RECT {
+  FX_RECT() : left(0), top(0), right(0), bottom(0) {}
+  FX_RECT(int l, int t, int r, int b) : left(l), top(t), right(r), bottom(b) {}
+
+  int Width() const { return right - left; }
+  int Height() const { return bottom - top; }
+  bool IsEmpty() const { return right <= left || bottom <= top; }
+
+  bool Valid() const {
+    pdfium::base::CheckedNumeric<int> w = right;
+    pdfium::base::CheckedNumeric<int> h = bottom;
+    w -= left;
+    h -= top;
+    return w.IsValid() && h.IsValid();
+  }
+
+  void Normalize();
+
+  void Intersect(const FX_RECT& src);
+  void Intersect(int l, int t, int r, int b) { Intersect(FX_RECT(l, t, r, b)); }
+
+  void Offset(int dx, int dy) {
+    left += dx;
+    right += dx;
+    top += dy;
+    bottom += dy;
+  }
+
+  bool operator==(const FX_RECT& src) const {
+    return left == src.left && right == src.right && top == src.top &&
+           bottom == src.bottom;
+  }
+
+  bool Contains(int x, int y) const {
+    return x >= left && x < right && y >= top && y < bottom;
+  }
+
+  int32_t left;
+  int32_t top;
+  int32_t right;
+  int32_t bottom;
+};
+
+// LTRB rectangles (y-axis runs upwards).
 class CFX_FloatRect {
  public:
   CFX_FloatRect() : CFX_FloatRect(0.0f, 0.0f, 0.0f, 0.0f) {}

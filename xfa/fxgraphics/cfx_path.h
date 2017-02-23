@@ -21,50 +21,34 @@ class CFX_Path final {
   ~CFX_Path();
 
   FWL_Error Create();
-  FWL_Error MoveTo(FX_FLOAT x, FX_FLOAT y);
-  FWL_Error LineTo(FX_FLOAT x, FX_FLOAT y);
-  FWL_Error BezierTo(FX_FLOAT ctrlX1,
-                     FX_FLOAT ctrlY1,
-                     FX_FLOAT ctrlX2,
-                     FX_FLOAT ctrlY2,
-                     FX_FLOAT toX,
-                     FX_FLOAT toY);
-  FWL_Error ArcTo(FX_FLOAT left,
-                  FX_FLOAT top,
-                  FX_FLOAT width,
-                  FX_FLOAT height,
+  FWL_Error MoveTo(const CFX_PointF& point);
+  FWL_Error LineTo(const CFX_PointF& point);
+  FWL_Error BezierTo(const CFX_PointF& c1,
+                     const CFX_PointF& c2,
+                     const CFX_PointF& to);
+  FWL_Error ArcTo(const CFX_PointF& pos,
+                  const CFX_SizeF& size,
                   FX_FLOAT startAngle,
                   FX_FLOAT sweepAngle);
   FWL_Error Close();
 
-  FWL_Error AddLine(FX_FLOAT x1, FX_FLOAT y1, FX_FLOAT x2, FX_FLOAT y2);
-  FWL_Error AddBezier(FX_FLOAT startX,
-                      FX_FLOAT startY,
-                      FX_FLOAT ctrlX1,
-                      FX_FLOAT ctrlY1,
-                      FX_FLOAT ctrlX2,
-                      FX_FLOAT ctrlY2,
-                      FX_FLOAT endX,
-                      FX_FLOAT endY);
+  FWL_Error AddLine(const CFX_PointF& p1, const CFX_PointF& p2);
+  FWL_Error AddBezier(const CFX_PointF& p1,
+                      const CFX_PointF& c1,
+                      const CFX_PointF& c2,
+                      const CFX_PointF& p2);
   FWL_Error AddRectangle(FX_FLOAT left,
                          FX_FLOAT top,
                          FX_FLOAT width,
                          FX_FLOAT height);
-  FWL_Error AddEllipse(FX_FLOAT left,
-                       FX_FLOAT top,
-                       FX_FLOAT width,
-                       FX_FLOAT height);
+  FWL_Error AddEllipse(const CFX_PointF& pos, const CFX_SizeF& size);
   FWL_Error AddEllipse(const CFX_RectF& rect);
-  FWL_Error AddArc(FX_FLOAT left,
-                   FX_FLOAT top,
-                   FX_FLOAT width,
-                   FX_FLOAT height,
+  FWL_Error AddArc(const CFX_PointF& pos,
+                   const CFX_SizeF& size,
                    FX_FLOAT startAngle,
                    FX_FLOAT sweepAngle);
-  FWL_Error AddPie(FX_FLOAT left,
-                   FX_FLOAT top,
-                   FX_FLOAT width,
-                   FX_FLOAT height,
+  FWL_Error AddPie(const CFX_PointF& pos,
+                   const CFX_SizeF& size,
                    FX_FLOAT startAngle,
                    FX_FLOAT sweepAngle);
   FWL_Error AddSubpath(CFX_Path* path);

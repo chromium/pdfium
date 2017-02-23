@@ -89,9 +89,9 @@ void CXFA_FFLine::RenderWidget(CFX_Graphics* pGS,
   CFX_Path linePath;
   linePath.Create();
   if (lineObj.GetSlope() && rtLine.right() > 0.0f && rtLine.bottom() > 0.0f)
-    linePath.AddLine(rtLine.right(), rtLine.top, rtLine.left, rtLine.bottom());
+    linePath.AddLine(rtLine.TopRight(), rtLine.BottomLeft());
   else
-    linePath.AddLine(rtLine.left, rtLine.top, rtLine.right(), rtLine.bottom());
+    linePath.AddLine(rtLine.TopLeft(), rtLine.BottomRight());
 
   CFX_Color color(lineColor);
   pGS->SaveGraphState();

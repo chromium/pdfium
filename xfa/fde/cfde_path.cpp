@@ -18,20 +18,20 @@ bool CFDE_Path::FigureClosed() const {
   return points.empty() ? true : points.back().m_CloseFigure;
 }
 
-void CFDE_Path::MoveTo(FX_FLOAT fx, FX_FLOAT fy) {
-  m_Path.AppendPoint(fx, fy, FXPT_TYPE::MoveTo, false);
+void CFDE_Path::MoveTo(const CFX_PointF& point) {
+  m_Path.AppendPoint(point, FXPT_TYPE::MoveTo, false);
 }
 
-void CFDE_Path::LineTo(FX_FLOAT fx, FX_FLOAT fy) {
-  m_Path.AppendPoint(fx, fy, FXPT_TYPE::LineTo, false);
+void CFDE_Path::LineTo(const CFX_PointF& point) {
+  m_Path.AppendPoint(point, FXPT_TYPE::LineTo, false);
 }
 
 void CFDE_Path::BezierTo(const CFX_PointF& p1,
                          const CFX_PointF& p2,
                          const CFX_PointF& p3) {
-  m_Path.AppendPoint(p1.x, p1.y, FXPT_TYPE::BezierTo, false);
-  m_Path.AppendPoint(p2.x, p2.y, FXPT_TYPE::BezierTo, false);
-  m_Path.AppendPoint(p3.x, p3.y, FXPT_TYPE::BezierTo, false);
+  m_Path.AppendPoint(p1, FXPT_TYPE::BezierTo, false);
+  m_Path.AppendPoint(p2, FXPT_TYPE::BezierTo, false);
+  m_Path.AppendPoint(p3, FXPT_TYPE::BezierTo, false);
 }
 
 void CFDE_Path::ArcTo(bool bStart,
@@ -52,6 +52,7 @@ void CFDE_Path::ArcTo(bool bStart,
     else
       alpha -= 2 * FX_PI;
   }
+
   FX_FLOAT half_delta = (beta - alpha) / 2;
   FX_FLOAT bcp = 4.0f / 3 * (1 - FXSYS_cos(half_delta)) / FXSYS_sin(half_delta);
   FX_FLOAT sin_alpha = FXSYS_sin(alpha);
@@ -155,8 +156,8 @@ void CFDE_Path::AddEllipse(const CFX_RectF& rect) {
 
 void CFDE_Path::AddLine(const CFX_PointF& pt1, const CFX_PointF& pt2) {
   std::vector<FX_PATHPOINT>& points = m_Path.GetPoints();
-  if (points.empty() || FXSYS_fabs(points.back().m_PointX - pt1.x) > 0.001 ||
-      FXSYS_fabs(points.back().m_PointY - pt1.y) > 0.001) {
+  if (points.empty() || FXSYS_fabs(points.back().m_Point.x - pt1.x) > 0.001 ||
+      FXSYS_fabs(points.back().m_Point.y - pt1.y) > 0.001) {
     MoveTo(pt1);
   }
   LineTo(pt2);
@@ -169,7 +170,7 @@ void CFDE_Path::AddPath(const CFDE_Path* pSrc, bool bConnect) {
   if (pSrc->m_Path.GetPoints().empty())
     return;
   if (bConnect)
-    LineTo(pSrc->m_Path.GetPointX(0), pSrc->m_Path.GetPointY(0));
+    LineTo(pSrc->m_Path.GetPoint(0));
 
   m_Path.Append(&pSrc->m_Path, nullptr);
 }

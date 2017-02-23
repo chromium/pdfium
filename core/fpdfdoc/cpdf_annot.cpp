@@ -500,8 +500,8 @@ void CPDF_Annot::DrawBorder(CFX_RenderDevice* pDevice,
   path.AppendRect(rect.left + width, rect.bottom + width, rect.right - width,
                   rect.top - width);
   int fill_type = 0;
-  if (pOptions && (pOptions->m_Flags & RENDER_NOPATHSMOOTH)) {
+  if (pOptions && (pOptions->m_Flags & RENDER_NOPATHSMOOTH))
     fill_type |= FXFILL_NOPATHSMOOTH;
-  }
+
   pDevice->DrawPath(&path, pUser2Device, &graph_state, argb, argb, fill_type);
 }

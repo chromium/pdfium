@@ -280,17 +280,16 @@ SkPath BuildPath(const CFX_PathData* pPathData) {
   const CFX_PathData* pFPath = pPathData;
   const std::vector<FX_PATHPOINT>& pPoints = pFPath->GetPoints();
   for (size_t i = 0; i < pPoints.size(); i++) {
-    FX_FLOAT x = pPoints[i].m_PointX;
-    FX_FLOAT y = pPoints[i].m_PointY;
+    CFX_PointF point = pPoints[i].m_Point;
     FXPT_TYPE point_type = pPoints[i].m_Type;
     if (point_type == FXPT_TYPE::MoveTo) {
-      skPath.moveTo(x, y);
+      skPath.moveTo(point.x, point.y);
     } else if (point_type == FXPT_TYPE::LineTo) {
-      skPath.lineTo(x, y);
+      skPath.lineTo(point.x, point.y);
     } else if (point_type == FXPT_TYPE::BezierTo) {
-      FX_FLOAT x2 = pPoints[i + 1].m_PointX, y2 = pPoints[i + 1].m_PointY;
-      FX_FLOAT x3 = pPoints[i + 2].m_PointX, y3 = pPoints[i + 2].m_PointY;
-      skPath.cubicTo(x, y, x2, y2, x3, y3);
+      CFX_PointF point2 = pPoints[i + 1].m_Point;
+      CFX_PointF point3 = pPoints[i + 2].m_Point;
+      skPath.cubicTo(point.x, point.y, point2.x, point2.y, point3.x, point3.y);
       i += 2;
     }
     if (pPoints[i].m_CloseFigure)

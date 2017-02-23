@@ -639,11 +639,11 @@ struct Coon_Bezier {
     int i;
     x.GetPoints(p);
     for (i = 0; i < 4; i++)
-      pPoints[start_idx + i].m_PointX = p[i];
+      pPoints[start_idx + i].m_Point.x = p[i];
 
     y.GetPoints(p);
     for (i = 0; i < 4; i++)
-      pPoints[start_idx + i].m_PointY = p[i];
+      pPoints[start_idx + i].m_Point.y = p[i];
   }
 
   void GetPointsReverse(std::vector<FX_PATHPOINT>& pPoints, size_t start_idx) {
@@ -651,11 +651,11 @@ struct Coon_Bezier {
     int i;
     x.GetPointsReverse(p);
     for (i = 0; i < 4; i++)
-      pPoints[i + start_idx].m_PointX = p[i];
+      pPoints[i + start_idx].m_Point.x = p[i];
 
     y.GetPointsReverse(p);
     for (i = 0; i < 4; i++)
-      pPoints[i + start_idx].m_PointY = p[i];
+      pPoints[i + start_idx].m_Point.y = p[i];
   }
 
   float Distance() { return x.Distance() + y.Distance(); }
@@ -822,7 +822,7 @@ void DrawCoonPatchMeshes(
 
   for (int i = 0; i < 13; i++) {
     patch.path.AppendPoint(
-        0, 0, i == 0 ? FXPT_TYPE::MoveTo : FXPT_TYPE::BezierTo, false);
+        CFX_PointF(), i == 0 ? FXPT_TYPE::MoveTo : FXPT_TYPE::BezierTo, false);
   }
 
   CFX_PointF coords[16];

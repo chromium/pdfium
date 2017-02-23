@@ -196,39 +196,39 @@ void CFWL_WidgetTP::DrawArrow(CFX_Graphics* pGraphics,
   path.Create();
   switch (eDict) {
     case FWLTHEME_DIRECTION_Down: {
-      path.MoveTo(fLeft, fTop + 1);
-      path.LineTo(fLeft + 4, fTop + 5);
-      path.LineTo(fLeft + 8, fTop + 1);
-      path.LineTo(fLeft + 7, fTop);
-      path.LineTo(fLeft + 4, fTop + 3);
-      path.LineTo(fLeft + 1, fTop);
+      path.MoveTo(CFX_PointF(fLeft, fTop + 1));
+      path.LineTo(CFX_PointF(fLeft + 4, fTop + 5));
+      path.LineTo(CFX_PointF(fLeft + 8, fTop + 1));
+      path.LineTo(CFX_PointF(fLeft + 7, fTop));
+      path.LineTo(CFX_PointF(fLeft + 4, fTop + 3));
+      path.LineTo(CFX_PointF(fLeft + 1, fTop));
       break;
     }
     case FWLTHEME_DIRECTION_Up: {
-      path.MoveTo(fLeft, fTop + 4);
-      path.LineTo(fLeft + 4, fTop);
-      path.LineTo(fLeft + 8, fTop + 4);
-      path.LineTo(fLeft + 7, fTop + 5);
-      path.LineTo(fLeft + 4, fTop + 2);
-      path.LineTo(fLeft + 1, fTop + 5);
+      path.MoveTo(CFX_PointF(fLeft, fTop + 4));
+      path.LineTo(CFX_PointF(fLeft + 4, fTop));
+      path.LineTo(CFX_PointF(fLeft + 8, fTop + 4));
+      path.LineTo(CFX_PointF(fLeft + 7, fTop + 5));
+      path.LineTo(CFX_PointF(fLeft + 4, fTop + 2));
+      path.LineTo(CFX_PointF(fLeft + 1, fTop + 5));
       break;
     }
     case FWLTHEME_DIRECTION_Right: {
-      path.MoveTo(fLeft + 1, fTop);
-      path.LineTo(fLeft + 5, fTop + 4);
-      path.LineTo(fLeft + 1, fTop + 8);
-      path.LineTo(fLeft, fTop + 7);
-      path.LineTo(fLeft + 3, fTop + 4);
-      path.LineTo(fLeft, fTop + 1);
+      path.MoveTo(CFX_PointF(fLeft + 1, fTop));
+      path.LineTo(CFX_PointF(fLeft + 5, fTop + 4));
+      path.LineTo(CFX_PointF(fLeft + 1, fTop + 8));
+      path.LineTo(CFX_PointF(fLeft, fTop + 7));
+      path.LineTo(CFX_PointF(fLeft + 3, fTop + 4));
+      path.LineTo(CFX_PointF(fLeft, fTop + 1));
       break;
     }
     case FWLTHEME_DIRECTION_Left: {
-      path.MoveTo(fLeft, fTop + 4);
-      path.LineTo(fLeft + 4, fTop);
-      path.LineTo(fLeft + 5, fTop + 1);
-      path.LineTo(fLeft + 2, fTop + 4);
-      path.LineTo(fLeft + 5, fTop + 7);
-      path.LineTo(fLeft + 4, fTop + 8);
+      path.MoveTo(CFX_PointF(fLeft, fTop + 4));
+      path.LineTo(CFX_PointF(fLeft + 4, fTop));
+      path.LineTo(CFX_PointF(fLeft + 5, fTop + 1));
+      path.LineTo(CFX_PointF(fLeft + 2, fTop + 4));
+      path.LineTo(CFX_PointF(fLeft + 5, fTop + 7));
+      path.LineTo(CFX_PointF(fLeft + 4, fTop + 8));
       break;
     }
   }

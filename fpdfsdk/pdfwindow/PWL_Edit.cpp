@@ -326,13 +326,17 @@ void CPWL_Edit::DrawThisAppearance(CFX_RenderDevice* pDevice,
 
         for (int32_t i = 0; i < nCharArray - 1; i++) {
           path.AppendPoint(
-              rcClient.left +
-                  ((rcClient.right - rcClient.left) / nCharArray) * (i + 1),
-              rcClient.bottom, FXPT_TYPE::MoveTo, false);
+              CFX_PointF(
+                  rcClient.left +
+                      ((rcClient.right - rcClient.left) / nCharArray) * (i + 1),
+                  rcClient.bottom),
+              FXPT_TYPE::MoveTo, false);
           path.AppendPoint(
-              rcClient.left +
-                  ((rcClient.right - rcClient.left) / nCharArray) * (i + 1),
-              rcClient.top, FXPT_TYPE::LineTo, false);
+              CFX_PointF(
+                  rcClient.left +
+                      ((rcClient.right - rcClient.left) / nCharArray) * (i + 1),
+                  rcClient.top),
+              FXPT_TYPE::LineTo, false);
         }
         if (!path.GetPoints().empty()) {
           pDevice->DrawPath(
@@ -354,13 +358,17 @@ void CPWL_Edit::DrawThisAppearance(CFX_RenderDevice* pDevice,
         CFX_PathData path;
         for (int32_t i = 0; i < nCharArray - 1; i++) {
           path.AppendPoint(
-              rcClient.left +
-                  ((rcClient.right - rcClient.left) / nCharArray) * (i + 1),
-              rcClient.bottom, FXPT_TYPE::MoveTo, false);
+              CFX_PointF(
+                  rcClient.left +
+                      ((rcClient.right - rcClient.left) / nCharArray) * (i + 1),
+                  rcClient.bottom),
+              FXPT_TYPE::MoveTo, false);
           path.AppendPoint(
-              rcClient.left +
-                  ((rcClient.right - rcClient.left) / nCharArray) * (i + 1),
-              rcClient.top, FXPT_TYPE::LineTo, false);
+              CFX_PointF(
+                  rcClient.left +
+                      ((rcClient.right - rcClient.left) / nCharArray) * (i + 1),
+                  rcClient.top),
+              FXPT_TYPE::LineTo, false);
         }
         if (!path.GetPoints().empty()) {
           pDevice->DrawPath(

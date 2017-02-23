@@ -20,12 +20,8 @@ void CPDF_Path::ClosePath() {
   m_Ref.GetPrivateCopy()->ClosePath();
 }
 
-FX_FLOAT CPDF_Path::GetPointX(int index) const {
-  return m_Ref.GetObject()->GetPointX(index);
-}
-
-FX_FLOAT CPDF_Path::GetPointY(int index) const {
-  return m_Ref.GetObject()->GetPointY(index);
+CFX_PointF CPDF_Path::GetPoint(int index) const {
+  return m_Ref.GetObject()->GetPoint(index);
 }
 
 CFX_FloatRect CPDF_Path::GetBoundingBox() const {
@@ -60,11 +56,10 @@ void CPDF_Path::AppendRect(FX_FLOAT left,
   m_Ref.GetPrivateCopy()->AppendRect(left, bottom, right, top);
 }
 
-void CPDF_Path::AppendPoint(FX_FLOAT x,
-                            FX_FLOAT y,
+void CPDF_Path::AppendPoint(const CFX_PointF& point,
                             FXPT_TYPE type,
                             bool close) {
   CFX_PathData data;
-  data.AppendPoint(x, y, type, close);
+  data.AppendPoint(point, type, close);
   Append(&data, nullptr);
 }

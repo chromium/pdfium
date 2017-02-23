@@ -94,10 +94,13 @@ void CFWL_CheckBoxTP::DrawSignCross(CFX_Graphics* pGraphics,
                                     CFX_Matrix* pMatrix) {
   CFX_Path path;
   path.Create();
+
   FX_FLOAT fRight = pRtSign->right();
   FX_FLOAT fBottom = pRtSign->bottom();
-  path.AddLine(pRtSign->left, pRtSign->top, fRight, fBottom);
-  path.AddLine(pRtSign->left, fBottom, fRight, pRtSign->top);
+  path.AddLine(pRtSign->TopLeft(), CFX_PointF(fRight, fBottom));
+  path.AddLine(CFX_PointF(pRtSign->left, fBottom),
+               CFX_PointF(fRight, pRtSign->top));
+
   CFX_Color crFill(argbFill);
   pGraphics->SaveGraphState();
   pGraphics->SetStrokeColor(&crFill);
@@ -112,14 +115,16 @@ void CFWL_CheckBoxTP::DrawSignDiamond(CFX_Graphics* pGraphics,
                                       CFX_Matrix* pMatrix) {
   CFX_Path path;
   path.Create();
+
   FX_FLOAT fWidth = pRtSign->width;
   FX_FLOAT fHeight = pRtSign->height;
   FX_FLOAT fBottom = pRtSign->bottom();
-  path.MoveTo(pRtSign->left + fWidth / 2, pRtSign->top);
-  path.LineTo(pRtSign->left, pRtSign->top + fHeight / 2);
-  path.LineTo(pRtSign->left + fWidth / 2, fBottom);
-  path.LineTo(pRtSign->right(), pRtSign->top + fHeight / 2);
-  path.LineTo(pRtSign->left + fWidth / 2, pRtSign->top);
+  path.MoveTo(CFX_PointF(pRtSign->left + fWidth / 2, pRtSign->top));
+  path.LineTo(CFX_PointF(pRtSign->left, pRtSign->top + fHeight / 2));
+  path.LineTo(CFX_PointF(pRtSign->left + fWidth / 2, fBottom));
+  path.LineTo(CFX_PointF(pRtSign->right(), pRtSign->top + fHeight / 2));
+  path.LineTo(CFX_PointF(pRtSign->left + fWidth / 2, pRtSign->top));
+
   CFX_Color crFill(argbFill);
   pGraphics->SaveGraphState();
   pGraphics->SetFillColor(&crFill);
@@ -148,27 +153,32 @@ void CFWL_CheckBoxTP::DrawSignStar(CFX_Graphics* pGraphics,
                                    CFX_Matrix* pMatrix) {
   CFX_Path path;
   path.Create();
+
   FX_FLOAT fBottom = pRtSign->bottom();
   FX_FLOAT fRadius =
-      (pRtSign->top - fBottom) / (1 + (FX_FLOAT)cos(FX_PI / 5.0f));
+      (pRtSign->top - fBottom) / (1 + static_cast<FX_FLOAT>(cos(FX_PI / 5.0f)));
   CFX_PointF ptCenter((pRtSign->left + pRtSign->right()) / 2.0f,
                       (pRtSign->top + fBottom) / 2.0f);
-  FX_FLOAT px[5], py[5];
+
+  CFX_PointF points[5];
   FX_FLOAT fAngel = FX_PI / 10.0f;
   for (int32_t i = 0; i < 5; i++) {
-    px[i] = ptCenter.x + fRadius * (FX_FLOAT)cos(fAngel);
-    py[i] = ptCenter.y + fRadius * (FX_FLOAT)sin(fAngel);
+    points[i] =
+        ptCenter + CFX_PointF(fRadius * static_cast<FX_FLOAT>(cos(fAngel)),
+                              fRadius * static_cast<FX_FLOAT>(sin(fAngel)));
     fAngel += FX_PI * 2 / 5.0f;
   }
-  path.MoveTo(px[0], py[0]);
+
+  path.MoveTo(points[0]);
   int32_t nNext = 0;
   for (int32_t j = 0; j < 5; j++) {
     nNext += 2;
-    if (nNext >= 5) {
+    if (nNext >= 5)
       nNext -= 5;
-    }
-    path.LineTo(px[nNext], py[nNext]);
+
+    path.LineTo(points[nNext]);
   }
+
   CFX_Color crFill(argbFill);
   pGraphics->SaveGraphState();
   pGraphics->SetFillColor(&crFill);
@@ -218,6 +228,7 @@ void CFWL_CheckBoxTP::InitCheckPath(FX_FLOAT fCheckLen) {
   if (!m_pCheckPath) {
     m_pCheckPath = pdfium::MakeUnique<CFX_Path>();
     m_pCheckPath->Create();
+
     FX_FLOAT fWidth = kSignPath;
     FX_FLOAT fHeight = -kSignPath;
     FX_FLOAT fBottom = kSignPath;
@@ -238,45 +249,32 @@ void CFWL_CheckBoxTP::InitCheckPath(FX_FLOAT fCheckLen) {
     CFX_PointF pt54(fWidth / 3.4f, fBottom + fHeight / 3.5f);
     CFX_PointF pt51(fWidth / 3.6f, fBottom + fHeight / 4.0f);
     CFX_PointF pt15(fWidth / 3.5f, fBottom + fHeight * 3.5f / 5.0f);
-    m_pCheckPath->MoveTo(pt1.x, pt1.y);
-    FX_FLOAT px1 = pt12.x - pt1.x;
-    FX_FLOAT py1 = pt12.y - pt1.y;
-    FX_FLOAT px2 = pt21.x - pt2.x;
-    FX_FLOAT py2 = pt21.y - pt2.y;
-    m_pCheckPath->BezierTo(pt1.x + px1 * FX_BEZIER, pt1.y + py1 * FX_BEZIER,
-                           pt2.x + px2 * FX_BEZIER, pt2.y + py2 * FX_BEZIER,
-                           pt2.x, pt2.y);
-    px1 = pt23.x - pt2.x;
-    py1 = pt23.y - pt2.y;
-    px2 = pt32.x - pt3.x;
-    py2 = pt32.y - pt3.y;
-    m_pCheckPath->BezierTo(pt2.x + px1 * FX_BEZIER, pt2.y + py1 * FX_BEZIER,
-                           pt3.x + px2 * FX_BEZIER, pt3.y + py2 * FX_BEZIER,
-                           pt3.x, pt3.y);
-    px1 = pt34.x - pt3.x;
-    py1 = pt34.y - pt3.y;
-    px2 = pt43.x - pt4.x;
-    py2 = pt43.y - pt4.y;
-    m_pCheckPath->BezierTo(pt3.x + px1 * FX_BEZIER, pt3.y + py1 * FX_BEZIER,
-                           pt4.x + px2 * FX_BEZIER, pt4.y + py2 * FX_BEZIER,
-                           pt4.x, pt4.y);
-    px1 = pt45.x - pt4.x;
-    py1 = pt45.y - pt4.y;
-    px2 = pt54.x - pt5.x;
-    py2 = pt54.y - pt5.y;
-    m_pCheckPath->BezierTo(pt4.x + px1 * FX_BEZIER, pt4.y + py1 * FX_BEZIER,
-                           pt5.x + px2 * FX_BEZIER, pt5.y + py2 * FX_BEZIER,
-                           pt5.x, pt5.y);
-    px1 = pt51.x - pt5.x;
-    py1 = pt51.y - pt5.y;
-    px2 = pt15.x - pt1.x;
-    py2 = pt15.y - pt1.y;
-    m_pCheckPath->BezierTo(pt5.x + px1 * FX_BEZIER, pt5.y + py1 * FX_BEZIER,
-                           pt1.x + px2 * FX_BEZIER, pt1.y + py2 * FX_BEZIER,
-                           pt1.x, pt1.y);
+    m_pCheckPath->MoveTo(pt1);
+
+    CFX_PointF p1 = CFX_PointF(pt12.x - pt1.x, pt12.y - pt1.y) * FX_BEZIER;
+    CFX_PointF p2 = CFX_PointF(pt21.x - pt2.x, pt21.y - pt2.y) * FX_BEZIER;
+    m_pCheckPath->BezierTo(pt1 + p1, pt2 + p2, pt2);
+
+    p1 = CFX_PointF(pt23.x - pt2.x, pt23.y - pt2.y) * FX_BEZIER;
+    p2 = CFX_PointF(pt32.x - pt3.x, pt32.y - pt3.y) * FX_BEZIER;
+    m_pCheckPath->BezierTo(pt2 + p1, pt3 + p2, pt3);
+
+    p1 = CFX_PointF(pt34.x - pt3.x, pt34.y - pt3.y) * FX_BEZIER;
+    p2 = CFX_PointF(pt43.x - pt4.x, pt43.y - pt4.y) * FX_BEZIER;
+    m_pCheckPath->BezierTo(pt3 + p1, pt4 + p2, pt4);
+
+    p1 = CFX_PointF(pt45.x - pt4.x, pt45.y - pt4.y) * FX_BEZIER;
+    p2 = CFX_PointF(pt54.x - pt5.x, pt54.y - pt5.y) * FX_BEZIER;
+    m_pCheckPath->BezierTo(pt4 + p1, pt5 + p2, pt5);
+
+    p1 = CFX_PointF(pt51.x - pt5.x, pt51.y - pt5.y) * FX_BEZIER;
+    p2 = CFX_PointF(pt15.x - pt1.x, pt15.y - pt1.y) * FX_BEZIER;
+    m_pCheckPath->BezierTo(pt5 + p1, pt1 + p2, pt1);
+
     FX_FLOAT fScale = fCheckLen / kSignPath;
     CFX_Matrix mt(1, 0, 0, 1, 0, 0);
     mt.Scale(fScale, fScale);
+
     CFX_PathData* pData = m_pCheckPath->GetPathData();
     pData->Transform(&mt);
   }

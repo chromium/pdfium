@@ -150,14 +150,14 @@ void CPDF_PageContentGenerator::ProcessPath(CFX_ByteTextBuf* buf,
   ProcessGraphics(buf, pPathObj);
   auto& pPoints = pPathObj->m_Path.GetPoints();
   if (pPathObj->m_Path.IsRect()) {
-    *buf << pPoints[0].m_PointX << " " << pPoints[0].m_PointY << " "
-         << (pPoints[2].m_PointX - pPoints[0].m_PointX) << " "
-         << (pPoints[2].m_PointY - pPoints[0].m_PointY) << " re";
+    CFX_PointF diff = pPoints[2].m_Point - pPoints[0].m_Point;
+    *buf << pPoints[0].m_Point.x << " " << pPoints[0].m_Point.y << " " << diff.x
+         << " " << diff.y << " re";
   } else {
     for (size_t i = 0; i < pPoints.size(); i++) {
       if (i > 0)
         *buf << " ";
-      *buf << pPoints[i].m_PointX << " " << pPoints[i].m_PointY;
+      *buf << pPoints[i].m_Point.x << " " << pPoints[i].m_Point.y;
       FXPT_TYPE pointType = pPoints[i].m_Type;
       if (pointType == FXPT_TYPE::MoveTo) {
         *buf << " m";
@@ -172,9 +172,9 @@ void CPDF_PageContentGenerator::ProcessPath(CFX_ByteTextBuf* buf,
           *buf << " h";
           break;
         }
-        *buf << " " << pPoints[i + 1].m_PointX << " " << pPoints[i + 1].m_PointY
-             << " " << pPoints[i + 2].m_PointX << " " << pPoints[i + 2].m_PointY
-             << " c";
+        *buf << " " << pPoints[i + 1].m_Point.x << " "
+             << pPoints[i + 1].m_Point.y << " " << pPoints[i + 2].m_Point.x
+             << " " << pPoints[i + 2].m_Point.y << " c";
         i += 2;
       }
       if (pPoints[i].m_CloseFigure)

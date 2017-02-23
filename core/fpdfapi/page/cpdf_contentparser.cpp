@@ -203,8 +203,10 @@ void CPDF_ContentParser::Continue(IFX_Pause* pPause) {
         CPDF_Path ClipPath = pObj->m_ClipPath.GetPath(0);
         if (!ClipPath.IsRect() || pObj->IsShading())
           continue;
-        CFX_FloatRect old_rect(ClipPath.GetPointX(0), ClipPath.GetPointY(0),
-                               ClipPath.GetPointX(2), ClipPath.GetPointY(2));
+
+        CFX_PointF point0 = ClipPath.GetPoint(0);
+        CFX_PointF point2 = ClipPath.GetPoint(2);
+        CFX_FloatRect old_rect(point0.x, point0.y, point2.x, point2.y);
         CFX_FloatRect obj_rect(pObj->m_Left, pObj->m_Bottom, pObj->m_Right,
                                pObj->m_Top);
         if (old_rect.Contains(obj_rect))

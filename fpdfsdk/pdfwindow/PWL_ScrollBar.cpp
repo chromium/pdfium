@@ -257,10 +257,10 @@ void CPWL_SBButton::DrawThisAppearance(CFX_RenderDevice* pDevice,
           if (rectWnd.right - rectWnd.left > PWL_TRIANGLE_HALFLEN * 2 &&
               rectWnd.top - rectWnd.bottom > PWL_TRIANGLE_HALFLEN) {
             CFX_PathData path;
-            path.AppendPoint(pt1.x, pt1.y, FXPT_TYPE::MoveTo, false);
-            path.AppendPoint(pt2.x, pt2.y, FXPT_TYPE::LineTo, false);
-            path.AppendPoint(pt3.x, pt3.y, FXPT_TYPE::LineTo, false);
-            path.AppendPoint(pt1.x, pt1.y, FXPT_TYPE::LineTo, false);
+            path.AppendPoint(pt1, FXPT_TYPE::MoveTo, false);
+            path.AppendPoint(pt2, FXPT_TYPE::LineTo, false);
+            path.AppendPoint(pt3, FXPT_TYPE::LineTo, false);
+            path.AppendPoint(pt1, FXPT_TYPE::LineTo, false);
 
             pDevice->DrawPath(&path, pUser2Device, nullptr,
                               CPWL_Utils::PWLColorToFXColor(
@@ -278,10 +278,10 @@ void CPWL_SBButton::DrawThisAppearance(CFX_RenderDevice* pDevice,
           if (rectWnd.right - rectWnd.left > PWL_TRIANGLE_HALFLEN * 2 &&
               rectWnd.top - rectWnd.bottom > PWL_TRIANGLE_HALFLEN) {
             CFX_PathData path;
-            path.AppendPoint(pt1.x, pt1.y, FXPT_TYPE::MoveTo, false);
-            path.AppendPoint(pt2.x, pt2.y, FXPT_TYPE::LineTo, false);
-            path.AppendPoint(pt3.x, pt3.y, FXPT_TYPE::LineTo, false);
-            path.AppendPoint(pt1.x, pt1.y, FXPT_TYPE::LineTo, false);
+            path.AppendPoint(pt1, FXPT_TYPE::MoveTo, false);
+            path.AppendPoint(pt2, FXPT_TYPE::LineTo, false);
+            path.AppendPoint(pt3, FXPT_TYPE::LineTo, false);
+            path.AppendPoint(pt1, FXPT_TYPE::LineTo, false);
 
             pDevice->DrawPath(&path, pUser2Device, nullptr,
                               CPWL_Utils::PWLColorToFXColor(

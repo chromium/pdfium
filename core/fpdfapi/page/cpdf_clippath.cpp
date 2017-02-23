@@ -84,8 +84,9 @@ void CPDF_ClipPath::AppendPath(CPDF_Path path, uint8_t type, bool bAutoMerge) {
   if (!pData->m_PathAndTypeList.empty() && bAutoMerge) {
     const CPDF_Path& old_path = pData->m_PathAndTypeList.back().first;
     if (old_path.IsRect()) {
-      CFX_FloatRect old_rect(old_path.GetPointX(0), old_path.GetPointY(0),
-                             old_path.GetPointX(2), old_path.GetPointY(2));
+      CFX_PointF point0 = old_path.GetPoint(0);
+      CFX_PointF point2 = old_path.GetPoint(2);
+      CFX_FloatRect old_rect(point0.x, point0.y, point2.x, point2.y);
       CFX_FloatRect new_rect = path.GetBoundingBox();
       if (old_rect.Contains(new_rect))
         pData->m_PathAndTypeList.pop_back();

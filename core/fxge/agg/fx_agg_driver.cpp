@@ -32,9 +32,9 @@
 
 namespace {
 
-void HardClip(FX_FLOAT& x, FX_FLOAT& y) {
-  x = std::max(std::min(x, 50000.0f), -50000.0f);
-  y = std::max(std::min(y, 50000.0f), -50000.0f);
+CFX_PointF HardClip(const CFX_PointF& pos) {
+  return CFX_PointF(std::max(std::min(pos.x, 50000.0f), -50000.0f),
+                    std::max(std::min(pos.y, 50000.0f), -50000.0f));
 }
 
 void RgbByteOrderSetPixel(CFX_DIBitmap* pBitmap, int x, int y, uint32_t argb) {
@@ -275,45 +275,44 @@ void CAgg_PathData::BuildPath(const CFX_PathData* pPathData,
                               const CFX_Matrix* pObject2Device) {
   const std::vector<FX_PATHPOINT>& pPoints = pPathData->GetPoints();
   for (size_t i = 0; i < pPoints.size(); i++) {
-    FX_FLOAT x = pPoints[i].m_PointX;
-    FX_FLOAT y = pPoints[i].m_PointY;
+    CFX_PointF pos = pPoints[i].m_Point;
     if (pObject2Device)
-      pObject2Device->TransformPoint(x, y);
+      pos = pObject2Device->Transform(pos);
 
-    HardClip(x, y);
+    pos = HardClip(pos);
     FXPT_TYPE point_type = pPoints[i].m_Type;
     if (point_type == FXPT_TYPE::MoveTo) {
-      m_PathData.move_to(x, y);
+      m_PathData.move_to(pos.x, pos.y);
     } else if (point_type == FXPT_TYPE::LineTo) {
       if (pPoints[i - 1].IsTypeAndOpen(FXPT_TYPE::MoveTo) &&
           (i == pPoints.size() - 1 ||
            pPoints[i + 1].IsTypeAndOpen(FXPT_TYPE::MoveTo)) &&
-          pPoints[i].m_PointX == pPoints[i - 1].m_PointX &&
-          pPoints[i].m_PointY == pPoints[i - 1].m_PointY) {
-        x += 1;
+          pPoints[i].m_Point == pPoints[i - 1].m_Point) {
+        pos.x += 1;
       }
-      m_PathData.line_to(x, y);
+      m_PathData.line_to(pos.x, pos.y);
     } else if (point_type == FXPT_TYPE::BezierTo) {
-      FX_FLOAT x0 = pPoints[i - 1].m_PointX, y0 = pPoints[i - 1].m_PointY;
-      FX_FLOAT x2 = pPoints[i + 1].m_PointX, y2 = pPoints[i + 1].m_PointY;
-      FX_FLOAT x3 = pPoints[i + 2].m_PointX, y3 = pPoints[i + 2].m_PointY;
+      CFX_PointF pos0 = pPoints[i - 1].m_Point;
+      CFX_PointF pos2 = pPoints[i + 1].m_Point;
+      CFX_PointF pos3 = pPoints[i + 2].m_Point;
       if (pObject2Device) {
-        pObject2Device->TransformPoint(x0, y0);
-        pObject2Device->TransformPoint(x2, y2);
-        pObject2Device->TransformPoint(x3, y3);
+        pos0 = pObject2Device->Transform(pos0);
+        pos2 = pObject2Device->Transform(pos2);
+        pos3 = pObject2Device->Transform(pos3);
       }
-      HardClip(x0, y0);
-      HardClip(x2, y2);
-      HardClip(x3, y3);
-      agg::curve4 curve(x0, y0, x, y, x2, y2, x3, y3);
+      pos0 = HardClip(pos0);
+      pos2 = HardClip(pos2);
+      pos3 = HardClip(pos3);
+      agg::curve4 curve(pos0.x, pos0.y, pos.x, pos.y, pos2.x, pos2.y, pos3.x,
+                        pos3.y);
       i += 2;
       m_PathData.add_path_curve(curve);
     }
-    if (pPoints[i].m_CloseFigure) {
+    if (pPoints[i].m_CloseFigure)
       m_PathData.end_poly();
-    }
   }
 }
+
 namespace agg {
 
 template <class BaseRenderer>
