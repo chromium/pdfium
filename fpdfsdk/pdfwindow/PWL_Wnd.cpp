@@ -619,7 +619,7 @@ void CPWL_Wnd::CreateVScrollBar(const PWL_CREATEPARAM& cp) {
     scp.pParentWnd = this;
     scp.sBackgroundColor = PWL_DEFAULT_WHITECOLOR;
     scp.eCursorType = FXCT_ARROW;
-    scp.nTransparency = PWL_SCROLLBAR_TRANSPARANCY;
+    scp.nTransparency = PWL_SCROLLBAR_TRANSPARENCY;
 
     m_pVScrollBar = new CPWL_ScrollBar(SBT_VSCROLL);
     m_pVScrollBar->Create(scp);
@@ -809,7 +809,7 @@ CPWL_Color CPWL_Wnd::GetBorderLeftTopColor(BorderStyle nBorderStyle) const {
 CPWL_Color CPWL_Wnd::GetBorderRightBottomColor(BorderStyle nBorderStyle) const {
   switch (nBorderStyle) {
     case BorderStyle::BEVELED:
-      return CPWL_Utils::DevideColor(GetBackgroundColor(), 2);
+      return GetBackgroundColor() / 2.0f;
     case BorderStyle::INSET:
       return CPWL_Color(COLORTYPE_GRAY, 0.75f);
     default:

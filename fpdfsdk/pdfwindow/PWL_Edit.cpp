@@ -341,10 +341,8 @@ void CPWL_Edit::DrawThisAppearance(CFX_RenderDevice* pDevice,
               FXPT_TYPE::LineTo, false);
         }
         if (!path.GetPoints().empty()) {
-          pDevice->DrawPath(
-              &path, pUser2Device, &gsd, 0,
-              CPWL_Utils::PWLColorToFXColor(GetBorderColor(), 255),
-              FXFILL_ALTERNATE);
+          pDevice->DrawPath(&path, pUser2Device, &gsd, 0,
+                            GetBorderColor().ToFXColor(255), FXFILL_ALTERNATE);
         }
         break;
       }
@@ -373,10 +371,8 @@ void CPWL_Edit::DrawThisAppearance(CFX_RenderDevice* pDevice,
               FXPT_TYPE::LineTo, false);
         }
         if (!path.GetPoints().empty()) {
-          pDevice->DrawPath(
-              &path, pUser2Device, &gsd, 0,
-              CPWL_Utils::PWLColorToFXColor(GetBorderColor(), 255),
-              FXFILL_ALTERNATE);
+          pDevice->DrawPath(&path, pUser2Device, &gsd, 0,
+                            GetBorderColor().ToFXColor(255), FXFILL_ALTERNATE);
         }
         break;
       }
@@ -394,10 +390,9 @@ void CPWL_Edit::DrawThisAppearance(CFX_RenderDevice* pDevice,
   }
 
   CFX_SystemHandler* pSysHandler = GetSystemHandler();
-  CFX_Edit::DrawEdit(
-      pDevice, pUser2Device, m_pEdit.get(),
-      CPWL_Utils::PWLColorToFXColor(GetTextColor(), GetTransparency()), rcClip,
-      CFX_PointF(), pRange, pSysHandler, m_pFormFiller);
+  CFX_Edit::DrawEdit(pDevice, pUser2Device, m_pEdit.get(),
+                     GetTextColor().ToFXColor(GetTransparency()), rcClip,
+                     CFX_PointF(), pRange, pSysHandler, m_pFormFiller);
 }
 
 bool CPWL_Edit::OnLButtonDown(const CFX_PointF& point, uint32_t nFlag) {

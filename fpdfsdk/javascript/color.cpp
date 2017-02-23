@@ -248,8 +248,7 @@ bool color::convert(CJS_Runtime* pRuntime,
   }
 
   CJS_Array aDest;
-  CPWL_Color crDest = crSource;
-  crDest.ConvertColorType(nColorType);
+  CPWL_Color crDest = crSource.ConvertColorType(nColorType);
   ConvertPWLColorToArray(pRuntime, crDest, &aDest);
   vRet = CJS_Value(pRuntime, aDest);
 
@@ -274,7 +273,7 @@ bool color::equal(CJS_Runtime* pRuntime,
   CPWL_Color color2;
   ConvertArrayToPWLColor(pRuntime, array1, &color1);
   ConvertArrayToPWLColor(pRuntime, array2, &color2);
-  color1.ConvertColorType(color2.nColorType);
+  color1 = color1.ConvertColorType(color2.nColorType);
   vRet = CJS_Value(pRuntime, color1 == color2);
   return true;
 }
