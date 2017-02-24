@@ -27,4 +27,5 @@ Local Modifications:
 0014-avoid-fixed-inf.patch: Avoid fixed number LUT optimization on inf values.
 0015-sanitize-float-read.patch: Sanitize floating point read. Partially backport
     from upstream https://github.com/mm2/Little-CMS/commit/4011a6e3
+0016-check-LUT-and-MPE.patch: check LUT consistency and sanitize MPE profiles.
 TODO(ochang): List other patches.
