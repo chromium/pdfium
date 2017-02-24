@@ -84,7 +84,7 @@ bool CPDF_Type1Font::Load() {
     if (pFontDesc && pFontDesc->KeyExist("Flags"))
       m_Flags = pFontDesc->GetIntegerFor("Flags");
     else
-      m_Flags = m_Base14Font >= 12 ? PDFFONT_SYMBOLIC : PDFFONT_NONSYMBOLIC;
+      m_Flags = m_Base14Font >= 12 ? FXFONT_SYMBOLIC : FXFONT_NONSYMBOLIC;
 
     if (m_Base14Font < 4) {
       for (int i = 0; i < 256; i++)
@@ -94,7 +94,7 @@ bool CPDF_Type1Font::Load() {
       m_BaseEncoding = PDFFONT_ENCODING_ADOBE_SYMBOL;
     else if (m_Base14Font == 13)
       m_BaseEncoding = PDFFONT_ENCODING_ZAPFDINGBATS;
-    else if (m_Flags & PDFFONT_NONSYMBOLIC)
+    else if (m_Flags & FXFONT_NONSYMBOLIC)
       m_BaseEncoding = PDFFONT_ENCODING_STANDARD;
   }
   return LoadCommon();
@@ -189,7 +189,7 @@ void CPDF_Type1Font::LoadGlyphMap() {
   FT_UseType1Charmap(m_Font.GetFace());
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
   if (bCoreText) {
-    if (m_Flags & PDFFONT_SYMBOLIC) {
+    if (m_Flags & FXFONT_SYMBOLIC) {
       for (int charcode = 0; charcode < 256; charcode++) {
         const FX_CHAR* name =
             GetAdobeCharName(m_BaseEncoding, m_CharNames, charcode);
@@ -257,7 +257,7 @@ void CPDF_Type1Font::LoadGlyphMap() {
     return;
   }
 #endif  // _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
-  if (m_Flags & PDFFONT_SYMBOLIC) {
+  if (m_Flags & FXFONT_SYMBOLIC) {
     for (int charcode = 0; charcode < 256; charcode++) {
       const FX_CHAR* name =
           GetAdobeCharName(m_BaseEncoding, m_CharNames, charcode);

@@ -161,7 +161,7 @@ uint32_t CPDF_Font::CharCodeFromUnicode(FX_WCHAR unicode) const {
 }
 
 void CPDF_Font::LoadFontDescriptor(CPDF_Dictionary* pFontDesc) {
-  m_Flags = pFontDesc->GetIntegerFor("Flags", PDFFONT_NONSYMBOLIC);
+  m_Flags = pFontDesc->GetIntegerFor("Flags", FXFONT_NONSYMBOLIC);
   int ItalicAngle = 0;
   bool bExistItalicAngle = false;
   if (pFontDesc->KeyExist("ItalicAngle")) {
@@ -169,7 +169,7 @@ void CPDF_Font::LoadFontDescriptor(CPDF_Dictionary* pFontDesc) {
     bExistItalicAngle = true;
   }
   if (ItalicAngle < 0) {
-    m_Flags |= PDFFONT_ITALIC;
+    m_Flags |= FXFONT_ITALIC;
     m_ItalicAngle = ItalicAngle;
   }
   bool bExistStemV = false;
@@ -188,16 +188,14 @@ void CPDF_Font::LoadFontDescriptor(CPDF_Dictionary* pFontDesc) {
     bExistDescent = true;
   }
   bool bExistCapHeight = false;
-  if (pFontDesc->KeyExist("CapHeight")) {
+  if (pFontDesc->KeyExist("CapHeight"))
     bExistCapHeight = true;
-  }
   if (bExistItalicAngle && bExistAscent && bExistCapHeight && bExistDescent &&
       bExistStemV) {
-    m_Flags |= PDFFONT_USEEXTERNATTR;
+    m_Flags |= FXFONT_USEEXTERNATTR;
   }
-  if (m_Descent > 10) {
+  if (m_Descent > 10)
     m_Descent = -m_Descent;
-  }
   CPDF_Array* pBBox = pFontDesc->GetArrayFor("FontBBox");
   if (pBBox) {
     m_FontBBox.left = pBBox->GetIntegerAt(0);
@@ -372,10 +370,9 @@ void CPDF_Font::LoadPDFEncoding(CPDF_Object* pEncoding,
         iBaseEncoding == PDFFONT_ENCODING_ZAPFDINGBATS) {
       return;
     }
-    if ((m_Flags & PDFFONT_SYMBOLIC) && m_BaseFont == "Symbol") {
-      if (!bTrueType) {
+    if ((m_Flags & FXFONT_SYMBOLIC) && m_BaseFont == "Symbol") {
+      if (!bTrueType)
         iBaseEncoding = PDFFONT_ENCODING_ADOBE_SYMBOL;
-      }
       return;
     }
     CFX_ByteString bsEncoding = pEncoding->GetString();

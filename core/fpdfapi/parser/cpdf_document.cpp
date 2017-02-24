@@ -279,19 +279,19 @@ int CalculateFlags(bool bold,
                    bool symbolic) {
   int flags = 0;
   if (bold)
-    flags |= PDFFONT_FORCEBOLD;
+    flags |= FXFONT_BOLD;
   if (italic)
-    flags |= PDFFONT_ITALIC;
+    flags |= FXFONT_ITALIC;
   if (fixedPitch)
-    flags |= PDFFONT_FIXEDPITCH;
+    flags |= FXFONT_FIXED_PITCH;
   if (serif)
-    flags |= PDFFONT_SERIF;
+    flags |= FXFONT_SERIF;
   if (script)
-    flags |= PDFFONT_SCRIPT;
+    flags |= FXFONT_SCRIPT;
   if (symbolic)
-    flags |= PDFFONT_SYMBOLIC;
+    flags |= FXFONT_SYMBOLIC;
   else
-    flags |= PDFFONT_NONSYMBOLIC;
+    flags |= FXFONT_NONSYMBOLIC;
   return flags;
 }
 

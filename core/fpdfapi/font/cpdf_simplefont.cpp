@@ -127,15 +127,13 @@ bool CPDF_SimpleFont::LoadCommon() {
     }
   }
   if (m_pFontFile) {
-    if (m_BaseFont.GetLength() > 8 && m_BaseFont[7] == '+') {
+    if (m_BaseFont.GetLength() > 8 && m_BaseFont[7] == '+')
       m_BaseFont = m_BaseFont.Mid(8);
-    }
   } else {
     LoadSubstFont();
   }
-  if (!(m_Flags & PDFFONT_SYMBOLIC)) {
+  if (!(m_Flags & FXFONT_SYMBOLIC))
     m_BaseEncoding = PDFFONT_ENCODING_STANDARD;
-  }
   CPDF_Object* pEncoding = m_pFontDict->GetDirectObjectFor("Encoding");
   LoadPDFEncoding(pEncoding, m_BaseEncoding, &m_CharNames, !!m_pFontFile,
                   m_Font.IsTTFont());
@@ -144,7 +142,7 @@ bool CPDF_SimpleFont::LoadCommon() {
   if (!m_Font.GetFace())
     return true;
 
-  if (m_Flags & PDFFONT_ALLCAP) {
+  if (m_Flags & FXFONT_ALLCAP) {
     unsigned char kLowercases[][2] = {{'a', 'z'}, {0xe0, 0xf6}, {0xf8, 0xfd}};
     for (size_t range = 0; range < FX_ArraySize(kLowercases); ++range) {
       const auto& lower = kLowercases[range];
@@ -166,21 +164,19 @@ bool CPDF_SimpleFont::LoadCommon() {
 }
 
 void CPDF_SimpleFont::LoadSubstFont() {
-  if (!m_bUseFontWidth && !(m_Flags & PDFFONT_FIXEDPITCH)) {
+  if (!m_bUseFontWidth && !(m_Flags & FXFONT_FIXED_PITCH)) {
     int width = 0, i;
     for (i = 0; i < 256; i++) {
-      if (m_CharWidth[i] == 0 || m_CharWidth[i] == 0xffff) {
+      if (m_CharWidth[i] == 0 || m_CharWidth[i] == 0xffff)
         continue;
-      }
-      if (width == 0) {
+
+      if (width == 0)
         width = m_CharWidth[i];
-      } else if (width != m_CharWidth[i]) {
+      else if (width != m_CharWidth[i])
         break;
-      }
     }
-    if (i == 256 && width) {
-      m_Flags |= PDFFONT_FIXEDPITCH;
-    }
+    if (i == 256 && width)
+      m_Flags |= FXFONT_FIXED_PITCH;
   }
   pdfium::base::CheckedNumeric<int> safeStemV(m_StemV);
   if (m_StemV < 140)

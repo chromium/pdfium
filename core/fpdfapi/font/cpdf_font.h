@@ -14,17 +14,6 @@
 #include "core/fxcrt/fx_system.h"
 #include "core/fxge/fx_font.h"
 
-#define PDFFONT_FIXEDPITCH 1
-#define PDFFONT_SERIF 2
-#define PDFFONT_SYMBOLIC 4
-#define PDFFONT_SCRIPT 8
-#define PDFFONT_NONSYMBOLIC 32
-#define PDFFONT_ITALIC 64
-#define PDFFONT_ALLCAP 0x10000
-#define PDFFONT_SMALLCAP 0x20000
-#define PDFFONT_FORCEBOLD 0x40000
-#define PDFFONT_USEEXTERNATTR 0x80000
-
 class CFX_SubstFont;
 class CPDF_CIDFont;
 class CPDF_Dictionary;
