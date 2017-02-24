@@ -500,7 +500,7 @@ CFX_ByteString PDF_EncodeText(const FX_WCHAR* pString, int len) {
   dest_buf2[1] = 0xff;
   dest_buf2 += 2;
   for (int j = 0; j < len; j++) {
-    *dest_buf2++ = pString[i] >> 8;
+    *dest_buf2++ = pString[j] >> 8;
     *dest_buf2++ = (uint8_t)pString[j];
   }
   result.ReleaseBuffer(encLen);
