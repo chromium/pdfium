@@ -45,6 +45,8 @@ void JSPropGetter(const char* prop_name_string,
     return;
   CJS_Object* pJSObj =
       static_cast<CJS_Object*>(pRuntime->GetObjectPrivate(info.Holder()));
+  if (!pJSObj)
+    return;
   C* pObj = reinterpret_cast<C*>(pJSObj->GetEmbedObject());
   CFX_WideString sError;
   CJS_PropValue value(pRuntime);
@@ -69,6 +71,8 @@ void JSPropSetter(const char* prop_name_string,
     return;
   CJS_Object* pJSObj =
       static_cast<CJS_Object*>(pRuntime->GetObjectPrivate(info.Holder()));
+  if (!pJSObj)
+    return;
   C* pObj = reinterpret_cast<C*>(pJSObj->GetEmbedObject());
   CFX_WideString sError;
   CJS_PropValue propValue(pRuntime, CJS_Value(pRuntime, value));
@@ -111,6 +115,8 @@ void JSMethod(const char* method_name_string,
   }
   CJS_Object* pJSObj =
       static_cast<CJS_Object*>(pRuntime->GetObjectPrivate(info.Holder()));
+  if (!pJSObj)
+    return;
   C* pObj = reinterpret_cast<C*>(pJSObj->GetEmbedObject());
   CFX_WideString sError;
   CJS_Value valueRes(pRuntime);
@@ -210,33 +216,31 @@ void JSMethod(const char* method_name_string,
   static JSPropertySpec PropertySpecs[];                                       \
   static JSMethodSpec MethodSpecs[];
 
-#define IMPLEMENT_JS_CLASS_RICH_PART(js_class_name, class_alternate,   \
-                                     class_name)                       \
-  void js_class_name::JSConstructor(CFXJS_Engine* pEngine,             \
-                                    v8::Local<v8::Object> obj) {       \
-    CJS_Object* pObj = new js_class_name(obj);                         \
-    pObj->SetEmbedObject(new class_alternate(pObj));                   \
-    pEngine->SetObjectPrivate(obj, (void*)pObj);                       \
-    pObj->InitInstance(static_cast<CJS_Runtime*>(pEngine));            \
-  }                                                                    \
-  void js_class_name::JSDestructor(CFXJS_Engine* pEngine,              \
-                                   v8::Local<v8::Object> obj) {        \
-    js_class_name* pObj =                                              \
-        static_cast<js_class_name*>(pEngine->GetObjectPrivate(obj));   \
-    delete pObj;                                                       \
-  }                                                                    \
-  void js_class_name::DefineProps(CFXJS_Engine* pEngine) {             \
-    for (size_t i = 0; i < FX_ArraySize(PropertySpecs) - 1; ++i) {     \
-      pEngine->DefineObjProperty(g_nObjDefnID, PropertySpecs[i].pName, \
-                                 PropertySpecs[i].pPropGet,            \
-                                 PropertySpecs[i].pPropPut);           \
-    }                                                                  \
-  }                                                                    \
-  void js_class_name::DefineMethods(CFXJS_Engine* pEngine) {           \
-    for (size_t i = 0; i < FX_ArraySize(MethodSpecs) - 1; ++i) {       \
-      pEngine->DefineObjMethod(g_nObjDefnID, MethodSpecs[i].pName,     \
-                               MethodSpecs[i].pMethodCall);            \
-    }                                                                  \
+#define IMPLEMENT_JS_CLASS_RICH_PART(js_class_name, class_alternate,    \
+                                     class_name)                        \
+  void js_class_name::JSConstructor(CFXJS_Engine* pEngine,              \
+                                    v8::Local<v8::Object> obj) {        \
+    CJS_Object* pObj = new js_class_name(obj);                          \
+    pObj->SetEmbedObject(new class_alternate(pObj));                    \
+    pEngine->SetObjectPrivate(obj, (void*)pObj);                        \
+    pObj->InitInstance(static_cast<CJS_Runtime*>(pEngine));             \
+  }                                                                     \
+  void js_class_name::JSDestructor(CFXJS_Engine* pEngine,               \
+                                   v8::Local<v8::Object> obj) {         \
+    delete static_cast<js_class_name*>(pEngine->GetObjectPrivate(obj)); \
+  }                                                                     \
+  void js_class_name::DefineProps(CFXJS_Engine* pEngine) {              \
+    for (size_t i = 0; i < FX_ArraySize(PropertySpecs) - 1; ++i) {      \
+      pEngine->DefineObjProperty(g_nObjDefnID, PropertySpecs[i].pName,  \
+                                 PropertySpecs[i].pPropGet,             \
+                                 PropertySpecs[i].pPropPut);            \
+    }                                                                   \
+  }                                                                     \
+  void js_class_name::DefineMethods(CFXJS_Engine* pEngine) {            \
+    for (size_t i = 0; i < FX_ArraySize(MethodSpecs) - 1; ++i) {        \
+      pEngine->DefineObjMethod(g_nObjDefnID, MethodSpecs[i].pName,      \
+                               MethodSpecs[i].pMethodCall);             \
+    }                                                                   \
   }
 
 // Special JS classes implement methods, props, and queries, but not consts.
@@ -310,12 +314,18 @@ void JSSpecialPropQuery(const char*,
                         const v8::PropertyCallbackInfo<v8::Integer>& info) {
   CJS_Runtime* pRuntime =
       CJS_Runtime::CurrentRuntimeFromIsolate(info.GetIsolate());
+  if (!pRuntime)
+    return;
+
+  CJS_Object* pJSObj =
+      static_cast<CJS_Object*>(pRuntime->GetObjectPrivate(info.Holder()));
+  if (!pJSObj)
+    return;
+
+  Alt* pObj = reinterpret_cast<Alt*>(pJSObj->GetEmbedObject());
   v8::String::Utf8Value utf8_value(property);
   CFX_WideString propname = CFX_WideString::FromUTF8(
       CFX_ByteStringC(*utf8_value, utf8_value.length()));
-  CJS_Object* pJSObj =
-      static_cast<CJS_Object*>(pRuntime->GetObjectPrivate(info.Holder()));
-  Alt* pObj = reinterpret_cast<Alt*>(pJSObj->GetEmbedObject());
   bool bRet = pObj->QueryProperty(propname.c_str());
   info.GetReturnValue().Set(bRet ? 4 : 0);
 }
@@ -328,8 +338,12 @@ void JSSpecialPropGet(const char* class_name,
       CJS_Runtime::CurrentRuntimeFromIsolate(info.GetIsolate());
   if (!pRuntime)
     return;
+
   CJS_Object* pJSObj =
       static_cast<CJS_Object*>(pRuntime->GetObjectPrivate(info.Holder()));
+  if (!pJSObj)
+    return;
+
   Alt* pObj = reinterpret_cast<Alt*>(pJSObj->GetEmbedObject());
   v8::String::Utf8Value utf8_value(property);
   CFX_WideString propname = CFX_WideString::FromUTF8(
@@ -353,8 +367,12 @@ void JSSpecialPropPut(const char* class_name,
       CJS_Runtime::CurrentRuntimeFromIsolate(info.GetIsolate());
   if (!pRuntime)
     return;
+
   CJS_Object* pJSObj =
       static_cast<CJS_Object*>(pRuntime->GetObjectPrivate(info.Holder()));
+  if (!pJSObj)
+    return;
+
   Alt* pObj = reinterpret_cast<Alt*>(pJSObj->GetEmbedObject());
   v8::String::Utf8Value utf8_value(property);
   CFX_WideString propname = CFX_WideString::FromUTF8(
@@ -375,8 +393,12 @@ void JSSpecialPropDel(const char* class_name,
       CJS_Runtime::CurrentRuntimeFromIsolate(info.GetIsolate());
   if (!pRuntime)
     return;
+
   CJS_Object* pJSObj =
       static_cast<CJS_Object*>(pRuntime->GetObjectPrivate(info.Holder()));
+  if (!pJSObj)
+    return;
+
   Alt* pObj = reinterpret_cast<Alt*>(pJSObj->GetEmbedObject());
   v8::String::Utf8Value utf8_value(property);
   CFX_WideString propname = CFX_WideString::FromUTF8(

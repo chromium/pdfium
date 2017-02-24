@@ -56,6 +56,12 @@ class CFXJS_ObjDefinition {
 
     v8::Local<v8::FunctionTemplate> fun = v8::FunctionTemplate::New(isolate);
     fun->InstanceTemplate()->SetInternalFieldCount(2);
+    fun->SetCallHandler([](const v8::FunctionCallbackInfo<v8::Value>& info) {
+      v8::Local<v8::Object> holder = info.Holder();
+      ASSERT(holder->InternalFieldCount() == 2);
+      holder->SetAlignedPointerInInternalField(0, nullptr);
+      holder->SetAlignedPointerInInternalField(1, nullptr);
+    });
     if (eObjType == FXJSOBJTYPE_GLOBAL) {
       fun->InstanceTemplate()->Set(
           v8::Symbol::GetToStringTag(isolate),

@@ -299,11 +299,13 @@ bool Document::getField(CJS_Runtime* pRuntime,
 
   v8::Local<v8::Object> pFieldObj =
       pRuntime->NewFxDynamicObj(CJS_Field::g_nObjDefnID);
+  if (pFieldObj.IsEmpty())
+    return false;
+
   CJS_Field* pJSField =
       static_cast<CJS_Field*>(pRuntime->GetObjectPrivate(pFieldObj));
   Field* pField = static_cast<Field*>(pJSField->GetEmbedObject());
   pField->AttachField(this, wideName);
-
   vRet = CJS_Value(pRuntime, pJSField);
   return true;
 }
@@ -1111,13 +1113,7 @@ bool Document::getAnnot(CJS_Runtime* pRuntime,
 
   CJS_Annot* pJS_Annot =
       static_cast<CJS_Annot*>(pRuntime->GetObjectPrivate(pObj));
-  if (!pJS_Annot)
-    return false;
-
   Annot* pAnnot = static_cast<Annot*>(pJS_Annot->GetEmbedObject());
-  if (!pAnnot)
-    return false;
-
   pAnnot->SetSDKAnnot(pSDKBAAnnot);
   vRet = CJS_Value(pRuntime, pJS_Annot);
   return true;
@@ -1155,13 +1151,7 @@ bool Document::getAnnots(CJS_Runtime* pRuntime,
 
       CJS_Annot* pJS_Annot =
           static_cast<CJS_Annot*>(pRuntime->GetObjectPrivate(pObj));
-      if (!pJS_Annot)
-        return false;
-
       Annot* pAnnot = static_cast<Annot*>(pJS_Annot->GetEmbedObject());
-      if (!pAnnot)
-        return false;
-
       pAnnot->SetSDKAnnot(static_cast<CPDFSDK_BAAnnot*>(pSDKAnnotCur.Get()));
       annots.SetElement(pRuntime, i, CJS_Value(pRuntime, pJS_Annot));
     }
@@ -1258,13 +1248,7 @@ bool Document::icons(CJS_Runtime* pRuntime,
 
     CJS_Icon* pJS_Icon =
         static_cast<CJS_Icon*>(pRuntime->GetObjectPrivate(pObj));
-    if (!pJS_Icon)
-      return false;
-
     Icon* pIcon = static_cast<Icon*>(pJS_Icon->GetEmbedObject());
-    if (!pIcon)
-      return false;
-
     pIcon->SetIconName(pIconElement->IconName);
     Icons.SetElement(pRuntime, i++, CJS_Value(pRuntime, pJS_Icon));
   }
@@ -1297,13 +1281,7 @@ bool Document::getIcon(CJS_Runtime* pRuntime,
 
     CJS_Icon* pJS_Icon =
         static_cast<CJS_Icon*>(pRuntime->GetObjectPrivate(pObj));
-    if (!pJS_Icon)
-      return false;
-
-    Icon* pIcon = (Icon*)pJS_Icon->GetEmbedObject();
-    if (!pIcon)
-      return false;
-
+    Icon* pIcon = static_cast<Icon*>(pJS_Icon->GetEmbedObject());
     pIcon->SetIconName(swIconName);
     vRet = CJS_Value(pRuntime, pJS_Icon);
     return true;
@@ -1473,6 +1451,8 @@ bool Document::getPrintParams(CJS_Runtime* pRuntime,
                               CFX_WideString& sError) {
   v8::Local<v8::Object> pRetObj =
       pRuntime->NewFxDynamicObj(CJS_PrintParamsObj::g_nObjDefnID);
+  if (pRetObj.IsEmpty())
+    return false;
 
   // Not implemented yet.
 

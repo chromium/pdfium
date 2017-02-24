@@ -215,13 +215,11 @@ bool app::activeDocs(CJS_Runtime* pRuntime,
 
   CJS_Document* pJSDocument = nullptr;
   v8::Local<v8::Object> pObj = pRuntime->GetThisObj();
-  if (CFXJS_Engine::GetObjDefnID(pObj) == CJS_Document::g_nObjDefnID) {
+  if (CFXJS_Engine::GetObjDefnID(pObj) == CJS_Document::g_nObjDefnID)
     pJSDocument = static_cast<CJS_Document*>(pRuntime->GetObjectPrivate(pObj));
-  }
 
   CJS_Array aDocs;
   aDocs.SetElement(pRuntime, 0, CJS_Value(pRuntime, pJSDocument));
-
   if (aDocs.GetLength(pRuntime) > 0)
     vp << aDocs;
   else
@@ -472,6 +470,9 @@ bool app::setInterval(CJS_Runtime* pRuntime,
 
   v8::Local<v8::Object> pRetObj =
       pRuntime->NewFxDynamicObj(CJS_TimerObj::g_nObjDefnID);
+  if (pRetObj.IsEmpty())
+    return false;
+
   CJS_TimerObj* pJS_TimerObj =
       static_cast<CJS_TimerObj*>(pRuntime->GetObjectPrivate(pRetObj));
   TimerObj* pTimerObj = static_cast<TimerObj*>(pJS_TimerObj->GetEmbedObject());
@@ -504,13 +505,13 @@ bool app::setTimeOut(CJS_Runtime* pRuntime,
 
   v8::Local<v8::Object> pRetObj =
       pRuntime->NewFxDynamicObj(CJS_TimerObj::g_nObjDefnID);
+  if (pRetObj.IsEmpty())
+    return false;
 
   CJS_TimerObj* pJS_TimerObj =
       static_cast<CJS_TimerObj*>(pRuntime->GetObjectPrivate(pRetObj));
-
   TimerObj* pTimerObj = static_cast<TimerObj*>(pJS_TimerObj->GetEmbedObject());
   pTimerObj->SetTimer(timerRef);
-
   vRet = CJS_Value(pRuntime, pRetObj);
   return true;
 }

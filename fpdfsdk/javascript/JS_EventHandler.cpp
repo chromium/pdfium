@@ -590,22 +590,25 @@ Field* CJS_EventHandler::Source() {
   CJS_Runtime* pRuntime = m_pJSEventContext->GetJSRuntime();
   v8::Local<v8::Object> pDocObj =
       pRuntime->NewFxDynamicObj(CJS_Document::g_nObjDefnID);
-  ASSERT(!pDocObj.IsEmpty());
+  if (pDocObj.IsEmpty())
+    return nullptr;
 
   v8::Local<v8::Object> pFieldObj =
       pRuntime->NewFxDynamicObj(CJS_Field::g_nObjDefnID);
-  ASSERT(!pFieldObj.IsEmpty());
+  if (pFieldObj.IsEmpty())
+    return nullptr;
 
   CJS_Document* pJSDocument =
       static_cast<CJS_Document*>(pRuntime->GetObjectPrivate(pDocObj));
-  Document* pDocument = (Document*)pJSDocument->GetEmbedObject();
+  CJS_Field* pJSField =
+      static_cast<CJS_Field*>(pRuntime->GetObjectPrivate(pFieldObj));
+
+  Document* pDocument = static_cast<Document*>(pJSDocument->GetEmbedObject());
   pDocument->SetFormFillEnv(m_pTargetFormFillEnv
                                 ? m_pTargetFormFillEnv.Get()
                                 : m_pJSEventContext->GetFormFillEnv());
 
-  CJS_Field* pJSField =
-      static_cast<CJS_Field*>(pRuntime->GetObjectPrivate(pFieldObj));
-  Field* pField = (Field*)pJSField->GetEmbedObject();
+  Field* pField = static_cast<Field*>(pJSField->GetEmbedObject());
   pField->AttachField(pDocument, m_strSourceName);
   return pField;
 }
@@ -614,22 +617,25 @@ Field* CJS_EventHandler::Target_Field() {
   CJS_Runtime* pRuntime = m_pJSEventContext->GetJSRuntime();
   v8::Local<v8::Object> pDocObj =
       pRuntime->NewFxDynamicObj(CJS_Document::g_nObjDefnID);
-  ASSERT(!pDocObj.IsEmpty());
+  if (pDocObj.IsEmpty())
+    return nullptr;
 
   v8::Local<v8::Object> pFieldObj =
       pRuntime->NewFxDynamicObj(CJS_Field::g_nObjDefnID);
-  ASSERT(!pFieldObj.IsEmpty());
+  if (pFieldObj.IsEmpty())
+    return nullptr;
 
   CJS_Document* pJSDocument =
       static_cast<CJS_Document*>(pRuntime->GetObjectPrivate(pDocObj));
-  Document* pDocument = (Document*)pJSDocument->GetEmbedObject();
+  CJS_Field* pJSField =
+      static_cast<CJS_Field*>(pRuntime->GetObjectPrivate(pFieldObj));
+
+  Document* pDocument = static_cast<Document*>(pJSDocument->GetEmbedObject());
   pDocument->SetFormFillEnv(m_pTargetFormFillEnv
                                 ? m_pTargetFormFillEnv.Get()
                                 : m_pJSEventContext->GetFormFillEnv());
 
-  CJS_Field* pJSField =
-      static_cast<CJS_Field*>(pRuntime->GetObjectPrivate(pFieldObj));
-  Field* pField = (Field*)pJSField->GetEmbedObject();
+  Field* pField = static_cast<Field*>(pJSField->GetEmbedObject());
   pField->AttachField(pDocument, m_strTargetName);
   return pField;
 }
