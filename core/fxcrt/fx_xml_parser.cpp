@@ -715,17 +715,8 @@ CXML_Element* CXML_Element::Parse(
   return XML_ContinueParse(parser, bSaveSpaceChars, pParsedSize);
 }
 
-CXML_Element::CXML_Element() : m_QSpaceName(), m_TagName(), m_AttrMap() {}
-CXML_Element::CXML_Element(const CFX_ByteStringC& qSpace,
-                           const CFX_ByteStringC& tagName)
-    : m_QSpaceName(), m_TagName(), m_AttrMap() {
-  m_QSpaceName = qSpace;
-  m_TagName = tagName;
-}
-CXML_Element::CXML_Element(const CFX_ByteStringC& qTagName)
-    : m_pParent(nullptr), m_QSpaceName(), m_TagName(), m_AttrMap() {
-  SetTag(qTagName);
-}
+CXML_Element::CXML_Element()
+    : m_pParent(nullptr), m_QSpaceName(), m_TagName(), m_AttrMap() {}
 CXML_Element::~CXML_Element() {
   Empty();
 }

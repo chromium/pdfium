@@ -46,6 +46,7 @@ CPDF_DataAvail::CPDF_DataAvail(
   }
   m_dwCurrentOffset = 0;
   m_dwXRefOffset = 0;
+  m_dwTrailerOffset = 0;
   m_bufferOffset = 0;
   m_bufferSize = 0;
   m_PagesObjNum = 0;
