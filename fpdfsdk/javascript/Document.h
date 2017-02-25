@@ -288,7 +288,7 @@ class Document : public CJS_EmbedObj {
   CPDFSDK_FormFillEnvironment::ObservedPtr m_pFormFillEnv;
   CFX_WideString m_cwBaseURL;
   std::list<std::unique_ptr<CJS_DelayData>> m_DelayData;
-  std::vector<std::unique_ptr<IconElement>> m_Icons;
+  std::list<std::unique_ptr<IconElement>> m_Icons;  // For iterator stability.
   bool m_bDelay;
 };
 
