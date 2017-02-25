@@ -13,7 +13,7 @@
 #include "testing/gtest/include/gtest/gtest.h"
 
 TEST(fxcodec, RLETestBadInputs) {
-  uint8_t src_buf[1] = {1};
+  const uint8_t src_buf[] = {1};
   uint8_t* dest_buf = nullptr;
   uint32_t src_size = 4;
   uint32_t dest_size = 0;
@@ -33,7 +33,7 @@ TEST(fxcodec, RLETestBadInputs) {
 
 // Check length 1 input works. Check terminating character is applied.
 TEST(fxcodec, RLETestShortInput) {
-  uint8_t src_buf[1] = {1};
+  const uint8_t src_buf[] = {1};
   uint8_t* dest_buf = nullptr;
   uint32_t src_size = 1;
   uint32_t dest_size = 0;
@@ -43,25 +43,25 @@ TEST(fxcodec, RLETestShortInput) {
 
   EXPECT_TRUE(
       pEncoders->RunLengthEncode(src_buf, src_size, &dest_buf, &dest_size));
-  EXPECT_EQ(3u, dest_size);
-  EXPECT_EQ(dest_buf[0], 0);
-  EXPECT_EQ(dest_buf[1], 1);
-  EXPECT_EQ(dest_buf[2], 128);
+  ASSERT_EQ(3u, dest_size);
+  EXPECT_EQ(0, dest_buf[0]);
+  EXPECT_EQ(1, dest_buf[1]);
+  EXPECT_EQ(128, dest_buf[2]);
 
   FX_Free(dest_buf);
 }
 
 // Check a few basic cases (2 matching runs in a row, matching run followed
-// by a nonmatching run, and nonmatching run followed by a matching run).
+// by a non-matching run, and non-matching run followed by a matching run).
 TEST(fxcodec, RLETestNormalInputs) {
   // Match, match
-  uint8_t src_buf_1[10] = {2, 2, 2, 2, 4, 4, 4, 4, 4, 4};
+  const uint8_t src_buf_1[] = {2, 2, 2, 2, 4, 4, 4, 4, 4, 4};
 
-  // Match, nonmatch
-  uint8_t src_buf_2[10] = {2, 2, 2, 2, 1, 2, 3, 4, 5, 6};
+  // Match, non-match
+  const uint8_t src_buf_2[] = {2, 2, 2, 2, 1, 2, 3, 4, 5, 6};
 
-  // Nonmatch, match
-  uint8_t src_buf_3[10] = {1, 2, 3, 4, 5, 3, 3, 3, 3, 3};
+  // Non-match, match
+  const uint8_t src_buf_3[] = {1, 2, 3, 4, 5, 3, 3, 3, 3, 3};
 
   uint32_t src_size = 10;
   uint32_t dest_size = 0;
@@ -76,9 +76,9 @@ TEST(fxcodec, RLETestNormalInputs) {
   uint8_t* decoded_buf = nullptr;
   uint32_t decoded_size = 0;
   RunLengthDecode(dest_buf, dest_size, decoded_buf, decoded_size);
-  EXPECT_EQ(decoded_size, src_size);
+  ASSERT_EQ(src_size, decoded_size);
   for (uint32_t i = 0; i < src_size; i++)
-    EXPECT_EQ(decoded_buf[i], src_buf_1[i]) << " at " << i;
+    EXPECT_EQ(src_buf_1[i], decoded_buf[i]) << " at " << i;
   FX_Free(dest_buf);
   FX_Free(decoded_buf);
 
@@ -90,9 +90,9 @@ TEST(fxcodec, RLETestNormalInputs) {
   decoded_buf = nullptr;
   decoded_size = 0;
   RunLengthDecode(dest_buf, dest_size, decoded_buf, decoded_size);
-  EXPECT_EQ(decoded_size, src_size);
+  ASSERT_EQ(src_size, decoded_size);
   for (uint32_t i = 0; i < src_size; i++)
-    EXPECT_EQ(decoded_buf[i], src_buf_2[i]) << " at " << i;
+    EXPECT_EQ(src_buf_2[i], decoded_buf[i]) << " at " << i;
   FX_Free(dest_buf);
   FX_Free(decoded_buf);
 
@@ -104,30 +104,30 @@ TEST(fxcodec, RLETestNormalInputs) {
   decoded_buf = nullptr;
   decoded_size = 0;
   RunLengthDecode(dest_buf, dest_size, decoded_buf, decoded_size);
-  EXPECT_EQ(decoded_size, src_size);
+  ASSERT_EQ(src_size, decoded_size);
   for (uint32_t i = 0; i < src_size; i++)
-    EXPECT_EQ(decoded_buf[i], src_buf_3[i]) << " at " << i;
+    EXPECT_EQ(src_buf_3[i], decoded_buf[i]) << " at " << i;
   FX_Free(dest_buf);
   FX_Free(decoded_buf);
 }
 
 // Check that runs longer than 128 are broken up properly, both matched and
-// nonmatched.
+// non-matched.
 TEST(fxcodec, RLETestFullLengthInputs) {
   // Match, match
-  uint8_t src_buf_1[260] = {1};
+  const uint8_t src_buf_1[260] = {1};
 
-  // Match, nonmatch
+  // Match, non-match
   uint8_t src_buf_2[260] = {2};
   for (uint16_t i = 128; i < 260; i++)
     src_buf_2[i] = (uint8_t)(i - 125);
 
-  // Nonmatch, match
+  // Non-match, match
   uint8_t src_buf_3[260] = {3};
   for (uint8_t i = 0; i < 128; i++)
     src_buf_3[i] = i;
 
-  // Nonmatch, nonmatch
+  // Non-match, non-match
   uint8_t src_buf_4[260];
   for (uint16_t i = 0; i < 260; i++)
     src_buf_4[i] = (uint8_t)(i);
@@ -145,9 +145,9 @@ TEST(fxcodec, RLETestFullLengthInputs) {
   uint8_t* decoded_buf = nullptr;
   uint32_t decoded_size = 0;
   RunLengthDecode(dest_buf, dest_size, decoded_buf, decoded_size);
-  EXPECT_EQ(decoded_size, src_size);
+  ASSERT_EQ(src_size, decoded_size);
   for (uint32_t i = 0; i < src_size; i++)
-    EXPECT_EQ(decoded_buf[i], src_buf_1[i]) << " at " << i;
+    EXPECT_EQ(src_buf_1[i], decoded_buf[i]) << " at " << i;
   FX_Free(dest_buf);
   FX_Free(decoded_buf);
 
@@ -159,9 +159,9 @@ TEST(fxcodec, RLETestFullLengthInputs) {
   decoded_buf = nullptr;
   decoded_size = 0;
   RunLengthDecode(dest_buf, dest_size, decoded_buf, decoded_size);
-  EXPECT_EQ(decoded_size, src_size);
+  ASSERT_EQ(src_size, decoded_size);
   for (uint32_t i = 0; i < src_size; i++)
-    EXPECT_EQ(decoded_buf[i], src_buf_2[i]) << " at " << i;
+    EXPECT_EQ(src_buf_2[i], decoded_buf[i]) << " at " << i;
   FX_Free(dest_buf);
   FX_Free(decoded_buf);
 
@@ -173,9 +173,9 @@ TEST(fxcodec, RLETestFullLengthInputs) {
   decoded_buf = nullptr;
   decoded_size = 0;
   RunLengthDecode(dest_buf, dest_size, decoded_buf, decoded_size);
-  EXPECT_EQ(decoded_size, src_size);
+  ASSERT_EQ(src_size, decoded_size);
   for (uint32_t i = 0; i < src_size; i++)
-    EXPECT_EQ(decoded_buf[i], src_buf_3[i]) << " at " << i;
+    EXPECT_EQ(src_buf_3[i], decoded_buf[i]) << " at " << i;
   FX_Free(dest_buf);
   FX_Free(decoded_buf);
 
@@ -187,9 +187,9 @@ TEST(fxcodec, RLETestFullLengthInputs) {
   decoded_buf = nullptr;
   decoded_size = 0;
   RunLengthDecode(dest_buf, dest_size, decoded_buf, decoded_size);
-  EXPECT_EQ(decoded_size, src_size);
+  ASSERT_EQ(src_size, decoded_size);
   for (uint32_t i = 0; i < src_size; i++)
-    EXPECT_EQ(decoded_buf[i], src_buf_4[i]) << " at " << i;
+    EXPECT_EQ(src_buf_4[i], decoded_buf[i]) << " at " << i;
   FX_Free(dest_buf);
   FX_Free(decoded_buf);
 }

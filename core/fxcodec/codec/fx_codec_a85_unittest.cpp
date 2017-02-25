@@ -12,7 +12,7 @@
 #include "testing/gtest/include/gtest/gtest.h"
 
 TEST(fxcodec, A85TestBadInputs) {
-  uint8_t src_buf[4] = {1, 2, 3, 4};
+  const uint8_t src_buf[] = {1, 2, 3, 4};
   uint8_t* dest_buf = nullptr;
   uint32_t src_size = 4;
   uint32_t dest_size = 0;
@@ -30,7 +30,7 @@ TEST(fxcodec, A85TestBadInputs) {
 // No leftover bytes, just translate 2 sets of symbols.
 TEST(fxcodec, A85TestBasic) {
   // Make sure really big values don't break.
-  uint8_t src_buf[8] = {1, 2, 3, 4, 255, 255, 255, 255};
+  const uint8_t src_buf[] = {1, 2, 3, 4, 255, 255, 255, 255};
   uint8_t* dest_buf = nullptr;
   uint32_t src_size = 8;
   uint32_t dest_size = 0;
@@ -42,19 +42,20 @@ TEST(fxcodec, A85TestBasic) {
   EXPECT_TRUE(pEncoders->A85Encode(src_buf, src_size, &dest_buf, &dest_size));
 
   // Should have 5 chars for each set of 4 and 2 terminators.
-  EXPECT_EQ(12u, dest_size);
-  uint8_t expected_out[12] = {33, 60, 78, 63, 43, 115, 56, 87, 45, 33, 126, 62};
+  ASSERT_EQ(12u, dest_size);
+  const uint8_t expected_out[] = {33, 60, 78, 63, 43,  115,
+                                  56, 87, 45, 33, 126, 62};
 
   // Check the output
   for (uint32_t i = 0; i < 12; i++)
-    EXPECT_EQ(dest_buf[i], expected_out[i]) << " at " << i;
+    EXPECT_EQ(expected_out[i], dest_buf[i]) << " at " << i;
   FX_Free(dest_buf);
 }
 
 // Leftover bytes.
 TEST(fxcodec, A85TestLeftoverBytes) {
   // 1 Leftover Byte:
-  uint8_t src_buf_1leftover[5] = {1, 2, 3, 4, 255};
+  const uint8_t src_buf_1leftover[] = {1, 2, 3, 4, 255};
   uint8_t* dest_buf = nullptr;
   uint32_t src_size = 5;
   uint32_t dest_size = 0;
@@ -65,53 +66,53 @@ TEST(fxcodec, A85TestLeftoverBytes) {
   // Should succeed
   EXPECT_TRUE(
       pEncoders->A85Encode(src_buf_1leftover, src_size, &dest_buf, &dest_size));
-  EXPECT_EQ(9u, dest_size);  // 5 chars for first symbol + 2 + 2 terminators.
-  uint8_t expected_out_1leftover[9] = {33, 60, 78, 63, 43, 114, 114, 126, 62};
+  ASSERT_EQ(9u, dest_size);  // 5 chars for first symbol + 2 + 2 terminators.
+  uint8_t expected_out_1leftover[] = {33, 60, 78, 63, 43, 114, 114, 126, 62};
 
   // Check the output
   for (uint32_t i = 0; i < 9; i++)
-    EXPECT_EQ(dest_buf[i], expected_out_1leftover[i]) << " at " << i;
+    EXPECT_EQ(expected_out_1leftover[i], dest_buf[i]) << " at " << i;
   FX_Free(dest_buf);
 
   // 2 Leftover bytes:
   src_size++;
   dest_buf = nullptr;
   dest_size = 0;
-  uint8_t src_buf_2leftover[6] = {1, 2, 3, 4, 255, 254};
+  const uint8_t src_buf_2leftover[] = {1, 2, 3, 4, 255, 254};
   // Should succeed
   EXPECT_TRUE(
       pEncoders->A85Encode(src_buf_2leftover, src_size, &dest_buf, &dest_size));
-  EXPECT_EQ(10u, dest_size);  // 5 chars for first symbol + 3 + 2 terminators.
-  uint8_t expected_out_2leftover[10] = {33,  60, 78, 63,  43,
-                                        115, 56, 68, 126, 62};
+  ASSERT_EQ(10u, dest_size);  // 5 chars for first symbol + 3 + 2 terminators.
+  const uint8_t expected_out_2leftover[] = {33,  60, 78, 63,  43,
+                                            115, 56, 68, 126, 62};
 
   // Check the output
   for (uint32_t i = 0; i < 10; i++)
-    EXPECT_EQ(dest_buf[i], expected_out_2leftover[i]) << " at " << i;
+    EXPECT_EQ(expected_out_2leftover[i], dest_buf[i]) << " at " << i;
   FX_Free(dest_buf);
 
   // 3 Leftover bytes:
   src_size++;
   dest_buf = nullptr;
   dest_size = 0;
-  uint8_t src_buf_3leftover[7] = {1, 2, 3, 4, 255, 254, 253};
+  const uint8_t src_buf_3leftover[] = {1, 2, 3, 4, 255, 254, 253};
   // Should succeed
   EXPECT_TRUE(
       pEncoders->A85Encode(src_buf_3leftover, src_size, &dest_buf, &dest_size));
-  EXPECT_EQ(11u, dest_size);  // 5 chars for first symbol + 4 + 2 terminators.
-  uint8_t expected_out_3leftover[11] = {33, 60, 78,  63,  43, 115,
-                                        56, 77, 114, 126, 62};
+  ASSERT_EQ(11u, dest_size);  // 5 chars for first symbol + 4 + 2 terminators.
+  const uint8_t expected_out_3leftover[] = {33, 60, 78,  63,  43, 115,
+                                            56, 77, 114, 126, 62};
 
   // Check the output
   for (uint32_t i = 0; i < 11; i++)
-    EXPECT_EQ(dest_buf[i], expected_out_3leftover[i]) << " at " << i;
+    EXPECT_EQ(expected_out_3leftover[i], dest_buf[i]) << " at " << i;
   FX_Free(dest_buf);
 }
 
 // Test all zeros comes through as "z".
 TEST(fxcodec, A85TestZeros) {
   // Make sure really big values don't break.
-  uint8_t src_buf[8] = {1, 2, 3, 4, 0, 0, 0, 0};
+  const uint8_t src_buf[] = {1, 2, 3, 4, 0, 0, 0, 0};
   uint8_t* dest_buf = nullptr;
   uint32_t src_size = 8;
   uint32_t dest_size = 0;
@@ -123,29 +124,29 @@ TEST(fxcodec, A85TestZeros) {
   EXPECT_TRUE(pEncoders->A85Encode(src_buf, src_size, &dest_buf, &dest_size));
 
   // Should have 5 chars for first set of 4 + 1 for z + 2 terminators.
-  EXPECT_EQ(8u, dest_size);
-  uint8_t expected_out[8] = {33, 60, 78, 63, 43, 122, 126, 62};
+  ASSERT_EQ(8u, dest_size);
+  const uint8_t expected_out[] = {33, 60, 78, 63, 43, 122, 126, 62};
 
   // Check the output
   for (uint32_t i = 0; i < 8; i++)
-    EXPECT_EQ(dest_buf[i], expected_out[i]) << " at " << i;
+    EXPECT_EQ(expected_out[i], dest_buf[i]) << " at " << i;
   FX_Free(dest_buf);
 
   // Should also work if it is at the start:
   dest_buf = nullptr;
   dest_size = 0;
-  uint8_t src_buf_2[8] = {0, 0, 0, 0, 1, 2, 3, 4};
+  const uint8_t src_buf_2[] = {0, 0, 0, 0, 1, 2, 3, 4};
 
   // Should succeed.
   EXPECT_TRUE(pEncoders->A85Encode(src_buf_2, src_size, &dest_buf, &dest_size));
 
   // Should have 5 chars for set of 4 + 1 for z + 2 terminators.
-  EXPECT_EQ(8u, dest_size);
-  uint8_t expected_out_2[8] = {122, 33, 60, 78, 63, 43, 126, 62};
+  ASSERT_EQ(8u, dest_size);
+  const uint8_t expected_out_2[] = {122, 33, 60, 78, 63, 43, 126, 62};
 
   // Check the output
   for (uint32_t i = 0; i < 8; i++)
-    EXPECT_EQ(dest_buf[i], expected_out_2[i]) << " at " << i;
+    EXPECT_EQ(expected_out_2[i], dest_buf[i]) << " at " << i;
   FX_Free(dest_buf);
 
   // Try with 2 leftover zero bytes. Make sure we don't get a "z".
@@ -157,12 +158,13 @@ TEST(fxcodec, A85TestZeros) {
   EXPECT_TRUE(pEncoders->A85Encode(src_buf, src_size, &dest_buf, &dest_size));
 
   // Should have 5 chars for set of 4 + 3 for last 2 + 2 terminators.
-  EXPECT_EQ(10u, dest_size);
-  uint8_t expected_out_leftover[10] = {33, 60, 78, 63, 43, 33, 33, 33, 126, 62};
+  ASSERT_EQ(10u, dest_size);
+  const uint8_t expected_out_leftover[] = {33, 60, 78, 63,  43,
+                                           33, 33, 33, 126, 62};
 
   // Check the output
   for (uint32_t i = 0; i < 10; i++)
-    EXPECT_EQ(dest_buf[i], expected_out_leftover[i]) << " at " << i;
+    EXPECT_EQ(expected_out_leftover[i], dest_buf[i]) << " at " << i;
   FX_Free(dest_buf);
 }
 
@@ -197,13 +199,13 @@ TEST(fxcodec, A85TestLineBreaks) {
   // Should have 75 chars in the first row plus 2 char return,
   // 76 chars in the second row plus 2 char return,
   // and 9 chars in the last row with 2 terminators.
-  EXPECT_EQ(166u, dest_size);
+  ASSERT_EQ(166u, dest_size);
 
   // Check for the returns.
-  EXPECT_EQ(dest_buf[75], 13);
-  EXPECT_EQ(dest_buf[76], 10);
-  EXPECT_EQ(dest_buf[153], 13);
-  EXPECT_EQ(dest_buf[154], 10);
+  EXPECT_EQ(13, dest_buf[75]);
+  EXPECT_EQ(10, dest_buf[76]);
+  EXPECT_EQ(13, dest_buf[153]);
+  EXPECT_EQ(10, dest_buf[154]);
 
   FX_Free(dest_buf);
 }
