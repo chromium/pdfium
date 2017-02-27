@@ -33,6 +33,18 @@ config("pdfium_common_config") {
 
   if (pdf_enable_xfa) {
     defines += [ "PDF_ENABLE_XFA" ]
+    if (pdf_enable_xfa_bmp) {
+      defines += [ "PDF_ENABLE_XFA_BMP" ]
+    }
+    if (pdf_enable_xfa_gif) {
+      defines += [ "PDF_ENABLE_XFA_GIF" ]
+    }
+    if (pdf_enable_xfa_png) {
+      defines += [ "PDF_ENABLE_XFA_PNG" ]
+    }
+    if (pdf_enable_xfa_tiff) {
+      defines += [ "PDF_ENABLE_XFA_TIFF" ]
+    }
   }
 
   if (pdf_use_win32_gdi) {
@@ -687,16 +699,16 @@ static_library("fxcodec") {
 
   if (pdf_enable_xfa) {
     sources += [
+      "core/fxcodec/codec/ccodec_bmpmodule.cpp",
       "core/fxcodec/codec/ccodec_bmpmodule.h",
+      "core/fxcodec/codec/ccodec_gifmodule.cpp",
       "core/fxcodec/codec/ccodec_gifmodule.h",
+      "core/fxcodec/codec/ccodec_pngmodule.cpp",
       "core/fxcodec/codec/ccodec_pngmodule.h",
       "core/fxcodec/codec/ccodec_progressivedecoder.h",
+      "core/fxcodec/codec/ccodec_tiffmodule.cpp",
       "core/fxcodec/codec/ccodec_tiffmodule.h",
-      "core/fxcodec/codec/fx_codec_bmp.cpp",
-      "core/fxcodec/codec/fx_codec_gif.cpp",
-      "core/fxcodec/codec/fx_codec_png.cpp",
       "core/fxcodec/codec/fx_codec_progress.cpp",
-      "core/fxcodec/codec/fx_codec_tiff.cpp",
       "core/fxcodec/lbmp/fx_bmp.cpp",
       "core/fxcodec/lbmp/fx_bmp.h",
       "core/fxcodec/lgif/fx_gif.cpp",

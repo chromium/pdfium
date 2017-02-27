@@ -171,6 +171,7 @@ class CCodec_ProgressiveDecoder {
   FXCODEC_STATUS m_status;
 
  protected:
+#ifdef PDF_ENABLE_XFA_PNG
   static bool PngReadHeaderFunc(void* pModule,
                                 int width,
                                 int height,
@@ -182,6 +183,9 @@ class CCodec_ProgressiveDecoder {
   static void PngFillScanlineBufCompletedFunc(void* pModule,
                                               int pass,
                                               int line);
+#endif  // PDF_ENABLE_XFA_PNG
+
+#ifdef PDF_ENABLE_XFA_GIF
   static void GifRecordCurrentPositionCallback(void* pModule,
                                                uint32_t& cur_pos);
   static uint8_t* GifAskLocalPaletteBufCallback(void* pModule,
@@ -200,10 +204,25 @@ class CCodec_ProgressiveDecoder {
   static void GifReadScanlineCallback(void* pModule,
                                       int32_t row_num,
                                       uint8_t* row_buf);
+  bool GifReadMoreData(CCodec_GifModule* pGifModule,
+                       FXCODEC_STATUS& err_status);
+  void GifDoubleLineResampleVert(CFX_DIBitmap* pDeviceBitmap,
+                                 double scale_y,
+                                 int des_row);
+#endif  // PDF_ENABLE_XFA_GIF
+
+#ifdef PDF_ENABLE_XFA_BMP
   static bool BmpInputImagePositionBufCallback(void* pModule, uint32_t rcd_pos);
   static void BmpReadScanlineCallback(void* pModule,
                                       int32_t row_num,
                                       uint8_t* row_buf);
+  void PngOneOneMapResampleHorz(CFX_DIBitmap* pDeviceBitmap,
+                                int32_t des_line,
+                                uint8_t* src_scan,
+                                FXCodec_Format src_format);
+  bool BmpReadMoreData(CCodec_BmpModule* pBmpModule,
+                       FXCODEC_STATUS& err_status);
+#endif  // PDF_ENABLE_XFA_BMP
 
   bool DetectImageType(FXCODEC_IMAGE_TYPE imageType,
                        CFX_DIBAttribute* pAttribute);
@@ -220,17 +239,6 @@ class CCodec_ProgressiveDecoder {
   void ResampleVert(CFX_DIBitmap* pDeviceBitmap, double scale_y, int des_row);
   bool JpegReadMoreData(CCodec_JpegModule* pJpegModule,
                         FXCODEC_STATUS& err_status);
-  void PngOneOneMapResampleHorz(CFX_DIBitmap* pDeviceBitmap,
-                                int32_t des_line,
-                                uint8_t* src_scan,
-                                FXCodec_Format src_format);
-  bool GifReadMoreData(CCodec_GifModule* pGifModule,
-                       FXCODEC_STATUS& err_status);
-  void GifDoubleLineResampleVert(CFX_DIBitmap* pDeviceBitmap,
-                                 double scale_y,
-                                 int des_row);
-  bool BmpReadMoreData(CCodec_BmpModule* pBmpModule,
-                       FXCODEC_STATUS& err_status);
   void ResampleVertBT(CFX_DIBitmap* pDeviceBitmap, double scale_y, int des_row);
 };
 

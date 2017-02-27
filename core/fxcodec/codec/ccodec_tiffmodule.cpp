@@ -4,6 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "core/fxcodec/codec/ccodec_tiffmodule.h"
+
 #include <limits>
 
 #include "core/fxcodec/codec/codec_int.h"

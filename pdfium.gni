@@ -17,6 +17,18 @@ declare_args() {
   # Build PDFium either with or without XFA Forms support.
   pdf_enable_xfa = pdf_enable_xfa_override
 
+  # If XFA, also support bmp codec. Ignored if not XFA.
+  pdf_enable_xfa_bmp = false
+
+  # If XFA, also support gif codec. Ignored if not XFA.
+  pdf_enable_xfa_gif = false
+
+  # If XFA, also support png codec. Ignored if not XFA.
+  pdf_enable_xfa_png = false
+
+  # If XFA, also support png codec. Ignored if not XFA.
+  pdf_enable_xfa_tiff = false
+
   # Build PDFium against skia (experimental) rather than agg. Use Skia to draw everything.
   pdf_use_skia = pdf_use_skia_override
 

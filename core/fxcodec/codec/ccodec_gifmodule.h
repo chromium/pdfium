@@ -7,8 +7,10 @@
 #ifndef CORE_FXCODEC_CODEC_CCODEC_GIFMODULE_H_
 #define CORE_FXCODEC_CODEC_CCODEC_GIFMODULE_H_
 
+#include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_system.h"
 
+class CFX_DIBAttribute;
 struct FXGIF_Context;
 
 class CCodec_GifModule {
