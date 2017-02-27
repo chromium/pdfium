@@ -28,4 +28,5 @@ Local Modifications:
 0015-sanitize-float-read.patch: Sanitize floating point read. Partially backport
     from upstream https://github.com/mm2/Little-CMS/commit/4011a6e3
 0016-check-LUT-and-MPE.patch: check LUT consistency and sanitize MPE profiles.
+0017-upstream-integer-overflow-MPEmatrix_Read.patch: fix some integer overflows.
 TODO(ochang): List other patches.
