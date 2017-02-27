@@ -105,7 +105,6 @@ If you used Ninja, you can build the sample program by:
 `ninja -C <directory>/pdfium_test` You can build the entire product (which
 includes a few unit tests) by: `ninja -C <directory>`.
 
-
 ## Running the sample program
 
 The pdfium\_test program supports reading, parsing, and rasterizing the pages of
