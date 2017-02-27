@@ -406,6 +406,18 @@ DLLEXPORT FPDF_PAGEOBJECT STDCALL FPDFPageObj_NewTextObj(FPDF_DOCUMENT document,
 DLLEXPORT FPDF_BOOL STDCALL FPDFText_SetText(FPDF_PAGEOBJECT text_object,
                                              FPDF_BYTESTRING text);
 
+// Returns a type 1 font object loaded from a stream of data. The font is loaded
+// into the document. The caller does not need to free the returned object.
+//
+// document - handle to the document.
+// data     - the stream of data, which will be copied by the font object.
+// size     - size of the stream, in bytes.
+//
+// Returns NULL on failure
+DLLEXPORT FPDF_FONT STDCALL FPDFText_LoadType1Font(FPDF_DOCUMENT document,
+                                                   const uint8_t* data,
+                                                   uint32_t size);
+
 #ifdef __cplusplus
 }  // extern "C"
 #endif  // __cplusplus
