@@ -22,7 +22,7 @@ CPDF_Metadata::CPDF_Metadata(CPDF_Document* pDoc) {
 
   CPDF_StreamAcc acc;
   acc.LoadAllData(pStream, false);
-  m_pXmlElement.reset(CXML_Element::Parse(acc.GetData(), acc.GetSize()));
+  m_pXmlElement = CXML_Element::Parse(acc.GetData(), acc.GetSize());
 }
 
 CPDF_Metadata::~CPDF_Metadata() {}

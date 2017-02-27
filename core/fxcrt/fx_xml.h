@@ -54,26 +54,18 @@ class CXML_Element {
  public:
   enum ChildType { Invalid, Element, Content };
 
-  static CXML_Element* Parse(const void* pBuffer,
-                             size_t size,
-                             bool bSaveSpaceChars = false,
-                             FX_FILESIZE* pParsedSize = nullptr);
-  static CXML_Element* Parse(const CFX_RetainPtr<IFX_SeekableReadStream>& pFile,
-                             bool bSaveSpaceChars = false,
-                             FX_FILESIZE* pParsedSize = nullptr);
-  static CXML_Element* Parse(
-      const CFX_RetainPtr<IFX_BufferedReadStream>& pBuffer,
-      bool bSaveSpaceChars = false,
-      FX_FILESIZE* pParsedSize = nullptr);
+  static std::unique_ptr<CXML_Element> Parse(const void* pBuffer, size_t size);
 
-  CXML_Element();
+  CXML_Element(const CXML_Element* pParent,
+               const CFX_ByteStringC& qSpace,
+               const CFX_ByteStringC& tagname);
   ~CXML_Element();
 
   void Empty();
   CFX_ByteString GetTagName(bool bQualified = false) const;
   CFX_ByteString GetNamespace(bool bQualified = false) const;
   CFX_ByteString GetNamespaceURI(const CFX_ByteString& qName) const;
-  CXML_Element* GetParent() const { return m_pParent; }
+  const CXML_Element* GetParent() const { return m_pParent; }
   uint32_t CountAttrs() const { return m_AttrMap.GetSize(); }
   void GetAttrByIndex(int index,
                       CFX_ByteString& space,
@@ -148,7 +140,6 @@ class CXML_Element {
                            int index) const;
 
   uint32_t FindElement(CXML_Element* pChild) const;
-  void SetTag(const CFX_ByteStringC& qSpace, const CFX_ByteStringC& tagname);
   void SetTag(const CFX_ByteStringC& qTagName);
   void RemoveChildren();
   void RemoveChild(uint32_t index);
@@ -159,7 +150,7 @@ class CXML_Element {
     void* child;  // CXML_Element and CXML_Content lack a common ancestor.
   };
 
-  CXML_Element* m_pParent;
+  const CXML_Element* const m_pParent;
   CFX_ByteString m_QSpaceName;
   CFX_ByteString m_TagName;
   CXML_AttrMap m_AttrMap;

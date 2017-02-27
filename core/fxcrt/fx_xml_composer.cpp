@@ -23,14 +23,10 @@ void FX_XML_SplitQualifiedName(const CFX_ByteStringC& bsFullName,
   }
 }
 
-void CXML_Element::SetTag(const CFX_ByteStringC& qSpace,
-                          const CFX_ByteStringC& tagname) {
-  m_QSpaceName = qSpace;
-  m_TagName = tagname;
-}
 void CXML_Element::SetTag(const CFX_ByteStringC& qTagName) {
   ASSERT(!qTagName.IsEmpty());
-  CFX_ByteStringC bsSpace, bsName;
+  CFX_ByteStringC bsSpace;
+  CFX_ByteStringC bsName;
   FX_XML_SplitQualifiedName(qTagName, bsSpace, bsName);
   m_QSpaceName = bsSpace;
   m_TagName = bsName;

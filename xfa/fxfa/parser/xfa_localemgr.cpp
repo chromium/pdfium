@@ -1053,7 +1053,7 @@ static std::unique_ptr<IFX_Locale> XFA_GetLocaleFromBuffer(const uint8_t* pBuf,
   pCodecMgr->GetFlateModule()->FlateOrLZWDecode(false, pBuf, nBufLen, true, 0,
                                                 0, 0, 0, 0, pOut, dwSize);
   if (pOut) {
-    pLocale.reset(CXML_Element::Parse(pOut, dwSize));
+    pLocale = CXML_Element::Parse(pOut, dwSize);
     FX_Free(pOut);
   }
   return pLocale ? std::unique_ptr<IFX_Locale>(

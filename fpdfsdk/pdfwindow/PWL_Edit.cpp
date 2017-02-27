@@ -6,6 +6,7 @@
 
 #include "fpdfsdk/pdfwindow/PWL_Edit.h"
 
+#include <memory>
 #include <vector>
 
 #include "core/fpdfapi/font/cpdf_font.h"
@@ -41,35 +42,41 @@ void CPWL_Edit::OnDestroy() {}
 
 void CPWL_Edit::SetText(const CFX_WideString& csText) {
   CFX_WideString swText = csText;
-  if (HasFlag(PES_RICH)) {
-    CFX_ByteString sValue = CFX_ByteString::FromUnicode(swText);
-    if (CXML_Element* pXML =
-            CXML_Element::Parse(sValue.c_str(), sValue.GetLength())) {
-      int32_t nCount = pXML->CountChildren();
-      bool bFirst = true;
+  if (!HasFlag(PES_RICH)) {
+    m_pEdit->SetText(swText);
+    return;
+  }
 
-      swText.clear();
+  CFX_ByteString sValue = CFX_ByteString::FromUnicode(swText);
+  std::unique_ptr<CXML_Element> pXML(
+      CXML_Element::Parse(sValue.c_str(), sValue.GetLength()));
+  if (!pXML) {
+    m_pEdit->SetText(swText);
+    return;
+  }
 
-      for (int32_t i = 0; i < nCount; i++) {
-        if (CXML_Element* pSubElement = pXML->GetElement(i)) {
-          CFX_ByteString tag = pSubElement->GetTagName();
-          if (tag.EqualNoCase("p")) {
-            int nChild = pSubElement->CountChildren();
-            CFX_WideString swSection;
-            for (int32_t j = 0; j < nChild; j++) {
-              swSection += pSubElement->GetContent(j);
-            }
+  int32_t nCount = pXML->CountChildren();
+  bool bFirst = true;
 
-            if (bFirst)
-              bFirst = false;
-            else
-              swText += FWL_VKEY_Return;
-            swText += swSection;
-          }
-        }
-      }
+  swText.clear();
 
-      delete pXML;
+  for (int32_t i = 0; i < nCount; i++) {
+    CXML_Element* pSubElement = pXML->GetElement(i);
+    if (!pSubElement)
+      continue;
+
+    CFX_ByteString tag = pSubElement->GetTagName();
+    if (tag.EqualNoCase("p")) {
+      int nChild = pSubElement->CountChildren();
+      CFX_WideString swSection;
+      for (int32_t j = 0; j < nChild; j++)
+        swSection += pSubElement->GetContent(j);
+
+      if (bFirst)
+        bFirst = false;
+      else
+        swText += FWL_VKEY_Return;
+      swText += swSection;
     }
   }
 

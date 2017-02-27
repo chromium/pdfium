@@ -8,6 +8,7 @@
 #define CORE_FXCRT_XML_INT_H_
 
 #include <algorithm>
+#include <memory>
 
 #include "core/fxcrt/fx_stream.h"
 
@@ -19,23 +20,21 @@ class CXML_Parser {
   CXML_Parser();
   ~CXML_Parser();
 
-  bool Init(uint8_t* pBuffer, size_t size);
-  bool Init(const CFX_RetainPtr<IFX_SeekableReadStream>& pFileRead);
-  bool Init(const CFX_RetainPtr<IFX_BufferedReadStream>& pBuffer);
-  bool Init();
+  bool Init(const uint8_t* pBuffer, size_t size);
   bool ReadNextBlock();
   bool IsEOF();
   bool HaveAvailData();
   void SkipWhiteSpaces();
-  void GetName(CFX_ByteString& space, CFX_ByteString& name);
+  void GetName(CFX_ByteString* space, CFX_ByteString* name);
   void GetAttrValue(CFX_WideString& value);
   uint32_t GetCharRef();
-  void GetTagName(CFX_ByteString& space,
-                  CFX_ByteString& name,
-                  bool& bEndTag,
-                  bool bStartTag = false);
+  void GetTagName(bool bStartTag,
+                  bool* bEndTag,
+                  CFX_ByteString* space,
+                  CFX_ByteString* name);
   void SkipLiterals(const CFX_ByteStringC& str);
-  CXML_Element* ParseElement(CXML_Element* pParent, bool bStartTag = false);
+  std::unique_ptr<CXML_Element> ParseElement(CXML_Element* pParent,
+                                             bool bStartTag);
   void InsertContentSegment(bool bCDATA,
                             const CFX_WideStringC& content,
                             CXML_Element* pElement);
@@ -43,7 +42,6 @@ class CXML_Parser {
 
   CFX_RetainPtr<IFX_BufferedReadStream> m_pDataAcc;
   FX_FILESIZE m_nOffset;
-  bool m_bSaveSpaceChars;
   const uint8_t* m_pBuffer;
   size_t m_dwBufferSize;
   FX_FILESIZE m_nBufferOffset;
