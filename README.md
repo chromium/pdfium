@@ -44,7 +44,6 @@ can be found in `depot_tools\win_toolchain\vs_files\<hash>\win_sdk\Debuggers`.
 If you want the IDE for debugging and editing, you will need to install
 it separately, but this is optional and not needed for building PDFium.
 
-
 ## Get the code
 
 The name of the top-level directory does not matter. In our examples, we use
