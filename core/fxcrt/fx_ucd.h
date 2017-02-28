@@ -165,13 +165,15 @@ class CFX_TxtChar : public CFX_Char {
   void* m_pUserData;
 };
 
+enum class CFX_RTFBreakType { None = 0, Piece, Line, Paragraph, Page };
+
 class CFX_RTFChar : public CFX_Char {
  public:
   CFX_RTFChar();
   CFX_RTFChar(const CFX_RTFChar& other);
   ~CFX_RTFChar();
 
-  uint32_t m_dwStatus;
+  CFX_RTFBreakType m_dwStatus;
   int32_t m_iFontSize;
   int32_t m_iFontHeight;
   int16_t m_iBidiClass;
@@ -183,7 +185,7 @@ class CFX_RTFChar : public CFX_Char {
 };
 
 inline CFX_RTFChar::CFX_RTFChar()
-    : m_dwStatus(0),
+    : m_dwStatus(CFX_RTFBreakType::None),
       m_iFontSize(0),
       m_iFontHeight(0),
       m_iBidiClass(0),

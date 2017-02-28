@@ -92,11 +92,11 @@ class CXFA_TextLayout {
                   FX_FLOAT& fLinePos,
                   FX_FLOAT fSpaceAbove,
                   bool bSavePieces);
-  void AppendTextLine(uint32_t dwStatus,
+  void AppendTextLine(CFX_RTFBreakType dwStatus,
                       FX_FLOAT& fLinePos,
                       bool bSavePieces,
                       bool bEndBreak = false);
-  void EndBreak(uint32_t dwStatus, FX_FLOAT& fLinePos, bool bDefault);
+  void EndBreak(CFX_RTFBreakType dwStatus, FX_FLOAT& fLinePos, bool bDefault);
   bool IsEnd(bool bSavePieces);
   void ProcessText(CFX_WideString& wsText);
   void UpdateAlign(FX_FLOAT fHeight, FX_FLOAT fBottom);
