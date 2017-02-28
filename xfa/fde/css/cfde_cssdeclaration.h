@@ -34,7 +34,8 @@ class CFDE_CSSDeclaration {
   CFDE_CSSDeclaration();
   ~CFDE_CSSDeclaration();
 
-  CFDE_CSSValue* GetProperty(FDE_CSSProperty eProperty, bool& bImportant) const;
+  CFX_RetainPtr<CFDE_CSSValue> GetProperty(FDE_CSSProperty eProperty,
+                                           bool* bImportant) const;
 
   const_prop_iterator begin() const { return properties_.begin(); }
   const_prop_iterator end() const { return properties_.end(); }

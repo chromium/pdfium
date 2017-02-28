@@ -21,11 +21,12 @@ class CFDE_CSSComputedStyle : public CFX_Retainable {
   class InheritedData {
    public:
     InheritedData();
+    ~InheritedData();
 
     FDE_CSSLength m_LetterSpacing;
     FDE_CSSLength m_WordSpacing;
     FDE_CSSLength m_TextIndent;
-    CFDE_CSSValueList* m_pFontFamily;
+    CFX_RetainPtr<CFDE_CSSValueList> m_pFontFamily;
     FX_FLOAT m_fFontSize;
     FX_FLOAT m_fLineHeight;
     FX_ARGB m_dwFontColor;

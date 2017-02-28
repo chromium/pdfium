@@ -33,8 +33,8 @@ int32_t CFDE_CSSComputedStyle::CountFontFamilies() const {
 }
 
 const CFX_WideString CFDE_CSSComputedStyle::GetFontFamily(int32_t index) const {
-  return static_cast<CFDE_CSSStringValue*>(
-             m_InheritedData.m_pFontFamily->GetValue(index))
+  return m_InheritedData.m_pFontFamily->GetValue(index)
+      .As<CFDE_CSSStringValue>()
       ->Value();
 }
 
@@ -179,6 +179,8 @@ CFDE_CSSComputedStyle::InheritedData::InheritedData()
       m_eFontVariant(FDE_CSSFontVariant::Normal),
       m_eFontStyle(FDE_CSSFontStyle::Normal),
       m_eTextAlign(FDE_CSSTextAlign::Left) {}
+
+CFDE_CSSComputedStyle::InheritedData::~InheritedData() {}
 
 CFDE_CSSComputedStyle::NonInheritedData::NonInheritedData()
     : m_MarginWidth(FDE_CSSLengthUnit::Point, 0),

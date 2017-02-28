@@ -30,6 +30,11 @@ class CFX_RetainPtr {
   template <class U>
   CFX_RetainPtr(const CFX_RetainPtr<U>& that) : CFX_RetainPtr(that.Get()) {}
 
+  template <class U>
+  CFX_RetainPtr<U> As() const {
+    return CFX_RetainPtr<U>(static_cast<U*>(Get()));
+  }
+
   void Reset(T* obj = nullptr) {
     if (obj)
       obj->Retain();

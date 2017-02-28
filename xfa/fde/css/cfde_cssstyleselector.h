@@ -58,7 +58,7 @@ class CFDE_CSSStyleSelector {
       const CFDE_CSSDeclaration* extraDecl,
       CFDE_CSSComputedStyle* pDestStyle);
   void ApplyProperty(FDE_CSSProperty eProperty,
-                     CFDE_CSSValue* pValue,
+                     const CFX_RetainPtr<CFDE_CSSValue>& pValue,
                      CFDE_CSSComputedStyle* pComputedStyle);
   void ExtractValues(const CFDE_CSSDeclaration* decl,
                      std::vector<const CFDE_CSSPropertyHolder*>* importants,
@@ -67,7 +67,7 @@ class CFDE_CSSStyleSelector {
 
   bool SetLengthWithPercent(FDE_CSSLength& width,
                             FDE_CSSPrimitiveType eType,
-                            CFDE_CSSValue* pValue,
+                            const CFX_RetainPtr<CFDE_CSSValue>& pValue,
                             FX_FLOAT fFontSize);
   FX_FLOAT ToFontSize(FDE_CSSPropertyValue eValue, FX_FLOAT fCurFontSize);
   FDE_CSSDisplay ToDisplay(FDE_CSSPropertyValue eValue);
@@ -75,7 +75,7 @@ class CFDE_CSSStyleSelector {
   uint16_t ToFontWeight(FDE_CSSPropertyValue eValue);
   FDE_CSSFontStyle ToFontStyle(FDE_CSSPropertyValue eValue);
   FDE_CSSVerticalAlign ToVerticalAlign(FDE_CSSPropertyValue eValue);
-  uint32_t ToTextDecoration(CFDE_CSSValueList* pList);
+  uint32_t ToTextDecoration(const CFX_RetainPtr<CFDE_CSSValueList>& pList);
   FDE_CSSFontVariant ToFontVariant(FDE_CSSPropertyValue eValue);
 
   CFGAS_FontMgr* const m_pFontMgr;

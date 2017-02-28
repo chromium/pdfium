@@ -17,7 +17,7 @@ class CFDE_CSSValueList : public CFDE_CSSValue {
   ~CFDE_CSSValueList() override;
 
   int32_t CountValues() const;
-  CFDE_CSSValue* GetValue(int32_t index) const;
+  CFX_RetainPtr<CFDE_CSSValue> GetValue(int32_t index) const;
 
  protected:
   std::vector<CFX_RetainPtr<CFDE_CSSValue>> m_ppList;

@@ -51,19 +51,19 @@ class CFDE_CSSStyleSheetTest : public testing::Test {
     ASSERT(decl_);
 
     bool important;
-    CFDE_CSSValue* v = decl_->GetProperty(prop, important);
+    CFX_RetainPtr<CFDE_CSSValue> v = decl_->GetProperty(prop, &important);
     EXPECT_EQ(v->GetType(), FDE_CSSPrimitiveType::Number);
-    EXPECT_EQ(static_cast<CFDE_CSSNumberValue*>(v)->Kind(), type);
-    EXPECT_EQ(static_cast<CFDE_CSSNumberValue*>(v)->Value(), val);
+    EXPECT_EQ(v.As<CFDE_CSSNumberValue>()->Kind(), type);
+    EXPECT_EQ(v.As<CFDE_CSSNumberValue>()->Value(), val);
   }
 
   void VerifyEnum(FDE_CSSProperty prop, FDE_CSSPropertyValue val) {
     ASSERT(decl_);
 
     bool important;
-    CFDE_CSSValue* v = decl_->GetProperty(prop, important);
+    CFX_RetainPtr<CFDE_CSSValue> v = decl_->GetProperty(prop, &important);
     EXPECT_EQ(v->GetType(), FDE_CSSPrimitiveType::Enum);
-    EXPECT_EQ(static_cast<CFDE_CSSEnumValue*>(v)->Value(), val);
+    EXPECT_EQ(v.As<CFDE_CSSEnumValue>()->Value(), val);
   }
 
   void VerifyList(FDE_CSSProperty prop,
@@ -71,14 +71,14 @@ class CFDE_CSSStyleSheetTest : public testing::Test {
     ASSERT(decl_);
 
     bool important;
-    CFDE_CSSValue* v = decl_->GetProperty(prop, important);
-    CFDE_CSSValueList* list = static_cast<CFDE_CSSValueList*>(v);
+    CFX_RetainPtr<CFDE_CSSValueList> list =
+        decl_->GetProperty(prop, &important).As<CFDE_CSSValueList>();
     EXPECT_EQ(list->CountValues(), pdfium::CollectionSize<int32_t>(values));
 
     for (size_t i = 0; i < values.size(); i++) {
-      CFDE_CSSValue* val = list->GetValue(i);
+      CFX_RetainPtr<CFDE_CSSValue> val = list->GetValue(i);
       EXPECT_EQ(val->GetType(), FDE_CSSPrimitiveType::Enum);
-      EXPECT_EQ(static_cast<CFDE_CSSEnumValue*>(val)->Value(), values[i]);
+      EXPECT_EQ(val.As<CFDE_CSSEnumValue>()->Value(), values[i]);
     }
   }
 

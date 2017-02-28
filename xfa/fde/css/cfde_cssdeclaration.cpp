@@ -133,12 +133,13 @@ CFDE_CSSDeclaration::CFDE_CSSDeclaration() {}
 
 CFDE_CSSDeclaration::~CFDE_CSSDeclaration() {}
 
-CFDE_CSSValue* CFDE_CSSDeclaration::GetProperty(FDE_CSSProperty eProperty,
-                                                bool& bImportant) const {
+CFX_RetainPtr<CFDE_CSSValue> CFDE_CSSDeclaration::GetProperty(
+    FDE_CSSProperty eProperty,
+    bool* bImportant) const {
   for (const auto& p : properties_) {
     if (p->eProperty == eProperty) {
-      bImportant = p->bImportant;
-      return p->pValue.Get();
+      *bImportant = p->bImportant;
+      return p->pValue;
     }
   }
   return nullptr;

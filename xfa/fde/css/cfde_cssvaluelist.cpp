@@ -20,6 +20,6 @@ int32_t CFDE_CSSValueList::CountValues() const {
   return m_ppList.size();
 }
 
-CFDE_CSSValue* CFDE_CSSValueList::GetValue(int32_t index) const {
-  return m_ppList[index].Get();
+CFX_RetainPtr<CFDE_CSSValue> CFDE_CSSValueList::GetValue(int32_t index) const {
+  return m_ppList[index];
 }
