@@ -108,26 +108,26 @@ void CXFA_TextLayout::InitBreak(FX_FLOAT fLineWidth) {
   FX_FLOAT fStart = 0;
   FX_FLOAT fStartPos = 0;
   if (para) {
-    int32_t iAlign = FX_RTFLINEALIGNMENT_Left;
+    CFX_RTFLineAlignment iAlign = CFX_RTFLineAlignment::Left;
     switch (para.GetHorizontalAlign()) {
       case XFA_ATTRIBUTEENUM_Center:
-        iAlign = FX_RTFLINEALIGNMENT_Center;
+        iAlign = CFX_RTFLineAlignment::Center;
         break;
       case XFA_ATTRIBUTEENUM_Right:
-        iAlign = FX_RTFLINEALIGNMENT_Right;
+        iAlign = CFX_RTFLineAlignment::Right;
         break;
       case XFA_ATTRIBUTEENUM_Justify:
-        iAlign = FX_RTFLINEALIGNMENT_Justified;
+        iAlign = CFX_RTFLineAlignment::Justified;
         break;
       case XFA_ATTRIBUTEENUM_JustifyAll:
-        iAlign = FX_RTFLINEALIGNMENT_Distributed;
+        iAlign = CFX_RTFLineAlignment::Distributed;
         break;
     }
     m_pBreak->SetAlignment(iAlign);
 
     fStart = para.GetMarginLeft();
     if (m_pTextProvider->IsCheckButtonAndAutoWidth()) {
-      if (iAlign != FX_RTFLINEALIGNMENT_Left)
+      if (iAlign != CFX_RTFLineAlignment::Left)
         fLineWidth -= para.GetMarginRight();
     } else {
       fLineWidth -= para.GetMarginRight();
@@ -167,24 +167,25 @@ void CXFA_TextLayout::InitBreak(CFDE_CSSComputedStyle* pStyle,
 
   if (eDisplay == FDE_CSSDisplay::Block ||
       eDisplay == FDE_CSSDisplay::ListItem) {
-    int32_t iAlign = FX_RTFLINEALIGNMENT_Left;
+    CFX_RTFLineAlignment iAlign = CFX_RTFLineAlignment::Left;
     switch (pStyle->GetTextAlign()) {
       case FDE_CSSTextAlign::Right:
-        iAlign = FX_RTFLINEALIGNMENT_Right;
+        iAlign = CFX_RTFLineAlignment::Right;
         break;
       case FDE_CSSTextAlign::Center:
-        iAlign = FX_RTFLINEALIGNMENT_Center;
+        iAlign = CFX_RTFLineAlignment::Center;
         break;
       case FDE_CSSTextAlign::Justify:
-        iAlign = FX_RTFLINEALIGNMENT_Justified;
+        iAlign = CFX_RTFLineAlignment::Justified;
         break;
       case FDE_CSSTextAlign::JustifyAll:
-        iAlign = FX_RTFLINEALIGNMENT_Distributed;
+        iAlign = CFX_RTFLineAlignment::Distributed;
         break;
       default:
         break;
     }
     m_pBreak->SetAlignment(iAlign);
+
     FX_FLOAT fStart = 0;
     const FDE_CSSRect* pRect = pStyle->GetMarginWidth();
     const FDE_CSSRect* pPaddingRect = pStyle->GetPaddingWidth();

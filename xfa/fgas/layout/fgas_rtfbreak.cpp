@@ -34,7 +34,7 @@ CFX_RTFBreak::CFX_RTFBreak(uint32_t dwLayoutStyles)
       m_bWordSpace(false),
       m_iWordSpace(0),
       m_bRTL(false),
-      m_iAlignment(FX_RTFLINEALIGNMENT_Left),
+      m_iAlignment(CFX_RTFLineAlignment::Left),
       m_pUserData(nullptr),
       m_eCharType(FX_CHARTYPE_Unknown),
       m_dwIdentity(0),
@@ -195,11 +195,6 @@ void CFX_RTFBreak::SetWordSpace(bool bDefault, FX_FLOAT fWordSpace) {
 }
 void CFX_RTFBreak::SetReadingOrder(bool bRTL) {
   m_bRTL = bRTL;
-}
-void CFX_RTFBreak::SetAlignment(int32_t iAlignment) {
-  ASSERT(iAlignment >= FX_RTFLINEALIGNMENT_Left &&
-         iAlignment <= FX_RTFLINEALIGNMENT_Distributed);
-  m_iAlignment = iAlignment;
 }
 
 void CFX_RTFBreak::SetUserData(const CFX_RetainPtr<CFX_Retainable>& pUserData) {
@@ -502,12 +497,13 @@ uint32_t CFX_RTFBreak::EndBreak(uint32_t dwStatus) {
   m_iReady = (m_pCurLine == &m_RTFLine1) ? 1 : 2;
   CFX_RTFLine* pNextLine =
       (m_pCurLine == &m_RTFLine1) ? &m_RTFLine2 : &m_RTFLine1;
-  bool bAllChars = (m_iAlignment > FX_RTFLINEALIGNMENT_Right);
+  bool bAllChars = m_iAlignment == CFX_RTFLineAlignment::Justified ||
+                   m_iAlignment == CFX_RTFLineAlignment::Distributed;
   CFX_TPOArray tpos(100);
   if (!EndBreak_SplitLine(pNextLine, bAllChars, dwStatus)) {
     EndBreak_BidiLine(tpos, dwStatus);
 
-    if (!m_bPagination && m_iAlignment > FX_RTFLINEALIGNMENT_Left)
+    if (!m_bPagination && m_iAlignment != CFX_RTFLineAlignment::Left)
       EndBreak_Alignment(tpos, bAllChars, dwStatus);
   }
 
@@ -727,10 +723,8 @@ void CFX_RTFBreak::EndBreak_Alignment(CFX_TPOArray& tpos,
     }
   }
   int32_t iOffset = m_iBoundaryEnd - iNetWidth;
-  int32_t iLowerAlignment = (m_iAlignment & FX_RTFLINEALIGNMENT_LowerMask);
-  int32_t iHigherAlignment = (m_iAlignment & FX_RTFLINEALIGNMENT_HigherMask);
-  if (iGapChars > 0 && (iHigherAlignment == FX_RTFLINEALIGNMENT_Distributed ||
-                        (iHigherAlignment == FX_RTFLINEALIGNMENT_Justified &&
+  if (iGapChars > 0 && (m_iAlignment == CFX_RTFLineAlignment::Distributed ||
+                        (m_iAlignment == CFX_RTFLineAlignment::Justified &&
                          dwStatus != FX_RTFBREAK_ParagraphBreak))) {
     int32_t iStart = -1;
     for (i = 0; i < iCount; i++) {
@@ -758,10 +752,10 @@ void CFX_RTFBreak::EndBreak_Alignment(CFX_TPOArray& tpos,
       }
       iStart += ttp.m_iWidth;
     }
-  } else if (iLowerAlignment > FX_RTFLINEALIGNMENT_Left) {
-    if (iLowerAlignment == FX_RTFLINEALIGNMENT_Center) {
+  } else if (m_iAlignment == CFX_RTFLineAlignment::Right ||
+             m_iAlignment == CFX_RTFLineAlignment::Center) {
+    if (m_iAlignment == CFX_RTFLineAlignment::Center)
       iOffset /= 2;
-    }
     if (iOffset > 0) {
       for (i = 0; i < iCount; i++) {
         CFX_RTFPiece& ttp = pCurPieces->GetAt(i);

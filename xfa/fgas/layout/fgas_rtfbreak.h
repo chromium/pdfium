@@ -27,33 +27,13 @@ class CFGAS_GEFont;
 #define FX_RTFLAYOUTSTYLE_Pagination 0x01
 #define FX_RTFLAYOUTSTYLE_ExpandTab 0x10
 
-#define FX_RTFCHARSTYLE_Alignment 0x000F
-#define FX_RTFCHARSTYLE_ArabicNumber 0x0010
-#define FX_RTFCHARSTYLE_ArabicShadda 0x0020
-#define FX_RTFCHARSTYLE_OddBidiLevel 0x0040
-#define FX_RTFCHARSTYLE_RTLReadingOrder 0x0080
-#define FX_RTFCHARSTYLE_ArabicContext 0x0300
-#define FX_RTFCHARSTYLE_ArabicIndic 0x0400
-#define FX_RTFCHARSTYLE_ArabicComma 0x0800
-#define FX_RTFLINEALIGNMENT_Left 0
-#define FX_RTFLINEALIGNMENT_Center 1
-#define FX_RTFLINEALIGNMENT_Right 2
-#define FX_RTFLINEALIGNMENT_Justified (1 << 2)
-#define FX_RTFLINEALIGNMENT_Distributed (2 << 2)
-#define FX_RTFLINEALIGNMENT_JustifiedLeft \
-  (FX_RTFLINEALIGNMENT_Left | FX_RTFLINEALIGNMENT_Justified)
-#define FX_RTFLINEALIGNMENT_JustifiedCenter \
-  (FX_RTFLINEALIGNMENT_Center | FX_RTFLINEALIGNMENT_Justified)
-#define FX_RTFLINEALIGNMENT_JustifiedRight \
-  (FX_RTFLINEALIGNMENT_Right | FX_RTFLINEALIGNMENT_Justified)
-#define FX_RTFLINEALIGNMENT_DistributedLeft \
-  (FX_RTFLINEALIGNMENT_Left | FX_RTFLINEALIGNMENT_Distributed)
-#define FX_RTFLINEALIGNMENT_DistributedCenter \
-  (FX_RTFLINEALIGNMENT_Center | FX_RTFLINEALIGNMENT_Distributed)
-#define FX_RTFLINEALIGNMENT_DistributedRight \
-  (FX_RTFLINEALIGNMENT_Right | FX_RTFLINEALIGNMENT_Distributed)
-#define FX_RTFLINEALIGNMENT_LowerMask 0x03
-#define FX_RTFLINEALIGNMENT_HigherMask 0x0C
+enum class CFX_RTFLineAlignment {
+  Left = 0,
+  Center,
+  Right,
+  Justified,
+  Distributed
+};
 
 struct FX_RTFTEXTOBJ {
   FX_RTFTEXTOBJ();
@@ -219,7 +199,7 @@ class CFX_RTFBreak {
   void SetCharSpace(FX_FLOAT fCharSpace);
   void SetWordSpace(bool bDefault, FX_FLOAT fWordSpace);
   void SetReadingOrder(bool bRTL = false);
-  void SetAlignment(int32_t iAlignment = FX_RTFLINEALIGNMENT_Left);
+  void SetAlignment(CFX_RTFLineAlignment align) { m_iAlignment = align; }
   void SetUserData(const CFX_RetainPtr<CFX_Retainable>& pUserData);
   uint32_t AppendChar(FX_WCHAR wch);
   uint32_t EndBreak(uint32_t dwStatus = FX_RTFBREAK_PieceBreak);
@@ -281,7 +261,7 @@ class CFX_RTFBreak {
   bool m_bWordSpace;
   int32_t m_iWordSpace;
   bool m_bRTL;
-  int32_t m_iAlignment;
+  CFX_RTFLineAlignment m_iAlignment;
   CFX_RetainPtr<CFX_Retainable> m_pUserData;
   FX_CHARTYPE m_eCharType;
   uint32_t m_dwIdentity;
