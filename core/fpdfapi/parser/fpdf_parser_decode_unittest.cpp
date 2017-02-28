@@ -76,3 +76,36 @@ TEST(fpdf_parser_decode, HexDecode) {
     FX_Free(result);
   }
 }
+
+TEST(fpdf_parser_decode, EncodeText) {
+  struct EncodeTestData {
+    const FX_WCHAR* input;
+    const FX_CHAR* expected_output;
+    FX_STRSIZE expected_length;
+  } test_data[] = {
+      // Empty src string.
+      {L"", "", 0},
+      // ASCII text.
+      {L"the quick\tfox", "the quick\tfox", 13},
+      // Unicode text.
+      {L"\x0330\x0331", "\xFE\xFF\x03\x30\x03\x31", 6},
+      // More Unicode text.
+      {L"\x7F51\x9875\x0020\x56FE\x7247\x0020"
+       L"\x8D44\x8BAF\x66F4\x591A\x0020\x00BB",
+       "\xFE\xFF\x7F\x51\x98\x75\x00\x20\x56\xFE\x72\x47\x00"
+       "\x20\x8D\x44\x8B\xAF\x66\xF4\x59\x1A\x00\x20\x00\xBB",
+       26},
+  };
+
+  for (size_t i = 0; i < FX_ArraySize(test_data); ++i) {
+    const auto& test_case = test_data[i];
+    CFX_ByteString output = PDF_EncodeText(test_case.input);
+    ASSERT_EQ(test_case.expected_length, output.GetLength()) << "for case "
+                                                             << i;
+    const FX_CHAR* str_ptr = output.c_str();
+    for (FX_STRSIZE j = 0; j < test_case.expected_length; ++j) {
+      EXPECT_EQ(test_case.expected_output[j], str_ptr[j]) << "for case " << i
+                                                          << " char " << j;
+    }
+  }
+}
