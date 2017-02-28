@@ -210,8 +210,8 @@ class CFX_RTFBreak {
  protected:
   void SetBreakStatus();
   CFX_RTFChar* GetLastChar(int32_t index) const;
-  CFX_RTFLine* GetRTFLine(bool bReady) const;
-  CFX_RTFPieceArray* GetRTFPieces(bool bReady) const;
+  CFX_RTFLine* GetRTFLine() const;
+  CFX_RTFPieceArray* GetRTFPieces() const;
   FX_CHARTYPE GetUnifiedCharType(FX_CHARTYPE chartype) const;
   int32_t GetLastPositionedTab() const;
   bool GetPositionedTab(int32_t& iTabPos) const;

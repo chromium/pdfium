@@ -271,9 +271,7 @@ CFX_TxtChar* CFX_TxtBreak::GetLastChar(int32_t index, bool bOmitChar) const {
   return nullptr;
 }
 
-CFX_TxtLine* CFX_TxtBreak::GetTxtLine(bool bReady) const {
-  if (!bReady)
-    return m_pCurLine;
+CFX_TxtLine* CFX_TxtBreak::GetTxtLine() const {
   if (m_iReady == 1)
     return m_pTxtLine1.get();
   if (m_iReady == 2)
@@ -281,8 +279,8 @@ CFX_TxtLine* CFX_TxtBreak::GetTxtLine(bool bReady) const {
   return nullptr;
 }
 
-CFX_TxtPieceArray* CFX_TxtBreak::GetTxtPieces(bool bReady) const {
-  CFX_TxtLine* pTxtLine = GetTxtLine(bReady);
+CFX_TxtPieceArray* CFX_TxtBreak::GetTxtPieces() const {
+  CFX_TxtLine* pTxtLine = GetTxtLine();
   if (!pTxtLine) {
     return nullptr;
   }
@@ -927,7 +925,7 @@ uint32_t CFX_TxtBreak::EndBreak(uint32_t dwStatus) {
     }
     return dwStatus;
   } else {
-    CFX_TxtLine* pLastLine = GetTxtLine(true);
+    CFX_TxtLine* pLastLine = GetTxtLine();
     if (pLastLine) {
       pCurPieces = pLastLine->m_pLinePieces.get();
       iCount = pCurPieces->GetSize();
@@ -1125,12 +1123,12 @@ void CFX_TxtBreak::SplitTextLine(CFX_TxtLine* pCurLine,
 }
 
 int32_t CFX_TxtBreak::CountBreakPieces() const {
-  CFX_TxtPieceArray* pTxtPieces = GetTxtPieces(true);
+  CFX_TxtPieceArray* pTxtPieces = GetTxtPieces();
   return pTxtPieces ? pTxtPieces->GetSize() : 0;
 }
 
 const CFX_TxtPiece* CFX_TxtBreak::GetBreakPiece(int32_t index) const {
-  CFX_TxtPieceArray* pTxtPieces = GetTxtPieces(true);
+  CFX_TxtPieceArray* pTxtPieces = GetTxtPieces();
   if (!pTxtPieces) {
     return nullptr;
   }
@@ -1141,7 +1139,7 @@ const CFX_TxtPiece* CFX_TxtBreak::GetBreakPiece(int32_t index) const {
 }
 
 void CFX_TxtBreak::ClearBreakPieces() {
-  CFX_TxtLine* pTxtLine = GetTxtLine(true);
+  CFX_TxtLine* pTxtLine = GetTxtLine();
   if (pTxtLine) {
     pTxtLine->RemoveAll(true);
   }

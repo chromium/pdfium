@@ -243,8 +243,8 @@ class CFX_TxtBreak {
   void SetBreakStatus();
   int32_t GetLineRotation(uint32_t dwStyles) const;
   CFX_TxtChar* GetLastChar(int32_t index, bool bOmitChar = true) const;
-  CFX_TxtLine* GetTxtLine(bool bReady) const;
-  CFX_TxtPieceArray* GetTxtPieces(bool bReady) const;
+  CFX_TxtLine* GetTxtLine() const;
+  CFX_TxtPieceArray* GetTxtPieces() const;
   FX_CHARTYPE GetUnifiedCharType(FX_CHARTYPE dwType) const;
   void ResetArabicContext();
   void ResetContextCharStyles();

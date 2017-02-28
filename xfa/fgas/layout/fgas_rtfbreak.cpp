@@ -187,23 +187,20 @@ CFX_RTFChar* CFX_RTFBreak::GetLastChar(int32_t index) const {
   }
   return nullptr;
 }
-CFX_RTFLine* CFX_RTFBreak::GetRTFLine(bool bReady) const {
-  if (bReady) {
-    if (m_iReady == 1) {
-      return (CFX_RTFLine*)&m_RTFLine1;
-    } else if (m_iReady == 2) {
-      return (CFX_RTFLine*)&m_RTFLine2;
-    } else {
-      return nullptr;
-    }
-  }
-  ASSERT(m_pCurLine);
-  return m_pCurLine;
+
+CFX_RTFLine* CFX_RTFBreak::GetRTFLine() const {
+  if (m_iReady == 1)
+    return (CFX_RTFLine*)&m_RTFLine1;
+  if (m_iReady == 2)
+    return (CFX_RTFLine*)&m_RTFLine2;
+  return nullptr;
 }
-CFX_RTFPieceArray* CFX_RTFBreak::GetRTFPieces(bool bReady) const {
-  CFX_RTFLine* pRTFLine = GetRTFLine(bReady);
+
+CFX_RTFPieceArray* CFX_RTFBreak::GetRTFPieces() const {
+  CFX_RTFLine* pRTFLine = GetRTFLine();
   return pRTFLine ? &pRTFLine->m_LinePieces : nullptr;
 }
+
 inline FX_CHARTYPE CFX_RTFBreak::GetUnifiedCharType(
     FX_CHARTYPE chartype) const {
   return chartype >= FX_CHARTYPE_ArabicAlef ? FX_CHARTYPE_Arabic : chartype;
@@ -423,7 +420,7 @@ CFX_RTFBreakType CFX_RTFBreak::EndBreak(CFX_RTFBreakType dwStatus) {
     return dwStatus;
   }
 
-  CFX_RTFLine* pLastLine = GetRTFLine(true);
+  CFX_RTFLine* pLastLine = GetRTFLine();
   if (pLastLine) {
     pCurPieces = &pLastLine->m_LinePieces;
     iCount = pCurPieces->GetSize();
@@ -856,12 +853,12 @@ void CFX_RTFBreak::SplitTextLine(CFX_RTFLine* pCurLine,
 }
 
 int32_t CFX_RTFBreak::CountBreakPieces() const {
-  CFX_RTFPieceArray* pRTFPieces = GetRTFPieces(true);
+  CFX_RTFPieceArray* pRTFPieces = GetRTFPieces();
   return pRTFPieces ? pRTFPieces->GetSize() : 0;
 }
 
 const CFX_RTFPiece* CFX_RTFBreak::GetBreakPiece(int32_t index) const {
-  CFX_RTFPieceArray* pRTFPieces = GetRTFPieces(true);
+  CFX_RTFPieceArray* pRTFPieces = GetRTFPieces();
   if (!pRTFPieces)
     return nullptr;
 
@@ -873,7 +870,7 @@ const CFX_RTFPiece* CFX_RTFBreak::GetBreakPiece(int32_t index) const {
 
 void CFX_RTFBreak::GetLineRect(CFX_RectF& rect) const {
   rect.top = 0;
-  CFX_RTFLine* pRTFLine = GetRTFLine(true);
+  CFX_RTFLine* pRTFLine = GetRTFLine();
   if (!pRTFLine) {
     rect.left = ((FX_FLOAT)m_iBoundaryStart) / 20000.0f;
     rect.width = rect.height = 0;
@@ -903,7 +900,7 @@ void CFX_RTFBreak::GetLineRect(CFX_RectF& rect) const {
   rect.height = ((FX_FLOAT)iLineHeight) / 20.0f;
 }
 void CFX_RTFBreak::ClearBreakPieces() {
-  CFX_RTFLine* pRTFLine = GetRTFLine(true);
+  CFX_RTFLine* pRTFLine = GetRTFLine();
   if (pRTFLine) {
     pRTFLine->RemoveAll(true);
   }
