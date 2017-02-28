@@ -23,14 +23,10 @@ class CFGAS_GEFont;
 #define FX_RTFBREAK_LineBreak 0x02
 #define FX_RTFBREAK_ParagraphBreak 0x03
 #define FX_RTFBREAK_PageBreak 0x04
+
 #define FX_RTFLAYOUTSTYLE_Pagination 0x01
-#define FX_RTFLAYOUTSTYLE_VerticalLayout 0x02
-#define FX_RTFLAYOUTSTYLE_VerticalChars 0x04
-#define FX_RTFLAYOUTSTYLE_LineDirection 0x08
 #define FX_RTFLAYOUTSTYLE_ExpandTab 0x10
-#define FX_RTFLAYOUTSTYLE_ArabicNumber 0x20
-#define FX_RTFLAYOUTSTYLE_SingleLine 0x40
-#define FX_RTFLAYOUTSTYLE_MBCSCode 0x80
+
 #define FX_RTFCHARSTYLE_Alignment 0x000F
 #define FX_RTFCHARSTYLE_ArabicNumber 0x0010
 #define FX_RTFCHARSTYLE_ArabicShadda 0x0020
@@ -68,8 +64,6 @@ struct FX_RTFTEXTOBJ {
   int32_t iLength;
   CFX_RetainPtr<CFGAS_GEFont> pFont;
   FX_FLOAT fFontSize;
-  uint32_t dwLayoutStyles;
-  int32_t iCharRotation;
   int32_t iBidiLevel;
   const CFX_RectF* pRect;
   FX_WCHAR wLineBreakChar;
@@ -155,7 +149,6 @@ class CFX_RTFPiece {
   int32_t m_iFontHeight;
   int32_t m_iHorizontalScale;
   int32_t m_iVerticalScale;
-  uint32_t m_dwLayoutStyles;
   uint32_t m_dwIdentity;
   std::vector<CFX_RTFChar>* m_pChars;  // not owned.
   CFX_RetainPtr<CFX_Retainable> m_pUserData;
@@ -207,13 +200,11 @@ class CFX_RTFLine {
 
 class CFX_RTFBreak {
  public:
-  CFX_RTFBreak();
+  explicit CFX_RTFBreak(uint32_t dwLayoutStyles);
   ~CFX_RTFBreak();
 
   void SetLineBoundary(FX_FLOAT fLineStart, FX_FLOAT fLineEnd);
   void SetLineStartPos(FX_FLOAT fLinePos);
-  uint32_t GetLayoutStyles() const { return m_dwLayoutStyles; }
-  void SetLayoutStyles(uint32_t dwLayoutStyles);
   void SetFont(const CFX_RetainPtr<CFGAS_GEFont>& pFont);
   void SetFontSize(FX_FLOAT fFontSize);
   void SetTabWidth(FX_FLOAT fTabWidth);
@@ -225,7 +216,6 @@ class CFX_RTFBreak {
   void SetLineBreakTolerance(FX_FLOAT fTolerance);
   void SetHorizontalScale(int32_t iScale);
   void SetVerticalScale(int32_t iScale);
-  void SetCharRotation(int32_t iCharRotation);
   void SetCharSpace(FX_FLOAT fCharSpace);
   void SetWordSpace(bool bDefault, FX_FLOAT fWordSpace);
   void SetReadingOrder(bool bRTL = false);
@@ -243,18 +233,13 @@ class CFX_RTFBreak {
                         bool bCharCode = false,
                         CFX_WideString* pWSForms = nullptr,
                         FX_AdjustCharDisplayPos pAdjustPos = nullptr) const;
-  int32_t GetCharRects(const FX_RTFTEXTOBJ* pText,
-                       std::vector<CFX_RectF>* rtArray,
-                       bool bCharBBox = false) const;
-  uint32_t AppendChar_CharCode(FX_WCHAR wch);
-  uint32_t AppendChar_Combination(CFX_RTFChar* pCurChar, int32_t iRotation);
-  uint32_t AppendChar_Tab(CFX_RTFChar* pCurChar, int32_t iRotation);
-  uint32_t AppendChar_Control(CFX_RTFChar* pCurChar, int32_t iRotation);
-  uint32_t AppendChar_Arabic(CFX_RTFChar* pCurChar, int32_t iRotation);
-  uint32_t AppendChar_Others(CFX_RTFChar* pCurChar, int32_t iRotation);
+  uint32_t AppendChar_Combination(CFX_RTFChar* pCurChar);
+  uint32_t AppendChar_Tab(CFX_RTFChar* pCurChar);
+  uint32_t AppendChar_Control(CFX_RTFChar* pCurChar);
+  uint32_t AppendChar_Arabic(CFX_RTFChar* pCurChar);
+  uint32_t AppendChar_Others(CFX_RTFChar* pCurChar);
 
  protected:
-  int32_t GetLineRotation(uint32_t dwStyles) const;
   void SetBreakStatus();
   CFX_RTFChar* GetLastChar(int32_t index) const;
   CFX_RTFLine* GetRTFLine(bool bReady) const;
@@ -282,9 +267,6 @@ class CFX_RTFBreak {
   int32_t m_iBoundaryEnd;
   uint32_t m_dwLayoutStyles;
   bool m_bPagination;
-  bool m_bVertical;
-  bool m_bSingleLine;
-  bool m_bCharCode;
   CFX_RetainPtr<CFGAS_GEFont> m_pFont;
   int32_t m_iFontHeight;
   int32_t m_iFontSize;
@@ -295,9 +277,6 @@ class CFX_RTFBreak {
   FX_WCHAR m_wLineBreakChar;
   int32_t m_iHorizontalScale;
   int32_t m_iVerticalScale;
-  int32_t m_iLineRotation;
-  int32_t m_iCharRotation;
-  int32_t m_iRotation;
   int32_t m_iCharSpace;
   bool m_bWordSpace;
   int32_t m_iWordSpace;

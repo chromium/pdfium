@@ -122,18 +122,14 @@ class CFX_Char {
   CFX_Char()
       : m_wCharCode(0),
         m_nBreakType(0),
-        m_nRotation(0),
         m_dwCharProps(0),
-        m_dwCharStyles(0),
         m_iCharWidth(0),
         m_iHorizontalScale(100),
         m_iVertialScale(100) {}
   CFX_Char(uint16_t wCharCode, uint32_t dwCharProps)
       : m_wCharCode(wCharCode),
         m_nBreakType(0),
-        m_nRotation(0),
         m_dwCharProps(dwCharProps),
-        m_dwCharStyles(0),
         m_iCharWidth(0),
         m_iHorizontalScale(100),
         m_iVertialScale(100) {}
@@ -142,9 +138,7 @@ class CFX_Char {
 
   uint16_t m_wCharCode;
   uint8_t m_nBreakType;
-  int8_t m_nRotation;
   uint32_t m_dwCharProps;
-  uint32_t m_dwCharStyles;
   int32_t m_iCharWidth;
   int32_t m_iHorizontalScale;
   int32_t m_iVertialScale;
@@ -153,12 +147,16 @@ class CFX_Char {
 class CFX_TxtChar : public CFX_Char {
  public:
   CFX_TxtChar()
-      : m_dwStatus(0),
+      : m_nRotation(0),
+        m_dwCharStyles(0),
+        m_dwStatus(0),
         m_iBidiClass(0),
         m_iBidiLevel(0),
         m_iBidiPos(0),
         m_iBidiOrder(0),
         m_pUserData(nullptr) {}
+  int8_t m_nRotation;
+  uint32_t m_dwCharStyles;
   uint32_t m_dwStatus;
   int16_t m_iBidiClass;
   int16_t m_iBidiLevel;
@@ -180,7 +178,6 @@ class CFX_RTFChar : public CFX_Char {
   int16_t m_iBidiLevel;
   int16_t m_iBidiPos;
   int16_t m_iBidiOrder;
-  uint32_t m_dwLayoutStyles;
   uint32_t m_dwIdentity;
   CFX_RetainPtr<CFX_Retainable> m_pUserData;
 };
@@ -192,7 +189,6 @@ inline CFX_RTFChar::CFX_RTFChar()
       m_iBidiClass(0),
       m_iBidiLevel(0),
       m_iBidiPos(0),
-      m_dwLayoutStyles(0),
       m_dwIdentity(0),
       m_pUserData(nullptr) {}
 

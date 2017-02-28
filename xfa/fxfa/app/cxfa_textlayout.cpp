@@ -94,8 +94,7 @@ CFX_RTFBreak* CXFA_TextLayout::CreateBreak(bool bDefault) {
   if (!bDefault)
     dwStyle |= FX_RTFLAYOUTSTYLE_Pagination;
 
-  CFX_RTFBreak* pBreak = new CFX_RTFBreak();
-  pBreak->SetLayoutStyles(dwStyle);
+  CFX_RTFBreak* pBreak = new CFX_RTFBreak(dwStyle);
   pBreak->SetLineBreakChar(L'\n');
   pBreak->SetLineBreakTolerance(1);
   pBreak->SetFont(m_textParser.GetFont(m_pTextProvider, nullptr));
@@ -1307,10 +1306,8 @@ bool CXFA_TextLayout::ToRun(const XFA_TextPiece* pPiece, FX_RTFTEXTOBJ* tr) {
   tr->iLength = iLength;
   tr->fFontSize = pPiece->fFontSize;
   tr->iBidiLevel = pPiece->iBidiLevel;
-  tr->iCharRotation = 0;
   tr->wLineBreakChar = L'\n';
   tr->iVerticalScale = pPiece->iVerScale;
-  tr->dwLayoutStyles = FX_RTFLAYOUTSTYLE_ExpandTab;
   tr->iHorizontalScale = pPiece->iHorScale;
   return true;
 }

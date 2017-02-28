@@ -488,7 +488,7 @@ uint32_t CFX_TxtBreak::AppendChar_Arabic(CFX_TxtChar* pCurChar,
   int32_t& iLineWidth = m_pCurLine->m_iWidth;
   FX_WCHAR wForm;
   int32_t iCharWidth = 0;
-  CFX_Char* pLastChar = nullptr;
+  CFX_TxtChar* pLastChar = nullptr;
   bool bAlef = false;
   if (!m_bCombText && m_eCharType >= FX_CHARTYPE_ArabicAlef &&
       m_eCharType <= FX_CHARTYPE_ArabicDistortion) {
@@ -641,7 +641,7 @@ void CFX_TxtBreak::EndBreak_UpdateArabicShapes() {
     return;
   }
   int32_t& iLineWidth = m_pCurLine->m_iWidth;
-  CFX_Char* pCur = m_pCurLine->GetCharPtr(0);
+  CFX_TxtChar* pCur = m_pCurLine->GetCharPtr(0);
   bool bPrevNum = (pCur->m_dwCharStyles & FX_TXTCHARSTYLE_ArabicIndic) != 0;
   pCur = m_pCurLine->GetCharPtr(1);
   FX_WCHAR wch, wForm;
@@ -649,7 +649,7 @@ void CFX_TxtBreak::EndBreak_UpdateArabicShapes() {
   int32_t i = 1;
   int32_t iCharWidth;
   int32_t iRotation;
-  CFX_Char* pNext;
+  CFX_TxtChar* pNext;
   do {
     i++;
     if (i < iCount) {
@@ -693,7 +693,7 @@ bool CFX_TxtBreak::EndBreak_SplitLine(CFX_TxtLine* pNextLine,
                                       uint32_t dwStatus) {
   int32_t iCount = m_pCurLine->CountChars();
   bool bDone = false;
-  CFX_Char* pTC;
+  CFX_TxtChar* pTC;
   if (!m_bSingleLine && m_pCurLine->m_iWidth > m_iLineWidth + m_iTolerance) {
     pTC = m_pCurLine->GetCharPtr(iCount - 1);
     switch (pTC->GetCharType()) {
