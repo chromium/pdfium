@@ -15,9 +15,8 @@
 #include "xfa/fgas/layout/fgas_linebreak.h"
 #include "xfa/fgas/layout/fgas_unicode.h"
 
-CFX_RTFBreak::CFX_RTFBreak(uint32_t dwPolicies)
-    : m_dwPolicies(dwPolicies),
-      m_iBoundaryStart(0),
+CFX_RTFBreak::CFX_RTFBreak()
+    : m_iBoundaryStart(0),
       m_iBoundaryEnd(2000000),
       m_dwLayoutStyles(0),
       m_bPagination(false),
@@ -29,7 +28,6 @@ CFX_RTFBreak::CFX_RTFBreak(uint32_t dwPolicies)
       m_iFontSize(240),
       m_iTabWidth(720000),
       m_PositionedTabs(),
-      m_bOrphanLine(false),
       m_wDefChar(0xFEFF),
       m_iDefChar(0),
       m_wLineBreakChar(L'\n'),
@@ -143,12 +141,8 @@ void CFX_RTFBreak::AddPositionedTab(FX_FLOAT fTabPos) {
     }
   }
   m_PositionedTabs.InsertAt(iFind, iTabPos);
-  if (m_dwPolicies & FX_RTFBREAKPOLICY_OrphanPositionedTab) {
-    m_bOrphanLine = GetLastPositionedTab() >= iLineEnd;
-  } else {
-    m_bOrphanLine = false;
-  }
 }
+
 void CFX_RTFBreak::SetPositionedTabs(const std::vector<FX_FLOAT>& tabs) {
   m_PositionedTabs.RemoveAll();
   int32_t iCount = pdfium::CollectionSize<int32_t>(tabs);
@@ -162,16 +156,12 @@ void CFX_RTFBreak::SetPositionedTabs(const std::vector<FX_FLOAT>& tabs) {
     }
     m_PositionedTabs[i] = iTabPos;
   }
-  if (m_dwPolicies & FX_RTFBREAKPOLICY_OrphanPositionedTab) {
-    m_bOrphanLine = GetLastPositionedTab() >= iLineEnd;
-  } else {
-    m_bOrphanLine = false;
-  }
 }
+
 void CFX_RTFBreak::ClearPositionedTabs() {
   m_PositionedTabs.RemoveAll();
-  m_bOrphanLine = false;
 }
+
 void CFX_RTFBreak::SetDefaultChar(FX_WCHAR wch) {
   m_wDefChar = wch;
   m_iDefChar = 0;
@@ -361,8 +351,7 @@ uint32_t CFX_RTFBreak::AppendChar(FX_WCHAR wch) {
   uint32_t dwRet1 = FX_RTFBREAK_None;
   if (chartype != FX_CHARTYPE_Combination &&
       GetUnifiedCharType(m_eCharType) != GetUnifiedCharType(chartype)) {
-    if (!m_bSingleLine && !m_bOrphanLine &&
-        m_eCharType != FX_CHARTYPE_Unknown &&
+    if (!m_bSingleLine && m_eCharType != FX_CHARTYPE_Unknown &&
         m_pCurLine->GetLineEnd() > m_iBoundaryEnd + m_iTolerance) {
       if (m_eCharType != FX_CHARTYPE_Space || chartype != FX_CHARTYPE_Control) {
         dwRet1 = EndBreak(FX_RTFBREAK_LineBreak);
@@ -452,22 +441,15 @@ uint32_t CFX_RTFBreak::AppendChar_Combination(CFX_RTFChar* pCurChar,
 uint32_t CFX_RTFBreak::AppendChar_Tab(CFX_RTFChar* pCurChar,
                                       int32_t iRotation) {
   if (m_dwLayoutStyles & FX_RTFLAYOUTSTYLE_ExpandTab) {
-    bool bBreak = false;
-    if ((m_dwPolicies & FX_RTFBREAKPOLICY_TabBreak) != 0) {
-      bBreak = (m_pCurLine->GetLineEnd() > m_iBoundaryEnd + m_iTolerance);
-    }
     int32_t& iLineWidth = m_pCurLine->m_iWidth;
     int32_t iCharWidth = iLineWidth;
-    if (GetPositionedTab(iCharWidth)) {
+    if (GetPositionedTab(iCharWidth))
       iCharWidth -= iLineWidth;
-    } else {
+    else
       iCharWidth = m_iTabWidth * (iLineWidth / m_iTabWidth + 1) - iLineWidth;
-    }
+
     pCurChar->m_iCharWidth = iCharWidth;
     iLineWidth += iCharWidth;
-    if (!m_bSingleLine && !m_bOrphanLine && bBreak) {
-      return EndBreak(FX_RTFBREAK_LineBreak);
-    }
   }
   return FX_RTFBREAK_None;
 }
@@ -551,7 +533,7 @@ uint32_t CFX_RTFBreak::AppendChar_Arabic(CFX_RTFChar* pCurChar,
   pCurChar->m_iCharWidth = iCharWidth;
   iLineWidth += iCharWidth;
   m_pCurLine->m_iArabicChars++;
-  if (!m_bSingleLine && !m_bOrphanLine &&
+  if (!m_bSingleLine &&
       m_pCurLine->GetLineEnd() > m_iBoundaryEnd + m_iTolerance) {
     return EndBreak(FX_RTFBREAK_LineBreak);
   }
@@ -588,9 +570,7 @@ uint32_t CFX_RTFBreak::AppendChar_Others(CFX_RTFChar* pCurChar,
 
   pCurChar->m_iCharWidth = iCharWidth;
   m_pCurLine->m_iWidth += iCharWidth;
-  bool bBreak = (chartype != FX_CHARTYPE_Space ||
-                 (m_dwPolicies & FX_RTFBREAKPOLICY_SpaceBreak) != 0);
-  if (!m_bSingleLine && !m_bOrphanLine && bBreak &&
+  if (!m_bSingleLine && chartype != FX_CHARTYPE_Space &&
       m_pCurLine->GetLineEnd() > m_iBoundaryEnd + m_iTolerance) {
     return EndBreak(FX_RTFBREAK_LineBreak);
   }
@@ -659,23 +639,13 @@ bool CFX_RTFBreak::EndBreak_SplitLine(CFX_RTFLine* pNextLine,
                                       bool bAllChars,
                                       uint32_t dwStatus) {
   bool bDone = false;
-  if (!m_bSingleLine && !m_bOrphanLine &&
+  if (!m_bSingleLine &&
       m_pCurLine->GetLineEnd() > m_iBoundaryEnd + m_iTolerance) {
     CFX_RTFChar& tc = m_pCurLine->GetChar(m_pCurLine->CountChars() - 1);
     switch (tc.GetCharType()) {
       case FX_CHARTYPE_Tab:
-        if ((m_dwPolicies & FX_RTFBREAKPOLICY_TabBreak) != 0) {
-          SplitTextLine(m_pCurLine, pNextLine, !m_bPagination && bAllChars);
-          bDone = true;
-        }
-        break;
       case FX_CHARTYPE_Control:
-        break;
       case FX_CHARTYPE_Space:
-        if ((m_dwPolicies & FX_RTFBREAKPOLICY_SpaceBreak) != 0) {
-          SplitTextLine(m_pCurLine, pNextLine, !m_bPagination && bAllChars);
-          bDone = true;
-        }
         break;
       default:
         SplitTextLine(m_pCurLine, pNextLine, !m_bPagination && bAllChars);
@@ -929,15 +899,20 @@ int32_t CFX_RTFBreak::GetBreakPos(std::vector<CFX_RTFChar>& tca,
   if (iLength < 1)
     return iLength;
 
-  int32_t iBreak = -1, iBreakPos = -1, iIndirect = -1, iIndirectPos = -1,
-          iLast = -1, iLastPos = -1;
-  if (m_bSingleLine || m_bOrphanLine || iEndPos <= m_iBoundaryEnd) {
+  int32_t iBreak = -1;
+  int32_t iBreakPos = -1;
+  int32_t iIndirect = -1;
+  int32_t iIndirectPos = -1;
+  int32_t iLast = -1;
+  int32_t iLastPos = -1;
+  if (m_bSingleLine || iEndPos <= m_iBoundaryEnd) {
     if (!bAllChars || m_bCharCode)
       return iLength;
 
     iBreak = iLength;
     iBreakPos = iEndPos;
   }
+
   CFX_RTFChar* pCharArray = tca.data();
   if (m_bCharCode) {
     const CFX_RTFChar* pChar;
@@ -953,69 +928,46 @@ int32_t CFX_RTFBreak::GetBreakPos(std::vector<CFX_RTFChar>& tca,
     }
     return iLength;
   }
-  bool bSpaceBreak = (m_dwPolicies & FX_RTFBREAKPOLICY_SpaceBreak) != 0;
-  bool bTabBreak = (m_dwPolicies & FX_RTFBREAKPOLICY_TabBreak) != 0;
-  bool bNumberBreak = (m_dwPolicies & FX_RTFBREAKPOLICY_NumberBreak) != 0;
-  bool bInfixBreak = (m_dwPolicies & FX_RTFBREAKPOLICY_InfixBreak) != 0;
-  FX_LINEBREAKTYPE eType;
-  uint32_t nCodeProp, nCur, nNext;
+
   CFX_RTFChar* pCur = pCharArray + iLength--;
-  if (bAllChars) {
+  if (bAllChars)
     pCur->m_nBreakType = FX_LBT_UNKNOWN;
-  }
-  nCodeProp = pCur->m_dwCharProps;
-  nNext = nCodeProp & 0x003F;
+
+  uint32_t nCodeProp = pCur->m_dwCharProps;
+  uint32_t nNext = nCodeProp & 0x003F;
   int32_t iCharWidth = pCur->m_iCharWidth;
-  if (iCharWidth > 0) {
+  if (iCharWidth > 0)
     iEndPos -= iCharWidth;
-  }
+
   while (iLength >= 0) {
     pCur = pCharArray + iLength;
     nCodeProp = pCur->m_dwCharProps;
-    nCur = nCodeProp & 0x003F;
+    uint32_t nCur = nCodeProp & 0x003F;
     bool bNeedBreak = false;
+    FX_LINEBREAKTYPE eType;
     if (nCur == FX_CBP_SP) {
-      bNeedBreak = !bSpaceBreak;
-      if (nNext == FX_CBP_SP) {
-        eType = bSpaceBreak ? FX_LBT_DIRECT_BRK : FX_LBT_PROHIBITED_BRK;
-      } else {
-        eType = gs_FX_LineBreak_PairTable[nCur][nNext];
-      }
+      bNeedBreak = true;
+      eType = nNext == FX_CBP_SP ? FX_LBT_PROHIBITED_BRK
+                                 : gs_FX_LineBreak_PairTable[nCur][nNext];
     } else if (nCur == FX_CBP_TB) {
-      bNeedBreak = !bTabBreak;
-      if (nNext == FX_CBP_TB) {
-        eType = bTabBreak ? FX_LBT_DIRECT_BRK : FX_LBT_PROHIBITED_BRK;
-      } else {
-        eType = gs_FX_LineBreak_PairTable[nCur][nNext];
-      }
-    } else if ((bNumberBreak && nCur == FX_CBP_NU && nNext == FX_CBP_NU) ||
-               (bInfixBreak && nCur == FX_CBP_IS && nNext == FX_CBP_IS)) {
-      eType = FX_LBT_DIRECT_BRK;
+      bNeedBreak = true;
+      eType = nNext == FX_CBP_TB ? FX_LBT_PROHIBITED_BRK
+                                 : gs_FX_LineBreak_PairTable[nCur][nNext];
     } else {
-      if (nNext == FX_CBP_SP) {
-        eType = FX_LBT_PROHIBITED_BRK;
-      } else {
-        eType = gs_FX_LineBreak_PairTable[nCur][nNext];
-      }
+      eType = nNext == FX_CBP_SP ? FX_LBT_PROHIBITED_BRK
+                                 : gs_FX_LineBreak_PairTable[nCur][nNext];
     }
-    if (bAllChars) {
+    if (bAllChars)
       pCur->m_nBreakType = eType;
-    }
+
     if (!bOnlyBrk) {
       iCharWidth = pCur->m_iCharWidth;
-      bool bBreak = false;
-      if (nCur == FX_CBP_TB && bTabBreak) {
-        bBreak = iCharWidth > 0 && iEndPos - iCharWidth <= m_iBoundaryEnd;
-      } else {
-        bBreak = iEndPos <= m_iBoundaryEnd;
-      }
-      if (m_bSingleLine || m_bOrphanLine || bBreak || bNeedBreak) {
+      if (m_bSingleLine || iEndPos <= m_iBoundaryEnd || bNeedBreak) {
         if (eType == FX_LBT_DIRECT_BRK && iBreak < 0) {
           iBreak = iLength;
           iBreakPos = iEndPos;
-          if (!bAllChars) {
+          if (!bAllChars)
             return iLength;
-          }
         } else if (eType == FX_LBT_INDIRECT_BRK && iIndirect < 0) {
           iIndirect = iLength;
           iIndirectPos = iEndPos;
@@ -1025,9 +977,8 @@ int32_t CFX_RTFBreak::GetBreakPos(std::vector<CFX_RTFChar>& tca,
           iLastPos = iEndPos;
         }
       }
-      if (iCharWidth > 0) {
+      if (iCharWidth > 0)
         iEndPos -= iCharWidth;
-      }
     }
     nNext = nCodeProp & 0x003F;
     iLength--;

@@ -18,12 +18,6 @@
 
 class CFGAS_GEFont;
 
-#define FX_RTFBREAKPOLICY_None 0x00
-#define FX_RTFBREAKPOLICY_SpaceBreak 0x01
-#define FX_RTFBREAKPOLICY_NumberBreak 0x02
-#define FX_RTFBREAKPOLICY_InfixBreak 0x04
-#define FX_RTFBREAKPOLICY_TabBreak 0x08
-#define FX_RTFBREAKPOLICY_OrphanPositionedTab 0x10
 #define FX_RTFBREAK_None 0x00
 #define FX_RTFBREAK_PieceBreak 0x01
 #define FX_RTFBREAK_LineBreak 0x02
@@ -213,7 +207,7 @@ class CFX_RTFLine {
 
 class CFX_RTFBreak {
  public:
-  explicit CFX_RTFBreak(uint32_t dwPolicies);
+  CFX_RTFBreak();
   ~CFX_RTFBreak();
 
   void SetLineBoundary(FX_FLOAT fLineStart, FX_FLOAT fLineEnd);
@@ -284,7 +278,6 @@ class CFX_RTFBreak {
                           bool bAllChars,
                           uint32_t dwStatus);
 
-  uint32_t m_dwPolicies;
   int32_t m_iBoundaryStart;
   int32_t m_iBoundaryEnd;
   uint32_t m_dwLayoutStyles;
@@ -297,7 +290,6 @@ class CFX_RTFBreak {
   int32_t m_iFontSize;
   int32_t m_iTabWidth;
   CFX_ArrayTemplate<int32_t> m_PositionedTabs;
-  bool m_bOrphanLine;
   FX_WCHAR m_wDefChar;
   int32_t m_iDefChar;
   FX_WCHAR m_wLineBreakChar;
