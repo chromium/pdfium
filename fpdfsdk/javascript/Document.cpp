@@ -6,6 +6,7 @@
 
 #include "fpdfsdk/javascript/Document.h"
 
+#include <algorithm>
 #include <utility>
 #include <vector>
 
@@ -1215,14 +1216,12 @@ bool Document::addIcon(CJS_Runtime* pRuntime,
     return false;
   }
 
-  CJS_EmbedObj* pEmbedObj = params[1].ToCJSObject(pRuntime)->GetEmbedObject();
-  if (!pEmbedObj) {
+  if (!params[1].ToCJSObject(pRuntime)->GetEmbedObject()) {
     sError = JSGetStringFromID(IDS_STRING_JSTYPEERROR);
     return false;
   }
 
-  m_Icons.push_back(pdfium::MakeUnique<IconElement>(
-      swIconName, static_cast<Icon*>(pEmbedObj)));
+  m_IconNames.push_back(swIconName);
   return true;
 }
 
@@ -1233,14 +1232,14 @@ bool Document::icons(CJS_Runtime* pRuntime,
     sError = JSGetStringFromID(IDS_STRING_JSREADONLY);
     return false;
   }
-  if (m_Icons.empty()) {
+  if (m_IconNames.empty()) {
     vp.GetJSValue()->SetNull(pRuntime);
     return true;
   }
 
   CJS_Array Icons;
   int i = 0;
-  for (const auto& pIconElement : m_Icons) {
+  for (const auto& name : m_IconNames) {
     v8::Local<v8::Object> pObj =
         pRuntime->NewFxDynamicObj(CJS_Icon::g_nObjDefnID);
     if (pObj.IsEmpty())
@@ -1249,7 +1248,7 @@ bool Document::icons(CJS_Runtime* pRuntime,
     CJS_Icon* pJS_Icon =
         static_cast<CJS_Icon*>(pRuntime->GetObjectPrivate(pObj));
     Icon* pIcon = static_cast<Icon*>(pJS_Icon->GetEmbedObject());
-    pIcon->SetIconName(pIconElement->IconName);
+    pIcon->SetIconName(name);
     Icons.SetElement(pRuntime, i++, CJS_Value(pRuntime, pJS_Icon));
   }
 
@@ -1266,28 +1265,21 @@ bool Document::getIcon(CJS_Runtime* pRuntime,
     return false;
   }
 
-  if (m_Icons.empty())
+  CFX_WideString swIconName = params[0].ToCFXWideString(pRuntime);
+  auto it = std::find(m_IconNames.begin(), m_IconNames.end(), swIconName);
+  if (it == m_IconNames.end())
     return false;
 
-  CFX_WideString swIconName = params[0].ToCFXWideString(pRuntime);
-  for (const auto& pIconElement : m_Icons) {
-    if (pIconElement->IconName != swIconName)
-      continue;
+  v8::Local<v8::Object> pObj =
+      pRuntime->NewFxDynamicObj(CJS_Icon::g_nObjDefnID);
+  if (pObj.IsEmpty())
+    return false;
 
-    v8::Local<v8::Object> pObj =
-        pRuntime->NewFxDynamicObj(CJS_Icon::g_nObjDefnID);
-    if (pObj.IsEmpty())
-      return false;
-
-    CJS_Icon* pJS_Icon =
-        static_cast<CJS_Icon*>(pRuntime->GetObjectPrivate(pObj));
-    Icon* pIcon = static_cast<Icon*>(pJS_Icon->GetEmbedObject());
-    pIcon->SetIconName(swIconName);
-    vRet = CJS_Value(pRuntime, pJS_Icon);
-    return true;
-  }
-
-  return false;
+  CJS_Icon* pJS_Icon = static_cast<CJS_Icon*>(pRuntime->GetObjectPrivate(pObj));
+  Icon* pIcon = static_cast<Icon*>(pJS_Icon->GetEmbedObject());
+  pIcon->SetIconName(*it);
+  vRet = CJS_Value(pRuntime, pJS_Icon);
+  return true;
 }
 
 bool Document::removeIcon(CJS_Runtime* pRuntime,

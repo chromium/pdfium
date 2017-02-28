@@ -41,20 +41,9 @@ class CJS_PrintParamsObj : public CJS_Object {
   DECLARE_JS_CLASS();
 };
 
-class Icon;
-class Field;
-
-struct IconElement {
-  IconElement(const CFX_WideString& name, Icon* stream)
-      : IconName(name), IconStream(stream) {}
-
-  const CFX_WideString IconName;
-  Icon* const IconStream;
-};
-
-struct CJS_DelayData;
-struct CJS_DelayAnnot;
 struct CJS_AnnotObj;
+struct CJS_DelayAnnot;
+struct CJS_DelayData;
 
 class Document : public CJS_EmbedObj {
  public:
@@ -318,7 +307,8 @@ class Document : public CJS_EmbedObj {
   CPDFSDK_FormFillEnvironment::ObservedPtr m_pFormFillEnv;
   CFX_WideString m_cwBaseURL;
   std::list<std::unique_ptr<CJS_DelayData>> m_DelayData;
-  std::list<std::unique_ptr<IconElement>> m_Icons;  // For iterator stability.
+  // Needs to be a std::list for iterator stability.
+  std::list<CFX_WideString> m_IconNames;
   bool m_bDelay;
 };
 
