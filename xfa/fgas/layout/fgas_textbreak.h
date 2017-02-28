@@ -213,17 +213,13 @@ class CFX_TxtBreak {
   void SetParagraphBreakChar(FX_WCHAR wch);
   void SetLineBreakTolerance(FX_FLOAT fTolerance);
   void SetHorizontalScale(int32_t iScale);
-  void SetVerticalScale(int32_t iScale);
   void SetCharRotation(int32_t iCharRotation);
   void SetCharSpace(FX_FLOAT fCharSpace);
   void SetAlignment(int32_t iAlignment);
-  uint32_t GetContextCharStyles() const;
-  void SetContextCharStyles(uint32_t dwCharStyles);
   void SetCombWidth(FX_FLOAT fCombWidth);
   void SetUserData(void* pUserData);
   uint32_t AppendChar(FX_WCHAR wch);
   uint32_t EndBreak(uint32_t dwStatus = FX_TXTBREAK_PieceBreak);
-  int32_t CountBreakChars() const;
   int32_t CountBreakPieces() const;
   const CFX_TxtPiece* GetBreakPiece(int32_t index) const;
   void ClearBreakPieces();
@@ -305,7 +301,6 @@ class CFX_TxtBreak {
   int32_t m_iReady;
   int32_t m_iTolerance;
   int32_t m_iHorScale;
-  int32_t m_iVerScale;
   int32_t m_iCharSpace;
 };
 

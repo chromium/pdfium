@@ -125,14 +125,15 @@ class CFX_Char {
         m_dwCharProps(0),
         m_iCharWidth(0),
         m_iHorizontalScale(100),
-        m_iVertialScale(100) {}
+        m_iVerticalScale(100) {}
+
   CFX_Char(uint16_t wCharCode, uint32_t dwCharProps)
       : m_wCharCode(wCharCode),
         m_nBreakType(0),
         m_dwCharProps(dwCharProps),
         m_iCharWidth(0),
         m_iHorizontalScale(100),
-        m_iVertialScale(100) {}
+        m_iVerticalScale(100) {}
 
   FX_CHARTYPE GetCharType() const { return GetCharTypeFromProp(m_dwCharProps); }
 
@@ -141,7 +142,7 @@ class CFX_Char {
   uint32_t m_dwCharProps;
   int32_t m_iCharWidth;
   int32_t m_iHorizontalScale;
-  int32_t m_iVertialScale;
+  int32_t m_iVerticalScale;
 };
 
 class CFX_TxtChar : public CFX_Char {

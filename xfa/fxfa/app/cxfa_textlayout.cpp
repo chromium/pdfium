@@ -95,7 +95,6 @@ CFX_RTFBreak* CXFA_TextLayout::CreateBreak(bool bDefault) {
     dwStyle |= FX_RTFLAYOUTSTYLE_Pagination;
 
   CFX_RTFBreak* pBreak = new CFX_RTFBreak(dwStyle);
-  pBreak->SetLineBreakChar(L'\n');
   pBreak->SetLineBreakTolerance(1);
   pBreak->SetFont(m_textParser.GetFont(m_pTextProvider, nullptr));
   pBreak->SetFontSize(m_textParser.GetFontSize(m_pTextProvider, nullptr));

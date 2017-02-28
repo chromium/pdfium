@@ -183,16 +183,10 @@ class CFX_RTFBreak {
   void SetFontSize(FX_FLOAT fFontSize);
   void SetTabWidth(FX_FLOAT fTabWidth);
   void AddPositionedTab(FX_FLOAT fTabPos);
-  void SetPositionedTabs(const std::vector<FX_FLOAT>& tabs);
-  void ClearPositionedTabs();
-  void SetDefaultChar(FX_WCHAR wch);
-  void SetLineBreakChar(FX_WCHAR wch);
   void SetLineBreakTolerance(FX_FLOAT fTolerance);
   void SetHorizontalScale(int32_t iScale);
   void SetVerticalScale(int32_t iScale);
   void SetCharSpace(FX_FLOAT fCharSpace);
-  void SetWordSpace(bool bDefault, FX_FLOAT fWordSpace);
-  void SetReadingOrder(bool bRTL = false);
   void SetAlignment(CFX_RTFLineAlignment align) { m_iAlignment = align; }
   void SetUserData(const CFX_RetainPtr<CFX_Retainable>& pUserData);
   CFX_RTFBreakType AppendChar(FX_WCHAR wch);
@@ -252,9 +246,6 @@ class CFX_RTFBreak {
   int32_t m_iHorizontalScale;
   int32_t m_iVerticalScale;
   int32_t m_iCharSpace;
-  bool m_bWordSpace;
-  int32_t m_iWordSpace;
-  bool m_bRTL;
   CFX_RTFLineAlignment m_iAlignment;
   CFX_RetainPtr<CFX_Retainable> m_pUserData;
   FX_CHARTYPE m_eCharType;
