@@ -208,7 +208,7 @@ class CFX_RTFBreak {
   int32_t m_iFontHeight;
   int32_t m_iFontSize;
   int32_t m_iTabWidth;
-  CFX_ArrayTemplate<int32_t> m_PositionedTabs;
+  std::vector<int32_t> m_PositionedTabs;
   FX_WCHAR m_wDefChar;
   int32_t m_iDefChar;
   FX_WCHAR m_wLineBreakChar;
