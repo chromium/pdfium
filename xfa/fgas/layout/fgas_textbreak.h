@@ -7,6 +7,7 @@
 #ifndef XFA_FGAS_LAYOUT_FGAS_TEXTBREAK_H_
 #define XFA_FGAS_LAYOUT_FGAS_TEXTBREAK_H_
 
+#include <deque>
 #include <memory>
 #include <vector>
 
@@ -14,13 +15,13 @@
 #include "core/fxge/cfx_renderdevice.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fgas/crt/fgas_utils.h"
-#include "xfa/fgas/layout/fgas_unicode.h"
 
 class CFX_Char;
 class CFGAS_GEFont;
 class CFX_TxtChar;
 class CFX_TxtPiece;
 class IFX_TxtAccess;
+struct FDE_TEXTEDITPIECE;
 
 #define FX_TXTBREAKPOLICY_None 0x00
 #define FX_TXTBREAKPOLICY_Pagination 0x01
@@ -74,7 +75,12 @@ class IFX_TxtAccess;
 #define FX_TXTLINEALIGNMENT_HigherMask 0x0C
 #define FX_TXTBREAK_MinimumTabWidth 160000
 
-struct FDE_TEXTEDITPIECE;
+struct FX_TPO {
+  int32_t index;
+  int32_t pos;
+
+  bool operator<(const FX_TPO& that) const { return pos < that.pos; }
+};
 
 class IFX_TxtAccess {
  public:
@@ -252,8 +258,8 @@ class CFX_TxtBreak {
   bool EndBreak_SplitLine(CFX_TxtLine* pNextLine,
                           bool bAllChars,
                           uint32_t dwStatus);
-  void EndBreak_BidiLine(CFX_TPOArray& tpos, uint32_t dwStatus);
-  void EndBreak_Alignment(CFX_TPOArray& tpos,
+  void EndBreak_BidiLine(std::deque<FX_TPO>* tpos, uint32_t dwStatus);
+  void EndBreak_Alignment(const std::deque<FX_TPO>& tpos,
                           bool bAllChars,
                           uint32_t dwStatus);
   int32_t GetBreakPos(std::vector<CFX_TxtChar>& ca,

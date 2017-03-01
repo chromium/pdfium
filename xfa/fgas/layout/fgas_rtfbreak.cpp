@@ -13,7 +13,6 @@
 #include "third_party/base/stl_util.h"
 #include "xfa/fgas/font/cfgas_gefont.h"
 #include "xfa/fgas/layout/fgas_linebreak.h"
-#include "xfa/fgas/layout/fgas_unicode.h"
 
 namespace {
 
@@ -433,14 +432,13 @@ CFX_RTFBreakType CFX_RTFBreak::EndBreak(CFX_RTFBreakType dwStatus) {
       m_pCurLine == &m_RTFLine1 ? &m_RTFLine2 : &m_RTFLine1;
   bool bAllChars = m_iAlignment == CFX_RTFLineAlignment::Justified ||
                    m_iAlignment == CFX_RTFLineAlignment::Distributed;
-  CFX_TPOArray tpos(100);
-  if (!EndBreak_SplitLine(pNextLine, bAllChars, dwStatus)) {
-    EndBreak_BidiLine(&tpos, dwStatus);
 
+  if (!EndBreak_SplitLine(pNextLine, bAllChars, dwStatus)) {
+    std::deque<FX_TPO> tpos;
+    EndBreak_BidiLine(&tpos, dwStatus);
     if (!m_bPagination && m_iAlignment != CFX_RTFLineAlignment::Left)
       EndBreak_Alignment(tpos, bAllChars, dwStatus);
   }
-
   m_pCurLine = pNextLine;
   m_pCurLine->m_iStart = m_iBoundaryStart;
 
@@ -521,7 +519,7 @@ bool CFX_RTFBreak::EndBreak_SplitLine(CFX_RTFLine* pNextLine,
   return true;
 }
 
-void CFX_RTFBreak::EndBreak_BidiLine(CFX_TPOArray* tpos,
+void CFX_RTFBreak::EndBreak_BidiLine(std::deque<FX_TPO>* tpos,
                                      CFX_RTFBreakType dwStatus) {
   FX_TPO tpo;
   CFX_RTFPiece tp;
@@ -584,7 +582,7 @@ void CFX_RTFBreak::EndBreak_BidiLine(CFX_TPOArray* tpos,
       tp.m_iStartChar = i;
       tpo.index = j++;
       tpo.pos = tp.m_iBidiPos;
-      tpos->Add(tpo);
+      tpos->push_back(tpo);
       iBidiLevel = -1;
     } else {
       iCharWidth = pTC->m_iCharWidth;
@@ -600,21 +598,19 @@ void CFX_RTFBreak::EndBreak_BidiLine(CFX_TPOArray* tpos,
     pCurPieces->Add(tp);
     tpo.index = j;
     tpo.pos = tp.m_iBidiPos;
-    tpos->Add(tpo);
+    tpos->push_back(tpo);
   }
 
-  j = tpos->GetSize() - 1;
-  FX_TEXTLAYOUT_PieceSort(*tpos, 0, j);
+  std::sort(tpos->begin(), tpos->end());
   int32_t iStartPos = m_pCurLine->m_iStart;
-  for (i = 0; i <= j; i++) {
-    tpo = tpos->GetAt(i);
-    CFX_RTFPiece& ttp = pCurPieces->GetAt(tpo.index);
+  for (const auto& it : *tpos) {
+    CFX_RTFPiece& ttp = pCurPieces->GetAt(it.index);
     ttp.m_iStartPos = iStartPos;
     iStartPos += ttp.m_iWidth;
   }
 }
 
-void CFX_RTFBreak::EndBreak_Alignment(const CFX_TPOArray& tpos,
+void CFX_RTFBreak::EndBreak_Alignment(const std::deque<FX_TPO>& tpos,
                                       bool bAllChars,
                                       CFX_RTFBreakType dwStatus) {
   CFX_RTFPieceArray* pCurPieces = &m_pCurLine->m_LinePieces;
@@ -628,7 +624,7 @@ void CFX_RTFBreak::EndBreak_Alignment(const CFX_TPOArray& tpos,
   int32_t j;
   FX_TPO tpo;
   for (i = iCount - 1; i > -1; i--) {
-    tpo = tpos.GetAt(i);
+    tpo = tpos[i];
     CFX_RTFPiece& ttp = pCurPieces->GetAt(tpo.index);
     if (!bFind)
       iNetWidth = ttp.GetEndPos();
@@ -667,7 +663,7 @@ void CFX_RTFBreak::EndBreak_Alignment(const CFX_TPOArray& tpos,
                          dwStatus != CFX_RTFBreakType::Paragraph))) {
     int32_t iStart = -1;
     for (i = 0; i < iCount; i++) {
-      tpo = tpos.GetAt(i);
+      tpo = tpos[i];
       CFX_RTFPiece& ttp = pCurPieces->GetAt(tpo.index);
       if (iStart < 0)
         iStart = ttp.m_iStartPos;

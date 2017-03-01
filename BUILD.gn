@@ -1238,8 +1238,6 @@ if (pdf_enable_xfa) {
       "xfa/fgas/layout/fgas_rtfbreak.h",
       "xfa/fgas/layout/fgas_textbreak.cpp",
       "xfa/fgas/layout/fgas_textbreak.h",
-      "xfa/fgas/layout/fgas_unicode.cpp",
-      "xfa/fgas/layout/fgas_unicode.h",
       "xfa/fgas/localization/fgas_datetime.cpp",
       "xfa/fgas/localization/fgas_datetime.h",
       "xfa/fgas/localization/fgas_locale.cpp",

@@ -14,7 +14,6 @@
 #include "third_party/base/ptr_util.h"
 #include "xfa/fgas/font/cfgas_gefont.h"
 #include "xfa/fgas/layout/fgas_linebreak.h"
-#include "xfa/fgas/layout/fgas_unicode.h"
 
 namespace {
 
@@ -695,7 +694,8 @@ bool CFX_TxtBreak::EndBreak_SplitLine(CFX_TxtLine* pNextLine,
   return false;
 }
 
-void CFX_TxtBreak::EndBreak_BidiLine(CFX_TPOArray& tpos, uint32_t dwStatus) {
+void CFX_TxtBreak::EndBreak_BidiLine(std::deque<FX_TPO>* tpos,
+                                     uint32_t dwStatus) {
   CFX_TxtPiece tp;
   FX_TPO tpo;
   CFX_TxtChar* pTC;
@@ -755,7 +755,7 @@ void CFX_TxtBreak::EndBreak_BidiLine(CFX_TPOArray& tpos, uint32_t dwStatus) {
         tp.m_iStartChar = i;
         tpo.index = ++j;
         tpo.pos = tp.m_iBidiPos;
-        tpos.Add(tpo);
+        tpos->push_back(tpo);
         iBidiLevel = -1;
       } else {
         iCharWidth = pTC->m_iCharWidth;
@@ -771,14 +771,14 @@ void CFX_TxtBreak::EndBreak_BidiLine(CFX_TPOArray& tpos, uint32_t dwStatus) {
       pCurPieces->Add(tp);
       tpo.index = ++j;
       tpo.pos = tp.m_iBidiPos;
-      tpos.Add(tpo);
+      tpos->push_back(tpo);
     }
     if (j > -1) {
       if (j > 0) {
-        FX_TEXTLAYOUT_PieceSort(tpos, 0, j);
+        std::sort(tpos->begin(), tpos->end());
         int32_t iStartPos = 0;
         for (i = 0; i <= j; i++) {
-          tpo = tpos.GetAt(i);
+          tpo = (*tpos)[i];
           CFX_TxtPiece& ttp = pCurPieces->GetAt(tpo.index);
           ttp.m_iStartPos = iStartPos;
           iStartPos += ttp.m_iWidth;
@@ -800,13 +800,11 @@ void CFX_TxtBreak::EndBreak_BidiLine(CFX_TPOArray& tpos, uint32_t dwStatus) {
     tp.m_iHorizontalScale = pTC->m_iHorizontalScale;
     tp.m_iVerticalScale = pTC->m_iVerticalScale;
     pCurPieces->Add(tp);
-    tpo.index = 0;
-    tpo.pos = 0;
-    tpos.Add(tpo);
+    tpos->push_back({0, 0});
   }
 }
 
-void CFX_TxtBreak::EndBreak_Alignment(CFX_TPOArray& tpos,
+void CFX_TxtBreak::EndBreak_Alignment(const std::deque<FX_TPO>& tpos,
                                       bool bAllChars,
                                       uint32_t dwStatus) {
   int32_t iNetWidth = m_pCurLine->m_iWidth;
@@ -821,7 +819,7 @@ void CFX_TxtBreak::EndBreak_Alignment(CFX_TPOArray& tpos,
   CFX_TxtChar* pTC;
   FX_CHARTYPE chartype;
   for (i = iCount - 1; i > -1; i--) {
-    tpo = tpos.GetAt(i);
+    tpo = tpos[i];
     CFX_TxtPiece& ttp = pCurPieces->GetAt(tpo.index);
     if (!bFind)
       iNetWidth = ttp.GetEndPos();
@@ -860,7 +858,7 @@ void CFX_TxtBreak::EndBreak_Alignment(CFX_TPOArray& tpos,
                          dwStatus != FX_TXTBREAK_ParagraphBreak))) {
     int32_t iStart = -1;
     for (i = 0; i < iCount; i++) {
-      tpo = tpos.GetAt(i);
+      tpo = tpos[i];
       CFX_TxtPiece& ttp = pCurPieces->GetAt(tpo.index);
       if (iStart < -1)
         iStart = ttp.m_iStartPos;
@@ -937,18 +935,18 @@ uint32_t CFX_TxtBreak::EndBreak(uint32_t dwStatus) {
   CFX_TxtLine* pNextLine =
       (m_pCurLine == m_pTxtLine1.get()) ? m_pTxtLine2.get() : m_pTxtLine1.get();
   bool bAllChars = (m_iCurAlignment > FX_TXTLINEALIGNMENT_Right);
-  CFX_TPOArray tpos(100);
-  CFX_Char* pTC;
   if (m_bArabicShapes)
     EndBreak_UpdateArabicShapes();
+
   if (!EndBreak_SplitLine(pNextLine, bAllChars, dwStatus)) {
-    EndBreak_BidiLine(tpos, dwStatus);
+    std::deque<FX_TPO> tpos;
+    EndBreak_BidiLine(&tpos, dwStatus);
     if (!m_bPagination && m_iCurAlignment > FX_TXTLINEALIGNMENT_Left)
       EndBreak_Alignment(tpos, bAllChars, dwStatus);
   }
 
   m_pCurLine = pNextLine;
-  pTC = GetLastChar(0, false);
+  CFX_Char* pTC = GetLastChar(0, false);
   m_eCharType = pTC ? pTC->GetCharType() : FX_CHARTYPE_Unknown;
   if (dwStatus == FX_TXTBREAK_ParagraphBreak) {
     m_iArabicContext = m_iCurArabicContext = 1;
