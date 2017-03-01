@@ -50,31 +50,13 @@ class CFX_RTFPiece {
   CFX_RTFPiece();
   ~CFX_RTFPiece();
 
-  void AppendChar(const CFX_RTFChar& tc) {
-    ASSERT(m_pChars);
-    m_pChars->push_back(tc);
-    if (m_iWidth < 0)
-      m_iWidth = tc.m_iCharWidth;
-    else
-      m_iWidth += tc.m_iCharWidth;
-    m_iChars++;
-  }
-
   int32_t GetEndPos() const {
     return m_iWidth < 0 ? m_iStartPos : m_iStartPos + m_iWidth;
   }
 
-  int32_t GetLength() const { return m_iChars; }
-  int32_t GetEndChar() const { return m_iStartChar + m_iChars; }
-
   CFX_RTFChar& GetChar(int32_t index) {
     ASSERT(index > -1 && index < m_iChars && m_pChars);
     return (*m_pChars)[m_iStartChar + index];
-  }
-
-  CFX_RTFChar* GetCharPtr(int32_t index) const {
-    ASSERT(index > -1 && index < m_iChars && m_pChars);
-    return &(*m_pChars)[m_iStartChar + index];
   }
 
   void GetString(FX_WCHAR* pText) const {
@@ -82,12 +64,6 @@ class CFX_RTFPiece {
     int32_t iEndChar = m_iStartChar + m_iChars;
     for (int32_t i = m_iStartChar; i < iEndChar; i++)
       *pText++ = static_cast<FX_WCHAR>((*m_pChars)[i].m_wCharCode);
-  }
-
-  void GetString(CFX_WideString& wsText) const {
-    FX_WCHAR* pText = wsText.GetBuffer(m_iChars);
-    GetString(pText);
-    wsText.ReleaseBuffer(m_iChars);
   }
 
   void GetWidths(int32_t* pWidths) const {
@@ -143,24 +119,8 @@ class CFX_RTFLine {
     return m_LineChars[index];
   }
 
-  CFX_RTFChar* GetCharPtr(int32_t index) {
-    ASSERT(index > -1 && index < pdfium::CollectionSize<int32_t>(m_LineChars));
-    return &m_LineChars[index];
-  }
-
-  int32_t CountPieces() const { return m_LinePieces.GetSize(); }
-  CFX_RTFPiece& GetPiece(int32_t index) const {
-    ASSERT(index > -1 && index < m_LinePieces.GetSize());
-    return m_LinePieces.GetAt(index);
-  }
-
-  CFX_RTFPiece* GetPiecePtr(int32_t index) const {
-    ASSERT(index > -1 && index < m_LinePieces.GetSize());
-    return m_LinePieces.GetPtrAt(index);
-  }
-
   int32_t GetLineEnd() const { return m_iStart + m_iWidth; }
-  void RemoveAll(bool bLeaveMemory = false) {
+  void RemoveAll(bool bLeaveMemory) {
     m_LineChars.clear();
     m_LinePieces.RemoveAll(bLeaveMemory);
     m_iWidth = 0;
@@ -186,32 +146,34 @@ class CFX_RTFBreak {
   void SetFont(const CFX_RetainPtr<CFGAS_GEFont>& pFont);
   void SetFontSize(FX_FLOAT fFontSize);
   void SetTabWidth(FX_FLOAT fTabWidth);
-  void AddPositionedTab(FX_FLOAT fTabPos);
   void SetLineBreakTolerance(FX_FLOAT fTolerance);
   void SetHorizontalScale(int32_t iScale);
   void SetVerticalScale(int32_t iScale);
   void SetCharSpace(FX_FLOAT fCharSpace);
   void SetAlignment(CFX_RTFLineAlignment align) { m_iAlignment = align; }
   void SetUserData(const CFX_RetainPtr<CFX_Retainable>& pUserData);
-  CFX_RTFBreakType AppendChar(FX_WCHAR wch);
+
+  void AddPositionedTab(FX_FLOAT fTabPos);
+
   CFX_RTFBreakType EndBreak(CFX_RTFBreakType dwStatus);
   int32_t CountBreakPieces() const;
   const CFX_RTFPiece* GetBreakPiece(int32_t index) const;
-  void GetLineRect(CFX_RectF& rect) const;
   void ClearBreakPieces();
+
   void Reset();
+
   int32_t GetDisplayPos(const FX_RTFTEXTOBJ* pText,
                         FXTEXT_CHARPOS* pCharPos,
-                        bool bCharCode = false,
-                        CFX_WideString* pWSForms = nullptr,
-                        FX_AdjustCharDisplayPos pAdjustPos = nullptr) const;
+                        bool bCharCode) const;
+
+  CFX_RTFBreakType AppendChar(FX_WCHAR wch);
   CFX_RTFBreakType AppendChar_Combination(CFX_RTFChar* pCurChar);
   CFX_RTFBreakType AppendChar_Tab(CFX_RTFChar* pCurChar);
   CFX_RTFBreakType AppendChar_Control(CFX_RTFChar* pCurChar);
   CFX_RTFBreakType AppendChar_Arabic(CFX_RTFChar* pCurChar);
   CFX_RTFBreakType AppendChar_Others(CFX_RTFChar* pCurChar);
 
- protected:
+ private:
   void FontChanged();
   void SetBreakStatus();
   CFX_RTFChar* GetLastChar(int32_t index) const;
@@ -223,11 +185,11 @@ class CFX_RTFBreak {
 
   int32_t GetBreakPos(std::vector<CFX_RTFChar>& tca,
                       int32_t& iEndPos,
-                      bool bAllChars = false,
-                      bool bOnlyBrk = false);
+                      bool bAllChars,
+                      bool bOnlyBrk);
   void SplitTextLine(CFX_RTFLine* pCurLine,
                      CFX_RTFLine* pNextLine,
-                     bool bAllChars = false);
+                     bool bAllChars);
   bool EndBreak_SplitLine(CFX_RTFLine* pNextLine,
                           bool bAllChars,
                           CFX_RTFBreakType dwStatus);
