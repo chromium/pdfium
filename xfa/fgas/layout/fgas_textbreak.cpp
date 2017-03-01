@@ -1143,8 +1143,7 @@ struct FX_FORMCHAR {
 int32_t CFX_TxtBreak::GetDisplayPos(const FX_TXTRUN* pTxtRun,
                                     FXTEXT_CHARPOS* pCharPos,
                                     bool bCharCode,
-                                    CFX_WideString* pWSForms,
-                                    FX_AdjustCharDisplayPos pAdjustPos) const {
+                                    CFX_WideString* pWSForms) const {
   if (!pTxtRun || pTxtRun->iLength < 1)
     return 0;
 
@@ -1422,12 +1421,7 @@ int32_t CFX_TxtBreak::GetDisplayPos(const FX_TXTRUN* pTxtRun,
           }
         }
         CFX_PointF ptOffset;
-        bool bAdjusted = false;
-        if (pAdjustPos) {
-          bAdjusted = pAdjustPos(wForm, bCharCode, pFont, fFontSize,
-                                 bVerticalChar, ptOffset);
-        }
-        if (!bAdjusted && bVerticalChar && (dwProps & 0x00010000) != 0) {
+        if (bVerticalChar && (dwProps & 0x00010000) != 0) {
           CFX_Rect rtBBox;
           if (pFont->GetCharBBox(wForm, &rtBBox, false)) {
             ptOffset.x = fFontSize * (850 - rtBBox.right()) / iMaxHeight;

@@ -227,8 +227,7 @@ class CFX_TxtBreak {
   int32_t GetDisplayPos(const FX_TXTRUN* pTxtRun,
                         FXTEXT_CHARPOS* pCharPos,
                         bool bCharCode = false,
-                        CFX_WideString* pWSForms = nullptr,
-                        FX_AdjustCharDisplayPos pAdjustPos = nullptr) const;
+                        CFX_WideString* pWSForms = nullptr) const;
   int32_t GetCharRects(const FX_TXTRUN* pTxtRun,
                        std::vector<CFX_RectF>* rtArray,
                        bool bCharBBox = false) const;
