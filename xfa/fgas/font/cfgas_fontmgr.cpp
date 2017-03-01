@@ -516,7 +516,7 @@ CFX_ByteString CFX_FontSourceEnum_File::GetNextFile() {
       FX_CloseFolder(pCurHandle);
       if (!m_FolderQueue.empty())
         m_FolderQueue.pop_back();
-      if (!m_FolderQueue.empty()) {
+      if (m_FolderQueue.empty()) {
         if (!m_FolderPaths.empty())
           m_FolderPaths.pop_back();
         return !m_FolderPaths.empty() ? GetNextFile() : "";
