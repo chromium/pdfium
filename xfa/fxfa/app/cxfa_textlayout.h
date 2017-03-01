@@ -65,7 +65,7 @@ class CXFA_TextLayout {
  private:
   void GetTextDataNode();
   CFDE_XMLNode* GetXMLContainerNode();
-  CFX_RTFBreak* CreateBreak(bool bDefault);
+  std::unique_ptr<CFX_RTFBreak> CreateBreak(bool bDefault);
   void InitBreak(FX_FLOAT fLineWidth);
   void InitBreak(CFDE_CSSComputedStyle* pStyle,
                  FDE_CSSDisplay eDisplay,

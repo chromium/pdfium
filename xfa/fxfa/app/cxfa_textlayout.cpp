@@ -89,12 +89,12 @@ CFDE_XMLNode* CXFA_TextLayout::GetXMLContainerNode() {
   return pXMLContainer;
 }
 
-CFX_RTFBreak* CXFA_TextLayout::CreateBreak(bool bDefault) {
+std::unique_ptr<CFX_RTFBreak> CXFA_TextLayout::CreateBreak(bool bDefault) {
   uint32_t dwStyle = FX_RTFLAYOUTSTYLE_ExpandTab;
   if (!bDefault)
     dwStyle |= FX_RTFLAYOUTSTYLE_Pagination;
 
-  CFX_RTFBreak* pBreak = new CFX_RTFBreak(dwStyle);
+  auto pBreak = pdfium::MakeUnique<CFX_RTFBreak>(dwStyle);
   pBreak->SetLineBreakTolerance(1);
   pBreak->SetFont(m_textParser.GetFont(m_pTextProvider, nullptr));
   pBreak->SetFontSize(m_textParser.GetFontSize(m_pTextProvider, nullptr));
@@ -391,7 +391,7 @@ bool CXFA_TextLayout::CalcSize(const CFX_SizeF& minSize,
   if (defaultSize.width < 1)
     defaultSize.width = 0xFFFF;
 
-  m_pBreak.reset(CreateBreak(false));
+  m_pBreak = CreateBreak(false);
   FX_FLOAT fLinePos = 0;
   m_iLines = 0;
   m_fMaxWidth = 0;
@@ -409,7 +409,7 @@ bool CXFA_TextLayout::Layout(const CFX_SizeF& size, FX_FLOAT* fHeight) {
     return false;
 
   Unload();
-  m_pBreak.reset(CreateBreak(true));
+  m_pBreak = CreateBreak(true);
   if (m_pLoader) {
     m_pLoader->m_iTotalLines = -1;
     m_pLoader->m_iChar = 0;
@@ -444,7 +444,7 @@ bool CXFA_TextLayout::Layout(int32_t iBlock) {
     return true;
   if (iBlock == iBlocksHeightCount) {
     Unload();
-    m_pBreak.reset(CreateBreak(true));
+    m_pBreak = CreateBreak(true);
     fLinePos = m_pLoader->m_fStartLineOffset;
     for (int32_t i = 0; i < iBlocksHeightCount; i++)
       fLinePos -= m_pLoader->m_BlocksHeight[i * 2 + 1];
