@@ -1128,7 +1128,7 @@ CFX_DIBitmap* XFA_LoadImageFromBuffer(
 
   CFX_DIBAttribute dibAttr;
   CFX_DIBitmap* pBitmap = nullptr;
-  CCodec_ProgressiveDecoder* pProgressiveDecoder =
+  std::unique_ptr<CCodec_ProgressiveDecoder> pProgressiveDecoder =
       pCodecMgr->CreateProgressiveDecoder();
   pProgressiveDecoder->LoadImageInfo(pImageFileRead, type, &dibAttr, false);
   switch (dibAttr.m_wDPIUnit) {
@@ -1164,9 +1164,9 @@ CFX_DIBitmap* XFA_LoadImageFromBuffer(
       pProgressiveDecoder->ContinueDecode();
     }
   }
-  delete pProgressiveDecoder;
   return pBitmap;
 }
+
 void XFA_RectWidthoutMargin(CFX_RectF& rt, const CXFA_Margin& mg, bool bUI) {
   if (!mg) {
     return;

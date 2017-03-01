@@ -7,23 +7,21 @@
 #ifndef CORE_FXCODEC_CODEC_CCODEC_BMPMODULE_H_
 #define CORE_FXCODEC_CODEC_CCODEC_BMPMODULE_H_
 
+#include "core/fxcodec/codec/icodec_bmpmodule.h"
 #include "core/fxcrt/fx_system.h"
 
-struct FXBMP_Context;
-class CFX_DIBAttribute;
-
-class CCodec_BmpModule {
+class CCodec_BmpModule : public ICodec_BmpModule {
  public:
-  CCodec_BmpModule() { FXSYS_memset(m_szLastError, 0, sizeof(m_szLastError)); }
+  CCodec_BmpModule();
+  ~CCodec_BmpModule() override;
 
-  FXBMP_Context* Start(void* pModule);
-  void Finish(FXBMP_Context* pContext);
-
-  uint32_t GetAvailInput(FXBMP_Context* pContext, uint8_t** avail_buf_ptr);
+  FXBMP_Context* Start() override;
+  void Finish(FXBMP_Context* pContext) override;
+  uint32_t GetAvailInput(FXBMP_Context* pContext,
+                         uint8_t** avail_buf_ptr) override;
   void Input(FXBMP_Context* pContext,
              const uint8_t* src_buf,
-             uint32_t src_size);
-
+             uint32_t src_size) override;
   int32_t ReadHeader(FXBMP_Context* pContext,
                      int32_t* width,
                      int32_t* height,
@@ -31,13 +29,8 @@ class CCodec_BmpModule {
                      int32_t* components,
                      int32_t* pal_num,
                      uint32_t** pal_pp,
-                     CFX_DIBAttribute* pAttribute);
-  int32_t LoadImage(FXBMP_Context* pContext);
-
-  bool (*InputImagePositionBufCallback)(void* pModule, uint32_t rcd_pos);
-  void (*ReadScanlineCallback)(void* pModule,
-                               int32_t row_num,
-                               uint8_t* row_buf);
+                     CFX_DIBAttribute* pAttribute) override;
+  int32_t LoadImage(FXBMP_Context* pContext) override;
 
  protected:
   FX_CHAR m_szLastError[256];

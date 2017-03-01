@@ -7,33 +7,22 @@
 #ifndef CORE_FXCODEC_CODEC_CCODEC_PNGMODULE_H_
 #define CORE_FXCODEC_CODEC_CCODEC_PNGMODULE_H_
 
+#include "core/fxcodec/codec/icodec_pngmodule.h"
 #include "core/fxcrt/fx_system.h"
-
-class CFX_DIBAttribute;
-struct FXPNG_Context;
 
 #define PNG_ERROR_SIZE 256
 
-class CCodec_PngModule {
+class CCodec_PngModule : public ICodec_PngModule {
  public:
-  CCodec_PngModule() { FXSYS_memset(m_szLastError, 0, sizeof(m_szLastError)); }
+  CCodec_PngModule();
+  ~CCodec_PngModule() override;
 
-  FXPNG_Context* Start(void* pModule);
-  void Finish(FXPNG_Context* pContext);
+  FXPNG_Context* Start() override;
+  void Finish(FXPNG_Context* pContext) override;
   bool Input(FXPNG_Context* pContext,
              const uint8_t* src_buf,
              uint32_t src_size,
-             CFX_DIBAttribute* pAttribute);
-
-  bool (*ReadHeaderCallback)(void* pModule,
-                             int width,
-                             int height,
-                             int bpc,
-                             int pass,
-                             int* color_type,
-                             double* gamma);
-  bool (*AskScanlineBufCallback)(void* pModule, int line, uint8_t*& src_buf);
-  void (*FillScanlineBufCompletedCallback)(void* pModule, int pass, int line);
+             CFX_DIBAttribute* pAttribute) override;
 
  protected:
   FX_CHAR m_szLastError[PNG_ERROR_SIZE];

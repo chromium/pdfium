@@ -14,7 +14,6 @@
 struct FXBMP_Context {
   bmp_decompress_struct_p bmp_ptr;
   void* parent_ptr;
-  void* child_ptr;
 
   void* (*m_AllocFunc)(unsigned int);
   void (*m_FreeFunc)(void*);
@@ -37,16 +36,22 @@ static void bmp_read_scanline(bmp_decompress_struct_p bmp_ptr,
                               uint8_t* row_buf) {
   FXBMP_Context* p = (FXBMP_Context*)bmp_ptr->context_ptr;
   CCodec_BmpModule* pModule = (CCodec_BmpModule*)p->parent_ptr;
-  pModule->ReadScanlineCallback(p->child_ptr, row_num, row_buf);
+  pModule->GetDelegate()->BmpReadScanline(row_num, row_buf);
 }
 static bool bmp_get_data_position(bmp_decompress_struct_p bmp_ptr,
                                   uint32_t rcd_pos) {
   FXBMP_Context* p = (FXBMP_Context*)bmp_ptr->context_ptr;
   CCodec_BmpModule* pModule = (CCodec_BmpModule*)p->parent_ptr;
-  return pModule->InputImagePositionBufCallback(p->child_ptr, rcd_pos);
+  return pModule->GetDelegate()->BmpInputImagePositionBuf(rcd_pos);
 }
 
-FXBMP_Context* CCodec_BmpModule::Start(void* pModule) {
+CCodec_BmpModule::CCodec_BmpModule() {
+  memset(m_szLastError, 0, sizeof(m_szLastError));
+}
+
+CCodec_BmpModule::~CCodec_BmpModule() {}
+
+FXBMP_Context* CCodec_BmpModule::Start() {
   FXBMP_Context* p = FX_Alloc(FXBMP_Context, 1);
   if (!p)
     return nullptr;
@@ -59,7 +64,6 @@ FXBMP_Context* CCodec_BmpModule::Start(void* pModule) {
   p->m_FreeFunc = bmp_free_func;
   p->bmp_ptr = nullptr;
   p->parent_ptr = (void*)this;
-  p->child_ptr = pModule;
   p->bmp_ptr = bmp_create_decompress();
   if (!p->bmp_ptr) {
     FX_Free(p);
