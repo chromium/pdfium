@@ -8,10 +8,6 @@
 
 #include "xfa/fxfa/app/cxfa_linkuserdata.h"
 
-XFA_TextPiece::XFA_TextPiece()
-    : pszText(nullptr), pWidths(nullptr), pFont(nullptr) {}
+XFA_TextPiece::XFA_TextPiece() {}
 
-XFA_TextPiece::~XFA_TextPiece() {
-  FX_Free(pszText);
-  FX_Free(pWidths);
-}
+XFA_TextPiece::~XFA_TextPiece() {}

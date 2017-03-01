@@ -33,14 +33,14 @@ struct FX_RTFTEXTOBJ {
   FX_RTFTEXTOBJ();
   ~FX_RTFTEXTOBJ();
 
-  const FX_WCHAR* pStr;
-  int32_t* pWidths;
-  int32_t iLength;
+  CFX_WideString pStr;
+  std::vector<int32_t> pWidths;
   CFX_RetainPtr<CFGAS_GEFont> pFont;
-  FX_FLOAT fFontSize;
-  int32_t iBidiLevel;
   const CFX_RectF* pRect;
   FX_WCHAR wLineBreakChar;
+  FX_FLOAT fFontSize;
+  int32_t iLength;
+  int32_t iBidiLevel;
   int32_t iHorizontalScale;
   int32_t iVerticalScale;
 };
@@ -59,18 +59,20 @@ class CFX_RTFPiece {
     return (*m_pChars)[m_iStartChar + index];
   }
 
-  void GetString(FX_WCHAR* pText) const {
-    ASSERT(pText);
-    int32_t iEndChar = m_iStartChar + m_iChars;
-    for (int32_t i = m_iStartChar; i < iEndChar; i++)
-      *pText++ = static_cast<FX_WCHAR>((*m_pChars)[i].m_wCharCode);
+  CFX_WideString GetString() const {
+    CFX_WideString ret;
+    ret.Reserve(m_iChars);
+    for (int32_t i = m_iStartChar; i < m_iStartChar + m_iChars; i++)
+      ret += static_cast<FX_WCHAR>((*m_pChars)[i].m_wCharCode);
+    return ret;
   }
 
-  void GetWidths(int32_t* pWidths) const {
-    ASSERT(pWidths);
-    int32_t iEndChar = m_iStartChar + m_iChars;
-    for (int32_t i = m_iStartChar; i < iEndChar; i++)
-      *pWidths++ = (*m_pChars)[i].m_iCharWidth;
+  std::vector<int32_t> GetWidths() const {
+    std::vector<int32_t> ret;
+    ret.reserve(m_iChars);
+    for (int32_t i = m_iStartChar; i < m_iStartChar + m_iChars; i++)
+      ret.push_back((*m_pChars)[i].m_iCharWidth);
+    return ret;
   }
 
   void Reset() {

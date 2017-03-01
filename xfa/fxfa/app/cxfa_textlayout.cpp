@@ -999,10 +999,10 @@ void CXFA_TextLayout::DoTabstops(CFDE_CSSComputedStyle* pStyle,
       } else if (dwAlign == FX_HashCode_GetW(L"decimal", false)) {
         int32_t iChars = pPiece->iChars;
         for (int32_t i = 0; i < iChars; i++) {
-          if (pPiece->pszText[i] == L'.')
+          if (pPiece->szText[i] == L'.')
             break;
 
-          fLeft += pPiece->pWidths[i] / 20000.0f;
+          fLeft += pPiece->Widths[i] / 20000.0f;
         }
       }
       m_pTabstopContext->m_fLeft =
@@ -1041,11 +1041,9 @@ void CXFA_TextLayout::AppendTextLine(CFX_RTFBreakType dwStatus,
       FX_FLOAT fVerScale = pPiece->m_iVerticalScale / 100.0f;
 
       auto pTP = pdfium::MakeUnique<XFA_TextPiece>();
-      pTP->pszText = FX_Alloc(FX_WCHAR, pPiece->m_iChars);
-      pTP->pWidths = FX_Alloc(int32_t, pPiece->m_iChars);
       pTP->iChars = pPiece->m_iChars;
-      pPiece->GetString(pTP->pszText);
-      pPiece->GetWidths(pTP->pWidths);
+      pTP->szText = pPiece->GetString();
+      pTP->Widths = pPiece->GetWidths();
       pTP->iBidiLevel = pPiece->m_iBidiLevel;
       pTP->iHorScale = pPiece->m_iHorizontalScale;
       pTP->iVerScale = pPiece->m_iVerticalScale;
@@ -1301,10 +1299,10 @@ bool CXFA_TextLayout::ToRun(const XFA_TextPiece* pPiece, FX_RTFTEXTOBJ* tr) {
   if (iLength < 1)
     return false;
 
-  tr->pStr = pPiece->pszText;
+  tr->pStr = pPiece->szText;
   tr->pFont = pPiece->pFont;
   tr->pRect = &pPiece->rtPiece;
-  tr->pWidths = pPiece->pWidths;
+  tr->pWidths = pPiece->Widths;
   tr->iLength = iLength;
   tr->fFontSize = pPiece->fFontSize;
   tr->iBidiLevel = pPiece->iBidiLevel;
