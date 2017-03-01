@@ -154,6 +154,18 @@ bool CPDF_MeshStream::Load() {
   return true;
 }
 
+bool CPDF_MeshStream::CanReadFlag() const {
+  return m_BitStream.BitsRemaining() >= m_nFlagBits;
+}
+
+bool CPDF_MeshStream::CanReadCoords() const {
+  return m_BitStream.BitsRemaining() / 2 >= m_nCoordBits;
+}
+
+bool CPDF_MeshStream::CanReadColor() const {
+  return m_BitStream.BitsRemaining() / m_nComponentBits >= m_nComponents;
+}
+
 uint32_t CPDF_MeshStream::ReadFlag() {
   ASSERT(ShouldCheckBitsPerFlag(m_type));
   return m_BitStream.GetBits(m_nFlagBits) & 0x03;
@@ -209,26 +221,35 @@ std::tuple<FX_FLOAT, FX_FLOAT, FX_FLOAT> CPDF_MeshStream::ReadColor() {
   return std::tuple<FX_FLOAT, FX_FLOAT, FX_FLOAT>(r, g, b);
 }
 
-CPDF_MeshVertex CPDF_MeshStream::ReadVertex(const CFX_Matrix& pObject2Bitmap,
-                                            uint32_t* flag) {
+bool CPDF_MeshStream::ReadVertex(const CFX_Matrix& pObject2Bitmap,
+                                 CPDF_MeshVertex* vertex,
+                                 uint32_t* flag) {
+  if (!CanReadFlag())
+    return false;
   *flag = ReadFlag();
 
-  CPDF_MeshVertex vertex;
-  vertex.position = pObject2Bitmap.Transform(ReadCoords());
-  std::tie(vertex.r, vertex.g, vertex.b) = ReadColor();
-  m_BitStream.ByteAlign();
+  if (!CanReadCoords())
+    return false;
+  vertex->position = pObject2Bitmap.Transform(ReadCoords());
 
-  return vertex;
+  if (!CanReadColor())
+    return false;
+  std::tie(vertex->r, vertex->g, vertex->b) = ReadColor();
+  m_BitStream.ByteAlign();
+  return true;
 }
 
 bool CPDF_MeshStream::ReadVertexRow(const CFX_Matrix& pObject2Bitmap,
                                     int count,
                                     CPDF_MeshVertex* vertex) {
   for (int i = 0; i < count; i++) {
-    if (m_BitStream.IsEOF())
+    if (m_BitStream.IsEOF() || !CanReadCoords())
       return false;
 
     vertex[i].position = pObject2Bitmap.Transform(ReadCoords());
+    if (!CanReadColor())
+      return false;
+
     std::tie(vertex[i].r, vertex[i].g, vertex[i].b) = ReadColor();
     m_BitStream.ByteAlign();
   }

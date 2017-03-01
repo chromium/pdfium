@@ -42,11 +42,17 @@ class CPDF_MeshStream {
 
   bool Load();
 
+  bool CanReadFlag() const;
+  bool CanReadCoords() const;
+  bool CanReadColor() const;
+
   uint32_t ReadFlag();
   CFX_PointF ReadCoords();
   std::tuple<FX_FLOAT, FX_FLOAT, FX_FLOAT> ReadColor();
 
-  CPDF_MeshVertex ReadVertex(const CFX_Matrix& pObject2Bitmap, uint32_t* flag);
+  bool ReadVertex(const CFX_Matrix& pObject2Bitmap,
+                  CPDF_MeshVertex* vertex,
+                  uint32_t* flag);
   bool ReadVertexRow(const CFX_Matrix& pObject2Bitmap,
                      int count,
                      CPDF_MeshVertex* vertex);

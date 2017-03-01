@@ -487,13 +487,17 @@ void DrawFreeGouraudShading(
   FXSYS_memset(triangle, 0, sizeof(triangle));
 
   while (!stream.BitStream()->IsEOF()) {
+    CPDF_MeshVertex vertex;
     uint32_t flag;
-    CPDF_MeshVertex vertex = stream.ReadVertex(*pObject2Bitmap, &flag);
+    if (!stream.ReadVertex(*pObject2Bitmap, &vertex, &flag))
+      return;
+
     if (flag == 0) {
       triangle[0] = vertex;
       for (int j = 1; j < 3; j++) {
         uint32_t tflag;
-        triangle[j] = stream.ReadVertex(*pObject2Bitmap, &tflag);
+        if (!stream.ReadVertex(*pObject2Bitmap, &triangle[j], &tflag))
+          return;
       }
     } else {
       if (flag == 1)
@@ -831,6 +835,8 @@ void DrawCoonPatchMeshes(
   CFX_PointF coords[16];
   int point_count = type == kTensorProductPatchMeshShading ? 16 : 12;
   while (!stream.BitStream()->IsEOF()) {
+    if (!stream.CanReadFlag())
+      break;
     uint32_t flag = stream.ReadFlag();
     int iStartPoint = 0, iStartColor = 0, i = 0;
     if (flag) {
@@ -846,10 +852,16 @@ void DrawCoonPatchMeshes(
       tempColors[1] = patch.patch_colors[(flag + 1) % 4];
       FXSYS_memcpy(patch.patch_colors, tempColors, sizeof(Coon_Color) * 2);
     }
-    for (i = iStartPoint; i < point_count; i++)
+    for (i = iStartPoint; i < point_count; i++) {
+      if (!stream.CanReadCoords())
+        break;
       coords[i] = pObject2Bitmap->Transform(stream.ReadCoords());
+    }
 
     for (i = iStartColor; i < 4; i++) {
+      if (!stream.CanReadColor())
+        break;
+
       FX_FLOAT r;
       FX_FLOAT g;
       FX_FLOAT b;
