@@ -582,15 +582,16 @@ FXFT_Face CFX_FontMapper::FindSubstFont(const CFX_ByteString& name,
         bItalic = italic_angle != 0;
         weight = old_weight;
       }
-      if (family.Find("Narrow") > 0 || family.Find("Condensed") > 0) {
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_LINUX_
+      if (SubstName.Find("Narrow") > 0 || SubstName.Find("Condensed") > 0)
         family = "LiberationSansNarrow";
 #elif _FXM_PLATFORM_ == _FXM_PLATFORM_ANDROID_
+      if (family.Find("Narrow") > 0 || family.Find("Condensed") > 0)
         family = "RobotoCondensed";
 #else
+      if (family.Find("Narrow") > 0 || family.Find("Condensed") > 0)
         family = "ArialNarrow";
-#endif
-      }
+#endif  // _FXM_PLATFORM_ == _FXM_PLATFORM_LINUX_
     } else {
       pSubstFont->m_bSubstCJK = true;
       if (nStyle)
