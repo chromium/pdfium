@@ -156,6 +156,7 @@ class CFX_TxtChar : public CFX_Char {
         m_iBidiPos(0),
         m_iBidiOrder(0),
         m_pUserData(nullptr) {}
+
   int8_t m_nRotation;
   uint32_t m_dwCharStyles;
   uint32_t m_dwStatus;

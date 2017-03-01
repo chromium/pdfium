@@ -240,6 +240,7 @@ class CFX_TxtBreak {
   uint32_t AppendChar_Others(CFX_TxtChar* pCurChar, int32_t iRotation);
 
  private:
+  void FontChanged();
   void SetBreakStatus();
   int32_t GetLineRotation(uint32_t dwStyles) const;
   CFX_TxtChar* GetLastChar(int32_t index, bool bOmitChar = true) const;
