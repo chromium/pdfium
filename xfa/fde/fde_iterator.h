@@ -7,6 +7,8 @@
 #ifndef XFA_FDE_FDE_ITERATOR_H_
 #define XFA_FDE_FDE_ITERATOR_H_
 
+#include <stack>
+
 #include "xfa/fde/fde_visualset.h"
 #include "xfa/fgas/crt/fgas_utils.h"
 
@@ -31,7 +33,7 @@ class CFDE_VisualSetIterator {
 
  protected:
   uint32_t m_dwFilter;
-  CFX_StackTemplate<FDE_CANVASITEM> m_CanvasStack;
+  std::stack<FDE_CANVASITEM> m_CanvasStack;
 };
 
 #endif  // XFA_FDE_FDE_ITERATOR_H_
