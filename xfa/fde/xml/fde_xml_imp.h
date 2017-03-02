@@ -8,6 +8,7 @@
 #define XFA_FDE_XML_FDE_XML_IMP_H_
 
 #include <memory>
+#include <stack>
 #include <vector>
 
 #include "core/fxcrt/fx_system.h"
@@ -326,7 +327,7 @@ class CFDE_XMLSyntaxParser {
   FX_WCHAR* m_pStart;
   FX_WCHAR* m_pEnd;
   FDE_XMLNODE m_CurNode;
-  CFX_StackTemplate<FDE_XMLNODE> m_XMLNodeStack;
+  std::stack<FDE_XMLNODE> m_XMLNodeStack;
   CFDE_BlockBuffer m_BlockBuffer;
   int32_t m_iAllocStep;
   int32_t& m_iDataLength;
@@ -337,7 +338,7 @@ class CFDE_XMLSyntaxParser {
   FDE_XmlSyntaxState m_syntaxParserState;
   FX_WCHAR m_wQuotationMark;
   int32_t m_iEntityStart;
-  CFX_StackTemplate<uint32_t> m_SkipStack;
+  std::stack<FX_WCHAR> m_SkipStack;
   FX_WCHAR m_SkipChar;
 };
 
