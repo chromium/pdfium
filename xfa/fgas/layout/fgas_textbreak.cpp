@@ -1513,11 +1513,10 @@ int32_t CFX_TxtBreak::GetDisplayPos(const FX_TXTRUN* pTxtRun,
   return iCount;
 }
 
-int32_t CFX_TxtBreak::GetCharRects(const FX_TXTRUN* pTxtRun,
-                                   std::vector<CFX_RectF>* rtArray,
-                                   bool bCharBBox) const {
+std::vector<CFX_RectF> CFX_TxtBreak::GetCharRects(const FX_TXTRUN* pTxtRun,
+                                                  bool bCharBBox) const {
   if (!pTxtRun || pTxtRun->iLength < 1)
-    return 0;
+    return std::vector<CFX_RectF>();
 
   IFX_TxtAccess* pAccess = pTxtRun->pAccess;
   const FDE_TEXTEDITPIECE* pIdentity = pTxtRun->pIdentity;
@@ -1525,7 +1524,6 @@ int32_t CFX_TxtBreak::GetCharRects(const FX_TXTRUN* pTxtRun,
   int32_t* pWidths = pTxtRun->pWidths;
   int32_t iLength = pTxtRun->iLength;
   CFX_RectF rect(*pTxtRun->pRect);
-  bool bRTLPiece = (pTxtRun->dwCharStyles & FX_TXTCHARSTYLE_OddBidiLevel) != 0;
   FX_FLOAT fFontSize = pTxtRun->fFontSize;
   int32_t iFontSize = FXSYS_round(fFontSize * 20.0f);
   FX_FLOAT fScale = fFontSize / 1000.0f;
@@ -1539,12 +1537,10 @@ int32_t CFX_TxtBreak::GetCharRects(const FX_TXTRUN* pTxtRun,
 
   FX_FLOAT fLeft = std::max(0.0f, bbox.left * fScale);
   FX_FLOAT fHeight = FXSYS_fabs(bbox.height * fScale);
-  rtArray->clear();
-  rtArray->resize(iLength);
-
-  bool bVertical = (pTxtRun->dwStyles & FX_TXTLAYOUTSTYLE_VerticalLayout) != 0;
-  bool bSingleLine = (pTxtRun->dwStyles & FX_TXTLAYOUTSTYLE_SingleLine) != 0;
-  bool bCombText = (pTxtRun->dwStyles & FX_TXTLAYOUTSTYLE_CombText) != 0;
+  bool bRTLPiece = !!(pTxtRun->dwCharStyles & FX_TXTCHARSTYLE_OddBidiLevel);
+  bool bVertical = !!(pTxtRun->dwStyles & FX_TXTLAYOUTSTYLE_VerticalLayout);
+  bool bSingleLine = !!(pTxtRun->dwStyles & FX_TXTLAYOUTSTYLE_SingleLine);
+  bool bCombText = !!(pTxtRun->dwStyles & FX_TXTLAYOUTSTYLE_CombText);
   FX_WCHAR wch;
   FX_WCHAR wLineBreakChar = pTxtRun->wLineBreakChar;
   int32_t iCharSize;
@@ -1555,6 +1551,7 @@ int32_t CFX_TxtBreak::GetCharRects(const FX_TXTRUN* pTxtRun,
   else
     fStart = bRTLPiece ? rect.right() : rect.left;
 
+  std::vector<CFX_RectF> rtArray(iLength);
   for (int32_t i = 0; i < iLength; i++) {
     if (pAccess) {
       wch = pAccess->GetChar(pIdentity, i);
@@ -1617,12 +1614,12 @@ int32_t CFX_TxtBreak::GetCharRects(const FX_TXTRUN* pTxtRun,
         rtBBoxF.height = fHeight;
         rtBBoxF.top = std::max(rtBBoxF.top, 0.0f);
       }
-      (*rtArray)[i] = rtBBoxF;
+      rtArray[i] = rtBBoxF;
       continue;
     }
-    (*rtArray)[i] = rect;
+    rtArray[i] = rect;
   }
-  return iLength;
+  return rtArray;
 }
 
 FX_TXTRUN::FX_TXTRUN()

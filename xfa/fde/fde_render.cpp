@@ -61,7 +61,6 @@ FDE_RENDERSTATUS CFDE_RenderContext::DoRender(IFX_Pause* pPause) {
   rm.TransformRect(rtDocClip);
   IFDE_VisualSet* pVisualSet;
   FDE_TEXTEDITPIECE* pPiece;
-  CFX_RectF rtObj;
   int32_t iCount = 0;
   while (true) {
     pPiece = m_pIterator->GetNext(pVisualSet);
@@ -69,9 +68,7 @@ FDE_RENDERSTATUS CFDE_RenderContext::DoRender(IFX_Pause* pPause) {
       eStatus = FDE_RENDERSTATUS_Done;
       break;
     }
-    rtObj.Empty();
-    pVisualSet->GetRect(pPiece, rtObj);
-    if (!rtDocClip.IntersectWith(rtObj))
+    if (!rtDocClip.IntersectWith(pVisualSet->GetRect(*pPiece)))
       continue;
 
     switch (pVisualSet->GetType()) {
@@ -111,7 +108,7 @@ void CFDE_RenderContext::RenderText(IFDE_TextSet* pTextSet,
   if (!pFont)
     return;
 
-  int32_t iCount = pTextSet->GetDisplayPos(pText, nullptr, false);
+  int32_t iCount = pTextSet->GetDisplayPos(*pText, nullptr, false);
   if (iCount < 1)
     return;
 
@@ -121,7 +118,7 @@ void CFDE_RenderContext::RenderText(IFDE_TextSet* pTextSet,
   if (m_CharPos.size() < static_cast<size_t>(iCount))
     m_CharPos.resize(iCount, FXTEXT_CHARPOS());
 
-  iCount = pTextSet->GetDisplayPos(pText, m_CharPos.data(), false);
+  iCount = pTextSet->GetDisplayPos(*pText, m_CharPos.data(), false);
   FX_FLOAT fFontSize = pTextSet->GetFontSize();
   FX_ARGB dwColor = pTextSet->GetFontColor();
   m_pBrush->SetColor(dwColor);

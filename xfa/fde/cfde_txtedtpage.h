@@ -7,6 +7,7 @@
 #ifndef XFA_FDE_CFDE_TXTEDTPAGE_H_
 #define XFA_FDE_CFDE_TXTEDTPAGE_H_
 
+#include <deque>
 #include <memory>
 #include <vector>
 
@@ -44,7 +45,7 @@ class CFDE_TxtEdtPage : public IFDE_TxtEdtPage {
 
   // IFDE_VisualSet:
   FDE_VISUALOBJTYPE GetType() override;
-  void GetRect(FDE_TEXTEDITPIECE* pPiece, CFX_RectF& rt) override;
+  CFX_RectF GetRect(const FDE_TEXTEDITPIECE& pPiece) override;
 
   // IFDE_CanvasSet:
   FX_POSITION GetFirstPosition() override;
@@ -65,7 +66,7 @@ class CFDE_TxtEdtPage : public IFDE_TxtEdtPage {
   std::unique_ptr<IFX_CharIter> m_pIter;
   std::unique_ptr<CFDE_TxtEdtTextSet> m_pTextSet;
   CFDE_TxtEdtEngine* const m_pEditEngine;
-  CFX_MassArrayTemplate<FDE_TEXTEDITPIECE> m_PieceMassArr;
+  std::deque<FDE_TEXTEDITPIECE> m_Pieces;
   CFDE_TxtEdtParag* m_pBgnParag;
   CFDE_TxtEdtParag* m_pEndParag;
   int32_t m_nRefCount;

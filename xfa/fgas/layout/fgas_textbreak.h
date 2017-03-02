@@ -234,9 +234,8 @@ class CFX_TxtBreak {
                         FXTEXT_CHARPOS* pCharPos,
                         bool bCharCode = false,
                         CFX_WideString* pWSForms = nullptr) const;
-  int32_t GetCharRects(const FX_TXTRUN* pTxtRun,
-                       std::vector<CFX_RectF>* rtArray,
-                       bool bCharBBox = false) const;
+  std::vector<CFX_RectF> GetCharRects(const FX_TXTRUN* pTxtRun,
+                                      bool bCharBBox = false) const;
   void AppendChar_PageLoad(CFX_TxtChar* pCurChar, uint32_t dwProps);
   uint32_t AppendChar_Combination(CFX_TxtChar* pCurChar, int32_t iRotation);
   uint32_t AppendChar_Tab(CFX_TxtChar* pCurChar, int32_t iRotation);

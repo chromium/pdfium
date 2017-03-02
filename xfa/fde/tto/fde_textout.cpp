@@ -745,8 +745,8 @@ int32_t CFDE_TextOut::GetDisplayPos(FDE_TTOPIECE* pPiece) {
 
 int32_t CFDE_TextOut::GetCharRects(const FDE_TTOPIECE* pPiece) {
   FX_TXTRUN tr = ToTextRun(pPiece);
-  m_rectArray.clear();
-  return m_pTxtBreak->GetCharRects(&tr, &m_rectArray);
+  m_rectArray = m_pTxtBreak->GetCharRects(&tr);
+  return pdfium::CollectionSize<int32_t>(m_rectArray);
 }
 
 FX_TXTRUN CFDE_TextOut::ToTextRun(const FDE_TTOPIECE* pPiece) {
