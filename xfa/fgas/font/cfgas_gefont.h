@@ -109,8 +109,7 @@ class CFGAS_GEFont : public CFX_Retainable {
   CFX_RetainPtr<IFX_SeekableReadStream> m_pFileRead;
   std::unique_ptr<CFX_UnicodeEncoding> m_pFontEncoding;
   std::unique_ptr<CFX_DiscreteArrayTemplate<uint16_t>> m_pCharWidthMap;
-  std::unique_ptr<CFX_MassArrayTemplate<CFX_Rect>> m_pRectArray;
-  std::map<FX_WCHAR, CFX_Rect*> m_BBoxMap;  // Rect owned by m_pRectArray.
+  std::map<FX_WCHAR, CFX_Rect> m_BBoxMap;
   CXFA_PDFFontMgr* m_pProvider;  // not owned.
   std::vector<CFX_RetainPtr<CFGAS_GEFont>> m_SubstFonts;
   std::map<FX_WCHAR, CFX_RetainPtr<CFGAS_GEFont>> m_FontMapper;
