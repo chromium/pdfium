@@ -8,6 +8,7 @@
 #define XFA_FXFA_PARSER_CXFA_DOCUMENT_H_
 
 #include <map>
+#include <unordered_set>
 
 #include "xfa/fxfa/fxfa.h"
 #include "xfa/fxfa/parser/xfa_localemgr.h"
@@ -118,7 +119,7 @@ class CXFA_Document {
   CScript_LogPseudoModel* m_pScriptLog;
   CScript_LayoutPseudoModel* m_pScriptLayout;
   CScript_SignaturePseudoModel* m_pScriptSignature;
-  CXFA_NodeSet m_PurgeNodes;
+  std::unordered_set<CXFA_Node*> m_PurgeNodes;
   XFA_VERSION m_eCurVersionMode;
   uint32_t m_dwDocFlags;
 };

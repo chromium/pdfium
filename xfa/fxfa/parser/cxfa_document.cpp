@@ -361,7 +361,7 @@ void CXFA_Document::DoProtoMerge() {
     return;
 
   std::map<uint32_t, CXFA_Node*> mIDMap;
-  CXFA_NodeSet sUseNodes;
+  std::unordered_set<CXFA_Node*> sUseNodes;
   CXFA_NodeIterator sIterator(pTemplateRoot);
   for (CXFA_Node* pNode = sIterator.GetCurrent(); pNode;
        pNode = sIterator.MoveToNext()) {
