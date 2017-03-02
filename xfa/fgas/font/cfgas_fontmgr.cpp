@@ -47,49 +47,49 @@ int32_t GetSimilarityScore(FX_FONTDESCRIPTOR const* pFont,
   return iValue;
 }
 
-FX_FONTDESCRIPTOR const* MatchDefaultFont(FX_FONTMATCHPARAMS* pParams,
-                                          const CFX_FontDescriptors& fonts) {
-  FX_FONTDESCRIPTOR const* pBestFont = nullptr;
+const FX_FONTDESCRIPTOR* MatchDefaultFont(
+    FX_FONTMATCHPARAMS* pParams,
+    const std::deque<FX_FONTDESCRIPTOR>& fonts) {
+  const FX_FONTDESCRIPTOR* pBestFont = nullptr;
   int32_t iBestSimilar = 0;
   bool bMatchStyle = (pParams->dwMatchFlags & FX_FONTMATCHPARA_MatchStyle) > 0;
-  for (int32_t i = 0; i < fonts.GetSize(); ++i) {
-    FX_FONTDESCRIPTOR const* pFont = fonts.GetPtrAt(i);
-    if ((pFont->dwFontStyles & FX_FONTSTYLE_BoldItalic) ==
+  for (const auto& font : fonts) {
+    if ((font.dwFontStyles & FX_FONTSTYLE_BoldItalic) ==
         FX_FONTSTYLE_BoldItalic) {
       continue;
     }
     if (pParams->pwsFamily) {
-      if (FXSYS_wcsicmp(pParams->pwsFamily, pFont->wsFontFace))
+      if (FXSYS_wcsicmp(pParams->pwsFamily, font.wsFontFace))
         continue;
-      if (pFont->uCharSet == FX_CHARSET_Symbol)
-        return pFont;
+      if (font.uCharSet == FX_CHARSET_Symbol)
+        return &font;
     }
-    if (pFont->uCharSet == FX_CHARSET_Symbol)
+    if (font.uCharSet == FX_CHARSET_Symbol)
       continue;
     if (pParams->wCodePage != 0xFFFF) {
-      if (FX_GetCodePageFromCharset(pFont->uCharSet) != pParams->wCodePage)
+      if (FX_GetCodePageFromCharset(font.uCharSet) != pParams->wCodePage)
         continue;
     } else {
       if (pParams->dwUSB < 128) {
         uint32_t dwByte = pParams->dwUSB / 32;
         uint32_t dwUSB = 1 << (pParams->dwUSB % 32);
-        if ((pFont->FontSignature.fsUsb[dwByte] & dwUSB) == 0)
+        if ((font.FontSignature.fsUsb[dwByte] & dwUSB) == 0)
           continue;
       }
     }
     if (bMatchStyle) {
-      if ((pFont->dwFontStyles & 0x0F) == (pParams->dwFontStyles & 0x0F))
-        return pFont;
+      if ((font.dwFontStyles & 0x0F) == (pParams->dwFontStyles & 0x0F))
+        return &font;
       continue;
     }
     if (pParams->pwsFamily) {
-      if (FXSYS_wcsicmp(pParams->pwsFamily, pFont->wsFontFace) == 0)
-        return pFont;
+      if (FXSYS_wcsicmp(pParams->pwsFamily, font.wsFontFace) == 0)
+        return &font;
     }
-    int32_t iSimilarValue = GetSimilarityScore(pFont, pParams->dwFontStyles);
+    int32_t iSimilarValue = GetSimilarityScore(&font, pParams->dwFontStyles);
     if (iBestSimilar < iSimilarValue) {
       iBestSimilar = iSimilarValue;
-      pBestFont = pFont;
+      pBestFont = &font;
     }
   }
   return iBestSimilar < 1 ? nullptr : pBestFont;
@@ -105,12 +105,10 @@ std::unique_ptr<CFGAS_FontMgr> CFGAS_FontMgr::Create(
 CFGAS_FontMgr::CFGAS_FontMgr(FX_LPEnumAllFonts pEnumerator)
     : m_pEnumerator(pEnumerator), m_FontFaces(100) {
   if (m_pEnumerator)
-    m_pEnumerator(m_FontFaces, nullptr, 0xFEFF);
+    m_pEnumerator(&m_FontFaces, nullptr, 0xFEFF);
 }
 
-CFGAS_FontMgr::~CFGAS_FontMgr() {
-  m_FontFaces.RemoveAll(false);
-}
+CFGAS_FontMgr::~CFGAS_FontMgr() {}
 
 CFX_RetainPtr<CFGAS_GEFont> CFGAS_FontMgr::GetFontByCodePage(
     uint16_t wCodePage,
@@ -264,7 +262,7 @@ void CFGAS_FontMgr::RemoveFont(const CFX_RetainPtr<CFGAS_GEFont>& pFont) {
     m_Fonts.erase(it);
 }
 
-FX_FONTDESCRIPTOR const* CFGAS_FontMgr::FindFont(const FX_WCHAR* pszFontFamily,
+const FX_FONTDESCRIPTOR* CFGAS_FontMgr::FindFont(const FX_WCHAR* pszFontFamily,
                                                  uint32_t dwFontStyles,
                                                  uint32_t dwMatchFlags,
                                                  uint16_t wCodePage,
@@ -278,25 +276,26 @@ FX_FONTDESCRIPTOR const* CFGAS_FontMgr::FindFont(const FX_WCHAR* pszFontFamily,
   params.pwsFamily = pszFontFamily;
   params.dwFontStyles = dwFontStyles;
   params.dwMatchFlags = dwMatchFlags;
-  FX_FONTDESCRIPTOR const* pDesc = MatchDefaultFont(&params, m_FontFaces);
+  const FX_FONTDESCRIPTOR* pDesc = MatchDefaultFont(&params, m_FontFaces);
   if (pDesc)
     return pDesc;
+
   if (!pszFontFamily || !m_pEnumerator)
     return nullptr;
 
-  CFX_FontDescriptors namedFonts(100);
-  m_pEnumerator(namedFonts, pszFontFamily, wUnicode);
+  std::deque<FX_FONTDESCRIPTOR> namedFonts;
+  m_pEnumerator(&namedFonts, pszFontFamily, wUnicode);
   params.pwsFamily = nullptr;
   pDesc = MatchDefaultFont(&params, namedFonts);
   if (!pDesc)
     return nullptr;
-  for (int32_t i = m_FontFaces.GetSize() - 1; i >= 0; i--) {
-    FX_FONTDESCRIPTOR const* pMatch = m_FontFaces.GetPtrAt(i);
-    if (*pMatch == *pDesc)
-      return pMatch;
-  }
-  int index = m_FontFaces.Add(*pDesc);
-  return m_FontFaces.GetPtrAt(index);
+
+  auto it = std::find(m_FontFaces.rbegin(), m_FontFaces.rend(), *pDesc);
+  if (it != m_FontFaces.rend())
+    return &*it;
+
+  m_FontFaces.push_back(*pDesc);
+  return &m_FontFaces.back();
 }
 
 uint32_t FX_GetGdiFontStyles(const LOGFONTW& lf) {
@@ -330,12 +329,12 @@ static int32_t CALLBACK FX_GdiFontEnumProc(ENUMLOGFONTEX* lpelfe,
   pFont->wsFontFace[31] = 0;
   FXSYS_memcpy(&pFont->FontSignature, &lpntme->ntmFontSig,
                sizeof(lpntme->ntmFontSig));
-  ((CFX_FontDescriptors*)lParam)->Add(*pFont);
+  reinterpret_cast<std::deque<FX_FONTDESCRIPTOR>*>(lParam)->push_back(*pFont);
   FX_Free(pFont);
   return 1;
 }
 
-static void FX_EnumGdiFonts(CFX_FontDescriptors& fonts,
+static void FX_EnumGdiFonts(std::deque<FX_FONTDESCRIPTOR>* fonts,
                             const FX_WCHAR* pwsFaceName,
                             FX_WCHAR wUnicode) {
   HDC hDC = ::GetDC(nullptr);
@@ -347,7 +346,7 @@ static void FX_EnumGdiFonts(CFX_FontDescriptors& fonts,
     lfFind.lfFaceName[31] = 0;
   }
   EnumFontFamiliesExW(hDC, (LPLOGFONTW)&lfFind,
-                      (FONTENUMPROCW)FX_GdiFontEnumProc, (LPARAM)&fonts, 0);
+                      (FONTENUMPROCW)FX_GdiFontEnumProc, (LPARAM)fonts, 0);
   ::ReleaseDC(nullptr, hDC);
 }
 

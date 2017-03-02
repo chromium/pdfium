@@ -7,6 +7,7 @@
 #ifndef XFA_FGAS_FONT_CFGAS_FONTMGR_H_
 #define XFA_FGAS_FONT_CFGAS_FONTMGR_H_
 
+#include <deque>
 #include <map>
 #include <memory>
 #include <set>
@@ -70,8 +71,6 @@ struct FX_FONTDESCRIPTOR {
   FX_FONTSIGNATURE FontSignature;
 };
 
-typedef CFX_MassArrayTemplate<FX_FONTDESCRIPTOR> CFX_FontDescriptors;
-
 inline bool operator==(const FX_FONTDESCRIPTOR& left,
                        const FX_FONTDESCRIPTOR& right) {
   return left.uCharSet == right.uCharSet &&
@@ -80,7 +79,7 @@ inline bool operator==(const FX_FONTDESCRIPTOR& left,
          FXSYS_wcscmp(left.wsFontFace, right.wsFontFace) == 0;
 }
 
-typedef void (*FX_LPEnumAllFonts)(CFX_FontDescriptors& fonts,
+typedef void (*FX_LPEnumAllFonts)(std::deque<FX_FONTDESCRIPTOR>* fonts,
                                   const FX_WCHAR* pwsFaceName,
                                   FX_WCHAR wUnicode);
 
@@ -119,7 +118,7 @@ class CFGAS_FontMgr {
                                     FX_WCHAR wUnicode = 0);
 
   FX_LPEnumAllFonts m_pEnumerator;
-  CFX_FontDescriptors m_FontFaces;
+  std::deque<FX_FONTDESCRIPTOR> m_FontFaces;
   std::vector<CFX_RetainPtr<CFGAS_GEFont>> m_Fonts;
   std::map<uint32_t, CFX_RetainPtr<CFGAS_GEFont>> m_CPFonts;
   std::map<uint32_t, CFX_RetainPtr<CFGAS_GEFont>> m_FamilyFonts;
