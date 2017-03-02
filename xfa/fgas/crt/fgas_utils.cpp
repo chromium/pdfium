@@ -301,37 +301,6 @@ void CFX_BaseMassArrayImp::RemoveAll(bool bLeaveMemory) {
   m_iChunkCount = 0;
   m_iBlockCount = 0;
 }
-CFX_BaseMassArray::CFX_BaseMassArray(int32_t iChunkSize, int32_t iBlockSize) {
-  m_pData = new CFX_BaseMassArrayImp(iChunkSize, iBlockSize);
-}
-CFX_BaseMassArray::~CFX_BaseMassArray() {
-  delete m_pData;
-}
-int32_t CFX_BaseMassArray::GetSize() const {
-  return m_pData->m_iBlockCount;
-}
-uint8_t* CFX_BaseMassArray::AddSpaceTo(int32_t index) {
-  return m_pData->AddSpaceTo(index);
-}
-uint8_t* CFX_BaseMassArray::GetAt(int32_t index) const {
-  return m_pData->GetAt(index);
-}
-int32_t CFX_BaseMassArray::Append(const CFX_BaseMassArray& src,
-                                  int32_t iStart,
-                                  int32_t iCount) {
-  return m_pData->Append(*(CFX_BaseMassArrayImp*)src.m_pData, iStart, iCount);
-}
-int32_t CFX_BaseMassArray::Copy(const CFX_BaseMassArray& src,
-                                int32_t iStart,
-                                int32_t iCount) {
-  return m_pData->Copy(*(CFX_BaseMassArrayImp*)src.m_pData, iStart, iCount);
-}
-int32_t CFX_BaseMassArray::RemoveLast(int32_t iCount) {
-  return m_pData->RemoveLast(iCount);
-}
-void CFX_BaseMassArray::RemoveAll(bool bLeaveMemory) {
-  m_pData->RemoveAll(bLeaveMemory);
-}
 
 struct FX_BASEDISCRETEARRAYDATA {
   int32_t iBlockSize;
