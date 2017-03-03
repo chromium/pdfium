@@ -8,6 +8,7 @@
 #define XFA_FXFA_PARSER_CXFA_XML_PARSER_H_
 
 #include <memory>
+#include <stack>
 
 #include "xfa/fde/xml/fde_xml_imp.h"
 
@@ -16,7 +17,7 @@ class IFX_Pause;
 
 class CXFA_XMLParser : public IFDE_XMLParser {
  public:
-  CXFA_XMLParser(CFDE_XMLNode* pRoot,
+  CXFA_XMLParser(CFDE_XMLNode* pParent,
                  const CFX_RetainPtr<IFGAS_Stream>& pStream);
   ~CXFA_XMLParser() override;
 
@@ -29,13 +30,12 @@ class CXFA_XMLParser : public IFDE_XMLParser {
   uint16_t m_dwCheckStatus;
   uint16_t m_dwCurrentCheckStatus;
 
- protected:
-  CFDE_XMLNode* m_pRoot;
+ private:
   CFX_RetainPtr<IFGAS_Stream> m_pStream;
   std::unique_ptr<CFDE_XMLSyntaxParser> m_pParser;
   CFDE_XMLNode* m_pParent;
   CFDE_XMLNode* m_pChild;
-  CFX_StackTemplate<CFDE_XMLNode*> m_NodeStack;
+  std::stack<CFDE_XMLNode*> m_NodeStack;
   CFX_WideString m_ws1;
   CFX_WideString m_ws2;
   FDE_XmlSyntaxResult m_syntaxParserResult;
