@@ -122,7 +122,6 @@ TEST_F(XFANodeIteratorTest, Root) {
   Iterator iter(root());
   EXPECT_EQ(root(), iter.GetRoot());
   EXPECT_EQ(root(), iter.GetCurrent());
-  EXPECT_EQ(root(), iter.GetCurrent());
 }
 
 TEST_F(XFANodeIteratorTest, Current) {
@@ -130,10 +129,9 @@ TEST_F(XFANodeIteratorTest, Current) {
   iter.SetCurrent(child1());
   EXPECT_EQ(root(), iter.GetRoot());
   EXPECT_EQ(child1(), iter.GetCurrent());
-  EXPECT_EQ(child1(), iter.GetCurrent());
 }
 
-TEST_F(XFANodeIteratorTest, CurrentOutsideRoot) {
+TEST_F(XFANodeIteratorTest, CurrentOutsideRootDisallowed) {
   Iterator iter(child1());
   iter.SetCurrent(root());
   EXPECT_EQ(child1(), iter.GetRoot());
@@ -153,7 +151,10 @@ TEST_F(XFANodeIteratorTest, CurrentNull) {
 
 TEST_F(XFANodeIteratorTest, MoveToPrev) {
   Iterator iter(root());
-  iter.SetCurrent(child8());
+  iter.SetCurrent(child9());
+
+  EXPECT_EQ(child8(), iter.MoveToPrev());
+  EXPECT_EQ(child8(), iter.GetCurrent());
 
   EXPECT_EQ(child7(), iter.MoveToPrev());
   EXPECT_EQ(child7(), iter.GetCurrent());
@@ -242,6 +243,7 @@ TEST_F(XFANodeIteratorTest, BackAndForth) {
 TEST_F(XFANodeIteratorTest, NextFromBeforeTheBeginning) {
   Iterator iter(root());
   EXPECT_EQ(nullptr, iter.MoveToPrev());
+  EXPECT_EQ(root(), iter.GetCurrent());
   EXPECT_EQ(child1(), iter.MoveToNext());
 }
 
