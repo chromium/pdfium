@@ -169,6 +169,9 @@ class CFX_RTFBreak {
                         bool bCharCode) const;
 
   CFX_RTFBreakType AppendChar(FX_WCHAR wch);
+
+  CFX_RTFLine* GetCurrentLineForTesting() const { return m_pCurLine; }
+
   CFX_RTFBreakType AppendChar_Combination(CFX_RTFChar* pCurChar);
   CFX_RTFBreakType AppendChar_Tab(CFX_RTFChar* pCurChar);
   CFX_RTFBreakType AppendChar_Control(CFX_RTFChar* pCurChar);
