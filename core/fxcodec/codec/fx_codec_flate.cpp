@@ -587,6 +587,10 @@ void FlateUncompress(const uint8_t* src_buf,
       cur_buf = FX_Alloc(uint8_t, buf_size + 1);
       cur_buf[buf_size] = '\0';
     }
+
+    // The TotalOut size returned from the library may not be big enough to
+    // handle the content the library returns. We can only handle items
+    // up to 4GB in size.
     dest_size = FPDFAPI_FlateGetTotalOut(context);
     offset = FPDFAPI_FlateGetTotalIn(context);
     if (result_tmp_bufs.size() == 1) {
@@ -594,14 +598,17 @@ void FlateUncompress(const uint8_t* src_buf,
     } else {
       uint8_t* result_buf = FX_Alloc(uint8_t, dest_size);
       uint32_t result_pos = 0;
+      uint32_t remaining = dest_size;
       for (size_t i = 0; i < result_tmp_bufs.size(); i++) {
         uint8_t* tmp_buf = result_tmp_bufs[i];
         uint32_t tmp_buf_size = buf_size;
         if (i == result_tmp_bufs.size() - 1) {
           tmp_buf_size = last_buf_size;
         }
-        FXSYS_memcpy(result_buf + result_pos, tmp_buf, tmp_buf_size);
-        result_pos += tmp_buf_size;
+        uint32_t cp_size = std::min(tmp_buf_size, remaining);
+        FXSYS_memcpy(result_buf + result_pos, tmp_buf, cp_size);
+        result_pos += cp_size;
+        remaining -= cp_size;
         FX_Free(result_tmp_bufs[i]);
       }
       dest_buf = result_buf;
