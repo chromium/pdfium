@@ -172,13 +172,12 @@ class CFX_RTFBreak {
 
   CFX_RTFLine* GetCurrentLineForTesting() const { return m_pCurLine; }
 
-  CFX_RTFBreakType AppendChar_Combination(CFX_RTFChar* pCurChar);
-  CFX_RTFBreakType AppendChar_Tab(CFX_RTFChar* pCurChar);
+ private:
+  void AppendChar_Combination(CFX_RTFChar* pCurChar);
+  void AppendChar_Tab(CFX_RTFChar* pCurChar);
   CFX_RTFBreakType AppendChar_Control(CFX_RTFChar* pCurChar);
   CFX_RTFBreakType AppendChar_Arabic(CFX_RTFChar* pCurChar);
   CFX_RTFBreakType AppendChar_Others(CFX_RTFChar* pCurChar);
-
- private:
   void FontChanged();
   void SetBreakStatus();
   CFX_RTFChar* GetLastChar(int32_t index) const;

@@ -14,23 +14,6 @@
 #include "xfa/fgas/font/cfgas_gefont.h"
 #include "xfa/fgas/layout/fgas_linebreak.h"
 
-namespace {
-
-typedef CFX_RTFBreakType (CFX_RTFBreak::*FX_RTFBreak_LPFAppendChar)(
-    CFX_RTFChar* pCurChar);
-const FX_RTFBreak_LPFAppendChar g_FX_RTFBreak_lpfAppendChar[16] = {
-    &CFX_RTFBreak::AppendChar_Others,      &CFX_RTFBreak::AppendChar_Tab,
-    &CFX_RTFBreak::AppendChar_Others,      &CFX_RTFBreak::AppendChar_Control,
-    &CFX_RTFBreak::AppendChar_Combination, &CFX_RTFBreak::AppendChar_Others,
-    &CFX_RTFBreak::AppendChar_Others,      &CFX_RTFBreak::AppendChar_Arabic,
-    &CFX_RTFBreak::AppendChar_Arabic,      &CFX_RTFBreak::AppendChar_Arabic,
-    &CFX_RTFBreak::AppendChar_Arabic,      &CFX_RTFBreak::AppendChar_Arabic,
-    &CFX_RTFBreak::AppendChar_Arabic,      &CFX_RTFBreak::AppendChar_Others,
-    &CFX_RTFBreak::AppendChar_Others,      &CFX_RTFBreak::AppendChar_Others,
-};
-
-}  // namespace
-
 CFX_RTFBreak::CFX_RTFBreak(uint32_t dwLayoutStyles)
     : m_iBoundaryStart(0),
       m_iBoundaryEnd(2000000),
@@ -256,14 +239,39 @@ CFX_RTFBreakType CFX_RTFBreak::AppendChar(FX_WCHAR wch) {
       pCurChar = &m_pCurLine->m_LineChars[iCount - 1];
   }
 
-  CFX_RTFBreakType dwRet2 =
-      (this->*g_FX_RTFBreak_lpfAppendChar[chartype >> FX_CHARTYPEBITS])(
-          pCurChar);
+  CFX_RTFBreakType dwRet2 = CFX_RTFBreakType::None;
+  switch (chartype) {
+    case FX_CHARTYPE_Tab:
+      AppendChar_Tab(pCurChar);
+      break;
+    case FX_CHARTYPE_Control:
+      dwRet2 = AppendChar_Control(pCurChar);
+      break;
+    case FX_CHARTYPE_Combination:
+      AppendChar_Combination(pCurChar);
+      break;
+    case FX_CHARTYPE_ArabicAlef:
+    case FX_CHARTYPE_ArabicSpecial:
+    case FX_CHARTYPE_ArabicDistortion:
+    case FX_CHARTYPE_ArabicNormal:
+    case FX_CHARTYPE_ArabicForm:
+    case FX_CHARTYPE_Arabic:
+      dwRet2 = AppendChar_Arabic(pCurChar);
+      break;
+    case FX_CHARTYPE_Unknown:
+    case FX_CHARTYPE_Space:
+    case FX_CHARTYPE_Numeric:
+    case FX_CHARTYPE_Normal:
+    default:
+      dwRet2 = AppendChar_Others(pCurChar);
+      break;
+  }
+
   m_eCharType = chartype;
   return std::max(dwRet1, dwRet2);
 }
 
-CFX_RTFBreakType CFX_RTFBreak::AppendChar_Combination(CFX_RTFChar* pCurChar) {
+void CFX_RTFBreak::AppendChar_Combination(CFX_RTFChar* pCurChar) {
   int32_t iCharWidth = 0;
   if (!m_pFont->GetCharWidth(pCurChar->m_wCharCode, iCharWidth, false))
     iCharWidth = 0;
@@ -279,13 +287,11 @@ CFX_RTFBreakType CFX_RTFBreak::AppendChar_Combination(CFX_RTFChar* pCurChar) {
   pCurChar->m_iCharWidth = iCharWidth;
   if (iCharWidth > 0)
     m_pCurLine->m_iWidth += iCharWidth;
-
-  return CFX_RTFBreakType::None;
 }
 
-CFX_RTFBreakType CFX_RTFBreak::AppendChar_Tab(CFX_RTFChar* pCurChar) {
+void CFX_RTFBreak::AppendChar_Tab(CFX_RTFChar* pCurChar) {
   if (!(m_dwLayoutStyles & FX_RTFLAYOUTSTYLE_ExpandTab))
-    return CFX_RTFBreakType::None;
+    return;
 
   int32_t& iLineWidth = m_pCurLine->m_iWidth;
   int32_t iCharWidth = iLineWidth;
@@ -296,7 +302,6 @@ CFX_RTFBreakType CFX_RTFBreak::AppendChar_Tab(CFX_RTFChar* pCurChar) {
 
   pCurChar->m_iCharWidth = iCharWidth;
   iLineWidth += iCharWidth;
-  return CFX_RTFBreakType::None;
 }
 
 CFX_RTFBreakType CFX_RTFBreak::AppendChar_Control(CFX_RTFChar* pCurChar) {
