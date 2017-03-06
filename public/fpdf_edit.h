@@ -30,6 +30,9 @@
 #define FPDF_FILLMODE_ALTERNATE 1
 #define FPDF_FILLMODE_WINDING 2
 
+#define FPDF_FONT_TYPE1 1
+#define FPDF_FONT_TRUETYPE 2
+
 #ifdef __cplusplus
 extern "C" {
 #endif  // __cplusplus
@@ -406,17 +409,22 @@ DLLEXPORT FPDF_PAGEOBJECT STDCALL FPDFPageObj_NewTextObj(FPDF_DOCUMENT document,
 DLLEXPORT FPDF_BOOL STDCALL FPDFText_SetText(FPDF_PAGEOBJECT text_object,
                                              FPDF_BYTESTRING text);
 
-// Returns a type 1 font object loaded from a stream of data. The font is loaded
+// Returns a font object loaded from a stream of data. The font is loaded
 // into the document. The caller does not need to free the returned object.
 //
-// document - handle to the document.
-// data     - the stream of data, which will be copied by the font object.
-// size     - size of the stream, in bytes.
+// document   - handle to the document.
+// data       - the stream of data, which will be copied by the font object.
+// size       - size of the stream, in bytes.
+// font_type  - FPDF_FONT_TYPE1 or FPDF_FONT_TRUETYPE depending on the font
+// type.
+// cid        - a boolean specifying if the font is a CID font or not.
 //
 // Returns NULL on failure
-DLLEXPORT FPDF_FONT STDCALL FPDFText_LoadType1Font(FPDF_DOCUMENT document,
-                                                   const uint8_t* data,
-                                                   uint32_t size);
+DLLEXPORT FPDF_FONT STDCALL FPDFText_LoadFont(FPDF_DOCUMENT document,
+                                              const uint8_t* data,
+                                              uint32_t size,
+                                              int font_type,
+                                              FPDF_BOOL cid);
 
 #ifdef __cplusplus
 }  // extern "C"
