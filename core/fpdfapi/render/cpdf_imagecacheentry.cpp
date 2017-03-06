@@ -97,11 +97,21 @@ void CPDF_ImageCacheEntry::ContinueGetCachedBitmap() {
   CPDF_RenderContext* pContext = m_pRenderStatus->GetContext();
   CPDF_PageRenderCache* pPageRenderCache = pContext->GetPageCache();
   m_dwTimeCount = pPageRenderCache->GetTimeCount();
-  m_pCachedBitmap = pdfium::WrapUnique<CFX_DIBSource>(m_pCurBitmap);
-  if (m_pCurMask)
-    m_pCachedMask = pdfium::WrapUnique<CFX_DIBSource>(m_pCurMask);
-  else
-    m_pCurMask = m_pCachedMask.get();
+  if (m_pCurBitmap->GetPitch() * m_pCurBitmap->GetHeight() <
+      FPDF_HUGE_IMAGE_SIZE) {
+    m_pCachedBitmap = m_pCurBitmap->Clone();
+    delete m_pCurBitmap;
+    m_pCurBitmap = nullptr;
+  } else {
+    m_pCachedBitmap = pdfium::WrapUnique<CFX_DIBSource>(m_pCurBitmap);
+  }
+  if (m_pCurMask) {
+    m_pCachedMask = m_pCurMask->Clone();
+    delete m_pCurMask;
+    m_pCurMask = nullptr;
+  }
+  m_pCurBitmap = m_pCachedBitmap.get();
+  m_pCurMask = m_pCachedMask.get();
   CalcSize();
 }
 
