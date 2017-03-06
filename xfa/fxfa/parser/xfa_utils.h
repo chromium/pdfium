@@ -26,140 +26,120 @@ bool XFA_FDEExtension_ResolveNamespaceQualifier(
 template <class NodeType, class TraverseStrategy>
 class CXFA_NodeIteratorTemplate {
  public:
-  explicit CXFA_NodeIteratorTemplate(NodeType* pRootNode = nullptr)
-      : m_pRoot(pRootNode), m_NodeStack(100) {
-    if (pRootNode) {
-      m_NodeStack.Push(pRootNode);
-    }
-  }
-  bool Init(NodeType* pRootNode) {
-    if (!pRootNode) {
+  explicit CXFA_NodeIteratorTemplate(NodeType* pRoot)
+      : m_pRoot(pRoot), m_pCurrent(pRoot) {}
+
+  NodeType* GetRoot() const { return m_pRoot; }
+  NodeType* GetCurrent() const { return m_pCurrent; }
+
+  void Reset() { m_pCurrent = m_pRoot; }
+  bool SetCurrent(NodeType* pNode) {
+    if (!RootReachableFromNode(pNode)) {
+      m_pCurrent = nullptr;
       return false;
     }
-    m_pRoot = pRootNode;
-    m_NodeStack.RemoveAll(false);
-    m_NodeStack.Push(pRootNode);
+    m_pCurrent = pNode;
     return true;
   }
-  void Clear() { m_NodeStack.RemoveAll(false); }
-  void Reset() {
-    Clear();
-    if (m_pRoot) {
-      m_NodeStack.Push(m_pRoot);
-    }
-  }
-  bool SetCurrent(NodeType* pCurNode) {
-    m_NodeStack.RemoveAll(false);
-    if (pCurNode) {
-      CFX_StackTemplate<NodeType*> revStack(100);
-      NodeType* pNode;
-      for (pNode = pCurNode; pNode && pNode != m_pRoot;
-           pNode = TraverseStrategy::GetParent(pNode)) {
-        revStack.Push(pNode);
-      }
-      if (!pNode) {
-        return false;
-      }
-      revStack.Push(m_pRoot);
-      while (revStack.GetSize()) {
-        m_NodeStack.Push(*revStack.GetTopElement());
-        revStack.Pop();
-      }
-    }
-    return true;
-  }
-  NodeType* GetCurrent() const {
-    return m_NodeStack.GetSize() ? *m_NodeStack.GetTopElement() : nullptr;
-  }
-  NodeType* GetRoot() const { return m_pRoot; }
+
   NodeType* MoveToPrev() {
-    int32_t nStackLength = m_NodeStack.GetSize();
-    if (nStackLength == 1) {
+    if (!m_pRoot)
       return nullptr;
-    } else if (nStackLength > 1) {
-      NodeType* pCurItem = *m_NodeStack.GetTopElement();
-      m_NodeStack.Pop();
-      NodeType* pParentItem = *m_NodeStack.GetTopElement();
-      NodeType* pParentFirstChildItem =
-          TraverseStrategy::GetFirstChild(pParentItem);
-      if (pCurItem == pParentFirstChildItem) {
-        return pParentItem;
-      }
-      NodeType *pPrevItem = pParentFirstChildItem, *pPrevItemNext = nullptr;
-      for (; pPrevItem; pPrevItem = pPrevItemNext) {
-        pPrevItemNext = TraverseStrategy::GetNextSibling(pPrevItem);
-        if (!pPrevItemNext || pPrevItemNext == pCurItem) {
-          break;
-        }
-      }
-      m_NodeStack.Push(pPrevItem);
-    } else {
-      m_NodeStack.RemoveAll(false);
-      if (m_pRoot) {
-        m_NodeStack.Push(m_pRoot);
-      }
+    if (!m_pCurrent) {
+      m_pCurrent = LastDescendant(m_pRoot);
+      return m_pCurrent;
     }
-    if (m_NodeStack.GetSize() > 0) {
-      NodeType* pChildItem = *m_NodeStack.GetTopElement();
-      while ((pChildItem = TraverseStrategy::GetFirstChild(pChildItem)) !=
-             nullptr) {
-        while (NodeType* pNextItem =
-                   TraverseStrategy::GetNextSibling(pChildItem)) {
-          pChildItem = pNextItem;
-        }
-        m_NodeStack.Push(pChildItem);
-      }
-      return *m_NodeStack.GetTopElement();
+    NodeType* pSibling = PreviousSiblingWithinSubtree(m_pCurrent);
+    if (pSibling) {
+      m_pCurrent = LastDescendant(pSibling);
+      return m_pCurrent;
+    }
+    NodeType* pParent = ParentWithinSubtree(m_pCurrent);
+    if (pParent) {
+      m_pCurrent = pParent;
+      return m_pCurrent;
     }
     return nullptr;
   }
+
   NodeType* MoveToNext() {
-    NodeType** ppNode = nullptr;
-    NodeType* pCurrent = GetCurrent();
-    while (m_NodeStack.GetSize() > 0) {
-      while ((ppNode = m_NodeStack.GetTopElement()) != nullptr) {
-        if (pCurrent != *ppNode) {
-          return *ppNode;
-        }
-        NodeType* pChild = TraverseStrategy::GetFirstChild(*ppNode);
-        if (!pChild) {
-          break;
-        }
-        m_NodeStack.Push(pChild);
-      }
-      while ((ppNode = m_NodeStack.GetTopElement()) != nullptr) {
-        NodeType* pNext = TraverseStrategy::GetNextSibling(*ppNode);
-        m_NodeStack.Pop();
-        if (m_NodeStack.GetSize() == 0) {
-          break;
-        }
-        if (pNext) {
-          m_NodeStack.Push(pNext);
-          break;
-        }
-      }
+    if (!m_pRoot || !m_pCurrent)
+      return nullptr;
+    NodeType* pChild = TraverseStrategy::GetFirstChild(m_pCurrent);
+    if (pChild) {
+      m_pCurrent = pChild;
+      return m_pCurrent;
     }
-    return nullptr;
+    return SkipChildrenAndMoveToNext();
   }
+
   NodeType* SkipChildrenAndMoveToNext() {
-    NodeType** ppNode = nullptr;
-    while ((ppNode = m_NodeStack.GetTopElement()) != nullptr) {
-      NodeType* pNext = TraverseStrategy::GetNextSibling(*ppNode);
-      m_NodeStack.Pop();
-      if (m_NodeStack.GetSize() == 0) {
-        break;
+    if (!m_pRoot)
+      return nullptr;
+    NodeType* pNode = m_pCurrent;
+    while (pNode) {
+      NodeType* pSibling = NextSiblingWithinSubtree(pNode);
+      if (pSibling) {
+        m_pCurrent = pSibling;
+        return m_pCurrent;
       }
-      if (pNext) {
-        m_NodeStack.Push(pNext);
-        break;
-      }
+      pNode = ParentWithinSubtree(pNode);
     }
-    return GetCurrent();
+    m_pCurrent = nullptr;
+    return m_pCurrent;
   }
 
  protected:
+  bool RootReachableFromNode(NodeType* pNode) {
+    if (!pNode)
+      return false;
+    if (pNode == m_pRoot)
+      return true;
+    return RootReachableFromNode(TraverseStrategy::GetParent(pNode));
+  }
+
+  NodeType* ParentWithinSubtree(NodeType* pNode) {
+    if (!pNode || pNode == m_pRoot)
+      return nullptr;
+    return TraverseStrategy::GetParent(pNode);
+  }
+
+  NodeType* NextSiblingWithinSubtree(NodeType* pNode) {
+    if (pNode == m_pRoot)
+      return nullptr;
+    return TraverseStrategy::GetNextSibling(pNode);
+  }
+
+  NodeType* PreviousSiblingWithinSubtree(NodeType* pNode) {
+    NodeType* pParent = ParentWithinSubtree(pNode);
+    if (!pParent)
+      return nullptr;
+    NodeType* pCurrent = TraverseStrategy::GetFirstChild(pParent);
+    NodeType* pPrevious = nullptr;
+    while (pCurrent != pNode) {
+      pPrevious = pCurrent;
+      pCurrent = TraverseStrategy::GetNextSibling(pCurrent);
+    }
+    return pPrevious;
+  }
+
+  NodeType* LastChild(NodeType* pNode) {
+    NodeType* pPrevious = nullptr;
+    NodeType* pChild = TraverseStrategy::GetFirstChild(pNode);
+    while (pChild) {
+      pPrevious = pChild;
+      pChild = NextSiblingWithinSubtree(pChild);
+    }
+    return pPrevious;
+  }
+
+  NodeType* LastDescendant(NodeType* pNode) {
+    NodeType* pChild = LastChild(pNode);
+    return pChild ? LastDescendant(pChild) : pNode;
+  }
+
   NodeType* m_pRoot;
-  CFX_StackTemplate<NodeType*> m_NodeStack;
+  NodeType* m_pCurrent;
 };
 
 CXFA_LocaleValue XFA_GetLocaleValue(CXFA_WidgetData* pWidgetData);

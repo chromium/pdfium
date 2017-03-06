@@ -146,15 +146,15 @@ IXFA_WidgetIterator* CXFA_FFPageView::CreateWidgetIterator(
 }
 
 CXFA_FFPageWidgetIterator::CXFA_FFPageWidgetIterator(CXFA_FFPageView* pPageView,
-                                                     uint32_t dwFilter) {
-  m_pPageView = pPageView;
-  m_dwFilter = dwFilter;
-  m_sIterator.Init(pPageView);
+                                                     uint32_t dwFilter)
+    : m_pPageView(pPageView), m_dwFilter(dwFilter), m_sIterator(pPageView) {
   m_bIgnorerelevant =
       m_pPageView->GetDocView()->GetDoc()->GetXFADoc()->GetCurVersionMode() <
       XFA_VERSION_205;
 }
+
 CXFA_FFPageWidgetIterator::~CXFA_FFPageWidgetIterator() {}
+
 void CXFA_FFPageWidgetIterator::Reset() {
   m_sIterator.Reset();
 }
@@ -432,8 +432,7 @@ void CXFA_FFTabOrderPageWidgetIterator::OrderContainer(
 }
 void CXFA_FFTabOrderPageWidgetIterator::CreateSpaceOrderWidgetArray(
     std::vector<CXFA_FFWidget*>* WidgetArray) {
-  CXFA_LayoutItemIterator sIterator;
-  sIterator.Init(m_pPageView);
+  CXFA_LayoutItemIterator sIterator(m_pPageView);
   auto pParam = pdfium::MakeUnique<CXFA_TabParam>();
   bool bCurrentItem = false;
   bool bContentArea = false;
