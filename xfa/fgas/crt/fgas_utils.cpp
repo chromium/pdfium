@@ -367,35 +367,3 @@ void CFX_BaseDiscreteArray::RemoveAll() {
   ChunkBuffer.RemoveAll();
   iChunkCount = 0;
 }
-CFX_BaseStack::CFX_BaseStack(int32_t iChunkSize, int32_t iBlockSize) {
-  m_pData = new CFX_BaseMassArrayImp(iChunkSize, iBlockSize);
-}
-CFX_BaseStack::~CFX_BaseStack() {
-  delete (CFX_BaseMassArrayImp*)m_pData;
-}
-uint8_t* CFX_BaseStack::Push() {
-  return m_pData->AddSpace();
-}
-void CFX_BaseStack::Pop() {
-  int32_t& iBlockCount = m_pData->m_iBlockCount;
-  if (iBlockCount < 1) {
-    return;
-  }
-  iBlockCount--;
-}
-uint8_t* CFX_BaseStack::GetTopElement() const {
-  int32_t iSize = m_pData->m_iBlockCount;
-  if (iSize < 1) {
-    return nullptr;
-  }
-  return m_pData->GetAt(iSize - 1);
-}
-int32_t CFX_BaseStack::GetSize() const {
-  return m_pData->m_iBlockCount;
-}
-uint8_t* CFX_BaseStack::GetAt(int32_t index) const {
-  return m_pData->GetAt(index);
-}
-void CFX_BaseStack::RemoveAll(bool bLeaveMemory) {
-  m_pData->RemoveAll(bLeaveMemory);
-}

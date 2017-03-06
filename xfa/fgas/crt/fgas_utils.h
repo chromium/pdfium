@@ -134,40 +134,4 @@ class CFX_DiscreteArrayTemplate : public CFX_BaseDiscreteArray {
   void RemoveAll() { CFX_BaseDiscreteArray::RemoveAll(); }
 };
 
-class CFX_BaseStack {
- protected:
-  CFX_BaseStack(int32_t iChunkSize, int32_t iBlockSize);
-  ~CFX_BaseStack();
-
-  uint8_t* Push();
-  void Pop();
-  uint8_t* GetTopElement() const;
-  int32_t GetSize() const;
-  uint8_t* GetAt(int32_t index) const;
-  void RemoveAll(bool bLeaveMemory);
-  CFX_BaseMassArrayImp* m_pData;
-};
-
-template <class baseType>
-class CFX_StackTemplate : public CFX_BaseStack {
- public:
-  explicit CFX_StackTemplate(int32_t iChunkSize)
-      : CFX_BaseStack(iChunkSize, sizeof(baseType)) {}
-
-  int32_t Push(const baseType& element) {
-    int32_t index = CFX_BaseStack::GetSize();
-    *(baseType*)CFX_BaseStack::Push() = element;
-    return index;
-  }
-  void Pop() { CFX_BaseStack::Pop(); }
-  baseType* GetTopElement() const {
-    return (baseType*)CFX_BaseStack::GetTopElement();
-  }
-  int32_t GetSize() const { return CFX_BaseStack::GetSize(); }
-  baseType* GetAt(int32_t index) const {
-    return (baseType*)CFX_BaseStack::GetAt(index);
-  }
-  void RemoveAll(bool bLeaveMemory) { CFX_BaseStack::RemoveAll(bLeaveMemory); }
-};
-
 #endif  // XFA_FGAS_CRT_FGAS_UTILS_H_
