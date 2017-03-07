@@ -33,6 +33,8 @@
 #define BMP_BIT_555 0
 #define BMP_BIT_565 1
 #define BMP_MAX_ERROR_SIZE 256
+// Limit width to (MAXINT32 - 31) / 32
+#define BMP_MAX_WIDTH 67108863
 #pragma pack(1)
 typedef struct tagBmpFileHeader {
   uint16_t bfType;

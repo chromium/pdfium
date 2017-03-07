@@ -171,7 +171,8 @@ int32_t bmp_read_header(bmp_decompress_struct_p bmp_ptr) {
         return 0;
       }
     }
-    if (bmp_ptr->width <= 0 || bmp_ptr->compress_flag > BMP_BITFIELDS) {
+    if (bmp_ptr->width <= 0 || bmp_ptr->width > BMP_MAX_WIDTH ||
+        bmp_ptr->compress_flag > BMP_BITFIELDS) {
       bmp_error(bmp_ptr, "The Bmp File Is Corrupt");
       return 0;
     }
