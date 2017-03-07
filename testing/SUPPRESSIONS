@@ -487,18 +487,6 @@ zh_shared_document.pdf mac * *
 bug_679643.in * * noxfa
 bug_679642.in * * noxfa
 
-### TODO(dsinclair): These need to be fixed ....
-Test_DateField_locale_en_CA.pdf asan * *
-Test_DateField_locale_en_GB.pdf asan * *
-Test_DateField_locale_en_US.pdf asan * *
-Test_DateField_locale_fr_CA.pdf asan * *
-Test_DateField_locale_fr_FR.pdf asan * *
-Test_DateField_locale_nl_NL.pdf asan * *
-Test_DateField_locale_zh_CN.pdf asan * *
-Test_DateField_locale_zh_HK.pdf asan * *
-Test_PasswordField.pdf asan * *
-format_custom_format.pdf asan * *
-
 #
 # xfa_specific
 #

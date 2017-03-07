@@ -12,7 +12,6 @@ class Suppressor:
     feature_vector = feature_string.strip().split(",")
     self.has_v8 = "V8" in feature_vector
     self.has_xfa = "XFA" in feature_vector
-    self.is_asan = "ASAN" in feature_vector
     v8_option = "v8" if self.has_v8 else "nov8"
     xfa_option = "xfa" if self.has_xfa else "noxfa"
 
@@ -33,8 +32,6 @@ class Suppressor:
     os_column = item[1].split(",");
     js_column = item[2].split(",");
     xfa_column = item[3].split(",");
-    if self.is_asan and 'asan' in os_column:
-      return True
     return (('*' in os_column or os in os_column) and
             ('*' in js_column or js in js_column) and
             ('*' in xfa_column or xfa in xfa_column))
