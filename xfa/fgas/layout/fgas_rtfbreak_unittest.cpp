@@ -58,7 +58,7 @@ TEST_F(RTFBreakTest, AddChars) {
 
   EXPECT_EQ(CFX_RTFBreakType::Paragraph, b->AppendChar(L'\n'));
   ASSERT_EQ(1, b->CountBreakPieces());
-  EXPECT_EQ(str + L"\n", b->GetBreakPiece(0)->GetString());
+  EXPECT_EQ(str + L"\n", b->GetBreakPieceUnstable(0)->GetString());
 
   b->ClearBreakPieces();
   b->Reset();
@@ -71,7 +71,7 @@ TEST_F(RTFBreakTest, AddChars) {
   // Force the end of the break at the end of the string.
   b->EndBreak(CFX_RTFBreakType::Paragraph);
   ASSERT_EQ(1, b->CountBreakPieces());
-  EXPECT_EQ(str, b->GetBreakPiece(0)->GetString());
+  EXPECT_EQ(str, b->GetBreakPieceUnstable(0)->GetString());
 }
 
 TEST_F(RTFBreakTest, ControlCharacters) {
@@ -83,5 +83,5 @@ TEST_F(RTFBreakTest, ControlCharacters) {
   EXPECT_EQ(CFX_RTFBreakType::Paragraph, b->AppendChar(L'\n'));
 
   ASSERT_EQ(1, b->CountBreakPieces());
-  EXPECT_EQ(L"\v", b->GetBreakPiece(0)->GetString());
+  EXPECT_EQ(L"\v", b->GetBreakPieceUnstable(0)->GetString());
 }

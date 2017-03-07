@@ -48,6 +48,7 @@ struct FX_RTFTEXTOBJ {
 class CFX_RTFPiece {
  public:
   CFX_RTFPiece();
+  CFX_RTFPiece(const CFX_RTFPiece& other);
   ~CFX_RTFPiece();
 
   int32_t GetEndPos() const {
@@ -75,20 +76,6 @@ class CFX_RTFPiece {
     return ret;
   }
 
-  void Reset() {
-    m_dwStatus = CFX_RTFBreakType::Piece;
-    if (m_iWidth > -1)
-      m_iStartPos += m_iWidth;
-
-    m_iWidth = -1;
-    m_iStartChar += m_iChars;
-    m_iChars = 0;
-    m_iBidiLevel = 0;
-    m_iBidiPos = 0;
-    m_iHorizontalScale = 100;
-    m_iVerticalScale = 100;
-  }
-
   CFX_RTFBreakType m_dwStatus;
   int32_t m_iStartPos;
   int32_t m_iWidth;
@@ -105,8 +92,6 @@ class CFX_RTFPiece {
   CFX_RetainPtr<CFX_Retainable> m_pUserData;
 };
 
-typedef CFX_BaseArrayTemplate<CFX_RTFPiece> CFX_RTFPieceArray;
-
 class CFX_RTFLine {
  public:
   CFX_RTFLine();
@@ -122,15 +107,15 @@ class CFX_RTFLine {
   }
 
   int32_t GetLineEnd() const { return m_iStart + m_iWidth; }
-  void RemoveAll(bool bLeaveMemory) {
+  void Clear() {
     m_LineChars.clear();
-    m_LinePieces.RemoveAll(bLeaveMemory);
+    m_LinePieces.clear();
     m_iWidth = 0;
     m_iArabicChars = 0;
   }
 
   std::vector<CFX_RTFChar> m_LineChars;
-  CFX_RTFPieceArray m_LinePieces;
+  std::vector<CFX_RTFPiece> m_LinePieces;
   int32_t m_iStart;
   int32_t m_iWidth;
   int32_t m_iArabicChars;
@@ -157,7 +142,7 @@ class CFX_RTFBreak {
 
   CFX_RTFBreakType EndBreak(CFX_RTFBreakType dwStatus);
   int32_t CountBreakPieces() const;
-  const CFX_RTFPiece* GetBreakPiece(int32_t index) const;
+  const CFX_RTFPiece* GetBreakPieceUnstable(int32_t index) const;
   void ClearBreakPieces();
 
   void Reset();
