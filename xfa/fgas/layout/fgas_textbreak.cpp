@@ -9,7 +9,6 @@
 #include <algorithm>
 
 #include "core/fxcrt/fx_arabic.h"
-#include "core/fxcrt/fx_arb.h"
 #include "core/fxcrt/fx_memory.h"
 #include "third_party/base/ptr_util.h"
 #include "xfa/fgas/font/cfgas_gefont.h"
@@ -30,6 +29,11 @@ const FX_TxtBreak_LPFAppendChar g_FX_TxtBreak_lpfAppendChar[16] = {
     &CFX_TxtBreak::AppendChar_Arabic,      &CFX_TxtBreak::AppendChar_Others,
     &CFX_TxtBreak::AppendChar_Others,      &CFX_TxtBreak::AppendChar_Others,
 };
+
+bool IsCtrlCode(FX_WCHAR ch) {
+  uint32_t dwRet = (FX_GetUnicodeProperties(ch) & FX_CHARTYPEBITSMASK);
+  return dwRet == FX_CHARTYPE_Tab || dwRet == FX_CHARTYPE_Control;
+}
 
 }  // namespace
 
@@ -1561,7 +1565,7 @@ std::vector<CFX_RectF> CFX_TxtBreak::GetCharRects(const FX_TXTRUN* pTxtRun,
       iCharSize = *pWidths++;
     }
     fCharSize = static_cast<FX_FLOAT>(iCharSize) / 20000.0f;
-    bool bRet = (!bSingleLine && FX_IsCtrlCode(wch));
+    bool bRet = (!bSingleLine && IsCtrlCode(wch));
     if (!(wch == L'\v' || wch == L'\f' || wch == 0x2028 || wch == 0x2029 ||
           (wLineBreakChar != 0xFEFF && wch == wLineBreakChar))) {
       bRet = false;

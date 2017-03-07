@@ -127,7 +127,6 @@ class CFX_RTFLine {
     m_LinePieces.RemoveAll(bLeaveMemory);
     m_iWidth = 0;
     m_iArabicChars = 0;
-    m_iMBCSChars = 0;
   }
 
   std::vector<CFX_RTFChar> m_LineChars;
@@ -135,7 +134,6 @@ class CFX_RTFLine {
   int32_t m_iStart;
   int32_t m_iWidth;
   int32_t m_iArabicChars;
-  int32_t m_iMBCSChars;
 };
 
 class CFX_RTFBreak {

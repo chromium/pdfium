@@ -13,13 +13,6 @@ uint32_t FX_GetUnicodeProperties(FX_WCHAR wch) {
   return 0;
 }
 
-#ifdef PDF_ENABLE_XFA
-bool FX_IsCtrlCode(FX_WCHAR ch) {
-  uint32_t dwRet = (FX_GetUnicodeProperties(ch) & FX_CHARTYPEBITSMASK);
-  return dwRet == FX_CHARTYPE_Tab || dwRet == FX_CHARTYPE_Control;
-}
-#endif  // PDF_ENABLE_XFA
-
 FX_WCHAR FX_GetMirrorChar(FX_WCHAR wch, bool bRTL, bool bVertical) {
   uint32_t dwProps = FX_GetUnicodeProperties(wch);
   uint32_t dwTemp = (dwProps & 0xFF800000);

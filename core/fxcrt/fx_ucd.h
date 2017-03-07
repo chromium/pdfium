@@ -49,46 +49,48 @@ uint32_t FX_GetUnicodeProperties(FX_WCHAR wch);
 FX_WCHAR FX_GetMirrorChar(FX_WCHAR wch, bool bRTL, bool bVertical);
 
 #ifdef PDF_ENABLE_XFA
-enum FX_CHARBREAKPROP {
-  FX_CBP_OP = 0,
-  FX_CBP_CL = 1,
-  FX_CBP_QU = 2,
-  FX_CBP_GL = 3,
-  FX_CBP_NS = 4,
-  FX_CBP_EX = 5,
-  FX_CBP_SY = 6,
-  FX_CBP_IS = 7,
-  FX_CBP_PR = 8,
-  FX_CBP_PO = 9,
-  FX_CBP_NU = 10,
-  FX_CBP_AL = 11,
-  FX_CBP_ID = 12,
-  FX_CBP_IN = 13,
-  FX_CBP_HY = 14,
-  FX_CBP_BA = 15,
-  FX_CBP_BB = 16,
-  FX_CBP_B2 = 17,
-  FX_CBP_ZW = 18,
-  FX_CBP_CM = 19,
-  FX_CBP_WJ = 20,
-  FX_CBP_H2 = 21,
-  FX_CBP_H3 = 22,
-  FX_CBP_JL = 23,
-  FX_CBP_JV = 24,
-  FX_CBP_JT = 25,
 
-  FX_CBP_BK = 26,
-  FX_CBP_CR = 27,
-  FX_CBP_LF = 28,
-  FX_CBP_NL = 29,
-  FX_CBP_SA = 30,
-  FX_CBP_SG = 31,
-  FX_CBP_CB = 32,
-  FX_CBP_XX = 33,
-  FX_CBP_AI = 34,
-  FX_CBP_SP = 35,
-  FX_CBP_TB = 37,
+// As defined in http://www.unicode.org/reports/tr14/
+enum FX_CHARBREAKPROP {
+  FX_CBP_OP = 0,   // Opening Punctuation
+  FX_CBP_CL = 1,   // Closing Punctuation
+  FX_CBP_QU = 2,   // Ambiguous Quotation
+  FX_CBP_GL = 3,   // Non-breaking ("Glue")
+  FX_CBP_NS = 4,   // Non Starter
+  FX_CBP_EX = 5,   // Exclamation/Interrogation
+  FX_CBP_SY = 6,   // Symbols Allowing Breaks
+  FX_CBP_IS = 7,   // Infix Separator (Numeric)
+  FX_CBP_PR = 8,   // Prefix (Numeric)
+  FX_CBP_PO = 9,   // Postfix (Numeric)
+  FX_CBP_NU = 10,  // Numeric
+  FX_CBP_AL = 11,  // Ordinary Alphabetic and Symbol Characters
+  FX_CBP_ID = 12,  // Ideographic
+  FX_CBP_IN = 13,  // Inseparable
+  FX_CBP_HY = 14,  // Hyphen
+  FX_CBP_BA = 15,  // Break Opportunity After
+  FX_CBP_BB = 16,  // Break Opportunity Before
+  FX_CBP_B2 = 17,  // Break Opportunity Before and After
+  FX_CBP_ZW = 18,  // Zero Width Space
+  FX_CBP_CM = 19,  // Attached Characters and Combining Marks
+  FX_CBP_WJ = 20,  // Word Joiner
+  FX_CBP_H2 = 21,  // Hangul LV Syllable
+  FX_CBP_H3 = 22,  // Hangul LVT Syllable
+  FX_CBP_JL = 23,  // Hangul Leading Jamo
+  FX_CBP_JV = 24,  // Hangul Vowel Jamo
+  FX_CBP_JT = 25,  // Hangul Trailing Jamo
+
+  FX_CBP_BK = 26,  // Mandatory Break
+  FX_CBP_CR = 27,  // Carriage Return
+  FX_CBP_LF = 28,  // Line Feed
+  FX_CBP_NL = 29,  // Next Line
+  FX_CBP_SA = 30,  // Complex Context (South East Asian)
+  FX_CBP_SG = 31,  // Surrogate
+  FX_CBP_CB = 32,  // Contingent Break Opportunity
+  FX_CBP_XX = 33,  // Unknown
+  FX_CBP_AI = 34,  // Ambiguous (Alphabetic or Ideographic)
+  FX_CBP_SP = 35,  // Space
   FX_CBP_NONE = 36,
+  FX_CBP_TB = 37,  // ?
 };
 
 #define FX_CHARTYPEBITS 11
@@ -112,7 +114,6 @@ inline FX_CHARTYPE GetCharTypeFromProp(uint32_t prop) {
   return static_cast<FX_CHARTYPE>(prop & FX_CHARTYPEBITSMASK);
 }
 
-bool FX_IsCtrlCode(FX_WCHAR ch);
 FX_WCHAR FX_GetMirrorChar(FX_WCHAR wch,
                           uint32_t dwProps,
                           bool bRTL,

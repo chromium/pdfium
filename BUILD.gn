@@ -796,7 +796,6 @@ static_library("fxcrt") {
     sources += [
       "core/fxcrt/fx_arabic.cpp",
       "core/fxcrt/fx_arabic.h",
-      "core/fxcrt/fx_arb.h",
     ]
   }
 }

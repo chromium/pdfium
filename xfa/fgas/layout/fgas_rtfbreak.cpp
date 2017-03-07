@@ -9,7 +9,6 @@
 #include <algorithm>
 
 #include "core/fxcrt/fx_arabic.h"
-#include "core/fxcrt/fx_arb.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fgas/font/cfgas_gefont.h"
 #include "xfa/fgas/layout/fgas_linebreak.h"
@@ -470,7 +469,7 @@ bool CFX_RTFBreak::EndBreak_SplitLine(CFX_RTFLine* pNextLine,
     }
   }
 
-  if (!m_bPagination && m_pCurLine->m_iMBCSChars <= 0) {
+  if (!m_bPagination) {
     if (bAllChars && !bDone) {
       int32_t endPos = m_pCurLine->GetLineEnd();
       GetBreakPos(m_pCurLine->m_LineChars, endPos, bAllChars, true);
@@ -1013,11 +1012,7 @@ CFX_RTFPiece::~CFX_RTFPiece() {
 }
 
 CFX_RTFLine::CFX_RTFLine()
-    : m_LinePieces(16),
-      m_iStart(0),
-      m_iWidth(0),
-      m_iArabicChars(0),
-      m_iMBCSChars(0) {}
+    : m_LinePieces(16), m_iStart(0), m_iWidth(0), m_iArabicChars(0) {}
 
 CFX_RTFLine::~CFX_RTFLine() {
   RemoveAll(false);

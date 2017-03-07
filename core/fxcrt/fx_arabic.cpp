@@ -286,17 +286,6 @@ FX_WCHAR FX_GetArabicFromShaddaTable(FX_WCHAR shadda) {
 namespace pdfium {
 namespace arabic {
 
-bool IsArabicChar(FX_WCHAR wch) {
-  uint32_t dwRet =
-      kTextLayoutCodeProperties[(uint16_t)wch] & FX_CHARTYPEBITSMASK;
-  return dwRet >= FX_CHARTYPE_ArabicAlef;
-}
-
-bool IsArabicFormChar(FX_WCHAR wch) {
-  return (kTextLayoutCodeProperties[(uint16_t)wch] & FX_CHARTYPEBITSMASK) ==
-         FX_CHARTYPE_ArabicForm;
-}
-
 FX_WCHAR GetFormChar(FX_WCHAR wch, FX_WCHAR prev, FX_WCHAR next) {
   CFX_Char c(wch, kTextLayoutCodeProperties[(uint16_t)wch]);
   CFX_Char p(prev, kTextLayoutCodeProperties[(uint16_t)prev]);

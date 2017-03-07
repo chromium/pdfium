@@ -7,7 +7,10 @@
 #ifndef CORE_FXCRT_FX_ARABIC_H_
 #define CORE_FXCRT_FX_ARABIC_H_
 
-#include "core/fxcrt/fx_arb.h"
+#include <vector>
+
+#include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/fx_ucd.h"
 
 #define FX_BIDIMAXLEVEL 61
 #define FX_BidiDirection(a) (FX_IsOdd(a) ? FX_BIDICLASS_R : FX_BIDICLASS_L)
@@ -17,9 +20,7 @@
 namespace pdfium {
 namespace arabic {
 
-bool IsArabicChar(FX_WCHAR wch);
-bool IsArabicFormChar(FX_WCHAR wch);
-FX_WCHAR GetFormChar(FX_WCHAR wch, FX_WCHAR prev = 0, FX_WCHAR next = 0);
+FX_WCHAR GetFormChar(FX_WCHAR wch, FX_WCHAR prev, FX_WCHAR next);
 FX_WCHAR GetFormChar(const CFX_Char* cur,
                      const CFX_Char* prev,
                      const CFX_Char* next);
@@ -46,47 +47,27 @@ int32_t FX_BidiResolveExplicit(int32_t iBaseLevel,
                                int32_t iNest = 0);
 
 enum FX_BIDIWEAKSTATE {
-  FX_BIDIWEAKSTATE_xa = 0,
-  FX_BIDIWEAKSTATE_xr,
-  FX_BIDIWEAKSTATE_xl,
-  FX_BIDIWEAKSTATE_ao,
-  FX_BIDIWEAKSTATE_ro,
-  FX_BIDIWEAKSTATE_lo,
-  FX_BIDIWEAKSTATE_rt,
-  FX_BIDIWEAKSTATE_lt,
-  FX_BIDIWEAKSTATE_cn,
-  FX_BIDIWEAKSTATE_ra,
-  FX_BIDIWEAKSTATE_re,
-  FX_BIDIWEAKSTATE_la,
-  FX_BIDIWEAKSTATE_le,
-  FX_BIDIWEAKSTATE_ac,
-  FX_BIDIWEAKSTATE_rc,
-  FX_BIDIWEAKSTATE_rs,
-  FX_BIDIWEAKSTATE_lc,
-  FX_BIDIWEAKSTATE_ls,
-  FX_BIDIWEAKSTATE_ret,
-  FX_BIDIWEAKSTATE_let,
+  FX_BWSxa = 0,
+  FX_BWSxr,
+  FX_BWSxl,
+  FX_BWSao,
+  FX_BWSro,
+  FX_BWSlo,
+  FX_BWSrt,
+  FX_BWSlt,
+  FX_BWScn,
+  FX_BWSra,
+  FX_BWSre,
+  FX_BWSla,
+  FX_BWSle,
+  FX_BWSac,
+  FX_BWSrc,
+  FX_BWSrs,
+  FX_BWSlc,
+  FX_BWSls,
+  FX_BWSret,
+  FX_BWSlet
 };
-#define FX_BWSxa FX_BIDIWEAKSTATE_xa
-#define FX_BWSxr FX_BIDIWEAKSTATE_xr
-#define FX_BWSxl FX_BIDIWEAKSTATE_xl
-#define FX_BWSao FX_BIDIWEAKSTATE_ao
-#define FX_BWSro FX_BIDIWEAKSTATE_ro
-#define FX_BWSlo FX_BIDIWEAKSTATE_lo
-#define FX_BWSrt FX_BIDIWEAKSTATE_rt
-#define FX_BWSlt FX_BIDIWEAKSTATE_lt
-#define FX_BWScn FX_BIDIWEAKSTATE_cn
-#define FX_BWSra FX_BIDIWEAKSTATE_ra
-#define FX_BWSre FX_BIDIWEAKSTATE_re
-#define FX_BWSla FX_BIDIWEAKSTATE_la
-#define FX_BWSle FX_BIDIWEAKSTATE_le
-#define FX_BWSac FX_BIDIWEAKSTATE_ac
-#define FX_BWSrc FX_BIDIWEAKSTATE_rc
-#define FX_BWSrs FX_BIDIWEAKSTATE_rs
-#define FX_BWSlc FX_BIDIWEAKSTATE_lc
-#define FX_BWSls FX_BIDIWEAKSTATE_ls
-#define FX_BWSret FX_BIDIWEAKSTATE_ret
-#define FX_BWSlet FX_BIDIWEAKSTATE_let
 
 enum FX_BIDIWEAKACTION {
   FX_BIDIWEAKACTION_IX = 0x100,
@@ -139,19 +120,14 @@ void FX_BidiResolveWeak(int32_t iBaseLevel,
                         CFX_ArrayTemplate<int32_t>& classes,
                         CFX_ArrayTemplate<int32_t>& levels);
 enum FX_BIDINEUTRALSTATE {
-  FX_BIDINEUTRALSTATE_r = 0,
-  FX_BIDINEUTRALSTATE_l,
-  FX_BIDINEUTRALSTATE_rn,
-  FX_BIDINEUTRALSTATE_ln,
-  FX_BIDINEUTRALSTATE_a,
-  FX_BIDINEUTRALSTATE_na,
+  FX_BNSr = 0,
+  FX_BNSl,
+  FX_BNSrn,
+  FX_BNSln,
+  FX_BNSa,
+  FX_BNSna
 };
-#define FX_BNSr FX_BIDINEUTRALSTATE_r
-#define FX_BNSl FX_BIDINEUTRALSTATE_l
-#define FX_BNSrn FX_BIDINEUTRALSTATE_rn
-#define FX_BNSln FX_BIDINEUTRALSTATE_ln
-#define FX_BNSa FX_BIDINEUTRALSTATE_a
-#define FX_BNSna FX_BIDINEUTRALSTATE_na
+
 enum FX_BIDINEUTRALACTION {
   FX_BIDINEUTRALACTION_nL = FX_BIDICLASS_L,
   FX_BIDINEUTRALACTION_En = (FX_BIDICLASS_AN << 4),
@@ -166,6 +142,35 @@ enum FX_BIDINEUTRALACTION {
 #define FX_BNALn FX_BIDINEUTRALACTION_Ln
 #define FX_BNAIn FX_BIDINEUTRALACTION_In
 #define FX_BNALnL FX_BIDINEUTRALACTION_LnL
+
+struct FX_ARBFORMTABLE {
+  uint16_t wIsolated;
+  uint16_t wFinal;
+  uint16_t wInitial;
+  uint16_t wMedial;
+};
+
+struct FX_ARAALEF {
+  uint16_t wAlef;
+  uint16_t wIsolated;
+};
+
+struct FX_ARASHADDA {
+  uint16_t wShadda;
+  uint16_t wIsolated;
+};
+
+const FX_ARBFORMTABLE* FX_GetArabicFormTable(FX_WCHAR unicode);
+FX_WCHAR FX_GetArabicFromAlefTable(FX_WCHAR alef);
+FX_WCHAR FX_GetArabicFromShaddaTable(FX_WCHAR shadda);
+
+void FX_BidiLine(std::vector<CFX_TxtChar>& chars,
+                 int32_t iCount,
+                 int32_t iBaseLevel = 0);
+void FX_BidiLine(std::vector<CFX_RTFChar>& chars,
+                 int32_t iCount,
+                 int32_t iBaseLevel = 0);
+
 int32_t FX_BidiGetDeferredNeutrals(int32_t iAction, int32_t iLevel);
 int32_t FX_BidiGetResolvedNeutrals(int32_t iAction);
 void FX_BidiResolveNeutrals(int32_t iBaseLevel,
