@@ -179,8 +179,7 @@ class CFX_RTFBreak {
   void FontChanged();
   void SetBreakStatus();
   CFX_RTFChar* GetLastChar(int32_t index) const;
-  const CFX_RTFLine* GetRTFLine() const;
-  const CFX_RTFPieceArray* GetRTFPieces() const;
+  bool HasRTFLine() const { return m_iReady >= 0; }
   FX_CHARTYPE GetUnifiedCharType(FX_CHARTYPE chartype) const;
   int32_t GetLastPositionedTab() const;
   bool GetPositionedTab(int32_t* iTabPos) const;
@@ -219,11 +218,10 @@ class CFX_RTFBreak {
   CFX_RetainPtr<CFX_Retainable> m_pUserData;
   FX_CHARTYPE m_eCharType;
   uint32_t m_dwIdentity;
-  CFX_RTFLine m_RTFLine1;
-  CFX_RTFLine m_RTFLine2;
+  CFX_RTFLine m_RTFLine[2];
   CFX_RTFLine* m_pCurLine;
-  int32_t m_iReady;
   int32_t m_iTolerance;
+  int8_t m_iReady;
 };
 
 #endif  // XFA_FGAS_LAYOUT_FGAS_RTFBREAK_H_
