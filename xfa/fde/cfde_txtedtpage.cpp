@@ -246,7 +246,7 @@ int32_t CFDE_TxtEdtPage::LoadPage(const CFX_RectF* pClipBox,
   m_pIter.reset(new CFDE_TxtEdtBuf::Iterator(static_cast<CFDE_TxtEdtBuf*>(pBuf),
                                              wcAlias));
   CFX_TxtBreak* pBreak = m_pEditEngine->GetTextBreak();
-  pBreak->EndBreak(FX_TXTBREAK_ParagraphBreak);
+  pBreak->EndBreak(CFX_BreakType::Paragraph);
   pBreak->ClearBreakPieces();
   int32_t nPageLineCount = m_pEditEngine->GetPageLineCount();
   int32_t nStartLine = nPageLineCount * m_nPageIndex;
@@ -274,11 +274,11 @@ int32_t CFDE_TxtEdtPage::LoadPage(const CFX_RectF* pClipBox,
     m_pTextSet = pdfium::MakeUnique<CFDE_TxtEdtTextSet>(this);
 
   m_Pieces.clear();
-  uint32_t dwBreakStatus = FX_TXTBREAK_None;
+  CFX_BreakType dwBreakStatus = CFX_BreakType::None;
   int32_t nPieceStart = 0;
 
   m_CharWidths.resize(nPageEnd - nPageStart + 1, 0);
-  pBreak->EndBreak(FX_TXTBREAK_ParagraphBreak);
+  pBreak->EndBreak(CFX_BreakType::Paragraph);
   pBreak->ClearBreakPieces();
   m_nPageStart = nPageStart;
   m_nCharCount = nPageEnd - nPageStart + 1;
@@ -290,15 +290,15 @@ int32_t CFDE_TxtEdtPage::LoadPage(const CFX_RectF* pClipBox,
   bool bFirstPiece = true;
   do {
     if (bReload) {
-      dwBreakStatus = pBreak->EndBreak(FX_TXTBREAK_ParagraphBreak);
+      dwBreakStatus = pBreak->EndBreak(CFX_BreakType::Paragraph);
     } else {
       FX_WCHAR wAppend = pIter->GetChar();
       dwBreakStatus = pBreak->AppendChar(wAppend);
     }
-    if (pIter->GetAt() == nPageEnd && dwBreakStatus < FX_TXTBREAK_LineBreak) {
-      dwBreakStatus = pBreak->EndBreak(FX_TXTBREAK_ParagraphBreak);
-    }
-    if (dwBreakStatus > FX_TXTBREAK_PieceBreak) {
+    if (pIter->GetAt() == nPageEnd && CFX_BreakTypeNoneOrPiece(dwBreakStatus))
+      dwBreakStatus = pBreak->EndBreak(CFX_BreakType::Paragraph);
+
+    if (!CFX_BreakTypeNoneOrPiece(dwBreakStatus)) {
       int32_t nPieceCount = pBreak->CountBreakPieces();
       for (int32_t j = 0; j < nPieceCount; j++) {
         const CFX_TxtPiece* pPiece = pBreak->GetBreakPiece(j);
@@ -312,7 +312,7 @@ int32_t CFDE_TxtEdtPage::LoadPage(const CFX_RectF* pClipBox,
           TxtEdtPiece.dwCharStyles |= FX_TXTCHARSTYLE_OddBidiLevel;
         }
         FX_FLOAT fParaBreakWidth = 0.0f;
-        if (pPiece->m_dwStatus > FX_TXTBREAK_PieceBreak) {
+        if (!CFX_BreakTypeNoneOrPiece(pPiece->m_dwStatus)) {
           FX_WCHAR wRtChar = pParams->wLineBreakChar;
           if (TxtEdtPiece.nCount >= 2) {
             FX_WCHAR wChar = pBuf->GetCharByIndex(
@@ -356,7 +356,7 @@ int32_t CFDE_TxtEdtPage::LoadPage(const CFX_RectF* pClipBox,
       fLinePos += fLineStep;
       pBreak->ClearBreakPieces();
     }
-    if (pIter->GetAt() == nPageEnd && dwBreakStatus == FX_TXTBREAK_LineBreak) {
+    if (pIter->GetAt() == nPageEnd && dwBreakStatus == CFX_BreakType::Line) {
       bReload = true;
       pIter->Next(true);
     }

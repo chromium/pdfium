@@ -118,10 +118,14 @@ FX_WCHAR FX_GetMirrorChar(FX_WCHAR wch,
                           uint32_t dwProps,
                           bool bRTL,
                           bool bVertical);
+
+enum class CFX_BreakType { None = 0, Piece, Line, Paragraph, Page };
+
 class CFX_Char {
  public:
   CFX_Char()
-      : m_wCharCode(0),
+      : m_dwStatus(CFX_BreakType::None),
+        m_wCharCode(0),
         m_nBreakType(0),
         m_dwCharProps(0),
         m_iCharWidth(0),
@@ -138,6 +142,7 @@ class CFX_Char {
 
   FX_CHARTYPE GetCharType() const { return GetCharTypeFromProp(m_dwCharProps); }
 
+  CFX_BreakType m_dwStatus;
   uint16_t m_wCharCode;
   uint8_t m_nBreakType;
   uint32_t m_dwCharProps;
@@ -151,7 +156,6 @@ class CFX_TxtChar : public CFX_Char {
   CFX_TxtChar()
       : m_nRotation(0),
         m_dwCharStyles(0),
-        m_dwStatus(0),
         m_iBidiClass(0),
         m_iBidiLevel(0),
         m_iBidiPos(0),
@@ -160,7 +164,6 @@ class CFX_TxtChar : public CFX_Char {
 
   int8_t m_nRotation;
   uint32_t m_dwCharStyles;
-  uint32_t m_dwStatus;
   int16_t m_iBidiClass;
   int16_t m_iBidiLevel;
   int16_t m_iBidiPos;
@@ -168,15 +171,12 @@ class CFX_TxtChar : public CFX_Char {
   void* m_pUserData;
 };
 
-enum class CFX_RTFBreakType { None = 0, Piece, Line, Paragraph, Page };
-
 class CFX_RTFChar : public CFX_Char {
  public:
   CFX_RTFChar();
   CFX_RTFChar(const CFX_RTFChar& other);
   ~CFX_RTFChar();
 
-  CFX_RTFBreakType m_dwStatus;
   int32_t m_iFontSize;
   int32_t m_iFontHeight;
   int16_t m_iBidiClass;
@@ -188,8 +188,7 @@ class CFX_RTFChar : public CFX_Char {
 };
 
 inline CFX_RTFChar::CFX_RTFChar()
-    : m_dwStatus(CFX_RTFBreakType::None),
-      m_iFontSize(0),
+    : m_iFontSize(0),
       m_iFontHeight(0),
       m_iBidiClass(0),
       m_iBidiLevel(0),

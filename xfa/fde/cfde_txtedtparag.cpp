@@ -8,6 +8,7 @@
 
 #include <memory>
 
+#include "third_party/base/ptr_util.h"
 #include "xfa/fde/cfde_txtedtbuf.h"
 #include "xfa/fde/cfde_txtedtengine.h"
 #include "xfa/fde/ifde_txtedtengine.h"
@@ -37,28 +38,28 @@ void CFDE_TxtEdtParag::LoadParag() {
   CFDE_TxtEdtBuf* pTxtBuf = m_pEngine->GetTextBuf();
   const FDE_TXTEDTPARAMS* pParam = m_pEngine->GetEditParams();
   FX_WCHAR wcAlias = 0;
-  if (pParam->dwMode & FDE_TEXTEDITMODE_Password) {
+  if (pParam->dwMode & FDE_TEXTEDITMODE_Password)
     wcAlias = m_pEngine->GetAliasChar();
-  }
+
   std::unique_ptr<IFX_CharIter> pIter(new CFDE_TxtEdtBuf::Iterator(
       static_cast<CFDE_TxtEdtBuf*>(pTxtBuf), wcAlias));
   pIter->SetAt(m_nCharStart);
   int32_t nEndIndex = m_nCharStart + m_nCharCount;
   CFX_ArrayTemplate<int32_t> LineBaseArr;
   bool bReload = false;
-  uint32_t dwBreakStatus = FX_TXTBREAK_None;
+  CFX_BreakType dwBreakStatus = CFX_BreakType::None;
   do {
     if (bReload) {
-      dwBreakStatus = pTxtBreak->EndBreak(FX_TXTBREAK_ParagraphBreak);
+      dwBreakStatus = pTxtBreak->EndBreak(CFX_BreakType::Paragraph);
     } else {
       FX_WCHAR wAppend = pIter->GetChar();
       dwBreakStatus = pTxtBreak->AppendChar(wAppend);
     }
     if (pIter->GetAt() + 1 == nEndIndex &&
-        dwBreakStatus < FX_TXTBREAK_LineBreak) {
-      dwBreakStatus = pTxtBreak->EndBreak(FX_TXTBREAK_ParagraphBreak);
+        CFX_BreakTypeNoneOrPiece(dwBreakStatus)) {
+      dwBreakStatus = pTxtBreak->EndBreak(CFX_BreakType::Paragraph);
     }
-    if (dwBreakStatus > FX_TXTBREAK_PieceBreak) {
+    if (!CFX_BreakTypeNoneOrPiece(dwBreakStatus)) {
       int32_t nCount = pTxtBreak->CountBreakPieces();
       int32_t nTotal = 0;
       for (int32_t j = 0; j < nCount; j++) {
@@ -68,28 +69,28 @@ void CFDE_TxtEdtParag::LoadParag() {
       LineBaseArr.Add(nTotal);
       pTxtBreak->ClearBreakPieces();
     }
-    if ((pIter->GetAt() + 1 == nEndIndex) &&
-        (dwBreakStatus == FX_TXTBREAK_LineBreak)) {
+    if (pIter->GetAt() + 1 == nEndIndex &&
+        dwBreakStatus == CFX_BreakType::Line) {
       bReload = true;
       pIter->Next(true);
     }
   } while (pIter->Next(false) && (pIter->GetAt() < nEndIndex));
-  pTxtBreak->EndBreak(FX_TXTBREAK_ParagraphBreak);
+  pTxtBreak->EndBreak(CFX_BreakType::Paragraph);
   pTxtBreak->ClearBreakPieces();
   int32_t nLineCount = LineBaseArr.GetSize();
   m_nLineCount = nLineCount;
-  if (m_lpData) {
+  if (m_lpData)
     m_lpData = FX_Realloc(int32_t, m_lpData, nLineCount + 1);
-  } else {
+  else
     m_lpData = FX_Alloc(int32_t, nLineCount + 1);
-  }
+
   int32_t* pIntArr = m_lpData;
   pIntArr[0] = 1;
   m_nLineCount = nLineCount;
   pIntArr++;
-  for (int32_t j = 0; j < nLineCount; j++, pIntArr++) {
+  for (int32_t j = 0; j < nLineCount; j++, pIntArr++)
     *pIntArr = LineBaseArr[j];
-  }
+
   LineBaseArr.RemoveAll();
 }
 
@@ -106,34 +107,34 @@ void CFDE_TxtEdtParag::CalcLines() {
   CFX_TxtBreak* pTxtBreak = m_pEngine->GetTextBreak();
   CFDE_TxtEdtBuf* pTxtBuf = m_pEngine->GetTextBuf();
   int32_t nCount = 0;
-  uint32_t dwBreakStatus = FX_TXTBREAK_None;
+  CFX_BreakType dwBreakStatus = CFX_BreakType::None;
   int32_t nEndIndex = m_nCharStart + m_nCharCount;
-  std::unique_ptr<IFX_CharIter> pIter(
-      new CFDE_TxtEdtBuf::Iterator(static_cast<CFDE_TxtEdtBuf*>(pTxtBuf)));
+  auto pIter = pdfium::MakeUnique<CFDE_TxtEdtBuf::Iterator>(
+      static_cast<CFDE_TxtEdtBuf*>(pTxtBuf));
   pIter->SetAt(m_nCharStart);
   bool bReload = false;
   do {
     if (bReload) {
-      dwBreakStatus = pTxtBreak->EndBreak(FX_TXTBREAK_ParagraphBreak);
+      dwBreakStatus = pTxtBreak->EndBreak(CFX_BreakType::Paragraph);
     } else {
       FX_WCHAR wAppend = pIter->GetChar();
       dwBreakStatus = pTxtBreak->AppendChar(wAppend);
     }
     if (pIter->GetAt() + 1 == nEndIndex &&
-        dwBreakStatus < FX_TXTBREAK_LineBreak) {
-      dwBreakStatus = pTxtBreak->EndBreak(FX_TXTBREAK_ParagraphBreak);
+        CFX_BreakTypeNoneOrPiece(dwBreakStatus)) {
+      dwBreakStatus = pTxtBreak->EndBreak(CFX_BreakType::Paragraph);
     }
-    if (dwBreakStatus > FX_TXTBREAK_PieceBreak) {
+    if (!CFX_BreakTypeNoneOrPiece(dwBreakStatus)) {
       nCount++;
       pTxtBreak->ClearBreakPieces();
     }
-    if ((pIter->GetAt() + 1 == nEndIndex) &&
-        (dwBreakStatus == FX_TXTBREAK_LineBreak)) {
+    if (pIter->GetAt() + 1 == nEndIndex &&
+        dwBreakStatus == CFX_BreakType::Line) {
       bReload = true;
       pIter->Next(true);
     }
   } while (pIter->Next(false) && (pIter->GetAt() < nEndIndex));
-  pTxtBreak->EndBreak(FX_TXTBREAK_ParagraphBreak);
+  pTxtBreak->EndBreak(CFX_BreakType::Paragraph);
   pTxtBreak->ClearBreakPieces();
   m_nLineCount = nCount;
 }

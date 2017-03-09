@@ -16,7 +16,7 @@
 
 namespace {
 
-typedef uint32_t (CFX_TxtBreak::*FX_TxtBreak_LPFAppendChar)(
+typedef CFX_BreakType (CFX_TxtBreak::*FX_TxtBreak_LPFAppendChar)(
     CFX_TxtChar* pCurChar,
     int32_t iRotation);
 const FX_TxtBreak_LPFAppendChar g_FX_TxtBreak_lpfAppendChar[16] = {
@@ -34,6 +34,8 @@ bool IsCtrlCode(FX_WCHAR ch) {
   uint32_t dwRet = (FX_GetUnicodeProperties(ch) & FX_CHARTYPEBITSMASK);
   return dwRet == FX_CHARTYPE_Tab || dwRet == FX_CHARTYPE_Control;
 }
+
+const int kMinimumTabWidth = 160000;
 
 }  // namespace
 
@@ -133,10 +135,7 @@ void CFX_TxtBreak::FontChanged() {
 }
 
 void CFX_TxtBreak::SetTabWidth(FX_FLOAT fTabWidth, bool bEquidistant) {
-  m_iTabWidth = FXSYS_round(fTabWidth * 20000.0f);
-  if (m_iTabWidth < FX_TXTBREAK_MinimumTabWidth)
-    m_iTabWidth = FX_TXTBREAK_MinimumTabWidth;
-
+  m_iTabWidth = std::max(FXSYS_round(fTabWidth * 20000.0f), kMinimumTabWidth);
   m_bEquidistant = bEquidistant;
 }
 
@@ -214,8 +213,8 @@ void CFX_TxtBreak::SetBreakStatus() {
     return;
 
   CFX_TxtChar* pTC = m_pCurLine->GetCharPtr(iCount - 1);
-  if (pTC->m_dwStatus == 0)
-    pTC->m_dwStatus = FX_TXTBREAK_PieceBreak;
+  if (pTC->m_dwStatus == CFX_BreakType::None)
+    pTC->m_dwStatus = CFX_BreakType::Piece;
 }
 
 void CFX_TxtBreak::SetHorizontalScale(int32_t iScale) {
@@ -295,7 +294,7 @@ void CFX_TxtBreak::ResetArabicContext() {
 
 void CFX_TxtBreak::AppendChar_PageLoad(CFX_TxtChar* pCurChar,
                                        uint32_t dwProps) {
-  pCurChar->m_dwStatus = 0;
+  pCurChar->m_dwStatus = CFX_BreakType::None;
   pCurChar->m_pUserData = m_pUserData;
 
   if (m_bArabicContext || m_bArabicShapes) {
@@ -312,15 +311,15 @@ void CFX_TxtBreak::AppendChar_PageLoad(CFX_TxtChar* pCurChar,
 
       ResetArabicContext();
       CFX_TxtChar* pLastChar = GetLastChar(1, false);
-      if (pLastChar && pLastChar->m_dwStatus < 1)
-        pLastChar->m_dwStatus = FX_TXTBREAK_PieceBreak;
+      if (pLastChar && pLastChar->m_dwStatus == CFX_BreakType::None)
+        pLastChar->m_dwStatus = CFX_BreakType::Piece;
     }
   }
   pCurChar->m_dwCharStyles = m_dwContextCharStyles;
 }
 
-uint32_t CFX_TxtBreak::AppendChar_Combination(CFX_TxtChar* pCurChar,
-                                              int32_t iRotation) {
+CFX_BreakType CFX_TxtBreak::AppendChar_Combination(CFX_TxtChar* pCurChar,
+                                                   int32_t iRotation) {
   FX_WCHAR wch = pCurChar->m_wCharCode;
   FX_WCHAR wForm;
   int32_t iCharWidth = 0;
@@ -361,14 +360,14 @@ uint32_t CFX_TxtBreak::AppendChar_Combination(CFX_TxtChar* pCurChar,
     iCharWidth = iCharWidth * m_iHorScale / 100;
   }
   pCurChar->m_iCharWidth = -iCharWidth;
-  return FX_TXTBREAK_None;
+  return CFX_BreakType::None;
 }
 
-uint32_t CFX_TxtBreak::AppendChar_Tab(CFX_TxtChar* pCurChar,
-                                      int32_t iRotation) {
+CFX_BreakType CFX_TxtBreak::AppendChar_Tab(CFX_TxtChar* pCurChar,
+                                           int32_t iRotation) {
   m_eCharType = FX_CHARTYPE_Tab;
   if ((m_dwLayoutStyles & FX_TXTLAYOUTSTYLE_ExpandTab) == 0)
-    return FX_TXTBREAK_None;
+    return CFX_BreakType::None;
 
   int32_t& iLineWidth = m_pCurLine->m_iWidth;
   int32_t iCharWidth;
@@ -376,9 +375,8 @@ uint32_t CFX_TxtBreak::AppendChar_Tab(CFX_TxtChar* pCurChar,
     iCharWidth = m_iCombWidth;
   } else {
     if (m_bEquidistant) {
-      iCharWidth = iLineWidth;
-      iCharWidth = m_iTabWidth * (iCharWidth / m_iTabWidth + 1) - iCharWidth;
-      if (iCharWidth < FX_TXTBREAK_MinimumTabWidth)
+      iCharWidth = m_iTabWidth * (iLineWidth / m_iTabWidth + 1) - iLineWidth;
+      if (iCharWidth < kMinimumTabWidth)
         iCharWidth += m_iTabWidth;
     } else {
       iCharWidth = m_iTabWidth;
@@ -388,41 +386,41 @@ uint32_t CFX_TxtBreak::AppendChar_Tab(CFX_TxtChar* pCurChar,
   pCurChar->m_iCharWidth = iCharWidth;
   iLineWidth += iCharWidth;
   if (!m_bSingleLine && iLineWidth >= m_iLineWidth + m_iTolerance)
-    return EndBreak(FX_TXTBREAK_LineBreak);
+    return EndBreak(CFX_BreakType::Line);
 
-  return FX_TXTBREAK_None;
+  return CFX_BreakType::None;
 }
 
-uint32_t CFX_TxtBreak::AppendChar_Control(CFX_TxtChar* pCurChar,
-                                          int32_t iRotation) {
+CFX_BreakType CFX_TxtBreak::AppendChar_Control(CFX_TxtChar* pCurChar,
+                                               int32_t iRotation) {
   m_eCharType = FX_CHARTYPE_Control;
-  uint32_t dwRet = FX_TXTBREAK_None;
+  CFX_BreakType dwRet = CFX_BreakType::None;
   if (!m_bSingleLine) {
     FX_WCHAR wch = pCurChar->m_wCharCode;
     switch (wch) {
       case L'\v':
       case 0x2028:
-        dwRet = FX_TXTBREAK_LineBreak;
+        dwRet = CFX_BreakType::Line;
         break;
       case L'\f':
-        dwRet = FX_TXTBREAK_PageBreak;
+        dwRet = CFX_BreakType::Page;
         break;
       case 0x2029:
-        dwRet = FX_TXTBREAK_ParagraphBreak;
+        dwRet = CFX_BreakType::Paragraph;
         break;
       default:
         if (wch == m_wParagBreakChar)
-          dwRet = FX_TXTBREAK_ParagraphBreak;
+          dwRet = CFX_BreakType::Paragraph;
         break;
     }
-    if (dwRet != FX_TXTBREAK_None)
+    if (dwRet != CFX_BreakType::None)
       dwRet = EndBreak(dwRet);
   }
   return dwRet;
 }
 
-uint32_t CFX_TxtBreak::AppendChar_Arabic(CFX_TxtChar* pCurChar,
-                                         int32_t iRotation) {
+CFX_BreakType CFX_TxtBreak::AppendChar_Arabic(CFX_TxtChar* pCurChar,
+                                              int32_t iRotation) {
   FX_CHARTYPE chartype = pCurChar->GetCharType();
   int32_t& iLineWidth = m_pCurLine->m_iWidth;
   FX_WCHAR wForm;
@@ -481,12 +479,12 @@ uint32_t CFX_TxtBreak::AppendChar_Arabic(CFX_TxtChar* pCurChar,
   iLineWidth += iCharWidth;
   m_pCurLine->m_iArabicChars++;
   if (!m_bSingleLine && iLineWidth > m_iLineWidth + m_iTolerance)
-    return EndBreak(FX_TXTBREAK_LineBreak);
-  return FX_TXTBREAK_None;
+    return EndBreak(CFX_BreakType::Line);
+  return CFX_BreakType::None;
 }
 
-uint32_t CFX_TxtBreak::AppendChar_Others(CFX_TxtChar* pCurChar,
-                                         int32_t iRotation) {
+CFX_BreakType CFX_TxtBreak::AppendChar_Others(CFX_TxtChar* pCurChar,
+                                              int32_t iRotation) {
   uint32_t dwProps = pCurChar->m_dwCharProps;
   FX_CHARTYPE chartype = pCurChar->GetCharType();
   int32_t& iLineWidth = m_pCurLine->m_iWidth;
@@ -525,13 +523,13 @@ uint32_t CFX_TxtBreak::AppendChar_Others(CFX_TxtChar* pCurChar,
   iLineWidth += iCharWidth;
   if (!m_bSingleLine && chartype != FX_CHARTYPE_Space &&
       iLineWidth > m_iLineWidth + m_iTolerance) {
-    return EndBreak(FX_TXTBREAK_LineBreak);
+    return EndBreak(CFX_BreakType::Line);
   }
 
-  return FX_TXTBREAK_None;
+  return CFX_BreakType::None;
 }
 
-uint32_t CFX_TxtBreak::AppendChar(FX_WCHAR wch) {
+CFX_BreakType CFX_TxtBreak::AppendChar(FX_WCHAR wch) {
   uint32_t dwProps = kTextLayoutCodeProperties[static_cast<uint16_t>(wch)];
   FX_CHARTYPE chartype = GetCharTypeFromProp(dwProps);
   m_pCurLine->m_LineChars.emplace_back();
@@ -544,20 +542,20 @@ uint32_t CFX_TxtBreak::AppendChar(FX_WCHAR wch) {
   pCurChar->m_iCharWidth = 0;
   pCurChar->m_iHorizontalScale = m_iHorScale;
   pCurChar->m_iVerticalScale = 100;
-  pCurChar->m_dwStatus = 0;
+  pCurChar->m_dwStatus = CFX_BreakType::None;
   pCurChar->m_iBidiClass = 0;
   pCurChar->m_iBidiLevel = 0;
   pCurChar->m_iBidiPos = 0;
   pCurChar->m_iBidiOrder = 0;
   pCurChar->m_pUserData = nullptr;
   AppendChar_PageLoad(pCurChar, dwProps);
-  uint32_t dwRet1 = FX_TXTBREAK_None;
+  CFX_BreakType dwRet1 = CFX_BreakType::None;
   if (chartype != FX_CHARTYPE_Combination &&
       GetUnifiedCharType(m_eCharType) != GetUnifiedCharType(chartype) &&
       m_eCharType != FX_CHARTYPE_Unknown &&
       m_pCurLine->m_iWidth > m_iLineWidth + m_iTolerance && !m_bSingleLine &&
       (m_eCharType != FX_CHARTYPE_Space || chartype != FX_CHARTYPE_Control)) {
-    dwRet1 = EndBreak(FX_TXTBREAK_LineBreak);
+    dwRet1 = EndBreak(CFX_BreakType::Line);
     int32_t iCount = m_pCurLine->CountChars();
     if (iCount > 0)
       pCurChar = &m_pCurLine->m_LineChars[iCount - 1];
@@ -567,7 +565,7 @@ uint32_t CFX_TxtBreak::AppendChar(FX_WCHAR wch) {
   if (m_bVertical && (dwProps & 0x8000) != 0)
     iRotation = (iRotation + 1) % 4;
 
-  uint32_t dwRet2 =
+  CFX_BreakType dwRet2 =
       (this->*g_FX_TxtBreak_lpfAppendChar[chartype >> FX_CHARTYPEBITS])(
           pCurChar, iRotation);
   return std::max(dwRet1, dwRet2);
@@ -628,9 +626,7 @@ void CFX_TxtBreak::EndBreak_UpdateArabicShapes() {
   } while (i < iCount);
 }
 
-bool CFX_TxtBreak::EndBreak_SplitLine(CFX_TxtLine* pNextLine,
-                                      bool bAllChars,
-                                      uint32_t dwStatus) {
+bool CFX_TxtBreak::EndBreak_SplitLine(CFX_TxtLine* pNextLine, bool bAllChars) {
   int32_t iCount = m_pCurLine->CountChars();
   bool bDone = false;
   CFX_TxtChar* pTC;
@@ -658,7 +654,7 @@ bool CFX_TxtBreak::EndBreak_SplitLine(CFX_TxtLine* pNextLine,
 }
 
 void CFX_TxtBreak::EndBreak_BidiLine(std::deque<FX_TPO>* tpos,
-                                     uint32_t dwStatus) {
+                                     CFX_BreakType dwStatus) {
   CFX_TxtPiece tp;
   FX_TPO tpo;
   CFX_TxtChar* pTC;
@@ -682,7 +678,7 @@ void CFX_TxtBreak::EndBreak_BidiLine(std::deque<FX_TPO>* tpos,
 
   CFX_TxtPieceArray* pCurPieces = &m_pCurLine->m_LinePieces;
   if (bDone || (m_dwLayoutStyles & FX_TXTLAYOUTSTYLE_MutipleFormat) != 0) {
-    tp.m_dwStatus = FX_TXTBREAK_PieceBreak;
+    tp.m_dwStatus = CFX_BreakType::Piece;
     tp.m_iStartPos = m_pCurLine->m_iStart;
     tp.m_pChars = &m_pCurLine->m_LineChars;
     int32_t iBidiLevel = -1;
@@ -700,9 +696,10 @@ void CFX_TxtBreak::EndBreak_BidiLine(std::deque<FX_TPO>* tpos,
         tp.m_pUserData = pTC->m_pUserData;
         tp.m_iHorizontalScale = pTC->m_iHorizontalScale;
         tp.m_iVerticalScale = pTC->m_iVerticalScale;
-        tp.m_dwStatus = FX_TXTBREAK_PieceBreak;
+        tp.m_dwStatus = CFX_BreakType::Piece;
       }
-      if (iBidiLevel != pTC->m_iBidiLevel || pTC->m_dwStatus != 0) {
+      if (iBidiLevel != pTC->m_iBidiLevel ||
+          pTC->m_dwStatus != CFX_BreakType::None) {
         if (iBidiLevel == pTC->m_iBidiLevel) {
           tp.m_dwStatus = pTC->m_dwStatus;
           iCharWidth = pTC->m_iCharWidth;
@@ -768,7 +765,7 @@ void CFX_TxtBreak::EndBreak_BidiLine(std::deque<FX_TPO>* tpos,
 
 void CFX_TxtBreak::EndBreak_Alignment(const std::deque<FX_TPO>& tpos,
                                       bool bAllChars,
-                                      uint32_t dwStatus) {
+                                      CFX_BreakType dwStatus) {
   int32_t iNetWidth = m_pCurLine->m_iWidth;
   int32_t iGapChars = 0;
   int32_t iCharWidth;
@@ -817,7 +814,7 @@ void CFX_TxtBreak::EndBreak_Alignment(const std::deque<FX_TPO>& tpos,
   int32_t iHigherAlignment = (m_iCurAlignment & FX_TXTLINEALIGNMENT_HigherMask);
   if (iGapChars > 0 && (iHigherAlignment == FX_TXTLINEALIGNMENT_Distributed ||
                         (iHigherAlignment == FX_TXTLINEALIGNMENT_Justified &&
-                         dwStatus != FX_TXTBREAK_ParagraphBreak))) {
+                         dwStatus != CFX_BreakType::Paragraph))) {
     int32_t iStart = -1;
     for (i = 0; i < iCount; i++) {
       tpo = tpos[i];
@@ -854,14 +851,13 @@ void CFX_TxtBreak::EndBreak_Alignment(const std::deque<FX_TPO>& tpos,
   }
 }
 
-uint32_t CFX_TxtBreak::EndBreak(uint32_t dwStatus) {
-  ASSERT(dwStatus >= FX_TXTBREAK_PieceBreak &&
-         dwStatus <= FX_TXTBREAK_PageBreak);
+CFX_BreakType CFX_TxtBreak::EndBreak(CFX_BreakType dwStatus) {
+  ASSERT(dwStatus != CFX_BreakType::None);
   const CFX_TxtPieceArray* pCurPieces = &m_pCurLine->m_LinePieces;
   int32_t iCount = pCurPieces->GetSize();
   if (iCount > 0) {
     CFX_TxtPiece* pLastPiece = pCurPieces->GetPtrAt(--iCount);
-    if (dwStatus > FX_TXTBREAK_PieceBreak)
+    if (dwStatus != CFX_BreakType::Piece)
       pLastPiece->m_dwStatus = dwStatus;
     else
       dwStatus = pLastPiece->m_dwStatus;
@@ -873,22 +869,22 @@ uint32_t CFX_TxtBreak::EndBreak(uint32_t dwStatus) {
       iCount = pCurPieces->GetSize();
       if (iCount-- > 0) {
         CFX_TxtPiece* pLastPiece = pCurPieces->GetPtrAt(iCount);
-        if (dwStatus > FX_TXTBREAK_PieceBreak)
+        if (dwStatus != CFX_BreakType::Piece)
           pLastPiece->m_dwStatus = dwStatus;
         else
           dwStatus = pLastPiece->m_dwStatus;
         return dwStatus;
       }
-      return FX_TXTBREAK_None;
+      return CFX_BreakType::None;
     }
 
     iCount = m_pCurLine->CountChars();
     if (iCount < 1)
-      return FX_TXTBREAK_None;
+      return CFX_BreakType::None;
 
     CFX_TxtChar* pTC = m_pCurLine->GetCharPtr(iCount - 1);
     pTC->m_dwStatus = dwStatus;
-    if (dwStatus <= FX_TXTBREAK_PieceBreak)
+    if (dwStatus == CFX_BreakType::Piece)
       return dwStatus;
   }
 
@@ -899,7 +895,7 @@ uint32_t CFX_TxtBreak::EndBreak(uint32_t dwStatus) {
   if (m_bArabicShapes)
     EndBreak_UpdateArabicShapes();
 
-  if (!EndBreak_SplitLine(pNextLine, bAllChars, dwStatus)) {
+  if (!EndBreak_SplitLine(pNextLine, bAllChars)) {
     std::deque<FX_TPO> tpos;
     EndBreak_BidiLine(&tpos, dwStatus);
     if (m_iCurAlignment > FX_TXTLINEALIGNMENT_Left)
@@ -909,7 +905,7 @@ uint32_t CFX_TxtBreak::EndBreak(uint32_t dwStatus) {
   m_pCurLine = pNextLine;
   CFX_Char* pTC = GetLastChar(0, false);
   m_eCharType = pTC ? pTC->GetCharType() : FX_CHARTYPE_Unknown;
-  if (dwStatus == FX_TXTBREAK_ParagraphBreak) {
+  if (dwStatus == CFX_BreakType::Paragraph) {
     m_iArabicContext = m_iCurArabicContext = 1;
     ResetArabicContext();
   }
@@ -1045,7 +1041,7 @@ void CFX_TxtBreak::SplitTextLine(CFX_TxtLine* pCurLine,
       pNextLine->m_iArabicChars++;
     }
     iWidth += std::max(0, pNextLine->m_LineChars[i].m_iCharWidth);
-    pNextLine->m_LineChars[i].m_dwStatus = 0;
+    pNextLine->m_LineChars[i].m_dwStatus = CFX_BreakType::None;
   }
   pNextLine->m_iWidth = iWidth;
 }
@@ -1591,7 +1587,7 @@ FX_TXTRUN::~FX_TXTRUN() {}
 FX_TXTRUN::FX_TXTRUN(const FX_TXTRUN& other) = default;
 
 CFX_TxtPiece::CFX_TxtPiece()
-    : m_dwStatus(FX_TXTBREAK_PieceBreak),
+    : m_dwStatus(CFX_BreakType::Piece),
       m_iStartPos(0),
       m_iWidth(-1),
       m_iStartChar(0),

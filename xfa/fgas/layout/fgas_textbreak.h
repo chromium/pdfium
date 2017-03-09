@@ -23,15 +23,6 @@ class CFX_TxtPiece;
 class IFX_TxtAccess;
 struct FDE_TEXTEDITPIECE;
 
-#define FX_TXTBREAK_None 0x00
-#define FX_TXTBREAK_PieceBreak 0x01
-#define FX_TXTBREAK_LineBreak 0x02
-#define FX_TXTBREAK_ParagraphBreak 0x03
-#define FX_TXTBREAK_PageBreak 0x04
-#define FX_TXTBREAK_ControlChar 0x10
-#define FX_TXTBREAK_BreakChar 0x20
-#define FX_TXTBREAK_UnknownChar 0x40
-#define FX_TXTBREAK_RemoveChar 0x80
 #define FX_TXTLAYOUTSTYLE_MutipleFormat 0x0001
 #define FX_TXTLAYOUTSTYLE_VerticalLayout 0x0002
 #define FX_TXTLAYOUTSTYLE_VerticalChars 0x0004
@@ -69,7 +60,6 @@ struct FDE_TEXTEDITPIECE;
   (FX_TXTLINEALIGNMENT_Right | FX_TXTLINEALIGNMENT_Distributed)
 #define FX_TXTLINEALIGNMENT_LowerMask 0x03
 #define FX_TXTLINEALIGNMENT_HigherMask 0x0C
-#define FX_TXTBREAK_MinimumTabWidth 160000
 
 struct FX_TPO {
   int32_t index;
@@ -77,6 +67,10 @@ struct FX_TPO {
 
   bool operator<(const FX_TPO& that) const { return pos < that.pos; }
 };
+
+inline bool CFX_BreakTypeNoneOrPiece(CFX_BreakType type) {
+  return type == CFX_BreakType::None || type == CFX_BreakType::Piece;
+}
 
 class IFX_TxtAccess {
  public:
@@ -140,7 +134,7 @@ class CFX_TxtPiece {
       *pWidths++ = (*m_pChars)[i].m_iCharWidth;
   }
 
-  uint32_t m_dwStatus;
+  CFX_BreakType m_dwStatus;
   int32_t m_iStartPos;
   int32_t m_iWidth;
   int32_t m_iStartChar;
@@ -224,8 +218,7 @@ class CFX_TxtBreak {
   void SetAlignment(int32_t iAlignment);
   void SetCombWidth(FX_FLOAT fCombWidth);
   void SetUserData(void* pUserData);
-  uint32_t AppendChar(FX_WCHAR wch);
-  uint32_t EndBreak(uint32_t dwStatus = FX_TXTBREAK_PieceBreak);
+  CFX_BreakType EndBreak(CFX_BreakType dwStatus);
   int32_t CountBreakPieces() const;
   const CFX_TxtPiece* GetBreakPiece(int32_t index) const;
   void ClearBreakPieces();
@@ -237,11 +230,13 @@ class CFX_TxtBreak {
   std::vector<CFX_RectF> GetCharRects(const FX_TXTRUN* pTxtRun,
                                       bool bCharBBox = false) const;
   void AppendChar_PageLoad(CFX_TxtChar* pCurChar, uint32_t dwProps);
-  uint32_t AppendChar_Combination(CFX_TxtChar* pCurChar, int32_t iRotation);
-  uint32_t AppendChar_Tab(CFX_TxtChar* pCurChar, int32_t iRotation);
-  uint32_t AppendChar_Control(CFX_TxtChar* pCurChar, int32_t iRotation);
-  uint32_t AppendChar_Arabic(CFX_TxtChar* pCurChar, int32_t iRotation);
-  uint32_t AppendChar_Others(CFX_TxtChar* pCurChar, int32_t iRotation);
+  CFX_BreakType AppendChar(FX_WCHAR wch);
+  CFX_BreakType AppendChar_Combination(CFX_TxtChar* pCurChar,
+                                       int32_t iRotation);
+  CFX_BreakType AppendChar_Tab(CFX_TxtChar* pCurChar, int32_t iRotation);
+  CFX_BreakType AppendChar_Control(CFX_TxtChar* pCurChar, int32_t iRotation);
+  CFX_BreakType AppendChar_Arabic(CFX_TxtChar* pCurChar, int32_t iRotation);
+  CFX_BreakType AppendChar_Others(CFX_TxtChar* pCurChar, int32_t iRotation);
 
  private:
   void FontChanged();
@@ -254,13 +249,11 @@ class CFX_TxtBreak {
   void ResetArabicContext();
   void ResetContextCharStyles();
   void EndBreak_UpdateArabicShapes();
-  bool EndBreak_SplitLine(CFX_TxtLine* pNextLine,
-                          bool bAllChars,
-                          uint32_t dwStatus);
-  void EndBreak_BidiLine(std::deque<FX_TPO>* tpos, uint32_t dwStatus);
+  bool EndBreak_SplitLine(CFX_TxtLine* pNextLine, bool bAllChars);
+  void EndBreak_BidiLine(std::deque<FX_TPO>* tpos, CFX_BreakType dwStatus);
   void EndBreak_Alignment(const std::deque<FX_TPO>& tpos,
                           bool bAllChars,
-                          uint32_t dwStatus);
+                          CFX_BreakType dwStatus);
   int32_t GetBreakPos(std::vector<CFX_TxtChar>& ca,
                       int32_t& iEndPos,
                       bool bAllChars = false,

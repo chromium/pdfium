@@ -693,7 +693,7 @@ void CXFA_TextLayout::LoadText(CXFA_Node* pNode,
   if (bRet && m_pLoader)
     m_pLoader->m_pNode = pNode;
   else
-    EndBreak(CFX_RTFBreakType::Paragraph, fLinePos, bSavePieces);
+    EndBreak(CFX_BreakType::Paragraph, fLinePos, bSavePieces);
 }
 
 bool CXFA_TextLayout::LoadRichText(
@@ -856,7 +856,7 @@ bool CXFA_TextLayout::LoadRichText(
         m_pLoader->m_dwFlags |= XFA_LOADERCNTXTFLG_FILTERSPACE;
     }
     if (bCurLi)
-      EndBreak(CFX_RTFBreakType::Line, fLinePos, bSavePieces);
+      EndBreak(CFX_BreakType::Line, fLinePos, bSavePieces);
   } else {
     if (pContext)
       eDisplay = pContext->GetDisplay();
@@ -864,9 +864,9 @@ bool CXFA_TextLayout::LoadRichText(
 
   if (m_bBlockContinue) {
     if (pContext && !bContentNode) {
-      CFX_RTFBreakType dwStatus = (eDisplay == FDE_CSSDisplay::Block)
-                                      ? CFX_RTFBreakType::Paragraph
-                                      : CFX_RTFBreakType::Piece;
+      CFX_BreakType dwStatus = (eDisplay == FDE_CSSDisplay::Block)
+                                   ? CFX_BreakType::Paragraph
+                                   : CFX_BreakType::Piece;
       EndBreak(dwStatus, fLinePos, bSavePieces);
       if (eDisplay == FDE_CSSDisplay::Block) {
         fLinePos += fSpaceBelow;
@@ -890,7 +890,7 @@ bool CXFA_TextLayout::AppendChar(const CFX_WideString& wsText,
                                  FX_FLOAT& fLinePos,
                                  FX_FLOAT fSpaceAbove,
                                  bool bSavePieces) {
-  CFX_RTFBreakType dwStatus = CFX_RTFBreakType::None;
+  CFX_BreakType dwStatus = CFX_BreakType::None;
   int32_t iChar = 0;
   if (m_pLoader)
     iChar = m_pLoader->m_iChar;
@@ -902,15 +902,14 @@ bool CXFA_TextLayout::AppendChar(const CFX_WideString& wsText,
       wch = 0x20;
 
     dwStatus = m_pBreak->AppendChar(wch);
-    if (dwStatus != CFX_RTFBreakType::None &&
-        dwStatus != CFX_RTFBreakType::Piece) {
+    if (dwStatus != CFX_BreakType::None && dwStatus != CFX_BreakType::Piece) {
       AppendTextLine(dwStatus, fLinePos, bSavePieces);
       if (IsEnd(bSavePieces)) {
         if (m_pLoader)
           m_pLoader->m_iChar = i;
         return true;
       }
-      if (dwStatus == CFX_RTFBreakType::Paragraph && m_bRichText)
+      if (dwStatus == CFX_BreakType::Paragraph && m_bRichText)
         fLinePos += fSpaceAbove;
     }
   }
@@ -950,11 +949,11 @@ void CXFA_TextLayout::ProcessText(CFX_WideString& wsText) {
   wsText = wsText.Left(iTrimLeft);
 }
 
-void CXFA_TextLayout::EndBreak(CFX_RTFBreakType dwStatus,
+void CXFA_TextLayout::EndBreak(CFX_BreakType dwStatus,
                                FX_FLOAT& fLinePos,
                                bool bSavePieces) {
   dwStatus = m_pBreak->EndBreak(dwStatus);
-  if (dwStatus != CFX_RTFBreakType::None && dwStatus != CFX_RTFBreakType::Piece)
+  if (dwStatus != CFX_BreakType::None && dwStatus != CFX_BreakType::Piece)
     AppendTextLine(dwStatus, fLinePos, bSavePieces, true);
 }
 
@@ -1014,7 +1013,7 @@ void CXFA_TextLayout::DoTabstops(CFDE_CSSComputedStyle* pStyle,
   }
 }
 
-void CXFA_TextLayout::AppendTextLine(CFX_RTFBreakType dwStatus,
+void CXFA_TextLayout::AppendTextLine(CFX_BreakType dwStatus,
                                      FX_FLOAT& fLinePos,
                                      bool bSavePieces,
                                      bool bEndBreak) {
@@ -1118,7 +1117,7 @@ void CXFA_TextLayout::AppendTextLine(CFX_RTFBreakType dwStatus,
   }
 
   m_pBreak->ClearBreakPieces();
-  if (dwStatus == CFX_RTFBreakType::Paragraph) {
+  if (dwStatus == CFX_BreakType::Paragraph) {
     m_pBreak->Reset();
     if (!pStyle && bEndBreak) {
       CXFA_Para para = m_pTextProvider->GetParaNode();

@@ -11,6 +11,7 @@
 #include <memory>
 #include <vector>
 
+#include "core/fxcrt/fx_ucd.h"
 #include "core/fxge/cfx_fxgedevice.h"
 #include "core/fxge/cfx_renderdevice.h"
 #include "core/fxge/fx_dib.h"
@@ -120,7 +121,7 @@ class CFDE_TextOut {
 
  protected:
   void CalcTextSize(const FX_WCHAR* pwsStr, int32_t iLength, CFX_RectF& rect);
-  bool RetrieveLineWidth(uint32_t dwBreakStatus,
+  bool RetrieveLineWidth(CFX_BreakType dwBreakStatus,
                          FX_FLOAT& fStartPos,
                          FX_FLOAT& fWidth,
                          FX_FLOAT& fHeight);
@@ -136,7 +137,7 @@ class CFDE_TextOut {
 
   void Reload(const CFX_RectF& rect);
   void ReloadLinePiece(CFDE_TTOLine* pLine, const CFX_RectF& rect);
-  bool RetriecePieces(uint32_t dwBreakStatus,
+  bool RetrievePieces(CFX_BreakType dwBreakStatus,
                       int32_t& iStartChar,
                       int32_t& iPieceWidths,
                       bool bReload,

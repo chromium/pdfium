@@ -76,7 +76,7 @@ class CFX_RTFPiece {
     return ret;
   }
 
-  CFX_RTFBreakType m_dwStatus;
+  CFX_BreakType m_dwStatus;
   int32_t m_iStartPos;
   int32_t m_iWidth;
   int32_t m_iStartChar;
@@ -140,7 +140,7 @@ class CFX_RTFBreak {
 
   void AddPositionedTab(FX_FLOAT fTabPos);
 
-  CFX_RTFBreakType EndBreak(CFX_RTFBreakType dwStatus);
+  CFX_BreakType EndBreak(CFX_BreakType dwStatus);
   int32_t CountBreakPieces() const;
   const CFX_RTFPiece* GetBreakPieceUnstable(int32_t index) const;
   void ClearBreakPieces();
@@ -151,16 +151,16 @@ class CFX_RTFBreak {
                         FXTEXT_CHARPOS* pCharPos,
                         bool bCharCode) const;
 
-  CFX_RTFBreakType AppendChar(FX_WCHAR wch);
+  CFX_BreakType AppendChar(FX_WCHAR wch);
 
   CFX_RTFLine* GetCurrentLineForTesting() const { return m_pCurLine; }
 
  private:
   void AppendChar_Combination(CFX_RTFChar* pCurChar);
   void AppendChar_Tab(CFX_RTFChar* pCurChar);
-  CFX_RTFBreakType AppendChar_Control(CFX_RTFChar* pCurChar);
-  CFX_RTFBreakType AppendChar_Arabic(CFX_RTFChar* pCurChar);
-  CFX_RTFBreakType AppendChar_Others(CFX_RTFChar* pCurChar);
+  CFX_BreakType AppendChar_Control(CFX_RTFChar* pCurChar);
+  CFX_BreakType AppendChar_Arabic(CFX_RTFChar* pCurChar);
+  CFX_BreakType AppendChar_Others(CFX_RTFChar* pCurChar);
   void FontChanged();
   void SetBreakStatus();
   CFX_RTFChar* GetLastChar(int32_t index) const;
@@ -178,11 +178,11 @@ class CFX_RTFBreak {
                      bool bAllChars);
   bool EndBreak_SplitLine(CFX_RTFLine* pNextLine,
                           bool bAllChars,
-                          CFX_RTFBreakType dwStatus);
-  void EndBreak_BidiLine(std::deque<FX_TPO>* tpos, CFX_RTFBreakType dwStatus);
+                          CFX_BreakType dwStatus);
+  void EndBreak_BidiLine(std::deque<FX_TPO>* tpos, CFX_BreakType dwStatus);
   void EndBreak_Alignment(const std::deque<FX_TPO>& tpos,
                           bool bAllChars,
-                          CFX_RTFBreakType dwStatus);
+                          CFX_BreakType dwStatus);
 
   int32_t m_iBoundaryStart;
   int32_t m_iBoundaryEnd;

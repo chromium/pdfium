@@ -54,9 +54,9 @@ TEST_F(RTFBreakTest, AddChars) {
 
   CFX_WideString str(L"Input String.");
   for (int32_t i = 0; i < str.GetLength(); i++)
-    EXPECT_EQ(CFX_RTFBreakType::None, b->AppendChar(str.GetAt(i)));
+    EXPECT_EQ(CFX_BreakType::None, b->AppendChar(str.GetAt(i)));
 
-  EXPECT_EQ(CFX_RTFBreakType::Paragraph, b->AppendChar(L'\n'));
+  EXPECT_EQ(CFX_BreakType::Paragraph, b->AppendChar(L'\n'));
   ASSERT_EQ(1, b->CountBreakPieces());
   EXPECT_EQ(str + L"\n", b->GetBreakPieceUnstable(0)->GetString());
 
@@ -66,21 +66,21 @@ TEST_F(RTFBreakTest, AddChars) {
 
   str = L"Second str.";
   for (int32_t i = 0; i < str.GetLength(); i++)
-    EXPECT_EQ(CFX_RTFBreakType::None, b->AppendChar(str.GetAt(i)));
+    EXPECT_EQ(CFX_BreakType::None, b->AppendChar(str.GetAt(i)));
 
   // Force the end of the break at the end of the string.
-  b->EndBreak(CFX_RTFBreakType::Paragraph);
+  b->EndBreak(CFX_BreakType::Paragraph);
   ASSERT_EQ(1, b->CountBreakPieces());
   EXPECT_EQ(str, b->GetBreakPieceUnstable(0)->GetString());
 }
 
 TEST_F(RTFBreakTest, ControlCharacters) {
   auto b = CreateBreak(FX_RTFLAYOUTSTYLE_ExpandTab);
-  EXPECT_EQ(CFX_RTFBreakType::Line, b->AppendChar(L'\v'));
-  EXPECT_EQ(CFX_RTFBreakType::Page, b->AppendChar(L'\f'));
+  EXPECT_EQ(CFX_BreakType::Line, b->AppendChar(L'\v'));
+  EXPECT_EQ(CFX_BreakType::Page, b->AppendChar(L'\f'));
   // 0x2029 is the Paragraph Separator unicode character.
-  EXPECT_EQ(CFX_RTFBreakType::Paragraph, b->AppendChar(0x2029));
-  EXPECT_EQ(CFX_RTFBreakType::Paragraph, b->AppendChar(L'\n'));
+  EXPECT_EQ(CFX_BreakType::Paragraph, b->AppendChar(0x2029));
+  EXPECT_EQ(CFX_BreakType::Paragraph, b->AppendChar(L'\n'));
 
   ASSERT_EQ(1, b->CountBreakPieces());
   EXPECT_EQ(L"\v", b->GetBreakPieceUnstable(0)->GetString());
