@@ -23,10 +23,6 @@ class CFX_TxtPiece;
 class IFX_TxtAccess;
 struct FDE_TEXTEDITPIECE;
 
-#define FX_TXTBREAKPOLICY_None 0x00
-#define FX_TXTBREAKPOLICY_Pagination 0x01
-#define FX_TXTBREAKPOLICY_SpaceBreak 0x02
-#define FX_TXTBREAKPOLICY_NumberBreak 0x04
 #define FX_TXTBREAK_None 0x00
 #define FX_TXTBREAK_PieceBreak 0x01
 #define FX_TXTBREAK_LineBreak 0x02
@@ -162,42 +158,46 @@ typedef CFX_BaseArrayTemplate<CFX_TxtPiece> CFX_TxtPieceArray;
 
 class CFX_TxtLine {
  public:
-  explicit CFX_TxtLine(int32_t iBlockSize);
+  CFX_TxtLine();
   ~CFX_TxtLine();
 
   int32_t CountChars() const {
-    return pdfium::CollectionSize<int32_t>(*m_pLineChars);
+    return pdfium::CollectionSize<int32_t>(m_LineChars);
   }
 
-  CFX_TxtChar* GetCharPtr(int32_t index) const {
-    ASSERT(index >= 0 &&
-           index < pdfium::CollectionSize<int32_t>(*m_pLineChars));
-    return &(*m_pLineChars)[index];
+  CFX_TxtChar* GetCharPtr(int32_t index) {
+    ASSERT(index >= 0 && index < pdfium::CollectionSize<int32_t>(m_LineChars));
+    return &m_LineChars[index];
   }
 
-  int32_t CountPieces() const { return m_pLinePieces->GetSize(); }
+  const CFX_TxtChar* GetCharPtr(int32_t index) const {
+    ASSERT(index >= 0 && index < pdfium::CollectionSize<int32_t>(m_LineChars));
+    return &m_LineChars[index];
+  }
+
+  int32_t CountPieces() const { return m_LinePieces.GetSize(); }
   CFX_TxtPiece* GetPiecePtr(int32_t index) const {
-    ASSERT(index > -1 && index < m_pLinePieces->GetSize());
-    return m_pLinePieces->GetPtrAt(index);
+    ASSERT(index > -1 && index < m_LinePieces.GetSize());
+    return m_LinePieces.GetPtrAt(index);
   }
 
   void GetString(CFX_WideString& wsStr) const {
-    int32_t iCount = pdfium::CollectionSize<int32_t>(*m_pLineChars);
+    int32_t iCount = pdfium::CollectionSize<int32_t>(m_LineChars);
     FX_WCHAR* pBuf = wsStr.GetBuffer(iCount);
     for (int32_t i = 0; i < iCount; i++)
-      *pBuf++ = static_cast<FX_WCHAR>((*m_pLineChars)[i].m_wCharCode);
+      *pBuf++ = static_cast<FX_WCHAR>(m_LineChars[i].m_wCharCode);
     wsStr.ReleaseBuffer(iCount);
   }
 
   void RemoveAll(bool bLeaveMemory = false) {
-    m_pLineChars->clear();
-    m_pLinePieces->RemoveAll(bLeaveMemory);
+    m_LineChars.clear();
+    m_LinePieces.RemoveAll(bLeaveMemory);
     m_iWidth = 0;
     m_iArabicChars = 0;
   }
 
-  std::unique_ptr<std::vector<CFX_TxtChar>> m_pLineChars;
-  std::unique_ptr<CFX_TxtPieceArray> m_pLinePieces;
+  std::vector<CFX_TxtChar> m_LineChars;
+  CFX_TxtPieceArray m_LinePieces;
   int32_t m_iStart;
   int32_t m_iWidth;
   int32_t m_iArabicChars;
@@ -205,7 +205,7 @@ class CFX_TxtLine {
 
 class CFX_TxtBreak {
  public:
-  explicit CFX_TxtBreak(uint32_t dwPolicies);
+  CFX_TxtBreak();
   ~CFX_TxtBreak();
 
   void SetLineWidth(FX_FLOAT fLineWidth);
@@ -248,8 +248,8 @@ class CFX_TxtBreak {
   void SetBreakStatus();
   int32_t GetLineRotation(uint32_t dwStyles) const;
   CFX_TxtChar* GetLastChar(int32_t index, bool bOmitChar = true) const;
-  CFX_TxtLine* GetTxtLine() const;
-  CFX_TxtPieceArray* GetTxtPieces() const;
+  const CFX_TxtLine* GetTxtLine() const;
+  const CFX_TxtPieceArray* GetTxtPieces() const;
   FX_CHARTYPE GetUnifiedCharType(FX_CHARTYPE dwType) const;
   void ResetArabicContext();
   void ResetContextCharStyles();
@@ -269,8 +269,6 @@ class CFX_TxtBreak {
                      CFX_TxtLine* pNextLine,
                      bool bAllChars = false);
 
-  uint32_t m_dwPolicies;
-  bool m_bPagination;
   int32_t m_iLineWidth;
   uint32_t m_dwLayoutStyles;
   bool m_bVertical;
@@ -300,8 +298,8 @@ class CFX_TxtBreak {
   int32_t m_iCurAlignment;
   bool m_bArabicNumber;
   bool m_bArabicComma;
-  std::unique_ptr<CFX_TxtLine> m_pTxtLine1;
-  std::unique_ptr<CFX_TxtLine> m_pTxtLine2;
+  CFX_TxtLine m_TxtLine1;
+  CFX_TxtLine m_TxtLine2;
   CFX_TxtLine* m_pCurLine;
   int32_t m_iReady;
   int32_t m_iTolerance;

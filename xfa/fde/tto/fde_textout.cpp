@@ -23,7 +23,7 @@ FDE_TTOPIECE::FDE_TTOPIECE(const FDE_TTOPIECE& that) = default;
 FDE_TTOPIECE::~FDE_TTOPIECE() = default;
 
 CFDE_TextOut::CFDE_TextOut()
-    : m_pTxtBreak(new CFX_TxtBreak(FX_TXTBREAKPOLICY_None)),
+    : m_pTxtBreak(pdfium::MakeUnique<CFX_TxtBreak>()),
       m_pFont(nullptr),
       m_fFontSize(12.0f),
       m_fLineSpace(m_fFontSize),
@@ -771,7 +771,7 @@ void CFDE_TextOut::DrawLine(const FDE_TTOPIECE* pPiece, CFDE_Pen* pPen) {
   if (!bUnderLine && !bStrikeOut && !bHotKey)
     return;
 
-  std::unique_ptr<CFDE_Path> pPath(new CFDE_Path);
+  auto pPath = pdfium::MakeUnique<CFDE_Path>();
   int32_t iLineCount = 0;
   CFX_RectF rtText = pPiece->rtPiece;
   CFX_PointF pt1, pt2;

@@ -53,7 +53,7 @@ FDE_TXTEDT_TEXTCHANGE_INFO::FDE_TXTEDT_TEXTCHANGE_INFO() {}
 FDE_TXTEDT_TEXTCHANGE_INFO::~FDE_TXTEDT_TEXTCHANGE_INFO() {}
 
 CFDE_TxtEdtEngine::CFDE_TxtEdtEngine()
-    : m_pTxtBuf(new CFDE_TxtEdtBuf()),
+    : m_pTxtBuf(pdfium::MakeUnique<CFDE_TxtEdtBuf>()),
       m_nPageLineCount(20),
       m_nLineCount(0),
       m_nAnchorPos(-1),
@@ -81,11 +81,11 @@ CFDE_TxtEdtEngine::~CFDE_TxtEdtEngine() {
 
 void CFDE_TxtEdtEngine::SetEditParams(const FDE_TXTEDTPARAMS& params) {
   if (!m_pTextBreak)
-    m_pTextBreak = pdfium::MakeUnique<CFX_TxtBreak>(FX_TXTBREAKPOLICY_None);
+    m_pTextBreak = pdfium::MakeUnique<CFX_TxtBreak>();
 
   m_Param = params;
   m_wLineEnd = params.wLineBreakChar;
-  m_bAutoLineEnd = (m_Param.nLineEnd == FDE_TXTEDIT_LINEEND_Auto);
+  m_bAutoLineEnd = m_Param.nLineEnd == FDE_TXTEDIT_LINEEND_Auto;
   UpdateTxtBreak();
 }
 
@@ -930,8 +930,7 @@ void CFDE_TxtEdtEngine::RebuildParagraphs() {
   FX_WCHAR wChar = L' ';
   int32_t nParagStart = 0;
   int32_t nIndex = 0;
-  std::unique_ptr<IFX_CharIter> pIter(
-      new CFDE_TxtEdtBuf::Iterator(m_pTxtBuf.get()));
+  auto pIter = pdfium::MakeUnique<CFDE_TxtEdtBuf::Iterator>(m_pTxtBuf.get());
   pIter->SetAt(0);
   do {
     wChar = pIter->GetChar();
@@ -1376,7 +1375,7 @@ bool CFDE_TxtEdtEngine::MoveEnd() {
 }
 
 bool CFDE_TxtEdtEngine::IsFitArea(CFX_WideString& wsText) {
-  std::unique_ptr<CFDE_TextOut> pTextOut(new CFDE_TextOut);
+  auto pTextOut = pdfium::MakeUnique<CFDE_TextOut>();
   pTextOut->SetLineSpace(m_Param.fLineSpace);
   pTextOut->SetFont(m_Param.pFont);
   pTextOut->SetFontSize(m_Param.fFontSize);
