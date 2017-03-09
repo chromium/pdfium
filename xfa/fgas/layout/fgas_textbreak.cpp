@@ -63,7 +63,6 @@ CFX_TxtBreak::CFX_TxtBreak()
       m_iAlignment(FX_TXTLINEALIGNMENT_Left),
       m_dwContextCharStyles(0),
       m_iCombWidth(360000),
-      m_pUserData(nullptr),
       m_eCharType(FX_CHARTYPE_Unknown),
       m_bArabicNumber(false),
       m_bArabicComma(false),
@@ -83,13 +82,6 @@ CFX_TxtBreak::~CFX_TxtBreak() {
 void CFX_TxtBreak::SetLineWidth(FX_FLOAT fLineWidth) {
   m_iLineWidth = FXSYS_round(fLineWidth * 20000.0f);
   ASSERT(m_iLineWidth >= 20000);
-}
-
-void CFX_TxtBreak::SetLinePos(FX_FLOAT fLinePos) {
-  int32_t iLinePos =
-      std::min(std::max(FXSYS_round(fLinePos * 20000.0f), 0), m_iLineWidth);
-  m_pCurLine->m_iStart = iLinePos;
-  m_pCurLine->m_iWidth += iLinePos;
 }
 
 void CFX_TxtBreak::SetLayoutStyles(uint32_t dwLayoutStyles) {
@@ -199,14 +191,6 @@ void CFX_TxtBreak::SetCombWidth(FX_FLOAT fCombWidth) {
   m_iCombWidth = FXSYS_round(fCombWidth * 20000.0f);
 }
 
-void CFX_TxtBreak::SetUserData(void* pUserData) {
-  if (m_pUserData == pUserData)
-    return;
-
-  SetBreakStatus();
-  m_pUserData = pUserData;
-}
-
 void CFX_TxtBreak::SetBreakStatus() {
   int32_t iCount = m_pCurLine->CountChars();
   if (iCount < 1)
@@ -295,7 +279,6 @@ void CFX_TxtBreak::ResetArabicContext() {
 void CFX_TxtBreak::AppendChar_PageLoad(CFX_TxtChar* pCurChar,
                                        uint32_t dwProps) {
   pCurChar->m_dwStatus = CFX_BreakType::None;
-  pCurChar->m_pUserData = m_pUserData;
 
   if (m_bArabicContext || m_bArabicShapes) {
     int32_t iBidiCls = (dwProps & FX_BIDICLASSBITSMASK) >> FX_BIDICLASSBITS;
@@ -547,7 +530,7 @@ CFX_BreakType CFX_TxtBreak::AppendChar(FX_WCHAR wch) {
   pCurChar->m_iBidiLevel = 0;
   pCurChar->m_iBidiPos = 0;
   pCurChar->m_iBidiOrder = 0;
-  pCurChar->m_pUserData = nullptr;
+
   AppendChar_PageLoad(pCurChar, dwProps);
   CFX_BreakType dwRet1 = CFX_BreakType::None;
   if (chartype != FX_CHARTYPE_Combination &&
@@ -693,7 +676,6 @@ void CFX_TxtBreak::EndBreak_BidiLine(std::deque<FX_TPO>* tpos,
         tp.m_iBidiLevel = iBidiLevel;
         tp.m_iBidiPos = pTC->m_iBidiOrder;
         tp.m_dwCharStyles = pTC->m_dwCharStyles;
-        tp.m_pUserData = pTC->m_pUserData;
         tp.m_iHorizontalScale = pTC->m_iHorizontalScale;
         tp.m_iVerticalScale = pTC->m_iVerticalScale;
         tp.m_dwStatus = CFX_BreakType::Piece;
@@ -753,7 +735,6 @@ void CFX_TxtBreak::EndBreak_BidiLine(std::deque<FX_TPO>* tpos,
     tp.m_iStartChar = 0;
     tp.m_iChars = iCount;
     tp.m_pChars = &m_pCurLine->m_LineChars;
-    tp.m_pUserData = m_pUserData;
     pTC = &chars[0];
     tp.m_dwCharStyles = pTC->m_dwCharStyles;
     tp.m_iHorizontalScale = pTC->m_iHorizontalScale;
@@ -1597,8 +1578,7 @@ CFX_TxtPiece::CFX_TxtPiece()
       m_iHorizontalScale(100),
       m_iVerticalScale(100),
       m_dwCharStyles(0),
-      m_pChars(nullptr),
-      m_pUserData(nullptr) {}
+      m_pChars(nullptr) {}
 
 CFX_TxtLine::CFX_TxtLine()
     : m_LinePieces(16), m_iStart(0), m_iWidth(0), m_iArabicChars(0) {}

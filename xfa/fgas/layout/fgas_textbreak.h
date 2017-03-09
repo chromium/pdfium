@@ -145,7 +145,6 @@ class CFX_TxtPiece {
   int32_t m_iVerticalScale;
   uint32_t m_dwCharStyles;
   std::vector<CFX_TxtChar>* m_pChars;
-  void* m_pUserData;
 };
 
 typedef CFX_BaseArrayTemplate<CFX_TxtPiece> CFX_TxtPieceArray;
@@ -203,7 +202,6 @@ class CFX_TxtBreak {
   ~CFX_TxtBreak();
 
   void SetLineWidth(FX_FLOAT fLineWidth);
-  void SetLinePos(FX_FLOAT fLinePos);
   uint32_t GetLayoutStyles() const { return m_dwLayoutStyles; }
   void SetLayoutStyles(uint32_t dwLayoutStyles);
   void SetFont(const CFX_RetainPtr<CFGAS_GEFont>& pFont);
@@ -217,7 +215,6 @@ class CFX_TxtBreak {
   void SetCharSpace(FX_FLOAT fCharSpace);
   void SetAlignment(int32_t iAlignment);
   void SetCombWidth(FX_FLOAT fCombWidth);
-  void SetUserData(void* pUserData);
   CFX_BreakType EndBreak(CFX_BreakType dwStatus);
   int32_t CountBreakPieces() const;
   const CFX_TxtPiece* GetBreakPiece(int32_t index) const;
@@ -285,7 +282,6 @@ class CFX_TxtBreak {
   int32_t m_iAlignment;
   uint32_t m_dwContextCharStyles;
   int32_t m_iCombWidth;
-  void* m_pUserData;
   FX_CHARTYPE m_eCharType;
   bool m_bCurRTL;
   int32_t m_iCurAlignment;

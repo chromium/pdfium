@@ -159,8 +159,7 @@ class CFX_TxtChar : public CFX_Char {
         m_iBidiClass(0),
         m_iBidiLevel(0),
         m_iBidiPos(0),
-        m_iBidiOrder(0),
-        m_pUserData(nullptr) {}
+        m_iBidiOrder(0) {}
 
   int8_t m_nRotation;
   uint32_t m_dwCharStyles;
@@ -168,7 +167,6 @@ class CFX_TxtChar : public CFX_Char {
   int16_t m_iBidiLevel;
   int16_t m_iBidiPos;
   int16_t m_iBidiOrder;
-  void* m_pUserData;
 };
 
 class CFX_RTFChar : public CFX_Char {
