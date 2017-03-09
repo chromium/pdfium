@@ -107,15 +107,15 @@ void CFDE_TextOut::SetAlignment(int32_t iAlignment) {
     case FDE_TTOALIGNMENT_TopCenter:
     case FDE_TTOALIGNMENT_Center:
     case FDE_TTOALIGNMENT_BottomCenter:
-      m_iTxtBkAlignment = FX_TXTLINEALIGNMENT_Center;
+      m_iTxtBkAlignment = CFX_TxtLineAlignment_Center;
       break;
     case FDE_TTOALIGNMENT_TopRight:
     case FDE_TTOALIGNMENT_CenterRight:
     case FDE_TTOALIGNMENT_BottomRight:
-      m_iTxtBkAlignment = FX_TXTLINEALIGNMENT_Right;
+      m_iTxtBkAlignment = CFX_TxtLineAlignment_Right;
       break;
     default:
-      m_iTxtBkAlignment = FX_TXTLINEALIGNMENT_Left;
+      m_iTxtBkAlignment = CFX_TxtLineAlignment_Left;
       break;
   }
   m_pTxtBreak->SetAlignment(m_iTxtBkAlignment);

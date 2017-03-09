@@ -33,6 +33,7 @@ struct FDE_TEXTEDITPIECE;
 #define FX_TXTLAYOUTSTYLE_ExpandTab 0x0100
 #define FX_TXTLAYOUTSTYLE_SingleLine 0x0200
 #define FX_TXTLAYOUTSTYLE_CombText 0x0400
+
 #define FX_TXTCHARSTYLE_Alignment 0x000F
 #define FX_TXTCHARSTYLE_ArabicNumber 0x0010
 #define FX_TXTCHARSTYLE_ArabicShadda 0x0020
@@ -41,25 +42,13 @@ struct FDE_TEXTEDITPIECE;
 #define FX_TXTCHARSTYLE_ArabicContext 0x0300
 #define FX_TXTCHARSTYLE_ArabicIndic 0x0400
 #define FX_TXTCHARSTYLE_ArabicComma 0x0800
-#define FX_TXTLINEALIGNMENT_Left 0
-#define FX_TXTLINEALIGNMENT_Center 1
-#define FX_TXTLINEALIGNMENT_Right 2
-#define FX_TXTLINEALIGNMENT_Justified (1 << 2)
-#define FX_TXTLINEALIGNMENT_Distributed (2 << 2)
-#define FX_TXTLINEALIGNMENT_JustifiedLeft \
-  (FX_TXTLINEALIGNMENT_Left | FX_TXTLINEALIGNMENT_Justified)
-#define FX_TXTLINEALIGNMENT_JustifiedCenter \
-  (FX_TXTLINEALIGNMENT_Center | FX_TXTLINEALIGNMENT_Justified)
-#define FX_TXTLINEALIGNMENT_JustifiedRight \
-  (FX_TXTLINEALIGNMENT_Right | FX_TXTLINEALIGNMENT_Justified)
-#define FX_TXTLINEALIGNMENT_DistributedLeft \
-  (FX_TXTLINEALIGNMENT_Left | FX_TXTLINEALIGNMENT_Distributed)
-#define FX_TXTLINEALIGNMENT_DistributedCenter \
-  (FX_TXTLINEALIGNMENT_Center | FX_TXTLINEALIGNMENT_Distributed)
-#define FX_TXTLINEALIGNMENT_DistributedRight \
-  (FX_TXTLINEALIGNMENT_Right | FX_TXTLINEALIGNMENT_Distributed)
-#define FX_TXTLINEALIGNMENT_LowerMask 0x03
-#define FX_TXTLINEALIGNMENT_HigherMask 0x0C
+
+enum CFX_TxtLineAlignment {
+  CFX_TxtLineAlignment_Left = 0,
+  CFX_TxtLineAlignment_Center = 1 << 0,
+  CFX_TxtLineAlignment_Right = 1 << 1,
+  CFX_TxtLineAlignment_Justified = 1 << 2
+};
 
 struct FX_TPO {
   int32_t index;

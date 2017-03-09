@@ -1001,20 +1001,19 @@ void CFDE_TxtEdtEngine::UpdatePages() {
 
 void CFDE_TxtEdtEngine::UpdateTxtBreak() {
   uint32_t dwStyle = m_pTextBreak->GetLayoutStyles();
-  if (m_Param.dwMode & FDE_TEXTEDITMODE_MultiLines) {
+  if (m_Param.dwMode & FDE_TEXTEDITMODE_MultiLines)
     dwStyle &= ~FX_TXTLAYOUTSTYLE_SingleLine;
-  } else {
+  else
     dwStyle |= FX_TXTLAYOUTSTYLE_SingleLine;
-  }
+
   dwStyle &= ~FX_TXTLAYOUTSTYLE_VerticalLayout;
   dwStyle &= ~FX_TXTLAYOUTSTYLE_ReverseLine;
   dwStyle &= ~FX_TXTLAYOUTSTYLE_RTLReadingOrder;
 
-  if (m_Param.dwLayoutStyles & FDE_TEXTEDITLAYOUT_CombText) {
+  if (m_Param.dwLayoutStyles & FDE_TEXTEDITLAYOUT_CombText)
     dwStyle |= FX_TXTLAYOUTSTYLE_CombText;
-  } else {
+  else
     dwStyle &= ~FX_TXTLAYOUTSTYLE_CombText;
-  }
 
   dwStyle &= ~FX_TXTLAYOUTSTYLE_VerticalChars;
   dwStyle &= ~FX_TXTLAYOUTSTYLE_ExpandTab;
@@ -1023,28 +1022,27 @@ void CFDE_TxtEdtEngine::UpdateTxtBreak() {
 
   m_pTextBreak->SetLayoutStyles(dwStyle);
   uint32_t dwAligment = 0;
-  if (m_Param.dwAlignment & FDE_TEXTEDITALIGN_Justified) {
-    dwAligment |= FX_TXTLINEALIGNMENT_Justified;
-  }
-  if (m_Param.dwAlignment & FDE_TEXTEDITALIGN_Center) {
-    dwAligment |= FX_TXTLINEALIGNMENT_Center;
-  } else if (m_Param.dwAlignment & FDE_TEXTEDITALIGN_Right) {
-    dwAligment |= FX_TXTLINEALIGNMENT_Right;
-  }
+  if (m_Param.dwAlignment & FDE_TEXTEDITALIGN_Justified)
+    dwAligment |= CFX_TxtLineAlignment_Justified;
+
+  if (m_Param.dwAlignment & FDE_TEXTEDITALIGN_Center)
+    dwAligment |= CFX_TxtLineAlignment_Center;
+  else if (m_Param.dwAlignment & FDE_TEXTEDITALIGN_Right)
+    dwAligment |= CFX_TxtLineAlignment_Right;
+
   m_pTextBreak->SetAlignment(dwAligment);
 
-  if (m_Param.dwMode & FDE_TEXTEDITMODE_AutoLineWrap) {
+  if (m_Param.dwMode & FDE_TEXTEDITMODE_AutoLineWrap)
     m_pTextBreak->SetLineWidth(m_Param.fPlateWidth);
-  } else {
+  else
     m_pTextBreak->SetLineWidth(kPageWidthMax);
-  }
 
   m_nPageLineCount = m_Param.nLineCount;
   if (m_Param.dwLayoutStyles & FDE_TEXTEDITLAYOUT_CombText) {
     FX_FLOAT fCombWidth = m_Param.fPlateWidth;
-    if (m_nLimit > 0) {
+    if (m_nLimit > 0)
       fCombWidth /= m_nLimit;
-    }
+
     m_pTextBreak->SetCombWidth(fCombWidth);
   }
   m_pTextBreak->SetFont(m_Param.pFont);

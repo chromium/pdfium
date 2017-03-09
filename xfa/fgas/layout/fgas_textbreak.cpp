@@ -60,7 +60,7 @@ CFX_TxtBreak::CFX_TxtBreak()
       m_iLineRotation(0),
       m_iCharRotation(0),
       m_iRotation(0),
-      m_iAlignment(FX_TXTLINEALIGNMENT_Left),
+      m_iAlignment(CFX_TxtLineAlignment_Left),
       m_dwContextCharStyles(0),
       m_iCombWidth(360000),
       m_eCharType(FX_CHARTYPE_Unknown),
@@ -170,8 +170,8 @@ void CFX_TxtBreak::SetCharRotation(int32_t iCharRotation) {
 }
 
 void CFX_TxtBreak::SetAlignment(int32_t iAlignment) {
-  ASSERT(iAlignment >= FX_TXTLINEALIGNMENT_Left &&
-         iAlignment <= FX_TXTLINEALIGNMENT_Distributed);
+  ASSERT(iAlignment >= CFX_TxtLineAlignment_Left &&
+         iAlignment <= CFX_TxtLineAlignment_Justified);
   m_iAlignment = iAlignment;
   ResetArabicContext();
 }
@@ -259,9 +259,9 @@ inline FX_CHARTYPE CFX_TxtBreak::GetUnifiedCharType(
 void CFX_TxtBreak::ResetArabicContext() {
   if (m_bArabicContext) {
     m_bCurRTL = m_iCurArabicContext > 1;
-    m_iCurAlignment = m_iCurArabicContext > 1 ? FX_TXTLINEALIGNMENT_Right
-                                              : FX_TXTLINEALIGNMENT_Left;
-    m_iCurAlignment |= (m_iAlignment & FX_TXTLINEALIGNMENT_HigherMask);
+    m_iCurAlignment = m_iCurArabicContext > 1 ? CFX_TxtLineAlignment_Right
+                                              : CFX_TxtLineAlignment_Left;
+    m_iCurAlignment |= (m_iAlignment & CFX_TxtLineAlignment_Justified);
     m_bArabicNumber = m_iArabicContext >= 1 && m_bArabicShapes;
   } else {
     m_bCurRTL = m_bRTL;
@@ -791,11 +791,8 @@ void CFX_TxtBreak::EndBreak_Alignment(const std::deque<FX_TPO>& tpos,
   }
 
   int32_t iOffset = m_iLineWidth - iNetWidth;
-  int32_t iLowerAlignment = (m_iCurAlignment & FX_TXTLINEALIGNMENT_LowerMask);
-  int32_t iHigherAlignment = (m_iCurAlignment & FX_TXTLINEALIGNMENT_HigherMask);
-  if (iGapChars > 0 && (iHigherAlignment == FX_TXTLINEALIGNMENT_Distributed ||
-                        (iHigherAlignment == FX_TXTLINEALIGNMENT_Justified &&
-                         dwStatus != CFX_BreakType::Paragraph))) {
+  if (iGapChars > 0 && m_iCurAlignment & CFX_TxtLineAlignment_Justified &&
+      dwStatus != CFX_BreakType::Paragraph) {
     int32_t iStart = -1;
     for (i = 0; i < iCount; i++) {
       tpo = tpos[i];
@@ -820,9 +817,12 @@ void CFX_TxtBreak::EndBreak_Alignment(const std::deque<FX_TPO>& tpos,
       }
       iStart += ttp.m_iWidth;
     }
-  } else if (iLowerAlignment > FX_TXTLINEALIGNMENT_Left) {
-    if (iLowerAlignment == FX_TXTLINEALIGNMENT_Center)
+  } else if (m_iCurAlignment & CFX_TxtLineAlignment_Center ||
+             m_iCurAlignment & CFX_TxtLineAlignment_Right) {
+    if (m_iCurAlignment & CFX_TxtLineAlignment_Center &&
+        !(m_iCurAlignment & CFX_TxtLineAlignment_Right)) {
       iOffset /= 2;
+    }
     if (iOffset > 0) {
       for (i = 0; i < iCount; i++) {
         CFX_TxtPiece& ttp = pCurPieces->GetAt(i);
@@ -872,14 +872,14 @@ CFX_BreakType CFX_TxtBreak::EndBreak(CFX_BreakType dwStatus) {
   m_iReady = m_pCurLine == &m_TxtLine1 ? 1 : 2;
   CFX_TxtLine* pNextLine =
       m_pCurLine == &m_TxtLine1 ? &m_TxtLine2 : &m_TxtLine1;
-  bool bAllChars = (m_iCurAlignment > FX_TXTLINEALIGNMENT_Right);
+  bool bAllChars = m_iCurAlignment > CFX_TxtLineAlignment_Right;
   if (m_bArabicShapes)
     EndBreak_UpdateArabicShapes();
 
   if (!EndBreak_SplitLine(pNextLine, bAllChars)) {
     std::deque<FX_TPO> tpos;
     EndBreak_BidiLine(&tpos, dwStatus);
-    if (m_iCurAlignment > FX_TXTLINEALIGNMENT_Left)
+    if (m_iCurAlignment > CFX_TxtLineAlignment_Left)
       EndBreak_Alignment(tpos, bAllChars, dwStatus);
   }
 
