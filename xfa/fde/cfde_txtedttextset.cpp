@@ -78,7 +78,7 @@ std::vector<CFX_RectF> CFDE_TxtEdtTextSet::GetCharRects(
   if (!pPiece || pPiece->nCount < 1)
     return std::vector<CFX_RectF>();
 
-  auto pEngine = static_cast<CFDE_TxtEdtEngine*>(m_pPage->GetEngine());
+  auto* pEngine = static_cast<CFDE_TxtEdtEngine*>(m_pPage->GetEngine());
   const FDE_TXTEDTPARAMS* pTextParams = pEngine->GetEditParams();
   uint32_t dwLayoutStyle = pEngine->GetTextBreak()->GetLayoutStyles();
   FX_TXTRUN tr;

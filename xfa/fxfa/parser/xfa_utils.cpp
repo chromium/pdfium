@@ -328,10 +328,10 @@ const XFA_PROPERTY* XFA_GetPropertyOfElement(XFA_Element eElement,
   if (!pProperties || iCount < 1)
     return nullptr;
 
-  auto it = std::find_if(pProperties, pProperties + iCount,
-                         [eProperty](const XFA_PROPERTY& prop) {
-                           return prop.eName == eProperty;
-                         });
+  auto* it = std::find_if(pProperties, pProperties + iCount,
+                          [eProperty](const XFA_PROPERTY& prop) {
+                            return prop.eName == eProperty;
+                          });
   if (it == pProperties + iCount)
     return nullptr;
 
@@ -375,10 +375,11 @@ XFA_Element XFA_GetElementTypeForName(const CFX_WideStringC& wsName) {
 
   uint32_t uHash = FX_HashCode_GetW(wsName, false);
   const XFA_ELEMENTINFO* pEnd = g_XFAElementData + g_iXFAElementCount;
-  auto pInfo = std::lower_bound(g_XFAElementData, pEnd, uHash,
-                                [](const XFA_ELEMENTINFO& info, uint32_t hash) {
-                                  return info.uHash < hash;
-                                });
+  auto* pInfo =
+      std::lower_bound(g_XFAElementData, pEnd, uHash,
+                       [](const XFA_ELEMENTINFO& info, uint32_t hash) {
+                         return info.uHash < hash;
+                       });
   if (pInfo < pEnd && pInfo->uHash == uHash)
     return pInfo->eName;
   return XFA_Element::Unknown;

@@ -85,7 +85,7 @@ FDE_CSSSyntaxStatus CFDE_CSSStyleSheet::LoadStyleRule(
       case FDE_CSSSyntaxStatus::PropertyValue: {
         if (propertyTable || iValueLen > 0) {
           CFX_WideStringC strValue = pSyntax->GetCurrentString();
-          auto decl = pStyleRule->GetDeclaration();
+          auto* decl = pStyleRule->GetDeclaration();
           if (!strValue.IsEmpty()) {
             if (propertyTable) {
               decl->AddProperty(propertyTable, strValue);

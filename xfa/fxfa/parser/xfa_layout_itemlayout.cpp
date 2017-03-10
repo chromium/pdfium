@@ -182,7 +182,7 @@ void RelocateTableRowCells(
   int32_t nCurrentColIdx = 0;
   bool bMetWholeRowCell = false;
 
-  for (auto pLayoutChild =
+  for (auto* pLayoutChild =
            static_cast<CXFA_ContentLayoutItem*>(pLayoutRow->m_pFirstChild);
        pLayoutChild; pLayoutChild = static_cast<CXFA_ContentLayoutItem*>(
                          pLayoutChild->m_pNextSibling)) {
@@ -1995,7 +1995,7 @@ bool CXFA_ItemLayoutProcessor::ProcessKeepForSplit(
                                          childSize.height, &keepLayoutItems)) {
     m_arrayKeepItems.clear();
 
-    for (auto item : keepLayoutItems) {
+    for (auto* item : keepLayoutItems) {
       pParentProcessor->m_pLayoutItem->RemoveChild(item);
       *fContentCurRowY -= item->m_sSize.height;
       m_arrayKeepItems.push_back(item);
@@ -2271,7 +2271,7 @@ XFA_ItemLayoutProcessorResult CXFA_ItemLayoutProcessor::DoLayoutFlowedContainer(
         case XFA_ItemLayoutProcessorStages::None:
           break;
         case XFA_ItemLayoutProcessorStages::BreakBefore: {
-          for (auto item : m_arrayKeepItems) {
+          for (auto* item : m_arrayKeepItems) {
             m_pLayoutItem->RemoveChild(item);
             fContentCalculatedHeight -= item->m_sSize.height;
           }

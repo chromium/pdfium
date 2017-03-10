@@ -227,7 +227,7 @@ CFX_RectF CXFA_FFComboBox::GetBBox(uint32_t dwStatus, bool bDrawFocus) {
 }
 
 bool CXFA_FFComboBox::PtInActiveRect(const CFX_PointF& point) {
-  auto pComboBox = static_cast<CFWL_ComboBox*>(m_pNormalWidget);
+  auto* pComboBox = static_cast<CFWL_ComboBox*>(m_pNormalWidget);
   return pComboBox && pComboBox->GetBBox().Contains(point);
 }
 

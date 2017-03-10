@@ -240,7 +240,7 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFText_SetText(FPDF_PAGEOBJECT text_object,
   if (!text_object)
     return false;
 
-  auto pTextObj = reinterpret_cast<CPDF_TextObject*>(text_object);
+  auto* pTextObj = reinterpret_cast<CPDF_TextObject*>(text_object);
   pTextObj->SetText(CFX_ByteString(text));
   return true;
 }

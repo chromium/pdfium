@@ -363,8 +363,8 @@ void CXFA_FFTabOrderPageWidgetIterator::CreateTabOrderWidgetArray() {
 
 static int32_t XFA_TabOrderWidgetComparator(const void* phWidget1,
                                             const void* phWidget2) {
-  auto param1 = *static_cast<CXFA_TabParam**>(const_cast<void*>(phWidget1));
-  auto param2 = *static_cast<CXFA_TabParam**>(const_cast<void*>(phWidget2));
+  auto* param1 = *static_cast<CXFA_TabParam**>(const_cast<void*>(phWidget1));
+  auto* param2 = *static_cast<CXFA_TabParam**>(const_cast<void*>(phWidget2));
   CFX_RectF rt1 = param1->m_pWidget->GetWidgetRect();
   CFX_RectF rt2 = param2->m_pWidget->GetWidgetRect();
   FX_FLOAT x1 = rt1.left, y1 = rt1.top, x2 = rt2.left, y2 = rt2.top;

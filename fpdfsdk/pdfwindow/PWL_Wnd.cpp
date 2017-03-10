@@ -15,7 +15,7 @@
 
 static std::map<int32_t, CPWL_Timer*>& GetPWLTimeMap() {
   // Leak the object at shutdown.
-  static auto timeMap = new std::map<int32_t, CPWL_Timer*>;
+  static auto* timeMap = new std::map<int32_t, CPWL_Timer*>;
   return *timeMap;
 }
 
@@ -412,7 +412,7 @@ void CPWL_Wnd::InvalidateRect(CFX_FloatRect* pRect) {
       return false;                                                \
     if (!IsWndCaptureKeyboard(this))                               \
       return false;                                                \
-    for (const auto& pChild : m_Children) {                        \
+    for (auto* pChild : m_Children) {                              \
       if (pChild && IsWndCaptureKeyboard(pChild))                  \
         return pChild->key_method_name(nChar, nFlag);              \
     }                                                              \
@@ -428,7 +428,7 @@ PWL_IMPLEMENT_KEY_METHOD(OnChar)
     if (!IsValid() || !IsVisible() || !IsEnabled())                            \
       return false;                                                            \
     if (IsWndCaptureMouse(this)) {                                             \
-      for (const auto& pChild : m_Children) {                                  \
+      for (auto* pChild : m_Children) {                                        \
         if (pChild && IsWndCaptureMouse(pChild)) {                             \
           return pChild->mouse_method_name(pChild->ParentToChild(point),       \
                                            nFlag);                             \
@@ -437,7 +437,7 @@ PWL_IMPLEMENT_KEY_METHOD(OnChar)
       SetCursor();                                                             \
       return false;                                                            \
     }                                                                          \
-    for (const auto& pChild : m_Children) {                                    \
+    for (auto* pChild : m_Children) {                                          \
       if (pChild && pChild->WndHitTest(pChild->ParentToChild(point))) {        \
         return pChild->mouse_method_name(pChild->ParentToChild(point), nFlag); \
       }                                                                        \
@@ -465,7 +465,7 @@ bool CPWL_Wnd::OnMouseWheel(short zDelta,
   if (!IsWndCaptureKeyboard(this))
     return false;
 
-  for (const auto& pChild : m_Children) {
+  for (auto* pChild : m_Children) {
     if (pChild && IsWndCaptureKeyboard(pChild))
       return pChild->OnMouseWheel(zDelta, pChild->ParentToChild(point), nFlag);
   }
@@ -628,7 +628,7 @@ void CPWL_Wnd::SetCapture() {
 }
 
 void CPWL_Wnd::ReleaseCapture() {
-  for (const auto& pChild : m_Children) {
+  for (auto* pChild : m_Children) {
     if (pChild)
       pChild->ReleaseCapture();
   }
@@ -674,7 +674,7 @@ void CPWL_Wnd::SetVisible(bool bVisible) {
   if (!IsValid())
     return;
 
-  for (const auto& pChild : m_Children) {
+  for (auto* pChild : m_Children) {
     if (pChild)
       pChild->SetVisible(bVisible);
   }
@@ -818,7 +818,7 @@ int32_t CPWL_Wnd::GetTransparency() {
 }
 
 void CPWL_Wnd::SetTransparency(int32_t nTransparency) {
-  for (const auto& pChild : m_Children) {
+  for (auto* pChild : m_Children) {
     if (pChild)
       pChild->SetTransparency(nTransparency);
   }
@@ -892,7 +892,7 @@ void CPWL_Wnd::EnableWindow(bool bEnable) {
   if (m_bEnabled == bEnable)
     return;
 
-  for (const auto& pChild : m_Children) {
+  for (auto* pChild : m_Children) {
     if (pChild)
       pChild->EnableWindow(bEnable);
   }

@@ -1993,7 +1993,7 @@ void CPDF_RenderStatus::DrawTextPathWithPattern(const CPDF_TextObject* textobj,
   CharPosList.Load(textobj->m_CharCodes, textobj->m_CharPos, pFont, font_size);
   for (uint32_t i = 0; i < CharPosList.m_nChars; i++) {
     FXTEXT_CHARPOS& charpos = CharPosList.m_pCharPos[i];
-    auto font =
+    auto* font =
         charpos.m_FallbackFontPosition == -1
             ? &pFont->m_Font
             : pFont->m_FontFallbacks[charpos.m_FallbackFontPosition].get();

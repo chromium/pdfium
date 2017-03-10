@@ -259,8 +259,8 @@ void CBC_QRCoderEncoder::MergeString(
     int32_t& e) {
   size_t mergeNum = 0;
   for (size_t i = 0; i + 1 < result->size(); i++) {
-    auto element1 = &(*result)[i];
-    auto element2 = &(*result)[i + 1];
+    auto* element1 = &(*result)[i];
+    auto* element2 = &(*result)[i + 1];
     if (element1->first == CBC_QRCoderMode::sALPHANUMERIC) {
       int32_t tmp = GetSpanByVersion(CBC_QRCoderMode::sALPHANUMERIC,
                                      CBC_QRCoderMode::sBYTE, versionNum, e);

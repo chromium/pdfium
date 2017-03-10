@@ -184,7 +184,7 @@ void CFWL_CheckBox::NextStates() {
       if (!pWidgetMgr->IsFormDisabled()) {
         std::vector<CFWL_Widget*> radioarr =
             pWidgetMgr->GetSameGroupRadioButton(this);
-        for (const auto& pWidget : radioarr) {
+        for (auto* pWidget : radioarr) {
           CFWL_CheckBox* pCheckBox = static_cast<CFWL_CheckBox*>(pWidget);
           if (pCheckBox != this &&
               pCheckBox->GetStates() & FWL_STATE_CKB_Checked) {

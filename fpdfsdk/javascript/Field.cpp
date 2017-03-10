@@ -1816,7 +1816,7 @@ bool Field::page(CJS_Runtime* pRuntime,
       return false;
     }
 
-    auto pWidget = static_cast<CPDFSDK_Widget*>(pObserved.Get());
+    auto* pWidget = static_cast<CPDFSDK_Widget*>(pObserved.Get());
     CPDFSDK_PageView* pPageView = pWidget->GetPageView();
     if (!pPageView)
       return false;

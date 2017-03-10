@@ -56,7 +56,7 @@ CFDE_CSSStyleSelector::MatchDeclarations(const CFX_WideString& tagname) {
   if (m_UARules.CountSelectors() == 0 || tagname.IsEmpty())
     return matchedDecls;
 
-  auto rules = m_UARules.GetTagRuleData(tagname);
+  auto* rules = m_UARules.GetTagRuleData(tagname);
   if (!rules)
     return matchedDecls;
 
@@ -106,19 +106,19 @@ void CFDE_CSSStyleSelector::ApplyDeclarations(
   std::vector<const CFDE_CSSPropertyHolder*> normals;
   std::vector<const CFDE_CSSCustomProperty*> customs;
 
-  for (auto& decl : declArray)
+  for (auto* decl : declArray)
     ExtractValues(decl, &importants, &normals, &customs);
 
   if (extraDecl)
     ExtractValues(extraDecl, &importants, &normals, &customs);
 
-  for (auto& prop : normals)
+  for (auto* prop : normals)
     ApplyProperty(prop->eProperty, prop->pValue, pComputedStyle);
 
-  for (auto& prop : customs)
+  for (auto* prop : customs)
     pComputedStyle->AddCustomStyle(*prop);
 
-  for (auto& prop : importants)
+  for (auto* prop : importants)
     ApplyProperty(prop->eProperty, prop->pValue, pComputedStyle);
 }
 

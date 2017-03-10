@@ -144,7 +144,7 @@ bool CFX_CTTGSUBTable::GetVerticalGlyphSub2(uint32_t glyphnum,
   for (const auto& subTable : Lookup->SubTables) {
     switch (subTable->SubstFormat) {
       case 1: {
-        auto tbl1 = static_cast<TSingleSubstFormat1*>(subTable.get());
+        auto* tbl1 = static_cast<TSingleSubstFormat1*>(subTable.get());
         if (GetCoverageIndex(tbl1->Coverage.get(), glyphnum) >= 0) {
           *vglyphnum = glyphnum + tbl1->DeltaGlyphID;
           return true;
@@ -152,7 +152,7 @@ bool CFX_CTTGSUBTable::GetVerticalGlyphSub2(uint32_t glyphnum,
         break;
       }
       case 2: {
-        auto tbl2 = static_cast<TSingleSubstFormat2*>(subTable.get());
+        auto* tbl2 = static_cast<TSingleSubstFormat2*>(subTable.get());
         int index = GetCoverageIndex(tbl2->Coverage.get(), glyphnum);
         if (index >= 0 &&
             index < pdfium::CollectionSize<int>(tbl2->Substitutes)) {

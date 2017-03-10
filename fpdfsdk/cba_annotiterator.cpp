@@ -73,7 +73,7 @@ CPDFSDK_Annot* CBA_AnnotIterator::GetPrevAnnot(CPDFSDK_Annot* pAnnot) {
 }
 
 void CBA_AnnotIterator::CollectAnnots(std::vector<CPDFSDK_Annot*>* pArray) {
-  for (auto pAnnot : m_pPageView->GetAnnotList()) {
+  for (auto* pAnnot : m_pPageView->GetAnnotList()) {
     if (pAnnot->GetAnnotSubtype() == m_nAnnotSubtype &&
         !pAnnot->IsSignatureWidget()) {
       pArray->push_back(pAnnot);

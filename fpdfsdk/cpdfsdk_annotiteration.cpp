@@ -33,7 +33,7 @@ CPDFSDK_AnnotIteration::CPDFSDK_AnnotIteration(CPDFSDK_PageView* pPageView,
     std::reverse(copiedList.begin(), copiedList.end());
 
   m_List.reserve(copiedList.size());
-  for (const auto& pAnnot : copiedList)
+  for (auto* pAnnot : copiedList)
     m_List.emplace_back(pAnnot);
 }
 

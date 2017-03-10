@@ -1505,7 +1505,7 @@ CFX_RetainPtr<CFGAS_GEFont> CXFA_WidgetAcc::GetFDEFont() {
     font.GetTypeface(wsFontName);
   }
 
-  auto pDoc = GetDoc();
+  auto* pDoc = GetDoc();
   return pDoc->GetApp()->GetXFAFontMgr()->GetFont(pDoc, wsFontName,
                                                   dwFontStyle);
 }

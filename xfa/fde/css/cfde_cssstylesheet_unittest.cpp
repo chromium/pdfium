@@ -143,7 +143,7 @@ TEST_F(CFDE_CSSStyleSheetTest, ParseChildSelectors) {
   CFDE_CSSStyleRule* style = sheet_->GetRule(0);
   EXPECT_EQ(1UL, style->CountSelectorLists());
 
-  auto sel = style->GetSelectorList(0);
+  auto* sel = style->GetSelectorList(0);
   EXPECT_TRUE(sel != nullptr);
   EXPECT_EQ(FX_HashCode_GetW(L"c", true), sel->GetNameHash());
 

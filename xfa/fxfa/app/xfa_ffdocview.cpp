@@ -633,12 +633,12 @@ void CXFA_FFDocView::AddCalculateWidgetAcc(CXFA_WidgetAcc* pWidgetAcc) {
 }
 
 void CXFA_FFDocView::AddCalculateNodeNotify(CXFA_Node* pNodeChange) {
-  auto pGlobalData =
+  auto* pGlobalData =
       static_cast<CXFA_CalcData*>(pNodeChange->GetUserData(XFA_CalcData));
   if (!pGlobalData)
     return;
 
-  for (const auto& pResultAcc : pGlobalData->m_Globals) {
+  for (auto* pResultAcc : pGlobalData->m_Globals) {
     if (!pResultAcc->GetNode()->HasRemovedChildren())
       AddCalculateWidgetAcc(pResultAcc);
   }
@@ -723,7 +723,7 @@ bool CXFA_FFDocView::RunEventLayoutReady() {
   return true;
 }
 void CXFA_FFDocView::RunBindItems() {
-  for (const auto& item : m_BindItems) {
+  for (auto* item : m_BindItems) {
     if (item->HasRemovedChildren())
       continue;
 

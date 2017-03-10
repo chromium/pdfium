@@ -36,7 +36,7 @@ int TT2PDF(int m, FXFT_Face face) {
 }
 
 bool FT_UseTTCharmap(FXFT_Face face, int platform_id, int encoding_id) {
-  auto* pCharMap = FXFT_Get_Face_Charmaps(face);
+  auto** pCharMap = FXFT_Get_Face_Charmaps(face);
   for (int i = 0; i < FXFT_Get_Face_CharmapCount(face); i++) {
     if (FXFT_Get_Charmap_PlatformID(pCharMap[i]) == platform_id &&
         FXFT_Get_Charmap_EncodingID(pCharMap[i]) == encoding_id) {

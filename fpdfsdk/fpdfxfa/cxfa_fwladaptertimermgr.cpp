@@ -66,7 +66,7 @@ void CXFA_FWLAdapterTimerMgr::TimerProc(int32_t idEvent) {
   if (!s_TimerArray)
     return;
 
-  for (const auto info : *s_TimerArray) {
+  for (auto* info : *s_TimerArray) {
     CFWL_FWLAdapterTimerInfo* pInfo =
         static_cast<CFWL_FWLAdapterTimerInfo*>(info);
     if (pInfo->idEvent == idEvent) {

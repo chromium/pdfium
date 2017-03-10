@@ -163,7 +163,7 @@ struct AbbrReplacementOp {
 CFX_ByteStringC FindFullName(const AbbrPair* table,
                              size_t count,
                              const CFX_ByteStringC& abbr) {
-  auto it = std::find_if(table, table + count, [abbr](const AbbrPair& pair) {
+  auto* it = std::find_if(table, table + count, [abbr](const AbbrPair& pair) {
     return pair.abbr == abbr;
   });
   return it != table + count ? CFX_ByteStringC(it->full_name)
