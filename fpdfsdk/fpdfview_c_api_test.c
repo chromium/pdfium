@@ -168,6 +168,7 @@ int CheckPDFiumCApi() {
 
     // fpdf_searchex.h
     CHK(FPDFText_GetCharIndexFromTextIndex);
+    CHK(FPDFText_GetTextIndexFromCharIndex);
 
     // fpdf_structtree.h
     CHK(FPDF_StructTree_GetForPage);

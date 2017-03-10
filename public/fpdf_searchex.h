@@ -23,6 +23,15 @@ extern "C" {
 DLLEXPORT int STDCALL
 FPDFText_GetCharIndexFromTextIndex(FPDF_TEXTPAGE text_page, int nTextIndex);
 
+// Get the text index in |text_page| internal character list.
+//
+//   text_page  - a text page information structure.
+//   nCharIndex - index of the character in internal character list.
+//
+// Returns the index of the text returned from |FPDFText_GetText|. -1 for error.
+DLLEXPORT int STDCALL
+FPDFText_GetTextIndexFromCharIndex(FPDF_TEXTPAGE text_page, int nCharIndex);
+
 #ifdef __cplusplus
 }  // extern "C"
 #endif  // __cplusplus

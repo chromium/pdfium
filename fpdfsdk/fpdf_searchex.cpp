@@ -15,3 +15,11 @@ FPDFText_GetCharIndexFromTextIndex(FPDF_TEXTPAGE text_page, int nTextIndex) {
   return static_cast<CPDF_TextPage*>(text_page)
       ->CharIndexFromTextIndex(nTextIndex);
 }
+
+DLLEXPORT int STDCALL
+FPDFText_GetTextIndexFromCharIndex(FPDF_TEXTPAGE text_page, int nCharIndex) {
+  if (!text_page)
+    return -1;
+  return static_cast<CPDF_TextPage*>(text_page)->TextIndexFromCharIndex(
+      nCharIndex);
+}
