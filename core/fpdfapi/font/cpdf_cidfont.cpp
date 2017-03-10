@@ -113,6 +113,10 @@ const struct CIDTransform {
     {8818, 0, 129, 127, 0, 19, 114}, {8819, 0, 129, 127, 0, 218, 108},
 };
 
+// Boundary values to avoid integer overflow when multiplied by 1000.
+const long kMinCBox = -2147483;
+const long kMaxCBox = 2147483;
+
 CPDF_FontGlobals* GetFontGlobals() {
   return CPDF_ModuleMgr::Get()->GetPageModule()->GetFontGlobals();
 }
@@ -440,11 +444,15 @@ FX_RECT CPDF_CIDFont::GetCharBBox(uint32_t charcode) {
       int err = FXFT_Load_Glyph(face, glyph_index,
                                 FXFT_LOAD_IGNORE_GLOBAL_ADVANCE_WIDTH);
       if (!err) {
-        FXFT_BBox cbox;
         FXFT_Glyph glyph;
         err = FXFT_Get_Glyph(((FXFT_Face)face)->glyph, &glyph);
         if (!err) {
+          FXFT_BBox cbox;
           FXFT_Glyph_Get_CBox(glyph, FXFT_GLYPH_BBOX_PIXELS, &cbox);
+          cbox.xMin = std::min(std::max(cbox.xMin, kMinCBox), kMaxCBox);
+          cbox.xMax = std::min(std::max(cbox.xMax, kMinCBox), kMaxCBox);
+          cbox.yMin = std::min(std::max(cbox.yMin, kMinCBox), kMaxCBox);
+          cbox.yMax = std::min(std::max(cbox.yMax, kMinCBox), kMaxCBox);
           int pixel_size_x = ((FXFT_Face)face)->size->metrics.x_ppem;
           int pixel_size_y = ((FXFT_Face)face)->size->metrics.y_ppem;
           if (pixel_size_x == 0 || pixel_size_y == 0) {
