@@ -1745,6 +1745,7 @@ test("pdfium_unittests") {
     "core/fpdfapi/edit/cpdf_pagecontentgenerator_unittest.cpp",
     "core/fpdfapi/font/fpdf_font_cid_unittest.cpp",
     "core/fpdfapi/font/fpdf_font_unittest.cpp",
+    "core/fpdfapi/page/cpdf_devicecs_unittest.cpp",
     "core/fpdfapi/page/cpdf_streamcontentparser_unittest.cpp",
     "core/fpdfapi/page/cpdf_streamparser_unittest.cpp",
     "core/fpdfapi/parser/cpdf_array_unittest.cpp",

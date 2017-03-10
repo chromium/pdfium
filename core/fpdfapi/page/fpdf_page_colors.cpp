@@ -46,13 +46,7 @@ void sRGB_to_AdobeCMYK(FX_FLOAT R,
   c = 1.0f - R;
   m = 1.0f - G;
   y = 1.0f - B;
-  k = c;
-  if (m < k) {
-    k = m;
-  }
-  if (y < k) {
-    k = y;
-  }
+  k = std::min(c, std::min(m, y));
 }
 
 void ReverseRGB(uint8_t* pDestBuf, const uint8_t* pSrcBuf, int pixels) {
@@ -101,7 +95,9 @@ bool CPDF_DeviceCS::GetRGB(FX_FLOAT* pBuf,
         G = 1.0f - std::min(1.0f, pBuf[1] + k);
         B = 1.0f - std::min(1.0f, pBuf[2] + k);
       } else {
-        AdobeCMYK_to_sRGB(pBuf[0], pBuf[1], pBuf[2], pBuf[3], R, G, B);
+        AdobeCMYK_to_sRGB(NormalizeChannel(pBuf[0]), NormalizeChannel(pBuf[1]),
+                          NormalizeChannel(pBuf[2]), NormalizeChannel(pBuf[3]),
+                          R, G, B);
       }
       break;
     default:
