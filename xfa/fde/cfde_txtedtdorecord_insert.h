@@ -17,7 +17,7 @@ class CFDE_TxtEdtDoRecord_Insert : public IFDE_TxtEdtDoRecord {
  public:
   CFDE_TxtEdtDoRecord_Insert(CFDE_TxtEdtEngine* pEngine,
                              int32_t nCaret,
-                             const FX_WCHAR* lpText,
+                             const wchar_t* lpText,
                              int32_t nLength);
   ~CFDE_TxtEdtDoRecord_Insert() override;
 

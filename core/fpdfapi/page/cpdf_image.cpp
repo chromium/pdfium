@@ -88,7 +88,7 @@ std::unique_ptr<CPDF_Dictionary> CPDF_Image::InitJPEG(uint8_t* pData,
   pDict->SetNewFor<CPDF_Name>("Subtype", "Image");
   pDict->SetNewFor<CPDF_Number>("Width", width);
   pDict->SetNewFor<CPDF_Number>("Height", height);
-  const FX_CHAR* csname = nullptr;
+  const char* csname = nullptr;
   if (num_comps == 1) {
     csname = "DeviceGray";
   } else if (num_comps == 3) {
@@ -200,13 +200,13 @@ void CPDF_Image::SetImage(const CFX_DIBitmap* pBitmap) {
       pCS->AddNew<CPDF_Name>("DeviceRGB");
       pCS->AddNew<CPDF_Number>(1);
       CFX_ByteString ct;
-      FX_CHAR* pBuf = ct.GetBuffer(6);
-      pBuf[0] = (FX_CHAR)reset_r;
-      pBuf[1] = (FX_CHAR)reset_g;
-      pBuf[2] = (FX_CHAR)reset_b;
-      pBuf[3] = (FX_CHAR)set_r;
-      pBuf[4] = (FX_CHAR)set_g;
-      pBuf[5] = (FX_CHAR)set_b;
+      char* pBuf = ct.GetBuffer(6);
+      pBuf[0] = (char)reset_r;
+      pBuf[1] = (char)reset_g;
+      pBuf[2] = (char)reset_b;
+      pBuf[3] = (char)set_r;
+      pBuf[4] = (char)set_g;
+      pBuf[5] = (char)set_b;
       ct.ReleaseBuffer(6);
       pCS->AddNew<CPDF_String>(ct, true);
     }

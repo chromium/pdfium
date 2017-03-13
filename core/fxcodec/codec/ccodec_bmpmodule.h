@@ -33,7 +33,7 @@ class CCodec_BmpModule : public ICodec_BmpModule {
   int32_t LoadImage(FXBMP_Context* pContext) override;
 
  protected:
-  FX_CHAR m_szLastError[256];
+  char m_szLastError[256];
 };
 
 #endif  // CORE_FXCODEC_CODEC_CCODEC_BMPMODULE_H_

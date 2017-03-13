@@ -34,15 +34,15 @@
 namespace {
 
 const struct {
-  const FX_CHAR* m_pFaceName;
-  const FX_CHAR* m_pVariantName;
+  const char* m_pFaceName;
+  const char* m_pVariantName;
 } g_VariantNames[] = {
     {"DFKai-SB", "\x19\x6A\x77\x69\xD4\x9A"},
 };
 
 const struct {
-  const FX_CHAR* m_pName;
-  const FX_CHAR* m_pWinName;
+  const char* m_pName;
+  const char* m_pWinName;
   bool m_bBold;
   bool m_bItalic;
 } g_Base14Substs[] = {
@@ -61,8 +61,8 @@ const struct {
 };
 
 struct FontNameMap {
-  const FX_CHAR* m_pSubFontName;
-  const FX_CHAR* m_pSrcFontName;
+  const char* m_pSubFontName;
+  const char* m_pSrcFontName;
 };
 const FontNameMap g_JpFontNameMap[] = {
     {"MS Mincho", "Heiseimin-W3"},
@@ -324,7 +324,7 @@ class CFX_Win32FallbackFontInfo final : public CFX_FolderFontInfo {
                 bool bItalic,
                 int charset,
                 int pitch_family,
-                const FX_CHAR* family,
+                const char* family,
                 int& iExact) override;
 };
 
@@ -339,9 +339,9 @@ class CFX_Win32FontInfo final : public IFX_SystemFontInfo {
                 bool bItalic,
                 int charset,
                 int pitch_family,
-                const FX_CHAR* face,
+                const char* face,
                 int& iExact) override;
-  void* GetFont(const FX_CHAR* face) override { return nullptr; }
+  void* GetFont(const char* face) override { return nullptr; }
   uint32_t GetFontData(void* hFont,
                        uint32_t table,
                        uint8_t* buffer,
@@ -476,7 +476,7 @@ void* CFX_Win32FallbackFontInfo::MapFont(int weight,
                                          bool bItalic,
                                          int charset,
                                          int pitch_family,
-                                         const FX_CHAR* cstr_face,
+                                         const char* cstr_face,
                                          int& iExact) {
   void* font = GetSubstFont(cstr_face);
   if (font) {
@@ -569,7 +569,7 @@ void* CFX_Win32FontInfo::MapFont(int weight,
                                  bool bItalic,
                                  int charset,
                                  int pitch_family,
-                                 const FX_CHAR* cstr_face,
+                                 const char* cstr_face,
                                  int& iExact) {
   CFX_ByteString face = cstr_face;
   int iBaseFont;

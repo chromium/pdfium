@@ -44,7 +44,7 @@ CFX_WideString MakeLetters(int num) {
 
   int count = num / nLetterCount + 1;
   count %= nMaxCount;
-  FX_WCHAR ch = L'a' + num % nLetterCount;
+  wchar_t ch = L'a' + num % nLetterCount;
   for (int i = 0; i < count; i++)
     wsLetters += ch;
   return wsLetters;

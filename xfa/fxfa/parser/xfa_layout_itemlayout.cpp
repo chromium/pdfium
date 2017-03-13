@@ -26,17 +26,17 @@
 
 namespace {
 
-std::vector<CFX_WideString> SeparateStringW(const FX_WCHAR* pStr,
+std::vector<CFX_WideString> SeparateStringW(const wchar_t* pStr,
                                             int32_t iStrLen,
-                                            FX_WCHAR delimiter) {
+                                            wchar_t delimiter) {
   std::vector<CFX_WideString> ret;
   if (!pStr)
     return ret;
   if (iStrLen < 0)
     iStrLen = FXSYS_wcslen(pStr);
 
-  const FX_WCHAR* pToken = pStr;
-  const FX_WCHAR* pEnd = pStr + iStrLen;
+  const wchar_t* pToken = pStr;
+  const wchar_t* pEnd = pStr + iStrLen;
   while (true) {
     if (pStr >= pEnd || delimiter == *pStr) {
       ret.push_back(CFX_WideString(pToken, pStr - pToken));

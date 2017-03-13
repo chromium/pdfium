@@ -20,13 +20,13 @@ void CPSOutput::Release() {
   delete this;
 }
 
-void CPSOutput::OutputPS(const FX_CHAR* str, int len) {
+void CPSOutput::OutputPS(const char* str, int len) {
   if (len < 0)
     len = static_cast<int>(FXSYS_strlen(str));
 
   int sent_len = 0;
   while (len > 0) {
-    FX_CHAR buffer[1026];
+    char buffer[1026];
     int send_len = std::min(len, 1024);
     *(reinterpret_cast<uint16_t*>(buffer)) = send_len;
     FXSYS_memcpy(buffer + 2, str + sent_len, send_len);

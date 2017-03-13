@@ -19,7 +19,7 @@ class CFDE_CSSSelector {
       const CFX_WideStringC& str);
 
   CFDE_CSSSelector(FDE_CSSSelectorType eType,
-                   const FX_WCHAR* psz,
+                   const wchar_t* psz,
                    int32_t iLen,
                    bool bIgnoreCase);
   ~CFDE_CSSSelector();

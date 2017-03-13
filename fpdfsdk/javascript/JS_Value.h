@@ -38,8 +38,8 @@ class CJS_Value {
   CJS_Value(CJS_Runtime* pRuntime, const float& fValue);
   CJS_Value(CJS_Runtime* pRuntime, const bool& bValue);
   CJS_Value(CJS_Runtime* pRuntime, CJS_Object* pObj);
-  CJS_Value(CJS_Runtime* pRuntime, const FX_CHAR* pStr);
-  CJS_Value(CJS_Runtime* pRuntime, const FX_WCHAR* pWstr);
+  CJS_Value(CJS_Runtime* pRuntime, const char* pStr);
+  CJS_Value(CJS_Runtime* pRuntime, const wchar_t* pWstr);
   CJS_Value(CJS_Runtime* pRuntime, const CJS_Array& array);
   CJS_Value(CJS_Runtime* pRuntime, const CJS_Date& date);
   CJS_Value(CJS_Runtime* pRuntime, const CJS_Object* object);
@@ -107,7 +107,7 @@ class CJS_PropValue {
   void operator>>(CFX_ByteString&) const;
   void operator<<(CFX_WideString);
   void operator>>(CFX_WideString&) const;
-  void operator<<(const FX_WCHAR* c_string);
+  void operator<<(const wchar_t* c_string);
   void operator<<(v8::Local<v8::Object>);
   void operator>>(v8::Local<v8::Object>&) const;
   void operator>>(CJS_Array& array) const;

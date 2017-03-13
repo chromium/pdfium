@@ -225,7 +225,7 @@ CFX_WideStringC GetAttributeDefaultValue_Cdata(XFA_Element eElement,
   void* pValue;
   if (XFA_GetAttributeDefaultValue(pValue, eElement, eAttribute,
                                    XFA_ATTRIBUTETYPE_Cdata, dwPacket)) {
-    return (const FX_WCHAR*)pValue;
+    return (const wchar_t*)pValue;
   }
   return nullptr;
 }
@@ -1292,24 +1292,24 @@ bool CXFA_WidgetData::GetBarcodeAttribute_DataLength(int32_t& val) {
   return false;
 }
 
-bool CXFA_WidgetData::GetBarcodeAttribute_StartChar(FX_CHAR& val) {
+bool CXFA_WidgetData::GetBarcodeAttribute_StartChar(char& val) {
   CXFA_Node* pUIChild = GetUIChild();
   CFX_WideStringC wsStartEndChar;
   if (pUIChild->TryCData(XFA_ATTRIBUTE_StartChar, wsStartEndChar)) {
     if (wsStartEndChar.GetLength()) {
-      val = (FX_CHAR)wsStartEndChar.GetAt(0);
+      val = (char)wsStartEndChar.GetAt(0);
       return true;
     }
   }
   return false;
 }
 
-bool CXFA_WidgetData::GetBarcodeAttribute_EndChar(FX_CHAR& val) {
+bool CXFA_WidgetData::GetBarcodeAttribute_EndChar(char& val) {
   CXFA_Node* pUIChild = GetUIChild();
   CFX_WideStringC wsStartEndChar;
   if (pUIChild->TryCData(XFA_ATTRIBUTE_EndChar, wsStartEndChar)) {
     if (wsStartEndChar.GetLength()) {
-      val = (FX_CHAR)wsStartEndChar.GetAt(0);
+      val = (char)wsStartEndChar.GetAt(0);
       return true;
     }
   }
@@ -1919,7 +1919,7 @@ CFX_WideString CXFA_WidgetData::NumericLimit(const CFX_WideString& wsValue,
     i++;
   }
   for (; i < iCount; i++) {
-    FX_WCHAR wc = wsValue[i];
+    wchar_t wc = wsValue[i];
     if (FXSYS_isDecimalDigit(wc)) {
       if (iLead >= 0) {
         iLead_++;

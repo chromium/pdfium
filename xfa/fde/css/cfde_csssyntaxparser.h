@@ -40,7 +40,7 @@ class CFDE_CSSSyntaxParser {
   CFDE_CSSSyntaxParser();
   ~CFDE_CSSSyntaxParser();
 
-  bool Init(const FX_WCHAR* pBuffer,
+  bool Init(const wchar_t* pBuffer,
             int32_t iBufferSize,
             int32_t iTextDatSize = 32,
             bool bOnlyDeclaration = false);
@@ -53,7 +53,7 @@ class CFDE_CSSSyntaxParser {
   int32_t SwitchToComment();
 
   bool RestoreMode();
-  bool AppendChar(FX_WCHAR wch);
+  bool AppendChar(wchar_t wch);
   int32_t SaveTextData();
   bool IsCharsetEnabled() const {
     return (m_dwCheck & FDE_CSSSYNTAXCHECK_AllowCharset) != 0;

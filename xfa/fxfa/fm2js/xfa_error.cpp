@@ -6,12 +6,12 @@
 
 #include "xfa/fxfa/fm2js/xfa_error.h"
 
-const FX_WCHAR kFMErrUnsupportedChar[] = L"unsupported char '%c'";
-const FX_WCHAR kFMErrBadSuffixNumber[] = L"bad suffix on number";
-const FX_WCHAR kFMErrExpectedIdentifier[] =
+const wchar_t kFMErrUnsupportedChar[] = L"unsupported char '%c'";
+const wchar_t kFMErrBadSuffixNumber[] = L"bad suffix on number";
+const wchar_t kFMErrExpectedIdentifier[] =
     L"expected identifier instead of '%s'";
-const FX_WCHAR kFMErrExpectedToken[] = L"expected '%s' instead of '%s'";
-const FX_WCHAR kFMErrExpectedEndIf[] = L"expected 'endif' instead of '%s'";
-const FX_WCHAR kFMErrUnexpectedExpression[] = L"unexpected expression '%s'";
-const FX_WCHAR kFMErrExpectedNonEmptyExpression[] =
+const wchar_t kFMErrExpectedToken[] = L"expected '%s' instead of '%s'";
+const wchar_t kFMErrExpectedEndIf[] = L"expected 'endif' instead of '%s'";
+const wchar_t kFMErrUnexpectedExpression[] = L"unexpected expression '%s'";
+const wchar_t kFMErrExpectedNonEmptyExpression[] =
     L"expected non-empty expression";

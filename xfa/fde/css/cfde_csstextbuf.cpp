@@ -27,9 +27,9 @@ void CFDE_CSSTextBuf::Reset() {
   m_iDatPos = m_iDatLen = m_iBufLen;
 }
 
-bool CFDE_CSSTextBuf::AttachBuffer(const FX_WCHAR* pBuffer, int32_t iBufLen) {
+bool CFDE_CSSTextBuf::AttachBuffer(const wchar_t* pBuffer, int32_t iBufLen) {
   Reset();
-  m_pBuffer = const_cast<FX_WCHAR*>(pBuffer);
+  m_pBuffer = const_cast<wchar_t*>(pBuffer);
   m_iDatLen = m_iBufLen = iBufLen;
   return m_bExtBuf = true;
 }
@@ -63,9 +63,9 @@ bool CFDE_CSSTextBuf::ExpandBuf(int32_t iDesiredSize) {
   if (m_bExtBuf)
     return false;
   if (!m_pBuffer)
-    m_pBuffer = FX_Alloc(FX_WCHAR, iDesiredSize);
+    m_pBuffer = FX_Alloc(wchar_t, iDesiredSize);
   else if (m_iBufLen != iDesiredSize)
-    m_pBuffer = FX_Realloc(FX_WCHAR, m_pBuffer, iDesiredSize);
+    m_pBuffer = FX_Realloc(wchar_t, m_pBuffer, iDesiredSize);
   else
     return true;
 
@@ -81,6 +81,6 @@ void CFDE_CSSTextBuf::Subtract(int32_t iStart, int32_t iLength) {
   ASSERT(iStart >= 0 && iLength >= 0);
 
   iLength = std::max(std::min(iLength, m_iDatLen - iStart), 0);
-  FXSYS_memmove(m_pBuffer, m_pBuffer + iStart, iLength * sizeof(FX_WCHAR));
+  FXSYS_memmove(m_pBuffer, m_pBuffer + iStart, iLength * sizeof(wchar_t));
   m_iDatLen = iLength;
 }

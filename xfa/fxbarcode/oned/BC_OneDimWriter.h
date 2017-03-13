@@ -96,7 +96,7 @@ class CBC_OneDimWriter : public CBC_Writer {
                                 int32_t startColor,
                                 int32_t& e);
 
-  FX_WCHAR Upper(FX_WCHAR ch);
+  wchar_t Upper(wchar_t ch);
 
   bool m_bPrintChecksum;
   int32_t m_iDataLenth;

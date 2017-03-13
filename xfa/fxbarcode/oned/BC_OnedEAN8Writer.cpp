@@ -65,7 +65,7 @@ bool CBC_OnedEAN8Writer::CheckContentValidity(const CFX_WideStringC& contents) {
 CFX_WideString CBC_OnedEAN8Writer::FilterContents(
     const CFX_WideStringC& contents) {
   CFX_WideString filtercontents;
-  FX_WCHAR ch;
+  wchar_t ch;
   for (int32_t i = 0; i < contents.GetLength(); i++) {
     ch = contents.GetAt(i);
     if (ch > 175) {

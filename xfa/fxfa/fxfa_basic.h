@@ -90,9 +90,9 @@ enum XFA_XDPPACKET_FLAGS {
 };
 struct XFA_PACKETINFO {
   uint32_t uHash;
-  const FX_WCHAR* pName;
+  const wchar_t* pName;
   XFA_XDPPACKET eName;
-  const FX_WCHAR* pURI;
+  const wchar_t* pURI;
   uint32_t eFlags;
 };
 
@@ -928,7 +928,7 @@ enum class XFA_Element : int32_t {
 };
 struct XFA_ELEMENTINFO {
   uint32_t uHash;
-  const FX_WCHAR* pName;
+  const wchar_t* pName;
   XFA_Element eName;
   uint32_t dwPackets;
   XFA_ObjectType eObjectType;
@@ -944,7 +944,7 @@ enum XFA_ATTRIBUTETYPE {
 };
 struct XFA_ATTRIBUTEINFO {
   uint32_t uHash;
-  const FX_WCHAR* pName;
+  const wchar_t* pName;
   XFA_ATTRIBUTE eName;
   XFA_ATTRIBUTETYPE eType;
   uint32_t dwPackets;
@@ -974,7 +974,7 @@ struct XFA_PROPERTY {
 
 struct XFA_ATTRIBUTEENUMINFO {
   uint32_t uHash;
-  const FX_WCHAR* pName;
+  const wchar_t* pName;
   XFA_ATTRIBUTEENUM eName;
 };
 
@@ -1004,7 +1004,7 @@ class CXFA_Object;
 typedef void (CXFA_Object::*XFA_METHOD_CALLBACK)(CFXJSE_Arguments* pArguments);
 struct XFA_METHODINFO {
   uint32_t uHash;
-  const FX_WCHAR* pName;
+  const wchar_t* pName;
   XFA_METHOD_CALLBACK lpfnCallback;
 };
 
@@ -1017,7 +1017,7 @@ enum XFA_SCRIPT_TYPE {
 };
 struct XFA_SCRIPTATTRIBUTEINFO {
   uint32_t uHash;
-  const FX_WCHAR* pName;
+  const wchar_t* pName;
   XFA_ATTRIBUTE_CALLBACK lpfnCallback;
   int32_t eAttribute;
   uint16_t eValueType;

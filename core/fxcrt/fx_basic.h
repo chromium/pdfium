@@ -70,7 +70,7 @@ class CFX_ByteTextBuf : public CFX_BinaryBuf {
   CFX_ByteTextBuf& operator<<(int i);
   CFX_ByteTextBuf& operator<<(uint32_t i);
   CFX_ByteTextBuf& operator<<(double f);
-  CFX_ByteTextBuf& operator<<(const FX_CHAR* pStr) {
+  CFX_ByteTextBuf& operator<<(const char* pStr) {
     return *this << CFX_ByteStringC(pStr);
   }
   CFX_ByteTextBuf& operator<<(const CFX_ByteString& str) {
@@ -82,29 +82,29 @@ class CFX_ByteTextBuf : public CFX_BinaryBuf {
 
 class CFX_WideTextBuf : public CFX_BinaryBuf {
  public:
-  void AppendChar(FX_WCHAR wch);
-  FX_STRSIZE GetLength() const { return m_DataSize / sizeof(FX_WCHAR); }
-  FX_WCHAR* GetBuffer() const {
-    return reinterpret_cast<FX_WCHAR*>(m_pBuffer.get());
+  void AppendChar(wchar_t wch);
+  FX_STRSIZE GetLength() const { return m_DataSize / sizeof(wchar_t); }
+  wchar_t* GetBuffer() const {
+    return reinterpret_cast<wchar_t*>(m_pBuffer.get());
   }
 
   CFX_WideStringC AsStringC() const {
-    return CFX_WideStringC(reinterpret_cast<const FX_WCHAR*>(m_pBuffer.get()),
-                           m_DataSize / sizeof(FX_WCHAR));
+    return CFX_WideStringC(reinterpret_cast<const wchar_t*>(m_pBuffer.get()),
+                           m_DataSize / sizeof(wchar_t));
   }
   CFX_WideString MakeString() const {
-    return CFX_WideString(reinterpret_cast<const FX_WCHAR*>(m_pBuffer.get()),
-                          m_DataSize / sizeof(FX_WCHAR));
+    return CFX_WideString(reinterpret_cast<const wchar_t*>(m_pBuffer.get()),
+                          m_DataSize / sizeof(wchar_t));
   }
 
   void Delete(int start_index, int count) {
-    CFX_BinaryBuf::Delete(start_index * sizeof(FX_WCHAR),
-                          count * sizeof(FX_WCHAR));
+    CFX_BinaryBuf::Delete(start_index * sizeof(wchar_t),
+                          count * sizeof(wchar_t));
   }
 
   CFX_WideTextBuf& operator<<(int i);
   CFX_WideTextBuf& operator<<(double f);
-  CFX_WideTextBuf& operator<<(const FX_WCHAR* lpsz);
+  CFX_WideTextBuf& operator<<(const wchar_t* lpsz);
   CFX_WideTextBuf& operator<<(const CFX_WideStringC& str);
   CFX_WideTextBuf& operator<<(const CFX_WideString& str);
   CFX_WideTextBuf& operator<<(const CFX_WideTextBuf& buf);
@@ -168,7 +168,7 @@ class CFX_UTF8Encoder {
  public:
   CFX_UTF8Encoder() {}
 
-  void Input(FX_WCHAR unicode);
+  void Input(wchar_t unicode);
   void AppendStr(const CFX_ByteStringC& str) { m_Buffer << str; }
   CFX_ByteStringC GetResult() const { return m_Buffer.AsStringC(); }
 

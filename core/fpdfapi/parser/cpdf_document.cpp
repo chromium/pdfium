@@ -231,8 +231,8 @@ CFX_ByteString FPDF_GetPSNameFromTT(HDC hDC) {
 
 void InsertWidthArray1(CFX_Font* pFont,
                        CFX_UnicodeEncoding* pEncoding,
-                       FX_WCHAR start,
-                       FX_WCHAR end,
+                       wchar_t start,
+                       wchar_t end,
                        CPDF_Array* pWidthArray) {
   int size = end - start + 1;
   int* widths = FX_Alloc(int, size);
@@ -765,7 +765,7 @@ void CPDF_Document::DeletePage(int iPage) {
   m_PageList.erase(m_PageList.begin() + iPage);
 }
 
-CPDF_Font* CPDF_Document::AddStandardFont(const FX_CHAR* font,
+CPDF_Font* CPDF_Document::AddStandardFont(const char* font,
                                           CPDF_FontEncoding* pEncoding) {
   CFX_ByteString name(font);
   if (PDF_GetStandardFontName(&name) < 0)
@@ -804,7 +804,7 @@ CPDF_Dictionary* CPDF_Document::ProcessbCJK(
     int charset,
     bool bVert,
     CFX_ByteString basefont,
-    std::function<void(FX_WCHAR, FX_WCHAR, CPDF_Array*)> Insert) {
+    std::function<void(wchar_t, wchar_t, CPDF_Array*)> Insert) {
   CPDF_Dictionary* pFontDict = NewIndirect<CPDF_Dictionary>();
   CFX_ByteString cmap;
   CFX_ByteString ordering;
@@ -914,12 +914,11 @@ CPDF_Font* CPDF_Document::AddFont(CFX_Font* pFont, int charset, bool bVert) {
     ProcessNonbCJK(pBaseDict, pFont->IsBold(), pFont->IsItalic(), basefont,
                    std::move(pWidths));
   } else {
-    pFontDict = ProcessbCJK(pBaseDict, charset, bVert, basefont,
-                            [pFont, &pEncoding](FX_WCHAR start, FX_WCHAR end,
-                                                CPDF_Array* widthArr) {
-                              InsertWidthArray1(pFont, pEncoding.get(), start,
-                                                end, widthArr);
-                            });
+    pFontDict = ProcessbCJK(
+        pBaseDict, charset, bVert, basefont,
+        [pFont, &pEncoding](wchar_t start, wchar_t end, CPDF_Array* widthArr) {
+          InsertWidthArray1(pFont, pEncoding.get(), start, end, widthArr);
+        });
   }
   int italicangle =
       pFont->GetSubstFont() ? pFont->GetSubstFont()->m_ItalicAngle : 0;
@@ -934,7 +933,7 @@ CPDF_Font* CPDF_Document::AddFont(CFX_Font* pFont, int charset, bool bVert) {
   if (pFont->GetSubstFont()) {
     nStemV = pFont->GetSubstFont()->m_Weight / 5;
   } else {
-    static const FX_CHAR stem_chars[] = {'i', 'I', '!', '1'};
+    static const char stem_chars[] = {'i', 'I', '!', '1'};
     const size_t count = FX_ArraySize(stem_chars);
     uint32_t glyph = pEncoding->GlyphFromCharCode(stem_chars[0]);
     nStemV = pFont->GetGlyphWidth(glyph);
@@ -1032,7 +1031,7 @@ CPDF_Font* CPDF_Document::AddWindowsFont(LOGFONTA* pLogFont,
   } else {
     pFontDict =
         ProcessbCJK(pBaseDict, pLogFont->lfCharSet, bVert, basefont,
-                    [&hDC](FX_WCHAR start, FX_WCHAR end, CPDF_Array* widthArr) {
+                    [&hDC](wchar_t start, wchar_t end, CPDF_Array* widthArr) {
                       InsertWidthArray(hDC, start, end, widthArr);
                     });
   }

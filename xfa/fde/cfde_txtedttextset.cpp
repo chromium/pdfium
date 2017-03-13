@@ -26,7 +26,7 @@ CFX_RectF CFDE_TxtEdtTextSet::GetRect(const FDE_TEXTEDITPIECE& pPiece) {
 
 int32_t CFDE_TxtEdtTextSet::GetString(FDE_TEXTEDITPIECE* pPiece,
                                       CFX_WideString& wsText) {
-  FX_WCHAR* pBuffer = wsText.GetBuffer(pPiece->nCount);
+  wchar_t* pBuffer = wsText.GetBuffer(pPiece->nCount);
   for (int32_t i = 0; i < pPiece->nCount; i++)
     pBuffer[i] = m_pPage->GetChar(pPiece, i);
 

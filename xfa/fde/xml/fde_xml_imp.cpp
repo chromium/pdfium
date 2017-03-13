@@ -24,7 +24,7 @@ const uint16_t g_XMLValidCharRange[][2] = {{0x09, 0x09},
                                            {0x20, 0xD7FF},
                                            {0xE000, 0xFFFD}};
 
-bool FDE_IsXMLWhiteSpace(FX_WCHAR ch) {
+bool FDE_IsXMLWhiteSpace(wchar_t ch) {
   return ch == L' ' || ch == 0x0A || ch == 0x0D || ch == 0x09;
 }
 
@@ -44,7 +44,7 @@ const FDE_XMLNAMECHAR g_XMLNameChars[] = {
     {0xF900, 0xFDCF, true}, {0xFDF0, 0xFFFD, true},
 };
 
-bool FDE_IsXMLNameChar(FX_WCHAR ch, bool bFirstChar) {
+bool FDE_IsXMLNameChar(wchar_t ch, bool bFirstChar) {
   int32_t iStart = 0;
   int32_t iEnd = FX_ArraySize(g_XMLNameChars) - 1;
   while (iStart <= iEnd) {
@@ -62,7 +62,7 @@ bool FDE_IsXMLNameChar(FX_WCHAR ch, bool bFirstChar) {
 
 }  // namespace
 
-bool FDE_IsXMLValidChar(FX_WCHAR ch) {
+bool FDE_IsXMLValidChar(wchar_t ch) {
   int32_t iStart = 0;
   int32_t iEnd = FX_ArraySize(g_XMLValidCharRange) - 1;
   while (iStart <= iEnd) {
@@ -137,7 +137,7 @@ int32_t CFDE_XMLNode::GetChildNodeIndex(CFDE_XMLNode* pNode) const {
   return -1;
 }
 
-CFDE_XMLNode* CFDE_XMLNode::GetPath(const FX_WCHAR* pPath,
+CFDE_XMLNode* CFDE_XMLNode::GetPath(const wchar_t* pPath,
                                     int32_t iLength,
                                     bool bQualifiedName) const {
   ASSERT(pPath);
@@ -148,9 +148,9 @@ CFDE_XMLNode* CFDE_XMLNode::GetPath(const FX_WCHAR* pPath,
     return nullptr;
   }
   CFX_WideString csPath;
-  const FX_WCHAR* pStart = pPath;
-  const FX_WCHAR* pEnd = pPath + iLength;
-  FX_WCHAR ch;
+  const wchar_t* pStart = pPath;
+  const wchar_t* pEnd = pPath + iLength;
+  wchar_t ch;
   while (pStart < pEnd) {
     ch = *pStart++;
     if (ch == L'/') {
@@ -562,7 +562,7 @@ bool CFDE_XMLInstruction::GetAttribute(int32_t index,
   return false;
 }
 
-bool CFDE_XMLInstruction::HasAttribute(const FX_WCHAR* pwsAttriName) const {
+bool CFDE_XMLInstruction::HasAttribute(const wchar_t* pwsAttriName) const {
   int32_t iCount = pdfium::CollectionSize<int32_t>(m_Attributes);
   for (int32_t i = 0; i < iCount; i += 2) {
     if (m_Attributes[i].Compare(pwsAttriName) == 0) {
@@ -572,9 +572,9 @@ bool CFDE_XMLInstruction::HasAttribute(const FX_WCHAR* pwsAttriName) const {
   return false;
 }
 
-void CFDE_XMLInstruction::GetString(const FX_WCHAR* pwsAttriName,
+void CFDE_XMLInstruction::GetString(const wchar_t* pwsAttriName,
                                     CFX_WideString& wsAttriValue,
-                                    const FX_WCHAR* pwsDefValue) const {
+                                    const wchar_t* pwsDefValue) const {
   int32_t iCount = pdfium::CollectionSize<int32_t>(m_Attributes);
   for (int32_t i = 0; i < iCount; i += 2) {
     if (m_Attributes[i].Compare(pwsAttriName) == 0) {
@@ -600,7 +600,7 @@ void CFDE_XMLInstruction::SetString(const CFX_WideString& wsAttriName,
   m_Attributes.push_back(wsAttriValue);
 }
 
-int32_t CFDE_XMLInstruction::GetInteger(const FX_WCHAR* pwsAttriName,
+int32_t CFDE_XMLInstruction::GetInteger(const wchar_t* pwsAttriName,
                                         int32_t iDefValue) const {
   int32_t iCount = pdfium::CollectionSize<int32_t>(m_Attributes);
   for (int32_t i = 0; i < iCount; i += 2) {
@@ -611,14 +611,14 @@ int32_t CFDE_XMLInstruction::GetInteger(const FX_WCHAR* pwsAttriName,
   return iDefValue;
 }
 
-void CFDE_XMLInstruction::SetInteger(const FX_WCHAR* pwsAttriName,
+void CFDE_XMLInstruction::SetInteger(const wchar_t* pwsAttriName,
                                      int32_t iAttriValue) {
   CFX_WideString wsValue;
   wsValue.Format(L"%d", iAttriValue);
   SetString(pwsAttriName, wsValue);
 }
 
-FX_FLOAT CFDE_XMLInstruction::GetFloat(const FX_WCHAR* pwsAttriName,
+FX_FLOAT CFDE_XMLInstruction::GetFloat(const wchar_t* pwsAttriName,
                                        FX_FLOAT fDefValue) const {
   int32_t iCount = pdfium::CollectionSize<int32_t>(m_Attributes);
   for (int32_t i = 0; i < iCount; i += 2) {
@@ -629,14 +629,14 @@ FX_FLOAT CFDE_XMLInstruction::GetFloat(const FX_WCHAR* pwsAttriName,
   return fDefValue;
 }
 
-void CFDE_XMLInstruction::SetFloat(const FX_WCHAR* pwsAttriName,
+void CFDE_XMLInstruction::SetFloat(const wchar_t* pwsAttriName,
                                    FX_FLOAT fAttriValue) {
   CFX_WideString wsValue;
   wsValue.Format(L"%f", fAttriValue);
   SetString(pwsAttriName, wsValue);
 }
 
-void CFDE_XMLInstruction::RemoveAttribute(const FX_WCHAR* pwsAttriName) {
+void CFDE_XMLInstruction::RemoveAttribute(const wchar_t* pwsAttriName) {
   int32_t iCount = pdfium::CollectionSize<int32_t>(m_Attributes);
   for (int32_t i = 0; i < iCount; i += 2) {
     if (m_Attributes[i].Compare(pwsAttriName) == 0) {
@@ -774,7 +774,7 @@ bool CFDE_XMLElement::GetAttribute(int32_t index,
   return false;
 }
 
-bool CFDE_XMLElement::HasAttribute(const FX_WCHAR* pwsAttriName) const {
+bool CFDE_XMLElement::HasAttribute(const wchar_t* pwsAttriName) const {
   int32_t iCount = pdfium::CollectionSize<int32_t>(m_Attributes);
   for (int32_t i = 0; i < iCount; i += 2) {
     if (m_Attributes[i].Compare(pwsAttriName) == 0)
@@ -783,9 +783,9 @@ bool CFDE_XMLElement::HasAttribute(const FX_WCHAR* pwsAttriName) const {
   return false;
 }
 
-void CFDE_XMLElement::GetString(const FX_WCHAR* pwsAttriName,
+void CFDE_XMLElement::GetString(const wchar_t* pwsAttriName,
                                 CFX_WideString& wsAttriValue,
-                                const FX_WCHAR* pwsDefValue) const {
+                                const wchar_t* pwsDefValue) const {
   int32_t iCount = pdfium::CollectionSize<int32_t>(m_Attributes);
   for (int32_t i = 0; i < iCount; i += 2) {
     if (m_Attributes[i].Compare(pwsAttriName) == 0) {
@@ -811,7 +811,7 @@ void CFDE_XMLElement::SetString(const CFX_WideString& wsAttriName,
   m_Attributes.push_back(wsAttriValue);
 }
 
-int32_t CFDE_XMLElement::GetInteger(const FX_WCHAR* pwsAttriName,
+int32_t CFDE_XMLElement::GetInteger(const wchar_t* pwsAttriName,
                                     int32_t iDefValue) const {
   int32_t iCount = pdfium::CollectionSize<int32_t>(m_Attributes);
   for (int32_t i = 0; i < iCount; i += 2) {
@@ -822,14 +822,14 @@ int32_t CFDE_XMLElement::GetInteger(const FX_WCHAR* pwsAttriName,
   return iDefValue;
 }
 
-void CFDE_XMLElement::SetInteger(const FX_WCHAR* pwsAttriName,
+void CFDE_XMLElement::SetInteger(const wchar_t* pwsAttriName,
                                  int32_t iAttriValue) {
   CFX_WideString wsValue;
   wsValue.Format(L"%d", iAttriValue);
   SetString(pwsAttriName, wsValue);
 }
 
-FX_FLOAT CFDE_XMLElement::GetFloat(const FX_WCHAR* pwsAttriName,
+FX_FLOAT CFDE_XMLElement::GetFloat(const wchar_t* pwsAttriName,
                                    FX_FLOAT fDefValue) const {
   int32_t iCount = pdfium::CollectionSize<int32_t>(m_Attributes);
   for (int32_t i = 0; i < iCount; i += 2) {
@@ -840,14 +840,14 @@ FX_FLOAT CFDE_XMLElement::GetFloat(const FX_WCHAR* pwsAttriName,
   return fDefValue;
 }
 
-void CFDE_XMLElement::SetFloat(const FX_WCHAR* pwsAttriName,
+void CFDE_XMLElement::SetFloat(const wchar_t* pwsAttriName,
                                FX_FLOAT fAttriValue) {
   CFX_WideString wsValue;
   wsValue.Format(L"%f", fAttriValue);
   SetString(pwsAttriName, wsValue);
 }
 
-void CFDE_XMLElement::RemoveAttribute(const FX_WCHAR* pwsAttriName) {
+void CFDE_XMLElement::RemoveAttribute(const wchar_t* pwsAttriName) {
   int32_t iCount = pdfium::CollectionSize<int32_t>(m_Attributes);
   for (int32_t i = 0; i < iCount; i += 2) {
     if (m_Attributes[i].Compare(pwsAttriName) == 0) {
@@ -1112,14 +1112,14 @@ CFDE_BlockBuffer::~CFDE_BlockBuffer() {
   ClearBuffer();
 }
 
-FX_WCHAR* CFDE_BlockBuffer::GetAvailableBlock(int32_t& iIndexInBlock) {
+wchar_t* CFDE_BlockBuffer::GetAvailableBlock(int32_t& iIndexInBlock) {
   iIndexInBlock = 0;
   if (!m_BlockArray.GetSize()) {
     return nullptr;
   }
   int32_t iRealIndex = m_iStartPosition + m_iDataLength;
   if (iRealIndex == m_iBufferSize) {
-    FX_WCHAR* pBlock = FX_Alloc(FX_WCHAR, m_iAllocStep);
+    wchar_t* pBlock = FX_Alloc(wchar_t, m_iAllocStep);
     m_BlockArray.Add(pBlock);
     m_iBufferSize += m_iAllocStep;
     return pBlock;
@@ -1132,13 +1132,13 @@ bool CFDE_BlockBuffer::InitBuffer(int32_t iBufferSize) {
   ClearBuffer();
   int32_t iNumOfBlock = (iBufferSize - 1) / m_iAllocStep + 1;
   for (int32_t i = 0; i < iNumOfBlock; i++) {
-    m_BlockArray.Add(FX_Alloc(FX_WCHAR, m_iAllocStep));
+    m_BlockArray.Add(FX_Alloc(wchar_t, m_iAllocStep));
   }
   m_iBufferSize = iNumOfBlock * m_iAllocStep;
   return true;
 }
 
-void CFDE_BlockBuffer::SetTextChar(int32_t iIndex, FX_WCHAR ch) {
+void CFDE_BlockBuffer::SetTextChar(int32_t iIndex, wchar_t ch) {
   if (iIndex < 0) {
     return;
   }
@@ -1149,12 +1149,12 @@ void CFDE_BlockBuffer::SetTextChar(int32_t iIndex, FX_WCHAR ch) {
   if (iBlockIndex >= iBlockSize) {
     int32_t iNewBlocks = iBlockIndex - iBlockSize + 1;
     do {
-      FX_WCHAR* pBlock = FX_Alloc(FX_WCHAR, m_iAllocStep);
+      wchar_t* pBlock = FX_Alloc(wchar_t, m_iAllocStep);
       m_BlockArray.Add(pBlock);
       m_iBufferSize += m_iAllocStep;
     } while (--iNewBlocks);
   }
-  FX_WCHAR* pTextData = m_BlockArray[iBlockIndex];
+  wchar_t* pTextData = m_BlockArray[iBlockIndex];
   *(pTextData + iInnerIndex) = ch;
   if (m_iDataLength <= iIndex) {
     m_iDataLength = iIndex + 1;
@@ -1192,7 +1192,7 @@ void CFDE_BlockBuffer::GetTextData(CFX_WideString& wsTextData,
   if (iLength <= 0) {
     return;
   }
-  FX_WCHAR* pBuf = wsTextData.GetBuffer(iLength);
+  wchar_t* pBuf = wsTextData.GetBuffer(iLength);
   if (!pBuf) {
     return;
   }
@@ -1213,9 +1213,9 @@ void CFDE_BlockBuffer::GetTextData(CFX_WideString& wsTextData,
     if (i == iEndBlockIndex) {
       iCopyLength -= ((m_iAllocStep - 1) - iEndInnerIndex);
     }
-    FX_WCHAR* pBlockBuf = m_BlockArray[i];
+    wchar_t* pBlockBuf = m_BlockArray[i];
     FXSYS_memcpy(pBuf + iPointer, pBlockBuf + iBufferPointer,
-                 iCopyLength * sizeof(FX_WCHAR));
+                 iCopyLength * sizeof(wchar_t));
     iPointer += iCopyLength;
   }
   wsTextData.ReleaseBuffer(iLength);
@@ -1286,7 +1286,7 @@ void CFDE_XMLSyntaxParser::Init(const CFX_RetainPtr<IFGAS_Stream>& pStream,
   }
 
   m_pBuffer = FX_Alloc(
-      FX_WCHAR, pdfium::base::ValueOrDieForType<size_t>(alloc_size_safe));
+      wchar_t, pdfium::base::ValueOrDieForType<size_t>(alloc_size_safe));
   m_pStart = m_pEnd = m_pBuffer;
   ASSERT(!m_BlockBuffer.IsInitialized());
   m_BlockBuffer.InitBuffer();
@@ -1330,7 +1330,7 @@ FDE_XmlSyntaxResult CFDE_XMLSyntaxParser::DoSyntaxParse() {
     }
 
     while (m_pStart < m_pEnd) {
-      FX_WCHAR ch = *m_pStart;
+      wchar_t ch = *m_pStart;
       switch (m_syntaxParserState) {
         case FDE_XmlSyntaxState::Text:
           if (ch == L'<') {
@@ -1778,7 +1778,7 @@ int32_t CFDE_XMLSyntaxParser::GetStatus() const {
   return m_iParsedBytes * 100 / iStreamLength;
 }
 
-static int32_t FX_GetUTF8EncodeLength(const FX_WCHAR* pSrc, int32_t iSrcLen) {
+static int32_t FX_GetUTF8EncodeLength(const wchar_t* pSrc, int32_t iSrcLen) {
   uint32_t unicode = 0;
   int32_t iDstNum = 0;
   while (iSrcLen-- > 0) {
@@ -1811,7 +1811,7 @@ FX_FILESIZE CFDE_XMLSyntaxParser::GetCurrentBinaryPos() const {
   return m_iParsedBytes + nDstLen;
 }
 
-void CFDE_XMLSyntaxParser::ParseTextChar(FX_WCHAR character) {
+void CFDE_XMLSyntaxParser::ParseTextChar(wchar_t character) {
   if (m_iIndexInBlock == m_iAllocStep) {
     m_pCurrentBlock = m_BlockBuffer.GetAvailableBlock(m_iIndexInBlock);
     if (!m_pCurrentBlock) {
@@ -1828,7 +1828,7 @@ void CFDE_XMLSyntaxParser::ParseTextChar(FX_WCHAR character) {
     if (iLen > 0) {
       if (csEntity[0] == L'#') {
         uint32_t ch = 0;
-        FX_WCHAR w;
+        wchar_t w;
         if (iLen > 1 && csEntity[1] == L'x') {
           for (int32_t i = 2; i < iLen; i++) {
             w = csEntity[i];
@@ -1853,7 +1853,7 @@ void CFDE_XMLSyntaxParser::ParseTextChar(FX_WCHAR character) {
         if (ch > kMaxCharRange)
           ch = ' ';
 
-        character = static_cast<FX_WCHAR>(ch);
+        character = static_cast<wchar_t>(ch);
         if (character != 0) {
           m_BlockBuffer.SetTextChar(m_iEntityStart, character);
           m_iEntityStart++;

@@ -21,11 +21,11 @@ class CFDE_TxtEdtBuf {
  public:
   class Iterator : public IFX_CharIter {
    public:
-    explicit Iterator(CFDE_TxtEdtBuf* pBuf, FX_WCHAR wcAlias = 0);
+    explicit Iterator(CFDE_TxtEdtBuf* pBuf, wchar_t wcAlias = 0);
     ~Iterator() override;
 
     bool Next(bool bPrev = false) override;
-    FX_WCHAR GetChar() override;
+    wchar_t GetChar() override;
 
     void SetAt(int32_t nIndex) override;
     int32_t GetAt() const override;
@@ -38,7 +38,7 @@ class CFDE_TxtEdtBuf {
     int32_t m_nCurChunk;
     int32_t m_nCurIndex;
     int32_t m_nIndex;
-    FX_WCHAR m_Alias;
+    wchar_t m_Alias;
   };
 
   CFDE_TxtEdtBuf();
@@ -50,10 +50,10 @@ class CFDE_TxtEdtBuf {
   void SetText(const CFX_WideString& wsText);
   CFX_WideString GetText() const;
 
-  FX_WCHAR GetCharByIndex(int32_t nIndex) const;
+  wchar_t GetCharByIndex(int32_t nIndex) const;
   CFX_WideString GetRange(int32_t nBegin, int32_t nCount) const;
 
-  void Insert(int32_t nPos, const FX_WCHAR* lpText, int32_t nLength);
+  void Insert(int32_t nPos, const wchar_t* lpText, int32_t nLength);
   void Delete(int32_t nIndex, int32_t nLength);
   void Clear(bool bRelease);
 
@@ -67,7 +67,7 @@ class CFDE_TxtEdtBuf {
     ~ChunkHeader();
 
     int32_t nUsed;
-    std::unique_ptr<FX_WCHAR, FxFreeDeleter> wChars;
+    std::unique_ptr<wchar_t, FxFreeDeleter> wChars;
   };
 
   void SetChunkSizeForTesting(size_t size);

@@ -2770,7 +2770,7 @@ const uint8_t gs_FX_WordBreak_CodePointProperties[(0xFFFF - 1) / 2 + 1] =
         0x00, 0x00, 0x00, 0x00, 0x05, 0x55, 0x00, 0x00,
 };
 
-FX_WordBreakProp GetWordBreakProperty(FX_WCHAR wcCodePoint) {
+FX_WordBreakProp GetWordBreakProperty(wchar_t wcCodePoint) {
   uint32_t dwProperty =
       (uint32_t)gs_FX_WordBreak_CodePointProperties[wcCodePoint >> 1];
   return (FX_WordBreakProp)(((wcCodePoint)&1) ? (dwProperty & 0x0F)
@@ -2836,7 +2836,7 @@ void CFX_WordBreak::GetWord(CFX_WideString& wsWord) const {
   if (nWordLength <= 0) {
     return;
   }
-  FX_WCHAR* lpBuf = wsWord.GetBuffer(nWordLength);
+  wchar_t* lpBuf = wsWord.GetBuffer(nWordLength);
   std::unique_ptr<IFX_CharIter> pTempIter(m_pPreIter->Clone());
   int32_t i = 0;
   while (pTempIter->GetAt() <= m_pCurIter->GetAt()) {

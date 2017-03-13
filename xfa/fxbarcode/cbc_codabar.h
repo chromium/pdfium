@@ -27,8 +27,8 @@ class CBC_Codabar : public CBC_OneCode {
   bool RenderBitmap(CFX_DIBitmap*& pOutBitmap, int32_t& e) override;
   BC_TYPE GetType() override;
 
-  bool SetStartChar(FX_CHAR start);
-  bool SetEndChar(FX_CHAR end);
+  bool SetStartChar(char start);
+  bool SetEndChar(char end);
   bool SetTextLocation(BC_TEXT_LOC location);
   bool SetWideNarrowRatio(int32_t ratio);
 

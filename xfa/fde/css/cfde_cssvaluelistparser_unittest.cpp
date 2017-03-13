@@ -11,7 +11,7 @@
 
 TEST(CFDE_CSSValueListParser, rgb_short) {
   FDE_CSSPrimitiveType type;
-  const FX_WCHAR* start;
+  const wchar_t* start;
   int32_t len;
 
   auto parser = pdfium::MakeUnique<CFDE_CSSValueListParser>(L"#abc", 4, L' ');
@@ -42,7 +42,7 @@ TEST(CFDE_CSSValueListParser, rgb_short) {
 
 TEST(CFDE_CSSValueListParser, number_parsing) {
   FDE_CSSPrimitiveType type;
-  const FX_WCHAR* start;
+  const wchar_t* start;
   int32_t len;
 
   auto parser = pdfium::MakeUnique<CFDE_CSSValueListParser>(L"1234", 4, L' ');
@@ -84,7 +84,7 @@ TEST(CFDE_CSSValueListParser, number_parsing) {
 
 TEST(CFDE_CSSValueListParser, string_parsing) {
   FDE_CSSPrimitiveType type;
-  const FX_WCHAR* start;
+  const wchar_t* start;
   int32_t len;
 
   auto parser =
@@ -107,7 +107,7 @@ TEST(CFDE_CSSValueListParser, string_parsing) {
 
 TEST(CFDE_CSSValueListParser, multiparsing) {
   FDE_CSSPrimitiveType type;
-  const FX_WCHAR* start;
+  const wchar_t* start;
   int32_t len;
 
   auto parser =

@@ -20,7 +20,7 @@
 
 namespace {
 
-const FX_CHAR* const g_sHighlightingMode[] = {
+const char* const g_sHighlightingMode[] = {
     // Must match order of HighlightingMode enum.
     "N", "I", "O", "P", "T"};
 

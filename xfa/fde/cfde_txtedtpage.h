@@ -49,7 +49,7 @@ class CFDE_TxtEdtPage : public IFDE_VisualSet {
   FX_POSITION GetFirstPosition();
   FDE_TEXTEDITPIECE* GetNext(FX_POSITION& pos, IFDE_VisualSet*& pVisualSet);
 
-  FX_WCHAR GetChar(const FDE_TEXTEDITPIECE* pIdentity, int32_t index) const;
+  wchar_t GetChar(const FDE_TEXTEDITPIECE* pIdentity, int32_t index) const;
   int32_t GetWidth(const FDE_TEXTEDITPIECE* pIdentity, int32_t index) const;
 
  private:

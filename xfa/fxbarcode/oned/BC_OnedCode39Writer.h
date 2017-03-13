@@ -46,7 +46,7 @@ class CBC_OnedCode39Writer : public CBC_OneDimWriter {
 
  private:
   void ToIntArray(int32_t a, int32_t* toReturn);
-  FX_CHAR CalcCheckSum(const CFX_ByteString& contents, int32_t& e);
+  char CalcCheckSum(const CFX_ByteString& contents, int32_t& e);
 
   int32_t m_iWideNarrRatio;
 };

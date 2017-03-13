@@ -13,7 +13,7 @@
 
 namespace {
 
-const FX_CHAR* const g_sATypes[] = {
+const char* const g_sATypes[] = {
     "Unknown",     "GoTo",       "GoToR",     "GoToE",      "Launch",
     "Thread",      "URI",        "Sound",     "Movie",      "Hide",
     "Named",       "SubmitForm", "ResetForm", "ImportData", "JavaScript",

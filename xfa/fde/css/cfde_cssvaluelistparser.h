@@ -12,21 +12,19 @@
 
 class CFDE_CSSValueListParser {
  public:
-  CFDE_CSSValueListParser(const FX_WCHAR* psz,
-                          int32_t iLen,
-                          FX_WCHAR separator);
+  CFDE_CSSValueListParser(const wchar_t* psz, int32_t iLen, wchar_t separator);
 
   bool NextValue(FDE_CSSPrimitiveType& eType,
-                 const FX_WCHAR*& pStart,
+                 const wchar_t*& pStart,
                  int32_t& iLength);
 
-  FX_WCHAR m_Separator;
+  wchar_t m_Separator;
 
  private:
-  int32_t SkipTo(FX_WCHAR wch, bool breakOnSpace, bool matchBrackets);
+  int32_t SkipTo(wchar_t wch, bool breakOnSpace, bool matchBrackets);
 
-  const FX_WCHAR* m_pCur;
-  const FX_WCHAR* m_pEnd;
+  const wchar_t* m_pCur;
+  const wchar_t* m_pEnd;
 };
 
 #endif  // XFA_FDE_CSS_CFDE_CSSVALUELISTPARSER_H_

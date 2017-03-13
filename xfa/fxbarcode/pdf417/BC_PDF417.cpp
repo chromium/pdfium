@@ -427,10 +427,10 @@ void CBC_PDF417::generateBarcodeLogic(CFX_WideString msg,
   }
   int32_t n = sourceCodeWords + pad + 1;
   CFX_WideString sb;
-  sb += (FX_WCHAR)n;
+  sb += (wchar_t)n;
   sb += highLevel;
   for (int32_t i = 0; i < pad; i++) {
-    sb += (FX_WCHAR)900;
+    sb += (wchar_t)900;
   }
   CFX_WideString dataCodewords(sb);
   CFX_WideString ec = CBC_PDF417ErrorCorrection::generateErrorCorrection(

@@ -28,11 +28,9 @@ class IFGAS_StreamImp {
   virtual int32_t GetPosition() = 0;
   virtual bool IsEOF() const = 0;
   virtual int32_t ReadData(uint8_t* pBuffer, int32_t iBufferSize) = 0;
-  virtual int32_t ReadString(FX_WCHAR* pStr,
-                             int32_t iMaxLength,
-                             bool& bEOS) = 0;
+  virtual int32_t ReadString(wchar_t* pStr, int32_t iMaxLength, bool& bEOS) = 0;
   virtual int32_t WriteData(const uint8_t* pBuffer, int32_t iBufferSize) = 0;
-  virtual int32_t WriteString(const FX_WCHAR* pStr, int32_t iLength) = 0;
+  virtual int32_t WriteString(const wchar_t* pStr, int32_t iLength) = 0;
   virtual void Flush() = 0;
   virtual bool SetLength(int32_t iLength) = 0;
 
@@ -51,7 +49,7 @@ class CFGAS_FileStreamImp : public IFGAS_StreamImp {
   CFGAS_FileStreamImp();
   ~CFGAS_FileStreamImp() override;
 
-  bool LoadFile(const FX_WCHAR* pszSrcFileName, uint32_t dwAccess);
+  bool LoadFile(const wchar_t* pszSrcFileName, uint32_t dwAccess);
 
   // IFGAS_StreamImp:
   int32_t GetLength() const override;
@@ -59,9 +57,9 @@ class CFGAS_FileStreamImp : public IFGAS_StreamImp {
   int32_t GetPosition() override;
   bool IsEOF() const override;
   int32_t ReadData(uint8_t* pBuffer, int32_t iBufferSize) override;
-  int32_t ReadString(FX_WCHAR* pStr, int32_t iMaxLength, bool& bEOS) override;
+  int32_t ReadString(wchar_t* pStr, int32_t iMaxLength, bool& bEOS) override;
   int32_t WriteData(const uint8_t* pBuffer, int32_t iBufferSize) override;
-  int32_t WriteString(const FX_WCHAR* pStr, int32_t iLength) override;
+  int32_t WriteString(const wchar_t* pStr, int32_t iLength) override;
   void Flush() override;
   bool SetLength(int32_t iLength) override;
 
@@ -83,9 +81,9 @@ class CFGAS_BufferStreamImp : public IFGAS_StreamImp {
   int32_t GetPosition() override;
   bool IsEOF() const override;
   int32_t ReadData(uint8_t* pBuffer, int32_t iBufferSize) override;
-  int32_t ReadString(FX_WCHAR* pStr, int32_t iMaxLength, bool& bEOS) override;
+  int32_t ReadString(wchar_t* pStr, int32_t iMaxLength, bool& bEOS) override;
   int32_t WriteData(const uint8_t* pBuffer, int32_t iBufferSize) override;
-  int32_t WriteString(const FX_WCHAR* pStr, int32_t iLength) override;
+  int32_t WriteString(const wchar_t* pStr, int32_t iLength) override;
   void Flush() override {}
   bool SetLength(int32_t iLength) override { return false; }
 
@@ -110,11 +108,11 @@ class CFGAS_FileReadStreamImp : public IFGAS_StreamImp {
   int32_t GetPosition() override { return m_iPosition; }
   bool IsEOF() const override;
   int32_t ReadData(uint8_t* pBuffer, int32_t iBufferSize) override;
-  int32_t ReadString(FX_WCHAR* pStr, int32_t iMaxLength, bool& bEOS) override;
+  int32_t ReadString(wchar_t* pStr, int32_t iMaxLength, bool& bEOS) override;
   int32_t WriteData(const uint8_t* pBuffer, int32_t iBufferSize) override {
     return 0;
   }
-  int32_t WriteString(const FX_WCHAR* pStr, int32_t iLength) override {
+  int32_t WriteString(const wchar_t* pStr, int32_t iLength) override {
     return 0;
   }
   void Flush() override {}
@@ -141,11 +139,11 @@ class CFGAS_BufferReadStreamImp : public IFGAS_StreamImp {
   int32_t GetPosition() override { return m_iPosition; }
   bool IsEOF() const override;
   int32_t ReadData(uint8_t* pBuffer, int32_t iBufferSize) override;
-  int32_t ReadString(FX_WCHAR* pStr, int32_t iMaxLength, bool& bEOS) override;
+  int32_t ReadString(wchar_t* pStr, int32_t iMaxLength, bool& bEOS) override;
   int32_t WriteData(const uint8_t* pBuffer, int32_t iBufferSize) override {
     return 0;
   }
-  int32_t WriteString(const FX_WCHAR* pStr, int32_t iLength) override {
+  int32_t WriteString(const wchar_t* pStr, int32_t iLength) override {
     return 0;
   }
   void Flush() override {}
@@ -171,11 +169,11 @@ class CFGAS_FileWriteStreamImp : public IFGAS_StreamImp {
   int32_t GetPosition() override { return m_iPosition; }
   bool IsEOF() const override;
   int32_t ReadData(uint8_t* pBuffer, int32_t iBufferSize) override { return 0; }
-  int32_t ReadString(FX_WCHAR* pStr, int32_t iMaxLength, bool& bEOS) override {
+  int32_t ReadString(wchar_t* pStr, int32_t iMaxLength, bool& bEOS) override {
     return 0;
   }
   int32_t WriteData(const uint8_t* pBuffer, int32_t iBufferSize) override;
-  int32_t WriteString(const FX_WCHAR* pStr, int32_t iLength) override;
+  int32_t WriteString(const wchar_t* pStr, int32_t iLength) override;
   void Flush() override;
   bool SetLength(int32_t iLength) override { return false; }
 
@@ -197,7 +195,7 @@ class CFGAS_Stream : public IFGAS_Stream {
   template <typename T, typename... Args>
   friend CFX_RetainPtr<T> pdfium::MakeRetain(Args&&... args);
 
-  bool LoadFile(const FX_WCHAR* pszSrcFileName, uint32_t dwAccess);
+  bool LoadFile(const wchar_t* pszSrcFileName, uint32_t dwAccess);
   bool LoadBuffer(uint8_t* pData, int32_t iTotalSize, uint32_t dwAccess);
   bool LoadFileRead(const CFX_RetainPtr<IFX_SeekableReadStream>& pFileRead,
                     uint32_t dwAccess);
@@ -214,9 +212,9 @@ class CFGAS_Stream : public IFGAS_Stream {
   int32_t GetPosition() override;
   bool IsEOF() const override;
   int32_t ReadData(uint8_t* pBuffer, int32_t iBufferSize) override;
-  int32_t ReadString(FX_WCHAR* pStr, int32_t iMaxLength, bool& bEOS) override;
+  int32_t ReadString(wchar_t* pStr, int32_t iMaxLength, bool& bEOS) override;
   int32_t WriteData(const uint8_t* pBuffer, int32_t iBufferSize) override;
-  int32_t WriteString(const FX_WCHAR* pStr, int32_t iLength) override;
+  int32_t WriteString(const wchar_t* pStr, int32_t iLength) override;
   void Flush() override;
   bool SetLength(int32_t iLength) override;
   int32_t GetBOM(uint8_t bom[4]) const override;
@@ -252,9 +250,9 @@ class CFGAS_TextStream : public IFGAS_Stream {
   int32_t GetPosition() override;
   bool IsEOF() const override;
   int32_t ReadData(uint8_t* pBuffer, int32_t iBufferSize) override;
-  int32_t ReadString(FX_WCHAR* pStr, int32_t iMaxLength, bool& bEOS) override;
+  int32_t ReadString(wchar_t* pStr, int32_t iMaxLength, bool& bEOS) override;
   int32_t WriteData(const uint8_t* pBuffer, int32_t iBufferSize) override;
-  int32_t WriteString(const FX_WCHAR* pStr, int32_t iLength) override;
+  int32_t WriteString(const wchar_t* pStr, int32_t iLength) override;
   void Flush() override;
   bool SetLength(int32_t iLength) override;
   int32_t GetBOM(uint8_t bom[4]) const override;
@@ -376,13 +374,13 @@ CFGAS_FileStreamImp::~CFGAS_FileStreamImp() {
     FXSYS_fclose(m_hFile);
 }
 
-bool CFGAS_FileStreamImp::LoadFile(const FX_WCHAR* pszSrcFileName,
+bool CFGAS_FileStreamImp::LoadFile(const wchar_t* pszSrcFileName,
                                    uint32_t dwAccess) {
   ASSERT(!m_hFile);
   ASSERT(pszSrcFileName && FXSYS_wcslen(pszSrcFileName) > 0);
 #if _FX_OS_ == _FX_WIN32_DESKTOP_ || _FX_OS_ == _FX_WIN32_MOBILE_ || \
     _FX_OS_ == _FX_WIN64_
-  const FX_WCHAR* wsMode;
+  const wchar_t* wsMode;
   if (dwAccess & FX_STREAMACCESS_Write) {
     if (dwAccess & FX_STREAMACCESS_Append) {
       wsMode = L"a+b";
@@ -414,7 +412,7 @@ bool CFGAS_FileStreamImp::LoadFile(const FX_WCHAR* pszSrcFileName,
     }
   }
 #else
-  const FX_CHAR* wsMode = "rb";
+  const char* wsMode = "rb";
   if (dwAccess & FX_STREAMACCESS_Write) {
     if (dwAccess & FX_STREAMACCESS_Append) {
       wsMode = "a+b";
@@ -476,7 +474,7 @@ int32_t CFGAS_FileStreamImp::ReadData(uint8_t* pBuffer, int32_t iBufferSize) {
   ASSERT(pBuffer && iBufferSize > 0);
   return FXSYS_fread(pBuffer, 1, iBufferSize, m_hFile);
 }
-int32_t CFGAS_FileStreamImp::ReadString(FX_WCHAR* pStr,
+int32_t CFGAS_FileStreamImp::ReadString(wchar_t* pStr,
                                         int32_t iMaxLength,
                                         bool& bEOS) {
   ASSERT(m_hFile);
@@ -514,8 +512,7 @@ int32_t CFGAS_FileStreamImp::WriteData(const uint8_t* pBuffer,
   }
   return iRet;
 }
-int32_t CFGAS_FileStreamImp::WriteString(const FX_WCHAR* pStr,
-                                         int32_t iLength) {
+int32_t CFGAS_FileStreamImp::WriteString(const wchar_t* pStr, int32_t iLength) {
   ASSERT(m_hFile && (GetAccessModes() & FX_STREAMACCESS_Write) != 0);
   ASSERT(pStr && iLength > 0);
   int32_t iRet = FXSYS_fwrite(pStr, 2, iLength, m_hFile);
@@ -591,7 +588,7 @@ int32_t CFGAS_FileReadStreamImp::ReadData(uint8_t* pBuffer,
   }
   return 0;
 }
-int32_t CFGAS_FileReadStreamImp::ReadString(FX_WCHAR* pStr,
+int32_t CFGAS_FileReadStreamImp::ReadString(wchar_t* pStr,
                                             int32_t iMaxLength,
                                             bool& bEOS) {
   ASSERT(m_pFileRead);
@@ -716,7 +713,7 @@ int32_t CFGAS_BufferReadStreamImp::ReadData(uint8_t* pBuffer,
   m_iPosition += dwOffsetTmp;
   return dwOffsetTmp;
 }
-int32_t CFGAS_BufferReadStreamImp::ReadString(FX_WCHAR* pStr,
+int32_t CFGAS_BufferReadStreamImp::ReadString(wchar_t* pStr,
                                               int32_t iMaxLength,
                                               bool& bEOS) {
   ASSERT(m_pBufferRead);
@@ -788,9 +785,9 @@ int32_t CFGAS_FileWriteStreamImp::WriteData(const uint8_t* pBuffer,
   }
   return iBufferSize;
 }
-int32_t CFGAS_FileWriteStreamImp::WriteString(const FX_WCHAR* pStr,
+int32_t CFGAS_FileWriteStreamImp::WriteString(const wchar_t* pStr,
                                               int32_t iLength) {
-  return WriteData((const uint8_t*)pStr, iLength * sizeof(FX_WCHAR));
+  return WriteData((const uint8_t*)pStr, iLength * sizeof(wchar_t));
 }
 void CFGAS_FileWriteStreamImp::Flush() {
   if (m_pFileWrite) {
@@ -851,7 +848,7 @@ int32_t CFGAS_BufferStreamImp::ReadData(uint8_t* pBuffer, int32_t iBufferSize) {
   m_iPosition += iLen;
   return iLen;
 }
-int32_t CFGAS_BufferStreamImp::ReadString(FX_WCHAR* pStr,
+int32_t CFGAS_BufferStreamImp::ReadString(wchar_t* pStr,
                                           int32_t iMaxLength,
                                           bool& bEOS) {
   ASSERT(m_pData);
@@ -860,7 +857,7 @@ int32_t CFGAS_BufferStreamImp::ReadString(FX_WCHAR* pStr,
   if (iLen <= 0) {
     return 0;
   }
-  const FX_WCHAR* pSrc = (const FX_WCHAR*)(FX_CHAR*)(m_pData + m_iPosition);
+  const wchar_t* pSrc = (const wchar_t*)(char*)(m_pData + m_iPosition);
   int32_t iCount = 0;
   while (*pSrc && iCount < iLen) {
     *pStr++ = *pSrc++;
@@ -885,7 +882,7 @@ int32_t CFGAS_BufferStreamImp::WriteData(const uint8_t* pBuffer,
   }
   return iLen;
 }
-int32_t CFGAS_BufferStreamImp::WriteString(const FX_WCHAR* pStr,
+int32_t CFGAS_BufferStreamImp::WriteString(const wchar_t* pStr,
                                            int32_t iLength) {
   ASSERT(m_pData && (GetAccessModes() & FX_STREAMACCESS_Write) != 0);
   ASSERT(pStr && iLength > 0);
@@ -1043,7 +1040,7 @@ uint16_t CFGAS_TextStream::SetCodePage(uint16_t wCodePage) {
   return v;
 }
 
-int32_t CFGAS_TextStream::ReadString(FX_WCHAR* pStr,
+int32_t CFGAS_TextStream::ReadString(wchar_t* pStr,
                                      int32_t iMaxLength,
                                      bool& bEOS) {
   ASSERT(pStr && iMaxLength > 0);
@@ -1056,7 +1053,7 @@ int32_t CFGAS_TextStream::ReadString(FX_WCHAR* pStr,
     int32_t iBytes = iMaxLength * 2;
     iLen = m_pStreamImp->ReadData((uint8_t*)pStr, iBytes);
     iMaxLength = iLen / 2;
-    if (sizeof(FX_WCHAR) > 2) {
+    if (sizeof(wchar_t) > 2) {
       FX_UTF16ToWChar(pStr, iMaxLength);
     }
 #if _FX_ENDIAN_ == _FX_BIG_ENDIAN_
@@ -1082,8 +1079,8 @@ int32_t CFGAS_TextStream::ReadString(FX_WCHAR* pStr,
       }
       iLen = m_pStreamImp->ReadData(m_pBuf, iBytes);
       int32_t iSrc = iLen;
-      int32_t iDecode = FX_DecodeString(m_wCodePage, (const FX_CHAR*)m_pBuf,
-                                        &iSrc, pStr, &iMaxLength, true);
+      int32_t iDecode = FX_DecodeString(m_wCodePage, (const char*)m_pBuf, &iSrc,
+                                        pStr, &iMaxLength, true);
       m_pStreamImp->Seek(FX_STREAMSEEK_Current, iSrc - iLen);
       if (iDecode < 1) {
         return -1;
@@ -1096,7 +1093,7 @@ int32_t CFGAS_TextStream::ReadString(FX_WCHAR* pStr,
   return iMaxLength;
 }
 
-int32_t CFGAS_TextStream::WriteString(const FX_WCHAR* pStr, int32_t iLength) {
+int32_t CFGAS_TextStream::WriteString(const wchar_t* pStr, int32_t iLength) {
   ASSERT(pStr && iLength > 0);
   if ((m_pStreamImp->GetAccessModes() & FX_STREAMACCESS_Write) == 0)
     return -1;
@@ -1129,7 +1126,7 @@ CFGAS_Stream::~CFGAS_Stream() {
     delete m_pStreamImp;
 }
 
-bool CFGAS_Stream::LoadFile(const FX_WCHAR* pszSrcFileName, uint32_t dwAccess) {
+bool CFGAS_Stream::LoadFile(const wchar_t* pszSrcFileName, uint32_t dwAccess) {
   if (m_eStreamType != FX_SREAMTYPE_Unknown || m_pStreamImp)
     return false;
 
@@ -1303,7 +1300,7 @@ int32_t CFGAS_Stream::ReadData(uint8_t* pBuffer, int32_t iBufferSize) {
   m_iPosition = m_pStreamImp->GetPosition();
   return iLen;
 }
-int32_t CFGAS_Stream::ReadString(FX_WCHAR* pStr,
+int32_t CFGAS_Stream::ReadString(wchar_t* pStr,
                                  int32_t iMaxLength,
                                  bool& bEOS) {
   ASSERT(pStr && iMaxLength > 0);
@@ -1353,7 +1350,7 @@ int32_t CFGAS_Stream::WriteData(const uint8_t* pBuffer, int32_t iBufferSize) {
   }
   return iLen;
 }
-int32_t CFGAS_Stream::WriteString(const FX_WCHAR* pStr, int32_t iLength) {
+int32_t CFGAS_Stream::WriteString(const wchar_t* pStr, int32_t iLength) {
   ASSERT(pStr && iLength > 0);
   if (!m_pStreamImp) {
     return -1;

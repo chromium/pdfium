@@ -17,10 +17,10 @@ class CXFA_LinkUserData : public CFX_Retainable {
   template <typename T, typename... Args>
   friend CFX_RetainPtr<T> pdfium::MakeRetain(Args&&... args);
 
-  const FX_WCHAR* GetLinkURL() const { return m_wsURLContent.c_str(); }
+  const wchar_t* GetLinkURL() const { return m_wsURLContent.c_str(); }
 
  protected:
-  explicit CXFA_LinkUserData(FX_WCHAR* pszText);
+  explicit CXFA_LinkUserData(wchar_t* pszText);
   ~CXFA_LinkUserData() override;
 
   CFX_WideString m_wsURLContent;

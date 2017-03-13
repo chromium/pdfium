@@ -208,7 +208,7 @@ void SetPageContents(const CFX_ByteString& key,
     acc.LoadAllData(pContentsStream);
     CFX_ByteString sStream = "q\n";
     CFX_ByteString sBody =
-        CFX_ByteString((const FX_CHAR*)acc.GetData(), acc.GetSize());
+        CFX_ByteString((const char*)acc.GetData(), acc.GetSize());
     sStream = sStream + sBody + "\nQ";
     pContentsStream->SetData(sStream.raw_str(), sStream.GetLength());
     pContentsArray->AddNew<CPDF_Reference>(pDocument,

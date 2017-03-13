@@ -89,7 +89,7 @@ CPDF_Type3Char* CPDF_Type3Font::LoadChar(uint32_t charcode) {
   if (it != m_CacheMap.end())
     return it->second.get();
 
-  const FX_CHAR* name = GetAdobeCharName(m_BaseEncoding, m_CharNames, charcode);
+  const char* name = GetAdobeCharName(m_BaseEncoding, m_CharNames, charcode);
   if (!name)
     return nullptr;
 

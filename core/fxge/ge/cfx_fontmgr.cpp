@@ -215,7 +215,7 @@ FXFT_Face CFX_FontMgr::GetFixedFace(const uint8_t* pData,
   return FXFT_Set_Pixel_Sizes(face, 64, 64) ? nullptr : face;
 }
 
-FXFT_Face CFX_FontMgr::GetFileFace(const FX_CHAR* filename, int face_index) {
+FXFT_Face CFX_FontMgr::GetFileFace(const char* filename, int face_index) {
   InitFTLibrary();
   FXFT_Library library = m_FTLibrary;
   FXFT_Face face = nullptr;

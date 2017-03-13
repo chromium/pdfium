@@ -23,12 +23,12 @@
 
 namespace {
 
-const FX_CHAR* const g_CharsetNames[CIDSET_NUM_SETS] = {
-    nullptr, "GB1", "CNS1", "Japan1", "Korea1", "UCS"};
+const char* const g_CharsetNames[CIDSET_NUM_SETS] = {nullptr,  "GB1",    "CNS1",
+                                                     "Japan1", "Korea1", "UCS"};
 
 class CPDF_PredefinedCMap {
  public:
-  const FX_CHAR* m_pName;
+  const char* m_pName;
   CIDSet m_Charset;
   CIDCoding m_Coding;
   CPDF_CMap::CodingScheme m_CodingScheme;
@@ -306,7 +306,7 @@ std::unique_ptr<CPDF_CMap> CPDF_CMapManager::LoadPredefinedCMap(
     const CFX_ByteString& name,
     bool bPromptCJK) {
   auto pCMap = pdfium::MakeUnique<CPDF_CMap>();
-  const FX_CHAR* pname = name.c_str();
+  const char* pname = name.c_str();
   if (*pname == '/')
     pname++;
 
@@ -451,7 +451,7 @@ uint32_t CPDF_CMapParser::CMap_GetCode(const CFX_ByteStringC& word) {
   }
 
   for (int i = 0; i < word.GetLength() && std::isdigit(word.GetAt(i)); ++i) {
-    num = num * 10 + FXSYS_toDecimalDigit(static_cast<FX_WCHAR>(word.GetAt(i)));
+    num = num * 10 + FXSYS_toDecimalDigit(static_cast<wchar_t>(word.GetAt(i)));
     if (!num.IsValid())
       return 0;
   }
@@ -610,7 +610,7 @@ uint16_t CPDF_CMap::CIDFromCharCode(uint32_t charcode) const {
   return m_pMapping[charcode];
 }
 
-uint32_t CPDF_CMap::GetNextChar(const FX_CHAR* pString,
+uint32_t CPDF_CMap::GetNextChar(const char* pString,
                                 int nStrLen,
                                 int& offset) const {
   switch (m_CodingScheme) {
@@ -676,7 +676,7 @@ int CPDF_CMap::GetCharSize(uint32_t charcode) const {
   }
   return 1;
 }
-int CPDF_CMap::CountChar(const FX_CHAR* pString, int size) const {
+int CPDF_CMap::CountChar(const char* pString, int size) const {
   switch (m_CodingScheme) {
     case OneByte:
       return size;
@@ -704,7 +704,7 @@ int CPDF_CMap::CountChar(const FX_CHAR* pString, int size) const {
   return size;
 }
 
-int CPDF_CMap::AppendChar(FX_CHAR* str, uint32_t charcode) const {
+int CPDF_CMap::AppendChar(char* str, uint32_t charcode) const {
   switch (m_CodingScheme) {
     case OneByte:
       str[0] = (uint8_t)charcode;
@@ -757,7 +757,7 @@ bool CPDF_CID2UnicodeMap::IsLoaded() {
   return m_EmbeddedCount != 0;
 }
 
-FX_WCHAR CPDF_CID2UnicodeMap::UnicodeFromCID(uint16_t CID) {
+wchar_t CPDF_CID2UnicodeMap::UnicodeFromCID(uint16_t CID) {
   if (m_Charset == CIDSET_UNICODE) {
     return CID;
   }

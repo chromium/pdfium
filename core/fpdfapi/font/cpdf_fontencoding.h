@@ -24,15 +24,14 @@
 #define PDFFONT_ENCODING_MS_SYMBOL 8
 #define PDFFONT_ENCODING_UNICODE 9
 
-uint32_t FT_CharCodeFromUnicode(int encoding, FX_WCHAR unicode);
-FX_WCHAR FT_UnicodeFromCharCode(int encoding, uint32_t charcode);
+uint32_t FT_CharCodeFromUnicode(int encoding, wchar_t unicode);
+wchar_t FT_UnicodeFromCharCode(int encoding, uint32_t charcode);
 
-FX_WCHAR PDF_UnicodeFromAdobeName(const FX_CHAR* name);
-CFX_ByteString PDF_AdobeNameFromUnicode(FX_WCHAR unicode);
+wchar_t PDF_UnicodeFromAdobeName(const char* name);
+CFX_ByteString PDF_AdobeNameFromUnicode(wchar_t unicode);
 
 const uint16_t* PDF_UnicodesForPredefinedCharSet(int encoding);
-const FX_CHAR* PDF_CharNameFromPredefinedCharSet(int encoding,
-                                                 uint8_t charcode);
+const char* PDF_CharNameFromPredefinedCharSet(int encoding, uint8_t charcode);
 
 class CPDF_Object;
 
@@ -45,19 +44,19 @@ class CPDF_FontEncoding {
 
   bool IsIdentical(CPDF_FontEncoding* pAnother) const;
 
-  FX_WCHAR UnicodeFromCharCode(uint8_t charcode) const {
+  wchar_t UnicodeFromCharCode(uint8_t charcode) const {
     return m_Unicodes[charcode];
   }
-  int CharCodeFromUnicode(FX_WCHAR unicode) const;
+  int CharCodeFromUnicode(wchar_t unicode) const;
 
-  void SetUnicode(uint8_t charcode, FX_WCHAR unicode) {
+  void SetUnicode(uint8_t charcode, wchar_t unicode) {
     m_Unicodes[charcode] = unicode;
   }
 
   std::unique_ptr<CPDF_Object> Realize(CFX_WeakPtr<CFX_ByteStringPool> pPool);
 
  public:
-  FX_WCHAR m_Unicodes[256];
+  wchar_t m_Unicodes[256];
 };
 
 #endif  // CORE_FPDFAPI_FONT_CPDF_FONTENCODING_H_

@@ -62,7 +62,7 @@ uint32_t CFX_UnicodeEncodingEx::GlyphFromCharCode(uint32_t charcode) {
   return 0;
 }
 
-uint32_t CFX_UnicodeEncodingEx::CharCodeFromUnicode(FX_WCHAR Unicode) const {
+uint32_t CFX_UnicodeEncodingEx::CharCodeFromUnicode(wchar_t Unicode) const {
   if (m_nEncodingID == FXFM_ENCODING_UNICODE ||
       m_nEncodingID == FXFM_ENCODING_MS_SYMBOL) {
     return Unicode;

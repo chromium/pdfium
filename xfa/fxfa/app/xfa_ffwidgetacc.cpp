@@ -838,8 +838,8 @@ void CXFA_WidgetAcc::CalculateTextContentSize(CFX_SizeF& size) {
     return;
   }
 
-  FX_WCHAR wcEnter = '\n';
-  FX_WCHAR wsLast = wsText.GetAt(wsText.GetLength() - 1);
+  wchar_t wcEnter = '\n';
+  wchar_t wsLast = wsText.GetAt(wsText.GetLength() - 1);
   if (wsLast == wcEnter) {
     wsText = wsText + wcEnter;
   }

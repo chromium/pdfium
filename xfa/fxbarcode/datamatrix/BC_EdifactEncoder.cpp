@@ -37,7 +37,7 @@ int32_t CBC_EdifactEncoder::getEncodingMode() {
 void CBC_EdifactEncoder::Encode(CBC_EncoderContext& context, int32_t& e) {
   CFX_WideString buffer;
   while (context.hasMoreCharacters()) {
-    FX_WCHAR c = context.getCurrentChar();
+    wchar_t c = context.getCurrentChar();
     encodeChar(c, buffer, e);
     if (e != BCExceptionNO) {
       return;
@@ -58,7 +58,7 @@ void CBC_EdifactEncoder::Encode(CBC_EncoderContext& context, int32_t& e) {
       }
     }
   }
-  buffer += (FX_WCHAR)31;
+  buffer += (wchar_t)31;
   handleEOD(context, buffer, e);
 }
 void CBC_EdifactEncoder::handleEOD(CBC_EncoderContext& context,
@@ -115,13 +115,11 @@ void CBC_EdifactEncoder::handleEOD(CBC_EncoderContext& context,
   }
   context.signalEncoderChange(ASCII_ENCODATION);
 }
-void CBC_EdifactEncoder::encodeChar(FX_WCHAR c,
-                                    CFX_WideString& sb,
-                                    int32_t& e) {
+void CBC_EdifactEncoder::encodeChar(wchar_t c, CFX_WideString& sb, int32_t& e) {
   if (c >= ' ' && c <= '?') {
     sb += c;
   } else if (c >= '@' && c <= '^') {
-    sb += (FX_WCHAR)(c - 64);
+    sb += (wchar_t)(c - 64);
   } else {
     CBC_HighLevelEncoder::illegalCharacter(c, e);
   }
@@ -134,14 +132,14 @@ CFX_WideString CBC_EdifactEncoder::encodeToCodewords(CFX_WideString sb,
     e = BCExceptionNoContents;
     return CFX_WideString();
   }
-  FX_WCHAR c1 = sb.GetAt(startPos);
-  FX_WCHAR c2 = len >= 2 ? sb.GetAt(startPos + 1) : 0;
-  FX_WCHAR c3 = len >= 3 ? sb.GetAt(startPos + 2) : 0;
-  FX_WCHAR c4 = len >= 4 ? sb.GetAt(startPos + 3) : 0;
+  wchar_t c1 = sb.GetAt(startPos);
+  wchar_t c2 = len >= 2 ? sb.GetAt(startPos + 1) : 0;
+  wchar_t c3 = len >= 3 ? sb.GetAt(startPos + 2) : 0;
+  wchar_t c4 = len >= 4 ? sb.GetAt(startPos + 3) : 0;
   int32_t v = (c1 << 18) + (c2 << 12) + (c3 << 6) + c4;
-  FX_WCHAR cw1 = (FX_WCHAR)((v >> 16) & 255);
-  FX_WCHAR cw2 = (FX_WCHAR)((v >> 8) & 255);
-  FX_WCHAR cw3 = (FX_WCHAR)(v & 255);
+  wchar_t cw1 = (wchar_t)((v >> 16) & 255);
+  wchar_t cw2 = (wchar_t)((v >> 8) & 255);
+  wchar_t cw3 = (wchar_t)(v & 255);
   CFX_WideString res;
   res += cw1;
   if (len >= 2) {

@@ -116,7 +116,7 @@ void GetBitmapSize(HBITMAP hBitmap, int& w, int& h) {
   h = bmp.bmHeight;
 }
 
-CFX_DIBitmap* CFX_WindowsDIB::LoadFromFile(const FX_WCHAR* filename) {
+CFX_DIBitmap* CFX_WindowsDIB::LoadFromFile(const wchar_t* filename) {
   CWin32Platform* pPlatform =
       (CWin32Platform*)CFX_GEModule::Get()->GetPlatformData();
   if (pPlatform->m_GdiplusExt.IsAvailable()) {
@@ -150,7 +150,7 @@ CFX_DIBitmap* CFX_WindowsDIB::LoadFromFile(const FX_WCHAR* filename) {
   return pDIBitmap;
 }
 
-CFX_DIBitmap* CFX_WindowsDIB::LoadFromFile(const FX_CHAR* filename) {
+CFX_DIBitmap* CFX_WindowsDIB::LoadFromFile(const char* filename) {
   return LoadFromFile(CFX_WideString::FromLocal(filename).c_str());
 }
 

@@ -7,9 +7,9 @@
 
 namespace {
 
-const FX_WCHAR kNeutralChar = 32;
-const FX_WCHAR kLeftChar = 65;
-const FX_WCHAR kRightChar = 1424;
+const wchar_t kNeutralChar = 32;
+const wchar_t kLeftChar = 65;
+const wchar_t kRightChar = 1424;
 
 }  // namespace
 
@@ -126,7 +126,7 @@ TEST(fxcrt, BidiStringEmpty) {
 
 TEST(fxcrt, BidiStringAllNeutral) {
   {
-    const FX_WCHAR str[] = {kNeutralChar, 0};
+    const wchar_t str[] = {kNeutralChar, 0};
     CFX_BidiString bidi(str);
     EXPECT_EQ(CFX_BidiChar::LEFT, bidi.OverallDirection());
 
@@ -139,7 +139,7 @@ TEST(fxcrt, BidiStringAllNeutral) {
     EXPECT_TRUE(it == bidi.end());
   }
   {
-    const FX_WCHAR str[] = {kNeutralChar, kNeutralChar, kNeutralChar, 0};
+    const wchar_t str[] = {kNeutralChar, kNeutralChar, kNeutralChar, 0};
     CFX_BidiString bidi(str);
     EXPECT_EQ(CFX_BidiChar::LEFT, bidi.OverallDirection());
 
@@ -155,7 +155,7 @@ TEST(fxcrt, BidiStringAllNeutral) {
 
 TEST(fxcrt, BidiStringAllLeft) {
   {
-    const FX_WCHAR str[] = {kLeftChar, 0};
+    const wchar_t str[] = {kLeftChar, 0};
     CFX_BidiString bidi(str);
     EXPECT_EQ(CFX_BidiChar::LEFT, bidi.OverallDirection());
 
@@ -176,7 +176,7 @@ TEST(fxcrt, BidiStringAllLeft) {
     EXPECT_TRUE(it == bidi.end());
   }
   {
-    const FX_WCHAR str[] = {kLeftChar, kLeftChar, kLeftChar, 0};
+    const wchar_t str[] = {kLeftChar, kLeftChar, kLeftChar, 0};
     CFX_BidiString bidi(str);
     EXPECT_EQ(CFX_BidiChar::LEFT, bidi.OverallDirection());
 
@@ -200,7 +200,7 @@ TEST(fxcrt, BidiStringAllLeft) {
 
 TEST(fxcrt, BidiStringAllRight) {
   {
-    const FX_WCHAR str[] = {kRightChar, 0};
+    const wchar_t str[] = {kRightChar, 0};
     CFX_BidiString bidi(str);
     EXPECT_EQ(CFX_BidiChar::RIGHT, bidi.OverallDirection());
 
@@ -221,7 +221,7 @@ TEST(fxcrt, BidiStringAllRight) {
     EXPECT_TRUE(it == bidi.end());
   }
   {
-    const FX_WCHAR str[] = {kRightChar, kRightChar, kRightChar, 0};
+    const wchar_t str[] = {kRightChar, kRightChar, kRightChar, 0};
     CFX_BidiString bidi(str);
     EXPECT_EQ(CFX_BidiChar::RIGHT, bidi.OverallDirection());
 
@@ -244,7 +244,7 @@ TEST(fxcrt, BidiStringAllRight) {
 }
 
 TEST(fxcrt, BidiStringLeftNeutralLeftRight) {
-  const FX_WCHAR str[] = {kLeftChar, kNeutralChar, kLeftChar, kRightChar, 0};
+  const wchar_t str[] = {kLeftChar, kNeutralChar, kLeftChar, kRightChar, 0};
   CFX_BidiString bidi(str);
   EXPECT_EQ(CFX_BidiChar::LEFT, bidi.OverallDirection());
 
@@ -284,7 +284,7 @@ TEST(fxcrt, BidiStringLeftNeutralLeftRight) {
 }
 
 TEST(fxcrt, BidiStringRightNeutralLeftRight) {
-  const FX_WCHAR str[] = {kRightChar, kNeutralChar, kLeftChar, kRightChar, 0};
+  const wchar_t str[] = {kRightChar, kNeutralChar, kLeftChar, kRightChar, 0};
   CFX_BidiString bidi(str);
   EXPECT_EQ(CFX_BidiChar::RIGHT, bidi.OverallDirection());
 
@@ -324,7 +324,7 @@ TEST(fxcrt, BidiStringRightNeutralLeftRight) {
 }
 
 TEST(fxcrt, BidiStringReverse) {
-  const FX_WCHAR str[] = {kLeftChar, kNeutralChar, kRightChar, kLeftChar, 0};
+  const wchar_t str[] = {kLeftChar, kNeutralChar, kRightChar, kLeftChar, 0};
   CFX_BidiString bidi(str);
   EXPECT_EQ(CFX_BidiChar::LEFT, bidi.OverallDirection());
   bidi.SetOverallDirectionRight();

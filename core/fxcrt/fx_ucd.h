@@ -45,13 +45,13 @@ extern const size_t kFXTextLayoutVerticalMirrorSize;
 extern const uint16_t kFXTextLayoutBidiMirror[];
 extern const size_t kFXTextLayoutBidiMirrorSize;
 
-uint32_t FX_GetUnicodeProperties(FX_WCHAR wch);
-FX_WCHAR FX_GetMirrorChar(FX_WCHAR wch, bool bRTL, bool bVertical);
+uint32_t FX_GetUnicodeProperties(wchar_t wch);
+wchar_t FX_GetMirrorChar(wchar_t wch, bool bRTL, bool bVertical);
 
 #ifdef PDF_ENABLE_XFA
 
 // As defined in http://www.unicode.org/reports/tr14/
-enum FX_CHARBREAKPROP {
+enum FXCHAR_BREAKPROP {
   FX_CBP_OP = 0,   // Opening Punctuation
   FX_CBP_CL = 1,   // Closing Punctuation
   FX_CBP_QU = 2,   // Ambiguous Quotation
@@ -114,10 +114,10 @@ inline FX_CHARTYPE GetCharTypeFromProp(uint32_t prop) {
   return static_cast<FX_CHARTYPE>(prop & FX_CHARTYPEBITSMASK);
 }
 
-FX_WCHAR FX_GetMirrorChar(FX_WCHAR wch,
-                          uint32_t dwProps,
-                          bool bRTL,
-                          bool bVertical);
+wchar_t FX_GetMirrorChar(wchar_t wch,
+                         uint32_t dwProps,
+                         bool bRTL,
+                         bool bVertical);
 
 #endif  // PDF_ENABLE_XFA
 

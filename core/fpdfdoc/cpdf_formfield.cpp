@@ -48,7 +48,7 @@ bool IsUnison(CPDF_FormField* pField) {
 }  // namespace
 
 CPDF_Object* FPDF_GetFieldAttr(CPDF_Dictionary* pFieldDict,
-                               const FX_CHAR* name,
+                               const char* name,
                                int nLevel) {
   if (nLevel > kMaxRecursion)
     return nullptr;

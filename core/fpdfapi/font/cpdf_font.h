@@ -50,15 +50,15 @@ class CPDF_Font {
 
   virtual bool IsVertWriting() const;
   virtual bool IsUnicodeCompatible() const;
-  virtual uint32_t GetNextChar(const FX_CHAR* pString,
+  virtual uint32_t GetNextChar(const char* pString,
                                int nStrLen,
                                int& offset) const;
-  virtual int CountChar(const FX_CHAR* pString, int size) const;
-  virtual int AppendChar(FX_CHAR* buf, uint32_t charcode) const;
+  virtual int CountChar(const char* pString, int size) const;
+  virtual int AppendChar(char* buf, uint32_t charcode) const;
   virtual int GlyphFromCharCode(uint32_t charcode, bool* pVertGlyph) = 0;
   virtual int GlyphFromCharCodeExt(uint32_t charcode);
   virtual CFX_WideString UnicodeFromCharCode(uint32_t charcode) const;
-  virtual uint32_t CharCodeFromUnicode(FX_WCHAR Unicode) const;
+  virtual uint32_t CharCodeFromUnicode(wchar_t Unicode) const;
 
   const CFX_ByteString& GetBaseFont() const { return m_BaseFont; }
   CFX_SubstFont* GetSubstFont() const { return m_Font.GetSubstFont(); }
@@ -71,7 +71,7 @@ class CPDF_Font {
   void GetFontBBox(FX_RECT& rect) const { rect = m_FontBBox; }
   int GetTypeAscent() const { return m_Ascent; }
   int GetTypeDescent() const { return m_Descent; }
-  int GetStringWidth(const FX_CHAR* pString, int size);
+  int GetStringWidth(const char* pString, int size);
   uint32_t FallbackFontFromCharcode(uint32_t charcode);
   int FallbackGlyphFromCharcode(int fallbackFont, uint32_t charcode);
 
@@ -96,9 +96,9 @@ class CPDF_Font {
   void LoadFontDescriptor(CPDF_Dictionary* pDict);
   void CheckFontMetrics();
 
-  const FX_CHAR* GetAdobeCharName(int iBaseEncoding,
-                                  const std::vector<CFX_ByteString>& charnames,
-                                  int charcode);
+  const char* GetAdobeCharName(int iBaseEncoding,
+                               const std::vector<CFX_ByteString>& charnames,
+                               int charcode);
 
   CFX_ByteString m_BaseFont;
   CPDF_StreamAcc* m_pFontFile;

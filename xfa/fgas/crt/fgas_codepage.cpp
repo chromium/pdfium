@@ -261,7 +261,7 @@ const FX_STR2CPHASH g_FXCPHashTable[] = {
     {0xf637e157, 0x478},  {0xfc213f3a, 0x2717}, {0xff654d14, 0x3b5},
 };
 
-uint16_t GetCodePageFromStringA(const FX_CHAR* pStr, int32_t iLength) {
+uint16_t GetCodePageFromStringA(const char* pStr, int32_t iLength) {
   ASSERT(pStr);
   if (iLength < 0) {
     iLength = FXSYS_strlen(pStr);
@@ -325,7 +325,7 @@ uint16_t FX_GetDefCodePageByLanguage(uint16_t wLanguage) {
   return 0xFFFF;
 }
 
-uint16_t FX_GetCodePageFromStringW(const FX_WCHAR* pStr, int32_t iLength) {
+uint16_t FX_GetCodePageFromStringW(const wchar_t* pStr, int32_t iLength) {
   if (iLength < 0) {
     iLength = FXSYS_wcslen(pStr);
   }
@@ -333,21 +333,21 @@ uint16_t FX_GetCodePageFromStringW(const FX_WCHAR* pStr, int32_t iLength) {
     return 0xFFFF;
   }
   CFX_ByteString csStr;
-  FX_CHAR* pBuf = csStr.GetBuffer(iLength + 1);
+  char* pBuf = csStr.GetBuffer(iLength + 1);
   for (int32_t i = 0; i < iLength; ++i) {
-    *pBuf++ = (FX_CHAR)*pStr++;
+    *pBuf++ = (char)*pStr++;
   }
   csStr.ReleaseBuffer(iLength);
   return GetCodePageFromStringA(csStr.c_str(), iLength);
 }
 
-void FX_SwapByteOrder(FX_WCHAR* pStr, int32_t iLength) {
+void FX_SwapByteOrder(wchar_t* pStr, int32_t iLength) {
   ASSERT(pStr);
   if (iLength < 0) {
     iLength = FXSYS_wcslen(pStr);
   }
   uint16_t wch;
-  if (sizeof(FX_WCHAR) > 2) {
+  if (sizeof(wchar_t) > 2) {
     while (iLength-- > 0) {
       wch = (uint16_t)*pStr;
       wch = (wch >> 8) | (wch << 8);
@@ -365,20 +365,20 @@ void FX_SwapByteOrder(FX_WCHAR* pStr, int32_t iLength) {
 
 void FX_UTF16ToWChar(void* pBuffer, int32_t iLength) {
   ASSERT(pBuffer && iLength > 0);
-  if (sizeof(FX_WCHAR) == 2) {
+  if (sizeof(wchar_t) == 2) {
     return;
   }
   uint16_t* pSrc = (uint16_t*)pBuffer;
-  FX_WCHAR* pDst = (FX_WCHAR*)pBuffer;
+  wchar_t* pDst = (wchar_t*)pBuffer;
   while (--iLength >= 0) {
-    pDst[iLength] = (FX_WCHAR)pSrc[iLength];
+    pDst[iLength] = (wchar_t)pSrc[iLength];
   }
 }
 
 int32_t FX_DecodeString(uint16_t wCodePage,
-                        const FX_CHAR* pSrc,
+                        const char* pSrc,
                         int32_t* pSrcLen,
-                        FX_WCHAR* pDst,
+                        wchar_t* pDst,
                         int32_t* pDstLen,
                         bool bErrBreak) {
   if (wCodePage == FX_CODEPAGE_UTF8) {
@@ -386,9 +386,9 @@ int32_t FX_DecodeString(uint16_t wCodePage,
   }
   return -1;
 }
-int32_t FX_UTF8Decode(const FX_CHAR* pSrc,
+int32_t FX_UTF8Decode(const char* pSrc,
                       int32_t* pSrcLen,
-                      FX_WCHAR* pDst,
+                      wchar_t* pDst,
                       int32_t* pDstLen) {
   if (!pSrcLen || !pDstLen) {
     return -1;

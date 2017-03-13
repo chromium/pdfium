@@ -236,7 +236,7 @@ const uint16_t ZapfEncoding[256] = {
     0x27BC, 0x27BD, 0x27BE, 0x0000,
 };
 
-const FX_CHAR* const StandardEncodingNames[224] = {
+const char* const StandardEncodingNames[224] = {
     "space",
     "exclam",
     "quotedbl",
@@ -463,7 +463,7 @@ const FX_CHAR* const StandardEncodingNames[224] = {
     nullptr,
 };
 
-const FX_CHAR* const AdobeWinAnsiEncodingNames[224] = {
+const char* const AdobeWinAnsiEncodingNames[224] = {
     "space",
     "exclam",
     "quotedbl",
@@ -690,7 +690,7 @@ const FX_CHAR* const AdobeWinAnsiEncodingNames[224] = {
     "ydieresis",
 };
 
-const FX_CHAR* const MacRomanEncodingNames[224] = {
+const char* const MacRomanEncodingNames[224] = {
     "space",
     "exclam",
     "quotedbl",
@@ -917,7 +917,7 @@ const FX_CHAR* const MacRomanEncodingNames[224] = {
     "caron",
 };
 
-const FX_CHAR* const MacExpertEncodingNames[224] = {
+const char* const MacExpertEncodingNames[224] = {
     "space",
     "exclamsmall",
     "Hungarumlautsmall",
@@ -1144,7 +1144,7 @@ const FX_CHAR* const MacExpertEncodingNames[224] = {
     nullptr,
 };
 
-const FX_CHAR* const PDFDocEncodingNames[232] = {
+const char* const PDFDocEncodingNames[232] = {
     "breve",
     "caron",
     "circumflex",
@@ -1379,7 +1379,7 @@ const FX_CHAR* const PDFDocEncodingNames[232] = {
     "ydieresis",
 };
 
-const FX_CHAR* const AdobeSymbolEncodingNames[224] = {
+const char* const AdobeSymbolEncodingNames[224] = {
     "space",
     "exclam",
     "universal",
@@ -1606,7 +1606,7 @@ const FX_CHAR* const AdobeSymbolEncodingNames[224] = {
     nullptr,
 };
 
-const FX_CHAR* const ZapfEncodingNames[224] = {
+const char* const ZapfEncodingNames[224] = {
     "space", "a1",    "a2",    "a202",  "a3",    "a4",    "a5",    "a119",
     "a118",  "a117",  "a11",   "a12",   "a13",   "a14",   "a15",   "a16",
     "a105",  "a17",   "a18",   "a19",   "a20",   "a21",   "a22",   "a23",
@@ -1649,7 +1649,7 @@ CPDF_FontEncoding::CPDF_FontEncoding() {
   FXSYS_memset(m_Unicodes, 0, sizeof(m_Unicodes));
 }
 
-int CPDF_FontEncoding::CharCodeFromUnicode(FX_WCHAR unicode) const {
+int CPDF_FontEncoding::CharCodeFromUnicode(wchar_t unicode) const {
   for (int i = 0; i < 256; i++)
     if (m_Unicodes[i] == unicode) {
       return i;
@@ -1717,7 +1717,7 @@ std::unique_ptr<CPDF_Object> CPDF_FontEncoding::Realize(
   return std::move(pDict);
 }
 
-uint32_t FT_CharCodeFromUnicode(int encoding, FX_WCHAR unicode) {
+uint32_t FT_CharCodeFromUnicode(int encoding, wchar_t unicode) {
   switch (encoding) {
     case FXFT_ENCODING_UNICODE:
       return unicode;
@@ -1758,18 +1758,17 @@ const uint16_t* PDF_UnicodesForPredefinedCharSet(int encoding) {
   return nullptr;
 }
 
-FX_WCHAR PDF_UnicodeFromAdobeName(const FX_CHAR* name) {
-  return (FX_WCHAR)(FXFT_unicode_from_adobe_name(name) & 0x7FFFFFFF);
+wchar_t PDF_UnicodeFromAdobeName(const char* name) {
+  return (wchar_t)(FXFT_unicode_from_adobe_name(name) & 0x7FFFFFFF);
 }
 
-CFX_ByteString PDF_AdobeNameFromUnicode(FX_WCHAR unicode) {
+CFX_ByteString PDF_AdobeNameFromUnicode(wchar_t unicode) {
   char glyph_name[64];
   FXFT_adobe_name_from_unicode(glyph_name, unicode);
   return CFX_ByteString(glyph_name);
 }
 
-const FX_CHAR* PDF_CharNameFromPredefinedCharSet(int encoding,
-                                                 uint8_t charcode) {
+const char* PDF_CharNameFromPredefinedCharSet(int encoding, uint8_t charcode) {
   if (encoding == PDFFONT_ENCODING_PDFDOC) {
     if (charcode < 24)
       return nullptr;
@@ -1800,7 +1799,7 @@ const FX_CHAR* PDF_CharNameFromPredefinedCharSet(int encoding,
   return nullptr;
 }
 
-FX_WCHAR FT_UnicodeFromCharCode(int encoding, uint32_t charcode) {
+wchar_t FT_UnicodeFromCharCode(int encoding, uint32_t charcode) {
   switch (encoding) {
     case FXFT_ENCODING_UNICODE:
       return (uint16_t)charcode;

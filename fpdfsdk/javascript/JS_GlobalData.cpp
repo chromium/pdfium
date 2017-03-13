@@ -336,18 +336,18 @@ void CJS_GlobalData::SaveGlobalPersisitentVariables() {
 
   CRYPT_ArcFourCryptBlock(sFile.GetBuffer(), sFile.GetSize(), JS_RC4KEY,
                           sizeof(JS_RC4KEY));
-  WriteFileBuffer(m_sFilePath.c_str(), (const FX_CHAR*)sFile.GetBuffer(),
+  WriteFileBuffer(m_sFilePath.c_str(), (const char*)sFile.GetBuffer(),
                   sFile.GetSize());
 }
 
-void CJS_GlobalData::LoadFileBuffer(const FX_WCHAR* sFilePath,
+void CJS_GlobalData::LoadFileBuffer(const wchar_t* sFilePath,
                                     uint8_t*& pBuffer,
                                     int32_t& nLength) {
   // UnSupport.
 }
 
-void CJS_GlobalData::WriteFileBuffer(const FX_WCHAR* sFilePath,
-                                     const FX_CHAR* pBuffer,
+void CJS_GlobalData::WriteFileBuffer(const wchar_t* sFilePath,
+                                     const char* pBuffer,
                                      int32_t nLength) {
   // UnSupport.
 }

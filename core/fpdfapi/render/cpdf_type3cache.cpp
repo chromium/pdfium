@@ -19,7 +19,7 @@ namespace {
 
 struct CPDF_UniqueKeyGen {
   void Generate(int count, ...);
-  FX_CHAR m_Key[128];
+  char m_Key[128];
   int m_KeyLen;
 };
 

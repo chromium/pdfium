@@ -432,7 +432,7 @@ CFX_WideString PDF_DecodeText(const uint8_t* src_data, uint32_t src_len) {
     if (src_data[0] == 0xff) {
       bBE = !src_data[2];
     }
-    FX_WCHAR* dest_buf = result.GetBuffer(max_chars);
+    wchar_t* dest_buf = result.GetBuffer(max_chars);
     const uint8_t* uni_str = src_data + 2;
     int dest_pos = 0;
     for (uint32_t i = 0; i < max_chars * 2; i += 2) {
@@ -453,7 +453,7 @@ CFX_WideString PDF_DecodeText(const uint8_t* src_data, uint32_t src_len) {
     }
     result.ReleaseBuffer(dest_pos);
   } else {
-    FX_WCHAR* dest_buf = result.GetBuffer(src_len);
+    wchar_t* dest_buf = result.GetBuffer(src_len);
     for (uint32_t i = 0; i < src_len; i++)
       dest_buf[i] = PDFDocEncoding[src_data[i]];
     result.ReleaseBuffer(src_len);
@@ -465,12 +465,12 @@ CFX_WideString PDF_DecodeText(const CFX_ByteString& bstr) {
   return PDF_DecodeText((const uint8_t*)bstr.c_str(), bstr.GetLength());
 }
 
-CFX_ByteString PDF_EncodeText(const FX_WCHAR* pString, int len) {
+CFX_ByteString PDF_EncodeText(const wchar_t* pString, int len) {
   if (len == -1) {
     len = FXSYS_wcslen(pString);
   }
   CFX_ByteString result;
-  FX_CHAR* dest_buf1 = result.GetBuffer(len);
+  char* dest_buf1 = result.GetBuffer(len);
   int i;
   for (i = 0; i < len; i++) {
     int code;

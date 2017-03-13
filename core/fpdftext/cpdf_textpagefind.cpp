@@ -17,7 +17,7 @@
 
 namespace {
 
-bool IsIgnoreSpaceCharacter(FX_WCHAR curChar) {
+bool IsIgnoreSpaceCharacter(wchar_t curChar) {
   if (curChar < 255 || (curChar >= 0x0600 && curChar <= 0x06FF) ||
       (curChar >= 0xFE70 && curChar <= 0xFEFF) ||
       (curChar >= 0xFB50 && curChar <= 0xFDFF) ||
@@ -150,7 +150,7 @@ bool CPDF_TextPageFind::FindNext() {
     CFX_WideString csWord = m_csFindWhatArray[iWord];
     if (csWord.IsEmpty()) {
       if (iWord == nCount - 1) {
-        FX_WCHAR strInsert = m_strText.GetAt(nStartPos);
+        wchar_t strInsert = m_strText.GetAt(nStartPos);
         if (strInsert == TEXT_LINEFEED_CHAR || strInsert == TEXT_SPACE_CHAR ||
             strInsert == TEXT_RETURN_CHAR || strInsert == 160) {
           nResultPos = nStartPos + 1;
@@ -183,7 +183,7 @@ bool CPDF_TextPageFind::FindNext() {
         bMatch = false;
       }
       for (int d = PreResEndPos; d < nResultPos; d++) {
-        FX_WCHAR strInsert = m_strText.GetAt(d);
+        wchar_t strInsert = m_strText.GetAt(d);
         if (strInsert != TEXT_LINEFEED_CHAR && strInsert != TEXT_SPACE_CHAR &&
             strInsert != TEXT_RETURN_CHAR && strInsert != 160) {
           bMatch = false;
@@ -192,7 +192,7 @@ bool CPDF_TextPageFind::FindNext() {
       }
     } else if (bSpaceStart) {
       if (nResultPos > 0) {
-        FX_WCHAR strInsert = m_strText.GetAt(nResultPos - 1);
+        wchar_t strInsert = m_strText.GetAt(nResultPos - 1);
         if (strInsert != TEXT_LINEFEED_CHAR && strInsert != TEXT_SPACE_CHAR &&
             strInsert != TEXT_RETURN_CHAR && strInsert != 160) {
           bMatch = false;
@@ -293,7 +293,7 @@ void CPDF_TextPageFind::ExtractFindWhat(const CFX_WideString& findwhat) {
     int pos = 0;
     while (pos < csWord.GetLength()) {
       CFX_WideString curStr = csWord.Mid(pos, 1);
-      FX_WCHAR curChar = csWord.GetAt(pos);
+      wchar_t curChar = csWord.GetAt(pos);
       if (IsIgnoreSpaceCharacter(curChar)) {
         if (pos > 0 && curChar == 0x2019) {
           pos++;
@@ -321,8 +321,8 @@ void CPDF_TextPageFind::ExtractFindWhat(const CFX_WideString& findwhat) {
 bool CPDF_TextPageFind::IsMatchWholeWord(const CFX_WideString& csPageText,
                                          int startPos,
                                          int endPos) {
-  FX_WCHAR char_left = 0;
-  FX_WCHAR char_right = 0;
+  wchar_t char_left = 0;
+  wchar_t char_right = 0;
   int char_count = endPos - startPos + 1;
   if (char_count < 1)
     return false;
@@ -362,9 +362,9 @@ bool CPDF_TextPageFind::IsMatchWholeWord(const CFX_WideString& csPageText,
 }
 
 bool CPDF_TextPageFind::ExtractSubString(CFX_WideString& rString,
-                                         const FX_WCHAR* lpszFullString,
+                                         const wchar_t* lpszFullString,
                                          int iSubString,
-                                         FX_WCHAR chSep) {
+                                         wchar_t chSep) {
   if (!lpszFullString)
     return false;
   while (iSubString--) {
@@ -377,12 +377,11 @@ bool CPDF_TextPageFind::ExtractSubString(CFX_WideString& rString,
     while (*lpszFullString == chSep)
       lpszFullString++;
   }
-  const FX_WCHAR* lpchEnd = std::wcschr(lpszFullString, chSep);
+  const wchar_t* lpchEnd = std::wcschr(lpszFullString, chSep);
   int nLen = lpchEnd ? (int)(lpchEnd - lpszFullString)
                      : (int)FXSYS_wcslen(lpszFullString);
   ASSERT(nLen >= 0);
-  FXSYS_memcpy(rString.GetBuffer(nLen), lpszFullString,
-               nLen * sizeof(FX_WCHAR));
+  FXSYS_memcpy(rString.GetBuffer(nLen), lpszFullString, nLen * sizeof(wchar_t));
   rString.ReleaseBuffer();
   return true;
 }

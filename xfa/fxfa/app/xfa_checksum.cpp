@@ -21,7 +21,7 @@ struct FX_BASE64DATA {
   uint32_t data7 : 8;
 };
 
-const FX_CHAR g_FXBase64EncoderMap[64] = {
+const char g_FXBase64EncoderMap[64] = {
     'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
     'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
     'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
@@ -29,9 +29,7 @@ const FX_CHAR g_FXBase64EncoderMap[64] = {
     '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '+', '/',
 };
 
-void Base64EncodePiece(const FX_BASE64DATA& src,
-                       int32_t iBytes,
-                       FX_CHAR dst[4]) {
+void Base64EncodePiece(const FX_BASE64DATA& src, int32_t iBytes, char dst[4]) {
   dst[0] = g_FXBase64EncoderMap[src.data2];
   uint32_t b = src.data1 << 4;
   if (iBytes > 1) {
@@ -54,7 +52,7 @@ void Base64EncodePiece(const FX_BASE64DATA& src,
   }
 }
 
-int32_t Base64EncodeA(const uint8_t* pSrc, int32_t iSrcLen, FX_CHAR* pDst) {
+int32_t Base64EncodeA(const uint8_t* pSrc, int32_t iSrcLen, char* pDst) {
   ASSERT(pSrc);
   if (iSrcLen < 1) {
     return 0;
@@ -68,7 +66,7 @@ int32_t Base64EncodeA(const uint8_t* pSrc, int32_t iSrcLen, FX_CHAR* pDst) {
   }
   FX_BASE64DATA srcData;
   int32_t iBytes = 3;
-  FX_CHAR* pDstEnd = pDst;
+  char* pDstEnd = pDst;
   while (iSrcLen > 0) {
     if (iSrcLen > 2) {
       ((uint8_t*)&srcData)[0] = *pSrc++;
@@ -252,7 +250,7 @@ void CXFA_ChecksumContext::FinishChecksum() {
     FXSYS_memset(digest, 0, 20);
     CRYPT_SHA1Finish(m_pByteContext.get(), digest);
     int32_t nLen = Base64EncodeA(digest, 20, nullptr);
-    FX_CHAR* pBuffer = m_bsChecksum.GetBuffer(nLen);
+    char* pBuffer = m_bsChecksum.GetBuffer(nLen);
     Base64EncodeA(digest, 20, pBuffer);
     m_bsChecksum.ReleaseBuffer(nLen);
     m_pByteContext.reset();

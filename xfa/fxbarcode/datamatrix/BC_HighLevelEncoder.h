@@ -36,44 +36,44 @@ class CBC_HighLevelEncoder : public CBC_SymbolShapeHint {
   static int32_t lookAheadTest(CFX_WideString msg,
                                int32_t startpos,
                                int32_t currentMode);
-  static bool isDigit(FX_WCHAR ch);
-  static bool isExtendedASCII(FX_WCHAR ch);
+  static bool isDigit(wchar_t ch);
+  static bool isExtendedASCII(wchar_t ch);
   static int32_t determineConsecutiveDigitCount(CFX_WideString msg,
                                                 int32_t startpos);
-  static void illegalCharacter(FX_WCHAR c, int32_t& e);
+  static void illegalCharacter(wchar_t c, int32_t& e);
 
  public:
-  static FX_WCHAR LATCH_TO_C40;
-  static FX_WCHAR LATCH_TO_BASE256;
-  static FX_WCHAR UPPER_SHIFT;
-  static FX_WCHAR LATCH_TO_ANSIX12;
-  static FX_WCHAR LATCH_TO_TEXT;
-  static FX_WCHAR LATCH_TO_EDIFACT;
-  static FX_WCHAR C40_UNLATCH;
-  static FX_WCHAR X12_UNLATCH;
+  static wchar_t LATCH_TO_C40;
+  static wchar_t LATCH_TO_BASE256;
+  static wchar_t UPPER_SHIFT;
+  static wchar_t LATCH_TO_ANSIX12;
+  static wchar_t LATCH_TO_TEXT;
+  static wchar_t LATCH_TO_EDIFACT;
+  static wchar_t C40_UNLATCH;
+  static wchar_t X12_UNLATCH;
 
  private:
-  static FX_WCHAR PAD;
-  static FX_WCHAR MACRO_05;
-  static FX_WCHAR MACRO_06;
+  static wchar_t PAD;
+  static wchar_t MACRO_05;
+  static wchar_t MACRO_06;
   static const wchar_t* MACRO_05_HEADER;
   static const wchar_t* MACRO_06_HEADER;
   static const wchar_t MACRO_TRAILER;
   CFX_ArrayTemplate<uint8_t> m_bytearray;
 
  private:
-  static FX_WCHAR randomize253State(FX_WCHAR ch, int32_t codewordPosition);
+  static wchar_t randomize253State(wchar_t ch, int32_t codewordPosition);
   static int32_t findMinimums(std::vector<FX_FLOAT>& charCounts,
                               CFX_ArrayTemplate<int32_t>& intCharCounts,
                               int32_t min,
                               CFX_ArrayTemplate<uint8_t>& mins);
   static int32_t getMinimumCount(CFX_ArrayTemplate<uint8_t>& mins);
-  static bool isNativeC40(FX_WCHAR ch);
-  static bool isNativeText(FX_WCHAR ch);
-  static bool isNativeX12(FX_WCHAR ch);
-  static bool isX12TermSep(FX_WCHAR ch);
-  static bool isNativeEDIFACT(FX_WCHAR ch);
-  static bool isSpecialB256(FX_WCHAR ch);
+  static bool isNativeC40(wchar_t ch);
+  static bool isNativeText(wchar_t ch);
+  static bool isNativeX12(wchar_t ch);
+  static bool isX12TermSep(wchar_t ch);
+  static bool isNativeEDIFACT(wchar_t ch);
+  static bool isSpecialB256(wchar_t ch);
 };
 
 #endif  // XFA_FXBARCODE_DATAMATRIX_BC_HIGHLEVELENCODER_H_

@@ -36,7 +36,7 @@ CBC_EncoderContext::CBC_EncoderContext(const CFX_WideString msg,
   CFX_WideString sb;
   int32_t c = dststr.GetLength();
   for (int32_t i = 0; i < c; i++) {
-    FX_WCHAR ch = (FX_WCHAR)(dststr.GetAt(i) & 0xff);
+    wchar_t ch = (wchar_t)(dststr.GetAt(i) & 0xff);
     if (ch == '?' && dststr.GetAt(i) != '?') {
       e = BCExceptionCharactersOutsideISO88591Encoding;
     }
@@ -66,16 +66,16 @@ CFX_WideString CBC_EncoderContext::getMessage() {
 void CBC_EncoderContext::setSkipAtEnd(int32_t count) {
   m_skipAtEnd = count;
 }
-FX_WCHAR CBC_EncoderContext::getCurrentChar() {
+wchar_t CBC_EncoderContext::getCurrentChar() {
   return m_msg.GetAt(m_pos);
 }
-FX_WCHAR CBC_EncoderContext::getCurrent() {
+wchar_t CBC_EncoderContext::getCurrent() {
   return m_msg.GetAt(m_pos);
 }
 void CBC_EncoderContext::writeCodewords(CFX_WideString codewords) {
   m_codewords += codewords;
 }
-void CBC_EncoderContext::writeCodeword(FX_WCHAR codeword) {
+void CBC_EncoderContext::writeCodeword(wchar_t codeword) {
   m_codewords += codeword;
 }
 int32_t CBC_EncoderContext::getCodewordCount() {

@@ -225,7 +225,7 @@ CFX_ByteString CPDF_SyntaxParser::ReadString() {
         break;
       case ReadStatus::Backslash:
         if (ch >= '0' && ch <= '7') {
-          iEscCode = FXSYS_toDecimalDigit(static_cast<FX_WCHAR>(ch));
+          iEscCode = FXSYS_toDecimalDigit(static_cast<wchar_t>(ch));
           status = ReadStatus::Octal;
           break;
         }
@@ -251,7 +251,7 @@ CFX_ByteString CPDF_SyntaxParser::ReadString() {
       case ReadStatus::Octal:
         if (ch >= '0' && ch <= '7') {
           iEscCode =
-              iEscCode * 8 + FXSYS_toDecimalDigit(static_cast<FX_WCHAR>(ch));
+              iEscCode * 8 + FXSYS_toDecimalDigit(static_cast<wchar_t>(ch));
           status = ReadStatus::FinishOctal;
         } else {
           buf.AppendChar(iEscCode);
@@ -263,7 +263,7 @@ CFX_ByteString CPDF_SyntaxParser::ReadString() {
         status = ReadStatus::Normal;
         if (ch >= '0' && ch <= '7') {
           iEscCode =
-              iEscCode * 8 + FXSYS_toDecimalDigit(static_cast<FX_WCHAR>(ch));
+              iEscCode * 8 + FXSYS_toDecimalDigit(static_cast<wchar_t>(ch));
           buf.AppendChar(iEscCode);
         } else {
           buf.AppendChar(iEscCode);
@@ -358,7 +358,7 @@ void CPDF_SyntaxParser::ToNextWord() {
 
 CFX_ByteString CPDF_SyntaxParser::GetNextWord(bool* bIsNumber) {
   GetNextWordInternal(bIsNumber);
-  return CFX_ByteString((const FX_CHAR*)m_WordBuffer, m_WordSize);
+  return CFX_ByteString((const char*)m_WordBuffer, m_WordSize);
 }
 
 CFX_ByteString CPDF_SyntaxParser::GetKeyword() {
@@ -781,7 +781,7 @@ uint32_t CPDF_SyntaxParser::GetDirectNum() {
     return 0;
 
   m_WordBuffer[m_WordSize] = 0;
-  return FXSYS_atoui(reinterpret_cast<const FX_CHAR*>(m_WordBuffer));
+  return FXSYS_atoui(reinterpret_cast<const char*>(m_WordBuffer));
 }
 
 bool CPDF_SyntaxParser::IsWholeWord(FX_FILESIZE startpos,

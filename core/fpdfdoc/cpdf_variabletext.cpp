@@ -338,7 +338,7 @@ CPVT_WordPlace CPDF_VariableText::InsertSection(
 }
 
 CPVT_WordPlace CPDF_VariableText::InsertText(const CPVT_WordPlace& place,
-                                             const FX_WCHAR* text) {
+                                             const wchar_t* text) {
   CFX_WideString swText = text;
   CPVT_WordPlace wp = place;
   for (int32_t i = 0, sz = swText.GetLength(); i < sz; i++) {

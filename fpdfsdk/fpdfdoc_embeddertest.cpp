@@ -198,37 +198,37 @@ TEST_F(FPDFDocEmbeddertest, GetPageLabels) {
   EXPECT_EQ(0u, FPDF_GetPageLabel(document(), -2, buf, sizeof(buf)));
   EXPECT_EQ(0u, FPDF_GetPageLabel(document(), -1, buf, sizeof(buf)));
 
-  const FX_WCHAR kExpectedPageLabel0[] = L"i";
+  const wchar_t kExpectedPageLabel0[] = L"i";
   ASSERT_EQ(4u, FPDF_GetPageLabel(document(), 0, buf, sizeof(buf)));
   EXPECT_EQ(CFX_WideString(kExpectedPageLabel0),
             CFX_WideString::FromUTF16LE(buf, FXSYS_len(kExpectedPageLabel0)));
 
-  const FX_WCHAR kExpectedPageLabel1[] = L"ii";
+  const wchar_t kExpectedPageLabel1[] = L"ii";
   ASSERT_EQ(6u, FPDF_GetPageLabel(document(), 1, buf, sizeof(buf)));
   EXPECT_EQ(CFX_WideString(kExpectedPageLabel1),
             CFX_WideString::FromUTF16LE(buf, FXSYS_len(kExpectedPageLabel1)));
 
-  const FX_WCHAR kExpectedPageLabel2[] = L"1";
+  const wchar_t kExpectedPageLabel2[] = L"1";
   ASSERT_EQ(4u, FPDF_GetPageLabel(document(), 2, buf, sizeof(buf)));
   EXPECT_EQ(CFX_WideString(kExpectedPageLabel2),
             CFX_WideString::FromUTF16LE(buf, FXSYS_len(kExpectedPageLabel2)));
 
-  const FX_WCHAR kExpectedPageLabel3[] = L"2";
+  const wchar_t kExpectedPageLabel3[] = L"2";
   ASSERT_EQ(4u, FPDF_GetPageLabel(document(), 3, buf, sizeof(buf)));
   EXPECT_EQ(CFX_WideString(kExpectedPageLabel3),
             CFX_WideString::FromUTF16LE(buf, FXSYS_len(kExpectedPageLabel3)));
 
-  const FX_WCHAR kExpectedPageLabel4[] = L"zzA";
+  const wchar_t kExpectedPageLabel4[] = L"zzA";
   ASSERT_EQ(8u, FPDF_GetPageLabel(document(), 4, buf, sizeof(buf)));
   EXPECT_EQ(CFX_WideString(kExpectedPageLabel4),
             CFX_WideString::FromUTF16LE(buf, FXSYS_len(kExpectedPageLabel4)));
 
-  const FX_WCHAR kExpectedPageLabel5[] = L"zzB";
+  const wchar_t kExpectedPageLabel5[] = L"zzB";
   ASSERT_EQ(8u, FPDF_GetPageLabel(document(), 5, buf, sizeof(buf)));
   EXPECT_EQ(CFX_WideString(kExpectedPageLabel5),
             CFX_WideString::FromUTF16LE(buf, FXSYS_len(kExpectedPageLabel5)));
 
-  const FX_WCHAR kExpectedPageLabel6[] = L"";
+  const wchar_t kExpectedPageLabel6[] = L"";
   ASSERT_EQ(2u, FPDF_GetPageLabel(document(), 6, buf, sizeof(buf)));
   EXPECT_EQ(CFX_WideString(kExpectedPageLabel6),
             CFX_WideString::FromUTF16LE(buf, FXSYS_len(kExpectedPageLabel6)));

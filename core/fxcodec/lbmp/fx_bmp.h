@@ -70,8 +70,8 @@ typedef bmp_decompress_struct* bmp_decompress_struct_p;
 typedef bmp_decompress_struct_p* bmp_decompress_struct_pp;
 struct tag_bmp_decompress_struct {
   jmp_buf jmpbuf;
-  FX_CHAR* err_ptr;
-  void (*bmp_error_fn)(bmp_decompress_struct_p gif_ptr, const FX_CHAR* err_msg);
+  char* err_ptr;
+  void (*bmp_error_fn)(bmp_decompress_struct_p gif_ptr, const char* err_msg);
 
   void* context_ptr;
 
@@ -111,7 +111,7 @@ struct tag_bmp_decompress_struct {
   uint32_t skip_size;
   int32_t decode_status;
 };
-void bmp_error(bmp_decompress_struct_p bmp_ptr, const FX_CHAR* err_msg);
+void bmp_error(bmp_decompress_struct_p bmp_ptr, const char* err_msg);
 bmp_decompress_struct_p bmp_create_decompress();
 void bmp_destroy_decompress(bmp_decompress_struct_pp bmp_ptr_ptr);
 int32_t bmp_read_header(bmp_decompress_struct_p bmp_ptr);

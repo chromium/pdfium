@@ -778,7 +778,7 @@ bool CPDF_XRefStream::GenerateXRefStream(CPDF_Creator* pCreator, bool bEOF) {
     if (pFile->AppendString("/Prev ") < 0) {
       return false;
     }
-    FX_CHAR offset_buf[20];
+    char offset_buf[20];
     FXSYS_memset(offset_buf, 0, sizeof(offset_buf));
     FXSYS_i64toa(m_PrevOffset, offset_buf, 10);
     int32_t offset_len = (int32_t)FXSYS_strlen(offset_buf);
@@ -1090,7 +1090,7 @@ int32_t CPDF_Creator::WriteDirectObj(uint32_t objnum,
       CPDF_Encryptor encryptor(m_pCryptoHandler, objnum, (uint8_t*)str.c_str(),
                                str.GetLength());
       CFX_ByteString content = PDF_EncodeString(
-          CFX_ByteString((const FX_CHAR*)encryptor.m_pData, encryptor.m_dwSize),
+          CFX_ByteString((const char*)encryptor.m_pData, encryptor.m_dwSize),
           bHex);
       if ((len = m_File.AppendString(content.AsStringC())) < 0) {
         return -1;
@@ -1778,7 +1778,7 @@ int32_t CPDF_Creator::WriteDoc_Stage4(IFX_Pause* pPause) {
         if (m_File.AppendString("/Prev ") < 0) {
           return -1;
         }
-        FX_CHAR offset_buf[20];
+        char offset_buf[20];
         FXSYS_memset(offset_buf, 0, sizeof(offset_buf));
         FXSYS_i64toa(prev, offset_buf, 10);
         if (m_File.AppendBlock(offset_buf, FXSYS_strlen(offset_buf)) < 0) {
@@ -1860,7 +1860,7 @@ int32_t CPDF_Creator::WriteDoc_Stage4(IFX_Pause* pPause) {
   if (m_File.AppendString("\r\nstartxref\r\n") < 0) {
     return -1;
   }
-  FX_CHAR offset_buf[20];
+  char offset_buf[20];
   FXSYS_memset(offset_buf, 0, sizeof(offset_buf));
   FXSYS_i64toa(m_XrefStart, offset_buf, 10);
   if (m_File.AppendBlock(offset_buf, FXSYS_strlen(offset_buf)) < 0) {

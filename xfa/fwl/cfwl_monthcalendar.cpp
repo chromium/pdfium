@@ -674,10 +674,10 @@ void CFWL_MonthCalendar::JumpToToday() {
 
 CFX_WideString CFWL_MonthCalendar::GetHeadText(int32_t iYear, int32_t iMonth) {
   ASSERT(iMonth > 0 && iMonth < 13);
-  static const FX_WCHAR* const pMonth[] = {
-      L"January",   L"February", L"March",    L"April",
-      L"May",       L"June",     L"July",     L"August",
-      L"September", L"October",  L"November", L"December"};
+  static const wchar_t* const pMonth[] = {L"January", L"February", L"March",
+                                          L"April",   L"May",      L"June",
+                                          L"July",    L"August",   L"September",
+                                          L"October", L"November", L"December"};
   CFX_WideString wsHead;
   wsHead.Format(L"%s, %d", pMonth[iMonth - 1], iYear);
   return wsHead;

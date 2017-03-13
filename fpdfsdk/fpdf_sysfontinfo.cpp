@@ -35,7 +35,7 @@ class CFX_ExternalFontInfo final : public IFX_SystemFontInfo {
                 bool bItalic,
                 int charset,
                 int pitch_family,
-                const FX_CHAR* family,
+                const char* family,
                 int& iExact) override {
     if (!m_pInfo->MapFont)
       return nullptr;
@@ -43,7 +43,7 @@ class CFX_ExternalFontInfo final : public IFX_SystemFontInfo {
                             family, &iExact);
   }
 
-  void* GetFont(const FX_CHAR* family) override {
+  void* GetFont(const char* family) override {
     if (!m_pInfo->GetFont)
       return nullptr;
     return m_pInfo->GetFont(m_pInfo, family);

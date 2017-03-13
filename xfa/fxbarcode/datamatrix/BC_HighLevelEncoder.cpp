@@ -40,17 +40,17 @@
 #include "xfa/fxbarcode/datamatrix/BC_X12Encoder.h"
 #include "xfa/fxbarcode/utils.h"
 
-FX_WCHAR CBC_HighLevelEncoder::LATCH_TO_C40 = 230;
-FX_WCHAR CBC_HighLevelEncoder::LATCH_TO_BASE256 = 231;
-FX_WCHAR CBC_HighLevelEncoder::UPPER_SHIFT = 235;
-FX_WCHAR CBC_HighLevelEncoder::LATCH_TO_ANSIX12 = 238;
-FX_WCHAR CBC_HighLevelEncoder::LATCH_TO_TEXT = 239;
-FX_WCHAR CBC_HighLevelEncoder::LATCH_TO_EDIFACT = 240;
-FX_WCHAR CBC_HighLevelEncoder::C40_UNLATCH = 254;
-FX_WCHAR CBC_HighLevelEncoder::X12_UNLATCH = 254;
-FX_WCHAR CBC_HighLevelEncoder::PAD = 129;
-FX_WCHAR CBC_HighLevelEncoder::MACRO_05 = 236;
-FX_WCHAR CBC_HighLevelEncoder::MACRO_06 = 237;
+wchar_t CBC_HighLevelEncoder::LATCH_TO_C40 = 230;
+wchar_t CBC_HighLevelEncoder::LATCH_TO_BASE256 = 231;
+wchar_t CBC_HighLevelEncoder::UPPER_SHIFT = 235;
+wchar_t CBC_HighLevelEncoder::LATCH_TO_ANSIX12 = 238;
+wchar_t CBC_HighLevelEncoder::LATCH_TO_TEXT = 239;
+wchar_t CBC_HighLevelEncoder::LATCH_TO_EDIFACT = 240;
+wchar_t CBC_HighLevelEncoder::C40_UNLATCH = 254;
+wchar_t CBC_HighLevelEncoder::X12_UNLATCH = 254;
+wchar_t CBC_HighLevelEncoder::PAD = 129;
+wchar_t CBC_HighLevelEncoder::MACRO_05 = 236;
+wchar_t CBC_HighLevelEncoder::MACRO_06 = 237;
 const wchar_t* CBC_HighLevelEncoder::MACRO_05_HEADER = L"[)>05";
 const wchar_t* CBC_HighLevelEncoder::MACRO_06_HEADER = L"[)>06";
 const wchar_t CBC_HighLevelEncoder::MACRO_TRAILER = 0x0004;
@@ -184,7 +184,7 @@ int32_t CBC_HighLevelEncoder::lookAheadTest(CFX_WideString msg,
       }
       return C40_ENCODATION;
     }
-    FX_WCHAR c = msg.GetAt(startpos + charsProcessed);
+    wchar_t c = msg.GetAt(startpos + charsProcessed);
     charsProcessed++;
     if (isDigit(c)) {
       charCounts[ASCII_ENCODATION] += 0.5;
@@ -271,7 +271,7 @@ int32_t CBC_HighLevelEncoder::lookAheadTest(CFX_WideString msg,
         if (intCharCounts[C40_ENCODATION] == intCharCounts[X12_ENCODATION]) {
           int32_t p = startpos + charsProcessed + 1;
           while (p < msg.GetLength()) {
-            FX_WCHAR tc = msg.GetAt(p);
+            wchar_t tc = msg.GetAt(p);
             if (isX12TermSep(tc)) {
               return X12_ENCODATION;
             }
@@ -286,10 +286,10 @@ int32_t CBC_HighLevelEncoder::lookAheadTest(CFX_WideString msg,
     }
   }
 }
-bool CBC_HighLevelEncoder::isDigit(FX_WCHAR ch) {
+bool CBC_HighLevelEncoder::isDigit(wchar_t ch) {
   return ch >= '0' && ch <= '9';
 }
-bool CBC_HighLevelEncoder::isExtendedASCII(FX_WCHAR ch) {
+bool CBC_HighLevelEncoder::isExtendedASCII(wchar_t ch) {
   return ch >= 128 && ch <= 255;
 }
 int32_t CBC_HighLevelEncoder::determineConsecutiveDigitCount(CFX_WideString msg,
@@ -298,7 +298,7 @@ int32_t CBC_HighLevelEncoder::determineConsecutiveDigitCount(CFX_WideString msg,
   int32_t len = msg.GetLength();
   int32_t idx = startpos;
   if (idx < len) {
-    FX_WCHAR ch = msg.GetAt(idx);
+    wchar_t ch = msg.GetAt(idx);
     while (isDigit(ch) && idx < len) {
       count++;
       idx++;
@@ -309,15 +309,15 @@ int32_t CBC_HighLevelEncoder::determineConsecutiveDigitCount(CFX_WideString msg,
   }
   return count;
 }
-void CBC_HighLevelEncoder::illegalCharacter(FX_WCHAR c, int32_t& e) {
+void CBC_HighLevelEncoder::illegalCharacter(wchar_t c, int32_t& e) {
   e = BCExceptionIllegalArgument;
 }
-FX_WCHAR CBC_HighLevelEncoder::randomize253State(FX_WCHAR ch,
-                                                 int32_t codewordPosition) {
+wchar_t CBC_HighLevelEncoder::randomize253State(wchar_t ch,
+                                                int32_t codewordPosition) {
   int32_t pseudoRandom = ((149 * codewordPosition) % 253) + 1;
   int32_t tempVariable = ch + pseudoRandom;
-  return tempVariable <= 254 ? (FX_WCHAR)tempVariable
-                             : (FX_WCHAR)(tempVariable - 254);
+  return tempVariable <= 254 ? (wchar_t)tempVariable
+                             : (wchar_t)(tempVariable - 254);
 }
 int32_t CBC_HighLevelEncoder::findMinimums(
     std::vector<FX_FLOAT>& charCounts,
@@ -350,22 +350,22 @@ int32_t CBC_HighLevelEncoder::getMinimumCount(
   }
   return minCount;
 }
-bool CBC_HighLevelEncoder::isNativeC40(FX_WCHAR ch) {
+bool CBC_HighLevelEncoder::isNativeC40(wchar_t ch) {
   return (ch == ' ') || (ch >= '0' && ch <= '9') || (ch >= 'A' && ch <= 'Z');
 }
-bool CBC_HighLevelEncoder::isNativeText(FX_WCHAR ch) {
+bool CBC_HighLevelEncoder::isNativeText(wchar_t ch) {
   return (ch == ' ') || (ch >= '0' && ch <= '9') || (ch >= 'a' && ch <= 'z');
 }
-bool CBC_HighLevelEncoder::isNativeX12(FX_WCHAR ch) {
+bool CBC_HighLevelEncoder::isNativeX12(wchar_t ch) {
   return isX12TermSep(ch) || (ch == ' ') || (ch >= '0' && ch <= '9') ||
          (ch >= 'A' && ch <= 'Z');
 }
-bool CBC_HighLevelEncoder::isX12TermSep(FX_WCHAR ch) {
+bool CBC_HighLevelEncoder::isX12TermSep(wchar_t ch) {
   return (ch == '\r') || (ch == '*') || (ch == '>');
 }
-bool CBC_HighLevelEncoder::isNativeEDIFACT(FX_WCHAR ch) {
+bool CBC_HighLevelEncoder::isNativeEDIFACT(wchar_t ch) {
   return ch >= ' ' && ch <= '^';
 }
-bool CBC_HighLevelEncoder::isSpecialB256(FX_WCHAR ch) {
+bool CBC_HighLevelEncoder::isSpecialB256(wchar_t ch) {
   return false;
 }

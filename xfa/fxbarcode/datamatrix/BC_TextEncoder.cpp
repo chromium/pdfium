@@ -35,61 +35,59 @@ CBC_TextEncoder::~CBC_TextEncoder() {}
 int32_t CBC_TextEncoder::getEncodingMode() {
   return TEXT_ENCODATION;
 }
-int32_t CBC_TextEncoder::encodeChar(FX_WCHAR c,
-                                    CFX_WideString& sb,
-                                    int32_t& e) {
+int32_t CBC_TextEncoder::encodeChar(wchar_t c, CFX_WideString& sb, int32_t& e) {
   if (c == ' ') {
-    sb += (FX_WCHAR)'\3';
+    sb += (wchar_t)'\3';
     return 1;
   }
   if (c >= '0' && c <= '9') {
-    sb += (FX_WCHAR)(c - 48 + 4);
+    sb += (wchar_t)(c - 48 + 4);
     return 1;
   }
   if (c >= 'a' && c <= 'z') {
-    sb += (FX_WCHAR)(c - 97 + 14);
+    sb += (wchar_t)(c - 97 + 14);
     return 1;
   }
   if (c <= 0x1f) {
-    sb += (FX_WCHAR)'\0';
+    sb += (wchar_t)'\0';
     sb += c;
     return 2;
   }
   if (c >= '!' && c <= '/') {
-    sb += (FX_WCHAR)'\1';
-    sb += (FX_WCHAR)(c - 33);
+    sb += (wchar_t)'\1';
+    sb += (wchar_t)(c - 33);
     return 2;
   }
   if (c >= ':' && c <= '@') {
-    sb += (FX_WCHAR)'\1';
-    sb += (FX_WCHAR)(c - 58 + 15);
+    sb += (wchar_t)'\1';
+    sb += (wchar_t)(c - 58 + 15);
     return 2;
   }
   if (c >= '[' && c <= '_') {
-    sb += (FX_WCHAR)'\1';
-    sb += (FX_WCHAR)(c - 91 + 22);
+    sb += (wchar_t)'\1';
+    sb += (wchar_t)(c - 91 + 22);
     return 2;
   }
   if (c == 0x0060) {
-    sb += (FX_WCHAR)'\2';
-    sb += (FX_WCHAR)(c - 96);
+    sb += (wchar_t)'\2';
+    sb += (wchar_t)(c - 96);
     return 2;
   }
   if (c >= 'A' && c <= 'Z') {
-    sb += (FX_WCHAR)'\2';
-    sb += (FX_WCHAR)(c - 65 + 1);
+    sb += (wchar_t)'\2';
+    sb += (wchar_t)(c - 65 + 1);
     return 2;
   }
   if (c >= '{' && c <= 0x007f) {
-    sb += (FX_WCHAR)'\2';
-    sb += (FX_WCHAR)(c - 123 + 27);
+    sb += (wchar_t)'\2';
+    sb += (wchar_t)(c - 123 + 27);
     return 2;
   }
   if (c >= 0x0080) {
-    sb += (FX_WCHAR)'\1';
-    sb += (FX_WCHAR)0x001e;
+    sb += (wchar_t)'\1';
+    sb += (wchar_t)0x001e;
     int32_t len = 2;
-    len += encodeChar((FX_WCHAR)(c - 128), sb, e);
+    len += encodeChar((wchar_t)(c - 128), sb, e);
     if (e != BCExceptionNO)
       return -1;
     return len;

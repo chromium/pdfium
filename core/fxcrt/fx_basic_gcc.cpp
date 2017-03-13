@@ -82,23 +82,23 @@ STR_T FXSYS_IntToStr(T value, STR_T str, int radix) {
 #ifdef __cplusplus
 extern "C" {
 #endif
-int32_t FXSYS_atoi(const FX_CHAR* str) {
-  return FXSYS_StrToInt<int32_t, FX_CHAR>(str);
+int32_t FXSYS_atoi(const char* str) {
+  return FXSYS_StrToInt<int32_t, char>(str);
 }
-uint32_t FXSYS_atoui(const FX_CHAR* str) {
+uint32_t FXSYS_atoui(const char* str) {
   return FXSYS_StrToInt<uint32_t>(str);
 }
-int32_t FXSYS_wtoi(const FX_WCHAR* str) {
-  return FXSYS_StrToInt<int32_t, FX_WCHAR>(str);
+int32_t FXSYS_wtoi(const wchar_t* str) {
+  return FXSYS_StrToInt<int32_t, wchar_t>(str);
 }
-int64_t FXSYS_atoi64(const FX_CHAR* str) {
-  return FXSYS_StrToInt<int64_t, FX_CHAR>(str);
+int64_t FXSYS_atoi64(const char* str) {
+  return FXSYS_StrToInt<int64_t, char>(str);
 }
-int64_t FXSYS_wtoi64(const FX_WCHAR* str) {
-  return FXSYS_StrToInt<int64_t, FX_WCHAR>(str);
+int64_t FXSYS_wtoi64(const wchar_t* str) {
+  return FXSYS_StrToInt<int64_t, wchar_t>(str);
 }
-const FX_CHAR* FXSYS_i64toa(int64_t value, FX_CHAR* str, int radix) {
-  return FXSYS_IntToStr<int64_t, uint64_t, FX_CHAR*>(value, str, radix);
+const char* FXSYS_i64toa(int64_t value, char* str, int radix) {
+  return FXSYS_IntToStr<int64_t, uint64_t, char*>(value, str, radix);
 }
 #ifdef __cplusplus
 }
@@ -110,10 +110,10 @@ extern "C" {
 int FXSYS_GetACP() {
   return 0;
 }
-uint32_t FXSYS_GetFullPathName(const FX_CHAR* filename,
+uint32_t FXSYS_GetFullPathName(const char* filename,
                                uint32_t buflen,
-                               FX_CHAR* buf,
-                               FX_CHAR** filepart) {
+                               char* buf,
+                               char** filepart) {
   int srclen = FXSYS_strlen(filename);
   if (!buf || (int)buflen < srclen + 1) {
     return srclen + 1;
@@ -132,7 +132,7 @@ uint32_t FXSYS_GetModuleFileName(void* hModule, char* buf, uint32_t bufsize) {
 #ifdef __cplusplus
 extern "C" {
 #endif
-FXSYS_FILE* FXSYS_wfopen(const FX_WCHAR* filename, const FX_WCHAR* mode) {
+FXSYS_FILE* FXSYS_wfopen(const wchar_t* filename, const wchar_t* mode) {
   return FXSYS_fopen(CFX_ByteString::FromUnicode(filename).c_str(),
                      CFX_ByteString::FromUnicode(mode).c_str());
 }
@@ -158,22 +158,22 @@ char* FXSYS_strupr(char* str) {
   }
   return s;
 }
-FX_WCHAR* FXSYS_wcslwr(FX_WCHAR* str) {
+wchar_t* FXSYS_wcslwr(wchar_t* str) {
   if (!str) {
     return nullptr;
   }
-  FX_WCHAR* s = str;
+  wchar_t* s = str;
   while (*str) {
     *str = FXSYS_tolower(*str);
     str++;
   }
   return s;
 }
-FX_WCHAR* FXSYS_wcsupr(FX_WCHAR* str) {
+wchar_t* FXSYS_wcsupr(wchar_t* str) {
   if (!str) {
     return nullptr;
   }
-  FX_WCHAR* s = str;
+  wchar_t* s = str;
   while (*str) {
     *str = FXSYS_toupper(*str);
     str++;
@@ -192,20 +192,20 @@ int FXSYS_stricmp(const char* dst, const char* src) {
   } while (f && (f == l));
   return (f - l);
 }
-int FXSYS_wcsicmp(const FX_WCHAR* dst, const FX_WCHAR* src) {
-  FX_WCHAR f, l;
+int FXSYS_wcsicmp(const wchar_t* dst, const wchar_t* src) {
+  wchar_t f, l;
   do {
-    if (((f = (FX_WCHAR)(*(dst++))) >= 'A') && (f <= 'Z')) {
+    if (((f = (wchar_t)(*(dst++))) >= 'A') && (f <= 'Z')) {
       f -= ('A' - 'a');
     }
-    if (((l = (FX_WCHAR)(*(src++))) >= 'A') && (l <= 'Z')) {
+    if (((l = (wchar_t)(*(src++))) >= 'A') && (l <= 'Z')) {
       l -= ('A' - 'a');
     }
   } while (f && (f == l));
   return (f - l);
 }
 char* FXSYS_itoa(int value, char* str, int radix) {
-  return FXSYS_IntToStr<int32_t, uint32_t, FX_CHAR*>(value, str, radix);
+  return FXSYS_IntToStr<int32_t, uint32_t, char*>(value, str, radix);
 }
 #ifdef __cplusplus
 }
@@ -217,17 +217,17 @@ extern "C" {
 #endif
 int FXSYS_WideCharToMultiByte(uint32_t codepage,
                               uint32_t dwFlags,
-                              const FX_WCHAR* wstr,
+                              const wchar_t* wstr,
                               int wlen,
-                              FX_CHAR* buf,
+                              char* buf,
                               int buflen,
-                              const FX_CHAR* default_str,
+                              const char* default_str,
                               int* pUseDefault) {
   int len = 0;
   for (int i = 0; i < wlen; i++) {
     if (wstr[i] < 0x100) {
       if (buf && len < buflen)
-        buf[len] = static_cast<FX_CHAR>(wstr[i]);
+        buf[len] = static_cast<char>(wstr[i]);
       len++;
     }
   }
@@ -235,9 +235,9 @@ int FXSYS_WideCharToMultiByte(uint32_t codepage,
 }
 int FXSYS_MultiByteToWideChar(uint32_t codepage,
                               uint32_t dwFlags,
-                              const FX_CHAR* bstr,
+                              const char* bstr,
                               int blen,
-                              FX_WCHAR* buf,
+                              wchar_t* buf,
                               int buflen) {
   int wlen = 0;
   for (int i = 0; i < blen; i++) {

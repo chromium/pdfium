@@ -262,7 +262,7 @@ class CFX_ListCtrl : protected CFX_ListContainer {
   void SetMultipleSel(bool bMultiple);
   bool IsMultipleSel() const;
   bool IsValid(int32_t nItemIndex) const;
-  int32_t FindNext(int32_t nIndex, FX_WCHAR nChar) const;
+  int32_t FindNext(int32_t nIndex, wchar_t nChar) const;
   int32_t GetFirstSelected() const;
 
   CFX_PointF InToOut(const CFX_PointF& point) const;
@@ -285,7 +285,7 @@ class CFX_ListCtrl : protected CFX_ListContainer {
   CFX_WideString GetItemText(int32_t nIndex) const;
   void SetItemSelect(int32_t nItemIndex, bool bSelected);
   int32_t GetLastSelected() const;
-  FX_WCHAR Toupper(FX_WCHAR c) const;
+  wchar_t Toupper(wchar_t c) const;
 
   CPWL_List_Notify* m_pNotify;
   bool m_bNotifyFlag;

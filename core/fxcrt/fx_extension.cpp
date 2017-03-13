@@ -387,7 +387,7 @@ CFX_RetainPtr<IFX_FileAccess> IFX_FileAccess::CreateDefault(
 
 // static
 CFX_RetainPtr<IFX_SeekableStream> IFX_SeekableStream::CreateFromFilename(
-    const FX_CHAR* filename,
+    const char* filename,
     uint32_t dwModes) {
   std::unique_ptr<IFXCRT_FileAccess> pFA(IFXCRT_FileAccess::Create());
   if (!pFA->Open(filename, dwModes))
@@ -397,7 +397,7 @@ CFX_RetainPtr<IFX_SeekableStream> IFX_SeekableStream::CreateFromFilename(
 
 // static
 CFX_RetainPtr<IFX_SeekableStream> IFX_SeekableStream::CreateFromFilename(
-    const FX_WCHAR* filename,
+    const wchar_t* filename,
     uint32_t dwModes) {
   std::unique_ptr<IFXCRT_FileAccess> pFA(IFXCRT_FileAccess::Create());
   if (!pFA->Open(filename, dwModes))
@@ -407,7 +407,7 @@ CFX_RetainPtr<IFX_SeekableStream> IFX_SeekableStream::CreateFromFilename(
 
 // static
 CFX_RetainPtr<IFX_SeekableReadStream>
-IFX_SeekableReadStream::CreateFromFilename(const FX_CHAR* filename) {
+IFX_SeekableReadStream::CreateFromFilename(const char* filename) {
   return IFX_SeekableStream::CreateFromFilename(filename, FX_FILEMODE_ReadOnly);
 }
 
@@ -429,9 +429,7 @@ FX_FLOAT FXSYS_tan(FX_FLOAT a) {
 FX_FLOAT FXSYS_logb(FX_FLOAT b, FX_FLOAT x) {
   return FXSYS_log(x) / FXSYS_log(b);
 }
-FX_FLOAT FXSYS_strtof(const FX_CHAR* pcsStr,
-                      int32_t iLength,
-                      int32_t* pUsedLen) {
+FX_FLOAT FXSYS_strtof(const char* pcsStr, int32_t iLength, int32_t* pUsedLen) {
   ASSERT(pcsStr);
   if (iLength < 0) {
     iLength = (int32_t)FXSYS_strlen(pcsStr);
@@ -440,7 +438,7 @@ FX_FLOAT FXSYS_strtof(const FX_CHAR* pcsStr,
       CFX_WideString::FromLocal(CFX_ByteStringC(pcsStr, iLength));
   return FXSYS_wcstof(ws.c_str(), iLength, pUsedLen);
 }
-FX_FLOAT FXSYS_wcstof(const FX_WCHAR* pwsStr,
+FX_FLOAT FXSYS_wcstof(const wchar_t* pwsStr,
                       int32_t iLength,
                       int32_t* pUsedLen) {
   ASSERT(pwsStr);
@@ -461,7 +459,7 @@ FX_FLOAT FXSYS_wcstof(const FX_WCHAR* pwsStr,
   }
   FX_FLOAT fValue = 0.0f;
   while (iUsedLen < iLength) {
-    FX_WCHAR wch = pwsStr[iUsedLen];
+    wchar_t wch = pwsStr[iUsedLen];
     if (wch >= L'0' && wch <= L'9') {
       fValue = fValue * 10.0f + (wch - L'0');
     } else {
@@ -472,7 +470,7 @@ FX_FLOAT FXSYS_wcstof(const FX_WCHAR* pwsStr,
   if (iUsedLen < iLength && pwsStr[iUsedLen] == L'.') {
     FX_FLOAT fPrecise = 0.1f;
     while (++iUsedLen < iLength) {
-      FX_WCHAR wch = pwsStr[iUsedLen];
+      wchar_t wch = pwsStr[iUsedLen];
       if (wch >= L'0' && wch <= L'9') {
         fValue += (wch - L'0') * fPrecise;
         fPrecise *= 0.1f;
@@ -486,9 +484,7 @@ FX_FLOAT FXSYS_wcstof(const FX_WCHAR* pwsStr,
   }
   return bNegtive ? -fValue : fValue;
 }
-FX_WCHAR* FXSYS_wcsncpy(FX_WCHAR* dstStr,
-                        const FX_WCHAR* srcStr,
-                        size_t count) {
+wchar_t* FXSYS_wcsncpy(wchar_t* dstStr, const wchar_t* srcStr, size_t count) {
   ASSERT(dstStr && srcStr && count > 0);
   for (size_t i = 0; i < count; ++i)
     if ((dstStr[i] = srcStr[i]) == L'\0') {
@@ -496,24 +492,24 @@ FX_WCHAR* FXSYS_wcsncpy(FX_WCHAR* dstStr,
     }
   return dstStr;
 }
-int32_t FXSYS_wcsnicmp(const FX_WCHAR* s1, const FX_WCHAR* s2, size_t count) {
+int32_t FXSYS_wcsnicmp(const wchar_t* s1, const wchar_t* s2, size_t count) {
   ASSERT(s1 && s2 && count > 0);
-  FX_WCHAR wch1 = 0, wch2 = 0;
+  wchar_t wch1 = 0, wch2 = 0;
   while (count-- > 0) {
-    wch1 = (FX_WCHAR)FXSYS_tolower(*s1++);
-    wch2 = (FX_WCHAR)FXSYS_tolower(*s2++);
+    wch1 = (wchar_t)FXSYS_tolower(*s1++);
+    wch2 = (wchar_t)FXSYS_tolower(*s2++);
     if (wch1 != wch2) {
       break;
     }
   }
   return wch1 - wch2;
 }
-int32_t FXSYS_strnicmp(const FX_CHAR* s1, const FX_CHAR* s2, size_t count) {
+int32_t FXSYS_strnicmp(const char* s1, const char* s2, size_t count) {
   ASSERT(s1 && s2 && count > 0);
-  FX_CHAR ch1 = 0, ch2 = 0;
+  char ch1 = 0, ch2 = 0;
   while (count-- > 0) {
-    ch1 = (FX_CHAR)FXSYS_tolower(*s1++);
-    ch2 = (FX_CHAR)FXSYS_tolower(*s2++);
+    ch1 = (char)FXSYS_tolower(*s1++);
+    ch2 = (char)FXSYS_tolower(*s2++);
     if (ch1 != ch2) {
       break;
     }
@@ -652,7 +648,7 @@ void FX_Random_GenerateCrypto(uint32_t* pBuffer, int32_t iCount) {
 }
 
 #ifdef PDF_ENABLE_XFA
-static const FX_CHAR gs_FX_pHexChars[] = "0123456789ABCDEF";
+static const char gs_FX_pHexChars[] = "0123456789ABCDEF";
 void FX_GUID_CreateV4(FX_GUID* pGUID) {
   FX_Random_GenerateMT((uint32_t*)pGUID, 4);
   uint8_t& b = ((uint8_t*)pGUID)[6];
@@ -661,7 +657,7 @@ void FX_GUID_CreateV4(FX_GUID* pGUID) {
 void FX_GUID_ToString(const FX_GUID* pGUID,
                       CFX_ByteString& bsStr,
                       bool bSeparator) {
-  FX_CHAR* pBuf = bsStr.GetBuffer(40);
+  char* pBuf = bsStr.GetBuffer(40);
   uint8_t b;
   for (int32_t i = 0; i < 16; i++) {
     b = ((const uint8_t*)pGUID)[i];

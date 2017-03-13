@@ -435,7 +435,7 @@ bool CJS_EventHandler::Modifier() {
   return m_bModifier;
 }
 
-const FX_WCHAR* CJS_EventHandler::Name() {
+const wchar_t* CJS_EventHandler::Name() {
   switch (m_eEventType) {
     case JET_APP_INIT:
       return L"Init";
@@ -506,7 +506,7 @@ const FX_WCHAR* CJS_EventHandler::Name() {
   }
 }
 
-const FX_WCHAR* CJS_EventHandler::Type() {
+const wchar_t* CJS_EventHandler::Type() {
   switch (m_eEventType) {
     case JET_APP_INIT:
       return L"App";

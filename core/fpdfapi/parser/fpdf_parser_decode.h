@@ -23,7 +23,7 @@ CFX_ByteString PDF_NameEncode(const CFX_ByteString& orig);
 CFX_ByteString PDF_EncodeString(const CFX_ByteString& src, bool bHex = false);
 CFX_WideString PDF_DecodeText(const uint8_t* pData, uint32_t size);
 CFX_WideString PDF_DecodeText(const CFX_ByteString& bstr);
-CFX_ByteString PDF_EncodeText(const FX_WCHAR* pString, int len = -1);
+CFX_ByteString PDF_EncodeText(const wchar_t* pString, int len = -1);
 CFX_ByteString PDF_EncodeText(const CFX_WideString& str);
 
 bool FlateEncode(const uint8_t* src_buf,

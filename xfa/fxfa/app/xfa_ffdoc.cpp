@@ -59,7 +59,7 @@ uint8_t base64DecoderValue(uint8_t val) {
   return g_FXBase64DecoderMap[val - kStartValuesRemoved];
 }
 
-void Base64DecodePiece(const FX_CHAR src[4],
+void Base64DecodePiece(const char src[4],
                        int32_t iChars,
                        FX_BASE64DATA& dst,
                        int32_t& iBytes) {
@@ -89,7 +89,7 @@ void Base64DecodePiece(const FX_CHAR src[4],
   }
 }
 
-int32_t Base64DecodeW(const FX_WCHAR* pSrc, int32_t iSrcLen, uint8_t* pDst) {
+int32_t Base64DecodeW(const wchar_t* pSrc, int32_t iSrcLen, uint8_t* pDst) {
   ASSERT(pSrc);
   if (iSrcLen < 1) {
     return 0;
@@ -112,26 +112,26 @@ int32_t Base64DecodeW(const FX_WCHAR* pSrc, int32_t iSrcLen, uint8_t* pDst) {
     }
     return iDstLen;
   }
-  FX_CHAR srcData[4];
+  char srcData[4];
   FX_BASE64DATA dstData;
   int32_t iChars = 4, iBytes;
   uint8_t* pDstEnd = pDst;
   while (iSrcLen > 0) {
     if (iSrcLen > 3) {
-      srcData[0] = (FX_CHAR)*pSrc++;
-      srcData[1] = (FX_CHAR)*pSrc++;
-      srcData[2] = (FX_CHAR)*pSrc++;
-      srcData[3] = (FX_CHAR)*pSrc++;
+      srcData[0] = (char)*pSrc++;
+      srcData[1] = (char)*pSrc++;
+      srcData[2] = (char)*pSrc++;
+      srcData[3] = (char)*pSrc++;
       iSrcLen -= 4;
     } else {
       *((uint32_t*)&dstData) = 0;
       *((uint32_t*)srcData) = 0;
-      srcData[0] = (FX_CHAR)*pSrc++;
+      srcData[0] = (char)*pSrc++;
       if (iSrcLen > 1) {
-        srcData[1] = (FX_CHAR)*pSrc++;
+        srcData[1] = (char)*pSrc++;
       }
       if (iSrcLen > 2) {
-        srcData[2] = (FX_CHAR)*pSrc++;
+        srcData[2] = (char)*pSrc++;
       }
       iChars = iSrcLen;
       iSrcLen = 0;

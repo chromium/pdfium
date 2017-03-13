@@ -39,7 +39,7 @@ class CCodec_GifModule : public ICodec_GifModule {
                     CFX_DIBAttribute* pAttribute) override;
 
  protected:
-  FX_CHAR m_szLastError[256];
+  char m_szLastError[256];
 };
 
 #endif  // CORE_FXCODEC_CODEC_CCODEC_GIFMODULE_H_

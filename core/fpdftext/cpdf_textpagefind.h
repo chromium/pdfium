@@ -32,9 +32,9 @@ class CPDF_TextPageFind {
                         int startPos,
                         int endPos);
   bool ExtractSubString(CFX_WideString& rString,
-                        const FX_WCHAR* lpszFullString,
+                        const wchar_t* lpszFullString,
                         int iSubString,
-                        FX_WCHAR chSep);
+                        wchar_t chSep);
   CFX_WideString MakeReverse(const CFX_WideString& str);
   int GetCharIndex(int index) const;
 

@@ -44,9 +44,9 @@ CFX_WideString CPDF_Bookmark::GetTitle() const {
   if (!len)
     return CFX_WideString();
 
-  std::unique_ptr<FX_WCHAR[]> buf(new FX_WCHAR[len]);
+  std::unique_ptr<wchar_t[]> buf(new wchar_t[len]);
   for (int i = 0; i < len; i++) {
-    FX_WCHAR w = title[i];
+    wchar_t w = title[i];
     buf[i] = w > 0x20 ? w : 0x20;
   }
   return CFX_WideString(buf.get(), len);

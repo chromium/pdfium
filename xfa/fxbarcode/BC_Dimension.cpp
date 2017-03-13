@@ -42,5 +42,5 @@ int32_t CBC_Dimension::hashCode() {
   return m_width * 32713 + m_height;
 }
 CFX_WideString CBC_Dimension::toString() {
-  return (FX_WCHAR)(m_width + (FX_WCHAR)'x' + m_height);
+  return (wchar_t)(m_width + (wchar_t)'x' + m_height);
 }

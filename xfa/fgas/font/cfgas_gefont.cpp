@@ -18,11 +18,10 @@
 #include "xfa/fxfa/xfa_fontmgr.h"
 
 // static
-CFX_RetainPtr<CFGAS_GEFont> CFGAS_GEFont::LoadFont(
-    const FX_WCHAR* pszFontFamily,
-    uint32_t dwFontStyles,
-    uint16_t wCodePage,
-    CFGAS_FontMgr* pFontMgr) {
+CFX_RetainPtr<CFGAS_GEFont> CFGAS_GEFont::LoadFont(const wchar_t* pszFontFamily,
+                                                   uint32_t dwFontStyles,
+                                                   uint16_t wCodePage,
+                                                   CFGAS_FontMgr* pFontMgr) {
 #if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
   if (!pFontMgr)
     return nullptr;
@@ -123,7 +122,7 @@ CFGAS_GEFont::~CFGAS_GEFont() {
 }
 
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
-bool CFGAS_GEFont::LoadFontInternal(const FX_WCHAR* pszFontFamily,
+bool CFGAS_GEFont::LoadFontInternal(const wchar_t* pszFontFamily,
                                     uint32_t dwFontStyles,
                                     uint16_t wCodePage) {
   if (m_pFont)
@@ -259,13 +258,13 @@ uint32_t CFGAS_GEFont::GetFontStyles() const {
   return dwStyles;
 }
 
-bool CFGAS_GEFont::GetCharWidth(FX_WCHAR wUnicode,
+bool CFGAS_GEFont::GetCharWidth(wchar_t wUnicode,
                                 int32_t& iWidth,
                                 bool bCharCode) {
   return GetCharWidthInternal(wUnicode, iWidth, true, bCharCode);
 }
 
-bool CFGAS_GEFont::GetCharWidthInternal(FX_WCHAR wUnicode,
+bool CFGAS_GEFont::GetCharWidthInternal(wchar_t wUnicode,
                                         int32_t& iWidth,
                                         bool bRecursive,
                                         bool bCharCode) {
@@ -299,13 +298,13 @@ bool CFGAS_GEFont::GetCharWidthInternal(FX_WCHAR wUnicode,
   return iWidth > 0;
 }
 
-bool CFGAS_GEFont::GetCharBBox(FX_WCHAR wUnicode,
+bool CFGAS_GEFont::GetCharBBox(wchar_t wUnicode,
                                CFX_Rect* bbox,
                                bool bCharCode) {
   return GetCharBBoxInternal(wUnicode, bbox, true, bCharCode);
 }
 
-bool CFGAS_GEFont::GetCharBBoxInternal(FX_WCHAR wUnicode,
+bool CFGAS_GEFont::GetCharBBoxInternal(wchar_t wUnicode,
                                        CFX_Rect* bbox,
                                        bool bRecursive,
                                        bool bCharCode) {
@@ -345,11 +344,11 @@ bool CFGAS_GEFont::GetBBox(CFX_Rect* bbox) {
   return true;
 }
 
-int32_t CFGAS_GEFont::GetGlyphIndex(FX_WCHAR wUnicode, bool bCharCode) {
+int32_t CFGAS_GEFont::GetGlyphIndex(wchar_t wUnicode, bool bCharCode) {
   return GetGlyphIndex(wUnicode, true, nullptr, bCharCode);
 }
 
-int32_t CFGAS_GEFont::GetGlyphIndex(FX_WCHAR wUnicode,
+int32_t CFGAS_GEFont::GetGlyphIndex(wchar_t wUnicode,
                                     bool bRecursive,
                                     CFX_RetainPtr<CFGAS_GEFont>* ppFont,
                                     bool bCharCode) {

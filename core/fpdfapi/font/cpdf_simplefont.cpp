@@ -198,13 +198,13 @@ CFX_WideString CPDF_SimpleFont::UnicodeFromCharCode(uint32_t charcode) const {
   CFX_WideString unicode = CPDF_Font::UnicodeFromCharCode(charcode);
   if (!unicode.IsEmpty())
     return unicode;
-  FX_WCHAR ret = m_Encoding.UnicodeFromCharCode((uint8_t)charcode);
+  wchar_t ret = m_Encoding.UnicodeFromCharCode((uint8_t)charcode);
   if (ret == 0)
     return CFX_WideString();
   return ret;
 }
 
-uint32_t CPDF_SimpleFont::CharCodeFromUnicode(FX_WCHAR unicode) const {
+uint32_t CPDF_SimpleFont::CharCodeFromUnicode(wchar_t unicode) const {
   uint32_t ret = CPDF_Font::CharCodeFromUnicode(unicode);
   if (ret)
     return ret;

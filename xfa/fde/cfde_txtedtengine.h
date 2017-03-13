@@ -46,7 +46,7 @@ class CFDE_TxtEdtEngine {
   void Unlock();
   bool IsLocked() const;
 
-  int32_t Insert(int32_t nStart, const FX_WCHAR* lpText, int32_t nLength);
+  int32_t Insert(int32_t nStart, const wchar_t* lpText, int32_t nLength);
   int32_t Delete(int32_t nStart, bool bBackspace = false);
   int32_t DeleteRange(int32_t nStart, int32_t nCount = -1);
   int32_t Replace(int32_t nStart,
@@ -54,7 +54,7 @@ class CFDE_TxtEdtEngine {
                   const CFX_WideString& wsReplace);
 
   void SetLimit(int32_t nLimit);
-  void SetAliasChar(FX_WCHAR wcAlias);
+  void SetAliasChar(wchar_t wcAlias);
 
   void RemoveSelRange(int32_t nStart, int32_t nCount);
 
@@ -83,7 +83,7 @@ class CFDE_TxtEdtEngine {
                      int32_t nStartLineofParag,
                      int32_t nLineIndex,
                      int32_t& nStartLine) const;
-  FX_WCHAR GetAliasChar() const { return m_wcAliasChar; }
+  wchar_t GetAliasChar() const { return m_wcAliasChar; }
 
  private:
   friend class CFDE_TxtEdtDoRecord_Insert;
@@ -100,14 +100,14 @@ class CFDE_TxtEdtEngine {
     int32_t nCharIndex;
   };
 
-  void Inner_Insert(int32_t nStart, const FX_WCHAR* lpText, int32_t nLength);
+  void Inner_Insert(int32_t nStart, const wchar_t* lpText, int32_t nLength);
   CFX_WideString GetPreDeleteText(int32_t nIndex, int32_t nLength);
   CFX_WideString GetPreInsertText(int32_t nIndex,
-                                  const FX_WCHAR* lpText,
+                                  const wchar_t* lpText,
                                   int32_t nLength);
   CFX_WideString GetPreReplaceText(int32_t nIndex,
                                    int32_t nOriginLength,
-                                   const FX_WCHAR* lpText,
+                                   const wchar_t* lpText,
                                    int32_t nLength);
 
   void Inner_DeleteRange(int32_t nStart, int32_t nCount = -1);
@@ -120,7 +120,7 @@ class CFDE_TxtEdtEngine {
   void UpdatePages();
   void UpdateTxtBreak();
 
-  bool ReplaceParagEnd(FX_WCHAR*& lpText,
+  bool ReplaceParagEnd(wchar_t*& lpText,
                        int32_t& nLength,
                        bool bPreIsCR = false);
   void RecoverParagEnd(CFX_WideString& wsText) const;
@@ -165,10 +165,10 @@ class CFDE_TxtEdtEngine {
   uint32_t m_dwFindFlags;
   bool m_bLock;
   int32_t m_nLimit;
-  FX_WCHAR m_wcAliasChar;
+  wchar_t m_wcAliasChar;
   int32_t m_nFirstLineEnd;
   bool m_bAutoLineEnd;
-  FX_WCHAR m_wLineEnd;
+  wchar_t m_wLineEnd;
   FDE_TXTEDT_TEXTCHANGE_INFO m_ChangeInfo;
 };
 

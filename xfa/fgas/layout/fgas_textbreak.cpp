@@ -29,7 +29,7 @@ const FX_TxtBreak_LPFAppendChar g_FX_TxtBreak_lpfAppendChar[16] = {
     &CFX_TxtBreak::AppendChar_Others,      &CFX_TxtBreak::AppendChar_Others,
 };
 
-bool IsCtrlCode(FX_WCHAR ch) {
+bool IsCtrlCode(wchar_t ch) {
   uint32_t dwRet = (FX_GetUnicodeProperties(ch) & FX_CHARTYPEBITSMASK);
   return dwRet == FX_CHARTYPE_Tab || dwRet == FX_CHARTYPE_Control;
 }
@@ -112,7 +112,7 @@ void CFX_TxtBreak::SetTabWidth(FX_FLOAT fTabWidth, bool bEquidistant) {
   m_bEquidistant = bEquidistant;
 }
 
-void CFX_TxtBreak::SetDefaultChar(FX_WCHAR wch) {
+void CFX_TxtBreak::SetDefaultChar(wchar_t wch) {
   m_wDefChar = wch;
   m_iDefChar = 0;
   if (m_wDefChar == 0xFEFF || !m_pFont)
@@ -125,7 +125,7 @@ void CFX_TxtBreak::SetDefaultChar(FX_WCHAR wch) {
     m_iDefChar *= m_iFontSize;
 }
 
-void CFX_TxtBreak::SetParagraphBreakChar(FX_WCHAR wch) {
+void CFX_TxtBreak::SetParagraphBreakChar(wchar_t wch) {
   if (wch != L'\r' && wch != L'\n')
     return;
   m_wParagBreakChar = wch;
@@ -208,8 +208,8 @@ void CFX_TxtBreak::AppendChar_PageLoad(CFX_Char* pCurChar, uint32_t dwProps) {
 }
 
 CFX_BreakType CFX_TxtBreak::AppendChar_Combination(CFX_Char* pCurChar) {
-  FX_WCHAR wch = pCurChar->m_wCharCode;
-  FX_WCHAR wForm;
+  wchar_t wch = pCurChar->m_wCharCode;
+  wchar_t wForm;
   int32_t iCharWidth = 0;
   pCurChar->m_iCharWidth = -1;
   if (m_bCombText) {
@@ -221,7 +221,7 @@ CFX_BreakType CFX_TxtBreak::AppendChar_Combination(CFX_Char* pCurChar) {
         (pLastChar->m_dwCharStyles & FX_TXTCHARSTYLE_ArabicShadda) == 0) {
       bool bShadda = false;
       if (wch == 0x0651) {
-        FX_WCHAR wLast = pLastChar->m_wCharCode;
+        wchar_t wLast = pLastChar->m_wCharCode;
         if (wLast >= 0x064C && wLast <= 0x0650) {
           wForm = FX_GetArabicFromShaddaTable(wLast);
           bShadda = true;
@@ -257,7 +257,7 @@ CFX_BreakType CFX_TxtBreak::AppendChar_Control(CFX_Char* pCurChar) {
   m_eCharType = FX_CHARTYPE_Control;
   CFX_BreakType dwRet = CFX_BreakType::None;
   if (!m_bSingleLine) {
-    FX_WCHAR wch = pCurChar->m_wCharCode;
+    wchar_t wch = pCurChar->m_wCharCode;
     switch (wch) {
       case L'\v':
       case 0x2028:
@@ -283,7 +283,7 @@ CFX_BreakType CFX_TxtBreak::AppendChar_Control(CFX_Char* pCurChar) {
 CFX_BreakType CFX_TxtBreak::AppendChar_Arabic(CFX_Char* pCurChar) {
   FX_CHARTYPE chartype = pCurChar->GetCharType();
   int32_t& iLineWidth = m_pCurLine->m_iWidth;
-  FX_WCHAR wForm;
+  wchar_t wForm;
   int32_t iCharWidth = 0;
   CFX_Char* pLastChar = nullptr;
   bool bAlef = false;
@@ -339,8 +339,8 @@ CFX_BreakType CFX_TxtBreak::AppendChar_Others(CFX_Char* pCurChar) {
   int32_t& iLineWidth = m_pCurLine->m_iWidth;
   int32_t iCharWidth = 0;
   m_eCharType = chartype;
-  FX_WCHAR wch = pCurChar->m_wCharCode;
-  FX_WCHAR wForm = wch;
+  wchar_t wch = pCurChar->m_wCharCode;
+  wchar_t wForm = wch;
 
   if (m_bCombText) {
     iCharWidth = m_iCombWidth;
@@ -363,7 +363,7 @@ CFX_BreakType CFX_TxtBreak::AppendChar_Others(CFX_Char* pCurChar) {
   return CFX_BreakType::None;
 }
 
-CFX_BreakType CFX_TxtBreak::AppendChar(FX_WCHAR wch) {
+CFX_BreakType CFX_TxtBreak::AppendChar(wchar_t wch) {
   uint32_t dwProps = kTextLayoutCodeProperties[static_cast<uint16_t>(wch)];
   FX_CHARTYPE chartype = GetCharTypeFromProp(dwProps);
   m_pCurLine->m_LineChars.emplace_back();
@@ -834,7 +834,7 @@ int32_t CFX_TxtBreak::GetDisplayPos(const FX_TXTRUN* pTxtRun,
 
   CFDE_TxtEdtPage* pAccess = pTxtRun->pAccess;
   const FDE_TEXTEDITPIECE* pIdentity = pTxtRun->pIdentity;
-  const FX_WCHAR* pStr = pTxtRun->wsStr.c_str();
+  const wchar_t* pStr = pTxtRun->wsStr.c_str();
   int32_t* pWidths = pTxtRun->pWidths;
   int32_t iLength = pTxtRun->iLength - 1;
   CFX_RetainPtr<CFGAS_GEFont> pFont = pTxtRun->pFont;
@@ -866,15 +866,15 @@ int32_t CFX_TxtBreak::GetDisplayPos(const FX_TXTRUN* pTxtRun,
 
   int32_t iCount = 0;
   int32_t iNext = 0;
-  FX_WCHAR wPrev = 0xFEFF;
-  FX_WCHAR wNext = 0xFEFF;
-  FX_WCHAR wForm = 0xFEFF;
-  FX_WCHAR wLast = 0xFEFF;
+  wchar_t wPrev = 0xFEFF;
+  wchar_t wNext = 0xFEFF;
+  wchar_t wForm = 0xFEFF;
+  wchar_t wLast = 0xFEFF;
   bool bShadda = false;
   bool bLam = false;
   for (int32_t i = 0; i <= iLength; i++) {
     int32_t iWidth;
-    FX_WCHAR wch;
+    wchar_t wch;
     if (pAccess) {
       wch = pAccess->GetChar(pIdentity, i);
       iWidth = pAccess->GetWidth(pIdentity, i);
@@ -1006,12 +1006,12 @@ int32_t CFX_TxtBreak::GetDisplayPos(const FX_TXTRUN* pTxtRun,
     }
 
     for (int32_t j = 0; j < iForms; j++) {
-      wForm = (FX_WCHAR)formChars[j].wForm;
+      wForm = (wchar_t)formChars[j].wForm;
       iCharWidth = formChars[j].iWidth;
       if (j > 0) {
         chartype = FX_CHARTYPE_Combination;
         wch = wForm;
-        wLast = (FX_WCHAR)formChars[j - 1].wForm;
+        wLast = (wchar_t)formChars[j - 1].wForm;
       }
       if (!bEmptyChar || (bEmptyChar && !bSkipSpace)) {
         pCharPos->m_GlyphIndex =
@@ -1085,7 +1085,7 @@ int32_t CFX_TxtBreak::GetDisplayPos(const FX_TXTRUN* pTxtRun,
       }
     }
     if (iWidth > 0)
-      wPrev = static_cast<FX_WCHAR>(formChars[0].wch);
+      wPrev = static_cast<wchar_t>(formChars[0].wch);
     wLast = wch;
   }
   return iCount;
@@ -1098,7 +1098,7 @@ std::vector<CFX_RectF> CFX_TxtBreak::GetCharRects(const FX_TXTRUN* pTxtRun,
 
   CFDE_TxtEdtPage* pAccess = pTxtRun->pAccess;
   const FDE_TEXTEDITPIECE* pIdentity = pTxtRun->pIdentity;
-  const FX_WCHAR* pStr = pTxtRun->wsStr.c_str();
+  const wchar_t* pStr = pTxtRun->wsStr.c_str();
   int32_t* pWidths = pTxtRun->pWidths;
   int32_t iLength = pTxtRun->iLength;
   CFX_RectF rect(*pTxtRun->pRect);
@@ -1118,8 +1118,8 @@ std::vector<CFX_RectF> CFX_TxtBreak::GetCharRects(const FX_TXTRUN* pTxtRun,
   bool bRTLPiece = !!(pTxtRun->dwCharStyles & FX_TXTCHARSTYLE_OddBidiLevel);
   bool bSingleLine = !!(pTxtRun->dwStyles & FX_TXTLAYOUTSTYLE_SingleLine);
   bool bCombText = !!(pTxtRun->dwStyles & FX_TXTLAYOUTSTYLE_CombText);
-  FX_WCHAR wch;
-  FX_WCHAR wLineBreakChar = pTxtRun->wLineBreakChar;
+  wchar_t wch;
+  wchar_t wLineBreakChar = pTxtRun->wLineBreakChar;
   int32_t iCharSize;
   FX_FLOAT fCharSize;
   FX_FLOAT fStart = bRTLPiece ? rect.right() : rect.left;

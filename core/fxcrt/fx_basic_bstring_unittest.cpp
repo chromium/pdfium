@@ -278,7 +278,7 @@ TEST(fxcrt, ByteStringCNull) {
   EXPECT_EQ(null_string, assigned_null_string);
 
   CFX_ByteStringC assigned_nullptr_string("initially not nullptr");
-  assigned_nullptr_string = (const FX_CHAR*)nullptr;
+  assigned_nullptr_string = (const char*)nullptr;
   EXPECT_FALSE(assigned_nullptr_string.raw_str());
   EXPECT_EQ(assigned_nullptr_string.GetLength(), 0);
   EXPECT_TRUE(assigned_nullptr_string.IsEmpty());
@@ -335,7 +335,7 @@ TEST(fxcrt, ByteStringRemove) {
 
 TEST(fxcrt, ByteStringRemoveCopies) {
   CFX_ByteString freed("FREED");
-  const FX_CHAR* old_buffer = freed.c_str();
+  const char* old_buffer = freed.c_str();
 
   // No change with single reference - no copy.
   freed.Remove('Q');
@@ -538,7 +538,7 @@ TEST(fxcrt, ByteStringTrimRightCopies) {
   {
     // With a single reference, no copy takes place.
     CFX_ByteString fred("  FRED  ");
-    const FX_CHAR* old_buffer = fred.c_str();
+    const char* old_buffer = fred.c_str();
     fred.TrimRight();
     EXPECT_EQ("  FRED", fred);
     EXPECT_EQ(old_buffer, fred.c_str());
@@ -547,7 +547,7 @@ TEST(fxcrt, ByteStringTrimRightCopies) {
     // With multiple references, we must copy.
     CFX_ByteString fred("  FRED  ");
     CFX_ByteString other_fred = fred;
-    const FX_CHAR* old_buffer = fred.c_str();
+    const char* old_buffer = fred.c_str();
     fred.TrimRight();
     EXPECT_EQ("  FRED", fred);
     EXPECT_EQ("  FRED  ", other_fred);
@@ -557,7 +557,7 @@ TEST(fxcrt, ByteStringTrimRightCopies) {
     // With multiple references, but no modifications, no copy.
     CFX_ByteString fred("FRED");
     CFX_ByteString other_fred = fred;
-    const FX_CHAR* old_buffer = fred.c_str();
+    const char* old_buffer = fred.c_str();
     fred.TrimRight();
     EXPECT_EQ("FRED", fred);
     EXPECT_EQ("FRED", other_fred);
@@ -597,7 +597,7 @@ TEST(fxcrt, ByteStringTrimLeftCopies) {
   {
     // With a single reference, no copy takes place.
     CFX_ByteString fred("  FRED  ");
-    const FX_CHAR* old_buffer = fred.c_str();
+    const char* old_buffer = fred.c_str();
     fred.TrimLeft();
     EXPECT_EQ("FRED  ", fred);
     EXPECT_EQ(old_buffer, fred.c_str());
@@ -606,7 +606,7 @@ TEST(fxcrt, ByteStringTrimLeftCopies) {
     // With multiple references, we must copy.
     CFX_ByteString fred("  FRED  ");
     CFX_ByteString other_fred = fred;
-    const FX_CHAR* old_buffer = fred.c_str();
+    const char* old_buffer = fred.c_str();
     fred.TrimLeft();
     EXPECT_EQ("FRED  ", fred);
     EXPECT_EQ("  FRED  ", other_fred);
@@ -616,7 +616,7 @@ TEST(fxcrt, ByteStringTrimLeftCopies) {
     // With multiple references, but no modifications, no copy.
     CFX_ByteString fred("FRED");
     CFX_ByteString other_fred = fred;
-    const FX_CHAR* old_buffer = fred.c_str();
+    const char* old_buffer = fred.c_str();
     fred.TrimLeft();
     EXPECT_EQ("FRED", fred);
     EXPECT_EQ("FRED", other_fred);
@@ -628,7 +628,7 @@ TEST(fxcrt, ByteStringReserve) {
   {
     CFX_ByteString str;
     str.Reserve(6);
-    const FX_CHAR* old_buffer = str.c_str();
+    const char* old_buffer = str.c_str();
     str += "ABCDEF";
     EXPECT_EQ(old_buffer, str.c_str());
     str += "Blah Blah Blah Blah Blah Blah";
@@ -637,7 +637,7 @@ TEST(fxcrt, ByteStringReserve) {
   {
     CFX_ByteString str("A");
     str.Reserve(6);
-    const FX_CHAR* old_buffer = str.c_str();
+    const char* old_buffer = str.c_str();
     str += "BCDEF";
     EXPECT_EQ(old_buffer, str.c_str());
     str += "Blah Blah Blah Blah Blah Blah";
@@ -648,7 +648,7 @@ TEST(fxcrt, ByteStringReserve) {
 TEST(fxcrt, ByteStringGetBuffer) {
   {
     CFX_ByteString str;
-    FX_CHAR* buffer = str.GetBuffer(12);
+    char* buffer = str.GetBuffer(12);
     // NOLINTNEXTLINE(runtime/printf)
     strcpy(buffer, "clams");
     str.ReleaseBuffer();
@@ -656,7 +656,7 @@ TEST(fxcrt, ByteStringGetBuffer) {
   }
   {
     CFX_ByteString str("cl");
-    FX_CHAR* buffer = str.GetBuffer(12);
+    char* buffer = str.GetBuffer(12);
     // NOLINTNEXTLINE(runtime/printf)
     strcpy(buffer + 2, "ams");
     str.ReleaseBuffer();
@@ -669,7 +669,7 @@ TEST(fxcrt, ByteStringReleaseBuffer) {
     CFX_ByteString str;
     str.Reserve(12);
     str += "clams";
-    const FX_CHAR* old_buffer = str.c_str();
+    const char* old_buffer = str.c_str();
     str.ReleaseBuffer(4);
     EXPECT_EQ(old_buffer, str.c_str());
     EXPECT_EQ("clam", str);
@@ -678,7 +678,7 @@ TEST(fxcrt, ByteStringReleaseBuffer) {
     CFX_ByteString str("c");
     str.Reserve(12);
     str += "lams";
-    const FX_CHAR* old_buffer = str.c_str();
+    const char* old_buffer = str.c_str();
     str.ReleaseBuffer(4);
     EXPECT_EQ(old_buffer, str.c_str());
     EXPECT_EQ("clam", str);
@@ -687,7 +687,7 @@ TEST(fxcrt, ByteStringReleaseBuffer) {
     CFX_ByteString str;
     str.Reserve(200);
     str += "clams";
-    const FX_CHAR* old_buffer = str.c_str();
+    const char* old_buffer = str.c_str();
     str.ReleaseBuffer(4);
     EXPECT_NE(old_buffer, str.c_str());
     EXPECT_EQ("clam", str);
@@ -696,7 +696,7 @@ TEST(fxcrt, ByteStringReleaseBuffer) {
     CFX_ByteString str("c");
     str.Reserve(200);
     str += "lams";
-    const FX_CHAR* old_buffer = str.c_str();
+    const char* old_buffer = str.c_str();
     str.ReleaseBuffer(4);
     EXPECT_NE(old_buffer, str.c_str());
     EXPECT_EQ("clam", str);
@@ -1097,6 +1097,6 @@ TEST(fxcrt, EmptyByteString) {
   CFX_ByteString empty_str;
   EXPECT_TRUE(empty_str.IsEmpty());
   EXPECT_EQ(0, empty_str.GetLength());
-  const FX_CHAR* cstr = empty_str.c_str();
+  const char* cstr = empty_str.c_str();
   EXPECT_EQ(0, FXSYS_strlen(cstr));
 }

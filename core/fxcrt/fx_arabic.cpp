@@ -236,7 +236,7 @@ const int32_t gc_FX_BidiAddLevel[][4] = {
 };
 
 const FX_ARBFORMTABLE* ParseChar(const CFX_Char* pTC,
-                                 FX_WCHAR& wChar,
+                                 wchar_t& wChar,
                                  FX_CHARTYPE& eType) {
   if (!pTC) {
     eType = FX_CHARTYPE_Unknown;
@@ -244,7 +244,7 @@ const FX_ARBFORMTABLE* ParseChar(const CFX_Char* pTC,
     return nullptr;
   }
   eType = pTC->GetCharType();
-  wChar = (FX_WCHAR)pTC->m_wCharCode;
+  wChar = (wchar_t)pTC->m_wCharCode;
   const FX_ARBFORMTABLE* pFT = FX_GetArabicFormTable(wChar);
   if (!pFT || eType >= FX_CHARTYPE_ArabicNormal)
     eType = FX_CHARTYPE_Unknown;
@@ -254,13 +254,13 @@ const FX_ARBFORMTABLE* ParseChar(const CFX_Char* pTC,
 
 }  // namespace
 
-const FX_ARBFORMTABLE* FX_GetArabicFormTable(FX_WCHAR unicode) {
+const FX_ARBFORMTABLE* FX_GetArabicFormTable(wchar_t unicode) {
   if (unicode < 0x622 || unicode > 0x6d5) {
     return nullptr;
   }
   return g_FX_ArabicFormTables + unicode - 0x622;
 }
-FX_WCHAR FX_GetArabicFromAlefTable(FX_WCHAR alef) {
+wchar_t FX_GetArabicFromAlefTable(wchar_t alef) {
   static const int32_t s_iAlefCount =
       sizeof(gs_FX_AlefTable) / sizeof(FX_ARAALEF);
   for (int32_t iStart = 0; iStart < s_iAlefCount; iStart++) {
@@ -271,7 +271,7 @@ FX_WCHAR FX_GetArabicFromAlefTable(FX_WCHAR alef) {
   }
   return alef;
 }
-FX_WCHAR FX_GetArabicFromShaddaTable(FX_WCHAR shadda) {
+wchar_t FX_GetArabicFromShaddaTable(wchar_t shadda) {
   static const int32_t s_iShaddaCount =
       sizeof(gs_FX_ShaddaTable) / sizeof(FX_ARASHADDA);
   for (int32_t iStart = 0; iStart < s_iShaddaCount; iStart++) {
@@ -286,30 +286,30 @@ FX_WCHAR FX_GetArabicFromShaddaTable(FX_WCHAR shadda) {
 namespace pdfium {
 namespace arabic {
 
-FX_WCHAR GetFormChar(FX_WCHAR wch, FX_WCHAR prev, FX_WCHAR next) {
+wchar_t GetFormChar(wchar_t wch, wchar_t prev, wchar_t next) {
   CFX_Char c(wch, kTextLayoutCodeProperties[(uint16_t)wch]);
   CFX_Char p(prev, kTextLayoutCodeProperties[(uint16_t)prev]);
   CFX_Char n(next, kTextLayoutCodeProperties[(uint16_t)next]);
   return GetFormChar(&c, &p, &n);
 }
 
-FX_WCHAR GetFormChar(const CFX_Char* cur,
-                     const CFX_Char* prev,
-                     const CFX_Char* next) {
+wchar_t GetFormChar(const CFX_Char* cur,
+                    const CFX_Char* prev,
+                    const CFX_Char* next) {
   FX_CHARTYPE eCur;
-  FX_WCHAR wCur;
+  wchar_t wCur;
   const FX_ARBFORMTABLE* ft = ParseChar(cur, wCur, eCur);
   if (eCur < FX_CHARTYPE_ArabicAlef || eCur >= FX_CHARTYPE_ArabicNormal) {
     return wCur;
   }
   FX_CHARTYPE ePrev;
-  FX_WCHAR wPrev;
+  wchar_t wPrev;
   ParseChar(prev, wPrev, ePrev);
   if (wPrev == 0x0644 && eCur == FX_CHARTYPE_ArabicAlef) {
     return 0xFEFF;
   }
   FX_CHARTYPE eNext;
-  FX_WCHAR wNext;
+  wchar_t wNext;
   ParseChar(next, wNext, eNext);
   bool bAlef = (eNext == FX_CHARTYPE_ArabicAlef && wCur == 0x644);
   if (ePrev < FX_CHARTYPE_ArabicAlef) {
@@ -336,10 +336,10 @@ void FX_BidiReverseString(CFX_WideString& wsText,
                           int32_t iCount) {
   ASSERT(iStart > -1 && iStart < wsText.GetLength());
   ASSERT(iCount >= 0 && iStart + iCount <= wsText.GetLength());
-  FX_WCHAR wch;
-  FX_WCHAR* pStart = const_cast<FX_WCHAR*>(wsText.c_str());
+  wchar_t wch;
+  wchar_t* pStart = const_cast<wchar_t*>(wsText.c_str());
   pStart += iStart;
-  FX_WCHAR* pEnd = pStart + iCount - 1;
+  wchar_t* pEnd = pStart + iCount - 1;
   while (pStart < pEnd) {
     wch = *pStart;
     *pStart++ = *pEnd;

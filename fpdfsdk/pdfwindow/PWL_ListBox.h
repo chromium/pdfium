@@ -92,7 +92,7 @@ class CPWL_ListBox : public CPWL_Wnd {
   int32_t GetCurSel() const;
   bool IsItemSelected(int32_t nItemIndex) const;
   int32_t GetTopVisibleIndex() const;
-  int32_t FindNext(int32_t nIndex, FX_WCHAR nChar) const;
+  int32_t FindNext(int32_t nIndex, wchar_t nChar) const;
   CFX_FloatRect GetContentRect() const;
   FX_FLOAT GetFirstHeight() const;
   CFX_FloatRect GetListRect() const;

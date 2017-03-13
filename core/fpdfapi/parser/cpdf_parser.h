@@ -48,7 +48,7 @@ class CPDF_Parser {
   Error StartLinearizedParse(const CFX_RetainPtr<IFX_SeekableReadStream>& pFile,
                              CPDF_Document* pDocument);
 
-  void SetPassword(const FX_CHAR* password) { m_Password = password; }
+  void SetPassword(const char* password) { m_Password = password; }
   CFX_ByteString GetPassword() { return m_Password; }
   CPDF_Dictionary* GetTrailer() const { return m_pTrailer.get(); }
   FX_FILESIZE GetLastXRefOffset() const { return m_LastXRefOffset; }

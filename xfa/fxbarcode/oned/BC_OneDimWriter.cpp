@@ -83,7 +83,7 @@ void CBC_OneDimWriter::SetFontColor(FX_ARGB color) {
   m_fontColor = color;
 }
 
-FX_WCHAR CBC_OneDimWriter::Upper(FX_WCHAR ch) {
+wchar_t CBC_OneDimWriter::Upper(wchar_t ch) {
   if (ch >= 'a' && ch <= 'z') {
     ch = ch - ('a' - 'A');
   }

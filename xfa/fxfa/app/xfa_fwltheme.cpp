@@ -28,7 +28,7 @@
 
 namespace {
 
-const FX_WCHAR* const g_FWLTheme_CalFonts[] = {
+const wchar_t* const g_FWLTheme_CalFonts[] = {
     L"Arial", L"Courier New", L"DejaVu Sans",
 };
 

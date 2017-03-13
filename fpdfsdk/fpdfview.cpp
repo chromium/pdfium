@@ -490,7 +490,7 @@ DLLEXPORT FPDF_DOCUMENT STDCALL FPDF_LoadDocument(FPDF_STRING file_path,
   // NOTE: the creation of the file needs to be by the embedder on the
   // other side of this API.
   CFX_RetainPtr<IFX_SeekableReadStream> pFileAccess =
-      IFX_SeekableReadStream::CreateFromFilename((const FX_CHAR*)file_path);
+      IFX_SeekableReadStream::CreateFromFilename((const char*)file_path);
   if (!pFileAccess)
     return nullptr;
 

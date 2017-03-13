@@ -14,7 +14,7 @@
 
 namespace {
 
-bool IsSelectorStart(FX_WCHAR wch) {
+bool IsSelectorStart(wchar_t wch) {
   return wch == '.' || wch == '#' || wch == '*' || (wch >= 'a' && wch <= 'z') ||
          (wch >= 'A' && wch <= 'Z');
 }
@@ -32,7 +32,7 @@ CFDE_CSSSyntaxParser::~CFDE_CSSSyntaxParser() {
   m_TextPlane.Reset();
 }
 
-bool CFDE_CSSSyntaxParser::Init(const FX_WCHAR* pBuffer,
+bool CFDE_CSSSyntaxParser::Init(const wchar_t* pBuffer,
                                 int32_t iBufferSize,
                                 int32_t iTextDatSize,
                                 bool bOnlyDeclaration) {
@@ -65,7 +65,7 @@ FDE_CSSSyntaxStatus CFDE_CSSSyntaxParser::DoSyntaxParse() {
       m_eStatus = FDE_CSSSyntaxStatus::EOS;
       return m_eStatus;
     }
-    FX_WCHAR wch;
+    wchar_t wch;
     while (!m_TextPlane.IsEOF()) {
       wch = m_TextPlane.GetChar();
       switch (m_eMode) {
@@ -198,7 +198,7 @@ bool CFDE_CSSSyntaxParser::IsImportEnabled() const {
   return true;
 }
 
-bool CFDE_CSSSyntaxParser::AppendChar(FX_WCHAR wch) {
+bool CFDE_CSSSyntaxParser::AppendChar(wchar_t wch) {
   m_TextPlane.MoveNext();
   if (m_TextData.GetLength() > 0 || wch > ' ') {
     m_TextData.AppendChar(wch);

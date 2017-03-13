@@ -34,7 +34,7 @@ CFDE_CSSStyleRule* CFDE_CSSStyleSheet::GetRule(int32_t index) const {
   return m_RuleArray[index].get();
 }
 
-bool CFDE_CSSStyleSheet::LoadBuffer(const FX_WCHAR* pBuffer, int32_t iBufSize) {
+bool CFDE_CSSStyleSheet::LoadBuffer(const wchar_t* pBuffer, int32_t iBufSize) {
   ASSERT(pBuffer && iBufSize > 0);
 
   auto pSyntax = pdfium::MakeUnique<CFDE_CSSSyntaxParser>();

@@ -38,12 +38,12 @@ typedef DIR FX_FileHandle;
 #define FX_FILESIZE off_t
 #endif  // _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
 
-FX_FileHandle* FX_OpenFolder(const FX_CHAR* path);
+FX_FileHandle* FX_OpenFolder(const char* path);
 bool FX_GetNextFile(FX_FileHandle* handle,
                     CFX_ByteString* filename,
                     bool* bFolder);
 void FX_CloseFolder(FX_FileHandle* handle);
-FX_WCHAR FX_GetFolderSeparator();
+wchar_t FX_GetFolderSeparator();
 
 #define FX_FILEMODE_Write 0
 #define FX_FILEMODE_ReadOnly 1
@@ -76,7 +76,7 @@ class IFX_SeekableWriteStream : public IFX_WriteStream {
 class IFX_SeekableReadStream : public IFX_ReadStream {
  public:
   static CFX_RetainPtr<IFX_SeekableReadStream> CreateFromFilename(
-      const FX_CHAR* filename);
+      const char* filename);
 
   // IFX_ReadStream:
   bool IsEOF() override;
@@ -91,11 +91,11 @@ class IFX_SeekableStream : public IFX_SeekableReadStream,
                            public IFX_SeekableWriteStream {
  public:
   static CFX_RetainPtr<IFX_SeekableStream> CreateFromFilename(
-      const FX_CHAR* filename,
+      const char* filename,
       uint32_t dwModes);
 
   static CFX_RetainPtr<IFX_SeekableStream> CreateFromFilename(
-      const FX_WCHAR* filename,
+      const wchar_t* filename,
       uint32_t dwModes);
 
   // IFX_SeekableReadStream:

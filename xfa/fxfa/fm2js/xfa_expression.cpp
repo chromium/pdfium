@@ -12,10 +12,10 @@
 
 namespace {
 
-const FX_WCHAR RUNTIMEBLOCKTEMPARRAY[] =
+const wchar_t RUNTIMEBLOCKTEMPARRAY[] =
     L"foxit_xfa_formcalc_runtime_block_temp_array";
 
-const FX_WCHAR RUNTIMEBLOCKTEMPARRAYINDEX[] =
+const wchar_t RUNTIMEBLOCKTEMPARRAYINDEX[] =
     L"foxit_xfa_formcalc_runtime_block_temp_array_index";
 
 }  // namespace

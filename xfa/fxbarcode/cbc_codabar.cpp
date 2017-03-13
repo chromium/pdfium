@@ -27,14 +27,14 @@ CBC_Codabar::CBC_Codabar() : CBC_OneCode(new CBC_OnedCodaBarWriter) {}
 
 CBC_Codabar::~CBC_Codabar() {}
 
-bool CBC_Codabar::SetStartChar(FX_CHAR start) {
+bool CBC_Codabar::SetStartChar(char start) {
   if (!m_pBCWriter)
     return false;
   return static_cast<CBC_OnedCodaBarWriter*>(m_pBCWriter.get())
       ->SetStartChar(start);
 }
 
-bool CBC_Codabar::SetEndChar(FX_CHAR end) {
+bool CBC_Codabar::SetEndChar(char end) {
   if (m_pBCWriter)
     return static_cast<CBC_OnedCodaBarWriter*>(m_pBCWriter.get())
         ->SetEndChar(end);

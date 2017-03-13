@@ -39,18 +39,18 @@ enum FXJSE_ClassPropTypes {
 };
 
 struct FXJSE_FUNCTION_DESCRIPTOR {
-  const FX_CHAR* name;
+  const char* name;
   FXJSE_FuncCallback callbackProc;
 };
 
 struct FXJSE_PROPERTY_DESCRIPTOR {
-  const FX_CHAR* name;
+  const char* name;
   FXJSE_PropAccessor getProc;
   FXJSE_PropAccessor setProc;
 };
 
 struct FXJSE_CLASS_DESCRIPTOR {
-  const FX_CHAR* name;
+  const char* name;
   FXJSE_FuncCallback constructor;
   const FXJSE_PROPERTY_DESCRIPTOR* properties;
   const FXJSE_FUNCTION_DESCRIPTOR* methods;

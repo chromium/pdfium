@@ -12,12 +12,12 @@
 CFDE_TxtEdtDoRecord_Insert::CFDE_TxtEdtDoRecord_Insert(
     CFDE_TxtEdtEngine* pEngine,
     int32_t nCaret,
-    const FX_WCHAR* lpText,
+    const wchar_t* lpText,
     int32_t nLength)
     : m_pEngine(pEngine), m_nCaret(nCaret) {
   ASSERT(pEngine);
-  FX_WCHAR* lpBuffer = m_wsInsert.GetBuffer(nLength);
-  FXSYS_memcpy(lpBuffer, lpText, nLength * sizeof(FX_WCHAR));
+  wchar_t* lpBuffer = m_wsInsert.GetBuffer(nLength);
+  FXSYS_memcpy(lpBuffer, lpText, nLength * sizeof(wchar_t));
   m_wsInsert.ReleaseBuffer();
 }
 

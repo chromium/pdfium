@@ -25,7 +25,7 @@ class CPDF_SimpleFont : public CPDF_Font {
   int GlyphFromCharCode(uint32_t charcode, bool* pVertGlyph) override;
   bool IsUnicodeCompatible() const override;
   CFX_WideString UnicodeFromCharCode(uint32_t charcode) const override;
-  uint32_t CharCodeFromUnicode(FX_WCHAR Unicode) const override;
+  uint32_t CharCodeFromUnicode(wchar_t Unicode) const override;
 
   CPDF_FontEncoding* GetEncoding() { return &m_Encoding; }
 

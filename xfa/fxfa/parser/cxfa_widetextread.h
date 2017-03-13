@@ -22,9 +22,9 @@ class CXFA_WideTextRead : public IFGAS_Stream {
   int32_t GetPosition() override;
   bool IsEOF() const override;
   int32_t ReadData(uint8_t* pBuffer, int32_t iBufferSize) override;
-  int32_t ReadString(FX_WCHAR* pStr, int32_t iMaxLength, bool& bEOS) override;
+  int32_t ReadString(wchar_t* pStr, int32_t iMaxLength, bool& bEOS) override;
   int32_t WriteData(const uint8_t* pBuffer, int32_t iBufferSize) override;
-  int32_t WriteString(const FX_WCHAR* pStr, int32_t iLength) override;
+  int32_t WriteString(const wchar_t* pStr, int32_t iLength) override;
   void Flush() override {}
   bool SetLength(int32_t iLength) override;
   int32_t GetBOM(uint8_t bom[4]) const override;

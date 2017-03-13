@@ -428,7 +428,7 @@ int32_t CPWL_ListBox::GetCount() const {
   return m_pList->GetCount();
 }
 
-int32_t CPWL_ListBox::FindNext(int32_t nIndex, FX_WCHAR nChar) const {
+int32_t CPWL_ListBox::FindNext(int32_t nIndex, wchar_t nChar) const {
   return m_pList->FindNext(nIndex, nChar);
 }
 

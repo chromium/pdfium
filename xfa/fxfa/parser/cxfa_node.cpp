@@ -350,7 +350,7 @@ CXFA_Node* CreateInstance(CXFA_Node* pInstMgrNode, bool bDataMerge) {
 struct XFA_ExecEventParaInfo {
  public:
   uint32_t m_uHash;
-  const FX_WCHAR* m_lpcEventName;
+  const wchar_t* m_lpcEventName;
   XFA_EVENTTYPE m_eventType;
   uint32_t m_validFlags;
 };
@@ -408,11 +408,11 @@ void StrToRGB(const CFX_WideString& strRGB,
   g = 0;
   b = 0;
 
-  FX_WCHAR zero = '0';
+  wchar_t zero = '0';
   int32_t iIndex = 0;
   int32_t iLen = strRGB.GetLength();
   for (int32_t i = 0; i < iLen; ++i) {
-    FX_WCHAR ch = strRGB.GetAt(i);
+    wchar_t ch = strRGB.GetAt(i);
     if (ch == L',')
       ++iIndex;
     if (iIndex > 2)
@@ -3949,7 +3949,7 @@ bool CXFA_Node::TryCData(XFA_ATTRIBUTE eAttr,
   void* pValue = nullptr;
   if (XFA_GetAttributeDefaultValue(pValue, GetElementType(), eAttr,
                                    XFA_ATTRIBUTETYPE_Cdata, m_ePacket)) {
-    wsValue = (const FX_WCHAR*)pValue;
+    wsValue = (const wchar_t*)pValue;
     return true;
   }
   return false;
@@ -3977,7 +3977,7 @@ bool CXFA_Node::TryCData(XFA_ATTRIBUTE eAttr,
   void* pValue = nullptr;
   if (XFA_GetAttributeDefaultValue(pValue, GetElementType(), eAttr,
                                    XFA_ATTRIBUTETYPE_Cdata, m_ePacket)) {
-    wsValue = (CFX_WideStringC)(const FX_WCHAR*)pValue;
+    wsValue = (CFX_WideStringC)(const wchar_t*)pValue;
     return true;
   }
   return false;
@@ -4898,7 +4898,7 @@ bool CXFA_Node::GetMapModuleValue(void* pKey, void*& pValue) {
 
 void CXFA_Node::SetMapModuleString(void* pKey, const CFX_WideStringC& wsValue) {
   SetMapModuleBuffer(pKey, (void*)wsValue.c_str(),
-                     wsValue.GetLength() * sizeof(FX_WCHAR));
+                     wsValue.GetLength() * sizeof(wchar_t));
 }
 
 bool CXFA_Node::GetMapModuleString(void* pKey, CFX_WideStringC& wsValue) {
@@ -4907,7 +4907,7 @@ bool CXFA_Node::GetMapModuleString(void* pKey, CFX_WideStringC& wsValue) {
   if (!GetMapModuleBuffer(pKey, pValue, iBytes)) {
     return false;
   }
-  wsValue = CFX_WideStringC((const FX_WCHAR*)pValue, iBytes / sizeof(FX_WCHAR));
+  wsValue = CFX_WideStringC((const wchar_t*)pValue, iBytes / sizeof(wchar_t));
   return true;
 }
 

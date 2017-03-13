@@ -37,16 +37,15 @@ void CBC_ASCIIEncoder::Encode(CBC_EncoderContext& context, int32_t& e) {
   int32_t n = CBC_HighLevelEncoder::determineConsecutiveDigitCount(
       context.m_msg, context.m_pos);
   if (n >= 2) {
-    FX_WCHAR code =
-        encodeASCIIDigits(context.m_msg.GetAt(context.m_pos),
-                          context.m_msg.GetAt(context.m_pos + 1), e);
+    wchar_t code = encodeASCIIDigits(context.m_msg.GetAt(context.m_pos),
+                                     context.m_msg.GetAt(context.m_pos + 1), e);
     if (e != BCExceptionNO) {
       return;
     }
     context.writeCodeword(code);
     context.m_pos += 2;
   } else {
-    FX_WCHAR c = context.getCurrentChar();
+    wchar_t c = context.getCurrentChar();
     int32_t newMode = CBC_HighLevelEncoder::lookAheadTest(
         context.m_msg, context.m_pos, getEncodingMode());
     if (newMode != getEncodingMode()) {
@@ -77,21 +76,21 @@ void CBC_ASCIIEncoder::Encode(CBC_EncoderContext& context, int32_t& e) {
       }
     } else if (CBC_HighLevelEncoder::isExtendedASCII(c)) {
       context.writeCodeword(CBC_HighLevelEncoder::UPPER_SHIFT);
-      context.writeCodeword((FX_WCHAR)(c - 128 + 1));
+      context.writeCodeword((wchar_t)(c - 128 + 1));
       context.m_pos++;
     } else {
-      context.writeCodeword((FX_WCHAR)(c + 1));
+      context.writeCodeword((wchar_t)(c + 1));
       context.m_pos++;
     }
   }
 }
-FX_WCHAR CBC_ASCIIEncoder::encodeASCIIDigits(FX_WCHAR digit1,
-                                             FX_WCHAR digit2,
-                                             int32_t& e) {
+wchar_t CBC_ASCIIEncoder::encodeASCIIDigits(wchar_t digit1,
+                                            wchar_t digit2,
+                                            int32_t& e) {
   if (CBC_HighLevelEncoder::isDigit(digit1) &&
       CBC_HighLevelEncoder::isDigit(digit2)) {
     int32_t num = (digit1 - 48) * 10 + (digit2 - 48);
-    return (FX_WCHAR)(num + 130);
+    return (wchar_t)(num + 130);
   }
   e = BCExceptionIllegalArgumentNotGigits;
   return 0;

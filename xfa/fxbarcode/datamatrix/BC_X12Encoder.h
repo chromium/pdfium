@@ -20,7 +20,7 @@ class CBC_X12Encoder : public CBC_C40Encoder {
   void handleEOD(CBC_EncoderContext& context,
                  CFX_WideString& buffer,
                  int32_t& e) override;
-  int32_t encodeChar(FX_WCHAR c, CFX_WideString& sb, int32_t& e) override;
+  int32_t encodeChar(wchar_t c, CFX_WideString& sb, int32_t& e) override;
 };
 
 #endif  // XFA_FXBARCODE_DATAMATRIX_BC_X12ENCODER_H_

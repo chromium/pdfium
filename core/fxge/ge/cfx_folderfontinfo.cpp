@@ -16,8 +16,8 @@
 namespace {
 
 const struct {
-  const FX_CHAR* m_pName;
-  const FX_CHAR* m_pSubstName;
+  const char* m_pName;
+  const char* m_pSubstName;
 } Base14Substs[] = {
     {"Courier", "Courier New"},
     {"Courier-Bold", "Courier New Bold"},
@@ -275,7 +275,7 @@ void* CFX_FolderFontInfo::FindFont(int weight,
                                    bool bItalic,
                                    int charset,
                                    int pitch_family,
-                                   const FX_CHAR* family,
+                                   const char* family,
                                    bool bMatchName) {
   CFX_FontFaceInfo* pFind = nullptr;
   if (charset == FXFONT_ANSI_CHARSET && (pitch_family & FXFONT_FF_FIXEDPITCH))
@@ -306,7 +306,7 @@ void* CFX_FolderFontInfo::MapFont(int weight,
                                   bool bItalic,
                                   int charset,
                                   int pitch_family,
-                                  const FX_CHAR* family,
+                                  const char* family,
                                   int& iExact) {
   return nullptr;
 }
@@ -320,7 +320,7 @@ void* CFX_FolderFontInfo::MapFontByUnicode(uint32_t dwUnicode,
 }
 #endif  // PDF_ENABLE_XFA
 
-void* CFX_FolderFontInfo::GetFont(const FX_CHAR* face) {
+void* CFX_FolderFontInfo::GetFont(const char* face) {
   auto it = m_FontList.find(face);
   return it != m_FontList.end() ? it->second : nullptr;
 }

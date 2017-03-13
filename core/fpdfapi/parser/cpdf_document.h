@@ -89,7 +89,7 @@ class CPDF_Document : public CPDF_IndirectObjectHolder {
   void CreateNewDoc();
   CPDF_Dictionary* CreateNewPage(int iPage);
 
-  CPDF_Font* AddStandardFont(const FX_CHAR* font, CPDF_FontEncoding* pEncoding);
+  CPDF_Font* AddStandardFont(const char* font, CPDF_FontEncoding* pEncoding);
   CPDF_Font* AddFont(CFX_Font* pFont, int charset, bool bVert);
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
   CPDF_Font* AddWindowsFont(LOGFONTA* pLogFont,
@@ -119,7 +119,7 @@ class CPDF_Document : public CPDF_IndirectObjectHolder {
       int charset,
       bool bVert,
       CFX_ByteString basefont,
-      std::function<void(FX_WCHAR, FX_WCHAR, CPDF_Array*)> Insert);
+      std::function<void(wchar_t, wchar_t, CPDF_Array*)> Insert);
   bool InsertDeletePDFPage(CPDF_Dictionary* pPages,
                            int nPagesToGo,
                            CPDF_Dictionary* pPageDict,

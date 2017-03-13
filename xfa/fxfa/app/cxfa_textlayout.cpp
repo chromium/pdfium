@@ -897,7 +897,7 @@ bool CXFA_TextLayout::AppendChar(const CFX_WideString& wsText,
 
   int32_t iLength = wsText.GetLength();
   for (int32_t i = iChar; i < iLength; i++) {
-    FX_WCHAR wch = wsText.GetAt(i);
+    wchar_t wch = wsText.GetAt(i);
     if (wch == 0xA0)
       wch = 0x20;
 
@@ -932,9 +932,9 @@ void CXFA_TextLayout::ProcessText(CFX_WideString& wsText) {
   if (iLen == 0)
     return;
 
-  FX_WCHAR* psz = wsText.GetBuffer(iLen);
+  wchar_t* psz = wsText.GetBuffer(iLen);
   int32_t iTrimLeft = 0;
-  FX_WCHAR wch = 0, wPrev = 0;
+  wchar_t wch = 0, wPrev = 0;
   for (int32_t i = 0; i < iLen; i++) {
     wch = psz[i];
     if (wch < 0x20)

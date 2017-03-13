@@ -154,7 +154,7 @@ void XFA_DataExporter_DealWithDataGroupNode(CXFA_Node* pDataNode);
 void XFA_DataExporter_RegenerateFormFile(
     CXFA_Node* pNode,
     const CFX_RetainPtr<IFGAS_Stream>& pStream,
-    const FX_CHAR* pChecksum = nullptr,
+    const char* pChecksum = nullptr,
     bool bSaveXML = false);
 
 const XFA_NOTSUREATTRIBUTE* XFA_GetNotsureAttribute(

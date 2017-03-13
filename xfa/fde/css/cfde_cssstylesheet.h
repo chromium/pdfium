@@ -21,7 +21,7 @@ class CFDE_CSSStyleSheet {
   CFDE_CSSStyleSheet();
   ~CFDE_CSSStyleSheet();
 
-  bool LoadBuffer(const FX_WCHAR* pBuffer, int32_t iBufSize);
+  bool LoadBuffer(const wchar_t* pBuffer, int32_t iBufSize);
 
   int32_t CountRules() const;
   CFDE_CSSStyleRule* GetRule(int32_t index) const;
@@ -34,7 +34,7 @@ class CFDE_CSSStyleSheet {
   void SkipRuleSet(CFDE_CSSSyntaxParser* pSyntax);
 
   std::vector<std::unique_ptr<CFDE_CSSStyleRule>> m_RuleArray;
-  std::unordered_map<uint32_t, FX_WCHAR*> m_StringCache;
+  std::unordered_map<uint32_t, wchar_t*> m_StringCache;
 };
 
 #endif  // XFA_FDE_CSS_CFDE_CSSSTYLESHEET_H_

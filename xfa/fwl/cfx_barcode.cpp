@@ -235,8 +235,8 @@ bool CFX_Barcode::SetWideNarrowRatio(int32_t ratio) {
   return m_pBCEngine && memptr ? (m_pBCEngine.get()->*memptr)(ratio) : false;
 }
 
-bool CFX_Barcode::SetStartChar(FX_CHAR start) {
-  typedef bool (CBC_CodeBase::*memptrtype)(FX_CHAR);
+bool CFX_Barcode::SetStartChar(char start) {
+  typedef bool (CBC_CodeBase::*memptrtype)(char);
   memptrtype memptr = nullptr;
   switch (GetType()) {
     case BC_CODABAR:
@@ -248,8 +248,8 @@ bool CFX_Barcode::SetStartChar(FX_CHAR start) {
   return m_pBCEngine && memptr ? (m_pBCEngine.get()->*memptr)(start) : false;
 }
 
-bool CFX_Barcode::SetEndChar(FX_CHAR end) {
-  typedef bool (CBC_CodeBase::*memptrtype)(FX_CHAR);
+bool CFX_Barcode::SetEndChar(char end) {
+  typedef bool (CBC_CodeBase::*memptrtype)(char);
   memptrtype memptr = nullptr;
   switch (GetType()) {
     case BC_CODABAR:

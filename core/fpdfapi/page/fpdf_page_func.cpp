@@ -25,7 +25,7 @@
 namespace {
 
 struct PDF_PSOpName {
-  const FX_CHAR* name;
+  const char* name;
   PDF_PSOP op;
 };
 
@@ -95,7 +95,7 @@ class CPDF_PSFunc : public CPDF_Function {
 bool CPDF_PSFunc::v_Init(CPDF_Object* pObj) {
   CPDF_StreamAcc acc;
   acc.LoadAllData(pObj->AsStream(), false);
-  return m_PS.Parse(reinterpret_cast<const FX_CHAR*>(acc.GetData()),
+  return m_PS.Parse(reinterpret_cast<const char*>(acc.GetData()),
                     acc.GetSize());
 }
 
@@ -200,7 +200,7 @@ FX_FLOAT CPDF_PSEngine::Pop() {
   }
   return m_Stack[--m_StackCount];
 }
-bool CPDF_PSEngine::Parse(const FX_CHAR* str, int size) {
+bool CPDF_PSEngine::Parse(const char* str, int size) {
   CPDF_SimpleParser parser((uint8_t*)str, size);
   CFX_ByteStringC word = parser.GetWord();
   if (word != "{") {

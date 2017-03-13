@@ -84,7 +84,7 @@ class CFDE_TextOut {
   void SetStyles(uint32_t dwStyles);
   void SetTabWidth(FX_FLOAT fTabWidth);
   void SetEllipsisString(const CFX_WideString& wsEllipsis);
-  void SetParagraphBreakChar(FX_WCHAR wch);
+  void SetParagraphBreakChar(wchar_t wch);
   void SetAlignment(int32_t iAlignment);
   void SetLineSpace(FX_FLOAT fLineSpace);
   void SetDIBitmap(CFX_DIBitmap* pDIB);
@@ -94,38 +94,35 @@ class CFDE_TextOut {
   void SetMatrix(const CFX_Matrix& matrix);
   void SetLineBreakTolerance(FX_FLOAT fTolerance);
 
-  void DrawText(const FX_WCHAR* pwsStr, int32_t iLength, int32_t x, int32_t y);
-  void DrawText(const FX_WCHAR* pwsStr,
-                int32_t iLength,
-                FX_FLOAT x,
-                FX_FLOAT y);
-  void DrawText(const FX_WCHAR* pwsStr, int32_t iLength, const CFX_Rect& rect);
-  void DrawText(const FX_WCHAR* pwsStr, int32_t iLength, const CFX_RectF& rect);
+  void DrawText(const wchar_t* pwsStr, int32_t iLength, int32_t x, int32_t y);
+  void DrawText(const wchar_t* pwsStr, int32_t iLength, FX_FLOAT x, FX_FLOAT y);
+  void DrawText(const wchar_t* pwsStr, int32_t iLength, const CFX_Rect& rect);
+  void DrawText(const wchar_t* pwsStr, int32_t iLength, const CFX_RectF& rect);
 
   void SetLogicClipRect(const CFX_RectF& rtClip);
-  void CalcLogicSize(const FX_WCHAR* pwsStr, int32_t iLength, CFX_SizeF& size);
-  void CalcLogicSize(const FX_WCHAR* pwsStr, int32_t iLength, CFX_RectF& rect);
-  void DrawLogicText(const FX_WCHAR* pwsStr,
+  void CalcLogicSize(const wchar_t* pwsStr, int32_t iLength, CFX_SizeF& size);
+  void CalcLogicSize(const wchar_t* pwsStr, int32_t iLength, CFX_RectF& rect);
+  void DrawLogicText(const wchar_t* pwsStr,
                      int32_t iLength,
                      FX_FLOAT x,
                      FX_FLOAT y);
-  void DrawLogicText(const FX_WCHAR* pwsStr,
+  void DrawLogicText(const wchar_t* pwsStr,
                      int32_t iLength,
                      const CFX_RectF& rect);
   int32_t GetTotalLines();
 
  protected:
-  void CalcTextSize(const FX_WCHAR* pwsStr, int32_t iLength, CFX_RectF& rect);
+  void CalcTextSize(const wchar_t* pwsStr, int32_t iLength, CFX_RectF& rect);
   bool RetrieveLineWidth(CFX_BreakType dwBreakStatus,
                          FX_FLOAT& fStartPos,
                          FX_FLOAT& fWidth,
                          FX_FLOAT& fHeight);
   void SetLineWidth(CFX_RectF& rect);
-  void DrawText(const FX_WCHAR* pwsStr,
+  void DrawText(const wchar_t* pwsStr,
                 int32_t iLength,
                 const CFX_RectF& rect,
                 const CFX_RectF& rtClip);
-  void LoadText(const FX_WCHAR* pwsStr, int32_t iLength, const CFX_RectF& rect);
+  void LoadText(const wchar_t* pwsStr, int32_t iLength, const CFX_RectF& rect);
   void LoadEllipsis();
   void ExpandBuffer(int32_t iSize, int32_t iType);
   void RetrieveEllPieces(std::vector<int32_t>* pCharWidths);
@@ -157,7 +154,7 @@ class CFDE_TextOut {
   int32_t m_iTxtBkAlignment;
   std::vector<int32_t> m_CharWidths;
   std::vector<int32_t> m_EllCharWidths;
-  FX_WCHAR m_wParagraphBkChar;
+  wchar_t m_wParagraphBkChar;
   FX_ARGB m_TxtColor;
   uint32_t m_dwStyles;
   uint32_t m_dwTxtBkStyles;

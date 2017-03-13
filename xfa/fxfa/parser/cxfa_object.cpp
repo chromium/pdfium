@@ -63,7 +63,7 @@ void CXFA_Object::ThrowArgumentMismatchException() const {
   ThrowException(L"Argument mismatch in property or function argument.");
 }
 
-void CXFA_Object::ThrowException(const FX_WCHAR* str, ...) const {
+void CXFA_Object::ThrowException(const wchar_t* str, ...) const {
   CFX_WideString wsMessage;
   va_list arg_ptr;
   va_start(arg_ptr, str);

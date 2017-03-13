@@ -29,7 +29,7 @@ namespace {
 const int nMaxRecursion = 32;
 
 const struct SupportFieldEncoding {
-  const FX_CHAR* m_name;
+  const char* m_name;
   uint16_t m_codePage;
 } g_fieldEncoding[] = {
     {"BigFive", 950},
@@ -307,7 +307,7 @@ class CFieldNameExtractor {
     m_pEnd = m_pCur + m_FullName.GetLength();
   }
 
-  void GetNext(const FX_WCHAR*& pSubName, FX_STRSIZE& size) {
+  void GetNext(const wchar_t*& pSubName, FX_STRSIZE& size) {
     pSubName = m_pCur;
     while (m_pCur < m_pEnd && m_pCur[0] != L'.')
       m_pCur++;
@@ -319,8 +319,8 @@ class CFieldNameExtractor {
 
  protected:
   CFX_WideString m_FullName;
-  const FX_WCHAR* m_pCur;
-  const FX_WCHAR* m_pEnd;
+  const wchar_t* m_pCur;
+  const wchar_t* m_pEnd;
 };
 
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
@@ -372,8 +372,8 @@ bool RetrieveSpecificFont(uint8_t charSet,
 #endif  // _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
 
 int CompareFieldName(const CFX_WideString& name1, const CFX_WideString& name2) {
-  const FX_WCHAR* ptr1 = name1.c_str();
-  const FX_WCHAR* ptr2 = name2.c_str();
+  const wchar_t* ptr1 = name1.c_str();
+  const wchar_t* ptr2 = name2.c_str();
   if (name1.GetLength() == name2.GetLength())
     return name1 == name2 ? 1 : 0;
 
@@ -523,7 +523,7 @@ void CFieldTree::SetField(const CFX_WideString& full_name,
     return;
 
   CFieldNameExtractor name_extractor(full_name);
-  const FX_WCHAR* pName;
+  const wchar_t* pName;
   FX_STRSIZE nLength;
   name_extractor.GetNext(pName, nLength);
   Node* pNode = &m_Root;
@@ -546,7 +546,7 @@ CPDF_FormField* CFieldTree::GetField(const CFX_WideString& full_name) {
     return nullptr;
 
   CFieldNameExtractor name_extractor(full_name);
-  const FX_WCHAR* pName;
+  const wchar_t* pName;
   FX_STRSIZE nLength;
   name_extractor.GetNext(pName, nLength);
   Node* pNode = &m_Root;
@@ -565,7 +565,7 @@ CFieldTree::Node* CFieldTree::FindNode(const CFX_WideString& full_name) {
     return nullptr;
 
   CFieldNameExtractor name_extractor(full_name);
-  const FX_WCHAR* pName;
+  const wchar_t* pName;
   FX_STRSIZE nLength;
   name_extractor.GetNext(pName, nLength);
   Node* pNode = &m_Root;
@@ -687,9 +687,9 @@ void CPDF_InterForm::SetUpdateAP(bool bUpdateAP) {
 
 CFX_ByteString CPDF_InterForm::GenerateNewResourceName(
     const CPDF_Dictionary* pResDict,
-    const FX_CHAR* csType,
+    const char* csType,
     int iMinLen,
-    const FX_CHAR* csPrefix) {
+    const char* csPrefix) {
   CFX_ByteString csStr = csPrefix;
   CFX_ByteString csBType = csType;
   if (csStr.IsEmpty()) {

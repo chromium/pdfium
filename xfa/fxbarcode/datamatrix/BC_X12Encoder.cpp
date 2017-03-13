@@ -38,7 +38,7 @@ int32_t CBC_X12Encoder::getEncodingMode() {
 void CBC_X12Encoder::Encode(CBC_EncoderContext& context, int32_t& e) {
   CFX_WideString buffer;
   while (context.hasMoreCharacters()) {
-    FX_WCHAR c = context.getCurrentChar();
+    wchar_t c = context.getCurrentChar();
     context.m_pos++;
     encodeChar(c, buffer, e);
     if (e != BCExceptionNO) {
@@ -79,19 +79,19 @@ void CBC_X12Encoder::handleEOD(CBC_EncoderContext& context,
     context.signalEncoderChange(ASCII_ENCODATION);
   }
 }
-int32_t CBC_X12Encoder::encodeChar(FX_WCHAR c, CFX_WideString& sb, int32_t& e) {
+int32_t CBC_X12Encoder::encodeChar(wchar_t c, CFX_WideString& sb, int32_t& e) {
   if (c == '\r') {
-    sb += (FX_WCHAR)'\0';
+    sb += (wchar_t)'\0';
   } else if (c == '*') {
-    sb += (FX_WCHAR)'\1';
+    sb += (wchar_t)'\1';
   } else if (c == '>') {
-    sb += (FX_WCHAR)'\2';
+    sb += (wchar_t)'\2';
   } else if (c == ' ') {
-    sb += (FX_WCHAR)'\3';
+    sb += (wchar_t)'\3';
   } else if (c >= '0' && c <= '9') {
-    sb += (FX_WCHAR)(c - 48 + 4);
+    sb += (wchar_t)(c - 48 + 4);
   } else if (c >= 'A' && c <= 'Z') {
-    sb += (FX_WCHAR)(c - 65 + 14);
+    sb += (wchar_t)(c - 65 + 14);
   } else {
     CBC_HighLevelEncoder::illegalCharacter(c, e);
     if (e != BCExceptionNO)

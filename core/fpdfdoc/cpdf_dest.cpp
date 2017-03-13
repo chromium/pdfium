@@ -13,8 +13,8 @@
 
 namespace {
 
-const FX_CHAR* const g_sZoomModes[] = {"XYZ",  "Fit",   "FitH",  "FitV", "FitR",
-                                       "FitB", "FitBH", "FitBV", nullptr};
+const char* const g_sZoomModes[] = {"XYZ",  "Fit",   "FitH",  "FitV", "FitR",
+                                    "FitB", "FitBH", "FitBV", nullptr};
 
 }  // namespace
 

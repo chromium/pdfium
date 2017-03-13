@@ -50,7 +50,7 @@ void CScript_LayoutPseudoModel::HWXY(CFXJSE_Arguments* pArguments,
                                      XFA_LAYOUTMODEL_HWXY layoutModel) {
   int32_t iLength = pArguments->GetLength();
   if (iLength < 1 || iLength > 3) {
-    const FX_WCHAR* methodName = nullptr;
+    const wchar_t* methodName = nullptr;
     switch (layoutModel) {
       case XFA_LAYOUTMODEL_H:
         methodName = L"h";
@@ -451,7 +451,7 @@ void CScript_LayoutPseudoModel::PageImp(CFXJSE_Arguments* pArguments,
                                         bool bAbsPage) {
   int32_t iLength = pArguments->GetLength();
   if (iLength != 1) {
-    const FX_WCHAR* methodName;
+    const wchar_t* methodName;
     if (bAbsPage) {
       methodName = L"absPage";
     } else {

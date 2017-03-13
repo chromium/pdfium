@@ -139,7 +139,7 @@ void CJS_GlobalConsts::DefineJSObjects(CJS_Runtime* pRuntime) {
 
 #define GLOBAL_ARRAY(rt, name, ...)                                          \
   {                                                                          \
-    const FX_WCHAR* values[] = {__VA_ARGS__};                                \
+    const wchar_t* values[] = {__VA_ARGS__};                                 \
     v8::Local<v8::Array> array = (rt)->NewArray();                           \
     for (size_t i = 0; i < FX_ArraySize(values); ++i)                        \
       array->Set(i, (rt)->NewString(values[i]));                             \

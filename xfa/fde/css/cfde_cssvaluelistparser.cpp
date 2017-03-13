@@ -6,15 +6,15 @@
 
 #include "xfa/fde/css/cfde_cssvaluelistparser.h"
 
-CFDE_CSSValueListParser::CFDE_CSSValueListParser(const FX_WCHAR* psz,
+CFDE_CSSValueListParser::CFDE_CSSValueListParser(const wchar_t* psz,
                                                  int32_t iLen,
-                                                 FX_WCHAR separator)
+                                                 wchar_t separator)
     : m_Separator(separator), m_pCur(psz), m_pEnd(psz + iLen) {
   ASSERT(psz && iLen > 0);
 }
 
 bool CFDE_CSSValueListParser::NextValue(FDE_CSSPrimitiveType& eType,
-                                        const FX_WCHAR*& pStart,
+                                        const wchar_t*& pStart,
                                         int32_t& iLength) {
   while (m_pCur < m_pEnd && (*m_pCur <= ' ' || *m_pCur == m_Separator))
     ++m_pCur;
@@ -25,7 +25,7 @@ bool CFDE_CSSValueListParser::NextValue(FDE_CSSPrimitiveType& eType,
   eType = FDE_CSSPrimitiveType::Unknown;
   pStart = m_pCur;
   iLength = 0;
-  FX_WCHAR wch = *m_pCur;
+  wchar_t wch = *m_pCur;
   if (wch == '#') {
     iLength = SkipTo(' ', false, false);
     if (iLength == 4 || iLength == 7)
@@ -56,10 +56,10 @@ bool CFDE_CSSValueListParser::NextValue(FDE_CSSPrimitiveType& eType,
   return m_pCur <= m_pEnd && iLength > 0;
 }
 
-int32_t CFDE_CSSValueListParser::SkipTo(FX_WCHAR wch,
+int32_t CFDE_CSSValueListParser::SkipTo(wchar_t wch,
                                         bool breakOnSpace,
                                         bool matchBrackets) {
-  const FX_WCHAR* pStart = m_pCur;
+  const wchar_t* pStart = m_pCur;
   int32_t bracketCount = 0;
   while (m_pCur < m_pEnd && *m_pCur != wch) {
     if (breakOnSpace && *m_pCur <= ' ')

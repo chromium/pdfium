@@ -10,13 +10,13 @@
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
 
-extern const FX_WCHAR kFMErrUnsupportedChar[];
-extern const FX_WCHAR kFMErrBadSuffixNumber[];
-extern const FX_WCHAR kFMErrExpectedIdentifier[];
-extern const FX_WCHAR kFMErrExpectedToken[];
-extern const FX_WCHAR kFMErrExpectedEndIf[];
-extern const FX_WCHAR kFMErrUnexpectedExpression[];
-extern const FX_WCHAR kFMErrExpectedNonEmptyExpression[];
+extern const wchar_t kFMErrUnsupportedChar[];
+extern const wchar_t kFMErrBadSuffixNumber[];
+extern const wchar_t kFMErrExpectedIdentifier[];
+extern const wchar_t kFMErrExpectedToken[];
+extern const wchar_t kFMErrExpectedEndIf[];
+extern const wchar_t kFMErrUnexpectedExpression[];
+extern const wchar_t kFMErrExpectedNonEmptyExpression[];
 
 class CXFA_FMErrorInfo {
  public:

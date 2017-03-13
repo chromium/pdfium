@@ -38,7 +38,7 @@ namespace {
 
 const int kEditMargin = 3;
 
-bool FX_EDIT_ISLATINWORD(FX_WCHAR c) {
+bool FX_EDIT_ISLATINWORD(wchar_t c) {
   return c == 0x2D || (c <= 0x005A && c >= 0x0041) ||
          (c <= 0x007A && c >= 0x0061) || (c <= 0x02AF && c >= 0x00C0) ||
          c == 0x0027;
@@ -203,7 +203,7 @@ void CFWL_Edit::DrawSpellCheck(CFX_Graphics* pGraphics,
     if (FX_EDIT_ISLATINWORD(wsSpell[i])) {
       if (sLatinWord.IsEmpty())
         nStart = i;
-      sLatinWord += (FX_CHAR)wsSpell[i];
+      sLatinWord += (char)wsSpell[i];
       continue;
     }
     checkWordEvent.bsWord = sLatinWord;
@@ -314,7 +314,7 @@ void CFWL_Edit::SetLimit(int32_t nLimit) {
   m_EdtEngine.SetLimit(nLimit);
 }
 
-void CFWL_Edit::SetAliasChar(FX_WCHAR wAlias) {
+void CFWL_Edit::SetAliasChar(wchar_t wAlias) {
   m_EdtEngine.SetAliasChar(wAlias);
 }
 
@@ -1137,7 +1137,7 @@ void CFWL_Edit::HideCaret(CFX_RectF* pRect) {
   pDocEnvironment->DisplayCaret(pXFAWidget, false, pRect);
 }
 
-bool CFWL_Edit::ValidateNumberChar(FX_WCHAR cNum) {
+bool CFWL_Edit::ValidateNumberChar(wchar_t cNum) {
   if (!m_bSetRange)
     return true;
 
@@ -1434,7 +1434,7 @@ void CFWL_Edit::OnChar(CFWL_MessageKey* pMsg) {
   }
 
   int32_t iError = 0;
-  FX_WCHAR c = static_cast<FX_WCHAR>(pMsg->m_dwKeyCode);
+  wchar_t c = static_cast<wchar_t>(pMsg->m_dwKeyCode);
   int32_t nCaret = m_EdtEngine.GetCaretPos();
   switch (c) {
     case FWL_VKEY_Back:

@@ -20,14 +20,14 @@
 
 struct FDE_CSSPropertyTable {
   FDE_CSSProperty eName;
-  const FX_WCHAR* pszName;
+  const wchar_t* pszName;
   uint32_t dwHash;
   uint32_t dwType;
 };
 
 struct FDE_CSSPropertyValueTable {
   FDE_CSSPropertyValue eName;
-  const FX_WCHAR* pszName;
+  const wchar_t* pszName;
   uint32_t dwHash;
 };
 

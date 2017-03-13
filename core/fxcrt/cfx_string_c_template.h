@@ -164,7 +164,7 @@ inline bool operator!=(const T* lhs, const CFX_StringCTemplate<T>& rhs) {
   return rhs != lhs;
 }
 
-extern template class CFX_StringCTemplate<FX_CHAR>;
-extern template class CFX_StringCTemplate<FX_WCHAR>;
+extern template class CFX_StringCTemplate<char>;
+extern template class CFX_StringCTemplate<wchar_t>;
 
 #endif  // CORE_FXCRT_CFX_STRING_C_TEMPLATE_H_

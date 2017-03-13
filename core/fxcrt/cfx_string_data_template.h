@@ -110,7 +110,7 @@ class CFX_StringDataTemplate {
   ~CFX_StringDataTemplate() = delete;
 };
 
-extern template class CFX_StringDataTemplate<FX_CHAR>;
-extern template class CFX_StringDataTemplate<FX_WCHAR>;
+extern template class CFX_StringDataTemplate<char>;
+extern template class CFX_StringDataTemplate<wchar_t>;
 
 #endif  // CORE_FXCRT_CFX_STRING_DATA_TEMPLATE_H_

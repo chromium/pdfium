@@ -23,7 +23,7 @@ class CXFA_NodeHelper {
   ~CXFA_NodeHelper();
 
   CXFA_Node* ResolveNodes_GetOneChild(CXFA_Node* parent,
-                                      const FX_WCHAR* pwsName,
+                                      const wchar_t* pwsName,
                                       bool bIsClassName = false);
   CXFA_Node* ResolveNodes_GetParent(
       CXFA_Node* pNode,

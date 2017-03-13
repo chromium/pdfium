@@ -45,7 +45,7 @@ void CPDF_LinkExtract::ParseLink() {
       strBeCheck = m_pTextPage->GetPageText(start, nCount);
       if (strBeCheck.GetLength() > 5) {
         while (strBeCheck.GetLength() > 0) {
-          FX_WCHAR ch = strBeCheck.GetAt(strBeCheck.GetLength() - 1);
+          wchar_t ch = strBeCheck.GetAt(strBeCheck.GetLength() - 1);
           if (ch == L')' || ch == L',' || ch == L'>' || ch == L'.') {
             strBeCheck = strBeCheck.Mid(0, strBeCheck.GetLength() - 1);
             nCount--;
@@ -101,7 +101,7 @@ bool CPDF_LinkExtract::CheckMailLink(CFX_WideString& str) {
   // Check the local part.
   int pPos = aPos;  // Used to track the position of '@' or '.'.
   for (int i = aPos - 1; i >= 0; i--) {
-    FX_WCHAR ch = str.GetAt(i);
+    wchar_t ch = str.GetAt(i);
     if (ch == L'_' || ch == L'-' || FXSYS_iswalnum(ch))
       continue;
 
@@ -137,7 +137,7 @@ bool CPDF_LinkExtract::CheckMailLink(CFX_WideString& str) {
   int nLen = str.GetLength();
   pPos = 0;  // Used to track the position of '.'.
   for (int i = aPos + 1; i < nLen; i++) {
-    FX_WCHAR wch = str.GetAt(i);
+    wchar_t wch = str.GetAt(i);
     if (wch == L'-' || FXSYS_iswalnum(wch))
       continue;
 

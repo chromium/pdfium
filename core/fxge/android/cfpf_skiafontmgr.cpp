@@ -87,12 +87,12 @@ uint32_t FPF_SkiaGetSubstFont(uint32_t dwHash,
   return 0;
 }
 
-uint32_t FPF_GetHashCode_StringA(const FX_CHAR* pStr, int32_t iLength) {
+uint32_t FPF_GetHashCode_StringA(const char* pStr, int32_t iLength) {
   if (!pStr)
     return 0;
   if (iLength < 0)
     iLength = FXSYS_strlen(pStr);
-  const FX_CHAR* pStrEnd = pStr + iLength;
+  const char* pStrEnd = pStr + iLength;
   uint32_t uHashCode = 0;
   while (pStr < pStrEnd)
     uHashCode = 31 * uHashCode + FXSYS_tolower(*pStr++);
@@ -160,9 +160,9 @@ uint32_t FPF_SkiaGetCharset(uint8_t uCharset) {
 uint32_t FPF_SKIANormalizeFontName(const CFX_ByteStringC& bsfamily) {
   uint32_t dwHash = 0;
   int32_t iLength = bsfamily.GetLength();
-  const FX_CHAR* pBuffer = bsfamily.c_str();
+  const char* pBuffer = bsfamily.c_str();
   for (int32_t i = 0; i < iLength; i++) {
-    FX_CHAR ch = pBuffer[i];
+    char ch = pBuffer[i];
     if (ch == ' ' || ch == '-' || ch == ',')
       continue;
     dwHash = 31 * dwHash + FXSYS_tolower(ch);

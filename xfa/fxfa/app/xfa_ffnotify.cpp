@@ -49,8 +49,8 @@ void CXFA_FFNotify::OnPageEvent(CXFA_ContainerLayoutItem* pSender,
 }
 
 void CXFA_FFNotify::OnWidgetListItemAdded(CXFA_WidgetData* pSender,
-                                          const FX_WCHAR* pLabel,
-                                          const FX_WCHAR* pValue,
+                                          const wchar_t* pLabel,
+                                          const wchar_t* pValue,
                                           int32_t iIndex) {
   CXFA_WidgetAcc* pWidgetAcc = static_cast<CXFA_WidgetAcc*>(pSender);
   if (pWidgetAcc->GetUIType() != XFA_Element::ChoiceList)

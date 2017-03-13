@@ -118,7 +118,7 @@ bool CPDF_Font::IsUnicodeCompatible() const {
   return false;
 }
 
-int CPDF_Font::CountChar(const FX_CHAR* pString, int size) const {
+int CPDF_Font::CountChar(const char* pString, int size) const {
   return size;
 }
 
@@ -131,8 +131,8 @@ bool CPDF_Font::IsVertWriting() const {
   return pCIDFont ? pCIDFont->IsVertWriting() : m_Font.IsVertical();
 }
 
-int CPDF_Font::AppendChar(FX_CHAR* buf, uint32_t charcode) const {
-  *buf = static_cast<FX_CHAR>(charcode);
+int CPDF_Font::AppendChar(char* buf, uint32_t charcode) const {
+  *buf = static_cast<char>(charcode);
   return 1;
 }
 
@@ -153,7 +153,7 @@ CFX_WideString CPDF_Font::UnicodeFromCharCode(uint32_t charcode) const {
   return m_pToUnicodeMap ? m_pToUnicodeMap->Lookup(charcode) : CFX_WideString();
 }
 
-uint32_t CPDF_Font::CharCodeFromUnicode(FX_WCHAR unicode) const {
+uint32_t CPDF_Font::CharCodeFromUnicode(wchar_t unicode) const {
   if (!m_bToUnicodeLoaded)
     LoadUnicodeMap();
 
@@ -281,7 +281,7 @@ void CPDF_Font::LoadUnicodeMap() const {
   m_pToUnicodeMap->Load(pStream);
 }
 
-int CPDF_Font::GetStringWidth(const FX_CHAR* pString, int size) {
+int CPDF_Font::GetStringWidth(const char* pString, int size) {
   int offset = 0;
   int width = 0;
   while (offset < size) {
@@ -341,7 +341,7 @@ std::unique_ptr<CPDF_Font> CPDF_Font::Create(CPDF_Document* pDoc,
   return pFont->Load() ? std::move(pFont) : nullptr;
 }
 
-uint32_t CPDF_Font::GetNextChar(const FX_CHAR* pString,
+uint32_t CPDF_Font::GetNextChar(const char* pString,
                                 int nStrLen,
                                 int& offset) const {
   if (offset < 0 || nStrLen < 1) {
@@ -429,7 +429,7 @@ bool CPDF_Font::IsStandardFont() const {
   return true;
 }
 
-const FX_CHAR* CPDF_Font::GetAdobeCharName(
+const char* CPDF_Font::GetAdobeCharName(
     int iBaseEncoding,
     const std::vector<CFX_ByteString>& charnames,
     int charcode) {
@@ -441,7 +441,7 @@ const FX_CHAR* CPDF_Font::GetAdobeCharName(
   if (!charnames.empty() && !charnames[charcode].IsEmpty())
     return charnames[charcode].c_str();
 
-  const FX_CHAR* name = nullptr;
+  const char* name = nullptr;
   if (iBaseEncoding)
     name = PDF_CharNameFromPredefinedCharSet(iBaseEncoding, charcode);
   return name && name[0] ? name : nullptr;

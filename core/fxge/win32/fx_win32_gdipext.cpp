@@ -680,7 +680,7 @@ CGdiplusExt::CGdiplusExt() {
 }
 void CGdiplusExt::Load() {
   CFX_ByteString strPlusPath = "";
-  FX_CHAR buf[MAX_PATH];
+  char buf[MAX_PATH];
   GetSystemDirectoryA(buf, MAX_PATH);
   strPlusPath += buf;
   strPlusPath += "\\";
@@ -765,7 +765,7 @@ bool CGdiplusExt::GdipCreateFromImage(void* bitmap, void** graphics) {
   }
   return false;
 }
-bool CGdiplusExt::GdipCreateFontFamilyFromName(const FX_WCHAR* name,
+bool CGdiplusExt::GdipCreateFontFamilyFromName(const wchar_t* name,
                                                void* pFontCollection,
                                                void** pFamily) {
   CGdiplusExt& GdiplusExt =

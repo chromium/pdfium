@@ -140,7 +140,7 @@ void FXSYS_vsnprintf(char* str, size_t size, const char* fmt, va_list ap) {
 }
 #endif  // _FXM_PLATFORM_WINDOWS_ && _MSC_VER < 1900
 
-FX_FileHandle* FX_OpenFolder(const FX_CHAR* path) {
+FX_FileHandle* FX_OpenFolder(const char* path) {
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
   std::unique_ptr<CFindFileDataA> pData(new CFindFileDataA);
   pData->m_Handle = FindFirstFileExA((CFX_ByteString(path) + "/*.*").c_str(),
@@ -197,7 +197,7 @@ void FX_CloseFolder(FX_FileHandle* handle) {
 #endif
 }
 
-FX_WCHAR FX_GetFolderSeparator() {
+wchar_t FX_GetFolderSeparator() {
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
   return '\\';
 #else

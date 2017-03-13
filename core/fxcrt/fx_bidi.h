@@ -28,7 +28,7 @@ class CFX_BidiChar {
   // Append a character and classify it as left, right, or neutral.
   // Returns true if the character has a different direction than the
   // existing direction to indicate there is a segment to process.
-  bool AppendChar(FX_WCHAR wch);
+  bool AppendChar(wchar_t wch);
 
   // Call this after the last character has been appended. AppendChar()
   // must not be called after this.
@@ -61,7 +61,7 @@ class CFX_BidiString {
   // Force the overall direction to be R2L regardless of what was detected.
   void SetOverallDirectionRight();
 
-  FX_WCHAR CharAt(size_t x) const { return m_Str[x]; }
+  wchar_t CharAt(size_t x) const { return m_Str[x]; }
   const_iterator begin() const { return m_Order.begin(); }
   const_iterator end() const { return m_Order.end(); }
 

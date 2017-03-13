@@ -163,7 +163,7 @@ CPDF_Stream* FPDFDOC_GetAnnotAP(CPDF_Dictionary* pAnnotDict,
   if (!pAP) {
     return nullptr;
   }
-  const FX_CHAR* ap_entry = "N";
+  const char* ap_entry = "N";
   if (mode == CPDF_Annot::Down)
     ap_entry = "D";
   else if (mode == CPDF_Annot::Rollover)

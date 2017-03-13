@@ -53,7 +53,7 @@ CFX_ByteString CFPF_SkiaFont::GetPsName() {
   return FXFT_Get_Postscript_Name(m_Face);
 }
 
-int32_t CFPF_SkiaFont::GetGlyphIndex(FX_WCHAR wUnicode) {
+int32_t CFPF_SkiaFont::GetGlyphIndex(wchar_t wUnicode) {
   if (!m_Face)
     return wUnicode;
   if (FXFT_Select_Charmap(m_Face, FXFT_ENCODING_UNICODE))

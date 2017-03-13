@@ -1762,10 +1762,10 @@ CFX_RetainPtr<CFGAS_GEFont> CXFA_DefFontMgr::GetFont(
       if (dwFontStyles & FX_FONTSTYLE_Italic) {
         dwStyle |= FX_FONTSTYLE_Italic;
       }
-      const FX_WCHAR* pReplace = pCurFont->pReplaceFont;
+      const wchar_t* pReplace = pCurFont->pReplaceFont;
       int32_t iLength = FXSYS_wcslen(pReplace);
       while (iLength > 0) {
-        const FX_WCHAR* pNameText = pReplace;
+        const wchar_t* pNameText = pReplace;
         while (*pNameText != L',' && iLength > 0) {
           pNameText++;
           iLength--;
@@ -1796,7 +1796,7 @@ CFX_RetainPtr<CFGAS_GEFont> CXFA_DefFontMgr::GetDefaultFont(
   CFX_RetainPtr<CFGAS_GEFont> pFont =
       pFDEFontMgr->LoadFont(L"Arial Narrow", dwFontStyles, wCodePage);
   if (!pFont) {
-    pFont = pFDEFontMgr->LoadFont(static_cast<const FX_WCHAR*>(nullptr),
+    pFont = pFDEFontMgr->LoadFont(static_cast<const wchar_t*>(nullptr),
                                   dwFontStyles, wCodePage);
   }
   if (pFont)
@@ -1969,7 +1969,7 @@ bool CXFA_PDFFontMgr::PsNameMatchDRFontName(const CFX_ByteStringC& bsPsName,
 }
 
 bool CXFA_PDFFontMgr::GetCharWidth(const CFX_RetainPtr<CFGAS_GEFont>& pFont,
-                                   FX_WCHAR wUnicode,
+                                   wchar_t wUnicode,
                                    bool bCharCode,
                                    int32_t* pWidth) {
   if (wUnicode != 0x20 || bCharCode)

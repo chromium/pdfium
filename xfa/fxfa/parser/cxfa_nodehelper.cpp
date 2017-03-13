@@ -25,7 +25,7 @@ CXFA_NodeHelper::CXFA_NodeHelper()
 CXFA_NodeHelper::~CXFA_NodeHelper() {}
 
 CXFA_Node* CXFA_NodeHelper::ResolveNodes_GetOneChild(CXFA_Node* parent,
-                                                     const FX_WCHAR* pwsName,
+                                                     const wchar_t* pwsName,
                                                      bool bIsClassName) {
   if (!parent) {
     return nullptr;
@@ -316,7 +316,7 @@ bool CXFA_NodeHelper::CreateNode_ForCondition(CFX_WideString& wsCondition) {
   if (wsCondition.GetAt(0) == '[') {
     int32_t i = 1;
     for (; i < iLen; ++i) {
-      FX_WCHAR ch = wsCondition[i];
+      wchar_t ch = wsCondition[i];
       if (ch == ' ') {
         continue;
       }

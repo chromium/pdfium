@@ -8,9 +8,9 @@
 
 namespace {
 
-const FX_CHAR* g_sAATypes[] = {"E",  "X",  "D",  "U",  "Fo", "Bl", "PO", "PC",
-                               "PV", "PI", "O",  "C",  "K",  "F",  "V",  "C",
-                               "WC", "WS", "DS", "WP", "DP", ""};
+const char* g_sAATypes[] = {"E",  "X",  "D",  "U",  "Fo", "Bl", "PO", "PC",
+                            "PV", "PI", "O",  "C",  "K",  "F",  "V",  "C",
+                            "WC", "WS", "DS", "WP", "DP", ""};
 
 }  // namespace
 

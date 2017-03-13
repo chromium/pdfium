@@ -30,7 +30,7 @@ class CBC_QRCoderErrorCorrectionLevel {
  private:
   CBC_QRCoderErrorCorrectionLevel(int32_t ordinal,
                                   int32_t bits,
-                                  const FX_CHAR* name);
+                                  const char* name);
   CBC_QRCoderErrorCorrectionLevel();
 
   int32_t m_ordinal;

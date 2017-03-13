@@ -31,7 +31,7 @@ uint32_t FGAS_GetFontHashCode(uint16_t wCodePage, uint32_t dwFontStyles) {
   }
   return dwHash;
 }
-uint32_t FGAS_GetFontFamilyHash(const FX_WCHAR* pszFontFamily,
+uint32_t FGAS_GetFontFamilyHash(const wchar_t* pszFontFamily,
                                 uint32_t dwFontStyles,
                                 uint16_t wCodePage) {
   CFX_WideString wsFont(pszFontFamily);
@@ -134,7 +134,7 @@ static const FGAS_FONTUSB g_FXGdiFontUSBTable[] = {
     {0xFFA0, 0xFFEF, 68, 0xFFFF},
 };
 
-const FGAS_FONTUSB* FGAS_GetUnicodeBitField(FX_WCHAR wUnicode) {
+const FGAS_FONTUSB* FGAS_GetUnicodeBitField(wchar_t wUnicode) {
   int32_t iEnd = sizeof(g_FXGdiFontUSBTable) / sizeof(FGAS_FONTUSB) - 1;
   ASSERT(iEnd >= 0);
   int32_t iStart = 0, iMid;

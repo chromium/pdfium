@@ -20,7 +20,7 @@ class CXFA_FMParse {
 
   void NextToken();
   void Check(XFA_FM_TOKEN op);
-  void Error(uint32_t lineNum, const FX_WCHAR* msg, ...);
+  void Error(uint32_t lineNum, const wchar_t* msg, ...);
   std::vector<std::unique_ptr<CXFA_FMExpression>> ParseTopExpression();
   std::unique_ptr<CXFA_FMExpression> ParseFunction();
   std::unique_ptr<CXFA_FMExpression> ParseExpression();

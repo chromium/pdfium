@@ -85,7 +85,7 @@ void CXFA_TextParser::InitCSSData(CXFA_TextProvider* pTextProvider) {
 }
 
 std::unique_ptr<CFDE_CSSStyleSheet> CXFA_TextParser::LoadDefaultSheetStyle() {
-  static const FX_WCHAR s_pStyle[] =
+  static const wchar_t s_pStyle[] =
       L"html,body,ol,p,ul{display:block}"
       L"li{display:list-item}"
       L"ol,ul{padding-left:33px;margin:1.12em 0}"
@@ -562,12 +562,12 @@ bool CXFA_TextParser::GetTabstops(CFDE_CSSComputedStyle* pStyle,
   }
 
   int32_t iLength = wsValue.GetLength();
-  const FX_WCHAR* pTabStops = wsValue.c_str();
+  const wchar_t* pTabStops = wsValue.c_str();
   int32_t iCur = 0;
   int32_t iLast = 0;
   CFX_WideString wsAlign;
   TabStopStatus eStatus = TabStopStatus::None;
-  FX_WCHAR ch;
+  wchar_t ch;
   while (iCur < iLength) {
     ch = pTabStops[iCur];
     switch (eStatus) {

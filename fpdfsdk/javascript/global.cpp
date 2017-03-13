@@ -60,12 +60,12 @@ void JSGlobalAlternate::Initial(CPDFSDK_FormFillEnvironment* pFormFillEnv) {
   UpdateGlobalPersistentVariables();
 }
 
-bool JSGlobalAlternate::QueryProperty(const FX_WCHAR* propname) {
+bool JSGlobalAlternate::QueryProperty(const wchar_t* propname) {
   return CFX_WideString(propname) != L"setPersistent";
 }
 
 bool JSGlobalAlternate::DelProperty(CJS_Runtime* pRuntime,
-                                    const FX_WCHAR* propname,
+                                    const wchar_t* propname,
                                     CFX_WideString& sError) {
   auto it = m_mapGlobal.find(CFX_ByteString::FromUnicode(propname));
   if (it == m_mapGlobal.end())
@@ -76,7 +76,7 @@ bool JSGlobalAlternate::DelProperty(CJS_Runtime* pRuntime,
 }
 
 bool JSGlobalAlternate::DoProperty(CJS_Runtime* pRuntime,
-                                   const FX_WCHAR* propname,
+                                   const wchar_t* propname,
                                    CJS_PropValue& vp,
                                    CFX_WideString& sError) {
   if (vp.IsSetting()) {

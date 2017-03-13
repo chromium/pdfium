@@ -174,7 +174,7 @@ void CXFA_FFBarcode::UpdateWidgetProperty() {
   pBarCodeWidget->SetType(pBarcodeTypeInfo->eBCType);
   CXFA_WidgetAcc* pAcc = GetDataAcc();
   int32_t intVal;
-  FX_CHAR charVal;
+  char charVal;
   bool boolVal;
   FX_FLOAT floatVal;
   if (pAcc->GetBarcodeAttribute_CharEncoding(intVal)) {

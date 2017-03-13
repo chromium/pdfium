@@ -135,8 +135,8 @@ CFX_FloatRect GetShadingBBox(CPDF_ShadingPattern* pShading,
 }
 
 struct AbbrPair {
-  const FX_CHAR* abbr;
-  const FX_CHAR* full_name;
+  const char* abbr;
+  const char* full_name;
 };
 
 const AbbrPair InlineKeyAbbr[] = {

@@ -163,8 +163,8 @@ CFX_WideString CBC_PDF417ErrorCorrection::generateErrorCorrection(
   int32_t k = getErrorCorrectionCodewordCount(errorCorrectionLevel, e);
   if (e != BCExceptionNO)
     return L" ";
-  FX_WCHAR* ech = FX_Alloc(FX_WCHAR, k);
-  FXSYS_memset(ech, 0, k * sizeof(FX_WCHAR));
+  wchar_t* ech = FX_Alloc(wchar_t, k);
+  FXSYS_memset(ech, 0, k * sizeof(wchar_t));
   int32_t sld = dataCodewords.GetLength();
   for (int32_t i = 0; i < sld; i++) {
     int32_t t1 = (dataCodewords.GetAt(i) + ech[k - 1]) % 929;
@@ -173,18 +173,18 @@ CFX_WideString CBC_PDF417ErrorCorrection::generateErrorCorrection(
     for (int32_t j = k - 1; j >= 1; j--) {
       t2 = (t1 * EC_COEFFICIENTS[errorCorrectionLevel][j]) % 929;
       t3 = 929 - t2;
-      ech[j] = (FX_WCHAR)((ech[j - 1] + t3) % 929);
+      ech[j] = (wchar_t)((ech[j - 1] + t3) % 929);
     }
     t2 = (t1 * EC_COEFFICIENTS[errorCorrectionLevel][0]) % 929;
     t3 = 929 - t2;
-    ech[0] = (FX_WCHAR)(t3 % 929);
+    ech[0] = (wchar_t)(t3 % 929);
   }
   CFX_WideString sb;
   for (int32_t j = k - 1; j >= 0; j--) {
     if (ech[j] != 0) {
-      ech[j] = (FX_WCHAR)(929 - ech[j]);
+      ech[j] = (wchar_t)(929 - ech[j]);
     }
-    sb += (FX_WCHAR)ech[j];
+    sb += (wchar_t)ech[j];
   }
   FX_Free(ech);
   return sb;

@@ -39,13 +39,13 @@ class JSGlobalAlternate : public CJS_EmbedObj {
                      const std::vector<CJS_Value>& params,
                      CJS_Value& vRet,
                      CFX_WideString& sError);
-  bool QueryProperty(const FX_WCHAR* propname);
+  bool QueryProperty(const wchar_t* propname);
   bool DoProperty(CJS_Runtime* pRuntime,
-                  const FX_WCHAR* propname,
+                  const wchar_t* propname,
                   CJS_PropValue& vp,
                   CFX_WideString& sError);
   bool DelProperty(CJS_Runtime* pRuntime,
-                   const FX_WCHAR* propname,
+                   const wchar_t* propname,
                    CFX_WideString& sError);
   void Initial(CPDFSDK_FormFillEnvironment* pFormFillEnv);
 

@@ -11,41 +11,39 @@
 namespace {
 
 struct XFA_FMDChar {
-  static const FX_WCHAR* inc(const FX_WCHAR*& p) {
+  static const wchar_t* inc(const wchar_t*& p) {
     ++p;
     return p;
   }
-  static const FX_WCHAR* dec(const FX_WCHAR*& p) {
+  static const wchar_t* dec(const wchar_t*& p) {
     --p;
     return p;
   }
-  static uint16_t get(const FX_WCHAR* p) { return *p; }
-  static bool isWhiteSpace(const FX_WCHAR* p) {
+  static uint16_t get(const wchar_t* p) { return *p; }
+  static bool isWhiteSpace(const wchar_t* p) {
     return (*p) == 0x09 || (*p) == 0x0b || (*p) == 0x0c || (*p) == 0x20;
   }
-  static bool isLineTerminator(const FX_WCHAR* p) {
+  static bool isLineTerminator(const wchar_t* p) {
     return *p == 0x0A || *p == 0x0D;
   }
-  static bool isBinary(const FX_WCHAR* p) { return (*p) >= '0' && (*p) <= '1'; }
-  static bool isOctal(const FX_WCHAR* p) { return (*p) >= '0' && (*p) <= '7'; }
-  static bool isDigital(const FX_WCHAR* p) {
-    return (*p) >= '0' && (*p) <= '9';
-  }
-  static bool isHex(const FX_WCHAR* p) {
+  static bool isBinary(const wchar_t* p) { return (*p) >= '0' && (*p) <= '1'; }
+  static bool isOctal(const wchar_t* p) { return (*p) >= '0' && (*p) <= '7'; }
+  static bool isDigital(const wchar_t* p) { return (*p) >= '0' && (*p) <= '9'; }
+  static bool isHex(const wchar_t* p) {
     return isDigital(p) || ((*p) >= 'a' && (*p) <= 'f') ||
            ((*p) >= 'A' && (*p) <= 'F');
   }
-  static bool isAlpha(const FX_WCHAR* p) {
+  static bool isAlpha(const wchar_t* p) {
     return ((*p) <= 'z' && (*p) >= 'a') || ((*p) <= 'Z' && (*p) >= 'A');
   }
-  static bool isAvalid(const FX_WCHAR* p, bool flag = 0);
-  static bool string2number(const FX_WCHAR* s,
+  static bool isAvalid(const wchar_t* p, bool flag = 0);
+  static bool string2number(const wchar_t* s,
                             FX_DOUBLE* pValue,
-                            const FX_WCHAR*& pEnd);
+                            const wchar_t*& pEnd);
   static bool isUnicodeAlpha(uint16_t ch);
 };
 
-inline bool XFA_FMDChar::isAvalid(const FX_WCHAR* p, bool flag) {
+inline bool XFA_FMDChar::isAvalid(const wchar_t* p, bool flag) {
   if (*p == 0) {
     return 1;
   }
@@ -61,9 +59,9 @@ inline bool XFA_FMDChar::isAvalid(const FX_WCHAR* p, bool flag) {
   return 0;
 }
 
-inline bool XFA_FMDChar::string2number(const FX_WCHAR* s,
+inline bool XFA_FMDChar::string2number(const wchar_t* s,
                                        FX_DOUBLE* pValue,
-                                       const FX_WCHAR*& pEnd) {
+                                       const wchar_t*& pEnd) {
   if (s) {
     *pValue = wcstod((wchar_t*)s, (wchar_t**)&pEnd);
   }
@@ -148,7 +146,7 @@ const XFA_FM_TOKEN KEYWORD_END = TOKendif;
 
 }  // namespace
 
-const FX_WCHAR* XFA_FM_KeywordToString(XFA_FM_TOKEN op) {
+const wchar_t* XFA_FM_KeywordToString(XFA_FM_TOKEN op) {
   if (op < KEYWORD_START || op > KEYWORD_END)
     return L"";
   return keyWords[op].m_keyword;
@@ -199,12 +197,12 @@ CXFA_FMToken* CXFA_FMLexer::Scan() {
         XFA_FMDChar::inc(m_ptr);
         break;
       case ';': {
-        const FX_WCHAR* pTemp = 0;
+        const wchar_t* pTemp = 0;
         Comment(m_ptr, pTemp);
         m_ptr = pTemp;
       } break;
       case '"': {
-        const FX_WCHAR* pTemp = 0;
+        const wchar_t* pTemp = 0;
         p->m_type = TOKstring;
         iRet = String(p, m_ptr, pTemp);
         m_ptr = pTemp;
@@ -221,7 +219,7 @@ CXFA_FMToken* CXFA_FMLexer::Scan() {
       case '8':
       case '9': {
         p->m_type = TOKnumber;
-        const FX_WCHAR* pTemp = 0;
+        const wchar_t* pTemp = 0;
         iRet = Number(p, m_ptr, pTemp);
         m_ptr = pTemp;
         if (iRet) {
@@ -333,7 +331,7 @@ CXFA_FMToken* CXFA_FMLexer::Scan() {
         if (XFA_FMDChar::isAvalid(m_ptr)) {
           ch = XFA_FMDChar::get(m_ptr);
           if (ch == '/') {
-            const FX_WCHAR* pTemp = 0;
+            const wchar_t* pTemp = 0;
             Comment(m_ptr, pTemp);
             m_ptr = pTemp;
             break;
@@ -365,7 +363,7 @@ CXFA_FMToken* CXFA_FMLexer::Scan() {
             return p;
           } else if (ch <= '9' && ch >= '0') {
             p->m_type = TOKnumber;
-            const FX_WCHAR* pTemp = 0;
+            const wchar_t* pTemp = 0;
             XFA_FMDChar::dec(m_ptr);
             iRet = Number(p, m_ptr, pTemp);
             m_ptr = pTemp;
@@ -389,7 +387,7 @@ CXFA_FMToken* CXFA_FMLexer::Scan() {
         XFA_FMDChar::inc(m_ptr);
         break;
       default: {
-        const FX_WCHAR* pTemp = 0;
+        const wchar_t* pTemp = 0;
         iRet = Identifiers(p, m_ptr, pTemp);
         m_ptr = pTemp;
         if (iRet) {
@@ -403,8 +401,8 @@ CXFA_FMToken* CXFA_FMLexer::Scan() {
 }
 
 uint32_t CXFA_FMLexer::Number(CXFA_FMToken* t,
-                              const FX_WCHAR* p,
-                              const FX_WCHAR*& pEnd) {
+                              const wchar_t* p,
+                              const wchar_t*& pEnd) {
   FX_DOUBLE number = 0;
   if (XFA_FMDChar::string2number(p, &number, pEnd)) {
     return 1;
@@ -417,9 +415,9 @@ uint32_t CXFA_FMLexer::Number(CXFA_FMToken* t,
 }
 
 uint32_t CXFA_FMLexer::String(CXFA_FMToken* t,
-                              const FX_WCHAR* p,
-                              const FX_WCHAR*& pEnd) {
-  const FX_WCHAR* pStart = p;
+                              const wchar_t* p,
+                              const wchar_t*& pEnd) {
+  const wchar_t* pStart = p;
   uint16_t ch = 0;
   XFA_FMDChar::inc(p);
   ch = XFA_FMDChar::get(p);
@@ -457,9 +455,9 @@ uint32_t CXFA_FMLexer::String(CXFA_FMToken* t,
 }
 
 uint32_t CXFA_FMLexer::Identifiers(CXFA_FMToken* t,
-                                   const FX_WCHAR* p,
-                                   const FX_WCHAR*& pEnd) {
-  const FX_WCHAR* pStart = p;
+                                   const wchar_t* p,
+                                   const wchar_t*& pEnd) {
+  const wchar_t* pStart = p;
   uint16_t ch = 0;
   ch = XFA_FMDChar::get(p);
   XFA_FMDChar::inc(p);
@@ -491,7 +489,7 @@ uint32_t CXFA_FMLexer::Identifiers(CXFA_FMToken* t,
   return 0;
 }
 
-void CXFA_FMLexer::Comment(const FX_WCHAR* p, const FX_WCHAR*& pEnd) {
+void CXFA_FMLexer::Comment(const wchar_t* p, const wchar_t*& pEnd) {
   unsigned ch = 0;
   XFA_FMDChar::inc(p);
   ch = XFA_FMDChar::get(p);
@@ -530,7 +528,7 @@ XFA_FM_TOKEN CXFA_FMLexer::IsKeyword(const CFX_WideStringC& str) {
   return TOKidentifier;
 }
 
-void CXFA_FMLexer::Error(const FX_WCHAR* msg, ...) {
+void CXFA_FMLexer::Error(const wchar_t* msg, ...) {
   m_pErrorInfo->linenum = m_uCurrentLine;
   va_list ap;
   va_start(ap, msg);

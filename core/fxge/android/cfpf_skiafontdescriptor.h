@@ -23,14 +23,14 @@ class CFPF_SkiaFontDescriptor {
 
   virtual int32_t GetType() const { return FPF_SKIAFONTTYPE_Unknown; }
 
-  void SetFamily(const FX_CHAR* pFamily) {
+  void SetFamily(const char* pFamily) {
     FX_Free(m_pFamily);
     int32_t iSize = FXSYS_strlen(pFamily);
-    m_pFamily = FX_Alloc(FX_CHAR, iSize + 1);
-    FXSYS_memcpy(m_pFamily, pFamily, iSize * sizeof(FX_CHAR));
+    m_pFamily = FX_Alloc(char, iSize + 1);
+    FXSYS_memcpy(m_pFamily, pFamily, iSize * sizeof(char));
     m_pFamily[iSize] = 0;
   }
-  FX_CHAR* m_pFamily;
+  char* m_pFamily;
   uint32_t m_dwStyle;
   int32_t m_iFaceIndex;
   uint32_t m_dwCharsets;

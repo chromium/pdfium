@@ -10,7 +10,7 @@
 #include "xfa/fgas/crt/fgas_stream.h"
 
 TEST(CFDE_XMLSyntaxParser, CData) {
-  const FX_WCHAR* input =
+  const wchar_t* input =
       L"<script contentType=\"application/x-javascript\">\n"
       L"  <![CDATA[\n"
       L"    if (a[1] < 3)\n"
@@ -18,16 +18,16 @@ TEST(CFDE_XMLSyntaxParser, CData) {
       L"  ]]>\n"
       L"</script>";
 
-  const FX_WCHAR* cdata =
+  const wchar_t* cdata =
       L"\n"
       L"    if (a[1] < 3)\n"
       L"      app.alert(\"Tclams\");\n"
       L"  ";
 
-  // We * sizeof(FX_WCHAR) because we pass in the uint8_t, not the FX_WCHAR.
-  size_t len = FXSYS_wcslen(input) * sizeof(FX_WCHAR);
+  // We * sizeof(wchar_t) because we pass in the uint8_t, not the wchar_t.
+  size_t len = FXSYS_wcslen(input) * sizeof(wchar_t);
   CFX_RetainPtr<IFGAS_Stream> stream = IFGAS_Stream::CreateStream(
-      reinterpret_cast<uint8_t*>(const_cast<FX_WCHAR*>(input)), len, 0);
+      reinterpret_cast<uint8_t*>(const_cast<wchar_t*>(input)), len, 0);
   CFDE_XMLSyntaxParser parser;
   parser.Init(stream, 256);
   EXPECT_EQ(FDE_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
@@ -65,7 +65,7 @@ TEST(CFDE_XMLSyntaxParser, CData) {
 }
 
 TEST(CFDE_XMLSyntaxParser, CDataWithInnerScript) {
-  const FX_WCHAR* input =
+  const wchar_t* input =
       L"<script contentType=\"application/x-javascript\">\n"
       L"  <![CDATA[\n"
       L"    if (a[1] < 3)\n"
@@ -74,17 +74,17 @@ TEST(CFDE_XMLSyntaxParser, CDataWithInnerScript) {
       L"  ]]>\n"
       L"</script>";
 
-  const FX_WCHAR* cdata =
+  const wchar_t* cdata =
       L"\n"
       L"    if (a[1] < 3)\n"
       L"      app.alert(\"Tclams\");\n"
       L"    </script>\n"
       L"  ";
 
-  // We * sizeof(FX_WCHAR) because we pass in the uint8_t, not the FX_WCHAR.
-  size_t len = FXSYS_wcslen(input) * sizeof(FX_WCHAR);
+  // We * sizeof(wchar_t) because we pass in the uint8_t, not the wchar_t.
+  size_t len = FXSYS_wcslen(input) * sizeof(wchar_t);
   CFX_RetainPtr<IFGAS_Stream> stream = IFGAS_Stream::CreateStream(
-      reinterpret_cast<uint8_t*>(const_cast<FX_WCHAR*>(input)), len, 0);
+      reinterpret_cast<uint8_t*>(const_cast<wchar_t*>(input)), len, 0);
   CFDE_XMLSyntaxParser parser;
   parser.Init(stream, 256);
   EXPECT_EQ(FDE_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
@@ -122,15 +122,15 @@ TEST(CFDE_XMLSyntaxParser, CDataWithInnerScript) {
 }
 
 TEST(CFDE_XMLSyntaxParser, ArrowBangArrow) {
-  const FX_WCHAR* input =
+  const wchar_t* input =
       L"<script contentType=\"application/x-javascript\">\n"
       L"  <!>\n"
       L"</script>";
 
-  // We * sizeof(FX_WCHAR) because we pass in the uint8_t, not the FX_WCHAR.
-  size_t len = FXSYS_wcslen(input) * sizeof(FX_WCHAR);
+  // We * sizeof(wchar_t) because we pass in the uint8_t, not the wchar_t.
+  size_t len = FXSYS_wcslen(input) * sizeof(wchar_t);
   CFX_RetainPtr<IFGAS_Stream> stream = IFGAS_Stream::CreateStream(
-      reinterpret_cast<uint8_t*>(const_cast<FX_WCHAR*>(input)), len, 0);
+      reinterpret_cast<uint8_t*>(const_cast<wchar_t*>(input)), len, 0);
   CFDE_XMLSyntaxParser parser;
   parser.Init(stream, 256);
   EXPECT_EQ(FDE_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
@@ -164,15 +164,15 @@ TEST(CFDE_XMLSyntaxParser, ArrowBangArrow) {
 }
 
 TEST(CFDE_XMLSyntaxParser, ArrowBangBracketArrow) {
-  const FX_WCHAR* input =
+  const wchar_t* input =
       L"<script contentType=\"application/x-javascript\">\n"
       L"  <![>\n"
       L"</script>";
 
-  // We * sizeof(FX_WCHAR) because we pass in the uint8_t, not the FX_WCHAR.
-  size_t len = FXSYS_wcslen(input) * sizeof(FX_WCHAR);
+  // We * sizeof(wchar_t) because we pass in the uint8_t, not the wchar_t.
+  size_t len = FXSYS_wcslen(input) * sizeof(wchar_t);
   CFX_RetainPtr<IFGAS_Stream> stream = IFGAS_Stream::CreateStream(
-      reinterpret_cast<uint8_t*>(const_cast<FX_WCHAR*>(input)), len, 0);
+      reinterpret_cast<uint8_t*>(const_cast<wchar_t*>(input)), len, 0);
   CFDE_XMLSyntaxParser parser;
   parser.Init(stream, 256);
   EXPECT_EQ(FDE_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
@@ -200,15 +200,15 @@ TEST(CFDE_XMLSyntaxParser, ArrowBangBracketArrow) {
 }
 
 TEST(CFDE_XMLSyntaxParser, IncompleteCData) {
-  const FX_WCHAR* input =
+  const wchar_t* input =
       L"<script contentType=\"application/x-javascript\">\n"
       L"  <![CDATA>\n"
       L"</script>";
 
-  // We * sizeof(FX_WCHAR) because we pass in the uint8_t, not the FX_WCHAR.
-  size_t len = FXSYS_wcslen(input) * sizeof(FX_WCHAR);
+  // We * sizeof(wchar_t) because we pass in the uint8_t, not the wchar_t.
+  size_t len = FXSYS_wcslen(input) * sizeof(wchar_t);
   CFX_RetainPtr<IFGAS_Stream> stream = IFGAS_Stream::CreateStream(
-      reinterpret_cast<uint8_t*>(const_cast<FX_WCHAR*>(input)), len, 0);
+      reinterpret_cast<uint8_t*>(const_cast<wchar_t*>(input)), len, 0);
   CFDE_XMLSyntaxParser parser;
   parser.Init(stream, 256);
   EXPECT_EQ(FDE_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
@@ -236,15 +236,15 @@ TEST(CFDE_XMLSyntaxParser, IncompleteCData) {
 }
 
 TEST(CFDE_XMLSyntaxParser, UnClosedCData) {
-  const FX_WCHAR* input =
+  const wchar_t* input =
       L"<script contentType=\"application/x-javascript\">\n"
       L"  <![CDATA[\n"
       L"</script>";
 
-  // We * sizeof(FX_WCHAR) because we pass in the uint8_t, not the FX_WCHAR.
-  size_t len = FXSYS_wcslen(input) * sizeof(FX_WCHAR);
+  // We * sizeof(wchar_t) because we pass in the uint8_t, not the wchar_t.
+  size_t len = FXSYS_wcslen(input) * sizeof(wchar_t);
   CFX_RetainPtr<IFGAS_Stream> stream = IFGAS_Stream::CreateStream(
-      reinterpret_cast<uint8_t*>(const_cast<FX_WCHAR*>(input)), len, 0);
+      reinterpret_cast<uint8_t*>(const_cast<wchar_t*>(input)), len, 0);
   CFDE_XMLSyntaxParser parser;
   parser.Init(stream, 256);
   EXPECT_EQ(FDE_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
@@ -272,15 +272,15 @@ TEST(CFDE_XMLSyntaxParser, UnClosedCData) {
 }
 
 TEST(CFDE_XMLSyntaxParser, EmptyCData) {
-  const FX_WCHAR* input =
+  const wchar_t* input =
       L"<script contentType=\"application/x-javascript\">\n"
       L"  <![CDATA[]]>\n"
       L"</script>";
 
-  // We * sizeof(FX_WCHAR) because we pass in the uint8_t, not the FX_WCHAR.
-  size_t len = FXSYS_wcslen(input) * sizeof(FX_WCHAR);
+  // We * sizeof(wchar_t) because we pass in the uint8_t, not the wchar_t.
+  size_t len = FXSYS_wcslen(input) * sizeof(wchar_t);
   CFX_RetainPtr<IFGAS_Stream> stream = IFGAS_Stream::CreateStream(
-      reinterpret_cast<uint8_t*>(const_cast<FX_WCHAR*>(input)), len, 0);
+      reinterpret_cast<uint8_t*>(const_cast<wchar_t*>(input)), len, 0);
   CFDE_XMLSyntaxParser parser;
   parser.Init(stream, 256);
   EXPECT_EQ(FDE_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
@@ -318,15 +318,15 @@ TEST(CFDE_XMLSyntaxParser, EmptyCData) {
 }
 
 TEST(CFDE_XMLSyntaxParser, Comment) {
-  const FX_WCHAR* input =
+  const wchar_t* input =
       L"<script contentType=\"application/x-javascript\">\n"
       L"  <!-- A Comment -->\n"
       L"</script>";
 
-  // We * sizeof(FX_WCHAR) because we pass in the uint8_t, not the FX_WCHAR.
-  size_t len = FXSYS_wcslen(input) * sizeof(FX_WCHAR);
+  // We * sizeof(wchar_t) because we pass in the uint8_t, not the wchar_t.
+  size_t len = FXSYS_wcslen(input) * sizeof(wchar_t);
   CFX_RetainPtr<IFGAS_Stream> stream = IFGAS_Stream::CreateStream(
-      reinterpret_cast<uint8_t*>(const_cast<FX_WCHAR*>(input)), len, 0);
+      reinterpret_cast<uint8_t*>(const_cast<wchar_t*>(input)), len, 0);
   CFDE_XMLSyntaxParser parser;
   parser.Init(stream, 256);
   EXPECT_EQ(FDE_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
@@ -360,15 +360,15 @@ TEST(CFDE_XMLSyntaxParser, Comment) {
 }
 
 TEST(CFDE_XMLSyntaxParser, IncorrectCommentStart) {
-  const FX_WCHAR* input =
+  const wchar_t* input =
       L"<script contentType=\"application/x-javascript\">\n"
       L"  <!- A Comment -->\n"
       L"</script>";
 
-  // We * sizeof(FX_WCHAR) because we pass in the uint8_t, not the FX_WCHAR.
-  size_t len = FXSYS_wcslen(input) * sizeof(FX_WCHAR);
+  // We * sizeof(wchar_t) because we pass in the uint8_t, not the wchar_t.
+  size_t len = FXSYS_wcslen(input) * sizeof(wchar_t);
   CFX_RetainPtr<IFGAS_Stream> stream = IFGAS_Stream::CreateStream(
-      reinterpret_cast<uint8_t*>(const_cast<FX_WCHAR*>(input)), len, 0);
+      reinterpret_cast<uint8_t*>(const_cast<wchar_t*>(input)), len, 0);
   CFDE_XMLSyntaxParser parser;
   parser.Init(stream, 256);
   EXPECT_EQ(FDE_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
@@ -402,15 +402,15 @@ TEST(CFDE_XMLSyntaxParser, IncorrectCommentStart) {
 }
 
 TEST(CFDE_XMLSyntaxParser, CommentEmpty) {
-  const FX_WCHAR* input =
+  const wchar_t* input =
       L"<script contentType=\"application/x-javascript\">\n"
       L"  <!---->\n"
       L"</script>";
 
-  // We * sizeof(FX_WCHAR) because we pass in the uint8_t, not the FX_WCHAR.
-  size_t len = FXSYS_wcslen(input) * sizeof(FX_WCHAR);
+  // We * sizeof(wchar_t) because we pass in the uint8_t, not the wchar_t.
+  size_t len = FXSYS_wcslen(input) * sizeof(wchar_t);
   CFX_RetainPtr<IFGAS_Stream> stream = IFGAS_Stream::CreateStream(
-      reinterpret_cast<uint8_t*>(const_cast<FX_WCHAR*>(input)), len, 0);
+      reinterpret_cast<uint8_t*>(const_cast<wchar_t*>(input)), len, 0);
   CFDE_XMLSyntaxParser parser;
   parser.Init(stream, 256);
   EXPECT_EQ(FDE_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
@@ -444,15 +444,15 @@ TEST(CFDE_XMLSyntaxParser, CommentEmpty) {
 }
 
 TEST(CFDE_XMLSyntaxParser, CommentThreeDash) {
-  const FX_WCHAR* input =
+  const wchar_t* input =
       L"<script contentType=\"application/x-javascript\">\n"
       L"  <!--->\n"
       L"</script>";
 
-  // We * sizeof(FX_WCHAR) because we pass in the uint8_t, not the FX_WCHAR.
-  size_t len = FXSYS_wcslen(input) * sizeof(FX_WCHAR);
+  // We * sizeof(wchar_t) because we pass in the uint8_t, not the wchar_t.
+  size_t len = FXSYS_wcslen(input) * sizeof(wchar_t);
   CFX_RetainPtr<IFGAS_Stream> stream = IFGAS_Stream::CreateStream(
-      reinterpret_cast<uint8_t*>(const_cast<FX_WCHAR*>(input)), len, 0);
+      reinterpret_cast<uint8_t*>(const_cast<wchar_t*>(input)), len, 0);
   CFDE_XMLSyntaxParser parser;
   parser.Init(stream, 256);
   EXPECT_EQ(FDE_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
@@ -478,15 +478,15 @@ TEST(CFDE_XMLSyntaxParser, CommentThreeDash) {
 }
 
 TEST(CFDE_XMLSyntaxParser, CommentTwoDash) {
-  const FX_WCHAR* input =
+  const wchar_t* input =
       L"<script contentType=\"application/x-javascript\">\n"
       L"  <!-->\n"
       L"</script>";
 
-  // We * sizeof(FX_WCHAR) because we pass in the uint8_t, not the FX_WCHAR.
-  size_t len = FXSYS_wcslen(input) * sizeof(FX_WCHAR);
+  // We * sizeof(wchar_t) because we pass in the uint8_t, not the wchar_t.
+  size_t len = FXSYS_wcslen(input) * sizeof(wchar_t);
   CFX_RetainPtr<IFGAS_Stream> stream = IFGAS_Stream::CreateStream(
-      reinterpret_cast<uint8_t*>(const_cast<FX_WCHAR*>(input)), len, 0);
+      reinterpret_cast<uint8_t*>(const_cast<wchar_t*>(input)), len, 0);
   CFDE_XMLSyntaxParser parser;
   parser.Init(stream, 256);
   EXPECT_EQ(FDE_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
@@ -512,7 +512,7 @@ TEST(CFDE_XMLSyntaxParser, CommentTwoDash) {
 }
 
 TEST(CFDE_XMLSyntaxParser, Entities) {
-  const FX_WCHAR* input =
+  const wchar_t* input =
       L"<script contentType=\"application/x-javascript\">"
       L"&#66;"
       L"&#x54;"
@@ -521,10 +521,10 @@ TEST(CFDE_XMLSyntaxParser, Entities) {
       L"&#x0000000000000000000;"
       L"</script>";
 
-  // We * sizeof(FX_WCHAR) because we pass in the uint8_t, not the FX_WCHAR.
-  size_t len = FXSYS_wcslen(input) * sizeof(FX_WCHAR);
+  // We * sizeof(wchar_t) because we pass in the uint8_t, not the wchar_t.
+  size_t len = FXSYS_wcslen(input) * sizeof(wchar_t);
   CFX_RetainPtr<IFGAS_Stream> stream = IFGAS_Stream::CreateStream(
-      reinterpret_cast<uint8_t*>(const_cast<FX_WCHAR*>(input)), len, 0);
+      reinterpret_cast<uint8_t*>(const_cast<wchar_t*>(input)), len, 0);
   CFDE_XMLSyntaxParser parser;
   parser.Init(stream, 256);
   EXPECT_EQ(FDE_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
@@ -554,16 +554,16 @@ TEST(CFDE_XMLSyntaxParser, Entities) {
 }
 
 TEST(CFDE_XMLSyntaxParser, EntityOverflowHex) {
-  const FX_WCHAR* input =
+  const wchar_t* input =
       L"<script contentType=\"application/x-javascript\">"
       L"&#xaDBDFFFFF;"
       L"&#xafffffffffffffffffffffffffffffffff;"
       L"</script>";
 
-  // We * sizeof(FX_WCHAR) because we pass in the uint8_t, not the FX_WCHAR.
-  size_t len = FXSYS_wcslen(input) * sizeof(FX_WCHAR);
+  // We * sizeof(wchar_t) because we pass in the uint8_t, not the wchar_t.
+  size_t len = FXSYS_wcslen(input) * sizeof(wchar_t);
   CFX_RetainPtr<IFGAS_Stream> stream = IFGAS_Stream::CreateStream(
-      reinterpret_cast<uint8_t*>(const_cast<FX_WCHAR*>(input)), len, 0);
+      reinterpret_cast<uint8_t*>(const_cast<wchar_t*>(input)), len, 0);
   CFDE_XMLSyntaxParser parser;
   parser.Init(stream, 256);
   EXPECT_EQ(FDE_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
@@ -593,16 +593,16 @@ TEST(CFDE_XMLSyntaxParser, EntityOverflowHex) {
 }
 
 TEST(CFDE_XMLSyntaxParser, EntityOverflowDecimal) {
-  const FX_WCHAR* input =
+  const wchar_t* input =
       L"<script contentType=\"application/x-javascript\">"
       L"&#2914910205;"
       L"&#29149102052342342134521341234512351234213452315;"
       L"</script>";
 
-  // We * sizeof(FX_WCHAR) because we pass in the uint8_t, not the FX_WCHAR.
-  size_t len = FXSYS_wcslen(input) * sizeof(FX_WCHAR);
+  // We * sizeof(wchar_t) because we pass in the uint8_t, not the wchar_t.
+  size_t len = FXSYS_wcslen(input) * sizeof(wchar_t);
   CFX_RetainPtr<IFGAS_Stream> stream = IFGAS_Stream::CreateStream(
-      reinterpret_cast<uint8_t*>(const_cast<FX_WCHAR*>(input)), len, 0);
+      reinterpret_cast<uint8_t*>(const_cast<wchar_t*>(input)), len, 0);
   CFDE_XMLSyntaxParser parser;
   parser.Init(stream, 256);
   EXPECT_EQ(FDE_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());

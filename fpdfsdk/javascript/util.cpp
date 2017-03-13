@@ -46,14 +46,14 @@ namespace {
 // Map PDF-style directives to equivalent wcsftime directives. Not
 // all have direct equivalents, though.
 struct TbConvert {
-  const FX_WCHAR* lpszJSMark;
-  const FX_WCHAR* lpszCppMark;
+  const wchar_t* lpszJSMark;
+  const wchar_t* lpszCppMark;
 };
 
 // Map PDF-style directives lacking direct wcsftime directives to
 // the value with which they will be replaced.
 struct TbConvertAdditional {
-  const FX_WCHAR* lpszJSMark;
+  const wchar_t* lpszJSMark;
   int iValue;
 };
 
@@ -318,7 +318,7 @@ bool util::printx(CJS_Runtime* pRuntime,
 
 enum CaseMode { kPreserveCase, kUpperCase, kLowerCase };
 
-static FX_WCHAR TranslateCase(FX_WCHAR input, CaseMode eMode) {
+static wchar_t TranslateCase(wchar_t input, CaseMode eMode) {
   if (eMode == kLowerCase && input >= 'A' && input <= 'Z')
     return input | 0x20;
   if (eMode == kUpperCase && input >= 'a' && input <= 'z')
@@ -456,7 +456,7 @@ bool util::byteToChar(CJS_Runtime* pRuntime,
     return false;
   }
 
-  CFX_WideString wStr(static_cast<FX_WCHAR>(arg));
+  CFX_WideString wStr(static_cast<wchar_t>(arg));
   vRet = CJS_Value(pRuntime, wStr.c_str());
   return true;
 }

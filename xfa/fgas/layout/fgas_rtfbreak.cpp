@@ -190,7 +190,7 @@ bool CFX_RTFBreak::GetPositionedTab(int32_t* iTabPos) const {
   return true;
 }
 
-CFX_BreakType CFX_RTFBreak::AppendChar(FX_WCHAR wch) {
+CFX_BreakType CFX_RTFBreak::AppendChar(wchar_t wch) {
   ASSERT(m_pFont && m_pCurLine);
 
   uint32_t dwProps = kTextLayoutCodeProperties[static_cast<uint16_t>(wch)];
@@ -313,7 +313,7 @@ CFX_BreakType CFX_RTFBreak::AppendChar_Control(CFX_Char* pCurChar) {
 CFX_BreakType CFX_RTFBreak::AppendChar_Arabic(CFX_Char* pCurChar) {
   CFX_Char* pLastChar = nullptr;
   int32_t iCharWidth = 0;
-  FX_WCHAR wForm;
+  wchar_t wForm;
   bool bAlef = false;
   if (m_eCharType >= FX_CHARTYPE_ArabicAlef &&
       m_eCharType <= FX_CHARTYPE_ArabicDistortion) {
@@ -357,7 +357,7 @@ CFX_BreakType CFX_RTFBreak::AppendChar_Arabic(CFX_Char* pCurChar) {
 
 CFX_BreakType CFX_RTFBreak::AppendChar_Others(CFX_Char* pCurChar) {
   FX_CHARTYPE chartype = pCurChar->GetCharType();
-  FX_WCHAR wForm = pCurChar->m_wCharCode;
+  wchar_t wForm = pCurChar->m_wCharCode;
   int32_t iCharWidth = 0;
   if (!m_pFont->GetCharWidth(wForm, iCharWidth, false))
     iCharWidth = m_iDefChar;
@@ -842,8 +842,8 @@ int32_t CFX_RTFBreak::GetDisplayPos(const FX_RTFTEXTOBJ* pText,
   FX_FLOAT fFontHeight = fFontSize;
   FX_FLOAT fAscent = fFontHeight * static_cast<FX_FLOAT>(iAscent) /
                      static_cast<FX_FLOAT>(iMaxHeight);
-  FX_WCHAR wPrev = 0xFEFF;
-  FX_WCHAR wNext;
+  wchar_t wPrev = 0xFEFF;
+  wchar_t wNext;
   FX_FLOAT fX = rtText.left;
   int32_t iHorScale = pText->iHorizontalScale;
   int32_t iVerScale = pText->iVerticalScale;
@@ -853,7 +853,7 @@ int32_t CFX_RTFBreak::GetDisplayPos(const FX_RTFTEXTOBJ* pText,
   FX_FLOAT fY = rtText.top + fAscent;
   int32_t iCount = 0;
   for (int32_t i = 0; i < pText->iLength; ++i) {
-    FX_WCHAR wch = pText->pStr[i];
+    wchar_t wch = pText->pStr[i];
     int32_t iWidth = pText->pWidths[i];
     uint32_t dwProps = FX_GetUnicodeProperties(wch);
     uint32_t dwCharType = (dwProps & FX_CHARTYPEBITSMASK);
@@ -871,7 +871,7 @@ int32_t CFX_RTFBreak::GetDisplayPos(const FX_RTFTEXTOBJ* pText,
 
     if (pCharPos) {
       iCharWidth /= iFontSize;
-      FX_WCHAR wForm = wch;
+      wchar_t wForm = wch;
       if (dwCharType >= FX_CHARTYPE_ArabicAlef) {
         if (i + 1 < pText->iLength) {
           wNext = pText->pStr[i + 1];

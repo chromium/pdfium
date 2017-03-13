@@ -23,13 +23,13 @@ class CXFA_DataExporter {
   bool Export(const CFX_RetainPtr<IFX_SeekableWriteStream>& pWrite,
               CXFA_Node* pNode,
               uint32_t dwFlag,
-              const FX_CHAR* pChecksum);
+              const char* pChecksum);
 
  protected:
   bool Export(const CFX_RetainPtr<IFGAS_Stream>& pStream,
               CXFA_Node* pNode,
               uint32_t dwFlag,
-              const FX_CHAR* pChecksum);
+              const char* pChecksum);
 
   CXFA_Document* const m_pDocument;
 };

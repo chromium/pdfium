@@ -98,7 +98,7 @@ class CXFA_Object : public CFXJSE_HostObject {
   void ThrowParamCountMismatchException(const CFX_WideString& method) const;
 
  protected:
-  void ThrowException(const FX_WCHAR* str, ...) const;
+  void ThrowException(const wchar_t* str, ...) const;
 
   CXFA_Document* const m_pDocument;
   const XFA_ObjectType m_objectType;

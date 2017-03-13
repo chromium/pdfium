@@ -34,7 +34,7 @@ CFX_WideString CBC_UPCA::Preprocess(const CFX_WideStringC& contents) {
   int32_t length = encodeContents.GetLength();
   if (length <= 11) {
     for (int32_t i = 0; i < 11 - length; i++)
-      encodeContents = FX_WCHAR('0') + encodeContents;
+      encodeContents = wchar_t('0') + encodeContents;
 
     CFX_ByteString byteString = encodeContents.UTF8Encode();
     int32_t checksum = pWriter->CalcChecksum(byteString);

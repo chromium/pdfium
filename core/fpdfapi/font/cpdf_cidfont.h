@@ -45,16 +45,16 @@ class CPDF_CIDFont : public CPDF_Font {
   int GlyphFromCharCode(uint32_t charcode, bool* pVertGlyph) override;
   int GetCharWidthF(uint32_t charcode) override;
   FX_RECT GetCharBBox(uint32_t charcode) override;
-  uint32_t GetNextChar(const FX_CHAR* pString,
+  uint32_t GetNextChar(const char* pString,
                        int nStrLen,
                        int& offset) const override;
-  int CountChar(const FX_CHAR* pString, int size) const override;
-  int AppendChar(FX_CHAR* str, uint32_t charcode) const override;
+  int CountChar(const char* pString, int size) const override;
+  int AppendChar(char* str, uint32_t charcode) const override;
   bool IsVertWriting() const override;
   bool IsUnicodeCompatible() const override;
   bool Load() override;
   CFX_WideString UnicodeFromCharCode(uint32_t charcode) const override;
-  uint32_t CharCodeFromUnicode(FX_WCHAR Unicode) const override;
+  uint32_t CharCodeFromUnicode(wchar_t Unicode) const override;
 
   uint16_t CIDFromCharCode(uint32_t charcode) const;
   const uint8_t* GetCIDTransform(uint16_t CID) const;
@@ -70,7 +70,7 @@ class CPDF_CIDFont : public CPDF_Font {
                         std::vector<uint32_t>* result,
                         int nElements);
   void LoadSubstFont();
-  FX_WCHAR GetUnicodeFromCharCode(uint32_t charcode) const;
+  wchar_t GetUnicodeFromCharCode(uint32_t charcode) const;
 
   CFX_MaybeOwned<CPDF_CMap> m_pCMap;
   CPDF_CID2UnicodeMap* m_pCID2UnicodeMap;

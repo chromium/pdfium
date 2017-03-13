@@ -18,7 +18,7 @@ uint32_t CGifLZWDecoder::GetAvailInput() {
   return avail_in;
 }
 
-CGifLZWDecoder::CGifLZWDecoder(FX_CHAR* error_ptr)
+CGifLZWDecoder::CGifLZWDecoder(char* error_ptr)
     : code_size(0),
       code_size_cur(0),
       code_clear(0),
@@ -506,12 +506,12 @@ void gif_destroy_compress(gif_compress_struct_pp gif_ptr_ptr) {
   FX_Free(gif_ptr->pte_ptr);
   FX_Free(gif_ptr);
 }
-void gif_error(gif_decompress_struct_p gif_ptr, const FX_CHAR* err_msg) {
+void gif_error(gif_decompress_struct_p gif_ptr, const char* err_msg) {
   if (gif_ptr && gif_ptr->gif_error_fn) {
     gif_ptr->gif_error_fn(gif_ptr, err_msg);
   }
 }
-void gif_warn(gif_decompress_struct_p gif_ptr, const FX_CHAR* err_msg) {}
+void gif_warn(gif_decompress_struct_p gif_ptr, const char* err_msg) {}
 int32_t gif_read_header(gif_decompress_struct_p gif_ptr) {
   if (!gif_ptr)
     return 0;
@@ -680,7 +680,7 @@ int32_t gif_decode_extension(gif_decompress_struct_p gif_ptr) {
           return 2;
         }
         *(gif_ptr->cmt_data_ptr) +=
-            CFX_ByteString((const FX_CHAR*)data_ptr, data_size);
+            CFX_ByteString((const char*)data_ptr, data_size);
       }
     } break;
     case GIF_D_STATUS_EXT_PTE: {
@@ -731,7 +731,7 @@ int32_t gif_decode_extension(gif_decompress_struct_p gif_ptr) {
           return 2;
         }
         *(gif_pt_ptr->string_ptr) +=
-            CFX_ByteString((const FX_CHAR*)data_ptr, data_size);
+            CFX_ByteString((const char*)data_ptr, data_size);
       }
       gif_ptr->pt_ptr_arr_ptr->push_back(gif_pt_ptr);
     } break;

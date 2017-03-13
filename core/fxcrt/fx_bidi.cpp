@@ -12,7 +12,7 @@
 CFX_BidiChar::CFX_BidiChar()
     : m_CurrentSegment({0, 0, NEUTRAL}), m_LastSegment({0, 0, NEUTRAL}) {}
 
-bool CFX_BidiChar::AppendChar(FX_WCHAR wch) {
+bool CFX_BidiChar::AppendChar(wchar_t wch) {
   uint32_t dwProps = FX_GetUnicodeProperties(wch);
   int32_t iBidiCls = (dwProps & FX_BIDICLASSBITSMASK) >> FX_BIDICLASSBITS;
   Direction direction = NEUTRAL;

@@ -86,10 +86,10 @@ enum XFA_FM_TOKEN {
 struct XFA_FMKeyword {
   XFA_FM_TOKEN m_type;
   uint32_t m_uHash;
-  const FX_WCHAR* m_keyword;
+  const wchar_t* m_keyword;
 };
 
-const FX_WCHAR* XFA_FM_KeywordToString(XFA_FM_TOKEN op);
+const wchar_t* XFA_FM_KeywordToString(XFA_FM_TOKEN op);
 
 class CXFA_FMToken {
  public:
@@ -107,27 +107,25 @@ class CXFA_FMLexer {
   ~CXFA_FMLexer();
 
   CXFA_FMToken* NextToken();
-  uint32_t Number(CXFA_FMToken* t, const FX_WCHAR* p, const FX_WCHAR*& pEnd);
-  uint32_t String(CXFA_FMToken* t, const FX_WCHAR* p, const FX_WCHAR*& pEnd);
-  uint32_t Identifiers(CXFA_FMToken* t,
-                       const FX_WCHAR* p,
-                       const FX_WCHAR*& pEnd);
-  void Comment(const FX_WCHAR* p, const FX_WCHAR*& pEnd);
+  uint32_t Number(CXFA_FMToken* t, const wchar_t* p, const wchar_t*& pEnd);
+  uint32_t String(CXFA_FMToken* t, const wchar_t* p, const wchar_t*& pEnd);
+  uint32_t Identifiers(CXFA_FMToken* t, const wchar_t* p, const wchar_t*& pEnd);
+  void Comment(const wchar_t* p, const wchar_t*& pEnd);
   XFA_FM_TOKEN IsKeyword(const CFX_WideStringC& p);
   void SetCurrentLine(uint32_t line) { m_uCurrentLine = line; }
   void SetToken(CXFA_FMToken* pToken) {
     if (m_pToken.get() != pToken)
       m_pToken.reset(pToken);
   }
-  const FX_WCHAR* SavePos() { return m_ptr; }
-  void RestorePos(const FX_WCHAR* pPos) { m_ptr = pPos; }
-  void Error(const FX_WCHAR* msg, ...);
+  const wchar_t* SavePos() { return m_ptr; }
+  void RestorePos(const wchar_t* pPos) { m_ptr = pPos; }
+  void Error(const wchar_t* msg, ...);
   bool HasError() const;
 
  protected:
   CXFA_FMToken* Scan();
 
-  const FX_WCHAR* m_ptr;
+  const wchar_t* m_ptr;
   uint32_t m_uCurrentLine;
   std::unique_ptr<CXFA_FMToken> m_pToken;
   CXFA_FMErrorInfo* m_pErrorInfo;

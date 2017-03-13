@@ -193,7 +193,7 @@ bool Tiff_Exif_GetInfo(TIFF* tif_ctx, ttag_t tag, CFX_DIBAttribute* pAttr) {
 void Tiff_Exif_GetStringInfo(TIFF* tif_ctx,
                              ttag_t tag,
                              CFX_DIBAttribute* pAttr) {
-  FX_CHAR* buf = nullptr;
+  char* buf = nullptr;
   TIFFGetField(tif_ctx, tag, &buf);
   if (!buf)
     return;

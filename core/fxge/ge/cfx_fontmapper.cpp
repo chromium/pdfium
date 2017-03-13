@@ -25,7 +25,7 @@ namespace {
 
 const int kNumStandardFonts = 14;
 
-const FX_CHAR* const g_Base14FontNames[kNumStandardFonts] = {
+const char* const g_Base14FontNames[kNumStandardFonts] = {
     "Courier",
     "Courier-Bold",
     "Courier-BoldOblique",
@@ -43,7 +43,7 @@ const FX_CHAR* const g_Base14FontNames[kNumStandardFonts] = {
 };
 
 const struct AltFontName {
-  const FX_CHAR* m_pName;
+  const char* m_pName;
   int m_Index;
 } g_AltFontNames[] = {
     {"Arial", 4},
@@ -138,8 +138,8 @@ const struct AltFontName {
 };
 
 const struct AltFontFamily {
-  const FX_CHAR* m_pFontName;
-  const FX_CHAR* m_pFontFamily;
+  const char* m_pFontName;
+  const char* m_pFontFamily;
 } g_AltFontFamilies[] = {
     {"AGaramondPro", "Adobe Garamond Pro"},
     {"BankGothicBT-Medium", "BankGothic Md BT"},
@@ -147,7 +147,7 @@ const struct AltFontFamily {
 };
 
 const struct FX_FontStyle {
-  const FX_CHAR* style;
+  const char* style;
   int32_t len;
 } g_FontStyles[] = {
     {"Bold", 4}, {"Italic", 6}, {"BoldItalic", 10}, {"Reg", 3}, {"Regular", 7},
@@ -167,20 +167,19 @@ const struct CODEPAGE_MAP {
 };
 
 int CompareFontFamilyString(const void* key, const void* element) {
-  CFX_ByteString str_key((const FX_CHAR*)key);
+  CFX_ByteString str_key((const char*)key);
   const AltFontFamily* family = reinterpret_cast<const AltFontFamily*>(element);
   if (str_key.Find(family->m_pFontName) != -1)
     return 0;
-  return FXSYS_stricmp(reinterpret_cast<const FX_CHAR*>(key),
-                       family->m_pFontName);
+  return FXSYS_stricmp(reinterpret_cast<const char*>(key), family->m_pFontName);
 }
 
 int CompareString(const void* key, const void* element) {
-  return FXSYS_stricmp(reinterpret_cast<const FX_CHAR*>(key),
+  return FXSYS_stricmp(reinterpret_cast<const char*>(key),
                        reinterpret_cast<const AltFontName*>(element)->m_pName);
 }
 
-CFX_ByteString TT_NormalizeName(const FX_CHAR* family) {
+CFX_ByteString TT_NormalizeName(const char* family) {
   CFX_ByteString norm(family);
   norm.Remove(' ');
   norm.Remove('-');
@@ -223,7 +222,7 @@ CFX_ByteString GetFontFamily(CFX_ByteString fontName, int nStyle) {
   return found ? CFX_ByteString(found->m_pFontFamily) : fontName;
 }
 
-CFX_ByteString ParseStyle(const FX_CHAR* pStyle, int iLen, int iIndex) {
+CFX_ByteString ParseStyle(const char* pStyle, int iLen, int iIndex) {
   CFX_ByteTextBuf buf;
   if (!iLen || iLen <= iIndex)
     return buf.MakeString();
@@ -505,7 +504,7 @@ FXFT_Face CFX_FontMapper::FindSubstFont(const CFX_ByteString& name,
   }
   if (!style.IsEmpty()) {
     int nLen = style.GetLength();
-    const FX_CHAR* pStyle = style.c_str();
+    const char* pStyle = style.c_str();
     int i = 0;
     bool bFirstItem = true;
     CFX_ByteString buf;

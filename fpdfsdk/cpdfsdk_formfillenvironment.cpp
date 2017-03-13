@@ -60,8 +60,8 @@ CPDFSDK_FormFillEnvironment::~CPDFSDK_FormFillEnvironment() {
     m_pInfo->Release(m_pInfo);
 }
 
-int CPDFSDK_FormFillEnvironment::JS_appAlert(const FX_WCHAR* Msg,
-                                             const FX_WCHAR* Title,
+int CPDFSDK_FormFillEnvironment::JS_appAlert(const wchar_t* Msg,
+                                             const wchar_t* Title,
                                              uint32_t Type,
                                              uint32_t Icon) {
   if (!m_pInfo || !m_pInfo->m_pJsPlatform ||
@@ -75,10 +75,10 @@ int CPDFSDK_FormFillEnvironment::JS_appAlert(const FX_WCHAR* Msg,
       AsFPDFWideString(&bsTitle), Type, Icon);
 }
 
-int CPDFSDK_FormFillEnvironment::JS_appResponse(const FX_WCHAR* Question,
-                                                const FX_WCHAR* Title,
-                                                const FX_WCHAR* Default,
-                                                const FX_WCHAR* cLabel,
+int CPDFSDK_FormFillEnvironment::JS_appResponse(const wchar_t* Question,
+                                                const wchar_t* Title,
+                                                const wchar_t* Default,
+                                                const wchar_t* cLabel,
                                                 FPDF_BOOL bPassword,
                                                 void* response,
                                                 int length) {
@@ -146,7 +146,7 @@ CFX_WideString CPDFSDK_FormFillEnvironment::JS_docGetFilePath() {
 
 void CPDFSDK_FormFillEnvironment::JS_docSubmitForm(void* formData,
                                                    int length,
-                                                   const FX_WCHAR* URL) {
+                                                   const wchar_t* URL) {
   if (!m_pInfo || !m_pInfo->m_pJsPlatform ||
       !m_pInfo->m_pJsPlatform->Doc_submitForm) {
     return;
@@ -160,11 +160,11 @@ void CPDFSDK_FormFillEnvironment::JS_docSubmitForm(void* formData,
 void CPDFSDK_FormFillEnvironment::JS_docmailForm(void* mailData,
                                                  int length,
                                                  FPDF_BOOL bUI,
-                                                 const FX_WCHAR* To,
-                                                 const FX_WCHAR* Subject,
-                                                 const FX_WCHAR* CC,
-                                                 const FX_WCHAR* BCC,
-                                                 const FX_WCHAR* Msg) {
+                                                 const wchar_t* To,
+                                                 const wchar_t* Subject,
+                                                 const wchar_t* CC,
+                                                 const wchar_t* BCC,
+                                                 const wchar_t* Msg) {
   if (!m_pInfo || !m_pInfo->m_pJsPlatform ||
       !m_pInfo->m_pJsPlatform->Doc_mail) {
     return;
@@ -313,8 +313,7 @@ FPDF_PAGE CPDFSDK_FormFillEnvironment::GetCurrentPage(FPDF_DOCUMENT document) {
   return nullptr;
 }
 
-void CPDFSDK_FormFillEnvironment::ExecuteNamedAction(
-    const FX_CHAR* namedAction) {
+void CPDFSDK_FormFillEnvironment::ExecuteNamedAction(const char* namedAction) {
   if (m_pInfo && m_pInfo->FFI_ExecuteNamedAction)
     m_pInfo->FFI_ExecuteNamedAction(m_pInfo, namedAction);
 }
@@ -327,7 +326,7 @@ void CPDFSDK_FormFillEnvironment::OnSetFieldInputFocus(
     m_pInfo->FFI_SetTextFieldFocus(m_pInfo, focusText, nTextLen, bFocus);
 }
 
-void CPDFSDK_FormFillEnvironment::DoURIAction(const FX_CHAR* bsURI) {
+void CPDFSDK_FormFillEnvironment::DoURIAction(const char* bsURI) {
   if (m_pInfo && m_pInfo->FFI_DoURIAction)
     m_pInfo->FFI_DoURIAction(m_pInfo, bsURI);
 }
@@ -462,7 +461,7 @@ FPDF_FILEHANDLER* CPDFSDK_FormFillEnvironment::OpenFile(int fileType,
 }
 
 CFX_RetainPtr<IFX_SeekableReadStream>
-CPDFSDK_FormFillEnvironment::DownloadFromURL(const FX_WCHAR* url) {
+CPDFSDK_FormFillEnvironment::DownloadFromURL(const wchar_t* url) {
   if (!m_pInfo || !m_pInfo->FFI_DownloadFromURL)
     return nullptr;
 
@@ -475,11 +474,11 @@ CPDFSDK_FormFillEnvironment::DownloadFromURL(const FX_WCHAR* url) {
 }
 
 CFX_WideString CPDFSDK_FormFillEnvironment::PostRequestURL(
-    const FX_WCHAR* wsURL,
-    const FX_WCHAR* wsData,
-    const FX_WCHAR* wsContentType,
-    const FX_WCHAR* wsEncode,
-    const FX_WCHAR* wsHeader) {
+    const wchar_t* wsURL,
+    const wchar_t* wsData,
+    const wchar_t* wsContentType,
+    const wchar_t* wsEncode,
+    const wchar_t* wsHeader) {
   if (!m_pInfo || !m_pInfo->FFI_PostRequestURL)
     return L"";
 
@@ -513,9 +512,9 @@ CFX_WideString CPDFSDK_FormFillEnvironment::PostRequestURL(
   return wsRet;
 }
 
-FPDF_BOOL CPDFSDK_FormFillEnvironment::PutRequestURL(const FX_WCHAR* wsURL,
-                                                     const FX_WCHAR* wsData,
-                                                     const FX_WCHAR* wsEncode) {
+FPDF_BOOL CPDFSDK_FormFillEnvironment::PutRequestURL(const wchar_t* wsURL,
+                                                     const wchar_t* wsData,
+                                                     const wchar_t* wsEncode) {
   if (!m_pInfo || !m_pInfo->FFI_PutRequestURL)
     return false;
 

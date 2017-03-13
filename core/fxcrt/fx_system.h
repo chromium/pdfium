@@ -70,8 +70,6 @@ extern "C" {
 typedef void* FX_POSITION;  // Keep until fxcrt containers gone
 typedef float FX_FLOAT;     // Keep, allow upgrade to doubles.
 typedef double FX_DOUBLE;   // Keep, allow downgrade to floats.
-typedef char FX_CHAR;       // Keep, questionable signedness.
-typedef wchar_t FX_WCHAR;   // Keep, maybe bad platform wchars.
 
 #define IsFloatZero(f) ((f) < 0.0001 && (f) > -0.0001)
 #define IsFloatBigger(fa, fb) ((fa) > (fb) && !IsFloatZero((fa) - (fb)))
@@ -141,7 +139,7 @@ void FXSYS_vsnprintf(char* str, size_t size, const char* fmt, va_list ap);
 #define FXSYS_wfopen _wfopen
 #endif
 #else
-FXSYS_FILE* FXSYS_wfopen(const FX_WCHAR* filename, const FX_WCHAR* mode);
+FXSYS_FILE* FXSYS_wfopen(const wchar_t* filename, const wchar_t* mode);
 #endif  // _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
 
 #ifdef __cplusplus
@@ -153,27 +151,27 @@ FXSYS_FILE* FXSYS_wfopen(const FX_WCHAR* filename, const FX_WCHAR* mode);
 #define FXSYS_wcslen(ptr) pdfium::base::checked_cast<FX_STRSIZE>(wcslen(ptr))
 
 // Overloaded functions for C++ templates
-inline FX_STRSIZE FXSYS_len(const FX_CHAR* ptr) {
+inline FX_STRSIZE FXSYS_len(const char* ptr) {
   return FXSYS_strlen(ptr);
 }
 
-inline FX_STRSIZE FXSYS_len(const FX_WCHAR* ptr) {
+inline FX_STRSIZE FXSYS_len(const wchar_t* ptr) {
   return FXSYS_wcslen(ptr);
 }
 
-inline int FXSYS_cmp(const FX_CHAR* ptr1, const FX_CHAR* ptr2, size_t len) {
+inline int FXSYS_cmp(const char* ptr1, const char* ptr2, size_t len) {
   return memcmp(ptr1, ptr2, len);
 }
 
-inline int FXSYS_cmp(const FX_WCHAR* ptr1, const FX_WCHAR* ptr2, size_t len) {
+inline int FXSYS_cmp(const wchar_t* ptr1, const wchar_t* ptr2, size_t len) {
   return wmemcmp(ptr1, ptr2, len);
 }
 
-inline const FX_CHAR* FXSYS_chr(const FX_CHAR* ptr, FX_CHAR ch, size_t len) {
-  return reinterpret_cast<const FX_CHAR*>(memchr(ptr, ch, len));
+inline const char* FXSYS_chr(const char* ptr, char ch, size_t len) {
+  return reinterpret_cast<const char*>(memchr(ptr, ch, len));
 }
 
-inline const FX_WCHAR* FXSYS_chr(const FX_WCHAR* ptr, FX_WCHAR ch, size_t len) {
+inline const wchar_t* FXSYS_chr(const wchar_t* ptr, wchar_t ch, size_t len) {
   return wmemchr(ptr, ch, len);
 }
 
@@ -276,12 +274,12 @@ wchar_t* FXSYS_wcsupr(wchar_t* str);
 #define FXSYS_LOBYTE(word) ((uint8_t)(word))
 #define FXSYS_HIWORD(dword) ((uint16_t)((dword) >> 16))
 #define FXSYS_LOWORD(dword) ((uint16_t)(dword))
-int32_t FXSYS_atoi(const FX_CHAR* str);
-uint32_t FXSYS_atoui(const FX_CHAR* str);
-int32_t FXSYS_wtoi(const FX_WCHAR* str);
-int64_t FXSYS_atoi64(const FX_CHAR* str);
-int64_t FXSYS_wtoi64(const FX_WCHAR* str);
-const FX_CHAR* FXSYS_i64toa(int64_t value, FX_CHAR* str, int radix);
+int32_t FXSYS_atoi(const char* str);
+uint32_t FXSYS_atoui(const char* str);
+int32_t FXSYS_wtoi(const wchar_t* str);
+int64_t FXSYS_atoi64(const char* str);
+int64_t FXSYS_wtoi64(const wchar_t* str);
+const char* FXSYS_i64toa(int64_t value, char* str, int radix);
 int FXSYS_round(FX_FLOAT f);
 #define FXSYS_sqrt2(a, b) (FX_FLOAT) FXSYS_sqrt((a) * (a) + (b) * (b))
 #ifdef __cplusplus

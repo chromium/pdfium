@@ -19,7 +19,7 @@ class CBC_Base256Encoder : public CBC_Encoder {
   void Encode(CBC_EncoderContext& context, int32_t& e) override;
 
  private:
-  static FX_WCHAR randomize255State(FX_WCHAR ch, int32_t codewordPosition);
+  static wchar_t randomize255State(wchar_t ch, int32_t codewordPosition);
 };
 
 #endif  // XFA_FXBARCODE_DATAMATRIX_BC_BASE256ENCODER_H_

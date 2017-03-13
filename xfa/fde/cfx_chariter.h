@@ -17,7 +17,7 @@ class CFX_CharIter : public IFX_CharIter {
   ~CFX_CharIter() override;
 
   bool Next(bool bPrev = false) override;
-  FX_WCHAR GetChar() override;
+  wchar_t GetChar() override;
   void SetAt(int32_t nIndex) override;
   int32_t GetAt() const override;
   bool IsEOF(bool bTail = true) const override;

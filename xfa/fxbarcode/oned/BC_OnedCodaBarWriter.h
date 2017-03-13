@@ -37,11 +37,11 @@ class CBC_OnedCodaBarWriter : public CBC_OneDimWriter {
   void SetDataLength(int32_t length) override;
 
   virtual CFX_WideString encodedContents(const CFX_WideStringC& contents);
-  virtual bool SetStartChar(FX_CHAR start);
-  virtual bool SetEndChar(FX_CHAR end);
+  virtual bool SetStartChar(char start);
+  virtual bool SetEndChar(char end);
   virtual bool SetTextLocation(BC_TEXT_LOC location);
   virtual bool SetWideNarrowRatio(int32_t ratio);
-  virtual bool FindChar(FX_WCHAR ch, bool isContent);
+  virtual bool FindChar(wchar_t ch, bool isContent);
 
  private:
   void RenderResult(const CFX_WideStringC& contents,
@@ -50,8 +50,8 @@ class CBC_OnedCodaBarWriter : public CBC_OneDimWriter {
                     bool isDevice,
                     int32_t& e) override;
 
-  FX_CHAR m_chStart;
-  FX_CHAR m_chEnd;
+  char m_chStart;
+  char m_chEnd;
   int32_t m_iWideNarrRatio;
 };
 

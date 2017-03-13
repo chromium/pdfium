@@ -44,7 +44,7 @@ FX_DOUBLE WideStringToDouble(const CFX_WideString& wsStringVal) {
   int32_t cc = 0;
   bool bNegative = false;
   bool bExpSign = false;
-  const FX_WCHAR* str = wsValue.c_str();
+  const wchar_t* str = wsValue.c_str();
   int32_t len = wsValue.GetLength();
   if (str[0] == '+') {
     cc++;

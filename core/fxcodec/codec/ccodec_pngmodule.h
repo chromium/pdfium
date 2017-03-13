@@ -25,7 +25,7 @@ class CCodec_PngModule : public ICodec_PngModule {
              CFX_DIBAttribute* pAttribute) override;
 
  protected:
-  FX_CHAR m_szLastError[PNG_ERROR_SIZE];
+  char m_szLastError[PNG_ERROR_SIZE];
 };
 
 #endif  // CORE_FXCODEC_CODEC_CCODEC_PNGMODULE_H_

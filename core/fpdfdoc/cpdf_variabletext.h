@@ -114,7 +114,7 @@ class CPDF_VariableText {
   CPVT_WordPlace InsertSection(const CPVT_WordPlace& place,
                                const CPVT_SecProps* pSecProps,
                                const CPVT_WordProps* pWordProps);
-  CPVT_WordPlace InsertText(const CPVT_WordPlace& place, const FX_WCHAR* text);
+  CPVT_WordPlace InsertText(const CPVT_WordPlace& place, const wchar_t* text);
   CPVT_WordPlace DeleteWords(const CPVT_WordRange& PlaceRange);
   CPVT_WordPlace DeleteWord(const CPVT_WordPlace& place);
   CPVT_WordPlace BackSpaceWord(const CPVT_WordPlace& place);

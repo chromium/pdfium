@@ -14,7 +14,7 @@ class IFX_CharIter {
   virtual ~IFX_CharIter() {}
 
   virtual bool Next(bool bPrev = false) = 0;
-  virtual FX_WCHAR GetChar() = 0;
+  virtual wchar_t GetChar() = 0;
   virtual void SetAt(int32_t nIndex) = 0;
   virtual int32_t GetAt() const = 0;
   virtual bool IsEOF(bool bTail = true) const = 0;

@@ -11,7 +11,7 @@
 
 namespace {
 
-const FX_CHAR szCompatibleModeScript[] =
+const char szCompatibleModeScript[] =
     "(function(global, list) {\n"
     "  'use strict';\n"
     "  var objname;\n"
@@ -202,7 +202,7 @@ void CFXJSE_Context::EnableCompatibleMode() {
   ExecuteScript(szCompatibleModeScript, nullptr, nullptr);
 }
 
-bool CFXJSE_Context::ExecuteScript(const FX_CHAR* szScript,
+bool CFXJSE_Context::ExecuteScript(const char* szScript,
                                    CFXJSE_Value* lpRetValue,
                                    CFXJSE_Value* lpNewThisObject) {
   CFXJSE_ScopeUtil_IsolateHandleContext scope(this);

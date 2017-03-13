@@ -34,7 +34,7 @@ CFX_WideString CBC_EAN13::Preprocess(const CFX_WideStringC& contents) {
   int32_t length = encodeContents.GetLength();
   if (length <= 12) {
     for (int32_t i = 0; i < 12 - length; i++)
-      encodeContents = FX_WCHAR('0') + encodeContents;
+      encodeContents = wchar_t('0') + encodeContents;
 
     CFX_ByteString byteString = encodeContents.UTF8Encode();
     int32_t checksum = static_cast<CBC_OnedEAN13Writer*>(m_pBCWriter.get())

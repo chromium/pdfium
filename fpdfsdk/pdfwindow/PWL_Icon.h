@@ -26,7 +26,7 @@ class CPWL_Image : public CPWL_Wnd {
   void GetImageSize(FX_FLOAT& fWidth, FX_FLOAT& fHeight);
   CFX_Matrix GetImageMatrix();
   CFX_ByteString GetImageAlias();
-  void SetImageAlias(const FX_CHAR* sImageAlias);
+  void SetImageAlias(const char* sImageAlias);
 
  protected:
   CPDF_Stream* m_pPDFStream;

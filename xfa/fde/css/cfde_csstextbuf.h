@@ -17,13 +17,13 @@ class CFDE_CSSTextBuf {
   CFDE_CSSTextBuf();
   ~CFDE_CSSTextBuf();
 
-  bool AttachBuffer(const FX_WCHAR* pBuffer, int32_t iBufLen);
+  bool AttachBuffer(const wchar_t* pBuffer, int32_t iBufLen);
   bool EstimateSize(int32_t iAllocSize);
   int32_t LoadFromStream(const CFX_RetainPtr<IFGAS_Stream>& pTxtStream,
                          int32_t iStreamOffset,
                          int32_t iMaxChars,
                          bool& bEOS);
-  bool AppendChar(FX_WCHAR wch) {
+  bool AppendChar(wchar_t wch) {
     if (m_iDatLen >= m_iBufLen && !ExpandBuf(m_iBufLen * 2))
       return false;
     m_pBuffer[m_iDatLen++] = wch;
@@ -43,21 +43,21 @@ class CFDE_CSSTextBuf {
   void Subtract(int32_t iStart, int32_t iLength);
   bool IsEOF() const { return m_iDatPos >= m_iDatLen; }
 
-  FX_WCHAR GetAt(int32_t index) const { return m_pBuffer[index]; }
-  FX_WCHAR GetChar() const { return m_pBuffer[m_iDatPos]; }
-  FX_WCHAR GetNextChar() const {
+  wchar_t GetAt(int32_t index) const { return m_pBuffer[index]; }
+  wchar_t GetChar() const { return m_pBuffer[m_iDatPos]; }
+  wchar_t GetNextChar() const {
     return (m_iDatPos + 1 >= m_iDatLen) ? 0 : m_pBuffer[m_iDatPos + 1];
   }
 
   void MoveNext() { m_iDatPos++; }
 
   int32_t GetLength() const { return m_iDatLen; }
-  const FX_WCHAR* GetBuffer() const { return m_pBuffer; }
+  const wchar_t* GetBuffer() const { return m_pBuffer; }
 
  protected:
   bool ExpandBuf(int32_t iDesiredSize);
   bool m_bExtBuf;
-  FX_WCHAR* m_pBuffer;
+  wchar_t* m_pBuffer;
   int32_t m_iBufLen;
   int32_t m_iDatLen;
   int32_t m_iDatPos;

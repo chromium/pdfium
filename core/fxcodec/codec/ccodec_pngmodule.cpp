@@ -57,7 +57,7 @@ static void _png_load_bmp_attribute(png_structp png_ptr,
     png_get_tIME(png_ptr, info_ptr, &t);
     if (t) {
       FXSYS_memset(pAttribute->m_strTime, 0, sizeof(pAttribute->m_strTime));
-      FXSYS_snprintf((FX_CHAR*)pAttribute->m_strTime,
+      FXSYS_snprintf((char*)pAttribute->m_strTime,
                      sizeof(pAttribute->m_strTime), "%4u:%2u:%2u %2u:%2u:%2u",
                      t->year, t->month, t->day, t->hour, t->minute, t->second);
       pAttribute->m_strTime[sizeof(pAttribute->m_strTime) - 1] = 0;
@@ -67,7 +67,7 @@ static void _png_load_bmp_attribute(png_structp png_ptr,
 #if defined(PNG_TEXT_SUPPORTED)
     int i;
     FX_STRSIZE len;
-    const FX_CHAR* buf;
+    const char* buf;
     int num_text;
     png_textp text = nullptr;
     png_get_text(png_ptr, info_ptr, &text, &num_text);

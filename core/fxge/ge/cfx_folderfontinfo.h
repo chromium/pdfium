@@ -27,7 +27,7 @@ class CFX_FolderFontInfo : public IFX_SystemFontInfo {
                 bool bItalic,
                 int charset,
                 int pitch_family,
-                const FX_CHAR* face,
+                const char* face,
                 int& bExact) override;
 #ifdef PDF_ENABLE_XFA
   void* MapFontByUnicode(uint32_t dwUnicode,
@@ -35,7 +35,7 @@ class CFX_FolderFontInfo : public IFX_SystemFontInfo {
                          bool bItalic,
                          int pitch_family) override;
 #endif  // PDF_ENABLE_XFA
-  void* GetFont(const FX_CHAR* face) override;
+  void* GetFont(const char* face) override;
   uint32_t GetFontData(void* hFont,
                        uint32_t table,
                        uint8_t* buffer,
@@ -56,7 +56,7 @@ class CFX_FolderFontInfo : public IFX_SystemFontInfo {
                  bool bItalic,
                  int charset,
                  int pitch_family,
-                 const FX_CHAR* family,
+                 const char* family,
                  bool bMatchName);
 
   std::map<CFX_ByteString, CFX_FontFaceInfo*> m_FontList;

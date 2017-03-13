@@ -12,7 +12,7 @@
 
 namespace {
 
-const FX_WCHAR* const gs_lpStrExpFuncName[] = {
+const wchar_t* const gs_lpStrExpFuncName[] = {
     L"foxit_xfa_formcalc_runtime.assign_value_operator",
     L"foxit_xfa_formcalc_runtime.logical_or_operator",
     L"foxit_xfa_formcalc_runtime.logical_and_operator",
@@ -42,7 +42,7 @@ const FX_WCHAR* const gs_lpStrExpFuncName[] = {
 
 struct XFA_FMBuildInFunc {
   uint32_t m_uHash;
-  const FX_WCHAR* m_buildinfunc;
+  const wchar_t* m_buildinfunc;
 };
 
 const XFA_FMBuildInFunc g_BuildInFuncs[] = {
@@ -83,7 +83,7 @@ const XFA_FMBuildInFunc g_BuildInFuncs[] = {
 
 struct XFA_FMSOMMethod {
   uint32_t m_uHash;
-  const FX_WCHAR* m_wsSomMethodName;
+  const wchar_t* m_wsSomMethodName;
   uint32_t m_dParameters;
 };
 const XFA_FMSOMMethod gs_FMSomMethods[] = {
@@ -155,7 +155,7 @@ void CXFA_FMStringExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
   CFX_WideString tempStr(m_wsString);
   if (tempStr.GetLength() > 2) {
     javascript.AppendChar(L'\"');
-    FX_WCHAR oneChar;
+    wchar_t oneChar;
     for (int16_t i = 1; i < tempStr.GetLength() - 1; i++) {
       oneChar = tempStr[i];
       switch (oneChar) {

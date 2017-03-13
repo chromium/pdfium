@@ -359,7 +359,7 @@ void CRYPT_SHA256Generate(const uint8_t* data,
   CRYPT_SHA256Finish(&ctx, digest);
 }
 
-uint64_t FX_ato64i(const FX_CHAR* str) {
+uint64_t FX_ato64i(const char* str) {
   ASSERT(str);
   uint64_t ret = 0;
   int len = (int)FXSYS_strlen(str);
@@ -426,7 +426,7 @@ static const uint8_t sha384_padding[128] = {
     0,    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 };
 
-static const FX_CHAR* constants[] = {
+static const char* constants[] = {
     "428a2f98d728ae22", "7137449123ef65cd", "b5c0fbcfec4d3b2f",
     "e9b5dba58189dbbc", "3956c25bf348b538", "59f111f1b605d019",
     "923f82a4af194f9b", "ab1c5ed5da6d8118", "d807aa98a3030242",

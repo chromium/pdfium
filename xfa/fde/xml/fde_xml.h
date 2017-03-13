@@ -40,6 +40,6 @@ struct FDE_XMLNODE {
   FDE_XMLNODETYPE eNodeType;
 };
 
-bool FDE_IsXMLValidChar(FX_WCHAR ch);
+bool FDE_IsXMLValidChar(wchar_t ch);
 
 #endif  // XFA_FDE_XML_FDE_XML_H_

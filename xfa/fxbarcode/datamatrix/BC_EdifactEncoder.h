@@ -22,7 +22,7 @@ class CBC_EdifactEncoder : public CBC_Encoder {
   static void handleEOD(CBC_EncoderContext& context,
                         CFX_WideString buffer,
                         int32_t& e);
-  static void encodeChar(FX_WCHAR c, CFX_WideString& sb, int32_t& e);
+  static void encodeChar(wchar_t c, CFX_WideString& sb, int32_t& e);
   static CFX_WideString encodeToCodewords(CFX_WideString sb,
                                           int32_t startPos,
                                           int32_t& e);

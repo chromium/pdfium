@@ -27,7 +27,7 @@ class CFDE_CSSStyleSheetTest : public testing::Test {
 
   void TearDown() override { decl_ = nullptr; }
 
-  void LoadAndVerifyDecl(const FX_WCHAR* buf,
+  void LoadAndVerifyDecl(const wchar_t* buf,
                          const std::vector<CFX_WideString>& selectors,
                          size_t decl_count) {
     ASSERT(sheet_);
@@ -87,7 +87,7 @@ class CFDE_CSSStyleSheetTest : public testing::Test {
 };
 
 TEST_F(CFDE_CSSStyleSheetTest, ParseMultipleSelectors) {
-  const FX_WCHAR* buf =
+  const wchar_t* buf =
       L"a { border: 10px; }\nb { text-decoration: underline; }";
   EXPECT_TRUE(sheet_->LoadBuffer(buf, FXSYS_wcslen(buf)));
   EXPECT_EQ(2, sheet_->CountRules());
@@ -136,7 +136,7 @@ TEST_F(CFDE_CSSStyleSheetTest, ParseMultipleSelectors) {
 }
 
 TEST_F(CFDE_CSSStyleSheetTest, ParseChildSelectors) {
-  const FX_WCHAR* buf = L"a b c { border: 10px; }";
+  const wchar_t* buf = L"a b c { border: 10px; }";
   EXPECT_TRUE(sheet_->LoadBuffer(buf, FXSYS_wcslen(buf)));
   EXPECT_EQ(1, sheet_->CountRules());
 
@@ -171,7 +171,7 @@ TEST_F(CFDE_CSSStyleSheetTest, ParseChildSelectors) {
 }
 
 TEST_F(CFDE_CSSStyleSheetTest, ParseUnhandledSelectors) {
-  const FX_WCHAR* buf = L"a > b { padding: 0; }";
+  const wchar_t* buf = L"a > b { padding: 0; }";
   EXPECT_TRUE(sheet_->LoadBuffer(buf, FXSYS_wcslen(buf)));
   EXPECT_EQ(0, sheet_->CountRules());
 

@@ -37,7 +37,7 @@ int32_t CBC_C40Encoder::getEncodingMode() {
 void CBC_C40Encoder::Encode(CBC_EncoderContext& context, int32_t& e) {
   CFX_WideString buffer;
   while (context.hasMoreCharacters()) {
-    FX_WCHAR c = context.getCurrentChar();
+    wchar_t c = context.getCurrentChar();
     context.m_pos++;
     int32_t lastCharSize = encodeChar(c, buffer, e);
     if (e != BCExceptionNO) {
@@ -100,7 +100,7 @@ void CBC_C40Encoder::handleEOD(CBC_EncoderContext& context,
   }
   int32_t available = context.m_symbolInfo->m_dataCapacity - curCodewordCount;
   if (rest == 2) {
-    buffer += (FX_WCHAR)'\0';
+    buffer += (wchar_t)'\0';
     while (buffer.GetLength() >= 3) {
       writeNextTriplet(context, buffer);
     }
@@ -128,39 +128,39 @@ void CBC_C40Encoder::handleEOD(CBC_EncoderContext& context,
   }
   context.signalEncoderChange(ASCII_ENCODATION);
 }
-int32_t CBC_C40Encoder::encodeChar(FX_WCHAR c, CFX_WideString& sb, int32_t& e) {
+int32_t CBC_C40Encoder::encodeChar(wchar_t c, CFX_WideString& sb, int32_t& e) {
   if (c == ' ') {
-    sb += (FX_WCHAR)'\3';
+    sb += (wchar_t)'\3';
     return 1;
   } else if ((c >= '0') && (c <= '9')) {
-    sb += (FX_WCHAR)(c - 48 + 4);
+    sb += (wchar_t)(c - 48 + 4);
     return 1;
   } else if ((c >= 'A') && (c <= 'Z')) {
-    sb += (FX_WCHAR)(c - 65 + 14);
+    sb += (wchar_t)(c - 65 + 14);
     return 1;
   } else if (c <= 0x1f) {
-    sb += (FX_WCHAR)'\0';
+    sb += (wchar_t)'\0';
     sb += c;
     return 2;
   } else if ((c >= '!') && (c <= '/')) {
-    sb += (FX_WCHAR)'\1';
-    sb += (FX_WCHAR)(c - 33);
+    sb += (wchar_t)'\1';
+    sb += (wchar_t)(c - 33);
     return 2;
   } else if ((c >= ':') && (c <= '@')) {
-    sb += (FX_WCHAR)'\1';
-    sb += (FX_WCHAR)(c - 58 + 15);
+    sb += (wchar_t)'\1';
+    sb += (wchar_t)(c - 58 + 15);
     return 2;
   } else if ((c >= '[') && (c <= '_')) {
-    sb += (FX_WCHAR)'\1';
-    sb += (FX_WCHAR)(c - 91 + 22);
+    sb += (wchar_t)'\1';
+    sb += (wchar_t)(c - 91 + 22);
     return 2;
   } else if ((c >= 60) && (c <= 0x7f)) {
-    sb += (FX_WCHAR)'\2';
-    sb += (FX_WCHAR)(c - 96);
+    sb += (wchar_t)'\2';
+    sb += (wchar_t)(c - 96);
     return 2;
   } else if (c >= 80) {
-    sb += (FX_WCHAR)'\1';
-    sb += (FX_WCHAR)0x001e;
+    sb += (wchar_t)'\1';
+    sb += (wchar_t)0x001e;
     int32_t len = 2;
     len += encodeChar((c - 128), sb, e);
     if (e != BCExceptionNO)
@@ -179,7 +179,7 @@ int32_t CBC_C40Encoder::backtrackOneCharacter(CBC_EncoderContext& context,
   int32_t count = buffer.GetLength();
   buffer.Delete(count - lastCharSize, count);
   context.m_pos--;
-  FX_WCHAR c = context.getCurrentChar();
+  wchar_t c = context.getCurrentChar();
   lastCharSize = encodeChar(c, removed, e);
   if (e != BCExceptionNO)
     return -1;
@@ -188,12 +188,12 @@ int32_t CBC_C40Encoder::backtrackOneCharacter(CBC_EncoderContext& context,
 }
 CFX_WideString CBC_C40Encoder::encodeToCodewords(CFX_WideString sb,
                                                  int32_t startPos) {
-  FX_WCHAR c1 = sb.GetAt(startPos);
-  FX_WCHAR c2 = sb.GetAt(startPos + 1);
-  FX_WCHAR c3 = sb.GetAt(startPos + 2);
+  wchar_t c1 = sb.GetAt(startPos);
+  wchar_t c2 = sb.GetAt(startPos + 1);
+  wchar_t c3 = sb.GetAt(startPos + 2);
   int32_t v = (1600 * c1) + (40 * c2) + c3 + 1;
-  FX_WCHAR cw1 = (FX_WCHAR)(v / 256);
-  FX_WCHAR cw2 = (FX_WCHAR)(v % 256);
+  wchar_t cw1 = (wchar_t)(v / 256);
+  wchar_t cw2 = (wchar_t)(v % 256);
   CFX_WideString b1(cw1);
   CFX_WideString b2(cw2);
   return b1 + b2;

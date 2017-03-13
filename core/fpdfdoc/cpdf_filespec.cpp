@@ -17,7 +17,7 @@ namespace {
 
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_ || \
     _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
-CFX_WideString ChangeSlashToPlatform(const FX_WCHAR* str) {
+CFX_WideString ChangeSlashToPlatform(const wchar_t* str) {
   CFX_WideString result;
   while (*str) {
     if (*str == '/') {
@@ -34,7 +34,7 @@ CFX_WideString ChangeSlashToPlatform(const FX_WCHAR* str) {
   return result;
 }
 
-CFX_WideString ChangeSlashToPDF(const FX_WCHAR* str) {
+CFX_WideString ChangeSlashToPDF(const wchar_t* str) {
   CFX_WideString result;
   while (*str) {
     if (*str == '\\' || *str == ':')

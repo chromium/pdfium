@@ -16,11 +16,11 @@
 
 namespace {
 
-const FX_CHAR kSentinel = 0x7f;
+const char kSentinel = 0x7f;
 
 void Check32BitBase16Itoa(int32_t input, const char* expected_output) {
   const size_t kBufLen = 11;  // "-" + 8 digits + NUL + sentinel.
-  FX_CHAR buf[kBufLen];
+  char buf[kBufLen];
   buf[kBufLen - 1] = kSentinel;
   FXSYS_itoa(input, buf, 16);
   EXPECT_EQ(std::string(expected_output), buf);
@@ -29,7 +29,7 @@ void Check32BitBase16Itoa(int32_t input, const char* expected_output) {
 
 void Check32BitBase10Itoa(int32_t input, const char* expected_output) {
   const size_t kBufLen = 13;  // "-" + 10 digits + NUL + sentinel.
-  FX_CHAR buf[kBufLen];
+  char buf[kBufLen];
   buf[kBufLen - 1] = kSentinel;
   FXSYS_itoa(input, buf, 10);
   EXPECT_EQ(std::string(expected_output), buf);
@@ -38,7 +38,7 @@ void Check32BitBase10Itoa(int32_t input, const char* expected_output) {
 
 void Check32BitBase2Itoa(int32_t input, const char* expected_output) {
   const size_t kBufLen = 35;  // "-" + 32 digits + NUL + sentinel.
-  FX_CHAR buf[kBufLen];
+  char buf[kBufLen];
   buf[kBufLen - 1] = kSentinel;
   FXSYS_itoa(input, buf, 2);
   EXPECT_EQ(std::string(expected_output), buf);
@@ -47,7 +47,7 @@ void Check32BitBase2Itoa(int32_t input, const char* expected_output) {
 
 void Check64BitBase16Itoa(int64_t input, const char* expected_output) {
   const size_t kBufLen = 19;  // "-" + 16 digits + NUL + sentinel.
-  FX_CHAR buf[kBufLen];
+  char buf[kBufLen];
   buf[kBufLen - 1] = kSentinel;
   FXSYS_i64toa(input, buf, 16);
   EXPECT_EQ(std::string(expected_output), buf);
@@ -56,7 +56,7 @@ void Check64BitBase16Itoa(int64_t input, const char* expected_output) {
 
 void Check64BitBase10Itoa(int64_t input, const char* expected_output) {
   const size_t kBufLen = 22;  // "-" + 19 digits + NUL + sentinel.
-  FX_CHAR buf[kBufLen];
+  char buf[kBufLen];
   buf[kBufLen - 1] = kSentinel;
   FXSYS_i64toa(input, buf, 10);
   EXPECT_EQ(std::string(expected_output), buf);
@@ -65,7 +65,7 @@ void Check64BitBase10Itoa(int64_t input, const char* expected_output) {
 
 void Check64BitBase2Itoa(int64_t input, const char* expected_output) {
   const size_t kBufLen = 67;  // "-" + 64 digits + NUL + sentinel.
-  FX_CHAR buf[kBufLen];
+  char buf[kBufLen];
   buf[kBufLen - 1] = kSentinel;
   FXSYS_i64toa(input, buf, 2);
   EXPECT_EQ(std::string(expected_output), buf);
@@ -75,7 +75,7 @@ void Check64BitBase2Itoa(int64_t input, const char* expected_output) {
 }  // namespace
 
 TEST(fxcrt, FXSYS_itoa_InvalidRadix) {
-  FX_CHAR buf[32];
+  char buf[32];
 
   FXSYS_itoa(42, buf, 17);  // Ours stops at 16.
   EXPECT_EQ(std::string(""), buf);
@@ -115,7 +115,7 @@ TEST(fxcrt, FXSYS_itoa) {
 }
 
 TEST(fxcrt, FXSYS_i64toa_InvalidRadix) {
-  FX_CHAR buf[32];
+  char buf[32];
 
   FXSYS_i64toa(42, buf, 17);  // Ours stops at 16.
   EXPECT_EQ(std::string(""), buf);

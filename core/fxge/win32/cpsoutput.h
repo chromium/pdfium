@@ -18,7 +18,7 @@ class CPSOutput {
 
   // IFX_PSOutput
   void Release();
-  void OutputPS(const FX_CHAR* str, int len);
+  void OutputPS(const char* str, int len);
 
   HDC m_hDC;
 };

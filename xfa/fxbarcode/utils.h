@@ -13,8 +13,8 @@ bool BC_FX_ByteString_Replace(CFX_ByteString& dst,
                               uint32_t first,
                               uint32_t last,
                               int32_t count,
-                              FX_CHAR c);
-void BC_FX_ByteString_Append(CFX_ByteString& dst, int32_t count, FX_CHAR c);
+                              char c);
+void BC_FX_ByteString_Append(CFX_ByteString& dst, int32_t count, char c);
 void BC_FX_ByteString_Append(CFX_ByteString& dst,
                              const CFX_ArrayTemplate<uint8_t>& ba);
 

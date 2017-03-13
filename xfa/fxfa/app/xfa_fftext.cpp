@@ -111,7 +111,7 @@ bool CXFA_FFText::OnLButtonDown(uint32_t dwFlags, const CFX_PointF& point) {
   if (!GetRectWithoutRotate().Contains(point))
     return false;
 
-  const FX_WCHAR* wsURLContent = GetLinkURLAtPoint(point);
+  const wchar_t* wsURLContent = GetLinkURLAtPoint(point);
   if (!wsURLContent)
     return false;
 
@@ -128,7 +128,7 @@ bool CXFA_FFText::OnLButtonUp(uint32_t dwFlags, const CFX_PointF& point) {
     return false;
 
   SetButtonDown(false);
-  const FX_WCHAR* wsURLContent = GetLinkURLAtPoint(point);
+  const wchar_t* wsURLContent = GetLinkURLAtPoint(point);
   if (!wsURLContent)
     return false;
 
@@ -145,7 +145,7 @@ FWL_WidgetHit CXFA_FFText::OnHitTest(const CFX_PointF& point) {
   return FWL_WidgetHit::HyperLink;
 }
 
-const FX_WCHAR* CXFA_FFText::GetLinkURLAtPoint(const CFX_PointF& point) {
+const wchar_t* CXFA_FFText::GetLinkURLAtPoint(const CFX_PointF& point) {
   CXFA_TextLayout* pTextLayout = m_pDataAcc->GetTextLayout();
   if (!pTextLayout)
     return nullptr;

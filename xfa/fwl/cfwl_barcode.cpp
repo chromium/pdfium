@@ -136,12 +136,12 @@ void CFWL_Barcode::SetWideNarrowRatio(int32_t ratio) {
   m_nWideNarrowRatio = ratio;
 }
 
-void CFWL_Barcode::SetStartChar(FX_CHAR startChar) {
+void CFWL_Barcode::SetStartChar(char startChar) {
   m_dwAttributeMask |= FWL_BCDATTRIBUTE_STARTCHAR;
   m_cStartChar = startChar;
 }
 
-void CFWL_Barcode::SetEndChar(FX_CHAR endChar) {
+void CFWL_Barcode::SetEndChar(char endChar) {
   m_dwAttributeMask |= FWL_BCDATTRIBUTE_ENDCHAR;
   m_cEndChar = endChar;
 }

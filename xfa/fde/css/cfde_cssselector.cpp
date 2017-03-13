@@ -12,14 +12,14 @@
 
 namespace {
 
-bool IsCSSChar(FX_WCHAR wch) {
+bool IsCSSChar(wchar_t wch) {
   return (wch >= 'a' && wch <= 'z') || (wch >= 'A' && wch <= 'Z');
 }
 
-int32_t GetCSSNameLen(const FX_WCHAR* psz, const FX_WCHAR* pEnd) {
-  const FX_WCHAR* pStart = psz;
+int32_t GetCSSNameLen(const wchar_t* psz, const wchar_t* pEnd) {
+  const wchar_t* pStart = psz;
   while (psz < pEnd) {
-    FX_WCHAR wch = *psz;
+    wchar_t wch = *psz;
     if (IsCSSChar(wch) || (wch >= '0' && wch <= '9') || wch == '_' ||
         wch == '-') {
       ++psz;
@@ -33,7 +33,7 @@ int32_t GetCSSNameLen(const FX_WCHAR* psz, const FX_WCHAR* pEnd) {
 }  // namespace
 
 CFDE_CSSSelector::CFDE_CSSSelector(FDE_CSSSelectorType eType,
-                                   const FX_WCHAR* psz,
+                                   const wchar_t* psz,
                                    int32_t iLen,
                                    bool bIgnoreCase)
     : m_eType(eType),
@@ -58,9 +58,9 @@ std::unique_ptr<CFDE_CSSSelector> CFDE_CSSSelector::FromString(
     const CFX_WideStringC& str) {
   ASSERT(!str.IsEmpty());
 
-  const FX_WCHAR* psz = str.c_str();
-  const FX_WCHAR* pStart = psz;
-  const FX_WCHAR* pEnd = psz + str.GetLength();
+  const wchar_t* psz = str.c_str();
+  const wchar_t* pStart = psz;
+  const wchar_t* pEnd = psz + str.GetLength();
   for (; psz < pEnd; ++psz) {
     switch (*psz) {
       case '>':
@@ -72,7 +72,7 @@ std::unique_ptr<CFDE_CSSSelector> CFDE_CSSSelector::FromString(
 
   std::unique_ptr<CFDE_CSSSelector> pFirst = nullptr;
   for (psz = pStart; psz < pEnd;) {
-    FX_WCHAR wch = *psz;
+    wchar_t wch = *psz;
     if (IsCSSChar(wch) || wch == '*') {
       int32_t iNameLen = wch == '*' ? 1 : GetCSSNameLen(psz, pEnd);
       auto p = pdfium::MakeUnique<CFDE_CSSSelector>(

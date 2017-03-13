@@ -27,9 +27,9 @@ class CFX_AndroidFontInfo : public IFX_SystemFontInfo {
                 bool bItalic,
                 int charset,
                 int pitch_family,
-                const FX_CHAR* face,
+                const char* face,
                 int& bExact) override;
-  void* GetFont(const FX_CHAR* face) override;
+  void* GetFont(const char* face) override;
   uint32_t GetFontData(void* hFont,
                        uint32_t table,
                        uint8_t* buffer,

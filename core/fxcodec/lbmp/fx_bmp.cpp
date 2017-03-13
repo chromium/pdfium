@@ -34,7 +34,7 @@ void SetWord_LSBFirst(uint8_t* p, uint16_t v) {
   p[0] = (uint8_t)v;
   p[1] = (uint8_t)(v >> 8);
 }
-void bmp_error(bmp_decompress_struct_p bmp_ptr, const FX_CHAR* err_msg) {
+void bmp_error(bmp_decompress_struct_p bmp_ptr, const char* err_msg) {
   if (bmp_ptr && bmp_ptr->bmp_error_fn) {
     bmp_ptr->bmp_error_fn(bmp_ptr, err_msg);
   }

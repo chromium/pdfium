@@ -153,7 +153,7 @@ class CJS_PublicMethods : public CJS_Object {
   static bool maskSatisfied(wchar_t c_Change, wchar_t c_Mask);
   static bool isReservedMaskChar(wchar_t ch);
 
-  static double AF_Simple(const FX_WCHAR* sFuction,
+  static double AF_Simple(const wchar_t* sFuction,
                           double dValue1,
                           double dValue2);
   static CJS_Array AF_MakeArrayFromList(CJS_Runtime* pRuntime, CJS_Value val);

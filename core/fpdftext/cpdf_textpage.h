@@ -49,8 +49,8 @@ class FPDF_CHAR_INFO {
   FPDF_CHAR_INFO();
   ~FPDF_CHAR_INFO();
 
-  FX_WCHAR m_Unicode;
-  FX_WCHAR m_Charcode;
+  wchar_t m_Unicode;
+  wchar_t m_Charcode;
   int32_t m_Flag;
   FX_FLOAT m_FontSize;
   CFX_PointF m_Origin;
@@ -72,7 +72,7 @@ class PAGECHAR_INFO {
 
   int m_Index;
   int m_CharCode;
-  FX_WCHAR m_Unicode;
+  wchar_t m_Unicode;
   int32_t m_Flag;
   CFX_PointF m_Origin;
   CFX_FloatRect m_CharBox;
@@ -125,7 +125,7 @@ class CPDF_TextPage {
     Hyphen,
   };
 
-  bool IsHyphen(FX_WCHAR curChar);
+  bool IsHyphen(wchar_t curChar);
   bool IsControlChar(const PAGECHAR_INFO& charInfo);
   void ProcessObject();
   void ProcessFormObject(CPDF_FormObject* pFormObj,
@@ -137,7 +137,7 @@ class CPDF_TextPage {
                          CPDF_PageObjectList::const_iterator ObjPos);
   GenerateCharacter ProcessInsertObject(const CPDF_TextObject* pObj,
                                         const CFX_Matrix& formMatrix);
-  bool GenerateCharInfo(FX_WCHAR unicode, PAGECHAR_INFO& info);
+  bool GenerateCharInfo(wchar_t unicode, PAGECHAR_INFO& info);
   bool IsSameAsPreTextObject(CPDF_TextObject* pTextObj,
                              const CPDF_PageObjectList* pObjList,
                              CPDF_PageObjectList::const_iterator ObjPos);
@@ -148,12 +148,12 @@ class CPDF_TextPage {
   void ProcessMarkedContent(PDFTEXT_Obj pObj);
   void CheckMarkedContentObject(int32_t& start, int32_t& nCount) const;
   void FindPreviousTextObject();
-  void AddCharInfoByLRDirection(FX_WCHAR wChar, PAGECHAR_INFO info);
-  void AddCharInfoByRLDirection(FX_WCHAR wChar, PAGECHAR_INFO info);
+  void AddCharInfoByLRDirection(wchar_t wChar, PAGECHAR_INFO info);
+  void AddCharInfoByRLDirection(wchar_t wChar, PAGECHAR_INFO info);
   TextOrientation GetTextObjectWritingMode(
       const CPDF_TextObject* pTextObj) const;
   TextOrientation FindTextlineFlowOrientation() const;
-  void AppendGeneratedCharacter(FX_WCHAR unicode, const CFX_Matrix& formMatrix);
+  void AppendGeneratedCharacter(wchar_t unicode, const CFX_Matrix& formMatrix);
 
   void SwapTempTextBuf(int32_t iCharListStartAppend, int32_t iBufStartAppend);
   bool IsRightToLeft(const CPDF_TextObject* pTextObj,

@@ -37,7 +37,7 @@ void CFDE_TxtEdtParag::LoadParag() {
   CFX_TxtBreak* pTxtBreak = m_pEngine->GetTextBreak();
   CFDE_TxtEdtBuf* pTxtBuf = m_pEngine->GetTextBuf();
   const FDE_TXTEDTPARAMS* pParam = m_pEngine->GetEditParams();
-  FX_WCHAR wcAlias = 0;
+  wchar_t wcAlias = 0;
   if (pParam->dwMode & FDE_TEXTEDITMODE_Password)
     wcAlias = m_pEngine->GetAliasChar();
 
@@ -52,7 +52,7 @@ void CFDE_TxtEdtParag::LoadParag() {
     if (bReload) {
       dwBreakStatus = pTxtBreak->EndBreak(CFX_BreakType::Paragraph);
     } else {
-      FX_WCHAR wAppend = pIter->GetChar();
+      wchar_t wAppend = pIter->GetChar();
       dwBreakStatus = pTxtBreak->AppendChar(wAppend);
     }
     if (pIter->GetAt() + 1 == nEndIndex &&
@@ -117,7 +117,7 @@ void CFDE_TxtEdtParag::CalcLines() {
     if (bReload) {
       dwBreakStatus = pTxtBreak->EndBreak(CFX_BreakType::Paragraph);
     } else {
-      FX_WCHAR wAppend = pIter->GetChar();
+      wchar_t wAppend = pIter->GetChar();
       dwBreakStatus = pTxtBreak->AppendChar(wAppend);
     }
     if (pIter->GetAt() + 1 == nEndIndex &&

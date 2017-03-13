@@ -21,9 +21,7 @@ class CBC_ASCIIEncoder : public CBC_Encoder {
   void Encode(CBC_EncoderContext& context, int32_t& e) override;
 
  private:
-  static FX_WCHAR encodeASCIIDigits(FX_WCHAR digit1,
-                                    FX_WCHAR digit2,
-                                    int32_t& e);
+  static wchar_t encodeASCIIDigits(wchar_t digit1, wchar_t digit2, int32_t& e);
 };
 
 #endif  // XFA_FXBARCODE_DATAMATRIX_BC_ASCIIENCODER_H_

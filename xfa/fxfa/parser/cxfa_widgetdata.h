@@ -140,8 +140,8 @@ class CXFA_WidgetData : public CXFA_Data {
   bool GetBarcodeAttribute_CharEncoding(int32_t& val);
   bool GetBarcodeAttribute_Checksum(bool& val);
   bool GetBarcodeAttribute_DataLength(int32_t& val);
-  bool GetBarcodeAttribute_StartChar(FX_CHAR& val);
-  bool GetBarcodeAttribute_EndChar(FX_CHAR& val);
+  bool GetBarcodeAttribute_StartChar(char& val);
+  bool GetBarcodeAttribute_EndChar(char& val);
   bool GetBarcodeAttribute_ECLevel(int32_t& val);
   bool GetBarcodeAttribute_ModuleWidth(int32_t& val);
   bool GetBarcodeAttribute_ModuleHeight(int32_t& val);

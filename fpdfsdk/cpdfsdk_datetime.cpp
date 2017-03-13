@@ -143,7 +143,7 @@ CPDFSDK_DateTime& CPDFSDK_DateTime::FromPDFDateTimeString(
 
   int j = 0;
   int k = 0;
-  FX_CHAR ch;
+  char ch;
   while (i < strLength && j < 4) {
     ch = dtStr[i];
     k = k * 10 + FXSYS_toDecimalDigit(ch);

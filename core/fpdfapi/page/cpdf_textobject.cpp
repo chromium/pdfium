@@ -149,7 +149,7 @@ void CPDF_TextObject::SetSegments(const CFX_ByteString* pStrs,
   m_CharPos.resize(nChars - 1);
   int index = 0;
   for (int i = 0; i < nsegs; ++i) {
-    const FX_CHAR* segment = pStrs[i].c_str();
+    const char* segment = pStrs[i].c_str();
     int len = pStrs[i].GetLength();
     int offset = 0;
     while (offset < len)

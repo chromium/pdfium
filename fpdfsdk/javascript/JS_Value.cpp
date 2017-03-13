@@ -55,10 +55,10 @@ CJS_Value::CJS_Value(CJS_Runtime* pRuntime, CJS_Object* pObj) {
     m_pValue = pObj->ToV8Object();
 }
 
-CJS_Value::CJS_Value(CJS_Runtime* pRuntime, const FX_WCHAR* pWstr)
+CJS_Value::CJS_Value(CJS_Runtime* pRuntime, const wchar_t* pWstr)
     : m_pValue(pRuntime->NewString(pWstr)) {}
 
-CJS_Value::CJS_Value(CJS_Runtime* pRuntime, const FX_CHAR* pStr)
+CJS_Value::CJS_Value(CJS_Runtime* pRuntime, const char* pStr)
     : m_pValue(pRuntime->NewString(CFX_WideString::FromLocal(pStr).c_str())) {}
 
 CJS_Value::CJS_Value(CJS_Runtime* pRuntime, const CJS_Array& array)
@@ -267,7 +267,7 @@ void CJS_PropValue::operator>>(CFX_ByteString& str) const {
   str = m_Value.ToCFXByteString(m_pJSRuntime);
 }
 
-void CJS_PropValue::operator<<(const FX_WCHAR* str) {
+void CJS_PropValue::operator<<(const wchar_t* str) {
   ASSERT(!m_bIsSetting);
   m_Value = CJS_Value(m_pJSRuntime, str);
 }

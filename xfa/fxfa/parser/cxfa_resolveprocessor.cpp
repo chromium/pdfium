@@ -34,7 +34,7 @@ int32_t CXFA_ResolveProcessor::Resolve(CXFA_ResolveNodesData& rnd) {
   if (rnd.m_dwStyles & XFA_RESOLVENODE_AnyChild) {
     return ResolveAnyChild(rnd);
   }
-  FX_WCHAR wch = rnd.m_wsName.GetAt(0);
+  wchar_t wch = rnd.m_wsName.GetAt(0);
   switch (wch) {
     case '$':
       return ResolveDollar(rnd);
@@ -517,14 +517,14 @@ int32_t CXFA_ResolveProcessor::GetFilter(const CFX_WideStringC& wsExpression,
   }
   CFX_WideString& wsName = rnd.m_wsName;
   CFX_WideString& wsCondition = rnd.m_wsCondition;
-  FX_WCHAR* pNameBuf = wsName.GetBuffer(iLength - nStart);
-  FX_WCHAR* pConditionBuf = wsCondition.GetBuffer(iLength - nStart);
+  wchar_t* pNameBuf = wsName.GetBuffer(iLength - nStart);
+  wchar_t* pConditionBuf = wsCondition.GetBuffer(iLength - nStart);
   int32_t nNameCount = 0;
   int32_t nConditionCount = 0;
   CFX_ArrayTemplate<int32_t> stack;
   int32_t nType = -1;
-  const FX_WCHAR* pSrc = wsExpression.c_str();
-  FX_WCHAR wPrev = 0, wCur;
+  const wchar_t* pSrc = wsExpression.c_str();
+  wchar_t wPrev = 0, wCur;
   bool bIsCondition = false;
   while (nStart < iLength) {
     wCur = pSrc[nStart++];
@@ -537,7 +537,7 @@ int32_t CXFA_ResolveProcessor::GetFilter(const CFX_WideStringC& wsExpression,
         rnd.m_dwStyles |= XFA_RESOLVENODE_AnyChild;
         continue;
       }
-      FX_WCHAR wLookahead = nStart < iLength ? pSrc[nStart] : 0;
+      wchar_t wLookahead = nStart < iLength ? pSrc[nStart] : 0;
       if (wLookahead != '[' && wLookahead != '(') {
         if (nType < 0) {
           break;
@@ -617,7 +617,7 @@ void CXFA_ResolveProcessor::ConditionArray(int32_t iCurIndex,
   bool bAll = false;
   int32_t i = 1;
   for (; i < iLen; ++i) {
-    FX_WCHAR ch = wsCondition[i];
+    wchar_t ch = wsCondition[i];
     if (ch == ' ') {
       continue;
     }
@@ -746,7 +746,7 @@ void CXFA_ResolveProcessor::FilterCondition(CXFA_ResolveNodesData& rnd,
       return;
     }
   }
-  FX_WCHAR wTypeChar = wsCondition[0];
+  wchar_t wTypeChar = wsCondition[0];
   switch (wTypeChar) {
     case '[':
       ConditionArray(iCurrIndex, wsCondition, iFoundCount, rnd);

@@ -36,7 +36,7 @@ class CPDF_InterForm;
 class CPDF_String;
 
 CPDF_Object* FPDF_GetFieldAttr(CPDF_Dictionary* pFieldDict,
-                               const FX_CHAR* name,
+                               const char* name,
                                int nLevel = 0);
 CFX_WideString FPDF_GetFullName(CPDF_Dictionary* pFieldDict);
 

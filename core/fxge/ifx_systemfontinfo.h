@@ -27,7 +27,7 @@ class IFX_SystemFontInfo {
                         bool bItalic,
                         int charset,
                         int pitch_family,
-                        const FX_CHAR* face,
+                        const char* face,
                         int& iExact) = 0;
 
 #ifdef PDF_ENABLE_XFA
@@ -37,7 +37,7 @@ class IFX_SystemFontInfo {
                                  int pitch_family);
 #endif  // PDF_ENABLE_XFA
 
-  virtual void* GetFont(const FX_CHAR* face) = 0;
+  virtual void* GetFont(const char* face) = 0;
   virtual uint32_t GetFontData(void* hFont,
                                uint32_t table,
                                uint8_t* buffer,

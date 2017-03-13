@@ -20,10 +20,10 @@
 namespace pdfium {
 namespace arabic {
 
-FX_WCHAR GetFormChar(FX_WCHAR wch, FX_WCHAR prev, FX_WCHAR next);
-FX_WCHAR GetFormChar(const CFX_Char* cur,
-                     const CFX_Char* prev,
-                     const CFX_Char* next);
+wchar_t GetFormChar(wchar_t wch, wchar_t prev, wchar_t next);
+wchar_t GetFormChar(const CFX_Char* cur,
+                    const CFX_Char* prev,
+                    const CFX_Char* next);
 
 }  // namespace arabic
 }  // namespace pdfium
@@ -160,9 +160,9 @@ struct FX_ARASHADDA {
   uint16_t wIsolated;
 };
 
-const FX_ARBFORMTABLE* FX_GetArabicFormTable(FX_WCHAR unicode);
-FX_WCHAR FX_GetArabicFromAlefTable(FX_WCHAR alef);
-FX_WCHAR FX_GetArabicFromShaddaTable(FX_WCHAR shadda);
+const FX_ARBFORMTABLE* FX_GetArabicFormTable(wchar_t unicode);
+wchar_t FX_GetArabicFromAlefTable(wchar_t alef);
+wchar_t FX_GetArabicFromShaddaTable(wchar_t shadda);
 
 void FX_BidiLine(std::vector<CFX_Char>& chars,
                  int32_t iCount,

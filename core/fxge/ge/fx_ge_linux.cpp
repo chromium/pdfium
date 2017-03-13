@@ -15,7 +15,7 @@ namespace {
 
 const size_t kLinuxGpNameSize = 6;
 
-const FX_CHAR* const g_LinuxGpFontList[][kLinuxGpNameSize] = {
+const char* const g_LinuxGpFontList[][kLinuxGpNameSize] = {
     {"TakaoPGothic", "VL PGothic", "IPAPGothic", "VL Gothic", "Kochi Gothic",
      "VL Gothic regular"},
     {"TakaoGothic", "VL Gothic", "IPAGothic", "Kochi Gothic", nullptr,
@@ -26,19 +26,19 @@ const FX_CHAR* const g_LinuxGpFontList[][kLinuxGpNameSize] = {
      "VL Gothic regular"},
 };
 
-const FX_CHAR* const g_LinuxGbFontList[] = {
+const char* const g_LinuxGbFontList[] = {
     "AR PL UMing CN Light", "WenQuanYi Micro Hei", "AR PL UKai CN",
 };
 
-const FX_CHAR* const g_LinuxB5FontList[] = {
+const char* const g_LinuxB5FontList[] = {
     "AR PL UMing TW Light", "WenQuanYi Micro Hei", "AR PL UKai TW",
 };
 
-const FX_CHAR* const g_LinuxHGFontList[] = {
+const char* const g_LinuxHGFontList[] = {
     "UnDotum",
 };
 
-size_t GetJapanesePreference(const FX_CHAR* facearr,
+size_t GetJapanesePreference(const char* facearr,
                              int weight,
                              int pitch_family) {
   CFX_ByteString face = facearr;
@@ -72,7 +72,7 @@ class CFX_LinuxFontInfo : public CFX_FolderFontInfo {
                 bool bItalic,
                 int charset,
                 int pitch_family,
-                const FX_CHAR* family,
+                const char* family,
                 int& iExact) override;
   bool ParseFontCfg(const char** pUserPaths);
 };
@@ -81,7 +81,7 @@ void* CFX_LinuxFontInfo::MapFont(int weight,
                                  bool bItalic,
                                  int charset,
                                  int pitch_family,
-                                 const FX_CHAR* cstr_face,
+                                 const char* cstr_face,
                                  int& iExact) {
   void* font = GetSubstFont(cstr_face);
   if (font) {

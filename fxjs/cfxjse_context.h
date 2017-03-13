@@ -30,7 +30,7 @@ class CFXJSE_Context {
   v8::Isolate* GetRuntime() { return m_pIsolate; }
   std::unique_ptr<CFXJSE_Value> GetGlobalObject();
   void EnableCompatibleMode();
-  bool ExecuteScript(const FX_CHAR* szScript,
+  bool ExecuteScript(const char* szScript,
                      CFXJSE_Value* lpRetValue,
                      CFXJSE_Value* lpNewThisObject = nullptr);
 

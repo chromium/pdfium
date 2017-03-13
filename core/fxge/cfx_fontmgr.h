@@ -43,7 +43,7 @@ class CFX_FontMgr {
                              uint8_t* pData,
                              uint32_t size,
                              int font_offset);
-  FXFT_Face GetFileFace(const FX_CHAR* filename, int face_index);
+  FXFT_Face GetFileFace(const char* filename, int face_index);
   FXFT_Face GetFixedFace(const uint8_t* pData, uint32_t size, int face_index);
   void ReleaseFace(FXFT_Face face);
   void SetSystemFontInfo(std::unique_ptr<IFX_SystemFontInfo> pFontInfo);

@@ -91,13 +91,13 @@ class CXFA_FM2JSContext : public CFXJSE_HostObject {
                       const CFX_ByteStringC& szFuncName,
                       CFXJSE_Arguments& args);
 
-  static bool IsIsoDateFormat(const FX_CHAR* pData,
+  static bool IsIsoDateFormat(const char* pData,
                               int32_t iLength,
                               int32_t& iStyle,
                               int32_t& iYear,
                               int32_t& iMonth,
                               int32_t& iDay);
-  static bool IsIsoTimeFormat(const FX_CHAR* pData,
+  static bool IsIsoTimeFormat(const char* pData,
                               int32_t iLength,
                               int32_t& iHour,
                               int32_t& iMinute,
@@ -105,7 +105,7 @@ class CXFA_FM2JSContext : public CFXJSE_HostObject {
                               int32_t& iMilliSecond,
                               int32_t& iZoneHour,
                               int32_t& iZoneMinute);
-  static bool IsIsoDateTimeFormat(const FX_CHAR* pData,
+  static bool IsIsoDateTimeFormat(const char* pData,
                                   int32_t iLength,
                                   int32_t& iYear,
                                   int32_t& iMonth,
@@ -462,7 +462,7 @@ class CXFA_FM2JSContext : public CFXJSE_HostObject {
                                          const CFX_WideString& exp) const;
   void ThrowArgumentMismatchException() const;
   void ThrowParamCountMismatchException(const CFX_WideString& method) const;
-  void ThrowException(const FX_WCHAR* str, ...) const;
+  void ThrowException(const wchar_t* str, ...) const;
 
   v8::Isolate* m_pIsolate;
   CFXJSE_Class* m_pFMClass;

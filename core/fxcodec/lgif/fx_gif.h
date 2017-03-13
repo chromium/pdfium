@@ -122,7 +122,7 @@ class CGifLZWDecoder {
     uint8_t suffix;
   };
 
-  explicit CGifLZWDecoder(FX_CHAR* error_ptr);
+  explicit CGifLZWDecoder(char* error_ptr);
   ~CGifLZWDecoder();
 
   void InitTable(uint8_t code_len);
@@ -152,7 +152,7 @@ class CGifLZWDecoder {
   uint8_t bits_left;
   uint32_t code_store;
 
-  FX_CHAR* err_msg_ptr;
+  char* err_msg_ptr;
 };
 
 class CGifLZWEncoder {
@@ -208,8 +208,8 @@ typedef gif_decompress_struct_p* gif_decompress_struct_pp;
 static const int32_t s_gif_interlace_step[4] = {8, 8, 4, 2};
 struct tag_gif_decompress_struct {
   jmp_buf jmpbuf;
-  FX_CHAR* err_ptr;
-  void (*gif_error_fn)(gif_decompress_struct_p gif_ptr, const FX_CHAR* err_msg);
+  char* err_ptr;
+  void (*gif_error_fn)(gif_decompress_struct_p gif_ptr, const char* err_msg);
   void* context_ptr;
   int width;
   int height;
@@ -280,8 +280,8 @@ struct tag_gif_compress_struct {
   uint32_t pte_data_len;
 };
 
-void gif_error(gif_decompress_struct_p gif_ptr, const FX_CHAR* err_msg);
-void gif_warn(gif_decompress_struct_p gif_ptr, const FX_CHAR* err_msg);
+void gif_error(gif_decompress_struct_p gif_ptr, const char* err_msg);
+void gif_warn(gif_decompress_struct_p gif_ptr, const char* err_msg);
 gif_decompress_struct_p gif_create_decompress();
 void gif_destroy_decompress(gif_decompress_struct_pp gif_ptr_ptr);
 gif_compress_struct_p gif_create_compress();

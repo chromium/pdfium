@@ -35,9 +35,9 @@ int32_t CBC_Base256Encoder::getEncodingMode() {
 }
 void CBC_Base256Encoder::Encode(CBC_EncoderContext& context, int32_t& e) {
   CFX_WideString buffer;
-  buffer += (FX_WCHAR)'\0';
+  buffer += (wchar_t)'\0';
   while (context.hasMoreCharacters()) {
-    FX_WCHAR c = context.getCurrentChar();
+    wchar_t c = context.getCurrentChar();
     buffer += c;
     context.m_pos++;
     int32_t newMode = CBC_HighLevelEncoder::lookAheadTest(
@@ -48,9 +48,9 @@ void CBC_Base256Encoder::Encode(CBC_EncoderContext& context, int32_t& e) {
     }
   }
   int32_t dataCount = buffer.GetLength() - 1;
-  FX_CHAR buf[128];
+  char buf[128];
   FXSYS_itoa(dataCount, buf, 10);
-  buffer.SetAt(0, FX_WCHAR(*buf) - '0');
+  buffer.SetAt(0, wchar_t(*buf) - '0');
   int32_t lengthFieldSize = 1;
   int32_t currentSize =
       context.getCodewordCount() + dataCount + lengthFieldSize;
@@ -61,10 +61,10 @@ void CBC_Base256Encoder::Encode(CBC_EncoderContext& context, int32_t& e) {
   bool mustPad = (context.m_symbolInfo->m_dataCapacity - currentSize) > 0;
   if (context.hasMoreCharacters() || mustPad) {
     if (dataCount <= 249) {
-      buffer.SetAt(0, (FX_WCHAR)dataCount);
+      buffer.SetAt(0, (wchar_t)dataCount);
     } else if (dataCount > 249 && dataCount <= 1555) {
-      buffer.SetAt(0, (FX_WCHAR)((dataCount / 250) + 249));
-      buffer.Insert(1, (FX_WCHAR)(dataCount % 250));
+      buffer.SetAt(0, (wchar_t)((dataCount / 250) + 249));
+      buffer.Insert(1, (wchar_t)(dataCount % 250));
     } else {
       e = BCExceptionIllegalStateMessageLengthInvalid;
       return;
@@ -75,13 +75,13 @@ void CBC_Base256Encoder::Encode(CBC_EncoderContext& context, int32_t& e) {
         randomize255State(buffer.GetAt(i), context.getCodewordCount() + 1));
   }
 }
-FX_WCHAR CBC_Base256Encoder::randomize255State(FX_WCHAR ch,
-                                               int32_t codewordPosition) {
+wchar_t CBC_Base256Encoder::randomize255State(wchar_t ch,
+                                              int32_t codewordPosition) {
   int32_t pseudoRandom = ((149 * codewordPosition) % 255) + 1;
   int32_t tempVariable = ch + pseudoRandom;
   if (tempVariable <= 255) {
-    return (FX_WCHAR)tempVariable;
+    return (wchar_t)tempVariable;
   } else {
-    return (FX_WCHAR)(tempVariable - 256);
+    return (wchar_t)(tempVariable - 256);
   }
 }

@@ -59,11 +59,11 @@ class CJS_GlobalData {
   iterator FindGlobalVariable(const CFX_ByteString& sPropname);
   const_iterator FindGlobalVariable(const CFX_ByteString& sPropname) const;
 
-  void LoadFileBuffer(const FX_WCHAR* sFilePath,
+  void LoadFileBuffer(const wchar_t* sFilePath,
                       uint8_t*& pBuffer,
                       int32_t& nLength);
-  void WriteFileBuffer(const FX_WCHAR* sFilePath,
-                       const FX_CHAR* pBuffer,
+  void WriteFileBuffer(const wchar_t* sFilePath,
+                       const char* pBuffer,
                        int32_t nLength);
   void MakeByteString(const CFX_ByteString& name,
                       CJS_KeyValue* pData,

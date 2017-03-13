@@ -134,20 +134,20 @@
 #define FX_CHARSET_OEM 255
 
 uint16_t FX_GetCodePageFromCharset(uint8_t charset);
-uint16_t FX_GetCodePageFromStringW(const FX_WCHAR* pStr, int32_t iLength);
+uint16_t FX_GetCodePageFromStringW(const wchar_t* pStr, int32_t iLength);
 uint16_t FX_GetDefCodePageByLanguage(uint16_t wLanguage);
-void FX_SwapByteOrder(FX_WCHAR* pStr, int32_t iLength);
+void FX_SwapByteOrder(wchar_t* pStr, int32_t iLength);
 
 void FX_UTF16ToWChar(void* pBuffer, int32_t iLength);
 int32_t FX_DecodeString(uint16_t wCodePage,
-                        const FX_CHAR* pSrc,
+                        const char* pSrc,
                         int32_t* pSrcLen,
-                        FX_WCHAR* pDst,
+                        wchar_t* pDst,
                         int32_t* pDstLen,
                         bool bErrBreak);
-int32_t FX_UTF8Decode(const FX_CHAR* pSrc,
+int32_t FX_UTF8Decode(const char* pSrc,
                       int32_t* pSrcLen,
-                      FX_WCHAR* pDst,
+                      wchar_t* pDst,
                       int32_t* pDstLen);
 
 #endif  // XFA_FGAS_CRT_FGAS_CODEPAGE_H_

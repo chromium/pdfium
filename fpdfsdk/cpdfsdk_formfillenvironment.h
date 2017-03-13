@@ -84,11 +84,11 @@ class CPDFSDK_FormFillEnvironment
   FPDF_PAGE GetPage(FPDF_DOCUMENT document, int nPageIndex);
   FPDF_PAGE GetCurrentPage(FPDF_DOCUMENT document);
 
-  void ExecuteNamedAction(const FX_CHAR* namedAction);
+  void ExecuteNamedAction(const char* namedAction);
   void OnSetFieldInputFocus(FPDF_WIDESTRING focusText,
                             FPDF_DWORD nTextLen,
                             bool bFocus);
-  void DoURIAction(const FX_CHAR* bsURI);
+  void DoURIAction(const char* bsURI);
   void DoGoToAction(int nPageIndex,
                     int zoomMode,
                     float* fPosArray,
@@ -141,15 +141,15 @@ class CPDFSDK_FormFillEnvironment
   FPDF_FILEHANDLER* OpenFile(int fileType,
                              FPDF_WIDESTRING wsURL,
                              const char* mode);
-  CFX_RetainPtr<IFX_SeekableReadStream> DownloadFromURL(const FX_WCHAR* url);
-  CFX_WideString PostRequestURL(const FX_WCHAR* wsURL,
-                                const FX_WCHAR* wsData,
-                                const FX_WCHAR* wsContentType,
-                                const FX_WCHAR* wsEncode,
-                                const FX_WCHAR* wsHeader);
-  FPDF_BOOL PutRequestURL(const FX_WCHAR* wsURL,
-                          const FX_WCHAR* wsData,
-                          const FX_WCHAR* wsEncode);
+  CFX_RetainPtr<IFX_SeekableReadStream> DownloadFromURL(const wchar_t* url);
+  CFX_WideString PostRequestURL(const wchar_t* wsURL,
+                                const wchar_t* wsData,
+                                const wchar_t* wsContentType,
+                                const wchar_t* wsEncode,
+                                const wchar_t* wsHeader);
+  FPDF_BOOL PutRequestURL(const wchar_t* wsURL,
+                          const wchar_t* wsData,
+                          const wchar_t* wsEncode);
   CFX_WideString GetLanguage();
 
   void PageEvent(int iPageCount, uint32_t dwEventType) const;
@@ -157,29 +157,29 @@ class CPDFSDK_FormFillEnvironment
   CPDF_Document* GetPDFDocument() const { return m_pUnderlyingDoc; }
 #endif  // PDF_ENABLE_XFA
 
-  int JS_appAlert(const FX_WCHAR* Msg,
-                  const FX_WCHAR* Title,
+  int JS_appAlert(const wchar_t* Msg,
+                  const wchar_t* Title,
                   uint32_t Type,
                   uint32_t Icon);
-  int JS_appResponse(const FX_WCHAR* Question,
-                     const FX_WCHAR* Title,
-                     const FX_WCHAR* Default,
-                     const FX_WCHAR* cLabel,
+  int JS_appResponse(const wchar_t* Question,
+                     const wchar_t* Title,
+                     const wchar_t* Default,
+                     const wchar_t* cLabel,
                      FPDF_BOOL bPassword,
                      void* response,
                      int length);
   void JS_appBeep(int nType);
   CFX_WideString JS_fieldBrowse();
   CFX_WideString JS_docGetFilePath();
-  void JS_docSubmitForm(void* formData, int length, const FX_WCHAR* URL);
+  void JS_docSubmitForm(void* formData, int length, const wchar_t* URL);
   void JS_docmailForm(void* mailData,
                       int length,
                       FPDF_BOOL bUI,
-                      const FX_WCHAR* To,
-                      const FX_WCHAR* Subject,
-                      const FX_WCHAR* CC,
-                      const FX_WCHAR* BCC,
-                      const FX_WCHAR* Msg);
+                      const wchar_t* To,
+                      const wchar_t* Subject,
+                      const wchar_t* CC,
+                      const wchar_t* BCC,
+                      const wchar_t* Msg);
   void JS_docprint(FPDF_BOOL bUI,
                    int nStart,
                    int nEnd,

@@ -147,7 +147,7 @@ void CFX_PSRenderer::OutputPath(const CFX_PathData* pPathData,
       }
     }
   }
-  m_pOutput->OutputPS((const FX_CHAR*)buf.GetBuffer(), buf.GetSize());
+  m_pOutput->OutputPS((const char*)buf.GetBuffer(), buf.GetSize());
 }
 
 void CFX_PSRenderer::SetClip_PathFill(const CFX_PathData* pPathData,
@@ -180,7 +180,7 @@ void CFX_PSRenderer::SetClip_PathStroke(const CFX_PathData* pPathData,
     buf << "mx Cm [" << pObject2Device->a << " " << pObject2Device->b << " "
         << pObject2Device->c << " " << pObject2Device->d << " "
         << pObject2Device->e << " " << pObject2Device->f << "]cm ";
-    m_pOutput->OutputPS((const FX_CHAR*)buf.GetBuffer(), buf.GetSize());
+    m_pOutput->OutputPS((const char*)buf.GetBuffer(), buf.GetSize());
   }
   OutputPath(pPathData, nullptr);
   CFX_FloatRect rect = pPathData->GetBoundingBox(pGraphState->m_LineWidth,
@@ -219,7 +219,7 @@ bool CFX_PSRenderer::DrawPath(const CFX_PathData* pPathData,
       buf << "mx Cm [" << pObject2Device->a << " " << pObject2Device->b << " "
           << pObject2Device->c << " " << pObject2Device->d << " "
           << pObject2Device->e << " " << pObject2Device->f << "]cm ";
-      m_pOutput->OutputPS((const FX_CHAR*)buf.GetBuffer(), buf.GetSize());
+      m_pOutput->OutputPS((const char*)buf.GetBuffer(), buf.GetSize());
     }
   }
   OutputPath(pPathData, stroke_alpha ? nullptr : pObject2Device);
@@ -282,7 +282,7 @@ void CFX_PSRenderer::SetGraphState(const CFX_GraphStateData* pGraphState) {
   m_CurGraphState.Copy(*pGraphState);
   m_bGraphStateSet = true;
   if (buf.GetSize()) {
-    m_pOutput->OutputPS((const FX_CHAR*)buf.GetBuffer(), buf.GetSize());
+    m_pOutput->OutputPS((const char*)buf.GetBuffer(), buf.GetSize());
   }
 }
 
@@ -306,7 +306,7 @@ static void PSCompressData(int PSLevel,
                            uint32_t src_size,
                            uint8_t** output_buf,
                            uint32_t* output_size,
-                           const FX_CHAR** filter) {
+                           const char** filter) {
   *output_buf = src_buf;
   *output_size = src_size;
   *filter = "";
@@ -415,7 +415,7 @@ bool CFX_PSRenderer::DrawDIBits(const CFX_DIBSource* pSource,
     } else {
       buf << "false 1 colorimage\n";
     }
-    m_pOutput->OutputPS((const FX_CHAR*)buf.GetBuffer(), buf.GetSize());
+    m_pOutput->OutputPS((const char*)buf.GetBuffer(), buf.GetSize());
     WritePSBinary(output_buf.get(), output_size);
     output_buf.release();
   } else {
@@ -451,7 +451,7 @@ bool CFX_PSRenderer::DrawDIBits(const CFX_DIBSource* pSource,
     int bpp = pConverted->GetBPP() / 8;
     uint8_t* output_buf = nullptr;
     FX_STRSIZE output_size = 0;
-    const FX_CHAR* filter = nullptr;
+    const char* filter = nullptr;
     if ((m_PSLevel == 2 || flags & FXRENDER_IMAGE_LOSSY) &&
         CCodec_JpegModule::JpegEncode(pConverted.Get(), &output_buf,
                                       &output_size)) {
@@ -493,7 +493,7 @@ bool CFX_PSRenderer::DrawDIBits(const CFX_DIBSource* pSource,
     }
     buf << "false " << bpp;
     buf << " colorimage\n";
-    m_pOutput->OutputPS((const FX_CHAR*)buf.GetBuffer(), buf.GetSize());
+    m_pOutput->OutputPS((const char*)buf.GetBuffer(), buf.GetSize());
     WritePSBinary(output_buf, output_size);
     FX_Free(output_buf);
   }
@@ -518,7 +518,7 @@ void CFX_PSRenderer::SetColor(uint32_t color) {
       m_bColorSet = true;
       m_LastColor = color;
     }
-    m_pOutput->OutputPS((const FX_CHAR*)buf.GetBuffer(), buf.GetSize());
+    m_pOutput->OutputPS((const char*)buf.GetBuffer(), buf.GetSize());
   }
 }
 
@@ -564,7 +564,7 @@ void CFX_PSRenderer::FindPSFontGlyph(CFX_FaceCache* pFaceCache,
            "currentdict end\n";
     buf << "/X" << static_cast<uint32_t>(m_PSFontList.size() - 1)
         << " exch definefont pop\n";
-    m_pOutput->OutputPS((const FX_CHAR*)buf.GetBuffer(), buf.GetSize());
+    m_pOutput->OutputPS((const char*)buf.GetBuffer(), buf.GetSize());
     buf.Clear();
   }
   *ps_fontnum = m_PSFontList.size() - 1;
@@ -625,7 +625,7 @@ void CFX_PSRenderer::FindPSFontGlyph(CFX_FaceCache* pFaceCache,
   buf << "f}bind def end\n";
   buf << "/X" << *ps_fontnum << " Ff/Encoding get " << glyphindex << "/"
       << glyphindex << " put\n";
-  m_pOutput->OutputPS((const FX_CHAR*)buf.GetBuffer(), buf.GetSize());
+  m_pOutput->OutputPS((const char*)buf.GetBuffer(), buf.GetSize());
 }
 
 bool CFX_PSRenderer::DrawText(int nChars,
@@ -666,7 +666,7 @@ bool CFX_PSRenderer::DrawText(int nChars,
     buf << hex.AsStringC() << "Tj\n";
   }
   buf << "Q\n";
-  m_pOutput->OutputPS((const FX_CHAR*)buf.GetBuffer(), buf.GetSize());
+  m_pOutput->OutputPS((const char*)buf.GetBuffer(), buf.GetSize());
   pCache->ReleaseCachedFace(pFont);
   return true;
 }
@@ -678,9 +678,9 @@ void CFX_PSRenderer::WritePSBinary(const uint8_t* data, int len) {
   if (pEncoders &&
       pEncoders->GetBasicModule()->A85Encode(data, len, &dest_buf,
                                              &dest_size)) {
-    m_pOutput->OutputPS((const FX_CHAR*)dest_buf, dest_size);
+    m_pOutput->OutputPS((const char*)dest_buf, dest_size);
     FX_Free(dest_buf);
   } else {
-    m_pOutput->OutputPS((const FX_CHAR*)data, len);
+    m_pOutput->OutputPS((const char*)data, len);
   }
 }

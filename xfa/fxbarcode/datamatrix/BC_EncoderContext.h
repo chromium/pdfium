@@ -23,10 +23,10 @@ class CBC_EncoderContext : public CBC_SymbolShapeHint {
   void setSizeConstraints(CBC_Dimension* minSize, CBC_Dimension* maxSize);
   CFX_WideString getMessage();
   void setSkipAtEnd(int32_t count);
-  FX_WCHAR getCurrentChar();
-  FX_WCHAR getCurrent();
+  wchar_t getCurrentChar();
+  wchar_t getCurrent();
   void writeCodewords(CFX_WideString codewords);
-  void writeCodeword(FX_WCHAR codeword);
+  void writeCodeword(wchar_t codeword);
   int32_t getCodewordCount();
   void signalEncoderChange(int32_t encoding);
   void resetEncoderSignal();

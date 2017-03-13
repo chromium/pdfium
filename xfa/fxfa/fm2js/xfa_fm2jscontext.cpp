@@ -28,7 +28,7 @@ const double kFinancialPrecision = 0.00000001;
 
 struct XFA_FMHtmlReserveCode {
   uint32_t m_uCode;
-  const FX_WCHAR* m_htmlReserve;
+  const wchar_t* m_htmlReserve;
 };
 
 struct XFA_FMHtmlHashedReserveCode {
@@ -384,7 +384,7 @@ void AlternateDateTimeSymbols(CFX_WideString& wsPattern,
   bool bEscape = false;
   int32_t i = 0;
   while (i < nLength) {
-    FX_WCHAR wc = wsPattern[i];
+    wchar_t wc = wsPattern[i];
     if (wc == L'\'') {
       bInConstRange = !bInConstRange;
       if (bEscape) {
@@ -442,11 +442,11 @@ bool PatternStringType(const CFX_ByteStringC& szPattern,
 
   patternType = XFA_VT_NULL;
   wsPattern.MakeLower();
-  const FX_WCHAR* pData = wsPattern.c_str();
+  const wchar_t* pData = wsPattern.c_str();
   int32_t iLength = wsPattern.GetLength();
   int32_t iIndex = 0;
   bool bSingleQuotation = false;
-  FX_WCHAR patternChar;
+  wchar_t patternChar;
   while (iIndex < iLength) {
     patternChar = pData[iIndex];
     if (patternChar == 0x27) {
@@ -455,7 +455,7 @@ bool PatternStringType(const CFX_ByteStringC& szPattern,
                (patternChar == 'y' || patternChar == 'j')) {
       patternType = XFA_VT_DATE;
       iIndex++;
-      FX_WCHAR timePatternChar;
+      wchar_t timePatternChar;
       while (iIndex < iLength) {
         timePatternChar = pData[iIndex];
         if (timePatternChar == 0x27) {
@@ -1642,7 +1642,7 @@ void CXFA_FM2JSContext::TimeFmt(CFXJSE_Value* pThis,
 }
 
 // static
-bool CXFA_FM2JSContext::IsIsoDateFormat(const FX_CHAR* pData,
+bool CXFA_FM2JSContext::IsIsoDateFormat(const char* pData,
                                         int32_t iLength,
                                         int32_t& iStyle,
                                         int32_t& iYear,
@@ -1655,7 +1655,7 @@ bool CXFA_FM2JSContext::IsIsoDateFormat(const FX_CHAR* pData,
   if (iLength < 4)
     return false;
 
-  FX_CHAR strYear[5];
+  char strYear[5];
   strYear[4] = '\0';
   for (int32_t i = 0; i < 4; ++i) {
     if (pData[i] > '9' || pData[i] < '0')
@@ -1670,7 +1670,7 @@ bool CXFA_FM2JSContext::IsIsoDateFormat(const FX_CHAR* pData,
 
   iStyle = pData[4] == '-' ? 1 : 0;
 
-  FX_CHAR strTemp[3];
+  char strTemp[3];
   strTemp[2] = '\0';
   int32_t iPosOff = iStyle == 0 ? 4 : 5;
   if ((pData[iPosOff] > '9' || pData[iPosOff] < '0') ||
@@ -1721,7 +1721,7 @@ bool CXFA_FM2JSContext::IsIsoDateFormat(const FX_CHAR* pData,
 }
 
 // static
-bool CXFA_FM2JSContext::IsIsoTimeFormat(const FX_CHAR* pData,
+bool CXFA_FM2JSContext::IsIsoTimeFormat(const char* pData,
                                         int32_t iLength,
                                         int32_t& iHour,
                                         int32_t& iMinute,
@@ -1738,7 +1738,7 @@ bool CXFA_FM2JSContext::IsIsoTimeFormat(const FX_CHAR* pData,
   if (!pData)
     return false;
 
-  FX_CHAR strTemp[3];
+  char strTemp[3];
   strTemp[2] = '\0';
   int32_t iZone = 0;
   int32_t i = 0;
@@ -1796,7 +1796,7 @@ bool CXFA_FM2JSContext::IsIsoTimeFormat(const FX_CHAR* pData,
   }
   if (pData[iIndex] == '.') {
     ++iIndex;
-    FX_CHAR strSec[4];
+    char strSec[4];
     strSec[3] = '\0';
     if (pData[iIndex] > '9' || pData[iIndex] < '0')
       return false;
@@ -1868,7 +1868,7 @@ bool CXFA_FM2JSContext::IsIsoTimeFormat(const FX_CHAR* pData,
 }
 
 // static
-bool CXFA_FM2JSContext::IsIsoDateTimeFormat(const FX_CHAR* pData,
+bool CXFA_FM2JSContext::IsIsoDateTimeFormat(const char* pData,
                                             int32_t iLength,
                                             int32_t& iYear,
                                             int32_t& iMonth,
@@ -3059,14 +3059,14 @@ void CXFA_FM2JSContext::UnitType(CFXJSE_Value* pThis,
   unitspanString.MakeLower();
   CFX_WideString wsTypeString =
       CFX_WideString::FromUTF8(unitspanString.AsStringC());
-  const FX_WCHAR* pData = wsTypeString.c_str();
+  const wchar_t* pData = wsTypeString.c_str();
   int32_t u = 0;
   int32_t uLen = wsTypeString.GetLength();
   while (IsWhitespace(pData[u]))
     u++;
 
   XFA_FM2JS_VALUETYPE_ParserStatus eParserStatus = VALUETYPE_START;
-  FX_WCHAR typeChar;
+  wchar_t typeChar;
   // TODO(dsinclair): Cleanup this parser, figure out what the various checks
   //    are for.
   while (u < uLen) {
@@ -3086,7 +3086,7 @@ void CXFA_FM2JSContext::UnitType(CFXJSE_Value* pThis,
       }
       eParserStatus = VALUETYPE_HAVEDIGIT;
     } else if ((typeChar == 'c' || typeChar == 'p') && (u + 1 < uLen)) {
-      FX_WCHAR nextChar = pData[u + 1];
+      wchar_t nextChar = pData[u + 1];
       if ((eParserStatus == VALUETYPE_START ||
            eParserStatus == VALUETYPE_HAVEDIGIT ||
            eParserStatus == VALUETYPE_HAVEDIGITWHITE) &&
@@ -3097,7 +3097,7 @@ void CXFA_FM2JSContext::UnitType(CFXJSE_Value* pThis,
       }
       eParserStatus = VALUETYPE_HAVEINVALIDCHAR;
     } else if (typeChar == 'm' && (u + 1 < uLen)) {
-      FX_WCHAR nextChar = pData[u + 1];
+      wchar_t nextChar = pData[u + 1];
       if ((eParserStatus == VALUETYPE_START ||
            eParserStatus == VALUETYPE_HAVEDIGIT ||
            eParserStatus == VALUETYPE_HAVEDIGITWHITE) &&
@@ -3153,7 +3153,7 @@ void CXFA_FM2JSContext::UnitValue(CFXJSE_Value* pThis,
 
   CFX_ByteString unitspanString;
   ValueToUTF8String(unitspanValue.get(), unitspanString);
-  const FX_CHAR* pData = unitspanString.c_str();
+  const char* pData = unitspanString.c_str();
   if (!pData) {
     args.GetReturnValue()->SetInteger(0);
     return;
@@ -3171,7 +3171,7 @@ void CXFA_FM2JSContext::UnitValue(CFXJSE_Value* pThis,
     ++u;
   }
 
-  FX_CHAR* pTemp = nullptr;
+  char* pTemp = nullptr;
   FX_DOUBLE dFirstNumber = strtod(pData, &pTemp);
   while (IsWhitespace(pData[u]))
     ++u;
@@ -3192,7 +3192,7 @@ void CXFA_FM2JSContext::UnitValue(CFXJSE_Value* pThis,
     std::unique_ptr<CFXJSE_Value> unitValue = GetSimpleValue(pThis, args, 1);
     CFX_ByteString unitTempString;
     ValueToUTF8String(unitValue.get(), unitTempString);
-    const FX_CHAR* pChar = unitTempString.c_str();
+    const char* pChar = unitTempString.c_str();
     int32_t uVal = 0;
     while (IsWhitespace(pChar[uVal]))
       ++uVal;
@@ -3393,18 +3393,18 @@ void CXFA_FM2JSContext::Decode(CFXJSE_Value* pThis,
 void CXFA_FM2JSContext::DecodeURL(const CFX_ByteStringC& szURLString,
                                   CFX_ByteTextBuf& szResultString) {
   CFX_WideString wsURLString = CFX_WideString::FromUTF8(szURLString);
-  const FX_WCHAR* pData = wsURLString.c_str();
+  const wchar_t* pData = wsURLString.c_str();
   int32_t i = 0;
   CFX_WideTextBuf wsResultBuf;
   while (i < wsURLString.GetLength()) {
-    FX_WCHAR ch = pData[i];
+    wchar_t ch = pData[i];
     if ('%' != ch) {
       wsResultBuf.AppendChar(ch);
       ++i;
       continue;
     }
 
-    FX_WCHAR chTemp = 0;
+    wchar_t chTemp = 0;
     int32_t iCount = 0;
     while (iCount < 2) {
       ++i;
@@ -3434,15 +3434,15 @@ void CXFA_FM2JSContext::DecodeURL(const CFX_ByteStringC& szURLString,
 void CXFA_FM2JSContext::DecodeHTML(const CFX_ByteStringC& szHTMLString,
                                    CFX_ByteTextBuf& szResultString) {
   CFX_WideString wsHTMLString = CFX_WideString::FromUTF8(szHTMLString);
-  FX_WCHAR strString[9];
+  wchar_t strString[9];
   int32_t iStrIndex = 0;
   int32_t iLen = wsHTMLString.GetLength();
   int32_t i = 0;
   int32_t iCode = 0;
-  const FX_WCHAR* pData = wsHTMLString.c_str();
+  const wchar_t* pData = wsHTMLString.c_str();
   CFX_WideTextBuf wsResultBuf;
   while (i < iLen) {
-    FX_WCHAR ch = pData[i];
+    wchar_t ch = pData[i];
     if (ch != '&') {
       wsResultBuf.AppendChar(ch);
       ++i;
@@ -3492,7 +3492,7 @@ void CXFA_FM2JSContext::DecodeHTML(const CFX_ByteStringC& szHTMLString,
     }
     uint32_t iData = 0;
     if (HTMLSTR2Code(strString, iData)) {
-      wsResultBuf.AppendChar((FX_WCHAR)iData);
+      wsResultBuf.AppendChar((wchar_t)iData);
     } else {
       wsResultBuf.AppendChar(iCode);
     }
@@ -3510,13 +3510,13 @@ void CXFA_FM2JSContext::DecodeHTML(const CFX_ByteStringC& szHTMLString,
 void CXFA_FM2JSContext::DecodeXML(const CFX_ByteStringC& szXMLString,
                                   CFX_ByteTextBuf& szResultString) {
   CFX_WideString wsXMLString = CFX_WideString::FromUTF8(szXMLString);
-  FX_WCHAR strString[9];
+  wchar_t strString[9];
   int32_t iStrIndex = 0;
   int32_t iLen = wsXMLString.GetLength();
   int32_t i = 0;
   int32_t iCode = 0;
-  FX_WCHAR ch = 0;
-  const FX_WCHAR* pData = wsXMLString.c_str();
+  wchar_t ch = 0;
+  const wchar_t* pData = wsXMLString.c_str();
   CFX_WideTextBuf wsXMLBuf;
   while (i < iLen) {
     ch = pData[i];
@@ -3568,7 +3568,7 @@ void CXFA_FM2JSContext::DecodeXML(const CFX_ByteStringC& szXMLString,
       strString[iStrIndex] = 0;
     }
 
-    const FX_WCHAR* const strName[] = {L"quot", L"amp", L"apos", L"lt", L"gt"};
+    const wchar_t* const strName[] = {L"quot", L"amp", L"apos", L"lt", L"gt"};
     int32_t iIndex = 0;
     while (iIndex < 5) {
       if (FXSYS_memcmp(strString, strName[iIndex],
@@ -3659,16 +3659,16 @@ void CXFA_FM2JSContext::EncodeURL(const CFX_ByteStringC& szURLString,
                                   CFX_ByteTextBuf& szResultBuf) {
   CFX_WideString wsURLString = CFX_WideString::FromUTF8(szURLString);
   CFX_WideTextBuf wsResultBuf;
-  FX_WCHAR strEncode[4];
+  wchar_t strEncode[4];
   strEncode[0] = '%';
   strEncode[3] = 0;
-  FX_WCHAR strUnsafe[] = {' ', '<',  '>', '"', '#', '%', '{', '}',
-                          '|', '\\', '^', '~', '[', ']', '`'};
-  FX_WCHAR strReserved[] = {';', '/', '?', ':', '@', '=', '&'};
-  FX_WCHAR strSpecial[] = {'$', '-', '+', '!', '*', '\'', '(', ')', ','};
-  const FX_WCHAR* strCode = L"0123456789abcdef";
+  wchar_t strUnsafe[] = {' ', '<',  '>', '"', '#', '%', '{', '}',
+                         '|', '\\', '^', '~', '[', ']', '`'};
+  wchar_t strReserved[] = {';', '/', '?', ':', '@', '=', '&'};
+  wchar_t strSpecial[] = {'$', '-', '+', '!', '*', '\'', '(', ')', ','};
+  const wchar_t* strCode = L"0123456789abcdef";
   for (int32_t u = 0; u < wsURLString.GetLength(); ++u) {
-    FX_WCHAR ch = wsURLString.GetAt(u);
+    wchar_t ch = wsURLString.GetAt(u);
     int32_t i = 0;
     int32_t iCount = FX_ArraySize(strUnsafe);
     while (i < iCount) {
@@ -3719,10 +3719,10 @@ void CXFA_FM2JSContext::EncodeURL(const CFX_ByteStringC& szURLString,
     } else if (ch >= 0x20 && ch <= 0x7e) {
       wsResultBuf.AppendChar(ch);
     } else {
-      const FX_WCHAR iRadix = 16;
+      const wchar_t iRadix = 16;
       CFX_WideString strTmp;
       while (ch >= iRadix) {
-        FX_WCHAR tmp = strCode[ch % iRadix];
+        wchar_t tmp = strCode[ch % iRadix];
         ch /= iRadix;
         strTmp += tmp;
       }
@@ -3760,8 +3760,8 @@ void CXFA_FM2JSContext::EncodeHTML(const CFX_ByteStringC& szHTMLString,
                                    CFX_ByteTextBuf& szResultBuf) {
   CFX_ByteString str = szHTMLString.c_str();
   CFX_WideString wsHTMLString = CFX_WideString::FromUTF8(str.AsStringC());
-  const FX_WCHAR* strCode = L"0123456789abcdef";
-  FX_WCHAR strEncode[9];
+  const wchar_t* strCode = L"0123456789abcdef";
+  wchar_t strEncode[9];
   strEncode[0] = '&';
   strEncode[1] = '#';
   strEncode[2] = 'x';
@@ -3772,7 +3772,7 @@ void CXFA_FM2JSContext::EncodeHTML(const CFX_ByteStringC& szHTMLString,
   CFX_WideTextBuf wsResultBuf;
   int32_t iLen = wsHTMLString.GetLength();
   int32_t i = 0;
-  const FX_WCHAR* pData = wsHTMLString.c_str();
+  const wchar_t* pData = wsHTMLString.c_str();
   while (i < iLen) {
     uint32_t ch = pData[i];
     CFX_WideString htmlReserve;
@@ -3781,7 +3781,7 @@ void CXFA_FM2JSContext::EncodeHTML(const CFX_ByteStringC& szHTMLString,
       wsResultBuf << htmlReserve;
       wsResultBuf.AppendChar(L';');
     } else if (ch >= 32 && ch <= 126) {
-      wsResultBuf.AppendChar((FX_WCHAR)ch);
+      wsResultBuf.AppendChar((wchar_t)ch);
     } else if (ch < 256) {
       int32_t iIndex = ch / 16;
       strEncode[3] = strCode[iIndex];
@@ -3810,7 +3810,7 @@ void CXFA_FM2JSContext::EncodeXML(const CFX_ByteStringC& szXMLString,
                                   CFX_ByteTextBuf& szResultBuf) {
   CFX_WideString wsXMLString = CFX_WideString::FromUTF8(szXMLString);
   CFX_WideTextBuf wsResultBuf;
-  FX_WCHAR strEncode[9];
+  wchar_t strEncode[9];
   strEncode[0] = '&';
   strEncode[1] = '#';
   strEncode[2] = 'x';
@@ -3818,10 +3818,10 @@ void CXFA_FM2JSContext::EncodeXML(const CFX_ByteStringC& szXMLString,
   strEncode[6] = 0;
   strEncode[7] = ';';
   strEncode[8] = 0;
-  const FX_WCHAR* strCode = L"0123456789abcdef";
-  const FX_WCHAR* pData = wsXMLString.c_str();
+  const wchar_t* strCode = L"0123456789abcdef";
+  const wchar_t* pData = wsXMLString.c_str();
   for (int32_t u = 0; u < wsXMLString.GetLength(); ++u) {
-    FX_WCHAR ch = pData[u];
+    wchar_t ch = pData[u];
     switch (ch) {
       case '"':
         wsResultBuf.AppendChar('&');
@@ -4060,7 +4060,7 @@ void CXFA_FM2JSContext::Lower(CFXJSE_Value* pThis,
   ValueToUTF8String(argOne.get(), argString);
   CFX_WideTextBuf lowStringBuf;
   CFX_WideString wsArgString = CFX_WideString::FromUTF8(argString.AsStringC());
-  const FX_WCHAR* pData = wsArgString.c_str();
+  const wchar_t* pData = wsArgString.c_str();
   int32_t i = 0;
   while (i < argString.GetLength()) {
     int32_t ch = pData[i];
@@ -4399,7 +4399,7 @@ void CXFA_FM2JSContext::Str(CFXJSE_Value* pThis,
   formatStr += "f";
   numberString.Format(formatStr.c_str(), fNumber);
 
-  const FX_CHAR* pData = numberString.c_str();
+  const char* pData = numberString.c_str();
   int32_t iLength = numberString.GetLength();
   int32_t u = 0;
   while (u < iLength) {
@@ -4608,7 +4608,7 @@ void CXFA_FM2JSContext::Upper(CFXJSE_Value* pThis,
 
   CFX_WideTextBuf upperStringBuf;
   CFX_WideString wsArgString = CFX_WideString::FromUTF8(argString.AsStringC());
-  const FX_WCHAR* pData = wsArgString.c_str();
+  const wchar_t* pData = wsArgString.c_str();
   int32_t i = 0;
   while (i < wsArgString.GetLength()) {
     int32_t ch = pData[i];
@@ -4692,7 +4692,7 @@ void CXFA_FM2JSContext::TrillionUS(const CFX_ByteStringC& szData,
                                  "Sixty",  "Seventy", "Eighty", "Ninety"};
   CFX_ByteStringC pComm[] = {" Hundred ", " Thousand ", " Million ",
                              " Billion ", "Trillion"};
-  const FX_CHAR* pData = szData.c_str();
+  const char* pData = szData.c_str();
   int32_t iLength = szData.GetLength();
   int32_t iComm = 0;
   if (iLength > 12)
@@ -4781,7 +4781,7 @@ void CXFA_FM2JSContext::TrillionUS(const CFX_ByteStringC& szData,
 void CXFA_FM2JSContext::WordUS(const CFX_ByteStringC& szData,
                                int32_t iStyle,
                                CFX_ByteTextBuf& strBuf) {
-  const FX_CHAR* pData = szData.c_str();
+  const char* pData = szData.c_str();
   int32_t iLength = szData.GetLength();
   if (iStyle < 0 || iStyle > 2) {
     return;
@@ -6411,7 +6411,7 @@ void CXFA_FM2JSContext::ThrowArgumentMismatchException() const {
   ThrowException(L"Argument mismatch in property or function argument.");
 }
 
-void CXFA_FM2JSContext::ThrowException(const FX_WCHAR* str, ...) const {
+void CXFA_FM2JSContext::ThrowException(const wchar_t* str, ...) const {
   CFX_WideString wsMessage;
   va_list arg_ptr;
   va_start(arg_ptr, str);

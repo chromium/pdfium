@@ -85,8 +85,8 @@ struct FDE_TXTEDTPARAMS {
   FX_FLOAT fLineSpace;
   FX_FLOAT fTabWidth;
   bool bTabEquidistant;
-  FX_WCHAR wDefChar;
-  FX_WCHAR wLineBreakChar;
+  wchar_t wDefChar;
+  wchar_t wLineBreakChar;
   int32_t nLineEnd;
   int32_t nHorzScale;
   FX_FLOAT fCharSpace;

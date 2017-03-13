@@ -83,7 +83,7 @@ class CGdiplusExt {
                         FX_FLOAT f,
                         void** matrix);
   void GdipDeleteMatrix(void* matrix);
-  bool GdipCreateFontFamilyFromName(const FX_WCHAR* name,
+  bool GdipCreateFontFamilyFromName(const wchar_t* name,
                                     void* pFontCollection,
                                     void** pFamily);
   void GdipDeleteFontFamily(void* pFamily);

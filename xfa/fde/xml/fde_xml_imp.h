@@ -56,7 +56,7 @@ class CFDE_XMLNode {
   void DeleteChildren();
   void CloneChildren(CFDE_XMLNode* pClone);
 
-  CFDE_XMLNode* GetPath(const FX_WCHAR* pPath,
+  CFDE_XMLNode* GetPath(const wchar_t* pPath,
                         int32_t iLength = -1,
                         bool bQualifiedName = true) const;
 
@@ -87,17 +87,17 @@ class CFDE_XMLInstruction : public CFDE_XMLNode {
   bool GetAttribute(int32_t index,
                     CFX_WideString& wsAttriName,
                     CFX_WideString& wsAttriValue) const;
-  bool HasAttribute(const FX_WCHAR* pwsAttriName) const;
-  void GetString(const FX_WCHAR* pwsAttriName,
+  bool HasAttribute(const wchar_t* pwsAttriName) const;
+  void GetString(const wchar_t* pwsAttriName,
                  CFX_WideString& wsAttriValue,
-                 const FX_WCHAR* pwsDefValue = nullptr) const;
+                 const wchar_t* pwsDefValue = nullptr) const;
   void SetString(const CFX_WideString& wsAttriName,
                  const CFX_WideString& wsAttriValue);
-  int32_t GetInteger(const FX_WCHAR* pwsAttriName, int32_t iDefValue = 0) const;
-  void SetInteger(const FX_WCHAR* pwsAttriName, int32_t iAttriValue);
-  FX_FLOAT GetFloat(const FX_WCHAR* pwsAttriName, FX_FLOAT fDefValue = 0) const;
-  void SetFloat(const FX_WCHAR* pwsAttriName, FX_FLOAT fAttriValue);
-  void RemoveAttribute(const FX_WCHAR* pwsAttriName);
+  int32_t GetInteger(const wchar_t* pwsAttriName, int32_t iDefValue = 0) const;
+  void SetInteger(const wchar_t* pwsAttriName, int32_t iAttriValue);
+  FX_FLOAT GetFloat(const wchar_t* pwsAttriName, FX_FLOAT fDefValue = 0) const;
+  void SetFloat(const wchar_t* pwsAttriName, FX_FLOAT fAttriValue);
+  void RemoveAttribute(const wchar_t* pwsAttriName);
   int32_t CountData() const;
   bool GetData(int32_t index, CFX_WideString& wsData) const;
   void AppendData(const CFX_WideString& wsData);
@@ -127,20 +127,20 @@ class CFDE_XMLElement : public CFDE_XMLNode {
   bool GetAttribute(int32_t index,
                     CFX_WideString& wsAttriName,
                     CFX_WideString& wsAttriValue) const;
-  bool HasAttribute(const FX_WCHAR* pwsAttriName) const;
-  void RemoveAttribute(const FX_WCHAR* pwsAttriName);
+  bool HasAttribute(const wchar_t* pwsAttriName) const;
+  void RemoveAttribute(const wchar_t* pwsAttriName);
 
-  void GetString(const FX_WCHAR* pwsAttriName,
+  void GetString(const wchar_t* pwsAttriName,
                  CFX_WideString& wsAttriValue,
-                 const FX_WCHAR* pwsDefValue = nullptr) const;
+                 const wchar_t* pwsDefValue = nullptr) const;
   void SetString(const CFX_WideString& wsAttriName,
                  const CFX_WideString& wsAttriValue);
 
-  int32_t GetInteger(const FX_WCHAR* pwsAttriName, int32_t iDefValue = 0) const;
-  void SetInteger(const FX_WCHAR* pwsAttriName, int32_t iAttriValue);
+  int32_t GetInteger(const wchar_t* pwsAttriName, int32_t iDefValue = 0) const;
+  void SetInteger(const wchar_t* pwsAttriName, int32_t iAttriValue);
 
-  FX_FLOAT GetFloat(const FX_WCHAR* pwsAttriName, FX_FLOAT fDefValue = 0) const;
-  void SetFloat(const FX_WCHAR* pwsAttriName, FX_FLOAT fAttriValue);
+  FX_FLOAT GetFloat(const wchar_t* pwsAttriName, FX_FLOAT fDefValue = 0) const;
+  void SetFloat(const wchar_t* pwsAttriName, FX_FLOAT fAttriValue);
 
   void GetTextData(CFX_WideString& wsText) const;
   void SetTextData(const CFX_WideString& wsText);
@@ -222,7 +222,7 @@ class CFDE_BlockBuffer {
 
   bool InitBuffer(int32_t iBufferSize = 1024 * 1024);
   bool IsInitialized() { return m_iBufferSize / m_iAllocStep >= 1; }
-  FX_WCHAR* GetAvailableBlock(int32_t& iIndexInBlock);
+  wchar_t* GetAvailableBlock(int32_t& iIndexInBlock);
   inline int32_t GetAllocStep() const { return m_iAllocStep; }
   inline int32_t& GetDataLengthRef() { return m_iDataLength; }
   inline void Reset(bool bReserveData = true) {
@@ -231,7 +231,7 @@ class CFDE_BlockBuffer {
     }
     m_iDataLength = 0;
   }
-  void SetTextChar(int32_t iIndex, FX_WCHAR ch);
+  void SetTextChar(int32_t iIndex, wchar_t ch);
   int32_t DeleteTextChars(int32_t iCount, bool bDirection = true);
   void GetTextData(CFX_WideString& wsTextData,
                    int32_t iStart = 0,
@@ -243,7 +243,7 @@ class CFDE_BlockBuffer {
                                      int32_t& iInnerIndex) const;
   void ClearBuffer();
 
-  CFX_ArrayTemplate<FX_WCHAR*> m_BlockArray;
+  CFX_ArrayTemplate<wchar_t*> m_BlockArray;
   int32_t m_iDataLength;
   int32_t m_iBufferSize;
   int32_t m_iAllocStep;
@@ -312,7 +312,7 @@ class CFDE_XMLSyntaxParser {
     TargetData
   };
 
-  void ParseTextChar(FX_WCHAR ch);
+  void ParseTextChar(wchar_t ch);
 
   CFX_RetainPtr<IFGAS_Stream> m_pStream;
   int32_t m_iXMLPlaneSize;
@@ -321,25 +321,25 @@ class CFDE_XMLSyntaxParser {
   int32_t m_iLastNodeNum;
   int32_t m_iParsedChars;
   int32_t m_iParsedBytes;
-  FX_WCHAR* m_pBuffer;
+  wchar_t* m_pBuffer;
   int32_t m_iBufferChars;
   bool m_bEOS;
-  FX_WCHAR* m_pStart;
-  FX_WCHAR* m_pEnd;
+  wchar_t* m_pStart;
+  wchar_t* m_pEnd;
   FDE_XMLNODE m_CurNode;
   std::stack<FDE_XMLNODE> m_XMLNodeStack;
   CFDE_BlockBuffer m_BlockBuffer;
   int32_t m_iAllocStep;
   int32_t& m_iDataLength;
-  FX_WCHAR* m_pCurrentBlock;
+  wchar_t* m_pCurrentBlock;
   int32_t m_iIndexInBlock;
   int32_t m_iTextDataLength;
   FDE_XmlSyntaxResult m_syntaxParserResult;
   FDE_XmlSyntaxState m_syntaxParserState;
-  FX_WCHAR m_wQuotationMark;
+  wchar_t m_wQuotationMark;
   int32_t m_iEntityStart;
-  std::stack<FX_WCHAR> m_SkipStack;
-  FX_WCHAR m_SkipChar;
+  std::stack<wchar_t> m_SkipStack;
+  wchar_t m_SkipChar;
 };
 
 #endif  // XFA_FDE_XML_FDE_XML_IMP_H_

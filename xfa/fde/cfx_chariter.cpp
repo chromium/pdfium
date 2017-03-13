@@ -26,7 +26,7 @@ bool CFX_CharIter::Next(bool bPrev) {
   return true;
 }
 
-FX_WCHAR CFX_CharIter::GetChar() {
+wchar_t CFX_CharIter::GetChar() {
   return m_wsText.GetAt(m_nIndex);
 }
 

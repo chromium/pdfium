@@ -218,7 +218,7 @@ FX_FLOAT CXFA_LocaleValue::GetNum() const {
     int32_t nExponent = 0;
     int cc = 0;
     bool bNegative = false, bExpSign = false;
-    const FX_WCHAR* str = m_wsValue.c_str();
+    const wchar_t* str = m_wsValue.c_str();
     int len = m_wsValue.GetLength();
     while (FXSYS_iswspace(str[cc]) && cc < len) {
       cc++;
@@ -294,7 +294,7 @@ FX_DOUBLE CXFA_LocaleValue::GetDoubleNum() const {
     int32_t nExponent = 0;
     int32_t cc = 0;
     bool bNegative = false, bExpSign = false;
-    const FX_WCHAR* str = m_wsValue.c_str();
+    const wchar_t* str = m_wsValue.c_str();
     int len = m_wsValue.GetLength();
     while (FXSYS_iswspace(str[cc]) && cc < len) {
       cc++;
@@ -605,7 +605,7 @@ bool CXFA_LocaleValue::ValidateCanonicalDate(const CFX_WideString& wsDate,
   uint16_t wYear = 0;
   uint16_t wMonth = 0;
   uint16_t wDay = 0;
-  const FX_WCHAR* pDate = wsDate.c_str();
+  const wchar_t* pDate = wsDate.c_str();
   int nIndex = 0, nStart = 0;
   while (pDate[nIndex] != '\0' && nIndex < wCountY) {
     if (!FXSYS_isDecimalDigit(pDate[nIndex])) {
@@ -691,7 +691,7 @@ bool CXFA_LocaleValue::ValidateCanonicalTime(const CFX_WideString& wsTime) {
   uint16_t wMinute = 0;
   uint16_t wSecond = 0;
   uint16_t wFraction = 0;
-  const FX_WCHAR* pTime = wsTime.c_str();
+  const wchar_t* pTime = wsTime.c_str();
   int nIndex = 0;
   int nStart = 0;
   while (nIndex - nStart < wCountH && pTime[nIndex]) {
@@ -880,7 +880,7 @@ void CXFA_LocaleValue::GetNumbericFormat(CFX_WideString& wsFormat,
   ASSERT(nIntLen >= -1 && nDecLen >= -1);
   int32_t nTotalLen = (nIntLen >= 0 ? nIntLen : 2) + (bSign ? 1 : 0) +
                       (nDecLen >= 0 ? nDecLen : 2) + (nDecLen == 0 ? 0 : 1);
-  FX_WCHAR* lpBuf = wsFormat.GetBuffer(nTotalLen);
+  wchar_t* lpBuf = wsFormat.GetBuffer(nTotalLen);
   int32_t nPos = 0;
   if (bSign) {
     lpBuf[nPos++] = L's';
@@ -915,11 +915,11 @@ bool CXFA_LocaleValue::ValidateNumericTemp(CFX_WideString& wsNumeric,
   if (wsFormat.IsEmpty() || wsNumeric.IsEmpty()) {
     return true;
   }
-  const FX_WCHAR* pNum = wsNumeric.c_str();
-  const FX_WCHAR* pFmt = wsFormat.c_str();
+  const wchar_t* pNum = wsNumeric.c_str();
+  const wchar_t* pFmt = wsFormat.c_str();
   int32_t n = 0, nf = 0;
-  FX_WCHAR c = pNum[n];
-  FX_WCHAR cf = pFmt[nf];
+  wchar_t c = pNum[n];
+  wchar_t cf = pFmt[nf];
   if (cf == L's') {
     if (c == L'-' || c == L'+') {
       ++n;

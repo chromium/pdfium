@@ -127,19 +127,19 @@ CFX_ByteTextBuf& CFX_ByteTextBuf::operator<<(const CFX_ByteTextBuf& buf) {
   return *this;
 }
 
-void CFX_WideTextBuf::AppendChar(FX_WCHAR ch) {
-  ExpandBuf(sizeof(FX_WCHAR));
-  *(FX_WCHAR*)(m_pBuffer.get() + m_DataSize) = ch;
-  m_DataSize += sizeof(FX_WCHAR);
+void CFX_WideTextBuf::AppendChar(wchar_t ch) {
+  ExpandBuf(sizeof(wchar_t));
+  *(wchar_t*)(m_pBuffer.get() + m_DataSize) = ch;
+  m_DataSize += sizeof(wchar_t);
 }
 
 CFX_WideTextBuf& CFX_WideTextBuf::operator<<(const CFX_WideStringC& str) {
-  AppendBlock(str.c_str(), str.GetLength() * sizeof(FX_WCHAR));
+  AppendBlock(str.c_str(), str.GetLength() * sizeof(wchar_t));
   return *this;
 }
 
 CFX_WideTextBuf& CFX_WideTextBuf::operator<<(const CFX_WideString& str) {
-  AppendBlock(str.c_str(), str.GetLength() * sizeof(FX_WCHAR));
+  AppendBlock(str.c_str(), str.GetLength() * sizeof(wchar_t));
   return *this;
 }
 
@@ -147,29 +147,29 @@ CFX_WideTextBuf& CFX_WideTextBuf::operator<<(int i) {
   char buf[32];
   FXSYS_itoa(i, buf, 10);
   FX_STRSIZE len = FXSYS_strlen(buf);
-  ExpandBuf(len * sizeof(FX_WCHAR));
-  FX_WCHAR* str = (FX_WCHAR*)(m_pBuffer.get() + m_DataSize);
+  ExpandBuf(len * sizeof(wchar_t));
+  wchar_t* str = (wchar_t*)(m_pBuffer.get() + m_DataSize);
   for (FX_STRSIZE j = 0; j < len; j++) {
     *str++ = buf[j];
   }
-  m_DataSize += len * sizeof(FX_WCHAR);
+  m_DataSize += len * sizeof(wchar_t);
   return *this;
 }
 
 CFX_WideTextBuf& CFX_WideTextBuf::operator<<(double f) {
   char buf[32];
   FX_STRSIZE len = FX_ftoa((FX_FLOAT)f, buf);
-  ExpandBuf(len * sizeof(FX_WCHAR));
-  FX_WCHAR* str = (FX_WCHAR*)(m_pBuffer.get() + m_DataSize);
+  ExpandBuf(len * sizeof(wchar_t));
+  wchar_t* str = (wchar_t*)(m_pBuffer.get() + m_DataSize);
   for (FX_STRSIZE i = 0; i < len; i++) {
     *str++ = buf[i];
   }
-  m_DataSize += len * sizeof(FX_WCHAR);
+  m_DataSize += len * sizeof(wchar_t);
   return *this;
 }
 
-CFX_WideTextBuf& CFX_WideTextBuf::operator<<(const FX_WCHAR* lpsz) {
-  AppendBlock(lpsz, FXSYS_wcslen(lpsz) * sizeof(FX_WCHAR));
+CFX_WideTextBuf& CFX_WideTextBuf::operator<<(const wchar_t* lpsz) {
+  AppendBlock(lpsz, FXSYS_wcslen(lpsz) * sizeof(wchar_t));
   return *this;
 }
 

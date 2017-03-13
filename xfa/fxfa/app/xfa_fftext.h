@@ -26,7 +26,7 @@ class CXFA_FFText : public CXFA_FFDraw {
   bool PerformLayout() override;
 
  private:
-  const FX_WCHAR* GetLinkURLAtPoint(const CFX_PointF& point);
+  const wchar_t* GetLinkURLAtPoint(const CFX_PointF& point);
 };
 
 #endif  // XFA_FXFA_APP_XFA_FFTEXT_H_

@@ -150,8 +150,8 @@ class CJS_EventHandler {
   bool FieldFull();
   bool KeyDown();
   bool Modifier();
-  const FX_WCHAR* Name();
-  const FX_WCHAR* Type();
+  const wchar_t* Name();
+  const wchar_t* Type();
   bool& Rc();
   int& SelEnd();
   int& SelStart();

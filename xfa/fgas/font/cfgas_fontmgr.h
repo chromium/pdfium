@@ -40,11 +40,11 @@ class CFGAS_GEFont;
 #define FX_FONTMATCHPARA_MatchStyle 0x01
 
 struct FX_FONTMATCHPARAMS {
-  const FX_WCHAR* pwsFamily;
+  const wchar_t* pwsFamily;
   uint32_t dwFontStyles;
   uint32_t dwUSB;
   uint32_t dwMatchFlags;
-  FX_WCHAR wUnicode;
+  wchar_t wUnicode;
   uint16_t wCodePage;
 };
 
@@ -61,7 +61,7 @@ inline bool operator==(const FX_FONTSIGNATURE& left,
 }
 
 struct FX_FONTDESCRIPTOR {
-  FX_WCHAR wsFontFace[32];
+  wchar_t wsFontFace[32];
   uint32_t dwFontStyles;
   uint8_t uCharSet;
   FX_FONTSIGNATURE FontSignature;
@@ -76,8 +76,8 @@ inline bool operator==(const FX_FONTDESCRIPTOR& left,
 }
 
 typedef void (*FX_LPEnumAllFonts)(std::deque<FX_FONTDESCRIPTOR>* fonts,
-                                  const FX_WCHAR* pwsFaceName,
-                                  FX_WCHAR wUnicode);
+                                  const wchar_t* pwsFaceName,
+                                  wchar_t wUnicode);
 
 FX_LPEnumAllFonts FX_GetDefFontEnumerator();
 
@@ -90,11 +90,11 @@ class CFGAS_FontMgr {
 
   CFX_RetainPtr<CFGAS_GEFont> GetFontByCodePage(uint16_t wCodePage,
                                                 uint32_t dwFontStyles,
-                                                const FX_WCHAR* pszFontFamily);
-  CFX_RetainPtr<CFGAS_GEFont> GetFontByUnicode(FX_WCHAR wUnicode,
+                                                const wchar_t* pszFontFamily);
+  CFX_RetainPtr<CFGAS_GEFont> GetFontByUnicode(wchar_t wUnicode,
                                                uint32_t dwFontStyles,
-                                               const FX_WCHAR* pszFontFamily);
-  CFX_RetainPtr<CFGAS_GEFont> LoadFont(const FX_WCHAR* pszFontFamily,
+                                               const wchar_t* pszFontFamily);
+  CFX_RetainPtr<CFGAS_GEFont> LoadFont(const wchar_t* pszFontFamily,
                                        uint32_t dwFontStyles,
                                        uint16_t wCodePage);
   void RemoveFont(const CFX_RetainPtr<CFGAS_GEFont>& pFont);
@@ -106,12 +106,12 @@ class CFGAS_FontMgr {
       uint16_t wCodePage);
   void RemoveFont(std::map<uint32_t, CFX_RetainPtr<CFGAS_GEFont>>* pFontMap,
                   const CFX_RetainPtr<CFGAS_GEFont>& pFont);
-  const FX_FONTDESCRIPTOR* FindFont(const FX_WCHAR* pszFontFamily,
+  const FX_FONTDESCRIPTOR* FindFont(const wchar_t* pszFontFamily,
                                     uint32_t dwFontStyles,
                                     uint32_t dwMatchFlags,
                                     uint16_t wCodePage,
                                     uint32_t dwUSB = 999,
-                                    FX_WCHAR wUnicode = 0);
+                                    wchar_t wUnicode = 0);
 
   FX_LPEnumAllFonts m_pEnumerator;
   std::deque<FX_FONTDESCRIPTOR> m_FontFaces;
@@ -190,11 +190,11 @@ class CFGAS_FontMgr {
 
   CFX_RetainPtr<CFGAS_GEFont> GetFontByCodePage(uint16_t wCodePage,
                                                 uint32_t dwFontStyles,
-                                                const FX_WCHAR* pszFontFamily);
-  CFX_RetainPtr<CFGAS_GEFont> GetFontByUnicode(FX_WCHAR wUnicode,
+                                                const wchar_t* pszFontFamily);
+  CFX_RetainPtr<CFGAS_GEFont> GetFontByUnicode(wchar_t wUnicode,
                                                uint32_t dwFontStyles,
-                                               const FX_WCHAR* pszFontFamily);
-  CFX_RetainPtr<CFGAS_GEFont> LoadFont(const FX_WCHAR* pszFontFamily,
+                                               const wchar_t* pszFontFamily);
+  CFX_RetainPtr<CFGAS_GEFont> LoadFont(const wchar_t* pszFontFamily,
                                        uint32_t dwFontStyles,
                                        uint16_t wCodePage);
   void RemoveFont(const CFX_RetainPtr<CFGAS_GEFont>& pFont);
@@ -210,20 +210,20 @@ class CFGAS_FontMgr {
   std::vector<uint16_t> GetCharsets(FXFT_Face pFace) const;
   void GetUSBCSB(FXFT_Face pFace, uint32_t* USB, uint32_t* CSB);
   uint32_t GetFlags(FXFT_Face pFace);
-  bool VerifyUnicode(CFX_FontDescriptor* pDesc, FX_WCHAR wcUnicode);
+  bool VerifyUnicode(CFX_FontDescriptor* pDesc, wchar_t wcUnicode);
   bool VerifyUnicode(const CFX_RetainPtr<CFGAS_GEFont>& pFont,
-                     FX_WCHAR wcUnicode);
+                     wchar_t wcUnicode);
   int32_t IsPartName(const CFX_WideString& Name1, const CFX_WideString& Name2);
   void MatchFonts(std::vector<CFX_FontDescriptorInfo>* MatchedFonts,
                   uint16_t wCodePage,
                   uint32_t dwFontStyles,
                   const CFX_WideString& FontName,
-                  FX_WCHAR wcUnicode = 0xFFFE);
+                  wchar_t wcUnicode = 0xFFFE);
   int32_t CalcPenalty(CFX_FontDescriptor* pInstalled,
                       uint16_t wCodePage,
                       uint32_t dwFontStyles,
                       const CFX_WideString& FontName,
-                      FX_WCHAR wcUnicode = 0xFFFE);
+                      wchar_t wcUnicode = 0xFFFE);
   CFX_RetainPtr<CFGAS_GEFont> LoadFont(const CFX_WideString& wsFaceName,
                                        int32_t iFaceIndex,
                                        int32_t* pFaceCount);
@@ -243,7 +243,7 @@ class CFGAS_FontMgr {
   std::map<uint32_t, std::vector<CFX_RetainPtr<CFGAS_GEFont>>> m_Hash2Fonts;
   std::map<CFX_RetainPtr<CFGAS_GEFont>, CFX_RetainPtr<IFX_SeekableReadStream>>
       m_IFXFont2FileRead;
-  std::set<FX_WCHAR> m_FailedUnicodesSet;
+  std::set<wchar_t> m_FailedUnicodesSet;
 };
 #endif  // _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
 

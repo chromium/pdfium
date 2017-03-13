@@ -728,13 +728,13 @@ int32_t CFX_ListCtrl::GetLastSelected() const {
   return -1;
 }
 
-FX_WCHAR CFX_ListCtrl::Toupper(FX_WCHAR c) const {
+wchar_t CFX_ListCtrl::Toupper(wchar_t c) const {
   if ((c >= 'a') && (c <= 'z'))
     c = c - ('a' - 'A');
   return c;
 }
 
-int32_t CFX_ListCtrl::FindNext(int32_t nIndex, FX_WCHAR nChar) const {
+int32_t CFX_ListCtrl::FindNext(int32_t nIndex, wchar_t nChar) const {
   int32_t nCircleIndex = nIndex;
 
   for (int32_t i = 0, sz = m_aListItems.GetSize(); i < sz; i++) {

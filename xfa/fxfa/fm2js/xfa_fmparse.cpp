@@ -39,7 +39,7 @@ void CXFA_FMParse::Check(XFA_FM_TOKEN op) {
   NextToken();
 }
 
-void CXFA_FMParse::Error(uint32_t lineNum, const FX_WCHAR* msg, ...) {
+void CXFA_FMParse::Error(uint32_t lineNum, const wchar_t* msg, ...) {
   m_pErrorInfo->linenum = lineNum;
   va_list ap;
   va_start(ap, msg);
@@ -832,7 +832,7 @@ std::unique_ptr<CXFA_FMExpression> CXFA_FMParse::ParseBlockExpression() {
 
 std::unique_ptr<CXFA_FMExpression> CXFA_FMParse::ParseIfExpression() {
   uint32_t line = m_pToken->m_uLinenum;
-  const FX_WCHAR* pStartPos = m_lexer->SavePos();
+  const wchar_t* pStartPos = m_lexer->SavePos();
   NextToken();
   Check(TOKlparen);
   std::unique_ptr<CXFA_FMSimpleExpression> pExpression;

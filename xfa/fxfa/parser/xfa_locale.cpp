@@ -14,10 +14,10 @@
 #include "xfa/fxfa/parser/xfa_object.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
 
-static const FX_WCHAR g_FX_Percent[] = L"z,zzz,zzz,zzz,zzz,zzz%";
-static const FX_WCHAR g_FX_Currency[] = L"$z,zzz,zzz,zzz,zzz,zz9.99";
-static const FX_WCHAR g_FX_Decimal[] = L"z,zzz,zzz,zzz,zzz,zz9.zzz";
-static const FX_WCHAR g_FX_Integer[] = L"z,zzz,zzz,zzz,zzz,zzz";
+static const wchar_t g_FX_Percent[] = L"z,zzz,zzz,zzz,zzz,zzz%";
+static const wchar_t g_FX_Currency[] = L"$z,zzz,zzz,zzz,zzz,zz9.99";
+static const wchar_t g_FX_Decimal[] = L"z,zzz,zzz,zzz,zzz,zz9.zzz";
+static const wchar_t g_FX_Integer[] = L"z,zzz,zzz,zzz,zzz,zzz";
 
 CXFA_XMLLocale::CXFA_XMLLocale(std::unique_ptr<CXML_Element> pLocaleData)
     : m_pLocaleData(std::move(pLocaleData)) {}

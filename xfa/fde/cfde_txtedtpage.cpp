@@ -109,7 +109,7 @@ int32_t CFDE_TxtEdtPage::GetCharIndex(const CFX_PointF& fPoint, bool& bBefore) {
             bBefore = true;
             return m_pEditEngine->GetTextBufLength();
           }
-          FX_WCHAR wChar = m_pEditEngine->GetTextBuf()->GetCharByIndex(nCaret);
+          wchar_t wChar = m_pEditEngine->GetTextBuf()->GetCharByIndex(nCaret);
           if (wChar == L'\n' || wChar == L'\r') {
             if (wChar == L'\n') {
               if (m_pEditEngine->GetTextBuf()->GetCharByIndex(nCaret - 1) ==
@@ -234,7 +234,7 @@ int32_t CFDE_TxtEdtPage::LoadPage(const CFX_RectF* pClipBox,
   }
   CFDE_TxtEdtBuf* pBuf = m_pEditEngine->GetTextBuf();
   const FDE_TXTEDTPARAMS* pParams = m_pEditEngine->GetEditParams();
-  FX_WCHAR wcAlias = 0;
+  wchar_t wcAlias = 0;
   if (pParams->dwMode & FDE_TEXTEDITMODE_Password) {
     wcAlias = m_pEditEngine->GetAliasChar();
   }
@@ -287,7 +287,7 @@ int32_t CFDE_TxtEdtPage::LoadPage(const CFX_RectF* pClipBox,
     if (bReload) {
       dwBreakStatus = pBreak->EndBreak(CFX_BreakType::Paragraph);
     } else {
-      FX_WCHAR wAppend = pIter->GetChar();
+      wchar_t wAppend = pIter->GetChar();
       dwBreakStatus = pBreak->AppendChar(wAppend);
     }
     if (pIter->GetAt() == nPageEnd && CFX_BreakTypeNoneOrPiece(dwBreakStatus))
@@ -308,11 +308,11 @@ int32_t CFDE_TxtEdtPage::LoadPage(const CFX_RectF* pClipBox,
         }
         FX_FLOAT fParaBreakWidth = 0.0f;
         if (!CFX_BreakTypeNoneOrPiece(pPiece->m_dwStatus)) {
-          FX_WCHAR wRtChar = pParams->wLineBreakChar;
+          wchar_t wRtChar = pParams->wLineBreakChar;
           if (TxtEdtPiece.nCount >= 2) {
-            FX_WCHAR wChar = pBuf->GetCharByIndex(
+            wchar_t wChar = pBuf->GetCharByIndex(
                 m_nPageStart + TxtEdtPiece.nStart + TxtEdtPiece.nCount - 1);
-            FX_WCHAR wCharPre = pBuf->GetCharByIndex(
+            wchar_t wCharPre = pBuf->GetCharByIndex(
                 m_nPageStart + TxtEdtPiece.nStart + TxtEdtPiece.nCount - 2);
             if (wChar == wRtChar) {
               fParaBreakWidth += fDefCharWidth;
@@ -321,7 +321,7 @@ int32_t CFDE_TxtEdtPage::LoadPage(const CFX_RectF* pClipBox,
               fParaBreakWidth += fDefCharWidth;
             }
           } else if (TxtEdtPiece.nCount >= 1) {
-            FX_WCHAR wChar = pBuf->GetCharByIndex(
+            wchar_t wChar = pBuf->GetCharByIndex(
                 m_nPageStart + TxtEdtPiece.nStart + TxtEdtPiece.nCount - 1);
             if (wChar == wRtChar) {
               fParaBreakWidth += fDefCharWidth;
@@ -434,13 +434,13 @@ FDE_TEXTEDITPIECE* CFDE_TxtEdtPage::GetNext(FX_POSITION& pos,
   return &m_Pieces[nPos - 1];
 }
 
-FX_WCHAR CFDE_TxtEdtPage::GetChar(const FDE_TEXTEDITPIECE* pIdentity,
-                                  int32_t index) const {
+wchar_t CFDE_TxtEdtPage::GetChar(const FDE_TEXTEDITPIECE* pIdentity,
+                                 int32_t index) const {
   int32_t nIndex = m_nPageStart + pIdentity->nStart + index;
   if (nIndex != m_pIter->GetAt())
     m_pIter->SetAt(nIndex);
 
-  FX_WCHAR wChar = m_pIter->GetChar();
+  wchar_t wChar = m_pIter->GetChar();
   m_pIter->Next();
   return wChar;
 }

@@ -296,7 +296,7 @@ TEST(fxcrt, WideStringRemove) {
 
 TEST(fxcrt, WideStringRemoveCopies) {
   CFX_WideString freed(L"FREED");
-  const FX_WCHAR* old_buffer = freed.c_str();
+  const wchar_t* old_buffer = freed.c_str();
 
   // No change with single reference - no copy.
   freed.Remove(L'Q');
@@ -505,7 +505,7 @@ TEST(fxcrt, WideStringTrimRightCopies) {
   {
     // With a single reference, no copy takes place.
     CFX_WideString fred(L"  FRED  ");
-    const FX_WCHAR* old_buffer = fred.c_str();
+    const wchar_t* old_buffer = fred.c_str();
     fred.TrimRight();
     EXPECT_EQ(L"  FRED", fred);
     EXPECT_EQ(old_buffer, fred.c_str());
@@ -514,7 +514,7 @@ TEST(fxcrt, WideStringTrimRightCopies) {
     // With multiple references, we must copy.
     CFX_WideString fred(L"  FRED  ");
     CFX_WideString other_fred = fred;
-    const FX_WCHAR* old_buffer = fred.c_str();
+    const wchar_t* old_buffer = fred.c_str();
     fred.TrimRight();
     EXPECT_EQ(L"  FRED", fred);
     EXPECT_EQ(L"  FRED  ", other_fred);
@@ -524,7 +524,7 @@ TEST(fxcrt, WideStringTrimRightCopies) {
     // With multiple references, but no modifications, no copy.
     CFX_WideString fred(L"FRED");
     CFX_WideString other_fred = fred;
-    const FX_WCHAR* old_buffer = fred.c_str();
+    const wchar_t* old_buffer = fred.c_str();
     fred.TrimRight();
     EXPECT_EQ(L"FRED", fred);
     EXPECT_EQ(L"FRED", other_fred);
@@ -564,7 +564,7 @@ TEST(fxcrt, WideStringTrimLeftCopies) {
   {
     // With a single reference, no copy takes place.
     CFX_WideString fred(L"  FRED  ");
-    const FX_WCHAR* old_buffer = fred.c_str();
+    const wchar_t* old_buffer = fred.c_str();
     fred.TrimLeft();
     EXPECT_EQ(L"FRED  ", fred);
     EXPECT_EQ(old_buffer, fred.c_str());
@@ -573,7 +573,7 @@ TEST(fxcrt, WideStringTrimLeftCopies) {
     // With multiple references, we must copy.
     CFX_WideString fred(L"  FRED  ");
     CFX_WideString other_fred = fred;
-    const FX_WCHAR* old_buffer = fred.c_str();
+    const wchar_t* old_buffer = fred.c_str();
     fred.TrimLeft();
     EXPECT_EQ(L"FRED  ", fred);
     EXPECT_EQ(L"  FRED  ", other_fred);
@@ -583,7 +583,7 @@ TEST(fxcrt, WideStringTrimLeftCopies) {
     // With multiple references, but no modifications, no copy.
     CFX_WideString fred(L"FRED");
     CFX_WideString other_fred = fred;
-    const FX_WCHAR* old_buffer = fred.c_str();
+    const wchar_t* old_buffer = fred.c_str();
     fred.TrimLeft();
     EXPECT_EQ(L"FRED", fred);
     EXPECT_EQ(L"FRED", other_fred);
@@ -595,7 +595,7 @@ TEST(fxcrt, WideStringReserve) {
   {
     CFX_WideString str;
     str.Reserve(6);
-    const FX_WCHAR* old_buffer = str.c_str();
+    const wchar_t* old_buffer = str.c_str();
     str += L"ABCDEF";
     EXPECT_EQ(old_buffer, str.c_str());
     str += L"Blah Blah Blah Blah Blah Blah";
@@ -604,7 +604,7 @@ TEST(fxcrt, WideStringReserve) {
   {
     CFX_WideString str(L"A");
     str.Reserve(6);
-    const FX_WCHAR* old_buffer = str.c_str();
+    const wchar_t* old_buffer = str.c_str();
     str += L"BCDEF";
     EXPECT_EQ(old_buffer, str.c_str());
     str += L"Blah Blah Blah Blah Blah Blah";
@@ -615,14 +615,14 @@ TEST(fxcrt, WideStringReserve) {
 TEST(fxcrt, WideStringGetBuffer) {
   {
     CFX_WideString str;
-    FX_WCHAR* buffer = str.GetBuffer(12);
+    wchar_t* buffer = str.GetBuffer(12);
     wcscpy(buffer, L"clams");
     str.ReleaseBuffer();
     EXPECT_EQ(L"clams", str);
   }
   {
     CFX_WideString str(L"cl");
-    FX_WCHAR* buffer = str.GetBuffer(12);
+    wchar_t* buffer = str.GetBuffer(12);
     wcscpy(buffer + 2, L"ams");
     str.ReleaseBuffer();
     EXPECT_EQ(L"clams", str);
@@ -634,7 +634,7 @@ TEST(fxcrt, WideStringReleaseBuffer) {
     CFX_WideString str;
     str.Reserve(12);
     str += L"clams";
-    const FX_WCHAR* old_buffer = str.c_str();
+    const wchar_t* old_buffer = str.c_str();
     str.ReleaseBuffer(4);
     EXPECT_EQ(old_buffer, str.c_str());
     EXPECT_EQ(L"clam", str);
@@ -643,7 +643,7 @@ TEST(fxcrt, WideStringReleaseBuffer) {
     CFX_WideString str(L"c");
     str.Reserve(12);
     str += L"lams";
-    const FX_WCHAR* old_buffer = str.c_str();
+    const wchar_t* old_buffer = str.c_str();
     str.ReleaseBuffer(4);
     EXPECT_EQ(old_buffer, str.c_str());
     EXPECT_EQ(L"clam", str);
@@ -652,7 +652,7 @@ TEST(fxcrt, WideStringReleaseBuffer) {
     CFX_WideString str;
     str.Reserve(200);
     str += L"clams";
-    const FX_WCHAR* old_buffer = str.c_str();
+    const wchar_t* old_buffer = str.c_str();
     str.ReleaseBuffer(4);
     EXPECT_NE(old_buffer, str.c_str());
     EXPECT_EQ(L"clam", str);
@@ -661,7 +661,7 @@ TEST(fxcrt, WideStringReleaseBuffer) {
     CFX_WideString str(L"c");
     str.Reserve(200);
     str += L"lams";
-    const FX_WCHAR* old_buffer = str.c_str();
+    const wchar_t* old_buffer = str.c_str();
     str.ReleaseBuffer(4);
     EXPECT_NE(old_buffer, str.c_str());
     EXPECT_EQ(L"clam", str);
@@ -936,6 +936,6 @@ TEST(fxcrt, EmptyWideString) {
   CFX_WideString empty_str;
   EXPECT_TRUE(empty_str.IsEmpty());
   EXPECT_EQ(0, empty_str.GetLength());
-  const FX_WCHAR* cstr = empty_str.c_str();
+  const wchar_t* cstr = empty_str.c_str();
   EXPECT_EQ(0, FXSYS_wcslen(cstr));
 }

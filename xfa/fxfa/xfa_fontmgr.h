@@ -21,8 +21,8 @@ class CPDF_Font;
 
 struct XFA_FONTINFO {
   uint32_t dwFontNameHash;
-  const FX_WCHAR* pPsName;
-  const FX_WCHAR* pReplaceFont;
+  const wchar_t* pPsName;
+  const wchar_t* pReplaceFont;
   uint16_t dwStyles;
   uint16_t wCodePage;
 };
@@ -56,7 +56,7 @@ class CXFA_PDFFontMgr {
                                       CPDF_Font** pPDFFont,
                                       bool bStrictMatch);
   bool GetCharWidth(const CFX_RetainPtr<CFGAS_GEFont>& pFont,
-                    FX_WCHAR wUnicode,
+                    wchar_t wUnicode,
                     bool bCharCode,
                     int32_t* pWidth);
   void SetFont(const CFX_RetainPtr<CFGAS_GEFont>& pFont, CPDF_Font* pPDFFont);

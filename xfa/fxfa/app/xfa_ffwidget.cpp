@@ -923,7 +923,7 @@ static uint8_t* XFA_RemoveBase64Whitespace(const uint8_t* pStr, int32_t iLen) {
   uint8_t* pCP;
   int32_t i = 0, j = 0;
   if (iLen == 0) {
-    iLen = FXSYS_strlen((FX_CHAR*)pStr);
+    iLen = FXSYS_strlen((char*)pStr);
   }
   pCP = FX_Alloc(uint8_t, iLen + 1);
   for (; i < iLen; i++) {
@@ -936,16 +936,16 @@ static uint8_t* XFA_RemoveBase64Whitespace(const uint8_t* pStr, int32_t iLen) {
   pCP[j] = '\0';
   return pCP;
 }
-static int32_t XFA_Base64Decode(const FX_CHAR* pStr, uint8_t* pOutBuffer) {
+static int32_t XFA_Base64Decode(const char* pStr, uint8_t* pOutBuffer) {
   if (!pStr) {
     return 0;
   }
   uint8_t* pBuffer =
-      XFA_RemoveBase64Whitespace((uint8_t*)pStr, FXSYS_strlen((FX_CHAR*)pStr));
+      XFA_RemoveBase64Whitespace((uint8_t*)pStr, FXSYS_strlen((char*)pStr));
   if (!pBuffer) {
     return 0;
   }
-  int32_t iLen = FXSYS_strlen((FX_CHAR*)pBuffer);
+  int32_t iLen = FXSYS_strlen((char*)pBuffer);
   int32_t i = 0, j = 0;
   uint32_t dwLimb = 0;
   for (; i + 3 < iLen; i += 4) {
@@ -982,14 +982,14 @@ static int32_t XFA_Base64Decode(const FX_CHAR* pStr, uint8_t* pOutBuffer) {
   return j;
 }
 
-static const FX_CHAR g_base64_chars[] =
+static const char g_base64_chars[] =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
-FX_CHAR* XFA_Base64Encode(const uint8_t* buf, int32_t buf_len) {
-  FX_CHAR* out = nullptr;
+char* XFA_Base64Encode(const uint8_t* buf, int32_t buf_len) {
+  char* out = nullptr;
   int i, j;
   uint32_t limb;
-  out = FX_Alloc(FX_CHAR, ((buf_len * 8 + 5) / 6) + 5);
+  out = FX_Alloc(char, ((buf_len * 8 + 5) / 6) + 5);
   for (i = 0, j = 0, limb = 0; i + 2 < buf_len; i += 3, j += 4) {
     limb = ((uint32_t)buf[i] << 16) | ((uint32_t)buf[i + 1] << 8) |
            ((uint32_t)buf[i + 2]);

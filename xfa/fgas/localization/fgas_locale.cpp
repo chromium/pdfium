@@ -23,7 +23,7 @@
 
 struct FX_LOCALESUBCATEGORYINFO {
   uint32_t uHash;
-  const FX_WCHAR* pName;
+  const wchar_t* pName;
   int32_t eSubCategory;
 };
 
@@ -59,11 +59,11 @@ static const FX_LOCALETIMEZONEINFO g_FXLocaleTimeZoneData[] = {
     {FXBSTR_ID(0, 'P', 'D', 'T'), -7, 0}, {FXBSTR_ID(0, 'P', 'S', 'T'), -8, 0},
 };
 
-static const FX_WCHAR gs_wsTimeSymbols[] = L"hHkKMSFAzZ";
-static const FX_WCHAR gs_wsDateSymbols[] = L"DJMEeGgYwW";
-static const FX_WCHAR gs_wsConstChars[] = L",-:/. ";
+static const wchar_t gs_wsTimeSymbols[] = L"hHkKMSFAzZ";
+static const wchar_t gs_wsDateSymbols[] = L"DJMEeGgYwW";
+static const wchar_t gs_wsConstChars[] = L",-:/. ";
 
-static int32_t FX_ParseTimeZone(const FX_WCHAR* pStr,
+static int32_t FX_ParseTimeZone(const wchar_t* pStr,
                                 int32_t iLen,
                                 FX_TIMEZONE& tz) {
   tz.tzHour = 0;
@@ -122,7 +122,7 @@ static bool FX_WStringToNumeric(const CFX_WideString& wsValue,
   int32_t cc = 0;
   bool bNegative = false;
   bool bExpSign = false;
-  const FX_WCHAR* str = wsValue.c_str();
+  const wchar_t* str = wsValue.c_str();
   int32_t len = wsValue.GetLength();
   while (cc < len && FXSYS_iswspace(str[cc]))
     cc++;
@@ -270,9 +270,9 @@ void CFX_FormatString::SplitFormatString(
     const CFX_WideString& wsFormatString,
     std::vector<CFX_WideString>& wsPatterns) {
   int32_t iStrLen = wsFormatString.GetLength();
-  const FX_WCHAR* pStr = wsFormatString.c_str();
-  const FX_WCHAR* pToken = pStr;
-  const FX_WCHAR* pEnd = pStr + iStrLen;
+  const wchar_t* pStr = wsFormatString.c_str();
+  const wchar_t* pToken = pStr;
+  const wchar_t* pEnd = pStr + iStrLen;
   bool iQuote = false;
   while (true) {
     if (pStr >= pEnd) {
@@ -289,7 +289,7 @@ void CFX_FormatString::SplitFormatString(
   }
 }
 
-static CFX_WideString FX_GetLiteralText(const FX_WCHAR* pStrPattern,
+static CFX_WideString FX_GetLiteralText(const wchar_t* pStrPattern,
                                         int32_t& iPattern,
                                         int32_t iLenPattern) {
   CFX_WideString wsOutput;
@@ -314,7 +314,7 @@ static CFX_WideString FX_GetLiteralText(const FX_WCHAR* pStrPattern,
       iPattern += 2;
       int32_t i = 0;
       while (iPattern < iLenPattern && i++ < 4) {
-        FX_WCHAR ch = pStrPattern[iPattern++];
+        wchar_t ch = pStrPattern[iPattern++];
         if ((ch >= '0' && ch <= '9')) {
           iKeyValue = iKeyValue * 16 + ch - '0';
         } else if ((ch >= 'a' && ch <= 'f')) {
@@ -324,7 +324,7 @@ static CFX_WideString FX_GetLiteralText(const FX_WCHAR* pStrPattern,
         }
       }
       if (iKeyValue != 0) {
-        wsOutput += (FX_WCHAR)(iKeyValue & 0x0000FFFF);
+        wsOutput += (wchar_t)(iKeyValue & 0x0000FFFF);
       }
       continue;
     }
@@ -332,7 +332,7 @@ static CFX_WideString FX_GetLiteralText(const FX_WCHAR* pStrPattern,
   }
   return wsOutput;
 }
-static CFX_WideString FX_GetLiteralTextReverse(const FX_WCHAR* pStrPattern,
+static CFX_WideString FX_GetLiteralTextReverse(const wchar_t* pStrPattern,
                                                int32_t& iPattern) {
   CFX_WideString wsOutput;
   if (pStrPattern[iPattern] != '\'') {
@@ -356,7 +356,7 @@ static CFX_WideString FX_GetLiteralTextReverse(const FX_WCHAR* pStrPattern,
       int32_t iLen = wsOutput.GetLength();
       int32_t i = 1;
       for (; i < iLen && i < 5; i++) {
-        FX_WCHAR ch = wsOutput[i];
+        wchar_t ch = wsOutput[i];
         if ((ch >= '0' && ch <= '9')) {
           iKeyValue = iKeyValue * 16 + ch - '0';
         } else if ((ch >= 'a' && ch <= 'f')) {
@@ -367,7 +367,7 @@ static CFX_WideString FX_GetLiteralTextReverse(const FX_WCHAR* pStrPattern,
       }
       if (iKeyValue != 0) {
         wsOutput.Delete(0, i);
-        wsOutput = (FX_WCHAR)(iKeyValue & 0x0000FFFF) + wsOutput;
+        wsOutput = (wchar_t)(iKeyValue & 0x0000FFFF) + wsOutput;
       }
       continue;
     }
@@ -380,7 +380,7 @@ FX_LOCALECATEGORY CFX_FormatString::GetCategory(
   FX_LOCALECATEGORY eCategory = FX_LOCALECATEGORY_Unknown;
   int32_t ccf = 0;
   int32_t iLenf = wsPattern.GetLength();
-  const FX_WCHAR* pStr = wsPattern.c_str();
+  const wchar_t* pStr = wsPattern.c_str();
   bool bBraceOpen = false;
   CFX_WideStringC wsConstChars(gs_wsConstChars);
   while (ccf < iLenf) {
@@ -432,7 +432,7 @@ FX_LOCALECATEGORY CFX_FormatString::GetCategory(
   }
   return eCategory;
 }
-static uint16_t FX_WStringToLCID(const FX_WCHAR* pstrLCID) {
+static uint16_t FX_WStringToLCID(const wchar_t* pstrLCID) {
   if (!pstrLCID) {
     return 0;
   }
@@ -446,7 +446,7 @@ CFX_WideString CFX_FormatString::GetLocaleName(
     const CFX_WideString& wsPattern) {
   int32_t ccf = 0;
   int32_t iLenf = wsPattern.GetLength();
-  const FX_WCHAR* pStr = wsPattern.c_str();
+  const wchar_t* pStr = wsPattern.c_str();
   while (ccf < iLenf) {
     if (pStr[ccf] == '\'') {
       FX_GetLiteralText(pStr, ccf, iLenf);
@@ -468,7 +468,7 @@ IFX_Locale* CFX_FormatString::GetTextFormat(const CFX_WideString& wsPattern,
   IFX_Locale* pLocale = nullptr;
   int32_t ccf = 0;
   int32_t iLenf = wsPattern.GetLength();
-  const FX_WCHAR* pStr = wsPattern.c_str();
+  const wchar_t* pStr = wsPattern.c_str();
   bool bBrackOpen = false;
   CFX_WideStringC wsConstChars(gs_wsConstChars);
   while (ccf < iLenf) {
@@ -525,7 +525,7 @@ IFX_Locale* CFX_FormatString::GetNumericFormat(const CFX_WideString& wsPattern,
   IFX_Locale* pLocale = nullptr;
   int32_t ccf = 0;
   int32_t iLenf = wsPattern.GetLength();
-  const FX_WCHAR* pStr = wsPattern.c_str();
+  const wchar_t* pStr = wsPattern.c_str();
   bool bFindDot = false;
   bool bBrackOpen = false;
   CFX_WideStringC wsConstChars(gs_wsConstChars);
@@ -625,7 +625,7 @@ static bool FX_GetNumericDotIndex(const CFX_WideString& wsNum,
                                   int32_t& iDotIndex) {
   int32_t ccf = 0;
   int32_t iLenf = wsNum.GetLength();
-  const FX_WCHAR* pStr = wsNum.c_str();
+  const wchar_t* pStr = wsNum.c_str();
   int32_t iLenDot = wsDotSymbol.GetLength();
   while (ccf < iLenf) {
     if (pStr[ccf] == '\'') {
@@ -657,9 +657,9 @@ bool CFX_FormatString::ParseText(const CFX_WideString& wsSrcText,
     return false;
   }
   int32_t iText = 0, iPattern = 0;
-  const FX_WCHAR* pStrText = wsSrcText.c_str();
+  const wchar_t* pStrText = wsSrcText.c_str();
   int32_t iLenText = wsSrcText.GetLength();
-  const FX_WCHAR* pStrPattern = wsTextFormat.c_str();
+  const wchar_t* pStrPattern = wsTextFormat.c_str();
   int32_t iLenPattern = wsTextFormat.GetLength();
   while (iPattern < iLenPattern && iText < iLenText) {
     switch (pStrPattern[iPattern]) {
@@ -741,9 +741,9 @@ bool CFX_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
   pLocale->GetNumbericSymbol(FX_LOCALENUMSYMBOL_Minus, wsMinus);
   int32_t iMinusLen = wsMinus.GetLength();
   int cc = 0, ccf = 0;
-  const FX_WCHAR* str = wsSrcNum.c_str();
+  const wchar_t* str = wsSrcNum.c_str();
   int len = wsSrcNum.GetLength();
-  const FX_WCHAR* strf = wsNumFormat.c_str();
+  const wchar_t* strf = wsNumFormat.c_str();
   int lenf = wsNumFormat.GetLength();
   double dbRetValue = 0;
   double coeff = 1;
@@ -1449,9 +1449,9 @@ bool CFX_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
   pLocale->GetNumbericSymbol(FX_LOCALENUMSYMBOL_Minus, wsMinus);
   int32_t iMinusLen = wsMinus.GetLength();
   int cc = 0, ccf = 0;
-  const FX_WCHAR* str = wsSrcNum.c_str();
+  const wchar_t* str = wsSrcNum.c_str();
   int len = wsSrcNum.GetLength();
-  const FX_WCHAR* strf = wsNumFormat.c_str();
+  const wchar_t* strf = wsNumFormat.c_str();
   int lenf = wsNumFormat.GetLength();
   bool bHavePercentSymbol = false;
   bool bNeg = false;
@@ -1915,7 +1915,7 @@ FX_DATETIMETYPE CFX_FormatString::GetDateTimeFormat(
   FX_LOCALECATEGORY eCategory = FX_LOCALECATEGORY_Unknown;
   int32_t ccf = 0;
   int32_t iLenf = wsPattern.GetLength();
-  const FX_WCHAR* pStr = wsPattern.c_str();
+  const wchar_t* pStr = wsPattern.c_str();
   int32_t iFindCategory = 0;
   bool bBraceOpen = false;
   CFX_WideStringC wsConstChars(gs_wsConstChars);
@@ -2052,9 +2052,9 @@ static bool FX_ParseLocaleDate(const CFX_WideString& wsDate,
   int32_t month = 1;
   int32_t day = 1;
   int32_t ccf = 0;
-  const FX_WCHAR* str = wsDate.c_str();
+  const wchar_t* str = wsDate.c_str();
   int32_t len = wsDate.GetLength();
-  const FX_WCHAR* strf = wsDatePattern.c_str();
+  const wchar_t* strf = wsDatePattern.c_str();
   int32_t lenf = wsDatePattern.GetLength();
   CFX_WideStringC wsDateSymbols(gs_wsDateSymbols);
   while (cc < len && ccf < lenf) {
@@ -2076,7 +2076,7 @@ static bool FX_ParseLocaleDate(const CFX_WideString& wsDate,
       continue;
     }
     uint32_t dwSymbolNum = 1;
-    FX_WCHAR dwCharSymbol = strf[ccf++];
+    wchar_t dwCharSymbol = strf[ccf++];
     while (ccf < lenf && strf[ccf] == dwCharSymbol) {
       ccf++;
       dwSymbolNum++;
@@ -2270,9 +2270,9 @@ static bool FX_ParseLocaleTime(const CFX_WideString& wsTime,
   uint8_t second = 0;
   uint16_t millisecond = 0;
   int32_t ccf = 0;
-  const FX_WCHAR* str = wsTime.c_str();
+  const wchar_t* str = wsTime.c_str();
   int len = wsTime.GetLength();
-  const FX_WCHAR* strf = wsTimePattern.c_str();
+  const wchar_t* strf = wsTimePattern.c_str();
   int lenf = wsTimePattern.GetLength();
   bool bHasA = false;
   bool bPM = false;
@@ -2296,7 +2296,7 @@ static bool FX_ParseLocaleTime(const CFX_WideString& wsTime,
       continue;
     }
     uint32_t dwSymbolNum = 1;
-    FX_WCHAR dwCharSymbol = strf[ccf++];
+    wchar_t dwCharSymbol = strf[ccf++];
     while (ccf < lenf && strf[ccf] == dwCharSymbol) {
       ccf++;
       dwSymbolNum++;
@@ -2508,9 +2508,9 @@ bool CFX_FormatString::ParseZero(const CFX_WideString& wsSrcText,
   CFX_WideString wsTextFormat;
   GetTextFormat(wsPattern, L"zero", wsTextFormat);
   int32_t iText = 0, iPattern = 0;
-  const FX_WCHAR* pStrText = wsSrcText.c_str();
+  const wchar_t* pStrText = wsSrcText.c_str();
   int32_t iLenText = wsSrcText.GetLength();
-  const FX_WCHAR* pStrPattern = wsTextFormat.c_str();
+  const wchar_t* pStrPattern = wsTextFormat.c_str();
   int32_t iLenPattern = wsTextFormat.GetLength();
   while (iPattern < iLenPattern && iText < iLenText) {
     if (pStrPattern[iPattern] == '\'') {
@@ -2538,9 +2538,9 @@ bool CFX_FormatString::ParseNull(const CFX_WideString& wsSrcText,
   CFX_WideString wsTextFormat;
   GetTextFormat(wsPattern, L"null", wsTextFormat);
   int32_t iText = 0, iPattern = 0;
-  const FX_WCHAR* pStrText = wsSrcText.c_str();
+  const wchar_t* pStrText = wsSrcText.c_str();
   int32_t iLenText = wsSrcText.GetLength();
-  const FX_WCHAR* pStrPattern = wsTextFormat.c_str();
+  const wchar_t* pStrPattern = wsTextFormat.c_str();
   int32_t iLenPattern = wsTextFormat.GetLength();
   while (iPattern < iLenPattern && iText < iLenText) {
     if (pStrPattern[iPattern] == '\'') {
@@ -2576,8 +2576,8 @@ bool CFX_FormatString::FormatText(const CFX_WideString& wsSrcText,
   CFX_WideString wsTextFormat;
   GetTextFormat(wsPattern, L"text", wsTextFormat);
   int32_t iText = 0, iPattern = 0;
-  const FX_WCHAR* pStrText = wsSrcText.c_str();
-  const FX_WCHAR* pStrPattern = wsTextFormat.c_str();
+  const wchar_t* pStrText = wsSrcText.c_str();
+  const wchar_t* pStrPattern = wsTextFormat.c_str();
   int32_t iLenPattern = wsTextFormat.GetLength();
   while (iPattern < iLenPattern) {
     switch (pStrPattern[iPattern]) {
@@ -2632,7 +2632,7 @@ static int32_t FX_GetNumTrailingLimit(const CFX_WideString& wsFormat,
   int32_t iCount = wsFormat.GetLength();
   int32_t iTreading = 0;
   for (iDotPos++; iDotPos < iCount; iDotPos++) {
-    FX_WCHAR wc = wsFormat[iDotPos];
+    wchar_t wc = wsFormat[iDotPos];
     if (wc == L'z' || wc == L'9' || wc == 'Z') {
       iTreading++;
       bTrimTailZeros = (wc == L'9' ? false : true);
@@ -2655,7 +2655,7 @@ bool CFX_FormatString::FormatStrNum(const CFX_WideStringC& wsInputNum,
     return false;
   }
   int32_t cc = 0, ccf = 0;
-  const FX_WCHAR* strf = wsNumFormat.c_str();
+  const wchar_t* strf = wsNumFormat.c_str();
   int lenf = wsNumFormat.GetLength();
   CFX_WideString wsSrcNum(wsInputNum);
   wsSrcNum.TrimLeft('0');
@@ -2725,7 +2725,7 @@ bool CFX_FormatString::FormatStrNum(const CFX_WideStringC& wsInputNum,
     wsSrcNum.Delete(0, 1);
   }
   bool bAddNeg = false;
-  const FX_WCHAR* str = wsSrcNum.c_str();
+  const wchar_t* str = wsSrcNum.c_str();
   int len = wsSrcNum.GetLength();
   int dot_index = wsSrcNum.Find('.');
   if (dot_index == -1) {
@@ -3088,7 +3088,7 @@ bool CFX_FormatString::FormatLCNumeric(CFX_LCNumeric& lcNum,
     return false;
   }
   int32_t cc = 0, ccf = 0;
-  const FX_WCHAR* strf = wsNumFormat.c_str();
+  const wchar_t* strf = wsNumFormat.c_str();
   int lenf = wsNumFormat.GetLength();
   double dbOrgRaw = lcNum.GetDouble();
   double dbRetValue = dbOrgRaw;
@@ -3151,7 +3151,7 @@ bool CFX_FormatString::FormatLCNumeric(CFX_LCNumeric& lcNum,
     wsNumeric.Delete(0, 1);
   }
   bool bAddNeg = false;
-  const FX_WCHAR* str = wsNumeric.c_str();
+  const wchar_t* str = wsNumeric.c_str();
   int len = wsNumeric.GetLength();
   int dot_index = wsNumeric.Find('.');
   if (dot_index == -1) {
@@ -3507,7 +3507,7 @@ bool FX_DateFromCanonical(const CFX_WideString& wsDate, CFX_Unitime& datetime) {
   int32_t day = 1;
   uint16_t wYear = 0;
   int cc_start = 0, cc = 0;
-  const FX_WCHAR* str = wsDate.c_str();
+  const wchar_t* str = wsDate.c_str();
   int len = wsDate.GetLength();
   if (len > 10) {
     return false;
@@ -3590,7 +3590,7 @@ bool FX_TimeFromCanonical(const CFX_WideStringC& wsTime,
   uint8_t second = 0;
   uint16_t millisecond = 0;
   int cc_start = 0, cc = cc_start;
-  const FX_WCHAR* str = wsTime.c_str();
+  const wchar_t* str = wsTime.c_str();
   int len = wsTime.GetLength();
   while (cc < len && cc < 2) {
     if (!FXSYS_isDecimalDigit(str[cc])) {
@@ -3711,7 +3711,7 @@ static bool FX_DateFormat(const CFX_WideString& wsDatePattern,
   uint8_t month = datetime.GetMonth();
   uint8_t day = datetime.GetDay();
   int32_t ccf = 0;
-  const FX_WCHAR* strf = wsDatePattern.c_str();
+  const wchar_t* strf = wsDatePattern.c_str();
   int32_t lenf = wsDatePattern.GetLength();
   CFX_WideStringC wsDateSymbols(gs_wsDateSymbols);
   while (ccf < lenf) {
@@ -3724,7 +3724,7 @@ static bool FX_DateFormat(const CFX_WideString& wsDatePattern,
       continue;
     }
     uint32_t dwSymbolNum = 1;
-    FX_WCHAR dwCharSymbol = strf[ccf++];
+    wchar_t dwCharSymbol = strf[ccf++];
     while (ccf < lenf && strf[ccf] == dwCharSymbol) {
       ccf++;
       dwSymbolNum++;
@@ -3831,7 +3831,7 @@ static bool FX_TimeFormat(const CFX_WideString& wsTimePattern,
   uint8_t second = datetime.GetSecond();
   uint16_t millisecond = datetime.GetMillisecond();
   int32_t ccf = 0;
-  const FX_WCHAR* strf = wsTimePattern.c_str();
+  const wchar_t* strf = wsTimePattern.c_str();
   int32_t lenf = wsTimePattern.GetLength();
   uint16_t wHour = hour;
   bool bPM = false;
@@ -3851,7 +3851,7 @@ static bool FX_TimeFormat(const CFX_WideString& wsTimePattern,
       continue;
     }
     uint32_t dwSymbolNum = 1;
-    FX_WCHAR dwCharSymbol = strf[ccf++];
+    wchar_t dwCharSymbol = strf[ccf++];
     while (ccf < lenf && strf[ccf] == dwCharSymbol) {
       ccf++;
       dwSymbolNum++;
@@ -4081,7 +4081,7 @@ bool CFX_FormatString::FormatZero(const CFX_WideString& wsPattern,
   CFX_WideString wsTextFormat;
   GetTextFormat(wsPattern, L"zero", wsTextFormat);
   int32_t iPattern = 0;
-  const FX_WCHAR* pStrPattern = wsTextFormat.c_str();
+  const wchar_t* pStrPattern = wsTextFormat.c_str();
   int32_t iLenPattern = wsTextFormat.GetLength();
   while (iPattern < iLenPattern) {
     if (pStrPattern[iPattern] == '\'') {
@@ -4103,7 +4103,7 @@ bool CFX_FormatString::FormatNull(const CFX_WideString& wsPattern,
   CFX_WideString wsTextFormat;
   GetTextFormat(wsPattern, L"null", wsTextFormat);
   int32_t iPattern = 0;
-  const FX_WCHAR* pStrPattern = wsTextFormat.c_str();
+  const wchar_t* pStrPattern = wsTextFormat.c_str();
   int32_t iLenPattern = wsTextFormat.GetLength();
   while (iPattern < iLenPattern) {
     if (pStrPattern[iPattern] == '\'') {
@@ -4433,8 +4433,8 @@ CFX_Decimal::CFX_Decimal(FX_FLOAT val, uint8_t scale) {
   m_uFlags = FXMATH_DECIMAL_MAKEFLAGS(val < 0 && IsNotZero(), scale);
 }
 CFX_Decimal::CFX_Decimal(const CFX_WideStringC& strObj) {
-  const FX_WCHAR* str = strObj.c_str();
-  const FX_WCHAR* strBound = str + strObj.GetLength();
+  const wchar_t* str = strObj.c_str();
+  const wchar_t* strBound = str + strObj.GetLength();
   bool pointmet = 0;
   bool negmet = 0;
   uint8_t scale = 0;

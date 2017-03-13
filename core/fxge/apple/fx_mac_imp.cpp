@@ -14,8 +14,8 @@
 namespace {
 
 const struct {
-  const FX_CHAR* m_pName;
-  const FX_CHAR* m_pSubstName;
+  const char* m_pName;
+  const char* m_pSubstName;
 } g_Base14Substs[] = {
     {"Courier", "Courier New"},
     {"Courier-Bold", "Courier New Bold"},
@@ -41,7 +41,7 @@ class CFX_MacFontInfo : public CFX_FolderFontInfo {
                 bool bItalic,
                 int charset,
                 int pitch_family,
-                const FX_CHAR* family,
+                const char* family,
                 int& iExact) override;
 };
 
@@ -61,7 +61,7 @@ void* CFX_MacFontInfo::MapFont(int weight,
                                bool bItalic,
                                int charset,
                                int pitch_family,
-                               const FX_CHAR* cstr_face,
+                               const char* cstr_face,
                                int& iExact) {
   CFX_ByteString face = cstr_face;
   for (size_t i = 0; i < FX_ArraySize(g_Base14Substs); ++i) {

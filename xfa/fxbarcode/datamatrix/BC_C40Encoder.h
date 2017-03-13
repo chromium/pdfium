@@ -24,7 +24,7 @@ class CBC_C40Encoder : public CBC_Encoder {
   virtual void handleEOD(CBC_EncoderContext& context,
                          CFX_WideString& buffer,
                          int32_t& e);
-  virtual int32_t encodeChar(FX_WCHAR c, CFX_WideString& sb, int32_t& e);
+  virtual int32_t encodeChar(wchar_t c, CFX_WideString& sb, int32_t& e);
 
  private:
   int32_t backtrackOneCharacter(CBC_EncoderContext& context,

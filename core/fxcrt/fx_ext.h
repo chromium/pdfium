@@ -17,15 +17,15 @@
 
 FX_FLOAT FXSYS_tan(FX_FLOAT a);
 FX_FLOAT FXSYS_logb(FX_FLOAT b, FX_FLOAT x);
-FX_FLOAT FXSYS_strtof(const FX_CHAR* pcsStr,
+FX_FLOAT FXSYS_strtof(const char* pcsStr,
                       int32_t iLength = -1,
                       int32_t* pUsedLen = nullptr);
-FX_FLOAT FXSYS_wcstof(const FX_WCHAR* pwsStr,
+FX_FLOAT FXSYS_wcstof(const wchar_t* pwsStr,
                       int32_t iLength = -1,
                       int32_t* pUsedLen = nullptr);
-FX_WCHAR* FXSYS_wcsncpy(FX_WCHAR* dstStr, const FX_WCHAR* srcStr, size_t count);
-int32_t FXSYS_wcsnicmp(const FX_WCHAR* s1, const FX_WCHAR* s2, size_t count);
-int32_t FXSYS_strnicmp(const FX_CHAR* s1, const FX_CHAR* s2, size_t count);
+wchar_t* FXSYS_wcsncpy(wchar_t* dstStr, const wchar_t* srcStr, size_t count);
+int32_t FXSYS_wcsnicmp(const wchar_t* s1, const wchar_t* s2, size_t count);
+int32_t FXSYS_strnicmp(const char* s1, const char* s2, size_t count);
 
 inline bool FXSYS_islower(int32_t ch) {
   return ch >= 'a' && ch <= 'z';
@@ -48,30 +48,30 @@ inline bool FXSYS_iswdigit(wchar_t wch) {
 inline bool FXSYS_iswalnum(wchar_t wch) {
   return FXSYS_iswalpha(wch) || FXSYS_iswdigit(wch);
 }
-inline bool FXSYS_iswspace(FX_WCHAR c) {
+inline bool FXSYS_iswspace(wchar_t c) {
   return (c == 0x20) || (c == 0x0d) || (c == 0x0a) || (c == 0x09);
 }
 
-inline int FXSYS_toHexDigit(const FX_CHAR c) {
+inline int FXSYS_toHexDigit(const char c) {
   if (!std::isxdigit(c))
     return 0;
   char upchar = std::toupper(c);
   return upchar > '9' ? upchar - 'A' + 10 : upchar - '0';
 }
 
-inline bool FXSYS_isDecimalDigit(const FX_CHAR c) {
+inline bool FXSYS_isDecimalDigit(const char c) {
   return !!std::isdigit(c);
 }
 
-inline bool FXSYS_isDecimalDigit(const FX_WCHAR c) {
+inline bool FXSYS_isDecimalDigit(const wchar_t c) {
   return !!std::iswdigit(c);
 }
 
-inline int FXSYS_toDecimalDigit(const FX_CHAR c) {
+inline int FXSYS_toDecimalDigit(const char c) {
   return std::isdigit(c) ? c - '0' : 0;
 }
 
-inline int FXSYS_toDecimalDigit(const FX_WCHAR c) {
+inline int FXSYS_toDecimalDigit(const wchar_t c) {
   return std::iswdigit(c) ? c - L'0' : 0;
 }
 

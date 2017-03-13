@@ -80,7 +80,7 @@ class CFWL_Edit : public CFWL_Widget {
   void ClearSelections();
   int32_t GetLimit() const;
   void SetLimit(int32_t nLimit);
-  void SetAliasChar(FX_WCHAR wAlias);
+  void SetAliasChar(wchar_t wAlias);
   bool Copy(CFX_WideString& wsCopy);
   bool Cut(CFX_WideString& wsCut);
   bool Paste(const CFX_WideString& wsPaste);
@@ -132,7 +132,7 @@ class CFWL_Edit : public CFWL_Widget {
   void InitHorizontalScrollBar();
   void InitEngine();
   void InitCaret();
-  bool ValidateNumberChar(FX_WCHAR cNum);
+  bool ValidateNumberChar(wchar_t cNum);
   void ClearRecord();
   bool IsShowScrollBar(bool bVert);
   bool IsContentHeightOverflow();

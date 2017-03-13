@@ -11,7 +11,7 @@ void CFX_UTF8Decoder::Clear() {
   m_PendingBytes = 0;
 }
 void CFX_UTF8Decoder::AppendChar(uint32_t ch) {
-  m_Buffer.AppendChar((FX_WCHAR)ch);
+  m_Buffer.AppendChar((wchar_t)ch);
 }
 void CFX_UTF8Decoder::Input(uint8_t byte) {
   if (byte < 0x80) {
@@ -43,7 +43,7 @@ void CFX_UTF8Decoder::Input(uint8_t byte) {
     m_PendingChar = (byte & 0x01) << 30;
   }
 }
-void CFX_UTF8Encoder::Input(FX_WCHAR unicode) {
+void CFX_UTF8Encoder::Input(wchar_t unicode) {
   if ((uint32_t)unicode < 0x80) {
     m_Buffer.AppendChar(unicode);
   } else {
@@ -76,7 +76,7 @@ void CFX_UTF8Encoder::Input(FX_WCHAR unicode) {
 
 CFX_ByteString FX_UTF8Encode(const CFX_WideStringC& wsStr) {
   FX_STRSIZE len = wsStr.GetLength();
-  const FX_WCHAR* pStr = wsStr.c_str();
+  const wchar_t* pStr = wsStr.c_str();
   CFX_UTF8Encoder encoder;
   while (len-- > 0)
     encoder.Input(*pStr++);
