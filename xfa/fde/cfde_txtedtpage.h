@@ -11,52 +11,46 @@
 #include <memory>
 #include <vector>
 
-#include "xfa/fde/ifde_txtedtpage.h"
+#include "xfa/fde/fde_visualset.h"
 #include "xfa/fde/ifx_chariter.h"
 
 class CFDE_TxtEdtEngine;
 class CFDE_TxtEdtParag;
 class CFDE_TxtEdtTextSet;
 
-class CFDE_TxtEdtPage : public IFDE_TxtEdtPage {
+class CFDE_TxtEdtPage : public IFDE_VisualSet {
  public:
   CFDE_TxtEdtPage(CFDE_TxtEdtEngine* pEngine, int32_t nLineIndex);
   ~CFDE_TxtEdtPage() override;
-
-  // IFDE_TxtEditPage:
-  CFDE_TxtEdtEngine* GetEngine() const override;
-  int32_t GetCharRect(int32_t nIndex,
-                      CFX_RectF& rect,
-                      bool bBBox = false) const override;
-  int32_t GetCharIndex(const CFX_PointF& fPoint, bool& bBefore) override;
-  void CalcRangeRectArray(int32_t nStart,
-                          int32_t nCount,
-                          std::vector<CFX_RectF>* RectFArr) const override;
-  int32_t SelectWord(const CFX_PointF& fPoint, int32_t& nCount) override;
-  int32_t GetCharStart() const override;
-  int32_t GetCharCount() const override;
-  int32_t GetDisplayPos(const CFX_RectF& rtClip,
-                        FXTEXT_CHARPOS*& pCharPos,
-                        CFX_RectF* pBBox) const override;
-  bool IsLoaded(const CFX_RectF* pClipBox) override;
-  int32_t LoadPage(const CFX_RectF* pClipBox, IFX_Pause* pPause) override;
-  void UnloadPage(const CFX_RectF* pClipBox) override;
-  const CFX_RectF& GetContentsBox() override;
 
   // IFDE_VisualSet:
   FDE_VISUALOBJTYPE GetType() override;
   CFX_RectF GetRect(const FDE_TEXTEDITPIECE& pPiece) override;
 
-  // IFDE_CanvasSet:
-  FX_POSITION GetFirstPosition() override;
-  FDE_TEXTEDITPIECE* GetNext(FX_POSITION& pos,
-                             IFDE_VisualSet*& pVisualSet) override;
+  CFDE_TxtEdtEngine* GetEngine() const;
+  int32_t GetCharRect(int32_t nIndex,
+                      CFX_RectF& rect,
+                      bool bBBox = false) const;
+  int32_t GetCharIndex(const CFX_PointF& fPoint, bool& bBefore);
+  void CalcRangeRectArray(int32_t nStart,
+                          int32_t nCount,
+                          std::vector<CFX_RectF>* RectFArr) const;
+  int32_t SelectWord(const CFX_PointF& fPoint, int32_t& nCount);
+  int32_t GetCharStart() const;
+  int32_t GetCharCount() const;
+  int32_t GetDisplayPos(const CFX_RectF& rtClip,
+                        FXTEXT_CHARPOS*& pCharPos,
+                        CFX_RectF* pBBox) const;
+  bool IsLoaded(const CFX_RectF* pClipBox);
+  int32_t LoadPage(const CFX_RectF* pClipBox, IFX_Pause* pPause);
+  void UnloadPage(const CFX_RectF* pClipBox);
+  const CFX_RectF& GetContentsBox();
 
-  // IFX_TxtAccess:
-  FX_WCHAR GetChar(const FDE_TEXTEDITPIECE* pIdentity,
-                   int32_t index) const override;
-  int32_t GetWidth(const FDE_TEXTEDITPIECE* pIdentity,
-                   int32_t index) const override;
+  FX_POSITION GetFirstPosition();
+  FDE_TEXTEDITPIECE* GetNext(FX_POSITION& pos, IFDE_VisualSet*& pVisualSet);
+
+  FX_WCHAR GetChar(const FDE_TEXTEDITPIECE* pIdentity, int32_t index) const;
+  int32_t GetWidth(const FDE_TEXTEDITPIECE* pIdentity, int32_t index) const;
 
  private:
   void NormalizePt2Rect(CFX_PointF& ptF,

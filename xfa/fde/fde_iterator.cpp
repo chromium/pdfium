@@ -6,13 +6,14 @@
 
 #include "xfa/fde/fde_iterator.h"
 
+#include "xfa/fde/cfde_txtedtpage.h"
 #include "xfa/fgas/crt/fgas_utils.h"
 
 CFDE_VisualSetIterator::CFDE_VisualSetIterator() : m_dwFilter(0) {}
 
 CFDE_VisualSetIterator::~CFDE_VisualSetIterator() {}
 
-bool CFDE_VisualSetIterator::AttachCanvas(IFDE_CanvasSet* pCanvas) {
+bool CFDE_VisualSetIterator::AttachCanvas(CFDE_TxtEdtPage* pCanvas) {
   ASSERT(pCanvas);
   m_CanvasStack = std::stack<FDE_CANVASITEM>();
 
@@ -50,7 +51,7 @@ void CFDE_VisualSetIterator::Reset() {
 FDE_TEXTEDITPIECE* CFDE_VisualSetIterator::GetNext(
     IFDE_VisualSet*& pVisualSet,
     FDE_TEXTEDITPIECE** phCanvasObj,
-    IFDE_CanvasSet** ppCanvasSet) {
+    CFDE_TxtEdtPage** ppCanvasSet) {
   while (!m_CanvasStack.empty()) {
     FDE_CANVASITEM* pCanvas = &m_CanvasStack.top();
     if (!pCanvas->hPos) {
@@ -69,7 +70,7 @@ FDE_TEXTEDITPIECE* CFDE_VisualSetIterator::GetNext(
       if (eType == FDE_VISUALOBJ_Canvas) {
         FDE_CANVASITEM canvas;
         canvas.hCanvas = pObj;
-        canvas.pCanvas = static_cast<IFDE_CanvasSet*>(pVisualSet);
+        canvas.pCanvas = static_cast<CFDE_TxtEdtPage*>(pVisualSet);
         canvas.hPos = canvas.pCanvas->GetFirstPosition();
         m_CanvasStack.push(canvas);
         break;

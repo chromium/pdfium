@@ -7,6 +7,7 @@
 #include "xfa/fde/fde_render.h"
 
 #include "third_party/base/ptr_util.h"
+#include "xfa/fde/cfde_txtedttextset.h"
 #include "xfa/fde/fde_gedevice.h"
 #include "xfa/fde/fde_object.h"
 
@@ -25,7 +26,7 @@ CFDE_RenderContext::~CFDE_RenderContext() {
 }
 
 bool CFDE_RenderContext::StartRender(CFDE_RenderDevice* pRenderDevice,
-                                     IFDE_CanvasSet* pCanvasSet,
+                                     CFDE_TxtEdtPage* pCanvasSet,
                                      const CFX_Matrix& tmDoc2Device) {
   if (m_pRenderDevice)
     return false;
@@ -73,7 +74,7 @@ FDE_RENDERSTATUS CFDE_RenderContext::DoRender(IFX_Pause* pPause) {
 
     switch (pVisualSet->GetType()) {
       case FDE_VISUALOBJ_Text:
-        RenderText(static_cast<IFDE_TextSet*>(pVisualSet), pPiece);
+        RenderText(static_cast<CFDE_TxtEdtTextSet*>(pVisualSet), pPiece);
         iCount += 5;
         break;
       case FDE_VISUALOBJ_Canvas:
@@ -99,7 +100,7 @@ void CFDE_RenderContext::StopRender() {
   m_CharPos.clear();
 }
 
-void CFDE_RenderContext::RenderText(IFDE_TextSet* pTextSet,
+void CFDE_RenderContext::RenderText(CFDE_TxtEdtTextSet* pTextSet,
                                     FDE_TEXTEDITPIECE* pText) {
   ASSERT(m_pRenderDevice);
   ASSERT(pTextSet && pText);

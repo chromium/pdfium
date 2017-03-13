@@ -12,8 +12,10 @@
 #include "xfa/fde/fde_visualset.h"
 #include "xfa/fgas/crt/fgas_utils.h"
 
+class CFDE_TxtEdtPage;
+
 struct FDE_CANVASITEM {
-  IFDE_CanvasSet* pCanvas;
+  CFDE_TxtEdtPage* pCanvas;
   FDE_TEXTEDITPIECE* hCanvas;
   FX_POSITION hPos;
 };
@@ -23,13 +25,13 @@ class CFDE_VisualSetIterator {
   CFDE_VisualSetIterator();
   ~CFDE_VisualSetIterator();
 
-  bool AttachCanvas(IFDE_CanvasSet* pCanvas);
+  bool AttachCanvas(CFDE_TxtEdtPage* pCanvas);
   bool FilterObjects(uint32_t dwObjects = 0xFFFFFFFF);
 
   void Reset();
   FDE_TEXTEDITPIECE* GetNext(IFDE_VisualSet*& pVisualSet,
                              FDE_TEXTEDITPIECE** phCanvasObj = nullptr,
-                             IFDE_CanvasSet** ppCanvasSet = nullptr);
+                             CFDE_TxtEdtPage** ppCanvasSet = nullptr);
 
  protected:
   uint32_t m_dwFilter;

@@ -99,7 +99,7 @@ int32_t CFDE_TxtEdtEngine::CountPages() const {
   return ((m_nLineCount - 1) / m_nPageLineCount) + 1;
 }
 
-IFDE_TxtEdtPage* CFDE_TxtEdtEngine::GetPage(int32_t nIndex) {
+CFDE_TxtEdtPage* CFDE_TxtEdtEngine::GetPage(int32_t nIndex) {
   if (m_PagePtrArray.GetSize() <= nIndex) {
     return nullptr;
   }
@@ -993,7 +993,7 @@ void CFDE_TxtEdtEngine::UpdatePages() {
   }
   if (nSize < nPageCount) {
     for (int32_t i = nSize; i < nPageCount; i++)
-      m_PagePtrArray.Add(IFDE_TxtEdtPage::Create(this, i));
+      m_PagePtrArray.Add(new CFDE_TxtEdtPage(this, i));
     return;
   }
 }
@@ -1138,7 +1138,7 @@ int32_t CFDE_TxtEdtEngine::MovePage2Char(int32_t nIndex) {
   ASSERT(nIndex >= 0);
   ASSERT(nIndex <= m_pTxtBuf->GetTextLength());
   if (m_nCaretPage >= 0) {
-    IFDE_TxtEdtPage* pPage = m_PagePtrArray[m_nCaretPage];
+    CFDE_TxtEdtPage* pPage = m_PagePtrArray[m_nCaretPage];
     m_Param.pEventSink->OnPageLoad(m_nCaretPage);
     int32_t nPageCharStart = pPage->GetCharStart();
     int32_t nPageCharCount = pPage->GetCharCount();
@@ -1232,7 +1232,7 @@ int32_t CFDE_TxtEdtEngine::MoveBackward(bool& bBefore) {
 }
 
 bool CFDE_TxtEdtEngine::MoveUp(CFX_PointF& ptCaret) {
-  IFDE_TxtEdtPage* pPage = GetPage(m_nCaretPage);
+  CFDE_TxtEdtPage* pPage = GetPage(m_nCaretPage);
   const CFX_RectF& rtContent = pPage->GetContentsBox();
   ptCaret.x = m_fCaretPosReserve;
   ptCaret.y = m_rtCaret.top + m_rtCaret.height / 2 - m_Param.fLineSpace;
@@ -1242,7 +1242,7 @@ bool CFDE_TxtEdtEngine::MoveUp(CFX_PointF& ptCaret) {
     }
     ptCaret.y -= rtContent.top;
     m_nCaretPage--;
-    IFDE_TxtEdtPage* pCurPage = GetPage(m_nCaretPage);
+    CFDE_TxtEdtPage* pCurPage = GetPage(m_nCaretPage);
     ptCaret.y += pCurPage->GetContentsBox().bottom();
   }
 
@@ -1250,7 +1250,7 @@ bool CFDE_TxtEdtEngine::MoveUp(CFX_PointF& ptCaret) {
 }
 
 bool CFDE_TxtEdtEngine::MoveDown(CFX_PointF& ptCaret) {
-  IFDE_TxtEdtPage* pPage = GetPage(m_nCaretPage);
+  CFDE_TxtEdtPage* pPage = GetPage(m_nCaretPage);
   const CFX_RectF& rtContent = pPage->GetContentsBox();
   ptCaret.x = m_fCaretPosReserve;
   ptCaret.y = m_rtCaret.top + m_rtCaret.height / 2 + m_Param.fLineSpace;
@@ -1260,7 +1260,7 @@ bool CFDE_TxtEdtEngine::MoveDown(CFX_PointF& ptCaret) {
     }
     ptCaret.y -= rtContent.bottom();
     m_nCaretPage++;
-    IFDE_TxtEdtPage* pCurPage = GetPage(m_nCaretPage);
+    CFDE_TxtEdtPage* pCurPage = GetPage(m_nCaretPage);
     ptCaret.y += pCurPage->GetContentsBox().top;
   }
   return true;
@@ -1409,7 +1409,7 @@ void CFDE_TxtEdtEngine::GetCaretRect(CFX_RectF& rtCaret,
                                      int32_t nPageIndex,
                                      int32_t nCaret,
                                      bool bBefore) {
-  IFDE_TxtEdtPage* pPage = m_PagePtrArray[m_nCaretPage];
+  CFDE_TxtEdtPage* pPage = m_PagePtrArray[m_nCaretPage];
   m_Param.pEventSink->OnPageLoad(m_nCaretPage);
   bool bCombText = !!(m_Param.dwLayoutStyles & FDE_TEXTEDITLAYOUT_CombText);
   int32_t nIndexInpage = nCaret - pPage->GetCharStart();
@@ -1431,7 +1431,7 @@ void CFDE_TxtEdtEngine::GetCaretRect(CFX_RectF& rtCaret,
 }
 
 void CFDE_TxtEdtEngine::UpdateCaretIndex(const CFX_PointF& ptCaret) {
-  IFDE_TxtEdtPage* pPage = m_PagePtrArray[m_nCaretPage];
+  CFDE_TxtEdtPage* pPage = m_PagePtrArray[m_nCaretPage];
   m_Param.pEventSink->OnPageLoad(m_nCaretPage);
   m_nCaret = pPage->GetCharIndex(ptCaret, m_bBefore);
   GetCaretRect(m_rtCaret, m_nCaretPage, m_nCaret, m_bBefore);

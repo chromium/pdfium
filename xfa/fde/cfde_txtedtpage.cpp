@@ -16,18 +16,13 @@
 #include "xfa/fde/cfde_txtedttextset.h"
 #include "xfa/fde/cfx_wordbreak.h"
 #include "xfa/fde/ifde_txtedtengine.h"
-#include "xfa/fde/ifde_txtedtpage.h"
+#include "xfa/fgas/layout/fgas_textbreak.h"
 
 namespace {
 
 const double kTolerance = 0.1f;
 
 }  // namespace
-
-IFDE_TxtEdtPage* IFDE_TxtEdtPage::Create(CFDE_TxtEdtEngine* pEngine,
-                                         int32_t nIndex) {
-  return new CFDE_TxtEdtPage(pEngine, nIndex);
-}
 
 CFDE_TxtEdtPage::CFDE_TxtEdtPage(CFDE_TxtEdtEngine* pEngine, int32_t nPageIndex)
     : m_pEditEngine(pEngine),

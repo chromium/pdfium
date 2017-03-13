@@ -47,26 +47,4 @@ class IFDE_VisualSet {
   virtual CFX_RectF GetRect(const FDE_TEXTEDITPIECE& hVisualObj) = 0;
 };
 
-class IFDE_CanvasSet : public IFDE_VisualSet {
- public:
-  virtual FX_POSITION GetFirstPosition() = 0;
-  virtual FDE_TEXTEDITPIECE* GetNext(FX_POSITION& pos,
-                                     IFDE_VisualSet*& pVisualSet) = 0;
-};
-
-class IFDE_TextSet : public IFDE_VisualSet {
- public:
-  virtual int32_t GetString(FDE_TEXTEDITPIECE* hText,
-                            CFX_WideString& wsText) = 0;
-  virtual CFX_RetainPtr<CFGAS_GEFont> GetFont() = 0;
-  virtual FX_FLOAT GetFontSize() = 0;
-  virtual FX_ARGB GetFontColor() = 0;
-  virtual int32_t GetDisplayPos(const FDE_TEXTEDITPIECE& hText,
-                                FXTEXT_CHARPOS* pCharPos,
-                                bool bCharCode = false,
-                                CFX_WideString* pWSForms = nullptr) = 0;
-  virtual std::vector<CFX_RectF> GetCharRects(const FDE_TEXTEDITPIECE* hText,
-                                              bool bbox) = 0;
-};
-
 #endif  // XFA_FDE_FDE_VISUALSET_H_

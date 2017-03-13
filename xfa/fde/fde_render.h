@@ -16,6 +16,7 @@
 #include "xfa/fde/fde_visualset.h"
 
 class CFDE_RenderDevice;
+class CFDE_TxtEdtTextSet;
 
 enum FDE_RENDERSTATUS {
   FDE_RENDERSTATUS_Reset = 0,
@@ -30,12 +31,12 @@ class CFDE_RenderContext {
   ~CFDE_RenderContext();
 
   bool StartRender(CFDE_RenderDevice* pRenderDevice,
-                   IFDE_CanvasSet* pCanvasSet,
+                   CFDE_TxtEdtPage* pCanvasSet,
                    const CFX_Matrix& tmDoc2Device);
   FDE_RENDERSTATUS GetStatus() const { return m_eStatus; }
   FDE_RENDERSTATUS DoRender(IFX_Pause* pPause = nullptr);
   void StopRender();
-  void RenderText(IFDE_TextSet* pTextSet, FDE_TEXTEDITPIECE* pText);
+  void RenderText(CFDE_TxtEdtTextSet* pTextSet, FDE_TEXTEDITPIECE* pText);
 
  protected:
   FDE_RENDERSTATUS m_eStatus;

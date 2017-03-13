@@ -14,9 +14,9 @@
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fde/cfde_txtedtengine.h"
+#include "xfa/fde/cfde_txtedtpage.h"
 #include "xfa/fde/fde_gedevice.h"
 #include "xfa/fde/fde_render.h"
-#include "xfa/fde/ifde_txtedtpage.h"
 #include "xfa/fgas/font/cfgas_gefont.h"
 #include "xfa/fwl/cfwl_app.h"
 #include "xfa/fwl/cfwl_caret.h"
@@ -167,7 +167,7 @@ void CFWL_Edit::AddSpellCheckObj(CFX_Path& PathData,
   FX_FLOAT fEndX = 0.0f;
   FX_FLOAT fY = 0.0f;
   FX_FLOAT fStep = 0.0f;
-  IFDE_TxtEdtPage* pPage = m_EdtEngine.GetPage(0);
+  CFDE_TxtEdtPage* pPage = m_EdtEngine.GetPage(0);
   const FDE_TXTEDTPARAMS* txtEdtParams = m_EdtEngine.GetEditParams();
   FX_FLOAT fAsent = static_cast<FX_FLOAT>(txtEdtParams->pFont->GetAscent()) *
                     txtEdtParams->fFontSize / 1000;
@@ -435,7 +435,7 @@ void CFWL_Edit::OnSelChanged() {
 }
 
 bool CFWL_Edit::OnPageLoad(int32_t nPageIndex) {
-  IFDE_TxtEdtPage* pPage = m_EdtEngine.GetPage(nPageIndex);
+  CFDE_TxtEdtPage* pPage = m_EdtEngine.GetPage(nPageIndex);
   if (!pPage)
     return false;
 
@@ -444,7 +444,7 @@ bool CFWL_Edit::OnPageLoad(int32_t nPageIndex) {
 }
 
 bool CFWL_Edit::OnPageUnload(int32_t nPageIndex) {
-  IFDE_TxtEdtPage* pPage = m_EdtEngine.GetPage(nPageIndex);
+  CFDE_TxtEdtPage* pPage = m_EdtEngine.GetPage(nPageIndex);
   if (!pPage)
     return false;
 
@@ -507,7 +507,7 @@ void CFWL_Edit::DrawTextBk(CFX_Graphics* pGraphics,
 void CFWL_Edit::DrawContent(CFX_Graphics* pGraphics,
                             IFWL_ThemeProvider* pTheme,
                             const CFX_Matrix* pMatrix) {
-  IFDE_TxtEdtPage* pPage = m_EdtEngine.GetPage(0);
+  CFDE_TxtEdtPage* pPage = m_EdtEngine.GetPage(0);
   if (!pPage)
     return;
 
@@ -695,7 +695,7 @@ void CFWL_Edit::UpdateEditLayout() {
   if (m_EdtEngine.GetTextLength() <= 0)
     m_EdtEngine.SetTextByStream(nullptr);
 
-  IFDE_TxtEdtPage* pPage = m_EdtEngine.GetPage(0);
+  CFDE_TxtEdtPage* pPage = m_EdtEngine.GetPage(0);
   if (pPage)
     pPage->UnloadPage(nullptr);
 
@@ -715,7 +715,7 @@ bool CFWL_Edit::UpdateOffset() {
   rtCaret.Offset(fOffSetX, fOffSetY);
   const CFX_RectF& rtEidt = m_rtEngine;
   if (rtEidt.Contains(rtCaret)) {
-    IFDE_TxtEdtPage* pPage = m_EdtEngine.GetPage(0);
+    CFDE_TxtEdtPage* pPage = m_EdtEngine.GetPage(0);
     if (!pPage)
       return false;
 
@@ -758,7 +758,7 @@ bool CFWL_Edit::UpdateOffset(CFWL_ScrollBar* pScrollBar, FX_FLOAT fPosChanged) {
 }
 
 void CFWL_Edit::UpdateVAlignment() {
-  IFDE_TxtEdtPage* pPage = m_EdtEngine.GetPage(0);
+  CFDE_TxtEdtPage* pPage = m_EdtEngine.GetPage(0);
   if (!pPage)
     return;
 
@@ -828,7 +828,7 @@ CFWL_ScrollBar* CFWL_Edit::UpdateScroll() {
   if (!bShowHorz && !bShowVert)
     return nullptr;
 
-  IFDE_TxtEdtPage* pPage = m_EdtEngine.GetPage(0);
+  CFDE_TxtEdtPage* pPage = m_EdtEngine.GetPage(0);
   if (!pPage)
     return nullptr;
 
@@ -904,7 +904,7 @@ bool CFWL_Edit::IsShowScrollBar(bool bVert) {
 }
 
 bool CFWL_Edit::IsContentHeightOverflow() {
-  IFDE_TxtEdtPage* pPage = m_EdtEngine.GetPage(0);
+  CFDE_TxtEdtPage* pPage = m_EdtEngine.GetPage(0);
   if (!pPage)
     return false;
   return pPage->GetContentsBox().height > m_rtEngine.height + 1.0f;
@@ -1258,7 +1258,7 @@ void CFWL_Edit::DoButtonDown(CFWL_MessageMouse* pMsg) {
   if ((m_pProperties->m_dwStates & FWL_WGTSTATE_Focused) == 0)
     SetFocus(true);
 
-  IFDE_TxtEdtPage* pPage = m_EdtEngine.GetPage(0);
+  CFDE_TxtEdtPage* pPage = m_EdtEngine.GetPage(0);
   if (!pPage)
     return;
 
@@ -1334,7 +1334,7 @@ void CFWL_Edit::OnLButtonUp(CFWL_MessageMouse* pMsg) {
 }
 
 void CFWL_Edit::OnButtonDblClk(CFWL_MessageMouse* pMsg) {
-  IFDE_TxtEdtPage* pPage = m_EdtEngine.GetPage(0);
+  CFDE_TxtEdtPage* pPage = m_EdtEngine.GetPage(0);
   if (!pPage)
     return;
 
@@ -1352,7 +1352,7 @@ void CFWL_Edit::OnMouseMove(CFWL_MessageMouse* pMsg) {
   if (m_nSelStart == -1 || !m_bLButtonDown)
     return;
 
-  IFDE_TxtEdtPage* pPage = m_EdtEngine.GetPage(0);
+  CFDE_TxtEdtPage* pPage = m_EdtEngine.GetPage(0);
   if (!pPage)
     return;
 

@@ -13,6 +13,7 @@
 #include "xfa/fde/ifde_txtedtengine.h"
 
 class CFDE_TxtEdtBuf;
+class CFDE_TxtEdtPage;
 class CFDE_TxtEdtParag;
 class CFX_TxtBreak;
 class IFDE_TxtEdtDoRecord;
@@ -27,7 +28,7 @@ class CFDE_TxtEdtEngine {
   FDE_TXTEDTPARAMS* GetEditParams();
 
   int32_t CountPages() const;
-  IFDE_TxtEdtPage* GetPage(int32_t nIndex);
+  CFDE_TxtEdtPage* GetPage(int32_t nIndex);
 
   void SetTextByStream(const CFX_RetainPtr<IFGAS_Stream>& pStream);
   void SetText(const CFX_WideString& wsText);
@@ -149,7 +150,7 @@ class CFDE_TxtEdtEngine {
   std::unique_ptr<CFDE_TxtEdtBuf> m_pTxtBuf;
   std::unique_ptr<CFX_TxtBreak> m_pTextBreak;
   FDE_TXTEDTPARAMS m_Param;
-  CFX_ArrayTemplate<IFDE_TxtEdtPage*> m_PagePtrArray;
+  CFX_ArrayTemplate<CFDE_TxtEdtPage*> m_PagePtrArray;
   CFX_ArrayTemplate<CFDE_TxtEdtParag*> m_ParagPtrArray;
   CFX_ArrayTemplate<FDE_TXTEDTSELRANGE*> m_SelRangePtrArr;
   int32_t m_nPageLineCount;

@@ -11,7 +11,6 @@
 #include "xfa/fgas/font/cfgas_fontmgr.h"
 
 class CFDE_TxtEdtEngine;
-class IFDE_TxtEdtPage;
 class CFWL_Edit;
 
 #define FDE_TEXTEDITMODE_MultiLines (1L << 0)
