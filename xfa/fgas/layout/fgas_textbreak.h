@@ -71,7 +71,6 @@ struct FX_TXTRUN {
   uint32_t dwStyles;
   int32_t iHorizontalScale;
   int32_t iVerticalScale;
-  int32_t iCharRotation;
   uint32_t dwCharStyles;
   const CFX_RectF* pRect;
   FX_WCHAR wLineBreakChar;
@@ -186,7 +185,6 @@ class CFX_TxtBreak {
   void SetParagraphBreakChar(FX_WCHAR wch);
   void SetLineBreakTolerance(FX_FLOAT fTolerance);
   void SetHorizontalScale(int32_t iScale);
-  void SetCharRotation(int32_t iCharRotation);
   void SetCharSpace(FX_FLOAT fCharSpace);
   void SetAlignment(int32_t iAlignment);
   void SetCombWidth(FX_FLOAT fCombWidth);
@@ -203,17 +201,15 @@ class CFX_TxtBreak {
                                       bool bCharBBox = false) const;
   void AppendChar_PageLoad(CFX_TxtChar* pCurChar, uint32_t dwProps);
   CFX_BreakType AppendChar(FX_WCHAR wch);
-  CFX_BreakType AppendChar_Combination(CFX_TxtChar* pCurChar,
-                                       int32_t iRotation);
-  CFX_BreakType AppendChar_Tab(CFX_TxtChar* pCurChar, int32_t iRotation);
-  CFX_BreakType AppendChar_Control(CFX_TxtChar* pCurChar, int32_t iRotation);
-  CFX_BreakType AppendChar_Arabic(CFX_TxtChar* pCurChar, int32_t iRotation);
-  CFX_BreakType AppendChar_Others(CFX_TxtChar* pCurChar, int32_t iRotation);
+  CFX_BreakType AppendChar_Combination(CFX_TxtChar* pCurChar);
+  CFX_BreakType AppendChar_Tab(CFX_TxtChar* pCurChar);
+  CFX_BreakType AppendChar_Control(CFX_TxtChar* pCurChar);
+  CFX_BreakType AppendChar_Arabic(CFX_TxtChar* pCurChar);
+  CFX_BreakType AppendChar_Others(CFX_TxtChar* pCurChar);
 
  private:
   void FontChanged();
   void SetBreakStatus();
-  int32_t GetLineRotation(uint32_t dwStyles) const;
   CFX_TxtChar* GetLastChar(int32_t index, bool bOmitChar = true) const;
   const CFX_TxtLine* GetTxtLine() const;
   const CFX_TxtPieceArray* GetTxtPieces() const;
@@ -246,9 +242,6 @@ class CFX_TxtBreak {
   FX_WCHAR m_wDefChar;
   FX_WCHAR m_wParagBreakChar;
   int32_t m_iDefChar;
-  int32_t m_iLineRotation;
-  int32_t m_iCharRotation;
-  int32_t m_iRotation;
   int32_t m_iAlignment;
   uint32_t m_dwContextCharStyles;
   int32_t m_iCombWidth;

@@ -154,14 +154,12 @@ class CFX_Char {
 class CFX_TxtChar : public CFX_Char {
  public:
   CFX_TxtChar()
-      : m_nRotation(0),
-        m_dwCharStyles(0),
+      : m_dwCharStyles(0),
         m_iBidiClass(0),
         m_iBidiLevel(0),
         m_iBidiPos(0),
         m_iBidiOrder(0) {}
 
-  int8_t m_nRotation;
   uint32_t m_dwCharStyles;
   int16_t m_iBidiClass;
   int16_t m_iBidiLevel;

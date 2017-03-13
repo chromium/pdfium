@@ -40,7 +40,6 @@ FDE_TXTEDTPARAMS::FDE_TXTEDTPARAMS()
       bTabEquidistant(false),
       wDefChar(0xFEFF),
       wLineBreakChar('\n'),
-      nCharRotation(0),
       nLineEnd(0),
       nHorzScale(100),
       fCharSpace(0),
@@ -1041,7 +1040,6 @@ void CFDE_TxtEdtEngine::UpdateTxtBreak() {
   m_pTextBreak->SetTabWidth(m_Param.fTabWidth, m_Param.bTabEquidistant);
   m_pTextBreak->SetDefaultChar(m_Param.wDefChar);
   m_pTextBreak->SetParagraphBreakChar(m_Param.wLineBreakChar);
-  m_pTextBreak->SetCharRotation(m_Param.nCharRotation);
   m_pTextBreak->SetLineBreakTolerance(m_Param.fFontSize * 0.2f);
   m_pTextBreak->SetHorizontalScale(m_Param.nHorzScale);
   m_pTextBreak->SetCharSpace(m_Param.fCharSpace);

@@ -687,7 +687,6 @@ void CFWL_Edit::UpdateEditParams() {
   params.fTabWidth = params.fFontSize * 1;
   params.bTabEquidistant = true;
   params.wLineBreakChar = L'\n';
-  params.nCharRotation = 0;
   params.pEventSink = this;
   m_EdtEngine.SetEditParams(params);
 }
