@@ -7,7 +7,6 @@
 #include "xfa/fde/fde_iterator.h"
 
 #include "xfa/fde/cfde_txtedtpage.h"
-#include "xfa/fgas/crt/fgas_utils.h"
 
 CFDE_VisualSetIterator::CFDE_VisualSetIterator() : m_dwFilter(0) {}
 

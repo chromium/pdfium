@@ -8,7 +8,6 @@
 #define XFA_FGAS_LAYOUT_FGAS_LINEBREAK_H_
 
 #include "core/fxcrt/fx_system.h"
-#include "xfa/fgas/crt/fgas_utils.h"
 
 enum FX_LINEBREAKTYPE : uint8_t {
   FX_LBT_UNKNOWN = 0x00,

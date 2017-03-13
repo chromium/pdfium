@@ -10,7 +10,6 @@
 #include <stack>
 
 #include "xfa/fde/fde_visualset.h"
-#include "xfa/fgas/crt/fgas_utils.h"
 
 class CFDE_TxtEdtPage;
 

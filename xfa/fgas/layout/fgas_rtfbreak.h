@@ -13,7 +13,6 @@
 #include "core/fxcrt/cfx_retain_ptr.h"
 #include "core/fxcrt/fx_basic.h"
 #include "core/fxcrt/fx_ucd.h"
-#include "xfa/fgas/crt/fgas_utils.h"
 #include "xfa/fgas/layout/fgas_textbreak.h"
 
 class CFGAS_GEFont;

@@ -15,7 +15,6 @@
 #include "xfa/fde/cfde_path.h"
 #include "xfa/fde/fde_gedevice.h"
 #include "xfa/fde/fde_object.h"
-#include "xfa/fgas/crt/fgas_utils.h"
 #include "xfa/fgas/layout/fgas_textbreak.h"
 
 FDE_TTOPIECE::FDE_TTOPIECE() = default;

@@ -21,10 +21,6 @@
 #include "third_party/freetype/include/freetype/fttypes.h"
 #include "xfa/fgas/crt/fgas_stream.h"
 
-#if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
-#include "xfa/fgas/crt/fgas_utils.h"
-#endif  // _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
-
 #define FX_FONTSTYLE_Normal 0x00
 #define FX_FONTSTYLE_FixedPitch 0x01
 #define FX_FONTSTYLE_Serif 0x02

@@ -13,7 +13,6 @@
 
 #include "core/fxcrt/cfx_retain_ptr.h"
 #include "core/fxcrt/fx_memory.h"
-#include "xfa/fgas/crt/fgas_utils.h"
 #include "xfa/fgas/font/cfgas_fontmgr.h"
 
 #define FXFONT_SUBST_ITALIC 0x02
@@ -108,7 +107,7 @@ class CFGAS_GEFont : public CFX_Retainable {
   CFX_RetainPtr<IFGAS_Stream> m_pStream;
   CFX_RetainPtr<IFX_SeekableReadStream> m_pFileRead;
   std::unique_ptr<CFX_UnicodeEncoding> m_pFontEncoding;
-  std::unique_ptr<CFX_DiscreteArrayTemplate<uint16_t>> m_pCharWidthMap;
+  std::map<FX_WCHAR, int32_t> m_CharWidthMap;
   std::map<FX_WCHAR, CFX_Rect> m_BBoxMap;
   CXFA_PDFFontMgr* m_pProvider;  // not owned.
   std::vector<CFX_RetainPtr<CFGAS_GEFont>> m_SubstFonts;

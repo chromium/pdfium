@@ -9,6 +9,7 @@
 
 #include <map>
 
+#include "core/fxcrt/fx_basic.h"
 #include "fxjs/cfxjse_arguments.h"
 #include "xfa/fde/xml/fde_xml.h"
 #include "xfa/fxfa/parser/xfa_utils.h"

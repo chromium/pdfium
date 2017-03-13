@@ -11,10 +11,10 @@
 #include <stack>
 #include <vector>
 
+#include "core/fxcrt/fx_basic.h"
 #include "core/fxcrt/fx_system.h"
 #include "xfa/fde/xml/fde_xml.h"
 #include "xfa/fgas/crt/fgas_stream.h"
-#include "xfa/fgas/crt/fgas_utils.h"
 
 class CFDE_BlockBuffer;
 class CFDE_XMLInstruction;

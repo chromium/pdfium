@@ -1223,8 +1223,6 @@ if (pdf_enable_xfa) {
       "xfa/fgas/crt/fgas_language.h",
       "xfa/fgas/crt/fgas_stream.cpp",
       "xfa/fgas/crt/fgas_stream.h",
-      "xfa/fgas/crt/fgas_utils.cpp",
-      "xfa/fgas/crt/fgas_utils.h",
       "xfa/fgas/font/cfgas_fontmgr.cpp",
       "xfa/fgas/font/cfgas_fontmgr.h",
       "xfa/fgas/font/cfgas_gefont.cpp",

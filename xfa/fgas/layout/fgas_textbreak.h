@@ -15,7 +15,6 @@
 #include "core/fxge/cfx_renderdevice.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fde/cfde_txtedtpage.h"
-#include "xfa/fgas/crt/fgas_utils.h"
 
 class CFX_Char;
 class CFGAS_GEFont;

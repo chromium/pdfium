@@ -9,7 +9,6 @@
 
 #include "core/fxge/fx_dib.h"
 #include "xfa/fgas/crt/fgas_stream.h"
-#include "xfa/fgas/crt/fgas_utils.h"
 #include "xfa/fgas/font/cfgas_fontmgr.h"
 
 enum FDE_CSSVALUETYPE {
