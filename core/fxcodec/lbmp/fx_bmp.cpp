@@ -7,6 +7,7 @@
 #include "core/fxcodec/lbmp/fx_bmp.h"
 
 #include <algorithm>
+#include <limits>
 
 namespace {
 
@@ -129,6 +130,10 @@ int32_t bmp_read_header(bmp_decompress_struct_p bmp_ptr) {
         bmp_ptr->dpi_y = (int32_t)GetDWord_LSBFirst(
             (uint8_t*)&bmp_info_header_ptr->biYPelsPerMeter);
         if (bmp_ptr->height < 0) {
+          if (bmp_ptr->height == std::numeric_limits<int>::min()) {
+            bmp_error(bmp_ptr, "Unsupported height");
+            return 0;
+          }
           bmp_ptr->height = -bmp_ptr->height;
           bmp_ptr->imgTB_flag = true;
         }
@@ -159,6 +164,10 @@ int32_t bmp_read_header(bmp_decompress_struct_p bmp_ptr) {
           bmp_ptr->dpi_y = GetDWord_LSBFirst(
               (uint8_t*)&bmp_info_header_ptr->biYPelsPerMeter);
           if (bmp_ptr->height < 0) {
+            if (bmp_ptr->height == std::numeric_limits<int>::min()) {
+              bmp_error(bmp_ptr, "Unsupported height");
+              return 0;
+            }
             bmp_ptr->height = -bmp_ptr->height;
             bmp_ptr->imgTB_flag = true;
           }
