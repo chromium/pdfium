@@ -21,14 +21,10 @@
 
 #define FDE_TTOSTYLE_Underline 0x0001
 #define FDE_TTOSTYLE_Strikeout 0x0002
-#define FDE_TTOSTYLE_VerticalLayout 0x0004
 #define FDE_TTOSTYLE_SingleLine 0x0010
-#define FDE_TTOSTYLE_ExpandTab 0x0020
 #define FDE_TTOSTYLE_HotKey 0x0040
 #define FDE_TTOSTYLE_Ellipsis 0x0080
 #define FDE_TTOSTYLE_LineWrap 0x0100
-#define FDE_TTOSTYLE_ArabicShapes 0x0200
-#define FDE_TTOSTYLE_ArabicContext 0x0800
 #define FDE_TTOSTYLE_LastLineHeight 0x1000
 #define FDE_TTOALIGNMENT_TopLeft 0
 #define FDE_TTOALIGNMENT_TopCenter 1

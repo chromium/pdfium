@@ -23,25 +23,11 @@ class CFX_TxtPiece;
 class IFX_TxtAccess;
 struct FDE_TEXTEDITPIECE;
 
-#define FX_TXTLAYOUTSTYLE_MutipleFormat 0x0001
-#define FX_TXTLAYOUTSTYLE_VerticalLayout 0x0002
-#define FX_TXTLAYOUTSTYLE_VerticalChars 0x0004
-#define FX_TXTLAYOUTSTYLE_ReverseLine 0x0008
-#define FX_TXTLAYOUTSTYLE_ArabicContext 0x0010
-#define FX_TXTLAYOUTSTYLE_ArabicShapes 0x0020
-#define FX_TXTLAYOUTSTYLE_RTLReadingOrder 0x0040
-#define FX_TXTLAYOUTSTYLE_ExpandTab 0x0100
 #define FX_TXTLAYOUTSTYLE_SingleLine 0x0200
 #define FX_TXTLAYOUTSTYLE_CombText 0x0400
 
-#define FX_TXTCHARSTYLE_Alignment 0x000F
-#define FX_TXTCHARSTYLE_ArabicNumber 0x0010
 #define FX_TXTCHARSTYLE_ArabicShadda 0x0020
 #define FX_TXTCHARSTYLE_OddBidiLevel 0x0040
-#define FX_TXTCHARSTYLE_RTLReadingOrder 0x0080
-#define FX_TXTCHARSTYLE_ArabicContext 0x0300
-#define FX_TXTCHARSTYLE_ArabicIndic 0x0400
-#define FX_TXTCHARSTYLE_ArabicComma 0x0800
 
 enum CFX_TxtLineAlignment {
   CFX_TxtLineAlignment_Left = 0,
@@ -234,7 +220,6 @@ class CFX_TxtBreak {
   FX_CHARTYPE GetUnifiedCharType(FX_CHARTYPE dwType) const;
   void ResetArabicContext();
   void ResetContextCharStyles();
-  void EndBreak_UpdateArabicShapes();
   bool EndBreak_SplitLine(CFX_TxtLine* pNextLine, bool bAllChars);
   void EndBreak_BidiLine(std::deque<FX_TPO>* tpos, CFX_BreakType dwStatus);
   void EndBreak_Alignment(const std::deque<FX_TPO>& tpos,
@@ -250,10 +235,6 @@ class CFX_TxtBreak {
 
   int32_t m_iLineWidth;
   uint32_t m_dwLayoutStyles;
-  bool m_bVertical;
-  bool m_bArabicContext;
-  bool m_bArabicShapes;
-  bool m_bRTL;
   bool m_bSingleLine;
   bool m_bCombText;
   int32_t m_iArabicContext;
@@ -272,10 +253,7 @@ class CFX_TxtBreak {
   uint32_t m_dwContextCharStyles;
   int32_t m_iCombWidth;
   FX_CHARTYPE m_eCharType;
-  bool m_bCurRTL;
   int32_t m_iCurAlignment;
-  bool m_bArabicNumber;
-  bool m_bArabicComma;
   CFX_TxtLine m_TxtLine1;
   CFX_TxtLine m_TxtLine2;
   CFX_TxtLine* m_pCurLine;

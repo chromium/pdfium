@@ -1006,19 +1006,10 @@ void CFDE_TxtEdtEngine::UpdateTxtBreak() {
   else
     dwStyle |= FX_TXTLAYOUTSTYLE_SingleLine;
 
-  dwStyle &= ~FX_TXTLAYOUTSTYLE_VerticalLayout;
-  dwStyle &= ~FX_TXTLAYOUTSTYLE_ReverseLine;
-  dwStyle &= ~FX_TXTLAYOUTSTYLE_RTLReadingOrder;
-
   if (m_Param.dwLayoutStyles & FDE_TEXTEDITLAYOUT_CombText)
     dwStyle |= FX_TXTLAYOUTSTYLE_CombText;
   else
     dwStyle &= ~FX_TXTLAYOUTSTYLE_CombText;
-
-  dwStyle &= ~FX_TXTLAYOUTSTYLE_VerticalChars;
-  dwStyle &= ~FX_TXTLAYOUTSTYLE_ExpandTab;
-  dwStyle &= ~FX_TXTLAYOUTSTYLE_ArabicContext;
-  dwStyle &= ~FX_TXTLAYOUTSTYLE_ArabicShapes;
 
   m_pTextBreak->SetLayoutStyles(dwStyle);
   uint32_t dwAligment = 0;

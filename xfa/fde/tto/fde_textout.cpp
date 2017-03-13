@@ -67,22 +67,9 @@ void CFDE_TextOut::SetTextColor(FX_ARGB color) {
 void CFDE_TextOut::SetStyles(uint32_t dwStyles) {
   m_dwStyles = dwStyles;
   m_dwTxtBkStyles = 0;
-  if (dwStyles & FDE_TTOSTYLE_SingleLine) {
+  if (dwStyles & FDE_TTOSTYLE_SingleLine)
     m_dwTxtBkStyles |= FX_TXTLAYOUTSTYLE_SingleLine;
-  }
-  if (dwStyles & FDE_TTOSTYLE_ExpandTab) {
-    m_dwTxtBkStyles |= FX_TXTLAYOUTSTYLE_ExpandTab;
-  }
-  if (dwStyles & FDE_TTOSTYLE_ArabicShapes) {
-    m_dwTxtBkStyles |= FX_TXTLAYOUTSTYLE_ArabicShapes;
-  }
-  if (dwStyles & FDE_TTOSTYLE_ArabicContext) {
-    m_dwTxtBkStyles |= FX_TXTLAYOUTSTYLE_ArabicContext;
-  }
-  if (dwStyles & FDE_TTOSTYLE_VerticalLayout) {
-    m_dwTxtBkStyles |=
-        (FX_TXTLAYOUTSTYLE_VerticalChars | FX_TXTLAYOUTSTYLE_VerticalLayout);
-  }
+
   m_pTxtBreak->SetLayoutStyles(m_dwTxtBkStyles);
 }
 
@@ -192,10 +179,9 @@ void CFDE_TextOut::CalcTextSize(const FX_WCHAR* pwsStr,
   m_iTotalLines = 0;
   const FX_WCHAR* pStr = pwsStr;
   bool bHotKey = !!(m_dwStyles & FDE_TTOSTYLE_HotKey);
-  bool bVertical = !!(m_dwStyles & FDE_TTOSTYLE_VerticalLayout);
   FX_FLOAT fWidth = 0.0f;
   FX_FLOAT fHeight = 0.0f;
-  FX_FLOAT fStartPos = bVertical ? rect.bottom() : rect.right();
+  FX_FLOAT fStartPos = rect.right();
   CFX_BreakType dwBreakStatus = CFX_BreakType::None;
   FX_WCHAR wPreChar = 0;
   FX_WCHAR wch;
@@ -222,45 +208,27 @@ void CFDE_TextOut::CalcTextSize(const FX_WCHAR* pwsStr,
 
   m_pTxtBreak->Reset();
   FX_FLOAT fInc = rect.Height() - fHeight;
-  if (bVertical) {
-    fInc = rect.Width() - fHeight;
-  }
   if (m_iAlignment >= FDE_TTOALIGNMENT_CenterLeft &&
       m_iAlignment < FDE_TTOALIGNMENT_BottomLeft) {
     fInc /= 2.0f;
   } else if (m_iAlignment < FDE_TTOALIGNMENT_CenterLeft) {
     fInc = 0.0f;
   }
-  if (bVertical) {
-    rect.top += fStartPos;
-    rect.left += fInc;
-    rect.width = fHeight;
-    rect.height = std::min(fWidth, rect.Height());
-  } else {
-    rect.left += fStartPos;
-    rect.top += fInc;
-    rect.width = std::min(fWidth, rect.Width());
-    rect.height = fHeight;
-    if (m_dwStyles & FDE_TTOSTYLE_LastLineHeight) {
-      rect.height -= m_fLineSpace - m_fFontSize;
-    }
-  }
+  rect.left += fStartPos;
+  rect.top += fInc;
+  rect.width = std::min(fWidth, rect.Width());
+  rect.height = fHeight;
+  if (m_dwStyles & FDE_TTOSTYLE_LastLineHeight)
+    rect.height -= m_fLineSpace - m_fFontSize;
 }
 
 void CFDE_TextOut::SetLineWidth(CFX_RectF& rect) {
   if ((m_dwStyles & FDE_TTOSTYLE_SingleLine) == 0) {
     FX_FLOAT fLineWidth = 0.0f;
-    if (m_dwStyles & FDE_TTOSTYLE_VerticalLayout) {
-      if (rect.Height() < 1.0f) {
-        rect.height = m_fFontSize * 1000.0f;
-      }
-      fLineWidth = rect.Height();
-    } else {
-      if (rect.Width() < 1.0f) {
-        rect.width = m_fFontSize * 1000.0f;
-      }
-      fLineWidth = rect.Width();
-    }
+    if (rect.Width() < 1.0f)
+      rect.width = m_fFontSize * 1000.0f;
+
+    fLineWidth = rect.Width();
     m_pTxtBreak->SetLineWidth(fLineWidth);
   }
 }
@@ -354,14 +322,10 @@ void CFDE_TextOut::DrawText(const FX_WCHAR* pwsStr,
   ASSERT(m_pFont && m_fFontSize >= 1.0f);
   if (!pwsStr || iLength < 1)
     return;
-
-  if (rect.width < m_fFontSize || rect.height < m_fFontSize) {
+  if (rect.width < m_fFontSize || rect.height < m_fFontSize)
     return;
-  }
+
   FX_FLOAT fLineWidth = rect.width;
-  if (m_dwStyles & FDE_TTOSTYLE_VerticalLayout) {
-    fLineWidth = rect.height;
-  }
   m_pTxtBreak->SetLineWidth(fLineWidth);
   m_ttoLines.clear();
   m_wsText.clear();
@@ -443,15 +407,11 @@ void CFDE_TextOut::LoadText(const FX_WCHAR* pwsStr,
   int32_t iTxtLength = iLength;
   ExpandBuffer(iTxtLength, 0);
   bool bHotKey = !!(m_dwStyles & FDE_TTOSTYLE_HotKey);
-  bool bVertical = !!(m_dwStyles & FDE_TTOSTYLE_VerticalLayout);
   bool bLineWrap = !!(m_dwStyles & FDE_TTOSTYLE_LineWrap);
   FX_FLOAT fLineStep =
       (m_fLineSpace > m_fFontSize) ? m_fLineSpace : m_fFontSize;
-  FX_FLOAT fLineStop = bVertical ? rect.left : rect.bottom();
-  m_fLinePos = bVertical ? rect.right() : rect.top;
-  if (bVertical) {
-    fLineStep = -fLineStep;
-  }
+  FX_FLOAT fLineStop = rect.bottom();
+  m_fLinePos = rect.top;
   m_hotKeys.RemoveAll();
   int32_t iStartChar = 0;
   int32_t iChars = 0;
@@ -479,8 +439,7 @@ void CFDE_TextOut::LoadText(const FX_WCHAR* pwsStr,
         m_iCurLine++;
         m_fLinePos += fLineStep;
       }
-      if ((bVertical && m_fLinePos + fLineStep < fLineStop) ||
-          (!bVertical && m_fLinePos + fLineStep > fLineStop)) {
+      if (m_fLinePos + fLineStep > fLineStop) {
         int32_t iCurLine = bEndofLine ? m_iCurLine - 1 : m_iCurLine;
         m_ttoLines[iCurLine].SetNewReload(true);
         bRet = true;
@@ -504,15 +463,11 @@ bool CFDE_TextOut::RetrievePieces(CFX_BreakType dwBreakStatus,
                                   const CFX_RectF& rect) {
   bool bSingleLine = !!(m_dwStyles & FDE_TTOSTYLE_SingleLine);
   bool bLineWrap = !!(m_dwStyles & FDE_TTOSTYLE_LineWrap);
-  bool bVertical = !!(m_dwStyles & FDE_TTOSTYLE_VerticalLayout);
   FX_FLOAT fLineStep =
       (m_fLineSpace > m_fFontSize) ? m_fLineSpace : m_fFontSize;
-  if (bVertical) {
-    fLineStep = -fLineStep;
-  }
   CFX_Char* pTC = nullptr;
   bool bNeedReload = false;
-  FX_FLOAT fLineWidth = bVertical ? rect.Height() : rect.Width();
+  FX_FLOAT fLineWidth = rect.Width();
   int32_t iLineWidth = FXSYS_round(fLineWidth * 20000.0f);
   int32_t iCount = m_pTxtBreak->CountBreakPieces();
   for (int32_t i = 0; i < iCount; i++) {
@@ -537,17 +492,11 @@ bool CFDE_TextOut::RetrievePieces(CFX_BreakType dwBreakStatus,
       m_ttoLines[m_iCurLine].SetNewReload(true);
     } else if (j > 0) {
       CFX_RectF rtPiece;
-      if (bVertical) {
-        rtPiece.left = m_fLinePos;
-        rtPiece.top = rect.top + (FX_FLOAT)pPiece->m_iStartPos / 20000.0f;
-        rtPiece.width = fLineStep;
-        rtPiece.height = iWidth / 20000.0f;
-      } else {
-        rtPiece.left = rect.left + (FX_FLOAT)pPiece->m_iStartPos / 20000.0f;
-        rtPiece.top = m_fLinePos;
-        rtPiece.width = iWidth / 20000.0f;
-        rtPiece.height = fLineStep;
-      }
+      rtPiece.left = rect.left + (FX_FLOAT)pPiece->m_iStartPos / 20000.0f;
+      rtPiece.top = m_fLinePos;
+      rtPiece.width = iWidth / 20000.0f;
+      rtPiece.height = fLineStep;
+
       FDE_TTOPIECE ttoPiece;
       ttoPiece.iStartChar = iStartChar;
       ttoPiece.iChars = j;
@@ -645,11 +594,10 @@ void CFDE_TextOut::Reload(const CFX_RectF& rect) {
 
 void CFDE_TextOut::ReloadLinePiece(CFDE_TTOLine* pLine, const CFX_RectF& rect) {
   const FX_WCHAR* pwsStr = m_wsText.c_str();
-  bool bVertical = !!(m_dwStyles & FDE_TTOSTYLE_VerticalLayout);
   int32_t iPieceWidths = 0;
   FDE_TTOPIECE* pPiece = pLine->GetPtrAt(0);
   int32_t iStartChar = pPiece->iStartChar;
-  m_fLinePos = bVertical ? pPiece->rtPiece.left : pPiece->rtPiece.top;
+  m_fLinePos = pPiece->rtPiece.top;
   int32_t iPieceCount = pLine->GetSize();
   int32_t iPieceIndex = 0;
   CFX_BreakType dwBreakStatus = CFX_BreakType::None;
@@ -678,14 +626,12 @@ void CFDE_TextOut::DoAlignment(const CFX_RectF& rect) {
   if (m_ttoLines.empty())
     return;
 
-  bool bVertical = !!(m_dwStyles & FDE_TTOSTYLE_VerticalLayout);
-  FX_FLOAT fLineStopS = bVertical ? rect.right() : rect.bottom();
+  FX_FLOAT fLineStopS = rect.bottom();
   FDE_TTOPIECE* pFirstPiece = m_ttoLines.back().GetPtrAt(0);
   if (!pFirstPiece)
     return;
 
-  FX_FLOAT fLineStopD =
-      bVertical ? pFirstPiece->rtPiece.right() : pFirstPiece->rtPiece.bottom();
+  FX_FLOAT fLineStopD = pFirstPiece->rtPiece.bottom();
   FX_FLOAT fInc = fLineStopS - fLineStopD;
   if (m_iAlignment >= FDE_TTOALIGNMENT_CenterLeft &&
       m_iAlignment < FDE_TTOALIGNMENT_BottomLeft) {
@@ -699,10 +645,7 @@ void CFDE_TextOut::DoAlignment(const CFX_RectF& rect) {
     int32_t iPieces = line.GetSize();
     for (int32_t j = 0; j < iPieces; j++) {
       FDE_TTOPIECE* pPiece = line.GetPtrAt(j);
-      if (bVertical)
-        pPiece->rtPiece.left += fInc;
-      else
-        pPiece->rtPiece.top += fInc;
+      pPiece->rtPiece.top += fInc;
     }
   }
 }
@@ -768,7 +711,6 @@ void CFDE_TextOut::DrawLine(const FDE_TTOPIECE* pPiece, CFDE_Pen* pPen) {
   bool bUnderLine = !!(m_dwStyles & FDE_TTOSTYLE_Underline);
   bool bStrikeOut = !!(m_dwStyles & FDE_TTOSTYLE_Strikeout);
   bool bHotKey = !!(m_dwStyles & FDE_TTOSTYLE_HotKey);
-  bool bVertical = !!(m_dwStyles & FDE_TTOSTYLE_VerticalLayout);
   if (!bUnderLine && !bStrikeOut && !bHotKey)
     return;
 
@@ -777,32 +719,18 @@ void CFDE_TextOut::DrawLine(const FDE_TTOPIECE* pPiece, CFDE_Pen* pPen) {
   CFX_RectF rtText = pPiece->rtPiece;
   CFX_PointF pt1, pt2;
   if (bUnderLine) {
-    if (bVertical) {
-      pt1.x = rtText.left;
-      pt1.y = rtText.top;
-      pt2.x = rtText.left;
-      pt2.y = rtText.bottom();
-    } else {
-      pt1.x = rtText.left;
-      pt1.y = rtText.bottom();
-      pt2.x = rtText.right();
-      pt2.y = rtText.bottom();
-    }
+    pt1.x = rtText.left;
+    pt1.y = rtText.bottom();
+    pt2.x = rtText.right();
+    pt2.y = rtText.bottom();
     pPath->AddLine(pt1, pt2);
     iLineCount++;
   }
   if (bStrikeOut) {
-    if (bVertical) {
-      pt1.x = rtText.left + rtText.width * 2.0f / 5.0f;
-      pt1.y = rtText.top;
-      pt2.x = pt1.x;
-      pt2.y = rtText.bottom();
-    } else {
-      pt1.x = rtText.left;
-      pt1.y = rtText.bottom() - rtText.height * 2.0f / 5.0f;
-      pt2.x = rtText.right();
-      pt2.y = pt1.y;
-    }
+    pt1.x = rtText.left;
+    pt1.y = rtText.bottom() - rtText.height * 2.0f / 5.0f;
+    pt2.x = rtText.right();
+    pt2.y = pt1.y;
     pPath->AddLine(pt1, pt2);
     iLineCount++;
   }
@@ -815,17 +743,10 @@ void CFDE_TextOut::DrawLine(const FDE_TTOPIECE* pPiece, CFDE_Pen* pPen) {
         if (iCharIndex >= pPiece->iStartChar &&
             iCharIndex < pPiece->iStartChar + pPiece->iChars) {
           CFX_RectF rect = m_rectArray[iCharIndex - pPiece->iStartChar];
-          if (bVertical) {
-            pt1.x = rect.left;
-            pt1.y = rect.top;
-            pt2.x = rect.left;
-            pt2.y = rect.bottom();
-          } else {
-            pt1.x = rect.left;
-            pt1.y = rect.bottom();
-            pt2.x = rect.right();
-            pt2.y = rect.bottom();
-          }
+          pt1.x = rect.left;
+          pt1.y = rect.bottom();
+          pt2.x = rect.right();
+          pt2.y = rect.bottom();
           pPath->AddLine(pt1, pt2);
           iLineCount++;
         }
