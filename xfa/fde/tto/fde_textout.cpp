@@ -245,7 +245,7 @@ bool CFDE_TextOut::RetrieveLineWidth(CFX_BreakType dwBreakStatus,
   FX_FLOAT fLineWidth = 0.0f;
   int32_t iCount = m_pTxtBreak->CountBreakPieces();
   for (int32_t i = 0; i < iCount; i++) {
-    const CFX_TxtPiece* pPiece = m_pTxtBreak->GetBreakPiece(i);
+    const CFX_BreakPiece* pPiece = m_pTxtBreak->GetBreakPiece(i);
     fLineWidth += static_cast<FX_FLOAT>(pPiece->m_iWidth) / 20000.0f;
     fStartPos = std::min(fStartPos,
                          static_cast<FX_FLOAT>(pPiece->m_iStartPos) / 20000.0f);
@@ -387,10 +387,11 @@ void CFDE_TextOut::RetrieveEllPieces(std::vector<int32_t>* pCharWidths) {
   int32_t iCount = m_pTxtBreak->CountBreakPieces();
   int32_t iCharIndex = 0;
   for (int32_t i = 0; i < iCount; i++) {
-    const CFX_TxtPiece* pPiece = m_pTxtBreak->GetBreakPiece(i);
+    const CFX_BreakPiece* pPiece = m_pTxtBreak->GetBreakPiece(i);
     int32_t iPieceChars = pPiece->GetLength();
     for (int32_t j = 0; j < iPieceChars; j++) {
-      (*pCharWidths)[iCharIndex] = std::max(pPiece->GetChar(j).m_iCharWidth, 0);
+      (*pCharWidths)[iCharIndex] =
+          std::max(pPiece->GetChar(j)->m_iCharWidth, 0);
       m_iEllipsisWidth += (*pCharWidths)[iCharIndex];
       iCharIndex++;
     }
@@ -468,14 +469,14 @@ bool CFDE_TextOut::RetrievePieces(CFX_BreakType dwBreakStatus,
   int32_t iLineWidth = FXSYS_round(fLineWidth * 20000.0f);
   int32_t iCount = m_pTxtBreak->CountBreakPieces();
   for (int32_t i = 0; i < iCount; i++) {
-    const CFX_TxtPiece* pPiece = m_pTxtBreak->GetBreakPiece(i);
+    const CFX_BreakPiece* pPiece = m_pTxtBreak->GetBreakPiece(i);
     int32_t iPieceChars = pPiece->GetLength();
     int32_t iChar = iStartChar;
     int32_t iWidth = 0;
     int32_t j = 0;
     for (; j < iPieceChars; j++) {
-      const CFX_Char& pTC = pPiece->GetChar(j);
-      int32_t iCurCharWidth = pTC.m_iCharWidth > 0 ? pTC.m_iCharWidth : 0;
+      const CFX_Char* pTC = pPiece->GetChar(j);
+      int32_t iCurCharWidth = pTC->m_iCharWidth > 0 ? pTC->m_iCharWidth : 0;
       if (bSingleLine || !bLineWrap) {
         if (iLineWidth - iPieceWidths - iWidth < iCurCharWidth) {
           bNeedReload = true;

@@ -44,82 +44,6 @@ struct FX_RTFTEXTOBJ {
   int32_t iVerticalScale;
 };
 
-class CFX_RTFPiece {
- public:
-  CFX_RTFPiece();
-  CFX_RTFPiece(const CFX_RTFPiece& other);
-  ~CFX_RTFPiece();
-
-  int32_t GetEndPos() const {
-    return m_iWidth < 0 ? m_iStartPos : m_iStartPos + m_iWidth;
-  }
-
-  CFX_RTFChar& GetChar(int32_t index) {
-    ASSERT(index > -1 && index < m_iChars && m_pChars);
-    return (*m_pChars)[m_iStartChar + index];
-  }
-
-  CFX_WideString GetString() const {
-    CFX_WideString ret;
-    ret.Reserve(m_iChars);
-    for (int32_t i = m_iStartChar; i < m_iStartChar + m_iChars; i++)
-      ret += static_cast<FX_WCHAR>((*m_pChars)[i].m_wCharCode);
-    return ret;
-  }
-
-  std::vector<int32_t> GetWidths() const {
-    std::vector<int32_t> ret;
-    ret.reserve(m_iChars);
-    for (int32_t i = m_iStartChar; i < m_iStartChar + m_iChars; i++)
-      ret.push_back((*m_pChars)[i].m_iCharWidth);
-    return ret;
-  }
-
-  CFX_BreakType m_dwStatus;
-  int32_t m_iStartPos;
-  int32_t m_iWidth;
-  int32_t m_iStartChar;
-  int32_t m_iChars;
-  int32_t m_iBidiLevel;
-  int32_t m_iBidiPos;
-  int32_t m_iFontSize;
-  int32_t m_iFontHeight;
-  int32_t m_iHorizontalScale;
-  int32_t m_iVerticalScale;
-  uint32_t m_dwIdentity;
-  std::vector<CFX_RTFChar>* m_pChars;  // not owned.
-  CFX_RetainPtr<CFX_Retainable> m_pUserData;
-};
-
-class CFX_RTFLine {
- public:
-  CFX_RTFLine();
-  ~CFX_RTFLine();
-
-  int32_t CountChars() const {
-    return pdfium::CollectionSize<int32_t>(m_LineChars);
-  }
-
-  CFX_RTFChar& GetChar(int32_t index) {
-    ASSERT(index >= 0 && index < pdfium::CollectionSize<int32_t>(m_LineChars));
-    return m_LineChars[index];
-  }
-
-  int32_t GetLineEnd() const { return m_iStart + m_iWidth; }
-  void Clear() {
-    m_LineChars.clear();
-    m_LinePieces.clear();
-    m_iWidth = 0;
-    m_iArabicChars = 0;
-  }
-
-  std::vector<CFX_RTFChar> m_LineChars;
-  std::vector<CFX_RTFPiece> m_LinePieces;
-  int32_t m_iStart;
-  int32_t m_iWidth;
-  int32_t m_iArabicChars;
-};
-
 class CFX_RTFBreak {
  public:
   explicit CFX_RTFBreak(uint32_t dwLayoutStyles);
@@ -141,7 +65,7 @@ class CFX_RTFBreak {
 
   CFX_BreakType EndBreak(CFX_BreakType dwStatus);
   int32_t CountBreakPieces() const;
-  const CFX_RTFPiece* GetBreakPieceUnstable(int32_t index) const;
+  const CFX_BreakPiece* GetBreakPieceUnstable(int32_t index) const;
   void ClearBreakPieces();
 
   void Reset();
@@ -152,30 +76,30 @@ class CFX_RTFBreak {
 
   CFX_BreakType AppendChar(FX_WCHAR wch);
 
-  CFX_RTFLine* GetCurrentLineForTesting() const { return m_pCurLine; }
+  CFX_BreakLine* GetCurrentLineForTesting() const { return m_pCurLine; }
 
  private:
-  void AppendChar_Combination(CFX_RTFChar* pCurChar);
-  void AppendChar_Tab(CFX_RTFChar* pCurChar);
-  CFX_BreakType AppendChar_Control(CFX_RTFChar* pCurChar);
-  CFX_BreakType AppendChar_Arabic(CFX_RTFChar* pCurChar);
-  CFX_BreakType AppendChar_Others(CFX_RTFChar* pCurChar);
+  void AppendChar_Combination(CFX_Char* pCurChar);
+  void AppendChar_Tab(CFX_Char* pCurChar);
+  CFX_BreakType AppendChar_Control(CFX_Char* pCurChar);
+  CFX_BreakType AppendChar_Arabic(CFX_Char* pCurChar);
+  CFX_BreakType AppendChar_Others(CFX_Char* pCurChar);
   void FontChanged();
   void SetBreakStatus();
-  CFX_RTFChar* GetLastChar(int32_t index) const;
+  CFX_Char* GetLastChar(int32_t index) const;
   bool HasRTFLine() const { return m_iReadyLineIndex >= 0; }
   FX_CHARTYPE GetUnifiedCharType(FX_CHARTYPE chartype) const;
   int32_t GetLastPositionedTab() const;
   bool GetPositionedTab(int32_t* iTabPos) const;
 
-  int32_t GetBreakPos(std::vector<CFX_RTFChar>& tca,
+  int32_t GetBreakPos(std::vector<CFX_Char>& tca,
                       int32_t& iEndPos,
                       bool bAllChars,
                       bool bOnlyBrk);
-  void SplitTextLine(CFX_RTFLine* pCurLine,
-                     CFX_RTFLine* pNextLine,
+  void SplitTextLine(CFX_BreakLine* pCurLine,
+                     CFX_BreakLine* pNextLine,
                      bool bAllChars);
-  bool EndBreak_SplitLine(CFX_RTFLine* pNextLine,
+  bool EndBreak_SplitLine(CFX_BreakLine* pNextLine,
                           bool bAllChars,
                           CFX_BreakType dwStatus);
   void EndBreak_BidiLine(std::deque<FX_TPO>* tpos, CFX_BreakType dwStatus);
@@ -202,8 +126,8 @@ class CFX_RTFBreak {
   CFX_RetainPtr<CFX_Retainable> m_pUserData;
   FX_CHARTYPE m_eCharType;
   uint32_t m_dwIdentity;
-  CFX_RTFLine m_RTFLine[2];
-  CFX_RTFLine* m_pCurLine;
+  CFX_BreakLine m_RTFLine[2];
+  CFX_BreakLine* m_pCurLine;
   int32_t m_iTolerance;
   int8_t m_iReadyLineIndex;
 };

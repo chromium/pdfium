@@ -9,8 +9,8 @@
 
 #include <vector>
 
+#include "core/fxcrt/cfx_char.h"
 #include "core/fxcrt/fx_system.h"
-#include "core/fxcrt/fx_ucd.h"
 
 #define FX_BIDIMAXLEVEL 61
 #define FX_BidiDirection(a) (FX_IsOdd(a) ? FX_BIDICLASS_R : FX_BIDICLASS_L)
@@ -164,10 +164,7 @@ const FX_ARBFORMTABLE* FX_GetArabicFormTable(FX_WCHAR unicode);
 FX_WCHAR FX_GetArabicFromAlefTable(FX_WCHAR alef);
 FX_WCHAR FX_GetArabicFromShaddaTable(FX_WCHAR shadda);
 
-void FX_BidiLine(std::vector<CFX_TxtChar>& chars,
-                 int32_t iCount,
-                 int32_t iBaseLevel = 0);
-void FX_BidiLine(std::vector<CFX_RTFChar>& chars,
+void FX_BidiLine(std::vector<CFX_Char>& chars,
                  int32_t iCount,
                  int32_t iBaseLevel = 0);
 

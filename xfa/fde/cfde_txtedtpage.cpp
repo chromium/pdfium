@@ -296,7 +296,7 @@ int32_t CFDE_TxtEdtPage::LoadPage(const CFX_RectF* pClipBox,
     if (!CFX_BreakTypeNoneOrPiece(dwBreakStatus)) {
       int32_t nPieceCount = pBreak->CountBreakPieces();
       for (int32_t j = 0; j < nPieceCount; j++) {
-        const CFX_TxtPiece* pPiece = pBreak->GetBreakPiece(j);
+        const CFX_BreakPiece* pPiece = pBreak->GetBreakPiece(j);
         FDE_TEXTEDITPIECE TxtEdtPiece;
         FXSYS_memset(&TxtEdtPiece, 0, sizeof(FDE_TEXTEDITPIECE));
         TxtEdtPiece.nBidiLevel = pPiece->m_iBidiLevel;
@@ -345,7 +345,7 @@ int32_t CFDE_TxtEdtPage::LoadPage(const CFX_RectF* pClipBox,
         m_Pieces.push_back(TxtEdtPiece);
         for (int32_t k = 0; k < TxtEdtPiece.nCount; k++) {
           m_CharWidths[TxtEdtPiece.nStart + k] =
-              pPiece->GetChar(k).m_iCharWidth;
+              pPiece->GetChar(k)->m_iCharWidth;
         }
       }
       fLinePos += fLineStep;

@@ -410,10 +410,9 @@ void FX_BidiReorder(int32_t iBaseLevel,
   }
 }
 
-template <class baseType>
 class CFX_BidiLineTemplate {
  public:
-  void FX_BidiReverseString(std::vector<baseType>& chars,
+  void FX_BidiReverseString(std::vector<CFX_Char>& chars,
                             int32_t iStart,
                             int32_t iCount) {
     ASSERT(iStart >= 0 && iStart < pdfium::CollectionSize<int32_t>(chars));
@@ -422,7 +421,7 @@ class CFX_BidiLineTemplate {
     std::reverse(chars.begin() + iStart, chars.begin() + iStart + iCount);
   }
 
-  void FX_BidiSetDeferredRun(std::vector<baseType>& chars,
+  void FX_BidiSetDeferredRun(std::vector<CFX_Char>& chars,
                              bool bClass,
                              int32_t iStart,
                              int32_t iCount,
@@ -439,7 +438,7 @@ class CFX_BidiLineTemplate {
     }
   }
 
-  void FX_BidiClassify(std::vector<baseType>& chars, int32_t iCount, bool bWS) {
+  void FX_BidiClassify(std::vector<CFX_Char>& chars, int32_t iCount, bool bWS) {
     ASSERT(iCount >= 0 && iCount <= pdfium::CollectionSize<int32_t>(chars));
     if (bWS) {
       for (int32_t i = 0; i < iCount; i++) {
@@ -456,7 +455,7 @@ class CFX_BidiLineTemplate {
     }
   }
 
-  void FX_BidiResolveExplicit(std::vector<baseType>& chars,
+  void FX_BidiResolveExplicit(std::vector<CFX_Char>& chars,
                               int32_t iCount,
                               int32_t iBaseLevel) {
     ASSERT(iCount >= 0 && iCount <= pdfium::CollectionSize<int32_t>(chars));
@@ -465,7 +464,7 @@ class CFX_BidiLineTemplate {
       chars[i].m_iBidiLevel = static_cast<int16_t>(iBaseLevel);
   }
 
-  void FX_BidiResolveWeak(std::vector<baseType>& chars,
+  void FX_BidiResolveWeak(std::vector<CFX_Char>& chars,
                           int32_t iCount,
                           int32_t iBaseLevel) {
     ASSERT(iCount >= 0 && iCount <= pdfium::CollectionSize<int32_t>(chars));
@@ -473,7 +472,7 @@ class CFX_BidiLineTemplate {
     if (iCount < 1) {
       return;
     }
-    baseType *pTC, *pTCNext;
+    CFX_Char *pTC, *pTCNext;
     int32_t iLevelCur = iBaseLevel;
     int32_t iState = FX_IsOdd(iBaseLevel) ? FX_BWSxr : FX_BWSxl;
     int32_t i = 0, iNum = 0, iClsCur, iClsRun, iClsNew, iAction;
@@ -537,7 +536,7 @@ class CFX_BidiLineTemplate {
     }
   }
 
-  void FX_BidiResolveNeutrals(std::vector<baseType>& chars,
+  void FX_BidiResolveNeutrals(std::vector<CFX_Char>& chars,
                               int32_t iCount,
                               int32_t iBaseLevel) {
     ASSERT(iCount >= 0 && iCount <= pdfium::CollectionSize<int32_t>(chars));
@@ -546,7 +545,7 @@ class CFX_BidiLineTemplate {
     if (iCount < 1) {
       return;
     }
-    baseType* pTC;
+    CFX_Char* pTC;
     int32_t iLevel = iBaseLevel;
     int32_t iState = FX_IsOdd(iBaseLevel) ? FX_BNSr : FX_BNSl;
     int32_t i = 0, iNum = 0, iClsCur, iClsRun, iClsNew, iAction;
@@ -586,7 +585,7 @@ class CFX_BidiLineTemplate {
     }
   }
 
-  void FX_BidiResolveImplicit(std::vector<baseType>& chars, int32_t iCount) {
+  void FX_BidiResolveImplicit(std::vector<CFX_Char>& chars, int32_t iCount) {
     ASSERT(iCount >= 0 && iCount <= pdfium::CollectionSize<int32_t>(chars));
     for (int32_t i = 0; i < iCount; i++) {
       int32_t iCls = chars[i].m_iBidiClass;
@@ -600,7 +599,7 @@ class CFX_BidiLineTemplate {
     }
   }
 
-  void FX_BidiResolveWhitespace(std::vector<baseType>& chars,
+  void FX_BidiResolveWhitespace(std::vector<CFX_Char>& chars,
                                 int32_t iCount,
                                 int32_t iBaseLevel) {
     ASSERT(iCount >= 0 && iCount <= pdfium::CollectionSize<int32_t>(chars));
@@ -644,7 +643,7 @@ class CFX_BidiLineTemplate {
     }
   }
 
-  int32_t FX_BidiReorderLevel(std::vector<baseType>& chars,
+  int32_t FX_BidiReorderLevel(std::vector<CFX_Char>& chars,
                               int32_t iCount,
                               int32_t iBaseLevel,
                               int32_t iStart,
@@ -672,7 +671,7 @@ class CFX_BidiLineTemplate {
     return iNum;
   }
 
-  void FX_BidiReorder(std::vector<baseType>& chars,
+  void FX_BidiReorder(std::vector<CFX_Char>& chars,
                       int32_t iCount,
                       int32_t iBaseLevel) {
     ASSERT(iCount >= 0 && iCount <= pdfium::CollectionSize<int32_t>(chars));
@@ -683,13 +682,13 @@ class CFX_BidiLineTemplate {
     }
   }
 
-  void FX_BidiPosition(std::vector<baseType>& chars, int32_t iCount) {
+  void FX_BidiPosition(std::vector<CFX_Char>& chars, int32_t iCount) {
     ASSERT(iCount >= 0 && iCount <= pdfium::CollectionSize<int32_t>(chars));
     for (int32_t i = 0; i < iCount; ++i)
       chars[chars[i].m_iBidiPos].m_iBidiOrder = i;
   }
 
-  void FX_BidiLine(std::vector<baseType>& chars,
+  void FX_BidiLine(std::vector<CFX_Char>& chars,
                    int32_t iCount,
                    int32_t iBaseLevel) {
     ASSERT(iCount >= 0 && iCount <= pdfium::CollectionSize<int32_t>(chars));
@@ -708,15 +707,9 @@ class CFX_BidiLineTemplate {
   }
 };
 
-void FX_BidiLine(std::vector<CFX_TxtChar>& chars,
+void FX_BidiLine(std::vector<CFX_Char>& chars,
                  int32_t iCount,
                  int32_t iBaseLevel) {
-  CFX_BidiLineTemplate<CFX_TxtChar> blt;
-  blt.FX_BidiLine(chars, iCount, iBaseLevel);
-}
-void FX_BidiLine(std::vector<CFX_RTFChar>& chars,
-                 int32_t iCount,
-                 int32_t iBaseLevel) {
-  CFX_BidiLineTemplate<CFX_RTFChar> blt;
+  CFX_BidiLineTemplate blt;
   blt.FX_BidiLine(chars, iCount, iBaseLevel);
 }
