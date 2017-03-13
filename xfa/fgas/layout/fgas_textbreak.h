@@ -71,6 +71,8 @@ struct FX_TXTRUN {
 class CFX_TxtPiece {
  public:
   CFX_TxtPiece();
+  CFX_TxtPiece(const CFX_TxtPiece& other);
+  ~CFX_TxtPiece();
 
   int32_t GetEndPos() const {
     return m_iWidth < 0 ? m_iStartPos : m_iStartPos + m_iWidth;
@@ -103,8 +105,6 @@ class CFX_TxtPiece {
   std::vector<CFX_TxtChar>* m_pChars;
 };
 
-typedef CFX_BaseArrayTemplate<CFX_TxtPiece> CFX_TxtPieceArray;
-
 class CFX_TxtLine {
  public:
   CFX_TxtLine();
@@ -124,10 +124,13 @@ class CFX_TxtLine {
     return &m_LineChars[index];
   }
 
-  int32_t CountPieces() const { return m_LinePieces.GetSize(); }
-  CFX_TxtPiece* GetPiecePtr(int32_t index) const {
-    ASSERT(index > -1 && index < m_LinePieces.GetSize());
-    return m_LinePieces.GetPtrAt(index);
+  int32_t CountPieces() const {
+    return pdfium::CollectionSize<int32_t>(m_LinePieces);
+  }
+
+  const CFX_TxtPiece* GetPiecePtr(int32_t index) const {
+    ASSERT(index >= 0 && index < CountPieces());
+    return &m_LinePieces[index];
   }
 
   void GetString(CFX_WideString& wsStr) const {
@@ -138,15 +141,15 @@ class CFX_TxtLine {
     wsStr.ReleaseBuffer(iCount);
   }
 
-  void RemoveAll(bool bLeaveMemory = false) {
+  void Clear() {
     m_LineChars.clear();
-    m_LinePieces.RemoveAll(bLeaveMemory);
+    m_LinePieces.clear();
     m_iWidth = 0;
     m_iArabicChars = 0;
   }
 
   std::vector<CFX_TxtChar> m_LineChars;
-  CFX_TxtPieceArray m_LinePieces;
+  std::vector<CFX_TxtPiece> m_LinePieces;
   int32_t m_iStart;
   int32_t m_iWidth;
   int32_t m_iArabicChars;
