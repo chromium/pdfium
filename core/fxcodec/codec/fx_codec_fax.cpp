@@ -315,6 +315,8 @@ bool FaxG4GetRow(const uint8_t* src_buf,
         }
         if (a0 < 0)
           ++run_len1;
+        if (run_len1 < 0)
+          return false;
 
         a1 = a0 + run_len1;
         if (!a0color)
@@ -329,6 +331,8 @@ bool FaxG4GetRow(const uint8_t* src_buf,
             break;
           }
         }
+        if (run_len2 < 0)
+          return false;
         a2 = a1 + run_len2;
         if (a0color)
           FaxFillBits(dest_buf, columns, a1, a2);
