@@ -38,4 +38,5 @@ Local Modifications:
 0026-use_opj_uint_ceildiv.patch: Remove (OPJ_UINT32)opj_int_ceildiv((OPJ_INT32)a, (OPJ_INT32) b).
 0027-undefined-shift-opj_t1_decode_cblk.patch: upstream fix for a ubsan bug.
 0028-upstream-check-size-in-opj_j2k_read_siz.patch: upstream patch in j2k.c.
+0029-avoid-division-by-0: fix some /0 and %0 in pi.c (caused by bad shifts).
 TODO(thestig): List all the other patches.
