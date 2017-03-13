@@ -193,8 +193,7 @@ class CFX_TxtBreak {
   void FontChanged();
   void SetBreakStatus();
   CFX_TxtChar* GetLastChar(int32_t index, bool bOmitChar = true) const;
-  const CFX_TxtLine* GetTxtLine() const;
-  const CFX_TxtPieceArray* GetTxtPieces() const;
+  bool HasTxtLine() const { return m_iReadyLineIndex >= 0; }
   FX_CHARTYPE GetUnifiedCharType(FX_CHARTYPE dwType) const;
   void ResetArabicContext();
   void ResetContextCharStyles();
@@ -215,11 +214,11 @@ class CFX_TxtBreak {
   uint32_t m_dwLayoutStyles;
   bool m_bSingleLine;
   bool m_bCombText;
+  bool m_bEquidistant;
   int32_t m_iArabicContext;
   int32_t m_iCurArabicContext;
   CFX_RetainPtr<CFGAS_GEFont> m_pFont;
   int32_t m_iFontSize;
-  bool m_bEquidistant;
   int32_t m_iTabWidth;
   FX_WCHAR m_wDefChar;
   FX_WCHAR m_wParagBreakChar;
@@ -229,13 +228,12 @@ class CFX_TxtBreak {
   int32_t m_iCombWidth;
   FX_CHARTYPE m_eCharType;
   int32_t m_iCurAlignment;
-  CFX_TxtLine m_TxtLine1;
-  CFX_TxtLine m_TxtLine2;
+  CFX_TxtLine m_TxtLine[2];
   CFX_TxtLine* m_pCurLine;
-  int32_t m_iReady;
   int32_t m_iTolerance;
   int32_t m_iHorScale;
   int32_t m_iCharSpace;
+  int8_t m_iReadyLineIndex;
 };
 
 #endif  // XFA_FGAS_LAYOUT_FGAS_TEXTBREAK_H_

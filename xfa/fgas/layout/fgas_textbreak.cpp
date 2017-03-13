@@ -43,11 +43,11 @@ CFX_TxtBreak::CFX_TxtBreak()
       m_dwLayoutStyles(0),
       m_bSingleLine(false),
       m_bCombText(false),
+      m_bEquidistant(true),
       m_iArabicContext(1),
       m_iCurArabicContext(1),
       m_pFont(nullptr),
       m_iFontSize(240),
-      m_bEquidistant(true),
       m_iTabWidth(720000),
       m_wDefChar(0xFEFF),
       m_wParagBreakChar(L'\n'),
@@ -57,11 +57,11 @@ CFX_TxtBreak::CFX_TxtBreak()
       m_iCombWidth(360000),
       m_eCharType(FX_CHARTYPE_Unknown),
       m_pCurLine(nullptr),
-      m_iReady(0),
       m_iTolerance(0),
       m_iHorScale(100),
-      m_iCharSpace(0) {
-  m_pCurLine = &m_TxtLine1;
+      m_iCharSpace(0),
+      m_iReadyLineIndex(-1) {
+  m_pCurLine = &m_TxtLine[0];
   ResetArabicContext();
 }
 
@@ -192,19 +192,6 @@ CFX_TxtChar* CFX_TxtBreak::GetLastChar(int32_t index, bool bOmitChar) const {
       return pTC;
   }
   return nullptr;
-}
-
-const CFX_TxtLine* CFX_TxtBreak::GetTxtLine() const {
-  if (m_iReady == 1)
-    return &m_TxtLine1;
-  if (m_iReady == 2)
-    return &m_TxtLine2;
-  return nullptr;
-}
-
-const CFX_TxtPieceArray* CFX_TxtBreak::GetTxtPieces() const {
-  const CFX_TxtLine* pTxtLine = GetTxtLine();
-  return pTxtLine ? &pTxtLine->m_LinePieces : nullptr;
 }
 
 inline FX_CHARTYPE CFX_TxtBreak::GetUnifiedCharType(
@@ -650,9 +637,8 @@ CFX_BreakType CFX_TxtBreak::EndBreak(CFX_BreakType dwStatus) {
       dwStatus = pLastPiece->m_dwStatus;
     return dwStatus;
   } else {
-    const CFX_TxtLine* pLastLine = GetTxtLine();
-    if (pLastLine) {
-      pCurPieces = &pLastLine->m_LinePieces;
+    if (HasTxtLine()) {
+      pCurPieces = &m_TxtLine[m_iReadyLineIndex].m_LinePieces;
       iCount = pCurPieces->GetSize();
       if (iCount-- > 0) {
         CFX_TxtPiece* pLastPiece = pCurPieces->GetPtrAt(iCount);
@@ -675,9 +661,8 @@ CFX_BreakType CFX_TxtBreak::EndBreak(CFX_BreakType dwStatus) {
       return dwStatus;
   }
 
-  m_iReady = m_pCurLine == &m_TxtLine1 ? 1 : 2;
-  CFX_TxtLine* pNextLine =
-      m_pCurLine == &m_TxtLine1 ? &m_TxtLine2 : &m_TxtLine1;
+  m_iReadyLineIndex = m_pCurLine == &m_TxtLine[0] ? 0 : 1;
+  CFX_TxtLine* pNextLine = &m_TxtLine[1 - m_iReadyLineIndex];
   bool bAllChars = m_iCurAlignment > CFX_TxtLineAlignment_Right;
   if (!EndBreak_SplitLine(pNextLine, bAllChars)) {
     std::deque<FX_TPO> tpos;
@@ -831,24 +816,21 @@ void CFX_TxtBreak::SplitTextLine(CFX_TxtLine* pCurLine,
 }
 
 int32_t CFX_TxtBreak::CountBreakPieces() const {
-  const CFX_TxtPieceArray* pTxtPieces = GetTxtPieces();
-  return pTxtPieces ? pTxtPieces->GetSize() : 0;
+  return HasTxtLine() ? m_TxtLine[m_iReadyLineIndex].m_LinePieces.GetSize() : 0;
 }
 
 const CFX_TxtPiece* CFX_TxtBreak::GetBreakPiece(int32_t index) const {
-  const CFX_TxtPieceArray* pTxtPieces = GetTxtPieces();
-  if (!pTxtPieces)
+  if (!HasTxtLine())
     return nullptr;
-  if (index < 0 || index >= pTxtPieces->GetSize())
+  if (index < 0 || index >= m_TxtLine[m_iReadyLineIndex].m_LinePieces.GetSize())
     return nullptr;
-  return pTxtPieces->GetPtrAt(index);
+  return m_TxtLine[m_iReadyLineIndex].m_LinePieces.GetPtrAt(index);
 }
 
 void CFX_TxtBreak::ClearBreakPieces() {
-  const CFX_TxtLine* pTxtLine = GetTxtLine();
-  if (pTxtLine)
-    const_cast<CFX_TxtLine*>(pTxtLine)->RemoveAll(true);
-  m_iReady = 0;
+  if (HasTxtLine())
+    m_TxtLine[m_iReadyLineIndex].RemoveAll(true);
+  m_iReadyLineIndex = -1;
 }
 
 void CFX_TxtBreak::Reset() {
@@ -856,8 +838,8 @@ void CFX_TxtBreak::Reset() {
   m_iArabicContext = 1;
   m_iCurArabicContext = 1;
   ResetArabicContext();
-  m_TxtLine1.RemoveAll(true);
-  m_TxtLine2.RemoveAll(true);
+  m_TxtLine[0].RemoveAll(true);
+  m_TxtLine[1].RemoveAll(true);
 }
 
 struct FX_FORMCHAR {

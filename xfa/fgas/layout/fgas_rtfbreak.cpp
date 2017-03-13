@@ -34,7 +34,7 @@ CFX_RTFBreak::CFX_RTFBreak(uint32_t dwLayoutStyles)
       m_dwIdentity(0),
       m_pCurLine(nullptr),
       m_iTolerance(0),
-      m_iReady(-1) {
+      m_iReadyLineIndex(-1) {
   m_pCurLine = &m_RTFLine[0];
 
   SetBreakStatus();
@@ -386,10 +386,10 @@ CFX_BreakType CFX_RTFBreak::EndBreak(CFX_BreakType dwStatus) {
   }
 
   if (HasRTFLine()) {
-    if (!m_RTFLine[m_iReady].m_LinePieces.empty()) {
+    if (!m_RTFLine[m_iReadyLineIndex].m_LinePieces.empty()) {
       if (dwStatus != CFX_BreakType::Piece)
-        m_RTFLine[m_iReady].m_LinePieces.back().m_dwStatus = dwStatus;
-      return m_RTFLine[m_iReady].m_LinePieces.back().m_dwStatus;
+        m_RTFLine[m_iReadyLineIndex].m_LinePieces.back().m_dwStatus = dwStatus;
+      return m_RTFLine[m_iReadyLineIndex].m_LinePieces.back().m_dwStatus;
     }
     return CFX_BreakType::None;
   }
@@ -403,8 +403,8 @@ CFX_BreakType CFX_RTFBreak::EndBreak(CFX_BreakType dwStatus) {
   if (dwStatus == CFX_BreakType::Piece)
     return dwStatus;
 
-  m_iReady = m_pCurLine == &m_RTFLine[0] ? 0 : 1;
-  CFX_RTFLine* pNextLine = &m_RTFLine[1 - m_iReady];
+  m_iReadyLineIndex = m_pCurLine == &m_RTFLine[0] ? 0 : 1;
+  CFX_RTFLine* pNextLine = &m_RTFLine[1 - m_iReadyLineIndex];
   bool bAllChars = m_iAlignment == CFX_RTFLineAlignment::Justified ||
                    m_iAlignment == CFX_RTFLineAlignment::Distributed;
 
@@ -794,9 +794,9 @@ void CFX_RTFBreak::SplitTextLine(CFX_RTFLine* pCurLine,
 }
 
 int32_t CFX_RTFBreak::CountBreakPieces() const {
-  return HasRTFLine()
-             ? pdfium::CollectionSize<int32_t>(m_RTFLine[m_iReady].m_LinePieces)
-             : 0;
+  return HasRTFLine() ? pdfium::CollectionSize<int32_t>(
+                            m_RTFLine[m_iReadyLineIndex].m_LinePieces)
+                      : 0;
 }
 
 const CFX_RTFPiece* CFX_RTFBreak::GetBreakPieceUnstable(int32_t index) const {
@@ -804,7 +804,7 @@ const CFX_RTFPiece* CFX_RTFBreak::GetBreakPieceUnstable(int32_t index) const {
     return nullptr;
 
   const std::vector<CFX_RTFPiece>& pRTFPieces =
-      m_RTFLine[m_iReady].m_LinePieces;
+      m_RTFLine[m_iReadyLineIndex].m_LinePieces;
   if (index < 0 || index >= pdfium::CollectionSize<int32_t>(pRTFPieces))
     return nullptr;
   return &pRTFPieces[index];
@@ -812,9 +812,9 @@ const CFX_RTFPiece* CFX_RTFBreak::GetBreakPieceUnstable(int32_t index) const {
 
 void CFX_RTFBreak::ClearBreakPieces() {
   if (HasRTFLine())
-    m_RTFLine[m_iReady].Clear();
+    m_RTFLine[m_iReadyLineIndex].Clear();
 
-  m_iReady = -1;
+  m_iReadyLineIndex = -1;
 }
 
 void CFX_RTFBreak::Reset() {
