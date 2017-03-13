@@ -59,6 +59,11 @@ config("pdfium_common_config") {
     ]
     ldflags += [ "--coverage" ]
   }
+
+  if (is_win) {
+    # Assume UTF-8 by default to avoid code page dependencies.
+    cflags += [ "/utf-8" ]
+  }
 }
 
 config("pdfium_core_config") {
