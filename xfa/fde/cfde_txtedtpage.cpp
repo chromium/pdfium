@@ -344,8 +344,8 @@ int32_t CFDE_TxtEdtPage::LoadPage(const CFX_RectF* pClipBox,
         nPieceStart += TxtEdtPiece.nCount;
         m_Pieces.push_back(TxtEdtPiece);
         for (int32_t k = 0; k < TxtEdtPiece.nCount; k++) {
-          CFX_Char* ptc = pPiece->GetCharPtr(k);
-          m_CharWidths[TxtEdtPiece.nStart + k] = ptc->m_iCharWidth;
+          m_CharWidths[TxtEdtPiece.nStart + k] =
+              pPiece->GetChar(k).m_iCharWidth;
         }
       }
       fLinePos += fLineStep;

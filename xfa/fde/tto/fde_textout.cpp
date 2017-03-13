@@ -391,8 +391,7 @@ void CFDE_TextOut::RetrieveEllPieces(std::vector<int32_t>* pCharWidths) {
     const CFX_TxtPiece* pPiece = m_pTxtBreak->GetBreakPiece(i);
     int32_t iPieceChars = pPiece->GetLength();
     for (int32_t j = 0; j < iPieceChars; j++) {
-      CFX_Char* pTC = pPiece->GetCharPtr(j);
-      (*pCharWidths)[iCharIndex] = std::max(pTC->m_iCharWidth, 0);
+      (*pCharWidths)[iCharIndex] = std::max(pPiece->GetChar(j).m_iCharWidth, 0);
       m_iEllipsisWidth += (*pCharWidths)[iCharIndex];
       iCharIndex++;
     }
@@ -465,7 +464,6 @@ bool CFDE_TextOut::RetrievePieces(CFX_BreakType dwBreakStatus,
   bool bLineWrap = !!(m_dwStyles & FDE_TTOSTYLE_LineWrap);
   FX_FLOAT fLineStep =
       (m_fLineSpace > m_fFontSize) ? m_fLineSpace : m_fFontSize;
-  CFX_Char* pTC = nullptr;
   bool bNeedReload = false;
   FX_FLOAT fLineWidth = rect.Width();
   int32_t iLineWidth = FXSYS_round(fLineWidth * 20000.0f);
@@ -477,8 +475,8 @@ bool CFDE_TextOut::RetrievePieces(CFX_BreakType dwBreakStatus,
     int32_t iWidth = 0;
     int32_t j = 0;
     for (; j < iPieceChars; j++) {
-      pTC = pPiece->GetCharPtr(j);
-      int32_t iCurCharWidth = pTC->m_iCharWidth > 0 ? pTC->m_iCharWidth : 0;
+      const CFX_Char& pTC = pPiece->GetChar(j);
+      int32_t iCurCharWidth = pTC.m_iCharWidth > 0 ? pTC.m_iCharWidth : 0;
       if (bSingleLine || !bLineWrap) {
         if (iLineWidth - iPieceWidths - iWidth < iCurCharWidth) {
           bNeedReload = true;

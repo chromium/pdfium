@@ -76,27 +76,18 @@ class CFX_TxtPiece {
     return m_iWidth < 0 ? m_iStartPos : m_iStartPos + m_iWidth;
   }
   int32_t GetLength() const { return m_iChars; }
-  int32_t GetEndChar() const { return m_iStartChar + m_iChars; }
-  CFX_TxtChar* GetCharPtr(int32_t index) const {
+
+  CFX_TxtChar& GetChar(int32_t index) const {
     ASSERT(index > -1 && index < m_iChars && m_pChars);
-    return &(*m_pChars)[m_iStartChar + index];
+    return (*m_pChars)[m_iStartChar + index];
   }
-  void GetString(FX_WCHAR* pText) const {
-    ASSERT(pText);
-    int32_t iEndChar = m_iStartChar + m_iChars;
-    for (int32_t i = m_iStartChar; i < iEndChar; i++)
-      *pText++ = static_cast<FX_WCHAR>((*m_pChars)[i].m_wCharCode);
-  }
-  void GetString(CFX_WideString& wsText) const {
-    FX_WCHAR* pText = wsText.GetBuffer(m_iChars);
-    GetString(pText);
-    wsText.ReleaseBuffer(m_iChars);
-  }
-  void GetWidths(int32_t* pWidths) const {
-    ASSERT(pWidths);
-    int32_t iEndChar = m_iStartChar + m_iChars;
-    for (int32_t i = m_iStartChar; i < iEndChar; i++)
-      *pWidths++ = (*m_pChars)[i].m_iCharWidth;
+
+  CFX_WideString GetString() const {
+    CFX_WideString ret;
+    ret.Reserve(m_iChars);
+    for (int32_t i = m_iStartChar; i < m_iStartChar + m_iChars; i++)
+      ret += static_cast<FX_WCHAR>((*m_pChars)[i].m_wCharCode);
+    return ret;
   }
 
   CFX_BreakType m_dwStatus;

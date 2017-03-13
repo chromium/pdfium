@@ -563,7 +563,6 @@ void CFX_TxtBreak::EndBreak_Alignment(const std::deque<FX_TPO>& tpos,
   int32_t iCount = pCurPieces->GetSize();
   bool bFind = false;
   FX_TPO tpo;
-  CFX_TxtChar* pTC;
   FX_CHARTYPE chartype;
   for (i = iCount - 1; i > -1; i--) {
     tpo = tpos[i];
@@ -574,14 +573,14 @@ void CFX_TxtBreak::EndBreak_Alignment(const std::deque<FX_TPO>& tpos,
     bool bArabic = FX_IsOdd(ttp.m_iBidiLevel);
     j = bArabic ? 0 : ttp.m_iChars - 1;
     while (j > -1 && j < ttp.m_iChars) {
-      pTC = ttp.GetCharPtr(j);
-      if (pTC->m_nBreakType == FX_LBT_DIRECT_BRK)
+      const CFX_TxtChar& pTC = ttp.GetChar(j);
+      if (pTC.m_nBreakType == FX_LBT_DIRECT_BRK)
         iGapChars++;
       if (!bFind || !bAllChars) {
-        chartype = pTC->GetCharType();
+        chartype = pTC.GetCharType();
         if (chartype == FX_CHARTYPE_Space || chartype == FX_CHARTYPE_Control) {
           if (!bFind) {
-            iCharWidth = pTC->m_iCharWidth;
+            iCharWidth = pTC.m_iCharWidth;
             if (bAllChars && iCharWidth > 0)
               iNetWidth -= iCharWidth;
           }
@@ -610,12 +609,12 @@ void CFX_TxtBreak::EndBreak_Alignment(const std::deque<FX_TPO>& tpos,
         ttp.m_iStartPos = iStart;
 
       for (j = 0; j < ttp.m_iChars; j++) {
-        pTC = ttp.GetCharPtr(j);
-        if (pTC->m_nBreakType != FX_LBT_DIRECT_BRK || pTC->m_iCharWidth < 0)
+        CFX_TxtChar& pTC = ttp.GetChar(j);
+        if (pTC.m_nBreakType != FX_LBT_DIRECT_BRK || pTC.m_iCharWidth < 0)
           continue;
 
         int32_t k = iOffset / iGapChars;
-        pTC->m_iCharWidth += k;
+        pTC.m_iCharWidth += k;
         ttp.m_iWidth += k;
         iOffset -= k;
         iGapChars--;
