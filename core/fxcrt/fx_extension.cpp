@@ -9,9 +9,11 @@
 #include <algorithm>
 #include <memory>
 #include <utility>
+#include <vector>
 
 #include "core/fxcrt/fx_basic.h"
 #include "core/fxcrt/fx_ext.h"
+#include "third_party/base/stl_util.h"
 
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
 #include <wincrypt.h>
@@ -151,7 +153,7 @@ class CFX_MemoryStream final : public IFX_MemoryStream {
 
   bool ExpandBlocks(size_t size);
 
-  CFX_ArrayTemplate<uint8_t*> m_Blocks;
+  std::vector<uint8_t*> m_Blocks;
   size_t m_nTotalSize;
   size_t m_nCurSize;
   size_t m_nCurPos;
@@ -175,18 +177,16 @@ CFX_MemoryStream::CFX_MemoryStream(uint8_t* pBuffer,
       m_nCurSize(nSize),
       m_nCurPos(0),
       m_nGrowSize(FX_MEMSTREAM_BlockSize) {
-  m_Blocks.Add(pBuffer);
+  m_Blocks.push_back(pBuffer);
   m_dwFlags =
       FX_MEMSTREAM_Consecutive | (bTakeOver ? FX_MEMSTREAM_TakeOver : 0);
 }
 
 CFX_MemoryStream::~CFX_MemoryStream() {
   if (m_dwFlags & FX_MEMSTREAM_TakeOver) {
-    for (int32_t i = 0; i < m_Blocks.GetSize(); i++) {
-      FX_Free(m_Blocks[i]);
-    }
+    for (uint8_t* pBlock : m_Blocks)
+      FX_Free(pBlock);
   }
-  m_Blocks.RemoveAll();
 }
 
 FX_FILESIZE CFX_MemoryStream::GetSize() {
@@ -261,15 +261,10 @@ bool CFX_MemoryStream::WriteBlock(const void* buffer,
     m_nCurPos = newPos.ValueOrDie();
     if (m_nCurPos > m_nTotalSize) {
       m_nTotalSize = (m_nCurPos + m_nGrowSize - 1) / m_nGrowSize * m_nGrowSize;
-      if (m_Blocks.GetSize() < 1) {
-        uint8_t* block = FX_Alloc(uint8_t, m_nTotalSize);
-        m_Blocks.Add(block);
+      if (m_Blocks.empty()) {
+        m_Blocks.push_back(FX_Alloc(uint8_t, m_nTotalSize));
       } else {
         m_Blocks[0] = FX_Realloc(uint8_t, m_Blocks[0], m_nTotalSize);
-      }
-      if (!m_Blocks[0]) {
-        m_Blocks.RemoveAll();
-        return false;
       }
     }
     FXSYS_memcpy(m_Blocks[0] + (size_t)offset, buffer, size);
@@ -315,19 +310,18 @@ bool CFX_MemoryStream::IsConsecutive() const {
 
 void CFX_MemoryStream::EstimateSize(size_t nInitSize, size_t nGrowSize) {
   if (m_dwFlags & FX_MEMSTREAM_Consecutive) {
-    if (m_Blocks.GetSize() < 1) {
-      uint8_t* pBlock =
-          FX_Alloc(uint8_t, std::max(nInitSize, static_cast<size_t>(4096)));
-      m_Blocks.Add(pBlock);
+    if (m_Blocks.empty()) {
+      m_Blocks.push_back(
+          FX_Alloc(uint8_t, std::max(nInitSize, static_cast<size_t>(4096))));
     }
     m_nGrowSize = std::max(nGrowSize, static_cast<size_t>(4096));
-  } else if (m_Blocks.GetSize() < 1) {
+  } else if (m_Blocks.empty()) {
     m_nGrowSize = std::max(nGrowSize, static_cast<size_t>(4096));
   }
 }
 
 uint8_t* CFX_MemoryStream::GetBuffer() const {
-  return m_Blocks.GetSize() ? m_Blocks[0] : nullptr;
+  return !m_Blocks.empty() ? m_Blocks.front() : nullptr;
 }
 
 void CFX_MemoryStream::AttachBuffer(uint8_t* pBuffer,
@@ -336,36 +330,38 @@ void CFX_MemoryStream::AttachBuffer(uint8_t* pBuffer,
   if (!(m_dwFlags & FX_MEMSTREAM_Consecutive))
     return;
 
-  m_Blocks.RemoveAll();
-  m_Blocks.Add(pBuffer);
-  m_nTotalSize = m_nCurSize = nSize;
+  m_Blocks.clear();
+  m_Blocks.push_back(pBuffer);
+  m_nTotalSize = nSize;
+  m_nCurSize = nSize;
   m_nCurPos = 0;
   m_dwFlags =
       FX_MEMSTREAM_Consecutive | (bTakeOver ? FX_MEMSTREAM_TakeOver : 0);
 }
 
 void CFX_MemoryStream::DetachBuffer() {
-  if (!(m_dwFlags & FX_MEMSTREAM_Consecutive)) {
+  if (!(m_dwFlags & FX_MEMSTREAM_Consecutive))
     return;
-  }
-  m_Blocks.RemoveAll();
-  m_nTotalSize = m_nCurSize = m_nCurPos = 0;
+
+  m_Blocks.clear();
+  m_nTotalSize = 0;
+  m_nCurSize = 0;
+  m_nCurPos = 0;
   m_dwFlags = FX_MEMSTREAM_TakeOver;
 }
 
 bool CFX_MemoryStream::ExpandBlocks(size_t size) {
-  if (m_nCurSize < size) {
+  if (m_nCurSize < size)
     m_nCurSize = size;
-  }
-  if (size <= m_nTotalSize) {
+
+  if (size <= m_nTotalSize)
     return true;
-  }
-  int32_t iCount = m_Blocks.GetSize();
+
   size = (size - m_nTotalSize + m_nGrowSize - 1) / m_nGrowSize;
-  m_Blocks.SetSize(m_Blocks.GetSize() + (int32_t)size);
+  size_t iCount = m_Blocks.size();
+  m_Blocks.resize(iCount + size);
   while (size--) {
-    uint8_t* pBlock = FX_Alloc(uint8_t, m_nGrowSize);
-    m_Blocks.SetAt(iCount++, pBlock);
+    m_Blocks[iCount++] = FX_Alloc(uint8_t, m_nGrowSize);
     m_nTotalSize += m_nGrowSize;
   }
   return true;
