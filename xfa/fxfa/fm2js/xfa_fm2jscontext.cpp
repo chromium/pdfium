@@ -522,7 +522,7 @@ void CXFA_FM2JSContext::Abs(CFXJSE_Value* pThis,
     return;
   }
 
-  FX_DOUBLE dValue = ValueToDouble(pThis, argOne.get());
+  double dValue = ValueToDouble(pThis, argOne.get());
   if (dValue < 0)
     dValue = -dValue;
 
@@ -541,7 +541,7 @@ void CXFA_FM2JSContext::Avg(CFXJSE_Value* pThis,
 
   v8::Isolate* pIsolate = ToJSContext(pThis, nullptr)->GetScriptRuntime();
   uint32_t uCount = 0;
-  FX_DOUBLE dSum = 0.0;
+  double dSum = 0.0;
   for (int32_t i = 0; i < argc; i++) {
     std::unique_ptr<CFXJSE_Value> argValue = args.GetValue(i);
     if (argValue->IsNull())
@@ -695,7 +695,7 @@ void CXFA_FM2JSContext::Max(CFXJSE_Value* pThis,
   CXFA_FM2JSContext* pContext = ToJSContext(pThis, nullptr);
   v8::Isolate* pIsolate = pContext->GetScriptRuntime();
   uint32_t uCount = 0;
-  FX_DOUBLE dMaxValue = 0.0;
+  double dMaxValue = 0.0;
   for (int32_t i = 0; i < args.GetLength(); i++) {
     std::unique_ptr<CFXJSE_Value> argValue = args.GetValue(i);
     if (argValue->IsNull())
@@ -723,7 +723,7 @@ void CXFA_FM2JSContext::Max(CFXJSE_Value* pThis,
             continue;
 
           uCount++;
-          FX_DOUBLE dValue = ValueToDouble(pThis, newPropertyValue.get());
+          double dValue = ValueToDouble(pThis, newPropertyValue.get());
           dMaxValue = (uCount == 1) ? dValue : std::max(dMaxValue, dValue);
         }
       } else {
@@ -735,7 +735,7 @@ void CXFA_FM2JSContext::Max(CFXJSE_Value* pThis,
             continue;
 
           uCount++;
-          FX_DOUBLE dValue = ValueToDouble(pThis, newPropertyValue.get());
+          double dValue = ValueToDouble(pThis, newPropertyValue.get());
           dMaxValue = (uCount == 1) ? dValue : std::max(dMaxValue, dValue);
         }
       }
@@ -746,11 +746,11 @@ void CXFA_FM2JSContext::Max(CFXJSE_Value* pThis,
         continue;
 
       uCount++;
-      FX_DOUBLE dValue = ValueToDouble(pThis, newPropertyValue.get());
+      double dValue = ValueToDouble(pThis, newPropertyValue.get());
       dMaxValue = (uCount == 1) ? dValue : std::max(dMaxValue, dValue);
     } else {
       uCount++;
-      FX_DOUBLE dValue = ValueToDouble(pThis, argValue.get());
+      double dValue = ValueToDouble(pThis, argValue.get());
       dMaxValue = (uCount == 1) ? dValue : std::max(dMaxValue, dValue);
     }
   }
@@ -769,7 +769,7 @@ void CXFA_FM2JSContext::Min(CFXJSE_Value* pThis,
   CXFA_FM2JSContext* pContext = ToJSContext(pThis, nullptr);
   v8::Isolate* pIsolate = pContext->GetScriptRuntime();
   uint32_t uCount = 0;
-  FX_DOUBLE dMinValue = 0.0;
+  double dMinValue = 0.0;
   for (int32_t i = 0; i < args.GetLength(); i++) {
     std::unique_ptr<CFXJSE_Value> argValue = args.GetValue(i);
     if (argValue->IsNull())
@@ -797,7 +797,7 @@ void CXFA_FM2JSContext::Min(CFXJSE_Value* pThis,
             continue;
 
           uCount++;
-          FX_DOUBLE dValue = ValueToDouble(pThis, newPropertyValue.get());
+          double dValue = ValueToDouble(pThis, newPropertyValue.get());
           dMinValue = uCount == 1 ? dValue : std::min(dMinValue, dValue);
         }
       } else {
@@ -809,7 +809,7 @@ void CXFA_FM2JSContext::Min(CFXJSE_Value* pThis,
             continue;
 
           uCount++;
-          FX_DOUBLE dValue = ValueToDouble(pThis, newPropertyValue.get());
+          double dValue = ValueToDouble(pThis, newPropertyValue.get());
           dMinValue = uCount == 1 ? dValue : std::min(dMinValue, dValue);
         }
       }
@@ -820,11 +820,11 @@ void CXFA_FM2JSContext::Min(CFXJSE_Value* pThis,
         continue;
 
       uCount++;
-      FX_DOUBLE dValue = ValueToDouble(pThis, newPropertyValue.get());
+      double dValue = ValueToDouble(pThis, newPropertyValue.get());
       dMinValue = uCount == 1 ? dValue : std::min(dMinValue, dValue);
     } else {
       uCount++;
-      FX_DOUBLE dValue = ValueToDouble(pThis, argValue.get());
+      double dValue = ValueToDouble(pThis, argValue.get());
       dMinValue = uCount == 1 ? dValue : std::min(dMinValue, dValue);
     }
   }
@@ -854,9 +854,9 @@ void CXFA_FM2JSContext::Mod(CFXJSE_Value* pThis,
   }
 
   bool argOneResult;
-  FX_DOUBLE dDividend = ExtractDouble(pThis, argOne.get(), &argOneResult);
+  double dDividend = ExtractDouble(pThis, argOne.get(), &argOneResult);
   bool argTwoResult;
-  FX_DOUBLE dDivisor = ExtractDouble(pThis, argTwo.get(), &argTwoResult);
+  double dDivisor = ExtractDouble(pThis, argTwo.get(), &argTwoResult);
   if (!argOneResult || !argTwoResult) {
     pContext->ThrowArgumentMismatchException();
     return;
@@ -889,7 +889,7 @@ void CXFA_FM2JSContext::Round(CFXJSE_Value* pThis,
   }
 
   bool dValueRet;
-  FX_DOUBLE dValue = ExtractDouble(pThis, argOne.get(), &dValueRet);
+  double dValue = ExtractDouble(pThis, argOne.get(), &dValueRet);
   if (!dValueRet) {
     pContext->ThrowArgumentMismatchException();
     return;
@@ -904,7 +904,7 @@ void CXFA_FM2JSContext::Round(CFXJSE_Value* pThis,
     }
 
     bool dPrecisionRet;
-    FX_DOUBLE dPrecision = ExtractDouble(pThis, argTwo.get(), &dPrecisionRet);
+    double dPrecision = ExtractDouble(pThis, argTwo.get(), &dPrecisionRet);
     if (!dPrecisionRet) {
       pContext->ThrowArgumentMismatchException();
       return;
@@ -932,7 +932,7 @@ void CXFA_FM2JSContext::Sum(CFXJSE_Value* pThis,
   CXFA_FM2JSContext* pContext = ToJSContext(pThis, nullptr);
   v8::Isolate* pIsolate = pContext->GetScriptRuntime();
   uint32_t uCount = 0;
-  FX_DOUBLE dSum = 0.0;
+  double dSum = 0.0;
   for (int32_t i = 0; i < argc; i++) {
     std::unique_ptr<CFXJSE_Value> argValue = args.GetValue(i);
     if (argValue->IsNull())
@@ -2354,23 +2354,22 @@ void CXFA_FM2JSContext::Apr(CFXJSE_Value* pThis,
     return;
   }
 
-  FX_DOUBLE nPrincipal = ValueToDouble(pThis, argOne.get());
-  FX_DOUBLE nPayment = ValueToDouble(pThis, argTwo.get());
-  FX_DOUBLE nPeriods = ValueToDouble(pThis, argThree.get());
+  double nPrincipal = ValueToDouble(pThis, argOne.get());
+  double nPayment = ValueToDouble(pThis, argTwo.get());
+  double nPeriods = ValueToDouble(pThis, argThree.get());
   if (nPrincipal <= 0 || nPayment <= 0 || nPeriods <= 0) {
     pContext->ThrowArgumentMismatchException();
     return;
   }
 
-  FX_DOUBLE r =
-      2 * (nPeriods * nPayment - nPrincipal) / (nPeriods * nPrincipal);
-  FX_DOUBLE nTemp = 1;
+  double r = 2 * (nPeriods * nPayment - nPrincipal) / (nPeriods * nPrincipal);
+  double nTemp = 1;
   for (int32_t i = 0; i < nPeriods; ++i)
     nTemp *= (1 + r);
 
-  FX_DOUBLE nRet = r * nTemp / (nTemp - 1) - nPayment / nPrincipal;
+  double nRet = r * nTemp / (nTemp - 1) - nPayment / nPrincipal;
   while (fabs(nRet) > kFinancialPrecision) {
-    FX_DOUBLE nDerivative =
+    double nDerivative =
         ((nTemp + r * nPeriods * (nTemp / (1 + r))) * (nTemp - 1) -
          (r * nTemp * nPeriods * (nTemp / (1 + r)))) /
         ((nTemp - 1) * (nTemp - 1));
@@ -2440,17 +2439,17 @@ void CXFA_FM2JSContext::FV(CFXJSE_Value* pThis,
     return;
   }
 
-  FX_DOUBLE nAmount = ValueToDouble(pThis, argOne.get());
-  FX_DOUBLE nRate = ValueToDouble(pThis, argTwo.get());
-  FX_DOUBLE nPeriod = ValueToDouble(pThis, argThree.get());
+  double nAmount = ValueToDouble(pThis, argOne.get());
+  double nRate = ValueToDouble(pThis, argTwo.get());
+  double nPeriod = ValueToDouble(pThis, argThree.get());
   if ((nRate < 0) || (nPeriod <= 0) || (nAmount <= 0)) {
     pContext->ThrowArgumentMismatchException();
     return;
   }
 
-  FX_DOUBLE dResult = 0;
+  double dResult = 0;
   if (nRate) {
-    FX_DOUBLE nTemp = 1;
+    double nTemp = 1;
     for (int i = 0; i < nPeriod; ++i) {
       nTemp *= 1 + nRate;
     }
@@ -2539,24 +2538,24 @@ void CXFA_FM2JSContext::NPV(CFXJSE_Value* pThis,
     }
   }
 
-  FX_DOUBLE nRate = ValueToDouble(pThis, argValues[0].get());
+  double nRate = ValueToDouble(pThis, argValues[0].get());
   if (nRate <= 0) {
     pContext->ThrowArgumentMismatchException();
     return;
   }
 
-  std::vector<FX_DOUBLE> data(argc - 1);
+  std::vector<double> data(argc - 1);
   for (int32_t i = 1; i < argc; i++)
     data.push_back(ValueToDouble(pThis, argValues[i].get()));
 
-  FX_DOUBLE nSum = 0;
+  double nSum = 0;
   int32_t iIndex = 0;
   for (int32_t i = 0; i < argc - 1; i++) {
-    FX_DOUBLE nTemp = 1;
+    double nTemp = 1;
     for (int32_t j = 0; j <= i; j++)
       nTemp *= 1 + nRate;
 
-    FX_DOUBLE nNum = data[iIndex++];
+    double nNum = data[iIndex++];
     nSum += nNum / nTemp;
   }
   args.GetReturnValue()->SetDouble(nSum);
@@ -2674,15 +2673,15 @@ void CXFA_FM2JSContext::PV(CFXJSE_Value* pThis,
     return;
   }
 
-  FX_DOUBLE nAmount = ValueToDouble(pThis, argOne.get());
-  FX_DOUBLE nRate = ValueToDouble(pThis, argTwo.get());
-  FX_DOUBLE nPeriod = ValueToDouble(pThis, argThree.get());
+  double nAmount = ValueToDouble(pThis, argOne.get());
+  double nRate = ValueToDouble(pThis, argTwo.get());
+  double nPeriod = ValueToDouble(pThis, argThree.get());
   if ((nAmount <= 0) || (nRate < 0) || (nPeriod <= 0)) {
     pContext->ThrowArgumentMismatchException();
     return;
   }
 
-  FX_DOUBLE nTemp = 1;
+  double nTemp = 1;
   for (int32_t i = 0; i < nPeriod; ++i)
     nTemp *= 1 + nRate;
 
@@ -3172,7 +3171,7 @@ void CXFA_FM2JSContext::UnitValue(CFXJSE_Value* pThis,
   }
 
   char* pTemp = nullptr;
-  FX_DOUBLE dFirstNumber = strtod(pData, &pTemp);
+  double dFirstNumber = strtod(pData, &pTemp);
   while (IsWhitespace(pData[u]))
     ++u;
 
@@ -3219,7 +3218,7 @@ void CXFA_FM2JSContext::UnitValue(CFXJSE_Value* pThis,
     strUnit = strFirstUnit;
   }
 
-  FX_DOUBLE dResult = 0;
+  double dResult = 0;
   if (strFirstUnit == "in" || strFirstUnit == "inches") {
     if (strUnit == "mm" || strUnit == "millimeters")
       dResult = dFirstNumber * 25.4;
@@ -5074,8 +5073,8 @@ void CXFA_FM2JSContext::equality_operator(CFXJSE_Value* pThis,
     return;
   }
 
-  FX_DOUBLE first = ValueToDouble(pThis, argFirst.get());
-  FX_DOUBLE second = ValueToDouble(pThis, argSecond.get());
+  double first = ValueToDouble(pThis, argFirst.get());
+  double second = ValueToDouble(pThis, argSecond.get());
   args.GetReturnValue()->SetInteger((first == second) ? 1 : 0);
 }
 
@@ -5107,8 +5106,8 @@ void CXFA_FM2JSContext::notequality_operator(CFXJSE_Value* pThis,
     return;
   }
 
-  FX_DOUBLE first = ValueToDouble(pThis, argFirst.get());
-  FX_DOUBLE second = ValueToDouble(pThis, argSecond.get());
+  double first = ValueToDouble(pThis, argFirst.get());
+  double second = ValueToDouble(pThis, argSecond.get());
   args.GetReturnValue()->SetInteger(first != second);
 }
 
@@ -5161,8 +5160,8 @@ void CXFA_FM2JSContext::less_operator(CFXJSE_Value* pThis,
     return;
   }
 
-  FX_DOUBLE first = ValueToDouble(pThis, argFirst.get());
-  FX_DOUBLE second = ValueToDouble(pThis, argSecond.get());
+  double first = ValueToDouble(pThis, argFirst.get());
+  double second = ValueToDouble(pThis, argSecond.get());
   args.GetReturnValue()->SetInteger((first < second) ? 1 : 0);
 }
 
@@ -5189,8 +5188,8 @@ void CXFA_FM2JSContext::lessequal_operator(CFXJSE_Value* pThis,
     return;
   }
 
-  FX_DOUBLE first = ValueToDouble(pThis, argFirst.get());
-  FX_DOUBLE second = ValueToDouble(pThis, argSecond.get());
+  double first = ValueToDouble(pThis, argFirst.get());
+  double second = ValueToDouble(pThis, argSecond.get());
   args.GetReturnValue()->SetInteger((first <= second) ? 1 : 0);
 }
 
@@ -5216,8 +5215,8 @@ void CXFA_FM2JSContext::greater_operator(CFXJSE_Value* pThis,
     return;
   }
 
-  FX_DOUBLE first = ValueToDouble(pThis, argFirst.get());
-  FX_DOUBLE second = ValueToDouble(pThis, argSecond.get());
+  double first = ValueToDouble(pThis, argFirst.get());
+  double second = ValueToDouble(pThis, argSecond.get());
   args.GetReturnValue()->SetInteger((first > second) ? 1 : 0);
 }
 
@@ -5244,8 +5243,8 @@ void CXFA_FM2JSContext::greaterequal_operator(CFXJSE_Value* pThis,
     return;
   }
 
-  FX_DOUBLE first = ValueToDouble(pThis, argFirst.get());
-  FX_DOUBLE second = ValueToDouble(pThis, argSecond.get());
+  double first = ValueToDouble(pThis, argFirst.get());
+  double second = ValueToDouble(pThis, argSecond.get());
   args.GetReturnValue()->SetInteger((first >= second) ? 1 : 0);
 }
 
@@ -5266,8 +5265,8 @@ void CXFA_FM2JSContext::plus_operator(CFXJSE_Value* pThis,
     return;
   }
 
-  FX_DOUBLE first = ValueToDouble(pThis, argFirst.get());
-  FX_DOUBLE second = ValueToDouble(pThis, argSecond.get());
+  double first = ValueToDouble(pThis, argFirst.get());
+  double second = ValueToDouble(pThis, argSecond.get());
   args.GetReturnValue()->SetDouble(first + second);
 }
 
@@ -5287,8 +5286,8 @@ void CXFA_FM2JSContext::minus_operator(CFXJSE_Value* pThis,
     return;
   }
 
-  FX_DOUBLE first = ValueToDouble(pThis, argFirst.get());
-  FX_DOUBLE second = ValueToDouble(pThis, argSecond.get());
+  double first = ValueToDouble(pThis, argFirst.get());
+  double second = ValueToDouble(pThis, argSecond.get());
   args.GetReturnValue()->SetDouble(first - second);
 }
 
@@ -5308,8 +5307,8 @@ void CXFA_FM2JSContext::multiple_operator(CFXJSE_Value* pThis,
     return;
   }
 
-  FX_DOUBLE first = ValueToDouble(pThis, argFirst.get());
-  FX_DOUBLE second = ValueToDouble(pThis, argSecond.get());
+  double first = ValueToDouble(pThis, argFirst.get());
+  double second = ValueToDouble(pThis, argSecond.get());
   args.GetReturnValue()->SetDouble(first * second);
 }
 
@@ -5330,13 +5329,13 @@ void CXFA_FM2JSContext::divide_operator(CFXJSE_Value* pThis,
     return;
   }
 
-  FX_DOUBLE second = ValueToDouble(pThis, argSecond.get());
+  double second = ValueToDouble(pThis, argSecond.get());
   if (second == 0.0) {
     pContext->ThrowDivideByZeroException();
     return;
   }
 
-  FX_DOUBLE first = ValueToDouble(pThis, argFirst.get());
+  double first = ValueToDouble(pThis, argFirst.get());
   args.GetReturnValue()->SetDouble(first / second);
 }
 
@@ -5389,7 +5388,7 @@ void CXFA_FM2JSContext::logical_not_operator(CFXJSE_Value* pThis,
     return;
   }
 
-  FX_DOUBLE first = ValueToDouble(pThis, argOne.get());
+  double first = ValueToDouble(pThis, argOne.get());
   args.GetReturnValue()->SetInteger((first == 0.0) ? 1 : 0);
 }
 
@@ -6257,8 +6256,8 @@ FX_FLOAT CXFA_FM2JSContext::ValueToFloat(CFXJSE_Value* pThis,
 }
 
 // static
-FX_DOUBLE CXFA_FM2JSContext::ValueToDouble(CFXJSE_Value* pThis,
-                                           CFXJSE_Value* arg) {
+double CXFA_FM2JSContext::ValueToDouble(CFXJSE_Value* pThis,
+                                        CFXJSE_Value* arg) {
   if (!arg)
     return 0;
 

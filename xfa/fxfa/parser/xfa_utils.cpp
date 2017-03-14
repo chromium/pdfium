@@ -17,24 +17,24 @@
 
 namespace {
 
-const FX_DOUBLE fraction_scales[] = {0.1,
-                                     0.01,
-                                     0.001,
-                                     0.0001,
-                                     0.00001,
-                                     0.000001,
-                                     0.0000001,
-                                     0.00000001,
-                                     0.000000001,
-                                     0.0000000001,
-                                     0.00000000001,
-                                     0.000000000001,
-                                     0.0000000000001,
-                                     0.00000000000001,
-                                     0.000000000000001,
-                                     0.0000000000000001};
+const double fraction_scales[] = {0.1,
+                                  0.01,
+                                  0.001,
+                                  0.0001,
+                                  0.00001,
+                                  0.000001,
+                                  0.0000001,
+                                  0.00000001,
+                                  0.000000001,
+                                  0.0000000001,
+                                  0.00000000001,
+                                  0.000000000001,
+                                  0.0000000000001,
+                                  0.00000000000001,
+                                  0.000000000000001,
+                                  0.0000000000000001};
 
-FX_DOUBLE WideStringToDouble(const CFX_WideString& wsStringVal) {
+double WideStringToDouble(const CFX_WideString& wsStringVal) {
   CFX_WideString wsValue = wsStringVal;
   wsValue.TrimLeft();
   wsValue.TrimRight();
@@ -67,7 +67,7 @@ FX_DOUBLE WideStringToDouble(const CFX_WideString& wsStringVal) {
   }
   nIntegral = bNegative ? -nIntegral : nIntegral;
   int32_t scale = 0;
-  FX_DOUBLE fraction = 0.0;
+  double fraction = 0.0;
   if (cc < len && str[cc] == '.') {
     cc++;
     while (cc < len) {
@@ -77,8 +77,8 @@ FX_DOUBLE WideStringToDouble(const CFX_WideString& wsStringVal) {
       if (cc == len) {
         break;
       }
-      if (scale == sizeof(fraction_scales) / sizeof(FX_DOUBLE) ||
-          str[cc] == 'E' || str[cc] == 'e') {
+      if (scale == sizeof(fraction_scales) / sizeof(double) || str[cc] == 'E' ||
+          str[cc] == 'e') {
         break;
       }
       if (!FXSYS_isDecimalDigit(str[cc])) {
@@ -106,7 +106,7 @@ FX_DOUBLE WideStringToDouble(const CFX_WideString& wsStringVal) {
     }
     nExponent = bExpSign ? -nExponent : nExponent;
   }
-  FX_DOUBLE dValue = (dwFractional / 4294967296.0);
+  double dValue = (dwFractional / 4294967296.0);
   dValue = nIntegral + (nIntegral >= 0 ? dValue : -dValue);
   if (nExponent != 0) {
     dValue *= FXSYS_pow(10, (FX_FLOAT)nExponent);
@@ -221,7 +221,7 @@ bool XFA_FieldIsMultiListBox(CXFA_Node* pFieldNode) {
   return bRet;
 }
 
-FX_DOUBLE XFA_ByteStringToDouble(const CFX_ByteStringC& szStringVal) {
+double XFA_ByteStringToDouble(const CFX_ByteStringC& szStringVal) {
   CFX_WideString wsValue = CFX_WideString::FromUTF8(szStringVal);
   return WideStringToDouble(wsValue);
 }

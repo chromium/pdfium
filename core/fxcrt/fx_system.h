@@ -69,7 +69,6 @@ extern "C" {
 
 typedef void* FX_POSITION;  // Keep until fxcrt containers gone
 typedef float FX_FLOAT;     // Keep, allow upgrade to doubles.
-typedef double FX_DOUBLE;   // Keep, allow downgrade to floats.
 
 #define IsFloatZero(f) ((f) < 0.0001 && (f) > -0.0001)
 #define IsFloatBigger(fa, fb) ((fa) > (fb) && !IsFloatZero((fa) - (fb)))

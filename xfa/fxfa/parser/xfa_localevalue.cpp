@@ -17,22 +17,22 @@
 #include "xfa/fxfa/parser/xfa_object.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
 
-static const FX_DOUBLE fraction_scales[] = {0.1,
-                                            0.01,
-                                            0.001,
-                                            0.0001,
-                                            0.00001,
-                                            0.000001,
-                                            0.0000001,
-                                            0.00000001,
-                                            0.000000001,
-                                            0.0000000001,
-                                            0.00000000001,
-                                            0.000000000001,
-                                            0.0000000000001,
-                                            0.00000000000001,
-                                            0.000000000000001,
-                                            0.0000000000000001};
+static const double fraction_scales[] = {0.1,
+                                         0.01,
+                                         0.001,
+                                         0.0001,
+                                         0.00001,
+                                         0.000001,
+                                         0.0000001,
+                                         0.00000001,
+                                         0.000000001,
+                                         0.0000000001,
+                                         0.00000000001,
+                                         0.000000000001,
+                                         0.0000000000001,
+                                         0.00000000000001,
+                                         0.000000000000001,
+                                         0.0000000000000001};
 CXFA_LocaleValue::CXFA_LocaleValue() {
   m_dwType = XFA_VT_NULL;
   m_bValid = true;
@@ -286,7 +286,7 @@ FX_FLOAT CXFA_LocaleValue::GetNum() const {
   }
   return 0;
 }
-FX_DOUBLE CXFA_LocaleValue::GetDoubleNum() const {
+double CXFA_LocaleValue::GetDoubleNum() const {
   if (m_bValid && (m_dwType == XFA_VT_BOOLEAN || m_dwType == XFA_VT_INTEGER ||
                    m_dwType == XFA_VT_DECIMAL || m_dwType == XFA_VT_FLOAT)) {
     int64_t nIntegral = 0;
@@ -320,14 +320,14 @@ FX_DOUBLE CXFA_LocaleValue::GetDoubleNum() const {
     }
     nIntegral = bNegative ? -nIntegral : nIntegral;
     int32_t scale = 0;
-    FX_DOUBLE fraction = 0.0;
+    double fraction = 0.0;
     if (cc < len && str[cc] == '.') {
       cc++;
       while (cc < len) {
         fraction += fraction_scales[scale] * (str[cc] - '0');
         scale++;
         cc++;
-        if (scale == sizeof fraction_scales / sizeof(FX_DOUBLE) ||
+        if (scale == sizeof fraction_scales / sizeof(double) ||
             !FXSYS_isDecimalDigit(str[cc])) {
           break;
         }
@@ -353,7 +353,7 @@ FX_DOUBLE CXFA_LocaleValue::GetDoubleNum() const {
       }
       nExponent = bExpSign ? -nExponent : nExponent;
     }
-    FX_DOUBLE dValue = (dwFractional / 4294967296.0);
+    double dValue = (dwFractional / 4294967296.0);
     dValue = nIntegral + (nIntegral >= 0 ? dValue : -dValue);
     if (nExponent != 0) {
       dValue *= FXSYS_pow(10, (FX_FLOAT)nExponent);
@@ -406,7 +406,7 @@ bool CXFA_LocaleValue::SetText(const CFX_WideString& wsText,
 }
 bool CXFA_LocaleValue::SetNum(FX_FLOAT fNum) {
   m_dwType = XFA_VT_FLOAT;
-  m_wsValue.Format(L"%.8g", (FX_DOUBLE)fNum);
+  m_wsValue.Format(L"%.8g", (double)fNum);
   return true;
 }
 bool CXFA_LocaleValue::SetNum(const CFX_WideString& wsNum,

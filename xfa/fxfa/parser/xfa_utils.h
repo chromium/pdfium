@@ -142,7 +142,7 @@ class CXFA_NodeIteratorTemplate {
 };
 
 CXFA_LocaleValue XFA_GetLocaleValue(CXFA_WidgetData* pWidgetData);
-FX_DOUBLE XFA_ByteStringToDouble(const CFX_ByteStringC& szStringVal);
+double XFA_ByteStringToDouble(const CFX_ByteStringC& szStringVal);
 int32_t XFA_MapRotation(int32_t nRotation);
 
 bool XFA_RecognizeRichText(CFDE_XMLElement* pRichTextXMLNode);

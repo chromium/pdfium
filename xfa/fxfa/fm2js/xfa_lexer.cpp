@@ -38,7 +38,7 @@ struct XFA_FMDChar {
   }
   static bool isAvalid(const wchar_t* p, bool flag = 0);
   static bool string2number(const wchar_t* s,
-                            FX_DOUBLE* pValue,
+                            double* pValue,
                             const wchar_t*& pEnd);
   static bool isUnicodeAlpha(uint16_t ch);
 };
@@ -60,7 +60,7 @@ inline bool XFA_FMDChar::isAvalid(const wchar_t* p, bool flag) {
 }
 
 inline bool XFA_FMDChar::string2number(const wchar_t* s,
-                                       FX_DOUBLE* pValue,
+                                       double* pValue,
                                        const wchar_t*& pEnd) {
   if (s) {
     *pValue = wcstod((wchar_t*)s, (wchar_t**)&pEnd);
@@ -403,7 +403,7 @@ CXFA_FMToken* CXFA_FMLexer::Scan() {
 uint32_t CXFA_FMLexer::Number(CXFA_FMToken* t,
                               const wchar_t* p,
                               const wchar_t*& pEnd) {
-  FX_DOUBLE number = 0;
+  double number = 0;
   if (XFA_FMDChar::string2number(p, &number, pEnd)) {
     return 1;
   }

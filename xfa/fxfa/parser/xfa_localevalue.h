@@ -71,7 +71,7 @@ class CXFA_LocaleValue {
   void SetValue(const CFX_WideString& wsValue, uint32_t dwType);
   CFX_WideString GetText() const;
   FX_FLOAT GetNum() const;
-  FX_DOUBLE GetDoubleNum() const;
+  double GetDoubleNum() const;
   CFX_Unitime GetDate() const;
   CFX_Unitime GetTime() const;
   CFX_Unitime GetDateTime() const;
