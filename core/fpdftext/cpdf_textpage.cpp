@@ -378,10 +378,7 @@ CFX_WideString CPDF_TextPage::GetTextByRect(const CFX_FloatRect& rect) const {
 }
 
 void CPDF_TextPage::GetCharInfo(int index, FPDF_CHAR_INFO* info) const {
-  if (!m_bIsParsed)
-    return;
-
-  if (index < 0 || index >= pdfium::CollectionSize<int>(m_CharList))
+  if (!m_bIsParsed || !pdfium::IndexInBounds(m_CharList, index))
     return;
 
   const PAGECHAR_INFO& charinfo = m_CharList[index];
@@ -496,10 +493,7 @@ void CPDF_TextPage::GetRect(int rectIndex,
                             float& top,
                             float& right,
                             float& bottom) const {
-  if (!m_bIsParsed)
-    return;
-
-  if (rectIndex < 0 || rectIndex >= pdfium::CollectionSize<int>(m_SelRects))
+  if (!m_bIsParsed || !pdfium::IndexInBounds(m_SelRects, rectIndex))
     return;
 
   left = m_SelRects[rectIndex].left;

@@ -55,32 +55,26 @@ CPDF_Document* CPWL_FontMap::GetDocument() {
       m_pPDFDoc->CreateNewDoc();
     }
   }
-
   return m_pPDFDoc.get();
 }
 
 CPDF_Font* CPWL_FontMap::GetPDFFont(int32_t nFontIndex) {
-  if (nFontIndex >= 0 && nFontIndex < pdfium::CollectionSize<int32_t>(m_Data)) {
-    if (m_Data[nFontIndex])
-      return m_Data[nFontIndex]->pFont;
-  }
+  if (pdfium::IndexInBounds(m_Data, nFontIndex) && m_Data[nFontIndex])
+    return m_Data[nFontIndex]->pFont;
+
   return nullptr;
 }
 
 CFX_ByteString CPWL_FontMap::GetPDFFontAlias(int32_t nFontIndex) {
-  if (nFontIndex >= 0 && nFontIndex < pdfium::CollectionSize<int32_t>(m_Data)) {
-    if (m_Data[nFontIndex])
-      return m_Data[nFontIndex]->sFontName;
-  }
+  if (pdfium::IndexInBounds(m_Data, nFontIndex) && m_Data[nFontIndex])
+    return m_Data[nFontIndex]->sFontName;
+
   return CFX_ByteString();
 }
 
 bool CPWL_FontMap::KnowWord(int32_t nFontIndex, uint16_t word) {
-  if (nFontIndex >= 0 && nFontIndex < pdfium::CollectionSize<int32_t>(m_Data)) {
-    if (m_Data[nFontIndex])
-      return CharCodeFromUnicode(nFontIndex, word) >= 0;
-  }
-  return false;
+  return pdfium::IndexInBounds(m_Data, nFontIndex) && m_Data[nFontIndex] &&
+         CharCodeFromUnicode(nFontIndex, word) >= 0;
 }
 
 int32_t CPWL_FontMap::GetWordFontIndex(uint16_t word,
@@ -116,7 +110,7 @@ int32_t CPWL_FontMap::GetWordFontIndex(uint16_t word,
 }
 
 int32_t CPWL_FontMap::CharCodeFromUnicode(int32_t nFontIndex, uint16_t word) {
-  if (nFontIndex < 0 || nFontIndex >= pdfium::CollectionSize<int32_t>(m_Data))
+  if (!pdfium::IndexInBounds(m_Data, nFontIndex))
     return -1;
 
   CPWL_FontMap_Data* pData = m_Data[nFontIndex].get();
@@ -284,10 +278,7 @@ CFX_ByteString CPWL_FontMap::EncodeFontAlias(const CFX_ByteString& sFontName) {
 }
 
 const CPWL_FontMap_Data* CPWL_FontMap::GetFontMapData(int32_t nIndex) const {
-  if (nIndex < 0 || nIndex >= pdfium::CollectionSize<int32_t>(m_Data))
-    return nullptr;
-
-  return m_Data[nIndex].get();
+  return pdfium::IndexInBounds(m_Data, nIndex) ? m_Data[nIndex].get() : nullptr;
 }
 
 int32_t CPWL_FontMap::GetNativeCharset() {

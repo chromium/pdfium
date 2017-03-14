@@ -775,10 +775,7 @@ int32_t CFDE_TTOLine::GetSize() const {
 }
 
 FDE_TTOPIECE* CFDE_TTOLine::GetPtrAt(int32_t index) {
-  if (index < 0 || index >= pdfium::CollectionSize<int32_t>(m_pieces))
-    return nullptr;
-
-  return &m_pieces[index];
+  return pdfium::IndexInBounds(m_pieces, index) ? &m_pieces[index] : nullptr;
 }
 
 void CFDE_TTOLine::RemoveLast(int32_t icount) {

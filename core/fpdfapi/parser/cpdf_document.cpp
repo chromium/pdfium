@@ -477,10 +477,10 @@ bool CPDF_Document::IsPageLoaded(int iPage) const {
 }
 
 CPDF_Dictionary* CPDF_Document::GetPage(int iPage) {
-  if (iPage < 0 || iPage >= pdfium::CollectionSize<int>(m_PageList))
+  if (!pdfium::IndexInBounds(m_PageList, iPage))
     return nullptr;
 
-  if (m_bLinearized && (iPage == m_iFirstPageNo)) {
+  if (m_bLinearized && iPage == m_iFirstPageNo) {
     if (CPDF_Dictionary* pDict =
             ToDictionary(GetOrParseIndirectObject(m_dwFirstPageObjNum))) {
       return pDict;
@@ -586,7 +586,7 @@ int CPDF_Document::GetPageIndex(uint32_t objnum) {
   int found_index = FindPageIndex(pPages, &skip_count, objnum, &start_index);
 
   // Corrupt page tree may yield out-of-range results.
-  if (found_index < 0 || found_index >= pdfium::CollectionSize<int>(m_PageList))
+  if (!pdfium::IndexInBounds(m_PageList, found_index))
     return -1;
 
   m_PageList[found_index] = objnum;

@@ -172,10 +172,8 @@ CPDFXFA_Page* CPDFXFA_Context::GetXFAPage(int page_index) {
     pPage->Release();
     return nullptr;
   }
-  if (page_index >= 0 &&
-      page_index < pdfium::CollectionSize<int>(m_XFAPageList)) {
+  if (pdfium::IndexInBounds(m_XFAPageList, page_index))
     m_XFAPageList[page_index] = pPage;
-  }
   return pPage;
 }
 
@@ -203,20 +201,17 @@ void CPDFXFA_Context::DeletePage(int page_index) {
   if (m_pPDFDoc)
     m_pPDFDoc->DeletePage(page_index);
 
-  if (page_index < 0 ||
-      page_index >= pdfium::CollectionSize<int>(m_XFAPageList)) {
+  if (!pdfium::IndexInBounds(m_XFAPageList, page_index))
     return;
-  }
+
   if (CPDFXFA_Page* pPage = m_XFAPageList[page_index])
     pPage->Release();
 }
 
 void CPDFXFA_Context::RemovePage(CPDFXFA_Page* page) {
   int page_index = page->GetPageIndex();
-  if (page_index >= 0 &&
-      page_index < pdfium::CollectionSize<int>(m_XFAPageList)) {
+  if (pdfium::IndexInBounds(m_XFAPageList, page_index))
     m_XFAPageList[page_index] = nullptr;
-  }
 }
 
 void CPDFXFA_Context::ClearChangeMark() {

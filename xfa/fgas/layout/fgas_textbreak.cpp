@@ -796,11 +796,10 @@ int32_t CFX_TxtBreak::CountBreakPieces() const {
 const CFX_BreakPiece* CFX_TxtBreak::GetBreakPiece(int32_t index) const {
   if (!HasTxtLine())
     return nullptr;
-  if (index < 0 ||
-      index >= pdfium::CollectionSize<int32_t>(
-                   m_TxtLine[m_iReadyLineIndex].m_LinePieces)) {
+
+  if (!pdfium::IndexInBounds(m_TxtLine[m_iReadyLineIndex].m_LinePieces, index))
     return nullptr;
-  }
+
   return &m_TxtLine[m_iReadyLineIndex].m_LinePieces[index];
 }
 

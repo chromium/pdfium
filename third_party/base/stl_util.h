@@ -44,6 +44,13 @@ ResultType CollectionSize(const Collection& collection) {
   return pdfium::base::checked_cast<ResultType>(collection.size());
 }
 
+// Convenience routine for "int-fected" code, to handle signed indicies. The
+// compiler can deduce the type, making this more convenient than the above.
+template <typename IndexType, typename Collection>
+bool IndexInBounds(const Collection& collection, IndexType index) {
+  return index >= 0 && index < CollectionSize<IndexType>(collection);
+}
+
 // Track the addition of an object to a set, removing it automatically when
 // the ScopedSetInsertion goes out of scope.
 template <typename T>

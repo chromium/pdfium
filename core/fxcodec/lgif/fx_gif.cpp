@@ -841,11 +841,11 @@ int32_t gif_decode_image_info(gif_decompress_struct_p gif_ptr) {
   gif_save_decoding_status(gif_ptr, GIF_D_STATUS_IMG_DATA);
   return 1;
 }
+
 int32_t gif_load_frame(gif_decompress_struct_p gif_ptr, int32_t frame_num) {
-  if (!gif_ptr || frame_num < 0 ||
-      frame_num >= pdfium::CollectionSize<int>(*gif_ptr->img_ptr_arr_ptr)) {
+  if (!gif_ptr || !pdfium::IndexInBounds(*gif_ptr->img_ptr_arr_ptr, frame_num))
     return 0;
-  }
+
   uint8_t* data_size_ptr = nullptr;
   uint8_t* data_ptr = nullptr;
   uint32_t skip_size_org = gif_ptr->skip_size;

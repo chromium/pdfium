@@ -458,10 +458,9 @@ uint32_t CPDF_Font::FallbackFontFromCharcode(uint32_t charcode) {
 }
 
 int CPDF_Font::FallbackGlyphFromCharcode(int fallbackFont, uint32_t charcode) {
-  if (fallbackFont < 0 ||
-      fallbackFont >= pdfium::CollectionSize<int>(m_FontFallbacks)) {
+  if (!pdfium::IndexInBounds(m_FontFallbacks, fallbackFont))
     return -1;
-  }
+
   int glyph =
       FXFT_Get_Char_Index(m_FontFallbacks[fallbackFont]->GetFace(), charcode);
   if (glyph == 0 || glyph == 0xffff)

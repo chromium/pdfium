@@ -805,8 +805,9 @@ const CFX_BreakPiece* CFX_RTFBreak::GetBreakPieceUnstable(int32_t index) const {
 
   const std::vector<CFX_BreakPiece>& pRTFPieces =
       m_RTFLine[m_iReadyLineIndex].m_LinePieces;
-  if (index < 0 || index >= pdfium::CollectionSize<int32_t>(pRTFPieces))
+  if (!pdfium::IndexInBounds(pRTFPieces, index))
     return nullptr;
+
   return &pRTFPieces[index];
 }
 

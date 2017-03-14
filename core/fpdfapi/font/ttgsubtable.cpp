@@ -127,9 +127,8 @@ bool CFX_CTTGSUBTable::GetVerticalGlyphSub(uint32_t glyphnum,
                                            uint32_t* vglyphnum,
                                            TFeature* Feature) {
   for (int index : Feature->LookupListIndices) {
-    if (index < 0 || index >= pdfium::CollectionSize<int>(LookupList.Lookups))
+    if (!pdfium::IndexInBounds(LookupList.Lookups, index))
       continue;
-
     if (LookupList.Lookups[index].LookupType == 1 &&
         GetVerticalGlyphSub2(glyphnum, vglyphnum, &LookupList.Lookups[index])) {
       return true;
@@ -154,8 +153,7 @@ bool CFX_CTTGSUBTable::GetVerticalGlyphSub2(uint32_t glyphnum,
       case 2: {
         auto* tbl2 = static_cast<TSingleSubstFormat2*>(subTable.get());
         int index = GetCoverageIndex(tbl2->Coverage.get(), glyphnum);
-        if (index >= 0 &&
-            index < pdfium::CollectionSize<int>(tbl2->Substitutes)) {
+        if (pdfium::IndexInBounds(tbl2->Substitutes, index)) {
           *vglyphnum = tbl2->Substitutes[index];
           return true;
         }

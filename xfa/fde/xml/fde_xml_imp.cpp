@@ -652,7 +652,7 @@ int32_t CFDE_XMLInstruction::CountData() const {
 }
 
 bool CFDE_XMLInstruction::GetData(int32_t index, CFX_WideString& wsData) const {
-  if (index < 0 || index >= pdfium::CollectionSize<int32_t>(m_TargetData))
+  if (!pdfium::IndexInBounds(m_TargetData, index))
     return false;
 
   wsData = m_TargetData[index];
@@ -664,10 +664,8 @@ void CFDE_XMLInstruction::AppendData(const CFX_WideString& wsData) {
 }
 
 void CFDE_XMLInstruction::RemoveData(int32_t index) {
-  if (index < 0 || index >= pdfium::CollectionSize<int32_t>(m_TargetData))
-    return;
-
-  m_TargetData.erase(m_TargetData.begin() + index);
+  if (pdfium::IndexInBounds(m_TargetData, index))
+    m_TargetData.erase(m_TargetData.begin() + index);
 }
 
 CFDE_XMLInstruction::~CFDE_XMLInstruction() {}

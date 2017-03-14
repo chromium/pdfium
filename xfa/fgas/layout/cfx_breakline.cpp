@@ -17,12 +17,12 @@ int32_t CFX_BreakLine::CountChars() const {
 }
 
 CFX_Char* CFX_BreakLine::GetChar(int32_t index) {
-  ASSERT(index >= 0 && index < pdfium::CollectionSize<int32_t>(m_LineChars));
+  ASSERT(pdfium::IndexInBounds(m_LineChars, index));
   return &m_LineChars[index];
 }
 
 const CFX_Char* CFX_BreakLine::GetChar(int32_t index) const {
-  ASSERT(index >= 0 && index < pdfium::CollectionSize<int32_t>(m_LineChars));
+  ASSERT(pdfium::IndexInBounds(m_LineChars, index));
   return &m_LineChars[index];
 }
 
