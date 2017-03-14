@@ -4,6 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include <vector>
+
+#include "third_party/base/stl_util.h"
 #include "xfa/fxfa/parser/xfa_object.h"
 
 CXFA_ArrayNodeList::CXFA_ArrayNodeList(CXFA_Document* pDocument)
@@ -11,51 +14,40 @@ CXFA_ArrayNodeList::CXFA_ArrayNodeList(CXFA_Document* pDocument)
 
 CXFA_ArrayNodeList::~CXFA_ArrayNodeList() {}
 
-void CXFA_ArrayNodeList::SetArrayNodeList(const CXFA_NodeArray& srcArray) {
-  if (srcArray.GetSize() > 0) {
-    m_array.Copy(srcArray);
-  }
+void CXFA_ArrayNodeList::SetArrayNodeList(
+    const std::vector<CXFA_Node*>& srcArray) {
+  if (!srcArray.empty())
+    m_array = srcArray;
 }
 
 int32_t CXFA_ArrayNodeList::GetLength() {
-  return m_array.GetSize();
+  return pdfium::CollectionSize<int32_t>(m_array);
 }
 
 bool CXFA_ArrayNodeList::Append(CXFA_Node* pNode) {
-  m_array.Add(pNode);
+  m_array.push_back(pNode);
   return true;
 }
 
 bool CXFA_ArrayNodeList::Insert(CXFA_Node* pNewNode, CXFA_Node* pBeforeNode) {
   if (!pBeforeNode) {
-    m_array.Add(pNewNode);
+    m_array.push_back(pNewNode);
   } else {
-    int32_t iSize = m_array.GetSize();
-    for (int32_t i = 0; i < iSize; ++i) {
-      if (m_array[i] == pBeforeNode) {
-        m_array.InsertAt(i, pNewNode);
-        break;
-      }
-    }
+    auto it = std::find(m_array.begin(), m_array.end(), pBeforeNode);
+    if (it != m_array.end())
+      m_array.insert(it, pNewNode);
   }
   return true;
 }
 
 bool CXFA_ArrayNodeList::Remove(CXFA_Node* pNode) {
-  int32_t iSize = m_array.GetSize();
-  for (int32_t i = 0; i < iSize; ++i) {
-    if (m_array[i] == pNode) {
-      m_array.RemoveAt(i);
-      break;
-    }
-  }
+  auto it = std::find(m_array.begin(), m_array.end(), pNode);
+  if (it != m_array.end())
+    m_array.erase(it);
   return true;
 }
 
 CXFA_Node* CXFA_ArrayNodeList::Item(int32_t iIndex) {
-  int32_t iSize = m_array.GetSize();
-  if (iIndex >= 0 && iIndex < iSize) {
-    return m_array[iIndex];
-  }
-  return nullptr;
+  int32_t iSize = pdfium::CollectionSize<int32_t>(m_array);
+  return (iIndex >= 0 && iIndex < iSize) ? m_array[iIndex] : nullptr;
 }

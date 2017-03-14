@@ -418,8 +418,8 @@ void CXFA_Document::DoProtoMerge() {
       XFA_RESOLVENODE_RS resoveNodeRS;
       int32_t iRet = m_pScriptContext->ResolveObjects(pUseHrefNode, wsSOM,
                                                       resoveNodeRS, dwFlag);
-      if (iRet > 0 && resoveNodeRS.nodes[0]->IsNode())
-        pProtoNode = resoveNodeRS.nodes[0]->AsNode();
+      if (iRet > 0 && resoveNodeRS.objects.front()->IsNode())
+        pProtoNode = resoveNodeRS.objects.front()->AsNode();
     } else if (!wsID.IsEmpty()) {
       auto it = mIDMap.find(FX_HashCode_GetW(wsID, false));
       if (it == mIDMap.end())

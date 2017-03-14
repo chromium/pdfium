@@ -19,7 +19,7 @@ class CXFA_Data {
 
   explicit CXFA_Data(CXFA_Node* pNode) : m_pNode(pNode) {}
 
-  operator bool() const { return !!m_pNode; }
+  explicit operator bool() const { return !!m_pNode; }
   CXFA_Node* GetNode() const { return m_pNode; }
   XFA_Element GetElementType() const;
 

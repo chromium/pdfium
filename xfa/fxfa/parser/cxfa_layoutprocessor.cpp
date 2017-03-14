@@ -7,6 +7,7 @@
 #include "xfa/fxfa/parser/cxfa_layoutprocessor.h"
 
 #include "third_party/base/ptr_util.h"
+#include "third_party/base/stl_util.h"
 #include "xfa/fxfa/parser/cxfa_contentlayoutitem.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_layoutpagemgr.h"
@@ -18,9 +19,7 @@
 #include "xfa/fxfa/parser/xfa_utils.h"
 
 CXFA_LayoutProcessor::CXFA_LayoutProcessor(CXFA_Document* pDocument)
-    : m_pDocument(pDocument),
-      m_nProgressCounter(0),
-      m_bNeeLayout(true) {}
+    : m_pDocument(pDocument), m_nProgressCounter(0), m_bNeedLayout(true) {}
 
 CXFA_LayoutProcessor::~CXFA_LayoutProcessor() {}
 
@@ -85,8 +84,8 @@ int32_t CXFA_LayoutProcessor::DoLayout(IFX_Pause* pPause) {
   if (eStatus == XFA_ItemLayoutProcessorResult::Done) {
     m_pLayoutPageMgr->FinishPaginatedPageSets();
     m_pLayoutPageMgr->SyncLayoutData();
-    m_bNeeLayout = false;
-    m_rgChangedContainers.RemoveAll();
+    m_bNeedLayout = false;
+    m_rgChangedContainers.clear();
   }
   return 100 * (eStatus == XFA_ItemLayoutProcessorResult::Done
                     ? m_nProgressCounter
@@ -95,13 +94,11 @@ int32_t CXFA_LayoutProcessor::DoLayout(IFX_Pause* pPause) {
 }
 
 bool CXFA_LayoutProcessor::IncrementLayout() {
-  if (m_bNeeLayout) {
+  if (m_bNeedLayout) {
     StartLayout(true);
     return DoLayout(nullptr) == 100;
   }
-
-  for (int32_t i = 0, c = m_rgChangedContainers.GetSize(); i < c; i++) {
-    CXFA_Node* pNode = m_rgChangedContainers[i];
+  for (CXFA_Node* pNode : m_rgChangedContainers) {
     CXFA_Node* pParentNode =
         pNode->GetNodeItem(XFA_NODEITEM_Parent, XFA_ObjectType::ContainerNode);
     if (!pParentNode)
@@ -111,7 +108,7 @@ bool CXFA_LayoutProcessor::IncrementLayout() {
       return false;
     }
   }
-  m_rgChangedContainers.RemoveAll();
+  m_rgChangedContainers.clear();
   return true;
 }
 
@@ -129,8 +126,8 @@ CXFA_LayoutItem* CXFA_LayoutProcessor::GetLayoutItem(CXFA_Node* pFormItem) {
 }
 
 void CXFA_LayoutProcessor::AddChangedContainer(CXFA_Node* pContainer) {
-  if (m_rgChangedContainers.Find(pContainer) < 0)
-    m_rgChangedContainers.Add(pContainer);
+  if (!pdfium::ContainsValue(m_rgChangedContainers, pContainer))
+    m_rgChangedContainers.push_back(pContainer);
 }
 
 CXFA_ContainerLayoutItem* CXFA_LayoutProcessor::GetRootLayoutItem() const {
@@ -138,5 +135,5 @@ CXFA_ContainerLayoutItem* CXFA_LayoutProcessor::GetRootLayoutItem() const {
 }
 
 bool CXFA_LayoutProcessor::IsNeedLayout() {
-  return m_bNeeLayout || m_rgChangedContainers.GetSize() > 0;
+  return m_bNeedLayout || !m_rgChangedContainers.empty();
 }

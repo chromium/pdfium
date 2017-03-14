@@ -7,6 +7,8 @@
 #ifndef XFA_FXFA_PARSER_CSCRIPT_LAYOUTPSEUDOMODEL_H_
 #define XFA_FXFA_PARSER_CSCRIPT_LAYOUTPSEUDOMODEL_H_
 
+#include <vector>
+
 #include "fxjs/cfxjse_arguments.h"
 #include "xfa/fxfa/parser/xfa_object.h"
 
@@ -49,11 +51,10 @@ class CScript_LayoutPseudoModel : public CXFA_Object {
   void AbsPage(CFXJSE_Arguments* pArguments);
 
  protected:
-  void GetObjArray(CXFA_LayoutProcessor* pDocLayout,
-                   int32_t iPageNo,
-                   const CFX_WideString& wsType,
-                   bool bOnPageArea,
-                   CXFA_NodeArray& retArray);
+  std::vector<CXFA_Node*> GetObjArray(CXFA_LayoutProcessor* pDocLayout,
+                                      int32_t iPageNo,
+                                      const CFX_WideString& wsType,
+                                      bool bOnPageArea);
   void PageImp(CFXJSE_Arguments* pArguments, bool bAbsPage);
 
  private:

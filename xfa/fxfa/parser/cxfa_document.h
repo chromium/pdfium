@@ -9,6 +9,7 @@
 
 #include <map>
 #include <unordered_set>
+#include <vector>
 
 #include "xfa/fxfa/fxfa.h"
 #include "xfa/fxfa/parser/xfa_localemgr.h"
@@ -70,7 +71,7 @@ class CXFA_Document {
   CXFA_LocaleMgr* GetLocalMgr();
   CXFA_Object* GetXFAObject(XFA_HashCode wsNodeNameHash);
   CXFA_Node* GetNodeByID(CXFA_Node* pRoot, const CFX_WideStringC& wsID);
-  CXFA_Node* GetNotBindNode(CXFA_ObjArray& arrayNodes);
+  CXFA_Node* GetNotBindNode(const std::vector<CXFA_Object*>& arrayNodes);
   CXFA_LayoutProcessor* GetLayoutProcessor();
   CXFA_LayoutProcessor* GetDocLayout();
   CXFA_ScriptContext* GetScriptContext();
@@ -105,7 +106,7 @@ class CXFA_Document {
   void ClearLayoutData();
 
   std::map<uint32_t, CXFA_Node*> m_rgGlobalBinding;
-  CXFA_NodeArray m_pPendingPageSet;
+  std::vector<CXFA_Node*> m_pPendingPageSet;
 
  protected:
   CXFA_DocumentParser* m_pParser;

@@ -164,34 +164,25 @@ void CXFA_FFWidgetHandler::RenderWidget(CXFA_FFWidget* hWidget,
 
 bool CXFA_FFWidgetHandler::HasEvent(CXFA_WidgetAcc* pWidgetAcc,
                                     XFA_EVENTTYPE eEventType) {
-  if (!pWidgetAcc || eEventType == XFA_EVENT_Unknown)
+  if (eEventType == XFA_EVENT_Unknown)
     return false;
-  if (pWidgetAcc->GetElementType() == XFA_Element::Draw)
+
+  if (!pWidgetAcc || pWidgetAcc->GetElementType() == XFA_Element::Draw)
     return false;
 
   switch (eEventType) {
     case XFA_EVENT_Calculate: {
       CXFA_Calculate calc = pWidgetAcc->GetCalculate();
-      if (!calc)
-        return false;
-      if (calc.GetScript())
-        return true;
-      return false;
+      return calc && calc.GetScript();
     }
     case XFA_EVENT_Validate: {
       CXFA_Validate val = pWidgetAcc->GetValidate();
-      if (!val)
-        return false;
-      if (val.GetScript())
-        return true;
-      return false;
+      return val && val.GetScript();
     }
     default:
       break;
   }
-  CXFA_NodeArray eventArray;
-  return pWidgetAcc->GetEventByActivity(gs_EventActivity[eEventType],
-                                        eventArray) > 0;
+  return !pWidgetAcc->GetEventByActivity(gs_EventActivity[eEventType]).empty();
 }
 
 int32_t CXFA_FFWidgetHandler::ProcessEvent(CXFA_WidgetAcc* pWidgetAcc,

@@ -51,7 +51,7 @@ class CXFA_WidgetAcc : public CXFA_WidgetData {
   IXFA_AppProvider* GetAppProvider();
 
   int32_t ProcessEvent(int32_t iActivity, CXFA_EventParam* pEventParam);
-  int32_t ProcessEvent(CXFA_Event& event, CXFA_EventParam* pEventParam);
+  int32_t ProcessEvent(const CXFA_Event& event, CXFA_EventParam* pEventParam);
   int32_t ProcessCalculate();
   int32_t ProcessValidate(int32_t iFlags = 0);
   int32_t ExecuteScript(CXFA_Script script,

@@ -7,6 +7,8 @@
 #ifndef XFA_FXFA_PARSER_CXFA_NODEHELPER_H_
 #define XFA_FXFA_PARSER_CXFA_NODEHELPER_H_
 
+#include <vector>
+
 #include "xfa/fxfa/parser/xfa_object.h"
 #include "xfa/fxfa/parser/xfa_resolvenode_rs.h"
 
@@ -31,17 +33,17 @@ class CXFA_NodeHelper {
 
   int32_t NodeAcc_TraverseSiblings(CXFA_Node* parent,
                                    uint32_t dNameHash,
-                                   CXFA_NodeArray* pSiblings,
+                                   std::vector<CXFA_Node*>* pSiblings,
                                    XFA_LOGIC_TYPE eLogicType,
                                    bool bIsClassName = false,
                                    bool bIsFindProperty = true);
   int32_t NodeAcc_TraverseAnySiblings(CXFA_Node* parent,
                                       uint32_t dNameHash,
-                                      CXFA_NodeArray* pSiblings,
+                                      std::vector<CXFA_Node*>* pSiblings,
                                       bool bIsClassName = false);
   int32_t CountSiblings(CXFA_Node* pNode,
                         XFA_LOGIC_TYPE eLogicType,
-                        CXFA_NodeArray* pSiblings,
+                        std::vector<CXFA_Node*>* pSiblings,
                         bool bIsClassName = false);
   int32_t GetIndex(CXFA_Node* pNode,
                    XFA_LOGIC_TYPE eLogicType = XFA_LOGIC_NoTransparent,

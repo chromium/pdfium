@@ -315,35 +315,32 @@ CXFA_Para CXFA_WidgetData::GetPara(bool bModified) {
   return CXFA_Para(m_pNode->GetProperty(0, XFA_Element::Para, bModified));
 }
 
-void CXFA_WidgetData::GetEventList(CXFA_NodeArray& events) {
-  m_pNode->GetNodeList(events, 0, XFA_Element::Event);
+std::vector<CXFA_Node*> CXFA_WidgetData::GetEventList() {
+  return m_pNode->GetNodeList(0, XFA_Element::Event);
 }
 
-int32_t CXFA_WidgetData::GetEventByActivity(int32_t iActivity,
-                                            CXFA_NodeArray& events,
-                                            bool bIsFormReady) {
-  CXFA_NodeArray allEvents;
-  GetEventList(allEvents);
-  int32_t iCount = allEvents.GetSize();
-  for (int32_t i = 0; i < iCount; i++) {
-    CXFA_Event event(allEvents[i]);
+std::vector<CXFA_Node*> CXFA_WidgetData::GetEventByActivity(int32_t iActivity,
+                                                            bool bIsFormReady) {
+  std::vector<CXFA_Node*> events;
+  for (CXFA_Node* pNode : GetEventList()) {
+    CXFA_Event event(pNode);
     if (event.GetActivity() == iActivity) {
       if (iActivity == XFA_ATTRIBUTEENUM_Ready) {
         CFX_WideStringC wsRef;
         event.GetRef(wsRef);
         if (bIsFormReady) {
           if (wsRef == CFX_WideStringC(L"$form"))
-            events.Add(allEvents[i]);
+            events.push_back(pNode);
         } else {
           if (wsRef == CFX_WideStringC(L"$layout"))
-            events.Add(allEvents[i]);
+            events.push_back(pNode);
         }
       } else {
-        events.Add(allEvents[i]);
+        events.push_back(pNode);
       }
     }
   }
-  return events.GetSize();
+  return events;
 }
 
 CXFA_Value CXFA_WidgetData::GetDefaultValue(bool bModified) {
@@ -733,35 +730,32 @@ int32_t CXFA_WidgetData::GetChoiceListOpen() {
 
 bool CXFA_WidgetData::IsListBox() {
   int32_t iOpenMode = GetChoiceListOpen();
-  return (iOpenMode == XFA_ATTRIBUTEENUM_Always ||
-          iOpenMode == XFA_ATTRIBUTEENUM_MultiSelect);
+  return iOpenMode == XFA_ATTRIBUTEENUM_Always ||
+         iOpenMode == XFA_ATTRIBUTEENUM_MultiSelect;
 }
 
 int32_t CXFA_WidgetData::CountChoiceListItems(bool bSaveValue) {
-  CXFA_NodeArray pItems;
-  CXFA_Node* pItem = nullptr;
+  std::vector<CXFA_Node*> pItems;
   int32_t iCount = 0;
-  CXFA_Node* pNode = m_pNode->GetNodeItem(XFA_NODEITEM_FirstChild);
-  for (; pNode; pNode = pNode->GetNodeItem(XFA_NODEITEM_NextSibling)) {
+  for (CXFA_Node* pNode = m_pNode->GetNodeItem(XFA_NODEITEM_FirstChild); pNode;
+       pNode = pNode->GetNodeItem(XFA_NODEITEM_NextSibling)) {
     if (pNode->GetElementType() != XFA_Element::Items)
       continue;
-
     iCount++;
-    pItems.Add(pNode);
+    pItems.push_back(pNode);
     if (iCount == 2)
       break;
   }
   if (iCount == 0)
     return 0;
 
-  pItem = pItems[0];
+  CXFA_Node* pItem = pItems[0];
   if (iCount > 1) {
     bool bItemOneHasSave = pItems[0]->GetBoolean(XFA_ATTRIBUTE_Save);
     bool bItemTwoHasSave = pItems[1]->GetBoolean(XFA_ATTRIBUTE_Save);
     if (bItemOneHasSave != bItemTwoHasSave && bSaveValue == bItemTwoHasSave)
       pItem = pItems[1];
   }
-  pItems.RemoveAll();
   return pItem->CountChildren(XFA_Element::Unknown);
 }
 
@@ -769,16 +763,15 @@ bool CXFA_WidgetData::GetChoiceListItem(CFX_WideString& wsText,
                                         int32_t nIndex,
                                         bool bSaveValue) {
   wsText.clear();
-  CXFA_NodeArray pItemsArray;
+  std::vector<CXFA_Node*> pItemsArray;
   CXFA_Node* pItems = nullptr;
   int32_t iCount = 0;
   CXFA_Node* pNode = m_pNode->GetNodeItem(XFA_NODEITEM_FirstChild);
   for (; pNode; pNode = pNode->GetNodeItem(XFA_NODEITEM_NextSibling)) {
     if (pNode->GetElementType() != XFA_Element::Items)
       continue;
-
     iCount++;
-    pItemsArray.Add(pNode);
+    pItemsArray.push_back(pNode);
     if (iCount == 2)
       break;
   }
@@ -805,32 +798,29 @@ bool CXFA_WidgetData::GetChoiceListItem(CFX_WideString& wsText,
 void CXFA_WidgetData::GetChoiceListItems(
     std::vector<CFX_WideString>& wsTextArray,
     bool bSaveValue) {
-  CXFA_NodeArray pItems;
-  CXFA_Node* pItem = nullptr;
+  std::vector<CXFA_Node*> pItems;
   int32_t iCount = 0;
-  CXFA_Node* pNode = m_pNode->GetNodeItem(XFA_NODEITEM_FirstChild);
-  for (; pNode; pNode = pNode->GetNodeItem(XFA_NODEITEM_NextSibling)) {
+  for (CXFA_Node* pNode = m_pNode->GetNodeItem(XFA_NODEITEM_FirstChild); pNode;
+       pNode = pNode->GetNodeItem(XFA_NODEITEM_NextSibling)) {
     if (pNode->GetElementType() != XFA_Element::Items)
       continue;
-
     iCount++;
-    pItems.Add(pNode);
+    pItems.push_back(pNode);
     if (iCount == 2)
       break;
   }
   if (iCount == 0)
     return;
 
-  pItem = pItems[0];
+  CXFA_Node* pItem = pItems[0];
   if (iCount > 1) {
     bool bItemOneHasSave = pItems[0]->GetBoolean(XFA_ATTRIBUTE_Save);
     bool bItemTwoHasSave = pItems[1]->GetBoolean(XFA_ATTRIBUTE_Save);
     if (bItemOneHasSave != bItemTwoHasSave && bSaveValue == bItemTwoHasSave)
       pItem = pItems[1];
   }
-  pItems.RemoveAll();
-  pNode = pItem->GetNodeItem(XFA_NODEITEM_FirstChild);
-  for (; pNode; pNode = pNode->GetNodeItem(XFA_NODEITEM_NextSibling)) {
+  for (CXFA_Node* pNode = pItem->GetNodeItem(XFA_NODEITEM_FirstChild); pNode;
+       pNode = pNode->GetNodeItem(XFA_NODEITEM_NextSibling)) {
     wsTextArray.emplace_back();
     pNode->TryContent(wsTextArray.back());
   }
@@ -1038,18 +1028,13 @@ void CXFA_WidgetData::InsertItem(const CFX_WideString& wsLabel,
   if (wsNewValue.IsEmpty())
     wsNewValue = wsLabel;
 
-  CXFA_NodeArray listitems;
-  int32_t iCount = 0;
-  CXFA_Node* pItemNode = m_pNode->GetNodeItem(XFA_NODEITEM_FirstChild);
-  for (; pItemNode;
-       pItemNode = pItemNode->GetNodeItem(XFA_NODEITEM_NextSibling)) {
-    if (pItemNode->GetElementType() != XFA_Element::Items)
-      continue;
-
-    listitems.Add(pItemNode);
-    iCount++;
+  std::vector<CXFA_Node*> listitems;
+  for (CXFA_Node* pItem = m_pNode->GetNodeItem(XFA_NODEITEM_FirstChild); pItem;
+       pItem = pItem->GetNodeItem(XFA_NODEITEM_NextSibling)) {
+    if (pItem->GetElementType() == XFA_Element::Items)
+      listitems.push_back(pItem);
   }
-  if (iCount < 1) {
+  if (listitems.empty()) {
     CXFA_Node* pItems = m_pNode->CreateSamePacketNode(XFA_Element::Items);
     m_pNode->InsertChild(-1, pItems);
     InsertListTextItem(pItems, wsLabel, nIndex);
@@ -1057,7 +1042,7 @@ void CXFA_WidgetData::InsertItem(const CFX_WideString& wsLabel,
     m_pNode->InsertChild(-1, pSaveItems);
     pSaveItems->SetBoolean(XFA_ATTRIBUTE_Save, true);
     InsertListTextItem(pSaveItems, wsNewValue, nIndex);
-  } else if (iCount > 1) {
+  } else if (listitems.size() > 1) {
     for (int32_t i = 0; i < 2; i++) {
       CXFA_Node* pNode = listitems[i];
       bool bHasSave = pNode->GetBoolean(XFA_ATTRIBUTE_Save);
@@ -1074,7 +1059,6 @@ void CXFA_WidgetData::InsertItem(const CFX_WideString& wsLabel,
     m_pNode->InsertChild(-1, pSaveItems);
     pSaveItems->SetBoolean(XFA_ATTRIBUTE_Save, true);
     pSaveItems->SetEnum(XFA_ATTRIBUTE_Presence, XFA_ATTRIBUTEENUM_Hidden);
-    listitems.RemoveAll();
     CXFA_Node* pListNode = pNode->GetNodeItem(XFA_NODEITEM_FirstChild);
     int32_t i = 0;
     while (pListNode) {
@@ -1097,14 +1081,13 @@ void CXFA_WidgetData::InsertItem(const CFX_WideString& wsLabel,
 void CXFA_WidgetData::GetItemLabel(const CFX_WideStringC& wsValue,
                                    CFX_WideString& wsLabel) {
   int32_t iCount = 0;
-  CXFA_NodeArray listitems;
+  std::vector<CXFA_Node*> listitems;
   CXFA_Node* pItems = m_pNode->GetNodeItem(XFA_NODEITEM_FirstChild);
   for (; pItems; pItems = pItems->GetNodeItem(XFA_NODEITEM_NextSibling)) {
     if (pItems->GetElementType() != XFA_Element::Items)
       continue;
-
     iCount++;
-    listitems.Add(pItems);
+    listitems.push_back(pItems);
   }
   if (iCount <= 1) {
     wsLabel = wsValue;
@@ -1143,14 +1126,13 @@ void CXFA_WidgetData::GetItemLabel(const CFX_WideStringC& wsValue,
 void CXFA_WidgetData::GetItemValue(const CFX_WideStringC& wsLabel,
                                    CFX_WideString& wsValue) {
   int32_t iCount = 0;
-  CXFA_NodeArray listitems;
-  CXFA_Node* pItems = m_pNode->GetNodeItem(XFA_NODEITEM_FirstChild);
-  for (; pItems; pItems = pItems->GetNodeItem(XFA_NODEITEM_NextSibling)) {
+  std::vector<CXFA_Node*> listitems;
+  for (CXFA_Node* pItems = m_pNode->GetNodeItem(XFA_NODEITEM_FirstChild);
+       pItems; pItems = pItems->GetNodeItem(XFA_NODEITEM_NextSibling)) {
     if (pItems->GetElementType() != XFA_Element::Items)
       continue;
-
     iCount++;
-    listitems.Add(pItems);
+    listitems.push_back(pItems);
   }
   if (iCount <= 1) {
     wsValue = wsLabel;

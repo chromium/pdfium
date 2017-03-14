@@ -224,6 +224,7 @@ void CScript_HostPseudoModel::GotoURL(CFXJSE_Arguments* pArguments) {
   }
   pNotify->GetDocEnvironment()->GotoURL(hDoc, wsURL);
 }
+
 void CScript_HostPseudoModel::OpenList(CFXJSE_Arguments* pArguments) {
   if (!m_pDocument->GetScriptContext()->IsRunAtClient()) {
     return;
@@ -256,10 +257,10 @@ void CScript_HostPseudoModel::OpenList(CFXJSE_Arguments* pArguments) {
       XFA_RESOLVENODE_RS resoveNodeRS;
       int32_t iRet = pScriptContext->ResolveObjects(
           pObject, pValue->ToWideString().AsStringC(), resoveNodeRS, dwFlag);
-      if (iRet < 1 || !resoveNodeRS.nodes[0]->IsNode())
+      if (iRet < 1 || !resoveNodeRS.objects.front()->IsNode())
         return;
 
-      pNode = resoveNodeRS.nodes[0]->AsNode();
+      pNode = resoveNodeRS.objects.front()->AsNode();
     }
   }
   CXFA_LayoutProcessor* pDocLayout = m_pDocument->GetDocLayout();
@@ -364,22 +365,22 @@ void CScript_HostPseudoModel::ResetData(CFXJSE_Arguments* pArguments) {
   while (iStart < iExpLength) {
     iStart = XFA_FilterName(wsExpression.AsStringC(), iStart, wsName);
     CXFA_ScriptContext* pScriptContext = m_pDocument->GetScriptContext();
-    if (!pScriptContext) {
+    if (!pScriptContext)
       return;
-    }
+
     CXFA_Object* pObject = pScriptContext->GetThisObject();
-    if (!pObject) {
+    if (!pObject)
       return;
-    }
+
     uint32_t dwFlag = XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Parent |
                       XFA_RESOLVENODE_Siblings;
     XFA_RESOLVENODE_RS resoveNodeRS;
     int32_t iRet = pScriptContext->ResolveObjects(pObject, wsName.AsStringC(),
                                                   resoveNodeRS, dwFlag);
-    if (iRet < 1 || !resoveNodeRS.nodes[0]->IsNode()) {
+    if (iRet < 1 || !resoveNodeRS.objects.front()->IsNode()) {
       continue;
     }
-    pNode = resoveNodeRS.nodes[0]->AsNode();
+    pNode = resoveNodeRS.objects.front()->AsNode();
     pNotify->ResetData(pNode->GetWidgetData());
   }
   if (!pNode) {
@@ -437,10 +438,10 @@ void CScript_HostPseudoModel::SetFocus(CFXJSE_Arguments* pArguments) {
       XFA_RESOLVENODE_RS resoveNodeRS;
       int32_t iRet = pScriptContext->ResolveObjects(
           pObject, pValue->ToWideString().AsStringC(), resoveNodeRS, dwFlag);
-      if (iRet < 1 || !resoveNodeRS.nodes[0]->IsNode())
+      if (iRet < 1 || !resoveNodeRS.objects.front()->IsNode())
         return;
 
-      pNode = resoveNodeRS.nodes[0]->AsNode();
+      pNode = resoveNodeRS.objects.front()->AsNode();
     }
   }
   pNotify->SetFocusWidgetNode(pNode);

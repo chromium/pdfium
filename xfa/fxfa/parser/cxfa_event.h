@@ -21,12 +21,10 @@ class CXFA_Event : public CXFA_Data {
   explicit CXFA_Event(CXFA_Node* pNode);
 
   int32_t GetActivity();
-  XFA_Element GetEventType();
+  XFA_Element GetEventType() const;
+  CXFA_Script GetScript() const;
+  CXFA_Submit GetSubmit() const;
   void GetRef(CFX_WideStringC& wsRef);
-
-  CXFA_Script GetScript();
-  CXFA_Submit GetSubmit();
-
   void GetSignDataTarget(CFX_WideString& wsTarget);
 };
 
