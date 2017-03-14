@@ -21,10 +21,10 @@
 class CPDF_ColorSpace;
 
 struct DecodeData {
- public:
-  DecodeData(uint8_t* data, OPJ_SIZE_T size)
+  DecodeData(const uint8_t* data, OPJ_SIZE_T size)
       : src_data(data), src_size(size), offset(0) {}
-  uint8_t* src_data;
+
+  const uint8_t* src_data;
   OPJ_SIZE_T src_size;
   OPJ_SIZE_T offset;
 };
@@ -35,9 +35,6 @@ void sycc420_to_rgb(opj_image_t* img);
 OPJ_SIZE_T opj_read_from_memory(void* p_buffer,
                                 OPJ_SIZE_T nb_bytes,
                                 void* p_user_data);
-OPJ_SIZE_T opj_write_from_memory(void* p_buffer,
-                                 OPJ_SIZE_T nb_bytes,
-                                 void* p_user_data);
 OPJ_OFF_T opj_skip_from_memory(OPJ_OFF_T nb_bytes, void* p_user_data);
 OPJ_BOOL opj_seek_from_memory(OPJ_OFF_T nb_bytes, void* p_user_data);
 

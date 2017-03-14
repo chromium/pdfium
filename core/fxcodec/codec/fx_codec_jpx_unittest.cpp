@@ -12,9 +12,8 @@
 
 static const OPJ_OFF_T kSkipError = static_cast<OPJ_OFF_T>(-1);
 static const OPJ_SIZE_T kReadError = static_cast<OPJ_SIZE_T>(-1);
-static const OPJ_SIZE_T kWriteError = static_cast<OPJ_SIZE_T>(-1);
 
-static unsigned char stream_data[] = {
+static const uint8_t stream_data[] = {
     0x00, 0x01, 0x02, 0x03,
     0x84, 0x85, 0x86, 0x87,  // Include some hi-bytes, too.
 };
@@ -43,19 +42,18 @@ TEST(fxcodec, CMYK_Rounding) {
 }
 
 TEST(fxcodec, DecodeDataNullDecodeData) {
-  unsigned char buffer[16];
+  uint8_t buffer[16];
   DecodeData* ptr = nullptr;
 
   // Error codes, not segvs, should callers pass us a nullptr pointer.
   EXPECT_EQ(kReadError, opj_read_from_memory(buffer, sizeof(buffer), ptr));
-  EXPECT_EQ(kWriteError, opj_write_from_memory(buffer, sizeof(buffer), ptr));
   EXPECT_EQ(kSkipError, opj_skip_from_memory(1, ptr));
   EXPECT_FALSE(opj_seek_from_memory(1, ptr));
 }
 
 TEST(fxcodec, DecodeDataNullStream) {
   DecodeData dd(nullptr, 0);
-  unsigned char buffer[16];
+  uint8_t buffer[16];
 
   // Reads of size 0 do nothing but return an error code.
   memset(buffer, 0xbd, sizeof(buffer));
@@ -66,12 +64,6 @@ TEST(fxcodec, DecodeDataNullStream) {
   memset(buffer, 0xbd, sizeof(buffer));
   EXPECT_EQ(kReadError, opj_read_from_memory(buffer, sizeof(buffer), &dd));
   EXPECT_EQ(0xbd, buffer[0]);
-
-  // writes of size 0 do nothing but return an error code.
-  EXPECT_EQ(kWriteError, opj_write_from_memory(buffer, 0, &dd));
-
-  // writes of nonzero size do nothing but return an error code.
-  EXPECT_EQ(kWriteError, opj_write_from_memory(buffer, sizeof(buffer), &dd));
 
   // Skips of size 0 always return an error code.
   EXPECT_EQ(kSkipError, opj_skip_from_memory(0, &dd));
@@ -88,7 +80,7 @@ TEST(fxcodec, DecodeDataNullStream) {
 
 TEST(fxcodec, DecodeDataZeroSize) {
   DecodeData dd(stream_data, 0);
-  unsigned char buffer[16];
+  uint8_t buffer[16];
 
   // Reads of size 0 do nothing but return an error code.
   memset(buffer, 0xbd, sizeof(buffer));
@@ -99,12 +91,6 @@ TEST(fxcodec, DecodeDataZeroSize) {
   memset(buffer, 0xbd, sizeof(buffer));
   EXPECT_EQ(kReadError, opj_read_from_memory(buffer, sizeof(buffer), &dd));
   EXPECT_EQ(0xbd, buffer[0]);
-
-  // writes of size 0 do nothing but return an error code.
-  EXPECT_EQ(kWriteError, opj_write_from_memory(buffer, 0, &dd));
-
-  // writes of nonzero size do nothing but return an error code.
-  EXPECT_EQ(kWriteError, opj_write_from_memory(buffer, sizeof(buffer), &dd));
 
   // Skips of size 0 always return an error code.
   EXPECT_EQ(kSkipError, opj_skip_from_memory(0, &dd));
@@ -120,7 +106,7 @@ TEST(fxcodec, DecodeDataZeroSize) {
 }
 
 TEST(fxcodec, DecodeDataReadInBounds) {
-  unsigned char buffer[16];
+  uint8_t buffer[16];
   {
     DecodeData dd(stream_data, sizeof(stream_data));
 
@@ -171,7 +157,7 @@ TEST(fxcodec, DecodeDataReadInBounds) {
 }
 
 TEST(fxcodec, DecodeDataReadBeyondBounds) {
-  unsigned char buffer[16];
+  uint8_t buffer[16];
   {
     DecodeData dd(stream_data, sizeof(stream_data));
 
@@ -234,86 +220,10 @@ TEST(fxcodec, DecodeDataReadBeyondBounds) {
   }
 }
 
-TEST(fxcodec, DecodeDataWriteInBounds) {
-  unsigned char stream[16];
-  static unsigned char buffer_data[] = {
-      0x00, 0x01, 0x02, 0x03, 0x80, 0x80, 0x81, 0x82, 0x83, 0x84,
-  };
-  {
-    // Pretend the stream can only hold 4 bytes.
-    DecodeData dd(stream, 4);
-
-    memset(stream, 0xbd, sizeof(stream));
-    EXPECT_EQ(4u, opj_write_from_memory(buffer_data, 4, &dd));
-    EXPECT_EQ(0x00, stream[0]);
-    EXPECT_EQ(0x01, stream[1]);
-    EXPECT_EQ(0x02, stream[2]);
-    EXPECT_EQ(0x03, stream[3]);
-    EXPECT_EQ(0xbd, stream[4]);
-  }
-  {
-    // Pretend the stream can only hold 4 bytes.
-    DecodeData dd(stream, 4);
-
-    memset(stream, 0xbd, sizeof(stream));
-    EXPECT_EQ(2u, opj_write_from_memory(buffer_data, 2, &dd));
-    EXPECT_EQ(2u, opj_write_from_memory(buffer_data, 2, &dd));
-    EXPECT_EQ(0x00, stream[0]);
-    EXPECT_EQ(0x01, stream[1]);
-    EXPECT_EQ(0x00, stream[2]);
-    EXPECT_EQ(0x01, stream[3]);
-    EXPECT_EQ(0xbd, stream[4]);
-  }
-}
-
-TEST(fxcodec, DecodeDataWriteBeyondBounds) {
-  unsigned char stream[16];
-  static unsigned char buffer_data[] = {
-      0x10, 0x11, 0x12, 0x13, 0x94, 0x95, 0x96, 0x97,
-  };
-  {
-    // Pretend the stream can only hold 4 bytes.
-    DecodeData dd(stream, 4);
-
-    // Write ending past EOF transfers up til EOF.
-    memset(stream, 0xbd, sizeof(stream));
-    EXPECT_EQ(4u, opj_write_from_memory(buffer_data, 5, &dd));
-    EXPECT_EQ(0x10, stream[0]);
-    EXPECT_EQ(0x11, stream[1]);
-    EXPECT_EQ(0x12, stream[2]);
-    EXPECT_EQ(0x13, stream[3]);
-    EXPECT_EQ(0xbd, stream[4]);
-
-    // Subsequent writes fail.
-    memset(stream, 0xbd, sizeof(stream));
-    EXPECT_EQ(kWriteError, opj_write_from_memory(buffer_data, 5, &dd));
-    EXPECT_EQ(0xbd, stream[0]);
-  }
-  {
-    // Pretend the stream can only hold 4 bytes.
-    DecodeData dd(stream, 4);
-
-    // Write ending past EOF (two steps) transfers up til EOF.
-    memset(stream, 0xbd, sizeof(stream));
-    EXPECT_EQ(2u, opj_write_from_memory(buffer_data, 2, &dd));
-    EXPECT_EQ(2u, opj_write_from_memory(buffer_data, 4, &dd));
-    EXPECT_EQ(0x10, stream[0]);
-    EXPECT_EQ(0x11, stream[1]);
-    EXPECT_EQ(0x10, stream[2]);
-    EXPECT_EQ(0x11, stream[3]);
-    EXPECT_EQ(0xbd, stream[4]);
-
-    // Subsequent writes fail.
-    memset(stream, 0xbd, sizeof(stream));
-    EXPECT_EQ(kWriteError, opj_write_from_memory(buffer_data, 5, &dd));
-    EXPECT_EQ(0xbd, stream[0]);
-  }
-}
-
 // Note: Some care needs to be taken here because the skip/seek functions
 // take OPJ_OFF_T's as arguments, which are typically a signed type.
 TEST(fxcodec, DecodeDataSkip) {
-  unsigned char buffer[16];
+  uint8_t buffer[16];
   {
     DecodeData dd(stream_data, sizeof(stream_data));
 
@@ -430,7 +340,7 @@ TEST(fxcodec, DecodeDataSkip) {
 }
 
 TEST(fxcodec, DecodeDataSeek) {
-  unsigned char buffer[16];
+  uint8_t buffer[16];
   DecodeData dd(stream_data, sizeof(stream_data));
 
   // Seeking within buffer is allowed and read succeeds

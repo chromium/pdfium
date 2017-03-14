@@ -44,24 +44,6 @@ OPJ_SIZE_T opj_read_from_memory(void* p_buffer,
   return readlength;
 }
 
-OPJ_SIZE_T opj_write_from_memory(void* p_buffer,
-                                 OPJ_SIZE_T nb_bytes,
-                                 void* p_user_data) {
-  DecodeData* srcData = static_cast<DecodeData*>(p_user_data);
-  if (!srcData || !srcData->src_data || srcData->src_size == 0) {
-    return static_cast<OPJ_SIZE_T>(-1);
-  }
-  // Writes at EOF return an error code.
-  if (srcData->offset >= srcData->src_size) {
-    return static_cast<OPJ_SIZE_T>(-1);
-  }
-  OPJ_SIZE_T bufferLength = srcData->src_size - srcData->offset;
-  OPJ_SIZE_T writeLength = nb_bytes < bufferLength ? nb_bytes : bufferLength;
-  memcpy(&srcData->src_data[srcData->offset], p_buffer, writeLength);
-  srcData->offset += writeLength;
-  return writeLength;
-}
-
 OPJ_OFF_T opj_skip_from_memory(OPJ_OFF_T nb_bytes, void* p_user_data) {
   DecodeData* srcData = static_cast<DecodeData*>(p_user_data);
   if (!srcData || !srcData->src_data || srcData->src_size == 0) {
@@ -132,7 +114,6 @@ opj_stream_t* fx_opj_stream_create_memory_stream(DecodeData* data,
   opj_stream_set_user_data(l_stream, data, nullptr);
   opj_stream_set_user_data_length(l_stream, data->src_size);
   opj_stream_set_read_function(l_stream, opj_read_from_memory);
-  opj_stream_set_write_function(l_stream, opj_write_from_memory);
   opj_stream_set_skip_function(l_stream, opj_skip_from_memory);
   opj_stream_set_seek_function(l_stream, opj_seek_from_memory);
   return l_stream;
