@@ -13,25 +13,25 @@
 
 CXFA_Font::CXFA_Font(CXFA_Node* pNode) : CXFA_Data(pNode) {}
 
-FX_FLOAT CXFA_Font::GetBaselineShift() {
+float CXFA_Font::GetBaselineShift() {
   return m_pNode->GetMeasure(XFA_ATTRIBUTE_BaselineShift).ToUnit(XFA_UNIT_Pt);
 }
 
-FX_FLOAT CXFA_Font::GetHorizontalScale() {
+float CXFA_Font::GetHorizontalScale() {
   CFX_WideString wsValue;
   m_pNode->TryCData(XFA_ATTRIBUTE_FontHorizontalScale, wsValue);
   int32_t iScale = FXSYS_wtoi(wsValue.c_str());
-  return iScale > 0 ? (FX_FLOAT)iScale : 100.0f;
+  return iScale > 0 ? (float)iScale : 100.0f;
 }
 
-FX_FLOAT CXFA_Font::GetVerticalScale() {
+float CXFA_Font::GetVerticalScale() {
   CFX_WideString wsValue;
   m_pNode->TryCData(XFA_ATTRIBUTE_FontVerticalScale, wsValue);
   int32_t iScale = FXSYS_wtoi(wsValue.c_str());
-  return iScale > 0 ? (FX_FLOAT)iScale : 100.0f;
+  return iScale > 0 ? (float)iScale : 100.0f;
 }
 
-FX_FLOAT CXFA_Font::GetLetterSpacing() {
+float CXFA_Font::GetLetterSpacing() {
   CFX_WideStringC wsValue;
   if (!m_pNode->TryCData(XFA_ATTRIBUTE_LetterSpacing, wsValue))
     return 0;
@@ -60,7 +60,7 @@ int32_t CXFA_Font::GetUnderlinePeriod() {
   return eAttr;
 }
 
-FX_FLOAT CXFA_Font::GetFontSize() {
+float CXFA_Font::GetFontSize() {
   CXFA_Measurement ms;
   m_pNode->TryMeasure(XFA_ATTRIBUTE_Size, ms);
   return ms.ToUnit(XFA_UNIT_Pt);

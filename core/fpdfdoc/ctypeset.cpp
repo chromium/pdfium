@@ -180,16 +180,16 @@ CTypeset::~CTypeset() {}
 
 CPVT_FloatRect CTypeset::CharArray() {
   ASSERT(m_pSection);
-  FX_FLOAT fLineAscent =
+  float fLineAscent =
       m_pVT->GetFontAscent(m_pVT->GetDefaultFontIndex(), m_pVT->GetFontSize());
-  FX_FLOAT fLineDescent =
+  float fLineDescent =
       m_pVT->GetFontDescent(m_pVT->GetDefaultFontIndex(), m_pVT->GetFontSize());
   m_rcRet.Default();
-  FX_FLOAT x = 0.0f, y = 0.0f;
-  FX_FLOAT fNextWidth;
+  float x = 0.0f, y = 0.0f;
+  float fNextWidth;
   int32_t nStart = 0;
-  FX_FLOAT fNodeWidth = m_pVT->GetPlateWidth() /
-                        (m_pVT->m_nCharArray <= 0 ? 1 : m_pVT->m_nCharArray);
+  float fNodeWidth = m_pVT->GetPlateWidth() /
+                     (m_pVT->m_nCharArray <= 0 ? 1 : m_pVT->m_nCharArray);
   if (CLine* pLine = m_pSection->m_LineArray.GetAt(0)) {
     x = 0.0f;
     y += m_pVT->GetLineLeading(m_pSection->m_SecInfo);
@@ -221,11 +221,11 @@ CPVT_FloatRect CTypeset::CharArray() {
       }
       if (CPVT_WordInfo* pWord = m_pSection->m_WordArray.GetAt(w)) {
         pWord->fWordTail = 0;
-        FX_FLOAT fWordWidth = m_pVT->GetWordWidth(*pWord);
-        FX_FLOAT fWordAscent = m_pVT->GetWordAscent(*pWord);
-        FX_FLOAT fWordDescent = m_pVT->GetWordDescent(*pWord);
-        x = (FX_FLOAT)(fNodeWidth * (w + nStart + 0.5) -
-                       fWordWidth * VARIABLETEXT_HALF);
+        float fWordWidth = m_pVT->GetWordWidth(*pWord);
+        float fWordAscent = m_pVT->GetWordAscent(*pWord);
+        float fWordDescent = m_pVT->GetWordDescent(*pWord);
+        x = (float)(fNodeWidth * (w + nStart + 0.5) -
+                    fWordWidth * VARIABLETEXT_HALF);
         pWord->fWordX = x;
         pWord->fWordY = y;
         if (w == 0) {
@@ -255,7 +255,7 @@ CPVT_FloatRect CTypeset::CharArray() {
   return m_rcRet = CPVT_FloatRect(0, 0, x, y);
 }
 
-CFX_SizeF CTypeset::GetEditSize(FX_FLOAT fFontSize) {
+CFX_SizeF CTypeset::GetEditSize(float fFontSize) {
   ASSERT(m_pSection);
   ASSERT(m_pVT);
   SplitLines(false, fFontSize);
@@ -271,22 +271,22 @@ CPVT_FloatRect CTypeset::Typeset() {
   return m_rcRet;
 }
 
-void CTypeset::SplitLines(bool bTypeset, FX_FLOAT fFontSize) {
+void CTypeset::SplitLines(bool bTypeset, float fFontSize) {
   ASSERT(m_pVT);
   ASSERT(m_pSection);
   int32_t nLineHead = 0;
   int32_t nLineTail = 0;
-  FX_FLOAT fMaxX = 0.0f, fMaxY = 0.0f;
-  FX_FLOAT fLineWidth = 0.0f, fBackupLineWidth = 0.0f;
-  FX_FLOAT fLineAscent = 0.0f, fBackupLineAscent = 0.0f;
-  FX_FLOAT fLineDescent = 0.0f, fBackupLineDescent = 0.0f;
+  float fMaxX = 0.0f, fMaxY = 0.0f;
+  float fLineWidth = 0.0f, fBackupLineWidth = 0.0f;
+  float fLineAscent = 0.0f, fBackupLineAscent = 0.0f;
+  float fLineDescent = 0.0f, fBackupLineDescent = 0.0f;
   int32_t nWordStartPos = 0;
   bool bFullWord = false;
   int32_t nLineFullWordIndex = 0;
   int32_t nCharIndex = 0;
   CPVT_LineInfo line;
-  FX_FLOAT fWordWidth = 0;
-  FX_FLOAT fTypesetWidth = std::max(
+  float fWordWidth = 0;
+  float fTypesetWidth = std::max(
       m_pVT->GetPlateWidth() - m_pVT->GetLineIndent(m_pSection->m_SecInfo),
       0.0f);
   int32_t nTotalWords = m_pSection->m_WordArray.GetSize();
@@ -420,10 +420,10 @@ void CTypeset::SplitLines(bool bTypeset, FX_FLOAT fFontSize) {
 void CTypeset::OutputLines() {
   ASSERT(m_pVT);
   ASSERT(m_pSection);
-  FX_FLOAT fMinX = 0.0f, fMinY = 0.0f, fMaxX = 0.0f, fMaxY = 0.0f;
-  FX_FLOAT fPosX = 0.0f, fPosY = 0.0f;
-  FX_FLOAT fLineIndent = m_pVT->GetLineIndent(m_pSection->m_SecInfo);
-  FX_FLOAT fTypesetWidth = std::max(m_pVT->GetPlateWidth() - fLineIndent, 0.0f);
+  float fMinX = 0.0f, fMinY = 0.0f, fMaxX = 0.0f, fMaxY = 0.0f;
+  float fPosX = 0.0f, fPosY = 0.0f;
+  float fLineIndent = m_pVT->GetLineIndent(m_pSection->m_SecInfo);
+  float fTypesetWidth = std::max(m_pVT->GetPlateWidth() - fLineIndent, 0.0f);
   switch (m_pVT->GetAlignment(m_pSection->m_SecInfo)) {
     default:
     case 0:

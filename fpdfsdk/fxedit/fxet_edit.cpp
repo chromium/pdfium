@@ -43,7 +43,7 @@ CFX_ByteString GetWordRenderString(const CFX_ByteString& strWords) {
 
 CFX_ByteString GetFontSetString(IPVT_FontMap* pFontMap,
                                 int32_t nFontIndex,
-                                FX_FLOAT fFontSize) {
+                                float fFontSize) {
   if (!pFontMap)
     return CFX_ByteString();
 
@@ -59,7 +59,7 @@ CFX_ByteString GetFontSetString(IPVT_FontMap* pFontMap,
 void DrawTextString(CFX_RenderDevice* pDevice,
                     const CFX_PointF& pt,
                     CPDF_Font* pFont,
-                    FX_FLOAT fFontSize,
+                    float fFontSize,
                     CFX_Matrix* pUser2Device,
                     const CFX_ByteString& str,
                     FX_ARGB crTextFill,
@@ -673,7 +673,7 @@ CFX_ByteString CFX_Edit::GetEditAppearanceStream(CFX_Edit* pEdit,
       sAppStream << nHorzScale << " Tz\n";
     }
 
-    FX_FLOAT fCharSpace = pEdit->GetCharSpace();
+    float fCharSpace = pEdit->GetCharSpace();
     if (!IsFloatZero(fCharSpace)) {
       sAppStream << fCharSpace << " Tc\n";
     }
@@ -726,7 +726,7 @@ void CFX_Edit::DrawEdit(CFX_RenderDevice* pDevice,
   const bool bContinuous =
       pEdit->GetCharArray() == 0 && pEdit->GetCharSpace() <= 0.0f;
   uint16_t SubWord = pEdit->GetPasswordChar();
-  FX_FLOAT fFontSize = pEdit->GetFontSize();
+  float fFontSize = pEdit->GetFontSize();
   CPVT_WordRange wrSelect = pEdit->GetSelectWordRange();
   int32_t nHorzScale = pEdit->GetHorzScale();
 
@@ -921,7 +921,7 @@ void CFX_Edit::SetCharArray(int32_t nCharArray) {
   Paint();
 }
 
-void CFX_Edit::SetCharSpace(FX_FLOAT fCharSpace) {
+void CFX_Edit::SetCharSpace(float fCharSpace) {
   m_pVT->SetCharSpace(fCharSpace);
   Paint();
 }
@@ -944,7 +944,7 @@ void CFX_Edit::SetAutoFontSize(bool bAuto, bool bPaint) {
     Paint();
 }
 
-void CFX_Edit::SetFontSize(FX_FLOAT fFontSize) {
+void CFX_Edit::SetFontSize(float fFontSize) {
   m_pVT->SetFontSize(fFontSize);
   Paint();
 }
@@ -1139,7 +1139,7 @@ bool CFX_Edit::InsertText(const CFX_WideString& sText, int32_t charset) {
   return InsertText(sText, charset, true, true);
 }
 
-FX_FLOAT CFX_Edit::GetFontSize() const {
+float CFX_Edit::GetFontSize() const {
   return m_pVT->GetFontSize();
 }
 
@@ -1159,7 +1159,7 @@ int32_t CFX_Edit::GetHorzScale() const {
   return m_pVT->GetHorzScale();
 }
 
-FX_FLOAT CFX_Edit::GetCharSpace() const {
+float CFX_Edit::GetCharSpace() const {
   return m_pVT->GetCharSpace();
 }
 
@@ -1269,7 +1269,7 @@ CFX_PointF CFX_Edit::VTToEdit(const CFX_PointF& point) const {
   CFX_FloatRect rcContent = m_pVT->GetContentRect();
   CFX_FloatRect rcPlate = m_pVT->GetPlateRect();
 
-  FX_FLOAT fPadding = 0.0f;
+  float fPadding = 0.0f;
 
   switch (m_nAlignment) {
     case 0:
@@ -1291,7 +1291,7 @@ CFX_PointF CFX_Edit::EditToVT(const CFX_PointF& point) const {
   CFX_FloatRect rcContent = m_pVT->GetContentRect();
   CFX_FloatRect rcPlate = m_pVT->GetPlateRect();
 
-  FX_FLOAT fPadding = 0.0f;
+  float fPadding = 0.0f;
 
   switch (m_nAlignment) {
     case 0:
@@ -1332,7 +1332,7 @@ void CFX_Edit::SetScrollInfo() {
   }
 }
 
-void CFX_Edit::SetScrollPosX(FX_FLOAT fx) {
+void CFX_Edit::SetScrollPosX(float fx) {
   if (!m_bEnableScroll)
     return;
 
@@ -1344,7 +1344,7 @@ void CFX_Edit::SetScrollPosX(FX_FLOAT fx) {
   }
 }
 
-void CFX_Edit::SetScrollPosY(FX_FLOAT fy) {
+void CFX_Edit::SetScrollPosY(float fy) {
   if (!m_bEnableScroll)
     return;
 

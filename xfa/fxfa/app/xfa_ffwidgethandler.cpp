@@ -499,7 +499,7 @@ CXFA_Node* CXFA_FFWidgetHandler::CreateFontNode(CXFA_Node* pParent) const {
 
 CXFA_Node* CXFA_FFWidgetHandler::CreateMarginNode(CXFA_Node* pParent,
                                                   uint32_t dwFlags,
-                                                  FX_FLOAT fInsets[4]) const {
+                                                  float fInsets[4]) const {
   CXFA_Node* pMargin = CreateCopyNode(XFA_Element::Margin, pParent);
   if (dwFlags & 0x01)
     pMargin->SetMeasure(XFA_ATTRIBUTE_LeftInset,

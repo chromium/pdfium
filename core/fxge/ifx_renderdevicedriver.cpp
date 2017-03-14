@@ -39,10 +39,10 @@ bool IFX_RenderDeviceDriver::FillRectWithBlend(const FX_RECT* pRect,
   return false;
 }
 
-bool IFX_RenderDeviceDriver::DrawCosmeticLine(FX_FLOAT x1,
-                                              FX_FLOAT y1,
-                                              FX_FLOAT x2,
-                                              FX_FLOAT y2,
+bool IFX_RenderDeviceDriver::DrawCosmeticLine(float x1,
+                                              float y1,
+                                              float x2,
+                                              float y2,
                                               uint32_t color,
                                               int blend_type) {
   return false;
@@ -68,7 +68,7 @@ bool IFX_RenderDeviceDriver::DrawDeviceText(int nChars,
                                             const FXTEXT_CHARPOS* pCharPos,
                                             CFX_Font* pFont,
                                             const CFX_Matrix* pObject2Device,
-                                            FX_FLOAT font_size,
+                                            float font_size,
                                             uint32_t color) {
   return false;
 }

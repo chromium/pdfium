@@ -176,7 +176,7 @@ void CXFA_FFBarcode::UpdateWidgetProperty() {
   int32_t intVal;
   char charVal;
   bool boolVal;
-  FX_FLOAT floatVal;
+  float floatVal;
   if (pAcc->GetBarcodeAttribute_CharEncoding(intVal)) {
     pBarCodeWidget->SetCharEncoding((BC_CHAR_ENCODING)intVal);
   }

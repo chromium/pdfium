@@ -21,7 +21,7 @@ class CXFA_FFDoc;
 class CXFA_FFApp;
 enum class FWL_WidgetHit;
 
-inline FX_FLOAT XFA_UnitPx2Pt(FX_FLOAT fPx, FX_FLOAT fDpi) {
+inline float XFA_UnitPx2Pt(float fPx, float fDpi) {
   return fPx * 72.0f / fDpi;
 }
 

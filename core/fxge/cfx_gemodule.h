@@ -24,7 +24,7 @@ class CFX_GEModule {
   void Init(const char** pUserFontPaths, CCodec_ModuleMgr* pCodecModule);
   CFX_FontCache* GetFontCache();
   CFX_FontMgr* GetFontMgr() { return m_pFontMgr.get(); }
-  void SetTextGamma(FX_FLOAT gammaValue);
+  void SetTextGamma(float gammaValue);
   const uint8_t* GetTextGammaTable() const;
 
   CCodec_ModuleMgr* GetCodecModule() { return m_pCodecModule; }

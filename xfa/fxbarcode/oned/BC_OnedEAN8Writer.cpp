@@ -185,7 +185,7 @@ void CBC_OnedEAN8Writer::ShowChars(const CFX_WideStringC& contents,
   CFX_ByteString tempStr = str.Mid(0, 4);
   int32_t iLen = tempStr.GetLength();
   int32_t strWidth = 7 * multiple * 4;
-  FX_FLOAT blank = 0.0;
+  float blank = 0.0;
   CFX_FxgeDevice geBitmap;
   if (pOutBitmap)
     geBitmap.Attach(pOutBitmap, false, nullptr, false);
@@ -194,19 +194,17 @@ void CBC_OnedEAN8Writer::ShowChars(const CFX_WideStringC& contents,
   int32_t iTextHeight = iFontSize + 1;
   if (!pOutBitmap) {
     CFX_Matrix matr(m_outputHScale, 0.0, 0.0, 1.0, 0.0, 0.0);
-    CFX_FloatRect rect(
-        (FX_FLOAT)leftPosition, (FX_FLOAT)(m_Height - iTextHeight),
-        (FX_FLOAT)(leftPosition + strWidth - 0.5), (FX_FLOAT)m_Height);
+    CFX_FloatRect rect((float)leftPosition, (float)(m_Height - iTextHeight),
+                       (float)(leftPosition + strWidth - 0.5), (float)m_Height);
     matr.Concat(*matrix);
     matr.TransformRect(rect);
     FX_RECT re = rect.GetOuterRect();
     device->FillRect(&re, m_backgroundColor);
     CFX_Matrix matr1(m_outputHScale, 0.0, 0.0, 1.0, 0.0, 0.0);
-    CFX_FloatRect rect1(
-        (FX_FLOAT)(leftPosition + 33 * multiple),
-        (FX_FLOAT)(m_Height - iTextHeight),
-        (FX_FLOAT)(leftPosition + 33 * multiple + strWidth - 0.5),
-        (FX_FLOAT)m_Height);
+    CFX_FloatRect rect1((float)(leftPosition + 33 * multiple),
+                        (float)(m_Height - iTextHeight),
+                        (float)(leftPosition + 33 * multiple + strWidth - 0.5),
+                        (float)m_Height);
     matr1.Concat(*matrix);
     matr1.TransformRect(rect1);
     re = rect1.GetOuterRect();
@@ -215,49 +213,48 @@ void CBC_OnedEAN8Writer::ShowChars(const CFX_WideStringC& contents,
   if (!pOutBitmap)
     strWidth = (int32_t)(strWidth * m_outputHScale);
 
-  CalcTextInfo(tempStr, pCharPos, m_pFont, (FX_FLOAT)strWidth, iFontSize,
-               blank);
-  CFX_Matrix affine_matrix(1.0, 0.0, 0.0, -1.0, 0.0, (FX_FLOAT)iFontSize);
+  CalcTextInfo(tempStr, pCharPos, m_pFont, (float)strWidth, iFontSize, blank);
+  CFX_Matrix affine_matrix(1.0, 0.0, 0.0, -1.0, 0.0, (float)iFontSize);
   CFX_FxgeDevice ge;
   if (pOutBitmap) {
     delete ge.GetBitmap();
     ge.Create(strWidth, iTextHeight, FXDIB_Argb, nullptr);
     ge.GetBitmap()->Clear(m_backgroundColor);
-    ge.DrawNormalText(iLen, pCharPos, m_pFont, static_cast<FX_FLOAT>(iFontSize),
+    ge.DrawNormalText(iLen, pCharPos, m_pFont, static_cast<float>(iFontSize),
                       &affine_matrix, m_fontColor, FXTEXT_CLEARTYPE);
     geBitmap.SetDIBits(ge.GetBitmap(), leftPosition, m_Height - iTextHeight);
   } else {
     CFX_Matrix affine_matrix1(1.0, 0.0, 0.0, -1.0,
-                              (FX_FLOAT)leftPosition * m_outputHScale,
-                              (FX_FLOAT)(m_Height - iTextHeight + iFontSize));
+                              (float)leftPosition * m_outputHScale,
+                              (float)(m_Height - iTextHeight + iFontSize));
     affine_matrix1.Concat(*matrix);
     device->DrawNormalText(iLen, pCharPos, m_pFont,
-                           static_cast<FX_FLOAT>(iFontSize), &affine_matrix1,
+                           static_cast<float>(iFontSize), &affine_matrix1,
                            m_fontColor, FXTEXT_CLEARTYPE);
   }
   tempStr = str.Mid(4, 4);
   iLen = tempStr.GetLength();
-  CalcTextInfo(tempStr, pCharPos + 4, m_pFont, (FX_FLOAT)strWidth, iFontSize,
+  CalcTextInfo(tempStr, pCharPos + 4, m_pFont, (float)strWidth, iFontSize,
                blank);
   if (pOutBitmap) {
     delete ge.GetBitmap();
     ge.Create(strWidth, iTextHeight, FXDIB_Argb, nullptr);
     ge.GetBitmap()->Clear(m_backgroundColor);
     ge.DrawNormalText(iLen, pCharPos + 4, m_pFont,
-                      static_cast<FX_FLOAT>(iFontSize), &affine_matrix,
+                      static_cast<float>(iFontSize), &affine_matrix,
                       m_fontColor, FXTEXT_CLEARTYPE);
     geBitmap.SetDIBits(ge.GetBitmap(), leftPosition + 33 * multiple,
                        m_Height - iTextHeight);
   } else {
     CFX_Matrix affine_matrix1(
         1.0, 0.0, 0.0, -1.0,
-        (FX_FLOAT)(leftPosition + 33 * multiple) * m_outputHScale,
-        (FX_FLOAT)(m_Height - iTextHeight + iFontSize));
+        (float)(leftPosition + 33 * multiple) * m_outputHScale,
+        (float)(m_Height - iTextHeight + iFontSize));
     if (matrix) {
       affine_matrix1.Concat(*matrix);
     }
     device->DrawNormalText(iLen, pCharPos + 4, m_pFont,
-                           static_cast<FX_FLOAT>(iFontSize), &affine_matrix1,
+                           static_cast<float>(iFontSize), &affine_matrix1,
                            m_fontColor, FXTEXT_CLEARTYPE);
   }
   FX_Free(pCharPos);

@@ -41,7 +41,7 @@
 #endif
 #define AGG_INLINE inline
 
-#include "core/fxcrt/fx_system.h"  // For FX_FLOAT
+#include "core/fxcrt/fx_system.h"
 
 namespace agg
 {
@@ -143,7 +143,7 @@ inline Rect unite_rectangles(const Rect& r1, const Rect& r2)
     return r;
 }
 typedef rect_base<int>    rect;
-typedef rect_base<FX_FLOAT> rect_d;
+typedef rect_base<float> rect_d;
 enum path_commands_e {
     path_cmd_stop     = 0,
     path_cmd_move_to  = 1,
@@ -261,10 +261,10 @@ inline unsigned set_orientation(unsigned c, unsigned o)
     return clear_orientation(c) | o;
 }
 struct point_type  {
-    FX_FLOAT x, y;
+    float x, y;
     unsigned flag;
     point_type() {}
-    point_type(FX_FLOAT x_, FX_FLOAT y_, unsigned flag_ = 0) : x(x_), y(y_), flag(flag_) {}
+    point_type(float x_, float y_, unsigned flag_ = 0) : x(x_), y(y_), flag(flag_) {}
 };
 struct point_type_flag : public point_type {
     unsigned flag;
@@ -272,13 +272,13 @@ struct point_type_flag : public point_type {
     {
         flag = 0;
     }
-    point_type_flag(FX_FLOAT x_, FX_FLOAT y_, unsigned flag_ = 0) : point_type(x_, y_), flag(flag_) {}
+    point_type_flag(float x_, float y_, unsigned flag_ = 0) : point_type(x_, y_), flag(flag_) {}
 };
 struct vertex_type  {
-    FX_FLOAT   x, y;
+    float   x, y;
     unsigned cmd;
     vertex_type() {}
-    vertex_type(FX_FLOAT x_, FX_FLOAT y_, unsigned cmd_) :
+    vertex_type(float x_, float y_, unsigned cmd_) :
         x(x_), y(y_), cmd(cmd_) {}
 };
 }

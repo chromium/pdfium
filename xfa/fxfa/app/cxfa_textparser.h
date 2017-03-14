@@ -43,7 +43,7 @@ class CXFA_TextParser {
 
   int32_t GetVAlign(CXFA_TextProvider* pTextProvider) const;
 
-  FX_FLOAT GetTabInterval(CFDE_CSSComputedStyle* pStyle) const;
+  float GetTabInterval(CFDE_CSSComputedStyle* pStyle) const;
   int32_t CountTabs(CFDE_CSSComputedStyle* pStyle) const;
 
   bool IsSpaceRun(CFDE_CSSComputedStyle* pStyle) const;
@@ -52,8 +52,8 @@ class CXFA_TextParser {
 
   CFX_RetainPtr<CFGAS_GEFont> GetFont(CXFA_TextProvider* pTextProvider,
                                       CFDE_CSSComputedStyle* pStyle) const;
-  FX_FLOAT GetFontSize(CXFA_TextProvider* pTextProvider,
-                       CFDE_CSSComputedStyle* pStyle) const;
+  float GetFontSize(CXFA_TextProvider* pTextProvider,
+                    CFDE_CSSComputedStyle* pStyle) const;
 
   int32_t GetHorScale(CXFA_TextProvider* pTextProvider,
                       CFDE_CSSComputedStyle* pStyle,
@@ -70,12 +70,12 @@ class CXFA_TextParser {
                       int32_t& iLinethrough) const;
   FX_ARGB GetColor(CXFA_TextProvider* pTextProvider,
                    CFDE_CSSComputedStyle* pStyle) const;
-  FX_FLOAT GetBaseline(CXFA_TextProvider* pTextProvider,
-                       CFDE_CSSComputedStyle* pStyle) const;
-  FX_FLOAT GetLineHeight(CXFA_TextProvider* pTextProvider,
-                         CFDE_CSSComputedStyle* pStyle,
-                         bool bFirst,
-                         FX_FLOAT fVerScale) const;
+  float GetBaseline(CXFA_TextProvider* pTextProvider,
+                    CFDE_CSSComputedStyle* pStyle) const;
+  float GetLineHeight(CXFA_TextProvider* pTextProvider,
+                      CFDE_CSSComputedStyle* pStyle,
+                      bool bFirst,
+                      float fVerScale) const;
 
   bool GetEmbbedObj(CXFA_TextProvider* pTextProvider,
                     CFDE_XMLNode* pXMLNode,

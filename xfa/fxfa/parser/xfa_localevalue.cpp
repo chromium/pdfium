@@ -210,7 +210,7 @@ CFX_WideString CXFA_LocaleValue::GetText() const {
   }
   return CFX_WideString();
 }
-FX_FLOAT CXFA_LocaleValue::GetNum() const {
+float CXFA_LocaleValue::GetNum() const {
   if (m_bValid && (m_dwType == XFA_VT_BOOLEAN || m_dwType == XFA_VT_INTEGER ||
                    m_dwType == XFA_VT_DECIMAL || m_dwType == XFA_VT_FLOAT)) {
     int64_t nIntegral = 0;
@@ -277,10 +277,10 @@ FX_FLOAT CXFA_LocaleValue::GetNum() const {
       }
       nExponent = bExpSign ? -nExponent : nExponent;
     }
-    FX_FLOAT fValue = (FX_FLOAT)(dwFractional / 4294967296.0);
+    float fValue = (float)(dwFractional / 4294967296.0);
     fValue = nIntegral + (nIntegral >= 0 ? fValue : -fValue);
     if (nExponent != 0) {
-      fValue *= FXSYS_pow(10, (FX_FLOAT)nExponent);
+      fValue *= FXSYS_pow(10, (float)nExponent);
     }
     return fValue;
   }
@@ -356,7 +356,7 @@ double CXFA_LocaleValue::GetDoubleNum() const {
     double dValue = (dwFractional / 4294967296.0);
     dValue = nIntegral + (nIntegral >= 0 ? dValue : -dValue);
     if (nExponent != 0) {
-      dValue *= FXSYS_pow(10, (FX_FLOAT)nExponent);
+      dValue *= FXSYS_pow(10, (float)nExponent);
     }
     return dValue;
   }
@@ -404,7 +404,7 @@ bool CXFA_LocaleValue::SetText(const CFX_WideString& wsText,
   m_dwType = XFA_VT_TEXT;
   return m_bValid = ParsePatternValue(wsText, wsFormat, pLocale);
 }
-bool CXFA_LocaleValue::SetNum(FX_FLOAT fNum) {
+bool CXFA_LocaleValue::SetNum(float fNum) {
   m_dwType = XFA_VT_FLOAT;
   m_wsValue.Format(L"%.8g", (double)fNum);
   return true;

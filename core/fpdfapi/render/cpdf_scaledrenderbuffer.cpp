@@ -40,9 +40,9 @@ bool CPDF_ScaledRenderBuffer::Initialize(CPDF_RenderContext* pContext,
     int dpiv =
         pDevice->GetDeviceCaps(FXDC_PIXEL_HEIGHT) * 254 / (vert_size * 10);
     if (dpih > max_dpi)
-      m_Matrix.Scale((FX_FLOAT)(max_dpi) / dpih, 1.0f);
+      m_Matrix.Scale((float)(max_dpi) / dpih, 1.0f);
     if (dpiv > max_dpi)
-      m_Matrix.Scale(1.0f, (FX_FLOAT)(max_dpi) / (FX_FLOAT)dpiv);
+      m_Matrix.Scale(1.0f, (float)(max_dpi) / (float)dpiv);
   }
   m_pBitmapDevice = pdfium::MakeUnique<CFX_FxgeDevice>();
   FXDIB_Format dibFormat = FXDIB_Rgb;

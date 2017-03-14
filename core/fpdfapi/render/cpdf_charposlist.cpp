@@ -20,9 +20,9 @@ CPDF_CharPosList::~CPDF_CharPosList() {
 }
 
 void CPDF_CharPosList::Load(const std::vector<uint32_t>& charCodes,
-                            const std::vector<FX_FLOAT>& charPos,
+                            const std::vector<float>& charPos,
                             CPDF_Font* pFont,
-                            FX_FLOAT FontSize) {
+                            float FontSize) {
   int nChars = pdfium::CollectionSize<int>(charCodes);
   m_pCharPos = FX_Alloc(FXTEXT_CHARPOS, nChars);
   m_nChars = 0;

@@ -59,8 +59,8 @@ class CXFA_WidgetAcc : public CXFA_WidgetData {
                         CFXJSE_Value** pRetValue = nullptr);
 
   CXFA_FFWidget* GetNextWidget(CXFA_FFWidget* pWidget);
-  void StartWidgetLayout(FX_FLOAT& fCalcWidth, FX_FLOAT& fCalcHeight);
-  bool FindSplitPos(int32_t iBlockIndex, FX_FLOAT& fCalcHeight);
+  void StartWidgetLayout(float& fCalcWidth, float& fCalcHeight);
+  bool FindSplitPos(int32_t iBlockIndex, float& fCalcHeight);
   bool LoadCaption();
   void LoadText();
   bool LoadImageImage();
@@ -77,9 +77,9 @@ class CXFA_WidgetAcc : public CXFA_WidgetData {
 
   CXFA_Node* GetDatasets();
   CFX_RetainPtr<CFGAS_GEFont> GetFDEFont();
-  FX_FLOAT GetFontSize();
+  float GetFontSize();
   FX_ARGB GetTextColor();
-  FX_FLOAT GetLineHeight();
+  float GetLineHeight();
   CXFA_WidgetLayoutData* GetWidgetLayoutData();
 
  protected:
@@ -102,16 +102,16 @@ class CXFA_WidgetAcc : public CXFA_WidgetData {
   bool CalculateImageEditAutoSize(CFX_SizeF& size);
   bool CalculateImageAutoSize(CFX_SizeF& size);
   bool CalculateTextAutoSize(CFX_SizeF& size);
-  FX_FLOAT CalculateWidgetAutoHeight(FX_FLOAT fHeightCalc);
-  FX_FLOAT CalculateWidgetAutoWidth(FX_FLOAT fWidthCalc);
-  FX_FLOAT GetWidthWithoutMargin(FX_FLOAT fWidthCalc);
-  FX_FLOAT GetHeightWithoutMargin(FX_FLOAT fHeightCalc);
+  float CalculateWidgetAutoHeight(float fHeightCalc);
+  float CalculateWidgetAutoWidth(float fWidthCalc);
+  float GetWidthWithoutMargin(float fWidthCalc);
+  float GetHeightWithoutMargin(float fHeightCalc);
   void CalculateTextContentSize(CFX_SizeF& size);
   void CalculateAccWidthAndHeight(XFA_Element eUIType,
-                                  FX_FLOAT& fWidth,
-                                  FX_FLOAT& fCalcHeight);
+                                  float& fWidth,
+                                  float& fCalcHeight);
   void InitLayoutData();
-  void StartTextLayout(FX_FLOAT& fCalcWidth, FX_FLOAT& fCalcHeight);
+  void StartTextLayout(float& fCalcWidth, float& fCalcHeight);
 
   CXFA_FFDocView* m_pDocView;
   std::unique_ptr<CXFA_WidgetLayoutData> m_pLayoutData;

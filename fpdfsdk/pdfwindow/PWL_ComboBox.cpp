@@ -339,8 +339,8 @@ void CPWL_ComboBox::RePosChildWnd() {
     CFX_FloatRect rcEdit = rcClient;
     CFX_FloatRect rcList = CPWL_Wnd::GetWindowRect();
 
-    FX_FLOAT fOldWindowHeight = m_rcOldWindow.Height();
-    FX_FLOAT fOldClientHeight = fOldWindowHeight - GetBorderWidth() * 2;
+    float fOldWindowHeight = m_rcOldWindow.Height();
+    float fOldClientHeight = fOldWindowHeight - GetBorderWidth() * 2;
 
     switch (m_nPopupWhere) {
       case 0:
@@ -440,7 +440,7 @@ void CPWL_ComboBox::SetPopup(bool bPopup) {
     return;
   if (bPopup == m_bPopup)
     return;
-  FX_FLOAT fListHeight = m_pList->GetContentRect().Height();
+  float fListHeight = m_pList->GetContentRect().Height();
   if (!IsFloatBigger(fListHeight, 0.0f))
     return;
 
@@ -453,12 +453,12 @@ void CPWL_ComboBox::SetPopup(bool bPopup) {
         return;
 #endif  // PDF_ENABLE_XFA
       int32_t nWhere = 0;
-      FX_FLOAT fPopupRet = 0.0f;
-      FX_FLOAT fPopupMin = 0.0f;
+      float fPopupRet = 0.0f;
+      float fPopupMin = 0.0f;
       if (m_pList->GetCount() > 3)
         fPopupMin =
             m_pList->GetFirstHeight() * 3 + m_pList->GetBorderWidth() * 2;
-      FX_FLOAT fPopupMax = fListHeight + m_pList->GetBorderWidth() * 2;
+      float fPopupMax = fListHeight + m_pList->GetBorderWidth() * 2;
       m_pFillerNotify->QueryWherePopup(GetAttachedData(), fPopupMin, fPopupMax,
                                        nWhere, fPopupRet);
 

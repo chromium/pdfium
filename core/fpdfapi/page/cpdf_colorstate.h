@@ -39,14 +39,10 @@ class CPDF_ColorState {
   CPDF_Color* GetMutableStrokeColor();
   bool HasStrokeColor() const;
 
-  void SetFillColor(CPDF_ColorSpace* pCS, FX_FLOAT* pValue, uint32_t nValues);
-  void SetStrokeColor(CPDF_ColorSpace* pCS, FX_FLOAT* pValue, uint32_t nValues);
-  void SetFillPattern(CPDF_Pattern* pattern,
-                      FX_FLOAT* pValue,
-                      uint32_t nValues);
-  void SetStrokePattern(CPDF_Pattern* pattern,
-                        FX_FLOAT* pValue,
-                        uint32_t nValues);
+  void SetFillColor(CPDF_ColorSpace* pCS, float* pValue, uint32_t nValues);
+  void SetStrokeColor(CPDF_ColorSpace* pCS, float* pValue, uint32_t nValues);
+  void SetFillPattern(CPDF_Pattern* pattern, float* pValue, uint32_t nValues);
+  void SetStrokePattern(CPDF_Pattern* pattern, float* pValue, uint32_t nValues);
 
   explicit operator bool() const { return !!m_Ref; }
 
@@ -68,7 +64,7 @@ class CPDF_ColorState {
   void SetColor(CPDF_Color& color,
                 uint32_t& rgb,
                 CPDF_ColorSpace* pCS,
-                FX_FLOAT* pValue,
+                float* pValue,
                 uint32_t nValues);
 
   CFX_SharedCopyOnWrite<ColorData> m_Ref;

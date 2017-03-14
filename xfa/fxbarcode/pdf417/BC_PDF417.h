@@ -36,9 +36,9 @@ class CBC_PDF417 {
   static const int32_t START_PATTERN = 0x1fea8;
   static const int32_t STOP_PATTERN = 0x3fa29;
   static const int32_t CODEWORD_TABLE[][929];
-  static constexpr FX_FLOAT PREFERRED_RATIO = 3.0f;
-  static constexpr FX_FLOAT DEFAULT_MODULE_WIDTH = 0.357f;
-  static constexpr FX_FLOAT HEIGHT = 2.0f;
+  static constexpr float PREFERRED_RATIO = 3.0f;
+  static constexpr float DEFAULT_MODULE_WIDTH = 0.357f;
+  static constexpr float HEIGHT = 2.0f;
 
   static int32_t calculateNumberOfRows(int32_t m, int32_t k, int32_t c);
   static int32_t getNumberOfPadCodewords(int32_t m,

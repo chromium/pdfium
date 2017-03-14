@@ -52,7 +52,7 @@ class FPDF_CHAR_INFO {
   wchar_t m_Unicode;
   wchar_t m_Charcode;
   int32_t m_Flag;
-  FX_FLOAT m_FontSize;
+  float m_FontSize;
   CFX_PointF m_Origin;
   CFX_FloatRect m_CharBox;
   CPDF_TextObject* m_pTextObj;
@@ -103,10 +103,10 @@ class CPDF_TextPage {
   CFX_WideString GetPageText(int start = 0, int nCount = -1) const;
   int CountRects(int start, int nCount);
   void GetRect(int rectIndex,
-               FX_FLOAT& left,
-               FX_FLOAT& top,
-               FX_FLOAT& right,
-               FX_FLOAT& bottom) const;
+               float& left,
+               float& top,
+               float& right,
+               float& bottom) const;
 
   static bool IsRectIntersect(const CFX_FloatRect& rect1,
                               const CFX_FloatRect& rect2);

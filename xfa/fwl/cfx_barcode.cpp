@@ -160,7 +160,7 @@ bool CFX_Barcode::SetFont(CFX_Font* pFont) {
   }
 }
 
-bool CFX_Barcode::SetFontSize(FX_FLOAT size) {
+bool CFX_Barcode::SetFontSize(float size) {
   switch (GetType()) {
     case BC_CODE39:
     case BC_CODABAR:

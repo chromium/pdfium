@@ -84,7 +84,7 @@ void CPWL_EditCtrl::OnNotify(CPWL_Wnd* pWnd,
       }
       break;
     case PNM_SCROLLWINDOW: {
-      FX_FLOAT fPos = *(FX_FLOAT*)lParam;
+      float fPos = *(float*)lParam;
       switch (wParam) {
         case SBT_VSCROLL:
           m_pEdit->SetScrollPos(CFX_PointF(m_pEdit->GetScrollPos().x, fPos));
@@ -121,11 +121,11 @@ void CPWL_EditCtrl::CreateEditCaret(const PWL_CREATEPARAM& cp) {
   m_pEditCaret->Create(ecp);
 }
 
-void CPWL_EditCtrl::SetFontSize(FX_FLOAT fFontSize) {
+void CPWL_EditCtrl::SetFontSize(float fFontSize) {
   m_pEdit->SetFontSize(fFontSize);
 }
 
-FX_FLOAT CPWL_EditCtrl::GetFontSize() const {
+float CPWL_EditCtrl::GetFontSize() const {
   return m_pEdit->GetFontSize();
 }
 
@@ -427,8 +427,8 @@ CPDF_Font* CPWL_EditCtrl::GetCaretFont() const {
   return nullptr;
 }
 
-FX_FLOAT CPWL_EditCtrl::GetCaretFontSize() const {
-  FX_FLOAT fFontSize = GetFontSize();
+float CPWL_EditCtrl::GetCaretFontSize() const {
+  float fFontSize = GetFontSize();
 
   CFX_Edit_Iterator* pIterator = m_pEdit->GetIterator();
   pIterator->SetAt(m_pEdit->GetCaret());
@@ -500,12 +500,12 @@ void CPWL_EditCtrl::Undo() {
     m_pEdit->Undo();
 }
 
-void CPWL_EditCtrl::IOnSetScrollInfoY(FX_FLOAT fPlateMin,
-                                      FX_FLOAT fPlateMax,
-                                      FX_FLOAT fContentMin,
-                                      FX_FLOAT fContentMax,
-                                      FX_FLOAT fSmallStep,
-                                      FX_FLOAT fBigStep) {
+void CPWL_EditCtrl::IOnSetScrollInfoY(float fPlateMin,
+                                      float fPlateMax,
+                                      float fContentMin,
+                                      float fContentMax,
+                                      float fSmallStep,
+                                      float fBigStep) {
   PWL_SCROLL_INFO Info;
 
   Info.fPlateWidth = fPlateMax - fPlateMin;
@@ -524,7 +524,7 @@ void CPWL_EditCtrl::IOnSetScrollInfoY(FX_FLOAT fPlateMin,
   }
 }
 
-void CPWL_EditCtrl::IOnSetScrollPosY(FX_FLOAT fy) {
+void CPWL_EditCtrl::IOnSetScrollPosY(float fy) {
   OnNotify(this, PNM_SETSCROLLPOS, SBT_VSCROLL, (intptr_t)&fy);
 }
 

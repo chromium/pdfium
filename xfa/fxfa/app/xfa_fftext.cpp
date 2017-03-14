@@ -46,10 +46,10 @@ void CXFA_FFText::RenderWidget(CFX_Graphics* pGS,
     if (!pItem->GetPrev() && !pItem->GetNext()) {
       XFA_RectWidthoutMargin(rtText, mgWidget);
     } else {
-      FX_FLOAT fLeftInset;
-      FX_FLOAT fRightInset;
-      FX_FLOAT fTopInset = 0;
-      FX_FLOAT fBottomInset = 0;
+      float fLeftInset;
+      float fRightInset;
+      float fTopInset = 0;
+      float fBottomInset = 0;
       mgWidget.GetLeftInset(fLeftInset);
       mgWidget.GetRightInset(fRightInset);
       if (!pItem->GetPrev())
@@ -91,11 +91,11 @@ bool CXFA_FFText::PerformLayout() {
     CFX_RectF rtText = pItem->GetRect(false);
     if (CXFA_Margin mgWidget = m_pDataAcc->GetMargin()) {
       if (!pItem->GetPrev()) {
-        FX_FLOAT fTopInset;
+        float fTopInset;
         mgWidget.GetTopInset(fTopInset);
         rtText.height -= fTopInset;
       } else if (!pItem->GetNext()) {
-        FX_FLOAT fBottomInset;
+        float fBottomInset;
         mgWidget.GetBottomInset(fBottomInset);
         rtText.height -= fBottomInset;
       }

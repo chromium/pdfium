@@ -109,7 +109,7 @@ bool CXFA_Box::IsCircular() const {
   return m_pNode->GetBoolean(XFA_ATTRIBUTE_Circular);
 }
 
-bool CXFA_Box::GetStartAngle(FX_FLOAT& fStartAngle) const {
+bool CXFA_Box::GetStartAngle(float& fStartAngle) const {
   fStartAngle = 0;
   if (!m_pNode)
     return false;
@@ -122,7 +122,7 @@ bool CXFA_Box::GetStartAngle(FX_FLOAT& fStartAngle) const {
   return bRet;
 }
 
-bool CXFA_Box::GetSweepAngle(FX_FLOAT& fSweepAngle) const {
+bool CXFA_Box::GetSweepAngle(float& fSweepAngle) const {
   fSweepAngle = 360;
   if (!m_pNode)
     return false;
@@ -148,7 +148,7 @@ CXFA_Margin CXFA_Box::GetMargin() const {
                              : nullptr);
 }
 
-int32_t CXFA_Box::Get3DStyle(bool& bVisible, FX_FLOAT& fThickness) const {
+int32_t CXFA_Box::Get3DStyle(bool& bVisible, float& fThickness) const {
   if (IsArc())
     return 0;
 

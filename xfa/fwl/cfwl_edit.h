@@ -100,7 +100,7 @@ class CFWL_Edit : public CFWL_Widget {
   bool OnPageUnload(int32_t nPageIndex);
   void OnAddDoRecord(std::unique_ptr<IFDE_TxtEdtDoRecord> pRecord);
   bool OnValidate(const CFX_WideString& wsText);
-  void SetScrollOffset(FX_FLOAT fScrollOffset);
+  void SetScrollOffset(float fScrollOffset);
 
  protected:
   void ShowCaret(CFX_RectF* pRect);
@@ -121,7 +121,7 @@ class CFWL_Edit : public CFWL_Widget {
   void UpdateEditParams();
   void UpdateEditLayout();
   bool UpdateOffset();
-  bool UpdateOffset(CFWL_ScrollBar* pScrollBar, FX_FLOAT fPosChanged);
+  bool UpdateOffset(CFWL_ScrollBar* pScrollBar, float fPosChanged);
   void UpdateVAlignment();
   void UpdateCaret();
   CFWL_ScrollBar* UpdateScroll();
@@ -141,8 +141,8 @@ class CFWL_Edit : public CFWL_Widget {
   void AddSpellCheckObj(CFX_Path& PathData,
                         int32_t nStart,
                         int32_t nCount,
-                        FX_FLOAT fOffSetX,
-                        FX_FLOAT fOffSetY);
+                        float fOffSetX,
+                        float fOffSetY);
 
   void DoButtonDown(CFWL_MessageMouse* pMsg);
   void OnFocusChanged(CFWL_Message* pMsg, bool bSet);
@@ -154,19 +154,19 @@ class CFWL_Edit : public CFWL_Widget {
   void OnChar(CFWL_MessageKey* pMsg);
   bool OnScroll(CFWL_ScrollBar* pScrollBar,
                 CFWL_EventScroll::Code dwCode,
-                FX_FLOAT fPos);
+                float fPos);
 
   CFX_RectF m_rtClient;
   CFX_RectF m_rtEngine;
   CFX_RectF m_rtStatic;
-  FX_FLOAT m_fVAlignOffset;
-  FX_FLOAT m_fScrollOffsetX;
-  FX_FLOAT m_fScrollOffsetY;
+  float m_fVAlignOffset;
+  float m_fScrollOffsetX;
+  float m_fScrollOffsetY;
   CFDE_TxtEdtEngine m_EdtEngine;
   bool m_bLButtonDown;
   int32_t m_nSelStart;
   int32_t m_nLimit;
-  FX_FLOAT m_fFontSize;
+  float m_fFontSize;
   bool m_bSetRange;
   int32_t m_iMax;
   std::unique_ptr<CFWL_ScrollBar> m_pVertScrollBar;

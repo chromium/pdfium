@@ -109,7 +109,7 @@ double WideStringToDouble(const CFX_WideString& wsStringVal) {
   double dValue = (dwFractional / 4294967296.0);
   dValue = nIntegral + (nIntegral >= 0 ? dValue : -dValue);
   if (nExponent != 0) {
-    dValue *= FXSYS_pow(10, (FX_FLOAT)nExponent);
+    dValue *= FXSYS_pow(10, (float)nExponent);
   }
   return dValue;
 }

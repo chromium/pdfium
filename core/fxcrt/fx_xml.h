@@ -107,19 +107,19 @@ class CXML_Element {
     return attr;
   }
 
-  bool GetAttrFloat(const CFX_ByteStringC& name, FX_FLOAT& attribute) const;
-  FX_FLOAT GetAttrFloat(const CFX_ByteStringC& name) const {
-    FX_FLOAT attr = 0;
+  bool GetAttrFloat(const CFX_ByteStringC& name, float& attribute) const;
+  float GetAttrFloat(const CFX_ByteStringC& name) const {
+    float attr = 0;
     GetAttrFloat(name, attr);
     return attr;
   }
 
   bool GetAttrFloat(const CFX_ByteStringC& space,
                     const CFX_ByteStringC& name,
-                    FX_FLOAT& attribute) const;
-  FX_FLOAT GetAttrFloat(const CFX_ByteStringC& space,
-                        const CFX_ByteStringC& name) const {
-    FX_FLOAT attr = 0;
+                    float& attribute) const;
+  float GetAttrFloat(const CFX_ByteStringC& space,
+                     const CFX_ByteStringC& name) const {
+    float attr = 0;
     GetAttrFloat(space, name, attr);
     return attr;
   }

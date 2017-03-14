@@ -204,7 +204,7 @@ struct PWL_CREATEPARAM {
   CPWL_Color sBorderColor;            // optional
   CPWL_Color sTextColor;              // optional
   int32_t nTransparency;              // optional
-  FX_FLOAT fFontSize;                 // optional
+  float fFontSize;                    // optional
   CPWL_Dash sDash;                    // optional
   void* pAttachedData;                // optional
   CPWL_Wnd* pParentWnd;               // ignore
@@ -269,8 +269,8 @@ class CPWL_Wnd : public CPWL_TimerHandler {
   virtual void KillFocus();
   virtual void SetCursor();
   virtual void SetVisible(bool bVisible);
-  virtual void SetFontSize(FX_FLOAT fFontSize);
-  virtual FX_FLOAT GetFontSize() const;
+  virtual void SetFontSize(float fFontSize);
+  virtual float GetFontSize() const;
 
   virtual CFX_FloatRect GetFocusRect() const;
   virtual CFX_FloatRect GetClientRect() const;

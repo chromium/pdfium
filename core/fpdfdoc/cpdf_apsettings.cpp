@@ -36,33 +36,32 @@ FX_ARGB CPDF_ApSettings::GetColor(int& iColorType,
   size_t dwCount = pEntry->GetCount();
   if (dwCount == 1) {
     iColorType = COLORTYPE_GRAY;
-    FX_FLOAT g = pEntry->GetNumberAt(0) * 255;
+    float g = pEntry->GetNumberAt(0) * 255;
     return ArgbEncode(255, (int)g, (int)g, (int)g);
   }
   if (dwCount == 3) {
     iColorType = COLORTYPE_RGB;
-    FX_FLOAT r = pEntry->GetNumberAt(0) * 255;
-    FX_FLOAT g = pEntry->GetNumberAt(1) * 255;
-    FX_FLOAT b = pEntry->GetNumberAt(2) * 255;
+    float r = pEntry->GetNumberAt(0) * 255;
+    float g = pEntry->GetNumberAt(1) * 255;
+    float b = pEntry->GetNumberAt(2) * 255;
     return ArgbEncode(255, (int)r, (int)g, (int)b);
   }
   if (dwCount == 4) {
     iColorType = COLORTYPE_CMYK;
-    FX_FLOAT c = pEntry->GetNumberAt(0);
-    FX_FLOAT m = pEntry->GetNumberAt(1);
-    FX_FLOAT y = pEntry->GetNumberAt(2);
-    FX_FLOAT k = pEntry->GetNumberAt(3);
-    FX_FLOAT r = 1.0f - std::min(1.0f, c + k);
-    FX_FLOAT g = 1.0f - std::min(1.0f, m + k);
-    FX_FLOAT b = 1.0f - std::min(1.0f, y + k);
+    float c = pEntry->GetNumberAt(0);
+    float m = pEntry->GetNumberAt(1);
+    float y = pEntry->GetNumberAt(2);
+    float k = pEntry->GetNumberAt(3);
+    float r = 1.0f - std::min(1.0f, c + k);
+    float g = 1.0f - std::min(1.0f, m + k);
+    float b = 1.0f - std::min(1.0f, y + k);
     return ArgbEncode(255, (int)(r * 255), (int)(g * 255), (int)(b * 255));
   }
   return color;
 }
 
-FX_FLOAT CPDF_ApSettings::GetOriginalColor(
-    int index,
-    const CFX_ByteString& csEntry) const {
+float CPDF_ApSettings::GetOriginalColor(int index,
+                                        const CFX_ByteString& csEntry) const {
   if (!m_pDict)
     return 0;
 
@@ -71,7 +70,7 @@ FX_FLOAT CPDF_ApSettings::GetOriginalColor(
 }
 
 void CPDF_ApSettings::GetOriginalColor(int& iColorType,
-                                       FX_FLOAT fc[4],
+                                       float fc[4],
                                        const CFX_ByteString& csEntry) const {
   iColorType = COLORTYPE_TRANSPARENT;
   for (int i = 0; i < 4; i++)

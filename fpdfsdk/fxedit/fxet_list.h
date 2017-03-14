@@ -20,10 +20,10 @@ class CLST_Rect : public CFX_FloatRect {
  public:
   CLST_Rect() { left = top = right = bottom = 0.0f; }
 
-  CLST_Rect(FX_FLOAT other_left,
-            FX_FLOAT other_top,
-            FX_FLOAT other_right,
-            FX_FLOAT other_bottom) {
+  CLST_Rect(float other_left,
+            float other_top,
+            float other_right,
+            float other_bottom) {
     left = other_left;
     top = other_top;
     right = other_right;
@@ -56,9 +56,9 @@ class CLST_Rect : public CFX_FloatRect {
 
   bool operator!=(const CLST_Rect& rect) const { return !(*this == rect); }
 
-  FX_FLOAT Width() const { return right - left; }
+  float Width() const { return right - left; }
 
-  FX_FLOAT Height() const {
+  float Height() const {
     if (top > bottom)
       return top - bottom;
     return bottom - top;
@@ -108,12 +108,12 @@ class CFX_ListItem final {
   void SetRect(const CLST_Rect& rect);
   void SetSelect(bool bSelected);
   void SetText(const CFX_WideString& text);
-  void SetFontSize(FX_FLOAT fFontSize);
+  void SetFontSize(float fFontSize);
   CFX_WideString GetText() const;
 
   CLST_Rect GetRect() const;
   bool IsSelected() const;
-  FX_FLOAT GetItemHeight() const;
+  float GetItemHeight() const;
   uint16_t GetFirstChar() const;
 
  private:
@@ -252,13 +252,13 @@ class CFX_ListCtrl : protected CFX_ListContainer {
   CFX_WideString GetText() const;
 
   void SetFontMap(IPVT_FontMap* pFontMap);
-  void SetFontSize(FX_FLOAT fFontSize);
+  void SetFontSize(float fFontSize);
   CFX_FloatRect GetPlateRect() const;
-  FX_FLOAT GetFontSize() const;
+  float GetFontSize() const;
   CFX_Edit* GetItemEdit(int32_t nIndex) const;
   int32_t GetCount() const;
   bool IsItemSelected(int32_t nIndex) const;
-  FX_FLOAT GetFirstHeight() const;
+  float GetFirstHeight() const;
   void SetMultipleSel(bool bMultiple);
   bool IsMultipleSel() const;
   bool IsValid(int32_t nItemIndex) const;
@@ -280,7 +280,7 @@ class CFX_ListCtrl : protected CFX_ListContainer {
   void SelectItems();
   bool IsItemVisible(int32_t nItemIndex) const;
   void SetScrollInfo();
-  void SetScrollPosY(FX_FLOAT fy);
+  void SetScrollPosY(float fy);
   void AddItem(const CFX_WideString& str);
   CFX_WideString GetItemText(int32_t nIndex) const;
   void SetItemSelect(int32_t nItemIndex, bool bSelected);
@@ -296,7 +296,7 @@ class CFX_ListCtrl : protected CFX_ListContainer {
   bool m_bCtrlSel;           // for multiple
   int32_t m_nCaretIndex;     // for multiple
   CLST_ArrayTemplate<CFX_ListItem*> m_aListItems;
-  FX_FLOAT m_fFontSize;
+  float m_fFontSize;
   IPVT_FontMap* m_pFontMap;
   bool m_bMultiple;
 };

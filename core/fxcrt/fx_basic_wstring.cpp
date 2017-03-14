@@ -945,7 +945,7 @@ void CFX_WideString::TrimLeft(wchar_t chTarget) {
 void CFX_WideString::TrimLeft() {
   TrimLeft(L"\x09\x0a\x0b\x0c\x0d\x20");
 }
-FX_FLOAT FX_wtof(const wchar_t* str, int len) {
+float FX_wtof(const wchar_t* str, int len) {
   if (len == 0) {
     return 0.0;
   }
@@ -965,17 +965,17 @@ FX_FLOAT FX_wtof(const wchar_t* str, int len) {
     integer = integer * 10 + FXSYS_toDecimalDigit(str[cc]);
     cc++;
   }
-  FX_FLOAT fraction = 0;
+  float fraction = 0;
   if (str[cc] == '.') {
     cc++;
-    FX_FLOAT scale = 0.1f;
+    float scale = 0.1f;
     while (cc < len) {
       fraction += scale * FXSYS_toDecimalDigit(str[cc]);
       scale *= 0.1f;
       cc++;
     }
   }
-  fraction += (FX_FLOAT)integer;
+  fraction += (float)integer;
   return bNegative ? -fraction : fraction;
 }
 
@@ -983,7 +983,7 @@ int CFX_WideString::GetInteger() const {
   return m_pData ? FXSYS_wtoi(m_pData->m_String) : 0;
 }
 
-FX_FLOAT CFX_WideString::GetFloat() const {
+float CFX_WideString::GetFloat() const {
   return m_pData ? FX_wtof(m_pData->m_String, m_pData->m_nDataLength) : 0.0f;
 }
 

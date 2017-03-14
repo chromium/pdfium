@@ -21,12 +21,11 @@ class IFX_Edit_UndoItem;
 class IPWL_Filler_Notify {
  public:
   virtual ~IPWL_Filler_Notify() {}
-  virtual void QueryWherePopup(
-      void* pPrivateData,
-      FX_FLOAT fPopupMin,
-      FX_FLOAT fPopupMax,
-      int32_t& nRet,
-      FX_FLOAT& fPopupRet) = 0;  // nRet: (0:bottom 1:top)
+  virtual void QueryWherePopup(void* pPrivateData,
+                               float fPopupMin,
+                               float fPopupMax,
+                               int32_t& nRet,
+                               float& fPopupRet) = 0;  // nRet: (0:bottom 1:top)
   virtual void OnBeforeKeyStroke(void* pPrivateData,
                                  CFX_WideString& strChange,
                                  const CFX_WideString& strChangeEx,
@@ -78,7 +77,7 @@ class CPWL_Edit : public CPWL_EditCtrl {
   void SetCharArray(int32_t nCharArray);
   void SetLimitChar(int32_t nLimitChar);
 
-  void SetCharSpace(FX_FLOAT fCharSpace);
+  void SetCharSpace(float fCharSpace);
 
   bool CanSelectAll() const;
   bool CanClear() const;
@@ -96,9 +95,9 @@ class CPWL_Edit : public CPWL_EditCtrl {
 
   bool IsTextFull() const;
 
-  static FX_FLOAT GetCharArrayAutoFontSize(CPDF_Font* pFont,
-                                           const CFX_FloatRect& rcPlate,
-                                           int32_t nCharArray);
+  static float GetCharArrayAutoFontSize(CPDF_Font* pFont,
+                                        const CFX_FloatRect& rcPlate,
+                                        int32_t nCharArray);
 
   void SetFillerNotify(IPWL_Filler_Notify* pNotify) {
     m_pFillerNotify = pNotify;
@@ -123,7 +122,7 @@ class CPWL_Edit : public CPWL_EditCtrl {
   bool IsVScrollBarVisible() const;
   void SetParamByFlag();
 
-  FX_FLOAT GetCharArrayAutoFontSize(int32_t nCharArray);
+  float GetCharArrayAutoFontSize(int32_t nCharArray);
   CFX_PointF GetWordRightBottomPoint(const CPVT_WordPlace& wpWord);
 
   CPVT_WordRange CombineWordRange(const CPVT_WordRange& wr1,

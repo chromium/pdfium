@@ -24,7 +24,7 @@ class CFXJSE_Arguments {
   std::unique_ptr<CFXJSE_Value> GetValue(int32_t index) const;
   bool GetBoolean(int32_t index) const;
   int32_t GetInt32(int32_t index) const;
-  FX_FLOAT GetFloat(int32_t index) const;
+  float GetFloat(int32_t index) const;
   CFX_ByteString GetUTF8String(int32_t index) const;
   CFXJSE_HostObject* GetObject(int32_t index,
                                CFXJSE_Class* pClass = nullptr) const;

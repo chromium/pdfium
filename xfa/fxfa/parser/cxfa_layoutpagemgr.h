@@ -23,8 +23,8 @@ class CXFA_LayoutPageMgr {
 
   bool InitLayoutPage(CXFA_Node* pFormNode);
   bool PrepareFirstPage(CXFA_Node* pRootSubform);
-  FX_FLOAT GetAvailHeight();
-  bool GetNextAvailContentHeight(FX_FLOAT fChildHeight);
+  float GetAvailHeight();
+  bool GetNextAvailContentHeight(float fChildHeight);
   void SubmitContentItem(CXFA_ContentLayoutItem* pContentLayoutItem,
                          XFA_ItemLayoutProcessorResult eStatus);
   void FinishPaginatedPageSets();

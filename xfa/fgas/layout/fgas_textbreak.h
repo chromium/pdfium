@@ -55,7 +55,7 @@ struct FX_TXTRUN {
   int32_t* pWidths;
   int32_t iLength;
   CFX_RetainPtr<CFGAS_GEFont> pFont;
-  FX_FLOAT fFontSize;
+  float fFontSize;
   uint32_t dwStyles;
   int32_t iHorizontalScale;
   int32_t iVerticalScale;
@@ -70,19 +70,19 @@ class CFX_TxtBreak {
   CFX_TxtBreak();
   ~CFX_TxtBreak();
 
-  void SetLineWidth(FX_FLOAT fLineWidth);
+  void SetLineWidth(float fLineWidth);
   uint32_t GetLayoutStyles() const { return m_dwLayoutStyles; }
   void SetLayoutStyles(uint32_t dwLayoutStyles);
   void SetFont(const CFX_RetainPtr<CFGAS_GEFont>& pFont);
-  void SetFontSize(FX_FLOAT fFontSize);
-  void SetTabWidth(FX_FLOAT fTabWidth, bool bEquidistant);
+  void SetFontSize(float fFontSize);
+  void SetTabWidth(float fTabWidth, bool bEquidistant);
   void SetDefaultChar(wchar_t wch);
   void SetParagraphBreakChar(wchar_t wch);
-  void SetLineBreakTolerance(FX_FLOAT fTolerance);
+  void SetLineBreakTolerance(float fTolerance);
   void SetHorizontalScale(int32_t iScale);
-  void SetCharSpace(FX_FLOAT fCharSpace);
+  void SetCharSpace(float fCharSpace);
   void SetAlignment(int32_t iAlignment);
-  void SetCombWidth(FX_FLOAT fCombWidth);
+  void SetCombWidth(float fCombWidth);
   CFX_BreakType EndBreak(CFX_BreakType dwStatus);
   int32_t CountBreakPieces() const;
   const CFX_BreakPiece* GetBreakPiece(int32_t index) const;

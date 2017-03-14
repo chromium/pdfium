@@ -20,12 +20,12 @@
 namespace agg
 {
 struct curve4_points  {
-    FX_FLOAT cp[8];
+    float cp[8];
     curve4_points() {}
-    curve4_points(FX_FLOAT x1, FX_FLOAT y1,
-                  FX_FLOAT x2, FX_FLOAT y2,
-                  FX_FLOAT x3, FX_FLOAT y3,
-                  FX_FLOAT x4, FX_FLOAT y4)
+    curve4_points(float x1, float y1,
+                  float x2, float y2,
+                  float x3, float y3,
+                  float x4, float y4)
     {
         cp[0] = x1;
         cp[1] = y1;
@@ -36,10 +36,10 @@ struct curve4_points  {
         cp[6] = x4;
         cp[7] = y4;
     }
-    void init(FX_FLOAT x1, FX_FLOAT y1,
-              FX_FLOAT x2, FX_FLOAT y2,
-              FX_FLOAT x3, FX_FLOAT y3,
-              FX_FLOAT x4, FX_FLOAT y4)
+    void init(float x1, float y1,
+              float x2, float y2,
+              float x3, float y3,
+              float x4, float y4)
     {
         cp[0] = x1;
         cp[1] = y1;
@@ -50,11 +50,11 @@ struct curve4_points  {
         cp[6] = x4;
         cp[7] = y4;
     }
-    FX_FLOAT  operator [] (unsigned i) const
+    float  operator [] (unsigned i) const
     {
         return cp[i];
     }
-    FX_FLOAT& operator [] (unsigned i)
+    float& operator [] (unsigned i)
     {
         return cp[i];
     }
@@ -65,10 +65,10 @@ public:
     curve4_div() :
         m_count(0)
     {}
-    curve4_div(FX_FLOAT x1, FX_FLOAT y1,
-               FX_FLOAT x2, FX_FLOAT y2,
-               FX_FLOAT x3, FX_FLOAT y3,
-               FX_FLOAT x4, FX_FLOAT y4) :
+    curve4_div(float x1, float y1,
+               float x2, float y2,
+               float x3, float y3,
+               float x4, float y4) :
         m_count(0)
     {
         init(x1, y1, x2, y2, x3, y3, x4, y4);
@@ -83,10 +83,10 @@ public:
         m_points.remove_all();
         m_count = 0;
     }
-    void init(FX_FLOAT x1, FX_FLOAT y1,
-              FX_FLOAT x2, FX_FLOAT y2,
-              FX_FLOAT x3, FX_FLOAT y3,
-              FX_FLOAT x4, FX_FLOAT y4);
+    void init(float x1, float y1,
+              float x2, float y2,
+              float x3, float y3,
+              float x4, float y4);
     void init(const curve4_points& cp)
     {
         init(cp[0], cp[1], cp[2], cp[3], cp[4], cp[5], cp[6], cp[7]);
@@ -95,7 +95,7 @@ public:
     {
         m_count = 0;
     }
-    unsigned vertex(FX_FLOAT* x, FX_FLOAT* y)
+    unsigned vertex(float* x, float* y)
     {
         if(m_count >= m_points.size()) {
             return path_cmd_stop;
@@ -105,7 +105,7 @@ public:
         *y = p.y;
         return (m_count == 1) ? path_cmd_move_to : path_cmd_line_to;
     }
-    unsigned vertex_flag(FX_FLOAT* x, FX_FLOAT* y, int& flag)
+    unsigned vertex_flag(float* x, float* y, int& flag)
     {
         if(m_count >= m_points.size()) {
             return path_cmd_stop;
@@ -121,17 +121,17 @@ public:
         return m_points.size();
     }
 private:
-    void bezier(FX_FLOAT x1, FX_FLOAT y1,
-                FX_FLOAT x2, FX_FLOAT y2,
-                FX_FLOAT x3, FX_FLOAT y3,
-                FX_FLOAT x4, FX_FLOAT y4);
-    void recursive_bezier(FX_FLOAT x1, FX_FLOAT y1,
-                          FX_FLOAT x2, FX_FLOAT y2,
-                          FX_FLOAT x3, FX_FLOAT y3,
-                          FX_FLOAT x4, FX_FLOAT y4,
+    void bezier(float x1, float y1,
+                float x2, float y2,
+                float x3, float y3,
+                float x4, float y4);
+    void recursive_bezier(float x1, float y1,
+                          float x2, float y2,
+                          float x3, float y3,
+                          float x4, float y4,
                           unsigned level);
-    FX_FLOAT    m_distance_tolerance_square;
-    FX_FLOAT    m_distance_tolerance_manhattan;
+    float    m_distance_tolerance_square;
+    float    m_distance_tolerance_manhattan;
     unsigned              m_count;
     pod_deque<point_type> m_points;
 };
@@ -139,10 +139,10 @@ class curve4
 {
 public:
     curve4() {}
-    curve4(FX_FLOAT x1, FX_FLOAT y1,
-           FX_FLOAT x2, FX_FLOAT y2,
-           FX_FLOAT x3, FX_FLOAT y3,
-           FX_FLOAT x4, FX_FLOAT y4)
+    curve4(float x1, float y1,
+           float x2, float y2,
+           float x3, float y3,
+           float x4, float y4)
     {
         init(x1, y1, x2, y2, x3, y3, x4, y4);
     }
@@ -154,10 +154,10 @@ public:
     {
         m_curve_div.reset();
     }
-    void init(FX_FLOAT x1, FX_FLOAT y1,
-              FX_FLOAT x2, FX_FLOAT y2,
-              FX_FLOAT x3, FX_FLOAT y3,
-              FX_FLOAT x4, FX_FLOAT y4)
+    void init(float x1, float y1,
+              float x2, float y2,
+              float x3, float y3,
+              float x4, float y4)
     {
         m_curve_div.init(x1, y1, x2, y2, x3, y3, x4, y4);
     }
@@ -169,11 +169,11 @@ public:
     {
         m_curve_div.rewind(path_id);
     }
-    unsigned vertex(FX_FLOAT* x, FX_FLOAT* y)
+    unsigned vertex(float* x, float* y)
     {
         return m_curve_div.vertex(x, y);
     }
-    unsigned vertex_curve_flag(FX_FLOAT* x, FX_FLOAT* y, int& flag)
+    unsigned vertex_curve_flag(float* x, float* y, int& flag)
     {
         return m_curve_div.vertex_flag(x, y, flag);
     }

@@ -25,17 +25,17 @@ enum class FDE_CSSNumberType {
 
 class CFDE_CSSNumberValue : public CFDE_CSSValue {
  public:
-  CFDE_CSSNumberValue(FDE_CSSNumberType type, FX_FLOAT value);
+  CFDE_CSSNumberValue(FDE_CSSNumberType type, float value);
   ~CFDE_CSSNumberValue() override;
 
-  FX_FLOAT Value() const { return value_; }
+  float Value() const { return value_; }
   FDE_CSSNumberType Kind() const { return type_; }
 
-  FX_FLOAT Apply(FX_FLOAT percentBase) const;
+  float Apply(float percentBase) const;
 
  private:
   FDE_CSSNumberType type_;
-  FX_FLOAT value_;
+  float value_;
 };
 
 #endif  // XFA_FDE_CSS_CFDE_CSSNUMBERVALUE_H_

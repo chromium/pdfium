@@ -25,12 +25,12 @@ CFX_ByteString CPWL_Image::GetImageAppStream() {
   CFX_Matrix mt;
   mt.SetReverse(GetImageMatrix());
 
-  FX_FLOAT fHScale = 1.0f;
-  FX_FLOAT fVScale = 1.0f;
+  float fHScale = 1.0f;
+  float fVScale = 1.0f;
   GetScale(fHScale, fVScale);
 
-  FX_FLOAT fx = 0.0f;
-  FX_FLOAT fy = 0.0f;
+  float fx = 0.0f;
+  float fy = 0.0f;
   GetImageOffset(fx, fy);
 
   if (m_pPDFStream && sAlias.GetLength() > 0) {
@@ -59,7 +59,7 @@ CPDF_Stream* CPWL_Image::GetPDFStream() {
   return m_pPDFStream;
 }
 
-void CPWL_Image::GetImageSize(FX_FLOAT& fWidth, FX_FLOAT& fHeight) {
+void CPWL_Image::GetImageSize(float& fWidth, float& fHeight) {
   fWidth = 0.0f;
   fHeight = 0.0f;
 
@@ -100,12 +100,12 @@ void CPWL_Image::SetImageAlias(const char* sImageAlias) {
   m_sImageAlias = sImageAlias;
 }
 
-void CPWL_Image::GetScale(FX_FLOAT& fHScale, FX_FLOAT& fVScale) {
+void CPWL_Image::GetScale(float& fHScale, float& fVScale) {
   fHScale = 1.0f;
   fVScale = 1.0f;
 }
 
-void CPWL_Image::GetImageOffset(FX_FLOAT& x, FX_FLOAT& y) {
+void CPWL_Image::GetImageOffset(float& x, float& y) {
   x = 0.0f;
   y = 0.0f;
 }
@@ -132,7 +132,7 @@ bool CPWL_Icon::IsProportionalScale() {
   return false;
 }
 
-void CPWL_Icon::GetIconPosition(FX_FLOAT& fLeft, FX_FLOAT& fBottom) {
+void CPWL_Icon::GetIconPosition(float& fLeft, float& fBottom) {
   if (m_pIconFit) {
     fLeft = 0.0f;
     fBottom = 0.0f;
@@ -152,13 +152,13 @@ void CPWL_Icon::GetIconPosition(FX_FLOAT& fLeft, FX_FLOAT& fBottom) {
   }
 }
 
-void CPWL_Icon::GetScale(FX_FLOAT& fHScale, FX_FLOAT& fVScale) {
+void CPWL_Icon::GetScale(float& fHScale, float& fVScale) {
   fHScale = 1.0f;
   fVScale = 1.0f;
 
   if (m_pPDFStream) {
-    FX_FLOAT fImageWidth, fImageHeight;
-    FX_FLOAT fPlateWidth, fPlateHeight;
+    float fImageWidth, fImageHeight;
+    float fPlateWidth, fPlateHeight;
 
     CFX_FloatRect rcPlate = GetClientRect();
     fPlateWidth = rcPlate.right - rcPlate.left;
@@ -190,7 +190,7 @@ void CPWL_Icon::GetScale(FX_FLOAT& fHScale, FX_FLOAT& fVScale) {
         break;
     }
 
-    FX_FLOAT fMinScale;
+    float fMinScale;
     if (IsProportionalScale()) {
       fMinScale = std::min(fHScale, fVScale);
       fHScale = fMinScale;
@@ -199,23 +199,23 @@ void CPWL_Icon::GetScale(FX_FLOAT& fHScale, FX_FLOAT& fVScale) {
   }
 }
 
-void CPWL_Icon::GetImageOffset(FX_FLOAT& x, FX_FLOAT& y) {
-  FX_FLOAT fLeft, fBottom;
+void CPWL_Icon::GetImageOffset(float& x, float& y) {
+  float fLeft, fBottom;
 
   GetIconPosition(fLeft, fBottom);
   x = 0.0f;
   y = 0.0f;
 
-  FX_FLOAT fImageWidth, fImageHeight;
+  float fImageWidth, fImageHeight;
   GetImageSize(fImageWidth, fImageHeight);
 
-  FX_FLOAT fHScale, fVScale;
+  float fHScale, fVScale;
   GetScale(fHScale, fVScale);
 
-  FX_FLOAT fImageFactWidth = fImageWidth * fHScale;
-  FX_FLOAT fImageFactHeight = fImageHeight * fVScale;
+  float fImageFactWidth = fImageWidth * fHScale;
+  float fImageFactHeight = fImageHeight * fVScale;
 
-  FX_FLOAT fPlateWidth, fPlateHeight;
+  float fPlateWidth, fPlateHeight;
   CFX_FloatRect rcPlate = GetClientRect();
   fPlateWidth = rcPlate.right - rcPlate.left;
   fPlateHeight = rcPlate.top - rcPlate.bottom;

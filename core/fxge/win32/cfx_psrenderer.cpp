@@ -22,7 +22,7 @@ struct PSGlyph {
   CFX_Font* m_pFont;
   uint32_t m_GlyphIndex;
   bool m_bGlyphAdjust;
-  FX_FLOAT m_AdjustMatrix[4];
+  float m_AdjustMatrix[4];
 };
 
 class CPSFont {
@@ -260,7 +260,7 @@ void CFX_PSRenderer::SetGraphState(const CFX_GraphStateData* pGraphState) {
   if (!m_bGraphStateSet ||
       m_CurGraphState.m_DashCount != pGraphState->m_DashCount ||
       FXSYS_memcmp(m_CurGraphState.m_DashArray, pGraphState->m_DashArray,
-                   sizeof(FX_FLOAT) * m_CurGraphState.m_DashCount)) {
+                   sizeof(float) * m_CurGraphState.m_DashCount)) {
     buf << "[";
     for (int i = 0; i < pGraphState->m_DashCount; ++i) {
       buf << pGraphState->m_DashArray[i] << " ";
@@ -343,9 +343,9 @@ bool CFX_PSRenderer::SetDIBits(const CFX_DIBSource* pSource,
                                int left,
                                int top) {
   StartRendering();
-  CFX_Matrix matrix((FX_FLOAT)(pSource->GetWidth()), 0.0f, 0.0f,
-                    -(FX_FLOAT)(pSource->GetHeight()), (FX_FLOAT)(left),
-                    (FX_FLOAT)(top + pSource->GetHeight()));
+  CFX_Matrix matrix((float)(pSource->GetWidth()), 0.0f, 0.0f,
+                    -(float)(pSource->GetHeight()), (float)(left),
+                    (float)(top + pSource->GetHeight()));
   return DrawDIBits(pSource, color, &matrix, 0);
 }
 
@@ -357,9 +357,8 @@ bool CFX_PSRenderer::StretchDIBits(const CFX_DIBSource* pSource,
                                    int dest_height,
                                    uint32_t flags) {
   StartRendering();
-  CFX_Matrix matrix((FX_FLOAT)(dest_width), 0.0f, 0.0f,
-                    (FX_FLOAT)(-dest_height), (FX_FLOAT)(dest_left),
-                    (FX_FLOAT)(dest_top + dest_height));
+  CFX_Matrix matrix((float)(dest_width), 0.0f, 0.0f, (float)(-dest_height),
+                    (float)(dest_left), (float)(dest_top + dest_height));
   return DrawDIBits(pSource, color, &matrix, flags);
 }
 
@@ -632,7 +631,7 @@ bool CFX_PSRenderer::DrawText(int nChars,
                               const FXTEXT_CHARPOS* pCharPos,
                               CFX_Font* pFont,
                               const CFX_Matrix* pObject2Device,
-                              FX_FLOAT font_size,
+                              float font_size,
                               uint32_t color) {
   StartRendering();
   int alpha = FXARGB_A(color);

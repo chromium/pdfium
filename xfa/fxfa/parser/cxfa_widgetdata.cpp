@@ -18,10 +18,10 @@
 
 namespace {
 
-FX_FLOAT GetEdgeThickness(const std::vector<CXFA_Stroke>& strokes,
-                          bool b3DStyle,
-                          int32_t nIndex) {
-  FX_FLOAT fThickness = 0;
+float GetEdgeThickness(const std::vector<CXFA_Stroke>& strokes,
+                       bool b3DStyle,
+                       int32_t nIndex) {
+  float fThickness = 0;
 
   if (strokes[nIndex * 2 + 1].GetPresence() == XFA_ATTRIBUTEENUM_Visible) {
     if (nIndex == 0)
@@ -375,27 +375,27 @@ CXFA_Assist CXFA_WidgetData::GetAssist(bool bModified) {
   return CXFA_Assist(m_pNode->GetProperty(0, XFA_Element::Assist, bModified));
 }
 
-bool CXFA_WidgetData::GetWidth(FX_FLOAT& fWidth) {
+bool CXFA_WidgetData::GetWidth(float& fWidth) {
   return TryMeasure(XFA_ATTRIBUTE_W, fWidth);
 }
 
-bool CXFA_WidgetData::GetHeight(FX_FLOAT& fHeight) {
+bool CXFA_WidgetData::GetHeight(float& fHeight) {
   return TryMeasure(XFA_ATTRIBUTE_H, fHeight);
 }
 
-bool CXFA_WidgetData::GetMinWidth(FX_FLOAT& fMinWidth) {
+bool CXFA_WidgetData::GetMinWidth(float& fMinWidth) {
   return TryMeasure(XFA_ATTRIBUTE_MinW, fMinWidth);
 }
 
-bool CXFA_WidgetData::GetMinHeight(FX_FLOAT& fMinHeight) {
+bool CXFA_WidgetData::GetMinHeight(float& fMinHeight) {
   return TryMeasure(XFA_ATTRIBUTE_MinH, fMinHeight);
 }
 
-bool CXFA_WidgetData::GetMaxWidth(FX_FLOAT& fMaxWidth) {
+bool CXFA_WidgetData::GetMaxWidth(float& fMaxWidth) {
   return TryMeasure(XFA_ATTRIBUTE_MaxW, fMaxWidth);
 }
 
-bool CXFA_WidgetData::GetMaxHeight(FX_FLOAT& fMaxHeight) {
+bool CXFA_WidgetData::GetMaxHeight(float& fMaxHeight) {
   return TryMeasure(XFA_ATTRIBUTE_MaxH, fMaxHeight);
 }
 
@@ -419,14 +419,14 @@ CFX_RectF CXFA_WidgetData::GetUIMargin() {
   if (border && border.GetPresence() != XFA_ATTRIBUTEENUM_Visible)
     return CFX_RectF();
 
-  FX_FLOAT fLeftInset, fTopInset, fRightInset, fBottomInset;
+  float fLeftInset, fTopInset, fRightInset, fBottomInset;
   bool bLeft = mgUI.GetLeftInset(fLeftInset);
   bool bTop = mgUI.GetTopInset(fTopInset);
   bool bRight = mgUI.GetRightInset(fRightInset);
   bool bBottom = mgUI.GetBottomInset(fBottomInset);
   if (border) {
     bool bVisible = false;
-    FX_FLOAT fThickness = 0;
+    float fThickness = 0;
     border.Get3DStyle(bVisible, fThickness);
     if (!bLeft || !bTop || !bRight || !bBottom) {
       std::vector<CXFA_Stroke> strokes;
@@ -509,7 +509,7 @@ bool CXFA_WidgetData::IsRadioButton() {
   return false;
 }
 
-FX_FLOAT CXFA_WidgetData::GetCheckButtonSize() {
+float CXFA_WidgetData::GetCheckButtonSize() {
   CXFA_Node* pUIChild = GetUIChild();
   if (pUIChild)
     return pUIChild->GetMeasure(XFA_ATTRIBUTE_Size).ToUnit(XFA_UNIT_Pt);
@@ -1393,20 +1393,20 @@ bool CXFA_WidgetData::GetBarcodeAttribute_Truncate(bool& val) {
   return false;
 }
 
-bool CXFA_WidgetData::GetBarcodeAttribute_WideNarrowRatio(FX_FLOAT& val) {
+bool CXFA_WidgetData::GetBarcodeAttribute_WideNarrowRatio(float& val) {
   CXFA_Node* pUIChild = GetUIChild();
   CFX_WideString wsWideNarrowRatio;
   if (pUIChild->TryCData(XFA_ATTRIBUTE_WideNarrowRatio, wsWideNarrowRatio)) {
     FX_STRSIZE ptPos = wsWideNarrowRatio.Find(':');
-    FX_FLOAT fRatio = 0;
+    float fRatio = 0;
     if (ptPos >= 0) {
-      fRatio = (FX_FLOAT)FXSYS_wtoi(wsWideNarrowRatio.c_str());
+      fRatio = (float)FXSYS_wtoi(wsWideNarrowRatio.c_str());
     } else {
       int32_t fA, fB;
       fA = FXSYS_wtoi(wsWideNarrowRatio.Left(ptPos).c_str());
       fB = FXSYS_wtoi(wsWideNarrowRatio.Mid(ptPos + 1).c_str());
       if (fB)
-        fRatio = (FX_FLOAT)fA / fB;
+        fRatio = (float)fA / fB;
     }
     val = fRatio;
     return true;

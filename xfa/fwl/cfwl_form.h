@@ -63,8 +63,8 @@ class CFWL_Form : public CFWL_Widget {
   CFX_RectF m_rtRelative;
   std::unique_ptr<CFWL_NoteLoop> m_pNoteLoop;
   CFWL_Widget* m_pSubFocus;
-  FX_FLOAT m_fCXBorder;
-  FX_FLOAT m_fCYBorder;
+  float m_fCXBorder;
+  float m_fCYBorder;
 };
 
 #endif  // XFA_FWL_CFWL_FORM_H_

@@ -22,16 +22,16 @@ union Float_t {
   Float_t(float num = 0.0f) : f(num) {}
 
   int32_t i;
-  FX_FLOAT f;
+  float f;
 };
 
 TEST(fxcodec, CMYK_Rounding) {
   // Testing all floats from 0.0 to 1.0 takes about 35 seconds in release
   // builds and much longer in debug builds, so just test the known-dangerous
   // range.
-  const FX_FLOAT startValue = 0.001f;
-  const FX_FLOAT endValue = 0.003f;
-  FX_FLOAT R = 0.0f, G = 0.0f, B = 0.0f;
+  const float startValue = 0.001f;
+  const float endValue = 0.003f;
+  float R = 0.0f, G = 0.0f, B = 0.0f;
   // Iterate through floats by incrementing the representation, as discussed in
   // https://randomascii.wordpress.com/2012/01/23/stupid-float-tricks-2/
   for (Float_t f = startValue; f.f < endValue; f.i++) {

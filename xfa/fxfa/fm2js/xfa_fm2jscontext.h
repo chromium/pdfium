@@ -436,7 +436,7 @@ class CXFA_FM2JSContext : public CFXJSE_HostObject {
                                                       uint32_t index);
   static bool ValueIsNull(CFXJSE_Value* pThis, CFXJSE_Value* pValue);
   static int32_t ValueToInteger(CFXJSE_Value* pThis, CFXJSE_Value* pValue);
-  static FX_FLOAT ValueToFloat(CFXJSE_Value* pThis, CFXJSE_Value* pValue);
+  static float ValueToFloat(CFXJSE_Value* pThis, CFXJSE_Value* pValue);
   static double ValueToDouble(CFXJSE_Value* pThis, CFXJSE_Value* pValue);
   static void ValueToUTF8String(CFXJSE_Value* pValue,
                                 CFX_ByteString& outputValue);

@@ -51,7 +51,7 @@ void vcgen_stroke::remove_all()
     m_closed = 0;
     m_status = initial;
 }
-void vcgen_stroke::add_vertex(FX_FLOAT x, FX_FLOAT y, unsigned cmd)
+void vcgen_stroke::add_vertex(float x, float y, unsigned cmd)
 {
     m_status = initial;
     if(is_move_to(cmd)) {
@@ -64,13 +64,13 @@ void vcgen_stroke::add_vertex(FX_FLOAT x, FX_FLOAT y, unsigned cmd)
         }
     }
 }
-static inline void calc_butt_cap(FX_FLOAT* cap,
+static inline void calc_butt_cap(float* cap,
                                  const vertex_dist& v0,
                                  const vertex_dist& v1,
-                                 FX_FLOAT len,
-                                 FX_FLOAT width) {
-  FX_FLOAT dx = (v1.y - v0.y) * width / len;
-  FX_FLOAT dy = (v1.x - v0.x) * width / len;
+                                 float len,
+                                 float width) {
+  float dx = (v1.y - v0.y) * width / len;
+  float dy = (v1.x - v0.x) * width / len;
   cap[0] = v0.x - dx;
   cap[1] = v0.y + dy;
   cap[2] = v0.x + dx;
@@ -88,7 +88,7 @@ void vcgen_stroke::rewind(unsigned)
     m_src_vertex = 0;
     m_out_vertex = 0;
 }
-unsigned vcgen_stroke::vertex(FX_FLOAT* x, FX_FLOAT* y)
+unsigned vcgen_stroke::vertex(float* x, float* y)
 {
     unsigned cmd = path_cmd_line_to;
     line_join_e curj;

@@ -26,8 +26,8 @@ CFX_Shading::CFX_Shading(const CFX_PointF& beginPoint,
 
 CFX_Shading::CFX_Shading(const CFX_PointF& beginPoint,
                          const CFX_PointF& endPoint,
-                         const FX_FLOAT beginRadius,
-                         const FX_FLOAT endRadius,
+                         const float beginRadius,
+                         const float endRadius,
                          bool isExtendedBegin,
                          bool isExtendedEnd,
                          const FX_ARGB beginArgb,
@@ -59,11 +59,11 @@ void CFX_Shading::InitArgbArray() {
   int32_t b2;
   ArgbDecode(m_endArgb, a2, r2, g2, b2);
 
-  FX_FLOAT f = (FX_FLOAT)(FX_SHADING_Steps - 1);
-  FX_FLOAT aScale = 1.0 * (a2 - a1) / f;
-  FX_FLOAT rScale = 1.0 * (r2 - r1) / f;
-  FX_FLOAT gScale = 1.0 * (g2 - g1) / f;
-  FX_FLOAT bScale = 1.0 * (b2 - b1) / f;
+  float f = (float)(FX_SHADING_Steps - 1);
+  float aScale = 1.0 * (a2 - a1) / f;
+  float rScale = 1.0 * (r2 - r1) / f;
+  float gScale = 1.0 * (g2 - g1) / f;
+  float bScale = 1.0 * (b2 - b1) / f;
 
   for (int32_t i = 0; i < FX_SHADING_Steps; i++) {
     int32_t a3 = static_cast<int32_t>(i * aScale);

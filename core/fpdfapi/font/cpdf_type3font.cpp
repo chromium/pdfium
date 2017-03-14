@@ -44,7 +44,7 @@ CPDF_Type3Font* CPDF_Type3Font::AsType3Font() {
 bool CPDF_Type3Font::Load() {
   m_pFontResources = m_pFontDict->GetDictFor("Resources");
   CPDF_Array* pMatrix = m_pFontDict->GetArrayFor("FontMatrix");
-  FX_FLOAT xscale = 1.0f, yscale = 1.0f;
+  float xscale = 1.0f, yscale = 1.0f;
   if (pMatrix) {
     m_FontMatrix = pMatrix->GetMatrix();
     xscale = m_FontMatrix.a;
@@ -112,12 +112,12 @@ CPDF_Type3Char* CPDF_Type3Font::LoadChar(uint32_t charcode) {
   if (it != m_CacheMap.end())
     return it->second.get();
 
-  FX_FLOAT scale = m_FontMatrix.GetXUnit();
+  float scale = m_FontMatrix.GetXUnit();
   pNewChar->m_Width = (int32_t)(pNewChar->m_Width * scale + 0.5f);
   FX_RECT& rcBBox = pNewChar->m_BBox;
   CFX_FloatRect char_rect(
-      (FX_FLOAT)rcBBox.left / 1000.0f, (FX_FLOAT)rcBBox.bottom / 1000.0f,
-      (FX_FLOAT)rcBBox.right / 1000.0f, (FX_FLOAT)rcBBox.top / 1000.0f);
+      (float)rcBBox.left / 1000.0f, (float)rcBBox.bottom / 1000.0f,
+      (float)rcBBox.right / 1000.0f, (float)rcBBox.top / 1000.0f);
   if (rcBBox.right <= rcBBox.left || rcBBox.bottom >= rcBBox.top)
     char_rect = pNewChar->m_pForm->CalcBoundingBox();
 

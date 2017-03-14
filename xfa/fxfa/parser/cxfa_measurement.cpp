@@ -16,7 +16,7 @@ CXFA_Measurement::CXFA_Measurement() {
   Set(-1, XFA_UNIT_Unknown);
 }
 
-CXFA_Measurement::CXFA_Measurement(FX_FLOAT fValue, XFA_UNIT eUnit) {
+CXFA_Measurement::CXFA_Measurement(float fValue, XFA_UNIT eUnit) {
   Set(fValue, eUnit);
 }
 
@@ -28,8 +28,8 @@ void CXFA_Measurement::Set(const CFX_WideStringC& wsMeasure) {
   }
   int32_t iUsedLen = 0;
   int32_t iOffset = (wsMeasure.GetAt(0) == L'=') ? 1 : 0;
-  FX_FLOAT fValue = FXSYS_wcstof(wsMeasure.c_str() + iOffset,
-                                 wsMeasure.GetLength() - iOffset, &iUsedLen);
+  float fValue = FXSYS_wcstof(wsMeasure.c_str() + iOffset,
+                              wsMeasure.GetLength() - iOffset, &iUsedLen);
   XFA_UNIT eUnit = GetUnit(wsMeasure.Mid(iOffset + iUsedLen));
   Set(fValue, eUnit);
 }
@@ -66,7 +66,7 @@ bool CXFA_Measurement::ToString(CFX_WideString& wsMeasure) const {
   }
 }
 
-bool CXFA_Measurement::ToUnit(XFA_UNIT eUnit, FX_FLOAT& fValue) const {
+bool CXFA_Measurement::ToUnit(XFA_UNIT eUnit, float& fValue) const {
   fValue = GetValue();
   XFA_UNIT eFrom = GetUnit();
   if (eFrom == eUnit)

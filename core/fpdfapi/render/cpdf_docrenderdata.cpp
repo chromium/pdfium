@@ -109,12 +109,12 @@ CPDF_TransferFunc* CPDF_DocRenderData::GetTransferFunc(CPDF_Object* pObj) {
           pdfium::MakeUnique<CPDF_TransferFunc>(m_pPDFDoc));
   CPDF_TransferFunc* pTransfer = pTransferCounter->get();
   m_TransferFuncMap[pObj] = pTransferCounter;
-  FX_FLOAT output[kMaxOutputs];
+  float output[kMaxOutputs];
   FXSYS_memset(output, 0, sizeof(output));
-  FX_FLOAT input;
+  float input;
   int noutput;
   for (int v = 0; v < 256; ++v) {
-    input = (FX_FLOAT)v / 255.0f;
+    input = (float)v / 255.0f;
     if (bUniTransfer) {
       if (pFuncs[0] && pFuncs[0]->CountOutputs() <= kMaxOutputs)
         pFuncs[0]->Call(&input, 1, output, noutput);

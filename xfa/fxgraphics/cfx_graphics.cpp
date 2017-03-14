@@ -134,15 +134,15 @@ void CFX_Graphics::SetLineCap(CFX_GraphStateData::LineCap lineCap) {
   }
 }
 
-void CFX_Graphics::SetLineDash(FX_FLOAT dashPhase,
-                               FX_FLOAT* dashArray,
+void CFX_Graphics::SetLineDash(float dashPhase,
+                               float* dashArray,
                                int32_t dashCount) {
   if (dashCount > 0 && !dashArray)
     return;
 
   dashCount = dashCount < 0 ? 0 : dashCount;
   if (m_type == FX_CONTEXT_Device && m_renderDevice) {
-    FX_FLOAT scale = 1.0;
+    float scale = 1.0;
     if (m_info.isActOnDash) {
       scale = m_info.graphState.m_LineWidth;
     }
@@ -159,7 +159,7 @@ void CFX_Graphics::SetLineDash(FX_DashStyle dashStyle) {
     RenderDeviceSetLineDash(dashStyle);
 }
 
-void CFX_Graphics::SetLineWidth(FX_FLOAT lineWidth, bool isActOnDash) {
+void CFX_Graphics::SetLineWidth(float lineWidth, bool isActOnDash) {
   if (m_type == FX_CONTEXT_Device && m_renderDevice) {
     m_info.graphState.m_LineWidth = lineWidth;
     m_info.isActOnDash = isActOnDash;
@@ -226,7 +226,7 @@ CFX_RectF CFX_Graphics::GetClipRect() const {
     return CFX_RectF();
 
   FX_RECT r = m_renderDevice->GetClipBox();
-  return CFX_Rect(r.left, r.top, r.Width(), r.Height()).As<FX_FLOAT>();
+  return CFX_Rect(r.left, r.top, r.Width(), r.Height()).As<float>();
 }
 
 void CFX_Graphics::SetClipRect(const CFX_RectF& rect) {
@@ -248,22 +248,22 @@ void CFX_Graphics::RenderDeviceSetLineDash(FX_DashStyle dashStyle) {
       return;
     }
     case FX_DASHSTYLE_Dash: {
-      FX_FLOAT dashArray[] = {3, 1};
+      float dashArray[] = {3, 1};
       SetLineDash(0, dashArray, 2);
       return;
     }
     case FX_DASHSTYLE_Dot: {
-      FX_FLOAT dashArray[] = {1, 1};
+      float dashArray[] = {1, 1};
       SetLineDash(0, dashArray, 2);
       return;
     }
     case FX_DASHSTYLE_DashDot: {
-      FX_FLOAT dashArray[] = {3, 1, 1, 1};
+      float dashArray[] = {3, 1, 1, 1};
       SetLineDash(0, dashArray, 4);
       return;
     }
     case FX_DASHSTYLE_DashDotDot: {
-      FX_FLOAT dashArray[] = {4, 1, 2, 1, 2, 1};
+      float dashArray[] = {4, 1, 2, 1, 2, 1};
       SetLineDash(0, dashArray, 6);
       return;
     }
@@ -388,10 +388,10 @@ void CFX_Graphics::FillPathWithShading(CFX_Path* path,
   CFX_DIBitmap* bitmap = m_renderDevice->GetBitmap();
   int32_t width = bitmap->GetWidth();
   int32_t height = bitmap->GetHeight();
-  FX_FLOAT start_x = m_info.fillColor->m_shading->m_beginPoint.x;
-  FX_FLOAT start_y = m_info.fillColor->m_shading->m_beginPoint.y;
-  FX_FLOAT end_x = m_info.fillColor->m_shading->m_endPoint.x;
-  FX_FLOAT end_y = m_info.fillColor->m_shading->m_endPoint.y;
+  float start_x = m_info.fillColor->m_shading->m_beginPoint.x;
+  float start_y = m_info.fillColor->m_shading->m_beginPoint.y;
+  float end_x = m_info.fillColor->m_shading->m_endPoint.x;
+  float end_y = m_info.fillColor->m_shading->m_endPoint.y;
   CFX_DIBitmap bmp;
   bmp.Create(width, height, FXDIB_Argb);
   m_renderDevice->GetDIBits(&bmp, 0, 0);
@@ -399,17 +399,16 @@ void CFX_Graphics::FillPathWithShading(CFX_Path* path,
   bool result = false;
   switch (m_info.fillColor->m_shading->m_type) {
     case FX_SHADING_Axial: {
-      FX_FLOAT x_span = end_x - start_x;
-      FX_FLOAT y_span = end_y - start_y;
-      FX_FLOAT axis_len_square = (x_span * x_span) + (y_span * y_span);
+      float x_span = end_x - start_x;
+      float y_span = end_y - start_y;
+      float axis_len_square = (x_span * x_span) + (y_span * y_span);
       for (int32_t row = 0; row < height; row++) {
         uint32_t* dib_buf = (uint32_t*)(bmp.GetBuffer() + row * pitch);
         for (int32_t column = 0; column < width; column++) {
-          FX_FLOAT x = (FX_FLOAT)(column);
-          FX_FLOAT y = (FX_FLOAT)(row);
-          FX_FLOAT scale =
-              (((x - start_x) * x_span) + ((y - start_y) * y_span)) /
-              axis_len_square;
+          float x = (float)(column);
+          float y = (float)(row);
+          float scale = (((x - start_x) * x_span) + ((y - start_y) * y_span)) /
+                        axis_len_square;
           if (scale < 0) {
             if (!m_info.fillColor->m_shading->m_isExtendedBegin) {
               continue;
@@ -429,31 +428,31 @@ void CFX_Graphics::FillPathWithShading(CFX_Path* path,
       break;
     }
     case FX_SHADING_Radial: {
-      FX_FLOAT start_r = m_info.fillColor->m_shading->m_beginRadius;
-      FX_FLOAT end_r = m_info.fillColor->m_shading->m_endRadius;
-      FX_FLOAT a = ((start_x - end_x) * (start_x - end_x)) +
-                   ((start_y - end_y) * (start_y - end_y)) -
-                   ((start_r - end_r) * (start_r - end_r));
+      float start_r = m_info.fillColor->m_shading->m_beginRadius;
+      float end_r = m_info.fillColor->m_shading->m_endRadius;
+      float a = ((start_x - end_x) * (start_x - end_x)) +
+                ((start_y - end_y) * (start_y - end_y)) -
+                ((start_r - end_r) * (start_r - end_r));
       for (int32_t row = 0; row < height; row++) {
         uint32_t* dib_buf = (uint32_t*)(bmp.GetBuffer() + row * pitch);
         for (int32_t column = 0; column < width; column++) {
-          FX_FLOAT x = (FX_FLOAT)(column);
-          FX_FLOAT y = (FX_FLOAT)(row);
-          FX_FLOAT b = -2 * (((x - start_x) * (end_x - start_x)) +
-                             ((y - start_y) * (end_y - start_y)) +
-                             (start_r * (end_r - start_r)));
-          FX_FLOAT c = ((x - start_x) * (x - start_x)) +
-                       ((y - start_y) * (y - start_y)) - (start_r * start_r);
-          FX_FLOAT s;
+          float x = (float)(column);
+          float y = (float)(row);
+          float b = -2 * (((x - start_x) * (end_x - start_x)) +
+                          ((y - start_y) * (end_y - start_y)) +
+                          (start_r * (end_r - start_r)));
+          float c = ((x - start_x) * (x - start_x)) +
+                    ((y - start_y) * (y - start_y)) - (start_r * start_r);
+          float s;
           if (a == 0) {
             s = -c / b;
           } else {
-            FX_FLOAT b2_4ac = (b * b) - 4 * (a * c);
+            float b2_4ac = (b * b) - 4 * (a * c);
             if (b2_4ac < 0) {
               continue;
             }
-            FX_FLOAT root = (FXSYS_sqrt(b2_4ac));
-            FX_FLOAT s1, s2;
+            float root = (FXSYS_sqrt(b2_4ac));
+            float s1, s2;
             if (a > 0) {
               s1 = (-b - root) / (2 * a);
               s2 = (-b + root) / (2 * a);
@@ -507,8 +506,8 @@ void CFX_Graphics::SetDIBitsWithMatrix(CFX_DIBSource* source,
   if (matrix->IsIdentity()) {
     m_renderDevice->SetDIBits(source, 0, 0);
   } else {
-    CFX_Matrix m((FX_FLOAT)source->GetWidth(), 0, 0,
-                 (FX_FLOAT)source->GetHeight(), 0, 0);
+    CFX_Matrix m((float)source->GetWidth(), 0, 0, (float)source->GetHeight(), 0,
+                 0);
     m.Concat(*matrix);
     int32_t left;
     int32_t top;

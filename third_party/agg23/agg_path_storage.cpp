@@ -32,7 +32,7 @@ namespace agg
 path_storage::~path_storage()
 {
     if(m_total_blocks) {
-        FX_FLOAT** coord_blk = m_coord_blocks + m_total_blocks - 1;
+        float** coord_blk = m_coord_blocks + m_total_blocks - 1;
         while(m_total_blocks--) {
             FX_Free(*coord_blk);
             --coord_blk;
@@ -52,14 +52,14 @@ path_storage::path_storage() :
 void path_storage::allocate_block(unsigned nb)
 {
     if(nb >= m_max_blocks) {
-        FX_FLOAT** new_coords =
-            FX_Alloc2D(FX_FLOAT*, m_max_blocks + block_pool, 2);
+        float** new_coords =
+            FX_Alloc2D(float*, m_max_blocks + block_pool, 2);
         unsigned char** new_cmds =
             (unsigned char**)(new_coords + m_max_blocks + block_pool);
         if(m_coord_blocks) {
             FXSYS_memcpy(new_coords,
                            m_coord_blocks,
-                           m_max_blocks * sizeof(FX_FLOAT*));
+                           m_max_blocks * sizeof(float*));
             FXSYS_memcpy(new_cmds,
                            m_cmd_blocks,
                            m_max_blocks * sizeof(unsigned char*));
@@ -70,9 +70,9 @@ void path_storage::allocate_block(unsigned nb)
         m_max_blocks += block_pool;
     }
     m_coord_blocks[nb] =
-        FX_Alloc( FX_FLOAT, block_size * 2 +
+        FX_Alloc( float, block_size * 2 +
                   block_size /
-                  (sizeof(FX_FLOAT) / sizeof(unsigned char)));
+                  (sizeof(float) / sizeof(unsigned char)));
     m_cmd_blocks[nb]  =
         (unsigned char*)(m_coord_blocks[nb] + block_size * 2);
     m_total_blocks++;
@@ -81,9 +81,9 @@ void path_storage::rewind(unsigned path_id)
 {
     m_iterator = path_id;
 }
-void path_storage::curve4(FX_FLOAT x_ctrl1, FX_FLOAT y_ctrl1,
-                          FX_FLOAT x_ctrl2, FX_FLOAT y_ctrl2,
-                          FX_FLOAT x_to,    FX_FLOAT y_to)
+void path_storage::curve4(float x_ctrl1, float y_ctrl1,
+                          float x_ctrl2, float y_ctrl2,
+                          float x_to,    float y_to)
 {
     add_vertex(x_ctrl1, y_ctrl1, path_cmd_curve4);
     add_vertex(x_ctrl2, y_ctrl2, path_cmd_curve4);

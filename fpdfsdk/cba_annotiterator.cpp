@@ -113,7 +113,7 @@ void CBA_AnnotIterator::GenerateResults() {
 
       while (!sa.empty()) {
         int nLeftTopIndex = -1;
-        FX_FLOAT fTop = 0.0f;
+        float fTop = 0.0f;
         for (int i = sa.size() - 1; i >= 0; i--) {
           CFX_FloatRect rcAnnot = GetAnnotRect(sa[i]);
           if (rcAnnot.top > fTop) {
@@ -129,7 +129,7 @@ void CBA_AnnotIterator::GenerateResults() {
         std::vector<size_t> aSelect;
         for (size_t i = 0; i < sa.size(); ++i) {
           CFX_FloatRect rcAnnot = GetAnnotRect(sa[i]);
-          FX_FLOAT fCenterY = (rcAnnot.top + rcAnnot.bottom) / 2.0f;
+          float fCenterY = (rcAnnot.top + rcAnnot.bottom) / 2.0f;
           if (fCenterY > rcLeftTop.bottom && fCenterY < rcLeftTop.top)
             aSelect.push_back(i);
         }
@@ -145,7 +145,7 @@ void CBA_AnnotIterator::GenerateResults() {
 
       while (!sa.empty()) {
         int nLeftTopIndex = -1;
-        FX_FLOAT fLeft = -1.0f;
+        float fLeft = -1.0f;
         for (int i = sa.size() - 1; i >= 0; --i) {
           CFX_FloatRect rcAnnot = GetAnnotRect(sa[i]);
           if (fLeft < 0) {
@@ -164,7 +164,7 @@ void CBA_AnnotIterator::GenerateResults() {
         std::vector<size_t> aSelect;
         for (size_t i = 0; i < sa.size(); ++i) {
           CFX_FloatRect rcAnnot = GetAnnotRect(sa[i]);
-          FX_FLOAT fCenterX = (rcAnnot.left + rcAnnot.right) / 2.0f;
+          float fCenterX = (rcAnnot.left + rcAnnot.right) / 2.0f;
           if (fCenterX > rcLeftTop.left && fCenterX < rcLeftTop.right)
             aSelect.push_back(i);
         }

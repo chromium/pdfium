@@ -15,14 +15,14 @@
 
 #define FX_INVALID_OFFSET static_cast<uint32_t>(-1)
 
-FX_FLOAT FXSYS_tan(FX_FLOAT a);
-FX_FLOAT FXSYS_logb(FX_FLOAT b, FX_FLOAT x);
-FX_FLOAT FXSYS_strtof(const char* pcsStr,
-                      int32_t iLength = -1,
-                      int32_t* pUsedLen = nullptr);
-FX_FLOAT FXSYS_wcstof(const wchar_t* pwsStr,
-                      int32_t iLength = -1,
-                      int32_t* pUsedLen = nullptr);
+float FXSYS_tan(float a);
+float FXSYS_logb(float b, float x);
+float FXSYS_strtof(const char* pcsStr,
+                   int32_t iLength = -1,
+                   int32_t* pUsedLen = nullptr);
+float FXSYS_wcstof(const wchar_t* pwsStr,
+                   int32_t iLength = -1,
+                   int32_t* pUsedLen = nullptr);
 wchar_t* FXSYS_wcsncpy(wchar_t* dstStr, const wchar_t* srcStr, size_t count);
 int32_t FXSYS_wcsnicmp(const wchar_t* s1, const wchar_t* s2, size_t count);
 int32_t FXSYS_strnicmp(const char* s1, const char* s2, size_t count);
@@ -75,7 +75,7 @@ inline int FXSYS_toDecimalDigit(const wchar_t c) {
   return std::iswdigit(c) ? c - L'0' : 0;
 }
 
-FX_FLOAT FXSYS_FractionalScale(size_t scale_factor, int value);
+float FXSYS_FractionalScale(size_t scale_factor, int value);
 int FXSYS_FractionalScaleCount();
 
 void* FX_Random_MT_Start(uint32_t dwSeed);

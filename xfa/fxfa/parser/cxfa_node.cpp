@@ -2034,7 +2034,7 @@ void CXFA_Node::Script_Som_DefaultValue(CFXJSE_Value* pValue,
       pValue->SetInteger(FXSYS_wtoi(content.c_str()));
     } else if (eType == XFA_Element::Float || eType == XFA_Element::Decimal) {
       CFX_Decimal decimal(content.AsStringC());
-      pValue->SetFloat((FX_FLOAT)(double)decimal);
+      pValue->SetFloat((float)(double)decimal);
     } else {
       pValue->SetString(content.UTF8Encode().AsStringC());
     }
@@ -2255,7 +2255,7 @@ void CXFA_Node::Script_Field_DefaultValue(CFXJSE_Value* pValue,
           pValue->SetString(content.UTF8Encode().AsStringC());
         } else {
           CFX_Decimal decimal(content.AsStringC());
-          pValue->SetFloat((FX_FLOAT)(double)decimal);
+          pValue->SetFloat((float)(double)decimal);
         }
       } else if (pNode && pNode->GetElementType() == XFA_Element::Integer) {
         pValue->SetInteger(FXSYS_wtoi(content.c_str()));
@@ -2263,7 +2263,7 @@ void CXFA_Node::Script_Field_DefaultValue(CFXJSE_Value* pValue,
         pValue->SetBoolean(FXSYS_wtoi(content.c_str()) == 0 ? false : true);
       } else if (pNode && pNode->GetElementType() == XFA_Element::Float) {
         CFX_Decimal decimal(content.AsStringC());
-        pValue->SetFloat((FX_FLOAT)(double)decimal);
+        pValue->SetFloat((float)(double)decimal);
       } else {
         pValue->SetString(content.UTF8Encode().AsStringC());
       }

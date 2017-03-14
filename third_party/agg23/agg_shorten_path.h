@@ -20,11 +20,11 @@
 namespace agg
 {
 template<class VertexSequence>
-void shorten_path(VertexSequence& vs, FX_FLOAT s, unsigned closed = 0)
+void shorten_path(VertexSequence& vs, float s, unsigned closed = 0)
 {
     typedef typename VertexSequence::value_type vertex_type;
     if(s > 0 && vs.size() > 1) {
-        FX_FLOAT d;
+        float d;
         int n = int(vs.size() - 2);
         while(n) {
             d = vs[n].dist;
@@ -42,8 +42,8 @@ void shorten_path(VertexSequence& vs, FX_FLOAT s, unsigned closed = 0)
             vertex_type& prev = vs[n - 1];
             vertex_type& last = vs[n];
             d = (prev.dist - s) / prev.dist;
-            FX_FLOAT x = prev.x + (last.x - prev.x) * d;
-            FX_FLOAT y = prev.y + (last.y - prev.y) * d;
+            float x = prev.x + (last.x - prev.x) * d;
+            float y = prev.y + (last.y - prev.y) * d;
             last.x = x;
             last.y = y;
             if(!prev(last)) {

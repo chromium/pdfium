@@ -257,16 +257,14 @@ bool CCodec_TiffContext::LoadFrameInfo(int32_t frame,
       pAttribute->m_wDPIUnit--;
     }
     Tiff_Exif_GetInfo<uint16_t>(m_tif_ctx, TIFFTAG_ORIENTATION, pAttribute);
-    if (Tiff_Exif_GetInfo<FX_FLOAT>(m_tif_ctx, TIFFTAG_XRESOLUTION,
-                                    pAttribute)) {
+    if (Tiff_Exif_GetInfo<float>(m_tif_ctx, TIFFTAG_XRESOLUTION, pAttribute)) {
       void* val = pAttribute->m_Exif[TIFFTAG_XRESOLUTION];
-      FX_FLOAT fDpi = val ? *reinterpret_cast<FX_FLOAT*>(val) : 0;
+      float fDpi = val ? *reinterpret_cast<float*>(val) : 0;
       pAttribute->m_nXDPI = (int32_t)(fDpi + 0.5f);
     }
-    if (Tiff_Exif_GetInfo<FX_FLOAT>(m_tif_ctx, TIFFTAG_YRESOLUTION,
-                                    pAttribute)) {
+    if (Tiff_Exif_GetInfo<float>(m_tif_ctx, TIFFTAG_YRESOLUTION, pAttribute)) {
       void* val = pAttribute->m_Exif[TIFFTAG_YRESOLUTION];
-      FX_FLOAT fDpi = val ? *reinterpret_cast<FX_FLOAT*>(val) : 0;
+      float fDpi = val ? *reinterpret_cast<float*>(val) : 0;
       pAttribute->m_nYDPI = (int32_t)(fDpi + 0.5f);
     }
     Tiff_Exif_GetStringInfo(m_tif_ctx, TIFFTAG_IMAGEDESCRIPTION, pAttribute);

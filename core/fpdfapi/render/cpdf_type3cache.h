@@ -23,15 +23,15 @@ class CPDF_Type3Cache {
 
   CFX_GlyphBitmap* LoadGlyph(uint32_t charcode,
                              const CFX_Matrix* pMatrix,
-                             FX_FLOAT retinaScaleX,
-                             FX_FLOAT retinaScaleY);
+                             float retinaScaleX,
+                             float retinaScaleY);
 
  private:
   CFX_GlyphBitmap* RenderGlyph(CPDF_Type3Glyphs* pSize,
                                uint32_t charcode,
                                const CFX_Matrix* pMatrix,
-                               FX_FLOAT retinaScaleX,
-                               FX_FLOAT retinaScaleY);
+                               float retinaScaleX,
+                               float retinaScaleY);
 
   CPDF_Type3Font* const m_pFont;
   std::map<CFX_ByteString, CPDF_Type3Glyphs*> m_SizeMap;

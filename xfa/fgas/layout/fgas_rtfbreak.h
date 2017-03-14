@@ -37,7 +37,7 @@ struct FX_RTFTEXTOBJ {
   CFX_RetainPtr<CFGAS_GEFont> pFont;
   const CFX_RectF* pRect;
   wchar_t wLineBreakChar;
-  FX_FLOAT fFontSize;
+  float fFontSize;
   int32_t iLength;
   int32_t iBidiLevel;
   int32_t iHorizontalScale;
@@ -49,19 +49,19 @@ class CFX_RTFBreak {
   explicit CFX_RTFBreak(uint32_t dwLayoutStyles);
   ~CFX_RTFBreak();
 
-  void SetLineBoundary(FX_FLOAT fLineStart, FX_FLOAT fLineEnd);
-  void SetLineStartPos(FX_FLOAT fLinePos);
+  void SetLineBoundary(float fLineStart, float fLineEnd);
+  void SetLineStartPos(float fLinePos);
   void SetFont(const CFX_RetainPtr<CFGAS_GEFont>& pFont);
-  void SetFontSize(FX_FLOAT fFontSize);
-  void SetTabWidth(FX_FLOAT fTabWidth);
-  void SetLineBreakTolerance(FX_FLOAT fTolerance);
+  void SetFontSize(float fFontSize);
+  void SetTabWidth(float fTabWidth);
+  void SetLineBreakTolerance(float fTolerance);
   void SetHorizontalScale(int32_t iScale);
   void SetVerticalScale(int32_t iScale);
-  void SetCharSpace(FX_FLOAT fCharSpace);
+  void SetCharSpace(float fCharSpace);
   void SetAlignment(CFX_RTFLineAlignment align) { m_iAlignment = align; }
   void SetUserData(const CFX_RetainPtr<CFX_Retainable>& pUserData);
 
-  void AddPositionedTab(FX_FLOAT fTabPos);
+  void AddPositionedTab(float fTabPos);
 
   CFX_BreakType EndBreak(CFX_BreakType dwStatus);
   int32_t CountBreakPieces() const;

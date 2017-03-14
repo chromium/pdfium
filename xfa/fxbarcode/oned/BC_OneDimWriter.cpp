@@ -71,7 +71,7 @@ bool CBC_OneDimWriter::SetFont(CFX_Font* cFont) {
   return true;
 }
 
-void CBC_OneDimWriter::SetFontSize(FX_FLOAT size) {
+void CBC_OneDimWriter::SetFontSize(float size) {
   m_fFontSize = size;
 }
 
@@ -151,39 +151,39 @@ int32_t CBC_OneDimWriter::AppendPattern(uint8_t* target,
 void CBC_OneDimWriter::CalcTextInfo(const CFX_ByteString& text,
                                     FXTEXT_CHARPOS* charPos,
                                     CFX_Font* cFont,
-                                    FX_FLOAT geWidth,
+                                    float geWidth,
                                     int32_t fontSize,
-                                    FX_FLOAT& charsLen) {
+                                    float& charsLen) {
   std::unique_ptr<CFX_UnicodeEncodingEx> encoding(
       FX_CreateFontEncodingEx(cFont));
 
   int32_t length = text.GetLength();
   uint32_t* pCharCode = FX_Alloc(uint32_t, text.GetLength());
-  FX_FLOAT charWidth = 0;
+  float charWidth = 0;
   for (int32_t j = 0; j < text.GetLength(); j++) {
     pCharCode[j] = encoding->CharCodeFromUnicode(text[j]);
     int32_t glyp_code = encoding->GlyphFromCharCode(pCharCode[j]);
     int32_t glyp_value = cFont->GetGlyphWidth(glyp_code);
-    FX_FLOAT temp = (FX_FLOAT)((glyp_value)*fontSize / 1000.0);
+    float temp = (float)((glyp_value)*fontSize / 1000.0);
     charWidth += temp;
   }
   charsLen = charWidth;
-  FX_FLOAT leftPositon = (FX_FLOAT)(geWidth - charsLen) / 2.0f;
+  float leftPositon = (float)(geWidth - charsLen) / 2.0f;
   if (leftPositon < 0 && geWidth == 0) {
     leftPositon = 0;
   }
-  FX_FLOAT penX = 0.0;
-  FX_FLOAT penY =
-      (FX_FLOAT)FXSYS_abs(cFont->GetDescent()) * (FX_FLOAT)fontSize / 1000.0f;
-  FX_FLOAT left = leftPositon;
-  FX_FLOAT top = 0.0;
+  float penX = 0.0;
+  float penY =
+      (float)FXSYS_abs(cFont->GetDescent()) * (float)fontSize / 1000.0f;
+  float left = leftPositon;
+  float top = 0.0;
   charPos[0].m_Origin = CFX_PointF(penX + left, penY + top);
   charPos[0].m_GlyphIndex = encoding->GlyphFromCharCode(pCharCode[0]);
   charPos[0].m_FontCharWidth = cFont->GetGlyphWidth(charPos[0].m_GlyphIndex);
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
   charPos[0].m_ExtGID = charPos[0].m_GlyphIndex;
 #endif
-  penX += (FX_FLOAT)(charPos[0].m_FontCharWidth) * (FX_FLOAT)fontSize / 1000.0f;
+  penX += (float)(charPos[0].m_FontCharWidth) * (float)fontSize / 1000.0f;
   for (int32_t i = 1; i < length; i++) {
     charPos[i].m_Origin = CFX_PointF(penX + left, penY + top);
     charPos[i].m_GlyphIndex = encoding->GlyphFromCharCode(pCharCode[i]);
@@ -191,8 +191,7 @@ void CBC_OneDimWriter::CalcTextInfo(const CFX_ByteString& text,
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
     charPos[i].m_ExtGID = charPos[i].m_GlyphIndex;
 #endif
-    penX +=
-        (FX_FLOAT)(charPos[i].m_FontCharWidth) * (FX_FLOAT)fontSize / 1000.0f;
+    penX += (float)(charPos[i].m_FontCharWidth) * (float)fontSize / 1000.0f;
   }
   FX_Free(pCharCode);
 }
@@ -200,37 +199,37 @@ void CBC_OneDimWriter::CalcTextInfo(const CFX_ByteString& text,
 void CBC_OneDimWriter::ShowDeviceChars(CFX_RenderDevice* device,
                                        const CFX_Matrix* matrix,
                                        const CFX_ByteString str,
-                                       FX_FLOAT geWidth,
+                                       float geWidth,
                                        FXTEXT_CHARPOS* pCharPos,
-                                       FX_FLOAT locX,
-                                       FX_FLOAT locY,
+                                       float locX,
+                                       float locY,
                                        int32_t barWidth) {
   int32_t iFontSize = (int32_t)fabs(m_fFontSize);
   int32_t iTextHeight = iFontSize + 1;
-  CFX_FloatRect rect((FX_FLOAT)locX, (FX_FLOAT)locY, (FX_FLOAT)(locX + geWidth),
-                     (FX_FLOAT)(locY + iTextHeight));
+  CFX_FloatRect rect((float)locX, (float)locY, (float)(locX + geWidth),
+                     (float)(locY + iTextHeight));
   if (geWidth != m_Width) {
     rect.right -= 1;
   }
   matrix->TransformRect(rect);
   FX_RECT re = rect.GetOuterRect();
   device->FillRect(&re, m_backgroundColor);
-  CFX_Matrix affine_matrix(1.0, 0.0, 0.0, -1.0, (FX_FLOAT)locX,
-                           (FX_FLOAT)(locY + iFontSize));
+  CFX_Matrix affine_matrix(1.0, 0.0, 0.0, -1.0, (float)locX,
+                           (float)(locY + iFontSize));
   if (matrix) {
     affine_matrix.Concat(*matrix);
   }
   device->DrawNormalText(str.GetLength(), pCharPos, m_pFont,
-                         static_cast<FX_FLOAT>(iFontSize), &affine_matrix,
+                         static_cast<float>(iFontSize), &affine_matrix,
                          m_fontColor, FXTEXT_CLEARTYPE);
 }
 
 void CBC_OneDimWriter::ShowBitmapChars(CFX_DIBitmap* pOutBitmap,
                                        const CFX_ByteString str,
-                                       FX_FLOAT geWidth,
+                                       float geWidth,
                                        FXTEXT_CHARPOS* pCharPos,
-                                       FX_FLOAT locX,
-                                       FX_FLOAT locY,
+                                       float locX,
+                                       float locY,
                                        int32_t barWidth) {
   int32_t iFontSize = (int32_t)fabs(m_fFontSize);
   int32_t iTextHeight = iFontSize + 1;
@@ -239,10 +238,10 @@ void CBC_OneDimWriter::ShowBitmapChars(CFX_DIBitmap* pOutBitmap,
   FX_RECT geRect(0, 0, (int)geWidth, iTextHeight);
   ge.FillRect(&geRect, m_backgroundColor);
   CFX_Matrix affine_matrix(1.0, 0.0, 0.0, -1.0, 0.0,
-                           static_cast<FX_FLOAT>(iFontSize));
+                           static_cast<float>(iFontSize));
   ge.DrawNormalText(str.GetLength(), pCharPos, m_pFont,
-                    static_cast<FX_FLOAT>(iFontSize), &affine_matrix,
-                    m_fontColor, FXTEXT_CLEARTYPE);
+                    static_cast<float>(iFontSize), &affine_matrix, m_fontColor,
+                    FXTEXT_CLEARTYPE);
   CFX_FxgeDevice geBitmap;
   geBitmap.Attach(pOutBitmap, false, nullptr, false);
   geBitmap.SetDIBits(ge.GetBitmap(), (int)locX, (int)locY);
@@ -267,14 +266,14 @@ void CBC_OneDimWriter::ShowChars(const CFX_WideStringC& contents,
   int32_t iLen = str.GetLength();
   FXTEXT_CHARPOS* pCharPos = FX_Alloc(FXTEXT_CHARPOS, iLen);
   FXSYS_memset(pCharPos, 0, sizeof(FXTEXT_CHARPOS) * iLen);
-  FX_FLOAT charsLen = 0;
-  FX_FLOAT geWidth = 0;
+  float charsLen = 0;
+  float geWidth = 0;
   if (m_locTextLoc == BC_TEXT_LOC_ABOVEEMBED ||
       m_locTextLoc == BC_TEXT_LOC_BELOWEMBED) {
     geWidth = 0;
   } else if (m_locTextLoc == BC_TEXT_LOC_ABOVE ||
              m_locTextLoc == BC_TEXT_LOC_BELOW) {
-    geWidth = (FX_FLOAT)barWidth;
+    geWidth = (float)barWidth;
   }
   int32_t iFontSize = (int32_t)fabs(m_fFontSize);
   int32_t iTextHeight = iFontSize + 1;
@@ -293,7 +292,7 @@ void CBC_OneDimWriter::ShowChars(const CFX_WideStringC& contents,
     case BC_TEXT_LOC_ABOVE:
       locX = 0;
       locY = 0;
-      geWidth = (FX_FLOAT)barWidth;
+      geWidth = (float)barWidth;
       break;
     case BC_TEXT_LOC_BELOWEMBED:
       locX = (int32_t)(barWidth - charsLen) / 2;
@@ -304,15 +303,15 @@ void CBC_OneDimWriter::ShowChars(const CFX_WideStringC& contents,
     default:
       locX = 0;
       locY = m_Height - iTextHeight;
-      geWidth = (FX_FLOAT)barWidth;
+      geWidth = (float)barWidth;
       break;
   }
   if (device) {
-    ShowDeviceChars(device, matrix, str, geWidth, pCharPos, (FX_FLOAT)locX,
-                    (FX_FLOAT)locY, barWidth);
+    ShowDeviceChars(device, matrix, str, geWidth, pCharPos, (float)locX,
+                    (float)locY, barWidth);
   } else {
-    ShowBitmapChars(pOutBitmap, str, geWidth, pCharPos, (FX_FLOAT)locX,
-                    (FX_FLOAT)locY, barWidth);
+    ShowBitmapChars(pOutBitmap, str, geWidth, pCharPos, (float)locX,
+                    (float)locY, barWidth);
   }
   FX_Free(pCharPos);
 }
@@ -364,16 +363,15 @@ void CBC_OneDimWriter::RenderDeviceResult(CFX_RenderDevice* device,
 
   CFX_GraphStateData stateData;
   CFX_PathData path;
-  path.AppendRect(0, 0, (FX_FLOAT)m_Width, (FX_FLOAT)m_Height);
+  path.AppendRect(0, 0, (float)m_Width, (float)m_Height);
   device->DrawPath(&path, matrix, &stateData, m_backgroundColor,
                    m_backgroundColor, FXFILL_ALTERNATE);
-  CFX_Matrix matri(m_outputHScale, 0.0, 0.0, (FX_FLOAT)m_Height, 0.0, 0.0);
+  CFX_Matrix matri(m_outputHScale, 0.0, 0.0, (float)m_Height, 0.0, 0.0);
   matri.Concat(*matrix);
   for (int32_t x = 0; x < m_output->GetWidth(); x++) {
     for (int32_t y = 0; y < m_output->GetHeight(); y++) {
       CFX_PathData rect;
-      rect.AppendRect((FX_FLOAT)x, (FX_FLOAT)y, (FX_FLOAT)(x + 1),
-                      (FX_FLOAT)(y + 1));
+      rect.AppendRect((float)x, (float)y, (float)(x + 1), (float)(y + 1));
       if (m_output->Get(x, y)) {
         CFX_GraphStateData data;
         device->DrawPath(&rect, &matri, &data, m_barColor, 0, FXFILL_WINDING);
@@ -417,18 +415,18 @@ void CBC_OneDimWriter::RenderResult(const CFX_WideStringC& contents,
   codeLength += rightPadding;
   m_outputHScale = 1.0;
   if (m_Width > 0) {
-    m_outputHScale = (FX_FLOAT)m_Width / (FX_FLOAT)codeLength;
+    m_outputHScale = (float)m_Width / (float)codeLength;
   }
   if (!isDevice) {
     m_outputHScale =
-        std::max(m_outputHScale, static_cast<FX_FLOAT>(m_ModuleWidth));
+        std::max(m_outputHScale, static_cast<float>(m_ModuleWidth));
   }
-  FX_FLOAT dataLengthScale = 1.0;
+  float dataLengthScale = 1.0;
   if (m_iDataLenth > 0 && contents.GetLength() != 0) {
-    dataLengthScale = FX_FLOAT(contents.GetLength()) / FX_FLOAT(m_iDataLenth);
+    dataLengthScale = float(contents.GetLength()) / float(m_iDataLenth);
   }
   if (m_iDataLenth > 0 && contents.GetLength() == 0) {
-    dataLengthScale = FX_FLOAT(1) / FX_FLOAT(m_iDataLenth);
+    dataLengthScale = float(1) / float(m_iDataLenth);
   }
   m_multiple = 1;
   if (!isDevice) {

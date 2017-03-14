@@ -19,9 +19,9 @@ class CPDF_CharPosList {
   CPDF_CharPosList();
   ~CPDF_CharPosList();
   void Load(const std::vector<uint32_t>& charCodes,
-            const std::vector<FX_FLOAT>& charPos,
+            const std::vector<float>& charPos,
             CPDF_Font* pFont,
-            FX_FLOAT font_size);
+            float font_size);
   FXTEXT_CHARPOS* m_pCharPos;
   uint32_t m_nChars;
 };

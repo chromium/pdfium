@@ -44,7 +44,7 @@ void vcgen_dash::remove_all_dashes()
     m_curr_dash_start = 0;
     m_curr_dash = 0;
 }
-void vcgen_dash::add_dash(FX_FLOAT dash_len, FX_FLOAT gap_len)
+void vcgen_dash::add_dash(float dash_len, float gap_len)
 {
     if(m_num_dashes < max_dashes) {
         m_total_dash_len += dash_len + gap_len;
@@ -52,12 +52,12 @@ void vcgen_dash::add_dash(FX_FLOAT dash_len, FX_FLOAT gap_len)
         m_dashes[m_num_dashes++] = gap_len;
     }
 }
-void vcgen_dash::dash_start(FX_FLOAT ds)
+void vcgen_dash::dash_start(float ds)
 {
     m_dash_start = ds;
     calc_dash_start(FXSYS_fabs(ds));
 }
-void vcgen_dash::calc_dash_start(FX_FLOAT ds)
+void vcgen_dash::calc_dash_start(float ds)
 {
     m_curr_dash = 0;
     m_curr_dash_start = 0;
@@ -81,7 +81,7 @@ void vcgen_dash::remove_all()
     m_src_vertices.remove_all();
     m_closed = 0;
 }
-void vcgen_dash::add_vertex(FX_FLOAT x, FX_FLOAT y, unsigned cmd)
+void vcgen_dash::add_vertex(float x, float y, unsigned cmd)
 {
     m_status = initial;
     if(is_move_to(cmd)) {
@@ -103,7 +103,7 @@ void vcgen_dash::rewind(unsigned)
     m_status = ready;
     m_src_vertex = 0;
 }
-unsigned vcgen_dash::vertex(FX_FLOAT* x, FX_FLOAT* y)
+unsigned vcgen_dash::vertex(float* x, float* y)
 {
     unsigned cmd = path_cmd_move_to;
     while(!is_stop(cmd)) {
@@ -127,7 +127,7 @@ unsigned vcgen_dash::vertex(FX_FLOAT* x, FX_FLOAT* y)
                 }
                 return path_cmd_move_to;
             case polyline: {
-                    FX_FLOAT dash_rest = m_dashes[m_curr_dash] - m_curr_dash_start;
+                    float dash_rest = m_dashes[m_curr_dash] - m_curr_dash_start;
                     unsigned cmd = (m_curr_dash & 1) ?
                                    path_cmd_move_to :
                                    path_cmd_line_to;

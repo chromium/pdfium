@@ -27,7 +27,7 @@ class CBC_OneCode : public CBC_CodeBase {
   virtual void SetDataLength(int32_t length);
   virtual void SetCalChecksum(bool calc);
   virtual bool SetFont(CFX_Font* cFont);
-  virtual void SetFontSize(FX_FLOAT size);
+  virtual void SetFontSize(float size);
   virtual void SetFontStyle(int32_t style);
   virtual void SetFontColor(FX_ARGB color);
 };

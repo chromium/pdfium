@@ -75,12 +75,12 @@ class CGdiplusExt {
                             const void* matrix);
   void GdipCreateBrush(uint32_t fill_argb, void** pBrush);
   void GdipDeleteBrush(void* pBrush);
-  void GdipCreateMatrix(FX_FLOAT a,
-                        FX_FLOAT b,
-                        FX_FLOAT c,
-                        FX_FLOAT d,
-                        FX_FLOAT e,
-                        FX_FLOAT f,
+  void GdipCreateMatrix(float a,
+                        float b,
+                        float c,
+                        float d,
+                        float e,
+                        float f,
                         void** matrix);
   void GdipDeleteMatrix(void* matrix);
   bool GdipCreateFontFamilyFromName(const wchar_t* name,
@@ -88,17 +88,17 @@ class CGdiplusExt {
                                     void** pFamily);
   void GdipDeleteFontFamily(void* pFamily);
   bool GdipCreateFontFromFamily(void* pFamily,
-                                FX_FLOAT font_size,
+                                float font_size,
                                 int fontstyle,
                                 int flag,
                                 void** pFont);
   void* GdipCreateFontFromCollection(void* pFontCollection,
-                                     FX_FLOAT font_size,
+                                     float font_size,
                                      int fontstyle);
   void GdipDeleteFont(void* pFont);
   bool GdipCreateBitmap(CFX_DIBitmap* pBitmap, void** bitmap);
   void GdipDisposeImage(void* bitmap);
-  void GdipGetFontSize(void* pFont, FX_FLOAT* size);
+  void GdipGetFontSize(void* pFont, float* size);
   void* GdiAddFontMemResourceEx(void* pFontdata,
                                 uint32_t size,
                                 void* pdv,
@@ -147,16 +147,16 @@ class CGdiDeviceDriver : public IFX_RenderDeviceDriver {
   bool FillRectWithBlend(const FX_RECT* pRect,
                          uint32_t fill_color,
                          int blend_type) override;
-  bool DrawCosmeticLine(FX_FLOAT x1,
-                        FX_FLOAT y1,
-                        FX_FLOAT x2,
-                        FX_FLOAT y2,
+  bool DrawCosmeticLine(float x1,
+                        float y1,
+                        float x2,
+                        float y2,
                         uint32_t color,
                         int blend_type) override;
   bool GetClipBox(FX_RECT* pRect) override;
   void* GetPlatformSurface() const override;
 
-  void DrawLine(FX_FLOAT x1, FX_FLOAT y1, FX_FLOAT x2, FX_FLOAT y2);
+  void DrawLine(float x1, float y1, float x2, float y2);
 
   bool GDI_SetDIBits(CFX_DIBitmap* pBitmap,
                      const FX_RECT* pSrcRect,
@@ -257,7 +257,7 @@ class CGdiPrinterDriver : public CGdiDeviceDriver {
                       const FXTEXT_CHARPOS* pCharPos,
                       CFX_Font* pFont,
                       const CFX_Matrix* pObject2Device,
-                      FX_FLOAT font_size,
+                      float font_size,
                       uint32_t color) override;
 
   const int m_HorzSize;
@@ -316,7 +316,7 @@ class CPSPrinterDriver : public IFX_RenderDeviceDriver {
                       const FXTEXT_CHARPOS* pCharPos,
                       CFX_Font* pFont,
                       const CFX_Matrix* pObject2Device,
-                      FX_FLOAT font_size,
+                      float font_size,
                       uint32_t color) override;
   void* GetPlatformSurface() const override;
 

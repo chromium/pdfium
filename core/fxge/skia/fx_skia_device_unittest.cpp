@@ -41,7 +41,7 @@ void CommonTest(CFX_SkiaDeviceDriver* driver, const State& state) {
   charPos[0].m_FontCharWidth = 4;
 
   CFX_Font font;
-  FX_FLOAT fontSize = 1;
+  float fontSize = 1;
   CFX_PathData clipPath, clipPath2;
   clipPath.AppendRect(0, 0, 3, 1);
   clipPath2.AppendRect(0, 0, 2, 1);

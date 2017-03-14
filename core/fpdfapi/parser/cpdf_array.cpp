@@ -108,7 +108,7 @@ int CPDF_Array::GetIntegerAt(size_t i) const {
   return m_Objects[i]->GetInteger();
 }
 
-FX_FLOAT CPDF_Array::GetNumberAt(size_t i) const {
+float CPDF_Array::GetNumberAt(size_t i) const {
   if (i >= m_Objects.size())
     return 0;
   return m_Objects[i]->GetNumber();

@@ -49,10 +49,10 @@ class IFX_RenderDeviceDriver {
   virtual bool FillRectWithBlend(const FX_RECT* pRect,
                                  uint32_t fill_color,
                                  int blend_type);
-  virtual bool DrawCosmeticLine(FX_FLOAT x1,
-                                FX_FLOAT y1,
-                                FX_FLOAT x2,
-                                FX_FLOAT y2,
+  virtual bool DrawCosmeticLine(float x1,
+                                float y1,
+                                float x2,
+                                float y2,
                                 uint32_t color,
                                 int blend_type);
 
@@ -87,7 +87,7 @@ class IFX_RenderDeviceDriver {
                               const FXTEXT_CHARPOS* pCharPos,
                               CFX_Font* pFont,
                               const CFX_Matrix* pObject2Device,
-                              FX_FLOAT font_size,
+                              float font_size,
                               uint32_t color);
   virtual void* GetPlatformSurface() const;
   virtual int GetDriverType() const;

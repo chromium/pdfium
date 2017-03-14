@@ -32,23 +32,23 @@ class CXFA_Box : public CXFA_Data {
   CXFA_Edge GetEdge(int32_t nIndex = 0) const;
   void GetStrokes(std::vector<CXFA_Stroke>* strokes) const;
   bool IsCircular() const;
-  bool GetStartAngle(FX_FLOAT& fStartAngle) const;
-  FX_FLOAT GetStartAngle() const {
-    FX_FLOAT fStartAngle;
+  bool GetStartAngle(float& fStartAngle) const;
+  float GetStartAngle() const {
+    float fStartAngle;
     GetStartAngle(fStartAngle);
     return fStartAngle;
   }
 
-  bool GetSweepAngle(FX_FLOAT& fSweepAngle) const;
-  FX_FLOAT GetSweepAngle() const {
-    FX_FLOAT fSweepAngle;
+  bool GetSweepAngle(float& fSweepAngle) const;
+  float GetSweepAngle() const {
+    float fSweepAngle;
     GetSweepAngle(fSweepAngle);
     return fSweepAngle;
   }
 
   CXFA_Fill GetFill(bool bModified = false) const;
   CXFA_Margin GetMargin() const;
-  int32_t Get3DStyle(bool& bVisible, FX_FLOAT& fThickness) const;
+  int32_t Get3DStyle(bool& bVisible, float& fThickness) const;
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_BOX_H_

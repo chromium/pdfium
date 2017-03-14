@@ -527,10 +527,10 @@ void CFFL_InteractiveFormFiller::UnRegisterFormFiller(CPDFSDK_Annot* pAnnot) {
 }
 
 void CFFL_InteractiveFormFiller::QueryWherePopup(void* pPrivateData,
-                                                 FX_FLOAT fPopupMin,
-                                                 FX_FLOAT fPopupMax,
+                                                 float fPopupMin,
+                                                 float fPopupMax,
                                                  int32_t& nRet,
-                                                 FX_FLOAT& fPopupRet) {
+                                                 float& fPopupRet) {
   CFFL_PrivateData* pData = (CFFL_PrivateData*)pPrivateData;
 
   CFX_FloatRect rcPageView(0, 0, 0, 0);
@@ -540,8 +540,8 @@ void CFFL_InteractiveFormFiller::QueryWherePopup(void* pPrivateData,
 
   CFX_FloatRect rcAnnot = pData->pWidget->GetRect();
 
-  FX_FLOAT fTop = 0.0f;
-  FX_FLOAT fBottom = 0.0f;
+  float fTop = 0.0f;
+  float fBottom = 0.0f;
 
   CPDFSDK_Widget* pWidget = (CPDFSDK_Widget*)pData->pWidget;
   switch (pWidget->GetRotate() / 90) {
@@ -564,9 +564,9 @@ void CFFL_InteractiveFormFiller::QueryWherePopup(void* pPrivateData,
       break;
   }
 
-  FX_FLOAT fFactHeight = 0;
+  float fFactHeight = 0;
   bool bBottom = true;
-  FX_FLOAT fMaxListBoxHeight = 0;
+  float fMaxListBoxHeight = 0;
   if (fPopupMax > FFL_MAXLISTBOXHEIGHT) {
     if (fPopupMin > FFL_MAXLISTBOXHEIGHT) {
       fMaxListBoxHeight = fPopupMin;

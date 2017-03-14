@@ -394,7 +394,7 @@ bool CFX_ImageTransformer::Start() {
   int stretch_width = (int)FXSYS_ceil(FXSYS_sqrt2(m_pMatrix->a, m_pMatrix->b));
   int stretch_height = (int)FXSYS_ceil(FXSYS_sqrt2(m_pMatrix->c, m_pMatrix->d));
   CFX_Matrix stretch2dest(1.0f, 0.0f, 0.0f, -1.0f, 0.0f,
-                          (FX_FLOAT)(stretch_height));
+                          (float)(stretch_height));
   stretch2dest.Concat(
       CFX_Matrix(m_pMatrix->a / stretch_width, m_pMatrix->b / stretch_width,
                  m_pMatrix->c / stretch_height, m_pMatrix->d / stretch_height,
@@ -453,8 +453,8 @@ bool CFX_ImageTransformer::Continue(IFX_Pause* pPause) {
   if (pTransformed->m_pAlphaMask)
     pTransformed->m_pAlphaMask->Clear(0);
 
-  CFX_Matrix result2stretch(1.0f, 0.0f, 0.0f, 1.0f, (FX_FLOAT)(m_result.left),
-                            (FX_FLOAT)(m_result.top));
+  CFX_Matrix result2stretch(1.0f, 0.0f, 0.0f, 1.0f, (float)(m_result.left),
+                            (float)(m_result.top));
   result2stretch.Concat(m_dest2stretch);
   result2stretch.Translate(-m_StretchClip.left, -m_StretchClip.top);
   if (!stretch_buf_mask && pTransformed->m_pAlphaMask) {

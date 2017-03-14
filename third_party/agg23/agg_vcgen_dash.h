@@ -38,9 +38,9 @@ public:
     typedef vertex_sequence<vertex_dist, 6> vertex_storage;
     vcgen_dash();
     void remove_all_dashes();
-    void add_dash(FX_FLOAT dash_len, FX_FLOAT gap_len);
-    void dash_start(FX_FLOAT ds);
-    void shorten(FX_FLOAT s)
+    void add_dash(float dash_len, float gap_len);
+    void dash_start(float ds);
+    void shorten(float s)
     {
         m_shorten = s;
     }
@@ -49,21 +49,21 @@ public:
         return m_shorten;
     }
     void remove_all();
-    void add_vertex(FX_FLOAT x, FX_FLOAT y, unsigned cmd);
+    void add_vertex(float x, float y, unsigned cmd);
     void     rewind(unsigned path_id);
-    unsigned vertex(FX_FLOAT* x, FX_FLOAT* y);
+    unsigned vertex(float* x, float* y);
 private:
     vcgen_dash(const vcgen_dash&);
     const vcgen_dash& operator = (const vcgen_dash&);
-    void calc_dash_start(FX_FLOAT ds);
-    FX_FLOAT     m_dashes[max_dashes];
-    FX_FLOAT		m_total_dash_len;
+    void calc_dash_start(float ds);
+    float     m_dashes[max_dashes];
+    float		m_total_dash_len;
     unsigned        m_num_dashes;
-    FX_FLOAT     m_dash_start;
-    FX_FLOAT     m_shorten;
-    FX_FLOAT     m_curr_dash_start;
+    float     m_dash_start;
+    float     m_shorten;
+    float     m_curr_dash_start;
     unsigned        m_curr_dash;
-    FX_FLOAT     m_curr_rest;
+    float     m_curr_rest;
     const vertex_dist* m_v1;
     const vertex_dist* m_v2;
     vertex_storage m_src_vertices;

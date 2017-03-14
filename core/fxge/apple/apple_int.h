@@ -27,7 +27,7 @@ class CQuartz2D {
   void setGraphicsTextMatrix(void* graphics, CFX_Matrix* matrix);
   bool drawGraphicsString(void* graphics,
                           void* font,
-                          FX_FLOAT fontSize,
+                          float fontSize,
                           uint16_t* glyphIndices,
                           CGPoint* glyphPositions,
                           int32_t chars,

@@ -117,7 +117,7 @@ bool CXFA_FFPushButton::PerformLayout() {
 
   return true;
 }
-FX_FLOAT CXFA_FFPushButton::GetLineWidth() {
+float CXFA_FFPushButton::GetLineWidth() {
   CXFA_Border border = m_pDataAcc->GetBorder();
   if (border && border.GetPresence() == XFA_ATTRIBUTEENUM_Visible) {
     CXFA_Edge edge = border.GetEdge(0);
@@ -210,7 +210,7 @@ void CXFA_FFPushButton::OnDrawWidget(CFX_Graphics* pGraphics,
     if ((m_pNormalWidget->GetStates() & FWL_STATE_PSB_Pressed) &&
         (m_pNormalWidget->GetStates() & FWL_STATE_PSB_Hovered)) {
       CFX_RectF rtFill(0, 0, m_pNormalWidget->GetWidgetRect().Size());
-      FX_FLOAT fLineWith = GetLineWidth();
+      float fLineWith = GetLineWidth();
       rtFill.Deflate(fLineWith, fLineWith);
       CFX_Color cr(FXARGB_MAKE(128, 128, 255, 255));
       pGraphics->SetFillColor(&cr);
@@ -223,7 +223,7 @@ void CXFA_FFPushButton::OnDrawWidget(CFX_Graphics* pGraphics,
              XFA_FWL_PSBSTYLEEXT_HiliteOutLine) {
     if ((m_pNormalWidget->GetStates() & FWL_STATE_PSB_Pressed) &&
         (m_pNormalWidget->GetStates() & FWL_STATE_PSB_Hovered)) {
-      FX_FLOAT fLineWidth = GetLineWidth();
+      float fLineWidth = GetLineWidth();
       CFX_Color cr(FXARGB_MAKE(255, 128, 255, 255));
       pGraphics->SetStrokeColor(&cr);
       pGraphics->SetLineWidth(fLineWidth);

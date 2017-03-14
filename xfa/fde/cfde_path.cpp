@@ -36,16 +36,15 @@ void CFDE_Path::BezierTo(const CFX_PointF& p1,
 
 void CFDE_Path::ArcTo(bool bStart,
                       const CFX_RectF& rect,
-                      FX_FLOAT startAngle,
-                      FX_FLOAT endAngle) {
-  FX_FLOAT rx = rect.width / 2;
-  FX_FLOAT ry = rect.height / 2;
-  FX_FLOAT cx = rect.left + rx;
-  FX_FLOAT cy = rect.top + ry;
-  FX_FLOAT alpha =
+                      float startAngle,
+                      float endAngle) {
+  float rx = rect.width / 2;
+  float ry = rect.height / 2;
+  float cx = rect.left + rx;
+  float cy = rect.top + ry;
+  float alpha =
       FXSYS_atan2(rx * FXSYS_sin(startAngle), ry * FXSYS_cos(startAngle));
-  FX_FLOAT beta =
-      FXSYS_atan2(rx * FXSYS_sin(endAngle), ry * FXSYS_cos(endAngle));
+  float beta = FXSYS_atan2(rx * FXSYS_sin(endAngle), ry * FXSYS_cos(endAngle));
   if (FXSYS_fabs(beta - alpha) > FX_PI) {
     if (beta > alpha)
       beta -= 2 * FX_PI;
@@ -53,12 +52,12 @@ void CFDE_Path::ArcTo(bool bStart,
       alpha -= 2 * FX_PI;
   }
 
-  FX_FLOAT half_delta = (beta - alpha) / 2;
-  FX_FLOAT bcp = 4.0f / 3 * (1 - FXSYS_cos(half_delta)) / FXSYS_sin(half_delta);
-  FX_FLOAT sin_alpha = FXSYS_sin(alpha);
-  FX_FLOAT sin_beta = FXSYS_sin(beta);
-  FX_FLOAT cos_alpha = FXSYS_cos(alpha);
-  FX_FLOAT cos_beta = FXSYS_cos(beta);
+  float half_delta = (beta - alpha) / 2;
+  float bcp = 4.0f / 3 * (1 - FXSYS_cos(half_delta)) / FXSYS_sin(half_delta);
+  float sin_alpha = FXSYS_sin(alpha);
+  float sin_beta = FXSYS_sin(beta);
+  float cos_alpha = FXSYS_cos(alpha);
+  float cos_beta = FXSYS_cos(beta);
   if (bStart)
     MoveTo(CFX_PointF(cx + rx * cos_alpha, cy + ry * sin_alpha));
 
@@ -92,13 +91,13 @@ void CFDE_Path::AddBeziers(const std::vector<CFX_PointF>& points) {
 void CFDE_Path::GetCurveTangents(const std::vector<CFX_PointF>& points,
                                  std::vector<CFX_PointF>* tangents,
                                  bool bClosed,
-                                 FX_FLOAT fTension) const {
+                                 float fTension) const {
   int32_t iCount = pdfium::CollectionSize<int32_t>(points);
   tangents->resize(iCount);
   if (iCount < 3)
     return;
 
-  FX_FLOAT fCoefficient = fTension / 3.0f;
+  float fCoefficient = fTension / 3.0f;
   const CFX_PointF* pPoints = points.data();
   CFX_PointF* pTangents = tangents->data();
   for (int32_t i = 0; i < iCount; ++i) {
@@ -116,7 +115,7 @@ void CFDE_Path::GetCurveTangents(const std::vector<CFX_PointF>& points,
 
 void CFDE_Path::AddCurve(const std::vector<CFX_PointF>& points,
                          bool bClosed,
-                         FX_FLOAT fTension) {
+                         float fTension) {
   int32_t iLast = pdfium::CollectionSize<int32_t>(points) - 1;
   if (iLast < 1)
     return;
@@ -144,8 +143,8 @@ void CFDE_Path::AddCurve(const std::vector<CFX_PointF>& points,
 }
 
 void CFDE_Path::AddEllipse(const CFX_RectF& rect) {
-  FX_FLOAT fStartAngle = 0;
-  FX_FLOAT fEndAngle = FX_PI / 2;
+  float fStartAngle = 0;
+  float fEndAngle = FX_PI / 2;
   for (int32_t i = 0; i < 4; ++i) {
     ArcTo(i == 0, rect, fStartAngle, fEndAngle);
     fStartAngle += FX_PI / 2;
@@ -216,7 +215,7 @@ CFX_RectF CFDE_Path::GetBBox() const {
   return bbox;
 }
 
-CFX_RectF CFDE_Path::GetBBox(FX_FLOAT fLineWidth, FX_FLOAT fMiterLimit) const {
+CFX_RectF CFDE_Path::GetBBox(float fLineWidth, float fMiterLimit) const {
   CFX_FloatRect rect = m_Path.GetBoundingBox(fLineWidth, fMiterLimit);
   CFX_RectF bbox = CFX_RectF(rect.left, rect.top, rect.Width(), rect.Height());
   bbox.Normalize();

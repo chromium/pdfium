@@ -46,10 +46,10 @@ CFX_FloatRect CPDF_PageObjectHolder::CalcBoundingBox() const {
   if (m_PageObjectList.empty())
     return CFX_FloatRect(0, 0, 0, 0);
 
-  FX_FLOAT left = 1000000.0f;
-  FX_FLOAT right = -1000000.0f;
-  FX_FLOAT bottom = 1000000.0f;
-  FX_FLOAT top = -1000000.0f;
+  float left = 1000000.0f;
+  float right = -1000000.0f;
+  float bottom = 1000000.0f;
+  float top = -1000000.0f;
   for (const auto& pObj : m_PageObjectList) {
     left = std::min(left, pObj->m_Left);
     right = std::max(right, pObj->m_Right);

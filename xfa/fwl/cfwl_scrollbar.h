@@ -35,23 +35,23 @@ class CFWL_ScrollBar : public CFWL_Widget {
   void OnDrawWidget(CFX_Graphics* pGraphics,
                     const CFX_Matrix* pMatrix) override;
 
-  void GetRange(FX_FLOAT* fMin, FX_FLOAT* fMax) const {
+  void GetRange(float* fMin, float* fMax) const {
     ASSERT(fMin);
     ASSERT(fMax);
     *fMin = m_fRangeMin;
     *fMax = m_fRangeMax;
   }
-  void SetRange(FX_FLOAT fMin, FX_FLOAT fMax) {
+  void SetRange(float fMin, float fMax) {
     m_fRangeMin = fMin;
     m_fRangeMax = fMax;
   }
-  FX_FLOAT GetPageSize() const { return m_fPageSize; }
-  void SetPageSize(FX_FLOAT fPageSize) { m_fPageSize = fPageSize; }
-  FX_FLOAT GetStepSize() const { return m_fStepSize; }
-  void SetStepSize(FX_FLOAT fStepSize) { m_fStepSize = fStepSize; }
-  FX_FLOAT GetPos() const { return m_fPos; }
-  void SetPos(FX_FLOAT fPos) { m_fPos = fPos; }
-  void SetTrackPos(FX_FLOAT fTrackPos);
+  float GetPageSize() const { return m_fPageSize; }
+  void SetPageSize(float fPageSize) { m_fPageSize = fPageSize; }
+  float GetStepSize() const { return m_fStepSize; }
+  void SetStepSize(float fStepSize) { m_fStepSize = fStepSize; }
+  float GetPos() const { return m_fPos; }
+  void SetPos(float fPos) { m_fPos = fPos; }
+  void SetTrackPos(float fTrackPos);
 
  private:
   class Timer : public CFWL_Timer {
@@ -84,16 +84,16 @@ class CFWL_ScrollBar : public CFWL_Widget {
   CFX_RectF CalcThumbButtonRect(const CFX_RectF& rtThumbRect);
   CFX_RectF CalcMinTrackRect(const CFX_RectF& rtMinRect);
   CFX_RectF CalcMaxTrackRect(const CFX_RectF& rtMaxRect);
-  FX_FLOAT GetTrackPointPos(const CFX_PointF& point);
+  float GetTrackPointPos(const CFX_PointF& point);
 
   bool SendEvent();
-  bool OnScroll(CFWL_EventScroll::Code dwCode, FX_FLOAT fPos);
+  bool OnScroll(CFWL_EventScroll::Code dwCode, float fPos);
   void OnLButtonDown(const CFX_PointF& point);
   void OnLButtonUp(const CFX_PointF& point);
   void OnMouseMove(const CFX_PointF& point);
   void OnMouseLeave();
   void OnMouseWheel(const CFX_PointF& delta);
-  bool DoScroll(CFWL_EventScroll::Code dwCode, FX_FLOAT fPos);
+  bool DoScroll(CFWL_EventScroll::Code dwCode, float fPos);
   void DoMouseDown(int32_t iItem,
                    const CFX_RectF& rtItem,
                    int32_t& iState,
@@ -110,22 +110,22 @@ class CFWL_ScrollBar : public CFWL_Widget {
   void DoMouseHover(int32_t iItem, const CFX_RectF& rtItem, int32_t& iState);
 
   CFWL_TimerInfo* m_pTimerInfo;
-  FX_FLOAT m_fRangeMin;
-  FX_FLOAT m_fRangeMax;
-  FX_FLOAT m_fPageSize;
-  FX_FLOAT m_fStepSize;
-  FX_FLOAT m_fPos;
-  FX_FLOAT m_fTrackPos;
+  float m_fRangeMin;
+  float m_fRangeMax;
+  float m_fPageSize;
+  float m_fStepSize;
+  float m_fPos;
+  float m_fTrackPos;
   int32_t m_iMinButtonState;
   int32_t m_iMaxButtonState;
   int32_t m_iThumbButtonState;
   int32_t m_iMinTrackState;
   int32_t m_iMaxTrackState;
-  FX_FLOAT m_fLastTrackPos;
+  float m_fLastTrackPos;
   CFX_PointF m_cpTrackPoint;
   int32_t m_iMouseWheel;
   bool m_bMouseDown;
-  FX_FLOAT m_fButtonLen;
+  float m_fButtonLen;
   bool m_bMinSize;
   CFX_RectF m_rtClient;
   CFX_RectF m_rtThumb;

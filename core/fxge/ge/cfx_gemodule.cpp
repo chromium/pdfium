@@ -59,11 +59,11 @@ CFX_FontCache* CFX_GEModule::GetFontCache() {
   return m_pFontCache;
 }
 
-void CFX_GEModule::SetTextGamma(FX_FLOAT gammaValue) {
+void CFX_GEModule::SetTextGamma(float gammaValue) {
   gammaValue /= 2.2f;
   for (int i = 0; i < 256; ++i) {
     m_GammaValue[i] = static_cast<uint8_t>(
-        FXSYS_pow(static_cast<FX_FLOAT>(i) / 255, gammaValue) * 255.0f + 0.5f);
+        FXSYS_pow(static_cast<float>(i) / 255, gammaValue) * 255.0f + 0.5f);
   }
 }
 

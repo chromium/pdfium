@@ -77,7 +77,7 @@ CFX_RectF CFWL_Widget::GetWidgetRect() {
 
 void CFWL_Widget::InflateWidgetRect(CFX_RectF& rect) {
   if (HasBorder()) {
-    FX_FLOAT fBorder = GetBorderSize(true);
+    float fBorder = GetBorderSize(true);
     rect.Inflate(fBorder, fBorder);
   }
 }
@@ -269,14 +269,14 @@ CFX_RectF CFWL_Widget::GetEdgeRect() {
   CFX_RectF rtEdge(0, 0, m_pProperties->m_rtWidget.width,
                    m_pProperties->m_rtWidget.height);
   if (HasBorder()) {
-    FX_FLOAT fCX = GetBorderSize(true);
-    FX_FLOAT fCY = GetBorderSize(false);
+    float fCX = GetBorderSize(true);
+    float fCY = GetBorderSize(false);
     rtEdge.Deflate(fCX, fCY);
   }
   return rtEdge;
 }
 
-FX_FLOAT CFWL_Widget::GetBorderSize(bool bCX) {
+float CFWL_Widget::GetBorderSize(bool bCX) {
   IFWL_ThemeProvider* theme = GetAvailableTheme();
   if (!theme)
     return 0.0f;
@@ -328,8 +328,7 @@ CFX_SizeF CFWL_Widget::CalcTextSize(const CFX_WideString& wsText,
   calPart.m_dwTTOStyles =
       bMultiLine ? FDE_TTOSTYLE_LineWrap : FDE_TTOSTYLE_SingleLine;
   calPart.m_iTTOAlign = FDE_TTOALIGNMENT_TopLeft;
-  FX_FLOAT fWidth =
-      bMultiLine ? FWL_WGT_CalcMultiLineDefWidth : FWL_WGT_CalcWidth;
+  float fWidth = bMultiLine ? FWL_WGT_CalcMultiLineDefWidth : FWL_WGT_CalcWidth;
   CFX_RectF rect(0, 0, fWidth, FWL_WGT_CalcHeight);
   pTheme->CalcTextRect(&calPart, rect);
   return CFX_SizeF(rect.width, rect.height);
@@ -378,8 +377,8 @@ void CFWL_Widget::SetGrab(bool bSet) {
   pDriver->SetGrab(this, bSet);
 }
 
-void CFWL_Widget::GetPopupPos(FX_FLOAT fMinHeight,
-                              FX_FLOAT fMaxHeight,
+void CFWL_Widget::GetPopupPos(float fMinHeight,
+                              float fMaxHeight,
                               const CFX_RectF& rtAnchor,
                               CFX_RectF& rtPopup) {
   if (GetClassID() == FWL_Type::ComboBox) {
@@ -400,13 +399,13 @@ void CFWL_Widget::GetPopupPos(FX_FLOAT fMinHeight,
   GetPopupPosGeneral(fMinHeight, fMaxHeight, rtAnchor, rtPopup);
 }
 
-bool CFWL_Widget::GetPopupPosMenu(FX_FLOAT fMinHeight,
-                                  FX_FLOAT fMaxHeight,
+bool CFWL_Widget::GetPopupPosMenu(float fMinHeight,
+                                  float fMaxHeight,
                                   const CFX_RectF& rtAnchor,
                                   CFX_RectF& rtPopup) {
   if (GetStylesEx() & FWL_STYLEEXT_MNU_Vert) {
     bool bLeft = m_pProperties->m_rtWidget.left < 0;
-    FX_FLOAT fRight = rtAnchor.right() + rtPopup.width;
+    float fRight = rtAnchor.right() + rtPopup.width;
     CFX_PointF point = TransformTo(nullptr, CFX_PointF());
     if (fRight + point.x > 0.0f || bLeft) {
       rtPopup = CFX_RectF(rtAnchor.left - rtPopup.width, rtAnchor.top,
@@ -419,7 +418,7 @@ bool CFWL_Widget::GetPopupPosMenu(FX_FLOAT fMinHeight,
     return true;
   }
 
-  FX_FLOAT fBottom = rtAnchor.bottom() + rtPopup.height;
+  float fBottom = rtAnchor.bottom() + rtPopup.height;
   CFX_PointF point = TransformTo(nullptr, point);
   if (fBottom + point.y > 0.0f) {
     rtPopup = CFX_RectF(rtAnchor.left, rtAnchor.top - rtPopup.height,
@@ -432,18 +431,18 @@ bool CFWL_Widget::GetPopupPosMenu(FX_FLOAT fMinHeight,
   return true;
 }
 
-bool CFWL_Widget::GetPopupPosComboBox(FX_FLOAT fMinHeight,
-                                      FX_FLOAT fMaxHeight,
+bool CFWL_Widget::GetPopupPosComboBox(float fMinHeight,
+                                      float fMaxHeight,
                                       const CFX_RectF& rtAnchor,
                                       CFX_RectF& rtPopup) {
-  FX_FLOAT fPopHeight = rtPopup.height;
+  float fPopHeight = rtPopup.height;
   if (rtPopup.height > fMaxHeight)
     fPopHeight = fMaxHeight;
   else if (rtPopup.height < fMinHeight)
     fPopHeight = fMinHeight;
 
-  FX_FLOAT fWidth = std::max(rtAnchor.width, rtPopup.width);
-  FX_FLOAT fBottom = rtAnchor.bottom() + fPopHeight;
+  float fWidth = std::max(rtAnchor.width, rtPopup.width);
+  float fBottom = rtAnchor.bottom() + fPopHeight;
   CFX_PointF point = TransformTo(nullptr, CFX_PointF());
   if (fBottom + point.y > 0.0f) {
     rtPopup =
@@ -456,8 +455,8 @@ bool CFWL_Widget::GetPopupPosComboBox(FX_FLOAT fMinHeight,
   return true;
 }
 
-bool CFWL_Widget::GetPopupPosGeneral(FX_FLOAT fMinHeight,
-                                     FX_FLOAT fMaxHeight,
+bool CFWL_Widget::GetPopupPosGeneral(float fMinHeight,
+                                     float fMaxHeight,
                                      const CFX_RectF& rtAnchor,
                                      CFX_RectF& rtPopup) {
   CFX_PointF point = TransformTo(nullptr, CFX_PointF());

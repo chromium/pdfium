@@ -43,11 +43,11 @@ CPDFXFA_Page* CPDFSDK_Annot::GetPDFXFAPage() {
 
 #endif  // PDF_ENABLE_XFA
 
-FX_FLOAT CPDFSDK_Annot::GetMinWidth() const {
+float CPDFSDK_Annot::GetMinWidth() const {
   return kMinWidth;
 }
 
-FX_FLOAT CPDFSDK_Annot::GetMinHeight() const {
+float CPDFSDK_Annot::GetMinHeight() const {
   return kMinHeight;
 }
 

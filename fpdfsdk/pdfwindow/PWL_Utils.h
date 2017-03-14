@@ -35,21 +35,19 @@ struct CPWL_Color;
 
 class CPWL_Utils {
  public:
-  static CFX_FloatRect InflateRect(const CFX_FloatRect& rcRect, FX_FLOAT fSize);
-  static CFX_FloatRect DeflateRect(const CFX_FloatRect& rcRect, FX_FLOAT fSize);
+  static CFX_FloatRect InflateRect(const CFX_FloatRect& rcRect, float fSize);
+  static CFX_FloatRect DeflateRect(const CFX_FloatRect& rcRect, float fSize);
 
   static CPVT_WordRange OverlapWordRange(const CPVT_WordRange& wr1,
                                          const CPVT_WordRange& wr2);
   static CFX_FloatRect GetCenterSquare(const CFX_FloatRect& rect);
 
-  static CFX_FloatRect OffsetRect(const CFX_FloatRect& rect,
-                                  FX_FLOAT x,
-                                  FX_FLOAT y);
+  static CFX_FloatRect OffsetRect(const CFX_FloatRect& rect, float x, float y);
 
   static CFX_ByteString GetColorAppStream(const CPWL_Color& color,
                                           const bool& bFillOrStroke = true);
   static CFX_ByteString GetBorderAppStream(const CFX_FloatRect& rect,
-                                           FX_FLOAT fWidth,
+                                           float fWidth,
                                            const CPWL_Color& color,
                                            const CPWL_Color& crLeftTop,
                                            const CPWL_Color& crRightBottom,
@@ -57,7 +55,7 @@ class CPWL_Utils {
                                            const CPWL_Dash& dash);
   static CFX_ByteString GetCircleBorderAppStream(
       const CFX_FloatRect& rect,
-      FX_FLOAT fWidth,
+      float fWidth,
       const CPWL_Color& color,
       const CPWL_Color& crLeftTop,
       const CPWL_Color& crRightBottom,
@@ -73,7 +71,7 @@ class CPWL_Utils {
                                                CPDF_IconFit& IconFit,
                                                const CFX_WideString& sLabel,
                                                const CPWL_Color& crText,
-                                               FX_FLOAT fFontSize,
+                                               float fFontSize,
                                                int32_t nLayOut);
   static CFX_ByteString GetCheckBoxAppStream(const CFX_FloatRect& rcBBox,
                                              int32_t nStyle,
@@ -105,17 +103,17 @@ class CPWL_Utils {
                              CFX_Matrix* pUser2Device,
                              const CFX_FloatRect& rect,
                              const FX_COLORREF& color,
-                             FX_FLOAT fWidth);
+                             float fWidth);
   static void DrawStrokeLine(CFX_RenderDevice* pDevice,
                              CFX_Matrix* pUser2Device,
                              const CFX_PointF& ptMoveTo,
                              const CFX_PointF& ptLineTo,
                              const FX_COLORREF& color,
-                             FX_FLOAT fWidth);
+                             float fWidth);
   static void DrawBorder(CFX_RenderDevice* pDevice,
                          CFX_Matrix* pUser2Device,
                          const CFX_FloatRect& rect,
-                         FX_FLOAT fWidth,
+                         float fWidth,
                          const CPWL_Color& color,
                          const CPWL_Color& crLeftTop,
                          const CPWL_Color& crRightBottom,
@@ -136,7 +134,7 @@ class CPWL_Utils {
                          int32_t nEndGray);
 
  private:
-  static CFX_FloatRect ScaleRect(const CFX_FloatRect& rcRect, FX_FLOAT fScale);
+  static CFX_FloatRect ScaleRect(const CFX_FloatRect& rcRect, float fScale);
 
   static CFX_ByteString GetAppStream_Check(const CFX_FloatRect& rcBBox,
                                            const CPWL_Color& crText);
@@ -158,7 +156,7 @@ class CPWL_Utils {
   static CFX_ByteString GetAP_Square(const CFX_FloatRect& crBBox);
   static CFX_ByteString GetAP_Star(const CFX_FloatRect& crBBox);
   static CFX_ByteString GetAP_HalfCircle(const CFX_FloatRect& crBBox,
-                                         FX_FLOAT fRotate);
+                                         float fRotate);
 };
 
 #endif  // FPDFSDK_PDFWINDOW_PWL_UTILS_H_

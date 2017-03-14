@@ -121,13 +121,12 @@ void color::ConvertArrayToPWLColor(CJS_Runtime* pRuntime,
   if (sSpace == "T") {
     *color = CPWL_Color(COLORTYPE_TRANSPARENT);
   } else if (sSpace == "G") {
-    *color = CPWL_Color(COLORTYPE_GRAY, (FX_FLOAT)d1);
+    *color = CPWL_Color(COLORTYPE_GRAY, (float)d1);
   } else if (sSpace == "RGB") {
-    *color =
-        CPWL_Color(COLORTYPE_RGB, (FX_FLOAT)d1, (FX_FLOAT)d2, (FX_FLOAT)d3);
+    *color = CPWL_Color(COLORTYPE_RGB, (float)d1, (float)d2, (float)d3);
   } else if (sSpace == "CMYK") {
-    *color = CPWL_Color(COLORTYPE_CMYK, (FX_FLOAT)d1, (FX_FLOAT)d2,
-                        (FX_FLOAT)d3, (FX_FLOAT)d4);
+    *color =
+        CPWL_Color(COLORTYPE_CMYK, (float)d1, (float)d2, (float)d3, (float)d4);
   }
 }
 

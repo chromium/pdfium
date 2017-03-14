@@ -454,13 +454,13 @@ void CXFA_LayoutPageMgr::SubmitContentItem(
   }
 }
 
-FX_FLOAT CXFA_LayoutPageMgr::GetAvailHeight() {
+float CXFA_LayoutPageMgr::GetAvailHeight() {
   CXFA_ContainerLayoutItem* pLayoutItem =
       GetCurrentContainerRecord()->pCurContentArea;
   if (!pLayoutItem || !pLayoutItem->m_pFormNode)
     return 0.0f;
 
-  FX_FLOAT fAvailHeight =
+  float fAvailHeight =
       pLayoutItem->m_pFormNode->GetMeasure(XFA_ATTRIBUTE_H).ToUnit(XFA_UNIT_Pt);
   if (fAvailHeight >= XFA_LAYOUT_FLOAT_PERCISION)
     return fAvailHeight;
@@ -647,7 +647,7 @@ void CXFA_LayoutPageMgr::FinishPaginatedPageSets() {
             }
           }
           bool bUsable = true;
-          CFX_ArrayTemplate<FX_FLOAT> rgUsedHeights;
+          CFX_ArrayTemplate<float> rgUsedHeights;
           for (CXFA_LayoutItem* pChildLayoutItem =
                    pLastPageAreaLayoutItem->m_pFirstChild;
                pChildLayoutItem;
@@ -656,7 +656,7 @@ void CXFA_LayoutPageMgr::FinishPaginatedPageSets() {
                 XFA_Element::ContentArea) {
               continue;
             }
-            FX_FLOAT fUsedHeight = 0;
+            float fUsedHeight = 0;
             for (CXFA_LayoutItem* pContentChildLayoutItem =
                      pChildLayoutItem->m_pFirstChild;
                  pContentChildLayoutItem;
@@ -1511,7 +1511,7 @@ void CXFA_LayoutPageMgr::ProcessLastPageSet() {
   }
 }
 
-bool CXFA_LayoutPageMgr::GetNextAvailContentHeight(FX_FLOAT fChildHeight) {
+bool CXFA_LayoutPageMgr::GetNextAvailContentHeight(float fChildHeight) {
   CXFA_Node* pCurContentNode =
       GetCurrentContainerRecord()->pCurContentArea->m_pFormNode;
   if (!pCurContentNode)
@@ -1520,7 +1520,7 @@ bool CXFA_LayoutPageMgr::GetNextAvailContentHeight(FX_FLOAT fChildHeight) {
   pCurContentNode =
       pCurContentNode->GetNextSameClassSibling(XFA_Element::ContentArea);
   if (pCurContentNode) {
-    FX_FLOAT fNextContentHeight =
+    float fNextContentHeight =
         pCurContentNode->GetMeasure(XFA_ATTRIBUTE_H).ToUnit(XFA_UNIT_Pt);
     return fNextContentHeight > fChildHeight;
   }
@@ -1549,7 +1549,7 @@ bool CXFA_LayoutPageMgr::GetNextAvailContentHeight(FX_FLOAT fChildHeight) {
         CXFA_Node* pContentArea =
             pNextPage->GetFirstChildByClass(XFA_Element::ContentArea);
         if (pContentArea) {
-          FX_FLOAT fNextContentHeight =
+          float fNextContentHeight =
               pContentArea->GetMeasure(XFA_ATTRIBUTE_H).ToUnit(XFA_UNIT_Pt);
           if (fNextContentHeight > fChildHeight)
             return true;
@@ -1561,7 +1561,7 @@ bool CXFA_LayoutPageMgr::GetNextAvailContentHeight(FX_FLOAT fChildHeight) {
 
   CXFA_Node* pContentArea =
       pPageNode->GetFirstChildByClass(XFA_Element::ContentArea);
-  FX_FLOAT fNextContentHeight =
+  float fNextContentHeight =
       pContentArea->GetMeasure(XFA_ATTRIBUTE_H).ToUnit(XFA_UNIT_Pt);
   if (fNextContentHeight < XFA_LAYOUT_FLOAT_PERCISION)
     return true;

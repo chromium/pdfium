@@ -28,7 +28,7 @@ class CFWL_EventScroll : public CFWL_Event {
   ~CFWL_EventScroll() override;
 
   Code m_iScrollCode;
-  FX_FLOAT m_fPos;
+  float m_fPos;
 };
 
 #endif  // XFA_FWL_CFWL_EVENTSCROLL_H_

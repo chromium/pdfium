@@ -20,7 +20,7 @@ class CXFA_Caption : public CXFA_Data {
 
   int32_t GetPresence();
   int32_t GetPlacementType();
-  FX_FLOAT GetReserve();
+  float GetReserve();
   CXFA_Margin GetMargin();
   CXFA_Font GetFont();
   CXFA_Value GetValue();

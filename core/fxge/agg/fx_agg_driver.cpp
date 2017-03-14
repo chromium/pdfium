@@ -358,7 +358,7 @@ static void RasterizeStroke(agg::rasterizer_scanline_aa& rasterizer,
                             agg::path_storage& path_data,
                             const CFX_Matrix* pObject2Device,
                             const CFX_GraphStateData* pGraphState,
-                            FX_FLOAT scale = 1.0f,
+                            float scale = 1.0f,
                             bool bStrokeAdjust = false,
                             bool bTextMode = false) {
   agg::line_cap_e cap;
@@ -385,8 +385,8 @@ static void RasterizeStroke(agg::rasterizer_scanline_aa& rasterizer,
       join = agg::miter_join_revert;
       break;
   }
-  FX_FLOAT width = pGraphState->m_LineWidth * scale;
-  FX_FLOAT unit = 1.f;
+  float width = pGraphState->m_LineWidth * scale;
+  float unit = 1.f;
   if (pObject2Device) {
     unit =
         1.0f / ((pObject2Device->GetXUnit() + pObject2Device->GetYUnit()) / 2);
@@ -398,13 +398,13 @@ static void RasterizeStroke(agg::rasterizer_scanline_aa& rasterizer,
     typedef agg::conv_dash<agg::path_storage> dash_converter;
     dash_converter dash(path_data);
     for (int i = 0; i < (pGraphState->m_DashCount + 1) / 2; i++) {
-      FX_FLOAT on = pGraphState->m_DashArray[i * 2];
+      float on = pGraphState->m_DashArray[i * 2];
       if (on <= 0.000001f) {
         on = 1.0f / 10;
       }
-      FX_FLOAT off = i * 2 + 1 == pGraphState->m_DashCount
-                         ? on
-                         : pGraphState->m_DashArray[i * 2 + 1];
+      float off = i * 2 + 1 == pGraphState->m_DashCount
+                      ? on
+                      : pGraphState->m_DashArray[i * 2 + 1];
       if (off < 0) {
         off = 0;
       }
@@ -460,7 +460,7 @@ bool CFX_AggDeviceDriver::DrawDeviceText(int nChars,
                                          const FXTEXT_CHARPOS* pCharPos,
                                          CFX_Font* pFont,
                                          const CFX_Matrix* pObject2Device,
-                                         FX_FLOAT font_size,
+                                         float font_size,
                                          uint32_t color) {
   return false;
 }
@@ -556,9 +556,9 @@ bool CFX_AggDeviceDriver::SetClip_PathFill(const CFX_PathData* pPathData,
   if (size == 5 || size == 4) {
     CFX_FloatRect rectf;
     if (pPathData->IsRect(pObject2Device, &rectf)) {
-      rectf.Intersect(
-          CFX_FloatRect(0, 0, (FX_FLOAT)GetDeviceCaps(FXDC_PIXEL_WIDTH),
-                        (FX_FLOAT)GetDeviceCaps(FXDC_PIXEL_HEIGHT)));
+      rectf.Intersect(CFX_FloatRect(0, 0,
+                                    (float)GetDeviceCaps(FXDC_PIXEL_WIDTH),
+                                    (float)GetDeviceCaps(FXDC_PIXEL_HEIGHT)));
       FX_RECT rect = rectf.GetOuterRect();
       m_pClipRgn->IntersectRect(rect);
       return true;
@@ -568,8 +568,8 @@ bool CFX_AggDeviceDriver::SetClip_PathFill(const CFX_PathData* pPathData,
   path_data.BuildPath(pPathData, pObject2Device);
   path_data.m_PathData.end_poly();
   agg::rasterizer_scanline_aa rasterizer;
-  rasterizer.clip_box(0.0f, 0.0f, (FX_FLOAT)(GetDeviceCaps(FXDC_PIXEL_WIDTH)),
-                      (FX_FLOAT)(GetDeviceCaps(FXDC_PIXEL_HEIGHT)));
+  rasterizer.clip_box(0.0f, 0.0f, (float)(GetDeviceCaps(FXDC_PIXEL_WIDTH)),
+                      (float)(GetDeviceCaps(FXDC_PIXEL_HEIGHT)));
   rasterizer.add_path(path_data.m_PathData);
   rasterizer.filling_rule((fill_mode & 3) == FXFILL_WINDING
                               ? agg::fill_non_zero
@@ -589,8 +589,8 @@ bool CFX_AggDeviceDriver::SetClip_PathStroke(
   CAgg_PathData path_data;
   path_data.BuildPath(pPathData, nullptr);
   agg::rasterizer_scanline_aa rasterizer;
-  rasterizer.clip_box(0.0f, 0.0f, (FX_FLOAT)(GetDeviceCaps(FXDC_PIXEL_WIDTH)),
-                      (FX_FLOAT)(GetDeviceCaps(FXDC_PIXEL_HEIGHT)));
+  rasterizer.clip_box(0.0f, 0.0f, (float)(GetDeviceCaps(FXDC_PIXEL_WIDTH)),
+                      (float)(GetDeviceCaps(FXDC_PIXEL_HEIGHT)));
   RasterizeStroke(rasterizer, path_data.m_PathData, pObject2Device,
                   pGraphState);
   rasterizer.filling_rule(agg::fill_non_zero);
@@ -1467,8 +1467,8 @@ bool CFX_AggDeviceDriver::DrawPath(const CFX_PathData* pPathData,
     CAgg_PathData path_data;
     path_data.BuildPath(pPathData, pObject2Device);
     agg::rasterizer_scanline_aa rasterizer;
-    rasterizer.clip_box(0.0f, 0.0f, (FX_FLOAT)(GetDeviceCaps(FXDC_PIXEL_WIDTH)),
-                        (FX_FLOAT)(GetDeviceCaps(FXDC_PIXEL_HEIGHT)));
+    rasterizer.clip_box(0.0f, 0.0f, (float)(GetDeviceCaps(FXDC_PIXEL_WIDTH)),
+                        (float)(GetDeviceCaps(FXDC_PIXEL_HEIGHT)));
     rasterizer.add_path(path_data.m_PathData);
     rasterizer.filling_rule((fill_mode & 3) == FXFILL_WINDING
                                 ? agg::fill_non_zero
@@ -1487,8 +1487,8 @@ bool CFX_AggDeviceDriver::DrawPath(const CFX_PathData* pPathData,
     CAgg_PathData path_data;
     path_data.BuildPath(pPathData, pObject2Device);
     agg::rasterizer_scanline_aa rasterizer;
-    rasterizer.clip_box(0.0f, 0.0f, (FX_FLOAT)(GetDeviceCaps(FXDC_PIXEL_WIDTH)),
-                        (FX_FLOAT)(GetDeviceCaps(FXDC_PIXEL_HEIGHT)));
+    rasterizer.clip_box(0.0f, 0.0f, (float)(GetDeviceCaps(FXDC_PIXEL_WIDTH)),
+                        (float)(GetDeviceCaps(FXDC_PIXEL_HEIGHT)));
     RasterizeStroke(rasterizer, path_data.m_PathData, nullptr, pGraphState, 1,
                     false, !!(fill_mode & FX_STROKE_TEXT_MODE));
     return RenderRasterizer(rasterizer, stroke_color,
@@ -1514,8 +1514,8 @@ bool CFX_AggDeviceDriver::DrawPath(const CFX_PathData* pPathData,
   CAgg_PathData path_data;
   path_data.BuildPath(pPathData, &matrix1);
   agg::rasterizer_scanline_aa rasterizer;
-  rasterizer.clip_box(0.0f, 0.0f, (FX_FLOAT)(GetDeviceCaps(FXDC_PIXEL_WIDTH)),
-                      (FX_FLOAT)(GetDeviceCaps(FXDC_PIXEL_HEIGHT)));
+  rasterizer.clip_box(0.0f, 0.0f, (float)(GetDeviceCaps(FXDC_PIXEL_WIDTH)),
+                      (float)(GetDeviceCaps(FXDC_PIXEL_HEIGHT)));
   RasterizeStroke(rasterizer, path_data.m_PathData, &matrix2, pGraphState,
                   matrix1.a, false, !!(fill_mode & FX_STROKE_TEXT_MODE));
   return RenderRasterizer(rasterizer, stroke_color,

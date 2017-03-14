@@ -47,7 +47,7 @@ class CFWL_CheckBox : public CFWL_Widget {
   void OnDrawWidget(CFX_Graphics* pGraphics,
                     const CFX_Matrix* pMatrix) override;
 
-  void SetBoxSize(FX_FLOAT fHeight);
+  void SetBoxSize(float fHeight);
 
  private:
   void SetCheckState(int32_t iCheck);
@@ -69,7 +69,7 @@ class CFWL_CheckBox : public CFWL_Widget {
   uint32_t m_dwTTOStyles;
   int32_t m_iTTOAlign;
   bool m_bBtnDown;
-  FX_FLOAT m_fBoxHeight;
+  float m_fBoxHeight;
 };
 
 #endif  // XFA_FWL_CFWL_CHECKBOX_H_

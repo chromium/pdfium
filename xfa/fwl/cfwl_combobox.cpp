@@ -376,7 +376,7 @@ void CFWL_ComboBox::Layout() {
   if (!theme)
     return;
 
-  FX_FLOAT fBtn = theme->GetScrollBarWidth();
+  float fBtn = theme->GetScrollBarWidth();
   m_rtBtn = CFX_RectF(m_rtClient.right() - fBtn, m_rtClient.top, fBtn,
                       m_rtClient.height);
   if (!IsDropDownStyle() || !m_pEdit)
@@ -543,13 +543,13 @@ void CFWL_ComboBox::DisForm_ShowDropList(bool bActivate) {
     ResetListItemAlignment();
     pComboList->ChangeSelected(m_iCurSel);
 
-    FX_FLOAT fItemHeight = pComboList->CalcItemHeight();
-    FX_FLOAT fBorder = GetBorderSize(true);
-    FX_FLOAT fPopupMin = 0.0f;
+    float fItemHeight = pComboList->CalcItemHeight();
+    float fBorder = GetBorderSize(true);
+    float fPopupMin = 0.0f;
     if (iItems > 3)
       fPopupMin = fItemHeight * 3 + fBorder * 2;
 
-    FX_FLOAT fPopupMax = fItemHeight * iItems + fBorder * 2;
+    float fPopupMax = fItemHeight * iItems + fBorder * 2;
     CFX_RectF rtList(m_rtClient.left, 0, m_pProperties->m_rtWidget.width, 0);
     GetPopupPos(fPopupMin, fPopupMax, m_pProperties->m_rtWidget, rtList);
 
@@ -666,8 +666,8 @@ void CFWL_ComboBox::DisForm_Layout() {
   if (!theme)
     return;
 
-  FX_FLOAT borderWidth = 1;
-  FX_FLOAT fBtn = theme->GetScrollBarWidth();
+  float borderWidth = 1;
+  float fBtn = theme->GetScrollBarWidth();
   if (!(GetStylesEx() & FWL_STYLEEXT_CMB_ReadOnly)) {
     m_rtBtn =
         CFX_RectF(m_rtClient.right() - fBtn, m_rtClient.top + borderWidth,

@@ -122,7 +122,7 @@ void CScript_LayoutPseudoModel::HWXY(CFXJSE_Arguments* pArguments,
       break;
   }
   XFA_UNIT unit = measure.GetUnit(wsUnit.AsStringC());
-  FX_FLOAT fValue = measure.ToUnit(unit);
+  float fValue = measure.ToUnit(unit);
   fValue = FXSYS_round(fValue * 1000) / 1000.0f;
   if (pValue)
     pValue->SetFloat(fValue);

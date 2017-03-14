@@ -35,7 +35,7 @@ DLLEXPORT FPDF_BOOL FPDFPath_SetStrokeColor(FPDF_PAGEOBJECT path,
 
   auto* pPathObj = reinterpret_cast<CPDF_PathObject*>(path);
   pPathObj->m_GeneralState.SetStrokeAlpha(A / 255.f);
-  FX_FLOAT rgb[3] = {R / 255.f, G / 255.f, B / 255.f};
+  float rgb[3] = {R / 255.f, G / 255.f, B / 255.f};
   pPathObj->m_ColorState.SetStrokeColor(
       CPDF_ColorSpace::GetStockCS(PDFCS_DEVICERGB), rgb, 3);
   return true;
@@ -60,7 +60,7 @@ DLLEXPORT FPDF_BOOL FPDFPath_SetFillColor(FPDF_PAGEOBJECT path,
 
   auto* pPathObj = reinterpret_cast<CPDF_PathObject*>(path);
   pPathObj->m_GeneralState.SetFillAlpha(A / 255.f);
-  FX_FLOAT rgb[3] = {R / 255.f, G / 255.f, B / 255.f};
+  float rgb[3] = {R / 255.f, G / 255.f, B / 255.f};
   pPathObj->m_ColorState.SetFillColor(
       CPDF_ColorSpace::GetStockCS(PDFCS_DEVICERGB), rgb, 3);
   return true;

@@ -23,10 +23,10 @@ class CPDF_Font;
 class CPDF_TextRenderer {
  public:
   static void DrawTextString(CFX_RenderDevice* pDevice,
-                             FX_FLOAT origin_x,
-                             FX_FLOAT origin_y,
+                             float origin_x,
+                             float origin_y,
                              CPDF_Font* pFont,
-                             FX_FLOAT font_size,
+                             float font_size,
                              const CFX_Matrix* matrix,
                              const CFX_ByteString& str,
                              FX_ARGB fill_argb,
@@ -35,9 +35,9 @@ class CPDF_TextRenderer {
 
   static bool DrawTextPath(CFX_RenderDevice* pDevice,
                            const std::vector<uint32_t>& charCodes,
-                           const std::vector<FX_FLOAT>& charPos,
+                           const std::vector<float>& charPos,
                            CPDF_Font* pFont,
-                           FX_FLOAT font_size,
+                           float font_size,
                            const CFX_Matrix* pText2User,
                            const CFX_Matrix* pUser2Device,
                            const CFX_GraphStateData* pGraphState,
@@ -48,9 +48,9 @@ class CPDF_TextRenderer {
 
   static bool DrawNormalText(CFX_RenderDevice* pDevice,
                              const std::vector<uint32_t>& charCodes,
-                             const std::vector<FX_FLOAT>& charPos,
+                             const std::vector<float>& charPos,
                              CPDF_Font* pFont,
-                             FX_FLOAT font_size,
+                             float font_size,
                              const CFX_Matrix* pText2Device,
                              FX_ARGB fill_argb,
                              const CPDF_RenderOptions* pOptions);

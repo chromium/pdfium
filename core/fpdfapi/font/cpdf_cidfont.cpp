@@ -823,7 +823,7 @@ void CPDF_CIDFont::LoadMetricsArray(CPDF_Array* pArray,
 }
 
 // static
-FX_FLOAT CPDF_CIDFont::CIDTransformToFloat(uint8_t ch) {
+float CPDF_CIDFont::CIDTransformToFloat(uint8_t ch) {
   return (ch < 128 ? ch : ch - 255) * (1.0f / 127);
 }
 

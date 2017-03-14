@@ -73,7 +73,7 @@ class CPDF_StructElement final : public CFX_Retainable,
   CPDF_Object* GetAttr(const CFX_ByteStringC& owner,
                        const CFX_ByteStringC& name,
                        bool bInheritable = false,
-                       FX_FLOAT fLevel = 0.0F) override;
+                       float fLevel = 0.0F) override;
   CFX_ByteString GetName(const CFX_ByteStringC& owner,
                          const CFX_ByteStringC& name,
                          const CFX_ByteStringC& default_value,
@@ -84,11 +84,11 @@ class CPDF_StructElement final : public CFX_Retainable,
                    FX_ARGB default_value,
                    bool bInheritable = false,
                    int subindex = -1) override;
-  FX_FLOAT GetNumber(const CFX_ByteStringC& owner,
-                     const CFX_ByteStringC& name,
-                     FX_FLOAT default_value,
-                     bool bInheritable = false,
-                     int subindex = -1) override;
+  float GetNumber(const CFX_ByteStringC& owner,
+                  const CFX_ByteStringC& name,
+                  float default_value,
+                  bool bInheritable = false,
+                  int subindex = -1) override;
   int GetInteger(const CFX_ByteStringC& owner,
                  const CFX_ByteStringC& name,
                  int default_value,

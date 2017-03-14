@@ -206,8 +206,7 @@ FPDFPageObj_TransformClipPath(FPDF_PAGEOBJECT page_object,
   CPDF_PageObject* pPageObj = (CPDF_PageObject*)page_object;
   if (!pPageObj)
     return;
-  CFX_Matrix matrix((FX_FLOAT)a, (FX_FLOAT)b, (FX_FLOAT)c, (FX_FLOAT)d,
-                    (FX_FLOAT)e, (FX_FLOAT)f);
+  CFX_Matrix matrix((float)a, (float)b, (float)c, (float)d, (float)e, (float)f);
 
   // Special treatment to shading object, because the ClipPath for shading
   // object is already transformed.

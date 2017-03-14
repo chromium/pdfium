@@ -199,7 +199,7 @@ bool CGdiPrinterDriver::DrawDeviceText(int nChars,
                                        const FXTEXT_CHARPOS* pCharPos,
                                        CFX_Font* pFont,
                                        const CFX_Matrix* pObject2Device,
-                                       FX_FLOAT font_size,
+                                       float font_size,
                                        uint32_t color) {
 #if defined(PDFIUM_PRINT_TEXT_WITH_GDI)
   if (!g_pdfium_print_text_with_gdi)
@@ -287,7 +287,7 @@ bool CGdiPrinterDriver::DrawDeviceText(int nChars,
   // Text
   CFX_WideString wsText;
   std::vector<INT> spacing(nChars);
-  FX_FLOAT fPreviousOriginX = 0;
+  float fPreviousOriginX = 0;
   for (int i = 0; i < nChars; ++i) {
     // Only works with PDFs from Skia's PDF generator. Cannot handle arbitrary
     // values from PDFs.
@@ -300,8 +300,8 @@ bool CGdiPrinterDriver::DrawDeviceText(int nChars,
 
     // Round the spacing to the nearest integer, but keep track of the rounding
     // error for calculating the next spacing value.
-    FX_FLOAT fOriginX = charpos.m_Origin.x * kScaleFactor;
-    FX_FLOAT fPixelSpacing = fOriginX - fPreviousOriginX;
+    float fOriginX = charpos.m_Origin.x * kScaleFactor;
+    float fPixelSpacing = fOriginX - fPreviousOriginX;
     spacing[i] = FXSYS_round(fPixelSpacing);
     fPreviousOriginX = fOriginX - (fPixelSpacing - spacing[i]);
 
@@ -349,10 +349,10 @@ CPSPrinterDriver::CPSPrinterDriver(HDC hDC, int pslevel, bool bCmykOutput)
         for (uint32_t i = 0; i < pData->rdh.nCount; i++) {
           RECT* pRect =
               reinterpret_cast<RECT*>(pData->Buffer + pData->rdh.nRgnSize * i);
-          path.AppendRect(static_cast<FX_FLOAT>(pRect->left),
-                          static_cast<FX_FLOAT>(pRect->bottom),
-                          static_cast<FX_FLOAT>(pRect->right),
-                          static_cast<FX_FLOAT>(pRect->top));
+          path.AppendRect(static_cast<float>(pRect->left),
+                          static_cast<float>(pRect->bottom),
+                          static_cast<float>(pRect->right),
+                          static_cast<float>(pRect->top));
         }
         m_PSRenderer.SetClip_PathFill(&path, nullptr, FXFILL_WINDING);
       }
@@ -483,7 +483,7 @@ bool CPSPrinterDriver::DrawDeviceText(int nChars,
                                       const FXTEXT_CHARPOS* pCharPos,
                                       CFX_Font* pFont,
                                       const CFX_Matrix* pObject2Device,
-                                      FX_FLOAT font_size,
+                                      float font_size,
                                       uint32_t color) {
   return m_PSRenderer.DrawText(nChars, pCharPos, pFont, pObject2Device,
                                font_size, color);

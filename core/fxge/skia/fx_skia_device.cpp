@@ -368,7 +368,7 @@ bool AddColors(const CPDF_ExpIntFunc* pFunc, SkTDArray<SkColor>* skColors) {
   return true;
 }
 
-uint8_t FloatToByte(FX_FLOAT f) {
+uint8_t FloatToByte(float f) {
   ASSERT(0 <= f && f <= 1);
   return (uint8_t)(f * 255.99f);
 }
@@ -395,25 +395,25 @@ bool AddSamples(const CPDF_SampledFunc* pFunc,
   if (pFunc->GetSampleStream()->GetSize() < sampleCount * 3 * sampleSize / 8)
     return false;
 
-  FX_FLOAT colorsMin[3];
-  FX_FLOAT colorsMax[3];
+  float colorsMin[3];
+  float colorsMax[3];
   for (int i = 0; i < 3; ++i) {
     colorsMin[i] = pFunc->GetRange(i * 2);
     colorsMax[i] = pFunc->GetRange(i * 2 + 1);
   }
   const uint8_t* pSampleData = pFunc->GetSampleStream()->GetData();
   for (uint32_t i = 0; i < sampleCount; ++i) {
-    FX_FLOAT floatColors[3];
+    float floatColors[3];
     for (uint32_t j = 0; j < 3; ++j) {
       int sample = GetBits32(pSampleData, (i * 3 + j) * sampleSize, sampleSize);
-      FX_FLOAT interp = (FX_FLOAT)sample / (sampleCount - 1);
+      float interp = (float)sample / (sampleCount - 1);
       floatColors[j] = colorsMin[j] + (colorsMax[j] - colorsMin[j]) * interp;
     }
     SkColor color =
         SkPackARGB32(0xFF, FloatToByte(floatColors[0]),
                      FloatToByte(floatColors[1]), FloatToByte(floatColors[2]));
     skColors->push(color);
-    skPos->push((FX_FLOAT)i / (sampleCount - 1));
+    skPos->push((float)i / (sampleCount - 1));
   }
   return true;
 }
@@ -421,7 +421,7 @@ bool AddSamples(const CPDF_SampledFunc* pFunc,
 bool AddStitching(const CPDF_StitchFunc* pFunc,
                   SkTDArray<SkColor>* skColors,
                   SkTDArray<SkScalar>* skPos) {
-  FX_FLOAT boundsStart = pFunc->GetDomain(0);
+  float boundsStart = pFunc->GetDomain(0);
 
   const auto& subFunctions = pFunc->GetSubFunctions();
   int subFunctionCount = subFunctions.size();
@@ -431,7 +431,7 @@ bool AddStitching(const CPDF_StitchFunc* pFunc,
       return false;
     if (!AddColors(pSubFunc, skColors))
       return false;
-    FX_FLOAT boundsEnd =
+    float boundsEnd =
         i < subFunctionCount - 1 ? pFunc->GetBound(i + 1) : pFunc->GetDomain(1);
     skPos->push(boundsStart);
     skPos->push(boundsEnd);
@@ -771,7 +771,7 @@ class SkiaState {
                 const FXTEXT_CHARPOS* pCharPos,
                 CFX_Font* pFont,
                 const CFX_Matrix* pMatrix,
-                FX_FLOAT font_size,
+                float font_size,
                 uint32_t color) {
     if (m_debugDisable)
       return false;
@@ -973,7 +973,7 @@ class SkiaState {
 
   bool FontChanged(CFX_Font* pFont,
                    const CFX_Matrix* pMatrix,
-                   FX_FLOAT font_size,
+                   float font_size,
                    uint32_t color) const {
     return pFont != m_pFont || MatrixChanged(pMatrix, m_drawMatrix) ||
            font_size != m_fontSize || color != m_fillColor;
@@ -1118,7 +1118,7 @@ class SkiaState {
   CFX_Matrix m_clipMatrix;
   CFX_SkiaDeviceDriver* m_pDriver;
   CFX_Font* m_pFont;
-  FX_FLOAT m_fontSize;
+  float m_fontSize;
   uint32_t m_fillColor;
   uint32_t m_strokeColor;
   int m_blendType;
@@ -1170,7 +1170,7 @@ void CFX_SkiaDeviceDriver::PaintStroke(SkPaint* spaint,
   inverse.set(SkMatrix::kMTransY, 0);
   SkVector deviceUnits[2] = {{0, 1}, {1, 0}};
   inverse.mapPoints(deviceUnits, SK_ARRAY_COUNT(deviceUnits));
-  FX_FLOAT width =
+  float width =
       SkTMax(pGraphState->m_LineWidth,
              SkTMin(deviceUnits[0].length(), deviceUnits[1].length()));
   if (pGraphState->m_DashArray) {
@@ -1178,12 +1178,12 @@ void CFX_SkiaDeviceDriver::PaintStroke(SkPaint* spaint,
     SkScalar* intervals = FX_Alloc2D(SkScalar, count, sizeof(SkScalar));
     // Set dash pattern
     for (int i = 0; i < count; i++) {
-      FX_FLOAT on = pGraphState->m_DashArray[i * 2];
+      float on = pGraphState->m_DashArray[i * 2];
       if (on <= 0.000001f)
         on = 1.f / 10;
-      FX_FLOAT off = i * 2 + 1 == pGraphState->m_DashCount
-                         ? on
-                         : pGraphState->m_DashArray[i * 2 + 1];
+      float off = i * 2 + 1 == pGraphState->m_DashCount
+                      ? on
+                      : pGraphState->m_DashArray[i * 2 + 1];
       if (off < 0)
         off = 0;
       intervals[i * 2] = on;
@@ -1261,7 +1261,7 @@ bool CFX_SkiaDeviceDriver::DrawDeviceText(int nChars,
                                           const FXTEXT_CHARPOS* pCharPos,
                                           CFX_Font* pFont,
                                           const CFX_Matrix* pObject2Device,
-                                          FX_FLOAT font_size,
+                                          float font_size,
                                           uint32_t color) {
   if (m_pCache->DrawText(nChars, pCharPos, pFont, pObject2Device, font_size,
                          color)) {
@@ -1435,9 +1435,9 @@ bool CFX_SkiaDeviceDriver::SetClip_PathFill(
       pPathData->GetPoints().size() == 4) {
     CFX_FloatRect rectf;
     if (pPathData->IsRect(deviceMatrix, &rectf)) {
-      rectf.Intersect(
-          CFX_FloatRect(0, 0, (FX_FLOAT)GetDeviceCaps(FXDC_PIXEL_WIDTH),
-                        (FX_FLOAT)GetDeviceCaps(FXDC_PIXEL_HEIGHT)));
+      rectf.Intersect(CFX_FloatRect(0, 0,
+                                    (float)GetDeviceCaps(FXDC_PIXEL_WIDTH),
+                                    (float)GetDeviceCaps(FXDC_PIXEL_HEIGHT)));
       // note that PDF's y-axis goes up; Skia's y-axis goes down
       if (!cached) {
         SkRect skClipRect =
@@ -1573,10 +1573,10 @@ bool CFX_SkiaDeviceDriver::DrawPath(
   return true;
 }
 
-bool CFX_SkiaDeviceDriver::DrawCosmeticLine(FX_FLOAT x1,
-                                            FX_FLOAT y1,
-                                            FX_FLOAT x2,
-                                            FX_FLOAT y2,
+bool CFX_SkiaDeviceDriver::DrawCosmeticLine(float x1,
+                                            float y1,
+                                            float x2,
+                                            float y2,
                                             uint32_t color,
                                             int blend_type) {
   return false;
@@ -1661,10 +1661,10 @@ bool CFX_SkiaDeviceDriver::DrawShading(const CPDF_ShadingPattern* pPattern,
   SkPath skClip;
   SkPath skPath;
   if (kAxialShading == shadingType) {
-    FX_FLOAT start_x = pCoords->GetNumberAt(0);
-    FX_FLOAT start_y = pCoords->GetNumberAt(1);
-    FX_FLOAT end_x = pCoords->GetNumberAt(2);
-    FX_FLOAT end_y = pCoords->GetNumberAt(3);
+    float start_x = pCoords->GetNumberAt(0);
+    float start_y = pCoords->GetNumberAt(1);
+    float end_x = pCoords->GetNumberAt(2);
+    float end_y = pCoords->GetNumberAt(3);
     SkPoint pts[] = {{start_x, start_y}, {end_x, end_y}};
     skMatrix.mapPoints(pts, SK_ARRAY_COUNT(pts));
     paint.setShader(SkGradientShader::MakeLinear(
@@ -1701,12 +1701,12 @@ bool CFX_SkiaDeviceDriver::DrawShading(const CPDF_ShadingPattern* pPattern,
     skPath.addRect(skRect);
     skMatrix.setIdentity();
   } else if (kRadialShading == shadingType) {
-    FX_FLOAT start_x = pCoords->GetNumberAt(0);
-    FX_FLOAT start_y = pCoords->GetNumberAt(1);
-    FX_FLOAT start_r = pCoords->GetNumberAt(2);
-    FX_FLOAT end_x = pCoords->GetNumberAt(3);
-    FX_FLOAT end_y = pCoords->GetNumberAt(4);
-    FX_FLOAT end_r = pCoords->GetNumberAt(5);
+    float start_x = pCoords->GetNumberAt(0);
+    float start_y = pCoords->GetNumberAt(1);
+    float start_r = pCoords->GetNumberAt(2);
+    float end_x = pCoords->GetNumberAt(3);
+    float end_y = pCoords->GetNumberAt(4);
+    float end_r = pCoords->GetNumberAt(5);
     SkPoint pts[] = {{start_x, start_y}, {end_x, end_y}};
 
     paint.setShader(SkGradientShader::MakeTwoPointConical(
@@ -1761,9 +1761,9 @@ bool CFX_SkiaDeviceDriver::DrawShading(const CPDF_ShadingPattern* pPattern,
         cubics[i].fY = point.y;
       }
       for (int i = iStartColor; i < (int)SK_ARRAY_COUNT(colors); i++) {
-        FX_FLOAT r;
-        FX_FLOAT g;
-        FX_FLOAT b;
+        float r;
+        float g;
+        float b;
         std::tie(r, g, b) = stream.ReadColor();
         colors[i] = SkColorSetARGBInline(0xFF, (U8CPU)(r * 255),
                                          (U8CPU)(g * 255), (U8CPU)(b * 255));

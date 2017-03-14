@@ -415,7 +415,7 @@ CFX_ByteString CPDF_StreamContentParser::GetString(uint32_t index) {
   return CFX_ByteString();
 }
 
-FX_FLOAT CPDF_StreamContentParser::GetNumber(uint32_t index) {
+float CPDF_StreamContentParser::GetNumber(uint32_t index) {
   if (index >= m_ParamCount) {
     return 0;
   }
@@ -425,7 +425,7 @@ FX_FLOAT CPDF_StreamContentParser::GetNumber(uint32_t index) {
   }
   ContentParam& param = m_ParamBuf[real_index];
   if (param.m_Type == ContentParam::NUMBER) {
-    return param.m_Number.m_bInteger ? (FX_FLOAT)param.m_Number.m_Integer
+    return param.m_Number.m_bInteger ? (float)param.m_Number.m_Integer
                                      : param.m_Number.m_Float;
   }
   if (param.m_Type == 0 && param.m_pObject) {
@@ -864,13 +864,13 @@ void CPDF_StreamContentParser::Handle_EOFillPath() {
 }
 
 void CPDF_StreamContentParser::Handle_SetGray_Fill() {
-  FX_FLOAT value = GetNumber(0);
+  float value = GetNumber(0);
   CPDF_ColorSpace* pCS = CPDF_ColorSpace::GetStockCS(PDFCS_DEVICEGRAY);
   m_pCurStates->m_ColorState.SetFillColor(pCS, &value, 1);
 }
 
 void CPDF_StreamContentParser::Handle_SetGray_Stroke() {
-  FX_FLOAT value = GetNumber(0);
+  float value = GetNumber(0);
   CPDF_ColorSpace* pCS = CPDF_ColorSpace::GetStockCS(PDFCS_DEVICEGRAY);
   m_pCurStates->m_ColorState.SetStrokeColor(pCS, &value, 1);
 }
@@ -916,7 +916,7 @@ void CPDF_StreamContentParser::Handle_SetCMYKColor_Fill() {
   if (m_ParamCount != 4)
     return;
 
-  FX_FLOAT values[4];
+  float values[4];
   for (int i = 0; i < 4; i++) {
     values[i] = GetNumber(3 - i);
   }
@@ -928,7 +928,7 @@ void CPDF_StreamContentParser::Handle_SetCMYKColor_Stroke() {
   if (m_ParamCount != 4)
     return;
 
-  FX_FLOAT values[4];
+  float values[4];
   for (int i = 0; i < 4; i++) {
     values[i] = GetNumber(3 - i);
   }
@@ -976,15 +976,12 @@ void CPDF_StreamContentParser::Handle_RestoreGraphState() {
 }
 
 void CPDF_StreamContentParser::Handle_Rectangle() {
-  FX_FLOAT x = GetNumber(3), y = GetNumber(2);
-  FX_FLOAT w = GetNumber(1), h = GetNumber(0);
+  float x = GetNumber(3), y = GetNumber(2);
+  float w = GetNumber(1), h = GetNumber(0);
   AddPathRect(x, y, w, h);
 }
 
-void CPDF_StreamContentParser::AddPathRect(FX_FLOAT x,
-                                           FX_FLOAT y,
-                                           FX_FLOAT w,
-                                           FX_FLOAT h) {
+void CPDF_StreamContentParser::AddPathRect(float x, float y, float w, float h) {
   AddPathPoint(x, y, FXPT_TYPE::MoveTo, false);
   AddPathPoint(x + w, y, FXPT_TYPE::LineTo, false);
   AddPathPoint(x + w, y + h, FXPT_TYPE::LineTo, false);
@@ -996,7 +993,7 @@ void CPDF_StreamContentParser::Handle_SetRGBColor_Fill() {
   if (m_ParamCount != 3)
     return;
 
-  FX_FLOAT values[3];
+  float values[3];
   for (int i = 0; i < 3; i++) {
     values[i] = GetNumber(2 - i);
   }
@@ -1008,7 +1005,7 @@ void CPDF_StreamContentParser::Handle_SetRGBColor_Stroke() {
   if (m_ParamCount != 3)
     return;
 
-  FX_FLOAT values[3];
+  float values[3];
   for (int i = 0; i < 3; i++) {
     values[i] = GetNumber(2 - i);
   }
@@ -1028,7 +1025,7 @@ void CPDF_StreamContentParser::Handle_StrokePath() {
 }
 
 void CPDF_StreamContentParser::Handle_SetColor_Fill() {
-  FX_FLOAT values[4];
+  float values[4];
   int nargs = m_ParamCount;
   if (nargs > 4) {
     nargs = 4;
@@ -1040,7 +1037,7 @@ void CPDF_StreamContentParser::Handle_SetColor_Fill() {
 }
 
 void CPDF_StreamContentParser::Handle_SetColor_Stroke() {
-  FX_FLOAT values[4];
+  float values[4];
   int nargs = m_ParamCount;
   if (nargs > 4) {
     nargs = 4;
@@ -1060,9 +1057,9 @@ void CPDF_StreamContentParser::Handle_SetColorPS_Fill() {
   uint32_t nvalues = nargs;
   if (pLastParam->IsName())
     nvalues--;
-  FX_FLOAT* values = nullptr;
+  float* values = nullptr;
   if (nvalues) {
-    values = FX_Alloc(FX_FLOAT, nvalues);
+    values = FX_Alloc(float, nvalues);
     for (uint32_t i = 0; i < nvalues; i++) {
       values[i] = GetNumber(nargs - i - 1);
     }
@@ -1088,9 +1085,9 @@ void CPDF_StreamContentParser::Handle_SetColorPS_Stroke() {
   if (pLastParam->IsName())
     nvalues--;
 
-  FX_FLOAT* values = nullptr;
+  float* values = nullptr;
   if (nvalues) {
-    values = FX_Alloc(FX_FLOAT, nvalues);
+    values = FX_Alloc(float, nvalues);
     for (int i = 0; i < nvalues; i++) {
       values[i] = GetNumber(nargs - i - 1);
     }
@@ -1149,7 +1146,7 @@ void CPDF_StreamContentParser::Handle_MoveTextPoint_SetLeading() {
 }
 
 void CPDF_StreamContentParser::Handle_SetFont() {
-  FX_FLOAT fs = GetNumber(0);
+  float fs = GetNumber(0);
   if (fs == 0) {
     fs = m_DefFontSize;
   }
@@ -1231,8 +1228,8 @@ CPDF_Pattern* CPDF_StreamContentParser::FindPattern(const CFX_ByteString& name,
 }
 
 void CPDF_StreamContentParser::AddTextObject(CFX_ByteString* pStrs,
-                                             FX_FLOAT fInitKerning,
-                                             FX_FLOAT* pKerning,
+                                             float fInitKerning,
+                                             float* pKerning,
                                              int nsegs) {
   CPDF_Font* pFont = m_pCurStates->m_TextState.GetFont();
   if (!pFont) {
@@ -1260,7 +1257,7 @@ void CPDF_StreamContentParser::AddTextObject(CFX_ByteString* pStrs,
     m_pLastTextObject = pText.get();
     SetGraphicStates(m_pLastTextObject, true, true, true);
     if (TextRenderingModeIsStrokeMode(text_mode)) {
-      FX_FLOAT* pCTM = pText->m_TextState.GetMutableCTM();
+      float* pCTM = pText->m_TextState.GetMutableCTM();
       pCTM[0] = m_pCurStates->m_CTM.a;
       pCTM[1] = m_pCurStates->m_CTM.c;
       pCTM[2] = m_pCurStates->m_CTM.b;
@@ -1323,9 +1320,9 @@ void CPDF_StreamContentParser::Handle_ShowText_Positioning() {
     return;
   }
   CFX_ByteString* pStrs = new CFX_ByteString[nsegs];
-  FX_FLOAT* pKerning = FX_Alloc(FX_FLOAT, nsegs);
+  float* pKerning = FX_Alloc(float, nsegs);
   size_t iSegment = 0;
-  FX_FLOAT fInitKerning = 0;
+  float fInitKerning = 0;
   for (size_t i = 0; i < n; i++) {
     CPDF_Object* pObj = pArray->GetDirectObjectAt(i);
     if (pObj->IsString()) {
@@ -1336,7 +1333,7 @@ void CPDF_StreamContentParser::Handle_ShowText_Positioning() {
       pStrs[iSegment] = str;
       pKerning[iSegment++] = 0;
     } else {
-      FX_FLOAT num = pObj ? pObj->GetNumber() : 0;
+      float num = pObj ? pObj->GetNumber() : 0;
       if (iSegment == 0) {
         fInitKerning += num;
       } else {
@@ -1368,7 +1365,7 @@ void CPDF_StreamContentParser::OnChangeTextMatrix() {
   text_matrix.Concat(m_pCurStates->m_TextMatrix);
   text_matrix.Concat(m_pCurStates->m_CTM);
   text_matrix.Concat(m_mtContentToUser);
-  FX_FLOAT* pTextMatrix = m_pCurStates->m_TextState.GetMutableMatrix();
+  float* pTextMatrix = m_pCurStates->m_TextState.GetMutableMatrix();
   pTextMatrix[0] = text_matrix.a;
   pTextMatrix[1] = text_matrix.c;
   pTextMatrix[2] = text_matrix.b;
@@ -1439,8 +1436,8 @@ void CPDF_StreamContentParser::Handle_NextLineShowText_Space() {
 
 void CPDF_StreamContentParser::Handle_Invalid() {}
 
-void CPDF_StreamContentParser::AddPathPoint(FX_FLOAT x,
-                                            FX_FLOAT y,
+void CPDF_StreamContentParser::AddPathPoint(float x,
+                                            float y,
                                             FXPT_TYPE type,
                                             bool close) {
   m_PathCurrentX = x;
@@ -1553,7 +1550,7 @@ uint32_t CPDF_StreamContentParser::Parse(const uint8_t* pData,
 }
 
 void CPDF_StreamContentParser::ParsePathObject() {
-  FX_FLOAT params[6] = {};
+  float params[6] = {};
   int nParams = 0;
   int last_pos = m_pSyntax->GetPos();
   while (1) {
@@ -1624,7 +1621,7 @@ void CPDF_StreamContentParser::ParsePathObject() {
 
         int value;
         bool bInteger = FX_atonum(m_pSyntax->GetWord(), &value);
-        params[nParams++] = bInteger ? (FX_FLOAT)value : *(FX_FLOAT*)&value;
+        params[nParams++] = bInteger ? (float)value : *(float*)&value;
         break;
       }
       default:

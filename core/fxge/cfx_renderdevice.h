@@ -68,7 +68,7 @@ class FXTEXT_CHARPOS {
   FXTEXT_CHARPOS(const FXTEXT_CHARPOS&);
   ~FXTEXT_CHARPOS();
 
-  FX_FLOAT m_AdjustMatrix[4];
+  float m_AdjustMatrix[4];
   CFX_PointF m_Origin;
   uint32_t m_GlyphIndex;
   int32_t m_FontCharWidth;
@@ -132,10 +132,10 @@ class CFX_RenderDevice {
     return FillRectWithBlend(pRect, color, FXDIB_BLEND_NORMAL);
   }
   bool FillRectWithBlend(const FX_RECT* pRect, uint32_t color, int blend_type);
-  bool DrawCosmeticLine(FX_FLOAT x1,
-                        FX_FLOAT y1,
-                        FX_FLOAT x2,
-                        FX_FLOAT y2,
+  bool DrawCosmeticLine(float x1,
+                        float y1,
+                        float x2,
+                        float y2,
                         uint32_t color,
                         int fill_mode,
                         int blend_type);
@@ -203,14 +203,14 @@ class CFX_RenderDevice {
   bool DrawNormalText(int nChars,
                       const FXTEXT_CHARPOS* pCharPos,
                       CFX_Font* pFont,
-                      FX_FLOAT font_size,
+                      float font_size,
                       const CFX_Matrix* pText2Device,
                       uint32_t fill_color,
                       uint32_t text_flags);
   bool DrawTextPath(int nChars,
                     const FXTEXT_CHARPOS* pCharPos,
                     CFX_Font* pFont,
-                    FX_FLOAT font_size,
+                    float font_size,
                     const CFX_Matrix* pText2User,
                     const CFX_Matrix* pUser2Device,
                     const CFX_GraphStateData* pGraphState,

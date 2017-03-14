@@ -14,7 +14,7 @@ namespace {
 void UpdateLineEndPoints(CFX_FloatRect* rect,
                          const CFX_PointF& start_pos,
                          const CFX_PointF& end_pos,
-                         FX_FLOAT hw) {
+                         float hw) {
   if (start_pos.x == end_pos.x) {
     if (start_pos.y == end_pos.y) {
       rect->UpdateRect(end_pos.x + hw, end_pos.y + hw);
@@ -22,7 +22,7 @@ void UpdateLineEndPoints(CFX_FloatRect* rect,
       return;
     }
 
-    FX_FLOAT point_y;
+    float point_y;
     if (end_pos.y < start_pos.y)
       point_y = end_pos.y - hw;
     else
@@ -34,7 +34,7 @@ void UpdateLineEndPoints(CFX_FloatRect* rect,
   }
 
   if (start_pos.y == end_pos.y) {
-    FX_FLOAT point_x;
+    float point_x;
     if (end_pos.x < start_pos.x)
       point_x = end_pos.x - hw;
     else
@@ -46,11 +46,11 @@ void UpdateLineEndPoints(CFX_FloatRect* rect,
   }
 
   CFX_PointF diff = end_pos - start_pos;
-  FX_FLOAT ll = FXSYS_sqrt2(diff.x, diff.y);
-  FX_FLOAT mx = end_pos.x + hw * diff.x / ll;
-  FX_FLOAT my = end_pos.y + hw * diff.y / ll;
-  FX_FLOAT dx1 = hw * diff.y / ll;
-  FX_FLOAT dy1 = hw * diff.x / ll;
+  float ll = FXSYS_sqrt2(diff.x, diff.y);
+  float mx = end_pos.x + hw * diff.x / ll;
+  float my = end_pos.y + hw * diff.y / ll;
+  float dx1 = hw * diff.y / ll;
+  float dy1 = hw * diff.x / ll;
   rect->UpdateRect(mx - dx1, my + dy1);
   rect->UpdateRect(mx + dx1, my - dy1);
 }
@@ -59,23 +59,23 @@ void UpdateLineJoinPoints(CFX_FloatRect* rect,
                           const CFX_PointF& start_pos,
                           const CFX_PointF& mid_pos,
                           const CFX_PointF& end_pos,
-                          FX_FLOAT half_width,
-                          FX_FLOAT miter_limit) {
-  FX_FLOAT start_k = 0;
-  FX_FLOAT start_c = 0;
-  FX_FLOAT end_k = 0;
-  FX_FLOAT end_c = 0;
-  FX_FLOAT start_len = 0;
-  FX_FLOAT start_dc = 0;
-  FX_FLOAT end_len = 0;
-  FX_FLOAT end_dc = 0;
-  FX_FLOAT one_twentieth = 1.0f / 20;
+                          float half_width,
+                          float miter_limit) {
+  float start_k = 0;
+  float start_c = 0;
+  float end_k = 0;
+  float end_c = 0;
+  float start_len = 0;
+  float start_dc = 0;
+  float end_len = 0;
+  float end_dc = 0;
+  float one_twentieth = 1.0f / 20;
 
   bool bStartVert = FXSYS_fabs(start_pos.x - mid_pos.x) < one_twentieth;
   bool bEndVert = FXSYS_fabs(mid_pos.x - end_pos.x) < one_twentieth;
   if (bStartVert && bEndVert) {
     int start_dir = mid_pos.y > start_pos.y ? 1 : -1;
-    FX_FLOAT point_y = mid_pos.y + half_width * start_dir;
+    float point_y = mid_pos.y + half_width * start_dir;
     rect->UpdateRect(mid_pos.x + half_width, point_y);
     rect->UpdateRect(mid_pos.x - half_width, point_y);
     return;
@@ -86,8 +86,8 @@ void UpdateLineJoinPoints(CFX_FloatRect* rect,
     start_k = (mid_pos.y - start_pos.y) / (mid_pos.x - start_pos.x);
     start_c = mid_pos.y - (start_k * mid_pos.x);
     start_len = FXSYS_sqrt2(start_to_mid.x, start_to_mid.y);
-    start_dc = static_cast<FX_FLOAT>(
-        FXSYS_fabs(half_width * start_len / start_to_mid.x));
+    start_dc =
+        static_cast<float>(FXSYS_fabs(half_width * start_len / start_to_mid.x));
   }
   if (!bEndVert) {
     CFX_PointF end_to_mid = end_pos - mid_pos;
@@ -95,7 +95,7 @@ void UpdateLineJoinPoints(CFX_FloatRect* rect,
     end_c = mid_pos.y - (end_k * mid_pos.x);
     end_len = FXSYS_sqrt2(end_to_mid.x, end_to_mid.y);
     end_dc =
-        static_cast<FX_FLOAT>(FXSYS_fabs(half_width * end_len / end_to_mid.x));
+        static_cast<float>(FXSYS_fabs(half_width * end_len / end_to_mid.x));
   }
   if (bStartVert) {
     CFX_PointF outside(start_pos.x, 0);
@@ -139,20 +139,20 @@ void UpdateLineJoinPoints(CFX_FloatRect* rect,
     return;
   }
 
-  FX_FLOAT start_outside_c = start_c;
+  float start_outside_c = start_c;
   if (end_pos.y < (start_k * end_pos.x) + start_c)
     start_outside_c += start_dc;
   else
     start_outside_c -= start_dc;
 
-  FX_FLOAT end_outside_c = end_c;
+  float end_outside_c = end_c;
   if (start_pos.y < (end_k * start_pos.x) + end_c)
     end_outside_c += end_dc;
   else
     end_outside_c -= end_dc;
 
-  FX_FLOAT join_x = (end_outside_c - start_outside_c) / (start_k - end_k);
-  FX_FLOAT join_y = start_k * join_x + start_outside_c;
+  float join_x = (end_outside_c - start_outside_c) / (start_k - end_k);
+  float join_y = start_k * join_x + start_outside_c;
   rect->UpdateRect(join_x, join_y);
 }
 
@@ -203,10 +203,10 @@ void CFX_PathData::AppendPoint(const CFX_PointF& point,
   m_Points.push_back(FX_PATHPOINT(point, type, closeFigure));
 }
 
-void CFX_PathData::AppendRect(FX_FLOAT left,
-                              FX_FLOAT bottom,
-                              FX_FLOAT right,
-                              FX_FLOAT top) {
+void CFX_PathData::AppendRect(float left,
+                              float bottom,
+                              float right,
+                              float top) {
   m_Points.push_back(
       FX_PATHPOINT(CFX_PointF(left, bottom), FXPT_TYPE::MoveTo, false));
   m_Points.push_back(
@@ -230,11 +230,11 @@ CFX_FloatRect CFX_PathData::GetBoundingBox() const {
   return rect;
 }
 
-CFX_FloatRect CFX_PathData::GetBoundingBox(FX_FLOAT line_width,
-                                           FX_FLOAT miter_limit) const {
+CFX_FloatRect CFX_PathData::GetBoundingBox(float line_width,
+                                           float miter_limit) const {
   CFX_FloatRect rect(100000.0f, 100000.0f, -100000.0f, -100000.0f);
   size_t iPoint = 0;
-  FX_FLOAT half_width = line_width;
+  float half_width = line_width;
   int iStartPoint = 0;
   int iEndPoint = 0;
   int iMiddlePoint = 0;

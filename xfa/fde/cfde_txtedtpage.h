@@ -55,7 +55,7 @@ class CFDE_TxtEdtPage : public IFDE_VisualSet {
  private:
   void NormalizePt2Rect(CFX_PointF& ptF,
                         const CFX_RectF& rtF,
-                        FX_FLOAT fTolerance) const;
+                        float fTolerance) const;
 
   std::unique_ptr<IFX_CharIter> m_pIter;
   std::unique_ptr<CFDE_TxtEdtTextSet> m_pTextSet;

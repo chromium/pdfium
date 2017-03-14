@@ -438,8 +438,8 @@ CFX_WideString CFFL_FormFiller::LoadPopupMenuString(int nIndex) {
 CFX_FloatRect CFFL_FormFiller::GetPDFWindowRect() const {
   CFX_FloatRect rectAnnot = m_pWidget->GetPDFAnnot()->GetRect();
 
-  FX_FLOAT fWidth = rectAnnot.right - rectAnnot.left;
-  FX_FLOAT fHeight = rectAnnot.top - rectAnnot.bottom;
+  float fWidth = rectAnnot.right - rectAnnot.left;
+  float fHeight = rectAnnot.top - rectAnnot.bottom;
   if ((m_pWidget->GetRotate() / 90) & 0x01)
     return CFX_FloatRect(0, 0, fHeight, fWidth);
 

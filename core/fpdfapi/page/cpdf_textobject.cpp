@@ -44,7 +44,7 @@ void CPDF_TextObject::GetItemInfo(int index, CPDF_TextObjectItem* pInfo) const {
   short vy;
   pFont->AsCIDFont()->GetVertOrigin(CID, vx, vy);
 
-  FX_FLOAT fontsize = m_TextState.GetFontSize();
+  float fontsize = m_TextState.GetFontSize();
   pInfo->m_Origin.x -= fontsize * vx / 1000;
   pInfo->m_Origin.y -= fontsize * vy / 1000;
 }
@@ -60,7 +60,7 @@ int CPDF_TextObject::CountChars() const {
 
 void CPDF_TextObject::GetCharInfo(int index,
                                   uint32_t* charcode,
-                                  FX_FLOAT* kerning) const {
+                                  float* kerning) const {
   int count = 0;
   for (size_t i = 0; i < m_CharCodes.size(); ++i) {
     if (m_CharCodes[i] == CPDF_Font::kInvalidCharCode)
@@ -108,7 +108,7 @@ void CPDF_TextObject::Transform(const CFX_Matrix& matrix) {
   CFX_Matrix text_matrix = GetTextMatrix();
   text_matrix.Concat(matrix);
 
-  FX_FLOAT* pTextMatrix = m_TextState.GetMutableMatrix();
+  float* pTextMatrix = m_TextState.GetMutableMatrix();
   pTextMatrix[0] = text_matrix.a;
   pTextMatrix[1] = text_matrix.c;
   pTextMatrix[2] = text_matrix.b;
@@ -130,13 +130,13 @@ const CPDF_TextObject* CPDF_TextObject::AsText() const {
 }
 
 CFX_Matrix CPDF_TextObject::GetTextMatrix() const {
-  const FX_FLOAT* pTextMatrix = m_TextState.GetMatrix();
+  const float* pTextMatrix = m_TextState.GetMatrix();
   return CFX_Matrix(pTextMatrix[0], pTextMatrix[2], pTextMatrix[1],
                     pTextMatrix[3], m_Pos.x, m_Pos.y);
 }
 
 void CPDF_TextObject::SetSegments(const CFX_ByteString* pStrs,
-                                  const FX_FLOAT* pKerning,
+                                  const float* pKerning,
                                   int nsegs) {
   m_CharCodes.clear();
   m_CharPos.clear();
@@ -166,8 +166,8 @@ void CPDF_TextObject::SetText(const CFX_ByteString& str) {
   RecalcPositionData();
 }
 
-FX_FLOAT CPDF_TextObject::GetCharWidth(uint32_t charcode) const {
-  FX_FLOAT fontsize = m_TextState.GetFontSize() / 1000;
+float CPDF_TextObject::GetCharWidth(uint32_t charcode) const {
+  float fontsize = m_TextState.GetFontSize() / 1000;
   CPDF_Font* pFont = m_TextState.GetFont();
   bool bVertWriting = false;
   CPDF_CIDFont* pCIDFont = pFont->AsCIDFont();
@@ -184,23 +184,23 @@ CPDF_Font* CPDF_TextObject::GetFont() const {
   return m_TextState.GetFont();
 }
 
-FX_FLOAT CPDF_TextObject::GetFontSize() const {
+float CPDF_TextObject::GetFontSize() const {
   return m_TextState.GetFontSize();
 }
 
-CFX_PointF CPDF_TextObject::CalcPositionData(FX_FLOAT horz_scale) {
-  FX_FLOAT curpos = 0;
-  FX_FLOAT min_x = 10000 * 1.0f;
-  FX_FLOAT max_x = -10000 * 1.0f;
-  FX_FLOAT min_y = 10000 * 1.0f;
-  FX_FLOAT max_y = -10000 * 1.0f;
+CFX_PointF CPDF_TextObject::CalcPositionData(float horz_scale) {
+  float curpos = 0;
+  float min_x = 10000 * 1.0f;
+  float max_x = -10000 * 1.0f;
+  float min_y = 10000 * 1.0f;
+  float max_y = -10000 * 1.0f;
   CPDF_Font* pFont = m_TextState.GetFont();
   bool bVertWriting = false;
   CPDF_CIDFont* pCIDFont = pFont->AsCIDFont();
   if (pCIDFont)
     bVertWriting = pCIDFont->IsVertWriting();
 
-  FX_FLOAT fontsize = m_TextState.GetFontSize();
+  float fontsize = m_TextState.GetFontSize();
   for (int i = 0; i < pdfium::CollectionSize<int>(m_CharCodes); ++i) {
     uint32_t charcode = m_CharCodes[i];
     if (i > 0) {
@@ -212,14 +212,14 @@ CFX_PointF CPDF_TextObject::CalcPositionData(FX_FLOAT horz_scale) {
     }
 
     FX_RECT char_rect = pFont->GetCharBBox(charcode);
-    FX_FLOAT charwidth;
+    float charwidth;
     if (!bVertWriting) {
-      min_y = std::min(min_y, static_cast<FX_FLOAT>(
-                                  std::min(char_rect.top, char_rect.bottom)));
-      max_y = std::max(max_y, static_cast<FX_FLOAT>(
-                                  std::max(char_rect.top, char_rect.bottom)));
-      FX_FLOAT char_left = curpos + char_rect.left * fontsize / 1000;
-      FX_FLOAT char_right = curpos + char_rect.right * fontsize / 1000;
+      min_y = std::min(
+          min_y, static_cast<float>(std::min(char_rect.top, char_rect.bottom)));
+      max_y = std::max(
+          max_y, static_cast<float>(std::max(char_rect.top, char_rect.bottom)));
+      float char_left = curpos + char_rect.left * fontsize / 1000;
+      float char_right = curpos + char_rect.right * fontsize / 1000;
       min_x = std::min(min_x, std::min(char_left, char_right));
       max_x = std::max(max_x, std::max(char_left, char_right));
       charwidth = pFont->GetCharWidthF(charcode) * fontsize / 1000;
@@ -232,12 +232,12 @@ CFX_PointF CPDF_TextObject::CalcPositionData(FX_FLOAT horz_scale) {
       char_rect.right -= vx;
       char_rect.top -= vy;
       char_rect.bottom -= vy;
-      min_x = std::min(min_x, static_cast<FX_FLOAT>(
-                                  std::min(char_rect.left, char_rect.right)));
-      max_x = std::max(max_x, static_cast<FX_FLOAT>(
-                                  std::max(char_rect.left, char_rect.right)));
-      FX_FLOAT char_top = curpos + char_rect.top * fontsize / 1000;
-      FX_FLOAT char_bottom = curpos + char_rect.bottom * fontsize / 1000;
+      min_x = std::min(
+          min_x, static_cast<float>(std::min(char_rect.left, char_rect.right)));
+      max_x = std::max(
+          max_x, static_cast<float>(std::max(char_rect.left, char_rect.right)));
+      float char_top = curpos + char_rect.top * fontsize / 1000;
+      float char_bottom = curpos + char_rect.bottom * fontsize / 1000;
       min_y = std::min(min_y, std::min(char_top, char_bottom));
       max_y = std::max(max_y, std::max(char_top, char_bottom));
       charwidth = pCIDFont->GetVertWidth(CID) * fontsize / 1000;
@@ -269,7 +269,7 @@ CFX_PointF CPDF_TextObject::CalcPositionData(FX_FLOAT horz_scale) {
   if (!TextRenderingModeIsStrokeMode(m_TextState.GetTextMode()))
     return ret;
 
-  FX_FLOAT half_width = m_GraphState.GetLineWidth() / 2;
+  float half_width = m_GraphState.GetLineWidth() / 2;
   m_Left -= half_width;
   m_Right += half_width;
   m_Top += half_width;
@@ -278,9 +278,9 @@ CFX_PointF CPDF_TextObject::CalcPositionData(FX_FLOAT horz_scale) {
   return ret;
 }
 
-void CPDF_TextObject::SetPosition(FX_FLOAT x, FX_FLOAT y) {
-  FX_FLOAT dx = x - m_Pos.x;
-  FX_FLOAT dy = y - m_Pos.y;
+void CPDF_TextObject::SetPosition(float x, float y) {
+  float dx = x - m_Pos.x;
+  float dy = y - m_Pos.y;
   m_Pos.x = x;
   m_Pos.y = y;
   m_Left += dx;

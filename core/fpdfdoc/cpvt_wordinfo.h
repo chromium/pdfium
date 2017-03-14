@@ -25,9 +25,9 @@ struct CPVT_WordInfo {
 
   uint16_t Word;
   int32_t nCharset;
-  FX_FLOAT fWordX;
-  FX_FLOAT fWordY;
-  FX_FLOAT fWordTail;
+  float fWordX;
+  float fWordY;
+  float fWordTail;
   int32_t nFontIndex;
   std::unique_ptr<CPVT_WordProps> pWordProps;
 };

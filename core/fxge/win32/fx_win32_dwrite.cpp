@@ -227,14 +227,14 @@ bool CDWriteExt::DwRendingString(void* renderTarget,
                                  FX_RECT& stringRect,
                                  CFX_Matrix* pMatrix,
                                  void* font,
-                                 FX_FLOAT font_size,
+                                 float font_size,
                                  FX_ARGB text_color,
                                  int glyph_count,
                                  unsigned short* glyph_indices,
-                                 FX_FLOAT baselineOriginX,
-                                 FX_FLOAT baselineOriginY,
+                                 float baselineOriginX,
+                                 float baselineOriginY,
                                  void* glyph_offsets,
-                                 FX_FLOAT* glyph_advances) {
+                                 float* glyph_advances) {
   if (!renderTarget) {
     return true;
   }

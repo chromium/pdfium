@@ -8,13 +8,13 @@
 #include "testing/gtest/include/gtest/gtest.h"
 
 TEST(CPDF_DeviceCSTest, GetRGBFromGray) {
-  FX_FLOAT R;
-  FX_FLOAT G;
-  FX_FLOAT B;
+  float R;
+  float G;
+  float B;
   CPDF_DeviceCS deviceGray(nullptr, PDFCS_DEVICEGRAY);
 
   // Test normal values. For gray, only first value from buf should be used.
-  FX_FLOAT buf[3] = {0.43f, 0.11f, 0.34f};
+  float buf[3] = {0.43f, 0.11f, 0.34f};
   ASSERT_TRUE(deviceGray.GetRGB(buf, R, G, B));
   EXPECT_EQ(0.43f, R);
   EXPECT_EQ(0.43f, G);
@@ -51,13 +51,13 @@ TEST(CPDF_DeviceCSTest, GetRGBFromGray) {
 }
 
 TEST(CPDF_DeviceCSTest, GetRGBFromRGB) {
-  FX_FLOAT R;
-  FX_FLOAT G;
-  FX_FLOAT B;
+  float R;
+  float G;
+  float B;
   CPDF_DeviceCS deviceRGB(nullptr, PDFCS_DEVICERGB);
 
   // Test normal values
-  FX_FLOAT buf[3] = {0.13f, 1.0f, 0.652f};
+  float buf[3] = {0.13f, 1.0f, 0.652f};
   ASSERT_TRUE(deviceRGB.GetRGB(buf, R, G, B));
   EXPECT_EQ(0.13f, R);
   EXPECT_EQ(1.0f, G);
@@ -80,14 +80,14 @@ TEST(CPDF_DeviceCSTest, GetRGBFromRGB) {
 }
 
 TEST(CPDF_DeviceCSTest, GetRGBFromCMYK) {
-  FX_FLOAT R;
-  FX_FLOAT G;
-  FX_FLOAT B;
+  float R;
+  float G;
+  float B;
   CPDF_DeviceCS deviceCMYK(nullptr, PDFCS_DEVICECMYK);
   // Use an error threshold because of the calculations used here.
-  FX_FLOAT eps = 1e-6f;
+  float eps = 1e-6f;
   // Test normal values
-  FX_FLOAT buf[4] = {0.6f, 0.5f, 0.3f, 0.9f};
+  float buf[4] = {0.6f, 0.5f, 0.3f, 0.9f};
   ASSERT_TRUE(deviceCMYK.GetRGB(buf, R, G, B));
   EXPECT_TRUE(std::abs(0.0627451f - R) < eps);
   EXPECT_TRUE(std::abs(0.0627451f - G) < eps);

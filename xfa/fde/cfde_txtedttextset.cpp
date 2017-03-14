@@ -38,7 +38,7 @@ CFX_RetainPtr<CFGAS_GEFont> CFDE_TxtEdtTextSet::GetFont() {
   return m_pPage->GetEngine()->GetEditParams()->pFont;
 }
 
-FX_FLOAT CFDE_TxtEdtTextSet::GetFontSize() {
+float CFDE_TxtEdtTextSet::GetFontSize() {
   return m_pPage->GetEngine()->GetEditParams()->fFontSize;
 }
 

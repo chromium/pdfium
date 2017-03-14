@@ -19,9 +19,7 @@ void CFX_GraphState::Emplace() {
   m_Ref.Emplace();
 }
 
-void CFX_GraphState::SetLineDash(CPDF_Array* pArray,
-                                 FX_FLOAT phase,
-                                 FX_FLOAT scale) {
+void CFX_GraphState::SetLineDash(CPDF_Array* pArray, float phase, float scale) {
   CFX_GraphStateData* pData = m_Ref.GetPrivateCopy();
   pData->m_DashPhase = phase * scale;
   pData->SetDashCount(static_cast<int>(pArray->GetCount()));
@@ -29,11 +27,11 @@ void CFX_GraphState::SetLineDash(CPDF_Array* pArray,
     pData->m_DashArray[i] = pArray->GetNumberAt(i) * scale;
 }
 
-FX_FLOAT CFX_GraphState::GetLineWidth() const {
+float CFX_GraphState::GetLineWidth() const {
   return m_Ref.GetObject() ? m_Ref.GetObject()->m_LineWidth : 1.f;
 }
 
-void CFX_GraphState::SetLineWidth(FX_FLOAT width) {
+void CFX_GraphState::SetLineWidth(float width) {
   m_Ref.GetPrivateCopy()->m_LineWidth = width;
 }
 
@@ -52,10 +50,10 @@ void CFX_GraphState::SetLineJoin(CFX_GraphStateData::LineJoin join) {
   m_Ref.GetPrivateCopy()->m_LineJoin = join;
 }
 
-FX_FLOAT CFX_GraphState::GetMiterLimit() const {
+float CFX_GraphState::GetMiterLimit() const {
   return m_Ref.GetObject() ? m_Ref.GetObject()->m_MiterLimit : 10.f;
 }
 
-void CFX_GraphState::SetMiterLimit(FX_FLOAT limit) {
+void CFX_GraphState::SetMiterLimit(float limit) {
   m_Ref.GetPrivateCopy()->m_MiterLimit = limit;
 }

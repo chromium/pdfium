@@ -10,14 +10,11 @@
 
 namespace {
 
-bool InRange(FX_FLOAT comp) {
+bool InRange(float comp) {
   return comp >= 0.0f && comp <= 1.0f;
 }
 
-CPWL_Color ConvertCMYK2GRAY(FX_FLOAT dC,
-                            FX_FLOAT dM,
-                            FX_FLOAT dY,
-                            FX_FLOAT dK) {
+CPWL_Color ConvertCMYK2GRAY(float dC, float dM, float dY, float dK) {
   if (!InRange(dC) || !InRange(dM) || !InRange(dY) || !InRange(dK))
     return CPWL_Color(COLORTYPE_GRAY);
   return CPWL_Color(
@@ -25,25 +22,25 @@ CPWL_Color ConvertCMYK2GRAY(FX_FLOAT dC,
       1.0f - std::min(1.0f, 0.3f * dC + 0.59f * dM + 0.11f * dY + dK));
 }
 
-CPWL_Color ConvertGRAY2CMYK(FX_FLOAT dGray) {
+CPWL_Color ConvertGRAY2CMYK(float dGray) {
   if (!InRange(dGray))
     return CPWL_Color(COLORTYPE_CMYK);
   return CPWL_Color(COLORTYPE_CMYK, 0.0f, 0.0f, 0.0f, 1.0f - dGray);
 }
 
-CPWL_Color ConvertGRAY2RGB(FX_FLOAT dGray) {
+CPWL_Color ConvertGRAY2RGB(float dGray) {
   if (!InRange(dGray))
     return CPWL_Color(COLORTYPE_RGB);
   return CPWL_Color(COLORTYPE_RGB, dGray, dGray, dGray);
 }
 
-CPWL_Color ConvertRGB2GRAY(FX_FLOAT dR, FX_FLOAT dG, FX_FLOAT dB) {
+CPWL_Color ConvertRGB2GRAY(float dR, float dG, float dB) {
   if (!InRange(dR) || !InRange(dG) || !InRange(dB))
     return CPWL_Color(COLORTYPE_GRAY);
   return CPWL_Color(COLORTYPE_GRAY, 0.3f * dR + 0.59f * dG + 0.11f * dB);
 }
 
-CPWL_Color ConvertCMYK2RGB(FX_FLOAT dC, FX_FLOAT dM, FX_FLOAT dY, FX_FLOAT dK) {
+CPWL_Color ConvertCMYK2RGB(float dC, float dM, float dY, float dK) {
   if (!InRange(dC) || !InRange(dM) || !InRange(dY) || !InRange(dK))
     return CPWL_Color(COLORTYPE_RGB);
   return CPWL_Color(COLORTYPE_RGB, 1.0f - std::min(1.0f, dC + dK),
@@ -51,13 +48,13 @@ CPWL_Color ConvertCMYK2RGB(FX_FLOAT dC, FX_FLOAT dM, FX_FLOAT dY, FX_FLOAT dK) {
                     1.0f - std::min(1.0f, dY + dK));
 }
 
-CPWL_Color ConvertRGB2CMYK(FX_FLOAT dR, FX_FLOAT dG, FX_FLOAT dB) {
+CPWL_Color ConvertRGB2CMYK(float dR, float dG, float dB) {
   if (!InRange(dR) || !InRange(dG) || !InRange(dB))
     return CPWL_Color(COLORTYPE_CMYK);
 
-  FX_FLOAT c = 1.0f - dR;
-  FX_FLOAT m = 1.0f - dG;
-  FX_FLOAT y = 1.0f - dB;
+  float c = 1.0f - dR;
+  float m = 1.0f - dG;
+  float y = 1.0f - dB;
   return CPWL_Color(COLORTYPE_CMYK, c, m, y, std::min(c, std::min(m, y)));
 }
 
@@ -135,7 +132,7 @@ FX_COLORREF CPWL_Color::ToFXColor(int32_t nTransparency) const {
                     static_cast<int32_t>(ret.fColor3 * 255));
 }
 
-CPWL_Color CPWL_Color::operator-(FX_FLOAT fColorSub) const {
+CPWL_Color CPWL_Color::operator-(float fColorSub) const {
   CPWL_Color sRet(nColorType);
   switch (nColorType) {
     case COLORTYPE_TRANSPARENT:
@@ -156,7 +153,7 @@ CPWL_Color CPWL_Color::operator-(FX_FLOAT fColorSub) const {
   return sRet;
 }
 
-CPWL_Color CPWL_Color::operator/(FX_FLOAT fColorDivide) const {
+CPWL_Color CPWL_Color::operator/(float fColorDivide) const {
   CPWL_Color sRet(nColorType);
   switch (nColorType) {
     case COLORTYPE_TRANSPARENT:

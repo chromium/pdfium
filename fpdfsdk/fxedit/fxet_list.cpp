@@ -53,11 +53,11 @@ void CFX_ListItem::SetText(const CFX_WideString& text) {
   m_pEdit->SetText(text);
 }
 
-void CFX_ListItem::SetFontSize(FX_FLOAT fFontSize) {
+void CFX_ListItem::SetFontSize(float fFontSize) {
   m_pEdit->SetFontSize(fFontSize);
 }
 
-FX_FLOAT CFX_ListItem::GetItemHeight() const {
+float CFX_ListItem::GetItemHeight() const {
   return m_pEdit->GetContentRect().Height();
 }
 
@@ -542,7 +542,7 @@ void CFX_ListCtrl::SetScrollPos(const CFX_PointF& point) {
   SetScrollPosY(point.y);
 }
 
-void CFX_ListCtrl::SetScrollPosY(FX_FLOAT fy) {
+void CFX_ListCtrl::SetScrollPosY(float fy) {
   if (!IsFloatEqual(m_ptScrollPos.y, fy)) {
     CFX_FloatRect rcPlate = GetPlateRect();
     CFX_FloatRect rcContent = GetContentRectInternal();
@@ -579,14 +579,14 @@ CFX_FloatRect CFX_ListCtrl::GetContentRect() const {
 }
 
 void CFX_ListCtrl::ReArrange(int32_t nItemIndex) {
-  FX_FLOAT fPosY = 0.0f;
+  float fPosY = 0.0f;
 
   if (CFX_ListItem* pPrevItem = m_aListItems.GetAt(nItemIndex - 1))
     fPosY = pPrevItem->GetRect().bottom;
 
   for (int32_t i = nItemIndex, sz = m_aListItems.GetSize(); i < sz; i++) {
     if (CFX_ListItem* pListItem = m_aListItems.GetAt(i)) {
-      FX_FLOAT fListItemHeight = pListItem->GetItemHeight();
+      float fListItemHeight = pListItem->GetItemHeight();
       pListItem->SetRect(CLST_Rect(0.0f, fPosY, 0.0f, fPosY + fListItemHeight));
       fPosY += fListItemHeight;
     }
@@ -668,7 +668,7 @@ void CFX_ListCtrl::SetFontMap(IPVT_FontMap* pFontMap) {
   m_pFontMap = pFontMap;
 }
 
-void CFX_ListCtrl::SetFontSize(FX_FLOAT fFontSize) {
+void CFX_ListCtrl::SetFontSize(float fFontSize) {
   m_fFontSize = fFontSize;
 }
 
@@ -696,11 +696,11 @@ CFX_FloatRect CFX_ListCtrl::GetPlateRect() const {
   return CFX_ListContainer::GetPlateRect();
 }
 
-FX_FLOAT CFX_ListCtrl::GetFontSize() const {
+float CFX_ListCtrl::GetFontSize() const {
   return m_fFontSize;
 }
 
-FX_FLOAT CFX_ListCtrl::GetFirstHeight() const {
+float CFX_ListCtrl::GetFirstHeight() const {
   if (CFX_ListItem* pListItem = m_aListItems.GetAt(0)) {
     return pListItem->GetItemHeight();
   }

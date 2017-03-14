@@ -298,7 +298,7 @@ void CPDF_Image::SetImage(const CFX_DIBitmap* pBitmap) {
     for (int32_t row = 0; row < BitmapHeight; row++) {
       src_offset = row * src_pitch;
       for (int32_t column = 0; column < BitmapWidth; column++) {
-        FX_FLOAT alpha = 1;
+        float alpha = 1;
         pDest[dest_offset] = (uint8_t)(src_buf[src_offset + 2] * alpha);
         pDest[dest_offset + 1] = (uint8_t)(src_buf[src_offset + 1] * alpha);
         pDest[dest_offset + 2] = (uint8_t)(src_buf[src_offset] * alpha);

@@ -36,15 +36,15 @@ struct conv_dash : public conv_adaptor_vcgen<VertexSource, vcgen_dash, Markers> 
     {
         base_type::generator().remove_all_dashes();
     }
-    void add_dash(FX_FLOAT dash_len, FX_FLOAT gap_len)
+    void add_dash(float dash_len, float gap_len)
     {
         base_type::generator().add_dash(dash_len, gap_len);
     }
-    void dash_start(FX_FLOAT ds)
+    void dash_start(float ds)
     {
         base_type::generator().dash_start(ds);
     }
-    void shorten(FX_FLOAT s)
+    void shorten(float s)
     {
         base_type::generator().shorten(s);
     }

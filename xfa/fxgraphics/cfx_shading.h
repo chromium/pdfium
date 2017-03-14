@@ -28,8 +28,8 @@ class CFX_Shading {
   // Radial shading.
   CFX_Shading(const CFX_PointF& beginPoint,
               const CFX_PointF& endPoint,
-              const FX_FLOAT beginRadius,
-              const FX_FLOAT endRadius,
+              const float beginRadius,
+              const float endRadius,
               bool isExtendedBegin,
               bool isExtendedEnd,
               const FX_ARGB beginArgb,
@@ -44,8 +44,8 @@ class CFX_Shading {
   const CFX_Shading_Type m_type;
   const CFX_PointF m_beginPoint;
   const CFX_PointF m_endPoint;
-  const FX_FLOAT m_beginRadius;
-  const FX_FLOAT m_endRadius;
+  const float m_beginRadius;
+  const float m_endRadius;
   const bool m_isExtendedBegin;
   const bool m_isExtendedEnd;
   const FX_ARGB m_beginArgb;

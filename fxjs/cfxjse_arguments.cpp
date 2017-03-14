@@ -32,8 +32,8 @@ int32_t CFXJSE_Arguments::GetInt32(int32_t index) const {
   return static_cast<int32_t>((*m_pInfo)[index]->NumberValue());
 }
 
-FX_FLOAT CFXJSE_Arguments::GetFloat(int32_t index) const {
-  return static_cast<FX_FLOAT>((*m_pInfo)[index]->NumberValue());
+float CFXJSE_Arguments::GetFloat(int32_t index) const {
+  return static_cast<float>((*m_pInfo)[index]->NumberValue());
 }
 
 CFX_ByteString CFXJSE_Arguments::GetUTF8String(int32_t index) const {

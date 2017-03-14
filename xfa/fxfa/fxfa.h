@@ -239,8 +239,8 @@ class IXFA_DocEnvironment {
                             bool bVisible,
                             const CFX_RectF* pRtAnchor) = 0;
   virtual bool GetPopupPos(CXFA_FFWidget* hWidget,
-                           FX_FLOAT fMinPopup,
-                           FX_FLOAT fMaxPopup,
+                           float fMinPopup,
+                           float fMaxPopup,
                            const CFX_RectF& rtAnchor,
                            CFX_RectF& rtPopup) = 0;
   virtual bool PopupMenu(CXFA_FFWidget* hWidget, CFX_PointF ptPopup) = 0;

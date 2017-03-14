@@ -24,7 +24,7 @@ class CFDE_TxtEdtTextSet : public IFDE_VisualSet {
 
   int32_t GetString(FDE_TEXTEDITPIECE* pPiece, CFX_WideString& wsText);
   CFX_RetainPtr<CFGAS_GEFont> GetFont();
-  FX_FLOAT GetFontSize();
+  float GetFontSize();
   FX_ARGB GetFontColor();
   int32_t GetDisplayPos(const FDE_TEXTEDITPIECE& pPiece,
                         FXTEXT_CHARPOS* pCharPos,

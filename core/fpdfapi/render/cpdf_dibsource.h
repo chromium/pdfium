@@ -29,8 +29,8 @@ class CPDF_Document;
 class CPDF_Stream;
 
 typedef struct {
-  FX_FLOAT m_DecodeMin;
-  FX_FLOAT m_DecodeStep;
+  float m_DecodeMin;
+  float m_DecodeStep;
   int m_ColorKeyMin;
   int m_ColorKeyMax;
 } DIB_COMP_DATA;

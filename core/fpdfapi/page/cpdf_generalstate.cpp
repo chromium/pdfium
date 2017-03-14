@@ -88,21 +88,21 @@ void CPDF_GeneralState::SetBlendType(int type) {
   m_Ref.GetPrivateCopy()->m_BlendType = type;
 }
 
-FX_FLOAT CPDF_GeneralState::GetFillAlpha() const {
+float CPDF_GeneralState::GetFillAlpha() const {
   const StateData* pData = m_Ref.GetObject();
   return pData ? pData->m_FillAlpha : 1.0f;
 }
 
-void CPDF_GeneralState::SetFillAlpha(FX_FLOAT alpha) {
+void CPDF_GeneralState::SetFillAlpha(float alpha) {
   m_Ref.GetPrivateCopy()->m_FillAlpha = alpha;
 }
 
-FX_FLOAT CPDF_GeneralState::GetStrokeAlpha() const {
+float CPDF_GeneralState::GetStrokeAlpha() const {
   const StateData* pData = m_Ref.GetObject();
   return pData ? pData->m_StrokeAlpha : 1.0f;
 }
 
-void CPDF_GeneralState::SetStrokeAlpha(FX_FLOAT alpha) {
+void CPDF_GeneralState::SetStrokeAlpha(float alpha) {
   m_Ref.GetPrivateCopy()->m_StrokeAlpha = alpha;
 }
 
@@ -186,11 +186,11 @@ void CPDF_GeneralState::SetHT(CPDF_Object* pObject) {
   m_Ref.GetPrivateCopy()->m_pHT = pObject;
 }
 
-void CPDF_GeneralState::SetFlatness(FX_FLOAT flatness) {
+void CPDF_GeneralState::SetFlatness(float flatness) {
   m_Ref.GetPrivateCopy()->m_Flatness = flatness;
 }
 
-void CPDF_GeneralState::SetSmoothness(FX_FLOAT smoothness) {
+void CPDF_GeneralState::SetSmoothness(float smoothness) {
   m_Ref.GetPrivateCopy()->m_Smoothness = smoothness;
 }
 

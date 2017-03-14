@@ -69,10 +69,10 @@ class CFX_SkiaDeviceDriver : public IFX_RenderDeviceDriver {
                          int blend_type) override;
 
   /** Draw a single pixel (device dependant) line */
-  bool DrawCosmeticLine(FX_FLOAT x1,
-                        FX_FLOAT y1,
-                        FX_FLOAT x2,
-                        FX_FLOAT y2,
+  bool DrawCosmeticLine(float x1,
+                        float y1,
+                        float x2,
+                        float y2,
                         uint32_t color,
                         int blend_type) override;
 
@@ -134,7 +134,7 @@ class CFX_SkiaDeviceDriver : public IFX_RenderDeviceDriver {
                       const FXTEXT_CHARPOS* pCharPos,
                       CFX_Font* pFont,
                       const CFX_Matrix* pObject2Device,
-                      FX_FLOAT font_size,
+                      float font_size,
                       uint32_t color) override;
 
   bool DrawShading(const CPDF_ShadingPattern* pPattern,

@@ -17,7 +17,7 @@
 
 namespace {
 
-FX_FLOAT ClipFloat(FX_FLOAT f) {
+float ClipFloat(float f) {
   return std::max(0.0f, std::min(1.0f, f));
 }
 
@@ -40,9 +40,7 @@ void CPDF_AllStates::Copy(const CPDF_AllStates& src) {
   m_TextHorzScale = src.m_TextHorzScale;
 }
 
-void CPDF_AllStates::SetLineDash(CPDF_Array* pArray,
-                                 FX_FLOAT phase,
-                                 FX_FLOAT scale) {
+void CPDF_AllStates::SetLineDash(CPDF_Array* pArray, float phase, float scale) {
   m_GraphState.SetLineDash(pArray, phase, scale);
 }
 

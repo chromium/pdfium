@@ -44,7 +44,7 @@ void ContrastAdjust(uint8_t* pDataIn,
                     int nDstRowBytes) {
   int col, row, temp;
   int max = 0, min = 255;
-  FX_FLOAT rate;
+  float rate;
   for (row = 0; row < nHeight; row++) {
     uint8_t* pRow = pDataIn + row * nSrcRowBytes;
     for (col = 0; col < nWidth; col++) {

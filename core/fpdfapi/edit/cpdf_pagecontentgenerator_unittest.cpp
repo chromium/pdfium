@@ -107,11 +107,11 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessGraphics) {
   pPathObj->m_FillType = FXFILL_WINDING;
   pPathObj->m_bStroke = true;
 
-  FX_FLOAT rgb[3] = {0.5f, 0.7f, 0.35f};
+  float rgb[3] = {0.5f, 0.7f, 0.35f};
   CPDF_ColorSpace* pCS = CPDF_ColorSpace::GetStockCS(PDFCS_DEVICERGB);
   pPathObj->m_ColorState.SetFillColor(pCS, rgb, 3);
 
-  FX_FLOAT rgb2[3] = {1, 0.9f, 0};
+  float rgb2[3] = {1, 0.9f, 0};
   pPathObj->m_ColorState.SetStrokeColor(pCS, rgb2, 3);
   pPathObj->m_GeneralState.SetFillAlpha(0.5f);
   pPathObj->m_GeneralState.SetStrokeAlpha(0.8f);

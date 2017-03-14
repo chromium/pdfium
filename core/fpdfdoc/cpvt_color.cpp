@@ -15,16 +15,16 @@ CPVT_Color CPVT_Color::ParseColor(const CFX_ByteString& str) {
     return CPVT_Color(CPVT_Color::kGray, FX_atof(syntax.GetWord()));
 
   if (syntax.FindTagParamFromStart("rg", 3)) {
-    FX_FLOAT f1 = FX_atof(syntax.GetWord());
-    FX_FLOAT f2 = FX_atof(syntax.GetWord());
-    FX_FLOAT f3 = FX_atof(syntax.GetWord());
+    float f1 = FX_atof(syntax.GetWord());
+    float f2 = FX_atof(syntax.GetWord());
+    float f3 = FX_atof(syntax.GetWord());
     return CPVT_Color(CPVT_Color::kRGB, f1, f2, f3);
   }
   if (syntax.FindTagParamFromStart("k", 4)) {
-    FX_FLOAT f1 = FX_atof(syntax.GetWord());
-    FX_FLOAT f2 = FX_atof(syntax.GetWord());
-    FX_FLOAT f3 = FX_atof(syntax.GetWord());
-    FX_FLOAT f4 = FX_atof(syntax.GetWord());
+    float f1 = FX_atof(syntax.GetWord());
+    float f2 = FX_atof(syntax.GetWord());
+    float f3 = FX_atof(syntax.GetWord());
+    float f4 = FX_atof(syntax.GetWord());
     return CPVT_Color(CPVT_Color::kCMYK, f1, f2, f3, f4);
   }
   return CPVT_Color(CPVT_Color::kTransparent);

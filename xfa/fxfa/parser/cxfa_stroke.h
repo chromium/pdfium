@@ -30,14 +30,14 @@ class CXFA_Stroke : public CXFA_Data {
   int32_t GetPresence() const;
   int32_t GetCapType() const;
   int32_t GetStrokeType() const;
-  FX_FLOAT GetThickness() const;
+  float GetThickness() const;
   CXFA_Measurement GetMSThickness() const;
   void SetMSThickness(CXFA_Measurement msThinkness);
   FX_ARGB GetColor() const;
   void SetColor(FX_ARGB argb);
   int32_t GetJoinType() const;
   bool IsInverted() const;
-  FX_FLOAT GetRadius() const;
+  float GetRadius() const;
   bool SameStyles(CXFA_Stroke stroke, uint32_t dwFlags = 0) const;
 };
 

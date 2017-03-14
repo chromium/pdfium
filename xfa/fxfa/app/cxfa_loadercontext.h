@@ -22,19 +22,19 @@ class CXFA_LoaderContext {
   ~CXFA_LoaderContext();
 
   bool m_bSaveLineHeight;
-  FX_FLOAT m_fWidth;
-  FX_FLOAT m_fHeight;
-  FX_FLOAT m_fLastPos;
-  FX_FLOAT m_fStartLineOffset;
+  float m_fWidth;
+  float m_fHeight;
+  float m_fLastPos;
+  float m_fStartLineOffset;
   int32_t m_iChar;
   int32_t m_iLines;
   int32_t m_iTotalLines;
   CFDE_XMLNode* m_pXMLNode;
   CXFA_Node* m_pNode;
   CFX_RetainPtr<CFDE_CSSComputedStyle> m_pParentStyle;
-  CFX_ArrayTemplate<FX_FLOAT> m_lineHeights;
+  CFX_ArrayTemplate<float> m_lineHeights;
   uint32_t m_dwFlags;
-  std::vector<FX_FLOAT> m_BlocksHeight;
+  std::vector<float> m_BlocksHeight;
 };
 
 #endif  // XFA_FXFA_APP_CXFA_LOADERCONTEXT_H_

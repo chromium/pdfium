@@ -32,8 +32,8 @@ class CPDFSDK_Annot : public CFX_Observable<CPDFSDK_Annot> {
   virtual CXFA_FFWidget* GetXFAWidget() const;
 #endif  // PDF_ENABLE_XFA
 
-  virtual FX_FLOAT GetMinWidth() const;
-  virtual FX_FLOAT GetMinHeight() const;
+  virtual float GetMinWidth() const;
+  virtual float GetMinHeight() const;
   virtual int GetLayoutOrder() const;
   virtual CPDF_Annot* GetPDFAnnot() const;
   virtual CPDF_Annot::Subtype GetAnnotSubtype() const;

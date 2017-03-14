@@ -87,8 +87,8 @@ CPDF_Type3Cache::~CPDF_Type3Cache() {
 
 CFX_GlyphBitmap* CPDF_Type3Cache::LoadGlyph(uint32_t charcode,
                                             const CFX_Matrix* pMatrix,
-                                            FX_FLOAT retinaScaleX,
-                                            FX_FLOAT retinaScaleY) {
+                                            float retinaScaleX,
+                                            float retinaScaleY) {
   CPDF_UniqueKeyGen keygen;
   keygen.Generate(
       4, FXSYS_round(pMatrix->a * 10000), FXSYS_round(pMatrix->b * 10000),
@@ -115,8 +115,8 @@ CFX_GlyphBitmap* CPDF_Type3Cache::LoadGlyph(uint32_t charcode,
 CFX_GlyphBitmap* CPDF_Type3Cache::RenderGlyph(CPDF_Type3Glyphs* pSize,
                                               uint32_t charcode,
                                               const CFX_Matrix* pMatrix,
-                                              FX_FLOAT retinaScaleX,
-                                              FX_FLOAT retinaScaleY) {
+                                              float retinaScaleX,
+                                              float retinaScaleY) {
   const CPDF_Type3Char* pChar = m_pFont->LoadChar(charcode);
   if (!pChar || !pChar->m_pBitmap)
     return nullptr;
@@ -134,11 +134,11 @@ CFX_GlyphBitmap* CPDF_Type3Cache::RenderGlyph(CPDF_Type3Glyphs* pSize,
     int top_line = DetectFirstLastScan(pBitmap, true);
     int bottom_line = DetectFirstLastScan(pBitmap, false);
     if (top_line == 0 && bottom_line == pBitmap->GetHeight() - 1) {
-      FX_FLOAT top_y = image_matrix.d + image_matrix.f;
-      FX_FLOAT bottom_y = image_matrix.f;
+      float top_y = image_matrix.d + image_matrix.f;
+      float bottom_y = image_matrix.f;
       bool bFlipped = top_y > bottom_y;
       if (bFlipped) {
-        FX_FLOAT temp = top_y;
+        float temp = top_y;
         top_y = bottom_y;
         bottom_y = temp;
       }

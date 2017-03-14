@@ -6,7 +6,7 @@
 
 #include "xfa/fde/css/cfde_cssnumbervalue.h"
 
-CFDE_CSSNumberValue::CFDE_CSSNumberValue(FDE_CSSNumberType type, FX_FLOAT value)
+CFDE_CSSNumberValue::CFDE_CSSNumberValue(FDE_CSSNumberType type, float value)
     : CFDE_CSSValue(FDE_CSSPrimitiveType::Number), type_(type), value_(value) {
   if (type_ == FDE_CSSNumberType::Number && FXSYS_fabs(value_) < 0.001f)
     value_ = 0.0f;
@@ -14,7 +14,7 @@ CFDE_CSSNumberValue::CFDE_CSSNumberValue(FDE_CSSNumberType type, FX_FLOAT value)
 
 CFDE_CSSNumberValue::~CFDE_CSSNumberValue() {}
 
-FX_FLOAT CFDE_CSSNumberValue::Apply(FX_FLOAT percentBase) const {
+float CFDE_CSSNumberValue::Apply(float percentBase) const {
   switch (type_) {
     case FDE_CSSNumberType::Pixels:
     case FDE_CSSNumberType::Number:

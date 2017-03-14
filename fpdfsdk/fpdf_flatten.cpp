@@ -123,14 +123,14 @@ int ParserAnnots(CPDF_Document* pSourceDoc,
   return FLATTEN_SUCCESS;
 }
 
-FX_FLOAT GetMinMaxValue(const std::vector<CFX_FloatRect>& array,
-                        FPDF_TYPE type,
-                        FPDF_VALUE value) {
+float GetMinMaxValue(const std::vector<CFX_FloatRect>& array,
+                     FPDF_TYPE type,
+                     FPDF_VALUE value) {
   size_t nRects = array.size();
   if (nRects <= 0)
     return 0.0f;
 
-  std::vector<FX_FLOAT> pArray(nRects);
+  std::vector<float> pArray(nRects);
   switch (value) {
     case LEFT:
       for (size_t i = 0; i < nRects; i++)
@@ -153,7 +153,7 @@ FX_FLOAT GetMinMaxValue(const std::vector<CFX_FloatRect>& array,
       return 0.0f;
   }
 
-  FX_FLOAT fRet = pArray[0];
+  float fRet = pArray[0];
   if (type == MAX) {
     for (size_t i = 1; i < nRects; i++)
       fRet = std::max(fRet, pArray[i]);
@@ -231,11 +231,11 @@ CFX_Matrix GetMatrix(CFX_FloatRect rcAnnot,
   matrix.TransformRect(rcStream);
   rcStream.Normalize();
 
-  FX_FLOAT a = rcAnnot.Width() / rcStream.Width();
-  FX_FLOAT d = rcAnnot.Height() / rcStream.Height();
+  float a = rcAnnot.Width() / rcStream.Width();
+  float d = rcAnnot.Height() / rcStream.Height();
 
-  FX_FLOAT e = rcAnnot.left - rcStream.left * a;
-  FX_FLOAT f = rcAnnot.bottom - rcStream.bottom * d;
+  float e = rcAnnot.left - rcStream.left * a;
+  float f = rcAnnot.bottom - rcStream.bottom * d;
   return CFX_Matrix(a, 0, 0, d, e, f);
 }
 

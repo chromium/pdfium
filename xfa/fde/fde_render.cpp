@@ -56,8 +56,8 @@ FDE_RENDERSTATUS CFDE_RenderContext::DoRender(IFX_Pause* pPause) {
   CFX_RectF rtDocClip = m_pRenderDevice->GetClipRect();
   if (rtDocClip.IsEmpty()) {
     rtDocClip.left = rtDocClip.top = 0;
-    rtDocClip.width = (FX_FLOAT)m_pRenderDevice->GetWidth();
-    rtDocClip.height = (FX_FLOAT)m_pRenderDevice->GetHeight();
+    rtDocClip.width = (float)m_pRenderDevice->GetWidth();
+    rtDocClip.height = (float)m_pRenderDevice->GetHeight();
   }
   rm.TransformRect(rtDocClip);
   IFDE_VisualSet* pVisualSet;
@@ -120,7 +120,7 @@ void CFDE_RenderContext::RenderText(CFDE_TxtEdtTextSet* pTextSet,
     m_CharPos.resize(iCount, FXTEXT_CHARPOS());
 
   iCount = pTextSet->GetDisplayPos(*pText, m_CharPos.data(), false);
-  FX_FLOAT fFontSize = pTextSet->GetFontSize();
+  float fFontSize = pTextSet->GetFontSize();
   FX_ARGB dwColor = pTextSet->GetFontColor();
   m_pBrush->SetColor(dwColor);
   m_pRenderDevice->DrawString(m_pBrush.get(), pFont, m_CharPos.data(), iCount,

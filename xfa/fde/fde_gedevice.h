@@ -31,8 +31,8 @@ class CFDE_RenderDevice {
   bool SetClipRect(const CFX_RectF& rtClip);
   const CFX_RectF& GetClipRect();
 
-  FX_FLOAT GetDpiX() const;
-  FX_FLOAT GetDpiY() const;
+  float GetDpiX() const;
+  float GetDpiY() const;
 
   bool DrawImage(CFX_DIBSource* pDib,
                  const CFX_RectF* pSrcRect,
@@ -43,49 +43,49 @@ class CFDE_RenderDevice {
                   const CFX_RetainPtr<CFGAS_GEFont>& pFont,
                   const FXTEXT_CHARPOS* pCharPos,
                   int32_t iCount,
-                  FX_FLOAT fFontSize,
+                  float fFontSize,
                   const CFX_Matrix* pMatrix = nullptr);
   bool DrawBezier(CFDE_Pen* pPen,
-                  FX_FLOAT fPenWidth,
+                  float fPenWidth,
                   const CFX_PointF& pt1,
                   const CFX_PointF& pt2,
                   const CFX_PointF& pt3,
                   const CFX_PointF& pt4,
                   const CFX_Matrix* pMatrix = nullptr);
   bool DrawCurve(CFDE_Pen* pPen,
-                 FX_FLOAT fPenWidth,
+                 float fPenWidth,
                  const std::vector<CFX_PointF>& points,
                  bool bClosed,
-                 FX_FLOAT fTension = 0.5f,
+                 float fTension = 0.5f,
                  const CFX_Matrix* pMatrix = nullptr);
   bool DrawEllipse(CFDE_Pen* pPen,
-                   FX_FLOAT fPenWidth,
+                   float fPenWidth,
                    const CFX_RectF& rect,
                    const CFX_Matrix* pMatrix = nullptr);
   bool DrawLines(CFDE_Pen* pPen,
-                 FX_FLOAT fPenWidth,
+                 float fPenWidth,
                  const std::vector<CFX_PointF>& points,
                  const CFX_Matrix* pMatrix = nullptr);
   bool DrawLine(CFDE_Pen* pPen,
-                FX_FLOAT fPenWidth,
+                float fPenWidth,
                 const CFX_PointF& pt1,
                 const CFX_PointF& pt2,
                 const CFX_Matrix* pMatrix = nullptr);
   bool DrawPath(CFDE_Pen* pPen,
-                FX_FLOAT fPenWidth,
+                float fPenWidth,
                 const CFDE_Path* pPath,
                 const CFX_Matrix* pMatrix = nullptr);
   bool DrawPolygon(CFDE_Pen* pPen,
-                   FX_FLOAT fPenWidth,
+                   float fPenWidth,
                    const std::vector<CFX_PointF>& points,
                    const CFX_Matrix* pMatrix = nullptr);
   bool DrawRectangle(CFDE_Pen* pPen,
-                     FX_FLOAT fPenWidth,
+                     float fPenWidth,
                      const CFX_RectF& rect,
                      const CFX_Matrix* pMatrix = nullptr);
   bool FillClosedCurve(CFDE_Brush* pBrush,
                        const std::vector<CFX_PointF>& points,
-                       FX_FLOAT fTension = 0.5f,
+                       float fTension = 0.5f,
                        const CFX_Matrix* pMatrix = nullptr);
   bool FillEllipse(CFDE_Brush* pBrush,
                    const CFX_RectF& rect,
@@ -104,18 +104,18 @@ class CFDE_RenderDevice {
                        const CFX_RetainPtr<CFGAS_GEFont>& pFont,
                        const FXTEXT_CHARPOS* pCharPos,
                        int32_t iCount,
-                       FX_FLOAT fFontSize,
+                       float fFontSize,
                        const CFX_Matrix* pMatrix);
   bool DrawStringPath(CFDE_Brush* pBrush,
                       const CFX_RetainPtr<CFGAS_GEFont>& pFont,
                       const FXTEXT_CHARPOS* pCharPos,
                       int32_t iCount,
-                      FX_FLOAT fFontSize,
+                      float fFontSize,
                       const CFX_Matrix* pMatrix);
 
  protected:
   bool CreatePen(CFDE_Pen* pPen,
-                 FX_FLOAT fPenWidth,
+                 float fPenWidth,
                  CFX_GraphStateData& graphState);
 
   CFX_RenderDevice* const m_pDevice;

@@ -11,7 +11,7 @@
 
 struct XFA_TABSTOPS {
   uint32_t dwAlign;
-  FX_FLOAT fTabstops;
+  float fTabstops;
 };
 
 class CXFA_TextTabstopsContext {
@@ -19,7 +19,7 @@ class CXFA_TextTabstopsContext {
   CXFA_TextTabstopsContext();
   ~CXFA_TextTabstopsContext();
 
-  void Append(uint32_t dwAlign, FX_FLOAT fTabstops);
+  void Append(uint32_t dwAlign, float fTabstops);
   void RemoveAll();
   void Reset();
 
@@ -27,8 +27,8 @@ class CXFA_TextTabstopsContext {
   int32_t m_iTabCount;
   int32_t m_iTabIndex;
   bool m_bTabstops;
-  FX_FLOAT m_fTabWidth;
-  FX_FLOAT m_fLeft;
+  float m_fTabWidth;
+  float m_fLeft;
 };
 
 #endif  // XFA_FXFA_APP_CXFA_TEXTTABSTOPSCONTEXT_H_

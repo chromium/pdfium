@@ -156,8 +156,8 @@ DLLEXPORT int STDCALL FPDFPage_HasFormFieldAtPoint(FPDF_FORMHANDLE hHandle,
   if (pPage) {
     CPDF_InterForm interform(pPage->m_pDocument);
     CPDF_FormControl* pFormCtrl = interform.GetControlAtPoint(
-        pPage, CFX_PointF(static_cast<FX_FLOAT>(page_x),
-                          static_cast<FX_FLOAT>(page_y)),
+        pPage,
+        CFX_PointF(static_cast<float>(page_x), static_cast<float>(page_y)),
         nullptr);
     if (!pFormCtrl)
       return -1;
@@ -198,8 +198,8 @@ DLLEXPORT int STDCALL FPDFPage_HasFormFieldAtPoint(FPDF_FORMHANDLE hHandle,
     rcWidget.bottom -= 1.0f;
     rcWidget.top += 1.0f;
 
-    if (rcWidget.Contains(CFX_PointF(static_cast<FX_FLOAT>(page_x),
-                                     static_cast<FX_FLOAT>(page_y)))) {
+    if (rcWidget.Contains(CFX_PointF(static_cast<float>(page_x),
+                                     static_cast<float>(page_y)))) {
       return FPDF_FORMFIELD_XFA;
     }
     pXFAAnnot = pWidgetIterator->MoveToNext();
@@ -227,8 +227,7 @@ DLLEXPORT int STDCALL FPDFPage_FormFieldZOrderAtPoint(FPDF_FORMHANDLE hHandle,
   CPDF_InterForm interform(pPage->m_pDocument);
   int z_order = -1;
   (void)interform.GetControlAtPoint(
-      pPage,
-      CFX_PointF(static_cast<FX_FLOAT>(page_x), static_cast<FX_FLOAT>(page_y)),
+      pPage, CFX_PointF(static_cast<float>(page_x), static_cast<float>(page_y)),
       &z_order);
   return z_order;
 }
@@ -318,7 +317,7 @@ DLLEXPORT FPDF_BOOL STDCALL FORM_OnLButtonUp(FPDF_FORMHANDLE hHandle,
   if (!pPageView)
     return false;
 
-  CFX_PointF pt((FX_FLOAT)page_x, (FX_FLOAT)page_y);
+  CFX_PointF pt((float)page_x, (float)page_y);
   return pPageView->OnLButtonUp(pt, modifier);
 }
 
@@ -343,7 +342,7 @@ DLLEXPORT FPDF_BOOL STDCALL FORM_OnRButtonUp(FPDF_FORMHANDLE hHandle,
   if (!pPageView)
     return false;
 
-  CFX_PointF pt((FX_FLOAT)page_x, (FX_FLOAT)page_y);
+  CFX_PointF pt((float)page_x, (float)page_y);
   return pPageView->OnRButtonUp(pt, modifier);
 }
 #endif  // PDF_ENABLE_XFA

@@ -32,7 +32,7 @@ class XFA_TextPiece {
   int32_t iPeriod;
   int32_t iLineThrough;
   FX_ARGB dwColor;
-  FX_FLOAT fFontSize;
+  float fFontSize;
   CFX_RectF rtPiece;
   CFX_RetainPtr<CFGAS_GEFont> pFont;
   CFX_RetainPtr<CXFA_LinkUserData> pLinkData;

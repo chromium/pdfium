@@ -41,19 +41,19 @@ enum inner_join_e {
     inner_jag,
     inner_round
 };
-const FX_FLOAT stroke_theta = 1.0f / 1000.0f;
+const float stroke_theta = 1.0f / 1000.0f;
 template<class VertexConsumer>
 void stroke_calc_arc(VertexConsumer& out_vertices,
-                     FX_FLOAT x,   FX_FLOAT y,
-                     FX_FLOAT dx1, FX_FLOAT dy1,
-                     FX_FLOAT dx2, FX_FLOAT dy2,
-                     FX_FLOAT width,
-                     FX_FLOAT approximation_scale)
+                     float x,   float y,
+                     float dx1, float dy1,
+                     float dx2, float dy2,
+                     float width,
+                     float approximation_scale)
 {
     typedef typename VertexConsumer::value_type coord_type;
-    FX_FLOAT a1 = FXSYS_atan2(dy1, dx1);
-    FX_FLOAT a2 = FXSYS_atan2(dy2, dx2);
-    FX_FLOAT da = a1 - a2;
+    float a1 = FXSYS_atan2(dy1, dx1);
+    float a2 = FXSYS_atan2(dy2, dx2);
+    float da = a1 - a2;
     bool ccw = da > 0 && da < FX_PI;
     if(width < 0) {
         width = -width;
@@ -92,31 +92,31 @@ void stroke_calc_miter(VertexConsumer& out_vertices,
                        const vertex_dist& v0,
                        const vertex_dist& v1,
                        const vertex_dist& v2,
-                       FX_FLOAT dx1, FX_FLOAT dy1,
-                       FX_FLOAT dx2, FX_FLOAT dy2,
-                       FX_FLOAT width,
+                       float dx1, float dy1,
+                       float dx2, float dy2,
+                       float width,
                        line_join_e line_join,
-                       FX_FLOAT miter_limit,
-                       FX_FLOAT approximation_scale)
+                       float miter_limit,
+                       float approximation_scale)
 {
     typedef typename VertexConsumer::value_type coord_type;
-    FX_FLOAT xi = v1.x;
-    FX_FLOAT yi = v1.y;
+    float xi = v1.x;
+    float yi = v1.y;
     bool miter_limit_exceeded = true;
     if(calc_intersection(v0.x + dx1, v0.y - dy1,
                          v1.x + dx1, v1.y - dy1,
                          v1.x + dx2, v1.y - dy2,
                          v2.x + dx2, v2.y - dy2,
                          &xi, &yi)) {
-        FX_FLOAT d1 = calc_distance(v1.x, v1.y, xi, yi);
-        FX_FLOAT lim = width * miter_limit;
+        float d1 = calc_distance(v1.x, v1.y, xi, yi);
+        float lim = width * miter_limit;
         if(d1 <= lim) {
             out_vertices.add(coord_type(xi, yi));
             miter_limit_exceeded = false;
         }
     } else {
-        FX_FLOAT x2 = v1.x + dx1;
-        FX_FLOAT y2 = v1.y - dy1;
+        float x2 = v1.x + dx1;
+        float y2 = v1.y - dy1;
         if ((((x2 - v0.x) * dy1) - ((v0.y - y2) * dx1) < 0) !=
             (((x2 - v2.x) * dy1) - ((v2.y - y2) * dx1) < 0)) {
             out_vertices.add(coord_type(v1.x + dx1, v1.y - dy1));
@@ -147,17 +147,17 @@ template<class VertexConsumer>
 void stroke_calc_cap(VertexConsumer& out_vertices,
                      const vertex_dist& v0,
                      const vertex_dist& v1,
-                     FX_FLOAT len,
+                     float len,
                      line_cap_e line_cap,
-                     FX_FLOAT width,
-                     FX_FLOAT approximation_scale)
+                     float width,
+                     float approximation_scale)
 {
     typedef typename VertexConsumer::value_type coord_type;
     out_vertices.remove_all();
-    FX_FLOAT dx1 = (v1.y - v0.y) / len;
-    FX_FLOAT dy1 = (v1.x - v0.x) / len;
-    FX_FLOAT dx2 = 0;
-    FX_FLOAT dy2 = 0;
+    float dx1 = (v1.y - v0.y) / len;
+    float dy1 = (v1.x - v0.x) / len;
+    float dx2 = 0;
+    float dy2 = 0;
     dx1 = dx1 * width;
     dy1 = dy1 * width;
     if(line_cap != round_cap) {
@@ -168,9 +168,9 @@ void stroke_calc_cap(VertexConsumer& out_vertices,
         out_vertices.add(coord_type(v0.x - dx1 - dx2, v0.y + dy1 - dy2));
         out_vertices.add(coord_type(v0.x + dx1 - dx2, v0.y - dy1 - dy2));
     } else {
-        FX_FLOAT a1 = FXSYS_atan2(dy1, -dx1);
-        FX_FLOAT a2 = a1 + FX_PI;
-        FX_FLOAT da =
+        float a1 = FXSYS_atan2(dy1, -dx1);
+        float a2 = a1 + FX_PI;
+        float da =
             FXSYS_acos(width / (width + ((1.0f / 8) / approximation_scale))) *
             2;
         out_vertices.add(coord_type(v0.x - dx1, v0.y + dy1));
@@ -189,17 +189,17 @@ void stroke_calc_join(VertexConsumer& out_vertices,
                       const vertex_dist& v0,
                       const vertex_dist& v1,
                       const vertex_dist& v2,
-                      FX_FLOAT len1,
-                      FX_FLOAT len2,
-                      FX_FLOAT width,
+                      float len1,
+                      float len2,
+                      float width,
                       line_join_e line_join,
                       inner_join_e inner_join,
-                      FX_FLOAT miter_limit,
-                      FX_FLOAT inner_miter_limit,
-                      FX_FLOAT approximation_scale)
+                      float miter_limit,
+                      float inner_miter_limit,
+                      float approximation_scale)
 {
     typedef typename VertexConsumer::value_type coord_type;
-    FX_FLOAT dx1, dy1, dx2, dy2;
+    float dx1, dy1, dx2, dy2;
     dx1 = width * (v1.y - v0.y) / len1;
     dy1 = width * (v1.x - v0.x) / len1;
     dx2 = width * (v2.y - v1.y) / len2;
@@ -221,7 +221,7 @@ void stroke_calc_join(VertexConsumer& out_vertices,
                 break;
             case inner_jag:
             case inner_round: {
-                    FX_FLOAT d = (dx1 - dx2) * (dx1 - dx2) + (dy1 - dy2) * (dy1 - dy2);
+                    float d = (dx1 - dx2) * (dx1 - dx2) + (dy1 - dy2) * (dy1 - dy2);
                     if(d < len1 * len1 && d < len2 * len2) {
                         stroke_calc_miter(out_vertices,
                                           v0, v1, v2, dx1, dy1, dx2, dy2,

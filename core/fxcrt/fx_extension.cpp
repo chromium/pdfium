@@ -423,13 +423,13 @@ CFX_RetainPtr<IFX_MemoryStream> IFX_MemoryStream::Create(bool bConsecutive) {
   return pdfium::MakeRetain<CFX_MemoryStream>(bConsecutive);
 }
 
-FX_FLOAT FXSYS_tan(FX_FLOAT a) {
-  return (FX_FLOAT)tan(a);
+float FXSYS_tan(float a) {
+  return (float)tan(a);
 }
-FX_FLOAT FXSYS_logb(FX_FLOAT b, FX_FLOAT x) {
+float FXSYS_logb(float b, float x) {
   return FXSYS_log(x) / FXSYS_log(b);
 }
-FX_FLOAT FXSYS_strtof(const char* pcsStr, int32_t iLength, int32_t* pUsedLen) {
+float FXSYS_strtof(const char* pcsStr, int32_t iLength, int32_t* pUsedLen) {
   ASSERT(pcsStr);
   if (iLength < 0) {
     iLength = (int32_t)FXSYS_strlen(pcsStr);
@@ -438,9 +438,7 @@ FX_FLOAT FXSYS_strtof(const char* pcsStr, int32_t iLength, int32_t* pUsedLen) {
       CFX_WideString::FromLocal(CFX_ByteStringC(pcsStr, iLength));
   return FXSYS_wcstof(ws.c_str(), iLength, pUsedLen);
 }
-FX_FLOAT FXSYS_wcstof(const wchar_t* pwsStr,
-                      int32_t iLength,
-                      int32_t* pUsedLen) {
+float FXSYS_wcstof(const wchar_t* pwsStr, int32_t iLength, int32_t* pUsedLen) {
   ASSERT(pwsStr);
   if (iLength < 0) {
     iLength = (int32_t)FXSYS_wcslen(pwsStr);
@@ -457,7 +455,7 @@ FX_FLOAT FXSYS_wcstof(const wchar_t* pwsStr,
       iUsedLen++;
       break;
   }
-  FX_FLOAT fValue = 0.0f;
+  float fValue = 0.0f;
   while (iUsedLen < iLength) {
     wchar_t wch = pwsStr[iUsedLen];
     if (wch >= L'0' && wch <= L'9') {
@@ -468,7 +466,7 @@ FX_FLOAT FXSYS_wcstof(const wchar_t* pwsStr,
     iUsedLen++;
   }
   if (iUsedLen < iLength && pwsStr[iUsedLen] == L'.') {
-    FX_FLOAT fPrecise = 0.1f;
+    float fPrecise = 0.1f;
     while (++iUsedLen < iLength) {
       wchar_t wch = pwsStr[iUsedLen];
       if (wch >= L'0' && wch <= L'9') {

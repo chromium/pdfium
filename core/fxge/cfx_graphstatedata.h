@@ -22,8 +22,8 @@ class CFX_GraphStateData {
 
   LineCap m_LineCap;
   int m_DashCount;
-  FX_FLOAT* m_DashArray;
-  FX_FLOAT m_DashPhase;
+  float* m_DashArray;
+  float m_DashPhase;
 
   enum LineJoin {
     LineJoinMiter = 0,
@@ -31,8 +31,8 @@ class CFX_GraphStateData {
     LineJoinBevel = 2,
   };
   LineJoin m_LineJoin;
-  FX_FLOAT m_MiterLimit;
-  FX_FLOAT m_LineWidth;
+  float m_MiterLimit;
+  float m_LineWidth;
 };
 
 #endif  // CORE_FXGE_CFX_GRAPHSTATEDATA_H_

@@ -69,13 +69,13 @@ void vertex_sequence<T, S>::close(bool closed)
         }
     }
 }
-const FX_FLOAT vertex_dist_epsilon = 1e-14f;
+const float vertex_dist_epsilon = 1e-14f;
 struct vertex_dist  {
-    FX_FLOAT   x;
-    FX_FLOAT   y;
-    FX_FLOAT   dist;
+    float   x;
+    float   y;
+    float   dist;
     vertex_dist() {}
-    vertex_dist(FX_FLOAT x_, FX_FLOAT y_) :
+    vertex_dist(float x_, float y_) :
         x(x_),
         y(y_),
         dist(0)
@@ -90,7 +90,7 @@ struct vertex_dist  {
 struct vertex_dist_cmd : public vertex_dist {
     unsigned cmd;
     vertex_dist_cmd() {}
-    vertex_dist_cmd(FX_FLOAT x_, FX_FLOAT y_, unsigned cmd_) :
+    vertex_dist_cmd(float x_, float y_, unsigned cmd_) :
         vertex_dist(x_, y_),
         cmd(cmd_)
     {

@@ -113,7 +113,7 @@ bool CPDF_Dest::GetXYZ(bool* pHasX,
   return true;
 }
 
-FX_FLOAT CPDF_Dest::GetParam(int index) {
+float CPDF_Dest::GetParam(int index) {
   CPDF_Array* pArray = ToArray(m_pObj);
   return pArray ? pArray->GetNumberAt(2 + index) : 0;
 }

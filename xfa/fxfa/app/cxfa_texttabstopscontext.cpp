@@ -15,7 +15,7 @@ CXFA_TextTabstopsContext::CXFA_TextTabstopsContext()
 
 CXFA_TextTabstopsContext::~CXFA_TextTabstopsContext() {}
 
-void CXFA_TextTabstopsContext::Append(uint32_t dwAlign, FX_FLOAT fTabstops) {
+void CXFA_TextTabstopsContext::Append(uint32_t dwAlign, float fTabstops) {
   int32_t i = 0;
   for (i = 0; i < m_iTabCount; i++) {
     XFA_TABSTOPS* pTabstop = m_tabstops.GetDataPtr(i);

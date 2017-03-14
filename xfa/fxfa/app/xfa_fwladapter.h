@@ -19,8 +19,8 @@ class CXFA_FWLAdapterWidgetMgr {
 
   void RepaintWidget(CFWL_Widget* pWidget);
   bool GetPopupPos(CFWL_Widget* pWidget,
-                   FX_FLOAT fMinHeight,
-                   FX_FLOAT fMaxHeight,
+                   float fMinHeight,
+                   float fMaxHeight,
                    const CFX_RectF& rtAnchor,
                    CFX_RectF& rtPopup);
 };

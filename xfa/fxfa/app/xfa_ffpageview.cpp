@@ -35,37 +35,29 @@ CFX_Matrix GetPageMatrix(const CFX_RectF& docPageRect,
   bool bFlipY = (dwCoordinatesType & 0x02) != 0;
   CFX_Matrix m((bFlipX ? -1.0f : 1.0f), 0, 0, (bFlipY ? -1.0f : 1.0f), 0, 0);
   if (iRotate == 0 || iRotate == 2) {
-    m.a *= (FX_FLOAT)devicePageRect.width / docPageRect.width;
-    m.d *= (FX_FLOAT)devicePageRect.height / docPageRect.height;
+    m.a *= (float)devicePageRect.width / docPageRect.width;
+    m.d *= (float)devicePageRect.height / docPageRect.height;
   } else {
-    m.a *= (FX_FLOAT)devicePageRect.height / docPageRect.width;
-    m.d *= (FX_FLOAT)devicePageRect.width / docPageRect.height;
+    m.a *= (float)devicePageRect.height / docPageRect.width;
+    m.d *= (float)devicePageRect.width / docPageRect.height;
   }
   m.Rotate(iRotate * 1.57079632675f);
   switch (iRotate) {
     case 0:
-      m.e = bFlipX ? (FX_FLOAT)devicePageRect.right()
-                   : (FX_FLOAT)devicePageRect.left;
-      m.f = bFlipY ? (FX_FLOAT)devicePageRect.bottom()
-                   : (FX_FLOAT)devicePageRect.top;
+      m.e = bFlipX ? (float)devicePageRect.right() : (float)devicePageRect.left;
+      m.f = bFlipY ? (float)devicePageRect.bottom() : (float)devicePageRect.top;
       break;
     case 1:
-      m.e = bFlipY ? (FX_FLOAT)devicePageRect.left
-                   : (FX_FLOAT)devicePageRect.right();
-      m.f = bFlipX ? (FX_FLOAT)devicePageRect.bottom()
-                   : (FX_FLOAT)devicePageRect.top;
+      m.e = bFlipY ? (float)devicePageRect.left : (float)devicePageRect.right();
+      m.f = bFlipX ? (float)devicePageRect.bottom() : (float)devicePageRect.top;
       break;
     case 2:
-      m.e = bFlipX ? (FX_FLOAT)devicePageRect.left
-                   : (FX_FLOAT)devicePageRect.right();
-      m.f = bFlipY ? (FX_FLOAT)devicePageRect.top
-                   : (FX_FLOAT)devicePageRect.bottom();
+      m.e = bFlipX ? (float)devicePageRect.left : (float)devicePageRect.right();
+      m.f = bFlipY ? (float)devicePageRect.top : (float)devicePageRect.bottom();
       break;
     case 3:
-      m.e = bFlipY ? (FX_FLOAT)devicePageRect.right()
-                   : (FX_FLOAT)devicePageRect.left;
-      m.f = bFlipX ? (FX_FLOAT)devicePageRect.top
-                   : (FX_FLOAT)devicePageRect.bottom();
+      m.e = bFlipY ? (float)devicePageRect.right() : (float)devicePageRect.left;
+      m.f = bFlipX ? (float)devicePageRect.top : (float)devicePageRect.bottom();
       break;
     default:
       break;
@@ -367,7 +359,7 @@ static int32_t XFA_TabOrderWidgetComparator(const void* phWidget1,
   auto* param2 = *static_cast<CXFA_TabParam**>(const_cast<void*>(phWidget2));
   CFX_RectF rt1 = param1->m_pWidget->GetWidgetRect();
   CFX_RectF rt2 = param2->m_pWidget->GetWidgetRect();
-  FX_FLOAT x1 = rt1.left, y1 = rt1.top, x2 = rt2.left, y2 = rt2.top;
+  float x1 = rt1.left, y1 = rt1.top, x2 = rt2.left, y2 = rt2.top;
   if (y1 < y2 || (y1 - y2 < XFA_FLOAT_PERCISION && x1 < x2))
     return -1;
   return 1;

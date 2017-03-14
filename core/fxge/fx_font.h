@@ -240,8 +240,8 @@ class FXTEXT_GLYPHPOS {
 
 FX_RECT FXGE_GetGlyphsBBox(const std::vector<FXTEXT_GLYPHPOS>& glyphs,
                            int anti_alias,
-                           FX_FLOAT retinaScaleX = 1.0f,
-                           FX_FLOAT retinaScaleY = 1.0f);
+                           float retinaScaleX = 1.0f,
+                           float retinaScaleY = 1.0f);
 
 CFX_ByteString GetNameFromTT(const uint8_t* name_table,
                              uint32_t name_table_size,

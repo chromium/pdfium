@@ -73,23 +73,23 @@ struct FDE_TXTEDTPARAMS {
   FDE_TXTEDTPARAMS();
   ~FDE_TXTEDTPARAMS();
 
-  FX_FLOAT fPlateWidth;
-  FX_FLOAT fPlateHeight;
+  float fPlateWidth;
+  float fPlateHeight;
   int32_t nLineCount;
   uint32_t dwLayoutStyles;
   uint32_t dwAlignment;
   uint32_t dwMode;
   CFX_RetainPtr<CFGAS_GEFont> pFont;
-  FX_FLOAT fFontSize;
+  float fFontSize;
   FX_ARGB dwFontColor;
-  FX_FLOAT fLineSpace;
-  FX_FLOAT fTabWidth;
+  float fLineSpace;
+  float fTabWidth;
   bool bTabEquidistant;
   wchar_t wDefChar;
   wchar_t wLineBreakChar;
   int32_t nLineEnd;
   int32_t nHorzScale;
-  FX_FLOAT fCharSpace;
+  float fCharSpace;
   CFWL_Edit* pEventSink;
 };
 

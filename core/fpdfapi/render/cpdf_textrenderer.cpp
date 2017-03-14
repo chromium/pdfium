@@ -18,9 +18,9 @@
 // static
 bool CPDF_TextRenderer::DrawTextPath(CFX_RenderDevice* pDevice,
                                      const std::vector<uint32_t>& charCodes,
-                                     const std::vector<FX_FLOAT>& charPos,
+                                     const std::vector<float>& charPos,
                                      CPDF_Font* pFont,
-                                     FX_FLOAT font_size,
+                                     float font_size,
                                      const CFX_Matrix* pText2User,
                                      const CFX_Matrix* pUser2Device,
                                      const CFX_GraphStateData* pGraphState,
@@ -65,10 +65,10 @@ bool CPDF_TextRenderer::DrawTextPath(CFX_RenderDevice* pDevice,
 
 // static
 void CPDF_TextRenderer::DrawTextString(CFX_RenderDevice* pDevice,
-                                       FX_FLOAT origin_x,
-                                       FX_FLOAT origin_y,
+                                       float origin_x,
+                                       float origin_y,
                                        CPDF_Font* pFont,
-                                       FX_FLOAT font_size,
+                                       float font_size,
                                        const CFX_Matrix* pMatrix,
                                        const CFX_ByteString& str,
                                        FX_ARGB fill_argb,
@@ -83,10 +83,10 @@ void CPDF_TextRenderer::DrawTextString(CFX_RenderDevice* pDevice,
 
   int offset = 0;
   std::vector<uint32_t> codes;
-  std::vector<FX_FLOAT> positions;
+  std::vector<float> positions;
   codes.resize(nChars);
   positions.resize(nChars - 1);
-  FX_FLOAT cur_pos = 0;
+  float cur_pos = 0;
   for (int i = 0; i < nChars; i++) {
     codes[i] = pFont->GetNextChar(str.c_str(), str.GetLength(), offset);
     if (i)
@@ -107,9 +107,9 @@ void CPDF_TextRenderer::DrawTextString(CFX_RenderDevice* pDevice,
 // static
 bool CPDF_TextRenderer::DrawNormalText(CFX_RenderDevice* pDevice,
                                        const std::vector<uint32_t>& charCodes,
-                                       const std::vector<FX_FLOAT>& charPos,
+                                       const std::vector<float>& charPos,
                                        CPDF_Font* pFont,
-                                       FX_FLOAT font_size,
+                                       float font_size,
                                        const CFX_Matrix* pText2Device,
                                        FX_ARGB fill_argb,
                                        const CPDF_RenderOptions* pOptions) {

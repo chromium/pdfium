@@ -779,7 +779,7 @@ bool CGdiplusExt::GdipCreateFontFamilyFromName(const wchar_t* name,
   return false;
 }
 bool CGdiplusExt::GdipCreateFontFromFamily(void* pFamily,
-                                           FX_FLOAT font_size,
+                                           float font_size,
                                            int fontstyle,
                                            int flag,
                                            void** pFont) {
@@ -793,13 +793,13 @@ bool CGdiplusExt::GdipCreateFontFromFamily(void* pFamily,
   }
   return false;
 }
-void CGdiplusExt::GdipGetFontSize(void* pFont, FX_FLOAT* size) {
+void CGdiplusExt::GdipGetFontSize(void* pFont, float* size) {
   REAL get_size;
   CGdiplusExt& GdiplusExt =
       ((CWin32Platform*)CFX_GEModule::Get()->GetPlatformData())->m_GdiplusExt;
   GpStatus status = CallFunc(GdipGetFontSize)((GpFont*)pFont, (REAL*)&get_size);
   if (status == Ok) {
-    *size = (FX_FLOAT)get_size;
+    *size = (float)get_size;
   } else {
     *size = 0;
   }
@@ -845,7 +845,7 @@ void CGdiplusExt::GdipDeleteBrush(void* pBrush) {
   CallFunc(GdipDeleteBrush)((GpSolidFill*)pBrush);
 }
 void* CGdiplusExt::GdipCreateFontFromCollection(void* pFontCollection,
-                                                FX_FLOAT font_size,
+                                                float font_size,
                                                 int fontstyle) {
   CGdiplusExt& GdiplusExt =
       ((CWin32Platform*)CFX_GEModule::Get()->GetPlatformData())->m_GdiplusExt;
@@ -869,12 +869,12 @@ void* CGdiplusExt::GdipCreateFontFromCollection(void* pFontCollection,
   }
   return pFont;
 }
-void CGdiplusExt::GdipCreateMatrix(FX_FLOAT a,
-                                   FX_FLOAT b,
-                                   FX_FLOAT c,
-                                   FX_FLOAT d,
-                                   FX_FLOAT e,
-                                   FX_FLOAT f,
+void CGdiplusExt::GdipCreateMatrix(float a,
+                                   float b,
+                                   float c,
+                                   float d,
+                                   float e,
+                                   float f,
                                    void** matrix) {
   CGdiplusExt& GdiplusExt =
       ((CWin32Platform*)CFX_GEModule::Get()->GetPlatformData())->m_GdiplusExt;
@@ -972,11 +972,11 @@ static GpPen* _GdipCreatePen(const CFX_GraphStateData* pGraphState,
                              bool bTextMode = false) {
   CGdiplusExt& GdiplusExt =
       ((CWin32Platform*)CFX_GEModule::Get()->GetPlatformData())->m_GdiplusExt;
-  FX_FLOAT width = pGraphState ? pGraphState->m_LineWidth : 1.0f;
+  float width = pGraphState ? pGraphState->m_LineWidth : 1.0f;
   if (!bTextMode) {
-    FX_FLOAT unit =
-        pMatrix ? 1.0f / ((pMatrix->GetXUnit() + pMatrix->GetYUnit()) / 2)
-                : 1.0f;
+    float unit = pMatrix
+                     ? 1.0f / ((pMatrix->GetXUnit() + pMatrix->GetYUnit()) / 2)
+                     : 1.0f;
     if (width < unit) {
       width = unit;
     }
@@ -1015,13 +1015,13 @@ static GpPen* _GdipCreatePen(const CFX_GraphStateData* pGraphState,
   }
   CallFunc(GdipSetPenLineJoin)(pPen, lineJoin);
   if (pGraphState->m_DashCount) {
-    FX_FLOAT* pDashArray = FX_Alloc(
-        FX_FLOAT, pGraphState->m_DashCount + pGraphState->m_DashCount % 2);
+    float* pDashArray = FX_Alloc(
+        float, pGraphState->m_DashCount + pGraphState->m_DashCount % 2);
     int nCount = 0;
-    FX_FLOAT on_leftover = 0, off_leftover = 0;
+    float on_leftover = 0, off_leftover = 0;
     for (int i = 0; i < pGraphState->m_DashCount; i += 2) {
-      FX_FLOAT on_phase = pGraphState->m_DashArray[i];
-      FX_FLOAT off_phase;
+      float on_phase = pGraphState->m_DashArray[i];
+      float off_phase;
       if (i == pGraphState->m_DashCount - 1) {
         off_phase = on_phase;
       } else {
@@ -1057,7 +1057,7 @@ static GpPen* _GdipCreatePen(const CFX_GraphStateData* pGraphState,
       }
     }
     CallFunc(GdipSetPenDashArray)(pPen, pDashArray, nCount);
-    FX_FLOAT phase = pGraphState->m_DashPhase;
+    float phase = pGraphState->m_DashPhase;
     if (bDashExtend) {
       if (phase < 0.5f) {
         phase = 0;
@@ -1089,7 +1089,7 @@ static bool IsSmallTriangle(PointF* points,
     }
 
     CFX_PointF diff = p1 - p2;
-    FX_FLOAT distance_square = (diff.x * diff.x) + (diff.y * diff.y);
+    float distance_square = (diff.x * diff.x) + (diff.y * diff.y);
     if (distance_square < (1.0f * 2 + 1.0f / 4)) {
       v1 = i;
       v2 = pair1;

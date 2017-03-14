@@ -19,7 +19,7 @@ class CPDF_IconFit {
 
   ScaleMethod GetScaleMethod();
   bool IsProportionalScale();
-  void GetIconPosition(FX_FLOAT& fLeft, FX_FLOAT& fBottom);
+  void GetIconPosition(float& fLeft, float& fBottom);
   bool GetFittingBounds();
   const CPDF_Dictionary* GetDict() const { return m_pDict; }
 

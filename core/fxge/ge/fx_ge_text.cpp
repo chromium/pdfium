@@ -45,8 +45,8 @@ ScopedFontTransform::~ScopedFontTransform() {
 
 FX_RECT FXGE_GetGlyphsBBox(const std::vector<FXTEXT_GLYPHPOS>& glyphs,
                            int anti_alias,
-                           FX_FLOAT retinaScaleX,
-                           FX_FLOAT retinaScaleY) {
+                           float retinaScaleX,
+                           float retinaScaleY) {
   FX_RECT rect(0, 0, 0, 0);
   bool bStarted = false;
   for (const FXTEXT_GLYPHPOS& glyph : glyphs) {

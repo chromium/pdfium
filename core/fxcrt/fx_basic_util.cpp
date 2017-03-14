@@ -14,7 +14,7 @@
 
 bool FX_atonum(const CFX_ByteStringC& strc, void* pData) {
   if (strc.Find('.') != -1) {
-    FX_FLOAT* pFloat = static_cast<FX_FLOAT*>(pData);
+    float* pFloat = static_cast<float*>(pData);
     *pFloat = FX_atof(strc);
     return false;
   }
@@ -69,7 +69,7 @@ bool FX_atonum(const CFX_ByteStringC& strc, void* pData) {
   return true;
 }
 
-static const FX_FLOAT fraction_scales[] = {
+static const float fraction_scales[] = {
     0.1f,         0.01f,         0.001f,        0.0001f,
     0.00001f,     0.000001f,     0.0000001f,    0.00000001f,
     0.000000001f, 0.0000000001f, 0.00000000001f};
@@ -78,11 +78,11 @@ int FXSYS_FractionalScaleCount() {
   return FX_ArraySize(fraction_scales);
 }
 
-FX_FLOAT FXSYS_FractionalScale(size_t scale_factor, int value) {
+float FXSYS_FractionalScale(size_t scale_factor, int value) {
   return fraction_scales[scale_factor] * value;
 }
 
-FX_FLOAT FX_atof(const CFX_ByteStringC& strc) {
+float FX_atof(const CFX_ByteStringC& strc) {
   if (strc.IsEmpty())
     return 0.0;
 
@@ -100,7 +100,7 @@ FX_FLOAT FX_atof(const CFX_ByteStringC& strc) {
       break;
     cc++;
   }
-  FX_FLOAT value = 0;
+  float value = 0;
   while (cc < len) {
     if (strc[cc] == '.')
       break;
@@ -206,8 +206,7 @@ wchar_t FX_GetFolderSeparator() {
 }
 
 CFX_Matrix_3by3 CFX_Matrix_3by3::Inverse() {
-  FX_FLOAT det =
-      a * (e * i - f * h) - b * (i * d - f * g) + c * (d * h - e * g);
+  float det = a * (e * i - f * h) - b * (i * d - f * g) + c * (d * h - e * g);
   if (FXSYS_fabs(det) < 0.0000001)
     return CFX_Matrix_3by3();
 

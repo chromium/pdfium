@@ -25,8 +25,8 @@ void CXFA_FWLAdapterWidgetMgr::RepaintWidget(CFWL_Widget* pWidget) {
 }
 
 bool CXFA_FWLAdapterWidgetMgr::GetPopupPos(CFWL_Widget* pWidget,
-                                           FX_FLOAT fMinHeight,
-                                           FX_FLOAT fMaxHeight,
+                                           float fMinHeight,
+                                           float fMaxHeight,
                                            const CFX_RectF& rtAnchor,
                                            CFX_RectF& rtPopup) {
   CXFA_FFWidget* pFFWidget = pWidget->GetLayoutItem();

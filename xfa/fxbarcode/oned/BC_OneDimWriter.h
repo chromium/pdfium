@@ -55,7 +55,7 @@ class CBC_OneDimWriter : public CBC_Writer {
   virtual void SetPrintChecksum(bool checksum);
   virtual void SetDataLength(int32_t length);
   virtual void SetCalcChecksum(bool state);
-  virtual void SetFontSize(FX_FLOAT size);
+  virtual void SetFontSize(float size);
   virtual void SetFontStyle(int32_t style);
   virtual void SetFontColor(FX_ARGB color);
   bool SetFont(CFX_Font* cFont);
@@ -64,9 +64,9 @@ class CBC_OneDimWriter : public CBC_Writer {
   virtual void CalcTextInfo(const CFX_ByteString& text,
                             FXTEXT_CHARPOS* charPos,
                             CFX_Font* cFont,
-                            FX_FLOAT geWidth,
+                            float geWidth,
                             int32_t fontSize,
-                            FX_FLOAT& charsLen);
+                            float& charsLen);
   virtual void ShowChars(const CFX_WideStringC& contents,
                          CFX_DIBitmap* pOutBitmap,
                          CFX_RenderDevice* device,
@@ -76,18 +76,18 @@ class CBC_OneDimWriter : public CBC_Writer {
                          int32_t& e);
   virtual void ShowBitmapChars(CFX_DIBitmap* pOutBitmap,
                                const CFX_ByteString str,
-                               FX_FLOAT geWidth,
+                               float geWidth,
                                FXTEXT_CHARPOS* pCharPos,
-                               FX_FLOAT locX,
-                               FX_FLOAT locY,
+                               float locX,
+                               float locY,
                                int32_t barWidth);
   virtual void ShowDeviceChars(CFX_RenderDevice* device,
                                const CFX_Matrix* matrix,
                                const CFX_ByteString str,
-                               FX_FLOAT geWidth,
+                               float geWidth,
                                FXTEXT_CHARPOS* pCharPos,
-                               FX_FLOAT locX,
-                               FX_FLOAT locY,
+                               float locX,
+                               float locY,
                                int32_t barWidth);
   virtual int32_t AppendPattern(uint8_t* target,
                                 int32_t pos,
@@ -102,7 +102,7 @@ class CBC_OneDimWriter : public CBC_Writer {
   int32_t m_iDataLenth;
   bool m_bCalcChecksum;
   CFX_Font* m_pFont;
-  FX_FLOAT m_fFontSize;
+  float m_fFontSize;
   int32_t m_iFontStyle;
   uint32_t m_fontColor;
   BC_TEXT_LOC m_locTextLoc;
@@ -112,7 +112,7 @@ class CBC_OneDimWriter : public CBC_Writer {
   std::unique_ptr<CBC_CommonBitMatrix> m_output;
   int32_t m_barWidth;
   int32_t m_multiple;
-  FX_FLOAT m_outputHScale;
+  float m_outputHScale;
 };
 
 #endif  // XFA_FXBARCODE_ONED_BC_ONEDIMWRITER_H_

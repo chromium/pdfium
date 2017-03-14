@@ -36,45 +36,45 @@ inline unsigned clip_liang_barsky(T x1, T y1, T x2, T y2,
                                   const rect_base<T>& clip_box,
                                   T* x, T* y)
 {
-    const FX_FLOAT nearzero = 1e-30f;
+    const float nearzero = 1e-30f;
 
-    pdfium::base::CheckedNumeric<FX_FLOAT> width = x2;
+    pdfium::base::CheckedNumeric<float> width = x2;
     width -= x1;
     if (!width.IsValid())
         return 0;
-    pdfium::base::CheckedNumeric<FX_FLOAT> height = y2;
+    pdfium::base::CheckedNumeric<float> height = y2;
     height -= y1;
     if (!height.IsValid())
         return 0;
 
-    FX_FLOAT deltax = width.ValueOrDefault(0);
-    FX_FLOAT deltay = height.ValueOrDefault(0);
+    float deltax = width.ValueOrDefault(0);
+    float deltay = height.ValueOrDefault(0);
     unsigned np = 0;
     if(deltax == 0) {
         deltax = (x1 > clip_box.x1) ? -nearzero : nearzero;
     }
-    FX_FLOAT xin, xout;
+    float xin, xout;
     if(deltax > 0) {
-        xin  = (FX_FLOAT)clip_box.x1;
-        xout = (FX_FLOAT)clip_box.x2;
+        xin  = (float)clip_box.x1;
+        xout = (float)clip_box.x2;
     } else {
-        xin  = (FX_FLOAT)clip_box.x2;
-        xout = (FX_FLOAT)clip_box.x1;
+        xin  = (float)clip_box.x2;
+        xout = (float)clip_box.x1;
     }
-    FX_FLOAT tinx = (xin - x1) / deltax;
+    float tinx = (xin - x1) / deltax;
     if(deltay == 0) {
         deltay = (y1 > clip_box.y1) ? -nearzero : nearzero;
     }
-    FX_FLOAT yin, yout;
+    float yin, yout;
     if(deltay > 0) {
-        yin  = (FX_FLOAT)clip_box.y1;
-        yout = (FX_FLOAT)clip_box.y2;
+        yin  = (float)clip_box.y1;
+        yout = (float)clip_box.y2;
     } else {
-        yin  = (FX_FLOAT)clip_box.y2;
-        yout = (FX_FLOAT)clip_box.y1;
+        yin  = (float)clip_box.y2;
+        yout = (float)clip_box.y1;
     }
-    FX_FLOAT tiny = (yin - y1) / deltay;
-    FX_FLOAT tin1, tin2;
+    float tiny = (yin - y1) / deltay;
+    float tin1, tin2;
     if (tinx < tiny) {
         tin1 = tinx;
         tin2 = tiny;
@@ -89,9 +89,9 @@ inline unsigned clip_liang_barsky(T x1, T y1, T x2, T y2,
             ++np;
         }
         if(tin2 <= 1.0f) {
-          FX_FLOAT toutx = (xout - x1) / deltax;
-          FX_FLOAT touty = (yout - y1) / deltay;
-          FX_FLOAT tout1 = (toutx < touty) ? toutx : touty;
+          float toutx = (xout - x1) / deltax;
+          float touty = (yout - y1) / deltay;
+          float tout1 = (toutx < touty) ? toutx : touty;
           if (tin2 > 0 || tout1 > 0) {
                 if(tin2 <= tout1) {
                     if(tin2 > 0) {

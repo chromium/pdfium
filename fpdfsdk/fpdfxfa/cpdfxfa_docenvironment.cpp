@@ -108,8 +108,8 @@ void CPDFXFA_DocEnvironment::DisplayCaret(CXFA_FFWidget* hWidget,
 }
 
 bool CPDFXFA_DocEnvironment::GetPopupPos(CXFA_FFWidget* hWidget,
-                                         FX_FLOAT fMinPopup,
-                                         FX_FLOAT fMaxPopup,
+                                         float fMinPopup,
+                                         float fMaxPopup,
                                          const CFX_RectF& rtAnchor,
                                          CFX_RectF& rtPopup) {
   if (!hWidget)
@@ -185,13 +185,13 @@ bool CPDFXFA_DocEnvironment::GetPopupPos(CXFA_FFWidget* hWidget,
     dwPos = 1;
   }
 
-  FX_FLOAT fPopupHeight;
+  float fPopupHeight;
   if (t < fMinPopup)
     fPopupHeight = fMinPopup;
   else if (t > fMaxPopup)
     fPopupHeight = fMaxPopup;
   else
-    fPopupHeight = static_cast<FX_FLOAT>(t);
+    fPopupHeight = static_cast<float>(t);
 
   switch (nRotate) {
     case 0:

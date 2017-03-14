@@ -64,8 +64,8 @@ class CFWL_WidgetMgr : public CFWL_WidgetMgrDelegate {
   }
 
   void GetAdapterPopupPos(CFWL_Widget* pWidget,
-                          FX_FLOAT fMinHeight,
-                          FX_FLOAT fMaxHeight,
+                          float fMinHeight,
+                          float fMaxHeight,
                           const CFX_RectF& rtAnchor,
                           CFX_RectF& rtPopup) const;
 

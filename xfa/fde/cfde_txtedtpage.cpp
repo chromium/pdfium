@@ -262,9 +262,9 @@ int32_t CFDE_TxtEdtPage::LoadPage(const CFX_RectF* pClipBox,
   m_pEndParag->GetLineRange(nEndLine - nEndLineInParag, nPageEnd, nTemp);
   nPageEnd += (nTemp - 1);
 
-  FX_FLOAT fLineStart = 0.0f;
-  FX_FLOAT fLineStep = pParams->fLineSpace;
-  FX_FLOAT fLinePos = fLineStart;
+  float fLineStart = 0.0f;
+  float fLineStep = pParams->fLineSpace;
+  float fLinePos = fLineStart;
   if (!m_pTextSet)
     m_pTextSet = pdfium::MakeUnique<CFDE_TxtEdtTextSet>(this);
 
@@ -278,7 +278,7 @@ int32_t CFDE_TxtEdtPage::LoadPage(const CFX_RectF* pClipBox,
   m_nPageStart = nPageStart;
   m_nCharCount = nPageEnd - nPageStart + 1;
   bool bReload = false;
-  FX_FLOAT fDefCharWidth = 0;
+  float fDefCharWidth = 0;
   std::unique_ptr<IFX_CharIter> pIter(m_pIter->Clone());
   pIter->SetAt(nPageStart);
   m_pIter->SetAt(nPageStart);
@@ -306,7 +306,7 @@ int32_t CFDE_TxtEdtPage::LoadPage(const CFX_RectF* pClipBox,
         if (FX_IsOdd(pPiece->m_iBidiLevel)) {
           TxtEdtPiece.dwCharStyles |= FX_TXTCHARSTYLE_OddBidiLevel;
         }
-        FX_FLOAT fParaBreakWidth = 0.0f;
+        float fParaBreakWidth = 0.0f;
         if (!CFX_BreakTypeNoneOrPiece(pPiece->m_dwStatus)) {
           wchar_t wRtChar = pParams->wLineBreakChar;
           if (TxtEdtPiece.nCount >= 2) {
@@ -329,10 +329,10 @@ int32_t CFDE_TxtEdtPage::LoadPage(const CFX_RectF* pClipBox,
           }
         }
 
-        TxtEdtPiece.rtPiece.left = (FX_FLOAT)pPiece->m_iStartPos / 20000.0f;
+        TxtEdtPiece.rtPiece.left = (float)pPiece->m_iStartPos / 20000.0f;
         TxtEdtPiece.rtPiece.top = fLinePos;
         TxtEdtPiece.rtPiece.width =
-            (FX_FLOAT)pPiece->m_iWidth / 20000.0f + fParaBreakWidth;
+            (float)pPiece->m_iWidth / 20000.0f + fParaBreakWidth;
         TxtEdtPiece.rtPiece.height = pParams->fLineSpace;
 
         if (bFirstPiece) {
@@ -357,7 +357,7 @@ int32_t CFDE_TxtEdtPage::LoadPage(const CFX_RectF* pClipBox,
     }
   } while (pIter->Next(false) && (pIter->GetAt() <= nPageEnd));
   if (m_rtPageContents.left != 0) {
-    FX_FLOAT fDelta = 0.0f;
+    float fDelta = 0.0f;
     if (m_rtPageContents.width < pParams->fPlateWidth) {
       if (pParams->dwAlignment & FDE_TEXTEDITALIGN_Right) {
         fDelta = pParams->fPlateWidth - m_rtPageContents.width;
@@ -372,7 +372,7 @@ int32_t CFDE_TxtEdtPage::LoadPage(const CFX_RectF* pClipBox,
         }
       }
     }
-    FX_FLOAT fOffset = m_rtPageContents.left - fDelta;
+    float fOffset = m_rtPageContents.left - fDelta;
     for (auto& piece : m_Pieces)
       piece.rtPiece.Offset(-fOffset, 0.0f);
 
@@ -453,7 +453,7 @@ int32_t CFDE_TxtEdtPage::GetWidth(const FDE_TEXTEDITPIECE* pIdentity,
 
 void CFDE_TxtEdtPage::NormalizePt2Rect(CFX_PointF& ptF,
                                        const CFX_RectF& rtF,
-                                       FX_FLOAT fTolerance) const {
+                                       float fTolerance) const {
   if (rtF.Contains(ptF))
     return;
   if (ptF.x < rtF.left)

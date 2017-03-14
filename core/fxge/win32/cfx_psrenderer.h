@@ -70,7 +70,7 @@ class CFX_PSRenderer {
                 const FXTEXT_CHARPOS* pCharPos,
                 CFX_Font* pFont,
                 const CFX_Matrix* pObject2Device,
-                FX_FLOAT font_size,
+                float font_size,
                 uint32_t color);
 
  private:

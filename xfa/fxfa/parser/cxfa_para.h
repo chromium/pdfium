@@ -18,12 +18,12 @@ class CXFA_Para : public CXFA_Data {
 
   int32_t GetHorizontalAlign();
   int32_t GetVerticalAlign();
-  FX_FLOAT GetLineHeight();
-  FX_FLOAT GetMarginLeft();
-  FX_FLOAT GetMarginRight();
-  FX_FLOAT GetSpaceAbove();
-  FX_FLOAT GetSpaceBelow();
-  FX_FLOAT GetTextIndent();
+  float GetLineHeight();
+  float GetMarginLeft();
+  float GetMarginRight();
+  float GetSpaceAbove();
+  float GetSpaceBelow();
+  float GetTextIndent();
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_PARA_H_

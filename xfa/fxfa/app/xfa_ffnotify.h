@@ -44,11 +44,11 @@ class CXFA_FFNotify {
                             CXFA_LayoutItem* pSender);
 
   void StartFieldDrawLayout(CXFA_Node* pItem,
-                            FX_FLOAT& fCalcWidth,
-                            FX_FLOAT& fCalcHeight);
+                            float& fCalcWidth,
+                            float& fCalcHeight);
   bool FindSplitPos(CXFA_Node* pItem,
                     int32_t iBlockIndex,
-                    FX_FLOAT& fCalcHeightPos);
+                    float& fCalcHeightPos);
   bool RunScript(CXFA_Node* pScript, CXFA_Node* pFormItem);
   int32_t ExecEventByDeepFirst(CXFA_Node* pFormNode,
                                XFA_EVENTTYPE eEventType,

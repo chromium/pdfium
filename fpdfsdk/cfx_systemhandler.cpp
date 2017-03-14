@@ -46,10 +46,10 @@ void CFX_SystemHandler::InvalidateRect(CPDFSDK_Widget* widget, FX_RECT rect) {
   CFX_Matrix device2page;
   device2page.SetReverse(page2device);
 
-  CFX_PointF left_top = device2page.Transform(CFX_PointF(
-      static_cast<FX_FLOAT>(rect.left), static_cast<FX_FLOAT>(rect.top)));
+  CFX_PointF left_top = device2page.Transform(
+      CFX_PointF(static_cast<float>(rect.left), static_cast<float>(rect.top)));
   CFX_PointF right_bottom = device2page.Transform(CFX_PointF(
-      static_cast<FX_FLOAT>(rect.right), static_cast<FX_FLOAT>(rect.bottom)));
+      static_cast<float>(rect.right), static_cast<float>(rect.bottom)));
 
   CFX_FloatRect rcPDF(left_top.x, right_bottom.y, right_bottom.x, left_top.y);
   rcPDF.Normalize();

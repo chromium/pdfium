@@ -33,8 +33,8 @@ void CFX_GraphStateData::Copy(const CFX_GraphStateData& src) {
   m_MiterLimit = src.m_MiterLimit;
   m_LineWidth = src.m_LineWidth;
   if (m_DashCount) {
-    m_DashArray = FX_Alloc(FX_FLOAT, m_DashCount);
-    FXSYS_memcpy(m_DashArray, src.m_DashArray, m_DashCount * sizeof(FX_FLOAT));
+    m_DashArray = FX_Alloc(float, m_DashCount);
+    FXSYS_memcpy(m_DashArray, src.m_DashArray, m_DashCount * sizeof(float));
   }
 }
 
@@ -48,5 +48,5 @@ void CFX_GraphStateData::SetDashCount(int count) {
   m_DashCount = count;
   if (count == 0)
     return;
-  m_DashArray = FX_Alloc(FX_FLOAT, count);
+  m_DashArray = FX_Alloc(float, count);
 }

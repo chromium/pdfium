@@ -138,10 +138,10 @@ void CFWL_WidgetTP::FillSoildRect(CFX_Graphics* pGraphics,
 }
 
 void CFWL_WidgetTP::DrawAxialShading(CFX_Graphics* pGraphics,
-                                     FX_FLOAT fx1,
-                                     FX_FLOAT fy1,
-                                     FX_FLOAT fx2,
-                                     FX_FLOAT fy2,
+                                     float fx1,
+                                     float fy1,
+                                     float fx2,
+                                     float fy2,
                                      FX_ARGB beginColor,
                                      FX_ARGB endColor,
                                      CFX_Path* path,
@@ -170,7 +170,7 @@ void CFWL_WidgetTP::DrawFocus(CFX_Graphics* pGraphics,
   pGraphics->SaveGraphState();
   CFX_Color cr(0xFF000000);
   pGraphics->SetStrokeColor(&cr);
-  FX_FLOAT DashPattern[2] = {1, 1};
+  float DashPattern[2] = {1, 1};
   pGraphics->SetLineDash(0.0f, DashPattern, 2);
   CFX_Path path;
   path.AddRectangle(pRect->left, pRect->top, pRect->width, pRect->height);
@@ -185,10 +185,10 @@ void CFWL_WidgetTP::DrawArrow(CFX_Graphics* pGraphics,
                               CFX_Matrix* pMatrix) {
   bool bVert =
       (eDict == FWLTHEME_DIRECTION_Up || eDict == FWLTHEME_DIRECTION_Down);
-  FX_FLOAT fLeft =
-      (FX_FLOAT)(((pRect->width - (bVert ? 9 : 6)) / 2 + pRect->left) + 0.5);
-  FX_FLOAT fTop =
-      (FX_FLOAT)(((pRect->height - (bVert ? 6 : 9)) / 2 + pRect->top) + 0.5);
+  float fLeft =
+      (float)(((pRect->width - (bVert ? 9 : 6)) / 2 + pRect->left) + 0.5);
+  float fTop =
+      (float)(((pRect->height - (bVert ? 6 : 9)) / 2 + pRect->top) + 0.5);
   CFX_Path path;
   switch (eDict) {
     case FWLTHEME_DIRECTION_Down: {
@@ -240,8 +240,8 @@ void CFWL_WidgetTP::DrawBtn(CFX_Graphics* pGraphics,
   CFX_Path path;
   InitializeArrowColorData();
 
-  FX_FLOAT fRight = pRect->right();
-  FX_FLOAT fBottom = pRect->bottom();
+  float fRight = pRect->right();
+  float fBottom = pRect->bottom();
   path.AddRectangle(pRect->left, pRect->top, pRect->width, pRect->height);
   DrawAxialShading(pGraphics, pRect->left, pRect->top, fRight, fBottom,
                    m_pColorData->clrStart[eState - 1],

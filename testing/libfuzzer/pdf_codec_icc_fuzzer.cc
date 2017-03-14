@@ -12,8 +12,8 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   void* transform = icc_module.CreateTransform_sRGB(data, size, nComponent);
 
   if (transform) {
-    FX_FLOAT src[4];
-    FX_FLOAT dst[4];
+    float src[4];
+    float dst[4];
     for (int i = 0; i < 4; i++)
       src[i] = 0.5f;
     icc_module.SetComponents(nComponent);

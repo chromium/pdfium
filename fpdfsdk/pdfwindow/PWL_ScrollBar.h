@@ -30,11 +30,11 @@ struct PWL_SCROLL_INFO {
     return !(*this == that);
   }
 
-  FX_FLOAT fContentMin;
-  FX_FLOAT fContentMax;
-  FX_FLOAT fPlateWidth;
-  FX_FLOAT fBigStep;
-  FX_FLOAT fSmallStep;
+  float fContentMin;
+  float fContentMax;
+  float fPlateWidth;
+  float fBigStep;
+  float fSmallStep;
 };
 
 enum PWL_SCROLLBAR_TYPE { SBT_HSCROLL, SBT_VSCROLL };
@@ -67,7 +67,7 @@ class CPWL_SBButton : public CPWL_Wnd {
 struct PWL_FLOATRANGE {
  public:
   PWL_FLOATRANGE();
-  PWL_FLOATRANGE(FX_FLOAT min, FX_FLOAT max);
+  PWL_FLOATRANGE(float min, float max);
 
   bool operator==(const PWL_FLOATRANGE& that) const {
     return fMin == that.fMin && fMax == that.fMax;
@@ -75,12 +75,12 @@ struct PWL_FLOATRANGE {
   bool operator!=(const PWL_FLOATRANGE& that) const { return !(*this == that); }
 
   void Default();
-  void Set(FX_FLOAT min, FX_FLOAT max);
-  bool In(FX_FLOAT x) const;
-  FX_FLOAT GetWidth() const;
+  void Set(float min, float max);
+  bool In(float x) const;
+  float GetWidth() const;
 
-  FX_FLOAT fMin;
-  FX_FLOAT fMax;
+  float fMin;
+  float fMax;
 };
 
 struct PWL_SCROLL_PRIVATEDATA {
@@ -97,11 +97,11 @@ struct PWL_SCROLL_PRIVATEDATA {
   }
 
   void Default();
-  void SetScrollRange(FX_FLOAT min, FX_FLOAT max);
-  void SetClientWidth(FX_FLOAT width);
-  void SetSmallStep(FX_FLOAT step);
-  void SetBigStep(FX_FLOAT step);
-  bool SetPos(FX_FLOAT pos);
+  void SetScrollRange(float min, float max);
+  void SetClientWidth(float width);
+  void SetSmallStep(float step);
+  void SetBigStep(float step);
+  bool SetPos(float pos);
 
   void AddSmall();
   void SubSmall();
@@ -109,10 +109,10 @@ struct PWL_SCROLL_PRIVATEDATA {
   void SubBig();
 
   PWL_FLOATRANGE ScrollRange;
-  FX_FLOAT fClientWidth;
-  FX_FLOAT fScrollPos;
-  FX_FLOAT fBigStep;
-  FX_FLOAT fSmallStep;
+  float fClientWidth;
+  float fScrollPos;
+  float fBigStep;
+  float fSmallStep;
 };
 
 class CPWL_ScrollBar : public CPWL_Wnd {
@@ -136,16 +136,16 @@ class CPWL_ScrollBar : public CPWL_Wnd {
   void CreateChildWnd(const PWL_CREATEPARAM& cp) override;
   void TimerProc() override;
 
-  FX_FLOAT GetScrollBarWidth() const;
+  float GetScrollBarWidth() const;
   PWL_SCROLLBAR_TYPE GetScrollBarType() const { return m_sbType; }
 
   void SetNotifyForever(bool bForever) { m_bNotifyForever = bForever; }
 
  protected:
-  void SetScrollRange(FX_FLOAT fMin, FX_FLOAT fMax, FX_FLOAT fClientWidth);
-  void SetScrollPos(FX_FLOAT fPos);
+  void SetScrollRange(float fMin, float fMax, float fClientWidth);
+  void SetScrollPos(float fPos);
   void MovePosButton(bool bRefresh);
-  void SetScrollStep(FX_FLOAT fBigStep, FX_FLOAT fSmallStep);
+  void SetScrollStep(float fBigStep, float fSmallStep);
   void NotifyScrollWindow();
   CFX_FloatRect GetScrollArea() const;
 
@@ -164,8 +164,8 @@ class CPWL_ScrollBar : public CPWL_Wnd {
   void OnPosButtonLBUp(const CFX_PointF& point);
   void OnPosButtonMouseMove(const CFX_PointF& point);
 
-  FX_FLOAT TrueToFace(FX_FLOAT);
-  FX_FLOAT FaceToTrue(FX_FLOAT);
+  float TrueToFace(float);
+  float FaceToTrue(float);
 
   PWL_SCROLLBAR_TYPE m_sbType;
   PWL_SCROLL_INFO m_OriginInfo;
@@ -176,8 +176,8 @@ class CPWL_ScrollBar : public CPWL_Wnd {
   bool m_bMouseDown;
   bool m_bMinOrMax;
   bool m_bNotifyForever;
-  FX_FLOAT m_nOldPos;
-  FX_FLOAT m_fOldPosButton;
+  float m_nOldPos;
+  float m_fOldPosButton;
 };
 
 #endif  // FPDFSDK_PDFWINDOW_PWL_SCROLLBAR_H_

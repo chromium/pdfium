@@ -139,10 +139,10 @@ class CFFL_InteractiveFormFiller : public IPWL_Filler_Notify {
 
   // IPWL_Filler_Notify:
   void QueryWherePopup(void* pPrivateData,
-                       FX_FLOAT fPopupMin,
-                       FX_FLOAT fPopupMax,
+                       float fPopupMin,
+                       float fPopupMax,
                        int32_t& nRet,
-                       FX_FLOAT& fPopupRet) override;
+                       float& fPopupRet) override;
   void OnBeforeKeyStroke(void* pPrivateData,
                          CFX_WideString& strChange,
                          const CFX_WideString& strChangeEx,

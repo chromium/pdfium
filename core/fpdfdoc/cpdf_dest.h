@@ -23,7 +23,7 @@ class CPDF_Dest {
   int GetPageIndex(CPDF_Document* pDoc);
   uint32_t GetPageObjNum();
   int GetZoomMode();
-  FX_FLOAT GetParam(int index);
+  float GetParam(int index);
 
   bool GetXYZ(bool* pHasX,
               bool* pHasY,

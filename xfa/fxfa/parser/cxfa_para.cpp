@@ -23,37 +23,37 @@ int32_t CXFA_Para::GetVerticalAlign() {
   return eAttr;
 }
 
-FX_FLOAT CXFA_Para::GetLineHeight() {
+float CXFA_Para::GetLineHeight() {
   CXFA_Measurement ms;
   m_pNode->TryMeasure(XFA_ATTRIBUTE_LineHeight, ms);
   return ms.ToUnit(XFA_UNIT_Pt);
 }
 
-FX_FLOAT CXFA_Para::GetMarginLeft() {
+float CXFA_Para::GetMarginLeft() {
   CXFA_Measurement ms;
   m_pNode->TryMeasure(XFA_ATTRIBUTE_MarginLeft, ms);
   return ms.ToUnit(XFA_UNIT_Pt);
 }
 
-FX_FLOAT CXFA_Para::GetMarginRight() {
+float CXFA_Para::GetMarginRight() {
   CXFA_Measurement ms;
   m_pNode->TryMeasure(XFA_ATTRIBUTE_MarginRight, ms);
   return ms.ToUnit(XFA_UNIT_Pt);
 }
 
-FX_FLOAT CXFA_Para::GetSpaceAbove() {
+float CXFA_Para::GetSpaceAbove() {
   CXFA_Measurement ms;
   m_pNode->TryMeasure(XFA_ATTRIBUTE_SpaceAbove, ms);
   return ms.ToUnit(XFA_UNIT_Pt);
 }
 
-FX_FLOAT CXFA_Para::GetSpaceBelow() {
+float CXFA_Para::GetSpaceBelow() {
   CXFA_Measurement ms;
   m_pNode->TryMeasure(XFA_ATTRIBUTE_SpaceBelow, ms);
   return ms.ToUnit(XFA_UNIT_Pt);
 }
 
-FX_FLOAT CXFA_Para::GetTextIndent() {
+float CXFA_Para::GetTextIndent() {
   CXFA_Measurement ms;
   m_pNode->TryMeasure(XFA_ATTRIBUTE_TextIndent, ms);
   return ms.ToUnit(XFA_UNIT_Pt);

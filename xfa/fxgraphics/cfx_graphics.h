@@ -54,9 +54,9 @@ class CFX_Graphics {
   CFX_RenderDevice* GetRenderDevice();
 
   void SetLineCap(CFX_GraphStateData::LineCap lineCap);
-  void SetLineDash(FX_FLOAT dashPhase, FX_FLOAT* dashArray, int32_t dashCount);
+  void SetLineDash(float dashPhase, float* dashArray, int32_t dashCount);
   void SetLineDash(FX_DashStyle dashStyle);
-  void SetLineWidth(FX_FLOAT lineWidth, bool isActOnDash = false);
+  void SetLineWidth(float lineWidth, bool isActOnDash = false);
   void SetStrokeColor(CFX_Color* color);
   void SetFillColor(CFX_Color* color);
   void SetClipRect(const CFX_RectF& rect);

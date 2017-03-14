@@ -27,7 +27,7 @@ CFDE_CSSStyleSelector::CFDE_CSSStyleSelector(CFGAS_FontMgr* pFontMgr)
 
 CFDE_CSSStyleSelector::~CFDE_CSSStyleSelector() {}
 
-void CFDE_CSSStyleSelector::SetDefFontSize(FX_FLOAT fFontSize) {
+void CFDE_CSSStyleSelector::SetDefFontSize(float fFontSize) {
   ASSERT(fFontSize > 0);
   m_fDefFontSize = fFontSize;
 }
@@ -185,7 +185,7 @@ void CFDE_CSSStyleSelector::ApplyProperty(
         }
         break;
       case FDE_CSSProperty::FontSize: {
-        FX_FLOAT& fFontSize = pComputedStyle->m_InheritedData.m_fFontSize;
+        float& fFontSize = pComputedStyle->m_InheritedData.m_fFontSize;
         if (eType == FDE_CSSPrimitiveType::Number) {
           fFontSize = pValue.As<CFDE_CSSNumberValue>()->Apply(fFontSize);
         } else if (eType == FDE_CSSPrimitiveType::Enum) {
@@ -478,7 +478,7 @@ bool CFDE_CSSStyleSelector::SetLengthWithPercent(
     FDE_CSSLength& width,
     FDE_CSSPrimitiveType eType,
     const CFX_RetainPtr<CFDE_CSSValue>& pValue,
-    FX_FLOAT fFontSize) {
+    float fFontSize) {
   if (eType == FDE_CSSPrimitiveType::Number) {
     CFX_RetainPtr<CFDE_CSSNumberValue> v = pValue.As<CFDE_CSSNumberValue>();
     if (v->Kind() == FDE_CSSNumberType::Percent) {
@@ -487,7 +487,7 @@ bool CFDE_CSSStyleSelector::SetLengthWithPercent(
       return width.NonZero();
     }
 
-    FX_FLOAT fValue = v->Apply(fFontSize);
+    float fValue = v->Apply(fFontSize);
     width.Set(FDE_CSSLengthUnit::Point, fValue);
     return width.NonZero();
   } else if (eType == FDE_CSSPrimitiveType::Enum) {
@@ -514,8 +514,8 @@ bool CFDE_CSSStyleSelector::SetLengthWithPercent(
   return false;
 }
 
-FX_FLOAT CFDE_CSSStyleSelector::ToFontSize(FDE_CSSPropertyValue eValue,
-                                           FX_FLOAT fCurFontSize) {
+float CFDE_CSSStyleSelector::ToFontSize(FDE_CSSPropertyValue eValue,
+                                        float fCurFontSize) {
   switch (eValue) {
     case FDE_CSSPropertyValue::XxSmall:
       return m_fDefFontSize / 1.2f / 1.2f / 1.2f;

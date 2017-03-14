@@ -31,15 +31,15 @@ class CPDF_TilingPattern : public CPDF_Pattern {
 
   bool colored() const { return m_bColored; }
   const CFX_FloatRect& bbox() const { return m_BBox; }
-  FX_FLOAT x_step() const { return m_XStep; }
-  FX_FLOAT y_step() const { return m_YStep; }
+  float x_step() const { return m_XStep; }
+  float y_step() const { return m_YStep; }
   CPDF_Form* form() const { return m_pForm.get(); }
 
  private:
   bool m_bColored;
   CFX_FloatRect m_BBox;
-  FX_FLOAT m_XStep;
-  FX_FLOAT m_YStep;
+  float m_XStep;
+  float m_YStep;
   std::unique_ptr<CPDF_Form> m_pForm;
 };
 

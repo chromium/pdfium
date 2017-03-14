@@ -18,9 +18,9 @@ class CPVT_Line {
   CPVT_WordPlace lineplace;
   CPVT_WordPlace lineEnd;
   CFX_PointF ptLine;
-  FX_FLOAT fLineWidth;
-  FX_FLOAT fLineAscent;
-  FX_FLOAT fLineDescent;
+  float fLineWidth;
+  float fLineAscent;
+  float fLineDescent;
 };
 
 inline CPVT_Line::CPVT_Line()

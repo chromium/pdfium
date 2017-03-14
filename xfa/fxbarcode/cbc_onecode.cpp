@@ -62,7 +62,7 @@ bool CBC_OneCode::SetFont(CFX_Font* cFont) {
   return false;
 }
 
-void CBC_OneCode::SetFontSize(FX_FLOAT size) {
+void CBC_OneCode::SetFontSize(float size) {
   if (m_pBCWriter)
     static_cast<CBC_OneDimWriter*>(m_pBCWriter.get())->SetFontSize(size);
 }

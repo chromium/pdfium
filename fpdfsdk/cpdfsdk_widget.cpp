@@ -584,11 +584,11 @@ bool CPDFSDK_Widget::GetTextColor(FX_COLORREF& color) const {
   return iColorType != COLORTYPE_TRANSPARENT;
 }
 
-FX_FLOAT CPDFSDK_Widget::GetFontSize() const {
+float CPDFSDK_Widget::GetFontSize() const {
   CPDF_FormControl* pFormCtrl = GetFormControl();
   CPDF_DefaultAppearance pDa = pFormCtrl->GetDefaultAppearance();
   CFX_ByteString csFont = "";
-  FX_FLOAT fFontSize = 0.0f;
+  float fFontSize = 0.0f;
   pDa.GetFont(csFont, fFontSize);
 
   return fFontSize;
@@ -892,7 +892,7 @@ void CPDFSDK_Widget::ResetAppearance_PushButton() {
   CPWL_Color crBackground;
   CPWL_Color crBorder;
   int iColorType;
-  FX_FLOAT fc[4];
+  float fc[4];
   pControl->GetOriginalBackgroundColor(iColorType, fc);
   if (iColorType > 0)
     crBackground = CPWL_Color(iColorType, fc[0], fc[1], fc[2], fc[3]);
@@ -901,7 +901,7 @@ void CPDFSDK_Widget::ResetAppearance_PushButton() {
   if (iColorType > 0)
     crBorder = CPWL_Color(iColorType, fc[0], fc[1], fc[2], fc[3]);
 
-  FX_FLOAT fBorderWidth = (FX_FLOAT)GetBorderWidth();
+  float fBorderWidth = (float)GetBorderWidth();
   CPWL_Dash dsBorder(3, 0, 0);
   CPWL_Color crLeftTop;
   CPWL_Color crRightBottom;
@@ -929,7 +929,7 @@ void CPDFSDK_Widget::ResetAppearance_PushButton() {
 
   CPWL_Color crText(COLORTYPE_GRAY, 0);
 
-  FX_FLOAT fFontSize = 12.0f;
+  float fFontSize = 12.0f;
   CFX_ByteString csNameTag;
 
   CPDF_DefaultAppearance da = pControl->GetDefaultAppearance();
@@ -1071,7 +1071,7 @@ void CPDFSDK_Widget::ResetAppearance_CheckBox() {
   CPDF_FormControl* pControl = GetFormControl();
   CPWL_Color crBackground, crBorder, crText;
   int iColorType;
-  FX_FLOAT fc[4];
+  float fc[4];
 
   pControl->GetOriginalBackgroundColor(iColorType, fc);
   if (iColorType > 0)
@@ -1081,7 +1081,7 @@ void CPDFSDK_Widget::ResetAppearance_CheckBox() {
   if (iColorType > 0)
     crBorder = CPWL_Color(iColorType, fc[0], fc[1], fc[2], fc[3]);
 
-  FX_FLOAT fBorderWidth = (FX_FLOAT)GetBorderWidth();
+  float fBorderWidth = (float)GetBorderWidth();
   CPWL_Dash dsBorder(3, 0, 0);
   CPWL_Color crLeftTop, crRightBottom;
 
@@ -1191,7 +1191,7 @@ void CPDFSDK_Widget::ResetAppearance_RadioButton() {
   CPDF_FormControl* pControl = GetFormControl();
   CPWL_Color crBackground, crBorder, crText;
   int iColorType;
-  FX_FLOAT fc[4];
+  float fc[4];
 
   pControl->GetOriginalBackgroundColor(iColorType, fc);
   if (iColorType > 0)
@@ -1201,7 +1201,7 @@ void CPDFSDK_Widget::ResetAppearance_RadioButton() {
   if (iColorType > 0)
     crBorder = CPWL_Color(iColorType, fc[0], fc[1], fc[2], fc[3]);
 
-  FX_FLOAT fBorderWidth = (FX_FLOAT)GetBorderWidth();
+  float fBorderWidth = (float)GetBorderWidth();
   CPWL_Dash dsBorder(3, 0, 0);
   CPWL_Color crLeftTop;
   CPWL_Color crRightBottom;
@@ -1369,7 +1369,7 @@ void CPDFSDK_Widget::ResetAppearance_ComboBox(const CFX_WideString* sValue) {
   pEdit->SetPlateRect(rcEdit);
   pEdit->SetAlignmentV(1, true);
 
-  FX_FLOAT fFontSize = GetFontSize();
+  float fFontSize = GetFontSize();
   if (IsFloatZero(fFontSize))
     pEdit->SetAutoFontSize(true, true);
   else
@@ -1428,14 +1428,14 @@ void CPDFSDK_Widget::ResetAppearance_ListBox() {
 
   pEdit->SetPlateRect(CFX_FloatRect(rcClient.left, 0.0f, rcClient.right, 0.0f));
 
-  FX_FLOAT fFontSize = GetFontSize();
+  float fFontSize = GetFontSize();
 
   pEdit->SetFontSize(IsFloatZero(fFontSize) ? 12.0f : fFontSize);
 
   pEdit->Initialize();
 
   CFX_ByteTextBuf sList;
-  FX_FLOAT fy = rcClient.top;
+  float fy = rcClient.top;
 
   int32_t nTop = pField->GetTopVisibleIndex();
   int32_t nCount = pField->CountOptions();
@@ -1453,7 +1453,7 @@ void CPDFSDK_Widget::ResetAppearance_ListBox() {
     pEdit->SetText(pField->GetOptionLabel(i));
 
     CFX_FloatRect rcContent = pEdit->GetContentRect();
-    FX_FLOAT fItemHeight = rcContent.Height();
+    float fItemHeight = rcContent.Height();
 
     if (bSelected) {
       CFX_FloatRect rcItem =
@@ -1530,7 +1530,7 @@ void CPDFSDK_Widget::ResetAppearance_TextField(const CFX_WideString* sValue) {
 
   int nMaxLen = pField->GetMaxLen();
   bool bCharArray = (dwFieldFlags >> 24) & 1;
-  FX_FLOAT fFontSize = GetFontSize();
+  float fFontSize = GetFontSize();
 
 #ifdef PDF_ENABLE_XFA
   CFX_WideString sValueTmp;
@@ -1642,7 +1642,7 @@ void CPDFSDK_Widget::ResetAppearance_TextField(const CFX_WideString* sValue) {
 
 CFX_FloatRect CPDFSDK_Widget::GetClientRect() const {
   CFX_FloatRect rcWindow = GetRotatedRect();
-  FX_FLOAT fBorderWidth = (FX_FLOAT)GetBorderWidth();
+  float fBorderWidth = (float)GetBorderWidth();
   switch (GetBorderStyle()) {
     case BorderStyle::BEVELED:
     case BorderStyle::INSET:
@@ -1657,8 +1657,8 @@ CFX_FloatRect CPDFSDK_Widget::GetClientRect() const {
 
 CFX_FloatRect CPDFSDK_Widget::GetRotatedRect() const {
   CFX_FloatRect rectAnnot = GetRect();
-  FX_FLOAT fWidth = rectAnnot.right - rectAnnot.left;
-  FX_FLOAT fHeight = rectAnnot.top - rectAnnot.bottom;
+  float fWidth = rectAnnot.right - rectAnnot.left;
+  float fHeight = rectAnnot.top - rectAnnot.bottom;
 
   CPDF_FormControl* pControl = GetFormControl();
   CFX_FloatRect rcPDFWindow;
@@ -1691,7 +1691,7 @@ CFX_ByteString CPDFSDK_Widget::GetBorderAppStream() const {
   CPWL_Color crBackground = GetFillPWLColor();
   CPWL_Color crLeftTop, crRightBottom;
 
-  FX_FLOAT fBorderWidth = (FX_FLOAT)GetBorderWidth();
+  float fBorderWidth = (float)GetBorderWidth();
   CPWL_Dash dsBorder(3, 0, 0);
 
   BorderStyle nBorderStyle = GetBorderStyle();
@@ -1722,8 +1722,8 @@ CFX_Matrix CPDFSDK_Widget::GetMatrix() const {
   CFX_Matrix mt;
   CPDF_FormControl* pControl = GetFormControl();
   CFX_FloatRect rcAnnot = GetRect();
-  FX_FLOAT fWidth = rcAnnot.right - rcAnnot.left;
-  FX_FLOAT fHeight = rcAnnot.top - rcAnnot.bottom;
+  float fWidth = rcAnnot.right - rcAnnot.left;
+  float fHeight = rcAnnot.top - rcAnnot.bottom;
 
   switch (abs(pControl->GetRotation() % 360)) {
     case 0:
@@ -1751,7 +1751,7 @@ CPWL_Color CPDFSDK_Widget::GetTextPWLColor() const {
   CPDF_DefaultAppearance da = pFormCtrl->GetDefaultAppearance();
   if (da.HasColor()) {
     int32_t iColorType;
-    FX_FLOAT fc[4];
+    float fc[4];
     da.GetColor(iColorType, fc);
     crText = CPWL_Color(iColorType, fc[0], fc[1], fc[2], fc[3]);
   }
@@ -1764,7 +1764,7 @@ CPWL_Color CPDFSDK_Widget::GetBorderPWLColor() const {
 
   CPDF_FormControl* pFormCtrl = GetFormControl();
   int32_t iColorType;
-  FX_FLOAT fc[4];
+  float fc[4];
   pFormCtrl->GetOriginalBorderColor(iColorType, fc);
   if (iColorType > 0)
     crBorder = CPWL_Color(iColorType, fc[0], fc[1], fc[2], fc[3]);
@@ -1777,7 +1777,7 @@ CPWL_Color CPDFSDK_Widget::GetFillPWLColor() const {
 
   CPDF_FormControl* pFormCtrl = GetFormControl();
   int32_t iColorType;
-  FX_FLOAT fc[4];
+  float fc[4];
   pFormCtrl->GetOriginalBackgroundColor(iColorType, fc);
   if (iColorType > 0)
     crFill = CPWL_Color(iColorType, fc[0], fc[1], fc[2], fc[3]);

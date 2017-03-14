@@ -95,8 +95,8 @@ class CFDE_XMLInstruction : public CFDE_XMLNode {
                  const CFX_WideString& wsAttriValue);
   int32_t GetInteger(const wchar_t* pwsAttriName, int32_t iDefValue = 0) const;
   void SetInteger(const wchar_t* pwsAttriName, int32_t iAttriValue);
-  FX_FLOAT GetFloat(const wchar_t* pwsAttriName, FX_FLOAT fDefValue = 0) const;
-  void SetFloat(const wchar_t* pwsAttriName, FX_FLOAT fAttriValue);
+  float GetFloat(const wchar_t* pwsAttriName, float fDefValue = 0) const;
+  void SetFloat(const wchar_t* pwsAttriName, float fAttriValue);
   void RemoveAttribute(const wchar_t* pwsAttriName);
   int32_t CountData() const;
   bool GetData(int32_t index, CFX_WideString& wsData) const;
@@ -139,8 +139,8 @@ class CFDE_XMLElement : public CFDE_XMLNode {
   int32_t GetInteger(const wchar_t* pwsAttriName, int32_t iDefValue = 0) const;
   void SetInteger(const wchar_t* pwsAttriName, int32_t iAttriValue);
 
-  FX_FLOAT GetFloat(const wchar_t* pwsAttriName, FX_FLOAT fDefValue = 0) const;
-  void SetFloat(const wchar_t* pwsAttriName, FX_FLOAT fAttriValue);
+  float GetFloat(const wchar_t* pwsAttriName, float fDefValue = 0) const;
+  void SetFloat(const wchar_t* pwsAttriName, float fAttriValue);
 
   void GetTextData(CFX_WideString& wsText) const;
   void SetTextData(const CFX_WideString& wsText);

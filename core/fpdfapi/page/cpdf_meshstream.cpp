@@ -191,25 +191,25 @@ CFX_PointF CPDF_MeshStream::ReadCoords() {
   return pos;
 }
 
-std::tuple<FX_FLOAT, FX_FLOAT, FX_FLOAT> CPDF_MeshStream::ReadColor() {
+std::tuple<float, float, float> CPDF_MeshStream::ReadColor() {
   ASSERT(ShouldCheckBPC(m_type));
 
-  FX_FLOAT color_value[kMaxComponents];
+  float color_value[kMaxComponents];
   for (uint32_t i = 0; i < m_nComponents; ++i) {
     color_value[i] = m_ColorMin[i] +
                      m_BitStream.GetBits(m_nComponentBits) *
                          (m_ColorMax[i] - m_ColorMin[i]) / m_ComponentMax;
   }
 
-  FX_FLOAT r;
-  FX_FLOAT g;
-  FX_FLOAT b;
+  float r;
+  float g;
+  float b;
   if (m_funcs.empty()) {
     m_pCS->GetRGB(color_value, r, g, b);
-    return std::tuple<FX_FLOAT, FX_FLOAT, FX_FLOAT>(r, g, b);
+    return std::tuple<float, float, float>(r, g, b);
   }
 
-  FX_FLOAT result[kMaxComponents];
+  float result[kMaxComponents];
   FXSYS_memset(result, 0, sizeof(result));
   int nResults;
   for (const auto& func : m_funcs) {
@@ -218,7 +218,7 @@ std::tuple<FX_FLOAT, FX_FLOAT, FX_FLOAT> CPDF_MeshStream::ReadColor() {
   }
 
   m_pCS->GetRGB(result, r, g, b);
-  return std::tuple<FX_FLOAT, FX_FLOAT, FX_FLOAT>(r, g, b);
+  return std::tuple<float, float, float>(r, g, b);
 }
 
 bool CPDF_MeshStream::ReadVertex(const CFX_Matrix& pObject2Bitmap,

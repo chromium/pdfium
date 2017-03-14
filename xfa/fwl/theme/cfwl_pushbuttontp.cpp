@@ -29,8 +29,8 @@ void CFWL_PushButtonTP::DrawBackground(CFWL_ThemeBackground* pParams) {
     }
     case CFWL_Part::Background: {
       CFX_RectF& rect = pParams->m_rtPart;
-      FX_FLOAT fRight = rect.right();
-      FX_FLOAT fBottom = rect.bottom();
+      float fRight = rect.right();
+      float fBottom = rect.bottom();
 
       CFX_Path strokePath;
       strokePath.MoveTo(

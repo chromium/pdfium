@@ -20,10 +20,10 @@ namespace agg
 {
 struct null_markers  {
     void remove_all() {}
-    void add_vertex(FX_FLOAT, FX_FLOAT, unsigned) {}
+    void add_vertex(float, float, unsigned) {}
     void prepare_src() {}
     void rewind(unsigned) {}
-    unsigned vertex(FX_FLOAT*, FX_FLOAT*)
+    unsigned vertex(float*, float*)
     {
         return path_cmd_stop;
     }
@@ -67,7 +67,7 @@ public:
         m_source->rewind(path_id);
         m_status = initial;
     }
-    unsigned vertex(FX_FLOAT* x, FX_FLOAT* y);
+    unsigned vertex(float* x, float* y);
 private:
     conv_adaptor_vcgen(const conv_adaptor_vcgen<VertexSource, Generator, Markers>&);
     const conv_adaptor_vcgen<VertexSource, Generator, Markers>&
@@ -77,11 +77,11 @@ private:
     Markers       m_markers;
     status        m_status;
     unsigned      m_last_cmd;
-    FX_FLOAT        m_start_x;
-    FX_FLOAT        m_start_y;
+    float        m_start_x;
+    float        m_start_y;
 };
 template<class VertexSource, class Generator, class Markers>
-unsigned conv_adaptor_vcgen<VertexSource, Generator, Markers>::vertex(FX_FLOAT* x, FX_FLOAT* y)
+unsigned conv_adaptor_vcgen<VertexSource, Generator, Markers>::vertex(float* x, float* y)
 {
     unsigned cmd = path_cmd_stop;
     bool done = false;

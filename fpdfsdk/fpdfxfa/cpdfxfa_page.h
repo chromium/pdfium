@@ -38,8 +38,8 @@ class CPDFXFA_Page {
     m_pXFAPageView = pPageView;
   }
 
-  FX_FLOAT GetPageWidth() const;
-  FX_FLOAT GetPageHeight() const;
+  float GetPageWidth() const;
+  float GetPageHeight() const;
 
   void DeviceToPage(int start_x,
                     int start_y,

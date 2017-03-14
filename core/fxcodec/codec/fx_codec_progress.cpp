@@ -51,25 +51,23 @@ void CCodec_ProgressiveDecoder::CFXCODEC_WeightTable::Calc(int dest_len,
                                                            int src_max,
                                                            bool bInterpol) {
   double scale, base;
-  scale = (FX_FLOAT)src_len / (FX_FLOAT)dest_len;
+  scale = (float)src_len / (float)dest_len;
   if (dest_len < 0) {
-    base = (FX_FLOAT)(src_len);
+    base = (float)(src_len);
   } else {
     base = 0.0f;
   }
-  m_ItemSize =
-      (int)(sizeof(int) * 2 +
-            sizeof(int) * (FXSYS_ceil(FXSYS_fabs((FX_FLOAT)scale)) + 1));
+  m_ItemSize = (int)(sizeof(int) * 2 +
+                     sizeof(int) * (FXSYS_ceil(FXSYS_fabs((float)scale)) + 1));
   m_DestMin = dest_min;
   m_pWeightTables.resize((dest_max - dest_min) * m_ItemSize + 4);
-  if (FXSYS_fabs((FX_FLOAT)scale) < 1.0f) {
+  if (FXSYS_fabs((float)scale) < 1.0f) {
     for (int dest_pixel = dest_min; dest_pixel < dest_max; dest_pixel++) {
       PixelWeight& pixel_weights = *GetPixelWeight(dest_pixel);
       double src_pos = dest_pixel * scale + scale / 2 + base;
       if (bInterpol) {
-        pixel_weights.m_SrcStart =
-            (int)FXSYS_floor((FX_FLOAT)src_pos - 1.0f / 2);
-        pixel_weights.m_SrcEnd = (int)FXSYS_floor((FX_FLOAT)src_pos + 1.0f / 2);
+        pixel_weights.m_SrcStart = (int)FXSYS_floor((float)src_pos - 1.0f / 2);
+        pixel_weights.m_SrcEnd = (int)FXSYS_floor((float)src_pos + 1.0f / 2);
         if (pixel_weights.m_SrcStart < src_min) {
           pixel_weights.m_SrcStart = src_min;
         }
@@ -80,13 +78,12 @@ void CCodec_ProgressiveDecoder::CFXCODEC_WeightTable::Calc(int dest_len,
           pixel_weights.m_Weights[0] = 65536;
         } else {
           pixel_weights.m_Weights[1] = FXSYS_round(
-              (FX_FLOAT)(src_pos - pixel_weights.m_SrcStart - 1.0f / 2) *
-              65536);
+              (float)(src_pos - pixel_weights.m_SrcStart - 1.0f / 2) * 65536);
           pixel_weights.m_Weights[0] = 65536 - pixel_weights.m_Weights[1];
         }
       } else {
         pixel_weights.m_SrcStart = pixel_weights.m_SrcEnd =
-            (int)FXSYS_floor((FX_FLOAT)src_pos);
+            (int)FXSYS_floor((float)src_pos);
         pixel_weights.m_Weights[0] = 65536;
       }
     }
@@ -98,11 +95,11 @@ void CCodec_ProgressiveDecoder::CFXCODEC_WeightTable::Calc(int dest_len,
     double src_end = src_start + scale;
     int start_i, end_i;
     if (src_start < src_end) {
-      start_i = (int)FXSYS_floor((FX_FLOAT)src_start);
-      end_i = (int)FXSYS_ceil((FX_FLOAT)src_end);
+      start_i = (int)FXSYS_floor((float)src_start);
+      end_i = (int)FXSYS_ceil((float)src_end);
     } else {
-      start_i = (int)FXSYS_floor((FX_FLOAT)src_end);
-      end_i = (int)FXSYS_ceil((FX_FLOAT)src_start);
+      start_i = (int)FXSYS_floor((float)src_end);
+      end_i = (int)FXSYS_ceil((float)src_start);
     }
     if (start_i < src_min) {
       start_i = src_min;
@@ -118,18 +115,17 @@ void CCodec_ProgressiveDecoder::CFXCODEC_WeightTable::Calc(int dest_len,
     pixel_weights.m_SrcStart = start_i;
     pixel_weights.m_SrcEnd = end_i;
     for (int j = start_i; j <= end_i; j++) {
-      double dest_start = ((FX_FLOAT)j - base) / scale;
-      double dest_end = ((FX_FLOAT)(j + 1) - base) / scale;
+      double dest_start = ((float)j - base) / scale;
+      double dest_end = ((float)(j + 1) - base) / scale;
       if (dest_start > dest_end) {
         double temp = dest_start;
         dest_start = dest_end;
         dest_end = temp;
       }
-      double area_start = dest_start > (FX_FLOAT)(dest_pixel)
-                              ? dest_start
-                              : (FX_FLOAT)(dest_pixel);
-      double area_end = dest_end > (FX_FLOAT)(dest_pixel + 1)
-                            ? (FX_FLOAT)(dest_pixel + 1)
+      double area_start =
+          dest_start > (float)(dest_pixel) ? dest_start : (float)(dest_pixel);
+      double area_end = dest_end > (float)(dest_pixel + 1)
+                            ? (float)(dest_pixel + 1)
                             : dest_end;
       double weight = area_start >= area_end ? 0.0f : area_end - area_start;
       if (weight == 0 && j == end_i) {
@@ -137,7 +133,7 @@ void CCodec_ProgressiveDecoder::CFXCODEC_WeightTable::Calc(int dest_len,
         break;
       }
       pixel_weights.m_Weights[j - start_i] =
-          FXSYS_round((FX_FLOAT)(weight * 65536));
+          FXSYS_round((float)(weight * 65536));
     }
   }
 }
@@ -157,7 +153,7 @@ void CCodec_ProgressiveDecoder::CFXCODEC_HorzTable::Calc(int dest_len,
     int pre_des_col = 0;
     for (int src_col = 0; src_col < src_len; src_col++) {
       double des_col_f = src_col * scale;
-      int des_col = FXSYS_round((FX_FLOAT)des_col_f);
+      int des_col = FXSYS_round((float)des_col_f);
       PixelWeight* pWeight = GetPixelWeight(des_col);
       pWeight->m_SrcStart = pWeight->m_SrcEnd = src_col;
       pWeight->m_Weights[0] = 65536;
@@ -179,10 +175,10 @@ void CCodec_ProgressiveDecoder::CFXCODEC_HorzTable::Calc(int dest_len,
         pWeight->m_SrcStart = src_col - 1;
         pWeight->m_SrcEnd = src_col;
         pWeight->m_Weights[0] =
-            bInterpol ? FXSYS_round((FX_FLOAT)(
-                            ((FX_FLOAT)des_col - (FX_FLOAT)des_col_index) /
-                            (FX_FLOAT)des_col_len * 65536))
-                      : 65536;
+            bInterpol
+                ? FXSYS_round((float)(((float)des_col - (float)des_col_index) /
+                                      (float)des_col_len * 65536))
+                : 65536;
         pWeight->m_Weights[1] = 65536 - pWeight->m_Weights[0];
       }
       pre_des_col = des_col;
@@ -191,7 +187,7 @@ void CCodec_ProgressiveDecoder::CFXCODEC_HorzTable::Calc(int dest_len,
   }
   for (int des_col = 0; des_col < dest_len; des_col++) {
     double src_col_f = des_col / scale;
-    int src_col = FXSYS_round((FX_FLOAT)src_col_f);
+    int src_col = FXSYS_round((float)src_col_f);
     PixelWeight* pWeight = GetPixelWeight(des_col);
     pWeight->m_SrcStart = pWeight->m_SrcEnd = src_col;
     pWeight->m_Weights[0] = 65536;
@@ -249,8 +245,8 @@ void CCodec_ProgressiveDecoder::CFXCODEC_VertTable::Calc(int dest_len,
       PixelWeight* pWeight = GetPixelWeight(des_row);
       pWeight->m_SrcStart = start_step;
       pWeight->m_SrcEnd = end_step;
-      pWeight->m_Weights[0] = FXSYS_round((FX_FLOAT)(end_step - des_row) /
-                                          (FX_FLOAT)length * 65536);
+      pWeight->m_Weights[0] =
+          FXSYS_round((float)(end_step - des_row) / (float)length * 65536);
       pWeight->m_Weights[1] = 65536 - pWeight->m_Weights[0];
     }
   }
@@ -1745,7 +1741,7 @@ void CCodec_ProgressiveDecoder::ResampleVert(CFX_DIBitmap* pDeviceBitmap,
     }
     return;
   }
-  int multiple = (int)FXSYS_ceil((FX_FLOAT)scale_y - 1);
+  int multiple = (int)FXSYS_ceil((float)scale_y - 1);
   if (multiple > 0) {
     uint8_t* scan_src =
         (uint8_t*)pDeviceBitmap->GetScanline(des_row) + des_ScanOffet;
@@ -1871,21 +1867,21 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::StartDecode(CFX_DIBitmap* pDIBitmap,
   m_bInterpol = bInterpol;
   m_FrameCur = 0;
   if (start_x < 0 || out_range_x > 0) {
-    FX_FLOAT scaleX = (FX_FLOAT)m_clipBox.Width() / (FX_FLOAT)size_x;
+    float scaleX = (float)m_clipBox.Width() / (float)size_x;
     if (start_x < 0) {
-      m_clipBox.left -= (int32_t)FXSYS_ceil((FX_FLOAT)start_x * scaleX);
+      m_clipBox.left -= (int32_t)FXSYS_ceil((float)start_x * scaleX);
     }
     if (out_range_x > 0) {
-      m_clipBox.right -= (int32_t)FXSYS_floor((FX_FLOAT)out_range_x * scaleX);
+      m_clipBox.right -= (int32_t)FXSYS_floor((float)out_range_x * scaleX);
     }
   }
   if (start_y < 0 || out_range_y > 0) {
-    FX_FLOAT scaleY = (FX_FLOAT)m_clipBox.Height() / (FX_FLOAT)size_y;
+    float scaleY = (float)m_clipBox.Height() / (float)size_y;
     if (start_y < 0) {
-      m_clipBox.top -= (int32_t)FXSYS_ceil((FX_FLOAT)start_y * scaleY);
+      m_clipBox.top -= (int32_t)FXSYS_ceil((float)start_y * scaleY);
     }
     if (out_range_y > 0) {
-      m_clipBox.bottom -= (int32_t)FXSYS_floor((FX_FLOAT)out_range_y * scaleY);
+      m_clipBox.bottom -= (int32_t)FXSYS_floor((float)out_range_y * scaleY);
     }
   }
   if (m_clipBox.IsEmpty()) {

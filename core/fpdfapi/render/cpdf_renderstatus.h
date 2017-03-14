@@ -127,7 +127,7 @@ class CPDF_RenderStatus {
   void DrawTextPathWithPattern(const CPDF_TextObject* textobj,
                                const CFX_Matrix* pObj2Device,
                                CPDF_Font* pFont,
-                               FX_FLOAT font_size,
+                               float font_size,
                                const CFX_Matrix* pTextMatrix,
                                bool bFill,
                                bool bStroke);

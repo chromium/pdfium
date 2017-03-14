@@ -46,7 +46,7 @@ class CFX_DIBAttribute {
 
   int32_t m_nXDPI;
   int32_t m_nYDPI;
-  FX_FLOAT m_fAspectRatio;
+  float m_fAspectRatio;
   uint16_t m_wDPIUnit;
   CFX_ByteString m_strAuthor;
   uint8_t m_strTime[20];
@@ -112,20 +112,20 @@ class CCodec_ModuleMgr {
 
 void ReverseRGB(uint8_t* pDestBuf, const uint8_t* pSrcBuf, int pixels);
 uint32_t ComponentsForFamily(int family);
-void sRGB_to_AdobeCMYK(FX_FLOAT R,
-                       FX_FLOAT G,
-                       FX_FLOAT B,
-                       FX_FLOAT& c,
-                       FX_FLOAT& m,
-                       FX_FLOAT& y,
-                       FX_FLOAT& k);
-void AdobeCMYK_to_sRGB(FX_FLOAT c,
-                       FX_FLOAT m,
-                       FX_FLOAT y,
-                       FX_FLOAT k,
-                       FX_FLOAT& R,
-                       FX_FLOAT& G,
-                       FX_FLOAT& B);
+void sRGB_to_AdobeCMYK(float R,
+                       float G,
+                       float B,
+                       float& c,
+                       float& m,
+                       float& y,
+                       float& k);
+void AdobeCMYK_to_sRGB(float c,
+                       float m,
+                       float y,
+                       float k,
+                       float& R,
+                       float& G,
+                       float& B);
 void AdobeCMYK_to_sRGB1(uint8_t c,
                         uint8_t m,
                         uint8_t y,

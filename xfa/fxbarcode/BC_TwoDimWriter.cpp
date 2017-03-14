@@ -23,7 +23,7 @@ void CBC_TwoDimWriter::RenderDeviceResult(CFX_RenderDevice* device,
                                           const CFX_Matrix* matrix) {
   CFX_GraphStateData stateData;
   CFX_PathData path;
-  path.AppendRect(0, 0, (FX_FLOAT)m_Width, (FX_FLOAT)m_Height);
+  path.AppendRect(0, 0, (float)m_Width, (float)m_Height);
   device->DrawPath(&path, matrix, &stateData, m_backgroundColor,
                    m_backgroundColor, FXFILL_ALTERNATE);
   int32_t leftPos = 0;
@@ -34,17 +34,17 @@ void CBC_TwoDimWriter::RenderDeviceResult(CFX_RenderDevice* device,
   }
   CFX_Matrix matri = *matrix;
   if (m_Width < m_output->GetWidth() && m_Height < m_output->GetHeight()) {
-    CFX_Matrix matriScale(
-        (FX_FLOAT)m_Width / (FX_FLOAT)m_output->GetWidth(), 0.0, 0.0,
-        (FX_FLOAT)m_Height / (FX_FLOAT)m_output->GetHeight(), 0.0, 0.0);
+    CFX_Matrix matriScale((float)m_Width / (float)m_output->GetWidth(), 0.0,
+                          0.0, (float)m_Height / (float)m_output->GetHeight(),
+                          0.0, 0.0);
     matriScale.Concat(*matrix);
     matri = matriScale;
   }
   for (int32_t x = 0; x < m_output->GetWidth(); x++) {
     for (int32_t y = 0; y < m_output->GetHeight(); y++) {
       CFX_PathData rect;
-      rect.AppendRect((FX_FLOAT)leftPos + x, (FX_FLOAT)topPos + y,
-                      (FX_FLOAT)(leftPos + x + 1), (FX_FLOAT)(topPos + y + 1));
+      rect.AppendRect((float)leftPos + x, (float)topPos + y,
+                      (float)(leftPos + x + 1), (float)(topPos + y + 1));
       if (m_output->Get(x, y)) {
         CFX_GraphStateData data;
         device->DrawPath(&rect, &matri, &data, m_barColor, 0, FXFILL_WINDING);
@@ -98,7 +98,7 @@ void CBC_TwoDimWriter::RenderResult(uint8_t* code,
   int32_t inputHeight = codeHeight;
   int32_t tempWidth = inputWidth + 2;
   int32_t tempHeight = inputHeight + 2;
-  FX_FLOAT moduleHSize = std::min(m_ModuleWidth, m_ModuleHeight);
+  float moduleHSize = std::min(m_ModuleWidth, m_ModuleHeight);
   moduleHSize = std::min(moduleHSize, 8.0f);
   moduleHSize = std::max(moduleHSize, 1.0f);
   pdfium::base::CheckedNumeric<int32_t> scaledWidth = tempWidth;
@@ -115,14 +115,14 @@ void CBC_TwoDimWriter::RenderResult(uint8_t* code,
     }
   } else {
     if (m_Width > outputWidth || m_Height > outputHeight) {
-      outputWidth = (int32_t)(outputWidth *
-                              ceil((FX_FLOAT)m_Width / (FX_FLOAT)outputWidth));
-      outputHeight = (int32_t)(
-          outputHeight * ceil((FX_FLOAT)m_Height / (FX_FLOAT)outputHeight));
+      outputWidth =
+          (int32_t)(outputWidth * ceil((float)m_Width / (float)outputWidth));
+      outputHeight =
+          (int32_t)(outputHeight * ceil((float)m_Height / (float)outputHeight));
     }
   }
-  int32_t multiX = (int32_t)ceil((FX_FLOAT)outputWidth / (FX_FLOAT)tempWidth);
-  int32_t multiY = (int32_t)ceil((FX_FLOAT)outputHeight / (FX_FLOAT)tempHeight);
+  int32_t multiX = (int32_t)ceil((float)outputWidth / (float)tempWidth);
+  int32_t multiY = (int32_t)ceil((float)outputHeight / (float)tempHeight);
   if (m_bFixedSize) {
     multiX = std::min(multiX, multiY);
     multiY = multiX;

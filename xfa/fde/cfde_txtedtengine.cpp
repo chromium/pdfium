@@ -1029,7 +1029,7 @@ void CFDE_TxtEdtEngine::UpdateTxtBreak() {
 
   m_nPageLineCount = m_Param.nLineCount;
   if (m_Param.dwLayoutStyles & FDE_TEXTEDITLAYOUT_CombText) {
-    FX_FLOAT fCombWidth = m_Param.fPlateWidth;
+    float fCombWidth = m_Param.fPlateWidth;
     if (m_nLimit > 0)
       fCombWidth /= m_nLimit;
 

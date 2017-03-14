@@ -452,11 +452,11 @@ DIB_COMP_DATA* CPDF_DIBSource::GetDecodeAndMaskArray(bool& bDefaultDecode,
   if (pDecode) {
     for (uint32_t i = 0; i < m_nComponents; i++) {
       pCompData[i].m_DecodeMin = pDecode->GetNumberAt(i * 2);
-      FX_FLOAT max = pDecode->GetNumberAt(i * 2 + 1);
+      float max = pDecode->GetNumberAt(i * 2 + 1);
       pCompData[i].m_DecodeStep = (max - pCompData[i].m_DecodeMin) / max_data;
-      FX_FLOAT def_value;
-      FX_FLOAT def_min;
-      FX_FLOAT def_max;
+      float def_value;
+      float def_min;
+      float def_max;
       m_pColorSpace->GetDefaultValue(i, def_value, def_min, def_max);
       if (m_Family == PDFCS_INDEXED) {
         def_max = max_data;
@@ -467,7 +467,7 @@ DIB_COMP_DATA* CPDF_DIBSource::GetDecodeAndMaskArray(bool& bDefaultDecode,
     }
   } else {
     for (uint32_t i = 0; i < m_nComponents; i++) {
-      FX_FLOAT def_value;
+      float def_value;
       m_pColorSpace->GetDefaultValue(i, def_value, pCompData[i].m_DecodeMin,
                                      pCompData[i].m_DecodeStep);
       if (m_Family == PDFCS_INDEXED) {
@@ -699,8 +699,8 @@ int CPDF_DIBSource::StratLoadMask() {
     CPDF_Array* pMatte = m_pMaskStream->GetDict()->GetArrayFor("Matte");
     if (pMatte && m_pColorSpace &&
         m_pColorSpace->CountComponents() <= m_nComponents) {
-      FX_FLOAT R, G, B;
-      std::vector<FX_FLOAT> colors(m_nComponents);
+      float R, G, B;
+      std::vector<float> colors(m_nComponents);
       for (uint32_t i = 0; i < m_nComponents; i++) {
         colors[i] = pMatte->GetFloatAt(i);
       }
@@ -775,10 +775,10 @@ void CPDF_DIBSource::LoadPalette() {
     if (m_pColorSpace->CountComponents() > 3) {
       return;
     }
-    FX_FLOAT color_values[3];
+    float color_values[3];
     color_values[0] = m_pCompData[0].m_DecodeMin;
     color_values[1] = color_values[2] = color_values[0];
-    FX_FLOAT R = 0.0f, G = 0.0f, B = 0.0f;
+    float R = 0.0f, G = 0.0f, B = 0.0f;
     m_pColorSpace->GetRGB(color_values, R, G, B);
     FX_ARGB argb0 = ArgbEncode(255, FXSYS_round(R * 255), FXSYS_round(G * 255),
                                FXSYS_round(B * 255));
@@ -798,8 +798,8 @@ void CPDF_DIBSource::LoadPalette() {
       m_bpc == 8 && m_bDefaultDecode) {
   } else {
     int palette_count = 1 << (m_bpc * m_nComponents);
-    CFX_FixedBufGrow<FX_FLOAT, 16> color_values(m_nComponents);
-    FX_FLOAT* color_value = color_values;
+    CFX_FixedBufGrow<float, 16> color_values(m_nComponents);
+    float* color_value = color_values;
     for (int i = 0; i < palette_count; i++) {
       int color_data = i;
       for (uint32_t j = 0; j < m_nComponents; j++) {
@@ -808,11 +808,11 @@ void CPDF_DIBSource::LoadPalette() {
         color_value[j] = m_pCompData[j].m_DecodeMin +
                          m_pCompData[j].m_DecodeStep * encoded_component;
       }
-      FX_FLOAT R = 0, G = 0, B = 0;
+      float R = 0, G = 0, B = 0;
       if (m_nComponents == 1 && m_Family == PDFCS_ICCBASED &&
           m_pColorSpace->CountComponents() > 1) {
         int nComponents = m_pColorSpace->CountComponents();
-        std::vector<FX_FLOAT> temp_buf(nComponents);
+        std::vector<float> temp_buf(nComponents);
         for (int k = 0; k < nComponents; k++) {
           temp_buf[k] = *color_value;
         }
@@ -917,9 +917,9 @@ void CPDF_DIBSource::TranslateScanline24bpp(uint8_t* dest_scan,
       return;
     }
   }
-  CFX_FixedBufGrow<FX_FLOAT, 16> color_values1(m_nComponents);
-  FX_FLOAT* color_values = color_values1;
-  FX_FLOAT R = 0.0f, G = 0.0f, B = 0.0f;
+  CFX_FixedBufGrow<float, 16> color_values1(m_nComponents);
+  float* color_values = color_values1;
+  float R = 0.0f, G = 0.0f, B = 0.0f;
   if (m_bpc == 8) {
     uint64_t src_byte_pos = 0;
     size_t dest_byte_pos = 0;
@@ -930,7 +930,7 @@ void CPDF_DIBSource::TranslateScanline24bpp(uint8_t* dest_scan,
                               m_pCompData[color].m_DecodeStep * data;
       }
       if (TransMask()) {
-        FX_FLOAT k = 1.0f - color_values[3];
+        float k = 1.0f - color_values[3];
         R = (1.0f - color_values[0]) * k;
         G = (1.0f - color_values[1]) * k;
         B = (1.0f - color_values[2]) * k;
@@ -956,7 +956,7 @@ void CPDF_DIBSource::TranslateScanline24bpp(uint8_t* dest_scan,
         src_bit_pos += m_bpc;
       }
       if (TransMask()) {
-        FX_FLOAT k = 1.0f - color_values[3];
+        float k = 1.0f - color_values[3];
         R = (1.0f - color_values[0]) * k;
         G = (1.0f - color_values[1]) * k;
         B = (1.0f - color_values[2]) * k;
@@ -1332,7 +1332,7 @@ void CPDF_DIBSource::DownSampleScanline32Bit(int orig_Bpp,
   // in [0, src_width). Set the initial value to be an invalid src_x value.
   uint32_t last_src_x = src_width;
   FX_ARGB last_argb = FXARGB_MAKE(0xFF, 0xFF, 0xFF, 0xFF);
-  FX_FLOAT unit_To8Bpc = 255.0f / ((1 << m_bpc) - 1);
+  float unit_To8Bpc = 255.0f / ((1 << m_bpc) - 1);
   for (int i = 0; i < clip_width; i++) {
     int dest_x = clip_left + i;
     uint32_t src_x = (bFlipX ? (dest_width - dest_x - 1) : dest_x) *
@@ -1376,8 +1376,7 @@ void CPDF_DIBSource::DownSampleScanline32Bit(int orig_Bpp,
                                             bTransMask);
         } else {
           for (uint32_t j = 0; j < m_nComponents; ++j) {
-            FX_FLOAT component_value =
-                static_cast<FX_FLOAT>(extracted_components[j]);
+            float component_value = static_cast<float>(extracted_components[j]);
             int color_value = static_cast<int>(
                 (m_pCompData[j].m_DecodeMin +
                  m_pCompData[j].m_DecodeStep * component_value) *

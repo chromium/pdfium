@@ -38,7 +38,7 @@ class CXFA_FFPushButton : public CXFA_FFField {
   void LoadHighlightCaption();
   void LayoutHighlightCaption();
   void RenderHighlightCaption(CFX_Graphics* pGS, CFX_Matrix* pMatrix = nullptr);
-  FX_FLOAT GetLineWidth();
+  float GetLineWidth();
   FX_ARGB GetLineColor();
   FX_ARGB GetFillColor();
 

@@ -319,7 +319,7 @@ void CPWL_Wnd::GetThisAppearanceStream(CFX_ByteTextBuf& sAppStream) {
 
     if (HasFlag(PWS_BORDER)) {
       sThis << CPWL_Utils::GetBorderAppStream(
-          rectWnd, (FX_FLOAT)GetBorderWidth(), GetBorderColor(),
+          rectWnd, (float)GetBorderWidth(), GetBorderColor(),
           GetBorderLeftTopColor(GetBorderStyle()),
           GetBorderRightBottomColor(GetBorderStyle()), GetBorderStyle(),
           GetBorderDash());
@@ -350,14 +350,14 @@ void CPWL_Wnd::DrawThisAppearance(CFX_RenderDevice* pDevice,
   if (!rectWnd.IsEmpty()) {
     if (HasFlag(PWS_BACKGROUND)) {
       CFX_FloatRect rcClient = CPWL_Utils::DeflateRect(
-          rectWnd, (FX_FLOAT)(GetBorderWidth() + GetInnerBorderWidth()));
+          rectWnd, (float)(GetBorderWidth() + GetInnerBorderWidth()));
       CPWL_Utils::DrawFillRect(pDevice, pUser2Device, rcClient,
                                GetBackgroundColor(), GetTransparency());
     }
 
     if (HasFlag(PWS_BORDER))
       CPWL_Utils::DrawBorder(pDevice, pUser2Device, rectWnd,
-                             (FX_FLOAT)GetBorderWidth(), GetBorderColor(),
+                             (float)GetBorderWidth(), GetBorderColor(),
                              GetBorderLeftTopColor(GetBorderStyle()),
                              GetBorderRightBottomColor(GetBorderStyle()),
                              GetBorderStyle(), GetTransparency());
@@ -520,7 +520,7 @@ CFX_FloatRect CPWL_Wnd::GetWindowRect() const {
 CFX_FloatRect CPWL_Wnd::GetClientRect() const {
   CFX_FloatRect rcWindow = GetWindowRect();
   CFX_FloatRect rcClient = CPWL_Utils::DeflateRect(
-      rcWindow, (FX_FLOAT)(GetBorderWidth() + GetInnerBorderWidth()));
+      rcWindow, (float)(GetBorderWidth() + GetInnerBorderWidth()));
   if (CPWL_ScrollBar* pVSB = GetVScrollBar())
     rcClient.right -= pVSB->GetScrollBarWidth();
 
@@ -700,7 +700,7 @@ bool CPWL_Wnd::IsReadOnly() const {
 
 void CPWL_Wnd::RePosChildWnd() {
   CFX_FloatRect rcContent = CPWL_Utils::DeflateRect(
-      GetWindowRect(), (FX_FLOAT)(GetBorderWidth() + GetInnerBorderWidth()));
+      GetWindowRect(), (float)(GetBorderWidth() + GetInnerBorderWidth()));
 
   CPWL_ScrollBar* pVSB = GetVScrollBar();
 
@@ -767,11 +767,11 @@ CFX_FloatRect CPWL_Wnd::GetFocusRect() const {
   return CPWL_Utils::InflateRect(GetWindowRect(), 1);
 }
 
-FX_FLOAT CPWL_Wnd::GetFontSize() const {
+float CPWL_Wnd::GetFontSize() const {
   return m_sPrivateParam.fFontSize;
 }
 
-void CPWL_Wnd::SetFontSize(FX_FLOAT fFontSize) {
+void CPWL_Wnd::SetFontSize(float fFontSize) {
   m_sPrivateParam.fFontSize = fFontSize;
 }
 

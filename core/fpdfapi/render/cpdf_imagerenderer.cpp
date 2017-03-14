@@ -305,7 +305,7 @@ bool CPDF_ImageRenderer::DrawPatternImage(const CFX_Matrix* pObj2Device) {
                            &m_pRenderStatus->m_Options, 0,
                            m_pRenderStatus->m_bDropObjects, nullptr, true);
   CFX_Matrix patternDevice = *pObj2Device;
-  patternDevice.Translate((FX_FLOAT)-rect.left, (FX_FLOAT)-rect.top);
+  patternDevice.Translate((float)-rect.left, (float)-rect.top);
   if (CPDF_TilingPattern* pTilingPattern = m_pPattern->AsTilingPattern()) {
     bitmap_render.DrawTilingPattern(pTilingPattern, m_pImageObject,
                                     &patternDevice, false);

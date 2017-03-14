@@ -95,11 +95,11 @@ class CFX_LCNumeric {
   CFX_LCNumeric(int64_t integral,
                 uint32_t fractional = 0,
                 int32_t exponent = 0);
-  explicit CFX_LCNumeric(FX_FLOAT dbRetValue);
+  explicit CFX_LCNumeric(float dbRetValue);
   explicit CFX_LCNumeric(double dbvalue);
   explicit CFX_LCNumeric(CFX_WideString& wsNumeric);
 
-  FX_FLOAT GetFloat() const;
+  float GetFloat() const;
   double GetDouble() const;
   CFX_WideString ToString() const;
   CFX_WideString ToString(int32_t nTreading, bool bTrimTailZeros) const;
@@ -210,7 +210,7 @@ CFX_LCNumeric::CFX_LCNumeric(int64_t integral,
   m_Fractional = fractional;
   m_Exponent = exponent;
 }
-CFX_LCNumeric::CFX_LCNumeric(FX_FLOAT dbRetValue) {
+CFX_LCNumeric::CFX_LCNumeric(float dbRetValue) {
   m_Integral = (int64_t)dbRetValue;
   m_Fractional = (uint32_t)(((dbRetValue > 0) ? (dbRetValue - m_Integral)
                                               : (m_Integral - dbRetValue)) *
@@ -227,11 +227,11 @@ CFX_LCNumeric::CFX_LCNumeric(double dbvalue) {
 CFX_LCNumeric::CFX_LCNumeric(CFX_WideString& wsNumeric) {
   FX_WStringToNumeric(wsNumeric, *this);
 }
-FX_FLOAT CFX_LCNumeric::GetFloat() const {
-  FX_FLOAT dbRetValue = m_Fractional / 4294967296.0f;
+float CFX_LCNumeric::GetFloat() const {
+  float dbRetValue = m_Fractional / 4294967296.0f;
   dbRetValue = m_Integral + (m_Integral >= 0 ? dbRetValue : -dbRetValue);
   if (m_Exponent != 0) {
-    dbRetValue *= FXSYS_pow(10, (FX_FLOAT)m_Exponent);
+    dbRetValue *= FXSYS_pow(10, (float)m_Exponent);
   }
   return dbRetValue;
 }
@@ -239,7 +239,7 @@ double CFX_LCNumeric::GetDouble() const {
   double value = m_Fractional / 4294967296.0;
   value = m_Integral + (m_Integral >= 0 ? value : -value);
   if (m_Exponent != 0) {
-    value *= FXSYS_pow(10, (FX_FLOAT)m_Exponent);
+    value *= FXSYS_pow(10, (float)m_Exponent);
   }
   return value;
 }
@@ -718,7 +718,7 @@ bool CFX_FormatString::ParseText(const CFX_WideString& wsSrcText,
 }
 bool CFX_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
                                 const CFX_WideString& wsPattern,
-                                FX_FLOAT& fValue) {
+                                float& fValue) {
   fValue = 0.0f;
   if (wsSrcNum.IsEmpty() || wsPattern.IsEmpty()) {
     return false;
@@ -1412,7 +1412,7 @@ bool CFX_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
     }
   }
   if (iExponent) {
-    dbRetValue *= FXSYS_pow(10, (FX_FLOAT)iExponent);
+    dbRetValue *= FXSYS_pow(10, (float)iExponent);
   }
   if (bHavePercentSymbol) {
     dbRetValue /= 100.0;
@@ -1420,7 +1420,7 @@ bool CFX_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
   if (bNeg) {
     dbRetValue = -dbRetValue;
   }
-  fValue = (FX_FLOAT)dbRetValue;
+  fValue = (float)dbRetValue;
   return true;
 }
 
@@ -1893,7 +1893,7 @@ bool CFX_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
   if (iExponent || bHavePercentSymbol) {
     CFX_Decimal decimal = CFX_Decimal(wsValue.AsStringC());
     if (iExponent) {
-      decimal = decimal * CFX_Decimal(FXSYS_pow(10, (FX_FLOAT)iExponent));
+      decimal = decimal * CFX_Decimal(FXSYS_pow(10, (float)iExponent));
     }
     if (bHavePercentSymbol) {
       decimal = decimal / CFX_Decimal(100);
@@ -3492,7 +3492,7 @@ bool CFX_FormatString::FormatNum(const CFX_WideString& wsSrcNum,
   }
   return FormatStrNum(wsSrcNum.AsStringC(), wsPattern, wsOutput);
 }
-bool CFX_FormatString::FormatNum(FX_FLOAT fNum,
+bool CFX_FormatString::FormatNum(float fNum,
                                  const CFX_WideString& wsPattern,
                                  CFX_WideString& wsOutput) {
   if (wsPattern.IsEmpty()) {
@@ -4412,8 +4412,8 @@ CFX_Decimal::CFX_Decimal(int64_t val) {
     SetNegate();
   }
 }
-CFX_Decimal::CFX_Decimal(FX_FLOAT val, uint8_t scale) {
-  FX_FLOAT newval = fabs(val);
+CFX_Decimal::CFX_Decimal(float val, uint8_t scale) {
+  float newval = fabs(val);
   uint64_t phi, pmid, plo;
   plo = (uint64_t)newval;
   pmid = (uint64_t)(newval / 1e32);

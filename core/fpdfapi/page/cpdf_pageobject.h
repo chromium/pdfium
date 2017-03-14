@@ -57,10 +57,10 @@ class CPDF_PageObject : public CPDF_GraphicStates {
   }
   FX_RECT GetBBox(const CFX_Matrix* pMatrix) const;
 
-  FX_FLOAT m_Left;
-  FX_FLOAT m_Right;
-  FX_FLOAT m_Top;
-  FX_FLOAT m_Bottom;
+  float m_Left;
+  float m_Right;
+  float m_Top;
+  float m_Bottom;
   CPDF_ContentMark m_ContentMark;
 
  protected:

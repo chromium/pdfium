@@ -31,7 +31,7 @@ typedef struct {
   CFX_PathData* m_pPath;
   int m_CurX;
   int m_CurY;
-  FX_FLOAT m_CoordUnit;
+  float m_CoordUnit;
 } OUTLINE_PARAMS;
 
 #ifdef PDF_ENABLE_XFA

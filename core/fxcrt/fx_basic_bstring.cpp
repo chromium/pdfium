@@ -958,7 +958,7 @@ void CFX_ByteString::TrimLeft() {
 uint32_t CFX_ByteString::GetID(FX_STRSIZE start_pos) const {
   return AsStringC().GetID(start_pos);
 }
-FX_STRSIZE FX_ftoa(FX_FLOAT d, char* buf) {
+FX_STRSIZE FX_ftoa(float d, char* buf) {
   buf[0] = '0';
   buf[1] = '\0';
   if (d == 0.0f) {
@@ -1004,7 +1004,7 @@ FX_STRSIZE FX_ftoa(FX_FLOAT d, char* buf) {
   }
   return buf_size;
 }
-CFX_ByteString CFX_ByteString::FormatFloat(FX_FLOAT d, int precision) {
+CFX_ByteString CFX_ByteString::FormatFloat(float d, int precision) {
   char buf[32];
   FX_STRSIZE len = FX_ftoa(d, buf);
   return CFX_ByteString(buf, len);

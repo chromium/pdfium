@@ -47,7 +47,7 @@ FWL_Type CFWL_CheckBox::GetClassID() const {
   return FWL_Type::CheckBox;
 }
 
-void CFWL_CheckBox::SetBoxSize(FX_FLOAT fHeight) {
+void CFWL_CheckBox::SetBoxSize(float fHeight) {
   m_fBoxHeight = fHeight;
 }
 
@@ -129,7 +129,7 @@ void CFWL_CheckBox::Layout() {
       FXSYS_round(m_pProperties->m_rtWidget.height);
   m_rtClient = GetClientRect();
 
-  FX_FLOAT fTextLeft = m_rtClient.left + m_fBoxHeight;
+  float fTextLeft = m_rtClient.left + m_fBoxHeight;
   m_rtBox = CFX_RectF(m_rtClient.TopLeft(), m_fBoxHeight, m_fBoxHeight);
   m_rtCaption = CFX_RectF(fTextLeft, m_rtClient.top,
                           m_rtClient.right() - fTextLeft, m_rtClient.height);

@@ -103,7 +103,7 @@ class CFX_Decimal {
   explicit CFX_Decimal(uint64_t val);
   explicit CFX_Decimal(int32_t val);
   explicit CFX_Decimal(int64_t val);
-  explicit CFX_Decimal(FX_FLOAT val, uint8_t scale = 3);
+  explicit CFX_Decimal(float val, uint8_t scale = 3);
   explicit CFX_Decimal(const CFX_WideStringC& str);
   explicit CFX_Decimal(const CFX_ByteStringC& str);
   operator CFX_WideString() const;

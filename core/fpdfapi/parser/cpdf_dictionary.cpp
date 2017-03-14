@@ -115,7 +115,7 @@ int CPDF_Dictionary::GetIntegerFor(const CFX_ByteString& key, int def) const {
   return p ? p->GetInteger() : def;
 }
 
-FX_FLOAT CPDF_Dictionary::GetNumberFor(const CFX_ByteString& key) const {
+float CPDF_Dictionary::GetNumberFor(const CFX_ByteString& key) const {
   CPDF_Object* p = GetObjectFor(key);
   return p ? p->GetNumber() : 0;
 }

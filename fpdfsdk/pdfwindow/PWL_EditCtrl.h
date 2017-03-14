@@ -62,7 +62,7 @@ class CPWL_EditCtrl : public CPWL_Wnd {
   int32_t GetCodePage() const { return m_nCodePage; }
 
   CPDF_Font* GetCaretFont() const;
-  FX_FLOAT GetCaretFontSize() const;
+  float GetCaretFontSize() const;
 
   bool CanUndo() const;
   bool CanRedo() const;
@@ -85,17 +85,17 @@ class CPWL_EditCtrl : public CPWL_Wnd {
                 intptr_t lParam = 0) override;
   void CreateChildWnd(const PWL_CREATEPARAM& cp) override;
   void RePosChildWnd() override;
-  void SetFontSize(FX_FLOAT fFontSize) override;
-  FX_FLOAT GetFontSize() const override;
+  void SetFontSize(float fFontSize) override;
+  float GetFontSize() const override;
   void SetCursor() override;
 
-  void IOnSetScrollInfoY(FX_FLOAT fPlateMin,
-                         FX_FLOAT fPlateMax,
-                         FX_FLOAT fContentMin,
-                         FX_FLOAT fContentMax,
-                         FX_FLOAT fSmallStep,
-                         FX_FLOAT fBigStep);
-  void IOnSetScrollPosY(FX_FLOAT fy);
+  void IOnSetScrollInfoY(float fPlateMin,
+                         float fPlateMax,
+                         float fContentMin,
+                         float fContentMax,
+                         float fSmallStep,
+                         float fBigStep);
+  void IOnSetScrollPosY(float fy);
   void IOnSetCaret(bool bVisible,
                    const CFX_PointF& ptHead,
                    const CFX_PointF& ptFoot,

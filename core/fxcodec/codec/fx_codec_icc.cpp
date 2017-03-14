@@ -156,8 +156,8 @@ void IccLib_DestroyTransform(void* pTransform) {
 }
 void IccLib_Translate(void* pTransform,
                       uint32_t nSrcComponents,
-                      FX_FLOAT* pSrcValues,
-                      FX_FLOAT* pDestValues) {
+                      float* pSrcValues,
+                      float* pDestValues) {
   if (!pTransform) {
     return;
   }
@@ -226,8 +226,8 @@ void CCodec_IccModule::DestroyTransform(void* pTransform) {
   IccLib_DestroyTransform(pTransform);
 }
 void CCodec_IccModule::Translate(void* pTransform,
-                                 FX_FLOAT* pSrcValues,
-                                 FX_FLOAT* pDestValues) {
+                                 float* pSrcValues,
+                                 float* pDestValues) {
   IccLib_Translate(pTransform, m_nComponents, pSrcValues, pDestValues);
 }
 void CCodec_IccModule::TranslateScanline(void* pTransform,
@@ -1631,13 +1631,13 @@ void AdobeCMYK_to_sRGB1(uint8_t c,
   G = fix_g >> 8;
   B = fix_b >> 8;
 }
-void AdobeCMYK_to_sRGB(FX_FLOAT c,
-                       FX_FLOAT m,
-                       FX_FLOAT y,
-                       FX_FLOAT k,
-                       FX_FLOAT& R,
-                       FX_FLOAT& G,
-                       FX_FLOAT& B) {
+void AdobeCMYK_to_sRGB(float c,
+                       float m,
+                       float y,
+                       float k,
+                       float& R,
+                       float& G,
+                       float& B) {
   // Convert to uint8_t with round-to-nearest. Avoid using FXSYS_round because
   // it is incredibly expensive with VC++ (tested on VC++ 2015) because round()
   // is very expensive.

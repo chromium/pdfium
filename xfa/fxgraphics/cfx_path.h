@@ -30,27 +30,24 @@ class CFX_Path final {
                 const CFX_PointF& to);
   void ArcTo(const CFX_PointF& pos,
              const CFX_SizeF& size,
-             FX_FLOAT startAngle,
-             FX_FLOAT sweepAngle);
+             float startAngle,
+             float sweepAngle);
 
   void AddLine(const CFX_PointF& p1, const CFX_PointF& p2);
-  void AddRectangle(FX_FLOAT left,
-                    FX_FLOAT top,
-                    FX_FLOAT width,
-                    FX_FLOAT height);
+  void AddRectangle(float left, float top, float width, float height);
   void AddEllipse(const CFX_RectF& rect);
   void AddArc(const CFX_PointF& pos,
               const CFX_SizeF& size,
-              FX_FLOAT startAngle,
-              FX_FLOAT sweepAngle);
+              float startAngle,
+              float sweepAngle);
 
   void AddSubpath(CFX_Path* path);
 
  private:
   void ArcToInternal(const CFX_PointF& pos,
                      const CFX_SizeF& size,
-                     FX_FLOAT start_angle,
-                     FX_FLOAT sweep_angle);
+                     float start_angle,
+                     float sweep_angle);
 
   CFX_PathData data_;
 };

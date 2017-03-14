@@ -4,7 +4,7 @@ index dc13851..7f21bac 100644
 +++ b/third_party/agg23/agg_path_storage.h
 @@ -38,9 +38,9 @@ public:
          }
-         unsigned vertex(FX_FLOAT* x, FX_FLOAT* y)
+         unsigned vertex(float* x, float* y)
          {
 -            return (m_vertex_idx < m_path->total_vertices()) ?
 -                   m_path->vertex(m_vertex_idx++, x, y) :

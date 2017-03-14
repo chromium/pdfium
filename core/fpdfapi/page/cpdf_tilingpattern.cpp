@@ -41,8 +41,8 @@ bool CPDF_TilingPattern::Load() {
     return false;
 
   m_bColored = pDict->GetIntegerFor("PaintType") == 1;
-  m_XStep = (FX_FLOAT)FXSYS_fabs(pDict->GetNumberFor("XStep"));
-  m_YStep = (FX_FLOAT)FXSYS_fabs(pDict->GetNumberFor("YStep"));
+  m_XStep = (float)FXSYS_fabs(pDict->GetNumberFor("XStep"));
+  m_YStep = (float)FXSYS_fabs(pDict->GetNumberFor("YStep"));
 
   CPDF_Stream* pStream = m_pPatternObj->AsStream();
   if (!pStream)

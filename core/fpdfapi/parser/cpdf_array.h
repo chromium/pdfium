@@ -41,11 +41,11 @@ class CPDF_Array : public CPDF_Object {
   CPDF_Object* GetDirectObjectAt(size_t index) const;
   CFX_ByteString GetStringAt(size_t index) const;
   int GetIntegerAt(size_t index) const;
-  FX_FLOAT GetNumberAt(size_t index) const;
+  float GetNumberAt(size_t index) const;
   CPDF_Dictionary* GetDictAt(size_t index) const;
   CPDF_Stream* GetStreamAt(size_t index) const;
   CPDF_Array* GetArrayAt(size_t index) const;
-  FX_FLOAT GetFloatAt(size_t index) const { return GetNumberAt(index); }
+  float GetFloatAt(size_t index) const { return GetNumberAt(index); }
   CFX_Matrix GetMatrix();
   CFX_FloatRect GetRect();
 

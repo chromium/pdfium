@@ -36,7 +36,7 @@ class CPDF_CIDFont : public CPDF_Font {
   CPDF_CIDFont();
   ~CPDF_CIDFont() override;
 
-  static FX_FLOAT CIDTransformToFloat(uint8_t ch);
+  static float CIDTransformToFloat(uint8_t ch);
 
   // CPDF_Font:
   bool IsCIDFont() const override;

@@ -28,8 +28,8 @@ CFX_FloatRect CPDF_Path::GetBoundingBox() const {
   return m_Ref.GetObject()->GetBoundingBox();
 }
 
-CFX_FloatRect CPDF_Path::GetBoundingBox(FX_FLOAT line_width,
-                                        FX_FLOAT miter_limit) const {
+CFX_FloatRect CPDF_Path::GetBoundingBox(float line_width,
+                                        float miter_limit) const {
   return m_Ref.GetObject()->GetBoundingBox(line_width, miter_limit);
 }
 
@@ -49,10 +49,7 @@ void CPDF_Path::Append(const CFX_PathData* pData, const CFX_Matrix* pMatrix) {
   m_Ref.GetPrivateCopy()->Append(pData, pMatrix);
 }
 
-void CPDF_Path::AppendRect(FX_FLOAT left,
-                           FX_FLOAT bottom,
-                           FX_FLOAT right,
-                           FX_FLOAT top) {
+void CPDF_Path::AppendRect(float left, float bottom, float right, float top) {
   m_Ref.GetPrivateCopy()->AppendRect(left, bottom, right, top);
 }
 

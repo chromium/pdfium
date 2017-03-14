@@ -28,7 +28,7 @@ bool CPDF_IconFit::IsProportionalScale() {
   return m_pDict ? m_pDict->GetStringFor("S", "P") != "A" : true;
 }
 
-void CPDF_IconFit::GetIconPosition(FX_FLOAT& fLeft, FX_FLOAT& fBottom) {
+void CPDF_IconFit::GetIconPosition(float& fLeft, float& fBottom) {
   fLeft = fBottom = 0.5;
   if (!m_pDict)
     return;

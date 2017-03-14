@@ -65,7 +65,7 @@ CPVT_FloatRect CSection::Rearrange() {
   return CTypeset(this).Typeset();
 }
 
-CFX_SizeF CSection::GetSectionSize(FX_FLOAT fFontSize) {
+CFX_SizeF CSection::GetSectionSize(float fFontSize) {
   return CTypeset(this).GetEditSize(fFontSize);
 }
 
@@ -154,8 +154,8 @@ CPVT_WordPlace CSection::SearchWordPlace(const CFX_PointF& point) const {
   int32_t nLeft = 0;
   int32_t nRight = m_LineArray.GetSize() - 1;
   int32_t nMid = m_LineArray.GetSize() / 2;
-  FX_FLOAT fTop = 0;
-  FX_FLOAT fBottom = 0;
+  float fTop = 0;
+  float fBottom = 0;
   while (nLeft <= nRight) {
     if (CLine* pLine = m_LineArray.GetAt(nMid)) {
       fTop = pLine->m_LineInfo.fLineY - pLine->m_LineInfo.fLineAscent -
@@ -195,7 +195,7 @@ CPVT_WordPlace CSection::SearchWordPlace(const CFX_PointF& point) const {
 }
 
 CPVT_WordPlace CSection::SearchWordPlace(
-    FX_FLOAT fx,
+    float fx,
     const CPVT_WordPlace& lineplace) const {
   if (CLine* pLine = m_LineArray.GetAt(lineplace.nLineIndex)) {
     return SearchWordPlace(
@@ -206,7 +206,7 @@ CPVT_WordPlace CSection::SearchWordPlace(
   return GetBeginWordPlace();
 }
 
-CPVT_WordPlace CSection::SearchWordPlace(FX_FLOAT fx,
+CPVT_WordPlace CSection::SearchWordPlace(float fx,
                                          const CPVT_WordRange& range) const {
   CPVT_WordPlace wordplace = range.BeginPos;
   wordplace.nWordIndex = -1;

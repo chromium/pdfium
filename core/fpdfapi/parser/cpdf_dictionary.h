@@ -48,13 +48,13 @@ class CPDF_Dictionary : public CPDF_Object {
   int GetIntegerFor(const CFX_ByteString& key) const;
   int GetIntegerFor(const CFX_ByteString& key, int default_int) const;
   bool GetBooleanFor(const CFX_ByteString& key, bool bDefault = false) const;
-  FX_FLOAT GetNumberFor(const CFX_ByteString& key) const;
+  float GetNumberFor(const CFX_ByteString& key) const;
   CPDF_Dictionary* GetDictFor(const CFX_ByteString& key) const;
   CPDF_Stream* GetStreamFor(const CFX_ByteString& key) const;
   CPDF_Array* GetArrayFor(const CFX_ByteString& key) const;
   CFX_FloatRect GetRectFor(const CFX_ByteString& key) const;
   CFX_Matrix GetMatrixFor(const CFX_ByteString& key) const;
-  FX_FLOAT GetFloatFor(const CFX_ByteString& key) const {
+  float GetFloatFor(const CFX_ByteString& key) const {
     return GetNumberFor(key);
   }
 

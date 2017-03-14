@@ -117,7 +117,7 @@ CFX_ByteTextBuf& CFX_ByteTextBuf::operator<<(uint32_t i) {
 
 CFX_ByteTextBuf& CFX_ByteTextBuf::operator<<(double f) {
   char buf[32];
-  FX_STRSIZE len = FX_ftoa((FX_FLOAT)f, buf);
+  FX_STRSIZE len = FX_ftoa((float)f, buf);
   AppendBlock(buf, len);
   return *this;
 }
@@ -158,7 +158,7 @@ CFX_WideTextBuf& CFX_WideTextBuf::operator<<(int i) {
 
 CFX_WideTextBuf& CFX_WideTextBuf::operator<<(double f) {
   char buf[32];
-  FX_STRSIZE len = FX_ftoa((FX_FLOAT)f, buf);
+  FX_STRSIZE len = FX_ftoa((float)f, buf);
   ExpandBuf(len * sizeof(wchar_t));
   wchar_t* str = (wchar_t*)(m_pBuffer.get() + m_DataSize);
   for (FX_STRSIZE i = 0; i < len; i++) {

@@ -37,7 +37,7 @@ CFX_ByteString CPDF_DefaultAppearance::GetFontString() {
 }
 
 void CPDF_DefaultAppearance::GetFont(CFX_ByteString& csFontNameTag,
-                                     FX_FLOAT& fFontSize) {
+                                     float& fFontSize) {
   csFontNameTag = "";
   fFontSize = 0;
   if (m_csDA.IsEmpty())
@@ -110,7 +110,7 @@ CFX_ByteString CPDF_DefaultAppearance::GetColorString(
 }
 
 void CPDF_DefaultAppearance::GetColor(int& iColorType,
-                                      FX_FLOAT fc[4],
+                                      float fc[4],
                                       PaintOperation nOperation) {
   iColorType = COLORTYPE_TRANSPARENT;
   for (int c = 0; c < 4; c++)
@@ -156,29 +156,29 @@ void CPDF_DefaultAppearance::GetColor(FX_ARGB& color,
   if (syntax.FindTagParamFromStart(
           (nOperation == PaintOperation::STROKE ? "G" : "g"), 1)) {
     iColorType = COLORTYPE_GRAY;
-    FX_FLOAT g = FX_atof(syntax.GetWord()) * 255 + 0.5f;
+    float g = FX_atof(syntax.GetWord()) * 255 + 0.5f;
     color = ArgbEncode(255, (int)g, (int)g, (int)g);
     return;
   }
   if (syntax.FindTagParamFromStart(
           (nOperation == PaintOperation::STROKE ? "RG" : "rg"), 3)) {
     iColorType = COLORTYPE_RGB;
-    FX_FLOAT r = FX_atof(syntax.GetWord()) * 255 + 0.5f;
-    FX_FLOAT g = FX_atof(syntax.GetWord()) * 255 + 0.5f;
-    FX_FLOAT b = FX_atof(syntax.GetWord()) * 255 + 0.5f;
+    float r = FX_atof(syntax.GetWord()) * 255 + 0.5f;
+    float g = FX_atof(syntax.GetWord()) * 255 + 0.5f;
+    float b = FX_atof(syntax.GetWord()) * 255 + 0.5f;
     color = ArgbEncode(255, (int)r, (int)g, (int)b);
     return;
   }
   if (syntax.FindTagParamFromStart(
           (nOperation == PaintOperation::STROKE ? "K" : "k"), 4)) {
     iColorType = COLORTYPE_CMYK;
-    FX_FLOAT c = FX_atof(syntax.GetWord());
-    FX_FLOAT m = FX_atof(syntax.GetWord());
-    FX_FLOAT y = FX_atof(syntax.GetWord());
-    FX_FLOAT k = FX_atof(syntax.GetWord());
-    FX_FLOAT r = 1.0f - std::min(1.0f, c + k);
-    FX_FLOAT g = 1.0f - std::min(1.0f, m + k);
-    FX_FLOAT b = 1.0f - std::min(1.0f, y + k);
+    float c = FX_atof(syntax.GetWord());
+    float m = FX_atof(syntax.GetWord());
+    float y = FX_atof(syntax.GetWord());
+    float k = FX_atof(syntax.GetWord());
+    float r = 1.0f - std::min(1.0f, c + k);
+    float g = 1.0f - std::min(1.0f, m + k);
+    float b = 1.0f - std::min(1.0f, y + k);
     color = ArgbEncode(255, (int)(r * 255 + 0.5f), (int)(g * 255 + 0.5f),
                        (int)(b * 255 + 0.5f));
   }
@@ -216,7 +216,7 @@ CFX_Matrix CPDF_DefaultAppearance::GetTextMatrix() {
   if (!syntax.FindTagParamFromStart("Tm", 6))
     return CFX_Matrix();
 
-  FX_FLOAT f[6];
+  float f[6];
   for (int i = 0; i < 6; i++)
     f[i] = FX_atof(syntax.GetWord());
   return CFX_Matrix(f);

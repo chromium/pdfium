@@ -140,7 +140,7 @@ int32_t CBC_HighLevelEncoder::lookAheadTest(CFX_WideString msg,
   if (startpos >= msg.GetLength()) {
     return currentMode;
   }
-  std::vector<FX_FLOAT> charCounts;
+  std::vector<float> charCounts;
   if (currentMode == ASCII_ENCODATION) {
     charCounts.push_back(0);
     charCounts.push_back(1);
@@ -189,12 +189,10 @@ int32_t CBC_HighLevelEncoder::lookAheadTest(CFX_WideString msg,
     if (isDigit(c)) {
       charCounts[ASCII_ENCODATION] += 0.5;
     } else if (isExtendedASCII(c)) {
-      charCounts[ASCII_ENCODATION] =
-          (FX_FLOAT)ceil(charCounts[ASCII_ENCODATION]);
+      charCounts[ASCII_ENCODATION] = (float)ceil(charCounts[ASCII_ENCODATION]);
       charCounts[ASCII_ENCODATION] += 2;
     } else {
-      charCounts[ASCII_ENCODATION] =
-          (FX_FLOAT)ceil(charCounts[ASCII_ENCODATION]);
+      charCounts[ASCII_ENCODATION] = (float)ceil(charCounts[ASCII_ENCODATION]);
       charCounts[ASCII_ENCODATION]++;
     }
     if (isNativeC40(c)) {
@@ -320,7 +318,7 @@ wchar_t CBC_HighLevelEncoder::randomize253State(wchar_t ch,
                              : (wchar_t)(tempVariable - 254);
 }
 int32_t CBC_HighLevelEncoder::findMinimums(
-    std::vector<FX_FLOAT>& charCounts,
+    std::vector<float>& charCounts,
     CFX_ArrayTemplate<int32_t>& intCharCounts,
     int32_t min,
     CFX_ArrayTemplate<uint8_t>& mins) {

@@ -23,7 +23,7 @@ int32_t CXFA_Caption::GetPlacementType() {
   return eAttr;
 }
 
-FX_FLOAT CXFA_Caption::GetReserve() {
+float CXFA_Caption::GetReserve() {
   CXFA_Measurement ms;
   m_pNode->TryMeasure(XFA_ATTRIBUTE_Reserve, ms);
   return ms.ToUnit(XFA_UNIT_Pt);

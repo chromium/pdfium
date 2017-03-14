@@ -575,7 +575,7 @@ bool Field::buttonAlignX(CJS_Runtime* pRuntime,
 
     CPDF_IconFit IconFit = pFormControl->GetIconFit();
 
-    FX_FLOAT fLeft, fBottom;
+    float fLeft, fBottom;
     IconFit.GetIconPosition(fLeft, fBottom);
 
     vp << (int32_t)fLeft;
@@ -624,7 +624,7 @@ bool Field::buttonAlignY(CJS_Runtime* pRuntime,
 
     CPDF_IconFit IconFit = pFormControl->GetIconFit();
 
-    FX_FLOAT fLeft, fBottom;
+    float fLeft, fBottom;
     IconFit.GetIconPosition(fLeft, fBottom);
 
     vp << (int32_t)fBottom;
@@ -2003,11 +2003,11 @@ bool Field::rect(CJS_Runtime* pRuntime,
     rcArray.GetElement(pRuntime, 2, Lower_Rightx);
     rcArray.GetElement(pRuntime, 3, Lower_Righty);
 
-    FX_FLOAT pArray[4] = {0.0f, 0.0f, 0.0f, 0.0f};
-    pArray[0] = static_cast<FX_FLOAT>(Upper_Leftx.ToInt(pRuntime));
-    pArray[1] = static_cast<FX_FLOAT>(Lower_Righty.ToInt(pRuntime));
-    pArray[2] = static_cast<FX_FLOAT>(Lower_Rightx.ToInt(pRuntime));
-    pArray[3] = static_cast<FX_FLOAT>(Upper_Lefty.ToInt(pRuntime));
+    float pArray[4] = {0.0f, 0.0f, 0.0f, 0.0f};
+    pArray[0] = static_cast<float>(Upper_Leftx.ToInt(pRuntime));
+    pArray[1] = static_cast<float>(Lower_Righty.ToInt(pRuntime));
+    pArray[2] = static_cast<float>(Lower_Rightx.ToInt(pRuntime));
+    pArray[3] = static_cast<float>(Upper_Lefty.ToInt(pRuntime));
 
     CFX_FloatRect crRect(pArray);
     if (m_bDelay) {
@@ -2485,7 +2485,7 @@ bool Field::textSize(CJS_Runtime* pRuntime,
   CPDF_DefaultAppearance FieldAppearance = pFormControl->GetDefaultAppearance();
 
   CFX_ByteString csFontNameTag;
-  FX_FLOAT fFontSize;
+  float fFontSize;
   FieldAppearance.GetFont(csFontNameTag, fFontSize);
   vp << (int)fFontSize;
   return true;

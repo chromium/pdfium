@@ -20,7 +20,7 @@ class CFDE_Path {
   void AddBeziers(const std::vector<CFX_PointF>& points);
   void AddCurve(const std::vector<CFX_PointF>& points,
                 bool bClosed,
-                FX_FLOAT fTension = 0.5f);
+                float fTension = 0.5f);
   void AddEllipse(const CFX_RectF& rect);
   void AddLines(const std::vector<CFX_PointF>& points);
   void AddLine(const CFX_PointF& pt1, const CFX_PointF& pt2);
@@ -29,7 +29,7 @@ class CFDE_Path {
   void AddRectangle(const CFX_RectF& rect);
 
   CFX_RectF GetBBox() const;
-  CFX_RectF GetBBox(FX_FLOAT fLineWidth, FX_FLOAT fMiterLimit) const;
+  CFX_RectF GetBBox(float fLineWidth, float fMiterLimit) const;
 
   bool FigureClosed() const;
   void BezierTo(const CFX_PointF& p1,
@@ -37,15 +37,15 @@ class CFDE_Path {
                 const CFX_PointF& p3);
   void ArcTo(bool bStart,
              const CFX_RectF& rect,
-             FX_FLOAT startAngle,
-             FX_FLOAT endAngle);
+             float startAngle,
+             float endAngle);
   void MoveTo(const CFX_PointF& p);
   void LineTo(const CFX_PointF& p);
 
   void GetCurveTangents(const std::vector<CFX_PointF>& points,
                         std::vector<CFX_PointF>* tangents,
                         bool bClosed,
-                        FX_FLOAT fTension) const;
+                        float fTension) const;
   CFX_PathData m_Path;
 };
 

@@ -30,7 +30,7 @@ class CFDE_CSSStyleSelector {
   explicit CFDE_CSSStyleSelector(CFGAS_FontMgr* pFontMgr);
   ~CFDE_CSSStyleSelector();
 
-  void SetDefFontSize(FX_FLOAT fFontSize);
+  void SetDefFontSize(float fFontSize);
   void SetUAStyleSheet(std::unique_ptr<CFDE_CSSStyleSheet> pSheet);
   void UpdateStyleIndex();
 
@@ -68,8 +68,8 @@ class CFDE_CSSStyleSelector {
   bool SetLengthWithPercent(FDE_CSSLength& width,
                             FDE_CSSPrimitiveType eType,
                             const CFX_RetainPtr<CFDE_CSSValue>& pValue,
-                            FX_FLOAT fFontSize);
-  FX_FLOAT ToFontSize(FDE_CSSPropertyValue eValue, FX_FLOAT fCurFontSize);
+                            float fFontSize);
+  float ToFontSize(FDE_CSSPropertyValue eValue, float fCurFontSize);
   FDE_CSSDisplay ToDisplay(FDE_CSSPropertyValue eValue);
   FDE_CSSTextAlign ToTextAlign(FDE_CSSPropertyValue eValue);
   uint16_t ToFontWeight(FDE_CSSPropertyValue eValue);
@@ -79,7 +79,7 @@ class CFDE_CSSStyleSelector {
   FDE_CSSFontVariant ToFontVariant(FDE_CSSPropertyValue eValue);
 
   CFGAS_FontMgr* const m_pFontMgr;
-  FX_FLOAT m_fDefFontSize;
+  float m_fDefFontSize;
   std::unique_ptr<CFDE_CSSStyleSheet> m_UAStyles;
   CFDE_CSSRuleCollection m_UARules;
 };

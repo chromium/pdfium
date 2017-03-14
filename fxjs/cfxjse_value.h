@@ -35,7 +35,7 @@ class CFXJSE_Value {
   bool IsFunction() const;
   bool IsDate() const;
   bool ToBoolean() const;
-  FX_FLOAT ToFloat() const;
+  float ToFloat() const;
   double ToDouble() const;
   int32_t ToInteger() const;
   CFX_ByteString ToString() const;
@@ -50,7 +50,7 @@ class CFXJSE_Value {
   void SetInteger(int32_t nInteger);
   void SetDouble(double dDouble);
   void SetString(const CFX_ByteStringC& szString);
-  void SetFloat(FX_FLOAT fFloat);
+  void SetFloat(float fFloat);
   void SetJSObject();
 
   void SetObject(CFXJSE_HostObject* lpObject, CFXJSE_Class* pClass);

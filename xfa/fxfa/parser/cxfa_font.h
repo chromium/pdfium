@@ -16,14 +16,14 @@ class CXFA_Font : public CXFA_Data {
  public:
   explicit CXFA_Font(CXFA_Node* pNode);
 
-  FX_FLOAT GetBaselineShift();
-  FX_FLOAT GetHorizontalScale();
-  FX_FLOAT GetVerticalScale();
-  FX_FLOAT GetLetterSpacing();
+  float GetBaselineShift();
+  float GetHorizontalScale();
+  float GetVerticalScale();
+  float GetLetterSpacing();
   int32_t GetLineThrough();
   int32_t GetUnderline();
   int32_t GetUnderlinePeriod();
-  FX_FLOAT GetFontSize();
+  float GetFontSize();
   void GetTypeface(CFX_WideStringC& wsTypeFace);
 
   bool IsBold();

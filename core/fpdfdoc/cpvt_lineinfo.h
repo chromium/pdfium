@@ -16,11 +16,11 @@ class CPVT_LineInfo {
   int32_t nTotalWord;
   int32_t nBeginWordIndex;
   int32_t nEndWordIndex;
-  FX_FLOAT fLineX;
-  FX_FLOAT fLineY;
-  FX_FLOAT fLineWidth;
-  FX_FLOAT fLineAscent;
-  FX_FLOAT fLineDescent;
+  float fLineX;
+  float fLineY;
+  float fLineWidth;
+  float fLineAscent;
+  float fLineDescent;
 };
 
 inline CPVT_LineInfo::CPVT_LineInfo()

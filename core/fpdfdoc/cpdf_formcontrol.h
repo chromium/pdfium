@@ -72,11 +72,11 @@ class CPDF_FormControl {
 
   FX_ARGB GetBorderColor(int& iColorType) { return GetColor(iColorType, "BC"); }
 
-  FX_FLOAT GetOriginalBorderColor(int index) {
+  float GetOriginalBorderColor(int index) {
     return GetOriginalColor(index, "BC");
   }
 
-  void GetOriginalBorderColor(int& iColorType, FX_FLOAT fc[4]) {
+  void GetOriginalBorderColor(int& iColorType, float fc[4]) {
     GetOriginalColor(iColorType, fc, "BC");
   }
 
@@ -84,11 +84,11 @@ class CPDF_FormControl {
     return GetColor(iColorType, "BG");
   }
 
-  FX_FLOAT GetOriginalBackgroundColor(int index) {
+  float GetOriginalBackgroundColor(int index) {
     return GetOriginalColor(index, "BG");
   }
 
-  void GetOriginalBackgroundColor(int& iColorType, FX_FLOAT fc[4]) {
+  void GetOriginalBackgroundColor(int& iColorType, float fc[4]) {
     GetOriginalColor(iColorType, fc, "BG");
   }
 
@@ -117,9 +117,9 @@ class CPDF_FormControl {
   void SetOnStateName(const CFX_ByteString& csOn);
   void CheckControl(bool bChecked);
   FX_ARGB GetColor(int& iColorType, const CFX_ByteString& csEntry);
-  FX_FLOAT GetOriginalColor(int index, const CFX_ByteString& csEntry);
+  float GetOriginalColor(int index, const CFX_ByteString& csEntry);
   void GetOriginalColor(int& iColorType,
-                        FX_FLOAT fc[4],
+                        float fc[4],
                         const CFX_ByteString& csEntry);
 
   CFX_WideString GetCaption(const CFX_ByteString& csEntry);

@@ -56,12 +56,12 @@ bool CWeightTable::Calc(int dest_len,
   FX_Free(m_pWeightTables);
   m_pWeightTables = nullptr;
   m_dwWeightTablesSize = 0;
-  const double scale = (FX_FLOAT)src_len / (FX_FLOAT)dest_len;
-  const double base = dest_len < 0 ? (FX_FLOAT)(src_len) : 0;
+  const double scale = (float)src_len / (float)dest_len;
+  const double base = dest_len < 0 ? (float)(src_len) : 0;
   const int ext_size = flags & FXDIB_BICUBIC_INTERPOL ? 3 : 1;
   m_ItemSize =
       sizeof(int) * 2 +
-      (int)(sizeof(int) * (FXSYS_ceil(FXSYS_fabs((FX_FLOAT)scale)) + ext_size));
+      (int)(sizeof(int) * (FXSYS_ceil(FXSYS_fabs((float)scale)) + ext_size));
   m_DestMin = dest_min;
   if ((dest_max - dest_min) > (int)((1U << 30) - 4) / m_ItemSize)
     return false;
@@ -71,14 +71,13 @@ bool CWeightTable::Calc(int dest_len,
   if (!m_pWeightTables)
     return false;
 
-  if ((flags & FXDIB_NOSMOOTH) != 0 || FXSYS_fabs((FX_FLOAT)scale) < 1.0f) {
+  if ((flags & FXDIB_NOSMOOTH) != 0 || FXSYS_fabs((float)scale) < 1.0f) {
     for (int dest_pixel = dest_min; dest_pixel < dest_max; dest_pixel++) {
       PixelWeight& pixel_weights = *GetPixelWeight(dest_pixel);
       double src_pos = dest_pixel * scale + scale / 2 + base;
       if (flags & FXDIB_INTERPOL) {
-        pixel_weights.m_SrcStart =
-            (int)FXSYS_floor((FX_FLOAT)src_pos - 1.0f / 2);
-        pixel_weights.m_SrcEnd = (int)FXSYS_floor((FX_FLOAT)src_pos + 1.0f / 2);
+        pixel_weights.m_SrcStart = (int)FXSYS_floor((float)src_pos - 1.0f / 2);
+        pixel_weights.m_SrcEnd = (int)FXSYS_floor((float)src_pos + 1.0f / 2);
         if (pixel_weights.m_SrcStart < src_min) {
           pixel_weights.m_SrcStart = src_min;
         }
@@ -89,14 +88,12 @@ bool CWeightTable::Calc(int dest_len,
           pixel_weights.m_Weights[0] = 65536;
         } else {
           pixel_weights.m_Weights[1] = FXSYS_round(
-              (FX_FLOAT)(src_pos - pixel_weights.m_SrcStart - 1.0f / 2) *
-              65536);
+              (float)(src_pos - pixel_weights.m_SrcStart - 1.0f / 2) * 65536);
           pixel_weights.m_Weights[0] = 65536 - pixel_weights.m_Weights[1];
         }
       } else if (flags & FXDIB_BICUBIC_INTERPOL) {
-        pixel_weights.m_SrcStart =
-            (int)FXSYS_floor((FX_FLOAT)src_pos - 1.0f / 2);
-        pixel_weights.m_SrcEnd = (int)FXSYS_floor((FX_FLOAT)src_pos + 1.0f / 2);
+        pixel_weights.m_SrcStart = (int)FXSYS_floor((float)src_pos - 1.0f / 2);
+        pixel_weights.m_SrcEnd = (int)FXSYS_floor((float)src_pos + 1.0f / 2);
         int start = pixel_weights.m_SrcStart - 1;
         int end = pixel_weights.m_SrcEnd + 1;
         if (start < src_min) {
@@ -114,7 +111,7 @@ bool CWeightTable::Calc(int dest_len,
         }
         int weight;
         weight = FXSYS_round(
-            (FX_FLOAT)(src_pos - pixel_weights.m_SrcStart - 1.0f / 2) * 256);
+            (float)(src_pos - pixel_weights.m_SrcStart - 1.0f / 2) * 256);
         if (start == end) {
           pixel_weights.m_Weights[0] =
               (SDP_Table[256 + weight] + SDP_Table[weight] +
@@ -179,7 +176,7 @@ bool CWeightTable::Calc(int dest_len,
         }
       } else {
         pixel_weights.m_SrcStart = pixel_weights.m_SrcEnd =
-            (int)FXSYS_floor((FX_FLOAT)src_pos);
+            (int)FXSYS_floor((float)src_pos);
         if (pixel_weights.m_SrcStart < src_min) {
           pixel_weights.m_SrcStart = src_min;
         }
@@ -198,11 +195,11 @@ bool CWeightTable::Calc(int dest_len,
     double src_end = src_start + scale;
     int start_i, end_i;
     if (src_start < src_end) {
-      start_i = (int)FXSYS_floor((FX_FLOAT)src_start);
-      end_i = (int)FXSYS_ceil((FX_FLOAT)src_end);
+      start_i = (int)FXSYS_floor((float)src_start);
+      end_i = (int)FXSYS_ceil((float)src_end);
     } else {
-      start_i = (int)FXSYS_floor((FX_FLOAT)src_end);
-      end_i = (int)FXSYS_ceil((FX_FLOAT)src_start);
+      start_i = (int)FXSYS_floor((float)src_end);
+      end_i = (int)FXSYS_ceil((float)src_start);
     }
     if (start_i < src_min) {
       start_i = src_min;
@@ -221,18 +218,17 @@ bool CWeightTable::Calc(int dest_len,
     pixel_weights.m_SrcStart = start_i;
     pixel_weights.m_SrcEnd = end_i;
     for (int j = start_i; j <= end_i; j++) {
-      double dest_start = ((FX_FLOAT)j - base) / scale;
-      double dest_end = ((FX_FLOAT)(j + 1) - base) / scale;
+      double dest_start = ((float)j - base) / scale;
+      double dest_end = ((float)(j + 1) - base) / scale;
       if (dest_start > dest_end) {
         double temp = dest_start;
         dest_start = dest_end;
         dest_end = temp;
       }
-      double area_start = dest_start > (FX_FLOAT)(dest_pixel)
-                              ? dest_start
-                              : (FX_FLOAT)(dest_pixel);
-      double area_end = dest_end > (FX_FLOAT)(dest_pixel + 1)
-                            ? (FX_FLOAT)(dest_pixel + 1)
+      double area_start =
+          dest_start > (float)(dest_pixel) ? dest_start : (float)(dest_pixel);
+      double area_end = dest_end > (float)(dest_pixel + 1)
+                            ? (float)(dest_pixel + 1)
                             : dest_end;
       double weight = area_start >= area_end ? 0.0f : area_end - area_start;
       if (weight == 0 && j == end_i) {
@@ -242,7 +238,7 @@ bool CWeightTable::Calc(int dest_len,
       size_t idx = j - start_i;
       if (idx >= GetPixelWeightSize())
         return false;
-      pixel_weights.m_Weights[idx] = FXSYS_round((FX_FLOAT)(weight * 65536));
+      pixel_weights.m_Weights[idx] = FXSYS_round((float)(weight * 65536));
     }
   }
   return true;
@@ -321,14 +317,14 @@ CStretchEngine::CStretchEngine(IFX_ScanlineComposer* pDestBitmap,
       m_Flags |= FXDIB_DOWNSAMPLE;
     }
   }
-  double scale_x = (FX_FLOAT)m_SrcWidth / (FX_FLOAT)m_DestWidth;
-  double scale_y = (FX_FLOAT)m_SrcHeight / (FX_FLOAT)m_DestHeight;
-  double base_x = m_DestWidth > 0 ? 0.0f : (FX_FLOAT)(m_DestWidth);
-  double base_y = m_DestHeight > 0 ? 0.0f : (FX_FLOAT)(m_DestHeight);
-  double src_left = scale_x * ((FX_FLOAT)(clip_rect.left) + base_x);
-  double src_right = scale_x * ((FX_FLOAT)(clip_rect.right) + base_x);
-  double src_top = scale_y * ((FX_FLOAT)(clip_rect.top) + base_y);
-  double src_bottom = scale_y * ((FX_FLOAT)(clip_rect.bottom) + base_y);
+  double scale_x = (float)m_SrcWidth / (float)m_DestWidth;
+  double scale_y = (float)m_SrcHeight / (float)m_DestHeight;
+  double base_x = m_DestWidth > 0 ? 0.0f : (float)(m_DestWidth);
+  double base_y = m_DestHeight > 0 ? 0.0f : (float)(m_DestHeight);
+  double src_left = scale_x * ((float)(clip_rect.left) + base_x);
+  double src_right = scale_x * ((float)(clip_rect.right) + base_x);
+  double src_top = scale_y * ((float)(clip_rect.top) + base_y);
+  double src_bottom = scale_y * ((float)(clip_rect.bottom) + base_y);
   if (src_left > src_right) {
     double temp = src_left;
     src_left = src_right;
@@ -339,10 +335,10 @@ CStretchEngine::CStretchEngine(IFX_ScanlineComposer* pDestBitmap,
     src_top = src_bottom;
     src_bottom = temp;
   }
-  m_SrcClip.left = (int)FXSYS_floor((FX_FLOAT)src_left);
-  m_SrcClip.right = (int)FXSYS_ceil((FX_FLOAT)src_right);
-  m_SrcClip.top = (int)FXSYS_floor((FX_FLOAT)src_top);
-  m_SrcClip.bottom = (int)FXSYS_ceil((FX_FLOAT)src_bottom);
+  m_SrcClip.left = (int)FXSYS_floor((float)src_left);
+  m_SrcClip.right = (int)FXSYS_ceil((float)src_right);
+  m_SrcClip.top = (int)FXSYS_floor((float)src_top);
+  m_SrcClip.bottom = (int)FXSYS_ceil((float)src_bottom);
   FX_RECT src_rect(0, 0, m_SrcWidth, m_SrcHeight);
   m_SrcClip.Intersect(src_rect);
   if (m_SrcBpp == 1) {

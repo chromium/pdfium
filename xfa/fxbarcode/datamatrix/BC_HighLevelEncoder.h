@@ -63,7 +63,7 @@ class CBC_HighLevelEncoder : public CBC_SymbolShapeHint {
 
  private:
   static wchar_t randomize253State(wchar_t ch, int32_t codewordPosition);
-  static int32_t findMinimums(std::vector<FX_FLOAT>& charCounts,
+  static int32_t findMinimums(std::vector<float>& charCounts,
                               CFX_ArrayTemplate<int32_t>& intCharCounts,
                               int32_t min,
                               CFX_ArrayTemplate<uint8_t>& mins);

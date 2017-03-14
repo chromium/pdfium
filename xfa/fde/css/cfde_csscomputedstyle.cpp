@@ -50,7 +50,7 @@ FDE_CSSFontStyle CFDE_CSSComputedStyle::GetFontStyle() const {
   return m_InheritedData.m_eFontStyle;
 }
 
-FX_FLOAT CFDE_CSSComputedStyle::GetFontSize() const {
+float CFDE_CSSComputedStyle::GetFontSize() const {
   return m_InheritedData.m_fFontSize;
 }
 
@@ -70,7 +70,7 @@ void CFDE_CSSComputedStyle::SetFontStyle(FDE_CSSFontStyle eFontStyle) {
   m_InheritedData.m_eFontStyle = eFontStyle;
 }
 
-void CFDE_CSSComputedStyle::SetFontSize(FX_FLOAT fFontSize) {
+void CFDE_CSSComputedStyle::SetFontSize(float fFontSize) {
   m_InheritedData.m_fFontSize = fFontSize;
 }
 
@@ -107,7 +107,7 @@ FDE_CSSDisplay CFDE_CSSComputedStyle::GetDisplay() const {
   return m_NonInheritedData.m_eDisplay;
 }
 
-FX_FLOAT CFDE_CSSComputedStyle::GetLineHeight() const {
+float CFDE_CSSComputedStyle::GetLineHeight() const {
   return m_InheritedData.m_fLineHeight;
 }
 
@@ -123,7 +123,7 @@ FDE_CSSVerticalAlign CFDE_CSSComputedStyle::GetVerticalAlign() const {
   return m_NonInheritedData.m_eVerticalAlign;
 }
 
-FX_FLOAT CFDE_CSSComputedStyle::GetNumberVerticalAlign() const {
+float CFDE_CSSComputedStyle::GetNumberVerticalAlign() const {
   return m_NonInheritedData.m_fVerticalAlign;
 }
 
@@ -135,7 +135,7 @@ const FDE_CSSLength& CFDE_CSSComputedStyle::GetLetterSpacing() const {
   return m_InheritedData.m_LetterSpacing;
 }
 
-void CFDE_CSSComputedStyle::SetLineHeight(FX_FLOAT fLineHeight) {
+void CFDE_CSSComputedStyle::SetLineHeight(float fLineHeight) {
   m_InheritedData.m_fLineHeight = fLineHeight;
 }
 
@@ -147,7 +147,7 @@ void CFDE_CSSComputedStyle::SetTextAlign(FDE_CSSTextAlign eTextAlign) {
   m_InheritedData.m_eTextAlign = eTextAlign;
 }
 
-void CFDE_CSSComputedStyle::SetNumberVerticalAlign(FX_FLOAT fAlign) {
+void CFDE_CSSComputedStyle::SetNumberVerticalAlign(float fAlign) {
   m_NonInheritedData.m_eVerticalAlign = FDE_CSSVerticalAlign::Number,
   m_NonInheritedData.m_fVerticalAlign = fAlign;
 }

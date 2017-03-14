@@ -28,11 +28,11 @@ class CPDF_GeneralState {
   int GetBlendType() const;
   void SetBlendType(int type);
 
-  FX_FLOAT GetFillAlpha() const;
-  void SetFillAlpha(FX_FLOAT alpha);
+  float GetFillAlpha() const;
+  void SetFillAlpha(float alpha);
 
-  FX_FLOAT GetStrokeAlpha() const;
-  void SetStrokeAlpha(FX_FLOAT alpha);
+  float GetStrokeAlpha() const;
+  void SetStrokeAlpha(float alpha);
 
   CPDF_Object* GetSoftMask() const;
   void SetSoftMask(CPDF_Object* pObject);
@@ -61,8 +61,8 @@ class CPDF_GeneralState {
   void SetUCR(CPDF_Object* pObject);
   void SetHT(CPDF_Object* pObject);
 
-  void SetFlatness(FX_FLOAT flatness);
-  void SetSmoothness(FX_FLOAT smoothness);
+  void SetFlatness(float flatness);
+  void SetSmoothness(float smoothness);
 
   bool GetStrokeAdjust() const;
   void SetStrokeAdjust(bool adjust);
@@ -84,8 +84,8 @@ class CPDF_GeneralState {
     int m_BlendType;
     CPDF_Object* m_pSoftMask;
     CFX_Matrix m_SMaskMatrix;
-    FX_FLOAT m_StrokeAlpha;
-    FX_FLOAT m_FillAlpha;
+    float m_StrokeAlpha;
+    float m_FillAlpha;
     CPDF_Object* m_pTR;
     CPDF_TransferFunc* m_pTransferFunc;
     CFX_Matrix m_Matrix;
@@ -99,8 +99,8 @@ class CPDF_GeneralState {
     CPDF_Object* m_pBG;
     CPDF_Object* m_pUCR;
     CPDF_Object* m_pHT;
-    FX_FLOAT m_Flatness;
-    FX_FLOAT m_Smoothness;
+    float m_Flatness;
+    float m_Smoothness;
   };
 
   CFX_SharedCopyOnWrite<StateData> m_Ref;

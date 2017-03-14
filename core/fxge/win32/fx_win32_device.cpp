@@ -91,8 +91,8 @@ bool IsGDIEnabled() {
 HPEN CreatePen(const CFX_GraphStateData* pGraphState,
                const CFX_Matrix* pMatrix,
                uint32_t argb) {
-  FX_FLOAT width;
-  FX_FLOAT scale = 1.f;
+  float width;
+  float scale = 1.f;
   if (pMatrix)
     scale = FXSYS_fabs(pMatrix->a) > FXSYS_fabs(pMatrix->b)
                 ? FXSYS_fabs(pMatrix->a)
@@ -215,26 +215,26 @@ void SetPathToDC(HDC hDC,
 // altogether and replace by Skia code.
 
 struct rect_base {
-  FX_FLOAT x1;
-  FX_FLOAT y1;
-  FX_FLOAT x2;
-  FX_FLOAT y2;
+  float x1;
+  float y1;
+  float x2;
+  float y2;
 };
 
-unsigned clip_liang_barsky(FX_FLOAT x1,
-                           FX_FLOAT y1,
-                           FX_FLOAT x2,
-                           FX_FLOAT y2,
+unsigned clip_liang_barsky(float x1,
+                           float y1,
+                           float x2,
+                           float y2,
                            const rect_base& clip_box,
-                           FX_FLOAT* x,
-                           FX_FLOAT* y) {
-  const FX_FLOAT nearzero = 1e-30f;
-  FX_FLOAT deltax = x2 - x1;
-  FX_FLOAT deltay = y2 - y1;
+                           float* x,
+                           float* y) {
+  const float nearzero = 1e-30f;
+  float deltax = x2 - x1;
+  float deltay = y2 - y1;
   unsigned np = 0;
   if (deltax == 0)
     deltax = (x1 > clip_box.x1) ? -nearzero : nearzero;
-  FX_FLOAT xin, xout;
+  float xin, xout;
   if (deltax > 0) {
     xin = clip_box.x1;
     xout = clip_box.x2;
@@ -242,10 +242,10 @@ unsigned clip_liang_barsky(FX_FLOAT x1,
     xin = clip_box.x2;
     xout = clip_box.x1;
   }
-  FX_FLOAT tinx = (xin - x1) / deltax;
+  float tinx = (xin - x1) / deltax;
   if (deltay == 0)
     deltay = (y1 > clip_box.y1) ? -nearzero : nearzero;
-  FX_FLOAT yin, yout;
+  float yin, yout;
   if (deltay > 0) {
     yin = clip_box.y1;
     yout = clip_box.y2;
@@ -253,8 +253,8 @@ unsigned clip_liang_barsky(FX_FLOAT x1,
     yin = clip_box.y2;
     yout = clip_box.y1;
   }
-  FX_FLOAT tiny = (yin - y1) / deltay;
-  FX_FLOAT tin1, tin2;
+  float tiny = (yin - y1) / deltay;
+  float tin1, tin2;
   if (tinx < tiny) {
     tin1 = tinx;
     tin2 = tiny;
@@ -269,9 +269,9 @@ unsigned clip_liang_barsky(FX_FLOAT x1,
       ++np;
     }
     if (tin2 <= 1.0f) {
-      FX_FLOAT toutx = (xout - x1) / deltax;
-      FX_FLOAT touty = (yout - y1) / deltay;
-      FX_FLOAT tout1 = (toutx < touty) ? toutx : touty;
+      float toutx = (xout - x1) / deltax;
+      float touty = (yout - y1) / deltay;
+      float tout1 = (toutx < touty) ? toutx : touty;
       if (tin2 > 0 || tout1 > 0) {
         if (tin2 <= tout1) {
           if (tin2 > 0) {
@@ -928,10 +928,7 @@ void* CGdiDeviceDriver::GetPlatformSurface() const {
   return (void*)m_hDC;
 }
 
-void CGdiDeviceDriver::DrawLine(FX_FLOAT x1,
-                                FX_FLOAT y1,
-                                FX_FLOAT x2,
-                                FX_FLOAT y2) {
+void CGdiDeviceDriver::DrawLine(float x1, float y1, float x2, float y2) {
   if (!m_bMetafileDCType) {  // EMF drawing is not bound to the DC.
     int startOutOfBoundsFlag = (x1 < 0) | ((x1 > m_Width) << 1) |
                                ((y1 < 0) << 2) | ((y1 > m_Height) << 3);
@@ -941,18 +938,18 @@ void CGdiDeviceDriver::DrawLine(FX_FLOAT x1,
       return;
 
     if (startOutOfBoundsFlag || endOutOfBoundsFlag) {
-      FX_FLOAT x[2];
-      FX_FLOAT y[2];
+      float x[2];
+      float y[2];
       int np;
 #ifdef _SKIA_SUPPORT_
       // TODO(caryclark) temporary replacement of antigrain in line function
       // to permit removing antigrain altogether
-      rect_base rect = {0.0f, 0.0f, (FX_FLOAT)(m_Width), (FX_FLOAT)(m_Height)};
+      rect_base rect = {0.0f, 0.0f, (float)(m_Width), (float)(m_Height)};
       np = clip_liang_barsky(x1, y1, x2, y2, rect, x, y);
 #else
-      agg::rect_base<FX_FLOAT> rect(0.0f, 0.0f, (FX_FLOAT)(m_Width),
-                                    (FX_FLOAT)(m_Height));
-      np = agg::clip_liang_barsky<FX_FLOAT>(x1, y1, x2, y2, rect, x, y);
+      agg::rect_base<float> rect(0.0f, 0.0f, (float)(m_Width),
+                                 (float)(m_Height));
+      np = agg::clip_liang_barsky<float>(x1, y1, x2, y2, rect, x, y);
 #endif
       if (np == 0)
         return;
@@ -994,13 +991,13 @@ bool CGdiDeviceDriver::DrawPath(const CFX_PathData* pPathData,
 
     FX_RECT bbox = bbox_f.GetInnerRect();
     if (bbox.Width() <= 0) {
-      return DrawCosmeticLine(
-          (FX_FLOAT)(bbox.left), (FX_FLOAT)(bbox.top), (FX_FLOAT)(bbox.left),
-          (FX_FLOAT)(bbox.bottom + 1), fill_color, FXDIB_BLEND_NORMAL);
+      return DrawCosmeticLine((float)(bbox.left), (float)(bbox.top),
+                              (float)(bbox.left), (float)(bbox.bottom + 1),
+                              fill_color, FXDIB_BLEND_NORMAL);
     }
     if (bbox.Height() <= 0) {
-      return DrawCosmeticLine((FX_FLOAT)(bbox.left), (FX_FLOAT)(bbox.top),
-                              (FX_FLOAT)(bbox.right + 1), (FX_FLOAT)(bbox.top),
+      return DrawCosmeticLine((float)(bbox.left), (float)(bbox.top),
+                              (float)(bbox.right + 1), (float)(bbox.top),
                               fill_color, FXDIB_BLEND_NORMAL);
     }
   }
@@ -1133,10 +1130,10 @@ bool CGdiDeviceDriver::SetClip_PathStroke(
   return ret;
 }
 
-bool CGdiDeviceDriver::DrawCosmeticLine(FX_FLOAT x1,
-                                        FX_FLOAT y1,
-                                        FX_FLOAT x2,
-                                        FX_FLOAT y2,
+bool CGdiDeviceDriver::DrawCosmeticLine(float x1,
+                                        float y1,
+                                        float x2,
+                                        float y2,
                                         uint32_t color,
                                         int blend_type) {
   if (blend_type != FXDIB_BLEND_NORMAL)

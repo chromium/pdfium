@@ -13,8 +13,8 @@
 
 namespace {
 
-double ftod(FX_FLOAT fNumber) {
-  static_assert(sizeof(FX_FLOAT) == 4, "FX_FLOAT of incorrect size");
+double ftod(float fNumber) {
+  static_assert(sizeof(float) == 4, "float of incorrect size");
 
   uint32_t nFloatBits = (uint32_t&)fNumber;
   uint8_t nExponent = (uint8_t)(nFloatBits >> 23);
@@ -120,7 +120,7 @@ void CFXJSE_Value::SetDate(double dDouble) {
   m_hValue.Reset(m_pIsolate, hDate);
 }
 
-void CFXJSE_Value::SetFloat(FX_FLOAT fFloat) {
+void CFXJSE_Value::SetFloat(float fFloat) {
   CFXJSE_ScopeUtil_IsolateHandle scope(m_pIsolate);
   v8::Local<v8::Value> pValue = v8::Number::New(m_pIsolate, ftod(fFloat));
   m_hValue.Reset(m_pIsolate, pValue);
@@ -442,11 +442,11 @@ bool CFXJSE_Value::ToBoolean() const {
   return static_cast<bool>(hValue->BooleanValue());
 }
 
-FX_FLOAT CFXJSE_Value::ToFloat() const {
+float CFXJSE_Value::ToFloat() const {
   ASSERT(!m_hValue.IsEmpty());
   CFXJSE_ScopeUtil_IsolateHandleRootContext scope(m_pIsolate);
   v8::Local<v8::Value> hValue = v8::Local<v8::Value>::New(m_pIsolate, m_hValue);
-  return static_cast<FX_FLOAT>(hValue->NumberValue());
+  return static_cast<float>(hValue->NumberValue());
 }
 
 double CFXJSE_Value::ToDouble() const {

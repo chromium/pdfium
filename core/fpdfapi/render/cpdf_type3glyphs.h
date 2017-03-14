@@ -20,10 +20,7 @@ class CPDF_Type3Glyphs {
   CPDF_Type3Glyphs();
   ~CPDF_Type3Glyphs();
 
-  void AdjustBlue(FX_FLOAT top,
-                  FX_FLOAT bottom,
-                  int& top_line,
-                  int& bottom_line);
+  void AdjustBlue(float top, float bottom, int& top_line, int& bottom_line);
 
   std::map<uint32_t, CFX_GlyphBitmap*> m_GlyphMap;
   int m_TopBlue[TYPE3_MAX_BLUES];

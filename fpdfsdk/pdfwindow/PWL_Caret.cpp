@@ -35,9 +35,9 @@ void CPWL_Caret::DrawThisAppearance(CFX_RenderDevice* pDevice,
     CFX_FloatRect rcClip = GetClipRect();
     CFX_PathData path;
 
-    FX_FLOAT fCaretX = rcRect.left + m_fWidth * 0.5f;
-    FX_FLOAT fCaretTop = rcRect.top;
-    FX_FLOAT fCaretBottom = rcRect.bottom;
+    float fCaretX = rcRect.left + m_fWidth * 0.5f;
+    float fCaretTop = rcRect.top;
+    float fCaretBottom = rcRect.bottom;
     if (!rcClip.IsEmpty()) {
       rcRect.Intersect(rcClip);
       if (rcRect.IsEmpty())

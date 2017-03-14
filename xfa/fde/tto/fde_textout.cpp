@@ -53,7 +53,7 @@ void CFDE_TextOut::SetFont(const CFX_RetainPtr<CFGAS_GEFont>& pFont) {
   m_pTxtBreak->SetFont(pFont);
 }
 
-void CFDE_TextOut::SetFontSize(FX_FLOAT fFontSize) {
+void CFDE_TextOut::SetFontSize(float fFontSize) {
   ASSERT(fFontSize > 0);
   m_fFontSize = fFontSize;
   m_pTxtBreak->SetFontSize(fFontSize);
@@ -72,7 +72,7 @@ void CFDE_TextOut::SetStyles(uint32_t dwStyles) {
   m_pTxtBreak->SetLayoutStyles(m_dwTxtBkStyles);
 }
 
-void CFDE_TextOut::SetTabWidth(FX_FLOAT fTabWidth) {
+void CFDE_TextOut::SetTabWidth(float fTabWidth) {
   ASSERT(fTabWidth > 1.0f);
   m_pTxtBreak->SetTabWidth(fTabWidth, false);
 }
@@ -107,7 +107,7 @@ void CFDE_TextOut::SetAlignment(int32_t iAlignment) {
   m_pTxtBreak->SetAlignment(m_iTxtBkAlignment);
 }
 
-void CFDE_TextOut::SetLineSpace(FX_FLOAT fLineSpace) {
+void CFDE_TextOut::SetLineSpace(float fLineSpace) {
   ASSERT(fLineSpace > 1.0f);
   m_fLineSpace = fLineSpace;
 }
@@ -127,7 +127,7 @@ void CFDE_TextOut::SetRenderDevice(CFX_RenderDevice* pDevice) {
 }
 
 void CFDE_TextOut::SetClipRect(const CFX_Rect& rtClip) {
-  m_rtClip = rtClip.As<FX_FLOAT>();
+  m_rtClip = rtClip.As<float>();
 }
 
 void CFDE_TextOut::SetClipRect(const CFX_RectF& rtClip) {
@@ -142,7 +142,7 @@ void CFDE_TextOut::SetMatrix(const CFX_Matrix& matrix) {
   m_Matrix = matrix;
 }
 
-void CFDE_TextOut::SetLineBreakTolerance(FX_FLOAT fTolerance) {
+void CFDE_TextOut::SetLineBreakTolerance(float fTolerance) {
   m_fTolerance = fTolerance;
   m_pTxtBreak->SetLineBreakTolerance(m_fTolerance);
 }
@@ -178,9 +178,9 @@ void CFDE_TextOut::CalcTextSize(const wchar_t* pwsStr,
   m_iTotalLines = 0;
   const wchar_t* pStr = pwsStr;
   bool bHotKey = !!(m_dwStyles & FDE_TTOSTYLE_HotKey);
-  FX_FLOAT fWidth = 0.0f;
-  FX_FLOAT fHeight = 0.0f;
-  FX_FLOAT fStartPos = rect.right();
+  float fWidth = 0.0f;
+  float fHeight = 0.0f;
+  float fStartPos = rect.right();
   CFX_BreakType dwBreakStatus = CFX_BreakType::None;
   wchar_t wPreChar = 0;
   wchar_t wch;
@@ -206,7 +206,7 @@ void CFDE_TextOut::CalcTextSize(const wchar_t* pwsStr,
     RetrieveLineWidth(dwBreakStatus, fStartPos, fWidth, fHeight);
 
   m_pTxtBreak->Reset();
-  FX_FLOAT fInc = rect.Height() - fHeight;
+  float fInc = rect.Height() - fHeight;
   if (m_iAlignment >= FDE_TTOALIGNMENT_CenterLeft &&
       m_iAlignment < FDE_TTOALIGNMENT_BottomLeft) {
     fInc /= 2.0f;
@@ -223,7 +223,7 @@ void CFDE_TextOut::CalcTextSize(const wchar_t* pwsStr,
 
 void CFDE_TextOut::SetLineWidth(CFX_RectF& rect) {
   if ((m_dwStyles & FDE_TTOSTYLE_SingleLine) == 0) {
-    FX_FLOAT fLineWidth = 0.0f;
+    float fLineWidth = 0.0f;
     if (rect.Width() < 1.0f)
       rect.width = m_fFontSize * 1000.0f;
 
@@ -233,22 +233,21 @@ void CFDE_TextOut::SetLineWidth(CFX_RectF& rect) {
 }
 
 bool CFDE_TextOut::RetrieveLineWidth(CFX_BreakType dwBreakStatus,
-                                     FX_FLOAT& fStartPos,
-                                     FX_FLOAT& fWidth,
-                                     FX_FLOAT& fHeight) {
+                                     float& fStartPos,
+                                     float& fWidth,
+                                     float& fHeight) {
   if (CFX_BreakTypeNoneOrPiece(dwBreakStatus))
     return false;
 
-  FX_FLOAT fLineStep =
-      (m_fLineSpace > m_fFontSize) ? m_fLineSpace : m_fFontSize;
+  float fLineStep = (m_fLineSpace > m_fFontSize) ? m_fLineSpace : m_fFontSize;
   bool bLineWrap = !!(m_dwStyles & FDE_TTOSTYLE_LineWrap);
-  FX_FLOAT fLineWidth = 0.0f;
+  float fLineWidth = 0.0f;
   int32_t iCount = m_pTxtBreak->CountBreakPieces();
   for (int32_t i = 0; i < iCount; i++) {
     const CFX_BreakPiece* pPiece = m_pTxtBreak->GetBreakPiece(i);
-    fLineWidth += static_cast<FX_FLOAT>(pPiece->m_iWidth) / 20000.0f;
-    fStartPos = std::min(fStartPos,
-                         static_cast<FX_FLOAT>(pPiece->m_iStartPos) / 20000.0f);
+    fLineWidth += static_cast<float>(pPiece->m_iWidth) / 20000.0f;
+    fStartPos =
+        std::min(fStartPos, static_cast<float>(pPiece->m_iStartPos) / 20000.0f);
   }
   m_pTxtBreak->ClearBreakPieces();
   if (dwBreakStatus == CFX_BreakType::Paragraph) {
@@ -268,15 +267,15 @@ void CFDE_TextOut::DrawText(const wchar_t* pwsStr,
                             int32_t iLength,
                             int32_t x,
                             int32_t y) {
-  CFX_RectF rtText(static_cast<FX_FLOAT>(x), static_cast<FX_FLOAT>(y),
+  CFX_RectF rtText(static_cast<float>(x), static_cast<float>(y),
                    m_fFontSize * 1000.0f, m_fFontSize * 1000.0f);
   DrawText(pwsStr, iLength, rtText);
 }
 
 void CFDE_TextOut::DrawText(const wchar_t* pwsStr,
                             int32_t iLength,
-                            FX_FLOAT x,
-                            FX_FLOAT y) {
+                            float x,
+                            float y) {
   DrawText(pwsStr, iLength,
            CFX_RectF(x, y, m_fFontSize * 1000.0f, m_fFontSize * 1000.0f));
 }
@@ -284,7 +283,7 @@ void CFDE_TextOut::DrawText(const wchar_t* pwsStr,
 void CFDE_TextOut::DrawText(const wchar_t* pwsStr,
                             int32_t iLength,
                             const CFX_Rect& rect) {
-  DrawText(pwsStr, iLength, rect.As<FX_FLOAT>());
+  DrawText(pwsStr, iLength, rect.As<float>());
 }
 
 void CFDE_TextOut::DrawText(const wchar_t* pwsStr,
@@ -299,8 +298,8 @@ void CFDE_TextOut::DrawText(const wchar_t* pwsStr,
 
 void CFDE_TextOut::DrawLogicText(const wchar_t* pwsStr,
                                  int32_t iLength,
-                                 FX_FLOAT x,
-                                 FX_FLOAT y) {
+                                 float x,
+                                 float y) {
   CFX_RectF rtText(x, y, m_fFontSize * 1000.0f, m_fFontSize * 1000.0f);
   DrawLogicText(pwsStr, iLength, rtText);
 }
@@ -324,7 +323,7 @@ void CFDE_TextOut::DrawText(const wchar_t* pwsStr,
   if (rect.width < m_fFontSize || rect.height < m_fFontSize)
     return;
 
-  FX_FLOAT fLineWidth = rect.width;
+  float fLineWidth = rect.width;
   m_pTxtBreak->SetLineWidth(fLineWidth);
   m_ttoLines.clear();
   m_wsText.clear();
@@ -407,9 +406,8 @@ void CFDE_TextOut::LoadText(const wchar_t* pwsStr,
   ExpandBuffer(iTxtLength, 0);
   bool bHotKey = !!(m_dwStyles & FDE_TTOSTYLE_HotKey);
   bool bLineWrap = !!(m_dwStyles & FDE_TTOSTYLE_LineWrap);
-  FX_FLOAT fLineStep =
-      (m_fLineSpace > m_fFontSize) ? m_fLineSpace : m_fFontSize;
-  FX_FLOAT fLineStop = rect.bottom();
+  float fLineStep = (m_fLineSpace > m_fFontSize) ? m_fLineSpace : m_fFontSize;
+  float fLineStop = rect.bottom();
   m_fLinePos = rect.top;
   m_hotKeys.RemoveAll();
   int32_t iStartChar = 0;
@@ -462,10 +460,9 @@ bool CFDE_TextOut::RetrievePieces(CFX_BreakType dwBreakStatus,
                                   const CFX_RectF& rect) {
   bool bSingleLine = !!(m_dwStyles & FDE_TTOSTYLE_SingleLine);
   bool bLineWrap = !!(m_dwStyles & FDE_TTOSTYLE_LineWrap);
-  FX_FLOAT fLineStep =
-      (m_fLineSpace > m_fFontSize) ? m_fLineSpace : m_fFontSize;
+  float fLineStep = (m_fLineSpace > m_fFontSize) ? m_fLineSpace : m_fFontSize;
   bool bNeedReload = false;
-  FX_FLOAT fLineWidth = rect.Width();
+  float fLineWidth = rect.Width();
   int32_t iLineWidth = FXSYS_round(fLineWidth * 20000.0f);
   int32_t iCount = m_pTxtBreak->CountBreakPieces();
   for (int32_t i = 0; i < iCount; i++) {
@@ -490,7 +487,7 @@ bool CFDE_TextOut::RetrievePieces(CFX_BreakType dwBreakStatus,
       m_ttoLines[m_iCurLine].SetNewReload(true);
     } else if (j > 0) {
       CFX_RectF rtPiece;
-      rtPiece.left = rect.left + (FX_FLOAT)pPiece->m_iStartPos / 20000.0f;
+      rtPiece.left = rect.left + (float)pPiece->m_iStartPos / 20000.0f;
       rtPiece.top = m_fLinePos;
       rtPiece.width = iWidth / 20000.0f;
       rtPiece.height = fLineStep;
@@ -624,13 +621,13 @@ void CFDE_TextOut::DoAlignment(const CFX_RectF& rect) {
   if (m_ttoLines.empty())
     return;
 
-  FX_FLOAT fLineStopS = rect.bottom();
+  float fLineStopS = rect.bottom();
   FDE_TTOPIECE* pFirstPiece = m_ttoLines.back().GetPtrAt(0);
   if (!pFirstPiece)
     return;
 
-  FX_FLOAT fLineStopD = pFirstPiece->rtPiece.bottom();
-  FX_FLOAT fInc = fLineStopS - fLineStopD;
+  float fLineStopD = pFirstPiece->rtPiece.bottom();
+  float fInc = fLineStopS - fLineStopD;
   if (m_iAlignment >= FDE_TTOALIGNMENT_CenterLeft &&
       m_iAlignment < FDE_TTOALIGNMENT_BottomLeft) {
     fInc /= 2.0f;

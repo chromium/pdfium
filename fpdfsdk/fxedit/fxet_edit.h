@@ -357,12 +357,12 @@ class CFX_Edit {
   // Set the maximum number of words in the text.
   void SetLimitChar(int32_t nLimitChar);
   void SetCharArray(int32_t nCharArray);
-  void SetCharSpace(FX_FLOAT fCharSpace);
+  void SetCharSpace(float fCharSpace);
   void SetMultiLine(bool bMultiLine, bool bPaint);
   void SetAutoReturn(bool bAuto, bool bPaint);
   void SetAutoFontSize(bool bAuto, bool bPaint);
   void SetAutoScroll(bool bAuto, bool bPaint);
-  void SetFontSize(FX_FLOAT fFontSize);
+  void SetFontSize(float fFontSize);
   void SetTextOverflow(bool bAllowed, bool bPaint);
   void OnMouseDown(const CFX_PointF& point, bool bShift, bool bCtrl);
   void OnMouseMove(const CFX_PointF& point, bool bShift, bool bCtrl);
@@ -388,14 +388,14 @@ class CFX_Edit {
   CPVT_WordPlace GetCaretWordPlace() const;
   CFX_WideString GetSelText() const;
   CFX_WideString GetText() const;
-  FX_FLOAT GetFontSize() const;
+  float GetFontSize() const;
   uint16_t GetPasswordChar() const;
   CFX_PointF GetScrollPos() const;
   int32_t GetCharArray() const;
   CFX_FloatRect GetContentRect() const;
   CFX_WideString GetRangeText(const CPVT_WordRange& range) const;
   int32_t GetHorzScale() const;
-  FX_FLOAT GetCharSpace() const;
+  float GetCharSpace() const;
   int32_t GetTotalWords() const;
   void SetSel(int32_t nStartChar, int32_t nEndChar);
   void GetSel(int32_t& nStartChar, int32_t& nEndChar) const;
@@ -440,8 +440,8 @@ class CFX_Edit {
   void RearrangePart(const CPVT_WordRange& range);
   void ScrollToCaret();
   void SetScrollInfo();
-  void SetScrollPosX(FX_FLOAT fx);
-  void SetScrollPosY(FX_FLOAT fy);
+  void SetScrollPosX(float fx);
+  void SetScrollPosY(float fy);
   void SetScrollLimit();
   void SetContentChanged();
 

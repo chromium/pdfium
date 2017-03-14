@@ -17,13 +17,13 @@ class CPWL_Image : public CPWL_Wnd {
 
   virtual CFX_ByteString GetImageAppStream();
 
-  virtual void GetScale(FX_FLOAT& fHScale, FX_FLOAT& fVScale);
-  virtual void GetImageOffset(FX_FLOAT& x, FX_FLOAT& y);
+  virtual void GetScale(float& fHScale, float& fVScale);
+  virtual void GetImageOffset(float& x, float& y);
   virtual CPDF_Stream* GetPDFStream();
 
  public:
   void SetPDFStream(CPDF_Stream* pStream);
-  void GetImageSize(FX_FLOAT& fWidth, FX_FLOAT& fHeight);
+  void GetImageSize(float& fWidth, float& fHeight);
   CFX_Matrix GetImageMatrix();
   CFX_ByteString GetImageAlias();
   void SetImageAlias(const char* sImageAlias);
@@ -41,12 +41,12 @@ class CPWL_Icon : public CPWL_Image {
   virtual CPDF_IconFit* GetIconFit();
 
   // CPWL_Image
-  void GetScale(FX_FLOAT& fHScale, FX_FLOAT& fVScale) override;
-  void GetImageOffset(FX_FLOAT& x, FX_FLOAT& y) override;
+  void GetScale(float& fHScale, float& fVScale) override;
+  void GetImageOffset(float& x, float& y) override;
 
   int32_t GetScaleMethod();
   bool IsProportionalScale();
-  void GetIconPosition(FX_FLOAT& fLeft, FX_FLOAT& fBottom);
+  void GetIconPosition(float& fLeft, float& fBottom);
 
   void SetIconFit(CPDF_IconFit* pIconFit) { m_pIconFit = pIconFit; }
 

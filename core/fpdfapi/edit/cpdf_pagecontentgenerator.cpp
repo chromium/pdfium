@@ -33,7 +33,7 @@ CFX_ByteTextBuf& operator<<(CFX_ByteTextBuf& ar, const CFX_Matrix& matrix) {
   return ar;
 }
 
-bool GetColor(const CPDF_Color* pColor, FX_FLOAT* rgb) {
+bool GetColor(const CPDF_Color* pColor, float* rgb) {
   int intRGB[3];
   if (!pColor ||
       pColor->GetColorSpace() != CPDF_ColorSpace::GetStockCS(PDFCS_DEVICERGB) ||
@@ -201,17 +201,17 @@ void CPDF_PageContentGenerator::ProcessPath(CFX_ByteTextBuf* buf,
 void CPDF_PageContentGenerator::ProcessGraphics(CFX_ByteTextBuf* buf,
                                                 CPDF_PageObject* pPageObj) {
   *buf << "q ";
-  FX_FLOAT fillColor[3];
+  float fillColor[3];
   if (GetColor(pPageObj->m_ColorState.GetFillColor(), fillColor)) {
     *buf << fillColor[0] << " " << fillColor[1] << " " << fillColor[2]
          << " rg ";
   }
-  FX_FLOAT strokeColor[3];
+  float strokeColor[3];
   if (GetColor(pPageObj->m_ColorState.GetStrokeColor(), strokeColor)) {
     *buf << strokeColor[0] << " " << strokeColor[1] << " " << strokeColor[2]
          << " RG ";
   }
-  FX_FLOAT lineWidth = pPageObj->m_GraphState.GetLineWidth();
+  float lineWidth = pPageObj->m_GraphState.GetLineWidth();
   if (lineWidth != 1.0f)
     *buf << lineWidth << " w ";
 

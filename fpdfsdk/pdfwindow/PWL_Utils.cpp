@@ -18,8 +18,8 @@
 #include "fpdfsdk/pdfwindow/PWL_Wnd.h"
 
 CFX_FloatRect CPWL_Utils::OffsetRect(const CFX_FloatRect& rect,
-                                     FX_FLOAT x,
-                                     FX_FLOAT y) {
+                                     float x,
+                                     float y) {
   return CFX_FloatRect(rect.left + x, rect.bottom + y, rect.right + x,
                        rect.top + y);
 }
@@ -51,8 +51,8 @@ CPVT_WordRange CPWL_Utils::OverlapWordRange(const CPVT_WordRange& wr1,
 }
 
 CFX_ByteString CPWL_Utils::GetAP_Check(const CFX_FloatRect& crBBox) {
-  const FX_FLOAT fWidth = crBBox.right - crBBox.left;
-  const FX_FLOAT fHeight = crBBox.top - crBBox.bottom;
+  const float fWidth = crBBox.right - crBBox.left;
+  const float fHeight = crBBox.top - crBBox.bottom;
 
   CFX_PointF pts[8][3] = {{CFX_PointF(0.28f, 0.52f), CFX_PointF(0.27f, 0.48f),
                            CFX_PointF(0.29f, 0.40f)},
@@ -84,10 +84,10 @@ CFX_ByteString CPWL_Utils::GetAP_Check(const CFX_FloatRect& crBBox) {
   for (size_t i = 0; i < FX_ArraySize(pts); ++i) {
     size_t nNext = i < FX_ArraySize(pts) - 1 ? i + 1 : 0;
 
-    FX_FLOAT px1 = pts[i][1].x - pts[i][0].x;
-    FX_FLOAT py1 = pts[i][1].y - pts[i][0].y;
-    FX_FLOAT px2 = pts[i][2].x - pts[nNext][0].x;
-    FX_FLOAT py2 = pts[i][2].y - pts[nNext][0].y;
+    float px1 = pts[i][1].x - pts[i][0].x;
+    float py1 = pts[i][1].y - pts[i][0].y;
+    float px2 = pts[i][2].x - pts[nNext][0].x;
+    float py2 = pts[i][2].y - pts[nNext][0].y;
 
     csAP << pts[i][0].x + px1 * FX_BEZIER << " "
          << pts[i][0].y + py1 * FX_BEZIER << " "
@@ -102,8 +102,8 @@ CFX_ByteString CPWL_Utils::GetAP_Check(const CFX_FloatRect& crBBox) {
 CFX_ByteString CPWL_Utils::GetAP_Circle(const CFX_FloatRect& crBBox) {
   CFX_ByteTextBuf csAP;
 
-  FX_FLOAT fWidth = crBBox.right - crBBox.left;
-  FX_FLOAT fHeight = crBBox.top - crBBox.bottom;
+  float fWidth = crBBox.right - crBBox.left;
+  float fHeight = crBBox.top - crBBox.bottom;
 
   CFX_PointF pt1(crBBox.left, crBBox.bottom + fHeight / 2);
   CFX_PointF pt2(crBBox.left + fWidth / 2, crBBox.top);
@@ -112,8 +112,8 @@ CFX_ByteString CPWL_Utils::GetAP_Circle(const CFX_FloatRect& crBBox) {
 
   csAP << pt1.x << " " << pt1.y << " m\n";
 
-  FX_FLOAT px = pt2.x - pt1.x;
-  FX_FLOAT py = pt2.y - pt1.y;
+  float px = pt2.x - pt1.x;
+  float py = pt2.y - pt1.y;
 
   csAP << pt1.x << " " << pt1.y + py * FX_BEZIER << " "
        << pt2.x - px * FX_BEZIER << " " << pt2.y << " " << pt2.x << " " << pt2.y
@@ -155,8 +155,8 @@ CFX_ByteString CPWL_Utils::GetAP_Cross(const CFX_FloatRect& crBBox) {
 CFX_ByteString CPWL_Utils::GetAP_Diamond(const CFX_FloatRect& crBBox) {
   CFX_ByteTextBuf csAP;
 
-  FX_FLOAT fWidth = crBBox.right - crBBox.left;
-  FX_FLOAT fHeight = crBBox.top - crBBox.bottom;
+  float fWidth = crBBox.right - crBBox.left;
+  float fHeight = crBBox.top - crBBox.bottom;
 
   CFX_PointF pt1(crBBox.left, crBBox.bottom + fHeight / 2);
   CFX_PointF pt2(crBBox.left + fWidth / 2, crBBox.top);
@@ -187,18 +187,17 @@ CFX_ByteString CPWL_Utils::GetAP_Square(const CFX_FloatRect& crBBox) {
 CFX_ByteString CPWL_Utils::GetAP_Star(const CFX_FloatRect& crBBox) {
   CFX_ByteTextBuf csAP;
 
-  FX_FLOAT fRadius =
-      (crBBox.top - crBBox.bottom) / (1 + (FX_FLOAT)cos(FX_PI / 5.0f));
+  float fRadius = (crBBox.top - crBBox.bottom) / (1 + (float)cos(FX_PI / 5.0f));
   CFX_PointF ptCenter = CFX_PointF((crBBox.left + crBBox.right) / 2.0f,
                                    (crBBox.top + crBBox.bottom) / 2.0f);
 
-  FX_FLOAT px[5], py[5];
+  float px[5], py[5];
 
-  FX_FLOAT fAngel = FX_PI / 10.0f;
+  float fAngel = FX_PI / 10.0f;
 
   for (int32_t i = 0; i < 5; i++) {
-    px[i] = ptCenter.x + fRadius * (FX_FLOAT)cos(fAngel);
-    py[i] = ptCenter.y + fRadius * (FX_FLOAT)sin(fAngel);
+    px[i] = ptCenter.x + fRadius * (float)cos(fAngel);
+    py[i] = ptCenter.y + fRadius * (float)sin(fAngel);
 
     fAngel += FX_PI * 2 / 5.0f;
   }
@@ -217,17 +216,17 @@ CFX_ByteString CPWL_Utils::GetAP_Star(const CFX_FloatRect& crBBox) {
 }
 
 CFX_ByteString CPWL_Utils::GetAP_HalfCircle(const CFX_FloatRect& crBBox,
-                                            FX_FLOAT fRotate) {
+                                            float fRotate) {
   CFX_ByteTextBuf csAP;
 
-  FX_FLOAT fWidth = crBBox.right - crBBox.left;
-  FX_FLOAT fHeight = crBBox.top - crBBox.bottom;
+  float fWidth = crBBox.right - crBBox.left;
+  float fHeight = crBBox.top - crBBox.bottom;
 
   CFX_PointF pt1(-fWidth / 2, 0);
   CFX_PointF pt2(0, fHeight / 2);
   CFX_PointF pt3(fWidth / 2, 0);
 
-  FX_FLOAT px, py;
+  float px, py;
 
   csAP << cos(fRotate) << " " << sin(fRotate) << " " << -sin(fRotate) << " "
        << cos(fRotate) << " " << crBBox.left + fWidth / 2 << " "
@@ -252,7 +251,7 @@ CFX_ByteString CPWL_Utils::GetAP_HalfCircle(const CFX_FloatRect& crBBox,
 }
 
 CFX_FloatRect CPWL_Utils::InflateRect(const CFX_FloatRect& rcRect,
-                                      FX_FLOAT fSize) {
+                                      float fSize) {
   if (rcRect.IsEmpty())
     return rcRect;
 
@@ -263,7 +262,7 @@ CFX_FloatRect CPWL_Utils::InflateRect(const CFX_FloatRect& rcRect,
 }
 
 CFX_FloatRect CPWL_Utils::DeflateRect(const CFX_FloatRect& rcRect,
-                                      FX_FLOAT fSize) {
+                                      float fSize) {
   if (rcRect.IsEmpty())
     return rcRect;
 
@@ -273,10 +272,9 @@ CFX_FloatRect CPWL_Utils::DeflateRect(const CFX_FloatRect& rcRect,
   return rcNew;
 }
 
-CFX_FloatRect CPWL_Utils::ScaleRect(const CFX_FloatRect& rcRect,
-                                    FX_FLOAT fScale) {
-  FX_FLOAT fHalfWidth = (rcRect.right - rcRect.left) / 2.0f;
-  FX_FLOAT fHalfHeight = (rcRect.top - rcRect.bottom) / 2.0f;
+CFX_FloatRect CPWL_Utils::ScaleRect(const CFX_FloatRect& rcRect, float fScale) {
+  float fHalfWidth = (rcRect.right - rcRect.left) / 2.0f;
+  float fHalfHeight = (rcRect.top - rcRect.bottom) / 2.0f;
 
   CFX_PointF ptCenter = CFX_PointF((rcRect.left + rcRect.right) / 2,
                                    (rcRect.top + rcRect.bottom) / 2);
@@ -311,13 +309,13 @@ CFX_ByteString CPWL_Utils::GetCircleFillAppStream(const CFX_FloatRect& rect,
 }
 
 CFX_FloatRect CPWL_Utils::GetCenterSquare(const CFX_FloatRect& rect) {
-  FX_FLOAT fWidth = rect.right - rect.left;
-  FX_FLOAT fHeight = rect.top - rect.bottom;
+  float fWidth = rect.right - rect.left;
+  float fHeight = rect.top - rect.bottom;
 
-  FX_FLOAT fCenterX = (rect.left + rect.right) / 2.0f;
-  FX_FLOAT fCenterY = (rect.top + rect.bottom) / 2.0f;
+  float fCenterX = (rect.left + rect.right) / 2.0f;
+  float fCenterY = (rect.top + rect.bottom) / 2.0f;
 
-  FX_FLOAT fRadius = (fWidth > fHeight) ? fHeight / 2 : fWidth / 2;
+  float fRadius = (fWidth > fHeight) ? fHeight / 2 : fWidth / 2;
 
   return CFX_FloatRect(fCenterX - fRadius, fCenterY - fRadius,
                        fCenterX + fRadius, fCenterY + fRadius);
@@ -344,9 +342,9 @@ CFX_ByteString CPWL_Utils::GetPushButtonAppStream(const CFX_FloatRect& rcBBox,
                                                   CPDF_IconFit& IconFit,
                                                   const CFX_WideString& sLabel,
                                                   const CPWL_Color& crText,
-                                                  FX_FLOAT fFontSize,
+                                                  float fFontSize,
                                                   int32_t nLayOut) {
-  const FX_FLOAT fAutoFontScale = 1.0f / 3.0f;
+  const float fAutoFontScale = 1.0f / 3.0f;
 
   std::unique_ptr<CFX_Edit> pEdit(new CFX_Edit);
   pEdit->SetFontMap(pFontMap);
@@ -372,8 +370,8 @@ CFX_ByteString CPWL_Utils::GetPushButtonAppStream(const CFX_FloatRect& rcBBox,
 
   CFX_FloatRect rcLabel = CFX_FloatRect(0, 0, 0, 0);
   CFX_FloatRect rcIcon = CFX_FloatRect(0, 0, 0, 0);
-  FX_FLOAT fWidth = 0.0f;
-  FX_FLOAT fHeight = 0.0f;
+  float fWidth = 0.0f;
+  float fHeight = 0.0f;
 
   switch (nLayOut) {
     case PPBL_LABEL:
@@ -585,7 +583,7 @@ CFX_ByteString CPWL_Utils::GetColorAppStream(const CPWL_Color& color,
 }
 
 CFX_ByteString CPWL_Utils::GetBorderAppStream(const CFX_FloatRect& rect,
-                                              FX_FLOAT fWidth,
+                                              float fWidth,
                                               const CPWL_Color& color,
                                               const CPWL_Color& crLeftTop,
                                               const CPWL_Color& crRightBottom,
@@ -594,13 +592,13 @@ CFX_ByteString CPWL_Utils::GetBorderAppStream(const CFX_FloatRect& rect,
   CFX_ByteTextBuf sAppStream;
   CFX_ByteString sColor;
 
-  FX_FLOAT fLeft = rect.left;
-  FX_FLOAT fRight = rect.right;
-  FX_FLOAT fTop = rect.top;
-  FX_FLOAT fBottom = rect.bottom;
+  float fLeft = rect.left;
+  float fRight = rect.right;
+  float fTop = rect.top;
+  float fBottom = rect.bottom;
 
   if (fWidth > 0.0f) {
-    FX_FLOAT fHalfWidth = fWidth / 2.0f;
+    float fHalfWidth = fWidth / 2.0f;
 
     sAppStream << "q\n";
 
@@ -702,7 +700,7 @@ CFX_ByteString CPWL_Utils::GetBorderAppStream(const CFX_FloatRect& rect,
 
 CFX_ByteString CPWL_Utils::GetCircleBorderAppStream(
     const CFX_FloatRect& rect,
-    FX_FLOAT fWidth,
+    float fWidth,
     const CPWL_Color& color,
     const CPWL_Color& crLeftTop,
     const CPWL_Color& crRightBottom,
@@ -738,7 +736,7 @@ CFX_ByteString CPWL_Utils::GetCircleBorderAppStream(
         }
       } break;
       case BorderStyle::BEVELED: {
-        FX_FLOAT fHalfWidth = fWidth / 2.0f;
+        float fHalfWidth = fWidth / 2.0f;
 
         sColor = CPWL_Utils::GetColorAppStream(color, false);
         if (sColor.GetLength() > 0) {
@@ -765,7 +763,7 @@ CFX_ByteString CPWL_Utils::GetCircleBorderAppStream(
         }
       } break;
       case BorderStyle::INSET: {
-        FX_FLOAT fHalfWidth = fWidth / 2.0f;
+        float fHalfWidth = fWidth / 2.0f;
 
         sColor = CPWL_Utils::GetColorAppStream(color, false);
         if (sColor.GetLength() > 0) {
@@ -961,7 +959,7 @@ void CPWL_Utils::DrawStrokeRect(CFX_RenderDevice* pDevice,
                                 CFX_Matrix* pUser2Device,
                                 const CFX_FloatRect& rect,
                                 const FX_COLORREF& color,
-                                FX_FLOAT fWidth) {
+                                float fWidth) {
   CFX_PathData path;
   CFX_FloatRect rcTemp(rect);
   path.AppendRect(rcTemp.left, rcTemp.bottom, rcTemp.right, rcTemp.top);
@@ -977,7 +975,7 @@ void CPWL_Utils::DrawStrokeLine(CFX_RenderDevice* pDevice,
                                 const CFX_PointF& ptMoveTo,
                                 const CFX_PointF& ptLineTo,
                                 const FX_COLORREF& color,
-                                FX_FLOAT fWidth) {
+                                float fWidth) {
   CFX_PathData path;
   path.AppendPoint(ptMoveTo, FXPT_TYPE::MoveTo, false);
   path.AppendPoint(ptLineTo, FXPT_TYPE::LineTo, false);
@@ -1005,12 +1003,12 @@ void CPWL_Utils::DrawShadow(CFX_RenderDevice* pDevice,
                             int32_t nTransparency,
                             int32_t nStartGray,
                             int32_t nEndGray) {
-  FX_FLOAT fStepGray = 1.0f;
+  float fStepGray = 1.0f;
 
   if (bVertical) {
     fStepGray = (nEndGray - nStartGray) / rect.Height();
 
-    for (FX_FLOAT fy = rect.bottom + 0.5f; fy <= rect.top - 0.5f; fy += 1.0f) {
+    for (float fy = rect.bottom + 0.5f; fy <= rect.top - 0.5f; fy += 1.0f) {
       int32_t nGray = nStartGray + (int32_t)(fStepGray * (fy - rect.bottom));
       CPWL_Utils::DrawStrokeLine(
           pDevice, pUser2Device, CFX_PointF(rect.left, fy),
@@ -1022,7 +1020,7 @@ void CPWL_Utils::DrawShadow(CFX_RenderDevice* pDevice,
   if (bHorizontal) {
     fStepGray = (nEndGray - nStartGray) / rect.Width();
 
-    for (FX_FLOAT fx = rect.left + 0.5f; fx <= rect.right - 0.5f; fx += 1.0f) {
+    for (float fx = rect.left + 0.5f; fx <= rect.right - 0.5f; fx += 1.0f) {
       int32_t nGray = nStartGray + (int32_t)(fStepGray * (fx - rect.left));
       CPWL_Utils::DrawStrokeLine(
           pDevice, pUser2Device, CFX_PointF(fx, rect.bottom),
@@ -1035,19 +1033,19 @@ void CPWL_Utils::DrawShadow(CFX_RenderDevice* pDevice,
 void CPWL_Utils::DrawBorder(CFX_RenderDevice* pDevice,
                             CFX_Matrix* pUser2Device,
                             const CFX_FloatRect& rect,
-                            FX_FLOAT fWidth,
+                            float fWidth,
                             const CPWL_Color& color,
                             const CPWL_Color& crLeftTop,
                             const CPWL_Color& crRightBottom,
                             BorderStyle nStyle,
                             int32_t nTransparency) {
-  FX_FLOAT fLeft = rect.left;
-  FX_FLOAT fRight = rect.right;
-  FX_FLOAT fTop = rect.top;
-  FX_FLOAT fBottom = rect.bottom;
+  float fLeft = rect.left;
+  float fRight = rect.right;
+  float fTop = rect.top;
+  float fBottom = rect.bottom;
 
   if (fWidth > 0.0f) {
-    FX_FLOAT fHalfWidth = fWidth / 2.0f;
+    float fHalfWidth = fWidth / 2.0f;
 
     switch (nStyle) {
       default:

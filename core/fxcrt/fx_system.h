@@ -68,7 +68,6 @@ extern "C" {
 #endif  // __cplusplus
 
 typedef void* FX_POSITION;  // Keep until fxcrt containers gone
-typedef float FX_FLOAT;     // Keep, allow upgrade to doubles.
 
 #define IsFloatZero(f) ((f) < 0.0001 && (f) > -0.0001)
 #define IsFloatBigger(fa, fb) ((fa) > (fb) && !IsFloatZero((fa) - (fb)))
@@ -247,21 +246,21 @@ wchar_t* FXSYS_wcsupr(wchar_t* str);
 #endif  // _FXM_PLATFORM == _FXM_PLATFORM_WINDOWS_
 
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
-#define FXSYS_pow(a, b) (FX_FLOAT) powf(a, b)
+#define FXSYS_pow(a, b) (float)powf(a, b)
 #else
-#define FXSYS_pow(a, b) (FX_FLOAT) pow(a, b)
+#define FXSYS_pow(a, b) (float)pow(a, b)
 #endif
-#define FXSYS_sqrt(a) (FX_FLOAT) sqrt(a)
-#define FXSYS_fabs(a) (FX_FLOAT) fabs(a)
-#define FXSYS_atan2(a, b) (FX_FLOAT) atan2(a, b)
-#define FXSYS_ceil(a) (FX_FLOAT) ceil(a)
-#define FXSYS_floor(a) (FX_FLOAT) floor(a)
-#define FXSYS_cos(a) (FX_FLOAT) cos(a)
-#define FXSYS_acos(a) (FX_FLOAT) acos(a)
-#define FXSYS_sin(a) (FX_FLOAT) sin(a)
-#define FXSYS_log(a) (FX_FLOAT) log(a)
-#define FXSYS_log10(a) (FX_FLOAT) log10(a)
-#define FXSYS_fmod(a, b) (FX_FLOAT) fmod(a, b)
+#define FXSYS_sqrt(a) (float)sqrt(a)
+#define FXSYS_fabs(a) (float)fabs(a)
+#define FXSYS_atan2(a, b) (float)atan2(a, b)
+#define FXSYS_ceil(a) (float)ceil(a)
+#define FXSYS_floor(a) (float)floor(a)
+#define FXSYS_cos(a) (float)cos(a)
+#define FXSYS_acos(a) (float)acos(a)
+#define FXSYS_sin(a) (float)sin(a)
+#define FXSYS_log(a) (float)log(a)
+#define FXSYS_log10(a) (float)log10(a)
+#define FXSYS_fmod(a, b) (float)fmod(a, b)
 #define FXSYS_abs abs
 #define FXDWORD_GET_LSBFIRST(p)                                                \
   ((static_cast<uint32_t>(p[3]) << 24) | (static_cast<uint32_t>(p[2]) << 16) | \
@@ -279,8 +278,8 @@ int32_t FXSYS_wtoi(const wchar_t* str);
 int64_t FXSYS_atoi64(const char* str);
 int64_t FXSYS_wtoi64(const wchar_t* str);
 const char* FXSYS_i64toa(int64_t value, char* str, int radix);
-int FXSYS_round(FX_FLOAT f);
-#define FXSYS_sqrt2(a, b) (FX_FLOAT) FXSYS_sqrt((a) * (a) + (b) * (b))
+int FXSYS_round(float f);
+#define FXSYS_sqrt2(a, b) (float)FXSYS_sqrt((a) * (a) + (b) * (b))
 #ifdef __cplusplus
 };
 #endif

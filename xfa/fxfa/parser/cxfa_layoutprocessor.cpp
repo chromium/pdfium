@@ -64,10 +64,10 @@ int32_t CXFA_LayoutProcessor::DoLayout(IFX_Pause* pPause) {
 
   XFA_ItemLayoutProcessorResult eStatus;
   CXFA_Node* pFormNode = m_pRootItemLayoutProcessor->GetFormNode();
-  FX_FLOAT fPosX = pFormNode->GetMeasure(XFA_ATTRIBUTE_X).ToUnit(XFA_UNIT_Pt);
-  FX_FLOAT fPosY = pFormNode->GetMeasure(XFA_ATTRIBUTE_Y).ToUnit(XFA_UNIT_Pt);
+  float fPosX = pFormNode->GetMeasure(XFA_ATTRIBUTE_X).ToUnit(XFA_UNIT_Pt);
+  float fPosY = pFormNode->GetMeasure(XFA_ATTRIBUTE_Y).ToUnit(XFA_UNIT_Pt);
   do {
-    FX_FLOAT fAvailHeight = m_pLayoutPageMgr->GetAvailHeight();
+    float fAvailHeight = m_pLayoutPageMgr->GetAvailHeight();
     eStatus = m_pRootItemLayoutProcessor->DoLayout(true, fAvailHeight,
                                                    fAvailHeight, nullptr);
     if (eStatus != XFA_ItemLayoutProcessorResult::Done)

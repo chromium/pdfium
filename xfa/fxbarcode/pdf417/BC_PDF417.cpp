@@ -540,7 +540,7 @@ CFX_ArrayTemplate<int32_t>* CBC_PDF417::determineDimensions(
     int32_t sourceCodeWords,
     int32_t errorCorrectionCodeWords,
     int32_t& e) {
-  FX_FLOAT ratio = 0.0f;
+  float ratio = 0.0f;
   CFX_ArrayTemplate<int32_t>* dimension = nullptr;
   for (int32_t cols = m_minCols; cols <= m_maxCols; cols++) {
     int32_t rows =
@@ -551,7 +551,7 @@ CFX_ArrayTemplate<int32_t>* CBC_PDF417::determineDimensions(
     if (rows > m_maxRows) {
       continue;
     }
-    FX_FLOAT newRatio =
+    float newRatio =
         ((17 * cols + 69) * DEFAULT_MODULE_WIDTH) / (rows * HEIGHT);
     if (dimension &&
         fabsf(newRatio - PREFERRED_RATIO) > fabsf(ratio - PREFERRED_RATIO)) {

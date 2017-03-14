@@ -67,7 +67,7 @@ void CXFA_TextParser::InitCSSData(CXFA_TextProvider* pTextProvider) {
     CFGAS_FontMgr* pFontMgr = pDoc->GetApp()->GetFDEFontMgr();
     ASSERT(pFontMgr);
     m_pSelector = pdfium::MakeUnique<CFDE_CSSStyleSelector>(pFontMgr);
-    FX_FLOAT fFontSize = 10;
+    float fFontSize = 10;
     CXFA_Font font = pTextProvider->GetFontNode();
     if (font) {
       fFontSize = font.GetFontSize();
@@ -106,8 +106,8 @@ CFX_RetainPtr<CFDE_CSSComputedStyle> CXFA_TextParser::CreateRootStyle(
   CXFA_Font font = pTextProvider->GetFontNode();
   CXFA_Para para = pTextProvider->GetParaNode();
   auto pStyle = m_pSelector->CreateComputedStyle(nullptr);
-  FX_FLOAT fLineHeight = 0;
-  FX_FLOAT fFontSize = 10;
+  float fLineHeight = 0;
+  float fFontSize = 10;
 
   if (para) {
     fLineHeight = para.GetLineHeight();
@@ -171,7 +171,7 @@ CFX_RetainPtr<CFDE_CSSComputedStyle> CXFA_TextParser::CreateStyle(
     return pNewStyle;
 
   uint32_t dwDecoration = pParentStyle->GetTextDecoration();
-  FX_FLOAT fBaseLine = 0;
+  float fBaseLine = 0;
   if (pParentStyle->GetVerticalAlign() == FDE_CSSVerticalAlign::Number)
     fBaseLine = pParentStyle->GetNumberVerticalAlign();
 
@@ -307,7 +307,7 @@ int32_t CXFA_TextParser::GetVAlign(CXFA_TextProvider* pTextProvider) const {
   return para ? para.GetVerticalAlign() : XFA_ATTRIBUTEENUM_Top;
 }
 
-FX_FLOAT CXFA_TextParser::GetTabInterval(CFDE_CSSComputedStyle* pStyle) const {
+float CXFA_TextParser::GetTabInterval(CFDE_CSSComputedStyle* pStyle) const {
   CFX_WideString wsValue;
   if (pStyle && pStyle->GetCustomStyle(L"tab-interval", wsValue))
     return CXFA_Measurement(wsValue.AsStringC()).ToUnit(XFA_UNIT_Pt);
@@ -361,8 +361,8 @@ CFX_RetainPtr<CFGAS_GEFont> CXFA_TextParser::GetFont(
   return pFontMgr->GetFont(pDoc, wsFamily, dwStyle);
 }
 
-FX_FLOAT CXFA_TextParser::GetFontSize(CXFA_TextProvider* pTextProvider,
-                                      CFDE_CSSComputedStyle* pStyle) const {
+float CXFA_TextParser::GetFontSize(CXFA_TextProvider* pTextProvider,
+                                   CFDE_CSSComputedStyle* pStyle) const {
   if (pStyle)
     return pStyle->GetFontSize();
 
@@ -466,8 +466,8 @@ FX_ARGB CXFA_TextParser::GetColor(CXFA_TextProvider* pTextProvider,
   return 0xFF000000;
 }
 
-FX_FLOAT CXFA_TextParser::GetBaseline(CXFA_TextProvider* pTextProvider,
-                                      CFDE_CSSComputedStyle* pStyle) const {
+float CXFA_TextParser::GetBaseline(CXFA_TextProvider* pTextProvider,
+                                   CFDE_CSSComputedStyle* pStyle) const {
   if (pStyle) {
     if (pStyle->GetVerticalAlign() == FDE_CSSVerticalAlign::Number)
       return pStyle->GetNumberVerticalAlign();
@@ -477,18 +477,18 @@ FX_FLOAT CXFA_TextParser::GetBaseline(CXFA_TextProvider* pTextProvider,
   return 0;
 }
 
-FX_FLOAT CXFA_TextParser::GetLineHeight(CXFA_TextProvider* pTextProvider,
-                                        CFDE_CSSComputedStyle* pStyle,
-                                        bool bFirst,
-                                        FX_FLOAT fVerScale) const {
-  FX_FLOAT fLineHeight = 0;
+float CXFA_TextParser::GetLineHeight(CXFA_TextProvider* pTextProvider,
+                                     CFDE_CSSComputedStyle* pStyle,
+                                     bool bFirst,
+                                     float fVerScale) const {
+  float fLineHeight = 0;
   if (pStyle)
     fLineHeight = pStyle->GetLineHeight();
   else if (CXFA_Para para = pTextProvider->GetParaNode())
     fLineHeight = para.GetLineHeight();
 
   if (bFirst) {
-    FX_FLOAT fFontSize = GetFontSize(pTextProvider, pStyle);
+    float fFontSize = GetFontSize(pTextProvider, pStyle);
     if (fLineHeight < 0.1f)
       fLineHeight = fFontSize;
     else
@@ -618,7 +618,7 @@ bool CXFA_TextParser::GetTabstops(CFDE_CSSComputedStyle* pStyle,
         if (ch == ' ') {
           uint32_t dwHashCode = FX_HashCode_GetW(wsAlign.AsStringC(), true);
           CXFA_Measurement ms(CFX_WideStringC(pTabStops + iLast, iCur - iLast));
-          FX_FLOAT fPos = ms.ToUnit(XFA_UNIT_Pt);
+          float fPos = ms.ToUnit(XFA_UNIT_Pt);
           pTabstopContext->Append(dwHashCode, fPos);
           wsAlign.clear();
           eStatus = TabStopStatus::None;
@@ -633,7 +633,7 @@ bool CXFA_TextParser::GetTabstops(CFDE_CSSComputedStyle* pStyle,
   if (!wsAlign.IsEmpty()) {
     uint32_t dwHashCode = FX_HashCode_GetW(wsAlign.AsStringC(), true);
     CXFA_Measurement ms(CFX_WideStringC(pTabStops + iLast, iCur - iLast));
-    FX_FLOAT fPos = ms.ToUnit(XFA_UNIT_Pt);
+    float fPos = ms.ToUnit(XFA_UNIT_Pt);
     pTabstopContext->Append(dwHashCode, fPos);
   }
   return true;

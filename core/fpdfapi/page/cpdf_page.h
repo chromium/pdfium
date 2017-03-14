@@ -24,8 +24,8 @@ class CPDF_PageRenderContext;
 // These structs are used to keep track of resources that have already been
 // generated in the page.
 struct GraphicsData {
-  FX_FLOAT fillAlpha;
-  FX_FLOAT strokeAlpha;
+  float fillAlpha;
+  float strokeAlpha;
   bool operator<(const GraphicsData& other) const;
 };
 
@@ -51,8 +51,8 @@ class CPDF_Page : public CPDF_PageObjectHolder {
                               int ySize,
                               int iRotate) const;
 
-  FX_FLOAT GetPageWidth() const { return m_PageWidth; }
-  FX_FLOAT GetPageHeight() const { return m_PageHeight; }
+  float GetPageWidth() const { return m_PageWidth; }
+  float GetPageHeight() const { return m_PageHeight; }
   CFX_FloatRect GetPageBBox() const { return m_BBox; }
   const CFX_Matrix& GetPageMatrix() const { return m_PageMatrix; }
   CPDF_Object* GetPageAttr(const CFX_ByteString& name) const;
@@ -72,8 +72,8 @@ class CPDF_Page : public CPDF_PageObjectHolder {
  protected:
   void StartParse();
 
-  FX_FLOAT m_PageWidth;
-  FX_FLOAT m_PageHeight;
+  float m_PageWidth;
+  float m_PageHeight;
   CFX_Matrix m_PageMatrix;
   View* m_pView;
   std::unique_ptr<CPDF_PageRenderCache> m_pPageRender;

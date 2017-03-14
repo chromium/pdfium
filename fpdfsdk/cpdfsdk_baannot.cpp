@@ -245,11 +245,11 @@ BorderStyle CPDFSDK_BAAnnot::GetBorderStyle() const {
 
 void CPDFSDK_BAAnnot::SetColor(FX_COLORREF color) {
   CPDF_Array* pArray = m_pAnnot->GetAnnotDict()->SetNewFor<CPDF_Array>("C");
-  pArray->AddNew<CPDF_Number>(static_cast<FX_FLOAT>(FXSYS_GetRValue(color)) /
+  pArray->AddNew<CPDF_Number>(static_cast<float>(FXSYS_GetRValue(color)) /
                               255.0f);
-  pArray->AddNew<CPDF_Number>(static_cast<FX_FLOAT>(FXSYS_GetGValue(color)) /
+  pArray->AddNew<CPDF_Number>(static_cast<float>(FXSYS_GetGValue(color)) /
                               255.0f);
-  pArray->AddNew<CPDF_Number>(static_cast<FX_FLOAT>(FXSYS_GetBValue(color)) /
+  pArray->AddNew<CPDF_Number>(static_cast<float>(FXSYS_GetBValue(color)) /
                               255.0f);
 }
 
@@ -261,28 +261,28 @@ bool CPDFSDK_BAAnnot::GetColor(FX_COLORREF& color) const {
   if (CPDF_Array* pEntry = m_pAnnot->GetAnnotDict()->GetArrayFor("C")) {
     size_t nCount = pEntry->GetCount();
     if (nCount == 1) {
-      FX_FLOAT g = pEntry->GetNumberAt(0) * 255;
+      float g = pEntry->GetNumberAt(0) * 255;
 
       color = FXSYS_RGB((int)g, (int)g, (int)g);
 
       return true;
     } else if (nCount == 3) {
-      FX_FLOAT r = pEntry->GetNumberAt(0) * 255;
-      FX_FLOAT g = pEntry->GetNumberAt(1) * 255;
-      FX_FLOAT b = pEntry->GetNumberAt(2) * 255;
+      float r = pEntry->GetNumberAt(0) * 255;
+      float g = pEntry->GetNumberAt(1) * 255;
+      float b = pEntry->GetNumberAt(2) * 255;
 
       color = FXSYS_RGB((int)r, (int)g, (int)b);
 
       return true;
     } else if (nCount == 4) {
-      FX_FLOAT c = pEntry->GetNumberAt(0);
-      FX_FLOAT m = pEntry->GetNumberAt(1);
-      FX_FLOAT y = pEntry->GetNumberAt(2);
-      FX_FLOAT k = pEntry->GetNumberAt(3);
+      float c = pEntry->GetNumberAt(0);
+      float m = pEntry->GetNumberAt(1);
+      float y = pEntry->GetNumberAt(2);
+      float k = pEntry->GetNumberAt(3);
 
-      FX_FLOAT r = 1.0f - std::min(1.0f, c + k);
-      FX_FLOAT g = 1.0f - std::min(1.0f, m + k);
-      FX_FLOAT b = 1.0f - std::min(1.0f, y + k);
+      float r = 1.0f - std::min(1.0f, c + k);
+      float g = 1.0f - std::min(1.0f, m + k);
+      float b = 1.0f - std::min(1.0f, y + k);
 
       color = FXSYS_RGB((int)(r * 255), (int)(g * 255), (int)(b * 255));
 

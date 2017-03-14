@@ -45,7 +45,7 @@ class CXFA_WidgetLayoutData {
   CXFA_WidgetLayoutData() : m_fWidgetHeight(-1) {}
   virtual ~CXFA_WidgetLayoutData() {}
 
-  FX_FLOAT m_fWidgetHeight;
+  float m_fWidgetHeight;
 };
 
 class CXFA_TextLayoutData : public CXFA_WidgetLayoutData {
@@ -128,7 +128,7 @@ class CXFA_FieldLayoutData : public CXFA_WidgetLayoutData {
   std::unique_ptr<CXFA_TextLayout> m_pCapTextLayout;
   std::unique_ptr<CXFA_TextProvider> m_pCapTextProvider;
   std::unique_ptr<CFDE_TextOut> m_pTextOut;
-  std::vector<FX_FLOAT> m_FieldSplitArray;
+  std::vector<float> m_FieldSplitArray;
 };
 
 class CXFA_TextEditData : public CXFA_FieldLayoutData {
@@ -718,7 +718,7 @@ void CXFA_WidgetAcc::CalcCaptionSize(CFX_SizeF& szCap) {
   LoadCaption();
   XFA_Element eUIType = GetUIType();
   int32_t iCapPlacement = caption.GetPlacementType();
-  FX_FLOAT fCapReserve = caption.GetReserve();
+  float fCapReserve = caption.GetReserve();
   const bool bVert = iCapPlacement == XFA_ATTRIBUTEENUM_Top ||
                      iCapPlacement == XFA_ATTRIBUTEENUM_Bottom;
   const bool bReserveExit = fCapReserve > 0.01;
@@ -735,7 +735,7 @@ void CXFA_WidgetAcc::CalcCaptionSize(CFX_SizeF& szCap) {
       bVert ? szCap.height = fCapReserve : szCap.width = fCapReserve;
     }
   } else {
-    FX_FLOAT fFontSize = 10.0f;
+    float fFontSize = 10.0f;
     if (CXFA_Font font = caption.GetFont()) {
       fFontSize = font.GetFontSize();
     } else if (CXFA_Font widgetfont = GetFont()) {
@@ -749,7 +749,7 @@ void CXFA_WidgetAcc::CalcCaptionSize(CFX_SizeF& szCap) {
     }
   }
   if (CXFA_Margin mgCap = caption.GetMargin()) {
-    FX_FLOAT fLeftInset, fTopInset, fRightInset, fBottomInset;
+    float fLeftInset, fTopInset, fRightInset, fBottomInset;
     mgCap.GetLeftInset(fLeftInset);
     mgCap.GetTopInset(fTopInset);
     mgCap.GetRightInset(fRightInset);
@@ -792,7 +792,7 @@ bool CXFA_WidgetAcc::CalculateFieldAutoSize(CFX_SizeF& size) {
 bool CXFA_WidgetAcc::CalculateWidgetAutoSize(CFX_SizeF& size) {
   CXFA_Margin mgWidget = GetMargin();
   if (mgWidget) {
-    FX_FLOAT fLeftInset, fTopInset, fRightInset, fBottomInset;
+    float fLeftInset, fTopInset, fRightInset, fBottomInset;
     mgWidget.GetLeftInset(fLeftInset);
     mgWidget.GetTopInset(fTopInset);
     mgWidget.GetRightInset(fRightInset);
@@ -804,9 +804,9 @@ bool CXFA_WidgetAcc::CalculateWidgetAutoSize(CFX_SizeF& size) {
   if (para)
     size.width += para.GetMarginLeft() + para.GetTextIndent();
 
-  FX_FLOAT fVal = 0;
-  FX_FLOAT fMin = 0;
-  FX_FLOAT fMax = 0;
+  float fVal = 0;
+  float fMin = 0;
+  float fMax = 0;
   if (GetWidth(fVal)) {
     size.width = fVal;
   } else {
@@ -830,7 +830,7 @@ bool CXFA_WidgetAcc::CalculateWidgetAutoSize(CFX_SizeF& size) {
 }
 
 void CXFA_WidgetAcc::CalculateTextContentSize(CFX_SizeF& size) {
-  FX_FLOAT fFontSize = GetFontSize();
+  float fFontSize = GetFontSize();
   CFX_WideString wsText;
   GetValue(wsText, XFA_VALUEPICTURE_Display);
   if (wsText.IsEmpty()) {
@@ -885,7 +885,7 @@ bool CXFA_WidgetAcc::CalculateTextEditAutoSize(CFX_SizeF& size) {
     size.width -= rtUIMargin.left + rtUIMargin.width;
     CXFA_Margin mgWidget = GetMargin();
     if (mgWidget) {
-      FX_FLOAT fLeftInset, fRightInset;
+      float fLeftInset, fRightInset;
       mgWidget.GetLeftInset(fLeftInset);
       mgWidget.GetRightInset(fRightInset);
       size.width -= fLeftInset + fRightInset;
@@ -914,7 +914,7 @@ bool CXFA_WidgetAcc::CalculateTextEditAutoSize(CFX_SizeF& size) {
   return CalculateFieldAutoSize(size);
 }
 bool CXFA_WidgetAcc::CalculateCheckButtonAutoSize(CFX_SizeF& size) {
-  FX_FLOAT fCheckSize = GetCheckButtonSize();
+  float fCheckSize = GetCheckButtonSize();
   size = CFX_SizeF(fCheckSize, fCheckSize);
   return CalculateFieldAutoSize(size);
 }
@@ -932,9 +932,8 @@ bool CXFA_WidgetAcc::CalculateImageAutoSize(CFX_SizeF& size) {
     int32_t iImageYDpi = 0;
     GetImageDpi(iImageXDpi, iImageYDpi);
     CFX_RectF rtImage(
-        0, 0,
-        XFA_UnitPx2Pt((FX_FLOAT)pBitmap->GetWidth(), (FX_FLOAT)iImageXDpi),
-        XFA_UnitPx2Pt((FX_FLOAT)pBitmap->GetHeight(), (FX_FLOAT)iImageYDpi));
+        0, 0, XFA_UnitPx2Pt((float)pBitmap->GetWidth(), (float)iImageXDpi),
+        XFA_UnitPx2Pt((float)pBitmap->GetHeight(), (float)iImageYDpi));
 
     CFX_RectF rtFit;
     if (GetWidth(rtFit.width)) {
@@ -961,9 +960,8 @@ bool CXFA_WidgetAcc::CalculateImageEditAutoSize(CFX_SizeF& size) {
     int32_t iImageYDpi = 0;
     GetImageEditDpi(iImageXDpi, iImageYDpi);
     CFX_RectF rtImage(
-        0, 0,
-        XFA_UnitPx2Pt((FX_FLOAT)pBitmap->GetWidth(), (FX_FLOAT)iImageXDpi),
-        XFA_UnitPx2Pt((FX_FLOAT)pBitmap->GetHeight(), (FX_FLOAT)iImageYDpi));
+        0, 0, XFA_UnitPx2Pt((float)pBitmap->GetWidth(), (float)iImageXDpi),
+        XFA_UnitPx2Pt((float)pBitmap->GetHeight(), (float)iImageYDpi));
 
     CFX_RectF rtFit;
     if (GetWidth(rtFit.width)) {
@@ -1017,15 +1015,15 @@ void CXFA_WidgetAcc::LoadText() {
   InitLayoutData();
   static_cast<CXFA_TextLayoutData*>(m_pLayoutData.get())->LoadText(this);
 }
-FX_FLOAT CXFA_WidgetAcc::CalculateWidgetAutoWidth(FX_FLOAT fWidthCalc) {
+float CXFA_WidgetAcc::CalculateWidgetAutoWidth(float fWidthCalc) {
   CXFA_Margin mgWidget = GetMargin();
   if (mgWidget) {
-    FX_FLOAT fLeftInset, fRightInset;
+    float fLeftInset, fRightInset;
     mgWidget.GetLeftInset(fLeftInset);
     mgWidget.GetRightInset(fRightInset);
     fWidthCalc += fLeftInset + fRightInset;
   }
-  FX_FLOAT fMin = 0, fMax = 0;
+  float fMin = 0, fMax = 0;
   if (GetMinWidth(fMin)) {
     fWidthCalc = std::max(fWidthCalc, fMin);
   }
@@ -1034,25 +1032,25 @@ FX_FLOAT CXFA_WidgetAcc::CalculateWidgetAutoWidth(FX_FLOAT fWidthCalc) {
   }
   return fWidthCalc;
 }
-FX_FLOAT CXFA_WidgetAcc::GetWidthWithoutMargin(FX_FLOAT fWidthCalc) {
+float CXFA_WidgetAcc::GetWidthWithoutMargin(float fWidthCalc) {
   CXFA_Margin mgWidget = GetMargin();
   if (mgWidget) {
-    FX_FLOAT fLeftInset, fRightInset;
+    float fLeftInset, fRightInset;
     mgWidget.GetLeftInset(fLeftInset);
     mgWidget.GetRightInset(fRightInset);
     fWidthCalc -= fLeftInset + fRightInset;
   }
   return fWidthCalc;
 }
-FX_FLOAT CXFA_WidgetAcc::CalculateWidgetAutoHeight(FX_FLOAT fHeightCalc) {
+float CXFA_WidgetAcc::CalculateWidgetAutoHeight(float fHeightCalc) {
   CXFA_Margin mgWidget = GetMargin();
   if (mgWidget) {
-    FX_FLOAT fTopInset, fBottomInset;
+    float fTopInset, fBottomInset;
     mgWidget.GetTopInset(fTopInset);
     mgWidget.GetBottomInset(fBottomInset);
     fHeightCalc += fTopInset + fBottomInset;
   }
-  FX_FLOAT fMin = 0, fMax = 0;
+  float fMin = 0, fMax = 0;
   if (GetMinHeight(fMin)) {
     fHeightCalc = std::max(fHeightCalc, fMin);
   }
@@ -1061,18 +1059,17 @@ FX_FLOAT CXFA_WidgetAcc::CalculateWidgetAutoHeight(FX_FLOAT fHeightCalc) {
   }
   return fHeightCalc;
 }
-FX_FLOAT CXFA_WidgetAcc::GetHeightWithoutMargin(FX_FLOAT fHeightCalc) {
+float CXFA_WidgetAcc::GetHeightWithoutMargin(float fHeightCalc) {
   CXFA_Margin mgWidget = GetMargin();
   if (mgWidget) {
-    FX_FLOAT fTopInset, fBottomInset;
+    float fTopInset, fBottomInset;
     mgWidget.GetTopInset(fTopInset);
     mgWidget.GetBottomInset(fBottomInset);
     fHeightCalc -= fTopInset + fBottomInset;
   }
   return fHeightCalc;
 }
-void CXFA_WidgetAcc::StartWidgetLayout(FX_FLOAT& fCalcWidth,
-                                       FX_FLOAT& fCalcHeight) {
+void CXFA_WidgetAcc::StartWidgetLayout(float& fCalcWidth, float& fCalcHeight) {
   InitLayoutData();
   XFA_Element eUIType = GetUIType();
   if (eUIType == XFA_Element::Text) {
@@ -1085,7 +1082,7 @@ void CXFA_WidgetAcc::StartWidgetLayout(FX_FLOAT& fCalcWidth,
     return;
   }
   m_pLayoutData->m_fWidgetHeight = -1;
-  FX_FLOAT fWidth = 0;
+  float fWidth = 0;
   if (fCalcWidth > 0 && fCalcHeight < 0) {
     if (!GetHeight(fCalcHeight)) {
       CalculateAccWidthAndHeight(eUIType, fCalcWidth, fCalcHeight);
@@ -1102,8 +1099,8 @@ void CXFA_WidgetAcc::StartWidgetLayout(FX_FLOAT& fCalcWidth,
   m_pLayoutData->m_fWidgetHeight = fCalcHeight;
 }
 void CXFA_WidgetAcc::CalculateAccWidthAndHeight(XFA_Element eUIType,
-                                                FX_FLOAT& fWidth,
-                                                FX_FLOAT& fCalcHeight) {
+                                                float& fWidth,
+                                                float& fCalcHeight) {
   CFX_SizeF sz(fWidth, m_pLayoutData->m_fWidgetHeight);
   switch (eUIType) {
     case XFA_Element::Barcode:
@@ -1143,7 +1140,7 @@ void CXFA_WidgetAcc::CalculateAccWidthAndHeight(XFA_Element eUIType,
   m_pLayoutData->m_fWidgetHeight = sz.height;
   fCalcHeight = sz.height;
 }
-bool CXFA_WidgetAcc::FindSplitPos(int32_t iBlockIndex, FX_FLOAT& fCalcHeight) {
+bool CXFA_WidgetAcc::FindSplitPos(int32_t iBlockIndex, float& fCalcHeight) {
   XFA_Element eUIType = GetUIType();
   if (eUIType == XFA_Element::Subform) {
     return false;
@@ -1154,8 +1151,8 @@ bool CXFA_WidgetAcc::FindSplitPos(int32_t iBlockIndex, FX_FLOAT& fCalcHeight) {
     fCalcHeight = 0;
     return true;
   }
-  FX_FLOAT fTopInset = 0;
-  FX_FLOAT fBottomInset = 0;
+  float fTopInset = 0;
+  float fBottomInset = 0;
   if (iBlockIndex == 0) {
     CXFA_Margin mgWidget = GetMargin();
     if (mgWidget) {
@@ -1167,7 +1164,7 @@ bool CXFA_WidgetAcc::FindSplitPos(int32_t iBlockIndex, FX_FLOAT& fCalcHeight) {
     fBottomInset += rtUIMargin.width;
   }
   if (eUIType == XFA_Element::Text) {
-    FX_FLOAT fHeight = fCalcHeight;
+    float fHeight = fCalcHeight;
     if (iBlockIndex == 0) {
       fCalcHeight = fCalcHeight - fTopInset;
       if (fCalcHeight < 0) {
@@ -1189,7 +1186,7 @@ bool CXFA_WidgetAcc::FindSplitPos(int32_t iBlockIndex, FX_FLOAT& fCalcHeight) {
     return true;
   }
   XFA_ATTRIBUTEENUM iCapPlacement = XFA_ATTRIBUTEENUM_Unknown;
-  FX_FLOAT fCapReserve = 0;
+  float fCapReserve = 0;
   if (iBlockIndex == 0) {
     CXFA_Caption caption = GetCaption();
     if (caption && caption.GetPresence() != XFA_ATTRIBUTEENUM_Hidden) {
@@ -1213,20 +1210,20 @@ bool CXFA_WidgetAcc::FindSplitPos(int32_t iBlockIndex, FX_FLOAT& fCalcHeight) {
   CXFA_FieldLayoutData* pFieldData =
       static_cast<CXFA_FieldLayoutData*>(m_pLayoutData.get());
   int32_t iLinesCount = 0;
-  FX_FLOAT fHeight = m_pLayoutData->m_fWidgetHeight;
+  float fHeight = m_pLayoutData->m_fWidgetHeight;
   CFX_WideString wsText;
   GetValue(wsText, XFA_VALUEPICTURE_Display);
   if (wsText.IsEmpty()) {
     iLinesCount = 1;
   } else {
     if (!pFieldData->m_pTextOut) {
-      FX_FLOAT fWidth = 0;
+      float fWidth = 0;
       GetWidth(fWidth);
       CalculateAccWidthAndHeight(eUIType, fWidth, fHeight);
     }
     iLinesCount = pFieldData->m_pTextOut->GetTotalLines();
   }
-  std::vector<FX_FLOAT>* pFieldArray = &pFieldData->m_FieldSplitArray;
+  std::vector<float>* pFieldArray = &pFieldData->m_FieldSplitArray;
   int32_t iFieldSplitCount = pdfium::CollectionSize<int32_t>(*pFieldArray);
   for (int32_t i = 0; i < iBlockIndex * 3; i += 3) {
     iLinesCount -= (int32_t)(*pFieldArray)[i + 1];
@@ -1235,17 +1232,17 @@ bool CXFA_WidgetAcc::FindSplitPos(int32_t iBlockIndex, FX_FLOAT& fCalcHeight) {
   if (iLinesCount == 0) {
     return false;
   }
-  FX_FLOAT fLineHeight = GetLineHeight();
-  FX_FLOAT fFontSize = GetFontSize();
-  FX_FLOAT fTextHeight = iLinesCount * fLineHeight - fLineHeight + fFontSize;
-  FX_FLOAT fSpaceAbove = 0;
-  FX_FLOAT fStartOffset = 0;
+  float fLineHeight = GetLineHeight();
+  float fFontSize = GetFontSize();
+  float fTextHeight = iLinesCount * fLineHeight - fLineHeight + fFontSize;
+  float fSpaceAbove = 0;
+  float fStartOffset = 0;
   if (fHeight > 0.1f && iBlockIndex == 0) {
     fStartOffset = fTopInset;
     fHeight -= (fTopInset + fBottomInset);
     if (CXFA_Para para = GetPara()) {
       fSpaceAbove = para.GetSpaceAbove();
-      FX_FLOAT fSpaceBelow = para.GetSpaceBelow();
+      float fSpaceBelow = para.GetSpaceBelow();
       fHeight -= (fSpaceAbove + fSpaceBelow);
       switch (para.GetVerticalAlign()) {
         case XFA_ATTRIBUTEENUM_Top:
@@ -1322,17 +1319,17 @@ bool CXFA_WidgetAcc::FindSplitPos(int32_t iBlockIndex, FX_FLOAT& fCalcHeight) {
       }
       return true;
     }
-    FX_FLOAT fTextNum =
+    float fTextNum =
         fCalcHeight + XFA_FLOAT_PERCISION - fCapReserve - fStartOffset;
     int32_t iLineNum =
         (int32_t)((fTextNum + (fLineHeight - fFontSize)) / fLineHeight);
     if (iLineNum >= iLinesCount) {
       if (fCalcHeight - fStartOffset - fTextHeight >= fFontSize) {
         if (iFieldSplitCount / 3 == (iBlockIndex + 1)) {
-          (*pFieldArray)[iBlockIndex * 3 + 1] = (FX_FLOAT)iLinesCount;
+          (*pFieldArray)[iBlockIndex * 3 + 1] = (float)iLinesCount;
           (*pFieldArray)[iBlockIndex * 3 + 2] = fCalcHeight;
         } else {
-          pFieldArray->push_back((FX_FLOAT)iLinesCount);
+          pFieldArray->push_back((float)iLinesCount);
           pFieldArray->push_back(fCalcHeight);
         }
         return false;
@@ -1348,13 +1345,12 @@ bool CXFA_WidgetAcc::FindSplitPos(int32_t iBlockIndex, FX_FLOAT& fCalcHeight) {
       }
     }
     if (iLineNum > 0) {
-      FX_FLOAT fSplitHeight =
-          iLineNum * fLineHeight + fCapReserve + fStartOffset;
+      float fSplitHeight = iLineNum * fLineHeight + fCapReserve + fStartOffset;
       if (iFieldSplitCount / 3 == (iBlockIndex + 1)) {
-        (*pFieldArray)[iBlockIndex * 3 + 1] = (FX_FLOAT)iLineNum;
+        (*pFieldArray)[iBlockIndex * 3 + 1] = (float)iLineNum;
         (*pFieldArray)[iBlockIndex * 3 + 2] = fSplitHeight;
       } else {
-        pFieldArray->push_back((FX_FLOAT)iLineNum);
+        pFieldArray->push_back((float)iLineNum);
         pFieldArray->push_back(fSplitHeight);
       }
       if (fabs(fSplitHeight - fCalcHeight) < XFA_FLOAT_PERCISION) {
@@ -1394,14 +1390,13 @@ void CXFA_WidgetAcc::InitLayoutData() {
   m_pLayoutData = pdfium::MakeUnique<CXFA_WidgetLayoutData>();
 }
 
-void CXFA_WidgetAcc::StartTextLayout(FX_FLOAT& fCalcWidth,
-                                     FX_FLOAT& fCalcHeight) {
+void CXFA_WidgetAcc::StartTextLayout(float& fCalcWidth, float& fCalcHeight) {
   LoadText();
   CXFA_TextLayout* pTextLayout =
       static_cast<CXFA_TextLayoutData*>(m_pLayoutData.get())->GetTextLayout();
-  FX_FLOAT fTextHeight = 0;
+  float fTextHeight = 0;
   if (fCalcWidth > 0 && fCalcHeight > 0) {
-    FX_FLOAT fWidth = GetWidthWithoutMargin(fCalcWidth);
+    float fWidth = GetWidthWithoutMargin(fCalcWidth);
     pTextLayout->StartLayout(fWidth);
     fTextHeight = fCalcHeight;
     fTextHeight = GetHeightWithoutMargin(fTextHeight);
@@ -1409,17 +1404,17 @@ void CXFA_WidgetAcc::StartTextLayout(FX_FLOAT& fCalcWidth,
     return;
   }
   if (fCalcWidth > 0 && fCalcHeight < 0) {
-    FX_FLOAT fWidth = GetWidthWithoutMargin(fCalcWidth);
+    float fWidth = GetWidthWithoutMargin(fCalcWidth);
     pTextLayout->StartLayout(fWidth);
   }
   if (fCalcWidth < 0 && fCalcHeight < 0) {
-    FX_FLOAT fMaxWidth = -1;
+    float fMaxWidth = -1;
     bool bRet = GetWidth(fMaxWidth);
     if (bRet) {
-      FX_FLOAT fWidth = GetWidthWithoutMargin(fMaxWidth);
+      float fWidth = GetWidthWithoutMargin(fMaxWidth);
       pTextLayout->StartLayout(fWidth);
     } else {
-      FX_FLOAT fWidth = pTextLayout->StartLayout(fMaxWidth);
+      float fWidth = pTextLayout->StartLayout(fMaxWidth);
       fMaxWidth = CalculateWidgetAutoWidth(fWidth);
       fWidth = GetWidthWithoutMargin(fMaxWidth);
       pTextLayout->StartLayout(fWidth);
@@ -1509,15 +1504,15 @@ CFX_RetainPtr<CFGAS_GEFont> CXFA_WidgetAcc::GetFDEFont() {
   return pDoc->GetApp()->GetXFAFontMgr()->GetFont(pDoc, wsFontName,
                                                   dwFontStyle);
 }
-FX_FLOAT CXFA_WidgetAcc::GetFontSize() {
-  FX_FLOAT fFontSize = 10.0f;
+float CXFA_WidgetAcc::GetFontSize() {
+  float fFontSize = 10.0f;
   if (CXFA_Font font = GetFont()) {
     fFontSize = font.GetFontSize();
   }
   return fFontSize < 0.1f ? 10.0f : fFontSize;
 }
-FX_FLOAT CXFA_WidgetAcc::GetLineHeight() {
-  FX_FLOAT fLineHeight = 0;
+float CXFA_WidgetAcc::GetLineHeight() {
+  float fLineHeight = 0;
   if (CXFA_Para para = GetPara()) {
     fLineHeight = para.GetLineHeight();
   }
@@ -1636,7 +1631,7 @@ CXFA_Font CXFA_TextProvider::GetFontNode() {
 bool CXFA_TextProvider::IsCheckButtonAndAutoWidth() {
   XFA_Element eType = m_pWidgetAcc->GetUIType();
   if (eType == XFA_Element::CheckButton) {
-    FX_FLOAT fWidth = 0;
+    float fWidth = 0;
     return !m_pWidgetAcc->GetWidth(fWidth);
   }
   return false;

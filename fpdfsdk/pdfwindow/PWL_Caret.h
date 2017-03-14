@@ -45,7 +45,7 @@ class CPWL_Caret : public CPWL_Wnd {
   bool m_bFlash;
   CFX_PointF m_ptHead;
   CFX_PointF m_ptFoot;
-  FX_FLOAT m_fWidth;
+  float m_fWidth;
   int32_t m_nDelay;
   CFX_FloatRect m_rcInvalid;
 };

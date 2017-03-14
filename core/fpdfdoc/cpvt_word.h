@@ -19,11 +19,11 @@ class CPVT_Word {
   int32_t nCharset;
   CPVT_WordPlace WordPlace;
   CFX_PointF ptWord;
-  FX_FLOAT fAscent;
-  FX_FLOAT fDescent;
-  FX_FLOAT fWidth;
+  float fAscent;
+  float fDescent;
+  float fWidth;
   int32_t nFontIndex;
-  FX_FLOAT fFontSize;
+  float fFontSize;
   CPVT_WordProps WordProps;
 };
 

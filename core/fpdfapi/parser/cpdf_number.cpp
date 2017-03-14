@@ -11,7 +11,7 @@ CPDF_Number::CPDF_Number() : m_bInteger(true), m_Integer(0) {}
 
 CPDF_Number::CPDF_Number(int value) : m_bInteger(true), m_Integer(value) {}
 
-CPDF_Number::CPDF_Number(FX_FLOAT value) : m_bInteger(false), m_Float(value) {}
+CPDF_Number::CPDF_Number(float value) : m_bInteger(false), m_Float(value) {}
 
 CPDF_Number::CPDF_Number(const CFX_ByteStringC& str)
     : m_bInteger(FX_atonum(str, &m_Integer)) {}
@@ -27,8 +27,8 @@ std::unique_ptr<CPDF_Object> CPDF_Number::Clone() const {
                     : pdfium::MakeUnique<CPDF_Number>(m_Float);
 }
 
-FX_FLOAT CPDF_Number::GetNumber() const {
-  return m_bInteger ? static_cast<FX_FLOAT>(m_Integer) : m_Float;
+float CPDF_Number::GetNumber() const {
+  return m_bInteger ? static_cast<float>(m_Integer) : m_Float;
 }
 
 int CPDF_Number::GetInteger() const {

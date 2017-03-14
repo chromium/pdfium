@@ -27,8 +27,8 @@ class CFDE_CSSComputedStyle : public CFX_Retainable {
     FDE_CSSLength m_WordSpacing;
     FDE_CSSLength m_TextIndent;
     CFX_RetainPtr<CFDE_CSSValueList> m_pFontFamily;
-    FX_FLOAT m_fFontSize;
-    FX_FLOAT m_fLineHeight;
+    float m_fFontSize;
+    float m_fLineHeight;
     FX_ARGB m_dwFontColor;
     uint16_t m_wFontWeight;
     FDE_CSSFontVariant m_eFontVariant;
@@ -47,7 +47,7 @@ class CFDE_CSSComputedStyle : public CFX_Retainable {
     FDE_CSSLength m_Bottom;
     FDE_CSSLength m_Left;
     FDE_CSSLength m_Right;
-    FX_FLOAT m_fVerticalAlign;
+    float m_fVerticalAlign;
     FDE_CSSDisplay m_eDisplay;
     FDE_CSSVerticalAlign m_eVerticalAlign;
     uint8_t m_dwTextDecoration;
@@ -61,12 +61,12 @@ class CFDE_CSSComputedStyle : public CFX_Retainable {
   uint16_t GetFontWeight() const;
   FDE_CSSFontVariant GetFontVariant() const;
   FDE_CSSFontStyle GetFontStyle() const;
-  FX_FLOAT GetFontSize() const;
+  float GetFontSize() const;
   FX_ARGB GetColor() const;
   void SetFontWeight(uint16_t wFontWeight);
   void SetFontVariant(FDE_CSSFontVariant eFontVariant);
   void SetFontStyle(FDE_CSSFontStyle eFontStyle);
-  void SetFontSize(FX_FLOAT fFontSize);
+  void SetFontSize(float fFontSize);
   void SetColor(FX_ARGB dwFontColor);
 
   const FDE_CSSRect* GetBorderWidth() const;
@@ -77,17 +77,17 @@ class CFDE_CSSComputedStyle : public CFX_Retainable {
 
   FDE_CSSDisplay GetDisplay() const;
 
-  FX_FLOAT GetLineHeight() const;
+  float GetLineHeight() const;
   const FDE_CSSLength& GetTextIndent() const;
   FDE_CSSTextAlign GetTextAlign() const;
   FDE_CSSVerticalAlign GetVerticalAlign() const;
-  FX_FLOAT GetNumberVerticalAlign() const;
+  float GetNumberVerticalAlign() const;
   uint32_t GetTextDecoration() const;
   const FDE_CSSLength& GetLetterSpacing() const;
-  void SetLineHeight(FX_FLOAT fLineHeight);
+  void SetLineHeight(float fLineHeight);
   void SetTextIndent(const FDE_CSSLength& textIndent);
   void SetTextAlign(FDE_CSSTextAlign eTextAlign);
-  void SetNumberVerticalAlign(FX_FLOAT fAlign);
+  void SetNumberVerticalAlign(float fAlign);
   void SetTextDecoration(uint32_t dwTextDecoration);
   void SetLetterSpacing(const FDE_CSSLength& letterSpacing);
   void AddCustomStyle(const CFDE_CSSCustomProperty& prop);

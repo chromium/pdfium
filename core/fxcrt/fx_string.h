@@ -154,7 +154,7 @@ class CFX_ByteString {
 #define FXFORMAT_CAPITAL 4
 
   static CFX_ByteString FormatInteger(int i, uint32_t flags = 0);
-  static CFX_ByteString FormatFloat(FX_FLOAT f, int precision = 0);
+  static CFX_ByteString FormatFloat(float f, int precision = 0);
 
  protected:
   using StringData = CFX_StringDataTemplate<char>;
@@ -336,7 +336,7 @@ class CFX_WideString {
   void ReleaseBuffer(FX_STRSIZE len = -1);
 
   int GetInteger() const;
-  FX_FLOAT GetFloat() const;
+  float GetFloat() const;
 
   FX_STRSIZE Find(const CFX_WideStringC& pSub, FX_STRSIZE start = 0) const;
   FX_STRSIZE Find(wchar_t ch, FX_STRSIZE start = 0) const;
@@ -421,12 +421,12 @@ inline bool operator!=(const CFX_WideStringC& lhs, const CFX_WideString& rhs) {
 }
 
 CFX_ByteString FX_UTF8Encode(const CFX_WideStringC& wsStr);
-FX_FLOAT FX_atof(const CFX_ByteStringC& str);
-inline FX_FLOAT FX_atof(const CFX_WideStringC& wsStr) {
+float FX_atof(const CFX_ByteStringC& str);
+inline float FX_atof(const CFX_WideStringC& wsStr) {
   return FX_atof(FX_UTF8Encode(wsStr).c_str());
 }
 bool FX_atonum(const CFX_ByteStringC& str, void* pData);
-FX_STRSIZE FX_ftoa(FX_FLOAT f, char* buf);
+FX_STRSIZE FX_ftoa(float f, char* buf);
 
 uint32_t FX_HashCode_GetA(const CFX_ByteStringC& str, bool bIgnoreCase);
 uint32_t FX_HashCode_GetW(const CFX_WideStringC& str, bool bIgnoreCase);

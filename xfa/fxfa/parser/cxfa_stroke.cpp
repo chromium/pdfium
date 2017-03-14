@@ -25,7 +25,7 @@ int32_t CXFA_Stroke::GetStrokeType() const {
                  : XFA_ATTRIBUTEENUM_Solid;
 }
 
-FX_FLOAT CXFA_Stroke::GetThickness() const {
+float CXFA_Stroke::GetThickness() const {
   return GetMSThickness().ToUnit(XFA_UNIT_Pt);
 }
 
@@ -80,7 +80,7 @@ bool CXFA_Stroke::IsInverted() const {
   return m_pNode ? m_pNode->GetBoolean(XFA_ATTRIBUTE_Inverted) : false;
 }
 
-FX_FLOAT CXFA_Stroke::GetRadius() const {
+float CXFA_Stroke::GetRadius() const {
   return m_pNode ? m_pNode->GetMeasure(XFA_ATTRIBUTE_Radius).ToUnit(XFA_UNIT_Pt)
                  : 0;
 }

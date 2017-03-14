@@ -52,7 +52,7 @@ class CPVT_GenerateAP {
                                        bool bContinuous,
                                        uint16_t SubWord);
   static CFX_ByteString GenerateBorderAP(const CFX_FloatRect& rect,
-                                         FX_FLOAT fWidth,
+                                         float fWidth,
                                          const CPVT_Color& color,
                                          const CPVT_Color& crLeftTop,
                                          const CPVT_Color& crRightBottom,
@@ -68,7 +68,7 @@ class CPVT_GenerateAP {
   static CFX_ByteString GetWordRenderString(const CFX_ByteString& strWords);
   static CFX_ByteString GetFontSetString(IPVT_FontMap* pFontMap,
                                          int32_t nFontIndex,
-                                         FX_FLOAT fFontSize);
+                                         float fFontSize);
 };
 
 #endif  // CORE_FPDFDOC_CPVT_GENERATEAP_H_

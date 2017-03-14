@@ -42,7 +42,7 @@ class IPDF_StructElement {
   virtual CPDF_Object* GetAttr(const CFX_ByteStringC& owner,
                                const CFX_ByteStringC& name,
                                bool bInheritable = false,
-                               FX_FLOAT fLevel = 0.0F) = 0;
+                               float fLevel = 0.0F) = 0;
 
   virtual CFX_ByteString GetName(const CFX_ByteStringC& owner,
                                  const CFX_ByteStringC& name,
@@ -56,11 +56,11 @@ class IPDF_StructElement {
                            bool bInheritable = false,
                            int subindex = -1) = 0;
 
-  virtual FX_FLOAT GetNumber(const CFX_ByteStringC& owner,
-                             const CFX_ByteStringC& name,
-                             FX_FLOAT default_value,
-                             bool bInheritable = false,
-                             int subindex = -1) = 0;
+  virtual float GetNumber(const CFX_ByteStringC& owner,
+                          const CFX_ByteStringC& name,
+                          float default_value,
+                          bool bInheritable = false,
+                          int subindex = -1) = 0;
 
   virtual int GetInteger(const CFX_ByteStringC& owner,
                          const CFX_ByteStringC& name,

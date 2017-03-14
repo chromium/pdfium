@@ -22,12 +22,12 @@ CPWL_List_Notify::CPWL_List_Notify(CPWL_ListBox* pList) : m_pList(pList) {
 
 CPWL_List_Notify::~CPWL_List_Notify() {}
 
-void CPWL_List_Notify::IOnSetScrollInfoY(FX_FLOAT fPlateMin,
-                                         FX_FLOAT fPlateMax,
-                                         FX_FLOAT fContentMin,
-                                         FX_FLOAT fContentMax,
-                                         FX_FLOAT fSmallStep,
-                                         FX_FLOAT fBigStep) {
+void CPWL_List_Notify::IOnSetScrollInfoY(float fPlateMin,
+                                         float fPlateMax,
+                                         float fContentMin,
+                                         float fContentMax,
+                                         float fSmallStep,
+                                         float fBigStep) {
   PWL_SCROLL_INFO Info;
 
   Info.fPlateWidth = fPlateMax - fPlateMin;
@@ -54,7 +54,7 @@ void CPWL_List_Notify::IOnSetScrollInfoY(FX_FLOAT fPlateMin,
   }
 }
 
-void CPWL_List_Notify::IOnSetScrollPosY(FX_FLOAT fy) {
+void CPWL_List_Notify::IOnSetScrollPosY(float fy) {
   m_pList->OnNotify(m_pList, PNM_SETSCROLLPOS, SBT_VSCROLL, (intptr_t)&fy);
 }
 
@@ -295,7 +295,7 @@ void CPWL_ListBox::OnNotify(CPWL_Wnd* pWnd,
                             intptr_t lParam) {
   CPWL_Wnd::OnNotify(pWnd, msg, wParam, lParam);
 
-  FX_FLOAT fPos;
+  float fPos;
 
   switch (msg) {
     case PNM_SETSCROLLINFO:
@@ -317,7 +317,7 @@ void CPWL_ListBox::OnNotify(CPWL_Wnd* pWnd,
       }
       break;
     case PNM_SCROLLWINDOW:
-      fPos = *(FX_FLOAT*)lParam;
+      fPos = *(float*)lParam;
       switch (wParam) {
         case SBT_VSCROLL:
           m_pList->SetScrollPos(CFX_PointF(0, fPos));
@@ -371,11 +371,11 @@ CFX_WideString CPWL_ListBox::GetText() const {
   return m_pList->GetText();
 }
 
-void CPWL_ListBox::SetFontSize(FX_FLOAT fFontSize) {
+void CPWL_ListBox::SetFontSize(float fFontSize) {
   m_pList->SetFontSize(fFontSize);
 }
 
-FX_FLOAT CPWL_ListBox::GetFontSize() const {
+float CPWL_ListBox::GetFontSize() const {
   return m_pList->GetFontSize();
 }
 
@@ -436,13 +436,13 @@ CFX_FloatRect CPWL_ListBox::GetContentRect() const {
   return m_pList->GetContentRect();
 }
 
-FX_FLOAT CPWL_ListBox::GetFirstHeight() const {
+float CPWL_ListBox::GetFirstHeight() const {
   return m_pList->GetFirstHeight();
 }
 
 CFX_FloatRect CPWL_ListBox::GetListRect() const {
   return CPWL_Utils::DeflateRect(
-      GetWindowRect(), (FX_FLOAT)(GetBorderWidth() + GetInnerBorderWidth()));
+      GetWindowRect(), (float)(GetBorderWidth() + GetInnerBorderWidth()));
 }
 
 bool CPWL_ListBox::OnMouseWheel(short zDelta,

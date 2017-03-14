@@ -77,7 +77,7 @@ class CPDFSDK_Widget : public CPDFSDK_BAAnnot {
   bool GetFillColor(FX_COLORREF& color) const;
   bool GetBorderColor(FX_COLORREF& color) const;
   bool GetTextColor(FX_COLORREF& color) const;
-  FX_FLOAT GetFontSize() const;
+  float GetFontSize() const;
 
   int GetSelectedIndex(int nIndex) const;
 #ifndef PDF_ENABLE_XFA

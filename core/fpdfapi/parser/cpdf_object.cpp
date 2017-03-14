@@ -46,7 +46,7 @@ CFX_WideString CPDF_Object::GetUnicodeText() const {
   return CFX_WideString();
 }
 
-FX_FLOAT CPDF_Object::GetNumber() const {
+float CPDF_Object::GetNumber() const {
   return 0;
 }
 

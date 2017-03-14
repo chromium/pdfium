@@ -45,7 +45,7 @@ enum poly_base_scale_e {
     poly_base_size  = 1 << poly_base_shift,
     poly_base_mask  = poly_base_size - 1
 };
-inline int poly_coord(FX_FLOAT c)
+inline int poly_coord(float c)
 {
     return int(c * poly_base_size);
 }
@@ -219,14 +219,14 @@ public:
         m_outline.reset();
         m_status = status_initial;
     }
-    void clip_box(FX_FLOAT x1, FX_FLOAT y1, FX_FLOAT x2, FX_FLOAT y2)
+    void clip_box(float x1, float y1, float x2, float y2)
     {
         m_clip_box = rect(poly_coord(x1), poly_coord(y1),
                           poly_coord(x2), poly_coord(y2));
         m_clip_box.normalize();
         m_clipping = true;
     }
-    void add_vertex(FX_FLOAT x, FX_FLOAT y, unsigned cmd)
+    void add_vertex(float x, float y, unsigned cmd)
     {
         if(is_close(cmd)) {
             close_polygon();
@@ -374,8 +374,8 @@ public:
     template<class VertexSource>
     void add_path(VertexSource& vs, unsigned path_id = 0)
     {
-        FX_FLOAT x;
-        FX_FLOAT y;
+        float x;
+        float y;
         unsigned cmd;
         vs.rewind(path_id);
         while(!is_stop(cmd = vs.vertex(&x, &y))) {
@@ -385,8 +385,8 @@ public:
     template<class VertexSource>
     void add_path_transformed(VertexSource& vs, const CFX_Matrix* pMatrix, unsigned path_id = 0)
     {
-        FX_FLOAT x;
-        FX_FLOAT y;
+        float x;
+        float y;
         unsigned cmd;
         vs.rewind(path_id);
         while(!is_stop(cmd = vs.vertex(&x, &y))) {

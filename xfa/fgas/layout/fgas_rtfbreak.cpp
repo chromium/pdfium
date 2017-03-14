@@ -43,7 +43,7 @@ CFX_RTFBreak::CFX_RTFBreak(uint32_t dwLayoutStyles)
 
 CFX_RTFBreak::~CFX_RTFBreak() {}
 
-void CFX_RTFBreak::SetLineBoundary(FX_FLOAT fLineStart, FX_FLOAT fLineEnd) {
+void CFX_RTFBreak::SetLineBoundary(float fLineStart, float fLineEnd) {
   if (fLineStart > fLineEnd)
     return;
 
@@ -53,7 +53,7 @@ void CFX_RTFBreak::SetLineBoundary(FX_FLOAT fLineStart, FX_FLOAT fLineEnd) {
   m_pCurLine->m_iStart = std::max(m_pCurLine->m_iStart, m_iBoundaryStart);
 }
 
-void CFX_RTFBreak::SetLineStartPos(FX_FLOAT fLinePos) {
+void CFX_RTFBreak::SetLineStartPos(float fLinePos) {
   int32_t iLinePos = FXSYS_round(fLinePos * 20000.0f);
   iLinePos = std::min(iLinePos, m_iBoundaryEnd);
   iLinePos = std::max(iLinePos, m_iBoundaryStart);
@@ -69,7 +69,7 @@ void CFX_RTFBreak::SetFont(const CFX_RetainPtr<CFGAS_GEFont>& pFont) {
   FontChanged();
 }
 
-void CFX_RTFBreak::SetFontSize(FX_FLOAT fFontSize) {
+void CFX_RTFBreak::SetFontSize(float fFontSize) {
   int32_t iFontSize = FXSYS_round(fFontSize * 20.0f);
   if (m_iFontSize == iFontSize)
     return;
@@ -92,11 +92,11 @@ void CFX_RTFBreak::FontChanged() {
   m_iDefChar *= m_iFontSize;
 }
 
-void CFX_RTFBreak::SetTabWidth(FX_FLOAT fTabWidth) {
+void CFX_RTFBreak::SetTabWidth(float fTabWidth) {
   m_iTabWidth = FXSYS_round(fTabWidth * 20000.0f);
 }
 
-void CFX_RTFBreak::AddPositionedTab(FX_FLOAT fTabPos) {
+void CFX_RTFBreak::AddPositionedTab(float fTabPos) {
   int32_t iTabPos = std::min(FXSYS_round(fTabPos * 20000.0f) + m_iBoundaryStart,
                              m_iBoundaryEnd);
   auto it = std::lower_bound(m_PositionedTabs.begin(), m_PositionedTabs.end(),
@@ -106,7 +106,7 @@ void CFX_RTFBreak::AddPositionedTab(FX_FLOAT fTabPos) {
   m_PositionedTabs.insert(it, iTabPos);
 }
 
-void CFX_RTFBreak::SetLineBreakTolerance(FX_FLOAT fTolerance) {
+void CFX_RTFBreak::SetLineBreakTolerance(float fTolerance) {
   m_iTolerance = FXSYS_round(fTolerance * 20000.0f);
 }
 
@@ -130,7 +130,7 @@ void CFX_RTFBreak::SetVerticalScale(int32_t iScale) {
   m_iVerticalScale = iScale;
 }
 
-void CFX_RTFBreak::SetCharSpace(FX_FLOAT fCharSpace) {
+void CFX_RTFBreak::SetCharSpace(float fCharSpace) {
   m_iCharSpace = FXSYS_round(fCharSpace * 20000.0f);
 }
 
@@ -834,23 +834,23 @@ int32_t CFX_RTFBreak::GetDisplayPos(const FX_RTFTEXTOBJ* pText,
   CFX_RetainPtr<CFGAS_GEFont> pFont = pText->pFont;
   CFX_RectF rtText(*pText->pRect);
   bool bRTLPiece = FX_IsOdd(pText->iBidiLevel);
-  FX_FLOAT fFontSize = pText->fFontSize;
+  float fFontSize = pText->fFontSize;
   int32_t iFontSize = FXSYS_round(fFontSize * 20.0f);
   int32_t iAscent = pFont->GetAscent();
   int32_t iDescent = pFont->GetDescent();
   int32_t iMaxHeight = iAscent - iDescent;
-  FX_FLOAT fFontHeight = fFontSize;
-  FX_FLOAT fAscent = fFontHeight * static_cast<FX_FLOAT>(iAscent) /
-                     static_cast<FX_FLOAT>(iMaxHeight);
+  float fFontHeight = fFontSize;
+  float fAscent = fFontHeight * static_cast<float>(iAscent) /
+                  static_cast<float>(iMaxHeight);
   wchar_t wPrev = 0xFEFF;
   wchar_t wNext;
-  FX_FLOAT fX = rtText.left;
+  float fX = rtText.left;
   int32_t iHorScale = pText->iHorizontalScale;
   int32_t iVerScale = pText->iVerticalScale;
   if (bRTLPiece)
     fX = rtText.right();
 
-  FX_FLOAT fY = rtText.top + fAscent;
+  float fY = rtText.top + fAscent;
   int32_t iCount = 0;
   for (int32_t i = 0; i < pText->iLength; ++i) {
     wchar_t wch = pText->pStr[i];
@@ -900,7 +900,7 @@ int32_t CFX_RTFBreak::GetDisplayPos(const FX_RTFTEXTOBJ* pText,
         pCharPos->m_FontCharWidth = iCharWidth;
       }
 
-      FX_FLOAT fCharWidth = fFontSize * iCharWidth / 1000.0f;
+      float fCharWidth = fFontSize * iCharWidth / 1000.0f;
       if (bRTLPiece && dwCharType != FX_CHARTYPE_Combination)
         fX -= fCharWidth;
 

@@ -291,7 +291,7 @@ void CPDF_StructElement::LoadKid(uint32_t PageObjNum,
 }
 static CPDF_Dictionary* FindAttrDict(CPDF_Object* pAttrs,
                                      const CFX_ByteStringC& owner,
-                                     FX_FLOAT nLevel = 0.0F) {
+                                     float nLevel = 0.0F) {
   if (nLevel > nMaxRecursion)
     return nullptr;
   if (!pAttrs)
@@ -317,7 +317,7 @@ static CPDF_Dictionary* FindAttrDict(CPDF_Object* pAttrs,
 CPDF_Object* CPDF_StructElement::GetAttr(const CFX_ByteStringC& owner,
                                          const CFX_ByteStringC& name,
                                          bool bInheritable,
-                                         FX_FLOAT fLevel) {
+                                         float fLevel) {
   if (fLevel > nMaxRecursion) {
     return nullptr;
   }
@@ -400,11 +400,11 @@ FX_ARGB CPDF_StructElement::GetColor(const CFX_ByteStringC& owner,
          ((int)(pArray->GetNumberAt(1) * 255) << 8) |
          (int)(pArray->GetNumberAt(2) * 255);
 }
-FX_FLOAT CPDF_StructElement::GetNumber(const CFX_ByteStringC& owner,
-                                       const CFX_ByteStringC& name,
-                                       FX_FLOAT default_value,
-                                       bool bInheritable,
-                                       int subindex) {
+float CPDF_StructElement::GetNumber(const CFX_ByteStringC& owner,
+                                    const CFX_ByteStringC& name,
+                                    float default_value,
+                                    bool bInheritable,
+                                    int subindex) {
   CPDF_Object* pAttr = GetAttr(owner, name, bInheritable, subindex);
   return ToNumber(pAttr) ? pAttr->GetNumber() : default_value;
 }

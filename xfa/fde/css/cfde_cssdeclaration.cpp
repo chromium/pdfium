@@ -25,7 +25,7 @@ uint8_t Hex2Dec(uint8_t hexHigh, uint8_t hexLow) {
 
 bool ParseCSSNumber(const wchar_t* pszValue,
                     int32_t iValueLen,
-                    FX_FLOAT& fValue,
+                    float& fValue,
                     FDE_CSSNumberType& eUnit) {
   ASSERT(pszValue && iValueLen > 0);
   int32_t iUsedLen = 0;
@@ -100,7 +100,7 @@ bool CFDE_CSSDeclaration::ParseCSSColor(const wchar_t* pszValue,
       return false;
 
     uint8_t rgb[3] = {0};
-    FX_FLOAT fValue;
+    float fValue;
     FDE_CSSPrimitiveType eType;
     CFDE_CSSValueListParser list(pszValue + 4, iValueLen - 5, ',');
     for (int32_t i = 0; i < 3; ++i) {
@@ -279,7 +279,7 @@ void CFDE_CSSDeclaration::AddProperty(const CFX_WideString& prop,
 CFX_RetainPtr<CFDE_CSSValue> CFDE_CSSDeclaration::ParseNumber(
     const wchar_t* pszValue,
     int32_t iValueLen) {
-  FX_FLOAT fValue;
+  float fValue;
   FDE_CSSNumberType eUnit;
   if (!ParseCSSNumber(pszValue, iValueLen, fValue, eUnit))
     return nullptr;
@@ -334,7 +334,7 @@ void CFDE_CSSDeclaration::ParseValueListProperty(
     switch (eType) {
       case FDE_CSSPrimitiveType::Number:
         if (dwType & FDE_CSSVALUETYPE_MaybeNumber) {
-          FX_FLOAT fValue;
+          float fValue;
           FDE_CSSNumberType eNumType;
           if (ParseCSSNumber(pszValue, iValueLen, fValue, eNumType))
             list.push_back(
@@ -457,7 +457,7 @@ bool CFDE_CSSDeclaration::ParseBorderProperty(
         if (pWidth)
           continue;
 
-        FX_FLOAT fValue;
+        float fValue;
         FDE_CSSNumberType eNumType;
         if (ParseCSSNumber(pszValue, iValueLen, fValue, eNumType))
           pWidth = pdfium::MakeRetain<CFDE_CSSNumberValue>(eNumType, fValue);
@@ -569,7 +569,7 @@ void CFDE_CSSDeclaration::ParseFontProperty(const wchar_t* pszValue,
         break;
       }
       case FDE_CSSPrimitiveType::Number: {
-        FX_FLOAT fValue;
+        float fValue;
         FDE_CSSNumberType eNumType;
         if (!ParseCSSNumber(pszValue, iValueLen, fValue, eNumType))
           break;

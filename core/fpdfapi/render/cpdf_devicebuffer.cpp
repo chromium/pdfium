@@ -38,9 +38,9 @@ bool CPDF_DeviceBuffer::Initialize(CPDF_RenderContext* pContext,
     int dpiv =
         pDevice->GetDeviceCaps(FXDC_PIXEL_HEIGHT) * 254 / (vert_size * 10);
     if (dpih > max_dpi)
-      m_Matrix.Scale((FX_FLOAT)(max_dpi) / dpih, 1.0f);
+      m_Matrix.Scale((float)(max_dpi) / dpih, 1.0f);
     if (dpiv > max_dpi)
-      m_Matrix.Scale(1.0f, (FX_FLOAT)(max_dpi) / (FX_FLOAT)dpiv);
+      m_Matrix.Scale(1.0f, (float)(max_dpi) / (float)dpiv);
   }
 #endif
   CFX_Matrix ctm = m_pDevice->GetCTM();

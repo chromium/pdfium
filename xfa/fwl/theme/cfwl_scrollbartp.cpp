@@ -124,13 +124,13 @@ void CFWL_ScrollBarTP::DrawPaw(CFX_Graphics* pGraphics,
                                CFX_Matrix* pMatrix) {
   CFX_Path path;
   if (bVert) {
-    FX_FLOAT fPawLen = kPawLength;
+    float fPawLen = kPawLength;
     if (pRect->width / 2 <= fPawLen) {
       fPawLen = (pRect->width - 6) / 2;
     }
 
-    FX_FLOAT fX = pRect->left + pRect->width / 4;
-    FX_FLOAT fY = pRect->top + pRect->height / 2;
+    float fX = pRect->left + pRect->width / 4;
+    float fY = pRect->top + pRect->height / 2;
     path.MoveTo(CFX_PointF(fX, fY - 4));
     path.LineTo(CFX_PointF(fX + fPawLen, fY - 4));
     path.MoveTo(CFX_PointF(fX, fY - 2));
@@ -161,13 +161,13 @@ void CFWL_ScrollBarTP::DrawPaw(CFX_Graphics* pGraphics,
     pGraphics->SetStrokeColor(&clrDark);
     pGraphics->StrokePath(&path, pMatrix);
   } else {
-    FX_FLOAT fPawLen = kPawLength;
+    float fPawLen = kPawLength;
     if (pRect->height / 2 <= fPawLen) {
       fPawLen = (pRect->height - 6) / 2;
     }
 
-    FX_FLOAT fX = pRect->left + pRect->width / 2;
-    FX_FLOAT fY = pRect->top + pRect->height / 4;
+    float fX = pRect->left + pRect->width / 2;
+    float fY = pRect->top + pRect->height / 4;
     path.MoveTo(CFX_PointF(fX - 4, fY));
     path.LineTo(CFX_PointF(fX - 4, fY + fPawLen));
     path.MoveTo(CFX_PointF(fX - 2, fY));
@@ -212,8 +212,8 @@ void CFWL_ScrollBarTP::DrawTrack(CFX_Graphics* pGraphics,
   pGraphics->SaveGraphState();
   CFX_Color colorLine(ArgbEncode(255, 238, 237, 229));
   CFX_Path path;
-  FX_FLOAT fRight = pRect->right();
-  FX_FLOAT fBottom = pRect->bottom();
+  float fRight = pRect->right();
+  float fBottom = pRect->bottom();
   if (bVert) {
     path.AddRectangle(pRect->left, pRect->top, 1, pRect->height);
     path.AddRectangle(fRight - 1, pRect->top, 1, pRect->height);
@@ -226,10 +226,10 @@ void CFWL_ScrollBarTP::DrawTrack(CFX_Graphics* pGraphics,
   path.Clear();
   path.AddRectangle(pRect->left + 1, pRect->top, pRect->width - 2,
                     pRect->height);
-  FX_FLOAT x1 = bVert ? pRect->left + 1 : pRect->left;
-  FX_FLOAT y1 = bVert ? pRect->top : pRect->top + 1;
-  FX_FLOAT x2 = bVert ? fRight - 1 : pRect->left;
-  FX_FLOAT y2 = bVert ? pRect->top : fBottom - 1;
+  float x1 = bVert ? pRect->left + 1 : pRect->left;
+  float y1 = bVert ? pRect->top : pRect->top + 1;
+  float x2 = bVert ? fRight - 1 : pRect->left;
+  float y2 = bVert ? pRect->top : fBottom - 1;
   pGraphics->RestoreGraphState();
   DrawAxialShading(pGraphics, x1, y1, x2, y2, m_pThemeData->clrTrackBKStart,
                    m_pThemeData->clrTrackBKEnd, &path, FXFILL_WINDING, pMatrix);

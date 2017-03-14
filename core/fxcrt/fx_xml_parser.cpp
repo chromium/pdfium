@@ -785,7 +785,7 @@ bool CXML_Element::GetAttrInteger(const CFX_ByteStringC& space,
 }
 
 bool CXML_Element::GetAttrFloat(const CFX_ByteStringC& name,
-                                FX_FLOAT& attribute) const {
+                                float& attribute) const {
   CFX_ByteStringC bsSpace;
   CFX_ByteStringC bsName;
   FX_XML_SplitQualifiedName(name, bsSpace, bsName);
@@ -794,7 +794,7 @@ bool CXML_Element::GetAttrFloat(const CFX_ByteStringC& name,
 
 bool CXML_Element::GetAttrFloat(const CFX_ByteStringC& space,
                                 const CFX_ByteStringC& name,
-                                FX_FLOAT& attribute) const {
+                                float& attribute) const {
   const CFX_WideString* pValue =
       m_AttrMap.Lookup(CFX_ByteString(space), CFX_ByteString(name));
   if (!pValue)

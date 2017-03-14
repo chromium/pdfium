@@ -81,7 +81,7 @@ void CFWL_DateTimePicker::Update() {
   if (!theme)
     return;
 
-  FX_FLOAT fBtn = theme->GetScrollBarWidth();
+  float fBtn = theme->GetScrollBarWidth();
   m_rtBtn = CFX_RectF(m_rtClient.right() - fBtn, m_rtClient.top, fBtn - 1,
                       m_rtClient.height - 1);
 
@@ -349,8 +349,8 @@ void CFWL_DateTimePicker::DisForm_ShowMonthCalendar(bool bActivate) {
 
   if (bActivate) {
     CFX_RectF rtMonthCal = m_pMonthCal->GetAutosizedWidgetRect();
-    FX_FLOAT fPopupMin = rtMonthCal.height;
-    FX_FLOAT fPopupMax = rtMonthCal.height;
+    float fPopupMin = rtMonthCal.height;
+    float fPopupMax = rtMonthCal.height;
     CFX_RectF rtAnchor(m_pProperties->m_rtWidget);
     rtAnchor.width = rtMonthCal.width;
     rtMonthCal.left = m_rtClient.left;

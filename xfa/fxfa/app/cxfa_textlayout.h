@@ -37,17 +37,17 @@ class CXFA_TextLayout {
   ~CXFA_TextLayout();
 
   int32_t GetText(CFX_WideString& wsText);
-  FX_FLOAT GetLayoutHeight();
-  FX_FLOAT StartLayout(FX_FLOAT fWidth = -1);
+  float GetLayoutHeight();
+  float StartLayout(float fWidth = -1);
   bool DoLayout(int32_t iBlockIndex,
-                FX_FLOAT& fCalcHeight,
-                FX_FLOAT fContentAreaHeight = -1,
-                FX_FLOAT fTextHeight = -1);
+                float& fCalcHeight,
+                float fContentAreaHeight = -1,
+                float fTextHeight = -1);
 
   bool CalcSize(const CFX_SizeF& minSize,
                 const CFX_SizeF& maxSize,
                 CFX_SizeF& defaultSize);
-  bool Layout(const CFX_SizeF& size, FX_FLOAT* fHeight = nullptr);
+  bool Layout(const CFX_SizeF& size, float* fHeight = nullptr);
   void ItemBlocks(const CFX_RectF& rtText, int32_t iBlockIndex);
   bool DrawString(CFX_RenderDevice* pFxDevice,
                   const CFX_Matrix& tmDoc2Device,
@@ -66,22 +66,22 @@ class CXFA_TextLayout {
   void GetTextDataNode();
   CFDE_XMLNode* GetXMLContainerNode();
   std::unique_ptr<CFX_RTFBreak> CreateBreak(bool bDefault);
-  void InitBreak(FX_FLOAT fLineWidth);
+  void InitBreak(float fLineWidth);
   void InitBreak(CFDE_CSSComputedStyle* pStyle,
                  FDE_CSSDisplay eDisplay,
-                 FX_FLOAT fLineWidth,
+                 float fLineWidth,
                  CFDE_XMLNode* pXMLNode,
                  CFDE_CSSComputedStyle* pParentStyle = nullptr);
   bool Loader(const CFX_SizeF& szText,
-              FX_FLOAT& fLinePos,
+              float& fLinePos,
               bool bSavePieces = true);
   void LoadText(CXFA_Node* pNode,
                 const CFX_SizeF& szText,
-                FX_FLOAT& fLinePos,
+                float& fLinePos,
                 bool bSavePieces);
   bool LoadRichText(CFDE_XMLNode* pXMLNode,
                     const CFX_SizeF& szText,
-                    FX_FLOAT& fLinePos,
+                    float& fLinePos,
                     const CFX_RetainPtr<CFDE_CSSComputedStyle>& pParentStyle,
                     bool bSavePieces,
                     CFX_RetainPtr<CXFA_LinkUserData> pLinkData,
@@ -89,17 +89,17 @@ class CXFA_TextLayout {
                     bool bIsOl = false,
                     int32_t iLiCount = 0);
   bool AppendChar(const CFX_WideString& wsText,
-                  FX_FLOAT& fLinePos,
-                  FX_FLOAT fSpaceAbove,
+                  float& fLinePos,
+                  float fSpaceAbove,
                   bool bSavePieces);
   void AppendTextLine(CFX_BreakType dwStatus,
-                      FX_FLOAT& fLinePos,
+                      float& fLinePos,
                       bool bSavePieces,
                       bool bEndBreak = false);
-  void EndBreak(CFX_BreakType dwStatus, FX_FLOAT& fLinePos, bool bDefault);
+  void EndBreak(CFX_BreakType dwStatus, float& fLinePos, bool bDefault);
   bool IsEnd(bool bSavePieces);
   void ProcessText(CFX_WideString& wsText);
-  void UpdateAlign(FX_FLOAT fHeight, FX_FLOAT fBottom);
+  void UpdateAlign(float fHeight, float fBottom);
   void RenderString(CFDE_RenderDevice* pDevice,
                     CFDE_Brush* pBrush,
                     CXFA_PieceLine* pPieceLine,
@@ -126,7 +126,7 @@ class CXFA_TextLayout {
   std::unique_ptr<CFX_RTFBreak> m_pBreak;
   std::unique_ptr<CXFA_LoaderContext> m_pLoader;
   int32_t m_iLines;
-  FX_FLOAT m_fMaxWidth;
+  float m_fMaxWidth;
   CXFA_TextParser m_textParser;
   std::vector<std::unique_ptr<CXFA_PieceLine>> m_pieceLines;
   std::unique_ptr<CXFA_TextTabstopsContext> m_pTabstopContext;

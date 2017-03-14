@@ -38,32 +38,21 @@ class CPDF_ColorSpace {
   void Release();
 
   int GetBufSize() const;
-  FX_FLOAT* CreateBuf();
-  void GetDefaultColor(FX_FLOAT* buf) const;
+  float* CreateBuf();
+  void GetDefaultColor(float* buf) const;
   uint32_t CountComponents() const;
   int GetFamily() const { return m_Family; }
   virtual void GetDefaultValue(int iComponent,
-                               FX_FLOAT& value,
-                               FX_FLOAT& min,
-                               FX_FLOAT& max) const;
+                               float& value,
+                               float& min,
+                               float& max) const;
 
   bool sRGB() const;
-  virtual bool GetRGB(FX_FLOAT* pBuf,
-                      FX_FLOAT& R,
-                      FX_FLOAT& G,
-                      FX_FLOAT& B) const = 0;
-  virtual bool SetRGB(FX_FLOAT* pBuf, FX_FLOAT R, FX_FLOAT G, FX_FLOAT B) const;
+  virtual bool GetRGB(float* pBuf, float& R, float& G, float& B) const = 0;
+  virtual bool SetRGB(float* pBuf, float R, float G, float B) const;
 
-  bool GetCMYK(FX_FLOAT* pBuf,
-               FX_FLOAT& c,
-               FX_FLOAT& m,
-               FX_FLOAT& y,
-               FX_FLOAT& k) const;
-  bool SetCMYK(FX_FLOAT* pBuf,
-               FX_FLOAT c,
-               FX_FLOAT m,
-               FX_FLOAT y,
-               FX_FLOAT k) const;
+  bool GetCMYK(float* pBuf, float& c, float& m, float& y, float& k) const;
+  bool SetCMYK(float* pBuf, float c, float m, float y, float k) const;
 
   virtual void TranslateImageLine(uint8_t* dest_buf,
                                   const uint8_t* src_buf,
@@ -84,16 +73,12 @@ class CPDF_ColorSpace {
   virtual ~CPDF_ColorSpace();
 
   virtual bool v_Load(CPDF_Document* pDoc, CPDF_Array* pArray);
-  virtual bool v_GetCMYK(FX_FLOAT* pBuf,
-                         FX_FLOAT& c,
-                         FX_FLOAT& m,
-                         FX_FLOAT& y,
-                         FX_FLOAT& k) const;
-  virtual bool v_SetCMYK(FX_FLOAT* pBuf,
-                         FX_FLOAT c,
-                         FX_FLOAT m,
-                         FX_FLOAT y,
-                         FX_FLOAT k) const;
+  virtual bool v_GetCMYK(float* pBuf,
+                         float& c,
+                         float& m,
+                         float& y,
+                         float& k) const;
+  virtual bool v_SetCMYK(float* pBuf, float c, float m, float y, float k) const;
 
   int m_Family;
   uint32_t m_nComponents;

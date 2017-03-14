@@ -618,8 +618,8 @@ void CFDE_XMLInstruction::SetInteger(const wchar_t* pwsAttriName,
   SetString(pwsAttriName, wsValue);
 }
 
-FX_FLOAT CFDE_XMLInstruction::GetFloat(const wchar_t* pwsAttriName,
-                                       FX_FLOAT fDefValue) const {
+float CFDE_XMLInstruction::GetFloat(const wchar_t* pwsAttriName,
+                                    float fDefValue) const {
   int32_t iCount = pdfium::CollectionSize<int32_t>(m_Attributes);
   for (int32_t i = 0; i < iCount; i += 2) {
     if (m_Attributes[i].Compare(pwsAttriName) == 0) {
@@ -630,7 +630,7 @@ FX_FLOAT CFDE_XMLInstruction::GetFloat(const wchar_t* pwsAttriName,
 }
 
 void CFDE_XMLInstruction::SetFloat(const wchar_t* pwsAttriName,
-                                   FX_FLOAT fAttriValue) {
+                                   float fAttriValue) {
   CFX_WideString wsValue;
   wsValue.Format(L"%f", fAttriValue);
   SetString(pwsAttriName, wsValue);
@@ -829,8 +829,8 @@ void CFDE_XMLElement::SetInteger(const wchar_t* pwsAttriName,
   SetString(pwsAttriName, wsValue);
 }
 
-FX_FLOAT CFDE_XMLElement::GetFloat(const wchar_t* pwsAttriName,
-                                   FX_FLOAT fDefValue) const {
+float CFDE_XMLElement::GetFloat(const wchar_t* pwsAttriName,
+                                float fDefValue) const {
   int32_t iCount = pdfium::CollectionSize<int32_t>(m_Attributes);
   for (int32_t i = 0; i < iCount; i += 2) {
     if (m_Attributes[i].Compare(pwsAttriName) == 0) {
@@ -840,8 +840,7 @@ FX_FLOAT CFDE_XMLElement::GetFloat(const wchar_t* pwsAttriName,
   return fDefValue;
 }
 
-void CFDE_XMLElement::SetFloat(const wchar_t* pwsAttriName,
-                               FX_FLOAT fAttriValue) {
+void CFDE_XMLElement::SetFloat(const wchar_t* pwsAttriName, float fAttriValue) {
   CFX_WideString wsValue;
   wsValue.Format(L"%f", fAttriValue);
   SetString(pwsAttriName, wsValue);

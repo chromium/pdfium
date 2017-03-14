@@ -306,11 +306,11 @@ void CFWL_ListBox::SetFocusItem(CFWL_ListItem* pItem) {
 
 CFWL_ListItem* CFWL_ListBox::GetItemAtPoint(const CFX_PointF& point) {
   CFX_PointF pos = point - m_rtConent.TopLeft();
-  FX_FLOAT fPosX = 0.0f;
+  float fPosX = 0.0f;
   if (m_pHorzScrollBar)
     fPosX = m_pHorzScrollBar->GetPos();
 
-  FX_FLOAT fPosY = 0.0;
+  float fPosY = 0.0;
   if (m_pVertScrollBar)
     fPosY = m_pVertScrollBar->GetPos();
 
@@ -334,7 +334,7 @@ bool CFWL_ListBox::ScrollToVisible(CFWL_ListItem* pItem) {
 
   CFX_RectF rtItem = pItem ? pItem->GetRect() : CFX_RectF();
   bool bScroll = false;
-  FX_FLOAT fPosY = m_pVertScrollBar->GetPos();
+  float fPosY = m_pVertScrollBar->GetPos();
   rtItem.Offset(0, -fPosY + m_rtConent.top);
   if (rtItem.top < m_rtConent.top) {
     fPosY += rtItem.top - m_rtConent.top;
@@ -378,11 +378,11 @@ void CFWL_ListBox::DrawBkground(CFX_Graphics* pGraphics,
 void CFWL_ListBox::DrawItems(CFX_Graphics* pGraphics,
                              IFWL_ThemeProvider* pTheme,
                              const CFX_Matrix* pMatrix) {
-  FX_FLOAT fPosX = 0.0f;
+  float fPosX = 0.0f;
   if (m_pHorzScrollBar)
     fPosX = m_pHorzScrollBar->GetPos();
 
-  FX_FLOAT fPosY = 0.0f;
+  float fPosY = 0.0f;
   if (m_pVertScrollBar)
     fPosY = m_pVertScrollBar->GetPos();
 
@@ -484,11 +484,10 @@ CFX_SizeF CFWL_ListBox::CalcSize(bool bAutoSize) {
                        pUIMargin.height);
   }
 
-  FX_FLOAT fWidth = GetMaxTextWidth();
+  float fWidth = GetMaxTextWidth();
   fWidth += 2 * kItemTextMargin;
   if (!bAutoSize) {
-    FX_FLOAT fActualWidth =
-        m_rtClient.width - rtUIMargin.left - rtUIMargin.width;
+    float fActualWidth = m_rtClient.width - rtUIMargin.left - rtUIMargin.width;
     fWidth = std::max(fWidth, fActualWidth);
   }
   m_fItemHeight = CalcItemHeight();
@@ -502,7 +501,7 @@ CFX_SizeF CFWL_ListBox::CalcSize(bool bAutoSize) {
   if (bAutoSize)
     return fs;
 
-  FX_FLOAT iHeight = m_rtClient.height;
+  float iHeight = m_rtClient.height;
   bool bShowVertScr = false;
   bool bShowHorzScr = false;
   if (!bShowVertScr && (m_pProperties->m_dwStyles & FWL_WGTSTYLE_VScroll))
@@ -527,7 +526,7 @@ CFX_SizeF CFWL_ListBox::CalcSize(bool bAutoSize) {
     m_pVertScrollBar->SetPageSize(rtScrollBar.height * 9 / 10);
     m_pVertScrollBar->SetStepSize(m_fItemHeight);
 
-    FX_FLOAT fPos =
+    float fPos =
         std::min(std::max(m_pVertScrollBar->GetPos(), 0.f), szRange.height);
     m_pVertScrollBar->SetPos(fPos);
     m_pVertScrollBar->SetTrackPos(fPos);
@@ -559,7 +558,7 @@ CFX_SizeF CFWL_ListBox::CalcSize(bool bAutoSize) {
     m_pHorzScrollBar->SetPageSize(fWidth * 9 / 10);
     m_pHorzScrollBar->SetStepSize(fWidth / 10);
 
-    FX_FLOAT fPos =
+    float fPos =
         std::min(std::max(m_pHorzScrollBar->GetPos(), 0.f), szRange.height);
     m_pHorzScrollBar->SetPos(fPos);
     m_pHorzScrollBar->SetTrackPos(fPos);
@@ -584,8 +583,8 @@ CFX_SizeF CFWL_ListBox::CalcSize(bool bAutoSize) {
 
 void CFWL_ListBox::UpdateItemSize(CFWL_ListItem* pItem,
                                   CFX_SizeF& size,
-                                  FX_FLOAT fWidth,
-                                  FX_FLOAT fItemHeight,
+                                  float fWidth,
+                                  float fItemHeight,
                                   bool bAutoSize) const {
   if (!bAutoSize && pItem) {
     CFX_RectF rtItem(0, size.height, fWidth, fItemHeight);
@@ -595,8 +594,8 @@ void CFWL_ListBox::UpdateItemSize(CFWL_ListItem* pItem,
   size.height += fItemHeight;
 }
 
-FX_FLOAT CFWL_ListBox::GetMaxTextWidth() {
-  FX_FLOAT fRet = 0.0f;
+float CFWL_ListBox::GetMaxTextWidth() {
+  float fRet = 0.0f;
   int32_t iCount = CountItems(this);
   for (int32_t i = 0; i < iCount; i++) {
     CFWL_ListItem* pItem = GetItem(this, i);
@@ -610,12 +609,12 @@ FX_FLOAT CFWL_ListBox::GetMaxTextWidth() {
   return fRet;
 }
 
-FX_FLOAT CFWL_ListBox::GetScrollWidth() {
+float CFWL_ListBox::GetScrollWidth() {
   IFWL_ThemeProvider* theme = GetAvailableTheme();
   return theme ? theme->GetScrollBarWidth() : 0.0f;
 }
 
-FX_FLOAT CFWL_ListBox::CalcItemHeight() {
+float CFWL_ListBox::CalcItemHeight() {
   IFWL_ThemeProvider* theme = GetAvailableTheme();
   CFWL_ThemePart part;
   part.m_pWidget = this;
@@ -838,11 +837,11 @@ void CFWL_ListBox::OnVK(CFWL_ListItem* pItem, bool bShift, bool bCtrl) {
 
 bool CFWL_ListBox::OnScroll(CFWL_ScrollBar* pScrollBar,
                             CFWL_EventScroll::Code dwCode,
-                            FX_FLOAT fPos) {
+                            float fPos) {
   CFX_SizeF fs;
   pScrollBar->GetRange(&fs.width, &fs.height);
-  FX_FLOAT iCurPos = pScrollBar->GetPos();
-  FX_FLOAT fStep = pScrollBar->GetStepSize();
+  float iCurPos = pScrollBar->GetPos();
+  float fStep = pScrollBar->GetStepSize();
   switch (dwCode) {
     case CFWL_EventScroll::Code::Min: {
       fPos = fs.width;

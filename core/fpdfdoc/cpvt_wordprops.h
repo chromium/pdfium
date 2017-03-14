@@ -22,12 +22,12 @@ struct CPVT_WordProps {
         nHorzScale(0) {}
 
   CPVT_WordProps(int32_t fontIndex,
-                 FX_FLOAT fontSize,
+                 float fontSize,
                  FX_COLORREF wordColor = 0,
                  CPDF_VariableText::ScriptType scriptType =
                      CPDF_VariableText::ScriptType::Normal,
                  int32_t wordStyle = 0,
-                 FX_FLOAT charSpace = 0,
+                 float charSpace = 0,
                  int32_t horzScale = 100)
       : nFontIndex(fontIndex),
         fFontSize(fontSize),
@@ -47,11 +47,11 @@ struct CPVT_WordProps {
         nHorzScale(other.nHorzScale) {}
 
   int32_t nFontIndex;
-  FX_FLOAT fFontSize;
+  float fFontSize;
   FX_COLORREF dwWordColor;
   CPDF_VariableText::ScriptType nScriptType;
   int32_t nWordStyle;
-  FX_FLOAT fCharSpace;
+  float fCharSpace;
   int32_t nHorzScale;
 };
 

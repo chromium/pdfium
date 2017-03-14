@@ -28,7 +28,7 @@ class CFX_FormatString {
                  CFX_WideString& wsValue);
   bool ParseNum(const CFX_WideString& wsSrcNum,
                 const CFX_WideString& wsPattern,
-                FX_FLOAT& fValue);
+                float& fValue);
   bool ParseNum(const CFX_WideString& wsSrcNum,
                 const CFX_WideString& wsPattern,
                 CFX_WideString& wsValue);
@@ -46,7 +46,7 @@ class CFX_FormatString {
   bool FormatNum(const CFX_WideString& wsSrcNum,
                  const CFX_WideString& wsPattern,
                  CFX_WideString& wsOutput);
-  bool FormatNum(FX_FLOAT fNum,
+  bool FormatNum(float fNum,
                  const CFX_WideString& wsPattern,
                  CFX_WideString& wsOutput);
   bool FormatDateTime(const CFX_WideString& wsSrcDateTime,

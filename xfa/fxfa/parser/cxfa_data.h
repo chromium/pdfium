@@ -25,9 +25,9 @@ class CXFA_Data {
 
  protected:
   bool TryMeasure(XFA_ATTRIBUTE eAttr,
-                  FX_FLOAT& fValue,
+                  float& fValue,
                   bool bUseDefault = false) const;
-  bool SetMeasure(XFA_ATTRIBUTE eAttr, FX_FLOAT fValue);
+  bool SetMeasure(XFA_ATTRIBUTE eAttr, float fValue);
 
   CXFA_Node* m_pNode;
 };

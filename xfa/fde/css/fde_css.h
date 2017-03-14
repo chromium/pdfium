@@ -188,7 +188,7 @@ class FDE_CSSLength {
 
   explicit FDE_CSSLength(FDE_CSSLengthUnit eUnit) : m_unit(eUnit) {}
 
-  FDE_CSSLength(FDE_CSSLengthUnit eUnit, FX_FLOAT fValue)
+  FDE_CSSLength(FDE_CSSLengthUnit eUnit, float fValue)
       : m_unit(eUnit), m_fValue(fValue) {}
 
   FDE_CSSLength& Set(FDE_CSSLengthUnit eUnit) {
@@ -196,7 +196,7 @@ class FDE_CSSLength {
     return *this;
   }
 
-  FDE_CSSLength& Set(FDE_CSSLengthUnit eUnit, FX_FLOAT fValue) {
+  FDE_CSSLength& Set(FDE_CSSLengthUnit eUnit, float fValue) {
     m_unit = eUnit;
     m_fValue = fValue;
     return *this;
@@ -204,19 +204,19 @@ class FDE_CSSLength {
 
   FDE_CSSLengthUnit GetUnit() const { return m_unit; }
 
-  FX_FLOAT GetValue() const { return m_fValue; }
+  float GetValue() const { return m_fValue; }
   bool NonZero() const { return static_cast<int>(m_fValue) != 0; }
 
  private:
   FDE_CSSLengthUnit m_unit;
-  FX_FLOAT m_fValue;
+  float m_fValue;
 };
 
 class FDE_CSSRect {
  public:
   FDE_CSSRect() {}
 
-  FDE_CSSRect(FDE_CSSLengthUnit eUnit, FX_FLOAT val)
+  FDE_CSSRect(FDE_CSSLengthUnit eUnit, float val)
       : left(eUnit, val),
         top(eUnit, val),
         right(eUnit, val),
@@ -229,7 +229,7 @@ class FDE_CSSRect {
     bottom.Set(eUnit);
     return *this;
   }
-  FDE_CSSRect& Set(FDE_CSSLengthUnit eUnit, FX_FLOAT fValue) {
+  FDE_CSSRect& Set(FDE_CSSLengthUnit eUnit, float fValue) {
     left.Set(eUnit, fValue);
     top.Set(eUnit, fValue);
     right.Set(eUnit, fValue);

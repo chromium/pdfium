@@ -39,16 +39,16 @@ class CPDF_TextObject : public CPDF_PageObject {
   int CountItems() const;
   void GetItemInfo(int index, CPDF_TextObjectItem* pInfo) const;
   int CountChars() const;
-  void GetCharInfo(int index, uint32_t* charcode, FX_FLOAT* kerning) const;
+  void GetCharInfo(int index, uint32_t* charcode, float* kerning) const;
   void GetCharInfo(int index, CPDF_TextObjectItem* pInfo) const;
-  FX_FLOAT GetCharWidth(uint32_t charcode) const;
+  float GetCharWidth(uint32_t charcode) const;
   CFX_PointF GetPos() const { return m_Pos; }
   CFX_Matrix GetTextMatrix() const;
   CPDF_Font* GetFont() const;
-  FX_FLOAT GetFontSize() const;
+  float GetFontSize() const;
 
   void SetText(const CFX_ByteString& text);
-  void SetPosition(FX_FLOAT x, FX_FLOAT y);
+  void SetPosition(float x, float y);
 
   void RecalcPositionData();
 
@@ -59,14 +59,14 @@ class CPDF_TextObject : public CPDF_PageObject {
   friend class CPDF_PageContentGenerator;
 
   void SetSegments(const CFX_ByteString* pStrs,
-                   const FX_FLOAT* pKerning,
+                   const float* pKerning,
                    int nSegs);
 
-  CFX_PointF CalcPositionData(FX_FLOAT horz_scale);
+  CFX_PointF CalcPositionData(float horz_scale);
 
   CFX_PointF m_Pos;
   std::vector<uint32_t> m_CharCodes;
-  std::vector<FX_FLOAT> m_CharPos;
+  std::vector<float> m_CharPos;
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_TEXTOBJECT_H_

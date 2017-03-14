@@ -70,7 +70,7 @@ class CXFA_LocaleValue {
   uint32_t GetType() const;
   void SetValue(const CFX_WideString& wsValue, uint32_t dwType);
   CFX_WideString GetText() const;
-  FX_FLOAT GetNum() const;
+  float GetNum() const;
   double GetDoubleNum() const;
   CFX_Unitime GetDate() const;
   CFX_Unitime GetTime() const;
@@ -79,7 +79,7 @@ class CXFA_LocaleValue {
   bool SetText(const CFX_WideString& wsText,
                const CFX_WideString& wsFormat,
                IFX_Locale* pLocale);
-  bool SetNum(FX_FLOAT fNum);
+  bool SetNum(float fNum);
   bool SetNum(const CFX_WideString& wsNum,
               const CFX_WideString& wsFormat,
               IFX_Locale* pLocale);

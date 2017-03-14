@@ -157,7 +157,7 @@ class CFDE_TxtEdtEngine {
   int32_t m_nLineCount;
   int32_t m_nAnchorPos;
   int32_t m_nLayoutPos;
-  FX_FLOAT m_fCaretPosReserve;
+  float m_fCaretPosReserve;
   int32_t m_nCaret;
   bool m_bBefore;
   int32_t m_nCaretPage;

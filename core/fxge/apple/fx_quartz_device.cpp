@@ -77,7 +77,7 @@ void CQuartz2D::setGraphicsTextMatrix(void* graphics, CFX_Matrix* matrix) {
 
 bool CQuartz2D::drawGraphicsString(void* graphics,
                                    void* font,
-                                   FX_FLOAT fontSize,
+                                   float fontSize,
                                    uint16_t* glyphIndices,
                                    CGPoint* glyphPositions,
                                    int32_t charsCount,

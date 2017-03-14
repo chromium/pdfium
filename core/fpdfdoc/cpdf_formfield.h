@@ -125,7 +125,7 @@ class CPDF_FormField {
                    bool bNotify = false);
 #endif  // PDF_ENABLE_XFA
 
-  FX_FLOAT GetFontSize() const { return m_FontSize; }
+  float GetFontSize() const { return m_FontSize; }
   CPDF_Font* GetFont() const { return m_pFont; }
 
  private:
@@ -160,7 +160,7 @@ class CPDF_FormField {
   CPDF_InterForm* const m_pForm;
   CPDF_Dictionary* m_pDict;
   std::vector<CPDF_FormControl*> m_ControlList;  // Owned by InterForm parent.
-  FX_FLOAT m_FontSize;
+  float m_FontSize;
   CPDF_Font* m_pFont;
 };
 

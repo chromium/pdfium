@@ -30,7 +30,7 @@ bool CGDrawGlyphRun(CGContextRef pContext,
                     const FXTEXT_CHARPOS* pCharPos,
                     CFX_Font* pFont,
                     const CFX_Matrix* pObject2Device,
-                    FX_FLOAT font_size,
+                    float font_size,
                     uint32_t argb) {
   if (nChars == 0)
     return true;
@@ -102,7 +102,7 @@ bool CFX_AggDeviceDriver::DrawDeviceText(int nChars,
                                          const FXTEXT_CHARPOS* pCharPos,
                                          CFX_Font* pFont,
                                          const CFX_Matrix* pObject2Device,
-                                         FX_FLOAT font_size,
+                                         float font_size,
                                          uint32_t argb) {
   if (!pFont)
     return false;

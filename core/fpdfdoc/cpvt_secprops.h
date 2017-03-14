@@ -12,7 +12,7 @@
 struct CPVT_SecProps {
   CPVT_SecProps() : fLineLeading(0.0f), fLineIndent(0.0f), nAlignment(0) {}
 
-  CPVT_SecProps(FX_FLOAT lineLeading, FX_FLOAT lineIndent, int32_t alignment)
+  CPVT_SecProps(float lineLeading, float lineIndent, int32_t alignment)
       : fLineLeading(lineLeading),
         fLineIndent(lineIndent),
         nAlignment(alignment) {}
@@ -22,8 +22,8 @@ struct CPVT_SecProps {
         fLineIndent(other.fLineIndent),
         nAlignment(other.nAlignment) {}
 
-  FX_FLOAT fLineLeading;
-  FX_FLOAT fLineIndent;
+  float fLineLeading;
+  float fLineIndent;
   int32_t nAlignment;
 };
 

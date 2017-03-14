@@ -21,37 +21,37 @@
 #include "agg_basics.h"
 namespace agg
 {
-const FX_FLOAT intersection_epsilon = 1.0e-30f;
-AGG_INLINE FX_FLOAT calc_point_location(FX_FLOAT x1, FX_FLOAT y1,
-                                        FX_FLOAT x2, FX_FLOAT y2,
-                                        FX_FLOAT x,  FX_FLOAT y)
+const float intersection_epsilon = 1.0e-30f;
+AGG_INLINE float calc_point_location(float x1, float y1,
+                                        float x2, float y2,
+                                        float x,  float y)
 {
   return ((x - x2) * (y2 - y1)) - ((y - y2) * (x2 - x1));
 }
-AGG_INLINE FX_FLOAT calc_distance(FX_FLOAT x1, FX_FLOAT y1, FX_FLOAT x2, FX_FLOAT y2)
+AGG_INLINE float calc_distance(float x1, float y1, float x2, float y2)
 {
-    FX_FLOAT dx = x2 - x1;
-    FX_FLOAT dy = y2 - y1;
+    float dx = x2 - x1;
+    float dy = y2 - y1;
     return FXSYS_sqrt2(dx, dy);
 }
-AGG_INLINE FX_FLOAT calc_line_point_distance(FX_FLOAT x1, FX_FLOAT y1,
-        FX_FLOAT x2, FX_FLOAT y2,
-        FX_FLOAT x,  FX_FLOAT y)
+AGG_INLINE float calc_line_point_distance(float x1, float y1,
+        float x2, float y2,
+        float x,  float y)
 {
-    FX_FLOAT dx = x2 - x1;
-    FX_FLOAT dy = y2 - y1;
-    FX_FLOAT d = FXSYS_sqrt2(dx, dy);
+    float dx = x2 - x1;
+    float dy = y2 - y1;
+    float d = FXSYS_sqrt2(dx, dy);
     if(d < intersection_epsilon) {
         return calc_distance(x1, y1, x, y);
     }
     return ((x - x2) * dy / d) - ((y - y2) * dx / d);
 }
-AGG_INLINE bool calc_intersection(FX_FLOAT ax, FX_FLOAT ay, FX_FLOAT bx, FX_FLOAT by,
-                                  FX_FLOAT cx, FX_FLOAT cy, FX_FLOAT dx, FX_FLOAT dy,
-                                  FX_FLOAT* x, FX_FLOAT* y)
+AGG_INLINE bool calc_intersection(float ax, float ay, float bx, float by,
+                                  float cx, float cy, float dx, float dy,
+                                  float* x, float* y)
 {
-  FX_FLOAT num = ((ay - cy) * (dx - cx)) - ((ax - cx) * (dy - cy));
-  FX_FLOAT den = ((bx - ax) * (dy - cy)) - ((by - ay) * (dx - cx));
+  float num = ((ay - cy) * (dx - cx)) - ((ax - cx) * (dy - cy));
+  float den = ((bx - ax) * (dy - cy)) - ((by - ay) * (dx - cx));
     if (FXSYS_fabs(den) < intersection_epsilon) {
         return false;
     }

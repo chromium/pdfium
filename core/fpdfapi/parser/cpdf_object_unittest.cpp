@@ -218,14 +218,14 @@ TEST_F(PDFObjectsTest, GetUnicodeText) {
 }
 
 TEST_F(PDFObjectsTest, GetNumber) {
-  const FX_FLOAT direct_obj_results[] = {0, 0, 1245, 9.00345f, 0, 0,
-                                         0, 0, 0,    0,        0};
+  const float direct_obj_results[] = {0, 0, 1245, 9.00345f, 0, 0,
+                                      0, 0, 0,    0,        0};
   // Check for direct objects.
   for (size_t i = 0; i < m_DirectObjs.size(); ++i)
     EXPECT_EQ(direct_obj_results[i], m_DirectObjs[i]->GetNumber());
 
   // Check indirect references.
-  const FX_FLOAT indirect_obj_results[] = {0, 1245, 0, 0, 0, 0, 0};
+  const float indirect_obj_results[] = {0, 1245, 0, 0, 0, 0, 0};
   for (size_t i = 0; i < m_RefObjs.size(); ++i)
     EXPECT_EQ(indirect_obj_results[i], m_RefObjs[i]->GetNumber());
 }

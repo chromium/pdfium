@@ -15,10 +15,10 @@ struct CPVT_Color {
   enum Type { kTransparent = 0, kGray, kRGB, kCMYK };
 
   CPVT_Color(Type type = kTransparent,
-             FX_FLOAT color1 = 0.0f,
-             FX_FLOAT color2 = 0.0f,
-             FX_FLOAT color3 = 0.0f,
-             FX_FLOAT color4 = 0.0f)
+             float color1 = 0.0f,
+             float color2 = 0.0f,
+             float color3 = 0.0f,
+             float color4 = 0.0f)
       : nColorType(type),
         fColor1(color1),
         fColor2(color2),
@@ -26,10 +26,10 @@ struct CPVT_Color {
         fColor4(color4) {}
 
   Type nColorType;
-  FX_FLOAT fColor1;
-  FX_FLOAT fColor2;
-  FX_FLOAT fColor3;
-  FX_FLOAT fColor4;
+  float fColor1;
+  float fColor2;
+  float fColor3;
+  float fColor4;
 
   static CPVT_Color ParseColor(const CFX_ByteString& str);
   static CPVT_Color ParseColor(const CPDF_Array& array);

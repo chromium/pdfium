@@ -63,12 +63,12 @@ class CXFA_WidgetData : public CXFA_Data {
   CXFA_Validate GetValidate(bool bModified = false);
   CXFA_Bind GetBind(bool bModified = false);
   CXFA_Assist GetAssist(bool bModified = false);
-  bool GetWidth(FX_FLOAT& fWidth);
-  bool GetHeight(FX_FLOAT& fHeight);
-  bool GetMinWidth(FX_FLOAT& fMinWidth);
-  bool GetMinHeight(FX_FLOAT& fMinHeight);
-  bool GetMaxWidth(FX_FLOAT& fMaxWidth);
-  bool GetMaxHeight(FX_FLOAT& fMaxHeight);
+  bool GetWidth(float& fWidth);
+  bool GetHeight(float& fHeight);
+  bool GetMinWidth(float& fMinWidth);
+  bool GetMinHeight(float& fMinHeight);
+  bool GetMaxWidth(float& fMaxWidth);
+  bool GetMaxHeight(float& fMaxHeight);
   CXFA_Border GetUIBorder();
   CFX_RectF GetUIMargin();
   int32_t GetButtonHighlight();
@@ -76,7 +76,7 @@ class CXFA_WidgetData : public CXFA_Data {
   bool GetButtonDown(CFX_WideString& wsDown, bool& bRichText);
   int32_t GetCheckButtonShape();
   int32_t GetCheckButtonMark();
-  FX_FLOAT GetCheckButtonSize();
+  float GetCheckButtonSize();
   bool IsAllowNeutral();
   bool IsRadioButton();
   XFA_CHECKSTATE GetCheckState();
@@ -148,7 +148,7 @@ class CXFA_WidgetData : public CXFA_Data {
   bool GetBarcodeAttribute_PrintChecksum(bool& val);
   bool GetBarcodeAttribute_TextLocation(int32_t& val);
   bool GetBarcodeAttribute_Truncate(bool& val);
-  bool GetBarcodeAttribute_WideNarrowRatio(FX_FLOAT& val);
+  bool GetBarcodeAttribute_WideNarrowRatio(float& val);
   void GetPasswordChar(CFX_WideString& wsPassWord);
   bool IsMultiLine();
   int32_t GetVerticalScrollPolicy();
