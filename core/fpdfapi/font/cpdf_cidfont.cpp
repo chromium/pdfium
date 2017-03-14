@@ -7,6 +7,7 @@
 #include "core/fpdfapi/font/cpdf_cidfont.h"
 
 #include <algorithm>
+#include <limits>
 #include <vector>
 
 #include "core/fpdfapi/cmaps/cmap_int.h"
@@ -781,8 +782,8 @@ void CPDF_CIDFont::LoadMetricsArray(CPDF_Array* pArray,
                                     int nElements) {
   int width_status = 0;
   int iCurElement = 0;
-  int first_code = 0;
-  int last_code = 0;
+  uint32_t first_code = 0;
+  uint32_t last_code = 0;
   for (size_t i = 0; i < pArray->GetCount(); i++) {
     CPDF_Object* pObj = pArray->GetDirectObjectAt(i);
     if (!pObj)
@@ -791,6 +792,11 @@ void CPDF_CIDFont::LoadMetricsArray(CPDF_Array* pArray,
     if (CPDF_Array* pObjArray = pObj->AsArray()) {
       if (width_status != 1)
         return;
+      if (first_code >
+          std::numeric_limits<uint32_t>::max() - pObjArray->GetCount()) {
+        width_status = 0;
+        continue;
+      }
 
       for (size_t j = 0; j < pObjArray->GetCount(); j += nElements) {
         result->push_back(first_code);
