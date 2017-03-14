@@ -95,6 +95,36 @@ const FX_FONTDESCRIPTOR* MatchDefaultFont(
   return iBestSimilar < 1 ? nullptr : pBestFont;
 }
 
+uint32_t GetFontHashCode(uint16_t wCodePage, uint32_t dwFontStyles) {
+  uint32_t dwHash = wCodePage;
+  if (dwFontStyles & FX_FONTSTYLE_FixedPitch)
+    dwHash |= 0x00010000;
+  if (dwFontStyles & FX_FONTSTYLE_Serif)
+    dwHash |= 0x00020000;
+  if (dwFontStyles & FX_FONTSTYLE_Symbolic)
+    dwHash |= 0x00040000;
+  if (dwFontStyles & FX_FONTSTYLE_Script)
+    dwHash |= 0x00080000;
+  if (dwFontStyles & FX_FONTSTYLE_Italic)
+    dwHash |= 0x00100000;
+  if (dwFontStyles & FX_FONTSTYLE_Bold)
+    dwHash |= 0x00200000;
+  return dwHash;
+}
+
+uint32_t GetFontFamilyHash(const wchar_t* pszFontFamily,
+                           uint32_t dwFontStyles,
+                           uint16_t wCodePage) {
+  CFX_WideString wsFont(pszFontFamily);
+  if (dwFontStyles & FX_FONTSTYLE_Bold)
+    wsFont += L"Bold";
+  if (dwFontStyles & FX_FONTSTYLE_Italic)
+    wsFont += L"Italic";
+
+  wsFont += wCodePage;
+  return FX_HashCode_GetW(wsFont.AsStringC(), false);
+}
+
 }  // namespace
 
 std::unique_ptr<CFGAS_FontMgr> CFGAS_FontMgr::Create(
@@ -114,7 +144,7 @@ CFX_RetainPtr<CFGAS_GEFont> CFGAS_FontMgr::GetFontByCodePage(
     uint16_t wCodePage,
     uint32_t dwFontStyles,
     const wchar_t* pszFontFamily) {
-  uint32_t dwHash = FGAS_GetFontHashCode(wCodePage, dwFontStyles);
+  uint32_t dwHash = GetFontHashCode(wCodePage, dwFontStyles);
   auto it = m_CPFonts.find(dwHash);
   if (it != m_CPFonts.end()) {
     return it->second ? LoadFont(it->second, dwFontStyles, wCodePage) : nullptr;
@@ -135,7 +165,7 @@ CFX_RetainPtr<CFGAS_GEFont> CFGAS_FontMgr::GetFontByCodePage(
 
   m_Fonts.push_back(pFont);
   m_CPFonts[dwHash] = pFont;
-  dwHash = FGAS_GetFontFamilyHash(pFD->wsFontFace, dwFontStyles, wCodePage);
+  dwHash = GetFontFamilyHash(pFD->wsFontFace, dwFontStyles, wCodePage);
   m_FamilyFonts[dwHash] = pFont;
   return LoadFont(pFont, dwFontStyles, wCodePage);
 }
@@ -149,7 +179,7 @@ CFX_RetainPtr<CFGAS_GEFont> CFGAS_FontMgr::GetFontByUnicode(
     return nullptr;
 
   uint32_t dwHash =
-      FGAS_GetFontFamilyHash(pszFontFamily, dwFontStyles, pRet->wBitField);
+      GetFontFamilyHash(pszFontFamily, dwFontStyles, pRet->wBitField);
   auto it = m_UnicodeFonts.find(dwHash);
   if (it != m_UnicodeFonts.end()) {
     return it->second ? LoadFont(it->second, dwFontStyles, pRet->wCodePage)
@@ -174,9 +204,8 @@ CFX_RetainPtr<CFGAS_GEFont> CFGAS_FontMgr::GetFontByUnicode(
 
   m_Fonts.push_back(pFont);
   m_UnicodeFonts[dwHash] = pFont;
-  m_CPFonts[FGAS_GetFontHashCode(wCodePage, dwFontStyles)] = pFont;
-  m_FamilyFonts[FGAS_GetFontFamilyHash(pFontFace, dwFontStyles, wCodePage)] =
-      pFont;
+  m_CPFonts[GetFontHashCode(wCodePage, dwFontStyles)] = pFont;
+  m_FamilyFonts[GetFontFamilyHash(pFontFace, dwFontStyles, wCodePage)] = pFont;
   return LoadFont(pFont, dwFontStyles, wCodePage);
 }
 
@@ -185,8 +214,7 @@ CFX_RetainPtr<CFGAS_GEFont> CFGAS_FontMgr::LoadFont(
     uint32_t dwFontStyles,
     uint16_t wCodePage) {
   CFX_RetainPtr<CFGAS_GEFont> pFont;
-  uint32_t dwHash =
-      FGAS_GetFontFamilyHash(pszFontFamily, dwFontStyles, wCodePage);
+  uint32_t dwHash = GetFontFamilyHash(pszFontFamily, dwFontStyles, wCodePage);
   auto it = m_FamilyFonts.find(dwHash);
   if (it != m_FamilyFonts.end())
     return it->second ? LoadFont(it->second, dwFontStyles, wCodePage) : nullptr;
@@ -208,7 +236,7 @@ CFX_RetainPtr<CFGAS_GEFont> CFGAS_FontMgr::LoadFont(
 
   m_Fonts.push_back(pFont);
   m_FamilyFonts[dwHash] = pFont;
-  dwHash = FGAS_GetFontHashCode(wCodePage, dwFontStyles);
+  dwHash = GetFontHashCode(wCodePage, dwFontStyles);
   m_CPFonts[dwHash] = pFont;
   return LoadFont(pFont, dwFontStyles, wCodePage);
 }
@@ -369,29 +397,75 @@ const char* g_FontFolders[] = {
 #endif
 };
 
-struct FX_BitCodePage {
-  uint16_t wBit;
-  uint16_t wCodePage;
-};
-
-const FX_BitCodePage g_Bit2CodePage[] = {
-    {0, 1252}, {1, 1250}, {2, 1251}, {3, 1253},  {4, 1254}, {5, 1255},
-    {6, 1256}, {7, 1257}, {8, 1258}, {9, 0},     {10, 0},   {11, 0},
-    {12, 0},   {13, 0},   {14, 0},   {15, 0},    {16, 874}, {17, 932},
-    {18, 936}, {19, 949}, {20, 950}, {21, 1361}, {22, 0},   {23, 0},
-    {24, 0},   {25, 0},   {26, 0},   {27, 0},    {28, 0},   {29, 0},
-    {30, 0},   {31, 0},   {32, 0},   {33, 0},    {34, 0},   {35, 0},
-    {36, 0},   {37, 0},   {38, 0},   {39, 0},    {40, 0},   {41, 0},
-    {42, 0},   {43, 0},   {44, 0},   {45, 0},    {46, 0},   {47, 0},
-    {48, 869}, {49, 866}, {50, 865}, {51, 864},  {52, 863}, {53, 862},
-    {54, 861}, {55, 860}, {56, 857}, {57, 855},  {58, 852}, {59, 775},
-    {60, 737}, {61, 708}, {62, 850}, {63, 437},
-};
+const uint16_t g_CodePages[] = {FX_CODEPAGE_MSWin_WesternEuropean,
+                                FX_CODEPAGE_MSWin_EasternEuropean,
+                                FX_CODEPAGE_MSWin_Cyrillic,
+                                FX_CODEPAGE_MSWin_Greek,
+                                FX_CODEPAGE_MSWin_Turkish,
+                                FX_CODEPAGE_MSWin_Hebrew,
+                                FX_CODEPAGE_MSWin_Arabic,
+                                FX_CODEPAGE_MSWin_Baltic,
+                                FX_CODEPAGE_MSWin_Vietnamese,
+                                FX_CODEPAGE_DefANSI,
+                                FX_CODEPAGE_DefANSI,
+                                FX_CODEPAGE_DefANSI,
+                                FX_CODEPAGE_DefANSI,
+                                FX_CODEPAGE_DefANSI,
+                                FX_CODEPAGE_DefANSI,
+                                FX_CODEPAGE_DefANSI,
+                                FX_CODEPAGE_MSDOS_Thai,
+                                FX_CODEPAGE_ShiftJIS,
+                                FX_CODEPAGE_ChineseSimplified,
+                                FX_CODEPAGE_Korean,
+                                FX_CODEPAGE_ChineseTraditional,
+                                FX_CODEPAGE_Johab,
+                                FX_CODEPAGE_DefANSI,
+                                FX_CODEPAGE_DefANSI,
+                                FX_CODEPAGE_DefANSI,
+                                FX_CODEPAGE_DefANSI,
+                                FX_CODEPAGE_DefANSI,
+                                FX_CODEPAGE_DefANSI,
+                                FX_CODEPAGE_DefANSI,
+                                FX_CODEPAGE_DefANSI,
+                                FX_CODEPAGE_DefANSI,
+                                FX_CODEPAGE_DefANSI,
+                                FX_CODEPAGE_DefANSI,
+                                FX_CODEPAGE_DefANSI,
+                                FX_CODEPAGE_DefANSI,
+                                FX_CODEPAGE_DefANSI,
+                                FX_CODEPAGE_DefANSI,
+                                FX_CODEPAGE_DefANSI,
+                                FX_CODEPAGE_DefANSI,
+                                FX_CODEPAGE_DefANSI,
+                                FX_CODEPAGE_DefANSI,
+                                FX_CODEPAGE_DefANSI,
+                                FX_CODEPAGE_DefANSI,
+                                FX_CODEPAGE_DefANSI,
+                                FX_CODEPAGE_DefANSI,
+                                FX_CODEPAGE_DefANSI,
+                                FX_CODEPAGE_DefANSI,
+                                FX_CODEPAGE_DefANSI,
+                                FX_CODEPAGE_MSDOS_Greek2,
+                                FX_CODEPAGE_MSDOS_Russian,
+                                FX_CODEPAGE_MSDOS_Norwegian,
+                                FX_CODEPAGE_MSDOS_Arabic,
+                                FX_CODEPAGE_MSDOS_FrenchCanadian,
+                                FX_CODEPAGE_MSDOS_Hebrew,
+                                FX_CODEPAGE_MSDOS_Icelandic,
+                                FX_CODEPAGE_MSDOS_Portuguese,
+                                FX_CODEPAGE_MSDOS_Turkish,
+                                FX_CODEPAGE_MSDOS_Cyrillic,
+                                FX_CODEPAGE_MSDOS_EasternEuropean,
+                                FX_CODEPAGE_MSDOS_Baltic,
+                                FX_CODEPAGE_MSDOS_Greek1,
+                                FX_CODEPAGE_Arabic_ASMO708,
+                                FX_CODEPAGE_MSDOS_WesternEuropean,
+                                FX_CODEPAGE_MSDOS_US};
 
 uint16_t FX_GetCodePageBit(uint16_t wCodePage) {
-  for (size_t i = 0; i < FX_ArraySize(g_Bit2CodePage); ++i) {
-    if (g_Bit2CodePage[i].wCodePage == wCodePage)
-      return g_Bit2CodePage[i].wBit;
+  for (size_t i = 0; i < FX_ArraySize(g_CodePages); ++i) {
+    if (g_CodePages[i] == wCodePage)
+      return static_cast<uint16_t>(i);
   }
   return static_cast<uint16_t>(-1);
 }
@@ -941,7 +1015,7 @@ int32_t CFGAS_FontMgr::CalcPenalty(CFX_FontDescriptor* pInstalled,
   if (nPenalty >= 0xFFFF)
     return 0xFFFF;
 
-  uint16_t wBit = (wCodePage == 0 || wCodePage == 0xFFFF)
+  uint16_t wBit = (wCodePage == FX_CODEPAGE_DefANSI || wCodePage == 0xFFFF)
                       ? static_cast<uint16_t>(-1)
                       : FX_GetCodePageBit(wCodePage);
   if (wBit != static_cast<uint16_t>(-1)) {
