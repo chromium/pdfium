@@ -19,8 +19,8 @@ bool CFDE_VisualSetIterator::AttachCanvas(CFDE_TxtEdtPage* pCanvas) {
   FDE_CANVASITEM canvas;
   canvas.hCanvas = nullptr;
   canvas.pCanvas = pCanvas;
-  canvas.hPos = pCanvas->GetFirstPosition();
-  if (!canvas.hPos)
+  canvas.pos = pCanvas->GetFirstPosition();
+  if (canvas.pos == 0)
     return false;
 
   m_CanvasStack.push(canvas);
@@ -39,8 +39,8 @@ bool CFDE_VisualSetIterator::FilterObjects(uint32_t dwObjects) {
   FDE_CANVASITEM* pCanvas = &m_CanvasStack.top();
   ASSERT(pCanvas && pCanvas->pCanvas);
 
-  pCanvas->hPos = pCanvas->pCanvas->GetFirstPosition();
-  return !!pCanvas->hPos;
+  pCanvas->pos = pCanvas->pCanvas->GetFirstPosition();
+  return pCanvas->pos != 0;
 }
 
 void CFDE_VisualSetIterator::Reset() {
@@ -53,7 +53,7 @@ FDE_TEXTEDITPIECE* CFDE_VisualSetIterator::GetNext(
     CFDE_TxtEdtPage** ppCanvasSet) {
   while (!m_CanvasStack.empty()) {
     FDE_CANVASITEM* pCanvas = &m_CanvasStack.top();
-    if (!pCanvas->hPos) {
+    if (pCanvas->pos == 0) {
       if (m_CanvasStack.size() == 1)
         break;
 
@@ -62,7 +62,7 @@ FDE_TEXTEDITPIECE* CFDE_VisualSetIterator::GetNext(
     }
     do {
       FDE_TEXTEDITPIECE* pObj =
-          pCanvas->pCanvas->GetNext(pCanvas->hPos, pVisualSet);
+          pCanvas->pCanvas->GetNext(&pCanvas->pos, pVisualSet);
       ASSERT(pObj);
 
       FDE_VISUALOBJTYPE eType = pVisualSet->GetType();
@@ -70,7 +70,7 @@ FDE_TEXTEDITPIECE* CFDE_VisualSetIterator::GetNext(
         FDE_CANVASITEM canvas;
         canvas.hCanvas = pObj;
         canvas.pCanvas = static_cast<CFDE_TxtEdtPage*>(pVisualSet);
-        canvas.hPos = canvas.pCanvas->GetFirstPosition();
+        canvas.pos = canvas.pCanvas->GetFirstPosition();
         m_CanvasStack.push(canvas);
         break;
       }
@@ -82,7 +82,7 @@ FDE_TEXTEDITPIECE* CFDE_VisualSetIterator::GetNext(
           *phCanvasObj = pCanvas->hCanvas;
         return pObj;
       }
-    } while (pCanvas->hPos);
+    } while (pCanvas->pos != 0);
   }
   if (ppCanvasSet)
     *ppCanvasSet = nullptr;

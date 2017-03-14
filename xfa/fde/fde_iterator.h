@@ -16,7 +16,7 @@ class CFDE_TxtEdtPage;
 struct FDE_CANVASITEM {
   CFDE_TxtEdtPage* pCanvas;
   FDE_TEXTEDITPIECE* hCanvas;
-  FX_POSITION hPos;
+  size_t pos;
 };
 
 class CFDE_VisualSetIterator {

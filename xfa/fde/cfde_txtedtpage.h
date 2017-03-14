@@ -46,8 +46,8 @@ class CFDE_TxtEdtPage : public IFDE_VisualSet {
   void UnloadPage(const CFX_RectF* pClipBox);
   const CFX_RectF& GetContentsBox();
 
-  FX_POSITION GetFirstPosition();
-  FDE_TEXTEDITPIECE* GetNext(FX_POSITION& pos, IFDE_VisualSet*& pVisualSet);
+  size_t GetFirstPosition();
+  FDE_TEXTEDITPIECE* GetNext(size_t* pos, IFDE_VisualSet*& pVisualSet);
 
   wchar_t GetChar(const FDE_TEXTEDITPIECE* pIdentity, int32_t index) const;
   int32_t GetWidth(const FDE_TEXTEDITPIECE* pIdentity, int32_t index) const;
