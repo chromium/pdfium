@@ -144,11 +144,11 @@ static v8::Local<v8::ObjectTemplate> GetGlobalObjectTemplate(
 }
 
 void* FXJS_ArrayBufferAllocator::Allocate(size_t length) {
-  return calloc(1, length);
+  return length <= kMaxAllowedBytes ? calloc(1, length) : nullptr;
 }
 
 void* FXJS_ArrayBufferAllocator::AllocateUninitialized(size_t length) {
-  return malloc(length);
+  return length < kMaxAllowedBytes ? malloc(length) : nullptr;
 }
 
 void FXJS_ArrayBufferAllocator::Free(void* data, size_t length) {

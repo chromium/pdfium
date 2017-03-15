@@ -111,6 +111,7 @@ class FXJS_PerIsolateData {
 };
 
 class FXJS_ArrayBufferAllocator : public v8::ArrayBuffer::Allocator {
+  static const size_t kMaxAllowedBytes = 0x10000000;
   void* Allocate(size_t length) override;
   void* AllocateUninitialized(size_t length) override;
   void Free(void* data, size_t length) override;
