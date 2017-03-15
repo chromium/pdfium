@@ -22,6 +22,8 @@
 
 namespace {
 
+const int kNumTestPages = 7;
+
 CPDF_Dictionary* CreatePageTreeNode(std::unique_ptr<CPDF_Array> kids,
                                     CPDF_Document* pDoc,
                                     int count) {
@@ -82,13 +84,18 @@ class CPDF_TestDocumentForPages : public CPDF_Document {
     allPages->AddNew<CPDF_Reference>(this, branch3->GetObjNum());
     allPages->AddNew<CPDF_Reference>(this, branch4->GetObjNum());
     CPDF_Dictionary* pagesDict =
-        CreatePageTreeNode(std::move(allPages), this, 7);
+        CreatePageTreeNode(std::move(allPages), this, kNumTestPages);
 
     m_pOwnedRootDict = pdfium::MakeUnique<CPDF_Dictionary>();
     m_pOwnedRootDict->SetNewFor<CPDF_Reference>("Pages", this,
                                                 pagesDict->GetObjNum());
     m_pRootDict = m_pOwnedRootDict.get();
-    m_PageList.resize(7);
+    m_PageList.resize(kNumTestPages);
+  }
+
+  void SetTreeSize(int size) {
+    m_pOwnedRootDict->SetNewFor<CPDF_Number>("Count", size);
+    m_PageList.resize(size);
   }
 
  private:
@@ -138,13 +145,13 @@ class cpdf_document_test : public testing::Test {
 TEST_F(cpdf_document_test, GetPages) {
   std::unique_ptr<CPDF_TestDocumentForPages> document =
       pdfium::MakeUnique<CPDF_TestDocumentForPages>();
-  for (int i = 0; i < 7; i++) {
+  for (int i = 0; i < kNumTestPages; i++) {
     CPDF_Dictionary* page = document->GetPage(i);
     ASSERT_TRUE(page);
     ASSERT_TRUE(page->KeyExist("PageNumbering"));
     EXPECT_EQ(i, page->GetIntegerFor("PageNumbering"));
   }
-  CPDF_Dictionary* page = document->GetPage(7);
+  CPDF_Dictionary* page = document->GetPage(kNumTestPages);
   EXPECT_FALSE(page);
 }
 
@@ -169,7 +176,7 @@ TEST_F(cpdf_document_test, GetPagesReverseOrder) {
     ASSERT_TRUE(page->KeyExist("PageNumbering"));
     EXPECT_EQ(i, page->GetIntegerFor("PageNumbering"));
   }
-  CPDF_Dictionary* page = document->GetPage(7);
+  CPDF_Dictionary* page = document->GetPage(kNumTestPages);
   EXPECT_FALSE(page);
 }
 
@@ -187,7 +194,7 @@ TEST_F(cpdf_document_test, GetPagesInDisorder) {
   ASSERT_TRUE(page->KeyExist("PageNumbering"));
   EXPECT_EQ(3, page->GetIntegerFor("PageNumbering"));
 
-  page = document->GetPage(7);
+  page = document->GetPage(kNumTestPages);
   EXPECT_FALSE(page);
 
   page = document->GetPage(6);
@@ -218,4 +225,15 @@ TEST_F(cpdf_document_test, UseCachedPageObjNumIfHaveNotPagesDict) {
   document.SetPageObjNum(test_page_num, obj_num);
   EXPECT_TRUE(document.IsPageLoaded(test_page_num));
   EXPECT_EQ(page_stub, document.GetPage(test_page_num));
+}
+
+TEST_F(cpdf_document_test, CountGreaterThanPageTree) {
+  std::unique_ptr<CPDF_TestDocumentForPages> document =
+      pdfium::MakeUnique<CPDF_TestDocumentForPages>();
+  document->SetTreeSize(kNumTestPages + 3);
+  for (int i = 0; i < kNumTestPages; i++)
+    EXPECT_TRUE(document->GetPage(i));
+  for (int i = kNumTestPages; i < kNumTestPages + 4; i++)
+    EXPECT_FALSE(document->GetPage(i));
+  EXPECT_TRUE(document->GetPage(kNumTestPages - 1));
 }

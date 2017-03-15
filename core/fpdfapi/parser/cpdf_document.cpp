@@ -503,9 +503,11 @@ CPDF_Dictionary* CPDF_Document::GetPage(int iPage) {
     // TODO(art-snake): optimize this.
     ResetTraversal();
   }
-  int nPagesToGo = iPage - m_iNextPageToTraverse + 1;
-  if (m_pTreeTraversal.empty())
+  if (m_pTreeTraversal.empty()) {
+    ResetTraversal();
     m_pTreeTraversal.push_back(std::make_pair(pPages, 0));
+  }
+  int nPagesToGo = iPage - m_iNextPageToTraverse + 1;
   CPDF_Dictionary* pPage = TraversePDFPages(iPage, &nPagesToGo, 0);
   m_iNextPageToTraverse = iPage + 1;
   return pPage;
