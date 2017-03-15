@@ -26,7 +26,7 @@ class CPDF_Color {
   void SetValue(float* comp);
   void SetValue(CPDF_Pattern* pPattern, float* comp, int ncomps);
 
-  bool GetRGB(int& R, int& G, int& B) const;
+  bool GetRGB(int* R, int* G, int* B) const;
   CPDF_Pattern* GetPattern() const;
   const CPDF_ColorSpace* GetColorSpace() const { return m_pCS; }
 

@@ -23,7 +23,7 @@ bool IsSelectorStart(wchar_t wch) {
 
 CFDE_CSSSyntaxParser::CFDE_CSSSyntaxParser()
     : m_iTextDataLen(0),
-      m_dwCheck((uint32_t)-1),
+      m_dwCheck(0xFFFFFFFF),
       m_eMode(FDE_CSSSyntaxMode::RuleSet),
       m_eStatus(FDE_CSSSyntaxStatus::None) {}
 
@@ -47,7 +47,7 @@ void CFDE_CSSSyntaxParser::Reset(bool bOnlyDeclaration) {
   m_TextPlane.Reset();
   m_TextData.Reset();
   m_iTextDataLen = 0;
-  m_dwCheck = (uint32_t)-1;
+  m_dwCheck = 0xFFFFFFFF;
   m_eStatus = FDE_CSSSyntaxStatus::None;
   m_eMode = bOnlyDeclaration ? FDE_CSSSyntaxMode::PropertyName
                              : FDE_CSSSyntaxMode::RuleSet;

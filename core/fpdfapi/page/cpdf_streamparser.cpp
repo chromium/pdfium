@@ -94,7 +94,7 @@ uint32_t PDF_DecodeInlineStream(const uint8_t* src_buf,
     return RunLengthDecode(src_buf, limit, dest_buf, dest_size);
   dest_size = 0;
   dest_buf = 0;
-  return (uint32_t)-1;
+  return 0xFFFFFFFF;
 }
 
 }  // namespace

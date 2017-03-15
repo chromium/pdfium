@@ -457,7 +457,7 @@ DIB_COMP_DATA* CPDF_DIBSource::GetDecodeAndMaskArray(bool& bDefaultDecode,
       float def_value;
       float def_min;
       float def_max;
-      m_pColorSpace->GetDefaultValue(i, def_value, def_min, def_max);
+      m_pColorSpace->GetDefaultValue(i, &def_value, &def_min, &def_max);
       if (m_Family == PDFCS_INDEXED) {
         def_max = max_data;
       }
@@ -468,8 +468,8 @@ DIB_COMP_DATA* CPDF_DIBSource::GetDecodeAndMaskArray(bool& bDefaultDecode,
   } else {
     for (uint32_t i = 0; i < m_nComponents; i++) {
       float def_value;
-      m_pColorSpace->GetDefaultValue(i, def_value, pCompData[i].m_DecodeMin,
-                                     pCompData[i].m_DecodeStep);
+      m_pColorSpace->GetDefaultValue(i, &def_value, &pCompData[i].m_DecodeMin,
+                                     &pCompData[i].m_DecodeStep);
       if (m_Family == PDFCS_INDEXED) {
         pCompData[i].m_DecodeStep = max_data;
       }
@@ -701,10 +701,10 @@ int CPDF_DIBSource::StratLoadMask() {
         m_pColorSpace->CountComponents() <= m_nComponents) {
       float R, G, B;
       std::vector<float> colors(m_nComponents);
-      for (uint32_t i = 0; i < m_nComponents; i++) {
+      for (uint32_t i = 0; i < m_nComponents; i++)
         colors[i] = pMatte->GetFloatAt(i);
-      }
-      m_pColorSpace->GetRGB(colors.data(), R, G, B);
+
+      m_pColorSpace->GetRGB(colors.data(), &R, &G, &B);
       m_MatteColor = FXARGB_MAKE(0, FXSYS_round(R * 255), FXSYS_round(G * 255),
                                  FXSYS_round(B * 255));
     }
@@ -779,13 +779,13 @@ void CPDF_DIBSource::LoadPalette() {
     color_values[0] = m_pCompData[0].m_DecodeMin;
     color_values[1] = color_values[2] = color_values[0];
     float R = 0.0f, G = 0.0f, B = 0.0f;
-    m_pColorSpace->GetRGB(color_values, R, G, B);
+    m_pColorSpace->GetRGB(color_values, &R, &G, &B);
     FX_ARGB argb0 = ArgbEncode(255, FXSYS_round(R * 255), FXSYS_round(G * 255),
                                FXSYS_round(B * 255));
     color_values[0] += m_pCompData[0].m_DecodeStep;
     color_values[1] += m_pCompData[0].m_DecodeStep;
     color_values[2] += m_pCompData[0].m_DecodeStep;
-    m_pColorSpace->GetRGB(color_values, R, G, B);
+    m_pColorSpace->GetRGB(color_values, &R, &G, &B);
     FX_ARGB argb1 = ArgbEncode(255, FXSYS_round(R * 255), FXSYS_round(G * 255),
                                FXSYS_round(B * 255));
     if (argb0 != 0xFF000000 || argb1 != 0xFFFFFFFF) {
@@ -816,9 +816,9 @@ void CPDF_DIBSource::LoadPalette() {
         for (int k = 0; k < nComponents; k++) {
           temp_buf[k] = *color_value;
         }
-        m_pColorSpace->GetRGB(temp_buf.data(), R, G, B);
+        m_pColorSpace->GetRGB(temp_buf.data(), &R, &G, &B);
       } else {
-        m_pColorSpace->GetRGB(color_value, R, G, B);
+        m_pColorSpace->GetRGB(color_value, &R, &G, &B);
       }
       SetPaletteArgb(i, ArgbEncode(255, FXSYS_round(R * 255),
                                    FXSYS_round(G * 255), FXSYS_round(B * 255)));
@@ -935,7 +935,7 @@ void CPDF_DIBSource::TranslateScanline24bpp(uint8_t* dest_scan,
         G = (1.0f - color_values[1]) * k;
         B = (1.0f - color_values[2]) * k;
       } else {
-        m_pColorSpace->GetRGB(color_values, R, G, B);
+        m_pColorSpace->GetRGB(color_values, &R, &G, &B);
       }
       R = ClampValue(R, 1.0f);
       G = ClampValue(G, 1.0f);
@@ -961,7 +961,7 @@ void CPDF_DIBSource::TranslateScanline24bpp(uint8_t* dest_scan,
         G = (1.0f - color_values[1]) * k;
         B = (1.0f - color_values[2]) * k;
       } else {
-        m_pColorSpace->GetRGB(color_values, R, G, B);
+        m_pColorSpace->GetRGB(color_values, &R, &G, &B);
       }
       R = ClampValue(R, 1.0f);
       G = ClampValue(G, 1.0f);
@@ -1183,12 +1183,12 @@ void CPDF_DIBSource::DownSampleScanline1Bit(int orig_Bpp,
                                             bool bFlipX,
                                             int clip_left,
                                             int clip_width) const {
-  uint32_t set_argb = (uint32_t)-1;
+  uint32_t set_argb = 0xFFFFFFFF;
   uint32_t reset_argb = 0;
   if (m_bImageMask) {
     if (m_bDefaultDecode) {
       set_argb = 0;
-      reset_argb = (uint32_t)-1;
+      reset_argb = 0xFFFFFFFF;
     }
   } else if (m_bColorKey) {
     reset_argb = m_pPalette ? m_pPalette.get()[0] : 0xFF000000;

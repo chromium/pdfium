@@ -161,7 +161,7 @@ int CLZWDecoder::Decode(uint8_t* dest_buf,
   m_pOutput = dest_buf;
   m_Early = bEarlyChange ? 1 : 0;
   m_nCodes = 0;
-  uint32_t old_code = (uint32_t)-1;
+  uint32_t old_code = 0xFFFFFFFF;
   uint8_t last_char = 0;
   while (1) {
     if (m_InPos + m_CodeLen > src_size * 8) {
@@ -193,20 +193,19 @@ int CLZWDecoder::Decode(uint8_t* dest_buf,
       }
       m_OutPos++;
       last_char = (uint8_t)code;
-      if (old_code != (uint32_t)-1) {
+      if (old_code != 0xFFFFFFFF)
         AddCode(old_code, last_char);
-      }
       old_code = code;
     } else if (code == 256) {
       m_CodeLen = 9;
       m_nCodes = 0;
-      old_code = (uint32_t)-1;
+      old_code = 0xFFFFFFFF;
     } else if (code == 257) {
       break;
     } else {
-      if (old_code == (uint32_t)-1) {
+      if (old_code == 0xFFFFFFFF)
         return 2;
-      }
+
       m_StackLen = 0;
       if (code >= m_nCodes + 258) {
         if (m_StackLen < sizeof(m_DecodeStack)) {
@@ -824,7 +823,7 @@ uint32_t CCodec_FlateModule::FlateOrLZWDecode(bool bLZW,
   if (bLZW) {
     {
       std::unique_ptr<CLZWDecoder> decoder(new CLZWDecoder);
-      dest_size = (uint32_t)-1;
+      dest_size = 0xFFFFFFFF;
       offset = src_size;
       int err =
           decoder->Decode(nullptr, dest_size, src_buf, offset, bEarlyChange);

@@ -37,7 +37,7 @@ bool GetColor(const CPDF_Color* pColor, float* rgb) {
   int intRGB[3];
   if (!pColor ||
       pColor->GetColorSpace() != CPDF_ColorSpace::GetStockCS(PDFCS_DEVICERGB) ||
-      !pColor->GetRGB(intRGB[0], intRGB[1], intRGB[2])) {
+      !pColor->GetRGB(&intRGB[0], &intRGB[1], &intRGB[2])) {
     return false;
   }
   rgb[0] = intRGB[0] / 255.0f;

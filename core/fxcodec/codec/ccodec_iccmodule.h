@@ -22,7 +22,7 @@ class CCodec_IccModule {
                              int32_t intent = 0,
                              uint32_t dwSrcFormat = Icc_FORMAT_DEFAULT);
   void DestroyTransform(void* pTransform);
-  void Translate(void* pTransform, float* pSrcValues, float* pDestValues);
+  void Translate(void* pTransform, const float* pSrcValues, float* pDestValues);
   void TranslateScanline(void* pTransform,
                          uint8_t* pDest,
                          const uint8_t* pSrc,

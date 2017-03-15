@@ -205,7 +205,7 @@ std::tuple<float, float, float> CPDF_MeshStream::ReadColor() {
   float g;
   float b;
   if (m_funcs.empty()) {
-    m_pCS->GetRGB(color_value, r, g, b);
+    m_pCS->GetRGB(color_value, &r, &g, &b);
     return std::tuple<float, float, float>(r, g, b);
   }
 
@@ -214,10 +214,10 @@ std::tuple<float, float, float> CPDF_MeshStream::ReadColor() {
   int nResults;
   for (const auto& func : m_funcs) {
     if (func && func->CountOutputs() <= kMaxComponents)
-      func->Call(color_value, 1, result, nResults);
+      func->Call(color_value, 1, result, &nResults);
   }
 
-  m_pCS->GetRGB(result, r, g, b);
+  m_pCS->GetRGB(result, &r, &g, &b);
   return std::tuple<float, float, float>(r, g, b);
 }
 

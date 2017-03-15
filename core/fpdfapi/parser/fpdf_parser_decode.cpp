@@ -101,9 +101,9 @@ uint32_t A85Decode(const uint8_t* src_buf,
   // Count the space needed to contain non-zero characters. The encoding ratio
   // of Ascii85 is 4:5.
   uint32_t space_for_non_zeroes = (pos - zcount) / 5 * 4 + 4;
-  if (zcount > (UINT_MAX - space_for_non_zeroes) / 4) {
-    return (uint32_t)-1;
-  }
+  if (zcount > (UINT_MAX - space_for_non_zeroes) / 4)
+    return 0xFFFFFFFF;
+
   dest_buf = FX_Alloc(uint8_t, zcount * 4 + space_for_non_zeroes);
   size_t state = 0;
   uint32_t res = 0;
@@ -315,7 +315,7 @@ uint32_t FPDFAPI_FlateOrLZWDecode(bool bLZW,
     BitsPerComponent = pParams->GetIntegerFor("BitsPerComponent", 8);
     Columns = pParams->GetIntegerFor("Columns", 1);
     if (!CheckFlateDecodeParams(Colors, BitsPerComponent, Columns))
-      return (uint32_t)-1;
+      return 0xFFFFFFFF;
   }
   return CPDF_ModuleMgr::Get()->GetFlateModule()->FlateOrLZWDecode(
       bLZW, src_buf, src_size, bEarlyChange, predictor, Colors,
@@ -358,7 +358,7 @@ bool PDF_DataDecode(const uint8_t* src_buf,
     CFX_ByteString decoder = DecoderArray[i].first;
     CPDF_Dictionary* pParam = ToDictionary(DecoderArray[i].second);
     uint8_t* new_buf = nullptr;
-    uint32_t new_size = (uint32_t)-1;
+    uint32_t new_size = 0xFFFFFFFF;
     int offset = -1;
     if (decoder == "FlateDecode" || decoder == "Fl") {
       if (bImageAcc && i == nSize - 1) {

@@ -117,7 +117,7 @@ CPDF_TransferFunc* CPDF_DocRenderData::GetTransferFunc(CPDF_Object* pObj) {
     input = (float)v / 255.0f;
     if (bUniTransfer) {
       if (pFuncs[0] && pFuncs[0]->CountOutputs() <= kMaxOutputs)
-        pFuncs[0]->Call(&input, 1, output, noutput);
+        pFuncs[0]->Call(&input, 1, output, &noutput);
       int o = FXSYS_round(output[0] * 255);
       if (o != v)
         bIdentity = false;
@@ -130,7 +130,7 @@ CPDF_TransferFunc* CPDF_DocRenderData::GetTransferFunc(CPDF_Object* pObj) {
         pTransfer->m_Samples[i * 256 + v] = v;
         continue;
       }
-      pFuncs[i]->Call(&input, 1, output, noutput);
+      pFuncs[i]->Call(&input, 1, output, &noutput);
       int o = FXSYS_round(output[0] * 255);
       if (o != v)
         bIdentity = false;

@@ -73,49 +73,50 @@ CPDF_DeviceCS::CPDF_DeviceCS(CPDF_Document* pDoc, int family)
          family == PDFCS_DEVICECMYK);
 }
 
-bool CPDF_DeviceCS::GetRGB(float* pBuf, float& R, float& G, float& B) const {
+CPDF_DeviceCS::~CPDF_DeviceCS() {}
+
+bool CPDF_DeviceCS::GetRGB(float* pBuf, float* R, float* G, float* B) const {
   switch (m_Family) {
     case PDFCS_DEVICEGRAY:
-      R = NormalizeChannel(*pBuf);
-      G = R;
-      B = R;
-      break;
+      *R = NormalizeChannel(*pBuf);
+      *G = *R;
+      *B = *R;
+      return true;
     case PDFCS_DEVICERGB:
-      R = NormalizeChannel(pBuf[0]);
-      G = NormalizeChannel(pBuf[1]);
-      B = NormalizeChannel(pBuf[2]);
-      break;
+      *R = NormalizeChannel(pBuf[0]);
+      *G = NormalizeChannel(pBuf[1]);
+      *B = NormalizeChannel(pBuf[2]);
+      return true;
     case PDFCS_DEVICECMYK:
       if (m_dwStdConversion) {
         float k = pBuf[3];
-        R = 1.0f - std::min(1.0f, pBuf[0] + k);
-        G = 1.0f - std::min(1.0f, pBuf[1] + k);
-        B = 1.0f - std::min(1.0f, pBuf[2] + k);
+        *R = 1.0f - std::min(1.0f, pBuf[0] + k);
+        *G = 1.0f - std::min(1.0f, pBuf[1] + k);
+        *B = 1.0f - std::min(1.0f, pBuf[2] + k);
       } else {
         AdobeCMYK_to_sRGB(NormalizeChannel(pBuf[0]), NormalizeChannel(pBuf[1]),
                           NormalizeChannel(pBuf[2]), NormalizeChannel(pBuf[3]),
-                          R, G, B);
+                          *R, *G, *B);
       }
-      break;
+      return true;
     default:
       ASSERT(false);
       return false;
   }
-  return true;
 }
 
 bool CPDF_DeviceCS::v_GetCMYK(float* pBuf,
-                              float& c,
-                              float& m,
-                              float& y,
-                              float& k) const {
+                              float* c,
+                              float* m,
+                              float* y,
+                              float* k) const {
   if (m_Family != PDFCS_DEVICECMYK)
     return false;
 
-  c = pBuf[0];
-  m = pBuf[1];
-  y = pBuf[2];
-  k = pBuf[3];
+  *c = pBuf[0];
+  *m = pBuf[1];
+  *y = pBuf[2];
+  *k = pBuf[3];
   return true;
 }
 

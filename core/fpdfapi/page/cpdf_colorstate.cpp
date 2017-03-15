@@ -88,15 +88,17 @@ void CPDF_ColorState::SetFillPattern(CPDF_Pattern* pPattern,
                                      uint32_t nValues) {
   ColorData* pData = m_Ref.GetPrivateCopy();
   pData->m_FillColor.SetValue(pPattern, pValue, nValues);
-  int R, G, B;
-  bool ret = pData->m_FillColor.GetRGB(R, G, B);
+  int R;
+  int G;
+  int B;
+  bool ret = pData->m_FillColor.GetRGB(&R, &G, &B);
   if (CPDF_TilingPattern* pTilingPattern = pPattern->AsTilingPattern()) {
     if (!ret && pTilingPattern->colored()) {
       pData->m_FillRGB = 0x00BFBFBF;
       return;
     }
   }
-  pData->m_FillRGB = ret ? FXSYS_RGB(R, G, B) : (uint32_t)-1;
+  pData->m_FillRGB = ret ? FXSYS_RGB(R, G, B) : 0xFFFFFFFF;
 }
 
 void CPDF_ColorState::SetStrokePattern(CPDF_Pattern* pPattern,
@@ -104,8 +106,10 @@ void CPDF_ColorState::SetStrokePattern(CPDF_Pattern* pPattern,
                                        uint32_t nValues) {
   ColorData* pData = m_Ref.GetPrivateCopy();
   pData->m_StrokeColor.SetValue(pPattern, pValue, nValues);
-  int R, G, B;
-  bool ret = pData->m_StrokeColor.GetRGB(R, G, B);
+  int R;
+  int G;
+  int B;
+  bool ret = pData->m_StrokeColor.GetRGB(&R, &G, &B);
   if (CPDF_TilingPattern* pTilingPattern = pPattern->AsTilingPattern()) {
     if (!ret && pTilingPattern->colored()) {
       pData->m_StrokeRGB = 0x00BFBFBF;
@@ -113,7 +117,7 @@ void CPDF_ColorState::SetStrokePattern(CPDF_Pattern* pPattern,
     }
   }
   pData->m_StrokeRGB =
-      pData->m_StrokeColor.GetRGB(R, G, B) ? FXSYS_RGB(R, G, B) : (uint32_t)-1;
+      pData->m_StrokeColor.GetRGB(&R, &G, &B) ? FXSYS_RGB(R, G, B) : 0xFFFFFFFF;
 }
 
 void CPDF_ColorState::SetColor(CPDF_Color& color,
@@ -133,7 +137,7 @@ void CPDF_ColorState::SetColor(CPDF_Color& color,
   int R;
   int G;
   int B;
-  rgb = color.GetRGB(R, G, B) ? FXSYS_RGB(R, G, B) : (uint32_t)-1;
+  rgb = color.GetRGB(&R, &G, &B) ? FXSYS_RGB(R, G, B) : 0xFFFFFFFF;
 }
 
 CPDF_ColorState::ColorData::ColorData() : m_FillRGB(0), m_StrokeRGB(0) {}

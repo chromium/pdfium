@@ -869,7 +869,7 @@ uint32_t CXML_Element::FindElement(CXML_Element* pChild) const {
     }
     ++index;
   }
-  return (uint32_t)-1;
+  return 0xFFFFFFFF;
 }
 
 bool CXML_AttrItem::Matches(const CFX_ByteString& space,

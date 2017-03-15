@@ -52,7 +52,7 @@ void CalcEncryptKey(CPDF_Dictionary* pEncrypt,
   }
   if (!bIgnoreMeta && revision >= 3 &&
       !pEncrypt->GetIntegerFor("EncryptMetadata", 1)) {
-    uint32_t tag = (uint32_t)-1;
+    uint32_t tag = 0xFFFFFFFF;
     CRYPT_MD5Update(&md5, (uint8_t*)&tag, 4);
   }
   uint8_t digest[16];

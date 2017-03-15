@@ -132,17 +132,19 @@ void CPDF_Color::Copy(const CPDF_Color* pSrc) {
   }
 }
 
-bool CPDF_Color::GetRGB(int& R, int& G, int& B) const {
+bool CPDF_Color::GetRGB(int* R, int* G, int* B) const {
   if (!m_pCS || !m_pBuffer)
     return false;
 
-  float r = 0.0f, g = 0.0f, b = 0.0f;
-  if (!m_pCS->GetRGB(m_pBuffer, r, g, b))
+  float r = 0.0f;
+  float g = 0.0f;
+  float b = 0.0f;
+  if (!m_pCS->GetRGB(m_pBuffer, &r, &g, &b))
     return false;
 
-  R = (int32_t)(r * 255 + 0.5f);
-  G = (int32_t)(g * 255 + 0.5f);
-  B = (int32_t)(b * 255 + 0.5f);
+  *R = static_cast<int32_t>(r * 255 + 0.5f);
+  *G = static_cast<int32_t>(g * 255 + 0.5f);
+  *B = static_cast<int32_t>(b * 255 + 0.5f);
   return true;
 }
 

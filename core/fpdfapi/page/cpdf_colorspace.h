@@ -43,15 +43,15 @@ class CPDF_ColorSpace {
   uint32_t CountComponents() const;
   int GetFamily() const { return m_Family; }
   virtual void GetDefaultValue(int iComponent,
-                               float& value,
-                               float& min,
-                               float& max) const;
+                               float* value,
+                               float* min,
+                               float* max) const;
 
   bool sRGB() const;
-  virtual bool GetRGB(float* pBuf, float& R, float& G, float& B) const = 0;
+  virtual bool GetRGB(float* pBuf, float* R, float* G, float* B) const = 0;
   virtual bool SetRGB(float* pBuf, float R, float G, float B) const;
 
-  bool GetCMYK(float* pBuf, float& c, float& m, float& y, float& k) const;
+  bool GetCMYK(float* pBuf, float* c, float* m, float* y, float* k) const;
   bool SetCMYK(float* pBuf, float c, float m, float y, float k) const;
 
   virtual void TranslateImageLine(uint8_t* dest_buf,
@@ -59,7 +59,7 @@ class CPDF_ColorSpace {
                                   int pixels,
                                   int image_width,
                                   int image_height,
-                                  bool bTransMask = false) const;
+                                  bool bTransMask) const;
 
   CPDF_Array*& GetArray() { return m_pArray; }
   virtual CPDF_ColorSpace* GetBaseCS() const;
@@ -74,10 +74,10 @@ class CPDF_ColorSpace {
 
   virtual bool v_Load(CPDF_Document* pDoc, CPDF_Array* pArray);
   virtual bool v_GetCMYK(float* pBuf,
-                         float& c,
-                         float& m,
-                         float& y,
-                         float& k) const;
+                         float* c,
+                         float* m,
+                         float* y,
+                         float* k) const;
   virtual bool v_SetCMYK(float* pBuf, float c, float m, float y, float k) const;
 
   int m_Family;

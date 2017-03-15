@@ -110,20 +110,23 @@ extern "C" {
 int FXSYS_GetACP() {
   return 0;
 }
+
 uint32_t FXSYS_GetFullPathName(const char* filename,
                                uint32_t buflen,
                                char* buf,
                                char** filepart) {
   int srclen = FXSYS_strlen(filename);
-  if (!buf || (int)buflen < srclen + 1) {
+  if (!buf || (int)buflen < srclen + 1)
     return srclen + 1;
-  }
+
   FXSYS_strcpy(buf, filename);
   return srclen;
 }
+
 uint32_t FXSYS_GetModuleFileName(void* hModule, char* buf, uint32_t bufsize) {
-  return (uint32_t)-1;
+  return 0xFFFFFFFF;
 }
+
 #ifdef __cplusplus
 }
 #endif
