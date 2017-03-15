@@ -54,9 +54,12 @@ template("test") {
         # the default shared_library configs rather than executable configs.
         configs -= [
           "//build/config:shared_library_config",
-          "//build/config/android:hide_native_jni_exports",
+          "//build/config/android:hide_all_but_jni_onload",
         ]
-        configs += [ "//build/config:executable_config" ]
+        configs += [
+          "//build/config:executable_config",
+          "//build/config/android:hide_all_but_jni",
+        ]
 
         # Don't output to the root or else conflict with the group() below.
         output_name = rebase_path(_exec_output, root_out_dir)
