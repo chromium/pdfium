@@ -1111,26 +1111,25 @@ CFDE_BlockBuffer::~CFDE_BlockBuffer() {
 
 wchar_t* CFDE_BlockBuffer::GetAvailableBlock(int32_t& iIndexInBlock) {
   iIndexInBlock = 0;
-  if (!m_BlockArray.GetSize()) {
+  if (m_BlockArray.empty())
     return nullptr;
-  }
+
   int32_t iRealIndex = m_iStartPosition + m_iDataLength;
   if (iRealIndex == m_iBufferSize) {
-    wchar_t* pBlock = FX_Alloc(wchar_t, m_iAllocStep);
-    m_BlockArray.Add(pBlock);
+    m_BlockArray.emplace_back(FX_Alloc(wchar_t, m_iAllocStep));
     m_iBufferSize += m_iAllocStep;
-    return pBlock;
+    return m_BlockArray.back().get();
   }
   iIndexInBlock = iRealIndex % m_iAllocStep;
-  return m_BlockArray[iRealIndex / m_iAllocStep];
+  return m_BlockArray[iRealIndex / m_iAllocStep].get();
 }
 
 bool CFDE_BlockBuffer::InitBuffer(int32_t iBufferSize) {
   ClearBuffer();
   int32_t iNumOfBlock = (iBufferSize - 1) / m_iAllocStep + 1;
-  for (int32_t i = 0; i < iNumOfBlock; i++) {
-    m_BlockArray.Add(FX_Alloc(wchar_t, m_iAllocStep));
-  }
+  for (int32_t i = 0; i < iNumOfBlock; i++)
+    m_BlockArray.emplace_back(FX_Alloc(wchar_t, m_iAllocStep));
+
   m_iBufferSize = iNumOfBlock * m_iAllocStep;
   return true;
 }
@@ -1142,26 +1141,23 @@ void CFDE_BlockBuffer::SetTextChar(int32_t iIndex, wchar_t ch) {
   int32_t iRealIndex = m_iStartPosition + iIndex;
   int32_t iBlockIndex = iRealIndex / m_iAllocStep;
   int32_t iInnerIndex = iRealIndex % m_iAllocStep;
-  int32_t iBlockSize = m_BlockArray.GetSize();
+  int32_t iBlockSize = pdfium::CollectionSize<int32_t>(m_BlockArray);
   if (iBlockIndex >= iBlockSize) {
     int32_t iNewBlocks = iBlockIndex - iBlockSize + 1;
     do {
-      wchar_t* pBlock = FX_Alloc(wchar_t, m_iAllocStep);
-      m_BlockArray.Add(pBlock);
+      m_BlockArray.emplace_back(FX_Alloc(wchar_t, m_iAllocStep));
       m_iBufferSize += m_iAllocStep;
     } while (--iNewBlocks);
   }
-  wchar_t* pTextData = m_BlockArray[iBlockIndex];
-  *(pTextData + iInnerIndex) = ch;
-  if (m_iDataLength <= iIndex) {
-    m_iDataLength = iIndex + 1;
-  }
+  wchar_t* pTextData = m_BlockArray[iBlockIndex].get();
+  pTextData[iInnerIndex] = ch;
+  m_iDataLength = std::max(m_iDataLength, iIndex + 1);
 }
 
 int32_t CFDE_BlockBuffer::DeleteTextChars(int32_t iCount, bool bDirection) {
-  if (iCount <= 0) {
+  if (iCount <= 0)
     return m_iDataLength;
-  }
+
   if (iCount >= m_iDataLength) {
     Reset(false);
     return 0;
@@ -1210,7 +1206,7 @@ void CFDE_BlockBuffer::GetTextData(CFX_WideString& wsTextData,
     if (i == iEndBlockIndex) {
       iCopyLength -= ((m_iAllocStep - 1) - iEndInnerIndex);
     }
-    wchar_t* pBlockBuf = m_BlockArray[i];
+    wchar_t* pBlockBuf = m_BlockArray[i].get();
     FXSYS_memcpy(pBuf + iPointer, pBlockBuf + iBufferPointer,
                  iCopyLength * sizeof(wchar_t));
     iPointer += iCopyLength;
@@ -1229,11 +1225,7 @@ void CFDE_BlockBuffer::TextDataIndex2BufIndex(const int32_t iIndex,
 
 void CFDE_BlockBuffer::ClearBuffer() {
   m_iBufferSize = 0;
-  int32_t iSize = m_BlockArray.GetSize();
-  for (int32_t i = 0; i < iSize; i++) {
-    FX_Free(m_BlockArray[i]);
-  }
-  m_BlockArray.RemoveAll();
+  m_BlockArray.clear();
 }
 
 CFDE_XMLSyntaxParser::CFDE_XMLSyntaxParser()

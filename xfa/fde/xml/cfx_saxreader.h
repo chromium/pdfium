@@ -128,7 +128,7 @@ class CFX_SAXReader {
   bool m_bCharData;
   uint8_t m_CurByte;
   uint32_t m_dwDataOffset;
-  CFX_ArrayTemplate<uint8_t> m_SkipStack;
+  std::stack<char> m_SkipStack;
   uint8_t m_SkipChar;
   uint32_t m_dwNodePos;
   uint8_t* m_pszData;

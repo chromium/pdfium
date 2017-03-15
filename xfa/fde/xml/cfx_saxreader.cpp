@@ -10,6 +10,7 @@
 #include <utility>
 
 #include "third_party/base/ptr_util.h"
+#include "third_party/base/stl_util.h"
 #include "xfa/fxfa/xfa_checksum.h"
 
 enum class CFX_SaxMode {
@@ -147,11 +148,9 @@ CFX_SAXReader::~CFX_SAXReader() {
 
 void CFX_SAXReader::Reset() {
   m_File.Reset();
-  while (!m_Stack.empty())
-    m_Stack.pop();
-
+  m_Stack = std::stack<std::unique_ptr<CFX_SAXItem>>();
   m_dwItemID = 0;
-  m_SkipStack.RemoveAll();
+  m_SkipStack = std::stack<char>();
   m_SkipChar = 0;
   m_iDataLength = 0;
   m_iEntityStart = -1;
@@ -397,17 +396,17 @@ void CFX_SAXReader::ParseDeclOrComment() {
     GetCurrentItem()->m_eNode = CFX_SAXItem::Type::Comment;
     if (!m_pCommentContext)
       m_pCommentContext = new CFX_SAXCommentContext;
-
     m_pCommentContext->m_iHeaderCount = 1;
     m_pCommentContext->m_iTailCount = 0;
-  } else {
-    m_eMode = CFX_SaxMode::DeclNode;
-    m_dwDataOffset = m_File.m_dwBufIndex;
-    m_SkipChar = '>';
-    m_SkipStack.Add('>');
-    SkipNode();
+    return;
   }
+  m_eMode = CFX_SaxMode::DeclNode;
+  m_dwDataOffset = m_File.m_dwBufIndex;
+  m_SkipChar = '>';
+  m_SkipStack.push('>');
+  SkipNode();
 }
+
 void CFX_SAXReader::ParseComment() {
   m_pCommentContext->m_iHeaderCount = 2;
   m_dwNodePos = m_File.m_dwCur + m_File.m_dwBufIndex;
@@ -591,44 +590,41 @@ void CFX_SAXReader::ParseTargetData() {
   }
 }
 void CFX_SAXReader::SkipNode() {
-  int32_t iLen = m_SkipStack.GetSize();
   if (m_SkipChar == '\'' || m_SkipChar == '\"') {
-    if (m_CurByte != m_SkipChar) {
+    if (m_CurByte != m_SkipChar)
       return;
-    }
-    iLen--;
-    ASSERT(iLen > -1);
-    m_SkipStack.RemoveAt(iLen, 1);
-    m_SkipChar = iLen ? m_SkipStack[iLen - 1] : 0;
+
+    ASSERT(!m_SkipStack.empty());
+    m_SkipStack.pop();
+    m_SkipChar = !m_SkipStack.empty() ? m_SkipStack.top() : 0;
     return;
   }
   switch (m_CurByte) {
     case '<':
       m_SkipChar = '>';
-      m_SkipStack.Add('>');
+      m_SkipStack.push('>');
       break;
     case '[':
       m_SkipChar = ']';
-      m_SkipStack.Add(']');
+      m_SkipStack.push(']');
       break;
     case '(':
       m_SkipChar = ')';
-      m_SkipStack.Add(')');
+      m_SkipStack.push(')');
       break;
     case '\'':
       m_SkipChar = '\'';
-      m_SkipStack.Add('\'');
+      m_SkipStack.push('\'');
       break;
     case '\"':
       m_SkipChar = '\"';
-      m_SkipStack.Add('\"');
+      m_SkipStack.push('\"');
       break;
     default:
       if (m_CurByte == m_SkipChar) {
-        iLen--;
-        m_SkipStack.RemoveAt(iLen, 1);
-        m_SkipChar = iLen ? m_SkipStack[iLen - 1] : 0;
-        if (iLen == 0 && m_CurByte == '>') {
+        m_SkipStack.pop();
+        m_SkipChar = !m_SkipStack.empty() ? m_SkipStack.top() : 0;
+        if (m_SkipStack.empty() && m_CurByte == '>') {
           m_iDataLength = m_iDataPos;
           m_iDataPos = 0;
           if (m_iDataLength >= 9 &&
@@ -653,9 +649,8 @@ void CFX_SAXReader::SkipNode() {
       }
       break;
   }
-  if (iLen > 0) {
+  if (!m_SkipStack.empty())
     ParseChar(m_CurByte);
-  }
 }
 
 void CFX_SAXReader::NotifyData() {

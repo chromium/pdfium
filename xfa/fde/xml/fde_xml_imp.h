@@ -243,7 +243,7 @@ class CFDE_BlockBuffer {
                                      int32_t& iInnerIndex) const;
   void ClearBuffer();
 
-  CFX_ArrayTemplate<wchar_t*> m_BlockArray;
+  std::vector<std::unique_ptr<wchar_t, FxFreeDeleter>> m_BlockArray;
   int32_t m_iDataLength;
   int32_t m_iBufferSize;
   int32_t m_iAllocStep;
