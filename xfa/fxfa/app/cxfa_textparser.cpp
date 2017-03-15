@@ -43,21 +43,13 @@ enum class TabStopStatus {
 CXFA_TextParser::CXFA_TextParser()
     : m_bParsed(false), m_cssInitialized(false) {}
 
-CXFA_TextParser::~CXFA_TextParser() {
-  for (auto& pair : m_mapXMLNodeToParseContext) {
-    if (pair.second)
-      delete pair.second;
-  }
-}
+CXFA_TextParser::~CXFA_TextParser() {}
 
 void CXFA_TextParser::Reset() {
-  for (auto& pair : m_mapXMLNodeToParseContext) {
-    if (pair.second)
-      delete pair.second;
-  }
   m_mapXMLNodeToParseContext.clear();
   m_bParsed = false;
 }
+
 void CXFA_TextParser::InitCSSData(CXFA_TextProvider* pTextProvider) {
   if (!pTextProvider)
     return;
@@ -67,12 +59,8 @@ void CXFA_TextParser::InitCSSData(CXFA_TextProvider* pTextProvider) {
     CFGAS_FontMgr* pFontMgr = pDoc->GetApp()->GetFDEFontMgr();
     ASSERT(pFontMgr);
     m_pSelector = pdfium::MakeUnique<CFDE_CSSStyleSelector>(pFontMgr);
-    float fFontSize = 10;
     CXFA_Font font = pTextProvider->GetFontNode();
-    if (font) {
-      fFontSize = font.GetFontSize();
-    }
-    m_pSelector->SetDefFontSize(fFontSize);
+    m_pSelector->SetDefFontSize(font ? font.GetFontSize() : 10.0f);
   }
 
   if (m_cssInitialized)
@@ -191,7 +179,7 @@ CFX_RetainPtr<CFDE_CSSComputedStyle> CXFA_TextParser::ComputeStyle(
   if (it == m_mapXMLNodeToParseContext.end())
     return nullptr;
 
-  CXFA_TextParseContext* pContext = it->second;
+  CXFA_TextParseContext* pContext = it->second.get();
   if (!pContext)
     return nullptr;
 
@@ -231,7 +219,7 @@ void CXFA_TextParser::ParseRichText(CFDE_XMLNode* pXMLNode,
   CFX_RetainPtr<CFDE_CSSComputedStyle> pNewStyle;
   if ((tagProvider->GetTagName() != L"body") ||
       (tagProvider->GetTagName() != L"html")) {
-    CXFA_TextParseContext* pTextContext = new CXFA_TextParseContext;
+    auto pTextContext = pdfium::MakeUnique<CXFA_TextParseContext>();
     FDE_CSSDisplay eDisplay = FDE_CSSDisplay::Inline;
     if (!tagProvider->m_bContent) {
       auto declArray =
@@ -247,7 +235,7 @@ void CXFA_TextParser::ParseRichText(CFDE_XMLNode* pXMLNode,
       eDisplay = pNewStyle->GetDisplay();
     }
     pTextContext->SetDisplay(eDisplay);
-    m_mapXMLNodeToParseContext[pXMLNode] = pTextContext;
+    m_mapXMLNodeToParseContext[pXMLNode] = std::move(pTextContext);
   }
 
   for (CFDE_XMLNode* pXMLChild =
@@ -383,7 +371,7 @@ int32_t CXFA_TextParser::GetHorScale(CXFA_TextProvider* pTextProvider,
     while (pXMLNode) {
       auto it = m_mapXMLNodeToParseContext.find(pXMLNode);
       if (it != m_mapXMLNodeToParseContext.end()) {
-        CXFA_TextParseContext* pContext = it->second;
+        CXFA_TextParseContext* pContext = it->second.get();
         if (pContext && pContext->m_pParentStyle &&
             pContext->m_pParentStyle->GetCustomStyle(
                 L"xfa-font-horizontal-scale", wsValue)) {
@@ -547,7 +535,7 @@ bool CXFA_TextParser::GetEmbbedObj(CXFA_TextProvider* pTextProvider,
 CXFA_TextParseContext* CXFA_TextParser::GetParseContextFromMap(
     CFDE_XMLNode* pXMLNode) {
   auto it = m_mapXMLNodeToParseContext.find(pXMLNode);
-  return it != m_mapXMLNodeToParseContext.end() ? it->second : nullptr;
+  return it != m_mapXMLNodeToParseContext.end() ? it->second.get() : nullptr;
 }
 
 bool CXFA_TextParser::GetTabstops(CFDE_CSSComputedStyle* pStyle,

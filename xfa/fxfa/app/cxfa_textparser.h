@@ -94,10 +94,11 @@ class CXFA_TextParser {
   CFX_RetainPtr<CFDE_CSSComputedStyle> CreateStyle(
       CFDE_CSSComputedStyle* pParentStyle);
 
-  std::unique_ptr<CFDE_CSSStyleSelector> m_pSelector;
-  std::map<CFDE_XMLNode*, CXFA_TextParseContext*> m_mapXMLNodeToParseContext;
   bool m_bParsed;
   bool m_cssInitialized;
+  std::unique_ptr<CFDE_CSSStyleSelector> m_pSelector;
+  std::map<CFDE_XMLNode*, std::unique_ptr<CXFA_TextParseContext>>
+      m_mapXMLNodeToParseContext;
 };
 
 #endif  // XFA_FXFA_APP_CXFA_TEXTPARSER_H_
