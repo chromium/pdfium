@@ -8,6 +8,7 @@
 #define FPDFSDK_FXEDIT_FXET_LIST_H_
 
 #include <memory>
+#include <vector>
 
 #include "core/fxcrt/fx_coordinates.h"
 #include "fpdfsdk/fxedit/fx_edit.h"
@@ -168,21 +169,6 @@ class CFX_ListContainer {
   CLST_Rect m_rcContent;  // positive forever!
 };
 
-template <class TYPE>
-class CLST_ArrayTemplate : public CFX_ArrayTemplate<TYPE> {
- public:
-  bool IsEmpty() { return CFX_ArrayTemplate<TYPE>::GetSize() <= 0; }
-  TYPE GetAt(int32_t nIndex) const {
-    if (nIndex >= 0 && nIndex < CFX_ArrayTemplate<TYPE>::GetSize())
-      return CFX_ArrayTemplate<TYPE>::GetAt(nIndex);
-    return nullptr;
-  }
-  void RemoveAt(int32_t nIndex) {
-    if (nIndex >= 0 && nIndex < CFX_ArrayTemplate<TYPE>::GetSize())
-      CFX_ArrayTemplate<TYPE>::RemoveAt(nIndex);
-  }
-};
-
 struct CPLST_Select_Item {
   CPLST_Select_Item(int32_t other_nItemIndex, int32_t other_nState) {
     nItemIndex = other_nItemIndex;
@@ -295,7 +281,7 @@ class CFX_ListCtrl : protected CFX_ListContainer {
   int32_t m_nFootIndex;      // for multiple
   bool m_bCtrlSel;           // for multiple
   int32_t m_nCaretIndex;     // for multiple
-  CLST_ArrayTemplate<CFX_ListItem*> m_aListItems;
+  std::vector<std::unique_ptr<CFX_ListItem>> m_ListItems;
   float m_fFontSize;
   IPVT_FontMap* m_pFontMap;
   bool m_bMultiple;
