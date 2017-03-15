@@ -507,7 +507,7 @@ void CFX_RTFBreak::EndBreak_BidiLine(std::deque<FX_TPO>* tpos,
       if (i == 0)
         pTC->m_iBidiLevel = 1;
     }
-    FX_BidiLine(chars, iBidiNum + 1, 0);
+    FX_BidiLine(&chars, iBidiNum + 1);
   } else {
     for (int32_t i = 0; i < iCount; ++i) {
       pTC = &chars[i];

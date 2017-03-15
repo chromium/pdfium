@@ -17,6 +17,9 @@ class CXFA_LocaleValue;
 class CXFA_Node;
 class CXFA_WidgetData;
 
+double XFA_GetFractionalScale(uint32_t idx);
+int XFA_GetMaxFractionalScale();
+
 bool XFA_FDEExtension_ResolveNamespaceQualifier(
     CFDE_XMLElement* pNode,
     const CFX_WideStringC& wsQualifier,

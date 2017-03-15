@@ -44,22 +44,29 @@ CPDF_Type3Font* CPDF_Type3Font::AsType3Font() {
 bool CPDF_Type3Font::Load() {
   m_pFontResources = m_pFontDict->GetDictFor("Resources");
   CPDF_Array* pMatrix = m_pFontDict->GetArrayFor("FontMatrix");
-  float xscale = 1.0f, yscale = 1.0f;
+  float xscale = 1.0f;
+  float yscale = 1.0f;
   if (pMatrix) {
     m_FontMatrix = pMatrix->GetMatrix();
     xscale = m_FontMatrix.a;
     yscale = m_FontMatrix.d;
   }
+
   CPDF_Array* pBBox = m_pFontDict->GetArrayFor("FontBBox");
   if (pBBox) {
-    m_FontBBox.left = (int32_t)(pBBox->GetNumberAt(0) * xscale * 1000);
-    m_FontBBox.bottom = (int32_t)(pBBox->GetNumberAt(1) * yscale * 1000);
-    m_FontBBox.right = (int32_t)(pBBox->GetNumberAt(2) * xscale * 1000);
-    m_FontBBox.top = (int32_t)(pBBox->GetNumberAt(3) * yscale * 1000);
+    m_FontBBox.left =
+        static_cast<int32_t>(pBBox->GetNumberAt(0) * xscale * 1000);
+    m_FontBBox.bottom =
+        static_cast<int32_t>(pBBox->GetNumberAt(1) * yscale * 1000);
+    m_FontBBox.right =
+        static_cast<int32_t>(pBBox->GetNumberAt(2) * xscale * 1000);
+    m_FontBBox.top =
+        static_cast<int32_t>(pBBox->GetNumberAt(3) * yscale * 1000);
   }
+
   int StartChar = m_pFontDict->GetIntegerFor("FirstChar");
   CPDF_Array* pWidthArray = m_pFontDict->GetArrayFor("Widths");
-  if (pWidthArray && (StartChar >= 0 && StartChar < 256)) {
+  if (pWidthArray && StartChar >= 0 && StartChar < 256) {
     size_t count = pWidthArray->GetCount();
     if (count > 256)
       count = 256;
@@ -113,11 +120,12 @@ CPDF_Type3Char* CPDF_Type3Font::LoadChar(uint32_t charcode) {
     return it->second.get();
 
   float scale = m_FontMatrix.GetXUnit();
-  pNewChar->m_Width = (int32_t)(pNewChar->m_Width * scale + 0.5f);
+  pNewChar->m_Width = static_cast<int32_t>(pNewChar->m_Width * scale + 0.5f);
   FX_RECT& rcBBox = pNewChar->m_BBox;
-  CFX_FloatRect char_rect(
-      (float)rcBBox.left / 1000.0f, (float)rcBBox.bottom / 1000.0f,
-      (float)rcBBox.right / 1000.0f, (float)rcBBox.top / 1000.0f);
+  CFX_FloatRect char_rect(static_cast<float>(rcBBox.left) / 1000.0f,
+                          static_cast<float>(rcBBox.bottom) / 1000.0f,
+                          static_cast<float>(rcBBox.right) / 1000.0f,
+                          static_cast<float>(rcBBox.top) / 1000.0f);
   if (rcBBox.right <= rcBBox.left || rcBBox.bottom >= rcBBox.top)
     char_rect = pNewChar->m_pForm->CalcBoundingBox();
 

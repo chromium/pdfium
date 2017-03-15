@@ -17,22 +17,6 @@
 #include "xfa/fxfa/parser/xfa_object.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
 
-static const double fraction_scales[] = {0.1,
-                                         0.01,
-                                         0.001,
-                                         0.0001,
-                                         0.00001,
-                                         0.000001,
-                                         0.0000001,
-                                         0.00000001,
-                                         0.000000001,
-                                         0.0000000001,
-                                         0.00000000001,
-                                         0.000000000001,
-                                         0.0000000000001,
-                                         0.00000000000001,
-                                         0.000000000000001,
-                                         0.0000000000000001};
 CXFA_LocaleValue::CXFA_LocaleValue() {
   m_dwType = XFA_VT_NULL;
   m_bValid = true;
@@ -248,10 +232,10 @@ float CXFA_LocaleValue::GetNum() const {
     if (cc < len && str[cc] == '.') {
       cc++;
       while (cc < len) {
-        fraction += fraction_scales[scale] * (str[cc] - '0');
+        fraction += XFA_GetFractionalScale(scale) * (str[cc] - '0');
         scale++;
         cc++;
-        if (scale == sizeof fraction_scales / sizeof(double) ||
+        if (scale == XFA_GetMaxFractionalScale() ||
             !FXSYS_isDecimalDigit(str[cc])) {
           break;
         }
@@ -296,18 +280,18 @@ double CXFA_LocaleValue::GetDoubleNum() const {
     bool bNegative = false, bExpSign = false;
     const wchar_t* str = m_wsValue.c_str();
     int len = m_wsValue.GetLength();
-    while (FXSYS_iswspace(str[cc]) && cc < len) {
+    while (FXSYS_iswspace(str[cc]) && cc < len)
       cc++;
-    }
-    if (cc >= len) {
+
+    if (cc >= len)
       return 0;
-    }
     if (str[0] == '+') {
       cc++;
     } else if (str[0] == '-') {
       bNegative = true;
       cc++;
     }
+
     int32_t nIntegralLen = 0;
     while (cc < len) {
       if (str[cc] == '.' || !FXSYS_isDecimalDigit(str[cc]) ||
@@ -324,15 +308,15 @@ double CXFA_LocaleValue::GetDoubleNum() const {
     if (cc < len && str[cc] == '.') {
       cc++;
       while (cc < len) {
-        fraction += fraction_scales[scale] * (str[cc] - '0');
+        fraction += XFA_GetFractionalScale(scale) * (str[cc] - '0');
         scale++;
         cc++;
-        if (scale == sizeof fraction_scales / sizeof(double) ||
+        if (scale == XFA_GetMaxFractionalScale() ||
             !FXSYS_isDecimalDigit(str[cc])) {
           break;
         }
       }
-      dwFractional = (uint32_t)(fraction * 4294967296.0);
+      dwFractional = static_cast<uint32_t>(fraction * 4294967296.0);
     }
     if (cc < len && (str[cc] == 'E' || str[cc] == 'e')) {
       cc++;
@@ -345,23 +329,25 @@ double CXFA_LocaleValue::GetDoubleNum() const {
         }
       }
       while (cc < len) {
-        if (str[cc] == '.' || !FXSYS_isDecimalDigit(str[cc])) {
+        if (str[cc] == '.' || !FXSYS_isDecimalDigit(str[cc]))
           break;
-        }
+
         nExponent = nExponent * 10 + str[cc] - '0';
         cc++;
       }
       nExponent = bExpSign ? -nExponent : nExponent;
     }
-    double dValue = (dwFractional / 4294967296.0);
+
+    double dValue = dwFractional / 4294967296.0;
     dValue = nIntegral + (nIntegral >= 0 ? dValue : -dValue);
-    if (nExponent != 0) {
-      dValue *= FXSYS_pow(10, (float)nExponent);
-    }
+    if (nExponent != 0)
+      dValue *= FXSYS_pow(10, static_cast<float>(nExponent));
+
     return dValue;
   }
   return 0;
 }
+
 CFX_Unitime CXFA_LocaleValue::GetDate() const {
   if (m_bValid && m_dwType == XFA_VT_DATE) {
     CFX_Unitime dt;
@@ -370,6 +356,7 @@ CFX_Unitime CXFA_LocaleValue::GetDate() const {
   }
   return CFX_Unitime();
 }
+
 CFX_Unitime CXFA_LocaleValue::GetTime() const {
   if (m_bValid && m_dwType == XFA_VT_TIME) {
     CFX_Unitime dt(0);
@@ -380,6 +367,7 @@ CFX_Unitime CXFA_LocaleValue::GetTime() const {
   }
   return CFX_Unitime();
 }
+
 CFX_Unitime CXFA_LocaleValue::GetDateTime() const {
   if (m_bValid && m_dwType == XFA_VT_DATETIME) {
     int32_t index = m_wsValue.Find('T');
@@ -393,39 +381,46 @@ CFX_Unitime CXFA_LocaleValue::GetDateTime() const {
   }
   return CFX_Unitime();
 }
+
 bool CXFA_LocaleValue::SetText(const CFX_WideString& wsText) {
   m_dwType = XFA_VT_TEXT;
   m_wsValue = wsText;
   return true;
 }
+
 bool CXFA_LocaleValue::SetText(const CFX_WideString& wsText,
                                const CFX_WideString& wsFormat,
                                IFX_Locale* pLocale) {
   m_dwType = XFA_VT_TEXT;
   return m_bValid = ParsePatternValue(wsText, wsFormat, pLocale);
 }
+
 bool CXFA_LocaleValue::SetNum(float fNum) {
   m_dwType = XFA_VT_FLOAT;
-  m_wsValue.Format(L"%.8g", (double)fNum);
+  m_wsValue.Format(L"%.8g", static_cast<double>(fNum));
   return true;
 }
+
 bool CXFA_LocaleValue::SetNum(const CFX_WideString& wsNum,
                               const CFX_WideString& wsFormat,
                               IFX_Locale* pLocale) {
   m_dwType = XFA_VT_FLOAT;
   return m_bValid = ParsePatternValue(wsNum, wsFormat, pLocale);
 }
+
 bool CXFA_LocaleValue::SetDate(const CFX_Unitime& d) {
   m_dwType = XFA_VT_DATE;
   m_wsValue.Format(L"%04d-%02d-%02d", d.GetYear(), d.GetMonth(), d.GetDay());
   return true;
 }
+
 bool CXFA_LocaleValue::SetDate(const CFX_WideString& wsDate,
                                const CFX_WideString& wsFormat,
                                IFX_Locale* pLocale) {
   m_dwType = XFA_VT_DATE;
   return m_bValid = ParsePatternValue(wsDate, wsFormat, pLocale);
 }
+
 bool CXFA_LocaleValue::SetTime(const CFX_Unitime& t) {
   m_dwType = XFA_VT_TIME;
   m_wsValue.Format(L"%02d:%02d:%02d", t.GetHour(), t.GetMinute(),
@@ -437,12 +432,14 @@ bool CXFA_LocaleValue::SetTime(const CFX_Unitime& t) {
   }
   return true;
 }
+
 bool CXFA_LocaleValue::SetTime(const CFX_WideString& wsTime,
                                const CFX_WideString& wsFormat,
                                IFX_Locale* pLocale) {
   m_dwType = XFA_VT_TIME;
   return m_bValid = ParsePatternValue(wsTime, wsFormat, pLocale);
 }
+
 bool CXFA_LocaleValue::SetDateTime(const CFX_Unitime& dt) {
   m_dwType = XFA_VT_DATETIME;
   m_wsValue.Format(L"%04d-%02d-%02dT%02d:%02d:%02d", dt.GetYear(),
@@ -455,6 +452,7 @@ bool CXFA_LocaleValue::SetDateTime(const CFX_Unitime& dt) {
   }
   return true;
 }
+
 bool CXFA_LocaleValue::SetDateTime(const CFX_WideString& wsDateTime,
                                    const CFX_WideString& wsFormat,
                                    IFX_Locale* pLocale) {

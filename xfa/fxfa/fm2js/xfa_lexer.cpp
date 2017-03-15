@@ -62,9 +62,9 @@ inline bool XFA_FMDChar::isAvalid(const wchar_t* p, bool flag) {
 inline bool XFA_FMDChar::string2number(const wchar_t* s,
                                        double* pValue,
                                        const wchar_t*& pEnd) {
-  if (s) {
-    *pValue = wcstod((wchar_t*)s, (wchar_t**)&pEnd);
-  }
+  if (s)
+    *pValue = wcstod(const_cast<wchar_t*>(s), const_cast<wchar_t**>(&pEnd));
+
   return 0;
 }
 
@@ -404,12 +404,11 @@ uint32_t CXFA_FMLexer::Number(CXFA_FMToken* t,
                               const wchar_t* p,
                               const wchar_t*& pEnd) {
   double number = 0;
-  if (XFA_FMDChar::string2number(p, &number, pEnd)) {
+  if (XFA_FMDChar::string2number(p, &number, pEnd))
     return 1;
-  }
-  if (pEnd && XFA_FMDChar::isAlpha(pEnd)) {
+  if (pEnd && XFA_FMDChar::isAlpha(pEnd))
     return 1;
-  }
+
   t->m_wstring = CFX_WideStringC(p, (pEnd - p));
   return 0;
 }

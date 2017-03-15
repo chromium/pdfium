@@ -71,21 +71,19 @@ double WideStringToDouble(const CFX_WideString& wsStringVal) {
   if (cc < len && str[cc] == '.') {
     cc++;
     while (cc < len) {
-      fraction += fraction_scales[scale] * (str[cc] - '0');
+      fraction += XFA_GetFractionalScale(scale) * (str[cc] - '0');
       scale++;
       cc++;
-      if (cc == len) {
+      if (cc == len)
         break;
-      }
-      if (scale == sizeof(fraction_scales) / sizeof(double) || str[cc] == 'E' ||
+      if (scale == XFA_GetMaxFractionalScale() || str[cc] == 'E' ||
           str[cc] == 'e') {
         break;
       }
-      if (!FXSYS_isDecimalDigit(str[cc])) {
+      if (!FXSYS_isDecimalDigit(str[cc]))
         return 0;
-      }
     }
-    dwFractional = (uint32_t)(fraction * 4294967296.0);
+    dwFractional = static_cast<uint32_t>(fraction * 4294967296.0);
   }
   if (cc < len && (str[cc] == 'E' || str[cc] == 'e')) {
     cc++;
@@ -98,23 +96,32 @@ double WideStringToDouble(const CFX_WideString& wsStringVal) {
       }
     }
     while (cc < len) {
-      if (str[cc] == '.' || !FXSYS_isDecimalDigit(str[cc])) {
+      if (str[cc] == '.' || !FXSYS_isDecimalDigit(str[cc]))
         return 0;
-      }
+
       nExponent = nExponent * 10 + str[cc] - '0';
       cc++;
     }
     nExponent = bExpSign ? -nExponent : nExponent;
   }
-  double dValue = (dwFractional / 4294967296.0);
+
+  double dValue = dwFractional / 4294967296.0;
   dValue = nIntegral + (nIntegral >= 0 ? dValue : -dValue);
-  if (nExponent != 0) {
-    dValue *= FXSYS_pow(10, (float)nExponent);
-  }
+  if (nExponent != 0)
+    dValue *= FXSYS_pow(10, static_cast<float>(nExponent));
+
   return dValue;
 }
 
 }  // namespace
+
+double XFA_GetFractionalScale(uint32_t idx) {
+  return fraction_scales[idx];
+}
+
+int XFA_GetMaxFractionalScale() {
+  return FX_ArraySize(fraction_scales);
+}
 
 CXFA_LocaleValue XFA_GetLocaleValue(CXFA_WidgetData* pWidgetData) {
   CXFA_Node* pNodeValue =
