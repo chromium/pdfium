@@ -117,8 +117,10 @@ class CPDF_PSOP {
     ASSERT(m_op != PSOP_PROC);
   }
   explicit CPDF_PSOP(float value) : m_op(PSOP_CONST), m_value(value) {}
-  explicit CPDF_PSOP(std::unique_ptr<CPDF_PSProc> proc)
-      : m_op(PSOP_PROC), m_value(0), m_proc(std::move(proc)) {}
+  CPDF_PSOP()
+      : m_op(PSOP_PROC),
+        m_value(0),
+        m_proc(pdfium::MakeUnique<CPDF_PSProc>()) {}
 
   float GetFloatValue() const {
     if (m_op == PSOP_CONST)
@@ -180,29 +182,23 @@ bool CPDF_PSProc::Execute(CPDF_PSEngine* pEngine) {
   return true;
 }
 
-CPDF_PSEngine::CPDF_PSEngine() {
-  m_StackCount = 0;
-}
+CPDF_PSEngine::CPDF_PSEngine() : m_StackCount(0) {}
+
 CPDF_PSEngine::~CPDF_PSEngine() {}
+
 void CPDF_PSEngine::Push(float v) {
-  if (m_StackCount == PSENGINE_STACKSIZE) {
-    return;
-  }
-  m_Stack[m_StackCount++] = v;
+  if (m_StackCount < PSENGINE_STACKSIZE)
+    m_Stack[m_StackCount++] = v;
 }
+
 float CPDF_PSEngine::Pop() {
-  if (m_StackCount == 0) {
-    return 0;
-  }
-  return m_Stack[--m_StackCount];
+  return m_StackCount > 0 ? m_Stack[--m_StackCount] : 0;
 }
+
 bool CPDF_PSEngine::Parse(const char* str, int size) {
-  CPDF_SimpleParser parser((uint8_t*)str, size);
+  CPDF_SimpleParser parser(reinterpret_cast<const uint8_t*>(str), size);
   CFX_ByteStringC word = parser.GetWord();
-  if (word != "{") {
-    return false;
-  }
-  return m_MainProc.Parse(&parser, 0);
+  return word == "{" ? m_MainProc.Parse(&parser, 0) : false;
 }
 
 bool CPDF_PSProc::Parse(CPDF_SimpleParser* parser, int depth) {
@@ -211,34 +207,29 @@ bool CPDF_PSProc::Parse(CPDF_SimpleParser* parser, int depth) {
 
   while (1) {
     CFX_ByteStringC word = parser->GetWord();
-    if (word.IsEmpty()) {
+    if (word.IsEmpty())
       return false;
-    }
-    if (word == "}") {
+
+    if (word == "}")
       return true;
-    }
+
     if (word == "{") {
-      std::unique_ptr<CPDF_PSProc> proc(new CPDF_PSProc);
-      std::unique_ptr<CPDF_PSOP> op(new CPDF_PSOP(std::move(proc)));
-      m_Operators.push_back(std::move(op));
-      if (!m_Operators.back()->GetProc()->Parse(parser, depth + 1)) {
+      m_Operators.push_back(pdfium::MakeUnique<CPDF_PSOP>());
+      if (!m_Operators.back()->GetProc()->Parse(parser, depth + 1))
         return false;
-      }
-    } else {
-      bool found = false;
-      for (const PDF_PSOpName& op_name : kPsOpNames) {
-        if (word == CFX_ByteStringC(op_name.name)) {
-          std::unique_ptr<CPDF_PSOP> op(new CPDF_PSOP(op_name.op));
-          m_Operators.push_back(std::move(op));
-          found = true;
-          break;
-        }
-      }
-      if (!found) {
-        std::unique_ptr<CPDF_PSOP> op(new CPDF_PSOP(FX_atof(word)));
-        m_Operators.push_back(std::move(op));
+      continue;
+    }
+
+    std::unique_ptr<CPDF_PSOP> op;
+    for (const PDF_PSOpName& op_name : kPsOpNames) {
+      if (word == CFX_ByteStringC(op_name.name)) {
+        op = pdfium::MakeUnique<CPDF_PSOP>(op_name.op);
+        break;
       }
     }
+    if (!op)
+      op = pdfium::MakeUnique<CPDF_PSOP>(FX_atof(word));
+    m_Operators.push_back(std::move(op));
   }
 }
 
@@ -611,18 +602,19 @@ CPDF_ExpIntFunc::~CPDF_ExpIntFunc() {
   FX_Free(m_pBeginValues);
   FX_Free(m_pEndValues);
 }
+
 bool CPDF_ExpIntFunc::v_Init(CPDF_Object* pObj) {
   CPDF_Dictionary* pDict = pObj->GetDict();
-  if (!pDict) {
+  if (!pDict)
     return false;
-  }
+
   CPDF_Array* pArray0 = pDict->GetArrayFor("C0");
   if (m_nOutputs == 0) {
     m_nOutputs = 1;
-    if (pArray0) {
+    if (pArray0)
       m_nOutputs = pArray0->GetCount();
-    }
   }
+
   CPDF_Array* pArray1 = pDict->GetArrayFor("C1");
   m_pBeginValues = FX_Alloc2D(float, m_nOutputs, 2);
   m_pEndValues = FX_Alloc2D(float, m_nOutputs, 2);
@@ -630,20 +622,22 @@ bool CPDF_ExpIntFunc::v_Init(CPDF_Object* pObj) {
     m_pBeginValues[i] = pArray0 ? pArray0->GetFloatAt(i) : 0.0f;
     m_pEndValues[i] = pArray1 ? pArray1->GetFloatAt(i) : 1.0f;
   }
+
   m_Exponent = pDict->GetFloatFor("N");
   m_nOrigOutputs = m_nOutputs;
-  if (m_nOutputs && m_nInputs > INT_MAX / m_nOutputs) {
+  if (m_nOutputs && m_nInputs > INT_MAX / m_nOutputs)
     return false;
-  }
+
   m_nOutputs *= m_nInputs;
   return true;
 }
+
 bool CPDF_ExpIntFunc::v_Call(float* inputs, float* results) const {
   for (uint32_t i = 0; i < m_nInputs; i++)
     for (uint32_t j = 0; j < m_nOrigOutputs; j++) {
       results[i * m_nOrigOutputs + j] =
           m_pBeginValues[j] +
-          (float)FXSYS_pow(inputs[i], m_Exponent) *
+          FXSYS_pow(inputs[i], m_Exponent) *
               (m_pEndValues[j] - m_pBeginValues[j]);
     }
   return true;
