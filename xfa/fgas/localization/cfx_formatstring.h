@@ -1,34 +1,29 @@
-// Copyright 2014 PDFium Authors. All rights reserved.
+// Copyright 2017 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FGAS_LOCALIZATION_FGAS_LOCALEIMP_H_
-#define XFA_FGAS_LOCALIZATION_FGAS_LOCALEIMP_H_
+#ifndef XFA_FGAS_LOCALIZATION_CFX_FORMATSTRING_H_
+#define XFA_FGAS_LOCALIZATION_CFX_FORMATSTRING_H_
 
 #include <vector>
 
 #include "xfa/fgas/localization/fgas_locale.h"
-
-class CFX_LCNumeric;
+#include "xfa/fxfa/parser/xfa_localemgr.h"
 
 class CFX_FormatString {
  public:
-  CFX_FormatString(IFX_LocaleMgr* pLocaleMgr, bool bUseLCID);
+  explicit CFX_FormatString(CXFA_LocaleMgr* pLocaleMgr);
   ~CFX_FormatString();
 
   void SplitFormatString(const CFX_WideString& wsFormatString,
                          std::vector<CFX_WideString>& wsPatterns);
   FX_LOCALECATEGORY GetCategory(const CFX_WideString& wsPattern);
-  uint16_t GetLCID(const CFX_WideString& wsPattern);
   CFX_WideString GetLocaleName(const CFX_WideString& wsPattern);
   bool ParseText(const CFX_WideString& wsSrcText,
                  const CFX_WideString& wsPattern,
                  CFX_WideString& wsValue);
-  bool ParseNum(const CFX_WideString& wsSrcNum,
-                const CFX_WideString& wsPattern,
-                float& fValue);
   bool ParseNum(const CFX_WideString& wsSrcNum,
                 const CFX_WideString& wsPattern,
                 CFX_WideString& wsValue);
@@ -46,23 +41,14 @@ class CFX_FormatString {
   bool FormatNum(const CFX_WideString& wsSrcNum,
                  const CFX_WideString& wsPattern,
                  CFX_WideString& wsOutput);
-  bool FormatNum(float fNum,
-                 const CFX_WideString& wsPattern,
-                 CFX_WideString& wsOutput);
-  bool FormatDateTime(const CFX_WideString& wsSrcDateTime,
-                      const CFX_WideString& wsPattern,
-                      CFX_WideString& wsOutput);
   bool FormatDateTime(const CFX_WideString& wsSrcDateTime,
                       const CFX_WideString& wsPattern,
                       CFX_WideString& wsOutput,
                       FX_DATETIMETYPE eDateTimeType);
-  bool FormatDateTime(const CFX_Unitime& dt,
-                      const CFX_WideString& wsPattern,
-                      CFX_WideString& wsOutput);
   bool FormatZero(const CFX_WideString& wsPattern, CFX_WideString& wsOutput);
   bool FormatNull(const CFX_WideString& wsPattern, CFX_WideString& wsOutput);
 
- protected:
+ private:
   IFX_Locale* GetTextFormat(const CFX_WideString& wsPattern,
                             const CFX_WideStringC& wsCategory,
                             CFX_WideString& wsPurgePattern);
@@ -73,17 +59,13 @@ class CFX_FormatString {
   bool FormatStrNum(const CFX_WideStringC& wsInputNum,
                     const CFX_WideString& wsPattern,
                     CFX_WideString& wsOutput);
-  bool FormatLCNumeric(CFX_LCNumeric& lcNum,
-                       const CFX_WideString& wsPattern,
-                       CFX_WideString& wsOutput);
   FX_DATETIMETYPE GetDateTimeFormat(const CFX_WideString& wsPattern,
                                     IFX_Locale*& pLocale,
                                     CFX_WideString& wsDatePattern,
                                     CFX_WideString& wsTimePattern);
   IFX_Locale* GetPatternLocale(const CFX_WideString& wsLocale);
 
-  IFX_LocaleMgr* m_pLocaleMgr;
-  bool m_bUseLCID;
+  CXFA_LocaleMgr* m_pLocaleMgr;
 };
 
-#endif  // XFA_FGAS_LOCALIZATION_FGAS_LOCALEIMP_H_
+#endif  // XFA_FGAS_LOCALIZATION_CFX_FORMATSTRING_H_

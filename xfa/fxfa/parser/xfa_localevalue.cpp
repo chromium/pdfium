@@ -11,7 +11,7 @@
 #include "core/fxcrt/fx_ext.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
-#include "xfa/fgas/localization/fgas_localeimp.h"
+#include "xfa/fgas/localization/cfx_formatstring.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/xfa_localemgr.h"
 #include "xfa/fxfa/parser/xfa_object.h"
@@ -91,7 +91,7 @@ bool CXFA_LocaleValue::ValidateValue(const CFX_WideString& wsValue,
   if (pLocale)
     m_pLocaleMgr->SetDefLocale(pLocale);
 
-  auto pFormat = pdfium::MakeUnique<CFX_FormatString>(m_pLocaleMgr, false);
+  auto pFormat = pdfium::MakeUnique<CFX_FormatString>(m_pLocaleMgr);
   std::vector<CFX_WideString> wsPatterns;
   pFormat->SplitFormatString(wsPattern, wsPatterns);
 
@@ -464,7 +464,7 @@ bool CXFA_LocaleValue::FormatPatterns(CFX_WideString& wsResult,
                                       const CFX_WideString& wsFormat,
                                       IFX_Locale* pLocale,
                                       XFA_VALUEPICTURE eValueType) const {
-  auto pFormat = pdfium::MakeUnique<CFX_FormatString>(m_pLocaleMgr, false);
+  auto pFormat = pdfium::MakeUnique<CFX_FormatString>(m_pLocaleMgr);
   std::vector<CFX_WideString> wsPatterns;
   pFormat->SplitFormatString(wsFormat, wsPatterns);
   wsResult.clear();
@@ -486,7 +486,7 @@ bool CXFA_LocaleValue::FormatSinglePattern(CFX_WideString& wsResult,
 
   wsResult.clear();
   bool bRet = false;
-  auto pFormat = pdfium::MakeUnique<CFX_FormatString>(m_pLocaleMgr, false);
+  auto pFormat = pdfium::MakeUnique<CFX_FormatString>(m_pLocaleMgr);
   FX_LOCALECATEGORY eCategory = pFormat->GetCategory(wsFormat);
   eCategory = XFA_ValugeCategory(eCategory, m_dwType);
   switch (eCategory) {
@@ -793,7 +793,7 @@ bool CXFA_LocaleValue::ParsePatternValue(const CFX_WideString& wsValue,
   if (pLocale)
     m_pLocaleMgr->SetDefLocale(pLocale);
 
-  auto pFormat = pdfium::MakeUnique<CFX_FormatString>(m_pLocaleMgr, false);
+  auto pFormat = pdfium::MakeUnique<CFX_FormatString>(m_pLocaleMgr);
   std::vector<CFX_WideString> wsPatterns;
   pFormat->SplitFormatString(wsPattern, wsPatterns);
   bool bRet = false;

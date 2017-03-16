@@ -80,18 +80,6 @@ class IFX_Locale {
                              CFX_WideString& wsPattern) const = 0;
 };
 
-class IFX_LocaleMgr {
- public:
-  virtual ~IFX_LocaleMgr() {}
-
-  virtual uint16_t GetDefLocaleID() const = 0;
-  virtual IFX_Locale* GetDefLocale() = 0;
-  virtual IFX_Locale* GetLocaleByName(const CFX_WideString& wsLocaleName) = 0;
-
- protected:
-  virtual std::unique_ptr<IFX_Locale> GetLocale(uint16_t lcid) = 0;
-};
-
 bool FX_DateFromCanonical(const CFX_WideString& wsDate, CFX_Unitime& datetime);
 bool FX_TimeFromCanonical(const CFX_WideStringC& wsTime,
                           CFX_Unitime& datetime,
@@ -102,45 +90,28 @@ class CFX_Decimal {
   explicit CFX_Decimal(uint32_t val);
   explicit CFX_Decimal(uint64_t val);
   explicit CFX_Decimal(int32_t val);
-  explicit CFX_Decimal(int64_t val);
-  explicit CFX_Decimal(float val, uint8_t scale = 3);
+  explicit CFX_Decimal(float val, uint8_t scale);
   explicit CFX_Decimal(const CFX_WideStringC& str);
-  explicit CFX_Decimal(const CFX_ByteStringC& str);
+
   operator CFX_WideString() const;
   operator double() const;
-  bool operator==(const CFX_Decimal& val) const;
-  bool operator<=(const CFX_Decimal& val) const;
-  bool operator>=(const CFX_Decimal& val) const;
-  bool operator!=(const CFX_Decimal& val) const;
-  bool operator<(const CFX_Decimal& val) const;
-  bool operator>(const CFX_Decimal& val) const;
-  CFX_Decimal operator+(const CFX_Decimal& val) const;
-  CFX_Decimal operator-(const CFX_Decimal& val) const;
+
   CFX_Decimal operator*(const CFX_Decimal& val) const;
   CFX_Decimal operator/(const CFX_Decimal& val) const;
-  CFX_Decimal operator%(const CFX_Decimal& val) const;
+
   void SetScale(uint8_t newScale);
   uint8_t GetScale();
-  void SetAbs();
   void SetNegate();
-  void SetFloor();
-  void SetCeiling();
-  void SetTruncate();
 
- protected:
+ private:
   CFX_Decimal(uint32_t hi, uint32_t mid, uint32_t lo, bool neg, uint8_t scale);
-  inline bool IsNotZero() const { return m_uHi || m_uMid || m_uLo; }
-  inline int8_t Compare(const CFX_Decimal& val) const;
-  inline void Swap(CFX_Decimal& val);
-  inline void FloorOrCeil(bool bFloor);
-  CFX_Decimal AddOrMinus(const CFX_Decimal& val, bool isAdding) const;
-  CFX_Decimal Multiply(const CFX_Decimal& val) const;
-  CFX_Decimal Divide(const CFX_Decimal& val) const;
-  CFX_Decimal Modulus(const CFX_Decimal& val) const;
-  uint32_t m_uFlags;
+  bool IsNotZero() const { return m_uHi || m_uMid || m_uLo; }
+  void Swap(CFX_Decimal& val);
+
   uint32_t m_uHi;
   uint32_t m_uLo;
   uint32_t m_uMid;
+  uint32_t m_uFlags;
 };
 
 #endif  // XFA_FGAS_LOCALIZATION_FGAS_LOCALE_H_

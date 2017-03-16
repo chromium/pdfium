@@ -33,21 +33,20 @@ class IFX_Locale;
 #define XFA_LANGID_nl_NL 0x0413
 #define XFA_LANGID_ru_RU 0x0419
 
-class CXFA_LocaleMgr : public IFX_LocaleMgr {
+class CXFA_LocaleMgr {
  public:
   CXFA_LocaleMgr(CXFA_Node* pLocaleSet, CFX_WideString wsDeflcid);
-  ~CXFA_LocaleMgr() override;
+  ~CXFA_LocaleMgr();
 
-  // IFX_LocaleMgr
-  uint16_t GetDefLocaleID() const override;
-  IFX_Locale* GetDefLocale() override;
-  IFX_Locale* GetLocaleByName(const CFX_WideString& wsLocaleName) override;
+  uint16_t GetDefLocaleID() const;
+  IFX_Locale* GetDefLocale();
+  IFX_Locale* GetLocaleByName(const CFX_WideString& wsLocaleName);
 
   void SetDefLocale(IFX_Locale* pLocale);
   CFX_WideStringC GetConfigLocaleName(CXFA_Node* pConfig);
 
- protected:
-  std::unique_ptr<IFX_Locale> GetLocale(uint16_t lcid) override;
+ private:
+  std::unique_ptr<IFX_Locale> GetLocale(uint16_t lcid);
 
   std::vector<std::unique_ptr<IFX_Locale>> m_LocaleArray;
   std::vector<std::unique_ptr<IFX_Locale>> m_XMLLocaleArray;
