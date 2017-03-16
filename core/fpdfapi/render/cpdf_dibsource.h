@@ -76,7 +76,7 @@ class CPDF_DIBSource : public CFX_DIBSource {
  private:
   bool LoadColorInfo(const CPDF_Dictionary* pFormResources,
                      const CPDF_Dictionary* pPageResources);
-  DIB_COMP_DATA* GetDecodeAndMaskArray(bool& bDefaultDecode, bool& bColorKey);
+  DIB_COMP_DATA* GetDecodeAndMaskArray(bool* bDefaultDecode, bool* bColorKey);
   void LoadJpxBitmap();
   void LoadPalette();
   int CreateDecoder();

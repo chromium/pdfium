@@ -428,25 +428,24 @@ bool CPDF_DIBSource::LoadColorInfo(const CPDF_Dictionary* pFormResources,
   m_nComponents = m_pColorSpace->CountComponents();
   if (m_Family == PDFCS_ICCBASED && pCSObj->IsName()) {
     CFX_ByteString cs = pCSObj->GetString();
-    if (cs == "DeviceGray") {
+    if (cs == "DeviceGray")
       m_nComponents = 1;
-    } else if (cs == "DeviceRGB") {
+    else if (cs == "DeviceRGB")
       m_nComponents = 3;
-    } else if (cs == "DeviceCMYK") {
+    else if (cs == "DeviceCMYK")
       m_nComponents = 4;
-    }
   }
   ValidateDictParam();
-  m_pCompData = GetDecodeAndMaskArray(m_bDefaultDecode, m_bColorKey);
+  m_pCompData = GetDecodeAndMaskArray(&m_bDefaultDecode, &m_bColorKey);
   return !!m_pCompData;
 }
 
-DIB_COMP_DATA* CPDF_DIBSource::GetDecodeAndMaskArray(bool& bDefaultDecode,
-                                                     bool& bColorKey) {
-  if (!m_pColorSpace) {
+DIB_COMP_DATA* CPDF_DIBSource::GetDecodeAndMaskArray(bool* bDefaultDecode,
+                                                     bool* bColorKey) {
+  if (!m_pColorSpace)
     return nullptr;
-  }
-  DIB_COMP_DATA* pCompData = FX_Alloc(DIB_COMP_DATA, m_nComponents);
+
+  DIB_COMP_DATA* const pCompData = FX_Alloc(DIB_COMP_DATA, m_nComponents);
   int max_data = (1 << m_bpc) - 1;
   CPDF_Array* pDecode = m_pDict->GetArrayFor("Decode");
   if (pDecode) {
@@ -458,41 +457,39 @@ DIB_COMP_DATA* CPDF_DIBSource::GetDecodeAndMaskArray(bool& bDefaultDecode,
       float def_min;
       float def_max;
       m_pColorSpace->GetDefaultValue(i, &def_value, &def_min, &def_max);
-      if (m_Family == PDFCS_INDEXED) {
+      if (m_Family == PDFCS_INDEXED)
         def_max = max_data;
-      }
-      if (def_min != pCompData[i].m_DecodeMin || def_max != max) {
-        bDefaultDecode = false;
-      }
+      if (def_min != pCompData[i].m_DecodeMin || def_max != max)
+        *bDefaultDecode = false;
     }
   } else {
     for (uint32_t i = 0; i < m_nComponents; i++) {
       float def_value;
       m_pColorSpace->GetDefaultValue(i, &def_value, &pCompData[i].m_DecodeMin,
                                      &pCompData[i].m_DecodeStep);
-      if (m_Family == PDFCS_INDEXED) {
+      if (m_Family == PDFCS_INDEXED)
         pCompData[i].m_DecodeStep = max_data;
-      }
       pCompData[i].m_DecodeStep =
           (pCompData[i].m_DecodeStep - pCompData[i].m_DecodeMin) / max_data;
     }
   }
-  if (!m_pDict->KeyExist("SMask")) {
-    CPDF_Object* pMask = m_pDict->GetDirectObjectFor("Mask");
-    if (!pMask) {
-      return pCompData;
-    }
-    if (CPDF_Array* pArray = pMask->AsArray()) {
-      if (pArray->GetCount() >= m_nComponents * 2) {
-        for (uint32_t i = 0; i < m_nComponents; i++) {
-          int min_num = pArray->GetIntegerAt(i * 2);
-          int max_num = pArray->GetIntegerAt(i * 2 + 1);
-          pCompData[i].m_ColorKeyMin = std::max(min_num, 0);
-          pCompData[i].m_ColorKeyMax = std::min(max_num, max_data);
-        }
+  if (m_pDict->KeyExist("SMask"))
+    return pCompData;
+
+  CPDF_Object* pMask = m_pDict->GetDirectObjectFor("Mask");
+  if (!pMask)
+    return pCompData;
+
+  if (CPDF_Array* pArray = pMask->AsArray()) {
+    if (pArray->GetCount() >= m_nComponents * 2) {
+      for (uint32_t i = 0; i < m_nComponents; i++) {
+        int min_num = pArray->GetIntegerAt(i * 2);
+        int max_num = pArray->GetIntegerAt(i * 2 + 1);
+        pCompData[i].m_ColorKeyMin = std::max(min_num, 0);
+        pCompData[i].m_ColorKeyMax = std::min(max_num, max_data);
       }
-      bColorKey = true;
     }
+    *bColorKey = true;
   }
   return pCompData;
 }
@@ -585,7 +582,7 @@ int CPDF_DIBSource::CreateDecoder() {
             if (m_Family == PDFCS_LAB && m_nComponents != 3)
               return 0;
           }
-          m_pCompData = GetDecodeAndMaskArray(m_bDefaultDecode, m_bColorKey);
+          m_pCompData = GetDecodeAndMaskArray(&m_bDefaultDecode, &m_bColorKey);
           if (!m_pCompData)
             return 0;
         }
@@ -861,9 +858,9 @@ void CPDF_DIBSource::ValidateDictParam() {
 
 void CPDF_DIBSource::TranslateScanline24bpp(uint8_t* dest_scan,
                                             const uint8_t* src_scan) const {
-  if (m_bpc == 0) {
+  if (m_bpc == 0)
     return;
-  }
+
   unsigned int max_data = (1 << m_bpc) - 1;
   if (m_bDefaultDecode) {
     if (m_Family == PDFCS_DEVICERGB || m_Family == PDFCS_CALRGB) {
@@ -872,20 +869,20 @@ void CPDF_DIBSource::TranslateScanline24bpp(uint8_t* dest_scan,
 
       const uint8_t* src_pos = src_scan;
       switch (m_bpc) {
-        case 16:
-          for (int col = 0; col < m_Width; col++) {
-            *dest_scan++ = src_pos[4];
-            *dest_scan++ = src_pos[2];
-            *dest_scan++ = *src_pos;
-            src_pos += 6;
-          }
-          break;
         case 8:
           for (int column = 0; column < m_Width; column++) {
             *dest_scan++ = src_pos[2];
             *dest_scan++ = src_pos[1];
             *dest_scan++ = *src_pos;
             src_pos += 3;
+          }
+          break;
+        case 16:
+          for (int col = 0; col < m_Width; col++) {
+            *dest_scan++ = src_pos[4];
+            *dest_scan++ = src_pos[2];
+            *dest_scan++ = *src_pos;
+            src_pos += 6;
           }
           break;
         default:
@@ -917,9 +914,12 @@ void CPDF_DIBSource::TranslateScanline24bpp(uint8_t* dest_scan,
       return;
     }
   }
+
   CFX_FixedBufGrow<float, 16> color_values1(m_nComponents);
   float* color_values = color_values1;
-  float R = 0.0f, G = 0.0f, B = 0.0f;
+  float R = 0.0f;
+  float G = 0.0f;
+  float B = 0.0f;
   if (m_bpc == 8) {
     uint64_t src_byte_pos = 0;
     size_t dest_byte_pos = 0;
@@ -1051,29 +1051,29 @@ const uint8_t* CPDF_DIBSource::GetScanline(int line) const {
         m_pLineBuf[col] = color_index;
       }
     }
-    if (m_bColorKey) {
-      uint8_t* pDestPixel = m_pMaskedLine;
-      const uint8_t* pSrcPixel = m_pLineBuf;
-      for (int col = 0; col < m_Width; col++) {
-        uint8_t index = *pSrcPixel++;
-        if (m_pPalette) {
-          *pDestPixel++ = FXARGB_B(m_pPalette.get()[index]);
-          *pDestPixel++ = FXARGB_G(m_pPalette.get()[index]);
-          *pDestPixel++ = FXARGB_R(m_pPalette.get()[index]);
-        } else {
-          *pDestPixel++ = index;
-          *pDestPixel++ = index;
-          *pDestPixel++ = index;
-        }
-        *pDestPixel = (index < m_pCompData[0].m_ColorKeyMin ||
-                       index > m_pCompData[0].m_ColorKeyMax)
-                          ? 0xFF
-                          : 0;
-        pDestPixel++;
+    if (!m_bColorKey)
+      return m_pLineBuf;
+
+    uint8_t* pDestPixel = m_pMaskedLine;
+    const uint8_t* pSrcPixel = m_pLineBuf;
+    for (int col = 0; col < m_Width; col++) {
+      uint8_t index = *pSrcPixel++;
+      if (m_pPalette) {
+        *pDestPixel++ = FXARGB_B(m_pPalette.get()[index]);
+        *pDestPixel++ = FXARGB_G(m_pPalette.get()[index]);
+        *pDestPixel++ = FXARGB_R(m_pPalette.get()[index]);
+      } else {
+        *pDestPixel++ = index;
+        *pDestPixel++ = index;
+        *pDestPixel++ = index;
       }
-      return m_pMaskedLine;
+      *pDestPixel = (index < m_pCompData[0].m_ColorKeyMin ||
+                     index > m_pCompData[0].m_ColorKeyMax)
+                        ? 0xFF
+                        : 0;
+      pDestPixel++;
     }
-    return m_pLineBuf;
+    return m_pMaskedLine;
   }
   if (m_bColorKey) {
     if (m_nComponents == 3 && m_bpc == 8) {
@@ -1097,18 +1097,18 @@ const uint8_t* CPDF_DIBSource::GetScanline(int line) const {
     TranslateScanline24bpp(m_pLineBuf, pSrcLine);
     pSrcLine = m_pLineBuf;
   }
-  if (m_bColorKey) {
-    const uint8_t* pSrcPixel = pSrcLine;
-    uint8_t* pDestPixel = m_pMaskedLine;
-    for (int col = 0; col < m_Width; col++) {
-      *pDestPixel++ = *pSrcPixel++;
-      *pDestPixel++ = *pSrcPixel++;
-      *pDestPixel++ = *pSrcPixel++;
-      pDestPixel++;
-    }
-    return m_pMaskedLine;
+  if (!m_bColorKey)
+    return pSrcLine;
+
+  const uint8_t* pSrcPixel = pSrcLine;
+  uint8_t* pDestPixel = m_pMaskedLine;
+  for (int col = 0; col < m_Width; col++) {
+    *pDestPixel++ = *pSrcPixel++;
+    *pDestPixel++ = *pSrcPixel++;
+    *pDestPixel++ = *pSrcPixel++;
+    pDestPixel++;
   }
-  return pSrcLine;
+  return m_pMaskedLine;
 }
 
 bool CPDF_DIBSource::SkipToScanline(int line, IFX_Pause* pPause) const {
