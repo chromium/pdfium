@@ -15,7 +15,6 @@ CFX_BreakPiece::CFX_BreakPiece()
       m_iBidiLevel(0),
       m_iBidiPos(0),
       m_iFontSize(0),
-      m_iFontHeight(0),
       m_iHorizontalScale(100),
       m_iVerticalScale(100),
       m_dwIdentity(0),

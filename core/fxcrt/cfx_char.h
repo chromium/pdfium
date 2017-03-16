@@ -35,7 +35,6 @@ class CFX_Char {
   int16_t m_iBidiOrder;
   uint16_t m_wCharCode;
   int32_t m_iFontSize;
-  int32_t m_iFontHeight;
   uint32_t m_dwIdentity;
   CFX_RetainPtr<CFX_Retainable> m_pUserData;
 };

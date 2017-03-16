@@ -67,14 +67,14 @@ void CFDE_TextOut::SetStyles(uint32_t dwStyles) {
   m_dwStyles = dwStyles;
   m_dwTxtBkStyles = 0;
   if (dwStyles & FDE_TTOSTYLE_SingleLine)
-    m_dwTxtBkStyles |= FX_TXTLAYOUTSTYLE_SingleLine;
+    m_dwTxtBkStyles |= FX_LAYOUTSTYLE_SingleLine;
 
   m_pTxtBreak->SetLayoutStyles(m_dwTxtBkStyles);
 }
 
 void CFDE_TextOut::SetTabWidth(float fTabWidth) {
   ASSERT(fTabWidth > 1.0f);
-  m_pTxtBreak->SetTabWidth(fTabWidth, false);
+  m_pTxtBreak->SetTabWidth(fTabWidth);
 }
 
 void CFDE_TextOut::SetEllipsisString(const CFX_WideString& wsEllipsis) {

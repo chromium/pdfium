@@ -37,7 +37,6 @@ FDE_TXTEDTPARAMS::FDE_TXTEDTPARAMS()
       dwFontColor(0xff000000),
       fLineSpace(10.0f),
       fTabWidth(36),
-      bTabEquidistant(false),
       wDefChar(0xFEFF),
       wLineBreakChar('\n'),
       nLineEnd(0),
@@ -1001,14 +1000,14 @@ void CFDE_TxtEdtEngine::UpdatePages() {
 void CFDE_TxtEdtEngine::UpdateTxtBreak() {
   uint32_t dwStyle = m_pTextBreak->GetLayoutStyles();
   if (m_Param.dwMode & FDE_TEXTEDITMODE_MultiLines)
-    dwStyle &= ~FX_TXTLAYOUTSTYLE_SingleLine;
+    dwStyle &= ~FX_LAYOUTSTYLE_SingleLine;
   else
-    dwStyle |= FX_TXTLAYOUTSTYLE_SingleLine;
+    dwStyle |= FX_LAYOUTSTYLE_SingleLine;
 
   if (m_Param.dwLayoutStyles & FDE_TEXTEDITLAYOUT_CombText)
-    dwStyle |= FX_TXTLAYOUTSTYLE_CombText;
+    dwStyle |= FX_LAYOUTSTYLE_CombText;
   else
-    dwStyle &= ~FX_TXTLAYOUTSTYLE_CombText;
+    dwStyle &= ~FX_LAYOUTSTYLE_CombText;
 
   m_pTextBreak->SetLayoutStyles(dwStyle);
   uint32_t dwAligment = 0;
@@ -1037,7 +1036,7 @@ void CFDE_TxtEdtEngine::UpdateTxtBreak() {
   }
   m_pTextBreak->SetFont(m_Param.pFont);
   m_pTextBreak->SetFontSize(m_Param.fFontSize);
-  m_pTextBreak->SetTabWidth(m_Param.fTabWidth, m_Param.bTabEquidistant);
+  m_pTextBreak->SetTabWidth(m_Param.fTabWidth);
   m_pTextBreak->SetDefaultChar(m_Param.wDefChar);
   m_pTextBreak->SetParagraphBreakChar(m_Param.wLineBreakChar);
   m_pTextBreak->SetLineBreakTolerance(m_Param.fFontSize * 0.2f);

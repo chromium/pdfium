@@ -1236,6 +1236,8 @@ if (pdf_enable_xfa) {
       "xfa/fgas/font/cfgas_gefont.h",
       "xfa/fgas/font/fgas_fontutils.cpp",
       "xfa/fgas/font/fgas_fontutils.h",
+      "xfa/fgas/layout/cfx_break.cpp",
+      "xfa/fgas/layout/cfx_break.h",
       "xfa/fgas/layout/cfx_breakline.cpp",
       "xfa/fgas/layout/cfx_breakline.h",
       "xfa/fgas/layout/cfx_breakpiece.cpp",

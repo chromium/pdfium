@@ -15,13 +15,10 @@
 #include "core/fxge/cfx_renderdevice.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fde/cfde_txtedtpage.h"
-#include "xfa/fgas/layout/cfx_breakline.h"
+#include "xfa/fgas/layout/cfx_break.h"
 
 class CFGAS_GEFont;
 struct FDE_TEXTEDITPIECE;
-
-#define FX_TXTLAYOUTSTYLE_SingleLine 0x0200
-#define FX_TXTLAYOUTSTYLE_CombText 0x0400
 
 #define FX_TXTCHARSTYLE_ArabicShadda 0x0020
 #define FX_TXTCHARSTYLE_OddBidiLevel 0x0040
@@ -31,13 +28,6 @@ enum CFX_TxtLineAlignment {
   CFX_TxtLineAlignment_Center = 1 << 0,
   CFX_TxtLineAlignment_Right = 1 << 1,
   CFX_TxtLineAlignment_Justified = 1 << 2
-};
-
-struct FX_TPO {
-  int32_t index;
-  int32_t pos;
-
-  bool operator<(const FX_TPO& that) const { return pos < that.pos; }
 };
 
 inline bool CFX_BreakTypeNoneOrPiece(CFX_BreakType type) {
@@ -65,22 +55,12 @@ struct FX_TXTRUN {
   bool bSkipSpace;
 };
 
-class CFX_TxtBreak {
+class CFX_TxtBreak : public CFX_Break {
  public:
   CFX_TxtBreak();
-  ~CFX_TxtBreak();
+  ~CFX_TxtBreak() override;
 
   void SetLineWidth(float fLineWidth);
-  uint32_t GetLayoutStyles() const { return m_dwLayoutStyles; }
-  void SetLayoutStyles(uint32_t dwLayoutStyles);
-  void SetFont(const CFX_RetainPtr<CFGAS_GEFont>& pFont);
-  void SetFontSize(float fFontSize);
-  void SetTabWidth(float fTabWidth, bool bEquidistant);
-  void SetDefaultChar(wchar_t wch);
-  void SetParagraphBreakChar(wchar_t wch);
-  void SetLineBreakTolerance(float fTolerance);
-  void SetHorizontalScale(int32_t iScale);
-  void SetCharSpace(float fCharSpace);
   void SetAlignment(int32_t iAlignment);
   void SetCombWidth(float fCombWidth);
   CFX_BreakType EndBreak(CFX_BreakType dwStatus);
@@ -103,12 +83,11 @@ class CFX_TxtBreak {
   CFX_BreakType AppendChar_Others(CFX_Char* pCurChar);
 
  private:
-  void FontChanged();
-  void SetBreakStatus();
+  void SetBreakStatus() override;
   CFX_Char* GetLastChar(int32_t index, bool bOmitChar = true) const;
   bool HasTxtLine() const { return m_iReadyLineIndex >= 0; }
   FX_CHARTYPE GetUnifiedCharType(FX_CHARTYPE dwType) const;
-  void ResetArabicContext();
+  void ResetArabicContext() override;
   void ResetContextCharStyles();
   bool EndBreak_SplitLine(CFX_BreakLine* pNextLine, bool bAllChars);
   void EndBreak_BidiLine(std::deque<FX_TPO>* tpos, CFX_BreakType dwStatus);
@@ -123,30 +102,12 @@ class CFX_TxtBreak {
                      CFX_BreakLine* pNextLine,
                      bool bAllChars = false);
 
-  int32_t m_iLineWidth;
-  uint32_t m_dwLayoutStyles;
-  bool m_bSingleLine;
-  bool m_bCombText;
-  bool m_bEquidistant;
   int32_t m_iArabicContext;
   int32_t m_iCurArabicContext;
-  CFX_RetainPtr<CFGAS_GEFont> m_pFont;
-  int32_t m_iFontSize;
-  int32_t m_iTabWidth;
-  wchar_t m_wDefChar;
-  wchar_t m_wParagBreakChar;
-  int32_t m_iDefChar;
   int32_t m_iAlignment;
   uint32_t m_dwContextCharStyles;
   int32_t m_iCombWidth;
-  FX_CHARTYPE m_eCharType;
   int32_t m_iCurAlignment;
-  CFX_BreakLine m_TxtLine[2];
-  CFX_BreakLine* m_pCurLine;
-  int32_t m_iTolerance;
-  int32_t m_iHorScale;
-  int32_t m_iCharSpace;
-  int8_t m_iReadyLineIndex;
 };
 
 #endif  // XFA_FGAS_LAYOUT_FGAS_TEXTBREAK_H_

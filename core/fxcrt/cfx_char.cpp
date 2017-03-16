@@ -20,7 +20,6 @@ CFX_Char::CFX_Char()
       m_iBidiOrder(0),
       m_wCharCode(0),
       m_iFontSize(0),
-      m_iFontHeight(0),
       m_dwIdentity(0),
       m_pUserData(nullptr) {}
 
@@ -37,7 +36,6 @@ CFX_Char::CFX_Char(uint16_t wCharCode, uint32_t dwCharProps)
       m_iBidiOrder(0),
       m_wCharCode(wCharCode),
       m_iFontSize(0),
-      m_iFontHeight(0),
       m_dwIdentity(0),
       m_pUserData(nullptr) {}
 

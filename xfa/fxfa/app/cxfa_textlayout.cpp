@@ -90,9 +90,9 @@ CFDE_XMLNode* CXFA_TextLayout::GetXMLContainerNode() {
 }
 
 std::unique_ptr<CFX_RTFBreak> CXFA_TextLayout::CreateBreak(bool bDefault) {
-  uint32_t dwStyle = FX_RTFLAYOUTSTYLE_ExpandTab;
+  uint32_t dwStyle = FX_LAYOUTSTYLE_ExpandTab;
   if (!bDefault)
-    dwStyle |= FX_RTFLAYOUTSTYLE_Pagination;
+    dwStyle |= FX_LAYOUTSTYLE_Pagination;
 
   auto pBreak = pdfium::MakeUnique<CFX_RTFBreak>(dwStyle);
   pBreak->SetLineBreakTolerance(1);

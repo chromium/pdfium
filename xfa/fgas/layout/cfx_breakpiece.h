@@ -34,7 +34,6 @@ class CFX_BreakPiece {
   int32_t m_iBidiLevel;
   int32_t m_iBidiPos;
   int32_t m_iFontSize;
-  int32_t m_iFontHeight;
   int32_t m_iHorizontalScale;
   int32_t m_iVerticalScale;
   uint32_t m_dwIdentity;

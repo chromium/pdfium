@@ -50,7 +50,7 @@ class RTFBreakTest : public testing::Test {
 // and must be consumed before you get any more characters ....
 
 TEST_F(RTFBreakTest, AddChars) {
-  auto b = CreateBreak(FX_RTFLAYOUTSTYLE_ExpandTab);
+  auto b = CreateBreak(FX_LAYOUTSTYLE_ExpandTab);
 
   CFX_WideString str(L"Input String.");
   for (int32_t i = 0; i < str.GetLength(); i++)
@@ -75,7 +75,7 @@ TEST_F(RTFBreakTest, AddChars) {
 }
 
 TEST_F(RTFBreakTest, ControlCharacters) {
-  auto b = CreateBreak(FX_RTFLAYOUTSTYLE_ExpandTab);
+  auto b = CreateBreak(FX_LAYOUTSTYLE_ExpandTab);
   EXPECT_EQ(CFX_BreakType::Line, b->AppendChar(L'\v'));
   EXPECT_EQ(CFX_BreakType::Page, b->AppendChar(L'\f'));
   // 0x2029 is the Paragraph Separator unicode character.
