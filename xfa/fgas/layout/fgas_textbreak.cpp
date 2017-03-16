@@ -16,19 +16,6 @@
 
 namespace {
 
-typedef CFX_BreakType (CFX_TxtBreak::*FX_TxtBreak_LPFAppendChar)(
-    CFX_Char* pCurChar);
-const FX_TxtBreak_LPFAppendChar g_FX_TxtBreak_lpfAppendChar[16] = {
-    &CFX_TxtBreak::AppendChar_Others,      &CFX_TxtBreak::AppendChar_Tab,
-    &CFX_TxtBreak::AppendChar_Others,      &CFX_TxtBreak::AppendChar_Control,
-    &CFX_TxtBreak::AppendChar_Combination, &CFX_TxtBreak::AppendChar_Others,
-    &CFX_TxtBreak::AppendChar_Others,      &CFX_TxtBreak::AppendChar_Arabic,
-    &CFX_TxtBreak::AppendChar_Arabic,      &CFX_TxtBreak::AppendChar_Arabic,
-    &CFX_TxtBreak::AppendChar_Arabic,      &CFX_TxtBreak::AppendChar_Arabic,
-    &CFX_TxtBreak::AppendChar_Arabic,      &CFX_TxtBreak::AppendChar_Others,
-    &CFX_TxtBreak::AppendChar_Others,      &CFX_TxtBreak::AppendChar_Others,
-};
-
 bool IsCtrlCode(wchar_t ch) {
   uint32_t dwRet = (FX_GetUnicodeProperties(ch) & FX_CHARTYPEBITSMASK);
   return dwRet == FX_CHARTYPE_Tab || dwRet == FX_CHARTYPE_Control;
@@ -107,7 +94,7 @@ void CFX_TxtBreak::AppendChar_PageLoad(CFX_Char* pCurChar, uint32_t dwProps) {
   pCurChar->m_dwCharStyles = m_dwContextCharStyles;
 }
 
-CFX_BreakType CFX_TxtBreak::AppendChar_Combination(CFX_Char* pCurChar) {
+void CFX_TxtBreak::AppendChar_Combination(CFX_Char* pCurChar) {
   wchar_t wch = pCurChar->m_wCharCode;
   wchar_t wForm;
   int32_t iCharWidth = 0;
@@ -145,12 +132,10 @@ CFX_BreakType CFX_TxtBreak::AppendChar_Combination(CFX_Char* pCurChar) {
     iCharWidth = iCharWidth * m_iHorizontalScale / 100;
   }
   pCurChar->m_iCharWidth = -iCharWidth;
-  return CFX_BreakType::None;
 }
 
-CFX_BreakType CFX_TxtBreak::AppendChar_Tab(CFX_Char* pCurChar) {
+void CFX_TxtBreak::AppendChar_Tab(CFX_Char* pCurChar) {
   m_eCharType = FX_CHARTYPE_Tab;
-  return CFX_BreakType::None;
 }
 
 CFX_BreakType CFX_TxtBreak::AppendChar_Control(CFX_Char* pCurChar) {
@@ -274,7 +259,7 @@ CFX_BreakType CFX_TxtBreak::AppendChar(wchar_t wch) {
   pCurChar->m_dwCharStyles = 0;
   pCurChar->m_iCharWidth = 0;
   pCurChar->m_iHorizontalScale = m_iHorizontalScale;
-  pCurChar->m_iVerticalScale = 100;
+  pCurChar->m_iVerticalScale = m_iVerticalScale;
   pCurChar->m_dwStatus = CFX_BreakType::None;
   pCurChar->m_iBidiClass = 0;
   pCurChar->m_iBidiLevel = 0;
@@ -294,9 +279,34 @@ CFX_BreakType CFX_TxtBreak::AppendChar(wchar_t wch) {
       pCurChar = &m_pCurLine->m_LineChars[iCount - 1];
   }
 
-  CFX_BreakType dwRet2 =
-      (this->*g_FX_TxtBreak_lpfAppendChar[chartype >> FX_CHARTYPEBITS])(
-          pCurChar);
+  CFX_BreakType dwRet2 = CFX_BreakType::None;
+  switch (chartype) {
+    case FX_CHARTYPE_Tab:
+      AppendChar_Tab(pCurChar);
+      break;
+    case FX_CHARTYPE_Control:
+      dwRet2 = AppendChar_Control(pCurChar);
+      break;
+    case FX_CHARTYPE_Combination:
+      AppendChar_Combination(pCurChar);
+      break;
+    case FX_CHARTYPE_ArabicAlef:
+    case FX_CHARTYPE_ArabicSpecial:
+    case FX_CHARTYPE_ArabicDistortion:
+    case FX_CHARTYPE_ArabicNormal:
+    case FX_CHARTYPE_ArabicForm:
+    case FX_CHARTYPE_Arabic:
+      dwRet2 = AppendChar_Arabic(pCurChar);
+      break;
+    case FX_CHARTYPE_Unknown:
+    case FX_CHARTYPE_Space:
+    case FX_CHARTYPE_Numeric:
+    case FX_CHARTYPE_Normal:
+    default:
+      dwRet2 = AppendChar_Others(pCurChar);
+      break;
+  }
+
   return std::max(dwRet1, dwRet2);
 }
 

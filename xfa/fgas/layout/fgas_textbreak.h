@@ -74,15 +74,16 @@ class CFX_TxtBreak : public CFX_Break {
                         CFX_WideString* pWSForms = nullptr) const;
   std::vector<CFX_RectF> GetCharRects(const FX_TXTRUN* pTxtRun,
                                       bool bCharBBox = false) const;
-  void AppendChar_PageLoad(CFX_Char* pCurChar, uint32_t dwProps);
   CFX_BreakType AppendChar(wchar_t wch);
-  CFX_BreakType AppendChar_Combination(CFX_Char* pCurChar);
-  CFX_BreakType AppendChar_Tab(CFX_Char* pCurChar);
+
+ private:
+  void AppendChar_Combination(CFX_Char* pCurChar);
+  void AppendChar_Tab(CFX_Char* pCurChar);
+  void AppendChar_PageLoad(CFX_Char* pCurChar, uint32_t dwProps);
   CFX_BreakType AppendChar_Control(CFX_Char* pCurChar);
   CFX_BreakType AppendChar_Arabic(CFX_Char* pCurChar);
   CFX_BreakType AppendChar_Others(CFX_Char* pCurChar);
 
- private:
   void SetBreakStatus() override;
   CFX_Char* GetLastChar(int32_t index, bool bOmitChar = true) const;
   bool HasTxtLine() const { return m_iReadyLineIndex >= 0; }
