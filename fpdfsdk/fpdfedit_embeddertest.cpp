@@ -220,7 +220,7 @@ TEST_F(FPDFEditEmbeddertest, RasterizePDF) {
 
     // Add the bitmap to an image object and add the image object to the output
     // page.
-    FPDF_PAGEOBJECT temp_img = FPDFPageObj_NewImgeObj(temp_doc);
+    FPDF_PAGEOBJECT temp_img = FPDFPageObj_NewImageObj(temp_doc);
     EXPECT_TRUE(FPDFImageObj_SetBitmap(&temp_page, 1, temp_img, orig_bitmap));
     EXPECT_TRUE(FPDFImageObj_SetMatrix(temp_img, 612, 0, 0, 792, 0, 0));
     FPDFPage_InsertObject(temp_page, temp_img);

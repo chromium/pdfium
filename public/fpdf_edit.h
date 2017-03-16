@@ -185,6 +185,15 @@ DLLEXPORT void STDCALL FPDFPage_TransformAnnots(FPDF_PAGE page,
 //
 // Returns a handle to a new image object.
 DLLEXPORT FPDF_PAGEOBJECT STDCALL
+FPDFPageObj_NewImageObj(FPDF_DOCUMENT document);
+
+// Create a new image object.
+// DEPRECATED. Please use FPDFPageObj_NewImageObj() above.
+//
+//   document - handle to a document.
+//
+// Returns a handle to a new image object.
+DLLEXPORT FPDF_PAGEOBJECT STDCALL
 FPDFPageObj_NewImgeObj(FPDF_DOCUMENT document);
 
 // Load an image from a JPEG image file and then set it into |image_object|.
