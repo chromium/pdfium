@@ -466,7 +466,6 @@ static_library("fx_zlib") {
   ]
 }
 
-# Can not be a static library due to lack of .cc files.
 source_set("pdfium_base") {
   configs -= [ "//build/config/compiler:chromium_code" ]
   configs += [
@@ -474,6 +473,18 @@ source_set("pdfium_base") {
     ":pdfium_third_party_config",
   ]
   sources = [
+    "base/allocator/partition_allocator/address_space_randomization.cc",
+    "base/allocator/partition_allocator/address_space_randomization.h",
+    "base/allocator/partition_allocator/oom.h",
+    "base/allocator/partition_allocator/page_allocator.cc",
+    "base/allocator/partition_allocator/page_allocator.h",
+    "base/allocator/partition_allocator/partition_alloc.cc",
+    "base/allocator/partition_allocator/partition_alloc.h",
+    "base/allocator/partition_allocator/spin_lock.cc",
+    "base/allocator/partition_allocator/spin_lock.h",
+    "base/base_export.h",
+    "base/bits.h",
+    "base/compiler_specific.h",
     "base/logging.h",
     "base/macros.h",
     "base/numerics/safe_conversions.h",
@@ -482,5 +493,8 @@ source_set("pdfium_base") {
     "base/numerics/safe_math_impl.h",
     "base/ptr_util.h",
     "base/stl_util.h",
+    "base/sys_byteorder.h",
+    "base/template_util.h",
+    "build/build_config.h",
   ]
 }

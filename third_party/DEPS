@@ -4,4 +4,5 @@ include_rules = [
   '+core/fxcrt/fx_coordinates.h',
   '+core/fxcrt/fx_memory.h',
   '+core/fxcrt/fx_system.h',
+  '+build',
 ]
