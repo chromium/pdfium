@@ -58,10 +58,6 @@ deps = {
     Var('chromium_git') + "/chromium/src/tools/generate_library_loader@" +
         Var('gen_library_loader_revision'),
 
-  # TODO(GYP): Remove this when no tools rely on GYP anymore.
-  "tools/gyp":
-    Var('chromium_git') + '/external/gyp.git' + '@' + 'c61b0b35c8396bfd59efc6cfc11401d912b0f510',
-
   "tools/memory":
     Var('chromium_git') + "/chromium/src/tools/memory@" +
         Var('tools_memory_revision'),
@@ -78,6 +74,10 @@ deps_os = {
       Var('chromium_git') + "/external/github.com/catapult-project/catapult.git@" + Var('catapult_revision'),
   },
   "win": {
+    # TODO(GYP): Remove this when no tools rely on GYP anymore.
+    "tools/gyp":
+      Var('chromium_git') + '/external/gyp.git' + '@' + 'c61b0b35c8396bfd59efc6cfc11401d912b0f510',
+
     "v8/third_party/cygwin":
       Var('chromium_git') + "/chromium/deps/cygwin@" + Var('cygwin_revision'),
   },
