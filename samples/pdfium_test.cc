@@ -18,6 +18,7 @@
 #endif
 
 #include "core/fdrm/crypto/fx_crypt.h"
+#include "public/cpp/fpdf_deleters.h"
 #include "public/fpdf_dataavail.h"
 #include "public/fpdf_edit.h"
 #include "public/fpdf_ext.h"
@@ -93,10 +94,6 @@ struct FPDF_FORMFILLINFO_PDFiumTest : public FPDF_FORMFILLINFO {
   // Hold a pointer of FPDF_FORMHANDLE so that PDFium app hooks can
   // make use of it.
   FPDF_FORMHANDLE form_handle;
-};
-
-struct AvailDeleter {
-  inline void operator()(FPDF_AVAIL avail) const { FPDFAvail_Destroy(avail); }
 };
 
 static FPDF_FORMFILLINFO_PDFiumTest* ToPDFiumTestFormFillInfo(
@@ -184,14 +181,11 @@ void WriteText(FPDF_PAGE page, const char* pdf_name, int num) {
   uint32_t bom = 0x0000FEFF;
   fwrite(&bom, sizeof(bom), 1, fp);
 
-  FPDF_TEXTPAGE textpage = FPDFText_LoadPage(page);
-  for (int i = 0; i < FPDFText_CountChars(textpage); i++) {
-    uint32_t c = FPDFText_GetUnicode(textpage, i);
+  std::unique_ptr<void, FPDFTextPageDeleter> textpage(FPDFText_LoadPage(page));
+  for (int i = 0; i < FPDFText_CountChars(textpage.get()); i++) {
+    uint32_t c = FPDFText_GetUnicode(textpage.get(), i);
     fwrite(&c, sizeof(c), 1, fp);
   }
-
-  FPDFText_ClosePage(textpage);
-
   (void)fclose(fp);
 }
 
@@ -609,7 +603,6 @@ FPDF_PAGE GetPageForIndex(FPDF_FORMFILLINFO* param,
   FPDF_FORMFILLINFO_PDFiumTest* form_fill_info =
       ToPDFiumTestFormFillInfo(param);
   auto& loaded_pages = form_fill_info->loaded_pages;
-
   auto iter = loaded_pages.find(index);
   if (iter != loaded_pages.end())
     return iter->second;
@@ -619,47 +612,50 @@ FPDF_PAGE GetPageForIndex(FPDF_FORMFILLINFO* param,
     return nullptr;
 
   FPDF_FORMHANDLE& form_handle = form_fill_info->form_handle;
-
   FORM_OnAfterLoadPage(page, form_handle);
   FORM_DoPageAAction(page, form_handle, FPDFPAGE_AACTION_OPEN);
-
   loaded_pages[index] = page;
   return page;
 }
 
 bool RenderPage(const std::string& name,
                 FPDF_DOCUMENT doc,
-                FPDF_FORMHANDLE& form,
+                FPDF_FORMHANDLE form,
                 FPDF_FORMFILLINFO_PDFiumTest& form_fill_info,
                 const int page_index,
                 const Options& options,
                 const std::string& events) {
-  FPDF_PAGE page = GetPageForIndex(&form_fill_info, doc, page_index);
-  if (!page)
+  std::unique_ptr<void, FPDFPageDeleter> page(
+      GetPageForIndex(&form_fill_info, doc, page_index));
+  if (!page.get())
     return false;
 
-  FPDF_TEXTPAGE text_page = FPDFText_LoadPage(page);
-
+  std::unique_ptr<void, FPDFTextPageDeleter> text_page(
+      FPDFText_LoadPage(page.get()));
   if (options.send_events)
-    SendPageEvents(form, page, events);
+    SendPageEvents(form, page.get(), events);
 
   double scale = 1.0;
   if (!options.scale_factor_as_string.empty())
     std::stringstream(options.scale_factor_as_string) >> scale;
 
-  int width = static_cast<int>(FPDF_GetPageWidth(page) * scale);
-  int height = static_cast<int>(FPDF_GetPageHeight(page) * scale);
-  int alpha = FPDFPage_HasTransparency(page) ? 1 : 0;
-  FPDF_BITMAP bitmap = FPDFBitmap_Create(width, height, alpha);
+  int width = static_cast<int>(FPDF_GetPageWidth(page.get()) * scale);
+  int height = static_cast<int>(FPDF_GetPageHeight(page.get()) * scale);
+  int alpha = FPDFPage_HasTransparency(page.get()) ? 1 : 0;
+  std::unique_ptr<void, FPDFBitmapDeleter> bitmap(
+      FPDFBitmap_Create(width, height, alpha));
+
   if (bitmap) {
     FPDF_DWORD fill_color = alpha ? 0x00000000 : 0xFFFFFFFF;
-    FPDFBitmap_FillRect(bitmap, 0, 0, width, height, fill_color);
-    FPDF_RenderPageBitmap(bitmap, page, 0, 0, width, height, 0, FPDF_ANNOT);
+    FPDFBitmap_FillRect(bitmap.get(), 0, 0, width, height, fill_color);
+    FPDF_RenderPageBitmap(bitmap.get(), page.get(), 0, 0, width, height, 0,
+                          FPDF_ANNOT);
 
-    FPDF_FFLDraw(form, bitmap, page, 0, 0, width, height, 0, FPDF_ANNOT);
-    int stride = FPDFBitmap_GetStride(bitmap);
+    FPDF_FFLDraw(form, bitmap.get(), page.get(), 0, 0, width, height, 0,
+                 FPDF_ANNOT);
+    int stride = FPDFBitmap_GetStride(bitmap.get());
     const char* buffer =
-        reinterpret_cast<const char*>(FPDFBitmap_GetBuffer(bitmap));
+        reinterpret_cast<const char*>(FPDFBitmap_GetBuffer(bitmap.get()));
 
     std::string&& image_file_name = "";
     switch (options.output_format) {
@@ -670,11 +666,11 @@ bool RenderPage(const std::string& name,
         break;
 
       case OUTPUT_EMF:
-        WriteEmf(page, name.c_str(), page_index);
+        WriteEmf(page.get(), name.c_str(), page_index);
         break;
 #endif
       case OUTPUT_TEXT:
-        WriteText(page, name.c_str(), page_index);
+        WriteText(page.get(), name.c_str(), page_index);
         break;
 
       case OUTPUT_PNG:
@@ -691,8 +687,9 @@ bool RenderPage(const std::string& name,
       case OUTPUT_SKP: {
         std::unique_ptr<SkPictureRecorder> recorder(
             reinterpret_cast<SkPictureRecorder*>(
-                FPDF_RenderPageSkp(page, width, height)));
-        FPDF_FFLRecord(form, recorder.get(), page, 0, 0, width, height, 0, 0);
+                FPDF_RenderPageSkp(page.get(), width, height)));
+        FPDF_FFLRecord(form, recorder.get(), page.get(), 0, 0, width, height, 0,
+                       0);
         image_file_name = WriteSkp(name.c_str(), page_index, recorder.get());
       } break;
 #endif
@@ -704,18 +701,13 @@ bool RenderPage(const std::string& name,
     // file.
     if (options.md5 && image_file_name != "")
       OutputMD5Hash(image_file_name.c_str(), buffer, stride * height);
-
-    FPDFBitmap_Destroy(bitmap);
   } else {
     fprintf(stderr, "Page was too large to be rendered.\n");
   }
 
   form_fill_info.loaded_pages.erase(page_index);
-
-  FORM_DoPageAAction(page, form, FPDFPAGE_AACTION_CLOSE);
-  FORM_OnBeforeClosePage(page, form);
-  FPDFText_ClosePage(text_page);
-  FPDF_ClosePage(page);
+  FORM_DoPageAAction(page.get(), form, FPDFPAGE_AACTION_CLOSE);
+  FORM_OnBeforeClosePage(page.get(), form);
   return !!bitmap;
 }
 
@@ -758,35 +750,33 @@ void RenderPdf(const std::string& name,
   hints.version = 1;
   hints.AddSegment = Add_Segment;
 
-  FPDF_DOCUMENT doc;
   int nRet = PDF_DATA_NOTAVAIL;
   bool bIsLinearized = false;
-  FPDF_AVAIL pdf_avail = FPDFAvail_Create(&file_avail, &file_access);
-  std::unique_ptr<void, AvailDeleter> scoped_pdf_avail_deleter(pdf_avail);
+  std::unique_ptr<void, FPDFDocumentDeleter> doc;
+  std::unique_ptr<void, FPDFAvailDeleter> pdf_avail(
+      FPDFAvail_Create(&file_avail, &file_access));
 
-  if (FPDFAvail_IsLinearized(pdf_avail) == PDF_LINEARIZED) {
-    doc = FPDFAvail_GetDocument(pdf_avail, nullptr);
+  if (FPDFAvail_IsLinearized(pdf_avail.get()) == PDF_LINEARIZED) {
+    doc.reset(FPDFAvail_GetDocument(pdf_avail.get(), nullptr));
     if (doc) {
       while (nRet == PDF_DATA_NOTAVAIL)
-        nRet = FPDFAvail_IsDocAvail(pdf_avail, &hints);
+        nRet = FPDFAvail_IsDocAvail(pdf_avail.get(), &hints);
 
       if (nRet == PDF_DATA_ERROR) {
         fprintf(stderr, "Unknown error in checking if doc was available.\n");
-        FPDF_CloseDocument(doc);
         return;
       }
-      nRet = FPDFAvail_IsFormAvail(pdf_avail, &hints);
+      nRet = FPDFAvail_IsFormAvail(pdf_avail.get(), &hints);
       if (nRet == PDF_FORM_ERROR || nRet == PDF_FORM_NOTAVAIL) {
         fprintf(stderr,
                 "Error %d was returned in checking if form was available.\n",
                 nRet);
-        FPDF_CloseDocument(doc);
         return;
       }
       bIsLinearized = true;
     }
   } else {
-    doc = FPDF_LoadCustomDocument(&file_access, nullptr);
+    doc.reset(FPDF_LoadCustomDocument(&file_access, nullptr));
   }
 
   if (!doc) {
@@ -818,29 +808,29 @@ void RenderPdf(const std::string& name,
         fprintf(stderr, "Unknown error %ld", err);
     }
     fprintf(stderr, ".\n");
-
     return;
   }
 
-  (void)FPDF_GetDocPermissions(doc);
+  (void)FPDF_GetDocPermissions(doc.get());
 
-  FPDF_FORMHANDLE form = FPDFDOC_InitFormFillEnvironment(doc, &form_callbacks);
-  form_callbacks.form_handle = form;
+  std::unique_ptr<void, FPDFFormHandleDeleter> form(
+      FPDFDOC_InitFormFillEnvironment(doc.get(), &form_callbacks));
+  form_callbacks.form_handle = form.get();
 
 #ifdef PDF_ENABLE_XFA
   int doc_type = DOCTYPE_PDF;
-  if (FPDF_HasXFAField(doc, &doc_type) && doc_type != DOCTYPE_PDF &&
-      !FPDF_LoadXFA(doc)) {
+  if (FPDF_HasXFAField(doc.get(), &doc_type) && doc_type != DOCTYPE_PDF &&
+      !FPDF_LoadXFA(doc.get())) {
     fprintf(stderr, "LoadXFA unsuccessful, continuing anyway.\n");
   }
 #endif  // PDF_ENABLE_XFA
-  FPDF_SetFormFieldHighlightColor(form, 0, 0xFFE4DD);
-  FPDF_SetFormFieldHighlightAlpha(form, 100);
 
-  FORM_DoDocumentJSAction(form);
-  FORM_DoDocumentOpenAction(form);
+  FPDF_SetFormFieldHighlightColor(form.get(), 0, 0xFFE4DD);
+  FPDF_SetFormFieldHighlightAlpha(form.get(), 100);
+  FORM_DoDocumentJSAction(form.get());
+  FORM_DoDocumentOpenAction(form.get());
 
-  int page_count = FPDF_GetPageCount(doc);
+  int page_count = FPDF_GetPageCount(doc.get());
   int rendered_pages = 0;
   int bad_pages = 0;
   int first_page = options.pages ? options.first_page : 0;
@@ -849,27 +839,22 @@ void RenderPdf(const std::string& name,
     if (bIsLinearized) {
       nRet = PDF_DATA_NOTAVAIL;
       while (nRet == PDF_DATA_NOTAVAIL)
-        nRet = FPDFAvail_IsPageAvail(pdf_avail, i, &hints);
+        nRet = FPDFAvail_IsPageAvail(pdf_avail.get(), i, &hints);
 
       if (nRet == PDF_DATA_ERROR) {
         fprintf(stderr, "Unknown error in checking if page %d is available.\n",
                 i);
-        FPDFDOC_ExitFormFillEnvironment(form);
-        FPDF_CloseDocument(doc);
         return;
       }
     }
-    if (RenderPage(name, doc, form, form_callbacks, i, options, events))
+    if (RenderPage(name, doc.get(), form.get(), form_callbacks, i, options,
+                   events))
       ++rendered_pages;
     else
       ++bad_pages;
   }
 
-  FORM_DoDocumentAAction(form, FPDFDOC_AACTION_WC);
-
-  FPDFDOC_ExitFormFillEnvironment(form);
-  FPDF_CloseDocument(doc);
-
+  FORM_DoDocumentAAction(form.get(), FPDFDOC_AACTION_WC);
   fprintf(stderr, "Rendered %d pages.\n", rendered_pages);
   if (bad_pages)
     fprintf(stderr, "Skipped %d bad pages.\n", bad_pages);

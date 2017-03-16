@@ -26,17 +26,13 @@ typedef void* FPDF_BITMAP;
 typedef void* FPDF_BOOKMARK;
 typedef void* FPDF_CLIPPATH;
 typedef void* FPDF_DEST;
-typedef void* FPDF_DOCSCHHANDLE;
 typedef void* FPDF_DOCUMENT;
 typedef void* FPDF_FONT;
-typedef void* FPDF_HMODULE;
 typedef void* FPDF_LINK;
-typedef void* FPDF_MODULEMGR;
 typedef void* FPDF_PAGE;
 typedef void* FPDF_PAGELINK;
 typedef void* FPDF_PAGEOBJECT;  // Page object(text, path, etc)
 typedef void* FPDF_PAGERANGE;
-typedef void* FPDF_PATH;
 typedef void* FPDF_RECORDER;
 typedef void* FPDF_SCHHANDLE;
 typedef void* FPDF_STRUCTELEMENT;

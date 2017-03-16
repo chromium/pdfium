@@ -142,6 +142,7 @@ static_library("pdfium") {
     "fpdfsdk/fsdk_pauseadapter.h",
     "fpdfsdk/pdfsdk_fieldaction.cpp",
     "fpdfsdk/pdfsdk_fieldaction.h",
+    "public/cpp/fpdf_deleters.h",
     "public/fpdf_dataavail.h",
     "public/fpdf_doc.h",
     "public/fpdf_edit.h",
