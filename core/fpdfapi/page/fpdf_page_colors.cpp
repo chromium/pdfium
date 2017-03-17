@@ -18,11 +18,12 @@
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "core/fpdfapi/parser/cpdf_string.h"
 #include "core/fxcodec/fx_codec.h"
+#include "third_party/base/stl_util.h"
 
 namespace {
 
 float NormalizeChannel(float fVal) {
-  return std::min(std::max(fVal, 0.0f), 1.0f);
+  return pdfium::clamp(fVal, 0.0f, 1.0f);
 }
 
 bool DetectSRGB(const uint8_t* pData, uint32_t dwSize) {

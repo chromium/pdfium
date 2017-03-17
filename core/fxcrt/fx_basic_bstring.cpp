@@ -12,6 +12,7 @@
 #include "core/fxcrt/cfx_string_pool_template.h"
 #include "core/fxcrt/fx_basic.h"
 #include "third_party/base/numerics/safe_math.h"
+#include "third_party/base/stl_util.h"
 
 template class CFX_StringDataTemplate<char>;
 template class CFX_StringCTemplate<char>;
@@ -405,8 +406,8 @@ CFX_ByteString CFX_ByteString::Mid(FX_STRSIZE nFirst, FX_STRSIZE nCount) const {
   if (!m_pData)
     return CFX_ByteString();
 
-  nFirst = std::min(std::max(nFirst, 0), m_pData->m_nDataLength);
-  nCount = std::min(std::max(nCount, 0), m_pData->m_nDataLength - nFirst);
+  nFirst = pdfium::clamp(nFirst, 0, m_pData->m_nDataLength);
+  nCount = pdfium::clamp(nCount, 0, m_pData->m_nDataLength - nFirst);
   if (nCount == 0)
     return CFX_ByteString();
 

@@ -24,6 +24,7 @@
 #include "core/fxcodec/fx_codec.h"
 #include "core/fxcrt/cfx_maybe_owned.h"
 #include "core/fxcrt/fx_memory.h"
+#include "third_party/base/stl_util.h"
 
 namespace {
 
@@ -227,7 +228,7 @@ class CPDF_DeviceNCS : public CPDF_ColorSpace {
 };
 
 float RGB_Conversion(float colorComponent) {
-  colorComponent = std::min(std::max(colorComponent, 0.0f), 1.0f);
+  colorComponent = pdfium::clamp(colorComponent, 0.0f, 1.0f);
   int scale = std::max(static_cast<int>(colorComponent * 1023), 0);
   if (scale < 192)
     return g_sRGBSamples1[scale] / 255.0f;
@@ -686,11 +687,12 @@ void CPDF_LabCS::GetDefaultValue(int iComponent,
     *min = 0.0f;
     *max = 100 * 1.0f;
     *value = 0.0f;
-  } else {
-    *min = m_Ranges[iComponent * 2 - 2];
-    *max = m_Ranges[iComponent * 2 - 1];
-    *value = std::min(std::max(0.0f, *min), *max);
+    return;
   }
+
+  *min = m_Ranges[iComponent * 2 - 2];
+  *max = m_Ranges[iComponent * 2 - 1];
+  *value = pdfium::clamp(0.0f, *min, *max);
 }
 
 bool CPDF_LabCS::v_Load(CPDF_Document* pDoc, CPDF_Array* pArray) {

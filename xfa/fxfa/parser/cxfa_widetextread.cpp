@@ -9,6 +9,7 @@
 #include <algorithm>
 
 #include "core/fxcrt/fx_ext.h"
+#include "third_party/base/stl_util.h"
 #include "xfa/fgas/crt/fgas_codepage.h"
 
 CXFA_WideTextRead::CXFA_WideTextRead(const CFX_WideString& wsBuffer)
@@ -36,7 +37,7 @@ int32_t CXFA_WideTextRead::Seek(FX_STREAMSEEK eSeek, int32_t iOffset) {
       m_iPosition = m_wsBuffer.GetLength() + iOffset;
       break;
   }
-  m_iPosition = std::min(std::max(0, m_iPosition), m_wsBuffer.GetLength());
+  m_iPosition = pdfium::clamp(0, m_iPosition, m_wsBuffer.GetLength());
   return GetPosition();
 }
 

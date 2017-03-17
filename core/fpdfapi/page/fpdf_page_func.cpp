@@ -21,6 +21,7 @@
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "third_party/base/ptr_util.h"
+#include "third_party/base/stl_util.h"
 
 namespace {
 
@@ -541,8 +542,8 @@ bool CPDF_SampledFunc::v_Call(float* inputs, float* results) const {
     encoded_input[i] =
         PDF_Interpolate(inputs[i], m_pDomains[i * 2], m_pDomains[i * 2 + 1],
                         m_EncodeInfo[i].encode_min, m_EncodeInfo[i].encode_max);
-    index[i] = std::min((uint32_t)std::max(0.f, encoded_input[i]),
-                        m_EncodeInfo[i].sizes - 1);
+    index[i] = pdfium::clamp(static_cast<uint32_t>(encoded_input[i]), 0U,
+                             m_EncodeInfo[i].sizes - 1);
     pos += index[i] * blocksize[i];
   }
   FX_SAFE_INT32 bits_to_output = m_nOutputs;
@@ -816,19 +817,16 @@ bool CPDF_Function::Call(float* inputs,
 
   *nresults = m_nOutputs;
   for (uint32_t i = 0; i < m_nInputs; i++) {
-    if (inputs[i] < m_pDomains[i * 2])
-      inputs[i] = m_pDomains[i * 2];
-    else if (inputs[i] > m_pDomains[i * 2 + 1])
-      inputs[i] = m_pDomains[i * 2] + 1;
+    inputs[i] =
+        pdfium::clamp(inputs[i], m_pDomains[i * 2], m_pDomains[i * 2 + 1]);
   }
   v_Call(inputs, results);
-  if (m_pRanges) {
-    for (uint32_t i = 0; i < m_nOutputs; i++) {
-      if (results[i] < m_pRanges[i * 2])
-        results[i] = m_pRanges[i * 2];
-      else if (results[i] > m_pRanges[i * 2 + 1])
-        results[i] = m_pRanges[i * 2 + 1];
-    }
+  if (!m_pRanges)
+    return true;
+
+  for (uint32_t i = 0; i < m_nOutputs; i++) {
+    results[i] =
+        pdfium::clamp(results[i], m_pRanges[i * 2], m_pRanges[i * 2 + 1]);
   }
   return true;
 }

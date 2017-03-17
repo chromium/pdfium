@@ -12,6 +12,7 @@
 #include "core/fxcodec/fx_codec.h"
 #include "core/fxcrt/fx_memory.h"
 #include "third_party/base/ptr_util.h"
+#include "third_party/base/stl_util.h"
 
 namespace {
 
@@ -104,7 +105,7 @@ void FaxG4FindB1B2(const std::vector<uint8_t>& ref_buf,
 
 void FaxFillBits(uint8_t* dest_buf, int columns, int startpos, int endpos) {
   startpos = std::max(startpos, 0);
-  endpos = std::min(std::max(endpos, 0), columns);
+  endpos = pdfium::clamp(endpos, 0, columns);
   if (startpos >= endpos)
     return;
 

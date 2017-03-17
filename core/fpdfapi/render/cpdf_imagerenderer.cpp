@@ -30,6 +30,7 @@
 #include "core/fxge/cfx_fxgedevice.h"
 #include "core/fxge/cfx_pathdata.h"
 #include "third_party/base/ptr_util.h"
+#include "third_party/base/stl_util.h"
 
 #ifdef _SKIA_SUPPORT_
 #include "core/fxge/skia/fx_skia_device.h"
@@ -273,11 +274,11 @@ void CPDF_ImageRenderer::CalculateDrawImage(CFX_FxgeDevice* pBitmapDevice1,
         continue;
       }
       int orig = (*dest_scan - matte_b) * 255 / alpha + matte_b;
-      *dest_scan++ = std::min(std::max(orig, 0), 255);
+      *dest_scan++ = pdfium::clamp(orig, 0, 255);
       orig = (*dest_scan - matte_g) * 255 / alpha + matte_g;
-      *dest_scan++ = std::min(std::max(orig, 0), 255);
+      *dest_scan++ = pdfium::clamp(orig, 0, 255);
       orig = (*dest_scan - matte_r) * 255 / alpha + matte_r;
-      *dest_scan++ = std::min(std::max(orig, 0), 255);
+      *dest_scan++ = pdfium::clamp(orig, 0, 255);
       dest_scan++;
     }
   }

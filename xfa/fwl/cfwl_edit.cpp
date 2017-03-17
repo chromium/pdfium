@@ -840,7 +840,7 @@ CFWL_ScrollBar* CFWL_Edit::UpdateScroll() {
       float fRange = rtFDE.width - rtScroll.width;
       m_pHorzScrollBar->SetRange(0.0f, fRange);
 
-      float fPos = std::min(std::max(m_fScrollOffsetX, 0.0f), fRange);
+      float fPos = pdfium::clamp(m_fScrollOffsetX, 0.0f, fRange);
       m_pHorzScrollBar->SetPos(fPos);
       m_pHorzScrollBar->SetTrackPos(fPos);
       m_pHorzScrollBar->SetPageSize(rtScroll.width);
@@ -867,7 +867,7 @@ CFWL_ScrollBar* CFWL_Edit::UpdateScroll() {
       float fRange = std::max(rtFDE.height - m_rtEngine.height, fStep);
 
       m_pVertScrollBar->SetRange(0.0f, fRange);
-      float fPos = std::min(std::max(m_fScrollOffsetY, 0.0f), fRange);
+      float fPos = pdfium::clamp(m_fScrollOffsetY, 0.0f, fRange);
       m_pVertScrollBar->SetPos(fPos);
       m_pVertScrollBar->SetTrackPos(fPos);
       m_pVertScrollBar->SetPageSize(rtScroll.height);
@@ -889,17 +889,16 @@ CFWL_ScrollBar* CFWL_Edit::UpdateScroll() {
 }
 
 bool CFWL_Edit::IsShowScrollBar(bool bVert) {
+  if (!bVert)
+    return false;
   bool bShow =
       (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_ShowScrollbarFocus)
           ? (m_pProperties->m_dwStates & FWL_WGTSTATE_Focused) ==
                 FWL_WGTSTATE_Focused
           : true;
-  if (bVert) {
-    return bShow && (m_pProperties->m_dwStyles & FWL_WGTSTYLE_VScroll) &&
-           (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_MultiLine) &&
-           IsContentHeightOverflow();
-  }
-  return false;
+  return bShow && (m_pProperties->m_dwStyles & FWL_WGTSTYLE_VScroll) &&
+         (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_MultiLine) &&
+         IsContentHeightOverflow();
 }
 
 bool CFWL_Edit::IsContentHeightOverflow() {

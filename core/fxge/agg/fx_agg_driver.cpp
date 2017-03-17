@@ -24,14 +24,15 @@
 #include "third_party/agg23/agg_renderer_scanline.h"
 #include "third_party/agg23/agg_scanline_u.h"
 #include "third_party/base/ptr_util.h"
+#include "third_party/base/stl_util.h"
 
 namespace {
 
 const float kMaxPos = 32000.0f;
 
 CFX_PointF HardClip(const CFX_PointF& pos) {
-  return CFX_PointF(std::max(std::min(pos.x, kMaxPos), -kMaxPos),
-                    std::max(std::min(pos.y, kMaxPos), -kMaxPos));
+  return CFX_PointF(pdfium::clamp(pos.x, -kMaxPos, kMaxPos),
+                    pdfium::clamp(pos.y, -kMaxPos, kMaxPos));
 }
 
 void RgbByteOrderSetPixel(CFX_DIBitmap* pBitmap, int x, int y, uint32_t argb) {

@@ -527,7 +527,7 @@ CFX_SizeF CFWL_ListBox::CalcSize(bool bAutoSize) {
     m_pVertScrollBar->SetStepSize(m_fItemHeight);
 
     float fPos =
-        std::min(std::max(m_pVertScrollBar->GetPos(), 0.f), szRange.height);
+        pdfium::clamp(m_pVertScrollBar->GetPos(), 0.0f, szRange.height);
     m_pVertScrollBar->SetPos(fPos);
     m_pVertScrollBar->SetTrackPos(fPos);
     if ((m_pProperties->m_dwStyleExes & FWL_STYLEEXT_LTB_ShowScrollBarFocus) ==
@@ -559,7 +559,7 @@ CFX_SizeF CFWL_ListBox::CalcSize(bool bAutoSize) {
     m_pHorzScrollBar->SetStepSize(fWidth / 10);
 
     float fPos =
-        std::min(std::max(m_pHorzScrollBar->GetPos(), 0.f), szRange.height);
+        pdfium::clamp(m_pHorzScrollBar->GetPos(), 0.0f, szRange.height);
     m_pHorzScrollBar->SetPos(fPos);
     m_pHorzScrollBar->SetTrackPos(fPos);
     if ((m_pProperties->m_dwStyleExes & FWL_STYLEEXT_LTB_ShowScrollBarFocus) ==

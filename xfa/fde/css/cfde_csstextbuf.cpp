@@ -6,7 +6,7 @@
 
 #include "xfa/fde/css/cfde_csstextbuf.h"
 
-#include <algorithm>
+#include "third_party/base/stl_util.h"
 
 CFDE_CSSTextBuf::CFDE_CSSTextBuf()
     : m_bExtBuf(false),
@@ -80,7 +80,7 @@ bool CFDE_CSSTextBuf::ExpandBuf(int32_t iDesiredSize) {
 void CFDE_CSSTextBuf::Subtract(int32_t iStart, int32_t iLength) {
   ASSERT(iStart >= 0 && iLength >= 0);
 
-  iLength = std::max(std::min(iLength, m_iDatLen - iStart), 0);
+  iLength = pdfium::clamp(iLength, 0, m_iDatLen - iStart);
   FXSYS_memmove(m_pBuffer, m_pBuffer + iStart, iLength * sizeof(wchar_t));
   m_iDatLen = iLength;
 }

@@ -699,7 +699,7 @@ CPVT_WordPlace CPDF_VariableText::AddSection(const CPVT_WordPlace& place,
     return place;
 
   int32_t nSecIndex =
-      std::max(std::min(place.nSecIndex, m_SectionArray.GetSize()), 0);
+      pdfium::clamp(place.nSecIndex, 0, m_SectionArray.GetSize());
   CSection* pSection = new CSection(this);
   pSection->m_SecInfo = secinfo;
   pSection->SecPlace.nSecIndex = nSecIndex;
@@ -727,7 +727,7 @@ CPVT_WordPlace CPDF_VariableText::AddWord(const CPVT_WordPlace& place,
   }
   CPVT_WordPlace newplace = place;
   newplace.nSecIndex =
-      std::max(std::min(newplace.nSecIndex, m_SectionArray.GetSize() - 1), 0);
+      pdfium::clamp(newplace.nSecIndex, 0, m_SectionArray.GetSize() - 1);
   if (CSection* pSection = m_SectionArray.GetAt(newplace.nSecIndex))
     return pSection->AddWord(newplace, wordinfo);
   return place;

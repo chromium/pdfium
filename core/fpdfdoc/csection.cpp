@@ -29,9 +29,8 @@ void CSection::ResetLineArray() {
 }
 
 void CSection::ResetWordArray() {
-  for (int32_t i = 0, sz = m_WordArray.GetSize(); i < sz; i++) {
+  for (int32_t i = 0, sz = m_WordArray.GetSize(); i < sz; i++)
     delete m_WordArray.GetAt(i);
-  }
   m_WordArray.RemoveAll();
 }
 
@@ -47,12 +46,11 @@ CPVT_WordPlace CSection::AddWord(const CPVT_WordPlace& place,
                                  const CPVT_WordInfo& wordinfo) {
   CPVT_WordInfo* pWord = new CPVT_WordInfo(wordinfo);
   int32_t nWordIndex =
-      std::max(std::min(place.nWordIndex, m_WordArray.GetSize()), 0);
-  if (nWordIndex == m_WordArray.GetSize()) {
+      pdfium::clamp(place.nWordIndex, 0, m_WordArray.GetSize());
+  if (nWordIndex == m_WordArray.GetSize())
     m_WordArray.Add(pWord);
-  } else {
+  else
     m_WordArray.InsertAt(nWordIndex, pWord);
-  }
   return place;
 }
 
@@ -62,9 +60,8 @@ CPVT_WordPlace CSection::AddLine(const CPVT_LineInfo& lineinfo) {
 }
 
 CPVT_FloatRect CSection::Rearrange() {
-  if (m_pVT->m_nCharArray > 0) {
+  if (m_pVT->m_nCharArray > 0)
     return CTypeset(this).CharArray();
-  }
   return CTypeset(this).Typeset();
 }
 

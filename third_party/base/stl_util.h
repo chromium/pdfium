@@ -10,6 +10,7 @@
 #include <set>
 
 #include "third_party/base/numerics/safe_conversions.h"
+#include "third_party/base/stl_util.h"
 
 namespace pdfium {
 
@@ -66,6 +67,12 @@ class ScopedSetInsertion {
   std::set<T>* const m_Set;
   const T m_Entry;
 };
+
+// std::clamp(), some day.
+template <class T>
+constexpr const T& clamp(const T& v, const T& lo, const T& hi) {
+  return std::min(std::max(v, lo), hi);
+}
 
 }  // namespace pdfium
 

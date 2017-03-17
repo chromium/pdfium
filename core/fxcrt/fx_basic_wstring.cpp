@@ -13,6 +13,7 @@
 #include "core/fxcrt/fx_basic.h"
 #include "core/fxcrt/fx_ext.h"
 #include "third_party/base/numerics/safe_math.h"
+#include "third_party/base/stl_util.h"
 
 template class CFX_StringDataTemplate<wchar_t>;
 template class CFX_StringCTemplate<wchar_t>;
@@ -375,8 +376,8 @@ CFX_WideString CFX_WideString::Mid(FX_STRSIZE nFirst, FX_STRSIZE nCount) const {
   if (!m_pData)
     return CFX_WideString();
 
-  nFirst = std::min(std::max(nFirst, 0), m_pData->m_nDataLength);
-  nCount = std::min(std::max(nCount, 0), m_pData->m_nDataLength - nFirst);
+  nFirst = pdfium::clamp(nFirst, 0, m_pData->m_nDataLength);
+  nCount = pdfium::clamp(nCount, 0, m_pData->m_nDataLength - nFirst);
   if (nCount == 0)
     return CFX_WideString();
 

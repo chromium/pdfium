@@ -21,6 +21,7 @@
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "third_party/base/numerics/safe_math.h"
 #include "third_party/base/ptr_util.h"
+#include "third_party/base/stl_util.h"
 
 namespace {
 
@@ -450,10 +451,10 @@ FX_RECT CPDF_CIDFont::GetCharBBox(uint32_t charcode) {
         if (!err) {
           FXFT_BBox cbox;
           FXFT_Glyph_Get_CBox(glyph, FXFT_GLYPH_BBOX_PIXELS, &cbox);
-          cbox.xMin = std::min(std::max(cbox.xMin, kMinCBox), kMaxCBox);
-          cbox.xMax = std::min(std::max(cbox.xMax, kMinCBox), kMaxCBox);
-          cbox.yMin = std::min(std::max(cbox.yMin, kMinCBox), kMaxCBox);
-          cbox.yMax = std::min(std::max(cbox.yMax, kMinCBox), kMaxCBox);
+          cbox.xMin = pdfium::clamp(cbox.xMin, kMinCBox, kMaxCBox);
+          cbox.xMax = pdfium::clamp(cbox.xMax, kMinCBox, kMaxCBox);
+          cbox.yMin = pdfium::clamp(cbox.yMin, kMinCBox, kMaxCBox);
+          cbox.yMax = pdfium::clamp(cbox.yMax, kMinCBox, kMaxCBox);
           int pixel_size_x = ((FXFT_Face)face)->size->metrics.x_ppem;
           int pixel_size_y = ((FXFT_Face)face)->size->metrics.y_ppem;
           if (pixel_size_x == 0 || pixel_size_y == 0) {
