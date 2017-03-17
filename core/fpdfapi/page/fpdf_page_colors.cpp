@@ -25,6 +25,11 @@ float NormalizeChannel(float fVal) {
   return std::min(std::max(fVal, 0.0f), 1.0f);
 }
 
+bool DetectSRGB(const uint8_t* pData, uint32_t dwSize) {
+  return dwSize == 3144 &&
+         FXSYS_memcmp(pData + 0x190, "sRGB IEC61966-2.1", 17) == 0;
+}
+
 }  // namespace
 
 uint32_t ComponentsForFamily(int family) {
@@ -214,16 +219,20 @@ void CPDF_DeviceCS::TranslateImageLine(uint8_t* pDestBuf,
 }
 
 CPDF_IccProfile::CPDF_IccProfile(const uint8_t* pData, uint32_t dwSize)
-    : m_bsRGB(false), m_pTransform(nullptr), m_nSrcComponents(0) {
-  if (dwSize == 3144 &&
-      FXSYS_memcmp(pData + 0x190, "sRGB IEC61966-2.1", 17) == 0) {
-    m_bsRGB = true;
+    : m_bsRGB(DetectSRGB(pData, dwSize)) {
+  if (m_bsRGB) {
     m_nSrcComponents = 3;
-  } else if (CPDF_ModuleMgr::Get()->GetIccModule()) {
-    m_pTransform = CPDF_ModuleMgr::Get()->GetIccModule()->CreateTransform_sRGB(
-        pData, dwSize, m_nSrcComponents);
+    return;
+  }
+  auto* pIccModule = CPDF_ModuleMgr::Get()->GetIccModule();
+  if (pIccModule) {
+    uint32_t nSrcComps = 0;
+    m_pTransform = pIccModule->CreateTransform_sRGB(pData, dwSize, nSrcComps);
+    if (m_pTransform)
+      m_nSrcComponents = nSrcComps;
   }
 }
+
 CPDF_IccProfile::~CPDF_IccProfile() {
   if (m_pTransform) {
     CPDF_ModuleMgr::Get()->GetIccModule()->DestroyTransform(m_pTransform);

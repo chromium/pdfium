@@ -138,12 +138,17 @@ class CPDF_IccProfile {
  public:
   CPDF_IccProfile(const uint8_t* pData, uint32_t dwSize);
   ~CPDF_IccProfile();
+
+  bool IsValid() const { return IsSRGB() || IsSupported(); }
+  bool IsSRGB() const { return m_bsRGB; }
+  bool IsSupported() const { return !!m_pTransform; }
+  void* transform() { return m_pTransform; }
   uint32_t GetComponents() const { return m_nSrcComponents; }
-  bool m_bsRGB;
-  void* m_pTransform;
 
  private:
-  uint32_t m_nSrcComponents;
+  const bool m_bsRGB;
+  void* m_pTransform = nullptr;
+  uint32_t m_nSrcComponents = 0;
 };
 
 class CPDF_DeviceCS : public CPDF_ColorSpace {

@@ -153,13 +153,14 @@ class CPDF_ICCBasedCS : public CPDF_ColorSpace {
                           int image_height,
                           bool bTransMask) const override;
 
-  bool IsSRGB() const { return m_pProfile->m_bsRGB; }
+  bool IsSRGB() const { return m_pProfile->IsSRGB(); }
 
  private:
   // If no valid ICC profile or using sRGB, try looking for an alternate.
   bool FindAlternateProfile(CPDF_Document* pDoc, CPDF_Dictionary* pDict);
 
   void UseStockAlternateProfile();
+  bool IsValidComponents(int32_t nComps) const;
   void PopulateRanges(CPDF_Dictionary* pDict);
 
   CFX_MaybeOwned<CPDF_ColorSpace> m_pAlterCS;
@@ -784,43 +785,64 @@ bool CPDF_ICCBasedCS::v_Load(CPDF_Document* pDoc, CPDF_Array* pArray) {
   if (!pStream)
     return false;
 
+  // The PDF 1.7 spec says the number of components must be valid. While some
+  // PDF viewers tolerate invalid values, Acrobat does not, so be consistent
+  // with Acrobat and reject bad values.
+  CPDF_Dictionary* pDict = pStream->GetDict();
+  int32_t nDictComponents = pDict ? pDict->GetIntegerFor("N") : 0;
+  if (!IsValidComponents(nDictComponents))
+    return false;
+
+  m_nComponents = nDictComponents;
   m_pProfile = pDoc->LoadIccProfile(pStream);
   if (!m_pProfile)
     return false;
 
-  // Try using the |nComponents| from ICC profile
-  m_nComponents = m_pProfile->GetComponents();
-  CPDF_Dictionary* pDict = pStream->GetDict();
-  if (!m_pProfile->m_pTransform && !FindAlternateProfile(pDoc, pDict))
+  // The PDF 1.7 spec also says the number of components in the ICC profile
+  // must match the N value. However, that assumes the viewer actually
+  // understands the ICC profile.
+  // If the valid ICC profile has a mismatch, fail.
+  if (m_pProfile->IsValid() && m_pProfile->GetComponents() != m_nComponents)
     return false;
+
+  // If PDFium does not understand the ICC profile format at all, or if it's
+  // SRGB, a profile PDFium recognizes but does not support well, then try the
+  // alternate profile.
+  if (!m_pProfile->IsSupported() && !FindAlternateProfile(pDoc, pDict)) {
+    // If there is no alternate profile, use a stock profile as mentioned in
+    // the PDF 1.7 spec in table 4.16 in the "Alternate" key description.
+    UseStockAlternateProfile();
+  }
 
   PopulateRanges(pDict);
   return true;
 }
 
 bool CPDF_ICCBasedCS::GetRGB(float* pBuf, float* R, float* G, float* B) const {
-  if (m_pProfile && m_pProfile->m_bsRGB) {
+  ASSERT(m_pProfile);
+  if (IsSRGB()) {
     *R = pBuf[0];
     *G = pBuf[1];
     *B = pBuf[2];
     return true;
   }
-  CCodec_IccModule* pIccModule = CPDF_ModuleMgr::Get()->GetIccModule();
-  if (!m_pProfile->m_pTransform || !pIccModule) {
-    if (m_pAlterCS)
-      return m_pAlterCS->GetRGB(pBuf, R, G, B);
-
-    *R = 0.0f;
-    *G = 0.0f;
-    *B = 0.0f;
+  if (m_pProfile->transform()) {
+    float rgb[3];
+    CCodec_IccModule* pIccModule = CPDF_ModuleMgr::Get()->GetIccModule();
+    pIccModule->SetComponents(m_nComponents);
+    pIccModule->Translate(m_pProfile->transform(), pBuf, rgb);
+    *R = rgb[0];
+    *G = rgb[1];
+    *B = rgb[2];
     return true;
   }
-  float rgb[3];
-  pIccModule->SetComponents(m_nComponents);
-  pIccModule->Translate(m_pProfile->m_pTransform, pBuf, rgb);
-  *R = rgb[0];
-  *G = rgb[1];
-  *B = rgb[2];
+
+  if (m_pAlterCS)
+    return m_pAlterCS->GetRGB(pBuf, R, G, B);
+
+  *R = 0.0f;
+  *G = 0.0f;
+  *B = 0.0f;
   return true;
 }
 
@@ -851,16 +873,16 @@ void CPDF_ICCBasedCS::TranslateImageLine(uint8_t* pDestBuf,
                                          int image_width,
                                          int image_height,
                                          bool bTransMask) const {
-  if (m_pProfile->m_bsRGB) {
+  if (IsSRGB()) {
     ReverseRGB(pDestBuf, pSrcBuf, pixels);
-  } else if (m_pProfile->m_pTransform) {
+  } else if (m_pProfile->transform()) {
     int nMaxColors = 1;
     for (uint32_t i = 0; i < m_nComponents; i++) {
       nMaxColors *= 52;
     }
     if (m_nComponents > 3 || image_width * image_height < nMaxColors * 3 / 2) {
       CPDF_ModuleMgr::Get()->GetIccModule()->TranslateScanline(
-          m_pProfile->m_pTransform, pDestBuf, pSrcBuf, pixels);
+          m_pProfile->transform(), pDestBuf, pSrcBuf, pixels);
     } else {
       if (!m_pCache) {
         ((CPDF_ICCBasedCS*)this)->m_pCache = FX_Alloc2D(uint8_t, nMaxColors, 3);
@@ -876,7 +898,7 @@ void CPDF_ICCBasedCS::TranslateImageLine(uint8_t* pDestBuf,
           }
         }
         CPDF_ModuleMgr::Get()->GetIccModule()->TranslateScanline(
-            m_pProfile->m_pTransform, m_pCache, temp_src, nMaxColors);
+            m_pProfile->transform(), m_pCache, temp_src, nMaxColors);
         FX_Free(temp_src);
       }
       for (int i = 0; i < pixels; i++) {
@@ -899,45 +921,19 @@ void CPDF_ICCBasedCS::TranslateImageLine(uint8_t* pDestBuf,
 
 bool CPDF_ICCBasedCS::FindAlternateProfile(CPDF_Document* pDoc,
                                            CPDF_Dictionary* pDict) {
-  CPDF_Object* pAlterCSObj =
-      pDict ? pDict->GetDirectObjectFor("Alternate") : nullptr;
-  if (!pAlterCSObj) {
-    UseStockAlternateProfile();
-    return true;
-  }
+  CPDF_Object* pAlterCSObj = pDict->GetDirectObjectFor("Alternate");
+  if (!pAlterCSObj)
+    return false;
 
   auto pAlterCS = CPDF_ColorSpace::Load(pDoc, pAlterCSObj);
-  if (!pAlterCS) {
-    UseStockAlternateProfile();
-    return true;
-  }
+  if (!pAlterCS)
+    return false;
 
-  if (m_nComponents) {
-    ASSERT(IsSRGB());  // Using sRGB case.
-    if (pAlterCS->CountComponents() == m_nComponents)
-      m_pAlterCS = std::move(pAlterCS);
-    else
-      UseStockAlternateProfile();
-    return true;
-  }
+  if (pAlterCS->CountComponents() != m_nComponents)
+    return false;
 
-  // NO valid ICC profile
-  if (pAlterCS->CountComponents() > 0) {
-    // Use Alternative colorspace
-    m_nComponents = pAlterCS->CountComponents();
-    m_pAlterCS = std::move(pAlterCS);
-    return true;
-  }
-
-  int32_t nDictComponents = pDict ? pDict->GetIntegerFor("N") : 0;
-  if (nDictComponents == 1 || nDictComponents == 3 || nDictComponents == 4) {
-    m_nComponents = nDictComponents;
-    UseStockAlternateProfile();
-    return true;
-  }
-
-  // No valid alternative colorspace
-  return false;
+  m_pAlterCS = std::move(pAlterCS);
+  return true;
 }
 
 void CPDF_ICCBasedCS::UseStockAlternateProfile() {
@@ -948,6 +944,10 @@ void CPDF_ICCBasedCS::UseStockAlternateProfile() {
     m_pAlterCS = GetStockCS(PDFCS_DEVICERGB);
   else if (m_nComponents == 4)
     m_pAlterCS = GetStockCS(PDFCS_DEVICECMYK);
+}
+
+bool CPDF_ICCBasedCS::IsValidComponents(int32_t nComps) const {
+  return nComps == 1 || nComps == 3 || nComps == 4;
 }
 
 void CPDF_ICCBasedCS::PopulateRanges(CPDF_Dictionary* pDict) {
