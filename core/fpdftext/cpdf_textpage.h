@@ -34,10 +34,12 @@ class CPDF_TextObject;
 #define TEXT_SPACE_CHAR L' '
 #define TEXT_LINEFEED_CHAR L'\n'
 #define TEXT_RETURN_CHAR L'\r'
+#define TEXT_HYPHEN_CHAR L'-'
 #define TEXT_EMPTY L""
 #define TEXT_SPACE L" "
 #define TEXT_RETURN_LINEFEED L"\r\n"
 #define TEXT_LINEFEED L"\n"
+#define TEXT_HYPHEN L"-"
 #define TEXT_CHARRATIO_GAPDELTA 0.070
 
 enum class FPDFText_MarkedContent { Pass = 0, Done, Delay };
