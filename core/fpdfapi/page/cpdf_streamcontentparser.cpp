@@ -1440,6 +1440,15 @@ void CPDF_StreamContentParser::AddPathPoint(float x,
                                             float y,
                                             FXPT_TYPE type,
                                             bool close) {
+  // If the path point is the same move as the previous one and neither of them
+  // closes the path, then just skip it.
+  if (!close && type == FXPT_TYPE::MoveTo && m_PathPointCount &&
+      !m_pPathPoints[m_PathPointCount - 1].m_CloseFigure &&
+      m_pPathPoints[m_PathPointCount - 1].m_Type == type &&
+      m_PathCurrentX == x && m_PathCurrentY == y) {
+    return;
+  }
+
   m_PathCurrentX = x;
   m_PathCurrentY = y;
   if (type == FXPT_TYPE::MoveTo && !close) {
