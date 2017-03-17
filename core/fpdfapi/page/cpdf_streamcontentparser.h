@@ -204,9 +204,7 @@ class CPDF_StreamContentParser {
   std::vector<std::unique_ptr<CPDF_TextObject>> m_ClipTextList;
   CPDF_TextObject* m_pLastTextObject;
   float m_DefFontSize;
-  FX_PATHPOINT* m_pPathPoints;
-  int m_PathPointCount;
-  int m_PathAllocSize;
+  std::vector<FX_PATHPOINT> m_PathPoints;
   float m_PathStartX;
   float m_PathStartY;
   float m_PathCurrentX;
