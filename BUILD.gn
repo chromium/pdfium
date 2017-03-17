@@ -273,8 +273,6 @@ static_library("fpdfdoc") {
   sources = [
     "core/fpdfdoc/cline.cpp",
     "core/fpdfdoc/cline.h",
-    "core/fpdfdoc/clines.cpp",
-    "core/fpdfdoc/clines.h",
     "core/fpdfdoc/cpdf_aaction.cpp",
     "core/fpdfdoc/cpdf_aaction.h",
     "core/fpdfdoc/cpdf_action.cpp",

@@ -8,6 +8,8 @@
 
 CLine::CLine() {}
 
+CLine::CLine(const CPVT_LineInfo& lineinfo) : m_LineInfo(lineinfo) {}
+
 CLine::~CLine() {}
 
 CPVT_WordPlace CLine::GetBeginWordPlace() const {

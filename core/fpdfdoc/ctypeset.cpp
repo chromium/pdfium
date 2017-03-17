@@ -11,6 +11,7 @@
 #include "core/fpdfdoc/cline.h"
 #include "core/fpdfdoc/cpvt_wordinfo.h"
 #include "core/fpdfdoc/csection.h"
+#include "third_party/base/stl_util.h"
 
 namespace {
 
@@ -179,80 +180,77 @@ CTypeset::CTypeset(CSection* pSection)
 CTypeset::~CTypeset() {}
 
 CPVT_FloatRect CTypeset::CharArray() {
-  ASSERT(m_pSection);
+  m_rcRet = CPVT_FloatRect(0, 0, 0, 0);
+  if (m_pSection->m_LineArray.empty())
+    return m_rcRet;
+
+  float fNodeWidth = m_pVT->GetPlateWidth() /
+                     (m_pVT->m_nCharArray <= 0 ? 1 : m_pVT->m_nCharArray);
   float fLineAscent =
       m_pVT->GetFontAscent(m_pVT->GetDefaultFontIndex(), m_pVT->GetFontSize());
   float fLineDescent =
       m_pVT->GetFontDescent(m_pVT->GetDefaultFontIndex(), m_pVT->GetFontSize());
-  m_rcRet.Default();
-  float x = 0.0f, y = 0.0f;
-  float fNextWidth;
+  float x = 0.0f;
+  float y = m_pVT->GetLineLeading(m_pSection->m_SecInfo) + fLineAscent;
   int32_t nStart = 0;
-  float fNodeWidth = m_pVT->GetPlateWidth() /
-                     (m_pVT->m_nCharArray <= 0 ? 1 : m_pVT->m_nCharArray);
-  if (CLine* pLine = m_pSection->m_LineArray.GetAt(0)) {
-    x = 0.0f;
-    y += m_pVT->GetLineLeading(m_pSection->m_SecInfo);
-    y += fLineAscent;
-    nStart = 0;
-    switch (m_pVT->GetAlignment(m_pSection->m_SecInfo)) {
-      case 0:
-        pLine->m_LineInfo.fLineX = fNodeWidth * VARIABLETEXT_HALF;
-        break;
-      case 1:
-        nStart = (m_pVT->m_nCharArray - m_pSection->m_WordArray.GetSize()) / 2;
-        pLine->m_LineInfo.fLineX =
-            fNodeWidth * nStart - fNodeWidth * VARIABLETEXT_HALF;
-        break;
-      case 2:
-        nStart = m_pVT->m_nCharArray - m_pSection->m_WordArray.GetSize();
-        pLine->m_LineInfo.fLineX =
-            fNodeWidth * nStart - fNodeWidth * VARIABLETEXT_HALF;
-        break;
-    }
-    for (int32_t w = 0, sz = m_pSection->m_WordArray.GetSize(); w < sz; w++) {
-      if (w >= m_pVT->m_nCharArray) {
-        break;
-      }
-      fNextWidth = 0;
-      if (CPVT_WordInfo* pNextWord = m_pSection->m_WordArray.GetAt(w + 1)) {
-        pNextWord->fWordTail = 0;
-        fNextWidth = m_pVT->GetWordWidth(*pNextWord);
-      }
-      if (CPVT_WordInfo* pWord = m_pSection->m_WordArray.GetAt(w)) {
-        pWord->fWordTail = 0;
-        float fWordWidth = m_pVT->GetWordWidth(*pWord);
-        float fWordAscent = m_pVT->GetWordAscent(*pWord);
-        float fWordDescent = m_pVT->GetWordDescent(*pWord);
-        x = (float)(fNodeWidth * (w + nStart + 0.5) -
-                    fWordWidth * VARIABLETEXT_HALF);
-        pWord->fWordX = x;
-        pWord->fWordY = y;
-        if (w == 0) {
-          pLine->m_LineInfo.fLineX = x;
-        }
-        if (w != m_pSection->m_WordArray.GetSize() - 1) {
-          pWord->fWordTail =
-              (fNodeWidth - (fWordWidth + fNextWidth) * VARIABLETEXT_HALF > 0
-                   ? fNodeWidth - (fWordWidth + fNextWidth) * VARIABLETEXT_HALF
-                   : 0);
-        } else {
-          pWord->fWordTail = 0;
-        }
-        x += fWordWidth;
-        fLineAscent = std::max(fLineAscent, fWordAscent);
-        fLineDescent = std::min(fLineDescent, fWordDescent);
-      }
-    }
-    pLine->m_LineInfo.nBeginWordIndex = 0;
-    pLine->m_LineInfo.nEndWordIndex = m_pSection->m_WordArray.GetSize() - 1;
-    pLine->m_LineInfo.fLineY = y;
-    pLine->m_LineInfo.fLineWidth = x - pLine->m_LineInfo.fLineX;
-    pLine->m_LineInfo.fLineAscent = fLineAscent;
-    pLine->m_LineInfo.fLineDescent = fLineDescent;
-    y -= fLineDescent;
+  CLine* pLine = m_pSection->m_LineArray.front().get();
+  switch (m_pVT->GetAlignment(m_pSection->m_SecInfo)) {
+    case 0:
+      pLine->m_LineInfo.fLineX = fNodeWidth * VARIABLETEXT_HALF;
+      break;
+    case 1:
+      nStart = (m_pVT->m_nCharArray - m_pSection->m_WordArray.GetSize()) / 2;
+      pLine->m_LineInfo.fLineX =
+          fNodeWidth * nStart - fNodeWidth * VARIABLETEXT_HALF;
+      break;
+    case 2:
+      nStart = m_pVT->m_nCharArray - m_pSection->m_WordArray.GetSize();
+      pLine->m_LineInfo.fLineX =
+          fNodeWidth * nStart - fNodeWidth * VARIABLETEXT_HALF;
+      break;
   }
-  return m_rcRet = CPVT_FloatRect(0, 0, x, y);
+  for (int32_t w = 0, sz = m_pSection->m_WordArray.GetSize(); w < sz; w++) {
+    if (w >= m_pVT->m_nCharArray)
+      break;
+
+    float fNextWidth = 0;
+    if (CPVT_WordInfo* pNextWord = m_pSection->m_WordArray.GetAt(w + 1)) {
+      pNextWord->fWordTail = 0;
+      fNextWidth = m_pVT->GetWordWidth(*pNextWord);
+    }
+    if (CPVT_WordInfo* pWord = m_pSection->m_WordArray.GetAt(w)) {
+      pWord->fWordTail = 0;
+      float fWordWidth = m_pVT->GetWordWidth(*pWord);
+      float fWordAscent = m_pVT->GetWordAscent(*pWord);
+      float fWordDescent = m_pVT->GetWordDescent(*pWord);
+      x = (float)(fNodeWidth * (w + nStart + 0.5) -
+                  fWordWidth * VARIABLETEXT_HALF);
+      pWord->fWordX = x;
+      pWord->fWordY = y;
+      if (w == 0) {
+        pLine->m_LineInfo.fLineX = x;
+      }
+      if (w != m_pSection->m_WordArray.GetSize() - 1) {
+        pWord->fWordTail =
+            (fNodeWidth - (fWordWidth + fNextWidth) * VARIABLETEXT_HALF > 0
+                 ? fNodeWidth - (fWordWidth + fNextWidth) * VARIABLETEXT_HALF
+                 : 0);
+      } else {
+        pWord->fWordTail = 0;
+      }
+      x += fWordWidth;
+      fLineAscent = std::max(fLineAscent, fWordAscent);
+      fLineDescent = std::min(fLineDescent, fWordDescent);
+    }
+  }
+  pLine->m_LineInfo.nBeginWordIndex = 0;
+  pLine->m_LineInfo.nEndWordIndex = m_pSection->m_WordArray.GetSize() - 1;
+  pLine->m_LineInfo.fLineY = y;
+  pLine->m_LineInfo.fLineWidth = x - pLine->m_LineInfo.fLineX;
+  pLine->m_LineInfo.fLineAscent = fLineAscent;
+  pLine->m_LineInfo.fLineDescent = fLineDescent;
+  m_rcRet = CPVT_FloatRect(0, 0, x, y - fLineDescent);
+  return m_rcRet;
 }
 
 CFX_SizeF CTypeset::GetEditSize(float fFontSize) {
@@ -264,9 +262,8 @@ CFX_SizeF CTypeset::GetEditSize(float fFontSize) {
 
 CPVT_FloatRect CTypeset::Typeset() {
   ASSERT(m_pVT);
-  m_pSection->m_LineArray.Empty();
+  m_pSection->m_LineArray.clear();
   SplitLines(true, 0.0f);
-  m_pSection->m_LineArray.Clear();
   OutputLines();
   return m_rcRet;
 }
@@ -439,54 +436,54 @@ void CTypeset::OutputLines() {
   fMaxX = fMinX + m_rcRet.Width();
   fMinY = 0.0f;
   fMaxY = m_rcRet.Height();
-  int32_t nTotalLines = m_pSection->m_LineArray.GetSize();
+  int32_t nTotalLines =
+      pdfium::CollectionSize<int32_t>(m_pSection->m_LineArray);
   if (nTotalLines > 0) {
     m_pSection->m_SecInfo.nTotalLine = nTotalLines;
     for (int32_t l = 0; l < nTotalLines; l++) {
-      if (CLine* pLine = m_pSection->m_LineArray.GetAt(l)) {
-        switch (m_pVT->GetAlignment(m_pSection->m_SecInfo)) {
-          default:
-          case 0:
-            fPosX = 0;
-            break;
-          case 1:
-            fPosX = (fTypesetWidth - pLine->m_LineInfo.fLineWidth) *
-                    VARIABLETEXT_HALF;
-            break;
-          case 2:
-            fPosX = fTypesetWidth - pLine->m_LineInfo.fLineWidth;
-            break;
-        }
-        fPosX += fLineIndent;
-        fPosY += m_pVT->GetLineLeading(m_pSection->m_SecInfo);
-        fPosY += pLine->m_LineInfo.fLineAscent;
-        pLine->m_LineInfo.fLineX = fPosX - fMinX;
-        pLine->m_LineInfo.fLineY = fPosY - fMinY;
-        for (int32_t w = pLine->m_LineInfo.nBeginWordIndex;
-             w <= pLine->m_LineInfo.nEndWordIndex; w++) {
-          if (CPVT_WordInfo* pWord = m_pSection->m_WordArray.GetAt(w)) {
-            pWord->fWordX = fPosX - fMinX;
-            if (pWord->pWordProps) {
-              switch (pWord->pWordProps->nScriptType) {
-                default:
-                case CPDF_VariableText::ScriptType::Normal:
-                  pWord->fWordY = fPosY - fMinY;
-                  break;
-                case CPDF_VariableText::ScriptType::Super:
-                  pWord->fWordY = fPosY - m_pVT->GetWordAscent(*pWord) - fMinY;
-                  break;
-                case CPDF_VariableText::ScriptType::Sub:
-                  pWord->fWordY = fPosY - m_pVT->GetWordDescent(*pWord) - fMinY;
-                  break;
-              }
-            } else {
-              pWord->fWordY = fPosY - fMinY;
-            }
-            fPosX += m_pVT->GetWordWidth(*pWord);
-          }
-        }
-        fPosY -= pLine->m_LineInfo.fLineDescent;
+      CLine* pLine = m_pSection->m_LineArray[l].get();
+      switch (m_pVT->GetAlignment(m_pSection->m_SecInfo)) {
+        default:
+        case 0:
+          fPosX = 0;
+          break;
+        case 1:
+          fPosX = (fTypesetWidth - pLine->m_LineInfo.fLineWidth) *
+                  VARIABLETEXT_HALF;
+          break;
+        case 2:
+          fPosX = fTypesetWidth - pLine->m_LineInfo.fLineWidth;
+          break;
       }
+      fPosX += fLineIndent;
+      fPosY += m_pVT->GetLineLeading(m_pSection->m_SecInfo);
+      fPosY += pLine->m_LineInfo.fLineAscent;
+      pLine->m_LineInfo.fLineX = fPosX - fMinX;
+      pLine->m_LineInfo.fLineY = fPosY - fMinY;
+      for (int32_t w = pLine->m_LineInfo.nBeginWordIndex;
+           w <= pLine->m_LineInfo.nEndWordIndex; w++) {
+        if (CPVT_WordInfo* pWord = m_pSection->m_WordArray.GetAt(w)) {
+          pWord->fWordX = fPosX - fMinX;
+          if (pWord->pWordProps) {
+            switch (pWord->pWordProps->nScriptType) {
+              default:
+              case CPDF_VariableText::ScriptType::Normal:
+                pWord->fWordY = fPosY - fMinY;
+                break;
+              case CPDF_VariableText::ScriptType::Super:
+                pWord->fWordY = fPosY - m_pVT->GetWordAscent(*pWord) - fMinY;
+                break;
+              case CPDF_VariableText::ScriptType::Sub:
+                pWord->fWordY = fPosY - m_pVT->GetWordDescent(*pWord) - fMinY;
+                break;
+            }
+          } else {
+            pWord->fWordY = fPosY - fMinY;
+          }
+          fPosX += m_pVT->GetWordWidth(*pWord);
+        }
+      }
+      fPosY -= pLine->m_LineInfo.fLineDescent;
     }
   }
   m_rcRet = CPVT_FloatRect(fMinX, fMinY, fMaxX, fMaxY);
