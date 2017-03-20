@@ -8,8 +8,8 @@
 #define CORE_FPDFDOC_CPDF_VARIABLETEXT_H_
 
 #include <memory>
+#include <vector>
 
-#include "core/fpdfdoc/cpvt_arraytemplate.h"
 #include "core/fpdfdoc/cpvt_floatrect.h"
 #include "core/fpdfdoc/cpvt_line.h"
 #include "core/fpdfdoc/cpvt_lineinfo.h"
@@ -101,7 +101,7 @@ class CPDF_VariableText {
   void SetAutoFontSize(bool bAuto) { m_bAutoFontSize = bAuto; }
   void Initialize();
 
-  bool IsValid() const { return m_bInitial; }
+  bool IsValid() const { return m_bInitialized; }
 
   void RearrangeAll();
   void RearrangePart(const CPVT_WordRange& PlaceRange);
@@ -219,9 +219,7 @@ class CPDF_VariableText {
   bool IsBigger(float fFontSize) const;
   CPVT_FloatRect RearrangeSections(const CPVT_WordRange& PlaceRange);
 
-  void ResetSectionArray();
-
-  CPVT_ArrayTemplate<CSection*> m_SectionArray;
+  std::vector<std::unique_ptr<CSection>> m_SectionArray;
   int32_t m_nLimitChar;
   int32_t m_nCharArray;
   bool m_bMultiLine;
@@ -233,7 +231,7 @@ class CPDF_VariableText {
   int32_t m_nHorzScale;
   uint16_t m_wSubWord;
   float m_fFontSize;
-  bool m_bInitial;
+  bool m_bInitialized;
   CPDF_VariableText::Provider* m_pVTProvider;
   std::unique_ptr<CPDF_VariableText::Iterator> m_pVTIterator;
   CFX_FloatRect m_rcPlate;
