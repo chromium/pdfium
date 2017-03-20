@@ -390,11 +390,11 @@ bool ParseLocaleDate(const CFX_WideString& wsDate,
       cc += 2;
     }
   }
-  if (cc < len) {
+  if (cc < len)
     return false;
-  }
+
   CFX_Unitime ut;
-  ut.Set(year, month, day);
+  ut.Set(year, month, day, 0, 0, 0, 0);
   datetime = datetime + ut;
   return !!cc;
 }
@@ -1027,7 +1027,7 @@ bool FX_DateFromCanonical(const CFX_WideString& wsDate, CFX_Unitime& datetime) {
     }
   }
   CFX_Unitime ut;
-  ut.Set(year, month, day);
+  ut.Set(year, month, day, 0, 0, 0, 0);
   datetime = datetime + ut;
   return true;
 }
@@ -1035,9 +1035,9 @@ bool FX_DateFromCanonical(const CFX_WideString& wsDate, CFX_Unitime& datetime) {
 bool FX_TimeFromCanonical(const CFX_WideStringC& wsTime,
                           CFX_Unitime& datetime,
                           IFX_Locale* pLocale) {
-  if (wsTime.GetLength() == 0) {
+  if (wsTime.GetLength() == 0)
     return false;
-  }
+
   uint8_t hour = 0;
   uint8_t minute = 0;
   uint8_t second = 0;

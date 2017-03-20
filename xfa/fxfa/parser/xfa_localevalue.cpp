@@ -672,7 +672,8 @@ bool CXFA_LocaleValue::ValidateCanonicalDate(const CFX_WideString& wsDate,
     return false;
   }
   CFX_Unitime ut;
-  ut.Set(wYear, static_cast<uint8_t>(wMonth), static_cast<uint8_t>(wDay));
+  ut.Set(wYear, static_cast<uint8_t>(wMonth), static_cast<uint8_t>(wDay), 0, 0,
+         0, 0);
   unDate = unDate + ut;
   return true;
 }
