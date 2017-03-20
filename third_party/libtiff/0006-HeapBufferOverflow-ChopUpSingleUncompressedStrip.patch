@@ -1,7 +1,7 @@
-diff --git a/core/fxcodec/codec/fx_codec_tiff.cpp b/core/fxcodec/codec/fx_codec_tiff.cpp
+diff --git a/core/fxcodec/codec/ccodec_tiffmodule.cpp b/core/fxcodec/codec/ccodec_tiffmodule.cpp
 index 09cfea4..20fda63 100644
---- a/core/fxcodec/codec/fx_codec_tiff.cpp
-+++ b/core/fxcodec/codec/fx_codec_tiff.cpp
+--- a/core/fxcodec/codec/ccodec_tiffmodule.cpp
++++ b/core/fxcodec/codec/ccodec_tiffmodule.cpp
 @@ -79,6 +79,10 @@ int _TIFFmemcmp(const void* ptr1, const void* ptr2, tmsize_t size) {
    return FXSYS_memcmp(ptr1, ptr2, (size_t)size);
  }

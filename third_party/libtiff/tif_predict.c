@@ -1,4 +1,4 @@
-/* $Id: tif_predict.c,v 1.35 2015-08-31 15:05:57 erouault Exp $ */
+/* $Id: tif_predict.c,v 1.40 2016-11-04 09:19:13 erouault Exp $ */
 
 /*
  * Copyright (c) 1988-1997 Sam Leffler
@@ -34,18 +34,18 @@
 
 #define	PredictorState(tif)	((TIFFPredictorState*) (tif)->tif_data)
 
-static void horAcc8(TIFF* tif, uint8* cp0, tmsize_t cc);
-static void horAcc16(TIFF* tif, uint8* cp0, tmsize_t cc);
-static void horAcc32(TIFF* tif, uint8* cp0, tmsize_t cc);
-static void swabHorAcc16(TIFF* tif, uint8* cp0, tmsize_t cc);
-static void swabHorAcc32(TIFF* tif, uint8* cp0, tmsize_t cc);
-static void horDiff8(TIFF* tif, uint8* cp0, tmsize_t cc);
-static void horDiff16(TIFF* tif, uint8* cp0, tmsize_t cc);
-static void horDiff32(TIFF* tif, uint8* cp0, tmsize_t cc);
-static void swabHorDiff16(TIFF* tif, uint8* cp0, tmsize_t cc);
-static void swabHorDiff32(TIFF* tif, uint8* cp0, tmsize_t cc);
-static void fpAcc(TIFF* tif, uint8* cp0, tmsize_t cc);
-static void fpDiff(TIFF* tif, uint8* cp0, tmsize_t cc);
+static int horAcc8(TIFF* tif, uint8* cp0, tmsize_t cc);
+static int horAcc16(TIFF* tif, uint8* cp0, tmsize_t cc);
+static int horAcc32(TIFF* tif, uint8* cp0, tmsize_t cc);
+static int swabHorAcc16(TIFF* tif, uint8* cp0, tmsize_t cc);
+static int swabHorAcc32(TIFF* tif, uint8* cp0, tmsize_t cc);
+static int horDiff8(TIFF* tif, uint8* cp0, tmsize_t cc);
+static int horDiff16(TIFF* tif, uint8* cp0, tmsize_t cc);
+static int horDiff32(TIFF* tif, uint8* cp0, tmsize_t cc);
+static int swabHorDiff16(TIFF* tif, uint8* cp0, tmsize_t cc);
+static int swabHorDiff32(TIFF* tif, uint8* cp0, tmsize_t cc);
+static int fpAcc(TIFF* tif, uint8* cp0, tmsize_t cc);
+static int fpDiff(TIFF* tif, uint8* cp0, tmsize_t cc);
 static int PredictorDecodeRow(TIFF* tif, uint8* op0, tmsize_t occ0, uint16 s);
 static int PredictorDecodeTile(TIFF* tif, uint8* op0, tmsize_t occ0, uint16 s);
 static int PredictorEncodeRow(TIFF* tif, uint8* bp, tmsize_t cc, uint16 s);
@@ -80,6 +80,15 @@ PredictorSetup(TIFF* tif)
 				    td->td_sampleformat);
 				return 0;
 			}
+                        if (td->td_bitspersample != 16
+                            && td->td_bitspersample != 24
+                            && td->td_bitspersample != 32
+                            && td->td_bitspersample != 64) { /* Should 64 be allowed? */
+                                TIFFErrorExt(tif->tif_clientdata, module,
+                                             "Floating point \"Predictor\" not supported with %d-bit samples",
+                                             td->td_bitspersample);
+				return 0;
+                            }
 			break;
 		default:
 			TIFFErrorExt(tif->tif_clientdata, module,
@@ -177,7 +186,7 @@ PredictorSetupDecode(TIFF* tif)
 		}
 		/*
 		 * Allocate buffer to keep the decoded bytes before
-		 * rearranging in the ight order
+		 * rearranging in the right order
 		 */
 	}
 
@@ -216,7 +225,7 @@ PredictorSetupEncode(TIFF* tif)
                 /*
                  * If the data is horizontally differenced 16-bit data that
                  * requires byte-swapping, then it must be byte swapped after
-                 * the differenciation step.  We do this with a special-purpose
+                 * the differentiation step.  We do this with a special-purpose
                  * routine and override the normal post decoding logic that
                  * the library setup when the directory was read.
                  */
@@ -267,13 +276,19 @@ PredictorSetupEncode(TIFF* tif)
 /* - when storing into the byte stream, we explicitly mask with 0xff so */
 /*   as to make icc -check=conversions happy (not necessary by the standard) */
 
-static void
+static int
 horAcc8(TIFF* tif, uint8* cp0, tmsize_t cc)
 {
 	tmsize_t stride = PredictorState(tif)->stride;
 
 	unsigned char* cp = (unsigned char*) cp0;
-	assert((cc%stride)==0);
+    if((cc%stride)!=0)
+    {
+        TIFFErrorExt(tif->tif_clientdata, "horAcc8",
+                     "%s", "(cc%stride)!=0");
+        return 0;
+    }
+
 	if (cc > stride) {
 		/*
 		 * Pipeline the most common cases.
@@ -315,26 +330,32 @@ horAcc8(TIFF* tif, uint8* cp0, tmsize_t cc)
 			} while (cc>0);
 		}
 	}
+	return 1;
 }
 
-static void
+static int
 swabHorAcc16(TIFF* tif, uint8* cp0, tmsize_t cc)
 {
 	uint16* wp = (uint16*) cp0;
 	tmsize_t wc = cc / 2;
 
         TIFFSwabArrayOfShort(wp, wc);
-        horAcc16(tif, cp0, cc);
+        return horAcc16(tif, cp0, cc);
 }
 
-static void
+static int
 horAcc16(TIFF* tif, uint8* cp0, tmsize_t cc)
 {
 	tmsize_t stride = PredictorState(tif)->stride;
 	uint16* wp = (uint16*) cp0;
 	tmsize_t wc = cc / 2;
 
-	assert((cc%(2*stride))==0);
+    if((cc%(2*stride))!=0)
+    {
+        TIFFErrorExt(tif->tif_clientdata, "horAcc16",
+                     "%s", "cc%(2*stride))!=0");
+        return 0;
+    }
 
 	if (wc > stride) {
 		wc -= stride;
@@ -343,26 +364,32 @@ horAcc16(TIFF* tif, uint8* cp0, tmsize_t cc)
 			wc -= stride;
 		} while (wc > 0);
 	}
+	return 1;
 }
 
-static void
+static int
 swabHorAcc32(TIFF* tif, uint8* cp0, tmsize_t cc)
 {
 	uint32* wp = (uint32*) cp0;
 	tmsize_t wc = cc / 4;
 
         TIFFSwabArrayOfLong(wp, wc);
-	horAcc32(tif, cp0, cc);
+	return horAcc32(tif, cp0, cc);
 }
 
-static void
+static int
 horAcc32(TIFF* tif, uint8* cp0, tmsize_t cc)
 {
 	tmsize_t stride = PredictorState(tif)->stride;
 	uint32* wp = (uint32*) cp0;
 	tmsize_t wc = cc / 4;
 
-	assert((cc%(4*stride))==0);
+    if((cc%(4*stride))!=0)
+    {
+        TIFFErrorExt(tif->tif_clientdata, "horAcc32",
+                     "%s", "cc%(4*stride))!=0");
+        return 0;
+    }
 
 	if (wc > stride) {
 		wc -= stride;
@@ -371,12 +398,13 @@ horAcc32(TIFF* tif, uint8* cp0, tmsize_t cc)
 			wc -= stride;
 		} while (wc > 0);
 	}
+	return 1;
 }
 
 /*
  * Floating point predictor accumulation routine.
  */
-static void
+static int
 fpAcc(TIFF* tif, uint8* cp0, tmsize_t cc)
 {
 	tmsize_t stride = PredictorState(tif)->stride;
@@ -384,12 +412,18 @@ fpAcc(TIFF* tif, uint8* cp0, tmsize_t cc)
 	tmsize_t wc = cc / bps;
 	tmsize_t count = cc;
 	uint8 *cp = (uint8 *) cp0;
-	uint8 *tmp = (uint8 *)_TIFFmalloc(cc);
+	uint8 *tmp;
 
-	assert((cc%(bps*stride))==0);
+    if(cc%(bps*stride)!=0)
+    {
+        TIFFErrorExt(tif->tif_clientdata, "fpAcc",
+                     "%s", "cc%(bps*stride))!=0");
+        return 0;
+    }
 
+    tmp = (uint8 *)_TIFFmalloc(cc);
 	if (!tmp)
-		return;
+		return 0;
 
 	while (count > stride) {
 		REPEAT4(stride, cp[stride] =
@@ -411,6 +445,7 @@ fpAcc(TIFF* tif, uint8* cp0, tmsize_t cc)
 		}
 	}
 	_TIFFfree(tmp);
+    return 1;
 }
 
 /*
@@ -426,8 +461,7 @@ PredictorDecodeRow(TIFF* tif, uint8* op0, tmsize_t occ0, uint16 s)
 	assert(sp->decodepfunc != NULL);  
 
 	if ((*sp->decoderow)(tif, op0, occ0, s)) {
-		(*sp->decodepfunc)(tif, op0, occ0);
-		return 1;
+		return (*sp->decodepfunc)(tif, op0, occ0);
 	} else
 		return 0;
 }
@@ -450,10 +484,16 @@ PredictorDecodeTile(TIFF* tif, uint8* op0, tmsize_t occ0, uint16 s)
 	if ((*sp->decodetile)(tif, op0, occ0, s)) {
 		tmsize_t rowsize = sp->rowsize;
 		assert(rowsize > 0);
-		assert((occ0%rowsize)==0);
+		if((occ0%rowsize) !=0)
+        {
+            TIFFErrorExt(tif->tif_clientdata, "PredictorDecodeTile",
+                         "%s", "occ0%rowsize != 0");
+            return 0;
+        }
 		assert(sp->decodepfunc != NULL);
 		while (occ0 > 0) {
-			(*sp->decodepfunc)(tif, op0, rowsize);
+			if( !(*sp->decodepfunc)(tif, op0, rowsize) )
+                return 0;
 			occ0 -= rowsize;
 			op0 += rowsize;
 		}
@@ -462,14 +502,19 @@ PredictorDecodeTile(TIFF* tif, uint8* op0, tmsize_t occ0, uint16 s)
 		return 0;
 }
 
-static void
+static int
 horDiff8(TIFF* tif, uint8* cp0, tmsize_t cc)
 {
 	TIFFPredictorState* sp = PredictorState(tif);
 	tmsize_t stride = sp->stride;
 	unsigned char* cp = (unsigned char*) cp0;
 
-	assert((cc%stride)==0);
+    if((cc%stride)!=0)
+    {
+        TIFFErrorExt(tif->tif_clientdata, "horDiff8",
+                     "%s", "(cc%stride)!=0");
+        return 0;
+    }
 
 	if (cc > stride) {
 		cc -= stride;
@@ -507,9 +552,10 @@ horDiff8(TIFF* tif, uint8* cp0, tmsize_t cc)
 			} while ((cc -= stride) > 0);
 		}
 	}
+	return 1;
 }
 
-static void
+static int
 horDiff16(TIFF* tif, uint8* cp0, tmsize_t cc)
 {
 	TIFFPredictorState* sp = PredictorState(tif);
@@ -517,7 +563,12 @@ horDiff16(TIFF* tif, uint8* cp0, tmsize_t cc)
 	uint16 *wp = (uint16*) cp0;
 	tmsize_t wc = cc/2;
 
-	assert((cc%(2*stride))==0);
+    if((cc%(2*stride))!=0)
+    {
+        TIFFErrorExt(tif->tif_clientdata, "horDiff8",
+                     "%s", "(cc%(2*stride))!=0");
+        return 0;
+    }
 
 	if (wc > stride) {
 		wc -= stride;
@@ -527,20 +578,23 @@ horDiff16(TIFF* tif, uint8* cp0, tmsize_t cc)
 			wc -= stride;
 		} while (wc > 0);
 	}
+	return 1;
 }
 
-static void
+static int
 swabHorDiff16(TIFF* tif, uint8* cp0, tmsize_t cc)
 {
     uint16* wp = (uint16*) cp0;
     tmsize_t wc = cc / 2;
 
-    horDiff16(tif, cp0, cc);
+    if( !horDiff16(tif, cp0, cc) )
+        return 0;
 
     TIFFSwabArrayOfShort(wp, wc);
+    return 1;
 }
 
-static void
+static int
 horDiff32(TIFF* tif, uint8* cp0, tmsize_t cc)
 {
 	TIFFPredictorState* sp = PredictorState(tif);
@@ -548,7 +602,12 @@ horDiff32(TIFF* tif, uint8* cp0, tmsize_t cc)
 	uint32 *wp = (uint32*) cp0;
 	tmsize_t wc = cc/4;
 
-	assert((cc%(4*stride))==0);
+    if((cc%(4*stride))!=0)
+    {
+        TIFFErrorExt(tif->tif_clientdata, "horDiff32",
+                     "%s", "(cc%(4*stride))!=0");
+        return 0;
+    }
 
 	if (wc > stride) {
 		wc -= stride;
@@ -558,23 +617,26 @@ horDiff32(TIFF* tif, uint8* cp0, tmsize_t cc)
 			wc -= stride;
 		} while (wc > 0);
 	}
+	return 1;
 }
 
-static void
+static int
 swabHorDiff32(TIFF* tif, uint8* cp0, tmsize_t cc)
 {
     uint32* wp = (uint32*) cp0;
     tmsize_t wc = cc / 4;
 
-    horDiff32(tif, cp0, cc);
+    if( !horDiff32(tif, cp0, cc) )
+        return 0;
 
     TIFFSwabArrayOfLong(wp, wc);
+    return 1;
 }
 
 /*
  * Floating point predictor differencing routine.
  */
-static void
+static int
 fpDiff(TIFF* tif, uint8* cp0, tmsize_t cc)
 {
 	tmsize_t stride = PredictorState(tif)->stride;
@@ -582,12 +644,18 @@ fpDiff(TIFF* tif, uint8* cp0, tmsize_t cc)
 	tmsize_t wc = cc / bps;
 	tmsize_t count;
 	uint8 *cp = (uint8 *) cp0;
-	uint8 *tmp = (uint8 *)_TIFFmalloc(cc);
+	uint8 *tmp;
 
-	assert((cc%(bps*stride))==0);
+    if((cc%(bps*stride))!=0)
+    {
+        TIFFErrorExt(tif->tif_clientdata, "fpDiff",
+                     "%s", "(cc%(bps*stride))!=0");
+        return 0;
+    }
 
+    tmp = (uint8 *)_TIFFmalloc(cc);
 	if (!tmp)
-		return;
+		return 0;
 
 	_TIFFmemcpy(tmp, cp0, cc);
 	for (count = 0; count < wc; count++) {
@@ -607,6 +675,7 @@ fpDiff(TIFF* tif, uint8* cp0, tmsize_t cc)
 	cp += cc - stride - 1;
 	for (count = cc; count > stride; count -= stride)
 		REPEAT4(stride, cp[stride] = (unsigned char)((cp[stride] - cp[0])&0xff); cp--)
+    return 1;
 }
 
 static int
@@ -619,7 +688,8 @@ PredictorEncodeRow(TIFF* tif, uint8* bp, tmsize_t cc, uint16 s)
 	assert(sp->encoderow != NULL);
 
 	/* XXX horizontal differencing alters user's data XXX */
-	(*sp->encodepfunc)(tif, bp, cc);
+	if( !(*sp->encodepfunc)(tif, bp, cc) )
+        return 0;
 	return (*sp->encoderow)(tif, bp, cc, s);
 }
 
@@ -654,7 +724,13 @@ PredictorEncodeTile(TIFF* tif, uint8* bp0, tmsize_t cc0, uint16 s)
 
 	rowsize = sp->rowsize;
 	assert(rowsize > 0);
-	assert((cc0%rowsize)==0);
+	if((cc0%rowsize)!=0)
+    {
+        TIFFErrorExt(tif->tif_clientdata, "PredictorEncodeTile",
+                     "%s", "(cc0%rowsize)!=0");
+        _TIFFfree( working_copy );
+        return 0;
+    }
 	while (cc > 0) {
 		(*sp->encodepfunc)(tif, bp, rowsize);
 		cc -= rowsize;
@@ -703,7 +779,7 @@ PredictorVGetField(TIFF* tif, uint32 tag, va_list ap)
 
 	switch (tag) {
 	case TIFFTAG_PREDICTOR:
-		*va_arg(ap, uint16*) = sp->predictor;
+		*va_arg(ap, uint16*) = (uint16)sp->predictor;
 		break;
 	default:
 		return (*sp->vgetparent)(tif, tag, ap);
