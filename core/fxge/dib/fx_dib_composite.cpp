@@ -4,6 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include <algorithm>
+
 #include "core/fxcodec/fx_codec.h"
 #include "core/fxge/cfx_gemodule.h"
 #include "core/fxge/dib/dib_int.h"
@@ -50,29 +52,21 @@ int Blend(int blend_mode, int back_color, int src_color) {
     case FXDIB_BLEND_LIGHTEN:
       return src_color > back_color ? src_color : back_color;
     case FXDIB_BLEND_COLORDODGE: {
-      if (src_color == 255) {
+      if (src_color == 255)
         return src_color;
-      }
-      int result = back_color * 255 / (255 - src_color);
-      if (result > 255) {
-        return 255;
-      }
-      return result;
+
+      return std::min(back_color * 255 / (255 - src_color), 255);
     }
     case FXDIB_BLEND_COLORBURN: {
-      if (src_color == 0) {
+      if (src_color == 0)
         return src_color;
-      }
-      int result = (255 - back_color) * 255 / src_color;
-      if (result > 255) {
-        result = 255;
-      }
-      return 255 - result;
+
+      return 255 - std::min((255 - back_color) * 255 / src_color, 255);
     }
     case FXDIB_BLEND_HARDLIGHT:
-      if (src_color < 128) {
+      if (src_color < 128)
         return (src_color * back_color * 2) / 255;
-      }
+
       return Blend(FXDIB_BLEND_SCREEN, back_color, 2 * src_color - 255);
     case FXDIB_BLEND_SOFTLIGHT: {
       if (src_color < 128) {
@@ -105,20 +99,8 @@ int Lum(RGB color) {
 
 RGB ClipColor(RGB color) {
   int l = Lum(color);
-  int n = color.red;
-  if (color.green < n) {
-    n = color.green;
-  }
-  if (color.blue < n) {
-    n = color.blue;
-  }
-  int x = color.red;
-  if (color.green > x) {
-    x = color.green;
-  }
-  if (color.blue > x) {
-    x = color.blue;
-  }
+  int n = std::min(color.red, std::min(color.green, color.blue));
+  int x = std::max(color.red, std::max(color.green, color.blue));
   if (n < 0) {
     color.red = l + ((color.red - l) * l / (l - n));
     color.green = l + ((color.green - l) * l / (l - n));
@@ -141,82 +123,32 @@ RGB SetLum(RGB color, int l) {
 }
 
 int Sat(RGB color) {
-  int n = color.red;
-  if (color.green < n) {
-    n = color.green;
-  }
-  if (color.blue < n) {
-    n = color.blue;
-  }
-  int x = color.red;
-  if (color.green > x) {
-    x = color.green;
-  }
-  if (color.blue > x) {
-    x = color.blue;
-  }
-  return x - n;
+  return std::max(color.red, std::max(color.green, color.blue)) -
+         std::min(color.red, std::min(color.green, color.blue));
 }
 
 RGB SetSat(RGB color, int s) {
-  int* max = &color.red;
-  int* mid = &color.red;
-  int* min = &color.red;
-  if (color.green > *max) {
-    max = &color.green;
-  }
-  if (color.blue > *max) {
-    max = &color.blue;
-  }
-  if (color.green < *min) {
-    min = &color.green;
-  }
-  if (color.blue < *min) {
-    min = &color.blue;
-  }
-  if (*max == *min) {
-    color.red = 0;
-    color.green = 0;
-    color.blue = 0;
-    return color;
-  }
-  if (max == &color.red) {
-    if (min == &color.green) {
-      mid = &color.blue;
-    } else {
-      mid = &color.green;
-    }
-  } else if (max == &color.green) {
-    if (min == &color.red) {
-      mid = &color.blue;
-    } else {
-      mid = &color.red;
-    }
-  } else {
-    if (min == &color.green) {
-      mid = &color.red;
-    } else {
-      mid = &color.green;
-    }
-  }
-  if (*max > *min) {
-    *mid = (*mid - *min) * s / (*max - *min);
-    *max = s;
-    *min = 0;
-  }
+  int min = std::min(color.red, std::min(color.green, color.blue));
+  int max = std::max(color.red, std::max(color.green, color.blue));
+  if (min == max)
+    return {0, 0, 0};
+
+  color.red = (color.red - min) * s / (max - min);
+  color.green = (color.green - min) * s / (max - min);
+  color.blue = (color.blue - min) * s / (max - min);
   return color;
 }
 
 void RGB_Blend(int blend_mode,
                const uint8_t* src_scan,
-               uint8_t* dest_scan,
+               const uint8_t* dest_scan,
                int results[3]) {
-  RGB src;
-  RGB back;
   RGB result = {0, 0, 0};
+  RGB src;
   src.red = src_scan[2];
   src.green = src_scan[1];
   src.blue = src_scan[0];
+  RGB back;
   back.red = dest_scan[2];
   back.green = dest_scan[1];
   back.blue = dest_scan[0];
