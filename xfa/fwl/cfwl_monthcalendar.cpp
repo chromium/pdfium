@@ -90,7 +90,6 @@ CFWL_MonthCalendar::CFWL_MonthCalendar(
     CFWL_Widget* pOuter)
     : CFWL_Widget(app, std::move(properties), pOuter),
       m_bInitialized(false),
-      m_pDateTime(new CFX_DateTime),
       m_iCurYear(2011),
       m_iCurMonth(1),
       m_iYear(2011),
@@ -570,9 +569,9 @@ void CFWL_MonthCalendar::ClearDateItem() {
 }
 
 void CFWL_MonthCalendar::ResetDateItem() {
-  m_pDateTime->Set(m_iCurYear, m_iCurMonth, 1);
   int32_t iDays = FX_DaysInMonth(m_iCurYear, m_iCurMonth);
-  int32_t iDayOfWeek = m_pDateTime->GetDayOfWeek();
+  int32_t iDayOfWeek =
+      CFX_Unitime(m_iCurYear, m_iCurMonth, 1, 0, 0, 0, 0).GetDayOfWeek();
   for (int32_t i = 0; i < iDays; i++) {
     if (iDayOfWeek >= 7)
       iDayOfWeek = 0;

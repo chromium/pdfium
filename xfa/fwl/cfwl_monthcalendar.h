@@ -165,7 +165,6 @@ class CFWL_MonthCalendar : public CFWL_Widget {
   CFX_RectF m_rtWeekNumSep;
   CFX_WideString m_wsHead;
   CFX_WideString m_wsToday;
-  std::unique_ptr<CFX_DateTime> m_pDateTime;
   std::vector<std::unique_ptr<DATEINFO>> m_arrDates;
   int32_t m_iCurYear;
   int32_t m_iCurMonth;

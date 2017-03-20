@@ -30,7 +30,7 @@ class CFX_FormatString {
   bool ParseDateTime(const CFX_WideString& wsSrcDateTime,
                      const CFX_WideString& wsPattern,
                      FX_DATETIMETYPE eDateTimeType,
-                     CFX_Unitime& dtValue);
+                     CFX_Unitime* dtValue);
   bool ParseZero(const CFX_WideString& wsSrcText,
                  const CFX_WideString& wsPattern);
   bool ParseNull(const CFX_WideString& wsSrcText,

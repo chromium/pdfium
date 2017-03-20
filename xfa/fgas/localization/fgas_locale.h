@@ -80,9 +80,9 @@ class IFX_Locale {
                              CFX_WideString& wsPattern) const = 0;
 };
 
-bool FX_DateFromCanonical(const CFX_WideString& wsDate, CFX_Unitime& datetime);
+bool FX_DateFromCanonical(const CFX_WideString& wsDate, CFX_Unitime* datetime);
 bool FX_TimeFromCanonical(const CFX_WideStringC& wsTime,
-                          CFX_Unitime& datetime,
+                          CFX_Unitime* datetime,
                           IFX_Locale* pLocale);
 class CFX_Decimal {
  public:

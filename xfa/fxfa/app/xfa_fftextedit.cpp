@@ -522,7 +522,7 @@ bool CXFA_FFDateTimeEdit::LoadWidget() {
         if (!wsText.IsEmpty()) {
           CXFA_LocaleValue lcValue = XFA_GetLocaleValue(m_pDataAcc);
           CFX_Unitime date = lcValue.GetDate();
-          if (date.ToInt64() != 0)
+          if (date.IsSet())
             pWidget->SetCurSel(date.GetYear(), date.GetMonth(), date.GetDay());
         }
       } break;
@@ -619,8 +619,8 @@ bool CXFA_FFDateTimeEdit::UpdateFWLData() {
     CXFA_LocaleValue lcValue = XFA_GetLocaleValue(m_pDataAcc);
     CFX_Unitime date = lcValue.GetDate();
     if (lcValue.IsValid()) {
-      if (date.ToInt64() != 0) {
-        ((CFWL_DateTimePicker*)m_pNormalWidget)
+      if (date.IsSet()) {
+        static_cast<CFWL_DateTimePicker*>(m_pNormalWidget)
             ->SetCurSel(date.GetYear(), date.GetMonth(), date.GetDay());
       }
     }
@@ -646,9 +646,8 @@ void CXFA_FFDateTimeEdit::OnSelectChanged(CFWL_Widget* pWidget,
   CFX_WideString wsPicture;
   m_pDataAcc->GetPictureContent(wsPicture, XFA_VALUEPICTURE_Edit);
   CXFA_LocaleValue date(XFA_VT_DATE, GetDoc()->GetXFADoc()->GetLocalMgr());
-  CFX_Unitime dt;
-  dt.Set(iYear, iMonth, iDay, 0, 0, 0, 0);
-  date.SetDate(dt);
+  date.SetDate(CFX_Unitime(iYear, iMonth, iDay, 0, 0, 0, 0));
+
   CFX_WideString wsDate;
   date.FormatPatterns(wsDate, wsPicture, m_pDataAcc->GetLocal(),
                       XFA_VALUEPICTURE_Edit);

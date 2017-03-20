@@ -17,35 +17,79 @@ uint8_t FX_DaysInMonth(int32_t iYear, uint8_t iMonth);
 
 class CFX_Unitime {
  public:
-  CFX_Unitime() { m_iUnitime = 0; }
-  explicit CFX_Unitime(int64_t iUnitime) { m_iUnitime = iUnitime; }
-
-  int64_t ToInt64() const { return m_iUnitime; }
+  CFX_Unitime()
+      : year_(0),
+        month_(0),
+        day_(0),
+        hour_(0),
+        minute_(0),
+        second_(0),
+        millisecond_(0) {}
+  CFX_Unitime(int32_t year,
+              uint8_t month,
+              uint8_t day,
+              uint8_t hour,
+              uint8_t minute,
+              uint8_t second,
+              uint16_t millisecond)
+      : year_(year),
+        month_(month),
+        day_(day),
+        hour_(hour),
+        minute_(minute),
+        second_(second),
+        millisecond_(millisecond) {}
 
   void Now();
-  void Set(int32_t year,
-           uint8_t month,
-           uint8_t day,
-           uint8_t hour,
-           uint8_t minute,
-           uint8_t second,
-           uint16_t millisecond);
-  void Set(int64_t t) { m_iUnitime = t; }
 
-  int32_t GetYear() const;
-  uint8_t GetMonth() const;
-  uint8_t GetDay() const;
-  uint8_t GetHour() const;
-  uint8_t GetMinute() const;
-  uint8_t GetSecond() const;
-  uint16_t GetMillisecond() const;
-
-  CFX_Unitime operator+(const CFX_Unitime& t2) const {
-    return CFX_Unitime(m_iUnitime + t2.m_iUnitime);
+  void Reset() {
+    year_ = 0;
+    month_ = 0;
+    day_ = 0;
+    hour_ = 0;
+    minute_ = 0;
+    second_ = 0;
+    millisecond_ = 0;
   }
 
+  bool IsSet() const {
+    return year_ != 0 || month_ != 0 || day_ != 0 || hour_ != 0 ||
+           minute_ != 0 || second_ != 0 || millisecond_ != 0;
+  }
+
+  void SetDate(int32_t year, uint8_t month, uint8_t day) {
+    year_ = year;
+    month_ = month;
+    day_ = day;
+  }
+
+  void SetTime(uint8_t hour,
+               uint8_t minute,
+               uint8_t second,
+               uint16_t millisecond) {
+    hour_ = hour;
+    minute_ = minute;
+    second_ = second;
+    millisecond_ = millisecond;
+  }
+
+  int32_t GetYear() const { return year_; }
+  uint8_t GetMonth() const { return month_; }
+  uint8_t GetDay() const { return day_; }
+  uint8_t GetHour() const { return hour_; }
+  uint8_t GetMinute() const { return minute_; }
+  uint8_t GetSecond() const { return second_; }
+  uint16_t GetMillisecond() const { return millisecond_; }
+  int32_t GetDayOfWeek() const;
+
  private:
-  int64_t m_iUnitime;
+  int32_t year_;
+  uint8_t month_;
+  uint8_t day_;
+  uint8_t hour_;
+  uint8_t minute_;
+  uint8_t second_;
+  uint16_t millisecond_;
 };
 
 #if _FX_OS_ != _FX_ANDROID_
@@ -58,47 +102,5 @@ struct FX_TIMEZONE {
 #if _FX_OS_ != _FX_ANDROID_
 #pragma pack(pop)
 #endif
-
-class CFX_DateTime {
- public:
-  CFX_DateTime() {}
-  ~CFX_DateTime() {}
-
-  bool Set(int32_t year, uint8_t month, uint8_t day);
-  int32_t GetDayOfWeek() const;
-
- private:
-#if _FX_OS_ != _FX_ANDROID_
-#pragma pack(push, 1)
-#endif
-  struct FX_DATE {
-    int32_t year;
-    uint8_t month;
-    uint8_t day;
-  };
-
-  struct FX_TIME {
-    uint8_t hour;
-    uint8_t minute;
-    uint8_t second;
-    uint16_t millisecond;
-  };
-
-  struct FX_DATETIME {
-    union {
-      FX_DATE sDate;
-      FX_DATE aDate;
-    } Date;
-    union {
-      FX_TIME sTime;
-      FX_TIME aTime;
-    } Time;
-  };
-
-#if _FX_OS_ != _FX_ANDROID_
-#pragma pack(pop)
-#endif
-  FX_DATETIME m_DateTime;
-};
 
 #endif  // XFA_FGAS_LOCALIZATION_FGAS_DATETIME_H_

@@ -54,7 +54,7 @@ class CXFA_LocaleValue {
                            IFX_Locale* pLocale,
                            XFA_VALUEPICTURE eValueType) const;
   bool ValidateCanonicalValue(const CFX_WideString& wsValue, uint32_t dwVType);
-  bool ValidateCanonicalDate(const CFX_WideString& wsDate, CFX_Unitime& unDate);
+  bool ValidateCanonicalDate(const CFX_WideString& wsDate, CFX_Unitime* unDate);
   bool ValidateCanonicalTime(const CFX_WideString& wsTime);
   bool ValidateCanonicalDateTime(const CFX_WideString& wsDateTime);
   void GetNumbericFormat(CFX_WideString& wsFormat,

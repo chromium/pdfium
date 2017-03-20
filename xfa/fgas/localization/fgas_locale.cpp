@@ -205,7 +205,7 @@ bool GetNumericDotIndex(const CFX_WideString& wsNum,
 bool ParseLocaleDate(const CFX_WideString& wsDate,
                      const CFX_WideString& wsDatePattern,
                      IFX_Locale* pLocale,
-                     CFX_Unitime& datetime,
+                     CFX_Unitime* datetime,
                      int32_t& cc) {
   int32_t year = 1900;
   int32_t month = 1;
@@ -393,9 +393,7 @@ bool ParseLocaleDate(const CFX_WideString& wsDate,
   if (cc < len)
     return false;
 
-  CFX_Unitime ut;
-  ut.Set(year, month, day, 0, 0, 0, 0);
-  datetime = datetime + ut;
+  datetime->SetDate(year, month, day);
   return !!cc;
 }
 
@@ -423,7 +421,7 @@ void ResolveZone(uint8_t& wHour,
 bool ParseLocaleTime(const CFX_WideString& wsTime,
                      const CFX_WideString& wsTimePattern,
                      IFX_Locale* pLocale,
-                     CFX_Unitime& datetime,
+                     CFX_Unitime* datetime,
                      int32_t& cc) {
   uint8_t hour = 0;
   uint8_t minute = 0;
@@ -611,9 +609,7 @@ bool ParseLocaleTime(const CFX_WideString& wsTime,
       }
     }
   }
-  CFX_Unitime ut;
-  ut.Set(0, 0, 0, hour, minute, second, millisecond);
-  datetime = datetime + ut;
+  datetime->SetTime(hour, minute, second, millisecond);
   return !!cc;
 }
 
@@ -953,7 +949,7 @@ bool FormatDateTimeInternal(const CFX_Unitime& dt,
 
 }  // namespace
 
-bool FX_DateFromCanonical(const CFX_WideString& wsDate, CFX_Unitime& datetime) {
+bool FX_DateFromCanonical(const CFX_WideString& wsDate, CFX_Unitime* datetime) {
   int32_t year = 1900;
   int32_t month = 1;
   int32_t day = 1;
@@ -1026,14 +1022,12 @@ bool FX_DateFromCanonical(const CFX_WideString& wsDate, CFX_Unitime& datetime) {
       }
     }
   }
-  CFX_Unitime ut;
-  ut.Set(year, month, day, 0, 0, 0, 0);
-  datetime = datetime + ut;
+  datetime->SetDate(year, month, day);
   return true;
 }
 
 bool FX_TimeFromCanonical(const CFX_WideStringC& wsTime,
-                          CFX_Unitime& datetime,
+                          CFX_Unitime* datetime,
                           IFX_Locale* pLocale) {
   if (wsTime.GetLength() == 0)
     return false;
@@ -1099,17 +1093,14 @@ bool FX_TimeFromCanonical(const CFX_WideStringC& wsTime,
           FX_TIMEZONE tzDiff;
           tzDiff.tzHour = 0;
           tzDiff.tzMinute = 0;
-          if (str[cc] != 'Z') {
+          if (str[cc] != 'Z')
             cc += ParseTimeZone(str + cc, len - cc, tzDiff);
-          }
           ResolveZone(hour, minute, tzDiff, pLocale);
         }
       }
     }
   }
-  CFX_Unitime ut;
-  ut.Set(0, 0, 0, hour, minute, second, millisecond);
-  datetime = datetime + ut;
+  datetime->SetTime(hour, minute, second, millisecond);
   return true;
 }
 
@@ -2077,8 +2068,9 @@ FX_DATETIMETYPE CFX_FormatString::GetDateTimeFormat(
 bool CFX_FormatString::ParseDateTime(const CFX_WideString& wsSrcDateTime,
                                      const CFX_WideString& wsPattern,
                                      FX_DATETIMETYPE eDateTimeType,
-                                     CFX_Unitime& dtValue) {
-  dtValue.Set(0);
+                                     CFX_Unitime* dtValue) {
+  dtValue->Reset();
+
   if (wsSrcDateTime.IsEmpty() || wsPattern.IsEmpty()) {
     return false;
   }
@@ -2711,15 +2703,16 @@ bool CFX_FormatString::FormatDateTime(const CFX_WideString& wsSrcDateTime,
   if (eCategory == FX_DATETIMETYPE_Unknown) {
     return false;
   }
-  CFX_Unitime dt(0);
+  CFX_Unitime dt;
   int32_t iT = wsSrcDateTime.Find(L"T");
   if (iT < 0) {
     if (eCategory == FX_DATETIMETYPE_Date &&
-        FX_DateFromCanonical(wsSrcDateTime, dt)) {
+        FX_DateFromCanonical(wsSrcDateTime, &dt)) {
       return FormatDateTimeInternal(dt, wsDatePattern, wsTimePattern, true,
                                     pLocale, wsOutput);
-    } else if (eCategory == FX_DATETIMETYPE_Time &&
-               FX_TimeFromCanonical(wsSrcDateTime.AsStringC(), dt, pLocale)) {
+    }
+    if (eCategory == FX_DATETIMETYPE_Time &&
+        FX_TimeFromCanonical(wsSrcDateTime.AsStringC(), &dt, pLocale)) {
       return FormatDateTimeInternal(dt, wsDatePattern, wsTimePattern, true,
                                     pLocale, wsOutput);
     }
@@ -2727,11 +2720,11 @@ bool CFX_FormatString::FormatDateTime(const CFX_WideString& wsSrcDateTime,
     CFX_WideString wsSrcDate(wsSrcDateTime.c_str(), iT);
     CFX_WideStringC wsSrcTime(wsSrcDateTime.c_str() + iT + 1,
                               wsSrcDateTime.GetLength() - iT - 1);
-    if (wsSrcDate.IsEmpty() || wsSrcTime.IsEmpty()) {
+    if (wsSrcDate.IsEmpty() || wsSrcTime.IsEmpty())
       return false;
-    }
-    if (FX_DateFromCanonical(wsSrcDate, dt) &&
-        FX_TimeFromCanonical(wsSrcTime, dt, pLocale)) {
+
+    if (FX_DateFromCanonical(wsSrcDate, &dt) &&
+        FX_TimeFromCanonical(wsSrcTime, &dt, pLocale)) {
       return FormatDateTimeInternal(dt, wsDatePattern, wsTimePattern,
                                     eCategory != FX_DATETIMETYPE_TimeDate,
                                     pLocale, wsOutput);

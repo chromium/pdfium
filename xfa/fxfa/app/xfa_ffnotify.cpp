@@ -264,6 +264,7 @@ void CXFA_FFNotify::OpenDropDownList(CXFA_FFWidget* hWidget) {
 CFX_WideString CXFA_FFNotify::GetCurrentDateTime() {
   CFX_Unitime dataTime;
   dataTime.Now();
+
   CFX_WideString wsDateTime;
   wsDateTime.Format(L"%d%02d%02dT%02d%02d%02d", dataTime.GetYear(),
                     dataTime.GetMonth(), dataTime.GetDay(), dataTime.GetHour(),
