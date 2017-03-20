@@ -199,52 +199,58 @@ CPVT_FloatRect CTypeset::CharArray() {
       pLine->m_LineInfo.fLineX = fNodeWidth * VARIABLETEXT_HALF;
       break;
     case 1:
-      nStart = (m_pVT->m_nCharArray - m_pSection->m_WordArray.GetSize()) / 2;
+      nStart = (m_pVT->m_nCharArray -
+                pdfium::CollectionSize<int32_t>(m_pSection->m_WordArray)) /
+               2;
       pLine->m_LineInfo.fLineX =
           fNodeWidth * nStart - fNodeWidth * VARIABLETEXT_HALF;
       break;
     case 2:
-      nStart = m_pVT->m_nCharArray - m_pSection->m_WordArray.GetSize();
+      nStart = m_pVT->m_nCharArray -
+               pdfium::CollectionSize<int32_t>(m_pSection->m_WordArray);
       pLine->m_LineInfo.fLineX =
           fNodeWidth * nStart - fNodeWidth * VARIABLETEXT_HALF;
       break;
   }
-  for (int32_t w = 0, sz = m_pSection->m_WordArray.GetSize(); w < sz; w++) {
+  for (int32_t w = 0,
+               sz = pdfium::CollectionSize<int32_t>(m_pSection->m_WordArray);
+       w < sz; w++) {
     if (w >= m_pVT->m_nCharArray)
       break;
 
     float fNextWidth = 0;
-    if (CPVT_WordInfo* pNextWord = m_pSection->m_WordArray.GetAt(w + 1)) {
+    if (pdfium::IndexInBounds(m_pSection->m_WordArray, w + 1)) {
+      CPVT_WordInfo* pNextWord = m_pSection->m_WordArray[w + 1].get();
       pNextWord->fWordTail = 0;
       fNextWidth = m_pVT->GetWordWidth(*pNextWord);
     }
-    if (CPVT_WordInfo* pWord = m_pSection->m_WordArray.GetAt(w)) {
-      pWord->fWordTail = 0;
-      float fWordWidth = m_pVT->GetWordWidth(*pWord);
-      float fWordAscent = m_pVT->GetWordAscent(*pWord);
-      float fWordDescent = m_pVT->GetWordDescent(*pWord);
-      x = (float)(fNodeWidth * (w + nStart + 0.5) -
-                  fWordWidth * VARIABLETEXT_HALF);
-      pWord->fWordX = x;
-      pWord->fWordY = y;
-      if (w == 0) {
-        pLine->m_LineInfo.fLineX = x;
-      }
-      if (w != m_pSection->m_WordArray.GetSize() - 1) {
-        pWord->fWordTail =
-            (fNodeWidth - (fWordWidth + fNextWidth) * VARIABLETEXT_HALF > 0
-                 ? fNodeWidth - (fWordWidth + fNextWidth) * VARIABLETEXT_HALF
-                 : 0);
-      } else {
-        pWord->fWordTail = 0;
-      }
-      x += fWordWidth;
-      fLineAscent = std::max(fLineAscent, fWordAscent);
-      fLineDescent = std::min(fLineDescent, fWordDescent);
+    CPVT_WordInfo* pWord = m_pSection->m_WordArray[w].get();
+    pWord->fWordTail = 0;
+    float fWordWidth = m_pVT->GetWordWidth(*pWord);
+    float fWordAscent = m_pVT->GetWordAscent(*pWord);
+    float fWordDescent = m_pVT->GetWordDescent(*pWord);
+    x = (float)(fNodeWidth * (w + nStart + 0.5) -
+                fWordWidth * VARIABLETEXT_HALF);
+    pWord->fWordX = x;
+    pWord->fWordY = y;
+    if (w == 0) {
+      pLine->m_LineInfo.fLineX = x;
     }
+    if (w != pdfium::CollectionSize<int32_t>(m_pSection->m_WordArray) - 1) {
+      pWord->fWordTail =
+          (fNodeWidth - (fWordWidth + fNextWidth) * VARIABLETEXT_HALF > 0
+               ? fNodeWidth - (fWordWidth + fNextWidth) * VARIABLETEXT_HALF
+               : 0);
+    } else {
+      pWord->fWordTail = 0;
+    }
+    x += fWordWidth;
+    fLineAscent = std::max(fLineAscent, fWordAscent);
+    fLineDescent = std::min(fLineDescent, fWordDescent);
   }
   pLine->m_LineInfo.nBeginWordIndex = 0;
-  pLine->m_LineInfo.nEndWordIndex = m_pSection->m_WordArray.GetSize() - 1;
+  pLine->m_LineInfo.nEndWordIndex =
+      pdfium::CollectionSize<int32_t>(m_pSection->m_WordArray) - 1;
   pLine->m_LineInfo.fLineY = y;
   pLine->m_LineInfo.fLineWidth = x - pLine->m_LineInfo.fLineX;
   pLine->m_LineInfo.fLineAscent = fLineAscent;
@@ -286,15 +292,16 @@ void CTypeset::SplitLines(bool bTypeset, float fFontSize) {
   float fTypesetWidth = std::max(
       m_pVT->GetPlateWidth() - m_pVT->GetLineIndent(m_pSection->m_SecInfo),
       0.0f);
-  int32_t nTotalWords = m_pSection->m_WordArray.GetSize();
+  int32_t nTotalWords =
+      pdfium::CollectionSize<int32_t>(m_pSection->m_WordArray);
   bool bOpened = false;
   if (nTotalWords > 0) {
     int32_t i = 0;
     while (i < nTotalWords) {
-      CPVT_WordInfo* pWord = m_pSection->m_WordArray.GetAt(i);
+      CPVT_WordInfo* pWord = m_pSection->m_WordArray[i].get();
       CPVT_WordInfo* pOldWord = pWord;
       if (i > 0) {
-        pOldWord = m_pSection->m_WordArray.GetAt(i - 1);
+        pOldWord = m_pSection->m_WordArray[i - 1].get();
       }
       if (pWord) {
         if (bTypeset) {
@@ -462,7 +469,8 @@ void CTypeset::OutputLines() {
       pLine->m_LineInfo.fLineY = fPosY - fMinY;
       for (int32_t w = pLine->m_LineInfo.nBeginWordIndex;
            w <= pLine->m_LineInfo.nEndWordIndex; w++) {
-        if (CPVT_WordInfo* pWord = m_pSection->m_WordArray.GetAt(w)) {
+        if (pdfium::IndexInBounds(m_pSection->m_WordArray, w)) {
+          CPVT_WordInfo* pWord = m_pSection->m_WordArray[w].get();
           pWord->fWordX = fPosX - fMinX;
           if (pWord->pWordProps) {
             switch (pWord->pWordProps->nScriptType) {

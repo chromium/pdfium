@@ -15,23 +15,11 @@
 
 CSection::CSection(CPDF_VariableText* pVT) : m_pVT(pVT) {}
 
-CSection::~CSection() {
-  ResetAll();
-}
+CSection::~CSection() {}
 
 void CSection::ResetAll() {
-  ResetWordArray();
-  ResetLineArray();
-}
-
-void CSection::ResetLineArray() {
+  m_WordArray.clear();
   m_LineArray.clear();
-}
-
-void CSection::ResetWordArray() {
-  for (int32_t i = 0, sz = m_WordArray.GetSize(); i < sz; i++)
-    delete m_WordArray.GetAt(i);
-  m_WordArray.RemoveAll();
 }
 
 void CSection::ResetLinePlace() {
@@ -44,13 +32,10 @@ void CSection::ResetLinePlace() {
 
 CPVT_WordPlace CSection::AddWord(const CPVT_WordPlace& place,
                                  const CPVT_WordInfo& wordinfo) {
-  CPVT_WordInfo* pWord = new CPVT_WordInfo(wordinfo);
-  int32_t nWordIndex =
-      pdfium::clamp(place.nWordIndex, 0, m_WordArray.GetSize());
-  if (nWordIndex == m_WordArray.GetSize())
-    m_WordArray.Add(pWord);
-  else
-    m_WordArray.InsertAt(nWordIndex, pWord);
+  int32_t nWordIndex = pdfium::clamp(
+      place.nWordIndex, 0, pdfium::CollectionSize<int32_t>(m_WordArray));
+  m_WordArray.insert(m_WordArray.begin() + nWordIndex,
+                     pdfium::MakeUnique<CPVT_WordInfo>(wordinfo));
   return place;
 }
 
@@ -202,54 +187,50 @@ CPVT_WordPlace CSection::SearchWordPlace(float fx,
   int32_t nRight = range.EndPos.nWordIndex + 1;
   int32_t nMid = (nLeft + nRight) / 2;
   while (nLeft < nRight) {
-    if (nMid == nLeft) {
+    if (nMid == nLeft)
       break;
-    }
     if (nMid == nRight) {
       nMid--;
       break;
     }
-    if (CPVT_WordInfo* pWord = m_WordArray.GetAt(nMid)) {
-      if (fx >
-          pWord->fWordX + m_pVT->GetWordWidth(*pWord) * VARIABLETEXT_HALF) {
-        nLeft = nMid;
-        nMid = (nLeft + nRight) / 2;
-        continue;
-      } else {
-        nRight = nMid;
-        nMid = (nLeft + nRight) / 2;
-        continue;
-      }
-    } else {
+    if (!pdfium::IndexInBounds(m_WordArray, nMid))
       break;
-    }
-  }
-  if (CPVT_WordInfo* pWord = m_WordArray.GetAt(nMid)) {
+    CPVT_WordInfo* pWord = m_WordArray[nMid].get();
     if (fx > pWord->fWordX + m_pVT->GetWordWidth(*pWord) * VARIABLETEXT_HALF) {
-      wordplace.nWordIndex = nMid;
+      nLeft = nMid;
+      nMid = (nLeft + nRight) / 2;
+      continue;
     }
+    nRight = nMid;
+    nMid = (nLeft + nRight) / 2;
+  }
+  if (pdfium::IndexInBounds(m_WordArray, nMid)) {
+    CPVT_WordInfo* pWord = m_WordArray[nMid].get();
+    if (fx > pWord->fWordX + m_pVT->GetWordWidth(*pWord) * VARIABLETEXT_HALF)
+      wordplace.nWordIndex = nMid;
   }
   return wordplace;
 }
 
 void CSection::ClearLeftWords(int32_t nWordIndex) {
   for (int32_t i = nWordIndex; i >= 0; i--) {
-    delete m_WordArray.GetAt(i);
-    m_WordArray.RemoveAt(i);
+    if (pdfium::IndexInBounds(m_WordArray, i))
+      m_WordArray.erase(m_WordArray.begin() + i);
   }
 }
 
 void CSection::ClearRightWords(int32_t nWordIndex) {
-  for (int32_t i = m_WordArray.GetSize() - 1; i > nWordIndex; i--) {
-    delete m_WordArray.GetAt(i);
-    m_WordArray.RemoveAt(i);
+  int32_t sz = pdfium::CollectionSize<int32_t>(m_WordArray);
+  for (int32_t i = sz - 1; i > nWordIndex; i--) {
+    if (pdfium::IndexInBounds(m_WordArray, i))
+      m_WordArray.erase(m_WordArray.begin() + i);
   }
 }
 
 void CSection::ClearMidWords(int32_t nBeginIndex, int32_t nEndIndex) {
   for (int32_t i = nEndIndex; i > nBeginIndex; i--) {
-    delete m_WordArray.GetAt(i);
-    m_WordArray.RemoveAt(i);
+    if (pdfium::IndexInBounds(m_WordArray, i))
+      m_WordArray.erase(m_WordArray.begin() + i);
   }
 }
 
@@ -266,11 +247,11 @@ void CSection::ClearWords(const CPVT_WordRange& PlaceRange) {
   } else if (PlaceRange.EndPos.WordCmp(SecEndPos) <= 0) {
     ClearLeftWords(PlaceRange.EndPos.nWordIndex);
   } else {
-    ResetWordArray();
+    m_WordArray.clear();
   }
 }
 
 void CSection::ClearWord(const CPVT_WordPlace& place) {
-  delete m_WordArray.GetAt(place.nWordIndex);
-  m_WordArray.RemoveAt(place.nWordIndex);
+  if (pdfium::IndexInBounds(m_WordArray, place.nWordIndex))
+    m_WordArray.erase(m_WordArray.begin() + place.nWordIndex);
 }

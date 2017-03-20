@@ -170,16 +170,12 @@ bool CPDF_VariableText::Iterator::PrevSection() {
 bool CPDF_VariableText::Iterator::GetWord(CPVT_Word& word) const {
   word.WordPlace = m_CurPos;
   CSection* pSection = m_pVT->m_SectionArray.GetAt(m_CurPos.nSecIndex);
-  if (!pSection)
+  if (!pSection ||
+      !pdfium::IndexInBounds(pSection->m_LineArray, m_CurPos.nLineIndex) ||
+      !pdfium::IndexInBounds(pSection->m_WordArray, m_CurPos.nWordIndex)) {
     return false;
-
-  if (!pdfium::IndexInBounds(pSection->m_LineArray, m_CurPos.nLineIndex))
-    return false;
-
-  CPVT_WordInfo* pWord = pSection->m_WordArray.GetAt(m_CurPos.nWordIndex);
-  if (!pWord)
-    return false;
-
+  }
+  CPVT_WordInfo* pWord = pSection->m_WordArray[m_CurPos.nWordIndex].get();
   word.Word = pWord->Word;
   word.nCharset = pWord->nCharset;
   word.fWidth = m_pVT->GetWordWidth(*pWord);
@@ -197,13 +193,11 @@ bool CPDF_VariableText::Iterator::GetWord(CPVT_Word& word) const {
 
 bool CPDF_VariableText::Iterator::SetWord(const CPVT_Word& word) {
   CSection* pSection = m_pVT->m_SectionArray.GetAt(m_CurPos.nSecIndex);
-  if (!pSection)
+  if (!pSection ||
+      !pdfium::IndexInBounds(pSection->m_WordArray, m_CurPos.nWordIndex)) {
     return false;
-
-  CPVT_WordInfo* pWord = pSection->m_WordArray.GetAt(m_CurPos.nWordIndex);
-  if (!pWord)
-    return false;
-
+  }
+  CPVT_WordInfo* pWord = pSection->m_WordArray[m_CurPos.nWordIndex].get();
   if (pWord->pWordProps)
     *pWord->pWordProps = word.WordProps;
   return true;
@@ -329,25 +323,22 @@ CPVT_WordPlace CPDF_VariableText::InsertSection(
 
   CPVT_WordPlace wordplace = place;
   UpdateWordPlace(wordplace);
-  CPVT_WordPlace newplace = place;
+  CPVT_WordPlace result = place;
   if (CSection* pSection = m_SectionArray.GetAt(wordplace.nSecIndex)) {
     CPVT_WordPlace NewPlace(wordplace.nSecIndex + 1, 0, -1);
     CPVT_SectionInfo secinfo;
     AddSection(NewPlace, secinfo);
-    newplace = NewPlace;
+    result = NewPlace;
     if (CSection* pNewSection = m_SectionArray.GetAt(NewPlace.nSecIndex)) {
-      for (int32_t w = wordplace.nWordIndex + 1,
-                   sz = pSection->m_WordArray.GetSize();
-           w < sz; w++) {
-        if (CPVT_WordInfo* pWord = pSection->m_WordArray.GetAt(w)) {
-          NewPlace.nWordIndex++;
-          pNewSection->AddWord(NewPlace, *pWord);
-        }
+      for (int32_t w = wordplace.nWordIndex + 1;
+           w < pdfium::CollectionSize<int32_t>(pSection->m_WordArray); ++w) {
+        NewPlace.nWordIndex++;
+        pNewSection->AddWord(NewPlace, *pSection->m_WordArray[w]);
       }
     }
     ClearSectionRightWords(wordplace);
   }
-  return newplace;
+  return result;
 }
 
 CPVT_WordPlace CPDF_VariableText::InsertText(const CPVT_WordPlace& place,
@@ -478,7 +469,7 @@ int32_t CPDF_VariableText::WordPlaceToWordIndex(
   for (i = 0, sz = m_SectionArray.GetSize(); i < sz && i < newplace.nSecIndex;
        i++) {
     if (CSection* pSection = m_SectionArray.GetAt(i)) {
-      nIndex += pSection->m_WordArray.GetSize();
+      nIndex += pdfium::CollectionSize<int32_t>(pSection->m_WordArray);
       if (i != m_SectionArray.GetSize() - 1)
         nIndex += kReturnLength;
     }
@@ -494,7 +485,7 @@ CPVT_WordPlace CPDF_VariableText::WordIndexToWordPlace(int32_t index) const {
   bool bFind = false;
   for (int32_t i = 0, sz = m_SectionArray.GetSize(); i < sz; i++) {
     if (CSection* pSection = m_SectionArray.GetAt(i)) {
-      nIndex += pSection->m_WordArray.GetSize();
+      nIndex += pdfium::CollectionSize<int32_t>(pSection->m_WordArray);
       if (nIndex == index) {
         place = pSection->GetEndWordPlace();
         bFind = true;
@@ -679,10 +670,11 @@ CPVT_WordPlace CPDF_VariableText::GetSectionEndPlace(
 int32_t CPDF_VariableText::GetTotalWords() const {
   int32_t nTotal = 0;
   for (int32_t i = 0, sz = m_SectionArray.GetSize(); i < sz; i++) {
-    if (CSection* pSection = m_SectionArray.GetAt(i))
-      nTotal += (pSection->m_WordArray.GetSize() + kReturnLength);
+    if (CSection* pSection = m_SectionArray.GetAt(i)) {
+      nTotal += pdfium::CollectionSize<int32_t>(pSection->m_WordArray) +
+                kReturnLength;
+    }
   }
-
   return nTotal - kReturnLength;
 }
 
@@ -735,24 +727,24 @@ CPVT_WordPlace CPDF_VariableText::AddWord(const CPVT_WordPlace& place,
 
 bool CPDF_VariableText::GetWordInfo(const CPVT_WordPlace& place,
                                     CPVT_WordInfo& wordinfo) {
-  if (CSection* pSection = m_SectionArray.GetAt(place.nSecIndex)) {
-    if (CPVT_WordInfo* pWord = pSection->m_WordArray.GetAt(place.nWordIndex)) {
-      wordinfo = *pWord;
-      return true;
-    }
+  CSection* pSection = m_SectionArray.GetAt(place.nSecIndex);
+  if (!pSection ||
+      !pdfium::IndexInBounds(pSection->m_WordArray, place.nWordIndex)) {
+    return false;
   }
-  return false;
+  wordinfo = *pSection->m_WordArray[place.nWordIndex];
+  return true;
 }
 
 bool CPDF_VariableText::SetWordInfo(const CPVT_WordPlace& place,
                                     const CPVT_WordInfo& wordinfo) {
-  if (CSection* pSection = m_SectionArray.GetAt(place.nSecIndex)) {
-    if (CPVT_WordInfo* pWord = pSection->m_WordArray.GetAt(place.nWordIndex)) {
-      *pWord = wordinfo;
-      return true;
-    }
+  CSection* pSection = m_SectionArray.GetAt(place.nSecIndex);
+  if (!pSection ||
+      !pdfium::IndexInBounds(pSection->m_WordArray, place.nWordIndex)) {
+    return false;
   }
-  return false;
+  *pSection->m_WordArray[place.nWordIndex] = wordinfo;
+  return true;
 }
 
 bool CPDF_VariableText::GetLineInfo(const CPVT_WordPlace& place,
@@ -876,13 +868,14 @@ int32_t CPDF_VariableText::GetHorzScale(const CPVT_WordInfo& WordInfo) {
 
 void CPDF_VariableText::ClearSectionRightWords(const CPVT_WordPlace& place) {
   CPVT_WordPlace wordplace = AdjustLineHeader(place, true);
-  if (CSection* pSection = m_SectionArray.GetAt(place.nSecIndex)) {
-    for (int32_t w = pSection->m_WordArray.GetSize() - 1;
-         w > wordplace.nWordIndex; w--) {
-      delete pSection->m_WordArray.GetAt(w);
-      pSection->m_WordArray.RemoveAt(w);
-    }
+  CSection* pSection = m_SectionArray.GetAt(place.nSecIndex);
+  if (!pSection ||
+      !pdfium::IndexInBounds(pSection->m_WordArray, wordplace.nWordIndex + 1)) {
+    return;
   }
+  pSection->m_WordArray.erase(
+      pSection->m_WordArray.begin() + wordplace.nWordIndex + 1,
+      pSection->m_WordArray.end());
 }
 
 CPVT_WordPlace CPDF_VariableText::AdjustLineHeader(const CPVT_WordPlace& place,
@@ -895,14 +888,14 @@ CPVT_WordPlace CPDF_VariableText::AdjustLineHeader(const CPVT_WordPlace& place,
 bool CPDF_VariableText::ClearEmptySection(const CPVT_WordPlace& place) {
   if (place.nSecIndex == 0 && m_SectionArray.GetSize() == 1)
     return false;
-  if (CSection* pSection = m_SectionArray.GetAt(place.nSecIndex)) {
-    if (pSection->m_WordArray.GetSize() == 0) {
-      delete pSection;
-      m_SectionArray.RemoveAt(place.nSecIndex);
-      return true;
-    }
-  }
-  return false;
+
+  CSection* pSection = m_SectionArray.GetAt(place.nSecIndex);
+  if (!pSection || !pSection->m_WordArray.empty())
+    return false;
+
+  delete pSection;
+  m_SectionArray.RemoveAt(place.nSecIndex);
+  return true;
 }
 
 void CPDF_VariableText::ClearEmptySections(const CPVT_WordRange& PlaceRange) {
@@ -918,12 +911,9 @@ void CPDF_VariableText::LinkLatterSection(const CPVT_WordPlace& place) {
   CPVT_WordPlace oldplace = AdjustLineHeader(place, true);
   if (CSection* pNextSection = m_SectionArray.GetAt(place.nSecIndex + 1)) {
     if (CSection* pSection = m_SectionArray.GetAt(oldplace.nSecIndex)) {
-      for (int32_t w = 0, sz = pNextSection->m_WordArray.GetSize(); w < sz;
-           w++) {
-        if (CPVT_WordInfo* pWord = pNextSection->m_WordArray.GetAt(w)) {
-          oldplace.nWordIndex++;
-          pSection->AddWord(oldplace, *pWord);
-        }
+      for (auto& pWord : pNextSection->m_WordArray) {
+        oldplace.nWordIndex++;
+        pSection->AddWord(oldplace, *pWord);
       }
     }
     delete pNextSection;
@@ -943,21 +933,23 @@ void CPDF_VariableText::ClearWords(const CPVT_WordRange& PlaceRange) {
 }
 
 CPVT_WordPlace CPDF_VariableText::ClearLeftWord(const CPVT_WordPlace& place) {
-  if (CSection* pSection = m_SectionArray.GetAt(place.nSecIndex)) {
-    CPVT_WordPlace leftplace = GetPrevWordPlace(place);
-    if (leftplace != place) {
-      if (leftplace.nSecIndex != place.nSecIndex) {
-        if (pSection->m_WordArray.GetSize() == 0)
-          ClearEmptySection(place);
-        else
-          LinkLatterSection(leftplace);
-      } else {
-        pSection->ClearWord(place);
-      }
-    }
-    return leftplace;
+  CSection* pSection = m_SectionArray.GetAt(place.nSecIndex);
+  if (!pSection)
+    return place;
+
+  CPVT_WordPlace leftplace = GetPrevWordPlace(place);
+  if (leftplace == place)
+    return place;
+
+  if (leftplace.nSecIndex != place.nSecIndex) {
+    if (pSection->m_WordArray.empty())
+      ClearEmptySection(place);
+    else
+      LinkLatterSection(leftplace);
+  } else {
+    pSection->ClearWord(place);
   }
-  return place;
+  return leftplace;
 }
 
 CPVT_WordPlace CPDF_VariableText::ClearRightWord(const CPVT_WordPlace& place) {

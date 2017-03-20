@@ -27,8 +27,6 @@ class CSection final {
   ~CSection();
 
   void ResetAll();
-  void ResetLineArray();
-  void ResetWordArray();
   void ResetLinePlace();
   CPVT_WordPlace AddWord(const CPVT_WordPlace& place,
                          const CPVT_WordInfo& wordinfo);
@@ -50,7 +48,7 @@ class CSection final {
   CPVT_WordPlace SecPlace;
   CPVT_SectionInfo m_SecInfo;
   std::vector<std::unique_ptr<CLine>> m_LineArray;
-  CPVT_ArrayTemplate<CPVT_WordInfo*> m_WordArray;
+  std::vector<std::unique_ptr<CPVT_WordInfo>> m_WordArray;
 
  private:
   friend class CTypeset;
