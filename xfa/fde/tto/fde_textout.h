@@ -168,7 +168,7 @@ class CFDE_TextOut {
   int32_t m_iTotalLines;
   std::vector<FXTEXT_CHARPOS> m_CharPos;
   std::unique_ptr<CFDE_RenderDevice> m_pRenderDevice;
-  CFX_ArrayTemplate<int32_t> m_hotKeys;
+  std::vector<int32_t> m_HotKeys;
   std::vector<CFX_RectF> m_rectArray;
 };
 

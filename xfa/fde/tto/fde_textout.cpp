@@ -409,7 +409,7 @@ void CFDE_TextOut::LoadText(const wchar_t* pwsStr,
   float fLineStep = (m_fLineSpace > m_fFontSize) ? m_fLineSpace : m_fFontSize;
   float fLineStop = rect.bottom();
   m_fLinePos = rect.top;
-  m_hotKeys.RemoveAll();
+  m_HotKeys.clear();
   int32_t iStartChar = 0;
   int32_t iChars = 0;
   int32_t iPieceWidths = 0;
@@ -420,7 +420,7 @@ void CFDE_TextOut::LoadText(const wchar_t* pwsStr,
     wch = *pwsStr++;
     if (bHotKey && wch == L'&' && *(pStr - 1) != L'&') {
       if (iTxtLength > 0)
-        m_hotKeys.Add(iChars);
+        m_HotKeys.push_back(iChars);
       continue;
     }
     *pStr++ = wch;
@@ -730,11 +730,8 @@ void CFDE_TextOut::DrawLine(const FDE_TTOPIECE* pPiece, CFDE_Pen* pPen) {
     iLineCount++;
   }
   if (bHotKey) {
-    int32_t iHotKeys = m_hotKeys.GetSize();
-    int32_t iCount = GetCharRects(pPiece);
-    if (iCount > 0) {
-      for (int32_t i = 0; i < iHotKeys; i++) {
-        int32_t iCharIndex = m_hotKeys.GetAt(i);
+    if (GetCharRects(pPiece) > 0) {
+      for (int32_t iCharIndex : m_HotKeys) {
         if (iCharIndex >= pPiece->iStartChar &&
             iCharIndex < pPiece->iStartChar + pPiece->iChars) {
           CFX_RectF rect = m_rectArray[iCharIndex - pPiece->iStartChar];
