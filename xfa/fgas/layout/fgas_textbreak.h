@@ -67,7 +67,7 @@ class CFX_TxtBreak : public CFX_Break {
   int32_t CountBreakPieces() const;
   const CFX_BreakPiece* GetBreakPiece(int32_t index) const;
   void ClearBreakPieces();
-  void Reset();
+
   int32_t GetDisplayPos(const FX_TXTRUN* pTxtRun,
                         FXTEXT_CHARPOS* pCharPos,
                         bool bCharCode = false,
@@ -88,7 +88,6 @@ class CFX_TxtBreak : public CFX_Break {
   CFX_Char* GetLastChar(int32_t index, bool bOmitChar = true) const;
   bool HasTxtLine() const { return m_iReadyLineIndex >= 0; }
   FX_CHARTYPE GetUnifiedCharType(FX_CHARTYPE dwType) const;
-  void ResetArabicContext() override;
   void ResetContextCharStyles();
   bool EndBreak_SplitLine(CFX_BreakLine* pNextLine, bool bAllChars);
   void EndBreak_BidiLine(std::deque<FX_TPO>* tpos, CFX_BreakType dwStatus);
@@ -103,12 +102,8 @@ class CFX_TxtBreak : public CFX_Break {
                      CFX_BreakLine* pNextLine,
                      bool bAllChars = false);
 
-  int32_t m_iArabicContext;
-  int32_t m_iCurArabicContext;
   int32_t m_iAlignment;
-  uint32_t m_dwContextCharStyles;
   int32_t m_iCombWidth;
-  int32_t m_iCurAlignment;
 };
 
 #endif  // XFA_FGAS_LAYOUT_FGAS_TEXTBREAK_H_

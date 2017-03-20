@@ -723,12 +723,6 @@ void CFX_RTFBreak::ClearBreakPieces() {
   m_iReadyLineIndex = -1;
 }
 
-void CFX_RTFBreak::Reset() {
-  m_eCharType = FX_CHARTYPE_Unknown;
-  m_Line[0].Clear();
-  m_Line[1].Clear();
-}
-
 int32_t CFX_RTFBreak::GetDisplayPos(const FX_RTFTEXTOBJ* pText,
                                     FXTEXT_CHARPOS* pCharPos,
                                     bool bCharCode) const {

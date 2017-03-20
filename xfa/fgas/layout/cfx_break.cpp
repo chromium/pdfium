@@ -38,12 +38,16 @@ CFX_Break::CFX_Break(uint32_t dwLayoutStyles)
 
 CFX_Break::~CFX_Break() {}
 
+void CFX_Break::Reset() {
+  m_eCharType = FX_CHARTYPE_Unknown;
+  m_Line[0].Clear();
+  m_Line[1].Clear();
+}
+
 void CFX_Break::SetLayoutStyles(uint32_t dwLayoutStyles) {
   m_dwLayoutStyles = dwLayoutStyles;
   m_bSingleLine = (m_dwLayoutStyles & FX_LAYOUTSTYLE_SingleLine) != 0;
   m_bCombText = (m_dwLayoutStyles & FX_LAYOUTSTYLE_CombText) != 0;
-
-  ResetArabicContext();
 }
 
 void CFX_Break::SetHorizontalScale(int32_t iScale) {

@@ -60,8 +60,6 @@ class CFX_RTFBreak : public CFX_Break {
   const CFX_BreakPiece* GetBreakPieceUnstable(int32_t index) const;
   void ClearBreakPieces();
 
-  void Reset();
-
   int32_t GetDisplayPos(const FX_RTFTEXTOBJ* pText,
                         FXTEXT_CHARPOS* pCharPos,
                         bool bCharCode) const;

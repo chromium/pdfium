@@ -32,6 +32,8 @@ class CFX_Break {
  public:
   virtual ~CFX_Break();
 
+  void Reset();
+
   void SetLayoutStyles(uint32_t dwLayoutStyles);
   uint32_t GetLayoutStyles() const { return m_dwLayoutStyles; }
 
@@ -49,7 +51,6 @@ class CFX_Break {
   void SetDefaultChar(wchar_t wch);
 
   virtual void SetBreakStatus() = 0;
-  virtual void ResetArabicContext() {}
 
  protected:
   explicit CFX_Break(uint32_t dwLayoutStyles);
