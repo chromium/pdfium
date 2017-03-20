@@ -31,6 +31,7 @@ struct GraphicsData {
 
 struct FontData {
   CFX_ByteString baseFont;
+  CFX_ByteString type;
   bool operator<(const FontData& other) const;
 };
 

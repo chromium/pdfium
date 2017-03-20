@@ -243,24 +243,35 @@ void CPDF_PageContentGenerator::ProcessGraphics(CFX_ByteTextBuf* buf,
 // Tj sets the actual text, <####...> is used when specifying charcodes.
 void CPDF_PageContentGenerator::ProcessText(CFX_ByteTextBuf* buf,
                                             CPDF_TextObject* pTextObj) {
-  // TODO(npm): Add support for something other than standard type1 fonts.
   *buf << "BT " << pTextObj->GetTextMatrix() << " Tm ";
   CPDF_Font* pFont = pTextObj->GetFont();
   if (!pFont)
     pFont = CPDF_Font::GetStockFont(m_pDocument, "Helvetica");
   FontData fontD;
+  if (pFont->IsType1Font())
+    fontD.type = "Type1";
+  else if (pFont->IsTrueTypeFont())
+    fontD.type = "TrueType";
+  else if (pFont->IsCIDFont())
+    fontD.type = "Type0";
+  else
+    return;
   fontD.baseFont = pFont->GetBaseFont();
   auto it = m_pPage->m_FontsMap.find(fontD);
   CFX_ByteString dictName;
   if (it != m_pPage->m_FontsMap.end()) {
     dictName = it->second;
   } else {
-    auto fontDict = pdfium::MakeUnique<CPDF_Dictionary>();
-    fontDict->SetNewFor<CPDF_Name>("Type", "Font");
-    fontDict->SetNewFor<CPDF_Name>("Subtype", "Type1");
-    fontDict->SetNewFor<CPDF_Name>("BaseFont", fontD.baseFont);
-    CPDF_Object* pDict = m_pDocument->AddIndirectObject(std::move(fontDict));
-    uint32_t dwObjNum = pDict->GetObjNum();
+    uint32_t dwObjNum = pFont->GetFontDict()->GetObjNum();
+    if (!dwObjNum) {
+      // In this case we assume it must be a standard font
+      auto fontDict = pdfium::MakeUnique<CPDF_Dictionary>();
+      fontDict->SetNewFor<CPDF_Name>("Type", "Font");
+      fontDict->SetNewFor<CPDF_Name>("Subtype", fontD.type);
+      fontDict->SetNewFor<CPDF_Name>("BaseFont", fontD.baseFont);
+      CPDF_Object* pDict = m_pDocument->AddIndirectObject(std::move(fontDict));
+      dwObjNum = pDict->GetObjNum();
+    }
     dictName = RealizeResource(dwObjNum, "Font");
     m_pPage->m_FontsMap[fontD] = dictName;
   }

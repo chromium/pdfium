@@ -183,5 +183,7 @@ bool GraphicsData::operator<(const GraphicsData& other) const {
 }
 
 bool FontData::operator<(const FontData& other) const {
-  return baseFont < other.baseFont;
+  if (baseFont != other.baseFont)
+    return baseFont < other.baseFont;
+  return type < other.type;
 }
