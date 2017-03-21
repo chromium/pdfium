@@ -205,32 +205,6 @@ wchar_t FX_GetFolderSeparator() {
 #endif
 }
 
-CFX_Matrix_3by3 CFX_Matrix_3by3::Inverse() {
-  float det = a * (e * i - f * h) - b * (i * d - f * g) + c * (d * h - e * g);
-  if (FXSYS_fabs(det) < 0.0000001)
-    return CFX_Matrix_3by3();
-
-  return CFX_Matrix_3by3(
-      (e * i - f * h) / det, -(b * i - c * h) / det, (b * f - c * e) / det,
-      -(d * i - f * g) / det, (a * i - c * g) / det, -(a * f - c * d) / det,
-      (d * h - e * g) / det, -(a * h - b * g) / det, (a * e - b * d) / det);
-}
-
-CFX_Matrix_3by3 CFX_Matrix_3by3::Multiply(const CFX_Matrix_3by3& m) {
-  return CFX_Matrix_3by3(
-      a * m.a + b * m.d + c * m.g, a * m.b + b * m.e + c * m.h,
-      a * m.c + b * m.f + c * m.i, d * m.a + e * m.d + f * m.g,
-      d * m.b + e * m.e + f * m.h, d * m.c + e * m.f + f * m.i,
-      g * m.a + h * m.d + i * m.g, g * m.b + h * m.e + i * m.h,
-      g * m.c + h * m.f + i * m.i);
-}
-
-CFX_Vector_3by1 CFX_Matrix_3by3::TransformVector(const CFX_Vector_3by1& v) {
-  return CFX_Vector_3by1(a * v.a + b * v.b + c * v.c,
-                         d * v.a + e * v.b + f * v.c,
-                         g * v.a + h * v.b + i * v.c);
-}
-
 uint32_t GetBits32(const uint8_t* pData, int bitpos, int nbits) {
   ASSERT(0 < nbits && nbits <= 32);
   const uint8_t* dataPtr = &pData[bitpos / 8];

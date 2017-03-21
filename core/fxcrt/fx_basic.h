@@ -338,18 +338,12 @@ class CFX_BitStream {
  public:
   void Init(const uint8_t* pData, uint32_t dwSize);
 
-  uint32_t GetBits(uint32_t nBits);
-
   void ByteAlign();
-
-  bool IsEOF() { return m_BitPos >= m_BitSize; }
-
+  bool IsEOF() const { return m_BitPos >= m_BitSize; }
+  uint32_t GetBits(uint32_t nBits);
   void SkipBits(uint32_t nBits) { m_BitPos += nBits; }
-
   void Rewind() { m_BitPos = 0; }
-
   uint32_t GetPos() const { return m_BitPos; }
-
   uint32_t BitsRemaining() const {
     return m_BitSize >= m_BitPos ? m_BitSize - m_BitPos : 0;
   }
@@ -376,57 +370,6 @@ class CFX_AutoRestorer {
  private:
   T* const m_Location;
   const T m_OldValue;
-};
-
-class CFX_Vector_3by1 {
- public:
-  CFX_Vector_3by1() : a(0.0f), b(0.0f), c(0.0f) {}
-
-  CFX_Vector_3by1(float a1, float b1, float c1) : a(a1), b(b1), c(c1) {}
-
-  float a;
-  float b;
-  float c;
-};
-class CFX_Matrix_3by3 {
- public:
-  CFX_Matrix_3by3()
-      : a(0.0f),
-        b(0.0f),
-        c(0.0f),
-        d(0.0f),
-        e(0.0f),
-        f(0.0f),
-        g(0.0f),
-        h(0.0f),
-        i(0.0f) {}
-
-  CFX_Matrix_3by3(float a1,
-                  float b1,
-                  float c1,
-                  float d1,
-                  float e1,
-                  float f1,
-                  float g1,
-                  float h1,
-                  float i1)
-      : a(a1), b(b1), c(c1), d(d1), e(e1), f(f1), g(g1), h(h1), i(i1) {}
-
-  CFX_Matrix_3by3 Inverse();
-
-  CFX_Matrix_3by3 Multiply(const CFX_Matrix_3by3& m);
-
-  CFX_Vector_3by1 TransformVector(const CFX_Vector_3by1& v);
-
-  float a;
-  float b;
-  float c;
-  float d;
-  float e;
-  float f;
-  float g;
-  float h;
-  float i;
 };
 
 uint32_t GetBits32(const uint8_t* pData, int bitpos, int nbits);

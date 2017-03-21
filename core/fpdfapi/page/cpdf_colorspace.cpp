@@ -7,6 +7,7 @@
 #include "core/fpdfapi/page/cpdf_colorspace.h"
 
 #include <algorithm>
+#include <limits>
 #include <memory>
 #include <utility>
 
@@ -227,6 +228,76 @@ class CPDF_DeviceNCS : public CPDF_ColorSpace {
   std::unique_ptr<CPDF_Function> m_pFunc;
 };
 
+class Vector_3by1 {
+ public:
+  Vector_3by1() : a(0.0f), b(0.0f), c(0.0f) {}
+
+  Vector_3by1(float a1, float b1, float c1) : a(a1), b(b1), c(c1) {}
+
+  float a;
+  float b;
+  float c;
+};
+
+class Matrix_3by3 {
+ public:
+  Matrix_3by3()
+      : a(0.0f),
+        b(0.0f),
+        c(0.0f),
+        d(0.0f),
+        e(0.0f),
+        f(0.0f),
+        g(0.0f),
+        h(0.0f),
+        i(0.0f) {}
+
+  Matrix_3by3(float a1,
+              float b1,
+              float c1,
+              float d1,
+              float e1,
+              float f1,
+              float g1,
+              float h1,
+              float i1)
+      : a(a1), b(b1), c(c1), d(d1), e(e1), f(f1), g(g1), h(h1), i(i1) {}
+
+  Matrix_3by3 Inverse() {
+    float det = a * (e * i - f * h) - b * (i * d - f * g) + c * (d * h - e * g);
+    if (FXSYS_fabs(det) < std::numeric_limits<float>::epsilon())
+      return Matrix_3by3();
+
+    return Matrix_3by3(
+        (e * i - f * h) / det, -(b * i - c * h) / det, (b * f - c * e) / det,
+        -(d * i - f * g) / det, (a * i - c * g) / det, -(a * f - c * d) / det,
+        (d * h - e * g) / det, -(a * h - b * g) / det, (a * e - b * d) / det);
+  }
+
+  Matrix_3by3 Multiply(const Matrix_3by3& m) {
+    return Matrix_3by3(a * m.a + b * m.d + c * m.g, a * m.b + b * m.e + c * m.h,
+                       a * m.c + b * m.f + c * m.i, d * m.a + e * m.d + f * m.g,
+                       d * m.b + e * m.e + f * m.h, d * m.c + e * m.f + f * m.i,
+                       g * m.a + h * m.d + i * m.g, g * m.b + h * m.e + i * m.h,
+                       g * m.c + h * m.f + i * m.i);
+  }
+
+  Vector_3by1 TransformVector(const Vector_3by1& v) {
+    return Vector_3by1(a * v.a + b * v.b + c * v.c, d * v.a + e * v.b + f * v.c,
+                       g * v.a + h * v.b + i * v.c);
+  }
+
+  float a;
+  float b;
+  float c;
+  float d;
+  float e;
+  float f;
+  float g;
+  float h;
+  float i;
+};
+
 float RGB_Conversion(float colorComponent) {
   colorComponent = pdfium::clamp(colorComponent, 0.0f, 1.0f);
   int scale = std::max(static_cast<int>(colorComponent * 1023), 0);
@@ -260,16 +331,16 @@ void XYZ_to_sRGB_WhitePoint(float X,
   float Rx = 0.64f, Ry = 0.33f;
   float Gx = 0.30f, Gy = 0.60f;
   float Bx = 0.15f, By = 0.06f;
-  CFX_Matrix_3by3 RGB_xyz(Rx, Gx, Bx, Ry, Gy, By, 1 - Rx - Ry, 1 - Gx - Gy,
-                          1 - Bx - By);
-  CFX_Vector_3by1 whitePoint(Xw, Yw, Zw);
-  CFX_Vector_3by1 XYZ(X, Y, Z);
+  Matrix_3by3 RGB_xyz(Rx, Gx, Bx, Ry, Gy, By, 1 - Rx - Ry, 1 - Gx - Gy,
+                      1 - Bx - By);
+  Vector_3by1 whitePoint(Xw, Yw, Zw);
+  Vector_3by1 XYZ(X, Y, Z);
 
-  CFX_Vector_3by1 RGB_Sum_XYZ = RGB_xyz.Inverse().TransformVector(whitePoint);
-  CFX_Matrix_3by3 RGB_SUM_XYZ_DIAG(RGB_Sum_XYZ.a, 0, 0, 0, RGB_Sum_XYZ.b, 0, 0,
-                                   0, RGB_Sum_XYZ.c);
-  CFX_Matrix_3by3 M = RGB_xyz.Multiply(RGB_SUM_XYZ_DIAG);
-  CFX_Vector_3by1 RGB = M.Inverse().TransformVector(XYZ);
+  Vector_3by1 RGB_Sum_XYZ = RGB_xyz.Inverse().TransformVector(whitePoint);
+  Matrix_3by3 RGB_SUM_XYZ_DIAG(RGB_Sum_XYZ.a, 0, 0, 0, RGB_Sum_XYZ.b, 0, 0, 0,
+                               RGB_Sum_XYZ.c);
+  Matrix_3by3 M = RGB_xyz.Multiply(RGB_SUM_XYZ_DIAG);
+  Vector_3by1 RGB = M.Inverse().TransformVector(XYZ);
 
   *R = RGB_Conversion(RGB.a);
   *G = RGB_Conversion(RGB.b);
