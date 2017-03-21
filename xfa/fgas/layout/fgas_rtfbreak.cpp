@@ -17,8 +17,7 @@ CFX_RTFBreak::CFX_RTFBreak(uint32_t dwLayoutStyles)
     : CFX_Break(dwLayoutStyles),
       m_bPagination(false),
       m_iAlignment(CFX_RTFLineAlignment::Left),
-      m_pUserData(nullptr),
-      m_dwIdentity(0) {
+      m_pUserData(nullptr) {
   SetBreakStatus();
   m_bPagination = !!(m_dwLayoutStyles & FX_LAYOUTSTYLE_Pagination);
 }
@@ -48,40 +47,6 @@ void CFX_RTFBreak::SetUserData(const CFX_RetainPtr<CFX_Retainable>& pUserData) {
 
   SetBreakStatus();
   m_pUserData = pUserData;
-}
-
-void CFX_RTFBreak::SetBreakStatus() {
-  ++m_dwIdentity;
-  int32_t iCount = m_pCurLine->CountChars();
-  if (iCount < 1)
-    return;
-
-  CFX_Char* tc = m_pCurLine->GetChar(iCount - 1);
-  if (tc->m_dwStatus == CFX_BreakType::None)
-    tc->m_dwStatus = CFX_BreakType::Piece;
-}
-
-CFX_Char* CFX_RTFBreak::GetLastChar(int32_t index) const {
-  std::vector<CFX_Char>& tca = m_pCurLine->m_LineChars;
-  int32_t iCount = pdfium::CollectionSize<int32_t>(tca);
-  if (index < 0 || index >= iCount)
-    return nullptr;
-
-  int32_t iStart = iCount - 1;
-  while (iStart > -1) {
-    CFX_Char* pTC = &tca[iStart--];
-    if (pTC->m_iCharWidth >= 0 ||
-        pTC->GetCharType() != FX_CHARTYPE_Combination) {
-      if (--index < 0)
-        return pTC;
-    }
-  }
-  return nullptr;
-}
-
-inline FX_CHARTYPE CFX_RTFBreak::GetUnifiedCharType(
-    FX_CHARTYPE chartype) const {
-  return chartype >= FX_CHARTYPE_ArabicAlef ? FX_CHARTYPE_Arabic : chartype;
 }
 
 int32_t CFX_RTFBreak::GetLastPositionedTab() const {
@@ -167,7 +132,7 @@ void CFX_RTFBreak::AppendChar_Combination(CFX_Char* pCurChar) {
 
   iCharWidth *= m_iFontSize;
   iCharWidth = iCharWidth * m_iHorizontalScale / 100;
-  CFX_Char* pLastChar = GetLastChar(0);
+  CFX_Char* pLastChar = GetLastChar(0, false, true);
   if (pLastChar && pLastChar->GetCharType() > FX_CHARTYPE_Combination)
     iCharWidth = -iCharWidth;
   else
@@ -224,10 +189,10 @@ CFX_BreakType CFX_RTFBreak::AppendChar_Arabic(CFX_Char* pCurChar) {
   bool bAlef = false;
   if (m_eCharType >= FX_CHARTYPE_ArabicAlef &&
       m_eCharType <= FX_CHARTYPE_ArabicDistortion) {
-    pLastChar = GetLastChar(1);
+    pLastChar = GetLastChar(1, false, true);
     if (pLastChar) {
       m_pCurLine->m_iWidth -= pLastChar->m_iCharWidth;
-      CFX_Char* pPrevChar = GetLastChar(2);
+      CFX_Char* pPrevChar = GetLastChar(2, false, true);
       wForm = pdfium::arabic::GetFormChar(pLastChar, pPrevChar, pCurChar);
       bAlef = (wForm == 0xFEFF &&
                pLastChar->GetCharType() == FX_CHARTYPE_ArabicAlef);
@@ -292,7 +257,7 @@ CFX_BreakType CFX_RTFBreak::EndBreak(CFX_BreakType dwStatus) {
     return m_pCurLine->m_LinePieces.back().m_dwStatus;
   }
 
-  if (HasRTFLine()) {
+  if (HasLine()) {
     if (!m_Line[m_iReadyLineIndex].m_LinePieces.empty()) {
       if (dwStatus != CFX_BreakType::Piece)
         m_Line[m_iReadyLineIndex].m_LinePieces.back().m_dwStatus = dwStatus;
@@ -324,7 +289,7 @@ CFX_BreakType CFX_RTFBreak::EndBreak(CFX_BreakType dwStatus) {
   m_pCurLine = pNextLine;
   m_pCurLine->m_iStart = m_iLineStart;
 
-  CFX_Char* pTC = GetLastChar(0);
+  CFX_Char* pTC = GetLastChar(0, false, true);
   m_eCharType = pTC ? pTC->GetCharType() : FX_CHARTYPE_Unknown;
   return dwStatus;
 }
@@ -696,31 +661,6 @@ void CFX_RTFBreak::SplitTextLine(CFX_BreakLine* pCurLine,
     }
     pNextLine->m_LineChars[i].m_dwStatus = CFX_BreakType::None;
   }
-}
-
-int32_t CFX_RTFBreak::CountBreakPieces() const {
-  return HasRTFLine() ? pdfium::CollectionSize<int32_t>(
-                            m_Line[m_iReadyLineIndex].m_LinePieces)
-                      : 0;
-}
-
-const CFX_BreakPiece* CFX_RTFBreak::GetBreakPieceUnstable(int32_t index) const {
-  if (!HasRTFLine())
-    return nullptr;
-
-  const std::vector<CFX_BreakPiece>& pRTFPieces =
-      m_Line[m_iReadyLineIndex].m_LinePieces;
-  if (!pdfium::IndexInBounds(pRTFPieces, index))
-    return nullptr;
-
-  return &pRTFPieces[index];
-}
-
-void CFX_RTFBreak::ClearBreakPieces() {
-  if (HasRTFLine())
-    m_Line[m_iReadyLineIndex].Clear();
-
-  m_iReadyLineIndex = -1;
 }
 
 int32_t CFX_RTFBreak::GetDisplayPos(const FX_RTFTEXTOBJ* pText,

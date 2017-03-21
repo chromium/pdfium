@@ -46,37 +46,6 @@ void CFX_TxtBreak::SetCombWidth(float fCombWidth) {
   m_iCombWidth = FXSYS_round(fCombWidth * 20000.0f);
 }
 
-void CFX_TxtBreak::SetBreakStatus() {
-  int32_t iCount = m_pCurLine->CountChars();
-  if (iCount < 1)
-    return;
-
-  CFX_Char* pTC = m_pCurLine->GetChar(iCount - 1);
-  if (pTC->m_dwStatus == CFX_BreakType::None)
-    pTC->m_dwStatus = CFX_BreakType::Piece;
-}
-CFX_Char* CFX_TxtBreak::GetLastChar(int32_t index, bool bOmitChar) const {
-  std::vector<CFX_Char>& ca = m_pCurLine->m_LineChars;
-  int32_t iCount = pdfium::CollectionSize<int32_t>(ca);
-  if (index < 0 || index >= iCount)
-    return nullptr;
-
-  int32_t iStart = iCount - 1;
-  while (iStart > -1) {
-    CFX_Char* pTC = &ca[iStart--];
-    if (bOmitChar && pTC->GetCharType() == FX_CHARTYPE_Combination)
-      continue;
-    if (--index < 0)
-      return pTC;
-  }
-  return nullptr;
-}
-
-inline FX_CHARTYPE CFX_TxtBreak::GetUnifiedCharType(
-    FX_CHARTYPE chartype) const {
-  return chartype >= FX_CHARTYPE_ArabicAlef ? FX_CHARTYPE_Arabic : chartype;
-}
-
 void CFX_TxtBreak::AppendChar_PageLoad(CFX_Char* pCurChar, uint32_t dwProps) {
   pCurChar->m_dwStatus = CFX_BreakType::None;
   pCurChar->m_dwCharStyles = m_iAlignment | (1 << 8);
@@ -91,7 +60,7 @@ void CFX_TxtBreak::AppendChar_Combination(CFX_Char* pCurChar) {
     iCharWidth = m_iCombWidth;
   } else {
     wForm = wch;
-    CFX_Char* pLastChar = GetLastChar(0, false);
+    CFX_Char* pLastChar = GetLastChar(0, false, false);
     if (pLastChar &&
         (pLastChar->m_dwCharStyles & FX_TXTCHARSTYLE_ArabicShadda) == 0) {
       bool bShadda = false;
@@ -162,13 +131,13 @@ CFX_BreakType CFX_TxtBreak::AppendChar_Arabic(CFX_Char* pCurChar) {
   bool bAlef = false;
   if (!m_bCombText && m_eCharType >= FX_CHARTYPE_ArabicAlef &&
       m_eCharType <= FX_CHARTYPE_ArabicDistortion) {
-    pLastChar = GetLastChar(1);
+    pLastChar = GetLastChar(1, true, false);
     if (pLastChar) {
       iCharWidth = pLastChar->m_iCharWidth;
       if (iCharWidth > 0)
         iLineWidth -= iCharWidth;
 
-      CFX_Char* pPrevChar = GetLastChar(2);
+      CFX_Char* pPrevChar = GetLastChar(2, true, false);
       wForm = pdfium::arabic::GetFormChar(pLastChar, pPrevChar, pCurChar);
       bAlef = (wForm == 0xFEFF &&
                pLastChar->GetCharType() == FX_CHARTYPE_ArabicAlef);
@@ -514,7 +483,7 @@ CFX_BreakType CFX_TxtBreak::EndBreak(CFX_BreakType dwStatus) {
     return m_pCurLine->m_LinePieces.back().m_dwStatus;
   }
 
-  if (HasTxtLine()) {
+  if (HasLine()) {
     if (!m_Line[m_iReadyLineIndex].m_LinePieces.empty()) {
       if (dwStatus != CFX_BreakType::Piece)
         m_Line[m_iReadyLineIndex].m_LinePieces.back().m_dwStatus = dwStatus;
@@ -542,7 +511,7 @@ CFX_BreakType CFX_TxtBreak::EndBreak(CFX_BreakType dwStatus) {
   }
 
   m_pCurLine = pNextLine;
-  CFX_Char* pTC = GetLastChar(0, false);
+  CFX_Char* pTC = GetLastChar(0, false, false);
   m_eCharType = pTC ? pTC->GetCharType() : FX_CHARTYPE_Unknown;
 
   return dwStatus;
@@ -680,28 +649,6 @@ void CFX_TxtBreak::SplitTextLine(CFX_BreakLine* pCurLine,
     pNextLine->m_LineChars[i].m_dwStatus = CFX_BreakType::None;
   }
   pNextLine->m_iWidth = iWidth;
-}
-
-int32_t CFX_TxtBreak::CountBreakPieces() const {
-  return HasTxtLine() ? pdfium::CollectionSize<int32_t>(
-                            m_Line[m_iReadyLineIndex].m_LinePieces)
-                      : 0;
-}
-
-const CFX_BreakPiece* CFX_TxtBreak::GetBreakPiece(int32_t index) const {
-  if (!HasTxtLine())
-    return nullptr;
-
-  if (!pdfium::IndexInBounds(m_Line[m_iReadyLineIndex].m_LinePieces, index))
-    return nullptr;
-
-  return &m_Line[m_iReadyLineIndex].m_LinePieces[index];
-}
-
-void CFX_TxtBreak::ClearBreakPieces() {
-  if (HasTxtLine())
-    m_Line[m_iReadyLineIndex].Clear();
-  m_iReadyLineIndex = -1;
 }
 
 struct FX_FORMCHAR {

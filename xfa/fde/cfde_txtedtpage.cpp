@@ -296,16 +296,16 @@ int32_t CFDE_TxtEdtPage::LoadPage(const CFX_RectF* pClipBox,
     if (!CFX_BreakTypeNoneOrPiece(dwBreakStatus)) {
       int32_t nPieceCount = pBreak->CountBreakPieces();
       for (int32_t j = 0; j < nPieceCount; j++) {
-        const CFX_BreakPiece* pPiece = pBreak->GetBreakPiece(j);
+        const CFX_BreakPiece* pPiece = pBreak->GetBreakPieceUnstable(j);
         FDE_TEXTEDITPIECE TxtEdtPiece;
         FXSYS_memset(&TxtEdtPiece, 0, sizeof(FDE_TEXTEDITPIECE));
         TxtEdtPiece.nBidiLevel = pPiece->m_iBidiLevel;
         TxtEdtPiece.nCount = pPiece->GetLength();
         TxtEdtPiece.nStart = nPieceStart;
         TxtEdtPiece.dwCharStyles = pPiece->m_dwCharStyles;
-        if (FX_IsOdd(pPiece->m_iBidiLevel)) {
+        if (FX_IsOdd(pPiece->m_iBidiLevel))
           TxtEdtPiece.dwCharStyles |= FX_TXTCHARSTYLE_OddBidiLevel;
-        }
+
         float fParaBreakWidth = 0.0f;
         if (!CFX_BreakTypeNoneOrPiece(pPiece->m_dwStatus)) {
           wchar_t wRtChar = pParams->wLineBreakChar;

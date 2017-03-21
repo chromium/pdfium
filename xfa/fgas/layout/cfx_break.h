@@ -50,14 +50,23 @@ class CFX_Break {
   void SetParagraphBreakChar(wchar_t wch);
   void SetDefaultChar(wchar_t wch);
 
-  virtual void SetBreakStatus() = 0;
+  int32_t CountBreakPieces() const;
+  const CFX_BreakPiece* GetBreakPieceUnstable(int32_t index) const;
+  void ClearBreakPieces();
+
+  CFX_Char* GetLastChar(int32_t index, bool bOmitChar, bool bRichText) const;
 
  protected:
   explicit CFX_Break(uint32_t dwLayoutStyles);
 
+  void SetBreakStatus();
+  bool HasLine() const { return m_iReadyLineIndex >= 0; }
+  FX_CHARTYPE GetUnifiedCharType(FX_CHARTYPE dwType) const;
+
   FX_CHARTYPE m_eCharType;
   bool m_bSingleLine;
   bool m_bCombText;
+  uint32_t m_dwIdentity;
   uint32_t m_dwLayoutStyles;
   int32_t m_iLineStart;
   int32_t m_iLineWidth;

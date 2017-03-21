@@ -7,6 +7,9 @@
 #include "xfa/fgas/layout/cfx_break.h"
 
 #include <algorithm>
+#include <vector>
+
+#include "third_party/base/stl_util.h"
 
 namespace {
 
@@ -18,6 +21,7 @@ CFX_Break::CFX_Break(uint32_t dwLayoutStyles)
     : m_eCharType(FX_CHARTYPE_Unknown),
       m_bSingleLine(false),
       m_bCombText(false),
+      m_dwIdentity(0),
       m_dwLayoutStyles(dwLayoutStyles),
       m_iLineStart(0),
       m_iLineWidth(2000000),
@@ -88,6 +92,21 @@ void CFX_Break::SetFontSize(float fFontSize) {
   FontChanged();
 }
 
+void CFX_Break::SetBreakStatus() {
+  ++m_dwIdentity;
+  int32_t iCount = m_pCurLine->CountChars();
+  if (iCount < 1)
+    return;
+
+  CFX_Char* tc = m_pCurLine->GetChar(iCount - 1);
+  if (tc->m_dwStatus == CFX_BreakType::None)
+    tc->m_dwStatus = CFX_BreakType::Piece;
+}
+
+FX_CHARTYPE CFX_Break::GetUnifiedCharType(FX_CHARTYPE chartype) const {
+  return chartype >= FX_CHARTYPE_ArabicAlef ? FX_CHARTYPE_Arabic : chartype;
+}
+
 void CFX_Break::FontChanged() {
   m_iDefChar = 0;
   if (!m_pFont || m_wDefChar == 0xFEFF)
@@ -139,4 +158,44 @@ void CFX_Break::SetLineBoundary(float fLineStart, float fLineEnd) {
   m_iLineWidth = FXSYS_round(fLineEnd * 20000.0f);
   m_pCurLine->m_iStart = std::min(m_pCurLine->m_iStart, m_iLineWidth);
   m_pCurLine->m_iStart = std::max(m_pCurLine->m_iStart, m_iLineStart);
+}
+
+CFX_Char* CFX_Break::GetLastChar(int32_t index,
+                                 bool bOmitChar,
+                                 bool bRichText) const {
+  std::vector<CFX_Char>& tca = m_pCurLine->m_LineChars;
+  if (!pdfium::IndexInBounds(tca, index))
+    return nullptr;
+
+  int32_t iStart = pdfium::CollectionSize<int32_t>(tca) - 1;
+  while (iStart > -1) {
+    CFX_Char* pTC = &tca[iStart--];
+    if (((bRichText && pTC->m_iCharWidth < 0) || bOmitChar) &&
+        pTC->GetCharType() == FX_CHARTYPE_Combination) {
+      continue;
+    }
+    if (--index < 0)
+      return pTC;
+  }
+  return nullptr;
+}
+
+int32_t CFX_Break::CountBreakPieces() const {
+  return HasLine() ? pdfium::CollectionSize<int32_t>(
+                         m_Line[m_iReadyLineIndex].m_LinePieces)
+                   : 0;
+}
+
+const CFX_BreakPiece* CFX_Break::GetBreakPieceUnstable(int32_t index) const {
+  if (!HasLine())
+    return nullptr;
+  if (!pdfium::IndexInBounds(m_Line[m_iReadyLineIndex].m_LinePieces, index))
+    return nullptr;
+  return &m_Line[m_iReadyLineIndex].m_LinePieces[index];
+}
+
+void CFX_Break::ClearBreakPieces() {
+  if (HasLine())
+    m_Line[m_iReadyLineIndex].Clear();
+  m_iReadyLineIndex = -1;
 }

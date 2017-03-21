@@ -56,9 +56,6 @@ class CFX_RTFBreak : public CFX_Break {
   void AddPositionedTab(float fTabPos);
 
   CFX_BreakType EndBreak(CFX_BreakType dwStatus);
-  int32_t CountBreakPieces() const;
-  const CFX_BreakPiece* GetBreakPieceUnstable(int32_t index) const;
-  void ClearBreakPieces();
 
   int32_t GetDisplayPos(const FX_RTFTEXTOBJ* pText,
                         FXTEXT_CHARPOS* pCharPos,
@@ -74,10 +71,6 @@ class CFX_RTFBreak : public CFX_Break {
   CFX_BreakType AppendChar_Control(CFX_Char* pCurChar);
   CFX_BreakType AppendChar_Arabic(CFX_Char* pCurChar);
   CFX_BreakType AppendChar_Others(CFX_Char* pCurChar);
-  void SetBreakStatus() override;
-  CFX_Char* GetLastChar(int32_t index) const;
-  bool HasRTFLine() const { return m_iReadyLineIndex >= 0; }
-  FX_CHARTYPE GetUnifiedCharType(FX_CHARTYPE chartype) const;
   int32_t GetLastPositionedTab() const;
   bool GetPositionedTab(int32_t* iTabPos) const;
 
@@ -100,7 +93,6 @@ class CFX_RTFBreak : public CFX_Break {
   std::vector<int32_t> m_PositionedTabs;
   CFX_RTFLineAlignment m_iAlignment;
   CFX_RetainPtr<CFX_Retainable> m_pUserData;
-  uint32_t m_dwIdentity;
 };
 
 #endif  // XFA_FGAS_LAYOUT_FGAS_RTFBREAK_H_

@@ -63,7 +63,7 @@ void CFDE_TxtEdtParag::LoadParag() {
       int32_t nCount = pTxtBreak->CountBreakPieces();
       int32_t nTotal = 0;
       for (int32_t j = 0; j < nCount; j++) {
-        const CFX_BreakPiece* Piece = pTxtBreak->GetBreakPiece(j);
+        const CFX_BreakPiece* Piece = pTxtBreak->GetBreakPieceUnstable(j);
         nTotal += Piece->GetLength();
       }
       LineBaseArr.Add(nTotal);

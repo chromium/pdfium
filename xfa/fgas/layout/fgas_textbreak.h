@@ -64,9 +64,6 @@ class CFX_TxtBreak : public CFX_Break {
   void SetAlignment(int32_t iAlignment);
   void SetCombWidth(float fCombWidth);
   CFX_BreakType EndBreak(CFX_BreakType dwStatus);
-  int32_t CountBreakPieces() const;
-  const CFX_BreakPiece* GetBreakPiece(int32_t index) const;
-  void ClearBreakPieces();
 
   int32_t GetDisplayPos(const FX_TXTRUN* pTxtRun,
                         FXTEXT_CHARPOS* pCharPos,
@@ -84,10 +81,6 @@ class CFX_TxtBreak : public CFX_Break {
   CFX_BreakType AppendChar_Arabic(CFX_Char* pCurChar);
   CFX_BreakType AppendChar_Others(CFX_Char* pCurChar);
 
-  void SetBreakStatus() override;
-  CFX_Char* GetLastChar(int32_t index, bool bOmitChar = true) const;
-  bool HasTxtLine() const { return m_iReadyLineIndex >= 0; }
-  FX_CHARTYPE GetUnifiedCharType(FX_CHARTYPE dwType) const;
   void ResetContextCharStyles();
   bool EndBreak_SplitLine(CFX_BreakLine* pNextLine, bool bAllChars);
   void EndBreak_BidiLine(std::deque<FX_TPO>* tpos, CFX_BreakType dwStatus);
