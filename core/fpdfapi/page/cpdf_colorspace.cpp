@@ -10,6 +10,7 @@
 #include <limits>
 #include <memory>
 #include <utility>
+#include <vector>
 
 #include "core/fpdfapi/cpdf_modulemgr.h"
 #include "core/fpdfapi/page/cpdf_docpagedata.h"
@@ -540,16 +541,16 @@ void CPDF_ColorSpace::TranslateImageLine(uint8_t* dest_buf,
                                          int image_width,
                                          int image_height,
                                          bool bTransMask) const {
-  CFX_FixedBufGrow<float, 16> srcbuf(m_nComponents);
-  float* src = srcbuf;
-  float R;
-  float G;
-  float B;
+  std::vector<float> src(std::max(16U, m_nComponents));
   const int divisor = m_Family != PDFCS_INDEXED ? 255 : 1;
   for (int i = 0; i < pixels; i++) {
     for (uint32_t j = 0; j < m_nComponents; j++)
       src[j] = static_cast<float>(*src_buf++) / divisor;
-    GetRGB(src, &R, &G, &B);
+
+    float R;
+    float G;
+    float B;
+    GetRGB(src.data(), &R, &G, &B);
     *dest_buf++ = static_cast<int32_t>(B * 255);
     *dest_buf++ = static_cast<int32_t>(G * 255);
     *dest_buf++ = static_cast<int32_t>(R * 255);
@@ -1100,15 +1101,15 @@ bool CPDF_IndexedCS::GetRGB(float* pBuf, float* R, float* G, float* B) const {
       return false;
     }
   }
-  CFX_FixedBufGrow<float, 16> Comps(m_nBaseComponents);
-  float* comps = Comps;
+
+  std::vector<float> comps(std::max(16, m_nBaseComponents));
   const uint8_t* pTable = m_Table.raw_str();
   for (int i = 0; i < m_nBaseComponents; i++) {
     comps[i] =
         m_pCompMinMax[i * 2] +
         m_pCompMinMax[i * 2 + 1] * pTable[index * m_nBaseComponents + i] / 255;
   }
-  return m_pBaseCS->GetRGB(comps, R, G, B);
+  return m_pBaseCS->GetRGB(comps.data(), R, G, B);
 }
 
 CPDF_ColorSpace* CPDF_IndexedCS::GetBaseCS() const {
@@ -1221,20 +1222,20 @@ bool CPDF_SeparationCS::GetRGB(float* pBuf,
       return false;
 
     int nComps = m_pAltCS->CountComponents();
-    CFX_FixedBufGrow<float, 16> results(nComps);
+    std::vector<float> results(std::max(16, nComps));
     for (int i = 0; i < nComps; i++)
       results[i] = *pBuf;
-    return m_pAltCS->GetRGB(results, R, G, B);
+    return m_pAltCS->GetRGB(results.data(), R, G, B);
   }
 
-  CFX_FixedBufGrow<float, 16> results(m_pFunc->CountOutputs());
+  std::vector<float> results(std::max(16U, m_pFunc->CountOutputs()));
   int nresults = 0;
-  m_pFunc->Call(pBuf, 1, results, &nresults);
+  m_pFunc->Call(pBuf, 1, results.data(), &nresults);
   if (nresults == 0)
     return false;
 
   if (m_pAltCS)
-    return m_pAltCS->GetRGB(results, R, G, B);
+    return m_pAltCS->GetRGB(results.data(), R, G, B);
 
   R = 0;
   G = 0;
@@ -1284,13 +1285,13 @@ bool CPDF_DeviceNCS::GetRGB(float* pBuf, float* R, float* G, float* B) const {
   if (!m_pFunc)
     return false;
 
-  CFX_FixedBufGrow<float, 16> results(m_pFunc->CountOutputs());
+  std::vector<float> results(std::max(16U, m_pFunc->CountOutputs()));
   int nresults = 0;
-  m_pFunc->Call(pBuf, m_nComponents, results, &nresults);
+  m_pFunc->Call(pBuf, m_nComponents, results.data(), &nresults);
   if (nresults == 0)
     return false;
 
-  return m_pAltCS->GetRGB(results, R, G, B);
+  return m_pAltCS->GetRGB(results.data(), R, G, B);
 }
 
 void CPDF_DeviceNCS::EnableStdConversion(bool bEnabled) {

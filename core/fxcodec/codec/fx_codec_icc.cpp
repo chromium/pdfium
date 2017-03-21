@@ -4,6 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include <algorithm>
+#include <vector>
+
 #include "core/fxcodec/codec/codec_int.h"
 #include "core/fxcodec/fx_codec.h"
 #include "third_party/lcms2-2.6/include/lcms2.h"
@@ -165,14 +168,12 @@ void IccLib_Translate(void* pTransform,
   CLcmsCmm* p = (CLcmsCmm*)pTransform;
   uint8_t output[4];
   if (p->m_bLab) {
-    CFX_FixedBufGrow<double, 16> inputs(nSrcComponents);
-    double* input = inputs;
+    std::vector<double> input(std::max(16U, nSrcComponents));
     for (uint32_t i = 0; i < nSrcComponents; i++)
       input[i] = pSrcValues[i];
-    cmsDoTransform(p->m_hTransform, input, output, 1);
+    cmsDoTransform(p->m_hTransform, input.data(), output, 1);
   } else {
-    CFX_FixedBufGrow<uint8_t, 16> inputs(nSrcComponents);
-    uint8_t* input = inputs;
+    std::vector<uint8_t> input(std::max(16U, nSrcComponents));
     for (uint32_t i = 0; i < nSrcComponents; i++) {
       if (pSrcValues[i] > 1.0f)
         input[i] = 255;
@@ -181,7 +182,7 @@ void IccLib_Translate(void* pTransform,
       else
         input[i] = static_cast<int>(pSrcValues[i] * 255.0f);
     }
-    cmsDoTransform(p->m_hTransform, input, output, 1);
+    cmsDoTransform(p->m_hTransform, input.data(), output, 1);
   }
   switch (p->m_nDstComponents) {
     case 1:

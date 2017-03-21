@@ -529,11 +529,9 @@ bool CPDF_SampledFunc::v_Init(CPDF_Object* pObj) {
 
 bool CPDF_SampledFunc::v_Call(float* inputs, float* results) const {
   int pos = 0;
-  CFX_FixedBufGrow<float, 16> encoded_input_buf(m_nInputs);
-  float* encoded_input = encoded_input_buf;
-  CFX_FixedBufGrow<uint32_t, 32> int_buf(m_nInputs * 2);
-  uint32_t* index = int_buf;
-  uint32_t* blocksize = index + m_nInputs;
+  std::vector<float> encoded_input(std::max(16U, m_nInputs));
+  std::vector<uint32_t> index(std::max(32U, m_nInputs * 2));
+  uint32_t* blocksize = index.data() + m_nInputs;
   for (uint32_t i = 0; i < m_nInputs; i++) {
     if (i == 0)
       blocksize[i] = 1;
