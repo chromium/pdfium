@@ -90,13 +90,13 @@ class CFX_Edit_Select {
   CFX_Edit_Select(const CPVT_WordPlace& begin, const CPVT_WordPlace& end);
   explicit CFX_Edit_Select(const CPVT_WordRange& range);
 
-  void Default();
+  void Reset();
   void Set(const CPVT_WordPlace& begin, const CPVT_WordPlace& end);
   void SetBeginPos(const CPVT_WordPlace& begin);
   void SetEndPos(const CPVT_WordPlace& end);
 
   CPVT_WordRange ConvertToWordRange() const;
-  bool IsExist() const;
+  bool IsEmpty() const;
 
   CPVT_WordPlace BeginPos;
   CPVT_WordPlace EndPos;

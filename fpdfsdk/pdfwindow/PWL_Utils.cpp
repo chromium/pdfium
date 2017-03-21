@@ -26,28 +26,13 @@ CFX_FloatRect CPWL_Utils::OffsetRect(const CFX_FloatRect& rect,
 
 CPVT_WordRange CPWL_Utils::OverlapWordRange(const CPVT_WordRange& wr1,
                                             const CPVT_WordRange& wr2) {
-  CPVT_WordRange wrRet;
-
-  if (wr2.EndPos.WordCmp(wr1.BeginPos) < 0 ||
-      wr2.BeginPos.WordCmp(wr1.EndPos) > 0)
-    return wrRet;
-  if (wr1.EndPos.WordCmp(wr2.BeginPos) < 0 ||
-      wr1.BeginPos.WordCmp(wr2.EndPos) > 0)
-    return wrRet;
-
-  if (wr1.BeginPos.WordCmp(wr2.BeginPos) < 0) {
-    wrRet.BeginPos = wr2.BeginPos;
-  } else {
-    wrRet.BeginPos = wr1.BeginPos;
+  if (wr2.EndPos < wr1.BeginPos || wr2.BeginPos > wr1.EndPos ||
+      wr1.EndPos < wr2.BeginPos || wr1.BeginPos > wr2.EndPos) {
+    return CPVT_WordRange();
   }
 
-  if (wr1.EndPos.WordCmp(wr2.EndPos) < 0) {
-    wrRet.EndPos = wr1.EndPos;
-  } else {
-    wrRet.EndPos = wr2.EndPos;
-  }
-
-  return wrRet;
+  return CPVT_WordRange(std::max(wr1.BeginPos, wr2.BeginPos),
+                        std::min(wr1.EndPos, wr2.EndPos));
 }
 
 CFX_ByteString CPWL_Utils::GetAP_Check(const CFX_FloatRect& crBBox) {

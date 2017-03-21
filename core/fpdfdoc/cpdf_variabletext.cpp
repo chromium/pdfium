@@ -432,9 +432,7 @@ void CPDF_VariableText::SetText(const CFX_WideString& swText) {
           if (swText.GetAt(i + 1) == 0x0A)
             i += 1;
 
-          wp.nSecIndex++;
-          wp.nLineIndex = 0;
-          wp.nWordIndex = -1;
+          wp.AdvanceSection();
           AddSection(wp, secinfo);
         }
         break;
@@ -443,9 +441,7 @@ void CPDF_VariableText::SetText(const CFX_WideString& swText) {
           if (swText.GetAt(i + 1) == 0x0D)
             i += 1;
 
-          wp.nSecIndex++;
-          wp.nLineIndex = 0;
-          wp.nWordIndex = -1;
+          wp.AdvanceSection();
           AddSection(wp, secinfo);
         }
         break;
@@ -537,7 +533,7 @@ CPVT_WordPlace CPDF_VariableText::GetPrevWordPlace(
     return GetEndWordPlace();
 
   CSection* pSection = m_SectionArray[place.nSecIndex].get();
-  if (place.WordCmp(pSection->GetBeginWordPlace()) > 0)
+  if (place > pSection->GetBeginWordPlace())
     return pSection->GetPrevWordPlace(place);
   if (!pdfium::IndexInBounds(m_SectionArray, place.nSecIndex - 1))
     return GetBeginWordPlace();
@@ -552,7 +548,7 @@ CPVT_WordPlace CPDF_VariableText::GetNextWordPlace(
     return GetEndWordPlace();
 
   CSection* pSection = m_SectionArray[place.nSecIndex].get();
-  if (place.WordCmp(pSection->GetEndWordPlace()) < 0)
+  if (place < pSection->GetEndWordPlace())
     return pSection->GetNextWordPlace(place);
   if (!pdfium::IndexInBounds(m_SectionArray, place.nSecIndex + 1))
     return GetEndWordPlace();
@@ -638,8 +634,7 @@ CPVT_WordPlace CPDF_VariableText::GetDownWordPlace(
     return pSection->SearchWordPlace(pt.x - pSection->m_SecInfo.rcSection.left,
                                      temp);
   }
-  ++temp.nSecIndex;
-  temp.nLineIndex = 0;
+  temp.AdvanceSection();
   if (!pdfium::IndexInBounds(m_SectionArray, temp.nSecIndex))
     return place;
 

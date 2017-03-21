@@ -237,14 +237,14 @@ void CSection::ClearMidWords(int32_t nBeginIndex, int32_t nEndIndex) {
 void CSection::ClearWords(const CPVT_WordRange& PlaceRange) {
   CPVT_WordPlace SecBeginPos = GetBeginWordPlace();
   CPVT_WordPlace SecEndPos = GetEndWordPlace();
-  if (PlaceRange.BeginPos.WordCmp(SecBeginPos) >= 0) {
-    if (PlaceRange.EndPos.WordCmp(SecEndPos) <= 0) {
+  if (PlaceRange.BeginPos >= SecBeginPos) {
+    if (PlaceRange.EndPos <= SecEndPos) {
       ClearMidWords(PlaceRange.BeginPos.nWordIndex,
                     PlaceRange.EndPos.nWordIndex);
     } else {
       ClearRightWords(PlaceRange.BeginPos.nWordIndex);
     }
-  } else if (PlaceRange.EndPos.WordCmp(SecEndPos) <= 0) {
+  } else if (PlaceRange.EndPos <= SecEndPos) {
     ClearLeftWords(PlaceRange.EndPos.nWordIndex);
   } else {
     m_WordArray.clear();

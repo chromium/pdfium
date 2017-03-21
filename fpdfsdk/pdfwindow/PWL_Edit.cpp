@@ -6,6 +6,7 @@
 
 #include "fpdfsdk/pdfwindow/PWL_Edit.h"
 
+#include <algorithm>
 #include <memory>
 #include <vector>
 
@@ -791,21 +792,8 @@ void CPWL_Edit::OnInsertText(const CPVT_WordPlace& place,
 
 CPVT_WordRange CPWL_Edit::CombineWordRange(const CPVT_WordRange& wr1,
                                            const CPVT_WordRange& wr2) {
-  CPVT_WordRange wrRet;
-
-  if (wr1.BeginPos.WordCmp(wr2.BeginPos) < 0) {
-    wrRet.BeginPos = wr1.BeginPos;
-  } else {
-    wrRet.BeginPos = wr2.BeginPos;
-  }
-
-  if (wr1.EndPos.WordCmp(wr2.EndPos) < 0) {
-    wrRet.EndPos = wr2.EndPos;
-  } else {
-    wrRet.EndPos = wr1.EndPos;
-  }
-
-  return wrRet;
+  return CPVT_WordRange(std::min(wr1.BeginPos, wr2.BeginPos),
+                        std::max(wr1.EndPos, wr2.EndPos));
 }
 
 CPVT_WordRange CPWL_Edit::GetLatinWordsRange(const CFX_PointF& point) const {
