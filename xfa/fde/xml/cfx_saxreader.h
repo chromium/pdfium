@@ -12,7 +12,10 @@
 
 #include "core/fxcrt/fx_basic.h"
 
+class CFX_SAXCommentContext;
 class CXFA_SAXContext;
+class CXFA_SAXReaderHandler;
+enum class CFX_SaxMode;
 
 class CFX_SAXItem {
  public:
@@ -55,9 +58,6 @@ class CFX_SAXFile {
   uint32_t m_dwBufIndex;
 };
 
-class CFX_SAXCommentContext;
-enum class CFX_SaxMode;
-
 enum CFX_SaxParseMode {
   CFX_SaxParseMode_NotConvert_amp = 1 << 0,
   CFX_SaxParseMode_NotConvert_lt = 1 << 1,
@@ -67,8 +67,6 @@ enum CFX_SaxParseMode {
   CFX_SaxParseMode_NotConvert_sharp = 1 << 5,
   CFX_SaxParseMode_NotSkipSpace = 1 << 6
 };
-
-class CXFA_SAXReaderHandler;
 
 class CFX_SAXReader {
  public:
@@ -140,7 +138,7 @@ class CFX_SAXReader {
   int32_t m_iNameSize;
   int32_t m_iNameLength;
   uint32_t m_dwParseMode;
-  CFX_SAXCommentContext* m_pCommentContext;
+  std::unique_ptr<CFX_SAXCommentContext> m_pCommentContext;
 };
 
 #endif  // XFA_FDE_XML_CFX_SAXREADER_H_

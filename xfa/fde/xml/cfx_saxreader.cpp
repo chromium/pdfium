@@ -156,8 +156,7 @@ void CFX_SAXReader::Reset() {
   m_iEntityStart = -1;
   m_iNameLength = 0;
   m_iDataPos = 0;
-  delete m_pCommentContext;
-  m_pCommentContext = nullptr;
+  m_pCommentContext.reset();
 }
 
 void CFX_SAXReader::Push() {
@@ -395,7 +394,7 @@ void CFX_SAXReader::ParseDeclOrComment() {
     m_eMode = CFX_SaxMode::Comment;
     GetCurrentItem()->m_eNode = CFX_SAXItem::Type::Comment;
     if (!m_pCommentContext)
-      m_pCommentContext = new CFX_SAXCommentContext;
+      m_pCommentContext = pdfium::MakeUnique<CFX_SAXCommentContext>();
     m_pCommentContext->m_iHeaderCount = 1;
     m_pCommentContext->m_iTailCount = 0;
     return;
@@ -412,6 +411,7 @@ void CFX_SAXReader::ParseComment() {
   m_dwNodePos = m_File.m_dwCur + m_File.m_dwBufIndex;
   m_eMode = CFX_SaxMode::CommentContent;
 }
+
 void CFX_SAXReader::ParseCommentContent() {
   if (m_CurByte == '-') {
     m_pCommentContext->m_iTailCount++;
