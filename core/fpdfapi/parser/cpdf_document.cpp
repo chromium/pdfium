@@ -406,6 +406,7 @@ CPDF_Dictionary* CPDF_Document::TraversePDFPages(int iPage,
   CPDF_Dictionary* pPages = m_pTreeTraversal[level].first;
   CPDF_Array* pKidList = pPages->GetArrayFor("Kids");
   if (!pKidList) {
+    m_pTreeTraversal.pop_back();
     if (*nPagesToGo != 1)
       return nullptr;
     m_PageList[iPage] = pPages->GetObjNum();

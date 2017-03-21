@@ -12,6 +12,7 @@
 #include "core/fpdfapi/parser/cpdf_boolean.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_linearized_header.h"
+#include "core/fpdfapi/parser/cpdf_name.h"
 #include "core/fpdfapi/parser/cpdf_number.h"
 #include "core/fpdfapi/parser/cpdf_parser.h"
 #include "core/fpdfapi/parser/cpdf_reference.h"
@@ -131,6 +132,23 @@ class TestLinearized : public CPDF_LinearizedHeader {
   explicit TestLinearized(CPDF_Dictionary* dict)
       : CPDF_LinearizedHeader(dict) {}
 };
+
+class CPDF_TestDocPagesWithoutKids : public CPDF_Document {
+ public:
+  CPDF_TestDocPagesWithoutKids() : CPDF_Document(nullptr) {
+    CPDF_Dictionary* pagesDict = NewIndirect<CPDF_Dictionary>();
+    pagesDict->SetNewFor<CPDF_Name>("Type", "Pages");
+    pagesDict->SetNewFor<CPDF_Number>("Count", 3);
+    m_PageList.resize(10);
+    m_pOwnedRootDict = pdfium::MakeUnique<CPDF_Dictionary>();
+    m_pOwnedRootDict->SetNewFor<CPDF_Reference>("Pages", this,
+                                                pagesDict->GetObjNum());
+    m_pRootDict = m_pOwnedRootDict.get();
+  }
+
+ private:
+  std::unique_ptr<CPDF_Dictionary> m_pOwnedRootDict;
+};
 }  // namespace
 
 class cpdf_document_test : public testing::Test {
@@ -236,4 +254,15 @@ TEST_F(cpdf_document_test, CountGreaterThanPageTree) {
   for (int i = kNumTestPages; i < kNumTestPages + 4; i++)
     EXPECT_FALSE(document->GetPage(i));
   EXPECT_TRUE(document->GetPage(kNumTestPages - 1));
+}
+
+TEST_F(cpdf_document_test, PagesWithoutKids) {
+  // Set up a document with Pages dict without kids, and Count = 3
+  auto pDoc = pdfium::MakeUnique<CPDF_TestDocPagesWithoutKids>();
+  EXPECT_TRUE(pDoc->GetPage(0));
+  // Test GetPage does not fetch pages out of range
+  for (int i = 1; i < 5; i++)
+    EXPECT_FALSE(pDoc->GetPage(i));
+
+  EXPECT_TRUE(pDoc->GetPage(0));
 }
