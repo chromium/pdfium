@@ -913,10 +913,10 @@ static_library("fxge") {
       "core/fxge/agg/fx_agg_driver.h",
     ]
     deps += [ "third_party:fx_agg" ]
+  }
 
-    if (is_mac) {
-      sources += [ "core/fxge/apple/fx_apple_platform.cpp" ]
-    }
+  if (is_mac) {
+    sources += [ "core/fxge/apple/fx_apple_platform.cpp" ]
   }
 
   if (is_win) {
