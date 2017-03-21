@@ -7,6 +7,7 @@
 #ifndef CORE_FPDFAPI_EDIT_CPDF_CREATOR_H_
 #define CORE_FPDFAPI_EDIT_CPDF_CREATOR_H_
 
+#include <map>
 #include <memory>
 #include <vector>
 
@@ -50,7 +51,6 @@ class CPDF_Creator {
   void InitNewObjNumOffsets();
   void InitID(bool bDefault = true);
 
-  void AppendNewObjNum(uint32_t objbum);
   int32_t AppendObjectNumberToXRef(uint32_t objnum);
 
   int32_t WriteDoc_Stage1(IFX_Pause* pPause);
@@ -95,7 +95,7 @@ class CPDF_Creator {
   uint32_t m_dwFlags;
   uint32_t m_CurObjNum;
   FX_FILESIZE m_XrefStart;
-  CFX_FileSizeListArray m_ObjectOffset;
+  std::map<uint32_t, FX_FILESIZE> m_ObjectOffsets;
   std::vector<uint32_t> m_NewObjNumArray;  // Sorted, ascending.
   std::unique_ptr<CPDF_Array> m_pIDArray;
   int32_t m_FileVersion;
