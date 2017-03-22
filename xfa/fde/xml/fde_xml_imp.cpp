@@ -11,6 +11,7 @@
 
 #include "core/fxcrt/fx_ext.h"
 #include "core/fxcrt/fx_safe_types.h"
+#include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fgas/crt/fgas_codepage.h"
 
@@ -909,40 +910,20 @@ CFDE_XMLNode* CFDE_XMLCharData::Clone(bool bRecursive) {
 
 CFDE_XMLCharData::~CFDE_XMLCharData() {}
 
-CFDE_XMLDoc::CFDE_XMLDoc() : m_pRoot(nullptr) {
-  Reset(true);
-  CFDE_XMLInstruction* pXML = new CFDE_XMLInstruction(L"xml");
-  m_pRoot->InsertChildNode(pXML);
+CFDE_XMLDoc::CFDE_XMLDoc()
+    : m_iStatus(0), m_pRoot(pdfium::MakeUnique<CFDE_XMLNode>()) {
+  m_pRoot->InsertChildNode(new CFDE_XMLInstruction(L"xml"));
 }
 
-CFDE_XMLDoc::~CFDE_XMLDoc() {
-  Reset(false);
-}
-
-void CFDE_XMLDoc::Reset(bool bInitRoot) {
-  m_iStatus = 0;
-  m_pStream = nullptr;
-  if (bInitRoot) {
-    if (m_pRoot)
-      m_pRoot->DeleteChildren();
-    else
-      m_pRoot = new CFDE_XMLNode;
-  } else {
-    delete m_pRoot;
-    m_pRoot = nullptr;
-  }
-  ReleaseParser();
-}
-
-void CFDE_XMLDoc::ReleaseParser() {
-  m_pXMLParser.reset();
-}
+CFDE_XMLDoc::~CFDE_XMLDoc() {}
 
 bool CFDE_XMLDoc::LoadXML(std::unique_ptr<IFDE_XMLParser> pXMLParser) {
   if (!pXMLParser)
     return false;
 
-  Reset(true);
+  m_iStatus = 0;
+  m_pStream.Reset();
+  m_pRoot->DeleteChildren();
   m_pXMLParser = std::move(pXMLParser);
   return true;
 }
@@ -955,7 +936,7 @@ int32_t CFDE_XMLDoc::DoLoad(IFX_Pause* pPause) {
 }
 
 void CFDE_XMLDoc::CloseXML() {
-  ReleaseParser();
+  m_pXMLParser.reset();
 }
 
 void CFDE_XMLDoc::SaveXMLNode(const CFX_RetainPtr<IFGAS_Stream>& pXMLStream,

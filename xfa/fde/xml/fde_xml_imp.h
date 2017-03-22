@@ -194,19 +194,16 @@ class CFDE_XMLDoc {
   bool LoadXML(std::unique_ptr<IFDE_XMLParser> pXMLParser);
   int32_t DoLoad(IFX_Pause* pPause = nullptr);
   void CloseXML();
-  CFDE_XMLNode* GetRoot() const { return m_pRoot; }
+  CFDE_XMLNode* GetRoot() const { return m_pRoot.get(); }
   void SaveXML(CFX_RetainPtr<IFGAS_Stream>& pXMLStream, bool bSaveBOM = true);
   void SaveXMLNode(const CFX_RetainPtr<IFGAS_Stream>& pXMLStream,
                    CFDE_XMLNode* pNode);
 
- protected:
-  void Reset(bool bInitRoot);
-  void ReleaseParser();
-
-  CFX_RetainPtr<IFGAS_Stream> m_pStream;
+ private:
   int32_t m_iStatus;
-  CFDE_XMLNode* m_pRoot;
+  std::unique_ptr<CFDE_XMLNode> m_pRoot;
   std::unique_ptr<IFDE_XMLParser> m_pXMLParser;
+  CFX_RetainPtr<IFGAS_Stream> m_pStream;
 };
 
 class IFDE_XMLParser {
