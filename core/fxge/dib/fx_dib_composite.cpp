@@ -181,14 +181,14 @@ void CompositeRow_AlphaToMask(uint8_t* dest_scan,
                               const uint8_t* clip_scan,
                               uint8_t stride) {
   src_scan += stride - 1;
-  for (int col = 0; col < pixel_count; col++) {
+  for (int col = 0; col < pixel_count; ++col) {
     int src_alpha = GetAlpha(*src_scan, clip_scan, col);
     uint8_t back_alpha = *dest_scan;
     if (!back_alpha)
       *dest_scan = src_alpha;
     else if (src_alpha)
       *dest_scan = back_alpha + src_alpha - back_alpha * src_alpha / 255;
-    dest_scan++;
+    ++dest_scan;
     src_scan += stride;
   }
 }
@@ -201,21 +201,34 @@ void CompositeRow_Rgb2Mask(uint8_t* dest_scan,
     FXSYS_memset(dest_scan, 0xff, width);
     return;
   }
-  for (int i = 0; i < width; i++) {
+  for (int i = 0; i < width; ++i) {
     *dest_scan = FXDIB_ALPHA_UNION(*dest_scan, *clip_scan);
-    dest_scan++;
-    clip_scan++;
+    ++dest_scan;
+    ++clip_scan;
   }
 }
 
-int GetGray(void* pIccTransform,
-            CCodec_IccModule* pIccModule,
-            const uint8_t* src_scan) {
+uint8_t GetGray(void* pIccTransform,
+                CCodec_IccModule* pIccModule,
+                const uint8_t* src_scan) {
   if (!pIccTransform)
     return FXRGB2GRAY(src_scan[2], src_scan[1], *src_scan);
 
   uint8_t gray;
   pIccModule->TranslateScanline(pIccTransform, &gray, src_scan, 1);
+  return gray;
+}
+
+uint8_t GetGrayWithBlend(void* pIccTransform,
+                         CCodec_IccModule* pIccModule,
+                         const uint8_t* src_scan,
+                         const uint8_t* dest_scan,
+                         int blend_type) {
+  uint8_t gray = GetGray(pIccTransform, pIccModule, src_scan);
+  if (blend_type >= FXDIB_BLEND_NONSEPARABLE)
+    gray = blend_type == FXDIB_BLEND_LUMINOSITY ? gray : *dest_scan;
+  else if (blend_type)
+    gray = Blend(blend_type, *dest_scan, gray);
   return gray;
 }
 
@@ -231,7 +244,7 @@ void CompositeRow_Argb2Graya(uint8_t* dest_scan,
   if (pIccTransform)
     pIccModule = CFX_GEModule::Get()->GetCodecModule()->GetIccModule();
   uint8_t offset = src_alpha_scan ? 3 : 4;
-  for (int col = 0; col < pixel_count; col++) {
+  for (int col = 0; col < pixel_count; ++col) {
     const uint8_t* alpha_scan =
         src_alpha_scan ? src_alpha_scan++ : &src_scan[3];
     uint8_t back_alpha = *dst_alpha_scan;
@@ -241,15 +254,15 @@ void CompositeRow_Argb2Graya(uint8_t* dest_scan,
         *dest_scan = GetGray(pIccTransform, pIccModule, src_scan);
         *dst_alpha_scan = src_alpha;
       }
-      dest_scan++;
-      dst_alpha_scan++;
+      ++dest_scan;
+      ++dst_alpha_scan;
       src_scan += offset;
       continue;
     }
     uint8_t src_alpha = GetAlpha(*alpha_scan, clip_scan, col);
     if (src_alpha == 0) {
-      dest_scan++;
-      dst_alpha_scan++;
+      ++dest_scan;
+      ++dst_alpha_scan;
       src_scan += offset;
       continue;
     }
@@ -264,8 +277,8 @@ void CompositeRow_Argb2Graya(uint8_t* dest_scan,
         gray = Blend(blend_type, *dest_scan, gray);
     }
     *dest_scan = FXDIB_ALPHA_MERGE(*dest_scan, gray, alpha_ratio);
-    dest_scan++;
-    dst_alpha_scan++;
+    ++dest_scan;
+    ++dst_alpha_scan;
     src_scan += offset;
   }
 }
@@ -282,63 +295,18 @@ void CompositeRow_Argb2Gray(uint8_t* dest_scan,
   if (pIccTransform)
     pIccModule = CFX_GEModule::Get()->GetCodecModule()->GetIccModule();
 
-  if (blend_type) {
-    bool bNonseparableBlend = blend_type >= FXDIB_BLEND_NONSEPARABLE;
-    if (src_alpha_scan) {
-      for (int col = 0; col < pixel_count; col++) {
-        int src_alpha = GetAlpha(*src_alpha_scan++, clip_scan, col);
-        if (src_alpha) {
-          gray = GetGray(pIccTransform, pIccModule, src_scan);
-
-          if (bNonseparableBlend)
-            gray = blend_type == FXDIB_BLEND_LUMINOSITY ? gray : *dest_scan;
-          else
-            gray = Blend(blend_type, *dest_scan, gray);
-          *dest_scan = FXDIB_ALPHA_MERGE(*dest_scan, gray, src_alpha);
-        }
-        dest_scan++;
-        src_scan += 3;
-      }
-      return;
-    }
-    for (int col = 0; col < pixel_count; col++) {
-      int src_alpha = GetAlpha(src_scan[3], clip_scan, col);
-      if (src_alpha) {
-        gray = GetGray(pIccTransform, pIccModule, src_scan);
-
-        if (bNonseparableBlend)
-          gray = blend_type == FXDIB_BLEND_LUMINOSITY ? gray : *dest_scan;
-        else
-          gray = Blend(blend_type, *dest_scan, gray);
-        *dest_scan = FXDIB_ALPHA_MERGE(*dest_scan, gray, src_alpha);
-      }
-      dest_scan++;
-      src_scan += 4;
-    }
-    return;
-  }
-  if (src_alpha_scan) {
-    for (int col = 0; col < pixel_count; col++) {
-      int src_alpha = GetAlpha(*src_alpha_scan++, clip_scan, col);
-      if (src_alpha) {
-        gray = GetGray(pIccTransform, pIccModule, src_scan);
-
-        *dest_scan = FXDIB_ALPHA_MERGE(*dest_scan, gray, src_alpha);
-      }
-      dest_scan++;
-      src_scan += 3;
-    }
-    return;
-  }
-  for (int col = 0; col < pixel_count; col++) {
-    int src_alpha = GetAlpha(src_scan[3], clip_scan, col);
+  uint8_t offset = src_alpha_scan ? 3 : 4;
+  for (int col = 0; col < pixel_count; ++col) {
+    const uint8_t* alpha_scan =
+        src_alpha_scan ? src_alpha_scan++ : &src_scan[3];
+    int src_alpha = GetAlpha(*alpha_scan, clip_scan, col);
     if (src_alpha) {
-      gray = GetGray(pIccTransform, pIccModule, src_scan);
-
+      gray = GetGrayWithBlend(pIccTransform, pIccModule, src_scan, dest_scan,
+                              blend_type);
       *dest_scan = FXDIB_ALPHA_MERGE(*dest_scan, gray, src_alpha);
     }
-    dest_scan++;
-    src_scan += 4;
+    ++dest_scan;
+    src_scan += offset;
   }
 }
 
@@ -353,30 +321,14 @@ void CompositeRow_Rgb2Gray(uint8_t* dest_scan,
   uint8_t gray;
   if (pIccTransform)
     pIccModule = CFX_GEModule::Get()->GetCodecModule()->GetIccModule();
-  if (blend_type) {
-    bool bNonseparableBlend = blend_type >= FXDIB_BLEND_NONSEPARABLE;
-    for (int col = 0; col < pixel_count; col++) {
-      gray = GetGray(pIccTransform, pIccModule, src_scan);
-      if (bNonseparableBlend)
-        gray = blend_type == FXDIB_BLEND_LUMINOSITY ? gray : *dest_scan;
-      else
-        gray = Blend(blend_type, *dest_scan, gray);
-      if (clip_scan && clip_scan[col] < 255)
-        *dest_scan = FXDIB_ALPHA_MERGE(*dest_scan, gray, clip_scan[col]);
-      else
-        *dest_scan = gray;
-      dest_scan++;
-      src_scan += src_Bpp;
-    }
-    return;
-  }
-  for (int col = 0; col < pixel_count; col++) {
-    gray = GetGray(pIccTransform, pIccModule, src_scan);
+  for (int col = 0; col < pixel_count; ++col) {
+    gray = GetGrayWithBlend(pIccTransform, pIccModule, src_scan, dest_scan,
+                            blend_type);
     if (clip_scan && clip_scan[col] < 255)
       *dest_scan = FXDIB_ALPHA_MERGE(*dest_scan, gray, clip_scan[col]);
     else
       *dest_scan = gray;
-    dest_scan++;
+    ++dest_scan;
     src_scan += src_Bpp;
   }
 }
@@ -392,64 +344,39 @@ void CompositeRow_Rgb2Graya(uint8_t* dest_scan,
   CCodec_IccModule* pIccModule = nullptr;
   if (pIccTransform)
     pIccModule = CFX_GEModule::Get()->GetCodecModule()->GetIccModule();
-  if (blend_type) {
-    for (int col = 0; col < pixel_count; col++) {
-      int back_alpha = *dest_alpha_scan;
-      if (back_alpha == 0) {
-        *dest_scan = GetGray(pIccTransform, pIccModule, src_scan);
-        dest_scan++;
-        dest_alpha_scan++;
-        src_scan += src_Bpp;
-        continue;
-      }
-      int src_alpha = 255;
-      if (clip_scan)
-        src_alpha = clip_scan[col];
-      if (src_alpha == 0) {
-        dest_scan++;
-        dest_alpha_scan++;
-        src_scan += src_Bpp;
-        continue;
-      }
-      uint8_t dest_alpha =
-          back_alpha + src_alpha - back_alpha * src_alpha / 255;
-      *dest_alpha_scan++ = dest_alpha;
-      int alpha_ratio = src_alpha * 255 / dest_alpha;
-      uint8_t gray = GetGray(pIccTransform, pIccModule, src_scan);
-      if (blend_type >= FXDIB_BLEND_NONSEPARABLE)
-        gray = blend_type == FXDIB_BLEND_LUMINOSITY ? gray : *dest_scan;
-      else
-        gray = Blend(blend_type, *dest_scan, gray);
-      *dest_scan = FXDIB_ALPHA_MERGE(*dest_scan, gray, alpha_ratio);
-      dest_scan++;
-      src_scan += src_Bpp;
-    }
-    return;
-  }
-  for (int col = 0; col < pixel_count; col++) {
-    int src_alpha = 255;
-    if (clip_scan)
-      src_alpha = clip_scan[col];
-    if (src_alpha == 255) {
+  for (int col = 0; col < pixel_count; ++col) {
+    if (blend_type && *dest_alpha_scan == 0) {
       *dest_scan = GetGray(pIccTransform, pIccModule, src_scan);
-      dest_scan++;
-      *dest_alpha_scan++ = 255;
+      ++dest_scan;
+      ++dest_alpha_scan;
+      src_scan += src_Bpp;
+      continue;
+    }
+    int src_alpha = clip_scan ? clip_scan[col] : 255;
+    if (src_alpha == 255) {
+      *dest_scan = GetGrayWithBlend(pIccTransform, pIccModule, src_scan,
+                                    dest_scan, blend_type);
+      ++dest_scan;
+      *dest_alpha_scan = 255;
+      ++dest_alpha_scan;
       src_scan += src_Bpp;
       continue;
     }
     if (src_alpha == 0) {
-      dest_scan++;
-      dest_alpha_scan++;
+      ++dest_scan;
+      ++dest_alpha_scan;
       src_scan += src_Bpp;
       continue;
     }
     int back_alpha = *dest_alpha_scan;
     uint8_t dest_alpha = back_alpha + src_alpha - back_alpha * src_alpha / 255;
-    *dest_alpha_scan++ = dest_alpha;
+    *dest_alpha_scan = dest_alpha;
+    ++dest_alpha_scan;
     int alpha_ratio = src_alpha * 255 / dest_alpha;
-    uint8_t gray = GetGray(pIccTransform, pIccModule, src_scan);
+    uint8_t gray = GetGrayWithBlend(pIccTransform, pIccModule, src_scan,
+                                    dest_scan, blend_type);
     *dest_scan = FXDIB_ALPHA_MERGE(*dest_scan, gray, alpha_ratio);
-    dest_scan++;
+    ++dest_scan;
     src_scan += src_Bpp;
   }
 }
