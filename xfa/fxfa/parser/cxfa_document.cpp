@@ -85,16 +85,7 @@ void MergeNode(CXFA_Document* pDocument,
 
 CXFA_Document::CXFA_Document(CXFA_DocumentParser* pParser)
     : m_pParser(pParser),
-      m_pScriptContext(nullptr),
-      m_pLayoutProcessor(nullptr),
       m_pRootNode(nullptr),
-      m_pLocalMgr(nullptr),
-      m_pScriptDataWindow(nullptr),
-      m_pScriptEvent(nullptr),
-      m_pScriptHost(nullptr),
-      m_pScriptLog(nullptr),
-      m_pScriptLayout(nullptr),
-      m_pScriptSignature(nullptr),
       m_eCurVersionMode(XFA_VERSION_DEFAULT),
       m_dwDocFlags(0) {
   ASSERT(m_pParser);
@@ -107,8 +98,8 @@ CXFA_Document::~CXFA_Document() {
 
 CXFA_LayoutProcessor* CXFA_Document::GetLayoutProcessor() {
   if (!m_pLayoutProcessor)
-    m_pLayoutProcessor = new CXFA_LayoutProcessor(this);
-  return m_pLayoutProcessor;
+    m_pLayoutProcessor = pdfium::MakeUnique<CXFA_LayoutProcessor>(this);
+  return m_pLayoutProcessor.get();
 }
 
 CXFA_LayoutProcessor* CXFA_Document::GetDocLayout() {
@@ -116,24 +107,15 @@ CXFA_LayoutProcessor* CXFA_Document::GetDocLayout() {
 }
 
 void CXFA_Document::ClearLayoutData() {
-  delete m_pLayoutProcessor;
-  m_pLayoutProcessor = nullptr;
-  delete m_pScriptContext;
-  m_pScriptContext = nullptr;
-  delete m_pLocalMgr;
-  m_pLocalMgr = nullptr;
-  delete m_pScriptDataWindow;
-  m_pScriptDataWindow = nullptr;
-  delete m_pScriptEvent;
-  m_pScriptEvent = nullptr;
-  delete m_pScriptHost;
-  m_pScriptHost = nullptr;
-  delete m_pScriptLog;
-  m_pScriptLog = nullptr;
-  delete m_pScriptLayout;
-  m_pScriptLayout = nullptr;
-  delete m_pScriptSignature;
-  m_pScriptSignature = nullptr;
+  m_pLayoutProcessor.reset();
+  m_pScriptContext.reset();
+  m_pLocalMgr.reset();
+  m_pScriptDataWindow.reset();
+  m_pScriptEvent.reset();
+  m_pScriptHost.reset();
+  m_pScriptLog.reset();
+  m_pScriptLayout.reset();
+  m_pScriptSignature.reset();
 }
 
 void CXFA_Document::SetRoot(CXFA_Node* pNewRoot) {
@@ -186,33 +168,34 @@ CXFA_Object* CXFA_Document::GetXFAObject(XFA_HashCode dwNodeNameHash) {
     }
     case XFA_HASHCODE_DataWindow: {
       if (!m_pScriptDataWindow)
-        m_pScriptDataWindow = new CScript_DataWindow(this);
-      return m_pScriptDataWindow;
+        m_pScriptDataWindow = pdfium::MakeUnique<CScript_DataWindow>(this);
+      return m_pScriptDataWindow.get();
     }
     case XFA_HASHCODE_Event: {
       if (!m_pScriptEvent)
-        m_pScriptEvent = new CScript_EventPseudoModel(this);
-      return m_pScriptEvent;
+        m_pScriptEvent = pdfium::MakeUnique<CScript_EventPseudoModel>(this);
+      return m_pScriptEvent.get();
     }
     case XFA_HASHCODE_Host: {
       if (!m_pScriptHost)
-        m_pScriptHost = new CScript_HostPseudoModel(this);
-      return m_pScriptHost;
+        m_pScriptHost = pdfium::MakeUnique<CScript_HostPseudoModel>(this);
+      return m_pScriptHost.get();
     }
     case XFA_HASHCODE_Log: {
       if (!m_pScriptLog)
-        m_pScriptLog = new CScript_LogPseudoModel(this);
-      return m_pScriptLog;
+        m_pScriptLog = pdfium::MakeUnique<CScript_LogPseudoModel>(this);
+      return m_pScriptLog.get();
     }
     case XFA_HASHCODE_Signature: {
       if (!m_pScriptSignature)
-        m_pScriptSignature = new CScript_SignaturePseudoModel(this);
-      return m_pScriptSignature;
+        m_pScriptSignature =
+            pdfium::MakeUnique<CScript_SignaturePseudoModel>(this);
+      return m_pScriptSignature.get();
     }
     case XFA_HASHCODE_Layout: {
       if (!m_pScriptLayout)
-        m_pScriptLayout = new CScript_LayoutPseudoModel(this);
-      return m_pScriptLayout;
+        m_pScriptLayout = pdfium::MakeUnique<CScript_LayoutPseudoModel>(this);
+      return m_pScriptLayout.get();
     }
     default:
       return m_pRootNode->GetFirstChildByName(dwNodeNameHash);
@@ -292,24 +275,23 @@ bool CXFA_Document::IsInteractive() {
 
 CXFA_LocaleMgr* CXFA_Document::GetLocalMgr() {
   if (!m_pLocalMgr) {
-    m_pLocalMgr =
-        new CXFA_LocaleMgr(ToNode(GetXFAObject(XFA_HASHCODE_LocaleSet)),
-                           GetNotify()->GetAppProvider()->GetLanguage());
+    m_pLocalMgr = pdfium::MakeUnique<CXFA_LocaleMgr>(
+        ToNode(GetXFAObject(XFA_HASHCODE_LocaleSet)),
+        GetNotify()->GetAppProvider()->GetLanguage());
   }
-  return m_pLocalMgr;
+  return m_pLocalMgr.get();
 }
 
 CXFA_ScriptContext* CXFA_Document::InitScriptContext(v8::Isolate* pIsolate) {
-  if (!m_pScriptContext)
-    m_pScriptContext = new CXFA_ScriptContext(this);
-  m_pScriptContext->Initialize(pIsolate);
-  return m_pScriptContext;
+  CXFA_ScriptContext* result = GetScriptContext();
+  result->Initialize(pIsolate);
+  return result;
 }
 
 CXFA_ScriptContext* CXFA_Document::GetScriptContext() {
   if (!m_pScriptContext)
-    m_pScriptContext = new CXFA_ScriptContext(this);
-  return m_pScriptContext;
+    m_pScriptContext = pdfium::MakeUnique<CXFA_ScriptContext>(this);
+  return m_pScriptContext.get();
 }
 
 XFA_VERSION CXFA_Document::RecognizeXFAVersionNumber(

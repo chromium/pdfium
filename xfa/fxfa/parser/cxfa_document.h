@@ -8,6 +8,7 @@
 #define XFA_FXFA_PARSER_CXFA_DOCUMENT_H_
 
 #include <map>
+#include <memory>
 #include <unordered_set>
 #include <vector>
 
@@ -110,16 +111,16 @@ class CXFA_Document {
 
  protected:
   CXFA_DocumentParser* m_pParser;
-  CXFA_ScriptContext* m_pScriptContext;
-  CXFA_LayoutProcessor* m_pLayoutProcessor;
   CXFA_Node* m_pRootNode;
-  CXFA_LocaleMgr* m_pLocalMgr;
-  CScript_DataWindow* m_pScriptDataWindow;
-  CScript_EventPseudoModel* m_pScriptEvent;
-  CScript_HostPseudoModel* m_pScriptHost;
-  CScript_LogPseudoModel* m_pScriptLog;
-  CScript_LayoutPseudoModel* m_pScriptLayout;
-  CScript_SignaturePseudoModel* m_pScriptSignature;
+  std::unique_ptr<CXFA_ScriptContext> m_pScriptContext;
+  std::unique_ptr<CXFA_LayoutProcessor> m_pLayoutProcessor;
+  std::unique_ptr<CXFA_LocaleMgr> m_pLocalMgr;
+  std::unique_ptr<CScript_DataWindow> m_pScriptDataWindow;
+  std::unique_ptr<CScript_EventPseudoModel> m_pScriptEvent;
+  std::unique_ptr<CScript_HostPseudoModel> m_pScriptHost;
+  std::unique_ptr<CScript_LogPseudoModel> m_pScriptLog;
+  std::unique_ptr<CScript_LayoutPseudoModel> m_pScriptLayout;
+  std::unique_ptr<CScript_SignaturePseudoModel> m_pScriptSignature;
   std::unordered_set<CXFA_Node*> m_PurgeNodes;
   XFA_VERSION m_eCurVersionMode;
   uint32_t m_dwDocFlags;
