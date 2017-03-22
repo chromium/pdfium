@@ -7,6 +7,8 @@
 #ifndef XFA_FXFA_APP_XFA_FFPUSHBUTTON_H_
 #define XFA_FXFA_APP_XFA_FFPUSHBUTTON_H_
 
+#include <memory>
+
 #include "xfa/fxfa/app/xfa_fffield.h"
 
 #define XFA_FWL_PSBSTYLEEXT_HiliteNone (0L << 0)
@@ -42,10 +44,10 @@ class CXFA_FFPushButton : public CXFA_FFField {
   FX_ARGB GetLineColor();
   FX_ARGB GetFillColor();
 
-  CXFA_TextLayout* m_pRolloverTextLayout;
-  CXFA_TextLayout* m_pDownTextLayout;
-  CXFA_TextProvider* m_pDownProvider;
-  CXFA_TextProvider* m_pRollProvider;
+  std::unique_ptr<CXFA_TextLayout> m_pRolloverTextLayout;
+  std::unique_ptr<CXFA_TextLayout> m_pDownTextLayout;
+  std::unique_ptr<CXFA_TextProvider> m_pRollProvider;
+  std::unique_ptr<CXFA_TextProvider> m_pDownProvider;
   IFWL_WidgetDelegate* m_pOldDelegate;
 };
 

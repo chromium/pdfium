@@ -19,12 +19,7 @@
 #include "xfa/fxgraphics/cfx_path.h"
 
 CXFA_FFPushButton::CXFA_FFPushButton(CXFA_WidgetAcc* pDataAcc)
-    : CXFA_FFField(pDataAcc),
-      m_pRolloverTextLayout(nullptr),
-      m_pDownTextLayout(nullptr),
-      m_pDownProvider(nullptr),
-      m_pRollProvider(nullptr),
-      m_pOldDelegate(nullptr) {}
+    : CXFA_FFField(pDataAcc), m_pOldDelegate(nullptr) {}
 
 CXFA_FFPushButton::~CXFA_FFPushButton() {
   CXFA_FFPushButton::UnloadWidget();
@@ -86,14 +81,10 @@ void CXFA_FFPushButton::UpdateWidgetProperty() {
 }
 
 void CXFA_FFPushButton::UnloadWidget() {
-  delete m_pRolloverTextLayout;
-  m_pRolloverTextLayout = nullptr;
-  delete m_pDownTextLayout;
-  m_pDownTextLayout = nullptr;
-  delete m_pDownProvider;
-  m_pDownProvider = nullptr;
-  delete m_pRollProvider;
-  m_pRollProvider = nullptr;
+  m_pRolloverTextLayout.reset();
+  m_pDownTextLayout.reset();
+  m_pRollProvider.reset();
+  m_pDownProvider.reset();
   CXFA_FFField::UnloadWidget();
 }
 
@@ -125,36 +116,41 @@ float CXFA_FFPushButton::GetLineWidth() {
   }
   return 0;
 }
+
 FX_ARGB CXFA_FFPushButton::GetLineColor() {
   return 0xFF000000;
 }
+
 FX_ARGB CXFA_FFPushButton::GetFillColor() {
   return 0xFFFFFFFF;
 }
+
 void CXFA_FFPushButton::LoadHighlightCaption() {
   CXFA_Caption caption = m_pDataAcc->GetCaption();
-  if (caption && caption.GetPresence() != XFA_ATTRIBUTEENUM_Hidden) {
-    {
-      CFX_WideString wsRollover;
-      bool bRichText;
-      if (m_pDataAcc->GetButtonRollover(wsRollover, bRichText)) {
-        if (!m_pRollProvider) {
-          m_pRollProvider =
-              new CXFA_TextProvider(m_pDataAcc, XFA_TEXTPROVIDERTYPE_Rollover);
-        }
-        m_pRolloverTextLayout = new CXFA_TextLayout(m_pRollProvider);
-      }
-      CFX_WideString wsDown;
-      if (m_pDataAcc->GetButtonDown(wsDown, bRichText)) {
-        if (!m_pDownProvider) {
-          m_pDownProvider =
-              new CXFA_TextProvider(m_pDataAcc, XFA_TEXTPROVIDERTYPE_Down);
-        }
-        m_pDownTextLayout = new CXFA_TextLayout(m_pDownProvider);
-      }
+  if (!caption || caption.GetPresence() == XFA_ATTRIBUTEENUM_Hidden)
+    return;
+
+  bool bRichText;
+  CFX_WideString wsRollover;
+  if (m_pDataAcc->GetButtonRollover(wsRollover, bRichText)) {
+    if (!m_pRollProvider) {
+      m_pRollProvider = pdfium::MakeUnique<CXFA_TextProvider>(
+          m_pDataAcc, XFA_TEXTPROVIDERTYPE_Rollover);
     }
+    m_pRolloverTextLayout =
+        pdfium::MakeUnique<CXFA_TextLayout>(m_pRollProvider.get());
+  }
+  CFX_WideString wsDown;
+  if (m_pDataAcc->GetButtonDown(wsDown, bRichText)) {
+    if (!m_pDownProvider) {
+      m_pDownProvider = pdfium::MakeUnique<CXFA_TextProvider>(
+          m_pDataAcc, XFA_TEXTPROVIDERTYPE_Down);
+    }
+    m_pDownTextLayout =
+        pdfium::MakeUnique<CXFA_TextLayout>(m_pDownProvider.get());
   }
 }
+
 void CXFA_FFPushButton::LayoutHighlightCaption() {
   CFX_SizeF sz(m_rtCaption.width, m_rtCaption.height);
   LayoutCaption();
