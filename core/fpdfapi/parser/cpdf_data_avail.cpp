@@ -1413,9 +1413,8 @@ CPDF_DataAvail::DocAvailStatus CPDF_DataAvail::CheckLinearizedFirstPage(
       return DataNotAvailable;
     m_bAnnotsLoad = true;
   }
-  const bool is_page_valid = ValidatePage(dwPage);
-  (void)is_page_valid;
-  ASSERT(is_page_valid);
+  if (!ValidatePage(dwPage))
+    return DataError;
   return DataAvailable;
 }
 
@@ -1559,9 +1558,8 @@ CPDF_DataAvail::DocAvailStatus CPDF_DataAvail::IsPageAvail(
 
   ResetFirstCheck(dwPage);
   m_pagesLoadState.insert(dwPage);
-  const bool is_page_valid = ValidatePage(dwPage);
-  (void)is_page_valid;
-  ASSERT(is_page_valid);
+  if (!ValidatePage(dwPage))
+    return DataError;
   return DataAvailable;
 }
 
@@ -1625,7 +1623,8 @@ CPDF_Dictionary* CPDF_DataAvail::GetPage(int index) {
     m_pDocument->ReplaceIndirectObjectIfHigherGeneration(
         dwObjNum, ParseIndirectObjectAt(0, dwObjNum, m_pDocument));
   }
-  ValidatePage(index);
+  if (!ValidatePage(index))
+    return nullptr;
   return m_pDocument->GetPage(index);
 }
 
@@ -1661,9 +1660,8 @@ CPDF_DataAvail::DocFormStatus CPDF_DataAvail::IsFormAvail(
   }
 
   m_objs_array.clear();
-  const bool is_form_valid = ValidateForm();
-  (void)is_form_valid;
-  ASSERT(is_form_valid);
+  if (!ValidateForm())
+    return FormError;
   return FormAvailable;
 }
 
