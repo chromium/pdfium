@@ -365,10 +365,12 @@ TEST_F(FPDFEditEmbeddertest, PathOnTopOfText) {
   FPDF_BITMAP bitmap = RenderPage(page);
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
   const char md5[] = "2f7c0deee10a9490538e195af64beb67";
+  const char new_md5[] = "f9e6fa74230f234286bfcada9f7606d8";
+  CompareBitmap2Options(bitmap, 200, 200, md5, new_md5);
 #else
   const char md5[] = "17c942c76ff229200f2c98073bb60d85";
-#endif
   CompareBitmap(bitmap, 200, 200, md5);
+#endif
   FPDFBitmap_Destroy(bitmap);
   UnloadPage(page);
 }
@@ -436,10 +438,12 @@ TEST_F(FPDFEditEmbeddertest, AddStandardFontText) {
   FPDF_BITMAP page_bitmap = RenderPage(page);
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
   const char md5[] = "e19c90395d73cb9f37a6c3b0e8b18a9e";
+  const char new_md5[] = "a4dddc1a3930fa694bbff9789dab4161";
+  CompareBitmap2Options(page_bitmap, 612, 792, md5, new_md5);
 #else
   const char md5[] = "7c3a36ba7cec01688a16a14bfed9ecfc";
-#endif
   CompareBitmap(page_bitmap, 612, 792, md5);
+#endif
   FPDFBitmap_Destroy(page_bitmap);
 
   // Try another font
@@ -453,10 +457,12 @@ TEST_F(FPDFEditEmbeddertest, AddStandardFontText) {
   page_bitmap = RenderPage(page);
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
   const char md5_2[] = "8e1c43dca6be68d364dbc283f5521041";
+  const char new_md5_2[] = "a5c4ace4c6f27644094813fe1441a21c";
+  CompareBitmap2Options(page_bitmap, 612, 792, md5_2, new_md5_2);
 #else
   const char md5_2[] = "e0e0873e3a2634a6394a431a51ce90ff";
-#endif
   CompareBitmap(page_bitmap, 612, 792, md5_2);
+#endif
   FPDFBitmap_Destroy(page_bitmap);
 
   // And some randomly transformed text
@@ -470,10 +476,12 @@ TEST_F(FPDFEditEmbeddertest, AddStandardFontText) {
   page_bitmap = RenderPage(page);
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
   const char md5_3[] = "c6e5df448428793c7e4b0c820bd8c85e";
+  const char new_md5_3[] = "40b3ef04f915ff4c4208948001763544";
+  CompareBitmap2Options(page_bitmap, 612, 792, md5_3, new_md5_3);
 #else
   const char md5_3[] = "903ee10b6a9f0be51ecad0a1a0eeb171";
-#endif
   CompareBitmap(page_bitmap, 612, 792, md5_3);
+#endif
   FPDFBitmap_Destroy(page_bitmap);
 
   // TODO(npm): Why are there issues with text rotated by 90 degrees?

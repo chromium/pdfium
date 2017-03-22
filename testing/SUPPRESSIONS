@@ -21,11 +21,22 @@
 #
 # Pixel tests
 #
+# TODO(npm): Unsupress mac pixel tests
+bug_524043_1.in mac * *
+bug_524043_2.in mac * *
+bug_524043_3.in mac * *
+bug_524043_4.in mac * *
+bug_524043_5.in mac * *
+bug_524043_7.in mac * *
+bug_543018_1.in mac * *
+bug_543018_2.in mac * *
+bug_551258_1.in mac * *
 font_size.in mac * *
 
 #
 # Corpus tests
 #
+# TODO(npm): remove mac unexpected successes from suppressions
 050_extra_m.pdf mac,win * *
 12.pdf mac * *
 1_10_watermark.pdf * * *
