@@ -8,6 +8,7 @@
 #define XFA_FDE_CFDE_TXTEDTENGINE_H_
 
 #include <memory>
+#include <vector>
 
 #include "core/fxcrt/cfx_retain_ptr.h"
 #include "xfa/fde/ifde_txtedtengine.h"
@@ -150,9 +151,9 @@ class CFDE_TxtEdtEngine {
   std::unique_ptr<CFDE_TxtEdtBuf> m_pTxtBuf;
   std::unique_ptr<CFX_TxtBreak> m_pTextBreak;
   FDE_TXTEDTPARAMS m_Param;
-  CFX_ArrayTemplate<CFDE_TxtEdtPage*> m_PagePtrArray;
-  CFX_ArrayTemplate<CFDE_TxtEdtParag*> m_ParagPtrArray;
-  CFX_ArrayTemplate<FDE_TXTEDTSELRANGE*> m_SelRangePtrArr;
+  std::vector<std::unique_ptr<CFDE_TxtEdtPage>> m_PagePtrArray;
+  std::vector<std::unique_ptr<CFDE_TxtEdtParag>> m_ParagPtrArray;
+  std::vector<std::unique_ptr<FDE_TXTEDTSELRANGE>> m_SelRangePtrArr;
   int32_t m_nPageLineCount;
   int32_t m_nLineCount;
   int32_t m_nAnchorPos;
