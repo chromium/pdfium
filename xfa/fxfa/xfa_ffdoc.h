@@ -38,7 +38,7 @@ class CXFA_FFDoc {
   int32_t DoLoad(IFX_Pause* pPause = nullptr);
   void StopLoad();
 
-  CXFA_FFDocView* CreateDocView(uint32_t dwView = 0);
+  CXFA_FFDocView* CreateDocView();
 
   bool OpenDoc(const CFX_RetainPtr<IFX_SeekableReadStream>& pStream);
   bool OpenDoc(CPDF_Document* pPDFDoc);
@@ -67,7 +67,7 @@ class CXFA_FFDoc {
   std::unique_ptr<CXFA_FFNotify> m_pNotify;
   CPDF_Document* m_pPDFDoc;
   std::map<uint32_t, FX_IMAGEDIB_AND_DPI> m_HashToDibDpiMap;
-  std::map<uint32_t, std::unique_ptr<CXFA_FFDocView>> m_TypeToDocViewMap;
+  std::unique_ptr<CXFA_FFDocView> m_DocView;
   uint32_t m_dwDocType;
 };
 

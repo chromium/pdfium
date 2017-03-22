@@ -119,7 +119,7 @@ bool CPDFXFA_Context::LoadXFADoc() {
   else
     m_iDocType = DOCTYPE_STATIC_XFA;
 
-  m_pXFADocView = m_pXFADoc->CreateDocView(XFA_DOCVIEW_View);
+  m_pXFADocView = m_pXFADoc->CreateDocView();
   if (m_pXFADocView->StartLayout() < 0) {
     CloseXFADoc();
     SetLastError(FPDF_ERR_XFALAYOUT);

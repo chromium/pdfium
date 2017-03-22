@@ -270,30 +270,27 @@ void CXFA_FFDoc::StopLoad() {
   }
 }
 
-CXFA_FFDocView* CXFA_FFDoc::CreateDocView(uint32_t dwView) {
-  if (!m_TypeToDocViewMap[dwView])
-    m_TypeToDocViewMap[dwView] = pdfium::MakeUnique<CXFA_FFDocView>(this);
+CXFA_FFDocView* CXFA_FFDoc::CreateDocView() {
+  if (!m_DocView)
+    m_DocView = pdfium::MakeUnique<CXFA_FFDocView>(this);
 
-  return m_TypeToDocViewMap[dwView].get();
+  return m_DocView.get();
 }
 
 CXFA_FFDocView* CXFA_FFDoc::GetDocView(CXFA_LayoutProcessor* pLayout) {
-  for (const auto& pair : m_TypeToDocViewMap) {
-    if (pair.second->GetXFALayout() == pLayout)
-      return pair.second.get();
-  }
-  return nullptr;
+  return m_DocView && m_DocView->GetXFALayout() == pLayout ? m_DocView.get()
+                                                           : nullptr;
 }
 
 CXFA_FFDocView* CXFA_FFDoc::GetDocView() {
-  auto it = m_TypeToDocViewMap.begin();
-  return it != m_TypeToDocViewMap.end() ? it->second.get() : nullptr;
+  return m_DocView.get();
 }
 
 bool CXFA_FFDoc::OpenDoc(const CFX_RetainPtr<IFX_SeekableReadStream>& pStream) {
   m_pStream = pStream;
   return true;
 }
+
 bool CXFA_FFDoc::OpenDoc(CPDF_Document* pPDFDoc) {
   if (!pPDFDoc)
     return false;
@@ -329,16 +326,15 @@ bool CXFA_FFDoc::OpenDoc(CPDF_Document* pPDFDoc) {
 }
 
 bool CXFA_FFDoc::CloseDoc() {
-  for (const auto& pair : m_TypeToDocViewMap)
-    pair.second->RunDocClose();
+  if (m_DocView)
+    m_DocView->RunDocClose();
 
   CXFA_Document* doc =
       m_pDocumentParser ? m_pDocumentParser->GetDocument() : nullptr;
   if (doc)
     doc->ClearLayoutData();
 
-  m_TypeToDocViewMap.clear();
-
+  m_DocView.reset();
   m_pNotify.reset(nullptr);
   m_pApp->GetXFAFontMgr()->ReleaseDocFonts(this);
 

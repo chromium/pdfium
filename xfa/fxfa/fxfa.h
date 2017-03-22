@@ -39,9 +39,6 @@ class IXFA_WidgetIterator;
 #define XFA_IDNo 3
 #define XFA_IDYes 4
 
-#define XFA_DOCVIEW_View 0x00000000
-#define XFA_DOCVIEW_MasterPage 0x00000001
-#define XFA_DOCVIEW_Design 0x00000002
 #define XFA_DOCTYPE_Dynamic 0
 #define XFA_DOCTYPE_Static 1
 #define XFA_DOCTYPE_XDP 2
