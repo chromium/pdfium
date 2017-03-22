@@ -1625,9 +1625,7 @@ CPDF_Dictionary* CPDF_DataAvail::GetPage(int index) {
     m_pDocument->ReplaceIndirectObjectIfHigherGeneration(
         dwObjNum, ParseIndirectObjectAt(0, dwObjNum, m_pDocument));
   }
-  const bool is_page_valid = ValidatePage(index);
-  (void)is_page_valid;
-  ASSERT(is_page_valid);
+  ValidatePage(index);
   return m_pDocument->GetPage(index);
 }
 
