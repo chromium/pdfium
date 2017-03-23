@@ -949,6 +949,13 @@ class SkiaState {
   bool ClipRestore() {
     if (m_debugDisable)
       return false;
+
+    // TODO(dsinclair): This check works around crbug.com/704442 where
+    // it looks like we have a ClipRestore without a corresponding ClipSave.
+    // We need to track down the imbalance and fix correctly.
+    if (m_commandIndex == 0)
+      return true;
+
     Dump(__func__);
     while (Clip::kSave != m_commands[--m_commandIndex]) {
       SkASSERT(m_commandIndex > 0);
