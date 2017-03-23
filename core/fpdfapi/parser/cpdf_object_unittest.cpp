@@ -761,7 +761,7 @@ TEST(PDFArrayTest, CloneDirectObject) {
 
   std::unique_ptr<CPDF_Array> cloned_array =
       ToArray(std::move(cloned_array_object));
-  ASSERT_EQ(1U, cloned_array->GetCount());
+  ASSERT_EQ(0U, cloned_array->GetCount());
   CPDF_Object* cloned_obj = cloned_array->GetObjectAt(0);
   EXPECT_FALSE(cloned_obj);
 }
@@ -795,7 +795,7 @@ TEST(PDFDictionaryTest, CloneDirectObject) {
 
   std::unique_ptr<CPDF_Dictionary> cloned_dict =
       ToDictionary(std::move(cloned_dict_object));
-  ASSERT_EQ(1U, cloned_dict->GetCount());
+  ASSERT_EQ(0U, cloned_dict->GetCount());
   CPDF_Object* cloned_obj = cloned_dict->GetObjectFor("foo");
   EXPECT_FALSE(cloned_obj);
 }
@@ -859,7 +859,7 @@ TEST(PDFObjectTest, CloneCheckLoop) {
     CPDF_Object* cloned_arr = cloned_dict->GetObjectFor("arr");
     ASSERT_TRUE(cloned_arr);
     ASSERT_TRUE(cloned_arr->IsArray());
-    EXPECT_EQ(1u, cloned_arr->AsArray()->GetCount());
+    EXPECT_EQ(0U, cloned_arr->AsArray()->GetCount());
     // Recursively referenced object is not cloned.
     EXPECT_EQ(nullptr, cloned_arr->AsArray()->GetObjectAt(0));
   }

@@ -68,8 +68,9 @@ std::unique_ptr<CPDF_Object> CPDF_Dictionary::CloneNonCyclic(
   auto pCopy = pdfium::MakeUnique<CPDF_Dictionary>(m_pPool);
   for (const auto& it : *this) {
     if (!pdfium::ContainsKey(*pVisited, it.second.get())) {
-      pCopy->m_Map.insert(std::make_pair(
-          it.first, it.second->CloneNonCyclic(bDirect, pVisited)));
+      std::set<const CPDF_Object*> visited(*pVisited);
+      if (auto obj = it.second->CloneNonCyclic(bDirect, &visited))
+        pCopy->m_Map.insert(std::make_pair(it.first, std::move(obj)));
     }
   }
   return std::move(pCopy);
