@@ -31,8 +31,7 @@ class CXFA_FFDoc {
   ~CXFA_FFDoc();
 
   IXFA_DocEnvironment* GetDocEnvironment() const { return m_pDocEnvironment; }
-  uint32_t GetDocType();
-  void SetDocType(uint32_t dwType);
+  XFA_DocType GetDocType() const { return m_dwDocType; }
 
   int32_t StartLoad();
   int32_t DoLoad(IFX_Pause* pPause = nullptr);
@@ -68,7 +67,7 @@ class CXFA_FFDoc {
   CPDF_Document* m_pPDFDoc;
   std::map<uint32_t, FX_IMAGEDIB_AND_DPI> m_HashToDibDpiMap;
   std::unique_ptr<CXFA_FFDocView> m_DocView;
-  uint32_t m_dwDocType;
+  XFA_DocType m_dwDocType;
 };
 
 #endif  // XFA_FXFA_XFA_FFDOC_H_

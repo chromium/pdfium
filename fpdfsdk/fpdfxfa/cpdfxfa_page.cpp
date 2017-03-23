@@ -70,15 +70,12 @@ bool CPDFXFA_Page::LoadPage() {
   if (!m_pContext || m_iPageIndex < 0)
     return false;
 
-  int iDocType = m_pContext->GetDocType();
-  switch (iDocType) {
-    case DOCTYPE_PDF:
-    case DOCTYPE_STATIC_XFA: {
+  switch (m_pContext->GetDocType()) {
+    case XFA_DocType::PDF:
+    case XFA_DocType::Static:
       return LoadPDFPage();
-    }
-    case DOCTYPE_DYNAMIC_XFA: {
+    case XFA_DocType::Dynamic:
       return LoadXFAPageView();
-    }
     default:
       return false;
   }
@@ -98,15 +95,14 @@ float CPDFXFA_Page::GetPageWidth() const {
   if (!m_pPDFPage && !m_pXFAPageView)
     return 0.0f;
 
-  int nDocType = m_pContext->GetDocType();
-  switch (nDocType) {
-    case DOCTYPE_DYNAMIC_XFA: {
+  switch (m_pContext->GetDocType()) {
+    case XFA_DocType::Dynamic: {
       if (m_pXFAPageView)
         return m_pXFAPageView->GetPageViewRect().width;
       break;
     }
-    case DOCTYPE_STATIC_XFA:
-    case DOCTYPE_PDF: {
+    case XFA_DocType::Static:
+    case XFA_DocType::PDF: {
       if (m_pPDFPage)
         return m_pPDFPage->GetPageWidth();
       break;
@@ -122,15 +118,14 @@ float CPDFXFA_Page::GetPageHeight() const {
   if (!m_pPDFPage && !m_pXFAPageView)
     return 0.0f;
 
-  int nDocType = m_pContext->GetDocType();
-  switch (nDocType) {
-    case DOCTYPE_PDF:
-    case DOCTYPE_STATIC_XFA: {
+  switch (m_pContext->GetDocType()) {
+    case XFA_DocType::PDF:
+    case XFA_DocType::Static: {
       if (m_pPDFPage)
         return m_pPDFPage->GetPageHeight();
       break;
     }
-    case DOCTYPE_DYNAMIC_XFA: {
+    case XFA_DocType::Dynamic: {
       if (m_pXFAPageView)
         return m_pXFAPageView->GetPageViewRect().height;
       break;
@@ -195,17 +190,16 @@ CFX_Matrix CPDFXFA_Page::GetDisplayMatrix(int xPos,
   if (!m_pPDFPage && !m_pXFAPageView)
     return CFX_Matrix();
 
-  int nDocType = m_pContext->GetDocType();
-  switch (nDocType) {
-    case DOCTYPE_DYNAMIC_XFA: {
+  switch (m_pContext->GetDocType()) {
+    case XFA_DocType::Dynamic: {
       if (m_pXFAPageView) {
         return m_pXFAPageView->GetDisplayMatrix(
             CFX_Rect(xPos, yPos, xSize, ySize), iRotate);
       }
       break;
     }
-    case DOCTYPE_PDF:
-    case DOCTYPE_STATIC_XFA: {
+    case XFA_DocType::PDF:
+    case XFA_DocType::Static: {
       if (m_pPDFPage)
         return m_pPDFPage->GetDisplayMatrix(xPos, yPos, xSize, ySize, iRotate);
       break;

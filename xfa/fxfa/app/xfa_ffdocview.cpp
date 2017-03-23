@@ -598,6 +598,7 @@ void CXFA_FFDocView::RunDocClose() {
   ExecEventActivityByDeepFirst(pRootItem, XFA_EVENT_DocClose, false, true,
                                nullptr);
 }
+
 void CXFA_FFDocView::DestroyDocView() {
   ClearInvalidateList();
   m_iStatus = XFA_DOCVIEW_LAYOUTSTATUS_None;
@@ -606,8 +607,9 @@ void CXFA_FFDocView::DestroyDocView() {
   m_BindItems.clear();
   m_CalculateAccs.clear();
 }
+
 bool CXFA_FFDocView::IsStaticNotify() {
-  return m_pDoc->GetDocType() == XFA_DOCTYPE_Static;
+  return m_pDoc->GetDocType() == XFA_DocType::Static;
 }
 
 void CXFA_FFDocView::AddCalculateWidgetAcc(CXFA_WidgetAcc* pWidgetAcc) {

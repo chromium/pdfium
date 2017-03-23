@@ -81,9 +81,10 @@ bool SaveXFADocumentData(
   if (!pContext)
     return false;
 
-  if (pContext->GetDocType() != DOCTYPE_DYNAMIC_XFA &&
-      pContext->GetDocType() != DOCTYPE_STATIC_XFA)
+  if (pContext->GetDocType() != XFA_DocType::Dynamic &&
+      pContext->GetDocType() != XFA_DocType::Static) {
     return true;
+  }
 
   CXFA_FFDocView* pXFADocView = pContext->GetXFADocView();
   if (!pXFADocView)
@@ -223,8 +224,8 @@ bool SendPostSaveToXFADoc(CPDFXFA_Context* pContext) {
   if (!pContext)
     return false;
 
-  if (pContext->GetDocType() != DOCTYPE_DYNAMIC_XFA &&
-      pContext->GetDocType() != DOCTYPE_STATIC_XFA)
+  if (pContext->GetDocType() != XFA_DocType::Dynamic &&
+      pContext->GetDocType() != XFA_DocType::Static)
     return true;
 
   CXFA_FFDocView* pXFADocView = pContext->GetXFADocView();
@@ -247,8 +248,8 @@ bool SendPostSaveToXFADoc(CPDFXFA_Context* pContext) {
 bool SendPreSaveToXFADoc(
     CPDFXFA_Context* pContext,
     std::vector<CFX_RetainPtr<IFX_SeekableStream>>* fileList) {
-  if (pContext->GetDocType() != DOCTYPE_DYNAMIC_XFA &&
-      pContext->GetDocType() != DOCTYPE_STATIC_XFA)
+  if (pContext->GetDocType() != XFA_DocType::Dynamic &&
+      pContext->GetDocType() != XFA_DocType::Static)
     return true;
 
   CXFA_FFDocView* pXFADocView = pContext->GetXFADocView();

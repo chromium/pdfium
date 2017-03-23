@@ -156,14 +156,10 @@ CXFA_FFDoc::CXFA_FFDoc(CXFA_FFApp* pApp, IXFA_DocEnvironment* pDocEnvironment)
       m_pApp(pApp),
       m_pNotify(nullptr),
       m_pPDFDoc(nullptr),
-      m_dwDocType(XFA_DOCTYPE_Static) {}
+      m_dwDocType(XFA_DocType::Static) {}
 
 CXFA_FFDoc::~CXFA_FFDoc() {
   CloseDoc();
-}
-
-uint32_t CXFA_FFDoc::GetDocType() {
-  return m_dwDocType;
 }
 
 int32_t CXFA_FFDoc::StartLoad() {
@@ -245,29 +241,28 @@ int32_t CXFA_FFDoc::DoLoad(IFX_Pause* pPause) {
 
 void CXFA_FFDoc::StopLoad() {
   m_pApp->GetXFAFontMgr()->LoadDocFonts(this);
-  m_dwDocType = XFA_DOCTYPE_Static;
+  m_dwDocType = XFA_DocType::Static;
   CXFA_Node* pConfig = ToNode(
       m_pDocumentParser->GetDocument()->GetXFAObject(XFA_HASHCODE_Config));
-  if (!pConfig) {
+  if (!pConfig)
     return;
-  }
+
   CXFA_Node* pAcrobat = pConfig->GetFirstChildByClass(XFA_Element::Acrobat);
-  if (!pAcrobat) {
+  if (!pAcrobat)
     return;
-  }
+
   CXFA_Node* pAcrobat7 = pAcrobat->GetFirstChildByClass(XFA_Element::Acrobat7);
-  if (!pAcrobat7) {
+  if (!pAcrobat7)
     return;
-  }
+
   CXFA_Node* pDynamicRender =
       pAcrobat7->GetFirstChildByClass(XFA_Element::DynamicRender);
-  if (!pDynamicRender) {
+  if (!pDynamicRender)
     return;
-  }
+
   CFX_WideString wsType;
-  if (pDynamicRender->TryContent(wsType) && wsType == L"required") {
-    m_dwDocType = XFA_DOCTYPE_Dynamic;
-  }
+  if (pDynamicRender->TryContent(wsType) && wsType == L"required")
+    m_dwDocType = XFA_DocType::Dynamic;
 }
 
 CXFA_FFDocView* CXFA_FFDoc::CreateDocView() {
@@ -345,9 +340,7 @@ bool CXFA_FFDoc::CloseDoc() {
   m_pApp->ClearEventTargets();
   return true;
 }
-void CXFA_FFDoc::SetDocType(uint32_t dwType) {
-  m_dwDocType = dwType;
-}
+
 CPDF_Document* CXFA_FFDoc::GetPDFDoc() {
   return m_pPDFDoc;
 }
