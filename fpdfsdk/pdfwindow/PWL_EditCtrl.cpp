@@ -21,8 +21,7 @@ CPWL_EditCtrl::CPWL_EditCtrl()
     : m_pEdit(new CFX_Edit),
       m_pEditCaret(nullptr),
       m_bMouseDown(false),
-      m_nCharSet(FXFONT_DEFAULT_CHARSET),
-      m_nCodePage(0) {}
+      m_nCharSet(FXFONT_DEFAULT_CHARSET) {}
 
 CPWL_EditCtrl::~CPWL_EditCtrl() {}
 
@@ -314,10 +313,6 @@ bool CPWL_EditCtrl::OnMouseMove(const CFX_PointF& point, uint32_t nFlag) {
   return true;
 }
 
-CFX_FloatRect CPWL_EditCtrl::GetContentRect() const {
-  return m_pEdit->GetContentRect();
-}
-
 void CPWL_EditCtrl::SetEditCaret(bool bVisible) {
   CFX_PointF ptHead;
   CFX_PointF ptFoot;
@@ -378,75 +373,12 @@ void CPWL_EditCtrl::SelectAll() {
   m_pEdit->SelectAll();
 }
 
-void CPWL_EditCtrl::Paint() {
-  m_pEdit->Paint();
-}
-
-void CPWL_EditCtrl::EnableRefresh(bool bRefresh) {
-  m_pEdit->EnableRefresh(bRefresh);
-}
-
-int32_t CPWL_EditCtrl::GetCaret() const {
-  return m_pEdit->GetCaret();
-}
-
-void CPWL_EditCtrl::SetCaret(int32_t nPos) {
-  m_pEdit->SetCaret(nPos);
-}
-
-int32_t CPWL_EditCtrl::GetTotalWords() const {
-  return m_pEdit->GetTotalWords();
-}
-
 void CPWL_EditCtrl::SetScrollPos(const CFX_PointF& point) {
   m_pEdit->SetScrollPos(point);
 }
 
 CFX_PointF CPWL_EditCtrl::GetScrollPos() const {
   return m_pEdit->GetScrollPos();
-}
-
-CPDF_Font* CPWL_EditCtrl::GetCaretFont() const {
-  int32_t nFontIndex = 0;
-
-  CFX_Edit_Iterator* pIterator = m_pEdit->GetIterator();
-  pIterator->SetAt(m_pEdit->GetCaret());
-  CPVT_Word word;
-  CPVT_Section section;
-  if (pIterator->GetWord(word)) {
-    nFontIndex = word.nFontIndex;
-  } else if (HasFlag(PES_RICH)) {
-    if (pIterator->GetSection(section)) {
-      nFontIndex = section.WordProps.nFontIndex;
-    }
-  }
-
-  if (IPVT_FontMap* pFontMap = GetFontMap())
-    return pFontMap->GetPDFFont(nFontIndex);
-
-  return nullptr;
-}
-
-float CPWL_EditCtrl::GetCaretFontSize() const {
-  float fFontSize = GetFontSize();
-
-  CFX_Edit_Iterator* pIterator = m_pEdit->GetIterator();
-  pIterator->SetAt(m_pEdit->GetCaret());
-  CPVT_Word word;
-  CPVT_Section section;
-  if (pIterator->GetWord(word)) {
-    fFontSize = word.fFontSize;
-  } else if (HasFlag(PES_RICH)) {
-    if (pIterator->GetSection(section)) {
-      fFontSize = section.WordProps.fFontSize;
-    }
-  }
-
-  return fFontSize;
-}
-
-void CPWL_EditCtrl::SetText(const CFX_WideString& wsText) {
-  m_pEdit->SetText(wsText);
 }
 
 void CPWL_EditCtrl::CopyText() {}
@@ -456,11 +388,6 @@ void CPWL_EditCtrl::PasteText() {}
 void CPWL_EditCtrl::CutText() {}
 
 void CPWL_EditCtrl::ShowVScrollBar(bool bShow) {}
-
-void CPWL_EditCtrl::InsertText(const CFX_WideString& wsText) {
-  if (!IsReadOnly())
-    m_pEdit->InsertText(wsText, FXFONT_DEFAULT_CHARSET);
-}
 
 void CPWL_EditCtrl::InsertWord(uint16_t word, int32_t nCharset) {
   if (!IsReadOnly())
@@ -540,33 +467,12 @@ void CPWL_EditCtrl::IOnSetCaret(bool bVisible,
   OnNotify(this, PNM_SETCARETINFO, (intptr_t)&cInfo, (intptr_t) nullptr);
 }
 
-void CPWL_EditCtrl::IOnCaretChange(const CPVT_SecProps& secProps,
-                                   const CPVT_WordProps& wordProps) {}
-
-void CPWL_EditCtrl::IOnContentChange(const CFX_FloatRect& rcContent) {}
-
 void CPWL_EditCtrl::IOnInvalidateRect(CFX_FloatRect* pRect) {
   InvalidateRect(pRect);
 }
 
 int32_t CPWL_EditCtrl::GetCharSet() const {
   return m_nCharSet < 0 ? FXFONT_DEFAULT_CHARSET : m_nCharSet;
-}
-
-void CPWL_EditCtrl::GetTextRange(const CFX_FloatRect& rect,
-                                 int32_t& nStartChar,
-                                 int32_t& nEndChar) const {
-  nStartChar = m_pEdit->WordPlaceToWordIndex(
-      m_pEdit->SearchWordPlace(CFX_PointF(rect.left, rect.top)));
-  nEndChar = m_pEdit->WordPlaceToWordIndex(
-      m_pEdit->SearchWordPlace(CFX_PointF(rect.right, rect.bottom)));
-}
-
-CFX_WideString CPWL_EditCtrl::GetText(int32_t& nStartChar,
-                                      int32_t& nEndChar) const {
-  CPVT_WordPlace wpStart = m_pEdit->WordIndexToWordPlace(nStartChar);
-  CPVT_WordPlace wpEnd = m_pEdit->WordIndexToWordPlace(nEndChar);
-  return m_pEdit->GetRangeText(CPVT_WordRange(wpStart, wpEnd));
 }
 
 void CPWL_EditCtrl::SetReadyToInput() {

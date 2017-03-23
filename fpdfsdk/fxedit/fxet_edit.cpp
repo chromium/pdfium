@@ -1074,10 +1074,6 @@ CFX_WideString CFX_Edit::GetSelText() const {
   return GetRangeText(m_SelState.ConvertToWordRange());
 }
 
-int32_t CFX_Edit::GetTotalWords() const {
-  return m_pVT->GetTotalWords();
-}
-
 int32_t CFX_Edit::GetTotalLines() const {
   int32_t nLines = 1;
 
@@ -1215,11 +1211,6 @@ void CFX_Edit::SetContentChanged() {
     CFX_FloatRect rcContent = m_pVT->GetContentRect();
     if (rcContent.Width() != m_rcOldContent.Width() ||
         rcContent.Height() != m_rcOldContent.Height()) {
-      if (!m_bNotifyFlag) {
-        m_bNotifyFlag = true;
-        m_pNotify->IOnContentChange(rcContent);
-        m_bNotifyFlag = false;
-      }
       m_rcOldContent = rcContent;
     }
   }
@@ -1305,11 +1296,11 @@ void CFX_Edit::SetScrollInfo() {
     CFX_FloatRect rcContent = m_pVT->GetContentRect();
 
     if (!m_bNotifyFlag) {
+      CFX_AutoRestorer<bool> restorer(&m_bNotifyFlag);
       m_bNotifyFlag = true;
       m_pNotify->IOnSetScrollInfoY(rcPlate.bottom, rcPlate.top,
                                    rcContent.bottom, rcContent.top,
                                    rcPlate.Height() / 3, rcPlate.Height());
-      m_bNotifyFlag = false;
     }
   }
 }
@@ -1337,9 +1328,9 @@ void CFX_Edit::SetScrollPosY(float fy) {
 
       if (m_pNotify) {
         if (!m_bNotifyFlag) {
+          CFX_AutoRestorer<bool> restorer(&m_bNotifyFlag);
           m_bNotifyFlag = true;
           m_pNotify->IOnSetScrollPosY(fy);
-          m_bNotifyFlag = false;
         }
       }
     }
@@ -1447,12 +1438,12 @@ void CFX_Edit::Refresh() {
 
     if (m_pNotify) {
       if (!m_bNotifyFlag) {
+        CFX_AutoRestorer<bool> restorer(&m_bNotifyFlag);
         m_bNotifyFlag = true;
         if (const CFX_Edit_RectArray* pRects = m_Refresh.GetRefreshRects()) {
           for (int32_t i = 0, sz = pRects->GetSize(); i < sz; i++)
             m_pNotify->IOnInvalidateRect(pRects->GetAt(i));
         }
-        m_bNotifyFlag = false;
       }
     }
 
@@ -1516,10 +1507,10 @@ void CFX_Edit::RefreshWordRange(const CPVT_WordRange& wr) {
 
       if (m_pNotify) {
         if (!m_bNotifyFlag) {
+          CFX_AutoRestorer<bool> restorer(&m_bNotifyFlag);
           m_bNotifyFlag = true;
           CFX_FloatRect rcRefresh = VTToEdit(rcWord);
           m_pNotify->IOnInvalidateRect(&rcRefresh);
-          m_bNotifyFlag = false;
         }
       }
     } else {
@@ -1530,10 +1521,10 @@ void CFX_Edit::RefreshWordRange(const CPVT_WordRange& wr) {
 
       if (m_pNotify) {
         if (!m_bNotifyFlag) {
+          CFX_AutoRestorer<bool> restorer(&m_bNotifyFlag);
           m_bNotifyFlag = true;
           CFX_FloatRect rcRefresh = VTToEdit(rcLine);
           m_pNotify->IOnInvalidateRect(&rcRefresh);
-          m_bNotifyFlag = false;
         }
       }
 
@@ -1569,10 +1560,10 @@ void CFX_Edit::SetCaretInfo() {
         ptFoot.y = line.ptLine.y + line.fLineDescent;
       }
 
+      CFX_AutoRestorer<bool> restorer(&m_bNotifyFlag);
       m_bNotifyFlag = true;
       m_pNotify->IOnSetCaret(m_SelState.IsEmpty(), VTToEdit(ptHead),
                              VTToEdit(ptFoot), m_wpCaret);
-      m_bNotifyFlag = false;
     }
   }
 }

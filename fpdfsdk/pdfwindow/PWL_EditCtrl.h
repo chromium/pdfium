@@ -33,36 +33,17 @@ class CPWL_EditCtrl : public CPWL_Wnd {
   CPWL_EditCtrl();
   ~CPWL_EditCtrl() override;
 
-  CFX_FloatRect GetContentRect() const;
-
   CFX_WideString GetText() const;
   void SetSel(int32_t nStartChar, int32_t nEndChar);
   void GetSel(int32_t& nStartChar, int32_t& nEndChar) const;
-  void GetTextRange(const CFX_FloatRect& rect,
-                    int32_t& nStartChar,
-                    int32_t& nEndChar) const;
-  CFX_WideString GetText(int32_t& nStartChar, int32_t& nEndChar) const;
   void Clear();
   void SelectAll();
 
-  int32_t GetCaret() const;
-  void SetCaret(int32_t nPos);
-  int32_t GetTotalWords() const;
-
-  void Paint();
-
-  void EnableRefresh(bool bRefresh);
   CFX_PointF GetScrollPos() const;
   void SetScrollPos(const CFX_PointF& point);
 
   void SetCharSet(uint8_t nCharSet) { m_nCharSet = nCharSet; }
   int32_t GetCharSet() const;
-
-  void SetCodePage(int32_t nCodePage) { m_nCodePage = nCodePage; }
-  int32_t GetCodePage() const { return m_nCodePage; }
-
-  CPDF_Font* GetCaretFont() const;
-  float GetCaretFontSize() const;
 
   bool CanUndo() const;
   bool CanRedo() const;
@@ -100,14 +81,9 @@ class CPWL_EditCtrl : public CPWL_Wnd {
                    const CFX_PointF& ptHead,
                    const CFX_PointF& ptFoot,
                    const CPVT_WordPlace& place);
-  void IOnCaretChange(const CPVT_SecProps& secProps,
-                      const CPVT_WordProps& wordProps);
-  void IOnContentChange(const CFX_FloatRect& rcContent);
   void IOnInvalidateRect(CFX_FloatRect* pRect);
 
  protected:
-  void InsertText(const CFX_WideString& wsText);
-  void SetText(const CFX_WideString& wsText);
   void CopyText();
   void PasteText();
   void CutText();
@@ -135,7 +111,6 @@ class CPWL_EditCtrl : public CPWL_Wnd {
   void CreateEditCaret(const PWL_CREATEPARAM& cp);
 
   int32_t m_nCharSet;
-  int32_t m_nCodePage;
 };
 
 #endif  // FPDFSDK_PDFWINDOW_PWL_EDITCTRL_H_

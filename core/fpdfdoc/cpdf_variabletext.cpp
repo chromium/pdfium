@@ -303,10 +303,10 @@ CPVT_WordPlace CPDF_VariableText::InsertWord(const CPVT_WordPlace& place,
                                              uint16_t word,
                                              int32_t charset,
                                              const CPVT_WordProps* pWordProps) {
-  int32_t nTotlaWords = GetTotalWords();
-  if (m_nLimitChar > 0 && nTotlaWords >= m_nLimitChar)
+  int32_t nTotalWords = GetTotalWords();
+  if (m_nLimitChar > 0 && nTotalWords >= m_nLimitChar)
     return place;
-  if (m_nCharArray > 0 && nTotlaWords >= m_nCharArray)
+  if (m_nCharArray > 0 && nTotalWords >= m_nCharArray)
     return place;
 
   CPVT_WordPlace newplace = place;
@@ -321,10 +321,10 @@ CPVT_WordPlace CPDF_VariableText::InsertSection(
     const CPVT_WordPlace& place,
     const CPVT_SecProps* pSecProps,
     const CPVT_WordProps* pWordProps) {
-  int32_t nTotlaWords = GetTotalWords();
-  if (m_nLimitChar > 0 && nTotlaWords >= m_nLimitChar)
+  int32_t nTotalWords = GetTotalWords();
+  if (m_nLimitChar > 0 && nTotalWords >= m_nLimitChar)
     return place;
-  if (m_nCharArray > 0 && nTotlaWords >= m_nCharArray)
+  if (m_nCharArray > 0 && nTotalWords >= m_nCharArray)
     return place;
   if (!m_bMultiLine)
     return place;

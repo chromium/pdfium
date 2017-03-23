@@ -396,7 +396,6 @@ class CFX_Edit {
   CFX_WideString GetRangeText(const CPVT_WordRange& range) const;
   int32_t GetHorzScale() const;
   float GetCharSpace() const;
-  int32_t GetTotalWords() const;
   void SetSel(int32_t nStartChar, int32_t nEndChar);
   void GetSel(int32_t& nStartChar, int32_t& nEndChar) const;
   void SelectAll();
