@@ -17,13 +17,7 @@ class CXFA_WidgetAccIterator {
   explicit CXFA_WidgetAccIterator(CXFA_Node* pTravelRoot);
   ~CXFA_WidgetAccIterator();
 
-  void Reset();
-  CXFA_WidgetAcc* MoveToFirst();
-  CXFA_WidgetAcc* MoveToLast();
   CXFA_WidgetAcc* MoveToNext();
-  CXFA_WidgetAcc* MoveToPrevious();
-  CXFA_WidgetAcc* GetCurrentWidgetAcc();
-  bool SetCurrentWidgetAcc(CXFA_WidgetAcc* hWidget);
   void SkipTree();
 
  private:

@@ -13,19 +13,6 @@ CXFA_WidgetAccIterator::CXFA_WidgetAccIterator(CXFA_Node* pTravelRoot)
 
 CXFA_WidgetAccIterator::~CXFA_WidgetAccIterator() {}
 
-void CXFA_WidgetAccIterator::Reset() {
-  m_pCurWidgetAcc = nullptr;
-  m_ContentIterator.Reset();
-}
-
-CXFA_WidgetAcc* CXFA_WidgetAccIterator::MoveToFirst() {
-  return nullptr;
-}
-
-CXFA_WidgetAcc* CXFA_WidgetAccIterator::MoveToLast() {
-  return nullptr;
-}
-
 CXFA_WidgetAcc* CXFA_WidgetAccIterator::MoveToNext() {
   CXFA_Node* pItem = m_pCurWidgetAcc ? m_ContentIterator.MoveToNext()
                                      : m_ContentIterator.GetCurrent();
@@ -36,18 +23,6 @@ CXFA_WidgetAcc* CXFA_WidgetAccIterator::MoveToNext() {
     pItem = m_ContentIterator.MoveToNext();
   }
   return nullptr;
-}
-
-CXFA_WidgetAcc* CXFA_WidgetAccIterator::MoveToPrevious() {
-  return nullptr;
-}
-
-CXFA_WidgetAcc* CXFA_WidgetAccIterator::GetCurrentWidgetAcc() {
-  return nullptr;
-}
-
-bool CXFA_WidgetAccIterator::SetCurrentWidgetAcc(CXFA_WidgetAcc* hWidget) {
-  return false;
 }
 
 void CXFA_WidgetAccIterator::SkipTree() {
