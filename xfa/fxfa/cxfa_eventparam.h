@@ -73,7 +73,6 @@ class CXFA_EventParam {
   CFX_WideString m_wsSoapFaultCode;
   CFX_WideString m_wsSoapFaultString;
   bool m_bIsFormReady;
-  int32_t m_iValidateActivities;
 };
 
 #endif  // XFA_FXFA_CXFA_EVENTPARAM_H_

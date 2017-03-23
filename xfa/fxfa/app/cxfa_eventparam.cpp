@@ -19,8 +19,7 @@ CXFA_EventParam::CXFA_EventParam()
       m_iSelEnd(0),
       m_iSelStart(0),
       m_bShift(false),
-      m_bIsFormReady(false),
-      m_iValidateActivities(XFA_VALIDATE_preSubmit) {}
+      m_bIsFormReady(false) {}
 
 CXFA_EventParam::~CXFA_EventParam() {}
 
@@ -44,5 +43,4 @@ void CXFA_EventParam::Reset() {
   m_wsSoapFaultCode.clear();
   m_wsSoapFaultString.clear();
   m_bIsFormReady = false;
-  m_iValidateActivities = XFA_VALIDATE_preSubmit;
 }

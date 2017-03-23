@@ -47,10 +47,6 @@ class IXFA_WidgetIterator;
 #define XFA_PARSESTATUS_SyntaxErr -1
 #define XFA_PARSESTATUS_Ready 0
 #define XFA_PARSESTATUS_Done 100
-#define XFA_VALIDATE_preSubmit 1
-#define XFA_VALIDATE_prePrint 2
-#define XFA_VALIDATE_preExecute 3
-#define XFA_VALIDATE_preSave 4
 
 #define XFA_PRINTOPT_ShowDialog 0x00000001
 #define XFA_PRINTOPT_CanCancel 0x00000002

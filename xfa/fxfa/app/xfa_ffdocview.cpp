@@ -274,42 +274,28 @@ int32_t CXFA_FFDocView::ProcessWidgetEvent(CXFA_EventParam* pParam,
                             ? pPresentNode->GetChild(0, XFA_Element::Validate)
                             : nullptr;
       }
-      if (pValidateNode) {
+      if (pValidateNode)
         wsValidateStr = pValidateNode->GetContent();
-      }
     }
-    bool bValidate = false;
-    switch (pParam->m_iValidateActivities) {
-      case XFA_VALIDATE_preSubmit:
-        bValidate = wsValidateStr.Find(L"preSubmit") != -1;
-        break;
-      case XFA_VALIDATE_prePrint:
-        bValidate = wsValidateStr.Find(L"prePrint") != -1;
-        break;
-      case XFA_VALIDATE_preExecute:
-        bValidate = wsValidateStr.Find(L"preExecute") != -1;
-        break;
-      case XFA_VALIDATE_preSave:
-        bValidate = wsValidateStr.Find(L"preSave") != -1;
-        break;
-    }
-    if (!bValidate) {
+
+    if (wsValidateStr.Find(L"preSubmit") == -1)
       return XFA_EVENTERROR_Success;
-    }
   }
+
   CXFA_Node* pNode = pWidgetAcc ? pWidgetAcc->GetNode() : nullptr;
   if (!pNode) {
     CXFA_Node* pRootItem =
         ToNode(m_pDoc->GetXFADoc()->GetXFAObject(XFA_HASHCODE_Form));
-    if (!pRootItem) {
+    if (!pRootItem)
       return XFA_EVENTERROR_Error;
-    }
+
     pNode = pRootItem->GetChild(0, XFA_Element::Subform);
   }
   ExecEventActivityByDeepFirst(pNode, pParam->m_eType, pParam->m_bIsFormReady,
                                true, nullptr);
   return XFA_EVENTERROR_Success;
 }
+
 CXFA_FFWidgetHandler* CXFA_FFDocView::GetWidgetHandler() {
   if (!m_pWidgetHandler)
     m_pWidgetHandler = pdfium::MakeUnique<CXFA_FFWidgetHandler>(this);
