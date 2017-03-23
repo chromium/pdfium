@@ -7,6 +7,7 @@
 #ifndef FPDFSDK_FXEDIT_FXET_LIST_H_
 #define FPDFSDK_FXEDIT_FXET_LIST_H_
 
+#include <map>
 #include <memory>
 #include <vector>
 
@@ -169,36 +170,26 @@ class CFX_ListContainer {
   CLST_Rect m_rcContent;  // positive forever!
 };
 
-struct CPLST_Select_Item {
-  CPLST_Select_Item(int32_t other_nItemIndex, int32_t other_nState) {
-    nItemIndex = other_nItemIndex;
-    nState = other_nState;
-  }
-
-  int32_t nItemIndex;
-  int32_t nState;  // 0:normal select -1:to deselect 1: to select
-};
-
 class CPLST_Select {
  public:
+  enum State { DESELECTING = -1, NORMAL = 0, SELECTING = 1 };
+  using const_iterator = std::map<int32_t, State>::const_iterator;
+
   CPLST_Select();
   virtual ~CPLST_Select();
 
- public:
   void Add(int32_t nItemIndex);
   void Add(int32_t nBeginIndex, int32_t nEndIndex);
   void Sub(int32_t nItemIndex);
   void Sub(int32_t nBeginIndex, int32_t nEndIndex);
-  bool IsExist(int32_t nItemIndex) const;
-  int32_t Find(int32_t nItemIndex) const;
-  int32_t GetCount() const;
-  int32_t GetItemIndex(int32_t nIndex) const;
-  int32_t GetState(int32_t nIndex) const;
-  void Done();
   void DeselectAll();
+  void Done();
+
+  const_iterator begin() const { return m_Items.begin(); }
+  const_iterator end() const { return m_Items.end(); }
 
  private:
-  CFX_ArrayTemplate<CPLST_Select_Item*> m_aItems;
+  std::map<int32_t, State> m_Items;
 };
 
 class CFX_ListCtrl : protected CFX_ListContainer {

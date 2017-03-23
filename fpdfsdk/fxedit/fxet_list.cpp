@@ -6,6 +6,7 @@
 
 #include "fpdfsdk/fxedit/fxet_list.h"
 
+#include <algorithm>
 #include <utility>
 
 #include "core/fpdfdoc/cpvt_word.h"
@@ -86,108 +87,46 @@ void CFX_ListContainer::SetPlateRect(const CFX_FloatRect& rect) {
 
 CPLST_Select::CPLST_Select() {}
 
-CPLST_Select::~CPLST_Select() {
-  for (int32_t i = 0, sz = m_aItems.GetSize(); i < sz; i++)
-    delete m_aItems.GetAt(i);
-
-  m_aItems.RemoveAll();
-}
+CPLST_Select::~CPLST_Select() {}
 
 void CPLST_Select::Add(int32_t nItemIndex) {
-  int32_t nIndex = Find(nItemIndex);
-
-  if (nIndex < 0) {
-    m_aItems.Add(new CPLST_Select_Item(nItemIndex, 1));
-  } else {
-    if (CPLST_Select_Item* pItem = m_aItems.GetAt(nIndex)) {
-      pItem->nState = 1;
-    }
-  }
+  m_Items[nItemIndex] = SELECTING;
 }
 
 void CPLST_Select::Add(int32_t nBeginIndex, int32_t nEndIndex) {
-  if (nBeginIndex > nEndIndex) {
-    int32_t nTemp = nEndIndex;
-    nEndIndex = nBeginIndex;
-    nBeginIndex = nTemp;
-  }
+  if (nBeginIndex > nEndIndex)
+    std::swap(nBeginIndex, nEndIndex);
 
-  for (int32_t i = nBeginIndex; i <= nEndIndex; i++)
+  for (int32_t i = nBeginIndex; i <= nEndIndex; ++i)
     Add(i);
 }
 
 void CPLST_Select::Sub(int32_t nItemIndex) {
-  for (int32_t i = m_aItems.GetSize() - 1; i >= 0; i--) {
-    if (CPLST_Select_Item* pItem = m_aItems.GetAt(i))
-      if (pItem->nItemIndex == nItemIndex)
-        pItem->nState = -1;
-  }
+  auto it = m_Items.find(nItemIndex);
+  if (it != m_Items.end())
+    it->second = DESELECTING;
 }
 
 void CPLST_Select::Sub(int32_t nBeginIndex, int32_t nEndIndex) {
-  if (nBeginIndex > nEndIndex) {
-    int32_t nTemp = nEndIndex;
-    nEndIndex = nBeginIndex;
-    nBeginIndex = nTemp;
-  }
+  if (nBeginIndex > nEndIndex)
+    std::swap(nBeginIndex, nEndIndex);
 
-  for (int32_t i = nBeginIndex; i <= nEndIndex; i++)
+  for (int32_t i = nBeginIndex; i <= nEndIndex; ++i)
     Sub(i);
 }
 
-int32_t CPLST_Select::Find(int32_t nItemIndex) const {
-  for (int32_t i = 0, sz = m_aItems.GetSize(); i < sz; i++) {
-    if (CPLST_Select_Item* pItem = m_aItems.GetAt(i)) {
-      if (pItem->nItemIndex == nItemIndex)
-        return i;
-    }
-  }
-
-  return -1;
-}
-
-bool CPLST_Select::IsExist(int32_t nItemIndex) const {
-  return Find(nItemIndex) >= 0;
-}
-
-int32_t CPLST_Select::GetCount() const {
-  return m_aItems.GetSize();
-}
-
-int32_t CPLST_Select::GetItemIndex(int32_t nIndex) const {
-  if (nIndex >= 0 && nIndex < m_aItems.GetSize())
-    if (CPLST_Select_Item* pItem = m_aItems.GetAt(nIndex))
-      return pItem->nItemIndex;
-
-  return -1;
-}
-
-int32_t CPLST_Select::GetState(int32_t nIndex) const {
-  if (nIndex >= 0 && nIndex < m_aItems.GetSize())
-    if (CPLST_Select_Item* pItem = m_aItems.GetAt(nIndex))
-      return pItem->nState;
-
-  return 0;
-}
-
 void CPLST_Select::DeselectAll() {
-  for (int32_t i = 0, sz = m_aItems.GetSize(); i < sz; i++) {
-    if (CPLST_Select_Item* pItem = m_aItems.GetAt(i)) {
-      pItem->nState = -1;
-    }
-  }
+  for (auto& item : m_Items)
+    item.second = DESELECTING;
 }
 
 void CPLST_Select::Done() {
-  for (int32_t i = m_aItems.GetSize() - 1; i >= 0; i--) {
-    if (CPLST_Select_Item* pItem = m_aItems.GetAt(i)) {
-      if (pItem->nState == -1) {
-        delete pItem;
-        m_aItems.RemoveAt(i);
-      } else {
-        pItem->nState = 0;
-      }
-    }
+  auto it = m_Items.begin();
+  while (it != m_Items.end()) {
+    if (it->second == DESELECTING)
+      it = m_Items.erase(it);
+    else
+      (it++)->second = NORMAL;
   }
 }
 
@@ -470,20 +409,10 @@ void CFX_ListCtrl::InvalidateItem(int32_t nItemIndex) {
 }
 
 void CFX_ListCtrl::SelectItems() {
-  for (int32_t i = 0, sz = m_aSelItems.GetCount(); i < sz; i++) {
-    int32_t nItemIndex = m_aSelItems.GetItemIndex(i);
-    int32_t nState = m_aSelItems.GetState(i);
-
-    switch (nState) {
-      case 1:
-        SetMultipleSelect(nItemIndex, true);
-        break;
-      case -1:
-        SetMultipleSelect(nItemIndex, false);
-        break;
-    }
+  for (const auto& item : m_aSelItems) {
+    if (item.second != CPLST_Select::NORMAL)
+      SetMultipleSelect(item.first, item.second == CPLST_Select::SELECTING);
   }
-
   m_aSelItems.Done();
 }
 
