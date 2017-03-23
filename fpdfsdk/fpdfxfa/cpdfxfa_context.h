@@ -11,7 +11,7 @@
 #include <vector>
 
 #include "fpdfsdk/fpdfxfa/cpdfxfa_docenvironment.h"
-#include "xfa/fxfa/xfa_ffdoc.h"
+#include "xfa/fxfa/cxfa_ffdoc.h"
 
 class CJS_Runtime;
 class CPDFSDK_FormFillEnvironment;

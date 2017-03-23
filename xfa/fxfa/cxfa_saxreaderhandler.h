@@ -1,29 +1,17 @@
-// Copyright 2014 PDFium Authors. All rights reserved.
+// Copyright 2017 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXFA_XFA_CHECKSUM_H_
-#define XFA_FXFA_XFA_CHECKSUM_H_
+#ifndef XFA_FXFA_CXFA_SAXREADERHANDLER_H_
+#define XFA_FXFA_CXFA_SAXREADERHANDLER_H_
 
-#include <memory>
-
-#include "core/fdrm/crypto/fx_crypt.h"
+#include "core/fxcrt/fx_string.h"
 #include "xfa/fde/xml/cfx_saxreader.h"
-#include "xfa/fxfa/fxfa.h"
+#include "xfa/fxfa/cxfa_saxcontext.h"
 
-class CXFA_SAXReaderHandler;
 class CXFA_ChecksumContext;
-
-class CXFA_SAXContext {
- public:
-  CXFA_SAXContext() : m_eNode(CFX_SAXItem::Type::Unknown) {}
-
-  CFX_ByteTextBuf m_TextBuf;
-  CFX_ByteString m_bsTagName;
-  CFX_SAXItem::Type m_eNode;
-};
 
 class CXFA_SAXReaderHandler {
  public:
@@ -51,30 +39,11 @@ class CXFA_SAXReaderHandler {
                     const CFX_ByteStringC& bsData,
                     uint32_t dwStartPos);
 
- protected:
+ private:
   void UpdateChecksum(bool bCheckSpace);
 
   CXFA_ChecksumContext* m_pContext;
   CXFA_SAXContext m_SAXContext;
 };
 
-class CXFA_ChecksumContext {
- public:
-  CXFA_ChecksumContext();
-  ~CXFA_ChecksumContext();
-
-  void StartChecksum();
-  void Update(const CFX_ByteStringC& bsText);
-  bool UpdateChecksum(const CFX_RetainPtr<IFX_SeekableReadStream>& pSrcFile,
-                      FX_FILESIZE offset = 0,
-                      size_t size = 0);
-  void FinishChecksum();
-  CFX_ByteString GetChecksum() const;
-
- protected:
-  std::unique_ptr<CFX_SAXReader> m_pSAXReader;
-  std::unique_ptr<CRYPT_sha1_context> m_pByteContext;
-  CFX_ByteString m_bsChecksum;
-};
-
-#endif  // XFA_FXFA_XFA_CHECKSUM_H_
+#endif  // XFA_FXFA_CXFA_SAXREADERHANDLER_H_

@@ -11,7 +11,7 @@
 
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
-#include "xfa/fxfa/xfa_checksum.h"
+#include "xfa/fxfa/cxfa_saxreaderhandler.h"
 
 enum class CFX_SaxMode {
   Text = 0,

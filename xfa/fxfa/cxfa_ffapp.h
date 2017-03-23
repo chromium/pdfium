@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXFA_XFA_FFAPP_H_
-#define XFA_FXFA_XFA_FFAPP_H_
+#ifndef XFA_FXFA_CXFA_FFAPP_H_
+#define XFA_FXFA_CXFA_FFAPP_H_
 
 #include <memory>
 #include <vector>
@@ -54,7 +54,7 @@ class CXFA_FFApp {
 
   void ClearEventTargets();
 
- protected:
+ private:
   std::unique_ptr<CXFA_FFDocHandler> m_pDocHandler;
   IXFA_AppProvider* const m_pProvider;
 
@@ -83,4 +83,4 @@ class CXFA_FFApp {
   std::unique_ptr<CFWL_App> m_pFWLApp;
 };
 
-#endif  // XFA_FXFA_XFA_FFAPP_H_
+#endif  // XFA_FXFA_CXFA_FFAPP_H_

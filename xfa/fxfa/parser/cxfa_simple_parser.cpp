@@ -11,13 +11,13 @@
 #include "core/fxcrt/fx_ext.h"
 #include "third_party/base/ptr_util.h"
 #include "xfa/fgas/crt/fgas_codepage.h"
+#include "xfa/fxfa/cxfa_checksumcontext.h"
 #include "xfa/fxfa/fxfa.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_widetextread.h"
 #include "xfa/fxfa/parser/cxfa_xml_parser.h"
 #include "xfa/fxfa/parser/xfa_basic_data.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
-#include "xfa/fxfa/xfa_checksum.h"
 
 namespace {
 

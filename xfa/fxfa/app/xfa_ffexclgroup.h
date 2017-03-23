@@ -7,8 +7,8 @@
 #ifndef XFA_FXFA_APP_XFA_FFEXCLGROUP_H_
 #define XFA_FXFA_APP_XFA_FFEXCLGROUP_H_
 
-#include "xfa/fxfa/xfa_ffpageview.h"
-#include "xfa/fxfa/xfa_ffwidget.h"
+#include "xfa/fxfa/cxfa_ffpageview.h"
+#include "xfa/fxfa/cxfa_ffwidget.h"
 
 class CXFA_FFExclGroup : public CXFA_FFWidget {
  public:

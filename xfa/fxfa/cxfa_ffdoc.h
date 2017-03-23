@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXFA_XFA_FFDOC_H_
-#define XFA_FXFA_XFA_FFDOC_H_
+#ifndef XFA_FXFA_CXFA_FFDOC_H_
+#define XFA_FXFA_CXFA_FFDOC_H_
 
 #include <map>
 #include <memory>
@@ -58,7 +58,7 @@ class CXFA_FFDoc {
   bool ImportData(const CFX_RetainPtr<IFX_SeekableReadStream>& pStream,
                   bool bXDP = true);
 
- protected:
+ private:
   IXFA_DocEnvironment* const m_pDocEnvironment;
   std::unique_ptr<CXFA_DocumentParser> m_pDocumentParser;
   CFX_RetainPtr<IFX_SeekableReadStream> m_pStream;
@@ -70,4 +70,4 @@ class CXFA_FFDoc {
   XFA_DocType m_dwDocType;
 };
 
-#endif  // XFA_FXFA_XFA_FFDOC_H_
+#endif  // XFA_FXFA_CXFA_FFDOC_H_

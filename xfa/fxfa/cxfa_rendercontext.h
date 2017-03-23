@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXFA_XFA_RENDERCONTEXT_H_
-#define XFA_FXFA_XFA_RENDERCONTEXT_H_
+#ifndef XFA_FXFA_CXFA_RENDERCONTEXT_H_
+#define XFA_FXFA_CXFA_RENDERCONTEXT_H_
 
 #include <memory>
 
@@ -31,7 +31,7 @@ class CXFA_RenderContext {
   int32_t DoRender(IFX_Pause* pPause = nullptr);
   void StopRender();
 
- protected:
+ private:
   std::unique_ptr<IXFA_WidgetIterator> m_pWidgetIterator;
   CXFA_FFWidget* m_pWidget;
   CXFA_FFPageView* m_pPageView;
@@ -42,4 +42,4 @@ class CXFA_RenderContext {
   CFX_RectF m_rtClipRect;
 };
 
-#endif  // XFA_FXFA_XFA_RENDERCONTEXT_H_
+#endif  // XFA_FXFA_CXFA_RENDERCONTEXT_H_

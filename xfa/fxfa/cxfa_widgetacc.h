@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXFA_FXFA_WIDGET_H_
-#define XFA_FXFA_FXFA_WIDGET_H_
+#ifndef XFA_FXFA_CXFA_WIDGETACC_H_
+#define XFA_FXFA_CXFA_WIDGETACC_H_
 
 #include <memory>
 
@@ -82,7 +82,7 @@ class CXFA_WidgetAcc : public CXFA_WidgetData {
   float GetLineHeight();
   CXFA_WidgetLayoutData* GetWidgetLayoutData();
 
- protected:
+ private:
   void ProcessScriptTestValidate(CXFA_Validate validate,
                                  int32_t iRet,
                                  CFXJSE_Value* pRetValue,
@@ -118,4 +118,4 @@ class CXFA_WidgetAcc : public CXFA_WidgetData {
   uint32_t m_nRecursionDepth;
 };
 
-#endif  // XFA_FXFA_FXFA_WIDGET_H_
+#endif  // XFA_FXFA_CXFA_WIDGETACC_H_

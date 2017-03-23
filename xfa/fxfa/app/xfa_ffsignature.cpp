@@ -7,9 +7,9 @@
 #include "xfa/fxfa/app/xfa_ffsignature.h"
 
 #include "xfa/fxfa/app/xfa_fffield.h"
-#include "xfa/fxfa/xfa_ffdoc.h"
-#include "xfa/fxfa/xfa_ffpageview.h"
-#include "xfa/fxfa/xfa_ffwidget.h"
+#include "xfa/fxfa/cxfa_ffdoc.h"
+#include "xfa/fxfa/cxfa_ffpageview.h"
+#include "xfa/fxfa/cxfa_ffwidget.h"
 
 CXFA_FFSignature::CXFA_FFSignature(CXFA_WidgetAcc* pDataAcc)
     : CXFA_FFField(pDataAcc) {}

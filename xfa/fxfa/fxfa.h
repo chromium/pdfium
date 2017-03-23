@@ -10,8 +10,8 @@
 #include <vector>
 
 #include "core/fxcrt/cfx_retain_ptr.h"
+#include "xfa/fxfa/cxfa_widgetacc.h"
 #include "xfa/fxfa/fxfa_basic.h"
-#include "xfa/fxfa/fxfa_widget.h"
 
 class CFGAS_GEFont;
 class CFX_Graphics;

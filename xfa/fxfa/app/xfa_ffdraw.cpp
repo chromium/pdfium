@@ -6,10 +6,10 @@
 
 #include "xfa/fxfa/app/xfa_ffdraw.h"
 
-#include "xfa/fxfa/xfa_ffapp.h"
-#include "xfa/fxfa/xfa_ffdoc.h"
-#include "xfa/fxfa/xfa_ffpageview.h"
-#include "xfa/fxfa/xfa_ffwidget.h"
+#include "xfa/fxfa/cxfa_ffapp.h"
+#include "xfa/fxfa/cxfa_ffdoc.h"
+#include "xfa/fxfa/cxfa_ffpageview.h"
+#include "xfa/fxfa/cxfa_ffwidget.h"
 
 CXFA_FFDraw::CXFA_FFDraw(CXFA_WidgetAcc* pDataAcc) : CXFA_FFWidget(pDataAcc) {}
 

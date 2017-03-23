@@ -4,15 +4,15 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXFA_XFA_FFDOCVIEW_H_
-#define XFA_FXFA_XFA_FFDOCVIEW_H_
+#ifndef XFA_FXFA_CXFA_FFDOCVIEW_H_
+#define XFA_FXFA_CXFA_FFDOCVIEW_H_
 
 #include <map>
 #include <memory>
 #include <vector>
 
 #include "xfa/fxfa/cxfa_eventparam.h"
-#include "xfa/fxfa/xfa_ffdoc.h"
+#include "xfa/fxfa/cxfa_ffdoc.h"
 
 class CXFA_FFWidgetHandler;
 class CXFA_FFDoc;
@@ -36,6 +36,7 @@ enum XFA_DOCVIEW_LAYOUTSTATUS {
   XFA_DOCVIEW_LAYOUTSTATUS_DocReady,
   XFA_DOCVIEW_LAYOUTSTATUS_End
 };
+
 class CXFA_FFDocView {
  public:
   explicit CXFA_FFDocView(CXFA_FFDoc* pDoc);
@@ -103,7 +104,9 @@ class CXFA_FFDocView {
   CXFA_FFWidget* m_pListFocusWidget;
   bool m_bInLayoutStatus;
 
- protected:
+ private:
+  friend class CXFA_FFNotify;
+
   bool RunEventLayoutReady();
   void RunBindItems();
   bool InitCalculate(CXFA_Node* pNode);
@@ -127,27 +130,6 @@ class CXFA_FFDocView {
   std::vector<CXFA_Node*> m_IndexChangedSubforms;
   XFA_DOCVIEW_LAYOUTSTATUS m_iStatus;
   int32_t m_iLock;
-  friend class CXFA_FFNotify;
 };
 
-class CXFA_WidgetAccIterator {
- public:
-  CXFA_WidgetAccIterator(CXFA_FFDocView* pDocView, CXFA_Node* pTravelRoot);
-  ~CXFA_WidgetAccIterator();
-
-  void Reset();
-  CXFA_WidgetAcc* MoveToFirst();
-  CXFA_WidgetAcc* MoveToLast();
-  CXFA_WidgetAcc* MoveToNext();
-  CXFA_WidgetAcc* MoveToPrevious();
-  CXFA_WidgetAcc* GetCurrentWidgetAcc();
-  bool SetCurrentWidgetAcc(CXFA_WidgetAcc* hWidget);
-  void SkipTree();
-
- protected:
-  CXFA_ContainerIterator m_ContentIterator;
-  CXFA_FFDocView* const m_pDocView;
-  CXFA_WidgetAcc* m_pCurWidgetAcc;  // not owned.
-};
-
-#endif  // XFA_FXFA_XFA_FFDOCVIEW_H_
+#endif  // XFA_FXFA_CXFA_FFDOCVIEW_H_

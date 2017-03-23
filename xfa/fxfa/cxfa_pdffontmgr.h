@@ -1,50 +1,23 @@
-// Copyright 2014 PDFium Authors. All rights reserved.
+// Copyright 2017 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXFA_XFA_FONTMGR_H_
-#define XFA_FXFA_XFA_FONTMGR_H_
+#ifndef XFA_FXFA_CXFA_PDFFONTMGR_H_
+#define XFA_FXFA_CXFA_PDFFONTMGR_H_
 
 #include <map>
-#include <memory>
-#include <vector>
 
+#include "core/fpdfapi/parser/cpdf_dictionary.h"
+#include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fxcrt/cfx_retain_ptr.h"
-#include "core/fxcrt/fx_ext.h"
-#include "core/fxcrt/fx_system.h"
-#include "xfa/fgas/font/cfgas_fontmgr.h"
-#include "xfa/fxfa/fxfa.h"
+#include "core/fxcrt/fx_string.h"
+#include "xfa/fgas/font/cfgas_gefont.h"
+#include "xfa/fxfa/cxfa_ffdoc.h"
 
 class CPDF_Font;
-
-struct XFA_FONTINFO {
-  uint32_t dwFontNameHash;
-  const wchar_t* pPsName;
-  const wchar_t* pReplaceFont;
-  uint16_t dwStyles;
-  uint16_t wCodePage;
-};
-
-class CXFA_DefFontMgr {
- public:
-  CXFA_DefFontMgr();
-  ~CXFA_DefFontMgr();
-
-  CFX_RetainPtr<CFGAS_GEFont> GetFont(CXFA_FFDoc* hDoc,
-                                      const CFX_WideStringC& wsFontFamily,
-                                      uint32_t dwFontStyles,
-                                      uint16_t wCodePage = 0xFFFF);
-  CFX_RetainPtr<CFGAS_GEFont> GetDefaultFont(
-      CXFA_FFDoc* hDoc,
-      const CFX_WideStringC& wsFontFamily,
-      uint32_t dwFontStyles,
-      uint16_t wCodePage = 0xFFFF);
-
- protected:
-  std::vector<CFX_RetainPtr<CFGAS_GEFont>> m_CacheFonts;
-};
+class CXFA_FFDoc;
 
 class CXFA_PDFFontMgr {
  public:
@@ -61,7 +34,7 @@ class CXFA_PDFFontMgr {
                     int32_t* pWidth);
   void SetFont(const CFX_RetainPtr<CFGAS_GEFont>& pFont, CPDF_Font* pPDFFont);
 
- protected:
+ private:
   CFX_RetainPtr<CFGAS_GEFont> FindFont(const CFX_ByteString& strFamilyName,
                                        bool bBold,
                                        bool bItalic,
@@ -81,23 +54,4 @@ class CXFA_PDFFontMgr {
   std::map<CFX_ByteString, CFX_RetainPtr<CFGAS_GEFont>> m_FontMap;
 };
 
-class CXFA_FontMgr {
- public:
-  CXFA_FontMgr();
-  ~CXFA_FontMgr();
-
-  CFX_RetainPtr<CFGAS_GEFont> GetFont(CXFA_FFDoc* hDoc,
-                                      const CFX_WideStringC& wsFontFamily,
-                                      uint32_t dwFontStyles,
-                                      uint16_t wCodePage = 0xFFFF);
-  void LoadDocFonts(CXFA_FFDoc* hDoc);
-  void ReleaseDocFonts(CXFA_FFDoc* hDoc);
-  void SetDefFontMgr(std::unique_ptr<CXFA_DefFontMgr> pFontMgr);
-
- protected:
-  std::unique_ptr<CXFA_DefFontMgr> m_pDefFontMgr;
-  std::map<CXFA_FFDoc*, std::unique_ptr<CXFA_PDFFontMgr>> m_PDFFontMgrMap;
-  std::map<CFX_ByteString, CFX_RetainPtr<CFGAS_GEFont>> m_FontMap;
-};
-
-#endif  //  XFA_FXFA_XFA_FONTMGR_H_
+#endif  // XFA_FXFA_CXFA_PDFFONTMGR_H_

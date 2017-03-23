@@ -22,7 +22,7 @@
 #include "xfa/fwl/theme/cfwl_pushbuttontp.h"
 #include "xfa/fwl/theme/cfwl_scrollbartp.h"
 #include "xfa/fwl/theme/cfwl_widgettp.h"
-#include "xfa/fxfa/xfa_ffapp.h"
+#include "xfa/fxfa/cxfa_ffapp.h"
 
 class CXFA_FWLTheme final : public IFWL_ThemeProvider {
  public:

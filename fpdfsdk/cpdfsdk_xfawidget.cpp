@@ -7,7 +7,7 @@
 #include "fpdfsdk/cpdfsdk_xfawidget.h"
 
 #include "fpdfsdk/ipdfsdk_annothandler.h"
-#include "xfa/fxfa/xfa_ffwidget.h"
+#include "xfa/fxfa/cxfa_ffwidget.h"
 
 CPDFSDK_XFAWidget::CPDFSDK_XFAWidget(CXFA_FFWidget* pAnnot,
                                      CPDFSDK_PageView* pPageView,

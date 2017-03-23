@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXFA_XFA_FFWIDGETHANDLER_H_
-#define XFA_FXFA_XFA_FFWIDGETHANDLER_H_
+#ifndef XFA_FXFA_CXFA_FFWIDGETHANDLER_H_
+#define XFA_FXFA_CXFA_FFWIDGETHANDLER_H_
 
 #include <vector>
 
@@ -65,7 +65,7 @@ class CXFA_FFWidgetHandler {
   bool HasEvent(CXFA_WidgetAcc* pWidgetAcc, XFA_EVENTTYPE eEventType);
   int32_t ProcessEvent(CXFA_WidgetAcc* pWidgetAcc, CXFA_EventParam* pParam);
 
- protected:
+ private:
   CXFA_Node* CreateWidgetFormItem(XFA_WIDGETTYPE eType,
                                   CXFA_Node* pParent,
                                   CXFA_Node* pBefore) const;
@@ -116,4 +116,4 @@ class CXFA_FFWidgetHandler {
   CXFA_FFDocView* m_pDocView;
 };
 
-#endif  //  XFA_FXFA_XFA_FFWIDGETHANDLER_H_
+#endif  //  XFA_FXFA_CXFA_FFWIDGETHANDLER_H_

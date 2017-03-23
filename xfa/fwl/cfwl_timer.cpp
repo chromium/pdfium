@@ -10,7 +10,7 @@
 #include "xfa/fwl/cfwl_timerinfo.h"
 #include "xfa/fwl/cfwl_widget.h"
 #include "xfa/fwl/ifwl_adaptertimermgr.h"
-#include "xfa/fxfa/xfa_ffapp.h"
+#include "xfa/fxfa/cxfa_ffapp.h"
 
 CFWL_TimerInfo* CFWL_Timer::StartTimer(uint32_t dwElapse, bool bImmediately) {
   const CFWL_App* pApp = m_pWidget->GetOwnerApp();

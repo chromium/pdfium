@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXFA_XFA_FFDOCHANDLER_H_
-#define XFA_FXFA_XFA_FFDOCHANDLER_H_
+#ifndef XFA_FXFA_CXFA_FFDOCHANDLER_H_
+#define XFA_FXFA_CXFA_FFDOCHANDLER_H_
 
 #include "xfa/fxfa/fxfa.h"
 
@@ -24,8 +24,6 @@ class CXFA_FFDocHandler {
                     const CFX_WideStringC& wsScript,
                     CFXJSE_Value* pRetValue,
                     CFXJSE_Value* pThisObject);
-
- protected:
 };
 
-#endif  // XFA_FXFA_XFA_FFDOCHANDLER_H_
+#endif  // XFA_FXFA_CXFA_FFDOCHANDLER_H_

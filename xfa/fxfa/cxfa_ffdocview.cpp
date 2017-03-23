@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fxfa/xfa_ffdocview.h"
+#include "xfa/fxfa/cxfa_ffdocview.h"
 
 #include "core/fxcrt/fx_ext.h"
 #include "third_party/base/ptr_util.h"
@@ -25,15 +25,16 @@
 #include "xfa/fxfa/app/xfa_fftextedit.h"
 #include "xfa/fxfa/app/xfa_ffwidgetacc.h"
 #include "xfa/fxfa/app/xfa_fwladapter.h"
+#include "xfa/fxfa/cxfa_ffapp.h"
+#include "xfa/fxfa/cxfa_ffdoc.h"
+#include "xfa/fxfa/cxfa_ffpageview.h"
+#include "xfa/fxfa/cxfa_ffwidget.h"
+#include "xfa/fxfa/cxfa_ffwidgethandler.h"
+#include "xfa/fxfa/cxfa_widgetacciterator.h"
 #include "xfa/fxfa/parser/cxfa_binditems.h"
 #include "xfa/fxfa/parser/cxfa_layoutprocessor.h"
 #include "xfa/fxfa/parser/cxfa_scriptcontext.h"
 #include "xfa/fxfa/parser/xfa_resolvenode_rs.h"
-#include "xfa/fxfa/xfa_ffapp.h"
-#include "xfa/fxfa/xfa_ffdoc.h"
-#include "xfa/fxfa/xfa_ffpageview.h"
-#include "xfa/fxfa/xfa_ffwidget.h"
-#include "xfa/fxfa/xfa_ffwidgethandler.h"
 
 const XFA_ATTRIBUTEENUM gs_EventActivity[] = {
     XFA_ATTRIBUTEENUM_Click,      XFA_ATTRIBUTEENUM_Change,
@@ -240,7 +241,7 @@ void CXFA_FFDocView::ResetWidgetData(CXFA_WidgetAcc* pWidgetAcc) {
   }
   if (pFormNode->GetElementType() != XFA_Element::Field &&
       pFormNode->GetElementType() != XFA_Element::ExclGroup) {
-    CXFA_WidgetAccIterator Iterator(this, pFormNode);
+    CXFA_WidgetAccIterator Iterator(pFormNode);
     while (CXFA_WidgetAcc* pAcc = Iterator.MoveToNext()) {
       bChanged |= ResetSingleWidgetAccData(pAcc);
       if (pAcc->GetNode()->GetElementType() == XFA_Element::ExclGroup) {
@@ -306,11 +307,13 @@ CXFA_FFWidgetHandler* CXFA_FFDocView::GetWidgetHandler() {
 CXFA_WidgetAccIterator* CXFA_FFDocView::CreateWidgetAccIterator(
     XFA_WIDGETORDER eOrder) {
   CXFA_Node* pFormRoot = GetRootSubform();
-  return pFormRoot ? new CXFA_WidgetAccIterator(this, pFormRoot) : nullptr;
+  return pFormRoot ? new CXFA_WidgetAccIterator(pFormRoot) : nullptr;
 }
+
 CXFA_FFWidget* CXFA_FFDocView::GetFocusWidget() {
   return m_pFocusWidget;
 }
+
 void CXFA_FFDocView::KillFocus() {
   if (m_pFocusWidget &&
       (m_pFocusWidget->GetStatus() & XFA_WidgetStatus_Focused)) {
@@ -784,53 +787,4 @@ CXFA_Node* CXFA_FFDocView::GetRootSubform() {
     return nullptr;
   }
   return pFormPacketNode->GetFirstChildByClass(XFA_Element::Subform);
-}
-
-CXFA_WidgetAccIterator::CXFA_WidgetAccIterator(CXFA_FFDocView* pDocView,
-                                               CXFA_Node* pTravelRoot)
-    : m_ContentIterator(pTravelRoot),
-      m_pDocView(pDocView),
-      m_pCurWidgetAcc(nullptr) {}
-
-CXFA_WidgetAccIterator::~CXFA_WidgetAccIterator() {}
-void CXFA_WidgetAccIterator::Reset() {
-  m_pCurWidgetAcc = nullptr;
-  m_ContentIterator.Reset();
-}
-
-CXFA_WidgetAcc* CXFA_WidgetAccIterator::MoveToFirst() {
-  return nullptr;
-}
-
-CXFA_WidgetAcc* CXFA_WidgetAccIterator::MoveToLast() {
-  return nullptr;
-}
-
-CXFA_WidgetAcc* CXFA_WidgetAccIterator::MoveToNext() {
-  CXFA_Node* pItem = m_pCurWidgetAcc ? m_ContentIterator.MoveToNext()
-                                     : m_ContentIterator.GetCurrent();
-  while (pItem) {
-    m_pCurWidgetAcc = static_cast<CXFA_WidgetAcc*>(pItem->GetWidgetData());
-    if (m_pCurWidgetAcc)
-      return m_pCurWidgetAcc;
-    pItem = m_ContentIterator.MoveToNext();
-  }
-  return nullptr;
-}
-
-CXFA_WidgetAcc* CXFA_WidgetAccIterator::MoveToPrevious() {
-  return nullptr;
-}
-
-CXFA_WidgetAcc* CXFA_WidgetAccIterator::GetCurrentWidgetAcc() {
-  return nullptr;
-}
-
-bool CXFA_WidgetAccIterator::SetCurrentWidgetAcc(CXFA_WidgetAcc* hWidget) {
-  return false;
-}
-
-void CXFA_WidgetAccIterator::SkipTree() {
-  m_ContentIterator.SkipChildrenAndMoveToNext();
-  m_pCurWidgetAcc = nullptr;
 }

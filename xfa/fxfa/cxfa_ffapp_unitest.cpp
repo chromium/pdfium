@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "xfa/fxfa/xfa_ffapp.h"
+#include "xfa/fxfa/cxfa_ffapp.h"
 
 #include <memory>
 #include <vector>
