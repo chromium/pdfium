@@ -21,11 +21,9 @@ class CPDFXFA_DocEnvironment : public IXFA_DocEnvironment {
 
   // IXFA_DocEnvironment
   void SetChangeMark(CXFA_FFDoc* hDoc) override;
-  // used in dynamic xfa, dwFlags refer to XFA_INVALIDATE_XXX macros.
-  void InvalidateRect(CXFA_FFPageView* pPageView,
-                      const CFX_RectF& rt,
-                      uint32_t dwFlags) override;
-  // show or hide caret
+  // Used in dynamic xfa.
+  void InvalidateRect(CXFA_FFPageView* pPageView, const CFX_RectF& rt) override;
+  // Show or hide caret.
   void DisplayCaret(CXFA_FFWidget* hWidget,
                     bool bVisible,
                     const CFX_RectF* pRtAnchor) override;

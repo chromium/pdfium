@@ -52,8 +52,6 @@ class IXFA_WidgetIterator;
 #define XFA_VALIDATE_preExecute 3
 #define XFA_VALIDATE_preSave 4
 
-#define XFA_INVALIDATE_AllPages 0x00000000
-#define XFA_INVALIDATE_CurrentPage 0x00000001
 #define XFA_PRINTOPT_ShowDialog 0x00000001
 #define XFA_PRINTOPT_CanCancel 0x00000002
 #define XFA_PRINTOPT_ShrinkPage 0x00000004
@@ -230,8 +228,7 @@ class IXFA_DocEnvironment {
 
   virtual void SetChangeMark(CXFA_FFDoc* hDoc) = 0;
   virtual void InvalidateRect(CXFA_FFPageView* pPageView,
-                              const CFX_RectF& rt,
-                              uint32_t dwFlags) = 0;
+                              const CFX_RectF& rt) = 0;
   virtual void DisplayCaret(CXFA_FFWidget* hWidget,
                             bool bVisible,
                             const CFX_RectF* pRtAnchor) = 0;

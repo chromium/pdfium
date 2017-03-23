@@ -55,8 +55,7 @@ void CPDFXFA_DocEnvironment::SetChangeMark(CXFA_FFDoc* hDoc) {
 }
 
 void CPDFXFA_DocEnvironment::InvalidateRect(CXFA_FFPageView* pPageView,
-                                            const CFX_RectF& rt,
-                                            uint32_t dwFlags /* = 0 */) {
+                                            const CFX_RectF& rt) {
   if (!m_pContext->GetXFADoc() || !m_pContext->GetFormFillEnv())
     return;
 

@@ -151,15 +151,13 @@ void CXFA_FFWidget::DrawBorder(CFX_Graphics* pGS,
 
 void CXFA_FFWidget::InvalidateWidget(const CFX_RectF* pRect) {
   if (pRect) {
-    GetDoc()->GetDocEnvironment()->InvalidateRect(m_pPageView, *pRect,
-                                                  XFA_INVALIDATE_CurrentPage);
+    GetDoc()->GetDocEnvironment()->InvalidateRect(m_pPageView, *pRect);
     return;
   }
 
   CFX_RectF rtWidget = GetBBox(XFA_WidgetStatus_Focused);
   rtWidget.Inflate(2, 2);
-  GetDoc()->GetDocEnvironment()->InvalidateRect(m_pPageView, rtWidget,
-                                                XFA_INVALIDATE_CurrentPage);
+  GetDoc()->GetDocEnvironment()->InvalidateRect(m_pPageView, rtWidget);
 }
 
 void CXFA_FFWidget::AddInvalidateRect(const CFX_RectF* pRect) {

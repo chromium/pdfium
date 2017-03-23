@@ -555,7 +555,7 @@ void CXFA_FFDocView::AddInvalidateRect(CXFA_FFPageView* pPageView,
 
 void CXFA_FFDocView::RunInvalidate() {
   for (const auto& pair : m_mapPageInvalidate)
-    m_pDoc->GetDocEnvironment()->InvalidateRect(pair.first, *pair.second, 0);
+    m_pDoc->GetDocEnvironment()->InvalidateRect(pair.first, *pair.second);
   m_mapPageInvalidate.clear();
 }
 
