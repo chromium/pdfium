@@ -44,7 +44,7 @@ class CXFA_TextProvider {
                     const CFX_WideString& wsAttr,
                     CFX_WideString& wsValue);
 
- protected:
+ private:
   CXFA_WidgetAcc* m_pWidgetAcc;
   XFA_TEXTPROVIDERTYPE m_eType;
   CXFA_Node* m_pTextNode;

@@ -99,7 +99,7 @@ class CXFA_LocaleValue {
   bool IsEmpty() const { return m_wsValue.IsEmpty(); }
   bool IsValid() const { return m_bValid; }
 
- protected:
+ private:
   bool ParsePatternValue(const CFX_WideString& wsValue,
                          const CFX_WideString& wsPattern,
                          IFX_Locale* pLocale);

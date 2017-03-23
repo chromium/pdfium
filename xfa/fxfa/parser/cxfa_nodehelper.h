@@ -62,7 +62,6 @@ class CXFA_NodeHelper {
   void SetCreateNodeType(CXFA_Node* refNode);
   bool NodeIsProperty(CXFA_Node* refNode);
 
- public:
   XFA_Element m_eLastCreateType;
   CXFA_Node* m_pCreateParent;
   int32_t m_iCreateCount;

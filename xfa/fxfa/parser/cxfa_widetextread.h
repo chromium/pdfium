@@ -36,7 +36,7 @@ class CXFA_WideTextRead : public IFGAS_Stream {
 
   CFX_WideString GetSrcText() const;
 
- protected:
+ private:
   explicit CXFA_WideTextRead(const CFX_WideString& wsBuffer);
   ~CXFA_WideTextRead() override;
 

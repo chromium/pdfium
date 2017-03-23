@@ -41,7 +41,7 @@ class CXFA_XMLLocale : public IFX_Locale {
   void GetNumPattern(FX_LOCALENUMSUBCATEGORY eType,
                      CFX_WideString& wsPattern) const override;
 
- protected:
+ private:
   void GetPattern(CXML_Element* pElement,
                   const CFX_ByteStringC& bsTag,
                   const CFX_WideStringC& wsName,
@@ -50,7 +50,6 @@ class CXFA_XMLLocale : public IFX_Locale {
                                    int index,
                                    bool bAbbr) const;
 
- private:
   std::unique_ptr<CXML_Element> m_pLocaleData;
 };
 
@@ -83,7 +82,7 @@ class CXFA_NodeLocale : public IFX_Locale {
   void GetNumPattern(FX_LOCALENUMSUBCATEGORY eType,
                      CFX_WideString& wsPattern) const override;
 
- protected:
+ private:
   CXFA_Node* GetNodeByName(CXFA_Node* pParent,
                            const CFX_WideStringC& wsName) const;
   CFX_WideString GetSymbol(XFA_Element eElement,

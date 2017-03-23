@@ -63,7 +63,7 @@ class CScript_EventPseudoModel : public CXFA_Object {
   void Emit(CFXJSE_Arguments* pArguments);
   void Reset(CFXJSE_Arguments* pArguments);
 
- protected:
+ private:
   void Property(CFXJSE_Value* pValue, XFA_Event dwFlag, bool bSetting);
 };
 

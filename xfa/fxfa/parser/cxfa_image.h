@@ -26,7 +26,7 @@ class CXFA_Image : public CXFA_Data {
   bool SetHref(const CFX_WideString& wsHref);
   bool SetTransferEncoding(int32_t iTransferEncoding);
 
- protected:
+ private:
   bool m_bDefValue;
 };
 

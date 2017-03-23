@@ -31,7 +31,7 @@ class CXFA_Validate : public CXFA_Data {
   void GetPicture(CFX_WideString& wsPicture);
   CXFA_Script GetScript();
 
- protected:
+ private:
   void GetMessageText(CFX_WideString& wsMessage,
                       const CFX_WideString& wsMessageType);
   void SetMessageText(CFX_WideString& wsMessage,

@@ -36,7 +36,7 @@ class CXFA_FFPushButton : public CXFA_FFField {
   void OnDrawWidget(CFX_Graphics* pGraphics,
                     const CFX_Matrix* pMatrix = nullptr) override;
 
- protected:
+ private:
   void LoadHighlightCaption();
   void LayoutHighlightCaption();
   void RenderHighlightCaption(CFX_Graphics* pGS, CFX_Matrix* pMatrix = nullptr);

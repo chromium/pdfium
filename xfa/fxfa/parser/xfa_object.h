@@ -615,7 +615,7 @@ class CXFA_Node : public CXFA_Object {
                                bool bSetting,
                                XFA_ATTRIBUTE eAttribute);
 
- protected:
+ private:
   friend class CXFA_Document;
 
   CXFA_Node(CXFA_Document* pDoc,
@@ -737,7 +737,7 @@ class CXFA_ArrayNodeList : public CXFA_NodeList {
 
   void SetArrayNodeList(const std::vector<CXFA_Node*>& srcArray);
 
- protected:
+ private:
   std::vector<CXFA_Node*> m_array;
 };
 
@@ -752,7 +752,7 @@ class CXFA_AttachNodeList : public CXFA_NodeList {
   bool Remove(CXFA_Node* pNode) override;
   CXFA_Node* Item(int32_t iIndex) override;
 
- protected:
+ private:
   CXFA_Node* m_pAttachNode;
 };
 class CXFA_TraverseStrategy_XFAContainerNode {

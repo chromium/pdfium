@@ -32,7 +32,7 @@ class CXFA_FFCheckButton : public CXFA_FFField {
 
   void SetFWLCheckState(XFA_CHECKSTATE eCheckState);
 
- protected:
+ private:
   bool CommitData() override;
   bool IsDataChanged() override;
 

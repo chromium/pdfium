@@ -36,14 +36,15 @@ class CXFA_FFTextEdit : public CXFA_FFField {
   bool CheckWord(const CFX_ByteStringC& sWord);
 
  protected:
+  uint32_t GetAlignment();
+
+  IFWL_WidgetDelegate* m_pOldDelegate;
+
+ private:
   bool CommitData() override;
   bool UpdateFWLData() override;
   bool IsDataChanged() override;
-
-  uint32_t GetAlignment();
   void ValidateNumberField(const CFX_WideString& wsText);
-
-  IFWL_WidgetDelegate* m_pOldDelegate;
 };
 
 class CXFA_FFNumericEdit : public CXFA_FFTextEdit {
@@ -56,7 +57,7 @@ class CXFA_FFNumericEdit : public CXFA_FFTextEdit {
   void UpdateWidgetProperty() override;
   void OnProcessEvent(CFWL_Event* pEvent) override;
 
- public:
+ private:
   bool OnValidate(CFWL_Widget* pWidget, CFX_WideString& wsText);
 };
 
@@ -68,8 +69,6 @@ class CXFA_FFPasswordEdit : public CXFA_FFTextEdit {
   // CXFA_FFTextEdit
   bool LoadWidget() override;
   void UpdateWidgetProperty() override;
-
- protected:
 };
 
 enum XFA_DATETIMETYPE {
@@ -94,7 +93,7 @@ class CXFA_FFDateTimeEdit : public CXFA_FFTextEdit {
                        int32_t iMonth,
                        int32_t iDay);
 
- protected:
+ private:
   bool PtInActiveRect(const CFX_PointF& point) override;
   bool CommitData() override;
   bool UpdateFWLData() override;

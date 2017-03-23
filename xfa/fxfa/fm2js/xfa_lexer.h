@@ -122,7 +122,7 @@ class CXFA_FMLexer {
   void Error(const wchar_t* msg, ...);
   bool HasError() const;
 
- protected:
+ private:
   CXFA_FMToken* Scan();
 
   const wchar_t* m_ptr;

@@ -51,7 +51,7 @@ class CXFA_LayoutPageMgr {
                                      bool bLeader,
                                      CXFA_Node*& pBookendAppendNode);
 
- protected:
+ private:
   bool AppendNewPage(bool bFirstTemPage = false);
   void ReorderPendingLayoutRecordToTail(CXFA_ContainerRecord* pNewRecord,
                                         CXFA_ContainerRecord* pPrevRecord);

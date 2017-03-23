@@ -21,7 +21,7 @@ class CXFA_TextUserData : public CFX_Retainable {
   CFX_RetainPtr<CFDE_CSSComputedStyle> m_pStyle;
   CFX_RetainPtr<CXFA_LinkUserData> m_pLinkData;
 
- protected:
+ private:
   explicit CXFA_TextUserData(
       const CFX_RetainPtr<CFDE_CSSComputedStyle>& pStyle);
   CXFA_TextUserData(const CFX_RetainPtr<CFDE_CSSComputedStyle>& pStyle,

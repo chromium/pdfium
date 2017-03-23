@@ -50,12 +50,10 @@ class CScript_HostPseudoModel : public CXFA_Object {
   void PageDown(CFXJSE_Arguments* pArguments);
   void CurrentDateTime(CFXJSE_Arguments* pArguments);
 
- protected:
+ private:
   bool ValidateArgsForMsg(CFXJSE_Arguments* pArguments,
                           int32_t iArgIndex,
                           CFX_WideString& wsValue);
-
- private:
   void ThrowSetLanguageException() const;
   void ThrowSetNumPagesException() const;
   void ThrowSetPlatformException() const;

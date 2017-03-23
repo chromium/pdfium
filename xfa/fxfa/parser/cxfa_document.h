@@ -109,7 +109,7 @@ class CXFA_Document {
   std::map<uint32_t, CXFA_Node*> m_rgGlobalBinding;
   std::vector<CXFA_Node*> m_pPendingPageSet;
 
- protected:
+ private:
   CXFA_DocumentParser* m_pParser;
   CXFA_Node* m_pRootNode;
   std::unique_ptr<CXFA_ScriptContext> m_pScriptContext;

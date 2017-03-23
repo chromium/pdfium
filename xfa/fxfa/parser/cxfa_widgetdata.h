@@ -162,7 +162,7 @@ class CXFA_WidgetData : public CXFA_Data {
   bool m_bIsNull;
   bool m_bPreNull;
 
- protected:
+ private:
   void SyncValue(const CFX_WideString& wsValue, bool bNotify);
   void InsertListTextItem(CXFA_Node* pItems,
                           const CFX_WideString& wsText,

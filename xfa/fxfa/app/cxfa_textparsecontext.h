@@ -31,7 +31,7 @@ class CXFA_TextParseContext {
 
   CFX_RetainPtr<CFDE_CSSComputedStyle> m_pParentStyle;
 
- protected:
+ private:
   std::vector<const CFDE_CSSDeclaration*> decls_;
   FDE_CSSDisplay m_eDisplay;
 };

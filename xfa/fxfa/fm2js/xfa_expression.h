@@ -33,7 +33,7 @@ class CXFA_FMExpression {
   uint32_t GetLine() { return m_line; }
   XFA_FM_EXPTYPE GetExpType() const { return m_type; }
 
- protected:
+ private:
   XFA_FM_EXPTYPE m_type;
   uint32_t m_line;
 };

@@ -50,14 +50,12 @@ class CScript_LayoutPseudoModel : public CXFA_Object {
   void SheetCount(CFXJSE_Arguments* pArguments);
   void AbsPage(CFXJSE_Arguments* pArguments);
 
- protected:
+ private:
   std::vector<CXFA_Node*> GetObjArray(CXFA_LayoutProcessor* pDocLayout,
                                       int32_t iPageNo,
                                       const CFX_WideString& wsType,
                                       bool bOnPageArea);
   void PageImp(CFXJSE_Arguments* pArguments, bool bAbsPage);
-
- private:
   void ThrowSetReadyException() const;
 };
 

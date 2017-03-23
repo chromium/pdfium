@@ -19,7 +19,7 @@ class CXFA_DataImporter {
 
   bool ImportData(const CFX_RetainPtr<IFX_SeekableReadStream>& pDataDocument);
 
- protected:
+ private:
   CXFA_Document* const m_pDocument;
 };
 

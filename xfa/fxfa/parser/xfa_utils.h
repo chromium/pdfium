@@ -91,7 +91,7 @@ class CXFA_NodeIteratorTemplate {
     return m_pCurrent;
   }
 
- protected:
+ private:
   bool RootReachableFromNode(NodeType* pNode) {
     if (!pNode)
       return false;

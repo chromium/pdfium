@@ -29,7 +29,7 @@ class CXFA_FFListBox : public CXFA_FFField {
   void InsertItem(const CFX_WideStringC& wsLabel, int32_t nIndex = -1);
   void DeleteItem(int32_t nIndex);
 
- protected:
+ private:
   bool CommitData() override;
   bool UpdateFWLData() override;
   bool IsDataChanged() override;
@@ -82,7 +82,7 @@ class CXFA_FFComboBox : public CXFA_FFField {
   void InsertItem(const CFX_WideStringC& wsLabel, int32_t nIndex = -1);
   void DeleteItem(int32_t nIndex);
 
- protected:
+ private:
   // CXFA_FFField
   bool PtInActiveRect(const CFX_PointF& point) override;
   bool CommitData() override;

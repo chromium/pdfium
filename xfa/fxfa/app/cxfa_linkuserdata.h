@@ -19,7 +19,7 @@ class CXFA_LinkUserData : public CFX_Retainable {
 
   const wchar_t* GetLinkURL() const { return m_wsURLContent.c_str(); }
 
- protected:
+ private:
   explicit CXFA_LinkUserData(wchar_t* pszText);
   ~CXFA_LinkUserData() override;
 
