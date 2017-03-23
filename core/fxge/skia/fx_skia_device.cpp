@@ -173,37 +173,26 @@ void DebugShowCanvasMatrix(const SkCanvas* canvas) {
 
 void DebugShowSkiaPath(const SkPath& path) {
 #if SHOW_SKIA_PATH
-  char buffer[4096];
-  sk_bzero(buffer, sizeof(buffer));
-  SkMemoryWStream stream(buffer, sizeof(buffer));
+  SkDynamicMemoryWStream stream;
   path.dump(&stream, false, false);
-  printf("%s", buffer);
+  std::unique_ptr<char, FxFreeDeleter> storage;
+  storage.reset(FX_Alloc(char, stream.bytesWritten()));
+  stream.copyTo(storage.get());
+  printf("%s", storage.get());
 #endif  // SHOW_SKIA_PATH
 }
 
 void DebugShowCanvasClip(const SkCanvas* canvas) {
 #if SHOW_SKIA_PATH
-  SkRect local;
-  SkIRect device;
-  canvas->getClipBounds(&local);
+  SkRect local = canvas->getLocalClipBounds();
+  SkIRect device = canvas->getDeviceClipBounds();
+
   printf("local bounds %g %g %g %g\n", local.fLeft, local.fTop, local.fRight,
          local.fBottom);
-  canvas->getClipDeviceBounds(&device);
   printf("device bounds %d %d %d %d\n", device.fLeft, device.fTop,
          device.fRight, device.fBottom);
 #endif  // SHOW_SKIA_PATH
 }
-
-#if SHOW_SKIA_PATH
-void DebugShowSkiaPaint(const SkPaint& paint) {
-  if (SkPaint::kFill_Style == paint.getStyle()) {
-    printf("fill 0x%08x\n", paint.getColor());
-  } else {
-    printf("stroke 0x%08x width %g\n", paint.getColor(),
-           paint.getStrokeWidth());
-  }
-}
-#endif  // SHOW_SKIA_PATH
 
 void DebugShowSkiaDrawPath(const SkCanvas* canvas,
                            const SkPaint& paint,
