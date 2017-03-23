@@ -795,7 +795,8 @@ void CPDF_DIBSource::LoadPalette() {
       m_bpc == 8 && m_bDefaultDecode) {
   } else {
     int palette_count = 1 << (m_bpc * m_nComponents);
-    std::vector<float> color_value(std::max(16U, m_nComponents));
+    CFX_FixedBufGrow<float, 16> color_values(m_nComponents);
+    float* color_value = color_values;
     for (int i = 0; i < palette_count; i++) {
       int color_data = i;
       for (uint32_t j = 0; j < m_nComponents; j++) {
@@ -810,11 +811,11 @@ void CPDF_DIBSource::LoadPalette() {
         int nComponents = m_pColorSpace->CountComponents();
         std::vector<float> temp_buf(nComponents);
         for (int k = 0; k < nComponents; k++) {
-          temp_buf[k] = color_value[0];
+          temp_buf[k] = *color_value;
         }
         m_pColorSpace->GetRGB(temp_buf.data(), &R, &G, &B);
       } else {
-        m_pColorSpace->GetRGB(color_value.data(), &R, &G, &B);
+        m_pColorSpace->GetRGB(color_value, &R, &G, &B);
       }
       SetPaletteArgb(i, ArgbEncode(255, FXSYS_round(R * 255),
                                    FXSYS_round(G * 255), FXSYS_round(B * 255)));
@@ -914,7 +915,8 @@ void CPDF_DIBSource::TranslateScanline24bpp(uint8_t* dest_scan,
     }
   }
 
-  std::vector<float> color_values(std::max(16U, m_nComponents));
+  CFX_FixedBufGrow<float, 16> color_values1(m_nComponents);
+  float* color_values = color_values1;
   float R = 0.0f;
   float G = 0.0f;
   float B = 0.0f;
@@ -933,7 +935,7 @@ void CPDF_DIBSource::TranslateScanline24bpp(uint8_t* dest_scan,
         G = (1.0f - color_values[1]) * k;
         B = (1.0f - color_values[2]) * k;
       } else {
-        m_pColorSpace->GetRGB(color_values.data(), &R, &G, &B);
+        m_pColorSpace->GetRGB(color_values, &R, &G, &B);
       }
       R = ClampValue(R, 1.0f);
       G = ClampValue(G, 1.0f);
@@ -959,7 +961,7 @@ void CPDF_DIBSource::TranslateScanline24bpp(uint8_t* dest_scan,
         G = (1.0f - color_values[1]) * k;
         B = (1.0f - color_values[2]) * k;
       } else {
-        m_pColorSpace->GetRGB(color_values.data(), &R, &G, &B);
+        m_pColorSpace->GetRGB(color_values, &R, &G, &B);
       }
       R = ClampValue(R, 1.0f);
       G = ClampValue(G, 1.0f);
@@ -1342,7 +1344,7 @@ void CPDF_DIBSource::DownSampleScanline32Bit(int orig_Bpp,
     if (src_x == last_src_x) {
       argb = last_argb;
     } else {
-      std::vector<uint8_t> extracted_components(std::max(128U, m_nComponents));
+      CFX_FixedBufGrow<uint8_t, 128> extracted_components(m_nComponents);
       const uint8_t* pSrcPixel = nullptr;
       if (m_bpc % 8 != 0) {
         // No need to check for 32-bit overflow, as |src_x| is bounded by
@@ -1356,13 +1358,13 @@ void CPDF_DIBSource::DownSampleScanline32Bit(int orig_Bpp,
               GetBits8(pSrcPixel, src_bit_pos, m_bpc) * unit_To8Bpc);
           src_bit_pos += m_bpc;
         }
-        pSrcPixel = extracted_components.data();
+        pSrcPixel = extracted_components;
       } else {
         pSrcPixel = pSrcLine + src_x * orig_Bpp;
         if (m_bpc == 16) {
           for (uint32_t j = 0; j < m_nComponents; ++j)
             extracted_components[j] = pSrcPixel[j * 2];
-          pSrcPixel = extracted_components.data();
+          pSrcPixel = extracted_components;
         }
       }
 
@@ -1383,8 +1385,8 @@ void CPDF_DIBSource::DownSampleScanline32Bit(int orig_Bpp,
             extracted_components[j] =
                 color_value > 255 ? 255 : (color_value < 0 ? 0 : color_value);
           }
-          m_pColorSpace->TranslateImageLine(color, extracted_components.data(),
-                                            1, 0, 0, bTransMask);
+          m_pColorSpace->TranslateImageLine(color, extracted_components, 1, 0,
+                                            0, bTransMask);
         }
         argb = FXARGB_MAKE(0xFF, color[2], color[1], color[0]);
       } else {

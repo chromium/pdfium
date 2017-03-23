@@ -317,6 +317,23 @@ class CFX_ArrayTemplate : public CFX_BasicArray {
   }
 };
 
+template <class DataType, int FixedSize>
+class CFX_FixedBufGrow {
+ public:
+  explicit CFX_FixedBufGrow(int data_size) {
+    if (data_size > FixedSize) {
+      m_pGrowData.reset(FX_Alloc(DataType, data_size));
+      return;
+    }
+    FXSYS_memset(m_FixedData, 0, sizeof(DataType) * FixedSize);
+  }
+  operator DataType*() { return m_pGrowData ? m_pGrowData.get() : m_FixedData; }
+
+ private:
+  DataType m_FixedData[FixedSize];
+  std::unique_ptr<DataType, FxFreeDeleter> m_pGrowData;
+};
+
 class CFX_BitStream {
  public:
   void Init(const uint8_t* pData, uint32_t dwSize);
