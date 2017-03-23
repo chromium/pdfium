@@ -125,16 +125,6 @@ bool CFX_Edit_Iterator::GetLine(CPVT_Line& line) const {
   return false;
 }
 
-bool CFX_Edit_Iterator::GetSection(CPVT_Section& section) const {
-  ASSERT(m_pEdit);
-
-  if (m_pVTIterator->GetSection(section)) {
-    section.rcSection = m_pEdit->VTToEdit(section.rcSection);
-    return true;
-  }
-  return false;
-}
-
 void CFX_Edit_Iterator::SetAt(int32_t nWordIndex) {
   m_pVTIterator->SetAt(nWordIndex);
 }
@@ -230,10 +220,6 @@ void CFX_Edit_Refresh::NoAnalyse() {
   }
 }
 
-void CFX_Edit_Refresh::AddRefresh(const CFX_FloatRect& rect) {
-  m_RefreshRects.Add(rect);
-}
-
 const CFX_Edit_RectArray* CFX_Edit_Refresh::GetRefreshRects() const {
   return &m_RefreshRects;
 }
@@ -245,8 +231,6 @@ void CFX_Edit_Refresh::EndRefresh() {
 CFX_Edit_Undo::CFX_Edit_Undo(int32_t nBufsize)
     : m_nCurUndoPos(0),
       m_nBufSize(nBufsize),
-      m_bModified(false),
-      m_bVirgin(true),
       m_bWorking(false) {}
 
 CFX_Edit_Undo::~CFX_Edit_Undo() {
@@ -262,7 +246,6 @@ void CFX_Edit_Undo::Undo() {
   if (m_nCurUndoPos > 0) {
     m_UndoItemStack[m_nCurUndoPos - 1]->Undo();
     m_nCurUndoPos--;
-    m_bModified = (m_nCurUndoPos != 0);
   }
   m_bWorking = false;
 }
@@ -276,7 +259,6 @@ void CFX_Edit_Undo::Redo() {
   if (m_nCurUndoPos < m_UndoItemStack.size()) {
     m_UndoItemStack[m_nCurUndoPos]->Redo();
     m_nCurUndoPos++;
-    m_bModified = true;
   }
   m_bWorking = false;
 }
@@ -288,18 +270,11 @@ void CFX_Edit_Undo::AddItem(std::unique_ptr<IFX_Edit_UndoItem> pItem) {
   if (m_nCurUndoPos < m_UndoItemStack.size())
     RemoveTails();
 
-  if (m_UndoItemStack.size() >= m_nBufSize) {
+  if (m_UndoItemStack.size() >= m_nBufSize)
     RemoveHeads();
-    m_bVirgin = false;
-  }
 
   m_UndoItemStack.push_back(std::move(pItem));
   m_nCurUndoPos = m_UndoItemStack.size();
-  m_bModified = true;
-}
-
-bool CFX_Edit_Undo::IsModified() const {
-  return m_bVirgin ? m_bModified : true;
 }
 
 void CFX_Edit_Undo::RemoveHeads() {
@@ -335,42 +310,6 @@ void CFX_Edit_UndoItem::SetLast(bool bLast) {
 
 bool CFX_Edit_UndoItem::IsLast() {
   return m_bLast;
-}
-
-CFX_Edit_GroupUndoItem::CFX_Edit_GroupUndoItem(const CFX_WideString& sTitle)
-    : m_sTitle(sTitle) {}
-
-CFX_Edit_GroupUndoItem::~CFX_Edit_GroupUndoItem() {}
-
-void CFX_Edit_GroupUndoItem::AddUndoItem(
-    std::unique_ptr<CFX_Edit_UndoItem> pUndoItem) {
-  pUndoItem->SetFirst(false);
-  pUndoItem->SetLast(false);
-  if (m_sTitle.IsEmpty())
-    m_sTitle = pUndoItem->GetUndoTitle();
-
-  m_Items.push_back(std::move(pUndoItem));
-}
-
-void CFX_Edit_GroupUndoItem::UpdateItems() {
-  if (!m_Items.empty()) {
-    m_Items.front()->SetFirst(true);
-    m_Items.back()->SetLast(true);
-  }
-}
-
-void CFX_Edit_GroupUndoItem::Undo() {
-  for (auto iter = m_Items.rbegin(); iter != m_Items.rend(); ++iter)
-    (*iter)->Undo();
-}
-
-void CFX_Edit_GroupUndoItem::Redo() {
-  for (auto iter = m_Items.begin(); iter != m_Items.end(); ++iter)
-    (*iter)->Redo();
-}
-
-CFX_WideString CFX_Edit_GroupUndoItem::GetUndoTitle() const {
-  return m_sTitle;
 }
 
 CFXEU_InsertWord::CFXEU_InsertWord(CFX_Edit* pEdit,
@@ -849,12 +788,9 @@ CFX_Edit::CFX_Edit()
       m_bEnableRefresh(true),
       m_rcOldContent(0.0f, 0.0f, 0.0f, 0.0f),
       m_bEnableUndo(true),
-      m_bOprNotify(false),
-      m_pGroupUndoItem(nullptr) {}
+      m_bOprNotify(false) {}
 
-CFX_Edit::~CFX_Edit() {
-  ASSERT(!m_pGroupUndoItem);
-}
+CFX_Edit::~CFX_Edit() {}
 
 void CFX_Edit::Initialize() {
   m_pVT->Initialize();
@@ -1568,18 +1504,6 @@ void CFX_Edit::SetCaretInfo() {
   }
 }
 
-void CFX_Edit::SetCaret(int32_t nPos) {
-  if (!m_pVT->IsValid())
-    return;
-
-  SelectNone();
-  SetCaret(m_pVT->WordIndexToWordPlace(nPos));
-  m_SelState.Set(m_wpCaret, m_wpCaret);
-  ScrollToCaret();
-  SetCaretOrigin();
-  SetCaretInfo();
-}
-
 void CFX_Edit::OnMouseDown(const CFX_PointF& point, bool bShift, bool bCtrl) {
   if (!m_pVT->IsValid())
     return;
@@ -2064,13 +1988,6 @@ void CFX_Edit::SetCaretOrigin() {
   }
 }
 
-int32_t CFX_Edit::WordPlaceToWordIndex(const CPVT_WordPlace& place) const {
-  if (m_pVT->IsValid())
-    return m_pVT->WordPlaceToWordIndex(place);
-
-  return -1;
-}
-
 CPVT_WordPlace CFX_Edit::WordIndexToWordPlace(int32_t index) const {
   if (m_pVT->IsValid())
     return m_pVT->WordIndexToWordPlace(index);
@@ -2172,10 +2089,7 @@ int32_t CFX_Edit::GetCharSetFromUnicode(uint16_t word, int32_t nOldCharset) {
 
 void CFX_Edit::AddEditUndoItem(
     std::unique_ptr<CFX_Edit_UndoItem> pEditUndoItem) {
-  if (m_pGroupUndoItem)
-    m_pGroupUndoItem->AddUndoItem(std::move(pEditUndoItem));
-  else
-    m_Undo.AddItem(std::move(pEditUndoItem));
+  m_Undo.AddItem(std::move(pEditUndoItem));
 }
 
 CFX_Edit_LineRectArray::CFX_Edit_LineRectArray() {}
@@ -2204,11 +2118,6 @@ CFX_Edit_LineRect* CFX_Edit_LineRectArray::GetAt(int32_t nIndex) const {
 
 CFX_Edit_Select::CFX_Edit_Select() {}
 
-CFX_Edit_Select::CFX_Edit_Select(const CPVT_WordPlace& begin,
-                                 const CPVT_WordPlace& end) {
-  Set(begin, end);
-}
-
 CFX_Edit_Select::CFX_Edit_Select(const CPVT_WordRange& range) {
   Set(range.BeginPos, range.EndPos);
 }
@@ -2226,10 +2135,6 @@ void CFX_Edit_Select::Set(const CPVT_WordPlace& begin,
                           const CPVT_WordPlace& end) {
   BeginPos = begin;
   EndPos = end;
-}
-
-void CFX_Edit_Select::SetBeginPos(const CPVT_WordPlace& begin) {
-  BeginPos = begin;
 }
 
 void CFX_Edit_Select::SetEndPos(const CPVT_WordPlace& end) {
