@@ -37,7 +37,7 @@ diff a/third_party/libpng16/pngstruct.h b/third_party/libpng16/pngstruct.h
  #  define ZLIB_CONST
  #endif
 -#include "zlib.h"
-+#include "third_party/zlib_v128/zlib.h"
++#include "third_party/zlib_v1211/zlib.h"
  #ifdef const
     /* zlib.h sometimes #defines const to nothing, undo this. */
  #  undef const

@@ -430,39 +430,28 @@ if (pdf_enable_xfa) {
   }
 }
 
-# TODO(dsinclair): Remove if fixed upstream. https://crbug.com/507712
-config("fx_zlib_warnings") {
-  visibility = [ ":*" ]
-  if (is_clang) {
-    cflags = [ "-Wno-shift-negative-value" ]
-  }
-}
-
 static_library("fx_zlib") {
   configs -= [ "//build/config/compiler:chromium_code" ]
   configs += [
     "//build/config/compiler:no_chromium_code",
     ":pdfium_third_party_config",
-
-    # Must be after no_chromium_code for warning flags to be ordered correctly.
-    ":fx_zlib_warnings",
   ]
   sources = [
-    "zlib_v128/adler32.c",
-    "zlib_v128/compress.c",
-    "zlib_v128/crc32.c",
-    "zlib_v128/deflate.c",
-    "zlib_v128/gzclose.c",
-    "zlib_v128/gzlib.c",
-    "zlib_v128/gzread.c",
-    "zlib_v128/gzwrite.c",
-    "zlib_v128/infback.c",
-    "zlib_v128/inffast.c",
-    "zlib_v128/inflate.c",
-    "zlib_v128/inftrees.c",
-    "zlib_v128/trees.c",
-    "zlib_v128/uncompr.c",
-    "zlib_v128/zutil.c",
+    "zlib_v1211/adler32.c",
+    "zlib_v1211/compress.c",
+    "zlib_v1211/crc32.c",
+    "zlib_v1211/deflate.c",
+    "zlib_v1211/gzclose.c",
+    "zlib_v1211/gzlib.c",
+    "zlib_v1211/gzread.c",
+    "zlib_v1211/gzwrite.c",
+    "zlib_v1211/infback.c",
+    "zlib_v1211/inffast.c",
+    "zlib_v1211/inflate.c",
+    "zlib_v1211/inftrees.c",
+    "zlib_v1211/trees.c",
+    "zlib_v1211/uncompr.c",
+    "zlib_v1211/zutil.c",
   ]
 }
 

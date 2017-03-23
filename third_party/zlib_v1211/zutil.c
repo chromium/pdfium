@@ -1,5 +1,5 @@
 /* zutil.c -- target dependent utility functions for the compression library
- * Copyright (C) 1995-2005, 2010, 2011, 2012 Jean-loup Gailly.
+ * Copyright (C) 1995-2017 Jean-loup Gailly
  * For conditions of distribution and use, see copyright notice in zlib.h
  */
 
@@ -10,21 +10,18 @@
 #  include "gzguts.h"
 #endif
 
-#ifndef NO_DUMMY_DECL
-struct internal_state      {int dummy;}; /* for buggy compilers */
-#endif
-
 z_const char * const z_errmsg[10] = {
-"need dictionary",     /* Z_NEED_DICT       2  */
-"stream end",          /* Z_STREAM_END      1  */
-"",                    /* Z_OK              0  */
-"file error",          /* Z_ERRNO         (-1) */
-"stream error",        /* Z_STREAM_ERROR  (-2) */
-"data error",          /* Z_DATA_ERROR    (-3) */
-"insufficient memory", /* Z_MEM_ERROR     (-4) */
-"buffer error",        /* Z_BUF_ERROR     (-5) */
-"incompatible version",/* Z_VERSION_ERROR (-6) */
-""};
+    (z_const char *)"need dictionary",     /* Z_NEED_DICT       2  */
+    (z_const char *)"stream end",          /* Z_STREAM_END      1  */
+    (z_const char *)"",                    /* Z_OK              0  */
+    (z_const char *)"file error",          /* Z_ERRNO         (-1) */
+    (z_const char *)"stream error",        /* Z_STREAM_ERROR  (-2) */
+    (z_const char *)"data error",          /* Z_DATA_ERROR    (-3) */
+    (z_const char *)"insufficient memory", /* Z_MEM_ERROR     (-4) */
+    (z_const char *)"buffer error",        /* Z_BUF_ERROR     (-5) */
+    (z_const char *)"incompatible version",/* Z_VERSION_ERROR (-6) */
+    (z_const char *)""
+};
 
 
 const char * ZEXPORT zlibVersion()
@@ -61,7 +58,7 @@ uLong ZEXPORT zlibCompileFlags()
     case 8:     flags += 2 << 6;        break;
     default:    flags += 3 << 6;
     }
-#ifdef DEBUG
+#ifdef ZLIB_DEBUG
     flags += 1 << 8;
 #endif
 #if defined(ASMV) || defined(ASMINF)
@@ -115,15 +112,15 @@ uLong ZEXPORT zlibCompileFlags()
     return flags;
 }
 
-#ifdef DEBUG
-
+#ifdef ZLIB_DEBUG
+#include <stdlib.h>
 #  ifndef verbose
 #    define verbose 0
 #  endif
 int ZLIB_INTERNAL z_verbose = verbose;
 
-void ZLIB_INTERNAL z_error (
-    char *m)
+void ZLIB_INTERNAL z_error (m)
+    char *m;
 {
     fprintf(stderr, "%s\n", m);
     exit(1);
@@ -133,8 +130,8 @@ void ZLIB_INTERNAL z_error (
 /* exported to allow conversion of error code to string for compress() and
  * uncompress()
  */
-const char * ZEXPORT zError(
-    int err)
+const char * ZEXPORT zError(err)
+    int err;
 {
     return ERR_MSG(err);
 }
@@ -144,16 +141,15 @@ const char * ZEXPORT zError(
      * errno.  We define it as a global variable to simplify porting.
      * Its value is always 0 and should not be used.
      */
-	/* does not exist on WCE. XYQ: and we don't need it! */
-    /*int errno = 0;*/
+    int errno = 0;
 #endif
 
 #ifndef HAVE_MEMCPY
 
-void ZLIB_INTERNAL zmemcpy(
-    Bytef* dest,
-    const Bytef* source,
-    uInt  len)
+void ZLIB_INTERNAL zmemcpy(dest, source, len)
+    Bytef* dest;
+    const Bytef* source;
+    uInt  len;
 {
     if (len == 0) return;
     do {
@@ -161,10 +157,10 @@ void ZLIB_INTERNAL zmemcpy(
     } while (--len != 0);
 }
 
-int ZLIB_INTERNAL zmemcmp(
-    const Bytef* s1,
-    const Bytef* s2,
-    uInt  len)
+int ZLIB_INTERNAL zmemcmp(s1, s2, len)
+    const Bytef* s1;
+    const Bytef* s2;
+    uInt  len;
 {
     uInt j;
 
@@ -174,9 +170,9 @@ int ZLIB_INTERNAL zmemcmp(
     return 0;
 }
 
-void ZLIB_INTERNAL zmemzero(
-    Bytef* dest,
-    uInt  len)
+void ZLIB_INTERNAL zmemzero(dest, len)
+    Bytef* dest;
+    uInt  len;
 {
     if (len == 0) return;
     do {
@@ -185,7 +181,6 @@ void ZLIB_INTERNAL zmemzero(
 }
 #endif
 
-#if 0
 #ifndef Z_SOLO
 
 #ifdef SYS16BIT
@@ -221,8 +216,10 @@ local ptr_table table[MAX_PTR];
 
 voidpf ZLIB_INTERNAL zcalloc (voidpf opaque, unsigned items, unsigned size)
 {
-    voidpf buf = opaque; /* just to make some compilers happy */
+    voidpf buf;
     ulg bsize = (ulg)items*size;
+
+    (void)opaque;
 
     /* If we allocate less than 65520 bytes, we assume that farmalloc
      * will return a usable pointer which doesn't have to be normalized.
@@ -246,6 +243,9 @@ voidpf ZLIB_INTERNAL zcalloc (voidpf opaque, unsigned items, unsigned size)
 void ZLIB_INTERNAL zcfree (voidpf opaque, voidpf ptr)
 {
     int n;
+
+    (void)opaque;
+
     if (*(ush*)&ptr != 0) { /* object < 64K */
         farfree(ptr);
         return;
@@ -261,7 +261,6 @@ void ZLIB_INTERNAL zcfree (voidpf opaque, voidpf ptr)
         next_ptr--;
         return;
     }
-    ptr = opaque; /* just to make some compilers happy */
     Assert(0, "zcfree: ptr not found");
 }
 
@@ -280,13 +279,13 @@ void ZLIB_INTERNAL zcfree (voidpf opaque, voidpf ptr)
 
 voidpf ZLIB_INTERNAL zcalloc (voidpf opaque, uInt items, uInt size)
 {
-    if (opaque) opaque = 0; /* to make compiler happy */
+    (void)opaque;
     return _halloc((long)items, size);
 }
 
 void ZLIB_INTERNAL zcfree (voidpf opaque, voidpf ptr)
 {
-    if (opaque) opaque = 0; /* to make compiler happy */
+    (void)opaque;
     _hfree(ptr);
 }
 
@@ -308,7 +307,7 @@ voidpf ZLIB_INTERNAL zcalloc (opaque, items, size)
     unsigned items;
     unsigned size;
 {
-    if (opaque) items += size - size; /* make compiler happy */
+    (void)opaque;
     return sizeof(uInt) > 2 ? (voidpf)malloc(items * size) :
                               (voidpf)calloc(items, size);
 }
@@ -317,25 +316,10 @@ void ZLIB_INTERNAL zcfree (opaque, ptr)
     voidpf opaque;
     voidpf ptr;
 {
+    (void)opaque;
     free(ptr);
-    if (opaque) return; /* make compiler happy */
 }
 
 #endif /* MY_ZCALLOC */
 
 #endif /* !Z_SOLO */
-#endif	/* 0 */
-
-extern void* FXMEM_DefaultAlloc(size_t, int);
-extern void FXMEM_DefaultFree(void*, int);
-
-/* XYQ 2007-1-19 */
-voidpf zcalloc(voidpf opaque, unsigned items, unsigned size)
-{
-	return FXMEM_DefaultAlloc(items * size, 0);
-}
-
-void zcfree(voidpf opaque, voidpf ptr)
-{
-	FXMEM_DefaultFree(ptr, 0);
-}
