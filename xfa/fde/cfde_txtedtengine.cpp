@@ -1062,23 +1062,22 @@ bool CFDE_TxtEdtEngine::ReplaceParagEnd(wchar_t*& lpText,
 void CFDE_TxtEdtEngine::RecoverParagEnd(CFX_WideString& wsText) const {
   wchar_t wc = (m_nFirstLineEnd == FDE_TXTEDIT_LINEEND_CR) ? L'\n' : L'\r';
   if (m_nFirstLineEnd == FDE_TXTEDIT_LINEEND_CRLF) {
-    CFX_ArrayTemplate<int32_t> PosArr;
+    std::vector<int32_t> PosArr;
     int32_t nLength = wsText.GetLength();
-    int32_t i = 0;
     wchar_t* lpPos = const_cast<wchar_t*>(wsText.c_str());
-    for (i = 0; i < nLength; i++, lpPos++) {
+    for (int32_t i = 0; i < nLength; i++, lpPos++) {
       if (*lpPos == m_wLineEnd) {
         *lpPos = wc;
-        PosArr.Add(i);
+        PosArr.push_back(i);
       }
     }
     const wchar_t* lpSrcBuf = wsText.c_str();
     CFX_WideString wsTemp;
-    int32_t nCount = PosArr.GetSize();
+    int32_t nCount = pdfium::CollectionSize<int32_t>(PosArr);
     wchar_t* lpDstBuf = wsTemp.GetBuffer(nLength + nCount);
     int32_t nDstPos = 0;
     int32_t nSrcPos = 0;
-    for (i = 0; i < nCount; i++) {
+    for (int32_t i = 0; i < nCount; i++) {
       int32_t nPos = PosArr[i];
       int32_t nCopyLen = nPos - nSrcPos + 1;
       FXSYS_memcpy(lpDstBuf + nDstPos, lpSrcBuf + nSrcPos,
