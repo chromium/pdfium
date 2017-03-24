@@ -830,6 +830,8 @@ class SkiaState {
     m_type = Accumulator::kNone;
   }
 
+  bool IsEmpty() { return !m_commands.count(); }
+
   bool SetClipFill(const CFX_PathData* pPathData,
                    const CFX_Matrix* pMatrix,
                    int fill_mode) {
@@ -938,13 +940,6 @@ class SkiaState {
   bool ClipRestore() {
     if (m_debugDisable)
       return false;
-
-    // TODO(dsinclair): This check works around crbug.com/704442 where
-    // it looks like we have a ClipRestore without a corresponding ClipSave.
-    // We need to track down the imbalance and fix correctly.
-    if (m_commandIndex == 0)
-      return true;
-
     Dump(__func__);
     while (Clip::kSave != m_commands[--m_commandIndex]) {
       SkASSERT(m_commandIndex > 0);
@@ -1128,8 +1123,13 @@ class SkiaState {
   bool m_debugDisable;  // turn off cache for debugging
 #if SHOW_SKIA_PATH
   mutable int m_debugSaveCounter;
+  static int m_debugInitCounter;
 #endif
 };
+
+#if SHOW_SKIA_PATH
+int SkiaState::m_debugInitCounter;
+#endif
 
 // convert a stroking path to scanlines
 void CFX_SkiaDeviceDriver::PaintStroke(SkPaint* spaint,
@@ -1362,16 +1362,21 @@ void CFX_SkiaDeviceDriver::SaveState() {
 }
 
 void CFX_SkiaDeviceDriver::RestoreState(bool bKeepSaved) {
-  if (!m_pCache->ClipRestore())
-    m_pCanvas->restore();
-  if (bKeepSaved && !m_pCache->ClipSave())
-    m_pCanvas->save();
 #ifdef _SKIA_SUPPORT_PATHS_
   m_pClipRgn.reset();
 
   if (m_StateStack.empty())
     return;
+#else
+  if (m_pCache->IsEmpty())
+    return;
+#endif
 
+  if (!m_pCache->ClipRestore())
+    m_pCanvas->restore();
+  if (bKeepSaved && !m_pCache->ClipSave())
+    m_pCanvas->save();
+#ifdef _SKIA_SUPPORT_PATHS_
   if (bKeepSaved) {
     if (m_StateStack.back())
       m_pClipRgn = pdfium::MakeUnique<CFX_ClipRgn>(*m_StateStack.back());
