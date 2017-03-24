@@ -5,9 +5,10 @@
 #include <cstdint>
 
 #include "core/fpdfapi/font/font_int.h"
+#include "third_party/base/ptr_util.h"
 
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
-  CPDF_CMap cmap;
-  cmap.LoadEmbedded(data, size);
+  auto cmap = pdfium::MakeRetain<CPDF_CMap>();
+  cmap->LoadEmbedded(data, size);
   return 0;
 }

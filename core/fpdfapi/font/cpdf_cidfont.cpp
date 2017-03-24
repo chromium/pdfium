@@ -365,9 +365,9 @@ bool CPDF_CIDFont::Load() {
     if (!m_pCMap)
       return false;
   } else if (CPDF_Stream* pStream = pEncoding->AsStream()) {
-    m_pCMap = pdfium::MakeUnique<CPDF_CMap>();
     CPDF_StreamAcc acc;
     acc.LoadAllData(pStream, false);
+    m_pCMap = pdfium::MakeRetain<CPDF_CMap>();
     m_pCMap->LoadEmbedded(acc.GetData(), acc.GetSize());
   } else {
     return false;

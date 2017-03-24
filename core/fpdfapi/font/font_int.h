@@ -12,7 +12,7 @@
 #include <vector>
 
 #include "core/fpdfapi/font/cpdf_cidfont.h"
-#include "core/fxcrt/cfx_maybe_owned.h"
+#include "core/fxcrt/cfx_retain_ptr.h"
 #include "core/fxcrt/fx_basic.h"
 
 class CPDF_CID2UnicodeMap;
@@ -31,17 +31,17 @@ class CPDF_CMapManager {
   CPDF_CMapManager();
   ~CPDF_CMapManager();
 
-  CFX_MaybeOwned<CPDF_CMap> GetPredefinedCMap(const CFX_ByteString& name,
-                                              bool bPromptCJK);
+  CFX_RetainPtr<CPDF_CMap> GetPredefinedCMap(const CFX_ByteString& name,
+                                             bool bPromptCJK);
   CPDF_CID2UnicodeMap* GetCID2UnicodeMap(CIDSet charset, bool bPromptCJK);
 
  private:
-  std::unique_ptr<CPDF_CMap> LoadPredefinedCMap(const CFX_ByteString& name,
-                                                bool bPromptCJK);
+  CFX_RetainPtr<CPDF_CMap> LoadPredefinedCMap(const CFX_ByteString& name,
+                                              bool bPromptCJK);
   std::unique_ptr<CPDF_CID2UnicodeMap> LoadCID2UnicodeMap(CIDSet charset,
                                                           bool bPromptCJK);
 
-  std::map<CFX_ByteString, std::unique_ptr<CPDF_CMap>> m_CMaps;
+  std::map<CFX_ByteString, CFX_RetainPtr<CPDF_CMap>> m_CMaps;
   std::unique_ptr<CPDF_CID2UnicodeMap> m_CID2UnicodeMaps[6];
 };
 
@@ -127,7 +127,7 @@ enum CIDCoding : uint8_t {
   CIDCODING_UTF16,
 };
 
-class CPDF_CMap {
+class CPDF_CMap : public CFX_Retainable {
  public:
   enum CodingScheme : uint8_t {
     OneByte,
@@ -136,8 +136,8 @@ class CPDF_CMap {
     MixedFourBytes
   };
 
-  CPDF_CMap();
-  ~CPDF_CMap();
+  template <typename T, typename... Args>
+  friend CFX_RetainPtr<T> pdfium::MakeRetain(Args&&... args);
 
   void LoadPredefined(CPDF_CMapManager* pMgr,
                       const CFX_ByteString& name,
@@ -155,6 +155,9 @@ class CPDF_CMap {
  private:
   friend class CPDF_CMapParser;
   friend class CPDF_CIDFont;
+
+  CPDF_CMap();
+  ~CPDF_CMap() override;
 
   CFX_ByteString m_PredefinedCMap;
   bool m_bVertical;

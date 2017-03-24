@@ -286,30 +286,28 @@ CPDF_CMapManager::CPDF_CMapManager() {}
 
 CPDF_CMapManager::~CPDF_CMapManager() {}
 
-CFX_MaybeOwned<CPDF_CMap> CPDF_CMapManager::GetPredefinedCMap(
+CFX_RetainPtr<CPDF_CMap> CPDF_CMapManager::GetPredefinedCMap(
     const CFX_ByteString& name,
     bool bPromptCJK) {
   auto it = m_CMaps.find(name);
   if (it != m_CMaps.end())
-    return CFX_MaybeOwned<CPDF_CMap>(it->second.get());  // Unowned.
+    return it->second;
 
-  std::unique_ptr<CPDF_CMap> pCMap = LoadPredefinedCMap(name, bPromptCJK);
-  if (name.IsEmpty())
-    return CFX_MaybeOwned<CPDF_CMap>(std::move(pCMap));  // Owned.
+  CFX_RetainPtr<CPDF_CMap> pCMap = LoadPredefinedCMap(name, bPromptCJK);
+  if (!name.IsEmpty())
+    m_CMaps[name] = pCMap;
 
-  CPDF_CMap* pUnowned = pCMap.get();
-  m_CMaps[name] = std::move(pCMap);
-  return CFX_MaybeOwned<CPDF_CMap>(pUnowned);  // Unowned.
+  return pCMap;
 }
 
-std::unique_ptr<CPDF_CMap> CPDF_CMapManager::LoadPredefinedCMap(
+CFX_RetainPtr<CPDF_CMap> CPDF_CMapManager::LoadPredefinedCMap(
     const CFX_ByteString& name,
     bool bPromptCJK) {
-  auto pCMap = pdfium::MakeUnique<CPDF_CMap>();
   const char* pname = name.c_str();
   if (*pname == '/')
     pname++;
 
+  auto pCMap = pdfium::MakeRetain<CPDF_CMap>();
   pCMap->LoadPredefined(this, pname, bPromptCJK);
   return pCMap;
 }
