@@ -75,13 +75,13 @@ bool CXFA_FFText::IsLoaded() {
 bool CXFA_FFText::PerformLayout() {
   CXFA_FFDraw::PerformLayout();
   CXFA_TextLayout* pTextLayout = m_pDataAcc->GetTextLayout();
-  if (!pTextLayout) {
+  if (!pTextLayout)
     return false;
-  }
-  if (!pTextLayout->m_bHasBlock) {
+
+  if (!pTextLayout->m_bHasBlock)
     return true;
-  }
-  pTextLayout->m_Blocks.RemoveAll();
+
+  pTextLayout->m_Blocks.clear();
   CXFA_LayoutItem* pItem = this;
   if (!pItem->GetPrev() && !pItem->GetNext()) {
     return true;

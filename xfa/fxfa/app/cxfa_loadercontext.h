@@ -29,11 +29,11 @@ class CXFA_LoaderContext {
   int32_t m_iChar;
   int32_t m_iLines;
   int32_t m_iTotalLines;
+  uint32_t m_dwFlags;
   CFDE_XMLNode* m_pXMLNode;
   CXFA_Node* m_pNode;
   CFX_RetainPtr<CFDE_CSSComputedStyle> m_pParentStyle;
-  CFX_ArrayTemplate<float> m_lineHeights;
-  uint32_t m_dwFlags;
+  std::vector<float> m_lineHeights;
   std::vector<float> m_BlocksHeight;
 };
 

@@ -60,7 +60,7 @@ class CXFA_TextLayout {
   }
 
   bool m_bHasBlock;
-  CFX_ArrayTemplate<int32_t> m_Blocks;
+  std::vector<int32_t> m_Blocks;
 
  private:
   void GetTextDataNode();

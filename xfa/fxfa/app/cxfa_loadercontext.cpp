@@ -14,8 +14,8 @@ CXFA_LoaderContext::CXFA_LoaderContext()
       m_fStartLineOffset(0),
       m_iChar(0),
       m_iTotalLines(-1),
+      m_dwFlags(0),
       m_pXMLNode(nullptr),
-      m_pNode(nullptr),
-      m_dwFlags(0) {}
+      m_pNode(nullptr) {}
 
 CXFA_LoaderContext::~CXFA_LoaderContext() {}

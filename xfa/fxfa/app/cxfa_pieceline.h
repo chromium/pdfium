@@ -20,7 +20,7 @@ class CXFA_PieceLine {
   ~CXFA_PieceLine();
 
   std::vector<std::unique_ptr<XFA_TextPiece>> m_textPieces;
-  CFX_ArrayTemplate<int32_t> m_charCounts;
+  std::vector<int32_t> m_charCounts;
 };
 
 #endif  // XFA_FXFA_APP_CXFA_PIECELINE_H_
