@@ -2153,9 +2153,7 @@ void CFX_SkiaDeviceDriver::DebugVerifyBitmapIsPreMultiplied() const {
 #endif  // _SKIA_SUPPORT_
 
 CFX_FxgeDevice::CFX_FxgeDevice() {
-#ifdef _SKIA_SUPPORT_
   m_bOwnedBitmap = false;
-#endif  // _SKIA_SUPPORT_
 }
 
 #ifdef _SKIA_SUPPORT_
@@ -2212,10 +2210,10 @@ bool CFX_FxgeDevice::Create(int width,
 CFX_FxgeDevice::~CFX_FxgeDevice() {
 #ifdef _SKIA_SUPPORT_
   Flush();
+#endif  // _SKIA_SUPPORT_
   // call destructor of CFX_RenderDevice / CFX_SkiaDeviceDriver immediately
   if (m_bOwnedBitmap && GetBitmap())
     delete GetBitmap();
-#endif  // _SKIA_SUPPORT_
 }
 
 #ifdef _SKIA_SUPPORT_
