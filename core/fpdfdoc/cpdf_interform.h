@@ -94,7 +94,7 @@ class CPDF_InterForm {
   friend class CPDF_FormField;
 
   void LoadField(CPDF_Dictionary* pFieldDict, int nLevel);
-  CPDF_FormField* AddTerminalField(CPDF_Dictionary* pFieldDict);
+  void AddTerminalField(CPDF_Dictionary* pFieldDict);
   CPDF_FormControl* AddControl(CPDF_FormField* pField,
                                CPDF_Dictionary* pWidgetDict);
   void FDF_ImportField(CPDF_Dictionary* pField,

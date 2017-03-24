@@ -394,8 +394,7 @@ class CFieldTree {
   class Node {
    public:
     Node() : m_pField(nullptr) {}
-    Node(const CFX_WideString& short_name, CPDF_FormField* pField)
-        : m_ShortName(short_name), m_pField(pField) {}
+    explicit Node(const CFX_WideString& short_name) : m_ShortName(short_name) {}
     ~Node() {}
 
     void AddChildNode(Node* pNode) { m_Children.push_back(pNode); }
@@ -412,10 +411,11 @@ class CFieldTree {
 
     size_t CountFields() const { return CountFieldsInternal(0); }
 
-    void SetField(CPDF_FormField* pField) { m_pField = pField; }
+    void SetField(std::unique_ptr<CPDF_FormField> pField) {
+      m_pField = std::move(pField);
+    }
 
-    CPDF_FormField* GetField() { return m_pField; }
-    const CPDF_FormField* GetField() const { return m_pField; }
+    CPDF_FormField* GetField() const { return m_pField.get(); }
 
     const CFX_WideString& GetShortName() const { return m_ShortName; }
 
@@ -423,7 +423,7 @@ class CFieldTree {
     CPDF_FormField* GetFieldInternal(size_t* pFieldsToGo) {
       if (m_pField) {
         if (*pFieldsToGo == 0)
-          return m_pField;
+          return m_pField.get();
 
         --*pFieldsToGo;
       }
@@ -450,20 +450,19 @@ class CFieldTree {
 
     std::vector<Node*> m_Children;
     CFX_WideString m_ShortName;
-    CPDF_FormField* m_pField;
+    std::unique_ptr<CPDF_FormField> m_pField;
   };
 
   CFieldTree();
   ~CFieldTree();
 
-  void SetField(const CFX_WideString& full_name, CPDF_FormField* pField);
+  bool SetField(const CFX_WideString& full_name,
+                std::unique_ptr<CPDF_FormField> pField);
   CPDF_FormField* GetField(const CFX_WideString& full_name);
   void RemoveAll();
 
   Node* FindNode(const CFX_WideString& full_name);
-  Node* AddChild(Node* pParent,
-                 const CFX_WideString& short_name,
-                 CPDF_FormField* pField);
+  Node* AddChild(Node* pParent, const CFX_WideString& short_name);
   void RemoveNode(Node* pNode, int nLevel = 0);
 
   Node* Lookup(Node* pParent, const CFX_WideString& short_name);
@@ -478,12 +477,11 @@ CFieldTree::~CFieldTree() {
 }
 
 CFieldTree::Node* CFieldTree::AddChild(Node* pParent,
-                                       const CFX_WideString& short_name,
-                                       CPDF_FormField* pField) {
+                                       const CFX_WideString& short_name) {
   if (!pParent)
     return nullptr;
 
-  Node* pNode = new Node(short_name, pField);
+  Node* pNode = new Node(short_name);
   pParent->AddChildNode(pNode);
   return pNode;
 }
@@ -517,10 +515,10 @@ void CFieldTree::RemoveAll() {
     RemoveNode(m_Root.GetChildAt(i));
 }
 
-void CFieldTree::SetField(const CFX_WideString& full_name,
-                          CPDF_FormField* pField) {
+bool CFieldTree::SetField(const CFX_WideString& full_name,
+                          std::unique_ptr<CPDF_FormField> pField) {
   if (full_name.IsEmpty())
-    return;
+    return false;
 
   CFieldNameExtractor name_extractor(full_name);
   const wchar_t* pName;
@@ -533,12 +531,15 @@ void CFieldTree::SetField(const CFX_WideString& full_name,
     CFX_WideString name = CFX_WideString(pName, nLength);
     pNode = Lookup(pLast, name);
     if (!pNode)
-      pNode = AddChild(pLast, name, nullptr);
+      pNode = AddChild(pLast, name);
 
     name_extractor.GetNext(pName, nLength);
   }
-  if (pNode != &m_Root)
-    pNode->SetField(pField);
+  if (pNode == &m_Root)
+    return false;
+
+  pNode->SetField(std::move(pField));
+  return true;
 }
 
 CPDF_FormField* CFieldTree::GetField(const CFX_WideString& full_name) {
@@ -670,9 +671,6 @@ CPDF_InterForm::CPDF_InterForm(CPDF_Document* pDocument)
 
 CPDF_InterForm::~CPDF_InterForm() {
   m_ControlMap.clear();
-  size_t nCount = m_pFieldTree->m_Root.CountFields();
-  for (size_t i = 0; i < nCount; ++i)
-    delete m_pFieldTree->m_Root.GetFieldAtIndex(i);
 }
 
 bool CPDF_InterForm::s_bUpdateAP = true;
@@ -1075,18 +1073,18 @@ void CPDF_InterForm::FixPageFields(const CPDF_Page* pPage) {
   }
 }
 
-CPDF_FormField* CPDF_InterForm::AddTerminalField(CPDF_Dictionary* pFieldDict) {
+void CPDF_InterForm::AddTerminalField(CPDF_Dictionary* pFieldDict) {
   if (!pFieldDict->KeyExist("FT")) {
     // Key "FT" is required for terminal fields, it is also inheritable.
     CPDF_Dictionary* pParentDict = pFieldDict->GetDictFor("Parent");
     if (!pParentDict || !pParentDict->KeyExist("FT"))
-      return nullptr;
+      return;
   }
 
   CPDF_Dictionary* pDict = pFieldDict;
   CFX_WideString csWName = FPDF_GetFullName(pFieldDict);
   if (csWName.IsEmpty())
-    return nullptr;
+    return;
 
   CPDF_FormField* pField = nullptr;
   pField = m_pFieldTree->GetField(csWName);
@@ -1113,7 +1111,8 @@ CPDF_FormField* CPDF_InterForm::AddTerminalField(CPDF_Dictionary* pFieldDict) {
       }
     }
 
-    pField = new CPDF_FormField(this, pParent);
+    auto newField = pdfium::MakeUnique<CPDF_FormField>(this, pParent);
+    pField = newField.get();
     CPDF_Object* pTObj = pDict->GetObjectFor("T");
     if (ToReference(pTObj)) {
       std::unique_ptr<CPDF_Object> pClone = pTObj->CloneDirectObject();
@@ -1122,7 +1121,8 @@ CPDF_FormField* CPDF_InterForm::AddTerminalField(CPDF_Dictionary* pFieldDict) {
       else
         pDict->SetNewFor<CPDF_Name>("T", "");
     }
-    m_pFieldTree->SetField(csWName, pField);
+    if (!m_pFieldTree->SetField(csWName, std::move(newField)))
+      return;
   }
 
   CPDF_Array* pKids = pFieldDict->GetArrayFor("Kids");
@@ -1140,7 +1140,6 @@ CPDF_FormField* CPDF_InterForm::AddTerminalField(CPDF_Dictionary* pFieldDict) {
     if (pFieldDict->GetStringFor("Subtype") == "Widget")
       AddControl(pField, pFieldDict);
   }
-  return pField;
 }
 
 CPDF_FormControl* CPDF_InterForm::AddControl(CPDF_FormField* pField,

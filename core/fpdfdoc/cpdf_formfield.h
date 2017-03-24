@@ -55,6 +55,9 @@ class CPDF_FormField {
     Sign
   };
 
+  CPDF_FormField(CPDF_InterForm* pForm, CPDF_Dictionary* pDict);
+  ~CPDF_FormField();
+
   CFX_WideString GetFullName() const;
 
   Type GetType() const { return m_Type; }
@@ -131,9 +134,6 @@ class CPDF_FormField {
  private:
   friend class CPDF_InterForm;
   friend class CPDF_FormControl;
-
-  CPDF_FormField(CPDF_InterForm* pForm, CPDF_Dictionary* pDict);
-  ~CPDF_FormField();
 
   CFX_WideString GetValue(bool bDefault) const;
   bool SetValue(const CFX_WideString& value, bool bDefault, bool bNotify);
