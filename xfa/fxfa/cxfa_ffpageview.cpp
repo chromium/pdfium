@@ -6,6 +6,7 @@
 
 #include "xfa/fxfa/cxfa_ffpageview.h"
 
+#include <algorithm>
 #include <memory>
 #include <vector>
 
@@ -353,18 +354,6 @@ void CXFA_FFTabOrderPageWidgetIterator::CreateTabOrderWidgetArray() {
   }
 }
 
-static int32_t XFA_TabOrderWidgetComparator(const void* phWidget1,
-                                            const void* phWidget2) {
-  auto* param1 = *static_cast<CXFA_TabParam**>(const_cast<void*>(phWidget1));
-  auto* param2 = *static_cast<CXFA_TabParam**>(const_cast<void*>(phWidget2));
-  CFX_RectF rt1 = param1->m_pWidget->GetWidgetRect();
-  CFX_RectF rt2 = param2->m_pWidget->GetWidgetRect();
-  float x1 = rt1.left, y1 = rt1.top, x2 = rt2.left, y2 = rt2.top;
-  if (y1 < y2 || (y1 - y2 < XFA_FLOAT_PERCISION && x1 < x2))
-    return -1;
-  return 1;
-}
-
 void CXFA_FFTabOrderPageWidgetIterator::OrderContainer(
     CXFA_LayoutItemIterator* sIterator,
     CXFA_LayoutItem* pContainerItem,
@@ -372,7 +361,7 @@ void CXFA_FFTabOrderPageWidgetIterator::OrderContainer(
     bool& bCurrentItem,
     bool& bContentArea,
     bool bMarsterPage) {
-  CFX_ArrayTemplate<CXFA_TabParam*> tabParams;
+  std::vector<std::unique_ptr<CXFA_TabParam>> tabParams;
   CXFA_LayoutItem* pSearchItem = sIterator->MoveToNext();
   while (pSearchItem) {
     if (!pSearchItem->IsContentLayoutItem()) {
@@ -393,12 +382,10 @@ void CXFA_FFTabOrderPageWidgetIterator::OrderContainer(
         bCurrentItem = true;
         break;
       }
-      CXFA_TabParam* pParam = new CXFA_TabParam;
-      pParam->m_pWidget = hWidget;
-      tabParams.Add(pParam);
+      tabParams.push_back(pdfium::MakeUnique<CXFA_TabParam>(hWidget));
       if (IsLayoutElement(pSearchItem->GetFormNode()->GetElementType(), true)) {
-        OrderContainer(sIterator, pSearchItem, pParam, bCurrentItem,
-                       bContentArea, bMarsterPage);
+        OrderContainer(sIterator, pSearchItem, tabParams.back().get(),
+                       bCurrentItem, bContentArea, bMarsterPage);
       }
     }
     if (bCurrentItem) {
@@ -408,24 +395,26 @@ void CXFA_FFTabOrderPageWidgetIterator::OrderContainer(
       pSearchItem = sIterator->MoveToNext();
     }
   }
-  int32_t iChildren = tabParams.GetSize();
-  if (iChildren > 1) {
-    FXSYS_qsort(tabParams.GetData(), iChildren, sizeof(void*),
-                XFA_TabOrderWidgetComparator);
-  }
-  for (int32_t iStart = 0; iStart < iChildren; iStart++) {
-    std::unique_ptr<CXFA_TabParam> pParam(tabParams[iStart]);
+  std::sort(tabParams.begin(), tabParams.end(),
+            [](const std::unique_ptr<CXFA_TabParam>& arg1,
+               const std::unique_ptr<CXFA_TabParam>& arg2) {
+              CFX_RectF rt1 = arg1->m_pWidget->GetWidgetRect();
+              CFX_RectF rt2 = arg2->m_pWidget->GetWidgetRect();
+              if (rt1.top - rt2.top >= XFA_FLOAT_PERCISION)
+                return rt1.top < rt2.top;
+              return rt1.left < rt2.left;
+            });
+  for (const auto& pParam : tabParams) {
     pContainer->m_Children.push_back(pParam->m_pWidget);
     pContainer->m_Children.insert(pContainer->m_Children.end(),
                                   pParam->m_Children.begin(),
                                   pParam->m_Children.end());
   }
-  tabParams.RemoveAll();
 }
 void CXFA_FFTabOrderPageWidgetIterator::CreateSpaceOrderWidgetArray(
     std::vector<CXFA_FFWidget*>* WidgetArray) {
   CXFA_LayoutItemIterator sIterator(m_pPageView);
-  auto pParam = pdfium::MakeUnique<CXFA_TabParam>();
+  auto pParam = pdfium::MakeUnique<CXFA_TabParam>(nullptr);
   bool bCurrentItem = false;
   bool bContentArea = false;
   OrderContainer(&sIterator, nullptr, pParam.get(), bCurrentItem, bContentArea);
@@ -454,6 +443,6 @@ CXFA_FFWidget* CXFA_FFTabOrderPageWidgetIterator::GetWidget(
   return nullptr;
 }
 
-CXFA_TabParam::CXFA_TabParam() : m_pWidget(nullptr) {}
+CXFA_TabParam::CXFA_TabParam(CXFA_FFWidget* pWidget) : m_pWidget(pWidget) {}
 
 CXFA_TabParam::~CXFA_TabParam() {}

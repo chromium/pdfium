@@ -62,7 +62,7 @@ class CXFA_FFPageWidgetIterator : public IXFA_WidgetIterator {
 
 class CXFA_TabParam {
  public:
-  CXFA_TabParam();
+  explicit CXFA_TabParam(CXFA_FFWidget* pWidget);
   ~CXFA_TabParam();
 
   CXFA_FFWidget* m_pWidget;
