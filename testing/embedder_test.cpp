@@ -355,28 +355,6 @@ void EmbedderTest::CompareBitmap(FPDF_BITMAP bitmap,
   EXPECT_EQ(expected_md5sum, CRYPT_ToBase16(digest));
 }
 
-// static
-void EmbedderTest::CompareBitmap2Options(FPDF_BITMAP bitmap,
-                                         int expected_width,
-                                         int expected_height,
-                                         const char* option1_md5sum,
-                                         const char* option2_md5sum) {
-  ASSERT_EQ(expected_width, FPDFBitmap_GetWidth(bitmap));
-  ASSERT_EQ(expected_height, FPDFBitmap_GetHeight(bitmap));
-  const int expected_stride = expected_width * 4;
-  ASSERT_EQ(expected_stride, FPDFBitmap_GetStride(bitmap));
-
-  if (!option1_md5sum || !option2_md5sum)
-    return;
-
-  uint8_t digest[16];
-  CRYPT_MD5Generate(static_cast<uint8_t*>(FPDFBitmap_GetBuffer(bitmap)),
-                    expected_stride * expected_height, digest);
-  std::string digest_string = CRYPT_ToBase16(digest);
-  EXPECT_TRUE(digest_string == option1_md5sum ||
-              digest_string == option2_md5sum);
-}
-
 // Can't use gtest-provided main since we need to stash the path to the
 // executable in order to find the external V8 binary data files.
 int main(int argc, char** argv) {

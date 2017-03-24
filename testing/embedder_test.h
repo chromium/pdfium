@@ -114,14 +114,6 @@ class EmbedderTest : public ::testing::Test,
                             int expected_height,
                             const char* expected_md5sum);
 
-  // Check |bitmap| to make sure it has the right dimensions and content.
-  // Have two options for the expected md5 sum.
-  static void CompareBitmap2Options(FPDF_BITMAP bitmap,
-                                    int expected_width,
-                                    int expected_height,
-                                    const char* option1_md5sum,
-                                    const char* option2_md5sum);
-
   Delegate* delegate_;
   std::unique_ptr<Delegate> default_delegate_;
   FPDF_DOCUMENT document_;

@@ -115,8 +115,7 @@ TEST_F(FPDFParserDecodeEmbeddertest, Bug_455199) {
   FPDF_PAGE page = LoadPage(0);
   FPDF_BITMAP bitmap = RenderPage(page);
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
-  // Rendering on Mac is inconsistent, so skip this check.
-  const char* const kExpectedMd5sum = nullptr;
+  const char kExpectedMd5sum[] = "b90475ca64d1348c3bf5e2b77ad9187a";
 #else
   const char kExpectedMd5sum[] = "6f9f0fd903da177babb24dd50a806a56";
 #endif
