@@ -56,7 +56,8 @@ class GoldResults(object):
     """
     source_type is the source_type (=corpus) field used for all results.
     output_dir is the directory where the resulting images are copied and
-               the dm.json file is written.
+               the dm.json file is written. If the directory exists it will
+               be removed and recreated.
     propertiesStr is a string with space separated key/value pairs that
                is used to set the top level fields in the output JSON file.
     keyStr is a string with space separated key/value pairs that
@@ -70,9 +71,10 @@ class GoldResults(object):
     self._results =  []
     self._outputDir = outputDir
 
-    # make sure the output directory exists.
-    if not os.path.exists(outputDir):
-      os.makedirs(outputDir)
+    # make sure the output directory exists and is empty.
+    if os.path.exists(outputDir):
+      shutil.rmtree(outputDir, ignore_errors=True)
+    os.makedirs(outputDir)
 
     self._ignore_hashes = set()
     if ignore_hashes_file:
