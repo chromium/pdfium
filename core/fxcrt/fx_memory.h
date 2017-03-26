@@ -26,6 +26,11 @@ void FXMEM_DefaultFree(void* pointer, int flags);
 #include <memory>
 #include <new>
 
+#include "third_party/base/allocator/partition_allocator/partition_alloc.h"
+
+extern pdfium::base::PartitionAllocatorGeneric gArrayBufferPartitionAllocator;
+extern pdfium::base::PartitionAllocatorGeneric gStringPartitionAllocator;
+
 NEVER_INLINE void FX_OutOfMemoryTerminate();
 
 inline void* FX_SafeRealloc(void* ptr, size_t num_members, size_t member_size) {

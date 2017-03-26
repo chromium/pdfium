@@ -8,6 +8,9 @@
 
 #include "core/fxcrt/fx_memory.h"
 
+pdfium::base::PartitionAllocatorGeneric gArrayBufferPartitionAllocator;
+pdfium::base::PartitionAllocatorGeneric gStringPartitionAllocator;
+
 void* FXMEM_DefaultAlloc(size_t byte_size, int flags) {
   return (void*)malloc(byte_size);
 }

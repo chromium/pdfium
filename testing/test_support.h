@@ -12,6 +12,7 @@
 
 #include "public/fpdf_save.h"
 #include "public/fpdfview.h"
+#include "testing/gtest/include/gtest/gtest.h"
 
 #ifdef PDF_ENABLE_V8
 #include "v8/include/v8.h"
@@ -56,6 +57,12 @@ struct NullTermWstrFuncTestData {
 // Used with std::unique_ptr to free() objects that can't be deleted.
 struct FreeDeleter {
   inline void operator()(void* ptr) const { free(ptr); }
+};
+
+class FPDF_Test : public ::testing::Test {
+ public:
+  void SetUp() override;
+  void TearDown() override;
 };
 
 }  // namespace pdfium

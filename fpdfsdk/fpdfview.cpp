@@ -33,6 +33,7 @@
 #include "fpdfsdk/javascript/ijs_runtime.h"
 #include "public/fpdf_ext.h"
 #include "public/fpdf_progressive.h"
+#include "third_party/base/allocator/partition_allocator/partition_alloc.h"
 #include "third_party/base/numerics/safe_conversions_impl.h"
 #include "third_party/base/ptr_util.h"
 
@@ -366,6 +367,14 @@ DLLEXPORT void STDCALL
 FPDF_InitLibraryWithConfig(const FPDF_LIBRARY_CONFIG* cfg) {
   if (g_pCodecModule)
     return;
+
+  static bool s_gPartitionAllocatorsInitialized = false;
+  if (!s_gPartitionAllocatorsInitialized) {
+    pdfium::base::PartitionAllocGlobalInit(FX_OutOfMemoryTerminate);
+    gArrayBufferPartitionAllocator.init();
+    gStringPartitionAllocator.init();
+    s_gPartitionAllocatorsInitialized = true;
+  }
 
   g_pCodecModule = new CCodec_ModuleMgr();
 

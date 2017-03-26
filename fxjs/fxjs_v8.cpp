@@ -9,6 +9,7 @@
 #include <vector>
 
 #include "core/fxcrt/fx_basic.h"
+#include "third_party/base/allocator/partition_allocator/partition_alloc.h"
 
 // Keep this consistent with the values defined in gin/public/context_holder.h
 // (without actually requiring a dependency on gin itself for the standalone
@@ -144,15 +145,23 @@ static v8::Local<v8::ObjectTemplate> GetGlobalObjectTemplate(
 }
 
 void* FXJS_ArrayBufferAllocator::Allocate(size_t length) {
-  return length <= kMaxAllowedBytes ? calloc(1, length) : nullptr;
+  if (length > kMaxAllowedBytes)
+    return nullptr;
+  void* p = AllocateUninitialized(length);
+  if (p)
+    memset(p, 0, length);
+  return p;
 }
 
 void* FXJS_ArrayBufferAllocator::AllocateUninitialized(size_t length) {
-  return length < kMaxAllowedBytes ? malloc(length) : nullptr;
+  if (length > kMaxAllowedBytes)
+    return nullptr;
+  return pdfium::base::PartitionAllocGeneric(
+      gArrayBufferPartitionAllocator.root(), length, "FXJS_ArrayBuffer");
 }
 
 void FXJS_ArrayBufferAllocator::Free(void* data, size_t length) {
-  free(data);
+  pdfium::base::PartitionFree(data);
 }
 
 void V8TemplateMapTraits::Dispose(v8::Isolate* isolate,

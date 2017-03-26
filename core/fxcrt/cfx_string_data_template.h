@@ -35,7 +35,8 @@ class CFX_StringDataTemplate {
     int usableLen = (totalSize - overhead) / sizeof(CharType);
     ASSERT(usableLen >= nLen);
 
-    void* pData = FX_Alloc(uint8_t, totalSize);
+    void* pData = pdfium::base::PartitionAllocGeneric(
+        gStringPartitionAllocator.root(), totalSize, "CFX_StringDataTemplate");
     return new (pData) CFX_StringDataTemplate(nLen, usableLen);
   }
 
@@ -54,7 +55,7 @@ class CFX_StringDataTemplate {
   void Retain() { ++m_nRefs; }
   void Release() {
     if (--m_nRefs <= 0)
-      FX_Free(this);
+      pdfium::base::PartitionFree(this);
   }
 
   bool CanOperateInPlace(FX_STRSIZE nTotalLen) const {

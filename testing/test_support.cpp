@@ -210,3 +210,15 @@ int TestSaver::WriteBlockCallback(FPDF_FILEWRITE* pFileWrite,
   pThis->m_String.append(static_cast<const char*>(data), size);
   return 1;
 }
+
+namespace pdfium {
+
+void FPDF_Test::SetUp() {
+  FPDF_InitLibrary();
+}
+
+void FPDF_Test::TearDown() {
+  FPDF_DestroyLibrary();
+}
+
+}  // namespace pdfium
