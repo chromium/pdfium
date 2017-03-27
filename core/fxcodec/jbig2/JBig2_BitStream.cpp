@@ -27,6 +27,9 @@ CJBig2_BitStream::CJBig2_BitStream(CPDF_StreamAcc* pSrcStream)
 CJBig2_BitStream::~CJBig2_BitStream() {}
 
 int32_t CJBig2_BitStream::readNBits(uint32_t dwBits, uint32_t* dwResult) {
+  if (!IsInBound())
+    return -1;
+
   uint32_t dwBitPos = getBitPos();
   if (dwBitPos > LengthInBits())
     return -1;
@@ -46,6 +49,9 @@ int32_t CJBig2_BitStream::readNBits(uint32_t dwBits, uint32_t* dwResult) {
 }
 
 int32_t CJBig2_BitStream::readNBits(uint32_t dwBits, int32_t* nResult) {
+  if (!IsInBound())
+    return -1;
+
   uint32_t dwBitPos = getBitPos();
   if (dwBitPos > LengthInBits())
     return -1;
