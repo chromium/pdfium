@@ -122,7 +122,7 @@ class CFX_SkiaDeviceDriver : public IFX_RenderDeviceDriver {
 
   bool ContinueDIBits(void* handle, IFX_Pause* pPause) override;
 
-  void CancelDIBits(void* handle) override {}
+  void CancelDIBits(void* handle) override;
 
   bool DrawBitsWithMask(const CFX_DIBSource* pBitmap,
                         const CFX_DIBSource* pMask,

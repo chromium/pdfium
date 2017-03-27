@@ -1171,7 +1171,8 @@ void CFX_SkiaDeviceDriver::PaintStroke(SkPaint* spaint,
              SkTMin(deviceUnits[0].length(), deviceUnits[1].length()));
   if (pGraphState->m_DashArray) {
     int count = (pGraphState->m_DashCount + 1) / 2;
-    SkScalar* intervals = FX_Alloc2D(SkScalar, count, sizeof(SkScalar));
+    std::unique_ptr<SkScalar, FxFreeDeleter> intervals(
+        FX_Alloc2D(SkScalar, count, sizeof(SkScalar)));
     // Set dash pattern
     for (int i = 0; i < count; i++) {
       float on = pGraphState->m_DashArray[i * 2];
@@ -1182,11 +1183,11 @@ void CFX_SkiaDeviceDriver::PaintStroke(SkPaint* spaint,
                       : pGraphState->m_DashArray[i * 2 + 1];
       if (off < 0)
         off = 0;
-      intervals[i * 2] = on;
-      intervals[i * 2 + 1] = off;
+      intervals.get()[i * 2] = on;
+      intervals.get()[i * 2 + 1] = off;
     }
-    spaint->setPathEffect(
-        SkDashPathEffect::Make(intervals, count * 2, pGraphState->m_DashPhase));
+    spaint->setPathEffect(SkDashPathEffect::Make(intervals.get(), count * 2,
+                                                 pGraphState->m_DashPhase));
   }
   spaint->setStyle(SkPaint::kStroke_Style);
   spaint->setAntiAlias(true);
@@ -2009,6 +2010,15 @@ bool CFX_SkiaDeviceDriver::StartDIBits(const CFX_DIBSource* pSource,
   return true;
 }
 
+void CFX_SkiaDeviceDriver::CancelDIBits(void* handle) {
+#ifdef _SKIA_SUPPORT_PATHS_
+  if (!m_pBitmap->GetBuffer())
+    return;
+
+  delete reinterpret_cast<CFX_ImageRenderer*>(handle);
+#endif  // _SKIA_SUPPORT_PATHS_
+}
+
 bool CFX_SkiaDeviceDriver::ContinueDIBits(void* handle, IFX_Pause* pPause) {
 #ifdef _SKIA_SUPPORT_
   m_pCache->FlushForDraw();
@@ -2213,9 +2223,7 @@ bool CFX_FxgeDevice::Create(int width,
 }
 
 CFX_FxgeDevice::~CFX_FxgeDevice() {
-#ifdef _SKIA_SUPPORT_
   Flush();
-#endif  // _SKIA_SUPPORT_
   // call destructor of CFX_RenderDevice / CFX_SkiaDeviceDriver immediately
   if (m_bOwnedBitmap && GetBitmap())
     delete GetBitmap();
