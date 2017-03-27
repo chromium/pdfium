@@ -7,8 +7,10 @@
 #include "xfa/fde/cfde_txtedtparag.h"
 
 #include <memory>
+#include <vector>
 
 #include "third_party/base/ptr_util.h"
+#include "third_party/base/stl_util.h"
 #include "xfa/fde/cfde_txtedtbuf.h"
 #include "xfa/fde/cfde_txtedtengine.h"
 #include "xfa/fde/ifde_txtedtengine.h"
@@ -45,7 +47,7 @@ void CFDE_TxtEdtParag::LoadParag() {
       static_cast<CFDE_TxtEdtBuf*>(pTxtBuf), wcAlias));
   pIter->SetAt(m_nCharStart);
   int32_t nEndIndex = m_nCharStart + m_nCharCount;
-  CFX_ArrayTemplate<int32_t> LineBaseArr;
+  std::vector<int32_t> LineBaseArr;
   bool bReload = false;
   CFX_BreakType dwBreakStatus = CFX_BreakType::None;
   do {
@@ -66,7 +68,7 @@ void CFDE_TxtEdtParag::LoadParag() {
         const CFX_BreakPiece* Piece = pTxtBreak->GetBreakPieceUnstable(j);
         nTotal += Piece->GetLength();
       }
-      LineBaseArr.Add(nTotal);
+      LineBaseArr.push_back(nTotal);
       pTxtBreak->ClearBreakPieces();
     }
     if (pIter->GetAt() + 1 == nEndIndex &&
@@ -77,7 +79,7 @@ void CFDE_TxtEdtParag::LoadParag() {
   } while (pIter->Next(false) && (pIter->GetAt() < nEndIndex));
   pTxtBreak->EndBreak(CFX_BreakType::Paragraph);
   pTxtBreak->ClearBreakPieces();
-  int32_t nLineCount = LineBaseArr.GetSize();
+  int32_t nLineCount = pdfium::CollectionSize<int32_t>(LineBaseArr);
   m_nLineCount = nLineCount;
   if (m_lpData)
     m_lpData = FX_Realloc(int32_t, m_lpData, nLineCount + 1);
@@ -90,8 +92,6 @@ void CFDE_TxtEdtParag::LoadParag() {
   pIntArr++;
   for (int32_t j = 0; j < nLineCount; j++, pIntArr++)
     *pIntArr = LineBaseArr[j];
-
-  LineBaseArr.RemoveAll();
 }
 
 void CFDE_TxtEdtParag::UnloadParag() {
