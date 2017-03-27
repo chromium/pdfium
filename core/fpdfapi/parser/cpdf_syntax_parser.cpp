@@ -727,6 +727,10 @@ std::unique_ptr<CPDF_Stream> CPDF_SyntaxParser::ReadStream(
   if (len < 0)
     return nullptr;
 
+  // If the length is longer then the remaining buffer giveup.
+  if (len > m_pFileAccess->GetSize() - m_pFileAccess->GetPosition())
+    return nullptr;
+
   std::unique_ptr<uint8_t, FxFreeDeleter> pData;
   if (len > 0) {
     pData.reset(FX_Alloc(uint8_t, len));
