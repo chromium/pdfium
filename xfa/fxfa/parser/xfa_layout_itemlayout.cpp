@@ -145,10 +145,9 @@ CFX_SizeF CalculateContainerComponentSizeFromContentSize(
   return componentSize;
 }
 
-void RelocateTableRowCells(
-    CXFA_ContentLayoutItem* pLayoutRow,
-    const CFX_ArrayTemplate<float>& rgSpecifiedColumnWidths,
-    XFA_ATTRIBUTEENUM eLayout) {
+void RelocateTableRowCells(CXFA_ContentLayoutItem* pLayoutRow,
+                           const std::vector<float>& rgSpecifiedColumnWidths,
+                           XFA_ATTRIBUTEENUM eLayout) {
   bool bContainerWidthAutoSize = true;
   bool bContainerHeightAutoSize = true;
   CFX_SizeF containerSize = CalculateContainerSpecifiedSize(
@@ -191,8 +190,10 @@ void RelocateTableRowCells(
     int32_t nColSpan = nOriginalColSpan;
     float fColSpanWidth = 0;
     if (nColSpan == -1 ||
-        nCurrentColIdx + nColSpan > rgSpecifiedColumnWidths.GetSize()) {
-      nColSpan = rgSpecifiedColumnWidths.GetSize() - nCurrentColIdx;
+        nCurrentColIdx + nColSpan >
+            pdfium::CollectionSize<int32_t>(rgSpecifiedColumnWidths)) {
+      nColSpan = pdfium::CollectionSize<int32_t>(rgSpecifiedColumnWidths) -
+                 nCurrentColIdx;
     }
     for (int32_t i = 0; i < nColSpan; i++)
       fColSpanWidth += rgSpecifiedColumnWidths[nCurrentColIdx + i];
@@ -1639,16 +1640,18 @@ void CXFA_ItemLayoutProcessor::DoLayoutPositionedContainer(
         m_pCurChildNode, m_pPageMgr);
     if (pContext && pContext->m_prgSpecifiedColumnWidths) {
       int32_t iColSpan = m_pCurChildNode->GetInteger(XFA_ATTRIBUTE_ColSpan);
-      if (iColSpan <=
-          pContext->m_prgSpecifiedColumnWidths->GetSize() - iColIndex) {
+      if (iColSpan <= pdfium::CollectionSize<int32_t>(
+                          *pContext->m_prgSpecifiedColumnWidths) -
+                          iColIndex) {
         pContext->m_fCurColumnWidth = 0;
         pContext->m_bCurColumnWidthAvaiable = true;
-        if (iColSpan == -1)
-          iColSpan = pContext->m_prgSpecifiedColumnWidths->GetSize();
-
+        if (iColSpan == -1) {
+          iColSpan = pdfium::CollectionSize<int32_t>(
+              *pContext->m_prgSpecifiedColumnWidths);
+        }
         for (int32_t i = 0; iColIndex + i < iColSpan; ++i) {
           pContext->m_fCurColumnWidth +=
-              pContext->m_prgSpecifiedColumnWidths->GetAt(iColIndex + i);
+              (*pContext->m_prgSpecifiedColumnWidths)[iColIndex + i];
         }
         if (pContext->m_fCurColumnWidth == 0)
           pContext->m_bCurColumnWidthAvaiable = false;
@@ -1749,12 +1752,13 @@ void CXFA_ItemLayoutProcessor::DoLayoutTableContainer(CXFA_Node* pLayoutNode) {
       if (width.IsEmpty())
         continue;
 
-      CXFA_Measurement measure(width.AsStringC());
-      m_rgSpecifiedColumnWidths.Add(measure.ToUnit(XFA_UNIT_Pt));
+      m_rgSpecifiedColumnWidths.push_back(
+          CXFA_Measurement(width.AsStringC()).ToUnit(XFA_UNIT_Pt));
     }
   }
 
-  int32_t iSpecifiedColumnCount = m_rgSpecifiedColumnWidths.GetSize();
+  int32_t iSpecifiedColumnCount =
+      pdfium::CollectionSize<int32_t>(m_rgSpecifiedColumnWidths);
   CXFA_LayoutContext layoutContext;
   layoutContext.m_prgSpecifiedColumnWidths = &m_rgSpecifiedColumnWidths;
   CXFA_LayoutContext* pLayoutContext =
@@ -1843,9 +1847,10 @@ void CXFA_ItemLayoutProcessor::DoLayoutTableContainer(CXFA_Node* pLayoutNode) {
           continue;
 
         if (iColCount >= iSpecifiedColumnCount) {
-          int32_t c = iColCount + 1 - m_rgSpecifiedColumnWidths.GetSize();
+          int32_t c = iColCount + 1 - pdfium::CollectionSize<int32_t>(
+                                          m_rgSpecifiedColumnWidths);
           for (int32_t j = 0; j < c; j++)
-            m_rgSpecifiedColumnWidths.Add(0);
+            m_rgSpecifiedColumnWidths.push_back(0);
         }
         if (m_rgSpecifiedColumnWidths[iColCount] < XFA_LAYOUT_FLOAT_PERCISION)
           bAutoCol = true;
@@ -1859,8 +1864,9 @@ void CXFA_ItemLayoutProcessor::DoLayoutTableContainer(CXFA_Node* pLayoutNode) {
         continue;
 
       float fFinalColumnWidth = 0.0f;
-      if (iColCount < m_rgSpecifiedColumnWidths.GetSize())
+      if (pdfium::IndexInBounds(m_rgSpecifiedColumnWidths, iColCount))
         fFinalColumnWidth = m_rgSpecifiedColumnWidths[iColCount];
+
       for (int32_t i = 0; i < iRowCount; ++i) {
         if (!rgRowItems[i])
           continue;

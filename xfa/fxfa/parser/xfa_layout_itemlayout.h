@@ -56,7 +56,7 @@ class CXFA_LayoutContext {
         m_pOverflowNode(nullptr) {}
   ~CXFA_LayoutContext() {}
 
-  CFX_ArrayTemplate<float>* m_prgSpecifiedColumnWidths;
+  std::vector<float>* m_prgSpecifiedColumnWidths;
   float m_fCurColumnWidth;
   bool m_bCurColumnWidthAvaiable;
   CXFA_ItemLayoutProcessor* m_pOverflowProcessor;
@@ -115,7 +115,7 @@ class CXFA_ItemLayoutProcessor {
   CXFA_LayoutPageMgr* m_pPageMgr;
   std::list<CXFA_Node*> m_PendingNodes;
   bool m_bBreakPending;
-  CFX_ArrayTemplate<float> m_rgSpecifiedColumnWidths;
+  std::vector<float> m_rgSpecifiedColumnWidths;
   std::vector<CXFA_ContentLayoutItem*> m_arrayKeepItems;
   float m_fLastRowWidth;
   float m_fLastRowY;
