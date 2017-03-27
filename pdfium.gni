@@ -41,6 +41,9 @@ declare_args() {
   # Build PDFium standalone
   pdf_is_standalone = false
 
+  # Build a complete static library
+  pdf_is_complete_lib = false
+
   # Enable coverage information
   use_coverage = false
 }
