@@ -467,7 +467,7 @@ CXFA_Node* FindDataRefDataNode(CXFA_Document* pDocument,
   }
 
   if (rs.dwFlags == XFA_RESOLVENODE_RSTYPE_CreateNodeOne) {
-    CXFA_Object* pObject = !rs.objects.empty() ? rs.objects[0] : nullptr;
+    CXFA_Object* pObject = !rs.objects.empty() ? rs.objects.front() : nullptr;
     CXFA_Node* pNode = ToNode(pObject);
     return (bForceBind || !pNode || !pNode->HasBindItem()) ? pNode : nullptr;
   }
@@ -651,39 +651,31 @@ CXFA_Node* FindMatchingDataNode(
   return pResult;
 }
 
-void SortRecurseRecord(CFX_ArrayTemplate<RecurseRecord>& rgRecords,
+void SortRecurseRecord(std::vector<RecurseRecord>* rgRecords,
                        CXFA_Node* pDataScope,
                        bool bChoiceMode) {
-  int32_t iCount = rgRecords.GetSize();
-  CFX_ArrayTemplate<RecurseRecord> rgResultRecord;
-  for (CXFA_Node* pChildNode = pDataScope->GetNodeItem(XFA_NODEITEM_FirstChild);
-       pChildNode;
-       pChildNode = pChildNode->GetNodeItem(XFA_NODEITEM_NextSibling)) {
-    for (int32_t i = 0; i < iCount; i++) {
-      CXFA_Node* pNode = rgRecords[i].pDataChild;
-      if (pChildNode == pNode) {
-        RecurseRecord sNewRecord = {rgRecords[i].pTemplateChild, pNode};
-        rgResultRecord.Add(sNewRecord);
-        rgRecords.RemoveAt(i);
-        iCount--;
+  std::vector<RecurseRecord> rgResultRecord;
+  for (CXFA_Node* pNode = pDataScope->GetNodeItem(XFA_NODEITEM_FirstChild);
+       pNode; pNode = pNode->GetNodeItem(XFA_NODEITEM_NextSibling)) {
+    auto it = std::find_if(rgRecords->begin(), rgRecords->end(),
+                           [pNode](const RecurseRecord& record) {
+                             return pNode == record.pDataChild;
+                           });
+    if (it != rgRecords->end()) {
+      rgResultRecord.push_back(*it);
+      rgRecords->erase(it);
+      if (bChoiceMode)
         break;
-      }
     }
-    if (bChoiceMode && rgResultRecord.GetSize() > 0)
-      break;
   }
+  if (rgResultRecord.empty())
+    return;
 
-  if (rgResultRecord.GetSize() > 0) {
-    if (!bChoiceMode) {
-      for (int32_t i = 0; i < iCount; i++) {
-        RecurseRecord sNewRecord = {rgRecords[i].pTemplateChild,
-                                    rgRecords[i].pDataChild};
-        rgResultRecord.Add(sNewRecord);
-      }
-    }
-    rgRecords.RemoveAll();
-    rgRecords.Copy(rgResultRecord);
+  if (!bChoiceMode) {
+    rgResultRecord.insert(rgResultRecord.end(), rgRecords->begin(),
+                          rgRecords->end());
   }
+  *rgRecords = rgResultRecord;
 }
 
 CXFA_Node* CopyContainer_SubformSet(CXFA_Document* pDocument,
@@ -814,8 +806,8 @@ CXFA_Node* CopyContainer_SubformSet(CXFA_Document* pDocument,
         if (!pFirstInstance)
           pFirstInstance = pSubformSetNode;
 
-        CFX_ArrayTemplate<RecurseRecord> rgItemMatchList;
-        CFX_ArrayTemplate<CXFA_Node*> rgItemUnmatchList;
+        std::vector<RecurseRecord> rgItemMatchList;
+        std::vector<CXFA_Node*> rgItemUnmatchList;
         for (CXFA_Node* pTemplateChild =
                  pTemplateNode->GetNodeItem(XFA_NODEITEM_FirstChild);
              pTemplateChild; pTemplateChild = pTemplateChild->GetNodeItem(
@@ -833,42 +825,39 @@ CXFA_Node* CopyContainer_SubformSet(CXFA_Document* pDocument,
               if (pDataMatch) {
                 RecurseRecord sNewRecord = {pTemplateChild, pDataMatch};
                 if (bSelfMatch)
-                  rgItemMatchList.InsertAt(0, sNewRecord);
+                  rgItemMatchList.insert(rgItemMatchList.begin(), sNewRecord);
                 else
-                  rgItemMatchList.Add(sNewRecord);
+                  rgItemMatchList.push_back(sNewRecord);
               } else {
-                rgItemUnmatchList.Add(pTemplateChild);
+                rgItemUnmatchList.push_back(pTemplateChild);
               }
             } else {
-              rgItemUnmatchList.Add(pTemplateChild);
+              rgItemUnmatchList.push_back(pTemplateChild);
             }
           }
         }
 
         switch (eRelation) {
           case XFA_ATTRIBUTEENUM_Choice: {
-            ASSERT(rgItemMatchList.GetSize());
-            SortRecurseRecord(rgItemMatchList, pDataScope, true);
+            ASSERT(!rgItemMatchList.empty());
+            SortRecurseRecord(&rgItemMatchList, pDataScope, true);
             pDocument->DataMerge_CopyContainer(
-                rgItemMatchList[0].pTemplateChild, pSubformSetNode, pDataScope,
-                false, true, true);
+                rgItemMatchList.front().pTemplateChild, pSubformSetNode,
+                pDataScope, false, true, true);
             break;
           }
           case XFA_ATTRIBUTEENUM_Unordered: {
-            if (rgItemMatchList.GetSize()) {
-              SortRecurseRecord(rgItemMatchList, pDataScope, false);
-              for (int32_t i = 0, count = rgItemMatchList.GetSize(); i < count;
-                   i++) {
-                pDocument->DataMerge_CopyContainer(
-                    rgItemMatchList[i].pTemplateChild, pSubformSetNode,
-                    pDataScope, false, true, true);
+            if (!rgItemMatchList.empty()) {
+              SortRecurseRecord(&rgItemMatchList, pDataScope, false);
+              for (const auto& matched : rgItemMatchList) {
+                pDocument->DataMerge_CopyContainer(matched.pTemplateChild,
+                                                   pSubformSetNode, pDataScope,
+                                                   false, true, true);
               }
             }
-            for (int32_t i = 0, count = rgItemUnmatchList.GetSize(); i < count;
-                 i++) {
-              pDocument->DataMerge_CopyContainer(rgItemUnmatchList[i],
-                                                 pSubformSetNode, pDataScope,
-                                                 false, true, true);
+            for (auto* unmatched : rgItemUnmatchList) {
+              pDocument->DataMerge_CopyContainer(unmatched, pSubformSetNode,
+                                                 pDataScope, false, true, true);
             }
             break;
           }
@@ -1153,7 +1142,8 @@ void UpdateBindingRelations(CXFA_Document* pDocument,
           XFA_RESOLVENODE_RS rs;
           pDocument->GetScriptContext()->ResolveObjects(pDataScope, wsRef, rs,
                                                         dFlags, pTemplateNode);
-          CXFA_Object* pObject = !rs.objects.empty() ? rs.objects[0] : nullptr;
+          CXFA_Object* pObject =
+              !rs.objects.empty() ? rs.objects.front() : nullptr;
           pDataNode = ToNode(pObject);
           if (pDataNode) {
             CreateDataBinding(pFormNode, pDataNode,
