@@ -394,7 +394,7 @@ void CompositeRow_Argb2Argb(uint8_t* dest_scan,
   bool bNonseparableBlend = blend_type >= FXDIB_BLEND_NONSEPARABLE;
   bool has_src = !!src_alpha_scan;
   bool has_dest = !!dest_alpha_scan;
-  for (int col = 0; col < pixel_count; col++) {
+  for (int col = 0; col < pixel_count; ++col) {
     uint8_t back_alpha = has_dest ? *dest_alpha_scan : dest_scan[3];
     const uint8_t* alpha_source = has_src ? src_alpha_scan++ : &src_scan[3];
     uint8_t src_alpha = GetAlpha(*alpha_source, clip_scan, col);
@@ -471,36 +471,18 @@ void CompositeRow_Rgb2Argb_Blend_NoClip(uint8_t* dest_scan,
   int blended_colors[3];
   bool bNonseparableBlend = blend_type >= FXDIB_BLEND_NONSEPARABLE;
   int src_gap = src_Bpp - 3;
-  if (dest_alpha_scan) {
-    for (int col = 0; col < width; col++) {
-      uint8_t back_alpha = *dest_alpha_scan;
-      if (back_alpha == 0) {
-        *dest_scan++ = *src_scan++;
-        *dest_scan++ = *src_scan++;
-        *dest_scan++ = *src_scan++;
-        *dest_alpha_scan++ = 0xff;
-        src_scan += src_gap;
-        continue;
-      }
-      *dest_alpha_scan++ = 0xff;
-      if (bNonseparableBlend) {
-        RGB_Blend(blend_type, src_scan, dest_scan, blended_colors);
-      }
-      for (int color = 0; color < 3; color++) {
-        int src_color = *src_scan;
-        int blended = bNonseparableBlend
-                          ? blended_colors[color]
-                          : Blend(blend_type, *dest_scan, src_color);
-        *dest_scan = FXDIB_ALPHA_MERGE(src_color, blended, back_alpha);
-        dest_scan++;
-        src_scan++;
-      }
-      src_scan += src_gap;
-    }
-  } else {
-    for (int col = 0; col < width; col++) {
-      uint8_t back_alpha = dest_scan[3];
-      if (back_alpha == 0) {
+  for (int col = 0; col < width; ++col) {
+    uint8_t* dest_alpha = dest_alpha_scan ? dest_alpha_scan : &dest_scan[3];
+    uint8_t back_alpha = *dest_alpha;
+    if (back_alpha == 0) {
+      if (dest_alpha_scan) {
+        for (int i = 0; i < 3; ++i) {
+          *dest_scan = *src_scan++;
+          ++dest_scan;
+        }
+        *dest_alpha_scan = 0xff;
+        ++dest_alpha_scan;
+      } else {
         if (src_Bpp == 4) {
           FXARGB_SETDIB(dest_scan, 0xff000000 | FXARGB_GETDIB(src_scan));
         } else {
@@ -508,25 +490,27 @@ void CompositeRow_Rgb2Argb_Blend_NoClip(uint8_t* dest_scan,
                                                src_scan[0]));
         }
         dest_scan += 4;
-        src_scan += src_Bpp;
-        continue;
       }
-      dest_scan[3] = 0xff;
-      if (bNonseparableBlend) {
-        RGB_Blend(blend_type, src_scan, dest_scan, blended_colors);
-      }
-      for (int color = 0; color < 3; color++) {
-        int src_color = *src_scan;
-        int blended = bNonseparableBlend
-                          ? blended_colors[color]
-                          : Blend(blend_type, *dest_scan, src_color);
-        *dest_scan = FXDIB_ALPHA_MERGE(src_color, blended, back_alpha);
-        dest_scan++;
-        src_scan++;
-      }
-      dest_scan++;
-      src_scan += src_gap;
+      src_scan += src_Bpp;
+      continue;
     }
+    *dest_alpha = 0xff;
+    if (bNonseparableBlend)
+      RGB_Blend(blend_type, src_scan, dest_scan, blended_colors);
+    for (int color = 0; color < 3; ++color) {
+      int src_color = *src_scan;
+      int blended = bNonseparableBlend
+                        ? blended_colors[color]
+                        : Blend(blend_type, *dest_scan, src_color);
+      *dest_scan = FXDIB_ALPHA_MERGE(src_color, blended, back_alpha);
+      ++dest_scan;
+      ++src_scan;
+      }
+      if (dest_alpha_scan)
+        ++dest_alpha_scan;
+      else
+        ++dest_scan;
+      src_scan += src_gap;
   }
 }
 
@@ -540,80 +524,50 @@ void CompositeRow_Rgb2Argb_Blend_Clip(uint8_t* dest_scan,
   int blended_colors[3];
   bool bNonseparableBlend = blend_type >= FXDIB_BLEND_NONSEPARABLE;
   int src_gap = src_Bpp - 3;
-  if (dest_alpha_scan) {
-    for (int col = 0; col < width; col++) {
-      int src_alpha = *clip_scan++;
-      uint8_t back_alpha = *dest_alpha_scan;
-      if (back_alpha == 0) {
-        *dest_scan++ = *src_scan++;
-        *dest_scan++ = *src_scan++;
-        *dest_scan++ = *src_scan++;
-        src_scan += src_gap;
-        dest_alpha_scan++;
-        continue;
+  bool has_dest = !!dest_alpha_scan;
+  for (int col = 0; col < width; ++col) {
+    int src_alpha = *clip_scan++;
+    uint8_t back_alpha = has_dest ? *dest_alpha_scan : dest_scan[3];
+    if (back_alpha == 0) {
+      for (int i = 0; i < 3; ++i) {
+        *dest_scan = *src_scan++;
+        ++dest_scan;
       }
-      if (src_alpha == 0) {
-        dest_scan += 3;
+      src_scan += src_gap;
+      if (has_dest)
         dest_alpha_scan++;
-        src_scan += src_Bpp;
-        continue;
-      }
-      uint8_t dest_alpha =
-          back_alpha + src_alpha - back_alpha * src_alpha / 255;
+      else
+        dest_scan++;
+      continue;
+    }
+    if (src_alpha == 0) {
+      dest_scan += has_dest ? 3 : 4;
+      if (has_dest)
+        dest_alpha_scan++;
+      src_scan += src_Bpp;
+      continue;
+    }
+    uint8_t dest_alpha = back_alpha + src_alpha - back_alpha * src_alpha / 255;
+    if (has_dest)
       *dest_alpha_scan++ = dest_alpha;
-      int alpha_ratio = src_alpha * 255 / dest_alpha;
-      if (bNonseparableBlend) {
-        RGB_Blend(blend_type, src_scan, dest_scan, blended_colors);
-      }
-      for (int color = 0; color < 3; color++) {
-        int src_color = *src_scan;
-        int blended = bNonseparableBlend
-                          ? blended_colors[color]
-                          : Blend(blend_type, *dest_scan, src_color);
-        blended = FXDIB_ALPHA_MERGE(src_color, blended, back_alpha);
-        *dest_scan = FXDIB_ALPHA_MERGE(*dest_scan, blended, alpha_ratio);
-        dest_scan++;
-        src_scan++;
-      }
-      src_scan += src_gap;
-    }
-  } else {
-    for (int col = 0; col < width; col++) {
-      int src_alpha = *clip_scan++;
-      uint8_t back_alpha = dest_scan[3];
-      if (back_alpha == 0) {
-        *dest_scan++ = *src_scan++;
-        *dest_scan++ = *src_scan++;
-        *dest_scan++ = *src_scan++;
-        src_scan += src_gap;
-        dest_scan++;
-        continue;
-      }
-      if (src_alpha == 0) {
-        dest_scan += 4;
-        src_scan += src_Bpp;
-        continue;
-      }
-      uint8_t dest_alpha =
-          back_alpha + src_alpha - back_alpha * src_alpha / 255;
+    else
       dest_scan[3] = dest_alpha;
-      int alpha_ratio = src_alpha * 255 / dest_alpha;
-      if (bNonseparableBlend) {
-        RGB_Blend(blend_type, src_scan, dest_scan, blended_colors);
-      }
-      for (int color = 0; color < 3; color++) {
-        int src_color = *src_scan;
-        int blended = bNonseparableBlend
-                          ? blended_colors[color]
-                          : Blend(blend_type, *dest_scan, src_color);
-        blended = FXDIB_ALPHA_MERGE(src_color, blended, back_alpha);
-        *dest_scan = FXDIB_ALPHA_MERGE(*dest_scan, blended, alpha_ratio);
-        dest_scan++;
-        src_scan++;
-      }
+    int alpha_ratio = src_alpha * 255 / dest_alpha;
+    if (bNonseparableBlend)
+      RGB_Blend(blend_type, src_scan, dest_scan, blended_colors);
+    for (int color = 0; color < 3; color++) {
+      int src_color = *src_scan;
+      int blended = bNonseparableBlend
+                        ? blended_colors[color]
+                        : Blend(blend_type, *dest_scan, src_color);
+      blended = FXDIB_ALPHA_MERGE(src_color, blended, back_alpha);
+      *dest_scan = FXDIB_ALPHA_MERGE(*dest_scan, blended, alpha_ratio);
       dest_scan++;
-      src_scan += src_gap;
+      src_scan++;
     }
+    src_scan += src_gap;
+    if (!has_dest)
+      dest_scan++;
   }
 }
 
