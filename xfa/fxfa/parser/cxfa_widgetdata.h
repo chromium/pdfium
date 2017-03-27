@@ -93,23 +93,22 @@ class CXFA_WidgetData : public CXFA_Data {
   bool IsChoiceListAllowTextEntry();
   int32_t GetChoiceListOpen();
   bool IsListBox();
-  int32_t CountChoiceListItems(bool bSaveValue = false);
+  int32_t CountChoiceListItems(bool bSaveValue);
   bool GetChoiceListItem(CFX_WideString& wsText,
                          int32_t nIndex,
-                         bool bSaveValue = false);
-  void GetChoiceListItems(std::vector<CFX_WideString>& wsTextArray,
-                          bool bSaveValue = false);
+                         bool bSaveValue);
+  std::vector<CFX_WideString> GetChoiceListItems(bool bSaveValue);
   int32_t CountSelectedItems();
   int32_t GetSelectedItem(int32_t nIndex = 0);
-  void GetSelectedItems(CFX_ArrayTemplate<int32_t>& iSelArray);
-  void GetSelectedItemsValue(std::vector<CFX_WideString>& wsSelTextArray);
+  std::vector<int32_t> GetSelectedItems();
+  std::vector<CFX_WideString> GetSelectedItemsValue();
   bool GetItemState(int32_t nIndex);
   void SetItemState(int32_t nIndex,
                     bool bSelected,
                     bool bNotify,
                     bool bScriptModify,
                     bool bSyncData);
-  void SetSelectedItems(CFX_ArrayTemplate<int32_t>& iSelArray,
+  void SetSelectedItems(const std::vector<int32_t>& iSelArray,
                         bool bNotify,
                         bool bScriptModify,
                         bool bSyncData);

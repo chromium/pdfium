@@ -7,6 +7,8 @@
 #ifndef XFA_FXFA_APP_XFA_FFCHOICELIST_H_
 #define XFA_FXFA_APP_XFA_FFCHOICELIST_H_
 
+#include <vector>
+
 #include "xfa/fxfa/app/xfa_fffield.h"
 #include "xfa/fxfa/cxfa_ffpageview.h"
 
@@ -24,7 +26,7 @@ class CXFA_FFListBox : public CXFA_FFField {
                     const CFX_Matrix* pMatrix = nullptr) override;
 
   void OnSelectChanged(CFWL_Widget* pWidget,
-                       const CFX_ArrayTemplate<int32_t>& arrSels);
+                       const std::vector<int32_t>& arrSels);
   void SetItemState(int32_t nIndex, bool bSelected);
   void InsertItem(const CFX_WideStringC& wsLabel, int32_t nIndex = -1);
   void DeleteItem(int32_t nIndex);

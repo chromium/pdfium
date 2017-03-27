@@ -7,33 +7,21 @@
 #include "xfa/fxfa/app/cxfa_texttabstopscontext.h"
 
 CXFA_TextTabstopsContext::CXFA_TextTabstopsContext()
-    : m_iTabCount(0),
-      m_iTabIndex(-1),
-      m_bTabstops(false),
-      m_fTabWidth(0),
-      m_fLeft(0) {}
+    : m_iTabIndex(-1), m_bTabstops(false), m_fTabWidth(0), m_fLeft(0) {}
 
 CXFA_TextTabstopsContext::~CXFA_TextTabstopsContext() {}
 
 void CXFA_TextTabstopsContext::Append(uint32_t dwAlign, float fTabstops) {
-  int32_t i = 0;
-  for (i = 0; i < m_iTabCount; i++) {
-    XFA_TABSTOPS* pTabstop = m_tabstops.GetDataPtr(i);
-    if (fTabstops < pTabstop->fTabstops) {
-      break;
-    }
-  }
-  m_tabstops.InsertSpaceAt(i, 1);
   XFA_TABSTOPS tabstop;
   tabstop.dwAlign = dwAlign;
   tabstop.fTabstops = fTabstops;
-  m_tabstops.SetAt(i, tabstop);
-  m_iTabCount++;
+
+  auto it = std::lower_bound(m_tabstops.begin(), m_tabstops.end(), tabstop);
+  m_tabstops.insert(it, tabstop);
 }
 
 void CXFA_TextTabstopsContext::RemoveAll() {
-  m_tabstops.RemoveAll();
-  m_iTabCount = 0;
+  m_tabstops.clear();
 }
 
 void CXFA_TextTabstopsContext::Reset() {

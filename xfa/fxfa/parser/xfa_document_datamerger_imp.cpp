@@ -153,17 +153,16 @@ void CreateDataBinding(CXFA_Node* pFormNode,
       case XFA_Element::ChoiceList:
         defValue.GetChildValueContent(wsValue);
         if (pWidgetData->GetChoiceListOpen() == XFA_ATTRIBUTEENUM_MultiSelect) {
-          std::vector<CFX_WideString> wsSelTextArray;
-          pWidgetData->GetSelectedItemsValue(wsSelTextArray);
-          int32_t iSize = pdfium::CollectionSize<int32_t>(wsSelTextArray);
-          if (iSize >= 1) {
-            CXFA_Node* pValue = nullptr;
-            for (int32_t i = 0; i < iSize; i++) {
-              pValue = pDataNode->CreateSamePacketNode(XFA_Element::DataValue);
+          std::vector<CFX_WideString> wsSelTextArray =
+              pWidgetData->GetSelectedItemsValue();
+          if (!wsSelTextArray.empty()) {
+            for (const auto& text : wsSelTextArray) {
+              CXFA_Node* pValue =
+                  pDataNode->CreateSamePacketNode(XFA_Element::DataValue);
               pValue->SetCData(XFA_ATTRIBUTE_Name, L"value");
               pValue->CreateXMLMappingNode();
               pDataNode->InsertChild(pValue);
-              pValue->SetCData(XFA_ATTRIBUTE_Value, wsSelTextArray[i]);
+              pValue->SetCData(XFA_ATTRIBUTE_Value, text);
             }
           } else {
             CFDE_XMLNode* pXMLNode = pDataNode->GetXMLMappingNode();

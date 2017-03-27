@@ -224,12 +224,9 @@ void CXFA_TextLayout::InitBreak(CFDE_CSSComputedStyle* pStyle,
     if (!m_pTabstopContext)
       m_pTabstopContext = pdfium::MakeUnique<CXFA_TextTabstopsContext>();
     m_textParser.GetTabstops(pStyle, m_pTabstopContext.get());
-    for (int32_t i = 0; i < m_pTabstopContext->m_iTabCount; i++) {
-      XFA_TABSTOPS* pTab = m_pTabstopContext->m_tabstops.GetDataPtr(i);
-      m_pBreak->AddPositionedTab(pTab->fTabstops);
-    }
+    for (const auto& stop : m_pTabstopContext->m_tabstops)
+      m_pBreak->AddPositionedTab(stop.fTabstops);
   }
-
   float fFontSize = m_textParser.GetFontSize(m_pTextProvider, pStyle);
   m_pBreak->SetFontSize(fFontSize);
   m_pBreak->SetLineBreakTolerance(fFontSize * 0.2f);
@@ -958,9 +955,10 @@ void CXFA_TextLayout::EndBreak(CFX_BreakType dwStatus,
 
 void CXFA_TextLayout::DoTabstops(CFDE_CSSComputedStyle* pStyle,
                                  CXFA_PieceLine* pPieceLine) {
-  if (!m_pTabstopContext || m_pTabstopContext->m_iTabCount == 0)
-    return;
   if (!pStyle || !pPieceLine)
+    return;
+
+  if (!m_pTabstopContext || m_pTabstopContext->m_tabstops.empty())
     return;
 
   int32_t iPieces = pdfium::CollectionSize<int32_t>(pPieceLine->m_textPieces);
@@ -970,7 +968,7 @@ void CXFA_TextLayout::DoTabstops(CFDE_CSSComputedStyle* pStyle,
   XFA_TextPiece* pPiece = pPieceLine->m_textPieces[iPieces - 1].get();
   int32_t& iTabstopsIndex = m_pTabstopContext->m_iTabIndex;
   int32_t iCount = m_textParser.CountTabs(pStyle);
-  if (iTabstopsIndex > m_pTabstopContext->m_iTabCount - 1)
+  if (!pdfium::IndexInBounds(m_pTabstopContext->m_tabstops, iTabstopsIndex))
     return;
 
   if (iCount > 0) {
@@ -986,9 +984,7 @@ void CXFA_TextLayout::DoTabstops(CFDE_CSSComputedStyle* pStyle,
   } else if (iTabstopsIndex > -1) {
     float fLeft = 0;
     if (m_pTabstopContext->m_bTabstops) {
-      XFA_TABSTOPS* pTabstops =
-          m_pTabstopContext->m_tabstops.GetDataPtr(iTabstopsIndex);
-      uint32_t dwAlign = pTabstops->dwAlign;
+      uint32_t dwAlign = m_pTabstopContext->m_tabstops[iTabstopsIndex].dwAlign;
       if (dwAlign == FX_HashCode_GetW(L"center", false)) {
         fLeft = pPiece->rtPiece.width / 2.0f;
       } else if (dwAlign == FX_HashCode_GetW(L"right", false) ||

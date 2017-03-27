@@ -301,7 +301,7 @@ void CPDFSDK_Widget::Synchronize(bool bSynchronizeElse) {
 
       for (int i = 0, sz = pFormField->CountSelectedItems(); i < sz; i++) {
         int nIndex = pFormField->GetSelectedIndex(i);
-        if (nIndex > -1 && nIndex < pWidgetAcc->CountChoiceListItems())
+        if (nIndex > -1 && nIndex < pWidgetAcc->CountChoiceListItems(false))
           pWidgetAcc->SetItemState(nIndex, true, false, false, true);
       }
       break;
@@ -311,7 +311,7 @@ void CPDFSDK_Widget::Synchronize(bool bSynchronizeElse) {
 
       for (int i = 0, sz = pFormField->CountSelectedItems(); i < sz; i++) {
         int nIndex = pFormField->GetSelectedIndex(i);
-        if (nIndex > -1 && nIndex < pWidgetAcc->CountChoiceListItems())
+        if (nIndex > -1 && nIndex < pWidgetAcc->CountChoiceListItems(false))
           pWidgetAcc->SetItemState(nIndex, true, false, false, true);
       }
       pWidgetAcc->SetValue(pFormField->GetValue(), XFA_VALUEPICTURE_Edit);
@@ -430,9 +430,10 @@ void CPDFSDK_Widget::SynchronizeXFAItems(CXFA_FFDocView* pXFADocView,
       pFormField->ClearOptions(true);
 
       if (CXFA_WidgetAcc* pWidgetAcc = hWidget->GetDataAcc()) {
-        for (int i = 0, sz = pWidgetAcc->CountChoiceListItems(); i < sz; i++) {
+        for (int i = 0, sz = pWidgetAcc->CountChoiceListItems(false); i < sz;
+             i++) {
           CFX_WideString swText;
-          pWidgetAcc->GetChoiceListItem(swText, i);
+          pWidgetAcc->GetChoiceListItem(swText, i, false);
 
           pFormField->InsertOption(swText, i, true);
         }
@@ -444,9 +445,10 @@ void CPDFSDK_Widget::SynchronizeXFAItems(CXFA_FFDocView* pXFADocView,
       pFormField->ClearOptions(false);
 
       if (CXFA_WidgetAcc* pWidgetAcc = hWidget->GetDataAcc()) {
-        for (int i = 0, sz = pWidgetAcc->CountChoiceListItems(); i < sz; i++) {
+        for (int i = 0, sz = pWidgetAcc->CountChoiceListItems(false); i < sz;
+             i++) {
           CFX_WideString swText;
-          pWidgetAcc->GetChoiceListItem(swText, i);
+          pWidgetAcc->GetChoiceListItem(swText, i, false);
 
           pFormField->InsertOption(swText, i, false);
         }
@@ -642,7 +644,7 @@ bool CPDFSDK_Widget::IsOptionSelected(int nIndex) const {
 #ifdef PDF_ENABLE_XFA
   if (CXFA_FFWidget* hWidget = GetMixXFAWidget()) {
     if (CXFA_WidgetAcc* pWidgetAcc = hWidget->GetDataAcc()) {
-      if (nIndex > -1 && nIndex < pWidgetAcc->CountChoiceListItems())
+      if (nIndex > -1 && nIndex < pWidgetAcc->CountChoiceListItems(false))
         return pWidgetAcc->GetItemState(nIndex);
 
       return false;
