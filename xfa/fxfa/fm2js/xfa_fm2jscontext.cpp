@@ -6169,13 +6169,13 @@ void CXFA_FM2JSContext::ParseResolveResult(
   }
 
   CXFA_ValueArray objectProperties(pIsolate);
-  int32_t iRet = resoveNodeRS.GetAttributeResult(objectProperties);
+  int32_t iRet = resoveNodeRS.GetAttributeResult(&objectProperties);
   *bAttribute = true;
   if (iRet != 0) {
     *bAttribute = false;
     for (int32_t i = 0; i < iRet; i++) {
       resultValues->push_back(pdfium::MakeUnique<CFXJSE_Value>(pIsolate));
-      resultValues->back()->Assign(objectProperties[i]);
+      resultValues->back()->Assign(objectProperties.m_Values[i].get());
     }
     return;
   }

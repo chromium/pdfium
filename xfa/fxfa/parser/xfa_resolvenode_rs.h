@@ -8,6 +8,7 @@
 #define XFA_FXFA_PARSER_XFA_RESOLVENODE_RS_H_
 
 #include <memory>
+#include <utility>
 #include <vector>
 
 #include "fxjs/cfxjse_value.h"
@@ -45,16 +46,17 @@ struct XFA_RESOLVENODE_RS {
   XFA_RESOLVENODE_RS();
   ~XFA_RESOLVENODE_RS();
 
-  int32_t GetAttributeResult(CXFA_ValueArray& valueArray) const {
+  size_t GetAttributeResult(CXFA_ValueArray* valueArray) const {
     if (pScriptAttribute && pScriptAttribute->eValueType == XFA_SCRIPT_Object) {
       for (CXFA_Object* pObject : objects) {
-        auto pValue = pdfium::MakeUnique<CFXJSE_Value>(valueArray.m_pIsolate);
+        auto pValue = pdfium::MakeUnique<CFXJSE_Value>(valueArray->m_pIsolate);
         (pObject->*(pScriptAttribute->lpfnCallback))(
-            pValue.get(), false, (XFA_ATTRIBUTE)pScriptAttribute->eAttribute);
-        valueArray.Add(pValue.release());
+            pValue.get(), false,
+            static_cast<XFA_ATTRIBUTE>(pScriptAttribute->eAttribute));
+        valueArray->m_Values.push_back(std::move(pValue));
       }
     }
-    return valueArray.GetSize();
+    return valueArray->m_Values.size();
   }
 
   std::vector<CXFA_Object*> objects;  // Not owned.

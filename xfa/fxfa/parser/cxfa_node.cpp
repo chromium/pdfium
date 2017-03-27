@@ -1055,7 +1055,7 @@ void CXFA_Node::Script_Som_ResolveNodeList(CFXJSE_Value* pValue,
     }
   } else {
     CXFA_ValueArray valueArray(pScriptContext->GetRuntime());
-    if (resoveNodeRS.GetAttributeResult(valueArray) > 0) {
+    if (resoveNodeRS.GetAttributeResult(&valueArray) > 0) {
       for (CXFA_Object* pObject : valueArray.GetAttributeObject()) {
         if (pObject->IsNode())
           pNodeList->Append(pObject->AsNode());

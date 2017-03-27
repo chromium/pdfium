@@ -6,20 +6,20 @@
 
 #include "xfa/fxfa/parser/cxfa_valuearray.h"
 
+#include <algorithm>
+
 #include "xfa/fxfa/parser/cxfa_scriptcontext.h"
 
 CXFA_ValueArray::CXFA_ValueArray(v8::Isolate* pIsolate)
     : m_pIsolate(pIsolate) {}
 
-CXFA_ValueArray::~CXFA_ValueArray() {
-  for (int32_t i = 0; i < GetSize(); i++)
-    delete GetAt(i);
-}
+CXFA_ValueArray::~CXFA_ValueArray() {}
 
 std::vector<CXFA_Object*> CXFA_ValueArray::GetAttributeObject() {
-  std::vector<CXFA_Object*> objArray;
-  for (int32_t i = 0; i < GetSize(); i++)
-    objArray.push_back(CXFA_ScriptContext::ToObject(GetAt(i), nullptr));
-
-  return objArray;
+  std::vector<CXFA_Object*> result(m_Values.size());
+  std::transform(m_Values.begin(), m_Values.end(), result.begin(),
+                 [](const std::unique_ptr<CFXJSE_Value>& value) {
+                   return CXFA_ScriptContext::ToObject(value.get(), nullptr);
+                 });
+  return result;
 }
