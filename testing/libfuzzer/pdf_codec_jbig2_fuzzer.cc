@@ -25,7 +25,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   size -= kParameterSize;
   data += kParameterSize;
 
-  std::unique_ptr<CFX_DIBitmap> bitmap(new CFX_DIBitmap);
+  auto bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
   if (!bitmap->Create(width, height, FXDIB_1bppRgb))
     return 0;
 

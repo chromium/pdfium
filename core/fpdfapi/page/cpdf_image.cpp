@@ -157,7 +157,7 @@ void CPDF_Image::SetJpegImageInline(
   m_pStream->InitStream(&(data[0]), size, std::move(pDict));
 }
 
-void CPDF_Image::SetImage(const CFX_DIBitmap* pBitmap) {
+void CPDF_Image::SetImage(const CFX_RetainPtr<CFX_DIBitmap>& pBitmap) {
   int32_t BitmapWidth = pBitmap->GetWidth();
   int32_t BitmapHeight = pBitmap->GetHeight();
   if (BitmapWidth < 1 || BitmapHeight < 1)
@@ -248,7 +248,7 @@ void CPDF_Image::SetImage(const CFX_DIBitmap* pBitmap) {
     bCopyWithoutAlpha = false;
   }
 
-  std::unique_ptr<CFX_DIBitmap> pMaskBitmap;
+  CFX_RetainPtr<CFX_DIBitmap> pMaskBitmap;
   if (pBitmap->HasAlpha())
     pMaskBitmap = pBitmap->CloneAlphaMask();
 
@@ -320,28 +320,25 @@ void CPDF_Image::SetImage(const CFX_DIBitmap* pBitmap) {
   FX_Free(dest_buf);
 }
 
-void CPDF_Image::ResetCache(CPDF_Page* pPage, const CFX_DIBitmap* pBitmap) {
+void CPDF_Image::ResetCache(CPDF_Page* pPage,
+                            const CFX_RetainPtr<CFX_DIBitmap>& pBitmap) {
   pPage->GetRenderCache()->ResetBitmap(m_pStream.Get(), pBitmap);
 }
 
-std::unique_ptr<CFX_DIBSource> CPDF_Image::LoadDIBSource() const {
-  auto source = pdfium::MakeUnique<CPDF_DIBSource>();
+CFX_RetainPtr<CFX_DIBSource> CPDF_Image::LoadDIBSource() const {
+  auto source = pdfium::MakeRetain<CPDF_DIBSource>();
   if (!source->Load(m_pDocument, m_pStream.Get()))
     return nullptr;
 
-  return std::move(source);
+  return source;
 }
 
-CFX_DIBSource* CPDF_Image::DetachBitmap() {
-  CFX_DIBSource* pBitmap = m_pDIBSource;
-  m_pDIBSource = nullptr;
-  return pBitmap;
+CFX_RetainPtr<CFX_DIBSource> CPDF_Image::DetachBitmap() {
+  return std::move(m_pDIBSource);
 }
 
-CFX_DIBSource* CPDF_Image::DetachMask() {
-  CFX_DIBSource* pBitmap = m_pMask;
-  m_pMask = nullptr;
-  return pBitmap;
+CFX_RetainPtr<CFX_DIBSource> CPDF_Image::DetachMask() {
+  return std::move(m_pMask);
 }
 
 bool CPDF_Image::StartLoadDIBSource(CPDF_Dictionary* pFormResource,
@@ -349,35 +346,33 @@ bool CPDF_Image::StartLoadDIBSource(CPDF_Dictionary* pFormResource,
                                     bool bStdCS,
                                     uint32_t GroupFamily,
                                     bool bLoadMask) {
-  auto source = pdfium::MakeUnique<CPDF_DIBSource>();
+  auto source = pdfium::MakeRetain<CPDF_DIBSource>();
   int ret = source->StartLoadDIBSource(m_pDocument, m_pStream.Get(), true,
                                        pFormResource, pPageResource, bStdCS,
                                        GroupFamily, bLoadMask);
-  if (ret == 2) {
-    m_pDIBSource = source.release();
-    return true;
-  }
   if (!ret) {
-    m_pDIBSource = nullptr;
+    m_pDIBSource.Reset();
     return false;
   }
+  m_pDIBSource = source;
+  if (ret == 2)
+    return true;
+
   m_pMask = source->DetachMask();
   m_MatteColor = source->GetMatteColor();
-  m_pDIBSource = source.release();
   return false;
 }
 
 bool CPDF_Image::Continue(IFX_Pause* pPause) {
-  CPDF_DIBSource* pSource = static_cast<CPDF_DIBSource*>(m_pDIBSource);
+  CFX_RetainPtr<CPDF_DIBSource> pSource = m_pDIBSource.As<CPDF_DIBSource>();
   int ret = pSource->ContinueLoadDIBSource(pPause);
-  if (ret == 2) {
-    return true;
-  }
   if (!ret) {
-    delete m_pDIBSource;
-    m_pDIBSource = nullptr;
+    m_pDIBSource.Reset();
     return false;
   }
+  if (ret == 2)
+    return true;
+
   m_pMask = pSource->DetachMask();
   m_MatteColor = pSource->GetMatteColor();
   return false;

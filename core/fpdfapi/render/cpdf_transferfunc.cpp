@@ -17,9 +17,9 @@ FX_COLORREF CPDF_TransferFunc::TranslateColor(FX_COLORREF rgb) const {
                    m_Samples[512 + FXSYS_GetBValue(rgb)]);
 }
 
-CFX_DIBSource* CPDF_TransferFunc::TranslateImage(const CFX_DIBSource* pSrc,
-                                                 bool bAutoDropSrc) {
-  CPDF_DIBTransferFunc* pDest = new CPDF_DIBTransferFunc(this);
-  pDest->LoadSrc(pSrc, bAutoDropSrc);
+CFX_RetainPtr<CFX_DIBSource> CPDF_TransferFunc::TranslateImage(
+    const CFX_RetainPtr<CFX_DIBSource>& pSrc) {
+  auto pDest = pdfium::MakeRetain<CPDF_DIBTransferFunc>(this);
+  pDest->LoadSrc(pSrc);
   return pDest;
 }

@@ -124,8 +124,9 @@ bool CPDF_PageRenderCache::Continue(IFX_Pause* pPause) {
   return false;
 }
 
-void CPDF_PageRenderCache::ResetBitmap(CPDF_Stream* pStream,
-                                       const CFX_DIBitmap* pBitmap) {
+void CPDF_PageRenderCache::ResetBitmap(
+    CPDF_Stream* pStream,
+    const CFX_RetainPtr<CFX_DIBitmap>& pBitmap) {
   CPDF_ImageCacheEntry* pEntry;
   const auto it = m_ImageCache.find(pStream);
   if (it == m_ImageCache.end()) {

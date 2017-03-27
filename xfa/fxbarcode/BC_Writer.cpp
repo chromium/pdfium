@@ -49,8 +49,10 @@ void CBC_Writer::SetBackgroundColor(FX_ARGB backgroundColor) {
 void CBC_Writer::SetBarcodeColor(FX_ARGB foregroundColor) {
   m_barColor = foregroundColor;
 }
-CFX_DIBitmap* CBC_Writer::CreateDIBitmap(int32_t width, int32_t height) {
-  CFX_DIBitmap* pDIBitmap = new CFX_DIBitmap;
+
+CFX_RetainPtr<CFX_DIBitmap> CBC_Writer::CreateDIBitmap(int32_t width,
+                                                       int32_t height) {
+  auto pDIBitmap = pdfium::MakeRetain<CFX_DIBitmap>();
   pDIBitmap->Create(width, height, m_colorSpace);
   return pDIBitmap;
 }

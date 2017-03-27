@@ -112,7 +112,7 @@ void CFDE_TextOut::SetLineSpace(float fLineSpace) {
   m_fLineSpace = fLineSpace;
 }
 
-void CFDE_TextOut::SetDIBitmap(CFX_DIBitmap* pDIB) {
+void CFDE_TextOut::SetDIBitmap(const CFX_RetainPtr<CFX_DIBitmap>& pDIB) {
   ASSERT(pDIB);
 
   m_pRenderDevice.reset();

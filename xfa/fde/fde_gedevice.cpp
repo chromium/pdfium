@@ -82,7 +82,7 @@ float CFDE_RenderDevice::GetDpiY() const {
   return 96;
 }
 
-bool CFDE_RenderDevice::DrawImage(CFX_DIBSource* pDib,
+bool CFDE_RenderDevice::DrawImage(const CFX_RetainPtr<CFX_DIBSource>& pDib,
                                   const CFX_RectF* pSrcRect,
                                   const CFX_RectF& dstRect,
                                   const CFX_Matrix* pImgMatrix,

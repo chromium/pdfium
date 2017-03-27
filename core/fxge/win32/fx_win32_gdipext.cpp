@@ -461,10 +461,10 @@ static GpBrush* _GdipCreateBrush(DWORD argb) {
   return solidBrush;
 }
 
-static std::unique_ptr<CFX_DIBitmap> StretchMonoToGray(
+static CFX_RetainPtr<CFX_DIBitmap> StretchMonoToGray(
     int dest_width,
     int dest_height,
-    const CFX_DIBitmap* pSource,
+    const CFX_RetainPtr<CFX_DIBitmap>& pSource,
     FX_RECT* pClipRect) {
   bool bFlipX = dest_width < 0;
   if (bFlipX)
@@ -477,7 +477,7 @@ static std::unique_ptr<CFX_DIBitmap> StretchMonoToGray(
   int result_width = pClipRect->Width();
   int result_height = pClipRect->Height();
   int result_pitch = (result_width + 3) / 4 * 4;
-  auto pStretched = pdfium::MakeUnique<CFX_DIBitmap>();
+  auto pStretched = pdfium::MakeRetain<CFX_DIBitmap>();
   if (!pStretched->Create(result_width, result_height, FXDIB_8bppRgb))
     return nullptr;
 
@@ -518,7 +518,7 @@ static std::unique_ptr<CFX_DIBitmap> StretchMonoToGray(
 
 static void OutputImageMask(GpGraphics* pGraphics,
                             BOOL bMonoDevice,
-                            const CFX_DIBitmap* pBitmap,
+                            const CFX_RetainPtr<CFX_DIBitmap>& pBitmap,
                             int dest_left,
                             int dest_top,
                             int dest_width,
@@ -562,7 +562,7 @@ static void OutputImageMask(GpGraphics* pGraphics,
       return;
     }
     image_clip.Offset(-image_rect.left, -image_rect.top);
-    std::unique_ptr<CFX_DIBitmap> pStretched;
+    CFX_RetainPtr<CFX_DIBitmap> pStretched;
     if (src_width * src_height > 10000) {
       pStretched =
           StretchMonoToGray(dest_width, dest_height, pBitmap, &image_clip);
@@ -602,7 +602,7 @@ static void OutputImageMask(GpGraphics* pGraphics,
   CallFunc(GdipDisposeImage)(bitmap);
 }
 static void OutputImage(GpGraphics* pGraphics,
-                        const CFX_DIBitmap* pBitmap,
+                        const CFX_RetainPtr<CFX_DIBitmap>& pBitmap,
                         const FX_RECT* pSrcRect,
                         int dest_left,
                         int dest_top,
@@ -613,11 +613,11 @@ static void OutputImage(GpGraphics* pGraphics,
       ((CWin32Platform*)CFX_GEModule::Get()->GetPlatformData())->m_GdiplusExt;
   if (pBitmap->GetBPP() == 1 && (pSrcRect->left % 8)) {
     FX_RECT new_rect(0, 0, src_width, src_height);
-    std::unique_ptr<CFX_DIBitmap> pCloned = pBitmap->Clone(pSrcRect);
+    CFX_RetainPtr<CFX_DIBitmap> pCloned = pBitmap->Clone(pSrcRect);
     if (!pCloned)
       return;
-    OutputImage(pGraphics, pCloned.get(), &new_rect, dest_left, dest_top,
-                dest_width, dest_height);
+    OutputImage(pGraphics, pCloned, &new_rect, dest_left, dest_top, dest_width,
+                dest_height);
     return;
   }
   int src_pitch = pBitmap->GetPitch();
@@ -730,7 +730,8 @@ void CGdiplusExt::DeleteMemFont(LPVOID pCollection) {
       ((CWin32Platform*)CFX_GEModule::Get()->GetPlatformData())->m_GdiplusExt;
   CallFunc(GdipDeletePrivateFontCollection)((GpFontCollection**)&pCollection);
 }
-bool CGdiplusExt::GdipCreateBitmap(CFX_DIBitmap* pBitmap, void** bitmap) {
+bool CGdiplusExt::GdipCreateBitmap(const CFX_RetainPtr<CFX_DIBitmap>& pBitmap,
+                                   void** bitmap) {
   CGdiplusExt& GdiplusExt =
       ((CWin32Platform*)CFX_GEModule::Get()->GetPlatformData())->m_GdiplusExt;
   PixelFormat format;
@@ -912,7 +913,7 @@ void CGdiplusExt::GdipDeleteGraphics(void* graphics) {
 }
 bool CGdiplusExt::StretchBitMask(HDC hDC,
                                  BOOL bMonoDevice,
-                                 const CFX_DIBitmap* pBitmap,
+                                 const CFX_RetainPtr<CFX_DIBitmap>& pBitmap,
                                  int dest_left,
                                  int dest_top,
                                  int dest_width,
@@ -938,7 +939,7 @@ bool CGdiplusExt::StretchBitMask(HDC hDC,
   return true;
 }
 bool CGdiplusExt::StretchDIBits(HDC hDC,
-                                const CFX_DIBitmap* pBitmap,
+                                const CFX_RetainPtr<CFX_DIBitmap>& pBitmap,
                                 int dest_left,
                                 int dest_top,
                                 int dest_width,
@@ -1492,14 +1493,16 @@ static void FreeDIBitmap(PREVIEW3_DIBITMAP* pInfo) {
   FX_Free(pInfo);
 }
 
-CFX_DIBitmap* _FX_WindowsDIB_LoadFromBuf(BITMAPINFO* pbmi,
-                                         LPVOID pData,
-                                         bool bAlpha);
-CFX_DIBitmap* CGdiplusExt::LoadDIBitmap(WINDIB_Open_Args_ args) {
+// TODO(tsepez): Really? Really? Move to header.
+CFX_RetainPtr<CFX_DIBitmap> _FX_WindowsDIB_LoadFromBuf(BITMAPINFO* pbmi,
+                                                       LPVOID pData,
+                                                       bool bAlpha);
+
+CFX_RetainPtr<CFX_DIBitmap> CGdiplusExt::LoadDIBitmap(WINDIB_Open_Args_ args) {
   PREVIEW3_DIBITMAP* pInfo = ::LoadDIBitmap(args);
-  if (!pInfo) {
+  if (!pInfo)
     return nullptr;
-  }
+
   int height = abs(pInfo->pbmi->bmiHeader.biHeight);
   int width = pInfo->pbmi->bmiHeader.biWidth;
   int dest_pitch = (width * pInfo->pbmi->bmiHeader.biBitCount + 31) / 32 * 4;
@@ -1512,7 +1515,7 @@ CFX_DIBitmap* CGdiplusExt::LoadDIBitmap(WINDIB_Open_Args_ args) {
                    dest_pitch);
     }
   }
-  CFX_DIBitmap* pDIBitmap = _FX_WindowsDIB_LoadFromBuf(
+  CFX_RetainPtr<CFX_DIBitmap> pDIBitmap = _FX_WindowsDIB_LoadFromBuf(
       pInfo->pbmi, pData, pInfo->pbmi->bmiHeader.biBitCount == 32);
   FX_Free(pData);
   FreeDIBitmap(pInfo);

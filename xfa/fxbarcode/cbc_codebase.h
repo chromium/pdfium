@@ -30,7 +30,8 @@ class CBC_CodeBase {
   virtual bool RenderDevice(CFX_RenderDevice* device,
                             const CFX_Matrix* matrix,
                             int32_t& e) = 0;
-  virtual bool RenderBitmap(CFX_DIBitmap*& pOutBitmap, int32_t& e) = 0;
+  virtual bool RenderBitmap(CFX_RetainPtr<CFX_DIBitmap>& pOutBitmap,
+                            int32_t& e) = 0;
 
   bool SetCharEncoding(int32_t encoding);
   bool SetModuleHeight(int32_t moduleHeight);

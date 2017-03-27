@@ -8,6 +8,7 @@
 
 #include <algorithm>
 #include <memory>
+#include <utility>
 #include <vector>
 
 #include "core/fpdfapi/cpdf_modulemgr.h"
@@ -126,12 +127,11 @@ CPDF_DIBSource::CPDF_DIBSource()
 CPDF_DIBSource::~CPDF_DIBSource() {
   FX_Free(m_pMaskedLine);
   FX_Free(m_pLineBuf);
-  m_pCachedBitmap.reset();
+  m_pCachedBitmap.Reset();  // TODO(tsepez): determine if required early here.
   FX_Free(m_pCompData);
   CPDF_ColorSpace* pCS = m_pColorSpace;
-  if (pCS && m_pDocument) {
+  if (pCS && m_pDocument)
     m_pDocument->GetPageData()->ReleaseColorSpace(pCS->GetArray());
-  }
 }
 
 bool CPDF_DIBSource::Load(CPDF_Document* pDoc, const CPDF_Stream* pStream) {
@@ -332,7 +332,7 @@ int CPDF_DIBSource::ContinueLoadDIBSource(IFX_Pause* pPause) {
           m_pStreamAcc.get(), m_pGlobalStream.get(),
           m_pCachedBitmap->GetBuffer(), m_pCachedBitmap->GetPitch(), pPause);
       if (ret < 0) {
-        m_pCachedBitmap.reset();
+        m_pCachedBitmap.Reset();
         m_pGlobalStream.reset();
         m_pJbig2Context.reset();
         return 0;
@@ -355,7 +355,7 @@ int CPDF_DIBSource::ContinueLoadDIBSource(IFX_Pause* pPause) {
     }
     ret = pJbig2Module->ContinueDecode(m_pJbig2Context.get(), pPause);
     if (ret < 0) {
-      m_pCachedBitmap.reset();
+      m_pCachedBitmap.Reset();
       m_pGlobalStream.reset();
       m_pJbig2Context.reset();
       return 0;
@@ -507,10 +507,10 @@ int CPDF_DIBSource::CreateDecoder() {
     return m_pCachedBitmap ? 1 : 0;
   }
   if (decoder == "JBIG2Decode") {
-    m_pCachedBitmap = pdfium::MakeUnique<CFX_DIBitmap>();
+    m_pCachedBitmap = pdfium::MakeRetain<CFX_DIBitmap>();
     if (!m_pCachedBitmap->Create(
             m_Width, m_Height, m_bImageMask ? FXDIB_1bppMask : FXDIB_1bppRgb)) {
-      m_pCachedBitmap.reset();
+      m_pCachedBitmap.Reset();
       return 0;
     }
     m_Status = 1;
@@ -656,9 +656,9 @@ void CPDF_DIBSource::LoadJpxBitmap() {
     format = FXDIB_Rgb;
   }
 
-  m_pCachedBitmap = pdfium::MakeUnique<CFX_DIBitmap>();
+  m_pCachedBitmap = pdfium::MakeRetain<CFX_DIBitmap>();
   if (!m_pCachedBitmap->Create(width, height, format)) {
-    m_pCachedBitmap.reset();
+    m_pCachedBitmap.Reset();
     return;
   }
   m_pCachedBitmap->Clear(0xFFFFFFFF);
@@ -671,7 +671,7 @@ void CPDF_DIBSource::LoadJpxBitmap() {
   }
   if (!pJpxModule->Decode(context->decoder(), m_pCachedBitmap->GetBuffer(),
                           m_pCachedBitmap->GetPitch(), output_offsets)) {
-    m_pCachedBitmap.reset();
+    m_pCachedBitmap.Reset();
     return;
   }
   if (m_pColorSpace && m_pColorSpace->GetFamily() == PDFCS_INDEXED &&
@@ -713,32 +713,29 @@ int CPDF_DIBSource::StratLoadMask() {
 }
 
 int CPDF_DIBSource::ContinueLoadMaskDIB(IFX_Pause* pPause) {
-  if (!m_pMask) {
+  if (!m_pMask)
     return 1;
-  }
+
   int ret = m_pMask->ContinueLoadDIBSource(pPause);
-  if (ret == 2) {
+  if (ret == 2)
     return ret;
-  }
-  if (m_pColorSpace && m_bStdCS) {
+
+  if (m_pColorSpace && m_bStdCS)
     m_pColorSpace->EnableStdConversion(false);
-  }
+
   if (!ret) {
-    delete m_pMask;
-    m_pMask = nullptr;
+    m_pMask.Reset();
     return ret;
   }
   return 1;
 }
 
-CPDF_DIBSource* CPDF_DIBSource::DetachMask() {
-  CPDF_DIBSource* pDIBSource = m_pMask;
-  m_pMask = nullptr;
-  return pDIBSource;
+CFX_RetainPtr<CPDF_DIBSource> CPDF_DIBSource::DetachMask() {
+  return std::move(m_pMask);
 }
 
 int CPDF_DIBSource::StartLoadMaskDIB() {
-  m_pMask = new CPDF_DIBSource;
+  m_pMask = pdfium::MakeRetain<CPDF_DIBSource>();
   int ret = m_pMask->StartLoadDIBSource(m_pDocument, m_pMaskStream, false,
                                         nullptr, nullptr, true);
   if (ret == 2) {
@@ -747,8 +744,7 @@ int CPDF_DIBSource::StartLoadMaskDIB() {
     return 2;
   }
   if (!ret) {
-    delete m_pMask;
-    m_pMask = nullptr;
+    m_pMask.Reset();
     return 1;
   }
   return 1;

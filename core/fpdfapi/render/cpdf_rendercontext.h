@@ -47,7 +47,7 @@ class CPDF_RenderContext {
               const CPDF_RenderOptions* pOptions,
               const CFX_Matrix* pFinalMatrix);
 
-  void GetBackground(CFX_DIBitmap* pBuffer,
+  void GetBackground(const CFX_RetainPtr<CFX_DIBitmap>& pBuffer,
                      const CPDF_PageObject* pObj,
                      const CPDF_RenderOptions* pOptions,
                      CFX_Matrix* pFinalMatrix);

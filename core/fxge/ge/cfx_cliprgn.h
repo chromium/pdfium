@@ -19,18 +19,22 @@ class CFX_ClipRgn {
 
   ClipType GetType() const { return m_Type; }
   const FX_RECT& GetBox() const { return m_Box; }
-  CFX_DIBitmapRef GetMask() const { return m_Mask; }
+  CFX_RetainPtr<CFX_DIBitmap> GetMask() const { return m_Mask; }
 
   void Reset(const FX_RECT& rect);
   void IntersectRect(const FX_RECT& rect);
-  void IntersectMaskF(int left, int top, CFX_DIBitmapRef Mask);
+  void IntersectMaskF(int left,
+                      int top,
+                      const CFX_RetainPtr<CFX_DIBitmap>& Mask);
 
  private:
-  void IntersectMaskRect(FX_RECT rect, FX_RECT mask_box, CFX_DIBitmapRef Mask);
+  void IntersectMaskRect(FX_RECT rect,
+                         FX_RECT mask_box,
+                         const CFX_RetainPtr<CFX_DIBitmap>& Mask);
 
   ClipType m_Type;
   FX_RECT m_Box;
-  CFX_DIBitmapRef m_Mask;
+  CFX_RetainPtr<CFX_DIBitmap> m_Mask;
 };
 
 #endif  // CORE_FXGE_GE_CFX_CLIPRGN_H_

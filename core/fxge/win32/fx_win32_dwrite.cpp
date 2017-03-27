@@ -103,7 +103,7 @@ class CDwFontContext {
 
 class CDwGdiTextRenderer {
  public:
-  CDwGdiTextRenderer(CFX_DIBitmap* pBitmap,
+  CDwGdiTextRenderer(const CFX_RetainPtr<CFX_DIBitmap>& pBitmap,
                      IDWriteBitmapRenderTarget* bitmapRenderTarget,
                      IDWriteRenderingParams* renderingParams);
   ~CDwGdiTextRenderer();
@@ -118,7 +118,7 @@ class CDwGdiTextRenderer {
                                          const COLORREF& textColor);
 
  private:
-  CFX_DIBitmap* pBitmap_;
+  CFX_RetainPtr<CFX_DIBitmap> pBitmap_;
   IDWriteBitmapRenderTarget* pRenderTarget_;
   IDWriteRenderingParams* pRenderingParams_;
 };
@@ -180,8 +180,9 @@ failed:
   return nullptr;
 }
 
-bool CDWriteExt::DwCreateRenderingTarget(CFX_DIBitmap* pBitmap,
-                                         void** renderTarget) {
+bool CDWriteExt::DwCreateRenderingTarget(
+    const CFX_RetainPtr<CFX_DIBitmap>& pBitmap,
+    void** renderTarget) {
   if (pBitmap->GetFormat() > FXDIB_Argb) {
     return false;
   }
@@ -395,7 +396,7 @@ HRESULT CDwFontContext::Initialize() {
 }
 
 CDwGdiTextRenderer::CDwGdiTextRenderer(
-    CFX_DIBitmap* pBitmap,
+    const CFX_RetainPtr<CFX_DIBitmap>& pBitmap,
     IDWriteBitmapRenderTarget* bitmapRenderTarget,
     IDWriteRenderingParams* renderingParams)
     : pBitmap_(pBitmap),
@@ -426,13 +427,13 @@ STDMETHODIMP CDwGdiTextRenderer::DrawGlyphRun(
   HBITMAP hBitmap = (HBITMAP)::GetCurrentObject(hDC, OBJ_BITMAP);
   BITMAP bitmap;
   GetObject(hBitmap, sizeof bitmap, &bitmap);
-  CFX_DIBitmap dib;
-  dib.Create(bitmap.bmWidth, bitmap.bmHeight,
-             bitmap.bmBitsPixel == 24 ? FXDIB_Rgb : FXDIB_Rgb32,
-             (uint8_t*)bitmap.bmBits);
-  dib.CompositeBitmap(text_bbox.left, text_bbox.top, text_bbox.Width(),
-                      text_bbox.Height(), pBitmap_, text_bbox.left,
-                      text_bbox.top, FXDIB_BLEND_NORMAL, nullptr);
+  auto dib = pdfium::MakeRetain<CFX_DIBitmap>();
+  dib->Create(bitmap.bmWidth, bitmap.bmHeight,
+              bitmap.bmBitsPixel == 24 ? FXDIB_Rgb : FXDIB_Rgb32,
+              (uint8_t*)bitmap.bmBits);
+  dib->CompositeBitmap(text_bbox.left, text_bbox.top, text_bbox.Width(),
+                       text_bbox.Height(), pBitmap_, text_bbox.left,
+                       text_bbox.top, FXDIB_BLEND_NORMAL, nullptr);
   hr = pRenderTarget_->DrawGlyphRun(baselineOriginX, baselineOriginY,
                                     measuringMode, glyphRun, pRenderingParams_,
                                     textColor);
@@ -440,7 +441,7 @@ STDMETHODIMP CDwGdiTextRenderer::DrawGlyphRun(
     return hr;
   }
   pBitmap_->CompositeBitmap(text_bbox.left, text_bbox.top, text_bbox.Width(),
-                            text_bbox.Height(), &dib, text_bbox.left,
+                            text_bbox.Height(), dib, text_bbox.left,
                             text_bbox.top, FXDIB_BLEND_NORMAL, pClipRgn);
   return hr;
 }

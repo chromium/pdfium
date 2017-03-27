@@ -67,7 +67,7 @@ int CGdiPrinterDriver::GetDeviceCaps(int caps_id) const {
   return CGdiDeviceDriver::GetDeviceCaps(caps_id);
 }
 
-bool CGdiPrinterDriver::SetDIBits(const CFX_DIBSource* pSource,
+bool CGdiPrinterDriver::SetDIBits(const CFX_RetainPtr<CFX_DIBSource>& pSource,
                                   uint32_t color,
                                   const FX_RECT* pSrcRect,
                                   int left,
@@ -87,29 +87,30 @@ bool CGdiPrinterDriver::SetDIBits(const CFX_DIBSource* pSource,
     return false;
 
   CFX_DIBExtractor temp(pSource);
-  CFX_DIBitmap* pBitmap = temp.GetBitmap();
+  CFX_RetainPtr<CFX_DIBitmap> pBitmap = temp.GetBitmap();
   if (!pBitmap)
     return false;
 
   return GDI_SetDIBits(pBitmap, pSrcRect, left, top);
 }
 
-bool CGdiPrinterDriver::StretchDIBits(const CFX_DIBSource* pSource,
-                                      uint32_t color,
-                                      int dest_left,
-                                      int dest_top,
-                                      int dest_width,
-                                      int dest_height,
-                                      const FX_RECT* pClipRect,
-                                      uint32_t flags,
-                                      int blend_type) {
+bool CGdiPrinterDriver::StretchDIBits(
+    const CFX_RetainPtr<CFX_DIBSource>& pSource,
+    uint32_t color,
+    int dest_left,
+    int dest_top,
+    int dest_width,
+    int dest_height,
+    const FX_RECT* pClipRect,
+    uint32_t flags,
+    int blend_type) {
   if (pSource->IsAlphaMask()) {
     int alpha = FXARGB_A(color);
     if (pSource->GetBPP() != 1 || alpha != 255)
       return false;
 
     if (dest_width < 0 || dest_height < 0) {
-      std::unique_ptr<CFX_DIBitmap> pFlipped =
+      CFX_RetainPtr<CFX_DIBitmap> pFlipped =
           pSource->FlipImage(dest_width < 0, dest_height < 0);
       if (!pFlipped)
         return false;
@@ -119,13 +120,12 @@ bool CGdiPrinterDriver::StretchDIBits(const CFX_DIBSource* pSource,
       if (dest_height < 0)
         dest_top += dest_height;
 
-      return GDI_StretchBitMask(pFlipped.get(), dest_left, dest_top,
-                                abs(dest_width), abs(dest_height), color,
-                                flags);
+      return GDI_StretchBitMask(pFlipped, dest_left, dest_top, abs(dest_width),
+                                abs(dest_height), color, flags);
     }
 
     CFX_DIBExtractor temp(pSource);
-    CFX_DIBitmap* pBitmap = temp.GetBitmap();
+    CFX_RetainPtr<CFX_DIBitmap> pBitmap = temp.GetBitmap();
     if (!pBitmap)
       return false;
     return GDI_StretchBitMask(pBitmap, dest_left, dest_top, dest_width,
@@ -136,7 +136,7 @@ bool CGdiPrinterDriver::StretchDIBits(const CFX_DIBSource* pSource,
     return false;
 
   if (dest_width < 0 || dest_height < 0) {
-    std::unique_ptr<CFX_DIBitmap> pFlipped =
+    CFX_RetainPtr<CFX_DIBitmap> pFlipped =
         pSource->FlipImage(dest_width < 0, dest_height < 0);
     if (!pFlipped)
       return false;
@@ -146,19 +146,19 @@ bool CGdiPrinterDriver::StretchDIBits(const CFX_DIBSource* pSource,
     if (dest_height < 0)
       dest_top += dest_height;
 
-    return GDI_StretchDIBits(pFlipped.get(), dest_left, dest_top,
-                             abs(dest_width), abs(dest_height), flags);
+    return GDI_StretchDIBits(pFlipped, dest_left, dest_top, abs(dest_width),
+                             abs(dest_height), flags);
   }
 
   CFX_DIBExtractor temp(pSource);
-  CFX_DIBitmap* pBitmap = temp.GetBitmap();
+  CFX_RetainPtr<CFX_DIBitmap> pBitmap = temp.GetBitmap();
   if (!pBitmap)
     return false;
   return GDI_StretchDIBits(pBitmap, dest_left, dest_top, dest_width,
                            dest_height, flags);
 }
 
-bool CGdiPrinterDriver::StartDIBits(const CFX_DIBSource* pSource,
+bool CGdiPrinterDriver::StartDIBits(const CFX_RetainPtr<CFX_DIBSource>& pSource,
                                     int bitmap_alpha,
                                     uint32_t color,
                                     const CFX_Matrix* pMatrix,
@@ -185,12 +185,12 @@ bool CGdiPrinterDriver::StartDIBits(const CFX_DIBSource* pSource,
   if (FXSYS_fabs(pMatrix->a) >= 0.5f || FXSYS_fabs(pMatrix->d) >= 0.5f)
     return false;
 
-  std::unique_ptr<CFX_DIBitmap> pTransformed =
+  CFX_RetainPtr<CFX_DIBitmap> pTransformed =
       pSource->SwapXY(pMatrix->c > 0, pMatrix->b < 0);
   if (!pTransformed)
     return false;
 
-  return StretchDIBits(pTransformed.get(), color, full_rect.left, full_rect.top,
+  return StretchDIBits(pTransformed, color, full_rect.left, full_rect.top,
                        full_rect.Width(), full_rect.Height(), nullptr, 0,
                        blend_type);
 }
@@ -436,7 +436,7 @@ bool CPSPrinterDriver::GetClipBox(FX_RECT* pRect) {
   return true;
 }
 
-bool CPSPrinterDriver::SetDIBits(const CFX_DIBSource* pBitmap,
+bool CPSPrinterDriver::SetDIBits(const CFX_RetainPtr<CFX_DIBSource>& pBitmap,
                                  uint32_t color,
                                  const FX_RECT* pSrcRect,
                                  int left,
@@ -447,22 +447,23 @@ bool CPSPrinterDriver::SetDIBits(const CFX_DIBSource* pBitmap,
   return m_PSRenderer.SetDIBits(pBitmap, color, left, top);
 }
 
-bool CPSPrinterDriver::StretchDIBits(const CFX_DIBSource* pBitmap,
-                                     uint32_t color,
-                                     int dest_left,
-                                     int dest_top,
-                                     int dest_width,
-                                     int dest_height,
-                                     const FX_RECT* pClipRect,
-                                     uint32_t flags,
-                                     int blend_type) {
+bool CPSPrinterDriver::StretchDIBits(
+    const CFX_RetainPtr<CFX_DIBSource>& pBitmap,
+    uint32_t color,
+    int dest_left,
+    int dest_top,
+    int dest_width,
+    int dest_height,
+    const FX_RECT* pClipRect,
+    uint32_t flags,
+    int blend_type) {
   if (blend_type != FXDIB_BLEND_NORMAL)
     return false;
   return m_PSRenderer.StretchDIBits(pBitmap, color, dest_left, dest_top,
                                     dest_width, dest_height, flags);
 }
 
-bool CPSPrinterDriver::StartDIBits(const CFX_DIBSource* pBitmap,
+bool CPSPrinterDriver::StartDIBits(const CFX_RetainPtr<CFX_DIBSource>& pBitmap,
                                    int bitmap_alpha,
                                    uint32_t color,
                                    const CFX_Matrix* pMatrix,

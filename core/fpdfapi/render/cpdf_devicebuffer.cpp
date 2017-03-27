@@ -50,7 +50,7 @@ bool CPDF_DeviceBuffer::Initialize(CPDF_RenderContext* pContext,
   m_Matrix.TransformRect(rect);
 
   FX_RECT bitmap_rect = rect.GetOuterRect();
-  m_pBitmap = pdfium::MakeUnique<CFX_DIBitmap>();
+  m_pBitmap = pdfium::MakeRetain<CFX_DIBitmap>();
   m_pBitmap->Create(bitmap_rect.Width(), bitmap_rect.Height(), FXDIB_Argb);
   return true;
 }
@@ -58,19 +58,19 @@ bool CPDF_DeviceBuffer::Initialize(CPDF_RenderContext* pContext,
 void CPDF_DeviceBuffer::OutputToDevice() {
   if (m_pDevice->GetDeviceCaps(FXDC_RENDER_CAPS) & FXRC_GET_BITS) {
     if (m_Matrix.a == 1.0f && m_Matrix.d == 1.0f) {
-      m_pDevice->SetDIBits(m_pBitmap.get(), m_Rect.left, m_Rect.top);
+      m_pDevice->SetDIBits(m_pBitmap, m_Rect.left, m_Rect.top);
     } else {
-      m_pDevice->StretchDIBits(m_pBitmap.get(), m_Rect.left, m_Rect.top,
+      m_pDevice->StretchDIBits(m_pBitmap, m_Rect.left, m_Rect.top,
                                m_Rect.Width(), m_Rect.Height());
     }
     return;
   }
-  CFX_DIBitmap buffer;
-  m_pDevice->CreateCompatibleBitmap(&buffer, m_pBitmap->GetWidth(),
+  auto pBuffer = pdfium::MakeRetain<CFX_DIBitmap>();
+  m_pDevice->CreateCompatibleBitmap(pBuffer, m_pBitmap->GetWidth(),
                                     m_pBitmap->GetHeight());
-  m_pContext->GetBackground(&buffer, m_pObject, nullptr, &m_Matrix);
-  buffer.CompositeBitmap(0, 0, buffer.GetWidth(), buffer.GetHeight(),
-                         m_pBitmap.get(), 0, 0);
-  m_pDevice->StretchDIBits(&buffer, m_Rect.left, m_Rect.top, m_Rect.Width(),
+  m_pContext->GetBackground(pBuffer, m_pObject, nullptr, &m_Matrix);
+  pBuffer->CompositeBitmap(0, 0, pBuffer->GetWidth(), pBuffer->GetHeight(),
+                           m_pBitmap, 0, 0);
+  m_pDevice->StretchDIBits(pBuffer, m_Rect.left, m_Rect.top, m_Rect.Width(),
                            m_Rect.Height());
 }

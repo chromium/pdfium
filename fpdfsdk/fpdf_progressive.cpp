@@ -6,6 +6,8 @@
 
 #include "public/fpdf_progressive.h"
 
+#include <utility>
+
 #include "core/fpdfapi/cpdf_pagerendercontext.h"
 #include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fpdfapi/render/cpdf_progressiverenderer.h"
@@ -44,11 +46,14 @@ DLLEXPORT int STDCALL FPDF_RenderPageBitmap_Start(FPDF_BITMAP bitmap,
   if (!pPage)
     return FPDF_RENDER_FAILED;
 
-  CPDF_PageRenderContext* pContext = new CPDF_PageRenderContext;
-  pPage->SetRenderContext(pdfium::WrapUnique(pContext));
-  CFX_FxgeDevice* pDevice = new CFX_FxgeDevice;
-  pContext->m_pDevice.reset(pDevice);
-  CFX_DIBitmap* pBitmap = CFXBitmapFromFPDFBitmap(bitmap);
+  auto pOwnedContext = pdfium::MakeUnique<CPDF_PageRenderContext>();
+  CPDF_PageRenderContext* pContext = pOwnedContext.get();
+  pPage->SetRenderContext(std::move(pOwnedContext));
+
+  CFX_RetainPtr<CFX_DIBitmap> pBitmap(CFXBitmapFromFPDFBitmap(bitmap));
+  auto pOwnedDevice = pdfium::MakeUnique<CFX_FxgeDevice>();
+  CFX_FxgeDevice* pDevice = pOwnedDevice.get();
+  pContext->m_pDevice = std::move(pOwnedDevice);
   pDevice->Attach(pBitmap, !!(flags & FPDF_REVERSE_BYTE_ORDER), nullptr, false);
 
   IFSDK_PAUSE_Adapter IPauseAdapter(pause);

@@ -265,7 +265,7 @@ CStretchEngine::CStretchEngine(IFX_ScanlineComposer* pDestBitmap,
                                int dest_width,
                                int dest_height,
                                const FX_RECT& clip_rect,
-                               const CFX_DIBSource* pSrcBitmap,
+                               const CFX_RetainPtr<CFX_DIBSource>& pSrcBitmap,
                                int flags) {
   m_State = 0;
   m_DestFormat = dest_format;
@@ -852,12 +852,13 @@ void CStretchEngine::StretchVert() {
   }
 }
 
-CFX_ImageStretcher::CFX_ImageStretcher(IFX_ScanlineComposer* pDest,
-                                       const CFX_DIBSource* pSource,
-                                       int dest_width,
-                                       int dest_height,
-                                       const FX_RECT& bitmap_rect,
-                                       uint32_t flags)
+CFX_ImageStretcher::CFX_ImageStretcher(
+    IFX_ScanlineComposer* pDest,
+    const CFX_RetainPtr<CFX_DIBSource>& pSource,
+    int dest_width,
+    int dest_height,
+    const FX_RECT& bitmap_rect,
+    uint32_t flags)
     : m_pDest(pDest),
       m_pSource(pSource),
       m_Flags(flags),

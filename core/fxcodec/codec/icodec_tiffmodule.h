@@ -29,7 +29,7 @@ class ICodec_TiffModule {
                              int32_t* bpc,
                              CFX_DIBAttribute* pAttribute) = 0;
   virtual bool Decode(CCodec_TiffContext* ctx,
-                      class CFX_DIBitmap* pDIBitmap) = 0;
+                      const CFX_RetainPtr<CFX_DIBitmap>& pDIBitmap) = 0;
   virtual void DestroyDecoder(CCodec_TiffContext* ctx) = 0;
 };
 

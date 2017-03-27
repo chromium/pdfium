@@ -8,6 +8,7 @@
 
 #include <map>
 #include <memory>
+#include <utility>
 
 #include "core/fpdfapi/font/cpdf_type3char.h"
 #include "core/fpdfapi/font/cpdf_type3font.h"
@@ -51,7 +52,8 @@ bool IsScanLine8bpp(uint8_t* pBuf, int width) {
   return false;
 }
 
-int DetectFirstLastScan(const CFX_DIBitmap* pBitmap, bool bFirst) {
+int DetectFirstLastScan(const CFX_RetainPtr<CFX_DIBitmap>& pBitmap,
+                        bool bFirst) {
   int height = pBitmap->GetHeight();
   int pitch = pBitmap->GetPitch();
   int width = pBitmap->GetWidth();
@@ -121,12 +123,12 @@ CFX_GlyphBitmap* CPDF_Type3Cache::RenderGlyph(CPDF_Type3Glyphs* pSize,
   if (!pChar || !pChar->m_pBitmap)
     return nullptr;
 
-  CFX_DIBitmap* pBitmap = pChar->m_pBitmap.get();
+  CFX_RetainPtr<CFX_DIBitmap> pBitmap = pChar->m_pBitmap;
   CFX_Matrix image_matrix = pChar->m_ImageMatrix;
   CFX_Matrix text_matrix(pMatrix->a, pMatrix->b, pMatrix->c, pMatrix->d, 0, 0);
   image_matrix.Concat(text_matrix);
 
-  std::unique_ptr<CFX_DIBitmap> pResBitmap;
+  CFX_RetainPtr<CFX_DIBitmap> pResBitmap;
   int left = 0;
   int top = 0;
   if (FXSYS_fabs(image_matrix.b) < FXSYS_fabs(image_matrix.a) / 100 &&
@@ -166,6 +168,6 @@ CFX_GlyphBitmap* CPDF_Type3Cache::RenderGlyph(CPDF_Type3Glyphs* pSize,
   CFX_GlyphBitmap* pGlyph = new CFX_GlyphBitmap;
   pGlyph->m_Left = left;
   pGlyph->m_Top = -top;
-  pGlyph->m_Bitmap.TakeOver(pResBitmap.get());
+  pGlyph->m_pBitmap->TakeOver(std::move(pResBitmap));
   return pGlyph;
 }

@@ -24,7 +24,8 @@ class CCodec_TiffModule : public ICodec_TiffModule {
                      int32_t* comps,
                      int32_t* bpc,
                      CFX_DIBAttribute* pAttribute) override;
-  bool Decode(CCodec_TiffContext* ctx, class CFX_DIBitmap* pDIBitmap) override;
+  bool Decode(CCodec_TiffContext* ctx,
+              const CFX_RetainPtr<CFX_DIBitmap>& pDIBitmap) override;
   void DestroyDecoder(CCodec_TiffContext* ctx) override;
 };
 

@@ -44,16 +44,9 @@ uint32_t ArgbEncode(int a, FX_COLORREF rgb) {
 }
 
 CFX_DIBSource::CFX_DIBSource()
-    : m_pAlphaMask(nullptr),
-      m_Width(0),
-      m_Height(0),
-      m_bpp(0),
-      m_AlphaFlag(0),
-      m_Pitch(0) {}
+    : m_Width(0), m_Height(0), m_bpp(0), m_AlphaFlag(0), m_Pitch(0) {}
 
-CFX_DIBSource::~CFX_DIBSource() {
-  delete m_pAlphaMask;
-}
+CFX_DIBSource::~CFX_DIBSource() {}
 
 uint8_t* CFX_DIBSource::GetBuffer() const {
   return nullptr;
@@ -127,7 +120,7 @@ bool CFX_DIBitmap::Create(int width,
   return true;
 }
 
-bool CFX_DIBitmap::Copy(const CFX_DIBSource* pSrc) {
+bool CFX_DIBitmap::Copy(const CFX_RetainPtr<CFX_DIBSource>& pSrc) {
   if (m_pBuffer)
     return false;
 
@@ -157,11 +150,10 @@ const uint8_t* CFX_DIBitmap::GetScanline(int line) const {
   return m_pBuffer ? m_pBuffer + line * m_Pitch : nullptr;
 }
 
-void CFX_DIBitmap::TakeOver(CFX_DIBitmap* pSrcBitmap) {
+void CFX_DIBitmap::TakeOver(CFX_RetainPtr<CFX_DIBitmap>&& pSrcBitmap) {
   if (!m_bExtBuf)
     FX_Free(m_pBuffer);
 
-  delete m_pAlphaMask;
   m_pBuffer = pSrcBitmap->m_pBuffer;
   m_pPalette = std::move(pSrcBitmap->m_pPalette);
   m_pAlphaMask = pSrcBitmap->m_pAlphaMask;
@@ -175,14 +167,14 @@ void CFX_DIBitmap::TakeOver(CFX_DIBitmap* pSrcBitmap) {
   m_Pitch = pSrcBitmap->m_Pitch;
 }
 
-std::unique_ptr<CFX_DIBitmap> CFX_DIBSource::Clone(const FX_RECT* pClip) const {
+CFX_RetainPtr<CFX_DIBitmap> CFX_DIBSource::Clone(const FX_RECT* pClip) const {
   FX_RECT rect(0, 0, m_Width, m_Height);
   if (pClip) {
     rect.Intersect(*pClip);
     if (rect.IsEmpty())
       return nullptr;
   }
-  auto pNewBitmap = pdfium::MakeUnique<CFX_DIBitmap>();
+  auto pNewBitmap = pdfium::MakeRetain<CFX_DIBitmap>();
   if (!pNewBitmap->Create(rect.Width(), rect.Height(), GetFormat()))
     return nullptr;
 
@@ -240,12 +232,11 @@ void CFX_DIBSource::BuildPalette() {
 }
 
 bool CFX_DIBSource::BuildAlphaMask() {
-  if (m_pAlphaMask) {
+  if (m_pAlphaMask)
     return true;
-  }
-  m_pAlphaMask = new CFX_DIBitmap;
+
+  m_pAlphaMask = pdfium::MakeRetain<CFX_DIBitmap>();
   if (!m_pAlphaMask->Create(m_Width, m_Height, FXDIB_8bppMask)) {
-    delete m_pAlphaMask;
     m_pAlphaMask = nullptr;
     return false;
   }
@@ -401,13 +392,14 @@ void CFX_DIBSource::GetOverlapRect(int& dest_left,
   height = dest_rect.bottom - dest_rect.top;
 }
 
-bool CFX_DIBitmap::TransferBitmap(int dest_left,
-                                  int dest_top,
-                                  int width,
-                                  int height,
-                                  const CFX_DIBSource* pSrcBitmap,
-                                  int src_left,
-                                  int src_top) {
+bool CFX_DIBitmap::TransferBitmap(
+    int dest_left,
+    int dest_top,
+    int width,
+    int height,
+    const CFX_RetainPtr<CFX_DIBSource>& pSrcBitmap,
+    int src_left,
+    int src_top) {
   if (!m_pBuffer)
     return false;
 
@@ -466,7 +458,7 @@ bool CFX_DIBitmap::TransferMask(int dest_left,
                                 int dest_top,
                                 int width,
                                 int height,
-                                const CFX_DIBSource* pMask,
+                                const CFX_RetainPtr<CFX_DIBSource>& pMask,
                                 uint32_t color,
                                 int src_left,
                                 int src_top,
@@ -605,7 +597,7 @@ void CFX_DIBSource::GetPalette(uint32_t* pal, int alpha) const {
   }
 }
 
-std::unique_ptr<CFX_DIBitmap> CFX_DIBSource::CloneAlphaMask(
+CFX_RetainPtr<CFX_DIBitmap> CFX_DIBSource::CloneAlphaMask(
     const FX_RECT* pClip) const {
   ASSERT(GetFormat() == FXDIB_Argb);
   FX_RECT rect(0, 0, m_Width, m_Height);
@@ -614,7 +606,7 @@ std::unique_ptr<CFX_DIBitmap> CFX_DIBSource::CloneAlphaMask(
     if (rect.IsEmpty())
       return nullptr;
   }
-  auto pMask = pdfium::MakeUnique<CFX_DIBitmap>();
+  auto pMask = pdfium::MakeRetain<CFX_DIBitmap>();
   if (!pMask->Create(rect.Width(), rect.Height(), FXDIB_8bppMask))
     return nullptr;
 
@@ -630,7 +622,7 @@ std::unique_ptr<CFX_DIBitmap> CFX_DIBSource::CloneAlphaMask(
   return pMask;
 }
 
-bool CFX_DIBSource::SetAlphaMask(const CFX_DIBSource* pAlphaMask,
+bool CFX_DIBSource::SetAlphaMask(const CFX_RetainPtr<CFX_DIBSource>& pAlphaMask,
                                  const FX_RECT* pClip) {
   if (!HasAlpha() || GetFormat() == FXDIB_Argb)
     return false;
@@ -660,12 +652,12 @@ bool CFX_DIBSource::SetAlphaMask(const CFX_DIBSource* pAlphaMask,
 
 const int g_ChannelOffset[] = {0, 2, 1, 0, 0, 1, 2, 3, 3};
 bool CFX_DIBitmap::LoadChannel(FXDIB_Channel destChannel,
-                               CFX_DIBSource* pSrcBitmap,
+                               const CFX_RetainPtr<CFX_DIBSource>& pSrcBitmap,
                                FXDIB_Channel srcChannel) {
   if (!m_pBuffer)
     return false;
 
-  CFX_MaybeOwned<CFX_DIBSource> pSrcClone(pSrcBitmap);
+  CFX_RetainPtr<CFX_DIBSource> pSrcClone = pSrcBitmap;
   int srcOffset;
   if (srcChannel == FXDIB_Alpha) {
     if (!pSrcBitmap->HasAlpha() && !pSrcBitmap->IsAlphaMask())
@@ -725,7 +717,7 @@ bool CFX_DIBitmap::LoadChannel(FXDIB_Channel destChannel,
     destOffset = g_ChannelOffset[destChannel];
   }
   if (srcChannel == FXDIB_Alpha && pSrcClone->m_pAlphaMask) {
-    CFX_MaybeOwned<CFX_DIBSource> pAlphaMask(pSrcClone->m_pAlphaMask);
+    CFX_RetainPtr<CFX_DIBSource> pAlphaMask = pSrcClone->m_pAlphaMask;
     if (pSrcClone->GetWidth() != m_Width ||
         pSrcClone->GetHeight() != m_Height) {
       if (pAlphaMask) {
@@ -738,14 +730,14 @@ bool CFX_DIBitmap::LoadChannel(FXDIB_Channel destChannel,
     srcOffset = 0;
   } else if (pSrcClone->GetWidth() != m_Width ||
              pSrcClone->GetHeight() != m_Height) {
-    std::unique_ptr<CFX_DIBitmap> pSrcMatched =
+    CFX_RetainPtr<CFX_DIBitmap> pSrcMatched =
         pSrcClone->StretchTo(m_Width, m_Height);
     if (!pSrcMatched)
       return false;
 
     pSrcClone = std::move(pSrcMatched);
   }
-  CFX_DIBitmap* pDst = this;
+  CFX_RetainPtr<CFX_DIBitmap> pDst(this);
   if (destChannel == FXDIB_Alpha && m_pAlphaMask) {
     pDst = m_pAlphaMask;
     destOffset = 0;
@@ -823,7 +815,8 @@ bool CFX_DIBitmap::LoadChannel(FXDIB_Channel destChannel, int value) {
   return true;
 }
 
-bool CFX_DIBitmap::MultiplyAlpha(CFX_DIBSource* pSrcBitmap) {
+bool CFX_DIBitmap::MultiplyAlpha(
+    const CFX_RetainPtr<CFX_DIBSource>& pSrcBitmap) {
   if (!m_pBuffer)
     return false;
 
@@ -834,8 +827,7 @@ bool CFX_DIBitmap::MultiplyAlpha(CFX_DIBSource* pSrcBitmap) {
   if (!IsAlphaMask() && !HasAlpha())
     return LoadChannel(FXDIB_Alpha, pSrcBitmap, FXDIB_Alpha);
 
-  CFX_MaybeOwned<CFX_DIBitmap> pSrcClone(
-      static_cast<CFX_DIBitmap*>(pSrcBitmap));
+  CFX_RetainPtr<CFX_DIBitmap> pSrcClone = pSrcBitmap.As<CFX_DIBitmap>();
   if (pSrcBitmap->GetWidth() != m_Width ||
       pSrcBitmap->GetHeight() != m_Height) {
     pSrcClone = pSrcBitmap->StretchTo(m_Width, m_Height);
@@ -875,7 +867,7 @@ bool CFX_DIBitmap::MultiplyAlpha(CFX_DIBSource* pSrcBitmap) {
         }
       }
     } else {
-      m_pAlphaMask->MultiplyAlpha(pSrcClone.Get());
+      m_pAlphaMask->MultiplyAlpha(pSrcClone);
     }
   }
   return true;
@@ -887,9 +879,9 @@ bool CFX_DIBitmap::GetGrayData(void* pIccTransform) {
   }
   switch (GetFormat()) {
     case FXDIB_1bppRgb: {
-      if (!m_pPalette) {
+      if (!m_pPalette)
         return false;
-      }
+
       uint8_t gray[2];
       for (int i = 0; i < 2; i++) {
         int r = static_cast<uint8_t>(m_pPalette.get()[i] >> 16);
@@ -897,11 +889,10 @@ bool CFX_DIBitmap::GetGrayData(void* pIccTransform) {
         int b = static_cast<uint8_t>(m_pPalette.get()[i]);
         gray[i] = static_cast<uint8_t>(FXRGB2GRAY(r, g, b));
       }
-      CFX_DIBitmap* pMask = new CFX_DIBitmap;
-      if (!pMask->Create(m_Width, m_Height, FXDIB_8bppMask)) {
-        delete pMask;
+      auto pMask = pdfium::MakeRetain<CFX_DIBitmap>();
+      if (!pMask->Create(m_Width, m_Height, FXDIB_8bppMask))
         return false;
-      }
+
       FXSYS_memset(pMask->GetBuffer(), gray[0], pMask->GetPitch() * m_Height);
       for (int row = 0; row < m_Height; row++) {
         uint8_t* src_pos = m_pBuffer + row * m_Pitch;
@@ -913,14 +904,13 @@ bool CFX_DIBitmap::GetGrayData(void* pIccTransform) {
           dest_pos++;
         }
       }
-      TakeOver(pMask);
-      delete pMask;
+      TakeOver(std::move(pMask));
       break;
     }
     case FXDIB_8bppRgb: {
-      if (!m_pPalette) {
+      if (!m_pPalette)
         return false;
-      }
+
       uint8_t gray[256];
       for (int i = 0; i < 256; i++) {
         int r = static_cast<uint8_t>(m_pPalette.get()[i] >> 16);
@@ -928,11 +918,10 @@ bool CFX_DIBitmap::GetGrayData(void* pIccTransform) {
         int b = static_cast<uint8_t>(m_pPalette.get()[i]);
         gray[i] = static_cast<uint8_t>(FXRGB2GRAY(r, g, b));
       }
-      CFX_DIBitmap* pMask = new CFX_DIBitmap;
-      if (!pMask->Create(m_Width, m_Height, FXDIB_8bppMask)) {
-        delete pMask;
+      auto pMask = pdfium::MakeRetain<CFX_DIBitmap>();
+      if (!pMask->Create(m_Width, m_Height, FXDIB_8bppMask))
         return false;
-      }
+
       for (int row = 0; row < m_Height; row++) {
         uint8_t* dest_pos = pMask->GetBuffer() + row * pMask->GetPitch();
         uint8_t* src_pos = m_pBuffer + row * m_Pitch;
@@ -940,16 +929,14 @@ bool CFX_DIBitmap::GetGrayData(void* pIccTransform) {
           *dest_pos++ = gray[*src_pos++];
         }
       }
-      TakeOver(pMask);
-      delete pMask;
+      TakeOver(std::move(pMask));
       break;
     }
     case FXDIB_Rgb: {
-      CFX_DIBitmap* pMask = new CFX_DIBitmap;
-      if (!pMask->Create(m_Width, m_Height, FXDIB_8bppMask)) {
-        delete pMask;
+      auto pMask = pdfium::MakeRetain<CFX_DIBitmap>();
+      if (!pMask->Create(m_Width, m_Height, FXDIB_8bppMask))
         return false;
-      }
+
       for (int row = 0; row < m_Height; row++) {
         uint8_t* src_pos = m_pBuffer + row * m_Pitch;
         uint8_t* dest_pos = pMask->GetBuffer() + row * pMask->GetPitch();
@@ -958,16 +945,14 @@ bool CFX_DIBitmap::GetGrayData(void* pIccTransform) {
           src_pos += 3;
         }
       }
-      TakeOver(pMask);
-      delete pMask;
+      TakeOver(std::move(pMask));
       break;
     }
     case FXDIB_Rgb32: {
-      CFX_DIBitmap* pMask = new CFX_DIBitmap;
-      if (!pMask->Create(m_Width, m_Height, FXDIB_8bppMask)) {
-        delete pMask;
+      auto pMask = pdfium::MakeRetain<CFX_DIBitmap>();
+      if (!pMask->Create(m_Width, m_Height, FXDIB_8bppMask))
         return false;
-      }
+
       for (int row = 0; row < m_Height; row++) {
         uint8_t* src_pos = m_pBuffer + row * m_Pitch;
         uint8_t* dest_pos = pMask->GetBuffer() + row * pMask->GetPitch();
@@ -976,8 +961,7 @@ bool CFX_DIBitmap::GetGrayData(void* pIccTransform) {
           src_pos += 4;
         }
       }
-      TakeOver(pMask);
-      delete pMask;
+      TakeOver(std::move(pMask));
       break;
     }
     default:
@@ -1342,9 +1326,9 @@ bool CFX_DIBitmap::ConvertColorScale(uint32_t forecolor, uint32_t backcolor) {
   return true;
 }
 
-std::unique_ptr<CFX_DIBitmap> CFX_DIBSource::FlipImage(bool bXFlip,
-                                                       bool bYFlip) const {
-  auto pFlipped = pdfium::MakeUnique<CFX_DIBitmap>();
+CFX_RetainPtr<CFX_DIBitmap> CFX_DIBSource::FlipImage(bool bXFlip,
+                                                     bool bYFlip) const {
+  auto pFlipped = pdfium::MakeRetain<CFX_DIBitmap>();
   if (!pFlipped->Create(m_Width, m_Height, GetFormat()))
     return nullptr;
 
@@ -1414,12 +1398,12 @@ std::unique_ptr<CFX_DIBitmap> CFX_DIBSource::FlipImage(bool bXFlip,
   return pFlipped;
 }
 
-CFX_DIBExtractor::CFX_DIBExtractor(const CFX_DIBSource* pSrc) {
+CFX_DIBExtractor::CFX_DIBExtractor(const CFX_RetainPtr<CFX_DIBSource>& pSrc) {
   if (pSrc->GetBuffer()) {
-    m_pBitmap = pdfium::MakeUnique<CFX_DIBitmap>();
+    m_pBitmap = pdfium::MakeRetain<CFX_DIBitmap>();
     if (!m_pBitmap->Create(pSrc->GetWidth(), pSrc->GetHeight(),
                            pSrc->GetFormat(), pSrc->GetBuffer())) {
-      m_pBitmap.reset();
+      m_pBitmap.Reset();
       return;
     }
     m_pBitmap->SetPalette(pSrc->GetPalette());
@@ -1431,17 +1415,12 @@ CFX_DIBExtractor::CFX_DIBExtractor(const CFX_DIBSource* pSrc) {
 
 CFX_DIBExtractor::~CFX_DIBExtractor() {}
 
-CFX_FilteredDIB::CFX_FilteredDIB() : m_pSrc(nullptr) {}
+CFX_FilteredDIB::CFX_FilteredDIB() {}
 
-CFX_FilteredDIB::~CFX_FilteredDIB() {
-  if (m_bAutoDropSrc) {
-    delete m_pSrc;
-  }
-}
+CFX_FilteredDIB::~CFX_FilteredDIB() {}
 
-void CFX_FilteredDIB::LoadSrc(const CFX_DIBSource* pSrc, bool bAutoDropSrc) {
+void CFX_FilteredDIB::LoadSrc(const CFX_RetainPtr<CFX_DIBSource>& pSrc) {
   m_pSrc = pSrc;
-  m_bAutoDropSrc = bAutoDropSrc;
   m_Width = pSrc->GetWidth();
   m_Height = pSrc->GetHeight();
   FXDIB_Format format = GetDestFormat();
@@ -1478,9 +1457,9 @@ CFX_ImageRenderer::CFX_ImageRenderer() {
 
 CFX_ImageRenderer::~CFX_ImageRenderer() {}
 
-bool CFX_ImageRenderer::Start(CFX_DIBitmap* pDevice,
+bool CFX_ImageRenderer::Start(const CFX_RetainPtr<CFX_DIBitmap>& pDevice,
                               const CFX_ClipRgn* pClipRgn,
-                              const CFX_DIBSource* pSource,
+                              const CFX_RetainPtr<CFX_DIBSource>& pSource,
                               int bitmap_alpha,
                               uint32_t mask_color,
                               const CFX_Matrix* pMatrix,
@@ -1569,7 +1548,7 @@ bool CFX_ImageRenderer::Continue(IFX_Pause* pPause) {
     if (m_pTransformer->Continue(pPause))
       return true;
 
-    std::unique_ptr<CFX_DIBitmap> pBitmap(m_pTransformer->DetachBitmap());
+    CFX_RetainPtr<CFX_DIBitmap> pBitmap = m_pTransformer->DetachBitmap();
     if (!pBitmap || !pBitmap->GetBuffer())
       return false;
 
@@ -1585,16 +1564,16 @@ bool CFX_ImageRenderer::Continue(IFX_Pause* pPause) {
       }
       m_pDevice->CompositeMask(
           m_pTransformer->result().left, m_pTransformer->result().top,
-          pBitmap->GetWidth(), pBitmap->GetHeight(), pBitmap.get(), m_MaskColor,
-          0, 0, m_BlendType, m_pClipRgn, m_bRgbByteOrder, m_AlphaFlag,
+          pBitmap->GetWidth(), pBitmap->GetHeight(), pBitmap, m_MaskColor, 0, 0,
+          m_BlendType, m_pClipRgn, m_bRgbByteOrder, m_AlphaFlag,
           m_pIccTransform);
     } else {
       if (m_BitmapAlpha != 255)
         pBitmap->MultiplyAlpha(m_BitmapAlpha);
       m_pDevice->CompositeBitmap(
           m_pTransformer->result().left, m_pTransformer->result().top,
-          pBitmap->GetWidth(), pBitmap->GetHeight(), pBitmap.get(), 0, 0,
-          m_BlendType, m_pClipRgn, m_bRgbByteOrder, m_pIccTransform);
+          pBitmap->GetWidth(), pBitmap->GetHeight(), pBitmap, 0, 0, m_BlendType,
+          m_pClipRgn, m_bRgbByteOrder, m_pIccTransform);
     }
     return false;
   }
@@ -1607,11 +1586,11 @@ CFX_BitmapStorer::CFX_BitmapStorer() {
 CFX_BitmapStorer::~CFX_BitmapStorer() {
 }
 
-std::unique_ptr<CFX_DIBitmap> CFX_BitmapStorer::Detach() {
+CFX_RetainPtr<CFX_DIBitmap> CFX_BitmapStorer::Detach() {
   return std::move(m_pBitmap);
 }
 
-void CFX_BitmapStorer::Replace(std::unique_ptr<CFX_DIBitmap> pBitmap) {
+void CFX_BitmapStorer::Replace(CFX_RetainPtr<CFX_DIBitmap>&& pBitmap) {
   m_pBitmap = std::move(pBitmap);
 }
 
@@ -1636,12 +1615,13 @@ bool CFX_BitmapStorer::SetInfo(int width,
                                int height,
                                FXDIB_Format src_format,
                                uint32_t* pSrcPalette) {
-  m_pBitmap = pdfium::MakeUnique<CFX_DIBitmap>();
-  if (!m_pBitmap->Create(width, height, src_format)) {
-    m_pBitmap.reset();
+  auto pBitmap = pdfium::MakeRetain<CFX_DIBitmap>();
+  if (!pBitmap->Create(width, height, src_format))
     return false;
-  }
+
   if (pSrcPalette)
-    m_pBitmap->SetPalette(pSrcPalette);
+    pBitmap->SetPalette(pSrcPalette);
+
+  m_pBitmap = std::move(pBitmap);
   return true;
 }

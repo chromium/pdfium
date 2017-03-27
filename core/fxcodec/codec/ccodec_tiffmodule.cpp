@@ -31,26 +31,26 @@ class CCodec_TiffContext {
                      int32_t* comps,
                      int32_t* bpc,
                      CFX_DIBAttribute* pAttribute);
-  bool Decode(CFX_DIBitmap* pDIBitmap);
+  bool Decode(const CFX_RetainPtr<CFX_DIBitmap>& pDIBitmap);
 
   CFX_RetainPtr<IFX_SeekableReadStream> io_in() const { return m_io_in; }
   uint32_t offset() const { return m_offset; }
   void set_offset(uint32_t offset) { m_offset = offset; }
 
  private:
-  bool IsSupport(const CFX_DIBitmap* pDIBitmap) const;
-  void SetPalette(CFX_DIBitmap* pDIBitmap, uint16_t bps);
-  bool Decode1bppRGB(CFX_DIBitmap* pDIBitmap,
+  bool IsSupport(const CFX_RetainPtr<CFX_DIBitmap>& pDIBitmap) const;
+  void SetPalette(const CFX_RetainPtr<CFX_DIBitmap>& pDIBitmap, uint16_t bps);
+  bool Decode1bppRGB(const CFX_RetainPtr<CFX_DIBitmap>& pDIBitmap,
                      int32_t height,
                      int32_t width,
                      uint16_t bps,
                      uint16_t spp);
-  bool Decode8bppRGB(CFX_DIBitmap* pDIBitmap,
+  bool Decode8bppRGB(const CFX_RetainPtr<CFX_DIBitmap>& pDIBitmap,
                      int32_t height,
                      int32_t width,
                      uint16_t bps,
                      uint16_t spp);
-  bool Decode24bppRGB(CFX_DIBitmap* pDIBitmap,
+  bool Decode24bppRGB(const CFX_RetainPtr<CFX_DIBitmap>& pDIBitmap,
                       int32_t height,
                       int32_t width,
                       uint16_t bps,
@@ -287,7 +287,8 @@ bool CCodec_TiffContext::LoadFrameInfo(int32_t frame,
   return true;
 }
 
-bool CCodec_TiffContext::IsSupport(const CFX_DIBitmap* pDIBitmap) const {
+bool CCodec_TiffContext::IsSupport(
+    const CFX_RetainPtr<CFX_DIBitmap>& pDIBitmap) const {
   if (TIFFIsTiled(m_tif_ctx))
     return false;
 
@@ -317,7 +318,9 @@ bool CCodec_TiffContext::IsSupport(const CFX_DIBitmap* pDIBitmap) const {
   return planarconfig != PLANARCONFIG_SEPARATE;
 }
 
-void CCodec_TiffContext::SetPalette(CFX_DIBitmap* pDIBitmap, uint16_t bps) {
+void CCodec_TiffContext::SetPalette(
+    const CFX_RetainPtr<CFX_DIBitmap>& pDIBitmap,
+    uint16_t bps) {
   uint16_t* red_orig = nullptr;
   uint16_t* green_orig = nullptr;
   uint16_t* blue_orig = nullptr;
@@ -340,11 +343,12 @@ void CCodec_TiffContext::SetPalette(CFX_DIBitmap* pDIBitmap, uint16_t bps) {
   }
 }
 
-bool CCodec_TiffContext::Decode1bppRGB(CFX_DIBitmap* pDIBitmap,
-                                       int32_t height,
-                                       int32_t width,
-                                       uint16_t bps,
-                                       uint16_t spp) {
+bool CCodec_TiffContext::Decode1bppRGB(
+    const CFX_RetainPtr<CFX_DIBitmap>& pDIBitmap,
+    int32_t height,
+    int32_t width,
+    uint16_t bps,
+    uint16_t spp) {
   if (pDIBitmap->GetBPP() != 1 || spp != 1 || bps != 1 ||
       !IsSupport(pDIBitmap)) {
     return false;
@@ -368,11 +372,12 @@ bool CCodec_TiffContext::Decode1bppRGB(CFX_DIBitmap* pDIBitmap,
   return true;
 }
 
-bool CCodec_TiffContext::Decode8bppRGB(CFX_DIBitmap* pDIBitmap,
-                                       int32_t height,
-                                       int32_t width,
-                                       uint16_t bps,
-                                       uint16_t spp) {
+bool CCodec_TiffContext::Decode8bppRGB(
+    const CFX_RetainPtr<CFX_DIBitmap>& pDIBitmap,
+    int32_t height,
+    int32_t width,
+    uint16_t bps,
+    uint16_t spp) {
   if (pDIBitmap->GetBPP() != 8 || spp != 1 || (bps != 4 && bps != 8) ||
       !IsSupport(pDIBitmap)) {
     return false;
@@ -404,11 +409,12 @@ bool CCodec_TiffContext::Decode8bppRGB(CFX_DIBitmap* pDIBitmap,
   return true;
 }
 
-bool CCodec_TiffContext::Decode24bppRGB(CFX_DIBitmap* pDIBitmap,
-                                        int32_t height,
-                                        int32_t width,
-                                        uint16_t bps,
-                                        uint16_t spp) {
+bool CCodec_TiffContext::Decode24bppRGB(
+    const CFX_RetainPtr<CFX_DIBitmap>& pDIBitmap,
+    int32_t height,
+    int32_t width,
+    uint16_t bps,
+    uint16_t spp) {
   if (pDIBitmap->GetBPP() != 24 || !IsSupport(pDIBitmap))
     return false;
 
@@ -432,7 +438,7 @@ bool CCodec_TiffContext::Decode24bppRGB(CFX_DIBitmap* pDIBitmap,
   return true;
 }
 
-bool CCodec_TiffContext::Decode(CFX_DIBitmap* pDIBitmap) {
+bool CCodec_TiffContext::Decode(const CFX_RetainPtr<CFX_DIBitmap>& pDIBitmap) {
   uint32_t img_wid = pDIBitmap->GetWidth();
   uint32_t img_hei = pDIBitmap->GetHeight();
   uint32_t width = 0;
@@ -493,7 +499,7 @@ bool CCodec_TiffModule::LoadFrameInfo(CCodec_TiffContext* ctx,
 }
 
 bool CCodec_TiffModule::Decode(CCodec_TiffContext* ctx,
-                               class CFX_DIBitmap* pDIBitmap) {
+                               const CFX_RetainPtr<CFX_DIBitmap>& pDIBitmap) {
   return ctx->Decode(pDIBitmap);
 }
 

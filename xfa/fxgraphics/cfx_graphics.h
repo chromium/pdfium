@@ -64,7 +64,7 @@ class CFX_Graphics {
   void FillPath(CFX_Path* path,
                 FX_FillMode fillMode = FXFILL_WINDING,
                 CFX_Matrix* matrix = nullptr);
-  void StretchImage(CFX_DIBSource* source,
+  void StretchImage(const CFX_RetainPtr<CFX_DIBSource>& source,
                     const CFX_RectF& rect,
                     CFX_Matrix* matrix = nullptr);
   void ConcatMatrix(const CFX_Matrix* matrix);
@@ -90,7 +90,7 @@ class CFX_Graphics {
   void RenderDeviceFillPath(CFX_Path* path,
                             FX_FillMode fillMode,
                             CFX_Matrix* matrix);
-  void RenderDeviceStretchImage(CFX_DIBSource* source,
+  void RenderDeviceStretchImage(const CFX_RetainPtr<CFX_DIBSource>& source,
                                 const CFX_RectF& rect,
                                 CFX_Matrix* matrix);
 
@@ -101,7 +101,8 @@ class CFX_Graphics {
                            FX_FillMode fillMode,
                            CFX_Matrix* matrix);
 
-  void SetDIBitsWithMatrix(CFX_DIBSource* source, CFX_Matrix* matrix);
+  void SetDIBitsWithMatrix(const CFX_RetainPtr<CFX_DIBSource>& source,
+                           CFX_Matrix* matrix);
 
   CFX_RenderDevice* m_renderDevice;
   std::vector<std::unique_ptr<TInfo>> m_infoStack;

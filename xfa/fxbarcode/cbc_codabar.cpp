@@ -93,7 +93,8 @@ bool CBC_Codabar::RenderDevice(CFX_RenderDevice* device,
   return true;
 }
 
-bool CBC_Codabar::RenderBitmap(CFX_DIBitmap*& pOutBitmap, int32_t& e) {
+bool CBC_Codabar::RenderBitmap(CFX_RetainPtr<CFX_DIBitmap>& pOutBitmap,
+                               int32_t& e) {
   CFX_WideString renderCon =
       static_cast<CBC_OnedCodaBarWriter*>(m_pBCWriter.get())
           ->encodedContents(m_renderContents.AsStringC());

@@ -558,7 +558,7 @@ class CXFA_ImageRenderer {
   ~CXFA_ImageRenderer();
 
   bool Start(CFX_RenderDevice* pDevice,
-             CFX_DIBSource* pDIBSource,
+             const CFX_RetainPtr<CFX_DIBSource>& pDIBSource,
              FX_ARGB bitmap_argb,
              int bitmap_alpha,
              const CFX_Matrix* pImage2Device,
@@ -568,7 +568,7 @@ class CXFA_ImageRenderer {
 
  protected:
   bool StartDIBSource();
-  void CompositeDIBitmap(CFX_DIBitmap* pDIBitmap,
+  void CompositeDIBitmap(const CFX_RetainPtr<CFX_DIBitmap>& pDIBitmap,
                          int left,
                          int top,
                          FX_ARGB mask_argb,
@@ -579,8 +579,8 @@ class CXFA_ImageRenderer {
   CFX_RenderDevice* m_pDevice;
   int m_Status;
   CFX_Matrix m_ImageMatrix;
-  CFX_DIBSource* m_pDIBSource;
-  std::unique_ptr<CFX_DIBitmap> m_pCloneConvert;
+  CFX_RetainPtr<CFX_DIBSource> m_pDIBSource;
+  CFX_RetainPtr<CFX_DIBitmap> m_pCloneConvert;
   int m_BitmapAlpha;
   FX_ARGB m_FillArgb;
   uint32_t m_Flags;
@@ -594,7 +594,6 @@ class CXFA_ImageRenderer {
 CXFA_ImageRenderer::CXFA_ImageRenderer()
     : m_pDevice(nullptr),
       m_Status(0),
-      m_pDIBSource(nullptr),
       m_BitmapAlpha(255),
       m_FillArgb(0),
       m_Flags(0),
@@ -609,7 +608,7 @@ CXFA_ImageRenderer::~CXFA_ImageRenderer() {
 }
 
 bool CXFA_ImageRenderer::Start(CFX_RenderDevice* pDevice,
-                               CFX_DIBSource* pDIBSource,
+                               const CFX_RetainPtr<CFX_DIBSource>& pDIBSource,
                                FX_ARGB bitmap_argb,
                                int bitmap_alpha,
                                const CFX_Matrix* pImage2Device,
@@ -645,7 +644,7 @@ bool CXFA_ImageRenderer::StartDIBSource() {
       m_Result = false;
       return false;
     }
-    CFX_DIBSource* pDib = m_pDIBSource;
+    CFX_RetainPtr<CFX_DIBSource> pDib = m_pDIBSource;
     if (m_pDIBSource->HasAlpha() &&
         !(m_pDevice->GetRenderCaps() & FXRC_ALPHA_IMAGE) &&
         !(m_pDevice->GetRenderCaps() & FXRC_GET_BITS)) {
@@ -654,13 +653,13 @@ bool CXFA_ImageRenderer::StartDIBSource() {
         m_Result = false;
         return false;
       }
-      pDib = m_pCloneConvert.get();
+      pDib = m_pCloneConvert;
     }
     FX_RECT clip_box = m_pDevice->GetClipBox();
     clip_box.Intersect(image_rect);
     m_Status = 2;
-    m_pTransformer.reset(
-        new CFX_ImageTransformer(pDib, &m_ImageMatrix, m_Flags, &clip_box));
+    m_pTransformer = pdfium::MakeUnique<CFX_ImageTransformer>(
+        pDib, &m_ImageMatrix, m_Flags, &clip_box);
     m_pTransformer->Start();
     return true;
   }
@@ -700,11 +699,11 @@ bool CXFA_ImageRenderer::StartDIBSource() {
   FX_RECT dest_clip(
       dest_rect.left - image_rect.left, dest_rect.top - image_rect.top,
       dest_rect.right - image_rect.left, dest_rect.bottom - image_rect.top);
-  std::unique_ptr<CFX_DIBitmap> pStretched(
-      m_pDIBSource->StretchTo(dest_width, dest_height, m_Flags, &dest_clip));
+  CFX_RetainPtr<CFX_DIBitmap> pStretched =
+      m_pDIBSource->StretchTo(dest_width, dest_height, m_Flags, &dest_clip);
   if (pStretched) {
-    CompositeDIBitmap(pStretched.get(), dest_rect.left, dest_rect.top,
-                      m_FillArgb, m_BitmapAlpha, m_BlendType, false);
+    CompositeDIBitmap(pStretched, dest_rect.left, dest_rect.top, m_FillArgb,
+                      m_BitmapAlpha, m_BlendType, false);
   }
   return false;
 }
@@ -714,7 +713,7 @@ bool CXFA_ImageRenderer::Continue(IFX_Pause* pPause) {
     if (m_pTransformer->Continue(pPause))
       return true;
 
-    std::unique_ptr<CFX_DIBitmap> pBitmap(m_pTransformer->DetachBitmap());
+    CFX_RetainPtr<CFX_DIBitmap> pBitmap = m_pTransformer->DetachBitmap();
     if (!pBitmap)
       return false;
 
@@ -722,14 +721,14 @@ bool CXFA_ImageRenderer::Continue(IFX_Pause* pPause) {
       if (m_BitmapAlpha != 255)
         m_FillArgb = FXARGB_MUL_ALPHA(m_FillArgb, m_BitmapAlpha);
       m_Result =
-          m_pDevice->SetBitMask(pBitmap.get(), m_pTransformer->result().left,
+          m_pDevice->SetBitMask(pBitmap, m_pTransformer->result().left,
                                 m_pTransformer->result().top, m_FillArgb);
     } else {
       if (m_BitmapAlpha != 255)
         pBitmap->MultiplyAlpha(m_BitmapAlpha);
       m_Result = m_pDevice->SetDIBitsWithBlend(
-          pBitmap.get(), m_pTransformer->result().left,
-          m_pTransformer->result().top, m_BlendType);
+          pBitmap, m_pTransformer->result().left, m_pTransformer->result().top,
+          m_BlendType);
     }
     return false;
   }
@@ -739,13 +738,14 @@ bool CXFA_ImageRenderer::Continue(IFX_Pause* pPause) {
   return false;
 }
 
-void CXFA_ImageRenderer::CompositeDIBitmap(CFX_DIBitmap* pDIBitmap,
-                                           int left,
-                                           int top,
-                                           FX_ARGB mask_argb,
-                                           int bitmap_alpha,
-                                           int blend_mode,
-                                           int Transparency) {
+void CXFA_ImageRenderer::CompositeDIBitmap(
+    const CFX_RetainPtr<CFX_DIBitmap>& pDIBitmap,
+    int left,
+    int top,
+    FX_ARGB mask_argb,
+    int bitmap_alpha,
+    int blend_mode,
+    int Transparency) {
   if (!pDIBitmap) {
     return;
   }
@@ -785,10 +785,10 @@ void CXFA_ImageRenderer::CompositeDIBitmap(CFX_DIBitmap* pDIBitmap,
       FX_RECT rect(left, top, left + pDIBitmap->GetWidth(),
                    top + pDIBitmap->GetHeight());
       rect.Intersect(m_pDevice->GetClipBox());
-      CFX_MaybeOwned<CFX_DIBitmap> pClone;
+      CFX_RetainPtr<CFX_DIBitmap> pClone;
       if (m_pDevice->GetBackDrop() && m_pDevice->GetBitmap()) {
         pClone = m_pDevice->GetBackDrop()->Clone(&rect);
-        CFX_DIBitmap* pForeBitmap = m_pDevice->GetBitmap();
+        CFX_RetainPtr<CFX_DIBitmap> pForeBitmap = m_pDevice->GetBitmap();
         pClone->CompositeBitmap(0, 0, pClone->GetWidth(), pClone->GetHeight(),
                                 pForeBitmap, rect.left, rect.top);
         left = left >= 0 ? 0 : left;
@@ -803,7 +803,7 @@ void CXFA_ImageRenderer::CompositeDIBitmap(CFX_DIBitmap* pDIBitmap,
         pClone = pDIBitmap;
       }
       if (m_pDevice->GetBackDrop()) {
-        m_pDevice->SetDIBits(pClone.Get(), rect.left, rect.top);
+        m_pDevice->SetDIBits(pClone, rect.left, rect.top);
       } else {
         if (pDIBitmap->IsAlphaMask())
           return;
@@ -817,14 +817,14 @@ void CXFA_ImageRenderer::CompositeDIBitmap(CFX_DIBitmap* pDIBitmap,
       (m_pDevice->GetRenderCaps() & FXRC_ALPHA_IMAGE)) {
     return;
   }
-  std::unique_ptr<CFX_DIBitmap> pCloneConvert =
+  CFX_RetainPtr<CFX_DIBitmap> pCloneConvert =
       pDIBitmap->CloneConvert(FXDIB_Rgb);
   if (!pCloneConvert)
     return;
 
   CXFA_ImageRenderer imageRender;
-  if (!imageRender.Start(m_pDevice, pCloneConvert.get(), m_FillArgb,
-                         m_BitmapAlpha, &m_ImageMatrix, m_Flags)) {
+  if (!imageRender.Start(m_pDevice, pCloneConvert, m_FillArgb, m_BitmapAlpha,
+                         &m_ImageMatrix, m_Flags)) {
     return;
   }
   while (imageRender.Continue(nullptr))
@@ -834,7 +834,7 @@ void CXFA_ImageRenderer::CompositeDIBitmap(CFX_DIBitmap* pDIBitmap,
 void XFA_DrawImage(CFX_Graphics* pGS,
                    const CFX_RectF& rtImage,
                    CFX_Matrix* pMatrix,
-                   CFX_DIBitmap* pDIBitmap,
+                   const CFX_RetainPtr<CFX_DIBitmap>& pDIBitmap,
                    int32_t iAspect,
                    int32_t iImageXDpi,
                    int32_t iImageYDpi,
@@ -1034,18 +1034,19 @@ FXCODEC_IMAGE_TYPE XFA_GetImageType(const CFX_WideString& wsType) {
     return FXCODEC_IMAGE_TIF;
   return FXCODEC_IMAGE_UNKNOWN;
 }
-CFX_DIBitmap* XFA_LoadImageData(CXFA_FFDoc* pDoc,
-                                CXFA_Image* pImage,
-                                bool& bNameImage,
-                                int32_t& iImageXDpi,
-                                int32_t& iImageYDpi) {
+
+CFX_RetainPtr<CFX_DIBitmap> XFA_LoadImageData(CXFA_FFDoc* pDoc,
+                                              CXFA_Image* pImage,
+                                              bool& bNameImage,
+                                              int32_t& iImageXDpi,
+                                              int32_t& iImageYDpi) {
   CFX_WideString wsHref;
-  pImage->GetHref(wsHref);
   CFX_WideString wsImage;
+  pImage->GetHref(wsHref);
   pImage->GetContent(wsImage);
-  if (wsHref.IsEmpty() && wsImage.IsEmpty()) {
+  if (wsHref.IsEmpty() && wsImage.IsEmpty())
     return nullptr;
-  }
+
   CFX_WideString wsContentType;
   pImage->GetContentType(wsContentType);
   FXCODEC_IMAGE_TYPE type = XFA_GetImageType(wsContentType);
@@ -1071,7 +1072,7 @@ CFX_DIBitmap* XFA_LoadImageData(CXFA_FFDoc* pDoc,
   } else {
     CFX_WideString wsURL = wsHref;
     if (wsURL.Left(7) != L"http://" && wsURL.Left(6) != L"ftp://") {
-      CFX_DIBitmap* pBitmap =
+      CFX_RetainPtr<CFX_DIBitmap> pBitmap =
           pDoc->GetPDFNamedImage(wsURL.AsStringC(), iImageXDpi, iImageYDpi);
       if (pBitmap) {
         bNameImage = true;
@@ -1085,7 +1086,7 @@ CFX_DIBitmap* XFA_LoadImageData(CXFA_FFDoc* pDoc,
     return nullptr;
   }
   bNameImage = false;
-  CFX_DIBitmap* pBitmap =
+  CFX_RetainPtr<CFX_DIBitmap> pBitmap =
       XFA_LoadImageFromBuffer(pImageFileRead, type, iImageXDpi, iImageYDpi);
   FX_Free(pImageBuffer);
   return pBitmap;
@@ -1111,7 +1112,7 @@ static FXDIB_Format XFA_GetDIBFormat(FXCODEC_IMAGE_TYPE type,
   return dibFormat;
 }
 
-CFX_DIBitmap* XFA_LoadImageFromBuffer(
+CFX_RetainPtr<CFX_DIBitmap> XFA_LoadImageFromBuffer(
     const CFX_RetainPtr<IFX_SeekableReadStream>& pImageFileRead,
     FXCODEC_IMAGE_TYPE type,
     int32_t& iImageXDpi,
@@ -1125,7 +1126,7 @@ CFX_DIBitmap* XFA_LoadImageFromBuffer(
     return nullptr;
 
   CFX_DIBAttribute dibAttr;
-  CFX_DIBitmap* pBitmap = nullptr;
+  CFX_RetainPtr<CFX_DIBitmap> pBitmap;
   std::unique_ptr<CCodec_ProgressiveDecoder> pProgressiveDecoder =
       pCodecMgr->CreateProgressiveDecoder();
   pProgressiveDecoder->LoadImageInfo(pImageFileRead, type, &dibAttr, false);
@@ -1149,7 +1150,7 @@ CFX_DIBitmap* XFA_LoadImageFromBuffer(
     int32_t iComponents = pProgressiveDecoder->GetNumComponents();
     int32_t iBpc = pProgressiveDecoder->GetBPC();
     FXDIB_Format dibFormat = XFA_GetDIBFormat(type, iComponents, iBpc);
-    pBitmap = new CFX_DIBitmap();
+    pBitmap = pdfium::MakeRetain<CFX_DIBitmap>();
     pBitmap->Create(pProgressiveDecoder->GetWidth(),
                     pProgressiveDecoder->GetHeight(), dibFormat);
     pBitmap->Clear(0xffffffff);
