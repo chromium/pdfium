@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fxfa/parser/xfa_localevalue.h"
+#include "xfa/fxfa/parser/cxfa_localevalue.h"
 
 #include <vector>
 
@@ -13,7 +13,7 @@
 #include "third_party/base/stl_util.h"
 #include "xfa/fgas/localization/cfx_formatstring.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
-#include "xfa/fxfa/parser/xfa_localemgr.h"
+#include "xfa/fxfa/parser/cxfa_localemgr.h"
 #include "xfa/fxfa/parser/xfa_object.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
 

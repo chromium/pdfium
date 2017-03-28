@@ -10,7 +10,7 @@
 #include <vector>
 
 #include "xfa/fgas/localization/fgas_locale.h"
-#include "xfa/fxfa/parser/xfa_localemgr.h"
+#include "xfa/fxfa/parser/cxfa_localemgr.h"
 
 class CFX_FormatString {
  public:

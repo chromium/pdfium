@@ -16,10 +16,10 @@
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_layoutitem.h"
 #include "xfa/fxfa/parser/cxfa_layoutprocessor.h"
+#include "xfa/fxfa/parser/cxfa_localemgr.h"
 #include "xfa/fxfa/parser/cxfa_measurement.h"
 #include "xfa/fxfa/parser/cxfa_scriptcontext.h"
 #include "xfa/fxfa/parser/cxfa_traversestrategy_contentlayoutitem.h"
-#include "xfa/fxfa/parser/xfa_localemgr.h"
 #include "xfa/fxfa/parser/xfa_object.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
 

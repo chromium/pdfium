@@ -26,7 +26,7 @@
 #include "xfa/fxfa/cxfa_ffdocview.h"
 #include "xfa/fxfa/cxfa_ffpageview.h"
 #include "xfa/fxfa/cxfa_ffwidget.h"
-#include "xfa/fxfa/parser/xfa_localevalue.h"
+#include "xfa/fxfa/parser/cxfa_localevalue.h"
 
 CXFA_FFTextEdit::CXFA_FFTextEdit(CXFA_WidgetAcc* pDataAcc)
     : CXFA_FFField(pDataAcc), m_pOldDelegate(nullptr) {}

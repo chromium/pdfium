@@ -11,14 +11,14 @@
 #include "xfa/fxfa/parser/cxfa_containerlayoutitem.h"
 #include "xfa/fxfa/parser/cxfa_contentlayoutitem.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
+#include "xfa/fxfa/parser/cxfa_itemlayoutprocessor.h"
 #include "xfa/fxfa/parser/cxfa_layoutprocessor.h"
+#include "xfa/fxfa/parser/cxfa_localemgr.h"
 #include "xfa/fxfa/parser/cxfa_measurement.h"
 #include "xfa/fxfa/parser/cxfa_scriptcontext.h"
 #include "xfa/fxfa/parser/cxfa_traversestrategy_contentareacontainerlayoutitem.h"
 #include "xfa/fxfa/parser/cxfa_traversestrategy_layoutitem.h"
 #include "xfa/fxfa/parser/xfa_document_datamerger_imp.h"
-#include "xfa/fxfa/parser/xfa_layout_itemlayout.h"
-#include "xfa/fxfa/parser/xfa_localemgr.h"
 #include "xfa/fxfa/parser/xfa_object.h"
 #include "xfa/fxfa/parser/xfa_resolvenode_rs.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
@@ -1632,9 +1632,7 @@ void CXFA_LayoutPageMgr::SaveLayoutItem(CXFA_LayoutItem* pParentLayoutItem) {
   }
 }
 
-CXFA_Node* CXFA_LayoutPageMgr::QueryOverflow(
-    CXFA_Node* pFormNode,
-    CXFA_LayoutContext* pLayoutContext) {
+CXFA_Node* CXFA_LayoutPageMgr::QueryOverflow(CXFA_Node* pFormNode) {
   for (CXFA_Node* pCurNode = pFormNode->GetNodeItem(XFA_NODEITEM_FirstChild);
        pCurNode; pCurNode = pCurNode->GetNodeItem((XFA_NODEITEM_NextSibling))) {
     if (pCurNode->GetElementType() == XFA_Element::Break) {

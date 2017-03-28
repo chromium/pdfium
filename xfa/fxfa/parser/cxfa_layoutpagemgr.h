@@ -12,10 +12,11 @@
 #include <map>
 #include <vector>
 
-#include "xfa/fxfa/parser/xfa_layout_itemlayout.h"
+#include "xfa/fxfa/parser/cxfa_itemlayoutprocessor.h"
 
 class CXFA_ContainerRecord;
 class CXFA_LayoutItem;
+class CXFA_Node;
 
 class CXFA_LayoutPageMgr {
  public:
@@ -46,8 +47,7 @@ class CXFA_LayoutPageMgr {
                        CXFA_Node*& pTrailerNode,
                        bool bDataMerge = false,
                        bool bCreatePage = true);
-  CXFA_Node* QueryOverflow(CXFA_Node* pFormNode,
-                           CXFA_LayoutContext* pLayoutContext = nullptr);
+  CXFA_Node* QueryOverflow(CXFA_Node* pFormNode);
   bool ProcessBookendLeaderOrTrailer(CXFA_Node* pBookendNode,
                                      bool bLeader,
                                      CXFA_Node*& pBookendAppendNode);

@@ -4,15 +4,15 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXFA_PARSER_XFA_LOCALEMGR_H_
-#define XFA_FXFA_PARSER_XFA_LOCALEMGR_H_
+#ifndef XFA_FXFA_PARSER_CXFA_LOCALEMGR_H_
+#define XFA_FXFA_PARSER_CXFA_LOCALEMGR_H_
 
 #include <memory>
 #include <vector>
 
 #include "xfa/fgas/localization/fgas_datetime.h"
 #include "xfa/fgas/localization/fgas_locale.h"
-#include "xfa/fxfa/parser/xfa_localemgr.h"
+#include "xfa/fxfa/parser/cxfa_localemgr.h"
 
 class CXFA_Node;
 class IFX_Locale;
@@ -56,15 +56,4 @@ class CXFA_LocaleMgr {
   uint16_t m_dwLocaleFlags;
 };
 
-class CXFA_TimeZoneProvider {
- public:
-  CXFA_TimeZoneProvider();
-  ~CXFA_TimeZoneProvider();
-
-  void GetTimeZone(FX_TIMEZONE* tz) const;
-
- private:
-  FX_TIMEZONE m_tz;
-};
-
-#endif  // XFA_FXFA_PARSER_XFA_LOCALEMGR_H_
+#endif  // XFA_FXFA_PARSER_CXFA_LOCALEMGR_H_

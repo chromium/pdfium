@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXFA_PARSER_XFA_LAYOUT_ITEMLAYOUT_H_
-#define XFA_FXFA_PARSER_XFA_LAYOUT_ITEMLAYOUT_H_
+#ifndef XFA_FXFA_PARSER_CXFA_ITEMLAYOUTPROCESSOR_H_
+#define XFA_FXFA_PARSER_CXFA_ITEMLAYOUTPROCESSOR_H_
 
 #include <float.h>
 
@@ -24,6 +24,7 @@
 class CXFA_ContainerLayoutItem;
 class CXFA_ContentLayoutItem;
 class CXFA_ItemLayoutProcessor;
+class CXFA_LayoutContext;
 class CXFA_LayoutPageMgr;
 class CXFA_LayoutProcessor;
 class CXFA_Node;
@@ -44,23 +45,6 @@ enum class XFA_ItemLayoutProcessorStages {
   BreakAfter,
   BookendTrailer,
   Done,
-};
-
-class CXFA_LayoutContext {
- public:
-  CXFA_LayoutContext()
-      : m_prgSpecifiedColumnWidths(nullptr),
-        m_fCurColumnWidth(0),
-        m_bCurColumnWidthAvaiable(false),
-        m_pOverflowProcessor(nullptr),
-        m_pOverflowNode(nullptr) {}
-  ~CXFA_LayoutContext() {}
-
-  std::vector<float>* m_prgSpecifiedColumnWidths;
-  float m_fCurColumnWidth;
-  bool m_bCurColumnWidthAvaiable;
-  CXFA_ItemLayoutProcessor* m_pOverflowProcessor;
-  CXFA_Node* m_pOverflowNode;
 };
 
 bool XFA_ItemLayoutProcessor_IsTakingSpace(CXFA_Node* pNode);
@@ -185,4 +169,4 @@ class CXFA_ItemLayoutProcessor {
   bool m_bHasAvailHeight;
 };
 
-#endif  // XFA_FXFA_PARSER_XFA_LAYOUT_ITEMLAYOUT_H_
+#endif  // XFA_FXFA_PARSER_CXFA_ITEMLAYOUTPROCESSOR_H_

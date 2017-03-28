@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fxfa/parser/xfa_layout_itemlayout.h"
+#include "xfa/fxfa/parser/cxfa_itemlayoutprocessor.h"
 
 #include <algorithm>
 #include <memory>
@@ -17,10 +17,11 @@
 #include "xfa/fxfa/parser/cxfa_containerlayoutitem.h"
 #include "xfa/fxfa/parser/cxfa_contentlayoutitem.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
+#include "xfa/fxfa/parser/cxfa_layoutcontext.h"
 #include "xfa/fxfa/parser/cxfa_layoutpagemgr.h"
+#include "xfa/fxfa/parser/cxfa_localemgr.h"
 #include "xfa/fxfa/parser/cxfa_measurement.h"
 #include "xfa/fxfa/parser/cxfa_occur.h"
-#include "xfa/fxfa/parser/xfa_localemgr.h"
 #include "xfa/fxfa/parser/xfa_object.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
 

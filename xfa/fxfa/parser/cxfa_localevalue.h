@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXFA_PARSER_XFA_LOCALEVALUE_H_
-#define XFA_FXFA_PARSER_XFA_LOCALEVALUE_H_
+#ifndef XFA_FXFA_PARSER_CXFA_LOCALEVALUE_H_
+#define XFA_FXFA_PARSER_CXFA_LOCALEVALUE_H_
 
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
@@ -109,4 +109,4 @@ class CXFA_LocaleValue {
   bool m_bValid;
 };
 
-#endif  // XFA_FXFA_PARSER_XFA_LOCALEVALUE_H_
+#endif  // XFA_FXFA_PARSER_CXFA_LOCALEVALUE_H_

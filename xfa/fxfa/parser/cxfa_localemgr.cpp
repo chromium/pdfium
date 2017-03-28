@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fxfa/parser/xfa_localemgr.h"
+#include "xfa/fxfa/parser/cxfa_localemgr.h"
 
 #include <time.h>
 
@@ -15,7 +15,8 @@
 #include "core/fxcrt/fx_xml.h"
 #include "core/fxge/cfx_gemodule.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
-#include "xfa/fxfa/parser/xfa_locale.h"
+#include "xfa/fxfa/parser/cxfa_nodelocale.h"
+#include "xfa/fxfa/parser/cxfa_xmllocale.h"
 #include "xfa/fxfa/parser/xfa_object.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
 
@@ -1245,30 +1246,4 @@ CFX_WideStringC CXFA_LocaleMgr::GetConfigLocaleName(CXFA_Node* pConfig) {
     m_dwLocaleFlags |= 0x01;
   }
   return m_wsConfigLocale.AsStringC();
-}
-
-static bool g_bProviderTimeZoneSet = false;
-
-CXFA_TimeZoneProvider::CXFA_TimeZoneProvider() {
-#if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
-  if (!g_bProviderTimeZoneSet) {
-    g_bProviderTimeZoneSet = true;
-    _tzset();
-  }
-  m_tz.tzHour = (int8_t)(_timezone / 3600 * -1);
-  m_tz.tzMinute = (int8_t)((FXSYS_abs(_timezone) % 3600) / 60);
-#else
-  if (!g_bProviderTimeZoneSet) {
-    g_bProviderTimeZoneSet = true;
-    tzset();
-  }
-  m_tz.tzHour = (int8_t)(timezone / 3600 * -1);
-  m_tz.tzMinute = (int8_t)((FXSYS_abs((int)timezone) % 3600) / 60);
-#endif
-}
-
-CXFA_TimeZoneProvider::~CXFA_TimeZoneProvider() {}
-
-void CXFA_TimeZoneProvider::GetTimeZone(FX_TIMEZONE* tz) const {
-  *tz = m_tz;
 }

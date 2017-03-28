@@ -12,8 +12,8 @@
 #include "xfa/fxfa/app/xfa_ffnotify.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_event.h"
+#include "xfa/fxfa/parser/cxfa_localevalue.h"
 #include "xfa/fxfa/parser/cxfa_measurement.h"
-#include "xfa/fxfa/parser/xfa_localevalue.h"
 #include "xfa/fxfa/parser/xfa_object.h"
 
 namespace {

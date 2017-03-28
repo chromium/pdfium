@@ -13,7 +13,7 @@
 #include <vector>
 
 #include "xfa/fxfa/fxfa.h"
-#include "xfa/fxfa/parser/xfa_localemgr.h"
+#include "xfa/fxfa/parser/cxfa_localemgr.h"
 #include "xfa/fxfa/parser/xfa_object.h"
 
 enum XFA_VERSION {
