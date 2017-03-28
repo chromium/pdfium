@@ -65,7 +65,13 @@ class CXFA_TabParam {
   explicit CXFA_TabParam(CXFA_FFWidget* pWidget);
   ~CXFA_TabParam();
 
-  CXFA_FFWidget* m_pWidget;
+  void AppendTabParam(CXFA_TabParam* pParam);
+  void ClearChildren();
+  CXFA_FFWidget* GetWidget() { return m_pWidget; }
+  const std::vector<CXFA_FFWidget*>& GetChildren() const { return m_Children; }
+
+ private:
+  CXFA_FFWidget* const m_pWidget;
   std::vector<CXFA_FFWidget*> m_Children;
 };
 

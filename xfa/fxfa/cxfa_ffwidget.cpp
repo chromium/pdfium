@@ -43,13 +43,13 @@ const CFWL_App* CXFA_FFWidget::GetFWLApp() {
   return GetPageView()->GetDocView()->GetDoc()->GetApp()->GetFWLApp();
 }
 
-CFX_RectF CXFA_FFWidget::GetWidgetRect() {
+const CFX_RectF& CXFA_FFWidget::GetWidgetRect() const {
   if ((m_dwStatus & XFA_WidgetStatus_RectCached) == 0)
     RecacheWidgetRect();
   return m_rtWidget;
 }
 
-CFX_RectF CXFA_FFWidget::RecacheWidgetRect() {
+const CFX_RectF& CXFA_FFWidget::RecacheWidgetRect() const {
   m_dwStatus |= XFA_WidgetStatus_RectCached;
   m_rtWidget = GetRect(false);
   return m_rtWidget;

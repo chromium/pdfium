@@ -151,6 +151,7 @@ CXFA_FFPageWidgetIterator::~CXFA_FFPageWidgetIterator() {}
 void CXFA_FFPageWidgetIterator::Reset() {
   m_sIterator.Reset();
 }
+
 CXFA_FFWidget* CXFA_FFPageWidgetIterator::MoveToFirst() {
   m_sIterator.Reset();
   for (CXFA_LayoutItem* pLayoutItem = m_sIterator.GetCurrent(); pLayoutItem;
@@ -161,10 +162,12 @@ CXFA_FFWidget* CXFA_FFPageWidgetIterator::MoveToFirst() {
   }
   return nullptr;
 }
+
 CXFA_FFWidget* CXFA_FFPageWidgetIterator::MoveToLast() {
   m_sIterator.SetCurrent(nullptr);
   return MoveToPrevious();
 }
+
 CXFA_FFWidget* CXFA_FFPageWidgetIterator::MoveToNext() {
   for (CXFA_LayoutItem* pLayoutItem = m_sIterator.MoveToNext(); pLayoutItem;
        pLayoutItem = m_sIterator.MoveToNext()) {
@@ -174,6 +177,7 @@ CXFA_FFWidget* CXFA_FFPageWidgetIterator::MoveToNext() {
   }
   return nullptr;
 }
+
 CXFA_FFWidget* CXFA_FFPageWidgetIterator::MoveToPrevious() {
   for (CXFA_LayoutItem* pLayoutItem = m_sIterator.MoveToPrev(); pLayoutItem;
        pLayoutItem = m_sIterator.MoveToPrev()) {
@@ -183,26 +187,40 @@ CXFA_FFWidget* CXFA_FFPageWidgetIterator::MoveToPrevious() {
   }
   return nullptr;
 }
+
 CXFA_FFWidget* CXFA_FFPageWidgetIterator::GetCurrentWidget() {
   CXFA_LayoutItem* pLayoutItem = m_sIterator.GetCurrent();
   return pLayoutItem ? XFA_GetWidgetFromLayoutItem(pLayoutItem) : nullptr;
 }
+
 bool CXFA_FFPageWidgetIterator::SetCurrentWidget(CXFA_FFWidget* hWidget) {
   return hWidget && m_sIterator.SetCurrent(hWidget);
 }
+
 CXFA_FFWidget* CXFA_FFPageWidgetIterator::GetWidget(
     CXFA_LayoutItem* pLayoutItem) {
-  if (CXFA_FFWidget* pWidget = XFA_GetWidgetFromLayoutItem(pLayoutItem)) {
-    if (!PageWidgetFilter(pWidget, m_dwFilter, false, m_bIgnorerelevant)) {
-      return nullptr;
-    }
-    if (!pWidget->IsLoaded() &&
-        (pWidget->GetStatus() & XFA_WidgetStatus_Visible) != 0) {
-      pWidget->LoadWidget();
-    }
-    return pWidget;
+  CXFA_FFWidget* pWidget = XFA_GetWidgetFromLayoutItem(pLayoutItem);
+  if (!pWidget)
+    return nullptr;
+
+  if (!PageWidgetFilter(pWidget, m_dwFilter, false, m_bIgnorerelevant))
+    return nullptr;
+
+  if (!pWidget->IsLoaded() &&
+      !!(pWidget->GetStatus() & XFA_WidgetStatus_Visible)) {
+    pWidget->LoadWidget();
   }
-  return nullptr;
+  return pWidget;
+}
+
+void CXFA_TabParam::AppendTabParam(CXFA_TabParam* pParam) {
+  m_Children.push_back(pParam->GetWidget());
+  m_Children.insert(m_Children.end(), pParam->GetChildren().begin(),
+                    pParam->GetChildren().end());
+}
+
+void CXFA_TabParam::ClearChildren() {
+  m_Children.clear();
 }
 
 CXFA_FFTabOrderPageWidgetIterator::CXFA_FFTabOrderPageWidgetIterator(
@@ -398,19 +416,16 @@ void CXFA_FFTabOrderPageWidgetIterator::OrderContainer(
   std::sort(tabParams.begin(), tabParams.end(),
             [](const std::unique_ptr<CXFA_TabParam>& arg1,
                const std::unique_ptr<CXFA_TabParam>& arg2) {
-              CFX_RectF rt1 = arg1->m_pWidget->GetWidgetRect();
-              CFX_RectF rt2 = arg2->m_pWidget->GetWidgetRect();
+              const CFX_RectF& rt1 = arg1->GetWidget()->GetWidgetRect();
+              const CFX_RectF& rt2 = arg2->GetWidget()->GetWidgetRect();
               if (rt1.top - rt2.top >= XFA_FLOAT_PERCISION)
                 return rt1.top < rt2.top;
               return rt1.left < rt2.left;
             });
-  for (const auto& pParam : tabParams) {
-    pContainer->m_Children.push_back(pParam->m_pWidget);
-    pContainer->m_Children.insert(pContainer->m_Children.end(),
-                                  pParam->m_Children.begin(),
-                                  pParam->m_Children.end());
-  }
+  for (const auto& pParam : tabParams)
+    pContainer->AppendTabParam(pParam.get());
 }
+
 void CXFA_FFTabOrderPageWidgetIterator::CreateSpaceOrderWidgetArray(
     std::vector<CXFA_FFWidget*>* WidgetArray) {
   CXFA_LayoutItemIterator sIterator(m_pPageView);
@@ -418,17 +433,17 @@ void CXFA_FFTabOrderPageWidgetIterator::CreateSpaceOrderWidgetArray(
   bool bCurrentItem = false;
   bool bContentArea = false;
   OrderContainer(&sIterator, nullptr, pParam.get(), bCurrentItem, bContentArea);
-  WidgetArray->insert(WidgetArray->end(), pParam->m_Children.begin(),
-                      pParam->m_Children.end());
+  WidgetArray->insert(WidgetArray->end(), pParam->GetChildren().begin(),
+                      pParam->GetChildren().end());
 
   sIterator.Reset();
   bCurrentItem = false;
   bContentArea = false;
-  pParam->m_Children.clear();
+  pParam->ClearChildren();
   OrderContainer(&sIterator, nullptr, pParam.get(), bCurrentItem, bContentArea,
                  true);
-  WidgetArray->insert(WidgetArray->end(), pParam->m_Children.begin(),
-                      pParam->m_Children.end());
+  WidgetArray->insert(WidgetArray->end(), pParam->GetChildren().begin(),
+                      pParam->GetChildren().end());
 }
 
 CXFA_FFWidget* CXFA_FFTabOrderPageWidgetIterator::GetWidget(
