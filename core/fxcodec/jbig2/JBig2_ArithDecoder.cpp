@@ -56,7 +56,7 @@ int DecodeNLPS(JBig2ArithCtx* pCX, const JBig2ArithQe& qe) {
 }  // namespace
 
 CJBig2_ArithDecoder::CJBig2_ArithDecoder(CJBig2_BitStream* pStream)
-    : m_pStream(pStream) {
+    : m_Complete(false), m_pStream(pStream) {
   m_B = m_pStream->getCurByte_arith();
   m_C = (m_B ^ 0xff) << 16;
   BYTEIN();
@@ -107,6 +107,9 @@ void CJBig2_ArithDecoder::BYTEIN() {
     m_C = m_C + 0xff00 - (m_B << 8);
     m_CT = 8;
   }
+
+  if (!m_pStream->IsInBounds())
+    m_Complete = true;
 }
 
 void CJBig2_ArithDecoder::ReadValueA() {

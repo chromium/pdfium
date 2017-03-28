@@ -40,9 +40,10 @@ class CJBig2_BitStream {
   uint32_t getByteLeft() const;
   uint32_t getObjNum() const;
 
+  bool IsInBounds() const;
+
  private:
   void AdvanceBit();
-  bool IsInBound() const;
   uint32_t LengthInBits() const;
 
   const uint8_t* m_pBuf;

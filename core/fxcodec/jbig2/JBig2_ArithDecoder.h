@@ -7,6 +7,8 @@
 #ifndef CORE_FXCODEC_JBIG2_JBIG2_ARITHDECODER_H_
 #define CORE_FXCODEC_JBIG2_JBIG2_ARITHDECODER_H_
 
+#include <stdint.h>
+
 class CJBig2_BitStream;
 
 struct JBig2ArithCtx {
@@ -24,11 +26,14 @@ class CJBig2_ArithDecoder {
 
   int DECODE(JBig2ArithCtx* pCX);
 
+  bool IsComplete() const { return m_Complete; }
+
  private:
   void BYTEIN();
   void ReadValueA();
 
-  unsigned char m_B;
+  bool m_Complete;
+  uint8_t m_B;
   unsigned int m_C;
   unsigned int m_A;
   unsigned int m_CT;
