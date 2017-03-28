@@ -25,7 +25,7 @@ group("libfuzzer") {
 
 template("pdfium_fuzzer") {
   source_set(target_name) {
-    sources = invoker.sources
+    sources = invoker.sources + [ "pdf_fuzzer_init.cc" ]
     deps = [
       "../..:pdfium",
     ]
