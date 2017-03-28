@@ -67,15 +67,9 @@ class CXFA_TextLayoutData : public CXFA_WidgetLayoutData {
 class CXFA_ImageLayoutData : public CXFA_WidgetLayoutData {
  public:
   CXFA_ImageLayoutData()
-      : m_pDIBitmap(nullptr),
-        m_bNamedImage(false),
-        m_iImageXDpi(0),
-        m_iImageYDpi(0) {}
+      : m_bNamedImage(false), m_iImageXDpi(0), m_iImageYDpi(0) {}
 
-  ~CXFA_ImageLayoutData() override {
-    if (m_pDIBitmap && !m_bNamedImage)
-      delete m_pDIBitmap;
-  }
+  ~CXFA_ImageLayoutData() override {}
 
   bool LoadImageData(CXFA_WidgetAcc* pAcc) {
     if (m_pDIBitmap)
@@ -95,7 +89,7 @@ class CXFA_ImageLayoutData : public CXFA_WidgetLayoutData {
     return !!m_pDIBitmap;
   }
 
-  CFX_DIBitmap* m_pDIBitmap;
+  CFX_RetainPtr<CFX_DIBitmap> m_pDIBitmap;
   bool m_bNamedImage;
   int32_t m_iImageXDpi;
   int32_t m_iImageYDpi;
@@ -132,15 +126,9 @@ class CXFA_TextEditData : public CXFA_FieldLayoutData {
 class CXFA_ImageEditData : public CXFA_FieldLayoutData {
  public:
   CXFA_ImageEditData()
-      : m_pDIBitmap(nullptr),
-        m_bNamedImage(false),
-        m_iImageXDpi(0),
-        m_iImageYDpi(0) {}
+      : m_bNamedImage(false), m_iImageXDpi(0), m_iImageYDpi(0) {}
 
-  ~CXFA_ImageEditData() override {
-    if (m_pDIBitmap && !m_bNamedImage)
-      delete m_pDIBitmap;
-  }
+  ~CXFA_ImageEditData() override {}
 
   bool LoadImageData(CXFA_WidgetAcc* pAcc) {
     if (m_pDIBitmap)
@@ -157,7 +145,7 @@ class CXFA_ImageEditData : public CXFA_FieldLayoutData {
     return !!m_pDIBitmap;
   }
 
-  CFX_DIBitmap* m_pDIBitmap;
+  CFX_RetainPtr<CFX_DIBitmap> m_pDIBitmap;
   bool m_bNamedImage;
   int32_t m_iImageXDpi;
   int32_t m_iImageYDpi;
@@ -929,7 +917,8 @@ bool CXFA_WidgetAcc::CalculateImageAutoSize(CFX_SizeF& size) {
     LoadImageImage();
 
   size.clear();
-  if (CFX_DIBitmap* pBitmap = GetImageImage()) {
+  CFX_RetainPtr<CFX_DIBitmap> pBitmap = GetImageImage();
+  if (pBitmap) {
     int32_t iImageXDpi = 0;
     int32_t iImageYDpi = 0;
     GetImageDpi(iImageXDpi, iImageYDpi);
@@ -958,7 +947,8 @@ bool CXFA_WidgetAcc::CalculateImageEditAutoSize(CFX_SizeF& size) {
     LoadImageEditImage();
 
   size.clear();
-  if (CFX_DIBitmap* pBitmap = GetImageEditImage()) {
+  CFX_RetainPtr<CFX_DIBitmap> pBitmap = GetImageEditImage();
+  if (pBitmap) {
     int32_t iImageXDpi = 0;
     int32_t iImageYDpi = 0;
     GetImageEditDpi(iImageXDpi, iImageYDpi);
@@ -1467,42 +1457,34 @@ CXFA_TextLayout* CXFA_WidgetAcc::GetTextLayout() {
              : nullptr;
 }
 
-CFX_DIBitmap* CXFA_WidgetAcc::GetImageImage() {
+CFX_RetainPtr<CFX_DIBitmap> CXFA_WidgetAcc::GetImageImage() {
   return m_pLayoutData
              ? static_cast<CXFA_ImageLayoutData*>(m_pLayoutData.get())
                    ->m_pDIBitmap
              : nullptr;
 }
 
-CFX_DIBitmap* CXFA_WidgetAcc::GetImageEditImage() {
+CFX_RetainPtr<CFX_DIBitmap> CXFA_WidgetAcc::GetImageEditImage() {
   return m_pLayoutData
              ? static_cast<CXFA_ImageEditData*>(m_pLayoutData.get())
                    ->m_pDIBitmap
              : nullptr;
 }
 
-void CXFA_WidgetAcc::SetImageImage(CFX_DIBitmap* newImage) {
+void CXFA_WidgetAcc::SetImageImage(
+    const CFX_RetainPtr<CFX_DIBitmap>& newImage) {
   CXFA_ImageLayoutData* pData =
       static_cast<CXFA_ImageLayoutData*>(m_pLayoutData.get());
-  if (pData->m_pDIBitmap == newImage)
-    return;
-
-  if (pData->m_pDIBitmap && !pData->m_bNamedImage)
-    delete pData->m_pDIBitmap;
-
-  pData->m_pDIBitmap = newImage;
+  if (pData->m_pDIBitmap != newImage)
+    pData->m_pDIBitmap = newImage;
 }
 
-void CXFA_WidgetAcc::SetImageEditImage(CFX_DIBitmap* newImage) {
+void CXFA_WidgetAcc::SetImageEditImage(
+    const CFX_RetainPtr<CFX_DIBitmap>& newImage) {
   CXFA_ImageEditData* pData =
       static_cast<CXFA_ImageEditData*>(m_pLayoutData.get());
-  if (pData->m_pDIBitmap == newImage)
-    return;
-
-  if (pData->m_pDIBitmap && !pData->m_bNamedImage)
-    delete pData->m_pDIBitmap;
-
-  pData->m_pDIBitmap = newImage;
+  if (pData->m_pDIBitmap != newImage)
+    pData->m_pDIBitmap = newImage;
 }
 
 CXFA_WidgetLayoutData* CXFA_WidgetAcc::GetWidgetLayoutData() {

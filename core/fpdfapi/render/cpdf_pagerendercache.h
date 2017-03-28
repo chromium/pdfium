@@ -9,6 +9,7 @@
 
 #include <map>
 
+#include "core/fxcrt/cfx_retain_ptr.h"
 #include "core/fxcrt/fx_system.h"
 
 class CPDF_Stream;
@@ -27,7 +28,8 @@ class CPDF_PageRenderCache {
   void CacheOptimization(int32_t dwLimitCacheSize);
   uint32_t GetTimeCount() const { return m_nTimeCount; }
 
-  void ResetBitmap(CPDF_Stream* pStream, const CFX_DIBitmap* pBitmap);
+  void ResetBitmap(CPDF_Stream* pStream,
+                   const CFX_RetainPtr<CFX_DIBitmap>& pBitmap);
   CPDF_Page* GetPage() const { return m_pPage; }
   CPDF_ImageCacheEntry* GetCurImageCacheEntry() const {
     return m_pCurImageCacheEntry;

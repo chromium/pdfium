@@ -48,14 +48,15 @@ bool IFX_RenderDeviceDriver::DrawCosmeticLine(float x1,
   return false;
 }
 
-bool IFX_RenderDeviceDriver::GetDIBits(CFX_DIBitmap* pBitmap,
-                                       int left,
-                                       int top) {
+bool IFX_RenderDeviceDriver::GetDIBits(
+    const CFX_RetainPtr<CFX_DIBitmap>& pBitmap,
+    int left,
+    int top) {
   return false;
 }
 
-CFX_DIBitmap* IFX_RenderDeviceDriver::GetBackDrop() {
-  return nullptr;
+CFX_RetainPtr<CFX_DIBitmap> IFX_RenderDeviceDriver::GetBackDrop() {
+  return CFX_RetainPtr<CFX_DIBitmap>();
 }
 
 bool IFX_RenderDeviceDriver::ContinueDIBits(void* handle, IFX_Pause* pPause) {
@@ -91,12 +92,13 @@ bool IFX_RenderDeviceDriver::DrawShading(const CPDF_ShadingPattern* pPattern,
   return false;
 }
 
-bool IFX_RenderDeviceDriver::SetBitsWithMask(const CFX_DIBSource* pBitmap,
-                                             const CFX_DIBSource* pMask,
-                                             int left,
-                                             int top,
-                                             int bitmap_alpha,
-                                             int blend_type) {
+bool IFX_RenderDeviceDriver::SetBitsWithMask(
+    const CFX_RetainPtr<CFX_DIBSource>& pBitmap,
+    const CFX_RetainPtr<CFX_DIBSource>& pMask,
+    int left,
+    int top,
+    int bitmap_alpha,
+    int blend_type) {
   return false;
 }
 

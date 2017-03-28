@@ -39,7 +39,9 @@ typedef struct {
 
 class CPDF_DIBSource : public CFX_DIBSource {
  public:
-  CPDF_DIBSource();
+  template <typename T, typename... Args>
+  friend CFX_RetainPtr<T> pdfium::MakeRetain(Args&&... args);
+
   ~CPDF_DIBSource() override;
 
   bool Load(CPDF_Document* pDoc, const CPDF_Stream* pStream);
@@ -71,9 +73,11 @@ class CPDF_DIBSource : public CFX_DIBSource {
   int StartLoadMaskDIB();
   int ContinueLoadMaskDIB(IFX_Pause* pPause);
   int ContinueToLoadMask();
-  CPDF_DIBSource* DetachMask();
+  CFX_RetainPtr<CPDF_DIBSource> DetachMask();
 
  private:
+  CPDF_DIBSource();
+
   bool LoadColorInfo(const CPDF_Dictionary* pFormResources,
                      const CPDF_Dictionary* pPageResources);
   DIB_COMP_DATA* GetDecodeAndMaskArray(bool* bDefaultDecode, bool* bColorKey);
@@ -133,9 +137,9 @@ class CPDF_DIBSource : public CFX_DIBSource {
   DIB_COMP_DATA* m_pCompData;
   uint8_t* m_pLineBuf;
   uint8_t* m_pMaskedLine;
-  std::unique_ptr<CFX_DIBitmap> m_pCachedBitmap;
+  CFX_RetainPtr<CFX_DIBitmap> m_pCachedBitmap;
+  CFX_RetainPtr<CPDF_DIBSource> m_pMask;
   std::unique_ptr<CCodec_ScanlineDecoder> m_pDecoder;
-  CPDF_DIBSource* m_pMask;
   std::unique_ptr<CPDF_StreamAcc> m_pGlobalStream;
   std::unique_ptr<CCodec_Jbig2Context> m_pJbig2Context;
   CPDF_Stream* m_pMaskStream;

@@ -16,7 +16,8 @@ class CPDF_TransferFunc {
   explicit CPDF_TransferFunc(CPDF_Document* pDoc);
 
   FX_COLORREF TranslateColor(FX_COLORREF src) const;
-  CFX_DIBSource* TranslateImage(const CFX_DIBSource* pSrc, bool bAutoDropSrc);
+  CFX_RetainPtr<CFX_DIBSource> TranslateImage(
+      const CFX_RetainPtr<CFX_DIBSource>& pSrc);
 
   CPDF_Document* const m_pPDFDoc;
   bool m_bIdentity;

@@ -30,10 +30,11 @@ CPDF_RenderContext::CPDF_RenderContext(CPDF_Document* pDoc,
 
 CPDF_RenderContext::~CPDF_RenderContext() {}
 
-void CPDF_RenderContext::GetBackground(CFX_DIBitmap* pBuffer,
-                                       const CPDF_PageObject* pObj,
-                                       const CPDF_RenderOptions* pOptions,
-                                       CFX_Matrix* pFinalMatrix) {
+void CPDF_RenderContext::GetBackground(
+    const CFX_RetainPtr<CFX_DIBitmap>& pBuffer,
+    const CPDF_PageObject* pObj,
+    const CPDF_RenderOptions* pOptions,
+    CFX_Matrix* pFinalMatrix) {
   CFX_FxgeDevice device;
   device.Attach(pBuffer, false, nullptr, false);
 

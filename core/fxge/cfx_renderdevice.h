@@ -100,9 +100,13 @@ class CFX_RenderDevice {
   int GetRenderCaps() const { return m_RenderCaps; }
   int GetDeviceCaps(int id) const;
   CFX_Matrix GetCTM() const;
-  CFX_DIBitmap* GetBitmap() const { return m_pBitmap; }
-  void SetBitmap(CFX_DIBitmap* pBitmap) { m_pBitmap = pBitmap; }
-  bool CreateCompatibleBitmap(CFX_DIBitmap* pDIB, int width, int height) const;
+  CFX_RetainPtr<CFX_DIBitmap> GetBitmap() const { return m_pBitmap; }
+  void SetBitmap(const CFX_RetainPtr<CFX_DIBitmap>& pBitmap) {
+    m_pBitmap = pBitmap;
+  }
+  bool CreateCompatibleBitmap(const CFX_RetainPtr<CFX_DIBitmap>& pDIB,
+                              int width,
+                              int height) const;
   const FX_RECT& GetClipBox() const { return m_ClipBox; }
   bool SetClip_PathFill(const CFX_PathData* pPathData,
                         const CFX_Matrix* pObject2Device,
@@ -140,16 +144,18 @@ class CFX_RenderDevice {
                         int fill_mode,
                         int blend_type);
 
-  bool GetDIBits(CFX_DIBitmap* pBitmap, int left, int top);
-  CFX_DIBitmap* GetBackDrop();
-  bool SetDIBits(const CFX_DIBSource* pBitmap, int left, int top) {
+  CFX_RetainPtr<CFX_DIBitmap> GetBackDrop();
+  bool GetDIBits(const CFX_RetainPtr<CFX_DIBitmap>& pBitmap, int left, int top);
+  bool SetDIBits(const CFX_RetainPtr<CFX_DIBSource>& pBitmap,
+                 int left,
+                 int top) {
     return SetDIBitsWithBlend(pBitmap, left, top, FXDIB_BLEND_NORMAL);
   }
-  bool SetDIBitsWithBlend(const CFX_DIBSource* pBitmap,
+  bool SetDIBitsWithBlend(const CFX_RetainPtr<CFX_DIBSource>& pBitmap,
                           int left,
                           int top,
                           int blend_type);
-  bool StretchDIBits(const CFX_DIBSource* pBitmap,
+  bool StretchDIBits(const CFX_RetainPtr<CFX_DIBSource>& pBitmap,
                      int left,
                      int top,
                      int dest_width,
@@ -157,31 +163,32 @@ class CFX_RenderDevice {
     return StretchDIBitsWithFlagsAndBlend(pBitmap, left, top, dest_width,
                                           dest_height, 0, FXDIB_BLEND_NORMAL);
   }
-  bool StretchDIBitsWithFlagsAndBlend(const CFX_DIBSource* pBitmap,
-                                      int left,
-                                      int top,
-                                      int dest_width,
-                                      int dest_height,
-                                      uint32_t flags,
-                                      int blend_type);
-  bool SetBitMask(const CFX_DIBSource* pBitmap,
+  bool StretchDIBitsWithFlagsAndBlend(
+      const CFX_RetainPtr<CFX_DIBSource>& pBitmap,
+      int left,
+      int top,
+      int dest_width,
+      int dest_height,
+      uint32_t flags,
+      int blend_type);
+  bool SetBitMask(const CFX_RetainPtr<CFX_DIBSource>& pBitmap,
                   int left,
                   int top,
                   uint32_t color);
-  bool StretchBitMask(const CFX_DIBSource* pBitmap,
+  bool StretchBitMask(const CFX_RetainPtr<CFX_DIBSource>& pBitmap,
                       int left,
                       int top,
                       int dest_width,
                       int dest_height,
                       uint32_t color);
-  bool StretchBitMaskWithFlags(const CFX_DIBSource* pBitmap,
+  bool StretchBitMaskWithFlags(const CFX_RetainPtr<CFX_DIBSource>& pBitmap,
                                int left,
                                int top,
                                int dest_width,
                                int dest_height,
                                uint32_t color,
                                uint32_t flags);
-  bool StartDIBits(const CFX_DIBSource* pBitmap,
+  bool StartDIBits(const CFX_RetainPtr<CFX_DIBSource>& pBitmap,
                    int bitmap_alpha,
                    uint32_t color,
                    const CFX_Matrix* pMatrix,
@@ -190,7 +197,7 @@ class CFX_RenderDevice {
     return StartDIBitsWithBlend(pBitmap, bitmap_alpha, color, pMatrix, flags,
                                 handle, FXDIB_BLEND_NORMAL);
   }
-  bool StartDIBitsWithBlend(const CFX_DIBSource* pBitmap,
+  bool StartDIBitsWithBlend(const CFX_RetainPtr<CFX_DIBSource>& pBitmap,
                             int bitmap_alpha,
                             uint32_t color,
                             const CFX_Matrix* pMatrix,
@@ -221,8 +228,8 @@ class CFX_RenderDevice {
 
 #ifdef _SKIA_SUPPORT_
   virtual void DebugVerifyBitmapIsPreMultiplied() const;
-  virtual bool SetBitsWithMask(const CFX_DIBSource* pBitmap,
-                               const CFX_DIBSource* pMask,
+  virtual bool SetBitsWithMask(const CFX_RetainPtr<CFX_DIBSource>& pBitmap,
+                               const CFX_RetainPtr<CFX_DIBSource>& pMask,
                                int left,
                                int top,
                                int bitmap_alpha,
@@ -243,7 +250,7 @@ class CFX_RenderDevice {
                           int fill_mode,
                           int blend_type);
 
-  CFX_DIBitmap* m_pBitmap;
+  CFX_RetainPtr<CFX_DIBitmap> m_pBitmap;
   int m_Width;
   int m_Height;
   int m_bpp;

@@ -71,7 +71,7 @@ class CStretchEngine {
                  int dest_width,
                  int dest_height,
                  const FX_RECT& clip_rect,
-                 const CFX_DIBSource* pSrcBitmap,
+                 const CFX_RetainPtr<CFX_DIBSource>& pSrcBitmap,
                  int flags);
   ~CStretchEngine();
 
@@ -91,7 +91,7 @@ class CStretchEngine {
   uint8_t* m_pDestScanline;
   uint8_t* m_pDestMaskScanline;
   FX_RECT m_SrcClip;
-  const CFX_DIBSource* m_pSource;
+  CFX_RetainPtr<CFX_DIBSource> m_pSource;
   uint32_t* m_pSrcPalette;
   int m_SrcWidth;
   int m_SrcHeight;

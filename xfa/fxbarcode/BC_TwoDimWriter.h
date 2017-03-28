@@ -23,11 +23,11 @@ class CBC_TwoDimWriter : public CBC_Writer {
                             int32_t codeWidth,
                             int32_t codeHeight,
                             int32_t& e);
-  virtual void RenderBitmapResult(CFX_DIBitmap*& pOutBitmap, int32_t& e);
+  virtual void RenderBitmapResult(CFX_RetainPtr<CFX_DIBitmap>& pOutBitmap,
+                                  int32_t& e);
   virtual void RenderDeviceResult(CFX_RenderDevice* device,
                                   const CFX_Matrix* matrix);
   virtual bool SetErrorCorrectionLevel(int32_t level) = 0;
-
   int32_t GetErrorCorrectionLevel() const;
 
  protected:

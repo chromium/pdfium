@@ -16,12 +16,17 @@ class CFX_Path;
 
 class CFWL_ThemeBackground : public CFWL_ThemePart {
  public:
-  CFWL_ThemeBackground()
-      : m_pGraphics(nullptr), m_pImage(nullptr), m_pPath(nullptr) {}
+  CFWL_ThemeBackground();
+  ~CFWL_ThemeBackground();
 
   CFX_Graphics* m_pGraphics;
-  CFX_DIBitmap* m_pImage;
   CFX_Path* m_pPath;
+  CFX_RetainPtr<CFX_DIBitmap> m_pImage;
 };
+
+inline CFWL_ThemeBackground::CFWL_ThemeBackground()
+    : m_pGraphics(nullptr), m_pPath(nullptr) {}
+
+inline CFWL_ThemeBackground::~CFWL_ThemeBackground() {}
 
 #endif  // XFA_FWL_CFWL_THEMEBACKGROUND_H_

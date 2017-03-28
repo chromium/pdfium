@@ -32,9 +32,9 @@ class CAgg_PathData {
 
 class CFX_AggDeviceDriver : public IFX_RenderDeviceDriver {
  public:
-  CFX_AggDeviceDriver(CFX_DIBitmap* pBitmap,
+  CFX_AggDeviceDriver(const CFX_RetainPtr<CFX_DIBitmap>& pBitmap,
                       bool bRgbByteOrder,
-                      CFX_DIBitmap* pOriDevice,
+                      const CFX_RetainPtr<CFX_DIBitmap>& pOriDevice,
                       bool bGroupKnockout);
   ~CFX_AggDeviceDriver() override;
 
@@ -63,15 +63,17 @@ class CFX_AggDeviceDriver : public IFX_RenderDeviceDriver {
                          uint32_t fill_color,
                          int blend_type) override;
   bool GetClipBox(FX_RECT* pRect) override;
-  bool GetDIBits(CFX_DIBitmap* pBitmap, int left, int top) override;
-  CFX_DIBitmap* GetBackDrop() override;
-  bool SetDIBits(const CFX_DIBSource* pBitmap,
+  bool GetDIBits(const CFX_RetainPtr<CFX_DIBitmap>& pBitmap,
+                 int left,
+                 int top) override;
+  CFX_RetainPtr<CFX_DIBitmap> GetBackDrop() override;
+  bool SetDIBits(const CFX_RetainPtr<CFX_DIBSource>& pBitmap,
                  uint32_t color,
                  const FX_RECT* pSrcRect,
                  int left,
                  int top,
                  int blend_type) override;
-  bool StretchDIBits(const CFX_DIBSource* pBitmap,
+  bool StretchDIBits(const CFX_RetainPtr<CFX_DIBSource>& pBitmap,
                      uint32_t color,
                      int dest_left,
                      int dest_top,
@@ -80,7 +82,7 @@ class CFX_AggDeviceDriver : public IFX_RenderDeviceDriver {
                      const FX_RECT* pClipRect,
                      uint32_t flags,
                      int blend_type) override;
-  bool StartDIBits(const CFX_DIBSource* pBitmap,
+  bool StartDIBits(const CFX_RetainPtr<CFX_DIBSource>& pBitmap,
                    int bitmap_alpha,
                    uint32_t color,
                    const CFX_Matrix* pMatrix,
@@ -109,7 +111,7 @@ class CFX_AggDeviceDriver : public IFX_RenderDeviceDriver {
   virtual uint8_t* GetBuffer() const;
 
  private:
-  CFX_DIBitmap* m_pBitmap;
+  CFX_RetainPtr<CFX_DIBitmap> m_pBitmap;
   std::unique_ptr<CFX_ClipRgn> m_pClipRgn;
   std::vector<std::unique_ptr<CFX_ClipRgn>> m_StateStack;
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
@@ -117,7 +119,7 @@ class CFX_AggDeviceDriver : public IFX_RenderDeviceDriver {
 #endif
   int m_FillFlags;
   bool m_bRgbByteOrder;
-  CFX_DIBitmap* m_pOriDevice;
+  CFX_RetainPtr<CFX_DIBitmap> m_pOriDevice;
   bool m_bGroupKnockout;
 };
 

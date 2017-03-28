@@ -117,13 +117,14 @@ uint8_t* CBC_OnedUPCAWriter::Encode(const CFX_ByteString& contents,
   return nullptr;
 }
 
-void CBC_OnedUPCAWriter::ShowChars(const CFX_WideStringC& contents,
-                                   CFX_DIBitmap* pOutBitmap,
-                                   CFX_RenderDevice* device,
-                                   const CFX_Matrix* matrix,
-                                   int32_t barWidth,
-                                   int32_t multiple,
-                                   int32_t& e) {
+void CBC_OnedUPCAWriter::ShowChars(
+    const CFX_WideStringC& contents,
+    const CFX_RetainPtr<CFX_DIBitmap>& pOutBitmap,
+    CFX_RenderDevice* device,
+    const CFX_Matrix* matrix,
+    int32_t barWidth,
+    int32_t multiple,
+    int32_t& e) {
   if (!device && !pOutBitmap) {
     e = BCExceptionIllegalArgument;
     return;
@@ -235,7 +236,6 @@ void CBC_OnedUPCAWriter::ShowChars(const CFX_WideStringC& contents,
 
   CalcTextInfo(tempStr, pCharPos, m_pFont, strWidth, iFontSize, blank);
   if (pOutBitmap) {
-    delete ge.GetBitmap();
     ge.Create((int)strWidth, iTextHeight, FXDIB_Argb, nullptr);
     ge.GetBitmap()->Clear(m_backgroundColor);
     ge.DrawNormalText(iLen, pCharPos, m_pFont, static_cast<float>(iFontSize),
@@ -255,7 +255,6 @@ void CBC_OnedUPCAWriter::ShowChars(const CFX_WideStringC& contents,
   iLen = tempStr.GetLength();
   CalcTextInfo(tempStr, pCharPos + 11, m_pFont, strWidth, iFontSize, blank);
   if (pOutBitmap) {
-    delete ge.GetBitmap();
     ge.Create((int)strWidth, iTextHeight, FXDIB_Argb, nullptr);
     ge.GetBitmap()->Clear(m_backgroundColor);
     ge.DrawNormalText(iLen, pCharPos + 11, m_pFont,

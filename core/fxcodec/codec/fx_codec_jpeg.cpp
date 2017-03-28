@@ -484,7 +484,7 @@ uint32_t CCodec_JpegModule::GetAvailInput(FXJPEG_Context* ctx,
 
 #if _FX_OS_ == _FX_WIN32_DESKTOP_ || _FX_OS_ == _FX_WIN64_DESKTOP_
 #define JPEG_BLOCK_SIZE 1048576
-bool CCodec_JpegModule::JpegEncode(const CFX_DIBSource* pSource,
+bool CCodec_JpegModule::JpegEncode(const CFX_RetainPtr<CFX_DIBSource>& pSource,
                                    uint8_t** dest_buf,
                                    FX_STRSIZE* dest_size) {
   struct jpeg_error_mgr jerr;

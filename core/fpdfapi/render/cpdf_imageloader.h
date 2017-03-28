@@ -31,8 +31,8 @@ class CPDF_ImageLoader {
              int32_t nDownsampleHeight);
   bool Continue(IFX_Pause* pPause);
 
-  CFX_DIBSource* m_pBitmap;
-  CFX_DIBSource* m_pMask;
+  CFX_RetainPtr<CFX_DIBSource> m_pBitmap;
+  CFX_RetainPtr<CFX_DIBSource> m_pMask;
   uint32_t m_MatteColor;
   bool m_bCached;
 

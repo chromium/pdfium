@@ -51,18 +51,18 @@ class CFX_PSRenderer {
                 uint32_t fill_color,
                 uint32_t stroke_color,
                 int fill_mode);
-  bool SetDIBits(const CFX_DIBSource* pBitmap,
+  bool SetDIBits(const CFX_RetainPtr<CFX_DIBSource>& pBitmap,
                  uint32_t color,
                  int dest_left,
                  int dest_top);
-  bool StretchDIBits(const CFX_DIBSource* pBitmap,
+  bool StretchDIBits(const CFX_RetainPtr<CFX_DIBSource>& pBitmap,
                      uint32_t color,
                      int dest_left,
                      int dest_top,
                      int dest_width,
                      int dest_height,
                      uint32_t flags);
-  bool DrawDIBits(const CFX_DIBSource* pBitmap,
+  bool DrawDIBits(const CFX_RetainPtr<CFX_DIBSource>& pBitmap,
                   uint32_t color,
                   const CFX_Matrix* pMatrix,
                   uint32_t flags);
