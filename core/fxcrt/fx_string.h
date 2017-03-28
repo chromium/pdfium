@@ -36,7 +36,7 @@ class CFX_ByteString {
 
   CFX_ByteString();
   CFX_ByteString(const CFX_ByteString& other);
-  CFX_ByteString(CFX_ByteString&& other);
+  CFX_ByteString(CFX_ByteString&& other) noexcept;
 
   // Deliberately implicit to avoid calling on every string literal.
   // NOLINTNEXTLINE(runtime/explicit)
@@ -235,7 +235,7 @@ class CFX_WideString {
 
   CFX_WideString();
   CFX_WideString(const CFX_WideString& other);
-  CFX_WideString(CFX_WideString&& other);
+  CFX_WideString(CFX_WideString&& other) noexcept;
 
   // Deliberately implicit to avoid calling on every string literal.
   // NOLINTNEXTLINE(runtime/explicit)

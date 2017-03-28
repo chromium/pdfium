@@ -22,7 +22,7 @@ class CFX_RetainPtr {
 
   CFX_RetainPtr() {}
   CFX_RetainPtr(const CFX_RetainPtr& that) : CFX_RetainPtr(that.Get()) {}
-  CFX_RetainPtr(CFX_RetainPtr&& that) { Swap(that); }
+  CFX_RetainPtr(CFX_RetainPtr&& that) noexcept { Swap(that); }
 
   // Deliberately implicit to allow returning nullptrs.
   CFX_RetainPtr(std::nullptr_t ptr) {}

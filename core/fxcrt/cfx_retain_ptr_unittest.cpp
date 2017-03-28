@@ -5,6 +5,7 @@
 #include "core/fxcrt/cfx_retain_ptr.h"
 
 #include <utility>
+#include <vector>
 
 #include "testing/fx_string_testhelpers.h"
 #include "testing/gtest/include/gtest/gtest.h"
@@ -274,4 +275,27 @@ TEST(fxcrt, RetainPtrMakeRetained) {
     EXPECT_FALSE(ptr->HasOneRef());
   }
   EXPECT_TRUE(ptr->HasOneRef());
+}
+
+TEST(fxcrt, RetainPtrVectorMove) {
+  // Proves move ctor is selected by std::vector over copy/delete, this
+  // may require the ctor to be marked "noexcept".
+  PseudoRetainable obj;
+  {
+    CFX_RetainPtr<PseudoRetainable> ptr(&obj);
+    std::vector<CFX_RetainPtr<PseudoRetainable>> vec1;
+    vec1.push_back(std::move(ptr));
+    EXPECT_EQ(1, obj.retain_count());
+    EXPECT_EQ(0, obj.release_count());
+
+    std::vector<CFX_RetainPtr<PseudoRetainable>> vec2 = std::move(vec1);
+    EXPECT_EQ(1, obj.retain_count());
+    EXPECT_EQ(0, obj.release_count());
+
+    vec2.resize(4096);
+    EXPECT_EQ(1, obj.retain_count());
+    EXPECT_EQ(0, obj.release_count());
+  }
+  EXPECT_EQ(1, obj.retain_count());
+  EXPECT_EQ(1, obj.release_count());
 }

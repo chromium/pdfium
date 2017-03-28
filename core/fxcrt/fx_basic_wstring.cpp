@@ -72,7 +72,7 @@ CFX_WideString::CFX_WideString() {}
 CFX_WideString::CFX_WideString(const CFX_WideString& other)
     : m_pData(other.m_pData) {}
 
-CFX_WideString::CFX_WideString(CFX_WideString&& other) {
+CFX_WideString::CFX_WideString(CFX_WideString&& other) noexcept {
   m_pData.Swap(other.m_pData);
 }
 

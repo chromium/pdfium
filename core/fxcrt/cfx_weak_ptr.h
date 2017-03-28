@@ -19,7 +19,7 @@ class CFX_WeakPtr {
  public:
   CFX_WeakPtr() {}
   CFX_WeakPtr(const CFX_WeakPtr& that) : m_pHandle(that.m_pHandle) {}
-  CFX_WeakPtr(CFX_WeakPtr&& that) { Swap(that); }
+  CFX_WeakPtr(CFX_WeakPtr&& that) noexcept { Swap(that); }
   explicit CFX_WeakPtr(std::unique_ptr<T, D> pObj)
       : m_pHandle(new Handle(std::move(pObj))) {}
 

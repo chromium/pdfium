@@ -25,7 +25,7 @@ class CFX_MaybeOwned {
       : m_pOwnedObj(std::move(ptr)), m_pObj(m_pOwnedObj.get()) {}
 
   CFX_MaybeOwned(const CFX_MaybeOwned& that) = delete;
-  CFX_MaybeOwned(CFX_MaybeOwned&& that)
+  CFX_MaybeOwned(CFX_MaybeOwned&& that) noexcept
       : m_pOwnedObj(that.m_pOwnedObj.release()), m_pObj(that.m_pObj) {
     that.m_pObj = nullptr;
   }

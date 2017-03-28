@@ -79,7 +79,10 @@ config("pdfium_core_config") {
     }
   }
   if (is_win) {
-    cflags += [ "/wd4267" ]
+    cflags += [
+      "/wd4267",
+      "/wd4577",
+    ]
   }
 }
 

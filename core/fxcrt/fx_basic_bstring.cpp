@@ -103,7 +103,7 @@ CFX_ByteString::CFX_ByteString() {}
 CFX_ByteString::CFX_ByteString(const CFX_ByteString& other)
     : m_pData(other.m_pData) {}
 
-CFX_ByteString::CFX_ByteString(CFX_ByteString&& other) {
+CFX_ByteString::CFX_ByteString(CFX_ByteString&& other) noexcept {
   m_pData.Swap(other.m_pData);
 }
 
