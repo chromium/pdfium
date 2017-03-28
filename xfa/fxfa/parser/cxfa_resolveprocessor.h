@@ -61,7 +61,7 @@ class CXFA_ResolveProcessor {
   int32_t ResolveNumberSign(CXFA_ResolveNodesData& rnd);
   int32_t ResolveAsterisk(CXFA_ResolveNodesData& rnd);
   int32_t ResolveNormal(CXFA_ResolveNodesData& rnd);
-  int32_t ResolvePopStack(CFX_ArrayTemplate<int32_t>& stack);
+  int32_t ResolvePopStack(std::vector<int32_t>* stack);
   void SetStylesForChild(uint32_t dwParentStyles, CXFA_ResolveNodesData& rnd);
 
   void ConditionArray(int32_t iCurIndex,

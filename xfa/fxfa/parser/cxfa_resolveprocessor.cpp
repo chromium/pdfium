@@ -476,16 +476,15 @@ int32_t CXFA_ResolveProcessor::ResolveAsterisk(CXFA_ResolveNodesData& rnd) {
   return pdfium::CollectionSize<int32_t>(rnd.m_Objects);
 }
 
-int32_t CXFA_ResolveProcessor::ResolvePopStack(
-    CFX_ArrayTemplate<int32_t>& stack) {
-  int32_t nType = -1;
-  int32_t iSize = stack.GetSize() - 1;
-  if (iSize > -1) {
-    nType = stack[iSize];
-    stack.RemoveAt(iSize, 1);
-  }
+int32_t CXFA_ResolveProcessor::ResolvePopStack(std::vector<int32_t>* stack) {
+  if (stack->empty())
+    return -1;
+
+  int32_t nType = stack->back();
+  stack->pop_back();
   return nType;
 }
+
 int32_t CXFA_ResolveProcessor::GetFilter(const CFX_WideStringC& wsExpression,
                                          int32_t nStart,
                                          CXFA_ResolveNodesData& rnd) {
@@ -500,7 +499,7 @@ int32_t CXFA_ResolveProcessor::GetFilter(const CFX_WideStringC& wsExpression,
   wchar_t* pConditionBuf = wsCondition.GetBuffer(iLength - nStart);
   int32_t nNameCount = 0;
   int32_t nConditionCount = 0;
-  CFX_ArrayTemplate<int32_t> stack;
+  std::vector<int32_t> stack;
   int32_t nType = -1;
   const wchar_t* pSrc = wsExpression.c_str();
   wchar_t wPrev = 0, wCur;
@@ -538,19 +537,19 @@ int32_t CXFA_ResolveProcessor::GetFilter(const CFX_WideStringC& wsExpression,
     switch (nType) {
       case 0:
         if (wCur == ']') {
-          nType = ResolvePopStack(stack);
+          nType = ResolvePopStack(&stack);
           bRecursive = false;
         }
         break;
       case 1:
         if (wCur == ')') {
-          nType = ResolvePopStack(stack);
+          nType = ResolvePopStack(&stack);
           bRecursive = false;
         }
         break;
       case 2:
         if (wCur == '"') {
-          nType = ResolvePopStack(stack);
+          nType = ResolvePopStack(&stack);
           bRecursive = false;
         }
         break;
@@ -558,24 +557,24 @@ int32_t CXFA_ResolveProcessor::GetFilter(const CFX_WideStringC& wsExpression,
     if (bRecursive) {
       switch (wCur) {
         case '[':
-          stack.Add(nType);
+          stack.push_back(nType);
           nType = 0;
           break;
         case '(':
-          stack.Add(nType);
+          stack.push_back(nType);
           nType = 1;
           break;
         case '"':
-          stack.Add(nType);
+          stack.push_back(nType);
           nType = 2;
           break;
       }
     }
     wPrev = wCur;
   }
-  if (stack.GetSize() > 0) {
+  if (!stack.empty())
     return -1;
-  }
+
   wsName.ReleaseBuffer(nNameCount);
   wsName.TrimLeft();
   wsName.TrimRight();
