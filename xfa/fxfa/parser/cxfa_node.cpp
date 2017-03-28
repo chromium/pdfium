@@ -81,29 +81,20 @@ int32_t GetCount(CXFA_Node* pInstMgrNode) {
   return iCount;
 }
 
-void SortNodeArrayByDocumentIdx(const std::unordered_set<CXFA_Node*>& rgNodeSet,
-                                std::vector<CXFA_Node*>& rgNodeArray,
-                                CFX_ArrayTemplate<int32_t>& rgIdxArray) {
-  int32_t iCount = pdfium::CollectionSize<int32_t>(rgNodeSet);
-  rgNodeArray.resize(iCount);
-  rgIdxArray.SetSize(iCount);
-  if (iCount == 0)
-    return;
+std::vector<CXFA_Node*> NodesSortedByDocumentIdx(
+    const std::unordered_set<CXFA_Node*>& rgNodeSet) {
+  if (rgNodeSet.empty())
+    return std::vector<CXFA_Node*>();
 
-  int32_t iIndex = -1;
-  int32_t iTotalIndex = -1;
+  std::vector<CXFA_Node*> rgNodeArray;
   CXFA_Node* pCommonParent =
       (*rgNodeSet.begin())->GetNodeItem(XFA_NODEITEM_Parent);
   for (CXFA_Node* pNode = pCommonParent->GetNodeItem(XFA_NODEITEM_FirstChild);
-       pNode && iIndex < iCount;
-       pNode = pNode->GetNodeItem(XFA_NODEITEM_NextSibling)) {
-    iTotalIndex++;
-    if (pdfium::ContainsValue(rgNodeSet, pNode)) {
-      iIndex++;
-      rgNodeArray[iIndex] = pNode;
-      rgIdxArray[iIndex] = iTotalIndex;
-    }
+       pNode; pNode = pNode->GetNodeItem(XFA_NODEITEM_NextSibling)) {
+    if (pdfium::ContainsValue(rgNodeSet, pNode))
+      rgNodeArray.push_back(pNode);
   }
+  return rgNodeArray;
 }
 
 using CXFA_NodeSetPair =
@@ -158,26 +149,21 @@ void ReorderDataNodes(const std::unordered_set<CXFA_Node*>& sSet1,
       if (!pNodeSetPair)
         continue;
       if (!pNodeSetPair->first.empty() && !pNodeSetPair->second.empty()) {
-        std::vector<CXFA_Node*> rgNodeArray1;
-        std::vector<CXFA_Node*> rgNodeArray2;
-        CFX_ArrayTemplate<int32_t> rgIdxArray1;
-        CFX_ArrayTemplate<int32_t> rgIdxArray2;
-        SortNodeArrayByDocumentIdx(pNodeSetPair->first, rgNodeArray1,
-                                   rgIdxArray1);
-        SortNodeArrayByDocumentIdx(pNodeSetPair->second, rgNodeArray2,
-                                   rgIdxArray2);
+        std::vector<CXFA_Node*> rgNodeArray1 =
+            NodesSortedByDocumentIdx(pNodeSetPair->first);
+        std::vector<CXFA_Node*> rgNodeArray2 =
+            NodesSortedByDocumentIdx(pNodeSetPair->second);
         CXFA_Node* pParentNode = nullptr;
         CXFA_Node* pBeforeNode = nullptr;
         if (bInsertBefore) {
-          pBeforeNode = rgNodeArray2[0];
+          pBeforeNode = rgNodeArray2.front();
           pParentNode = pBeforeNode->GetNodeItem(XFA_NODEITEM_Parent);
         } else {
-          CXFA_Node* pLastNode = rgNodeArray2[rgIdxArray2.GetSize() - 1];
+          CXFA_Node* pLastNode = rgNodeArray2.back();
           pParentNode = pLastNode->GetNodeItem(XFA_NODEITEM_Parent);
           pBeforeNode = pLastNode->GetNodeItem(XFA_NODEITEM_NextSibling);
         }
-        for (int32_t iIdx = 0; iIdx < rgIdxArray1.GetSize(); iIdx++) {
-          CXFA_Node* pCurNode = rgNodeArray1[iIdx];
+        for (auto* pCurNode : rgNodeArray1) {
           pParentNode->RemoveChild(pCurNode);
           pParentNode->InsertChild(pCurNode, pBeforeNode);
         }
