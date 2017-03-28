@@ -10,6 +10,7 @@
 #include <iterator>
 #include <list>
 #include <map>
+#include <vector>
 
 #include "xfa/fxfa/parser/xfa_layout_itemlayout.h"
 
@@ -140,7 +141,7 @@ class CXFA_LayoutPageMgr {
   XFA_ATTRIBUTEENUM m_ePageSetMode;
   bool m_bCreateOverFlowPage;
   std::map<CXFA_Node*, int32_t> m_pPageSetMap;
-  CFX_ArrayTemplate<CXFA_ContainerLayoutItem*> m_PageArray;
+  std::vector<CXFA_ContainerLayoutItem*> m_PageArray;
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_LAYOUTPAGEMGR_H_

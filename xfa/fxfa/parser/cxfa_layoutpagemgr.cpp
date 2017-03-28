@@ -553,17 +553,16 @@ CXFA_ContainerRecord* CXFA_LayoutPageMgr::CreateContainerRecord(
 void CXFA_LayoutPageMgr::AddPageAreaLayoutItem(CXFA_ContainerRecord* pNewRecord,
                                                CXFA_Node* pNewPageArea) {
   CXFA_ContainerLayoutItem* pNewPageAreaLayoutItem = nullptr;
-  if (m_PageArray.GetSize() > m_nAvailPages) {
+  if (pdfium::IndexInBounds(m_PageArray, m_nAvailPages)) {
     CXFA_ContainerLayoutItem* pContainerItem = m_PageArray[m_nAvailPages];
     pContainerItem->m_pFormNode = pNewPageArea;
     m_nAvailPages++;
     pNewPageAreaLayoutItem = pContainerItem;
   } else {
     CXFA_FFNotify* pNotify = pNewPageArea->GetDocument()->GetNotify();
-    CXFA_ContainerLayoutItem* pContainerItem =
-        static_cast<CXFA_ContainerLayoutItem*>(
-            pNotify->OnCreateLayoutItem(pNewPageArea));
-    m_PageArray.Add(pContainerItem);
+    auto* pContainerItem = static_cast<CXFA_ContainerLayoutItem*>(
+        pNotify->OnCreateLayoutItem(pNewPageArea));
+    m_PageArray.push_back(pContainerItem);
     m_nAvailPages++;
     pNotify->OnPageEvent(pContainerItem, XFA_PAGEVIEWEVENT_PostRemoved);
     pNewPageAreaLayoutItem = pContainerItem;
@@ -648,7 +647,7 @@ void CXFA_LayoutPageMgr::FinishPaginatedPageSets() {
             }
           }
           bool bUsable = true;
-          CFX_ArrayTemplate<float> rgUsedHeights;
+          std::vector<float> rgUsedHeights;
           for (CXFA_LayoutItem* pChildLayoutItem =
                    pLastPageAreaLayoutItem->m_pFirstChild;
                pChildLayoutItem;
@@ -668,7 +667,7 @@ void CXFA_LayoutPageMgr::FinishPaginatedPageSets() {
                 fUsedHeight += pContent->m_sSize.height;
               }
             }
-            rgUsedHeights.Add(fUsedHeight);
+            rgUsedHeights.push_back(fUsedHeight);
           }
           int32_t iCurContentAreaIndex = -1;
           for (CXFA_Node* pContentAreaNode =
@@ -724,19 +723,19 @@ void CXFA_LayoutPageMgr::FinishPaginatedPageSets() {
 }
 
 int32_t CXFA_LayoutPageMgr::GetPageCount() const {
-  return m_PageArray.GetSize();
+  return pdfium::CollectionSize<int32_t>(m_PageArray);
 }
 
 CXFA_ContainerLayoutItem* CXFA_LayoutPageMgr::GetPage(int32_t index) const {
-  if (index < 0 || index >= m_PageArray.GetSize())
+  if (!pdfium::IndexInBounds(m_PageArray, index))
     return nullptr;
   return m_PageArray[index];
 }
 
 int32_t CXFA_LayoutPageMgr::GetPageIndex(
     const CXFA_ContainerLayoutItem* pPage) const {
-  // FIXME: Find() method should take const.
-  return m_PageArray.Find(const_cast<CXFA_ContainerLayoutItem*>(pPage));
+  auto it = std::find(m_PageArray.begin(), m_PageArray.end(), pPage);
+  return it != m_PageArray.end() ? it - m_PageArray.begin() : -1;
 }
 
 bool CXFA_LayoutPageMgr::RunBreak(XFA_Element eBreakType,
@@ -1923,10 +1922,10 @@ void CXFA_LayoutPageMgr::SyncLayoutData() {
     }
   }
 
-  int32_t nPage = m_PageArray.GetSize();
+  int32_t nPage = pdfium::CollectionSize<int32_t>(m_PageArray);
   for (int32_t i = nPage - 1; i >= m_nAvailPages; i--) {
     CXFA_ContainerLayoutItem* pPage = m_PageArray[i];
-    m_PageArray.RemoveAt(i);
+    m_PageArray.erase(m_PageArray.begin() + i);
     pNotify->OnPageEvent(pPage, XFA_PAGEVIEWEVENT_PostRemoved);
     delete pPage;
   }
@@ -1963,7 +1962,7 @@ void CXFA_LayoutPageMgr::PrepareLayout() {
       m_pPageSetLayoutItemRoot = nullptr;
       pRootLayoutItem = nullptr;
       pPageSetFormNode = nullptr;
-      m_PageArray.RemoveAll();
+      m_PageArray.clear();
     }
     while (pPageSetFormNode) {
       CXFA_Node* pNextPageSet =
