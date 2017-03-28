@@ -25,7 +25,7 @@ class CPDF_Type3Char {
   bool LoadBitmap(CPDF_RenderContext* pContext);
 
   std::unique_ptr<CPDF_Form> m_pForm;
-  CFX_RetainPtr<CFX_DIBitmap> m_pBitmap;
+  std::unique_ptr<CFX_DIBitmap> m_pBitmap;
   bool m_bColored;
   int m_Width;
   CFX_Matrix m_ImageMatrix;

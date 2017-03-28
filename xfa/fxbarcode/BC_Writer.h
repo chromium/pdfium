@@ -24,7 +24,7 @@ class CBC_Writer {
   virtual void SetBarcodeColor(FX_ARGB foregroundColor);
 
  protected:
-  CFX_RetainPtr<CFX_DIBitmap> CreateDIBitmap(int32_t width, int32_t height);
+  CFX_DIBitmap* CreateDIBitmap(int32_t width, int32_t height);
   int32_t m_CharEncoding;
   int32_t m_ModuleHeight;
   int32_t m_ModuleWidth;

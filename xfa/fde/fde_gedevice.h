@@ -34,7 +34,7 @@ class CFDE_RenderDevice {
   float GetDpiX() const;
   float GetDpiY() const;
 
-  bool DrawImage(const CFX_RetainPtr<CFX_DIBSource>& pDib,
+  bool DrawImage(CFX_DIBSource* pDib,
                  const CFX_RectF* pSrcRect,
                  const CFX_RectF& dstRect,
                  const CFX_Matrix* pImgMatrix = nullptr,

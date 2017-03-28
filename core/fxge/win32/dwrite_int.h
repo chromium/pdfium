@@ -39,8 +39,7 @@ class CDWriteExt {
   void* DwCreateFontFaceFromStream(uint8_t* pData,
                                    uint32_t size,
                                    int simulation_style);
-  bool DwCreateRenderingTarget(const CFX_RetainPtr<CFX_DIBitmap>& pSrc,
-                               void** renderTarget);
+  bool DwCreateRenderingTarget(CFX_DIBitmap* pSrc, void** renderTarget);
   void DwDeleteRenderingTarget(void* renderTarget);
   bool DwRendingString(void* renderTarget,
                        CFX_ClipRgn* pClipRgn,

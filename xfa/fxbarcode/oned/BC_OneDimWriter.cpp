@@ -224,14 +224,13 @@ void CBC_OneDimWriter::ShowDeviceChars(CFX_RenderDevice* device,
                          m_fontColor, FXTEXT_CLEARTYPE);
 }
 
-void CBC_OneDimWriter::ShowBitmapChars(
-    const CFX_RetainPtr<CFX_DIBitmap>& pOutBitmap,
-    const CFX_ByteString str,
-    float geWidth,
-    FXTEXT_CHARPOS* pCharPos,
-    float locX,
-    float locY,
-    int32_t barWidth) {
+void CBC_OneDimWriter::ShowBitmapChars(CFX_DIBitmap* pOutBitmap,
+                                       const CFX_ByteString str,
+                                       float geWidth,
+                                       FXTEXT_CHARPOS* pCharPos,
+                                       float locX,
+                                       float locY,
+                                       int32_t barWidth) {
   int32_t iFontSize = (int32_t)fabs(m_fFontSize);
   int32_t iTextHeight = iFontSize + 1;
   CFX_FxgeDevice ge;
@@ -249,7 +248,7 @@ void CBC_OneDimWriter::ShowBitmapChars(
 }
 
 void CBC_OneDimWriter::ShowChars(const CFX_WideStringC& contents,
-                                 const CFX_RetainPtr<CFX_DIBitmap>& pOutBitmap,
+                                 CFX_DIBitmap* pOutBitmap,
                                  CFX_RenderDevice* device,
                                  const CFX_Matrix* matrix,
                                  int32_t barWidth,
@@ -317,10 +316,9 @@ void CBC_OneDimWriter::ShowChars(const CFX_WideStringC& contents,
   FX_Free(pCharPos);
 }
 
-void CBC_OneDimWriter::RenderBitmapResult(
-    CFX_RetainPtr<CFX_DIBitmap>& pOutBitmap,
-    const CFX_WideStringC& contents,
-    int32_t& e) {
+void CBC_OneDimWriter::RenderBitmapResult(CFX_DIBitmap*& pOutBitmap,
+                                          const CFX_WideStringC& contents,
+                                          int32_t& e) {
   if (!m_output)
     if (e != BCExceptionNO)
       return;
@@ -339,17 +337,20 @@ void CBC_OneDimWriter::RenderBitmapResult(
     }
   }
   int32_t i = 0;
-  for (; i < contents.GetLength(); i++) {
-    if (contents.GetAt(i) != ' ')
+  for (; i < contents.GetLength(); i++)
+    if (contents.GetAt(i) != ' ') {
       break;
-  }
+    }
   if (m_locTextLoc != BC_TEXT_LOC_NONE && i < contents.GetLength()) {
     ShowChars(contents, pOutBitmap, nullptr, nullptr, m_barWidth, m_multiple,
               e);
     if (e != BCExceptionNO)
       return;
   }
-  pOutBitmap = pOutBitmap->StretchTo(m_Width, m_Height);
+  std::unique_ptr<CFX_DIBitmap> pStretchBitmap =
+      pOutBitmap->StretchTo(m_Width, m_Height);
+  delete pOutBitmap;
+  pOutBitmap = pStretchBitmap.release();
 }
 
 void CBC_OneDimWriter::RenderDeviceResult(CFX_RenderDevice* device,

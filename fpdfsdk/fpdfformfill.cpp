@@ -109,12 +109,11 @@ void FFLCommon(FPDF_FORMHANDLE hHandle,
       pPage->GetDisplayMatrix(start_x, start_y, size_x, size_y, rotate);
   FX_RECT clip(start_x, start_y, start_x + size_x, start_y + size_y);
 
-  auto pDevice = pdfium::MakeUnique<CFX_FxgeDevice>();
+  std::unique_ptr<CFX_FxgeDevice> pDevice(new CFX_FxgeDevice);
 #ifdef _SKIA_SUPPORT_
   pDevice->AttachRecorder(static_cast<SkPictureRecorder*>(recorder));
 #endif
-  CFX_RetainPtr<CFX_DIBitmap> holder(CFXBitmapFromFPDFBitmap(bitmap));
-  pDevice->Attach(holder, false, nullptr, false);
+  pDevice->Attach(CFXBitmapFromFPDFBitmap(bitmap), false, nullptr, false);
   pDevice->SaveState();
   pDevice->SetClip_Rect(clip);
 
@@ -148,7 +147,7 @@ void FFLCommon(FPDF_FORMHANDLE hHandle,
   pDevice->RestoreState(false);
 #ifdef _SKIA_SUPPORT_PATHS_
   pDevice->Flush();
-  holder->UnPreMultiply();
+  CFXBitmapFromFPDFBitmap(bitmap)->UnPreMultiply();
 #endif
 }
 

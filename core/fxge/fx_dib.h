@@ -10,10 +10,9 @@
 #include <memory>
 #include <vector>
 
-#include "core/fxcrt/cfx_retain_ptr.h"
+#include "core/fxcrt/cfx_shared_copy_on_write.h"
 #include "core/fxcrt/fx_basic.h"
 #include "core/fxcrt/fx_coordinates.h"
-#include "third_party/base/stl_util.h"
 
 enum FXDIB_Format {
   FXDIB_Invalid = 0,
@@ -164,14 +163,14 @@ bool ConvertBuffer(FXDIB_Format dest_format,
                    int dest_pitch,
                    int width,
                    int height,
-                   const CFX_RetainPtr<CFX_DIBSource>& pSrcBitmap,
+                   const CFX_DIBSource* pSrcBitmap,
                    int src_left,
                    int src_top,
                    std::unique_ptr<uint32_t, FxFreeDeleter>* pal);
 
-class CFX_DIBSource : public CFX_Retainable {
+class CFX_DIBSource {
  public:
-  ~CFX_DIBSource() override;
+  virtual ~CFX_DIBSource();
 
   virtual uint8_t* GetBuffer() const;
   virtual const uint8_t* GetScanline(int line) const = 0;
@@ -217,28 +216,30 @@ class CFX_DIBSource : public CFX_Retainable {
   // Copies into internally-owned palette.
   void SetPalette(const uint32_t* pSrcPal);
 
-  CFX_RetainPtr<CFX_DIBitmap> Clone(const FX_RECT* pClip = nullptr) const;
-  CFX_RetainPtr<CFX_DIBitmap> CloneConvert(FXDIB_Format format);
-  CFX_RetainPtr<CFX_DIBitmap> StretchTo(int dest_width,
-                                        int dest_height,
-                                        uint32_t flags = 0,
-                                        const FX_RECT* pClip = nullptr);
-  CFX_RetainPtr<CFX_DIBitmap> TransformTo(const CFX_Matrix* pMatrix,
-                                          int& left,
-                                          int& top,
+  std::unique_ptr<CFX_DIBitmap> Clone(const FX_RECT* pClip = nullptr) const;
+  std::unique_ptr<CFX_DIBitmap> CloneConvert(FXDIB_Format format) const;
+  std::unique_ptr<CFX_DIBitmap> StretchTo(int dest_width,
+                                          int dest_height,
                                           uint32_t flags = 0,
-                                          const FX_RECT* pClip = nullptr);
-  CFX_RetainPtr<CFX_DIBitmap> SwapXY(bool bXFlip,
-                                     bool bYFlip,
-                                     const FX_RECT* pClip = nullptr) const;
-  CFX_RetainPtr<CFX_DIBitmap> FlipImage(bool bXFlip, bool bYFlip) const;
+                                          const FX_RECT* pClip = nullptr) const;
+  std::unique_ptr<CFX_DIBitmap> TransformTo(
+      const CFX_Matrix* pMatrix,
+      int& left,
+      int& top,
+      uint32_t flags = 0,
+      const FX_RECT* pClip = nullptr) const;
+  std::unique_ptr<CFX_DIBitmap> SwapXY(bool bXFlip,
+                                       bool bYFlip,
+                                       const FX_RECT* pClip = nullptr) const;
+  std::unique_ptr<CFX_DIBitmap> FlipImage(bool bXFlip, bool bYFlip) const;
 
-  CFX_RetainPtr<CFX_DIBitmap> CloneAlphaMask(
+  std::unique_ptr<CFX_DIBitmap> CloneAlphaMask(
       const FX_RECT* pClip = nullptr) const;
 
   // Copies into internally-owned mask.
-  bool SetAlphaMask(const CFX_RetainPtr<CFX_DIBSource>& pAlphaMask,
+  bool SetAlphaMask(const CFX_DIBSource* pAlphaMask,
                     const FX_RECT* pClip = nullptr);
+
 
   void GetOverlapRect(int& dest_left,
                       int& dest_top,
@@ -254,7 +255,7 @@ class CFX_DIBSource : public CFX_Retainable {
   void DebugVerifyBitmapIsPreMultiplied(void* buffer = nullptr) const;
 #endif
 
-  CFX_RetainPtr<CFX_DIBitmap> m_pAlphaMask;
+  CFX_DIBitmap* m_pAlphaMask;
 
  protected:
   CFX_DIBSource();
@@ -275,9 +276,8 @@ class CFX_DIBSource : public CFX_Retainable {
 
 class CFX_DIBitmap : public CFX_DIBSource {
  public:
-  template <typename T, typename... Args>
-  friend CFX_RetainPtr<T> pdfium::MakeRetain(Args&&... args);
-
+  CFX_DIBitmap();
+  explicit CFX_DIBitmap(const CFX_DIBitmap& src);
   ~CFX_DIBitmap() override;
 
   bool Create(int width,
@@ -286,7 +286,7 @@ class CFX_DIBitmap : public CFX_DIBSource {
               uint8_t* pBuffer = nullptr,
               int pitch = 0);
 
-  bool Copy(const CFX_RetainPtr<CFX_DIBSource>& pSrc);
+  bool Copy(const CFX_DIBSource* pSrc);
 
   // CFX_DIBSource
   uint8_t* GetBuffer() const override;
@@ -299,26 +299,31 @@ class CFX_DIBitmap : public CFX_DIBSource {
                           int clip_left,
                           int clip_width) const override;
 
-  void TakeOver(CFX_RetainPtr<CFX_DIBitmap>&& pSrcBitmap);
+  void TakeOver(CFX_DIBitmap* pSrcBitmap);
+
   bool ConvertFormat(FXDIB_Format format);
+
   void Clear(uint32_t color);
 
   uint32_t GetPixel(int x, int y) const;
+
   void SetPixel(int x, int y, uint32_t color);
 
   bool LoadChannel(FXDIB_Channel destChannel,
-                   const CFX_RetainPtr<CFX_DIBSource>& pSrcBitmap,
+                   CFX_DIBSource* pSrcBitmap,
                    FXDIB_Channel srcChannel);
+
   bool LoadChannel(FXDIB_Channel destChannel, int value);
 
   bool MultiplyAlpha(int alpha);
-  bool MultiplyAlpha(const CFX_RetainPtr<CFX_DIBSource>& pAlphaMask);
+
+  bool MultiplyAlpha(CFX_DIBSource* pAlphaMask);
 
   bool TransferBitmap(int dest_left,
                       int dest_top,
                       int width,
                       int height,
-                      const CFX_RetainPtr<CFX_DIBSource>& pSrcBitmap,
+                      const CFX_DIBSource* pSrcBitmap,
                       int src_left,
                       int src_top);
 
@@ -326,7 +331,7 @@ class CFX_DIBitmap : public CFX_DIBSource {
                        int dest_top,
                        int width,
                        int height,
-                       const CFX_RetainPtr<CFX_DIBSource>& pSrcBitmap,
+                       const CFX_DIBSource* pSrcBitmap,
                        int src_left,
                        int src_top,
                        int blend_type = FXDIB_BLEND_NORMAL,
@@ -338,7 +343,7 @@ class CFX_DIBitmap : public CFX_DIBSource {
                     int dest_top,
                     int width,
                     int height,
-                    const CFX_RetainPtr<CFX_DIBSource>& pMask,
+                    const CFX_DIBSource* pMask,
                     uint32_t color,
                     int src_left,
                     int src_top,
@@ -349,7 +354,7 @@ class CFX_DIBitmap : public CFX_DIBSource {
                      int dest_top,
                      int width,
                      int height,
-                     const CFX_RetainPtr<CFX_DIBSource>& pMask,
+                     const CFX_DIBSource* pMask,
                      uint32_t color,
                      int src_left,
                      int src_top,
@@ -377,8 +382,6 @@ class CFX_DIBitmap : public CFX_DIBSource {
 #endif
 
  protected:
-  CFX_DIBitmap();
-  CFX_DIBitmap(const CFX_DIBitmap& src);
   bool GetGrayData(void* pIccTransform = nullptr);
 
 #if defined _SKIA_SUPPORT_PATHS_
@@ -394,36 +397,37 @@ class CFX_DIBitmap : public CFX_DIBSource {
 
 class CFX_DIBExtractor {
  public:
-  explicit CFX_DIBExtractor(const CFX_RetainPtr<CFX_DIBSource>& pSrc);
+  explicit CFX_DIBExtractor(const CFX_DIBSource* pSrc);
   ~CFX_DIBExtractor();
 
-  CFX_RetainPtr<CFX_DIBitmap> GetBitmap() { return m_pBitmap; }
+  CFX_DIBitmap* GetBitmap() { return m_pBitmap.get(); }
 
  private:
-  CFX_RetainPtr<CFX_DIBitmap> m_pBitmap;
+  std::unique_ptr<CFX_DIBitmap> m_pBitmap;
 };
+
+typedef CFX_SharedCopyOnWrite<CFX_DIBitmap> CFX_DIBitmapRef;
 
 class CFX_FilteredDIB : public CFX_DIBSource {
  public:
-  template <typename T, typename... Args>
-  friend CFX_RetainPtr<T> pdfium::MakeRetain(Args&&... args);
-
+  CFX_FilteredDIB();
   ~CFX_FilteredDIB() override;
 
+  void LoadSrc(const CFX_DIBSource* pSrc, bool bAutoDropSrc = false);
+
   virtual FXDIB_Format GetDestFormat() = 0;
+
   virtual uint32_t* GetDestPalette() = 0;
+
   virtual void TranslateScanline(const uint8_t* src_buf,
                                  std::vector<uint8_t>* dest_buf) const = 0;
+
   virtual void TranslateDownSamples(uint8_t* dest_buf,
                                     const uint8_t* src_buf,
                                     int pixels,
                                     int Bpp) const = 0;
 
-  void LoadSrc(const CFX_RetainPtr<CFX_DIBSource>& pSrc);
-
  protected:
-  CFX_FilteredDIB();
-
   // CFX_DIBSource
   const uint8_t* GetScanline(int line) const override;
   void DownSampleScanline(int line,
@@ -434,7 +438,8 @@ class CFX_FilteredDIB : public CFX_DIBSource {
                           int clip_left,
                           int clip_width) const override;
 
-  CFX_RetainPtr<CFX_DIBSource> m_pSrc;
+  const CFX_DIBSource* m_pSrc;
+  bool m_bAutoDropSrc;
   mutable std::vector<uint8_t> m_Scanline;
 };
 
@@ -515,7 +520,7 @@ class CFX_BitmapComposer : public IFX_ScanlineComposer {
   CFX_BitmapComposer();
   ~CFX_BitmapComposer() override;
 
-  void Compose(const CFX_RetainPtr<CFX_DIBitmap>& pDest,
+  void Compose(CFX_DIBitmap* pDest,
                const CFX_ClipRgn* pClipRgn,
                int bitmap_alpha,
                uint32_t mask_color,
@@ -545,28 +550,21 @@ class CFX_BitmapComposer : public IFX_ScanlineComposer {
                  const uint8_t* clip_scan,
                  const uint8_t* src_extra_alpha = nullptr,
                  uint8_t* dst_extra_alpha = nullptr);
-  void ComposeScanlineV(int line,
-                        const uint8_t* scanline,
-                        const uint8_t* scan_extra_alpha = nullptr);
-
-  CFX_RetainPtr<CFX_DIBitmap> m_pBitmap;
+  CFX_DIBitmap* m_pBitmap;
   const CFX_ClipRgn* m_pClipRgn;
   FXDIB_Format m_SrcFormat;
-  int m_DestLeft;
-  int m_DestTop;
-  int m_DestWidth;
-  int m_DestHeight;
-  int m_BitmapAlpha;
+  int m_DestLeft, m_DestTop, m_DestWidth, m_DestHeight, m_BitmapAlpha;
   uint32_t m_MaskColor;
-  CFX_RetainPtr<CFX_DIBitmap> m_pClipMask;
+  const CFX_DIBitmap* m_pClipMask;
   CFX_ScanlineCompositor m_Compositor;
-  bool m_bVertical;
-  bool m_bFlipX;
-  bool m_bFlipY;
+  bool m_bVertical, m_bFlipX, m_bFlipY;
   int m_AlphaFlag;
   void* m_pIccTransform;
   bool m_bRgbByteOrder;
   int m_BlendType;
+  void ComposeScanlineV(int line,
+                        const uint8_t* scanline,
+                        const uint8_t* scan_extra_alpha = nullptr);
   uint8_t* m_pScanlineV;
   uint8_t* m_pClipScanV;
   uint8_t* m_pAddClipScan;
@@ -587,18 +585,18 @@ class CFX_BitmapStorer : public IFX_ScanlineComposer {
                FXDIB_Format src_format,
                uint32_t* pSrcPalette) override;
 
-  CFX_RetainPtr<CFX_DIBitmap> GetBitmap() { return m_pBitmap; }
-  CFX_RetainPtr<CFX_DIBitmap> Detach();
-  void Replace(CFX_RetainPtr<CFX_DIBitmap>&& pBitmap);
+  CFX_DIBitmap* GetBitmap() { return m_pBitmap.get(); }
+  std::unique_ptr<CFX_DIBitmap> Detach();
+  void Replace(std::unique_ptr<CFX_DIBitmap> pBitmap);
 
  private:
-  CFX_RetainPtr<CFX_DIBitmap> m_pBitmap;
+  std::unique_ptr<CFX_DIBitmap> m_pBitmap;
 };
 
 class CFX_ImageStretcher {
  public:
   CFX_ImageStretcher(IFX_ScanlineComposer* pDest,
-                     const CFX_RetainPtr<CFX_DIBSource>& pSource,
+                     const CFX_DIBSource* pSource,
                      int dest_width,
                      int dest_height,
                      const FX_RECT& bitmap_rect,
@@ -608,7 +606,7 @@ class CFX_ImageStretcher {
   bool Start();
   bool Continue(IFX_Pause* pPause);
 
-  CFX_RetainPtr<CFX_DIBSource> source() { return m_pSource; }
+  const CFX_DIBSource* source() { return m_pSource; }
 
  private:
   bool StartQuickStretch();
@@ -617,7 +615,7 @@ class CFX_ImageStretcher {
   bool ContinueStretch(IFX_Pause* pPause);
 
   IFX_ScanlineComposer* const m_pDest;
-  CFX_RetainPtr<CFX_DIBSource> m_pSource;
+  const CFX_DIBSource* const m_pSource;
   std::unique_ptr<CStretchEngine> m_pStretchEngine;
   std::unique_ptr<uint8_t, FxFreeDeleter> m_pScanline;
   std::unique_ptr<uint8_t, FxFreeDeleter> m_pMaskScanline;
@@ -634,7 +632,7 @@ class CFX_ImageStretcher {
 
 class CFX_ImageTransformer {
  public:
-  CFX_ImageTransformer(const CFX_RetainPtr<CFX_DIBSource>& pSrc,
+  CFX_ImageTransformer(const CFX_DIBSource* pSrc,
                        const CFX_Matrix* pMatrix,
                        int flags,
                        const FX_RECT* pClip);
@@ -644,10 +642,10 @@ class CFX_ImageTransformer {
   bool Continue(IFX_Pause* pPause);
 
   const FX_RECT& result() const { return m_result; }
-  CFX_RetainPtr<CFX_DIBitmap> DetachBitmap();
+  std::unique_ptr<CFX_DIBitmap> DetachBitmap();
 
  private:
-  const CFX_RetainPtr<CFX_DIBSource> m_pSrc;
+  const CFX_DIBSource* const m_pSrc;
   const CFX_Matrix* const m_pMatrix;
   const FX_RECT* const m_pClip;
   FX_RECT m_StretchClip;
@@ -664,9 +662,9 @@ class CFX_ImageRenderer {
   CFX_ImageRenderer();
   ~CFX_ImageRenderer();
 
-  bool Start(const CFX_RetainPtr<CFX_DIBitmap>& pDevice,
+  bool Start(CFX_DIBitmap* pDevice,
              const CFX_ClipRgn* pClipRgn,
-             const CFX_RetainPtr<CFX_DIBSource>& pSource,
+             const CFX_DIBSource* pSource,
              int bitmap_alpha,
              uint32_t mask_color,
              const CFX_Matrix* pMatrix,
@@ -679,7 +677,7 @@ class CFX_ImageRenderer {
   bool Continue(IFX_Pause* pPause);
 
  protected:
-  CFX_RetainPtr<CFX_DIBitmap> m_pDevice;
+  CFX_DIBitmap* m_pDevice;
   const CFX_ClipRgn* m_pClipRgn;
   int m_BitmapAlpha;
   uint32_t m_MaskColor;

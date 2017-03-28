@@ -50,7 +50,7 @@ class CBC_OnedEAN8Writer : public CBC_OneDimWriter {
 
  protected:
   void ShowChars(const CFX_WideStringC& contents,
-                 const CFX_RetainPtr<CFX_DIBitmap>& pOutBitmap,
+                 CFX_DIBitmap* pOutBitmap,
                  CFX_RenderDevice* device,
                  const CFX_Matrix* matrix,
                  int32_t barWidth,

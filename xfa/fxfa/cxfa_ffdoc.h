@@ -20,29 +20,10 @@ class CXFA_FFNotify;
 class CXFA_FFDocView;
 
 struct FX_IMAGEDIB_AND_DPI {
-  FX_IMAGEDIB_AND_DPI();
-  FX_IMAGEDIB_AND_DPI(const FX_IMAGEDIB_AND_DPI& that);
-  FX_IMAGEDIB_AND_DPI(const CFX_RetainPtr<CFX_DIBSource>& pDib,
-                      int32_t xDpi,
-                      int32_t yDpi);
-  ~FX_IMAGEDIB_AND_DPI();
-
-  CFX_RetainPtr<CFX_DIBSource> pDibSource;
+  CFX_DIBSource* pDibSource;
   int32_t iImageXDpi;
   int32_t iImageYDpi;
 };
-
-inline FX_IMAGEDIB_AND_DPI::FX_IMAGEDIB_AND_DPI() = default;
-inline FX_IMAGEDIB_AND_DPI::FX_IMAGEDIB_AND_DPI(
-    const FX_IMAGEDIB_AND_DPI& that) = default;
-
-inline FX_IMAGEDIB_AND_DPI::FX_IMAGEDIB_AND_DPI(
-    const CFX_RetainPtr<CFX_DIBSource>& pDib,
-    int32_t xDpi,
-    int32_t yDpi)
-    : pDibSource(pDib), iImageXDpi(xDpi), iImageYDpi(yDpi) {}
-
-inline FX_IMAGEDIB_AND_DPI::~FX_IMAGEDIB_AND_DPI() = default;
 
 class CXFA_FFDoc {
  public:
@@ -67,9 +48,9 @@ class CXFA_FFDoc {
   CXFA_FFDocView* GetDocView(CXFA_LayoutProcessor* pLayout);
   CXFA_FFDocView* GetDocView();
   CPDF_Document* GetPDFDoc();
-  CFX_RetainPtr<CFX_DIBitmap> GetPDFNamedImage(const CFX_WideStringC& wsName,
-                                               int32_t& iImageXDpi,
-                                               int32_t& iImageYDpi);
+  CFX_DIBitmap* GetPDFNamedImage(const CFX_WideStringC& wsName,
+                                 int32_t& iImageXDpi,
+                                 int32_t& iImageYDpi);
 
   bool SavePackage(XFA_HashCode code,
                    const CFX_RetainPtr<IFX_SeekableWriteStream>& pFile,

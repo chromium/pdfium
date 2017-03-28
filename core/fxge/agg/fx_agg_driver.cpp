@@ -35,10 +35,7 @@ CFX_PointF HardClip(const CFX_PointF& pos) {
                     pdfium::clamp(pos.y, -kMaxPos, kMaxPos));
 }
 
-void RgbByteOrderSetPixel(const CFX_RetainPtr<CFX_DIBitmap>& pBitmap,
-                          int x,
-                          int y,
-                          uint32_t argb) {
+void RgbByteOrderSetPixel(CFX_DIBitmap* pBitmap, int x, int y, uint32_t argb) {
   if (x < 0 || x >= pBitmap->GetWidth() || y < 0 || y >= pBitmap->GetHeight())
     return;
 
@@ -55,7 +52,7 @@ void RgbByteOrderSetPixel(const CFX_RetainPtr<CFX_DIBitmap>& pBitmap,
   pos[2] = (FXARGB_B(argb) * alpha + pos[2] * (255 - alpha)) / 255;
 }
 
-void RgbByteOrderCompositeRect(const CFX_RetainPtr<CFX_DIBitmap>& pBitmap,
+void RgbByteOrderCompositeRect(CFX_DIBitmap* pBitmap,
                                int left,
                                int top,
                                int width,
@@ -130,12 +127,12 @@ void RgbByteOrderCompositeRect(const CFX_RetainPtr<CFX_DIBitmap>& pBitmap,
   }
 }
 
-void RgbByteOrderTransferBitmap(const CFX_RetainPtr<CFX_DIBitmap>& pBitmap,
+void RgbByteOrderTransferBitmap(CFX_DIBitmap* pBitmap,
                                 int dest_left,
                                 int dest_top,
                                 int width,
                                 int height,
-                                const CFX_RetainPtr<CFX_DIBSource>& pSrcBitmap,
+                                const CFX_DIBSource* pSrcBitmap,
                                 int src_left,
                                 int src_top) {
   if (!pBitmap)
@@ -235,7 +232,7 @@ FX_ARGB DefaultCMYK2ARGB(FX_CMYK cmyk, uint8_t alpha) {
   return ArgbEncode(alpha, r, g, b);
 }
 
-bool DibSetPixel(const CFX_RetainPtr<CFX_DIBitmap>& pDevice,
+bool DibSetPixel(CFX_DIBitmap* pDevice,
                  int x,
                  int y,
                  uint32_t color,
@@ -401,8 +398,8 @@ class CFX_Renderer {
                          uint8_t* clip_scan,
                          uint8_t* dest_extra_alpha_scan);
 
-  bool Init(const CFX_RetainPtr<CFX_DIBitmap>& pDevice,
-            const CFX_RetainPtr<CFX_DIBitmap>& pOriDevice,
+  bool Init(CFX_DIBitmap* pDevice,
+            CFX_DIBitmap* pOriDevice,
             const CFX_ClipRgn* pClipRgn,
             uint32_t color,
             bool bFullCover,
@@ -459,10 +456,10 @@ class CFX_Renderer {
   uint32_t m_Color;
   bool m_bFullCover;
   bool m_bRgbByteOrder;
+  CFX_DIBitmap* m_pOriDevice;
   FX_RECT m_ClipBox;
-  CFX_RetainPtr<CFX_DIBitmap> m_pOriDevice;
-  CFX_RetainPtr<CFX_DIBitmap> m_pClipMask;
-  CFX_RetainPtr<CFX_DIBitmap> m_pDevice;
+  const CFX_DIBitmap* m_pClipMask;
+  CFX_DIBitmap* m_pDevice;
   const CFX_ClipRgn* m_pClipRgn;
 };
 
@@ -902,8 +899,8 @@ void CFX_Renderer::CompositeSpanCMYK(uint8_t* dest_scan,
   }
 }
 
-bool CFX_Renderer::Init(const CFX_RetainPtr<CFX_DIBitmap>& pDevice,
-                        const CFX_RetainPtr<CFX_DIBitmap>& pOriDevice,
+bool CFX_Renderer::Init(CFX_DIBitmap* pDevice,
+                        CFX_DIBitmap* pOriDevice,
                         const CFX_ClipRgn* pClipRgn,
                         uint32_t color,
                         bool bFullCover,
@@ -924,7 +921,7 @@ bool CFX_Renderer::Init(const CFX_RetainPtr<CFX_DIBitmap>& pDevice,
   }
   m_pClipMask = nullptr;
   if (m_pClipRgn && m_pClipRgn->GetType() == CFX_ClipRgn::MaskF)
-    m_pClipMask = m_pClipRgn->GetMask();
+    m_pClipMask = m_pClipRgn->GetMask().GetObject();
   m_bFullCover = bFullCover;
   bool bObjectCMYK = !!FXGETFLAG_COLORTYPE(alpha_flag);
   bool bDeviceCMYK = pDevice->IsCmykImage();
@@ -1041,7 +1038,7 @@ void CFX_Renderer::render(const Scanline& sl) {
 
   uint8_t* dest_scan = m_pDevice->GetBuffer() + m_pDevice->GetPitch() * y;
   uint8_t* dest_scan_extra_alpha = nullptr;
-  CFX_RetainPtr<CFX_DIBitmap> pAlphaMask = m_pDevice->m_pAlphaMask;
+  CFX_DIBitmap* pAlphaMask = m_pDevice->m_pAlphaMask;
   if (pAlphaMask) {
     dest_scan_extra_alpha =
         pAlphaMask->GetBuffer() + pAlphaMask->GetPitch() * y;
@@ -1202,11 +1199,10 @@ void CAgg_PathData::BuildPath(const CFX_PathData* pPathData,
   }
 }
 
-CFX_AggDeviceDriver::CFX_AggDeviceDriver(
-    const CFX_RetainPtr<CFX_DIBitmap>& pBitmap,
-    bool bRgbByteOrder,
-    const CFX_RetainPtr<CFX_DIBitmap>& pOriDevice,
-    bool bGroupKnockout)
+CFX_AggDeviceDriver::CFX_AggDeviceDriver(CFX_DIBitmap* pBitmap,
+                                         bool bRgbByteOrder,
+                                         CFX_DIBitmap* pOriDevice,
+                                         bool bGroupKnockout)
     : m_pBitmap(pBitmap),
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
       m_pPlatformGraphics(nullptr),
@@ -1300,7 +1296,8 @@ void CFX_AggDeviceDriver::SetClipMask(agg::rasterizer_scanline_aa& rasterizer) {
   FX_RECT path_rect(rasterizer.min_x(), rasterizer.min_y(),
                     rasterizer.max_x() + 1, rasterizer.max_y() + 1);
   path_rect.Intersect(m_pClipRgn->GetBox());
-  auto pThisLayer = pdfium::MakeRetain<CFX_DIBitmap>();
+  CFX_DIBitmapRef mask;
+  CFX_DIBitmap* pThisLayer = mask.Emplace();
   pThisLayer->Create(path_rect.Width(), path_rect.Height(), FXDIB_8bppMask);
   pThisLayer->Clear(0);
   agg::rendering_buffer raw_buf(pThisLayer->GetBuffer(), pThisLayer->GetWidth(),
@@ -1314,7 +1311,7 @@ void CFX_AggDeviceDriver::SetClipMask(agg::rasterizer_scanline_aa& rasterizer) {
   agg::scanline_u8 scanline;
   agg::render_scanlines(rasterizer, scanline, final_render,
                         (m_FillFlags & FXFILL_NOPATHSMOOTH) != 0);
-  m_pClipRgn->IntersectMaskF(path_rect.left, path_rect.top, pThisLayer);
+  m_pClipRgn->IntersectMaskF(path_rect.left, path_rect.top, mask);
 }
 
 bool CFX_AggDeviceDriver::SetClip_PathFill(const CFX_PathData* pPathData,
@@ -1384,7 +1381,7 @@ bool CFX_AggDeviceDriver::RenderRasterizer(
     bool bGroupKnockout,
     int alpha_flag,
     void* pIccTransform) {
-  CFX_RetainPtr<CFX_DIBitmap> pt = bGroupKnockout ? m_pOriDevice : nullptr;
+  CFX_DIBitmap* pt = bGroupKnockout ? m_pOriDevice : nullptr;
   CFX_Renderer render;
   if (!render.Init(m_pBitmap, pt, m_pClipRgn.get(), color, bFullCover,
                    m_bRgbByteOrder, alpha_flag, pIccTransform)) {
@@ -1495,8 +1492,8 @@ bool CFX_AggDeviceDriver::SetPixel(int x, int y, uint32_t color) {
   if (m_pClipRgn->GetType() != CFX_ClipRgn::MaskF)
     return true;
 
-  int new_alpha =
-      FXARGB_A(color) * m_pClipRgn->GetMask()->GetScanline(y)[x] / 255;
+  const CFX_DIBitmap* pMask = m_pClipRgn->GetMask().GetObject();
+  int new_alpha = FXARGB_A(color) * pMask->GetScanline(y)[x] / 255;
   color = (color & 0xffffff) | (new_alpha << 24);
   if (m_bRgbByteOrder) {
     RgbByteOrderSetPixel(m_pBitmap, x, y, color);
@@ -1533,11 +1530,11 @@ bool CFX_AggDeviceDriver::FillRectWithBlend(const FX_RECT* pRect,
     }
     return true;
   }
-  m_pBitmap->CompositeMask(draw_rect.left, draw_rect.top, draw_rect.Width(),
-                           draw_rect.Height(), m_pClipRgn->GetMask(),
-                           fill_color, draw_rect.left - clip_rect.left,
-                           draw_rect.top - clip_rect.top, FXDIB_BLEND_NORMAL,
-                           nullptr, m_bRgbByteOrder, 0, nullptr);
+  m_pBitmap->CompositeMask(
+      draw_rect.left, draw_rect.top, draw_rect.Width(), draw_rect.Height(),
+      m_pClipRgn->GetMask().GetObject(), fill_color,
+      draw_rect.left - clip_rect.left, draw_rect.top - clip_rect.top,
+      FXDIB_BLEND_NORMAL, nullptr, m_bRgbByteOrder, 0, nullptr);
   return true;
 }
 
@@ -1552,15 +1549,13 @@ bool CFX_AggDeviceDriver::GetClipBox(FX_RECT* pRect) {
   return true;
 }
 
-bool CFX_AggDeviceDriver::GetDIBits(const CFX_RetainPtr<CFX_DIBitmap>& pBitmap,
-                                    int left,
-                                    int top) {
+bool CFX_AggDeviceDriver::GetDIBits(CFX_DIBitmap* pBitmap, int left, int top) {
   if (!m_pBitmap || !m_pBitmap->GetBuffer())
     return true;
 
   FX_RECT rect(left, top, left + pBitmap->GetWidth(),
                top + pBitmap->GetHeight());
-  CFX_RetainPtr<CFX_DIBitmap> pBack;
+  std::unique_ptr<CFX_DIBitmap> pBack;
   if (m_pOriDevice) {
     pBack = m_pOriDevice->Clone(&rect);
     if (!pBack)
@@ -1578,18 +1573,18 @@ bool CFX_AggDeviceDriver::GetDIBits(const CFX_RetainPtr<CFX_DIBitmap>& pBitmap,
   top = std::min(top, 0);
   if (m_bRgbByteOrder) {
     RgbByteOrderTransferBitmap(pBitmap, 0, 0, rect.Width(), rect.Height(),
-                               pBack, left, top);
+                               pBack.get(), left, top);
     return true;
   }
-  return pBitmap->TransferBitmap(0, 0, rect.Width(), rect.Height(), pBack, left,
-                                 top);
+  return pBitmap->TransferBitmap(0, 0, rect.Width(), rect.Height(), pBack.get(),
+                                 left, top);
 }
 
-CFX_RetainPtr<CFX_DIBitmap> CFX_AggDeviceDriver::GetBackDrop() {
+CFX_DIBitmap* CFX_AggDeviceDriver::GetBackDrop() {
   return m_pOriDevice;
 }
 
-bool CFX_AggDeviceDriver::SetDIBits(const CFX_RetainPtr<CFX_DIBSource>& pBitmap,
+bool CFX_AggDeviceDriver::SetDIBits(const CFX_DIBSource* pBitmap,
                                     uint32_t argb,
                                     const FX_RECT* pSrcRect,
                                     int left,
@@ -1609,16 +1604,15 @@ bool CFX_AggDeviceDriver::SetDIBits(const CFX_RetainPtr<CFX_DIBSource>& pBitmap,
       pSrcRect->top, blend_type, m_pClipRgn.get(), m_bRgbByteOrder, nullptr);
 }
 
-bool CFX_AggDeviceDriver::StretchDIBits(
-    const CFX_RetainPtr<CFX_DIBSource>& pSource,
-    uint32_t argb,
-    int dest_left,
-    int dest_top,
-    int dest_width,
-    int dest_height,
-    const FX_RECT* pClipRect,
-    uint32_t flags,
-    int blend_type) {
+bool CFX_AggDeviceDriver::StretchDIBits(const CFX_DIBSource* pSource,
+                                        uint32_t argb,
+                                        int dest_left,
+                                        int dest_top,
+                                        int dest_width,
+                                        int dest_height,
+                                        const FX_RECT* pClipRect,
+                                        uint32_t flags,
+                                        int blend_type) {
   if (!m_pBitmap->GetBuffer())
     return true;
 
@@ -1643,14 +1637,13 @@ bool CFX_AggDeviceDriver::StretchDIBits(
   return true;
 }
 
-bool CFX_AggDeviceDriver::StartDIBits(
-    const CFX_RetainPtr<CFX_DIBSource>& pSource,
-    int bitmap_alpha,
-    uint32_t argb,
-    const CFX_Matrix* pMatrix,
-    uint32_t render_flags,
-    void*& handle,
-    int blend_type) {
+bool CFX_AggDeviceDriver::StartDIBits(const CFX_DIBSource* pSource,
+                                      int bitmap_alpha,
+                                      uint32_t argb,
+                                      const CFX_Matrix* pMatrix,
+                                      uint32_t render_flags,
+                                      void*& handle,
+                                      int blend_type) {
   if (!m_pBitmap->GetBuffer())
     return true;
 
@@ -1675,13 +1668,13 @@ void CFX_AggDeviceDriver::CancelDIBits(void* pHandle) {
 }
 
 #ifndef _SKIA_SUPPORT_
-CFX_FxgeDevice::CFX_FxgeDevice() {}
+CFX_FxgeDevice::CFX_FxgeDevice() {
+  m_bOwnedBitmap = false;
+}
 
-CFX_FxgeDevice::~CFX_FxgeDevice() {}
-
-bool CFX_FxgeDevice::Attach(const CFX_RetainPtr<CFX_DIBitmap>& pBitmap,
+bool CFX_FxgeDevice::Attach(CFX_DIBitmap* pBitmap,
                             bool bRgbByteOrder,
-                            const CFX_RetainPtr<CFX_DIBitmap>& pOriDevice,
+                            CFX_DIBitmap* pOriDevice,
                             bool bGroupKnockout) {
   if (!pBitmap)
     return false;
@@ -1695,15 +1688,21 @@ bool CFX_FxgeDevice::Attach(const CFX_RetainPtr<CFX_DIBitmap>& pBitmap,
 bool CFX_FxgeDevice::Create(int width,
                             int height,
                             FXDIB_Format format,
-                            const CFX_RetainPtr<CFX_DIBitmap>& pOriDevice) {
-  auto pBitmap = pdfium::MakeRetain<CFX_DIBitmap>();
-  if (!pBitmap->Create(width, height, format))
+                            CFX_DIBitmap* pOriDevice) {
+  m_bOwnedBitmap = true;
+  CFX_DIBitmap* pBitmap = new CFX_DIBitmap;
+  if (!pBitmap->Create(width, height, format)) {
+    delete pBitmap;
     return false;
-
+  }
   SetBitmap(pBitmap);
   SetDeviceDriver(pdfium::MakeUnique<CFX_AggDeviceDriver>(pBitmap, false,
                                                           pOriDevice, false));
   return true;
 }
 
+CFX_FxgeDevice::~CFX_FxgeDevice() {
+  if (m_bOwnedBitmap)
+    delete GetBitmap();
+}
 #endif

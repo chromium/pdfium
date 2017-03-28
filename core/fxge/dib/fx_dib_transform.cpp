@@ -100,7 +100,7 @@ void bicubic_get_pos_weight(int pos_pixel[],
   v_w[3] = SDP_Table[512 - res_y];
 }
 
-FXDIB_Format GetTransformedFormat(const CFX_RetainPtr<CFX_DIBSource>& pDrc) {
+FXDIB_Format GetTransformedFormat(const CFX_DIBSource* pDrc) {
   FXDIB_Format format = pDrc->GetFormat();
   if (pDrc->IsAlphaMask()) {
     format = FXDIB_8bppMask;
@@ -179,7 +179,7 @@ class CFX_BilinearMatrix : public CPDF_FixedMatrix {
   }
 };
 
-CFX_RetainPtr<CFX_DIBitmap> CFX_DIBSource::SwapXY(
+std::unique_ptr<CFX_DIBitmap> CFX_DIBSource::SwapXY(
     bool bXFlip,
     bool bYFlip,
     const FX_RECT* pDestClip) const {
@@ -189,7 +189,7 @@ CFX_RetainPtr<CFX_DIBitmap> CFX_DIBSource::SwapXY(
   if (dest_clip.IsEmpty())
     return nullptr;
 
-  auto pTransBitmap = pdfium::MakeRetain<CFX_DIBitmap>();
+  auto pTransBitmap = pdfium::MakeUnique<CFX_DIBitmap>();
   int result_height = dest_clip.Height();
   int result_width = dest_clip.Width();
   if (!pTransBitmap->Create(result_width, result_height, GetFormat()))
@@ -303,14 +303,13 @@ FX_RECT FXDIB_SwapClipBox(FX_RECT& clip,
   return rect;
 }
 
-CFX_RetainPtr<CFX_DIBitmap> CFX_DIBSource::TransformTo(
+std::unique_ptr<CFX_DIBitmap> CFX_DIBSource::TransformTo(
     const CFX_Matrix* pDestMatrix,
     int& result_left,
     int& result_top,
     uint32_t flags,
-    const FX_RECT* pDestClip) {
-  CFX_RetainPtr<CFX_DIBSource> holder(this);
-  CFX_ImageTransformer transformer(holder, pDestMatrix, flags, pDestClip);
+    const FX_RECT* pDestClip) const {
+  CFX_ImageTransformer transformer(this, pDestMatrix, flags, pDestClip);
   transformer.Start();
   transformer.Continue(nullptr);
   result_left = transformer.result().left;
@@ -318,11 +317,11 @@ CFX_RetainPtr<CFX_DIBitmap> CFX_DIBSource::TransformTo(
   return transformer.DetachBitmap();
 }
 
-CFX_RetainPtr<CFX_DIBitmap> CFX_DIBSource::StretchTo(int dest_width,
-                                                     int dest_height,
-                                                     uint32_t flags,
-                                                     const FX_RECT* pClip) {
-  CFX_RetainPtr<CFX_DIBSource> holder(this);
+std::unique_ptr<CFX_DIBitmap> CFX_DIBSource::StretchTo(
+    int dest_width,
+    int dest_height,
+    uint32_t flags,
+    const FX_RECT* pClip) const {
   FX_RECT clip_rect(0, 0, FXSYS_abs(dest_width), FXSYS_abs(dest_height));
   if (pClip)
     clip_rect.Intersect(*pClip);
@@ -334,7 +333,7 @@ CFX_RetainPtr<CFX_DIBitmap> CFX_DIBSource::StretchTo(int dest_width,
     return Clone(&clip_rect);
 
   CFX_BitmapStorer storer;
-  CFX_ImageStretcher stretcher(&storer, holder, dest_width, dest_height,
+  CFX_ImageStretcher stretcher(&storer, this, dest_width, dest_height,
                                clip_rect, flags);
   if (stretcher.Start())
     stretcher.Continue(nullptr);
@@ -342,11 +341,10 @@ CFX_RetainPtr<CFX_DIBitmap> CFX_DIBSource::StretchTo(int dest_width,
   return storer.Detach();
 }
 
-CFX_ImageTransformer::CFX_ImageTransformer(
-    const CFX_RetainPtr<CFX_DIBSource>& pSrc,
-    const CFX_Matrix* pMatrix,
-    int flags,
-    const FX_RECT* pClip)
+CFX_ImageTransformer::CFX_ImageTransformer(const CFX_DIBSource* pSrc,
+                                           const CFX_Matrix* pMatrix,
+                                           int flags,
+                                           const FX_RECT* pClip)
     : m_pSrc(pSrc),
       m_pMatrix(pMatrix),
       m_pClip(pClip),
@@ -446,7 +444,7 @@ bool CFX_ImageTransformer::Continue(IFX_Pause* pPause) {
     stretch_buf_mask = m_Storer.GetBitmap()->m_pAlphaMask->GetBuffer();
 
   int stretch_pitch = m_Storer.GetBitmap()->GetPitch();
-  auto pTransformed = pdfium::MakeRetain<CFX_DIBitmap>();
+  std::unique_ptr<CFX_DIBitmap> pTransformed(new CFX_DIBitmap);
   FXDIB_Format transformF = GetTransformedFormat(m_Stretcher->source());
   if (!pTransformed->Create(m_result.Width(), m_result.Height(), transformF))
     return false;
@@ -960,6 +958,6 @@ bool CFX_ImageTransformer::Continue(IFX_Pause* pPause) {
   return false;
 }
 
-CFX_RetainPtr<CFX_DIBitmap> CFX_ImageTransformer::DetachBitmap() {
+std::unique_ptr<CFX_DIBitmap> CFX_ImageTransformer::DetachBitmap() {
   return m_Storer.Detach();
 }

@@ -7,7 +7,6 @@
 #ifndef CORE_FPDFAPI_PAGE_CPDF_GENERALSTATE_H_
 #define CORE_FPDFAPI_PAGE_CPDF_GENERALSTATE_H_
 
-#include "core/fxcrt/cfx_shared_copy_on_write.h"
 #include "core/fxcrt/fx_basic.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxge/fx_dib.h"

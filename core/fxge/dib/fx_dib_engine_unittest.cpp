@@ -23,9 +23,9 @@ TEST(CStretchEngine, OverflowInCtor) {
   dict_obj->SetNewFor<CPDF_Number>("Height", 12500);
   std::unique_ptr<CPDF_Stream> stream =
       pdfium::MakeUnique<CPDF_Stream>(nullptr, 0, std::move(dict_obj));
-  auto dib_source = pdfium::MakeRetain<CPDF_DIBSource>();
-  dib_source->Load(nullptr, stream.get());
-  CStretchEngine engine(nullptr, FXDIB_8bppRgb, 500, 500, clip_rect, dib_source,
-                        0);
+  CPDF_DIBSource dib_source;
+  dib_source.Load(nullptr, stream.get());
+  CStretchEngine engine(nullptr, FXDIB_8bppRgb, 500, 500, clip_rect,
+                        &dib_source, 0);
   EXPECT_EQ(FXDIB_INTERPOL, engine.m_Flags);
 }

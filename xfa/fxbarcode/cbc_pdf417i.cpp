@@ -63,11 +63,12 @@ bool CBC_PDF417I::RenderDevice(CFX_RenderDevice* device,
   return true;
 }
 
-bool CBC_PDF417I::RenderBitmap(CFX_RetainPtr<CFX_DIBitmap>& pOutBitmap,
-                               int32_t& e) {
+bool CBC_PDF417I::RenderBitmap(CFX_DIBitmap*& pOutBitmap, int32_t& e) {
   static_cast<CBC_TwoDimWriter*>(m_pBCWriter.get())
       ->RenderBitmapResult(pOutBitmap, e);
-  return e == BCExceptionNO;
+  if (e != BCExceptionNO)
+    return false;
+  return true;
 }
 
 BC_TYPE CBC_PDF417I::GetType() {

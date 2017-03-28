@@ -32,7 +32,7 @@ class XFACodecFuzzer {
     if (status != FXCODEC_STATUS_FRAME_READY)
       return 0;
 
-    auto bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
+    std::unique_ptr<CFX_DIBitmap> bitmap(new CFX_DIBitmap);
     bitmap->Create(decoder->GetWidth(), decoder->GetHeight(), FXDIB_Argb);
 
     int32_t frames;
@@ -40,7 +40,7 @@ class XFACodecFuzzer {
         frames == 0)
       return 0;
 
-    status = decoder->StartDecode(bitmap, 0, 0, bitmap->GetWidth(),
+    status = decoder->StartDecode(bitmap.get(), 0, 0, bitmap->GetWidth(),
                                   bitmap->GetHeight());
     while (status == FXCODEC_STATUS_DECODE_TOBECONTINUE)
       status = decoder->ContinueDecode();

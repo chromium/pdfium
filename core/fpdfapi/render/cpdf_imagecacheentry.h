@@ -9,7 +9,6 @@
 
 #include <memory>
 
-#include "core/fxcrt/cfx_retain_ptr.h"
 #include "core/fxcrt/fx_system.h"
 
 class CFX_DIBitmap;
@@ -25,7 +24,7 @@ class CPDF_ImageCacheEntry {
   CPDF_ImageCacheEntry(CPDF_Document* pDoc, CPDF_Stream* pStream);
   ~CPDF_ImageCacheEntry();
 
-  void Reset(const CFX_RetainPtr<CFX_DIBitmap>& pBitmap);
+  void Reset(const CFX_DIBitmap* pBitmap);
   uint32_t EstimateSize() const { return m_dwCacheSize; }
   uint32_t GetTimeCount() const { return m_dwTimeCount; }
   CPDF_Stream* GetStream() const { return m_pStream; }
@@ -39,8 +38,8 @@ class CPDF_ImageCacheEntry {
                            int32_t downsampleWidth,
                            int32_t downsampleHeight);
   int Continue(IFX_Pause* pPause);
-  CFX_RetainPtr<CFX_DIBSource> DetachBitmap();
-  CFX_RetainPtr<CFX_DIBSource> DetachMask();
+  CFX_DIBSource* DetachBitmap();
+  CFX_DIBSource* DetachMask();
 
   int m_dwTimeCount;
   uint32_t m_MatteColor;
@@ -52,10 +51,10 @@ class CPDF_ImageCacheEntry {
   CPDF_RenderStatus* m_pRenderStatus;
   CPDF_Document* m_pDocument;
   CPDF_Stream* m_pStream;
-  CFX_RetainPtr<CFX_DIBSource> m_pCurBitmap;
-  CFX_RetainPtr<CFX_DIBSource> m_pCurMask;
-  CFX_RetainPtr<CFX_DIBSource> m_pCachedBitmap;
-  CFX_RetainPtr<CFX_DIBSource> m_pCachedMask;
+  CFX_DIBSource* m_pCurBitmap;
+  CFX_DIBSource* m_pCurMask;
+  std::unique_ptr<CFX_DIBSource> m_pCachedBitmap;
+  std::unique_ptr<CFX_DIBSource> m_pCachedMask;
   uint32_t m_dwCacheSize;
 };
 

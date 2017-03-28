@@ -165,14 +165,13 @@ uint8_t* CBC_OnedEAN8Writer::Encode(const CFX_ByteString& contents,
   return result;
 }
 
-void CBC_OnedEAN8Writer::ShowChars(
-    const CFX_WideStringC& contents,
-    const CFX_RetainPtr<CFX_DIBitmap>& pOutBitmap,
-    CFX_RenderDevice* device,
-    const CFX_Matrix* matrix,
-    int32_t barWidth,
-    int32_t multiple,
-    int32_t& e) {
+void CBC_OnedEAN8Writer::ShowChars(const CFX_WideStringC& contents,
+                                   CFX_DIBitmap* pOutBitmap,
+                                   CFX_RenderDevice* device,
+                                   const CFX_Matrix* matrix,
+                                   int32_t barWidth,
+                                   int32_t multiple,
+                                   int32_t& e) {
   if (!device && !pOutBitmap) {
     e = BCExceptionIllegalArgument;
     return;
@@ -218,6 +217,7 @@ void CBC_OnedEAN8Writer::ShowChars(
   CFX_Matrix affine_matrix(1.0, 0.0, 0.0, -1.0, 0.0, (float)iFontSize);
   CFX_FxgeDevice ge;
   if (pOutBitmap) {
+    delete ge.GetBitmap();
     ge.Create(strWidth, iTextHeight, FXDIB_Argb, nullptr);
     ge.GetBitmap()->Clear(m_backgroundColor);
     ge.DrawNormalText(iLen, pCharPos, m_pFont, static_cast<float>(iFontSize),
@@ -237,6 +237,7 @@ void CBC_OnedEAN8Writer::ShowChars(
   CalcTextInfo(tempStr, pCharPos + 4, m_pFont, (float)strWidth, iFontSize,
                blank);
   if (pOutBitmap) {
+    delete ge.GetBitmap();
     ge.Create(strWidth, iTextHeight, FXDIB_Argb, nullptr);
     ge.GetBitmap()->Clear(m_backgroundColor);
     ge.DrawNormalText(iLen, pCharPos + 4, m_pFont,

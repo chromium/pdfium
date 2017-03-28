@@ -338,7 +338,7 @@ static void PSCompressData(int PSLevel,
   }
 }
 
-bool CFX_PSRenderer::SetDIBits(const CFX_RetainPtr<CFX_DIBSource>& pSource,
+bool CFX_PSRenderer::SetDIBits(const CFX_DIBSource* pSource,
                                uint32_t color,
                                int left,
                                int top) {
@@ -349,7 +349,7 @@ bool CFX_PSRenderer::SetDIBits(const CFX_RetainPtr<CFX_DIBSource>& pSource,
   return DrawDIBits(pSource, color, &matrix, 0);
 }
 
-bool CFX_PSRenderer::StretchDIBits(const CFX_RetainPtr<CFX_DIBSource>& pSource,
+bool CFX_PSRenderer::StretchDIBits(const CFX_DIBSource* pSource,
                                    uint32_t color,
                                    int dest_left,
                                    int dest_top,
@@ -362,7 +362,7 @@ bool CFX_PSRenderer::StretchDIBits(const CFX_RetainPtr<CFX_DIBSource>& pSource,
   return DrawDIBits(pSource, color, &matrix, flags);
 }
 
-bool CFX_PSRenderer::DrawDIBits(const CFX_RetainPtr<CFX_DIBSource>& pSource,
+bool CFX_PSRenderer::DrawDIBits(const CFX_DIBSource* pSource,
                                 uint32_t color,
                                 const CFX_Matrix* pMatrix,
                                 uint32_t flags) {
@@ -419,25 +419,25 @@ bool CFX_PSRenderer::DrawDIBits(const CFX_RetainPtr<CFX_DIBSource>& pSource,
     output_buf.release();
   } else {
     CFX_DIBExtractor source_extractor(pSource);
-    CFX_RetainPtr<CFX_DIBSource> pConverted = source_extractor.GetBitmap();
-    if (!pConverted)
+    CFX_MaybeOwned<CFX_DIBSource> pConverted(source_extractor.GetBitmap());
+    if (!pConverted.Get())
       return false;
     switch (pSource->GetFormat()) {
       case FXDIB_1bppRgb:
       case FXDIB_Rgb32:
-        pConverted = pConverted->CloneConvert(FXDIB_Rgb);
+        pConverted = pConverted->CloneConvert(FXDIB_Rgb).release();
         break;
       case FXDIB_8bppRgb:
         if (pSource->GetPalette()) {
-          pConverted = pConverted->CloneConvert(FXDIB_Rgb);
+          pConverted = pConverted->CloneConvert(FXDIB_Rgb).release();
         }
         break;
       case FXDIB_1bppCmyk:
-        pConverted = pConverted->CloneConvert(FXDIB_Cmyk);
+        pConverted = pConverted->CloneConvert(FXDIB_Cmyk).release();
         break;
       case FXDIB_8bppCmyk:
         if (pSource->GetPalette()) {
-          pConverted = pConverted->CloneConvert(FXDIB_Cmyk);
+          pConverted = pConverted->CloneConvert(FXDIB_Cmyk).release();
         }
         break;
       default:
@@ -452,7 +452,8 @@ bool CFX_PSRenderer::DrawDIBits(const CFX_RetainPtr<CFX_DIBSource>& pSource,
     FX_STRSIZE output_size = 0;
     const char* filter = nullptr;
     if ((m_PSLevel == 2 || flags & FXRENDER_IMAGE_LOSSY) &&
-        CCodec_JpegModule::JpegEncode(pConverted, &output_buf, &output_size)) {
+        CCodec_JpegModule::JpegEncode(pConverted.Get(), &output_buf,
+                                      &output_size)) {
       filter = "/DCTDecode filter ";
     }
     if (!filter) {

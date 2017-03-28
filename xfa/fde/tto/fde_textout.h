@@ -87,7 +87,7 @@ class CFDE_TextOut {
   void SetParagraphBreakChar(wchar_t wch);
   void SetAlignment(int32_t iAlignment);
   void SetLineSpace(float fLineSpace);
-  void SetDIBitmap(const CFX_RetainPtr<CFX_DIBitmap>& pDIB);
+  void SetDIBitmap(CFX_DIBitmap* pDIB);
   void SetRenderDevice(CFX_RenderDevice* pDevice);
   void SetClipRect(const CFX_Rect& rtClip);
   void SetClipRect(const CFX_RectF& rtClip);

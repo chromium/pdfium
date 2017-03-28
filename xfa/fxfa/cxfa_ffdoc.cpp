@@ -332,6 +332,10 @@ bool CXFA_FFDoc::CloseDoc() {
   m_DocView.reset();
   m_pNotify.reset(nullptr);
   m_pApp->GetXFAFontMgr()->ReleaseDocFonts(this);
+
+  for (const auto& pair : m_HashToDibDpiMap)
+    delete pair.second.pDibSource;
+
   m_HashToDibDpiMap.clear();
   m_pApp->ClearEventTargets();
   return true;
@@ -341,10 +345,9 @@ CPDF_Document* CXFA_FFDoc::GetPDFDoc() {
   return m_pPDFDoc;
 }
 
-CFX_RetainPtr<CFX_DIBitmap> CXFA_FFDoc::GetPDFNamedImage(
-    const CFX_WideStringC& wsName,
-    int32_t& iImageXDpi,
-    int32_t& iImageYDpi) {
+CFX_DIBitmap* CXFA_FFDoc::GetPDFNamedImage(const CFX_WideStringC& wsName,
+                                           int32_t& iImageXDpi,
+                                           int32_t& iImageYDpi) {
   if (!m_pPDFDoc)
     return nullptr;
 
@@ -353,7 +356,7 @@ CFX_RetainPtr<CFX_DIBitmap> CXFA_FFDoc::GetPDFNamedImage(
   if (it != m_HashToDibDpiMap.end()) {
     iImageXDpi = it->second.iImageXDpi;
     iImageYDpi = it->second.iImageYDpi;
-    return it->second.pDibSource.As<CFX_DIBitmap>();
+    return static_cast<CFX_DIBitmap*>(it->second.pDibSource);
   }
 
   CPDF_Dictionary* pRoot = m_pPDFDoc->GetRoot();
@@ -393,7 +396,7 @@ CFX_RetainPtr<CFX_DIBitmap> CXFA_FFDoc::GetPDFNamedImage(
       IFX_MemoryStream::Create((uint8_t*)streamAcc.GetData(),
                                streamAcc.GetSize());
 
-  CFX_RetainPtr<CFX_DIBitmap> pDibSource = XFA_LoadImageFromBuffer(
+  CFX_DIBitmap* pDibSource = XFA_LoadImageFromBuffer(
       pImageFileRead, FXCODEC_IMAGE_UNKNOWN, iImageXDpi, iImageYDpi);
   m_HashToDibDpiMap[dwHash] = {pDibSource, iImageXDpi, iImageYDpi};
   return pDibSource;

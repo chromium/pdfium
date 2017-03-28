@@ -26,7 +26,7 @@ class CPDF_DeviceBuffer {
                   const CPDF_PageObject* pObj,
                   int max_dpi);
   void OutputToDevice();
-  CFX_RetainPtr<CFX_DIBitmap> GetBitmap() const { return m_pBitmap; }
+  CFX_DIBitmap* GetBitmap() const { return m_pBitmap.get(); }
   const CFX_Matrix* GetMatrix() const { return &m_Matrix; }
 
  private:
@@ -34,7 +34,7 @@ class CPDF_DeviceBuffer {
   CPDF_RenderContext* m_pContext;
   FX_RECT m_Rect;
   const CPDF_PageObject* m_pObject;
-  CFX_RetainPtr<CFX_DIBitmap> m_pBitmap;
+  std::unique_ptr<CFX_DIBitmap> m_pBitmap;
   CFX_Matrix m_Matrix;
 };
 

@@ -43,7 +43,7 @@ void CXFA_FFImage::RenderWidget(CFX_Graphics* pGS,
 
   CXFA_FFWidget::RenderWidget(pGS, &mtRotate, dwStatus);
 
-  CFX_RetainPtr<CFX_DIBitmap> pDIBitmap = GetDataAcc()->GetImageImage();
+  CFX_DIBitmap* pDIBitmap = GetDataAcc()->GetImageImage();
   if (!pDIBitmap)
     return;
 

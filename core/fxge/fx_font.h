@@ -222,18 +222,10 @@ class CFX_FontFaceInfo {
 
 class CFX_GlyphBitmap {
  public:
-  CFX_GlyphBitmap();
-  ~CFX_GlyphBitmap();
-
   int m_Top;
   int m_Left;
-  CFX_RetainPtr<CFX_DIBitmap> m_pBitmap;
+  CFX_DIBitmap m_Bitmap;
 };
-
-inline CFX_GlyphBitmap::CFX_GlyphBitmap()
-    : m_pBitmap(pdfium::MakeRetain<CFX_DIBitmap>()) {}
-
-inline CFX_GlyphBitmap::~CFX_GlyphBitmap() {}
 
 class FXTEXT_GLYPHPOS {
  public:

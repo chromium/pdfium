@@ -83,11 +83,12 @@ bool CBC_EAN13::RenderDevice(CFX_RenderDevice* device,
   return true;
 }
 
-bool CBC_EAN13::RenderBitmap(CFX_RetainPtr<CFX_DIBitmap>& pOutBitmap,
-                             int32_t& e) {
+bool CBC_EAN13::RenderBitmap(CFX_DIBitmap*& pOutBitmap, int32_t& e) {
   static_cast<CBC_OneDimWriter*>(m_pBCWriter.get())
       ->RenderBitmapResult(pOutBitmap, m_renderContents.AsStringC(), e);
-  return e == BCExceptionNO;
+  if (e != BCExceptionNO)
+    return false;
+  return true;
 }
 
 BC_TYPE CBC_EAN13::GetType() {

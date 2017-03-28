@@ -70,14 +70,15 @@ bool CBC_Code39::RenderDevice(CFX_RenderDevice* device,
   return true;
 }
 
-bool CBC_Code39::RenderBitmap(CFX_RetainPtr<CFX_DIBitmap>& pOutBitmap,
-                              int32_t& e) {
+bool CBC_Code39::RenderBitmap(CFX_DIBitmap*& pOutBitmap, int32_t& e) {
   CFX_WideString renderCon =
       static_cast<CBC_OnedCode39Writer*>(m_pBCWriter.get())
           ->encodedContents(m_renderContents.AsStringC(), e);
   static_cast<CBC_OneDimWriter*>(m_pBCWriter.get())
       ->RenderBitmapResult(pOutBitmap, renderCon.AsStringC(), e);
-  return e == BCExceptionNO;
+  if (e != BCExceptionNO)
+    return false;
+  return true;
 }
 
 BC_TYPE CBC_Code39::GetType() {

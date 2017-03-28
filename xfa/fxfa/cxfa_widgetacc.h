@@ -69,10 +69,10 @@ class CXFA_WidgetAcc : public CXFA_WidgetData {
   void GetImageEditDpi(int32_t& iImageXDpi, int32_t& iImageYDpi);
   CXFA_TextLayout* GetCaptionTextLayout();
   CXFA_TextLayout* GetTextLayout();
-  CFX_RetainPtr<CFX_DIBitmap> GetImageImage();
-  CFX_RetainPtr<CFX_DIBitmap> GetImageEditImage();
-  void SetImageImage(const CFX_RetainPtr<CFX_DIBitmap>& newImage);
-  void SetImageEditImage(const CFX_RetainPtr<CFX_DIBitmap>& newImage);
+  CFX_DIBitmap* GetImageImage();
+  CFX_DIBitmap* GetImageEditImage();
+  void SetImageImage(CFX_DIBitmap* newImage);
+  void SetImageEditImage(CFX_DIBitmap* newImage);
   void UpdateUIDisplay(CXFA_FFWidget* pExcept = nullptr);
 
   CXFA_Node* GetDatasets();

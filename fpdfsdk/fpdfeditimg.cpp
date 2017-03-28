@@ -105,8 +105,7 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFImageObj_SetBitmap(FPDF_PAGE* pages,
     if (pPage)
       pImgObj->GetImage()->ResetCache(pPage, nullptr);
   }
-  CFX_RetainPtr<CFX_DIBitmap> holder(CFXBitmapFromFPDFBitmap(bitmap));
-  pImgObj->GetImage()->SetImage(holder);
+  pImgObj->GetImage()->SetImage(reinterpret_cast<CFX_DIBitmap*>(bitmap));
   pImgObj->CalcBoundingBox();
   return true;
 }

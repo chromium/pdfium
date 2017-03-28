@@ -57,9 +57,8 @@ int32_t CBC_TwoDimWriter::GetErrorCorrectionLevel() const {
   return m_iCorrectLevel;
 }
 
-void CBC_TwoDimWriter::RenderBitmapResult(
-    CFX_RetainPtr<CFX_DIBitmap>& pOutBitmap,
-    int32_t& e) {
+void CBC_TwoDimWriter::RenderBitmapResult(CFX_DIBitmap*& pOutBitmap,
+                                          int32_t& e) {
   if (m_bFixedSize) {
     pOutBitmap = CreateDIBitmap(m_Width, m_Height);
   } else {
@@ -83,8 +82,12 @@ void CBC_TwoDimWriter::RenderBitmapResult(
       }
     }
   }
-  if (!m_bFixedSize)
-    pOutBitmap = pOutBitmap->StretchTo(m_Width, m_Height);
+  if (!m_bFixedSize) {
+    std::unique_ptr<CFX_DIBitmap> pStretchBitmap =
+        pOutBitmap->StretchTo(m_Width, m_Height);
+    delete pOutBitmap;
+    pOutBitmap = pStretchBitmap.release();
+  }
 }
 
 void CBC_TwoDimWriter::RenderResult(uint8_t* code,

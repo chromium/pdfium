@@ -15,14 +15,21 @@
 #include "core/fxcrt/fx_basic.h"
 
 CPDF_ImageLoader::CPDF_ImageLoader()
-    : m_MatteColor(0),
+    : m_pBitmap(nullptr),
+      m_pMask(nullptr),
+      m_MatteColor(0),
       m_bCached(false),
       m_nDownsampleWidth(0),
       m_nDownsampleHeight(0),
       m_pCache(nullptr),
       m_pImage(nullptr) {}
 
-CPDF_ImageLoader::~CPDF_ImageLoader() {}
+CPDF_ImageLoader::~CPDF_ImageLoader() {
+  if (!m_bCached) {
+    delete m_pBitmap;
+    delete m_pMask;
+  }
+}
 
 bool CPDF_ImageLoader::Start(const CPDF_ImageObject* pImage,
                              CPDF_PageRenderCache* pCache,
