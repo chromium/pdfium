@@ -7,6 +7,8 @@
 #ifndef XFA_FXBARCODE_BC_UTILCODINGCONVERT_H_
 #define XFA_FXBARCODE_BC_UTILCODINGCONVERT_H_
 
+#include <vector>
+
 #include "core/fxcrt/fx_basic.h"
 
 class CBC_UtilCodingConvert {
@@ -18,8 +20,8 @@ class CBC_UtilCodingConvert {
   static void LocaleToUtf8(const CFX_ByteString& source,
                            CFX_ByteString& result);
   static void LocaleToUtf8(const CFX_ByteString& source,
-                           CFX_ArrayTemplate<uint8_t>& result);
-  static void Utf8ToLocale(const CFX_ArrayTemplate<uint8_t>& source,
+                           std::vector<uint8_t>& result);
+  static void Utf8ToLocale(const std::vector<uint8_t>& source,
                            CFX_ByteString& result);
   static void Utf8ToLocale(const uint8_t* source,
                            int32_t count,

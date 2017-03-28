@@ -412,12 +412,12 @@ void CBC_PDF417::generateBarcodeLogic(CFX_WideString msg,
   if (e != BCExceptionNO)
     return;
   int32_t sourceCodeWords = highLevel.GetLength();
-  CFX_ArrayTemplate<int32_t>* dimension =
+  std::vector<int32_t>* dimension =
       determineDimensions(sourceCodeWords, errorCorrectionCodeWords, e);
   if (e != BCExceptionNO)
     return;
-  int32_t cols = dimension->GetAt(0);
-  int32_t rows = dimension->GetAt(1);
+  int32_t cols = (*dimension)[0];
+  int32_t rows = (*dimension)[1];
   delete dimension;
   int32_t pad = getNumberOfPadCodewords(sourceCodeWords,
                                         errorCorrectionCodeWords, cols, rows);
@@ -536,12 +536,12 @@ void CBC_PDF417::encodeLowLevel(CFX_WideString fullCodewords,
   }
 }
 
-CFX_ArrayTemplate<int32_t>* CBC_PDF417::determineDimensions(
+std::vector<int32_t>* CBC_PDF417::determineDimensions(
     int32_t sourceCodeWords,
     int32_t errorCorrectionCodeWords,
     int32_t& e) {
   float ratio = 0.0f;
-  CFX_ArrayTemplate<int32_t>* dimension = nullptr;
+  std::vector<int32_t>* dimension = nullptr;
   for (int32_t cols = m_minCols; cols <= m_maxCols; cols++) {
     int32_t rows =
         calculateNumberOfRows(sourceCodeWords, errorCorrectionCodeWords, cols);
@@ -559,21 +559,21 @@ CFX_ArrayTemplate<int32_t>* CBC_PDF417::determineDimensions(
     }
     ratio = newRatio;
     delete dimension;
-    dimension = new CFX_ArrayTemplate<int32_t>;
-    dimension->Add(cols);
-    dimension->Add(rows);
+    dimension = new std::vector<int32_t>;
+    dimension->push_back(cols);
+    dimension->push_back(rows);
   }
   if (!dimension) {
     int32_t rows = calculateNumberOfRows(sourceCodeWords,
                                          errorCorrectionCodeWords, m_minCols);
     if (rows < m_minRows) {
-      dimension = new CFX_ArrayTemplate<int32_t>;
-      dimension->Add(m_minCols);
-      dimension->Add(m_minRows);
+      dimension = new std::vector<int32_t>;
+      dimension->push_back(m_minCols);
+      dimension->push_back(m_minRows);
     } else if (rows >= 3 && rows <= 90) {
-      dimension = new CFX_ArrayTemplate<int32_t>;
-      dimension->Add(m_minCols);
-      dimension->Add(rows);
+      dimension = new std::vector<int32_t>;
+      dimension->push_back(m_minCols);
+      dimension->push_back(rows);
     }
   }
   if (!dimension) {

@@ -7,6 +7,8 @@
 #ifndef XFA_FXBARCODE_QRCODE_BC_QRCODERVERSION_H_
 #define XFA_FXBARCODE_QRCODE_BC_QRCODERVERSION_H_
 
+#include <vector>
+
 #include "core/fxcrt/fx_basic.h"
 
 class CBC_CommonBitMatrix;
@@ -23,7 +25,7 @@ class CBC_QRCoderVersion {
   int32_t GetTotalCodeWords();
   int32_t GetDimensionForVersion();
   CBC_CommonBitMatrix* BuildFunctionPattern(int32_t& e);
-  CFX_ArrayTemplate<int32_t>* GetAlignmentPatternCenters();
+  std::vector<int32_t>* GetAlignmentPatternCenters();
   CBC_QRCoderECBlocks* GetECBlocksForLevel(
       CBC_QRCoderErrorCorrectionLevel* ecLevel);
   static CBC_QRCoderVersion* GetVersionForNumber(int32_t versionNumber,
@@ -44,12 +46,12 @@ class CBC_QRCoderVersion {
                      CBC_QRCoderECBlocks* ecBlocks4);
 
   static const int32_t VERSION_DECODE_INFO[34];
-  static CFX_ArrayTemplate<CBC_QRCoderVersion*>* VERSION;
+  static std::vector<CBC_QRCoderVersion*>* VERSION;
 
   int32_t m_versionNumber;
   int32_t m_totalCodeWords;
-  CFX_ArrayTemplate<int32_t> m_alignmentPatternCenters;
-  CFX_ArrayTemplate<CBC_QRCoderECBlocks*> m_ecBlocksArray;
+  std::vector<int32_t> m_alignmentPatternCenters;
+  std::vector<CBC_QRCoderECBlocks*> m_ecBlocksArray;
 };
 
 #endif  // XFA_FXBARCODE_QRCODE_BC_QRCODERVERSION_H_

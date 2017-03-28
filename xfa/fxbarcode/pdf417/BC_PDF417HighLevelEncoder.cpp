@@ -71,9 +71,9 @@ CFX_WideString CBC_PDF417HighLevelEncoder::encodeHighLevel(
     }
     msg += ch;
   }
-  CFX_ArrayTemplate<uint8_t> byteArr;
+  std::vector<uint8_t> byteArr;
   for (int32_t k = 0; k < bytes.GetLength(); k++) {
-    byteArr.Add(bytes.GetAt(k));
+    byteArr.push_back(bytes.GetAt(k));
   }
   CFX_WideString sb;
   len = msg.GetLength();
@@ -82,7 +82,7 @@ CFX_WideString CBC_PDF417HighLevelEncoder::encodeHighLevel(
   if (compaction == TEXT) {
     encodeText(msg, p, len, sb, textSubMode);
   } else if (compaction == BYTES) {
-    encodeBinary(&byteArr, p, byteArr.GetSize(), BYTE_COMPACTION, sb);
+    encodeBinary(&byteArr, p, byteArr.size(), BYTE_COMPACTION, sb);
   } else if (compaction == NUMERIC) {
     sb += (wchar_t)LATCH_TO_NUMERIC;
     encodeNumeric(msg, p, len, sb);
@@ -261,7 +261,7 @@ int32_t CBC_PDF417HighLevelEncoder::encodeText(CFX_WideString msg,
   }
   return submode;
 }
-void CBC_PDF417HighLevelEncoder::encodeBinary(CFX_ArrayTemplate<uint8_t>* bytes,
+void CBC_PDF417HighLevelEncoder::encodeBinary(std::vector<uint8_t>* bytes,
                                               int32_t startpos,
                                               int32_t count,
                                               int32_t startmode,
@@ -278,7 +278,7 @@ void CBC_PDF417HighLevelEncoder::encodeBinary(CFX_ArrayTemplate<uint8_t>* bytes,
       int64_t t = 0;
       for (i = 0; i < 6; i++) {
         t <<= 8;
-        t += bytes->GetAt(idx + i) & 0xff;
+        t += (*bytes)[idx + i] & 0xff;
       }
       for (i = 0; i < 5; i++) {
         chars[i] = (wchar_t)(t % 900);
@@ -294,7 +294,7 @@ void CBC_PDF417HighLevelEncoder::encodeBinary(CFX_ArrayTemplate<uint8_t>* bytes,
     sb += (wchar_t)LATCH_TO_BYTE_PADDED;
   }
   for (i = idx; i < startpos + count; i++) {
-    int32_t ch = bytes->GetAt(i) & 0xff;
+    int32_t ch = (*bytes)[i] & 0xff;
     sb += (wchar_t)ch;
   }
 }
@@ -388,7 +388,7 @@ int32_t CBC_PDF417HighLevelEncoder::determineConsecutiveTextCount(
 }
 int32_t CBC_PDF417HighLevelEncoder::determineConsecutiveBinaryCount(
     CFX_WideString msg,
-    CFX_ArrayTemplate<uint8_t>* bytes,
+    std::vector<uint8_t>* bytes,
     int32_t startpos,
     int32_t& e) {
   int32_t len = msg.GetLength();
@@ -420,7 +420,7 @@ int32_t CBC_PDF417HighLevelEncoder::determineConsecutiveBinaryCount(
       return idx - startpos;
     }
     ch = msg.GetAt(idx);
-    if (bytes->GetAt(idx) == 63 && ch != '?') {
+    if ((*bytes)[idx] == 63 && ch != '?') {
       e = BCExceptionNonEncodableCharacterDetected;
       return -1;
     }

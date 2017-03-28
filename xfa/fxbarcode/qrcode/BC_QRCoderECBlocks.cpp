@@ -26,19 +26,19 @@
 CBC_QRCoderECBlocks::CBC_QRCoderECBlocks(int32_t ecCodeWordsPerBlock,
                                          CBC_QRCoderECB* ecBlocks)
     : m_ecCodeWordsPerBlock(ecCodeWordsPerBlock) {
-  m_ecBlocksArray.Add(ecBlocks);
+  m_ecBlocksArray.push_back(ecBlocks);
 }
 
 CBC_QRCoderECBlocks::CBC_QRCoderECBlocks(int32_t ecCodeWordsPerBlock,
                                          CBC_QRCoderECB* ecBlocks1,
                                          CBC_QRCoderECB* ecBlocks2)
     : m_ecCodeWordsPerBlock(ecCodeWordsPerBlock) {
-  m_ecBlocksArray.Add(ecBlocks1);
-  m_ecBlocksArray.Add(ecBlocks2);
+  m_ecBlocksArray.push_back(ecBlocks1);
+  m_ecBlocksArray.push_back(ecBlocks2);
 }
 
 CBC_QRCoderECBlocks::~CBC_QRCoderECBlocks() {
-  for (int32_t i = 0; i < m_ecBlocksArray.GetSize(); i++)
+  for (size_t i = 0; i < m_ecBlocksArray.size(); i++)
     delete m_ecBlocksArray[i];
 }
 
@@ -48,7 +48,7 @@ int32_t CBC_QRCoderECBlocks::GetECCodeWordsPerBlock() const {
 
 int32_t CBC_QRCoderECBlocks::GetNumBlocks() const {
   int32_t total = 0;
-  for (int32_t i = 0; i < m_ecBlocksArray.GetSize(); i++)
+  for (size_t i = 0; i < m_ecBlocksArray.size(); i++)
     total += m_ecBlocksArray[i]->GetCount();
 
   return total;
@@ -58,6 +58,6 @@ int32_t CBC_QRCoderECBlocks::GetTotalECCodeWords() const {
   return m_ecCodeWordsPerBlock * GetNumBlocks();
 }
 
-CFX_ArrayTemplate<CBC_QRCoderECB*>* CBC_QRCoderECBlocks::GetECBlocks() {
+std::vector<CBC_QRCoderECB*>* CBC_QRCoderECBlocks::GetECBlocks() {
   return &m_ecBlocksArray;
 }

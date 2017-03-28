@@ -22,6 +22,8 @@
 
 #include "xfa/fxbarcode/common/reedsolomon/BC_ReedSolomonGF256.h"
 
+#include <vector>
+
 #include "third_party/base/ptr_util.h"
 #include "xfa/fxbarcode/common/reedsolomon/BC_ReedSolomonGF256Poly.h"
 
@@ -86,8 +88,7 @@ CBC_ReedSolomonGF256Poly* CBC_ReedSolomonGF256::BuildMonomial(
       return nullptr;
     return temp;
   }
-  CFX_ArrayTemplate<int32_t> coefficients;
-  coefficients.SetSize(degree + 1);
+  std::vector<int32_t> coefficients(degree + 1);
   coefficients[0] = coefficient;
   CBC_ReedSolomonGF256Poly* temp = new CBC_ReedSolomonGF256Poly();
   temp->Init(this, &coefficients, e);

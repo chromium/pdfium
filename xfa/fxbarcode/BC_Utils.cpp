@@ -4,6 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include <vector>
+
 #include "core/fxcrt/fx_basic.h"
 #include "xfa/fxbarcode/utils.h"
 
@@ -21,14 +23,13 @@ bool BC_FX_ByteString_Replace(CFX_ByteString& dst,
   }
   return true;
 }
+
 void BC_FX_ByteString_Append(CFX_ByteString& dst, int32_t count, char c) {
-  for (int32_t i = 0; i < count; i++) {
+  for (int32_t i = 0; i < count; i++)
     dst += c;
-  }
 }
 void BC_FX_ByteString_Append(CFX_ByteString& dst,
-                             const CFX_ArrayTemplate<uint8_t>& ba) {
-  for (int32_t i = 0; i < ba.GetSize(); i++) {
-    dst += ba[i];
-  }
+                             const std::vector<uint8_t>& ba) {
+  for (uint8_t value : ba)
+    dst += value;
 }

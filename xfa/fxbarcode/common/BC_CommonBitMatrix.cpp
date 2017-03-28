@@ -104,7 +104,7 @@ void CBC_CommonBitMatrix::SetRegion(int32_t left,
 CBC_CommonBitArray* CBC_CommonBitMatrix::GetRow(int32_t y,
                                                 CBC_CommonBitArray* row) {
   CBC_CommonBitArray* rowArray = nullptr;
-  if (!row || row->GetSize() < m_width) {
+  if (!row || static_cast<int32_t>(row->GetSize()) < m_width) {
     rowArray = new CBC_CommonBitArray(m_width);
   } else {
     rowArray = new CBC_CommonBitArray(row);
@@ -123,11 +123,12 @@ void CBC_CommonBitMatrix::SetRow(int32_t y, CBC_CommonBitArray* row) {
     l++;
   }
 }
+
 void CBC_CommonBitMatrix::SetCol(int32_t y, CBC_CommonBitArray* col) {
-  for (int32_t i = 0; i < col->GetBits().GetSize(); i++) {
+  for (size_t i = 0; i < col->GetBits().size(); ++i)
     m_bits[i * m_rowSize + y] = col->GetBitArray()[i];
-  }
 }
+
 int32_t CBC_CommonBitMatrix::GetWidth() {
   return m_width;
 }

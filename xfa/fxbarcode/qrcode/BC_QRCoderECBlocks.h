@@ -7,6 +7,8 @@
 #ifndef XFA_FXBARCODE_QRCODE_BC_QRCODERECBLOCKS_H_
 #define XFA_FXBARCODE_QRCODE_BC_QRCODERECBLOCKS_H_
 
+#include <vector>
+
 #include "core/fxcrt/fx_basic.h"
 
 class CBC_QRCoderECB;
@@ -22,11 +24,11 @@ class CBC_QRCoderECBlocks {
   int32_t GetECCodeWordsPerBlock() const;
   int32_t GetNumBlocks() const;
   int32_t GetTotalECCodeWords() const;
-  CFX_ArrayTemplate<CBC_QRCoderECB*>* GetECBlocks();
+  std::vector<CBC_QRCoderECB*>* GetECBlocks();
 
  private:
   int32_t m_ecCodeWordsPerBlock;
-  CFX_ArrayTemplate<CBC_QRCoderECB*> m_ecBlocksArray;
+  std::vector<CBC_QRCoderECB*> m_ecBlocksArray;
 };
 
 #endif  // XFA_FXBARCODE_QRCODE_BC_QRCODERECBLOCKS_H_

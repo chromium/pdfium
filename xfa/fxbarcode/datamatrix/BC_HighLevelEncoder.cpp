@@ -58,13 +58,12 @@ const wchar_t CBC_HighLevelEncoder::MACRO_TRAILER = 0x0004;
 CBC_HighLevelEncoder::CBC_HighLevelEncoder() {}
 CBC_HighLevelEncoder::~CBC_HighLevelEncoder() {}
 
-CFX_ArrayTemplate<uint8_t>& CBC_HighLevelEncoder::getBytesForMessage(
+std::vector<uint8_t>& CBC_HighLevelEncoder::getBytesForMessage(
     CFX_WideString msg) {
   CFX_ByteString bytestr;
   CBC_UtilCodingConvert::UnicodeToUTF8(msg, bytestr);
-  for (int32_t i = 0; i < bytestr.GetLength(); i++) {
-    m_bytearray.Add(bytestr.GetAt(i));
-  }
+  for (int32_t i = 0; i < bytestr.GetLength(); i++)
+    m_bytearray.push_back(bytestr.GetAt(i));
   return m_bytearray;
 }
 CFX_WideString CBC_HighLevelEncoder::encodeHighLevel(CFX_WideString msg,
@@ -161,10 +160,8 @@ int32_t CBC_HighLevelEncoder::lookAheadTest(CFX_WideString msg,
   while (true) {
     if ((startpos + charsProcessed) == msg.GetLength()) {
       int32_t min = std::numeric_limits<int32_t>::max();
-      CFX_ArrayTemplate<uint8_t> mins;
-      mins.SetSize(6);
-      CFX_ArrayTemplate<int32_t> intCharCounts;
-      intCharCounts.SetSize(6);
+      std::vector<uint8_t> mins(6);
+      std::vector<int32_t> intCharCounts(6);
       min = findMinimums(charCounts, intCharCounts, min, mins);
       int32_t minCount = getMinimumCount(mins);
       if (intCharCounts[ASCII_ENCODATION] == min) {
@@ -229,10 +226,8 @@ int32_t CBC_HighLevelEncoder::lookAheadTest(CFX_WideString msg,
       charCounts[BASE256_ENCODATION]++;
     }
     if (charsProcessed >= 4) {
-      CFX_ArrayTemplate<int32_t> intCharCounts;
-      intCharCounts.SetSize(6);
-      CFX_ArrayTemplate<uint8_t> mins;
-      mins.SetSize(6);
+      std::vector<int32_t> intCharCounts(6);
+      std::vector<uint8_t> mins(6);
       findMinimums(charCounts, intCharCounts,
                    std::numeric_limits<int32_t>::max(), mins);
       int32_t minCount = getMinimumCount(mins);
@@ -317,31 +312,27 @@ wchar_t CBC_HighLevelEncoder::randomize253State(wchar_t ch,
   return tempVariable <= 254 ? (wchar_t)tempVariable
                              : (wchar_t)(tempVariable - 254);
 }
-int32_t CBC_HighLevelEncoder::findMinimums(
-    std::vector<float>& charCounts,
-    CFX_ArrayTemplate<int32_t>& intCharCounts,
-    int32_t min,
-    CFX_ArrayTemplate<uint8_t>& mins) {
-  for (int32_t l = 0; l < mins.GetSize(); l++) {
-    mins[l] = (uint8_t)0;
-  }
-  for (int32_t i = 0; i < 6; i++) {
-    intCharCounts[i] = (int32_t)ceil(charCounts[i]);
+int32_t CBC_HighLevelEncoder::findMinimums(std::vector<float>& charCounts,
+                                           std::vector<int32_t>& intCharCounts,
+                                           int32_t min,
+                                           std::vector<uint8_t>& mins) {
+  for (size_t l = 0; l < mins.size(); l++)
+    mins[l] = 0;
+
+  for (size_t i = 0; i < 6; i++) {
+    intCharCounts[i] = static_cast<int32_t>(ceil(charCounts[i]));
     int32_t current = intCharCounts[i];
     if (min > current) {
       min = current;
-      for (int32_t j = 0; j < mins.GetSize(); j++) {
-        mins[j] = (uint8_t)0;
-      }
+      for (size_t j = 0; j < mins.size(); j++)
+        mins[j] = 0;
     }
-    if (min == current) {
+    if (min == current)
       mins[i]++;
-    }
   }
   return min;
 }
-int32_t CBC_HighLevelEncoder::getMinimumCount(
-    CFX_ArrayTemplate<uint8_t>& mins) {
+int32_t CBC_HighLevelEncoder::getMinimumCount(std::vector<uint8_t>& mins) {
   int32_t minCount = 0;
   for (int32_t i = 0; i < 6; i++) {
     minCount += mins[i];

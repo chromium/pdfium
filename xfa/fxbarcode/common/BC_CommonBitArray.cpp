@@ -21,49 +21,63 @@
  */
 
 #include "xfa/fxbarcode/common/BC_CommonBitArray.h"
+
+#include <utility>
+
 #include "xfa/fxbarcode/utils.h"
 
 CBC_CommonBitArray::CBC_CommonBitArray(CBC_CommonBitArray* array) {
   m_size = array->GetSize();
-  m_bits.Copy(array->GetBits());
+  m_bits = array->GetBits();
 }
+
 CBC_CommonBitArray::CBC_CommonBitArray() {
-  m_bits.SetSize(1);
+  m_bits.resize(1);
   m_size = 0;
 }
+
 CBC_CommonBitArray::CBC_CommonBitArray(int32_t size) {
-  m_bits.SetSize((size + 31) >> 5);
+  m_bits.resize((size + 31) >> 5);
   m_size = size;
 }
-CBC_CommonBitArray::~CBC_CommonBitArray() {
-  m_size = 0;
-}
-int32_t CBC_CommonBitArray::GetSize() {
+
+CBC_CommonBitArray::~CBC_CommonBitArray() {}
+
+size_t CBC_CommonBitArray::GetSize() {
   return m_size;
 }
-CFX_ArrayTemplate<int32_t>& CBC_CommonBitArray::GetBits() {
+
+std::vector<int32_t>& CBC_CommonBitArray::GetBits() {
   return m_bits;
 }
-int32_t CBC_CommonBitArray::GetSizeInBytes() {
+
+size_t CBC_CommonBitArray::GetSizeInBytes() {
   return (m_size + 7) >> 3;
 }
-bool CBC_CommonBitArray::Get(int32_t i) {
+
+bool CBC_CommonBitArray::Get(size_t i) {
   return (m_bits[i >> 5] & (1 << (i & 0x1f))) != 0;
 }
-void CBC_CommonBitArray::Set(int32_t i) {
+
+void CBC_CommonBitArray::Set(size_t i) {
   m_bits[i >> 5] |= 1 << (i & 0x1F);
 }
-void CBC_CommonBitArray::Flip(int32_t i) {
+
+void CBC_CommonBitArray::Flip(size_t i) {
   m_bits[i >> 5] ^= 1 << (i & 0x1F);
 }
-void CBC_CommonBitArray::SetBulk(int32_t i, int32_t newBits) {
+
+void CBC_CommonBitArray::SetBulk(size_t i, int32_t newBits) {
   m_bits[i >> 5] = newBits;
 }
+
 void CBC_CommonBitArray::Clear() {
-  FXSYS_memset(&m_bits[0], 0x00, m_bits.GetSize() * sizeof(int32_t));
+  for (auto& value : m_bits)
+    value = 0;
 }
-bool CBC_CommonBitArray::IsRange(int32_t start,
-                                 int32_t end,
+
+bool CBC_CommonBitArray::IsRange(size_t start,
+                                 size_t end,
                                  bool value,
                                  int32_t& e) {
   if (end < start) {
@@ -95,19 +109,16 @@ bool CBC_CommonBitArray::IsRange(int32_t start,
   }
   return true;
 }
+
 int32_t* CBC_CommonBitArray::GetBitArray() {
-  return &m_bits[0];
+  return m_bits.data();
 }
+
 void CBC_CommonBitArray::Reverse() {
-  int32_t* newBits = FX_Alloc(int32_t, m_bits.GetSize());
-  FXSYS_memset(newBits, 0x00, m_bits.GetSize() * sizeof(int32_t));
-  int32_t size = m_size;
-  int32_t i;
-  for (i = 0; i < size; i++) {
-    if (Get(size - i - 1)) {
+  std::vector<int32_t> newBits(m_bits.size());
+  for (size_t i = 0; i < m_size; i++) {
+    if (Get(m_size - i - 1))
       newBits[i >> 5] |= 1 << (i & 0x1F);
-    }
   }
-  FXSYS_memcpy(&m_bits[0], newBits, m_bits.GetSize() * sizeof(int32_t));
-  FX_Free(newBits);
+  m_bits = std::move(newBits);
 }

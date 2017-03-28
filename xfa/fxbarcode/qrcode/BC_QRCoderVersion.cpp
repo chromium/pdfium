@@ -54,14 +54,14 @@ const int32_t CBC_QRCoderVersion::VERSION_DECODE_INFO[] = {
     0x1CC1A, 0x1D33F, 0x1ED75, 0x1F250, 0x209D5, 0x216F0, 0x228BA,
     0x2379F, 0x24B0B, 0x2542E, 0x26A64, 0x27541, 0x28C69};
 
-CFX_ArrayTemplate<CBC_QRCoderVersion*>* CBC_QRCoderVersion::VERSION = nullptr;
+std::vector<CBC_QRCoderVersion*>* CBC_QRCoderVersion::VERSION = nullptr;
 
 void CBC_QRCoderVersion::Initialize() {
-  VERSION = new CFX_ArrayTemplate<CBC_QRCoderVersion*>();
+  VERSION = new std::vector<CBC_QRCoderVersion*>();
 }
 void CBC_QRCoderVersion::Finalize() {
-  for (int32_t i = 0; i < VERSION->GetSize(); i++)
-    delete VERSION->GetAt(i);
+  for (size_t i = 0; i < VERSION->size(); i++)
+    delete (*VERSION)[i];
 
   delete VERSION;
   VERSION = nullptr;
@@ -72,14 +72,14 @@ CBC_QRCoderVersion::CBC_QRCoderVersion(int32_t versionNumber,
                                        CBC_QRCoderECBlocks* ecBlocks3,
                                        CBC_QRCoderECBlocks* ecBlocks4) {
   m_versionNumber = versionNumber;
-  m_ecBlocksArray.Add(ecBlocks1);
-  m_ecBlocksArray.Add(ecBlocks2);
-  m_ecBlocksArray.Add(ecBlocks3);
-  m_ecBlocksArray.Add(ecBlocks4);
+  m_ecBlocksArray.push_back(ecBlocks1);
+  m_ecBlocksArray.push_back(ecBlocks2);
+  m_ecBlocksArray.push_back(ecBlocks3);
+  m_ecBlocksArray.push_back(ecBlocks4);
   int32_t total = 0;
   int32_t ecCodeWords = ecBlocks1->GetECCodeWordsPerBlock();
-  CFX_ArrayTemplate<CBC_QRCoderECB*>* ecbArray = ecBlocks1->GetECBlocks();
-  for (int32_t i = 0; i < ecbArray->GetSize(); i++) {
+  std::vector<CBC_QRCoderECB*>* ecbArray = ecBlocks1->GetECBlocks();
+  for (size_t i = 0; i < ecbArray->size(); i++) {
     CBC_QRCoderECB* ecBlock = (*ecbArray)[i];
     total += ecBlock->GetCount() * (ecBlock->GetDataCodeWords() + ecCodeWords);
   }
@@ -88,273 +88,273 @@ CBC_QRCoderVersion::CBC_QRCoderVersion(int32_t versionNumber,
     case 1:
       break;
     case 2:
-      m_alignmentPatternCenters.Add(6);
-      m_alignmentPatternCenters.Add(18);
+      m_alignmentPatternCenters.push_back(6);
+      m_alignmentPatternCenters.push_back(18);
       break;
     case 3:
-      m_alignmentPatternCenters.Add(6);
-      m_alignmentPatternCenters.Add(22);
+      m_alignmentPatternCenters.push_back(6);
+      m_alignmentPatternCenters.push_back(22);
       break;
     case 4:
-      m_alignmentPatternCenters.Add(6);
-      m_alignmentPatternCenters.Add(26);
+      m_alignmentPatternCenters.push_back(6);
+      m_alignmentPatternCenters.push_back(26);
       break;
     case 5:
-      m_alignmentPatternCenters.Add(6);
-      m_alignmentPatternCenters.Add(30);
+      m_alignmentPatternCenters.push_back(6);
+      m_alignmentPatternCenters.push_back(30);
       break;
     case 6:
-      m_alignmentPatternCenters.Add(6);
-      m_alignmentPatternCenters.Add(34);
+      m_alignmentPatternCenters.push_back(6);
+      m_alignmentPatternCenters.push_back(34);
       break;
     case 7:
-      m_alignmentPatternCenters.Add(6);
-      m_alignmentPatternCenters.Add(22);
-      m_alignmentPatternCenters.Add(38);
+      m_alignmentPatternCenters.push_back(6);
+      m_alignmentPatternCenters.push_back(22);
+      m_alignmentPatternCenters.push_back(38);
       break;
     case 8:
-      m_alignmentPatternCenters.Add(6);
-      m_alignmentPatternCenters.Add(24);
-      m_alignmentPatternCenters.Add(42);
+      m_alignmentPatternCenters.push_back(6);
+      m_alignmentPatternCenters.push_back(24);
+      m_alignmentPatternCenters.push_back(42);
       break;
     case 9:
-      m_alignmentPatternCenters.Add(6);
-      m_alignmentPatternCenters.Add(26);
-      m_alignmentPatternCenters.Add(46);
+      m_alignmentPatternCenters.push_back(6);
+      m_alignmentPatternCenters.push_back(26);
+      m_alignmentPatternCenters.push_back(46);
       break;
     case 10:
-      m_alignmentPatternCenters.Add(6);
-      m_alignmentPatternCenters.Add(28);
-      m_alignmentPatternCenters.Add(50);
+      m_alignmentPatternCenters.push_back(6);
+      m_alignmentPatternCenters.push_back(28);
+      m_alignmentPatternCenters.push_back(50);
       break;
     case 11:
-      m_alignmentPatternCenters.Add(6);
-      m_alignmentPatternCenters.Add(30);
-      m_alignmentPatternCenters.Add(54);
+      m_alignmentPatternCenters.push_back(6);
+      m_alignmentPatternCenters.push_back(30);
+      m_alignmentPatternCenters.push_back(54);
       break;
     case 12:
-      m_alignmentPatternCenters.Add(6);
-      m_alignmentPatternCenters.Add(32);
-      m_alignmentPatternCenters.Add(58);
+      m_alignmentPatternCenters.push_back(6);
+      m_alignmentPatternCenters.push_back(32);
+      m_alignmentPatternCenters.push_back(58);
       break;
     case 13:
-      m_alignmentPatternCenters.Add(6);
-      m_alignmentPatternCenters.Add(34);
-      m_alignmentPatternCenters.Add(62);
+      m_alignmentPatternCenters.push_back(6);
+      m_alignmentPatternCenters.push_back(34);
+      m_alignmentPatternCenters.push_back(62);
       break;
     case 14:
-      m_alignmentPatternCenters.Add(6);
-      m_alignmentPatternCenters.Add(26);
-      m_alignmentPatternCenters.Add(46);
-      m_alignmentPatternCenters.Add(66);
+      m_alignmentPatternCenters.push_back(6);
+      m_alignmentPatternCenters.push_back(26);
+      m_alignmentPatternCenters.push_back(46);
+      m_alignmentPatternCenters.push_back(66);
       break;
     case 15:
-      m_alignmentPatternCenters.Add(6);
-      m_alignmentPatternCenters.Add(26);
-      m_alignmentPatternCenters.Add(48);
-      m_alignmentPatternCenters.Add(70);
+      m_alignmentPatternCenters.push_back(6);
+      m_alignmentPatternCenters.push_back(26);
+      m_alignmentPatternCenters.push_back(48);
+      m_alignmentPatternCenters.push_back(70);
       break;
     case 16:
-      m_alignmentPatternCenters.Add(6);
-      m_alignmentPatternCenters.Add(26);
-      m_alignmentPatternCenters.Add(50);
-      m_alignmentPatternCenters.Add(74);
+      m_alignmentPatternCenters.push_back(6);
+      m_alignmentPatternCenters.push_back(26);
+      m_alignmentPatternCenters.push_back(50);
+      m_alignmentPatternCenters.push_back(74);
       break;
     case 17:
-      m_alignmentPatternCenters.Add(6);
-      m_alignmentPatternCenters.Add(30);
-      m_alignmentPatternCenters.Add(54);
-      m_alignmentPatternCenters.Add(78);
+      m_alignmentPatternCenters.push_back(6);
+      m_alignmentPatternCenters.push_back(30);
+      m_alignmentPatternCenters.push_back(54);
+      m_alignmentPatternCenters.push_back(78);
       break;
     case 18:
-      m_alignmentPatternCenters.Add(6);
-      m_alignmentPatternCenters.Add(30);
-      m_alignmentPatternCenters.Add(56);
-      m_alignmentPatternCenters.Add(82);
+      m_alignmentPatternCenters.push_back(6);
+      m_alignmentPatternCenters.push_back(30);
+      m_alignmentPatternCenters.push_back(56);
+      m_alignmentPatternCenters.push_back(82);
       break;
     case 19:
-      m_alignmentPatternCenters.Add(6);
-      m_alignmentPatternCenters.Add(30);
-      m_alignmentPatternCenters.Add(58);
-      m_alignmentPatternCenters.Add(86);
+      m_alignmentPatternCenters.push_back(6);
+      m_alignmentPatternCenters.push_back(30);
+      m_alignmentPatternCenters.push_back(58);
+      m_alignmentPatternCenters.push_back(86);
       break;
     case 20:
-      m_alignmentPatternCenters.Add(6);
-      m_alignmentPatternCenters.Add(34);
-      m_alignmentPatternCenters.Add(62);
-      m_alignmentPatternCenters.Add(90);
+      m_alignmentPatternCenters.push_back(6);
+      m_alignmentPatternCenters.push_back(34);
+      m_alignmentPatternCenters.push_back(62);
+      m_alignmentPatternCenters.push_back(90);
       break;
     case 21:
-      m_alignmentPatternCenters.Add(6);
-      m_alignmentPatternCenters.Add(28);
-      m_alignmentPatternCenters.Add(50);
-      m_alignmentPatternCenters.Add(72);
-      m_alignmentPatternCenters.Add(94);
+      m_alignmentPatternCenters.push_back(6);
+      m_alignmentPatternCenters.push_back(28);
+      m_alignmentPatternCenters.push_back(50);
+      m_alignmentPatternCenters.push_back(72);
+      m_alignmentPatternCenters.push_back(94);
       break;
     case 22:
-      m_alignmentPatternCenters.Add(6);
-      m_alignmentPatternCenters.Add(26);
-      m_alignmentPatternCenters.Add(50);
-      m_alignmentPatternCenters.Add(74);
-      m_alignmentPatternCenters.Add(98);
+      m_alignmentPatternCenters.push_back(6);
+      m_alignmentPatternCenters.push_back(26);
+      m_alignmentPatternCenters.push_back(50);
+      m_alignmentPatternCenters.push_back(74);
+      m_alignmentPatternCenters.push_back(98);
       break;
     case 23:
-      m_alignmentPatternCenters.Add(6);
-      m_alignmentPatternCenters.Add(30);
-      m_alignmentPatternCenters.Add(54);
-      m_alignmentPatternCenters.Add(74);
-      m_alignmentPatternCenters.Add(102);
+      m_alignmentPatternCenters.push_back(6);
+      m_alignmentPatternCenters.push_back(30);
+      m_alignmentPatternCenters.push_back(54);
+      m_alignmentPatternCenters.push_back(74);
+      m_alignmentPatternCenters.push_back(102);
       break;
     case 24:
-      m_alignmentPatternCenters.Add(6);
-      m_alignmentPatternCenters.Add(28);
-      m_alignmentPatternCenters.Add(54);
-      m_alignmentPatternCenters.Add(80);
-      m_alignmentPatternCenters.Add(106);
+      m_alignmentPatternCenters.push_back(6);
+      m_alignmentPatternCenters.push_back(28);
+      m_alignmentPatternCenters.push_back(54);
+      m_alignmentPatternCenters.push_back(80);
+      m_alignmentPatternCenters.push_back(106);
       break;
     case 25:
-      m_alignmentPatternCenters.Add(6);
-      m_alignmentPatternCenters.Add(32);
-      m_alignmentPatternCenters.Add(58);
-      m_alignmentPatternCenters.Add(84);
-      m_alignmentPatternCenters.Add(110);
+      m_alignmentPatternCenters.push_back(6);
+      m_alignmentPatternCenters.push_back(32);
+      m_alignmentPatternCenters.push_back(58);
+      m_alignmentPatternCenters.push_back(84);
+      m_alignmentPatternCenters.push_back(110);
       break;
     case 26:
-      m_alignmentPatternCenters.Add(6);
-      m_alignmentPatternCenters.Add(30);
-      m_alignmentPatternCenters.Add(58);
-      m_alignmentPatternCenters.Add(86);
-      m_alignmentPatternCenters.Add(114);
+      m_alignmentPatternCenters.push_back(6);
+      m_alignmentPatternCenters.push_back(30);
+      m_alignmentPatternCenters.push_back(58);
+      m_alignmentPatternCenters.push_back(86);
+      m_alignmentPatternCenters.push_back(114);
       break;
     case 27:
-      m_alignmentPatternCenters.Add(6);
-      m_alignmentPatternCenters.Add(34);
-      m_alignmentPatternCenters.Add(62);
-      m_alignmentPatternCenters.Add(90);
-      m_alignmentPatternCenters.Add(118);
+      m_alignmentPatternCenters.push_back(6);
+      m_alignmentPatternCenters.push_back(34);
+      m_alignmentPatternCenters.push_back(62);
+      m_alignmentPatternCenters.push_back(90);
+      m_alignmentPatternCenters.push_back(118);
       break;
     case 28:
-      m_alignmentPatternCenters.Add(6);
-      m_alignmentPatternCenters.Add(26);
-      m_alignmentPatternCenters.Add(50);
-      m_alignmentPatternCenters.Add(74);
-      m_alignmentPatternCenters.Add(98);
-      m_alignmentPatternCenters.Add(122);
+      m_alignmentPatternCenters.push_back(6);
+      m_alignmentPatternCenters.push_back(26);
+      m_alignmentPatternCenters.push_back(50);
+      m_alignmentPatternCenters.push_back(74);
+      m_alignmentPatternCenters.push_back(98);
+      m_alignmentPatternCenters.push_back(122);
       break;
     case 29:
-      m_alignmentPatternCenters.Add(6);
-      m_alignmentPatternCenters.Add(30);
-      m_alignmentPatternCenters.Add(54);
-      m_alignmentPatternCenters.Add(78);
-      m_alignmentPatternCenters.Add(102);
-      m_alignmentPatternCenters.Add(126);
+      m_alignmentPatternCenters.push_back(6);
+      m_alignmentPatternCenters.push_back(30);
+      m_alignmentPatternCenters.push_back(54);
+      m_alignmentPatternCenters.push_back(78);
+      m_alignmentPatternCenters.push_back(102);
+      m_alignmentPatternCenters.push_back(126);
       break;
     case 30:
-      m_alignmentPatternCenters.Add(6);
-      m_alignmentPatternCenters.Add(26);
-      m_alignmentPatternCenters.Add(52);
-      m_alignmentPatternCenters.Add(78);
-      m_alignmentPatternCenters.Add(104);
-      m_alignmentPatternCenters.Add(130);
+      m_alignmentPatternCenters.push_back(6);
+      m_alignmentPatternCenters.push_back(26);
+      m_alignmentPatternCenters.push_back(52);
+      m_alignmentPatternCenters.push_back(78);
+      m_alignmentPatternCenters.push_back(104);
+      m_alignmentPatternCenters.push_back(130);
       break;
     case 31:
-      m_alignmentPatternCenters.Add(6);
-      m_alignmentPatternCenters.Add(30);
-      m_alignmentPatternCenters.Add(56);
-      m_alignmentPatternCenters.Add(82);
-      m_alignmentPatternCenters.Add(108);
-      m_alignmentPatternCenters.Add(134);
+      m_alignmentPatternCenters.push_back(6);
+      m_alignmentPatternCenters.push_back(30);
+      m_alignmentPatternCenters.push_back(56);
+      m_alignmentPatternCenters.push_back(82);
+      m_alignmentPatternCenters.push_back(108);
+      m_alignmentPatternCenters.push_back(134);
       break;
     case 32:
-      m_alignmentPatternCenters.Add(6);
-      m_alignmentPatternCenters.Add(34);
-      m_alignmentPatternCenters.Add(60);
-      m_alignmentPatternCenters.Add(86);
-      m_alignmentPatternCenters.Add(112);
-      m_alignmentPatternCenters.Add(138);
+      m_alignmentPatternCenters.push_back(6);
+      m_alignmentPatternCenters.push_back(34);
+      m_alignmentPatternCenters.push_back(60);
+      m_alignmentPatternCenters.push_back(86);
+      m_alignmentPatternCenters.push_back(112);
+      m_alignmentPatternCenters.push_back(138);
       break;
     case 33:
-      m_alignmentPatternCenters.Add(6);
-      m_alignmentPatternCenters.Add(30);
-      m_alignmentPatternCenters.Add(58);
-      m_alignmentPatternCenters.Add(86);
-      m_alignmentPatternCenters.Add(114);
-      m_alignmentPatternCenters.Add(142);
+      m_alignmentPatternCenters.push_back(6);
+      m_alignmentPatternCenters.push_back(30);
+      m_alignmentPatternCenters.push_back(58);
+      m_alignmentPatternCenters.push_back(86);
+      m_alignmentPatternCenters.push_back(114);
+      m_alignmentPatternCenters.push_back(142);
       break;
     case 34:
-      m_alignmentPatternCenters.Add(6);
-      m_alignmentPatternCenters.Add(34);
-      m_alignmentPatternCenters.Add(62);
-      m_alignmentPatternCenters.Add(90);
-      m_alignmentPatternCenters.Add(118);
-      m_alignmentPatternCenters.Add(146);
+      m_alignmentPatternCenters.push_back(6);
+      m_alignmentPatternCenters.push_back(34);
+      m_alignmentPatternCenters.push_back(62);
+      m_alignmentPatternCenters.push_back(90);
+      m_alignmentPatternCenters.push_back(118);
+      m_alignmentPatternCenters.push_back(146);
       break;
     case 35:
-      m_alignmentPatternCenters.Add(6);
-      m_alignmentPatternCenters.Add(30);
-      m_alignmentPatternCenters.Add(54);
-      m_alignmentPatternCenters.Add(78);
-      m_alignmentPatternCenters.Add(102);
-      m_alignmentPatternCenters.Add(126);
-      m_alignmentPatternCenters.Add(150);
+      m_alignmentPatternCenters.push_back(6);
+      m_alignmentPatternCenters.push_back(30);
+      m_alignmentPatternCenters.push_back(54);
+      m_alignmentPatternCenters.push_back(78);
+      m_alignmentPatternCenters.push_back(102);
+      m_alignmentPatternCenters.push_back(126);
+      m_alignmentPatternCenters.push_back(150);
       break;
     case 36:
-      m_alignmentPatternCenters.Add(6);
-      m_alignmentPatternCenters.Add(24);
-      m_alignmentPatternCenters.Add(50);
-      m_alignmentPatternCenters.Add(76);
-      m_alignmentPatternCenters.Add(102);
-      m_alignmentPatternCenters.Add(128);
-      m_alignmentPatternCenters.Add(154);
+      m_alignmentPatternCenters.push_back(6);
+      m_alignmentPatternCenters.push_back(24);
+      m_alignmentPatternCenters.push_back(50);
+      m_alignmentPatternCenters.push_back(76);
+      m_alignmentPatternCenters.push_back(102);
+      m_alignmentPatternCenters.push_back(128);
+      m_alignmentPatternCenters.push_back(154);
       break;
     case 37:
-      m_alignmentPatternCenters.Add(6);
-      m_alignmentPatternCenters.Add(28);
-      m_alignmentPatternCenters.Add(54);
-      m_alignmentPatternCenters.Add(80);
-      m_alignmentPatternCenters.Add(106);
-      m_alignmentPatternCenters.Add(132);
-      m_alignmentPatternCenters.Add(158);
+      m_alignmentPatternCenters.push_back(6);
+      m_alignmentPatternCenters.push_back(28);
+      m_alignmentPatternCenters.push_back(54);
+      m_alignmentPatternCenters.push_back(80);
+      m_alignmentPatternCenters.push_back(106);
+      m_alignmentPatternCenters.push_back(132);
+      m_alignmentPatternCenters.push_back(158);
       break;
     case 38:
-      m_alignmentPatternCenters.Add(6);
-      m_alignmentPatternCenters.Add(32);
-      m_alignmentPatternCenters.Add(58);
-      m_alignmentPatternCenters.Add(84);
-      m_alignmentPatternCenters.Add(110);
-      m_alignmentPatternCenters.Add(136);
-      m_alignmentPatternCenters.Add(162);
+      m_alignmentPatternCenters.push_back(6);
+      m_alignmentPatternCenters.push_back(32);
+      m_alignmentPatternCenters.push_back(58);
+      m_alignmentPatternCenters.push_back(84);
+      m_alignmentPatternCenters.push_back(110);
+      m_alignmentPatternCenters.push_back(136);
+      m_alignmentPatternCenters.push_back(162);
       break;
     case 39:
-      m_alignmentPatternCenters.Add(6);
-      m_alignmentPatternCenters.Add(26);
-      m_alignmentPatternCenters.Add(54);
-      m_alignmentPatternCenters.Add(82);
-      m_alignmentPatternCenters.Add(110);
-      m_alignmentPatternCenters.Add(138);
-      m_alignmentPatternCenters.Add(166);
+      m_alignmentPatternCenters.push_back(6);
+      m_alignmentPatternCenters.push_back(26);
+      m_alignmentPatternCenters.push_back(54);
+      m_alignmentPatternCenters.push_back(82);
+      m_alignmentPatternCenters.push_back(110);
+      m_alignmentPatternCenters.push_back(138);
+      m_alignmentPatternCenters.push_back(166);
       break;
     case 40:
-      m_alignmentPatternCenters.Add(6);
-      m_alignmentPatternCenters.Add(30);
-      m_alignmentPatternCenters.Add(58);
-      m_alignmentPatternCenters.Add(86);
-      m_alignmentPatternCenters.Add(114);
-      m_alignmentPatternCenters.Add(142);
-      m_alignmentPatternCenters.Add(170);
+      m_alignmentPatternCenters.push_back(6);
+      m_alignmentPatternCenters.push_back(30);
+      m_alignmentPatternCenters.push_back(58);
+      m_alignmentPatternCenters.push_back(86);
+      m_alignmentPatternCenters.push_back(114);
+      m_alignmentPatternCenters.push_back(142);
+      m_alignmentPatternCenters.push_back(170);
       break;
   }
 }
 
 CBC_QRCoderVersion::~CBC_QRCoderVersion() {
-  for (int32_t i = 0; i < m_ecBlocksArray.GetSize(); ++i)
+  for (size_t i = 0; i < m_ecBlocksArray.size(); ++i)
     delete m_ecBlocksArray[i];
 }
 
 int32_t CBC_QRCoderVersion::GetVersionNumber() {
   return m_versionNumber;
 }
-CFX_ArrayTemplate<int32_t>* CBC_QRCoderVersion::GetAlignmentPatternCenters() {
+std::vector<int32_t>* CBC_QRCoderVersion::GetAlignmentPatternCenters() {
   return &m_alignmentPatternCenters;
 }
 int32_t CBC_QRCoderVersion::GetTotalCodeWords() {
@@ -419,10 +419,10 @@ CBC_CommonBitMatrix* CBC_QRCoderVersion::BuildFunctionPattern(int32_t& e) {
   bitMatrix->SetRegion(0, dimension - 8, 9, 8, e);
   if (e != BCExceptionNO)
     return nullptr;
-  int32_t max = m_alignmentPatternCenters.GetSize();
-  for (int32_t x = 0; x < max; x++) {
+  size_t max = m_alignmentPatternCenters.size();
+  for (size_t x = 0; x < max; x++) {
     int32_t i = m_alignmentPatternCenters[x] - 2;
-    for (int32_t y = 0; y < max; y++) {
+    for (size_t y = 0; y < max; y++) {
       if ((x == 0 && (y == 0 || y == max - 1)) || (x == max - 1 && y == 0)) {
         continue;
       }
@@ -450,47 +450,47 @@ CBC_CommonBitMatrix* CBC_QRCoderVersion::BuildFunctionPattern(int32_t& e) {
 CBC_QRCoderVersion* CBC_QRCoderVersion::GetVersionForNumber(
     int32_t versionNumber,
     int32_t& e) {
-  if (VERSION->GetSize() == 0) {
-    VERSION->Add(new CBC_QRCoderVersion(
+  if (VERSION->empty()) {
+    VERSION->push_back(new CBC_QRCoderVersion(
         1, new CBC_QRCoderECBlocks(7, new CBC_QRCoderECB(1, 19)),
         new CBC_QRCoderECBlocks(10, new CBC_QRCoderECB(1, 16)),
         new CBC_QRCoderECBlocks(13, new CBC_QRCoderECB(1, 13)),
         new CBC_QRCoderECBlocks(17, new CBC_QRCoderECB(1, 9))));
-    VERSION->Add(new CBC_QRCoderVersion(
+    VERSION->push_back(new CBC_QRCoderVersion(
         2, new CBC_QRCoderECBlocks(10, new CBC_QRCoderECB(1, 34)),
         new CBC_QRCoderECBlocks(16, new CBC_QRCoderECB(1, 28)),
         new CBC_QRCoderECBlocks(22, new CBC_QRCoderECB(1, 22)),
         new CBC_QRCoderECBlocks(28, new CBC_QRCoderECB(1, 16))));
-    VERSION->Add(new CBC_QRCoderVersion(
+    VERSION->push_back(new CBC_QRCoderVersion(
         3, new CBC_QRCoderECBlocks(15, new CBC_QRCoderECB(1, 55)),
         new CBC_QRCoderECBlocks(26, new CBC_QRCoderECB(1, 44)),
         new CBC_QRCoderECBlocks(18, new CBC_QRCoderECB(2, 17)),
         new CBC_QRCoderECBlocks(22, new CBC_QRCoderECB(2, 13))));
-    VERSION->Add(new CBC_QRCoderVersion(
+    VERSION->push_back(new CBC_QRCoderVersion(
         4, new CBC_QRCoderECBlocks(20, new CBC_QRCoderECB(1, 80)),
         new CBC_QRCoderECBlocks(18, new CBC_QRCoderECB(2, 32)),
         new CBC_QRCoderECBlocks(26, new CBC_QRCoderECB(2, 24)),
         new CBC_QRCoderECBlocks(16, new CBC_QRCoderECB(4, 9))));
-    VERSION->Add(new CBC_QRCoderVersion(
+    VERSION->push_back(new CBC_QRCoderVersion(
         5, new CBC_QRCoderECBlocks(26, new CBC_QRCoderECB(1, 108)),
         new CBC_QRCoderECBlocks(24, new CBC_QRCoderECB(2, 43)),
         new CBC_QRCoderECBlocks(18, new CBC_QRCoderECB(2, 15),
                                 new CBC_QRCoderECB(2, 16)),
         new CBC_QRCoderECBlocks(22, new CBC_QRCoderECB(2, 11),
                                 new CBC_QRCoderECB(2, 12))));
-    VERSION->Add(new CBC_QRCoderVersion(
+    VERSION->push_back(new CBC_QRCoderVersion(
         6, new CBC_QRCoderECBlocks(18, new CBC_QRCoderECB(2, 68)),
         new CBC_QRCoderECBlocks(16, new CBC_QRCoderECB(4, 27)),
         new CBC_QRCoderECBlocks(24, new CBC_QRCoderECB(4, 19)),
         new CBC_QRCoderECBlocks(28, new CBC_QRCoderECB(4, 15))));
-    VERSION->Add(new CBC_QRCoderVersion(
+    VERSION->push_back(new CBC_QRCoderVersion(
         7, new CBC_QRCoderECBlocks(20, new CBC_QRCoderECB(2, 78)),
         new CBC_QRCoderECBlocks(18, new CBC_QRCoderECB(4, 31)),
         new CBC_QRCoderECBlocks(18, new CBC_QRCoderECB(2, 14),
                                 new CBC_QRCoderECB(4, 15)),
         new CBC_QRCoderECBlocks(26, new CBC_QRCoderECB(4, 13),
                                 new CBC_QRCoderECB(1, 14))));
-    VERSION->Add(new CBC_QRCoderVersion(
+    VERSION->push_back(new CBC_QRCoderVersion(
         8, new CBC_QRCoderECBlocks(24, new CBC_QRCoderECB(2, 97)),
         new CBC_QRCoderECBlocks(22, new CBC_QRCoderECB(2, 38),
                                 new CBC_QRCoderECB(2, 39)),
@@ -498,7 +498,7 @@ CBC_QRCoderVersion* CBC_QRCoderVersion::GetVersionForNumber(
                                 new CBC_QRCoderECB(2, 19)),
         new CBC_QRCoderECBlocks(26, new CBC_QRCoderECB(4, 14),
                                 new CBC_QRCoderECB(2, 15))));
-    VERSION->Add(new CBC_QRCoderVersion(
+    VERSION->push_back(new CBC_QRCoderVersion(
         9, new CBC_QRCoderECBlocks(30, new CBC_QRCoderECB(2, 116)),
         new CBC_QRCoderECBlocks(22, new CBC_QRCoderECB(3, 36),
                                 new CBC_QRCoderECB(2, 37)),
@@ -506,7 +506,7 @@ CBC_QRCoderVersion* CBC_QRCoderVersion::GetVersionForNumber(
                                 new CBC_QRCoderECB(4, 17)),
         new CBC_QRCoderECBlocks(24, new CBC_QRCoderECB(4, 12),
                                 new CBC_QRCoderECB(4, 13))));
-    VERSION->Add(new CBC_QRCoderVersion(
+    VERSION->push_back(new CBC_QRCoderVersion(
         10, new CBC_QRCoderECBlocks(18, new CBC_QRCoderECB(2, 68),
                                     new CBC_QRCoderECB(2, 69)),
         new CBC_QRCoderECBlocks(26, new CBC_QRCoderECB(4, 43),
@@ -515,7 +515,7 @@ CBC_QRCoderVersion* CBC_QRCoderVersion::GetVersionForNumber(
                                 new CBC_QRCoderECB(2, 20)),
         new CBC_QRCoderECBlocks(28, new CBC_QRCoderECB(6, 15),
                                 new CBC_QRCoderECB(2, 16))));
-    VERSION->Add(new CBC_QRCoderVersion(
+    VERSION->push_back(new CBC_QRCoderVersion(
         11, new CBC_QRCoderECBlocks(20, new CBC_QRCoderECB(4, 81)),
         new CBC_QRCoderECBlocks(30, new CBC_QRCoderECB(1, 50),
                                 new CBC_QRCoderECB(4, 51)),
@@ -523,7 +523,7 @@ CBC_QRCoderVersion* CBC_QRCoderVersion::GetVersionForNumber(
                                 new CBC_QRCoderECB(4, 23)),
         new CBC_QRCoderECBlocks(24, new CBC_QRCoderECB(3, 12),
                                 new CBC_QRCoderECB(8, 13))));
-    VERSION->Add(new CBC_QRCoderVersion(
+    VERSION->push_back(new CBC_QRCoderVersion(
         12, new CBC_QRCoderECBlocks(24, new CBC_QRCoderECB(2, 92),
                                     new CBC_QRCoderECB(2, 93)),
         new CBC_QRCoderECBlocks(22, new CBC_QRCoderECB(6, 36),
@@ -532,7 +532,7 @@ CBC_QRCoderVersion* CBC_QRCoderVersion::GetVersionForNumber(
                                 new CBC_QRCoderECB(6, 21)),
         new CBC_QRCoderECBlocks(28, new CBC_QRCoderECB(7, 14),
                                 new CBC_QRCoderECB(4, 15))));
-    VERSION->Add(new CBC_QRCoderVersion(
+    VERSION->push_back(new CBC_QRCoderVersion(
         13, new CBC_QRCoderECBlocks(26, new CBC_QRCoderECB(4, 107)),
         new CBC_QRCoderECBlocks(22, new CBC_QRCoderECB(8, 37),
                                 new CBC_QRCoderECB(1, 38)),
@@ -540,7 +540,7 @@ CBC_QRCoderVersion* CBC_QRCoderVersion::GetVersionForNumber(
                                 new CBC_QRCoderECB(4, 21)),
         new CBC_QRCoderECBlocks(22, new CBC_QRCoderECB(12, 11),
                                 new CBC_QRCoderECB(4, 12))));
-    VERSION->Add(new CBC_QRCoderVersion(
+    VERSION->push_back(new CBC_QRCoderVersion(
         14, new CBC_QRCoderECBlocks(30, new CBC_QRCoderECB(3, 115),
                                     new CBC_QRCoderECB(1, 116)),
         new CBC_QRCoderECBlocks(24, new CBC_QRCoderECB(4, 40),
@@ -549,7 +549,7 @@ CBC_QRCoderVersion* CBC_QRCoderVersion::GetVersionForNumber(
                                 new CBC_QRCoderECB(5, 17)),
         new CBC_QRCoderECBlocks(24, new CBC_QRCoderECB(11, 12),
                                 new CBC_QRCoderECB(5, 13))));
-    VERSION->Add(new CBC_QRCoderVersion(
+    VERSION->push_back(new CBC_QRCoderVersion(
         15, new CBC_QRCoderECBlocks(22, new CBC_QRCoderECB(5, 87),
                                     new CBC_QRCoderECB(1, 88)),
         new CBC_QRCoderECBlocks(24, new CBC_QRCoderECB(5, 41),
@@ -558,7 +558,7 @@ CBC_QRCoderVersion* CBC_QRCoderVersion::GetVersionForNumber(
                                 new CBC_QRCoderECB(7, 25)),
         new CBC_QRCoderECBlocks(24, new CBC_QRCoderECB(11, 12),
                                 new CBC_QRCoderECB(7, 13))));
-    VERSION->Add(new CBC_QRCoderVersion(
+    VERSION->push_back(new CBC_QRCoderVersion(
         16, new CBC_QRCoderECBlocks(24, new CBC_QRCoderECB(5, 98),
                                     new CBC_QRCoderECB(1, 99)),
         new CBC_QRCoderECBlocks(28, new CBC_QRCoderECB(7, 45),
@@ -567,7 +567,7 @@ CBC_QRCoderVersion* CBC_QRCoderVersion::GetVersionForNumber(
                                 new CBC_QRCoderECB(2, 20)),
         new CBC_QRCoderECBlocks(30, new CBC_QRCoderECB(3, 15),
                                 new CBC_QRCoderECB(13, 16))));
-    VERSION->Add(new CBC_QRCoderVersion(
+    VERSION->push_back(new CBC_QRCoderVersion(
         17, new CBC_QRCoderECBlocks(28, new CBC_QRCoderECB(1, 107),
                                     new CBC_QRCoderECB(5, 108)),
         new CBC_QRCoderECBlocks(28, new CBC_QRCoderECB(10, 46),
@@ -576,7 +576,7 @@ CBC_QRCoderVersion* CBC_QRCoderVersion::GetVersionForNumber(
                                 new CBC_QRCoderECB(15, 23)),
         new CBC_QRCoderECBlocks(28, new CBC_QRCoderECB(2, 14),
                                 new CBC_QRCoderECB(17, 15))));
-    VERSION->Add(new CBC_QRCoderVersion(
+    VERSION->push_back(new CBC_QRCoderVersion(
         18, new CBC_QRCoderECBlocks(30, new CBC_QRCoderECB(5, 120),
                                     new CBC_QRCoderECB(1, 121)),
         new CBC_QRCoderECBlocks(26, new CBC_QRCoderECB(9, 43),
@@ -585,7 +585,7 @@ CBC_QRCoderVersion* CBC_QRCoderVersion::GetVersionForNumber(
                                 new CBC_QRCoderECB(1, 23)),
         new CBC_QRCoderECBlocks(28, new CBC_QRCoderECB(2, 14),
                                 new CBC_QRCoderECB(19, 15))));
-    VERSION->Add(new CBC_QRCoderVersion(
+    VERSION->push_back(new CBC_QRCoderVersion(
         19, new CBC_QRCoderECBlocks(28, new CBC_QRCoderECB(3, 113),
                                     new CBC_QRCoderECB(4, 114)),
         new CBC_QRCoderECBlocks(26, new CBC_QRCoderECB(3, 44),
@@ -594,7 +594,7 @@ CBC_QRCoderVersion* CBC_QRCoderVersion::GetVersionForNumber(
                                 new CBC_QRCoderECB(4, 22)),
         new CBC_QRCoderECBlocks(26, new CBC_QRCoderECB(9, 13),
                                 new CBC_QRCoderECB(16, 14))));
-    VERSION->Add(new CBC_QRCoderVersion(
+    VERSION->push_back(new CBC_QRCoderVersion(
         20, new CBC_QRCoderECBlocks(28, new CBC_QRCoderECB(3, 107),
                                     new CBC_QRCoderECB(5, 108)),
         new CBC_QRCoderECBlocks(26, new CBC_QRCoderECB(3, 41),
@@ -603,7 +603,7 @@ CBC_QRCoderVersion* CBC_QRCoderVersion::GetVersionForNumber(
                                 new CBC_QRCoderECB(5, 25)),
         new CBC_QRCoderECBlocks(28, new CBC_QRCoderECB(15, 15),
                                 new CBC_QRCoderECB(10, 16))));
-    VERSION->Add(new CBC_QRCoderVersion(
+    VERSION->push_back(new CBC_QRCoderVersion(
         21, new CBC_QRCoderECBlocks(28, new CBC_QRCoderECB(4, 116),
                                     new CBC_QRCoderECB(4, 117)),
         new CBC_QRCoderECBlocks(26, new CBC_QRCoderECB(17, 42)),
@@ -611,14 +611,14 @@ CBC_QRCoderVersion* CBC_QRCoderVersion::GetVersionForNumber(
                                 new CBC_QRCoderECB(6, 23)),
         new CBC_QRCoderECBlocks(30, new CBC_QRCoderECB(19, 16),
                                 new CBC_QRCoderECB(6, 17))));
-    VERSION->Add(new CBC_QRCoderVersion(
+    VERSION->push_back(new CBC_QRCoderVersion(
         22, new CBC_QRCoderECBlocks(28, new CBC_QRCoderECB(2, 111),
                                     new CBC_QRCoderECB(7, 112)),
         new CBC_QRCoderECBlocks(28, new CBC_QRCoderECB(17, 46)),
         new CBC_QRCoderECBlocks(30, new CBC_QRCoderECB(7, 24),
                                 new CBC_QRCoderECB(16, 25)),
         new CBC_QRCoderECBlocks(24, new CBC_QRCoderECB(34, 13))));
-    VERSION->Add(new CBC_QRCoderVersion(
+    VERSION->push_back(new CBC_QRCoderVersion(
         23, new CBC_QRCoderECBlocks(30, new CBC_QRCoderECB(4, 121),
                                     new CBC_QRCoderECB(5, 122)),
         new CBC_QRCoderECBlocks(28, new CBC_QRCoderECB(4, 47),
@@ -627,7 +627,7 @@ CBC_QRCoderVersion* CBC_QRCoderVersion::GetVersionForNumber(
                                 new CBC_QRCoderECB(14, 25)),
         new CBC_QRCoderECBlocks(30, new CBC_QRCoderECB(16, 15),
                                 new CBC_QRCoderECB(14, 16))));
-    VERSION->Add(new CBC_QRCoderVersion(
+    VERSION->push_back(new CBC_QRCoderVersion(
         24, new CBC_QRCoderECBlocks(30, new CBC_QRCoderECB(6, 117),
                                     new CBC_QRCoderECB(4, 118)),
         new CBC_QRCoderECBlocks(28, new CBC_QRCoderECB(6, 45),
@@ -636,7 +636,7 @@ CBC_QRCoderVersion* CBC_QRCoderVersion::GetVersionForNumber(
                                 new CBC_QRCoderECB(16, 25)),
         new CBC_QRCoderECBlocks(30, new CBC_QRCoderECB(30, 16),
                                 new CBC_QRCoderECB(2, 17))));
-    VERSION->Add(new CBC_QRCoderVersion(
+    VERSION->push_back(new CBC_QRCoderVersion(
         25, new CBC_QRCoderECBlocks(26, new CBC_QRCoderECB(8, 106),
                                     new CBC_QRCoderECB(4, 107)),
         new CBC_QRCoderECBlocks(28, new CBC_QRCoderECB(8, 47),
@@ -645,7 +645,7 @@ CBC_QRCoderVersion* CBC_QRCoderVersion::GetVersionForNumber(
                                 new CBC_QRCoderECB(22, 25)),
         new CBC_QRCoderECBlocks(30, new CBC_QRCoderECB(22, 15),
                                 new CBC_QRCoderECB(13, 16))));
-    VERSION->Add(new CBC_QRCoderVersion(
+    VERSION->push_back(new CBC_QRCoderVersion(
         26, new CBC_QRCoderECBlocks(28, new CBC_QRCoderECB(10, 114),
                                     new CBC_QRCoderECB(2, 115)),
         new CBC_QRCoderECBlocks(28, new CBC_QRCoderECB(19, 46),
@@ -654,7 +654,7 @@ CBC_QRCoderVersion* CBC_QRCoderVersion::GetVersionForNumber(
                                 new CBC_QRCoderECB(6, 23)),
         new CBC_QRCoderECBlocks(30, new CBC_QRCoderECB(33, 16),
                                 new CBC_QRCoderECB(4, 17))));
-    VERSION->Add(new CBC_QRCoderVersion(
+    VERSION->push_back(new CBC_QRCoderVersion(
         27, new CBC_QRCoderECBlocks(30, new CBC_QRCoderECB(8, 122),
                                     new CBC_QRCoderECB(4, 123)),
         new CBC_QRCoderECBlocks(28, new CBC_QRCoderECB(22, 45),
@@ -663,7 +663,7 @@ CBC_QRCoderVersion* CBC_QRCoderVersion::GetVersionForNumber(
                                 new CBC_QRCoderECB(26, 24)),
         new CBC_QRCoderECBlocks(30, new CBC_QRCoderECB(12, 15),
                                 new CBC_QRCoderECB(28, 16))));
-    VERSION->Add(new CBC_QRCoderVersion(
+    VERSION->push_back(new CBC_QRCoderVersion(
         28, new CBC_QRCoderECBlocks(30, new CBC_QRCoderECB(3, 117),
                                     new CBC_QRCoderECB(10, 118)),
         new CBC_QRCoderECBlocks(28, new CBC_QRCoderECB(3, 45),
@@ -672,7 +672,7 @@ CBC_QRCoderVersion* CBC_QRCoderVersion::GetVersionForNumber(
                                 new CBC_QRCoderECB(31, 25)),
         new CBC_QRCoderECBlocks(30, new CBC_QRCoderECB(11, 15),
                                 new CBC_QRCoderECB(31, 16))));
-    VERSION->Add(new CBC_QRCoderVersion(
+    VERSION->push_back(new CBC_QRCoderVersion(
         29, new CBC_QRCoderECBlocks(30, new CBC_QRCoderECB(7, 116),
                                     new CBC_QRCoderECB(7, 117)),
         new CBC_QRCoderECBlocks(28, new CBC_QRCoderECB(21, 45),
@@ -681,7 +681,7 @@ CBC_QRCoderVersion* CBC_QRCoderVersion::GetVersionForNumber(
                                 new CBC_QRCoderECB(37, 24)),
         new CBC_QRCoderECBlocks(30, new CBC_QRCoderECB(19, 15),
                                 new CBC_QRCoderECB(26, 16))));
-    VERSION->Add(new CBC_QRCoderVersion(
+    VERSION->push_back(new CBC_QRCoderVersion(
         30, new CBC_QRCoderECBlocks(30, new CBC_QRCoderECB(5, 115),
                                     new CBC_QRCoderECB(10, 116)),
         new CBC_QRCoderECBlocks(28, new CBC_QRCoderECB(19, 47),
@@ -690,7 +690,7 @@ CBC_QRCoderVersion* CBC_QRCoderVersion::GetVersionForNumber(
                                 new CBC_QRCoderECB(25, 25)),
         new CBC_QRCoderECBlocks(30, new CBC_QRCoderECB(23, 15),
                                 new CBC_QRCoderECB(25, 16))));
-    VERSION->Add(new CBC_QRCoderVersion(
+    VERSION->push_back(new CBC_QRCoderVersion(
         31, new CBC_QRCoderECBlocks(30, new CBC_QRCoderECB(13, 115),
                                     new CBC_QRCoderECB(3, 116)),
         new CBC_QRCoderECBlocks(28, new CBC_QRCoderECB(2, 46),
@@ -699,7 +699,7 @@ CBC_QRCoderVersion* CBC_QRCoderVersion::GetVersionForNumber(
                                 new CBC_QRCoderECB(1, 25)),
         new CBC_QRCoderECBlocks(30, new CBC_QRCoderECB(23, 15),
                                 new CBC_QRCoderECB(28, 16))));
-    VERSION->Add(new CBC_QRCoderVersion(
+    VERSION->push_back(new CBC_QRCoderVersion(
         32, new CBC_QRCoderECBlocks(30, new CBC_QRCoderECB(17, 115)),
         new CBC_QRCoderECBlocks(28, new CBC_QRCoderECB(10, 46),
                                 new CBC_QRCoderECB(23, 47)),
@@ -707,7 +707,7 @@ CBC_QRCoderVersion* CBC_QRCoderVersion::GetVersionForNumber(
                                 new CBC_QRCoderECB(35, 25)),
         new CBC_QRCoderECBlocks(30, new CBC_QRCoderECB(19, 15),
                                 new CBC_QRCoderECB(35, 16))));
-    VERSION->Add(new CBC_QRCoderVersion(
+    VERSION->push_back(new CBC_QRCoderVersion(
         33, new CBC_QRCoderECBlocks(30, new CBC_QRCoderECB(17, 115),
                                     new CBC_QRCoderECB(1, 116)),
         new CBC_QRCoderECBlocks(28, new CBC_QRCoderECB(14, 46),
@@ -716,7 +716,7 @@ CBC_QRCoderVersion* CBC_QRCoderVersion::GetVersionForNumber(
                                 new CBC_QRCoderECB(19, 25)),
         new CBC_QRCoderECBlocks(30, new CBC_QRCoderECB(11, 15),
                                 new CBC_QRCoderECB(46, 16))));
-    VERSION->Add(new CBC_QRCoderVersion(
+    VERSION->push_back(new CBC_QRCoderVersion(
         34, new CBC_QRCoderECBlocks(30, new CBC_QRCoderECB(13, 115),
                                     new CBC_QRCoderECB(6, 116)),
         new CBC_QRCoderECBlocks(28, new CBC_QRCoderECB(14, 46),
@@ -725,7 +725,7 @@ CBC_QRCoderVersion* CBC_QRCoderVersion::GetVersionForNumber(
                                 new CBC_QRCoderECB(7, 25)),
         new CBC_QRCoderECBlocks(30, new CBC_QRCoderECB(59, 16),
                                 new CBC_QRCoderECB(1, 17))));
-    VERSION->Add(new CBC_QRCoderVersion(
+    VERSION->push_back(new CBC_QRCoderVersion(
         35, new CBC_QRCoderECBlocks(30, new CBC_QRCoderECB(12, 121),
                                     new CBC_QRCoderECB(7, 122)),
         new CBC_QRCoderECBlocks(28, new CBC_QRCoderECB(12, 47),
@@ -734,7 +734,7 @@ CBC_QRCoderVersion* CBC_QRCoderVersion::GetVersionForNumber(
                                 new CBC_QRCoderECB(14, 25)),
         new CBC_QRCoderECBlocks(30, new CBC_QRCoderECB(22, 15),
                                 new CBC_QRCoderECB(41, 16))));
-    VERSION->Add(new CBC_QRCoderVersion(
+    VERSION->push_back(new CBC_QRCoderVersion(
         36, new CBC_QRCoderECBlocks(30, new CBC_QRCoderECB(6, 121),
                                     new CBC_QRCoderECB(14, 122)),
         new CBC_QRCoderECBlocks(28, new CBC_QRCoderECB(6, 47),
@@ -743,7 +743,7 @@ CBC_QRCoderVersion* CBC_QRCoderVersion::GetVersionForNumber(
                                 new CBC_QRCoderECB(10, 25)),
         new CBC_QRCoderECBlocks(30, new CBC_QRCoderECB(2, 15),
                                 new CBC_QRCoderECB(64, 16))));
-    VERSION->Add(new CBC_QRCoderVersion(
+    VERSION->push_back(new CBC_QRCoderVersion(
         37, new CBC_QRCoderECBlocks(30, new CBC_QRCoderECB(17, 122),
                                     new CBC_QRCoderECB(4, 123)),
         new CBC_QRCoderECBlocks(28, new CBC_QRCoderECB(29, 46),
@@ -752,7 +752,7 @@ CBC_QRCoderVersion* CBC_QRCoderVersion::GetVersionForNumber(
                                 new CBC_QRCoderECB(10, 25)),
         new CBC_QRCoderECBlocks(30, new CBC_QRCoderECB(24, 15),
                                 new CBC_QRCoderECB(46, 16))));
-    VERSION->Add(new CBC_QRCoderVersion(
+    VERSION->push_back(new CBC_QRCoderVersion(
         38, new CBC_QRCoderECBlocks(30, new CBC_QRCoderECB(4, 122),
                                     new CBC_QRCoderECB(18, 123)),
         new CBC_QRCoderECBlocks(28, new CBC_QRCoderECB(13, 46),
@@ -761,7 +761,7 @@ CBC_QRCoderVersion* CBC_QRCoderVersion::GetVersionForNumber(
                                 new CBC_QRCoderECB(14, 25)),
         new CBC_QRCoderECBlocks(30, new CBC_QRCoderECB(42, 15),
                                 new CBC_QRCoderECB(32, 16))));
-    VERSION->Add(new CBC_QRCoderVersion(
+    VERSION->push_back(new CBC_QRCoderVersion(
         39, new CBC_QRCoderECBlocks(30, new CBC_QRCoderECB(20, 117),
                                     new CBC_QRCoderECB(4, 118)),
         new CBC_QRCoderECBlocks(28, new CBC_QRCoderECB(40, 47),
@@ -770,7 +770,7 @@ CBC_QRCoderVersion* CBC_QRCoderVersion::GetVersionForNumber(
                                 new CBC_QRCoderECB(22, 25)),
         new CBC_QRCoderECBlocks(30, new CBC_QRCoderECB(10, 15),
                                 new CBC_QRCoderECB(67, 16))));
-    VERSION->Add(new CBC_QRCoderVersion(
+    VERSION->push_back(new CBC_QRCoderVersion(
         40, new CBC_QRCoderECBlocks(30, new CBC_QRCoderECB(19, 118),
                                     new CBC_QRCoderECB(6, 119)),
         new CBC_QRCoderECBlocks(28, new CBC_QRCoderECB(18, 47),
@@ -788,7 +788,7 @@ CBC_QRCoderVersion* CBC_QRCoderVersion::GetVersionForNumber(
 }
 
 void CBC_QRCoderVersion::Destroy() {
-  for (int32_t i = 0; i < VERSION->GetSize(); i++)
+  for (size_t i = 0; i < VERSION->size(); i++)
     delete (*VERSION)[i];
-  VERSION->RemoveAll();
+  VERSION->clear();
 }

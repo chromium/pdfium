@@ -7,6 +7,8 @@
 #ifndef XFA_FXBARCODE_DATAMATRIX_BC_DEFAULTPLACEMENT_H_
 #define XFA_FXBARCODE_DATAMATRIX_BC_DEFAULTPLACEMENT_H_
 
+#include <vector>
+
 #include "core/fxcrt/fx_basic.h"
 
 class CBC_DefaultPlacement {
@@ -18,7 +20,7 @@ class CBC_DefaultPlacement {
 
   int32_t getNumrows();
   int32_t getNumcols();
-  CFX_ArrayTemplate<uint8_t>& getBits();
+  std::vector<uint8_t>& getBits();
   bool getBit(int32_t col, int32_t row);
   void setBit(int32_t col, int32_t row, bool bit);
   bool hasBit(int32_t col, int32_t row);
@@ -28,7 +30,7 @@ class CBC_DefaultPlacement {
   CFX_WideString m_codewords;
   int32_t m_numrows;
   int32_t m_numcols;
-  CFX_ArrayTemplate<uint8_t> m_bits;
+  std::vector<uint8_t> m_bits;
   void module(int32_t row, int32_t col, int32_t pos, int32_t bit);
   void utah(int32_t row, int32_t col, int32_t pos);
   void corner1(int32_t pos);

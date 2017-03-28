@@ -101,12 +101,12 @@ void CBC_QRCoderEncoder::AppendDataModeLenghInfo(
       if (e != BCExceptionNO)
         return;
     } else if (tempMode == CBC_QRCoderMode::sBYTE) {
-      CFX_ArrayTemplate<uint8_t> bytes;
+      std::vector<uint8_t> bytes;
       CBC_UtilCodingConvert::LocaleToUtf8(splitResult.second, bytes);
       AppendModeInfo(tempMode, &headerAndDataBits, e);
       if (e != BCExceptionNO)
         return;
-      AppendLengthInfo(bytes.GetSize(), qrCode->GetVersion(), tempMode,
+      AppendLengthInfo(bytes.size(), qrCode->GetVersion(), tempMode,
                        &headerAndDataBits, e);
       if (e != BCExceptionNO)
         return;
@@ -765,10 +765,10 @@ void CBC_QRCoderEncoder::Append8BitBytes(const CFX_ByteString& content,
   }
 }
 
-void CBC_QRCoderEncoder::Append8BitBytes(CFX_ArrayTemplate<uint8_t>& bytes,
+void CBC_QRCoderEncoder::Append8BitBytes(std::vector<uint8_t>& bytes,
                                          CBC_QRCoderBitVector* bits,
                                          int32_t& e) {
-  for (int32_t i = 0; i < bytes.GetSize(); i++) {
+  for (size_t i = 0; i < bytes.size(); i++) {
     bits->AppendBits(bytes[i], 8, e);
     if (e != BCExceptionNO)
       return;
@@ -778,9 +778,9 @@ void CBC_QRCoderEncoder::Append8BitBytes(CFX_ArrayTemplate<uint8_t>& bytes,
 void CBC_QRCoderEncoder::AppendKanjiBytes(const CFX_ByteString& content,
                                           CBC_QRCoderBitVector* bits,
                                           int32_t& e) {
-  CFX_ArrayTemplate<uint8_t> bytes;
+  std::vector<uint8_t> bytes;
   uint32_t value = 0;
-  for (int32_t i = 0; i < bytes.GetSize(); i += 2) {
+  for (size_t i = 0; i < bytes.size(); i += 2) {
     value = (uint32_t)((uint8_t)(content[i] << 8) | (uint8_t)content[i + 1]);
     if (value <= 0x9ffc && value >= 0x8140) {
       value -= 0x8140;
@@ -870,7 +870,7 @@ void CBC_QRCoderEncoder::InterleaveWithECBytes(CBC_QRCoderBitVector* bits,
   int32_t dataBytesOffset = 0;
   int32_t maxNumDataBytes = 0;
   int32_t maxNumEcBytes = 0;
-  CFX_ArrayTemplate<CBC_QRCoderBlockPair*> blocks;
+  std::vector<CBC_QRCoderBlockPair*> blocks;
   int32_t i;
   for (i = 0; i < numRSBlocks; i++) {
     int32_t numDataBytesInBlock;
@@ -886,7 +886,7 @@ void CBC_QRCoderEncoder::InterleaveWithECBytes(CBC_QRCoderBitVector* bits,
       return;
     maxNumDataBytes = std::max(maxNumDataBytes, dataBytes->Size());
     maxNumEcBytes = std::max(maxNumEcBytes, ecBytes->Size());
-    blocks.Add(
+    blocks.push_back(
         new CBC_QRCoderBlockPair(std::move(dataBytes), std::move(ecBytes)));
     dataBytesOffset += numDataBytesInBlock;
   }
@@ -895,7 +895,7 @@ void CBC_QRCoderEncoder::InterleaveWithECBytes(CBC_QRCoderBitVector* bits,
     return;
   }
   for (int32_t x = 0; x < maxNumDataBytes; x++) {
-    for (int32_t j = 0; j < blocks.GetSize(); j++) {
+    for (size_t j = 0; j < blocks.size(); j++) {
       const CBC_CommonByteArray* dataBytes = blocks[j]->GetDataBytes();
       if (x < dataBytes->Size()) {
         result->AppendBits(dataBytes->At(x), 8, e);
@@ -905,7 +905,7 @@ void CBC_QRCoderEncoder::InterleaveWithECBytes(CBC_QRCoderBitVector* bits,
     }
   }
   for (int32_t y = 0; y < maxNumEcBytes; y++) {
-    for (int32_t l = 0; l < blocks.GetSize(); l++) {
+    for (size_t l = 0; l < blocks.size(); l++) {
       const CBC_CommonByteArray* ecBytes = blocks[l]->GetErrorCorrectionBytes();
       if (y < ecBytes->Size()) {
         result->AppendBits(ecBytes->At(y), 8, e);
@@ -914,7 +914,7 @@ void CBC_QRCoderEncoder::InterleaveWithECBytes(CBC_QRCoderBitVector* bits,
       }
     }
   }
-  for (int32_t k = 0; k < blocks.GetSize(); k++) {
+  for (size_t k = 0; k < blocks.size(); k++) {
     delete blocks[k];
   }
   if (numTotalBytes != result->sizeInBytes())
@@ -953,8 +953,7 @@ CBC_CommonByteArray* CBC_QRCoderEncoder::GenerateECBytes(
     int32_t numEcBytesInBlock,
     int32_t& e) {
   int32_t numDataBytes = dataBytes->Size();
-  CFX_ArrayTemplate<int32_t> toEncode;
-  toEncode.SetSize(numDataBytes + numEcBytesInBlock);
+  std::vector<int32_t> toEncode(numDataBytes + numEcBytesInBlock);
   for (int32_t i = 0; i < numDataBytes; i++) {
     toEncode[i] = (dataBytes->At(i));
   }

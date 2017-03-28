@@ -7,6 +7,8 @@
 #ifndef XFA_FXBARCODE_COMMON_BC_COMMONBYTEARRAY_H_
 #define XFA_FXBARCODE_COMMON_BC_COMMONBYTEARRAY_H_
 
+#include <vector>
+
 #include "core/fxcrt/fx_basic.h"
 
 // TODO(weili): The usage of this class should be replaced by
@@ -25,7 +27,7 @@ class CBC_CommonByteArray {
   void AppendByte(int32_t value);
   void Reserve(int32_t capacity);
   void Set(uint8_t* source, int32_t offset, int32_t count);
-  void Set(CFX_ArrayTemplate<uint8_t>* source, int32_t offset, int32_t count);
+  void Set(std::vector<uint8_t>* source, int32_t offset, int32_t count);
 
  private:
   int32_t m_size;

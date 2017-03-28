@@ -7,6 +7,8 @@
 #ifndef XFA_FXBARCODE_ONED_BC_ONEDCODE128WRITER_H_
 #define XFA_FXBARCODE_ONED_BC_ONEDCODE128WRITER_H_
 
+#include <vector>
+
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
 #include "xfa/fxbarcode/oned/BC_OneDimWriter.h"
@@ -43,9 +45,9 @@ class CBC_OnedCode128Writer : public CBC_OneDimWriter {
  private:
   bool IsDigits(const CFX_ByteString& contents, int32_t start, int32_t length);
   int32_t Encode128B(const CFX_ByteString& contents,
-                     CFX_ArrayTemplate<const int32_t*>* patterns);
+                     std::vector<const int32_t*>* patterns);
   int32_t Encode128C(const CFX_ByteString& contents,
-                     CFX_ArrayTemplate<const int32_t*>* patterns);
+                     std::vector<const int32_t*>* patterns);
 
   BC_TYPE m_codeFormat;
 };

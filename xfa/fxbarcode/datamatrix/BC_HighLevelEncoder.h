@@ -23,7 +23,7 @@ class CBC_HighLevelEncoder : public CBC_SymbolShapeHint {
   CBC_HighLevelEncoder();
   ~CBC_HighLevelEncoder() override;
 
-  CFX_ArrayTemplate<uint8_t>& getBytesForMessage(CFX_WideString msg);
+  std::vector<uint8_t>& getBytesForMessage(CFX_WideString msg);
   static CFX_WideString encodeHighLevel(CFX_WideString msg,
                                         CFX_WideString ecLevel,
                                         int32_t& e);
@@ -59,15 +59,15 @@ class CBC_HighLevelEncoder : public CBC_SymbolShapeHint {
   static const wchar_t* MACRO_05_HEADER;
   static const wchar_t* MACRO_06_HEADER;
   static const wchar_t MACRO_TRAILER;
-  CFX_ArrayTemplate<uint8_t> m_bytearray;
+  std::vector<uint8_t> m_bytearray;
 
  private:
   static wchar_t randomize253State(wchar_t ch, int32_t codewordPosition);
   static int32_t findMinimums(std::vector<float>& charCounts,
-                              CFX_ArrayTemplate<int32_t>& intCharCounts,
+                              std::vector<int32_t>& intCharCounts,
                               int32_t min,
-                              CFX_ArrayTemplate<uint8_t>& mins);
-  static int32_t getMinimumCount(CFX_ArrayTemplate<uint8_t>& mins);
+                              std::vector<uint8_t>& mins);
+  static int32_t getMinimumCount(std::vector<uint8_t>& mins);
   static bool isNativeC40(wchar_t ch);
   static bool isNativeText(wchar_t ch);
   static bool isNativeX12(wchar_t ch);

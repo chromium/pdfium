@@ -7,6 +7,8 @@
 #ifndef XFA_FXBARCODE_UTILS_H_
 #define XFA_FXBARCODE_UTILS_H_
 
+#include <vector>
+
 #include "core/fxcrt/fx_basic.h"
 
 bool BC_FX_ByteString_Replace(CFX_ByteString& dst,
@@ -16,7 +18,7 @@ bool BC_FX_ByteString_Replace(CFX_ByteString& dst,
                               char c);
 void BC_FX_ByteString_Append(CFX_ByteString& dst, int32_t count, char c);
 void BC_FX_ByteString_Append(CFX_ByteString& dst,
-                             const CFX_ArrayTemplate<uint8_t>& ba);
+                             const std::vector<uint8_t>& ba);
 
 #if (_FX_OS_ == _FX_WIN32_DESKTOP_ || _FX_OS_ == _FX_WIN64_)
 #include <limits>

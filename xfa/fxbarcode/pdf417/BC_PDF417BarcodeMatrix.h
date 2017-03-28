@@ -7,6 +7,8 @@
 #ifndef XFA_FXBARCODE_PDF417_BC_PDF417BARCODEMATRIX_H_
 #define XFA_FXBARCODE_PDF417_BC_PDF417BARCODEMATRIX_H_
 
+#include <vector>
+
 #include "core/fxcrt/fx_basic.h"
 
 class CBC_BarcodeRow;
@@ -21,15 +23,15 @@ class CBC_BarcodeMatrix {
   void setMatrix(int32_t x, int32_t y, bool black);
   void startRow();
   CBC_BarcodeRow* getCurrentRow();
-  CFX_ArrayTemplate<uint8_t>& getMatrix();
-  CFX_ArrayTemplate<uint8_t>& getScaledMatrix(int32_t scale);
-  CFX_ArrayTemplate<uint8_t>& getScaledMatrix(int32_t xScale, int32_t yScale);
+  std::vector<uint8_t>& getMatrix();
+  std::vector<uint8_t>& getScaledMatrix(int32_t scale);
+  std::vector<uint8_t>& getScaledMatrix(int32_t xScale, int32_t yScale);
   int32_t getWidth();
   int32_t getHeight();
 
  private:
-  CFX_ArrayTemplate<CBC_BarcodeRow*> m_matrix;
-  CFX_ArrayTemplate<uint8_t> m_matrixOut;
+  std::vector<CBC_BarcodeRow*> m_matrix;
+  std::vector<uint8_t> m_matrixOut;
   int32_t m_currentRow;
   int32_t m_height;
   int32_t m_width;

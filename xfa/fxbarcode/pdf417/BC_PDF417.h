@@ -8,6 +8,7 @@
 #define XFA_FXBARCODE_PDF417_BC_PDF417_H_
 
 #include <memory>
+#include <vector>
 
 #include "core/fxcrt/fx_basic.h"
 #include "xfa/fxbarcode/pdf417/BC_PDF417Compaction.h"
@@ -51,10 +52,9 @@ class CBC_PDF417 {
                       int32_t r,
                       int32_t errorCorrectionLevel,
                       CBC_BarcodeMatrix* logic);
-  CFX_ArrayTemplate<int32_t>* determineDimensions(
-      int32_t sourceCodeWords,
-      int32_t errorCorrectionCodeWords,
-      int32_t& e);
+  std::vector<int32_t>* determineDimensions(int32_t sourceCodeWords,
+                                            int32_t errorCorrectionCodeWords,
+                                            int32_t& e);
 
   std::unique_ptr<CBC_BarcodeMatrix> m_barcodeMatrix;
   bool m_compact;

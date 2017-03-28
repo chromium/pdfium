@@ -29,21 +29,20 @@ CBC_DefaultPlacement::CBC_DefaultPlacement(CFX_WideString codewords,
   m_codewords = codewords;
   m_numcols = numcols;
   m_numrows = numrows;
-  m_bits.SetSize(numcols * numrows);
+  m_bits.resize(numcols * numrows);
   for (int32_t i = 0; i < numcols * numrows; i++) {
     m_bits[i] = (uint8_t)2;
   }
 }
-CBC_DefaultPlacement::~CBC_DefaultPlacement() {
-  m_bits.RemoveAll();
-}
+CBC_DefaultPlacement::~CBC_DefaultPlacement() {}
+
 int32_t CBC_DefaultPlacement::getNumrows() {
   return m_numrows;
 }
 int32_t CBC_DefaultPlacement::getNumcols() {
   return m_numcols;
 }
-CFX_ArrayTemplate<uint8_t>& CBC_DefaultPlacement::getBits() {
+std::vector<uint8_t>& CBC_DefaultPlacement::getBits() {
   return m_bits;
 }
 bool CBC_DefaultPlacement::getBit(int32_t col, int32_t row) {

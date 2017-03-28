@@ -20,6 +20,8 @@
  * limitations under the License.
  */
 
+#include <vector>
+
 #include "xfa/fxbarcode/datamatrix/BC_Encoder.h"
 #include "xfa/fxbarcode/datamatrix/BC_ErrorCorrection.h"
 #include "xfa/fxbarcode/datamatrix/BC_SymbolInfo.h"
@@ -133,12 +135,9 @@ CFX_WideString CBC_ErrorCorrection::encodeECC200(CFX_WideString codewords,
       return CFX_WideString();
     sb += ecc;
   } else {
-    CFX_ArrayTemplate<int32_t> dataSizes;
-    dataSizes.SetSize(blockCount);
-    CFX_ArrayTemplate<int32_t> errorSizes;
-    errorSizes.SetSize(blockCount);
-    CFX_ArrayTemplate<int32_t> startPos;
-    startPos.SetSize(blockCount);
+    std::vector<int32_t> dataSizes(blockCount);
+    std::vector<int32_t> errorSizes(blockCount);
+    std::vector<int32_t> startPos(blockCount);
     for (int32_t i = 0; i < blockCount; i++) {
       dataSizes[i] = symbolInfo->getDataLengthForInterleavedBlock(i + 1);
       errorSizes[i] = symbolInfo->getErrorLengthForInterleavedBlock(i + 1);

@@ -7,6 +7,8 @@
 #ifndef XFA_FXBARCODE_COMMON_REEDSOLOMON_BC_REEDSOLOMON_H_
 #define XFA_FXBARCODE_COMMON_REEDSOLOMON_BC_REEDSOLOMON_H_
 
+#include <vector>
+
 #include "core/fxcrt/fx_basic.h"
 
 class CBC_ReedSolomonGF256;
@@ -17,16 +19,14 @@ class CBC_ReedSolomonEncoder {
   explicit CBC_ReedSolomonEncoder(CBC_ReedSolomonGF256* field);
   virtual ~CBC_ReedSolomonEncoder();
 
-  void Encode(CFX_ArrayTemplate<int32_t>* toEncode,
-              int32_t ecBytes,
-              int32_t& e);
+  void Encode(std::vector<int32_t>* toEncode, size_t ecBytes, int32_t& e);
   virtual void Init();
 
  private:
-  CBC_ReedSolomonGF256Poly* BuildGenerator(int32_t degree, int32_t& e);
+  CBC_ReedSolomonGF256Poly* BuildGenerator(size_t degree, int32_t& e);
 
   CBC_ReedSolomonGF256* m_field;
-  CFX_ArrayTemplate<CBC_ReedSolomonGF256Poly*> m_cachedGenerators;
+  std::vector<CBC_ReedSolomonGF256Poly*> m_cachedGenerators;
 };
 
 #endif  // XFA_FXBARCODE_COMMON_REEDSOLOMON_BC_REEDSOLOMON_H_

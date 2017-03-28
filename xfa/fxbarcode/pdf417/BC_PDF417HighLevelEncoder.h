@@ -7,6 +7,8 @@
 #ifndef XFA_FXBARCODE_PDF417_BC_PDF417HIGHLEVELENCODER_H_
 #define XFA_FXBARCODE_PDF417_BC_PDF417HIGHLEVELENCODER_H_
 
+#include <vector>
+
 #include "core/fxcrt/fx_basic.h"
 #include "core/fxcrt/fx_string.h"
 #include "xfa/fxbarcode/pdf417/BC_PDF417Compaction.h"
@@ -39,7 +41,7 @@ class CBC_PDF417HighLevelEncoder {
                             int32_t count,
                             CFX_WideString& sb,
                             int32_t initialSubmode);
-  static void encodeBinary(CFX_ArrayTemplate<uint8_t>* bytes,
+  static void encodeBinary(std::vector<uint8_t>* bytes,
                            int32_t startpos,
                            int32_t count,
                            int32_t startmode,
@@ -58,11 +60,10 @@ class CBC_PDF417HighLevelEncoder {
                                                 int32_t startpos);
   static int32_t determineConsecutiveTextCount(CFX_WideString msg,
                                                int32_t startpos);
-  static int32_t determineConsecutiveBinaryCount(
-      CFX_WideString msg,
-      CFX_ArrayTemplate<uint8_t>* bytes,
-      int32_t startpos,
-      int32_t& e);
+  static int32_t determineConsecutiveBinaryCount(CFX_WideString msg,
+                                                 std::vector<uint8_t>* bytes,
+                                                 int32_t startpos,
+                                                 int32_t& e);
 
   friend class PDF417HighLevelEncoder_EncodeNumeric_Test;
   friend class PDF417HighLevelEncoder_EncodeBinary_Test;

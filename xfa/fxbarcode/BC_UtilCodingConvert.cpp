@@ -22,20 +22,20 @@ void CBC_UtilCodingConvert::LocaleToUtf8(const CFX_ByteString& src,
 }
 
 void CBC_UtilCodingConvert::LocaleToUtf8(const CFX_ByteString& src,
-                                         CFX_ArrayTemplate<uint8_t>& dst) {
+                                         std::vector<uint8_t>& dst) {
   CFX_WideString unicode = CFX_WideString::FromLocal(src.AsStringC());
   CFX_ByteString utf8 = unicode.UTF8Encode();
   for (int32_t i = 0; i < utf8.GetLength(); i++) {
-    dst.Add(utf8[i]);
+    dst.push_back(utf8[i]);
   }
 }
 
-void CBC_UtilCodingConvert::Utf8ToLocale(const CFX_ArrayTemplate<uint8_t>& src,
+void CBC_UtilCodingConvert::Utf8ToLocale(const std::vector<uint8_t>& src,
                                          CFX_ByteString& dst) {
   CFX_ByteString utf8;
-  for (int32_t i = 0; i < src.GetSize(); i++) {
-    utf8 += src[i];
-  }
+  for (uint8_t value : src)
+    utf8 += value;
+
   CFX_WideString unicode = CFX_WideString::FromUTF8(utf8.AsStringC());
   dst = CFX_ByteString::FromUnicode(unicode);
 }

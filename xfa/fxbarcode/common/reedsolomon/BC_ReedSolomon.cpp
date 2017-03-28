@@ -30,18 +30,17 @@
 CBC_ReedSolomonEncoder::CBC_ReedSolomonEncoder(CBC_ReedSolomonGF256* field) {
   m_field = field;
 }
+
 void CBC_ReedSolomonEncoder::Init() {
-  m_cachedGenerators.Add(new CBC_ReedSolomonGF256Poly(m_field, 1));
+  m_cachedGenerators.push_back(new CBC_ReedSolomonGF256Poly(m_field, 1));
 }
-CBC_ReedSolomonGF256Poly* CBC_ReedSolomonEncoder::BuildGenerator(int32_t degree,
+
+CBC_ReedSolomonGF256Poly* CBC_ReedSolomonEncoder::BuildGenerator(size_t degree,
                                                                  int32_t& e) {
-  if (degree >= m_cachedGenerators.GetSize()) {
-    CBC_ReedSolomonGF256Poly* lastGenerator =
-        m_cachedGenerators[m_cachedGenerators.GetSize() - 1];
-    for (int32_t d = m_cachedGenerators.GetSize(); d <= degree; d++) {
-      CFX_ArrayTemplate<int32_t> temp;
-      temp.Add(1);
-      temp.Add(m_field->Exp(d - 1));
+  if (degree >= m_cachedGenerators.size()) {
+    CBC_ReedSolomonGF256Poly* lastGenerator = m_cachedGenerators.back();
+    for (size_t d = m_cachedGenerators.size(); d <= degree; ++d) {
+      std::vector<int32_t> temp = {1, m_field->Exp(d - 1)};
       CBC_ReedSolomonGF256Poly temp_poly;
       temp_poly.Init(m_field, &temp, e);
       if (e != BCExceptionNO)
@@ -50,31 +49,31 @@ CBC_ReedSolomonGF256Poly* CBC_ReedSolomonEncoder::BuildGenerator(int32_t degree,
           lastGenerator->Multiply(&temp_poly, e);
       if (e != BCExceptionNO)
         return nullptr;
-      m_cachedGenerators.Add(nextGenerator);
+      m_cachedGenerators.push_back(nextGenerator);
       lastGenerator = nextGenerator;
     }
   }
   return m_cachedGenerators[degree];
 }
-void CBC_ReedSolomonEncoder::Encode(CFX_ArrayTemplate<int32_t>* toEncode,
-                                    int32_t ecBytes,
+
+void CBC_ReedSolomonEncoder::Encode(std::vector<int32_t>* toEncode,
+                                    size_t ecBytes,
                                     int32_t& e) {
   if (ecBytes == 0) {
     e = BCExceptionNoCorrectionBytes;
     return;
   }
-  int32_t dataBytes = toEncode->GetSize() - ecBytes;
-  if (dataBytes <= 0) {
+  if (toEncode->size() <= ecBytes) {
     e = BCExceptionNoDataBytesProvided;
     return;
   }
   CBC_ReedSolomonGF256Poly* generator = BuildGenerator(ecBytes, e);
   if (e != BCExceptionNO)
     return;
-  CFX_ArrayTemplate<int32_t> infoCoefficients;
-  infoCoefficients.SetSize(dataBytes);
-  for (int32_t x = 0; x < dataBytes; x++) {
-    infoCoefficients[x] = toEncode->operator[](x);
+  size_t dataBytes = toEncode->size() - ecBytes;
+  std::vector<int32_t> infoCoefficients(dataBytes);
+  for (size_t x = 0; x < dataBytes; x++) {
+    infoCoefficients[x] = (*toEncode)[x];
   }
   CBC_ReedSolomonGF256Poly info;
   info.Init(m_field, &infoCoefficients, e);
@@ -84,25 +83,23 @@ void CBC_ReedSolomonEncoder::Encode(CFX_ArrayTemplate<int32_t>* toEncode,
       info.MultiplyByMonomial(ecBytes, 1, e));
   if (e != BCExceptionNO)
     return;
-  std::unique_ptr<CFX_ArrayTemplate<CBC_ReedSolomonGF256Poly*>> temp(
+  std::unique_ptr<std::vector<CBC_ReedSolomonGF256Poly*>> temp(
       infoTemp->Divide(generator, e));
   if (e != BCExceptionNO)
     return;
   CBC_ReedSolomonGF256Poly* remainder = (*temp)[1];
-  CFX_ArrayTemplate<int32_t>* coefficients = remainder->GetCoefficients();
-  int32_t numZeroCoefficients = ecBytes - coefficients->GetSize();
-  for (int32_t i = 0; i < numZeroCoefficients; i++) {
+  std::vector<int32_t>* coefficients = remainder->GetCoefficients();
+  size_t numZeroCoefficients =
+      ecBytes > coefficients->size() ? ecBytes - coefficients->size() : 0;
+  for (size_t i = 0; i < numZeroCoefficients; i++)
     (*toEncode)[dataBytes + i] = 0;
-  }
-  for (int32_t y = 0; y < coefficients->GetSize(); y++) {
-    (*toEncode)[dataBytes + numZeroCoefficients + y] =
-        coefficients->operator[](y);
-  }
-  for (int32_t k = 0; k < temp->GetSize(); k++) {
+  for (size_t y = 0; y < coefficients->size(); y++)
+    (*toEncode)[dataBytes + numZeroCoefficients + y] = (*coefficients)[y];
+  for (size_t k = 0; k < temp->size(); k++)
     delete (*temp)[k];
-  }
 }
+
 CBC_ReedSolomonEncoder::~CBC_ReedSolomonEncoder() {
-  for (int32_t i = 0; i < m_cachedGenerators.GetSize(); i++)
+  for (size_t i = 0; i < m_cachedGenerators.size(); i++)
     delete m_cachedGenerators[i];
 }

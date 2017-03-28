@@ -62,7 +62,7 @@ class CBC_QRCoderEncoder {
                               CBC_QRCoderBitVector* bits,
                               CFX_ByteString encoding,
                               int32_t& e);
-  static void Append8BitBytes(CFX_ArrayTemplate<uint8_t>& bytes,
+  static void Append8BitBytes(std::vector<uint8_t>& bytes,
                               CBC_QRCoderBitVector* bits,
                               int32_t& e);
   static void AppendKanjiBytes(const CFX_ByteString& content,
