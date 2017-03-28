@@ -7,9 +7,9 @@ import("//build_overrides/pdfium.gni")
 # This file contains PDFium-related build flags.
 
 declare_args() {
-  # On Android there's no system FreeType. On Windows and Mac, only a few
-  # methods are used from it.
-  pdfium_bundle_freetype = !is_linux
+  # Build PDFium either using the bundled FreeType, or using the system
+  # FreeType.
+  pdf_bundle_freetype = pdf_bundle_freetype_override
 
   # Build PDFium either with or without v8 support.
   pdf_enable_v8 = pdf_enable_v8_override
@@ -29,10 +29,12 @@ declare_args() {
   # If XFA, also support png codec. Ignored if not XFA.
   pdf_enable_xfa_tiff = true
 
-  # Build PDFium against skia (experimental) rather than agg. Use Skia to draw everything.
+  # Build PDFium against skia (experimental) rather than agg. Use Skia to draw
+  # everything.
   pdf_use_skia = pdf_use_skia_override
 
-  # Build PDFium against skia (experimental) rather than agg. Use Skia to draw paths.
+  # Build PDFium against skia (experimental) rather than agg. Use Skia to draw
+  # paths.
   pdf_use_skia_paths = pdf_use_skia_paths_override
 
   # Build PDFium with or without experimental win32 GDI APIs.
