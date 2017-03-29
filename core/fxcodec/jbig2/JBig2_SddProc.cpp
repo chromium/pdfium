@@ -301,7 +301,7 @@ CJBig2_SymbolDict* CJBig2_SDDProc::decode_Huffman(
   uint32_t EXINDEX;
   bool CUREXFLAG;
   uint32_t EXRUNLENGTH;
-  int32_t nVal, nBits;
+  int32_t nVal;
   uint32_t nTmp;
   uint32_t SBNUMSYMS;
   uint8_t SBSYMCODELEN;
@@ -439,30 +439,19 @@ CJBig2_SymbolDict* CJBig2_SDDProc::decode_Huffman(
             nTmp++;
           }
           SBSYMCODELEN = (uint8_t)nTmp;
-          SBSYMCODES = FX_Alloc(JBig2HuffmanCode, SBNUMSYMS);
-          for (I = 0; I < SBNUMSYMS; I++) {
-            SBSYMCODES[I].codelen = SBSYMCODELEN;
-            SBSYMCODES[I].code = I;
-          }
           nVal = 0;
-          nBits = 0;
           for (;;) {
-            if (pStream->read1Bit(&nTmp) != 0) {
-              FX_Free(SBSYMCODES);
+            if (pStream->read1Bit(&nTmp) != 0)
               goto failed;
-            }
+
             nVal = (nVal << 1) | nTmp;
-            for (IDI = 0; IDI < SBNUMSYMS; IDI++) {
-              if ((nVal == SBSYMCODES[IDI].code) &&
-                  (nBits == SBSYMCODES[IDI].codelen)) {
-                break;
-              }
-            }
-            if (IDI < SBNUMSYMS) {
+            if (nVal < 0 || static_cast<uint32_t>(nVal) >= SBNUMSYMS)
+              goto failed;
+
+            IDI = SBSYMCODELEN == 0 ? nVal : SBNUMSYMS;
+            if (IDI < SBNUMSYMS)
               break;
-            }
           }
-          FX_Free(SBSYMCODES);
           auto SBHUFFRDX = pdfium::MakeUnique<CJBig2_HuffmanTable>(
               HuffmanTable_B15, HuffmanTable_B15_Size, HuffmanTable_HTOOB_B15);
           auto SBHUFFRSIZE = pdfium::MakeUnique<CJBig2_HuffmanTable>(
