@@ -9,7 +9,9 @@
 
 #include <memory>
 
-#include "xfa/fgas/localization/fgas_locale.h"
+#include "xfa/fgas/localization/ifx_locale.h"
+
+class CXML_Element;
 
 class CXFA_XMLLocale : public IFX_Locale {
  public:

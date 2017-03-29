@@ -4,14 +4,14 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fgas/localization/fgas_locale.h"
+#include "xfa/fgas/localization/cfx_formatstring.h"
 
 #include <algorithm>
 #include <vector>
 
 #include "core/fxcrt/fx_ext.h"
 #include "core/fxcrt/fx_xml.h"
-#include "xfa/fgas/localization/cfx_formatstring.h"
+#include "xfa/fgas/localization/cfx_decimal.h"
 
 #define FX_LOCALECATEGORY_DateHash 0xbde9abde
 #define FX_LOCALECATEGORY_TimeHash 0x2d71b00f

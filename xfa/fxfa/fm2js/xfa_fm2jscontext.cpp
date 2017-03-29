@@ -16,7 +16,7 @@
 #include "fxjs/cfxjse_value.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
-#include "xfa/fgas/localization/fgas_locale.h"
+#include "xfa/fgas/localization/cfx_decimal.h"
 #include "xfa/fxfa/app/xfa_ffnotify.h"
 #include "xfa/fxfa/fm2js/xfa_program.h"
 #include "xfa/fxfa/parser/cxfa_document.h"

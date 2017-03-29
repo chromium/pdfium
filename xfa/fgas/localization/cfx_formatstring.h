@@ -9,8 +9,13 @@
 
 #include <vector>
 
-#include "xfa/fgas/localization/fgas_locale.h"
+#include "xfa/fgas/localization/ifx_locale.h"
 #include "xfa/fxfa/parser/cxfa_localemgr.h"
+
+bool FX_DateFromCanonical(const CFX_WideString& wsDate, CFX_DateTime* datetime);
+bool FX_TimeFromCanonical(const CFX_WideStringC& wsTime,
+                          CFX_DateTime* datetime,
+                          IFX_Locale* pLocale);
 
 class CFX_FormatString {
  public:

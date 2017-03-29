@@ -4,10 +4,10 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "xfa/fgas/localization/cfx_decimal.h"
+
 #include <algorithm>
 #include <utility>
-
-#include "xfa/fgas/localization/fgas_locale.h"
 
 #define FXMATH_DECIMAL_SCALELIMIT 0x1c
 #define FXMATH_DECIMAL_NEGMASK (0x80000000L)

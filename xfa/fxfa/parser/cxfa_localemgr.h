@@ -11,7 +11,7 @@
 #include <vector>
 
 #include "xfa/fgas/localization/cfx_datetime.h"
-#include "xfa/fgas/localization/fgas_locale.h"
+#include "xfa/fgas/localization/ifx_locale.h"
 #include "xfa/fxfa/parser/cxfa_localemgr.h"
 
 class CXFA_Node;
