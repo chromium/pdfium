@@ -1047,12 +1047,6 @@ TEST(fxcrt, ByteStringFormatWidth) {
     str.Format("%0d", 1);
     EXPECT_EQ("1", str);
   }
-
-  {
-    CFX_ByteString str;
-    str.Format("%1048576d", 1);
-    EXPECT_EQ("Bad width", str);
-  }
 }
 
 TEST(fxcrt, ByteStringFormatPrecision) {
@@ -1084,12 +1078,6 @@ TEST(fxcrt, ByteStringFormatPrecision) {
     CFX_ByteString str;
     str.Format("%0f", 1.12345);
     EXPECT_EQ("1.123450", str);
-  }
-
-  {
-    CFX_ByteString str;
-    str.Format("%.1048576f", 1.2);
-    EXPECT_EQ("Bad precision", str);
   }
 }
 
