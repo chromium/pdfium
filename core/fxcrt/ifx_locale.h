@@ -4,11 +4,11 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FGAS_LOCALIZATION_IFX_LOCALE_H_
-#define XFA_FGAS_LOCALIZATION_IFX_LOCALE_H_
+#ifndef CORE_FXCRT_IFX_LOCALE_H_
+#define CORE_FXCRT_IFX_LOCALE_H_
 
+#include "core/fxcrt/cfx_datetime.h"
 #include "core/fxcrt/fx_string.h"
-#include "xfa/fgas/localization/cfx_datetime.h"
 
 enum FX_LOCALENUMSYMBOL {
   FX_LOCALENUMSYMBOL_Decimal,
@@ -73,4 +73,4 @@ class IFX_Locale {
   virtual CFX_WideString GetNumPattern(FX_LOCALENUMSUBCATEGORY eType) const = 0;
 };
 
-#endif  // XFA_FGAS_LOCALIZATION_IFX_LOCALE_H_
+#endif  // CORE_FXCRT_IFX_LOCALE_H_

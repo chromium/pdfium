@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fgas/localization/cfx_decimal.h"
+#include "core/fxcrt/cfx_decimal.h"
 
 #include <algorithm>
 #include <utility>

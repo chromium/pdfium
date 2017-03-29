@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FGAS_LOCALIZATION_CFX_DATETIME_H_
-#define XFA_FGAS_LOCALIZATION_CFX_DATETIME_H_
+#ifndef CORE_FXCRT_CFX_DATETIME_H_
+#define CORE_FXCRT_CFX_DATETIME_H_
 
 #include "core/fxcrt/fx_system.h"
 
@@ -100,4 +100,4 @@ struct FX_TIMEZONE {
 #pragma pack(pop)
 #endif
 
-#endif  // XFA_FGAS_LOCALIZATION_CFX_DATETIME_H_
+#endif  // CORE_FXCRT_CFX_DATETIME_H_

@@ -805,8 +805,13 @@ static_library("fxcrt") {
     sources += [
       "core/fxcrt/cfx_char.cpp",
       "core/fxcrt/cfx_char.h",
+      "core/fxcrt/cfx_datetime.cpp",
+      "core/fxcrt/cfx_datetime.h",
+      "core/fxcrt/cfx_decimal.cpp",
+      "core/fxcrt/cfx_decimal.h",
       "core/fxcrt/fx_arabic.cpp",
       "core/fxcrt/fx_arabic.h",
+      "core/fxcrt/ifx_locale.h",
     ]
   }
 }
@@ -1229,6 +1234,8 @@ if (pdf_enable_xfa) {
       "xfa/fde/xml/fde_xml.h",
       "xfa/fde/xml/fde_xml_imp.cpp",
       "xfa/fde/xml/fde_xml_imp.h",
+      "xfa/fgas/crt/cfgas_formatstring.cpp",
+      "xfa/fgas/crt/cfgas_formatstring.h",
       "xfa/fgas/crt/fgas_codepage.cpp",
       "xfa/fgas/crt/fgas_codepage.h",
       "xfa/fgas/crt/fgas_language.h",
@@ -1252,13 +1259,6 @@ if (pdf_enable_xfa) {
       "xfa/fgas/layout/fgas_rtfbreak.h",
       "xfa/fgas/layout/fgas_textbreak.cpp",
       "xfa/fgas/layout/fgas_textbreak.h",
-      "xfa/fgas/localization/cfx_datetime.cpp",
-      "xfa/fgas/localization/cfx_datetime.h",
-      "xfa/fgas/localization/cfx_decimal.cpp",
-      "xfa/fgas/localization/cfx_decimal.h",
-      "xfa/fgas/localization/cfx_formatstring.cpp",
-      "xfa/fgas/localization/cfx_formatstring.h",
-      "xfa/fgas/localization/ifx_locale.h",
       "xfa/fwl/cfwl_app.cpp",
       "xfa/fwl/cfwl_app.h",
       "xfa/fwl/cfwl_barcode.cpp",

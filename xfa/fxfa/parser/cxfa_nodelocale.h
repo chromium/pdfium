@@ -9,7 +9,7 @@
 
 #include <memory>
 
-#include "xfa/fgas/localization/ifx_locale.h"
+#include "core/fxcrt/ifx_locale.h"
 #include "xfa/fxfa/fxfa_basic.h"
 
 class CXFA_Node;

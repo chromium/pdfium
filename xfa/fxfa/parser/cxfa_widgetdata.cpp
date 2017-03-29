@@ -6,9 +6,9 @@
 
 #include "xfa/fxfa/parser/cxfa_widgetdata.h"
 
+#include "core/fxcrt/cfx_decimal.h"
 #include "core/fxcrt/fx_ext.h"
 #include "third_party/base/stl_util.h"
-#include "xfa/fgas/localization/cfx_decimal.h"
 #include "xfa/fxbarcode/BC_Library.h"
 #include "xfa/fxfa/app/xfa_ffnotify.h"
 #include "xfa/fxfa/parser/cxfa_document.h"

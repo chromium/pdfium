@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "core/fxcrt/cfx_datetime.h"
 #include "core/fxcrt/fx_system.h"
-#include "xfa/fgas/localization/cfx_datetime.h"
 
 #if _FX_OS_ == _FX_LINUX_DESKTOP_ || _FX_OS_ == _FX_ANDROID_ || \
     _FX_OS_ == _FX_MACOSX_ || _FX_OS_ == _FX_IOS_

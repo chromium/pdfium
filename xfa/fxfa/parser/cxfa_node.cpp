@@ -12,13 +12,13 @@
 #include <utility>
 #include <vector>
 
+#include "core/fxcrt/cfx_decimal.h"
 #include "core/fxcrt/fx_ext.h"
 #include "fxjs/cfxjse_value.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fde/xml/fde_xml_imp.h"
 #include "xfa/fgas/crt/fgas_codepage.h"
-#include "xfa/fgas/localization/cfx_decimal.h"
 #include "xfa/fxfa/app/xfa_ffnotify.h"
 #include "xfa/fxfa/cxfa_eventparam.h"
 #include "xfa/fxfa/cxfa_ffwidget.h"

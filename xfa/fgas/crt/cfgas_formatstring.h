@@ -4,12 +4,12 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FGAS_LOCALIZATION_CFX_FORMATSTRING_H_
-#define XFA_FGAS_LOCALIZATION_CFX_FORMATSTRING_H_
+#ifndef XFA_FGAS_CRT_CFGAS_FORMATSTRING_H_
+#define XFA_FGAS_CRT_CFGAS_FORMATSTRING_H_
 
 #include <vector>
 
-#include "xfa/fgas/localization/ifx_locale.h"
+#include "core/fxcrt/ifx_locale.h"
 #include "xfa/fxfa/parser/cxfa_localemgr.h"
 
 bool FX_DateFromCanonical(const CFX_WideString& wsDate, CFX_DateTime* datetime);
@@ -17,10 +17,10 @@ bool FX_TimeFromCanonical(const CFX_WideStringC& wsTime,
                           CFX_DateTime* datetime,
                           IFX_Locale* pLocale);
 
-class CFX_FormatString {
+class CFGAS_FormatString {
  public:
-  explicit CFX_FormatString(CXFA_LocaleMgr* pLocaleMgr);
-  ~CFX_FormatString();
+  explicit CFGAS_FormatString(CXFA_LocaleMgr* pLocaleMgr);
+  ~CFGAS_FormatString();
 
   void SplitFormatString(const CFX_WideString& wsFormatString,
                          std::vector<CFX_WideString>& wsPatterns);
@@ -73,4 +73,4 @@ class CFX_FormatString {
   CXFA_LocaleMgr* m_pLocaleMgr;
 };
 
-#endif  // XFA_FGAS_LOCALIZATION_CFX_FORMATSTRING_H_
+#endif  // XFA_FGAS_CRT_CFGAS_FORMATSTRING_H_
