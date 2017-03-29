@@ -8,8 +8,8 @@
 
 #include "core/fxcrt/cfx_decimal.h"
 #include "core/fxcrt/fx_ext.h"
+#include "fxbarcode/BC_Library.h"
 #include "third_party/base/stl_util.h"
-#include "xfa/fxbarcode/BC_Library.h"
 #include "xfa/fxfa/app/xfa_ffnotify.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_event.h"

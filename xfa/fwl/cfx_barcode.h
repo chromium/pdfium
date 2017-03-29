@@ -13,7 +13,7 @@
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxge/fx_dib.h"
-#include "xfa/fxbarcode/BC_Library.h"
+#include "fxbarcode/BC_Library.h"
 
 class CBC_CodeBase;
 class CFX_Font;

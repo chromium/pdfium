@@ -9,10 +9,10 @@
 
 #include <memory>
 
+#include "fxbarcode/BC_Library.h"
 #include "xfa/fwl/cfwl_edit.h"
 #include "xfa/fwl/cfwl_scrollbar.h"
 #include "xfa/fwl/cfwl_widget.h"
-#include "xfa/fxbarcode/BC_Library.h"
 
 class CFWL_WidgetProperties;
 class CFX_Barcode;

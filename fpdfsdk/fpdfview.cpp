@@ -41,8 +41,8 @@
 #include "fpdfsdk/fpdfxfa/cpdfxfa_context.h"
 #include "fpdfsdk/fpdfxfa/cpdfxfa_page.h"
 #include "fpdfsdk/fpdfxfa/cxfa_fwladaptertimermgr.h"
+#include "fxbarcode/BC_Library.h"
 #include "public/fpdf_formfill.h"
-#include "xfa/fxbarcode/BC_Library.h"
 #endif  // PDF_ENABLE_XFA
 
 #ifdef PDF_ENABLE_XFA_BMP

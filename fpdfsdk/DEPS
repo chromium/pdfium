@@ -3,7 +3,7 @@ include_rules = [
   '+public',
   '+v8',
   '+xfa/fwl',
-  '+xfa/fxbarcode',
+  '+fxbarcode',
   '+xfa/fxfa',
   '+xfa/fxgraphics',
   ]

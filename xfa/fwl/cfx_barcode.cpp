@@ -6,17 +6,17 @@
 
 #include "xfa/fwl/cfx_barcode.h"
 
-#include "xfa/fxbarcode/cbc_codabar.h"
-#include "xfa/fxbarcode/cbc_code128.h"
-#include "xfa/fxbarcode/cbc_code39.h"
-#include "xfa/fxbarcode/cbc_codebase.h"
-#include "xfa/fxbarcode/cbc_datamatrix.h"
-#include "xfa/fxbarcode/cbc_ean13.h"
-#include "xfa/fxbarcode/cbc_ean8.h"
-#include "xfa/fxbarcode/cbc_pdf417i.h"
-#include "xfa/fxbarcode/cbc_qrcode.h"
-#include "xfa/fxbarcode/cbc_upca.h"
-#include "xfa/fxbarcode/utils.h"
+#include "fxbarcode/cbc_codabar.h"
+#include "fxbarcode/cbc_code128.h"
+#include "fxbarcode/cbc_code39.h"
+#include "fxbarcode/cbc_codebase.h"
+#include "fxbarcode/cbc_datamatrix.h"
+#include "fxbarcode/cbc_ean13.h"
+#include "fxbarcode/cbc_ean8.h"
+#include "fxbarcode/cbc_pdf417i.h"
+#include "fxbarcode/cbc_qrcode.h"
+#include "fxbarcode/cbc_upca.h"
+#include "fxbarcode/utils.h"
 
 namespace {
 
