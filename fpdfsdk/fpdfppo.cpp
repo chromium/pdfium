@@ -210,16 +210,18 @@ bool CPDF_PageOrganizer::ExportPage(const std::vector<uint16_t>& pageNums,
     }
 
     // inheritable item
+    // Even though some entries are required by the PDF spec, there exist
+    // PDFs that omit them. Set some defaults in this case.
     // 1 MediaBox - required
     if (!CopyInheritable(pCurPageDict, pSrcPageDict, "MediaBox")) {
-      // Search for "CropBox" in the source page dictionary,
-      // if it does not exists, use the default letter size.
+      // Search for "CropBox" in the source page dictionary.
+      // If it does not exist, use the default letter size.
       CPDF_Object* pInheritable =
           PageDictGetInheritableTag(pSrcPageDict, "CropBox");
       if (pInheritable) {
         pCurPageDict->SetFor("MediaBox", pInheritable->Clone());
       } else {
-        // Make the default size to be letter size (8.5'x11')
+        // Make the default size letter size (8.5"x11")
         CPDF_Array* pArray = pCurPageDict->SetNewFor<CPDF_Array>("MediaBox");
         pArray->AddNew<CPDF_Number>(0);
         pArray->AddNew<CPDF_Number>(0);
@@ -229,8 +231,10 @@ bool CPDF_PageOrganizer::ExportPage(const std::vector<uint16_t>& pageNums,
     }
 
     // 2 Resources - required
-    if (!CopyInheritable(pCurPageDict, pSrcPageDict, "Resources"))
-      return false;
+    if (!CopyInheritable(pCurPageDict, pSrcPageDict, "Resources")) {
+      // Use a default empty resources if it does not exist.
+      pCurPageDict->SetNewFor<CPDF_Dictionary>("Resources");
+    }
 
     // 3 CropBox - optional
     CopyInheritable(pCurPageDict, pSrcPageDict, "CropBox");
