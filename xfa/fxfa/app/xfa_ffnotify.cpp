@@ -263,7 +263,7 @@ void CXFA_FFNotify::OpenDropDownList(CXFA_FFWidget* hWidget) {
   pDocView->UpdateDocView();
 }
 CFX_WideString CXFA_FFNotify::GetCurrentDateTime() {
-  CFX_Unitime dataTime;
+  CFX_DateTime dataTime;
   dataTime.Now();
 
   CFX_WideString wsDateTime;

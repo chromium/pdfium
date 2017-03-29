@@ -10,9 +10,7 @@
 #include <memory>
 
 #include "core/fxcrt/fx_xml.h"
-#include "xfa/fgas/localization/fgas_datetime.h"
-
-class CFX_Unitime;
+#include "xfa/fgas/localization/cfx_datetime.h"
 
 enum FX_LOCALENUMSYMBOL {
   FX_LOCALENUMSYMBOL_Decimal,
@@ -73,9 +71,9 @@ class IFX_Locale {
   virtual CFX_WideString GetNumPattern(FX_LOCALENUMSUBCATEGORY eType) const = 0;
 };
 
-bool FX_DateFromCanonical(const CFX_WideString& wsDate, CFX_Unitime* datetime);
+bool FX_DateFromCanonical(const CFX_WideString& wsDate, CFX_DateTime* datetime);
 bool FX_TimeFromCanonical(const CFX_WideStringC& wsTime,
-                          CFX_Unitime* datetime,
+                          CFX_DateTime* datetime,
                           IFX_Locale* pLocale);
 class CFX_Decimal {
  public:

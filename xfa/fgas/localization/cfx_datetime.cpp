@@ -5,7 +5,7 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "core/fxcrt/fx_system.h"
-#include "xfa/fgas/localization/fgas_datetime.h"
+#include "xfa/fgas/localization/cfx_datetime.h"
 
 #if _FX_OS_ == _FX_LINUX_DESKTOP_ || _FX_OS_ == _FX_ANDROID_ || \
     _FX_OS_ == _FX_MACOSX_ || _FX_OS_ == _FX_IOS_
@@ -90,7 +90,7 @@ bool FX_IsLeapYear(int32_t iYear) {
   return ((iYear % 4) == 0 && (iYear % 100) != 0) || (iYear % 400) == 0;
 }
 
-void CFX_Unitime::Now() {
+void CFX_DateTime::Now() {
   FXUT_SYSTEMTIME utLocal;
 #if _FX_OS_ == _FX_WIN32_DESKTOP_ || _FX_OS_ == _FX_WIN32_MOBILE_ || \
     _FX_OS_ == _FX_WIN64_
@@ -121,7 +121,7 @@ void CFX_Unitime::Now() {
   millisecond_ = static_cast<uint16_t>(utLocal.wMillisecond);
 }
 
-int32_t CFX_Unitime::GetDayOfWeek() const {
+int32_t CFX_DateTime::GetDayOfWeek() const {
   int32_t v = static_cast<int32_t>(DateToDays(year_, month_, day_, true) % 7);
   if (v < 0)
     v += 7;

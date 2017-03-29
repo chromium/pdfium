@@ -130,7 +130,7 @@ bool CXFA_LocaleValue::ValidateValue(const CFX_WideString& wsValue,
         }
         break;
       case FX_LOCALECATEGORY_Date: {
-        CFX_Unitime dt;
+        CFX_DateTime dt;
         bRet = ValidateCanonicalDate(wsValue, &dt);
         if (!bRet) {
           bRet = pFormat->ParseDateTime(wsValue, wsFormat, FX_DATETIMETYPE_Date,
@@ -143,7 +143,7 @@ bool CXFA_LocaleValue::ValidateValue(const CFX_WideString& wsValue,
         break;
       }
       case FX_LOCALECATEGORY_Time: {
-        CFX_Unitime dt;
+        CFX_DateTime dt;
         bRet = pFormat->ParseDateTime(wsValue, wsFormat, FX_DATETIMETYPE_Time,
                                       &dt);
         if (!bRet) {
@@ -153,7 +153,7 @@ bool CXFA_LocaleValue::ValidateValue(const CFX_WideString& wsValue,
         break;
       }
       case FX_LOCALECATEGORY_DateTime: {
-        CFX_Unitime dt;
+        CFX_DateTime dt;
         bRet = pFormat->ParseDateTime(wsValue, wsFormat,
                                       FX_DATETIMETYPE_DateTime, &dt);
         if (!bRet) {
@@ -347,31 +347,31 @@ double CXFA_LocaleValue::GetDoubleNum() const {
   return 0;
 }
 
-CFX_Unitime CXFA_LocaleValue::GetDate() const {
+CFX_DateTime CXFA_LocaleValue::GetDate() const {
   if (m_bValid && m_dwType == XFA_VT_DATE) {
-    CFX_Unitime dt;
+    CFX_DateTime dt;
     FX_DateFromCanonical(m_wsValue, &dt);
     return dt;
   }
-  return CFX_Unitime();
+  return CFX_DateTime();
 }
 
-CFX_Unitime CXFA_LocaleValue::GetTime() const {
+CFX_DateTime CXFA_LocaleValue::GetTime() const {
   if (m_bValid && m_dwType == XFA_VT_TIME) {
     ASSERT(m_pLocaleMgr);
 
-    CFX_Unitime dt;
+    CFX_DateTime dt;
     FX_TimeFromCanonical(m_wsValue.AsStringC(), &dt,
                          m_pLocaleMgr->GetDefLocale());
     return dt;
   }
-  return CFX_Unitime();
+  return CFX_DateTime();
 }
 
-CFX_Unitime CXFA_LocaleValue::GetDateTime() const {
+CFX_DateTime CXFA_LocaleValue::GetDateTime() const {
   if (m_bValid && m_dwType == XFA_VT_DATETIME) {
     int32_t index = m_wsValue.Find('T');
-    CFX_Unitime dt;
+    CFX_DateTime dt;
     FX_DateFromCanonical(m_wsValue.Left(index), &dt);
     ASSERT(m_pLocaleMgr);
     FX_TimeFromCanonical(
@@ -379,7 +379,7 @@ CFX_Unitime CXFA_LocaleValue::GetDateTime() const {
         m_pLocaleMgr->GetDefLocale());
     return dt;
   }
-  return CFX_Unitime();
+  return CFX_DateTime();
 }
 
 bool CXFA_LocaleValue::SetText(const CFX_WideString& wsText) {
@@ -408,7 +408,7 @@ bool CXFA_LocaleValue::SetNum(const CFX_WideString& wsNum,
   return m_bValid = ParsePatternValue(wsNum, wsFormat, pLocale);
 }
 
-bool CXFA_LocaleValue::SetDate(const CFX_Unitime& d) {
+bool CXFA_LocaleValue::SetDate(const CFX_DateTime& d) {
   m_dwType = XFA_VT_DATE;
   m_wsValue.Format(L"%04d-%02d-%02d", d.GetYear(), d.GetMonth(), d.GetDay());
   return true;
@@ -421,7 +421,7 @@ bool CXFA_LocaleValue::SetDate(const CFX_WideString& wsDate,
   return m_bValid = ParsePatternValue(wsDate, wsFormat, pLocale);
 }
 
-bool CXFA_LocaleValue::SetTime(const CFX_Unitime& t) {
+bool CXFA_LocaleValue::SetTime(const CFX_DateTime& t) {
   m_dwType = XFA_VT_TIME;
   m_wsValue.Format(L"%02d:%02d:%02d", t.GetHour(), t.GetMinute(),
                    t.GetSecond());
@@ -440,7 +440,7 @@ bool CXFA_LocaleValue::SetTime(const CFX_WideString& wsTime,
   return m_bValid = ParsePatternValue(wsTime, wsFormat, pLocale);
 }
 
-bool CXFA_LocaleValue::SetDateTime(const CFX_Unitime& dt) {
+bool CXFA_LocaleValue::SetDateTime(const CFX_DateTime& dt) {
   m_dwType = XFA_VT_DATETIME;
   m_wsValue.Format(L"%04d-%02d-%02dT%02d:%02d:%02d", dt.GetYear(),
                    dt.GetMonth(), dt.GetDay(), dt.GetHour(), dt.GetMinute(),
@@ -557,7 +557,7 @@ bool CXFA_LocaleValue::ValidateCanonicalValue(const CFX_WideString& wsValue,
   if (wsValue.IsEmpty()) {
     return true;
   }
-  CFX_Unitime dt;
+  CFX_DateTime dt;
   switch (dwVType) {
     case XFA_VT_DATE: {
       if (ValidateCanonicalDate(wsValue, &dt))
@@ -592,7 +592,7 @@ bool CXFA_LocaleValue::ValidateCanonicalValue(const CFX_WideString& wsValue,
   return true;
 }
 bool CXFA_LocaleValue::ValidateCanonicalDate(const CFX_WideString& wsDate,
-                                             CFX_Unitime* unDate) {
+                                             CFX_DateTime* unDate) {
   const uint16_t LastDay[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
   const uint16_t wCountY = 4, wCountM = 2, wCountD = 2;
   int nLen = wsDate.GetLength();
@@ -784,7 +784,7 @@ bool CXFA_LocaleValue::ValidateCanonicalDateTime(
 
   wsDate = wsDateTime.Left(nSplitIndex);
   wsTime = wsDateTime.Right(wsDateTime.GetLength() - nSplitIndex - 1);
-  CFX_Unitime dt;
+  CFX_DateTime dt;
   return ValidateCanonicalDate(wsDate, &dt) && ValidateCanonicalTime(wsTime);
 }
 
@@ -828,7 +828,7 @@ bool CXFA_LocaleValue::ParsePatternValue(const CFX_WideString& wsValue,
         bRet = pFormat->ParseText(wsValue, wsFormat, m_wsValue);
         break;
       case FX_LOCALECATEGORY_Date: {
-        CFX_Unitime dt;
+        CFX_DateTime dt;
         bRet = ValidateCanonicalDate(wsValue, &dt);
         if (!bRet) {
           bRet = pFormat->ParseDateTime(wsValue, wsFormat, FX_DATETIMETYPE_Date,
@@ -839,7 +839,7 @@ bool CXFA_LocaleValue::ParsePatternValue(const CFX_WideString& wsValue,
         break;
       }
       case FX_LOCALECATEGORY_Time: {
-        CFX_Unitime dt;
+        CFX_DateTime dt;
         bRet = pFormat->ParseDateTime(wsValue, wsFormat, FX_DATETIMETYPE_Time,
                                       &dt);
         if (bRet)
@@ -847,7 +847,7 @@ bool CXFA_LocaleValue::ParsePatternValue(const CFX_WideString& wsValue,
         break;
       }
       case FX_LOCALECATEGORY_DateTime: {
-        CFX_Unitime dt;
+        CFX_DateTime dt;
         bRet = pFormat->ParseDateTime(wsValue, wsFormat,
                                       FX_DATETIMETYPE_DateTime, &dt);
         if (bRet)

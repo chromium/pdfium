@@ -205,7 +205,7 @@ bool GetNumericDotIndex(const CFX_WideString& wsNum,
 bool ParseLocaleDate(const CFX_WideString& wsDate,
                      const CFX_WideString& wsDatePattern,
                      IFX_Locale* pLocale,
-                     CFX_Unitime* datetime,
+                     CFX_DateTime* datetime,
                      int32_t& cc) {
   int32_t year = 1900;
   int32_t month = 1;
@@ -416,7 +416,7 @@ void ResolveZone(uint8_t& wHour,
 bool ParseLocaleTime(const CFX_WideString& wsTime,
                      const CFX_WideString& wsTimePattern,
                      IFX_Locale* pLocale,
-                     CFX_Unitime* datetime,
+                     CFX_DateTime* datetime,
                      int32_t& cc) {
   uint8_t hour = 0;
   uint8_t minute = 0;
@@ -669,7 +669,7 @@ uint16_t GetWeekOfYear(uint16_t year, uint16_t month, uint16_t day) {
 
 bool DateFormat(const CFX_WideString& wsDatePattern,
                 IFX_Locale* pLocale,
-                const CFX_Unitime& datetime,
+                const CFX_DateTime& datetime,
                 CFX_WideString& wsResult) {
   bool bRet = true;
   int32_t year = datetime.GetYear();
@@ -777,7 +777,7 @@ bool DateFormat(const CFX_WideString& wsDatePattern,
 
 bool TimeFormat(const CFX_WideString& wsTimePattern,
                 IFX_Locale* pLocale,
-                const CFX_Unitime& datetime,
+                const CFX_DateTime& datetime,
                 CFX_WideString& wsResult) {
   bool bGMT = false;
   bool bRet = true;
@@ -902,7 +902,7 @@ bool TimeFormat(const CFX_WideString& wsTimePattern,
   return bRet;
 }
 
-bool FormatDateTimeInternal(const CFX_Unitime& dt,
+bool FormatDateTimeInternal(const CFX_DateTime& dt,
                             const CFX_WideString& wsDatePattern,
                             const CFX_WideString& wsTimePattern,
                             bool bDateFirst,
@@ -921,7 +921,8 @@ bool FormatDateTimeInternal(const CFX_Unitime& dt,
 
 }  // namespace
 
-bool FX_DateFromCanonical(const CFX_WideString& wsDate, CFX_Unitime* datetime) {
+bool FX_DateFromCanonical(const CFX_WideString& wsDate,
+                          CFX_DateTime* datetime) {
   int32_t year = 1900;
   int32_t month = 1;
   int32_t day = 1;
@@ -999,7 +1000,7 @@ bool FX_DateFromCanonical(const CFX_WideString& wsDate, CFX_Unitime* datetime) {
 }
 
 bool FX_TimeFromCanonical(const CFX_WideStringC& wsTime,
-                          CFX_Unitime* datetime,
+                          CFX_DateTime* datetime,
                           IFX_Locale* pLocale) {
   if (wsTime.GetLength() == 0)
     return false;
@@ -2038,7 +2039,7 @@ FX_DATETIMETYPE CFX_FormatString::GetDateTimeFormat(
 bool CFX_FormatString::ParseDateTime(const CFX_WideString& wsSrcDateTime,
                                      const CFX_WideString& wsPattern,
                                      FX_DATETIMETYPE eDateTimeType,
-                                     CFX_Unitime* dtValue) {
+                                     CFX_DateTime* dtValue) {
   dtValue->Reset();
 
   if (wsSrcDateTime.IsEmpty() || wsPattern.IsEmpty()) {
@@ -2658,7 +2659,7 @@ bool CFX_FormatString::FormatDateTime(const CFX_WideString& wsSrcDateTime,
   if (eCategory == FX_DATETIMETYPE_Unknown) {
     return false;
   }
-  CFX_Unitime dt;
+  CFX_DateTime dt;
   int32_t iT = wsSrcDateTime.Find(L"T");
   if (iT < 0) {
     if (eCategory == FX_DATETIMETYPE_Date &&

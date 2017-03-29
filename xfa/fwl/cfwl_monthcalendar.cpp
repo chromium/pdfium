@@ -571,7 +571,7 @@ void CFWL_MonthCalendar::ClearDateItem() {
 void CFWL_MonthCalendar::ResetDateItem() {
   int32_t iDays = FX_DaysInMonth(m_iCurYear, m_iCurMonth);
   int32_t iDayOfWeek =
-      CFX_Unitime(m_iCurYear, m_iCurMonth, 1, 0, 0, 0, 0).GetDayOfWeek();
+      CFX_DateTime(m_iCurYear, m_iCurMonth, 1, 0, 0, 0, 0).GetDayOfWeek();
   for (int32_t i = 0; i < iDays; i++) {
     if (iDayOfWeek >= 7)
       iDayOfWeek = 0;

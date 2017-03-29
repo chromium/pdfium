@@ -12,7 +12,7 @@
 #include "xfa/fxfa/parser/cxfa_widgetdata.h"
 
 class IFX_Locale;
-class CFX_Unitime;
+class CFX_DateTime;
 class CXFA_LocaleMgr;
 
 #define XFA_VT_NULL 0
@@ -54,7 +54,8 @@ class CXFA_LocaleValue {
                            IFX_Locale* pLocale,
                            XFA_VALUEPICTURE eValueType) const;
   bool ValidateCanonicalValue(const CFX_WideString& wsValue, uint32_t dwVType);
-  bool ValidateCanonicalDate(const CFX_WideString& wsDate, CFX_Unitime* unDate);
+  bool ValidateCanonicalDate(const CFX_WideString& wsDate,
+                             CFX_DateTime* unDate);
   bool ValidateCanonicalTime(const CFX_WideString& wsTime);
   bool ValidateCanonicalDateTime(const CFX_WideString& wsDateTime);
   void GetNumbericFormat(CFX_WideString& wsFormat,
@@ -72,9 +73,9 @@ class CXFA_LocaleValue {
   CFX_WideString GetText() const;
   float GetNum() const;
   double GetDoubleNum() const;
-  CFX_Unitime GetDate() const;
-  CFX_Unitime GetTime() const;
-  CFX_Unitime GetDateTime() const;
+  CFX_DateTime GetDate() const;
+  CFX_DateTime GetTime() const;
+  CFX_DateTime GetDateTime() const;
   bool SetText(const CFX_WideString& wsText);
   bool SetText(const CFX_WideString& wsText,
                const CFX_WideString& wsFormat,
@@ -83,15 +84,15 @@ class CXFA_LocaleValue {
   bool SetNum(const CFX_WideString& wsNum,
               const CFX_WideString& wsFormat,
               IFX_Locale* pLocale);
-  bool SetDate(const CFX_Unitime& d);
+  bool SetDate(const CFX_DateTime& d);
   bool SetDate(const CFX_WideString& wsDate,
                const CFX_WideString& wsFormat,
                IFX_Locale* pLocale);
-  bool SetTime(const CFX_Unitime& t);
+  bool SetTime(const CFX_DateTime& t);
   bool SetTime(const CFX_WideString& wsTime,
                const CFX_WideString& wsFormat,
                IFX_Locale* pLocale);
-  bool SetDateTime(const CFX_Unitime& dt);
+  bool SetDateTime(const CFX_DateTime& dt);
   bool SetDateTime(const CFX_WideString& wsDateTime,
                    const CFX_WideString& wsFormat,
                    IFX_Locale* pLocale);

@@ -4,20 +4,17 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FGAS_LOCALIZATION_FGAS_DATETIME_H_
-#define XFA_FGAS_LOCALIZATION_FGAS_DATETIME_H_
+#ifndef XFA_FGAS_LOCALIZATION_CFX_DATETIME_H_
+#define XFA_FGAS_LOCALIZATION_CFX_DATETIME_H_
 
 #include "core/fxcrt/fx_system.h"
-
-class CFX_Unitime;
-class CFX_DateTime;
 
 bool FX_IsLeapYear(int32_t iYear);
 uint8_t FX_DaysInMonth(int32_t iYear, uint8_t iMonth);
 
-class CFX_Unitime {
+class CFX_DateTime {
  public:
-  CFX_Unitime()
+  CFX_DateTime()
       : year_(0),
         month_(0),
         day_(0),
@@ -25,13 +22,13 @@ class CFX_Unitime {
         minute_(0),
         second_(0),
         millisecond_(0) {}
-  CFX_Unitime(int32_t year,
-              uint8_t month,
-              uint8_t day,
-              uint8_t hour,
-              uint8_t minute,
-              uint8_t second,
-              uint16_t millisecond)
+  CFX_DateTime(int32_t year,
+               uint8_t month,
+               uint8_t day,
+               uint8_t hour,
+               uint8_t minute,
+               uint8_t second,
+               uint16_t millisecond)
       : year_(year),
         month_(month),
         day_(day),
@@ -103,4 +100,4 @@ struct FX_TIMEZONE {
 #pragma pack(pop)
 #endif
 
-#endif  // XFA_FGAS_LOCALIZATION_FGAS_DATETIME_H_
+#endif  // XFA_FGAS_LOCALIZATION_CFX_DATETIME_H_

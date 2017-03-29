@@ -1164,7 +1164,7 @@ void CXFA_FM2JSContext::IsoTime2Num(CFXJSE_Value* pThis,
     return;
   }
 
-  CFX_Unitime uniTime = timeValue.GetTime();
+  CFX_DateTime uniTime = timeValue.GetTime();
   int32_t hour = uniTime.GetHour();
   int32_t min = uniTime.GetMinute();
   int32_t second = uniTime.GetSecond();
@@ -1580,7 +1580,7 @@ void CXFA_FM2JSContext::Time2Num(CFXJSE_Value* pThis,
     return;
   }
 
-  CFX_Unitime uniTime = localeValue.GetTime();
+  CFX_DateTime uniTime = localeValue.GetTime();
   int32_t hour = uniTime.GetHour();
   int32_t min = uniTime.GetMinute();
   int32_t second = uniTime.GetSecond();
@@ -1944,7 +1944,7 @@ bool CXFA_FM2JSContext::Local2IsoDate(CFXJSE_Value* pThis,
 
   CXFA_LocaleValue widgetValue(XFA_VT_DATE, CFX_WideString::FromUTF8(szDate),
                                wsFormat, pLocale, pMgr);
-  CFX_Unitime dt = widgetValue.GetDate();
+  CFX_DateTime dt = widgetValue.GetDate();
   strIsoDate.Format("%4d-%02d-%02d", dt.GetYear(), dt.GetMonth(), dt.GetDay());
   return true;
 }
@@ -1982,7 +1982,7 @@ bool CXFA_FM2JSContext::Local2IsoTime(CFXJSE_Value* pThis,
   wsFormat = L"time{" + wsFormat + L"}";
   CXFA_LocaleValue widgetValue(XFA_VT_TIME, CFX_WideString::FromUTF8(szTime),
                                wsFormat, pLocale, pMgr);
-  CFX_Unitime utime = widgetValue.GetTime();
+  CFX_DateTime utime = widgetValue.GetTime();
   strIsoTime.Format("%02d:%02d:%02d.%03d", utime.GetHour(), utime.GetMinute(),
                     utime.GetSecond(), utime.GetMillisecond());
   return true;
