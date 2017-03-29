@@ -59,25 +59,18 @@ class IFX_Locale {
   virtual ~IFX_Locale() {}
 
   virtual CFX_WideString GetName() const = 0;
-  virtual void GetNumbericSymbol(FX_LOCALENUMSYMBOL eType,
-                                 CFX_WideString& wsNumSymbol) const = 0;
-  virtual void GetDateTimeSymbols(CFX_WideString& wsDtSymbol) const = 0;
-  virtual void GetMonthName(int32_t nMonth,
-                            CFX_WideString& wsMonthName,
-                            bool bAbbr = true) const = 0;
-  virtual void GetDayName(int32_t nWeek,
-                          CFX_WideString& wsDayName,
-                          bool bAbbr = true) const = 0;
-  virtual void GetMeridiemName(CFX_WideString& wsMeridiemName,
-                               bool bAM = true) const = 0;
-  virtual void GetTimeZone(FX_TIMEZONE* tz) const = 0;
-  virtual void GetEraName(CFX_WideString& wsEraName, bool bAD = true) const = 0;
-  virtual void GetDatePattern(FX_LOCALEDATETIMESUBCATEGORY eType,
-                              CFX_WideString& wsPattern) const = 0;
-  virtual void GetTimePattern(FX_LOCALEDATETIMESUBCATEGORY eType,
-                              CFX_WideString& wsPattern) const = 0;
-  virtual void GetNumPattern(FX_LOCALENUMSUBCATEGORY eType,
-                             CFX_WideString& wsPattern) const = 0;
+  virtual CFX_WideString GetNumbericSymbol(FX_LOCALENUMSYMBOL eType) const = 0;
+  virtual CFX_WideString GetDateTimeSymbols() const = 0;
+  virtual CFX_WideString GetMonthName(int32_t nMonth, bool bAbbr) const = 0;
+  virtual CFX_WideString GetDayName(int32_t nWeek, bool bAbbr) const = 0;
+  virtual CFX_WideString GetMeridiemName(bool bAM) const = 0;
+  virtual FX_TIMEZONE GetTimeZone() const = 0;
+  virtual CFX_WideString GetEraName(bool bAD) const = 0;
+  virtual CFX_WideString GetDatePattern(
+      FX_LOCALEDATETIMESUBCATEGORY eType) const = 0;
+  virtual CFX_WideString GetTimePattern(
+      FX_LOCALEDATETIMESUBCATEGORY eType) const = 0;
+  virtual CFX_WideString GetNumPattern(FX_LOCALENUMSUBCATEGORY eType) const = 0;
 };
 
 bool FX_DateFromCanonical(const CFX_WideString& wsDate, CFX_Unitime* datetime);

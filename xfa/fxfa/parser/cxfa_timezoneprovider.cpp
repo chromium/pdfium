@@ -30,7 +30,3 @@ CXFA_TimeZoneProvider::CXFA_TimeZoneProvider() {
 }
 
 CXFA_TimeZoneProvider::~CXFA_TimeZoneProvider() {}
-
-void CXFA_TimeZoneProvider::GetTimeZone(FX_TIMEZONE* tz) const {
-  *tz = m_tz;
-}

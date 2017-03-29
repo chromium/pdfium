@@ -1486,7 +1486,7 @@ bool CXFA_WidgetData::GetPictureContent(CFX_WideString& wsPicture,
             return true;
         }
       }
-      CFX_WideString wsDataPicture, wsTimePicture;
+
       IFX_Locale* pLocale = GetLocal();
       if (!pLocale)
         return false;
@@ -1494,19 +1494,18 @@ bool CXFA_WidgetData::GetPictureContent(CFX_WideString& wsPicture,
       uint32_t dwType = widgetValue.GetType();
       switch (dwType) {
         case XFA_VT_DATE:
-          pLocale->GetDatePattern(FX_LOCALEDATETIMESUBCATEGORY_Medium,
-                                  wsPicture);
+          wsPicture =
+              pLocale->GetDatePattern(FX_LOCALEDATETIMESUBCATEGORY_Medium);
           break;
         case XFA_VT_TIME:
-          pLocale->GetTimePattern(FX_LOCALEDATETIMESUBCATEGORY_Medium,
-                                  wsPicture);
+          wsPicture =
+              pLocale->GetTimePattern(FX_LOCALEDATETIMESUBCATEGORY_Medium);
           break;
         case XFA_VT_DATETIME:
-          pLocale->GetDatePattern(FX_LOCALEDATETIMESUBCATEGORY_Medium,
-                                  wsDataPicture);
-          pLocale->GetTimePattern(FX_LOCALEDATETIMESUBCATEGORY_Medium,
-                                  wsTimePicture);
-          wsPicture = wsDataPicture + L"T" + wsTimePicture;
+          wsPicture =
+              pLocale->GetDatePattern(FX_LOCALEDATETIMESUBCATEGORY_Medium) +
+              L"T" +
+              pLocale->GetTimePattern(FX_LOCALEDATETIMESUBCATEGORY_Medium);
           break;
         case XFA_VT_DECIMAL:
         case XFA_VT_FLOAT:
@@ -1516,7 +1515,6 @@ bool CXFA_WidgetData::GetPictureContent(CFX_WideString& wsPicture,
       }
       return true;
     }
-
     case XFA_VALUEPICTURE_Edit: {
       CXFA_Node* pUI = m_pNode->GetChild(0, XFA_Element::Ui);
       if (pUI) {
@@ -1525,32 +1523,29 @@ bool CXFA_WidgetData::GetPictureContent(CFX_WideString& wsPicture,
             return true;
         }
       }
-      {
-        CFX_WideString wsDataPicture, wsTimePicture;
-        IFX_Locale* pLocale = GetLocal();
-        if (!pLocale) {
-          return false;
-        }
-        uint32_t dwType = widgetValue.GetType();
-        switch (dwType) {
-          case XFA_VT_DATE:
-            pLocale->GetDatePattern(FX_LOCALEDATETIMESUBCATEGORY_Short,
-                                    wsPicture);
-            break;
-          case XFA_VT_TIME:
-            pLocale->GetTimePattern(FX_LOCALEDATETIMESUBCATEGORY_Short,
-                                    wsPicture);
-            break;
-          case XFA_VT_DATETIME:
-            pLocale->GetDatePattern(FX_LOCALEDATETIMESUBCATEGORY_Short,
-                                    wsDataPicture);
-            pLocale->GetTimePattern(FX_LOCALEDATETIMESUBCATEGORY_Short,
-                                    wsTimePicture);
-            wsPicture = wsDataPicture + L"T" + wsTimePicture;
-            break;
-          default:
-            break;
-        }
+
+      IFX_Locale* pLocale = GetLocal();
+      if (!pLocale)
+        return false;
+
+      uint32_t dwType = widgetValue.GetType();
+      switch (dwType) {
+        case XFA_VT_DATE:
+          wsPicture =
+              pLocale->GetDatePattern(FX_LOCALEDATETIMESUBCATEGORY_Short);
+          break;
+        case XFA_VT_TIME:
+          wsPicture =
+              pLocale->GetTimePattern(FX_LOCALEDATETIMESUBCATEGORY_Short);
+          break;
+        case XFA_VT_DATETIME:
+          wsPicture =
+              pLocale->GetDatePattern(FX_LOCALEDATETIMESUBCATEGORY_Short) +
+              L"T" +
+              pLocale->GetTimePattern(FX_LOCALEDATETIMESUBCATEGORY_Short);
+          break;
+        default:
+          break;
       }
       return true;
     }
@@ -1783,8 +1778,8 @@ void CXFA_WidgetData::FormatNumStr(const CFX_WideString& wsValue,
     return;
 
   CFX_WideString wsSrcNum = wsValue;
-  CFX_WideString wsGroupSymbol;
-  pLocale->GetNumbericSymbol(FX_LOCALENUMSYMBOL_Grouping, wsGroupSymbol);
+  CFX_WideString wsGroupSymbol =
+      pLocale->GetNumbericSymbol(FX_LOCALENUMSYMBOL_Grouping);
   bool bNeg = false;
   if (wsSrcNum[0] == '-') {
     bNeg = true;
@@ -1806,15 +1801,12 @@ void CXFA_WidgetData::FormatNumStr(const CFX_WideString& wsValue,
       wsOutput += wsSrcNum[i];
     }
     if (dot_index < len) {
-      CFX_WideString wsSymbol;
-      pLocale->GetNumbericSymbol(FX_LOCALENUMSYMBOL_Decimal, wsSymbol);
-      wsOutput += wsSymbol;
+      wsOutput += pLocale->GetNumbericSymbol(FX_LOCALENUMSYMBOL_Decimal);
       wsOutput += wsSrcNum.Right(len - dot_index - 1);
     }
     if (bNeg) {
-      CFX_WideString wsMinusymbol;
-      pLocale->GetNumbericSymbol(FX_LOCALENUMSYMBOL_Minus, wsMinusymbol);
-      wsOutput = wsMinusymbol + wsOutput;
+      wsOutput =
+          pLocale->GetNumbericSymbol(FX_LOCALENUMSYMBOL_Minus) + wsOutput;
     }
   }
 }

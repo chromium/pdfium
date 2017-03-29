@@ -19,33 +19,25 @@ class CXFA_XMLLocale : public IFX_Locale {
 
   // IFX_Locale
   CFX_WideString GetName() const override;
-  void GetNumbericSymbol(FX_LOCALENUMSYMBOL eType,
-                         CFX_WideString& wsNumSymbol) const override;
+  CFX_WideString GetNumbericSymbol(FX_LOCALENUMSYMBOL eType) const override;
 
-  void GetDateTimeSymbols(CFX_WideString& wsDtSymbol) const override;
-  void GetMonthName(int32_t nMonth,
-                    CFX_WideString& wsMonthName,
-                    bool bAbbr = true) const override;
-  void GetDayName(int32_t nWeek,
-                  CFX_WideString& wsDayName,
-                  bool bAbbr = true) const override;
-  void GetMeridiemName(CFX_WideString& wsMeridiemName,
-                       bool bAM = true) const override;
-  void GetTimeZone(FX_TIMEZONE* tz) const override;
-  void GetEraName(CFX_WideString& wsEraName, bool bAD = true) const override;
+  CFX_WideString GetDateTimeSymbols() const override;
+  CFX_WideString GetMonthName(int32_t nMonth, bool bAbbr) const override;
+  CFX_WideString GetDayName(int32_t nWeek, bool bAbbr) const override;
+  CFX_WideString GetMeridiemName(bool bAM) const override;
+  FX_TIMEZONE GetTimeZone() const override;
+  CFX_WideString GetEraName(bool bAD) const override;
 
-  void GetDatePattern(FX_LOCALEDATETIMESUBCATEGORY eType,
-                      CFX_WideString& wsPattern) const override;
-  void GetTimePattern(FX_LOCALEDATETIMESUBCATEGORY eType,
-                      CFX_WideString& wsPattern) const override;
-  void GetNumPattern(FX_LOCALENUMSUBCATEGORY eType,
-                     CFX_WideString& wsPattern) const override;
+  CFX_WideString GetDatePattern(
+      FX_LOCALEDATETIMESUBCATEGORY eType) const override;
+  CFX_WideString GetTimePattern(
+      FX_LOCALEDATETIMESUBCATEGORY eType) const override;
+  CFX_WideString GetNumPattern(FX_LOCALENUMSUBCATEGORY eType) const override;
 
  private:
-  void GetPattern(CXML_Element* pElement,
-                  const CFX_ByteStringC& bsTag,
-                  const CFX_WideStringC& wsName,
-                  CFX_WideString& wsPattern) const;
+  CFX_WideString GetPattern(CXML_Element* pElement,
+                            const CFX_ByteStringC& bsTag,
+                            const CFX_WideStringC& wsName) const;
   CFX_WideString GetCalendarSymbol(const CFX_ByteStringC& symbol,
                                    int index,
                                    bool bAbbr) const;

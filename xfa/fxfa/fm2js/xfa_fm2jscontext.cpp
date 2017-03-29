@@ -1168,13 +1168,10 @@ void CXFA_FM2JSContext::IsoTime2Num(CFXJSE_Value* pThis,
   int32_t second = uniTime.GetSecond();
   int32_t milSecond = uniTime.GetMillisecond();
 
-  FX_TIMEZONE tzLocale;
-  pMgr->GetDefLocale()->GetTimeZone(&tzLocale);
-
   // TODO(dsinclair): See if there is other time conversion code in pdfium and
   //   consolidate.
   int32_t mins = hour * 60 + min;
-  mins -= (tzLocale.tzHour * 60);
+  mins -= (pMgr->GetDefLocale()->GetTimeZone().tzHour * 60);
   while (mins > 1440)
     mins -= 1440;
   while (mins < 0)
@@ -1568,7 +1565,7 @@ void CXFA_FM2JSContext::Time2Num(CFXJSE_Value* pThis,
 
   CFX_WideString wsFormat;
   if (formatString.IsEmpty())
-    pLocale->GetTimePattern(FX_LOCALEDATETIMESUBCATEGORY_Default, wsFormat);
+    wsFormat = pLocale->GetTimePattern(FX_LOCALEDATETIMESUBCATEGORY_Default);
   else
     wsFormat = CFX_WideString::FromUTF8(formatString.AsStringC());
 
@@ -1588,10 +1585,7 @@ void CXFA_FM2JSContext::Time2Num(CFXJSE_Value* pThis,
   int32_t milSecond = uniTime.GetMillisecond();
   int32_t mins = hour * 60 + min;
 
-  FX_TIMEZONE tz;
-  CXFA_TimeZoneProvider provider;
-  provider.GetTimeZone(&tz);
-  mins -= (tz.tzHour * 60);
+  mins -= (CXFA_TimeZoneProvider().GetTimeZone().tzHour * 60);
   while (mins > 1440)
     mins -= 1440;
 
@@ -1942,7 +1936,7 @@ bool CXFA_FM2JSContext::Local2IsoDate(CFXJSE_Value* pThis,
 
   CFX_WideString wsFormat;
   if (szFormat.IsEmpty())
-    pLocale->GetDatePattern(FX_LOCALEDATETIMESUBCATEGORY_Default, wsFormat);
+    wsFormat = pLocale->GetDatePattern(FX_LOCALEDATETIMESUBCATEGORY_Default);
   else
     wsFormat = CFX_WideString::FromUTF8(szFormat);
 
@@ -1979,7 +1973,7 @@ bool CXFA_FM2JSContext::Local2IsoTime(CFXJSE_Value* pThis,
 
   CFX_WideString wsFormat;
   if (szFormat.IsEmpty())
-    pLocale->GetTimePattern(FX_LOCALEDATETIMESUBCATEGORY_Default, wsFormat);
+    wsFormat = pLocale->GetTimePattern(FX_LOCALEDATETIMESUBCATEGORY_Default);
   else
     wsFormat = CFX_WideString::FromUTF8(szFormat);
 
@@ -2017,7 +2011,7 @@ bool CXFA_FM2JSContext::IsoDate2Local(CFXJSE_Value* pThis,
 
   CFX_WideString wsFormat;
   if (szFormat.IsEmpty())
-    pLocale->GetDatePattern(FX_LOCALEDATETIMESUBCATEGORY_Default, wsFormat);
+    wsFormat = pLocale->GetDatePattern(FX_LOCALEDATETIMESUBCATEGORY_Default);
   else
     wsFormat = CFX_WideString::FromUTF8(szFormat);
 
@@ -2055,7 +2049,7 @@ bool CXFA_FM2JSContext::IsoTime2Local(CFXJSE_Value* pThis,
 
   CFX_WideString wsFormat;
   if (szFormat.IsEmpty())
-    pLocale->GetTimePattern(FX_LOCALEDATETIMESUBCATEGORY_Default, wsFormat);
+    wsFormat = pLocale->GetTimePattern(FX_LOCALEDATETIMESUBCATEGORY_Default);
   else
     wsFormat = CFX_WideString::FromUTF8(szFormat);
 
@@ -2094,7 +2088,7 @@ bool CXFA_FM2JSContext::GetGMTTime(CFXJSE_Value* pThis,
 
   CFX_WideString wsFormat;
   if (szFormat.IsEmpty())
-    pLocale->GetTimePattern(FX_LOCALEDATETIMESUBCATEGORY_Default, wsFormat);
+    wsFormat = pLocale->GetTimePattern(FX_LOCALEDATETIMESUBCATEGORY_Default);
   else
     wsFormat = CFX_WideString::FromUTF8(szFormat);
 
@@ -2206,12 +2200,10 @@ void CXFA_FM2JSContext::GetLocalDateFormat(CFXJSE_Value* pThis,
   if (!pLocale)
     return;
 
-  CFX_WideString strRet;
-  pLocale->GetDatePattern(strStyle, strRet);
+  CFX_WideString strRet = pLocale->GetDatePattern(strStyle);
   if (!bStandard) {
-    CFX_WideString wsSymbols;
-    pLocale->GetDateTimeSymbols(wsSymbols);
-    AlternateDateTimeSymbols(strRet, wsSymbols, g_sAltTable_Date);
+    AlternateDateTimeSymbols(strRet, pLocale->GetDateTimeSymbols(),
+                             g_sAltTable_Date);
   }
   strFormat = strRet.UTF8Encode();
 }
@@ -2257,12 +2249,10 @@ void CXFA_FM2JSContext::GetLocalTimeFormat(CFXJSE_Value* pThis,
   if (!pLocale)
     return;
 
-  CFX_WideString strRet;
-  pLocale->GetTimePattern(strStyle, strRet);
+  CFX_WideString strRet = pLocale->GetTimePattern(strStyle);
   if (!bStandard) {
-    CFX_WideString wsSymbols;
-    pLocale->GetDateTimeSymbols(wsSymbols);
-    AlternateDateTimeSymbols(strRet, wsSymbols, g_sAltTable_Time);
+    AlternateDateTimeSymbols(strRet, pLocale->GetDateTimeSymbols(),
+                             g_sAltTable_Time);
   }
   strFormat = strRet.UTF8Encode();
 }

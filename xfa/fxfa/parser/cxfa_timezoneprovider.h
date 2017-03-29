@@ -14,7 +14,7 @@ class CXFA_TimeZoneProvider {
   CXFA_TimeZoneProvider();
   ~CXFA_TimeZoneProvider();
 
-  void GetTimeZone(FX_TIMEZONE* tz) const;
+  FX_TIMEZONE GetTimeZone() const { return m_tz; }
 
  private:
   FX_TIMEZONE m_tz;

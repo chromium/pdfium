@@ -940,28 +940,26 @@ bool CXFA_LocaleValue::ValidateNumericTemp(CFX_WideString& wsNumeric,
     }
     n++;
   }
-  if (n == nCount) {
+  if (n == nCount)
     return true;
-  }
-  if (nf == nCountFmt) {
+  if (nf == nCountFmt)
     return false;
-  }
+
   while (nf < nCountFmt && (cf = pFmt[nf]) != L'.') {
     ASSERT(cf == L'z' || cf == L'*');
     ++nf;
   }
   CFX_WideString wsDecimalSymbol;
-  if (pLocale) {
-    pLocale->GetNumbericSymbol(FX_LOCALENUMSYMBOL_Decimal, wsDecimalSymbol);
-  } else {
+  if (pLocale)
+    wsDecimalSymbol = pLocale->GetNumbericSymbol(FX_LOCALENUMSYMBOL_Decimal);
+  else
     wsDecimalSymbol = CFX_WideString(L'.');
-  }
-  if (pFmt[nf] != L'.') {
+
+  if (pFmt[nf] != L'.')
     return false;
-  }
-  if (wsDecimalSymbol != CFX_WideStringC(c) && c != L'.') {
+  if (wsDecimalSymbol != CFX_WideStringC(c) && c != L'.')
     return false;
-  }
+
   ++nf;
   ++n;
   bLimit = true;
