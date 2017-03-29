@@ -613,7 +613,7 @@ void CFX_WideString::FormatV(const wchar_t* pFormat, va_list argList) {
     // -1 return code even though the buffer is written. Probably just as well
     // not to trust the vendor's implementation to write anything anyways.
     // See https://crbug.com/705912.
-    memset(m_pData->m_String, 0, nMaxLen + 1);
+    memset(m_pData->m_String, 0, (nMaxLen + 1) * sizeof(wchar_t));
     FXSYS_vswprintf((wchar_t*)m_pData->m_String, nMaxLen + 1,
                     (const wchar_t*)pFormat, argListSave);
     ReleaseBuffer();
