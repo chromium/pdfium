@@ -10,7 +10,9 @@
 #include <memory>
 
 #include "xfa/fgas/localization/fgas_locale.h"
-#include "xfa/fxfa/parser/xfa_object.h"
+#include "xfa/fxfa/fxfa_basic.h"
+
+class CXFA_Node;
 
 CFX_WideString XFA_PatternToString(FX_LOCALENUMSUBCATEGORY category);
 

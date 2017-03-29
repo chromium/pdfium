@@ -7,7 +7,8 @@
 #include "xfa/fxfa/parser/cxfa_stroke.h"
 
 #include "xfa/fxfa/parser/cxfa_measurement.h"
-#include "xfa/fxfa/parser/xfa_object.h"
+#include "xfa/fxfa/parser/cxfa_node.h"
+#include "xfa/fxfa/parser/xfa_utils.h"
 
 int32_t CXFA_Stroke::GetPresence() const {
   return m_pNode ? m_pNode->GetEnum(XFA_ATTRIBUTE_Presence)

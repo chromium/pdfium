@@ -9,8 +9,7 @@
 
 #include <vector>
 
-#include "fxjs/cfxjse_arguments.h"
-#include "xfa/fxfa/parser/xfa_object.h"
+#include "xfa/fxfa/parser/cxfa_object.h"
 
 enum XFA_LAYOUTMODEL_HWXY {
   XFA_LAYOUTMODEL_H,
@@ -19,6 +18,7 @@ enum XFA_LAYOUTMODEL_HWXY {
   XFA_LAYOUTMODEL_Y
 };
 
+class CFXJSE_Arguments;
 class CXFA_LayoutProcessor;
 
 class CScript_LayoutPseudoModel : public CXFA_Object {

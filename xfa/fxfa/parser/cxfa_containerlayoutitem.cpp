@@ -9,6 +9,7 @@
 #include "xfa/fxfa/parser/cxfa_layoutpagemgr.h"
 #include "xfa/fxfa/parser/cxfa_layoutprocessor.h"
 #include "xfa/fxfa/parser/cxfa_measurement.h"
+#include "xfa/fxfa/parser/cxfa_node.h"
 
 CXFA_ContainerLayoutItem::CXFA_ContainerLayoutItem(CXFA_Node* pNode)
     : CXFA_LayoutItem(pNode, false), m_pOldSubform(nullptr) {}

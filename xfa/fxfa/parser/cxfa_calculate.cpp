@@ -6,8 +6,8 @@
 
 #include "xfa/fxfa/parser/cxfa_calculate.h"
 
+#include "xfa/fxfa/parser/cxfa_node.h"
 #include "xfa/fxfa/parser/cxfa_text.h"
-#include "xfa/fxfa/parser/xfa_object.h"
 
 CXFA_Calculate::CXFA_Calculate(CXFA_Node* pNode) : CXFA_Data(pNode) {}
 

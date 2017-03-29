@@ -26,8 +26,8 @@
 #include "xfa/fxfa/app/xfa_ffwidgetacc.h"
 #include "xfa/fxfa/app/xfa_textpiece.h"
 #include "xfa/fxfa/parser/cxfa_font.h"
+#include "xfa/fxfa/parser/cxfa_node.h"
 #include "xfa/fxfa/parser/cxfa_para.h"
-#include "xfa/fxfa/parser/xfa_object.h"
 
 #define XFA_LOADERCNTXTFLG_FILTERSPACE 0x001
 

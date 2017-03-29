@@ -4,12 +4,13 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fxfa/parser/xfa_object.h"
+#include "xfa/fxfa/parser/cxfa_nodelist.h"
 
 #include <memory>
 
 #include "core/fxcrt/fx_ext.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
+#include "xfa/fxfa/parser/cxfa_node.h"
 #include "xfa/fxfa/parser/cxfa_scriptcontext.h"
 
 CXFA_NodeList::CXFA_NodeList(CXFA_Document* pDocument)

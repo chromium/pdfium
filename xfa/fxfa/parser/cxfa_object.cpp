@@ -4,12 +4,14 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fxfa/parser/xfa_object.h"
+#include "xfa/fxfa/parser/cxfa_object.h"
 
 #include "core/fxcrt/fx_ext.h"
 #include "fxjs/cfxjse_value.h"
 #include "xfa/fxfa/app/xfa_ffnotify.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
+#include "xfa/fxfa/parser/cxfa_node.h"
+#include "xfa/fxfa/parser/cxfa_nodelist.h"
 
 CXFA_Object::CXFA_Object(CXFA_Document* pDocument,
                          XFA_ObjectType objectType,
@@ -22,18 +24,6 @@ CXFA_Object::CXFA_Object(CXFA_Document* pDocument,
       m_elementName(elementName) {}
 
 CXFA_Object::~CXFA_Object() {}
-
-CFX_WideStringC CXFA_Object::GetClassName() const {
-  return m_elementName;
-}
-
-uint32_t CXFA_Object::GetClassHashCode() const {
-  return m_elementNameHash;
-}
-
-XFA_Element CXFA_Object::GetElementType() const {
-  return m_elementType;
-}
 
 void CXFA_Object::Script_ObjectClass_ClassName(CFXJSE_Value* pValue,
                                                bool bSetting,
@@ -70,4 +60,28 @@ void CXFA_Object::ThrowException(const wchar_t* str, ...) const {
   wsMessage.FormatV(str, arg_ptr);
   va_end(arg_ptr);
   FXJSE_ThrowMessage(wsMessage.UTF8Encode().AsStringC());
+}
+
+CXFA_Node* CXFA_Object::AsNode() {
+  return IsNode() ? static_cast<CXFA_Node*>(this) : nullptr;
+}
+
+CXFA_NodeList* CXFA_Object::AsNodeList() {
+  return IsNodeList() ? static_cast<CXFA_NodeList*>(this) : nullptr;
+}
+
+const CXFA_Node* CXFA_Object::AsNode() const {
+  return IsNode() ? static_cast<const CXFA_Node*>(this) : nullptr;
+}
+
+const CXFA_NodeList* CXFA_Object::AsNodeList() const {
+  return IsNodeList() ? static_cast<const CXFA_NodeList*>(this) : nullptr;
+}
+
+CXFA_Node* ToNode(CXFA_Object* pObj) {
+  return pObj ? pObj->AsNode() : nullptr;
+}
+
+const CXFA_Node* ToNode(const CXFA_Object* pObj) {
+  return pObj ? pObj->AsNode() : nullptr;
 }

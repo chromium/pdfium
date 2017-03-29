@@ -4,7 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fxfa/parser/xfa_object.h"
+#include "xfa/fxfa/parser/cxfa_attachnodelist.h"
+
+#include "xfa/fxfa/parser/cxfa_node.h"
 
 CXFA_AttachNodeList::CXFA_AttachNodeList(CXFA_Document* pDocument,
                                          CXFA_Node* pAttachNode)
@@ -20,17 +22,17 @@ int32_t CXFA_AttachNodeList::GetLength() {
 
 bool CXFA_AttachNodeList::Append(CXFA_Node* pNode) {
   CXFA_Node* pParent = pNode->GetNodeItem(XFA_NODEITEM_Parent);
-  if (pParent) {
+  if (pParent)
     pParent->RemoveChild(pNode);
-  }
+
   return m_pAttachNode->InsertChild(pNode);
 }
 
 bool CXFA_AttachNodeList::Insert(CXFA_Node* pNewNode, CXFA_Node* pBeforeNode) {
   CXFA_Node* pParent = pNewNode->GetNodeItem(XFA_NODEITEM_Parent);
-  if (pParent) {
+  if (pParent)
     pParent->RemoveChild(pNewNode);
-  }
+
   return m_pAttachNode->InsertChild(pNewNode, pBeforeNode);
 }
 

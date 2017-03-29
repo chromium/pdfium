@@ -6,7 +6,7 @@
 
 #include "xfa/fxfa/parser/cxfa_bind.h"
 
-#include "xfa/fxfa/parser/xfa_object.h"
+#include "xfa/fxfa/parser/cxfa_node.h"
 
 CXFA_Bind::CXFA_Bind(CXFA_Node* pNode) : CXFA_Data(pNode) {}
 

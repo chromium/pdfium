@@ -7,7 +7,7 @@
 #include "xfa/fxfa/parser/xfa_basic_data.h"
 
 #include "xfa/fxfa/fxfa_basic.h"
-#include "xfa/fxfa/parser/xfa_object.h"
+#include "xfa/fxfa/parser/cxfa_object.h"
 
 const XFA_ELEMENTINFO g_XFAElementData[] = {
     {0x23ee3, L"ps", XFA_Element::Ps, XFA_XDPPACKET_Config,

@@ -8,7 +8,7 @@
 
 #include "core/fxcrt/fx_ext.h"
 #include "xfa/fxfa/parser/cxfa_measurement.h"
-#include "xfa/fxfa/parser/xfa_object.h"
+#include "xfa/fxfa/parser/cxfa_node.h"
 
 // Static.
 FX_ARGB CXFA_Data::ToColor(const CFX_WideStringC& wsValue) {

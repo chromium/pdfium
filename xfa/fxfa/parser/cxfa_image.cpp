@@ -6,7 +6,7 @@
 
 #include "xfa/fxfa/parser/cxfa_image.h"
 
-#include "xfa/fxfa/parser/xfa_object.h"
+#include "xfa/fxfa/parser/cxfa_node.h"
 
 CXFA_Image::CXFA_Image(CXFA_Node* pNode, bool bDefValue)
     : CXFA_Data(pNode), m_bDefValue(bDefValue) {}

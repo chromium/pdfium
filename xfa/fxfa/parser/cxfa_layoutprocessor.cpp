@@ -14,8 +14,8 @@
 #include "xfa/fxfa/parser/cxfa_layoutpagemgr.h"
 #include "xfa/fxfa/parser/cxfa_localemgr.h"
 #include "xfa/fxfa/parser/cxfa_measurement.h"
+#include "xfa/fxfa/parser/cxfa_node.h"
 #include "xfa/fxfa/parser/xfa_document_datamerger_imp.h"
-#include "xfa/fxfa/parser/xfa_object.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
 
 CXFA_LayoutProcessor::CXFA_LayoutProcessor(CXFA_Document* pDocument)

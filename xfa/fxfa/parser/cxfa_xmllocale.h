@@ -10,7 +10,6 @@
 #include <memory>
 
 #include "xfa/fgas/localization/fgas_locale.h"
-#include "xfa/fxfa/parser/xfa_object.h"
 
 class CXFA_XMLLocale : public IFX_Locale {
  public:

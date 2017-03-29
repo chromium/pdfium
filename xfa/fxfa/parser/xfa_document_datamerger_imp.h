@@ -9,7 +9,10 @@
 
 #include <vector>
 
-#include "xfa/fxfa/parser/xfa_object.h"
+#include "xfa/fxfa/fxfa_basic.h"
+
+class CXFA_Document;
+class CXFA_Node;
 
 CXFA_Node* XFA_NodeMerge_CloneOrMergeContainer(
     CXFA_Document* pDocument,

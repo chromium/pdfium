@@ -26,6 +26,7 @@
 #include "xfa/fxfa/cxfa_ffpageview.h"
 #include "xfa/fxfa/cxfa_widgetacc.h"
 #include "xfa/fxfa/parser/cxfa_corner.h"
+#include "xfa/fxfa/parser/cxfa_node.h"
 #include "xfa/fxgraphics/cfx_color.h"
 #include "xfa/fxgraphics/cfx_graphics.h"
 #include "xfa/fxgraphics/cfx_path.h"

@@ -15,9 +15,9 @@
 #include "core/fxcrt/fx_xml.h"
 #include "core/fxge/cfx_gemodule.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
+#include "xfa/fxfa/parser/cxfa_node.h"
 #include "xfa/fxfa/parser/cxfa_nodelocale.h"
 #include "xfa/fxfa/parser/cxfa_xmllocale.h"
-#include "xfa/fxfa/parser/xfa_object.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
 
 const uint8_t g_enUS_Locale[] = {

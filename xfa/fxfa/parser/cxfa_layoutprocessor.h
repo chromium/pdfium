@@ -11,7 +11,6 @@
 #include <vector>
 
 #include "core/fxcrt/fx_system.h"
-#include "xfa/fxfa/parser/xfa_object.h"
 
 class CXFA_ContainerLayoutItem;
 class CXFA_Document;

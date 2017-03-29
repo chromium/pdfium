@@ -14,8 +14,8 @@
 #include "xfa/fxfa/fxfa.h"
 #include "xfa/fxfa/fxfa_basic.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
+#include "xfa/fxfa/parser/cxfa_node.h"
 #include "xfa/fxfa/parser/cxfa_simple_parser.h"
-#include "xfa/fxfa/parser/xfa_object.h"
 
 CXFA_DataImporter::CXFA_DataImporter(CXFA_Document* pDocument)
     : m_pDocument(pDocument) {

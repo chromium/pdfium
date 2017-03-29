@@ -6,7 +6,7 @@
 
 #include "xfa/fxfa/parser/cxfa_value.h"
 
-#include "xfa/fxfa/parser/xfa_object.h"
+#include "xfa/fxfa/parser/cxfa_node.h"
 
 XFA_Element CXFA_Value::GetChildValueClassID() {
   if (!m_pNode)

@@ -13,6 +13,8 @@
 #include "xfa/fxfa/parser/cscript_layoutpseudomodel.h"
 #include "xfa/fxfa/parser/cscript_logpseudomodel.h"
 #include "xfa/fxfa/parser/cscript_signaturepseudomodel.h"
+#include "xfa/fxfa/parser/cxfa_node.h"
+#include "xfa/fxfa/parser/cxfa_nodelist.h"
 
 const XFA_SCRIPTHIERARCHY g_XFAScriptIndex[] = {
     {0, 0, 0, 2, 316},      {0, 0, 2, 2, 316},       {0, 0, 4, 2, 316},

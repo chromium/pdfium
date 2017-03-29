@@ -10,7 +10,6 @@
 #include <memory>
 #include <vector>
 
-#include "xfa/fxfa/parser/xfa_object.h"
 #include "xfa/fxfa/parser/xfa_resolvenode_rs.h"
 
 class CXFA_NodeHelper;

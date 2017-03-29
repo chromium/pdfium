@@ -6,7 +6,8 @@
 
 #include "xfa/fxfa/parser/cxfa_validate.h"
 
-#include "xfa/fxfa/parser/xfa_object.h"
+#include "xfa/fxfa/parser/cxfa_node.h"
+#include "xfa/fxfa/parser/xfa_utils.h"
 
 CXFA_Validate::CXFA_Validate(CXFA_Node* pNode) : CXFA_Data(pNode) {}
 

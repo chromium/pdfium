@@ -14,7 +14,6 @@
 #include "xfa/fgas/localization/cfx_formatstring.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_localemgr.h"
-#include "xfa/fxfa/parser/xfa_object.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
 
 CXFA_LocaleValue::CXFA_LocaleValue() {

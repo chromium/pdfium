@@ -6,7 +6,7 @@
 
 #include "xfa/fxfa/parser/cxfa_submit.h"
 
-#include "xfa/fxfa/parser/xfa_object.h"
+#include "xfa/fxfa/parser/cxfa_node.h"
 
 CXFA_Submit::CXFA_Submit(CXFA_Node* pNode) : CXFA_Data(pNode) {}
 

@@ -9,7 +9,6 @@
 #include "fxjs/cfxjse_arguments.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_localemgr.h"
-#include "xfa/fxfa/parser/xfa_object.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
 
 CScript_LogPseudoModel::CScript_LogPseudoModel(CXFA_Document* pDocument)

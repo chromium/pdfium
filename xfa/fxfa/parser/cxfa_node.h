@@ -1,37 +1,25 @@
-// Copyright 2014 PDFium Authors. All rights reserved.
+// Copyright 2017 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXFA_PARSER_XFA_OBJECT_H_
-#define XFA_FXFA_PARSER_XFA_OBJECT_H_
+#ifndef XFA_FXFA_PARSER_CXFA_NODE_H_
+#define XFA_FXFA_PARSER_CXFA_NODE_H_
 
 #include <map>
 #include <vector>
 
-#include "core/fxcrt/fx_basic.h"
-#include "fxjs/cfxjse_arguments.h"
-#include "xfa/fde/xml/fde_xml.h"
-#include "xfa/fxfa/parser/xfa_utils.h"
+#include "core/fxcrt/fx_string.h"
+#include "xfa/fxfa/parser/cxfa_object.h"
 
-class CXFA_Document;
-class CXFA_Node;
-class CXFA_NodeList;
+class CFDE_XMLNode;
+class CFXJSE_Argument;
+class CXFA_WidgetData;
 
-enum class XFA_ObjectType {
-  Object,
-  List,
-  NodeList,
-  Node,
-  NodeC,
-  NodeV,
-  ModelNode,
-  TextNode,
-  ContainerNode,
-  ContentNode,
-  VariablesThis
-};
+#define XFA_NODEFILTER_Children 0x01
+#define XFA_NODEFILTER_Properties 0x02
+#define XFA_NODEFILTER_OneOfProperty 0x04
 
 enum XFA_NodeFlag {
   XFA_NodeFlag_None = 0,
@@ -46,83 +34,17 @@ enum XFA_NodeFlag {
   XFA_NodeFlag_LayoutGeneratedNode = 1 << 8
 };
 
-class CXFA_Object : public CFXJSE_HostObject {
- public:
-  CXFA_Object(CXFA_Document* pDocument,
-              XFA_ObjectType objectType,
-              XFA_Element eType,
-              const CFX_WideStringC& elementName);
-  ~CXFA_Object() override;
-
-  CXFA_Document* GetDocument() const { return m_pDocument; }
-  XFA_ObjectType GetObjectType() const { return m_objectType; }
-
-  bool IsNode() const {
-    return m_objectType == XFA_ObjectType::Node ||
-           m_objectType == XFA_ObjectType::NodeC ||
-           m_objectType == XFA_ObjectType::NodeV ||
-           m_objectType == XFA_ObjectType::ModelNode ||
-           m_objectType == XFA_ObjectType::TextNode ||
-           m_objectType == XFA_ObjectType::ContainerNode ||
-           m_objectType == XFA_ObjectType::ContentNode ||
-           m_objectType == XFA_ObjectType::VariablesThis;
-  }
-  bool IsNodeList() const { return m_objectType == XFA_ObjectType::NodeList; }
-  bool IsContentNode() const {
-    return m_objectType == XFA_ObjectType::ContentNode;
-  }
-  bool IsContainerNode() const {
-    return m_objectType == XFA_ObjectType::ContainerNode;
-  }
-  bool IsModelNode() const { return m_objectType == XFA_ObjectType::ModelNode; }
-  bool IsNodeV() const { return m_objectType == XFA_ObjectType::NodeV; }
-  bool IsVariablesThis() const {
-    return m_objectType == XFA_ObjectType::VariablesThis;
-  }
-
-  CXFA_Node* AsNode();
-  CXFA_NodeList* AsNodeList();
-
-  const CXFA_Node* AsNode() const;
-  const CXFA_NodeList* AsNodeList() const;
-
-  XFA_Element GetElementType() const;
-  CFX_WideStringC GetClassName() const;
-  uint32_t GetClassHashCode() const;
-  void Script_ObjectClass_ClassName(CFXJSE_Value* pValue,
-                                    bool bSetting,
-                                    XFA_ATTRIBUTE eAttribute);
-
-  void ThrowInvalidPropertyException() const;
-  void ThrowArgumentMismatchException() const;
-  void ThrowIndexOutOfBoundsException() const;
-  void ThrowParamCountMismatchException(const CFX_WideString& method) const;
-
- protected:
-  void ThrowException(const wchar_t* str, ...) const;
-
-  CXFA_Document* const m_pDocument;
-  const XFA_ObjectType m_objectType;
-  const XFA_Element m_elementType;
-
-  const uint32_t m_elementNameHash;
-  const CFX_WideStringC m_elementName;
+enum XFA_SOM_MESSAGETYPE {
+  XFA_SOM_ValidationMessage,
+  XFA_SOM_FormatMessage,
+  XFA_SOM_MandatoryMessage
 };
 
-#define XFA_NODEFILTER_Children 0x01
-#define XFA_NODEFILTER_Properties 0x02
-#define XFA_NODEFILTER_OneOfProperty 0x04
-#define XFA_CLONEFLAG_Content 0x01
 enum XFA_NODEITEM {
   XFA_NODEITEM_Parent,
   XFA_NODEITEM_FirstChild,
   XFA_NODEITEM_NextSibling,
   XFA_NODEITEM_PrevSibling,
-};
-enum XFA_SOM_MESSAGETYPE {
-  XFA_SOM_ValidationMessage,
-  XFA_SOM_FormatMessage,
-  XFA_SOM_MandatoryMessage
 };
 
 typedef void (*PD_CALLBACK_FREEDATA)(void* pData);
@@ -146,10 +68,6 @@ struct XFA_MAPMODULEDATA {
   std::map<void*, void*> m_ValueMap;
   std::map<void*, XFA_MAPDATABLOCK*> m_BufferMap;
 };
-
-#define XFA_CalcRefCount (void*)(uintptr_t) FXBSTR_ID('X', 'F', 'A', 'R')
-#define XFA_CalcData (void*)(uintptr_t) FXBSTR_ID('X', 'F', 'A', 'C')
-#define XFA_LAYOUTITEMKEY (void*)(uintptr_t) FXBSTR_ID('L', 'Y', 'I', 'M')
 
 class CXFA_Node : public CXFA_Object {
  public:
@@ -687,132 +605,4 @@ class CXFA_Node : public CXFA_Object {
   void ThrowTooManyOccurancesException(const CFX_WideString& obj) const;
 };
 
-class CXFA_ThisProxy : public CXFA_Object {
- public:
-  CXFA_ThisProxy(CXFA_Node* pThisNode, CXFA_Node* pScriptNode);
-  ~CXFA_ThisProxy() override;
-
-  CXFA_Node* GetThisNode() const;
-  CXFA_Node* GetScriptNode() const;
-
- private:
-  CXFA_Node* m_pThisNode;
-  CXFA_Node* m_pScriptNode;
-};
-
-class CXFA_NodeList : public CXFA_Object {
- public:
-  explicit CXFA_NodeList(CXFA_Document* pDocument);
-  ~CXFA_NodeList() override;
-
-  CXFA_Node* NamedItem(const CFX_WideStringC& wsName);
-  virtual int32_t GetLength() = 0;
-  virtual bool Append(CXFA_Node* pNode) = 0;
-  virtual bool Insert(CXFA_Node* pNewNode, CXFA_Node* pBeforeNode) = 0;
-  virtual bool Remove(CXFA_Node* pNode) = 0;
-  virtual CXFA_Node* Item(int32_t iIndex) = 0;
-
-  void Script_ListClass_Append(CFXJSE_Arguments* pArguments);
-  void Script_ListClass_Insert(CFXJSE_Arguments* pArguments);
-  void Script_ListClass_Remove(CFXJSE_Arguments* pArguments);
-  void Script_ListClass_Item(CFXJSE_Arguments* pArguments);
-
-  void Script_TreelistClass_NamedItem(CFXJSE_Arguments* pArguments);
-  void Script_ListClass_Length(CFXJSE_Value* pValue,
-                               bool bSetting,
-                               XFA_ATTRIBUTE eAttribute);
-};
-
-class CXFA_ArrayNodeList : public CXFA_NodeList {
- public:
-  explicit CXFA_ArrayNodeList(CXFA_Document* pDocument);
-  ~CXFA_ArrayNodeList() override;
-
-  // From CXFA_NodeList.
-  int32_t GetLength() override;
-  bool Append(CXFA_Node* pNode) override;
-  bool Insert(CXFA_Node* pNewNode, CXFA_Node* pBeforeNode) override;
-  bool Remove(CXFA_Node* pNode) override;
-  CXFA_Node* Item(int32_t iIndex) override;
-
-  void SetArrayNodeList(const std::vector<CXFA_Node*>& srcArray);
-
- private:
-  std::vector<CXFA_Node*> m_array;
-};
-
-class CXFA_AttachNodeList : public CXFA_NodeList {
- public:
-  CXFA_AttachNodeList(CXFA_Document* pDocument, CXFA_Node* pAttachNode);
-
-  // From CXFA_NodeList.
-  int32_t GetLength() override;
-  bool Append(CXFA_Node* pNode) override;
-  bool Insert(CXFA_Node* pNewNode, CXFA_Node* pBeforeNode) override;
-  bool Remove(CXFA_Node* pNode) override;
-  CXFA_Node* Item(int32_t iIndex) override;
-
- private:
-  CXFA_Node* m_pAttachNode;
-};
-class CXFA_TraverseStrategy_XFAContainerNode {
- public:
-  static CXFA_Node* GetFirstChild(CXFA_Node* pTemplateNode,
-                                  void* pUserData = nullptr) {
-    return pTemplateNode->GetNodeItem(XFA_NODEITEM_FirstChild,
-                                      XFA_ObjectType::ContainerNode);
-  }
-  static CXFA_Node* GetNextSibling(CXFA_Node* pTemplateNode,
-                                   void* pUserData = nullptr) {
-    return pTemplateNode->GetNodeItem(XFA_NODEITEM_NextSibling,
-                                      XFA_ObjectType::ContainerNode);
-  }
-  static CXFA_Node* GetParent(CXFA_Node* pTemplateNode,
-                              void* pUserData = nullptr) {
-    return pTemplateNode->GetNodeItem(XFA_NODEITEM_Parent,
-                                      XFA_ObjectType::ContainerNode);
-  }
-};
-typedef CXFA_NodeIteratorTemplate<CXFA_Node,
-                                  CXFA_TraverseStrategy_XFAContainerNode>
-    CXFA_ContainerIterator;
-class CXFA_TraverseStrategy_XFANode {
- public:
-  static inline CXFA_Node* GetFirstChild(CXFA_Node* pTemplateNode) {
-    return pTemplateNode->GetNodeItem(XFA_NODEITEM_FirstChild);
-  }
-  static inline CXFA_Node* GetNextSibling(CXFA_Node* pTemplateNode) {
-    return pTemplateNode->GetNodeItem(XFA_NODEITEM_NextSibling);
-  }
-  static inline CXFA_Node* GetParent(CXFA_Node* pTemplateNode) {
-    return pTemplateNode->GetNodeItem(XFA_NODEITEM_Parent);
-  }
-};
-typedef CXFA_NodeIteratorTemplate<CXFA_Node, CXFA_TraverseStrategy_XFANode>
-    CXFA_NodeIterator;
-
-inline CXFA_Node* CXFA_Object::AsNode() {
-  return IsNode() ? static_cast<CXFA_Node*>(this) : nullptr;
-}
-
-inline CXFA_NodeList* CXFA_Object::AsNodeList() {
-  return IsNodeList() ? static_cast<CXFA_NodeList*>(this) : nullptr;
-}
-
-inline const CXFA_Node* CXFA_Object::AsNode() const {
-  return IsNode() ? static_cast<const CXFA_Node*>(this) : nullptr;
-}
-
-inline const CXFA_NodeList* CXFA_Object::AsNodeList() const {
-  return IsNodeList() ? static_cast<const CXFA_NodeList*>(this) : nullptr;
-}
-
-inline CXFA_Node* ToNode(CXFA_Object* pObj) {
-  return pObj ? pObj->AsNode() : nullptr;
-}
-
-inline const CXFA_Node* ToNode(const CXFA_Object* pObj) {
-  return pObj ? pObj->AsNode() : nullptr;
-}
-
-#endif  // XFA_FXFA_PARSER_XFA_OBJECT_H_
+#endif  // XFA_FXFA_PARSER_CXFA_NODE_H_

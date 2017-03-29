@@ -4,10 +4,11 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "xfa/fxfa/parser/cxfa_arraynodelist.h"
+
 #include <vector>
 
 #include "third_party/base/stl_util.h"
-#include "xfa/fxfa/parser/xfa_object.h"
 
 CXFA_ArrayNodeList::CXFA_ArrayNodeList(CXFA_Document* pDocument)
     : CXFA_NodeList(pDocument) {}

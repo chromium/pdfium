@@ -21,7 +21,6 @@
 #include "xfa/fxfa/parser/cxfa_margin.h"
 #include "xfa/fxfa/parser/cxfa_para.h"
 #include "xfa/fxfa/parser/cxfa_validate.h"
-#include "xfa/fxfa/parser/xfa_object.h"
 
 enum XFA_CHECKSTATE {
   XFA_CHECKSTATE_On = 0,

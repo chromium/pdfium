@@ -36,6 +36,8 @@
 #include "xfa/fxfa/parser/cxfa_scriptcontext.h"
 #include "xfa/fxfa/parser/xfa_resolvenode_rs.h"
 
+#define XFA_CalcRefCount (void*)(uintptr_t) FXBSTR_ID('X', 'F', 'A', 'R')
+
 const XFA_ATTRIBUTEENUM gs_EventActivity[] = {
     XFA_ATTRIBUTEENUM_Click,      XFA_ATTRIBUTEENUM_Change,
     XFA_ATTRIBUTEENUM_DocClose,   XFA_ATTRIBUTEENUM_DocReady,

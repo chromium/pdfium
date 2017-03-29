@@ -6,7 +6,7 @@
 
 #include "xfa/fxfa/parser/cxfa_line.h"
 
-#include "xfa/fxfa/parser/xfa_object.h"
+#include "xfa/fxfa/parser/cxfa_node.h"
 
 int32_t CXFA_Line::GetHand() {
   return m_pNode->GetEnum(XFA_ATTRIBUTE_Hand);

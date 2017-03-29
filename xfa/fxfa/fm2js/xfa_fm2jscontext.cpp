@@ -21,8 +21,10 @@
 #include "xfa/fxfa/fm2js/xfa_program.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_localevalue.h"
+#include "xfa/fxfa/parser/cxfa_node.h"
 #include "xfa/fxfa/parser/cxfa_scriptcontext.h"
 #include "xfa/fxfa/parser/cxfa_timezoneprovider.h"
+#include "xfa/fxfa/parser/xfa_utils.h"
 
 namespace {
 

@@ -7,7 +7,7 @@
 #ifndef XFA_FXFA_CXFA_WIDGETACCITERATOR_H_
 #define XFA_FXFA_CXFA_WIDGETACCITERATOR_H_
 
-#include "xfa/fxfa/parser/xfa_object.h"
+#include "xfa/fxfa/parser/cxfa_traversestrategy_xfacontainernode.h"
 
 class CXFA_Node;
 class CXFA_WidgetAcc;

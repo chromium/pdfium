@@ -7,8 +7,9 @@
 #ifndef XFA_FXFA_PARSER_CSCRIPT_LOGPSEUDOMODEL_H_
 #define XFA_FXFA_PARSER_CSCRIPT_LOGPSEUDOMODEL_H_
 
-#include "fxjs/cfxjse_arguments.h"
-#include "xfa/fxfa/parser/xfa_object.h"
+#include "xfa/fxfa/parser/cxfa_object.h"
+
+class CFXJSE_Arguments;
 
 class CScript_LogPseudoModel : public CXFA_Object {
  public:
