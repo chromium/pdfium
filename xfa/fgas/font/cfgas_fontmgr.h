@@ -18,7 +18,6 @@
 #include "core/fxge/cfx_fontmapper.h"
 #include "core/fxge/fx_freetype.h"
 #include "core/fxge/ifx_systemfontinfo.h"
-#include "freetype/fttypes.h"
 #include "xfa/fgas/crt/ifgas_stream.h"
 
 #define FX_FONTSTYLE_Normal 0x00
