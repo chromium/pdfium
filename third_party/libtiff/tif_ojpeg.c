@@ -253,6 +253,7 @@ typedef enum {
 
 typedef struct {
 	TIFF* tif;
+	int decoder_ok;
 	#ifndef LIBJPEG_ENCAP_EXTERNAL
 	JMP_BUF exit_jmpbuf;
 	#endif
@@ -731,6 +732,7 @@ OJPEGPreDecode(TIFF* tif, uint16 s)
 		}
 		sp->write_curstrile++;
 	}
+	sp->decoder_ok = 1;
 	return(1);
 }
 
@@ -793,8 +795,14 @@ OJPEGPreDecodeSkipScanlines(TIFF* tif)
 static int
 OJPEGDecode(TIFF* tif, uint8* buf, tmsize_t cc, uint16 s)
 {
+	static const char module[]="OJPEGDecode";
 	OJPEGState* sp=(OJPEGState*)tif->tif_data;
 	(void)s;
+	if( !sp->decoder_ok )
+	{
+		TIFFErrorExt(tif->tif_clientdata,module,"Cannot decode: decoder not correctly initialized");
+		return 0;
+	}
 	if (sp->libjpeg_jpeg_query_style==0)
 	{
 		if (OJPEGDecodeRaw(tif,buf,cc)==0)

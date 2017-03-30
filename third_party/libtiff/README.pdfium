@@ -24,3 +24,4 @@ Local Modifications:
 0017-safe_skews_in_gtTileContig.patch: return error if to/from skews overflow from int32.
 0018-fix-leak-in-PredictorSetupDecode.patch: call tif->tif_cleanup if the setup fails.
 0019-oom-TIFFReadDirEntryArray.patch: Try to avoid out-of-memory in tif_dirread.c.
+0020-upstream-security-fixes.patch: patch our copy with several upstream security fixes.
