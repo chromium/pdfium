@@ -29,7 +29,6 @@ class CJBig2_SDDProc {
                                     std::vector<JBig2ArithCtx>* grContext,
                                     IFX_Pause* pPause);
 
- public:
   bool SDHUFF;
   bool SDREFAGG;
   uint32_t SDNUMINSYMS;
