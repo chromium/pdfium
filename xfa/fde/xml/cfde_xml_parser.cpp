@@ -4,11 +4,11 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fxfa/parser/cxfa_xml_parser.h"
+#include "xfa/fde/xml/cfde_xml_parser.h"
 
 #include "third_party/base/ptr_util.h"
 
-CXFA_XMLParser::CXFA_XMLParser(CFDE_XMLNode* pParent,
+CFDE_XMLParser::CFDE_XMLParser(CFDE_XMLNode* pParent,
                                const CFX_RetainPtr<IFGAS_Stream>& pStream)
     : m_nElementStart(0),
       m_dwCheckStatus(0),
@@ -23,9 +23,9 @@ CXFA_XMLParser::CXFA_XMLParser(CFDE_XMLNode* pParent,
   m_pParser->Init(m_pStream, 32 * 1024, 1024 * 1024);
 }
 
-CXFA_XMLParser::~CXFA_XMLParser() {}
+CFDE_XMLParser::~CFDE_XMLParser() {}
 
-int32_t CXFA_XMLParser::DoParser(IFX_Pause* pPause) {
+int32_t CFDE_XMLParser::DoParser(IFX_Pause* pPause) {
   if (m_syntaxParserResult == FDE_XmlSyntaxResult::Error)
     return -1;
   if (m_syntaxParserResult == FDE_XmlSyntaxResult::EndOfString)

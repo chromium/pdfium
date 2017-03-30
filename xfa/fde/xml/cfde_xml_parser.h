@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXFA_PARSER_CXFA_XML_PARSER_H_
-#define XFA_FXFA_PARSER_CXFA_XML_PARSER_H_
+#ifndef XFA_FDE_XML_CFDE_XML_PARSER_H_
+#define XFA_FDE_XML_CFDE_XML_PARSER_H_
 
 #include <memory>
 #include <stack>
@@ -15,14 +15,13 @@
 class IFGAS_Stream;
 class IFX_Pause;
 
-class CXFA_XMLParser : public IFDE_XMLParser {
+class CFDE_XMLParser {
  public:
-  CXFA_XMLParser(CFDE_XMLNode* pParent,
+  CFDE_XMLParser(CFDE_XMLNode* pParent,
                  const CFX_RetainPtr<IFGAS_Stream>& pStream);
-  ~CXFA_XMLParser() override;
+  ~CFDE_XMLParser();
 
-  // IFDE_XMLParser
-  int32_t DoParser(IFX_Pause* pPause) override;
+  int32_t DoParser(IFX_Pause* pPause);
 
   FX_FILESIZE m_nStart[2];
   size_t m_nSize[2];
@@ -41,4 +40,4 @@ class CXFA_XMLParser : public IFDE_XMLParser {
   FDE_XmlSyntaxResult m_syntaxParserResult;
 };
 
-#endif  // XFA_FXFA_PARSER_CXFA_XML_PARSER_H_
+#endif  // XFA_FDE_XML_CFDE_XML_PARSER_H_

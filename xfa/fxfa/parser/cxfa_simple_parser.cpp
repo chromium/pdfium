@@ -11,12 +11,12 @@
 #include "core/fxcrt/cfx_checksumcontext.h"
 #include "core/fxcrt/fx_ext.h"
 #include "third_party/base/ptr_util.h"
+#include "xfa/fde/xml/cfde_xml_parser.h"
 #include "xfa/fgas/crt/fgas_codepage.h"
 #include "xfa/fxfa/fxfa.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
 #include "xfa/fxfa/parser/cxfa_widetextread.h"
-#include "xfa/fxfa/parser/cxfa_xml_parser.h"
 #include "xfa/fxfa/parser/xfa_basic_data.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
 
@@ -298,7 +298,7 @@ int32_t CXFA_SimpleParser::StartParse(
   }
   m_pXMLDoc = pdfium::MakeUnique<CFDE_XMLDoc>();
   auto pNewParser =
-      pdfium::MakeUnique<CXFA_XMLParser>(m_pXMLDoc->GetRoot(), m_pStream);
+      pdfium::MakeUnique<CFDE_XMLParser>(m_pXMLDoc->GetRoot(), m_pStream);
   m_pXMLParser = pNewParser.get();
   if (!m_pXMLDoc->LoadXML(std::move(pNewParser)))
     return XFA_PARSESTATUS_StatusErr;
@@ -334,7 +334,7 @@ int32_t CXFA_SimpleParser::ParseXMLData(const CFX_WideString& wsXML,
   m_pXMLDoc = pdfium::MakeUnique<CFDE_XMLDoc>();
   auto pStream = pdfium::MakeRetain<CXFA_WideTextRead>(wsXML);
   auto pParser =
-      pdfium::MakeUnique<CXFA_XMLParser>(m_pXMLDoc->GetRoot(), pStream);
+      pdfium::MakeUnique<CFDE_XMLParser>(m_pXMLDoc->GetRoot(), pStream);
   pParser->m_dwCheckStatus = 0x03;
   if (!m_pXMLDoc->LoadXML(std::move(pParser)))
     return XFA_PARSESTATUS_StatusErr;

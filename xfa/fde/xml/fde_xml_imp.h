@@ -22,8 +22,8 @@ class CFDE_XMLElement;
 class CFDE_XMLText;
 class CFDE_XMLDoc;
 class CFDE_XMLDOMParser;
+class CFDE_XMLParser;
 class CFDE_XMLSyntaxParser;
-class IFDE_XMLParser;
 
 class CFDE_XMLNode {
  public:
@@ -191,25 +191,18 @@ class CFDE_XMLDoc {
   CFDE_XMLDoc();
   ~CFDE_XMLDoc();
 
-  bool LoadXML(std::unique_ptr<IFDE_XMLParser> pXMLParser);
+  bool LoadXML(std::unique_ptr<CFDE_XMLParser> pXMLParser);
   int32_t DoLoad(IFX_Pause* pPause = nullptr);
   void CloseXML();
   CFDE_XMLNode* GetRoot() const { return m_pRoot.get(); }
-  void SaveXML(CFX_RetainPtr<IFGAS_Stream>& pXMLStream, bool bSaveBOM = true);
   void SaveXMLNode(const CFX_RetainPtr<IFGAS_Stream>& pXMLStream,
                    CFDE_XMLNode* pNode);
 
  private:
   int32_t m_iStatus;
   std::unique_ptr<CFDE_XMLNode> m_pRoot;
-  std::unique_ptr<IFDE_XMLParser> m_pXMLParser;
+  std::unique_ptr<CFDE_XMLParser> m_pXMLParser;
   CFX_RetainPtr<IFGAS_Stream> m_pStream;
-};
-
-class IFDE_XMLParser {
- public:
-  virtual ~IFDE_XMLParser() {}
-  virtual int32_t DoParser(IFX_Pause* pPause) = 0;
 };
 
 class CFDE_BlockBuffer {

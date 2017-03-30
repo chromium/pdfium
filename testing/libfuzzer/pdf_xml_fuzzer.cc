@@ -10,8 +10,8 @@
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/fx_system.h"
 #include "third_party/base/ptr_util.h"
+#include "xfa/fde/xml/cfde_xml_parser.h"
 #include "xfa/fde/xml/fde_xml_imp.h"
-#include "xfa/fxfa/parser/cxfa_xml_parser.h"
 #include "xfa/fxfa/parser/cxfa_widetextread.h"
 
 namespace {
@@ -57,7 +57,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
     return 0;
 
   auto doc = pdfium::MakeUnique<CFDE_XMLDoc>();
-  if (!doc->LoadXML(pdfium::MakeUnique<CXFA_XMLParser>(doc->GetRoot(), stream)))
+  if (!doc->LoadXML(pdfium::MakeUnique<CFDE_XMLParser>(doc->GetRoot(), stream)))
     return 0;
 
   if (doc->DoLoad(nullptr) < 100)

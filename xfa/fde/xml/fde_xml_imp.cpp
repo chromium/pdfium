@@ -13,6 +13,7 @@
 #include "core/fxcrt/fx_safe_types.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
+#include "xfa/fde/xml/cfde_xml_parser.h"
 #include "xfa/fgas/crt/fgas_codepage.h"
 
 namespace {
@@ -917,7 +918,7 @@ CFDE_XMLDoc::CFDE_XMLDoc()
 
 CFDE_XMLDoc::~CFDE_XMLDoc() {}
 
-bool CFDE_XMLDoc::LoadXML(std::unique_ptr<IFDE_XMLParser> pXMLParser) {
+bool CFDE_XMLDoc::LoadXML(std::unique_ptr<CFDE_XMLParser> pXMLParser) {
   if (!pXMLParser)
     return false;
 
@@ -1049,34 +1050,6 @@ void CFDE_XMLDoc::SaveXMLNode(const CFX_RetainPtr<IFGAS_Stream>& pXMLStream,
       break;
     default:
       break;
-  }
-}
-
-void CFDE_XMLDoc::SaveXML(CFX_RetainPtr<IFGAS_Stream>& pXMLStream,
-                          bool bSaveBOM) {
-  if (!pXMLStream || pXMLStream == m_pStream) {
-    m_pStream->Seek(FX_STREAMSEEK_Begin, 0);
-    pXMLStream = m_pStream;
-  }
-  ASSERT((pXMLStream->GetAccessModes() & FX_STREAMACCESS_Text) != 0);
-  ASSERT((pXMLStream->GetAccessModes() & FX_STREAMACCESS_Write) != 0);
-  uint16_t wCodePage = pXMLStream->GetCodePage();
-  if (wCodePage != FX_CODEPAGE_UTF16LE && wCodePage != FX_CODEPAGE_UTF16BE &&
-      wCodePage != FX_CODEPAGE_UTF8) {
-    wCodePage = FX_CODEPAGE_UTF8;
-    pXMLStream->SetCodePage(wCodePage);
-  }
-  if (bSaveBOM) {
-    pXMLStream->WriteString(L"\xFEFF", 1);
-  }
-  CFDE_XMLNode* pNode = m_pRoot->m_pChild;
-  while (pNode) {
-    SaveXMLNode(pXMLStream, static_cast<CFDE_XMLNode*>(pNode));
-    pNode = pNode->m_pNext;
-  }
-  if (pXMLStream == m_pStream) {
-    int32_t iPos = pXMLStream->GetPosition();
-    pXMLStream->SetLength(iPos);
   }
 }
 
