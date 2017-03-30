@@ -4,12 +4,12 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fde/fde_render.h"
+#include "xfa/fde/cfde_rendercontext.h"
 
 #include "third_party/base/ptr_util.h"
+#include "xfa/fde/cfde_brush.h"
+#include "xfa/fde/cfde_renderdevice.h"
 #include "xfa/fde/cfde_txtedttextset.h"
-#include "xfa/fde/fde_gedevice.h"
-#include "xfa/fde/fde_object.h"
 
 #define FDE_PATHRENDER_Stroke 1
 #define FDE_PATHRENDER_Fill 2
@@ -126,4 +126,3 @@ void CFDE_RenderContext::RenderText(CFDE_TxtEdtTextSet* pTextSet,
   m_pRenderDevice->DrawString(m_pBrush.get(), pFont, m_CharPos.data(), iCount,
                               fFontSize, &m_Transform);
 }
-

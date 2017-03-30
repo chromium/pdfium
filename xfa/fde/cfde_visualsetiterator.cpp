@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fde/fde_iterator.h"
+#include "xfa/fde/cfde_visualsetiterator.h"
 
 #include "xfa/fde/cfde_txtedtpage.h"
 

@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FDE_FDE_VISUALSET_H_
-#define XFA_FDE_FDE_VISUALSET_H_
+#ifndef XFA_FDE_IFDE_VISUALSET_H_
+#define XFA_FDE_IFDE_VISUALSET_H_
 
 #include <vector>
 
@@ -14,7 +14,6 @@
 #include "core/fxcrt/fx_system.h"
 #include "core/fxge/fx_dib.h"
 #include "xfa/fde/cfde_path.h"
-#include "xfa/fde/fde_object.h"
 #include "xfa/fgas/font/cfgas_fontmgr.h"
 
 class FXTEXT_CHARPOS;
@@ -47,4 +46,4 @@ class IFDE_VisualSet {
   virtual CFX_RectF GetRect(const FDE_TEXTEDITPIECE& hVisualObj) = 0;
 };
 
-#endif  // XFA_FDE_FDE_VISUALSET_H_
+#endif  // XFA_FDE_IFDE_VISUALSET_H_

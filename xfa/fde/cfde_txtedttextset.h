@@ -9,7 +9,7 @@
 
 #include <vector>
 
-#include "xfa/fde/fde_visualset.h"
+#include "xfa/fde/ifde_visualset.h"
 
 class CFDE_TxtEdtPage;
 

@@ -13,10 +13,10 @@
 
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
+#include "xfa/fde/cfde_rendercontext.h"
+#include "xfa/fde/cfde_renderdevice.h"
 #include "xfa/fde/cfde_txtedtengine.h"
 #include "xfa/fde/cfde_txtedtpage.h"
-#include "xfa/fde/fde_gedevice.h"
-#include "xfa/fde/fde_render.h"
 #include "xfa/fgas/font/cfgas_gefont.h"
 #include "xfa/fwl/cfwl_app.h"
 #include "xfa/fwl/cfwl_caret.h"

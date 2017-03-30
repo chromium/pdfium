@@ -7,7 +7,6 @@
 #include "xfa/fde/cfde_path.h"
 
 #include "third_party/base/stl_util.h"
-#include "xfa/fde/fde_object.h"
 
 void CFDE_Path::CloseFigure() {
   m_Path.ClosePath();

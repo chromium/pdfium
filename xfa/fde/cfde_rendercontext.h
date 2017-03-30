@@ -4,16 +4,16 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FDE_FDE_RENDER_H_
-#define XFA_FDE_FDE_RENDER_H_
+#ifndef XFA_FDE_CFDE_RENDERCONTEXT_H_
+#define XFA_FDE_CFDE_RENDERCONTEXT_H_
 
 #include <memory>
 #include <vector>
 
 #include "core/fxcrt/fx_coordinates.h"
-#include "xfa/fde/fde_gedevice.h"
-#include "xfa/fde/fde_iterator.h"
-#include "xfa/fde/fde_visualset.h"
+#include "xfa/fde/cfde_renderdevice.h"
+#include "xfa/fde/cfde_visualsetiterator.h"
+#include "xfa/fde/ifde_visualset.h"
 
 class CFDE_RenderDevice;
 class CFDE_TxtEdtTextSet;
@@ -47,4 +47,4 @@ class CFDE_RenderContext {
   std::unique_ptr<CFDE_VisualSetIterator> m_pIterator;
 };
 
-#endif  // XFA_FDE_FDE_RENDER_H_
+#endif  // XFA_FDE_CFDE_RENDERCONTEXT_H_

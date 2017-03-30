@@ -12,7 +12,7 @@
 
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
-#include "xfa/fde/fde_render.h"
+#include "xfa/fde/cfde_rendercontext.h"
 #include "xfa/fxfa/app/xfa_ffcheckbutton.h"
 #include "xfa/fxfa/app/xfa_ffchoicelist.h"
 #include "xfa/fxfa/app/xfa_fffield.h"

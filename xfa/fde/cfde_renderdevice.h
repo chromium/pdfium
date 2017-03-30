@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FDE_FDE_GEDEVICE_H_
-#define XFA_FDE_FDE_GEDEVICE_H_
+#ifndef XFA_FDE_CFDE_RENDERDEVICE_H_
+#define XFA_FDE_CFDE_RENDERDEVICE_H_
 
 #include <vector>
 
@@ -124,4 +124,4 @@ class CFDE_RenderDevice {
   int32_t m_iCharCount;
 };
 
-#endif  // XFA_FDE_FDE_GEDEVICE_H_
+#endif  // XFA_FDE_CFDE_RENDERDEVICE_H_

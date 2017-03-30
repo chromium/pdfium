@@ -12,13 +12,16 @@
 #include "core/fxcrt/fx_system.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
+#include "xfa/fde/cfde_brush.h"
 #include "xfa/fde/cfde_path.h"
-#include "xfa/fde/fde_gedevice.h"
-#include "xfa/fde/fde_object.h"
+#include "xfa/fde/cfde_pen.h"
+#include "xfa/fde/cfde_renderdevice.h"
 #include "xfa/fgas/layout/fgas_textbreak.h"
 
 FDE_TTOPIECE::FDE_TTOPIECE() = default;
+
 FDE_TTOPIECE::FDE_TTOPIECE(const FDE_TTOPIECE& that) = default;
+
 FDE_TTOPIECE::~FDE_TTOPIECE() = default;
 
 CFDE_TextOut::CFDE_TextOut()

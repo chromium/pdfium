@@ -15,7 +15,6 @@
 #include "core/fxge/cfx_fxgedevice.h"
 #include "core/fxge/cfx_renderdevice.h"
 #include "core/fxge/fx_dib.h"
-#include "xfa/fde/fde_object.h"
 #include "xfa/fgas/font/cfgas_fontmgr.h"
 
 #define FDE_TTOSTYLE_Underline 0x0001
@@ -38,6 +37,7 @@
 #define FDE_TTOALIGNMENT_BottomRight 10
 #define FDE_TTOALIGNMENT_BottomAuto 11
 
+class CFDE_Pen;
 class CFDE_RenderDevice;
 class CFX_RenderDevice;
 class CFX_TxtBreak;

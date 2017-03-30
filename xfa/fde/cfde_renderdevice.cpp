@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fde/fde_gedevice.h"
+#include "xfa/fde/cfde_renderdevice.h"
 
 #include <algorithm>
 #include <memory>
@@ -13,8 +13,9 @@
 #include "core/fxge/cfx_graphstatedata.h"
 #include "core/fxge/cfx_renderdevice.h"
 #include "core/fxge/cfx_substfont.h"
+#include "xfa/fde/cfde_brush.h"
 #include "xfa/fde/cfde_path.h"
-#include "xfa/fde/fde_object.h"
+#include "xfa/fde/cfde_pen.h"
 #include "xfa/fgas/font/cfgas_fontmgr.h"
 #include "xfa/fgas/font/cfgas_gefont.h"
 
@@ -352,4 +353,3 @@ bool CFDE_RenderDevice::FillPath(CFDE_Brush* pBrush,
   return m_pDevice->DrawPath(&pGePath->m_Path, pMatrix, nullptr,
                              pBrush->GetColor(), 0, FXFILL_WINDING);
 }
-

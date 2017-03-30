@@ -4,12 +4,12 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FDE_FDE_ITERATOR_H_
-#define XFA_FDE_FDE_ITERATOR_H_
+#ifndef XFA_FDE_CFDE_VISUALSETITERATOR_H_
+#define XFA_FDE_CFDE_VISUALSETITERATOR_H_
 
 #include <stack>
 
-#include "xfa/fde/fde_visualset.h"
+#include "xfa/fde/ifde_visualset.h"
 
 class CFDE_TxtEdtPage;
 
@@ -37,4 +37,4 @@ class CFDE_VisualSetIterator {
   std::stack<FDE_CANVASITEM> m_CanvasStack;
 };
 
-#endif  // XFA_FDE_FDE_ITERATOR_H_
+#endif  // XFA_FDE_CFDE_VISUALSETITERATOR_H_
