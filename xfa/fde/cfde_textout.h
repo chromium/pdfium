@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FDE_TTO_FDE_TEXTOUT_H_
-#define XFA_FDE_TTO_FDE_TEXTOUT_H_
+#ifndef XFA_FDE_CFDE_TEXTOUT_H_
+#define XFA_FDE_CFDE_TEXTOUT_H_
 
 #include <deque>
 #include <memory>
@@ -108,7 +108,7 @@ class CFDE_TextOut {
                      const CFX_RectF& rect);
   int32_t GetTotalLines();
 
- protected:
+ private:
   void CalcTextSize(const wchar_t* pwsStr, int32_t iLength, CFX_RectF& rect);
   bool RetrieveLineWidth(CFX_BreakType dwBreakStatus,
                          float& fStartPos,
@@ -172,4 +172,4 @@ class CFDE_TextOut {
   std::vector<CFX_RectF> m_rectArray;
 };
 
-#endif  // XFA_FDE_TTO_FDE_TEXTOUT_H_
+#endif  // XFA_FDE_CFDE_TEXTOUT_H_
