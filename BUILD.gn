@@ -5,14 +5,19 @@
 import("//testing/test.gni")
 import("pdfium.gni")
 
+group("freetype_common") {
+  public_deps = []
+  if (pdf_bundle_freetype) {
+    public_deps += [ "third_party:fx_freetype" ]
+  } else {
+    public_deps += [ "//build/config/freetype" ]
+  }
+}
+
 config("pdfium_common_config") {
   cflags = []
   ldflags = []
-  include_dirs = [
-    ".",
-    "third_party/freetype/include",
-    "third_party/freetype/include/freetype",
-  ]
+  include_dirs = [ "." ]
   defines = [
     "OPJ_STATIC",
     "PNG_PREFIX",
@@ -210,12 +215,6 @@ static_library("pdfium") {
       "AppKit.framework",
       "CoreFoundation.framework",
     ]
-  }
-
-  if (pdf_bundle_freetype) {
-    deps += [ "third_party:fx_freetype" ]
-  } else {
-    libs += [ "freetype" ]
   }
 
   if (pdf_is_complete_lib) {
@@ -798,6 +797,7 @@ static_library("fxcrt") {
     "third_party:pdfium_base",
   ]
   public_deps = [
+    ":freetype_common",
     "third_party:pdfium_base",
   ]
 

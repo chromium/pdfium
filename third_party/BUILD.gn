@@ -46,10 +46,17 @@ config("fx_freetype_warnings") {
     #
     # ttgload.c casts from unsigned int to unsigned long to void*.
     cflags = [
-        "-Wno-unused-function",
-        "-Wno-int-to-void-pointer-cast",
+      "-Wno-unused-function",
+      "-Wno-int-to-void-pointer-cast",
     ]
   }
+}
+
+config("freetype_public_includes_config") {
+  include_dirs = [
+    "freetype/include",
+    "freetype/src/include",
+  ]
 }
 
 # Tests may link against this even if the production library doesn't,
@@ -63,6 +70,9 @@ static_library("fx_freetype") {
     # Must be after no_chromium_code for warning flags to be ordered correctly.
     ":fx_freetype_warnings",
   ]
+
+  public_configs = [ ":freetype_public_includes_config" ]
+
   defines = [ "FT2_BUILD_LIBRARY" ]
   sources = [
     "freetype/include/freetype/config/ftconfig.h",

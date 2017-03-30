@@ -7,8 +7,8 @@ import("//build_overrides/pdfium.gni")
 # This file contains PDFium-related build flags.
 
 declare_args() {
-  # Build PDFium either using the bundled FreeType, or using the system
-  # FreeType.
+  # Build PDFium either using the bundled FreeType, or using a third-party
+  # FreeType, configured by the embedder in //build/config/freetype.
   pdf_bundle_freetype = pdf_bundle_freetype_override
 
   # Build PDFium either with or without v8 support.

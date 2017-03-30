@@ -12,8 +12,8 @@ pdf_enable_v8_override = true
 # Default: Without XFA support.
 pdf_enable_xfa_override = false
 
-# Build PDFium either using the bundled FreeType, or using the system FreeType.
-# System FreeType only exists on Linux.
+# Build PDFium either using the bundled FreeType, or using a third-party
+# FreeType, configured by the embedder in //build/config/freetype.
 # Default: Use the bundled FreeType.
 pdf_bundle_freetype_override = true
 
