@@ -1400,14 +1400,15 @@ CFX_RetainPtr<CFX_DIBitmap> CFX_DIBSource::FlipImage(bool bXFlip,
 
 CFX_DIBExtractor::CFX_DIBExtractor(const CFX_RetainPtr<CFX_DIBSource>& pSrc) {
   if (pSrc->GetBuffer()) {
+    CFX_RetainPtr<CFX_DIBSource> pOldSrc(pSrc);
     m_pBitmap = pdfium::MakeRetain<CFX_DIBitmap>();
-    if (!m_pBitmap->Create(pSrc->GetWidth(), pSrc->GetHeight(),
-                           pSrc->GetFormat(), pSrc->GetBuffer())) {
+    if (!m_pBitmap->Create(pOldSrc->GetWidth(), pOldSrc->GetHeight(),
+                           pOldSrc->GetFormat(), pOldSrc->GetBuffer())) {
       m_pBitmap.Reset();
       return;
     }
-    m_pBitmap->SetPalette(pSrc->GetPalette());
-    m_pBitmap->SetAlphaMask(pSrc->m_pAlphaMask);
+    m_pBitmap->SetPalette(pOldSrc->GetPalette());
+    m_pBitmap->SetAlphaMask(pOldSrc->m_pAlphaMask);
   } else {
     m_pBitmap = pSrc->Clone();
   }
