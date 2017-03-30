@@ -357,6 +357,9 @@ class CFX_WideString {
   void AssignCopy(const wchar_t* pSrcData, FX_STRSIZE nSrcLen);
   void Concat(const wchar_t* lpszSrcData, FX_STRSIZE nSrcLen);
 
+  // Returns true unless we ran out of space.
+  bool TryVSWPrintf(FX_STRSIZE size, const wchar_t* format, va_list argList);
+
   CFX_RetainPtr<StringData> m_pData;
 
   friend class fxcrt_WideStringConcatInPlace_Test;

@@ -66,11 +66,11 @@ const wchar_t* FX_wcsstr(const wchar_t* haystack,
   return nullptr;
 }
 
-FX_STRSIZE GuessSizeForVSWPrintf(const wchar_t*& pFormat, va_list argList) {
+FX_STRSIZE GuessSizeForVSWPrintf(const wchar_t* pFormat, va_list argList) {
   FX_STRSIZE nMaxLen = 0;
   for (const wchar_t* pStr = pFormat; *pStr != 0; pStr++) {
     if (*pStr != '%' || *(pStr = pStr + 1) == '%') {
-      nMaxLen += FXSYS_wcslen(pStr);
+      ++nMaxLen;
       continue;
     }
     int nItemLen = 0;
@@ -89,11 +89,8 @@ FX_STRSIZE GuessSizeForVSWPrintf(const wchar_t*& pFormat, va_list argList) {
       while (std::iswdigit(*pStr))
         ++pStr;
     }
-    if (nWidth < 0 || nWidth > 128 * 1024) {
-      pFormat = L"Bad width";
-      nMaxLen = 10;
-      break;
-    }
+    if (nWidth < 0 || nWidth > 128 * 1024)
+      return -1;
     int nPrecision = 0;
     if (*pStr == '.') {
       pStr++;
@@ -106,11 +103,8 @@ FX_STRSIZE GuessSizeForVSWPrintf(const wchar_t*& pFormat, va_list argList) {
           ++pStr;
       }
     }
-    if (nPrecision < 0 || nPrecision > 128 * 1024) {
-      pFormat = L"Bad precision";
-      nMaxLen = 14;
-      break;
-    }
+    if (nPrecision < 0 || nPrecision > 128 * 1024)
+      return -1;
     int nModifier = 0;
     if (*pStr == L'I' && *(pStr + 1) == L'6' && *(pStr + 2) == L'4') {
       pStr += 3;
@@ -258,6 +252,7 @@ FX_STRSIZE GuessSizeForVSWPrintf(const wchar_t*& pFormat, va_list argList) {
     }
     nMaxLen += nItemLen;
   }
+  nMaxLen += 32;  // Fudge factor.
   return nMaxLen;
 }
 
@@ -599,30 +594,43 @@ void CFX_WideString::AllocCopy(CFX_WideString& dest,
   dest.m_pData.Swap(pNewData);
 }
 
-void CFX_WideString::FormatV(const wchar_t* pFormat, va_list argList) {
-  va_list argListCopy;
-  FX_VA_COPY(argListCopy, argList);
-  FX_STRSIZE nMaxLen = GuessSizeForVSWPrintf(pFormat, argListCopy);
-  va_end(argListCopy);
-  if (nMaxLen <= 0)
-    return;
-
-  GetBuffer(nMaxLen);
+bool CFX_WideString::TryVSWPrintf(FX_STRSIZE size,
+                                  const wchar_t* pFormat,
+                                  va_list argList) {
+  GetBuffer(size);
   if (!m_pData)
-    return;
+    return true;
 
-  FX_VA_COPY(argListCopy, argList);
   // In the following two calls, there's always space in the buffer for
   // a terminating NUL that's not included in nMaxLen.
   // For vswprintf(), MSAN won't untaint the buffer on a truncated write's
   // -1 return code even though the buffer is written. Probably just as well
   // not to trust the vendor's implementation to write anything anyways.
   // See https://crbug.com/705912.
-  memset(m_pData->m_String, 0, (nMaxLen + 1) * sizeof(wchar_t));
-  FXSYS_vswprintf((wchar_t*)m_pData->m_String, nMaxLen + 1,
-                  (const wchar_t*)pFormat, argListCopy);
+  memset(m_pData->m_String, 0, (size + 1) * sizeof(wchar_t));
+  int ret = vswprintf(m_pData->m_String, size + 1, pFormat, argList);
   ReleaseBuffer();
+  return ret >= 0 || m_pData->m_String[size - 1] == 0;
+}
+
+void CFX_WideString::FormatV(const wchar_t* pFormat, va_list argList) {
+  va_list argListCopy;
+  FX_VA_COPY(argListCopy, argList);
+  FX_STRSIZE nMaxLen = vswprintf(nullptr, 0, pFormat, argListCopy);
   va_end(argListCopy);
+  if (nMaxLen <= 0) {
+    nMaxLen = GuessSizeForVSWPrintf(pFormat, argListCopy);
+    if (nMaxLen <= 0)
+      return;
+  }
+  while (nMaxLen < 32 * 1024) {
+    FX_VA_COPY(argListCopy, argList);
+    bool bRetryPointless = TryVSWPrintf(nMaxLen, pFormat, argListCopy);
+    va_end(argListCopy);
+    if (bRetryPointless)
+      break;
+    nMaxLen *= 2;
+  }
 }
 
 void CFX_WideString::Format(const wchar_t* pFormat, ...) {

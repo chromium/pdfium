@@ -890,7 +890,7 @@ TEST(fxcrt, WideStringFormatWidth) {
   {
     CFX_WideString str;
     str.Format(L"%1048576d", 1);
-    EXPECT_EQ(L"Bad width", str);
+    EXPECT_EQ(L"", str);
   }
 }
 
@@ -928,7 +928,7 @@ TEST(fxcrt, WideStringFormatPrecision) {
   {
     CFX_WideString str;
     str.Format(L"%.1048576f", 1.2);
-    EXPECT_EQ(L"Bad precision", str);
+    EXPECT_EQ(L"", str);
   }
 }
 
