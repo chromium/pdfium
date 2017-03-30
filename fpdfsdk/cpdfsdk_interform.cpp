@@ -47,7 +47,8 @@
 
 CPDFSDK_InterForm::CPDFSDK_InterForm(CPDFSDK_FormFillEnvironment* pFormFillEnv)
     : m_pFormFillEnv(pFormFillEnv),
-      m_pInterForm(new CPDF_InterForm(m_pFormFillEnv->GetPDFDocument())),
+      m_pInterForm(
+          pdfium::MakeUnique<CPDF_InterForm>(m_pFormFillEnv->GetPDFDocument())),
 #ifdef PDF_ENABLE_XFA
       m_bXfaCalculate(true),
       m_bXfaValidationsEnabled(true),
@@ -73,8 +74,8 @@ bool CPDFSDK_InterForm::HighlightWidgets() {
 
 CPDFSDK_Widget* CPDFSDK_InterForm::GetSibling(CPDFSDK_Widget* pWidget,
                                               bool bNext) const {
-  std::unique_ptr<CBA_AnnotIterator> pIterator(new CBA_AnnotIterator(
-      pWidget->GetPageView(), CPDF_Annot::Subtype::WIDGET));
+  auto pIterator = pdfium::MakeUnique<CBA_AnnotIterator>(
+      pWidget->GetPageView(), CPDF_Annot::Subtype::WIDGET);
 
   if (bNext)
     return static_cast<CPDFSDK_Widget*>(pIterator->GetNextAnnot(pWidget));

@@ -215,7 +215,7 @@ int32_t CFDE_TxtEdtPage::SelectWord(const CFX_PointF& fPoint, int32_t& nCount) {
   if (nIndex < 0) {
     return -1;
   }
-  std::unique_ptr<CFX_WordBreak> pIter(new CFX_WordBreak);
+  auto pIter = pdfium::MakeUnique<CFX_WordBreak>();
   pIter->Attach(new CFDE_TxtEdtBuf::Iterator(pBuf));
   pIter->SetAt(nIndex);
   nCount = pIter->GetWordLength();
@@ -238,8 +238,8 @@ int32_t CFDE_TxtEdtPage::LoadPage(const CFX_RectF* pClipBox,
   if (pParams->dwMode & FDE_TEXTEDITMODE_Password) {
     wcAlias = m_pEditEngine->GetAliasChar();
   }
-  m_pIter.reset(new CFDE_TxtEdtBuf::Iterator(static_cast<CFDE_TxtEdtBuf*>(pBuf),
-                                             wcAlias));
+  m_pIter = pdfium::MakeUnique<CFDE_TxtEdtBuf::Iterator>(
+      static_cast<CFDE_TxtEdtBuf*>(pBuf), wcAlias);
   CFX_TxtBreak* pBreak = m_pEditEngine->GetTextBreak();
   pBreak->EndBreak(CFX_BreakType::Paragraph);
   pBreak->ClearBreakPieces();

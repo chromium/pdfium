@@ -218,7 +218,7 @@ void CFWL_Barcode::CreateBarcodeEngine() {
   if (m_pBarcodeEngine || m_type == BC_UNKNOWN)
     return;
 
-  std::unique_ptr<CFX_Barcode> pBarcode(new CFX_Barcode);
+  auto pBarcode = pdfium::MakeUnique<CFX_Barcode>();
   if (pBarcode->Create(m_type))
     m_pBarcodeEngine = std::move(pBarcode);
 }

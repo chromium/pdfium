@@ -51,7 +51,7 @@ bool IsValiableRect(CFX_FloatRect rect, CFX_FloatRect rcPage) {
 void GetContentsRect(CPDF_Document* pDoc,
                      CPDF_Dictionary* pDict,
                      std::vector<CFX_FloatRect>* pRectArray) {
-  std::unique_ptr<CPDF_Page> pPDFPage(new CPDF_Page(pDoc, pDict, false));
+  auto pPDFPage = pdfium::MakeUnique<CPDF_Page>(pDoc, pDict, false);
   pPDFPage->ParseContent();
 
   for (const auto& pPageObject : *pPDFPage->GetPageObjectList()) {

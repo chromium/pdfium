@@ -497,7 +497,7 @@ void CPDFXFA_DocEnvironment::ExportData(CXFA_FFDoc* hDoc,
         fileWrite->WriteBlock(content.c_str(), fileWrite->GetSize(),
                               content.GetLength());
       }
-      std::unique_ptr<CPDF_StreamAcc> pAcc(new CPDF_StreamAcc);
+      auto pAcc = pdfium::MakeUnique<CPDF_StreamAcc>();
       pAcc->LoadAllData(pStream);
       fileWrite->WriteBlock(pAcc->GetData(), fileWrite->GetSize(),
                             pAcc->GetSize());

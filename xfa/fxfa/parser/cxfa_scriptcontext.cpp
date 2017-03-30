@@ -153,8 +153,8 @@ bool CXFA_ScriptContext::RunScript(XFA_SCRIPTLANGTYPE eScriptType,
   m_eScriptType = eScriptType;
   if (eScriptType == XFA_SCRIPTLANGTYPE_Formcalc) {
     if (!m_FM2JSContext) {
-      m_FM2JSContext.reset(
-          new CXFA_FM2JSContext(m_pIsolate, m_JsContext.get(), m_pDocument));
+      m_FM2JSContext = pdfium::MakeUnique<CXFA_FM2JSContext>(
+          m_pIsolate, m_JsContext.get(), m_pDocument);
     }
     CFX_WideTextBuf wsJavaScript;
     CFX_WideString wsErrorInfo;
@@ -492,7 +492,7 @@ bool CXFA_ScriptContext::RunVariablesScript(CXFA_Node* pScriptNode) {
     return false;
 
   CFX_ByteString btScript = FX_UTF8Encode(wsScript);
-  std::unique_ptr<CFXJSE_Value> hRetValue(new CFXJSE_Value(m_pIsolate));
+  auto hRetValue = pdfium::MakeUnique<CFXJSE_Value>(m_pIsolate);
   CXFA_Node* pThisObject = pParent->GetNodeItem(XFA_NODEITEM_Parent);
   CFXJSE_Context* pVariablesContext =
       CreateVariablesContext(pScriptNode, pThisObject);
@@ -521,7 +521,7 @@ bool CXFA_ScriptContext::QueryVariableValue(CXFA_Node* pScriptNode,
   bool bRes = false;
   CFXJSE_Context* pVariableContext = static_cast<CFXJSE_Context*>(lpVariables);
   std::unique_ptr<CFXJSE_Value> pObject = pVariableContext->GetGlobalObject();
-  std::unique_ptr<CFXJSE_Value> hVariableValue(new CFXJSE_Value(m_pIsolate));
+  auto hVariableValue = pdfium::MakeUnique<CFXJSE_Value>(m_pIsolate);
   if (!bGetter) {
     pObject->SetObjectOwnProperty(szPropName, pValue);
     bRes = true;
@@ -545,7 +545,7 @@ void CXFA_ScriptContext::DefineJsClass() {
 void CXFA_ScriptContext::RemoveBuiltInObjs(CFXJSE_Context* pContext) const {
   static const CFX_ByteStringC OBJ_NAME[2] = {"Number", "Date"};
   std::unique_ptr<CFXJSE_Value> pObject = pContext->GetGlobalObject();
-  std::unique_ptr<CFXJSE_Value> hProp(new CFXJSE_Value(m_pIsolate));
+  auto hProp = pdfium::MakeUnique<CFXJSE_Value>(m_pIsolate);
   for (int i = 0; i < 2; ++i) {
     if (pObject->GetObjectProperty(OBJ_NAME[i], hProp.get()))
       pObject->DeleteObjectProperty(OBJ_NAME[i]);
@@ -650,7 +650,7 @@ int32_t CXFA_ScriptContext::ResolveObjects(CXFA_Object* refObject,
       }
       if (rndFind.m_dwFlag == XFA_RESOVENODE_RSTYPE_Attribute &&
           rndFind.m_pScriptAttribute && nStart < wsExpression.GetLength()) {
-        std::unique_ptr<CFXJSE_Value> pValue(new CFXJSE_Value(m_pIsolate));
+        auto pValue = pdfium::MakeUnique<CFXJSE_Value>(m_pIsolate);
         (rndFind.m_Objects.front()
              ->*(rndFind.m_pScriptAttribute->lpfnCallback))(
             pValue.get(), false,
@@ -733,7 +733,7 @@ CFXJSE_Value* CXFA_ScriptContext::GetJSValueFromMap(CXFA_Object* pObject) {
   if (iter != m_mapObjectToValue.end())
     return iter->second.get();
 
-  std::unique_ptr<CFXJSE_Value> jsValue(new CFXJSE_Value(m_pIsolate));
+  auto jsValue = pdfium::MakeUnique<CFXJSE_Value>(m_pIsolate);
   jsValue->SetObject(pObject, m_pJsClass);
   CFXJSE_Value* pValue = jsValue.get();
   m_mapObjectToValue.insert(std::make_pair(pObject, std::move(jsValue)));

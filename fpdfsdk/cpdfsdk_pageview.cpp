@@ -100,7 +100,7 @@ void CPDFSDK_PageView::PageView_OnDraw(CFX_RenderDevice* pDevice,
         static_cast<float>(pClip.left), static_cast<float>(pClip.top),
         static_cast<float>(pClip.Width()), static_cast<float>(pClip.Height()));
     gs.SetClipRect(rectClip);
-    std::unique_ptr<CXFA_RenderContext> pRenderContext(new CXFA_RenderContext);
+    auto pRenderContext = pdfium::MakeUnique<CXFA_RenderContext>();
     CXFA_RenderOptions renderOptions;
     renderOptions.m_bHighlight = true;
     CXFA_FFPageView* xfaView = pPage->GetXFAPageView();

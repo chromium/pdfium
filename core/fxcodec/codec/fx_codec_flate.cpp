@@ -822,7 +822,7 @@ uint32_t CCodec_FlateModule::FlateOrLZWDecode(bool bLZW,
   }
   if (bLZW) {
     {
-      std::unique_ptr<CLZWDecoder> decoder(new CLZWDecoder);
+      auto decoder = pdfium::MakeUnique<CLZWDecoder>();
       dest_size = 0xFFFFFFFF;
       offset = src_size;
       int err =
@@ -832,7 +832,7 @@ uint32_t CCodec_FlateModule::FlateOrLZWDecode(bool bLZW,
       }
     }
     {
-      std::unique_ptr<CLZWDecoder> decoder(new CLZWDecoder);
+      auto decoder = pdfium::MakeUnique<CLZWDecoder>();
       dest_buf = FX_Alloc(uint8_t, dest_size + 1);
       dest_buf[dest_size] = '\0';
       decoder->Decode(dest_buf, dest_size, src_buf, offset, bEarlyChange);

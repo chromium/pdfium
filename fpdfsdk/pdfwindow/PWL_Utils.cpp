@@ -331,7 +331,7 @@ CFX_ByteString CPWL_Utils::GetPushButtonAppStream(const CFX_FloatRect& rcBBox,
                                                   int32_t nLayOut) {
   const float fAutoFontScale = 1.0f / 3.0f;
 
-  std::unique_ptr<CFX_Edit> pEdit(new CFX_Edit);
+  auto pEdit = pdfium::MakeUnique<CFX_Edit>();
   pEdit->SetFontMap(pFontMap);
   pEdit->SetAlignmentH(1, true);
   pEdit->SetAlignmentV(1, true);

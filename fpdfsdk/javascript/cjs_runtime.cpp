@@ -147,8 +147,7 @@ void CJS_Runtime::DefineJSObjects() {
 }
 
 IJS_EventContext* CJS_Runtime::NewEventContext() {
-  m_EventContextArray.push_back(
-      std::unique_ptr<CJS_EventContext>(new CJS_EventContext(this)));
+  m_EventContextArray.push_back(pdfium::MakeUnique<CJS_EventContext>(this));
   return m_EventContextArray.back().get();
 }
 

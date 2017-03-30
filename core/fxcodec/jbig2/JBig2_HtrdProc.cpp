@@ -20,7 +20,7 @@ CJBig2_Image* CJBig2_HTRDProc::decode_Arith(CJBig2_ArithDecoder* pArithDecoder,
   uint32_t HBPP;
   uint32_t* GI;
   std::unique_ptr<CJBig2_Image> HSKIP;
-  std::unique_ptr<CJBig2_Image> HTREG(new CJBig2_Image(HBW, HBH));
+  auto HTREG = pdfium::MakeUnique<CJBig2_Image>(HBW, HBH);
   HTREG->fill(HDEFPIXEL);
   if (HENABLESKIP == 1) {
     HSKIP = pdfium::MakeUnique<CJBig2_Image>(HGW, HGH);
@@ -41,7 +41,7 @@ CJBig2_Image* CJBig2_HTRDProc::decode_Arith(CJBig2_ArithDecoder* pArithDecoder,
   while ((uint32_t)(1 << HBPP) < HNUMPATS) {
     HBPP++;
   }
-  std::unique_ptr<CJBig2_GSIDProc> pGID(new CJBig2_GSIDProc());
+  auto pGID = pdfium::MakeUnique<CJBig2_GSIDProc>();
   pGID->GSMMR = HMMR;
   pGID->GSW = HGW;
   pGID->GSH = HGH;
@@ -73,13 +73,13 @@ CJBig2_Image* CJBig2_HTRDProc::decode_MMR(CJBig2_BitStream* pStream,
   uint32_t ng, mg;
   int32_t x, y;
   uint32_t* GI;
-  std::unique_ptr<CJBig2_Image> HTREG(new CJBig2_Image(HBW, HBH));
+  auto HTREG = pdfium::MakeUnique<CJBig2_Image>(HBW, HBH);
   HTREG->fill(HDEFPIXEL);
   uint32_t HBPP = 1;
   while ((uint32_t)(1 << HBPP) < HNUMPATS) {
     HBPP++;
   }
-  std::unique_ptr<CJBig2_GSIDProc> pGID(new CJBig2_GSIDProc());
+  auto pGID = pdfium::MakeUnique<CJBig2_GSIDProc>();
   pGID->GSMMR = HMMR;
   pGID->GSW = HGW;
   pGID->GSH = HGH;

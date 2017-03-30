@@ -39,6 +39,7 @@
 #include "fxbarcode/qrcode/BC_QRCoderMatrixUtil.h"
 #include "fxbarcode/qrcode/BC_QRCoderMode.h"
 #include "fxbarcode/qrcode/BC_QRCoderVersion.h"
+#include "third_party/base/ptr_util.h"
 
 namespace {
 
@@ -388,8 +389,8 @@ void CBC_QRCoderEncoder::EncodeWithSpecifyVersion(
   if (e != BCExceptionNO)
     return;
 
-  std::unique_ptr<CBC_CommonByteMatrix> matrix(new CBC_CommonByteMatrix(
-      qrCode->GetMatrixWidth(), qrCode->GetMatrixWidth()));
+  auto matrix = pdfium::MakeUnique<CBC_CommonByteMatrix>(
+      qrCode->GetMatrixWidth(), qrCode->GetMatrixWidth());
   matrix->Init();
   int32_t maskPattern = ChooseMaskPattern(
       &finalBits, qrCode->GetECLevel(), qrCode->GetVersion(), matrix.get(), e);
@@ -473,8 +474,8 @@ catchException:
   if (e != BCExceptionNO)
     return;
 
-  std::unique_ptr<CBC_CommonByteMatrix> matrix(new CBC_CommonByteMatrix(
-      qrCode->GetMatrixWidth(), qrCode->GetMatrixWidth()));
+  auto matrix = pdfium::MakeUnique<CBC_CommonByteMatrix>(
+      qrCode->GetMatrixWidth(), qrCode->GetMatrixWidth());
   matrix->Init();
   int32_t maskPattern = ChooseMaskPattern(
       &finalBits, qrCode->GetECLevel(), qrCode->GetVersion(), matrix.get(), e);
@@ -533,8 +534,8 @@ void CBC_QRCoderEncoder::Encode(const CFX_WideString& content,
   if (e != BCExceptionNO)
     return;
 
-  std::unique_ptr<CBC_CommonByteMatrix> matrix(new CBC_CommonByteMatrix(
-      qrCode->GetMatrixWidth(), qrCode->GetMatrixWidth()));
+  auto matrix = pdfium::MakeUnique<CBC_CommonByteMatrix>(
+      qrCode->GetMatrixWidth(), qrCode->GetMatrixWidth());
   matrix->Init();
   int32_t maskPattern = ChooseMaskPattern(
       &finalBits, qrCode->GetECLevel(), qrCode->GetVersion(), matrix.get(), e);
@@ -878,7 +879,7 @@ void CBC_QRCoderEncoder::InterleaveWithECBytes(CBC_QRCoderBitVector* bits,
     GetNumDataBytesAndNumECBytesForBlockID(numTotalBytes, numDataBytes,
                                            numRSBlocks, i, numDataBytesInBlock,
                                            numEcBytesInBlosk);
-    std::unique_ptr<CBC_CommonByteArray> dataBytes(new CBC_CommonByteArray);
+    auto dataBytes = pdfium::MakeUnique<CBC_CommonByteArray>();
     dataBytes->Set(bits->GetArray(), dataBytesOffset, numDataBytesInBlock);
     std::unique_ptr<CBC_CommonByteArray> ecBytes(
         GenerateECBytes(dataBytes.get(), numEcBytesInBlosk, e));

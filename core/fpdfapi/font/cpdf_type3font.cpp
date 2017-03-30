@@ -105,9 +105,9 @@ CPDF_Type3Char* CPDF_Type3Font::LoadChar(uint32_t charcode) {
   if (!pStream)
     return nullptr;
 
-  std::unique_ptr<CPDF_Type3Char> pNewChar(new CPDF_Type3Char(new CPDF_Form(
+  auto pNewChar = pdfium::MakeUnique<CPDF_Type3Char>(new CPDF_Form(
       m_pDocument, m_pFontResources ? m_pFontResources : m_pPageResources,
-      pStream, nullptr)));
+      pStream, nullptr));
 
   // This can trigger recursion into this method. The content of |m_CacheMap|
   // can change as a result. Thus after it returns, check the cache again for

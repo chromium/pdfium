@@ -13,11 +13,12 @@
 #include "core/fxcodec/jbig2/JBig2_GrdProc.h"
 #include "core/fxcodec/jbig2/JBig2_Image.h"
 #include "core/fxcrt/fx_basic.h"
+#include "third_party/base/ptr_util.h"
 
 uint32_t* CJBig2_GSIDProc::decode_Arith(CJBig2_ArithDecoder* pArithDecoder,
                                         JBig2ArithCtx* gbContext,
                                         IFX_Pause* pPause) {
-  std::unique_ptr<CJBig2_GRDProc> pGRD(new CJBig2_GRDProc());
+  auto pGRD = pdfium::MakeUnique<CJBig2_GRDProc>();
   pGRD->MMR = GSMMR;
   pGRD->GBW = GSW;
   pGRD->GBH = GSH;
@@ -69,7 +70,7 @@ uint32_t* CJBig2_GSIDProc::decode_Arith(CJBig2_ArithDecoder* pArithDecoder,
 
 uint32_t* CJBig2_GSIDProc::decode_MMR(CJBig2_BitStream* pStream,
                                       IFX_Pause* pPause) {
-  std::unique_ptr<CJBig2_GRDProc> pGRD(new CJBig2_GRDProc());
+  auto pGRD = pdfium::MakeUnique<CJBig2_GRDProc>();
   pGRD->MMR = GSMMR;
   pGRD->GBW = GSW;
   pGRD->GBH = GSH;

@@ -39,6 +39,7 @@
 #include "fxbarcode/datamatrix/BC_TextEncoder.h"
 #include "fxbarcode/datamatrix/BC_X12Encoder.h"
 #include "fxbarcode/utils.h"
+#include "third_party/base/ptr_util.h"
 
 wchar_t CBC_HighLevelEncoder::LATCH_TO_C40 = 230;
 wchar_t CBC_HighLevelEncoder::LATCH_TO_BASE256 = 231;
@@ -95,12 +96,12 @@ CFX_WideString CBC_HighLevelEncoder::encodeHighLevel(CFX_WideString msg,
   }
 
   std::vector<std::unique_ptr<CBC_Encoder>> encoders;
-  encoders.push_back(std::unique_ptr<CBC_Encoder>(new CBC_ASCIIEncoder()));
-  encoders.push_back(std::unique_ptr<CBC_Encoder>(new CBC_C40Encoder()));
-  encoders.push_back(std::unique_ptr<CBC_Encoder>(new CBC_TextEncoder()));
-  encoders.push_back(std::unique_ptr<CBC_Encoder>(new CBC_X12Encoder()));
-  encoders.push_back(std::unique_ptr<CBC_Encoder>(new CBC_EdifactEncoder()));
-  encoders.push_back(std::unique_ptr<CBC_Encoder>(new CBC_Base256Encoder()));
+  encoders.push_back(pdfium::MakeUnique<CBC_ASCIIEncoder>());
+  encoders.push_back(pdfium::MakeUnique<CBC_C40Encoder>());
+  encoders.push_back(pdfium::MakeUnique<CBC_TextEncoder>());
+  encoders.push_back(pdfium::MakeUnique<CBC_X12Encoder>());
+  encoders.push_back(pdfium::MakeUnique<CBC_EdifactEncoder>());
+  encoders.push_back(pdfium::MakeUnique<CBC_Base256Encoder>());
   int32_t encodingMode = ASCII_ENCODATION;
   while (context.hasMoreCharacters()) {
     encoders[encodingMode]->Encode(context, e);

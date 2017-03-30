@@ -559,8 +559,7 @@ bool CXFA_TextLayout::DrawString(CFX_RenderDevice* pFxDevice,
   if (!pFxDevice)
     return false;
 
-  std::unique_ptr<CFDE_RenderDevice> pDevice(
-      new CFDE_RenderDevice(pFxDevice, false));
+  auto pDevice = pdfium::MakeUnique<CFDE_RenderDevice>(pFxDevice, false);
   pDevice->SaveState();
   pDevice->SetClipRect(rtClip);
 
@@ -1176,7 +1175,7 @@ void CXFA_TextLayout::RenderPath(CFDE_RenderDevice* pDevice,
     return;
 
   pPen->SetColor(pPiece->dwColor);
-  std::unique_ptr<CFDE_Path> pPath(new CFDE_Path);
+  auto pPath = pdfium::MakeUnique<CFDE_Path>();
   int32_t iChars = GetDisplayPos(pPiece, pCharPos);
   if (iChars > 0) {
     CFX_PointF pt1, pt2;

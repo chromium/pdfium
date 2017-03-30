@@ -122,7 +122,7 @@ int32_t CJBig2_Context::decode_EmbedOrgnazation(IFX_Pause* pPause) {
 int32_t CJBig2_Context::decode_RandomOrgnazation_FirstPage(IFX_Pause* pPause) {
   int32_t nRet;
   while (m_pStream->getByteLeft() > JBIG2_MIN_SEGMENT_SIZE) {
-    std::unique_ptr<CJBig2_Segment> pSegment(new CJBig2_Segment);
+    auto pSegment = pdfium::MakeUnique<CJBig2_Segment>();
     nRet = parseSegmentHeader(pSegment.get());
     if (nRet != JBIG2_SUCCESS) {
       return nRet;
@@ -364,7 +364,7 @@ int32_t CJBig2_Context::ProcessingParseSegmentData(CJBig2_Segment* pSegment,
       return parseGenericRefinementRegion(pSegment);
     case 48: {
       uint16_t wTemp;
-      std::unique_ptr<JBig2PageInfo> pPageInfo(new JBig2PageInfo);
+      auto pPageInfo = pdfium::MakeUnique<JBig2PageInfo>();
       if (m_pStream->readInteger(&pPageInfo->m_dwWidth) != 0 ||
           m_pStream->readInteger(&pPageInfo->m_dwHeight) != 0 ||
           m_pStream->readInteger(&pPageInfo->m_dwResolutionX) != 0 ||
@@ -424,7 +424,7 @@ int32_t CJBig2_Context::parseSymbolDict(CJBig2_Segment* pSegment,
   if (m_pStream->readShortInteger(&wFlags) != 0)
     return JBIG2_ERROR_TOO_SHORT;
 
-  std::unique_ptr<CJBig2_SDDProc> pSymbolDictDecoder(new CJBig2_SDDProc);
+  auto pSymbolDictDecoder = pdfium::MakeUnique<CJBig2_SDDProc>();
   pSymbolDictDecoder->SDHUFF = wFlags & 0x0001;
   pSymbolDictDecoder->SDREFAGG = (wFlags >> 1) & 0x0001;
   pSymbolDictDecoder->SDTEMPLATE = (wFlags >> 10) & 0x0003;
@@ -600,8 +600,8 @@ int32_t CJBig2_Context::parseSymbolDict(CJBig2_Segment* pSegment,
   }
   if (!cache_hit) {
     if (bUseGbContext) {
-      std::unique_ptr<CJBig2_ArithDecoder> pArithDecoder(
-          new CJBig2_ArithDecoder(m_pStream.get()));
+      auto pArithDecoder =
+          pdfium::MakeUnique<CJBig2_ArithDecoder>(m_pStream.get());
       pSegment->m_Result.sd = pSymbolDictDecoder->decode_Arith(
           pArithDecoder.get(), &gbContext, &grContext);
       if (!pSegment->m_Result.sd)
@@ -644,7 +644,7 @@ int32_t CJBig2_Context::parseTextRegion(CJBig2_Segment* pSegment) {
     return JBIG2_ERROR_TOO_SHORT;
   }
 
-  std::unique_ptr<CJBig2_TRDProc> pTRD(new CJBig2_TRDProc);
+  auto pTRD = pdfium::MakeUnique<CJBig2_TRDProc>();
   pTRD->SBW = ri.width;
   pTRD->SBH = ri.height;
   pTRD->SBHUFF = wFlags & 0x0001;
@@ -902,8 +902,8 @@ int32_t CJBig2_Context::parseTextRegion(CJBig2_Segment* pSegment) {
     JBIG2_memset(grContext.get(), 0, sizeof(JBig2ArithCtx) * size);
   }
   if (pTRD->SBHUFF == 0) {
-    std::unique_ptr<CJBig2_ArithDecoder> pArithDecoder(
-        new CJBig2_ArithDecoder(m_pStream.get()));
+    auto pArithDecoder =
+        pdfium::MakeUnique<CJBig2_ArithDecoder>(m_pStream.get());
     pSegment->m_nResultType = JBIG2_IMAGE_POINTER;
     pSegment->m_Result.im =
         pTRD->decode_Arith(pArithDecoder.get(), grContext.get(), nullptr);
@@ -938,7 +938,7 @@ int32_t CJBig2_Context::parseTextRegion(CJBig2_Segment* pSegment) {
 int32_t CJBig2_Context::parsePatternDict(CJBig2_Segment* pSegment,
                                          IFX_Pause* pPause) {
   uint8_t cFlags;
-  std::unique_ptr<CJBig2_PDDProc> pPDD(new CJBig2_PDDProc);
+  auto pPDD = pdfium::MakeUnique<CJBig2_PDDProc>();
   if (m_pStream->read1Byte(&cFlags) != 0 ||
       m_pStream->read1Byte(&pPDD->HDPW) != 0 ||
       m_pStream->read1Byte(&pPDD->HDPH) != 0 ||
@@ -956,8 +956,8 @@ int32_t CJBig2_Context::parsePatternDict(CJBig2_Segment* pSegment,
     std::unique_ptr<JBig2ArithCtx, FxFreeDeleter> gbContext(
         FX_Alloc(JBig2ArithCtx, size));
     JBIG2_memset(gbContext.get(), 0, sizeof(JBig2ArithCtx) * size);
-    std::unique_ptr<CJBig2_ArithDecoder> pArithDecoder(
-        new CJBig2_ArithDecoder(m_pStream.get()));
+    auto pArithDecoder =
+        pdfium::MakeUnique<CJBig2_ArithDecoder>(m_pStream.get());
     pSegment->m_Result.pd =
         pPDD->decode_Arith(pArithDecoder.get(), gbContext.get(), pPause);
     if (!pSegment->m_Result.pd)
@@ -978,7 +978,7 @@ int32_t CJBig2_Context::parseHalftoneRegion(CJBig2_Segment* pSegment,
                                             IFX_Pause* pPause) {
   uint8_t cFlags;
   JBig2RegionInfo ri;
-  std::unique_ptr<CJBig2_HTRDProc> pHRD(new CJBig2_HTRDProc);
+  auto pHRD = pdfium::MakeUnique<CJBig2_HTRDProc>();
   if (parseRegionInfo(&ri) != JBIG2_SUCCESS ||
       m_pStream->read1Byte(&cFlags) != 0 ||
       m_pStream->readInteger(&pHRD->HGW) != 0 ||
@@ -1022,8 +1022,8 @@ int32_t CJBig2_Context::parseHalftoneRegion(CJBig2_Segment* pSegment,
     std::unique_ptr<JBig2ArithCtx, FxFreeDeleter> gbContext(
         FX_Alloc(JBig2ArithCtx, size));
     JBIG2_memset(gbContext.get(), 0, sizeof(JBig2ArithCtx) * size);
-    std::unique_ptr<CJBig2_ArithDecoder> pArithDecoder(
-        new CJBig2_ArithDecoder(m_pStream.get()));
+    auto pArithDecoder =
+        pdfium::MakeUnique<CJBig2_ArithDecoder>(m_pStream.get());
     pSegment->m_Result.im =
         pHRD->decode_Arith(pArithDecoder.get(), gbContext.get(), pPause);
     if (!pSegment->m_Result.im)
@@ -1056,7 +1056,7 @@ int32_t CJBig2_Context::parseHalftoneRegion(CJBig2_Segment* pSegment,
 int32_t CJBig2_Context::parseGenericRegion(CJBig2_Segment* pSegment,
                                            IFX_Pause* pPause) {
   if (!m_pGRD) {
-    std::unique_ptr<CJBig2_GRDProc> pGRD(new CJBig2_GRDProc);
+    auto pGRD = pdfium::MakeUnique<CJBig2_GRDProc>();
     uint8_t cFlags;
     if (parseRegionInfo(&m_ri) != JBIG2_SUCCESS ||
         m_pStream->read1Byte(&cFlags) != 0) {
@@ -1165,7 +1165,7 @@ int32_t CJBig2_Context::parseGenericRefinementRegion(CJBig2_Segment* pSegment) {
       m_pStream->read1Byte(&cFlags) != 0) {
     return JBIG2_ERROR_TOO_SHORT;
   }
-  std::unique_ptr<CJBig2_GRRDProc> pGRRD(new CJBig2_GRRDProc);
+  auto pGRRD = pdfium::MakeUnique<CJBig2_GRRDProc>();
   pGRRD->GRW = ri.width;
   pGRRD->GRH = ri.height;
   pGRRD->GRTEMPLATE = !!(cFlags & 0x01);
@@ -1202,8 +1202,7 @@ int32_t CJBig2_Context::parseGenericRefinementRegion(CJBig2_Segment* pSegment) {
   std::unique_ptr<JBig2ArithCtx, FxFreeDeleter> grContext(
       FX_Alloc(JBig2ArithCtx, size));
   JBIG2_memset(grContext.get(), 0, sizeof(JBig2ArithCtx) * size);
-  std::unique_ptr<CJBig2_ArithDecoder> pArithDecoder(
-      new CJBig2_ArithDecoder(m_pStream.get()));
+  auto pArithDecoder = pdfium::MakeUnique<CJBig2_ArithDecoder>(m_pStream.get());
   pSegment->m_nResultType = JBIG2_IMAGE_POINTER;
   pSegment->m_Result.im = pGRRD->decode(pArithDecoder.get(), grContext.get());
   if (!pSegment->m_Result.im)
@@ -1230,8 +1229,7 @@ int32_t CJBig2_Context::parseGenericRefinementRegion(CJBig2_Segment* pSegment) {
 int32_t CJBig2_Context::parseTable(CJBig2_Segment* pSegment) {
   pSegment->m_nResultType = JBIG2_HUFFMAN_TABLE_POINTER;
   pSegment->m_Result.ht = nullptr;
-  std::unique_ptr<CJBig2_HuffmanTable> pHuff(
-      new CJBig2_HuffmanTable(m_pStream.get()));
+  auto pHuff = pdfium::MakeUnique<CJBig2_HuffmanTable>(m_pStream.get());
   if (!pHuff->IsOK())
     return JBIG2_ERROR_FATAL;
 

@@ -10,6 +10,7 @@
 
 #include "fxjs/cfxjse_context.h"
 #include "fxjs/cfxjse_value.h"
+#include "third_party/base/ptr_util.h"
 
 namespace {
 
@@ -22,10 +23,9 @@ void V8FunctionCallback_Wrapper(
     return;
 
   CFX_ByteStringC szFunctionName(lpFunctionInfo->name);
-  std::unique_ptr<CFXJSE_Value> lpThisValue(
-      new CFXJSE_Value(info.GetIsolate()));
+  auto lpThisValue = pdfium::MakeUnique<CFXJSE_Value>(info.GetIsolate());
   lpThisValue->ForceSetValue(info.Holder());
-  std::unique_ptr<CFXJSE_Value> lpRetValue(new CFXJSE_Value(info.GetIsolate()));
+  auto lpRetValue = pdfium::MakeUnique<CFXJSE_Value>(info.GetIsolate());
   CFXJSE_Arguments impl(&info, lpRetValue.get());
   lpFunctionInfo->callbackProc(lpThisValue.get(), szFunctionName, impl);
   if (!lpRetValue->DirectGetValue().IsEmpty())
@@ -41,10 +41,9 @@ void V8ClassGlobalConstructorCallback_Wrapper(
     return;
 
   CFX_ByteStringC szFunctionName(lpClassDefinition->name);
-  std::unique_ptr<CFXJSE_Value> lpThisValue(
-      new CFXJSE_Value(info.GetIsolate()));
+  auto lpThisValue = pdfium::MakeUnique<CFXJSE_Value>(info.GetIsolate());
   lpThisValue->ForceSetValue(info.Holder());
-  std::unique_ptr<CFXJSE_Value> lpRetValue(new CFXJSE_Value(info.GetIsolate()));
+  auto lpRetValue = pdfium::MakeUnique<CFXJSE_Value>(info.GetIsolate());
   CFXJSE_Arguments impl(&info, lpRetValue.get());
   lpClassDefinition->constructor(lpThisValue.get(), szFunctionName, impl);
   if (!lpRetValue->DirectGetValue().IsEmpty())
@@ -60,10 +59,8 @@ void V8GetterCallback_Wrapper(v8::Local<v8::String> property,
     return;
 
   CFX_ByteStringC szPropertyName(lpPropertyInfo->name);
-  std::unique_ptr<CFXJSE_Value> lpThisValue(
-      new CFXJSE_Value(info.GetIsolate()));
-  std::unique_ptr<CFXJSE_Value> lpPropValue(
-      new CFXJSE_Value(info.GetIsolate()));
+  auto lpThisValue = pdfium::MakeUnique<CFXJSE_Value>(info.GetIsolate());
+  auto lpPropValue = pdfium::MakeUnique<CFXJSE_Value>(info.GetIsolate());
   lpThisValue->ForceSetValue(info.Holder());
   lpPropertyInfo->getProc(lpThisValue.get(), szPropertyName, lpPropValue.get());
   info.GetReturnValue().Set(lpPropValue->DirectGetValue());
@@ -79,10 +76,8 @@ void V8SetterCallback_Wrapper(v8::Local<v8::String> property,
     return;
 
   CFX_ByteStringC szPropertyName(lpPropertyInfo->name);
-  std::unique_ptr<CFXJSE_Value> lpThisValue(
-      new CFXJSE_Value(info.GetIsolate()));
-  std::unique_ptr<CFXJSE_Value> lpPropValue(
-      new CFXJSE_Value(info.GetIsolate()));
+  auto lpThisValue = pdfium::MakeUnique<CFXJSE_Value>(info.GetIsolate());
+  auto lpPropValue = pdfium::MakeUnique<CFXJSE_Value>(info.GetIsolate());
   lpThisValue->ForceSetValue(info.Holder());
   lpPropValue->ForceSetValue(value);
   lpPropertyInfo->setProc(lpThisValue.get(), szPropertyName, lpPropValue.get());
@@ -135,10 +130,9 @@ void DynPropGetterAdapter_MethodCallback(
   ASSERT(lpClass && !hPropName.IsEmpty());
   v8::String::Utf8Value szPropName(hPropName);
   CFX_ByteStringC szFxPropName = *szPropName;
-  std::unique_ptr<CFXJSE_Value> lpThisValue(
-      new CFXJSE_Value(info.GetIsolate()));
+  auto lpThisValue = pdfium::MakeUnique<CFXJSE_Value>(info.GetIsolate());
   lpThisValue->ForceSetValue(info.Holder());
-  std::unique_ptr<CFXJSE_Value> lpRetValue(new CFXJSE_Value(info.GetIsolate()));
+  auto lpRetValue = pdfium::MakeUnique<CFXJSE_Value>(info.GetIsolate());
   CFXJSE_Arguments impl(&info, lpRetValue.get());
   lpClass->dynMethodCall(lpThisValue.get(), szFxPropName, impl);
   if (!lpRetValue->DirectGetValue().IsEmpty())
@@ -233,8 +227,7 @@ void NamedPropertyQueryCallback(
   v8::HandleScope scope(pIsolate);
   v8::String::Utf8Value szPropName(property);
   CFX_ByteStringC szFxPropName(*szPropName, szPropName.length());
-  std::unique_ptr<CFXJSE_Value> lpThisValue(
-      new CFXJSE_Value(info.GetIsolate()));
+  auto lpThisValue = pdfium::MakeUnique<CFXJSE_Value>(info.GetIsolate());
   lpThisValue->ForceSetValue(thisObject);
   if (DynPropQueryAdapter(lpClass, lpThisValue.get(), szFxPropName)) {
     info.GetReturnValue().Set(v8::DontDelete);
@@ -254,8 +247,7 @@ void NamedPropertyDeleterCallback(
   v8::HandleScope scope(pIsolate);
   v8::String::Utf8Value szPropName(property);
   CFX_ByteStringC szFxPropName(*szPropName, szPropName.length());
-  std::unique_ptr<CFXJSE_Value> lpThisValue(
-      new CFXJSE_Value(info.GetIsolate()));
+  auto lpThisValue = pdfium::MakeUnique<CFXJSE_Value>(info.GetIsolate());
   lpThisValue->ForceSetValue(thisObject);
   info.GetReturnValue().Set(
       !!DynPropDeleterAdapter(lpClass, lpThisValue.get(), szFxPropName));
@@ -269,10 +261,9 @@ void NamedPropertyGetterCallback(
       info.Data().As<v8::External>()->Value());
   v8::String::Utf8Value szPropName(property);
   CFX_ByteStringC szFxPropName(*szPropName, szPropName.length());
-  std::unique_ptr<CFXJSE_Value> lpThisValue(
-      new CFXJSE_Value(info.GetIsolate()));
+  auto lpThisValue = pdfium::MakeUnique<CFXJSE_Value>(info.GetIsolate());
   lpThisValue->ForceSetValue(thisObject);
-  std::unique_ptr<CFXJSE_Value> lpNewValue(new CFXJSE_Value(info.GetIsolate()));
+  auto lpNewValue = pdfium::MakeUnique<CFXJSE_Value>(info.GetIsolate());
   DynPropGetterAdapter(lpClass, lpThisValue.get(), szFxPropName,
                        lpNewValue.get());
   info.GetReturnValue().Set(lpNewValue->DirectGetValue());
@@ -287,11 +278,10 @@ void NamedPropertySetterCallback(
       info.Data().As<v8::External>()->Value());
   v8::String::Utf8Value szPropName(property);
   CFX_ByteStringC szFxPropName(*szPropName, szPropName.length());
-  std::unique_ptr<CFXJSE_Value> lpThisValue(
-      new CFXJSE_Value(info.GetIsolate()));
+  auto lpThisValue = pdfium::MakeUnique<CFXJSE_Value>(info.GetIsolate());
   lpThisValue->ForceSetValue(thisObject);
 
-  std::unique_ptr<CFXJSE_Value> lpNewValue(new CFXJSE_Value(info.GetIsolate()));
+  auto lpNewValue = pdfium::MakeUnique<CFXJSE_Value>(info.GetIsolate());
   lpNewValue->ForceSetValue(value);
   DynPropSetterAdapter(lpClass, lpThisValue.get(), szFxPropName,
                        lpNewValue.get());

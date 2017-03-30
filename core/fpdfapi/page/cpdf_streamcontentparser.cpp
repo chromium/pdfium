@@ -262,7 +262,7 @@ CPDF_StreamContentParser::CPDF_StreamContentParser(
       m_Level(level),
       m_ParamStartPos(0),
       m_ParamCount(0),
-      m_pCurStates(new CPDF_AllStates),
+      m_pCurStates(pdfium::MakeUnique<CPDF_AllStates>()),
       m_pLastTextObject(nullptr),
       m_DefFontSize(0),
       m_PathStartX(0.0f),
@@ -765,9 +765,9 @@ void CPDF_StreamContentParser::Handle_ExecuteXObject() {
 }
 
 void CPDF_StreamContentParser::AddForm(CPDF_Stream* pStream) {
-  std::unique_ptr<CPDF_FormObject> pFormObj(new CPDF_FormObject);
-  pFormObj->m_pForm.reset(
-      new CPDF_Form(m_pDocument, m_pPageResources, pStream, m_pResources));
+  auto pFormObj = pdfium::MakeUnique<CPDF_FormObject>();
+  pFormObj->m_pForm = pdfium::MakeUnique<CPDF_Form>(
+      m_pDocument, m_pPageResources, pStream, m_pResources);
   pFormObj->m_FormMatrix = m_pCurStates->m_CTM;
   pFormObj->m_FormMatrix.Concat(m_mtContentToUser);
   CPDF_AllStates status;
@@ -957,7 +957,7 @@ void CPDF_StreamContentParser::Handle_EndPath() {
 }
 
 void CPDF_StreamContentParser::Handle_SaveGraphState() {
-  std::unique_ptr<CPDF_AllStates> pStates(new CPDF_AllStates);
+  auto pStates = pdfium::MakeUnique<CPDF_AllStates>();
   pStates->Copy(*m_pCurStates);
   m_StateStack.push_back(std::move(pStates));
 }
@@ -1110,7 +1110,7 @@ void CPDF_StreamContentParser::Handle_ShadeFill() {
   if (!pShading->IsShadingObject() || !pShading->Load())
     return;
 
-  std::unique_ptr<CPDF_ShadingObject> pObj(new CPDF_ShadingObject);
+  auto pObj = pdfium::MakeUnique<CPDF_ShadingObject>();
   pObj->m_pShading = pShading;
   SetGraphicStates(pObj.get(), false, false, false);
   pObj->m_Matrix = m_pCurStates->m_CTM;
@@ -1248,7 +1248,7 @@ void CPDF_StreamContentParser::AddTextObject(CFX_ByteString* pStrs,
       pFont->IsType3Font() ? TextRenderingMode::MODE_FILL
                            : m_pCurStates->m_TextState.GetTextMode();
   {
-    std::unique_ptr<CPDF_TextObject> pText(new CPDF_TextObject);
+    auto pText = pdfium::MakeUnique<CPDF_TextObject>();
     m_pLastTextObject = pText.get();
     SetGraphicStates(m_pLastTextObject, true, true, true);
     if (TextRenderingModeIsStrokeMode(text_mode)) {

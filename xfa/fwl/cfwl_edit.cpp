@@ -566,9 +566,8 @@ void CFWL_Edit::DrawContent(CFX_Graphics* pGraphics,
   if (!pRenderDev)
     return;
 
-  std::unique_ptr<CFDE_RenderDevice> pRenderDevice(
-      new CFDE_RenderDevice(pRenderDev, false));
-  std::unique_ptr<CFDE_RenderContext> pRenderContext(new CFDE_RenderContext);
+  auto pRenderDevice = pdfium::MakeUnique<CFDE_RenderDevice>(pRenderDev, false);
+  auto pRenderContext = pdfium::MakeUnique<CFDE_RenderContext>();
   pRenderDevice->SetClipRect(rtClip);
   pRenderContext->StartRender(pRenderDevice.get(), pPage, mt);
   pRenderContext->DoRender(nullptr);

@@ -12,6 +12,7 @@
 #include "core/fxcodec/jbig2/JBig2_ArithDecoder.h"
 #include "core/fxcodec/jbig2/JBig2_BitStream.h"
 #include "core/fxcodec/jbig2/JBig2_Image.h"
+#include "third_party/base/ptr_util.h"
 
 CJBig2_GRDProc::CJBig2_GRDProc()
     : m_loopIndex(0),
@@ -65,7 +66,7 @@ CJBig2_Image* CJBig2_GRDProc::decode_Arith(CJBig2_ArithDecoder* pArithDecoder,
 CJBig2_Image* CJBig2_GRDProc::decode_Arith_Template0_opt3(
     CJBig2_ArithDecoder* pArithDecoder,
     JBig2ArithCtx* gbContext) {
-  std::unique_ptr<CJBig2_Image> GBREG(new CJBig2_Image(GBW, GBH));
+  auto GBREG = pdfium::MakeUnique<CJBig2_Image>(GBW, GBH);
   if (!GBREG->m_pData)
     return nullptr;
 
@@ -164,7 +165,7 @@ CJBig2_Image* CJBig2_GRDProc::decode_Arith_Template0_unopt(
     CJBig2_ArithDecoder* pArithDecoder,
     JBig2ArithCtx* gbContext) {
   int LTP = 0;
-  std::unique_ptr<CJBig2_Image> GBREG(new CJBig2_Image(GBW, GBH));
+  auto GBREG = pdfium::MakeUnique<CJBig2_Image>(GBW, GBH);
   GBREG->fill(0);
   for (uint32_t h = 0; h < GBH; h++) {
     if (TPGDON) {
@@ -214,7 +215,7 @@ CJBig2_Image* CJBig2_GRDProc::decode_Arith_Template0_unopt(
 CJBig2_Image* CJBig2_GRDProc::decode_Arith_Template1_opt3(
     CJBig2_ArithDecoder* pArithDecoder,
     JBig2ArithCtx* gbContext) {
-  std::unique_ptr<CJBig2_Image> GBREG(new CJBig2_Image(GBW, GBH));
+  auto GBREG = pdfium::MakeUnique<CJBig2_Image>(GBW, GBH);
   if (!GBREG->m_pData)
     return nullptr;
 
@@ -312,7 +313,7 @@ CJBig2_Image* CJBig2_GRDProc::decode_Arith_Template1_unopt(
     CJBig2_ArithDecoder* pArithDecoder,
     JBig2ArithCtx* gbContext) {
   int LTP = 0;
-  std::unique_ptr<CJBig2_Image> GBREG(new CJBig2_Image(GBW, GBH));
+  auto GBREG = pdfium::MakeUnique<CJBig2_Image>(GBW, GBH);
   GBREG->fill(0);
   for (uint32_t h = 0; h < GBH; h++) {
     if (TPGDON) {
@@ -360,7 +361,7 @@ CJBig2_Image* CJBig2_GRDProc::decode_Arith_Template1_unopt(
 CJBig2_Image* CJBig2_GRDProc::decode_Arith_Template2_opt3(
     CJBig2_ArithDecoder* pArithDecoder,
     JBig2ArithCtx* gbContext) {
-  std::unique_ptr<CJBig2_Image> GBREG(new CJBig2_Image(GBW, GBH));
+  auto GBREG = pdfium::MakeUnique<CJBig2_Image>(GBW, GBH);
   if (!GBREG->m_pData)
     return nullptr;
 
@@ -458,7 +459,7 @@ CJBig2_Image* CJBig2_GRDProc::decode_Arith_Template2_unopt(
     CJBig2_ArithDecoder* pArithDecoder,
     JBig2ArithCtx* gbContext) {
   int LTP = 0;
-  std::unique_ptr<CJBig2_Image> GBREG(new CJBig2_Image(GBW, GBH));
+  auto GBREG = pdfium::MakeUnique<CJBig2_Image>(GBW, GBH);
   GBREG->fill(0);
   for (uint32_t h = 0; h < GBH; h++) {
     if (TPGDON) {
@@ -504,7 +505,7 @@ CJBig2_Image* CJBig2_GRDProc::decode_Arith_Template2_unopt(
 CJBig2_Image* CJBig2_GRDProc::decode_Arith_Template3_opt3(
     CJBig2_ArithDecoder* pArithDecoder,
     JBig2ArithCtx* gbContext) {
-  std::unique_ptr<CJBig2_Image> GBREG(new CJBig2_Image(GBW, GBH));
+  auto GBREG = pdfium::MakeUnique<CJBig2_Image>(GBW, GBH);
   if (!GBREG->m_pData)
     return nullptr;
 
@@ -590,7 +591,7 @@ CJBig2_Image* CJBig2_GRDProc::decode_Arith_Template3_unopt(
     CJBig2_ArithDecoder* pArithDecoder,
     JBig2ArithCtx* gbContext) {
   int LTP = 0;
-  std::unique_ptr<CJBig2_Image> GBREG(new CJBig2_Image(GBW, GBH));
+  auto GBREG = pdfium::MakeUnique<CJBig2_Image>(GBW, GBH);
   GBREG->fill(0);
   for (uint32_t h = 0; h < GBH; h++) {
     if (TPGDON) {

@@ -15,7 +15,7 @@
 TEST(cpdf_array, RemoveAt) {
   {
     int elems[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-    std::unique_ptr<CPDF_Array> arr(new CPDF_Array);
+    auto arr = pdfium::MakeUnique<CPDF_Array>();
     for (size_t i = 0; i < FX_ArraySize(elems); ++i)
       arr->AddNew<CPDF_Number>(elems[i]);
     arr->RemoveAt(3, 3);
@@ -32,7 +32,7 @@ TEST(cpdf_array, RemoveAt) {
   {
     // When the range is out of bound, RemoveAt has no effect.
     int elems[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-    std::unique_ptr<CPDF_Array> arr(new CPDF_Array);
+    auto arr = pdfium::MakeUnique<CPDF_Array>();
     for (size_t i = 0; i < FX_ArraySize(elems); ++i)
       arr->AddNew<CPDF_Number>(elems[i]);
     arr->RemoveAt(8, 5);
@@ -102,14 +102,13 @@ TEST(cpdf_array, Clone) {
     static const size_t kNumOfRowElems = 5;
     int elems[kNumOfRows][kNumOfRowElems] = {
         {1, 2, 3, 4, 5}, {10, 9, 8, 7, 6}, {11, 12, 13, 14, 15}};
-    std::unique_ptr<CPDF_Array> arr(new CPDF_Array);
+    auto arr = pdfium::MakeUnique<CPDF_Array>();
     // Indirect references to indirect objects.
-    std::unique_ptr<CPDF_IndirectObjectHolder> obj_holder(
-        new CPDF_IndirectObjectHolder());
+    auto obj_holder = pdfium::MakeUnique<CPDF_IndirectObjectHolder>();
     for (size_t i = 0; i < kNumOfRows; ++i) {
       auto arr_elem = pdfium::MakeUnique<CPDF_Array>();
       for (size_t j = 0; j < kNumOfRowElems; ++j) {
-        std::unique_ptr<CPDF_Number> obj(new CPDF_Number(elems[i][j]));
+        auto obj = pdfium::MakeUnique<CPDF_Number>(elems[i][j]);
         // Starts object number from 1.
         int obj_num = i * kNumOfRowElems + j + 1;
         obj_holder->ReplaceIndirectObjectIfHigherGeneration(obj_num,
@@ -168,7 +167,7 @@ TEST(cpdf_array, Clone) {
 TEST(cpdf_array, Iterator) {
   const int elems[] = {-23, -11,     3,         455,   2345877,
                        0,   7895330, -12564334, 10000, -100000};
-  std::unique_ptr<CPDF_Array> arr(new CPDF_Array);
+  auto arr = pdfium::MakeUnique<CPDF_Array>();
   for (size_t i = 0; i < FX_ArraySize(elems); ++i)
     arr->InsertNewAt<CPDF_Number>(i, elems[i]);
   size_t index = 0;

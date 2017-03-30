@@ -21,6 +21,7 @@
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
 #include "core/fpdfapi/render/cpdf_pagerendercache.h"
 #include "core/fpdfapi/render/cpdf_renderstatus.h"
+#include "core/fxcodec/codec/cjpx_decoder.h"
 #include "core/fxcodec/fx_codec.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "third_party/base/ptr_util.h"
@@ -79,16 +80,17 @@ class JpxBitMapContext {
   explicit JpxBitMapContext(CCodec_JpxModule* jpx_module)
       : jpx_module_(jpx_module), decoder_(nullptr) {}
 
-  ~JpxBitMapContext() { jpx_module_->DestroyDecoder(decoder_); }
+  ~JpxBitMapContext() {}
 
-  // Takes ownership of |decoder|.
-  void set_decoder(CJPX_Decoder* decoder) { decoder_ = decoder; }
+  void set_decoder(std::unique_ptr<CJPX_Decoder> decoder) {
+    decoder_ = std::move(decoder);
+  }
 
-  CJPX_Decoder* decoder() { return decoder_; }
+  CJPX_Decoder* decoder() { return decoder_.get(); }
 
  private:
   CCodec_JpxModule* const jpx_module_;  // Weak pointer.
-  CJPX_Decoder* decoder_;               // Decoder, owned.
+  std::unique_ptr<CJPX_Decoder> decoder_;
 
   // Disallow evil constructors
   JpxBitMapContext(const JpxBitMapContext&);
@@ -613,7 +615,7 @@ void CPDF_DIBSource::LoadJpxBitmap() {
   if (!pJpxModule)
     return;
 
-  std::unique_ptr<JpxBitMapContext> context(new JpxBitMapContext(pJpxModule));
+  auto context = pdfium::MakeUnique<JpxBitMapContext>(pJpxModule);
   context->set_decoder(pJpxModule->CreateDecoder(
       m_pStreamAcc->GetData(), m_pStreamAcc->GetSize(), m_pColorSpace));
   if (!context->decoder())

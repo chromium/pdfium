@@ -43,8 +43,8 @@ void CFDE_TxtEdtParag::LoadParag() {
   if (pParam->dwMode & FDE_TEXTEDITMODE_Password)
     wcAlias = m_pEngine->GetAliasChar();
 
-  std::unique_ptr<IFX_CharIter> pIter(new CFDE_TxtEdtBuf::Iterator(
-      static_cast<CFDE_TxtEdtBuf*>(pTxtBuf), wcAlias));
+  auto pIter = pdfium::MakeUnique<CFDE_TxtEdtBuf::Iterator>(
+      static_cast<CFDE_TxtEdtBuf*>(pTxtBuf), wcAlias);
   pIter->SetAt(m_nCharStart);
   int32_t nEndIndex = m_nCharStart + m_nCharCount;
   std::vector<int32_t> LineBaseArr;

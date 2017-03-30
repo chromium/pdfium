@@ -9,6 +9,7 @@
 #include <utility>
 
 #include "core/fdrm/crypto/fx_crypt.h"
+#include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 
 #define JS_MAXGLOBALDATA (1024 * 4 - 8)
@@ -104,7 +105,7 @@ void CJS_GlobalData::SetGlobalVariableNumber(const CFX_ByteString& propname,
     pData->data.dData = dData;
     return;
   }
-  std::unique_ptr<CJS_GlobalData_Element> pNewData(new CJS_GlobalData_Element);
+  auto pNewData = pdfium::MakeUnique<CJS_GlobalData_Element>();
   pNewData->data.sKey = sPropName;
   pNewData->data.nType = JS_GlobalDataType::NUMBER;
   pNewData->data.dData = dData;
@@ -122,7 +123,7 @@ void CJS_GlobalData::SetGlobalVariableBoolean(const CFX_ByteString& propname,
     pData->data.bData = bData;
     return;
   }
-  std::unique_ptr<CJS_GlobalData_Element> pNewData(new CJS_GlobalData_Element);
+  auto pNewData = pdfium::MakeUnique<CJS_GlobalData_Element>();
   pNewData->data.sKey = sPropName;
   pNewData->data.nType = JS_GlobalDataType::BOOLEAN;
   pNewData->data.bData = bData;
@@ -140,7 +141,7 @@ void CJS_GlobalData::SetGlobalVariableString(const CFX_ByteString& propname,
     pData->data.sData = sData;
     return;
   }
-  std::unique_ptr<CJS_GlobalData_Element> pNewData(new CJS_GlobalData_Element);
+  auto pNewData = pdfium::MakeUnique<CJS_GlobalData_Element>();
   pNewData->data.sKey = sPropName;
   pNewData->data.nType = JS_GlobalDataType::STRING;
   pNewData->data.sData = sData;
@@ -159,7 +160,7 @@ void CJS_GlobalData::SetGlobalVariableObject(
     pData->data.objData.Copy(array);
     return;
   }
-  std::unique_ptr<CJS_GlobalData_Element> pNewData(new CJS_GlobalData_Element);
+  auto pNewData = pdfium::MakeUnique<CJS_GlobalData_Element>();
   pNewData->data.sKey = sPropName;
   pNewData->data.nType = JS_GlobalDataType::OBJECT;
   pNewData->data.objData.Copy(array);
@@ -175,7 +176,7 @@ void CJS_GlobalData::SetGlobalVariableNull(const CFX_ByteString& propname) {
     pData->data.nType = JS_GlobalDataType::NULLOBJ;
     return;
   }
-  std::unique_ptr<CJS_GlobalData_Element> pNewData(new CJS_GlobalData_Element);
+  auto pNewData = pdfium::MakeUnique<CJS_GlobalData_Element>();
   pNewData->data.sKey = sPropName;
   pNewData->data.nType = JS_GlobalDataType::NULLOBJ;
   m_arrayGlobalData.push_back(std::move(pNewData));

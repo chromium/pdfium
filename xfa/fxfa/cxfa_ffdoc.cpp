@@ -405,7 +405,7 @@ bool CXFA_FFDoc::SavePackage(
     const CFX_RetainPtr<IFX_SeekableWriteStream>& pFile,
     CFX_ChecksumContext* pCSContext) {
   CXFA_Document* doc = m_pDocumentParser->GetDocument();
-  std::unique_ptr<CXFA_DataExporter> pExport(new CXFA_DataExporter(doc));
+  auto pExport = pdfium::MakeUnique<CXFA_DataExporter>(doc);
   CXFA_Node* pNode = code == XFA_HASHCODE_Xfa ? doc->GetRoot()
                                               : ToNode(doc->GetXFAObject(code));
   if (!pNode)

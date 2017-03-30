@@ -6,18 +6,15 @@
 #include <memory>
 #include <vector>
 
+#include "core/fxcodec/codec/cjpx_decoder.h"
 #include "core/fxcodec/codec/codec_int.h"
 #include "core/fxge/fx_dib.h"
 
 CCodec_JpxModule g_module;
 
-struct DecoderDeleter {
-  void operator()(CJPX_Decoder* decoder) { g_module.DestroyDecoder(decoder); }
-};
-
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
-  std::unique_ptr<CJPX_Decoder, DecoderDeleter> decoder(
-      g_module.CreateDecoder(data, size, nullptr));
+  std::unique_ptr<CJPX_Decoder> decoder =
+      g_module.CreateDecoder(data, size, nullptr);
   if (!decoder)
     return 0;
 

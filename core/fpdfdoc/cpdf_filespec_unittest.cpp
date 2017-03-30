@@ -11,6 +11,7 @@
 #include "core/fpdfdoc/cpdf_filespec.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/test_support.h"
+#include "third_party/base/ptr_util.h"
 
 TEST(cpdf_filespec, EncodeDecodeFileName) {
   std::vector<pdfium::NullTermWstrFuncTestData> test_data = {
@@ -67,8 +68,7 @@ TEST(cpdf_filespec, GetFileName) {
       L"/docs/test.pdf"
 #endif
     };
-    std::unique_ptr<CPDF_Object> str_obj(
-        new CPDF_String(nullptr, test_data.input));
+    auto str_obj = pdfium::MakeUnique<CPDF_String>(nullptr, test_data.input);
     CPDF_FileSpec file_spec(str_obj.get());
     CFX_WideString file_name;
     EXPECT_TRUE(file_spec.GetFileName(&file_name));
@@ -99,7 +99,7 @@ TEST(cpdf_filespec, GetFileName) {
     };
     // Keyword fields in reverse order of precedence to retrieve the file name.
     const char* const keywords[5] = {"Unix", "Mac", "DOS", "F", "UF"};
-    std::unique_ptr<CPDF_Dictionary> dict_obj(new CPDF_Dictionary());
+    auto dict_obj = pdfium::MakeUnique<CPDF_Dictionary>();
     CPDF_FileSpec file_spec(dict_obj.get());
     CFX_WideString file_name;
     for (int i = 0; i < 5; ++i) {
@@ -116,7 +116,7 @@ TEST(cpdf_filespec, GetFileName) {
   }
   {
     // Invalid object.
-    std::unique_ptr<CPDF_Object> name_obj(new CPDF_Name(nullptr, "test.pdf"));
+    auto name_obj = pdfium::MakeUnique<CPDF_Name>(nullptr, "test.pdf");
     CPDF_FileSpec file_spec(name_obj.get());
     CFX_WideString file_name;
     EXPECT_FALSE(file_spec.GetFileName(&file_name));
@@ -137,7 +137,7 @@ TEST(cpdf_filespec, SetFileName) {
 #endif
   };
   // String object.
-  std::unique_ptr<CPDF_Object> str_obj(new CPDF_String(nullptr, L"babababa"));
+  auto str_obj = pdfium::MakeUnique<CPDF_String>(nullptr, L"babababa");
   CPDF_FileSpec file_spec1(str_obj.get());
   file_spec1.SetFileName(test_data.input);
   // Check internal object value.
@@ -149,7 +149,7 @@ TEST(cpdf_filespec, SetFileName) {
   EXPECT_TRUE(file_name == test_data.input);
 
   // Dictionary object.
-  std::unique_ptr<CPDF_Dictionary> dict_obj(new CPDF_Dictionary());
+  auto dict_obj = pdfium::MakeUnique<CPDF_Dictionary>();
   CPDF_FileSpec file_spec2(dict_obj.get());
   file_spec2.SetFileName(test_data.input);
   // Check internal object value.

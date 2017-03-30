@@ -11,6 +11,7 @@
 #include "core/fxcodec/jbig2/JBig2_ArithDecoder.h"
 #include "core/fxcodec/jbig2/JBig2_BitStream.h"
 #include "core/fxcodec/jbig2/JBig2_Image.h"
+#include "third_party/base/ptr_util.h"
 
 CJBig2_Image* CJBig2_GRRDProc::decode(CJBig2_ArithDecoder* pArithDecoder,
                                       JBig2ArithCtx* grContext) {
@@ -35,7 +36,7 @@ CJBig2_Image* CJBig2_GRRDProc::decode_Template0_unopt(
     CJBig2_ArithDecoder* pArithDecoder,
     JBig2ArithCtx* grContext) {
   int LTP = 0;
-  std::unique_ptr<CJBig2_Image> GRREG(new CJBig2_Image(GRW, GRH));
+  auto GRREG = pdfium::MakeUnique<CJBig2_Image>(GRW, GRH);
   GRREG->fill(0);
   for (uint32_t h = 0; h < GRH; h++) {
     if (TPGRON)
@@ -155,7 +156,7 @@ CJBig2_Image* CJBig2_GRRDProc::decode_Template0_opt(
 
   int32_t iGRW = static_cast<int32_t>(GRW);
   int32_t iGRH = static_cast<int32_t>(GRH);
-  std::unique_ptr<CJBig2_Image> GRREG(new CJBig2_Image(iGRW, iGRH));
+  auto GRREG = pdfium::MakeUnique<CJBig2_Image>(iGRW, iGRH);
   if (!GRREG->m_pData)
     return nullptr;
 
@@ -283,7 +284,7 @@ CJBig2_Image* CJBig2_GRRDProc::decode_Template1_unopt(
     CJBig2_ArithDecoder* pArithDecoder,
     JBig2ArithCtx* grContext) {
   int LTP = 0;
-  std::unique_ptr<CJBig2_Image> GRREG(new CJBig2_Image(GRW, GRH));
+  auto GRREG = pdfium::MakeUnique<CJBig2_Image>(GRW, GRH);
   GRREG->fill(0);
   for (uint32_t h = 0; h < GRH; h++) {
     if (TPGRON)
@@ -389,7 +390,7 @@ CJBig2_Image* CJBig2_GRRDProc::decode_Template1_opt(
 
   int32_t iGRW = static_cast<int32_t>(GRW);
   int32_t iGRH = static_cast<int32_t>(GRH);
-  std::unique_ptr<CJBig2_Image> GRREG(new CJBig2_Image(iGRW, iGRH));
+  auto GRREG = pdfium::MakeUnique<CJBig2_Image>(iGRW, iGRH);
   if (!GRREG->m_pData)
     return nullptr;
 

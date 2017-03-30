@@ -4,13 +4,14 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fxcrt/fx_basic.h"
-#include "core/fxcrt/fx_ext.h"
-
 #include <algorithm>
 #include <cctype>
 #include <limits>
 #include <memory>
+
+#include "core/fxcrt/fx_basic.h"
+#include "core/fxcrt/fx_ext.h"
+#include "third_party/base/ptr_util.h"
 
 bool FX_atonum(const CFX_ByteStringC& strc, void* pData) {
   if (strc.Find('.') != -1) {
@@ -142,7 +143,7 @@ void FXSYS_vsnprintf(char* str, size_t size, const char* fmt, va_list ap) {
 
 FX_FileHandle* FX_OpenFolder(const char* path) {
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
-  std::unique_ptr<CFindFileDataA> pData(new CFindFileDataA);
+  auto pData = pdfium::MakeUnique<CFindFileDataA>();
   pData->m_Handle = FindFirstFileExA((CFX_ByteString(path) + "/*.*").c_str(),
                                      FindExInfoStandard, &pData->m_FindData,
                                      FindExSearchNameMatch, nullptr, 0);

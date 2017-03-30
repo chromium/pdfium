@@ -661,7 +661,8 @@ CXFA_Node* CXFA_SimpleParser::ParseAsXDPPacket_TemplateForm(
           m_pXMLParser->m_dwCheckStatus != 0x03) {
         return nullptr;
       }
-      std::unique_ptr<CFX_ChecksumContext> pChecksum(new CFX_ChecksumContext);
+
+      auto pChecksum = pdfium::MakeUnique<CFX_ChecksumContext>();
       pChecksum->StartChecksum();
       pChecksum->UpdateChecksum(m_pFileRead, m_pXMLParser->m_nStart[0],
                                 m_pXMLParser->m_nSize[0]);

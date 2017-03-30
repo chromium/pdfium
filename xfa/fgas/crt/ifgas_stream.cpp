@@ -1082,7 +1082,7 @@ bool CFGAS_Stream::LoadFile(const wchar_t* pszSrcFileName, uint32_t dwAccess) {
   if (!pszSrcFileName || FXSYS_wcslen(pszSrcFileName) < 1)
     return false;
 
-  std::unique_ptr<CFGAS_FileStreamImp> pImp(new CFGAS_FileStreamImp());
+  auto pImp = pdfium::MakeUnique<CFGAS_FileStreamImp>();
   if (!pImp->LoadFile(pszSrcFileName, dwAccess))
     return false;
 
@@ -1102,7 +1102,7 @@ bool CFGAS_Stream::LoadFileRead(
   if (!pFileRead)
     return false;
 
-  std::unique_ptr<CFGAS_FileReadStreamImp> pImp(new CFGAS_FileReadStreamImp());
+  auto pImp = pdfium::MakeUnique<CFGAS_FileReadStreamImp>();
   if (!pImp->LoadFileRead(pFileRead, dwAccess))
     return false;
 
@@ -1142,7 +1142,7 @@ bool CFGAS_Stream::LoadBuffer(uint8_t* pData,
   if (!pData || iTotalSize < 1)
     return false;
 
-  std::unique_ptr<CFGAS_BufferStreamImp> pImp(new CFGAS_BufferStreamImp());
+  auto pImp = pdfium::MakeUnique<CFGAS_BufferStreamImp>();
   if (!pImp->LoadBuffer(pData, iTotalSize, dwAccess))
     return false;
 

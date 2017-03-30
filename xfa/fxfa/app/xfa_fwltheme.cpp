@@ -44,18 +44,18 @@ CXFA_FFWidget* XFA_ThemeGetOuterWidget(CFWL_Widget* pWidget) {
 }
 
 CXFA_FWLTheme::CXFA_FWLTheme(CXFA_FFApp* pApp)
-    : m_pCheckBoxTP(new CFWL_CheckBoxTP),
-      m_pListBoxTP(new CFWL_ListBoxTP),
-      m_pPictureBoxTP(new CFWL_PictureBoxTP),
-      m_pSrollBarTP(new CFWL_ScrollBarTP),
-      m_pEditTP(new CFWL_EditTP),
-      m_pComboBoxTP(new CFWL_ComboBoxTP),
-      m_pMonthCalendarTP(new CFWL_MonthCalendarTP),
-      m_pDateTimePickerTP(new CFWL_DateTimePickerTP),
-      m_pPushButtonTP(new CFWL_PushButtonTP),
-      m_pCaretTP(new CFWL_CaretTP),
-      m_pBarcodeTP(new CFWL_BarcodeTP),
-      m_pTextOut(new CFDE_TextOut),
+    : m_pCheckBoxTP(pdfium::MakeUnique<CFWL_CheckBoxTP>()),
+      m_pListBoxTP(pdfium::MakeUnique<CFWL_ListBoxTP>()),
+      m_pPictureBoxTP(pdfium::MakeUnique<CFWL_PictureBoxTP>()),
+      m_pSrollBarTP(pdfium::MakeUnique<CFWL_ScrollBarTP>()),
+      m_pEditTP(pdfium::MakeUnique<CFWL_EditTP>()),
+      m_pComboBoxTP(pdfium::MakeUnique<CFWL_ComboBoxTP>()),
+      m_pMonthCalendarTP(pdfium::MakeUnique<CFWL_MonthCalendarTP>()),
+      m_pDateTimePickerTP(pdfium::MakeUnique<CFWL_DateTimePickerTP>()),
+      m_pPushButtonTP(pdfium::MakeUnique<CFWL_PushButtonTP>()),
+      m_pCaretTP(pdfium::MakeUnique<CFWL_CaretTP>()),
+      m_pBarcodeTP(pdfium::MakeUnique<CFWL_BarcodeTP>()),
+      m_pTextOut(pdfium::MakeUnique<CFDE_TextOut>()),
       m_pCalendarFont(nullptr),
       m_pApp(pApp) {
   m_Rect.Reset();

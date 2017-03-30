@@ -12,6 +12,7 @@
 #include "core/fxge/cfx_facecache.h"
 #include "core/fxge/fx_font.h"
 #include "core/fxge/fx_freetype.h"
+#include "third_party/base/ptr_util.h"
 
 CFX_FontCache::CountedFaceCache::CountedFaceCache() {}
 
@@ -35,7 +36,7 @@ CFX_FaceCache* CFX_FontCache::GetCachedFace(const CFX_Font* pFont) {
     return counted_face_cache->m_Obj.get();
   }
 
-  std::unique_ptr<CountedFaceCache> counted_face_cache(new CountedFaceCache);
+  auto counted_face_cache = pdfium::MakeUnique<CountedFaceCache>();
   counted_face_cache->m_nCount = 2;
   CFX_FaceCache* face_cache = new CFX_FaceCache(bExternal ? nullptr : face);
   counted_face_cache->m_Obj.reset(face_cache);

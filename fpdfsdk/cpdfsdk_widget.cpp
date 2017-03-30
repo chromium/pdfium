@@ -1357,7 +1357,7 @@ void CPDFSDK_Widget::ResetAppearance_ComboBox(const CFX_WideString* sValue) {
   rcButton.left = rcButton.right - 13;
   rcButton.Normalize();
 
-  std::unique_ptr<CFX_Edit> pEdit(new CFX_Edit);
+  auto pEdit = pdfium::MakeUnique<CFX_Edit>();
   pEdit->EnableRefresh(false);
 
   CBA_FontMap font_map(this, m_pInterForm->GetFormFillEnv()->GetSysHandler());
@@ -1421,7 +1421,7 @@ void CPDFSDK_Widget::ResetAppearance_ListBox() {
   CFX_FloatRect rcClient = GetClientRect();
   CFX_ByteTextBuf sBody, sLines;
 
-  std::unique_ptr<CFX_Edit> pEdit(new CFX_Edit);
+  auto pEdit = pdfium::MakeUnique<CFX_Edit>();
   pEdit->EnableRefresh(false);
 
   CBA_FontMap font_map(this, m_pInterForm->GetFormFillEnv()->GetSysHandler());
@@ -1503,7 +1503,7 @@ void CPDFSDK_Widget::ResetAppearance_TextField(const CFX_WideString* sValue) {
   CPDF_FormField* pField = pControl->GetField();
   CFX_ByteTextBuf sBody, sLines;
 
-  std::unique_ptr<CFX_Edit> pEdit(new CFX_Edit);
+  auto pEdit = pdfium::MakeUnique<CFX_Edit>();
   pEdit->EnableRefresh(false);
 
   CBA_FontMap font_map(this, m_pInterForm->GetFormFillEnv()->GetSysHandler());

@@ -10,6 +10,7 @@
 #include "core/fxcodec/codec/ccodec_jbig2module.h"
 #include "core/fxcodec/jbig2/JBig2_Context.h"
 #include "core/fxge/fx_dib.h"
+#include "third_party/base/ptr_util.h"
 
 static uint32_t GetInteger(const uint8_t* data) {
   return data[0] | data[1] << 8 | data[2] << 16 | data[3] << 24;
@@ -29,7 +30,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   if (!bitmap->Create(width, height, FXDIB_1bppRgb))
     return 0;
 
-  std::unique_ptr<CPDF_Object> stream(new CPDF_Stream);
+  auto stream = pdfium::MakeUnique<CPDF_Stream>();
   stream->AsStream()->SetData(data, size);
   CPDF_StreamAcc src_stream;
   src_stream.LoadAllData(stream->AsStream(), true);

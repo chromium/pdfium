@@ -41,10 +41,14 @@
 class CFX_IFileWrite final : public IFX_WriteStream {
  public:
   static CFX_RetainPtr<CFX_IFileWrite> Create();
+
   bool Init(FPDF_FILEWRITE* pFileWriteStruct);
   bool WriteBlock(const void* pData, size_t size) override;
 
  protected:
+  template <typename T, typename... Args>
+  friend CFX_RetainPtr<T> pdfium::MakeRetain(Args&&... args);
+
   CFX_IFileWrite();
   ~CFX_IFileWrite() override {}
 
@@ -52,7 +56,7 @@ class CFX_IFileWrite final : public IFX_WriteStream {
 };
 
 CFX_RetainPtr<CFX_IFileWrite> CFX_IFileWrite::Create() {
-  return CFX_RetainPtr<CFX_IFileWrite>(new CFX_IFileWrite());
+  return pdfium::MakeRetain<CFX_IFileWrite>();
 }
 
 CFX_IFileWrite::CFX_IFileWrite() : m_pFileWriteStruct(nullptr) {}
@@ -127,7 +131,7 @@ bool SaveXFADocumentData(
     else if (pPDFObj->GetString() == "template")
       iTemplate = i + 1;
   }
-  std::unique_ptr<CFX_ChecksumContext> pChecksum(new CFX_ChecksumContext);
+  auto pChecksum = pdfium::MakeUnique<CFX_ChecksumContext>();
   pChecksum->StartChecksum();
 
   // template

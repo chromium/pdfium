@@ -11,6 +11,7 @@
 
 #include "core/fxge/android/cfpf_skiadevicemodule.h"
 #include "core/fxge/android/cfx_androidfontinfo.h"
+#include "third_party/base/ptr_util.h"
 
 void CFX_GEModule::InitPlatform() {
   CFPF_SkiaDeviceModule* pDeviceModule = CFPF_GetSkiaDeviceModule();
@@ -19,7 +20,7 @@ void CFX_GEModule::InitPlatform() {
 
   CFPF_SkiaFontMgr* pFontMgr = pDeviceModule->GetFontMgr();
   if (pFontMgr) {
-    std::unique_ptr<CFX_AndroidFontInfo> pFontInfo(new CFX_AndroidFontInfo);
+    auto pFontInfo = pdfium::MakeUnique<CFX_AndroidFontInfo>();
     pFontInfo->Init(pFontMgr);
     m_pFontMgr->SetSystemFontInfo(std::move(pFontInfo));
   }

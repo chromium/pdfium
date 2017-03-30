@@ -6,13 +6,15 @@
 
 #include "xfa/fxfa/parser/cxfa_xml_parser.h"
 
+#include "third_party/base/ptr_util.h"
+
 CXFA_XMLParser::CXFA_XMLParser(CFDE_XMLNode* pParent,
                                const CFX_RetainPtr<IFGAS_Stream>& pStream)
     : m_nElementStart(0),
       m_dwCheckStatus(0),
       m_dwCurrentCheckStatus(0),
       m_pStream(pStream),
-      m_pParser(new CFDE_XMLSyntaxParser),
+      m_pParser(pdfium::MakeUnique<CFDE_XMLSyntaxParser>()),
       m_pParent(pParent),
       m_pChild(nullptr),
       m_syntaxParserResult(FDE_XmlSyntaxResult::None) {

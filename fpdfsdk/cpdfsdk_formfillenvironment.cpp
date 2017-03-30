@@ -35,7 +35,7 @@ CPDFSDK_FormFillEnvironment::CPDFSDK_FormFillEnvironment(
     FPDF_FORMFILLINFO* pFFinfo)
     : m_pInfo(pFFinfo),
       m_pUnderlyingDoc(pDoc),
-      m_pSysHandler(new CFX_SystemHandler(this)),
+      m_pSysHandler(pdfium::MakeUnique<CFX_SystemHandler>(this)),
       m_bChangeMask(false),
       m_bBeingDestroyed(false) {}
 

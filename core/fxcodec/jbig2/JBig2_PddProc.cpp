@@ -11,6 +11,7 @@
 #include "core/fxcodec/jbig2/JBig2_GrdProc.h"
 #include "core/fxcodec/jbig2/JBig2_Image.h"
 #include "core/fxcodec/jbig2/JBig2_PatternDict.h"
+#include "third_party/base/ptr_util.h"
 
 CJBig2_PatternDict* CJBig2_PDDProc::decode_Arith(
     CJBig2_ArithDecoder* pArithDecoder,
@@ -18,12 +19,12 @@ CJBig2_PatternDict* CJBig2_PDDProc::decode_Arith(
     IFX_Pause* pPause) {
   uint32_t GRAY;
   CJBig2_Image* BHDC = nullptr;
-  std::unique_ptr<CJBig2_PatternDict> pDict(new CJBig2_PatternDict());
+  auto pDict = pdfium::MakeUnique<CJBig2_PatternDict>();
   pDict->NUMPATS = GRAYMAX + 1;
   pDict->HDPATS = FX_Alloc(CJBig2_Image*, pDict->NUMPATS);
   JBIG2_memset(pDict->HDPATS, 0, sizeof(CJBig2_Image*) * pDict->NUMPATS);
 
-  std::unique_ptr<CJBig2_GRDProc> pGRD(new CJBig2_GRDProc());
+  auto pGRD = pdfium::MakeUnique<CJBig2_GRDProc>();
   pGRD->MMR = HDMMR;
   pGRD->GBW = (GRAYMAX + 1) * HDPW;
   pGRD->GBH = HDPH;
@@ -60,12 +61,12 @@ CJBig2_PatternDict* CJBig2_PDDProc::decode_MMR(CJBig2_BitStream* pStream,
                                                IFX_Pause* pPause) {
   uint32_t GRAY;
   CJBig2_Image* BHDC = nullptr;
-  std::unique_ptr<CJBig2_PatternDict> pDict(new CJBig2_PatternDict());
+  auto pDict = pdfium::MakeUnique<CJBig2_PatternDict>();
   pDict->NUMPATS = GRAYMAX + 1;
   pDict->HDPATS = FX_Alloc(CJBig2_Image*, pDict->NUMPATS);
   JBIG2_memset(pDict->HDPATS, 0, sizeof(CJBig2_Image*) * pDict->NUMPATS);
 
-  std::unique_ptr<CJBig2_GRDProc> pGRD(new CJBig2_GRDProc());
+  auto pGRD = pdfium::MakeUnique<CJBig2_GRDProc>();
   pGRD->MMR = HDMMR;
   pGRD->GBW = (GRAYMAX + 1) * HDPW;
   pGRD->GBH = HDPH;
