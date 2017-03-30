@@ -9,12 +9,12 @@
 #include <memory>
 #include <vector>
 
+#include "core/fxcrt/ifx_chariter.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fde/cfde_txtedtbuf.h"
 #include "xfa/fde/cfde_txtedtengine.h"
 #include "xfa/fde/ifde_txtedtengine.h"
-#include "xfa/fde/ifx_chariter.h"
 #include "xfa/fgas/layout/fgas_textbreak.h"
 
 CFDE_TxtEdtParag::CFDE_TxtEdtParag(CFDE_TxtEdtEngine* pEngine)

@@ -11,8 +11,8 @@
 #include <memory>
 #include <vector>
 
+#include "core/fxcrt/ifx_chariter.h"
 #include "xfa/fde/ifde_visualset.h"
-#include "xfa/fde/ifx_chariter.h"
 
 class CFDE_TxtEdtEngine;
 class CFDE_TxtEdtParag;

@@ -14,13 +14,13 @@
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
 #include "core/fpdfdoc/cpdf_nametree.h"
+#include "core/fxcrt/cfx_checksumcontext.h"
 #include "core/fxcrt/fx_ext.h"
 #include "core/fxcrt/fx_memory.h"
 #include "third_party/base/ptr_util.h"
 #include "xfa/fde/xml/fde_xml_imp.h"
 #include "xfa/fwl/cfwl_notedriver.h"
 #include "xfa/fxfa/app/xfa_ffnotify.h"
-#include "xfa/fxfa/cxfa_checksumcontext.h"
 #include "xfa/fxfa/cxfa_ffapp.h"
 #include "xfa/fxfa/cxfa_ffdocview.h"
 #include "xfa/fxfa/cxfa_ffwidget.h"
@@ -403,7 +403,7 @@ CFX_RetainPtr<CFX_DIBitmap> CXFA_FFDoc::GetPDFNamedImage(
 bool CXFA_FFDoc::SavePackage(
     XFA_HashCode code,
     const CFX_RetainPtr<IFX_SeekableWriteStream>& pFile,
-    CXFA_ChecksumContext* pCSContext) {
+    CFX_ChecksumContext* pCSContext) {
   CXFA_Document* doc = m_pDocumentParser->GetDocument();
   std::unique_ptr<CXFA_DataExporter> pExport(new CXFA_DataExporter(doc));
   CXFA_Node* pNode = code == XFA_HASHCODE_Xfa ? doc->GetRoot()

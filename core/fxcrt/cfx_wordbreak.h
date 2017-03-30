@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FDE_CFX_WORDBREAK_H_
-#define XFA_FDE_CFX_WORDBREAK_H_
+#ifndef CORE_FXCRT_CFX_WORDBREAK_H_
+#define CORE_FXCRT_CFX_WORDBREAK_H_
 
 #include <memory>
 
@@ -36,4 +36,4 @@ class CFX_WordBreak {
   std::unique_ptr<IFX_CharIter> m_pCurIter;
 };
 
-#endif  // XFA_FDE_CFX_WORDBREAK_H_
+#endif  // CORE_FXCRT_CFX_WORDBREAK_H_

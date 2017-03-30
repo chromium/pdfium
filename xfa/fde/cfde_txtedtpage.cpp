@@ -8,13 +8,13 @@
 
 #include <algorithm>
 
+#include "core/fxcrt/cfx_wordbreak.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fde/cfde_txtedtbuf.h"
 #include "xfa/fde/cfde_txtedtengine.h"
 #include "xfa/fde/cfde_txtedtparag.h"
 #include "xfa/fde/cfde_txtedttextset.h"
-#include "xfa/fde/cfx_wordbreak.h"
 #include "xfa/fde/ifde_txtedtengine.h"
 #include "xfa/fgas/layout/fgas_textbreak.h"
 

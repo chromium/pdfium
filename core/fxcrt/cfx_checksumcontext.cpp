@@ -4,11 +4,11 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fxfa/cxfa_checksumcontext.h"
+#include "core/fxcrt/cfx_checksumcontext.h"
 
 #include "core/fdrm/crypto/fx_crypt.h"
+#include "core/fxcrt/xml/cfx_saxreaderhandler.h"
 #include "third_party/base/ptr_util.h"
-#include "xfa/fxfa/cxfa_saxreaderhandler.h"
 
 namespace {
 
@@ -91,11 +91,11 @@ int32_t Base64EncodeA(const uint8_t* pSrc, int32_t iSrcLen, char* pDst) {
 
 }  // namespace
 
-CXFA_ChecksumContext::CXFA_ChecksumContext() {}
+CFX_ChecksumContext::CFX_ChecksumContext() {}
 
-CXFA_ChecksumContext::~CXFA_ChecksumContext() {}
+CFX_ChecksumContext::~CFX_ChecksumContext() {}
 
-void CXFA_ChecksumContext::StartChecksum() {
+void CFX_ChecksumContext::StartChecksum() {
   FinishChecksum();
   m_pByteContext = pdfium::MakeUnique<CRYPT_sha1_context>();
   CRYPT_SHA1Start(m_pByteContext.get());
@@ -103,7 +103,7 @@ void CXFA_ChecksumContext::StartChecksum() {
   m_pSAXReader = pdfium::MakeUnique<CFX_SAXReader>();
 }
 
-bool CXFA_ChecksumContext::UpdateChecksum(
+bool CFX_ChecksumContext::UpdateChecksum(
     const CFX_RetainPtr<IFX_SeekableReadStream>& pSrcFile,
     FX_FILESIZE offset,
     size_t size) {
@@ -113,7 +113,7 @@ bool CXFA_ChecksumContext::UpdateChecksum(
   if (size < 1)
     size = pSrcFile->GetSize();
 
-  CXFA_SAXReaderHandler handler(this);
+  CFX_SAXReaderHandler handler(this);
   m_pSAXReader->SetHandler(&handler);
   if (m_pSAXReader->StartParse(
           pSrcFile, (uint32_t)offset, (uint32_t)size,
@@ -125,7 +125,7 @@ bool CXFA_ChecksumContext::UpdateChecksum(
   return m_pSAXReader->ContinueParse(nullptr) > 99;
 }
 
-void CXFA_ChecksumContext::FinishChecksum() {
+void CFX_ChecksumContext::FinishChecksum() {
   m_pSAXReader.reset();
   if (m_pByteContext) {
     uint8_t digest[20];
@@ -139,11 +139,11 @@ void CXFA_ChecksumContext::FinishChecksum() {
   }
 }
 
-CFX_ByteString CXFA_ChecksumContext::GetChecksum() const {
+CFX_ByteString CFX_ChecksumContext::GetChecksum() const {
   return m_bsChecksum;
 }
 
-void CXFA_ChecksumContext::Update(const CFX_ByteStringC& bsText) {
+void CFX_ChecksumContext::Update(const CFX_ByteStringC& bsText) {
   if (!m_pByteContext)
     return;
 

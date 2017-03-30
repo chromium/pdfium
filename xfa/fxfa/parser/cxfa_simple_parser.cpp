@@ -8,10 +8,10 @@
 
 #include <utility>
 
+#include "core/fxcrt/cfx_checksumcontext.h"
 #include "core/fxcrt/fx_ext.h"
 #include "third_party/base/ptr_util.h"
 #include "xfa/fgas/crt/fgas_codepage.h"
-#include "xfa/fxfa/cxfa_checksumcontext.h"
 #include "xfa/fxfa/fxfa.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
@@ -661,7 +661,7 @@ CXFA_Node* CXFA_SimpleParser::ParseAsXDPPacket_TemplateForm(
           m_pXMLParser->m_dwCheckStatus != 0x03) {
         return nullptr;
       }
-      std::unique_ptr<CXFA_ChecksumContext> pChecksum(new CXFA_ChecksumContext);
+      std::unique_ptr<CFX_ChecksumContext> pChecksum(new CFX_ChecksumContext);
       pChecksum->StartChecksum();
       pChecksum->UpdateChecksum(m_pFileRead, m_pXMLParser->m_nStart[0],
                                 m_pXMLParser->m_nSize[0]);

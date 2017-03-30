@@ -9,7 +9,7 @@
 
 #include "xfa/fxfa/fxfa.h"
 
-class CXFA_ChecksumContext;
+class CFX_ChecksumContext;
 
 class CXFA_FFDocHandler {
  public:

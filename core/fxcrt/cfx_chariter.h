@@ -4,12 +4,12 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FDE_CFX_CHARITER_H_
-#define XFA_FDE_CFX_CHARITER_H_
+#ifndef CORE_FXCRT_CFX_CHARITER_H_
+#define CORE_FXCRT_CFX_CHARITER_H_
 
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
-#include "xfa/fde/ifx_chariter.h"
+#include "core/fxcrt/ifx_chariter.h"
 
 class CFX_CharIter : public IFX_CharIter {
  public:
@@ -28,4 +28,4 @@ class CFX_CharIter : public IFX_CharIter {
   int32_t m_nIndex;
 };
 
-#endif  // XFA_FDE_CFX_CHARITER_H_
+#endif  // CORE_FXCRT_CFX_CHARITER_H_

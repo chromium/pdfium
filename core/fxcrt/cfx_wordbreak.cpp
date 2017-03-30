@@ -4,12 +4,12 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fde/cfx_wordbreak.h"
+#include "core/fxcrt/cfx_wordbreak.h"
 
 #include <utility>
 
+#include "core/fxcrt/cfx_chariter.h"
 #include "third_party/base/ptr_util.h"
-#include "xfa/fde/cfx_chariter.h"
 
 namespace {
 

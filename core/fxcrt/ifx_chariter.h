@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FDE_IFX_CHARITER_H_
-#define XFA_FDE_IFX_CHARITER_H_
+#ifndef CORE_FXCRT_IFX_CHARITER_H_
+#define CORE_FXCRT_IFX_CHARITER_H_
 
 #include "core/fxcrt/fx_system.h"
 
@@ -21,4 +21,4 @@ class IFX_CharIter {
   virtual IFX_CharIter* Clone() = 0;
 };
 
-#endif  // XFA_FDE_IFX_CHARITER_H_
+#endif  // CORE_FXCRT_IFX_CHARITER_H_

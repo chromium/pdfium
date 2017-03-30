@@ -4,18 +4,18 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXFA_CXFA_CHECKSUMCONTEXT_H_
-#define XFA_FXFA_CXFA_CHECKSUMCONTEXT_H_
+#ifndef CORE_FXCRT_CFX_CHECKSUMCONTEXT_H_
+#define CORE_FXCRT_CFX_CHECKSUMCONTEXT_H_
 
 #include <memory>
 
 #include "core/fdrm/crypto/fx_crypt.h"
-#include "xfa/fde/xml/cfx_saxreader.h"
+#include "core/fxcrt/xml/cfx_saxreader.h"
 
-class CXFA_ChecksumContext {
+class CFX_ChecksumContext {
  public:
-  CXFA_ChecksumContext();
-  ~CXFA_ChecksumContext();
+  CFX_ChecksumContext();
+  ~CFX_ChecksumContext();
 
   void StartChecksum();
   void Update(const CFX_ByteStringC& bsText);
@@ -31,4 +31,4 @@ class CXFA_ChecksumContext {
   CFX_ByteString m_bsChecksum;
 };
 
-#endif  // XFA_FXFA_CXFA_CHECKSUMCONTEXT_H_
+#endif  // CORE_FXCRT_CFX_CHECKSUMCONTEXT_H_

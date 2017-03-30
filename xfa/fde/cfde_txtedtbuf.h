@@ -13,7 +13,7 @@
 
 #include "core/fxcrt/fx_basic.h"
 #include "core/fxcrt/fx_system.h"
-#include "xfa/fde/ifx_chariter.h"
+#include "core/fxcrt/ifx_chariter.h"
 
 class IFX_Pause;
 

@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fde/cfx_chariter.h"
+#include "core/fxcrt/cfx_chariter.h"
 
 CFX_CharIter::CFX_CharIter(const CFX_WideString& wsText)
     : m_wsText(wsText), m_nIndex(0) {

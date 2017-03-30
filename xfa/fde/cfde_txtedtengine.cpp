@@ -9,13 +9,13 @@
 #include <algorithm>
 #include <utility>
 
+#include "core/fxcrt/ifx_chariter.h"
 #include "third_party/base/ptr_util.h"
 #include "xfa/fde/cfde_txtedtbuf.h"
 #include "xfa/fde/cfde_txtedtdorecord_deleterange.h"
 #include "xfa/fde/cfde_txtedtdorecord_insert.h"
 #include "xfa/fde/cfde_txtedtpage.h"
 #include "xfa/fde/cfde_txtedtparag.h"
-#include "xfa/fde/ifx_chariter.h"
 #include "xfa/fde/tto/fde_textout.h"
 #include "xfa/fgas/layout/fgas_textbreak.h"
 #include "xfa/fwl/cfwl_edit.h"

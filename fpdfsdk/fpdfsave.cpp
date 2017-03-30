@@ -21,10 +21,10 @@
 #include "public/fpdf_edit.h"
 
 #ifdef PDF_ENABLE_XFA
+#include "core/fxcrt/cfx_checksumcontext.h"
 #include "fpdfsdk/fpdfxfa/cpdfxfa_context.h"
 #include "fpdfsdk/fpdfxfa/cxfa_fwladaptertimermgr.h"
 #include "public/fpdf_formfill.h"
-#include "xfa/fxfa/cxfa_checksumcontext.h"
 #include "xfa/fxfa/cxfa_eventparam.h"
 #include "xfa/fxfa/cxfa_ffapp.h"
 #include "xfa/fxfa/cxfa_ffdocview.h"
@@ -127,7 +127,7 @@ bool SaveXFADocumentData(
     else if (pPDFObj->GetString() == "template")
       iTemplate = i + 1;
   }
-  std::unique_ptr<CXFA_ChecksumContext> pChecksum(new CXFA_ChecksumContext);
+  std::unique_ptr<CFX_ChecksumContext> pChecksum(new CFX_ChecksumContext);
   pChecksum->StartChecksum();
 
   // template

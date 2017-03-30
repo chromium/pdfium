@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FDE_XML_CFX_SAXREADER_H_
-#define XFA_FDE_XML_CFX_SAXREADER_H_
+#ifndef CORE_FXCRT_XML_CFX_SAXREADER_H_
+#define CORE_FXCRT_XML_CFX_SAXREADER_H_
 
 #include <memory>
 #include <stack>
@@ -13,8 +13,8 @@
 #include "core/fxcrt/fx_basic.h"
 
 class CFX_SAXCommentContext;
-class CXFA_SAXContext;
-class CXFA_SAXReaderHandler;
+class CFX_SAXContext;
+class CFX_SAXReaderHandler;
 enum class CFX_SaxMode;
 
 class CFX_SAXItem {
@@ -32,7 +32,7 @@ class CFX_SAXItem {
   explicit CFX_SAXItem(uint32_t id)
       : m_pNode(nullptr), m_eNode(Type::Unknown), m_dwID(id), m_bSkip(false) {}
 
-  CXFA_SAXContext* m_pNode;
+  CFX_SAXContext* m_pNode;
   Type m_eNode;
   const uint32_t m_dwID;
   bool m_bSkip;
@@ -79,7 +79,7 @@ class CFX_SAXReader {
                      uint32_t dwParseMode = 0);
   int32_t ContinueParse(IFX_Pause* pPause = nullptr);
   void SkipCurrentNode();
-  void SetHandler(CXFA_SAXReaderHandler* pHandler);
+  void SetHandler(CFX_SAXReaderHandler* pHandler) { m_pHandler = pHandler; }
   void AppendData(uint8_t ch);
   void AppendName(uint8_t ch);
   void ParseText();
@@ -117,7 +117,7 @@ class CFX_SAXReader {
   void ParseChar(uint8_t ch);
 
   CFX_SAXFile m_File;
-  CXFA_SAXReaderHandler* m_pHandler;
+  CFX_SAXReaderHandler* m_pHandler;
   int32_t m_iState;
   std::stack<std::unique_ptr<CFX_SAXItem>> m_Stack;
   uint32_t m_dwItemID;
@@ -141,4 +141,4 @@ class CFX_SAXReader {
   std::unique_ptr<CFX_SAXCommentContext> m_pCommentContext;
 };
 
-#endif  // XFA_FDE_XML_CFX_SAXREADER_H_
+#endif  // CORE_FXCRT_XML_CFX_SAXREADER_H_

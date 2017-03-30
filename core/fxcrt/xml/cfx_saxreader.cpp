@@ -4,14 +4,14 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fde/xml/cfx_saxreader.h"
+#include "core/fxcrt/xml/cfx_saxreader.h"
 
 #include <algorithm>
 #include <utility>
 
+#include "core/fxcrt/xml/cfx_saxreaderhandler.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
-#include "xfa/fxfa/cxfa_saxreaderhandler.h"
 
 enum class CFX_SaxMode {
   Text = 0,
@@ -727,8 +727,4 @@ void CFX_SAXReader::SkipCurrentNode() {
     return;
 
   pItem->m_bSkip = true;
-}
-
-void CFX_SAXReader::SetHandler(CXFA_SAXReaderHandler* pHandler) {
-  m_pHandler = pHandler;
 }

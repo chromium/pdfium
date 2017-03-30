@@ -14,7 +14,7 @@
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_document_parser.h"
 
-class CXFA_ChecksumContext;
+class CFX_ChecksumContext;
 class CXFA_FFApp;
 class CXFA_FFNotify;
 class CXFA_FFDocView;
@@ -73,7 +73,7 @@ class CXFA_FFDoc {
 
   bool SavePackage(XFA_HashCode code,
                    const CFX_RetainPtr<IFX_SeekableWriteStream>& pFile,
-                   CXFA_ChecksumContext* pCSContext);
+                   CFX_ChecksumContext* pCSContext);
   bool ImportData(const CFX_RetainPtr<IFX_SeekableReadStream>& pStream,
                   bool bXDP = true);
 
