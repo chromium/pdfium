@@ -441,14 +441,7 @@ CFX_ByteString CFX_ByteString::FormatInteger(int i, uint32_t flags) {
 
 void CFX_ByteString::FormatV(const char* pFormat, va_list argList) {
   va_list argListSave;
-#if defined(__ARMCC_VERSION) ||                                              \
-    (!defined(_MSC_VER) && (_FX_CPU_ == _FX_X64_ || _FX_CPU_ == _FX_IA64_ || \
-                            _FX_CPU_ == _FX_ARM64_)) ||                      \
-    defined(__native_client__)
-  va_copy(argListSave, argList);
-#else
-  argListSave = argList;
-#endif
+  FX_VA_COPY(argListSave, argList);
   FX_STRSIZE nMaxLen = vsnprintf(nullptr, 0, pFormat, argList);
   if (nMaxLen > 0) {
     GetBuffer(nMaxLen);
