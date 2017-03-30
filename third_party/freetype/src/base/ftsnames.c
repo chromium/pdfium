@@ -7,7 +7,7 @@
 /*                                                                         */
 /*    This is _not_ used to retrieve glyph names!                          */
 /*                                                                         */
-/*  Copyright 1996-2015 by                                                 */
+/*  Copyright 1996-2017 by                                                 */
 /*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
 /*                                                                         */
 /*  This file is part of the FreeType project, and may only be used,       */
@@ -58,7 +58,7 @@
 
 
         /* load name on demand */
-        if ( entry->stringLength > 0 && entry->string == NULL )
+        if ( entry->stringLength > 0 && !entry->string )
         {
           FT_Memory  memory = face->memory;
           FT_Stream  stream = face->stream;

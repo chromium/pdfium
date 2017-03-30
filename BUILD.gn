@@ -908,6 +908,8 @@ static_library("fxge") {
     ":fxcrt",
   ]
 
+  defines = [ "DEFINE_PS_TABLES" ]
+
   if (pdf_enable_xfa) {
     sources += [
       "core/fxge/cfx_unicodeencodingex.h",

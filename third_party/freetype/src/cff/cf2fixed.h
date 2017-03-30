@@ -36,8 +36,8 @@
 /***************************************************************************/
 
 
-#ifndef __CF2FIXED_H__
-#define __CF2FIXED_H__
+#ifndef CF2FIXED_H_
+#define CF2FIXED_H_
 
 
 FT_BEGIN_HEADER
@@ -51,8 +51,8 @@ FT_BEGIN_HEADER
 
 #define CF2_FIXED_MAX      ( (CF2_Fixed)0x7FFFFFFFL )
 #define CF2_FIXED_MIN      ( (CF2_Fixed)0x80000000L )
-#define CF2_FIXED_ONE      0x10000L
-#define CF2_FIXED_EPSILON  0x0001
+#define CF2_FIXED_ONE      ( (CF2_Fixed)0x10000L )
+#define CF2_FIXED_EPSILON  ( (CF2_Fixed)0x0001 )
 
   /* in C 89, left and right shift of negative numbers is  */
   /* implementation specific behaviour in the general case */
@@ -89,7 +89,7 @@ FT_BEGIN_HEADER
 FT_END_HEADER
 
 
-#endif /*  __CF2FIXED_H__ */
+#endif /* CF2FIXED_H_ */
 
 
 /* END */

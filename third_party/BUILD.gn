@@ -43,7 +43,12 @@ config("fx_freetype_warnings") {
   if (is_clang) {
     # open_face_PS_from_sfnt_stream() and open_face_from_buffer() in
     # ftbase.h are unused.
-    cflags = [ "-Wno-unused-function" ]
+    #
+    # ttgload.c casts from unsigned int to unsigned long to void*.
+    cflags = [
+        "-Wno-unused-function",
+        "-Wno-int-to-void-pointer-cast",
+    ]
   }
 }
 
@@ -96,6 +101,7 @@ static_library("fx_freetype") {
     "freetype/include/freetype/internal/ftdebug.h",
     "freetype/include/freetype/internal/ftdriver.h",
     "freetype/include/freetype/internal/ftgloadr.h",
+    "freetype/include/freetype/internal/fthash.h",
     "freetype/include/freetype/internal/ftmemory.h",
     "freetype/include/freetype/internal/ftobjs.h",
     "freetype/include/freetype/internal/ftpic.h",
@@ -110,6 +116,7 @@ static_library("fx_freetype") {
     "freetype/include/freetype/internal/services/svfntfmt.h",
     "freetype/include/freetype/internal/services/svgldict.h",
     "freetype/include/freetype/internal/services/svkern.h",
+    "freetype/include/freetype/internal/services/svmetric.h",
     "freetype/include/freetype/internal/services/svmm.h",
     "freetype/include/freetype/internal/services/svpostnm.h",
     "freetype/include/freetype/internal/services/svprop.h",

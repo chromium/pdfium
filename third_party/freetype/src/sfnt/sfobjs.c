@@ -4,7 +4,7 @@
 /*                                                                         */
 /*    SFNT object management (base).                                       */
 /*                                                                         */
-/*  Copyright 1996-2015 by                                                 */
+/*  Copyright 1996-2017 by                                                 */
 /*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
 /*                                                                         */
 /*  This file is part of the FreeType project, and may only be used,       */
@@ -28,6 +28,12 @@
 #include FT_SERVICE_POSTSCRIPT_CMAPS_H
 #include FT_SFNT_NAMES_H
 #include FT_GZIP_H
+
+#ifdef TT_CONFIG_OPTION_GX_VAR_SUPPORT
+#include FT_SERVICE_MULTIPLE_MASTERS_H
+#include FT_SERVICE_METRICS_VARIATIONS_H
+#endif
+
 #include "sferrors.h"
 
 #ifdef TT_CONFIG_OPTION_BDF
@@ -254,7 +260,7 @@
 
     if ( rec && convert )
     {
-      if ( rec->string == NULL )
+      if ( !rec->string )
       {
         FT_Stream  stream = face->name_table.stream;
 
@@ -451,10 +457,14 @@
                                      woff.metaOrigLength != 0 ) ) ||
          ( woff.metaLength != 0 && woff.metaOrigLength == 0 )     ||
          ( woff.privOffset == 0 && woff.privLength != 0 )         )
+    {
+      FT_ERROR(( "woff_font_open: invalid WOFF header\n" ));
       return FT_THROW( Invalid_Table );
+    }
 
-    if ( FT_ALLOC( sfnt, woff.totalSfntSize ) ||
-         FT_NEW( sfnt_stream )                )
+    /* Don't trust `totalSfntSize' before thorough checks. */
+    if ( FT_ALLOC( sfnt, 12 + woff.num_tables * 16UL ) ||
+         FT_NEW( sfnt_stream )                         )
       goto Exit;
 
     sfnt_header = sfnt;
@@ -521,6 +531,8 @@
       if ( table->Tag <= old_tag )
       {
         FT_FRAME_EXIT();
+
+        FT_ERROR(( "woff_font_open: table tags are not sorted\n" ));
         error = FT_THROW( Invalid_Table );
         goto Exit;
       }
@@ -555,6 +567,7 @@
            sfnt_offset > woff.totalSfntSize - table->OrigLength ||
            table->CompLength > table->OrigLength                )
       {
+        FT_ERROR(( "woff_font_open: invalid table offsets\n" ));
         error = FT_THROW( Invalid_Table );
         goto Exit;
       }
@@ -580,6 +593,8 @@
       if ( woff.metaOffset != woff_offset                  ||
            woff.metaOffset + woff.metaLength > woff.length )
       {
+        FT_ERROR(( "woff_font_open:"
+                   " invalid `metadata' offset or length\n" ));
         error = FT_THROW( Invalid_Table );
         goto Exit;
       }
@@ -596,6 +611,7 @@
       if ( woff.privOffset != woff_offset                  ||
            woff.privOffset + woff.privLength > woff.length )
       {
+        FT_ERROR(( "woff_font_open: invalid `private' offset or length\n" ));
         error = FT_THROW( Invalid_Table );
         goto Exit;
       }
@@ -607,9 +623,18 @@
     if ( sfnt_offset != woff.totalSfntSize ||
          woff_offset != woff.length        )
     {
+      FT_ERROR(( "woff_font_open: invalid `sfnt' table structure\n" ));
       error = FT_THROW( Invalid_Table );
       goto Exit;
     }
+
+    /* Now use `totalSfntSize'. */
+    if ( FT_REALLOC( sfnt,
+                     12 + woff.num_tables * 16UL,
+                     woff.totalSfntSize ) )
+      goto Exit;
+
+    sfnt_header = sfnt + 12;
 
     /* Write the tables. */
 
@@ -651,6 +676,7 @@
           goto Exit;
         if ( output_len != table->OrigLength )
         {
+          FT_ERROR(( "woff_font_open: compressed table length mismatch\n" ));
           error = FT_THROW( Invalid_Table );
           goto Exit;
         }
@@ -778,6 +804,9 @@
       if ( FT_STREAM_READ_FIELDS( ttc_header_fields, &face->ttc_header ) )
         return error;
 
+      FT_TRACE3(( "                with %ld subfonts\n",
+                  face->ttc_header.count ));
+
       if ( face->ttc_header.count == 0 )
         return FT_THROW( Invalid_Table );
 
@@ -852,6 +881,21 @@
 
     FT_FACE_FIND_GLOBAL_SERVICE( face, face->psnames, POSTSCRIPT_CMAPS );
 
+#ifdef TT_CONFIG_OPTION_GX_VAR_SUPPORT
+    if ( !face->mm )
+    {
+      /* we want the MM interface from the `truetype' module only */
+      FT_Module  tt_module = FT_Get_Module( library, "truetype" );
+
+
+      face->mm = ft_module_get_service( tt_module,
+                                        FT_SERVICE_ID_MULTI_MASTERS,
+                                        0 );
+    }
+
+    FT_FACE_FIND_GLOBAL_SERVICE( face, face->var, METRICS_VARIATIONS );
+#endif
+
     FT_TRACE2(( "SFNT driver\n" ));
 
     error = sfnt_open_font( stream, face );
@@ -861,9 +905,13 @@
     /* Stream may have changed in sfnt_open_font. */
     stream = face->root.stream;
 
-    FT_TRACE2(( "sfnt_init_face: %08p, %ld\n", face, face_instance_index ));
+    FT_TRACE2(( "sfnt_init_face: %08p, %d\n", face, face_instance_index ));
 
     face_index = FT_ABS( face_instance_index ) & 0xFFFF;
+
+    /* value -(N+1) requests information on index N */
+    if ( face_instance_index < 0 )
+      face_index--;
 
     if ( face_index >= face->ttc_header.count )
     {
@@ -883,18 +931,66 @@
 
 #ifdef TT_CONFIG_OPTION_GX_VAR_SUPPORT
     {
-      FT_ULong   fvar_len;
-      FT_UShort  num_instances;
-      FT_Int     instance_index;
+      FT_ULong  fvar_len;
 
+      FT_ULong  version;
+      FT_ULong  offset;
+
+      FT_UShort  num_axes;
+      FT_UShort  axis_size;
+      FT_UShort  num_instances;
+      FT_UShort  instance_size;
+
+      FT_Int  instance_index;
+
+
+      face->is_default_instance = 1;
 
       instance_index = FT_ABS( face_instance_index ) >> 16;
 
       /* test whether current face is a GX font with named instances */
       if ( face->goto_table( face, TTAG_fvar, stream, &fvar_len ) ||
            fvar_len < 20                                          ||
-           FT_STREAM_SKIP( 12 )                                   ||
-           FT_READ_USHORT( num_instances )                        )
+           FT_READ_ULONG( version )                               ||
+           FT_READ_USHORT( offset )                               ||
+           FT_STREAM_SKIP( 2 ) /* count_size_pairs */             ||
+           FT_READ_USHORT( num_axes )                             ||
+           FT_READ_USHORT( axis_size )                            ||
+           FT_READ_USHORT( num_instances )                        ||
+           FT_READ_USHORT( instance_size )                        )
+      {
+        version       = 0;
+        offset        = 0;
+        num_axes      = 0;
+        axis_size     = 0;
+        num_instances = 0;
+        instance_size = 0;
+      }
+
+      /* check that the data is bound by the table length */
+      if ( version != 0x00010000UL                    ||
+#if 0
+           /* fonts like `JamRegular.ttf' have an incorrect value for   */
+           /* `count_size_pairs'; since value 2 is hard-coded in `fvar' */
+           /* version 1.0, we simply ignore it                          */
+           count_size_pairs != 2                      ||
+#endif
+           axis_size != 20                            ||
+           num_axes == 0                              ||
+           /* `num_axes' limit implied by 16-bit `instance_size' */
+           num_axes > 0x3FFE                          ||
+           !( instance_size == 4 + 4 * num_axes ||
+              instance_size == 6 + 4 * num_axes )     ||
+           num_instances > 0x7EFF                     ||
+           offset                          +
+             axis_size * num_axes          +
+             instance_size * num_instances > fvar_len )
+        num_instances = 0;
+      else
+        face->variation_support |= TT_FACE_FLAG_VAR_FVAR;
+
+      /* we don't support Multiple Master CFFs yet */
+      if ( !face->goto_table( face, TTAG_CFF, stream, 0 ) )
         num_instances = 0;
 
       /* we support at most 2^15 - 1 instances */
@@ -921,7 +1017,7 @@
 #endif
 
     face->root.num_faces  = face->ttc_header.count;
-    face->root.face_index = face_index;
+    face->root.face_index = face_instance_index;
 
     return error;
   }
@@ -1027,12 +1123,14 @@
 
     /* do we have outlines in there? */
 #ifdef FT_CONFIG_OPTION_INCREMENTAL
-    has_outline = FT_BOOL( face->root.internal->incremental_interface != 0 ||
-                           tt_face_lookup_table( face, TTAG_glyf )    != 0 ||
-                           tt_face_lookup_table( face, TTAG_CFF )     != 0 );
+    has_outline = FT_BOOL( face->root.internal->incremental_interface ||
+                           tt_face_lookup_table( face, TTAG_glyf )    ||
+                           tt_face_lookup_table( face, TTAG_CFF )     ||
+                           tt_face_lookup_table( face, TTAG_CFF2 )    );
 #else
-    has_outline = FT_BOOL( tt_face_lookup_table( face, TTAG_glyf ) != 0 ||
-                           tt_face_lookup_table( face, TTAG_CFF )  != 0 );
+    has_outline = FT_BOOL( tt_face_lookup_table( face, TTAG_glyf ) ||
+                           tt_face_lookup_table( face, TTAG_CFF )  ||
+                           tt_face_lookup_table( face, TTAG_CFF2 ) );
 #endif
 
     is_apple_sbit = 0;
@@ -1164,30 +1262,10 @@
 
     /* embedded bitmap support */
     if ( sfnt->load_eblc )
-    {
       LOAD_( eblc );
-      if ( error )
-      {
-        /* a font which contains neither bitmaps nor outlines is */
-        /* still valid (although rather useless in most cases);  */
-        /* however, you can find such stripped fonts in PDFs     */
-        if ( FT_ERR_EQ( error, Table_Missing ) )
-          error = FT_Err_Ok;
-        else
-          goto Exit;
-      }
-    }
 
+    /* consider the pclt, kerning, and gasp tables as optional */
     LOAD_( pclt );
-    if ( error )
-    {
-      if ( FT_ERR_NEQ( error, Table_Missing ) )
-        goto Exit;
-
-      face->pclt.Version = 0;
-    }
-
-    /* consider the kerning and gasp tables as optional */
     LOAD_( gasp );
     LOAD_( kern );
 
@@ -1271,10 +1349,14 @@
 #ifdef TT_CONFIG_OPTION_GX_VAR_SUPPORT
       /* Don't bother to load the tables unless somebody asks for them. */
       /* No need to do work which will (probably) not be used.          */
-      if ( tt_face_lookup_table( face, TTAG_glyf ) != 0 &&
-           tt_face_lookup_table( face, TTAG_fvar ) != 0 &&
-           tt_face_lookup_table( face, TTAG_gvar ) != 0 )
-        flags |= FT_FACE_FLAG_MULTIPLE_MASTERS;
+      if ( face->variation_support & TT_FACE_FLAG_VAR_FVAR )
+      {
+        if ( tt_face_lookup_table( face, TTAG_glyf ) != 0 &&
+             tt_face_lookup_table( face, TTAG_gvar ) != 0 )
+          flags |= FT_FACE_FLAG_MULTIPLE_MASTERS;
+        if ( tt_face_lookup_table( face, TTAG_CFF2 ) != 0 )
+          flags |= FT_FACE_FLAG_MULTIPLE_MASTERS;
+      }
 #endif
 
       root->face_flags = flags;
@@ -1337,7 +1419,7 @@
                                                   charmap->encoding_id );
 
 #if 0
-          if ( root->charmap     == NULL &&
+          if ( !root->charmap                           &&
                charmap->encoding == FT_ENCODING_UNICODE )
           {
             /* set 'root->charmap' to the first Unicode encoding we find */
@@ -1355,7 +1437,7 @@
        *  depths in the FT_Bitmap_Size record.  This is a design error.
        */
       {
-        FT_UInt  i, count;
+        FT_UInt  count;
 
 
         count = face->sbit_num_strikes;
@@ -1367,6 +1449,9 @@
           FT_Short         avgwidth = face->os2.xAvgCharWidth;
           FT_Size_Metrics  metrics;
 
+          FT_UInt*  sbit_strike_map = NULL;
+          FT_UInt   strike_idx, bsize_idx;
+
 
           if ( em_size == 0 || face->os2.version == 0xFFFFU )
           {
@@ -1374,31 +1459,50 @@
             em_size = 1;
           }
 
-          if ( FT_NEW_ARRAY( root->available_sizes, count ) )
+          /* to avoid invalid strike data in the `available_sizes' field */
+          /* of `FT_Face', we map `available_sizes' indices to strike    */
+          /* indices                                                     */
+          if ( FT_NEW_ARRAY( root->available_sizes, count ) ||
+               FT_NEW_ARRAY( sbit_strike_map, count ) )
             goto Exit;
 
-          for ( i = 0; i < count; i++ )
+          bsize_idx = 0;
+          for ( strike_idx = 0; strike_idx < count; strike_idx++ )
           {
-            FT_Bitmap_Size*  bsize = root->available_sizes + i;
+            FT_Bitmap_Size*  bsize = root->available_sizes + bsize_idx;
 
 
-            error = sfnt->load_strike_metrics( face, i, &metrics );
+            error = sfnt->load_strike_metrics( face, strike_idx, &metrics );
             if ( error )
-              goto Exit;
+              continue;
 
             bsize->height = (FT_Short)( metrics.height >> 6 );
-            bsize->width = (FT_Short)(
-                ( avgwidth * metrics.x_ppem + em_size / 2 ) / em_size );
+            bsize->width  = (FT_Short)(
+              ( avgwidth * metrics.x_ppem + em_size / 2 ) / em_size );
 
             bsize->x_ppem = metrics.x_ppem << 6;
             bsize->y_ppem = metrics.y_ppem << 6;
 
             /* assume 72dpi */
             bsize->size   = metrics.y_ppem << 6;
+
+            /* only use strikes with valid PPEM values */
+            if ( bsize->x_ppem && bsize->y_ppem )
+              sbit_strike_map[bsize_idx++] = strike_idx;
           }
 
-          root->face_flags     |= FT_FACE_FLAG_FIXED_SIZES;
-          root->num_fixed_sizes = (FT_Int)count;
+          /* reduce array size to the actually used elements */
+          (void)FT_RENEW_ARRAY( sbit_strike_map, count, bsize_idx );
+
+          /* from now on, all strike indices are mapped */
+          /* using `sbit_strike_map'                    */
+          if ( bsize_idx )
+          {
+            face->sbit_strike_map = sbit_strike_map;
+
+            root->face_flags     |= FT_FACE_FLAG_FIXED_SIZES;
+            root->num_fixed_sizes = (FT_Int)bsize_idx;
+          }
         }
       }
 
@@ -1559,18 +1663,10 @@
       face->cmap_size = 0;
     }
 
-    /* freeing the horizontal metrics */
-    {
-      FT_Stream  stream = FT_FACE_STREAM( face );
+    face->horz_metrics_size = 0;
+    face->vert_metrics_size = 0;
 
-
-      FT_FRAME_RELEASE( face->horz_metrics );
-      FT_FRAME_RELEASE( face->vert_metrics );
-      face->horz_metrics_size = 0;
-      face->vert_metrics_size = 0;
-    }
-
-    /* freeing the vertical ones, if any */
+    /* freeing vertical metrics, if any */
     if ( face->vertical_info )
     {
       FT_FREE( face->vertical.long_metrics  );
@@ -1592,6 +1688,7 @@
 
     /* freeing sbit size table */
     FT_FREE( face->root.available_sizes );
+    FT_FREE( face->sbit_strike_map );
     face->root.num_fixed_sizes = 0;
 
     FT_FREE( face->postscript_name );

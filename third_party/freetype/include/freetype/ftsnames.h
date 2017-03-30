@@ -7,7 +7,7 @@
 /*                                                                         */
 /*    This is _not_ used to retrieve glyph names!                          */
 /*                                                                         */
-/*  Copyright 1996-2015 by                                                 */
+/*  Copyright 1996-2017 by                                                 */
 /*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
 /*                                                                         */
 /*  This file is part of the FreeType project, and may only be used,       */
@@ -19,8 +19,8 @@
 /***************************************************************************/
 
 
-#ifndef __FT_SFNT_NAMES_H__
-#define __FT_SFNT_NAMES_H__
+#ifndef FTSNAMES_H_
+#define FTSNAMES_H_
 
 
 #include <ft2build.h>
@@ -147,8 +147,8 @@ FT_BEGIN_HEADER
   /*                                                                       */
   /* <Note>                                                                */
   /*    The `string' array returned in the `aname' structure is not        */
-  /*    null-terminated.  The application should deallocate it if it is no */
-  /*    longer in use.                                                     */
+  /*    null-terminated.  Note that you don't have to deallocate `string'  */
+  /*    by yourself; FreeType takes care of it if you call @FT_Done_Face.  */
   /*                                                                       */
   /*    Use @FT_Get_Sfnt_Name_Count to get the total number of available   */
   /*    `name' table entries, then do a loop until you get the right       */
@@ -194,7 +194,7 @@ FT_BEGIN_HEADER
 
 FT_END_HEADER
 
-#endif /* __FT_SFNT_NAMES_H__ */
+#endif /* FTSNAMES_H_ */
 
 
 /* END */

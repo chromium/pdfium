@@ -4,7 +4,7 @@
 /*                                                                         */
 /*    FreeType utility functions for bitmaps (body).                       */
 /*                                                                         */
-/*  Copyright 2004-2015 by                                                 */
+/*  Copyright 2004-2017 by                                                 */
 /*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
 /*                                                                         */
 /*  This file is part of the FreeType project, and may only be used,       */
@@ -76,7 +76,7 @@
     source_pitch_sign = source->pitch < 0 ? -1 : 1;
     target_pitch_sign = target->pitch < 0 ? -1 : 1;
 
-    if ( source->buffer == NULL )
+    if ( !source->buffer )
     {
       *target = *source;
       if ( source_pitch_sign != target_pitch_sign )
@@ -351,7 +351,7 @@
     }
 
     /* for each row */
-    for ( y = 0; y < bitmap->rows ; y++ )
+    for ( y = 0; y < bitmap->rows; y++ )
     {
       /*
        * Horizontally:

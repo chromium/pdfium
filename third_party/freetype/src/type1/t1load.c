@@ -4,7 +4,7 @@
 /*                                                                         */
 /*    Type 1 font loader (body).                                           */
 /*                                                                         */
-/*  Copyright 1996-2015 by                                                 */
+/*  Copyright 1996-2017 by                                                 */
 /*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
 /*                                                                         */
 /*  This file is part of the FreeType project, and may only be used,       */
@@ -66,6 +66,7 @@
 #include FT_MULTIPLE_MASTERS_H
 #include FT_INTERNAL_TYPE1_TYPES_H
 #include FT_INTERNAL_CALC_H
+#include FT_INTERNAL_HASH_H
 
 #include "t1load.h"
 #include "t1errors.h"
@@ -236,7 +237,7 @@
     if ( ncv <= axismap->blend_points[0] )
       return INT_TO_FIXED( axismap->design_points[0] );
 
-    for ( j = 1; j < axismap->num_points; ++j )
+    for ( j = 1; j < axismap->num_points; j++ )
     {
       if ( ncv <= axismap->blend_points[j] )
         return INT_TO_FIXED( axismap->design_points[j - 1] ) +
@@ -320,12 +321,12 @@
 
     mmvar->num_axis        = mmaster.num_axis;
     mmvar->num_designs     = mmaster.num_designs;
-    mmvar->num_namedstyles = ~0U;                        /* Does not apply */
+    mmvar->num_namedstyles = 0;                           /* Not supported */
     mmvar->axis            = (FT_Var_Axis*)&mmvar[1];
                                       /* Point to axes after MM_Var struct */
     mmvar->namedstyle      = NULL;
 
-    for ( i = 0 ; i < mmaster.num_axis; ++i )
+    for ( i = 0; i < mmaster.num_axis; i++ )
     {
       mmvar->axis[i].name    = mmaster.axis[i].name;
       mmvar->axis[i].minimum = INT_TO_FIXED( mmaster.axis[i].minimum);
@@ -335,6 +336,9 @@
                             /* Does not apply.  But this value is in range */
       mmvar->axis[i].strid   = ~0U;                      /* Does not apply */
       mmvar->axis[i].tag     = ~0U;                      /* Does not apply */
+
+      if ( !mmvar->axis[i].name )
+        continue;
 
       if ( ft_strcmp( mmvar->axis[i].name, "Weight" ) == 0 )
         mmvar->axis[i].tag = FT_MAKE_TAG( 'w', 'g', 'h', 't' );
@@ -350,7 +354,7 @@
                         axiscoords,
                         blend->num_axis );
 
-      for ( i = 0; i < mmaster.num_axis; ++i )
+      for ( i = 0; i < mmaster.num_axis; i++ )
         mmvar->axis[i].def = mm_axis_unmap( &blend->design_map[i],
                                             axiscoords[i] );
     }
@@ -403,6 +407,41 @@
       }
       blend->weight_vector[n] = result;
     }
+
+    return FT_Err_Ok;
+  }
+
+
+  FT_LOCAL_DEF( FT_Error )
+  T1_Get_MM_Blend( T1_Face    face,
+                   FT_UInt    num_coords,
+                   FT_Fixed*  coords )
+  {
+    PS_Blend  blend = face->blend;
+
+    FT_Fixed  axiscoords[4];
+    FT_UInt   i, nc;
+
+
+    if ( !blend )
+      return FT_THROW( Invalid_Argument );
+
+    mm_weights_unmap( blend->weight_vector,
+                      axiscoords,
+                      blend->num_axis );
+
+    nc = num_coords;
+    if ( num_coords > blend->num_axis )
+    {
+      FT_TRACE2(( "T1_Get_MM_Blend: only using first %d of %d coordinates\n",
+                  blend->num_axis, num_coords ));
+      nc = blend->num_axis;
+    }
+
+    for ( i = 0; i < nc; i++ )
+      coords[i] = axiscoords[i];
+    for ( ; i < num_coords; i++ )
+      coords[i] = 0x8000;
 
     return FT_Err_Ok;
   }
@@ -500,10 +539,46 @@
      if ( num_coords > T1_MAX_MM_AXIS )
        num_coords = T1_MAX_MM_AXIS;
 
-     for ( i = 0; i < num_coords; ++i )
+     for ( i = 0; i < num_coords; i++ )
        lcoords[i] = FIXED_TO_INT( coords[i] );
 
      return T1_Set_MM_Design( face, num_coords, lcoords );
+  }
+
+
+  FT_LOCAL_DEF( FT_Error )
+  T1_Get_Var_Design( T1_Face    face,
+                     FT_UInt    num_coords,
+                     FT_Fixed*  coords )
+  {
+    PS_Blend  blend = face->blend;
+
+    FT_Fixed  axiscoords[4];
+    FT_UInt   i, nc;
+
+
+    if ( !blend )
+      return FT_THROW( Invalid_Argument );
+
+    mm_weights_unmap( blend->weight_vector,
+                      axiscoords,
+                      blend->num_axis );
+
+    nc = num_coords;
+    if ( num_coords > blend->num_axis )
+    {
+      FT_TRACE2(( "T1_Get_Var_Design:"
+                  " only using first %d of %d coordinates\n",
+                  blend->num_axis, num_coords ));
+      nc = blend->num_axis;
+    }
+
+    for ( i = 0; i < nc; i++ )
+      coords[i] = mm_axis_unmap( &blend->design_map[i], axiscoords[i] );
+    for ( ; i < num_coords; i++ )
+      coords[i] = 0;
+
+    return FT_Err_Ok;
   }
 
 
@@ -1401,6 +1476,7 @@
     FT_Memory  memory = parser->root.memory;
     FT_Error   error;
     FT_Int     num_subrs;
+    FT_UInt    count;
 
     PSAux_Service  psaux = (PSAux_Service)face->psaux;
 
@@ -1420,6 +1496,47 @@
     }
 
     num_subrs = (FT_Int)T1_ToInt( parser );
+    if ( num_subrs < 0 )
+    {
+      parser->root.error = FT_THROW( Invalid_File_Format );
+      return;
+    }
+
+    /* we certainly need more than 8 bytes per subroutine */
+    if ( parser->root.limit >= parser->root.cursor                     &&
+         num_subrs > ( parser->root.limit - parser->root.cursor ) >> 3 )
+    {
+      /*
+       * There are two possibilities.  Either the font contains an invalid
+       * value for `num_subrs', or we have a subsetted font where the
+       * subroutine indices are not adjusted, e.g.
+       *
+       *   /Subrs 812 array
+       *     dup 0 { ... } NP
+       *     dup 51 { ... } NP
+       *     dup 681 { ... } NP
+       *   ND
+       *
+       * In both cases, we use a number hash that maps from subr indices to
+       * actual array elements.
+       */
+
+      FT_TRACE0(( "parse_subrs: adjusting number of subroutines"
+                  " (from %d to %d)\n",
+                  num_subrs,
+                  ( parser->root.limit - parser->root.cursor ) >> 3 ));
+      num_subrs = ( parser->root.limit - parser->root.cursor ) >> 3;
+
+      if ( !loader->subrs_hash )
+      {
+        if ( FT_NEW( loader->subrs_hash ) )
+          goto Fail;
+
+        error = ft_hash_num_init( loader->subrs_hash, memory );
+        if ( error )
+          goto Fail;
+      }
+    }
 
     /* position the parser right before the `dup' of the first subr */
     T1_Skip_PS_Token( parser );         /* `array' */
@@ -1440,7 +1557,7 @@
     /*                         */
     /*   `index' + binary data */
     /*                         */
-    for (;;)
+    for ( count = 0; ; count++ )
     {
       FT_Long   idx;
       FT_ULong  size;
@@ -1476,6 +1593,14 @@
         T1_Skip_Spaces  ( parser );
       }
 
+      /* if we use a hash, the subrs index is the key, and a running */
+      /* counter specified for `T1_Add_Table' acts as the value      */
+      if ( loader->subrs_hash )
+      {
+        ft_hash_num_insert( idx, count, loader->subrs_hash, memory );
+        idx = count;
+      }
+
       /* with synthetic fonts it is possible we get here twice */
       if ( loader->num_subrs )
         continue;
@@ -1487,7 +1612,7 @@
       /*                                                         */
       if ( face->type1.private_dict.lenIV >= 0 )
       {
-        FT_Byte*  temp;
+        FT_Byte*  temp = NULL;
 
 
         /* some fonts define empty subr records -- this is not totally */
@@ -1691,7 +1816,7 @@
         if ( face->type1.private_dict.lenIV >= 0 &&
              n < num_glyphs + TABLE_EXTEND       )
         {
-          FT_Byte*  temp;
+          FT_Byte*  temp = NULL;
 
 
           if ( size <= (FT_ULong)face->type1.private_dict.lenIV )
@@ -1717,6 +1842,12 @@
 
         n++;
       }
+    }
+
+    if ( !n )
+    {
+      error = FT_THROW( Invalid_File_Format );
+      goto Fail;
     }
 
     loader->num_glyphs = n;
@@ -2047,7 +2178,7 @@
                 parser->root.error = t1_load_keyword( face,
                                                       loader,
                                                       keyword );
-                if ( parser->root.error != FT_Err_Ok )
+                if ( parser->root.error )
                 {
                   if ( FT_ERR_EQ( parser->root.error, Ignore ) )
                     parser->root.error = FT_Err_Ok;
@@ -2086,18 +2217,7 @@
   {
     FT_UNUSED( face );
 
-    FT_MEM_ZERO( loader, sizeof ( *loader ) );
-    loader->num_glyphs = 0;
-    loader->num_chars  = 0;
-
-    /* initialize the tables -- simply set their `init' field to 0 */
-    loader->encoding_table.init  = 0;
-    loader->charstrings.init     = 0;
-    loader->glyph_names.init     = 0;
-    loader->subrs.init           = 0;
-    loader->swap_table.init      = 0;
-    loader->fontdata             = 0;
-    loader->keywords_encountered = 0;
+    FT_ZERO( loader );
   }
 
 
@@ -2105,6 +2225,7 @@
   t1_done_loader( T1_Loader  loader )
   {
     T1_Parser  parser = &loader->parser;
+    FT_Memory  memory = parser->root.memory;
 
 
     /* finalize tables */
@@ -2113,6 +2234,10 @@
     T1_Release_Table( &loader->glyph_names );
     T1_Release_Table( &loader->swap_table );
     T1_Release_Table( &loader->subrs );
+
+    /* finalize hash */
+    ft_hash_num_free( loader->subrs_hash, memory );
+    FT_FREE( loader->subrs_hash );
 
     /* finalize parser */
     T1_Finalize_Parser( parser );
@@ -2230,11 +2355,15 @@
 
     if ( loader.subrs.init )
     {
-      loader.subrs.init  = 0;
       type1->num_subrs   = loader.num_subrs;
       type1->subrs_block = loader.subrs.block;
       type1->subrs       = loader.subrs.elements;
       type1->subrs_len   = loader.subrs.lengths;
+      type1->subrs_hash  = loader.subrs_hash;
+
+      /* prevent `t1_done_loader' from freeing the propagated data */
+      loader.subrs.init = 0;
+      loader.subrs_hash = NULL;
     }
 
     if ( !IS_INCREMENTAL )

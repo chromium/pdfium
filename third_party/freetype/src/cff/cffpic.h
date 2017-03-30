@@ -4,7 +4,7 @@
 /*                                                                         */
 /*    The FreeType position independent code services for cff module.      */
 /*                                                                         */
-/*  Copyright 2009-2015 by                                                 */
+/*  Copyright 2009-2017 by                                                 */
 /*  Oran Agra and Mickey Gabel.                                            */
 /*                                                                         */
 /*  This file is part of the FreeType project, and may only be used,       */
@@ -16,8 +16,8 @@
 /***************************************************************************/
 
 
-#ifndef __CFFPIC_H__
-#define __CFFPIC_H__
+#ifndef CFFPIC_H_
+#define CFFPIC_H_
 
 
 #include FT_INTERNAL_PIC_H
@@ -32,6 +32,7 @@
 #define CFF_SERVICE_CID_INFO_GET         cff_service_cid_info
 #define CFF_SERVICE_PROPERTIES_GET       cff_service_properties
 #define CFF_SERVICES_GET                 cff_services
+#define CFF_SERVICE_MULTI_MASTERS_GET    cff_service_multi_masters
 #define CFF_CMAP_ENCODING_CLASS_REC_GET  cff_cmap_encoding_class_rec
 #define CFF_CMAP_UNICODE_CLASS_REC_GET   cff_cmap_unicode_class_rec
 #define CFF_FIELD_HANDLERS_GET           cff_field_handlers
@@ -102,7 +103,7 @@ FT_END_HEADER
 
  /* */
 
-#endif /* __CFFPIC_H__ */
+#endif /* CFFPIC_H_ */
 
 
 /* END */

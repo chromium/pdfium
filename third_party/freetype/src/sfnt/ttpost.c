@@ -2,10 +2,10 @@
 /*                                                                         */
 /*  ttpost.c                                                               */
 /*                                                                         */
-/*    Postcript name table processing for TrueType and OpenType fonts      */
+/*    PostScript name table processing for TrueType and OpenType fonts     */
 /*    (body).                                                              */
 /*                                                                         */
-/*  Copyright 1996-2015 by                                                 */
+/*  Copyright 1996-2017 by                                                 */
 /*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
 /*                                                                         */
 /*  This file is part of the FreeType project, and may only be used,       */
@@ -326,7 +326,9 @@
       goto Exit;
 
     /* check the number of glyphs */
-    if ( num_glyphs > face->max_profile.numGlyphs || num_glyphs > 258 )
+    if ( num_glyphs > face->max_profile.numGlyphs ||
+         num_glyphs > 258                         ||
+         num_glyphs < 1                           )
     {
       error = FT_THROW( Invalid_File_Format );
       goto Exit;

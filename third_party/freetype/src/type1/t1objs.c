@@ -4,7 +4,7 @@
 /*                                                                         */
 /*    Type 1 objects manager (body).                                       */
 /*                                                                         */
-/*  Copyright 1996-2015 by                                                 */
+/*  Copyright 1996-2017 by                                                 */
 /*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
 /*                                                                         */
 /*  This file is part of the FreeType project, and may only be used,       */
@@ -67,7 +67,7 @@
                             "pshinter" );
     return ( module && pshinter && pshinter->get_globals_funcs )
            ? pshinter->get_globals_funcs( module )
-           : 0 ;
+           : 0;
   }
 
 
@@ -246,6 +246,9 @@
 
     FT_FREE( type1->subrs );
     FT_FREE( type1->subrs_len );
+
+    ft_hash_num_free( type1->subrs_hash, memory );
+    FT_FREE( type1->subrs_hash );
 
     FT_FREE( type1->subrs_block );
     FT_FREE( type1->charstrings_block );

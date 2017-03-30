@@ -4,7 +4,7 @@
 /*                                                                         */
 /*    Objects manager (body).                                              */
 /*                                                                         */
-/*  Copyright 1996-2015 by                                                 */
+/*  Copyright 1996-2017 by                                                 */
 /*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
 /*                                                                         */
 /*  This file is part of the FreeType project, and may only be used,       */
@@ -30,10 +30,6 @@
 
 #ifdef TT_USE_BYTECODE_INTERPRETER
 #include "ttinterp.h"
-#endif
-
-#ifdef TT_CONFIG_OPTION_UNPATENTED_HINTING
-#include FT_TRUETYPE_UNPATENTED_H
 #endif
 
 #ifdef TT_CONFIG_OPTION_GX_VAR_SUPPORT
@@ -121,7 +117,7 @@
     FT_Error  error;
 
 
-    FT_MEM_ZERO( zone, sizeof ( *zone ) );
+    FT_ZERO( zone );
     zone->memory = memory;
 
     if ( FT_NEW_ARRAY( zone->org,      maxPoints   ) ||
@@ -246,7 +242,7 @@
   tt_check_trickyness_sfnt_ids( TT_Face  face )
   {
 #define TRICK_SFNT_IDS_PER_FACE   3
-#define TRICK_SFNT_IDS_NUM_FACES  17
+#define TRICK_SFNT_IDS_NUM_FACES  18
 
     static const tt_sfnt_id_rec sfnt_id[TRICK_SFNT_IDS_NUM_FACES]
                                        [TRICK_SFNT_IDS_PER_FACE] = {
@@ -268,6 +264,11 @@
       { /* DFKaiShu */
         { 0x11E5EAD4UL, 0x00000350UL }, /* cvt  */
         { 0x5A30CA3BUL, 0x00009063UL }, /* fpgm */
+        { 0x13A42602UL, 0x0000007EUL }  /* prep */
+      },
+      { /* DFKaiShu2 */
+        { 0x11E5EAD4UL, 0x00000350UL }, /* cvt  */
+        { 0xA6E78C01UL, 0x00008998UL }, /* fpgm */
         { 0x13A42602UL, 0x0000007EUL }  /* prep */
       },
       { /* HuaTianKaiTi */
@@ -397,11 +398,11 @@
     for ( j = 0; j < TRICK_SFNT_IDS_NUM_FACES; j++ )
     {
       if ( !has_cvt  && !sfnt_id[j][TRICK_SFNT_ID_cvt].Length )
-        num_matched_ids[j] ++;
+        num_matched_ids[j]++;
       if ( !has_fpgm && !sfnt_id[j][TRICK_SFNT_ID_fpgm].Length )
-        num_matched_ids[j] ++;
+        num_matched_ids[j]++;
       if ( !has_prep && !sfnt_id[j][TRICK_SFNT_ID_prep].Length )
-        num_matched_ids[j] ++;
+        num_matched_ids[j]++;
       if ( num_matched_ids[j] == TRICK_SFNT_IDS_PER_FACE )
         return TRUE;
     }
@@ -535,6 +536,7 @@
       goto Exit;
 
     /* check that we have a valid TrueType file */
+    FT_TRACE2(( "  " ));
     error = sfnt->init_face( stream, face, face_index, num_params, params );
 
     /* Stream may have changed. */
@@ -576,58 +578,50 @@
 
     if ( FT_IS_SCALABLE( ttface ) )
     {
-
 #ifdef FT_CONFIG_OPTION_INCREMENTAL
-
       if ( !ttface->internal->incremental_interface )
-        error = tt_face_load_loca( face, stream );
-      if ( !error )
-        error = tt_face_load_cvt( face, stream );
-      if ( !error )
-        error = tt_face_load_fpgm( face, stream );
-      if ( !error )
-        error = tt_face_load_prep( face, stream );
-
-      /* Check the scalable flag based on `loca'. */
-      if ( !ttface->internal->incremental_interface &&
-           ttface->num_fixed_sizes                  &&
-           face->glyph_locations                    &&
-           tt_check_single_notdef( ttface )         )
+#endif
       {
-        FT_TRACE5(( "tt_face_init:"
-                    " Only the `.notdef' glyph has an outline.\n"
-                    "             "
-                    " Resetting scalable flag to FALSE.\n" ));
+        error = tt_face_load_loca( face, stream );
 
-        ttface->face_flags &= ~FT_FACE_FLAG_SCALABLE;
+        /* having a (non-zero) `glyf' table without */
+        /* a `loca' table is not valid              */
+        if ( face->glyf_len && FT_ERR_EQ( error, Table_Missing ) )
+          goto Exit;
+        if ( error )
+          goto Exit;
       }
 
-#else /* !FT_CONFIG_OPTION_INCREMENTAL */
+      /* `fpgm', `cvt', and `prep' are optional */
+      error = tt_face_load_cvt( face, stream );
+      if ( error && FT_ERR_NEQ( error, Table_Missing ) )
+        goto Exit;
 
-      if ( !error )
-        error = tt_face_load_loca( face, stream );
-      if ( !error )
-        error = tt_face_load_cvt( face, stream );
-      if ( !error )
-        error = tt_face_load_fpgm( face, stream );
-      if ( !error )
-        error = tt_face_load_prep( face, stream );
+      error = tt_face_load_fpgm( face, stream );
+      if ( error && FT_ERR_NEQ( error, Table_Missing ) )
+        goto Exit;
+
+      error = tt_face_load_prep( face, stream );
+      if ( error && FT_ERR_NEQ( error, Table_Missing ) )
+        goto Exit;
 
       /* Check the scalable flag based on `loca'. */
-      if ( ttface->num_fixed_sizes          &&
-           face->glyph_locations            &&
-           tt_check_single_notdef( ttface ) )
+#ifdef FT_CONFIG_OPTION_INCREMENTAL
+      if ( !ttface->internal->incremental_interface )
+#endif
       {
-        FT_TRACE5(( "tt_face_init:"
-                    " Only the `.notdef' glyph has an outline.\n"
-                    "             "
-                    " Resetting scalable flag to FALSE.\n" ));
+        if ( ttface->num_fixed_sizes          &&
+             face->glyph_locations            &&
+             tt_check_single_notdef( ttface ) )
+        {
+          FT_TRACE5(( "tt_face_init:"
+                      " Only the `.notdef' glyph has an outline.\n"
+                      "             "
+                      " Resetting scalable flag to FALSE.\n" ));
 
-        ttface->face_flags &= ~FT_FACE_FLAG_SCALABLE;
+          ttface->face_flags &= ~FT_FACE_FLAG_SCALABLE;
+        }
       }
-
-#endif /* !FT_CONFIG_OPTION_INCREMENTAL */
-
     }
 
 #ifdef TT_CONFIG_OPTION_GX_VAR_SUPPORT
@@ -670,34 +664,13 @@
                                      named_style->coords );
           if ( error )
             goto Exit;
+
+          tt_apply_mvar( face );
         }
       }
     }
 
 #endif /* TT_CONFIG_OPTION_GX_VAR_SUPPORT */
-
-#if defined( TT_CONFIG_OPTION_UNPATENTED_HINTING    ) && \
-    !defined( TT_CONFIG_OPTION_BYTECODE_INTERPRETER )
-
-    {
-      FT_Bool  unpatented_hinting;
-      int      i;
-
-
-      /* Determine whether unpatented hinting is to be used for this face. */
-      unpatented_hinting = FT_BOOL
-        ( library->debug_hooks[FT_DEBUG_HOOK_UNPATENTED_HINTING] != NULL );
-
-      for ( i = 0; i < num_params && !face->unpatented_hinting; i++ )
-        if ( params[i].tag == FT_PARAM_TAG_UNPATENTED_HINTING )
-          unpatented_hinting = TRUE;
-
-      if ( !unpatented_hinting )
-        ttface->internal->ignore_unpatented_hinter = TRUE;
-    }
-
-#endif /* TT_CONFIG_OPTION_UNPATENTED_HINTING &&
-          !TT_CONFIG_OPTION_BYTECODE_INTERPRETER */
 
     /* initialize standard glyph loading routines */
     TT_Init_Glyph_Loading( face );
@@ -761,7 +734,7 @@
     face->cvt_program_size  = 0;
 
 #ifdef TT_CONFIG_OPTION_GX_VAR_SUPPORT
-    tt_done_blend( memory, face->blend );
+    tt_done_blend( face );
     face->blend = NULL;
 #endif
   }
@@ -849,6 +822,11 @@
 
       FT_TRACE4(( "Executing `fpgm' table.\n" ));
       error = face->interpreter( exec );
+#ifdef FT_DEBUG_LEVEL_TRACE
+      if ( error )
+        FT_TRACE4(( "  interpretation failed with error code 0x%x\n",
+                    error ));
+#endif
     }
     else
       error = FT_Err_Ok;
@@ -912,8 +890,12 @@
       TT_Goto_CodeRange( exec, tt_coderange_cvt, 0 );
 
       FT_TRACE4(( "Executing `prep' table.\n" ));
-
       error = face->interpreter( exec );
+#ifdef FT_DEBUG_LEVEL_TRACE
+      if ( error )
+        FT_TRACE4(( "  interpretation failed with error code 0x%x\n",
+                    error ));
+#endif
     }
     else
       error = FT_Err_Ok;
@@ -1078,7 +1060,15 @@
     }
 
     /* Fine, now run the font program! */
+
+    /* In case of an error while executing `fpgm', we intentionally don't */
+    /* clean up immediately – bugs in the `fpgm' are so fundamental that  */
+    /* all following hinting calls should fail.  Additionally, `fpgm' is  */
+    /* to be executed just once; calling it again is completely useless   */
+    /* and might even lead to extremely slow behaviour if it is malformed */
+    /* (containing an infinite loop, for example).                        */
     error = tt_size_run_fpgm( size, pedantic );
+    return error;
 
   Exit:
     if ( error )
@@ -1097,8 +1087,10 @@
 
     if ( size->bytecode_ready < 0 )
       error = tt_size_init_bytecode( (FT_Size)size, pedantic );
+    else
+      error = size->bytecode_ready;
 
-    if ( error || size->bytecode_ready )
+    if ( error )
       goto Exit;
 
     /* rescale CVT when needed */
@@ -1130,6 +1122,8 @@
 
       error = tt_size_run_prep( size, pedantic );
     }
+    else
+      error = size->cvt_ready;
 
   Exit:
     return error;
@@ -1206,13 +1200,15 @@
   /*    have been changed.                                                 */
   /*                                                                       */
   /* <Input>                                                               */
-  /*    size :: A handle to the target size object.                        */
+  /*    size        :: A handle to the target size object.                 */
+  /*                                                                       */
+  /*    only_height :: Only recompute ascender, descender, and height.     */
   /*                                                                       */
   FT_LOCAL_DEF( FT_Error )
-  tt_size_reset( TT_Size  size )
+  tt_size_reset( TT_Size  size,
+                 FT_Bool  only_height )
   {
     TT_Face           face;
-    FT_Error          error = FT_Err_Ok;
     FT_Size_Metrics*  metrics;
 
 
@@ -1234,17 +1230,26 @@
     /*                                                               */
     if ( face->header.Flags & 8 )
     {
-      metrics->x_scale = FT_DivFix( metrics->x_ppem << 6,
-                                    face->root.units_per_EM );
-      metrics->y_scale = FT_DivFix( metrics->y_ppem << 6,
-                                    face->root.units_per_EM );
-
       metrics->ascender =
         FT_PIX_ROUND( FT_MulFix( face->root.ascender, metrics->y_scale ) );
       metrics->descender =
         FT_PIX_ROUND( FT_MulFix( face->root.descender, metrics->y_scale ) );
       metrics->height =
         FT_PIX_ROUND( FT_MulFix( face->root.height, metrics->y_scale ) );
+    }
+
+    size->ttmetrics.valid = TRUE;
+
+    if ( only_height )
+      return FT_Err_Ok;
+
+    if ( face->header.Flags & 8 )
+    {
+      metrics->x_scale = FT_DivFix( metrics->x_ppem << 6,
+                                    face->root.units_per_EM );
+      metrics->y_scale = FT_DivFix( metrics->y_ppem << 6,
+                                    face->root.units_per_EM );
+
       metrics->max_advance =
         FT_PIX_ROUND( FT_MulFix( face->root.max_advance_width,
                                  metrics->x_scale ) );
@@ -1272,10 +1277,7 @@
     size->cvt_ready = -1;
 #endif /* TT_USE_BYTECODE_INTERPRETER */
 
-    if ( !error )
-      size->ttmetrics.valid = TRUE;
-
-    return error;
+    return FT_Err_Ok;
   }
 
 
@@ -1301,10 +1303,12 @@
 
     TT_Driver  driver = (TT_Driver)ttdriver;
 
-#ifdef TT_CONFIG_OPTION_SUBPIXEL_HINTING
-    driver->interpreter_version = TT_INTERPRETER_VERSION_38;
-#else
     driver->interpreter_version = TT_INTERPRETER_VERSION_35;
+#ifdef TT_SUPPORT_SUBPIXEL_HINTING_INFINALITY
+    driver->interpreter_version = TT_INTERPRETER_VERSION_38;
+#endif
+#ifdef TT_SUPPORT_SUBPIXEL_HINTING_MINIMAL
+    driver->interpreter_version = TT_INTERPRETER_VERSION_40;
 #endif
 
 #else /* !TT_USE_BYTECODE_INTERPRETER */

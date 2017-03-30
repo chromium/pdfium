@@ -4,7 +4,7 @@
 /*                                                                         */
 /*    TrueType Subpixel Hinting.                                           */
 /*                                                                         */
-/*  Copyright 2010-2015 by                                                 */
+/*  Copyright 2010-2017 by                                                 */
 /*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
 /*                                                                         */
 /*  This file is part of the FreeType project, and may only be used,       */
@@ -27,7 +27,7 @@
 #include "ttsubpix.h"
 
 
-#ifdef TT_CONFIG_OPTION_SUBPIXEL_HINTING
+#ifdef TT_SUPPORT_SUBPIXEL_HINTING_INFINALITY
 
   /*************************************************************************/
   /*                                                                       */
@@ -1000,12 +1000,12 @@
     }
   }
 
-#else /* !TT_CONFIG_OPTION_SUBPIXEL_HINTING */
+#else /* !TT_SUPPORT_SUBPIXEL_HINTING_INFINALITY */
 
   /* ANSI C doesn't like empty source files */
   typedef int  _tt_subpix_dummy;
 
-#endif /* !TT_CONFIG_OPTION_SUBPIXEL_HINTING */
+#endif /* !TT_SUPPORT_SUBPIXEL_HINTING_INFINALITY */
 
 
 /* END */
