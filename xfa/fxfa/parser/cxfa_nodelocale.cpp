@@ -8,7 +8,7 @@
 
 #include <utility>
 
-#include "core/fxcrt/fx_xml.h"
+#include "core/fxcrt/xml/cxml_element.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_localemgr.h"
 #include "xfa/fxfa/parser/cxfa_node.h"

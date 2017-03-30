@@ -16,7 +16,7 @@
 #include "core/fpdfdoc/cpdf_metadata.h"
 #include "core/fxcrt/fx_basic.h"
 #include "core/fxcrt/fx_memory.h"
-#include "core/fxcrt/fx_xml.h"
+#include "core/fxcrt/xml/cxml_element.h"
 #include "fpdfsdk/fsdk_define.h"
 #include "third_party/base/ptr_util.h"
 

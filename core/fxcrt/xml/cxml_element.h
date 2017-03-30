@@ -4,51 +4,14 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXCRT_FX_XML_H_
-#define CORE_FXCRT_FX_XML_H_
+#ifndef CORE_FXCRT_XML_CXML_ELEMENT_H_
+#define CORE_FXCRT_XML_CXML_ELEMENT_H_
 
 #include <memory>
 #include <vector>
 
 #include "core/fxcrt/fx_basic.h"
-
-class CXML_AttrItem {
- public:
-  bool Matches(const CFX_ByteString& space, const CFX_ByteString& name) const;
-
-  CFX_ByteString m_QSpaceName;
-  CFX_ByteString m_AttrName;
-  CFX_WideString m_Value;
-};
-
-class CXML_AttrMap {
- public:
-  CXML_AttrMap();
-  ~CXML_AttrMap();
-
-  const CFX_WideString* Lookup(const CFX_ByteString& space,
-                               const CFX_ByteString& name) const;
-  int GetSize() const;
-  CXML_AttrItem& GetAt(int index) const;
-
-  void SetAt(const CFX_ByteString& space,
-             const CFX_ByteString& name,
-             const CFX_WideString& value);
-
-  std::unique_ptr<std::vector<CXML_AttrItem>> m_pMap;
-};
-
-class CXML_Content {
- public:
-  CXML_Content() : m_bCDATA(false), m_Content() {}
-  void Set(bool bCDATA, const CFX_WideStringC& content) {
-    m_bCDATA = bCDATA;
-    m_Content = content;
-  }
-
-  bool m_bCDATA;
-  CFX_WideString m_Content;
-};
+#include "core/fxcrt/xml/cxml_attrmap.h"
 
 class CXML_Element {
  public:
@@ -144,7 +107,10 @@ class CXML_Element {
   void RemoveChildren();
   void RemoveChild(uint32_t index);
 
- protected:
+ private:
+  friend class CXML_Parser;
+  friend class CXML_Composer;
+
   struct ChildRecord {
     ChildType type;
     void* child;  // CXML_Element and CXML_Content lack a common ancestor.
@@ -155,9 +121,6 @@ class CXML_Element {
   CFX_ByteString m_TagName;
   CXML_AttrMap m_AttrMap;
   std::vector<ChildRecord> m_Children;
-
-  friend class CXML_Parser;
-  friend class CXML_Composer;
 };
 
-#endif  // CORE_FXCRT_FX_XML_H_
+#endif  // CORE_FXCRT_XML_CXML_ELEMENT_H_

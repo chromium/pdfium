@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXCRT_XML_INT_H_
-#define CORE_FXCRT_XML_INT_H_
+#ifndef CORE_FXCRT_XML_CXML_PARSER_H_
+#define CORE_FXCRT_XML_CXML_PARSER_H_
 
 #include <algorithm>
 #include <memory>
@@ -52,4 +52,4 @@ void FX_XML_SplitQualifiedName(const CFX_ByteStringC& bsFullName,
                                CFX_ByteStringC& bsSpace,
                                CFX_ByteStringC& bsName);
 
-#endif  // CORE_FXCRT_XML_INT_H_
+#endif  // CORE_FXCRT_XML_CXML_PARSER_H_

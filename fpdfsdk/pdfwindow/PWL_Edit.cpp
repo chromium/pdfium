@@ -13,7 +13,7 @@
 #include "core/fpdfapi/font/cpdf_font.h"
 #include "core/fpdfdoc/cpvt_word.h"
 #include "core/fxcrt/fx_safe_types.h"
-#include "core/fxcrt/fx_xml.h"
+#include "core/fxcrt/xml/cxml_element.h"
 #include "core/fxge/cfx_graphstatedata.h"
 #include "core/fxge/cfx_pathdata.h"
 #include "core/fxge/cfx_renderdevice.h"

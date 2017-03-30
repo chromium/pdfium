@@ -11,7 +11,7 @@
 
 #include "core/fxcrt/cfx_decimal.h"
 #include "core/fxcrt/fx_ext.h"
-#include "core/fxcrt/fx_xml.h"
+#include "core/fxcrt/xml/cxml_element.h"
 
 #define FX_LOCALECATEGORY_DateHash 0xbde9abde
 #define FX_LOCALECATEGORY_TimeHash 0x2d71b00f
