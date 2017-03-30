@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FGAS_CRT_FGAS_STREAM_H_
-#define XFA_FGAS_CRT_FGAS_STREAM_H_
+#ifndef XFA_FGAS_CRT_IFGAS_STREAM_H_
+#define XFA_FGAS_CRT_IFGAS_STREAM_H_
 
 #include "core/fxcrt/cfx_retain_ptr.h"
 #include "core/fxcrt/fx_stream.h"
@@ -63,5 +63,4 @@ class IFGAS_Stream : public CFX_Retainable {
   CFX_RetainPtr<IFX_SeekableReadStream> MakeSeekableReadStream();
 };
 
-
-#endif  // XFA_FGAS_CRT_FGAS_STREAM_H_
+#endif  // XFA_FGAS_CRT_IFGAS_STREAM_H_

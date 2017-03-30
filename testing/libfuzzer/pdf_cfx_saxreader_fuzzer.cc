@@ -6,7 +6,7 @@
 
 #include "core/fxcrt/cfx_retain_ptr.h"
 #include "xfa/fde/xml/cfx_saxreader.h"
-#include "xfa/fgas/crt/fgas_stream.h"
+#include "xfa/fgas/crt/ifgas_stream.h"
 #include "xfa/fxfa/parser/cxfa_widetextread.h"
 
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {

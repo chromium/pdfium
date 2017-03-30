@@ -10,7 +10,7 @@
 #include "core/fxcrt/cfx_retain_ptr.h"
 #include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_system.h"
-#include "xfa/fgas/crt/fgas_stream.h"
+#include "xfa/fgas/crt/ifgas_stream.h"
 
 class CFDE_CSSTextBuf {
  public:

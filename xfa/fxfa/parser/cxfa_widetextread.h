@@ -8,7 +8,7 @@
 #define XFA_FXFA_PARSER_CXFA_WIDETEXTREAD_H_
 
 #include "core/fxcrt/cfx_retain_ptr.h"
-#include "xfa/fgas/crt/fgas_stream.h"
+#include "xfa/fgas/crt/ifgas_stream.h"
 
 class CXFA_WideTextRead : public IFGAS_Stream {
  public:

@@ -7,7 +7,7 @@
 #include <memory>
 
 #include "testing/gtest/include/gtest/gtest.h"
-#include "xfa/fgas/crt/fgas_stream.h"
+#include "xfa/fgas/crt/ifgas_stream.h"
 
 TEST(CFDE_XMLSyntaxParser, CData) {
   const wchar_t* input =
