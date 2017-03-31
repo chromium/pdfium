@@ -15,6 +15,7 @@
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/dib/cfx_dibsource.h"
+#include "core/fxge/dib/cfx_scanlinecompositor.h"
 #include "third_party/base/stl_util.h"
 
 typedef uint32_t FX_ARGB;
@@ -140,64 +141,6 @@ class IFX_ScanlineComposer {
                        int height,
                        FXDIB_Format src_format,
                        uint32_t* pSrcPalette) = 0;
-};
-
-class CFX_ScanlineCompositor {
- public:
-  CFX_ScanlineCompositor();
-
-  ~CFX_ScanlineCompositor();
-
-  bool Init(FXDIB_Format dest_format,
-            FXDIB_Format src_format,
-            int32_t width,
-            uint32_t* pSrcPalette,
-            uint32_t mask_color,
-            int blend_type,
-            bool bClip,
-            bool bRgbByteOrder = false,
-            int alpha_flag = 0,
-            void* pIccTransform = nullptr);
-
-  void CompositeRgbBitmapLine(uint8_t* dest_scan,
-                              const uint8_t* src_scan,
-                              int width,
-                              const uint8_t* clip_scan,
-                              const uint8_t* src_extra_alpha = nullptr,
-                              uint8_t* dst_extra_alpha = nullptr);
-
-  void CompositePalBitmapLine(uint8_t* dest_scan,
-                              const uint8_t* src_scan,
-                              int src_left,
-                              int width,
-                              const uint8_t* clip_scan,
-                              const uint8_t* src_extra_alpha = nullptr,
-                              uint8_t* dst_extra_alpha = nullptr);
-
-  void CompositeByteMaskLine(uint8_t* dest_scan,
-                             const uint8_t* src_scan,
-                             int width,
-                             const uint8_t* clip_scan,
-                             uint8_t* dst_extra_alpha = nullptr);
-
-  void CompositeBitMaskLine(uint8_t* dest_scan,
-                            const uint8_t* src_scan,
-                            int src_left,
-                            int width,
-                            const uint8_t* clip_scan,
-                            uint8_t* dst_extra_alpha = nullptr);
-
- protected:
-  int m_Transparency;
-  FXDIB_Format m_SrcFormat, m_DestFormat;
-  uint32_t* m_pSrcPalette;
-
-  int m_MaskAlpha, m_MaskRed, m_MaskGreen, m_MaskBlue, m_MaskBlack;
-  int m_BlendType;
-  void* m_pIccTransform;
-  uint8_t* m_pCacheScanline;
-  int m_CacheSize;
-  bool m_bRgbByteOrder;
 };
 
 class CFX_BitmapComposer : public IFX_ScanlineComposer {

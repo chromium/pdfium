@@ -1083,39 +1083,6 @@ CFX_DIBExtractor::CFX_DIBExtractor(const CFX_RetainPtr<CFX_DIBSource>& pSrc) {
 
 CFX_DIBExtractor::~CFX_DIBExtractor() {}
 
-CFX_FilteredDIB::CFX_FilteredDIB() {}
-
-CFX_FilteredDIB::~CFX_FilteredDIB() {}
-
-void CFX_FilteredDIB::LoadSrc(const CFX_RetainPtr<CFX_DIBSource>& pSrc) {
-  m_pSrc = pSrc;
-  m_Width = pSrc->GetWidth();
-  m_Height = pSrc->GetHeight();
-  FXDIB_Format format = GetDestFormat();
-  m_bpp = (uint8_t)format;
-  m_AlphaFlag = (uint8_t)(format >> 8);
-  m_Pitch = (m_Width * (format & 0xff) + 31) / 32 * 4;
-  m_pPalette.reset(GetDestPalette());
-  m_Scanline.resize(m_Pitch);
-}
-
-const uint8_t* CFX_FilteredDIB::GetScanline(int line) const {
-  TranslateScanline(m_pSrc->GetScanline(line), &m_Scanline);
-  return m_Scanline.data();
-}
-
-void CFX_FilteredDIB::DownSampleScanline(int line,
-                                         uint8_t* dest_scan,
-                                         int dest_bpp,
-                                         int dest_width,
-                                         bool bFlipX,
-                                         int clip_left,
-                                         int clip_width) const {
-  m_pSrc->DownSampleScanline(line, dest_scan, dest_bpp, dest_width, bFlipX,
-                             clip_left, clip_width);
-  TranslateDownSamples(dest_scan, dest_scan, clip_width, dest_bpp);
-}
-
 CFX_ImageRenderer::CFX_ImageRenderer() {
   m_Status = 0;
   m_pIccTransform = nullptr;
