@@ -9,6 +9,7 @@
 
 #include <vector>
 
+#include "core/fxge/dib/cfx_filtereddib.h"
 #include "core/fxge/fx_dib.h"
 
 class CPDF_TransferFunc;

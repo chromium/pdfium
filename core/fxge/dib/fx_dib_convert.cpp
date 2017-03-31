@@ -787,49 +787,6 @@ bool ConvertBuffer(FXDIB_Format dest_format,
   }
 }
 
-CFX_RetainPtr<CFX_DIBitmap> CFX_DIBSource::CloneConvert(
-    FXDIB_Format dest_format) {
-  if (dest_format == GetFormat())
-    return Clone(nullptr);
-
-  auto pClone = pdfium::MakeRetain<CFX_DIBitmap>();
-  if (!pClone->Create(m_Width, m_Height, dest_format))
-    return nullptr;
-
-  CFX_RetainPtr<CFX_DIBitmap> pSrcAlpha;
-  if (HasAlpha()) {
-    if (GetFormat() == FXDIB_Argb)
-      pSrcAlpha = CloneAlphaMask();
-    else
-      pSrcAlpha = m_pAlphaMask;
-
-    if (!pSrcAlpha)
-      return nullptr;
-  }
-  bool ret = true;
-  if (dest_format & 0x0200) {
-    if (dest_format == FXDIB_Argb) {
-      ret = pSrcAlpha ? pClone->LoadChannel(FXDIB_Alpha, pSrcAlpha, FXDIB_Alpha)
-                      : pClone->LoadChannel(FXDIB_Alpha, 0xff);
-    } else {
-      ret = pClone->SetAlphaMask(pSrcAlpha);
-    }
-  }
-  if (!ret)
-    return nullptr;
-
-  CFX_RetainPtr<CFX_DIBSource> holder(this);
-  std::unique_ptr<uint32_t, FxFreeDeleter> pal_8bpp;
-  if (!ConvertBuffer(dest_format, pClone->GetBuffer(), pClone->GetPitch(),
-                     m_Width, m_Height, holder, 0, 0, &pal_8bpp)) {
-    return nullptr;
-  }
-  if (pal_8bpp)
-    pClone->SetPalette(pal_8bpp.get());
-
-  return pClone;
-}
-
 bool CFX_DIBitmap::ConvertFormat(FXDIB_Format dest_format) {
   FXDIB_Format src_format = GetFormat();
   if (dest_format == src_format)
