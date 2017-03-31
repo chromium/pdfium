@@ -161,7 +161,8 @@ void* FXJS_ArrayBufferAllocator::AllocateUninitialized(size_t length) {
 }
 
 void FXJS_ArrayBufferAllocator::Free(void* data, size_t length) {
-  pdfium::base::PartitionFree(data);
+  pdfium::base::PartitionFreeGeneric(gArrayBufferPartitionAllocator.root(),
+                                     data);
 }
 
 void V8TemplateMapTraits::Dispose(v8::Isolate* isolate,
