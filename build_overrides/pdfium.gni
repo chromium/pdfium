@@ -12,9 +12,9 @@ pdf_enable_v8_override = true
 # Default: Without XFA support.
 pdf_enable_xfa_override = false
 
-# Build PDFium either using the bundled FreeType, or using a third-party
-# FreeType, configured by the embedder in //build/config/freetype.
-# Default: Use the bundled FreeType.
+# Build PDFium either using a bundled FreeType library, or using the FreeType
+# target defined in //build/config/freetype.
+# Default: Use a bundled FreeType.
 pdf_bundle_freetype_override = true
 
 # Build PDFium against skia (experimental) rather than agg, replacing all PDFium
