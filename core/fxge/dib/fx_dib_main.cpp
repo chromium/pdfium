@@ -20,6 +20,68 @@
 #include "core/fxge/ge/cfx_cliprgn.h"
 #include "third_party/base/ptr_util.h"
 
+const int16_t SDP_Table[513] = {
+    256, 256, 256, 256, 256, 256, 256, 256, 256, 255, 255, 255, 255, 255, 255,
+    254, 254, 254, 254, 253, 253, 253, 252, 252, 252, 251, 251, 251, 250, 250,
+    249, 249, 249, 248, 248, 247, 247, 246, 246, 245, 244, 244, 243, 243, 242,
+    242, 241, 240, 240, 239, 238, 238, 237, 236, 236, 235, 234, 233, 233, 232,
+    231, 230, 230, 229, 228, 227, 226, 226, 225, 224, 223, 222, 221, 220, 219,
+    218, 218, 217, 216, 215, 214, 213, 212, 211, 210, 209, 208, 207, 206, 205,
+    204, 203, 202, 201, 200, 199, 198, 196, 195, 194, 193, 192, 191, 190, 189,
+    188, 186, 185, 184, 183, 182, 181, 179, 178, 177, 176, 175, 173, 172, 171,
+    170, 169, 167, 166, 165, 164, 162, 161, 160, 159, 157, 156, 155, 154, 152,
+    151, 150, 149, 147, 146, 145, 143, 142, 141, 140, 138, 137, 136, 134, 133,
+    132, 130, 129, 128, 126, 125, 124, 122, 121, 120, 119, 117, 116, 115, 113,
+    112, 111, 109, 108, 107, 105, 104, 103, 101, 100, 99,  97,  96,  95,  93,
+    92,  91,  89,  88,  87,  85,  84,  83,  81,  80,  79,  77,  76,  75,  73,
+    72,  71,  69,  68,  67,  66,  64,  63,  62,  60,  59,  58,  57,  55,  54,
+    53,  52,  50,  49,  48,  47,  45,  44,  43,  42,  40,  39,  38,  37,  36,
+    34,  33,  32,  31,  30,  28,  27,  26,  25,  24,  23,  21,  20,  19,  18,
+    17,  16,  15,  14,  13,  11,  10,  9,   8,   7,   6,   5,   4,   3,   2,
+    1,   0,   0,   -1,  -2,  -3,  -4,  -5,  -6,  -7,  -7,  -8,  -9,  -10, -11,
+    -12, -12, -13, -14, -15, -15, -16, -17, -17, -18, -19, -19, -20, -21, -21,
+    -22, -22, -23, -24, -24, -25, -25, -26, -26, -27, -27, -27, -28, -28, -29,
+    -29, -30, -30, -30, -31, -31, -31, -32, -32, -32, -33, -33, -33, -33, -34,
+    -34, -34, -34, -35, -35, -35, -35, -35, -36, -36, -36, -36, -36, -36, -36,
+    -36, -36, -37, -37, -37, -37, -37, -37, -37, -37, -37, -37, -37, -37, -37,
+    -37, -37, -37, -37, -37, -37, -37, -37, -36, -36, -36, -36, -36, -36, -36,
+    -36, -36, -35, -35, -35, -35, -35, -35, -34, -34, -34, -34, -34, -33, -33,
+    -33, -33, -33, -32, -32, -32, -32, -31, -31, -31, -31, -30, -30, -30, -30,
+    -29, -29, -29, -29, -28, -28, -28, -27, -27, -27, -27, -26, -26, -26, -25,
+    -25, -25, -24, -24, -24, -23, -23, -23, -22, -22, -22, -22, -21, -21, -21,
+    -20, -20, -20, -19, -19, -19, -18, -18, -18, -17, -17, -17, -16, -16, -16,
+    -15, -15, -15, -14, -14, -14, -13, -13, -13, -12, -12, -12, -11, -11, -11,
+    -10, -10, -10, -9,  -9,  -9,  -9,  -8,  -8,  -8,  -7,  -7,  -7,  -7,  -6,
+    -6,  -6,  -6,  -5,  -5,  -5,  -5,  -4,  -4,  -4,  -4,  -3,  -3,  -3,  -3,
+    -3,  -2,  -2,  -2,  -2,  -2,  -1,  -1,  -1,  -1,  -1,  -1,  0,   0,   0,
+    0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+    0,   0,   0,
+};
+
+FX_RECT FXDIB_SwapClipBox(FX_RECT& clip,
+                          int width,
+                          int height,
+                          bool bFlipX,
+                          bool bFlipY) {
+  FX_RECT rect;
+  if (bFlipY) {
+    rect.left = height - clip.top;
+    rect.right = height - clip.bottom;
+  } else {
+    rect.left = clip.top;
+    rect.right = clip.bottom;
+  }
+  if (bFlipX) {
+    rect.top = width - clip.left;
+    rect.bottom = width - clip.right;
+  } else {
+    rect.top = clip.left;
+    rect.bottom = clip.right;
+  }
+  rect.Normalize();
+  return rect;
+}
+
 void CmykDecode(uint32_t cmyk, int& c, int& m, int& y, int& k) {
   c = FXSYS_GetCValue(cmyk);
   m = FXSYS_GetMValue(cmyk);
@@ -1082,138 +1144,6 @@ CFX_DIBExtractor::CFX_DIBExtractor(const CFX_RetainPtr<CFX_DIBSource>& pSrc) {
 }
 
 CFX_DIBExtractor::~CFX_DIBExtractor() {}
-
-CFX_ImageRenderer::CFX_ImageRenderer() {
-  m_Status = 0;
-  m_pIccTransform = nullptr;
-  m_bRgbByteOrder = false;
-  m_BlendType = FXDIB_BLEND_NORMAL;
-}
-
-CFX_ImageRenderer::~CFX_ImageRenderer() {}
-
-bool CFX_ImageRenderer::Start(const CFX_RetainPtr<CFX_DIBitmap>& pDevice,
-                              const CFX_ClipRgn* pClipRgn,
-                              const CFX_RetainPtr<CFX_DIBSource>& pSource,
-                              int bitmap_alpha,
-                              uint32_t mask_color,
-                              const CFX_Matrix* pMatrix,
-                              uint32_t dib_flags,
-                              bool bRgbByteOrder,
-                              int alpha_flag,
-                              void* pIccTransform,
-                              int blend_type) {
-  m_Matrix = *pMatrix;
-  CFX_FloatRect image_rect_f = m_Matrix.GetUnitRect();
-  FX_RECT image_rect = image_rect_f.GetOuterRect();
-  m_ClipBox = pClipRgn ? pClipRgn->GetBox() : FX_RECT(0, 0, pDevice->GetWidth(),
-                                                      pDevice->GetHeight());
-  m_ClipBox.Intersect(image_rect);
-  if (m_ClipBox.IsEmpty())
-    return false;
-
-  m_pDevice = pDevice;
-  m_pClipRgn = pClipRgn;
-  m_MaskColor = mask_color;
-  m_BitmapAlpha = bitmap_alpha;
-  m_Matrix = *pMatrix;
-  m_Flags = dib_flags;
-  m_AlphaFlag = alpha_flag;
-  m_pIccTransform = pIccTransform;
-  m_bRgbByteOrder = bRgbByteOrder;
-  m_BlendType = blend_type;
-
-  if ((FXSYS_fabs(m_Matrix.b) >= 0.5f || m_Matrix.a == 0) ||
-      (FXSYS_fabs(m_Matrix.c) >= 0.5f || m_Matrix.d == 0)) {
-    if (FXSYS_fabs(m_Matrix.a) < FXSYS_fabs(m_Matrix.b) / 20 &&
-        FXSYS_fabs(m_Matrix.d) < FXSYS_fabs(m_Matrix.c) / 20 &&
-        FXSYS_fabs(m_Matrix.a) < 0.5f && FXSYS_fabs(m_Matrix.d) < 0.5f) {
-      int dest_width = image_rect.Width();
-      int dest_height = image_rect.Height();
-      FX_RECT bitmap_clip = m_ClipBox;
-      bitmap_clip.Offset(-image_rect.left, -image_rect.top);
-      bitmap_clip = FXDIB_SwapClipBox(bitmap_clip, dest_width, dest_height,
-                                      m_Matrix.c > 0, m_Matrix.b < 0);
-      m_Composer.Compose(pDevice, pClipRgn, bitmap_alpha, mask_color, m_ClipBox,
-                         true, m_Matrix.c > 0, m_Matrix.b < 0, m_bRgbByteOrder,
-                         alpha_flag, pIccTransform, m_BlendType);
-      m_Stretcher = pdfium::MakeUnique<CFX_ImageStretcher>(
-          &m_Composer, pSource, dest_height, dest_width, bitmap_clip,
-          dib_flags);
-      if (!m_Stretcher->Start())
-        return false;
-
-      m_Status = 1;
-      return true;
-    }
-    m_Status = 2;
-    m_pTransformer.reset(
-        new CFX_ImageTransformer(pSource, &m_Matrix, dib_flags, &m_ClipBox));
-    m_pTransformer->Start();
-    return true;
-  }
-
-  int dest_width = image_rect.Width();
-  if (m_Matrix.a < 0)
-    dest_width = -dest_width;
-
-  int dest_height = image_rect.Height();
-  if (m_Matrix.d > 0)
-    dest_height = -dest_height;
-
-  if (dest_width == 0 || dest_height == 0)
-    return false;
-
-  FX_RECT bitmap_clip = m_ClipBox;
-  bitmap_clip.Offset(-image_rect.left, -image_rect.top);
-  m_Composer.Compose(pDevice, pClipRgn, bitmap_alpha, mask_color, m_ClipBox,
-                     false, false, false, m_bRgbByteOrder, alpha_flag,
-                     pIccTransform, m_BlendType);
-  m_Status = 1;
-  m_Stretcher = pdfium::MakeUnique<CFX_ImageStretcher>(
-      &m_Composer, pSource, dest_width, dest_height, bitmap_clip, dib_flags);
-  return m_Stretcher->Start();
-}
-
-bool CFX_ImageRenderer::Continue(IFX_Pause* pPause) {
-  if (m_Status == 1)
-    return m_Stretcher->Continue(pPause);
-
-  if (m_Status == 2) {
-    if (m_pTransformer->Continue(pPause))
-      return true;
-
-    CFX_RetainPtr<CFX_DIBitmap> pBitmap = m_pTransformer->DetachBitmap();
-    if (!pBitmap || !pBitmap->GetBuffer())
-      return false;
-
-    if (pBitmap->IsAlphaMask()) {
-      if (m_BitmapAlpha != 255) {
-        if (m_AlphaFlag >> 8) {
-          m_AlphaFlag =
-              (((uint8_t)((m_AlphaFlag & 0xff) * m_BitmapAlpha / 255)) |
-               ((m_AlphaFlag >> 8) << 8));
-        } else {
-          m_MaskColor = FXARGB_MUL_ALPHA(m_MaskColor, m_BitmapAlpha);
-        }
-      }
-      m_pDevice->CompositeMask(
-          m_pTransformer->result().left, m_pTransformer->result().top,
-          pBitmap->GetWidth(), pBitmap->GetHeight(), pBitmap, m_MaskColor, 0, 0,
-          m_BlendType, m_pClipRgn, m_bRgbByteOrder, m_AlphaFlag,
-          m_pIccTransform);
-    } else {
-      if (m_BitmapAlpha != 255)
-        pBitmap->MultiplyAlpha(m_BitmapAlpha);
-      m_pDevice->CompositeBitmap(
-          m_pTransformer->result().left, m_pTransformer->result().top,
-          pBitmap->GetWidth(), pBitmap->GetHeight(), pBitmap, 0, 0, m_BlendType,
-          m_pClipRgn, m_bRgbByteOrder, m_pIccTransform);
-    }
-    return false;
-  }
-  return false;
-}
 
 CFX_BitmapStorer::CFX_BitmapStorer() {
 }
