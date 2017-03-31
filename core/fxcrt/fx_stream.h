@@ -16,9 +16,8 @@
 
 class CFindFileDataA;
 typedef CFindFileDataA FX_FileHandle;
-#define FX_FILESIZE int32_t
 
-#else
+#else  // _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
 
 #include <dirent.h>
 #include <fcntl.h>
@@ -35,7 +34,6 @@ typedef CFindFileDataA FX_FileHandle;
 #endif  // O_LARGEFILE
 
 typedef DIR FX_FileHandle;
-#define FX_FILESIZE off_t
 #endif  // _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
 
 FX_FileHandle* FX_OpenFolder(const char* path);

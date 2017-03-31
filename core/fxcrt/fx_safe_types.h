@@ -7,7 +7,6 @@
 
 #include <stdlib.h>  // For size_t.
 
-#include "core/fxcrt/fx_stream.h"  // for FX_FILESIZE.
 #include "core/fxcrt/fx_system.h"
 #include "third_party/base/numerics/safe_math.h"
 
