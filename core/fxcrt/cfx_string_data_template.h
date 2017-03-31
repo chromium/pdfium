@@ -55,7 +55,8 @@ class CFX_StringDataTemplate {
   void Retain() { ++m_nRefs; }
   void Release() {
     if (--m_nRefs <= 0)
-      pdfium::base::PartitionFree(this);
+      pdfium::base::PartitionFreeGeneric(gStringPartitionAllocator.root(),
+                                         this);
   }
 
   bool CanOperateInPlace(FX_STRSIZE nTotalLen) const {
