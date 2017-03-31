@@ -123,6 +123,10 @@ float FX_atof(const CFX_ByteStringC& strc) {
   return bNegative ? -value : value;
 }
 
+float FX_atof(const CFX_WideStringC& wsStr) {
+  return FX_atof(FX_UTF8Encode(wsStr).c_str());
+}
+
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_ && _MSC_VER < 1900
 void FXSYS_snprintf(char* str,
                     size_t size,

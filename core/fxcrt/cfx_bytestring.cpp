@@ -4,6 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "core/fxcrt/cfx_bytestring.h"
+
 #include <stddef.h>
 
 #include <algorithm>
