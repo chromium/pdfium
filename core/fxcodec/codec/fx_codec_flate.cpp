@@ -15,7 +15,7 @@
 #include "core/fxcrt/fx_ext.h"
 #include "third_party/base/numerics/safe_conversions.h"
 #include "third_party/base/ptr_util.h"
-#include "third_party/zlib_v1211/zlib.h"
+#include "third_party/zlib/zlib.h"
 
 extern "C" {
 

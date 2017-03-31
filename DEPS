@@ -21,6 +21,7 @@ vars = {
   'tools_memory_revision': '427f10475e1a8d72424c29d00bf689122b738e5d',
   'trace_event_revision': '06294c8a4a6f744ef284cd63cfe54dbf61eea290',
   'v8_revision': '01498094d09202413aab3ab513785261f82b755d',
+  'zlib_revision': 'eed2732a73838fd581cb25819ab1c4f478d6b38f',
 }
 
 deps = {
@@ -58,6 +59,10 @@ deps = {
 
   "third_party/skia":
     Var('chromium_git') + '/skia.git@' +  Var('skia_revision'),
+
+  "third_party/zlib":
+    Var('chromium_git') + "/chromium/src/third_party/zlib.git@" +
+        Var('zlib_revision'),
 
   "tools/clang":
     Var('chromium_git') + "/chromium/src/tools/clang@" +  Var('clang_revision'),

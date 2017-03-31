@@ -90,7 +90,7 @@
  */
 
 #include "tif_predict.h"
-#include "../zlib_v1211/zlib.h"
+#include "zlib.h"
 
 #include <stdio.h>
 #include <stdlib.h>

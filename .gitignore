@@ -13,6 +13,7 @@
 /third_party/llvm
 /third_party/llvm-build
 /third_party/skia
+/third_party/zlib
 /tools/clang
 /tools/generate_library_loader
 /tools/gyp

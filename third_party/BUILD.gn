@@ -432,6 +432,9 @@ static_library("fx_lpng") {
 
   defines = []
   cflags = []
+  deps = [
+    "//third_party/zlib",
+  ]
 
   if (current_cpu == "x86" || current_cpu == "x64") {
     sources += [
@@ -470,6 +473,7 @@ if (pdf_enable_xfa) {
     }
     deps = [
       "//third_party:jpeg",
+      "//third_party/zlib",
     ]
     sources = [
       "libtiff/tif_aux.c",
@@ -511,31 +515,6 @@ if (pdf_enable_xfa) {
       "libtiff/tiffvers.h",
     ]
   }
-}
-
-static_library("fx_zlib") {
-  configs -= [ "//build/config/compiler:chromium_code" ]
-  configs += [
-    "//build/config/compiler:no_chromium_code",
-    ":pdfium_third_party_config",
-  ]
-  sources = [
-    "zlib_v1211/adler32.c",
-    "zlib_v1211/compress.c",
-    "zlib_v1211/crc32.c",
-    "zlib_v1211/deflate.c",
-    "zlib_v1211/gzclose.c",
-    "zlib_v1211/gzlib.c",
-    "zlib_v1211/gzread.c",
-    "zlib_v1211/gzwrite.c",
-    "zlib_v1211/infback.c",
-    "zlib_v1211/inffast.c",
-    "zlib_v1211/inflate.c",
-    "zlib_v1211/inftrees.c",
-    "zlib_v1211/trees.c",
-    "zlib_v1211/uncompr.c",
-    "zlib_v1211/zutil.c",
-  ]
 }
 
 source_set("pdfium_base") {
