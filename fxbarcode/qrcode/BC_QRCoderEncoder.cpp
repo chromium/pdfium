@@ -487,8 +487,9 @@ catchException:
                                      qrCode->GetVersion(),
                                      qrCode->GetMaskPattern(), matrix.get(), e);
   if (e != BCExceptionNO)
-    return qrCode->SetMatrix(std::move(matrix));
+    return;
 
+  qrCode->SetMatrix(std::move(matrix));
   if (!qrCode->IsValid())
     e = BCExceptionInvalidQRCode;
 }
@@ -523,7 +524,8 @@ void CBC_QRCoderEncoder::Encode(const CFX_WideString& content,
     return;
   headerAndDataBits.AppendBitVector(&dataBits, e);
   if (e != BCExceptionNO)
-    return TerminateBits(qrCode->GetNumDataBytes(), &headerAndDataBits, e);
+    return;
+  TerminateBits(qrCode->GetNumDataBytes(), &headerAndDataBits, e);
   if (e != BCExceptionNO)
     return;
   CBC_QRCoderBitVector finalBits;
@@ -547,8 +549,9 @@ void CBC_QRCoderEncoder::Encode(const CFX_WideString& content,
                                      qrCode->GetVersion(),
                                      qrCode->GetMaskPattern(), matrix.get(), e);
   if (e != BCExceptionNO)
-    return qrCode->SetMatrix(std::move(matrix));
+    return;
 
+  qrCode->SetMatrix(std::move(matrix));
   if (!qrCode->IsValid())
     e = BCExceptionInvalidQRCode;
 }
@@ -629,9 +632,9 @@ int32_t CBC_QRCoderEncoder::CalculateMaskPenalty(CBC_CommonByteMatrix* matrix) {
 
 CBC_QRCoderMode* CBC_QRCoderEncoder::ChooseMode(const CFX_ByteString& content,
                                                 CFX_ByteString encoding) {
-  if (encoding.Compare("SHIFT_JIS") == 0) {
+  if (encoding.Compare("SHIFT_JIS") == 0)
     return CBC_QRCoderMode::sKANJI;
-  }
+
   bool hasNumeric = false;
   bool hasAlphaNumeric = false;
   for (int32_t i = 0; i < content.GetLength(); i++) {
@@ -643,11 +646,10 @@ CBC_QRCoderMode* CBC_QRCoderEncoder::ChooseMode(const CFX_ByteString& content,
       return CBC_QRCoderMode::sBYTE;
     }
   }
-  if (hasAlphaNumeric) {
+  if (hasAlphaNumeric)
     return CBC_QRCoderMode::sALPHANUMERIC;
-  } else if (hasNumeric) {
+  if (hasNumeric)
     return CBC_QRCoderMode::sNUMERIC;
-  }
   return CBC_QRCoderMode::sBYTE;
 }
 
