@@ -7,6 +7,7 @@
 /testing/gtest
 /third_party/android_ndk
 /third_party/catapult
+/third_party/freetype/src
 /third_party/icu
 /third_party/instrumented_libraries
 /third_party/llvm

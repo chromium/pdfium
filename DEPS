@@ -10,6 +10,7 @@ vars = {
   'catapult_revision': '86352b966b0245d6883e5f7df27687856978b6d7',
   'clang_revision': 'c55112ff399f9ad6958b4bb58ca031b8ada63628',
   'cygwin_revision': 'c89e446b273697fadf3a10ff1007a97c0b7de6df',
+  'freetype_revision': '66725768cdf758cfb3f9abf03cbf5e5a77f42088',
   'gen_library_loader_revision': '916d4acd8b2cde67a390737dfba90b3c37de23a1',
   'gmock_revision': '29763965ab52f24565299976b936d1265cb6a271',
   'gtest_revision': '8245545b6dc9c4703e6496d1efd19e975ad2b038',
@@ -31,7 +32,8 @@ deps = {
     Var('chromium_git') + "/chromium/src/build.git@" + Var('build_revision'),
 
   "buildtools":
-    Var('chromium_git') + "/chromium/buildtools.git@" + Var('buildtools_revision'),
+    Var('chromium_git') + "/chromium/buildtools.git@" +
+        Var('buildtools_revision'),
 
   "testing/corpus":
     Var('pdfium_git') + "/pdfium_tests@" + Var('pdfium_tests_revision'),
@@ -42,14 +44,20 @@ deps = {
   "testing/gtest":
     Var('chromium_git') + "/external/googletest.git@" + Var('gtest_revision'),
 
+  "third_party/freetype/src":
+    Var('chromium_git') + '/chromium/src/third_party/freetype2.git@' +
+        Var('freetype_revision'),
+
   "third_party/icu":
     Var('chromium_git') + "/chromium/deps/icu.git@" + Var('icu_revision'),
 
   "third_party/instrumented_libraries":
-    Var('chromium_git') + "/chromium/src/third_party/instrumented_libraries.git@" + Var('instrumented_lib_revision'),
+    Var('chromium_git') +
+        "/chromium/src/third_party/instrumented_libraries.git@" +
+        Var('instrumented_lib_revision'),
 
   "third_party/skia":
-    Var('chromium_git') + '/skia.git' + '@' +  Var('skia_revision'),
+    Var('chromium_git') + '/skia.git@' +  Var('skia_revision'),
 
   "tools/clang":
     Var('chromium_git') + "/chromium/src/tools/clang@" +  Var('clang_revision'),
@@ -71,12 +79,15 @@ deps_os = {
     "third_party/android_ndk":
       Var('chromium_git') + "/android_ndk.git@" + Var('android_ndk_revision'),
     "third_party/catapult":
-      Var('chromium_git') + "/external/github.com/catapult-project/catapult.git@" + Var('catapult_revision'),
+      Var('chromium_git') +
+          "/external/github.com/catapult-project/catapult.git@" +
+          Var('catapult_revision'),
   },
   "win": {
     # TODO(GYP): Remove this when no tools rely on GYP anymore.
     "tools/gyp":
-      Var('chromium_git') + '/external/gyp.git' + '@' + 'c61b0b35c8396bfd59efc6cfc11401d912b0f510',
+      Var('chromium_git') + '/external/gyp.git@' +
+          'c61b0b35c8396bfd59efc6cfc11401d912b0f510',
 
     "v8/third_party/cygwin":
       Var('chromium_git') + "/chromium/deps/cygwin@" + Var('cygwin_revision'),

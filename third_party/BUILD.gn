@@ -9,9 +9,11 @@ import("../pdfium.gni")
 group("third_party") {
   deps = [
     ":bigint",
-    ":fx_freetype",
     ":pdfium_base",
   ]
+  if (pdf_bundle_freetype) {
+    deps += [ ":fx_freetype" ]
+  }
 }
 
 config("pdfium_third_party_config") {
@@ -38,141 +40,145 @@ static_library("bigint") {
   ]
 }
 
-config("fx_freetype_warnings") {
-  visibility = [ ":*" ]
-  if (is_clang) {
-    # open_face_PS_from_sfnt_stream() and open_face_from_buffer() in
-    # ftbase.h are unused.
-    #
-    # ttgload.c casts from unsigned int to unsigned long to void*.
-    cflags = [
-      "-Wno-unused-function",
-      "-Wno-int-to-void-pointer-cast",
+if (pdf_bundle_freetype) {
+  config("fx_freetype_warnings") {
+    visibility = [ ":*" ]
+    if (is_clang) {
+      # open_face_PS_from_sfnt_stream() and open_face_from_buffer() in
+      # ftbase.h are unused.
+      #
+      # ttgload.c casts from unsigned int to unsigned long to void*.
+      cflags = [
+        "-Wno-unused-function",
+        "-Wno-int-to-void-pointer-cast",
+      ]
+    }
+  }
+
+  config("freetype_public_includes_config") {
+    include_dirs = [
+      "freetype/include",
+      "freetype/src/include",
+    ]
+    defines = [
+      "FT_CONFIG_MODULES_H=<freetype-custom-config/ftmodule.h>",
+      "FT_CONFIG_OPTIONS_H=<freetype-custom-config/ftoption.h>",
     ]
   }
-}
 
-config("freetype_public_includes_config") {
-  include_dirs = [
-    "freetype/include",
-    "freetype/src/include",
-  ]
-}
+  # Tests may link against this even if the production library doesn't,
+  # so it needs to be separate from it.
+  static_library("fx_freetype") {
+    configs -= [ "//build/config/compiler:chromium_code" ]
+    configs += [
+      "//build/config/compiler:no_chromium_code",
+      ":pdfium_third_party_config",
 
-# Tests may link against this even if the production library doesn't,
-# so it needs to be separate from it.
-static_library("fx_freetype") {
-  configs -= [ "//build/config/compiler:chromium_code" ]
-  configs += [
-    "//build/config/compiler:no_chromium_code",
-    ":pdfium_third_party_config",
-
-    # Must be after no_chromium_code for warning flags to be ordered correctly.
-    ":fx_freetype_warnings",
-  ]
-
-  public_configs = [ ":freetype_public_includes_config" ]
-
-  defines = [ "FT2_BUILD_LIBRARY" ]
-  sources = [
-    "freetype/include/freetype/config/ftconfig.h",
-    "freetype/include/freetype/config/ftheader.h",
-    "freetype/include/freetype/config/ftmodule.h",
-    "freetype/include/freetype/config/ftoption.h",
-    "freetype/include/freetype/config/ftstdlib.h",
-    "freetype/include/freetype/freetype.h",
-    "freetype/include/freetype/ftadvanc.h",
-    "freetype/include/freetype/ftbitmap.h",
-    "freetype/include/freetype/ftcffdrv.h",
-    "freetype/include/freetype/fterrdef.h",
-    "freetype/include/freetype/fterrors.h",
-    "freetype/include/freetype/ftglyph.h",
-    "freetype/include/freetype/ftgzip.h",
-    "freetype/include/freetype/ftimage.h",
-    "freetype/include/freetype/ftincrem.h",
-    "freetype/include/freetype/ftlcdfil.h",
-    "freetype/include/freetype/ftlist.h",
-    "freetype/include/freetype/ftmm.h",
-    "freetype/include/freetype/ftmodapi.h",
-    "freetype/include/freetype/ftmoderror.h",
-    "freetype/include/freetype/ftobjs.h",
-    "freetype/include/freetype/ftotval.h",
-    "freetype/include/freetype/ftoutln.h",
-    "freetype/include/freetype/ftrender.h",
-    "freetype/include/freetype/ftsizes.h",
-    "freetype/include/freetype/ftsnames.h",
-    "freetype/include/freetype/ftstream.h",
-    "freetype/include/freetype/ftsystem.h",
-    "freetype/include/freetype/fttrigon.h",
-    "freetype/include/freetype/ftttdrv.h",
-    "freetype/include/freetype/fttypes.h",
-    "freetype/include/freetype/internal/autohint.h",
-    "freetype/include/freetype/internal/ftcalc.h",
-    "freetype/include/freetype/internal/ftdebug.h",
-    "freetype/include/freetype/internal/ftdriver.h",
-    "freetype/include/freetype/internal/ftgloadr.h",
-    "freetype/include/freetype/internal/fthash.h",
-    "freetype/include/freetype/internal/ftmemory.h",
-    "freetype/include/freetype/internal/ftobjs.h",
-    "freetype/include/freetype/internal/ftpic.h",
-    "freetype/include/freetype/internal/ftrfork.h",
-    "freetype/include/freetype/internal/ftserv.h",
-    "freetype/include/freetype/internal/ftstream.h",
-    "freetype/include/freetype/internal/ftvalid.h",
-    "freetype/include/freetype/internal/internal.h",
-    "freetype/include/freetype/internal/psaux.h",
-    "freetype/include/freetype/internal/pshints.h",
-    "freetype/include/freetype/internal/services/svcid.h",
-    "freetype/include/freetype/internal/services/svfntfmt.h",
-    "freetype/include/freetype/internal/services/svgldict.h",
-    "freetype/include/freetype/internal/services/svkern.h",
-    "freetype/include/freetype/internal/services/svmetric.h",
-    "freetype/include/freetype/internal/services/svmm.h",
-    "freetype/include/freetype/internal/services/svpostnm.h",
-    "freetype/include/freetype/internal/services/svprop.h",
-    "freetype/include/freetype/internal/services/svpscmap.h",
-    "freetype/include/freetype/internal/services/svpsinfo.h",
-    "freetype/include/freetype/internal/services/svsfnt.h",
-    "freetype/include/freetype/internal/services/svttcmap.h",
-    "freetype/include/freetype/internal/services/svtteng.h",
-    "freetype/include/freetype/internal/services/svttglyf.h",
-    "freetype/include/freetype/internal/sfnt.h",
-    "freetype/include/freetype/internal/t1types.h",
-    "freetype/include/freetype/internal/tttypes.h",
-    "freetype/include/freetype/t1tables.h",
-    "freetype/include/freetype/ttnameid.h",
-    "freetype/include/freetype/tttables.h",
-    "freetype/include/freetype/tttags.h",
-    "freetype/include/ft2build.h",
-    "freetype/src/base/ftbase.c",
-    "freetype/src/base/ftbase.h",
-    "freetype/src/base/ftbitmap.c",
-    "freetype/src/base/ftglyph.c",
-    "freetype/src/base/ftinit.c",
-    "freetype/src/base/ftlcdfil.c",
-    "freetype/src/base/ftmm.c",
-    "freetype/src/base/ftsystem.c",
-    "freetype/src/cff/cff.c",
-    "freetype/src/cff/cffobjs.h",
-    "freetype/src/cff/cfftypes.h",
-    "freetype/src/cid/type1cid.c",
-    "freetype/src/psaux/psaux.c",
-    "freetype/src/pshinter/pshinter.c",
-    "freetype/src/psnames/psmodule.c",
-    "freetype/src/raster/raster.c",
-    "freetype/src/sfnt/sfnt.c",
-    "freetype/src/smooth/smooth.c",
-    "freetype/src/truetype/truetype.c",
-    "freetype/src/type1/type1.c",
-  ]
-  if (pdf_use_skia || pdf_use_skia_paths) {
-    sources += [
-      "freetype/include/freetype/ftfntfmt.h",
-      "freetype/include/freetype/ftsynth.h",
-      "freetype/src/base/ftfntfmt.c",
-      "freetype/src/base/ftfstype.c",
-      "freetype/src/base/fttype1.c",
+      # Must be after no_chromium_code for warning flags to be ordered correctly.
+      ":fx_freetype_warnings",
     ]
+
+    public_configs = [ ":freetype_public_includes_config" ]
+
+    defines = [ "FT2_BUILD_LIBRARY" ]
+    sources = [
+      "freetype/src/include/freetype/config/ftconfig.h",
+      "freetype/src/include/freetype/config/ftheader.h",
+      "freetype/src/include/freetype/config/ftstdlib.h",
+      "freetype/src/include/freetype/freetype.h",
+      "freetype/src/include/freetype/ftadvanc.h",
+      "freetype/src/include/freetype/ftbitmap.h",
+      "freetype/src/include/freetype/ftcffdrv.h",
+      "freetype/src/include/freetype/fterrdef.h",
+      "freetype/src/include/freetype/fterrors.h",
+      "freetype/src/include/freetype/ftglyph.h",
+      "freetype/src/include/freetype/ftgzip.h",
+      "freetype/src/include/freetype/ftimage.h",
+      "freetype/src/include/freetype/ftincrem.h",
+      "freetype/src/include/freetype/ftlcdfil.h",
+      "freetype/src/include/freetype/ftlist.h",
+      "freetype/src/include/freetype/ftmm.h",
+      "freetype/src/include/freetype/ftmodapi.h",
+      "freetype/src/include/freetype/ftmoderror.h",
+      "freetype/src/include/freetype/ftobjs.h",
+      "freetype/src/include/freetype/ftotval.h",
+      "freetype/src/include/freetype/ftoutln.h",
+      "freetype/src/include/freetype/ftrender.h",
+      "freetype/src/include/freetype/ftsizes.h",
+      "freetype/src/include/freetype/ftsnames.h",
+      "freetype/src/include/freetype/ftstream.h",
+      "freetype/src/include/freetype/ftsystem.h",
+      "freetype/src/include/freetype/fttrigon.h",
+      "freetype/src/include/freetype/ftttdrv.h",
+      "freetype/src/include/freetype/fttypes.h",
+      "freetype/src/include/freetype/internal/autohint.h",
+      "freetype/src/include/freetype/internal/ftcalc.h",
+      "freetype/src/include/freetype/internal/ftdebug.h",
+      "freetype/src/include/freetype/internal/ftdriver.h",
+      "freetype/src/include/freetype/internal/ftgloadr.h",
+      "freetype/src/include/freetype/internal/fthash.h",
+      "freetype/src/include/freetype/internal/ftmemory.h",
+      "freetype/src/include/freetype/internal/ftobjs.h",
+      "freetype/src/include/freetype/internal/ftpic.h",
+      "freetype/src/include/freetype/internal/ftrfork.h",
+      "freetype/src/include/freetype/internal/ftserv.h",
+      "freetype/src/include/freetype/internal/ftstream.h",
+      "freetype/src/include/freetype/internal/ftvalid.h",
+      "freetype/src/include/freetype/internal/internal.h",
+      "freetype/src/include/freetype/internal/psaux.h",
+      "freetype/src/include/freetype/internal/pshints.h",
+      "freetype/src/include/freetype/internal/services/svcid.h",
+      "freetype/src/include/freetype/internal/services/svfntfmt.h",
+      "freetype/src/include/freetype/internal/services/svgldict.h",
+      "freetype/src/include/freetype/internal/services/svkern.h",
+      "freetype/src/include/freetype/internal/services/svmetric.h",
+      "freetype/src/include/freetype/internal/services/svmm.h",
+      "freetype/src/include/freetype/internal/services/svpostnm.h",
+      "freetype/src/include/freetype/internal/services/svprop.h",
+      "freetype/src/include/freetype/internal/services/svpscmap.h",
+      "freetype/src/include/freetype/internal/services/svpsinfo.h",
+      "freetype/src/include/freetype/internal/services/svsfnt.h",
+      "freetype/src/include/freetype/internal/services/svttcmap.h",
+      "freetype/src/include/freetype/internal/services/svtteng.h",
+      "freetype/src/include/freetype/internal/services/svttglyf.h",
+      "freetype/src/include/freetype/internal/sfnt.h",
+      "freetype/src/include/freetype/internal/t1types.h",
+      "freetype/src/include/freetype/internal/tttypes.h",
+      "freetype/src/include/freetype/t1tables.h",
+      "freetype/src/include/freetype/ttnameid.h",
+      "freetype/src/include/freetype/tttables.h",
+      "freetype/src/include/freetype/tttags.h",
+      "freetype/src/include/ft2build.h",
+      "freetype/src/src/base/ftbase.c",
+      "freetype/src/src/base/ftbase.h",
+      "freetype/src/src/base/ftbitmap.c",
+      "freetype/src/src/base/ftglyph.c",
+      "freetype/src/src/base/ftinit.c",
+      "freetype/src/src/base/ftlcdfil.c",
+      "freetype/src/src/base/ftmm.c",
+      "freetype/src/src/base/ftsystem.c",
+      "freetype/src/src/cff/cff.c",
+      "freetype/src/src/cff/cffobjs.h",
+      "freetype/src/src/cff/cfftypes.h",
+      "freetype/src/src/cid/type1cid.c",
+      "freetype/src/src/psaux/psaux.c",
+      "freetype/src/src/pshinter/pshinter.c",
+      "freetype/src/src/psnames/psmodule.c",
+      "freetype/src/src/raster/raster.c",
+      "freetype/src/src/sfnt/sfnt.c",
+      "freetype/src/src/smooth/smooth.c",
+      "freetype/src/src/truetype/truetype.c",
+      "freetype/src/src/type1/type1.c",
+    ]
+    if (pdf_use_skia || pdf_use_skia_paths) {
+      sources += [
+        "freetype/src/include/freetype/ftfntfmt.h",
+        "freetype/src/include/freetype/ftsynth.h",
+        "freetype/src/src/base/ftfntfmt.c",
+        "freetype/src/src/base/ftfstype.c",
+        "freetype/src/src/base/fttype1.c",
+      ]
+    }
   }
 }
 

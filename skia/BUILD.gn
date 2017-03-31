@@ -33,9 +33,6 @@ config("skia_config") {
     "//third_party/skia/include/pipe",
     "//third_party/skia/include/ports",
     "//third_party/skia/include/utils",
-
-    # TODO(dsinclair): Right way to use //third_party/freetype?
-    "//third_party/freetype/include",
   ]
 
   defines = []
@@ -305,6 +302,7 @@ component("skia") {
   deps = [
     ":skia_opts",
     "../third_party:fx_zlib",
+    "//:freetype_common",
   ]
 
   if (is_linux) {
