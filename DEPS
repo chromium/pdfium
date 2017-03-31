@@ -14,8 +14,8 @@ vars = {
   'gmock_revision': '29763965ab52f24565299976b936d1265cb6a271',
   'gtest_revision': '8245545b6dc9c4703e6496d1efd19e975ad2b038',
   'icu_revision': '73e24736676b4b438270fda44e5b2c83b49fdd80',
-  'instrumented_lib_revision': '61065eb0db191f46bdea202e833f5cd1f1ecedcd',
   'pdfium_tests_revision': '46cec65c6895ed37a9bf960ce341a5655c7519bf',
+  'instrumented_lib_revision': '45f5814b1543e41ea0be54c771e3840ea52cca4a',
   'skia_revision': '90e3cd78991ef337dbd0023efb30ece864694308',
   'tools_memory_revision': '427f10475e1a8d72424c29d00bf689122b738e5d',
   'trace_event_revision': '06294c8a4a6f744ef284cd63cfe54dbf61eea290',
@@ -189,6 +189,13 @@ hooks = [
     'name': 'mac_toolchain',
     'pattern': '.',
     'action': ['python', 'pdfium/build/mac_toolchain.py'],
+  },
+  {
+    # Pull sanitizer-instrumented third-party libraries if requested via
+    # GYP_DEFINES.
+    'name': 'instrumented_libraries',
+    'pattern': '\\.sha1',
+    'action': ['python', 'pdfium/third_party/instrumented_libraries/scripts/download_binaries.py'],
   },
 
 ]
