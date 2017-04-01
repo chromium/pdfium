@@ -1981,3 +1981,17 @@ if (pdf_is_standalone) {
     ]
   }
 }
+
+group("pdfium_all") {
+  testonly = true
+  deps = [
+    ":pdfium_embeddertests",
+    ":pdfium_unittests",
+  ]
+  if (pdf_is_standalone) {
+    deps += [
+      ":fuzzers",
+      ":samples",
+    ]
+  }
+}
