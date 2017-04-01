@@ -791,23 +791,24 @@ CPDF_ImageObject* CPDF_StreamContentParser::AddImage(
     return nullptr;
 
   auto pImageObj = pdfium::MakeUnique<CPDF_ImageObject>();
-  pImageObj->SetOwnedImage(
-      pdfium::MakeUnique<CPDF_Image>(m_pDocument, std::move(pStream)));
+  pImageObj->SetImage(
+      pdfium::MakeRetain<CPDF_Image>(m_pDocument, std::move(pStream)));
   return AddImageObject(std::move(pImageObj));
 }
 
 CPDF_ImageObject* CPDF_StreamContentParser::AddImage(uint32_t streamObjNum) {
   auto pImageObj = pdfium::MakeUnique<CPDF_ImageObject>();
-  pImageObj->SetUnownedImage(m_pDocument->LoadImageFromPageData(streamObjNum));
+  pImageObj->SetImage(m_pDocument->LoadImageFromPageData(streamObjNum));
   return AddImageObject(std::move(pImageObj));
 }
 
-CPDF_ImageObject* CPDF_StreamContentParser::AddImage(CPDF_Image* pImage) {
+CPDF_ImageObject* CPDF_StreamContentParser::AddImage(
+    const CFX_RetainPtr<CPDF_Image>& pImage) {
   if (!pImage)
     return nullptr;
 
   auto pImageObj = pdfium::MakeUnique<CPDF_ImageObject>();
-  pImageObj->SetUnownedImage(
+  pImageObj->SetImage(
       m_pDocument->GetPageData()->GetImage(pImage->GetStream()->GetObjNum()));
 
   return AddImageObject(std::move(pImageObj));

@@ -99,7 +99,7 @@ class CPDF_StreamContentParser {
   void AddPathObject(int FillType, bool bStroke);
   CPDF_ImageObject* AddImage(std::unique_ptr<CPDF_Stream> pStream);
   CPDF_ImageObject* AddImage(uint32_t streamObjNum);
-  CPDF_ImageObject* AddImage(CPDF_Image* pImage);
+  CPDF_ImageObject* AddImage(const CFX_RetainPtr<CPDF_Image>& pImage);
 
   void AddForm(CPDF_Stream* pStream);
   void SetGraphicStates(CPDF_PageObject* pObj,
@@ -211,7 +211,7 @@ class CPDF_StreamContentParser {
   float m_PathCurrentY;
   uint8_t m_PathClipType;
   CFX_ByteString m_LastImageName;
-  CPDF_Image* m_pLastImage;
+  CFX_RetainPtr<CPDF_Image> m_pLastImage;
   bool m_bColored;
   float m_Type3Data[6];
   bool m_bResourceMissing;

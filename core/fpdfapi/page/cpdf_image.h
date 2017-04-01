@@ -11,6 +11,7 @@
 
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fxcrt/cfx_maybe_owned.h"
+#include "core/fxcrt/cfx_retain_ptr.h"
 #include "core/fxcrt/fx_system.h"
 
 class CFX_DIBSource;
@@ -20,12 +21,10 @@ class CPDF_Page;
 class IFX_Pause;
 class IFX_SeekableReadStream;
 
-class CPDF_Image {
+class CPDF_Image : public CFX_Retainable {
  public:
-  explicit CPDF_Image(CPDF_Document* pDoc);
-  CPDF_Image(CPDF_Document* pDoc, std::unique_ptr<CPDF_Stream> pStream);
-  CPDF_Image(CPDF_Document* pDoc, uint32_t dwStreamObjNum);
-  ~CPDF_Image();
+  template <typename T, typename... Args>
+  friend CFX_RetainPtr<T> pdfium::MakeRetain(Args&&... args);
 
   void ConvertStreamToIndirectObject();
 
@@ -66,6 +65,11 @@ class CPDF_Image {
   uint32_t m_MatteColor = 0;
 
  private:
+  explicit CPDF_Image(CPDF_Document* pDoc);
+  CPDF_Image(CPDF_Document* pDoc, std::unique_ptr<CPDF_Stream> pStream);
+  CPDF_Image(CPDF_Document* pDoc, uint32_t dwStreamObjNum);
+  ~CPDF_Image() override;
+
   void FinishInitialization();
   std::unique_ptr<CPDF_Dictionary> InitJPEG(uint8_t* pData, uint32_t size);
 

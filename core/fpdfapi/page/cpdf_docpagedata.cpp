@@ -113,18 +113,7 @@ void CPDF_DocPageData::Clear(bool bForceRelease) {
     }
   }
 
-  for (auto it = m_ImageMap.begin(); it != m_ImageMap.end();) {
-    auto curr_it = it++;
-    CPDF_CountedImage* pCountedImage = curr_it->second;
-    if (!pCountedImage->get())
-      continue;
-
-    if (bForceRelease || pCountedImage->use_count() < 2) {
-      delete pCountedImage->get();
-      delete pCountedImage;
-      m_ImageMap.erase(curr_it);
-    }
-  }
+  m_ImageMap.clear();
 }
 
 CPDF_Font* CPDF_DocPageData::GetFont(CPDF_Dictionary* pFontDict) {
@@ -398,36 +387,22 @@ void CPDF_DocPageData::ReleasePattern(const CPDF_Object* pPatternObj) {
   pPattern->clear();
 }
 
-CPDF_Image* CPDF_DocPageData::GetImage(uint32_t dwStreamObjNum) {
+CFX_RetainPtr<CPDF_Image> CPDF_DocPageData::GetImage(uint32_t dwStreamObjNum) {
   ASSERT(dwStreamObjNum);
   auto it = m_ImageMap.find(dwStreamObjNum);
   if (it != m_ImageMap.end())
-    return it->second->AddRef();
+    return it->second;
 
-  CPDF_CountedImage* pCountedImage = new CPDF_CountedImage(
-      pdfium::MakeUnique<CPDF_Image>(m_pPDFDoc, dwStreamObjNum));
-  m_ImageMap[dwStreamObjNum] = pCountedImage;
-  return pCountedImage->AddRef();
+  auto pImage = pdfium::MakeRetain<CPDF_Image>(m_pPDFDoc, dwStreamObjNum);
+  m_ImageMap[dwStreamObjNum] = pImage;
+  return pImage;
 }
 
-void CPDF_DocPageData::ReleaseImage(uint32_t dwStreamObjNum) {
+void CPDF_DocPageData::MaybePurgeImage(uint32_t dwStreamObjNum) {
   ASSERT(dwStreamObjNum);
   auto it = m_ImageMap.find(dwStreamObjNum);
-  if (it == m_ImageMap.end())
-    return;
-
-  CPDF_CountedImage* pCountedImage = it->second;
-  if (!pCountedImage)
-    return;
-
-  pCountedImage->RemoveRef();
-  if (pCountedImage->use_count() > 1)
-    return;
-
-  // We have item only in m_ImageMap cache. Clean it.
-  delete pCountedImage->get();
-  delete pCountedImage;
-  m_ImageMap.erase(it);
+  if (it != m_ImageMap.end() && it->second->HasOneRef())
+    m_ImageMap.erase(it);
 }
 
 CPDF_IccProfile* CPDF_DocPageData::GetIccProfile(

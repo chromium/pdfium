@@ -48,9 +48,9 @@ FPDFPageObj_NewImageObj(FPDF_DOCUMENT document) {
   if (!pDoc)
     return nullptr;
 
-  CPDF_ImageObject* pImageObj = new CPDF_ImageObject;
-  pImageObj->SetOwnedImage(pdfium::MakeUnique<CPDF_Image>(pDoc));
-  return pImageObj;
+  auto pImageObj = pdfium::MakeUnique<CPDF_ImageObject>();
+  pImageObj->SetImage(pdfium::MakeRetain<CPDF_Image>(pDoc));
+  return pImageObj.release();
 }
 
 DLLEXPORT FPDF_PAGEOBJECT STDCALL

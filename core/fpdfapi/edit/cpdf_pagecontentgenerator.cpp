@@ -114,7 +114,7 @@ void CPDF_PageContentGenerator::ProcessImage(CFX_ByteTextBuf* buf,
   }
   *buf << "q " << pImageObj->matrix() << " cm ";
 
-  CPDF_Image* pImage = pImageObj->GetImage();
+  CFX_RetainPtr<CPDF_Image> pImage = pImageObj->GetImage();
   if (pImage->IsInline())
     return;
 
@@ -129,7 +129,7 @@ void CPDF_PageContentGenerator::ProcessImage(CFX_ByteTextBuf* buf,
   uint32_t dwObjNum = pStream->GetObjNum();
   CFX_ByteString name = RealizeResource(dwObjNum, "XObject");
   if (bWasInline)
-    pImageObj->SetUnownedImage(m_pDocument->GetPageData()->GetImage(dwObjNum));
+    pImageObj->SetImage(m_pDocument->GetPageData()->GetImage(dwObjNum));
 
   *buf << "/" << PDF_NameEncode(name) << " Do Q\n";
 }

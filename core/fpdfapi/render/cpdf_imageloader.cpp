@@ -68,7 +68,7 @@ void CPDF_ImageLoader::HandleFailure() {
     m_MatteColor = entry->m_MatteColor;
     return;
   }
-  CPDF_Image* pImage = m_pImage->GetImage();
+  CFX_RetainPtr<CPDF_Image> pImage = m_pImage->GetImage();
   m_bCached = false;
   m_pBitmap = pImage->DetachBitmap();
   m_pMask = pImage->DetachMask();

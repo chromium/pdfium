@@ -13,6 +13,7 @@
 #include <utility>
 #include <vector>
 
+#include "core/fpdfapi/page/cpdf_image.h"
 #include "core/fpdfapi/parser/cpdf_indirect_object_holder.h"
 #include "core/fpdfapi/parser/cpdf_object.h"
 #include "core/fpdfdoc/cpdf_linklist.h"
@@ -26,7 +27,6 @@ class CPDF_DocRenderData;
 class CPDF_Font;
 class CPDF_FontEncoding;
 class CPDF_IccProfile;
-class CPDF_Image;
 class CPDF_LinearizedHeader;
 class CPDF_Parser;
 class CPDF_Pattern;
@@ -78,7 +78,7 @@ class CPDF_Document : public CPDF_IndirectObjectHolder {
                             bool bShading,
                             const CFX_Matrix& matrix);
 
-  CPDF_Image* LoadImageFromPageData(uint32_t dwStreamObjNum);
+  CFX_RetainPtr<CPDF_Image> LoadImageFromPageData(uint32_t dwStreamObjNum);
   CPDF_StreamAcc* LoadFontFile(CPDF_Stream* pStream);
   CPDF_IccProfile* LoadIccProfile(CPDF_Stream* pStream);
 

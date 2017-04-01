@@ -649,7 +649,8 @@ CPDF_IccProfile* CPDF_Document::LoadIccProfile(CPDF_Stream* pStream) {
   return m_pDocPage->GetIccProfile(pStream);
 }
 
-CPDF_Image* CPDF_Document::LoadImageFromPageData(uint32_t dwStreamObjNum) {
+CFX_RetainPtr<CPDF_Image> CPDF_Document::LoadImageFromPageData(
+    uint32_t dwStreamObjNum) {
   ASSERT(dwStreamObjNum);
   return m_pDocPage->GetImage(dwStreamObjNum);
 }
