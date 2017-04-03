@@ -611,8 +611,9 @@ bool CFX_WideString::TryVSWPrintf(FX_STRSIZE size,
   // See https://crbug.com/705912.
   memset(m_pData->m_String, 0, (size + 1) * sizeof(wchar_t));
   int ret = vswprintf(m_pData->m_String, size + 1, pFormat, argList);
+  bool bSufficientBuffer = ret >= 0 || m_pData->m_String[size - 1] == 0;
   ReleaseBuffer();
-  return ret >= 0 || m_pData->m_String[size - 1] == 0;
+  return bSufficientBuffer;
 }
 
 void CFX_WideString::FormatV(const wchar_t* pFormat, va_list argList) {
@@ -627,9 +628,9 @@ void CFX_WideString::FormatV(const wchar_t* pFormat, va_list argList) {
   }
   while (nMaxLen < 32 * 1024) {
     FX_VA_COPY(argListCopy, argList);
-    bool bRetryPointless = TryVSWPrintf(nMaxLen, pFormat, argListCopy);
+    bool bSufficientBuffer = TryVSWPrintf(nMaxLen, pFormat, argListCopy);
     va_end(argListCopy);
-    if (bRetryPointless)
+    if (bSufficientBuffer)
       break;
     nMaxLen *= 2;
   }
