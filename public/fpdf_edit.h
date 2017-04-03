@@ -21,6 +21,7 @@
 #define FPDF_GetAValue(argb) ((uint8_t)((argb) >> 24))
 
 // The page object constants.
+#define FPDF_PAGEOBJ_UNKNOWN 0
 #define FPDF_PAGEOBJ_TEXT 1
 #define FPDF_PAGEOBJ_PATH 2
 #define FPDF_PAGEOBJ_IMAGE 3
@@ -134,6 +135,14 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFPage_GenerateContent(FPDF_PAGE page);
 // Returns TRUE if |pageObject| contains transparency.
 DLLEXPORT FPDF_BOOL STDCALL
 FPDFPageObj_HasTransparency(FPDF_PAGEOBJECT pageObject);
+
+// Get type of |pageObject|.
+//
+//   pageObject - handle to a page object.
+//
+// Returns one of the FPDF_PAGEOBJ_* values on success, FPDF_PAGEOBJ_UNKNOWN on
+// error.
+DLLEXPORT int STDCALL FPDFPageObj_GetType(FPDF_PAGEOBJECT pageObject);
 
 // Transform |pageObject| by the given matrix.
 //

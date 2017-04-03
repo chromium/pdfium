@@ -246,6 +246,14 @@ FPDFPageObj_HasTransparency(FPDF_PAGEOBJECT pageObject) {
   return false;
 }
 
+DLLEXPORT int STDCALL FPDFPageObj_GetType(FPDF_PAGEOBJECT pageObject) {
+  if (!pageObject)
+    return FPDF_PAGEOBJ_UNKNOWN;
+
+  CPDF_PageObject* pPageObj = reinterpret_cast<CPDF_PageObject*>(pageObject);
+  return pPageObj->GetType();
+}
+
 DLLEXPORT FPDF_BOOL STDCALL FPDFPage_GenerateContent(FPDF_PAGE page) {
   CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
   if (!IsPageObject(pPage))

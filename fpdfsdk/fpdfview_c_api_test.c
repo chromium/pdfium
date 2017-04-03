@@ -79,6 +79,7 @@ int CheckPDFiumCApi() {
     CHK(FPDFPage_HasTransparency);
     CHK(FPDFPage_GenerateContent);
     CHK(FPDFPageObj_HasTransparency);
+    CHK(FPDFPageObj_GetType);
     CHK(FPDFPageObj_Transform);
     CHK(FPDFPage_TransformAnnots);
     CHK(FPDFPageObj_NewImageObj);
