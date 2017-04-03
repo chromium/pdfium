@@ -6,60 +6,6 @@
 
 #include "core/fdrm/crypto/fx_crypt.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-void CRYPT_ArcFourSetup(CRYPT_rc4_context* s,
-                        const uint8_t* key,
-                        uint32_t length) {
-  int i, j, k, *m, a;
-  s->x = 0;
-  s->y = 0;
-  m = s->m;
-  for (i = 0; i < 256; i++) {
-    m[i] = i;
-  }
-  j = k = 0;
-  for (i = 0; i < 256; i++) {
-    a = m[i];
-    j = (j + a + key[k]) & 0xFF;
-    m[i] = m[j];
-    m[j] = a;
-    if (++k >= (int)length) {
-      k = 0;
-    }
-  }
-}
-
-void CRYPT_ArcFourCrypt(CRYPT_rc4_context* s,
-                        unsigned char* data,
-                        uint32_t length) {
-  int i, x, y, *m, a, b;
-  x = s->x;
-  y = s->y;
-  m = s->m;
-  for (i = 0; i < (int)length; i++) {
-    x = (x + 1) & 0xFF;
-    a = m[x];
-    y = (y + a) & 0xFF;
-    m[x] = b = m[y];
-    m[y] = a;
-    data[i] ^= m[(a + b) & 0xFF];
-  }
-  s->x = x;
-  s->y = y;
-}
-
-void CRYPT_ArcFourCryptBlock(uint8_t* pData,
-                             uint32_t size,
-                             const uint8_t* key,
-                             uint32_t keylen) {
-  CRYPT_rc4_context s;
-  CRYPT_ArcFourSetup(&s, key, keylen);
-  CRYPT_ArcFourCrypt(&s, pData, size);
-}
-
 #define GET_UINT32(n, b, i)                            \
   {                                                    \
     (n) = (uint32_t)((uint8_t*)b)[(i)] |               \
@@ -74,6 +20,13 @@ void CRYPT_ArcFourCryptBlock(uint8_t* pData,
     (((uint8_t*)b)[(i) + 2]) = (uint8_t)(((n) >> 16) & 0xFF); \
     (((uint8_t*)b)[(i) + 3]) = (uint8_t)(((n) >> 24) & 0xFF); \
   }
+
+namespace {
+
+const uint8_t md5_padding[64] = {
+    0x80, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0,    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0,    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
 void md5_process(CRYPT_md5_context* ctx, const uint8_t data[64]) {
   uint32_t A, B, C, D, X[16];
@@ -181,6 +134,58 @@ void md5_process(CRYPT_md5_context* ctx, const uint8_t data[64]) {
   ctx->state[3] += D;
 }
 
+}  // namespace
+
+void CRYPT_ArcFourSetup(CRYPT_rc4_context* s,
+                        const uint8_t* key,
+                        uint32_t length) {
+  int i, j, k, *m, a;
+  s->x = 0;
+  s->y = 0;
+  m = s->m;
+  for (i = 0; i < 256; i++) {
+    m[i] = i;
+  }
+  j = k = 0;
+  for (i = 0; i < 256; i++) {
+    a = m[i];
+    j = (j + a + key[k]) & 0xFF;
+    m[i] = m[j];
+    m[j] = a;
+    if (++k >= (int)length) {
+      k = 0;
+    }
+  }
+}
+
+void CRYPT_ArcFourCrypt(CRYPT_rc4_context* s,
+                        unsigned char* data,
+                        uint32_t length) {
+  int i, x, y, *m, a, b;
+  x = s->x;
+  y = s->y;
+  m = s->m;
+  for (i = 0; i < (int)length; i++) {
+    x = (x + 1) & 0xFF;
+    a = m[x];
+    y = (y + a) & 0xFF;
+    m[x] = b = m[y];
+    m[y] = a;
+    data[i] ^= m[(a + b) & 0xFF];
+  }
+  s->x = x;
+  s->y = y;
+}
+
+void CRYPT_ArcFourCryptBlock(uint8_t* pData,
+                             uint32_t size,
+                             const uint8_t* key,
+                             uint32_t keylen) {
+  CRYPT_rc4_context s;
+  CRYPT_ArcFourSetup(&s, key, keylen);
+  CRYPT_ArcFourCrypt(&s, pData, size);
+}
+
 void CRYPT_MD5Start(CRYPT_md5_context* ctx) {
   ctx->total[0] = 0;
   ctx->total[1] = 0;
@@ -220,11 +225,6 @@ void CRYPT_MD5Update(CRYPT_md5_context* ctx,
   }
 }
 
-const uint8_t md5_padding[64] = {
-    0x80, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0,    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0,    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-
 void CRYPT_MD5Finish(CRYPT_md5_context* ctx, uint8_t digest[16]) {
   uint32_t last, padn;
   uint8_t msglen[8];
@@ -248,7 +248,3 @@ void CRYPT_MD5Generate(const uint8_t* input,
   CRYPT_MD5Update(&ctx, input, length);
   CRYPT_MD5Finish(&ctx, digest);
 }
-
-#ifdef __cplusplus
-};
-#endif

@@ -9,10 +9,6 @@
 
 #include "core/fxcrt/fx_system.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 typedef struct {
   int32_t x;
   int32_t y;
@@ -109,8 +105,5 @@ void CRYPT_SHA512Finish(void* context, uint8_t digest[64]);
 void CRYPT_SHA512Generate(const uint8_t* data,
                           uint32_t size,
                           uint8_t digest[64]);
-#ifdef __cplusplus
-};
-#endif
 
 #endif  // CORE_FDRM_CRYPTO_FX_CRYPT_H_

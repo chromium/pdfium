@@ -6,9 +6,6 @@
 
 #include "core/fdrm/crypto/fx_crypt.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
 #define MAX_NR 14
 #define MAX_NK 8
 #define MAX_NB 8
@@ -25,6 +22,7 @@ extern "C" {
     (cp)[1] = (value) >> 16;           \
     (cp)[0] = (value) >> 24;           \
   } while (0)
+
 struct AESContext {
   unsigned int keysched[(MAX_NR + 1) * MAX_NB];
   unsigned int invkeysched[(MAX_NR + 1) * MAX_NB];
@@ -33,7 +31,10 @@ struct AESContext {
   unsigned int iv[MAX_NB];
   int Nb, Nr;
 };
-static const unsigned char Sbox[256] = {
+
+namespace {
+
+const unsigned char Sbox[256] = {
     0x63, 0x7c, 0x77, 0x7b, 0xf2, 0x6b, 0x6f, 0xc5, 0x30, 0x01, 0x67, 0x2b,
     0xfe, 0xd7, 0xab, 0x76, 0xca, 0x82, 0xc9, 0x7d, 0xfa, 0x59, 0x47, 0xf0,
     0xad, 0xd4, 0xa2, 0xaf, 0x9c, 0xa4, 0x72, 0xc0, 0xb7, 0xfd, 0x93, 0x26,
@@ -56,7 +57,7 @@ static const unsigned char Sbox[256] = {
     0x69, 0xd9, 0x8e, 0x94, 0x9b, 0x1e, 0x87, 0xe9, 0xce, 0x55, 0x28, 0xdf,
     0x8c, 0xa1, 0x89, 0x0d, 0xbf, 0xe6, 0x42, 0x68, 0x41, 0x99, 0x2d, 0x0f,
     0xb0, 0x54, 0xbb, 0x16};
-static const unsigned char Sboxinv[256] = {
+const unsigned char Sboxinv[256] = {
     0x52, 0x09, 0x6a, 0xd5, 0x30, 0x36, 0xa5, 0x38, 0xbf, 0x40, 0xa3, 0x9e,
     0x81, 0xf3, 0xd7, 0xfb, 0x7c, 0xe3, 0x39, 0x82, 0x9b, 0x2f, 0xff, 0x87,
     0x34, 0x8e, 0x43, 0x44, 0xc4, 0xde, 0xe9, 0xcb, 0x54, 0x7b, 0x94, 0x32,
@@ -79,7 +80,7 @@ static const unsigned char Sboxinv[256] = {
     0xae, 0x2a, 0xf5, 0xb0, 0xc8, 0xeb, 0xbb, 0x3c, 0x83, 0x53, 0x99, 0x61,
     0x17, 0x2b, 0x04, 0x7e, 0xba, 0x77, 0xd6, 0x26, 0xe1, 0x69, 0x14, 0x63,
     0x55, 0x21, 0x0c, 0x7d};
-static const unsigned int E0[256] = {
+const unsigned int E0[256] = {
     0xc66363a5, 0xf87c7c84, 0xee777799, 0xf67b7b8d, 0xfff2f20d, 0xd66b6bbd,
     0xde6f6fb1, 0x91c5c554, 0x60303050, 0x02010103, 0xce6767a9, 0x562b2b7d,
     0xe7fefe19, 0xb5d7d762, 0x4dababe6, 0xec76769a, 0x8fcaca45, 0x1f82829d,
@@ -124,7 +125,7 @@ static const unsigned int E0[256] = {
     0x844242c6, 0xd06868b8, 0x824141c3, 0x299999b0, 0x5a2d2d77, 0x1e0f0f11,
     0x7bb0b0cb, 0xa85454fc, 0x6dbbbbd6, 0x2c16163a,
 };
-static const unsigned int E1[256] = {
+const unsigned int E1[256] = {
     0xa5c66363, 0x84f87c7c, 0x99ee7777, 0x8df67b7b, 0x0dfff2f2, 0xbdd66b6b,
     0xb1de6f6f, 0x5491c5c5, 0x50603030, 0x03020101, 0xa9ce6767, 0x7d562b2b,
     0x19e7fefe, 0x62b5d7d7, 0xe64dabab, 0x9aec7676, 0x458fcaca, 0x9d1f8282,
@@ -169,7 +170,7 @@ static const unsigned int E1[256] = {
     0xc6844242, 0xb8d06868, 0xc3824141, 0xb0299999, 0x775a2d2d, 0x111e0f0f,
     0xcb7bb0b0, 0xfca85454, 0xd66dbbbb, 0x3a2c1616,
 };
-static const unsigned int E2[256] = {
+const unsigned int E2[256] = {
     0x63a5c663, 0x7c84f87c, 0x7799ee77, 0x7b8df67b, 0xf20dfff2, 0x6bbdd66b,
     0x6fb1de6f, 0xc55491c5, 0x30506030, 0x01030201, 0x67a9ce67, 0x2b7d562b,
     0xfe19e7fe, 0xd762b5d7, 0xabe64dab, 0x769aec76, 0xca458fca, 0x829d1f82,
@@ -214,7 +215,7 @@ static const unsigned int E2[256] = {
     0x42c68442, 0x68b8d068, 0x41c38241, 0x99b02999, 0x2d775a2d, 0x0f111e0f,
     0xb0cb7bb0, 0x54fca854, 0xbbd66dbb, 0x163a2c16,
 };
-static const unsigned int E3[256] = {
+const unsigned int E3[256] = {
     0x6363a5c6, 0x7c7c84f8, 0x777799ee, 0x7b7b8df6, 0xf2f20dff, 0x6b6bbdd6,
     0x6f6fb1de, 0xc5c55491, 0x30305060, 0x01010302, 0x6767a9ce, 0x2b2b7d56,
     0xfefe19e7, 0xd7d762b5, 0xababe64d, 0x76769aec, 0xcaca458f, 0x82829d1f,
@@ -259,7 +260,7 @@ static const unsigned int E3[256] = {
     0x4242c684, 0x6868b8d0, 0x4141c382, 0x9999b029, 0x2d2d775a, 0x0f0f111e,
     0xb0b0cb7b, 0x5454fca8, 0xbbbbd66d, 0x16163a2c,
 };
-static const unsigned int D0[256] = {
+const unsigned int D0[256] = {
     0x51f4a750, 0x7e416553, 0x1a17a4c3, 0x3a275e96, 0x3bab6bcb, 0x1f9d45f1,
     0xacfa58ab, 0x4be30393, 0x2030fa55, 0xad766df6, 0x88cc7691, 0xf5024c25,
     0x4fe5d7fc, 0xc52acbd7, 0x26354480, 0xb562a38f, 0xdeb15a49, 0x25ba1b67,
@@ -304,7 +305,7 @@ static const unsigned int D0[256] = {
     0x283c498b, 0xff0d9541, 0x39a80171, 0x080cb3de, 0xd8b4e49c, 0x6456c190,
     0x7bcb8461, 0xd532b670, 0x486c5c74, 0xd0b85742,
 };
-static const unsigned int D1[256] = {
+const unsigned int D1[256] = {
     0x5051f4a7, 0x537e4165, 0xc31a17a4, 0x963a275e, 0xcb3bab6b, 0xf11f9d45,
     0xabacfa58, 0x934be303, 0x552030fa, 0xf6ad766d, 0x9188cc76, 0x25f5024c,
     0xfc4fe5d7, 0xd7c52acb, 0x80263544, 0x8fb562a3, 0x49deb15a, 0x6725ba1b,
@@ -349,7 +350,7 @@ static const unsigned int D1[256] = {
     0x8b283c49, 0x41ff0d95, 0x7139a801, 0xde080cb3, 0x9cd8b4e4, 0x906456c1,
     0x617bcb84, 0x70d532b6, 0x74486c5c, 0x42d0b857,
 };
-static const unsigned int D2[256] = {
+const unsigned int D2[256] = {
     0xa75051f4, 0x65537e41, 0xa4c31a17, 0x5e963a27, 0x6bcb3bab, 0x45f11f9d,
     0x58abacfa, 0x03934be3, 0xfa552030, 0x6df6ad76, 0x769188cc, 0x4c25f502,
     0xd7fc4fe5, 0xcbd7c52a, 0x44802635, 0xa38fb562, 0x5a49deb1, 0x1b6725ba,
@@ -394,7 +395,7 @@ static const unsigned int D2[256] = {
     0x498b283c, 0x9541ff0d, 0x017139a8, 0xb3de080c, 0xe49cd8b4, 0xc1906456,
     0x84617bcb, 0xb670d532, 0x5c74486c, 0x5742d0b8,
 };
-static const unsigned int D3[256] = {
+const unsigned int D3[256] = {
     0xf4a75051, 0x4165537e, 0x17a4c31a, 0x275e963a, 0xab6bcb3b, 0x9d45f11f,
     0xfa58abac, 0xe303934b, 0x30fa5520, 0x766df6ad, 0xcc769188, 0x024c25f5,
     0xe5d7fc4f, 0x2acbd7c5, 0x35448026, 0x62a38fb5, 0xb15a49de, 0xba1b6725,
@@ -461,9 +462,9 @@ static const unsigned int D3[256] = {
                  (Sbox[(block[(i + C1) % Nb] >> 16) & 0xFF] << 16) | \
                  (Sbox[(block[(i + C2) % Nb] >> 8) & 0xFF] << 8) |   \
                  (Sbox[(block[(i + C3) % Nb]) & 0xFF]))
-static void aes_encrypt_nb_4(AESContext* ctx, unsigned int* block) {
+void aes_encrypt_nb_4(AESContext* ctx, unsigned int* block) {
   int i;
-  static const int C1 = 1, C2 = 2, C3 = 3, Nb = 4;
+  const int C1 = 1, C2 = 2, C3 = 3, Nb = 4;
   unsigned int* keysched = ctx->keysched;
   unsigned int newstate[4];
   for (i = 0; i < ctx->Nr - 1; i++) {
@@ -488,9 +489,9 @@ static void aes_encrypt_nb_4(AESContext* ctx, unsigned int* block) {
   MOVEWORD(3);
   ADD_ROUND_KEY_4;
 }
-static void aes_encrypt_nb_6(AESContext* ctx, unsigned int* block) {
+void aes_encrypt_nb_6(AESContext* ctx, unsigned int* block) {
   int i;
-  static const int C1 = 1, C2 = 2, C3 = 3, Nb = 6;
+  const int C1 = 1, C2 = 2, C3 = 3, Nb = 6;
   unsigned int* keysched = ctx->keysched;
   unsigned int newstate[6];
   for (i = 0; i < ctx->Nr - 1; i++) {
@@ -523,9 +524,9 @@ static void aes_encrypt_nb_6(AESContext* ctx, unsigned int* block) {
   MOVEWORD(5);
   ADD_ROUND_KEY_6;
 }
-static void aes_encrypt_nb_8(AESContext* ctx, unsigned int* block) {
+void aes_encrypt_nb_8(AESContext* ctx, unsigned int* block) {
   int i;
-  static const int C1 = 1, C2 = 3, C3 = 4, Nb = 8;
+  const int C1 = 1, C2 = 3, C3 = 4, Nb = 8;
   unsigned int* keysched = ctx->keysched;
   unsigned int newstate[8];
   for (i = 0; i < ctx->Nr - 1; i++) {
@@ -578,9 +579,9 @@ static void aes_encrypt_nb_8(AESContext* ctx, unsigned int* block) {
                  (Sboxinv[(block[(i + C1) % Nb] >> 16) & 0xFF] << 16) | \
                  (Sboxinv[(block[(i + C2) % Nb] >> 8) & 0xFF] << 8) |   \
                  (Sboxinv[(block[(i + C3) % Nb]) & 0xFF]))
-static void aes_decrypt_nb_4(AESContext* ctx, unsigned int* block) {
+void aes_decrypt_nb_4(AESContext* ctx, unsigned int* block) {
   int i;
-  static const int C1 = 4 - 1, C2 = 4 - 2, C3 = 4 - 3, Nb = 4;
+  const int C1 = 4 - 1, C2 = 4 - 2, C3 = 4 - 3, Nb = 4;
   unsigned int* keysched = ctx->invkeysched;
   unsigned int newstate[4];
   for (i = 0; i < ctx->Nr - 1; i++) {
@@ -605,9 +606,9 @@ static void aes_decrypt_nb_4(AESContext* ctx, unsigned int* block) {
   MOVEWORD(3);
   ADD_ROUND_KEY_4;
 }
-static void aes_decrypt_nb_6(AESContext* ctx, unsigned int* block) {
+void aes_decrypt_nb_6(AESContext* ctx, unsigned int* block) {
   int i;
-  static const int C1 = 6 - 1, C2 = 6 - 2, C3 = 6 - 3, Nb = 6;
+  const int C1 = 6 - 1, C2 = 6 - 2, C3 = 6 - 3, Nb = 6;
   unsigned int* keysched = ctx->invkeysched;
   unsigned int newstate[6];
   for (i = 0; i < ctx->Nr - 1; i++) {
@@ -640,9 +641,9 @@ static void aes_decrypt_nb_6(AESContext* ctx, unsigned int* block) {
   MOVEWORD(5);
   ADD_ROUND_KEY_6;
 }
-static void aes_decrypt_nb_8(AESContext* ctx, unsigned int* block) {
+void aes_decrypt_nb_8(AESContext* ctx, unsigned int* block) {
   int i;
-  static const int C1 = 8 - 1, C2 = 8 - 3, C3 = 8 - 4, Nb = 8;
+  const int C1 = 8 - 1, C2 = 8 - 3, C3 = 8 - 4, Nb = 8;
   unsigned int* keysched = ctx->invkeysched;
   unsigned int newstate[8];
   for (i = 0; i < ctx->Nr - 1; i++) {
@@ -685,10 +686,10 @@ static void aes_decrypt_nb_8(AESContext* ctx, unsigned int* block) {
 }
 #undef MAKEWORD
 #undef LASTWORD
-static void aes_setup(AESContext* ctx,
-                      int blocklen,
-                      const unsigned char* key,
-                      int keylen) {
+void aes_setup(AESContext* ctx,
+               int blocklen,
+               const unsigned char* key,
+               int keylen) {
   int i, j, Nk, rconst;
   ASSERT(blocklen == 16 || blocklen == 24 || blocklen == 32);
   ASSERT(keylen == 16 || keylen == 24 || keylen == 32);
@@ -752,13 +753,13 @@ static void aes_setup(AESContext* ctx,
     }
   }
 }
-static void aes_decrypt(AESContext* ctx, unsigned int* block) {
+void aes_decrypt(AESContext* ctx, unsigned int* block) {
   ctx->decrypt(ctx, block);
 }
-static void aes_decrypt_cbc(unsigned char* dest,
-                            const unsigned char* src,
-                            int len,
-                            AESContext* ctx) {
+void aes_decrypt_cbc(unsigned char* dest,
+                     const unsigned char* src,
+                     int len,
+                     AESContext* ctx) {
   unsigned int iv[4], x[4], ct[4];
   int i;
   ASSERT((len & 15) == 0);
@@ -778,13 +779,13 @@ static void aes_decrypt_cbc(unsigned char* dest,
   }
   memcpy(ctx->iv, iv, sizeof(iv));
 }
-static void aes_encrypt(AESContext* ctx, unsigned int* block) {
+void aes_encrypt(AESContext* ctx, unsigned int* block) {
   ctx->encrypt(ctx, block);
 }
-static void aes_encrypt_cbc(unsigned char* dest,
-                            const unsigned char* src,
-                            int len,
-                            AESContext* ctx) {
+void aes_encrypt_cbc(unsigned char* dest,
+                     const unsigned char* src,
+                     int len,
+                     AESContext* ctx) {
   unsigned int iv[4];
   int i;
   ASSERT((len & 15) == 0);
@@ -803,6 +804,9 @@ static void aes_encrypt_cbc(unsigned char* dest,
   }
   memcpy(ctx->iv, iv, sizeof(iv));
 }
+
+}  // namespace
+
 void CRYPT_AESSetKey(void* context,
                      uint32_t blocklen,
                      const uint8_t* key,
@@ -828,6 +832,3 @@ void CRYPT_AESEncrypt(void* context,
                       uint32_t len) {
   aes_encrypt_cbc(dest, src, len, (AESContext*)context);
 }
-#ifdef __cplusplus
-};
-#endif
