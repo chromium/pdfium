@@ -55,7 +55,7 @@ void vcgen_dash::add_dash(float dash_len, float gap_len)
 void vcgen_dash::dash_start(float ds)
 {
     m_dash_start = ds;
-    calc_dash_start(FXSYS_fabs(ds));
+    calc_dash_start(fabs(ds));
 }
 void vcgen_dash::calc_dash_start(float ds)
 {

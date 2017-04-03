@@ -95,9 +95,8 @@ HPEN CreatePen(const CFX_GraphStateData* pGraphState,
   float width;
   float scale = 1.f;
   if (pMatrix)
-    scale = FXSYS_fabs(pMatrix->a) > FXSYS_fabs(pMatrix->b)
-                ? FXSYS_fabs(pMatrix->a)
-                : FXSYS_fabs(pMatrix->b);
+    scale = fabs(pMatrix->a) > fabs(pMatrix->b) ? fabs(pMatrix->a)
+                                                : fabs(pMatrix->b);
   if (pGraphState) {
     width = scale * pGraphState->m_LineWidth;
   } else {
@@ -151,7 +150,7 @@ HPEN CreatePen(const CFX_GraphStateData* pGraphState,
       dashes[i] = std::max(dashes[i], 1U);
     }
   }
-  return ExtCreatePen(PenStyle, (DWORD)FXSYS_ceil(width), &lb,
+  return ExtCreatePen(PenStyle, (DWORD)ceil(width), &lb,
                       pGraphState->m_DashCount,
                       reinterpret_cast<const DWORD*>(dashes.data()));
 }

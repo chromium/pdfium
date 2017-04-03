@@ -43,7 +43,7 @@ void AdjustGlyphSpace(std::vector<FXTEXT_GLYPHPOS>* pGlyphAndPos) {
 
     int space = next_origin - current_origin;
     float space_f = next_origin_f - current_origin_f;
-    float error = FXSYS_fabs(space_f) - FXSYS_fabs(static_cast<float>(space));
+    float error = fabs(space_f) - fabs(static_cast<float>(space));
     if (error > 0.5f)
       current_origin += space > 0 ? -1 : 1;
   }
@@ -513,13 +513,13 @@ bool CFX_RenderDevice::DrawPathWithBlend(const CFX_PathData* pPathData,
       if (!rect_i.Valid())
         return false;
 
-      int width = (int)FXSYS_ceil(rect_f.right - rect_f.left);
+      int width = (int)ceil(rect_f.right - rect_f.left);
       if (width < 1) {
         width = 1;
         if (rect_i.left == rect_i.right)
           rect_i.right++;
       }
-      int height = (int)FXSYS_ceil(rect_f.top - rect_f.bottom);
+      int height = (int)ceil(rect_f.top - rect_f.bottom);
       if (height < 1) {
         height = 1;
         if (rect_i.bottom == rect_i.top)
@@ -608,8 +608,8 @@ bool CFX_RenderDevice::DrawFillStrokePath(const CFX_PathData* pPathData,
     pObject2Device->TransformRect(bbox);
 
   CFX_Matrix ctm = GetCTM();
-  float fScaleX = FXSYS_fabs(ctm.a);
-  float fScaleY = FXSYS_fabs(ctm.d);
+  float fScaleX = fabs(ctm.a);
+  float fScaleY = fabs(ctm.d);
   FX_RECT rect = bbox.GetOuterRect();
   auto bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
   auto Backdrop = pdfium::MakeRetain<CFX_DIBitmap>();
@@ -719,8 +719,8 @@ bool CFX_RenderDevice::SetDIBitsWithBlend(
     int blend_mode) {
   ASSERT(!pBitmap->IsAlphaMask());
   CFX_Matrix ctm = GetCTM();
-  float fScaleX = FXSYS_fabs(ctm.a);
-  float fScaleY = FXSYS_fabs(ctm.d);
+  float fScaleX = fabs(ctm.a);
+  float fScaleY = fabs(ctm.d);
   FX_RECT dest_rect(left, top,
                     FXSYS_round(left + pBitmap->GetWidth() / fScaleX),
                     FXSYS_round(top + pBitmap->GetHeight() / fScaleY));
@@ -889,7 +889,7 @@ bool CFX_RenderDevice::DrawNormalText(int nChars,
   }
 
   char2device.Scale(font_size, -font_size);
-  if (FXSYS_fabs(char2device.a) + FXSYS_fabs(char2device.b) > 50 * 1.0f ||
+  if (fabs(char2device.a) + fabs(char2device.b) > 50 * 1.0f ||
       ((m_DeviceClass == FXDC_PRINTER) &&
        !(text_flags & FXTEXT_PRINTIMAGETEXT))) {
     if (pFont->GetFace()) {
@@ -927,8 +927,8 @@ bool CFX_RenderDevice::DrawNormalText(int nChars,
   }
   std::vector<FXTEXT_GLYPHPOS> glyphs(nChars);
   CFX_Matrix matrixCTM = GetCTM();
-  float scale_x = FXSYS_fabs(matrixCTM.a);
-  float scale_y = FXSYS_fabs(matrixCTM.d);
+  float scale_x = fabs(matrixCTM.a);
+  float scale_y = fabs(matrixCTM.d);
   CFX_Matrix deviceCtm = char2device;
   CFX_Matrix m(scale_x, 0, 0, scale_y, 0, 0);
   deviceCtm.Concat(m);
@@ -942,7 +942,7 @@ bool CFX_RenderDevice::DrawNormalText(int nChars,
     if (anti_alias < FXFT_RENDER_MODE_LCD)
       glyph.m_Origin.x = FXSYS_round(glyph.m_fOrigin.x);
     else
-      glyph.m_Origin.x = static_cast<int>(FXSYS_floor(glyph.m_fOrigin.x));
+      glyph.m_Origin.x = static_cast<int>(floor(glyph.m_fOrigin.x));
     glyph.m_Origin.y = FXSYS_round(glyph.m_fOrigin.y);
 
     if (charpos.m_bGlyphAdjust) {

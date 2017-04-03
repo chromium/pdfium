@@ -44,7 +44,7 @@ bool CPDF_DeviceBuffer::Initialize(CPDF_RenderContext* pContext,
   }
 #endif
   CFX_Matrix ctm = m_pDevice->GetCTM();
-  m_Matrix.Concat(CFX_Matrix(FXSYS_fabs(ctm.a), 0, 0, FXSYS_fabs(ctm.d), 0, 0));
+  m_Matrix.Concat(CFX_Matrix(fabs(ctm.a), 0, 0, fabs(ctm.d), 0, 0));
 
   CFX_FloatRect rect(*pRect);
   m_Matrix.TransformRect(rect);

@@ -248,8 +248,8 @@ void DrawRadialShading(const CFX_RetainPtr<CFX_DIBitmap>& pBitmap,
   int pitch = pBitmap->GetPitch();
   bool bDecreasing = false;
   if (start_r > end_r) {
-    int length = (int)FXSYS_sqrt((((start_x - end_x) * (start_x - end_x)) +
-                                  ((start_y - end_y) * (start_y - end_y))));
+    int length = (int)sqrt((((start_x - end_x) * (start_x - end_x)) +
+                            ((start_y - end_y) * (start_y - end_y))));
     if (length < start_r - end_r) {
       bDecreasing = true;
     }
@@ -272,7 +272,7 @@ void DrawRadialShading(const CFX_RetainPtr<CFX_DIBitmap>& pBitmap,
         if (b2_4ac < 0) {
           continue;
         }
-        float root = FXSYS_sqrt(b2_4ac);
+        float root = sqrt(b2_4ac);
         float s1, s2;
         if (a > 0) {
           s1 = (-b - root) / (2 * a);
@@ -403,8 +403,8 @@ void DrawGouraud(const CFX_RetainPtr<CFX_DIBitmap>& pBitmap,
   if (min_y == max_y)
     return;
 
-  int min_yi = std::max(static_cast<int>(FXSYS_floor(min_y)), 0);
-  int max_yi = static_cast<int>(FXSYS_ceil(max_y));
+  int min_yi = std::max(static_cast<int>(floor(min_y)), 0);
+  int max_yi = static_cast<int>(ceil(max_y));
 
   if (max_yi >= pBitmap->GetHeight())
     max_yi = pBitmap->GetHeight() - 1;
@@ -436,13 +436,13 @@ void DrawGouraud(const CFX_RetainPtr<CFX_DIBitmap>& pBitmap,
 
     int min_x, max_x, start_index, end_index;
     if (inter_x[0] < inter_x[1]) {
-      min_x = (int)FXSYS_floor(inter_x[0]);
-      max_x = (int)FXSYS_ceil(inter_x[1]);
+      min_x = (int)floor(inter_x[0]);
+      max_x = (int)ceil(inter_x[1]);
       start_index = 0;
       end_index = 1;
     } else {
-      min_x = (int)FXSYS_floor(inter_x[1]);
-      max_x = (int)FXSYS_ceil(inter_x[0]);
+      min_x = (int)floor(inter_x[1]);
+      max_x = (int)ceil(inter_x[0]);
       start_index = 1;
       end_index = 0;
     }
@@ -701,9 +701,8 @@ struct Coon_Color {
   }
 
   int Distance(Coon_Color& o) {
-    return std::max({FXSYS_abs(comp[0] - o.comp[0]),
-                     FXSYS_abs(comp[1] - o.comp[1]),
-                     FXSYS_abs(comp[2] - o.comp[2])});
+    return std::max({abs(comp[0] - o.comp[0]), abs(comp[1] - o.comp[1]),
+                     abs(comp[2] - o.comp[2])});
   }
 };
 
@@ -1130,15 +1129,13 @@ bool CPDF_RenderStatus::GetObjectClippedRect(const CPDF_PageObject* pObj,
   FX_RECT rtClip = m_pDevice->GetClipBox();
   if (!bLogical) {
     CFX_Matrix dCTM = m_pDevice->GetCTM();
-    float a = FXSYS_fabs(dCTM.a);
-    float d = FXSYS_fabs(dCTM.d);
+    float a = fabs(dCTM.a);
+    float d = fabs(dCTM.d);
     if (a != 1.0f || d != 1.0f) {
-      rect.right = rect.left + (int32_t)FXSYS_ceil((float)rect.Width() * a);
-      rect.bottom = rect.top + (int32_t)FXSYS_ceil((float)rect.Height() * d);
-      rtClip.right =
-          rtClip.left + (int32_t)FXSYS_ceil((float)rtClip.Width() * a);
-      rtClip.bottom =
-          rtClip.top + (int32_t)FXSYS_ceil((float)rtClip.Height() * d);
+      rect.right = rect.left + (int32_t)ceil((float)rect.Width() * a);
+      rect.bottom = rect.top + (int32_t)ceil((float)rect.Height() * d);
+      rtClip.right = rtClip.left + (int32_t)ceil((float)rtClip.Width() * a);
+      rtClip.bottom = rtClip.top + (int32_t)ceil((float)rtClip.Height() * d);
     }
   }
   rect.Intersect(rtClip);
@@ -1196,8 +1193,8 @@ bool CPDF_RenderStatus::DrawObjWithBlend(CPDF_PageObject* pObj,
 
 void CPDF_RenderStatus::GetScaledMatrix(CFX_Matrix& matrix) const {
   CFX_Matrix dCTM = m_pDevice->GetCTM();
-  matrix.a *= FXSYS_fabs(dCTM.a);
-  matrix.d *= FXSYS_fabs(dCTM.d);
+  matrix.a *= fabs(dCTM.a);
+  matrix.d *= fabs(dCTM.d);
 }
 
 void CPDF_RenderStatus::DrawObjWithBackground(CPDF_PageObject* pObj,
@@ -1534,8 +1531,8 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
     return true;
 
   CFX_Matrix deviceCTM = m_pDevice->GetCTM();
-  float scaleX = FXSYS_fabs(deviceCTM.a);
-  float scaleY = FXSYS_fabs(deviceCTM.d);
+  float scaleX = fabs(deviceCTM.a);
+  float scaleY = fabs(deviceCTM.d);
   int width = FXSYS_round((float)rect.Width() * scaleX);
   int height = FXSYS_round((float)rect.Height() * scaleY);
   CFX_FxgeDevice bitmap_device;
@@ -1631,8 +1628,8 @@ CFX_RetainPtr<CFX_DIBitmap> CPDF_RenderStatus::GetBackdrop(
   left = bbox.left;
   top = bbox.top;
   CFX_Matrix deviceCTM = m_pDevice->GetCTM();
-  float scaleX = FXSYS_fabs(deviceCTM.a);
-  float scaleY = FXSYS_fabs(deviceCTM.d);
+  float scaleX = fabs(deviceCTM.a);
+  float scaleY = fabs(deviceCTM.d);
   int width = FXSYS_round(bbox.Width() * scaleX);
   int height = FXSYS_round(bbox.Height() * scaleY);
   auto pBackdrop = pdfium::MakeRetain<CFX_DIBitmap>();
@@ -1813,8 +1810,8 @@ bool CPDF_RenderStatus::ProcessType3Text(CPDF_TextObject* textobj,
     return true;
 
   CFX_Matrix dCTM = m_pDevice->GetCTM();
-  float sa = FXSYS_fabs(dCTM.a);
-  float sd = FXSYS_fabs(dCTM.d);
+  float sa = fabs(dCTM.a);
+  float sd = fabs(dCTM.d);
   CFX_Matrix text_matrix = textobj->GetTextMatrix();
   CFX_Matrix char_matrix = pType3Font->GetFontMatrix();
   float font_size = textobj->m_TextState.GetFontSize();
@@ -2196,10 +2193,10 @@ void CPDF_RenderStatus::DrawTilingPattern(CPDF_TilingPattern* pPattern,
     return;
   }
   CFX_Matrix dCTM = m_pDevice->GetCTM();
-  float sa = FXSYS_fabs(dCTM.a);
-  float sd = FXSYS_fabs(dCTM.d);
-  clip_box.right = clip_box.left + (int32_t)FXSYS_ceil(clip_box.Width() * sa);
-  clip_box.bottom = clip_box.top + (int32_t)FXSYS_ceil(clip_box.Height() * sd);
+  float sa = fabs(dCTM.a);
+  float sd = fabs(dCTM.d);
+  clip_box.right = clip_box.left + (int32_t)ceil(clip_box.Width() * sa);
+  clip_box.bottom = clip_box.top + (int32_t)ceil(clip_box.Height() * sd);
   CFX_Matrix mtPattern2Device = *pPattern->pattern_to_form();
   mtPattern2Device.Concat(*pObj2Device);
   GetScaledMatrix(mtPattern2Device);
@@ -2212,8 +2209,8 @@ void CPDF_RenderStatus::DrawTilingPattern(CPDF_TilingPattern* pPattern,
   }
   CFX_FloatRect cell_bbox = pPattern->bbox();
   mtPattern2Device.TransformRect(cell_bbox);
-  int width = (int)FXSYS_ceil(cell_bbox.Width());
-  int height = (int)FXSYS_ceil(cell_bbox.Height());
+  int width = (int)ceil(cell_bbox.Width());
+  int height = (int)ceil(cell_bbox.Height());
   if (width == 0) {
     width = 1;
   }
@@ -2227,14 +2224,14 @@ void CPDF_RenderStatus::DrawTilingPattern(CPDF_TilingPattern* pPattern,
   CFX_FloatRect clip_box_p(clip_box);
   mtDevice2Pattern.TransformRect(clip_box_p);
 
-  min_col = (int)FXSYS_ceil((clip_box_p.left - pPattern->bbox().right) /
-                            pPattern->x_step());
-  max_col = (int)FXSYS_floor((clip_box_p.right - pPattern->bbox().left) /
-                             pPattern->x_step());
-  min_row = (int)FXSYS_ceil((clip_box_p.bottom - pPattern->bbox().top) /
-                            pPattern->y_step());
-  max_row = (int)FXSYS_floor((clip_box_p.top - pPattern->bbox().bottom) /
-                             pPattern->y_step());
+  min_col = (int)ceil((clip_box_p.left - pPattern->bbox().right) /
+                      pPattern->x_step());
+  max_col = (int)floor((clip_box_p.right - pPattern->bbox().left) /
+                       pPattern->x_step());
+  min_row = (int)ceil((clip_box_p.bottom - pPattern->bbox().top) /
+                      pPattern->y_step());
+  max_row = (int)floor((clip_box_p.top - pPattern->bbox().bottom) /
+                       pPattern->y_step());
 
   if (width > clip_box.Width() || height > clip_box.Height() ||
       width * height > clip_box.Width() * clip_box.Height()) {

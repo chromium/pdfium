@@ -323,14 +323,12 @@ int CPDF_TextPage::GetIndexAtPos(const CFX_PointF& point,
       charRectExt.bottom = charrect.bottom - tolerance.height / 2;
       if (charRectExt.Contains(point)) {
         double curXdif, curYdif;
-        curXdif = FXSYS_fabs(point.x - charrect.left) <
-                          FXSYS_fabs(point.x - charrect.right)
-                      ? FXSYS_fabs(point.x - charrect.left)
-                      : FXSYS_fabs(point.x - charrect.right);
-        curYdif = FXSYS_fabs(point.y - charrect.bottom) <
-                          FXSYS_fabs(point.y - charrect.top)
-                      ? FXSYS_fabs(point.y - charrect.bottom)
-                      : FXSYS_fabs(point.y - charrect.top);
+        curXdif = fabs(point.x - charrect.left) < fabs(point.x - charrect.right)
+                      ? fabs(point.x - charrect.left)
+                      : fabs(point.x - charrect.right);
+        curYdif = fabs(point.y - charrect.bottom) < fabs(point.y - charrect.top)
+                      ? fabs(point.y - charrect.bottom)
+                      : fabs(point.y - charrect.top);
         if (curYdif + curXdif < xdif + ydif) {
           ydif = curYdif;
           xdif = curXdif;
@@ -353,7 +351,7 @@ CFX_WideString CPDF_TextPage::GetTextByRect(const CFX_FloatRect& rect) const {
   CFX_WideString strText;
   for (const auto& charinfo : m_CharList) {
     if (IsRectIntersect(rect, charinfo.m_CharBox)) {
-      if (FXSYS_fabs(posy - charinfo.m_Origin.y) > 0 && !IsContainPreChar &&
+      if (fabs(posy - charinfo.m_Origin.y) > 0 && !IsContainPreChar &&
           IsAddLineFeed) {
         posy = charinfo.m_Origin.y;
         if (!strText.IsEmpty())
@@ -738,7 +736,7 @@ void CPDF_TextPage::ProcessTextObject(
     const CFX_Matrix& formMatrix,
     const CPDF_PageObjectList* pObjList,
     CPDF_PageObjectList::const_iterator ObjPos) {
-  if (FXSYS_fabs(pTextObj->m_Right - pTextObj->m_Left) < 0.01f)
+  if (fabs(pTextObj->m_Right - pTextObj->m_Left) < 0.01f)
     return;
 
   size_t count = m_LineObj.size();
@@ -761,16 +759,16 @@ void CPDF_TextPage::ProcessTextObject(
       prev_Obj.m_pTextObj->GetFontSize() / 1000;
 
   CFX_Matrix prev_matrix = prev_Obj.m_pTextObj->GetTextMatrix();
-  prev_width = FXSYS_fabs(prev_width);
+  prev_width = fabs(prev_width);
   prev_matrix.Concat(prev_Obj.m_formMatrix);
   prev_width = prev_matrix.TransformDistance(prev_width);
   pTextObj->GetItemInfo(0, &item);
   float this_width = GetCharWidth(item.m_CharCode, pTextObj->GetFont()) *
                      pTextObj->GetFontSize() / 1000;
-  this_width = FXSYS_fabs(this_width);
+  this_width = fabs(this_width);
 
   CFX_Matrix this_matrix = pTextObj->GetTextMatrix();
-  this_width = FXSYS_fabs(this_width);
+  this_width = fabs(this_width);
   this_matrix.Concat(formMatrix);
   this_width = this_matrix.TransformDistance(this_width);
 
@@ -779,7 +777,7 @@ void CPDF_TextPage::ProcessTextObject(
       prev_Obj.m_formMatrix.Transform(prev_Obj.m_pTextObj->GetPos()));
   CFX_PointF this_pos =
       m_DisplayMatrix.Transform(formMatrix.Transform(pTextObj->GetPos()));
-  if (FXSYS_fabs(this_pos.y - prev_pos.y) > threshold * 2) {
+  if (fabs(this_pos.y - prev_pos.y) > threshold * 2) {
     for (size_t i = 0; i < count; i++)
       ProcessTextObject(m_LineObj[i]);
     m_LineObj.clear();
@@ -955,7 +953,7 @@ bool CPDF_TextPage::IsRightToLeft(const CPDF_TextObject* pTextObj,
 
 void CPDF_TextPage::ProcessTextObject(PDFTEXT_Obj Obj) {
   CPDF_TextObject* pTextObj = Obj.m_pTextObj;
-  if (FXSYS_fabs(pTextObj->m_Right - pTextObj->m_Left) < 0.01f)
+  if (fabs(pTextObj->m_Right - pTextObj->m_Left) < 0.01f)
     return;
   CFX_Matrix formMatrix = Obj.m_formMatrix;
   CPDF_Font* pFont = pTextObj->GetFont();
@@ -1063,7 +1061,7 @@ void CPDF_TextPage::ProcessTextObject(PDFTEXT_Obj Obj) {
     if (charSpace > 0.001)
       spacing += matrix.TransformDistance(charSpace);
     else if (charSpace < -0.001)
-      spacing -= matrix.TransformDistance(FXSYS_fabs(charSpace));
+      spacing -= matrix.TransformDistance(fabs(charSpace));
     spacing -= baseSpace;
     if (spacing && i > 0) {
       int last_width = 0;
@@ -1078,7 +1076,7 @@ void CPDF_TextPage::ProcessTextObject(PDFTEXT_Obj Obj) {
         threshold /= 2;
       if (threshold == 0) {
         threshold = fontsize_h;
-        int this_width = FXSYS_abs(GetCharWidth(item.m_CharCode, pFont));
+        int this_width = abs(GetCharWidth(item.m_CharCode, pFont));
         threshold =
             this_width > last_width ? (float)this_width : (float)last_width;
         threshold = NormalizeThreshold(threshold);
@@ -1156,7 +1154,7 @@ void CPDF_TextPage::ProcessTextObject(PDFTEXT_Obj Obj) {
         CFX_PointF diff = charinfo1.m_Origin - charinfo.m_Origin;
         if (charinfo1.m_CharCode == charinfo.m_CharCode &&
             charinfo1.m_pTextObj->GetFont() == charinfo.m_pTextObj->GetFont() &&
-            FXSYS_fabs(diff.x) < threshold && FXSYS_fabs(diff.y) < threshold) {
+            fabs(diff.x) < threshold && fabs(diff.y) < threshold) {
           bDel = true;
           break;
         }
@@ -1200,8 +1198,8 @@ CPDF_TextPage::TextOrientation CPDF_TextPage::GetTextObjectWritingMode(
   first.m_Origin = textMatrix.Transform(first.m_Origin);
   last.m_Origin = textMatrix.Transform(last.m_Origin);
 
-  float dX = FXSYS_fabs(last.m_Origin.x - first.m_Origin.x);
-  float dY = FXSYS_fabs(last.m_Origin.y - first.m_Origin.y);
+  float dX = fabs(last.m_Origin.x - first.m_Origin.x);
+  float dY = fabs(last.m_Origin.y - first.m_Origin.y);
   if (dX <= 0.0001f && dY <= 0.0001f)
     return TextOrientation::Unknown;
 
@@ -1297,10 +1295,10 @@ CPDF_TextPage::GenerateCharacter CPDF_TextPage::ProcessInsertObject(
   float last_pos = PrevItem.m_Origin.x;
   int nLastWidth = GetCharWidth(PrevItem.m_CharCode, m_pPreTextObj->GetFont());
   float last_width = nLastWidth * m_pPreTextObj->GetFontSize() / 1000;
-  last_width = FXSYS_fabs(last_width);
+  last_width = fabs(last_width);
   int nThisWidth = GetCharWidth(item.m_CharCode, pObj->GetFont());
   float this_width = nThisWidth * pObj->GetFontSize() / 1000;
-  this_width = FXSYS_fabs(this_width);
+  this_width = fabs(this_width);
   float threshold = last_width > this_width ? last_width / 4 : this_width / 4;
 
   CFX_Matrix prev_matrix = m_pPreTextObj->GetTextMatrix();
@@ -1322,8 +1320,7 @@ CPDF_TextPage::GenerateCharacter CPDF_TextPage::ProcessInsertObject(
     rect1.Intersect(rect2);
     if ((rect1.IsEmpty() && rect2.Height() > 5 && rect3.Height() > 5) ||
         ((pos.y > threshold * 2 || pos.y < threshold * -3) &&
-         (FXSYS_fabs(pos.y) < 1 ? FXSYS_fabs(pos.x) < FXSYS_fabs(pos.y)
-                                : true))) {
+         (fabs(pos.y) < 1 ? fabs(pos.x) < fabs(pos.y) : true))) {
       bNewline = true;
       if (nItem > 1) {
         CPDF_TextObjectItem tempItem;
@@ -1369,9 +1366,9 @@ CPDF_TextPage::GenerateCharacter CPDF_TextPage::ProcessInsertObject(
                          : (threshold > 800 ? threshold / 6 : threshold / 5))
                   : (threshold / 2);
   if (nLastWidth >= nThisWidth) {
-    threshold *= FXSYS_fabs(m_pPreTextObj->GetFontSize());
+    threshold *= fabs(m_pPreTextObj->GetFontSize());
   } else {
-    threshold *= FXSYS_fabs(pObj->GetFontSize());
+    threshold *= fabs(pObj->GetFontSize());
     threshold = matrix.TransformDistance(threshold);
     threshold = prev_reverse.TransformDistance(threshold);
   }
@@ -1380,8 +1377,8 @@ CPDF_TextPage::GenerateCharacter CPDF_TextPage::ProcessInsertObject(
       (threshold < 1.39001 && threshold > 1.38999)) {
     threshold *= 1.5;
   }
-  if (FXSYS_fabs(last_pos + last_width - pos.x) > threshold &&
-      curChar != L' ' && preChar != L' ') {
+  if (fabs(last_pos + last_width - pos.x) > threshold && curChar != L' ' &&
+      preChar != L' ') {
     if (curChar != L' ' && preChar != L' ') {
       if ((pos.x - last_pos - last_width) > threshold ||
           (last_pos - pos.x - last_width) > threshold) {
@@ -1406,7 +1403,7 @@ bool CPDF_TextPage::IsSameTextObject(CPDF_TextObject* pTextObj1,
   CFX_FloatRect rcPreObj = pTextObj2->GetRect();
   CFX_FloatRect rcCurObj = pTextObj1->GetRect();
   if (rcPreObj.IsEmpty() && rcCurObj.IsEmpty()) {
-    float dbXdif = FXSYS_fabs(rcPreObj.left - rcCurObj.left);
+    float dbXdif = fabs(rcPreObj.left - rcCurObj.left);
     size_t nCount = m_CharList.size();
     if (nCount >= 2) {
       PAGECHAR_INFO perCharTemp = m_CharList[nCount - 2];
@@ -1419,8 +1416,7 @@ bool CPDF_TextPage::IsSameTextObject(CPDF_TextObject* pTextObj1,
     rcPreObj.Intersect(rcCurObj);
     if (rcPreObj.IsEmpty())
       return false;
-    if (FXSYS_fabs(rcPreObj.Width() - rcCurObj.Width()) >
-        rcCurObj.Width() / 2) {
+    if (fabs(rcPreObj.Width() - rcCurObj.Width()) > rcCurObj.Width() / 2) {
       return false;
     }
     if (pTextObj2->GetFontSize() != pTextObj1->GetFontSize())
@@ -1448,8 +1444,8 @@ bool CPDF_TextPage::IsSameTextObject(CPDF_TextObject* pTextObj1,
   float char_size = GetCharWidth(itemPer.m_CharCode, pTextObj2->GetFont());
   float max_pre_size =
       std::max(std::max(rcPreObj.Height(), rcPreObj.Width()), font_size);
-  if (FXSYS_fabs(diff.x) > char_size * font_size / 1000 * 0.9 ||
-      FXSYS_fabs(diff.y) > max_pre_size / 8) {
+  if (fabs(diff.x) > char_size * font_size / 1000 * 0.9 ||
+      fabs(diff.y) > max_pre_size / 8) {
     return false;
   }
   return true;

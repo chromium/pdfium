@@ -17,7 +17,7 @@ CXFA_TimeZoneProvider::CXFA_TimeZoneProvider() {
     _tzset();
   }
   m_tz.tzHour = static_cast<int8_t>(_timezone / 3600 * -1);
-  m_tz.tzMinute = static_cast<int8_t>((FXSYS_abs(_timezone) % 3600) / 60);
+  m_tz.tzMinute = static_cast<int8_t>((abs(_timezone) % 3600) / 60);
 #else
   if (!g_bProviderTimeZoneSet) {
     g_bProviderTimeZoneSet = true;
@@ -25,7 +25,7 @@ CXFA_TimeZoneProvider::CXFA_TimeZoneProvider() {
   }
   m_tz.tzHour = static_cast<int8_t>(timezone / 3600 * -1);
   m_tz.tzMinute =
-      static_cast<int8_t>((FXSYS_abs(static_cast<int>(timezone)) % 3600) / 60);
+      static_cast<int8_t>((abs(static_cast<int>(timezone)) % 3600) / 60);
 #endif
 }
 

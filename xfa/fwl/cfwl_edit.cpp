@@ -1367,7 +1367,7 @@ void CFWL_Edit::OnMouseMove(CFWL_MessageMouse* pMsg) {
     m_nSelStart = nLen;
 
   m_EdtEngine.AddSelRange(std::min(m_nSelStart, nIndex),
-                          FXSYS_abs(nIndex - m_nSelStart));
+                          abs(nIndex - m_nSelStart));
 }
 
 void CFWL_Edit::OnKeyDown(CFWL_MessageKey* pMsg) {

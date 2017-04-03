@@ -22,7 +22,7 @@ static int _AdjustBlue(float pos, int& count, int blues[]) {
   float min_distance = 1000000.0f;
   int closest_pos = -1;
   for (int i = 0; i < count; i++) {
-    float distance = FXSYS_fabs(pos - static_cast<float>(blues[i]));
+    float distance = fabs(pos - static_cast<float>(blues[i]));
     if (distance < 1.0f * 80.0f / 100.0f && distance < min_distance) {
       min_distance = distance;
       closest_pos = i;

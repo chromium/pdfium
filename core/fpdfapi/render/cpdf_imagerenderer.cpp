@@ -433,8 +433,8 @@ bool CPDF_ImageRenderer::StartDIBSource() {
   FX_RECT image_rect = image_rect_f.GetOuterRect();
   int dest_width = image_rect.Width();
   int dest_height = image_rect.Height();
-  if ((FXSYS_fabs(m_ImageMatrix.b) >= 0.5f || m_ImageMatrix.a == 0) ||
-      (FXSYS_fabs(m_ImageMatrix.c) >= 0.5f || m_ImageMatrix.d == 0)) {
+  if ((fabs(m_ImageMatrix.b) >= 0.5f || m_ImageMatrix.a == 0) ||
+      (fabs(m_ImageMatrix.c) >= 0.5f || m_ImageMatrix.d == 0)) {
     if (NotDrawing()) {
       m_Result = false;
       return false;
@@ -510,8 +510,7 @@ bool CPDF_ImageRenderer::StartBitmapAlpha() {
   else
     pAlphaMask = m_pDIBSource->CloneAlphaMask();
 
-  if (FXSYS_fabs(m_ImageMatrix.b) >= 0.5f ||
-      FXSYS_fabs(m_ImageMatrix.c) >= 0.5f) {
+  if (fabs(m_ImageMatrix.b) >= 0.5f || fabs(m_ImageMatrix.c) >= 0.5f) {
     int left;
     int top;
     CFX_RetainPtr<CFX_DIBitmap> pTransformed =

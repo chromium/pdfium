@@ -50,14 +50,14 @@ void CFX_Path::ArcToInternal(const CFX_PointF& pos,
                              const CFX_SizeF& size,
                              float start_angle,
                              float sweep_angle) {
-  float x0 = FXSYS_cos(sweep_angle / 2);
-  float y0 = FXSYS_sin(sweep_angle / 2);
+  float x0 = cos(sweep_angle / 2);
+  float y0 = sin(sweep_angle / 2);
   float tx = ((1.0f - x0) * 4) / (3 * 1.0f);
   float ty = y0 - ((tx * x0) / y0);
 
   CFX_PointF points[] = {CFX_PointF(x0 + tx, -ty), CFX_PointF(x0 + tx, ty)};
-  float sn = FXSYS_sin(start_angle + sweep_angle / 2);
-  float cs = FXSYS_cos(start_angle + sweep_angle / 2);
+  float sn = sin(start_angle + sweep_angle / 2);
+  float cs = cos(start_angle + sweep_angle / 2);
 
   CFX_PointF bezier;
   bezier.x = pos.x + (size.width * ((points[0].x * cs) - (points[0].y * sn)));
@@ -68,8 +68,8 @@ void CFX_Path::ArcToInternal(const CFX_PointF& pos,
   bezier.y = pos.y + (size.height * ((points[1].x * sn) + (points[1].y * cs)));
   data_.AppendPoint(bezier, FXPT_TYPE::BezierTo, false);
 
-  bezier.x = pos.x + (size.width * FXSYS_cos(start_angle + sweep_angle));
-  bezier.y = pos.y + (size.height * FXSYS_sin(start_angle + sweep_angle));
+  bezier.x = pos.x + (size.width * cos(start_angle + sweep_angle));
+  bezier.y = pos.y + (size.height * sin(start_angle + sweep_angle));
   data_.AppendPoint(bezier, FXPT_TYPE::BezierTo, false);
 }
 
@@ -105,8 +105,8 @@ void CFX_Path::AddArc(const CFX_PointF& original_pos,
 
   CFX_SizeF size = original_size / 2;
   CFX_PointF pos(original_pos.x + size.width, original_pos.y + size.height);
-  data_.AppendPoint(pos + CFX_PointF(size.width * FXSYS_cos(start_angle),
-                                     size.height * FXSYS_sin(start_angle)),
+  data_.AppendPoint(pos + CFX_PointF(size.width * cos(start_angle),
+                                     size.height * sin(start_angle)),
                     FXPT_TYPE::MoveTo, false);
 
   float total_sweep = 0;

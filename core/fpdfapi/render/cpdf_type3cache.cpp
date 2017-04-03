@@ -131,8 +131,8 @@ CFX_GlyphBitmap* CPDF_Type3Cache::RenderGlyph(CPDF_Type3Glyphs* pSize,
   CFX_RetainPtr<CFX_DIBitmap> pResBitmap;
   int left = 0;
   int top = 0;
-  if (FXSYS_fabs(image_matrix.b) < FXSYS_fabs(image_matrix.a) / 100 &&
-      FXSYS_fabs(image_matrix.c) < FXSYS_fabs(image_matrix.d) / 100) {
+  if (fabs(image_matrix.b) < fabs(image_matrix.a) / 100 &&
+      fabs(image_matrix.c) < fabs(image_matrix.d) / 100) {
     int top_line = DetectFirstLastScan(pBitmap, true);
     int bottom_line = DetectFirstLastScan(pBitmap, false);
     if (top_line == 0 && bottom_line == pBitmap->GetHeight() - 1) {

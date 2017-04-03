@@ -8,7 +8,7 @@
 
 CFDE_CSSNumberValue::CFDE_CSSNumberValue(FDE_CSSNumberType type, float value)
     : CFDE_CSSValue(FDE_CSSPrimitiveType::Number), type_(type), value_(value) {
-  if (type_ == FDE_CSSNumberType::Number && FXSYS_fabs(value_) < 0.001f)
+  if (type_ == FDE_CSSNumberType::Number && fabs(value_) < 0.001f)
     value_ = 0.0f;
 }
 

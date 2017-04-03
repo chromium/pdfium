@@ -283,8 +283,7 @@ int32_t CFDE_TxtEdtEngine::MoveCaretPos(FDE_TXTEDTMOVECARET eMoveCaret,
       break;
   }
   if (bShift && m_nAnchorPos != -1 && (m_nAnchorPos != m_nCaret)) {
-    AddSelRange(std::min(m_nAnchorPos, m_nCaret),
-                FXSYS_abs(m_nAnchorPos - m_nCaret));
+    AddSelRange(std::min(m_nAnchorPos, m_nCaret), abs(m_nAnchorPos - m_nCaret));
     m_Param.pEventSink->OnSelChanged();
   }
   if (bSelChange)

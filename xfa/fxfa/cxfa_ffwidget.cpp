@@ -640,8 +640,8 @@ bool CXFA_ImageRenderer::StartDIBSource() {
   FX_RECT image_rect = image_rect_f.GetOuterRect();
   int dest_width = image_rect.Width();
   int dest_height = image_rect.Height();
-  if ((FXSYS_fabs(m_ImageMatrix.b) >= 0.5f || m_ImageMatrix.a == 0) ||
-      (FXSYS_fabs(m_ImageMatrix.c) >= 0.5f || m_ImageMatrix.d == 0)) {
+  if ((fabs(m_ImageMatrix.b) >= 0.5f || m_ImageMatrix.a == 0) ||
+      (fabs(m_ImageMatrix.c) >= 0.5f || m_ImageMatrix.d == 0)) {
     if (m_bPrint && !(m_pDevice->GetRenderCaps() & FXRC_BLEND_MODE)) {
       m_Result = false;
       return false;
@@ -1550,8 +1550,8 @@ static void XFA_BOX_Fill_Radial(CXFA_Box box,
     crStart = temp;
   }
   CFX_Shading shading(rtFill.Center(), rtFill.Center(), 0,
-                      FXSYS_sqrt(rtFill.Width() * rtFill.Width() +
-                                 rtFill.Height() * rtFill.Height()) /
+                      sqrt(rtFill.Width() * rtFill.Width() +
+                           rtFill.Height() * rtFill.Height()) /
                           2,
                       true, true, crStart, crEnd);
   CFX_Color cr(&shading);

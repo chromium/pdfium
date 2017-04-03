@@ -168,9 +168,9 @@ bool CFX_ImageTransformer::Start() {
     return false;
 
   m_result = result_clip;
-  if (FXSYS_fabs(m_pMatrix->a) < FXSYS_fabs(m_pMatrix->b) / 20 &&
-      FXSYS_fabs(m_pMatrix->d) < FXSYS_fabs(m_pMatrix->c) / 20 &&
-      FXSYS_fabs(m_pMatrix->a) < 0.5f && FXSYS_fabs(m_pMatrix->d) < 0.5f) {
+  if (fabs(m_pMatrix->a) < fabs(m_pMatrix->b) / 20 &&
+      fabs(m_pMatrix->d) < fabs(m_pMatrix->c) / 20 &&
+      fabs(m_pMatrix->a) < 0.5f && fabs(m_pMatrix->d) < 0.5f) {
     int dest_width = result_rect.Width();
     int dest_height = result_rect.Height();
     result_clip.Offset(-result_rect.left, -result_rect.top);
@@ -182,12 +182,11 @@ bool CFX_ImageTransformer::Start() {
     m_Status = 1;
     return true;
   }
-  if (FXSYS_fabs(m_pMatrix->b) < FIX16_005 &&
-      FXSYS_fabs(m_pMatrix->c) < FIX16_005) {
-    int dest_width = m_pMatrix->a > 0 ? (int)FXSYS_ceil(m_pMatrix->a)
-                                      : (int)FXSYS_floor(m_pMatrix->a);
-    int dest_height = m_pMatrix->d > 0 ? (int)-FXSYS_ceil(m_pMatrix->d)
-                                       : (int)-FXSYS_floor(m_pMatrix->d);
+  if (fabs(m_pMatrix->b) < FIX16_005 && fabs(m_pMatrix->c) < FIX16_005) {
+    int dest_width =
+        m_pMatrix->a > 0 ? (int)ceil(m_pMatrix->a) : (int)floor(m_pMatrix->a);
+    int dest_height =
+        m_pMatrix->d > 0 ? (int)-ceil(m_pMatrix->d) : (int)-floor(m_pMatrix->d);
     result_clip.Offset(-result_rect.left, -result_rect.top);
     m_Stretcher = pdfium::MakeUnique<CFX_ImageStretcher>(
         &m_Storer, m_pSrc, dest_width, dest_height, result_clip, m_Flags);
@@ -195,8 +194,8 @@ bool CFX_ImageTransformer::Start() {
     m_Status = 2;
     return true;
   }
-  int stretch_width = (int)FXSYS_ceil(FXSYS_sqrt2(m_pMatrix->a, m_pMatrix->b));
-  int stretch_height = (int)FXSYS_ceil(FXSYS_sqrt2(m_pMatrix->c, m_pMatrix->d));
+  int stretch_width = (int)ceil(FXSYS_sqrt2(m_pMatrix->a, m_pMatrix->b));
+  int stretch_height = (int)ceil(FXSYS_sqrt2(m_pMatrix->c, m_pMatrix->d));
   CFX_Matrix stretch2dest(1.0f, 0.0f, 0.0f, -1.0f, 0.0f,
                           (float)(stretch_height));
   stretch2dest.Concat(

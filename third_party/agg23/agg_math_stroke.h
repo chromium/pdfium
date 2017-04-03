@@ -51,14 +51,14 @@ void stroke_calc_arc(VertexConsumer& out_vertices,
                      float approximation_scale)
 {
     typedef typename VertexConsumer::value_type coord_type;
-    float a1 = FXSYS_atan2(dy1, dx1);
-    float a2 = FXSYS_atan2(dy2, dx2);
+    float a1 = atan2(dy1, dx1);
+    float a2 = atan2(dy2, dx2);
     float da = a1 - a2;
     bool ccw = da > 0 && da < FX_PI;
     if(width < 0) {
         width = -width;
     }
-    da = FXSYS_acos(width / (width + ((1.0f / 8) / approximation_scale))) * 2;
+    da = acos(width / (width + ((1.0f / 8) / approximation_scale))) * 2;
     out_vertices.add(coord_type(x + dx1, y + dy1));
     if (da > 0) {
       if (!ccw) {
@@ -68,8 +68,8 @@ void stroke_calc_arc(VertexConsumer& out_vertices,
         a2 -= da / 4;
         a1 += da;
         while (a1 < a2) {
-          out_vertices.add(coord_type(x + (width * FXSYS_cos(a1)),
-                                      y + (width * FXSYS_sin(a1))));
+          out_vertices.add(
+              coord_type(x + (width * cos(a1)), y + (width * sin(a1))));
           a1 += da;
         }
       } else {
@@ -79,8 +79,8 @@ void stroke_calc_arc(VertexConsumer& out_vertices,
         a2 += da / 4;
         a1 -= da;
         while (a1 > a2) {
-          out_vertices.add(coord_type(x + (width * FXSYS_cos(a1)),
-                                      y + (width * FXSYS_sin(a1))));
+          out_vertices.add(
+              coord_type(x + (width * cos(a1)), y + (width * sin(a1))));
           a1 -= da;
         }
       }
@@ -168,18 +168,16 @@ void stroke_calc_cap(VertexConsumer& out_vertices,
         out_vertices.add(coord_type(v0.x - dx1 - dx2, v0.y + dy1 - dy2));
         out_vertices.add(coord_type(v0.x + dx1 - dx2, v0.y - dy1 - dy2));
     } else {
-        float a1 = FXSYS_atan2(dy1, -dx1);
-        float a2 = a1 + FX_PI;
-        float da =
-            FXSYS_acos(width / (width + ((1.0f / 8) / approximation_scale))) *
-            2;
-        out_vertices.add(coord_type(v0.x - dx1, v0.y + dy1));
+      float a1 = atan2(dy1, -dx1);
+      float a2 = a1 + FX_PI;
+      float da = acos(width / (width + ((1.0f / 8) / approximation_scale))) * 2;
+      out_vertices.add(coord_type(v0.x - dx1, v0.y + dy1));
+      a1 += da;
+      a2 -= da / 4;
+      while (a1 < a2) {
+        out_vertices.add(
+            coord_type(v0.x + (width * cos(a1)), v0.y + (width * sin(a1))));
         a1 += da;
-        a2 -= da / 4;
-        while(a1 < a2) {
-          out_vertices.add(coord_type(v0.x + (width * FXSYS_cos(a1)),
-                                      v0.y + (width * FXSYS_sin(a1))));
-            a1 += da;
         }
         out_vertices.add(coord_type(v0.x + dx1, v0.y - dy1));
     }

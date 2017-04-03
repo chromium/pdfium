@@ -273,8 +273,8 @@ float CXFA_TextLayout::StartLayout(float fWidth) {
   if (!m_pLoader)
     m_pLoader = pdfium::MakeUnique<CXFA_LoaderContext>();
 
-  if (fWidth < 0 || (m_pLoader->m_fWidth > -1 &&
-                     FXSYS_fabs(fWidth - m_pLoader->m_fWidth) > 0)) {
+  if (fWidth < 0 ||
+      (m_pLoader->m_fWidth > -1 && fabs(fWidth - m_pLoader->m_fWidth) > 0)) {
     m_pLoader->m_lineHeights.clear();
     m_Blocks.clear();
     Unload();

@@ -173,8 +173,7 @@ void CBC_OneDimWriter::CalcTextInfo(const CFX_ByteString& text,
     leftPositon = 0;
   }
   float penX = 0.0;
-  float penY =
-      (float)FXSYS_abs(cFont->GetDescent()) * (float)fontSize / 1000.0f;
+  float penY = (float)abs(cFont->GetDescent()) * (float)fontSize / 1000.0f;
   float left = leftPositon;
   float top = 0.0;
   charPos[0].m_Origin = CFX_PointF(penX + left, penY + top);

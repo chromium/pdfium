@@ -40,9 +40,8 @@ bool CWeightTable::Calc(int dest_len,
   const double scale = (float)src_len / (float)dest_len;
   const double base = dest_len < 0 ? (float)(src_len) : 0;
   const int ext_size = flags & FXDIB_BICUBIC_INTERPOL ? 3 : 1;
-  m_ItemSize =
-      sizeof(int) * 2 +
-      (int)(sizeof(int) * (FXSYS_ceil(FXSYS_fabs((float)scale)) + ext_size));
+  m_ItemSize = sizeof(int) * 2 +
+               (int)(sizeof(int) * (ceil(fabs((float)scale)) + ext_size));
   m_DestMin = dest_min;
   if ((dest_max - dest_min) > (int)((1U << 30) - 4) / m_ItemSize)
     return false;
@@ -52,13 +51,13 @@ bool CWeightTable::Calc(int dest_len,
   if (!m_pWeightTables)
     return false;
 
-  if ((flags & FXDIB_NOSMOOTH) != 0 || FXSYS_fabs((float)scale) < 1.0f) {
+  if ((flags & FXDIB_NOSMOOTH) != 0 || fabs((float)scale) < 1.0f) {
     for (int dest_pixel = dest_min; dest_pixel < dest_max; dest_pixel++) {
       PixelWeight& pixel_weights = *GetPixelWeight(dest_pixel);
       double src_pos = dest_pixel * scale + scale / 2 + base;
       if (flags & FXDIB_INTERPOL) {
-        pixel_weights.m_SrcStart = (int)FXSYS_floor((float)src_pos - 1.0f / 2);
-        pixel_weights.m_SrcEnd = (int)FXSYS_floor((float)src_pos + 1.0f / 2);
+        pixel_weights.m_SrcStart = (int)floor((float)src_pos - 1.0f / 2);
+        pixel_weights.m_SrcEnd = (int)floor((float)src_pos + 1.0f / 2);
         if (pixel_weights.m_SrcStart < src_min) {
           pixel_weights.m_SrcStart = src_min;
         }
@@ -73,8 +72,8 @@ bool CWeightTable::Calc(int dest_len,
           pixel_weights.m_Weights[0] = 65536 - pixel_weights.m_Weights[1];
         }
       } else if (flags & FXDIB_BICUBIC_INTERPOL) {
-        pixel_weights.m_SrcStart = (int)FXSYS_floor((float)src_pos - 1.0f / 2);
-        pixel_weights.m_SrcEnd = (int)FXSYS_floor((float)src_pos + 1.0f / 2);
+        pixel_weights.m_SrcStart = (int)floor((float)src_pos - 1.0f / 2);
+        pixel_weights.m_SrcEnd = (int)floor((float)src_pos + 1.0f / 2);
         int start = pixel_weights.m_SrcStart - 1;
         int end = pixel_weights.m_SrcEnd + 1;
         if (start < src_min) {
@@ -157,7 +156,7 @@ bool CWeightTable::Calc(int dest_len,
         }
       } else {
         pixel_weights.m_SrcStart = pixel_weights.m_SrcEnd =
-            (int)FXSYS_floor((float)src_pos);
+            (int)floor((float)src_pos);
         if (pixel_weights.m_SrcStart < src_min) {
           pixel_weights.m_SrcStart = src_min;
         }
@@ -176,11 +175,11 @@ bool CWeightTable::Calc(int dest_len,
     double src_end = src_start + scale;
     int start_i, end_i;
     if (src_start < src_end) {
-      start_i = (int)FXSYS_floor((float)src_start);
-      end_i = (int)FXSYS_ceil((float)src_end);
+      start_i = (int)floor((float)src_start);
+      end_i = (int)ceil((float)src_end);
     } else {
-      start_i = (int)FXSYS_floor((float)src_end);
-      end_i = (int)FXSYS_ceil((float)src_start);
+      start_i = (int)floor((float)src_end);
+      end_i = (int)ceil((float)src_start);
     }
     if (start_i < src_min) {
       start_i = src_min;
@@ -286,9 +285,9 @@ CStretchEngine::CStretchEngine(IFX_ScanlineComposer* pDestBitmap,
   m_SrcPitch = (m_SrcWidth * m_SrcBpp + 31) / 32 * 4;
   if ((flags & FXDIB_NOSMOOTH) == 0) {
     bool bInterpol = flags & FXDIB_INTERPOL || flags & FXDIB_BICUBIC_INTERPOL;
-    if (!bInterpol && FXSYS_abs(dest_width) != 0 &&
-        FXSYS_abs(dest_height) / 8 < static_cast<long long>(m_SrcWidth) *
-                                         m_SrcHeight / FXSYS_abs(dest_width)) {
+    if (!bInterpol && abs(dest_width) != 0 &&
+        abs(dest_height) / 8 < static_cast<long long>(m_SrcWidth) *
+                                   m_SrcHeight / abs(dest_width)) {
       flags = FXDIB_INTERPOL;
     }
     m_Flags = flags;
@@ -316,10 +315,10 @@ CStretchEngine::CStretchEngine(IFX_ScanlineComposer* pDestBitmap,
     src_top = src_bottom;
     src_bottom = temp;
   }
-  m_SrcClip.left = (int)FXSYS_floor((float)src_left);
-  m_SrcClip.right = (int)FXSYS_ceil((float)src_right);
-  m_SrcClip.top = (int)FXSYS_floor((float)src_top);
-  m_SrcClip.bottom = (int)FXSYS_ceil((float)src_bottom);
+  m_SrcClip.left = (int)floor((float)src_left);
+  m_SrcClip.right = (int)ceil((float)src_right);
+  m_SrcClip.top = (int)floor((float)src_top);
+  m_SrcClip.bottom = (int)ceil((float)src_bottom);
   FX_RECT src_rect(0, 0, m_SrcWidth, m_SrcHeight);
   m_SrcClip.Intersect(src_rect);
   if (m_SrcBpp == 1) {

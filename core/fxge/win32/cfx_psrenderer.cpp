@@ -533,14 +533,14 @@ void CFX_PSRenderer::FindPSFontGlyph(CFX_FaceCache* pFaceCache,
           pPSFont->m_Glyphs[j].m_GlyphIndex == charpos.m_GlyphIndex &&
           ((!pPSFont->m_Glyphs[j].m_bGlyphAdjust && !charpos.m_bGlyphAdjust) ||
            (pPSFont->m_Glyphs[j].m_bGlyphAdjust && charpos.m_bGlyphAdjust &&
-            (FXSYS_fabs(pPSFont->m_Glyphs[j].m_AdjustMatrix[0] -
-                        charpos.m_AdjustMatrix[0]) < 0.01 &&
-             FXSYS_fabs(pPSFont->m_Glyphs[j].m_AdjustMatrix[1] -
-                        charpos.m_AdjustMatrix[1]) < 0.01 &&
-             FXSYS_fabs(pPSFont->m_Glyphs[j].m_AdjustMatrix[2] -
-                        charpos.m_AdjustMatrix[2]) < 0.01 &&
-             FXSYS_fabs(pPSFont->m_Glyphs[j].m_AdjustMatrix[3] -
-                        charpos.m_AdjustMatrix[3]) < 0.01)))) {
+            (fabs(pPSFont->m_Glyphs[j].m_AdjustMatrix[0] -
+                  charpos.m_AdjustMatrix[0]) < 0.01 &&
+             fabs(pPSFont->m_Glyphs[j].m_AdjustMatrix[1] -
+                  charpos.m_AdjustMatrix[1]) < 0.01 &&
+             fabs(pPSFont->m_Glyphs[j].m_AdjustMatrix[2] -
+                  charpos.m_AdjustMatrix[2]) < 0.01 &&
+             fabs(pPSFont->m_Glyphs[j].m_AdjustMatrix[3] -
+                  charpos.m_AdjustMatrix[3]) < 0.01)))) {
         *ps_fontnum = i;
         *ps_glyphindex = j;
         return;

@@ -1449,8 +1449,7 @@ bool CFX_AggDeviceDriver::DrawPath(const CFX_PathData* pPathData,
   CFX_Matrix matrix1;
   CFX_Matrix matrix2;
   if (pObject2Device) {
-    matrix1.a =
-        std::max(FXSYS_fabs(pObject2Device->a), FXSYS_fabs(pObject2Device->b));
+    matrix1.a = std::max(fabs(pObject2Device->a), fabs(pObject2Device->b));
     matrix1.d = matrix1.a;
     matrix2 = CFX_Matrix(
         pObject2Device->a / matrix1.a, pObject2Device->b / matrix1.a,

@@ -15,7 +15,6 @@
 
 #define FX_INVALID_OFFSET static_cast<uint32_t>(-1)
 
-float FXSYS_tan(float a);
 float FXSYS_strtof(const char* pcsStr,
                    int32_t iLength = -1,
                    int32_t* pUsedLen = nullptr);

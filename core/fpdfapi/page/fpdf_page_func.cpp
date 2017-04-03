@@ -289,15 +289,15 @@ bool CPDF_PSEngine::DoOperator(PDF_PSOP op) {
       break;
     case PSOP_ABS:
       d1 = Pop();
-      Push((float)FXSYS_fabs(d1));
+      Push((float)fabs(d1));
       break;
     case PSOP_CEILING:
       d1 = Pop();
-      Push((float)FXSYS_ceil(d1));
+      Push((float)ceil(d1));
       break;
     case PSOP_FLOOR:
       d1 = Pop();
-      Push((float)FXSYS_floor(d1));
+      Push((float)floor(d1));
       break;
     case PSOP_ROUND:
       d1 = Pop();
@@ -309,20 +309,20 @@ bool CPDF_PSEngine::DoOperator(PDF_PSOP op) {
       break;
     case PSOP_SQRT:
       d1 = Pop();
-      Push((float)FXSYS_sqrt(d1));
+      Push((float)sqrt(d1));
       break;
     case PSOP_SIN:
       d1 = Pop();
-      Push((float)FXSYS_sin(d1 * FX_PI / 180.0f));
+      Push((float)sin(d1 * FX_PI / 180.0f));
       break;
     case PSOP_COS:
       d1 = Pop();
-      Push((float)FXSYS_cos(d1 * FX_PI / 180.0f));
+      Push((float)cos(d1 * FX_PI / 180.0f));
       break;
     case PSOP_ATAN:
       d2 = Pop();
       d1 = Pop();
-      d1 = (float)(FXSYS_atan2(d1, d2) * 180.0 / FX_PI);
+      d1 = (float)(atan2(d1, d2) * 180.0 / FX_PI);
       if (d1 < 0) {
         d1 += 360;
       }
@@ -335,11 +335,11 @@ bool CPDF_PSEngine::DoOperator(PDF_PSOP op) {
       break;
     case PSOP_LN:
       d1 = Pop();
-      Push((float)FXSYS_log(d1));
+      Push((float)log(d1));
       break;
     case PSOP_LOG:
       d1 = Pop();
-      Push((float)FXSYS_log10(d1));
+      Push((float)log10(d1));
       break;
     case PSOP_CVI:
       i1 = (int)Pop();

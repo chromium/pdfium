@@ -57,17 +57,17 @@ void CCodec_ProgressiveDecoder::CFXCODEC_WeightTable::Calc(int dest_len,
   } else {
     base = 0.0f;
   }
-  m_ItemSize = (int)(sizeof(int) * 2 +
-                     sizeof(int) * (FXSYS_ceil(FXSYS_fabs((float)scale)) + 1));
+  m_ItemSize =
+      (int)(sizeof(int) * 2 + sizeof(int) * (ceil(fabs((float)scale)) + 1));
   m_DestMin = dest_min;
   m_pWeightTables.resize((dest_max - dest_min) * m_ItemSize + 4);
-  if (FXSYS_fabs((float)scale) < 1.0f) {
+  if (fabs((float)scale) < 1.0f) {
     for (int dest_pixel = dest_min; dest_pixel < dest_max; dest_pixel++) {
       PixelWeight& pixel_weights = *GetPixelWeight(dest_pixel);
       double src_pos = dest_pixel * scale + scale / 2 + base;
       if (bInterpol) {
-        pixel_weights.m_SrcStart = (int)FXSYS_floor((float)src_pos - 1.0f / 2);
-        pixel_weights.m_SrcEnd = (int)FXSYS_floor((float)src_pos + 1.0f / 2);
+        pixel_weights.m_SrcStart = (int)floor((float)src_pos - 1.0f / 2);
+        pixel_weights.m_SrcEnd = (int)floor((float)src_pos + 1.0f / 2);
         if (pixel_weights.m_SrcStart < src_min) {
           pixel_weights.m_SrcStart = src_min;
         }
@@ -83,7 +83,7 @@ void CCodec_ProgressiveDecoder::CFXCODEC_WeightTable::Calc(int dest_len,
         }
       } else {
         pixel_weights.m_SrcStart = pixel_weights.m_SrcEnd =
-            (int)FXSYS_floor((float)src_pos);
+            (int)floor((float)src_pos);
         pixel_weights.m_Weights[0] = 65536;
       }
     }
@@ -95,11 +95,11 @@ void CCodec_ProgressiveDecoder::CFXCODEC_WeightTable::Calc(int dest_len,
     double src_end = src_start + scale;
     int start_i, end_i;
     if (src_start < src_end) {
-      start_i = (int)FXSYS_floor((float)src_start);
-      end_i = (int)FXSYS_ceil((float)src_end);
+      start_i = (int)floor((float)src_start);
+      end_i = (int)ceil((float)src_end);
     } else {
-      start_i = (int)FXSYS_floor((float)src_end);
-      end_i = (int)FXSYS_ceil((float)src_start);
+      start_i = (int)floor((float)src_end);
+      end_i = (int)ceil((float)src_start);
     }
     if (start_i < src_min) {
       start_i = src_min;
@@ -1744,7 +1744,7 @@ void CCodec_ProgressiveDecoder::ResampleVert(
     }
     return;
   }
-  int multiple = (int)FXSYS_ceil((float)scale_y - 1);
+  int multiple = (int)ceil((float)scale_y - 1);
   if (multiple > 0) {
     uint8_t* scan_src =
         (uint8_t*)pDeviceBitmap->GetScanline(des_row) + des_ScanOffet;
@@ -1874,19 +1874,19 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::StartDecode(
   if (start_x < 0 || out_range_x > 0) {
     float scaleX = (float)m_clipBox.Width() / (float)size_x;
     if (start_x < 0) {
-      m_clipBox.left -= (int32_t)FXSYS_ceil((float)start_x * scaleX);
+      m_clipBox.left -= (int32_t)ceil((float)start_x * scaleX);
     }
     if (out_range_x > 0) {
-      m_clipBox.right -= (int32_t)FXSYS_floor((float)out_range_x * scaleX);
+      m_clipBox.right -= (int32_t)floor((float)out_range_x * scaleX);
     }
   }
   if (start_y < 0 || out_range_y > 0) {
     float scaleY = (float)m_clipBox.Height() / (float)size_y;
     if (start_y < 0) {
-      m_clipBox.top -= (int32_t)FXSYS_ceil((float)start_y * scaleY);
+      m_clipBox.top -= (int32_t)ceil((float)start_y * scaleY);
     }
     if (out_range_y > 0) {
-      m_clipBox.bottom -= (int32_t)FXSYS_floor((float)out_range_y * scaleY);
+      m_clipBox.bottom -= (int32_t)floor((float)out_range_y * scaleY);
     }
   }
   if (m_clipBox.IsEmpty()) {

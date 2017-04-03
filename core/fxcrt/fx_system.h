@@ -252,18 +252,6 @@ wchar_t* FXSYS_wcsupr(wchar_t* str);
 #define FXSYS_pow(a, b) (float)pow(a, b)
 #endif  // _FXM_PLATFORM == _FXM_PLATFORM_WINDOWS_
 
-#define FXSYS_sqrt(a) (float)sqrt(a)
-#define FXSYS_fabs(a) (float)fabs(a)
-#define FXSYS_atan2(a, b) (float)atan2(a, b)
-#define FXSYS_ceil(a) (float)ceil(a)
-#define FXSYS_floor(a) (float)floor(a)
-#define FXSYS_cos(a) (float)cos(a)
-#define FXSYS_acos(a) (float)acos(a)
-#define FXSYS_sin(a) (float)sin(a)
-#define FXSYS_log(a) (float)log(a)
-#define FXSYS_log10(a) (float)log10(a)
-#define FXSYS_fmod(a, b) (float)fmod(a, b)
-#define FXSYS_abs abs
 #define FXDWORD_GET_LSBFIRST(p)                                                \
   ((static_cast<uint32_t>(p[3]) << 24) | (static_cast<uint32_t>(p[2]) << 16) | \
    (static_cast<uint32_t>(p[1]) << 8) | (static_cast<uint32_t>(p[0])))
@@ -277,7 +265,7 @@ int64_t FXSYS_atoi64(const char* str);
 int64_t FXSYS_wtoi64(const wchar_t* str);
 const char* FXSYS_i64toa(int64_t value, char* str, int radix);
 int FXSYS_round(float f);
-#define FXSYS_sqrt2(a, b) (float)FXSYS_sqrt((a) * (a) + (b) * (b))
+#define FXSYS_sqrt2(a, b) (float)sqrt((a) * (a) + (b) * (b))
 #ifdef __cplusplus
 };      // extern C
 #endif  // __cplusplus

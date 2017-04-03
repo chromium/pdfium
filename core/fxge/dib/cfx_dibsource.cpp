@@ -513,7 +513,7 @@ CFX_RetainPtr<CFX_DIBitmap> CFX_DIBSource::StretchTo(int dest_width,
                                                      uint32_t flags,
                                                      const FX_RECT* pClip) {
   CFX_RetainPtr<CFX_DIBSource> holder(this);
-  FX_RECT clip_rect(0, 0, FXSYS_abs(dest_width), FXSYS_abs(dest_height));
+  FX_RECT clip_rect(0, 0, abs(dest_width), abs(dest_height));
   if (pClip)
     clip_rect.Intersect(*pClip);
 

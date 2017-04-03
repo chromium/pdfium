@@ -615,8 +615,7 @@ void CXFA_FM2JSContext::Ceil(CFXJSE_Value* pThis,
     return;
   }
 
-  args.GetReturnValue()->SetFloat(
-      FXSYS_ceil(ValueToFloat(pThis, argValue.get())));
+  args.GetReturnValue()->SetFloat(ceil(ValueToFloat(pThis, argValue.get())));
 }
 
 // static
@@ -688,8 +687,7 @@ void CXFA_FM2JSContext::Floor(CFXJSE_Value* pThis,
     return;
   }
 
-  args.GetReturnValue()->SetFloat(
-      FXSYS_floor(ValueToFloat(pThis, argValue.get())));
+  args.GetReturnValue()->SetFloat(floor(ValueToFloat(pThis, argValue.get())));
 }
 
 // static
@@ -1419,7 +1417,7 @@ void CXFA_FM2JSContext::Num2GMTime(CFXJSE_Value* pThis,
     return;
   }
   int32_t iTime = (int32_t)ValueToFloat(pThis, timeValue.get());
-  if (FXSYS_abs(iTime) < 1.0) {
+  if (abs(iTime) < 1.0) {
     args.GetReturnValue()->SetNull();
     return;
   }
@@ -1466,7 +1464,7 @@ void CXFA_FM2JSContext::Num2Time(CFXJSE_Value* pThis,
     return;
   }
   float fTime = ValueToFloat(pThis, timeValue.get());
-  if (FXSYS_fabs(fTime) < 1.0) {
+  if (fabs(fTime) < 1.0) {
     args.GetReturnValue()->SetNull();
     return;
   }
@@ -2407,9 +2405,8 @@ void CXFA_FM2JSContext::CTerm(CFXJSE_Value* pThis,
     return;
   }
 
-  args.GetReturnValue()->SetFloat(
-      FXSYS_log((float)(nFutureValue / nInitAmount)) /
-      FXSYS_log((float)(1 + nRate)));
+  args.GetReturnValue()->SetFloat(log((float)(nFutureValue / nInitAmount)) /
+                                  log((float)(1 + nRate)));
 }
 
 // static
@@ -2487,10 +2484,10 @@ void CXFA_FM2JSContext::IPmt(CFXJSE_Value* pThis,
   }
 
   float nRateOfMonth = nRate / 12;
-  int32_t iNums = (int32_t)(
-      (FXSYS_log10((float)(nPayment / nPrincipalAmount)) -
-       FXSYS_log10((float)(nPayment / nPrincipalAmount - nRateOfMonth))) /
-      FXSYS_log10((float)(1 + nRateOfMonth)));
+  int32_t iNums =
+      (int32_t)((log10((float)(nPayment / nPrincipalAmount)) -
+                 log10((float)(nPayment / nPrincipalAmount - nRateOfMonth))) /
+                log10((float)(1 + nRateOfMonth)));
   int32_t iEnd = std::min((int32_t)(nFirstMonth + nNumberOfMonths - 1), iNums);
 
   if (nPayment < nPrincipalAmount * nRateOfMonth) {
@@ -2622,10 +2619,10 @@ void CXFA_FM2JSContext::PPmt(CFXJSE_Value* pThis,
   }
 
   float nRateOfMonth = nRate / 12;
-  int32_t iNums = (int32_t)(
-      (FXSYS_log10((float)(nPayment / nPrincipalAmount)) -
-       FXSYS_log10((float)(nPayment / nPrincipalAmount - nRateOfMonth))) /
-      FXSYS_log10((float)(1 + nRateOfMonth)));
+  int32_t iNums =
+      (int32_t)((log10((float)(nPayment / nPrincipalAmount)) -
+                 log10((float)(nPayment / nPrincipalAmount - nRateOfMonth))) /
+                log10((float)(1 + nRateOfMonth)));
   int32_t iEnd = std::min((int32_t)(nFirstMonth + nNumberOfMonths - 1), iNums);
   if (nPayment < nPrincipalAmount * nRateOfMonth) {
     pContext->ThrowArgumentMismatchException();
@@ -2739,9 +2736,8 @@ void CXFA_FM2JSContext::Term(CFXJSE_Value* pThis,
     return;
   }
 
-  args.GetReturnValue()->SetFloat(
-      FXSYS_log((float)(nFuture / nMount * nRate) + 1) /
-      FXSYS_log((float)(1 + nRate)));
+  args.GetReturnValue()->SetFloat(log((float)(nFuture / nMount * nRate) + 1) /
+                                  log((float)(1 + nRate)));
 }
 
 // static

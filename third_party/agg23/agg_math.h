@@ -52,8 +52,8 @@ AGG_INLINE bool calc_intersection(float ax, float ay, float bx, float by,
 {
   float num = ((ay - cy) * (dx - cx)) - ((ax - cx) * (dy - cy));
   float den = ((bx - ax) * (dy - cy)) - ((by - ay) * (dx - cx));
-    if (FXSYS_fabs(den) < intersection_epsilon) {
-        return false;
+  if (fabs(den) < intersection_epsilon) {
+    return false;
     }
     *x = ax + ((bx - ax) * num / den);
     *y = ay + ((by - ay) * num / den);

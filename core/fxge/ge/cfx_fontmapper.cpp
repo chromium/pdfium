@@ -707,7 +707,7 @@ FXFT_Face CFX_FontMapper::FindSubstFont(const CFX_ByteString& name,
   if (bItalic && !FXFT_Is_Face_Italic(face)) {
     if (italic_angle == 0)
       italic_angle = -12;
-    else if (FXSYS_abs(italic_angle) < 5)
+    else if (abs(italic_angle) < 5)
       italic_angle = 0;
     pSubstFont->m_ItalicAngle = italic_angle;
   }

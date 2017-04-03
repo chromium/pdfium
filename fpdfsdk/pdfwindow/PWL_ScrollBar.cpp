@@ -1003,12 +1003,12 @@ void CPWL_ScrollBar::OnPosButtonMouseMove(const CFX_PointF& point) {
 
   switch (m_sbType) {
     case SBT_HSCROLL:
-      if (FXSYS_fabs(point.x - m_nOldPos) < 1)
+      if (fabs(point.x - m_nOldPos) < 1)
         return;
       fNewPos = FaceToTrue(m_fOldPosButton + point.x - m_nOldPos);
       break;
     case SBT_VSCROLL:
-      if (FXSYS_fabs(point.y - m_nOldPos) < 1)
+      if (fabs(point.y - m_nOldPos) < 1)
         return;
       fNewPos = FaceToTrue(m_fOldPosButton + point.y - m_nOldPos);
       break;

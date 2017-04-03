@@ -276,12 +276,12 @@ CFX_Decimal::CFX_Decimal(float val, uint8_t scale) {
   plo = static_cast<uint64_t>(newval);
   pmid = static_cast<uint64_t>(newval / 1e32);
   phi = static_cast<uint64_t>(newval / 1e64);
-  newval = FXSYS_fmod(newval, 1.0f);
+  newval = fmod(newval, 1.0f);
   for (uint8_t iter = 0; iter < scale; iter++) {
     decimal_helper_mul10(phi, pmid, plo);
     newval *= 10;
     plo += static_cast<uint64_t>(newval);
-    newval = FXSYS_fmod(newval, 1.0f);
+    newval = fmod(newval, 1.0f);
   }
 
   plo += FXSYS_round(newval);

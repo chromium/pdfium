@@ -289,7 +289,7 @@ void CPDFXFA_DocEnvironment::PageViewEvent(CXFA_FFPageView* pPageView,
   int flag = (nNewCount < m_pContext->GetOriginalPageCount())
                  ? FXFA_PAGEVIEWEVENT_POSTREMOVED
                  : FXFA_PAGEVIEWEVENT_POSTADDED;
-  int count = FXSYS_abs(nNewCount - m_pContext->GetOriginalPageCount());
+  int count = abs(nNewCount - m_pContext->GetOriginalPageCount());
   m_pContext->SetOriginalPageCount(nNewCount);
   pFormFillEnv->PageEvent(count, flag);
 }

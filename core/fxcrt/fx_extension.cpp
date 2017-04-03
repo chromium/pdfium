@@ -419,12 +419,6 @@ CFX_RetainPtr<IFX_MemoryStream> IFX_MemoryStream::Create(bool bConsecutive) {
   return pdfium::MakeRetain<CFX_MemoryStream>(bConsecutive);
 }
 
-float FXSYS_tan(float a) {
-  return (float)tan(a);
-}
-float FXSYS_logb(float b, float x) {
-  return FXSYS_log(x) / FXSYS_log(b);
-}
 float FXSYS_strtof(const char* pcsStr, int32_t iLength, int32_t* pUsedLen) {
   ASSERT(pcsStr);
   if (iLength < 0) {
@@ -434,6 +428,7 @@ float FXSYS_strtof(const char* pcsStr, int32_t iLength, int32_t* pUsedLen) {
       CFX_WideString::FromLocal(CFX_ByteStringC(pcsStr, iLength));
   return FXSYS_wcstof(ws.c_str(), iLength, pUsedLen);
 }
+
 float FXSYS_wcstof(const wchar_t* pwsStr, int32_t iLength, int32_t* pUsedLen) {
   ASSERT(pwsStr);
   if (iLength < 0) {

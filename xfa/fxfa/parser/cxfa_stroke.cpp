@@ -89,7 +89,7 @@ float CXFA_Stroke::GetRadius() const {
 bool CXFA_Stroke::SameStyles(CXFA_Stroke stroke, uint32_t dwFlags) const {
   if (m_pNode == stroke.GetNode())
     return true;
-  if (FXSYS_fabs(GetThickness() - stroke.GetThickness()) >= 0.01f)
+  if (fabs(GetThickness() - stroke.GetThickness()) >= 0.01f)
     return false;
   if ((dwFlags & XFA_STROKE_SAMESTYLE_NoPresence) == 0 &&
       IsVisible() != stroke.IsVisible()) {
@@ -100,7 +100,7 @@ bool CXFA_Stroke::SameStyles(CXFA_Stroke stroke, uint32_t dwFlags) const {
   if (GetColor() != stroke.GetColor())
     return false;
   if ((dwFlags & XFA_STROKE_SAMESTYLE_Corner) != 0 &&
-      FXSYS_fabs(GetRadius() - stroke.GetRadius()) >= 0.01f) {
+      fabs(GetRadius() - stroke.GetRadius()) >= 0.01f) {
     return false;
   }
   return true;

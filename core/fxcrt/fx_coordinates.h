@@ -162,7 +162,7 @@ class CFX_VTemplate : public CFX_PTemplate<BaseType> {
                 const CFX_PTemplate<BaseType>& point2)
       : CFX_PTemplate<BaseType>(point2.x - point1.x, point2.y - point1.y) {}
 
-  float Length() const { return FXSYS_sqrt(x * x + y * y); }
+  float Length() const { return sqrt(x * x + y * y); }
   void Normalize() {
     float fLen = Length();
     if (fLen < 0.0001f)
@@ -180,8 +180,8 @@ class CFX_VTemplate : public CFX_PTemplate<BaseType> {
     y *= sy;
   }
   void Rotate(float fRadian) {
-    float cosValue = FXSYS_cos(fRadian);
-    float sinValue = FXSYS_sin(fRadian);
+    float cosValue = cos(fRadian);
+    float sinValue = sin(fRadian);
     x = x * cosValue - y * sinValue;
     y = x * sinValue + y * cosValue;
   }

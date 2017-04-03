@@ -139,19 +139,19 @@ void CPDF_TextState::TextData::SetFont(CPDF_Font* pFont) {
 }
 
 float CPDF_TextState::TextData::GetFontSizeV() const {
-  return FXSYS_fabs(FXSYS_sqrt2(m_Matrix[1], m_Matrix[3]) * m_FontSize);
+  return fabs(FXSYS_sqrt2(m_Matrix[1], m_Matrix[3]) * m_FontSize);
 }
 
 float CPDF_TextState::TextData::GetFontSizeH() const {
-  return FXSYS_fabs(FXSYS_sqrt2(m_Matrix[0], m_Matrix[2]) * m_FontSize);
+  return fabs(FXSYS_sqrt2(m_Matrix[0], m_Matrix[2]) * m_FontSize);
 }
 
 float CPDF_TextState::TextData::GetBaselineAngle() const {
-  return FXSYS_atan2(m_Matrix[2], m_Matrix[0]);
+  return atan2(m_Matrix[2], m_Matrix[0]);
 }
 
 float CPDF_TextState::TextData::GetShearAngle() const {
-  return GetBaselineAngle() + FXSYS_atan2(m_Matrix[1], m_Matrix[3]);
+  return GetBaselineAngle() + atan2(m_Matrix[1], m_Matrix[3]);
 }
 
 bool SetTextRenderingModeFromInt(int iMode, TextRenderingMode* mode) {

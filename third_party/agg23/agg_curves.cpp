@@ -61,17 +61,16 @@ void curve4_div::recursive_bezier(float x1, float y1,
     float y1234 = (y123 + y234) / 2;
     float dx = x4 - x1;
     float dy = y4 - y1;
-    float d2 = FXSYS_fabs(((x2 - x4) * dy) - ((y2 - y4) * dx));
-    float d3 = FXSYS_fabs(((x3 - x4) * dy) - ((y3 - y4) * dx));
+    float d2 = fabs(((x2 - x4) * dy) - ((y2 - y4) * dx));
+    float d3 = fabs(((x3 - x4) * dy) - ((y3 - y4) * dx));
     switch((int(d2 > curve_collinearity_epsilon) << 1) +
             int(d3 > curve_collinearity_epsilon)) {
         case 0:
-            if(FXSYS_fabs(x1 + x3 - x2 - x2) +
-                    FXSYS_fabs(y1 + y3 - y2 - y2) +
-                    FXSYS_fabs(x2 + x4 - x3 - x3) +
-                    FXSYS_fabs(y2 + y4 - y3 - y3) <= m_distance_tolerance_manhattan) {
-                m_points.add(point_type(x1234, y1234, path_flags_jr));
-                return;
+          if (fabs(x1 + x3 - x2 - x2) + fabs(y1 + y3 - y2 - y2) +
+                  fabs(x2 + x4 - x3 - x3) + fabs(y2 + y4 - y3 - y3) <=
+              m_distance_tolerance_manhattan) {
+            m_points.add(point_type(x1234, y1234, path_flags_jr));
+            return;
             }
             break;
         case 1:

@@ -244,9 +244,9 @@ int CLZWDecoder::Decode(uint8_t* dest_buf,
 
 uint8_t PathPredictor(int a, int b, int c) {
   int p = a + b - c;
-  int pa = FXSYS_abs(p - a);
-  int pb = FXSYS_abs(p - b);
-  int pc = FXSYS_abs(p - c);
+  int pa = abs(p - a);
+  int pb = abs(p - b);
+  int pc = abs(p - c);
   if (pa <= pb && pa <= pc)
     return (uint8_t)a;
   if (pb <= pc)

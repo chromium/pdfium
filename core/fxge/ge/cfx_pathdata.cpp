@@ -71,8 +71,8 @@ void UpdateLineJoinPoints(CFX_FloatRect* rect,
   float end_dc = 0;
   float one_twentieth = 1.0f / 20;
 
-  bool bStartVert = FXSYS_fabs(start_pos.x - mid_pos.x) < one_twentieth;
-  bool bEndVert = FXSYS_fabs(mid_pos.x - end_pos.x) < one_twentieth;
+  bool bStartVert = fabs(start_pos.x - mid_pos.x) < one_twentieth;
+  bool bEndVert = fabs(mid_pos.x - end_pos.x) < one_twentieth;
   if (bStartVert && bEndVert) {
     int start_dir = mid_pos.y > start_pos.y ? 1 : -1;
     float point_y = mid_pos.y + half_width * start_dir;
@@ -87,15 +87,14 @@ void UpdateLineJoinPoints(CFX_FloatRect* rect,
     start_c = mid_pos.y - (start_k * mid_pos.x);
     start_len = FXSYS_sqrt2(start_to_mid.x, start_to_mid.y);
     start_dc =
-        static_cast<float>(FXSYS_fabs(half_width * start_len / start_to_mid.x));
+        static_cast<float>(fabs(half_width * start_len / start_to_mid.x));
   }
   if (!bEndVert) {
     CFX_PointF end_to_mid = end_pos - mid_pos;
     end_k = end_to_mid.y / end_to_mid.x;
     end_c = mid_pos.y - (end_k * mid_pos.x);
     end_len = FXSYS_sqrt2(end_to_mid.x, end_to_mid.y);
-    end_dc =
-        static_cast<float>(FXSYS_fabs(half_width * end_len / end_to_mid.x));
+    end_dc = static_cast<float>(fabs(half_width * end_len / end_to_mid.x));
   }
   if (bStartVert) {
     CFX_PointF outside(start_pos.x, 0);
@@ -129,7 +128,7 @@ void UpdateLineJoinPoints(CFX_FloatRect* rect,
     return;
   }
 
-  if (FXSYS_fabs(start_k - end_k) < one_twentieth) {
+  if (fabs(start_k - end_k) < one_twentieth) {
     int start_dir = mid_pos.x > start_pos.x ? 1 : -1;
     int end_dir = end_pos.x > mid_pos.x ? 1 : -1;
     if (start_dir == end_dir)
@@ -360,8 +359,8 @@ bool CFX_PathData::GetZeroAreaPath(const CFX_Matrix* pMatrix,
                  (m_Points[i].m_Point.y - m_Points[next].m_Point.y) >
              0)) {
           int pre = i;
-          if (FXSYS_fabs(m_Points[i].m_Point.y - m_Points[i - 1].m_Point.y) <
-              FXSYS_fabs(m_Points[i].m_Point.y - m_Points[next].m_Point.y)) {
+          if (fabs(m_Points[i].m_Point.y - m_Points[i - 1].m_Point.y) <
+              fabs(m_Points[i].m_Point.y - m_Points[next].m_Point.y)) {
             pre--;
             next--;
           }
@@ -375,8 +374,8 @@ bool CFX_PathData::GetZeroAreaPath(const CFX_Matrix* pMatrix,
                         (m_Points[i].m_Point.x - m_Points[next].m_Point.x) >
                     0)) {
           int pre = i;
-          if (FXSYS_fabs(m_Points[i].m_Point.x - m_Points[i - 1].m_Point.x) <
-              FXSYS_fabs(m_Points[i].m_Point.x - m_Points[next].m_Point.x)) {
+          if (fabs(m_Points[i].m_Point.x - m_Points[i - 1].m_Point.x) <
+              fabs(m_Points[i].m_Point.x - m_Points[next].m_Point.x)) {
             pre--;
             next--;
           }

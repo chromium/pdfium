@@ -885,7 +885,7 @@ bool TimeFormat(const CFX_WideString& wsTimePattern,
         wsResult += tz.tzHour < 0 ? L"-" : L"+";
 
         CFX_WideString wsTimezone;
-        wsTimezone.Format(L"%02d:%02d", FXSYS_abs(tz.tzHour), tz.tzMinute);
+        wsTimezone.Format(L"%02d:%02d", abs(tz.tzHour), tz.tzMinute);
         wsResult += wsTimezone;
       }
     } else if (dwSymbol == FXBSTR_ID(0, 0, 'z', '1')) {
@@ -894,7 +894,7 @@ bool TimeFormat(const CFX_WideString& wsTimePattern,
         wsResult += tz.tzHour < 0 ? L"-" : L"+";
 
         CFX_WideString wsTimezone;
-        wsTimezone.Format(L"%02d:%02d", FXSYS_abs(tz.tzHour), tz.tzMinute);
+        wsTimezone.Format(L"%02d:%02d", abs(tz.tzHour), tz.tzMinute);
         wsResult += wsTimezone;
       }
     }

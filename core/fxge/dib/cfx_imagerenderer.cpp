@@ -53,11 +53,11 @@ bool CFX_ImageRenderer::Start(const CFX_RetainPtr<CFX_DIBitmap>& pDevice,
   m_bRgbByteOrder = bRgbByteOrder;
   m_BlendType = blend_type;
 
-  if ((FXSYS_fabs(m_Matrix.b) >= 0.5f || m_Matrix.a == 0) ||
-      (FXSYS_fabs(m_Matrix.c) >= 0.5f || m_Matrix.d == 0)) {
-    if (FXSYS_fabs(m_Matrix.a) < FXSYS_fabs(m_Matrix.b) / 20 &&
-        FXSYS_fabs(m_Matrix.d) < FXSYS_fabs(m_Matrix.c) / 20 &&
-        FXSYS_fabs(m_Matrix.a) < 0.5f && FXSYS_fabs(m_Matrix.d) < 0.5f) {
+  if ((fabs(m_Matrix.b) >= 0.5f || m_Matrix.a == 0) ||
+      (fabs(m_Matrix.c) >= 0.5f || m_Matrix.d == 0)) {
+    if (fabs(m_Matrix.a) < fabs(m_Matrix.b) / 20 &&
+        fabs(m_Matrix.d) < fabs(m_Matrix.c) / 20 && fabs(m_Matrix.a) < 0.5f &&
+        fabs(m_Matrix.d) < 0.5f) {
       int dest_width = image_rect.Width();
       int dest_height = image_rect.Height();
       FX_RECT bitmap_clip = m_ClipBox;

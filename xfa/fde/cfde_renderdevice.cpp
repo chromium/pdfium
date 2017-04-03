@@ -57,10 +57,9 @@ void CFDE_RenderDevice::RestoreState() {
 
 bool CFDE_RenderDevice::SetClipRect(const CFX_RectF& rtClip) {
   m_rtClip = rtClip;
-  return m_pDevice->SetClip_Rect(FX_RECT((int32_t)FXSYS_floor(rtClip.left),
-                                         (int32_t)FXSYS_floor(rtClip.top),
-                                         (int32_t)FXSYS_ceil(rtClip.right()),
-                                         (int32_t)FXSYS_ceil(rtClip.bottom())));
+  return m_pDevice->SetClip_Rect(
+      FX_RECT((int32_t)floor(rtClip.left), (int32_t)floor(rtClip.top),
+              (int32_t)ceil(rtClip.right()), (int32_t)ceil(rtClip.bottom())));
 }
 
 const CFX_RectF& CFDE_RenderDevice::GetClipRect() {

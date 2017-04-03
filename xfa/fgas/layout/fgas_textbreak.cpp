@@ -946,7 +946,7 @@ std::vector<CFX_RectF> CFX_TxtBreak::GetCharRects(const FX_TXTRUN* pTxtRun,
     bCharBBox = pFont->GetBBox(&bbox);
 
   float fLeft = std::max(0.0f, bbox.left * fScale);
-  float fHeight = FXSYS_fabs(bbox.height * fScale);
+  float fHeight = fabs(bbox.height * fScale);
   bool bRTLPiece = !!(pTxtRun->dwCharStyles & FX_TXTCHARSTYLE_OddBidiLevel);
   bool bSingleLine = !!(pTxtRun->dwStyles & FX_LAYOUTSTYLE_SingleLine);
   bool bCombText = !!(pTxtRun->dwStyles & FX_LAYOUTSTYLE_CombText);

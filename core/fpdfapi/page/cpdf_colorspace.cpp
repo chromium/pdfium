@@ -265,7 +265,7 @@ class Matrix_3by3 {
 
   Matrix_3by3 Inverse() {
     float det = a * (e * i - f * h) - b * (i * d - f * g) + c * (d * h - e * g);
-    if (FXSYS_fabs(det) < std::numeric_limits<float>::epsilon())
+    if (fabs(det) < std::numeric_limits<float>::epsilon())
       return Matrix_3by3();
 
     return Matrix_3by3(

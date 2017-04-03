@@ -452,7 +452,7 @@ void CFX_Graphics::FillPathWithShading(CFX_Path* path,
             if (b2_4ac < 0) {
               continue;
             }
-            float root = (FXSYS_sqrt(b2_4ac));
+            float root = (sqrt(b2_4ac));
             float s1, s2;
             if (a > 0) {
               s1 = (-b - root) / (2 * a);
