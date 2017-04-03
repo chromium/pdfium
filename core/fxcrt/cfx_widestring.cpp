@@ -858,7 +858,7 @@ CFX_WideString CFX_WideString::FromUTF16LE(const unsigned short* wstr,
 
 int CFX_WideString::Compare(const wchar_t* lpsz) const {
   if (m_pData)
-    return FXSYS_wcscmp(m_pData->m_String, lpsz);
+    return wcscmp(m_pData->m_String, lpsz);
   return (!lpsz || lpsz[0] == 0) ? 0 : -1;
 }
 

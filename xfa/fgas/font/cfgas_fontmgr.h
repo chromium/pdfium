@@ -71,7 +71,7 @@ inline bool operator==(const FX_FONTDESCRIPTOR& left,
   return left.uCharSet == right.uCharSet &&
          left.dwFontStyles == right.dwFontStyles &&
          left.FontSignature == right.FontSignature &&
-         FXSYS_wcscmp(left.wsFontFace, right.wsFontFace) == 0;
+         wcscmp(left.wsFontFace, right.wsFontFace) == 0;
 }
 
 typedef void (*FX_LPEnumAllFonts)(std::deque<FX_FONTDESCRIPTOR>* fonts,
