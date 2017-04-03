@@ -64,15 +64,6 @@ class CPDF_DocPageData {
   using CPDF_CountedIccProfile = CPDF_CountedObject<CPDF_IccProfile>;
   using CPDF_CountedStreamAcc = CPDF_CountedObject<CPDF_StreamAcc>;
 
-  using CPDF_ColorSpaceMap =
-      std::map<const CPDF_Object*, CPDF_CountedColorSpace*>;
-  using CPDF_FontFileMap = std::map<const CPDF_Stream*, CPDF_CountedStreamAcc*>;
-  using CPDF_FontMap = std::map<const CPDF_Dictionary*, CPDF_CountedFont*>;
-  using CPDF_IccProfileMap =
-      std::map<const CPDF_Stream*, CPDF_CountedIccProfile*>;
-  using CPDF_ImageMap = std::map<uint32_t, CFX_RetainPtr<CPDF_Image>>;
-  using CPDF_PatternMap = std::map<const CPDF_Object*, CPDF_CountedPattern*>;
-
   CPDF_ColorSpace* GetColorSpaceImpl(CPDF_Object* pCSObj,
                                      const CPDF_Dictionary* pResources,
                                      std::set<CPDF_Object*>* pVisited);
@@ -80,12 +71,12 @@ class CPDF_DocPageData {
   CPDF_Document* const m_pPDFDoc;
   bool m_bForceClear;
   std::map<CFX_ByteString, CPDF_Stream*> m_HashProfileMap;
-  CPDF_ColorSpaceMap m_ColorSpaceMap;
-  CPDF_FontFileMap m_FontFileMap;
-  CPDF_FontMap m_FontMap;
-  CPDF_IccProfileMap m_IccProfileMap;
-  CPDF_ImageMap m_ImageMap;
-  CPDF_PatternMap m_PatternMap;
+  std::map<const CPDF_Object*, CPDF_CountedColorSpace*> m_ColorSpaceMap;
+  std::map<const CPDF_Stream*, CPDF_CountedStreamAcc*> m_FontFileMap;
+  std::map<const CPDF_Dictionary*, CPDF_CountedFont*> m_FontMap;
+  std::map<const CPDF_Stream*, CPDF_CountedIccProfile*> m_IccProfileMap;
+  std::map<uint32_t, CFX_RetainPtr<CPDF_Image>> m_ImageMap;
+  std::map<const CPDF_Object*, CPDF_CountedPattern*> m_PatternMap;
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_DOCPAGEDATA_H_
