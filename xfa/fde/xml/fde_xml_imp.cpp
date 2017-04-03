@@ -1161,8 +1161,8 @@ void CFDE_BlockBuffer::GetTextData(CFX_WideString& wsTextData,
       iCopyLength -= ((m_iAllocStep - 1) - iEndInnerIndex);
     }
     wchar_t* pBlockBuf = m_BlockArray[i].get();
-    FXSYS_memcpy(pBuf + iPointer, pBlockBuf + iBufferPointer,
-                 iCopyLength * sizeof(wchar_t));
+    memcpy(pBuf + iPointer, pBlockBuf + iBufferPointer,
+           iCopyLength * sizeof(wchar_t));
     iPointer += iCopyLength;
   }
   wsTextData.ReleaseBuffer(iLength);

@@ -19,7 +19,7 @@ CFX_ByteString CFX_WindowsDIB::GetBitmapInfo(
     len += sizeof(DWORD) * (int)(1 << pBitmap->GetBPP());
   }
   BITMAPINFOHEADER* pbmih = (BITMAPINFOHEADER*)result.GetBuffer(len);
-  FXSYS_memset(pbmih, 0, sizeof(BITMAPINFOHEADER));
+  memset(pbmih, 0, sizeof(BITMAPINFOHEADER));
   pbmih->biSize = sizeof(BITMAPINFOHEADER);
   pbmih->biBitCount = pBitmap->GetBPP();
   pbmih->biCompression = BI_RGB;
@@ -70,15 +70,15 @@ CFX_RetainPtr<CFX_DIBitmap> _FX_WindowsDIB_LoadFromBuf(BITMAPINFO* pbmi,
   if (!pBitmap->Create(width, height, format))
     return nullptr;
 
-  FXSYS_memcpy(pBitmap->GetBuffer(), pData, pitch * height);
+  memcpy(pBitmap->GetBuffer(), pData, pitch * height);
   if (bBottomUp) {
     uint8_t* temp_buf = FX_Alloc(uint8_t, pitch);
     int top = 0, bottom = height - 1;
     while (top < bottom) {
-      FXSYS_memcpy(temp_buf, pBitmap->GetBuffer() + top * pitch, pitch);
-      FXSYS_memcpy(pBitmap->GetBuffer() + top * pitch,
-                   pBitmap->GetBuffer() + bottom * pitch, pitch);
-      FXSYS_memcpy(pBitmap->GetBuffer() + bottom * pitch, temp_buf, pitch);
+      memcpy(temp_buf, pBitmap->GetBuffer() + top * pitch, pitch);
+      memcpy(pBitmap->GetBuffer() + top * pitch,
+             pBitmap->GetBuffer() + bottom * pitch, pitch);
+      memcpy(pBitmap->GetBuffer() + bottom * pitch, temp_buf, pitch);
       top++;
       bottom--;
     }
@@ -189,7 +189,7 @@ CFX_RetainPtr<CFX_DIBitmap> CFX_WindowsDIB::LoadDIBitmap(
 CFX_WindowsDIB::CFX_WindowsDIB(HDC hDC, int width, int height) {
   Create(width, height, FXDIB_Rgb, (uint8_t*)1);
   BITMAPINFOHEADER bmih;
-  FXSYS_memset(&bmih, 0, sizeof bmih);
+  memset(&bmih, 0, sizeof bmih);
   bmih.biSize = sizeof bmih;
   bmih.biBitCount = 24;
   bmih.biHeight = -height;

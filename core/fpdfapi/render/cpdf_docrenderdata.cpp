@@ -110,7 +110,7 @@ CPDF_TransferFunc* CPDF_DocRenderData::GetTransferFunc(CPDF_Object* pObj) {
   CPDF_TransferFunc* pTransfer = pTransferCounter->get();
   m_TransferFuncMap[pObj] = pTransferCounter;
   float output[kMaxOutputs];
-  FXSYS_memset(output, 0, sizeof(output));
+  memset(output, 0, sizeof(output));
   float input;
   int noutput;
   for (int v = 0; v < 256; ++v) {

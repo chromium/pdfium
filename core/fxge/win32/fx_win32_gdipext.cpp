@@ -1297,7 +1297,7 @@ class GpStream final : public IStream {
     }
     bytes_left = m_InterStream.GetLength() - m_ReadPos;
     bytes_out = std::min(pdfium::base::checked_cast<size_t>(cb), bytes_left);
-    FXSYS_memcpy(Output, m_InterStream.GetBuffer() + m_ReadPos, bytes_out);
+    memcpy(Output, m_InterStream.GetBuffer() + m_ReadPos, bytes_out);
     m_ReadPos += (int32_t)bytes_out;
     if (pcbRead) {
       *pcbRead = (ULONG)bytes_out;
@@ -1508,11 +1508,11 @@ CFX_RetainPtr<CFX_DIBitmap> CGdiplusExt::LoadDIBitmap(WINDIB_Open_Args_ args) {
   int dest_pitch = (width * pInfo->pbmi->bmiHeader.biBitCount + 31) / 32 * 4;
   LPBYTE pData = FX_Alloc2D(BYTE, dest_pitch, height);
   if (dest_pitch == pInfo->Stride) {
-    FXSYS_memcpy(pData, pInfo->pScan0, dest_pitch * height);
+    memcpy(pData, pInfo->pScan0, dest_pitch * height);
   } else {
     for (int i = 0; i < height; i++) {
-      FXSYS_memcpy(pData + dest_pitch * i, pInfo->pScan0 + pInfo->Stride * i,
-                   dest_pitch);
+      memcpy(pData + dest_pitch * i, pInfo->pScan0 + pInfo->Stride * i,
+             dest_pitch);
     }
   }
   CFX_RetainPtr<CFX_DIBitmap> pDIBitmap = _FX_WindowsDIB_LoadFromBuf(

@@ -53,8 +53,7 @@ void CFDE_TxtEdtBuf::SetText(const CFX_WideString& wsText) {
     }
 
     ChunkHeader* chunk = m_chunks[i].get();
-    FXSYS_memcpy(chunk->wChars.get(), lpSrcBuf,
-                 nCopyedLength * sizeof(wchar_t));
+    memcpy(chunk->wChars.get(), lpSrcBuf, nCopyedLength * sizeof(wchar_t));
     nLeave -= nCopyedLength;
     lpSrcBuf += nCopyedLength;
     chunk->nUsed = nCopyedLength;
@@ -108,7 +107,7 @@ CFX_WideString CFDE_TxtEdtBuf::GetRange(int32_t nBegin, int32_t nLength) const {
     if (nLeave <= nCopyLength) {
       nCopyLength = nLeave;
     }
-    FXSYS_memcpy(lpDstBuf, lpSrcBuf, nCopyLength * sizeof(wchar_t));
+    memcpy(lpDstBuf, lpSrcBuf, nCopyLength * sizeof(wchar_t));
     nChunkIndex++;
     if (nChunkIndex >= nCount) {
       break;
@@ -141,8 +140,8 @@ void CFDE_TxtEdtBuf::Insert(int32_t nPos,
     ChunkHeader* chunk = m_chunks[chunkIndex].get();
     int32_t nCopy = chunk->nUsed - charIndex;
 
-    FXSYS_memcpy(newChunk->wChars.get(), chunk->wChars.get() + charIndex,
-                 nCopy * sizeof(wchar_t));
+    memcpy(newChunk->wChars.get(), chunk->wChars.get() + charIndex,
+           nCopy * sizeof(wchar_t));
     chunk->nUsed -= nCopy;
     chunkIndex++;
 
@@ -157,8 +156,8 @@ void CFDE_TxtEdtBuf::Insert(int32_t nPos,
       chunkIndex--;
       int32_t nFree = GetChunkSize() - chunk->nUsed;
       int32_t nCopy = std::min(nLengthTemp, nFree);
-      FXSYS_memcpy(chunk->wChars.get() + chunk->nUsed, lpText,
-                   nCopy * sizeof(wchar_t));
+      memcpy(chunk->wChars.get() + chunk->nUsed, lpText,
+             nCopy * sizeof(wchar_t));
       lpText += nCopy;
       nLengthTemp -= nCopy;
       chunk->nUsed += nCopy;
@@ -170,7 +169,7 @@ void CFDE_TxtEdtBuf::Insert(int32_t nPos,
     auto chunk = NewChunk();
 
     int32_t nCopy = std::min(nLengthTemp, GetChunkSize());
-    FXSYS_memcpy(chunk->wChars.get(), lpText, nCopy * sizeof(wchar_t));
+    memcpy(chunk->wChars.get(), lpText, nCopy * sizeof(wchar_t));
     lpText += nCopy;
     nLengthTemp -= nCopy;
     chunk->nUsed = nCopy;
@@ -193,9 +192,8 @@ void CFDE_TxtEdtBuf::Delete(int32_t nIndex, int32_t nLength) {
   int32_t nMovePart = chunk->nUsed - nFirstPart;
   if (nMovePart != 0) {
     int32_t nDelete = std::min(nFirstPart, nLength);
-    FXSYS_memmove(chunk->wChars.get() + nFirstPart - nDelete,
-                  chunk->wChars.get() + nFirstPart,
-                  nMovePart * sizeof(wchar_t));
+    memmove(chunk->wChars.get() + nFirstPart - nDelete,
+            chunk->wChars.get() + nFirstPart, nMovePart * sizeof(wchar_t));
     chunk->nUsed -= nDelete;
     nLength -= nDelete;
     endChunkIndex--;

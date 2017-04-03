@@ -280,7 +280,7 @@ CFX_FontMapper::CFX_FontMapper(CFX_FontMgr* mgr)
     : m_bListLoaded(false), m_pFontMgr(mgr) {
   m_MMFaces[0] = nullptr;
   m_MMFaces[1] = nullptr;
-  FXSYS_memset(m_FoxitFaces, 0, sizeof(m_FoxitFaces));
+  memset(m_FoxitFaces, 0, sizeof(m_FoxitFaces));
 }
 
 CFX_FontMapper::~CFX_FontMapper() {

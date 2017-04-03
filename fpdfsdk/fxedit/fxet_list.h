@@ -53,7 +53,7 @@ class CLST_Rect : public CFX_FloatRect {
   }
 
   bool operator==(const CLST_Rect& rect) const {
-    return FXSYS_memcmp(this, &rect, sizeof(CLST_Rect)) == 0;
+    return memcmp(this, &rect, sizeof(CLST_Rect)) == 0;
   }
 
   bool operator!=(const CLST_Rect& rect) const { return !(*this == rect); }

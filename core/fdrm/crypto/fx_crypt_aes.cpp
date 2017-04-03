@@ -762,7 +762,7 @@ static void aes_decrypt_cbc(unsigned char* dest,
   unsigned int iv[4], x[4], ct[4];
   int i;
   ASSERT((len & 15) == 0);
-  FXSYS_memcpy(iv, ctx->iv, sizeof(iv));
+  memcpy(iv, ctx->iv, sizeof(iv));
   while (len > 0) {
     for (i = 0; i < 4; i++) {
       x[i] = ct[i] = GET_32BIT_MSB_FIRST(src + 4 * i);
@@ -776,7 +776,7 @@ static void aes_decrypt_cbc(unsigned char* dest,
     src += 16;
     len -= 16;
   }
-  FXSYS_memcpy(ctx->iv, iv, sizeof(iv));
+  memcpy(ctx->iv, iv, sizeof(iv));
 }
 static void aes_encrypt(AESContext* ctx, unsigned int* block) {
   ctx->encrypt(ctx, block);
@@ -788,7 +788,7 @@ static void aes_encrypt_cbc(unsigned char* dest,
   unsigned int iv[4];
   int i;
   ASSERT((len & 15) == 0);
-  FXSYS_memcpy(iv, ctx->iv, sizeof(iv));
+  memcpy(iv, ctx->iv, sizeof(iv));
   while (len > 0) {
     for (i = 0; i < 4; i++) {
       iv[i] ^= GET_32BIT_MSB_FIRST(src + 4 * i);
@@ -801,7 +801,7 @@ static void aes_encrypt_cbc(unsigned char* dest,
     src += 16;
     len -= 16;
   }
-  FXSYS_memcpy(ctx->iv, iv, sizeof(iv));
+  memcpy(ctx->iv, iv, sizeof(iv));
 }
 void CRYPT_AESSetKey(void* context,
                      uint32_t blocklen,

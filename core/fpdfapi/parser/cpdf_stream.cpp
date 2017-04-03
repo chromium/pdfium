@@ -57,7 +57,7 @@ void CPDF_Stream::InitStream(const uint8_t* pData,
   m_pFile = nullptr;
   m_pDataBuf.reset(FX_Alloc(uint8_t, size));
   if (pData)
-    FXSYS_memcpy(m_pDataBuf.get(), pData, size);
+    memcpy(m_pDataBuf.get(), pData, size);
   m_dwSize = size;
   if (m_pDict)
     m_pDict->SetNewFor<CPDF_Number>("Length", static_cast<int>(m_dwSize));
@@ -101,7 +101,7 @@ void CPDF_Stream::SetData(const uint8_t* pData, uint32_t size) {
   m_bMemoryBased = true;
   m_pDataBuf.reset(FX_Alloc(uint8_t, size));
   if (pData)
-    FXSYS_memcpy(m_pDataBuf.get(), pData, size);
+    memcpy(m_pDataBuf.get(), pData, size);
   m_dwSize = size;
   if (!m_pDict)
     m_pDict = pdfium::MakeUnique<CPDF_Dictionary>();
@@ -117,7 +117,7 @@ bool CPDF_Stream::ReadRawData(FX_FILESIZE offset,
     return m_pFile->ReadBlock(buf, offset, size);
 
   if (m_pDataBuf)
-    FXSYS_memcpy(buf, m_pDataBuf.get() + offset, size);
+    memcpy(buf, m_pDataBuf.get() + offset, size);
 
   return true;
 }

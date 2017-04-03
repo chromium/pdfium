@@ -68,7 +68,7 @@ FPDF_StructElement_GetAltText(FPDF_STRUCTELEMENT struct_element,
   CFX_ByteString encodedStr = str.UTF16LE_Encode();
   const unsigned long len = encodedStr.GetLength();
   if (buffer && len <= buflen)
-    FXSYS_memcpy(buffer, encodedStr.c_str(), len);
+    memcpy(buffer, encodedStr.c_str(), len);
   return len;
 }
 

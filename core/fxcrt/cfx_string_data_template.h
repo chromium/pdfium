@@ -65,13 +65,13 @@ class CFX_StringDataTemplate {
 
   void CopyContents(const CFX_StringDataTemplate& other) {
     ASSERT(other.m_nDataLength <= m_nAllocLength);
-    FXSYS_memcpy(m_String, other.m_String,
-                 (other.m_nDataLength + 1) * sizeof(CharType));
+    memcpy(m_String, other.m_String,
+           (other.m_nDataLength + 1) * sizeof(CharType));
   }
 
   void CopyContents(const CharType* pStr, FX_STRSIZE nLen) {
     ASSERT(nLen >= 0 && nLen <= m_nAllocLength);
-    FXSYS_memcpy(m_String, pStr, nLen * sizeof(CharType));
+    memcpy(m_String, pStr, nLen * sizeof(CharType));
     m_String[nLen] = 0;
   }
 
@@ -79,7 +79,7 @@ class CFX_StringDataTemplate {
                       const CharType* pStr,
                       FX_STRSIZE nLen) {
     ASSERT(offset >= 0 && nLen >= 0 && offset + nLen <= m_nAllocLength);
-    FXSYS_memcpy(m_String + offset, pStr, nLen * sizeof(CharType));
+    memcpy(m_String + offset, pStr, nLen * sizeof(CharType));
     m_String[offset + nLen] = 0;
   }
 

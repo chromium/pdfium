@@ -954,8 +954,8 @@ void CFX_WideString::TrimLeft(const CFX_WideStringC& pTargets) {
   if (pos) {
     ReallocBeforeWrite(len);
     FX_STRSIZE nDataLength = len - pos;
-    FXSYS_memmove(m_pData->m_String, m_pData->m_String + pos,
-                  (nDataLength + 1) * sizeof(wchar_t));
+    memmove(m_pData->m_String, m_pData->m_String + pos,
+            (nDataLength + 1) * sizeof(wchar_t));
     m_pData->m_nDataLength = nDataLength;
   }
 }

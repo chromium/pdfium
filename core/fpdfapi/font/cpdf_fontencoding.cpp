@@ -1646,7 +1646,7 @@ uint32_t PDF_FindCode(const uint16_t* pCodes, uint16_t unicode) {
 }  // namespace
 
 CPDF_FontEncoding::CPDF_FontEncoding() {
-  FXSYS_memset(m_Unicodes, 0, sizeof(m_Unicodes));
+  memset(m_Unicodes, 0, sizeof(m_Unicodes));
 }
 
 int CPDF_FontEncoding::CharCodeFromUnicode(wchar_t unicode) const {
@@ -1660,7 +1660,7 @@ int CPDF_FontEncoding::CharCodeFromUnicode(wchar_t unicode) const {
 CPDF_FontEncoding::CPDF_FontEncoding(int PredefinedEncoding) {
   const uint16_t* pSrc = PDF_UnicodesForPredefinedCharSet(PredefinedEncoding);
   if (!pSrc) {
-    FXSYS_memset(m_Unicodes, 0, sizeof(m_Unicodes));
+    memset(m_Unicodes, 0, sizeof(m_Unicodes));
   } else {
     for (int i = 0; i < 256; i++)
       m_Unicodes[i] = pSrc[i];
@@ -1668,8 +1668,7 @@ CPDF_FontEncoding::CPDF_FontEncoding(int PredefinedEncoding) {
 }
 
 bool CPDF_FontEncoding::IsIdentical(CPDF_FontEncoding* pAnother) const {
-  return FXSYS_memcmp(m_Unicodes, pAnother->m_Unicodes, sizeof(m_Unicodes)) ==
-         0;
+  return memcmp(m_Unicodes, pAnother->m_Unicodes, sizeof(m_Unicodes)) == 0;
 }
 
 std::unique_ptr<CPDF_Object> CPDF_FontEncoding::Realize(

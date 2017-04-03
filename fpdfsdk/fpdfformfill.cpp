@@ -489,9 +489,9 @@ DLLEXPORT void STDCALL FPDF_Widget_Copy(FPDF_DOCUMENT document,
 
   uint32_t real_size = len < *size ? len : *size;
   if (real_size > 0) {
-    FXSYS_memcpy((void*)wsText,
-                 bsCpText.GetBuffer(real_size * sizeof(unsigned short)),
-                 real_size * sizeof(unsigned short));
+    memcpy((void*)wsText,
+           bsCpText.GetBuffer(real_size * sizeof(unsigned short)),
+           real_size * sizeof(unsigned short));
     bsCpText.ReleaseBuffer(real_size * sizeof(unsigned short));
   }
   *size = real_size;
@@ -521,9 +521,9 @@ DLLEXPORT void STDCALL FPDF_Widget_Cut(FPDF_DOCUMENT document,
 
   uint32_t real_size = len < *size ? len : *size;
   if (real_size > 0) {
-    FXSYS_memcpy((void*)wsText,
-                 bsCpText.GetBuffer(real_size * sizeof(unsigned short)),
-                 real_size * sizeof(unsigned short));
+    memcpy((void*)wsText,
+           bsCpText.GetBuffer(real_size * sizeof(unsigned short)),
+           real_size * sizeof(unsigned short));
     bsCpText.ReleaseBuffer(real_size * sizeof(unsigned short));
   }
   *size = real_size;
@@ -615,7 +615,7 @@ FPDF_StringHandleGetStringByIndex(FPDF_STRINGHANDLE sHandle,
 
   uint32_t real_size = len < *size ? len : *size;
   if (real_size > 0)
-    FXSYS_memcpy((void*)bsText, (*sSuggestWords)[index].c_str(), real_size);
+    memcpy((void*)bsText, (*sSuggestWords)[index].c_str(), real_size);
   *size = real_size;
   return true;
 }

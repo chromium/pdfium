@@ -446,7 +446,7 @@ void CFX_Win32FontInfo::AddInstalledFont(const LOGFONTA* plf,
 bool CFX_Win32FontInfo::EnumFontList(CFX_FontMapper* pMapper) {
   m_pMapper = pMapper;
   LOGFONTA lf;
-  FXSYS_memset(&lf, 0, sizeof(LOGFONTA));
+  memset(&lf, 0, sizeof(LOGFONTA));
   lf.lfCharSet = FXFONT_DEFAULT_CHARSET;
   lf.lfFaceName[0] = 0;
   lf.lfPitchAndFamily = 0;
@@ -879,7 +879,7 @@ bool CGdiDeviceDriver::GDI_StretchBitMask(
     BITMAPINFOHEADER bmiHeader;
     uint32_t bmiColors[2];
   } bmi;
-  FXSYS_memset(&bmi.bmiHeader, 0, sizeof(BITMAPINFOHEADER));
+  memset(&bmi.bmiHeader, 0, sizeof(BITMAPINFOHEADER));
   bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
   bmi.bmiHeader.biBitCount = 1;
   bmi.bmiHeader.biCompression = BI_RGB;
@@ -1180,7 +1180,7 @@ bool CGdiDisplayDriver::GetDIBits(const CFX_RetainPtr<CFX_DIBitmap>& pBitmap,
   BitBlt(hDCMemory, 0, 0, width, height, m_hDC, left, top, SRCCOPY);
   SelectObject(hDCMemory, holdbmp);
   BITMAPINFO bmi;
-  FXSYS_memset(&bmi, 0, sizeof bmi);
+  memset(&bmi, 0, sizeof bmi);
   bmi.bmiHeader.biSize = sizeof bmi.bmiHeader;
   bmi.bmiHeader.biBitCount = pBitmap->GetBPP();
   bmi.bmiHeader.biHeight = -height;

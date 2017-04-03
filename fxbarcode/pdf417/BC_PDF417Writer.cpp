@@ -97,7 +97,7 @@ uint8_t* CBC_PDF417Writer::Encode(const CFX_WideString& contents,
     }
   }
   uint8_t* result = FX_Alloc2D(uint8_t, outHeight, outWidth);
-  FXSYS_memcpy(result, originalScale.data(), outHeight * outWidth);
+  memcpy(result, originalScale.data(), outHeight * outWidth);
   return result;
 }
 void CBC_PDF417Writer::rotateArray(std::vector<uint8_t>& bitarray,

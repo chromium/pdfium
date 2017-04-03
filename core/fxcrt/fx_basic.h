@@ -184,7 +184,7 @@ class CFX_FixedBufGrow {
       m_pGrowData.reset(FX_Alloc(DataType, data_size));
       return;
     }
-    FXSYS_memset(m_FixedData, 0, sizeof(DataType) * FixedSize);
+    memset(m_FixedData, 0, sizeof(DataType) * FixedSize);
   }
   operator DataType*() { return m_pGrowData ? m_pGrowData.get() : m_FixedData; }
 

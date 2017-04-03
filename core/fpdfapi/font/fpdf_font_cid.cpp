@@ -413,8 +413,8 @@ void CPDF_CMapParser::ParseWord(const CFX_ByteStringC& word) {
         FX_Free(m_pCMap->m_pLeadingBytes);
         m_pCMap->m_pLeadingBytes =
             FX_Alloc2D(uint8_t, nSegs, sizeof(CMap_CodeRange));
-        FXSYS_memcpy(m_pCMap->m_pLeadingBytes, m_CodeRanges.data(),
-                     nSegs * sizeof(CMap_CodeRange));
+        memcpy(m_pCMap->m_pLeadingBytes, m_CodeRanges.data(),
+               nSegs * sizeof(CMap_CodeRange));
       } else if (nSegs == 1) {
         m_pCMap->m_CodingScheme = (m_CodeRanges[0].m_CharSize == 2)
                                       ? CPDF_CMap::TwoBytes
@@ -577,8 +577,8 @@ void CPDF_CMap::LoadEmbedded(const uint8_t* pData, uint32_t size) {
   if (m_CodingScheme == MixedFourBytes && parser.m_AddMaps.GetSize()) {
     m_pAddMapping = FX_Alloc(uint8_t, parser.m_AddMaps.GetSize() + 4);
     *(uint32_t*)m_pAddMapping = parser.m_AddMaps.GetSize() / 8;
-    FXSYS_memcpy(m_pAddMapping + 4, parser.m_AddMaps.GetBuffer(),
-                 parser.m_AddMaps.GetSize());
+    memcpy(m_pAddMapping + 4, parser.m_AddMaps.GetBuffer(),
+           parser.m_AddMaps.GetSize());
     FXSYS_qsort(m_pAddMapping + 4, parser.m_AddMaps.GetSize() / 8, 8,
                 CompareDWORD);
   }
@@ -720,7 +720,7 @@ int CPDF_CMap::AppendChar(char* str, uint32_t charcode) const {
           iSize = 1;
         }
         if (iSize > 1) {
-          FXSYS_memset(str, 0, sizeof(uint8_t) * iSize);
+          memset(str, 0, sizeof(uint8_t) * iSize);
         }
         str[iSize - 1] = (uint8_t)charcode;
         return iSize;

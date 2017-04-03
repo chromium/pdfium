@@ -27,8 +27,7 @@ float NormalizeChannel(float fVal) {
 }
 
 bool DetectSRGB(const uint8_t* pData, uint32_t dwSize) {
-  return dwSize == 3144 &&
-         FXSYS_memcmp(pData + 0x190, "sRGB IEC61966-2.1", 17) == 0;
+  return dwSize == 3144 && memcmp(pData + 0x190, "sRGB IEC61966-2.1", 17) == 0;
 }
 
 }  // namespace

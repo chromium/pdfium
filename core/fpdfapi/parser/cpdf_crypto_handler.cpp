@@ -21,7 +21,7 @@ void CPDF_CryptoHandler::CryptBlock(bool bEncrypt,
                                     uint8_t* dest_buf,
                                     uint32_t& dest_size) {
   if (m_Cipher == FXCIPHER_NONE) {
-    FXSYS_memcpy(dest_buf, src_buf, src_size);
+    memcpy(dest_buf, src_buf, src_size);
     return;
   }
   uint8_t realkey[16];
@@ -31,7 +31,7 @@ void CPDF_CryptoHandler::CryptBlock(bool bEncrypt,
     PopulateKey(objnum, gennum, key1);
 
     if (m_Cipher == FXCIPHER_AES) {
-      FXSYS_memcpy(key1 + m_KeyLen + 5, "sAlT", 4);
+      memcpy(key1 + m_KeyLen + 5, "sAlT", 4);
     }
     CRYPT_MD5Generate(
         key1, m_Cipher == FXCIPHER_AES ? m_KeyLen + 9 : m_KeyLen + 5, realkey);
@@ -49,13 +49,12 @@ void CPDF_CryptoHandler::CryptBlock(bool bEncrypt,
         iv[i] = (uint8_t)rand();
       }
       CRYPT_AESSetIV(m_pAESContext, iv);
-      FXSYS_memcpy(dest_buf, iv, 16);
+      memcpy(dest_buf, iv, 16);
       int nblocks = src_size / 16;
       CRYPT_AESEncrypt(m_pAESContext, dest_buf + 16, src_buf, nblocks * 16);
       uint8_t padding[16];
-      FXSYS_memcpy(padding, src_buf + nblocks * 16, src_size % 16);
-      FXSYS_memset(padding + src_size % 16, 16 - src_size % 16,
-                   16 - src_size % 16);
+      memcpy(padding, src_buf + nblocks * 16, src_size % 16);
+      memset(padding + src_size % 16, 16 - src_size % 16, 16 - src_size % 16);
       CRYPT_AESEncrypt(m_pAESContext, dest_buf + nblocks * 16 + 16, padding,
                        16);
       dest_size = 32 + nblocks * 16;
@@ -68,7 +67,7 @@ void CPDF_CryptoHandler::CryptBlock(bool bEncrypt,
   } else {
     ASSERT(dest_size == src_size);
     if (dest_buf != src_buf) {
-      FXSYS_memcpy(dest_buf, src_buf, src_size);
+      memcpy(dest_buf, src_buf, src_size);
     }
     CRYPT_ArcFourCryptBlock(dest_buf, dest_size, realkey, realkeylen);
   }
@@ -104,7 +103,7 @@ void* CPDF_CryptoHandler::CryptStart(uint32_t objnum,
   PopulateKey(objnum, gennum, key1);
 
   if (m_Cipher == FXCIPHER_AES) {
-    FXSYS_memcpy(key1 + m_KeyLen + 5, "sAlT", 4);
+    memcpy(key1 + m_KeyLen + 5, "sAlT", 4);
   }
   uint8_t realkey[16];
   CRYPT_MD5Generate(
@@ -162,8 +161,8 @@ bool CPDF_CryptoHandler::CryptStream(void* context,
     if (copy_size > src_left) {
       copy_size = src_left;
     }
-    FXSYS_memcpy(pContext->m_Block + pContext->m_BlockOffset, src_buf + src_off,
-                 copy_size);
+    memcpy(pContext->m_Block + pContext->m_BlockOffset, src_buf + src_off,
+           copy_size);
     src_off += copy_size;
     src_left -= copy_size;
     pContext->m_BlockOffset += copy_size;
@@ -212,9 +211,9 @@ bool CPDF_CryptoHandler::CryptFinish(void* context,
       dest_buf.AppendBlock(block_buf, 16);
       pContext->m_BlockOffset = 0;
     }
-    FXSYS_memset(pContext->m_Block + pContext->m_BlockOffset,
-                 (uint8_t)(16 - pContext->m_BlockOffset),
-                 16 - pContext->m_BlockOffset);
+    memset(pContext->m_Block + pContext->m_BlockOffset,
+           (uint8_t)(16 - pContext->m_BlockOffset),
+           16 - pContext->m_BlockOffset);
     CRYPT_AESEncrypt(pContext->m_Context, block_buf, pContext->m_Block, 16);
     dest_buf.AppendBlock(block_buf, 16);
   } else if (pContext->m_BlockOffset == 16) {
@@ -255,7 +254,7 @@ bool CPDF_CryptoHandler::Init(CPDF_Dictionary* pEncryptDict,
     return false;
   }
   if (m_Cipher != FXCIPHER_NONE) {
-    FXSYS_memcpy(m_EncryptKey, key, m_KeyLen);
+    memcpy(m_EncryptKey, key, m_KeyLen);
   }
   if (m_Cipher == FXCIPHER_AES) {
     m_pAESContext = FX_Alloc(uint8_t, 2048);
@@ -288,7 +287,7 @@ bool CPDF_CryptoHandler::Init(int cipher, const uint8_t* key, int keylen) {
   }
   m_Cipher = cipher;
   m_KeyLen = keylen;
-  FXSYS_memcpy(m_EncryptKey, key, keylen);
+  memcpy(m_EncryptKey, key, keylen);
   if (m_Cipher == FXCIPHER_AES) {
     m_pAESContext = FX_Alloc(uint8_t, 2048);
   }
@@ -333,7 +332,7 @@ CPDF_CryptoHandler::~CPDF_CryptoHandler() {
 void CPDF_CryptoHandler::PopulateKey(uint32_t objnum,
                                      uint32_t gennum,
                                      uint8_t* key) {
-  FXSYS_memcpy(key, m_EncryptKey, m_KeyLen);
+  memcpy(key, m_EncryptKey, m_KeyLen);
   key[m_KeyLen + 0] = (uint8_t)objnum;
   key[m_KeyLen + 1] = (uint8_t)(objnum >> 8);
   key[m_KeyLen + 2] = (uint8_t)(objnum >> 16);

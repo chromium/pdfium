@@ -137,7 +137,7 @@ void DrawAxialShading(const CFX_RetainPtr<CFX_DIBitmap>& pBitmap,
       std::max(CountOutputs(funcs), pCS->CountComponents());
   CFX_FixedBufGrow<float, 16> result_array(total_results);
   float* pResults = result_array;
-  FXSYS_memset(pResults, 0, total_results * sizeof(float));
+  memset(pResults, 0, total_results * sizeof(float));
   uint32_t rgb_array[SHADING_STEPS];
   for (int i = 0; i < SHADING_STEPS; i++) {
     float input = (t_max - t_min) * i / SHADING_STEPS + t_min;
@@ -220,7 +220,7 @@ void DrawRadialShading(const CFX_RetainPtr<CFX_DIBitmap>& pBitmap,
       std::max(CountOutputs(funcs), pCS->CountComponents());
   CFX_FixedBufGrow<float, 16> result_array(total_results);
   float* pResults = result_array;
-  FXSYS_memset(pResults, 0, total_results * sizeof(float));
+  memset(pResults, 0, total_results * sizeof(float));
   uint32_t rgb_array[SHADING_STEPS];
   for (int i = 0; i < SHADING_STEPS; i++) {
     float input = (t_max - t_min) * i / SHADING_STEPS + t_min;
@@ -345,7 +345,7 @@ void DrawFuncShading(const CFX_RetainPtr<CFX_DIBitmap>& pBitmap,
       std::max(CountOutputs(funcs), pCS->CountComponents());
   CFX_FixedBufGrow<float, 16> result_array(total_results);
   float* pResults = result_array;
-  FXSYS_memset(pResults, 0, total_results * sizeof(float));
+  memset(pResults, 0, total_results * sizeof(float));
   for (int row = 0; row < height; row++) {
     uint32_t* dib_buf = (uint32_t*)(pBitmap->GetBuffer() + row * pitch);
     for (int column = 0; column < width; column++) {
@@ -487,7 +487,7 @@ void DrawFreeGouraudShading(
     return;
 
   CPDF_MeshVertex triangle[3];
-  FXSYS_memset(triangle, 0, sizeof(triangle));
+  memset(triangle, 0, sizeof(triangle));
 
   while (!stream.BitStream()->IsEOF()) {
     CPDF_MeshVertex vertex;
@@ -685,7 +685,7 @@ int BiInterpolImpl(int c0,
 }
 
 struct Coon_Color {
-  Coon_Color() { FXSYS_memset(comp, 0, sizeof(int) * 3); }
+  Coon_Color() { memset(comp, 0, sizeof(int) * 3); }
   int comp[3];
 
   void BiInterpol(Coon_Color colors[4],
@@ -848,11 +848,11 @@ void DrawCoonPatchMeshes(
       for (i = 0; i < 4; i++) {
         tempCoords[i] = coords[(flag * 3 + i) % 12];
       }
-      FXSYS_memcpy(coords, tempCoords, sizeof(tempCoords));
+      memcpy(coords, tempCoords, sizeof(tempCoords));
       Coon_Color tempColors[2];
       tempColors[0] = patch.patch_colors[flag];
       tempColors[1] = patch.patch_colors[(flag + 1) % 4];
-      FXSYS_memcpy(patch.patch_colors, tempColors, sizeof(Coon_Color) * 2);
+      memcpy(patch.patch_colors, tempColors, sizeof(Coon_Color) * 2);
     }
     for (i = iStartPoint; i < point_count; i++) {
       if (!stream.CanReadCoords())
@@ -2586,7 +2586,7 @@ CFX_RetainPtr<CFX_DIBitmap> CPDF_RenderStatus::LoadSMask(
         if (!num_floats.IsValid()) {
           return nullptr;
         }
-        FXSYS_memset(pFloats, 0, num_floats.ValueOrDie());
+        memset(pFloats, 0, num_floats.ValueOrDie());
         size_t count = pBC->GetCount() > 8 ? 8 : pBC->GetCount();
         for (size_t i = 0; i < count; i++) {
           pFloats[i] = pBC->GetNumberAt(i);
@@ -2651,7 +2651,7 @@ CFX_RetainPtr<CFX_DIBitmap> CPDF_RenderStatus::LoadSMask(
       dest_buf[i] = transfers[src_buf[i]];
     }
   } else {
-    FXSYS_memcpy(dest_buf, src_buf, dest_pitch * height);
+    memcpy(dest_buf, src_buf, dest_pitch * height);
   }
   return pMask;
 }

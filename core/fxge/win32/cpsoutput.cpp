@@ -29,7 +29,7 @@ void CPSOutput::OutputPS(const char* str, int len) {
     char buffer[1026];
     int send_len = std::min(len, 1024);
     *(reinterpret_cast<uint16_t*>(buffer)) = send_len;
-    FXSYS_memcpy(buffer + 2, str + sent_len, send_len);
+    memcpy(buffer + 2, str + sent_len, send_len);
 
     // TODO(thestig/rbpotter): Do PASSTHROUGH for non-Chromium usage.
     // ExtEscape(m_hDC, PASSTHROUGH, send_len + 2, buffer, 0, nullptr);

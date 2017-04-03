@@ -564,9 +564,9 @@ void color_apply_icc_profile(opj_image_t* image) {
     image->comps[1] = image->comps[0];
     image->comps[2] = image->comps[0];
     image->comps[1].data = FX_Alloc(int, (size_t)max);
-    FXSYS_memset(image->comps[1].data, 0, sizeof(int) * (size_t)max);
+    memset(image->comps[1].data, 0, sizeof(int) * (size_t)max);
     image->comps[2].data = FX_Alloc(int, (size_t)max);
-    FXSYS_memset(image->comps[2].data, 0, sizeof(int) * (size_t)max);
+    memset(image->comps[2].data, 0, sizeof(int) * (size_t)max);
     image->numcomps += 2;
     r = image->comps[0].data;
     for (int i = 0; i < max; ++i) {
@@ -707,7 +707,7 @@ bool CJPX_Decoder::Init(const unsigned char* src_data, uint32_t src_size) {
   opj_set_default_decoder_parameters(&parameters);
   parameters.decod_format = 0;
   parameters.cod_format = 3;
-  if (FXSYS_memcmp(m_SrcData, szJP2Header, sizeof(szJP2Header)) == 0) {
+  if (memcmp(m_SrcData, szJP2Header, sizeof(szJP2Header)) == 0) {
     l_codec = opj_create_decompress(OPJ_CODEC_JP2);
     parameters.decod_format = 1;
   } else {
@@ -788,7 +788,7 @@ bool CJPX_Decoder::Decode(uint8_t* dest_buf,
   if (pitch<(int)(image->comps[0].w * 8 * image->numcomps + 31)>> 5 << 2)
     return false;
 
-  FXSYS_memset(dest_buf, 0xff, image->y1 * pitch);
+  memset(dest_buf, 0xff, image->y1 * pitch);
   std::vector<uint8_t*> channel_bufs(image->numcomps);
   std::vector<int> adjust_comps(image->numcomps);
   for (uint32_t i = 0; i < image->numcomps; i++) {

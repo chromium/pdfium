@@ -260,8 +260,8 @@ void CFX_PSRenderer::SetGraphState(const CFX_GraphStateData* pGraphState) {
   }
   if (!m_bGraphStateSet ||
       m_CurGraphState.m_DashCount != pGraphState->m_DashCount ||
-      FXSYS_memcmp(m_CurGraphState.m_DashArray, pGraphState->m_DashArray,
-                   sizeof(float) * m_CurGraphState.m_DashCount)) {
+      memcmp(m_CurGraphState.m_DashArray, pGraphState->m_DashArray,
+             sizeof(float) * m_CurGraphState.m_DashCount)) {
     buf << "[";
     for (int i = 0; i < pGraphState->m_DashCount; ++i) {
       buf << pGraphState->m_DashArray[i] << " ";
@@ -392,7 +392,7 @@ bool CFX_PSRenderer::DrawDIBits(const CFX_RetainPtr<CFX_DIBSource>& pSource,
     uint8_t* src_buf = FX_Alloc(uint8_t, src_size);
     for (int row = 0; row < height; row++) {
       const uint8_t* src_scan = pSource->GetScanline(row);
-      FXSYS_memcpy(src_buf + row * pitch, src_scan, pitch);
+      memcpy(src_buf + row * pitch, src_scan, pitch);
     }
     std::unique_ptr<uint8_t, FxFreeDeleter> output_buf;
     uint32_t output_size;
@@ -471,7 +471,7 @@ bool CFX_PSRenderer::DrawDIBits(const CFX_RetainPtr<CFX_DIBSource>& pSource,
             src_scan += 3;
           }
         } else {
-          FXSYS_memcpy(dest_scan, src_scan, src_pitch);
+          memcpy(dest_scan, src_scan, src_pitch);
         }
       }
       uint8_t* compressed_buf;

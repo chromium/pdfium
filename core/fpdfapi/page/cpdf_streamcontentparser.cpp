@@ -326,11 +326,11 @@ void CPDF_StreamContentParser::AddNameParam(const CFX_ByteStringC& bsName) {
   } else {
     param.m_Type = ContentParam::NAME;
     if (bsName.Find('#') == -1) {
-      FXSYS_memcpy(param.m_Name.m_Buffer, bsName.raw_str(), bsName.GetLength());
+      memcpy(param.m_Name.m_Buffer, bsName.raw_str(), bsName.GetLength());
       param.m_Name.m_Len = bsName.GetLength();
     } else {
       CFX_ByteString str = PDF_NameDecode(bsName);
-      FXSYS_memcpy(param.m_Name.m_Buffer, str.c_str(), str.GetLength());
+      memcpy(param.m_Name.m_Buffer, str.c_str(), str.GetLength());
       param.m_Name.m_Len = str.GetLength();
     }
   }

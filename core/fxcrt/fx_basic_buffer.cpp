@@ -28,9 +28,8 @@ void CFX_BinaryBuf::Delete(int start_index, int count) {
       start_index > m_DataSize - count) {
     return;
   }
-  FXSYS_memmove(m_pBuffer.get() + start_index,
-                m_pBuffer.get() + start_index + count,
-                m_DataSize - start_index - count);
+  memmove(m_pBuffer.get() + start_index, m_pBuffer.get() + start_index + count,
+          m_DataSize - start_index - count);
   m_DataSize -= count;
 }
 
@@ -72,9 +71,9 @@ void CFX_BinaryBuf::AppendBlock(const void* pBuf, FX_STRSIZE size) {
 
   ExpandBuf(size);
   if (pBuf) {
-    FXSYS_memcpy(m_pBuffer.get() + m_DataSize, pBuf, size);
+    memcpy(m_pBuffer.get() + m_DataSize, pBuf, size);
   } else {
-    FXSYS_memset(m_pBuffer.get() + m_DataSize, 0, size);
+    memset(m_pBuffer.get() + m_DataSize, 0, size);
   }
   m_DataSize += size;
 }
@@ -86,12 +85,12 @@ void CFX_BinaryBuf::InsertBlock(FX_STRSIZE pos,
     return;
 
   ExpandBuf(size);
-  FXSYS_memmove(m_pBuffer.get() + pos + size, m_pBuffer.get() + pos,
-                m_DataSize - pos);
+  memmove(m_pBuffer.get() + pos + size, m_pBuffer.get() + pos,
+          m_DataSize - pos);
   if (pBuf) {
-    FXSYS_memcpy(m_pBuffer.get() + pos, pBuf, size);
+    memcpy(m_pBuffer.get() + pos, pBuf, size);
   } else {
-    FXSYS_memset(m_pBuffer.get() + pos, 0, size);
+    memset(m_pBuffer.get() + pos, 0, size);
   }
   m_DataSize += size;
 }
@@ -254,7 +253,7 @@ int32_t CFX_FileBufferArchive::AppendBlock(const void* pBuf, size_t size) {
   size_t temp_size = size;
   while (temp_size) {
     size_t buf_size = std::min(kBufSize - m_Length, temp_size);
-    FXSYS_memcpy(m_pBuffer.get() + m_Length, buffer, buf_size);
+    memcpy(m_pBuffer.get() + m_Length, buffer, buf_size);
     m_Length += buf_size;
     if (m_Length == kBufSize) {
       if (!Flush()) {

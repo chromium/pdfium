@@ -171,10 +171,6 @@ extern "C" {
 #define FXSYS_wcslen(ptr) ((FX_STRSIZE)wcslen(ptr))
 #endif  // __cplusplus
 
-#define FXSYS_memcmp memcmp
-#define FXSYS_memcpy memcpy
-#define FXSYS_memmove memmove
-#define FXSYS_memset memset
 #define FXSYS_qsort qsort
 #define FXSYS_bsearch bsearch
 

@@ -297,7 +297,7 @@ const FX_FONTDESCRIPTOR* CFGAS_FontMgr::FindFont(const wchar_t* pszFontFamily,
                                                  uint32_t dwUSB,
                                                  wchar_t wUnicode) {
   FX_FONTMATCHPARAMS params;
-  FXSYS_memset(&params, 0, sizeof(params));
+  memset(&params, 0, sizeof(params));
   params.dwUSB = dwUSB;
   params.wUnicode = wUnicode;
   params.wCodePage = wCodePage;
@@ -350,13 +350,13 @@ static int32_t CALLBACK FX_GdiFontEnumProc(ENUMLOGFONTEX* lpelfe,
   if (lf.lfFaceName[0] == L'@')
     return 1;
   FX_FONTDESCRIPTOR* pFont = FX_Alloc(FX_FONTDESCRIPTOR, 1);
-  FXSYS_memset(pFont, 0, sizeof(FX_FONTDESCRIPTOR));
+  memset(pFont, 0, sizeof(FX_FONTDESCRIPTOR));
   pFont->uCharSet = lf.lfCharSet;
   pFont->dwFontStyles = FX_GetGdiFontStyles(lf);
   FXSYS_wcsncpy(pFont->wsFontFace, (const wchar_t*)lf.lfFaceName, 31);
   pFont->wsFontFace[31] = 0;
-  FXSYS_memcpy(&pFont->FontSignature, &lpntme->ntmFontSig,
-               sizeof(lpntme->ntmFontSig));
+  memcpy(&pFont->FontSignature, &lpntme->ntmFontSig,
+         sizeof(lpntme->ntmFontSig));
   reinterpret_cast<std::deque<FX_FONTDESCRIPTOR>*>(lParam)->push_back(*pFont);
   FX_Free(pFont);
   return 1;
@@ -367,7 +367,7 @@ static void FX_EnumGdiFonts(std::deque<FX_FONTDESCRIPTOR>* fonts,
                             wchar_t wUnicode) {
   HDC hDC = ::GetDC(nullptr);
   LOGFONTW lfFind;
-  FXSYS_memset(&lfFind, 0, sizeof(lfFind));
+  memset(&lfFind, 0, sizeof(lfFind));
   lfFind.lfCharSet = DEFAULT_CHARSET;
   if (pwsFaceName) {
     FXSYS_wcsncpy(lfFind.lfFaceName, pwsFaceName, 31);
@@ -884,7 +884,7 @@ FXFT_Face CFGAS_FontMgr::LoadFace(
     return nullptr;
 
   FXFT_Stream ftStream = FX_Alloc(FXFT_StreamRec, 1);
-  FXSYS_memset(ftStream, 0, sizeof(FXFT_StreamRec));
+  memset(ftStream, 0, sizeof(FXFT_StreamRec));
   ftStream->base = nullptr;
   ftStream->descriptor.pointer = static_cast<void*>(pFontStream.Get());
   ftStream->pos = 0;
@@ -893,7 +893,7 @@ FXFT_Face CFGAS_FontMgr::LoadFace(
   ftStream->close = _ftStreamClose;
 
   FXFT_Open_Args ftArgs;
-  FXSYS_memset(&ftArgs, 0, sizeof(FXFT_Open_Args));
+  memset(&ftArgs, 0, sizeof(FXFT_Open_Args));
   ftArgs.flags |= FT_OPEN_STREAM;
   ftArgs.stream = ftStream;
 

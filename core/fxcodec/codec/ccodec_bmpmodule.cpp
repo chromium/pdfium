@@ -56,7 +56,7 @@ FXBMP_Context* CCodec_BmpModule::Start() {
   if (!p)
     return nullptr;
 
-  FXSYS_memset(p, 0, sizeof(FXBMP_Context));
+  memset(p, 0, sizeof(FXBMP_Context));
   if (!p)
     return nullptr;
 

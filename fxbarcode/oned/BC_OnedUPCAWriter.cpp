@@ -135,7 +135,7 @@ void CBC_OnedUPCAWriter::ShowChars(
   CFX_ByteString str = FX_UTF8Encode(contents);
   int32_t iLen = str.GetLength();
   FXTEXT_CHARPOS* pCharPos = FX_Alloc(FXTEXT_CHARPOS, iLen);
-  FXSYS_memset(pCharPos, 0, sizeof(FXTEXT_CHARPOS) * iLen);
+  memset(pCharPos, 0, sizeof(FXTEXT_CHARPOS) * iLen);
   CFX_ByteString tempStr = str.Mid(1, 5);
   float strWidth = (float)35 * multiple;
   float blank = 0.0;

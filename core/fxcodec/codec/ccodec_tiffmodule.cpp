@@ -74,15 +74,15 @@ void* _TIFFrealloc(void* ptr, tmsize_t size) {
 }
 
 void _TIFFmemset(void* ptr, int val, tmsize_t size) {
-  FXSYS_memset(ptr, val, (size_t)size);
+  memset(ptr, val, (size_t)size);
 }
 
 void _TIFFmemcpy(void* des, const void* src, tmsize_t size) {
-  FXSYS_memcpy(des, src, (size_t)size);
+  memcpy(des, src, (size_t)size);
 }
 
 int _TIFFmemcmp(const void* ptr1, const void* ptr2, tmsize_t size) {
-  return FXSYS_memcmp(ptr1, ptr2, (size_t)size);
+  return memcmp(ptr1, ptr2, (size_t)size);
 }
 
 int _TIFFIfMultiplicationOverflow(tmsize_t op1, tmsize_t op2) {
@@ -199,7 +199,7 @@ void Tiff_Exif_GetStringInfo(TIFF* tif_ctx,
     return;
   FX_STRSIZE size = FXSYS_strlen(buf);
   uint8_t* ptr = FX_Alloc(uint8_t, size + 1);
-  FXSYS_memcpy(ptr, buf, size);
+  memcpy(ptr, buf, size);
   ptr[size] = 0;
   pAttr->m_Exif[tag] = ptr;
 }

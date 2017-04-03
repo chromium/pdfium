@@ -83,7 +83,7 @@ public:
     void add_cells(int x, unsigned len, const CoverT* covers)
     {
         x -= m_min_x;
-        FXSYS_memcpy(m_covers + x, covers, len * sizeof(CoverT));
+        memcpy(m_covers + x, covers, len * sizeof(CoverT));
         if(x == m_last_x + 1) {
             m_cur_span->len += (coord_type)len;
         } else {
@@ -97,7 +97,7 @@ public:
     void add_span(int x, unsigned len, unsigned cover)
     {
         x -= m_min_x;
-        FXSYS_memset(m_covers + x, cover, len);
+        memset(m_covers + x, cover, len);
         if(x == m_last_x + 1) {
             m_cur_span->len += (coord_type)len;
         } else {

@@ -601,7 +601,7 @@ bool CXFA_TextLayout::DrawString(CFX_RenderDevice* pFxDevice,
         pCharPos = FX_Alloc(FXTEXT_CHARPOS, iChars);
         iCharCount = iChars;
       }
-      FXSYS_memset(pCharPos, 0, iCharCount * sizeof(FXTEXT_CHARPOS));
+      memset(pCharPos, 0, iCharCount * sizeof(FXTEXT_CHARPOS));
       RenderString(pDevice.get(), pSolidBrush.get(), pPieceLine, j, pCharPos,
                    tmDoc2Device);
     }

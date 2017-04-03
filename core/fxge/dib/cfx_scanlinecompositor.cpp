@@ -198,7 +198,7 @@ void CompositeRow_Rgb2Mask(uint8_t* dest_scan,
                            int width,
                            const uint8_t* clip_scan) {
   if (!clip_scan) {
-    FXSYS_memset(dest_scan, 0xff, width);
+    memset(dest_scan, 0xff, width);
     return;
   }
   for (int i = 0; i < width; ++i) {
@@ -872,7 +872,7 @@ void CompositeRow_Rgb2Rgb_NoBlend_NoClip(uint8_t* dest_scan,
                                          int dest_Bpp,
                                          int src_Bpp) {
   if (dest_Bpp == src_Bpp) {
-    FXSYS_memcpy(dest_scan, src_scan, width * dest_Bpp);
+    memcpy(dest_scan, src_scan, width * dest_Bpp);
     return;
   }
   for (int col = 0; col < width; col++) {
@@ -3386,7 +3386,7 @@ void ScanlineCompositor_InitSourcePalette(FXDIB_Format src_format,
         int palsize = 1 << (src_format & 0xff);
         pDestPalette = FX_Alloc(uint32_t, palsize);
         if (isDstCmyk == isSrcCmyk) {
-          FXSYS_memcpy(pDestPalette, pSrcPalette, palsize * sizeof(uint32_t));
+          memcpy(pDestPalette, pSrcPalette, palsize * sizeof(uint32_t));
         } else {
           for (int i = 0; i < palsize; i++) {
             FX_CMYK cmyk = pSrcPalette[i];

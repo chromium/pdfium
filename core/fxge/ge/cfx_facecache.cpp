@@ -57,8 +57,8 @@ void ContrastAdjust(uint8_t* pDataIn,
   if (temp == 0 || temp == 255) {
     int rowbytes = std::min(abs(nSrcRowBytes), nDstRowBytes);
     for (row = 0; row < nHeight; row++) {
-      FXSYS_memcpy(pDataOut + row * nDstRowBytes, pDataIn + row * nSrcRowBytes,
-                   rowbytes);
+      memcpy(pDataOut + row * nDstRowBytes, pDataIn + row * nSrcRowBytes,
+             rowbytes);
     }
     return;
   }
@@ -206,14 +206,14 @@ CFX_GlyphBitmap* CFX_FaceCache::RenderGlyph(const CFX_Font* pFont,
       }
     }
   } else {
-    FXSYS_memset(pDestBuf, 0, dest_pitch * bmheight);
+    memset(pDestBuf, 0, dest_pitch * bmheight);
     if (anti_alias == FXFT_RENDER_MODE_MONO &&
         FXFT_Get_Bitmap_PixelMode(FXFT_Get_Glyph_Bitmap(m_Face)) ==
             FXFT_PIXEL_MODE_MONO) {
       int rowbytes = abs(src_pitch) > dest_pitch ? dest_pitch : abs(src_pitch);
       for (int row = 0; row < bmheight; row++) {
-        FXSYS_memcpy(pDestBuf + row * dest_pitch, pSrcBuf + row * src_pitch,
-                     rowbytes);
+        memcpy(pDestBuf + row * dest_pitch, pSrcBuf + row * src_pitch,
+               rowbytes);
       }
     } else {
       ContrastAdjust(pSrcBuf, pDestBuf, bmwidth, bmheight, src_pitch,

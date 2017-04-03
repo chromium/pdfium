@@ -95,7 +95,7 @@ void CFX_BitmapComposer::DoCompose(uint8_t* dest_scan,
         m_pAddClipScan[i] = clip_scan[i] * m_BitmapAlpha / 255;
       }
     } else {
-      FXSYS_memset(m_pAddClipScan, m_BitmapAlpha, dest_width);
+      memset(m_pAddClipScan, m_BitmapAlpha, dest_width);
     }
     clip_scan = m_pAddClipScan;
   }

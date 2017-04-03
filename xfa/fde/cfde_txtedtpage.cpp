@@ -158,7 +158,7 @@ int32_t CFDE_TxtEdtPage::GetDisplayPos(const CFX_RectF& rtClip,
   }
   if ((nCharPosCount * 5) < (m_nCharCount << 2)) {
     FXTEXT_CHARPOS* pTemp = FX_Alloc(FXTEXT_CHARPOS, nCharPosCount);
-    FXSYS_memcpy(pTemp, pCharPos, sizeof(FXTEXT_CHARPOS) * nCharPosCount);
+    memcpy(pTemp, pCharPos, sizeof(FXTEXT_CHARPOS) * nCharPosCount);
     FX_Free(pCharPos);
     pCharPos = pTemp;
   }
@@ -298,7 +298,7 @@ int32_t CFDE_TxtEdtPage::LoadPage(const CFX_RectF* pClipBox,
       for (int32_t j = 0; j < nPieceCount; j++) {
         const CFX_BreakPiece* pPiece = pBreak->GetBreakPieceUnstable(j);
         FDE_TEXTEDITPIECE TxtEdtPiece;
-        FXSYS_memset(&TxtEdtPiece, 0, sizeof(FDE_TEXTEDITPIECE));
+        memset(&TxtEdtPiece, 0, sizeof(FDE_TEXTEDITPIECE));
         TxtEdtPiece.nBidiLevel = pPiece->m_iBidiLevel;
         TxtEdtPiece.nCount = pPiece->GetLength();
         TxtEdtPiece.nStart = nPieceStart;

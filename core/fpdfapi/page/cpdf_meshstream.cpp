@@ -210,7 +210,7 @@ std::tuple<float, float, float> CPDF_MeshStream::ReadColor() {
   }
 
   float result[kMaxComponents];
-  FXSYS_memset(result, 0, sizeof(result));
+  memset(result, 0, sizeof(result));
   int nResults;
   for (const auto& func : m_funcs) {
     if (func && func->CountOutputs() <= kMaxComponents)

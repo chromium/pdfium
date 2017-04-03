@@ -1217,7 +1217,7 @@ void CPDF_Parser::GetIndirectBinary(uint32_t objnum,
       }
 
       pBuffer = FX_Alloc(uint8_t, size);
-      FXSYS_memcpy(pBuffer, pData + thisoff + offset, size);
+      memcpy(pBuffer, pData + thisoff + offset, size);
       return;
     }
     return;

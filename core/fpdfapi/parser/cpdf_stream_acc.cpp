@@ -82,6 +82,6 @@ std::unique_ptr<uint8_t, FxFreeDeleter> CPDF_StreamAcc::DetachData() {
     return p;
   }
   std::unique_ptr<uint8_t, FxFreeDeleter> p(FX_Alloc(uint8_t, m_dwSize));
-  FXSYS_memcpy(p.get(), m_pData, m_dwSize);
+  memcpy(p.get(), m_pData, m_dwSize);
   return p;
 }

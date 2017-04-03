@@ -565,7 +565,7 @@ class CMemFile final : public IFX_SeekableReadStream {
     if (!newPos.IsValid() || newPos.ValueOrDie() > m_size)
       return false;
 
-    FXSYS_memcpy(buffer, m_pBuf + offset, size);
+    memcpy(buffer, m_pBuf + offset, size);
     return true;
   }
 
@@ -734,7 +734,7 @@ DLLEXPORT void STDCALL FPDF_RenderPage(HDC dc,
       auto pDst = pdfium::MakeRetain<CFX_DIBitmap>();
       int pitch = pBitmap->GetPitch();
       pDst->Create(size_x, size_y, FXDIB_Rgb32);
-      FXSYS_memset(pDst->GetBuffer(), -1, pitch * size_y);
+      memset(pDst->GetBuffer(), -1, pitch * size_y);
       pDst->CompositeBitmap(0, 0, size_x, size_y, pBitmap, 0, 0,
                             FXDIB_BLEND_NORMAL, nullptr, false, nullptr);
       WinDC.StretchDIBits(pDst, 0, 0, size_x, size_y);
@@ -1164,7 +1164,7 @@ DLLEXPORT FPDF_RESULT STDCALL FPDF_BStr_Init(FPDF_BSTR* str) {
   if (!str)
     return -1;
 
-  FXSYS_memset(str, 0, sizeof(FPDF_BSTR));
+  memset(str, 0, sizeof(FPDF_BSTR));
   return 0;
 }
 
@@ -1193,7 +1193,7 @@ DLLEXPORT FPDF_RESULT STDCALL FPDF_BStr_Set(FPDF_BSTR* str,
     str->str = FX_Alloc(char, length + 1);
 
   str->str[length] = 0;
-  FXSYS_memcpy(str->str, bstr, length);
+  memcpy(str->str, bstr, length);
   str->len = length;
 
   return 0;

@@ -62,7 +62,7 @@ FXCODEC_STATUS CCodec_Jbig2Module::StartDecode(
   pJbig2Context->m_dest_buf = dest_buf;
   pJbig2Context->m_dest_pitch = dest_pitch;
   pJbig2Context->m_pPause = pPause;
-  FXSYS_memset(dest_buf, 0, height * dest_pitch);
+  memset(dest_buf, 0, height * dest_pitch);
   pJbig2Context->m_pContext = pdfium::MakeUnique<CJBig2_Context>(
       global_stream, src_stream, pJBig2DocumentContext->GetSymbolDictCache(),
       pPause, false);

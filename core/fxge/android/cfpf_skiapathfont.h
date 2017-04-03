@@ -24,7 +24,7 @@ class CFPF_SkiaPathFont : public CFPF_SkiaFontDescriptor {
     FX_Free(m_pPath);
     int32_t iSize = FXSYS_strlen(pPath);
     m_pPath = FX_Alloc(char, iSize + 1);
-    FXSYS_memcpy(m_pPath, pPath, iSize * sizeof(char));
+    memcpy(m_pPath, pPath, iSize * sizeof(char));
     m_pPath[iSize] = 0;
   }
   char* m_pPath;

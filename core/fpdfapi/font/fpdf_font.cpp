@@ -71,8 +71,8 @@ CPDF_Font* CFX_StockFontArray::SetFont(uint32_t index,
 }
 
 CPDF_FontGlobals::CPDF_FontGlobals() {
-  FXSYS_memset(m_EmbeddedCharsets, 0, sizeof(m_EmbeddedCharsets));
-  FXSYS_memset(m_EmbeddedToUnicodes, 0, sizeof(m_EmbeddedToUnicodes));
+  memset(m_EmbeddedCharsets, 0, sizeof(m_EmbeddedCharsets));
+  memset(m_EmbeddedToUnicodes, 0, sizeof(m_EmbeddedToUnicodes));
 }
 
 CPDF_FontGlobals::~CPDF_FontGlobals() {}

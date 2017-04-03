@@ -1753,11 +1753,11 @@ bool CFX_SkiaDeviceDriver::DrawShading(const CPDF_ShadingPattern* pPattern,
         SkPoint tempCubics[4];
         for (int i = 0; i < (int)SK_ARRAY_COUNT(tempCubics); i++)
           tempCubics[i] = cubics[(flag * 3 + i) % 12];
-        FXSYS_memcpy(cubics, tempCubics, sizeof(tempCubics));
+        memcpy(cubics, tempCubics, sizeof(tempCubics));
         SkColor tempColors[2];
         tempColors[0] = colors[flag];
         tempColors[1] = colors[(flag + 1) % 4];
-        FXSYS_memcpy(colors, tempColors, sizeof(tempColors));
+        memcpy(colors, tempColors, sizeof(tempColors));
       }
       for (int i = iStartPoint; i < (int)SK_ARRAY_COUNT(cubics); i++) {
         CFX_PointF point = stream.ReadCoords();

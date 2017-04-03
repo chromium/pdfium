@@ -532,7 +532,7 @@ bool CFWL_WidgetMgr::IsNeedRepaint(CFWL_Widget* pWidget,
   bool bOrginPtIntersectWidthChild = false;
   bool bOrginPtIntersectWidthDirty = rtDirty.Contains(rtWidget.TopLeft());
   static FWL_NEEDREPAINTHITDATA hitPoint[kNeedRepaintHitPoints];
-  FXSYS_memset(hitPoint, 0, sizeof(hitPoint));
+  memset(hitPoint, 0, sizeof(hitPoint));
   float fxPiece = rtWidget.width / kNeedRepaintHitPiece;
   float fyPiece = rtWidget.height / kNeedRepaintHitPiece;
   hitPoint[2].hitPoint.x = hitPoint[6].hitPoint.x = rtWidget.left;

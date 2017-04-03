@@ -3747,13 +3747,13 @@ bool CXFA_Node::TryMeasure(XFA_ATTRIBUTE eAttr,
   void* pValue;
   int32_t iBytes;
   if (GetMapModuleBuffer(pKey, pValue, iBytes) && iBytes == sizeof(mValue)) {
-    FXSYS_memcpy(&mValue, pValue, sizeof(mValue));
+    memcpy(&mValue, pValue, sizeof(mValue));
     return true;
   }
   if (bUseDefault &&
       XFA_GetAttributeDefaultValue(pValue, GetElementType(), eAttr,
                                    XFA_ATTRIBUTETYPE_Measure, m_ePacket)) {
-    FXSYS_memcpy(&mValue, pValue, sizeof(mValue));
+    memcpy(&mValue, pValue, sizeof(mValue));
     return true;
   }
   return false;
@@ -4020,7 +4020,7 @@ bool CXFA_Node::TryUserData(void* pKey, void*& pData, bool bProtoAlso) {
   if (!GetMapModuleBuffer(pKey, pData, iBytes, bProtoAlso)) {
     return false;
   }
-  return iBytes == sizeof(void*) && FXSYS_memcpy(&pData, pData, iBytes);
+  return iBytes == sizeof(void*) && memcpy(&pData, pData, iBytes);
 }
 
 bool CXFA_Node::SetScriptContent(const CFX_WideString& wsContent,
@@ -4889,7 +4889,7 @@ void CXFA_Node::SetMapModuleBuffer(
 
   pBuffer->pCallbackInfo = pCallbackInfo;
   pBuffer->iBytes = iBytes;
-  FXSYS_memcpy(pBuffer->GetData(), pValue, iBytes);
+  memcpy(pBuffer->GetData(), pValue, iBytes);
 }
 
 bool CXFA_Node::GetMapModuleBuffer(void* pKey,
@@ -5006,8 +5006,7 @@ void CXFA_Node::MergeAllData(void* pDstModule) {
     }
     pDstBuffer->pCallbackInfo = pSrcBuffer->pCallbackInfo;
     pDstBuffer->iBytes = pSrcBuffer->iBytes;
-    FXSYS_memcpy(pDstBuffer->GetData(), pSrcBuffer->GetData(),
-                 pSrcBuffer->iBytes);
+    memcpy(pDstBuffer->GetData(), pSrcBuffer->GetData(), pSrcBuffer->iBytes);
     if (pDstBuffer->pCallbackInfo && pDstBuffer->pCallbackInfo->pCopy) {
       pDstBuffer->pCallbackInfo->pCopy(*(void**)pDstBuffer->GetData());
     }

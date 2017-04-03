@@ -155,7 +155,7 @@ bool ConvertBuffer_1bppMask2Gray(uint8_t* dest_buf,
   reset_gray = 0x00;
   for (int row = 0; row < height; row++) {
     uint8_t* dest_scan = dest_buf + row * dest_pitch;
-    FXSYS_memset(dest_scan, reset_gray, width);
+    memset(dest_scan, reset_gray, width);
     const uint8_t* src_scan = pSrcBitmap->GetScanline(src_top + row);
     for (int col = src_left; col < src_left + width; col++) {
       if (src_scan[col / 8] & (1 << (7 - col % 8))) {
@@ -177,7 +177,7 @@ bool ConvertBuffer_8bppMask2Gray(uint8_t* dest_buf,
   for (int row = 0; row < height; row++) {
     uint8_t* dest_scan = dest_buf + row * dest_pitch;
     const uint8_t* src_scan = pSrcBitmap->GetScanline(src_top + row) + src_left;
-    FXSYS_memcpy(dest_scan, src_scan, width);
+    memcpy(dest_scan, src_scan, width);
   }
   return true;
 }
@@ -217,7 +217,7 @@ bool ConvertBuffer_1bppPlt2Gray(uint8_t* dest_buf,
 
   for (int row = 0; row < height; row++) {
     uint8_t* dest_scan = dest_buf + row * dest_pitch;
-    FXSYS_memset(dest_scan, gray[0], width);
+    memset(dest_scan, gray[0], width);
     const uint8_t* src_scan = pSrcBitmap->GetScanline(src_top + row);
     for (int col = src_left; col < src_left + width; col++) {
       if (src_scan[col / 8] & (1 << (7 - col % 8))) {
@@ -313,7 +313,7 @@ void ConvertBuffer_IndexCopy(uint8_t* dest_buf,
   if (pSrcBitmap->GetBPP() == 1) {
     for (int row = 0; row < height; row++) {
       uint8_t* dest_scan = dest_buf + row * dest_pitch;
-      FXSYS_memset(dest_scan, 0, width);
+      memset(dest_scan, 0, width);
       const uint8_t* src_scan = pSrcBitmap->GetScanline(src_top + row);
       for (int col = src_left; col < src_left + width; col++) {
         if (src_scan[col / 8] & (1 << (7 - col % 8))) {
@@ -327,7 +327,7 @@ void ConvertBuffer_IndexCopy(uint8_t* dest_buf,
       uint8_t* dest_scan = dest_buf + row * dest_pitch;
       const uint8_t* src_scan =
           pSrcBitmap->GetScanline(src_top + row) + src_left;
-      FXSYS_memcpy(dest_scan, src_scan, width);
+      memcpy(dest_scan, src_scan, width);
     }
   }
 }
@@ -355,7 +355,7 @@ bool ConvertBuffer_Plt2PltRgb8(uint8_t* dest_buf,
       dst_plt[i] = FXARGB_MAKE(0xff, r, g, b);
     }
   } else {
-    FXSYS_memcpy(dst_plt, src_plt, plt_size * 4);
+    memcpy(dst_plt, src_plt, plt_size * 4);
   }
   return true;
 }
@@ -418,7 +418,7 @@ bool ConvertBuffer_Rgb2PltRgb8(uint8_t* dest_buf,
         }
     }
   }
-  FXSYS_memcpy(dst_plt, pPalette, sizeof(uint32_t) * 256);
+  memcpy(dst_plt, pPalette, sizeof(uint32_t) * 256);
   return true;
 }
 
@@ -587,7 +587,7 @@ bool ConvertBuffer_24bppRgb2Rgb24(
     uint8_t* dest_scan = dest_buf + row * dest_pitch;
     const uint8_t* src_scan =
         pSrcBitmap->GetScanline(src_top + row) + src_left * 3;
-    FXSYS_memcpy(dest_scan, src_scan, width * 3);
+    memcpy(dest_scan, src_scan, width * 3);
   }
   return true;
 }

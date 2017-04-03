@@ -371,7 +371,7 @@ FXFT_Face CFPF_SkiaFontMgr::GetFontFace(
   if (iFaceIndex < 0)
     return nullptr;
   FXFT_StreamRec streamRec;
-  FXSYS_memset(&streamRec, 0, sizeof(FXFT_StreamRec));
+  memset(&streamRec, 0, sizeof(FXFT_StreamRec));
   streamRec.size = pFileRead->GetSize();
   streamRec.descriptor.pointer = static_cast<void*>(pFileRead.Get());
   streamRec.read = FPF_SkiaStream_Read;

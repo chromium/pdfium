@@ -40,10 +40,7 @@ public:
     }
     void allocate(unsigned size, unsigned extra_tail = 0);
     void resize(unsigned new_size);
-    void zero()
-    {
-        FXSYS_memset(m_array, 0, sizeof(T) * m_size);
-    }
+    void zero() { memset(m_array, 0, sizeof(T) * m_size); }
     void add(const T& v)
     {
         m_array[m_size++] = v;
@@ -130,7 +127,7 @@ void pod_array<T>::resize(unsigned new_size)
     if(new_size > m_size) {
         if(new_size > m_capacity) {
             T* data = FX_Alloc(T, new_size);
-            FXSYS_memcpy(data, m_array, m_size * sizeof(T));
+            memcpy(data, m_array, m_size * sizeof(T));
             FX_Free(m_array);
             m_array = data;
         }
@@ -145,14 +142,14 @@ template<class T> pod_array<T>::pod_array(const pod_array<T>& v) :
     m_capacity(v.m_capacity),
     m_array(v.m_capacity ? FX_Alloc(T, v.m_capacity) : 0)
 {
-    FXSYS_memcpy(m_array, v.m_array, sizeof(T) * v.m_size);
+  memcpy(m_array, v.m_array, sizeof(T) * v.m_size);
 }
 template<class T> const pod_array<T>&
 pod_array<T>::operator = (const pod_array<T>&v)
 {
     allocate(v.m_size);
     if(v.m_size) {
-        FXSYS_memcpy(m_array, v.m_array, sizeof(T) * v.m_size);
+      memcpy(m_array, v.m_array, sizeof(T) * v.m_size);
     }
     return *this;
 }
@@ -322,7 +319,7 @@ pod_deque<T, S>::pod_deque(const pod_deque<T, S>& v) :
     unsigned i;
     for(i = 0; i < v.m_num_blocks; ++i) {
         m_blocks[i] = FX_Alloc(T, block_size);
-        FXSYS_memcpy(m_blocks[i], v.m_blocks[i], block_size * sizeof(T));
+        memcpy(m_blocks[i], v.m_blocks[i], block_size * sizeof(T));
     }
 }
 template<class T, unsigned S>
@@ -333,7 +330,7 @@ const pod_deque<T, S>& pod_deque<T, S>::operator = (const pod_deque<T, S>& v)
         allocate_block(i);
     }
     for(i = 0; i < v.m_num_blocks; ++i) {
-        FXSYS_memcpy(m_blocks[i], v.m_blocks[i], block_size * sizeof(T));
+      memcpy(m_blocks[i], v.m_blocks[i], block_size * sizeof(T));
     }
     m_size = v.m_size;
     return *this;
@@ -344,10 +341,8 @@ void pod_deque<T, S>::allocate_block(unsigned nb)
     if(nb >= m_max_blocks) {
         T** new_blocks = FX_Alloc(T*, m_max_blocks + m_block_ptr_inc);
         if(m_blocks) {
-            FXSYS_memcpy(new_blocks,
-                         m_blocks,
-                         m_num_blocks * sizeof(T*));
-            FX_Free(m_blocks);
+          memcpy(new_blocks, m_blocks, m_num_blocks * sizeof(T*));
+          FX_Free(m_blocks);
         }
         m_blocks = new_blocks;
         m_max_blocks += m_block_ptr_inc;
@@ -476,10 +471,8 @@ private:
         if(m_num_blocks >= m_max_blocks) {
             int8u** new_blocks = FX_Alloc(int8u*, m_max_blocks + m_block_ptr_inc);
             if(m_blocks) {
-                FXSYS_memcpy(new_blocks,
-                             m_blocks,
-                             m_num_blocks * sizeof(int8u*));
-                FX_Free(m_blocks);
+              memcpy(new_blocks, m_blocks, m_num_blocks * sizeof(int8u*));
+              FX_Free(m_blocks);
             }
             m_blocks = new_blocks;
             m_max_blocks += m_block_ptr_inc;

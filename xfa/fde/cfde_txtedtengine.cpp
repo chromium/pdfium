@@ -142,7 +142,7 @@ void CFDE_TxtEdtEngine::SetText(const CFX_WideString& wsText) {
   if (nLength > 0) {
     CFX_WideString wsTemp;
     wchar_t* lpBuffer = wsTemp.GetBuffer(nLength);
-    FXSYS_memcpy(lpBuffer, wsText.c_str(), nLength * sizeof(wchar_t));
+    memcpy(lpBuffer, wsText.c_str(), nLength * sizeof(wchar_t));
     ReplaceParagEnd(lpBuffer, nLength, false);
     wsTemp.ReleaseBuffer(nLength);
     if (m_nLimit > 0 && nLength > m_nLimit) {
@@ -312,7 +312,7 @@ int32_t CFDE_TxtEdtEngine::Insert(int32_t nStart,
 
   CFX_WideString wsTemp;
   wchar_t* lpBuffer = wsTemp.GetBuffer(nLength);
-  FXSYS_memcpy(lpBuffer, lpText, nLength * sizeof(wchar_t));
+  memcpy(lpBuffer, lpText, nLength * sizeof(wchar_t));
   ReplaceParagEnd(lpBuffer, nLength, false);
   wsTemp.ReleaseBuffer(nLength);
   bool bPart = false;
@@ -730,10 +730,10 @@ CFX_WideString CFDE_TxtEdtEngine::GetPreInsertText(int32_t nIndex,
   int32_t nOldLength = wsText.GetLength();
   const wchar_t* pOldBuffer = wsText.c_str();
   wchar_t* lpBuffer = wsTemp.GetBuffer(nOldLength + nLength);
-  FXSYS_memcpy(lpBuffer, pOldBuffer, (nIndex) * sizeof(wchar_t));
-  FXSYS_memcpy(lpBuffer + nIndex, lpText, nLength * sizeof(wchar_t));
-  FXSYS_memcpy(lpBuffer + nIndex + nLength, pOldBuffer + nIndex,
-               (nOldLength - nIndex) * sizeof(wchar_t));
+  memcpy(lpBuffer, pOldBuffer, (nIndex) * sizeof(wchar_t));
+  memcpy(lpBuffer + nIndex, lpText, nLength * sizeof(wchar_t));
+  memcpy(lpBuffer + nIndex + nLength, pOldBuffer + nIndex,
+         (nOldLength - nIndex) * sizeof(wchar_t));
   wsTemp.ReleaseBuffer(nOldLength + nLength);
   wsText = wsTemp;
   return wsText;
@@ -1028,8 +1028,8 @@ bool CFDE_TxtEdtEngine::ReplaceParagEnd(wchar_t*& lpText,
         if (bPreIsCR == true) {
           int32_t nNext = i + 1;
           if (nNext < nLength) {
-            FXSYS_memmove(lpText + i, lpText + nNext,
-                          (nLength - nNext) * sizeof(wchar_t));
+            memmove(lpText + i, lpText + nNext,
+                    (nLength - nNext) * sizeof(wchar_t));
           }
           i--;
           nLength--;
@@ -1079,16 +1079,16 @@ void CFDE_TxtEdtEngine::RecoverParagEnd(CFX_WideString& wsText) const {
     for (int32_t i = 0; i < nCount; i++) {
       int32_t nPos = PosArr[i];
       int32_t nCopyLen = nPos - nSrcPos + 1;
-      FXSYS_memcpy(lpDstBuf + nDstPos, lpSrcBuf + nSrcPos,
-                   nCopyLen * sizeof(wchar_t));
+      memcpy(lpDstBuf + nDstPos, lpSrcBuf + nSrcPos,
+             nCopyLen * sizeof(wchar_t));
       nDstPos += nCopyLen;
       nSrcPos += nCopyLen;
       lpDstBuf[nDstPos] = L'\n';
       nDstPos++;
     }
     if (nSrcPos < nLength) {
-      FXSYS_memcpy(lpDstBuf + nDstPos, lpSrcBuf + nSrcPos,
-                   (nLength - nSrcPos) * sizeof(wchar_t));
+      memcpy(lpDstBuf + nDstPos, lpSrcBuf + nSrcPos,
+             (nLength - nSrcPos) * sizeof(wchar_t));
     }
     wsTemp.ReleaseBuffer(nLength + nCount);
     wsText = wsTemp;

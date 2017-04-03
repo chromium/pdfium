@@ -55,7 +55,7 @@ static void _png_load_bmp_attribute(png_structp png_ptr,
     png_timep t = nullptr;
     png_get_tIME(png_ptr, info_ptr, &t);
     if (t) {
-      FXSYS_memset(pAttribute->m_strTime, 0, sizeof(pAttribute->m_strTime));
+      memset(pAttribute->m_strTime, 0, sizeof(pAttribute->m_strTime));
       FXSYS_snprintf((char*)pAttribute->m_strTime,
                      sizeof(pAttribute->m_strTime), "%4u:%2u:%2u %2u:%2u:%2u",
                      t->year, t->month, t->day, t->hour, t->minute, t->second);
@@ -73,16 +73,16 @@ static void _png_load_bmp_attribute(png_structp png_ptr,
     for (i = 0; i < num_text; i++) {
       len = FXSYS_strlen(text[i].key);
       buf = "Time";
-      if (!FXSYS_memcmp(buf, text[i].key, std::min(len, FXSYS_strlen(buf)))) {
+      if (!memcmp(buf, text[i].key, std::min(len, FXSYS_strlen(buf)))) {
         if (!bTime) {
-          FXSYS_memset(pAttribute->m_strTime, 0, sizeof(pAttribute->m_strTime));
-          FXSYS_memcpy(
+          memset(pAttribute->m_strTime, 0, sizeof(pAttribute->m_strTime));
+          memcpy(
               pAttribute->m_strTime, text[i].text,
               std::min(sizeof(pAttribute->m_strTime) - 1, text[i].text_length));
         }
       } else {
         buf = "Author";
-        if (!FXSYS_memcmp(buf, text[i].key, std::min(len, FXSYS_strlen(buf)))) {
+        if (!memcmp(buf, text[i].key, std::min(len, FXSYS_strlen(buf)))) {
           pAttribute->m_strAuthor =
               CFX_ByteString(reinterpret_cast<uint8_t*>(text[i].text),
                              static_cast<FX_STRSIZE>(text[i].text_length));

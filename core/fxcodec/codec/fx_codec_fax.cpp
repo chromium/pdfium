@@ -123,7 +123,7 @@ void FaxFillBits(uint8_t* dest_buf, int columns, int startpos, int endpos) {
     dest_buf[last_byte] -= 1 << (7 - i);
 
   if (last_byte > first_byte + 1)
-    FXSYS_memset(dest_buf + first_byte + 1, 0, last_byte - first_byte - 1);
+    memset(dest_buf + first_byte + 1, 0, last_byte - first_byte - 1);
 }
 
 inline bool NextBit(const uint8_t* src_buf, int* bitpos) {
@@ -502,7 +502,7 @@ CCodec_FaxDecoder::CCodec_FaxDecoder(const uint8_t* src_buf,
 CCodec_FaxDecoder::~CCodec_FaxDecoder() {}
 
 bool CCodec_FaxDecoder::v_Rewind() {
-  FXSYS_memset(m_RefBuf.data(), 0xff, m_RefBuf.size());
+  memset(m_RefBuf.data(), 0xff, m_RefBuf.size());
   m_bitpos = 0;
   return true;
 }
@@ -513,7 +513,7 @@ uint8_t* CCodec_FaxDecoder::v_GetNextLine() {
   if (m_bitpos >= bitsize)
     return nullptr;
 
-  FXSYS_memset(m_ScanlineBuf.data(), 0xff, m_ScanlineBuf.size());
+  memset(m_ScanlineBuf.data(), 0xff, m_ScanlineBuf.size());
   if (m_Encoding < 0) {
     FaxG4GetRow(m_pSrcBuf, bitsize, &m_bitpos, m_ScanlineBuf.data(), m_RefBuf,
                 m_OrigWidth);
@@ -570,9 +570,9 @@ void FaxG4Decode(const uint8_t* src_buf,
   int bitpos = *pbitpos;
   for (int iRow = 0; iRow < height; iRow++) {
     uint8_t* line_buf = dest_buf + iRow * pitch;
-    FXSYS_memset(line_buf, 0xff, pitch);
+    memset(line_buf, 0xff, pitch);
     FaxG4GetRow(src_buf, src_size << 3, &bitpos, line_buf, ref_buf, width);
-    FXSYS_memcpy(ref_buf.data(), line_buf, pitch);
+    memcpy(ref_buf.data(), line_buf, pitch);
   }
   *pbitpos = bitpos;
 }
@@ -756,7 +756,7 @@ CCodec_FaxEncoder::CCodec_FaxEncoder(const uint8_t* src_buf,
                                      int pitch)
     : m_Cols(width), m_Rows(height), m_Pitch(pitch), m_pSrcBuf(src_buf) {
   m_RefLine.resize(m_Pitch);
-  FXSYS_memset(m_RefLine.data(), 0xff, m_Pitch);
+  memset(m_RefLine.data(), 0xff, m_Pitch);
   m_pLineBuf = FX_Alloc2D(uint8_t, m_Pitch, 8);
   m_DestBuf.EstimateSize(0, 10240);
 }
@@ -772,13 +772,13 @@ void CCodec_FaxEncoder::Encode(
   uint8_t last_byte = 0;
   for (int i = 0; i < m_Rows; i++) {
     const uint8_t* scan_line = m_pSrcBuf + i * m_Pitch;
-    FXSYS_memset(m_pLineBuf, 0, m_Pitch * 8);
+    memset(m_pLineBuf, 0, m_Pitch * 8);
     m_pLineBuf[0] = last_byte;
     FaxEncode2DLine(m_pLineBuf, &dest_bitpos, scan_line, m_RefLine, m_Cols);
     m_DestBuf.AppendBlock(m_pLineBuf, dest_bitpos / 8);
     last_byte = m_pLineBuf[dest_bitpos / 8];
     dest_bitpos %= 8;
-    FXSYS_memcpy(m_RefLine.data(), scan_line, m_Pitch);
+    memcpy(m_RefLine.data(), scan_line, m_Pitch);
   }
   if (dest_bitpos)
     m_DestBuf.AppendByte(last_byte);

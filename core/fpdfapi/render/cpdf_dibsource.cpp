@@ -999,7 +999,7 @@ const uint8_t* CPDF_DIBSource::GetScanline(int line) const {
   }
   if (!pSrcLine) {
     uint8_t* pLineBuf = m_pMaskedLine ? m_pMaskedLine : m_pLineBuf;
-    FXSYS_memset(pLineBuf, 0xFF, m_Pitch);
+    memset(pLineBuf, 0xFF, m_Pitch);
     return pLineBuf;
   }
   if (m_bpc * m_nComponents == 1) {
@@ -1030,13 +1030,13 @@ const uint8_t* CPDF_DIBSource::GetScanline(int line) const {
       }
       return m_pMaskedLine;
     } else {
-      FXSYS_memcpy(m_pLineBuf, pSrcLine, src_pitch_value);
+      memcpy(m_pLineBuf, pSrcLine, src_pitch_value);
     }
     return m_pLineBuf;
   }
   if (m_bpc * m_nComponents <= 8) {
     if (m_bpc == 8) {
-      FXSYS_memcpy(m_pLineBuf, pSrcLine, src_pitch_value);
+      memcpy(m_pLineBuf, pSrcLine, src_pitch_value);
     } else {
       uint64_t src_bit_pos = 0;
       for (int col = 0; col < m_Width; col++) {
@@ -1088,7 +1088,7 @@ const uint8_t* CPDF_DIBSource::GetScanline(int line) const {
                                      : 0;
       }
     } else {
-      FXSYS_memset(m_pMaskedLine, 0xFF, m_Pitch);
+      memset(m_pMaskedLine, 0xFF, m_Pitch);
     }
   }
   if (m_pColorSpace) {
@@ -1149,7 +1149,7 @@ void CPDF_DIBSource::DownSampleScanline(int line,
   int orig_Bpp = m_bpc * m_nComponents / 8;
   int dest_Bpp = dest_bpp / 8;
   if (!pSrcLine) {
-    FXSYS_memset(dest_scan, 0xFF, dest_Bpp * clip_width);
+    memset(dest_scan, 0xFF, dest_Bpp * clip_width);
     return;
   }
 

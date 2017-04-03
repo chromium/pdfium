@@ -628,14 +628,13 @@ void CFX_SAXReader::SkipNode() {
           m_iDataLength = m_iDataPos;
           m_iDataPos = 0;
           if (m_iDataLength >= 9 &&
-              FXSYS_memcmp(m_pszData, "[CDATA[", 7 * sizeof(uint8_t)) == 0 &&
-              FXSYS_memcmp(m_pszData + m_iDataLength - 2, "]]",
-                           2 * sizeof(uint8_t)) == 0) {
+              memcmp(m_pszData, "[CDATA[", 7 * sizeof(uint8_t)) == 0 &&
+              memcmp(m_pszData + m_iDataLength - 2, "]]",
+                     2 * sizeof(uint8_t)) == 0) {
             Pop();
             m_iDataLength -= 9;
             m_dwDataOffset += 7;
-            FXSYS_memmove(m_pszData, m_pszData + 7,
-                          m_iDataLength * sizeof(uint8_t));
+            memmove(m_pszData, m_pszData + 7, m_iDataLength * sizeof(uint8_t));
             m_bCharData = true;
             if (m_pHandler) {
               NotifyData();

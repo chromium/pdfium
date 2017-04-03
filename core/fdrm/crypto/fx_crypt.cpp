@@ -204,7 +204,7 @@ void CRYPT_MD5Update(CRYPT_md5_context* ctx,
   ctx->total[0] &= 0xFFFFFFFF;
   ctx->total[1] += ctx->total[0] < length << 3;
   if (left && length >= fill) {
-    FXSYS_memcpy((void*)(ctx->buffer + left), (void*)input, fill);
+    memcpy((void*)(ctx->buffer + left), (void*)input, fill);
     md5_process(ctx, ctx->buffer);
     length -= fill;
     input += fill;
@@ -216,7 +216,7 @@ void CRYPT_MD5Update(CRYPT_md5_context* ctx,
     input += 64;
   }
   if (length) {
-    FXSYS_memcpy((void*)(ctx->buffer + left), (void*)input, length);
+    memcpy((void*)(ctx->buffer + left), (void*)input, length);
   }
 }
 

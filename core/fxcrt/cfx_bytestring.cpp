@@ -196,7 +196,7 @@ bool CFX_ByteString::operator==(const char* ptr) const {
     return m_pData->m_nDataLength == 0;
 
   return FXSYS_strlen(ptr) == m_pData->m_nDataLength &&
-         FXSYS_memcmp(ptr, m_pData->m_String, m_pData->m_nDataLength) == 0;
+         memcmp(ptr, m_pData->m_String, m_pData->m_nDataLength) == 0;
 }
 
 bool CFX_ByteString::operator==(const CFX_ByteStringC& str) const {
@@ -204,7 +204,7 @@ bool CFX_ByteString::operator==(const CFX_ByteStringC& str) const {
     return str.IsEmpty();
 
   return m_pData->m_nDataLength == str.GetLength() &&
-         FXSYS_memcmp(m_pData->m_String, str.c_str(), str.GetLength()) == 0;
+         memcmp(m_pData->m_String, str.c_str(), str.GetLength()) == 0;
 }
 
 bool CFX_ByteString::operator==(const CFX_ByteString& other) const {
@@ -218,16 +218,16 @@ bool CFX_ByteString::operator==(const CFX_ByteString& other) const {
     return false;
 
   return other.m_pData->m_nDataLength == m_pData->m_nDataLength &&
-         FXSYS_memcmp(other.m_pData->m_String, m_pData->m_String,
-                      m_pData->m_nDataLength) == 0;
+         memcmp(other.m_pData->m_String, m_pData->m_String,
+                m_pData->m_nDataLength) == 0;
 }
 
 bool CFX_ByteString::operator<(const CFX_ByteString& str) const {
   if (m_pData == str.m_pData)
     return false;
 
-  int result = FXSYS_memcmp(c_str(), str.c_str(),
-                            std::min(GetLength(), str.GetLength()));
+  int result =
+      memcmp(c_str(), str.c_str(), std::min(GetLength(), str.GetLength()));
   return result < 0 || (result == 0 && GetLength() < str.GetLength());
 }
 
@@ -368,8 +368,8 @@ FX_STRSIZE CFX_ByteString::Delete(FX_STRSIZE nIndex, FX_STRSIZE nCount) {
     }
     ReallocBeforeWrite(nOldLength);
     int nCharsToCopy = nOldLength - mLength + 1;
-    FXSYS_memmove(m_pData->m_String + nIndex, m_pData->m_String + mLength,
-                  nCharsToCopy);
+    memmove(m_pData->m_String + nIndex, m_pData->m_String + mLength,
+            nCharsToCopy);
     m_pData->m_nDataLength = nOldLength - nCount;
   }
   return m_pData->m_nDataLength;
@@ -472,8 +472,8 @@ FX_STRSIZE CFX_ByteString::Insert(FX_STRSIZE nIndex, char ch) {
   nNewLength++;
 
   ReallocBeforeWrite(nNewLength);
-  FXSYS_memmove(m_pData->m_String + nIndex + 1, m_pData->m_String + nIndex,
-                nNewLength - nIndex);
+  memmove(m_pData->m_String + nIndex + 1, m_pData->m_String + nIndex,
+          nNewLength - nIndex);
   m_pData->m_String[nIndex] = ch;
   m_pData->m_nDataLength = nNewLength;
   return nNewLength;
@@ -630,13 +630,13 @@ FX_STRSIZE CFX_ByteString::Replace(const CFX_ByteStringC& pOld,
   for (FX_STRSIZE i = 0; i < nCount; i++) {
     const char* pTarget = FX_strstr(pStart, (FX_STRSIZE)(pEnd - pStart),
                                     pOld.c_str(), nSourceLen);
-    FXSYS_memcpy(pDest, pStart, pTarget - pStart);
+    memcpy(pDest, pStart, pTarget - pStart);
     pDest += pTarget - pStart;
-    FXSYS_memcpy(pDest, pNew.c_str(), pNew.GetLength());
+    memcpy(pDest, pNew.c_str(), pNew.GetLength());
     pDest += pNew.GetLength();
     pStart = pTarget + nSourceLen;
   }
-  FXSYS_memcpy(pDest, pStart, pEnd - pStart);
+  memcpy(pDest, pStart, pEnd - pStart);
   m_pData.Swap(pNewData);
   return nCount;
 }
@@ -750,8 +750,8 @@ void CFX_ByteString::TrimLeft(const CFX_ByteStringC& pTargets) {
   if (pos) {
     ReallocBeforeWrite(len);
     FX_STRSIZE nDataLength = len - pos;
-    FXSYS_memmove(m_pData->m_String, m_pData->m_String + pos,
-                  (nDataLength + 1) * sizeof(char));
+    memmove(m_pData->m_String, m_pData->m_String + pos,
+            (nDataLength + 1) * sizeof(char));
     m_pData->m_nDataLength = nDataLength;
   }
 }
@@ -798,7 +798,7 @@ FX_STRSIZE FX_ftoa(float d, char* buf) {
   int i = scaled / scale;
   FXSYS_itoa(i, buf2, 10);
   FX_STRSIZE len = FXSYS_strlen(buf2);
-  FXSYS_memcpy(buf + buf_size, buf2, len);
+  memcpy(buf + buf_size, buf2, len);
   buf_size += len;
   int fraction = scaled % scale;
   if (fraction == 0) {

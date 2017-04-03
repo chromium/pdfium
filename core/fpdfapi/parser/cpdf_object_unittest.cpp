@@ -162,8 +162,8 @@ class PDFObjectsTest : public testing::Test {
         // streams need to be handled.
         if (!stream1->IsMemoryBased() || !stream2->IsMemoryBased())
           return false;
-        return FXSYS_memcmp(stream1->GetRawData(), stream2->GetRawData(),
-                            stream1->GetRawSize()) == 0;
+        return memcmp(stream1->GetRawData(), stream2->GetRawData(),
+                      stream1->GetRawSize()) == 0;
       }
       case CPDF_Object::REFERENCE:
         return obj1->AsReference()->GetRefObjNum() ==

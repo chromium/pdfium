@@ -151,7 +151,7 @@ void CPDF_Type1Font::LoadGlyphMap() {
       if (bGotOne) {
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
         if (!bCoreText)
-          FXSYS_memcpy(m_ExtGID, m_GlyphIndex, 256);
+          memcpy(m_ExtGID, m_GlyphIndex, 256);
 #endif
         return;
       }
@@ -182,7 +182,7 @@ void CPDF_Type1Font::LoadGlyphMap() {
     }
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
     if (!bCoreText)
-      FXSYS_memcpy(m_ExtGID, m_GlyphIndex, 256);
+      memcpy(m_ExtGID, m_GlyphIndex, 256);
 #endif
     return;
   }
@@ -207,7 +207,7 @@ void CPDF_Type1Font::LoadGlyphMap() {
                 FT_UnicodeFromCharCode(PDFFONT_ENCODING_STANDARD, charcode);
           }
           char name_glyph[256];
-          FXSYS_memset(name_glyph, 0, sizeof(name_glyph));
+          memset(name_glyph, 0, sizeof(name_glyph));
           FXFT_Get_Glyph_Name(m_Font.GetFace(), m_GlyphIndex[charcode],
                               name_glyph, 256);
           name_glyph[255] = 0;
@@ -272,7 +272,7 @@ void CPDF_Type1Font::LoadGlyphMap() {
               FT_UnicodeFromCharCode(PDFFONT_ENCODING_STANDARD, charcode);
           if (unicode == 0) {
             char name_glyph[256];
-            FXSYS_memset(name_glyph, 0, sizeof(name_glyph));
+            memset(name_glyph, 0, sizeof(name_glyph));
             FXFT_Get_Glyph_Name(m_Font.GetFace(), m_GlyphIndex[charcode],
                                 name_glyph, 256);
             name_glyph[255] = 0;
@@ -286,7 +286,7 @@ void CPDF_Type1Font::LoadGlyphMap() {
     }
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
     if (!bCoreText)
-      FXSYS_memcpy(m_ExtGID, m_GlyphIndex, 256);
+      memcpy(m_ExtGID, m_GlyphIndex, 256);
 
 #endif
     return;
@@ -315,7 +315,7 @@ void CPDF_Type1Font::LoadGlyphMap() {
   }
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
   if (!bCoreText)
-    FXSYS_memcpy(m_ExtGID, m_GlyphIndex, 256);
+    memcpy(m_ExtGID, m_GlyphIndex, 256);
 #endif
 }
 

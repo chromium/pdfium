@@ -274,7 +274,7 @@ CStretchEngine::CStretchEngine(IFX_ScanlineComposer* pDestBitmap,
     return;
   }
   if (dest_format == FXDIB_Rgb32) {
-    FXSYS_memset(m_pDestScanline, 255, size);
+    memset(m_pDestScanline, 255, size);
   }
   m_InterPitch = (m_DestClip.Width() * m_DestBpp + 31) / 32 * 4;
   m_ExtraMaskPitch = (m_DestClip.Width() * 8 + 31) / 32 * 4;

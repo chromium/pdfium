@@ -801,8 +801,8 @@ bool CPDF_Function::Init(CPDF_Object* pObj) {
   if (m_pRanges && m_nOutputs > old_outputs) {
     m_pRanges = FX_Realloc(float, m_pRanges, m_nOutputs * 2);
     if (m_pRanges) {
-      FXSYS_memset(m_pRanges + (old_outputs * 2), 0,
-                   sizeof(float) * (m_nOutputs - old_outputs) * 2);
+      memset(m_pRanges + (old_outputs * 2), 0,
+             sizeof(float) * (m_nOutputs - old_outputs) * 2);
     }
   }
   return true;

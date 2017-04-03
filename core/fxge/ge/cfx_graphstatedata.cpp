@@ -34,7 +34,7 @@ void CFX_GraphStateData::Copy(const CFX_GraphStateData& src) {
   m_LineWidth = src.m_LineWidth;
   if (m_DashCount) {
     m_DashArray = FX_Alloc(float, m_DashCount);
-    FXSYS_memcpy(m_DashArray, src.m_DashArray, m_DashCount * sizeof(float));
+    memcpy(m_DashArray, src.m_DashArray, m_DashCount * sizeof(float));
   }
 }
 

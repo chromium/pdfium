@@ -24,7 +24,7 @@ CPDF_Type3Font::CPDF_Type3Font()
       m_pPageResources(nullptr),
       m_pFontResources(nullptr),
       m_CharLoadingDepth(0) {
-  FXSYS_memset(m_CharWidthL, 0, sizeof(m_CharWidthL));
+  memset(m_CharWidthL, 0, sizeof(m_CharWidthL));
 }
 
 CPDF_Type3Font::~CPDF_Type3Font() {}

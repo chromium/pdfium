@@ -100,7 +100,7 @@ uint8_t* CBC_QRCodeWriter::Encode(const CFX_WideString& contents,
   outWidth = qr.GetMatrixWidth();
   outHeight = qr.GetMatrixWidth();
   uint8_t* result = FX_Alloc2D(uint8_t, outWidth, outHeight);
-  FXSYS_memcpy(result, qr.GetMatrix()->GetArray(), outWidth * outHeight);
+  memcpy(result, qr.GetMatrix()->GetArray(), outWidth * outHeight);
   return result;
 }
 

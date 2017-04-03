@@ -52,7 +52,7 @@ bool FlateCompress(unsigned char* dest_buf,
 
 void* FlateInit() {
   z_stream* p = FX_Alloc(z_stream, 1);
-  FXSYS_memset(p, 0, sizeof(z_stream));
+  memset(p, 0, sizeof(z_stream));
   p->zalloc = my_alloc_func;
   p->zfree = my_free_func;
   inflateInit(p);
@@ -80,7 +80,7 @@ uint32_t FlateOutput(void* context,
 
   uint32_t written = post_pos - pre_pos;
   if (written < dest_size)
-    FXSYS_memset(dest_buf + written, '\0', dest_size - written);
+    memset(dest_buf + written, '\0', dest_size - written);
 
   return ret;
 }
@@ -290,7 +290,7 @@ void PNG_PredictLine(uint8_t* pDestData,
   int BytesPerPixel = (bpc * nColors + 7) / 8;
   uint8_t tag = pSrcData[0];
   if (tag == 0) {
-    FXSYS_memmove(pDestData, pSrcData + 1, row_size);
+    memmove(pDestData, pSrcData + 1, row_size);
     return;
   }
   for (int byte = 0; byte < row_size; byte++) {
@@ -372,7 +372,7 @@ bool PNG_Predictor(uint8_t*& data_buf,
       if ((row + 1) * (move_size + 1) > (int)data_size) {
         move_size = last_row_size - 1;
       }
-      FXSYS_memmove(pDestData, pSrcData + 1, move_size);
+      memmove(pDestData, pSrcData + 1, move_size);
       pSrcData += move_size + 1;
       pDestData += move_size;
       byte_cnt += move_size;
@@ -603,7 +603,7 @@ void FlateUncompress(const uint8_t* src_buf,
           tmp_buf_size = last_buf_size;
 
         uint32_t cp_size = std::min(tmp_buf_size, remaining);
-        FXSYS_memcpy(result_buf + result_pos, tmp_buf, cp_size);
+        memcpy(result_buf + result_pos, tmp_buf, cp_size);
         result_pos += cp_size;
         remaining -= cp_size;
 
@@ -736,7 +736,7 @@ uint8_t* CCodec_FlateScanlineDecoder::v_GetNextLine() {
         FlateOutput(m_pFlate, m_pPredictRaw, m_PredictPitch + 1);
         PNG_PredictLine(m_pScanline, m_pPredictRaw, m_pLastLine,
                         m_BitsPerComponent, m_Colors, m_Columns);
-        FXSYS_memcpy(m_pLastLine, m_pScanline, m_PredictPitch);
+        memcpy(m_pLastLine, m_pScanline, m_PredictPitch);
       } else {
         FlateOutput(m_pFlate, m_pScanline, m_Pitch);
         TIFF_PredictLine(m_pScanline, m_PredictPitch, m_bpc, m_nComps,
@@ -747,9 +747,8 @@ uint8_t* CCodec_FlateScanlineDecoder::v_GetNextLine() {
       size_t read_leftover =
           m_LeftOver > bytes_to_go ? bytes_to_go : m_LeftOver;
       if (read_leftover) {
-        FXSYS_memcpy(m_pScanline,
-                     m_pPredictBuffer + m_PredictPitch - m_LeftOver,
-                     read_leftover);
+        memcpy(m_pScanline, m_pPredictBuffer + m_PredictPitch - m_LeftOver,
+               read_leftover);
         m_LeftOver -= read_leftover;
         bytes_to_go -= read_leftover;
       }
@@ -758,7 +757,7 @@ uint8_t* CCodec_FlateScanlineDecoder::v_GetNextLine() {
           FlateOutput(m_pFlate, m_pPredictRaw, m_PredictPitch + 1);
           PNG_PredictLine(m_pPredictBuffer, m_pPredictRaw, m_pLastLine,
                           m_BitsPerComponent, m_Colors, m_Columns);
-          FXSYS_memcpy(m_pLastLine, m_pPredictBuffer, m_PredictPitch);
+          memcpy(m_pLastLine, m_pPredictBuffer, m_PredictPitch);
         } else {
           FlateOutput(m_pFlate, m_pPredictBuffer, m_PredictPitch);
           TIFF_PredictLine(m_pPredictBuffer, m_PredictPitch, m_BitsPerComponent,
@@ -766,8 +765,8 @@ uint8_t* CCodec_FlateScanlineDecoder::v_GetNextLine() {
         }
         size_t read_bytes =
             m_PredictPitch > bytes_to_go ? bytes_to_go : m_PredictPitch;
-        FXSYS_memcpy(m_pScanline + m_Pitch - bytes_to_go, m_pPredictBuffer,
-                     read_bytes);
+        memcpy(m_pScanline + m_Pitch - bytes_to_go, m_pPredictBuffer,
+               read_bytes);
         m_LeftOver += m_PredictPitch - read_bytes;
         bytes_to_go -= read_bytes;
       }
@@ -873,7 +872,7 @@ bool CCodec_FlateModule::PngEncode(const uint8_t* src_buf,
                                    uint8_t** dest_buf,
                                    uint32_t* dest_size) {
   uint8_t* pSrcBuf = FX_Alloc(uint8_t, src_size);
-  FXSYS_memcpy(pSrcBuf, src_buf, src_size);
+  memcpy(pSrcBuf, src_buf, src_size);
   PNG_PredictorEncode(&pSrcBuf, &src_size);
   bool ret = Encode(pSrcBuf, src_size, dest_buf, dest_size);
   FX_Free(pSrcBuf);

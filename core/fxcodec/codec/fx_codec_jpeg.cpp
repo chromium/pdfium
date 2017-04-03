@@ -185,9 +185,9 @@ CCodec_JpegDecoder::CCodec_JpegDecoder() {
   m_pScanlineBuf = nullptr;
   m_bStarted = false;
   m_bInited = false;
-  FXSYS_memset(&cinfo, 0, sizeof(cinfo));
-  FXSYS_memset(&jerr, 0, sizeof(jerr));
-  FXSYS_memset(&src, 0, sizeof(src));
+  memset(&cinfo, 0, sizeof(cinfo));
+  memset(&jerr, 0, sizeof(jerr));
+  memset(&src, 0, sizeof(src));
   m_nDefaultScaleDenom = 1;
 }
 
@@ -253,8 +253,7 @@ bool CCodec_JpegDecoder::Create(const uint8_t* src_buf,
   src.fill_input_buffer = _src_fill_buffer;
   src.resync_to_restart = _src_resync;
   m_bJpegTransform = ColorTransform;
-  if (src_size > 1 &&
-      FXSYS_memcmp(src_buf + src_size - 2, "\xFF\xD9", 2) != 0) {
+  if (src_size > 1 && memcmp(src_buf + src_size - 2, "\xFF\xD9", 2) != 0) {
     ((uint8_t*)src_buf)[src_size - 2] = 0xFF;
     ((uint8_t*)src_buf)[src_size - 1] = 0xD9;
   }

@@ -66,7 +66,7 @@ unsigned long Utf16EncodeMaybeCopyAndReturnLength(const CFX_WideString& text,
   CFX_ByteString encodedText = text.UTF16LE_Encode();
   unsigned long len = encodedText.GetLength();
   if (buffer && len <= buflen)
-    FXSYS_memcpy(buffer, encodedText.c_str(), len);
+    memcpy(buffer, encodedText.c_str(), len);
   return len;
 }
 
@@ -188,7 +188,7 @@ DLLEXPORT unsigned long STDCALL FPDFAction_GetFilePath(FPDF_ACTION pDict,
   CFX_ByteString path = action.GetFilePath().UTF8Encode();
   unsigned long len = path.GetLength() + 1;
   if (buffer && len <= buflen)
-    FXSYS_memcpy(buffer, path.c_str(), len);
+    memcpy(buffer, path.c_str(), len);
   return len;
 }
 
@@ -205,7 +205,7 @@ DLLEXPORT unsigned long STDCALL FPDFAction_GetURIPath(FPDF_DOCUMENT document,
   CFX_ByteString path = action.GetURI(pDoc);
   unsigned long len = path.GetLength() + 1;
   if (buffer && len <= buflen)
-    FXSYS_memcpy(buffer, path.c_str(), len);
+    memcpy(buffer, path.c_str(), len);
   return len;
 }
 

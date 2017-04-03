@@ -182,7 +182,7 @@ void CBC_OnedEAN8Writer::ShowChars(
   CFX_ByteString str = FX_UTF8Encode(contents);
   int32_t iLength = str.GetLength();
   FXTEXT_CHARPOS* pCharPos = FX_Alloc(FXTEXT_CHARPOS, iLength);
-  FXSYS_memset(pCharPos, 0, sizeof(FXTEXT_CHARPOS) * iLength);
+  memset(pCharPos, 0, sizeof(FXTEXT_CHARPOS) * iLength);
   CFX_ByteString tempStr = str.Mid(0, 4);
   int32_t iLen = tempStr.GetLength();
   int32_t strWidth = 7 * multiple * 4;

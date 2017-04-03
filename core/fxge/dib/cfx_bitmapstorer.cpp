@@ -32,11 +32,11 @@ void CFX_BitmapStorer::ComposeScanline(int line,
           ? const_cast<uint8_t*>(m_pBitmap->m_pAlphaMask->GetScanline(line))
           : nullptr;
   if (dest_buf)
-    FXSYS_memcpy(dest_buf, scanline, m_pBitmap->GetPitch());
+    memcpy(dest_buf, scanline, m_pBitmap->GetPitch());
 
   if (dest_alpha_buf) {
-    FXSYS_memcpy(dest_alpha_buf, scan_extra_alpha,
-                 m_pBitmap->m_pAlphaMask->GetPitch());
+    memcpy(dest_alpha_buf, scan_extra_alpha,
+           m_pBitmap->m_pAlphaMask->GetPitch());
   }
 }
 

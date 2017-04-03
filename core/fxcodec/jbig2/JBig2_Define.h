@@ -9,9 +9,9 @@
 
 #include "core/fxcrt/fx_system.h"
 
-#define JBIG2_memset FXSYS_memset
-#define JBIG2_memcmp FXSYS_memcmp
-#define JBIG2_memcpy FXSYS_memcpy
+#define JBIG2_memset memset
+#define JBIG2_memcmp memcmp
+#define JBIG2_memcpy memcpy
 #define JBIG2_OOB 1
 
 struct JBig2RegionInfo {

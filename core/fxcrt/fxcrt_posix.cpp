@@ -66,7 +66,7 @@ FX_FILESIZE CFXCRT_FileAccess_Posix::GetSize() const {
     return 0;
   }
   struct stat s;
-  FXSYS_memset(&s, 0, sizeof(s));
+  memset(&s, 0, sizeof(s));
   fstat(m_nFD, &s);
   return s.st_size;
 }

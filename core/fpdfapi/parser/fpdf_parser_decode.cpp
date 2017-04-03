@@ -114,7 +114,7 @@ uint32_t A85Decode(const uint8_t* src_buf,
       continue;
 
     if (ch == 'z') {
-      FXSYS_memset(dest_buf + dest_size, 0, 4);
+      memset(dest_buf + dest_size, 0, 4);
       state = 0;
       res = 0;
       dest_size += 4;
@@ -226,9 +226,9 @@ uint32_t RunLengthDecode(const uint8_t* src_buf,
       if (buf_left < copy_len) {
         uint32_t delta = copy_len - buf_left;
         copy_len = buf_left;
-        FXSYS_memset(dest_buf + dest_count + copy_len, '\0', delta);
+        memset(dest_buf + dest_count + copy_len, '\0', delta);
       }
-      FXSYS_memcpy(dest_buf + dest_count, src_buf + i + 1, copy_len);
+      memcpy(dest_buf + dest_count, src_buf + i + 1, copy_len);
       dest_count += src_buf[i] + 1;
       i += src_buf[i] + 2;
     } else {
@@ -236,7 +236,7 @@ uint32_t RunLengthDecode(const uint8_t* src_buf,
       if (i < src_size - 1) {
         fill = src_buf[i + 1];
       }
-      FXSYS_memset(dest_buf + dest_count, fill, 257 - src_buf[i]);
+      memset(dest_buf + dest_count, fill, 257 - src_buf[i]);
       dest_count += 257 - src_buf[i];
       i += 2;
     }

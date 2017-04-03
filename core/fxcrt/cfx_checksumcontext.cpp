@@ -129,7 +129,7 @@ void CFX_ChecksumContext::FinishChecksum() {
   m_pSAXReader.reset();
   if (m_pByteContext) {
     uint8_t digest[20];
-    FXSYS_memset(digest, 0, 20);
+    memset(digest, 0, 20);
     CRYPT_SHA1Finish(m_pByteContext.get(), digest);
     int32_t nLen = Base64EncodeA(digest, 20, nullptr);
     char* pBuffer = m_bsChecksum.GetBuffer(nLen);

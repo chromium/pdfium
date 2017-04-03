@@ -651,7 +651,7 @@ int32_t CFGAS_BufferReadStreamImp::ReadData(uint8_t* pBuffer,
   uint32_t dwOffsetTmp = m_iPosition - dwBlockOffset;
   uint32_t dwCopySize =
       std::min(iBufferSize, (int32_t)(dwBlockSize - dwOffsetTmp));
-  FXSYS_memcpy(pBuffer, pBufferTmp + dwOffsetTmp, dwCopySize);
+  memcpy(pBuffer, pBufferTmp + dwOffsetTmp, dwCopySize);
   dwOffsetTmp = dwCopySize;
   iBufferSize -= dwCopySize;
   while (iBufferSize > 0) {
@@ -662,7 +662,7 @@ int32_t CFGAS_BufferReadStreamImp::ReadData(uint8_t* pBuffer,
     dwBlockSize = m_pBufferRead->GetBlockSize();
     pBufferTmp = m_pBufferRead->GetBlockBuffer();
     dwCopySize = std::min((uint32_t)iBufferSize, dwBlockSize);
-    FXSYS_memcpy(pBuffer + dwOffsetTmp, pBufferTmp, dwCopySize);
+    memcpy(pBuffer + dwOffsetTmp, pBufferTmp, dwCopySize);
     dwOffsetTmp += dwCopySize;
     iBufferSize -= dwCopySize;
   }
@@ -800,7 +800,7 @@ int32_t CFGAS_BufferStreamImp::ReadData(uint8_t* pBuffer, int32_t iBufferSize) {
   if (iLen <= 0) {
     return 0;
   }
-  FXSYS_memcpy(pBuffer, m_pData + m_iPosition, iLen);
+  memcpy(pBuffer, m_pData + m_iPosition, iLen);
   m_iPosition += iLen;
   return iLen;
 }
@@ -831,7 +831,7 @@ int32_t CFGAS_BufferStreamImp::WriteData(const uint8_t* pBuffer,
   if (iLen <= 0) {
     return 0;
   }
-  FXSYS_memcpy(m_pData + m_iPosition, pBuffer, iLen);
+  memcpy(m_pData + m_iPosition, pBuffer, iLen);
   m_iPosition += iLen;
   if (m_iPosition > m_iLength) {
     m_iLength = m_iPosition;
@@ -846,7 +846,7 @@ int32_t CFGAS_BufferStreamImp::WriteString(const wchar_t* pStr,
   if (iLen <= 0) {
     return 0;
   }
-  FXSYS_memcpy(m_pData + m_iPosition, pStr, iLen * 2);
+  memcpy(m_pData + m_iPosition, pStr, iLen * 2);
   m_iPosition += iLen * 2;
   if (m_iPosition > m_iLength) {
     m_iLength = m_iPosition;
