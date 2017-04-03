@@ -10,7 +10,7 @@
 
 #include "core/fxcrt/fx_stream.h"
 #include "third_party/base/ptr_util.h"
-#include "xfa/fde/xml/fde_xml_imp.h"
+#include "xfa/fde/xml/cfde_xmlnode.h"
 #include "xfa/fxfa/fxfa.h"
 #include "xfa/fxfa/fxfa_basic.h"
 #include "xfa/fxfa/parser/cxfa_document.h"

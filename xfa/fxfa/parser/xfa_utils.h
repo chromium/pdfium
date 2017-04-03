@@ -7,7 +7,6 @@
 #ifndef XFA_FXFA_PARSER_XFA_UTILS_H_
 #define XFA_FXFA_PARSER_XFA_UTILS_H_
 
-#include "xfa/fde/xml/fde_xml.h"
 #include "xfa/fgas/crt/ifgas_stream.h"
 #include "xfa/fxfa/fxfa_basic.h"
 

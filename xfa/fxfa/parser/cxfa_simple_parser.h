@@ -9,11 +9,13 @@
 
 #include <memory>
 
-#include "xfa/fde/xml/fde_xml_imp.h"
 #include "xfa/fxfa/fxfa_basic.h"
 
 class CXFA_Document;
 class CXFA_Node;
+class CFDE_XMLDoc;
+class CFDE_XMLInstruction;
+class CFDE_XMLNode;
 class CFDE_XMLParser;
 class IFX_SeekableReadStream;
 class IFX_Pause;

@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "xfa/fde/xml/fde_xml_imp.h"
+#include "xfa/fde/xml/cfde_xmlsyntaxparser.h"
 
 #include <memory>
 

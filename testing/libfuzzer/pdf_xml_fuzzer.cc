@@ -10,8 +10,9 @@
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/fx_system.h"
 #include "third_party/base/ptr_util.h"
-#include "xfa/fde/xml/cfde_xml_parser.h"
-#include "xfa/fde/xml/fde_xml_imp.h"
+#include "xfa/fde/xml/cfde_xmldoc.h"
+#include "xfa/fde/xml/cfde_xmlnode.h"
+#include "xfa/fde/xml/cfde_xmlparser.h"
 #include "xfa/fxfa/parser/cxfa_widetextread.h"
 
 namespace {

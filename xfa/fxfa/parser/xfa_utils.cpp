@@ -7,7 +7,10 @@
 #include "xfa/fxfa/parser/xfa_utils.h"
 
 #include "core/fxcrt/fx_ext.h"
-#include "xfa/fde/xml/fde_xml_imp.h"
+#include "xfa/fde/xml/cfde_xmlchardata.h"
+#include "xfa/fde/xml/cfde_xmlelement.h"
+#include "xfa/fde/xml/cfde_xmlnode.h"
+#include "xfa/fde/xml/cfde_xmltext.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_localemgr.h"
 #include "xfa/fxfa/parser/cxfa_localevalue.h"

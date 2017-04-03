@@ -4,9 +4,15 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fde/xml/cfde_xml_parser.h"
+#include "xfa/fde/xml/cfde_xmlparser.h"
 
+#include "core/fxcrt/fx_basic.h"
 #include "third_party/base/ptr_util.h"
+#include "xfa/fde/xml/cfde_xmlchardata.h"
+#include "xfa/fde/xml/cfde_xmlelement.h"
+#include "xfa/fde/xml/cfde_xmlinstruction.h"
+#include "xfa/fde/xml/cfde_xmlnode.h"
+#include "xfa/fde/xml/cfde_xmltext.h"
 
 CFDE_XMLParser::CFDE_XMLParser(CFDE_XMLNode* pParent,
                                const CFX_RetainPtr<IFGAS_Stream>& pStream)

@@ -4,14 +4,18 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FDE_XML_CFDE_XML_PARSER_H_
-#define XFA_FDE_XML_CFDE_XML_PARSER_H_
+#ifndef XFA_FDE_XML_CFDE_XMLPARSER_H_
+#define XFA_FDE_XML_CFDE_XMLPARSER_H_
 
 #include <memory>
 #include <stack>
 
-#include "xfa/fde/xml/fde_xml_imp.h"
+#include "core/fxcrt/cfx_retain_ptr.h"
+#include "core/fxcrt/fx_string.h"
+#include "xfa/fde/xml/cfde_xmlsyntaxparser.h"
 
+class CFDE_XMLElement;
+class CFDE_XMLNode;
 class IFGAS_Stream;
 class IFX_Pause;
 
@@ -40,4 +44,4 @@ class CFDE_XMLParser {
   FDE_XmlSyntaxResult m_syntaxParserResult;
 };
 
-#endif  // XFA_FDE_XML_CFDE_XML_PARSER_H_
+#endif  // XFA_FDE_XML_CFDE_XMLPARSER_H_

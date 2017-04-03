@@ -11,7 +11,8 @@
 
 #include "core/fxcrt/fx_ext.h"
 #include "third_party/base/stl_util.h"
-#include "xfa/fde/xml/fde_xml_imp.h"
+#include "xfa/fde/xml/cfde_xmlelement.h"
+#include "xfa/fde/xml/cfde_xmlnode.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_layoutprocessor.h"
 #include "xfa/fxfa/parser/cxfa_localemgr.h"

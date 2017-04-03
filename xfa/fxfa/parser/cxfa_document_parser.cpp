@@ -7,6 +7,7 @@
 #include "xfa/fxfa/parser/cxfa_document_parser.h"
 
 #include "third_party/base/ptr_util.h"
+#include "xfa/fde/xml/cfde_xmldoc.h"
 #include "xfa/fxfa/fxfa.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 

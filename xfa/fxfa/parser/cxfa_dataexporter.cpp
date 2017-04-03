@@ -10,7 +10,9 @@
 
 #include "core/fxcrt/fx_basic.h"
 #include "third_party/base/stl_util.h"
-#include "xfa/fde/xml/fde_xml_imp.h"
+#include "xfa/fde/xml/cfde_xmldoc.h"
+#include "xfa/fde/xml/cfde_xmlelement.h"
+#include "xfa/fde/xml/cfde_xmlnode.h"
 #include "xfa/fgas/crt/fgas_codepage.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
@@ -46,12 +48,33 @@ CFX_WideString ExportEncodeAttribute(const CFX_WideString& str) {
   return textBuf.MakeString();
 }
 
+const uint16_t g_XMLValidCharRange[][2] = {{0x09, 0x09},
+                                           {0x0A, 0x0A},
+                                           {0x0D, 0x0D},
+                                           {0x20, 0xD7FF},
+                                           {0xE000, 0xFFFD}};
+bool IsXMLValidChar(wchar_t ch) {
+  int32_t iStart = 0;
+  int32_t iEnd = FX_ArraySize(g_XMLValidCharRange) - 1;
+  while (iStart <= iEnd) {
+    int32_t iMid = (iStart + iEnd) / 2;
+    if (ch < g_XMLValidCharRange[iMid][0]) {
+      iEnd = iMid - 1;
+    } else if (ch > g_XMLValidCharRange[iMid][1]) {
+      iStart = iMid + 1;
+    } else {
+      return true;
+    }
+  }
+  return false;
+}
+
 CFX_WideString ExportEncodeContent(const CFX_WideStringC& str) {
   CFX_WideTextBuf textBuf;
   int32_t iLen = str.GetLength();
   for (int32_t i = 0; i < iLen; i++) {
     wchar_t ch = str.GetAt(i);
-    if (!FDE_IsXMLValidChar(ch))
+    if (!IsXMLValidChar(ch))
       continue;
 
     if (ch == '&') {

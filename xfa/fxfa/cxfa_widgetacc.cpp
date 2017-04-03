@@ -11,7 +11,8 @@
 
 #include "third_party/base/stl_util.h"
 #include "xfa/fde/cfde_textout.h"
-#include "xfa/fde/xml/fde_xml_imp.h"
+#include "xfa/fde/xml/cfde_xmlelement.h"
+#include "xfa/fde/xml/cfde_xmlnode.h"
 #include "xfa/fxfa/app/cxfa_textlayout.h"
 #include "xfa/fxfa/app/xfa_ffwidgetacc.h"
 #include "xfa/fxfa/cxfa_ffapp.h"
