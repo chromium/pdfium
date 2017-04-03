@@ -103,15 +103,15 @@ int32_t CGifLZWDecoder::Decode(uint8_t* des_buf, uint32_t& des_size) {
   while (i <= des_size && (avail_in > 0 || bits_left >= code_size_cur)) {
     if (code_size_cur > 12) {
       if (err_msg_ptr) {
-        FXSYS_strncpy(err_msg_ptr, "Code Length Out Of Range",
-                      GIF_MAX_ERROR_SIZE - 1);
+        strncpy(err_msg_ptr, "Code Length Out Of Range",
+                GIF_MAX_ERROR_SIZE - 1);
       }
       return 0;
     }
     if (avail_in > 0) {
       if (bits_left > 31) {
         if (err_msg_ptr)
-          FXSYS_strncpy(err_msg_ptr, "Decode Error", GIF_MAX_ERROR_SIZE - 1);
+          strncpy(err_msg_ptr, "Decode Error", GIF_MAX_ERROR_SIZE - 1);
         return 0;
       }
       pdfium::base::CheckedNumeric<uint32_t> safe_code = *next_in++;
@@ -119,8 +119,8 @@ int32_t CGifLZWDecoder::Decode(uint8_t* des_buf, uint32_t& des_size) {
       safe_code |= code_store;
       if (!safe_code.IsValid()) {
         if (err_msg_ptr) {
-          FXSYS_strncpy(err_msg_ptr, "Code Store Out Of Range",
-                        GIF_MAX_ERROR_SIZE - 1);
+          strncpy(err_msg_ptr, "Code Store Out Of Range",
+                  GIF_MAX_ERROR_SIZE - 1);
         }
         return 0;
       }
@@ -146,8 +146,8 @@ int32_t CGifLZWDecoder::Decode(uint8_t* des_buf, uint32_t& des_size) {
               DecodeString(code);
             } else if (code > code_next) {
               if (err_msg_ptr) {
-                FXSYS_strncpy(err_msg_ptr, "Decode Error, Out Of Range",
-                              GIF_MAX_ERROR_SIZE - 1);
+                strncpy(err_msg_ptr, "Decode Error, Out Of Range",
+                        GIF_MAX_ERROR_SIZE - 1);
               }
               return 0;
             } else {
@@ -522,7 +522,7 @@ int32_t gif_read_header(gif_decompress_struct_p gif_ptr) {
   if (!gif_read_data(gif_ptr, (uint8_t**)&gif_header_ptr, 6))
     return 2;
 
-  if (FXSYS_strncmp(gif_header_ptr->signature, GIF_SIGNATURE, 3) != 0 ||
+  if (strncmp(gif_header_ptr->signature, GIF_SIGNATURE, 3) != 0 ||
       gif_header_ptr->version[0] != '8' || gif_header_ptr->version[2] != 'a') {
     gif_error(gif_ptr, "Not A Gif Image");
     return 0;

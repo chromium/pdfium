@@ -30,7 +30,7 @@ static void gif_free_func(void* p) {
 
 static void gif_error_data(gif_decompress_struct_p gif_ptr,
                            const char* err_msg) {
-  FXSYS_strncpy((char*)gif_ptr->err_ptr, err_msg, GIF_MAX_ERROR_SIZE - 1);
+  strncpy((char*)gif_ptr->err_ptr, err_msg, GIF_MAX_ERROR_SIZE - 1);
   longjmp(gif_ptr->jmpbuf, 1);
 }
 

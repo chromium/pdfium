@@ -19,8 +19,7 @@ extern "C" {
 
 static void _png_error_data(png_structp png_ptr, png_const_charp error_msg) {
   if (png_get_error_ptr(png_ptr)) {
-    FXSYS_strncpy((char*)png_get_error_ptr(png_ptr), error_msg,
-                  PNG_ERROR_SIZE - 1);
+    strncpy((char*)png_get_error_ptr(png_ptr), error_msg, PNG_ERROR_SIZE - 1);
   }
   longjmp(png_jmpbuf(png_ptr), 1);
 }
@@ -252,7 +251,7 @@ bool CCodec_PngModule::Input(FXPNG_Context* ctx,
                              CFX_DIBAttribute* pAttribute) {
   if (setjmp(png_jmpbuf(ctx->png_ptr))) {
     if (pAttribute &&
-        0 == FXSYS_strcmp(m_szLastError, "Read Header Callback Error")) {
+        0 == strcmp(m_szLastError, "Read Header Callback Error")) {
       _png_load_bmp_attribute(ctx->png_ptr, ctx->info_ptr, pAttribute);
     }
     return false;

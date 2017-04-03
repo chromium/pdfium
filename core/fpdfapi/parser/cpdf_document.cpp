@@ -966,7 +966,8 @@ CPDF_Font* CPDF_Document::AddWindowsFont(LOGFONTW* pLogFont,
   if (face.GetLength() >= LF_FACESIZE)
     return nullptr;
 
-  FXSYS_strcpy(lfa.lfFaceName, face.c_str());
+  strncpy(lfa.lfFaceName, face.c_str(),
+          (face.GetLength() + 1) * sizeof(CFX_ByteString::CharType));
   return AddWindowsFont(&lfa, bVert, bTranslateName);
 }
 

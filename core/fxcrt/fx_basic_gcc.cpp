@@ -119,7 +119,7 @@ uint32_t FXSYS_GetFullPathName(const char* filename,
   if (!buf || (int)buflen < srclen + 1)
     return srclen + 1;
 
-  FXSYS_strcpy(buf, filename);
+  strncpy(buf, filename, buflen);
   return srclen;
 }
 

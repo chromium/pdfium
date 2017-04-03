@@ -130,7 +130,7 @@ void CPDF_TrueTypeFont::LoadGlyphMap() {
       }
       if ((m_GlyphIndex[charcode] == 0 || m_GlyphIndex[charcode] == 0xffff) &&
           name) {
-        if (name[0] == '.' && FXSYS_strcmp(name, ".notdef") == 0) {
+        if (name[0] == '.' && strcmp(name, ".notdef") == 0) {
           m_GlyphIndex[charcode] = FXFT_Get_Char_Index(m_Font.GetFace(), 32);
         } else {
           m_GlyphIndex[charcode] =

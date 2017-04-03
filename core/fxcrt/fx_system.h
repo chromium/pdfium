@@ -121,11 +121,7 @@ void FXSYS_vsnprintf(char* str, size_t size, const char* fmt, va_list ap);
 
 #define FXSYS_sprintf DO_NOT_USE_SPRINTF_DIE_DIE_DIE
 #define FXSYS_vsprintf DO_NOT_USE_VSPRINTF_DIE_DIE_DIE
-#define FXSYS_strncmp strncmp
-#define FXSYS_strcmp strcmp
-#define FXSYS_strcpy strcpy
-#define FXSYS_strncpy strncpy
-#define FXSYS_strstr strstr
+
 #define FXSYS_FILE FILE
 #define FXSYS_fopen fopen
 #define FXSYS_fclose fclose

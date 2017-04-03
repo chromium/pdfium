@@ -28,7 +28,7 @@ static void bmp_free_func(void* p) {
 };
 static void bmp_error_data(bmp_decompress_struct_p bmp_ptr,
                            const char* err_msg) {
-  FXSYS_strncpy((char*)bmp_ptr->err_ptr, err_msg, BMP_MAX_ERROR_SIZE - 1);
+  strncpy((char*)bmp_ptr->err_ptr, err_msg, BMP_MAX_ERROR_SIZE - 1);
   longjmp(bmp_ptr->jmpbuf, 1);
 }
 static void bmp_read_scanline(bmp_decompress_struct_p bmp_ptr,

@@ -227,10 +227,10 @@ JMESSAGE(JWRN_TOO_MUCH_DATA, "Application transferred too many scanlines")
    (cinfo)->err->msg_parm.i[2] = (p3), \
    (cinfo)->err->msg_parm.i[3] = (p4), \
    (*(cinfo)->err->error_exit) ((j_common_ptr) (cinfo)))
-#define ERREXITS(cinfo,code,str)  \
-  ((cinfo)->err->msg_code = (code), \
-   FXSYS_strncpy((cinfo)->err->msg_parm.s, (str), JMSG_STR_PARM_MAX), \
-   (*(cinfo)->err->error_exit) ((j_common_ptr) (cinfo)))
+#define ERREXITS(cinfo,code,str)                                \
+  ((cinfo)->err->msg_code = (code),                             \
+   strncpy((cinfo)->err->msg_parm.s, (str), JMSG_STR_PARM_MAX), \
+   (*(cinfo)->err->error_exit)((j_common_ptr)(cinfo)))
 
 #define MAKESTMT(stuff)		do { stuff } while (0)
 
@@ -283,9 +283,9 @@ JMESSAGE(JWRN_TOO_MUCH_DATA, "Application transferred too many scanlines")
 	   _mp[4] = (p5); _mp[5] = (p6); _mp[6] = (p7); _mp[7] = (p8); \
 	   (cinfo)->err->msg_code = (code); \
 	   (*(cinfo)->err->emit_message) ((j_common_ptr) (cinfo), (lvl)); )
-#define TRACEMSS(cinfo,lvl,code,str)  \
-  ((cinfo)->err->msg_code = (code), \
-   FXSYS_strncpy((cinfo)->err->msg_parm.s, (str), JMSG_STR_PARM_MAX), \
-   (*(cinfo)->err->emit_message) ((j_common_ptr) (cinfo), (lvl)))
+#define TRACEMSS(cinfo,lvl,code,str)                            \
+  ((cinfo)->err->msg_code = (code),                             \
+   strncpy((cinfo)->err->msg_parm.s, (str), JMSG_STR_PARM_MAX), \
+   (*(cinfo)->err->emit_message)((j_common_ptr)(cinfo), (lvl)))
 
 #endif /* JERROR_H */
