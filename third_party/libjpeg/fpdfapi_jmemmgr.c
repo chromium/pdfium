@@ -195,18 +195,18 @@ print_mem_stats (j_common_ptr cinfo, int pool_id)
    * fprintf directly rather than going through the trace message code.
    * This is helpful because message parm array can't handle longs.
    */
-  FXSYS_fprintf(stderr, "Freeing pool %d, total space = %ld\n",
+  fprintf(stderr, "Freeing pool %d, total space = %ld\n",
 	  pool_id, mem->total_space_allocated);
 
   for (lhdr_ptr = mem->large_list[pool_id]; lhdr_ptr != NULL;
        lhdr_ptr = lhdr_ptr->hdr.next) {
-    FXSYS_fprintf(stderr, "  Large chunk used %ld\n",
+    fprintf(stderr, "  Large chunk used %ld\n",
 	    (long) lhdr_ptr->hdr.bytes_used);
   }
 
   for (shdr_ptr = mem->small_list[pool_id]; shdr_ptr != NULL;
        shdr_ptr = shdr_ptr->hdr.next) {
-    FXSYS_fprintf(stderr, "  Small chunk used %ld free %ld\n",
+    fprintf(stderr, "  Small chunk used %ld free %ld\n",
 	    (long) shdr_ptr->hdr.bytes_used,
 	    (long) shdr_ptr->hdr.bytes_left);
   }

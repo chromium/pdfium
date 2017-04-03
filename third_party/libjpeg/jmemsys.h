@@ -129,7 +129,7 @@ typedef struct backing_store_struct {
 
   /* Private fields for system-dependent backing-store management */
   /* For a typical implementation with temp files, we need: */
-  FXSYS_FILE * temp_file;		/* stdio reference to temp file */
+  FILE* temp_file;                  /* stdio reference to temp file */
   char temp_name[TEMP_NAME_LENGTH]; /* name of temp file */
 } backing_store_info;
 

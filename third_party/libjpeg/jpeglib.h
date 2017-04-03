@@ -1010,8 +1010,8 @@ EXTERN(void) jpeg_destroy_decompress JPP((j_decompress_ptr cinfo));
 #if 0
 /* Standard data source and destination managers: stdio streams. */
 /* Caller is responsible for opening the file before and closing after. */
-EXTERN(void) jpeg_stdio_dest JPP((j_compress_ptr cinfo, FXSYS_FILE * outfile));
-EXTERN(void) jpeg_stdio_src JPP((j_decompress_ptr cinfo, FXSYS_FILE * infile));
+EXTERN(void) jpeg_stdio_dest JPP((j_compress_ptr cinfo, FILE * outfile));
+EXTERN(void) jpeg_stdio_src JPP((j_decompress_ptr cinfo, FILE * infile));
 #endif
 
 /* Default parameter setup for compression */

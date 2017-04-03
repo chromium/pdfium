@@ -48,7 +48,7 @@ class CFX_FolderFontInfo : public IFX_SystemFontInfo {
   void ScanPath(const CFX_ByteString& path);
   void ScanFile(const CFX_ByteString& path);
   void ReportFace(const CFX_ByteString& path,
-                  FXSYS_FILE* pFile,
+                  FILE* pFile,
                   uint32_t filesize,
                   uint32_t offset);
   void* GetSubstFont(const CFX_ByteString& face);

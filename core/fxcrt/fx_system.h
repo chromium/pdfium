@@ -122,18 +122,6 @@ void FXSYS_vsnprintf(char* str, size_t size, const char* fmt, va_list ap);
 #define FXSYS_sprintf DO_NOT_USE_SPRINTF_DIE_DIE_DIE
 #define FXSYS_vsprintf DO_NOT_USE_VSPRINTF_DIE_DIE_DIE
 
-#define FXSYS_FILE FILE
-#define FXSYS_fopen fopen
-#define FXSYS_fclose fclose
-#define FXSYS_SEEK_END SEEK_END
-#define FXSYS_SEEK_SET SEEK_SET
-#define FXSYS_fseek fseek
-#define FXSYS_ftell ftell
-#define FXSYS_fread fread
-#define FXSYS_fwrite fwrite
-#define FXSYS_fprintf fprintf
-#define FXSYS_fflush fflush
-
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
 #ifdef _NATIVE_WCHAR_T_DEFINED
 #define FXSYS_wfopen(f, m) _wfopen((const wchar_t*)(f), (const wchar_t*)(m))
@@ -141,7 +129,7 @@ void FXSYS_vsnprintf(char* str, size_t size, const char* fmt, va_list ap);
 #define FXSYS_wfopen _wfopen
 #endif  // _NATIVE_WCHAR_T_DEFINED
 #else
-FXSYS_FILE* FXSYS_wfopen(const wchar_t* filename, const wchar_t* mode);
+FILE* FXSYS_wfopen(const wchar_t* filename, const wchar_t* mode);
 #endif  // _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
 
 #ifdef __cplusplus

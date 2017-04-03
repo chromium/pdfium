@@ -94,7 +94,7 @@ output_message (j_common_ptr cinfo)
   (*cinfo->err->format_message) (cinfo, buffer);
 
   /* Send it to stderr, adding a newline */
-  FXSYS_fprintf(stderr, "%s\n", buffer);
+  fprintf(stderr, "%s\n", buffer);
 }
 
 

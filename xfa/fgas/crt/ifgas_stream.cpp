@@ -64,7 +64,7 @@ class CFGAS_FileStreamImp : public IFGAS_StreamImp {
   bool SetLength(int32_t iLength) override;
 
  protected:
-  FXSYS_FILE* m_hFile;
+  FILE* m_hFile;
   int32_t m_iLength;
 };
 
@@ -292,20 +292,20 @@ class CFGAS_FileRead : public IFX_SeekableReadStream {
   CFX_RetainPtr<IFGAS_Stream> m_pStream;
 };
 
-int32_t FileLength(FXSYS_FILE* file) {
+int32_t FileLength(FILE* file) {
   ASSERT(file);
 #if _FX_OS_ == _FX_WIN32_DESKTOP_ || _FX_OS_ == _FX_WIN64_
   return _filelength(_fileno(file));
 #else
-  int32_t iPos = FXSYS_ftell(file);
-  FXSYS_fseek(file, 0, FXSYS_SEEK_END);
-  int32_t iLen = FXSYS_ftell(file);
-  FXSYS_fseek(file, iPos, FXSYS_SEEK_SET);
+  int32_t iPos = ftell(file);
+  fseek(file, 0, SEEK_END);
+  int32_t iLen = ftell(file);
+  fseek(file, iPos, SEEK_SET);
   return iLen;
 #endif
 }
 
-bool FileSetSize(FXSYS_FILE* file, int32_t size) {
+bool FileSetSize(FILE* file, int32_t size) {
   ASSERT(file);
 #if _FX_OS_ == _FX_WIN32_DESKTOP_ || _FX_OS_ == _FX_WIN64_
   return _chsize(_fileno(file), size) == 0;
@@ -327,7 +327,7 @@ CFGAS_FileStreamImp::CFGAS_FileStreamImp() : m_hFile(nullptr), m_iLength(0) {}
 
 CFGAS_FileStreamImp::~CFGAS_FileStreamImp() {
   if (m_hFile)
-    FXSYS_fclose(m_hFile);
+    fclose(m_hFile);
 }
 
 bool CFGAS_FileStreamImp::LoadFile(const wchar_t* pszSrcFileName,
@@ -379,14 +379,14 @@ bool CFGAS_FileStreamImp::LoadFile(const wchar_t* pszSrcFileName,
     }
   }
   CFX_ByteString szFileName = CFX_ByteString::FromUnicode(pszSrcFileName);
-  m_hFile = FXSYS_fopen(szFileName.c_str(), wsMode);
+  m_hFile = fopen(szFileName.c_str(), wsMode);
   if (!m_hFile) {
     if (dwAccess & FX_STREAMACCESS_Write) {
       if (dwAccess & FX_STREAMACCESS_Create) {
-        m_hFile = FXSYS_fopen(szFileName.c_str(), "w+b");
+        m_hFile = fopen(szFileName.c_str(), "w+b");
       }
       if (!m_hFile) {
-        m_hFile = FXSYS_fopen(szFileName.c_str(), "r+b");
+        m_hFile = fopen(szFileName.c_str(), "r+b");
         if (!m_hFile) {
           return false;
         }
@@ -414,21 +414,21 @@ int32_t CFGAS_FileStreamImp::GetLength() const {
 }
 int32_t CFGAS_FileStreamImp::Seek(FX_STREAMSEEK eSeek, int32_t iOffset) {
   ASSERT(m_hFile);
-  FXSYS_fseek(m_hFile, iOffset, eSeek);
-  return FXSYS_ftell(m_hFile);
+  fseek(m_hFile, iOffset, eSeek);
+  return ftell(m_hFile);
 }
 int32_t CFGAS_FileStreamImp::GetPosition() {
   ASSERT(m_hFile);
-  return FXSYS_ftell(m_hFile);
+  return ftell(m_hFile);
 }
 bool CFGAS_FileStreamImp::IsEOF() const {
   ASSERT(m_hFile);
-  return FXSYS_ftell(m_hFile) >= m_iLength;
+  return ftell(m_hFile) >= m_iLength;
 }
 int32_t CFGAS_FileStreamImp::ReadData(uint8_t* pBuffer, int32_t iBufferSize) {
   ASSERT(m_hFile);
   ASSERT(pBuffer && iBufferSize > 0);
-  return FXSYS_fread(pBuffer, 1, iBufferSize, m_hFile);
+  return fread(pBuffer, 1, iBufferSize, m_hFile);
 }
 int32_t CFGAS_FileStreamImp::ReadString(wchar_t* pStr,
                                         int32_t iMaxLength,
@@ -438,19 +438,19 @@ int32_t CFGAS_FileStreamImp::ReadString(wchar_t* pStr,
   if (m_iLength <= 0) {
     return 0;
   }
-  int32_t iPosition = FXSYS_ftell(m_hFile);
+  int32_t iPosition = ftell(m_hFile);
   int32_t iLen = std::min((m_iLength - iPosition) / 2, iMaxLength);
   if (iLen <= 0) {
     return 0;
   }
-  iLen = FXSYS_fread(pStr, 2, iLen, m_hFile);
+  iLen = fread(pStr, 2, iLen, m_hFile);
   int32_t iCount = 0;
   while (*pStr != L'\0' && iCount < iLen) {
     pStr++, iCount++;
   }
   iPosition += iCount * 2;
-  if (FXSYS_ftell(m_hFile) != iPosition) {
-    FXSYS_fseek(m_hFile, iPosition, 0);
+  if (ftell(m_hFile) != iPosition) {
+    fseek(m_hFile, iPosition, 0);
   }
   bEOS = (iPosition >= m_iLength);
   return iCount;
@@ -459,9 +459,9 @@ int32_t CFGAS_FileStreamImp::WriteData(const uint8_t* pBuffer,
                                        int32_t iBufferSize) {
   ASSERT(m_hFile && (GetAccessModes() & FX_STREAMACCESS_Write) != 0);
   ASSERT(pBuffer && iBufferSize > 0);
-  int32_t iRet = FXSYS_fwrite(pBuffer, 1, iBufferSize, m_hFile);
+  int32_t iRet = fwrite(pBuffer, 1, iBufferSize, m_hFile);
   if (iRet != 0) {
-    int32_t iPos = FXSYS_ftell(m_hFile);
+    int32_t iPos = ftell(m_hFile);
     if (iPos > m_iLength) {
       m_iLength = iPos;
     }
@@ -471,9 +471,9 @@ int32_t CFGAS_FileStreamImp::WriteData(const uint8_t* pBuffer,
 int32_t CFGAS_FileStreamImp::WriteString(const wchar_t* pStr, int32_t iLength) {
   ASSERT(m_hFile && (GetAccessModes() & FX_STREAMACCESS_Write) != 0);
   ASSERT(pStr && iLength > 0);
-  int32_t iRet = FXSYS_fwrite(pStr, 2, iLength, m_hFile);
+  int32_t iRet = fwrite(pStr, 2, iLength, m_hFile);
   if (iRet != 0) {
-    int32_t iPos = FXSYS_ftell(m_hFile);
+    int32_t iPos = ftell(m_hFile);
     if (iPos > m_iLength) {
       m_iLength = iPos;
     }
@@ -482,7 +482,7 @@ int32_t CFGAS_FileStreamImp::WriteString(const wchar_t* pStr, int32_t iLength) {
 }
 void CFGAS_FileStreamImp::Flush() {
   ASSERT(m_hFile && (GetAccessModes() & FX_STREAMACCESS_Write) != 0);
-  FXSYS_fflush(m_hFile);
+  fflush(m_hFile);
 }
 bool CFGAS_FileStreamImp::SetLength(int32_t iLength) {
   ASSERT(m_hFile && (GetAccessModes() & FX_STREAMACCESS_Write) != 0);

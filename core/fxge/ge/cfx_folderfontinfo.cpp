@@ -33,15 +33,15 @@ const struct {
     {"Times-Italic", "Times New Roman Italic"},
 };
 
-CFX_ByteString FPDF_ReadStringFromFile(FXSYS_FILE* pFile, uint32_t size) {
+CFX_ByteString FPDF_ReadStringFromFile(FILE* pFile, uint32_t size) {
   CFX_ByteString buffer;
-  if (!FXSYS_fread(buffer.GetBuffer(size), size, 1, pFile))
+  if (!fread(buffer.GetBuffer(size), size, 1, pFile))
     return CFX_ByteString();
   buffer.ReleaseBuffer(size);
   return buffer;
 }
 
-CFX_ByteString FPDF_LoadTableFromTT(FXSYS_FILE* pFile,
+CFX_ByteString FPDF_LoadTableFromTT(FILE* pFile,
                                     const uint8_t* pTables,
                                     uint32_t nTables,
                                     uint32_t tag) {
@@ -50,7 +50,7 @@ CFX_ByteString FPDF_LoadTableFromTT(FXSYS_FILE* pFile,
     if (GET_TT_LONG(p) == tag) {
       uint32_t offset = GET_TT_LONG(p + 8);
       uint32_t size = GET_TT_LONG(p + 12);
-      FXSYS_fseek(pFile, offset, FXSYS_SEEK_SET);
+      fseek(pFile, offset, SEEK_SET);
       return FPDF_ReadStringFromFile(pFile, size);
     }
   }
@@ -149,34 +149,34 @@ void CFX_FolderFontInfo::ScanPath(const CFX_ByteString& path) {
 }
 
 void CFX_FolderFontInfo::ScanFile(const CFX_ByteString& path) {
-  FXSYS_FILE* pFile = FXSYS_fopen(path.c_str(), "rb");
+  FILE* pFile = fopen(path.c_str(), "rb");
   if (!pFile)
     return;
 
-  FXSYS_fseek(pFile, 0, FXSYS_SEEK_END);
+  fseek(pFile, 0, SEEK_END);
 
-  uint32_t filesize = FXSYS_ftell(pFile);
+  uint32_t filesize = ftell(pFile);
   uint8_t buffer[16];
-  FXSYS_fseek(pFile, 0, FXSYS_SEEK_SET);
+  fseek(pFile, 0, SEEK_SET);
 
-  size_t readCnt = FXSYS_fread(buffer, 12, 1, pFile);
+  size_t readCnt = fread(buffer, 12, 1, pFile);
   if (readCnt != 1) {
-    FXSYS_fclose(pFile);
+    fclose(pFile);
     return;
   }
 
   if (GET_TT_LONG(buffer) == kTableTTCF) {
     uint32_t nFaces = GET_TT_LONG(buffer + 8);
     if (nFaces > std::numeric_limits<uint32_t>::max() / 4) {
-      FXSYS_fclose(pFile);
+      fclose(pFile);
       return;
     }
     uint32_t face_bytes = nFaces * 4;
     uint8_t* offsets = FX_Alloc(uint8_t, face_bytes);
-    readCnt = FXSYS_fread(offsets, 1, face_bytes, pFile);
+    readCnt = fread(offsets, 1, face_bytes, pFile);
     if (readCnt != face_bytes) {
       FX_Free(offsets);
-      FXSYS_fclose(pFile);
+      fclose(pFile);
       return;
     }
     for (uint32_t i = 0; i < nFaces; i++) {
@@ -187,16 +187,16 @@ void CFX_FolderFontInfo::ScanFile(const CFX_ByteString& path) {
   } else {
     ReportFace(path, pFile, filesize, 0);
   }
-  FXSYS_fclose(pFile);
+  fclose(pFile);
 }
 
 void CFX_FolderFontInfo::ReportFace(const CFX_ByteString& path,
-                                    FXSYS_FILE* pFile,
+                                    FILE* pFile,
                                     uint32_t filesize,
                                     uint32_t offset) {
-  FXSYS_fseek(pFile, offset, FXSYS_SEEK_SET);
+  fseek(pFile, offset, SEEK_SET);
   char buffer[16];
-  if (!FXSYS_fread(buffer, 12, 1, pFile))
+  if (!fread(buffer, 12, 1, pFile))
     return;
 
   uint32_t nTables = GET_TT_SHORT(buffer + 4);
@@ -353,15 +353,15 @@ uint32_t CFX_FolderFontInfo::GetFontData(void* hFont,
   if (!datasize || size < datasize)
     return datasize;
 
-  FXSYS_FILE* pFile = FXSYS_fopen(pFont->m_FilePath.c_str(), "rb");
+  FILE* pFile = fopen(pFont->m_FilePath.c_str(), "rb");
   if (!pFile)
     return 0;
 
-  if (FXSYS_fseek(pFile, offset, FXSYS_SEEK_SET) < 0 ||
-      FXSYS_fread(buffer, datasize, 1, pFile) != 1) {
+  if (fseek(pFile, offset, SEEK_SET) < 0 ||
+      fread(buffer, datasize, 1, pFile) != 1) {
     datasize = 0;
   }
-  FXSYS_fclose(pFile);
+  fclose(pFile);
   return datasize;
 }
 

@@ -31,7 +31,7 @@ struct cjpeg_source_struct {
   JMETHOD(void, finish_input, (j_compress_ptr cinfo,
 			       cjpeg_source_ptr sinfo));
 
-  FXSYS_FILE *input_file;
+  FILE* input_file;
 
   JSAMPARRAY buffer;
   JDIMENSION buffer_height;
@@ -59,7 +59,7 @@ struct djpeg_dest_struct {
 				djpeg_dest_ptr dinfo));
 
   /* Target file spec; filled in by djpeg.c after object is created. */
-  FXSYS_FILE * output_file;
+  FILE* output_file;
 
   /* Output pixel-row buffer.  Created by module init or start_output.
    * Width is cinfo->output_width * cinfo->output_components;
@@ -138,7 +138,7 @@ EXTERN(boolean) set_sample_factors JPP((j_compress_ptr cinfo, char *arg));
 
 /* djpeg support routines (in rdcolmap.c) */
 
-EXTERN(void) read_color_map JPP((j_decompress_ptr cinfo, FXSYS_FILE * infile));
+EXTERN(void) read_color_map JPP((j_decompress_ptr cinfo, FILE* infile));
 
 /* common support routines (in cdjpeg.c) */
 
@@ -147,8 +147,8 @@ EXTERN(void) start_progress_monitor JPP((j_common_ptr cinfo,
 					 cd_progress_ptr progress));
 EXTERN(void) end_progress_monitor JPP((j_common_ptr cinfo));
 EXTERN(boolean) keymatch JPP((char * arg, const char * keyword, int minchars));
-EXTERN(FXSYS_FILE *) read_stdin JPP((void));
-EXTERN(FXSYS_FILE *) write_stdout JPP((void));
+EXTERN(FILE*) read_stdin JPP((void));
+EXTERN(FILE*) write_stdout JPP((void));
 
 /* miscellaneous useful macros */
 
