@@ -261,19 +261,6 @@ bool CFX_Barcode::SetEndChar(char end) {
   return m_pBCEngine && memptr ? (m_pBCEngine.get()->*memptr)(end) : false;
 }
 
-bool CFX_Barcode::SetVersion(int32_t version) {
-  typedef bool (CBC_CodeBase::*memptrtype)(int32_t);
-  memptrtype memptr = nullptr;
-  switch (GetType()) {
-    case BC_QR_CODE:
-      memptr = (memptrtype)&CBC_QRCode::SetVersion;
-      break;
-    default:
-      break;
-  }
-  return m_pBCEngine && memptr ? (m_pBCEngine.get()->*memptr)(version) : false;
-}
-
 bool CFX_Barcode::SetErrorCorrectionLevel(int32_t level) {
   typedef bool (CBC_CodeBase::*memptrtype)(int32_t);
   memptrtype memptr = nullptr;

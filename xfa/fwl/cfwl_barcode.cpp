@@ -201,8 +201,6 @@ void CFWL_Barcode::GenerateBarcodeImageCache() {
     m_pBarcodeEngine->SetStartChar(m_cStartChar);
   if (m_dwAttributeMask & FWL_BCDATTRIBUTE_ENDCHAR)
     m_pBarcodeEngine->SetEndChar(m_cEndChar);
-  if (m_dwAttributeMask & FWL_BCDATTRIBUTE_VERSION)
-    m_pBarcodeEngine->SetVersion(0);
   if (m_dwAttributeMask & FWL_BCDATTRIBUTE_ECLEVEL)
     m_pBarcodeEngine->SetErrorCorrectionLevel(m_nECLevel);
   if (m_dwAttributeMask & FWL_BCDATTRIBUTE_TRUNCATED)

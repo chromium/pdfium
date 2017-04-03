@@ -15,31 +15,16 @@ class CBC_QRCodeWriter : public CBC_TwoDimWriter {
   CBC_QRCodeWriter();
   ~CBC_QRCodeWriter() override;
 
+  static void ReleaseAll();
+
   uint8_t* Encode(const CFX_WideString& contents,
                   int32_t ecLevel,
                   int32_t& outWidth,
                   int32_t& outHeight,
                   int32_t& e);
-  uint8_t* Encode(const CFX_ByteString& contents,
-                  BCFORMAT format,
-                  int32_t& outWidth,
-                  int32_t& outHeight,
-                  int32_t hints,
-                  int32_t& e);
-  uint8_t* Encode(const CFX_ByteString& contents,
-                  BCFORMAT format,
-                  int32_t& outWidth,
-                  int32_t& outHeight,
-                  int32_t& e);
-  bool SetVersion(int32_t version);
 
   // CBC_TwoDimWriter
   bool SetErrorCorrectionLevel(int32_t level) override;
-
-  static void ReleaseAll();
-
- private:
-  int32_t m_iVersion;
 };
 
 #endif  // FXBARCODE_QRCODE_BC_QRCODEWRITER_H_

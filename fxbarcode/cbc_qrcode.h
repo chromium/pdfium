@@ -12,6 +12,8 @@
 #include "core/fxge/fx_dib.h"
 #include "fxbarcode/cbc_codebase.h"
 
+class CBC_QRCodeWriter;
+
 class CBC_QRCode : public CBC_CodeBase {
  public:
   CBC_QRCode();
@@ -28,8 +30,10 @@ class CBC_QRCode : public CBC_CodeBase {
                     int32_t& e) override;
   BC_TYPE GetType() override;
 
-  bool SetVersion(int32_t version);
   bool SetErrorCorrectionLevel(int32_t level);
+
+ private:
+  CBC_QRCodeWriter* writer();
 };
 
 #endif  // FXBARCODE_CBC_QRCODE_H_

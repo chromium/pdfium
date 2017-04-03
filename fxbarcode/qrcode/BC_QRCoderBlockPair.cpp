@@ -26,11 +26,7 @@
 
 #include "fxbarcode/common/BC_CommonByteArray.h"
 
-CBC_QRCoderBlockPair::CBC_QRCoderBlockPair(
-    std::unique_ptr<CBC_CommonByteArray> data,
-    std::unique_ptr<CBC_CommonByteArray> errorCorrection)
-    : m_dataBytes(std::move(data)),
-      m_errorCorrectionBytes(std::move(errorCorrection)) {}
+CBC_QRCoderBlockPair::CBC_QRCoderBlockPair() {}
 
 CBC_QRCoderBlockPair::~CBC_QRCoderBlockPair() {}
 
@@ -41,4 +37,11 @@ const CBC_CommonByteArray* CBC_QRCoderBlockPair::GetDataBytes() const {
 const CBC_CommonByteArray* CBC_QRCoderBlockPair::GetErrorCorrectionBytes()
     const {
   return m_errorCorrectionBytes.get();
+}
+
+void CBC_QRCoderBlockPair::SetData(
+    std::unique_ptr<CBC_CommonByteArray> data,
+    std::unique_ptr<CBC_CommonByteArray> errorCorrection) {
+  m_dataBytes = std::move(data);
+  m_errorCorrectionBytes = std::move(errorCorrection);
 }

@@ -21,11 +21,6 @@ class CBC_QRCoderEncoder {
   CBC_QRCoderEncoder();
   ~CBC_QRCoderEncoder();
 
-  static void Encode(const CFX_ByteString& content,
-                     CBC_QRCoderErrorCorrectionLevel* ecLevel,
-                     CBC_QRCoder* qrCode,
-                     int32_t& e,
-                     int32_t versionSpecify);
   static void Encode(const CFX_WideString& content,
                      CBC_QRCoderErrorCorrectionLevel* ecLevel,
                      CBC_QRCoder* qrCode,

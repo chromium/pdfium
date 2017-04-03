@@ -33,7 +33,6 @@
 CBC_QRCodeWriter::CBC_QRCodeWriter() {
   m_bFixedSize = true;
   m_iCorrectLevel = 1;
-  m_iVersion = 0;
 }
 
 CBC_QRCodeWriter::~CBC_QRCodeWriter() {}
@@ -46,14 +45,6 @@ void CBC_QRCodeWriter::ReleaseAll() {
   CBC_QRCoderMode::Destroy();
   CBC_QRCoderErrorCorrectionLevel::Destroy();
   CBC_QRCoderVersion::Destroy();
-}
-
-bool CBC_QRCodeWriter::SetVersion(int32_t version) {
-  if (version < 0 || version > 40) {
-    return false;
-  }
-  m_iVersion = version;
-  return true;
 }
 
 bool CBC_QRCodeWriter::SetErrorCorrectionLevel(int32_t level) {
@@ -89,34 +80,13 @@ uint8_t* CBC_QRCodeWriter::Encode(const CFX_WideString& contents,
     }
   }
   CBC_QRCoder qr;
-  if (m_iVersion > 0 && m_iVersion < 41) {
-    CFX_ByteString byteStr = contents.UTF8Encode();
-    CBC_QRCoderEncoder::Encode(byteStr, ec, &qr, e, m_iVersion);
-  } else {
-    CBC_QRCoderEncoder::Encode(contents, ec, &qr, e);
-  }
+  CBC_QRCoderEncoder::Encode(contents, ec, &qr, e);
   if (e != BCExceptionNO)
     return nullptr;
+
   outWidth = qr.GetMatrixWidth();
   outHeight = qr.GetMatrixWidth();
   uint8_t* result = FX_Alloc2D(uint8_t, outWidth, outHeight);
   memcpy(result, qr.GetMatrix()->GetArray(), outWidth * outHeight);
   return result;
-}
-
-uint8_t* CBC_QRCodeWriter::Encode(const CFX_ByteString& contents,
-                                  BCFORMAT format,
-                                  int32_t& outWidth,
-                                  int32_t& outHeight,
-                                  int32_t hints,
-                                  int32_t& e) {
-  return nullptr;
-}
-
-uint8_t* CBC_QRCodeWriter::Encode(const CFX_ByteString& contents,
-                                  BCFORMAT format,
-                                  int32_t& outWidth,
-                                  int32_t& outHeight,
-                                  int32_t& e) {
-  return nullptr;
 }

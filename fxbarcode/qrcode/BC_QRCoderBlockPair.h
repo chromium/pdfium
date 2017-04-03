@@ -13,12 +13,13 @@ class CBC_CommonByteArray;
 
 class CBC_QRCoderBlockPair {
  public:
-  CBC_QRCoderBlockPair(std::unique_ptr<CBC_CommonByteArray> data,
-                       std::unique_ptr<CBC_CommonByteArray> errorCorrection);
-  virtual ~CBC_QRCoderBlockPair();
+  CBC_QRCoderBlockPair();
+  ~CBC_QRCoderBlockPair();
 
   const CBC_CommonByteArray* GetDataBytes() const;
   const CBC_CommonByteArray* GetErrorCorrectionBytes() const;
+  void SetData(std::unique_ptr<CBC_CommonByteArray> data,
+               std::unique_ptr<CBC_CommonByteArray> errorCorrection);
 
  private:
   std::unique_ptr<CBC_CommonByteArray> m_dataBytes;

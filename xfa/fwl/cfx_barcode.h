@@ -54,7 +54,6 @@ class CFX_Barcode {
   bool SetWideNarrowRatio(int32_t ratio);
   bool SetStartChar(char start);
   bool SetEndChar(char end);
-  bool SetVersion(int32_t version);
   bool SetErrorCorrectionLevel(int32_t level);
   bool SetTruncated(bool truncated);
 

@@ -21,26 +21,18 @@
 
 #include "fxbarcode/cbc_qrcode.h"
 
+#include <memory>
+
 #include "fxbarcode/qrcode/BC_QRCodeWriter.h"
 
 CBC_QRCode::CBC_QRCode() : CBC_CodeBase(new CBC_QRCodeWriter) {}
 
 CBC_QRCode::~CBC_QRCode() {}
 
-bool CBC_QRCode::SetVersion(int32_t version) {
-  if (version < 0 || version > 40)
-    return false;
-  return m_pBCWriter &&
-         static_cast<CBC_QRCodeWriter*>(m_pBCWriter.get())->SetVersion(version);
-}
-
 bool CBC_QRCode::SetErrorCorrectionLevel(int32_t level) {
   if (level < 0 || level > 3)
     return false;
-
-  return m_pBCWriter &&
-         static_cast<CBC_TwoDimWriter*>(m_pBCWriter.get())
-             ->SetErrorCorrectionLevel(level);
+  return m_pBCWriter && writer()->SetErrorCorrectionLevel(level);
 }
 
 bool CBC_QRCode::Encode(const CFX_WideStringC& contents,
@@ -48,34 +40,33 @@ bool CBC_QRCode::Encode(const CFX_WideStringC& contents,
                         int32_t& e) {
   int32_t outWidth = 0;
   int32_t outHeight = 0;
-  CBC_QRCodeWriter* pWriter = static_cast<CBC_QRCodeWriter*>(m_pBCWriter.get());
-  uint8_t* data = pWriter->Encode(CFX_WideString(contents),
-                                  pWriter->GetErrorCorrectionLevel(), outWidth,
-                                  outHeight, e);
+  CBC_QRCodeWriter* pWriter = writer();
+  std::unique_ptr<uint8_t, FxFreeDeleter> data(pWriter->Encode(
+      CFX_WideString(contents), pWriter->GetErrorCorrectionLevel(), outWidth,
+      outHeight, e));
   if (e != BCExceptionNO)
     return false;
-  pWriter->RenderResult(data, outWidth, outHeight, e);
-  FX_Free(data);
-  if (e != BCExceptionNO)
-    return false;
-  return true;
+  pWriter->RenderResult(data.get(), outWidth, outHeight, e);
+  return e == BCExceptionNO;
 }
 
 bool CBC_QRCode::RenderDevice(CFX_RenderDevice* device,
                               const CFX_Matrix* matrix,
                               int32_t& e) {
-  static_cast<CBC_TwoDimWriter*>(m_pBCWriter.get())
-      ->RenderDeviceResult(device, matrix);
+  writer()->RenderDeviceResult(device, matrix);
   return true;
 }
 
 bool CBC_QRCode::RenderBitmap(CFX_RetainPtr<CFX_DIBitmap>& pOutBitmap,
                               int32_t& e) {
-  static_cast<CBC_TwoDimWriter*>(m_pBCWriter.get())
-      ->RenderBitmapResult(pOutBitmap, e);
+  writer()->RenderBitmapResult(pOutBitmap, e);
   return e == BCExceptionNO;
 }
 
 BC_TYPE CBC_QRCode::GetType() {
   return BC_QR_CODE;
+}
+
+CBC_QRCodeWriter* CBC_QRCode::writer() {
+  return static_cast<CBC_QRCodeWriter*>(m_pBCWriter.get());
 }
