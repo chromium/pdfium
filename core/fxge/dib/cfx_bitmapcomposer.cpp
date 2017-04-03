@@ -1,13 +1,14 @@
-// Copyright 2014 PDFium Authors. All rights reserved.
+// Copyright 2017 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include <algorithm>
+#include "core/fxge/dib/cfx_bitmapcomposer.h"
 
 #include "core/fxcodec/fx_codec.h"
 #include "core/fxge/cfx_gemodule.h"
+#include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/ge/cfx_cliprgn.h"
 
 CFX_BitmapComposer::CFX_BitmapComposer() {

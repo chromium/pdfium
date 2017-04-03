@@ -19,7 +19,9 @@
 #include "core/fxge/cfx_graphstatedata.h"
 #include "core/fxge/cfx_pathdata.h"
 #include "core/fxge/cfx_renderdevice.h"
+#include "core/fxge/dib/cfx_bitmapcomposer.h"
 #include "core/fxge/dib/cfx_imagerenderer.h"
+#include "core/fxge/dib/cfx_imagestretcher.h"
 #include "core/fxge/skia/fx_skia_device.h"
 
 #ifdef _SKIA_SUPPORT_PATHS_

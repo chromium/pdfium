@@ -10,7 +10,9 @@
 #include <memory>
 #include <utility>
 
+#include "core/fxge/dib/cfx_bitmapstorer.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
+#include "core/fxge/dib/cfx_imagestretcher.h"
 #include "core/fxge/dib/cfx_imagetransformer.h"
 #include "core/fxge/ge/cfx_cliprgn.h"
 #include "third_party/base/ptr_util.h"
