@@ -76,15 +76,15 @@ uint16_t FPDFAPI_CIDFromCharCode(const FXCMAP_CMap* pMap, uint32_t charcode) {
     while (1) {
       if (pMap->m_DWordMapType == FXCMAP_CMap::Range) {
         uint16_t* found = static_cast<uint16_t*>(
-            FXSYS_bsearch(&charcode, pMap->m_pDWordMap, pMap->m_DWordCount, 8,
-                          compareDWordRange));
+            bsearch(&charcode, pMap->m_pDWordMap, pMap->m_DWordCount, 8,
+                    compareDWordRange));
         if (found)
           return found[3] + (uint16_t)charcode - found[1];
 
       } else if (pMap->m_DWordMapType == FXCMAP_CMap::Single) {
         uint16_t* found = static_cast<uint16_t*>(
-            FXSYS_bsearch(&charcode, pMap->m_pDWordMap, pMap->m_DWordCount, 6,
-                          compareDWordSingle));
+            bsearch(&charcode, pMap->m_pDWordMap, pMap->m_DWordCount, 6,
+                    compareDWordSingle));
         if (found)
           return found[2];
       }
@@ -101,13 +101,13 @@ uint16_t FPDFAPI_CIDFromCharCode(const FXCMAP_CMap* pMap, uint32_t charcode) {
     if (!pMap->m_pWordMap)
       return 0;
     if (pMap->m_WordMapType == FXCMAP_CMap::Single) {
-      uint16_t* found = static_cast<uint16_t*>(FXSYS_bsearch(
-          &code, pMap->m_pWordMap, pMap->m_WordCount, 4, compareWord));
+      uint16_t* found = static_cast<uint16_t*>(
+          bsearch(&code, pMap->m_pWordMap, pMap->m_WordCount, 4, compareWord));
       if (found)
         return found[1];
 
     } else if (pMap->m_WordMapType == FXCMAP_CMap::Range) {
-      uint16_t* found = static_cast<uint16_t*>(FXSYS_bsearch(
+      uint16_t* found = static_cast<uint16_t*>(bsearch(
           &code, pMap->m_pWordMap, pMap->m_WordCount, 6, compareWordRange));
       if (found)
         return found[2] + code - found[0];

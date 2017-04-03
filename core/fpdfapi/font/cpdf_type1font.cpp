@@ -35,9 +35,9 @@ int compareString(const void* key, const void* element) {
 }
 
 const char* GlyphNameRemap(const char* pStrAdobe) {
-  const GlyphNameMap* found = static_cast<const GlyphNameMap*>(FXSYS_bsearch(
-      pStrAdobe, g_GlyphNameSubsts, FX_ArraySize(g_GlyphNameSubsts),
-      sizeof(GlyphNameMap), compareString));
+  const GlyphNameMap* found = static_cast<const GlyphNameMap*>(
+      bsearch(pStrAdobe, g_GlyphNameSubsts, FX_ArraySize(g_GlyphNameSubsts),
+              sizeof(GlyphNameMap), compareString));
   return found ? found->m_pStrUnicode : nullptr;
 }
 

@@ -48,7 +48,7 @@ void CPDF_PageRenderCache::CacheOptimization(int32_t dwLimitCacheSize) {
     pCACHEINFO[i].time = it.second->GetTimeCount();
     pCACHEINFO[i++].pStream = it.second->GetStream();
   }
-  FXSYS_qsort(pCACHEINFO, nCount, sizeof(CACHEINFO), compare);
+  qsort(pCACHEINFO, nCount, sizeof(CACHEINFO), compare);
   uint32_t nTimeCount = m_nTimeCount;
 
   // Check if time value is about to roll over and reset all entries.

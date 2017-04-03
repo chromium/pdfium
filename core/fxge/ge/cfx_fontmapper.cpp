@@ -216,7 +216,7 @@ CFX_ByteString GetFontFamily(CFX_ByteString fontName, int nStyle) {
       fontName = "FreeStyleScript";
     return fontName;
   }
-  AltFontFamily* found = reinterpret_cast<AltFontFamily*>(FXSYS_bsearch(
+  AltFontFamily* found = reinterpret_cast<AltFontFamily*>(bsearch(
       fontName.c_str(), g_AltFontFamilies, FX_ArraySize(g_AltFontFamilies),
       sizeof(AltFontFamily), CompareFontFamilyString));
   return found ? CFX_ByteString(found->m_pFontFamily) : fontName;
@@ -809,8 +809,8 @@ FXFT_Face CFX_FontMapper::GetCachedFace(void* hFont,
 
 int PDF_GetStandardFontName(CFX_ByteString* name) {
   AltFontName* found = static_cast<AltFontName*>(
-      FXSYS_bsearch(name->c_str(), g_AltFontNames, FX_ArraySize(g_AltFontNames),
-                    sizeof(AltFontName), CompareString));
+      bsearch(name->c_str(), g_AltFontNames, FX_ArraySize(g_AltFontNames),
+              sizeof(AltFontName), CompareString));
   if (!found)
     return -1;
 

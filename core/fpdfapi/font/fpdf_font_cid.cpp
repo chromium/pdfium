@@ -579,8 +579,7 @@ void CPDF_CMap::LoadEmbedded(const uint8_t* pData, uint32_t size) {
     *(uint32_t*)m_pAddMapping = parser.m_AddMaps.GetSize() / 8;
     memcpy(m_pAddMapping + 4, parser.m_AddMaps.GetBuffer(),
            parser.m_AddMaps.GetSize());
-    FXSYS_qsort(m_pAddMapping + 4, parser.m_AddMaps.GetSize() / 8, 8,
-                CompareDWORD);
+    qsort(m_pAddMapping + 4, parser.m_AddMaps.GetSize() / 8, 8, CompareDWORD);
   }
 }
 
@@ -596,8 +595,8 @@ uint16_t CPDF_CMap::CIDFromCharCode(uint32_t charcode) const {
   }
   if (charcode >> 16) {
     if (m_pAddMapping) {
-      void* found = FXSYS_bsearch(&charcode, m_pAddMapping + 4,
-                                  *(uint32_t*)m_pAddMapping, 8, CompareCID);
+      void* found = bsearch(&charcode, m_pAddMapping + 4,
+                            *(uint32_t*)m_pAddMapping, 8, CompareCID);
       if (!found)
         return 0;
       return (uint16_t)(((uint32_t*)found)[1] % 65536 + charcode -
