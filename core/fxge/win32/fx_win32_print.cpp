@@ -12,6 +12,7 @@
 
 #include "core/fxcrt/fx_system.h"
 #include "core/fxge/cfx_windowsdevice.h"
+#include "core/fxge/dib/cfx_dibextractor.h"
 #include "core/fxge/dib/dib_int.h"
 #include "core/fxge/fx_freetype.h"
 #include "core/fxge/ge/fx_text_int.h"

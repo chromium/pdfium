@@ -12,6 +12,8 @@
 #include "core/fxge/fx_dib.h"
 #include "third_party/base/ptr_util.h"
 
+namespace {
+
 class CFX_Palette {
  public:
   CFX_Palette();
@@ -657,6 +659,8 @@ bool ConvertBuffer_32bppCmyk2Rgb32(
   return true;
 }
 
+}  // namespace
+
 bool ConvertBuffer(FXDIB_Format dest_format,
                    uint8_t* dest_buf,
                    int dest_pitch,
@@ -785,84 +789,4 @@ bool ConvertBuffer(FXDIB_Format dest_format,
     default:
       return false;
   }
-}
-
-bool CFX_DIBitmap::ConvertFormat(FXDIB_Format dest_format) {
-  FXDIB_Format src_format = GetFormat();
-  if (dest_format == src_format)
-    return true;
-
-  if (dest_format == FXDIB_8bppMask && src_format == FXDIB_8bppRgb &&
-      !m_pPalette) {
-    m_AlphaFlag = 1;
-    return true;
-  }
-  if (dest_format == FXDIB_Argb && src_format == FXDIB_Rgb32) {
-    m_AlphaFlag = 2;
-    for (int row = 0; row < m_Height; row++) {
-      uint8_t* scanline = m_pBuffer + row * m_Pitch + 3;
-      for (int col = 0; col < m_Width; col++) {
-        *scanline = 0xff;
-        scanline += 4;
-      }
-    }
-    return true;
-  }
-  int dest_bpp = dest_format & 0xff;
-  int dest_pitch = (dest_bpp * m_Width + 31) / 32 * 4;
-  uint8_t* dest_buf = FX_TryAlloc(uint8_t, dest_pitch * m_Height + 4);
-  if (!dest_buf) {
-    return false;
-  }
-  CFX_RetainPtr<CFX_DIBitmap> pAlphaMask;
-  if (dest_format == FXDIB_Argb) {
-    FXSYS_memset(dest_buf, 0xff, dest_pitch * m_Height + 4);
-    if (m_pAlphaMask) {
-      for (int row = 0; row < m_Height; row++) {
-        uint8_t* pDstScanline = dest_buf + row * dest_pitch + 3;
-        const uint8_t* pSrcScanline = m_pAlphaMask->GetScanline(row);
-        for (int col = 0; col < m_Width; col++) {
-          *pDstScanline = *pSrcScanline++;
-          pDstScanline += 4;
-        }
-      }
-    }
-  } else if (dest_format & 0x0200) {
-    if (src_format == FXDIB_Argb) {
-      pAlphaMask = CloneAlphaMask();
-      if (!pAlphaMask) {
-        FX_Free(dest_buf);
-        return false;
-      }
-    } else {
-      if (!m_pAlphaMask) {
-        if (!BuildAlphaMask()) {
-          FX_Free(dest_buf);
-          return false;
-        }
-        pAlphaMask = std::move(m_pAlphaMask);
-      } else {
-        pAlphaMask = m_pAlphaMask;
-      }
-    }
-  }
-  bool ret = false;
-  CFX_RetainPtr<CFX_DIBSource> holder(this);
-  std::unique_ptr<uint32_t, FxFreeDeleter> pal_8bpp;
-  ret = ConvertBuffer(dest_format, dest_buf, dest_pitch, m_Width, m_Height,
-                      holder, 0, 0, &pal_8bpp);
-  if (!ret) {
-    FX_Free(dest_buf);
-    return false;
-  }
-  m_pAlphaMask = pAlphaMask;
-  m_pPalette = std::move(pal_8bpp);
-  if (!m_bExtBuf)
-    FX_Free(m_pBuffer);
-  m_bExtBuf = false;
-  m_pBuffer = dest_buf;
-  m_bpp = (uint8_t)dest_format;
-  m_AlphaFlag = (uint8_t)(dest_format >> 8);
-  m_Pitch = dest_pitch;
-  return true;
 }

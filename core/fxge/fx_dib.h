@@ -118,17 +118,6 @@ bool ConvertBuffer(FXDIB_Format dest_format,
                    int src_top,
                    std::unique_ptr<uint32_t, FxFreeDeleter>* pal);
 
-class CFX_DIBExtractor {
- public:
-  explicit CFX_DIBExtractor(const CFX_RetainPtr<CFX_DIBSource>& pSrc);
-  ~CFX_DIBExtractor();
-
-  CFX_RetainPtr<CFX_DIBitmap> GetBitmap() { return m_pBitmap; }
-
- private:
-  CFX_RetainPtr<CFX_DIBitmap> m_pBitmap;
-};
-
 class IFX_ScanlineComposer {
  public:
   virtual ~IFX_ScanlineComposer() {}
