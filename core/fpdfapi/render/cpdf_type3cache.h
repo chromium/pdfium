@@ -10,16 +10,17 @@
 #include <map>
 
 #include "core/fpdfapi/font/cpdf_type3font.h"
+#include "core/fxcrt/cfx_retain_ptr.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
 
 class CPDF_Type3Glyphs;
 
-class CPDF_Type3Cache {
+class CPDF_Type3Cache : public CFX_Retainable {
  public:
-  explicit CPDF_Type3Cache(CPDF_Type3Font* pFont);
-  ~CPDF_Type3Cache();
+  template <typename T, typename... Args>
+  friend CFX_RetainPtr<T> pdfium::MakeRetain(Args&&... args);
 
   CFX_GlyphBitmap* LoadGlyph(uint32_t charcode,
                              const CFX_Matrix* pMatrix,
@@ -27,6 +28,9 @@ class CPDF_Type3Cache {
                              float retinaScaleY);
 
  private:
+  explicit CPDF_Type3Cache(CPDF_Type3Font* pFont);
+  ~CPDF_Type3Cache() override;
+
   CFX_GlyphBitmap* RenderGlyph(CPDF_Type3Glyphs* pSize,
                                uint32_t charcode,
                                const CFX_Matrix* pMatrix,

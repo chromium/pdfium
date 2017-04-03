@@ -32,10 +32,7 @@ CPDF_DocRenderData::~CPDF_DocRenderData() {
 void CPDF_DocRenderData::Clear(bool bRelease) {
   for (auto it = m_Type3FaceMap.begin(); it != m_Type3FaceMap.end();) {
     auto curr_it = it++;
-    CPDF_CountedObject<CPDF_Type3Cache>* cache = curr_it->second;
-    if (bRelease || cache->use_count() < 2) {
-      delete cache->get();
-      delete cache;
+    if (bRelease || curr_it->second->HasOneRef()) {
       m_Type3FaceMap.erase(curr_it);
     }
   }
@@ -47,29 +44,21 @@ void CPDF_DocRenderData::Clear(bool bRelease) {
   }
 }
 
-CPDF_Type3Cache* CPDF_DocRenderData::GetCachedType3(CPDF_Type3Font* pFont) {
-  CPDF_CountedObject<CPDF_Type3Cache>* pCache;
+CFX_RetainPtr<CPDF_Type3Cache> CPDF_DocRenderData::GetCachedType3(
+    CPDF_Type3Font* pFont) {
   auto it = m_Type3FaceMap.find(pFont);
-  if (it == m_Type3FaceMap.end()) {
-    pCache = new CPDF_CountedObject<CPDF_Type3Cache>(
-        pdfium::MakeUnique<CPDF_Type3Cache>(pFont));
-    m_Type3FaceMap[pFont] = pCache;
-  } else {
-    pCache = it->second;
-  }
-  return pCache->AddRef();
+  if (it != m_Type3FaceMap.end())
+    return it->second;
+
+  auto pCache = pdfium::MakeRetain<CPDF_Type3Cache>(pFont);
+  m_Type3FaceMap[pFont] = pCache;
+  return pCache;
 }
 
-void CPDF_DocRenderData::ReleaseCachedType3(CPDF_Type3Font* pFont) {
+void CPDF_DocRenderData::MaybePurgeCachedType3(CPDF_Type3Font* pFont) {
   auto it = m_Type3FaceMap.find(pFont);
-  if (it != m_Type3FaceMap.end()) {
-    it->second->RemoveRef();
-    if (it->second->use_count() < 2) {
-      delete it->second->get();
-      delete it->second;
-      m_Type3FaceMap.erase(it);
-    }
-  }
+  if (it != m_Type3FaceMap.end() && it->second->HasOneRef())
+    m_Type3FaceMap.erase(it);
 }
 
 CFX_RetainPtr<CPDF_TransferFunc> CPDF_DocRenderData::GetTransferFunc(

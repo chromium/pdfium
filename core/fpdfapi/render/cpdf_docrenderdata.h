@@ -23,8 +23,8 @@ class CPDF_DocRenderData {
   explicit CPDF_DocRenderData(CPDF_Document* pPDFDoc);
   ~CPDF_DocRenderData();
 
-  CPDF_Type3Cache* GetCachedType3(CPDF_Type3Font* pFont);
-  void ReleaseCachedType3(CPDF_Type3Font* pFont);
+  CFX_RetainPtr<CPDF_Type3Cache> GetCachedType3(CPDF_Type3Font* pFont);
+  void MaybePurgeCachedType3(CPDF_Type3Font* pFont);
 
   CFX_RetainPtr<CPDF_TransferFunc> GetTransferFunc(CPDF_Object* pObj);
   void MaybePurgeTransferFunc(CPDF_Object* pOb);
@@ -32,11 +32,8 @@ class CPDF_DocRenderData {
   void Clear(bool bRelease);
 
  private:
-  using CPDF_Type3CacheMap =
-      std::map<CPDF_Font*, CPDF_CountedObject<CPDF_Type3Cache>*>;
-
   CPDF_Document* m_pPDFDoc;  // Not Owned
-  CPDF_Type3CacheMap m_Type3FaceMap;
+  std::map<CPDF_Font*, CFX_RetainPtr<CPDF_Type3Cache>> m_Type3FaceMap;
   std::map<CPDF_Object*, CFX_RetainPtr<CPDF_TransferFunc>> m_TransferFuncMap;
 };
 

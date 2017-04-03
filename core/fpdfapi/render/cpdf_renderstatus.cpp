@@ -66,11 +66,12 @@
 namespace {
 
 void ReleaseCachedType3(CPDF_Type3Font* pFont) {
-  if (!pFont->m_pDocument)
+  CPDF_Document* pDoc = pFont->m_pDocument;
+  if (!pDoc)
     return;
 
-  pFont->m_pDocument->GetRenderData()->ReleaseCachedType3(pFont);
-  pFont->m_pDocument->GetPageData()->ReleaseFont(pFont->GetFontDict());
+  pDoc->GetRenderData()->MaybePurgeCachedType3(pFont);
+  pDoc->GetPageData()->ReleaseFont(pFont->GetFontDict());
 }
 
 class CPDF_RefType3Cache {
@@ -1795,12 +1796,14 @@ bool CPDF_RenderStatus::ProcessText(CPDF_TextObject* textobj,
                                            &text_matrix, fill_argb, &m_Options);
 }
 
-CPDF_Type3Cache* CPDF_RenderStatus::GetCachedType3(CPDF_Type3Font* pFont) {
-  if (!pFont->m_pDocument) {
+CFX_RetainPtr<CPDF_Type3Cache> CPDF_RenderStatus::GetCachedType3(
+    CPDF_Type3Font* pFont) {
+  CPDF_Document* pDoc = pFont->m_pDocument;
+  if (!pDoc)
     return nullptr;
-  }
-  pFont->m_pDocument->GetPageData()->GetFont(pFont->GetFontDict());
-  return pFont->m_pDocument->GetRenderData()->GetCachedType3(pFont);
+
+  pDoc->GetPageData()->GetFont(pFont->GetFontDict());
+  return pDoc->GetRenderData()->GetCachedType3(pFont);
 }
 
 // TODO(npm): Font fallback for type 3 fonts? (Completely separate code!!)
@@ -1902,7 +1905,7 @@ bool CPDF_RenderStatus::ProcessType3Text(CPDF_TextObject* textobj,
       delete pStates;
     } else if (pType3Char->m_pBitmap) {
       if (device_class == FXDC_DISPLAY) {
-        CPDF_Type3Cache* pCache = GetCachedType3(pType3Font);
+        CFX_RetainPtr<CPDF_Type3Cache> pCache = GetCachedType3(pType3Font);
         refTypeCache.m_dwCount++;
         CFX_GlyphBitmap* pBitmap = pCache->LoadGlyph(charcode, &matrix, sa, sd);
         if (!pBitmap)
