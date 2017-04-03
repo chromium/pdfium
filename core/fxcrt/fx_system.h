@@ -56,12 +56,12 @@
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
 #include <windows.h>
 #include <sal.h>
-#endif
+#endif  // _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
 
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
 #include <Carbon/Carbon.h>
 #include <libkern/OSAtomic.h>
-#endif
+#endif  // _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
 
 #ifdef __cplusplus
 extern "C" {
@@ -92,14 +92,14 @@ typedef int FX_STRSIZE;
 #define ASSERT assert
 #else
 #define ASSERT(a)
-#endif
-#endif
+#endif  // NDEBUG
+#endif  // ASSERT
 
 #if defined(__clang__) || defined(__GNUC__)
 #define PDFIUM_IMMEDIATE_CRASH() __builtin_trap()
 #else
 #define PDFIUM_IMMEDIATE_CRASH() ((void)(*(volatile char*)0 = 0))
-#endif
+#endif  // defined(__clang__) || defined(__GNUC__)
 
 // M_PI not universally present on all platforms.
 #define FX_PI 3.1415926535897932384626433832795f
@@ -117,7 +117,7 @@ void FXSYS_vsnprintf(char* str, size_t size, const char* fmt, va_list ap);
 #else
 #define FXSYS_snprintf (void)snprintf
 #define FXSYS_vsnprintf (void)vsnprintf
-#endif
+#endif  // _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_ && _MSC_VER < 1900
 
 #define FXSYS_sprintf DO_NOT_USE_SPRINTF_DIE_DIE_DIE
 #define FXSYS_vsprintf DO_NOT_USE_VSPRINTF_DIE_DIE_DIE
@@ -143,7 +143,7 @@ void FXSYS_vsnprintf(char* str, size_t size, const char* fmt, va_list ap);
 #define FXSYS_wfopen(f, m) _wfopen((const wchar_t*)(f), (const wchar_t*)(m))
 #else
 #define FXSYS_wfopen _wfopen
-#endif
+#endif  // _NATIVE_WCHAR_T_DEFINED
 #else
 FXSYS_FILE* FXSYS_wfopen(const wchar_t* filename, const wchar_t* mode);
 #endif  // _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
@@ -185,7 +185,7 @@ extern "C" {
 #else
 #define FXSYS_strlen(ptr) ((FX_STRSIZE)strlen(ptr))
 #define FXSYS_wcslen(ptr) ((FX_STRSIZE)wcslen(ptr))
-#endif
+#endif  // __cplusplus
 
 #define FXSYS_wcscmp wcscmp
 #define FXSYS_wcsstr wcsstr
@@ -206,6 +206,10 @@ extern "C" {
 #define FXSYS_strlwr _strlwr
 #define FXSYS_strupr _strupr
 #define FXSYS_stricmp _stricmp
+#define FXSYS_pow(a, b) (float)powf(a, b)
+#define FXSYS_GetFullPathName GetFullPathName
+#define FXSYS_GetModuleFileName GetModuleFileName
+
 #ifdef _NATIVE_WCHAR_T_DEFINED
 #define FXSYS_wcsicmp(str1, str2) _wcsicmp((wchar_t*)(str1), (wchar_t*)(str2))
 #define FXSYS_WideCharToMultiByte(p1, p2, p3, p4, p5, p6, p7, p8) \
@@ -220,9 +224,7 @@ extern "C" {
 #define FXSYS_MultiByteToWideChar MultiByteToWideChar
 #define FXSYS_wcslwr _wcslwr
 #define FXSYS_wcsupr _wcsupr
-#endif
-#define FXSYS_GetFullPathName GetFullPathName
-#define FXSYS_GetModuleFileName GetModuleFileName
+#endif  // _NATIVE_WCHAR_T_DEFINED
 #else
 int FXSYS_GetACP();
 char* FXSYS_itoa(int value, char* str, int radix);
@@ -251,13 +253,9 @@ int FXSYS_stricmp(const char*, const char*);
 int FXSYS_wcsicmp(const wchar_t* str1, const wchar_t* str2);
 wchar_t* FXSYS_wcslwr(wchar_t* str);
 wchar_t* FXSYS_wcsupr(wchar_t* str);
+#define FXSYS_pow(a, b) (float)pow(a, b)
 #endif  // _FXM_PLATFORM == _FXM_PLATFORM_WINDOWS_
 
-#if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
-#define FXSYS_pow(a, b) (float)powf(a, b)
-#else
-#define FXSYS_pow(a, b) (float)pow(a, b)
-#endif
 #define FXSYS_sqrt(a) (float)sqrt(a)
 #define FXSYS_fabs(a) (float)fabs(a)
 #define FXSYS_atan2(a, b) (float)atan2(a, b)
@@ -276,10 +274,6 @@ wchar_t* FXSYS_wcsupr(wchar_t* str);
 #define FXDWORD_GET_MSBFIRST(p)                                                \
   ((static_cast<uint32_t>(p[0]) << 24) | (static_cast<uint32_t>(p[1]) << 16) | \
    (static_cast<uint32_t>(p[2]) << 8) | (static_cast<uint32_t>(p[3])))
-#define FXSYS_HIBYTE(word) ((uint8_t)((word) >> 8))
-#define FXSYS_LOBYTE(word) ((uint8_t)(word))
-#define FXSYS_HIWORD(dword) ((uint16_t)((dword) >> 16))
-#define FXSYS_LOWORD(dword) ((uint16_t)(dword))
 int32_t FXSYS_atoi(const char* str);
 uint32_t FXSYS_atoui(const char* str);
 int32_t FXSYS_wtoi(const wchar_t* str);
@@ -289,8 +283,8 @@ const char* FXSYS_i64toa(int64_t value, char* str, int radix);
 int FXSYS_round(float f);
 #define FXSYS_sqrt2(a, b) (float)FXSYS_sqrt((a) * (a) + (b) * (b))
 #ifdef __cplusplus
-};
-#endif
+};      // extern C
+#endif  // __cplusplus
 
 // To print a size_t value in a portable way:
 //   size_t size;

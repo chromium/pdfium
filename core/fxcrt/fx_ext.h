@@ -16,7 +16,6 @@
 #define FX_INVALID_OFFSET static_cast<uint32_t>(-1)
 
 float FXSYS_tan(float a);
-float FXSYS_logb(float b, float x);
 float FXSYS_strtof(const char* pcsStr,
                    int32_t iLength = -1,
                    int32_t* pUsedLen = nullptr);
@@ -30,24 +29,31 @@ int32_t FXSYS_strnicmp(const char* s1, const char* s2, size_t count);
 inline bool FXSYS_islower(int32_t ch) {
   return ch >= 'a' && ch <= 'z';
 }
+
 inline bool FXSYS_isupper(int32_t ch) {
   return ch >= 'A' && ch <= 'Z';
 }
+
 inline int32_t FXSYS_tolower(int32_t ch) {
   return ch < 'A' || ch > 'Z' ? ch : (ch + 0x20);
 }
+
 inline int32_t FXSYS_toupper(int32_t ch) {
   return ch < 'a' || ch > 'z' ? ch : (ch - 0x20);
 }
+
 inline bool FXSYS_iswalpha(wchar_t wch) {
   return (wch >= L'A' && wch <= L'Z') || (wch >= L'a' && wch <= L'z');
 }
+
 inline bool FXSYS_iswdigit(wchar_t wch) {
   return wch >= L'0' && wch <= L'9';
 }
+
 inline bool FXSYS_iswalnum(wchar_t wch) {
   return FXSYS_iswalpha(wch) || FXSYS_iswdigit(wch);
 }
+
 inline bool FXSYS_iswspace(wchar_t c) {
   return (c == 0x20) || (c == 0x0d) || (c == 0x0a) || (c == 0x09);
 }
