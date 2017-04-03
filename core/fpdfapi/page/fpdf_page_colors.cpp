@@ -218,8 +218,10 @@ void CPDF_DeviceCS::TranslateImageLine(uint8_t* pDestBuf,
   }
 }
 
-CPDF_IccProfile::CPDF_IccProfile(const uint8_t* pData, uint32_t dwSize)
-    : m_bsRGB(DetectSRGB(pData, dwSize)) {
+CPDF_IccProfile::CPDF_IccProfile(CPDF_Stream* pStream,
+                                 const uint8_t* pData,
+                                 uint32_t dwSize)
+    : m_bsRGB(DetectSRGB(pData, dwSize)), m_pStream(pStream) {
   if (m_bsRGB) {
     m_nSrcComponents = 3;
     return;

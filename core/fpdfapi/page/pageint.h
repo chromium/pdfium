@@ -12,11 +12,13 @@
 
 #include "core/fpdfapi/page/cpdf_colorspace.h"
 #include "core/fpdfapi/page/cpdf_countedobject.h"
+#include "core/fxcrt/cfx_retain_ptr.h"
 
 class CPDF_ExpIntFunc;
 class CPDF_Pattern;
 class CPDF_SampledFunc;
 class CPDF_StitchFunc;
+class CPDF_Stream;
 class CPDF_StreamAcc;
 
 class CPDF_Function {
@@ -134,11 +136,12 @@ class CPDF_StitchFunc : public CPDF_Function {
   static const uint32_t kRequiredNumInputs = 1;
 };
 
-class CPDF_IccProfile {
+class CPDF_IccProfile : public CFX_Retainable {
  public:
-  CPDF_IccProfile(const uint8_t* pData, uint32_t dwSize);
-  ~CPDF_IccProfile();
+  template <typename T, typename... Args>
+  friend CFX_RetainPtr<T> pdfium::MakeRetain(Args&&... args);
 
+  CPDF_Stream* GetStream() const { return m_pStream; }
   bool IsValid() const { return IsSRGB() || IsSupported(); }
   bool IsSRGB() const { return m_bsRGB; }
   bool IsSupported() const { return !!m_pTransform; }
@@ -146,7 +149,11 @@ class CPDF_IccProfile {
   uint32_t GetComponents() const { return m_nSrcComponents; }
 
  private:
+  CPDF_IccProfile(CPDF_Stream* pStream, const uint8_t* pData, uint32_t dwSize);
+  ~CPDF_IccProfile() override;
+
   const bool m_bsRGB;
+  CPDF_Stream* const m_pStream;
   void* m_pTransform = nullptr;
   uint32_t m_nSrcComponents = 0;
 };

@@ -50,8 +50,8 @@ class CPDF_DocPageData {
   CFX_RetainPtr<CPDF_Image> GetImage(uint32_t dwStreamObjNum);
   void MaybePurgeImage(uint32_t dwStreamObjNum);
 
-  CPDF_IccProfile* GetIccProfile(CPDF_Stream* pIccProfileStream);
-  void ReleaseIccProfile(const CPDF_IccProfile* pIccProfile);
+  CFX_RetainPtr<CPDF_IccProfile> GetIccProfile(CPDF_Stream* pProfileStream);
+  void MaybePurgeIccProfile(CPDF_Stream* pProfileStream);
 
   CPDF_StreamAcc* GetFontFileStreamAcc(CPDF_Stream* pFontStream);
   void ReleaseFontFileStreamAcc(const CPDF_Stream* pFontStream);
@@ -61,7 +61,6 @@ class CPDF_DocPageData {
 
  private:
   using CPDF_CountedFont = CPDF_CountedObject<CPDF_Font>;
-  using CPDF_CountedIccProfile = CPDF_CountedObject<CPDF_IccProfile>;
   using CPDF_CountedStreamAcc = CPDF_CountedObject<CPDF_StreamAcc>;
 
   CPDF_ColorSpace* GetColorSpaceImpl(CPDF_Object* pCSObj,
@@ -74,7 +73,7 @@ class CPDF_DocPageData {
   std::map<const CPDF_Object*, CPDF_CountedColorSpace*> m_ColorSpaceMap;
   std::map<const CPDF_Stream*, CPDF_CountedStreamAcc*> m_FontFileMap;
   std::map<const CPDF_Dictionary*, CPDF_CountedFont*> m_FontMap;
-  std::map<const CPDF_Stream*, CPDF_CountedIccProfile*> m_IccProfileMap;
+  std::map<const CPDF_Stream*, CFX_RetainPtr<CPDF_IccProfile>> m_IccProfileMap;
   std::map<uint32_t, CFX_RetainPtr<CPDF_Image>> m_ImageMap;
   std::map<const CPDF_Object*, CPDF_CountedPattern*> m_PatternMap;
 };

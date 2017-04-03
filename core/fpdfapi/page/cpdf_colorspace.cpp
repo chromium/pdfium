@@ -166,7 +166,7 @@ class CPDF_ICCBasedCS : public CPDF_ColorSpace {
   void PopulateRanges(CPDF_Dictionary* pDict);
 
   CFX_MaybeOwned<CPDF_ColorSpace> m_pAlterCS;
-  CPDF_IccProfile* m_pProfile;
+  CFX_RetainPtr<CPDF_IccProfile> m_pProfile;
   uint8_t* m_pCache;
   float* m_pRanges;
 };
@@ -849,8 +849,11 @@ CPDF_ICCBasedCS::CPDF_ICCBasedCS(CPDF_Document* pDoc)
 CPDF_ICCBasedCS::~CPDF_ICCBasedCS() {
   FX_Free(m_pCache);
   FX_Free(m_pRanges);
-  if (m_pProfile && m_pDocument)
-    m_pDocument->GetPageData()->ReleaseIccProfile(m_pProfile);
+  if (m_pProfile && m_pDocument) {
+    CPDF_Stream* pStream = m_pProfile->GetStream();
+    m_pProfile.Reset();  // Give up our reference first.
+    m_pDocument->GetPageData()->MaybePurgeIccProfile(pStream);
+  }
 }
 
 bool CPDF_ICCBasedCS::v_Load(CPDF_Document* pDoc, CPDF_Array* pArray) {

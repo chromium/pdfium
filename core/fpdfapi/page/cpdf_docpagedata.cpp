@@ -82,11 +82,7 @@ void CPDF_DocPageData::Clear(bool bForceRelease) {
 
   for (auto it = m_IccProfileMap.begin(); it != m_IccProfileMap.end();) {
     auto curr_it = it++;
-    CPDF_CountedIccProfile* ipData = curr_it->second;
-    if (!ipData->get())
-      continue;
-
-    if (bForceRelease || ipData->use_count() < 2) {
+    if (bForceRelease || curr_it->second->HasOneRef()) {
       for (auto hash_it = m_HashProfileMap.begin();
            hash_it != m_HashProfileMap.end(); ++hash_it) {
         if (curr_it->first == hash_it->second) {
@@ -94,8 +90,6 @@ void CPDF_DocPageData::Clear(bool bForceRelease) {
           break;
         }
       }
-      delete ipData->get();
-      delete ipData;
       m_IccProfileMap.erase(curr_it);
     }
   }
@@ -405,50 +399,40 @@ void CPDF_DocPageData::MaybePurgeImage(uint32_t dwStreamObjNum) {
     m_ImageMap.erase(it);
 }
 
-CPDF_IccProfile* CPDF_DocPageData::GetIccProfile(
-    CPDF_Stream* pIccProfileStream) {
-  if (!pIccProfileStream)
+CFX_RetainPtr<CPDF_IccProfile> CPDF_DocPageData::GetIccProfile(
+    CPDF_Stream* pProfileStream) {
+  if (!pProfileStream)
     return nullptr;
 
-  auto it = m_IccProfileMap.find(pIccProfileStream);
+  auto it = m_IccProfileMap.find(pProfileStream);
   if (it != m_IccProfileMap.end())
-    return it->second->AddRef();
+    return it->second;
 
-  CPDF_StreamAcc stream;
-  stream.LoadAllData(pIccProfileStream, false);
+  CPDF_StreamAcc accessor;
+  accessor.LoadAllData(pProfileStream, false);
+
   uint8_t digest[20];
-  CRYPT_SHA1Generate(stream.GetData(), stream.GetSize(), digest);
+  CRYPT_SHA1Generate(accessor.GetData(), accessor.GetSize(), digest);
+
   CFX_ByteString bsDigest(digest, 20);
   auto hash_it = m_HashProfileMap.find(bsDigest);
   if (hash_it != m_HashProfileMap.end()) {
     auto it_copied_stream = m_IccProfileMap.find(hash_it->second);
     if (it_copied_stream != m_IccProfileMap.end())
-      return it_copied_stream->second->AddRef();
+      return it_copied_stream->second;
   }
-  CPDF_CountedIccProfile* ipData = new CPDF_CountedIccProfile(
-      pdfium::MakeUnique<CPDF_IccProfile>(stream.GetData(), stream.GetSize()));
-  m_IccProfileMap[pIccProfileStream] = ipData;
-  m_HashProfileMap[bsDigest] = pIccProfileStream;
-  return ipData->AddRef();
+  auto pProfile = pdfium::MakeRetain<CPDF_IccProfile>(
+      pProfileStream, accessor.GetData(), accessor.GetSize());
+  m_IccProfileMap[pProfileStream] = pProfile;
+  m_HashProfileMap[bsDigest] = pProfileStream;
+  return pProfile;
 }
 
-void CPDF_DocPageData::ReleaseIccProfile(const CPDF_IccProfile* pIccProfile) {
-  ASSERT(pIccProfile);
-
-  for (auto it = m_IccProfileMap.begin(); it != m_IccProfileMap.end(); ++it) {
-    CPDF_CountedIccProfile* profile = it->second;
-    if (profile->get() != pIccProfile)
-      continue;
-
-    profile->RemoveRef();
-    if (profile->use_count() > 1)
-      continue;
-    // We have item only in m_IccProfileMap cache. Clean it.
-    delete profile->get();
-    delete profile;
+void CPDF_DocPageData::MaybePurgeIccProfile(CPDF_Stream* pProfileStream) {
+  ASSERT(pProfileStream);
+  auto it = m_IccProfileMap.find(pProfileStream);
+  if (it != m_IccProfileMap.end() && it->second->HasOneRef())
     m_IccProfileMap.erase(it);
-    return;
-  }
 }
 
 CPDF_StreamAcc* CPDF_DocPageData::GetFontFileStreamAcc(
