@@ -12,7 +12,8 @@
 #include "core/fpdfapi/render/cpdf_transferfunc.h"
 
 CPDF_DIBTransferFunc::CPDF_DIBTransferFunc(
-    const CPDF_TransferFunc* pTransferFunc) {
+    const CFX_RetainPtr<CPDF_TransferFunc>& pTransferFunc)
+    : m_pTransferFunc(pTransferFunc) {
   m_RampR = pTransferFunc->m_Samples;
   m_RampG = &pTransferFunc->m_Samples[256];
   m_RampB = &pTransferFunc->m_Samples[512];

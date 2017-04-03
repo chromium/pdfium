@@ -11,6 +11,8 @@
 
 CPDF_TransferFunc::CPDF_TransferFunc(CPDF_Document* pDoc) : m_pPDFDoc(pDoc) {}
 
+CPDF_TransferFunc::~CPDF_TransferFunc() {}
+
 FX_COLORREF CPDF_TransferFunc::TranslateColor(FX_COLORREF rgb) const {
   return FXSYS_RGB(m_Samples[FXSYS_GetRValue(rgb)],
                    m_Samples[256 + FXSYS_GetGValue(rgb)],
@@ -19,7 +21,8 @@ FX_COLORREF CPDF_TransferFunc::TranslateColor(FX_COLORREF rgb) const {
 
 CFX_RetainPtr<CFX_DIBSource> CPDF_TransferFunc::TranslateImage(
     const CFX_RetainPtr<CFX_DIBSource>& pSrc) {
-  auto pDest = pdfium::MakeRetain<CPDF_DIBTransferFunc>(this);
+  CFX_RetainPtr<CPDF_TransferFunc> pHolder(this);
+  auto pDest = pdfium::MakeRetain<CPDF_DIBTransferFunc>(pHolder);
   pDest->LoadSrc(pSrc);
   return pDest;
 }

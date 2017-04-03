@@ -41,8 +41,8 @@ class CPDF_GeneralState {
   CPDF_Object* GetTR() const;
   void SetTR(CPDF_Object* pObject);
 
-  CPDF_TransferFunc* GetTransferFunc() const;
-  void SetTransferFunc(CPDF_TransferFunc* pFunc);
+  CFX_RetainPtr<CPDF_TransferFunc> GetTransferFunc() const;
+  void SetTransferFunc(const CFX_RetainPtr<CPDF_TransferFunc>& pFunc);
 
   void SetBlendMode(const CFX_ByteString& mode);
 
@@ -88,7 +88,7 @@ class CPDF_GeneralState {
     float m_StrokeAlpha;
     float m_FillAlpha;
     CPDF_Object* m_pTR;
-    CPDF_TransferFunc* m_pTransferFunc;
+    CFX_RetainPtr<CPDF_TransferFunc> m_pTransferFunc;
     CFX_Matrix m_Matrix;
     int m_RenderIntent;
     bool m_StrokeAdjust;

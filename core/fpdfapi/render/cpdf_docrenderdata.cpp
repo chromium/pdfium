@@ -42,12 +42,8 @@ void CPDF_DocRenderData::Clear(bool bRelease) {
 
   for (auto it = m_TransferFuncMap.begin(); it != m_TransferFuncMap.end();) {
     auto curr_it = it++;
-    CPDF_CountedObject<CPDF_TransferFunc>* value = curr_it->second;
-    if (bRelease || value->use_count() < 2) {
-      delete value->get();
-      delete value;
+    if (bRelease || curr_it->second->HasOneRef())
       m_TransferFuncMap.erase(curr_it);
-    }
   }
 }
 
@@ -76,15 +72,14 @@ void CPDF_DocRenderData::ReleaseCachedType3(CPDF_Type3Font* pFont) {
   }
 }
 
-CPDF_TransferFunc* CPDF_DocRenderData::GetTransferFunc(CPDF_Object* pObj) {
+CFX_RetainPtr<CPDF_TransferFunc> CPDF_DocRenderData::GetTransferFunc(
+    CPDF_Object* pObj) {
   if (!pObj)
     return nullptr;
 
   auto it = m_TransferFuncMap.find(pObj);
-  if (it != m_TransferFuncMap.end()) {
-    CPDF_CountedObject<CPDF_TransferFunc>* pTransferCounter = it->second;
-    return pTransferCounter->AddRef();
-  }
+  if (it != m_TransferFuncMap.end())
+    return it->second;
 
   std::unique_ptr<CPDF_Function> pFuncs[3];
   bool bUniTransfer = true;
@@ -104,15 +99,13 @@ CPDF_TransferFunc* CPDF_DocRenderData::GetTransferFunc(CPDF_Object* pObj) {
     if (!pFuncs[0])
       return nullptr;
   }
-  CPDF_CountedObject<CPDF_TransferFunc>* pTransferCounter =
-      new CPDF_CountedObject<CPDF_TransferFunc>(
-          pdfium::MakeUnique<CPDF_TransferFunc>(m_pPDFDoc));
-  CPDF_TransferFunc* pTransfer = pTransferCounter->get();
-  m_TransferFuncMap[pObj] = pTransferCounter;
-  float output[kMaxOutputs];
-  memset(output, 0, sizeof(output));
+  auto pTransfer = pdfium::MakeRetain<CPDF_TransferFunc>(m_pPDFDoc);
+  m_TransferFuncMap[pObj] = pTransfer;
+
   float input;
   int noutput;
+  float output[kMaxOutputs];
+  memset(output, 0, sizeof(output));
   for (int v = 0; v < 256; ++v) {
     input = (float)v / 255.0f;
     if (bUniTransfer) {
@@ -139,17 +132,11 @@ CPDF_TransferFunc* CPDF_DocRenderData::GetTransferFunc(CPDF_Object* pObj) {
   }
 
   pTransfer->m_bIdentity = bIdentity;
-  return pTransferCounter->AddRef();
+  return pTransfer;
 }
 
-void CPDF_DocRenderData::ReleaseTransferFunc(CPDF_Object* pObj) {
+void CPDF_DocRenderData::MaybePurgeTransferFunc(CPDF_Object* pObj) {
   auto it = m_TransferFuncMap.find(pObj);
-  if (it != m_TransferFuncMap.end()) {
-    it->second->RemoveRef();
-    if (it->second->use_count() < 2) {
-      delete it->second->get();
-      delete it->second;
-      m_TransferFuncMap.erase(it);
-    }
-  }
+  if (it != m_TransferFuncMap.end() && it->second->HasOneRef())
+    m_TransferFuncMap.erase(it);
 }
