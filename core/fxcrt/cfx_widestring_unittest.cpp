@@ -933,6 +933,11 @@ TEST(fxcrt, WideStringFormatPrecision) {
   }
 }
 
+TEST(fxcrt, WideStringFormatOutOfRangeChar) {
+  CFX_WideString str;
+  str.Format(L"unsupported char '%c'", 0x00FF00FF);
+}
+
 TEST(fxcrt, EmptyWideString) {
   CFX_WideString empty_str;
   EXPECT_TRUE(empty_str.IsEmpty());
