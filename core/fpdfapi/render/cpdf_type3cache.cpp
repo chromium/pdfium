@@ -15,6 +15,7 @@
 #include "core/fpdfapi/render/cpdf_type3glyphs.h"
 #include "core/fxge/fx_dib.h"
 #include "core/fxge/fx_font.h"
+#include "third_party/base/ptr_util.h"
 
 namespace {
 
@@ -81,11 +82,7 @@ int DetectFirstLastScan(const CFX_RetainPtr<CFX_DIBitmap>& pBitmap,
 
 CPDF_Type3Cache::CPDF_Type3Cache(CPDF_Type3Font* pFont) : m_pFont(pFont) {}
 
-CPDF_Type3Cache::~CPDF_Type3Cache() {
-  for (const auto& pair : m_SizeMap)
-    delete pair.second;
-  m_SizeMap.clear();
-}
+CPDF_Type3Cache::~CPDF_Type3Cache() {}
 
 CFX_GlyphBitmap* CPDF_Type3Cache::LoadGlyph(uint32_t charcode,
                                             const CFX_Matrix* pMatrix,
@@ -99,10 +96,11 @@ CFX_GlyphBitmap* CPDF_Type3Cache::LoadGlyph(uint32_t charcode,
   CPDF_Type3Glyphs* pSizeCache;
   auto it = m_SizeMap.find(FaceGlyphsKey);
   if (it == m_SizeMap.end()) {
-    pSizeCache = new CPDF_Type3Glyphs;
-    m_SizeMap[FaceGlyphsKey] = pSizeCache;
+    auto pNew = pdfium::MakeUnique<CPDF_Type3Glyphs>();
+    pSizeCache = pNew.get();
+    m_SizeMap[FaceGlyphsKey] = std::move(pNew);
   } else {
-    pSizeCache = it->second;
+    pSizeCache = it->second.get();
   }
   auto it2 = pSizeCache->m_GlyphMap.find(charcode);
   if (it2 != pSizeCache->m_GlyphMap.end())
