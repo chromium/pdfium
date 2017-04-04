@@ -16,6 +16,7 @@
 #include "core/fxge/cfx_fxgedevice.h"
 #include "core/fxge/cfx_graphstatedata.h"
 #include "core/fxge/cfx_pathdata.h"
+#include "core/fxge/dib/cfx_imagerenderer.h"
 #include "core/fxge/ifx_renderdevicedriver.h"
 
 #if defined _SKIA_SUPPORT_ || defined _SKIA_SUPPORT_PATHS_
@@ -825,18 +826,15 @@ bool CFX_RenderDevice::StartDIBitsWithBlend(
     uint32_t argb,
     const CFX_Matrix* pMatrix,
     uint32_t flags,
-    void*& handle,
+    std::unique_ptr<CFX_ImageRenderer>* handle,
     int blend_mode) {
   return m_pDeviceDriver->StartDIBits(pBitmap, bitmap_alpha, argb, pMatrix,
                                       flags, handle, blend_mode);
 }
 
-bool CFX_RenderDevice::ContinueDIBits(void* handle, IFX_Pause* pPause) {
+bool CFX_RenderDevice::ContinueDIBits(CFX_ImageRenderer* handle,
+                                      IFX_Pause* pPause) {
   return m_pDeviceDriver->ContinueDIBits(handle, pPause);
-}
-
-void CFX_RenderDevice::CancelDIBits(void* handle) {
-  m_pDeviceDriver->CancelDIBits(handle);
 }
 
 #ifdef _SKIA_SUPPORT_

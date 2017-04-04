@@ -16,6 +16,7 @@
 #include "core/fxcrt/fx_system.h"
 #include "core/fxge/cfx_windowsdevice.h"
 #include "core/fxge/dib/cfx_dibextractor.h"
+#include "core/fxge/dib/cfx_imagerenderer.h"
 #include "core/fxge/dib/dib_int.h"
 #include "core/fxge/fx_font.h"
 #include "core/fxge/fx_freetype.h"
@@ -1356,7 +1357,7 @@ bool CGdiDisplayDriver::StartDIBits(const CFX_RetainPtr<CFX_DIBSource>& pBitmap,
                                     uint32_t color,
                                     const CFX_Matrix* pMatrix,
                                     uint32_t render_flags,
-                                    void*& handle,
+                                    std::unique_ptr<CFX_ImageRenderer>* handle,
                                     int blend_type) {
   return false;
 }

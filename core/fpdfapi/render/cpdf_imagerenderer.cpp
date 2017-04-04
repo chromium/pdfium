@@ -40,23 +40,18 @@
 #include "core/fxge/skia/fx_skia_device.h"
 #endif
 
-CPDF_ImageRenderer::CPDF_ImageRenderer() {
-  m_pRenderStatus = nullptr;
-  m_pImageObject = nullptr;
-  m_Result = true;
-  m_Status = 0;
-  m_DeviceHandle = nullptr;
-  m_bStdCS = false;
-  m_bPatternColor = false;
-  m_BlendType = FXDIB_BLEND_NORMAL;
-  m_pPattern = nullptr;
-  m_pObj2Device = nullptr;
-}
+CPDF_ImageRenderer::CPDF_ImageRenderer()
+    : m_pRenderStatus(nullptr),
+      m_pImageObject(nullptr),
+      m_Status(0),
+      m_pObj2Device(nullptr),
+      m_bPatternColor(false),
+      m_pPattern(nullptr),
+      m_bStdCS(false),
+      m_BlendType(FXDIB_BLEND_NORMAL),
+      m_Result(true) {}
 
-CPDF_ImageRenderer::~CPDF_ImageRenderer() {
-  if (m_DeviceHandle)
-    m_pRenderStatus->m_pDevice->CancelDIBits(m_DeviceHandle);
-}
+CPDF_ImageRenderer::~CPDF_ImageRenderer() {}
 
 bool CPDF_ImageRenderer::StartLoadDIBSource() {
   CFX_FloatRect image_rect_f = m_ImageMatrix.GetUnitRect();
@@ -413,7 +408,7 @@ bool CPDF_ImageRenderer::StartDIBSource() {
     CFX_SkiaDeviceDriver::PreMultiply(premultiplied);
   if (m_pRenderStatus->m_pDevice->StartDIBitsWithBlend(
           premultiplied, m_BitmapAlpha, m_FillArgb, &m_ImageMatrix, m_Flags,
-          m_DeviceHandle, m_BlendType)) {
+          &m_DeviceHandle, m_BlendType)) {
     if (m_DeviceHandle) {
       m_Status = 3;
       return true;
@@ -423,7 +418,7 @@ bool CPDF_ImageRenderer::StartDIBSource() {
 #else
   if (m_pRenderStatus->m_pDevice->StartDIBitsWithBlend(
           m_pDIBSource, m_BitmapAlpha, m_FillArgb, &m_ImageMatrix, m_Flags,
-          m_DeviceHandle, m_BlendType)) {
+          &m_DeviceHandle, m_BlendType)) {
     if (m_DeviceHandle) {
       m_Status = 3;
       return true;
@@ -564,7 +559,8 @@ bool CPDF_ImageRenderer::Continue(IFX_Pause* pPause) {
     return false;
   }
   if (m_Status == 3)
-    return m_pRenderStatus->m_pDevice->ContinueDIBits(m_DeviceHandle, pPause);
+    return m_pRenderStatus->m_pDevice->ContinueDIBits(m_DeviceHandle.get(),
+                                                      pPause);
 
   if (m_Status == 4) {
     if (m_Loader.Continue(pPause))

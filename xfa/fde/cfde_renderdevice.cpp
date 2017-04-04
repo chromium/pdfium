@@ -13,6 +13,7 @@
 #include "core/fxge/cfx_graphstatedata.h"
 #include "core/fxge/cfx_renderdevice.h"
 #include "core/fxge/cfx_substfont.h"
+#include "core/fxge/dib/cfx_imagerenderer.h"
 #include "xfa/fde/cfde_brush.h"
 #include "xfa/fde/cfde_path.h"
 #include "xfa/fde/cfde_pen.h"
@@ -111,12 +112,11 @@ bool CFDE_RenderDevice::DrawImage(const CFX_RetainPtr<CFX_DIBSource>& pDib,
   if (pDevMatrix) {
     dib2fxdev.Concat(*pDevMatrix);
   }
-  void* handle = nullptr;
+  std::unique_ptr<CFX_ImageRenderer> handle;
   m_pDevice->StartDIBits(pDib, 255, 0, (const CFX_Matrix*)&dib2fxdev, 0,
-                         handle);
-  while (m_pDevice->ContinueDIBits(handle, nullptr)) {
+                         &handle);
+  while (m_pDevice->ContinueDIBits(handle.get(), nullptr)) {
   }
-  m_pDevice->CancelDIBits(handle);
   return !!handle;
 }
 

@@ -17,6 +17,7 @@
 #include "core/fxge/cfx_gemodule.h"
 #include "core/fxge/cfx_pathdata.h"
 #include "core/fxge/cfx_renderdevice.h"
+#include "core/fxge/dib/cfx_imagerenderer.h"
 #include "core/fxge/dib/cfx_imagetransformer.h"
 #include "xfa/fwl/fwl_widgethit.h"
 #include "xfa/fxfa/app/cxfa_textlayout.h"
@@ -587,7 +588,7 @@ class CXFA_ImageRenderer {
   FX_ARGB m_FillArgb;
   uint32_t m_Flags;
   std::unique_ptr<CFX_ImageTransformer> m_pTransformer;
-  void* m_DeviceHandle;
+  std::unique_ptr<CFX_ImageRenderer> m_DeviceHandle;
   int32_t m_BlendType;
   bool m_Result;
   bool m_bPrint;
@@ -604,10 +605,7 @@ CXFA_ImageRenderer::CXFA_ImageRenderer()
       m_Result(true),
       m_bPrint(false) {}
 
-CXFA_ImageRenderer::~CXFA_ImageRenderer() {
-  if (m_DeviceHandle)
-    m_pDevice->CancelDIBits(m_DeviceHandle);
-}
+CXFA_ImageRenderer::~CXFA_ImageRenderer() {}
 
 bool CXFA_ImageRenderer::Start(CFX_RenderDevice* pDevice,
                                const CFX_RetainPtr<CFX_DIBSource>& pDIBSource,
@@ -628,7 +626,7 @@ bool CXFA_ImageRenderer::Start(CFX_RenderDevice* pDevice,
 
 bool CXFA_ImageRenderer::StartDIBSource() {
   if (m_pDevice->StartDIBitsWithBlend(m_pDIBSource, m_BitmapAlpha, m_FillArgb,
-                                      &m_ImageMatrix, m_Flags, m_DeviceHandle,
+                                      &m_ImageMatrix, m_Flags, &m_DeviceHandle,
                                       m_BlendType)) {
     if (m_DeviceHandle) {
       m_Status = 3;
@@ -735,7 +733,7 @@ bool CXFA_ImageRenderer::Continue(IFX_Pause* pPause) {
     return false;
   }
   if (m_Status == 3)
-    return m_pDevice->ContinueDIBits(m_DeviceHandle, pPause);
+    return m_pDevice->ContinueDIBits(m_DeviceHandle.get(), pPause);
 
   return false;
 }

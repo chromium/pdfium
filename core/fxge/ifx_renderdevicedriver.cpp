@@ -59,11 +59,10 @@ CFX_RetainPtr<CFX_DIBitmap> IFX_RenderDeviceDriver::GetBackDrop() {
   return CFX_RetainPtr<CFX_DIBitmap>();
 }
 
-bool IFX_RenderDeviceDriver::ContinueDIBits(void* handle, IFX_Pause* pPause) {
+bool IFX_RenderDeviceDriver::ContinueDIBits(CFX_ImageRenderer* handle,
+                                            IFX_Pause* pPause) {
   return false;
 }
-
-void IFX_RenderDeviceDriver::CancelDIBits(void* handle) {}
 
 bool IFX_RenderDeviceDriver::DrawDeviceText(int nChars,
                                             const FXTEXT_CHARPOS* pCharPos,

@@ -1884,8 +1884,8 @@ bool CFX_SkiaDeviceDriver::SetDIBits(
 #ifdef _SKIA_SUPPORT_
   CFX_Matrix m(pBitmap->GetWidth(), 0, 0, -pBitmap->GetHeight(), left,
                top + pBitmap->GetHeight());
-  void* dummy;
-  return StartDIBits(pBitmap, 0xFF, argb, &m, 0, dummy, blend_type);
+  std::unique_ptr<CFX_ImageRenderer> dummy;
+  return StartDIBits(pBitmap, 0xFF, argb, &m, 0, &dummy, blend_type);
 #endif  // _SKIA_SUPPORT_
 
 #ifdef _SKIA_SUPPORT_PATHS_
@@ -1923,8 +1923,8 @@ bool CFX_SkiaDeviceDriver::StretchDIBits(
   SkRect skClipRect = SkRect::MakeLTRB(pClipRect->left, pClipRect->bottom,
                                        pClipRect->right, pClipRect->top);
   m_pCanvas->clipRect(skClipRect, SkClipOp::kIntersect, true);
-  void* dummy;
-  bool result = StartDIBits(pSource, 0xFF, argb, &m, 0, dummy, blend_type);
+  std::unique_ptr<CFX_ImageRenderer> dummy;
+  bool result = StartDIBits(pSource, 0xFF, argb, &m, 0, &dummy, blend_type);
   m_pCanvas->restore();
 
   return result;
@@ -1960,7 +1960,7 @@ bool CFX_SkiaDeviceDriver::StartDIBits(
     uint32_t argb,
     const CFX_Matrix* pMatrix,
     uint32_t render_flags,
-    void*& handle,
+    std::unique_ptr<CFX_ImageRenderer>* handle,
     int blend_type) {
 #ifdef _SKIA_SUPPORT_
   m_pCache->FlushForDraw();
@@ -2009,24 +2009,15 @@ bool CFX_SkiaDeviceDriver::StartDIBits(
   if (!m_pBitmap->GetBuffer())
     return true;
   m_pBitmap->UnPreMultiply();
-  CFX_ImageRenderer* pRenderer = new CFX_ImageRenderer;
-  pRenderer->Start(m_pBitmap, m_pClipRgn.get(), pSource, bitmap_alpha, argb,
+  *handle = pdfium::MakeUnique<CFX_ImageRenderer>();
+  (*handle)->Start(m_pBitmap, m_pClipRgn.get(), pSource, bitmap_alpha, argb,
                    pMatrix, render_flags, m_bRgbByteOrder, 0, nullptr);
-  handle = pRenderer;
 #endif  // _SKIA_SUPPORT_PATHS_
   return true;
 }
 
-void CFX_SkiaDeviceDriver::CancelDIBits(void* handle) {
-#ifdef _SKIA_SUPPORT_PATHS_
-  if (!m_pBitmap->GetBuffer())
-    return;
-
-  delete reinterpret_cast<CFX_ImageRenderer*>(handle);
-#endif  // _SKIA_SUPPORT_PATHS_
-}
-
-bool CFX_SkiaDeviceDriver::ContinueDIBits(void* handle, IFX_Pause* pPause) {
+bool CFX_SkiaDeviceDriver::ContinueDIBits(CFX_ImageRenderer* handle,
+                                          IFX_Pause* pPause) {
 #ifdef _SKIA_SUPPORT_
   m_pCache->FlushForDraw();
   return false;
@@ -2037,7 +2028,7 @@ bool CFX_SkiaDeviceDriver::ContinueDIBits(void* handle, IFX_Pause* pPause) {
   if (!m_pBitmap->GetBuffer()) {
     return true;
   }
-  return static_cast<CFX_ImageRenderer*>(handle)->Continue(pPause);
+  return handle->Continue(pPause);
 #endif  // _SKIA_SUPPORT_PATHS_
 }
 

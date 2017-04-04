@@ -17,6 +17,7 @@
 #include "core/fxge/win32/cpsoutput.h"
 #include "core/fxge/win32/dwrite_int.h"
 
+class CFX_ImageRenderer;
 class FXTEXT_CHARPOS;
 struct WINDIB_Open_Args_;
 
@@ -215,7 +216,7 @@ class CGdiDisplayDriver : public CGdiDeviceDriver {
                    uint32_t color,
                    const CFX_Matrix* pMatrix,
                    uint32_t render_flags,
-                   void*& handle,
+                   std::unique_ptr<CFX_ImageRenderer>* handle,
                    int blend_type) override;
   bool UseFoxitStretchEngine(const CFX_RetainPtr<CFX_DIBSource>& pSource,
                              uint32_t color,
@@ -254,7 +255,7 @@ class CGdiPrinterDriver : public CGdiDeviceDriver {
                    uint32_t color,
                    const CFX_Matrix* pMatrix,
                    uint32_t render_flags,
-                   void*& handle,
+                   std::unique_ptr<CFX_ImageRenderer>* handle,
                    int blend_type) override;
   bool DrawDeviceText(int nChars,
                       const FXTEXT_CHARPOS* pCharPos,
@@ -313,7 +314,7 @@ class CPSPrinterDriver : public IFX_RenderDeviceDriver {
                    uint32_t color,
                    const CFX_Matrix* pMatrix,
                    uint32_t render_flags,
-                   void*& handle,
+                   std::unique_ptr<CFX_ImageRenderer>* handle,
                    int blend_type) override;
   bool DrawDeviceText(int nChars,
                       const FXTEXT_CHARPOS* pCharPos,

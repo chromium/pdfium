@@ -11,6 +11,7 @@
 
 #include "core/fpdfapi/render/cpdf_imageloader.h"
 #include "core/fxcrt/fx_coordinates.h"
+#include "core/fxge/dib/cfx_imagerenderer.h"
 
 class CFX_DIBitmap;
 class CFX_DIBSource;
@@ -74,7 +75,7 @@ class CPDF_ImageRenderer {
   FX_ARGB m_FillArgb;
   uint32_t m_Flags;
   std::unique_ptr<CFX_ImageTransformer> m_pTransformer;
-  void* m_DeviceHandle;
+  std::unique_ptr<CFX_ImageRenderer> m_DeviceHandle;
   bool m_bStdCS;
   int m_BlendType;
   bool m_Result;

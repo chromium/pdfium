@@ -15,6 +15,7 @@
 
 class CFX_Font;
 class CFX_GraphStateData;
+class CFX_ImageRenderer;
 class IFX_RenderDeviceDriver;
 
 #define FXDC_DEVICE_CLASS 1
@@ -193,7 +194,7 @@ class CFX_RenderDevice {
                    uint32_t color,
                    const CFX_Matrix* pMatrix,
                    uint32_t flags,
-                   void*& handle) {
+                   std::unique_ptr<CFX_ImageRenderer>* handle) {
     return StartDIBitsWithBlend(pBitmap, bitmap_alpha, color, pMatrix, flags,
                                 handle, FXDIB_BLEND_NORMAL);
   }
@@ -202,10 +203,9 @@ class CFX_RenderDevice {
                             uint32_t color,
                             const CFX_Matrix* pMatrix,
                             uint32_t flags,
-                            void*& handle,
+                            std::unique_ptr<CFX_ImageRenderer>* handle,
                             int blend_type);
-  bool ContinueDIBits(void* handle, IFX_Pause* pPause);
-  void CancelDIBits(void* handle);
+  bool ContinueDIBits(CFX_ImageRenderer* handle, IFX_Pause* pPause);
 
   bool DrawNormalText(int nChars,
                       const FXTEXT_CHARPOS* pCharPos,

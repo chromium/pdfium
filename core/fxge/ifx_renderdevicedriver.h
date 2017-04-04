@@ -7,6 +7,8 @@
 #ifndef CORE_FXGE_IFX_RENDERDEVICEDRIVER_H_
 #define CORE_FXGE_IFX_RENDERDEVICEDRIVER_H_
 
+#include <memory>
+
 #include "core/fxcrt/cfx_retain_ptr.h"
 #include "core/fxcrt/fx_system.h"
 
@@ -14,6 +16,7 @@ class CFX_DIBitmap;
 class CFX_DIBSource;
 class CFX_Font;
 class CFX_GraphStateData;
+class CFX_ImageRenderer;
 class CFX_Matrix;
 class CFX_PathData;
 class CPDF_ShadingPattern;
@@ -82,10 +85,9 @@ class IFX_RenderDeviceDriver {
                            uint32_t color,
                            const CFX_Matrix* pMatrix,
                            uint32_t flags,
-                           void*& handle,
+                           std::unique_ptr<CFX_ImageRenderer>* handle,
                            int blend_type) = 0;
-  virtual bool ContinueDIBits(void* handle, IFX_Pause* pPause);
-  virtual void CancelDIBits(void* handle);
+  virtual bool ContinueDIBits(CFX_ImageRenderer* handle, IFX_Pause* pPause);
   virtual bool DrawDeviceText(int nChars,
                               const FXTEXT_CHARPOS* pCharPos,
                               CFX_Font* pFont,

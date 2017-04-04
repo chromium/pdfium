@@ -13,6 +13,7 @@
 #include "core/fxcrt/fx_system.h"
 #include "core/fxge/cfx_windowsdevice.h"
 #include "core/fxge/dib/cfx_dibextractor.h"
+#include "core/fxge/dib/cfx_imagerenderer.h"
 #include "core/fxge/dib/dib_int.h"
 #include "core/fxge/fx_freetype.h"
 #include "core/fxge/ge/fx_text_int.h"
@@ -164,7 +165,7 @@ bool CGdiPrinterDriver::StartDIBits(const CFX_RetainPtr<CFX_DIBSource>& pSource,
                                     uint32_t color,
                                     const CFX_Matrix* pMatrix,
                                     uint32_t render_flags,
-                                    void*& handle,
+                                    std::unique_ptr<CFX_ImageRenderer>* handle,
                                     int blend_type) {
   if (bitmap_alpha < 255 || pSource->HasAlpha() ||
       (pSource->IsAlphaMask() && (pSource->GetBPP() != 1))) {
@@ -469,7 +470,7 @@ bool CPSPrinterDriver::StartDIBits(const CFX_RetainPtr<CFX_DIBSource>& pBitmap,
                                    uint32_t color,
                                    const CFX_Matrix* pMatrix,
                                    uint32_t render_flags,
-                                   void*& handle,
+                                   std::unique_ptr<CFX_ImageRenderer>* handle,
                                    int blend_type) {
   if (blend_type != FXDIB_BLEND_NORMAL)
     return false;
@@ -477,7 +478,7 @@ bool CPSPrinterDriver::StartDIBits(const CFX_RetainPtr<CFX_DIBSource>& pBitmap,
   if (bitmap_alpha < 255)
     return false;
 
-  handle = nullptr;
+  *handle = nullptr;
   return m_PSRenderer.DrawDIBits(pBitmap, color, pMatrix, render_flags);
 }
 

@@ -1650,29 +1650,20 @@ bool CFX_AggDeviceDriver::StartDIBits(
     uint32_t argb,
     const CFX_Matrix* pMatrix,
     uint32_t render_flags,
-    void*& handle,
+    std::unique_ptr<CFX_ImageRenderer>* handle,
     int blend_type) {
   if (!m_pBitmap->GetBuffer())
     return true;
 
-  CFX_ImageRenderer* pRenderer = new CFX_ImageRenderer;
-  pRenderer->Start(m_pBitmap, m_pClipRgn.get(), pSource, bitmap_alpha, argb,
+  *handle = pdfium::MakeUnique<CFX_ImageRenderer>();
+  (*handle)->Start(m_pBitmap, m_pClipRgn.get(), pSource, bitmap_alpha, argb,
                    pMatrix, render_flags, m_bRgbByteOrder, 0, nullptr);
-  handle = pRenderer;
   return true;
 }
 
-bool CFX_AggDeviceDriver::ContinueDIBits(void* pHandle, IFX_Pause* pPause) {
-  return m_pBitmap->GetBuffer()
-             ? reinterpret_cast<CFX_ImageRenderer*>(pHandle)->Continue(pPause)
-             : true;
-}
-
-void CFX_AggDeviceDriver::CancelDIBits(void* pHandle) {
-  if (!m_pBitmap->GetBuffer())
-    return;
-
-  delete reinterpret_cast<CFX_ImageRenderer*>(pHandle);
+bool CFX_AggDeviceDriver::ContinueDIBits(CFX_ImageRenderer* pHandle,
+                                         IFX_Pause* pPause) {
+  return m_pBitmap->GetBuffer() ? pHandle->Continue(pPause) : true;
 }
 
 #ifndef _SKIA_SUPPORT_
