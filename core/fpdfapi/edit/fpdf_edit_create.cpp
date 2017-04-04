@@ -182,12 +182,12 @@ int32_t PDF_CreatorAppendObject(const CPDF_Object* pObj,
         return -1;
       }
       offset += 8;
-      CPDF_StreamAcc acc;
-      acc.LoadAllData(p, true);
-      if (pFile->AppendBlock(acc.GetData(), acc.GetSize()) < 0) {
+      auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(p);
+      pAcc->LoadAllData(true);
+      if (pFile->AppendBlock(pAcc->GetData(), pAcc->GetSize()) < 0) {
         return -1;
       }
-      offset += acc.GetSize();
+      offset += pAcc->GetSize();
       if ((len = pFile->AppendString("\r\nendstream")) < 0) {
         return -1;
       }
@@ -411,7 +411,7 @@ class CPDF_FlateEncoder {
   uint32_t m_dwSize;
   CFX_MaybeOwned<uint8_t, FxFreeDeleter> m_pData;
   CFX_MaybeOwned<CPDF_Dictionary> m_pDict;
-  CPDF_StreamAcc m_Acc;
+  CFX_RetainPtr<CPDF_StreamAcc> m_pAcc;
 };
 
 void CPDF_FlateEncoder::CloneDict() {
@@ -422,27 +422,27 @@ void CPDF_FlateEncoder::CloneDict() {
 }
 
 CPDF_FlateEncoder::CPDF_FlateEncoder(CPDF_Stream* pStream, bool bFlateEncode)
-    : m_dwSize(0) {
-  m_Acc.LoadAllData(pStream, true);
+    : m_dwSize(0), m_pAcc(pdfium::MakeRetain<CPDF_StreamAcc>(pStream)) {
+  m_pAcc->LoadAllData(true);
   bool bHasFilter = pStream && pStream->HasFilter();
   if (bHasFilter && !bFlateEncode) {
-    CPDF_StreamAcc destAcc;
-    destAcc.LoadAllData(pStream);
-    m_dwSize = destAcc.GetSize();
-    m_pData = destAcc.DetachData();
+    auto pDestAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pStream);
+    pDestAcc->LoadAllData();
+    m_dwSize = pDestAcc->GetSize();
+    m_pData = pDestAcc->DetachData();
     m_pDict = ToDictionary(pStream->GetDict()->Clone());
     m_pDict->RemoveFor("Filter");
     return;
   }
   if (bHasFilter || !bFlateEncode) {
-    m_pData = const_cast<uint8_t*>(m_Acc.GetData());
-    m_dwSize = m_Acc.GetSize();
+    m_pData = const_cast<uint8_t*>(m_pAcc->GetData());
+    m_dwSize = m_pAcc->GetSize();
     m_pDict = pStream->GetDict();
     return;
   }
   // TODO(thestig): Move to Init() and check return value.
   uint8_t* buffer = nullptr;
-  ::FlateEncode(m_Acc.GetData(), m_Acc.GetSize(), &buffer, &m_dwSize);
+  ::FlateEncode(m_pAcc->GetData(), m_pAcc->GetSize(), &buffer, &m_dwSize);
   m_pData = std::unique_ptr<uint8_t, FxFreeDeleter>(buffer);
   m_pDict = ToDictionary(pStream->GetDict()->Clone());
   m_pDict->SetNewFor<CPDF_Number>("Length", static_cast<int>(m_dwSize));

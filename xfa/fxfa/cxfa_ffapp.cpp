@@ -35,13 +35,13 @@ class CXFA_FileRead : public IFX_SeekableReadStream {
   bool ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) override;
 
  private:
-  std::vector<std::unique_ptr<CPDF_StreamAcc>> m_Data;
+  std::vector<CFX_RetainPtr<CPDF_StreamAcc>> m_Data;
 };
 
 CXFA_FileRead::CXFA_FileRead(const std::vector<CPDF_Stream*>& streams) {
   for (CPDF_Stream* pStream : streams) {
-    m_Data.push_back(pdfium::MakeUnique<CPDF_StreamAcc>());
-    m_Data.back()->LoadAllData(pStream);
+    m_Data.push_back(pdfium::MakeRetain<CPDF_StreamAcc>(pStream));
+    m_Data.back()->LoadAllData();
   }
 }
 

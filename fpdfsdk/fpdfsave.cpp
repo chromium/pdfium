@@ -137,12 +137,10 @@ bool SaveXFADocumentData(
   // template
   if (iTemplate > -1) {
     CPDF_Stream* pTemplateStream = pArray->GetStreamAt(iTemplate);
-    CPDF_StreamAcc streamAcc;
-    streamAcc.LoadAllData(pTemplateStream);
-    uint8_t* pData = (uint8_t*)streamAcc.GetData();
-    uint32_t dwSize2 = streamAcc.GetSize();
-    CFX_RetainPtr<IFX_SeekableStream> pTemplate =
-        IFX_MemoryStream::Create(pData, dwSize2);
+    auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pTemplateStream);
+    pAcc->LoadAllData();
+    CFX_RetainPtr<IFX_SeekableStream> pTemplate = IFX_MemoryStream::Create(
+        const_cast<uint8_t*>(pAcc->GetData()), pAcc->GetSize());
     pChecksum->UpdateChecksum(pTemplate);
   }
   CPDF_Stream* pFormStream = nullptr;

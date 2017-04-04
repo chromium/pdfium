@@ -12,14 +12,13 @@
 
 #include "core/fpdfapi/page/cpdf_colorspace.h"
 #include "core/fpdfapi/page/cpdf_countedobject.h"
+#include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "core/fxcrt/cfx_retain_ptr.h"
 
 class CPDF_ExpIntFunc;
 class CPDF_Pattern;
 class CPDF_SampledFunc;
 class CPDF_StitchFunc;
-class CPDF_Stream;
-class CPDF_StreamAcc;
 
 class CPDF_Function {
  public:
@@ -102,8 +101,8 @@ class CPDF_SampledFunc : public CPDF_Function {
     return m_EncodeInfo;
   }
   uint32_t GetBitsPerSample() const { return m_nBitsPerSample; }
-  const CPDF_StreamAcc* GetSampleStream() const {
-    return m_pSampleStream.get();
+  CFX_RetainPtr<CPDF_StreamAcc> GetSampleStream() const {
+    return m_pSampleStream;
   }
 
  private:
@@ -111,7 +110,7 @@ class CPDF_SampledFunc : public CPDF_Function {
   std::vector<SampleDecodeInfo> m_DecodeInfo;
   uint32_t m_nBitsPerSample;
   uint32_t m_SampleMax;
-  std::unique_ptr<CPDF_StreamAcc> m_pSampleStream;
+  CFX_RetainPtr<CPDF_StreamAcc> m_pSampleStream;
 };
 
 class CPDF_StitchFunc : public CPDF_Function {

@@ -11,19 +11,19 @@
 
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
+#include "core/fxcrt/cfx_retain_ptr.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
 
-class CPDF_StreamAcc {
+class CPDF_StreamAcc : public CFX_Retainable {
  public:
-  CPDF_StreamAcc();
-  ~CPDF_StreamAcc();
+  template <typename T, typename... Args>
+  friend CFX_RetainPtr<T> pdfium::MakeRetain(Args&&... args);
 
   CPDF_StreamAcc(const CPDF_StreamAcc&) = delete;
   CPDF_StreamAcc& operator=(const CPDF_StreamAcc&) = delete;
 
-  void LoadAllData(const CPDF_Stream* pStream,
-                   bool bRawAccess = false,
+  void LoadAllData(bool bRawAccess = false,
                    uint32_t estimated_size = 0,
                    bool bImageAcc = false);
 
@@ -39,12 +39,15 @@ class CPDF_StreamAcc {
   std::unique_ptr<uint8_t, FxFreeDeleter> DetachData();
 
  protected:
+  explicit CPDF_StreamAcc(const CPDF_Stream* pStream);
+  ~CPDF_StreamAcc() override;
+
   uint8_t* m_pData;
   uint32_t m_dwSize;
   bool m_bNewBuf;
   CFX_ByteString m_ImageDecoder;
   CPDF_Dictionary* m_pImageParam;
-  const CPDF_Stream* m_pStream;
+  const CPDF_Stream* const m_pStream;
   uint8_t* m_pSrcData;
 };
 

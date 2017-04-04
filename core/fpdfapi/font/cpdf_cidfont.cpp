@@ -365,10 +365,10 @@ bool CPDF_CIDFont::Load() {
     if (!m_pCMap)
       return false;
   } else if (CPDF_Stream* pStream = pEncoding->AsStream()) {
-    CPDF_StreamAcc acc;
-    acc.LoadAllData(pStream, false);
+    auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pStream);
+    pAcc->LoadAllData(false);
     m_pCMap = pdfium::MakeRetain<CPDF_CMap>();
-    m_pCMap->LoadEmbedded(acc.GetData(), acc.GetSize());
+    m_pCMap->LoadEmbedded(pAcc->GetData(), pAcc->GetSize());
   } else {
     return false;
   }
@@ -403,8 +403,8 @@ bool CPDF_CIDFont::Load() {
     CPDF_Object* pmap = pCIDFontDict->GetDirectObjectFor("CIDToGIDMap");
     if (pmap) {
       if (CPDF_Stream* pStream = pmap->AsStream()) {
-        m_pStreamAcc = pdfium::MakeUnique<CPDF_StreamAcc>();
-        m_pStreamAcc->LoadAllData(pStream, false);
+        m_pStreamAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pStream);
+        m_pStreamAcc->LoadAllData(false);
       } else if (pmap->GetString() == "Identity") {
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
         if (m_pFontFile)

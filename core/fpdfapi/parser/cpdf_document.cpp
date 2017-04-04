@@ -630,7 +630,8 @@ CPDF_Font* CPDF_Document::LoadFont(CPDF_Dictionary* pFontDict) {
   return m_pDocPage->GetFont(pFontDict);
 }
 
-CPDF_StreamAcc* CPDF_Document::LoadFontFile(CPDF_Stream* pStream) {
+CFX_RetainPtr<CPDF_StreamAcc> CPDF_Document::LoadFontFile(
+    CPDF_Stream* pStream) {
   return m_pDocPage->GetFontFileStreamAcc(pStream);
 }
 

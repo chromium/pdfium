@@ -8,40 +8,38 @@
 
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
 
-CPDF_StreamAcc::CPDF_StreamAcc()
+CPDF_StreamAcc::CPDF_StreamAcc(const CPDF_Stream* pStream)
     : m_pData(nullptr),
       m_dwSize(0),
       m_bNewBuf(false),
       m_pImageParam(nullptr),
-      m_pStream(nullptr),
+      m_pStream(pStream),
       m_pSrcData(nullptr) {}
 
-void CPDF_StreamAcc::LoadAllData(const CPDF_Stream* pStream,
-                                 bool bRawAccess,
+void CPDF_StreamAcc::LoadAllData(bool bRawAccess,
                                  uint32_t estimated_size,
                                  bool bImageAcc) {
-  if (!pStream)
+  if (!m_pStream)
     return;
 
-  m_pStream = pStream;
-  if (pStream->IsMemoryBased() && (!pStream->HasFilter() || bRawAccess)) {
-    m_dwSize = pStream->GetRawSize();
-    m_pData = pStream->GetRawData();
+  if (m_pStream->IsMemoryBased() && (!m_pStream->HasFilter() || bRawAccess)) {
+    m_dwSize = m_pStream->GetRawSize();
+    m_pData = m_pStream->GetRawData();
     return;
   }
-  uint32_t dwSrcSize = pStream->GetRawSize();
+  uint32_t dwSrcSize = m_pStream->GetRawSize();
   if (dwSrcSize == 0)
     return;
 
   uint8_t* pSrcData;
-  if (!pStream->IsMemoryBased()) {
+  if (!m_pStream->IsMemoryBased()) {
     pSrcData = m_pSrcData = FX_Alloc(uint8_t, dwSrcSize);
-    if (!pStream->ReadRawData(0, pSrcData, dwSrcSize))
+    if (!m_pStream->ReadRawData(0, pSrcData, dwSrcSize))
       return;
   } else {
-    pSrcData = pStream->GetRawData();
+    pSrcData = m_pStream->GetRawData();
   }
-  if (!pStream->HasFilter() || bRawAccess) {
+  if (!m_pStream->HasFilter() || bRawAccess) {
     m_pData = pSrcData;
     m_dwSize = dwSrcSize;
   } else if (!PDF_DataDecode(pSrcData, dwSrcSize, m_pStream->GetDict(), m_pData,
@@ -50,10 +48,10 @@ void CPDF_StreamAcc::LoadAllData(const CPDF_Stream* pStream,
     m_pData = pSrcData;
     m_dwSize = dwSrcSize;
   }
-  if (pSrcData != pStream->GetRawData() && pSrcData != m_pData)
+  if (pSrcData != m_pStream->GetRawData() && pSrcData != m_pData)
     FX_Free(pSrcData);
   m_pSrcData = nullptr;
-  m_bNewBuf = m_pData != pStream->GetRawData();
+  m_bNewBuf = m_pData != m_pStream->GetRawData();
 }
 
 CPDF_StreamAcc::~CPDF_StreamAcc() {

@@ -79,7 +79,7 @@ class CPDF_Document : public CPDF_IndirectObjectHolder {
                             const CFX_Matrix& matrix);
 
   CFX_RetainPtr<CPDF_Image> LoadImageFromPageData(uint32_t dwStreamObjNum);
-  CPDF_StreamAcc* LoadFontFile(CPDF_Stream* pStream);
+  CFX_RetainPtr<CPDF_StreamAcc> LoadFontFile(CPDF_Stream* pStream);
   CFX_RetainPtr<CPDF_IccProfile> LoadIccProfile(CPDF_Stream* pStream);
 
   void LoadDoc();

@@ -46,11 +46,12 @@ size_t GetRefAggContextSize(bool val) {
 // difference for typical JBIG2 documents.
 static const int kSymbolDictCacheMaxSize = 2;
 
-CJBig2_Context::CJBig2_Context(CPDF_StreamAcc* pGlobalStream,
-                               CPDF_StreamAcc* pSrcStream,
-                               std::list<CJBig2_CachePair>* pSymbolDictCache,
-                               IFX_Pause* pPause,
-                               bool bIsGlobal)
+CJBig2_Context::CJBig2_Context(
+    const CFX_RetainPtr<CPDF_StreamAcc>& pGlobalStream,
+    const CFX_RetainPtr<CPDF_StreamAcc>& pSrcStream,
+    std::list<CJBig2_CachePair>* pSymbolDictCache,
+    IFX_Pause* pPause,
+    bool bIsGlobal)
     : m_nSegmentDecoded(0),
       m_bInPage(false),
       m_bBufSpecified(false),

@@ -40,8 +40,8 @@ using CJBig2_CachePair =
 
 class CJBig2_Context {
  public:
-  CJBig2_Context(CPDF_StreamAcc* pGlobalStream,
-                 CPDF_StreamAcc* pSrcStream,
+  CJBig2_Context(const CFX_RetainPtr<CPDF_StreamAcc>& pGlobalStream,
+                 const CFX_RetainPtr<CPDF_StreamAcc>& pSrcStream,
                  std::list<CJBig2_CachePair>* pSymbolDictCache,
                  IFX_Pause* pPause,
                  bool bIsGlobal);

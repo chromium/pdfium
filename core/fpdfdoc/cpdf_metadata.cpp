@@ -20,9 +20,9 @@ CPDF_Metadata::CPDF_Metadata(CPDF_Document* pDoc) {
   if (!pStream)
     return;
 
-  CPDF_StreamAcc acc;
-  acc.LoadAllData(pStream, false);
-  m_pXmlElement = CXML_Element::Parse(acc.GetData(), acc.GetSize());
+  auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pStream);
+  pAcc->LoadAllData(false);
+  m_pXmlElement = CXML_Element::Parse(pAcc->GetData(), pAcc->GetSize());
 }
 
 CPDF_Metadata::~CPDF_Metadata() {}

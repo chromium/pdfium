@@ -140,7 +140,7 @@ class CPDF_Parser {
   bool LoadLinearizedCrossRefV4(FX_FILESIZE pos, uint32_t dwObjCount);
   bool LoadLinearizedAllCrossRefV5(FX_FILESIZE pos);
   Error LoadLinearizedMainXRefTable();
-  CPDF_StreamAcc* GetObjectStream(uint32_t number);
+  CFX_RetainPtr<CPDF_StreamAcc> GetObjectStream(uint32_t number);
   bool IsLinearizedFile(
       const CFX_RetainPtr<IFX_SeekableReadStream>& pFileAccess,
       uint32_t offset);
@@ -165,8 +165,8 @@ class CPDF_Parser {
   std::unique_ptr<CPDF_LinearizedHeader> m_pLinearized;
   uint32_t m_dwXrefStartObjNum;
 
-  // A map of object numbers to indirect streams. Map owns the streams.
-  std::map<uint32_t, std::unique_ptr<CPDF_StreamAcc>> m_ObjectStreamMap;
+  // A map of object numbers to indirect streams.
+  std::map<uint32_t, CFX_RetainPtr<CPDF_StreamAcc>> m_ObjectStreamMap;
 
   // Mapping of object numbers to offsets. The offsets are relative to the first
   // object in the stream.
@@ -174,7 +174,7 @@ class CPDF_Parser {
 
   // Mapping of streams to their object caches. This is valid as long as the
   // streams in |m_ObjectStreamMap| are valid.
-  std::map<CPDF_StreamAcc*, StreamObjectCache> m_ObjCache;
+  std::map<CFX_RetainPtr<CPDF_StreamAcc>, StreamObjectCache> m_ObjCache;
 
   // All indirect object numbers that are being parsed.
   std::set<uint32_t> m_ParsingObjNums;

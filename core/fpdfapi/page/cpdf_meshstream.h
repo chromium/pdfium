@@ -39,6 +39,7 @@ class CPDF_MeshStream {
                   const std::vector<std::unique_ptr<CPDF_Function>>& funcs,
                   CPDF_Stream* pShadingStream,
                   CPDF_ColorSpace* pCS);
+  ~CPDF_MeshStream();
 
   bool Load();
 
@@ -80,7 +81,7 @@ class CPDF_MeshStream {
   float m_ymax;
   float m_ColorMin[kMaxComponents];
   float m_ColorMax[kMaxComponents];
-  CPDF_StreamAcc m_Stream;
+  CFX_RetainPtr<CPDF_StreamAcc> m_pStream;
   CFX_BitStream m_BitStream;
 };
 

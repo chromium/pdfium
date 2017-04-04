@@ -10,6 +10,7 @@
 #include <memory>
 #include <vector>
 
+#include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxge/fx_font.h"
@@ -19,7 +20,6 @@ class CPDF_CIDFont;
 class CPDF_Dictionary;
 class CPDF_Document;
 class CPDF_Object;
-class CPDF_StreamAcc;
 class CPDF_TrueTypeFont;
 class CPDF_Type1Font;
 class CPDF_Type3Font;
@@ -101,7 +101,7 @@ class CPDF_Font {
                                int charcode);
 
   CFX_ByteString m_BaseFont;
-  CPDF_StreamAcc* m_pFontFile;
+  CFX_RetainPtr<CPDF_StreamAcc> m_pFontFile;
   CPDF_Dictionary* m_pFontDict;
   mutable std::unique_ptr<CPDF_ToUnicodeMap> m_pToUnicodeMap;
   mutable bool m_bToUnicodeLoaded;

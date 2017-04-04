@@ -388,12 +388,12 @@ CFX_RetainPtr<CFX_DIBitmap> CXFA_FFDoc::GetPDFNamedImage(
   if (!pStream)
     return nullptr;
 
-  CPDF_StreamAcc streamAcc;
-  streamAcc.LoadAllData(pStream);
+  auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pStream);
+  pAcc->LoadAllData();
 
   CFX_RetainPtr<IFX_SeekableReadStream> pImageFileRead =
-      IFX_MemoryStream::Create((uint8_t*)streamAcc.GetData(),
-                               streamAcc.GetSize());
+      IFX_MemoryStream::Create(const_cast<uint8_t*>(pAcc->GetData()),
+                               pAcc->GetSize());
 
   CFX_RetainPtr<CFX_DIBitmap> pDibSource = XFA_LoadImageFromBuffer(
       pImageFileRead, FXCODEC_IMAGE_UNKNOWN, iImageXDpi, iImageYDpi);

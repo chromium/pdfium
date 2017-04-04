@@ -12,6 +12,7 @@
 
 #include "core/fpdfapi/page/cpdf_pageobjectholder.h"
 #include "core/fpdfapi/page/cpdf_streamcontentparser.h"
+#include "core/fpdfapi/parser/cpdf_stream_acc.h"
 
 class CPDF_AllStates;
 class CPDF_Form;
@@ -48,8 +49,8 @@ class CPDF_ContentParser {
   bool m_bForm;
   CPDF_Type3Char* m_pType3Char;
   uint32_t m_nStreams;
-  std::unique_ptr<CPDF_StreamAcc> m_pSingleStream;
-  std::vector<std::unique_ptr<CPDF_StreamAcc>> m_StreamArray;
+  CFX_RetainPtr<CPDF_StreamAcc> m_pSingleStream;
+  std::vector<CFX_RetainPtr<CPDF_StreamAcc>> m_StreamArray;
   uint8_t* m_pData;
   uint32_t m_Size;
   uint32_t m_CurrentOffset;

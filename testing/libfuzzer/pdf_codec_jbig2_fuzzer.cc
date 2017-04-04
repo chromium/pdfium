@@ -33,14 +33,15 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
 
   auto stream = pdfium::MakeUnique<CPDF_Stream>();
   stream->AsStream()->SetData(data, size);
-  CPDF_StreamAcc src_stream;
-  src_stream.LoadAllData(stream->AsStream(), true);
+
+  auto src_stream = pdfium::MakeRetain<CPDF_StreamAcc>(stream->AsStream());
+  src_stream->LoadAllData(true);
 
   CCodec_Jbig2Module module;
   CCodec_Jbig2Context jbig2_context;
   std::unique_ptr<JBig2_DocumentContext> document_context;
   FXCODEC_STATUS status = module.StartDecode(
-      &jbig2_context, &document_context, width, height, &src_stream, nullptr,
+      &jbig2_context, &document_context, width, height, src_stream, nullptr,
       bitmap->GetBuffer(), bitmap->GetPitch(), nullptr);
 
   while (status == FXCODEC_STATUS_DECODE_TOBECONTINUE)

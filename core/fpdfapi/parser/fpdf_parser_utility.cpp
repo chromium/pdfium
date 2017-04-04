@@ -208,9 +208,9 @@ CFX_ByteTextBuf& operator<<(CFX_ByteTextBuf& buf, const CPDF_Object* pObj) {
     case CPDF_Object::STREAM: {
       const CPDF_Stream* p = pObj->AsStream();
       buf << p->GetDict() << "stream\r\n";
-      CPDF_StreamAcc acc;
-      acc.LoadAllData(p, true);
-      buf.AppendBlock(acc.GetData(), acc.GetSize());
+      auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(p);
+      pAcc->LoadAllData(true);
+      buf.AppendBlock(pAcc->GetData(), pAcc->GetSize());
       buf << "\r\nendstream";
       break;
     }

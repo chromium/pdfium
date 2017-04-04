@@ -165,8 +165,8 @@ bool CPDF_DIBSource::Load(CPDF_Document* pDoc, const CPDF_Stream* pStream) {
   if (!src_size.IsValid())
     return false;
 
-  m_pStreamAcc = pdfium::MakeUnique<CPDF_StreamAcc>();
-  m_pStreamAcc->LoadAllData(pStream, false, src_size.ValueOrDie(), true);
+  m_pStreamAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pStream);
+  m_pStreamAcc->LoadAllData(false, src_size.ValueOrDie(), true);
   if (m_pStreamAcc->GetSize() == 0 || !m_pStreamAcc->GetData())
     return false;
 
@@ -278,8 +278,8 @@ int CPDF_DIBSource::StartLoadDIBSource(CPDF_Document* pDoc,
   if (!src_size.IsValid()) {
     return 0;
   }
-  m_pStreamAcc = pdfium::MakeUnique<CPDF_StreamAcc>();
-  m_pStreamAcc->LoadAllData(pStream, false, src_size.ValueOrDie(), true);
+  m_pStreamAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pStream);
+  m_pStreamAcc->LoadAllData(false, src_size.ValueOrDie(), true);
   if (m_pStreamAcc->GetSize() == 0 || !m_pStreamAcc->GetData()) {
     return 0;
   }
@@ -325,17 +325,17 @@ int CPDF_DIBSource::ContinueLoadDIBSource(IFX_Pause* pPause) {
         CPDF_Stream* pGlobals =
             m_pStreamAcc->GetImageParam()->GetStreamFor("JBIG2Globals");
         if (pGlobals) {
-          m_pGlobalStream = pdfium::MakeUnique<CPDF_StreamAcc>();
-          m_pGlobalStream->LoadAllData(pGlobals, false);
+          m_pGlobalStream = pdfium::MakeRetain<CPDF_StreamAcc>(pGlobals);
+          m_pGlobalStream->LoadAllData(false);
         }
       }
       ret = pJbig2Module->StartDecode(
           m_pJbig2Context.get(), m_pDocument->CodecContext(), m_Width, m_Height,
-          m_pStreamAcc.get(), m_pGlobalStream.get(),
-          m_pCachedBitmap->GetBuffer(), m_pCachedBitmap->GetPitch(), pPause);
+          m_pStreamAcc, m_pGlobalStream, m_pCachedBitmap->GetBuffer(),
+          m_pCachedBitmap->GetPitch(), pPause);
       if (ret < 0) {
         m_pCachedBitmap.Reset();
-        m_pGlobalStream.reset();
+        m_pGlobalStream.Reset();
         m_pJbig2Context.reset();
         return 0;
       }
@@ -358,7 +358,7 @@ int CPDF_DIBSource::ContinueLoadDIBSource(IFX_Pause* pPause) {
     ret = pJbig2Module->ContinueDecode(m_pJbig2Context.get(), pPause);
     if (ret < 0) {
       m_pCachedBitmap.Reset();
-      m_pGlobalStream.reset();
+      m_pGlobalStream.Reset();
       m_pJbig2Context.reset();
       return 0;
     }

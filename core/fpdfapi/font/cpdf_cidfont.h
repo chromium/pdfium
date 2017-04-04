@@ -78,7 +78,7 @@ class CPDF_CIDFont : public CPDF_Font {
   bool m_bType1;
   bool m_bCIDIsGID;
   uint16_t m_DefaultWidth;
-  std::unique_ptr<CPDF_StreamAcc> m_pStreamAcc;
+  CFX_RetainPtr<CPDF_StreamAcc> m_pStreamAcc;
   bool m_bAnsiWidthsFixed;
   FX_RECT m_CharBBox[256];
   std::vector<uint32_t> m_WidthList;

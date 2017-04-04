@@ -204,11 +204,11 @@ void SetPageContents(const CFX_ByteString& key,
   pPage->ConvertToIndirectObjectFor("Contents", pDocument);
   if (!pContentsArray) {
     pContentsArray = pDocument->NewIndirect<CPDF_Array>();
-    CPDF_StreamAcc acc;
-    acc.LoadAllData(pContentsStream);
+    auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pContentsStream);
+    pAcc->LoadAllData();
     CFX_ByteString sStream = "q\n";
     CFX_ByteString sBody =
-        CFX_ByteString((const char*)acc.GetData(), acc.GetSize());
+        CFX_ByteString((const char*)pAcc->GetData(), pAcc->GetSize());
     sStream = sStream + sBody + "\nQ";
     pContentsStream->SetData(sStream.raw_str(), sStream.GetLength());
     pContentsArray->AddNew<CPDF_Reference>(pDocument,
@@ -402,11 +402,9 @@ DLLEXPORT int STDCALL FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
     pXObject->SetNewFor<CPDF_Reference>(sFormName, pDocument,
                                         pObj->GetObjNum());
 
-    CPDF_StreamAcc acc;
-    acc.LoadAllData(pNewXObject);
-
-    const uint8_t* pData = acc.GetData();
-    CFX_ByteString sStream(pData, acc.GetSize());
+    auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pNewXObject);
+    pAcc->LoadAllData();
+    CFX_ByteString sStream(pAcc->GetData(), pAcc->GetSize());
     CFX_Matrix matrix = pAPDic->GetMatrixFor("Matrix");
     if (matrix.IsIdentity()) {
       matrix.a = 1.0f;

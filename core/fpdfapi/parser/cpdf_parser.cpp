@@ -40,11 +40,11 @@ uint32_t GetVarInt(const uint8_t* p, int32_t n) {
   return result;
 }
 
-int32_t GetStreamNCount(CPDF_StreamAcc* pObjStream) {
+int32_t GetStreamNCount(const CFX_RetainPtr<CPDF_StreamAcc>& pObjStream) {
   return pObjStream->GetDict()->GetIntegerFor("N");
 }
 
-int32_t GetStreamFirst(CPDF_StreamAcc* pObjStream) {
+int32_t GetStreamFirst(const CFX_RetainPtr<CPDF_StreamAcc>& pObjStream) {
   return pObjStream->GetDict()->GetIntegerFor("First");
 }
 
@@ -997,11 +997,11 @@ bool CPDF_Parser::LoadCrossRefV5(FX_FILESIZE* pos, bool bMainXRef) {
     return false;
 
   uint32_t totalWidth = dwAccWidth.ValueOrDie();
-  CPDF_StreamAcc acc;
-  acc.LoadAllData(pStream);
+  auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pStream);
+  pAcc->LoadAllData();
 
-  const uint8_t* pData = acc.GetData();
-  uint32_t dwTotalSize = acc.GetSize();
+  const uint8_t* pData = pAcc->GetData();
+  uint32_t dwTotalSize = pAcc->GetSize();
   uint32_t segindex = 0;
   for (uint32_t i = 0; i < arrIndex.size(); i++) {
     int32_t startnum = arrIndex[i].first;
@@ -1114,7 +1114,8 @@ std::unique_ptr<CPDF_Object> CPDF_Parser::ParseIndirectObject(
   if (GetObjectType(objnum) != 2)
     return nullptr;
 
-  CPDF_StreamAcc* pObjStream = GetObjectStream(m_ObjectInfo[objnum].pos);
+  CFX_RetainPtr<CPDF_StreamAcc> pObjStream =
+      GetObjectStream(m_ObjectInfo[objnum].pos);
   if (!pObjStream)
     return nullptr;
 
@@ -1141,10 +1142,10 @@ std::unique_ptr<CPDF_Object> CPDF_Parser::ParseIndirectObject(
   return syntax.GetObject(pObjList, 0, 0, true);
 }
 
-CPDF_StreamAcc* CPDF_Parser::GetObjectStream(uint32_t objnum) {
+CFX_RetainPtr<CPDF_StreamAcc> CPDF_Parser::GetObjectStream(uint32_t objnum) {
   auto it = m_ObjectStreamMap.find(objnum);
   if (it != m_ObjectStreamMap.end())
-    return it->second.get();
+    return it->second;
 
   if (!m_pDocument)
     return nullptr;
@@ -1154,9 +1155,9 @@ CPDF_StreamAcc* CPDF_Parser::GetObjectStream(uint32_t objnum) {
   if (!pStream)
     return nullptr;
 
-  CPDF_StreamAcc* pStreamAcc = new CPDF_StreamAcc;
-  pStreamAcc->LoadAllData(pStream);
-  m_ObjectStreamMap[objnum].reset(pStreamAcc);
+  auto pStreamAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pStream);
+  pStreamAcc->LoadAllData();
+  m_ObjectStreamMap[objnum] = pStreamAcc;
   return pStreamAcc;
 }
 
@@ -1190,7 +1191,8 @@ void CPDF_Parser::GetIndirectBinary(uint32_t objnum,
     return;
 
   if (GetObjectType(objnum) == 2) {
-    CPDF_StreamAcc* pObjStream = GetObjectStream(m_ObjectInfo[objnum].pos);
+    CFX_RetainPtr<CPDF_StreamAcc> pObjStream =
+        GetObjectStream(m_ObjectInfo[objnum].pos);
     if (!pObjStream)
       return;
 

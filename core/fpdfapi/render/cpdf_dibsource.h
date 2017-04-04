@@ -118,7 +118,7 @@ class CPDF_DIBSource : public CFX_DIBSource {
 
   CPDF_Document* m_pDocument;
   const CPDF_Stream* m_pStream;
-  std::unique_ptr<CPDF_StreamAcc> m_pStreamAcc;
+  CFX_RetainPtr<CPDF_StreamAcc> m_pStreamAcc;
   const CPDF_Dictionary* m_pDict;
   CPDF_ColorSpace* m_pColorSpace;
   uint32_t m_Family;
@@ -139,8 +139,8 @@ class CPDF_DIBSource : public CFX_DIBSource {
   uint8_t* m_pMaskedLine;
   CFX_RetainPtr<CFX_DIBitmap> m_pCachedBitmap;
   CFX_RetainPtr<CPDF_DIBSource> m_pMask;
+  CFX_RetainPtr<CPDF_StreamAcc> m_pGlobalStream;
   std::unique_ptr<CCodec_ScanlineDecoder> m_pDecoder;
-  std::unique_ptr<CPDF_StreamAcc> m_pGlobalStream;
   std::unique_ptr<CCodec_Jbig2Context> m_pJbig2Context;
   CPDF_Stream* m_pMaskStream;
   int m_Status;

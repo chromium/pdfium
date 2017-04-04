@@ -107,14 +107,17 @@ CPDF_MeshStream::CPDF_MeshStream(
       m_xmin(0),
       m_xmax(0),
       m_ymin(0),
-      m_ymax(0) {
+      m_ymax(0),
+      m_pStream(pdfium::MakeRetain<CPDF_StreamAcc>(pShadingStream)) {
   memset(&m_ColorMin, 0, sizeof(m_ColorMin));
   memset(&m_ColorMax, 0, sizeof(m_ColorMax));
 }
 
+CPDF_MeshStream::~CPDF_MeshStream() {}
+
 bool CPDF_MeshStream::Load() {
-  m_Stream.LoadAllData(m_pShadingStream);
-  m_BitStream.Init(m_Stream.GetData(), m_Stream.GetSize());
+  m_pStream->LoadAllData();
+  m_BitStream.Init(m_pStream->GetData(), m_pStream->GetSize());
   CPDF_Dictionary* pDict = m_pShadingStream->GetDict();
   m_nCoordBits = pDict->GetIntegerFor("BitsPerCoordinate");
   m_nComponentBits = pDict->GetIntegerFor("BitsPerComponent");
