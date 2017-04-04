@@ -54,7 +54,7 @@ class CJBig2_Context {
                        IFX_Pause* pPause);
 
   int32_t Continue(IFX_Pause* pPause);
-  FXCODEC_STATUS GetProcessingStatus() { return m_ProcessingStatus; }
+  FXCODEC_STATUS GetProcessingStatus() const { return m_ProcessingStatus; }
 
  private:
   int32_t decode_SquentialOrgnazation(IFX_Pause* pPause);

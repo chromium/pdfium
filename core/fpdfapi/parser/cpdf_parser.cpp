@@ -240,17 +240,13 @@ CPDF_Parser::Error CPDF_Parser::SetEncryptHandler() {
 
   if (m_pEncryptDict) {
     CFX_ByteString filter = m_pEncryptDict->GetStringFor("Filter");
-    std::unique_ptr<CPDF_SecurityHandler> pSecurityHandler;
-    Error err = HANDLER_ERROR;
-    if (filter == "Standard") {
-      pSecurityHandler = pdfium::MakeUnique<CPDF_SecurityHandler>();
-      err = PASSWORD_ERROR;
-    }
-    if (!pSecurityHandler)
+    if (filter != "Standard")
       return HANDLER_ERROR;
 
+    std::unique_ptr<CPDF_SecurityHandler> pSecurityHandler =
+        pdfium::MakeUnique<CPDF_SecurityHandler>();
     if (!pSecurityHandler->OnInit(this, m_pEncryptDict))
-      return err;
+      return PASSWORD_ERROR;
 
     m_pSecurityHandler = std::move(pSecurityHandler);
     std::unique_ptr<CPDF_CryptoHandler> pCryptoHandler(

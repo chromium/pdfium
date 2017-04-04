@@ -50,6 +50,9 @@ class CCodec_Jbig2Module {
       IFX_Pause* pPause);
   FXCODEC_STATUS ContinueDecode(CCodec_Jbig2Context* pJbig2Context,
                                 IFX_Pause* pPause);
+
+ private:
+  FXCODEC_STATUS Decode(CCodec_Jbig2Context* pJbig2Context, int result);
 };
 
 #endif  // CORE_FXCODEC_CODEC_CCODEC_JBIG2MODULE_H_
