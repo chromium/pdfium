@@ -211,7 +211,7 @@ bool CGdiPrinterDriver::DrawDeviceText(int nChars,
     return false;
 
   // Scale factor used to minimize the kerning problems caused by rounding
-  // errors below. Value choosen based on the title of https://crbug.com/18383
+  // errors below. Value chosen based on the title of https://crbug.com/18383
   const double kScaleFactor = 10;
 
   // Font
