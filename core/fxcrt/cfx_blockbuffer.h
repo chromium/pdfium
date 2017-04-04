@@ -10,44 +10,43 @@
 #include <stdint.h>
 
 #include <memory>
+#include <utility>
 #include <vector>
 
 #include "core/fxcrt/fx_string.h"
 
 class CFX_BlockBuffer {
  public:
-  explicit CFX_BlockBuffer(int32_t iAllocStep = 1024 * 1024);
+  CFX_BlockBuffer();
   ~CFX_BlockBuffer();
 
-  bool InitBuffer(int32_t iBufferSize = 1024 * 1024);
-  bool IsInitialized() { return m_iBufferSize / m_iAllocStep >= 1; }
+  bool InitBuffer();
+  bool IsInitialized() { return m_iBufferSize / GetAllocStep() >= 1; }
 
-  wchar_t* GetAvailableBlock(int32_t& iIndexInBlock);
-  inline int32_t GetAllocStep() const { return m_iAllocStep; }
-  inline int32_t& GetDataLengthRef() { return m_iDataLength; }
+  std::pair<wchar_t*, int32_t> GetAvailableBlock();
+  int32_t GetAllocStep() const;
 
-  inline void Reset(bool bReserveData = true) {
+  // This is ... scary. This returns a ref, which the XMLSyntaxParser stores
+  // and modifies.
+  int32_t& GetDataLengthRef() { return m_iDataLength; }
+
+  void Reset(bool bReserveData) {
     if (!bReserveData)
       m_iStartPosition = 0;
     m_iDataLength = 0;
   }
 
   void SetTextChar(int32_t iIndex, wchar_t ch);
-  int32_t DeleteTextChars(int32_t iCount, bool bDirection = true);
-  void GetTextData(CFX_WideString& wsTextData,
-                   int32_t iStart = 0,
-                   int32_t iLength = -1) const;
+  int32_t DeleteTextChars(int32_t iCount);
+  CFX_WideString GetTextData(int32_t iStart, int32_t iLength) const;
 
  private:
-  inline void TextDataIndex2BufIndex(const int32_t iIndex,
-                                     int32_t& iBlockIndex,
-                                     int32_t& iInnerIndex) const;
-  void ClearBuffer();
+  std::pair<int32_t, int32_t> TextDataIndex2BufIndex(
+      const int32_t iIndex) const;
 
   std::vector<std::unique_ptr<wchar_t, FxFreeDeleter>> m_BlockArray;
   int32_t m_iDataLength;
   int32_t m_iBufferSize;
-  int32_t m_iAllocStep;
   int32_t m_iStartPosition;
 };
 

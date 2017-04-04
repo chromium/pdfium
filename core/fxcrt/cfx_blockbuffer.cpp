@@ -7,57 +7,58 @@
 #include "core/fxcrt/cfx_blockbuffer.h"
 
 #include <algorithm>
+#include <utility>
 
 #include "third_party/base/stl_util.h"
 
-CFX_BlockBuffer::CFX_BlockBuffer(int32_t iAllocStep)
-    : m_iDataLength(0),
-      m_iBufferSize(0),
-      m_iAllocStep(iAllocStep),
-      m_iStartPosition(0) {}
+namespace {
 
-CFX_BlockBuffer::~CFX_BlockBuffer() {
-  ClearBuffer();
+const int kAllocStep = 1024 * 1024;
+
+}  // namespace
+
+CFX_BlockBuffer::CFX_BlockBuffer()
+    : m_iDataLength(0), m_iBufferSize(0), m_iStartPosition(0) {}
+
+CFX_BlockBuffer::~CFX_BlockBuffer() {}
+
+int32_t CFX_BlockBuffer::GetAllocStep() const {
+  return kAllocStep;
 }
 
-wchar_t* CFX_BlockBuffer::GetAvailableBlock(int32_t& iIndexInBlock) {
-  iIndexInBlock = 0;
+std::pair<wchar_t*, int32_t> CFX_BlockBuffer::GetAvailableBlock() {
   if (m_BlockArray.empty())
-    return nullptr;
+    return {nullptr, 0};
 
   int32_t iRealIndex = m_iStartPosition + m_iDataLength;
   if (iRealIndex == m_iBufferSize) {
-    m_BlockArray.emplace_back(FX_Alloc(wchar_t, m_iAllocStep));
-    m_iBufferSize += m_iAllocStep;
-    return m_BlockArray.back().get();
+    m_BlockArray.emplace_back(FX_Alloc(wchar_t, kAllocStep));
+    m_iBufferSize += kAllocStep;
+    return {m_BlockArray.back().get(), 0};
   }
-  iIndexInBlock = iRealIndex % m_iAllocStep;
-  return m_BlockArray[iRealIndex / m_iAllocStep].get();
+  return {m_BlockArray[iRealIndex / kAllocStep].get(), iRealIndex % kAllocStep};
 }
 
-bool CFX_BlockBuffer::InitBuffer(int32_t iBufferSize) {
-  ClearBuffer();
-  int32_t iNumOfBlock = (iBufferSize - 1) / m_iAllocStep + 1;
-  for (int32_t i = 0; i < iNumOfBlock; i++)
-    m_BlockArray.emplace_back(FX_Alloc(wchar_t, m_iAllocStep));
-
-  m_iBufferSize = iNumOfBlock * m_iAllocStep;
+bool CFX_BlockBuffer::InitBuffer() {
+  m_BlockArray.clear();
+  m_BlockArray.emplace_back(FX_Alloc(wchar_t, kAllocStep));
+  m_iBufferSize = kAllocStep;
   return true;
 }
 
 void CFX_BlockBuffer::SetTextChar(int32_t iIndex, wchar_t ch) {
-  if (iIndex < 0) {
+  if (iIndex < 0)
     return;
-  }
+
   int32_t iRealIndex = m_iStartPosition + iIndex;
-  int32_t iBlockIndex = iRealIndex / m_iAllocStep;
-  int32_t iInnerIndex = iRealIndex % m_iAllocStep;
+  int32_t iBlockIndex = iRealIndex / kAllocStep;
+  int32_t iInnerIndex = iRealIndex % kAllocStep;
   int32_t iBlockSize = pdfium::CollectionSize<int32_t>(m_BlockArray);
   if (iBlockIndex >= iBlockSize) {
     int32_t iNewBlocks = iBlockIndex - iBlockSize + 1;
     do {
-      m_BlockArray.emplace_back(FX_Alloc(wchar_t, m_iAllocStep));
-      m_iBufferSize += m_iAllocStep;
+      m_BlockArray.emplace_back(FX_Alloc(wchar_t, kAllocStep));
+      m_iBufferSize += kAllocStep;
     } while (--iNewBlocks);
   }
   wchar_t* pTextData = m_BlockArray[iBlockIndex].get();
@@ -65,7 +66,7 @@ void CFX_BlockBuffer::SetTextChar(int32_t iIndex, wchar_t ch) {
   m_iDataLength = std::max(m_iDataLength, iIndex + 1);
 }
 
-int32_t CFX_BlockBuffer::DeleteTextChars(int32_t iCount, bool bDirection) {
+int32_t CFX_BlockBuffer::DeleteTextChars(int32_t iCount) {
   if (iCount <= 0)
     return m_iDataLength;
 
@@ -73,68 +74,57 @@ int32_t CFX_BlockBuffer::DeleteTextChars(int32_t iCount, bool bDirection) {
     Reset(false);
     return 0;
   }
-  if (bDirection) {
-    m_iStartPosition += iCount;
-    m_iDataLength -= iCount;
-  } else {
-    m_iDataLength -= iCount;
-  }
+  m_iDataLength -= iCount;
   return m_iDataLength;
 }
 
-void CFX_BlockBuffer::GetTextData(CFX_WideString& wsTextData,
-                                  int32_t iStart,
-                                  int32_t iLength) const {
-  wsTextData.clear();
+CFX_WideString CFX_BlockBuffer::GetTextData(int32_t iStart,
+                                            int32_t iLength) const {
   int32_t iMaybeDataLength = m_iBufferSize - 1 - m_iStartPosition;
-  if (iStart < 0 || iStart > iMaybeDataLength) {
-    return;
-  }
-  if (iLength == -1 || iLength > iMaybeDataLength) {
+  if (iStart < 0 || iStart > iMaybeDataLength)
+    return CFX_WideString();
+  if (iLength == -1 || iLength > iMaybeDataLength)
     iLength = iMaybeDataLength;
-  }
-  if (iLength <= 0) {
-    return;
-  }
+  if (iLength <= 0)
+    return CFX_WideString();
+
+  CFX_WideString wsTextData;
   wchar_t* pBuf = wsTextData.GetBuffer(iLength);
-  if (!pBuf) {
-    return;
-  }
-  int32_t iStartBlockIndex = 0;
-  int32_t iStartInnerIndex = 0;
-  TextDataIndex2BufIndex(iStart, iStartBlockIndex, iStartInnerIndex);
-  int32_t iEndBlockIndex = 0;
-  int32_t iEndInnerIndex = 0;
-  TextDataIndex2BufIndex(iStart + iLength, iEndBlockIndex, iEndInnerIndex);
+  if (!pBuf)
+    return CFX_WideString();
+
+  int32_t iStartBlock = 0;
+  int32_t iStartInner = 0;
+  std::tie(iStartBlock, iStartInner) = TextDataIndex2BufIndex(iStart);
+
+  int32_t iEndBlock = 0;
+  int32_t iEndInner = 0;
+  std::tie(iEndBlock, iEndInner) = TextDataIndex2BufIndex(iStart + iLength);
+
   int32_t iPointer = 0;
-  for (int32_t i = iStartBlockIndex; i <= iEndBlockIndex; i++) {
+  for (int32_t i = iStartBlock; i <= iEndBlock; i++) {
     int32_t iBufferPointer = 0;
-    int32_t iCopyLength = m_iAllocStep;
-    if (i == iStartBlockIndex) {
-      iCopyLength -= iStartInnerIndex;
-      iBufferPointer = iStartInnerIndex;
+    int32_t iCopyLength = kAllocStep;
+    if (i == iStartBlock) {
+      iCopyLength -= iStartInner;
+      iBufferPointer = iStartInner;
     }
-    if (i == iEndBlockIndex) {
-      iCopyLength -= ((m_iAllocStep - 1) - iEndInnerIndex);
-    }
+    if (i == iEndBlock)
+      iCopyLength -= ((kAllocStep - 1) - iEndInner);
+
     wchar_t* pBlockBuf = m_BlockArray[i].get();
     memcpy(pBuf + iPointer, pBlockBuf + iBufferPointer,
            iCopyLength * sizeof(wchar_t));
     iPointer += iCopyLength;
   }
   wsTextData.ReleaseBuffer(iLength);
+  return wsTextData;
 }
 
-void CFX_BlockBuffer::TextDataIndex2BufIndex(const int32_t iIndex,
-                                             int32_t& iBlockIndex,
-                                             int32_t& iInnerIndex) const {
+std::pair<int32_t, int32_t> CFX_BlockBuffer::TextDataIndex2BufIndex(
+    const int32_t iIndex) const {
   ASSERT(iIndex >= 0);
-  int32_t iRealIndex = m_iStartPosition + iIndex;
-  iBlockIndex = iRealIndex / m_iAllocStep;
-  iInnerIndex = iRealIndex % m_iAllocStep;
-}
 
-void CFX_BlockBuffer::ClearBuffer() {
-  m_iBufferSize = 0;
-  m_BlockArray.clear();
+  int32_t iRealIndex = m_iStartPosition + iIndex;
+  return {iRealIndex / kAllocStep, iRealIndex % kAllocStep};
 }

@@ -53,22 +53,27 @@ class CFDE_XMLSyntaxParser {
   int32_t GetLastNodeNumber() const { return m_iLastNodeNum; }
 
   void GetTargetName(CFX_WideString& wsTarget) const {
-    m_BlockBuffer.GetTextData(wsTarget, 0, m_iTextDataLength);
+    wsTarget = m_BlockBuffer.GetTextData(0, m_iTextDataLength);
   }
+
   void GetTagName(CFX_WideString& wsTag) const {
-    m_BlockBuffer.GetTextData(wsTag, 0, m_iTextDataLength);
+    wsTag = m_BlockBuffer.GetTextData(0, m_iTextDataLength);
   }
+
   void GetAttributeName(CFX_WideString& wsAttriName) const {
-    m_BlockBuffer.GetTextData(wsAttriName, 0, m_iTextDataLength);
+    wsAttriName = m_BlockBuffer.GetTextData(0, m_iTextDataLength);
   }
+
   void GetAttributeValue(CFX_WideString& wsAttriValue) const {
-    m_BlockBuffer.GetTextData(wsAttriValue, 0, m_iTextDataLength);
+    wsAttriValue = m_BlockBuffer.GetTextData(0, m_iTextDataLength);
   }
+
   void GetTextData(CFX_WideString& wsText) const {
-    m_BlockBuffer.GetTextData(wsText, 0, m_iTextDataLength);
+    wsText = m_BlockBuffer.GetTextData(0, m_iTextDataLength);
   }
+
   void GetTargetData(CFX_WideString& wsData) const {
-    m_BlockBuffer.GetTextData(wsData, 0, m_iTextDataLength);
+    wsData = m_BlockBuffer.GetTextData(0, m_iTextDataLength);
   }
 
  protected:
