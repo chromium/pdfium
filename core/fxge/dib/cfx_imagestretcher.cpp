@@ -8,6 +8,8 @@
 
 #include <climits>
 
+#include "core/fxge/dib/cfx_dibitmap.h"
+#include "core/fxge/dib/cfx_dibsource.h"
 #include "core/fxge/dib/dib_int.h"
 #include "core/fxge/fx_dib.h"
 #include "third_party/base/ptr_util.h"
@@ -28,6 +30,13 @@ FXDIB_Format GetStretchedFormat(const CFX_DIBSource& src) {
   if (format == FXDIB_8bppRgb && src.GetPalette())
     return FXDIB_Rgb;
   return format;
+}
+
+void CmykDecode(uint32_t cmyk, int& c, int& m, int& y, int& k) {
+  c = FXSYS_GetCValue(cmyk);
+  m = FXSYS_GetMValue(cmyk);
+  y = FXSYS_GetYValue(cmyk);
+  k = FXSYS_GetKValue(cmyk);
 }
 
 }  // namespace

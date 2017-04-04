@@ -10,6 +10,7 @@
 #include <memory>
 
 #include "core/fxcodec/fx_codec.h"
+#include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/fx_dib.h"
 #include "third_party/base/numerics/safe_math.h"
 #include "third_party/base/ptr_util.h"

@@ -8,6 +8,7 @@
 #define FPDFSDK_FSDK_DEFINE_H_
 
 #include "core/fpdfapi/parser/cpdf_parser.h"
+#include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/fx_dib.h"
 #include "public/fpdfview.h"
 

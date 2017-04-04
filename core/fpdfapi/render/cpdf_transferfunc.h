@@ -11,6 +11,7 @@
 #include "core/fxge/fx_dib.h"
 
 class CPDF_Document;
+class CFX_DIBSource;
 
 class CPDF_TransferFunc : public CFX_Retainable {
  public:

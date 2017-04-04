@@ -8,6 +8,7 @@
 
 #include "core/fxcodec/codec/cjpx_decoder.h"
 #include "core/fxcodec/codec/codec_int.h"
+#include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/fx_dib.h"
 
 CCodec_JpxModule g_module;

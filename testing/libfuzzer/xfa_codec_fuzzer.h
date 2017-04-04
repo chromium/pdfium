@@ -14,6 +14,7 @@
 #include "core/fxcodec/codec/ccodec_tiffmodule.h"
 #include "core/fxcodec/fx_codec.h"
 #include "core/fxcrt/fx_stream.h"
+#include "core/fxge/dib/cfx_dibitmap.h"
 #include "third_party/base/ptr_util.h"
 
 class XFACodecFuzzer {

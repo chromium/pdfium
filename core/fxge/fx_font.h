@@ -13,6 +13,7 @@
 
 #include "core/fxcrt/fx_system.h"
 #include "core/fxge/cfx_substfont.h"
+#include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/fx_dib.h"
 #include "core/fxge/fx_freetype.h"
 

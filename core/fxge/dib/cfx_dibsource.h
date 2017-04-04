@@ -12,6 +12,7 @@
 #include "core/fxcrt/cfx_retain_ptr.h"
 #include "core/fxcrt/fx_basic.h"
 #include "core/fxcrt/fx_coordinates.h"
+#include "core/fxge/fx_dib.h"
 
 enum FXDIB_Channel {
   FXDIB_Red = 1,
@@ -23,48 +24,6 @@ enum FXDIB_Channel {
   FXDIB_Black,
   FXDIB_Alpha
 };
-
-enum FXDIB_Format {
-  FXDIB_Invalid = 0,
-  FXDIB_1bppMask = 0x101,
-  FXDIB_1bppRgb = 0x001,
-  FXDIB_1bppCmyk = 0x401,
-  FXDIB_8bppMask = 0x108,
-  FXDIB_8bppRgb = 0x008,
-  FXDIB_8bppRgba = 0x208,
-  FXDIB_8bppCmyk = 0x408,
-  FXDIB_8bppCmyka = 0x608,
-  FXDIB_Rgb = 0x018,
-  FXDIB_Rgba = 0x218,
-  FXDIB_Rgb32 = 0x020,
-  FXDIB_Argb = 0x220,
-  FXDIB_Cmyk = 0x420,
-  FXDIB_Cmyka = 0x620,
-};
-
-#define FXDIB_DOWNSAMPLE 0x04
-#define FXDIB_INTERPOL 0x20
-#define FXDIB_BICUBIC_INTERPOL 0x80
-#define FXDIB_NOSMOOTH 0x100
-#define FXDIB_BLEND_NORMAL 0
-#define FXDIB_BLEND_MULTIPLY 1
-#define FXDIB_BLEND_SCREEN 2
-#define FXDIB_BLEND_OVERLAY 3
-#define FXDIB_BLEND_DARKEN 4
-#define FXDIB_BLEND_LIGHTEN 5
-
-#define FXDIB_BLEND_COLORDODGE 6
-#define FXDIB_BLEND_COLORBURN 7
-#define FXDIB_BLEND_HARDLIGHT 8
-#define FXDIB_BLEND_SOFTLIGHT 9
-#define FXDIB_BLEND_DIFFERENCE 10
-#define FXDIB_BLEND_EXCLUSION 11
-#define FXDIB_BLEND_NONSEPARABLE 21
-#define FXDIB_BLEND_HUE 21
-#define FXDIB_BLEND_SATURATION 22
-#define FXDIB_BLEND_COLOR 23
-#define FXDIB_BLEND_LUMINOSITY 24
-#define FXDIB_BLEND_UNSUPPORTED -1
 
 class CFX_ClipRgn;
 class CFX_DIBitmap;
@@ -158,6 +117,16 @@ class CFX_DIBSource : public CFX_Retainable {
 
  protected:
   CFX_DIBSource();
+
+  static bool ConvertBuffer(FXDIB_Format dest_format,
+                            uint8_t* dest_buf,
+                            int dest_pitch,
+                            int width,
+                            int height,
+                            const CFX_RetainPtr<CFX_DIBSource>& pSrcBitmap,
+                            int src_left,
+                            int src_top,
+                            std::unique_ptr<uint32_t, FxFreeDeleter>* pal);
 
   void BuildPalette();
   bool BuildAlphaMask();

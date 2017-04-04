@@ -9,6 +9,7 @@
 
 #include <memory>
 
+#include "core/fxcrt/fx_coordinates.h"
 #include "fxbarcode/BC_Writer.h"
 
 class CBC_CommonBitMatrix;

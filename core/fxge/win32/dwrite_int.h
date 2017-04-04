@@ -7,6 +7,10 @@
 #ifndef CORE_FXGE_WIN32_DWRITE_INT_H_
 #define CORE_FXGE_WIN32_DWRITE_INT_H_
 
+#include "core/fxcrt/fx_coordinates.h"
+#include "core/fxge/dib/cfx_dibitmap.h"
+#include "core/fxge/fx_dib.h"
+
 #ifndef DECLSPEC_UUID
 #if (_MSC_VER >= 1100) && defined(__cplusplus)
 #define DECLSPEC_UUID(x) __declspec(uuid(x))

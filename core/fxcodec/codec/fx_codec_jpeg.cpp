@@ -12,6 +12,7 @@
 #include "core/fxcodec/codec/codec_int.h"
 #include "core/fxcodec/fx_codec.h"
 #include "core/fxcrt/fx_safe_types.h"
+#include "core/fxge/dib/cfx_dibsource.h"
 #include "core/fxge/fx_dib.h"
 #include "third_party/base/ptr_util.h"
 

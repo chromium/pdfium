@@ -73,13 +73,6 @@ FX_RECT FXDIB_SwapClipBox(FX_RECT& clip,
   return rect;
 }
 
-void CmykDecode(uint32_t cmyk, int& c, int& m, int& y, int& k) {
-  c = FXSYS_GetCValue(cmyk);
-  m = FXSYS_GetMValue(cmyk);
-  y = FXSYS_GetYValue(cmyk);
-  k = FXSYS_GetKValue(cmyk);
-}
-
 void ArgbDecode(uint32_t argb, int& a, int& r, int& g, int& b) {
   a = FXARGB_A(argb);
   r = FXARGB_R(argb);

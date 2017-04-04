@@ -12,6 +12,7 @@
 
 #include "core/fxcodec/fx_codec.h"
 #include "core/fxge/cfx_gemodule.h"
+#include "core/fxge/dib/cfx_scanlinecompositor.h"
 #include "core/fxge/dib/dib_int.h"
 #include "core/fxge/ge/cfx_cliprgn.h"
 #include "third_party/base/ptr_util.h"

@@ -7,6 +7,7 @@
 #ifndef FXBARCODE_CBC_DATAMATRIX_H_
 #define FXBARCODE_CBC_DATAMATRIX_H_
 
+#include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxge/fx_dib.h"

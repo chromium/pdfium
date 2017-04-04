@@ -10,7 +10,10 @@
 #include <memory>
 
 #include "core/fpdfapi/render/cpdf_imageloader.h"
+#include "core/fxcrt/fx_coordinates.h"
 
+class CFX_DIBitmap;
+class CFX_DIBSource;
 class CFX_FxgeDevice;
 class CFX_ImageTransformer;
 class CPDF_ImageObject;

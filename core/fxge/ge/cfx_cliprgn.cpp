@@ -8,6 +8,8 @@
 
 #include <utility>
 
+#include "core/fxge/dib/cfx_dibitmap.h"
+
 CFX_ClipRgn::CFX_ClipRgn(int width, int height)
     : m_Type(RectI), m_Box(0, 0, width, height) {}
 

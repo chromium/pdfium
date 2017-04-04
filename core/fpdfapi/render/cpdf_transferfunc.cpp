@@ -8,6 +8,7 @@
 
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfapi/render/cpdf_dibtransferfunc.h"
+#include "core/fxge/dib/cfx_dibsource.h"
 
 CPDF_TransferFunc::CPDF_TransferFunc(CPDF_Document* pDoc) : m_pPDFDoc(pDoc) {}
 
