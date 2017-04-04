@@ -211,7 +211,7 @@ FXPNG_Context* CCodec_PngModule::Start() {
   p->m_FreeFunc = _png_free_func;
   p->png_ptr = nullptr;
   p->info_ptr = nullptr;
-  p->parent_ptr = (void*)this;
+  p->parent_ptr = this;
   p->png_ptr =
       png_create_read_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
   if (!p->png_ptr) {

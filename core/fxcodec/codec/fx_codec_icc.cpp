@@ -62,7 +62,7 @@ void* IccLib_CreateTransform(const unsigned char* pSrcProfileData,
                              uint32_t dwDstFormat = Icc_FORMAT_DEFAULT) {
   nSrcComponents = 0;
   cmsHPROFILE srcProfile =
-      cmsOpenProfileFromMem((void*)pSrcProfileData, dwSrcProfileSize);
+      cmsOpenProfileFromMem(pSrcProfileData, dwSrcProfileSize);
   if (!srcProfile)
     return nullptr;
 
@@ -70,8 +70,7 @@ void* IccLib_CreateTransform(const unsigned char* pSrcProfileData,
   if (!pDstProfileData && dwDstProfileSize == 0 && nDstComponents == 3) {
     dstProfile = cmsCreate_sRGBProfile();
   } else {
-    dstProfile =
-        cmsOpenProfileFromMem((void*)pDstProfileData, dwDstProfileSize);
+    dstProfile = cmsOpenProfileFromMem(pDstProfileData, dwDstProfileSize);
   }
   if (!dstProfile) {
     cmsCloseProfile(srcProfile);
@@ -205,8 +204,7 @@ void IccLib_TranslateImage(void* pTransform,
                            unsigned char* pDest,
                            const unsigned char* pSrc,
                            int32_t pixels) {
-  cmsDoTransform(((CLcmsCmm*)pTransform)->m_hTransform, (void*)pSrc, pDest,
-                 pixels);
+  cmsDoTransform(((CLcmsCmm*)pTransform)->m_hTransform, pSrc, pDest, pixels);
 }
 
 CCodec_IccModule::CCodec_IccModule() : m_nComponents(0) {}

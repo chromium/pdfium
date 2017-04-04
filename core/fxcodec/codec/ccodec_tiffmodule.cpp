@@ -186,7 +186,7 @@ bool Tiff_Exif_GetInfo(TIFF* tif_ctx, ttag_t tag, CFX_DIBAttribute* pAttr) {
     return false;
   T* ptr = FX_Alloc(T, 1);
   *ptr = val;
-  pAttr->m_Exif[tag] = (void*)ptr;
+  pAttr->m_Exif[tag] = ptr;
   return true;
 }
 

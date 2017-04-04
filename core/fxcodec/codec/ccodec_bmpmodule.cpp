@@ -63,13 +63,13 @@ FXBMP_Context* CCodec_BmpModule::Start() {
   p->m_AllocFunc = bmp_alloc_func;
   p->m_FreeFunc = bmp_free_func;
   p->bmp_ptr = nullptr;
-  p->parent_ptr = (void*)this;
+  p->parent_ptr = this;
   p->bmp_ptr = bmp_create_decompress();
   if (!p->bmp_ptr) {
     FX_Free(p);
     return nullptr;
   }
-  p->bmp_ptr->context_ptr = (void*)p;
+  p->bmp_ptr->context_ptr = p;
   p->bmp_ptr->err_ptr = m_szLastError;
   p->bmp_ptr->bmp_error_fn = bmp_error_data;
   p->bmp_ptr->bmp_get_row_fn = bmp_read_scanline;

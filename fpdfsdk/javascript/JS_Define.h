@@ -222,7 +222,7 @@ void JSMethod(const char* method_name_string,
                                     v8::Local<v8::Object> obj) {        \
     CJS_Object* pObj = new js_class_name(obj);                          \
     pObj->SetEmbedObject(new class_alternate(pObj));                    \
-    pEngine->SetObjectPrivate(obj, (void*)pObj);                        \
+    pEngine->SetObjectPrivate(obj, pObj);                               \
     pObj->InitInstance(static_cast<CJS_Runtime*>(pEngine));             \
   }                                                                     \
   void js_class_name::JSDestructor(CFXJS_Engine* pEngine,               \

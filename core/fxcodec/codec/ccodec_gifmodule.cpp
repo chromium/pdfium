@@ -92,13 +92,13 @@ FXGIF_Context* CCodec_GifModule::Start() {
   p->m_AllocFunc = gif_alloc_func;
   p->m_FreeFunc = gif_free_func;
   p->gif_ptr = nullptr;
-  p->parent_ptr = (void*)this;
+  p->parent_ptr = this;
   p->gif_ptr = gif_create_decompress();
   if (!p->gif_ptr) {
     FX_Free(p);
     return nullptr;
   }
-  p->gif_ptr->context_ptr = (void*)p;
+  p->gif_ptr->context_ptr = p;
   p->gif_ptr->err_ptr = m_szLastError;
   p->gif_ptr->gif_error_fn = gif_error_data;
   p->gif_ptr->gif_ask_buf_for_pal_fn = gif_ask_buf_for_pal;

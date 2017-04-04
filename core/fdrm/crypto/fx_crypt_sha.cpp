@@ -481,11 +481,11 @@ void CRYPT_SHA256Update(CRYPT_sha256_context* ctx,
   uint32_t fill = 64 - left;
   ctx->total[0] += length;
   ctx->total[0] &= 0xFFFFFFFF;
-  if (ctx->total[0] < length) {
+  if (ctx->total[0] < length)
     ctx->total[1]++;
-  }
+
   if (left && length >= fill) {
-    memcpy((void*)(ctx->buffer + left), (void*)input, fill);
+    memcpy(ctx->buffer + left, input, fill);
     sha256_process(ctx, ctx->buffer);
     length -= fill;
     input += fill;
@@ -496,9 +496,8 @@ void CRYPT_SHA256Update(CRYPT_sha256_context* ctx,
     length -= 64;
     input += 64;
   }
-  if (length) {
-    memcpy((void*)(ctx->buffer + left), (void*)input, length);
-  }
+  if (length)
+    memcpy(ctx->buffer + left, input, length);
 }
 
 void CRYPT_SHA256Finish(CRYPT_sha256_context* ctx, uint8_t digest[32]) {
@@ -550,18 +549,17 @@ void CRYPT_SHA384Start(CRYPT_sha384_context* ctx) {
 void CRYPT_SHA384Update(CRYPT_sha384_context* ctx,
                         const uint8_t* input,
                         uint32_t length) {
-  uint32_t left, fill;
-  if (!length) {
+  if (!length)
     return;
-  }
-  left = (uint32_t)ctx->total[0] & 0x7F;
-  fill = 128 - left;
+
+  uint32_t left = static_cast<uint32_t>(ctx->total[0]) & 0x7F;
+  uint32_t fill = 128 - left;
   ctx->total[0] += length;
-  if (ctx->total[0] < length) {
+  if (ctx->total[0] < length)
     ctx->total[1]++;
-  }
+
   if (left && length >= fill) {
-    memcpy((void*)(ctx->buffer + left), (void*)input, fill);
+    memcpy(ctx->buffer + left, input, fill);
     sha384_process(ctx, ctx->buffer);
     length -= fill;
     input += fill;
@@ -572,9 +570,8 @@ void CRYPT_SHA384Update(CRYPT_sha384_context* ctx,
     length -= 128;
     input += 128;
   }
-  if (length) {
-    memcpy((void*)(ctx->buffer + left), (void*)input, length);
-  }
+  if (length)
+    memcpy(ctx->buffer + left, input, length);
 }
 
 void CRYPT_SHA384Finish(CRYPT_sha384_context* ctx, uint8_t digest[48]) {

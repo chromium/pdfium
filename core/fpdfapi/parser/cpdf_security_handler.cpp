@@ -452,11 +452,9 @@ bool CPDF_SecurityHandler::CheckUserPassword(const uint8_t* password,
     CRYPT_MD5Finish(&md5, ukeybuf);
     return memcmp(test, ukeybuf, 16) == 0;
   }
-  if (memcmp((void*)ukey.c_str(), ukeybuf, 16) == 0) {
-    return true;
-  }
-  return false;
+  return memcmp(ukey.c_str(), ukeybuf, 16) == 0;
 }
+
 CFX_ByteString CPDF_SecurityHandler::GetUserPassword(const uint8_t* owner_pass,
                                                      uint32_t pass_size,
                                                      int32_t key_len) {
