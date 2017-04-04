@@ -7,7 +7,7 @@
 #include "xfa/fde/xml/cfde_xmlchardata.h"
 
 CFDE_XMLCharData::CFDE_XMLCharData(const CFX_WideString& wsCData)
-    : CFDE_XMLDeclaration(), m_wsCharData(wsCData) {}
+    : CFDE_XMLNode(), m_wsCharData(wsCData) {}
 
 CFDE_XMLCharData::~CFDE_XMLCharData() {}
 

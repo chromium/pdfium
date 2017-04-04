@@ -8,9 +8,9 @@
 #define XFA_FDE_XML_CFDE_XMLCHARDATA_H_
 
 #include "core/fxcrt/fx_string.h"
-#include "xfa/fde/xml/cfde_xmldeclaration.h"
+#include "xfa/fde/xml/cfde_xmlnode.h"
 
-class CFDE_XMLCharData : public CFDE_XMLDeclaration {
+class CFDE_XMLCharData : public CFDE_XMLNode {
  public:
   explicit CFDE_XMLCharData(const CFX_WideString& wsCData);
   ~CFDE_XMLCharData() override;
