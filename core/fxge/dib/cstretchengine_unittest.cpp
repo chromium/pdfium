@@ -1,6 +1,8 @@
-// Copyright 2016 PDFium Authors. All rights reserved.
+// Copyright 2017 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
+
+#include "core/fxge/dib/cstretchengine.h"
 
 #include <memory>
 #include <utility>
@@ -10,7 +12,6 @@
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/render/cpdf_dibsource.h"
 #include "core/fxcrt/fx_memory.h"
-#include "core/fxge/dib/dib_int.h"
 #include "core/fxge/fx_dib.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "third_party/base/ptr_util.h"

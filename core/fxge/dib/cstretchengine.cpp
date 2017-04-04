@@ -1,42 +1,37 @@
-// Copyright 2014 PDFium Authors. All rights reserved.
+// Copyright 2017 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include <limits.h>
-
-#include <algorithm>
+#include "core/fxge/dib/cstretchengine.h"
 
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/dib/cfx_dibsource.h"
-#include "core/fxge/dib/dib_int.h"
 #include "core/fxge/dib/ifx_scanlinecomposer.h"
 #include "core/fxge/fx_dib.h"
-#include "third_party/base/ptr_util.h"
-#include "third_party/base/stl_util.h"
 
-CWeightTable::CWeightTable()
+CStretchEngine::CWeightTable::CWeightTable()
     : m_DestMin(0),
       m_ItemSize(0),
       m_pWeightTables(nullptr),
       m_dwWeightTablesSize(0) {}
 
-CWeightTable::~CWeightTable() {
+CStretchEngine::CWeightTable::~CWeightTable() {
   FX_Free(m_pWeightTables);
 }
 
-size_t CWeightTable::GetPixelWeightSize() const {
+size_t CStretchEngine::CWeightTable::GetPixelWeightSize() const {
   return m_ItemSize / sizeof(int) - 2;
 }
 
-bool CWeightTable::Calc(int dest_len,
-                        int dest_min,
-                        int dest_max,
-                        int src_len,
-                        int src_min,
-                        int src_max,
-                        int flags) {
+bool CStretchEngine::CWeightTable::Calc(int dest_len,
+                                        int dest_min,
+                                        int dest_max,
+                                        int src_len,
+                                        int src_min,
+                                        int src_max,
+                                        int flags) {
   FX_Free(m_pWeightTables);
   m_pWeightTables = nullptr;
   m_dwWeightTablesSize = 0;
@@ -227,14 +222,14 @@ bool CWeightTable::Calc(int dest_len,
   return true;
 }
 
-PixelWeight* CWeightTable::GetPixelWeight(int pixel) const {
+PixelWeight* CStretchEngine::CWeightTable::GetPixelWeight(int pixel) const {
   ASSERT(pixel >= m_DestMin);
   return reinterpret_cast<PixelWeight*>(m_pWeightTables +
                                         (pixel - m_DestMin) * m_ItemSize);
 }
 
-int* CWeightTable::GetValueFromPixelWeight(PixelWeight* pWeight,
-                                           int index) const {
+int* CStretchEngine::CWeightTable::GetValueFromPixelWeight(PixelWeight* pWeight,
+                                                           int index) const {
   if (index < pWeight->m_SrcStart)
     return nullptr;
 

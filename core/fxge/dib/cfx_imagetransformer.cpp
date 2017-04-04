@@ -115,6 +115,32 @@ FXDIB_Format GetTransformedFormat(const CFX_RetainPtr<CFX_DIBSource>& pDrc) {
   return format;
 }
 
+class CPDF_FixedMatrix {
+ public:
+  CPDF_FixedMatrix(const CFX_Matrix& src, int bits) {
+    base = 1 << bits;
+    a = FXSYS_round(src.a * base);
+    b = FXSYS_round(src.b * base);
+    c = FXSYS_round(src.c * base);
+    d = FXSYS_round(src.d * base);
+    e = FXSYS_round(src.e * base);
+    f = FXSYS_round(src.f * base);
+  }
+
+  inline void Transform(int x, int y, int& x1, int& y1) {
+    x1 = (a * x + c * y + e + base / 2) / base;
+    y1 = (b * x + d * y + f + base / 2) / base;
+  }
+
+  int a;
+  int b;
+  int c;
+  int d;
+  int e;
+  int f;
+  int base;
+};
+
 class CFX_BilinearMatrix : public CPDF_FixedMatrix {
  public:
   CFX_BilinearMatrix(const CFX_Matrix& src, int bits)

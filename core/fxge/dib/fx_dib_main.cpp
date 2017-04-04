@@ -8,7 +8,6 @@
 
 #include <utility>
 
-#include "core/fxge/dib/dib_int.h"
 #include "third_party/base/ptr_util.h"
 
 const int16_t SDP_Table[513] = {

@@ -7,7 +7,7 @@
 #ifndef CORE_FXGE_FX_DIB_H_
 #define CORE_FXGE_FX_DIB_H_
 
-#include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/fx_coordinates.h"
 
 enum FXDIB_Format {
   FXDIB_Invalid = 0,
@@ -27,12 +27,20 @@ enum FXDIB_Format {
   FXDIB_Cmyka = 0x620,
 };
 
+struct PixelWeight {
+  int m_SrcStart;
+  int m_SrcEnd;
+  int m_Weights[1];
+};
+
 typedef uint32_t FX_ARGB;
 typedef uint32_t FX_COLORREF;
 typedef uint32_t FX_CMYK;
 class CFX_ClipRgn;
 class CFX_DIBSource;
 class CStretchEngine;
+
+extern const int16_t SDP_Table[513];
 
 #define FXDIB_DOWNSAMPLE 0x04
 #define FXDIB_INTERPOL 0x20
@@ -112,5 +120,11 @@ FX_ARGB ArgbEncode(int a, FX_COLORREF rgb);
    ((uint8_t)(argb)) << 16 | ((uint8_t)(argb >> 24) << 24))
 #define FXGETFLAG_COLORTYPE(flag) (uint8_t)((flag) >> 8)
 #define FXGETFLAG_ALPHA_FILL(flag) (uint8_t)(flag)
+
+FX_RECT FXDIB_SwapClipBox(FX_RECT& clip,
+                          int width,
+                          int height,
+                          bool bFlipX,
+                          bool bFlipY);
 
 #endif  // CORE_FXGE_FX_DIB_H_

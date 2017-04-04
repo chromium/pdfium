@@ -10,7 +10,7 @@
 
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/dib/cfx_dibsource.h"
-#include "core/fxge/dib/dib_int.h"
+#include "core/fxge/dib/cstretchengine.h"
 #include "core/fxge/fx_dib.h"
 #include "third_party/base/ptr_util.h"
 
