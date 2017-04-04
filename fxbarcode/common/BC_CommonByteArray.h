@@ -26,7 +26,7 @@ class CBC_CommonByteArray {
   void Set(int32_t index, int32_t value);
   void AppendByte(int32_t value);
   void Reserve(int32_t capacity);
-  void Set(uint8_t* source, int32_t offset, int32_t count);
+  void Set(const uint8_t* source, int32_t offset, int32_t count);
   void Set(std::vector<uint8_t>* source, int32_t offset, int32_t count);
 
  private:

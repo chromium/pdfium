@@ -382,7 +382,7 @@ CBC_QRCoderVersion* CBC_QRCoderVersion::GetProvisionalVersionForDimension(
 CBC_QRCoderVersion* CBC_QRCoderVersion::DecodeVersionInformation(
     int32_t versionBits,
     int32_t& e) {
-  int32_t bestDifference = FXSYS_IntMax;
+  int32_t bestDifference = INT_MAX;
   int32_t bestVersion = 0;
   for (int32_t i = 0; i < 34; i++) {
     int32_t targetVersion = VERSION_DECODE_INFO[i];

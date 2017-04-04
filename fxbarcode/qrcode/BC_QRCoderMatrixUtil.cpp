@@ -130,6 +130,7 @@ void CBC_QRCoderMatrixUtil::EmbedBasicPatterns(int32_t version,
   if (e != BCExceptionNO)
     return;
 }
+
 void CBC_QRCoderMatrixUtil::EmbedTypeInfo(
     CBC_QRCoderErrorCorrectionLevel* ecLevel,
     int32_t maskPattern,
@@ -140,11 +141,11 @@ void CBC_QRCoderMatrixUtil::EmbedTypeInfo(
     return;
   }
   CBC_QRCoderBitVector typeInfoBits;
-  typeInfoBits.Init();
   MakeTypeInfoBits(ecLevel, maskPattern, &typeInfoBits, e);
   if (e != BCExceptionNO)
     return;
-  for (int32_t i = 0; i < typeInfoBits.Size(); i++) {
+
+  for (size_t i = 0; i < typeInfoBits.Size(); i++) {
     int32_t bit = typeInfoBits.At(typeInfoBits.Size() - 1 - i, e);
     if (e != BCExceptionNO)
       return;
@@ -162,6 +163,7 @@ void CBC_QRCoderMatrixUtil::EmbedTypeInfo(
     }
   }
 }
+
 void CBC_QRCoderMatrixUtil::MaybeEmbedVersionInfo(int32_t version,
                                                   CBC_CommonByteMatrix* matrix,
                                                   int32_t& e) {
@@ -173,7 +175,6 @@ void CBC_QRCoderMatrixUtil::MaybeEmbedVersionInfo(int32_t version,
     return;
   }
   CBC_QRCoderBitVector versionInfoBits;
-  versionInfoBits.Init();
   MakeVersionInfoBits(version, &versionInfoBits, e);
   if (e != BCExceptionNO)
     return;
@@ -197,7 +198,7 @@ void CBC_QRCoderMatrixUtil::EmbedDataBits(CBC_QRCoderBitVector* dataBits,
     e = BCExceptionNullPointer;
     return;
   }
-  int32_t bitIndex = 0;
+  size_t bitIndex = 0;
   int32_t direction = -1;
   int32_t x = matrix->GetWidth() - 1;
   int32_t y = matrix->GetHeight() - 1;
@@ -266,23 +267,16 @@ void CBC_QRCoderMatrixUtil::MakeTypeInfoBits(
     return;
   }
   int32_t typeInfo = (ecLevel->GetBits() << 3) | maskPattern;
-  if (e != BCExceptionNO)
-    return;
-  bits->AppendBits(typeInfo, 5, e);
+  bits->AppendBits(typeInfo, 5);
   int32_t bchCode = CalculateBCHCode(typeInfo, TYPE_INFO_POLY);
-  if (e != BCExceptionNO)
-    return;
-  bits->AppendBits(bchCode, 10, e);
+  bits->AppendBits(bchCode, 10);
   CBC_QRCoderBitVector maskBits;
-  maskBits.Init();
-  maskBits.AppendBits(TYPE_INFO_MASK_PATTERN, 15, e);
-  if (e != BCExceptionNO)
+  maskBits.AppendBits(TYPE_INFO_MASK_PATTERN, 15);
+  if (!bits->XOR(&maskBits)) {
+    e = BCExceptionGeneric;
     return;
-  bits->XOR(&maskBits, e);
-  if (e != BCExceptionNO)
-    return;
-  if (bits->Size() != 15)
-    e = BCExceptionBitSizeNot15;
+  }
+  ASSERT(bits->Size() == 15);
 }
 
 void CBC_QRCoderMatrixUtil::MakeVersionInfoBits(int32_t version,
@@ -292,17 +286,11 @@ void CBC_QRCoderMatrixUtil::MakeVersionInfoBits(int32_t version,
     e = BCExceptionNullPointer;
     return;
   }
-  bits->AppendBits(version, 6, e);
-  if (e != BCExceptionNO)
-    return;
 
+  bits->AppendBits(version, 6);
   int32_t bchCode = CalculateBCHCode(version, VERSION_INFO_POLY);
-  bits->AppendBits(bchCode, 12, e);
-  if (e != BCExceptionNO)
-    return;
-
-  if (bits->Size() != 18)
-    e = BCExceptionBitSizeNot18;
+  bits->AppendBits(bchCode, 12);
+  ASSERT(bits->Size() == 18);
 }
 
 bool CBC_QRCoderMatrixUtil::IsEmpty(int32_t value) {

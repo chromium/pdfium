@@ -7,29 +7,31 @@
 #ifndef FXBARCODE_QRCODE_BC_QRCODERBITVECTOR_H_
 #define FXBARCODE_QRCODE_BC_QRCODERBITVECTOR_H_
 
+#include <stddef.h>
 #include <stdint.h>
 
+#include <vector>
+
 class CBC_QRCoderBitVector {
- private:
-  int32_t m_sizeInBits;
-  uint8_t* m_array;
-  int32_t m_size;
-
-  void AppendByte(int32_t value);
-
  public:
   CBC_QRCoderBitVector();
-  virtual ~CBC_QRCoderBitVector();
-  int32_t At(int32_t index, int32_t& e);
-  int32_t Size();
-  int32_t sizeInBytes();
-  void AppendBit(int32_t bit, int32_t& e);
-  void AppendBits(int32_t value, int32_t numBits, int32_t& e);
-  void AppendBitVector(CBC_QRCoderBitVector* bits, int32_t& e);
-  void XOR(CBC_QRCoderBitVector* other, int32_t& e);
-  uint8_t* GetArray();
-  void Clear();
-  virtual void Init();
+  ~CBC_QRCoderBitVector();
+
+  const uint8_t* GetArray() const;
+  int32_t At(size_t index, int32_t& e) const;
+  size_t Size() const;
+  size_t sizeInBytes() const;
+
+  void AppendBit(int32_t bit);
+  void AppendBits(int32_t value, int32_t numBits);
+  void AppendBitVector(CBC_QRCoderBitVector* bits);
+  bool XOR(const CBC_QRCoderBitVector* other);
+
+ private:
+  void AppendByte(int8_t value);
+
+  size_t m_sizeInBits = 0;
+  std::vector<uint8_t> m_array;
 };
 
 #endif  // FXBARCODE_QRCODE_BC_QRCODERBITVECTOR_H_

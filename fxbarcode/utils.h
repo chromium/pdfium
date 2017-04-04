@@ -58,8 +58,6 @@ enum BCFORMAT {
 #define BCFORMAT_ECLEVEL_Q 2
 #define BCFORMAT_ECLEVEL_H 3
 #include <ctype.h>
-#define FXSYS_IntMax INT_MAX
-#define FXSYS_Isdigit isdigit
 #define BCExceptionNO 0
 #define BCExceptionNotFound 1
 #define BCExceptionEndLessThanStart 2
@@ -113,8 +111,6 @@ enum BCFORMAT {
 #define BCExceptionReedsolomnDecodeException 51
 #define BCExceptionBadIndexException 52
 #define BCExceptionBadValueException 53
-#define BCExceptionBadNumBitsException 54
-#define BCExceptioncanNotOperatexorOperator 55
 #define BCExceptionVersionMust1_40 56
 #define BCExceptionUnknown 57
 #define BCExceptionNoSuchVersion 58
@@ -130,8 +126,6 @@ enum BCFORMAT {
 #define BCExceptionInvalidateMaskPattern 68
 #define BCExceptionNullPointer 69
 #define BCExceptionBadMask 70
-#define BCExceptionBitSizeNot15 71
-#define BCExceptionBitSizeNot18 72
 #define BCExceptionInvalidateImageData 73
 #define BCExceptionHeight_8BeZero 74
 #define BCExceptionCharacterNotThisMode 75
@@ -154,7 +148,6 @@ enum BCFORMAT {
 #define BCExceptionIllegalStateMessageLengthInvalid 92
 #define BCExceptionIllegalArgumentNotGigits 93
 #define BCExceptionIllegalStateIllegalMode 94
-#define BCExceptionOnlyEncodePDF417 95
 #define BCExceptionNonEncodableCharacterDetected 96
 #define BCExceptionErrorCorrectionLevelMustBeBetween0And8 97
 #define BCExceptionNoRecommendationPossible 98
@@ -167,5 +160,6 @@ enum BCFORMAT {
 #define BCExceptiontNotFoundInstance 104
 #define BCExceptionNotFoundInstance 105
 #define BCExceptionCannotMetadata 106
+#define BCExceptionGeneric 107
 
 #endif  // FXBARCODE_UTILS_H_

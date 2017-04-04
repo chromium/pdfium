@@ -78,7 +78,9 @@ void CBC_CommonByteArray::Reserve(int32_t capacity) {
     m_size = capacity;
   }
 }
-void CBC_CommonByteArray::Set(uint8_t* source, int32_t offset, int32_t count) {
+void CBC_CommonByteArray::Set(const uint8_t* source,
+                              int32_t offset,
+                              int32_t count) {
   FX_Free(m_bytes);
   m_bytes = FX_Alloc(uint8_t, count);
   m_size = count;
