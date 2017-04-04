@@ -21,6 +21,19 @@ IPDF_StructElement* ToStructTreeElement(FPDF_STRUCTELEMENT struct_element) {
   return reinterpret_cast<IPDF_StructElement*>(struct_element);
 }
 
+unsigned long WideStringToBuffer(const CFX_WideString& str,
+                                 void* buffer,
+                                 unsigned long buflen) {
+  if (str.IsEmpty())
+    return 0;
+
+  CFX_ByteString encodedStr = str.UTF16LE_Encode();
+  const unsigned long len = encodedStr.GetLength();
+  if (buffer && len <= buflen)
+    memcpy(buffer, encodedStr.c_str(), len);
+  return len;
+}
+
 }  // namespace
 
 DLLEXPORT FPDF_STRUCTTREE STDCALL FPDF_StructTree_GetForPage(FPDF_PAGE page) {
@@ -54,22 +67,19 @@ FPDF_StructElement_GetAltText(FPDF_STRUCTELEMENT struct_element,
                               void* buffer,
                               unsigned long buflen) {
   IPDF_StructElement* elem = ToStructTreeElement(struct_element);
-  if (!elem)
-    return 0;
+  return (elem && elem->GetDict())
+             ? WideStringToBuffer(elem->GetDict()->GetUnicodeTextFor("Alt"),
+                                  buffer, buflen)
+             : 0;
+}
 
-  CPDF_Dictionary* dict = elem->GetDict();
-  if (!dict)
-    return 0;
-
-  CFX_WideString str = elem->GetDict()->GetUnicodeTextFor("Alt");
-  if (str.IsEmpty())
-    return 0;
-
-  CFX_ByteString encodedStr = str.UTF16LE_Encode();
-  const unsigned long len = encodedStr.GetLength();
-  if (buffer && len <= buflen)
-    memcpy(buffer, encodedStr.c_str(), len);
-  return len;
+DLLEXPORT unsigned long STDCALL
+FPDF_StructElement_GetType(FPDF_STRUCTELEMENT struct_element,
+                           void* buffer,
+                           unsigned long buflen) {
+  IPDF_StructElement* elem = ToStructTreeElement(struct_element);
+  return elem ? WideStringToBuffer(elem->GetType().UTF8Decode(), buffer, buflen)
+              : 0;
 }
 
 DLLEXPORT int STDCALL

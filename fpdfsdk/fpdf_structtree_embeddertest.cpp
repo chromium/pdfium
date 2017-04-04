@@ -68,3 +68,32 @@ TEST_F(FPDFStructTreeEmbeddertest, GetAltText) {
   FPDF_StructTree_Close(struct_tree);
   FPDF_ClosePage(page);
 }
+
+TEST_F(FPDFStructTreeEmbeddertest, GetType) {
+  ASSERT_TRUE(OpenDocument("tagged_alt_text.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  FPDF_STRUCTTREE struct_tree = FPDF_StructTree_GetForPage(page);
+  ASSERT_TRUE(struct_tree);
+  ASSERT_EQ(1, FPDF_StructTree_CountChildren(struct_tree));
+
+  FPDF_STRUCTELEMENT element = FPDF_StructTree_GetChildAtIndex(struct_tree, 0);
+  ASSERT_NE(nullptr, element);
+
+  unsigned short buffer[12];
+  memset(buffer, 0, sizeof(buffer));
+  // Deliberately pass in a small buffer size to make sure |buffer| remains
+  // untouched.
+  ASSERT_EQ(18U, FPDF_StructElement_GetType(element, buffer, 1));
+  for (size_t i = 0; i < FX_ArraySize(buffer); ++i)
+    EXPECT_EQ(0U, buffer[i]);
+
+  ASSERT_EQ(18U, FPDF_StructElement_GetType(element, buffer, sizeof(buffer)));
+  const wchar_t kExpected[] = L"Document";
+  EXPECT_EQ(CFX_WideString(kExpected),
+            CFX_WideString::FromUTF16LE(buffer, FXSYS_len(kExpected)));
+
+  FPDF_StructTree_Close(struct_tree);
+  FPDF_ClosePage(page);
+}
