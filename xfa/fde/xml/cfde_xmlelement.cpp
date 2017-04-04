@@ -7,6 +7,7 @@
 #include "xfa/fde/xml/cfde_xmlelement.h"
 
 #include "core/fxcrt/fx_ext.h"
+#include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fde/xml/cfde_xmlchardata.h"
 #include "xfa/fde/xml/cfde_xmltext.h"
@@ -22,29 +23,23 @@ FDE_XMLNODETYPE CFDE_XMLElement::GetType() const {
   return FDE_XMLNODE_Element;
 }
 
-CFDE_XMLNode* CFDE_XMLElement::Clone(bool bRecursive) {
-  CFDE_XMLElement* pClone = new CFDE_XMLElement(m_wsTag);
-  if (!pClone)
-    return nullptr;
-
+std::unique_ptr<CFDE_XMLNode> CFDE_XMLElement::Clone() {
+  auto pClone = pdfium::MakeUnique<CFDE_XMLElement>(m_wsTag);
   pClone->m_Attributes = m_Attributes;
-  if (bRecursive) {
-    CloneChildren(pClone);
-  } else {
-    CFX_WideString wsText;
-    CFDE_XMLNode* pChild = m_pChild;
-    while (pChild) {
-      switch (pChild->GetType()) {
-        case FDE_XMLNODE_Text:
-          wsText += ((CFDE_XMLText*)pChild)->m_wsText;
-          break;
-        default:
-          break;
-      }
-      pChild = pChild->m_pNext;
+
+  CFX_WideString wsText;
+  CFDE_XMLNode* pChild = m_pChild;
+  while (pChild) {
+    switch (pChild->GetType()) {
+      case FDE_XMLNODE_Text:
+        wsText += static_cast<CFDE_XMLText*>(pChild)->GetText();
+        break;
+      default:
+        break;
     }
-    pClone->SetTextData(wsText);
+    pChild = pChild->m_pNext;
   }
+  pClone->SetTextData(wsText);
   return pClone;
 }
 
@@ -202,10 +197,8 @@ void CFDE_XMLElement::GetTextData(CFX_WideString& wsText) const {
   while (pChild) {
     switch (pChild->GetType()) {
       case FDE_XMLNODE_Text:
-        buffer << ((CFDE_XMLText*)pChild)->m_wsText;
-        break;
       case FDE_XMLNODE_CharData:
-        buffer << ((CFDE_XMLCharData*)pChild)->m_wsCharData;
+        buffer << static_cast<CFDE_XMLText*>(pChild)->GetText();
         break;
       default:
         break;

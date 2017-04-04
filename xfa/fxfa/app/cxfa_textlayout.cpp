@@ -773,7 +773,7 @@ bool CXFA_TextLayout::LoadRichText(
             bContentNode ? pParentStyle.Get() : pStyle.Get());
         CFX_WideString wsText;
         if (bContentNode && iTabCount == 0) {
-          static_cast<CFDE_XMLText*>(pXMLNode)->GetText(wsText);
+          wsText = static_cast<CFDE_XMLText*>(pXMLNode)->GetText();
         } else if (wsName == L"br") {
           wsText = L'\n';
         } else if (wsName == L"li") {

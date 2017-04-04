@@ -7,6 +7,8 @@
 #ifndef XFA_FDE_XML_CFDE_XMLTEXT_H_
 #define XFA_FDE_XML_CFDE_XMLTEXT_H_
 
+#include <memory>
+
 #include "core/fxcrt/fx_string.h"
 #include "xfa/fde/xml/cfde_xmlnode.h"
 
@@ -17,11 +19,12 @@ class CFDE_XMLText : public CFDE_XMLNode {
 
   // CFDE_XMLNode
   FDE_XMLNODETYPE GetType() const override;
-  CFDE_XMLNode* Clone(bool bRecursive) override;
+  std::unique_ptr<CFDE_XMLNode> Clone() override;
 
-  void GetText(CFX_WideString& wsText) const { wsText = m_wsText; }
+  CFX_WideString GetText() const { return m_wsText; }
   void SetText(const CFX_WideString& wsText) { m_wsText = wsText; }
 
+ private:
   CFX_WideString m_wsText;
 };
 

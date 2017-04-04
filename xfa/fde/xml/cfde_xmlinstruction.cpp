@@ -7,6 +7,7 @@
 #include "xfa/fde/xml/cfde_xmlinstruction.h"
 
 #include "core/fxcrt/fx_ext.h"
+#include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 
 CFDE_XMLInstruction::CFDE_XMLInstruction(const CFX_WideString& wsTarget)
@@ -20,16 +21,10 @@ FDE_XMLNODETYPE CFDE_XMLInstruction::GetType() const {
   return FDE_XMLNODE_Instruction;
 }
 
-CFDE_XMLNode* CFDE_XMLInstruction::Clone(bool bRecursive) {
-  CFDE_XMLInstruction* pClone = new CFDE_XMLInstruction(m_wsTarget);
-  if (!pClone)
-    return nullptr;
-
+std::unique_ptr<CFDE_XMLNode> CFDE_XMLInstruction::Clone() {
+  auto pClone = pdfium::MakeUnique<CFDE_XMLInstruction>(m_wsTarget);
   pClone->m_Attributes = m_Attributes;
   pClone->m_TargetData = m_TargetData;
-  if (bRecursive)
-    CloneChildren(pClone);
-
   return pClone;
 }
 

@@ -7,6 +7,7 @@
 #ifndef XFA_FDE_XML_CFDE_XMLINSTRUCTION_H_
 #define XFA_FDE_XML_CFDE_XMLINSTRUCTION_H_
 
+#include <memory>
 #include <vector>
 
 #include "core/fxcrt/fx_string.h"
@@ -19,7 +20,7 @@ class CFDE_XMLInstruction : public CFDE_XMLNode {
 
   // CFDE_XMLNode
   FDE_XMLNODETYPE GetType() const override;
-  CFDE_XMLNode* Clone(bool bRecursive) override;
+  std::unique_ptr<CFDE_XMLNode> Clone() override;
 
   void GetTargetName(CFX_WideString& wsTarget) const { wsTarget = m_wsTarget; }
   int32_t CountAttributes() const;

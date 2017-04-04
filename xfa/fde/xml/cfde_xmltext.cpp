@@ -6,6 +6,8 @@
 
 #include "xfa/fde/xml/cfde_xmltext.h"
 
+#include "third_party/base/ptr_util.h"
+
 CFDE_XMLText::CFDE_XMLText(const CFX_WideString& wsText)
     : CFDE_XMLNode(), m_wsText(wsText) {}
 
@@ -15,7 +17,6 @@ FDE_XMLNODETYPE CFDE_XMLText::GetType() const {
   return FDE_XMLNODE_Text;
 }
 
-CFDE_XMLNode* CFDE_XMLText::Clone(bool bRecursive) {
-  CFDE_XMLText* pClone = new CFDE_XMLText(m_wsText);
-  return pClone;
+std::unique_ptr<CFDE_XMLNode> CFDE_XMLText::Clone() {
+  return pdfium::MakeUnique<CFDE_XMLText>(m_wsText);
 }

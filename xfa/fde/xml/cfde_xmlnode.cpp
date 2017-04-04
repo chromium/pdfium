@@ -325,7 +325,7 @@ CFDE_XMLNode* CFDE_XMLNode::RemoveNodeItem(CFDE_XMLNode::NodeItem eItem) {
   return pNode;
 }
 
-CFDE_XMLNode* CFDE_XMLNode::Clone(bool bRecursive) {
+std::unique_ptr<CFDE_XMLNode> CFDE_XMLNode::Clone() {
   return nullptr;
 }
 
@@ -379,7 +379,8 @@ void CFDE_XMLNode::SaveXMLNode(const CFX_RetainPtr<IFGAS_Stream>& pXMLStream) {
         ws = L"?>";
         pXMLStream->WriteString(ws.c_str(), ws.GetLength());
       }
-    } break;
+      break;
+    }
     case FDE_XMLNODE_Element: {
       CFX_WideString ws;
       ws = L"<";
@@ -418,41 +419,27 @@ void CFDE_XMLNode::SaveXMLNode(const CFX_RetainPtr<IFGAS_Stream>& pXMLStream) {
         ws = L"\n/>";
       }
       pXMLStream->WriteString(ws.c_str(), ws.GetLength());
-    } break;
+      break;
+    }
     case FDE_XMLNODE_Text: {
-      CFX_WideString ws = ((CFDE_XMLText*)pNode)->m_wsText;
+      CFX_WideString ws = static_cast<CFDE_XMLText*>(pNode)->GetText();
       ws.Replace(L"&", L"&amp;");
       ws.Replace(L"<", L"&lt;");
       ws.Replace(L">", L"&gt;");
       ws.Replace(L"\'", L"&apos;");
       ws.Replace(L"\"", L"&quot;");
       pXMLStream->WriteString(ws.c_str(), ws.GetLength());
-    } break;
+      break;
+    }
     case FDE_XMLNODE_CharData: {
       CFX_WideString ws = L"<![CDATA[";
-      ws += ((CFDE_XMLCharData*)pNode)->m_wsCharData;
+      ws += static_cast<CFDE_XMLCharData*>(pNode)->GetText();
       ws += L"]]>";
       pXMLStream->WriteString(ws.c_str(), ws.GetLength());
-    } break;
-    case FDE_XMLNODE_Unknown:
       break;
+    }
+    case FDE_XMLNODE_Unknown:
     default:
       break;
-  }
-}
-
-void CFDE_XMLNode::CloneChildren(CFDE_XMLNode* pClone) {
-  if (!m_pChild) {
-    return;
-  }
-  CFDE_XMLNode* pNext = m_pChild;
-  CFDE_XMLNode* pCloneNext = pNext->Clone(true);
-  pClone->InsertChildNode(pCloneNext);
-  pNext = pNext->m_pNext;
-  while (pNext) {
-    CFDE_XMLNode* pChild = pNext->Clone(true);
-    pCloneNext->InsertNodeItem(CFDE_XMLNode::NextSibling, pChild);
-    pCloneNext = pChild;
-    pNext = pNext->m_pNext;
   }
 }

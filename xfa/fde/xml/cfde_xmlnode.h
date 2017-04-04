@@ -7,6 +7,8 @@
 #ifndef XFA_FDE_XML_CFDE_XMLNODE_H_
 #define XFA_FDE_XML_CFDE_XMLNODE_H_
 
+#include <memory>
+
 #include "core/fxcrt/cfx_retain_ptr.h"
 #include "xfa/fgas/crt/ifgas_stream.h"
 
@@ -44,7 +46,7 @@ class CFDE_XMLNode {
   virtual ~CFDE_XMLNode();
 
   virtual FDE_XMLNODETYPE GetType() const;
-  virtual CFDE_XMLNode* Clone(bool bRecursive);
+  virtual std::unique_ptr<CFDE_XMLNode> Clone();
 
   int32_t CountChildNodes() const;
   CFDE_XMLNode* GetChildNode(int32_t index) const;
@@ -52,7 +54,6 @@ class CFDE_XMLNode {
   int32_t InsertChildNode(CFDE_XMLNode* pNode, int32_t index = -1);
   void RemoveChildNode(CFDE_XMLNode* pNode);
   void DeleteChildren();
-  void CloneChildren(CFDE_XMLNode* pClone);
 
   CFDE_XMLNode* GetPath(const wchar_t* pPath,
                         int32_t iLength = -1,

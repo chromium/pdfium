@@ -517,22 +517,21 @@ CXFA_Node* CXFA_Node::Clone(bool bRecursive) {
   MergeAllData(pClone);
   pClone->UpdateNameHash();
   if (IsNeedSavingXMLNode()) {
-    CFDE_XMLNode* pCloneXML = nullptr;
+    std::unique_ptr<CFDE_XMLNode> pCloneXML;
     if (IsAttributeInXML()) {
       CFX_WideString wsName;
       GetAttribute(XFA_ATTRIBUTE_Name, wsName, false);
-      CFDE_XMLElement* pCloneXMLElement = new CFDE_XMLElement(wsName);
+      auto pCloneXMLElement = pdfium::MakeUnique<CFDE_XMLElement>(wsName);
       CFX_WideStringC wsValue = GetCData(XFA_ATTRIBUTE_Value);
       if (!wsValue.IsEmpty()) {
         pCloneXMLElement->SetTextData(CFX_WideString(wsValue));
       }
-      pCloneXML = pCloneXMLElement;
-      pCloneXMLElement = nullptr;
+      pCloneXML.reset(pCloneXMLElement.release());
       pClone->SetEnum(XFA_ATTRIBUTE_Contains, XFA_ATTRIBUTEENUM_Unknown);
     } else {
-      pCloneXML = m_pXMLNode->Clone(false);
+      pCloneXML = m_pXMLNode->Clone();
     }
-    pClone->SetXMLMappingNode(pCloneXML);
+    pClone->SetXMLMappingNode(pCloneXML.release());
     pClone->SetFlag(XFA_NodeFlag_OwnXMLNode, false);
   }
   if (bRecursive) {
@@ -1303,13 +1302,16 @@ void CXFA_Node::Script_NodeClass_LoadXML(CFXJSE_Arguments* pArguments) {
     pFakeRoot->SetCData(XFA_ATTRIBUTE_ContentType,
                         CFX_WideString(wsContentType));
   }
-  CFDE_XMLNode* pFakeXMLRoot = pFakeRoot->GetXMLMappingNode();
+
+  std::unique_ptr<CFDE_XMLNode> pFakeXMLRoot(pFakeRoot->GetXMLMappingNode());
   if (!pFakeXMLRoot) {
     CFDE_XMLNode* pThisXMLRoot = GetXMLMappingNode();
-    pFakeXMLRoot = pThisXMLRoot ? pThisXMLRoot->Clone(false) : nullptr;
+    pFakeXMLRoot = pThisXMLRoot ? pThisXMLRoot->Clone() : nullptr;
   }
-  if (!pFakeXMLRoot)
-    pFakeXMLRoot = new CFDE_XMLElement(CFX_WideString(GetClassName()));
+  if (!pFakeXMLRoot) {
+    pFakeXMLRoot =
+        pdfium::MakeUnique<CFDE_XMLElement>(CFX_WideString(GetClassName()));
+  }
 
   if (bIgnoreRoot) {
     CFDE_XMLNode* pXMLChild = pXMLNode->GetNodeItem(CFDE_XMLNode::FirstChild);
@@ -1327,57 +1329,54 @@ void CXFA_Node::Script_NodeClass_LoadXML(CFXJSE_Arguments* pArguments) {
     }
     pFakeXMLRoot->InsertChildNode(pXMLNode);
   }
-  pParser->ConstructXFANode(pFakeRoot, pFakeXMLRoot);
+  pParser->ConstructXFANode(pFakeRoot, pFakeXMLRoot.get());
   pFakeRoot = pParser->GetRootNode();
-  if (pFakeRoot) {
-    if (bOverwrite) {
-      CXFA_Node* pChild = GetNodeItem(XFA_NODEITEM_FirstChild);
-      CXFA_Node* pNewChild = pFakeRoot->GetNodeItem(XFA_NODEITEM_FirstChild);
-      int32_t index = 0;
-      while (pNewChild) {
-        CXFA_Node* pItem = pNewChild->GetNodeItem(XFA_NODEITEM_NextSibling);
-        pFakeRoot->RemoveChild(pNewChild);
-        InsertChild(index++, pNewChild);
-        pNewChild->SetFlag(XFA_NodeFlag_Initialized, true);
-        pNewChild = pItem;
-      }
-      while (pChild) {
-        CXFA_Node* pItem = pChild->GetNodeItem(XFA_NODEITEM_NextSibling);
-        RemoveChild(pChild);
-        pFakeRoot->InsertChild(pChild);
-        pChild = pItem;
-      }
-      if (GetPacketID() == XFA_XDPPACKET_Form &&
-          GetElementType() == XFA_Element::ExData) {
-        CFDE_XMLNode* pTempXMLNode = GetXMLMappingNode();
-        SetXMLMappingNode(pFakeXMLRoot);
-        SetFlag(XFA_NodeFlag_OwnXMLNode, false);
-        if (pTempXMLNode && !pTempXMLNode->GetNodeItem(CFDE_XMLNode::Parent)) {
-          pFakeXMLRoot = pTempXMLNode;
-        } else {
-          pFakeXMLRoot = nullptr;
-        }
-      }
-      MoveBufferMapData(pFakeRoot, this, XFA_CalcData, true);
-    } else {
-      CXFA_Node* pChild = pFakeRoot->GetNodeItem(XFA_NODEITEM_FirstChild);
-      while (pChild) {
-        CXFA_Node* pItem = pChild->GetNodeItem(XFA_NODEITEM_NextSibling);
-        pFakeRoot->RemoveChild(pChild);
-        InsertChild(pChild);
-        pChild->SetFlag(XFA_NodeFlag_Initialized, true);
-        pChild = pItem;
-      }
+  if (!pFakeRoot)
+    return;
+
+  if (bOverwrite) {
+    CXFA_Node* pChild = GetNodeItem(XFA_NODEITEM_FirstChild);
+    CXFA_Node* pNewChild = pFakeRoot->GetNodeItem(XFA_NODEITEM_FirstChild);
+    int32_t index = 0;
+    while (pNewChild) {
+      CXFA_Node* pItem = pNewChild->GetNodeItem(XFA_NODEITEM_NextSibling);
+      pFakeRoot->RemoveChild(pNewChild);
+      InsertChild(index++, pNewChild);
+      pNewChild->SetFlag(XFA_NodeFlag_Initialized, true);
+      pNewChild = pItem;
     }
-    if (pFakeXMLRoot) {
-      pFakeRoot->SetXMLMappingNode(pFakeXMLRoot);
-      pFakeRoot->SetFlag(XFA_NodeFlag_OwnXMLNode, false);
+    while (pChild) {
+      CXFA_Node* pItem = pChild->GetNodeItem(XFA_NODEITEM_NextSibling);
+      RemoveChild(pChild);
+      pFakeRoot->InsertChild(pChild);
+      pChild = pItem;
     }
-    pFakeRoot->SetFlag(XFA_NodeFlag_HasRemovedChildren, false);
+    if (GetPacketID() == XFA_XDPPACKET_Form &&
+        GetElementType() == XFA_Element::ExData) {
+      CFDE_XMLNode* pTempXMLNode = GetXMLMappingNode();
+      SetXMLMappingNode(pFakeXMLRoot.release());
+      SetFlag(XFA_NodeFlag_OwnXMLNode, false);
+      if (pTempXMLNode && !pTempXMLNode->GetNodeItem(CFDE_XMLNode::Parent))
+        pFakeXMLRoot.reset(pTempXMLNode);
+      else
+        pFakeXMLRoot = nullptr;
+    }
+    MoveBufferMapData(pFakeRoot, this, XFA_CalcData, true);
   } else {
-    delete pFakeXMLRoot;
-    pFakeXMLRoot = nullptr;
+    CXFA_Node* pChild = pFakeRoot->GetNodeItem(XFA_NODEITEM_FirstChild);
+    while (pChild) {
+      CXFA_Node* pItem = pChild->GetNodeItem(XFA_NODEITEM_NextSibling);
+      pFakeRoot->RemoveChild(pChild);
+      InsertChild(pChild);
+      pChild->SetFlag(XFA_NodeFlag_Initialized, true);
+      pChild = pItem;
+    }
   }
+  if (pFakeXMLRoot) {
+    pFakeRoot->SetXMLMappingNode(pFakeXMLRoot.release());
+    pFakeRoot->SetFlag(XFA_NodeFlag_OwnXMLNode, false);
+  }
+  pFakeRoot->SetFlag(XFA_NodeFlag_HasRemovedChildren, false);
 }
 
 void CXFA_Node::Script_NodeClass_SaveFilteredXML(CFXJSE_Arguments* pArguments) {

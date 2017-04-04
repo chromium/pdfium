@@ -213,22 +213,14 @@ void ConvertXMLToPlainText(CFDE_XMLElement* pRootXMLNode,
         wsOutput += wsTextData;
         break;
       }
-      case FDE_XMLNODE_Text: {
-        CFX_WideString wsText;
-        static_cast<CFDE_XMLText*>(pXMLChild)->GetText(wsText);
+      case FDE_XMLNODE_Text:
+      case FDE_XMLNODE_CharData: {
+        CFX_WideString wsText =
+            static_cast<CFDE_XMLText*>(pXMLChild)->GetText();
         if (IsStringAllWhitespace(wsText))
           continue;
 
         wsOutput = wsText;
-        break;
-      }
-      case FDE_XMLNODE_CharData: {
-        CFX_WideString wsCharData;
-        static_cast<CFDE_XMLCharData*>(pXMLChild)->GetCharData(wsCharData);
-        if (IsStringAllWhitespace(wsCharData))
-          continue;
-
-        wsOutput = wsCharData;
         break;
       }
       default:
@@ -1004,10 +996,8 @@ void CXFA_SimpleParser::ParseContentNode(CXFA_Node* pXFANode,
     } else {
       if (eNodeType == FDE_XMLNODE_Element)
         break;
-      if (eNodeType == FDE_XMLNODE_Text)
-        static_cast<CFDE_XMLText*>(pXMLChild)->GetText(wsValue);
-      else if (eNodeType == FDE_XMLNODE_CharData)
-        static_cast<CFDE_XMLCharData*>(pXMLChild)->GetCharData(wsValue);
+      if (eNodeType == FDE_XMLNODE_Text || eNodeType == FDE_XMLNODE_CharData)
+        wsValue = static_cast<CFDE_XMLText*>(pXMLChild)->GetText();
     }
     break;
   }
@@ -1140,29 +1130,10 @@ void CXFA_SimpleParser::ParseDataGroup(CXFA_Node* pXFANode,
         pXFAChild->SetFlag(XFA_NodeFlag_Initialized, false);
         continue;
       }
-      case FDE_XMLNODE_CharData: {
-        CFDE_XMLCharData* pXMLCharData =
-            static_cast<CFDE_XMLCharData*>(pXMLChild);
-        CFX_WideString wsCharData;
-        pXMLCharData->GetCharData(wsCharData);
-        if (IsStringAllWhitespace(wsCharData))
-          continue;
-
-        CXFA_Node* pXFAChild = m_pFactory->CreateNode(XFA_XDPPACKET_Datasets,
-                                                      XFA_Element::DataValue);
-        if (!pXFAChild)
-          return;
-
-        pXFAChild->SetCData(XFA_ATTRIBUTE_Value, wsCharData);
-        pXFANode->InsertChild(pXFAChild);
-        pXFAChild->SetXMLMappingNode(pXMLCharData);
-        pXFAChild->SetFlag(XFA_NodeFlag_Initialized, false);
-        continue;
-      }
+      case FDE_XMLNODE_CharData:
       case FDE_XMLNODE_Text: {
         CFDE_XMLText* pXMLText = static_cast<CFDE_XMLText*>(pXMLChild);
-        CFX_WideString wsText;
-        pXMLText->GetText(wsText);
+        CFX_WideString wsText = pXMLText->GetText();
         if (IsStringAllWhitespace(wsText))
           continue;
 
@@ -1199,14 +1170,8 @@ void CXFA_SimpleParser::ParseDataValue(CXFA_Node* pXFANode,
       continue;
 
     CFX_WideString wsText;
-    if (eNodeType == FDE_XMLNODE_Text) {
-      static_cast<CFDE_XMLText*>(pXMLChild)->GetText(wsText);
-      if (!pXMLCurValueNode)
-        pXMLCurValueNode = pXMLChild;
-
-      wsCurValueTextBuf << wsText;
-    } else if (eNodeType == FDE_XMLNODE_CharData) {
-      static_cast<CFDE_XMLCharData*>(pXMLChild)->GetCharData(wsText);
+    if (eNodeType == FDE_XMLNODE_Text || eNodeType == FDE_XMLNODE_CharData) {
+      wsText = static_cast<CFDE_XMLText*>(pXMLChild)->GetText();
       if (!pXMLCurValueNode)
         pXMLCurValueNode = pXMLChild;
 

@@ -192,17 +192,15 @@ void XFA_GetPlainTextFromRichText(CFDE_XMLNode* pXMLNode,
           wsPlainText += L"\n";
         }
       }
-    } break;
-    case FDE_XMLNODE_Text: {
-      CFX_WideString wsContent;
-      static_cast<CFDE_XMLText*>(pXMLNode)->GetText(wsContent);
-      wsPlainText += wsContent;
-    } break;
+      break;
+    }
+    case FDE_XMLNODE_Text:
     case FDE_XMLNODE_CharData: {
-      CFX_WideString wsCharData;
-      static_cast<CFDE_XMLCharData*>(pXMLNode)->GetCharData(wsCharData);
-      wsPlainText += wsCharData;
-    } break;
+      CFX_WideString wsContent =
+          static_cast<CFDE_XMLText*>(pXMLNode)->GetText();
+      wsPlainText += wsContent;
+      break;
+    }
     default:
       break;
   }

@@ -7,23 +7,18 @@
 #ifndef XFA_FDE_XML_CFDE_XMLCHARDATA_H_
 #define XFA_FDE_XML_CFDE_XMLCHARDATA_H_
 
-#include "core/fxcrt/fx_string.h"
-#include "xfa/fde/xml/cfde_xmlnode.h"
+#include <memory>
 
-class CFDE_XMLCharData : public CFDE_XMLNode {
+#include "core/fxcrt/fx_string.h"
+#include "xfa/fde/xml/cfde_xmltext.h"
+
+class CFDE_XMLCharData : public CFDE_XMLText {
  public:
   explicit CFDE_XMLCharData(const CFX_WideString& wsCData);
   ~CFDE_XMLCharData() override;
 
   FDE_XMLNODETYPE GetType() const override;
-  CFDE_XMLNode* Clone(bool bRecursive) override;
-
-  void GetCharData(CFX_WideString& wsCharData) const {
-    wsCharData = m_wsCharData;
-  }
-  void SetCharData(const CFX_WideString& wsCData) { m_wsCharData = wsCData; }
-
-  CFX_WideString m_wsCharData;
+  std::unique_ptr<CFDE_XMLNode> Clone() override;
 };
 
 #endif  // XFA_FDE_XML_CFDE_XMLCHARDATA_H_

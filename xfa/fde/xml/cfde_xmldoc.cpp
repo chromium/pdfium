@@ -98,7 +98,8 @@ void CFDE_XMLDoc::SaveXMLNode(const CFX_RetainPtr<IFGAS_Stream>& pXMLStream,
         ws = L"?>";
         pXMLStream->WriteString(ws.c_str(), ws.GetLength());
       }
-    } break;
+      break;
+    }
     case FDE_XMLNODE_Element: {
       CFX_WideString ws;
       ws = L"<";
@@ -137,24 +138,26 @@ void CFDE_XMLDoc::SaveXMLNode(const CFX_RetainPtr<IFGAS_Stream>& pXMLStream,
         ws = L"\n/>";
       }
       pXMLStream->WriteString(ws.c_str(), ws.GetLength());
-    } break;
+      break;
+    }
     case FDE_XMLNODE_Text: {
-      CFX_WideString ws = ((CFDE_XMLText*)pNode)->m_wsText;
+      CFX_WideString ws = static_cast<CFDE_XMLText*>(pNode)->GetText();
       ws.Replace(L"&", L"&amp;");
       ws.Replace(L"<", L"&lt;");
       ws.Replace(L">", L"&gt;");
       ws.Replace(L"\'", L"&apos;");
       ws.Replace(L"\"", L"&quot;");
       pXMLStream->WriteString(ws.c_str(), ws.GetLength());
-    } break;
+      break;
+    }
     case FDE_XMLNODE_CharData: {
       CFX_WideString ws = L"<![CDATA[";
-      ws += ((CFDE_XMLCharData*)pNode)->m_wsCharData;
+      ws += static_cast<CFDE_XMLCharData*>(pNode)->GetText();
       ws += L"]]>";
       pXMLStream->WriteString(ws.c_str(), ws.GetLength());
-    } break;
-    case FDE_XMLNODE_Unknown:
       break;
+    }
+    case FDE_XMLNODE_Unknown:
     default:
       break;
   }
