@@ -32,34 +32,25 @@ TEST(CFDE_XMLSyntaxParser, CData) {
   parser.Init(stream, 256);
   EXPECT_EQ(FDE_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
   EXPECT_EQ(FDE_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
-
-  CFX_WideString data;
-  parser.GetTagName(data);
-  EXPECT_EQ(L"script", data);
+  EXPECT_EQ(L"script", parser.GetTagName());
 
   EXPECT_EQ(FDE_XmlSyntaxResult::AttriName, parser.DoSyntaxParse());
-  parser.GetAttributeName(data);
-  EXPECT_EQ(L"contentType", data);
+  EXPECT_EQ(L"contentType", parser.GetAttributeName());
   EXPECT_EQ(FDE_XmlSyntaxResult::AttriValue, parser.DoSyntaxParse());
-  parser.GetAttributeValue(data);
-  EXPECT_EQ(L"application/x-javascript", data);
+  EXPECT_EQ(L"application/x-javascript", parser.GetAttributeValue());
 
   EXPECT_EQ(FDE_XmlSyntaxResult::ElementBreak, parser.DoSyntaxParse());
   EXPECT_EQ(FDE_XmlSyntaxResult::Text, parser.DoSyntaxParse());
-  parser.GetTextData(data);
-  EXPECT_EQ(L"\n  ", data);
+  EXPECT_EQ(L"\n  ", parser.GetTextData());
 
   EXPECT_EQ(FDE_XmlSyntaxResult::CData, parser.DoSyntaxParse());
-  parser.GetTextData(data);
-  EXPECT_EQ(cdata, data);
+  EXPECT_EQ(cdata, parser.GetTextData());
 
   EXPECT_EQ(FDE_XmlSyntaxResult::Text, parser.DoSyntaxParse());
-  parser.GetTextData(data);
-  EXPECT_EQ(L"\n", data);
+  EXPECT_EQ(L"\n", parser.GetTextData());
 
   EXPECT_EQ(FDE_XmlSyntaxResult::ElementClose, parser.DoSyntaxParse());
-  parser.GetTagName(data);
-  EXPECT_EQ(L"script", data);
+  EXPECT_EQ(L"script", parser.GetTagName());
 
   EXPECT_EQ(FDE_XmlSyntaxResult::EndOfString, parser.DoSyntaxParse());
 }
@@ -89,34 +80,25 @@ TEST(CFDE_XMLSyntaxParser, CDataWithInnerScript) {
   parser.Init(stream, 256);
   EXPECT_EQ(FDE_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
   EXPECT_EQ(FDE_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
-
-  CFX_WideString data;
-  parser.GetTagName(data);
-  EXPECT_EQ(L"script", data);
+  EXPECT_EQ(L"script", parser.GetTagName());
 
   EXPECT_EQ(FDE_XmlSyntaxResult::AttriName, parser.DoSyntaxParse());
-  parser.GetAttributeName(data);
-  EXPECT_EQ(L"contentType", data);
+  EXPECT_EQ(L"contentType", parser.GetAttributeName());
   EXPECT_EQ(FDE_XmlSyntaxResult::AttriValue, parser.DoSyntaxParse());
-  parser.GetAttributeValue(data);
-  EXPECT_EQ(L"application/x-javascript", data);
+  EXPECT_EQ(L"application/x-javascript", parser.GetAttributeValue());
 
   EXPECT_EQ(FDE_XmlSyntaxResult::ElementBreak, parser.DoSyntaxParse());
   EXPECT_EQ(FDE_XmlSyntaxResult::Text, parser.DoSyntaxParse());
-  parser.GetTextData(data);
-  EXPECT_EQ(L"\n  ", data);
+  EXPECT_EQ(L"\n  ", parser.GetTextData());
 
   EXPECT_EQ(FDE_XmlSyntaxResult::CData, parser.DoSyntaxParse());
-  parser.GetTextData(data);
-  EXPECT_EQ(cdata, data);
+  EXPECT_EQ(cdata, parser.GetTextData());
 
   EXPECT_EQ(FDE_XmlSyntaxResult::Text, parser.DoSyntaxParse());
-  parser.GetTextData(data);
-  EXPECT_EQ(L"\n", data);
+  EXPECT_EQ(L"\n", parser.GetTextData());
 
   EXPECT_EQ(FDE_XmlSyntaxResult::ElementClose, parser.DoSyntaxParse());
-  parser.GetTagName(data);
-  EXPECT_EQ(L"script", data);
+  EXPECT_EQ(L"script", parser.GetTagName());
 
   EXPECT_EQ(FDE_XmlSyntaxResult::EndOfString, parser.DoSyntaxParse());
 }
@@ -136,29 +118,22 @@ TEST(CFDE_XMLSyntaxParser, ArrowBangArrow) {
   EXPECT_EQ(FDE_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
   EXPECT_EQ(FDE_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
 
-  CFX_WideString data;
-  parser.GetTagName(data);
-  EXPECT_EQ(L"script", data);
+  EXPECT_EQ(L"script", parser.GetTagName());
 
   EXPECT_EQ(FDE_XmlSyntaxResult::AttriName, parser.DoSyntaxParse());
-  parser.GetAttributeName(data);
-  EXPECT_EQ(L"contentType", data);
+  EXPECT_EQ(L"contentType", parser.GetAttributeName());
   EXPECT_EQ(FDE_XmlSyntaxResult::AttriValue, parser.DoSyntaxParse());
-  parser.GetAttributeValue(data);
-  EXPECT_EQ(L"application/x-javascript", data);
+  EXPECT_EQ(L"application/x-javascript", parser.GetAttributeValue());
 
   EXPECT_EQ(FDE_XmlSyntaxResult::ElementBreak, parser.DoSyntaxParse());
   EXPECT_EQ(FDE_XmlSyntaxResult::Text, parser.DoSyntaxParse());
-  parser.GetTextData(data);
-  EXPECT_EQ(L"\n  ", data);
+  EXPECT_EQ(L"\n  ", parser.GetTextData());
 
   EXPECT_EQ(FDE_XmlSyntaxResult::Text, parser.DoSyntaxParse());
-  parser.GetTextData(data);
-  EXPECT_EQ(L"\n", data);
+  EXPECT_EQ(L"\n", parser.GetTextData());
 
   EXPECT_EQ(FDE_XmlSyntaxResult::ElementClose, parser.DoSyntaxParse());
-  parser.GetTagName(data);
-  EXPECT_EQ(L"script", data);
+  EXPECT_EQ(L"script", parser.GetTagName());
 
   EXPECT_EQ(FDE_XmlSyntaxResult::EndOfString, parser.DoSyntaxParse());
 }
@@ -177,22 +152,16 @@ TEST(CFDE_XMLSyntaxParser, ArrowBangBracketArrow) {
   parser.Init(stream, 256);
   EXPECT_EQ(FDE_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
   EXPECT_EQ(FDE_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
-
-  CFX_WideString data;
-  parser.GetTagName(data);
-  EXPECT_EQ(L"script", data);
+  EXPECT_EQ(L"script", parser.GetTagName());
 
   EXPECT_EQ(FDE_XmlSyntaxResult::AttriName, parser.DoSyntaxParse());
-  parser.GetAttributeName(data);
-  EXPECT_EQ(L"contentType", data);
+  EXPECT_EQ(L"contentType", parser.GetAttributeName());
   EXPECT_EQ(FDE_XmlSyntaxResult::AttriValue, parser.DoSyntaxParse());
-  parser.GetAttributeValue(data);
-  EXPECT_EQ(L"application/x-javascript", data);
+  EXPECT_EQ(L"application/x-javascript", parser.GetAttributeValue());
 
   EXPECT_EQ(FDE_XmlSyntaxResult::ElementBreak, parser.DoSyntaxParse());
   EXPECT_EQ(FDE_XmlSyntaxResult::Text, parser.DoSyntaxParse());
-  parser.GetTextData(data);
-  EXPECT_EQ(L"\n  ", data);
+  EXPECT_EQ(L"\n  ", parser.GetTextData());
 
   // Parser walks to end of input.
 
@@ -213,22 +182,16 @@ TEST(CFDE_XMLSyntaxParser, IncompleteCData) {
   parser.Init(stream, 256);
   EXPECT_EQ(FDE_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
   EXPECT_EQ(FDE_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
-
-  CFX_WideString data;
-  parser.GetTagName(data);
-  EXPECT_EQ(L"script", data);
+  EXPECT_EQ(L"script", parser.GetTagName());
 
   EXPECT_EQ(FDE_XmlSyntaxResult::AttriName, parser.DoSyntaxParse());
-  parser.GetAttributeName(data);
-  EXPECT_EQ(L"contentType", data);
+  EXPECT_EQ(L"contentType", parser.GetAttributeName());
   EXPECT_EQ(FDE_XmlSyntaxResult::AttriValue, parser.DoSyntaxParse());
-  parser.GetAttributeValue(data);
-  EXPECT_EQ(L"application/x-javascript", data);
+  EXPECT_EQ(L"application/x-javascript", parser.GetAttributeValue());
 
   EXPECT_EQ(FDE_XmlSyntaxResult::ElementBreak, parser.DoSyntaxParse());
   EXPECT_EQ(FDE_XmlSyntaxResult::Text, parser.DoSyntaxParse());
-  parser.GetTextData(data);
-  EXPECT_EQ(L"\n  ", data);
+  EXPECT_EQ(L"\n  ", parser.GetTextData());
 
   // Parser walks to end of input.
 
@@ -249,22 +212,16 @@ TEST(CFDE_XMLSyntaxParser, UnClosedCData) {
   parser.Init(stream, 256);
   EXPECT_EQ(FDE_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
   EXPECT_EQ(FDE_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
-
-  CFX_WideString data;
-  parser.GetTagName(data);
-  EXPECT_EQ(L"script", data);
+  EXPECT_EQ(L"script", parser.GetTagName());
 
   EXPECT_EQ(FDE_XmlSyntaxResult::AttriName, parser.DoSyntaxParse());
-  parser.GetAttributeName(data);
-  EXPECT_EQ(L"contentType", data);
+  EXPECT_EQ(L"contentType", parser.GetAttributeName());
   EXPECT_EQ(FDE_XmlSyntaxResult::AttriValue, parser.DoSyntaxParse());
-  parser.GetAttributeValue(data);
-  EXPECT_EQ(L"application/x-javascript", data);
+  EXPECT_EQ(L"application/x-javascript", parser.GetAttributeValue());
 
   EXPECT_EQ(FDE_XmlSyntaxResult::ElementBreak, parser.DoSyntaxParse());
   EXPECT_EQ(FDE_XmlSyntaxResult::Text, parser.DoSyntaxParse());
-  parser.GetTextData(data);
-  EXPECT_EQ(L"\n  ", data);
+  EXPECT_EQ(L"\n  ", parser.GetTextData());
 
   // Parser walks to end of input.
 
@@ -285,34 +242,25 @@ TEST(CFDE_XMLSyntaxParser, EmptyCData) {
   parser.Init(stream, 256);
   EXPECT_EQ(FDE_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
   EXPECT_EQ(FDE_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
-
-  CFX_WideString data;
-  parser.GetTagName(data);
-  EXPECT_EQ(L"script", data);
+  EXPECT_EQ(L"script", parser.GetTagName());
 
   EXPECT_EQ(FDE_XmlSyntaxResult::AttriName, parser.DoSyntaxParse());
-  parser.GetAttributeName(data);
-  EXPECT_EQ(L"contentType", data);
+  EXPECT_EQ(L"contentType", parser.GetAttributeName());
   EXPECT_EQ(FDE_XmlSyntaxResult::AttriValue, parser.DoSyntaxParse());
-  parser.GetAttributeValue(data);
-  EXPECT_EQ(L"application/x-javascript", data);
+  EXPECT_EQ(L"application/x-javascript", parser.GetAttributeValue());
 
   EXPECT_EQ(FDE_XmlSyntaxResult::ElementBreak, parser.DoSyntaxParse());
   EXPECT_EQ(FDE_XmlSyntaxResult::Text, parser.DoSyntaxParse());
-  parser.GetTextData(data);
-  EXPECT_EQ(L"\n  ", data);
+  EXPECT_EQ(L"\n  ", parser.GetTextData());
 
   EXPECT_EQ(FDE_XmlSyntaxResult::CData, parser.DoSyntaxParse());
-  parser.GetTextData(data);
-  EXPECT_EQ(L"", data);
+  EXPECT_EQ(L"", parser.GetTextData());
 
   EXPECT_EQ(FDE_XmlSyntaxResult::Text, parser.DoSyntaxParse());
-  parser.GetTextData(data);
-  EXPECT_EQ(L"\n", data);
+  EXPECT_EQ(L"\n", parser.GetTextData());
 
   EXPECT_EQ(FDE_XmlSyntaxResult::ElementClose, parser.DoSyntaxParse());
-  parser.GetTagName(data);
-  EXPECT_EQ(L"script", data);
+  EXPECT_EQ(L"script", parser.GetTagName());
 
   EXPECT_EQ(FDE_XmlSyntaxResult::EndOfString, parser.DoSyntaxParse());
 }
@@ -331,30 +279,22 @@ TEST(CFDE_XMLSyntaxParser, Comment) {
   parser.Init(stream, 256);
   EXPECT_EQ(FDE_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
   EXPECT_EQ(FDE_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
-
-  CFX_WideString data;
-  parser.GetTagName(data);
-  EXPECT_EQ(L"script", data);
+  EXPECT_EQ(L"script", parser.GetTagName());
 
   EXPECT_EQ(FDE_XmlSyntaxResult::AttriName, parser.DoSyntaxParse());
-  parser.GetAttributeName(data);
-  EXPECT_EQ(L"contentType", data);
+  EXPECT_EQ(L"contentType", parser.GetAttributeName());
   EXPECT_EQ(FDE_XmlSyntaxResult::AttriValue, parser.DoSyntaxParse());
-  parser.GetAttributeValue(data);
-  EXPECT_EQ(L"application/x-javascript", data);
+  EXPECT_EQ(L"application/x-javascript", parser.GetAttributeValue());
 
   EXPECT_EQ(FDE_XmlSyntaxResult::ElementBreak, parser.DoSyntaxParse());
   EXPECT_EQ(FDE_XmlSyntaxResult::Text, parser.DoSyntaxParse());
-  parser.GetTextData(data);
-  EXPECT_EQ(L"\n  ", data);
+  EXPECT_EQ(L"\n  ", parser.GetTextData());
 
   EXPECT_EQ(FDE_XmlSyntaxResult::Text, parser.DoSyntaxParse());
-  parser.GetTextData(data);
-  EXPECT_EQ(L"\n", data);
+  EXPECT_EQ(L"\n", parser.GetTextData());
 
   EXPECT_EQ(FDE_XmlSyntaxResult::ElementClose, parser.DoSyntaxParse());
-  parser.GetTagName(data);
-  EXPECT_EQ(L"script", data);
+  EXPECT_EQ(L"script", parser.GetTagName());
 
   EXPECT_EQ(FDE_XmlSyntaxResult::EndOfString, parser.DoSyntaxParse());
 }
@@ -373,30 +313,22 @@ TEST(CFDE_XMLSyntaxParser, IncorrectCommentStart) {
   parser.Init(stream, 256);
   EXPECT_EQ(FDE_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
   EXPECT_EQ(FDE_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
-
-  CFX_WideString data;
-  parser.GetTagName(data);
-  EXPECT_EQ(L"script", data);
+  EXPECT_EQ(L"script", parser.GetTagName());
 
   EXPECT_EQ(FDE_XmlSyntaxResult::AttriName, parser.DoSyntaxParse());
-  parser.GetAttributeName(data);
-  EXPECT_EQ(L"contentType", data);
+  EXPECT_EQ(L"contentType", parser.GetAttributeName());
   EXPECT_EQ(FDE_XmlSyntaxResult::AttriValue, parser.DoSyntaxParse());
-  parser.GetAttributeValue(data);
-  EXPECT_EQ(L"application/x-javascript", data);
+  EXPECT_EQ(L"application/x-javascript", parser.GetAttributeValue());
 
   EXPECT_EQ(FDE_XmlSyntaxResult::ElementBreak, parser.DoSyntaxParse());
   EXPECT_EQ(FDE_XmlSyntaxResult::Text, parser.DoSyntaxParse());
-  parser.GetTextData(data);
-  EXPECT_EQ(L"\n  ", data);
+  EXPECT_EQ(L"\n  ", parser.GetTextData());
 
   EXPECT_EQ(FDE_XmlSyntaxResult::Text, parser.DoSyntaxParse());
-  parser.GetTextData(data);
-  EXPECT_EQ(L"\n", data);
+  EXPECT_EQ(L"\n", parser.GetTextData());
 
   EXPECT_EQ(FDE_XmlSyntaxResult::ElementClose, parser.DoSyntaxParse());
-  parser.GetTagName(data);
-  EXPECT_EQ(L"script", data);
+  EXPECT_EQ(L"script", parser.GetTagName());
 
   EXPECT_EQ(FDE_XmlSyntaxResult::EndOfString, parser.DoSyntaxParse());
 }
@@ -415,30 +347,22 @@ TEST(CFDE_XMLSyntaxParser, CommentEmpty) {
   parser.Init(stream, 256);
   EXPECT_EQ(FDE_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
   EXPECT_EQ(FDE_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
-
-  CFX_WideString data;
-  parser.GetTagName(data);
-  EXPECT_EQ(L"script", data);
+  EXPECT_EQ(L"script", parser.GetTagName());
 
   EXPECT_EQ(FDE_XmlSyntaxResult::AttriName, parser.DoSyntaxParse());
-  parser.GetAttributeName(data);
-  EXPECT_EQ(L"contentType", data);
+  EXPECT_EQ(L"contentType", parser.GetAttributeName());
   EXPECT_EQ(FDE_XmlSyntaxResult::AttriValue, parser.DoSyntaxParse());
-  parser.GetAttributeValue(data);
-  EXPECT_EQ(L"application/x-javascript", data);
+  EXPECT_EQ(L"application/x-javascript", parser.GetAttributeValue());
 
   EXPECT_EQ(FDE_XmlSyntaxResult::ElementBreak, parser.DoSyntaxParse());
   EXPECT_EQ(FDE_XmlSyntaxResult::Text, parser.DoSyntaxParse());
-  parser.GetTextData(data);
-  EXPECT_EQ(L"\n  ", data);
+  EXPECT_EQ(L"\n  ", parser.GetTextData());
 
   EXPECT_EQ(FDE_XmlSyntaxResult::Text, parser.DoSyntaxParse());
-  parser.GetTextData(data);
-  EXPECT_EQ(L"\n", data);
+  EXPECT_EQ(L"\n", parser.GetTextData());
 
   EXPECT_EQ(FDE_XmlSyntaxResult::ElementClose, parser.DoSyntaxParse());
-  parser.GetTagName(data);
-  EXPECT_EQ(L"script", data);
+  EXPECT_EQ(L"script", parser.GetTagName());
 
   EXPECT_EQ(FDE_XmlSyntaxResult::EndOfString, parser.DoSyntaxParse());
 }
@@ -457,22 +381,16 @@ TEST(CFDE_XMLSyntaxParser, CommentThreeDash) {
   parser.Init(stream, 256);
   EXPECT_EQ(FDE_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
   EXPECT_EQ(FDE_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
-
-  CFX_WideString data;
-  parser.GetTagName(data);
-  EXPECT_EQ(L"script", data);
+  EXPECT_EQ(L"script", parser.GetTagName());
 
   EXPECT_EQ(FDE_XmlSyntaxResult::AttriName, parser.DoSyntaxParse());
-  parser.GetAttributeName(data);
-  EXPECT_EQ(L"contentType", data);
+  EXPECT_EQ(L"contentType", parser.GetAttributeName());
   EXPECT_EQ(FDE_XmlSyntaxResult::AttriValue, parser.DoSyntaxParse());
-  parser.GetAttributeValue(data);
-  EXPECT_EQ(L"application/x-javascript", data);
+  EXPECT_EQ(L"application/x-javascript", parser.GetAttributeValue());
 
   EXPECT_EQ(FDE_XmlSyntaxResult::ElementBreak, parser.DoSyntaxParse());
   EXPECT_EQ(FDE_XmlSyntaxResult::Text, parser.DoSyntaxParse());
-  parser.GetTextData(data);
-  EXPECT_EQ(L"\n  ", data);
+  EXPECT_EQ(L"\n  ", parser.GetTextData());
 
   EXPECT_EQ(FDE_XmlSyntaxResult::EndOfString, parser.DoSyntaxParse());
 }
@@ -491,22 +409,16 @@ TEST(CFDE_XMLSyntaxParser, CommentTwoDash) {
   parser.Init(stream, 256);
   EXPECT_EQ(FDE_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
   EXPECT_EQ(FDE_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
-
-  CFX_WideString data;
-  parser.GetTagName(data);
-  EXPECT_EQ(L"script", data);
+  EXPECT_EQ(L"script", parser.GetTagName());
 
   EXPECT_EQ(FDE_XmlSyntaxResult::AttriName, parser.DoSyntaxParse());
-  parser.GetAttributeName(data);
-  EXPECT_EQ(L"contentType", data);
+  EXPECT_EQ(L"contentType", parser.GetAttributeName());
   EXPECT_EQ(FDE_XmlSyntaxResult::AttriValue, parser.DoSyntaxParse());
-  parser.GetAttributeValue(data);
-  EXPECT_EQ(L"application/x-javascript", data);
+  EXPECT_EQ(L"application/x-javascript", parser.GetAttributeValue());
 
   EXPECT_EQ(FDE_XmlSyntaxResult::ElementBreak, parser.DoSyntaxParse());
   EXPECT_EQ(FDE_XmlSyntaxResult::Text, parser.DoSyntaxParse());
-  parser.GetTextData(data);
-  EXPECT_EQ(L"\n  ", data);
+  EXPECT_EQ(L"\n  ", parser.GetTextData());
 
   EXPECT_EQ(FDE_XmlSyntaxResult::EndOfString, parser.DoSyntaxParse());
 }
@@ -529,26 +441,19 @@ TEST(CFDE_XMLSyntaxParser, Entities) {
   parser.Init(stream, 256);
   EXPECT_EQ(FDE_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
   EXPECT_EQ(FDE_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
-
-  CFX_WideString data;
-  parser.GetTagName(data);
-  EXPECT_EQ(L"script", data);
+  EXPECT_EQ(L"script", parser.GetTagName());
 
   EXPECT_EQ(FDE_XmlSyntaxResult::AttriName, parser.DoSyntaxParse());
-  parser.GetAttributeName(data);
-  EXPECT_EQ(L"contentType", data);
+  EXPECT_EQ(L"contentType", parser.GetAttributeName());
   EXPECT_EQ(FDE_XmlSyntaxResult::AttriValue, parser.DoSyntaxParse());
-  parser.GetAttributeValue(data);
-  EXPECT_EQ(L"application/x-javascript", data);
+  EXPECT_EQ(L"application/x-javascript", parser.GetAttributeValue());
 
   EXPECT_EQ(FDE_XmlSyntaxResult::ElementBreak, parser.DoSyntaxParse());
   EXPECT_EQ(FDE_XmlSyntaxResult::Text, parser.DoSyntaxParse());
-  parser.GetTextData(data);
-  EXPECT_EQ(L"BTH\xab48", data);
+  EXPECT_EQ(L"BTH\xab48", parser.GetTextData());
 
   EXPECT_EQ(FDE_XmlSyntaxResult::ElementClose, parser.DoSyntaxParse());
-  parser.GetTagName(data);
-  EXPECT_EQ(L"script", data);
+  EXPECT_EQ(L"script", parser.GetTagName());
 
   EXPECT_EQ(FDE_XmlSyntaxResult::EndOfString, parser.DoSyntaxParse());
 }
@@ -568,26 +473,19 @@ TEST(CFDE_XMLSyntaxParser, EntityOverflowHex) {
   parser.Init(stream, 256);
   EXPECT_EQ(FDE_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
   EXPECT_EQ(FDE_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
-
-  CFX_WideString data;
-  parser.GetTagName(data);
-  EXPECT_EQ(L"script", data);
+  EXPECT_EQ(L"script", parser.GetTagName());
 
   EXPECT_EQ(FDE_XmlSyntaxResult::AttriName, parser.DoSyntaxParse());
-  parser.GetAttributeName(data);
-  EXPECT_EQ(L"contentType", data);
+  EXPECT_EQ(L"contentType", parser.GetAttributeName());
   EXPECT_EQ(FDE_XmlSyntaxResult::AttriValue, parser.DoSyntaxParse());
-  parser.GetAttributeValue(data);
-  EXPECT_EQ(L"application/x-javascript", data);
+  EXPECT_EQ(L"application/x-javascript", parser.GetAttributeValue());
 
   EXPECT_EQ(FDE_XmlSyntaxResult::ElementBreak, parser.DoSyntaxParse());
   EXPECT_EQ(FDE_XmlSyntaxResult::Text, parser.DoSyntaxParse());
-  parser.GetTextData(data);
-  EXPECT_EQ(L"  ", data);
+  EXPECT_EQ(L"  ", parser.GetTextData());
 
   EXPECT_EQ(FDE_XmlSyntaxResult::ElementClose, parser.DoSyntaxParse());
-  parser.GetTagName(data);
-  EXPECT_EQ(L"script", data);
+  EXPECT_EQ(L"script", parser.GetTagName());
 
   EXPECT_EQ(FDE_XmlSyntaxResult::EndOfString, parser.DoSyntaxParse());
 }
@@ -607,26 +505,19 @@ TEST(CFDE_XMLSyntaxParser, EntityOverflowDecimal) {
   parser.Init(stream, 256);
   EXPECT_EQ(FDE_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
   EXPECT_EQ(FDE_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
-
-  CFX_WideString data;
-  parser.GetTagName(data);
-  EXPECT_EQ(L"script", data);
+  EXPECT_EQ(L"script", parser.GetTagName());
 
   EXPECT_EQ(FDE_XmlSyntaxResult::AttriName, parser.DoSyntaxParse());
-  parser.GetAttributeName(data);
-  EXPECT_EQ(L"contentType", data);
+  EXPECT_EQ(L"contentType", parser.GetAttributeName());
   EXPECT_EQ(FDE_XmlSyntaxResult::AttriValue, parser.DoSyntaxParse());
-  parser.GetAttributeValue(data);
-  EXPECT_EQ(L"application/x-javascript", data);
+  EXPECT_EQ(L"application/x-javascript", parser.GetAttributeValue());
 
   EXPECT_EQ(FDE_XmlSyntaxResult::ElementBreak, parser.DoSyntaxParse());
   EXPECT_EQ(FDE_XmlSyntaxResult::Text, parser.DoSyntaxParse());
-  parser.GetTextData(data);
-  EXPECT_EQ(L"  ", data);
+  EXPECT_EQ(L"  ", parser.GetTextData());
 
   EXPECT_EQ(FDE_XmlSyntaxResult::ElementClose, parser.DoSyntaxParse());
-  parser.GetTagName(data);
-  EXPECT_EQ(L"script", data);
+  EXPECT_EQ(L"script", parser.GetTagName());
 
   EXPECT_EQ(FDE_XmlSyntaxResult::EndOfString, parser.DoSyntaxParse());
 }

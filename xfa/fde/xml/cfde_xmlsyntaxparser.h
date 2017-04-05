@@ -38,9 +38,7 @@ class CFDE_XMLSyntaxParser {
   CFDE_XMLSyntaxParser();
   ~CFDE_XMLSyntaxParser();
 
-  void Init(const CFX_RetainPtr<IFGAS_Stream>& pStream,
-            int32_t iXMLPlaneSize,
-            int32_t iTextDataSize = 256);
+  void Init(const CFX_RetainPtr<IFGAS_Stream>& pStream, int32_t iXMLPlaneSize);
 
   FDE_XmlSyntaxResult DoSyntaxParse();
 
@@ -52,28 +50,28 @@ class CFDE_XMLSyntaxParser {
   int32_t GetCurrentNodeNumber() const { return m_iCurrentNodeNum; }
   int32_t GetLastNodeNumber() const { return m_iLastNodeNum; }
 
-  void GetTargetName(CFX_WideString& wsTarget) const {
-    wsTarget = m_BlockBuffer.GetTextData(0, m_iTextDataLength);
+  CFX_WideString GetTargetName() const {
+    return m_BlockBuffer.GetTextData(0, m_iTextDataLength);
   }
 
-  void GetTagName(CFX_WideString& wsTag) const {
-    wsTag = m_BlockBuffer.GetTextData(0, m_iTextDataLength);
+  CFX_WideString GetTagName() const {
+    return m_BlockBuffer.GetTextData(0, m_iTextDataLength);
   }
 
-  void GetAttributeName(CFX_WideString& wsAttriName) const {
-    wsAttriName = m_BlockBuffer.GetTextData(0, m_iTextDataLength);
+  CFX_WideString GetAttributeName() const {
+    return m_BlockBuffer.GetTextData(0, m_iTextDataLength);
   }
 
-  void GetAttributeValue(CFX_WideString& wsAttriValue) const {
-    wsAttriValue = m_BlockBuffer.GetTextData(0, m_iTextDataLength);
+  CFX_WideString GetAttributeValue() const {
+    return m_BlockBuffer.GetTextData(0, m_iTextDataLength);
   }
 
-  void GetTextData(CFX_WideString& wsText) const {
-    wsText = m_BlockBuffer.GetTextData(0, m_iTextDataLength);
+  CFX_WideString GetTextData() const {
+    return m_BlockBuffer.GetTextData(0, m_iTextDataLength);
   }
 
-  void GetTargetData(CFX_WideString& wsData) const {
-    wsData = m_BlockBuffer.GetTextData(0, m_iTextDataLength);
+  CFX_WideString GetTargetData() const {
+    return m_BlockBuffer.GetTextData(0, m_iTextDataLength);
   }
 
  protected:

@@ -104,8 +104,7 @@ CFDE_XMLSyntaxParser::CFDE_XMLSyntaxParser()
 }
 
 void CFDE_XMLSyntaxParser::Init(const CFX_RetainPtr<IFGAS_Stream>& pStream,
-                                int32_t iXMLPlaneSize,
-                                int32_t iTextDataSize) {
+                                int32_t iXMLPlaneSize) {
   ASSERT(!m_pStream && !m_pBuffer);
   ASSERT(pStream && iXMLPlaneSize > 0);
   int32_t iStreamLength = pStream->GetLength();

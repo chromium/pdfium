@@ -20,8 +20,9 @@ class CFDE_XMLDoc {
   ~CFDE_XMLDoc();
 
   bool LoadXML(std::unique_ptr<CFDE_XMLParser> pXMLParser);
-  int32_t DoLoad(IFX_Pause* pPause = nullptr);
+  int32_t DoLoad(IFX_Pause* pPause);
   void CloseXML();
+
   CFDE_XMLNode* GetRoot() const { return m_pRoot.get(); }
   void SaveXMLNode(const CFX_RetainPtr<IFGAS_Stream>& pXMLStream,
                    CFDE_XMLNode* pNode);
