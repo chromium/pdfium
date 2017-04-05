@@ -81,8 +81,7 @@ CFDE_XMLNode* CXFA_TextLayout::GetXMLContainerNode() {
        pXMLChild = pXMLChild->GetNodeItem(CFDE_XMLNode::NextSibling)) {
     if (pXMLChild->GetType() == FDE_XMLNODE_Element) {
       CFDE_XMLElement* pXMLElement = static_cast<CFDE_XMLElement*>(pXMLChild);
-      CFX_WideString wsTag;
-      pXMLElement->GetLocalTagName(wsTag);
+      CFX_WideString wsTag = pXMLElement->GetLocalTagName();
       if (wsTag == L"body" || wsTag == L"html") {
         pXMLContainer = pXMLChild;
         break;
@@ -727,7 +726,7 @@ bool CXFA_TextLayout::LoadRichText(
         bContentNode = true;
       } else if (pXMLNode->GetType() == FDE_XMLNODE_Element) {
         pElement = static_cast<CFDE_XMLElement*>(pXMLNode);
-        pElement->GetLocalTagName(wsName);
+        wsName = pElement->GetLocalTagName();
       }
       if (wsName == L"ol") {
         bIsOl = true;
@@ -757,9 +756,8 @@ bool CXFA_TextLayout::LoadRichText(
         }
 
         if (wsName == L"a") {
-          CFX_WideString wsLinkContent;
           ASSERT(pElement);
-          pElement->GetString(L"href", wsLinkContent);
+          CFX_WideString wsLinkContent = pElement->GetString(L"href");
           if (!wsLinkContent.IsEmpty()) {
             pLinkData = pdfium::MakeRetain<CXFA_LinkUserData>(
                 wsLinkContent.GetBuffer(wsLinkContent.GetLength()));

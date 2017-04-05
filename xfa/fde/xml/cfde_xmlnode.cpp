@@ -109,17 +109,17 @@ CFDE_XMLNode* CFDE_XMLNode::GetPath(const wchar_t* pPath,
     CFDE_XMLNode* pNode = m_pChild;
     while (pNode) {
       if (pNode->GetType() == FDE_XMLNODE_Element) {
-        if (bQualifiedName) {
-          ((CFDE_XMLElement*)pNode)->GetTagName(wsTag);
-        } else {
-          ((CFDE_XMLElement*)pNode)->GetLocalTagName(wsTag);
-        }
+        if (bQualifiedName)
+          wsTag = static_cast<CFDE_XMLElement*>(pNode)->GetName();
+        else
+          wsTag = static_cast<CFDE_XMLElement*>(pNode)->GetLocalTagName();
+
         if (wsTag.Compare(csPath) == 0) {
-          if (iLength < 1) {
+          if (iLength < 1)
             pFind = pNode;
-          } else {
+          else
             pFind = pNode->GetPath(pStart, iLength, bQualifiedName);
-          }
+
           if (pFind)
             return pFind;
         }
@@ -335,7 +335,7 @@ void CFDE_XMLNode::SaveXMLNode(const CFX_RetainPtr<IFGAS_Stream>& pXMLStream) {
     case FDE_XMLNODE_Instruction: {
       CFX_WideString ws;
       CFDE_XMLInstruction* pInstruction = (CFDE_XMLInstruction*)pNode;
-      if (pInstruction->m_wsTarget.CompareNoCase(L"xml") == 0) {
+      if (pInstruction->GetName().CompareNoCase(L"xml") == 0) {
         ws = L"<?xml version=\"1.0\" encoding=\"";
         uint16_t wCodePage = pXMLStream->GetCodePage();
         if (wCodePage == FX_CODEPAGE_UTF16LE) {
@@ -348,31 +348,28 @@ void CFDE_XMLNode::SaveXMLNode(const CFX_RetainPtr<IFGAS_Stream>& pXMLStream) {
         ws += L"\"?>";
         pXMLStream->WriteString(ws.c_str(), ws.GetLength());
       } else {
-        ws.Format(L"<?%s", pInstruction->m_wsTarget.c_str());
+        ws.Format(L"<?%s", pInstruction->GetName().c_str());
         pXMLStream->WriteString(ws.c_str(), ws.GetLength());
-        std::vector<CFX_WideString>& attributes = pInstruction->m_Attributes;
-        int32_t i;
-        int32_t iCount = pdfium::CollectionSize<int32_t>(attributes);
-        CFX_WideString wsValue;
-        for (i = 0; i < iCount; i += 2) {
-          ws = L" ";
-          ws += attributes[i];
-          ws += L"=\"";
-          wsValue = attributes[i + 1];
+
+        for (auto it : pInstruction->GetAttributes()) {
+          CFX_WideString wsValue = it.second;
           wsValue.Replace(L"&", L"&amp;");
           wsValue.Replace(L"<", L"&lt;");
           wsValue.Replace(L">", L"&gt;");
           wsValue.Replace(L"\'", L"&apos;");
           wsValue.Replace(L"\"", L"&quot;");
+
+          ws = L" ";
+          ws += it.first;
+          ws += L"=\"";
           ws += wsValue;
           ws += L"\"";
           pXMLStream->WriteString(ws.c_str(), ws.GetLength());
         }
-        std::vector<CFX_WideString>& targetdata = pInstruction->m_TargetData;
-        iCount = pdfium::CollectionSize<int32_t>(targetdata);
-        for (i = 0; i < iCount; i++) {
+
+        for (auto target : pInstruction->GetTargetData()) {
           ws = L" \"";
-          ws += targetdata[i];
+          ws += target;
           ws += L"\"";
           pXMLStream->WriteString(ws.c_str(), ws.GetLength());
         }
@@ -384,22 +381,20 @@ void CFDE_XMLNode::SaveXMLNode(const CFX_RetainPtr<IFGAS_Stream>& pXMLStream) {
     case FDE_XMLNODE_Element: {
       CFX_WideString ws;
       ws = L"<";
-      ws += ((CFDE_XMLElement*)pNode)->m_wsTag;
+      ws += static_cast<CFDE_XMLElement*>(pNode)->GetName();
       pXMLStream->WriteString(ws.c_str(), ws.GetLength());
-      std::vector<CFX_WideString>& attributes =
-          static_cast<CFDE_XMLElement*>(pNode)->m_Attributes;
-      int32_t iCount = pdfium::CollectionSize<int32_t>(attributes);
-      CFX_WideString wsValue;
-      for (int32_t i = 0; i < iCount; i += 2) {
-        ws = L" ";
-        ws += attributes[i];
-        ws += L"=\"";
-        wsValue = attributes[i + 1];
+
+      for (auto it : static_cast<CFDE_XMLElement*>(pNode)->GetAttributes()) {
+        CFX_WideString wsValue = it.second;
         wsValue.Replace(L"&", L"&amp;");
         wsValue.Replace(L"<", L"&lt;");
         wsValue.Replace(L">", L"&gt;");
         wsValue.Replace(L"\'", L"&apos;");
         wsValue.Replace(L"\"", L"&quot;");
+
+        ws = L" ";
+        ws += it.first;
+        ws += L"=\"";
         ws += wsValue;
         ws += L"\"";
         pXMLStream->WriteString(ws.c_str(), ws.GetLength());
@@ -413,7 +408,7 @@ void CFDE_XMLNode::SaveXMLNode(const CFX_RetainPtr<IFGAS_Stream>& pXMLStream) {
           pChild = pChild->m_pNext;
         }
         ws = L"</";
-        ws += ((CFDE_XMLElement*)pNode)->m_wsTag;
+        ws += static_cast<CFDE_XMLElement*>(pNode)->GetName();
         ws += L"\n>";
       } else {
         ws = L"\n/>";

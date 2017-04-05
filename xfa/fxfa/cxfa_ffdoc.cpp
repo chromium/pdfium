@@ -178,9 +178,8 @@ bool XFA_GetPDFContentsFromPDFXML(CFDE_XMLNode* pPDFElement,
            pPDFElement->GetNodeItem(CFDE_XMLNode::FirstChild);
        pXMLNode; pXMLNode = pXMLNode->GetNodeItem(CFDE_XMLNode::NextSibling)) {
     if (pXMLNode->GetType() == FDE_XMLNODE_Element) {
-      CFX_WideString wsTagName;
       CFDE_XMLElement* pXMLElement = static_cast<CFDE_XMLElement*>(pXMLNode);
-      pXMLElement->GetTagName(wsTagName);
+      CFX_WideString wsTagName = pXMLElement->GetName();
       if (wsTagName == L"document") {
         pDocumentElement = pXMLElement;
         break;
@@ -195,9 +194,8 @@ bool XFA_GetPDFContentsFromPDFXML(CFDE_XMLNode* pPDFElement,
            pDocumentElement->GetNodeItem(CFDE_XMLNode::FirstChild);
        pXMLNode; pXMLNode = pXMLNode->GetNodeItem(CFDE_XMLNode::NextSibling)) {
     if (pXMLNode->GetType() == FDE_XMLNODE_Element) {
-      CFX_WideString wsTagName;
       CFDE_XMLElement* pXMLElement = static_cast<CFDE_XMLElement*>(pXMLNode);
-      pXMLElement->GetTagName(wsTagName);
+      CFX_WideString wsTagName = pXMLElement->GetName();
       if (wsTagName == L"chunk") {
         pChunkElement = pXMLElement;
         break;
@@ -207,8 +205,7 @@ bool XFA_GetPDFContentsFromPDFXML(CFDE_XMLNode* pPDFElement,
   if (!pChunkElement) {
     return false;
   }
-  CFX_WideString wsPDFContent;
-  pChunkElement->GetTextData(wsPDFContent);
+  CFX_WideString wsPDFContent = pChunkElement->GetTextData();
   iBufferSize =
       Base64DecodeW(wsPDFContent.c_str(), wsPDFContent.GetLength(), nullptr);
   pByteBuffer = FX_Alloc(uint8_t, iBufferSize + 1);

@@ -22,7 +22,7 @@ int XFA_GetMaxFractionalScale();
 bool XFA_FDEExtension_ResolveNamespaceQualifier(
     CFDE_XMLElement* pNode,
     const CFX_WideStringC& wsQualifier,
-    CFX_WideString& wsNamespaceURI);
+    CFX_WideString* wsNamespaceURI);
 
 template <class NodeType, class TraverseStrategy>
 class CXFA_NodeIteratorTemplate {

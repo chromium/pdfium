@@ -64,7 +64,7 @@ int32_t CFDE_XMLParser::DoParser(IFX_Pause* pPause) {
           break;
         }
         m_pParser->GetTagName(m_ws1);
-        static_cast<CFDE_XMLElement*>(m_pChild)->GetTagName(m_ws2);
+        m_ws2 = static_cast<CFDE_XMLElement*>(m_pChild)->GetName();
         if (m_ws1.GetLength() > 0 && m_ws1 != m_ws2) {
           m_syntaxParserResult = FDE_XmlSyntaxResult::Error;
           break;
@@ -102,8 +102,8 @@ int32_t CFDE_XMLParser::DoParser(IFX_Pause* pPause) {
         m_pParent = m_pChild;
 
         if (m_dwCheckStatus != 0x03 && m_NodeStack.size() == 3) {
-          CFX_WideString wsTag;
-          static_cast<CFDE_XMLElement*>(m_pChild)->GetLocalTagName(wsTag);
+          CFX_WideString wsTag =
+              static_cast<CFDE_XMLElement*>(m_pChild)->GetLocalTagName();
           if (wsTag == L"template") {
             m_dwCheckStatus |= 0x01;
             m_dwCurrentCheckStatus = 0x01;

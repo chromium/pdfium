@@ -284,14 +284,15 @@ void CreateDataBinding(CXFA_Node* pFormNode,
         CFDE_XMLElement* pXMLDataElement =
             static_cast<CFDE_XMLElement*>(pDataNode->GetXMLMappingNode());
         ASSERT(pXMLDataElement);
-        CFX_WideString wsContentType;
-        CFX_WideString wsHref;
-        pXMLDataElement->GetString(L"xfa:contentType", wsContentType);
+
+        CFX_WideString wsContentType =
+            pXMLDataElement->GetString(L"xfa:contentType");
         if (!wsContentType.IsEmpty()) {
           pDataNode->SetCData(XFA_ATTRIBUTE_ContentType, wsContentType);
           image.SetContentType(wsContentType);
         }
-        pXMLDataElement->GetString(L"href", wsHref);
+
+        CFX_WideString wsHref = pXMLDataElement->GetString(L"href");
         if (!wsHref.IsEmpty())
           image.SetHref(wsHref);
       }

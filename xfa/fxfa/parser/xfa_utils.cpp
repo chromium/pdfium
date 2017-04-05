@@ -177,8 +177,7 @@ void XFA_GetPlainTextFromRichText(CFDE_XMLNode* pXMLNode,
   switch (pXMLNode->GetType()) {
     case FDE_XMLNODE_Element: {
       CFDE_XMLElement* pXMLElement = static_cast<CFDE_XMLElement*>(pXMLNode);
-      CFX_WideString wsTag;
-      pXMLElement->GetLocalTagName(wsTag);
+      CFX_WideString wsTag = pXMLElement->GetLocalTagName();
       uint32_t uTag = FX_HashCode_GetW(wsTag.AsStringC(), true);
       if (uTag == 0x0001f714) {
         wsPlainText += L"\n";

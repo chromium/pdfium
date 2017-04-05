@@ -296,7 +296,7 @@ CXFA_ScriptContext* CXFA_Document::GetScriptContext() {
 }
 
 XFA_VERSION CXFA_Document::RecognizeXFAVersionNumber(
-    CFX_WideString& wsTemplateNS) {
+    const CFX_WideString& wsTemplateNS) {
   CFX_WideStringC wsTemplateURIPrefix =
       XFA_GetPacketByIndex(XFA_PACKET_Template)->pURI;
   FX_STRSIZE nPrefixLength = wsTemplateURIPrefix.GetLength();

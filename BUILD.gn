@@ -1404,6 +1404,8 @@ if (pdf_enable_xfa) {
       "xfa/fde/ifde_txtedtdorecord.h",
       "xfa/fde/ifde_txtedtengine.h",
       "xfa/fde/ifde_txtedtpage.h",
+      "xfa/fde/xml/cfde_xmlattributenode.cpp",
+      "xfa/fde/xml/cfde_xmlattributenode.h",
       "xfa/fde/xml/cfde_xmlchardata.cpp",
       "xfa/fde/xml/cfde_xmlchardata.h",
       "xfa/fde/xml/cfde_xmldoc.cpp",

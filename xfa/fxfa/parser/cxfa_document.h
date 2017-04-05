@@ -87,7 +87,7 @@ class CXFA_Document {
 
   bool IsInteractive();
   XFA_VERSION GetCurVersionMode() { return m_eCurVersionMode; }
-  XFA_VERSION RecognizeXFAVersionNumber(CFX_WideString& wsTemplateNS);
+  XFA_VERSION RecognizeXFAVersionNumber(const CFX_WideString& wsTemplateNS);
 
   CXFA_Node* CreateNode(uint32_t dwPacket, XFA_Element eElement);
   CXFA_Node* CreateNode(const XFA_PACKETINFO* pPacket, XFA_Element eElement);
