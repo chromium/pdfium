@@ -21,6 +21,11 @@
 #if defined _SKIA_SUPPORT_ || _SKIA_SUPPORT_PATHS_
 #include "third_party/skia/include/core/SkStream.h"
 #include "third_party/skia/include/core/SkTypeface.h"
+
+#if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
+#include "third_party/skia/include/ports/SkFontMgr.h"
+#include "third_party/skia/include/ports/SkFontMgr_empty.h"
+#endif
 #endif
 
 namespace {
@@ -359,6 +364,13 @@ CFX_TypeFace* CFX_FaceCache::GetDeviceCache(const CFX_Font* pFont) {
             new SkMemoryStream(pFont->GetFontData(), pFont->GetSize()))
             .release();
   }
+#if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
+  if (!m_pTypeface) {
+    sk_sp<SkFontMgr> customMgr(SkFontMgr_New_Custom_Empty());
+    m_pTypeface = customMgr->createFromStream(
+        new SkMemoryStream(pFont->GetFontData(), pFont->GetSize()));
+  }
+#endif
   return m_pTypeface;
 }
 #endif
