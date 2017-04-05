@@ -35,10 +35,8 @@ enum class FDE_XmlSyntaxResult {
 
 class CFDE_XMLSyntaxParser {
  public:
-  CFDE_XMLSyntaxParser();
+  explicit CFDE_XMLSyntaxParser(const CFX_RetainPtr<IFGAS_Stream>& pStream);
   ~CFDE_XMLSyntaxParser();
-
-  void Init(const CFX_RetainPtr<IFGAS_Stream>& pStream, int32_t iXMLPlaneSize);
 
   FDE_XmlSyntaxResult DoSyntaxParse();
 

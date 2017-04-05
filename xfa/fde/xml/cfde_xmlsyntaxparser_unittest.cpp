@@ -28,8 +28,7 @@ TEST(CFDE_XMLSyntaxParser, CData) {
   size_t len = FXSYS_wcslen(input) * sizeof(wchar_t);
   CFX_RetainPtr<IFGAS_Stream> stream = IFGAS_Stream::CreateStream(
       reinterpret_cast<uint8_t*>(const_cast<wchar_t*>(input)), len, 0);
-  CFDE_XMLSyntaxParser parser;
-  parser.Init(stream, 256);
+  CFDE_XMLSyntaxParser parser(stream);
   EXPECT_EQ(FDE_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
   EXPECT_EQ(FDE_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
   EXPECT_EQ(L"script", parser.GetTagName());
@@ -76,8 +75,7 @@ TEST(CFDE_XMLSyntaxParser, CDataWithInnerScript) {
   size_t len = FXSYS_wcslen(input) * sizeof(wchar_t);
   CFX_RetainPtr<IFGAS_Stream> stream = IFGAS_Stream::CreateStream(
       reinterpret_cast<uint8_t*>(const_cast<wchar_t*>(input)), len, 0);
-  CFDE_XMLSyntaxParser parser;
-  parser.Init(stream, 256);
+  CFDE_XMLSyntaxParser parser(stream);
   EXPECT_EQ(FDE_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
   EXPECT_EQ(FDE_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
   EXPECT_EQ(L"script", parser.GetTagName());
@@ -113,8 +111,7 @@ TEST(CFDE_XMLSyntaxParser, ArrowBangArrow) {
   size_t len = FXSYS_wcslen(input) * sizeof(wchar_t);
   CFX_RetainPtr<IFGAS_Stream> stream = IFGAS_Stream::CreateStream(
       reinterpret_cast<uint8_t*>(const_cast<wchar_t*>(input)), len, 0);
-  CFDE_XMLSyntaxParser parser;
-  parser.Init(stream, 256);
+  CFDE_XMLSyntaxParser parser(stream);
   EXPECT_EQ(FDE_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
   EXPECT_EQ(FDE_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
 
@@ -148,8 +145,7 @@ TEST(CFDE_XMLSyntaxParser, ArrowBangBracketArrow) {
   size_t len = FXSYS_wcslen(input) * sizeof(wchar_t);
   CFX_RetainPtr<IFGAS_Stream> stream = IFGAS_Stream::CreateStream(
       reinterpret_cast<uint8_t*>(const_cast<wchar_t*>(input)), len, 0);
-  CFDE_XMLSyntaxParser parser;
-  parser.Init(stream, 256);
+  CFDE_XMLSyntaxParser parser(stream);
   EXPECT_EQ(FDE_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
   EXPECT_EQ(FDE_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
   EXPECT_EQ(L"script", parser.GetTagName());
@@ -178,8 +174,7 @@ TEST(CFDE_XMLSyntaxParser, IncompleteCData) {
   size_t len = FXSYS_wcslen(input) * sizeof(wchar_t);
   CFX_RetainPtr<IFGAS_Stream> stream = IFGAS_Stream::CreateStream(
       reinterpret_cast<uint8_t*>(const_cast<wchar_t*>(input)), len, 0);
-  CFDE_XMLSyntaxParser parser;
-  parser.Init(stream, 256);
+  CFDE_XMLSyntaxParser parser(stream);
   EXPECT_EQ(FDE_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
   EXPECT_EQ(FDE_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
   EXPECT_EQ(L"script", parser.GetTagName());
@@ -208,8 +203,7 @@ TEST(CFDE_XMLSyntaxParser, UnClosedCData) {
   size_t len = FXSYS_wcslen(input) * sizeof(wchar_t);
   CFX_RetainPtr<IFGAS_Stream> stream = IFGAS_Stream::CreateStream(
       reinterpret_cast<uint8_t*>(const_cast<wchar_t*>(input)), len, 0);
-  CFDE_XMLSyntaxParser parser;
-  parser.Init(stream, 256);
+  CFDE_XMLSyntaxParser parser(stream);
   EXPECT_EQ(FDE_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
   EXPECT_EQ(FDE_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
   EXPECT_EQ(L"script", parser.GetTagName());
@@ -238,8 +232,7 @@ TEST(CFDE_XMLSyntaxParser, EmptyCData) {
   size_t len = FXSYS_wcslen(input) * sizeof(wchar_t);
   CFX_RetainPtr<IFGAS_Stream> stream = IFGAS_Stream::CreateStream(
       reinterpret_cast<uint8_t*>(const_cast<wchar_t*>(input)), len, 0);
-  CFDE_XMLSyntaxParser parser;
-  parser.Init(stream, 256);
+  CFDE_XMLSyntaxParser parser(stream);
   EXPECT_EQ(FDE_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
   EXPECT_EQ(FDE_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
   EXPECT_EQ(L"script", parser.GetTagName());
@@ -275,8 +268,7 @@ TEST(CFDE_XMLSyntaxParser, Comment) {
   size_t len = FXSYS_wcslen(input) * sizeof(wchar_t);
   CFX_RetainPtr<IFGAS_Stream> stream = IFGAS_Stream::CreateStream(
       reinterpret_cast<uint8_t*>(const_cast<wchar_t*>(input)), len, 0);
-  CFDE_XMLSyntaxParser parser;
-  parser.Init(stream, 256);
+  CFDE_XMLSyntaxParser parser(stream);
   EXPECT_EQ(FDE_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
   EXPECT_EQ(FDE_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
   EXPECT_EQ(L"script", parser.GetTagName());
@@ -309,8 +301,7 @@ TEST(CFDE_XMLSyntaxParser, IncorrectCommentStart) {
   size_t len = FXSYS_wcslen(input) * sizeof(wchar_t);
   CFX_RetainPtr<IFGAS_Stream> stream = IFGAS_Stream::CreateStream(
       reinterpret_cast<uint8_t*>(const_cast<wchar_t*>(input)), len, 0);
-  CFDE_XMLSyntaxParser parser;
-  parser.Init(stream, 256);
+  CFDE_XMLSyntaxParser parser(stream);
   EXPECT_EQ(FDE_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
   EXPECT_EQ(FDE_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
   EXPECT_EQ(L"script", parser.GetTagName());
@@ -343,8 +334,7 @@ TEST(CFDE_XMLSyntaxParser, CommentEmpty) {
   size_t len = FXSYS_wcslen(input) * sizeof(wchar_t);
   CFX_RetainPtr<IFGAS_Stream> stream = IFGAS_Stream::CreateStream(
       reinterpret_cast<uint8_t*>(const_cast<wchar_t*>(input)), len, 0);
-  CFDE_XMLSyntaxParser parser;
-  parser.Init(stream, 256);
+  CFDE_XMLSyntaxParser parser(stream);
   EXPECT_EQ(FDE_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
   EXPECT_EQ(FDE_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
   EXPECT_EQ(L"script", parser.GetTagName());
@@ -377,8 +367,7 @@ TEST(CFDE_XMLSyntaxParser, CommentThreeDash) {
   size_t len = FXSYS_wcslen(input) * sizeof(wchar_t);
   CFX_RetainPtr<IFGAS_Stream> stream = IFGAS_Stream::CreateStream(
       reinterpret_cast<uint8_t*>(const_cast<wchar_t*>(input)), len, 0);
-  CFDE_XMLSyntaxParser parser;
-  parser.Init(stream, 256);
+  CFDE_XMLSyntaxParser parser(stream);
   EXPECT_EQ(FDE_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
   EXPECT_EQ(FDE_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
   EXPECT_EQ(L"script", parser.GetTagName());
@@ -405,8 +394,7 @@ TEST(CFDE_XMLSyntaxParser, CommentTwoDash) {
   size_t len = FXSYS_wcslen(input) * sizeof(wchar_t);
   CFX_RetainPtr<IFGAS_Stream> stream = IFGAS_Stream::CreateStream(
       reinterpret_cast<uint8_t*>(const_cast<wchar_t*>(input)), len, 0);
-  CFDE_XMLSyntaxParser parser;
-  parser.Init(stream, 256);
+  CFDE_XMLSyntaxParser parser(stream);
   EXPECT_EQ(FDE_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
   EXPECT_EQ(FDE_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
   EXPECT_EQ(L"script", parser.GetTagName());
@@ -437,8 +425,7 @@ TEST(CFDE_XMLSyntaxParser, Entities) {
   size_t len = FXSYS_wcslen(input) * sizeof(wchar_t);
   CFX_RetainPtr<IFGAS_Stream> stream = IFGAS_Stream::CreateStream(
       reinterpret_cast<uint8_t*>(const_cast<wchar_t*>(input)), len, 0);
-  CFDE_XMLSyntaxParser parser;
-  parser.Init(stream, 256);
+  CFDE_XMLSyntaxParser parser(stream);
   EXPECT_EQ(FDE_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
   EXPECT_EQ(FDE_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
   EXPECT_EQ(L"script", parser.GetTagName());
@@ -469,8 +456,7 @@ TEST(CFDE_XMLSyntaxParser, EntityOverflowHex) {
   size_t len = FXSYS_wcslen(input) * sizeof(wchar_t);
   CFX_RetainPtr<IFGAS_Stream> stream = IFGAS_Stream::CreateStream(
       reinterpret_cast<uint8_t*>(const_cast<wchar_t*>(input)), len, 0);
-  CFDE_XMLSyntaxParser parser;
-  parser.Init(stream, 256);
+  CFDE_XMLSyntaxParser parser(stream);
   EXPECT_EQ(FDE_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
   EXPECT_EQ(FDE_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
   EXPECT_EQ(L"script", parser.GetTagName());
@@ -501,8 +487,7 @@ TEST(CFDE_XMLSyntaxParser, EntityOverflowDecimal) {
   size_t len = FXSYS_wcslen(input) * sizeof(wchar_t);
   CFX_RetainPtr<IFGAS_Stream> stream = IFGAS_Stream::CreateStream(
       reinterpret_cast<uint8_t*>(const_cast<wchar_t*>(input)), len, 0);
-  CFDE_XMLSyntaxParser parser;
-  parser.Init(stream, 256);
+  CFDE_XMLSyntaxParser parser(stream);
   EXPECT_EQ(FDE_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
   EXPECT_EQ(FDE_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
   EXPECT_EQ(L"script", parser.GetTagName());

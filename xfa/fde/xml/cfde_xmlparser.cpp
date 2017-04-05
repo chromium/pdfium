@@ -20,13 +20,12 @@ CFDE_XMLParser::CFDE_XMLParser(CFDE_XMLNode* pParent,
       m_dwCheckStatus(0),
       m_dwCurrentCheckStatus(0),
       m_pStream(pStream),
-      m_pParser(pdfium::MakeUnique<CFDE_XMLSyntaxParser>()),
+      m_pParser(pdfium::MakeUnique<CFDE_XMLSyntaxParser>(m_pStream)),
       m_pParent(pParent),
       m_pChild(nullptr),
       m_syntaxParserResult(FDE_XmlSyntaxResult::None) {
   ASSERT(m_pParent && m_pStream);
   m_NodeStack.push(m_pParent);
-  m_pParser->Init(m_pStream, 32 * 1024);
 }
 
 CFDE_XMLParser::~CFDE_XMLParser() {}

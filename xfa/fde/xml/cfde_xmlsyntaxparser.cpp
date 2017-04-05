@@ -77,9 +77,10 @@ int32_t GetUTF8EncodeLength(const wchar_t* pSrc, int32_t iSrcLen) {
 
 }  // namespace
 
-CFDE_XMLSyntaxParser::CFDE_XMLSyntaxParser()
-    : m_pStream(nullptr),
-      m_iXMLPlaneSize(-1),
+CFDE_XMLSyntaxParser::CFDE_XMLSyntaxParser(
+    const CFX_RetainPtr<IFGAS_Stream>& pStream)
+    : m_pStream(pStream),
+      m_iXMLPlaneSize(32 * 1024),
       m_iCurrentPos(0),
       m_iCurrentNodeNum(-1),
       m_iLastNodeNum(-1),
@@ -99,21 +100,15 @@ CFDE_XMLSyntaxParser::CFDE_XMLSyntaxParser()
       m_syntaxParserState(FDE_XmlSyntaxState::Text),
       m_wQuotationMark(0),
       m_iEntityStart(-1) {
+  ASSERT(pStream);
+
   m_CurNode.iNodeNum = -1;
   m_CurNode.eNodeType = FDE_XMLNODE_Unknown;
-}
 
-void CFDE_XMLSyntaxParser::Init(const CFX_RetainPtr<IFGAS_Stream>& pStream,
-                                int32_t iXMLPlaneSize) {
-  ASSERT(!m_pStream && !m_pBuffer);
-  ASSERT(pStream && iXMLPlaneSize > 0);
-  int32_t iStreamLength = pStream->GetLength();
-  ASSERT(iStreamLength > 0);
-  m_pStream = pStream;
-  m_iXMLPlaneSize = std::min(iXMLPlaneSize, iStreamLength);
+  m_iXMLPlaneSize = std::min(m_iXMLPlaneSize, m_pStream->GetLength());
+
   uint8_t bom[4];
   m_iCurrentPos = m_pStream->GetBOM(bom);
-  ASSERT(!m_pBuffer);
 
   FX_SAFE_INT32 alloc_size_safe = m_iXMLPlaneSize;
   alloc_size_safe += 1;  // For NUL.
@@ -124,14 +119,12 @@ void CFDE_XMLSyntaxParser::Init(const CFX_RetainPtr<IFGAS_Stream>& pStream,
 
   m_pBuffer = FX_Alloc(
       wchar_t, pdfium::base::ValueOrDieForType<size_t>(alloc_size_safe));
-  m_pStart = m_pEnd = m_pBuffer;
+  m_pStart = m_pBuffer;
+  m_pEnd = m_pBuffer;
 
-  ASSERT(!m_BlockBuffer.IsInitialized());
   m_BlockBuffer.InitBuffer();
   std::tie(m_pCurrentBlock, m_iIndexInBlock) =
       m_BlockBuffer.GetAvailableBlock();
-  m_iParsedBytes = m_iParsedChars = 0;
-  m_iBufferChars = 0;
 }
 
 FDE_XmlSyntaxResult CFDE_XMLSyntaxParser::DoSyntaxParse() {
@@ -600,7 +593,6 @@ FDE_XmlSyntaxResult CFDE_XMLSyntaxParser::DoSyntaxParse() {
 }
 
 CFDE_XMLSyntaxParser::~CFDE_XMLSyntaxParser() {
-  m_pCurrentBlock = nullptr;
   FX_Free(m_pBuffer);
 }
 
