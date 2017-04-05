@@ -726,7 +726,7 @@ std::unique_ptr<CPDF_Stream> CPDF_SyntaxParser::ReadStream(
   }
 
   // Read up to the end of the buffer.
-  std::min(len, m_FileLen - m_Pos - m_HeaderOffset);
+  len = std::min(len, m_FileLen - m_Pos - m_HeaderOffset);
   if (len <= 0)
     return nullptr;
 
