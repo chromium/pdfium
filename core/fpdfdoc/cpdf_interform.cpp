@@ -397,12 +397,14 @@ class CFieldTree {
     explicit Node(const CFX_WideString& short_name) : m_ShortName(short_name) {}
     ~Node() {}
 
-    void AddChildNode(Node* pNode) { m_Children.push_back(pNode); }
+    void AddChildNode(std::unique_ptr<Node> pNode) {
+      m_Children.push_back(std::move(pNode));
+    }
 
     size_t GetChildrenCount() const { return m_Children.size(); }
 
-    Node* GetChildAt(size_t i) { return m_Children[i]; }
-    const Node* GetChildAt(size_t i) const { return m_Children[i]; }
+    Node* GetChildAt(size_t i) { return m_Children[i].get(); }
+    const Node* GetChildAt(size_t i) const { return m_Children[i].get(); }
 
     CPDF_FormField* GetFieldAtIndex(size_t index) {
       size_t nFieldsToGo = index;
@@ -448,7 +450,7 @@ class CFieldTree {
       return count;
     }
 
-    std::vector<Node*> m_Children;
+    std::vector<std::unique_ptr<Node>> m_Children;
     CFX_WideString m_ShortName;
     std::unique_ptr<CPDF_FormField> m_pField;
   };
@@ -459,11 +461,9 @@ class CFieldTree {
   bool SetField(const CFX_WideString& full_name,
                 std::unique_ptr<CPDF_FormField> pField);
   CPDF_FormField* GetField(const CFX_WideString& full_name);
-  void RemoveAll();
 
   Node* FindNode(const CFX_WideString& full_name);
   Node* AddChild(Node* pParent, const CFX_WideString& short_name);
-  void RemoveNode(Node* pNode, int nLevel = 0);
 
   Node* Lookup(Node* pParent, const CFX_WideString& short_name);
 
@@ -472,29 +472,17 @@ class CFieldTree {
 
 CFieldTree::CFieldTree() {}
 
-CFieldTree::~CFieldTree() {
-  RemoveAll();
-}
+CFieldTree::~CFieldTree() {}
 
 CFieldTree::Node* CFieldTree::AddChild(Node* pParent,
                                        const CFX_WideString& short_name) {
   if (!pParent)
     return nullptr;
 
-  Node* pNode = new Node(short_name);
-  pParent->AddChildNode(pNode);
-  return pNode;
-}
-
-void CFieldTree::RemoveNode(Node* pNode, int nLevel) {
-  if (!pNode)
-    return;
-
-  if (nLevel <= nMaxRecursion) {
-    for (size_t i = 0; i < pNode->GetChildrenCount(); ++i)
-      RemoveNode(pNode->GetChildAt(i), nLevel + 1);
-  }
-  delete pNode;
+  auto pNew = pdfium::MakeUnique<Node>(short_name);
+  Node* pChild = pNew.get();
+  pParent->AddChildNode(std::move(pNew));
+  return pChild;
 }
 
 CFieldTree::Node* CFieldTree::Lookup(Node* pParent,
@@ -508,11 +496,6 @@ CFieldTree::Node* CFieldTree::Lookup(Node* pParent,
       return pNode;
   }
   return nullptr;
-}
-
-void CFieldTree::RemoveAll() {
-  for (size_t i = 0; i < m_Root.GetChildrenCount(); ++i)
-    RemoveNode(m_Root.GetChildAt(i));
 }
 
 bool CFieldTree::SetField(const CFX_WideString& full_name,
