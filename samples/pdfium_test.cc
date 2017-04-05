@@ -53,6 +53,7 @@
 
 enum OutputFormat {
   OUTPUT_NONE,
+  OUTPUT_STRUCTURE,
   OUTPUT_TEXT,
   OUTPUT_PPM,
   OUTPUT_PNG,
@@ -67,14 +68,12 @@ enum OutputFormat {
 
 struct Options {
   Options()
-      : show_structure(false),
-        show_config(false),
+      : show_config(false),
         send_events(false),
         pages(false),
         md5(false),
         output_format(OUTPUT_NONE) {}
 
-  bool show_structure;
   bool show_config;
   bool send_events;
   bool pages;
@@ -502,7 +501,11 @@ bool ParseCommandLine(const std::vector<std::string>& args,
       }
       options->scale_factor_as_string = cur_arg.substr(8);
     } else if (cur_arg == "--show-structure") {
-      options->show_structure = true;
+      if (options->output_format != OUTPUT_NONE) {
+        fprintf(stderr, "Duplicate or conflicting --show-structure argument\n");
+        return false;
+      }
+      options->output_format = OUTPUT_STRUCTURE;
     } else if (cur_arg.size() > 8 && cur_arg.compare(0, 8, "--pages=") == 0) {
       if (options->pages) {
         fprintf(stderr, "Duplicate --pages argument\n");
@@ -623,19 +626,19 @@ FPDF_PAGE GetPageForIndex(FPDF_FORMFILLINFO* param,
   return page;
 }
 
-static const size_t kBufSize = 1024;
 std::wstring ConvertToWString(const unsigned short* buf,
                               unsigned long buf_size) {
-  wchar_t new_buf[kBufSize];
-  for (unsigned long i = 0; i < buf_size; ++i)
-    new_buf[i] = buf[i];
-  return std::wstring(new_buf);
+  std::wstring result;
+  result.reserve(buf_size);
+  std::copy(buf, buf + buf_size, std::back_inserter(result));
+  return result;
 }
 
-void DumpChildStructure(FPDF_STRUCTELEMENT child, const std::string& indent) {
+void DumpChildStructure(FPDF_STRUCTELEMENT child, int indent) {
+  static const size_t kBufSize = 1024;
   unsigned short buf[kBufSize];
   unsigned long len = FPDF_StructElement_GetType(child, buf, kBufSize);
-  printf("%s%ls", indent.c_str(), ConvertToWString(buf, len).c_str());
+  printf("%*s%ls", indent * 2, "", ConvertToWString(buf, len).c_str());
 
   memset(buf, 0, sizeof(buf));
   len = FPDF_StructElement_GetAltText(child, buf, kBufSize);
@@ -650,7 +653,7 @@ void DumpChildStructure(FPDF_STRUCTELEMENT child, const std::string& indent) {
     if (!sub_child)
       continue;
 
-    DumpChildStructure(sub_child, indent + "  ");
+    DumpChildStructure(sub_child, indent + 1);
   }
 }
 
@@ -658,7 +661,7 @@ void DumpPageStructure(FPDF_PAGE page, const int page_idx) {
   std::unique_ptr<void, FPDFStructTreeDeleter> tree(
       FPDF_StructTree_GetForPage(page));
   if (!tree) {
-    printf("Failed to load struct tree for page %d\n", page_idx);
+    fprintf(stderr, "Failed to load struct tree for page %d\n", page_idx);
     return;
   }
 
@@ -666,10 +669,10 @@ void DumpPageStructure(FPDF_PAGE page, const int page_idx) {
   for (int i = 0; i < FPDF_StructTree_CountChildren(tree.get()); ++i) {
     FPDF_STRUCTELEMENT child = FPDF_StructTree_GetChildAtIndex(tree.get(), i);
     if (!child) {
-      printf("Failed to load child %d for page %d\n", i, page_idx);
+      fprintf(stderr, "Failed to load child %d for page %d\n", i, page_idx);
       continue;
     }
-    DumpChildStructure(child, "");
+    DumpChildStructure(child, 0);
   }
   printf("\n\n");
 }
@@ -685,16 +688,15 @@ bool RenderPage(const std::string& name,
       GetPageForIndex(&form_fill_info, doc, page_index));
   if (!page.get())
     return false;
-
-  if (options.show_structure) {
+  if (options.send_events)
+    SendPageEvents(form, page.get(), events);
+  if (options.output_format == OUTPUT_STRUCTURE) {
     DumpPageStructure(page.get(), page_index);
     return true;
   }
 
   std::unique_ptr<void, FPDFTextPageDeleter> text_page(
       FPDFText_LoadPage(page.get()));
-  if (options.send_events)
-    SendPageEvents(form, page.get(), events);
 
   double scale = 1.0;
   if (!options.scale_factor_as_string.empty())
