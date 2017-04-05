@@ -23,6 +23,7 @@
 #include "public/fpdf_edit.h"
 #include "public/fpdf_ext.h"
 #include "public/fpdf_formfill.h"
+#include "public/fpdf_structtree.h"
 #include "public/fpdf_text.h"
 #include "public/fpdfview.h"
 #include "samples/image_diff_png.h"
@@ -66,12 +67,14 @@ enum OutputFormat {
 
 struct Options {
   Options()
-      : show_config(false),
+      : show_structure(false),
+        show_config(false),
         send_events(false),
         pages(false),
         md5(false),
         output_format(OUTPUT_NONE) {}
 
+  bool show_structure;
   bool show_config;
   bool send_events;
   bool pages;
@@ -498,6 +501,8 @@ bool ParseCommandLine(const std::vector<std::string>& args,
         return false;
       }
       options->scale_factor_as_string = cur_arg.substr(8);
+    } else if (cur_arg == "--show-structure") {
+      options->show_structure = true;
     } else if (cur_arg.size() > 8 && cur_arg.compare(0, 8, "--pages=") == 0) {
       if (options->pages) {
         fprintf(stderr, "Duplicate --pages argument\n");
@@ -618,6 +623,57 @@ FPDF_PAGE GetPageForIndex(FPDF_FORMFILLINFO* param,
   return page;
 }
 
+static const size_t kBufSize = 1024;
+std::wstring ConvertToWString(const unsigned short* buf,
+                              unsigned long buf_size) {
+  wchar_t new_buf[kBufSize];
+  for (unsigned long i = 0; i < buf_size; ++i)
+    new_buf[i] = buf[i];
+  return std::wstring(new_buf);
+}
+
+void DumpChildStructure(FPDF_STRUCTELEMENT child, const std::string& indent) {
+  unsigned short buf[kBufSize];
+  unsigned long len = FPDF_StructElement_GetType(child, buf, kBufSize);
+  printf("%s%ls", indent.c_str(), ConvertToWString(buf, len).c_str());
+
+  memset(buf, 0, sizeof(buf));
+  len = FPDF_StructElement_GetAltText(child, buf, kBufSize);
+  if (len > 0)
+    printf(" (%ls)", ConvertToWString(buf, len).c_str());
+  printf("\n");
+
+  for (int i = 0; i < FPDF_StructElement_CountChildren(child); ++i) {
+    FPDF_STRUCTELEMENT sub_child = FPDF_StructElement_GetChildAtIndex(child, i);
+    // If the child is not an Element then this will return null. This can
+    // happen if the element is things like an object reference or a stream.
+    if (!sub_child)
+      continue;
+
+    DumpChildStructure(sub_child, indent + "  ");
+  }
+}
+
+void DumpPageStructure(FPDF_PAGE page, const int page_idx) {
+  std::unique_ptr<void, FPDFStructTreeDeleter> tree(
+      FPDF_StructTree_GetForPage(page));
+  if (!tree) {
+    printf("Failed to load struct tree for page %d\n", page_idx);
+    return;
+  }
+
+  printf("Structure Tree for Page %d\n", page_idx);
+  for (int i = 0; i < FPDF_StructTree_CountChildren(tree.get()); ++i) {
+    FPDF_STRUCTELEMENT child = FPDF_StructTree_GetChildAtIndex(tree.get(), i);
+    if (!child) {
+      printf("Failed to load child %d for page %d\n", i, page_idx);
+      continue;
+    }
+    DumpChildStructure(child, "");
+  }
+  printf("\n\n");
+}
+
 bool RenderPage(const std::string& name,
                 FPDF_DOCUMENT doc,
                 FPDF_FORMHANDLE form,
@@ -629,6 +685,11 @@ bool RenderPage(const std::string& name,
       GetPageForIndex(&form_fill_info, doc, page_index));
   if (!page.get())
     return false;
+
+  if (options.show_structure) {
+    DumpPageStructure(page.get(), page_index);
+    return true;
+  }
 
   std::unique_ptr<void, FPDFTextPageDeleter> text_page(
       FPDFText_LoadPage(page.get()));
@@ -889,6 +950,7 @@ static void ShowConfig() {
 static const char kUsageString[] =
     "Usage: pdfium_test [OPTION] [FILE]...\n"
     "  --show-config     - print build options and exit\n"
+    "  --show-structure  - print the structure elements from the document\n"
     "  --send-events     - send input described by .evt file\n"
     "  --bin-dir=<path>  - override path to v8 external data\n"
     "  --font-dir=<path> - override path to external fonts\n"

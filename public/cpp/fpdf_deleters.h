@@ -7,6 +7,7 @@
 
 #include "public/fpdf_dataavail.h"
 #include "public/fpdf_formfill.h"
+#include "public/fpdf_structtree.h"
 #include "public/fpdf_text.h"
 #include "public/fpdfview.h"
 
@@ -36,6 +37,10 @@ struct FPDFTextPageDeleter {
 
 struct FPDFPageDeleter {
   inline void operator()(FPDF_PAGE page) { FPDF_ClosePage(page); }
+};
+
+struct FPDFStructTreeDeleter {
+  inline void operator()(FPDF_STRUCTTREE tree) { FPDF_StructTree_Close(tree); }
 };
 
 #endif  // PUBLIC_CPP_FPDF_DELETERS_H_

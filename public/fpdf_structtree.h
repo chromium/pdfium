@@ -117,7 +117,7 @@ FPDF_StructElement_GetChildAtIndex(FPDF_STRUCTELEMENT struct_element,
                                    int index);
 
 #ifdef __cplusplus
-}
+}  // extern "C"
 #endif
 
 #endif  // PUBLIC_FPDF_STRUCTTREE_H_
