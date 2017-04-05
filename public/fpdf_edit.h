@@ -343,6 +343,21 @@ DLLEXPORT FPDF_BOOL FPDFPath_SetFillColor(FPDF_PAGEOBJECT path,
                                           unsigned int B,
                                           unsigned int A);
 
+// Get the fill RGBA of a path. Range of values: 0 - 255.
+//
+// path   - the handle to the path object.
+// R      - the red component of the path fill color.
+// G      - the green component of the path fill color.
+// B      - the blue component of the path fill color.
+// A      - the fill alpha of the path.
+//
+// Returns TRUE on success.
+DLLEXPORT FPDF_BOOL FPDFPath_GetFillColor(FPDF_PAGEOBJECT path,
+                                          unsigned int* R,
+                                          unsigned int* G,
+                                          unsigned int* B,
+                                          unsigned int* A);
+
 // Move a path's current point.
 //
 // path   - the handle to the path object.

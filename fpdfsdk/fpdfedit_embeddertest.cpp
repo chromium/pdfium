@@ -279,6 +279,18 @@ TEST_F(FPDFEditEmbeddertest, AddPaths) {
   // Now add to that a green rectangle with some medium alpha
   FPDF_PAGEOBJECT green_rect = FPDFPageObj_CreateNewRect(100, 100, 40, 40);
   EXPECT_TRUE(FPDFPath_SetFillColor(green_rect, 0, 255, 0, 128));
+
+  // Make sure we get back the same color we set previously.
+  unsigned int R;
+  unsigned int G;
+  unsigned int B;
+  unsigned int A;
+  EXPECT_TRUE(FPDFPath_GetFillColor(green_rect, &R, &G, &B, &A));
+  EXPECT_EQ(0U, R);
+  EXPECT_EQ(255U, G);
+  EXPECT_EQ(0U, B);
+  EXPECT_EQ(128U, A);
+
   EXPECT_TRUE(FPDFPath_SetDrawMode(green_rect, FPDF_FILLMODE_WINDING, 0));
   FPDFPage_InsertObject(page, green_rect);
   EXPECT_TRUE(FPDFPage_GenerateContent(page));
