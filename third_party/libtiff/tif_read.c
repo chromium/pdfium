@@ -616,6 +616,13 @@ TIFFFillStrip(TIFF* tif, uint32 strip)
 				TIFFErrorExt(tif->tif_clientdata,module,"Integer overflow");
 				return(0);
 			}
+			const tmsize_t size=isMapped(tif)? tif->tif_size : (tmsize_t)TIFFGetFileSize(tif);
+			if (bytecountm > size) {
+				TIFFErrorExt(tif->tif_clientdata, module,
+					"Requested read strip size %lu is too large",
+					(unsigned long) strip);
+				return (0);
+			}
 			if (bytecountm > tif->tif_rawdatasize) {
 				tif->tif_curstrip = NOSTRIP;
 				if ((tif->tif_flags & TIFF_MYBUFFER) == 0) {
