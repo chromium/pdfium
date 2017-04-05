@@ -724,11 +724,10 @@ std::unique_ptr<CPDF_Stream> CPDF_SyntaxParser::ReadStream(
     }
     m_Pos = streamStartPos;
   }
-  if (len < 0)
-    return nullptr;
 
-  // If the length is longer then the remaining buffer giveup.
-  if (len > m_pFileAccess->GetSize() - m_pFileAccess->GetPosition())
+  // Read up to the end of the buffer.
+  std::min(len, m_FileLen - m_Pos - m_HeaderOffset);
+  if (len <= 0)
     return nullptr;
 
   std::unique_ptr<uint8_t, FxFreeDeleter> pData;
