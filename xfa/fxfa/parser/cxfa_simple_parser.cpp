@@ -412,13 +412,14 @@ bool XFA_FDEExtension_ResolveNamespaceQualifier(
   } else {
     wsNSAttribute = L"xmlns:" + wsQualifier;
   }
-  for (; pNode != pFakeRoot; pNode = static_cast<CFDE_XMLElement*>(
-                                 pNode->GetNodeItem(CFDE_XMLNode::Parent))) {
-    if (pNode->GetType() != FDE_XMLNODE_Element)
+  for (CFDE_XMLNode* pParent = pNode; pParent != pFakeRoot;
+       pParent = pParent->GetNodeItem(CFDE_XMLNode::Parent)) {
+    if (pParent->GetType() != FDE_XMLNODE_Element)
       continue;
 
-    if (pNode->HasAttribute(wsNSAttribute.c_str())) {
-      *wsNamespaceURI = pNode->GetString(wsNSAttribute.c_str());
+    auto* pElement = static_cast<CFDE_XMLElement*>(pParent);
+    if (pElement->HasAttribute(wsNSAttribute.c_str())) {
+      *wsNamespaceURI = pElement->GetString(wsNSAttribute.c_str());
       return true;
     }
   }
