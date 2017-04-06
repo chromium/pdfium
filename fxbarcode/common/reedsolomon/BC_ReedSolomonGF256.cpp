@@ -74,7 +74,7 @@ CBC_ReedSolomonGF256Poly* CBC_ReedSolomonGF256::GetOne() const {
   return m_one.get();
 }
 
-CBC_ReedSolomonGF256Poly* CBC_ReedSolomonGF256::BuildMonomial(
+std::unique_ptr<CBC_ReedSolomonGF256Poly> CBC_ReedSolomonGF256::BuildMonomial(
     int32_t degree,
     int32_t coefficient,
     int32_t& e) {
@@ -83,17 +83,18 @@ CBC_ReedSolomonGF256Poly* CBC_ReedSolomonGF256::BuildMonomial(
     return nullptr;
   }
   if (coefficient == 0) {
-    CBC_ReedSolomonGF256Poly* temp = m_zero->Clone(e);
-    if (e != BCExceptionNO)
-      return nullptr;
+    auto temp = m_zero->Clone();
+    if (!temp)
+      e = BCExceptionGeneric;
     return temp;
   }
   std::vector<int32_t> coefficients(degree + 1);
   coefficients[0] = coefficient;
-  CBC_ReedSolomonGF256Poly* temp = new CBC_ReedSolomonGF256Poly();
-  temp->Init(this, &coefficients, e);
-  if (e != BCExceptionNO)
+  auto temp = pdfium::MakeUnique<CBC_ReedSolomonGF256Poly>();
+  if (!temp->Init(this, &coefficients)) {
+    e = BCExceptionGeneric;
     return nullptr;
+  }
   return temp;
 }
 

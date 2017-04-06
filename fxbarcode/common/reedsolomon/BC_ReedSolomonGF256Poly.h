@@ -7,6 +7,7 @@
 #ifndef FXBARCODE_COMMON_REEDSOLOMON_BC_REEDSOLOMONGF256POLY_H_
 #define FXBARCODE_COMMON_REEDSOLOMON_BC_REEDSOLOMONGF256POLY_H_
 
+#include <memory>
 #include <vector>
 
 #include "core/fxcrt/fx_basic.h"
@@ -18,28 +19,25 @@ class CBC_ReedSolomonGF256Poly final {
   CBC_ReedSolomonGF256Poly(CBC_ReedSolomonGF256* field, int32_t coefficients);
   CBC_ReedSolomonGF256Poly();
   ~CBC_ReedSolomonGF256Poly();
-  void Init(CBC_ReedSolomonGF256* field,
-            std::vector<int32_t>* coefficients,
-            int32_t& e);
+  bool Init(CBC_ReedSolomonGF256* field,
+            const std::vector<int32_t>* coefficients);
 
-  int32_t GetCoefficients(int32_t degree);
-  std::vector<int32_t>* GetCoefficients();
-  int32_t GetDegree();
-  bool IsZero();
+  int32_t GetCoefficients(int32_t degree) const;
+  const std::vector<int32_t>& GetCoefficients() const;
+  int32_t GetDegree() const;
+  bool IsZero() const;
   int32_t EvaluateAt(int32_t a);
-  CBC_ReedSolomonGF256Poly* AddOrSubtract(CBC_ReedSolomonGF256Poly* other,
-                                          int32_t& e);
-  CBC_ReedSolomonGF256Poly* Multiply(CBC_ReedSolomonGF256Poly* other,
-                                     int32_t& e);
-  CBC_ReedSolomonGF256Poly* Multiply(int32_t scalar, int32_t& e);
-  CBC_ReedSolomonGF256Poly* MultiplyByMonomial(int32_t degree,
-                                               int32_t coefficient,
-                                               int32_t& e);
-  std::vector<CBC_ReedSolomonGF256Poly*>* Divide(
-      CBC_ReedSolomonGF256Poly* other,
-      int32_t& e);
-
-  CBC_ReedSolomonGF256Poly* Clone(int32_t& e);
+  std::unique_ptr<CBC_ReedSolomonGF256Poly> AddOrSubtract(
+      const CBC_ReedSolomonGF256Poly* other);
+  std::unique_ptr<CBC_ReedSolomonGF256Poly> Multiply(
+      const CBC_ReedSolomonGF256Poly* other);
+  std::unique_ptr<CBC_ReedSolomonGF256Poly> Multiply(int32_t scalar);
+  std::unique_ptr<CBC_ReedSolomonGF256Poly> MultiplyByMonomial(
+      int32_t degree,
+      int32_t coefficient) const;
+  std::unique_ptr<CBC_ReedSolomonGF256Poly> Divide(
+      const CBC_ReedSolomonGF256Poly* other);
+  std::unique_ptr<CBC_ReedSolomonGF256Poly> Clone() const;
 
  private:
   CBC_ReedSolomonGF256* m_field;

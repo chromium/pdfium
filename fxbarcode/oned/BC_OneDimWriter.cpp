@@ -455,12 +455,16 @@ void CBC_OneDimWriter::RenderResult(const CFX_WideStringC& contents,
         break;
       }
       if (outputX + m_multiple > outputWidth && outputWidth - outputX > 0) {
-        m_output->SetRegion(outputX, 0, outputWidth - outputX, outputHeight, e);
+        if (!m_output->SetRegion(outputX, 0, outputWidth - outputX,
+                                 outputHeight)) {
+          e = BCExceptionGeneric;
+        }
         break;
       }
-      m_output->SetRegion(outputX, 0, m_multiple, outputHeight, e);
-      if (e != BCExceptionNO)
+      if (!m_output->SetRegion(outputX, 0, m_multiple, outputHeight)) {
+        e = BCExceptionGeneric;
         return;
+      }
     }
     outputX += m_multiple;
   }

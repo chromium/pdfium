@@ -184,7 +184,7 @@ uint8_t* CBC_OnedCode128Writer::Encode(const CFX_ByteString& contents,
                                        int32_t& outLength,
                                        int32_t& e) {
   if (contents.GetLength() < 1 || contents.GetLength() > 80) {
-    e = BCExceptionContentsLengthShouldBetween1and80;
+    e = BCExceptionGeneric;
     return nullptr;
   }
   std::vector<const int32_t*> patterns;

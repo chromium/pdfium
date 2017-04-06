@@ -76,40 +76,6 @@ void CBC_CommonBitArray::Clear() {
     value = 0;
 }
 
-bool CBC_CommonBitArray::IsRange(size_t start,
-                                 size_t end,
-                                 bool value,
-                                 int32_t& e) {
-  if (end < start) {
-    e = BCExceptionEndLessThanStart;
-    return false;
-  }
-  if (end == start) {
-    return true;
-  }
-  end--;
-  int32_t firstInt = start >> 5;
-  int32_t lastInt = end >> 5;
-  int32_t i;
-  for (i = firstInt; i <= lastInt; i++) {
-    int32_t firstBit = i > firstInt ? 0 : start & 0x1F;
-    int32_t lastBit = i < lastInt ? 31 : end & 0x1F;
-    int32_t mask;
-    if (firstBit == 0 && lastBit == 31) {
-      mask = -1;
-    } else {
-      mask = 0;
-      for (int32_t j = firstBit; j <= lastBit; j++) {
-        mask |= 1 << j;
-      }
-    }
-    if ((m_bits[i] & mask) != (value ? mask : 0)) {
-      return false;
-    }
-  }
-  return true;
-}
-
 int32_t* CBC_CommonBitArray::GetBitArray() {
   return m_bits.data();
 }

@@ -158,7 +158,7 @@ char CBC_OnedCode39Writer::CalcCheckSum(const CFX_ByteString& contents,
                                         int32_t& e) {
   int32_t length = contents.GetLength();
   if (length > 80) {
-    e = BCExceptionContentsLengthShouldBetween1and80;
+    e = BCExceptionGeneric;
     return '*';
   }
   int32_t checksum = 0;
@@ -167,16 +167,13 @@ char CBC_OnedCode39Writer::CalcCheckSum(const CFX_ByteString& contents,
     int32_t j = 0;
     for (; j < len; j++) {
       if (ALPHABET_STRING[j] == contents[i]) {
-        if (contents[i] != '*') {
+        if (contents[i] != '*')
           checksum += j;
-          break;
-        } else {
-          break;
-        }
+        break;
       }
     }
     if (j >= len) {
-      e = BCExceptionUnSupportedString;
+      e = BCExceptionGeneric;
       return '*';
     }
   }

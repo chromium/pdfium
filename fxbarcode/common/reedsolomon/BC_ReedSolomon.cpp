@@ -23,83 +23,78 @@
 #include "fxbarcode/common/reedsolomon/BC_ReedSolomon.h"
 
 #include <memory>
+#include <utility>
 
 #include "fxbarcode/common/reedsolomon/BC_ReedSolomonGF256.h"
 #include "fxbarcode/common/reedsolomon/BC_ReedSolomonGF256Poly.h"
+#include "third_party/base/ptr_util.h"
 
-CBC_ReedSolomonEncoder::CBC_ReedSolomonEncoder(CBC_ReedSolomonGF256* field) {
-  m_field = field;
-}
+CBC_ReedSolomonEncoder::CBC_ReedSolomonEncoder(CBC_ReedSolomonGF256* field)
+    : m_field(field) {}
+
+CBC_ReedSolomonEncoder::~CBC_ReedSolomonEncoder() {}
 
 void CBC_ReedSolomonEncoder::Init() {
-  m_cachedGenerators.push_back(new CBC_ReedSolomonGF256Poly(m_field, 1));
+  m_cachedGenerators.push_back(
+      pdfium::MakeUnique<CBC_ReedSolomonGF256Poly>(m_field, 1));
 }
 
-CBC_ReedSolomonGF256Poly* CBC_ReedSolomonEncoder::BuildGenerator(size_t degree,
-                                                                 int32_t& e) {
+CBC_ReedSolomonGF256Poly* CBC_ReedSolomonEncoder::BuildGenerator(
+    size_t degree) {
   if (degree >= m_cachedGenerators.size()) {
-    CBC_ReedSolomonGF256Poly* lastGenerator = m_cachedGenerators.back();
+    CBC_ReedSolomonGF256Poly* lastGenerator = m_cachedGenerators.back().get();
     for (size_t d = m_cachedGenerators.size(); d <= degree; ++d) {
       std::vector<int32_t> temp = {1, m_field->Exp(d - 1)};
       CBC_ReedSolomonGF256Poly temp_poly;
-      temp_poly.Init(m_field, &temp, e);
-      if (e != BCExceptionNO)
+      if (!temp_poly.Init(m_field, &temp))
         return nullptr;
-      CBC_ReedSolomonGF256Poly* nextGenerator =
-          lastGenerator->Multiply(&temp_poly, e);
-      if (e != BCExceptionNO)
+
+      auto nextGenerator = lastGenerator->Multiply(&temp_poly);
+      if (!nextGenerator)
         return nullptr;
-      m_cachedGenerators.push_back(nextGenerator);
-      lastGenerator = nextGenerator;
+
+      lastGenerator = nextGenerator.get();
+      m_cachedGenerators.push_back(std::move(nextGenerator));
     }
   }
-  return m_cachedGenerators[degree];
+  return m_cachedGenerators[degree].get();
 }
 
-void CBC_ReedSolomonEncoder::Encode(std::vector<int32_t>* toEncode,
-                                    size_t ecBytes,
-                                    int32_t& e) {
-  if (ecBytes == 0) {
-    e = BCExceptionNoCorrectionBytes;
-    return;
-  }
-  if (toEncode->size() <= ecBytes) {
-    e = BCExceptionNoDataBytesProvided;
-    return;
-  }
-  CBC_ReedSolomonGF256Poly* generator = BuildGenerator(ecBytes, e);
-  if (e != BCExceptionNO)
-    return;
+bool CBC_ReedSolomonEncoder::Encode(std::vector<int32_t>* toEncode,
+                                    size_t ecBytes) {
+  if (ecBytes == 0)
+    return false;
+
+  if (toEncode->size() <= ecBytes)
+    return false;
+
+  CBC_ReedSolomonGF256Poly* generator = BuildGenerator(ecBytes);
+  if (!generator)
+    return false;
+
   size_t dataBytes = toEncode->size() - ecBytes;
   std::vector<int32_t> infoCoefficients(dataBytes);
-  for (size_t x = 0; x < dataBytes; x++) {
+  for (size_t x = 0; x < dataBytes; x++)
     infoCoefficients[x] = (*toEncode)[x];
-  }
+
   CBC_ReedSolomonGF256Poly info;
-  info.Init(m_field, &infoCoefficients, e);
-  if (e != BCExceptionNO)
-    return;
-  std::unique_ptr<CBC_ReedSolomonGF256Poly> infoTemp(
-      info.MultiplyByMonomial(ecBytes, 1, e));
-  if (e != BCExceptionNO)
-    return;
-  std::unique_ptr<std::vector<CBC_ReedSolomonGF256Poly*>> temp(
-      infoTemp->Divide(generator, e));
-  if (e != BCExceptionNO)
-    return;
-  CBC_ReedSolomonGF256Poly* remainder = (*temp)[1];
-  std::vector<int32_t>* coefficients = remainder->GetCoefficients();
+  if (!info.Init(m_field, &infoCoefficients))
+    return false;
+
+  auto infoTemp = info.MultiplyByMonomial(ecBytes, 1);
+  if (!infoTemp)
+    return false;
+
+  auto remainder = infoTemp->Divide(generator);
+  if (!remainder)
+    return false;
+
+  const auto& coefficients = remainder->GetCoefficients();
   size_t numZeroCoefficients =
-      ecBytes > coefficients->size() ? ecBytes - coefficients->size() : 0;
+      ecBytes > coefficients.size() ? ecBytes - coefficients.size() : 0;
   for (size_t i = 0; i < numZeroCoefficients; i++)
     (*toEncode)[dataBytes + i] = 0;
-  for (size_t y = 0; y < coefficients->size(); y++)
-    (*toEncode)[dataBytes + numZeroCoefficients + y] = (*coefficients)[y];
-  for (size_t k = 0; k < temp->size(); k++)
-    delete (*temp)[k];
-}
-
-CBC_ReedSolomonEncoder::~CBC_ReedSolomonEncoder() {
-  for (size_t i = 0; i < m_cachedGenerators.size(); i++)
-    delete m_cachedGenerators[i];
+  for (size_t y = 0; y < coefficients.size(); y++)
+    (*toEncode)[dataBytes + numZeroCoefficients + y] = coefficients[y];
+  return true;
 }

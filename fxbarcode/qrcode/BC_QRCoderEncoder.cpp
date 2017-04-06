@@ -171,8 +171,8 @@ bool AppendLengthInfo(int32_t numLetters,
                       CBC_QRCoderMode* mode,
                       CBC_QRCoderBitVector* bits) {
   int32_t e = BCExceptionNO;
-  CBC_QRCoderVersion* qcv = CBC_QRCoderVersion::GetVersionForNumber(version, e);
-  if (e != BCExceptionNO)
+  CBC_QRCoderVersion* qcv = CBC_QRCoderVersion::GetVersionForNumber(version);
+  if (!qcv)
     return false;
   int32_t numBits = mode->GetCharacterCountBits(qcv, e);
   if (e != BCExceptionNO)
@@ -214,8 +214,8 @@ void InitQRCode(int32_t numInputBytes,
   qrCode->SetMode(mode);
   for (int32_t versionNum = 1; versionNum <= kMaxVersion; versionNum++) {
     CBC_QRCoderVersion* version =
-        CBC_QRCoderVersion::GetVersionForNumber(versionNum, e);
-    if (e != BCExceptionNO)
+        CBC_QRCoderVersion::GetVersionForNumber(versionNum);
+    if (!version)
       return;
     int32_t numBytes = version->GetTotalCodeWords();
     CBC_QRCoderECBlocks* ecBlocks = version->GetECBlocksForLevel(ecLevel);
@@ -237,16 +237,14 @@ void InitQRCode(int32_t numInputBytes,
 
 std::unique_ptr<CBC_CommonByteArray> GenerateECBytes(
     CBC_CommonByteArray* dataBytes,
-    int32_t numEcBytesInBlock,
-    int32_t& e) {
+    int32_t numEcBytesInBlock) {
   int32_t numDataBytes = dataBytes->Size();
   std::vector<int32_t> toEncode(numDataBytes + numEcBytesInBlock);
   for (int32_t i = 0; i < numDataBytes; ++i)
     toEncode[i] = dataBytes->At(i);
   CBC_ReedSolomonEncoder encode(CBC_ReedSolomonGF256::QRCodeField);
   encode.Init();
-  encode.Encode(&toEncode, numEcBytesInBlock, e);
-  if (e != BCExceptionNO)
+  if (!encode.Encode(&toEncode, numEcBytesInBlock))
     return nullptr;
   auto ecBytes = pdfium::MakeUnique<CBC_CommonByteArray>(numEcBytesInBlock);
   for (int32_t i = 0; i < numEcBytesInBlock; ++i)
@@ -543,10 +541,12 @@ void InterleaveWithECBytes(CBC_QRCoderBitVector* bits,
                                            numEcBytesInBlosk);
     auto dataBytes = pdfium::MakeUnique<CBC_CommonByteArray>();
     dataBytes->Set(bits->GetArray(), dataBytesOffset, numDataBytesInBlock);
-    std::unique_ptr<CBC_CommonByteArray> ecBytes(
-        GenerateECBytes(dataBytes.get(), numEcBytesInBlosk, e));
-    if (e != BCExceptionNO)
+    std::unique_ptr<CBC_CommonByteArray> ecBytes =
+        GenerateECBytes(dataBytes.get(), numEcBytesInBlosk);
+    if (!ecBytes) {
+      e = BCExceptionGeneric;
       return;
+    }
     maxNumDataBytes = std::max(maxNumDataBytes, dataBytes->Size());
     maxNumEcBytes = std::max(maxNumEcBytes, ecBytes->Size());
     blocks[i].SetData(std::move(dataBytes), std::move(ecBytes));

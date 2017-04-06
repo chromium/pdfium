@@ -26,7 +26,6 @@ class CBC_CommonBitArray {
   void Set(size_t i);
   void Flip(size_t i);
   void SetBulk(size_t i, int32_t newBits);
-  bool IsRange(size_t start, size_t end, bool value, int32_t& e);
   void Reverse();
   void Clear();
 

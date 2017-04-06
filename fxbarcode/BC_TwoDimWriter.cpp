@@ -124,14 +124,8 @@ void CBC_TwoDimWriter::RenderResult(uint8_t* code,
     multiX = std::min(multiX, multiY);
     multiY = multiX;
   }
-  int32_t leftPadding = (outputWidth - (inputWidth * multiX)) / 2;
-  int32_t topPadding = (outputHeight - (inputHeight * multiY)) / 2;
-  if (leftPadding < 0) {
-    leftPadding = 0;
-  }
-  if (topPadding < 0) {
-    topPadding = 0;
-  }
+  int32_t leftPadding = std::max((outputWidth - (inputWidth * multiX)) / 2, 0);
+  int32_t topPadding = std::max((outputHeight - (inputHeight * multiY)) / 2, 0);
   m_output = pdfium::MakeUnique<CBC_CommonBitMatrix>();
   m_output->Init(outputWidth, outputHeight);
   for (int32_t inputY = 0, outputY = topPadding;
@@ -141,9 +135,10 @@ void CBC_TwoDimWriter::RenderResult(uint8_t* code,
          (inputX < inputWidth) && (outputX < outputWidth - multiX);
          inputX++, outputX += multiX) {
       if (code[inputX + inputY * inputWidth] == 1) {
-        m_output->SetRegion(outputX, outputY, multiX, multiY, e);
-        if (e != BCExceptionNO)
+        if (!m_output->SetRegion(outputX, outputY, multiX, multiY)) {
+          e = BCExceptionGeneric;
           return;
+        }
       }
     }
   }

@@ -17,9 +17,12 @@ class CBC_QRCoderErrorCorrectionLevel;
 
 class CBC_QRCoderVersion {
  public:
-  virtual ~CBC_QRCoderVersion();
+  ~CBC_QRCoderVersion();
   static void Initialize();
   static void Finalize();
+
+  static CBC_QRCoderVersion* GetVersionForNumber(int32_t versionNumber);
+  static void Destroy();
 
   int32_t GetVersionNumber();
   int32_t GetTotalCodeWords();
@@ -28,14 +31,6 @@ class CBC_QRCoderVersion {
   std::vector<int32_t>* GetAlignmentPatternCenters();
   CBC_QRCoderECBlocks* GetECBlocksForLevel(
       CBC_QRCoderErrorCorrectionLevel* ecLevel);
-  static CBC_QRCoderVersion* GetVersionForNumber(int32_t versionNumber,
-                                                 int32_t& e);
-  static CBC_QRCoderVersion* GetProvisionalVersionForDimension(
-      int32_t dimension,
-      int32_t& e);
-  static CBC_QRCoderVersion* DecodeVersionInformation(int32_t versionBits,
-                                                      int32_t& e);
-  static void Destroy();
 
  private:
   CBC_QRCoderVersion();
