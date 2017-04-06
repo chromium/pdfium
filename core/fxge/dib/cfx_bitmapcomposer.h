@@ -7,6 +7,8 @@
 #ifndef CORE_FXGE_DIB_CFX_BITMAPCOMPOSER_H_
 #define CORE_FXGE_DIB_CFX_BITMAPCOMPOSER_H_
 
+#include <vector>
+
 #include "core/fxcrt/cfx_retain_ptr.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxge/dib/cfx_scanlinecompositor.h"
@@ -24,14 +26,14 @@ class CFX_BitmapComposer : public IFX_ScanlineComposer {
                const CFX_ClipRgn* pClipRgn,
                int bitmap_alpha,
                uint32_t mask_color,
-               FX_RECT& dest_rect,
+               const FX_RECT& dest_rect,
                bool bVertical,
                bool bFlipX,
                bool bFlipY,
-               bool bRgbByteOrder = false,
-               int alpha_flag = 0,
-               void* pIccTransform = nullptr,
-               int blend_type = FXDIB_BLEND_NORMAL);
+               bool bRgbByteOrder,
+               int alpha_flag,
+               void* pIccTransform,
+               int blend_type);
 
   // IFX_ScanlineComposer
   bool SetInfo(int width,
@@ -48,11 +50,11 @@ class CFX_BitmapComposer : public IFX_ScanlineComposer {
                  const uint8_t* src_scan,
                  int dest_width,
                  const uint8_t* clip_scan,
-                 const uint8_t* src_extra_alpha = nullptr,
-                 uint8_t* dst_extra_alpha = nullptr);
+                 const uint8_t* src_extra_alpha,
+                 uint8_t* dst_extra_alpha);
   void ComposeScanlineV(int line,
                         const uint8_t* scanline,
-                        const uint8_t* scan_extra_alpha = nullptr);
+                        const uint8_t* scan_extra_alpha);
 
   CFX_RetainPtr<CFX_DIBitmap> m_pBitmap;
   const CFX_ClipRgn* m_pClipRgn;
@@ -72,10 +74,10 @@ class CFX_BitmapComposer : public IFX_ScanlineComposer {
   void* m_pIccTransform;
   bool m_bRgbByteOrder;
   int m_BlendType;
-  uint8_t* m_pScanlineV;
-  uint8_t* m_pClipScanV;
-  uint8_t* m_pAddClipScan;
-  uint8_t* m_pScanlineAlphaV;
+  std::vector<uint8_t> m_pScanlineV;
+  std::vector<uint8_t> m_pClipScanV;
+  std::vector<uint8_t> m_pAddClipScan;
+  std::vector<uint8_t> m_pScanlineAlphaV;
 };
 
 #endif  // CORE_FXGE_DIB_CFX_BITMAPCOMPOSER_H_

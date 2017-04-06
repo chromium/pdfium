@@ -11,27 +11,16 @@
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/ge/cfx_cliprgn.h"
 
-CFX_BitmapComposer::CFX_BitmapComposer() {
-  m_pScanlineV = nullptr;
-  m_pScanlineAlphaV = nullptr;
-  m_pClipScanV = nullptr;
-  m_pAddClipScan = nullptr;
-  m_bRgbByteOrder = false;
-  m_BlendType = FXDIB_BLEND_NORMAL;
-}
+CFX_BitmapComposer::CFX_BitmapComposer()
+    : m_bRgbByteOrder(false), m_BlendType(FXDIB_BLEND_NORMAL) {}
 
-CFX_BitmapComposer::~CFX_BitmapComposer() {
-  FX_Free(m_pScanlineV);
-  FX_Free(m_pScanlineAlphaV);
-  FX_Free(m_pClipScanV);
-  FX_Free(m_pAddClipScan);
-}
+CFX_BitmapComposer::~CFX_BitmapComposer() {}
 
 void CFX_BitmapComposer::Compose(const CFX_RetainPtr<CFX_DIBitmap>& pDest,
                                  const CFX_ClipRgn* pClipRgn,
                                  int bitmap_alpha,
                                  uint32_t mask_color,
-                                 FX_RECT& dest_rect,
+                                 const FX_RECT& dest_rect,
                                  bool bVertical,
                                  bool bFlipX,
                                  bool bFlipY,
@@ -70,15 +59,14 @@ bool CFX_BitmapComposer::SetInfo(int width,
     return false;
   }
   if (m_bVertical) {
-    m_pScanlineV = FX_Alloc(uint8_t, m_pBitmap->GetBPP() / 8 * width + 4);
-    m_pClipScanV = FX_Alloc(uint8_t, m_pBitmap->GetHeight());
-    if (m_pBitmap->m_pAlphaMask) {
-      m_pScanlineAlphaV = FX_Alloc(uint8_t, width + 4);
-    }
+    m_pScanlineV.resize(m_pBitmap->GetBPP() / 8 * width + 4);
+    m_pClipScanV.resize(m_pBitmap->GetHeight());
+    if (m_pBitmap->m_pAlphaMask)
+      m_pScanlineAlphaV.resize(width + 4);
   }
   if (m_BitmapAlpha < 255) {
-    m_pAddClipScan = FX_Alloc(
-        uint8_t, m_bVertical ? m_pBitmap->GetHeight() : m_pBitmap->GetWidth());
+    m_pAddClipScan.resize(m_bVertical ? m_pBitmap->GetHeight()
+                                      : m_pBitmap->GetWidth());
   }
   return true;
 }
@@ -89,15 +77,15 @@ void CFX_BitmapComposer::DoCompose(uint8_t* dest_scan,
                                    const uint8_t* clip_scan,
                                    const uint8_t* src_extra_alpha,
                                    uint8_t* dst_extra_alpha) {
+  uint8_t* pAddClipScan = m_pAddClipScan.data();
   if (m_BitmapAlpha < 255) {
     if (clip_scan) {
-      for (int i = 0; i < dest_width; i++) {
-        m_pAddClipScan[i] = clip_scan[i] * m_BitmapAlpha / 255;
-      }
+      for (int i = 0; i < dest_width; ++i)
+        pAddClipScan[i] = clip_scan[i] * m_BitmapAlpha / 255;
     } else {
-      memset(m_pAddClipScan, m_BitmapAlpha, dest_width);
+      memset(pAddClipScan, m_BitmapAlpha, dest_width);
     }
-    clip_scan = m_pAddClipScan;
+    clip_scan = pAddClipScan;
   }
   if (m_SrcFormat == FXDIB_8bppMask) {
     m_Compositor.CompositeByteMaskLine(dest_scan, src_scan, dest_width,
@@ -126,11 +114,13 @@ void CFX_BitmapComposer::ComposeScanline(int line,
                 (m_DestTop + line - m_pClipRgn->GetBox().top) *
                     m_pClipMask->GetPitch() +
                 (m_DestLeft - m_pClipRgn->GetBox().left);
-  uint8_t* dest_scan = (uint8_t*)m_pBitmap->GetScanline(line + m_DestTop) +
-                       m_DestLeft * m_pBitmap->GetBPP() / 8;
+  uint8_t* dest_scan =
+      const_cast<uint8_t*>(m_pBitmap->GetScanline(line + m_DestTop)) +
+      m_DestLeft * m_pBitmap->GetBPP() / 8;
   uint8_t* dest_alpha_scan =
       m_pBitmap->m_pAlphaMask
-          ? (uint8_t*)m_pBitmap->m_pAlphaMask->GetScanline(line + m_DestTop) +
+          ? const_cast<uint8_t*>(
+                m_pBitmap->m_pAlphaMask->GetScanline(line + m_DestTop)) +
                 m_DestLeft
           : nullptr;
   DoCompose(dest_scan, scanline, m_DestWidth, clip_scan, scan_extra_alpha,
@@ -140,7 +130,6 @@ void CFX_BitmapComposer::ComposeScanline(int line,
 void CFX_BitmapComposer::ComposeScanlineV(int line,
                                           const uint8_t* scanline,
                                           const uint8_t* scan_extra_alpha) {
-  int i;
   int Bpp = m_pBitmap->GetBPP() / 8;
   int dest_pitch = m_pBitmap->GetPitch();
   int dest_alpha_pitch =
@@ -162,25 +151,24 @@ void CFX_BitmapComposer::ComposeScanlineV(int line,
     y_step = -y_step;
     y_alpha_step = -y_alpha_step;
   }
-  uint8_t* src_scan = m_pScanlineV;
+  uint8_t* src_scan = m_pScanlineV.data();
   uint8_t* dest_scan = dest_buf;
-  for (i = 0; i < m_DestHeight; i++) {
-    for (int j = 0; j < Bpp; j++) {
+  for (int i = 0; i < m_DestHeight; ++i) {
+    for (int j = 0; j < Bpp; ++j)
       *src_scan++ = dest_scan[j];
-    }
     dest_scan += y_step;
   }
-  uint8_t* src_alpha_scan = m_pScanlineAlphaV;
+  uint8_t* src_alpha_scan = m_pScanlineAlphaV.data();
   uint8_t* dest_alpha_scan = dest_alpha_buf;
   if (dest_alpha_scan) {
-    for (i = 0; i < m_DestHeight; i++) {
+    for (int i = 0; i < m_DestHeight; ++i) {
       *src_alpha_scan++ = *dest_alpha_scan;
       dest_alpha_scan += y_alpha_step;
     }
   }
   uint8_t* clip_scan = nullptr;
   if (m_pClipMask) {
-    clip_scan = m_pClipScanV;
+    clip_scan = m_pClipScanV.data();
     int clip_pitch = m_pClipMask->GetPitch();
     const uint8_t* src_clip =
         m_pClipMask->GetBuffer() +
@@ -190,27 +178,26 @@ void CFX_BitmapComposer::ComposeScanlineV(int line,
       src_clip += clip_pitch * (m_DestHeight - 1);
       clip_pitch = -clip_pitch;
     }
-    for (i = 0; i < m_DestHeight; i++) {
+    for (int i = 0; i < m_DestHeight; ++i) {
       clip_scan[i] = *src_clip;
       src_clip += clip_pitch;
     }
   }
-  DoCompose(m_pScanlineV, scanline, m_DestHeight, clip_scan, scan_extra_alpha,
-            m_pScanlineAlphaV);
-  src_scan = m_pScanlineV;
+  DoCompose(m_pScanlineV.data(), scanline, m_DestHeight, clip_scan,
+            scan_extra_alpha, m_pScanlineAlphaV.data());
+  src_scan = m_pScanlineV.data();
   dest_scan = dest_buf;
-  for (i = 0; i < m_DestHeight; i++) {
-    for (int j = 0; j < Bpp; j++) {
+  for (int i = 0; i < m_DestHeight; ++i) {
+    for (int j = 0; j < Bpp; ++j)
       dest_scan[j] = *src_scan++;
-    }
     dest_scan += y_step;
   }
-  src_alpha_scan = m_pScanlineAlphaV;
+  src_alpha_scan = m_pScanlineAlphaV.data();
   dest_alpha_scan = dest_alpha_buf;
-  if (dest_alpha_scan) {
-    for (i = 0; i < m_DestHeight; i++) {
-      *dest_alpha_scan = *src_alpha_scan++;
-      dest_alpha_scan += y_alpha_step;
-    }
+  if (!dest_alpha_scan)
+    return;
+  for (int i = 0; i < m_DestHeight; ++i) {
+    *dest_alpha_scan = *src_alpha_scan++;
+    dest_alpha_scan += y_alpha_step;
   }
 }

@@ -15,7 +15,7 @@ class IFX_ScanlineComposer {
 
   virtual void ComposeScanline(int line,
                                const uint8_t* scanline,
-                               const uint8_t* scan_extra_alpha = nullptr) = 0;
+                               const uint8_t* scan_extra_alpha) = 0;
 
   virtual bool SetInfo(int width,
                        int height,
