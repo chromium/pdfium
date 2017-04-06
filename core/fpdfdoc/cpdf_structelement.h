@@ -1,23 +1,25 @@
-// Copyright 2014 PDFium Authors. All rights reserved.
+// Copyright 2017 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FPDFDOC_TAGGED_INT_H_
-#define CORE_FPDFDOC_TAGGED_INT_H_
+#ifndef CORE_FPDFDOC_CPDF_STRUCTELEMENT_H_
+#define CORE_FPDFDOC_CPDF_STRUCTELEMENT_H_
 
-#include <map>
-#include <memory>
 #include <vector>
 
-#include "core/fpdfdoc/fpdf_tagged.h"
 #include "core/fxcrt/cfx_retain_ptr.h"
-#include "third_party/base/stl_util.h"
+#include "core/fxcrt/fx_string.h"
+#include "core/fxge/fx_dib.h"
 
+class CPDF_Dictionary;
+class CPDF_Object;
 class CPDF_StructElement;
+class CPDF_StructTree;
 
-struct CPDF_StructKid {
+class CPDF_StructKid {
+ public:
   CPDF_StructKid();
   CPDF_StructKid(const CPDF_StructKid& that);
   ~CPDF_StructKid();
@@ -31,69 +33,42 @@ struct CPDF_StructKid {
   uint32_t m_ContentId;   // For PageContent, StreamContent.
 };
 
-class CPDF_StructTree final : public IPDF_StructTree {
- public:
-  explicit CPDF_StructTree(const CPDF_Document* pDoc);
-  ~CPDF_StructTree() override;
-
-  // IPDF_StructTree:
-  int CountTopElements() const override;
-  IPDF_StructElement* GetTopElement(int i) const override;
-
-  void LoadPageTree(const CPDF_Dictionary* pPageDict);
-  CFX_RetainPtr<CPDF_StructElement> AddPageNode(
-      CPDF_Dictionary* pElement,
-      std::map<CPDF_Dictionary*, CFX_RetainPtr<CPDF_StructElement>>* map,
-      int nLevel = 0);
-  bool AddTopLevelNode(CPDF_Dictionary* pDict,
-                       const CFX_RetainPtr<CPDF_StructElement>& pElement);
-
- protected:
-  const CPDF_Dictionary* const m_pTreeRoot;
-  const CPDF_Dictionary* const m_pRoleMap;
-  const CPDF_Dictionary* m_pPage;
-  std::vector<CFX_RetainPtr<CPDF_StructElement>> m_Kids;
-
-  friend class CPDF_StructElement;
-};
-
-class CPDF_StructElement final : public CFX_Retainable,
-                                 public IPDF_StructElement {
+class CPDF_StructElement : public CFX_Retainable {
  public:
   template <typename T, typename... Args>
   friend CFX_RetainPtr<T> pdfium::MakeRetain(Args&&... args);
 
-  // IPDF_StructElement
-  IPDF_StructTree* GetTree() const override;
-  const CFX_ByteString& GetType() const override;
-  IPDF_StructElement* GetParent() const override;
-  CPDF_Dictionary* GetDict() const override;
-  int CountKids() const override;
-  IPDF_StructElement* GetKidIfElement(int index) const override;
+  CPDF_StructTree* GetTree() const { return m_pTree; }
+  const CFX_ByteString& GetType() const { return m_Type; }
+  CPDF_StructElement* GetParent() const { return m_pParent; }
+  CPDF_Dictionary* GetDict() const { return m_pDict; }
+
+  int CountKids() const;
+  CPDF_StructElement* GetKidIfElement(int index) const;
   CPDF_Object* GetAttr(const CFX_ByteStringC& owner,
                        const CFX_ByteStringC& name,
                        bool bInheritable = false,
-                       float fLevel = 0.0F) override;
+                       float fLevel = 0.0F);
   CFX_ByteString GetName(const CFX_ByteStringC& owner,
                          const CFX_ByteStringC& name,
                          const CFX_ByteStringC& default_value,
                          bool bInheritable = false,
-                         int subindex = -1) override;
+                         int subindex = -1);
   FX_ARGB GetColor(const CFX_ByteStringC& owner,
                    const CFX_ByteStringC& name,
                    FX_ARGB default_value,
                    bool bInheritable = false,
-                   int subindex = -1) override;
+                   int subindex = -1);
   float GetNumber(const CFX_ByteStringC& owner,
                   const CFX_ByteStringC& name,
                   float default_value,
                   bool bInheritable = false,
-                  int subindex = -1) override;
+                  int subindex = -1);
   int GetInteger(const CFX_ByteStringC& owner,
                  const CFX_ByteStringC& name,
                  int default_value,
                  bool bInheritable = false,
-                 int subindex = -1) override;
+                 int subindex = -1);
 
   std::vector<CPDF_StructKid>* GetKids() { return &m_Kids; }
   void LoadKids(CPDF_Dictionary* pDict);
@@ -116,4 +91,4 @@ class CPDF_StructElement final : public CFX_Retainable,
   std::vector<CPDF_StructKid> m_Kids;
 };
 
-#endif  // CORE_FPDFDOC_TAGGED_INT_H_
+#endif  // CORE_FPDFDOC_CPDF_STRUCTELEMENT_H_

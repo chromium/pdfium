@@ -325,6 +325,10 @@ static_library("fpdfdoc") {
     "core/fpdfdoc/cpdf_occontext.h",
     "core/fpdfdoc/cpdf_pagelabel.cpp",
     "core/fpdfdoc/cpdf_pagelabel.h",
+    "core/fpdfdoc/cpdf_structelement.cpp",
+    "core/fpdfdoc/cpdf_structelement.h",
+    "core/fpdfdoc/cpdf_structtree.cpp",
+    "core/fpdfdoc/cpdf_structtree.h",
     "core/fpdfdoc/cpdf_variabletext.cpp",
     "core/fpdfdoc/cpdf_variabletext.h",
     "core/fpdfdoc/cpdf_viewerpreferences.cpp",
@@ -353,11 +357,8 @@ static_library("fpdfdoc") {
     "core/fpdfdoc/csection.h",
     "core/fpdfdoc/ctypeset.cpp",
     "core/fpdfdoc/ctypeset.h",
-    "core/fpdfdoc/doc_tagged.cpp",
-    "core/fpdfdoc/fpdf_tagged.h",
     "core/fpdfdoc/ipdf_formnotify.h",
     "core/fpdfdoc/ipvt_fontmap.h",
-    "core/fpdfdoc/tagged_int.h",
   ]
   configs += [ ":pdfium_core_config" ]
   deps = [
