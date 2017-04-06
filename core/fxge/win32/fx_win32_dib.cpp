@@ -195,8 +195,10 @@ CFX_WindowsDIB::CFX_WindowsDIB(HDC hDC, int width, int height) {
   bmih.biHeight = -height;
   bmih.biPlanes = 1;
   bmih.biWidth = width;
-  m_hBitmap = CreateDIBSection(hDC, (BITMAPINFO*)&bmih, DIB_RGB_COLORS,
-                               (LPVOID*)&m_pBuffer, nullptr, 0);
+  LPVOID pData = nullptr;
+  m_hBitmap = CreateDIBSection(hDC, (BITMAPINFO*)&bmih, DIB_RGB_COLORS, &pData,
+                               nullptr, 0);
+  m_pBuffer.Reset(static_cast<uint8_t*>(pData));
   m_hMemDC = CreateCompatibleDC(hDC);
   m_hOldBitmap = (HBITMAP)SelectObject(m_hMemDC, m_hBitmap);
 }

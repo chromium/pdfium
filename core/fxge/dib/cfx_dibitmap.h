@@ -7,6 +7,7 @@
 #ifndef CORE_FXGE_DIB_CFX_DIBITMAP_H_
 #define CORE_FXGE_DIB_CFX_DIBITMAP_H_
 
+#include "core/fxcrt/cfx_maybe_owned.h"
 #include "core/fxcrt/cfx_retain_ptr.h"
 #include "core/fxcrt/fx_basic.h"
 #include "core/fxcrt/fx_coordinates.h"
@@ -119,17 +120,16 @@ class CFX_DIBitmap : public CFX_DIBSource {
  protected:
   CFX_DIBitmap();
   CFX_DIBitmap(const CFX_DIBitmap& src);
-  bool GetGrayData(void* pIccTransform = nullptr);
 
+  bool GetGrayData(void* pIccTransform = nullptr);
 #if defined _SKIA_SUPPORT_PATHS_
   enum class Format { kCleared, kPreMultiplied, kUnPreMultiplied };
 #endif
 
-  uint8_t* m_pBuffer;
+  CFX_MaybeOwned<uint8_t, FxFreeDeleter> m_pBuffer;
 #if defined _SKIA_SUPPORT_PATHS_
   Format m_nFormat;
 #endif
-  bool m_bExtBuf;
 };
 
 #endif  // CORE_FXGE_DIB_CFX_DIBITMAP_H_
