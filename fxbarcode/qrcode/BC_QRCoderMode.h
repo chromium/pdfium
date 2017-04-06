@@ -13,8 +13,6 @@
 
 #include "core/fxcrt/fx_string.h"
 
-class CBC_QRCoderVersion;
-
 class CBC_QRCoderMode {
  public:
   virtual ~CBC_QRCoderMode();
@@ -24,7 +22,7 @@ class CBC_QRCoderMode {
   static CBC_QRCoderMode* ForBits(int32_t bits, int32_t& e);
   static void Destroy();
 
-  int32_t GetCharacterCountBits(CBC_QRCoderVersion* version, int32_t& e) const;
+  int32_t GetCharacterCountBits(int32_t number, int32_t& e) const;
   int32_t GetBits() const;
   CFX_ByteString GetName() const;
 

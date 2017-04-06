@@ -20,44 +20,28 @@
  * limitations under the License.
  */
 
-#include "fxbarcode/qrcode/BC_QRCoderECB.h"
 #include "fxbarcode/qrcode/BC_QRCoderECBlocks.h"
 
-CBC_QRCoderECBlocks::CBC_QRCoderECBlocks(int32_t ecCodeWordsPerBlock,
-                                         CBC_QRCoderECB* ecBlocks)
-    : m_ecCodeWordsPerBlock(ecCodeWordsPerBlock) {
-  m_ecBlocksArray.push_back(ecBlocks);
-}
+#include "fxbarcode/qrcode/BC_QRCoderECBlocksData.h"
 
-CBC_QRCoderECBlocks::CBC_QRCoderECBlocks(int32_t ecCodeWordsPerBlock,
-                                         CBC_QRCoderECB* ecBlocks1,
-                                         CBC_QRCoderECB* ecBlocks2)
-    : m_ecCodeWordsPerBlock(ecCodeWordsPerBlock) {
-  m_ecBlocksArray.push_back(ecBlocks1);
-  m_ecBlocksArray.push_back(ecBlocks2);
-}
+CBC_QRCoderECBlocks::CBC_QRCoderECBlocks(const CBC_QRCoderECBlockData& data)
+    : m_data(data) {}
 
-CBC_QRCoderECBlocks::~CBC_QRCoderECBlocks() {
-  for (size_t i = 0; i < m_ecBlocksArray.size(); i++)
-    delete m_ecBlocksArray[i];
-}
+CBC_QRCoderECBlocks::~CBC_QRCoderECBlocks() {}
 
 int32_t CBC_QRCoderECBlocks::GetECCodeWordsPerBlock() const {
-  return m_ecCodeWordsPerBlock;
+  return m_data.ecCodeWordsPerBlock;
 }
 
 int32_t CBC_QRCoderECBlocks::GetNumBlocks() const {
-  int32_t total = 0;
-  for (size_t i = 0; i < m_ecBlocksArray.size(); i++)
-    total += m_ecBlocksArray[i]->GetCount();
-
-  return total;
+  return m_data.count1 + m_data.count2;
 }
 
 int32_t CBC_QRCoderECBlocks::GetTotalECCodeWords() const {
-  return m_ecCodeWordsPerBlock * GetNumBlocks();
+  return GetECCodeWordsPerBlock() * GetNumBlocks();
 }
 
-std::vector<CBC_QRCoderECB*>* CBC_QRCoderECBlocks::GetECBlocks() {
-  return &m_ecBlocksArray;
+int32_t CBC_QRCoderECBlocks::GetTotalDataCodeWords() const {
+  return m_data.count1 * (m_data.dataCodeWords1 + GetECCodeWordsPerBlock()) +
+         m_data.count2 * (m_data.dataCodeWords2 + GetECCodeWordsPerBlock());
 }

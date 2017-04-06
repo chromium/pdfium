@@ -45,7 +45,7 @@ CBC_QRCoderMode* CBC_QRCoder::GetMode() const {
   return m_mode;
 }
 
-CBC_QRCoderErrorCorrectionLevel* CBC_QRCoder::GetECLevel() const {
+const CBC_QRCoderErrorCorrectionLevel* CBC_QRCoder::GetECLevel() const {
   return m_ecLevel;
 }
 
@@ -104,7 +104,7 @@ void CBC_QRCoder::SetMode(CBC_QRCoderMode* value) {
   m_mode = value;
 }
 
-void CBC_QRCoder::SetECLevel(CBC_QRCoderErrorCorrectionLevel* ecLevel) {
+void CBC_QRCoder::SetECLevel(const CBC_QRCoderErrorCorrectionLevel* ecLevel) {
   m_ecLevel = ecLevel;
 }
 

@@ -24,7 +24,6 @@
 
 #include <utility>
 
-#include "fxbarcode/qrcode/BC_QRCoderVersion.h"
 #include "fxbarcode/utils.h"
 
 CBC_QRCoderMode* CBC_QRCoderMode::sBYTE = nullptr;
@@ -112,13 +111,12 @@ CFX_ByteString CBC_QRCoderMode::GetName() const {
   return m_name;
 }
 
-int32_t CBC_QRCoderMode::GetCharacterCountBits(CBC_QRCoderVersion* version,
+int32_t CBC_QRCoderMode::GetCharacterCountBits(int32_t number,
                                                int32_t& e) const {
   if (m_characterCountBitsForVersions.empty()) {
     e = BCExceptionCharacterNotThisMode;
     return 0;
   }
-  int32_t number = version->GetVersionNumber();
   int32_t offset;
   if (number <= 9) {
     offset = 0;

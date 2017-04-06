@@ -11,24 +11,21 @@
 
 #include "core/fxcrt/fx_basic.h"
 
-class CBC_QRCoderECB;
+struct CBC_QRCoderECBlockData;
 
 class CBC_QRCoderECBlocks {
  public:
-  CBC_QRCoderECBlocks(int32_t ecCodeWordsPerBlock, CBC_QRCoderECB* ecBlocks);
-  CBC_QRCoderECBlocks(int32_t ecCodeWordsPerBlock,
-                      CBC_QRCoderECB* ecBlocks1,
-                      CBC_QRCoderECB* ecBlocks2);
+  explicit CBC_QRCoderECBlocks(const CBC_QRCoderECBlockData& data);
   ~CBC_QRCoderECBlocks();
 
-  int32_t GetECCodeWordsPerBlock() const;
   int32_t GetNumBlocks() const;
   int32_t GetTotalECCodeWords() const;
-  std::vector<CBC_QRCoderECB*>* GetECBlocks();
+  int32_t GetTotalDataCodeWords() const;
 
  private:
-  int32_t m_ecCodeWordsPerBlock;
-  std::vector<CBC_QRCoderECB*> m_ecBlocksArray;
+  int32_t GetECCodeWordsPerBlock() const;
+
+  const CBC_QRCoderECBlockData& m_data;
 };
 
 #endif  // FXBARCODE_QRCODE_BC_QRCODERECBLOCKS_H_

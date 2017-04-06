@@ -23,7 +23,7 @@ class CBC_QRCoder {
   static bool IsValidMaskPattern(int32_t maskPattern);
 
   CBC_QRCoderMode* GetMode() const;
-  CBC_QRCoderErrorCorrectionLevel* GetECLevel() const;
+  const CBC_QRCoderErrorCorrectionLevel* GetECLevel() const;
   int32_t GetVersion() const;
   int32_t GetMatrixWidth() const;
   int32_t GetMaskPattern() const;
@@ -37,7 +37,7 @@ class CBC_QRCoder {
   bool IsValid();
 
   void SetMode(CBC_QRCoderMode* value);
-  void SetECLevel(CBC_QRCoderErrorCorrectionLevel* ecLevel);
+  void SetECLevel(const CBC_QRCoderErrorCorrectionLevel* ecLevel);
   void SetVersion(int32_t version);
   void SetMatrixWidth(int32_t width);
   void SetMaskPattern(int32_t pattern);
@@ -49,7 +49,7 @@ class CBC_QRCoder {
 
  private:
   CBC_QRCoderMode* m_mode;
-  CBC_QRCoderErrorCorrectionLevel* m_ecLevel;
+  const CBC_QRCoderErrorCorrectionLevel* m_ecLevel;
   int32_t m_version;
   int32_t m_matrixWidth;
   int32_t m_maskPattern;

@@ -22,7 +22,7 @@ class CBC_QRCoderEncoder {
   ~CBC_QRCoderEncoder();
 
   static void Encode(const CFX_WideString& content,
-                     CBC_QRCoderErrorCorrectionLevel* ecLevel,
+                     const CBC_QRCoderErrorCorrectionLevel* ecLevel,
                      CBC_QRCoder* qrCode,
                      int32_t& e);
 };

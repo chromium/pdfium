@@ -85,7 +85,7 @@ void CBC_QRCoderMatrixUtil::ClearMatrix(CBC_CommonByteMatrix* matrix,
 }
 void CBC_QRCoderMatrixUtil::BuildMatrix(
     CBC_QRCoderBitVector* dataBits,
-    CBC_QRCoderErrorCorrectionLevel* ecLevel,
+    const CBC_QRCoderErrorCorrectionLevel* ecLevel,
     int32_t version,
     int32_t maskPattern,
     CBC_CommonByteMatrix* matrix,
@@ -132,7 +132,7 @@ void CBC_QRCoderMatrixUtil::EmbedBasicPatterns(int32_t version,
 }
 
 void CBC_QRCoderMatrixUtil::EmbedTypeInfo(
-    CBC_QRCoderErrorCorrectionLevel* ecLevel,
+    const CBC_QRCoderErrorCorrectionLevel* ecLevel,
     int32_t maskPattern,
     CBC_CommonByteMatrix* matrix,
     int32_t& e) {
@@ -254,7 +254,7 @@ int32_t CBC_QRCoderMatrixUtil::CalculateBCHCode(int32_t value, int32_t poly) {
   return value;
 }
 void CBC_QRCoderMatrixUtil::MakeTypeInfoBits(
-    CBC_QRCoderErrorCorrectionLevel* ecLevel,
+    const CBC_QRCoderErrorCorrectionLevel* ecLevel,
     int32_t maskPattern,
     CBC_QRCoderBitVector* bits,
     int32_t& e) {

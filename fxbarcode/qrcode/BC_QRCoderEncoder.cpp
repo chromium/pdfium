@@ -43,8 +43,6 @@
 
 using ModeStringPair = std::pair<CBC_QRCoderMode*, CFX_ByteString>;
 
-const int32_t kMaxVersion = 40;
-
 namespace {
 
 // This is a mapping for an ASCII table, starting at an index of 32.
@@ -171,10 +169,10 @@ bool AppendLengthInfo(int32_t numLetters,
                       CBC_QRCoderMode* mode,
                       CBC_QRCoderBitVector* bits) {
   int32_t e = BCExceptionNO;
-  CBC_QRCoderVersion* qcv = CBC_QRCoderVersion::GetVersionForNumber(version);
+  const auto* qcv = CBC_QRCoderVersion::GetVersionForNumber(version);
   if (!qcv)
     return false;
-  int32_t numBits = mode->GetCharacterCountBits(qcv, e);
+  int32_t numBits = mode->GetCharacterCountBits(qcv->GetVersionNumber(), e);
   if (e != BCExceptionNO)
     return false;
   if (numBits > ((1 << numBits) - 1))
@@ -206,24 +204,23 @@ void AppendBytes(const CFX_ByteString& content,
 }
 
 void InitQRCode(int32_t numInputBytes,
-                CBC_QRCoderErrorCorrectionLevel* ecLevel,
+                const CBC_QRCoderErrorCorrectionLevel* ecLevel,
                 CBC_QRCoderMode* mode,
                 CBC_QRCoder* qrCode,
                 int32_t& e) {
   qrCode->SetECLevel(ecLevel);
   qrCode->SetMode(mode);
-  for (int32_t versionNum = 1; versionNum <= kMaxVersion; versionNum++) {
-    CBC_QRCoderVersion* version =
-        CBC_QRCoderVersion::GetVersionForNumber(versionNum);
+  for (int32_t i = 1; i <= CBC_QRCoderVersion::kMaxVersion; ++i) {
+    const auto* version = CBC_QRCoderVersion::GetVersionForNumber(i);
     if (!version)
       return;
     int32_t numBytes = version->GetTotalCodeWords();
-    CBC_QRCoderECBlocks* ecBlocks = version->GetECBlocksForLevel(ecLevel);
+    const auto* ecBlocks = version->GetECBlocksForLevel(*ecLevel);
     int32_t numEcBytes = ecBlocks->GetTotalECCodeWords();
     int32_t numRSBlocks = ecBlocks->GetNumBlocks();
     int32_t numDataBytes = numBytes - numEcBytes;
     if (numDataBytes >= numInputBytes + 3) {
-      qrCode->SetVersion(versionNum);
+      qrCode->SetVersion(i);
       qrCode->SetNumTotalBytes(numBytes);
       qrCode->SetNumDataBytes(numDataBytes);
       qrCode->SetNumRSBlocks(numRSBlocks);
@@ -265,7 +262,7 @@ int32_t GetSpanByVersion(CBC_QRCoderMode* modeFirst,
       return 11;
     if (versionNum >= 10 && versionNum <= 26)
       return 15;
-    if (versionNum >= 27 && versionNum <= kMaxVersion)
+    if (versionNum >= 27 && versionNum <= CBC_QRCoderVersion::kMaxVersion)
       return 16;
     e = BCExceptionNoSuchVersion;
     return 0;
@@ -276,7 +273,7 @@ int32_t GetSpanByVersion(CBC_QRCoderMode* modeFirst,
       return 13;
     if (versionNum >= 10 && versionNum <= 26)
       return 15;
-    if (versionNum >= 27 && versionNum <= kMaxVersion)
+    if (versionNum >= 27 && versionNum <= CBC_QRCoderVersion::kMaxVersion)
       return 17;
     e = BCExceptionNoSuchVersion;
     return 0;
@@ -287,7 +284,7 @@ int32_t GetSpanByVersion(CBC_QRCoderMode* modeFirst,
       return 6;
     if (versionNum >= 10 && versionNum <= 26)
       return 8;
-    if (versionNum >= 27 && versionNum <= kMaxVersion)
+    if (versionNum >= 27 && versionNum <= CBC_QRCoderVersion::kMaxVersion)
       return 9;
     e = BCExceptionNoSuchVersion;
     return 0;
@@ -303,7 +300,7 @@ int32_t CalculateMaskPenalty(CBC_CommonByteMatrix* matrix) {
 }
 
 int32_t ChooseMaskPattern(CBC_QRCoderBitVector* bits,
-                          CBC_QRCoderErrorCorrectionLevel* ecLevel,
+                          const CBC_QRCoderErrorCorrectionLevel* ecLevel,
                           int32_t version,
                           CBC_CommonByteMatrix* matrix,
                           int32_t& e) {
@@ -581,7 +578,7 @@ CBC_QRCoderEncoder::CBC_QRCoderEncoder() {}
 CBC_QRCoderEncoder::~CBC_QRCoderEncoder() {}
 
 void CBC_QRCoderEncoder::Encode(const CFX_WideString& content,
-                                CBC_QRCoderErrorCorrectionLevel* ecLevel,
+                                const CBC_QRCoderErrorCorrectionLevel* ecLevel,
                                 CBC_QRCoder* qrCode,
                                 int32_t& e) {
   CFX_ByteString encoding = "utf8";

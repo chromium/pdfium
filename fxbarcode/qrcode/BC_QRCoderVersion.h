@@ -7,46 +7,38 @@
 #ifndef FXBARCODE_QRCODE_BC_QRCODERVERSION_H_
 #define FXBARCODE_QRCODE_BC_QRCODERVERSION_H_
 
+#include <memory>
 #include <vector>
 
 #include "core/fxcrt/fx_basic.h"
+#include "fxbarcode/qrcode/BC_QRCoderECBlocks.h"
 
-class CBC_CommonBitMatrix;
-class CBC_QRCoderECBlocks;
 class CBC_QRCoderErrorCorrectionLevel;
 
 class CBC_QRCoderVersion {
  public:
+  static constexpr int32_t kMaxVersion = 40;
+
+  CBC_QRCoderVersion(int32_t versionNumber,
+                     const CBC_QRCoderECBlockData data[4]);
   ~CBC_QRCoderVersion();
+
   static void Initialize();
   static void Finalize();
 
-  static CBC_QRCoderVersion* GetVersionForNumber(int32_t versionNumber);
+  static const CBC_QRCoderVersion* GetVersionForNumber(int32_t versionNumber);
   static void Destroy();
 
-  int32_t GetVersionNumber();
-  int32_t GetTotalCodeWords();
-  int32_t GetDimensionForVersion();
-  CBC_CommonBitMatrix* BuildFunctionPattern(int32_t& e);
-  std::vector<int32_t>* GetAlignmentPatternCenters();
-  CBC_QRCoderECBlocks* GetECBlocksForLevel(
-      CBC_QRCoderErrorCorrectionLevel* ecLevel);
+  int32_t GetVersionNumber() const;
+  int32_t GetTotalCodeWords() const;
+  int32_t GetDimensionForVersion() const;
+  const CBC_QRCoderECBlocks* GetECBlocksForLevel(
+      const CBC_QRCoderErrorCorrectionLevel& ecLevel) const;
 
  private:
-  CBC_QRCoderVersion();
-  CBC_QRCoderVersion(int32_t versionNumber,
-                     CBC_QRCoderECBlocks* ecBlocks1,
-                     CBC_QRCoderECBlocks* ecBlocks2,
-                     CBC_QRCoderECBlocks* ecBlocks3,
-                     CBC_QRCoderECBlocks* ecBlocks4);
-
-  static const int32_t VERSION_DECODE_INFO[34];
-  static std::vector<CBC_QRCoderVersion*>* VERSION;
-
-  int32_t m_versionNumber;
+  const int32_t m_versionNumber;
   int32_t m_totalCodeWords;
-  std::vector<int32_t> m_alignmentPatternCenters;
-  std::vector<CBC_QRCoderECBlocks*> m_ecBlocksArray;
+  std::unique_ptr<CBC_QRCoderECBlocks> m_ecBlocksArray[4];
 };
 
 #endif  // FXBARCODE_QRCODE_BC_QRCODERVERSION_H_
