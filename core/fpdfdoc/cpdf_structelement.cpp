@@ -33,7 +33,8 @@ CPDF_StructElement::CPDF_StructElement(CPDF_StructTree* pTree,
     : m_pTree(pTree),
       m_pParent(pParent),
       m_pDict(pDict),
-      m_Type(pDict->GetStringFor("S")) {
+      m_Type(pDict->GetStringFor("S")),
+      m_Title(pDict->GetStringFor("T")) {
   if (pTree->GetRoleMap()) {
     CFX_ByteString mapped = pTree->GetRoleMap()->GetStringFor(m_Type);
     if (!mapped.IsEmpty())

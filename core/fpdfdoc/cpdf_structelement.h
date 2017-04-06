@@ -39,6 +39,7 @@ class CPDF_StructElement : public CFX_Retainable {
   friend CFX_RetainPtr<T> pdfium::MakeRetain(Args&&... args);
 
   const CFX_ByteString& GetType() const { return m_Type; }
+  const CFX_ByteString& GetTitle() const { return m_Title; }
   CPDF_Dictionary* GetDict() const { return m_pDict; }
 
   int CountKids() const;
@@ -58,6 +59,7 @@ class CPDF_StructElement : public CFX_Retainable {
   CPDF_StructElement* const m_pParent;
   CPDF_Dictionary* const m_pDict;
   CFX_ByteString m_Type;
+  CFX_ByteString m_Title;
   std::vector<CPDF_StructKid> m_Kids;
 };
 

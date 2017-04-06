@@ -641,6 +641,11 @@ void DumpChildStructure(FPDF_STRUCTELEMENT child, int indent) {
   printf("%*s%ls", indent * 2, "", ConvertToWString(buf, len).c_str());
 
   memset(buf, 0, sizeof(buf));
+  len = FPDF_StructElement_GetTitle(child, buf, kBufSize);
+  if (len > 0)
+    printf(": '%ls'", ConvertToWString(buf, len).c_str());
+
+  memset(buf, 0, sizeof(buf));
   len = FPDF_StructElement_GetAltText(child, buf, kBufSize);
   if (len > 0)
     printf(" (%ls)", ConvertToWString(buf, len).c_str());
