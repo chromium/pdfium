@@ -88,7 +88,7 @@ void CPDF_StructTree::LoadPageTree(const CPDF_Dictionary* pPageDict) {
   std::map<CPDF_Dictionary*, CFX_RetainPtr<CPDF_StructElement>> element_map;
   for (size_t i = 0; i < pParentArray->GetCount(); i++) {
     if (CPDF_Dictionary* pParent = pParentArray->GetDictAt(i))
-      AddPageNode(pParent, &element_map);
+      AddPageNode(pParent, &element_map, 0);
   }
 }
 

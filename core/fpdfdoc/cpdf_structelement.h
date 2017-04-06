@@ -38,51 +38,21 @@ class CPDF_StructElement : public CFX_Retainable {
   template <typename T, typename... Args>
   friend CFX_RetainPtr<T> pdfium::MakeRetain(Args&&... args);
 
-  CPDF_StructTree* GetTree() const { return m_pTree; }
   const CFX_ByteString& GetType() const { return m_Type; }
-  CPDF_StructElement* GetParent() const { return m_pParent; }
   CPDF_Dictionary* GetDict() const { return m_pDict; }
 
   int CountKids() const;
   CPDF_StructElement* GetKidIfElement(int index) const;
-  CPDF_Object* GetAttr(const CFX_ByteStringC& owner,
-                       const CFX_ByteStringC& name,
-                       bool bInheritable = false,
-                       float fLevel = 0.0F);
-  CFX_ByteString GetName(const CFX_ByteStringC& owner,
-                         const CFX_ByteStringC& name,
-                         const CFX_ByteStringC& default_value,
-                         bool bInheritable = false,
-                         int subindex = -1);
-  FX_ARGB GetColor(const CFX_ByteStringC& owner,
-                   const CFX_ByteStringC& name,
-                   FX_ARGB default_value,
-                   bool bInheritable = false,
-                   int subindex = -1);
-  float GetNumber(const CFX_ByteStringC& owner,
-                  const CFX_ByteStringC& name,
-                  float default_value,
-                  bool bInheritable = false,
-                  int subindex = -1);
-  int GetInteger(const CFX_ByteStringC& owner,
-                 const CFX_ByteStringC& name,
-                 int default_value,
-                 bool bInheritable = false,
-                 int subindex = -1);
-
   std::vector<CPDF_StructKid>* GetKids() { return &m_Kids; }
-  void LoadKids(CPDF_Dictionary* pDict);
-  void LoadKid(uint32_t PageObjNum, CPDF_Object* pObj, CPDF_StructKid* pKid);
-  CPDF_Object* GetAttr(const CFX_ByteStringC& owner,
-                       const CFX_ByteStringC& name,
-                       bool bInheritable,
-                       int subindex);
 
  private:
   CPDF_StructElement(CPDF_StructTree* pTree,
                      CPDF_StructElement* pParent,
                      CPDF_Dictionary* pDict);
   ~CPDF_StructElement() override;
+
+  void LoadKids(CPDF_Dictionary* pDict);
+  void LoadKid(uint32_t PageObjNum, CPDF_Object* pObj, CPDF_StructKid* pKid);
 
   CPDF_StructTree* const m_pTree;
   CPDF_StructElement* const m_pParent;

@@ -28,20 +28,19 @@ class CPDF_StructTree {
 
   int CountTopElements() const;
   CPDF_StructElement* GetTopElement(int i) const;
-
-  void LoadPageTree(const CPDF_Dictionary* pPageDict);
-  CFX_RetainPtr<CPDF_StructElement> AddPageNode(
-      CPDF_Dictionary* pElement,
-      std::map<CPDF_Dictionary*, CFX_RetainPtr<CPDF_StructElement>>* map,
-      int nLevel = 0);
-  bool AddTopLevelNode(CPDF_Dictionary* pDict,
-                       const CFX_RetainPtr<CPDF_StructElement>& pElement);
-
   const CPDF_Dictionary* GetRoleMap() const { return m_pRoleMap; }
   const CPDF_Dictionary* GetPage() const { return m_pPage; }
   const CPDF_Dictionary* GetTreeRoot() const { return m_pTreeRoot; }
 
  private:
+  void LoadPageTree(const CPDF_Dictionary* pPageDict);
+  CFX_RetainPtr<CPDF_StructElement> AddPageNode(
+      CPDF_Dictionary* pElement,
+      std::map<CPDF_Dictionary*, CFX_RetainPtr<CPDF_StructElement>>* map,
+      int nLevel);
+  bool AddTopLevelNode(CPDF_Dictionary* pDict,
+                       const CFX_RetainPtr<CPDF_StructElement>& pElement);
+
   const CPDF_Dictionary* const m_pTreeRoot;
   const CPDF_Dictionary* const m_pRoleMap;
   const CPDF_Dictionary* m_pPage;
