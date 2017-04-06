@@ -8,9 +8,12 @@
 #include <vector>
 
 #include "testing/gtest/include/gtest/gtest.h"
+#include "testing/test_support.h"
 #include "third_party/base/ptr_util.h"
 
-TEST(XfaUtilsImp, XFA_MapRotation) {
+class XfaUtilsImpTest : public pdfium::FPDF_Test {};
+
+TEST_F(XfaUtilsImpTest, XFA_MapRotation) {
   struct TestCase {
     int input;
     int expected_output;
@@ -26,7 +29,7 @@ TEST(XfaUtilsImp, XFA_MapRotation) {
   }
 }
 
-class XFANodeIteratorTest : public testing::Test {
+class XFANodeIteratorTest : public pdfium::FPDF_Test {
  public:
   class Node {
    public:

@@ -1892,7 +1892,7 @@ test("pdfium_unittests") {
       "xfa/fde/xml/cfde_xmlsyntaxparser_unittest.cpp",
       "xfa/fgas/layout/fgas_rtfbreak_unittest.cpp",
       "xfa/fxfa/app/cxfa_textparser_unittest.cpp",
-      "xfa/fxfa/cxfa_ffapp_unitest.cpp",
+      "xfa/fxfa/cxfa_ffapp_unittest.cpp",
       "xfa/fxfa/fm2js/xfa_simpleexpression_unittest.cpp",
       "xfa/fxfa/parser/xfa_utils_unittest.cpp",
     ]

@@ -7,9 +7,12 @@
 #include <memory>
 
 #include "testing/gtest/include/gtest/gtest.h"
+#include "testing/test_support.h"
 #include "xfa/fgas/crt/ifgas_stream.h"
 
-TEST(CFDE_XMLSyntaxParser, CData) {
+class CFDE_XMLSyntaxParserTest : public pdfium::FPDF_Test {};
+
+TEST_F(CFDE_XMLSyntaxParserTest, CData) {
   const wchar_t* input =
       L"<script contentType=\"application/x-javascript\">\n"
       L"  <![CDATA[\n"
@@ -54,7 +57,7 @@ TEST(CFDE_XMLSyntaxParser, CData) {
   EXPECT_EQ(FDE_XmlSyntaxResult::EndOfString, parser.DoSyntaxParse());
 }
 
-TEST(CFDE_XMLSyntaxParser, CDataWithInnerScript) {
+TEST_F(CFDE_XMLSyntaxParserTest, CDataWithInnerScript) {
   const wchar_t* input =
       L"<script contentType=\"application/x-javascript\">\n"
       L"  <![CDATA[\n"
@@ -101,7 +104,7 @@ TEST(CFDE_XMLSyntaxParser, CDataWithInnerScript) {
   EXPECT_EQ(FDE_XmlSyntaxResult::EndOfString, parser.DoSyntaxParse());
 }
 
-TEST(CFDE_XMLSyntaxParser, ArrowBangArrow) {
+TEST_F(CFDE_XMLSyntaxParserTest, ArrowBangArrow) {
   const wchar_t* input =
       L"<script contentType=\"application/x-javascript\">\n"
       L"  <!>\n"
@@ -135,7 +138,7 @@ TEST(CFDE_XMLSyntaxParser, ArrowBangArrow) {
   EXPECT_EQ(FDE_XmlSyntaxResult::EndOfString, parser.DoSyntaxParse());
 }
 
-TEST(CFDE_XMLSyntaxParser, ArrowBangBracketArrow) {
+TEST_F(CFDE_XMLSyntaxParserTest, ArrowBangBracketArrow) {
   const wchar_t* input =
       L"<script contentType=\"application/x-javascript\">\n"
       L"  <![>\n"
@@ -164,7 +167,7 @@ TEST(CFDE_XMLSyntaxParser, ArrowBangBracketArrow) {
   EXPECT_EQ(FDE_XmlSyntaxResult::EndOfString, parser.DoSyntaxParse());
 }
 
-TEST(CFDE_XMLSyntaxParser, IncompleteCData) {
+TEST_F(CFDE_XMLSyntaxParserTest, IncompleteCData) {
   const wchar_t* input =
       L"<script contentType=\"application/x-javascript\">\n"
       L"  <![CDATA>\n"
@@ -193,7 +196,7 @@ TEST(CFDE_XMLSyntaxParser, IncompleteCData) {
   EXPECT_EQ(FDE_XmlSyntaxResult::EndOfString, parser.DoSyntaxParse());
 }
 
-TEST(CFDE_XMLSyntaxParser, UnClosedCData) {
+TEST_F(CFDE_XMLSyntaxParserTest, UnClosedCData) {
   const wchar_t* input =
       L"<script contentType=\"application/x-javascript\">\n"
       L"  <![CDATA[\n"
@@ -222,7 +225,7 @@ TEST(CFDE_XMLSyntaxParser, UnClosedCData) {
   EXPECT_EQ(FDE_XmlSyntaxResult::EndOfString, parser.DoSyntaxParse());
 }
 
-TEST(CFDE_XMLSyntaxParser, EmptyCData) {
+TEST_F(CFDE_XMLSyntaxParserTest, EmptyCData) {
   const wchar_t* input =
       L"<script contentType=\"application/x-javascript\">\n"
       L"  <![CDATA[]]>\n"
@@ -258,7 +261,7 @@ TEST(CFDE_XMLSyntaxParser, EmptyCData) {
   EXPECT_EQ(FDE_XmlSyntaxResult::EndOfString, parser.DoSyntaxParse());
 }
 
-TEST(CFDE_XMLSyntaxParser, Comment) {
+TEST_F(CFDE_XMLSyntaxParserTest, Comment) {
   const wchar_t* input =
       L"<script contentType=\"application/x-javascript\">\n"
       L"  <!-- A Comment -->\n"
@@ -291,7 +294,7 @@ TEST(CFDE_XMLSyntaxParser, Comment) {
   EXPECT_EQ(FDE_XmlSyntaxResult::EndOfString, parser.DoSyntaxParse());
 }
 
-TEST(CFDE_XMLSyntaxParser, IncorrectCommentStart) {
+TEST_F(CFDE_XMLSyntaxParserTest, IncorrectCommentStart) {
   const wchar_t* input =
       L"<script contentType=\"application/x-javascript\">\n"
       L"  <!- A Comment -->\n"
@@ -324,7 +327,7 @@ TEST(CFDE_XMLSyntaxParser, IncorrectCommentStart) {
   EXPECT_EQ(FDE_XmlSyntaxResult::EndOfString, parser.DoSyntaxParse());
 }
 
-TEST(CFDE_XMLSyntaxParser, CommentEmpty) {
+TEST_F(CFDE_XMLSyntaxParserTest, CommentEmpty) {
   const wchar_t* input =
       L"<script contentType=\"application/x-javascript\">\n"
       L"  <!---->\n"
@@ -357,7 +360,7 @@ TEST(CFDE_XMLSyntaxParser, CommentEmpty) {
   EXPECT_EQ(FDE_XmlSyntaxResult::EndOfString, parser.DoSyntaxParse());
 }
 
-TEST(CFDE_XMLSyntaxParser, CommentThreeDash) {
+TEST_F(CFDE_XMLSyntaxParserTest, CommentThreeDash) {
   const wchar_t* input =
       L"<script contentType=\"application/x-javascript\">\n"
       L"  <!--->\n"
@@ -384,7 +387,7 @@ TEST(CFDE_XMLSyntaxParser, CommentThreeDash) {
   EXPECT_EQ(FDE_XmlSyntaxResult::EndOfString, parser.DoSyntaxParse());
 }
 
-TEST(CFDE_XMLSyntaxParser, CommentTwoDash) {
+TEST_F(CFDE_XMLSyntaxParserTest, CommentTwoDash) {
   const wchar_t* input =
       L"<script contentType=\"application/x-javascript\">\n"
       L"  <!-->\n"
@@ -411,7 +414,7 @@ TEST(CFDE_XMLSyntaxParser, CommentTwoDash) {
   EXPECT_EQ(FDE_XmlSyntaxResult::EndOfString, parser.DoSyntaxParse());
 }
 
-TEST(CFDE_XMLSyntaxParser, Entities) {
+TEST_F(CFDE_XMLSyntaxParserTest, Entities) {
   const wchar_t* input =
       L"<script contentType=\"application/x-javascript\">"
       L"&#66;"
@@ -445,7 +448,7 @@ TEST(CFDE_XMLSyntaxParser, Entities) {
   EXPECT_EQ(FDE_XmlSyntaxResult::EndOfString, parser.DoSyntaxParse());
 }
 
-TEST(CFDE_XMLSyntaxParser, EntityOverflowHex) {
+TEST_F(CFDE_XMLSyntaxParserTest, EntityOverflowHex) {
   const wchar_t* input =
       L"<script contentType=\"application/x-javascript\">"
       L"&#xaDBDFFFFF;"
@@ -476,7 +479,7 @@ TEST(CFDE_XMLSyntaxParser, EntityOverflowHex) {
   EXPECT_EQ(FDE_XmlSyntaxResult::EndOfString, parser.DoSyntaxParse());
 }
 
-TEST(CFDE_XMLSyntaxParser, EntityOverflowDecimal) {
+TEST_F(CFDE_XMLSyntaxParserTest, EntityOverflowDecimal) {
   const wchar_t* input =
       L"<script contentType=\"application/x-javascript\">"
       L"&#2914910205;"

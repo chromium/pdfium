@@ -11,9 +11,12 @@
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fxcrt/fx_memory.h"
 #include "testing/gtest/include/gtest/gtest.h"
+#include "testing/test_support.h"
 #include "third_party/base/ptr_util.h"
 
-TEST(CXFAFileRead, NoStreams) {
+class CXFAFileReadTest : public pdfium::FPDF_Test {};
+
+TEST_F(CXFAFileReadTest, NoStreams) {
   std::vector<CPDF_Stream*> streams;
   CFX_RetainPtr<IFX_SeekableReadStream> fileread =
       MakeSeekableReadStream(streams);
@@ -24,7 +27,7 @@ TEST(CXFAFileRead, NoStreams) {
   EXPECT_EQ(0xbd, output_buffer[0]);
 }
 
-TEST(CXFAFileRead, EmptyStreams) {
+TEST_F(CXFAFileReadTest, EmptyStreams) {
   std::vector<CPDF_Stream*> streams;
   auto stream1 = pdfium::MakeUnique<CPDF_Stream>();
   streams.push_back(stream1.get());
@@ -37,7 +40,7 @@ TEST(CXFAFileRead, EmptyStreams) {
   EXPECT_EQ(0xbd, output_buffer[0]);
 }
 
-TEST(CXFAFileRead, NormalStreams) {
+TEST_F(CXFAFileReadTest, NormalStreams) {
   std::vector<CPDF_Stream*> streams;
   auto stream1 = pdfium::MakeUnique<CPDF_Stream>();
   auto stream2 = pdfium::MakeUnique<CPDF_Stream>();

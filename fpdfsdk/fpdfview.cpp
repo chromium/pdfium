@@ -368,14 +368,7 @@ FPDF_InitLibraryWithConfig(const FPDF_LIBRARY_CONFIG* cfg) {
   if (g_pCodecModule)
     return;
 
-  static bool s_gPartitionAllocatorsInitialized = false;
-  if (!s_gPartitionAllocatorsInitialized) {
-    pdfium::base::PartitionAllocGlobalInit(FX_OutOfMemoryTerminate);
-    gArrayBufferPartitionAllocator.init();
-    gStringPartitionAllocator.init();
-    s_gPartitionAllocatorsInitialized = true;
-  }
-
+  FXMEM_InitalizePartitionAlloc();
   g_pCodecModule = new CCodec_ModuleMgr();
 
   CFX_GEModule* pModule = CFX_GEModule::Get();
