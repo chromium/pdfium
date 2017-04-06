@@ -51,9 +51,10 @@ bool IsXMLNameChar(wchar_t ch, bool bFirstChar) {
   return false;
 }
 
-int32_t GetUTF8EncodeLength(const wchar_t* pSrc, int32_t iSrcLen) {
+int32_t GetUTF8EncodeLength(const std::vector<wchar_t>& src, int32_t iSrcLen) {
   uint32_t unicode = 0;
   int32_t iDstNum = 0;
+  const wchar_t* pSrc = src.data();
   while (iSrcLen-- > 0) {
     unicode = *pSrc++;
     int nbytes = 0;
@@ -86,11 +87,10 @@ CFDE_XMLSyntaxParser::CFDE_XMLSyntaxParser(
       m_iLastNodeNum(-1),
       m_iParsedChars(0),
       m_iParsedBytes(0),
-      m_pBuffer(nullptr),
       m_iBufferChars(0),
       m_bEOS(false),
-      m_pStart(nullptr),
-      m_pEnd(nullptr),
+      m_pStart(0),
+      m_pEnd(0),
       m_iAllocStep(m_BlockBuffer.GetAllocStep()),
       m_iDataLength(m_BlockBuffer.GetDataLengthRef()),
       m_pCurrentBlock(nullptr),
@@ -117,22 +117,21 @@ CFDE_XMLSyntaxParser::CFDE_XMLSyntaxParser(
     return;
   }
 
-  m_pBuffer = FX_Alloc(
-      wchar_t, pdfium::base::ValueOrDieForType<size_t>(alloc_size_safe));
-  m_pStart = m_pBuffer;
-  m_pEnd = m_pBuffer;
+  m_Buffer.resize(pdfium::base::ValueOrDieForType<size_t>(alloc_size_safe));
 
   m_BlockBuffer.InitBuffer();
   std::tie(m_pCurrentBlock, m_iIndexInBlock) =
       m_BlockBuffer.GetAvailableBlock();
 }
 
+CFDE_XMLSyntaxParser::~CFDE_XMLSyntaxParser() {}
+
 FDE_XmlSyntaxResult CFDE_XMLSyntaxParser::DoSyntaxParse() {
   if (m_syntaxParserResult == FDE_XmlSyntaxResult::Error ||
       m_syntaxParserResult == FDE_XmlSyntaxResult::EndOfString) {
     return m_syntaxParserResult;
   }
-  ASSERT(m_pStream && m_pBuffer && m_BlockBuffer.IsInitialized());
+
   int32_t iStreamLength = m_pStream->GetLength();
   int32_t iPos;
 
@@ -143,13 +142,13 @@ FDE_XmlSyntaxResult CFDE_XMLSyntaxParser::DoSyntaxParse() {
         m_syntaxParserResult = FDE_XmlSyntaxResult::EndOfString;
         return m_syntaxParserResult;
       }
-      m_iParsedChars += (m_pEnd - m_pBuffer);
+      m_iParsedChars += m_pEnd;
       m_iParsedBytes = m_iCurrentPos;
       if (m_pStream->GetPosition() != m_iCurrentPos) {
         m_pStream->Seek(FX_STREAMSEEK_Begin, m_iCurrentPos);
       }
       m_iBufferChars =
-          m_pStream->ReadString(m_pBuffer, m_iXMLPlaneSize, m_bEOS);
+          m_pStream->ReadString(m_Buffer.data(), m_iXMLPlaneSize, m_bEOS);
       iPos = m_pStream->GetPosition();
       if (m_iBufferChars < 1) {
         m_iCurrentPos = iStreamLength;
@@ -157,12 +156,12 @@ FDE_XmlSyntaxResult CFDE_XMLSyntaxParser::DoSyntaxParse() {
         return m_syntaxParserResult;
       }
       m_iCurrentPos = iPos;
-      m_pStart = m_pBuffer;
-      m_pEnd = m_pBuffer + m_iBufferChars;
+      m_pStart = 0;
+      m_pEnd = m_iBufferChars;
     }
 
     while (m_pStart < m_pEnd) {
-      wchar_t ch = *m_pStart;
+      wchar_t ch = m_Buffer[m_pStart];
       switch (m_syntaxParserState) {
         case FDE_XmlSyntaxState::Text:
           if (ch == L'<') {
@@ -427,10 +426,11 @@ FDE_XmlSyntaxResult CFDE_XMLSyntaxParser::DoSyntaxParse() {
           m_pStart++;
           break;
         case FDE_XmlSyntaxState::SkipCommentOrDecl:
-          if (FXSYS_wcsnicmp(m_pStart, L"--", 2) == 0) {
+          if (FXSYS_wcsnicmp(m_Buffer.data() + m_pStart, L"--", 2) == 0) {
             m_pStart += 2;
             m_syntaxParserState = FDE_XmlSyntaxState::SkipComment;
-          } else if (FXSYS_wcsnicmp(m_pStart, L"[CDATA[", 7) == 0) {
+          } else if (FXSYS_wcsnicmp(m_Buffer.data() + m_pStart, L"[CDATA[",
+                                    7) == 0) {
             m_pStart += 7;
             m_syntaxParserState = FDE_XmlSyntaxState::SkipCData;
           } else {
@@ -440,7 +440,7 @@ FDE_XmlSyntaxResult CFDE_XMLSyntaxParser::DoSyntaxParse() {
           }
           break;
         case FDE_XmlSyntaxState::SkipCData: {
-          if (FXSYS_wcsnicmp(m_pStart, L"]]>", 3) == 0) {
+          if (FXSYS_wcsnicmp(m_Buffer.data() + m_pStart, L"]]>", 3) == 0) {
             m_pStart += 3;
             syntaxParserResult = FDE_XmlSyntaxResult::CData;
             m_iTextDataLength = m_iDataLength;
@@ -527,7 +527,7 @@ FDE_XmlSyntaxResult CFDE_XMLSyntaxParser::DoSyntaxParse() {
           }
           break;
         case FDE_XmlSyntaxState::SkipComment:
-          if (FXSYS_wcsnicmp(m_pStart, L"-->", 3) == 0) {
+          if (FXSYS_wcsnicmp(m_Buffer.data() + m_pStart, L"-->", 3) == 0) {
             m_pStart += 2;
             m_syntaxParserState = FDE_XmlSyntaxState::Text;
           }
@@ -592,10 +592,6 @@ FDE_XmlSyntaxResult CFDE_XMLSyntaxParser::DoSyntaxParse() {
   return FDE_XmlSyntaxResult::Text;
 }
 
-CFDE_XMLSyntaxParser::~CFDE_XMLSyntaxParser() {
-  FX_Free(m_pBuffer);
-}
-
 int32_t CFDE_XMLSyntaxParser::GetStatus() const {
   if (!m_pStream)
     return -1;
@@ -616,8 +612,8 @@ FX_FILESIZE CFDE_XMLSyntaxParser::GetCurrentBinaryPos() const {
   if (!m_pStream)
     return 0;
 
-  int32_t nSrcLen = m_pStart - m_pBuffer;
-  int32_t nDstLen = GetUTF8EncodeLength(m_pBuffer, nSrcLen);
+  int32_t nSrcLen = m_pStart;
+  int32_t nDstLen = GetUTF8EncodeLength(m_Buffer, nSrcLen);
   return m_iParsedBytes + nDstLen;
 }
 
