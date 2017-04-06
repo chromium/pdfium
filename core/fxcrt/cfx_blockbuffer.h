@@ -21,33 +21,31 @@ class CFX_BlockBuffer {
   ~CFX_BlockBuffer();
 
   bool InitBuffer();
-  bool IsInitialized() { return m_iBufferSize / GetAllocStep() >= 1; }
+  bool IsInitialized() { return m_BufferSize / GetAllocStep() >= 1; }
 
-  std::pair<wchar_t*, int32_t> GetAvailableBlock();
-  int32_t GetAllocStep() const;
-
-  // This is ... scary. This returns a ref, which the XMLSyntaxParser stores
-  // and modifies.
-  int32_t& GetDataLengthRef() { return m_iDataLength; }
+  std::pair<wchar_t*, size_t> GetAvailableBlock();
+  size_t GetAllocStep() const;
+  size_t GetDataLength() const { return m_DataLength; }
+  void IncrementDataLength() { m_DataLength++; }
+  bool IsEmpty() const { return m_DataLength == 0; }
 
   void Reset(bool bReserveData) {
     if (!bReserveData)
-      m_iStartPosition = 0;
-    m_iDataLength = 0;
+      m_StartPosition = 0;
+    m_DataLength = 0;
   }
 
-  void SetTextChar(int32_t iIndex, wchar_t ch);
-  int32_t DeleteTextChars(int32_t iCount);
-  CFX_WideString GetTextData(int32_t iStart, int32_t iLength) const;
+  void SetTextChar(size_t iIndex, wchar_t ch);
+  void DeleteTextChars(size_t iCount);
+  CFX_WideString GetTextData(size_t iStart, size_t iLength) const;
 
  private:
-  std::pair<int32_t, int32_t> TextDataIndex2BufIndex(
-      const int32_t iIndex) const;
+  std::pair<size_t, size_t> TextDataIndex2BufIndex(const size_t iIndex) const;
 
   std::vector<std::unique_ptr<wchar_t, FxFreeDeleter>> m_BlockArray;
-  int32_t m_iDataLength;
-  int32_t m_iBufferSize;
-  int32_t m_iStartPosition;
+  size_t m_DataLength;
+  size_t m_BufferSize;
+  size_t m_StartPosition;
 };
 
 #endif  // CORE_FXCRT_CFX_BLOCKBUFFER_H_

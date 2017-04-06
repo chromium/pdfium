@@ -113,7 +113,6 @@ class CFDE_XMLSyntaxParser {
   std::stack<FDE_XMLNODE> m_XMLNodeStack;
   CFX_BlockBuffer m_BlockBuffer;
   int32_t m_iAllocStep;
-  int32_t& m_iDataLength;
   wchar_t* m_pCurrentBlock;  // Pointer into CFX_BlockBuffer
   int32_t m_iIndexInBlock;
   int32_t m_iTextDataLength;
