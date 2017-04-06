@@ -683,7 +683,7 @@ void CFDE_XMLSyntaxParser::ParseTextChar(wchar_t character) {
         }
       }
     }
-    if (m_iEntityStart > 0 &&
+    if (m_iEntityStart >= 0 &&
         m_BlockBuffer.GetDataLength() > static_cast<size_t>(m_iEntityStart)) {
       m_BlockBuffer.DeleteTextChars(m_BlockBuffer.GetDataLength() -
                                     m_iEntityStart);

@@ -11,7 +11,7 @@
 
 namespace {
 
-const int kAllocStep = 1024 * 1024;
+const size_t kAllocStep = 1024 * 1024;
 
 }  // namespace
 
@@ -77,8 +77,7 @@ CFX_WideString CFX_BlockBuffer::GetTextData(size_t start, size_t length) const {
   size_t maybeDataLength = m_BufferSize - 1 - m_StartPosition;
   if (start > maybeDataLength)
     return CFX_WideString();
-  if (length > maybeDataLength)
-    length = maybeDataLength;
+  length = std::min(length, maybeDataLength);
 
   CFX_WideString wsTextData;
   wchar_t* pBuf = wsTextData.GetBuffer(length);
