@@ -16,11 +16,13 @@ vars = {
   'gtest_revision': '8245545b6dc9c4703e6496d1efd19e975ad2b038',
   'icu_revision': '73e24736676b4b438270fda44e5b2c83b49fdd80',
   'instrumented_lib_revision': '45f5814b1543e41ea0be54c771e3840ea52cca4a',
+  'jinja2_revision': 'd34383206fa42d52faa10bb9931d6d538f3a57e0',
+  'markupsafe_revision': '8f45f5cfa0009d2a70589bcda0349b8cb2b72783',
   'pdfium_tests_revision': 'bf5149ba7be4c0ffa9efe340f77e2e12e8b1cac2',
   'skia_revision': '90e3cd78991ef337dbd0023efb30ece864694308',
   'tools_memory_revision': '427f10475e1a8d72424c29d00bf689122b738e5d',
   'trace_event_revision': '06294c8a4a6f744ef284cd63cfe54dbf61eea290',
-  'v8_revision': '01498094d09202413aab3ab513785261f82b755d',
+  'v8_revision': '07b2253a044bffa43697c6a43aaccb68c7e82af4',
   'zlib_revision': 'eed2732a73838fd581cb25819ab1c4f478d6b38f',
 }
 
@@ -56,6 +58,14 @@ deps = {
     Var('chromium_git') +
         "/chromium/src/third_party/instrumented_libraries.git@" +
         Var('instrumented_lib_revision'),
+
+  "third_party/jinja2":
+    Var('chromium_git') + "/chromium/src/third_party/jinja2.git@" +
+        Var('jinja2_revision'),
+
+  "third_party/markupsafe":
+    Var('chromium_git') + "/chromium/src/third_party/markupsafe.git@" +
+        Var('markupsafe_revision'),
 
   "third_party/skia":
     Var('chromium_git') + '/skia.git@' +  Var('skia_revision'),
