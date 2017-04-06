@@ -42,7 +42,7 @@ class CFDE_XMLSyntaxParser {
   FDE_XmlSyntaxResult DoSyntaxParse();
 
   int32_t GetStatus() const;
-  int32_t GetCurrentPos() const { return m_iParsedChars + m_pStart; }
+  FX_FILESIZE GetCurrentPos() const { return m_ParsedChars + m_Start; }
   FX_FILESIZE GetCurrentBinaryPos() const;
   int32_t GetCurrentNodeNumber() const { return m_iCurrentNodeNum; }
   int32_t GetLastNodeNumber() const { return m_iLastNodeNum; }
@@ -102,13 +102,13 @@ class CFDE_XMLSyntaxParser {
   int32_t m_iCurrentPos;
   int32_t m_iCurrentNodeNum;
   int32_t m_iLastNodeNum;
-  int32_t m_iParsedChars;
   int32_t m_iParsedBytes;
+  FX_FILESIZE m_ParsedChars;
   std::vector<wchar_t> m_Buffer;
   int32_t m_iBufferChars;
   bool m_bEOS;
-  int32_t m_pStart;  // Start position in m_Buffer
-  int32_t m_pEnd;    // End position in m_Buffer
+  FX_FILESIZE m_Start;  // Start position in m_Buffer
+  FX_FILESIZE m_End;    // End position in m_Buffer
   FDE_XMLNODE m_CurNode;
   std::stack<FDE_XMLNODE> m_XMLNodeStack;
   CFX_BlockBuffer m_BlockBuffer;

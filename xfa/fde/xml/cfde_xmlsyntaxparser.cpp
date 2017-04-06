@@ -51,7 +51,8 @@ bool IsXMLNameChar(wchar_t ch, bool bFirstChar) {
   return false;
 }
 
-int32_t GetUTF8EncodeLength(const std::vector<wchar_t>& src, int32_t iSrcLen) {
+int32_t GetUTF8EncodeLength(const std::vector<wchar_t>& src,
+                            FX_FILESIZE iSrcLen) {
   uint32_t unicode = 0;
   int32_t iDstNum = 0;
   const wchar_t* pSrc = src.data();
@@ -85,12 +86,12 @@ CFDE_XMLSyntaxParser::CFDE_XMLSyntaxParser(
       m_iCurrentPos(0),
       m_iCurrentNodeNum(-1),
       m_iLastNodeNum(-1),
-      m_iParsedChars(0),
       m_iParsedBytes(0),
+      m_ParsedChars(0),
       m_iBufferChars(0),
       m_bEOS(false),
-      m_pStart(0),
-      m_pEnd(0),
+      m_Start(0),
+      m_End(0),
       m_iAllocStep(m_BlockBuffer.GetAllocStep()),
       m_iDataLength(m_BlockBuffer.GetDataLengthRef()),
       m_pCurrentBlock(nullptr),
@@ -137,12 +138,12 @@ FDE_XmlSyntaxResult CFDE_XMLSyntaxParser::DoSyntaxParse() {
 
   FDE_XmlSyntaxResult syntaxParserResult = FDE_XmlSyntaxResult::None;
   while (true) {
-    if (m_pStart >= m_pEnd) {
+    if (m_Start >= m_End) {
       if (m_bEOS || m_iCurrentPos >= iStreamLength) {
         m_syntaxParserResult = FDE_XmlSyntaxResult::EndOfString;
         return m_syntaxParserResult;
       }
-      m_iParsedChars += m_pEnd;
+      m_ParsedChars += m_End;
       m_iParsedBytes = m_iCurrentPos;
       if (m_pStream->GetPosition() != m_iCurrentPos) {
         m_pStream->Seek(FX_STREAMSEEK_Begin, m_iCurrentPos);
@@ -156,12 +157,12 @@ FDE_XmlSyntaxResult CFDE_XMLSyntaxParser::DoSyntaxParse() {
         return m_syntaxParserResult;
       }
       m_iCurrentPos = iPos;
-      m_pStart = 0;
-      m_pEnd = m_iBufferChars;
+      m_Start = 0;
+      m_End = m_iBufferChars;
     }
 
-    while (m_pStart < m_pEnd) {
-      wchar_t ch = m_Buffer[m_pStart];
+    while (m_Start < m_End) {
+      wchar_t ch = m_Buffer[m_Start];
       switch (m_syntaxParserState) {
         case FDE_XmlSyntaxState::Text:
           if (ch == L'<') {
@@ -173,7 +174,7 @@ FDE_XmlSyntaxResult CFDE_XMLSyntaxParser::DoSyntaxParse() {
               m_iEntityStart = -1;
               syntaxParserResult = FDE_XmlSyntaxResult::Text;
             } else {
-              m_pStart++;
+              m_Start++;
               m_syntaxParserState = FDE_XmlSyntaxState::Node;
             }
           } else {
@@ -182,10 +183,10 @@ FDE_XmlSyntaxResult CFDE_XMLSyntaxParser::DoSyntaxParse() {
           break;
         case FDE_XmlSyntaxState::Node:
           if (ch == L'!') {
-            m_pStart++;
+            m_Start++;
             m_syntaxParserState = FDE_XmlSyntaxState::SkipCommentOrDecl;
           } else if (ch == L'/') {
-            m_pStart++;
+            m_Start++;
             m_syntaxParserState = FDE_XmlSyntaxState::CloseElement;
           } else if (ch == L'?') {
             m_iLastNodeNum++;
@@ -193,7 +194,7 @@ FDE_XmlSyntaxResult CFDE_XMLSyntaxParser::DoSyntaxParse() {
             m_CurNode.iNodeNum = m_iLastNodeNum;
             m_CurNode.eNodeType = FDE_XMLNODE_Instruction;
             m_XMLNodeStack.push(m_CurNode);
-            m_pStart++;
+            m_Start++;
             m_syntaxParserState = FDE_XmlSyntaxState::Target;
             syntaxParserResult = FDE_XmlSyntaxResult::InstructionOpen;
           } else {
@@ -234,12 +235,12 @@ FDE_XmlSyntaxResult CFDE_XMLSyntaxParser::DoSyntaxParse() {
             }
             m_pCurrentBlock[m_iIndexInBlock++] = ch;
             m_iDataLength++;
-            m_pStart++;
+            m_Start++;
           }
           break;
         case FDE_XmlSyntaxState::AttriName:
           if (m_iDataLength < 1 && IsXMLWhiteSpace(ch)) {
-            m_pStart++;
+            m_Start++;
             break;
           }
           if (!IsXMLNameChar(ch, m_iDataLength < 1)) {
@@ -252,7 +253,7 @@ FDE_XmlSyntaxResult CFDE_XMLSyntaxParser::DoSyntaxParse() {
               } else if (m_CurNode.eNodeType == FDE_XMLNODE_Instruction) {
                 if (ch == L'?') {
                   m_syntaxParserState = FDE_XmlSyntaxState::CloseInstruction;
-                  m_pStart++;
+                  m_Start++;
                 } else {
                   m_syntaxParserState = FDE_XmlSyntaxState::TargetData;
                 }
@@ -284,12 +285,12 @@ FDE_XmlSyntaxResult CFDE_XMLSyntaxParser::DoSyntaxParse() {
             }
             m_pCurrentBlock[m_iIndexInBlock++] = ch;
             m_iDataLength++;
-            m_pStart++;
+            m_Start++;
           }
           break;
         case FDE_XmlSyntaxState::AttriEqualSign:
           if (IsXMLWhiteSpace(ch)) {
-            m_pStart++;
+            m_Start++;
             break;
           }
           if (ch != L'=') {
@@ -301,12 +302,12 @@ FDE_XmlSyntaxResult CFDE_XMLSyntaxParser::DoSyntaxParse() {
             return m_syntaxParserResult;
           } else {
             m_syntaxParserState = FDE_XmlSyntaxState::AttriQuotation;
-            m_pStart++;
+            m_Start++;
           }
           break;
         case FDE_XmlSyntaxState::AttriQuotation:
           if (IsXMLWhiteSpace(ch)) {
-            m_pStart++;
+            m_Start++;
             break;
           }
           if (ch != L'\"' && ch != L'\'') {
@@ -315,7 +316,7 @@ FDE_XmlSyntaxResult CFDE_XMLSyntaxParser::DoSyntaxParse() {
           } else {
             m_wQuotationMark = ch;
             m_syntaxParserState = FDE_XmlSyntaxState::AttriValue;
-            m_pStart++;
+            m_Start++;
           }
           break;
         case FDE_XmlSyntaxState::AttriValue:
@@ -329,7 +330,7 @@ FDE_XmlSyntaxResult CFDE_XMLSyntaxParser::DoSyntaxParse() {
             m_BlockBuffer.Reset(true);
             std::tie(m_pCurrentBlock, m_iIndexInBlock) =
                 m_BlockBuffer.GetAvailableBlock();
-            m_pStart++;
+            m_Start++;
             m_syntaxParserState = FDE_XmlSyntaxState::AttriName;
             syntaxParserResult = FDE_XmlSyntaxResult::AttriValue;
           } else {
@@ -355,7 +356,7 @@ FDE_XmlSyntaxResult CFDE_XMLSyntaxParser::DoSyntaxParse() {
                 m_BlockBuffer.GetAvailableBlock();
             syntaxParserResult = FDE_XmlSyntaxResult::TargetData;
           } else {
-            m_pStart++;
+            m_Start++;
             if (m_XMLNodeStack.empty()) {
               m_syntaxParserResult = FDE_XmlSyntaxResult::Error;
               return m_syntaxParserResult;
@@ -385,7 +386,7 @@ FDE_XmlSyntaxResult CFDE_XMLSyntaxParser::DoSyntaxParse() {
             m_syntaxParserResult = FDE_XmlSyntaxResult::Error;
             return m_syntaxParserResult;
           }
-          m_pStart++;
+          m_Start++;
           break;
         case FDE_XmlSyntaxState::CloseElement:
           if (!IsXMLNameChar(ch, m_iDataLength < 1)) {
@@ -423,15 +424,15 @@ FDE_XmlSyntaxResult CFDE_XMLSyntaxParser::DoSyntaxParse() {
             m_pCurrentBlock[m_iIndexInBlock++] = ch;
             m_iDataLength++;
           }
-          m_pStart++;
+          m_Start++;
           break;
         case FDE_XmlSyntaxState::SkipCommentOrDecl:
-          if (FXSYS_wcsnicmp(m_Buffer.data() + m_pStart, L"--", 2) == 0) {
-            m_pStart += 2;
+          if (FXSYS_wcsnicmp(m_Buffer.data() + m_Start, L"--", 2) == 0) {
+            m_Start += 2;
             m_syntaxParserState = FDE_XmlSyntaxState::SkipComment;
-          } else if (FXSYS_wcsnicmp(m_Buffer.data() + m_pStart, L"[CDATA[",
-                                    7) == 0) {
-            m_pStart += 7;
+          } else if (FXSYS_wcsnicmp(m_Buffer.data() + m_Start, L"[CDATA[", 7) ==
+                     0) {
+            m_Start += 7;
             m_syntaxParserState = FDE_XmlSyntaxState::SkipCData;
           } else {
             m_syntaxParserState = FDE_XmlSyntaxState::SkipDeclNode;
@@ -440,8 +441,8 @@ FDE_XmlSyntaxResult CFDE_XMLSyntaxParser::DoSyntaxParse() {
           }
           break;
         case FDE_XmlSyntaxState::SkipCData: {
-          if (FXSYS_wcsnicmp(m_Buffer.data() + m_pStart, L"]]>", 3) == 0) {
-            m_pStart += 3;
+          if (FXSYS_wcsnicmp(m_Buffer.data() + m_Start, L"]]>", 3) == 0) {
+            m_Start += 3;
             syntaxParserResult = FDE_XmlSyntaxResult::CData;
             m_iTextDataLength = m_iDataLength;
             m_BlockBuffer.Reset(true);
@@ -457,13 +458,13 @@ FDE_XmlSyntaxResult CFDE_XMLSyntaxParser::DoSyntaxParse() {
             }
             m_pCurrentBlock[m_iIndexInBlock++] = ch;
             m_iDataLength++;
-            m_pStart++;
+            m_Start++;
           }
           break;
         }
         case FDE_XmlSyntaxState::SkipDeclNode:
           if (m_SkipChar == L'\'' || m_SkipChar == L'\"') {
-            m_pStart++;
+            m_Start++;
             if (ch != m_SkipChar)
               break;
 
@@ -523,21 +524,21 @@ FDE_XmlSyntaxResult CFDE_XMLSyntaxParser::DoSyntaxParse() {
               m_pCurrentBlock[m_iIndexInBlock++] = ch;
               m_iDataLength++;
             }
-            m_pStart++;
+            m_Start++;
           }
           break;
         case FDE_XmlSyntaxState::SkipComment:
-          if (FXSYS_wcsnicmp(m_Buffer.data() + m_pStart, L"-->", 3) == 0) {
-            m_pStart += 2;
+          if (FXSYS_wcsnicmp(m_Buffer.data() + m_Start, L"-->", 3) == 0) {
+            m_Start += 2;
             m_syntaxParserState = FDE_XmlSyntaxState::Text;
           }
 
-          m_pStart++;
+          m_Start++;
           break;
         case FDE_XmlSyntaxState::TargetData:
           if (IsXMLWhiteSpace(ch)) {
             if (m_iDataLength < 1) {
-              m_pStart++;
+              m_Start++;
               break;
             } else if (m_wQuotationMark == 0) {
               m_iTextDataLength = m_iDataLength;
@@ -545,25 +546,25 @@ FDE_XmlSyntaxResult CFDE_XMLSyntaxParser::DoSyntaxParse() {
               m_BlockBuffer.Reset(true);
               std::tie(m_pCurrentBlock, m_iIndexInBlock) =
                   m_BlockBuffer.GetAvailableBlock();
-              m_pStart++;
+              m_Start++;
               syntaxParserResult = FDE_XmlSyntaxResult::TargetData;
               break;
             }
           }
           if (ch == '?') {
             m_syntaxParserState = FDE_XmlSyntaxState::CloseInstruction;
-            m_pStart++;
+            m_Start++;
           } else if (ch == '\"') {
             if (m_wQuotationMark == 0) {
               m_wQuotationMark = ch;
-              m_pStart++;
+              m_Start++;
             } else if (ch == m_wQuotationMark) {
               m_iTextDataLength = m_iDataLength;
               m_wQuotationMark = 0;
               m_BlockBuffer.Reset(true);
               std::tie(m_pCurrentBlock, m_iIndexInBlock) =
                   m_BlockBuffer.GetAvailableBlock();
-              m_pStart++;
+              m_Start++;
               syntaxParserResult = FDE_XmlSyntaxResult::TargetData;
             } else {
               m_syntaxParserResult = FDE_XmlSyntaxResult::Error;
@@ -579,7 +580,7 @@ FDE_XmlSyntaxResult CFDE_XMLSyntaxParser::DoSyntaxParse() {
             }
             m_pCurrentBlock[m_iIndexInBlock++] = ch;
             m_iDataLength++;
-            m_pStart++;
+            m_Start++;
           }
           break;
         default:
@@ -612,8 +613,7 @@ FX_FILESIZE CFDE_XMLSyntaxParser::GetCurrentBinaryPos() const {
   if (!m_pStream)
     return 0;
 
-  int32_t nSrcLen = m_pStart;
-  int32_t nDstLen = GetUTF8EncodeLength(m_Buffer, nSrcLen);
+  int32_t nDstLen = GetUTF8EncodeLength(m_Buffer, m_Start);
   return m_iParsedBytes + nDstLen;
 }
 
@@ -690,5 +690,5 @@ void CFDE_XMLSyntaxParser::ParseTextChar(wchar_t character) {
   } else if (m_iEntityStart < 0 && character == L'&') {
     m_iEntityStart = m_iDataLength - 1;
   }
-  m_pStart++;
+  m_Start++;
 }
