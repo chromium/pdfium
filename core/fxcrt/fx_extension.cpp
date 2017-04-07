@@ -638,24 +638,24 @@ void FX_Random_GenerateCrypto(uint32_t* pBuffer, int32_t iCount) {
 
 #ifdef PDF_ENABLE_XFA
 static const char gs_FX_pHexChars[] = "0123456789ABCDEF";
+
 void FX_GUID_CreateV4(FX_GUID* pGUID) {
   FX_Random_GenerateMT((uint32_t*)pGUID, 4);
   uint8_t& b = ((uint8_t*)pGUID)[6];
   b = (b & 0x0F) | 0x40;
 }
-void FX_GUID_ToString(const FX_GUID* pGUID,
-                      CFX_ByteString& bsStr,
-                      bool bSeparator) {
+
+CFX_ByteString FX_GUID_ToString(const FX_GUID* pGUID, bool bSeparator) {
+  CFX_ByteString bsStr;
   char* pBuf = bsStr.GetBuffer(40);
-  uint8_t b;
   for (int32_t i = 0; i < 16; i++) {
-    b = ((const uint8_t*)pGUID)[i];
+    uint8_t b = reinterpret_cast<const uint8_t*>(pGUID)[i];
     *pBuf++ = gs_FX_pHexChars[b >> 4];
     *pBuf++ = gs_FX_pHexChars[b & 0x0F];
-    if (bSeparator && (i == 3 || i == 5 || i == 7 || i == 9)) {
+    if (bSeparator && (i == 3 || i == 5 || i == 7 || i == 9))
       *pBuf++ = L'-';
     }
-  }
   bsStr.ReleaseBuffer(bSeparator ? 36 : 32);
+  return bsStr;
 }
 #endif  // PDF_ENABLE_XFA

@@ -677,9 +677,9 @@ FXFT_Face CFX_FontMapper::FindSubstFont(const CFX_ByteString& name,
   if (!hFont)
     return nullptr;
 
-  m_pFontInfo->GetFaceName(hFont, SubstName);
+  m_pFontInfo->GetFaceName(hFont, &SubstName);
   if (Charset == FXFONT_DEFAULT_CHARSET)
-    m_pFontInfo->GetFontCharset(hFont, Charset);
+    m_pFontInfo->GetFontCharset(hFont, &Charset);
   uint32_t ttc_size = m_pFontInfo->GetFontData(hFont, kTableTTCF, nullptr, 0);
   uint32_t font_size = m_pFontInfo->GetFontData(hFont, 0, nullptr, 0);
   if (font_size == 0 && ttc_size == 0) {
@@ -742,7 +742,7 @@ FXFT_Face CFX_FontMapper::FindSubstFontByUnicode(uint32_t dwUnicode,
     face = GetCachedTTCFace(hFont, 0x74746366, ttc_size, font_size);
   } else {
     CFX_ByteString SubstName;
-    m_pFontInfo->GetFaceName(hFont, SubstName);
+    m_pFontInfo->GetFaceName(hFont, &SubstName);
     face = GetCachedFace(hFont, SubstName, weight, bItalic, font_size);
   }
   m_pFontInfo->DeleteFont(hFont);

@@ -65,16 +65,16 @@ CFX_ByteString CXML_Element::GetNamespaceURI(
 }
 
 void CXML_Element::GetAttrByIndex(int index,
-                                  CFX_ByteString& space,
-                                  CFX_ByteString& name,
-                                  CFX_WideString& value) const {
+                                  CFX_ByteString* space,
+                                  CFX_ByteString* name,
+                                  CFX_WideString* value) const {
   if (index < 0 || index >= m_AttrMap.GetSize())
     return;
 
   CXML_AttrItem& item = m_AttrMap.GetAt(index);
-  space = item.m_QSpaceName;
-  name = item.m_AttrName;
-  value = item.m_Value;
+  *space = item.m_QSpaceName;
+  *name = item.m_AttrName;
+  *value = item.m_Value;
 }
 
 bool CXML_Element::HasAttr(const CFX_ByteStringC& name) const {

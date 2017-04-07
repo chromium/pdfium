@@ -53,7 +53,7 @@ class CPWL_FontMap : public IPVT_FontMap {
  protected:
   virtual void Initialize();
   virtual CPDF_Document* GetDocument();
-  virtual CPDF_Font* FindFontSameCharset(CFX_ByteString& sFontAlias,
+  virtual CPDF_Font* FindFontSameCharset(CFX_ByteString* sFontAlias,
                                          int32_t nCharset);
   virtual void AddedFont(CPDF_Font* pFont, const CFX_ByteString& sFontAlias);
 

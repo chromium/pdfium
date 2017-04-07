@@ -41,8 +41,8 @@ class CFX_FolderFontInfo : public IFX_SystemFontInfo {
                        uint8_t* buffer,
                        uint32_t size) override;
   void DeleteFont(void* hFont) override;
-  bool GetFaceName(void* hFont, CFX_ByteString& name) override;
-  bool GetFontCharset(void* hFont, int& charset) override;
+  bool GetFaceName(void* hFont, CFX_ByteString* name) override;
+  bool GetFontCharset(void* hFont, int* charset) override;
 
  protected:
   void ScanPath(const CFX_ByteString& path);

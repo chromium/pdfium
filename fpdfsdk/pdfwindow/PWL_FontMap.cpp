@@ -180,10 +180,7 @@ int32_t CPWL_FontMap::GetFontIndex(const CFX_ByteString& sFontName,
     return nFontIndex;
 
   CFX_ByteString sAlias;
-  CPDF_Font* pFont = nullptr;
-  if (bFind)
-    pFont = FindFontSameCharset(sAlias, nCharset);
-
+  CPDF_Font* pFont = bFind ? FindFontSameCharset(&sAlias, nCharset) : nullptr;
   if (!pFont) {
     CFX_ByteString sTemp = sFontName;
     pFont = AddFontToDocument(GetDocument(), sTemp, nCharset);
@@ -193,7 +190,7 @@ int32_t CPWL_FontMap::GetFontIndex(const CFX_ByteString& sFontName,
   return AddFontData(pFont, sAlias, nCharset);
 }
 
-CPDF_Font* CPWL_FontMap::FindFontSameCharset(CFX_ByteString& sFontAlias,
+CPDF_Font* CPWL_FontMap::FindFontSameCharset(CFX_ByteString* sFontAlias,
                                              int32_t nCharset) {
   return nullptr;
 }

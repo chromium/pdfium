@@ -366,14 +366,14 @@ uint32_t CFX_FolderFontInfo::GetFontData(void* hFont,
 }
 
 void CFX_FolderFontInfo::DeleteFont(void* hFont) {}
-bool CFX_FolderFontInfo::GetFaceName(void* hFont, CFX_ByteString& name) {
+
+bool CFX_FolderFontInfo::GetFaceName(void* hFont, CFX_ByteString* name) {
   if (!hFont)
     return false;
-  CFX_FontFaceInfo* pFont = (CFX_FontFaceInfo*)hFont;
-  name = pFont->m_FaceName;
+  *name = static_cast<CFX_FontFaceInfo*>(hFont)->m_FaceName;
   return true;
 }
 
-bool CFX_FolderFontInfo::GetFontCharset(void* hFont, int& charset) {
+bool CFX_FolderFontInfo::GetFontCharset(void* hFont, int* charset) {
   return false;
 }

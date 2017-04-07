@@ -79,9 +79,10 @@ bool CheckSharedForm(const CXML_Element* pElement, CFX_ByteString cbName) {
   int count = pElement->CountAttrs();
   int i = 0;
   for (i = 0; i < count; i++) {
-    CFX_ByteString space, name;
+    CFX_ByteString space;
+    CFX_ByteString name;
     CFX_WideString value;
-    pElement->GetAttrByIndex(i, space, name, value);
+    pElement->GetAttrByIndex(i, &space, &name, &value);
     if (space == "xmlns" && name == "adhocwf" &&
         value == L"http://ns.adobe.com/AcrobatAdhocWorkflow/1.0/") {
       CXML_Element* pVersion =

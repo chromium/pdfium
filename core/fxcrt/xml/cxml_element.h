@@ -31,9 +31,9 @@ class CXML_Element {
   const CXML_Element* GetParent() const { return m_pParent; }
   uint32_t CountAttrs() const { return m_AttrMap.GetSize(); }
   void GetAttrByIndex(int index,
-                      CFX_ByteString& space,
-                      CFX_ByteString& name,
-                      CFX_WideString& value) const;
+                      CFX_ByteString* space,
+                      CFX_ByteString* name,
+                      CFX_WideString* value) const;
   bool HasAttr(const CFX_ByteStringC& qName) const;
   bool GetAttrValue(const CFX_ByteStringC& name,
                     CFX_WideString& attribute) const;

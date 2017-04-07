@@ -26,14 +26,14 @@ class CBA_FontMap : public CPWL_FontMap {
   // CPWL_FontMap:
   void Initialize() override;
   CPDF_Document* GetDocument() override;
-  CPDF_Font* FindFontSameCharset(CFX_ByteString& sFontAlias,
+  CPDF_Font* FindFontSameCharset(CFX_ByteString* sFontAlias,
                                  int32_t nCharset) override;
   void AddedFont(CPDF_Font* pFont, const CFX_ByteString& sFontAlias) override;
 
   CPDF_Font* FindResFontSameCharset(CPDF_Dictionary* pResDict,
-                                    CFX_ByteString& sFontAlias,
+                                    CFX_ByteString* sFontAlias,
                                     int32_t nCharset);
-  CPDF_Font* GetAnnotDefaultFont(CFX_ByteString& csNameTag);
+  CPDF_Font* GetAnnotDefaultFont(CFX_ByteString* csNameTag);
   void AddFontToAnnotDict(CPDF_Font* pFont, const CFX_ByteString& sAlias);
 
   CPDF_Document* m_pDocument;

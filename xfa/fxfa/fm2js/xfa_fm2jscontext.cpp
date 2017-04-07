@@ -4568,8 +4568,7 @@ void CXFA_FM2JSContext::Uuid(CFXJSE_Value* pThis,
   FX_GUID guid;
   FX_GUID_CreateV4(&guid);
 
-  CFX_ByteString bsUId;
-  FX_GUID_ToString(&guid, bsUId, !!iNum);
+  CFX_ByteString bsUId = FX_GUID_ToString(&guid, !!iNum);
   args.GetReturnValue()->SetString(bsUId.AsStringC());
 }
 

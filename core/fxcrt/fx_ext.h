@@ -98,9 +98,7 @@ struct FX_GUID {
   uint8_t data4[8];
 };
 void FX_GUID_CreateV4(FX_GUID* pGUID);
-void FX_GUID_ToString(const FX_GUID* pGUID,
-                      CFX_ByteString& bsStr,
-                      bool bSeparator = true);
+CFX_ByteString FX_GUID_ToString(const FX_GUID* pGUID, bool bSeparator = true);
 #endif  // PDF_ENABLE_XFA
 
 #endif  // CORE_FXCRT_FX_EXT_H_

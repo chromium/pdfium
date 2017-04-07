@@ -347,8 +347,8 @@ class CFX_Win32FontInfo final : public IFX_SystemFontInfo {
                        uint32_t table,
                        uint8_t* buffer,
                        uint32_t size) override;
-  bool GetFaceName(void* hFont, CFX_ByteString& name) override;
-  bool GetFontCharset(void* hFont, int& charset) override;
+  bool GetFaceName(void* hFont, CFX_ByteString* name) override;
+  bool GetFontCharset(void* hFont, int* charset) override;
   void DeleteFont(void* hFont) override;
 
   bool IsOpenTypeFromDiv(const LOGFONTA* plf);
@@ -664,7 +664,7 @@ uint32_t CFX_Win32FontInfo::GetFontData(void* hFont,
   return size;
 }
 
-bool CFX_Win32FontInfo::GetFaceName(void* hFont, CFX_ByteString& name) {
+bool CFX_Win32FontInfo::GetFaceName(void* hFont, CFX_ByteString* name) {
   char facebuf[100];
   HFONT hOldFont = (HFONT)::SelectObject(m_hDC, (HFONT)hFont);
   int ret = ::GetTextFaceA(m_hDC, 100, facebuf);
@@ -672,16 +672,16 @@ bool CFX_Win32FontInfo::GetFaceName(void* hFont, CFX_ByteString& name) {
   if (ret == 0) {
     return false;
   }
-  name = facebuf;
+  *name = facebuf;
   return true;
 }
 
-bool CFX_Win32FontInfo::GetFontCharset(void* hFont, int& charset) {
+bool CFX_Win32FontInfo::GetFontCharset(void* hFont, int* charset) {
   TEXTMETRIC tm;
   HFONT hOldFont = (HFONT)::SelectObject(m_hDC, (HFONT)hFont);
   ::GetTextMetrics(m_hDC, &tm);
   ::SelectObject(m_hDC, hOldFont);
-  charset = tm.tmCharSet;
+  *charset = tm.tmCharSet;
   return true;
 }
 
