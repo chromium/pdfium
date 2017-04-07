@@ -10,9 +10,12 @@
 /third_party/freetype/src
 /third_party/icu
 /third_party/instrumented_libraries
+/third_party/libjpeg_turbo
 /third_party/llvm
 /third_party/llvm-build
 /third_party/skia
+/third_party/yasm/binaries
+/third_party/yasm/source/patched-yasm
 /third_party/zlib
 /tools/clang
 /tools/generate_library_loader
@@ -20,13 +23,11 @@
 /tools/memory
 /v8
 /xcodebuild
-Makefile
 .DS_Store
 .gclient
 .gclient_entries
 *.aps
 *.filters
-*.mk
 *.opensdf
 *.pyc
 *.sdf
