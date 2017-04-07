@@ -507,110 +507,64 @@ void FlateUncompress(const uint8_t* src_buf,
                      uint8_t*& dest_buf,
                      uint32_t& dest_size,
                      uint32_t& offset) {
-  uint32_t guess_size = orig_size ? orig_size : src_size * 2;
-  const uint32_t kStepSize = 10240;
-  uint32_t alloc_step = orig_size ? kStepSize : std::min(src_size, kStepSize);
-  static const uint32_t kMaxInitialAllocSize = 10000000;
-  if (guess_size > kMaxInitialAllocSize) {
-    guess_size = kMaxInitialAllocSize;
-    alloc_step = kMaxInitialAllocSize;
-  }
-  uint32_t buf_size = guess_size;
-  uint32_t last_buf_size = buf_size;
-
   dest_buf = nullptr;
   dest_size = 0;
   void* context = FlateInit();
   if (!context)
     return;
 
+  FlateInput(context, src_buf, src_size);
+
+  const uint32_t kMaxInitialAllocSize = 10000000;
+  uint32_t guess_size = orig_size ? orig_size : src_size * 2;
+  guess_size = std::min(guess_size, kMaxInitialAllocSize);
+
+  uint32_t buf_size = guess_size;
+  uint32_t last_buf_size = buf_size;
   std::unique_ptr<uint8_t, FxFreeDeleter> guess_buf(
       FX_Alloc(uint8_t, guess_size + 1));
   guess_buf.get()[guess_size] = '\0';
 
-  FlateInput(context, src_buf, src_size);
-
-  if (src_size < kStepSize) {
-    // This is the old implementation.
-    uint8_t* cur_buf = guess_buf.get();
-    while (1) {
-      uint32_t ret = FlateOutput(context, cur_buf, buf_size);
-      if (ret != Z_OK)
-        break;
-      uint32_t avail_buf_size = FlateGetAvailOut(context);
-      if (avail_buf_size != 0)
-        break;
-
-      uint32_t old_size = guess_size;
-      guess_size += alloc_step;
-      if (guess_size < old_size || guess_size + 1 < guess_size) {
-        FlateEnd(context);
-        return;
-      }
-
-      {
-        uint8_t* new_buf =
-            FX_Realloc(uint8_t, guess_buf.release(), guess_size + 1);
-        guess_buf.reset(new_buf);
-      }
-      guess_buf.get()[guess_size] = '\0';
-      cur_buf = guess_buf.get() + old_size;
-      buf_size = guess_size - old_size;
-    }
-    dest_size = FlateGetPossiblyTruncatedTotalOut(context);
-    offset = FlateGetPossiblyTruncatedTotalIn(context);
-    if (guess_size / 2 > dest_size) {
-      {
-        uint8_t* new_buf =
-            FX_Realloc(uint8_t, guess_buf.release(), dest_size + 1);
-        guess_buf.reset(new_buf);
-      }
-      guess_size = dest_size;
-      guess_buf.get()[guess_size] = '\0';
-    }
-    dest_buf = guess_buf.release();
-  } else {
-    std::vector<uint8_t*> result_tmp_bufs;
-    uint8_t* cur_buf = guess_buf.release();
-    while (1) {
-      uint32_t ret = FlateOutput(context, cur_buf, buf_size);
-      uint32_t avail_buf_size = FlateGetAvailOut(context);
-      if (ret != Z_OK || avail_buf_size != 0) {
-        last_buf_size = buf_size - avail_buf_size;
-        result_tmp_bufs.push_back(cur_buf);
-        break;
-      }
+  std::vector<uint8_t*> result_tmp_bufs;
+  uint8_t* cur_buf = guess_buf.release();
+  while (1) {
+    uint32_t ret = FlateOutput(context, cur_buf, buf_size);
+    uint32_t avail_buf_size = FlateGetAvailOut(context);
+    if (ret != Z_OK || avail_buf_size != 0) {
+      last_buf_size = buf_size - avail_buf_size;
       result_tmp_bufs.push_back(cur_buf);
-      cur_buf = FX_Alloc(uint8_t, buf_size + 1);
-      cur_buf[buf_size] = '\0';
+      break;
     }
+    result_tmp_bufs.push_back(cur_buf);
+    cur_buf = FX_Alloc(uint8_t, buf_size + 1);
+    cur_buf[buf_size] = '\0';
+  }
 
-    // The TotalOut size returned from the library may not be big enough to
-    // handle the content the library returns. We can only handle items
-    // up to 4GB in size.
-    dest_size = FlateGetPossiblyTruncatedTotalOut(context);
-    offset = FlateGetPossiblyTruncatedTotalIn(context);
-    if (result_tmp_bufs.size() == 1) {
-      dest_buf = result_tmp_bufs[0];
-    } else {
-      uint8_t* result_buf = FX_Alloc(uint8_t, dest_size);
-      uint32_t result_pos = 0;
-      uint32_t remaining = dest_size;
-      for (size_t i = 0; i < result_tmp_bufs.size(); i++) {
-        uint8_t* tmp_buf = result_tmp_bufs[i];
-        uint32_t tmp_buf_size = buf_size;
-        if (i == result_tmp_bufs.size() - 1)
-          tmp_buf_size = last_buf_size;
+  // The TotalOut size returned from the library may not be big enough to
+  // handle the content the library returns. We can only handle items
+  // up to 4GB in size.
+  dest_size = FlateGetPossiblyTruncatedTotalOut(context);
+  offset = FlateGetPossiblyTruncatedTotalIn(context);
+  if (result_tmp_bufs.size() == 1) {
+    dest_buf = result_tmp_bufs[0];
+  } else {
+    uint8_t* result_buf = FX_Alloc(uint8_t, dest_size);
+    uint32_t result_pos = 0;
+    uint32_t remaining = dest_size;
+    for (size_t i = 0; i < result_tmp_bufs.size(); i++) {
+      uint8_t* tmp_buf = result_tmp_bufs[i];
+      uint32_t tmp_buf_size = buf_size;
+      if (i == result_tmp_bufs.size() - 1)
+        tmp_buf_size = last_buf_size;
 
-        uint32_t cp_size = std::min(tmp_buf_size, remaining);
-        memcpy(result_buf + result_pos, tmp_buf, cp_size);
-        result_pos += cp_size;
-        remaining -= cp_size;
+      uint32_t cp_size = std::min(tmp_buf_size, remaining);
+      memcpy(result_buf + result_pos, tmp_buf, cp_size);
+      result_pos += cp_size;
+      remaining -= cp_size;
 
-        FX_Free(result_tmp_bufs[i]);
-      }
-      dest_buf = result_buf;
+      FX_Free(result_tmp_bufs[i]);
     }
+    dest_buf = result_buf;
   }
   FlateEnd(context);
 }
