@@ -26,7 +26,6 @@ void CFX_BitmapComposer::Compose(const CFX_RetainPtr<CFX_DIBitmap>& pDest,
                                  bool bFlipY,
                                  bool bRgbByteOrder,
                                  int alpha_flag,
-                                 void* pIccTransform,
                                  int blend_type) {
   m_pBitmap = pDest;
   m_pClipRgn = pClipRgn;
@@ -43,7 +42,6 @@ void CFX_BitmapComposer::Compose(const CFX_RetainPtr<CFX_DIBitmap>& pDest,
   m_bFlipX = bFlipX;
   m_bFlipY = bFlipY;
   m_AlphaFlag = alpha_flag;
-  m_pIccTransform = pIccTransform;
   m_bRgbByteOrder = bRgbByteOrder;
   m_BlendType = blend_type;
 }
@@ -55,7 +53,7 @@ bool CFX_BitmapComposer::SetInfo(int width,
   if (!m_Compositor.Init(m_pBitmap->GetFormat(), src_format, width, pSrcPalette,
                          m_MaskColor, FXDIB_BLEND_NORMAL,
                          m_pClipMask != nullptr || (m_BitmapAlpha < 255),
-                         m_bRgbByteOrder, m_AlphaFlag, m_pIccTransform)) {
+                         m_bRgbByteOrder, m_AlphaFlag)) {
     return false;
   }
   if (m_bVertical) {

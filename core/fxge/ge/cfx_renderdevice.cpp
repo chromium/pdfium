@@ -673,7 +673,7 @@ bool CFX_RenderDevice::FillRectWithBlend(const FX_RECT* pRect,
     return false;
 
   if (!bitmap->CompositeRect(0, 0, pRect->Width(), pRect->Height(), fill_color,
-                             0, nullptr)) {
+                             0)) {
     return false;
   }
   FX_RECT src_rect(0, 0, pRect->Width(), pRect->Height());
@@ -755,7 +755,7 @@ bool CFX_RenderDevice::SetDIBitsWithBlend(
     }
     if (!background->CompositeBitmap(0, 0, bg_pixel_width, bg_pixel_height,
                                      pBitmap, src_rect.left, src_rect.top,
-                                     blend_mode, nullptr, false, nullptr)) {
+                                     blend_mode, nullptr, false)) {
       return false;
     }
     FX_RECT rect(0, 0, bg_pixel_width, bg_pixel_height);
@@ -1042,8 +1042,7 @@ bool CFX_RenderDevice::DrawNormalText(int nChars,
     if (anti_alias == FXFT_RENDER_MODE_NORMAL) {
       if (!bitmap->CompositeMask(left.ValueOrDie(), top.ValueOrDie(), ncols,
                                  nrows, pGlyph, fill_color, 0, 0,
-                                 FXDIB_BLEND_NORMAL, nullptr, false, 0,
-                                 nullptr)) {
+                                 FXDIB_BLEND_NORMAL, nullptr, false, 0)) {
         return false;
       }
       continue;

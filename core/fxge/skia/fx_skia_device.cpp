@@ -1891,14 +1891,14 @@ bool CFX_SkiaDeviceDriver::SetDIBits(
 #ifdef _SKIA_SUPPORT_PATHS_
   Flush();
   if (pBitmap->IsAlphaMask()) {
-    return m_pBitmap->CompositeMask(
-        left, top, pSrcRect->Width(), pSrcRect->Height(), pBitmap, argb,
-        pSrcRect->left, pSrcRect->top, blend_type, m_pClipRgn.get(),
-        m_bRgbByteOrder, 0, nullptr);
+    return m_pBitmap->CompositeMask(left, top, pSrcRect->Width(),
+                                    pSrcRect->Height(), pBitmap, argb,
+                                    pSrcRect->left, pSrcRect->top, blend_type,
+                                    m_pClipRgn.get(), m_bRgbByteOrder, 0);
   }
   return m_pBitmap->CompositeBitmap(
       left, top, pSrcRect->Width(), pSrcRect->Height(), pBitmap, pSrcRect->left,
-      pSrcRect->top, blend_type, m_pClipRgn.get(), m_bRgbByteOrder, nullptr);
+      pSrcRect->top, blend_type, m_pClipRgn.get(), m_bRgbByteOrder);
 #endif  // _SKIA_SUPPORT_PATHS_
 }
 
@@ -1944,7 +1944,7 @@ bool CFX_SkiaDeviceDriver::StretchDIBits(
   dest_clip.Intersect(*pClipRect);
   CFX_BitmapComposer composer;
   composer.Compose(m_pBitmap, m_pClipRgn.get(), 255, argb, dest_clip, false,
-                   false, false, m_bRgbByteOrder, 0, nullptr, blend_type);
+                   false, false, m_bRgbByteOrder, 0, blend_type);
   dest_clip.Offset(-dest_rect.left, -dest_rect.top);
   CFX_ImageStretcher stretcher(&composer, pSource, dest_width, dest_height,
                                dest_clip, flags);
@@ -2011,7 +2011,7 @@ bool CFX_SkiaDeviceDriver::StartDIBits(
   m_pBitmap->UnPreMultiply();
   *handle = pdfium::MakeUnique<CFX_ImageRenderer>();
   (*handle)->Start(m_pBitmap, m_pClipRgn.get(), pSource, bitmap_alpha, argb,
-                   pMatrix, render_flags, m_bRgbByteOrder, 0, nullptr);
+                   pMatrix, render_flags, m_bRgbByteOrder);
 #endif  // _SKIA_SUPPORT_PATHS_
   return true;
 }

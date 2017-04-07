@@ -1530,7 +1530,7 @@ bool CFX_AggDeviceDriver::FillRectWithBlend(const FX_RECT* pRect,
                                 fill_color);
     } else {
       m_pBitmap->CompositeRect(draw_rect.left, draw_rect.top, draw_rect.Width(),
-                               draw_rect.Height(), fill_color, 0, nullptr);
+                               draw_rect.Height(), fill_color, 0);
     }
     return true;
   }
@@ -1538,7 +1538,7 @@ bool CFX_AggDeviceDriver::FillRectWithBlend(const FX_RECT* pRect,
                            draw_rect.Height(), m_pClipRgn->GetMask(),
                            fill_color, draw_rect.left - clip_rect.left,
                            draw_rect.top - clip_rect.top, FXDIB_BLEND_NORMAL,
-                           nullptr, m_bRgbByteOrder, 0, nullptr);
+                           nullptr, m_bRgbByteOrder, 0);
   return true;
 }
 
@@ -1600,14 +1600,14 @@ bool CFX_AggDeviceDriver::SetDIBits(const CFX_RetainPtr<CFX_DIBSource>& pBitmap,
     return true;
 
   if (pBitmap->IsAlphaMask()) {
-    return m_pBitmap->CompositeMask(
-        left, top, pSrcRect->Width(), pSrcRect->Height(), pBitmap, argb,
-        pSrcRect->left, pSrcRect->top, blend_type, m_pClipRgn.get(),
-        m_bRgbByteOrder, 0, nullptr);
+    return m_pBitmap->CompositeMask(left, top, pSrcRect->Width(),
+                                    pSrcRect->Height(), pBitmap, argb,
+                                    pSrcRect->left, pSrcRect->top, blend_type,
+                                    m_pClipRgn.get(), m_bRgbByteOrder, 0);
   }
   return m_pBitmap->CompositeBitmap(
       left, top, pSrcRect->Width(), pSrcRect->Height(), pBitmap, pSrcRect->left,
-      pSrcRect->top, blend_type, m_pClipRgn.get(), m_bRgbByteOrder, nullptr);
+      pSrcRect->top, blend_type, m_pClipRgn.get(), m_bRgbByteOrder);
 }
 
 bool CFX_AggDeviceDriver::StretchDIBits(
@@ -1635,7 +1635,7 @@ bool CFX_AggDeviceDriver::StretchDIBits(
   dest_clip.Intersect(*pClipRect);
   CFX_BitmapComposer composer;
   composer.Compose(m_pBitmap, m_pClipRgn.get(), 255, argb, dest_clip, false,
-                   false, false, m_bRgbByteOrder, 0, nullptr, blend_type);
+                   false, false, m_bRgbByteOrder, 0, blend_type);
   dest_clip.Offset(-dest_rect.left, -dest_rect.top);
   CFX_ImageStretcher stretcher(&composer, pSource, dest_width, dest_height,
                                dest_clip, flags);
@@ -1657,7 +1657,7 @@ bool CFX_AggDeviceDriver::StartDIBits(
 
   *handle = pdfium::MakeUnique<CFX_ImageRenderer>();
   (*handle)->Start(m_pBitmap, m_pClipRgn.get(), pSource, bitmap_alpha, argb,
-                   pMatrix, render_flags, m_bRgbByteOrder, 0, nullptr);
+                   pMatrix, render_flags, m_bRgbByteOrder);
   return true;
 }
 

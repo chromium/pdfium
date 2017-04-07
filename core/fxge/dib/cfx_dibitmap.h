@@ -72,19 +72,7 @@ class CFX_DIBitmap : public CFX_DIBSource {
                        int src_top,
                        int blend_type = FXDIB_BLEND_NORMAL,
                        const CFX_ClipRgn* pClipRgn = nullptr,
-                       bool bRgbByteOrder = false,
-                       void* pIccTransform = nullptr);
-
-  bool TransferMask(int dest_left,
-                    int dest_top,
-                    int width,
-                    int height,
-                    const CFX_RetainPtr<CFX_DIBSource>& pMask,
-                    uint32_t color,
-                    int src_left,
-                    int src_top,
-                    int alpha_flag = 0,
-                    void* pIccTransform = nullptr);
+                       bool bRgbByteOrder = false);
 
   bool CompositeMask(int dest_left,
                      int dest_top,
@@ -97,16 +85,14 @@ class CFX_DIBitmap : public CFX_DIBSource {
                      int blend_type = FXDIB_BLEND_NORMAL,
                      const CFX_ClipRgn* pClipRgn = nullptr,
                      bool bRgbByteOrder = false,
-                     int alpha_flag = 0,
-                     void* pIccTransform = nullptr);
+                     int alpha_flag = 0);
 
   bool CompositeRect(int dest_left,
                      int dest_top,
                      int width,
                      int height,
                      uint32_t color,
-                     int alpha_flag = 0,
-                     void* pIccTransform = nullptr);
+                     int alpha_flag);
 
   bool ConvertColorScale(uint32_t forecolor, uint32_t backcolor);
 
@@ -121,7 +107,6 @@ class CFX_DIBitmap : public CFX_DIBSource {
   CFX_DIBitmap();
   CFX_DIBitmap(const CFX_DIBitmap& src);
 
-  bool GetGrayData(void* pIccTransform = nullptr);
 #if defined _SKIA_SUPPORT_PATHS_
   enum class Format { kCleared, kPreMultiplied, kUnPreMultiplied };
 #endif

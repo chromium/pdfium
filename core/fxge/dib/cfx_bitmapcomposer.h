@@ -32,7 +32,6 @@ class CFX_BitmapComposer : public IFX_ScanlineComposer {
                bool bFlipY,
                bool bRgbByteOrder,
                int alpha_flag,
-               void* pIccTransform,
                int blend_type);
 
   // IFX_ScanlineComposer
@@ -71,7 +70,6 @@ class CFX_BitmapComposer : public IFX_ScanlineComposer {
   bool m_bFlipX;
   bool m_bFlipY;
   int m_AlphaFlag;
-  void* m_pIccTransform;
   bool m_bRgbByteOrder;
   int m_BlendType;
   std::vector<uint8_t> m_pScanlineV;

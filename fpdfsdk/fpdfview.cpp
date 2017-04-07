@@ -729,7 +729,7 @@ DLLEXPORT void STDCALL FPDF_RenderPage(HDC dc,
       pDst->Create(size_x, size_y, FXDIB_Rgb32);
       memset(pDst->GetBuffer(), -1, pitch * size_y);
       pDst->CompositeBitmap(0, 0, size_x, size_y, pBitmap, 0, 0,
-                            FXDIB_BLEND_NORMAL, nullptr, false, nullptr);
+                            FXDIB_BLEND_NORMAL, nullptr, false);
       WinDC.StretchDIBits(pDst, 0, 0, size_x, size_y);
     } else {
       WinDC.SetDIBits(pBitmap, 0, 0);

@@ -32,10 +32,7 @@ class CFX_ImageRenderer {
              uint32_t mask_color,
              const CFX_Matrix* pMatrix,
              uint32_t dib_flags,
-             bool bRgbByteOrder = false,
-             int alpha_flag = 0,
-             void* pIccTransform = nullptr,
-             int blend_type = FXDIB_BLEND_NORMAL);
+             bool bRgbByteOrder);
 
   bool Continue(IFX_Pause* pPause);
 
@@ -52,7 +49,6 @@ class CFX_ImageRenderer {
   FX_RECT m_ClipBox;
   uint32_t m_Flags;
   int m_AlphaFlag;
-  void* m_pIccTransform;
   bool m_bRgbByteOrder;
   int m_BlendType;
 };

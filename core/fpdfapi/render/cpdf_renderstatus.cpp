@@ -1965,7 +1965,7 @@ bool CPDF_RenderStatus::ProcessType3Text(CPDF_TextObject* textobj,
                            glyph.m_pGlyph->m_pBitmap->GetWidth(),
                            glyph.m_pGlyph->m_pBitmap->GetHeight(),
                            glyph.m_pGlyph->m_pBitmap, fill_argb, 0, 0,
-                           FXDIB_BLEND_NORMAL, nullptr, false, 0, nullptr);
+                           FXDIB_BLEND_NORMAL, nullptr, false, 0);
   }
   m_pDevice->SetBitMask(pBitmap, rect.left, rect.top, fill_argb);
   return true;

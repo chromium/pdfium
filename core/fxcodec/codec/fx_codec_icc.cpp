@@ -204,6 +204,8 @@ void IccLib_TranslateImage(void* pTransform,
                            unsigned char* pDest,
                            const unsigned char* pSrc,
                            int32_t pixels) {
+  if (!pTransform)
+    return;
   cmsDoTransform(((CLcmsCmm*)pTransform)->m_hTransform, pSrc, pDest, pixels);
 }
 

@@ -1224,8 +1224,7 @@ bool CGdiDisplayDriver::SetDIBits(const CFX_RetainPtr<CFX_DIBSource>& pSource,
       if (!background->Create(width, height, FXDIB_Rgb32) ||
           !GetDIBits(background, left, top) ||
           !background->CompositeMask(0, 0, width, height, pSource, color, 0, 0,
-                                     FXDIB_BLEND_NORMAL, nullptr, false, 0,
-                                     nullptr)) {
+                                     FXDIB_BLEND_NORMAL, nullptr, false, 0)) {
         return false;
       }
       FX_RECT src_rect(0, 0, width, height);
@@ -1244,7 +1243,7 @@ bool CGdiDisplayDriver::SetDIBits(const CFX_RetainPtr<CFX_DIBSource>& pSource,
         !GetDIBits(bitmap, left, top) ||
         !bitmap->CompositeBitmap(0, 0, width, height, pSource, pSrcRect->left,
                                  pSrcRect->top, FXDIB_BLEND_NORMAL, nullptr,
-                                 false, nullptr)) {
+                                 false)) {
       return false;
     }
     FX_RECT src_rect(0, 0, width, height);
@@ -1321,7 +1320,7 @@ bool CGdiDisplayDriver::StretchDIBits(
                    image_rect.top + clip_rect.top) ||
         !background->CompositeMask(0, 0, clip_width, clip_height, pStretched,
                                    color, 0, 0, FXDIB_BLEND_NORMAL, nullptr,
-                                   false, 0, nullptr)) {
+                                   false, 0)) {
       return false;
     }
 

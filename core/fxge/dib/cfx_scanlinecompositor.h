@@ -23,8 +23,7 @@ class CFX_ScanlineCompositor {
             int blend_type,
             bool bClip,
             bool bRgbByteOrder = false,
-            int alpha_flag = 0,
-            void* pIccTransform = nullptr);
+            int alpha_flag = 0);
 
   void CompositeRgbBitmapLine(uint8_t* dest_scan,
                               const uint8_t* src_scan,
@@ -65,7 +64,6 @@ class CFX_ScanlineCompositor {
   int m_MaskBlue;
   int m_MaskBlack;
   int m_BlendType;
-  void* m_pIccTransform;
   uint8_t* m_pCacheScanline;
   int m_CacheSize;
   bool m_bRgbByteOrder;
