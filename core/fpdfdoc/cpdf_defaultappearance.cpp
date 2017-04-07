@@ -36,20 +36,19 @@ CFX_ByteString CPDF_DefaultAppearance::GetFontString() {
   return csFont;
 }
 
-void CPDF_DefaultAppearance::GetFont(CFX_ByteString& csFontNameTag,
-                                     float& fFontSize) {
-  csFontNameTag = "";
-  fFontSize = 0;
+CFX_ByteString CPDF_DefaultAppearance::GetFont(float* fFontSize) {
+  *fFontSize = 0.0f;
   if (m_csDA.IsEmpty())
-    return;
+    return CFX_ByteString();
 
+  CFX_ByteString csFontNameTag;
   CPDF_SimpleParser syntax(m_csDA.AsStringC());
   if (syntax.FindTagParamFromStart("Tf", 2)) {
     csFontNameTag = CFX_ByteString(syntax.GetWord());
     csFontNameTag.Delete(0, 1);
-    fFontSize = FX_atof(syntax.GetWord());
+    *fFontSize = FX_atof(syntax.GetWord());
   }
-  csFontNameTag = PDF_NameDecode(csFontNameTag);
+  return PDF_NameDecode(csFontNameTag);
 }
 
 bool CPDF_DefaultAppearance::HasColor(PaintOperation nOperation) {

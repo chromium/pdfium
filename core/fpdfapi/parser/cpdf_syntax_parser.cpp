@@ -405,13 +405,13 @@ std::unique_ptr<CPDF_Object> CPDF_SyntaxParser::GetObject(
   if (word == "(") {
     CFX_ByteString str = ReadString();
     if (m_pCryptoHandler && bDecrypt)
-      m_pCryptoHandler->Decrypt(objnum, gennum, str);
+      str = m_pCryptoHandler->Decrypt(objnum, gennum, str);
     return pdfium::MakeUnique<CPDF_String>(m_pPool, str, false);
   }
   if (word == "<") {
     CFX_ByteString str = ReadHexString();
     if (m_pCryptoHandler && bDecrypt)
-      m_pCryptoHandler->Decrypt(objnum, gennum, str);
+      str = m_pCryptoHandler->Decrypt(objnum, gennum, str);
     return pdfium::MakeUnique<CPDF_String>(m_pPool, str, true);
   }
   if (word == "[") {
@@ -526,17 +526,17 @@ std::unique_ptr<CPDF_Object> CPDF_SyntaxParser::GetObjectForStrict(
   if (word == "(") {
     CFX_ByteString str = ReadString();
     if (m_pCryptoHandler)
-      m_pCryptoHandler->Decrypt(objnum, gennum, str);
+      str = m_pCryptoHandler->Decrypt(objnum, gennum, str);
     return pdfium::MakeUnique<CPDF_String>(m_pPool, str, false);
   }
   if (word == "<") {
     CFX_ByteString str = ReadHexString();
     if (m_pCryptoHandler)
-      m_pCryptoHandler->Decrypt(objnum, gennum, str);
+      str = m_pCryptoHandler->Decrypt(objnum, gennum, str);
     return pdfium::MakeUnique<CPDF_String>(m_pPool, str, true);
   }
   if (word == "[") {
-    std::unique_ptr<CPDF_Array> pArray = pdfium::MakeUnique<CPDF_Array>();
+    auto pArray = pdfium::MakeUnique<CPDF_Array>();
     while (std::unique_ptr<CPDF_Object> pObj =
                GetObject(pObjList, objnum, gennum, true)) {
       pArray->Add(std::move(pObj));

@@ -29,7 +29,7 @@ class IPDF_FormNotify;
 
 CPDF_Font* AddNativeInterFormFont(CPDF_Dictionary*& pFormDict,
                                   CPDF_Document* pDocument,
-                                  CFX_ByteString& csNameTag);
+                                  CFX_ByteString* csNameTag);
 
 class CPDF_InterForm {
  public:

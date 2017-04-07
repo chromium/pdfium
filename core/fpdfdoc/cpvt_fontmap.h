@@ -33,10 +33,9 @@ class CPVT_FontMap : public IPVT_FontMap {
   int32_t CharCodeFromUnicode(int32_t nFontIndex, uint16_t word) override;
   int32_t CharSetFromUnicode(uint16_t word, int32_t nOldCharset) override;
 
-  static void GetAnnotSysPDFFont(CPDF_Document* pDoc,
-                                 const CPDF_Dictionary* pResDict,
-                                 CPDF_Font*& pSysFont,
-                                 CFX_ByteString& sSysFontAlias);
+  static CPDF_Font* GetAnnotSysPDFFont(CPDF_Document* pDoc,
+                                       const CPDF_Dictionary* pResDict,
+                                       CFX_ByteString* sSysFontAlias);
 
  private:
   CPDF_Document* const m_pDocument;

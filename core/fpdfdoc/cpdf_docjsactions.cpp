@@ -16,11 +16,12 @@ int CPDF_DocJSActions::CountJSActions() const {
   return name_tree.GetCount();
 }
 
-CPDF_Action CPDF_DocJSActions::GetJSAction(int index,
-                                           CFX_ByteString& csName) const {
+CPDF_Action CPDF_DocJSActions::GetJSActionAndName(
+    int index,
+    CFX_ByteString* csName) const {
   ASSERT(m_pDocument);
   CPDF_NameTree name_tree(m_pDocument, "JavaScript");
-  CPDF_Object* pAction = name_tree.LookupValue(index, csName);
+  CPDF_Object* pAction = name_tree.LookupValueAndName(index, csName);
   return ToDictionary(pAction) ? CPDF_Action(pAction->GetDict())
                                : CPDF_Action();
 }

@@ -156,7 +156,7 @@ class CPDF_DataAvail final {
   int32_t CheckCrossRefStream(DownloadHints* pHints, FX_FILESIZE& xref_offset);
   bool IsLinearizedFile(uint8_t* pData, uint32_t dwLen);
   void SetStartOffset(FX_FILESIZE dwOffset);
-  bool GetNextToken(CFX_ByteString& token);
+  bool GetNextToken(CFX_ByteString* token);
   bool GetNextChar(uint8_t& ch);
   std::unique_ptr<CPDF_Object> ParseIndirectObjectAt(
       FX_FILESIZE pos,

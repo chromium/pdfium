@@ -1249,7 +1249,7 @@ DLLEXPORT FPDF_DEST STDCALL FPDF_GetNamedDest(FPDF_DOCUMENT document,
       i++;
     }
   } else {
-    pDestObj = nameTree.LookupValue(index, bsName);
+    pDestObj = nameTree.LookupValueAndName(index, &bsName);
   }
   if (!pDestObj)
     return nullptr;

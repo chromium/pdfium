@@ -55,7 +55,7 @@ CFX_WideString GetFieldValue(const CPDF_Dictionary& pFieldDict,
 void AddFont(CPDF_Dictionary*& pFormDict,
              CPDF_Document* pDocument,
              const CPDF_Font* pFont,
-             CFX_ByteString& csNameTag);
+             CFX_ByteString* csNameTag);
 
 void InitDict(CPDF_Dictionary*& pFormDict, CPDF_Document* pDocument) {
   if (!pDocument)
@@ -70,27 +70,24 @@ void InitDict(CPDF_Dictionary*& pFormDict, CPDF_Document* pDocument) {
   CFX_ByteString csDA;
   if (!pFormDict->KeyExist("DR")) {
     CFX_ByteString csBaseName;
-    CFX_ByteString csDefault;
     uint8_t charSet = CPDF_InterForm::GetNativeCharSet();
     CPDF_Font* pFont = CPDF_InterForm::AddStandardFont(pDocument, "Helvetica");
-    if (pFont) {
-      AddFont(pFormDict, pDocument, pFont, csBaseName);
-      csDefault = csBaseName;
-    }
+    if (pFont)
+      AddFont(pFormDict, pDocument, pFont, &csBaseName);
+
     if (charSet != FXFONT_ANSI_CHARSET) {
       CFX_ByteString csFontName =
           CPDF_InterForm::GetNativeFont(charSet, nullptr);
       if (!pFont || csFontName != "Helvetica") {
         pFont = CPDF_InterForm::AddNativeFont(pDocument);
         if (pFont) {
-          csBaseName = "";
-          AddFont(pFormDict, pDocument, pFont, csBaseName);
-          csDefault = csBaseName;
+          csBaseName.clear();
+          AddFont(pFormDict, pDocument, pFont, &csBaseName);
         }
       }
     }
     if (pFont)
-      csDA = "/" + PDF_NameEncode(csDefault) + " 0 Tf";
+      csDA = "/" + PDF_NameEncode(csBaseName) + " 0 Tf";
   }
   if (!csDA.IsEmpty())
     csDA += " ";
@@ -102,7 +99,7 @@ void InitDict(CPDF_Dictionary*& pFormDict, CPDF_Document* pDocument) {
 
 CPDF_Font* GetFont(CPDF_Dictionary* pFormDict,
                    CPDF_Document* pDocument,
-                   CFX_ByteString csNameTag) {
+                   const CFX_ByteString& csNameTag) {
   CFX_ByteString csAlias = PDF_NameDecode(csNameTag);
   if (!pFormDict || csAlias.IsEmpty())
     return nullptr;
@@ -127,7 +124,7 @@ CPDF_Font* GetFont(CPDF_Dictionary* pFormDict,
 CPDF_Font* GetNativeFont(CPDF_Dictionary* pFormDict,
                          CPDF_Document* pDocument,
                          uint8_t charSet,
-                         CFX_ByteString& csNameTag) {
+                         CFX_ByteString* csNameTag) {
   if (!pFormDict)
     return nullptr;
 
@@ -157,8 +154,8 @@ CPDF_Font* GetNativeFont(CPDF_Dictionary* pFormDict,
     if (!pSubst)
       continue;
 
-    if (pSubst->m_Charset == (int)charSet) {
-      csNameTag = csKey;
+    if (pSubst->m_Charset == static_cast<int>(charSet)) {
+      *csNameTag = csKey;
       return pFind;
     }
   }
@@ -167,7 +164,7 @@ CPDF_Font* GetNativeFont(CPDF_Dictionary* pFormDict,
 
 bool FindFont(CPDF_Dictionary* pFormDict,
               const CPDF_Font* pFont,
-              CFX_ByteString& csNameTag) {
+              CFX_ByteString* csNameTag) {
   if (!pFormDict || !pFont)
     return false;
 
@@ -189,7 +186,7 @@ bool FindFont(CPDF_Dictionary* pFormDict,
     if (pElement->GetStringFor("Type") != "Font")
       continue;
     if (pFont->GetFontDict() == pElement) {
-      csNameTag = csKey;
+      *csNameTag = csKey;
       return true;
     }
   }
@@ -200,7 +197,7 @@ bool FindFont(CPDF_Dictionary* pFormDict,
               CPDF_Document* pDocument,
               CFX_ByteString csFontName,
               CPDF_Font*& pFont,
-              CFX_ByteString& csNameTag) {
+              CFX_ByteString* csNameTag) {
   if (!pFormDict)
     return false;
 
@@ -211,6 +208,7 @@ bool FindFont(CPDF_Dictionary* pFormDict,
   CPDF_Dictionary* pFonts = pDR->GetDictFor("Font");
   if (!pFonts)
     return false;
+
   if (csFontName.GetLength() > 0)
     csFontName.Remove(' ');
 
@@ -232,7 +230,7 @@ bool FindFont(CPDF_Dictionary* pFormDict,
     csBaseFont = pFont->GetBaseFont();
     csBaseFont.Remove(' ');
     if (csBaseFont == csFontName) {
-      csNameTag = csKey;
+      *csNameTag = csKey;
       return true;
     }
   }
@@ -242,15 +240,15 @@ bool FindFont(CPDF_Dictionary* pFormDict,
 void AddFont(CPDF_Dictionary*& pFormDict,
              CPDF_Document* pDocument,
              const CPDF_Font* pFont,
-             CFX_ByteString& csNameTag) {
+             CFX_ByteString* csNameTag) {
   if (!pFont)
     return;
   if (!pFormDict)
     InitDict(pFormDict, pDocument);
 
   CFX_ByteString csTag;
-  if (FindFont(pFormDict, pFont, csTag)) {
-    csNameTag = csTag;
+  if (FindFont(pFormDict, pFont, &csTag)) {
+    *csNameTag = csTag;
     return;
   }
   if (!pFormDict)
@@ -264,27 +262,27 @@ void AddFont(CPDF_Dictionary*& pFormDict,
   if (!pFonts)
     pFonts = pDR->SetNewFor<CPDF_Dictionary>("Font");
 
-  if (csNameTag.IsEmpty())
-    csNameTag = pFont->GetBaseFont();
+  if (csNameTag->IsEmpty())
+    *csNameTag = pFont->GetBaseFont();
 
-  csNameTag.Remove(' ');
-  csNameTag = CPDF_InterForm::GenerateNewResourceName(pDR, "Font", 4,
-                                                      csNameTag.c_str());
-  pFonts->SetNewFor<CPDF_Reference>(csNameTag, pDocument,
+  csNameTag->Remove(' ');
+  *csNameTag = CPDF_InterForm::GenerateNewResourceName(pDR, "Font", 4,
+                                                       csNameTag->c_str());
+  pFonts->SetNewFor<CPDF_Reference>(*csNameTag, pDocument,
                                     pFont->GetFontDict()->GetObjNum());
 }
 
 CPDF_Font* AddNativeFont(CPDF_Dictionary*& pFormDict,
                          CPDF_Document* pDocument,
                          uint8_t charSet,
-                         CFX_ByteString& csNameTag) {
+                         CFX_ByteString* csNameTag) {
   if (!pFormDict)
     InitDict(pFormDict, pDocument);
 
   CFX_ByteString csTemp;
-  CPDF_Font* pFont = GetNativeFont(pFormDict, pDocument, charSet, csTemp);
+  CPDF_Font* pFont = GetNativeFont(pFormDict, pDocument, charSet, &csTemp);
   if (pFont) {
-    csNameTag = csTemp;
+    *csNameTag = csTemp;
     return pFont;
   }
   CFX_ByteString csFontName = CPDF_InterForm::GetNativeFont(charSet, nullptr);
@@ -565,7 +563,7 @@ CFieldTree::Node* CFieldTree::FindNode(const CFX_WideString& full_name) {
 
 CPDF_Font* AddNativeInterFormFont(CPDF_Dictionary*& pFormDict,
                                   CPDF_Document* pDocument,
-                                  CFX_ByteString& csNameTag) {
+                                  CFX_ByteString* csNameTag) {
   uint8_t charSet = CPDF_InterForm::GetNativeCharSet();
   return AddNativeFont(pFormDict, pDocument, charSet, csNameTag);
 }

@@ -17,7 +17,7 @@ class CPDF_DocJSActions {
   explicit CPDF_DocJSActions(CPDF_Document* pDoc);
 
   int CountJSActions() const;
-  CPDF_Action GetJSAction(int index, CFX_ByteString& csName) const;
+  CPDF_Action GetJSActionAndName(int index, CFX_ByteString* csName) const;
   CPDF_Action GetJSAction(const CFX_ByteString& csName) const;
   int FindJSAction(const CFX_ByteString& csName) const;
   CPDF_Document* GetDocument() const { return m_pDocument; }

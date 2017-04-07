@@ -62,7 +62,7 @@ uint32_t PDF_DecodeInlineStream(const uint8_t* src_buf,
                                 uint32_t limit,
                                 int width,
                                 int height,
-                                CFX_ByteString& decoder,
+                                const CFX_ByteString& decoder,
                                 CPDF_Dictionary* pParam,
                                 uint8_t*& dest_buf,
                                 uint32_t& dest_size) {

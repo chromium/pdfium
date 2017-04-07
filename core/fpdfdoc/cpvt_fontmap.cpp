@@ -25,25 +25,23 @@ CPVT_FontMap::CPVT_FontMap(CPDF_Document* pDoc,
 
 CPVT_FontMap::~CPVT_FontMap() {}
 
-void CPVT_FontMap::GetAnnotSysPDFFont(CPDF_Document* pDoc,
-                                      const CPDF_Dictionary* pResDict,
-                                      CPDF_Font*& pSysFont,
-                                      CFX_ByteString& sSysFontAlias) {
+CPDF_Font* CPVT_FontMap::GetAnnotSysPDFFont(CPDF_Document* pDoc,
+                                            const CPDF_Dictionary* pResDict,
+                                            CFX_ByteString* sSysFontAlias) {
   if (!pDoc || !pResDict)
-    return;
+    return nullptr;
 
-  CFX_ByteString sFontAlias;
   CPDF_Dictionary* pFormDict = pDoc->GetRoot()->GetDictFor("AcroForm");
   CPDF_Font* pPDFFont = AddNativeInterFormFont(pFormDict, pDoc, sSysFontAlias);
   if (!pPDFFont)
-    return;
+    return nullptr;
 
   CPDF_Dictionary* pFontList = pResDict->GetDictFor("Font");
-  if (pFontList && !pFontList->KeyExist(sSysFontAlias)) {
-    pFontList->SetNewFor<CPDF_Reference>(sSysFontAlias, pDoc,
+  if (pFontList && !pFontList->KeyExist(*sSysFontAlias)) {
+    pFontList->SetNewFor<CPDF_Reference>(*sSysFontAlias, pDoc,
                                          pPDFFont->GetFontDict()->GetObjNum());
   }
-  pSysFont = pPDFFont;
+  return pPDFFont;
 }
 
 CPDF_Font* CPVT_FontMap::GetPDFFont(int32_t nFontIndex) {
@@ -52,8 +50,8 @@ CPDF_Font* CPVT_FontMap::GetPDFFont(int32_t nFontIndex) {
       return m_pDefFont;
     case 1:
       if (!m_pSysFont) {
-        GetAnnotSysPDFFont(m_pDocument, m_pResDict, m_pSysFont,
-                           m_sSysFontAlias);
+        m_pSysFont =
+            GetAnnotSysPDFFont(m_pDocument, m_pResDict, &m_sSysFontAlias);
       }
       return m_pSysFont;
     default:
@@ -67,12 +65,12 @@ CFX_ByteString CPVT_FontMap::GetPDFFontAlias(int32_t nFontIndex) {
       return m_sDefFontAlias;
     case 1:
       if (!m_pSysFont) {
-        GetAnnotSysPDFFont(m_pDocument, m_pResDict, m_pSysFont,
-                           m_sSysFontAlias);
+        m_pSysFont =
+            GetAnnotSysPDFFont(m_pDocument, m_pResDict, &m_sSysFontAlias);
       }
       return m_sSysFontAlias;
     default:
-      return "";
+      return CFX_ByteString();
   }
 }
 

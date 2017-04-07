@@ -280,10 +280,9 @@ CPDF_DefaultAppearance CPDF_FormControl::GetDefaultAppearance() {
 }
 
 CPDF_Font* CPDF_FormControl::GetDefaultControlFont() {
-  CPDF_DefaultAppearance cDA = GetDefaultAppearance();
-  CFX_ByteString csFontNameTag;
   float fFontSize;
-  cDA.GetFont(csFontNameTag, fFontSize);
+  CPDF_DefaultAppearance cDA = GetDefaultAppearance();
+  CFX_ByteString csFontNameTag = cDA.GetFont(&fFontSize);
   if (csFontNameTag.IsEmpty())
     return nullptr;
 

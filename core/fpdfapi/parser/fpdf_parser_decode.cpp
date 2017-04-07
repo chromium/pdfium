@@ -327,7 +327,7 @@ bool PDF_DataDecode(const uint8_t* src_buf,
                     const CPDF_Dictionary* pDict,
                     uint8_t*& dest_buf,
                     uint32_t& dest_size,
-                    CFX_ByteString& ImageEncoding,
+                    CFX_ByteString* ImageEncoding,
                     CPDF_Dictionary*& pImageParms,
                     uint32_t last_estimated_size,
                     bool bImageAcc) {
@@ -362,8 +362,8 @@ bool PDF_DataDecode(const uint8_t* src_buf,
     int offset = -1;
     if (decoder == "FlateDecode" || decoder == "Fl") {
       if (bImageAcc && i == nSize - 1) {
-        ImageEncoding = "FlateDecode";
-        dest_buf = (uint8_t*)last_buf;
+        *ImageEncoding = "FlateDecode";
+        dest_buf = last_buf;
         dest_size = last_size;
         pImageParms = pParam;
         return true;
@@ -379,8 +379,8 @@ bool PDF_DataDecode(const uint8_t* src_buf,
       offset = HexDecode(last_buf, last_size, new_buf, new_size);
     } else if (decoder == "RunLengthDecode" || decoder == "RL") {
       if (bImageAcc && i == nSize - 1) {
-        ImageEncoding = "RunLengthDecode";
-        dest_buf = (uint8_t*)last_buf;
+        *ImageEncoding = "RunLengthDecode";
+        dest_buf = last_buf;
         dest_size = last_size;
         pImageParms = pParam;
         return true;
@@ -395,9 +395,9 @@ bool PDF_DataDecode(const uint8_t* src_buf,
       } else if (decoder == "CCF") {
         decoder = "CCITTFaxDecode";
       }
-      ImageEncoding = decoder;
+      *ImageEncoding = decoder;
       pImageParms = pParam;
-      dest_buf = (uint8_t*)last_buf;
+      dest_buf = last_buf;
       dest_size = last_size;
       if (CPDF_Array* pDecoders = pDecoder->AsArray())
         pDecoders->RemoveAt(i + 1, pDecoders->GetCount() - i - 1);
@@ -413,7 +413,7 @@ bool PDF_DataDecode(const uint8_t* src_buf,
     last_buf = new_buf;
     last_size = new_size;
   }
-  ImageEncoding = "";
+  *ImageEncoding = "";
   pImageParms = nullptr;
   dest_buf = last_buf;
   dest_size = last_size;

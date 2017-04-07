@@ -87,7 +87,7 @@ bool PDF_DataDecode(const uint8_t* src_buf,
                     const CPDF_Dictionary* pDict,
                     uint8_t*& dest_buf,
                     uint32_t& dest_size,
-                    CFX_ByteString& ImageEncoding,
+                    CFX_ByteString* ImageEncoding,
                     CPDF_Dictionary*& pImageParms,
                     uint32_t estimated_size,
                     bool bImageAcc);

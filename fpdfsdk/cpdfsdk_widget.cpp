@@ -588,10 +588,8 @@ bool CPDFSDK_Widget::GetTextColor(FX_COLORREF& color) const {
 float CPDFSDK_Widget::GetFontSize() const {
   CPDF_FormControl* pFormCtrl = GetFormControl();
   CPDF_DefaultAppearance pDa = pFormCtrl->GetDefaultAppearance();
-  CFX_ByteString csFont = "";
-  float fFontSize = 0.0f;
-  pDa.GetFont(csFont, fFontSize);
-
+  float fFontSize;
+  pDa.GetFont(&fFontSize);
   return fFontSize;
 }
 
@@ -930,21 +928,20 @@ void CPDFSDK_Widget::ResetAppearance_PushButton() {
 
   CPWL_Color crText(COLORTYPE_GRAY, 0);
 
-  float fFontSize = 12.0f;
   CFX_ByteString csNameTag;
-
   CPDF_DefaultAppearance da = pControl->GetDefaultAppearance();
   if (da.HasColor()) {
     da.GetColor(iColorType, fc);
     crText = CPWL_Color(iColorType, fc[0], fc[1], fc[2], fc[3]);
   }
-
+  float fFontSize = 12.0f;
   if (da.HasFont())
-    da.GetFont(csNameTag, fFontSize);
+    csNameTag = da.GetFont(&fFontSize);
 
   CFX_WideString csWCaption;
-  CFX_WideString csNormalCaption, csRolloverCaption, csDownCaption;
-
+  CFX_WideString csNormalCaption;
+  CFX_WideString csRolloverCaption;
+  CFX_WideString csDownCaption;
   if (pControl->HasMKEntry("CA"))
     csNormalCaption = pControl->GetNormalCaption();
 
@@ -957,7 +954,6 @@ void CPDFSDK_Widget::ResetAppearance_PushButton() {
   CPDF_Stream* pNormalIcon = nullptr;
   CPDF_Stream* pRolloverIcon = nullptr;
   CPDF_Stream* pDownIcon = nullptr;
-
   if (pControl->HasMKEntry("I"))
     pNormalIcon = pControl->GetNormalIcon();
 

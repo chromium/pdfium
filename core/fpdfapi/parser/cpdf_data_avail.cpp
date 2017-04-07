@@ -837,7 +837,7 @@ void CPDF_DataAvail::SetStartOffset(FX_FILESIZE dwOffset) {
   m_Pos = dwOffset;
 }
 
-bool CPDF_DataAvail::GetNextToken(CFX_ByteString& token) {
+bool CPDF_DataAvail::GetNextToken(CFX_ByteString* token) {
   uint8_t ch;
   if (!GetNextChar(ch))
     return false;
@@ -870,11 +870,9 @@ bool CPDF_DataAvail::GetNextToken(CFX_ByteString& token) {
 
         if (!PDFCharIsOther(ch) && !PDFCharIsNumeric(ch)) {
           m_Pos--;
-          CFX_ByteString ret(buffer, index);
-          token = ret;
+          *token = CFX_ByteString(buffer, index);
           return true;
         }
-
         if (index < sizeof(buffer))
           buffer[index++] = ch;
       }
@@ -895,9 +893,7 @@ bool CPDF_DataAvail::GetNextToken(CFX_ByteString& token) {
       else
         m_Pos--;
     }
-
-    CFX_ByteString ret(buffer, index);
-    token = ret;
+    *token = CFX_ByteString(buffer, index);
     return true;
   }
 
@@ -914,7 +910,7 @@ bool CPDF_DataAvail::GetNextToken(CFX_ByteString& token) {
     }
   }
 
-  token = CFX_ByteString(buffer, index);
+  *token = CFX_ByteString(buffer, index);
   return true;
 }
 
@@ -948,8 +944,9 @@ bool CPDF_DataAvail::CheckCrossRefItem(DownloadHints* pHints) {
   int32_t iSize = 0;
   CFX_ByteString token;
   while (1) {
-    if (!GetNextToken(token)) {
-      iSize = (int32_t)(m_Pos + 512 > m_dwFileLen ? m_dwFileLen - m_Pos : 512);
+    if (!GetNextToken(&token)) {
+      iSize = static_cast<int32_t>(
+          m_Pos + 512 > m_dwFileLen ? m_dwFileLen - m_Pos : 512);
       pHints->AddSegment(m_Pos, iSize);
       return false;
     }
@@ -983,8 +980,9 @@ bool CPDF_DataAvail::CheckAllCrossRefStream(DownloadHints* pHints) {
 bool CPDF_DataAvail::CheckCrossRef(DownloadHints* pHints) {
   int32_t iSize = 0;
   CFX_ByteString token;
-  if (!GetNextToken(token)) {
-    iSize = (int32_t)(m_Pos + 512 > m_dwFileLen ? m_dwFileLen - m_Pos : 512);
+  if (!GetNextToken(&token)) {
+    iSize = static_cast<int32_t>(m_Pos + 512 > m_dwFileLen ? m_dwFileLen - m_Pos
+                                                           : 512);
     pHints->AddSegment(m_Pos, iSize);
     return false;
   }
@@ -995,8 +993,9 @@ bool CPDF_DataAvail::CheckCrossRef(DownloadHints* pHints) {
   }
 
   while (1) {
-    if (!GetNextToken(token)) {
-      iSize = (int32_t)(m_Pos + 512 > m_dwFileLen ? m_dwFileLen - m_Pos : 512);
+    if (!GetNextToken(&token)) {
+      iSize = static_cast<int32_t>(
+          m_Pos + 512 > m_dwFileLen ? m_dwFileLen - m_Pos : 512);
       pHints->AddSegment(m_Pos, iSize);
       m_docStatus = PDF_DATAAVAIL_CROSSREF_ITEM;
       return false;

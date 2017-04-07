@@ -19,7 +19,7 @@ class CPDF_NameTree {
   explicit CPDF_NameTree(CPDF_Dictionary* pRoot) : m_pRoot(pRoot) {}
   CPDF_NameTree(CPDF_Document* pDoc, const CFX_ByteString& category);
 
-  CPDF_Object* LookupValue(int nIndex, CFX_ByteString& csName) const;
+  CPDF_Object* LookupValueAndName(int nIndex, CFX_ByteString* csName) const;
   CPDF_Object* LookupValue(const CFX_ByteString& csName) const;
   CPDF_Array* LookupNamedDest(CPDF_Document* pDoc, const CFX_ByteString& sName);
 
