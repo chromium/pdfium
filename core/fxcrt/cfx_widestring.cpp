@@ -14,6 +14,7 @@
 #include "core/fxcrt/cfx_string_pool_template.h"
 #include "core/fxcrt/fx_basic.h"
 #include "core/fxcrt/fx_ext.h"
+#include "core/fxcrt/fx_safe_types.h"
 #include "third_party/base/numerics/safe_math.h"
 #include "third_party/base/stl_util.h"
 
@@ -296,13 +297,35 @@ CFX_WideString::CFX_WideString(const CFX_WideStringC& stringSrc) {
 
 CFX_WideString::CFX_WideString(const CFX_WideStringC& str1,
                                const CFX_WideStringC& str2) {
-  int nNewLen = str1.GetLength() + str2.GetLength();
+  FX_SAFE_STRSIZE nSafeLen = str1.GetLength();
+  nSafeLen += str2.GetLength();
+
+  FX_STRSIZE nNewLen = nSafeLen.ValueOrDie();
   if (nNewLen == 0)
     return;
 
   m_pData.Reset(StringData::Create(nNewLen));
   m_pData->CopyContents(str1.c_str(), str1.GetLength());
   m_pData->CopyContentsAt(str1.GetLength(), str2.c_str(), str2.GetLength());
+}
+
+CFX_WideString::CFX_WideString(
+    const std::initializer_list<CFX_WideStringC>& list) {
+  FX_SAFE_STRSIZE nSafeLen = 0;
+  for (const auto& item : list)
+    nSafeLen += item.GetLength();
+
+  FX_STRSIZE nNewLen = nSafeLen.ValueOrDie();
+  if (nNewLen == 0)
+    return;
+
+  m_pData.Reset(StringData::Create(nNewLen));
+
+  FX_STRSIZE nOffset = 0;
+  for (const auto& item : list) {
+    m_pData->CopyContentsAt(nOffset, item.c_str(), item.GetLength());
+    nOffset += item.GetLength();
+  }
 }
 
 CFX_WideString::~CFX_WideString() {}

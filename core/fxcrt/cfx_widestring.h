@@ -8,6 +8,7 @@
 #define CORE_FXCRT_CFX_WIDESTRING_H_
 
 #include <functional>
+#include <utility>
 
 #include "core/fxcrt/cfx_retain_ptr.h"
 #include "core/fxcrt/cfx_string_c_template.h"
@@ -37,6 +38,7 @@ class CFX_WideString {
 
   explicit CFX_WideString(const CFX_WideStringC& str);
   CFX_WideString(const CFX_WideStringC& str1, const CFX_WideStringC& str2);
+  CFX_WideString(const std::initializer_list<CFX_WideStringC>& list);
 
   ~CFX_WideString();
 
