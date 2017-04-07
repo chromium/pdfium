@@ -66,7 +66,7 @@ class CPDF_Font {
   CPDF_Dictionary* GetFontDict() const { return m_pFontDict; }
   bool IsStandardFont() const;
   FXFT_Face GetFace() const { return m_Font.GetFace(); }
-  void AppendChar(CFX_ByteString& str, uint32_t charcode) const;
+  void AppendChar(CFX_ByteString* str, uint32_t charcode) const;
 
   void GetFontBBox(FX_RECT& rect) const { rect = m_FontBBox; }
   int GetTypeAscent() const { return m_Ascent; }

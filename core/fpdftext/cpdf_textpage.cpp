@@ -624,7 +624,7 @@ int CPDF_TextPage::GetCharWidth(uint32_t charCode, CPDF_Font* pFont) const {
     return w;
 
   CFX_ByteString str;
-  pFont->AppendChar(str, charCode);
+  pFont->AppendChar(&str, charCode);
   if (int w = pFont->GetStringWidth(str.c_str(), 1))
     return w;
 

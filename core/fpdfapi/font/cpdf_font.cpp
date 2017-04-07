@@ -136,14 +136,10 @@ int CPDF_Font::AppendChar(char* buf, uint32_t charcode) const {
   return 1;
 }
 
-void CPDF_Font::AppendChar(CFX_ByteString& str, uint32_t charcode) const {
+void CPDF_Font::AppendChar(CFX_ByteString* str, uint32_t charcode) const {
   char buf[4];
   int len = AppendChar(buf, charcode);
-  if (len == 1) {
-    str += buf[0];
-  } else {
-    str += CFX_ByteString(buf, len);
-  }
+  *str += CFX_ByteStringC(buf, len);
 }
 
 CFX_WideString CPDF_Font::UnicodeFromCharCode(uint32_t charcode) const {

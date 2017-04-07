@@ -26,13 +26,11 @@ CFX_ByteString GetPDFWordString(IPVT_FontMap* pFontMap,
     uint32_t dwCharCode = pPDFFont->IsUnicodeCompatible()
                               ? pPDFFont->CharCodeFromUnicode(Word)
                               : pFontMap->CharCodeFromUnicode(nFontIndex, Word);
-
     if (dwCharCode > 0) {
-      pPDFFont->AppendChar(sWord, dwCharCode);
+      pPDFFont->AppendChar(&sWord, dwCharCode);
       return sWord;
     }
   }
-
-  pPDFFont->AppendChar(sWord, Word);
+  pPDFFont->AppendChar(&sWord, Word);
   return sWord;
 }

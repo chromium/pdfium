@@ -1338,7 +1338,7 @@ CFX_ByteString CPVT_GenerateAP::GetPDFWordString(IPVT_FontMap* pFontMap,
     } else {
       uint32_t dwCharCode = pPDFFont->CharCodeFromUnicode(Word);
       if (dwCharCode != CPDF_Font::kInvalidCharCode)
-        pPDFFont->AppendChar(sWord, dwCharCode);
+        pPDFFont->AppendChar(&sWord, dwCharCode);
     }
   }
   return sWord;
