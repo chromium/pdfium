@@ -10,9 +10,11 @@
 /third_party/freetype/src
 /third_party/icu
 /third_party/instrumented_libraries
+/third_party/jinja2
 /third_party/libjpeg_turbo
 /third_party/llvm
 /third_party/llvm-build
+/third_party/markupsafe
 /third_party/skia
 /third_party/yasm/binaries
 /third_party/yasm/source/patched-yasm
