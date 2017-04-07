@@ -230,38 +230,14 @@ void RgbByteOrderTransferBitmap(const CFX_RetainPtr<CFX_DIBitmap>& pBitmap,
   }
 }
 
-FX_ARGB DefaultCMYK2ARGB(FX_CMYK cmyk, uint8_t alpha) {
-  uint8_t r, g, b;
-  AdobeCMYK_to_sRGB1(FXSYS_GetCValue(cmyk), FXSYS_GetMValue(cmyk),
-                     FXSYS_GetYValue(cmyk), FXSYS_GetKValue(cmyk), r, g, b);
-  return ArgbEncode(alpha, r, g, b);
-}
-
 bool DibSetPixel(const CFX_RetainPtr<CFX_DIBitmap>& pDevice,
                  int x,
                  int y,
-                 uint32_t color,
-                 int alpha_flag,
-                 void* pIccTransform) {
-  bool bObjCMYK = !!FXGETFLAG_COLORTYPE(alpha_flag);
-  int alpha = bObjCMYK ? FXGETFLAG_ALPHA_FILL(alpha_flag) : FXARGB_A(color);
-  if (pIccTransform) {
-    CCodec_IccModule* pIccModule =
-        CFX_GEModule::Get()->GetCodecModule()->GetIccModule();
-    color = bObjCMYK ? FXCMYK_TODIB(color) : FXARGB_TODIB(color);
-    uint8_t* pColor = reinterpret_cast<uint8_t*>(&color);
-    pIccModule->TranslateScanline(pIccTransform, pColor, pColor, 1);
-    color = bObjCMYK ? FXCMYK_TODIB(color) : FXARGB_TODIB(color);
-    if (!pDevice->IsCmykImage())
-      color = (color & 0xffffff) | (alpha << 24);
-  } else {
-    if (pDevice->IsCmykImage()) {
-      if (!bObjCMYK)
-        return false;
-    } else if (bObjCMYK) {
-      color = DefaultCMYK2ARGB(color, alpha);
-    }
-  }
+                 uint32_t color) {
+  int alpha = FXARGB_A(color);
+  if (pDevice->IsCmykImage())
+    return false;
+
   pDevice->SetPixel(x, y, color);
   if (pDevice->m_pAlphaMask)
     pDevice->m_pAlphaMask->SetPixel(x, y, alpha << 24);
@@ -408,9 +384,7 @@ class CFX_Renderer {
             const CFX_ClipRgn* pClipRgn,
             uint32_t color,
             bool bFullCover,
-            bool bRgbByteOrder,
-            int alpha_flag,
-            void* pIccTransform);
+            bool bRgbByteOrder);
 
   template <class Scanline>
   void render(const Scanline& sl);
@@ -909,9 +883,7 @@ bool CFX_Renderer::Init(const CFX_RetainPtr<CFX_DIBitmap>& pDevice,
                         const CFX_ClipRgn* pClipRgn,
                         uint32_t color,
                         bool bFullCover,
-                        bool bRgbByteOrder,
-                        int alpha_flag,
-                        void* pIccTransform) {
+                        bool bRgbByteOrder) {
   m_pDevice = pDevice;
   m_pClipRgn = pClipRgn;
   composite_span = nullptr;
@@ -928,105 +900,30 @@ bool CFX_Renderer::Init(const CFX_RetainPtr<CFX_DIBitmap>& pDevice,
   if (m_pClipRgn && m_pClipRgn->GetType() == CFX_ClipRgn::MaskF)
     m_pClipMask = m_pClipRgn->GetMask();
   m_bFullCover = bFullCover;
-  bool bObjectCMYK = !!FXGETFLAG_COLORTYPE(alpha_flag);
   bool bDeviceCMYK = pDevice->IsCmykImage();
-  m_Alpha = bObjectCMYK ? FXGETFLAG_ALPHA_FILL(alpha_flag) : FXARGB_A(color);
-  CCodec_IccModule* pIccModule = nullptr;
-  if (!CFX_GEModule::Get()->GetCodecModule() ||
-      !CFX_GEModule::Get()->GetCodecModule()->GetIccModule()) {
-    pIccTransform = nullptr;
-  } else {
-    pIccModule = CFX_GEModule::Get()->GetCodecModule()->GetIccModule();
-  }
+  m_Alpha = FXARGB_A(color);
   if (m_pDevice->GetBPP() == 8) {
     ASSERT(!m_bRgbByteOrder);
     composite_span = &CFX_Renderer::CompositeSpanGray;
-    if (m_pDevice->IsAlphaMask()) {
+    if (m_pDevice->IsAlphaMask())
       m_Gray = 255;
-    } else {
-      if (pIccTransform) {
-        uint8_t gray;
-        color = bObjectCMYK ? FXCMYK_TODIB(color) : FXARGB_TODIB(color);
-        pIccModule->TranslateScanline(pIccTransform, &gray,
-                                      (const uint8_t*)&color, 1);
-        m_Gray = gray;
-      } else {
-        if (bObjectCMYK) {
-          uint8_t r, g, b;
-          AdobeCMYK_to_sRGB1(FXSYS_GetCValue(color), FXSYS_GetMValue(color),
-                             FXSYS_GetYValue(color), FXSYS_GetKValue(color), r,
-                             g, b);
-          m_Gray = FXRGB2GRAY(r, g, b);
-        } else {
-          m_Gray =
-              FXRGB2GRAY(FXARGB_R(color), FXARGB_G(color), FXARGB_B(color));
-        }
-      }
-    }
+    else
+      m_Gray = FXRGB2GRAY(FXARGB_R(color), FXARGB_G(color), FXARGB_B(color));
     return true;
   }
   if (bDeviceCMYK) {
     ASSERT(!m_bRgbByteOrder);
     composite_span = &CFX_Renderer::CompositeSpanCMYK;
-    if (bObjectCMYK) {
-      m_Color = FXCMYK_TODIB(color);
-      if (pIccTransform) {
-        uint8_t* pColor = reinterpret_cast<uint8_t*>(&m_Color);
-        pIccModule->TranslateScanline(pIccTransform, pColor, pColor, 1);
-      }
-    } else {
-      if (!pIccTransform)
-        return false;
-
-      color = FXARGB_TODIB(color);
-      pIccModule->TranslateScanline(
-          pIccTransform, reinterpret_cast<uint8_t*>(&m_Color),
-          reinterpret_cast<const uint8_t*>(&color), 1);
-    }
-    uint8_t* pColor = reinterpret_cast<uint8_t*>(&m_Color);
-    m_Red = pColor[0];
-    m_Green = pColor[1];
-    m_Blue = pColor[2];
-    m_Gray = pColor[3];
-  } else {
-    composite_span = (pDevice->GetFormat() == FXDIB_Argb)
-                         ? &CFX_Renderer::CompositeSpanARGB
-                         : &CFX_Renderer::CompositeSpanRGB;
-    if (pIccTransform) {
-      color = bObjectCMYK ? FXCMYK_TODIB(color) : FXARGB_TODIB(color);
-      pIccModule->TranslateScanline(
-          pIccTransform, reinterpret_cast<uint8_t*>(&m_Color),
-          reinterpret_cast<const uint8_t*>(&color), 1);
-      uint8_t* pColor = reinterpret_cast<uint8_t*>(&m_Color);
-      pColor[3] = m_Alpha;
-      m_Red = pColor[2];
-      m_Green = pColor[1];
-      m_Blue = pColor[0];
-      if (m_bRgbByteOrder)
-        m_Color = FXARGB_TOBGRORDERDIB(FXARGB_TODIB(m_Color));
-    } else {
-      if (bObjectCMYK) {
-        uint8_t r, g, b;
-        AdobeCMYK_to_sRGB1(FXSYS_GetCValue(color), FXSYS_GetMValue(color),
-                           FXSYS_GetYValue(color), FXSYS_GetKValue(color), r, g,
-                           b);
-        m_Color = FXARGB_MAKE(m_Alpha, r, g, b);
-        if (m_bRgbByteOrder)
-          m_Color = FXARGB_TOBGRORDERDIB(m_Color);
-        else
-          m_Color = FXARGB_TODIB(m_Color);
-        m_Red = r;
-        m_Green = g;
-        m_Blue = b;
-      } else {
-        if (m_bRgbByteOrder)
-          m_Color = FXARGB_TOBGRORDERDIB(color);
-        else
-          m_Color = FXARGB_TODIB(color);
-        ArgbDecode(color, m_Alpha, m_Red, m_Green, m_Blue);
-      }
-    }
+    return false;
   }
+  composite_span = (pDevice->GetFormat() == FXDIB_Argb)
+                       ? &CFX_Renderer::CompositeSpanARGB
+                       : &CFX_Renderer::CompositeSpanRGB;
+  if (m_bRgbByteOrder)
+    m_Color = FXARGB_TOBGRORDERDIB(color);
+  else
+    m_Color = FXARGB_TODIB(color);
+  ArgbDecode(color, m_Alpha, m_Red, m_Green, m_Blue);
   if (m_pDevice->GetBPP() == 1)
     composite_span = &CFX_Renderer::CompositeSpan1bpp;
   return true;
@@ -1383,13 +1280,11 @@ bool CFX_AggDeviceDriver::RenderRasterizer(
     agg::rasterizer_scanline_aa& rasterizer,
     uint32_t color,
     bool bFullCover,
-    bool bGroupKnockout,
-    int alpha_flag,
-    void* pIccTransform) {
+    bool bGroupKnockout) {
   CFX_RetainPtr<CFX_DIBitmap> pt = bGroupKnockout ? m_pOriDevice : nullptr;
   CFX_Renderer render;
   if (!render.Init(m_pBitmap, pt, m_pClipRgn.get(), color, bFullCover,
-                   m_bRgbByteOrder, alpha_flag, pIccTransform)) {
+                   m_bRgbByteOrder)) {
     return false;
   }
   agg::scanline_u8 scanline;
@@ -1424,8 +1319,7 @@ bool CFX_AggDeviceDriver::DrawPath(const CFX_PathData* pPathData,
                                 ? agg::fill_non_zero
                                 : agg::fill_even_odd);
     if (!RenderRasterizer(rasterizer, fill_color,
-                          !!(fill_mode & FXFILL_FULLCOVER), false, 0,
-                          nullptr)) {
+                          !!(fill_mode & FXFILL_FULLCOVER), false)) {
       return false;
     }
   }
@@ -1443,8 +1337,7 @@ bool CFX_AggDeviceDriver::DrawPath(const CFX_PathData* pPathData,
     RasterizeStroke(&rasterizer, &path_data.m_PathData, nullptr, pGraphState, 1,
                     false, !!(fill_mode & FX_STROKE_TEXT_MODE));
     return RenderRasterizer(rasterizer, stroke_color,
-                            !!(fill_mode & FXFILL_FULLCOVER), m_bGroupKnockout,
-                            0, nullptr);
+                            !!(fill_mode & FXFILL_FULLCOVER), m_bGroupKnockout);
   }
   CFX_Matrix matrix1;
   CFX_Matrix matrix2;
@@ -1470,8 +1363,7 @@ bool CFX_AggDeviceDriver::DrawPath(const CFX_PathData* pPathData,
   RasterizeStroke(&rasterizer, &path_data.m_PathData, &matrix2, pGraphState,
                   matrix1.a, false, !!(fill_mode & FX_STROKE_TEXT_MODE));
   return RenderRasterizer(rasterizer, stroke_color,
-                          !!(fill_mode & FXFILL_FULLCOVER), m_bGroupKnockout, 0,
-                          nullptr);
+                          !!(fill_mode & FXFILL_FULLCOVER), m_bGroupKnockout);
 }
 
 bool CFX_AggDeviceDriver::SetPixel(int x, int y, uint32_t color) {
@@ -1480,7 +1372,7 @@ bool CFX_AggDeviceDriver::SetPixel(int x, int y, uint32_t color) {
 
   if (!m_pClipRgn) {
     if (!m_bRgbByteOrder)
-      return DibSetPixel(m_pBitmap, x, y, color, 0, nullptr);
+      return DibSetPixel(m_pBitmap, x, y, color);
     RgbByteOrderSetPixel(m_pBitmap, x, y, color);
     return true;
   }
@@ -1489,7 +1381,7 @@ bool CFX_AggDeviceDriver::SetPixel(int x, int y, uint32_t color) {
 
   if (m_pClipRgn->GetType() == CFX_ClipRgn::RectI) {
     if (!m_bRgbByteOrder)
-      return DibSetPixel(m_pBitmap, x, y, color, 0, nullptr);
+      return DibSetPixel(m_pBitmap, x, y, color);
     RgbByteOrderSetPixel(m_pBitmap, x, y, color);
     return true;
   }
@@ -1503,7 +1395,7 @@ bool CFX_AggDeviceDriver::SetPixel(int x, int y, uint32_t color) {
     RgbByteOrderSetPixel(m_pBitmap, x, y, color);
     return true;
   }
-  return DibSetPixel(m_pBitmap, x, y, color, 0, nullptr);
+  return DibSetPixel(m_pBitmap, x, y, color);
 }
 
 bool CFX_AggDeviceDriver::FillRectWithBlend(const FX_RECT* pRect,

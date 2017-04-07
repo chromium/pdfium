@@ -101,9 +101,7 @@ class CFX_AggDeviceDriver : public IFX_RenderDeviceDriver {
   bool RenderRasterizer(agg::rasterizer_scanline_aa& rasterizer,
                         uint32_t color,
                         bool bFullCover,
-                        bool bGroupKnockout,
-                        int alpha_flag,
-                        void* pIccTransform);
+                        bool bGroupKnockout);
 
   void SetClipMask(agg::rasterizer_scanline_aa& rasterizer);
 
