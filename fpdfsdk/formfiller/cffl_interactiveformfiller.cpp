@@ -458,7 +458,7 @@ bool CFFL_InteractiveFormFiller::IsReadOnly(CPDFSDK_Widget* pWidget) {
 
 bool CFFL_InteractiveFormFiller::IsFillingAllowed(CPDFSDK_Widget* pWidget) {
   if (pWidget->GetFieldType() == FIELDTYPE_PUSHBUTTON)
-    return true;
+    return false;
 
   CPDF_Page* pPage = pWidget->GetPDFPage();
   CPDF_Document* pDocument = pPage->m_pDocument;
