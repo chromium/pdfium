@@ -37,6 +37,17 @@ config("skia_config") {
 
   defines = []
 
+  if (is_win) {
+    defines += [ "SK_FREETYPE_MINIMUM_RUNTIME_VERSION=(((FREETYPE_MAJOR) * 0x01000000) | ((FREETYPE_MINOR) * 0x00010000) | ((FREETYPE_PATCH) * 0x00000100))" ]
+  }
+
+  if (is_component_build) {
+    defines += [
+      "SKIA_DLL",
+      "GR_GL_IGNORE_ES3_MSAA=0",
+    ]
+  }
+
   if (skia_support_gpu) {
     include_dirs += [
       "//third_party/skia/include/gpu",
@@ -89,6 +100,10 @@ config("skia_library_config") {
   }
 
   defines = []
+
+  if (is_component_build) {
+    defines += [ "SKIA_IMPLEMENTATION=1" ]
+  }
 
   if (current_cpu == "arm") {
     if (arm_use_neon) {
