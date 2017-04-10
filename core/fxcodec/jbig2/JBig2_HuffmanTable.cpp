@@ -97,11 +97,10 @@ bool CJBig2_HuffmanTable::ParseFromCodedBuffer(CJBig2_BitStream* pStream) {
     ++NTEMP;
   }
 
-  InitCodes();
-  return true;
+  return InitCodes();
 }
 
-void CJBig2_HuffmanTable::InitCodes() {
+bool CJBig2_HuffmanTable::InitCodes() {
   int lenmax = 0;
   for (uint32_t i = 0; i < NTEMP; ++i)
     lenmax = std::max(PREFLEN[i], lenmax);
@@ -115,13 +114,21 @@ void CJBig2_HuffmanTable::InitCodes() {
   FIRSTCODE[0] = 0;
   LENCOUNT[0] = 0;
   for (int i = 1; i <= lenmax; ++i) {
-    FIRSTCODE[i] = (FIRSTCODE[i - 1] + LENCOUNT[i - 1]) << 1;
+    pdfium::base::CheckedNumeric<int> shifted;
+    shifted = FIRSTCODE[i - 1] + LENCOUNT[i - 1];
+    shifted <<= 1;
+    if (!shifted.IsValid())
+      return false;
+
+    FIRSTCODE[i] = shifted.ValueOrDie();
     int CURCODE = FIRSTCODE[i];
     for (uint32_t j = 0; j < NTEMP; ++j) {
       if (PREFLEN[j] == i)
         CODES[j] = CURCODE++;
     }
   }
+
+  return true;
 }
 
 void CJBig2_HuffmanTable::ExtendBuffers(bool increment) {
