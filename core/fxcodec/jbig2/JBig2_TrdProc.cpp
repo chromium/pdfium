@@ -69,7 +69,7 @@ CJBig2_Image* CJBig2_TRDProc::decode_Huffman(CJBig2_BitStream* pStream,
         CURT = nVal;
       }
       int32_t TI = STRIPT + CURT;
-      int32_t nVal = 0;
+      pdfium::base::CheckedNumeric<int32_t> nVal = 0;
       int32_t nBits = 0;
       uint32_t IDI;
       for (;;) {
@@ -77,11 +77,15 @@ CJBig2_Image* CJBig2_TRDProc::decode_Huffman(CJBig2_BitStream* pStream,
         if (pStream->read1Bit(&nTmp) != 0)
           return nullptr;
 
-        nVal = (nVal << 1) | nTmp;
+        nVal <<= 1;
+        if (!nVal.IsValid())
+          return nullptr;
+
+        nVal |= nTmp;
         nBits++;
         for (IDI = 0; IDI < SBNUMSYMS; IDI++) {
           if ((nBits == SBSYMCODES[IDI].codelen) &&
-              (nVal == SBSYMCODES[IDI].code)) {
+              (nVal.ValueOrDie() == SBSYMCODES[IDI].code)) {
             break;
           }
         }
@@ -101,11 +105,12 @@ CJBig2_Image* CJBig2_TRDProc::decode_Huffman(CJBig2_BitStream* pStream,
         int32_t RDHI;
         int32_t RDXI;
         int32_t RDYI;
+        int32_t HUFFRSIZE;
         if ((pHuffmanDecoder->decodeAValue(SBHUFFRDW, &RDWI) != 0) ||
             (pHuffmanDecoder->decodeAValue(SBHUFFRDH, &RDHI) != 0) ||
             (pHuffmanDecoder->decodeAValue(SBHUFFRDX, &RDXI) != 0) ||
             (pHuffmanDecoder->decodeAValue(SBHUFFRDY, &RDYI) != 0) ||
-            (pHuffmanDecoder->decodeAValue(SBHUFFRSIZE, &nVal) != 0)) {
+            (pHuffmanDecoder->decodeAValue(SBHUFFRSIZE, &HUFFRSIZE) != 0)) {
           return nullptr;
         }
         pStream->alignByte();
@@ -141,7 +146,7 @@ CJBig2_Image* CJBig2_TRDProc::decode_Huffman(CJBig2_BitStream* pStream,
 
         pStream->alignByte();
         pStream->offset(2);
-        if ((uint32_t)nVal != (pStream->getOffset() - nTmp)) {
+        if (static_cast<uint32_t>(HUFFRSIZE) != (pStream->getOffset() - nTmp)) {
           delete IBI;
           return nullptr;
         }
