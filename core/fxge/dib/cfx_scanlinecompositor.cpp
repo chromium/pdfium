@@ -892,323 +892,6 @@ void CompositeRow_Rgb2Rgb_NoBlend_Clip(uint8_t* dest_scan,
   }
 }
 
-void CompositeRow_Argb2Argb_Transform(uint8_t* dest_scan,
-                                      const uint8_t* src_scan,
-                                      int pixel_count,
-                                      int blend_type,
-                                      const uint8_t* clip_scan,
-                                      uint8_t* dest_alpha_scan,
-                                      const uint8_t* src_alpha_scan,
-                                      uint8_t* src_cache_scan) {
-  uint8_t* dp = src_cache_scan;
-  if (src_alpha_scan && !dest_alpha_scan) {
-    for (int col = 0; col < pixel_count; col++) {
-      dp[3] = *src_alpha_scan++;
-      src_scan += 3;
-      dp += 4;
-    }
-    src_alpha_scan = nullptr;
-  } else {
-    if (dest_alpha_scan) {
-      int blended_colors[3];
-      bool bNonseparableBlend = blend_type >= FXDIB_BLEND_NONSEPARABLE;
-      for (int col = 0; col < pixel_count; col++) {
-        uint8_t back_alpha = *dest_alpha_scan;
-        if (back_alpha == 0) {
-          if (clip_scan) {
-            int src_alpha = clip_scan[col] * src_scan[3] / 255;
-            *dest_alpha_scan = src_alpha;
-            *dest_scan++ = *src_cache_scan++;
-            *dest_scan++ = *src_cache_scan++;
-            *dest_scan++ = *src_cache_scan++;
-          } else {
-            *dest_alpha_scan = src_scan[3];
-            *dest_scan++ = *src_cache_scan++;
-            *dest_scan++ = *src_cache_scan++;
-            *dest_scan++ = *src_cache_scan++;
-          }
-          dest_alpha_scan++;
-          src_scan += 4;
-          continue;
-        }
-        uint8_t src_alpha;
-        if (clip_scan) {
-          src_alpha = clip_scan[col] * src_scan[3] / 255;
-        } else {
-          src_alpha = src_scan[3];
-        }
-        src_scan += 4;
-        if (src_alpha == 0) {
-          dest_scan += 3;
-          src_cache_scan += 3;
-          dest_alpha_scan++;
-          continue;
-        }
-        uint8_t dest_alpha =
-            back_alpha + src_alpha - back_alpha * src_alpha / 255;
-        *dest_alpha_scan++ = dest_alpha;
-        int alpha_ratio = src_alpha * 255 / dest_alpha;
-        if (bNonseparableBlend) {
-          RGB_Blend(blend_type, src_cache_scan, dest_scan, blended_colors);
-        }
-        for (int color = 0; color < 3; color++) {
-          if (blend_type) {
-            int blended = bNonseparableBlend
-                              ? blended_colors[color]
-                              : Blend(blend_type, *dest_scan, *src_cache_scan);
-            blended = FXDIB_ALPHA_MERGE(*src_cache_scan, blended, back_alpha);
-            *dest_scan = FXDIB_ALPHA_MERGE(*dest_scan, blended, alpha_ratio);
-          } else {
-            *dest_scan =
-                FXDIB_ALPHA_MERGE(*dest_scan, *src_cache_scan, alpha_ratio);
-          }
-          dest_scan++;
-          src_cache_scan++;
-        }
-      }
-      return;
-    }
-    for (int col = 0; col < pixel_count; col++) {
-      dp[3] = src_scan[3];
-      src_scan += 4;
-      dp += 4;
-    }
-  }
-  CompositeRow_Argb2Argb(dest_scan, src_cache_scan, pixel_count, blend_type,
-                         clip_scan, dest_alpha_scan, src_alpha_scan);
-}
-
-void CompositeRow_Rgb2Argb_Blend_NoClip_Transform(uint8_t* dest_scan,
-                                                  const uint8_t* src_scan,
-                                                  int width,
-                                                  int blend_type,
-                                                  int src_Bpp,
-                                                  uint8_t* dest_alpha_scan,
-                                                  uint8_t* src_cache_scan) {
-  if (src_Bpp != 3) {
-    uint8_t* dp = src_cache_scan;
-    for (int col = 0; col < width; col++) {
-      src_scan += 4;
-      dp += 3;
-    }
-  }
-  CompositeRow_Rgb2Argb_Blend_NoClip(dest_scan, src_cache_scan, width,
-                                     blend_type, 3, dest_alpha_scan);
-}
-
-void CompositeRow_Rgb2Argb_Blend_Clip_Transform(uint8_t* dest_scan,
-                                                const uint8_t* src_scan,
-                                                int width,
-                                                int blend_type,
-                                                int src_Bpp,
-                                                const uint8_t* clip_scan,
-                                                uint8_t* dest_alpha_scan,
-                                                uint8_t* src_cache_scan) {
-  if (src_Bpp != 3) {
-    uint8_t* dp = src_cache_scan;
-    for (int col = 0; col < width; col++) {
-      src_scan += 4;
-      dp += 3;
-    }
-  }
-  CompositeRow_Rgb2Argb_Blend_Clip(dest_scan, src_cache_scan, width, blend_type,
-                                   3, clip_scan, dest_alpha_scan);
-}
-
-void CompositeRow_Rgb2Argb_NoBlend_Clip_Transform(uint8_t* dest_scan,
-                                                  const uint8_t* src_scan,
-                                                  int width,
-                                                  int src_Bpp,
-                                                  const uint8_t* clip_scan,
-                                                  uint8_t* dest_alpha_scan,
-                                                  uint8_t* src_cache_scan) {
-  if (src_Bpp != 3) {
-    uint8_t* dp = src_cache_scan;
-    for (int col = 0; col < width; col++) {
-      src_scan += 4;
-      dp += 3;
-    }
-  }
-  CompositeRow_Rgb2Argb_NoBlend_Clip(dest_scan, src_cache_scan, width, 3,
-                                     clip_scan, dest_alpha_scan);
-}
-
-void CompositeRow_Rgb2Argb_NoBlend_NoClip_Transform(uint8_t* dest_scan,
-                                                    const uint8_t* src_scan,
-                                                    int width,
-                                                    int src_Bpp,
-                                                    uint8_t* dest_alpha_scan,
-                                                    uint8_t* src_cache_scan) {
-  if (src_Bpp != 3) {
-    uint8_t* dp = src_cache_scan;
-    for (int col = 0; col < width; col++) {
-      src_scan += 4;
-      dp += 3;
-    }
-  }
-  CompositeRow_Rgb2Argb_NoBlend_NoClip(dest_scan, src_cache_scan, width, 3,
-                                       dest_alpha_scan);
-}
-
-void CompositeRow_Argb2Rgb_Blend_Transform(uint8_t* dest_scan,
-                                           const uint8_t* src_scan,
-                                           int width,
-                                           int blend_type,
-                                           int dest_Bpp,
-                                           const uint8_t* clip_scan,
-                                           const uint8_t* src_alpha_scan,
-                                           uint8_t* src_cache_scan) {
-  if (!src_alpha_scan) {
-    int blended_colors[3];
-    bool bNonseparableBlend = blend_type >= FXDIB_BLEND_NONSEPARABLE;
-    int dest_gap = dest_Bpp - 3;
-    for (int col = 0; col < width; col++) {
-      uint8_t src_alpha;
-      if (clip_scan) {
-        src_alpha = src_scan[3] * (*clip_scan++) / 255;
-      } else {
-        src_alpha = src_scan[3];
-      }
-      src_scan += 4;
-      if (src_alpha == 0) {
-        dest_scan += dest_Bpp;
-        src_cache_scan += 3;
-        continue;
-      }
-      if (bNonseparableBlend) {
-        RGB_Blend(blend_type, src_cache_scan, dest_scan, blended_colors);
-      }
-      for (int color = 0; color < 3; color++) {
-        int back_color = *dest_scan;
-        int blended = bNonseparableBlend
-                          ? blended_colors[color]
-                          : Blend(blend_type, back_color, *src_cache_scan);
-        *dest_scan = FXDIB_ALPHA_MERGE(back_color, blended, src_alpha);
-        dest_scan++;
-        src_cache_scan++;
-      }
-      dest_scan += dest_gap;
-    }
-    return;
-  }
-  CompositeRow_Argb2Rgb_Blend(dest_scan, src_cache_scan, width, blend_type,
-                              dest_Bpp, clip_scan, src_alpha_scan);
-}
-
-void CompositeRow_Argb2Rgb_NoBlend_Transform(uint8_t* dest_scan,
-                                             const uint8_t* src_scan,
-                                             int width,
-                                             int dest_Bpp,
-                                             const uint8_t* clip_scan,
-                                             const uint8_t* src_alpha_scan,
-                                             uint8_t* src_cache_scan) {
-  if (!src_alpha_scan) {
-    int dest_gap = dest_Bpp - 3;
-    for (int col = 0; col < width; col++) {
-      uint8_t src_alpha;
-      if (clip_scan) {
-        src_alpha = src_scan[3] * (*clip_scan++) / 255;
-      } else {
-        src_alpha = src_scan[3];
-      }
-      src_scan += 4;
-      if (src_alpha == 255) {
-        *dest_scan++ = *src_cache_scan++;
-        *dest_scan++ = *src_cache_scan++;
-        *dest_scan++ = *src_cache_scan++;
-        dest_scan += dest_gap;
-        continue;
-      }
-      if (src_alpha == 0) {
-        dest_scan += dest_Bpp;
-        src_cache_scan += 3;
-        continue;
-      }
-      for (int color = 0; color < 3; color++) {
-        *dest_scan = FXDIB_ALPHA_MERGE(*dest_scan, *src_cache_scan, src_alpha);
-        dest_scan++;
-        src_cache_scan++;
-      }
-      dest_scan += dest_gap;
-    }
-    return;
-  }
-  CompositeRow_Argb2Rgb_NoBlend(dest_scan, src_cache_scan, width, dest_Bpp,
-                                clip_scan, src_alpha_scan);
-}
-
-void CompositeRow_Rgb2Rgb_Blend_NoClip_Transform(uint8_t* dest_scan,
-                                                 const uint8_t* src_scan,
-                                                 int width,
-                                                 int blend_type,
-                                                 int dest_Bpp,
-                                                 int src_Bpp,
-                                                 uint8_t* src_cache_scan) {
-  if (src_Bpp != 3) {
-    uint8_t* dp = src_cache_scan;
-    for (int col = 0; col < width; col++) {
-      src_scan += 4;
-      dp += 3;
-    }
-  }
-  CompositeRow_Rgb2Rgb_Blend_NoClip(dest_scan, src_cache_scan, width,
-                                    blend_type, dest_Bpp, 3);
-}
-
-void CompositeRow_Rgb2Rgb_Blend_Clip_Transform(uint8_t* dest_scan,
-                                               const uint8_t* src_scan,
-                                               int width,
-                                               int blend_type,
-                                               int dest_Bpp,
-                                               int src_Bpp,
-                                               const uint8_t* clip_scan,
-                                               uint8_t* src_cache_scan) {
-  if (src_Bpp != 3) {
-    uint8_t* dp = src_cache_scan;
-    for (int col = 0; col < width; col++) {
-      src_scan += 4;
-      dp += 3;
-    }
-  }
-  CompositeRow_Rgb2Rgb_Blend_Clip(dest_scan, src_cache_scan, width, blend_type,
-                                  dest_Bpp, 3, clip_scan);
-}
-
-void CompositeRow_Rgb2Rgb_NoBlend_NoClip_Transform(uint8_t* dest_scan,
-                                                   const uint8_t* src_scan,
-                                                   int width,
-                                                   int dest_Bpp,
-                                                   int src_Bpp,
-                                                   uint8_t* src_cache_scan) {
-  if (src_Bpp != 3) {
-    uint8_t* dp = src_cache_scan;
-    for (int col = 0; col < width; col++) {
-      src_scan += 4;
-      dp += 3;
-    }
-  }
-  CompositeRow_Rgb2Rgb_NoBlend_NoClip(dest_scan, src_cache_scan, width,
-                                      dest_Bpp, 3);
-}
-
-void CompositeRow_Rgb2Rgb_NoBlend_Clip_Transform(uint8_t* dest_scan,
-                                                 const uint8_t* src_scan,
-                                                 int width,
-                                                 int dest_Bpp,
-                                                 int src_Bpp,
-                                                 const uint8_t* clip_scan,
-                                                 uint8_t* src_cache_scan) {
-  if (src_Bpp != 3) {
-    uint8_t* dp = src_cache_scan;
-    for (int col = 0; col < width; col++) {
-      src_scan += 4;
-      dp += 3;
-    }
-  }
-  CompositeRow_Rgb2Rgb_NoBlend_Clip(dest_scan, src_cache_scan, width, dest_Bpp,
-                                    3, clip_scan);
-}
-
 void CompositeRow_8bppPal2Gray(uint8_t* dest_scan,
                                const uint8_t* src_scan,
                                const uint8_t* pPalette,
@@ -3439,107 +3122,48 @@ void CFX_ScanlineCompositor::CompositeRgbBitmapLine(
         CompositeRow_Argb2Argb(dest_scan, src_scan, width, m_BlendType,
                                clip_scan, dst_extra_alpha, src_extra_alpha);
       } break;
-      case 64:
-      case 4 + 64:
-      case 8 + 64:
-      case 4 + 8 + 64: {
-        CompositeRow_Argb2Argb_Transform(
-            dest_scan, src_scan, width, m_BlendType, clip_scan, dst_extra_alpha,
-            src_extra_alpha, m_pCacheScanline);
-      } break;
       case 1:
         CompositeRow_Rgb2Argb_Blend_NoClip(
             dest_scan, src_scan, width, m_BlendType, src_Bpp, dst_extra_alpha);
-        break;
-      case 1 + 64:
-        CompositeRow_Rgb2Argb_Blend_NoClip_Transform(
-            dest_scan, src_scan, width, m_BlendType, src_Bpp, dst_extra_alpha,
-            m_pCacheScanline);
         break;
       case 1 + 8:
         CompositeRow_Rgb2Argb_Blend_Clip(dest_scan, src_scan, width,
                                          m_BlendType, src_Bpp, clip_scan,
                                          dst_extra_alpha);
         break;
-      case 1 + 8 + 64:
-        CompositeRow_Rgb2Argb_Blend_Clip_Transform(
-            dest_scan, src_scan, width, m_BlendType, src_Bpp, clip_scan,
-            dst_extra_alpha, m_pCacheScanline);
-        break;
       case 1 + 4:
         CompositeRow_Rgb2Argb_NoBlend_NoClip(dest_scan, src_scan, width,
                                              src_Bpp, dst_extra_alpha);
         break;
-      case 1 + 4 + 64:
-        CompositeRow_Rgb2Argb_NoBlend_NoClip_Transform(
-            dest_scan, src_scan, width, src_Bpp, dst_extra_alpha,
-            m_pCacheScanline);
-        break;
       case 1 + 4 + 8:
         CompositeRow_Rgb2Argb_NoBlend_Clip(dest_scan, src_scan, width, src_Bpp,
                                            clip_scan, dst_extra_alpha);
-        break;
-      case 1 + 4 + 8 + 64:
-        CompositeRow_Rgb2Argb_NoBlend_Clip_Transform(
-            dest_scan, src_scan, width, src_Bpp, clip_scan, dst_extra_alpha,
-            m_pCacheScanline);
         break;
       case 2:
       case 2 + 8:
         CompositeRow_Argb2Rgb_Blend(dest_scan, src_scan, width, m_BlendType,
                                     dest_Bpp, clip_scan, src_extra_alpha);
         break;
-      case 2 + 64:
-      case 2 + 8 + 64:
-        CompositeRow_Argb2Rgb_Blend_Transform(
-            dest_scan, src_scan, width, m_BlendType, dest_Bpp, clip_scan,
-            src_extra_alpha, m_pCacheScanline);
-        break;
       case 2 + 4:
       case 2 + 4 + 8:
         CompositeRow_Argb2Rgb_NoBlend(dest_scan, src_scan, width, dest_Bpp,
                                       clip_scan, src_extra_alpha);
         break;
-      case 2 + 4 + 64:
-      case 2 + 4 + 8 + 64:
-        CompositeRow_Argb2Rgb_NoBlend_Transform(
-            dest_scan, src_scan, width, dest_Bpp, clip_scan, src_extra_alpha,
-            m_pCacheScanline);
-        break;
       case 1 + 2:
         CompositeRow_Rgb2Rgb_Blend_NoClip(dest_scan, src_scan, width,
                                           m_BlendType, dest_Bpp, src_Bpp);
-        break;
-      case 1 + 2 + 64:
-        CompositeRow_Rgb2Rgb_Blend_NoClip_Transform(dest_scan, src_scan, width,
-                                                    m_BlendType, dest_Bpp,
-                                                    src_Bpp, m_pCacheScanline);
         break;
       case 1 + 2 + 8:
         CompositeRow_Rgb2Rgb_Blend_Clip(dest_scan, src_scan, width, m_BlendType,
                                         dest_Bpp, src_Bpp, clip_scan);
         break;
-      case 1 + 2 + 8 + 64:
-        CompositeRow_Rgb2Rgb_Blend_Clip_Transform(
-            dest_scan, src_scan, width, m_BlendType, dest_Bpp, src_Bpp,
-            clip_scan, m_pCacheScanline);
-        break;
       case 1 + 2 + 4:
         CompositeRow_Rgb2Rgb_NoBlend_NoClip(dest_scan, src_scan, width,
                                             dest_Bpp, src_Bpp);
         break;
-      case 1 + 2 + 4 + 64:
-        CompositeRow_Rgb2Rgb_NoBlend_NoClip_Transform(
-            dest_scan, src_scan, width, dest_Bpp, src_Bpp, m_pCacheScanline);
-        break;
       case 1 + 2 + 4 + 8:
         CompositeRow_Rgb2Rgb_NoBlend_Clip(dest_scan, src_scan, width, dest_Bpp,
                                           src_Bpp, clip_scan);
-        break;
-      case 1 + 2 + 4 + 8 + 64:
-        CompositeRow_Rgb2Rgb_NoBlend_Clip_Transform(
-            dest_scan, src_scan, width, dest_Bpp, src_Bpp, clip_scan,
-            m_pCacheScanline);
         break;
     }
   }
