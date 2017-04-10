@@ -30,9 +30,6 @@ class CXFA_WideTextRead : public IFGAS_Stream {
   int32_t GetBOM(uint8_t bom[4]) const override;
   uint16_t GetCodePage() const override;
   uint16_t SetCodePage(uint16_t wCodePage) override;
-  CFX_RetainPtr<IFGAS_Stream> CreateSharedStream(uint32_t dwAccess,
-                                                 int32_t iOffset,
-                                                 int32_t iLength) override;
 
   CFX_WideString GetSrcText() const;
 

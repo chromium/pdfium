@@ -91,13 +91,6 @@ uint16_t CXFA_WideTextRead::SetCodePage(uint16_t wCodePage) {
   return GetCodePage();
 }
 
-CFX_RetainPtr<IFGAS_Stream> CXFA_WideTextRead::CreateSharedStream(
-    uint32_t dwAccess,
-    int32_t iOffset,
-    int32_t iLength) {
-  return nullptr;
-}
-
 CFX_WideString CXFA_WideTextRead::GetSrcText() const {
   return m_wsBuffer;
 }

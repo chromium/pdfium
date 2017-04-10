@@ -220,9 +220,6 @@ class CFGAS_Stream : public IFGAS_Stream {
   int32_t GetBOM(uint8_t bom[4]) const override;
   uint16_t GetCodePage() const override;
   uint16_t SetCodePage(uint16_t wCodePage) override;
-  CFX_RetainPtr<IFGAS_Stream> CreateSharedStream(uint32_t dwAccess,
-                                                 int32_t iOffset,
-                                                 int32_t iLength) override;
 
  protected:
   CFGAS_Stream();
@@ -258,9 +255,6 @@ class CFGAS_TextStream : public IFGAS_Stream {
   int32_t GetBOM(uint8_t bom[4]) const override;
   uint16_t GetCodePage() const override;
   uint16_t SetCodePage(uint16_t wCodePage) override;
-  CFX_RetainPtr<IFGAS_Stream> CreateSharedStream(uint32_t dwAccess,
-                                                 int32_t iOffset,
-                                                 int32_t iLength) override;
 
  protected:
   explicit CFGAS_TextStream(const CFX_RetainPtr<IFGAS_Stream>& pStream);
@@ -957,21 +951,6 @@ uint16_t CFGAS_TextStream::GetCodePage() const {
   return m_wCodePage;
 }
 
-CFX_RetainPtr<IFGAS_Stream> CFGAS_TextStream::CreateSharedStream(
-    uint32_t dwAccess,
-    int32_t iOffset,
-    int32_t iLength) {
-  CFX_RetainPtr<IFGAS_Stream> pSR =
-      m_pStreamImp->CreateSharedStream(dwAccess, iOffset, iLength);
-  if (!pSR)
-    return nullptr;
-
-  if (dwAccess & FX_STREAMACCESS_Text)
-    return pdfium::MakeRetain<CFGAS_TextStream>(pSR);
-
-  return pSR;
-}
-
 int32_t CFGAS_TextStream::GetBOM(uint8_t bom[4]) const {
   if (m_wBOMLength < 1)
     return 0;
@@ -1362,44 +1341,6 @@ uint16_t CFGAS_Stream::SetCodePage(uint16_t wCodePage) {
 #else
   return FX_CODEPAGE_UTF16BE;
 #endif
-}
-
-CFX_RetainPtr<IFGAS_Stream> CFGAS_Stream::CreateSharedStream(uint32_t dwAccess,
-                                                             int32_t iOffset,
-                                                             int32_t iLength) {
-  ASSERT(iLength > 0);
-  if (!m_pStreamImp)
-    return nullptr;
-
-  if ((m_dwAccess & FX_STREAMACCESS_Text) != 0 &&
-      (dwAccess & FX_STREAMACCESS_Text) == 0) {
-    return nullptr;
-  }
-  if ((m_dwAccess & FX_STREAMACCESS_Write) == 0 &&
-      (dwAccess & FX_STREAMACCESS_Write) != 0) {
-    return nullptr;
-  }
-  int32_t iStart = m_iStart + iOffset;
-  int32_t iTotal = m_iStart + m_iLength;
-  if (iStart < m_iStart || iStart >= iTotal)
-    return nullptr;
-
-  int32_t iEnd = iStart + iLength;
-  if (iEnd < iStart || iEnd > iTotal)
-    return nullptr;
-
-  auto pShared = pdfium::MakeRetain<CFGAS_Stream>();
-  pShared->m_eStreamType = FX_STREAMTYPE_Stream;
-  pShared->m_pStreamImp = m_pStreamImp;
-  pShared->m_dwAccess = dwAccess;
-  pShared->m_iTotalSize = iLength;
-  pShared->m_iPosition = iStart;
-  pShared->m_iStart = iStart;
-  pShared->m_iLength = (dwAccess & FX_STREAMACCESS_Write) != 0 ? 0 : iLength;
-  if (dwAccess & FX_STREAMACCESS_Text)
-    return IFGAS_Stream::CreateTextStream(pShared);
-
-  return pShared;
 }
 
 CFX_RetainPtr<CFGAS_FileRead> CFGAS_FileRead::Create(

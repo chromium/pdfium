@@ -41,10 +41,6 @@ class IFGAS_Stream : public CFX_Retainable {
   static CFX_RetainPtr<IFGAS_Stream> CreateTextStream(
       const CFX_RetainPtr<IFGAS_Stream>& pBaseStream);
 
-  virtual CFX_RetainPtr<IFGAS_Stream> CreateSharedStream(uint32_t dwAccess,
-                                                         int32_t iOffset,
-                                                         int32_t iLength) = 0;
-
   virtual uint32_t GetAccessModes() const = 0;
   virtual int32_t GetLength() const = 0;
   virtual int32_t Seek(FX_STREAMSEEK eSeek, int32_t iOffset) = 0;
