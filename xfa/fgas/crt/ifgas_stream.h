@@ -38,8 +38,6 @@ class IFGAS_Stream : public CFX_Retainable {
   static CFX_RetainPtr<IFGAS_Stream> CreateStream(uint8_t* pData,
                                                   int32_t length,
                                                   uint32_t dwAccess);
-  static CFX_RetainPtr<IFGAS_Stream> CreateTextStream(
-      const CFX_RetainPtr<IFGAS_Stream>& pBaseStream);
 
   virtual uint32_t GetAccessModes() const = 0;
   virtual int32_t GetLength() const = 0;

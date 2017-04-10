@@ -1410,13 +1410,6 @@ CFX_RetainPtr<IFGAS_Stream> IFGAS_Stream::CreateStream(uint8_t* pData,
 }
 
 // static
-CFX_RetainPtr<IFGAS_Stream> IFGAS_Stream::CreateTextStream(
-    const CFX_RetainPtr<IFGAS_Stream>& pBaseStream) {
-  ASSERT(pBaseStream);
-  return pdfium::MakeRetain<CFGAS_TextStream>(pBaseStream);
-}
-
-// static
 CFX_RetainPtr<IFX_SeekableReadStream> IFGAS_Stream::MakeSeekableReadStream() {
   return CFGAS_FileRead::Create(CFX_RetainPtr<IFGAS_Stream>(this));
 }
