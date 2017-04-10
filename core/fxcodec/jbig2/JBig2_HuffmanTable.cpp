@@ -70,6 +70,10 @@ bool CJBig2_HuffmanTable::ParseFromCodedBuffer(CJBig2_BitStream* pStream) {
       return false;
     }
     RANGELOW[NTEMP] = cur_low.ValueOrDie();
+
+    if (RANGELEN[NTEMP] >= 32)
+      return false;
+
     cur_low += (1 << RANGELEN[NTEMP]);
     if (!cur_low.IsValid())
       return false;
