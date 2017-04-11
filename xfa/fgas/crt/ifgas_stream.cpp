@@ -13,6 +13,7 @@
 
 #include <algorithm>
 #include <memory>
+#include <utility>
 
 #include "third_party/base/ptr_util.h"
 #include "xfa/fgas/crt/fgas_codepage.h"
@@ -125,23 +126,10 @@ class CFGAS_FileWriteStreamImp : public IFGAS_StreamImp {
   int32_t m_iPosition;
 };
 
-enum FX_STREAMTYPE {
-  FX_SREAMTYPE_Unknown = 0,
-  FX_STREAMTYPE_File,
-  FX_STREAMTYPE_Buffer,
-  FX_STREAMTYPE_Stream,
-  FX_STREAMTYPE_BufferRead,
-};
-
 class CFGAS_Stream : public IFGAS_Stream {
  public:
   template <typename T, typename... Args>
   friend CFX_RetainPtr<T> pdfium::MakeRetain(Args&&... args);
-
-  bool LoadBuffer(uint8_t* pData, int32_t iTotalSize);
-  bool LoadFileRead(const CFX_RetainPtr<IFX_SeekableReadStream>& pFileRead);
-  bool LoadFileWrite(const CFX_RetainPtr<IFX_SeekableWriteStream>& pFileWrite,
-                     uint32_t dwAccess);
 
   // IFGAS_Stream
   uint32_t GetAccessModes() const override;
@@ -160,11 +148,10 @@ class CFGAS_Stream : public IFGAS_Stream {
   uint16_t SetCodePage(uint16_t wCodePage) override;
 
  protected:
-  CFGAS_Stream();
+  CFGAS_Stream(std::unique_ptr<IFGAS_StreamImp> imp, uint32_t dwAccess);
   ~CFGAS_Stream() override;
 
-  FX_STREAMTYPE m_eStreamType;
-  IFGAS_StreamImp* m_pStreamImp;
+  std::unique_ptr<IFGAS_StreamImp> m_pStreamImp;
   uint32_t m_dwAccess;
   int32_t m_iTotalSize;
   int32_t m_iPosition;
@@ -626,137 +613,44 @@ int32_t CFGAS_TextStream::WriteString(const wchar_t* pStr, int32_t iLength) {
   return iLength;
 }
 
-CFGAS_Stream::CFGAS_Stream()
-    : m_eStreamType(FX_SREAMTYPE_Unknown),
-      m_pStreamImp(nullptr),
-      m_dwAccess(0),
+CFGAS_Stream::CFGAS_Stream(std::unique_ptr<IFGAS_StreamImp> imp,
+                           uint32_t dwAccess)
+    : m_pStreamImp(std::move(imp)),
+      m_dwAccess(dwAccess),
       m_iTotalSize(0),
       m_iPosition(0),
       m_iStart(0),
-      m_iLength(0),
+      m_iLength(m_pStreamImp->GetLength()),
       m_iRefCount(1) {}
 
-CFGAS_Stream::~CFGAS_Stream() {
-  if (m_eStreamType != FX_STREAMTYPE_Stream)
-    delete m_pStreamImp;
-}
-
-bool CFGAS_Stream::LoadFileRead(
-    const CFX_RetainPtr<IFX_SeekableReadStream>& pFileRead) {
-  if (m_eStreamType != FX_SREAMTYPE_Unknown || m_pStreamImp)
-    return false;
-
-  if (!pFileRead)
-    return false;
-
-  auto pImp = pdfium::MakeUnique<CFGAS_FileReadStreamImp>();
-  if (!pImp->LoadFileRead(pFileRead))
-    return false;
-
-  m_pStreamImp = pImp.release();
-  m_eStreamType = FX_STREAMTYPE_File;
-  m_dwAccess = 0;
-  m_iLength = m_pStreamImp->GetLength();
-  return true;
-}
-
-bool CFGAS_Stream::LoadFileWrite(
-    const CFX_RetainPtr<IFX_SeekableWriteStream>& pFileWrite,
-    uint32_t dwAccess) {
-  if (m_eStreamType != FX_SREAMTYPE_Unknown || m_pStreamImp)
-    return false;
-
-  if (!pFileWrite)
-    return false;
-
-  auto pImp = pdfium::MakeUnique<CFGAS_FileWriteStreamImp>();
-  if (!pImp->LoadFileWrite(pFileWrite, dwAccess))
-    return false;
-
-  m_pStreamImp = pImp.release();
-  m_eStreamType = FX_STREAMTYPE_File;
-  m_dwAccess = dwAccess;
-  m_iLength = m_pStreamImp->GetLength();
-  return true;
-}
-
-bool CFGAS_Stream::LoadBuffer(uint8_t* pData, int32_t iTotalSize) {
-  if (m_eStreamType != FX_SREAMTYPE_Unknown || m_pStreamImp)
-    return false;
-
-  if (!pData || iTotalSize < 1)
-    return false;
-
-  auto pImp = pdfium::MakeUnique<CFGAS_BufferStreamImp>();
-  if (!pImp->LoadBuffer(pData, iTotalSize))
-    return false;
-
-  m_pStreamImp = pImp.release();
-  m_eStreamType = FX_STREAMTYPE_Buffer;
-  m_dwAccess = 0;
-  m_iLength = m_pStreamImp->GetLength();
-  return true;
-}
+CFGAS_Stream::~CFGAS_Stream() {}
 
 uint32_t CFGAS_Stream::GetAccessModes() const {
   return m_dwAccess;
 }
 
 int32_t CFGAS_Stream::GetLength() const {
-  if (!m_pStreamImp) {
-    return -1;
-  }
-  if (m_eStreamType == FX_STREAMTYPE_File ||
-      m_eStreamType == FX_STREAMTYPE_Buffer) {
-    return m_pStreamImp->GetLength();
-  }
-  return m_iLength;
+  return m_pStreamImp ? m_pStreamImp->GetLength() : -1;
 }
+
 int32_t CFGAS_Stream::Seek(FX_STREAMSEEK eSeek, int32_t iOffset) {
-  if (!m_pStreamImp) {
+  if (!m_pStreamImp)
     return -1;
-  }
-  if (m_eStreamType == FX_STREAMTYPE_File ||
-      m_eStreamType == FX_STREAMTYPE_Buffer) {
-    return m_iPosition = m_pStreamImp->Seek(eSeek, iOffset);
-  }
-  int32_t iEnd = m_iStart + m_iLength;
-  int32_t iPosition = m_iStart + iOffset;
-  if (eSeek == FX_STREAMSEEK_Begin) {
-    m_iPosition = iPosition;
-  } else if (eSeek == FX_STREAMSEEK_Current) {
-    m_iPosition += iOffset;
-  } else if (eSeek == FX_STREAMSEEK_End) {
-    m_iPosition = iEnd + iOffset;
-  }
-  if (m_iPosition > iEnd) {
-    m_iPosition = iEnd;
-  }
-  if (m_iPosition < m_iStart) {
-    m_iPosition = m_iStart;
-  }
-  return m_iPosition - m_iStart;
+  m_iPosition = m_pStreamImp->Seek(eSeek, iOffset);
+  return m_iPosition;
 }
+
 int32_t CFGAS_Stream::GetPosition() {
-  if (!m_pStreamImp) {
+  if (!m_pStreamImp)
     return -1;
-  }
-  if (m_eStreamType == FX_STREAMTYPE_File ||
-      m_eStreamType == FX_STREAMTYPE_Buffer) {
-    return m_iPosition = m_pStreamImp->GetPosition();
-  }
-  return m_iPosition - m_iStart;
+  m_iPosition = m_pStreamImp->GetPosition();
+  return m_iPosition;
 }
+
 bool CFGAS_Stream::IsEOF() const {
-  if (!m_pStreamImp) {
-    return true;
-  }
-  if (m_eStreamType == FX_STREAMTYPE_File ||
-      m_eStreamType == FX_STREAMTYPE_Buffer) {
-    return m_pStreamImp->IsEOF();
-  }
-  return m_iPosition >= m_iStart + m_iLength;
+  return m_pStreamImp ? m_pStreamImp->IsEOF() : true;
 }
+
 int32_t CFGAS_Stream::ReadData(uint8_t* pBuffer, int32_t iBufferSize) {
   ASSERT(pBuffer && iBufferSize > 0);
   if (!m_pStreamImp) {
@@ -806,12 +700,7 @@ int32_t CFGAS_Stream::WriteData(const uint8_t* pBuffer, int32_t iBufferSize) {
     return -1;
   }
   int32_t iLen = iBufferSize;
-  if (m_eStreamType == FX_STREAMTYPE_Stream) {
-    iLen = std::min(m_iStart + m_iTotalSize - m_iPosition, iBufferSize);
-    if (iLen <= 0) {
-      return 0;
-    }
-  }
+
   int32_t iEnd = m_iStart + m_iLength;
   if (m_pStreamImp->GetPosition() != m_iPosition) {
     m_pStreamImp->Seek(FX_STREAMSEEK_Begin, m_iPosition);
@@ -832,12 +721,7 @@ int32_t CFGAS_Stream::WriteString(const wchar_t* pStr, int32_t iLength) {
     return -1;
   }
   int32_t iLen = iLength;
-  if (m_eStreamType == FX_STREAMTYPE_Stream) {
-    iLen = std::min((m_iStart + m_iTotalSize - m_iPosition) / 2, iLength);
-    if (iLen <= 0) {
-      return 0;
-    }
-  }
+
   int32_t iEnd = m_iStart + m_iLength;
   if (m_pStreamImp->GetPosition() != m_iPosition) {
     m_pStreamImp->Seek(FX_STREAMSEEK_Begin, m_iPosition);
@@ -910,28 +794,49 @@ bool CFGAS_FileRead::ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) {
 // static
 CFX_RetainPtr<IFGAS_Stream> IFGAS_Stream::CreateReadStream(
     const CFX_RetainPtr<IFX_SeekableReadStream>& pFileRead) {
-  auto pSR = pdfium::MakeRetain<CFGAS_Stream>();
-  if (!pSR->LoadFileRead(pFileRead))
+  if (!pFileRead)
     return nullptr;
-  return pdfium::MakeRetain<CFGAS_TextStream>(pSR);
+
+  std::unique_ptr<IFGAS_StreamImp> pImp =
+      pdfium::MakeUnique<CFGAS_FileReadStreamImp>();
+  if (!static_cast<CFGAS_FileReadStreamImp*>(pImp.get())
+           ->LoadFileRead(pFileRead)) {
+    return nullptr;
+  }
+  return pdfium::MakeRetain<CFGAS_TextStream>(
+      pdfium::MakeRetain<CFGAS_Stream>(std::move(pImp), 0));
 }
 
 // static
 CFX_RetainPtr<IFGAS_Stream> IFGAS_Stream::CreateWriteStream(
     const CFX_RetainPtr<IFX_SeekableWriteStream>& pFileWrite) {
-  auto pSR = pdfium::MakeRetain<CFGAS_Stream>();
-  if (!pSR->LoadFileWrite(pFileWrite, FX_STREAMACCESS_Write))
+  if (!pFileWrite)
     return nullptr;
-  return pdfium::MakeRetain<CFGAS_TextStream>(pSR);
+
+  std::unique_ptr<IFGAS_StreamImp> pImp =
+      pdfium::MakeUnique<CFGAS_FileWriteStreamImp>();
+  if (!static_cast<CFGAS_FileWriteStreamImp*>(pImp.get())
+           ->LoadFileWrite(pFileWrite, FX_STREAMACCESS_Write)) {
+    return nullptr;
+  }
+
+  return pdfium::MakeRetain<CFGAS_TextStream>(
+      pdfium::MakeRetain<CFGAS_Stream>(std::move(pImp), FX_STREAMACCESS_Write));
 }
 
 // static
 CFX_RetainPtr<IFGAS_Stream> IFGAS_Stream::CreateStream(uint8_t* pData,
                                                        int32_t length) {
-  auto pSR = pdfium::MakeRetain<CFGAS_Stream>();
-  if (!pSR->LoadBuffer(pData, length))
+  if (!pData || length < 1)
     return nullptr;
-  return pSR;
+
+  std::unique_ptr<IFGAS_StreamImp> pImp =
+      pdfium::MakeUnique<CFGAS_BufferStreamImp>();
+  if (!static_cast<CFGAS_BufferStreamImp*>(pImp.get())
+           ->LoadBuffer(pData, length))
+    return nullptr;
+
+  return pdfium::MakeRetain<CFGAS_Stream>(std::move(pImp), 0);
 }
 
 CFX_RetainPtr<IFX_SeekableReadStream> IFGAS_Stream::MakeSeekableReadStream() {
