@@ -30,7 +30,7 @@ TEST_F(CFDE_XMLSyntaxParserTest, CData) {
   // We * sizeof(wchar_t) because we pass in the uint8_t, not the wchar_t.
   size_t len = FXSYS_wcslen(input) * sizeof(wchar_t);
   CFX_RetainPtr<IFGAS_Stream> stream = IFGAS_Stream::CreateStream(
-      reinterpret_cast<uint8_t*>(const_cast<wchar_t*>(input)), len, 0);
+      reinterpret_cast<uint8_t*>(const_cast<wchar_t*>(input)), len);
   CFDE_XMLSyntaxParser parser(stream);
   EXPECT_EQ(FDE_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
   EXPECT_EQ(FDE_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
@@ -77,7 +77,7 @@ TEST_F(CFDE_XMLSyntaxParserTest, CDataWithInnerScript) {
   // We * sizeof(wchar_t) because we pass in the uint8_t, not the wchar_t.
   size_t len = FXSYS_wcslen(input) * sizeof(wchar_t);
   CFX_RetainPtr<IFGAS_Stream> stream = IFGAS_Stream::CreateStream(
-      reinterpret_cast<uint8_t*>(const_cast<wchar_t*>(input)), len, 0);
+      reinterpret_cast<uint8_t*>(const_cast<wchar_t*>(input)), len);
   CFDE_XMLSyntaxParser parser(stream);
   EXPECT_EQ(FDE_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
   EXPECT_EQ(FDE_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
@@ -113,7 +113,7 @@ TEST_F(CFDE_XMLSyntaxParserTest, ArrowBangArrow) {
   // We * sizeof(wchar_t) because we pass in the uint8_t, not the wchar_t.
   size_t len = FXSYS_wcslen(input) * sizeof(wchar_t);
   CFX_RetainPtr<IFGAS_Stream> stream = IFGAS_Stream::CreateStream(
-      reinterpret_cast<uint8_t*>(const_cast<wchar_t*>(input)), len, 0);
+      reinterpret_cast<uint8_t*>(const_cast<wchar_t*>(input)), len);
   CFDE_XMLSyntaxParser parser(stream);
   EXPECT_EQ(FDE_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
   EXPECT_EQ(FDE_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
@@ -147,7 +147,7 @@ TEST_F(CFDE_XMLSyntaxParserTest, ArrowBangBracketArrow) {
   // We * sizeof(wchar_t) because we pass in the uint8_t, not the wchar_t.
   size_t len = FXSYS_wcslen(input) * sizeof(wchar_t);
   CFX_RetainPtr<IFGAS_Stream> stream = IFGAS_Stream::CreateStream(
-      reinterpret_cast<uint8_t*>(const_cast<wchar_t*>(input)), len, 0);
+      reinterpret_cast<uint8_t*>(const_cast<wchar_t*>(input)), len);
   CFDE_XMLSyntaxParser parser(stream);
   EXPECT_EQ(FDE_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
   EXPECT_EQ(FDE_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
@@ -176,7 +176,7 @@ TEST_F(CFDE_XMLSyntaxParserTest, IncompleteCData) {
   // We * sizeof(wchar_t) because we pass in the uint8_t, not the wchar_t.
   size_t len = FXSYS_wcslen(input) * sizeof(wchar_t);
   CFX_RetainPtr<IFGAS_Stream> stream = IFGAS_Stream::CreateStream(
-      reinterpret_cast<uint8_t*>(const_cast<wchar_t*>(input)), len, 0);
+      reinterpret_cast<uint8_t*>(const_cast<wchar_t*>(input)), len);
   CFDE_XMLSyntaxParser parser(stream);
   EXPECT_EQ(FDE_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
   EXPECT_EQ(FDE_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
@@ -205,7 +205,7 @@ TEST_F(CFDE_XMLSyntaxParserTest, UnClosedCData) {
   // We * sizeof(wchar_t) because we pass in the uint8_t, not the wchar_t.
   size_t len = FXSYS_wcslen(input) * sizeof(wchar_t);
   CFX_RetainPtr<IFGAS_Stream> stream = IFGAS_Stream::CreateStream(
-      reinterpret_cast<uint8_t*>(const_cast<wchar_t*>(input)), len, 0);
+      reinterpret_cast<uint8_t*>(const_cast<wchar_t*>(input)), len);
   CFDE_XMLSyntaxParser parser(stream);
   EXPECT_EQ(FDE_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
   EXPECT_EQ(FDE_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
@@ -234,7 +234,7 @@ TEST_F(CFDE_XMLSyntaxParserTest, EmptyCData) {
   // We * sizeof(wchar_t) because we pass in the uint8_t, not the wchar_t.
   size_t len = FXSYS_wcslen(input) * sizeof(wchar_t);
   CFX_RetainPtr<IFGAS_Stream> stream = IFGAS_Stream::CreateStream(
-      reinterpret_cast<uint8_t*>(const_cast<wchar_t*>(input)), len, 0);
+      reinterpret_cast<uint8_t*>(const_cast<wchar_t*>(input)), len);
   CFDE_XMLSyntaxParser parser(stream);
   EXPECT_EQ(FDE_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
   EXPECT_EQ(FDE_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
@@ -270,7 +270,7 @@ TEST_F(CFDE_XMLSyntaxParserTest, Comment) {
   // We * sizeof(wchar_t) because we pass in the uint8_t, not the wchar_t.
   size_t len = FXSYS_wcslen(input) * sizeof(wchar_t);
   CFX_RetainPtr<IFGAS_Stream> stream = IFGAS_Stream::CreateStream(
-      reinterpret_cast<uint8_t*>(const_cast<wchar_t*>(input)), len, 0);
+      reinterpret_cast<uint8_t*>(const_cast<wchar_t*>(input)), len);
   CFDE_XMLSyntaxParser parser(stream);
   EXPECT_EQ(FDE_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
   EXPECT_EQ(FDE_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
@@ -303,7 +303,7 @@ TEST_F(CFDE_XMLSyntaxParserTest, IncorrectCommentStart) {
   // We * sizeof(wchar_t) because we pass in the uint8_t, not the wchar_t.
   size_t len = FXSYS_wcslen(input) * sizeof(wchar_t);
   CFX_RetainPtr<IFGAS_Stream> stream = IFGAS_Stream::CreateStream(
-      reinterpret_cast<uint8_t*>(const_cast<wchar_t*>(input)), len, 0);
+      reinterpret_cast<uint8_t*>(const_cast<wchar_t*>(input)), len);
   CFDE_XMLSyntaxParser parser(stream);
   EXPECT_EQ(FDE_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
   EXPECT_EQ(FDE_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
@@ -336,7 +336,7 @@ TEST_F(CFDE_XMLSyntaxParserTest, CommentEmpty) {
   // We * sizeof(wchar_t) because we pass in the uint8_t, not the wchar_t.
   size_t len = FXSYS_wcslen(input) * sizeof(wchar_t);
   CFX_RetainPtr<IFGAS_Stream> stream = IFGAS_Stream::CreateStream(
-      reinterpret_cast<uint8_t*>(const_cast<wchar_t*>(input)), len, 0);
+      reinterpret_cast<uint8_t*>(const_cast<wchar_t*>(input)), len);
   CFDE_XMLSyntaxParser parser(stream);
   EXPECT_EQ(FDE_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
   EXPECT_EQ(FDE_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
@@ -369,7 +369,7 @@ TEST_F(CFDE_XMLSyntaxParserTest, CommentThreeDash) {
   // We * sizeof(wchar_t) because we pass in the uint8_t, not the wchar_t.
   size_t len = FXSYS_wcslen(input) * sizeof(wchar_t);
   CFX_RetainPtr<IFGAS_Stream> stream = IFGAS_Stream::CreateStream(
-      reinterpret_cast<uint8_t*>(const_cast<wchar_t*>(input)), len, 0);
+      reinterpret_cast<uint8_t*>(const_cast<wchar_t*>(input)), len);
   CFDE_XMLSyntaxParser parser(stream);
   EXPECT_EQ(FDE_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
   EXPECT_EQ(FDE_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
@@ -396,7 +396,7 @@ TEST_F(CFDE_XMLSyntaxParserTest, CommentTwoDash) {
   // We * sizeof(wchar_t) because we pass in the uint8_t, not the wchar_t.
   size_t len = FXSYS_wcslen(input) * sizeof(wchar_t);
   CFX_RetainPtr<IFGAS_Stream> stream = IFGAS_Stream::CreateStream(
-      reinterpret_cast<uint8_t*>(const_cast<wchar_t*>(input)), len, 0);
+      reinterpret_cast<uint8_t*>(const_cast<wchar_t*>(input)), len);
   CFDE_XMLSyntaxParser parser(stream);
   EXPECT_EQ(FDE_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
   EXPECT_EQ(FDE_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
@@ -427,7 +427,7 @@ TEST_F(CFDE_XMLSyntaxParserTest, Entities) {
   // We * sizeof(wchar_t) because we pass in the uint8_t, not the wchar_t.
   size_t len = FXSYS_wcslen(input) * sizeof(wchar_t);
   CFX_RetainPtr<IFGAS_Stream> stream = IFGAS_Stream::CreateStream(
-      reinterpret_cast<uint8_t*>(const_cast<wchar_t*>(input)), len, 0);
+      reinterpret_cast<uint8_t*>(const_cast<wchar_t*>(input)), len);
   CFDE_XMLSyntaxParser parser(stream);
   EXPECT_EQ(FDE_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
   EXPECT_EQ(FDE_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
@@ -458,7 +458,7 @@ TEST_F(CFDE_XMLSyntaxParserTest, EntityOverflowHex) {
   // We * sizeof(wchar_t) because we pass in the uint8_t, not the wchar_t.
   size_t len = FXSYS_wcslen(input) * sizeof(wchar_t);
   CFX_RetainPtr<IFGAS_Stream> stream = IFGAS_Stream::CreateStream(
-      reinterpret_cast<uint8_t*>(const_cast<wchar_t*>(input)), len, 0);
+      reinterpret_cast<uint8_t*>(const_cast<wchar_t*>(input)), len);
   CFDE_XMLSyntaxParser parser(stream);
   EXPECT_EQ(FDE_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
   EXPECT_EQ(FDE_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
@@ -489,7 +489,7 @@ TEST_F(CFDE_XMLSyntaxParserTest, EntityOverflowDecimal) {
   // We * sizeof(wchar_t) because we pass in the uint8_t, not the wchar_t.
   size_t len = FXSYS_wcslen(input) * sizeof(wchar_t);
   CFX_RetainPtr<IFGAS_Stream> stream = IFGAS_Stream::CreateStream(
-      reinterpret_cast<uint8_t*>(const_cast<wchar_t*>(input)), len, 0);
+      reinterpret_cast<uint8_t*>(const_cast<wchar_t*>(input)), len);
   CFDE_XMLSyntaxParser parser(stream);
   EXPECT_EQ(FDE_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
   EXPECT_EQ(FDE_XmlSyntaxResult::TagName, parser.DoSyntaxParse());

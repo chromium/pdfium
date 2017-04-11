@@ -1411,11 +1411,8 @@ void CXFA_Node::Script_NodeClass_SaveXML(CFXJSE_Arguments* pArguments) {
     }
     CFX_RetainPtr<IFX_MemoryStream> pMemoryStream =
         IFX_MemoryStream::Create(true);
-
-    // Note: ambiguious below without static_cast.
-    CFX_RetainPtr<IFGAS_Stream> pStream = IFGAS_Stream::CreateStream(
-        CFX_RetainPtr<IFX_SeekableWriteStream>(pMemoryStream),
-        FX_STREAMACCESS_Text | FX_STREAMACCESS_Write | FX_STREAMACCESS_Append);
+    CFX_RetainPtr<IFGAS_Stream> pStream =
+        IFGAS_Stream::CreateWriteStream(pMemoryStream);
 
     if (!pStream) {
       pArguments->GetReturnValue()->SetString(bsXMLHeader);

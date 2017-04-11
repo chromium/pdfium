@@ -18,7 +18,7 @@ CXFA_WideTextRead::CXFA_WideTextRead(const CFX_WideString& wsBuffer)
 CXFA_WideTextRead::~CXFA_WideTextRead() {}
 
 uint32_t CXFA_WideTextRead::GetAccessModes() const {
-  return FX_STREAMACCESS_Read | FX_STREAMACCESS_Text;
+  return FX_STREAMACCESS_Read;
 }
 
 int32_t CXFA_WideTextRead::GetLength() const {

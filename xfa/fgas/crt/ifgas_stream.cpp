@@ -911,7 +911,7 @@ void CFGAS_TextStream::InitStream() {
 }
 
 uint32_t CFGAS_TextStream::GetAccessModes() const {
-  return m_pStreamImp->GetAccessModes() | FX_STREAMACCESS_Text;
+  return m_pStreamImp->GetAccessModes();
 }
 
 int32_t CFGAS_TextStream::GetLength() const {
@@ -1368,44 +1368,30 @@ bool CFGAS_FileRead::ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) {
 }  // namespace
 
 // static
-CFX_RetainPtr<IFGAS_Stream> IFGAS_Stream::CreateStream(
-    const CFX_RetainPtr<IFX_SeekableReadStream>& pFileRead,
-    uint32_t dwAccess) {
+CFX_RetainPtr<IFGAS_Stream> IFGAS_Stream::CreateReadStream(
+    const CFX_RetainPtr<IFX_SeekableReadStream>& pFileRead) {
   auto pSR = pdfium::MakeRetain<CFGAS_Stream>();
-  if (!pSR->LoadFileRead(pFileRead, dwAccess))
+  if (!pSR->LoadFileRead(pFileRead, FX_STREAMACCESS_Read))
     return nullptr;
-
-  if (dwAccess & FX_STREAMACCESS_Text)
-    return pdfium::MakeRetain<CFGAS_TextStream>(pSR);
-
-  return pSR;
+  return pdfium::MakeRetain<CFGAS_TextStream>(pSR);
 }
 
 // static
-CFX_RetainPtr<IFGAS_Stream> IFGAS_Stream::CreateStream(
-    const CFX_RetainPtr<IFX_SeekableWriteStream>& pFileWrite,
-    uint32_t dwAccess) {
+CFX_RetainPtr<IFGAS_Stream> IFGAS_Stream::CreateWriteStream(
+    const CFX_RetainPtr<IFX_SeekableWriteStream>& pFileWrite) {
   auto pSR = pdfium::MakeRetain<CFGAS_Stream>();
-  if (!pSR->LoadFileWrite(pFileWrite, dwAccess))
+  if (!pSR->LoadFileWrite(pFileWrite,
+                          FX_STREAMACCESS_Write | FX_STREAMACCESS_Append))
     return nullptr;
-
-  if (dwAccess & FX_STREAMACCESS_Text)
-    return pdfium::MakeRetain<CFGAS_TextStream>(pSR);
-
-  return pSR;
+  return pdfium::MakeRetain<CFGAS_TextStream>(pSR);
 }
 
 // static
 CFX_RetainPtr<IFGAS_Stream> IFGAS_Stream::CreateStream(uint8_t* pData,
-                                                       int32_t length,
-                                                       uint32_t dwAccess) {
+                                                       int32_t length) {
   auto pSR = pdfium::MakeRetain<CFGAS_Stream>();
-  if (!pSR->LoadBuffer(pData, length, dwAccess))
+  if (!pSR->LoadBuffer(pData, length, 0))
     return nullptr;
-
-  if (dwAccess & FX_STREAMACCESS_Text)
-    return pdfium::MakeRetain<CFGAS_TextStream>(pSR);
-
   return pSR;
 }
 

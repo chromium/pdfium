@@ -277,8 +277,7 @@ int32_t CXFA_SimpleParser::StartParse(
     XFA_XDPPACKET ePacketID) {
   CloseParser();
   m_pFileRead = pStream;
-  m_pStream = IFGAS_Stream::CreateStream(
-      pStream, FX_STREAMACCESS_Read | FX_STREAMACCESS_Text);
+  m_pStream = IFGAS_Stream::CreateReadStream(pStream);
   if (!m_pStream)
     return XFA_PARSESTATUS_StreamErr;
 

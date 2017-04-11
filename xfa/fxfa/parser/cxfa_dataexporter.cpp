@@ -226,12 +226,8 @@ void RegenerateFormFile_Changed(CXFA_Node* pNode,
 
         CFX_RetainPtr<IFX_MemoryStream> pMemStream =
             IFX_MemoryStream::Create(true);
-
-        // Note: ambiguous without cast below.
-        CFX_RetainPtr<IFGAS_Stream> pTempStream = IFGAS_Stream::CreateStream(
-            CFX_RetainPtr<IFX_SeekableWriteStream>(pMemStream),
-            FX_STREAMACCESS_Text | FX_STREAMACCESS_Write |
-                FX_STREAMACCESS_Append);
+        CFX_RetainPtr<IFGAS_Stream> pTempStream =
+            IFGAS_Stream::CreateWriteStream(pMemStream);
 
         pTempStream->SetCodePage(FX_CODEPAGE_UTF8);
         pRichTextXML->SaveXMLNode(pTempStream);
@@ -489,9 +485,7 @@ bool CXFA_DataExporter::Export(
   if (!pWrite)
     return false;
 
-  CFX_RetainPtr<IFGAS_Stream> pStream = IFGAS_Stream::CreateStream(
-      pWrite,
-      FX_STREAMACCESS_Text | FX_STREAMACCESS_Write | FX_STREAMACCESS_Append);
+  CFX_RetainPtr<IFGAS_Stream> pStream = IFGAS_Stream::CreateWriteStream(pWrite);
   if (!pStream)
     return false;
 
