@@ -12,6 +12,12 @@
 
 #include "third_party/base/ptr_util.h"
 
+namespace {
+
+const int kMaxAssignmentChainLength = 12;
+
+}  // namespace
+
 CXFA_FMParse::CXFA_FMParse(const CFX_WideStringC& wsFormcalc,
                            CXFA_FMErrorInfo* pErrorInfo)
     : m_pToken(nullptr), m_pErrorInfo(pErrorInfo) {
@@ -208,9 +214,12 @@ std::unique_ptr<CXFA_FMExpression> CXFA_FMParse::ParseVarExpression() {
 std::unique_ptr<CXFA_FMSimpleExpression> CXFA_FMParse::ParseSimpleExpression() {
   uint32_t line = m_pToken->m_uLinenum;
   std::unique_ptr<CXFA_FMSimpleExpression> pExp1 = ParseLogicalOrExpression();
+  int level = 1;
   while (m_pToken->m_type == TOKassign) {
     NextToken();
     std::unique_ptr<CXFA_FMSimpleExpression> pExp2 = ParseLogicalOrExpression();
+    if (level++ == kMaxAssignmentChainLength)
+      Error(m_pToken->m_uLinenum, kFMErrLongAssignmentChain);
     if (m_pErrorInfo->message.IsEmpty()) {
       pExp1 = pdfium::MakeUnique<CXFA_FMAssignExpression>(
           line, TOKassign, std::move(pExp1), std::move(pExp2));
@@ -776,9 +785,12 @@ std::unique_ptr<CXFA_FMSimpleExpression> CXFA_FMParse::ParseParenExpression() {
   uint32_t line = m_pToken->m_uLinenum;
   std::unique_ptr<CXFA_FMSimpleExpression> pExp1 = ParseLogicalOrExpression();
 
+  int level = 1;
   while (m_pToken->m_type == TOKassign) {
     NextToken();
     std::unique_ptr<CXFA_FMSimpleExpression> pExp2 = ParseLogicalOrExpression();
+    if (level++ == kMaxAssignmentChainLength)
+      Error(m_pToken->m_uLinenum, kFMErrLongAssignmentChain);
     if (m_pErrorInfo->message.IsEmpty()) {
       pExp1 = pdfium::MakeUnique<CXFA_FMAssignExpression>(
           line, TOKassign, std::move(pExp1), std::move(pExp2));

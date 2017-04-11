@@ -15,3 +15,5 @@ const wchar_t kFMErrExpectedEndIf[] = L"expected 'endif' instead of '%s'";
 const wchar_t kFMErrUnexpectedExpression[] = L"unexpected expression '%s'";
 const wchar_t kFMErrExpectedNonEmptyExpression[] =
     L"expected non-empty expression";
+const wchar_t kFMErrLongAssignmentChain[] =
+    L"long assignment chains are unsupported";
