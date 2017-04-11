@@ -12,12 +12,7 @@
 #include "core/fxcrt/fx_system.h"
 
 enum FX_STREAMACCESS {
-  FX_STREAMACCESS_Binary = 0x00,
-  FX_STREAMACCESS_Read = 0x02,
   FX_STREAMACCESS_Write = 0x04,
-  FX_STREAMACCESS_Truncate = 0x10,
-  FX_STREAMACCESS_Append = 0x20,
-  FX_STREAMACCESS_Create = 0x80,
 };
 
 enum FX_STREAMSEEK {
