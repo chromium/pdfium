@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <memory>
 #include <utility>
+#include <vector>
 
 #include "core/fxcodec/fx_codec.h"
 #include "core/fxge/dib/cfx_bitmapstorer.h"
@@ -22,60 +23,28 @@ namespace {
 
 class CFX_Palette {
  public:
-  CFX_Palette();
+  explicit CFX_Palette(const CFX_RetainPtr<CFX_DIBSource>& pBitmap);
   ~CFX_Palette();
 
-  bool BuildPalette(const CFX_RetainPtr<CFX_DIBSource>& pBitmap);
-  uint32_t* GetPalette() const { return m_pPalette; }
-  uint32_t* GetColorLut() const { return m_cLut; }
-  uint32_t* GetAmountLut() const { return m_aLut; }
-  int32_t Getlut() const { return m_lut; }
+  const uint32_t* GetPalette() { return m_Palette.data(); }
+  const std::pair<uint32_t, uint32_t>* GetLuts() const { return m_Luts.data(); }
+  int32_t GetLutCount() const { return m_lut; }
+  void SetAmountLut(int row, uint32_t value) { m_Luts[row].first = value; }
 
- protected:
-  uint32_t* m_pPalette;
-  uint32_t* m_cLut;
-  uint32_t* m_aLut;
+ private:
+  std::vector<uint32_t> m_Palette;
+  // (Amount, Color) pairs
+  std::vector<std::pair<uint32_t, uint32_t>> m_Luts;
   int m_lut;
 };
 
-int Partition(uint32_t* alut, uint32_t* clut, int l, int r) {
-  uint32_t p_a = alut[l];
-  uint32_t p_c = clut[l];
-  while (l < r) {
-    while (l < r && alut[r] >= p_a)
-      r--;
-    if (l < r) {
-      alut[l] = alut[r];
-      clut[l++] = clut[r];
-    }
-    while (l < r && alut[l] <= p_a)
-      l++;
-    if (l < r) {
-      alut[r] = alut[l];
-      clut[r--] = clut[l];
-    }
-  }
-  alut[l] = p_a;
-  clut[l] = p_c;
-  return l;
+void ColorDecode(uint32_t pal_v, uint8_t* r, uint8_t* g, uint8_t* b) {
+  *r = static_cast<uint8_t>((pal_v & 0xf00) >> 4);
+  *g = static_cast<uint8_t>(pal_v & 0x0f0);
+  *b = static_cast<uint8_t>((pal_v & 0x00f) << 4);
 }
 
-void Qsort(uint32_t* alut, uint32_t* clut, int l, int r) {
-  if (l < r) {
-    int pI = Partition(alut, clut, l, r);
-    Qsort(alut, clut, l, pI - 1);
-    Qsort(alut, clut, pI + 1, r);
-  }
-}
-
-void ColorDecode(uint32_t pal_v, uint8_t& r, uint8_t& g, uint8_t& b) {
-  r = static_cast<uint8_t>((pal_v & 0xf00) >> 4);
-  g = static_cast<uint8_t>(pal_v & 0x0f0);
-  b = static_cast<uint8_t>((pal_v & 0x00f) << 4);
-}
-
-void Obtain_Pal(uint32_t* aLut,
-                uint32_t* cLut,
+void Obtain_Pal(std::pair<uint32_t, uint32_t>* luts,
                 uint32_t* dest_pal,
                 uint32_t lut) {
   uint32_t lut_1 = lut - 1;
@@ -83,65 +52,50 @@ void Obtain_Pal(uint32_t* aLut,
     int lut_offset = lut_1 - row;
     if (lut_offset < 0)
       lut_offset += 256;
-    uint32_t color = cLut[lut_offset];
+    uint32_t color = luts[lut_offset].second;
     uint8_t r;
     uint8_t g;
     uint8_t b;
-    ColorDecode(color, r, g, b);
+    ColorDecode(color, &r, &g, &b);
     dest_pal[row] = (static_cast<uint32_t>(r) << 16) |
                     (static_cast<uint32_t>(g) << 8) | b | 0xff000000;
-    aLut[lut_offset] = row;
+    luts[lut_offset].first = row;
   }
 }
 
-CFX_Palette::CFX_Palette()
-    : m_pPalette(nullptr), m_cLut(nullptr), m_aLut(nullptr), m_lut(0) {}
-
-CFX_Palette::~CFX_Palette() {
-  FX_Free(m_pPalette);
-  FX_Free(m_cLut);
-  FX_Free(m_aLut);
-}
-
-bool CFX_Palette::BuildPalette(const CFX_RetainPtr<CFX_DIBSource>& pBitmap) {
-  if (!pBitmap) {
-    return false;
-  }
-  FX_Free(m_pPalette);
-  m_pPalette = FX_Alloc(uint32_t, 256);
+CFX_Palette::CFX_Palette(const CFX_RetainPtr<CFX_DIBSource>& pBitmap)
+    : m_Palette(256), m_Luts(4096), m_lut(0) {
   int bpp = pBitmap->GetBPP() / 8;
   int width = pBitmap->GetWidth();
   int height = pBitmap->GetHeight();
-  FX_Free(m_cLut);
-  m_cLut = nullptr;
-  FX_Free(m_aLut);
-  m_aLut = nullptr;
-  m_cLut = FX_Alloc(uint32_t, 4096);
-  m_aLut = FX_Alloc(uint32_t, 4096);
-  int row, col;
-  m_lut = 0;
-  for (row = 0; row < height; row++) {
-    uint8_t* scan_line = (uint8_t*)pBitmap->GetScanline(row);
-    for (col = 0; col < width; col++) {
-      uint8_t* src_port = scan_line + col * bpp;
+  for (int row = 0; row < height; ++row) {
+    const uint8_t* scan_line = pBitmap->GetScanline(row);
+    for (int col = 0; col < width; ++col) {
+      const uint8_t* src_port = scan_line + col * bpp;
       uint32_t b = src_port[0] & 0xf0;
       uint32_t g = src_port[1] & 0xf0;
       uint32_t r = src_port[2] & 0xf0;
       uint32_t index = (r << 4) + g + (b >> 4);
-      m_aLut[index]++;
+      m_Luts[index].first++;
     }
   }
-  for (row = 0; row < 4096; row++) {
-    if (m_aLut[row] != 0) {
-      m_aLut[m_lut] = m_aLut[row];
-      m_cLut[m_lut] = row;
-      m_lut++;
+  // Move non-zeros to the front and count them
+  for (int row = 0; row < 4096; ++row) {
+    if (m_Luts[row].first != 0) {
+      m_Luts[m_lut].first = m_Luts[row].first;
+      m_Luts[m_lut].second = row;
+      ++m_lut;
     }
   }
-  Qsort(m_aLut, m_cLut, 0, m_lut - 1);
-  Obtain_Pal(m_aLut, m_cLut, m_pPalette, m_lut);
-  return true;
+  std::sort(m_Luts.begin(), m_Luts.begin() + m_lut,
+            [](const std::pair<uint32_t, uint32_t>& arg1,
+               const std::pair<uint32_t, uint32_t>& arg2) {
+              return arg1.first < arg2.first;
+            });
+  Obtain_Pal(m_Luts.data(), m_Palette.data(), m_lut);
 }
+
+CFX_Palette::~CFX_Palette() {}
 
 bool ConvertBuffer_1bppMask2Gray(uint8_t* dest_buf,
                                  int dest_pitch,
@@ -370,15 +324,12 @@ bool ConvertBuffer_Rgb2PltRgb8(uint8_t* dest_buf,
                                int src_top,
                                uint32_t* dst_plt) {
   int bpp = pSrcBitmap->GetBPP() / 8;
-  CFX_Palette palette;
-  palette.BuildPalette(pSrcBitmap);
-  uint32_t* cLut = palette.GetColorLut();
-  uint32_t* aLut = palette.GetAmountLut();
-  if (!cLut || !aLut) {
+  if (!pSrcBitmap)
     return false;
-  }
-  int lut = palette.Getlut();
-  uint32_t* pPalette = palette.GetPalette();
+  CFX_Palette palette(pSrcBitmap);
+  const std::pair<uint32_t, uint32_t>* Luts = palette.GetLuts();
+  int lut = palette.GetLutCount();
+  const uint32_t* pal = palette.GetPalette();
   if (lut > 256) {
     int err;
     int min_err;
@@ -388,10 +339,10 @@ bool ConvertBuffer_Rgb2PltRgb8(uint8_t* dest_buf,
       uint8_t r;
       uint8_t g;
       uint8_t b;
-      ColorDecode(cLut[row], r, g, b);
-      int clrindex = 0;
+      ColorDecode(Luts[row].second, &r, &g, &b);
+      uint32_t clrindex = 0;
       for (int col = 0; col < 256; col++) {
-        uint32_t p_color = *(pPalette + col);
+        uint32_t p_color = pal[col];
         int d_r = r - static_cast<uint8_t>(p_color >> 16);
         int d_g = g - static_cast<uint8_t>(p_color >> 8);
         int d_b = b - static_cast<uint8_t>(p_color);
@@ -401,7 +352,7 @@ bool ConvertBuffer_Rgb2PltRgb8(uint8_t* dest_buf,
           clrindex = col;
         }
       }
-      aLut[row] = clrindex;
+      palette.SetAmountLut(row, clrindex);
     }
   }
   int32_t lut_1 = lut - 1;
@@ -416,13 +367,13 @@ bool ConvertBuffer_Rgb2PltRgb8(uint8_t* dest_buf,
       int b = src_port[0] & 0xf0;
       uint32_t clrindex = (r << 4) + g + (b >> 4);
       for (int i = lut_1; i >= 0; i--)
-        if (clrindex == cLut[i]) {
-          *(dest_scan + col) = static_cast<uint8_t>(aLut[i]);
+        if (clrindex == Luts[i].second) {
+          *(dest_scan + col) = static_cast<uint8_t>(Luts[i].first);
           break;
         }
     }
   }
-  memcpy(dst_plt, pPalette, sizeof(uint32_t) * 256);
+  memcpy(dst_plt, pal, sizeof(uint32_t) * 256);
   return true;
 }
 
