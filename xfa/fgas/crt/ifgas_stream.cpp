@@ -44,30 +44,6 @@ class IFGAS_StreamImp {
   uint32_t m_dwAccess;
 };
 
-class CFGAS_FileStreamImp : public IFGAS_StreamImp {
- public:
-  CFGAS_FileStreamImp();
-  ~CFGAS_FileStreamImp() override;
-
-  bool LoadFile(const wchar_t* pszSrcFileName, uint32_t dwAccess);
-
-  // IFGAS_StreamImp:
-  int32_t GetLength() const override;
-  int32_t Seek(FX_STREAMSEEK eSeek, int32_t iOffset) override;
-  int32_t GetPosition() override;
-  bool IsEOF() const override;
-  int32_t ReadData(uint8_t* pBuffer, int32_t iBufferSize) override;
-  int32_t ReadString(wchar_t* pStr, int32_t iMaxLength, bool& bEOS) override;
-  int32_t WriteData(const uint8_t* pBuffer, int32_t iBufferSize) override;
-  int32_t WriteString(const wchar_t* pStr, int32_t iLength) override;
-  void Flush() override;
-  bool SetLength(int32_t iLength) override;
-
- protected:
-  FILE* m_hFile;
-  int32_t m_iLength;
-};
-
 class CFGAS_BufferStreamImp : public IFGAS_StreamImp {
  public:
   CFGAS_BufferStreamImp();
@@ -124,37 +100,6 @@ class CFGAS_FileReadStreamImp : public IFGAS_StreamImp {
   int32_t m_iLength;
 };
 
-class CFGAS_BufferReadStreamImp : public IFGAS_StreamImp {
- public:
-  CFGAS_BufferReadStreamImp();
-  ~CFGAS_BufferReadStreamImp() override;
-
-  bool LoadBufferRead(const CFX_RetainPtr<IFX_BufferedReadStream>& pBufferRead,
-                      int32_t iFileSize,
-                      uint32_t dwAccess);
-
-  // IFGAS_StreamImp:
-  int32_t GetLength() const override;
-  int32_t Seek(FX_STREAMSEEK eSeek, int32_t iOffset) override;
-  int32_t GetPosition() override { return m_iPosition; }
-  bool IsEOF() const override;
-  int32_t ReadData(uint8_t* pBuffer, int32_t iBufferSize) override;
-  int32_t ReadString(wchar_t* pStr, int32_t iMaxLength, bool& bEOS) override;
-  int32_t WriteData(const uint8_t* pBuffer, int32_t iBufferSize) override {
-    return 0;
-  }
-  int32_t WriteString(const wchar_t* pStr, int32_t iLength) override {
-    return 0;
-  }
-  void Flush() override {}
-  bool SetLength(int32_t iLength) override { return false; }
-
- private:
-  CFX_RetainPtr<IFX_BufferedReadStream> m_pBufferRead;
-  int32_t m_iPosition;
-  int32_t m_iBufferSize;
-};
-
 class CFGAS_FileWriteStreamImp : public IFGAS_StreamImp {
  public:
   CFGAS_FileWriteStreamImp();
@@ -195,15 +140,11 @@ class CFGAS_Stream : public IFGAS_Stream {
   template <typename T, typename... Args>
   friend CFX_RetainPtr<T> pdfium::MakeRetain(Args&&... args);
 
-  bool LoadFile(const wchar_t* pszSrcFileName, uint32_t dwAccess);
   bool LoadBuffer(uint8_t* pData, int32_t iTotalSize, uint32_t dwAccess);
   bool LoadFileRead(const CFX_RetainPtr<IFX_SeekableReadStream>& pFileRead,
                     uint32_t dwAccess);
   bool LoadFileWrite(const CFX_RetainPtr<IFX_SeekableWriteStream>& pFileWrite,
                      uint32_t dwAccess);
-  bool LoadBufferRead(const CFX_RetainPtr<IFX_BufferedReadStream>& pBufferRead,
-                      int32_t iFileSize,
-                      uint32_t dwAccess);
 
   // IFGAS_Stream
   uint32_t GetAccessModes() const override;
@@ -272,9 +213,6 @@ class CFGAS_TextStream : public IFGAS_Stream {
 
 class CFGAS_FileRead : public IFX_SeekableReadStream {
  public:
-  static CFX_RetainPtr<CFGAS_FileRead> Create(
-      const CFX_RetainPtr<IFGAS_Stream>& pStream);
-
   explicit CFGAS_FileRead(const CFX_RetainPtr<IFGAS_Stream>& pStream);
   ~CFGAS_FileRead() override;
 
@@ -286,204 +224,7 @@ class CFGAS_FileRead : public IFX_SeekableReadStream {
   CFX_RetainPtr<IFGAS_Stream> m_pStream;
 };
 
-int32_t FileLength(FILE* file) {
-  ASSERT(file);
-#if _FX_OS_ == _FX_WIN32_DESKTOP_ || _FX_OS_ == _FX_WIN64_
-  return _filelength(_fileno(file));
-#else
-  int32_t iPos = ftell(file);
-  fseek(file, 0, SEEK_END);
-  int32_t iLen = ftell(file);
-  fseek(file, iPos, SEEK_SET);
-  return iLen;
-#endif
-}
-
-bool FileSetSize(FILE* file, int32_t size) {
-  ASSERT(file);
-#if _FX_OS_ == _FX_WIN32_DESKTOP_ || _FX_OS_ == _FX_WIN64_
-  return _chsize(_fileno(file), size) == 0;
-#elif _FX_OS_ == _FX_WIN32_MOBILE_
-  HANDLE hFile = _fileno(file);
-  uint32_t dwPos = ::SetFilePointer(hFile, 0, 0, FILE_CURRENT);
-  ::SetFilePointer(hFile, size, 0, FILE_BEGIN);
-  bool bRet = ::SetEndOfFile(hFile);
-  ::SetFilePointer(hFile, (int32_t)dwPos, 0, FILE_BEGIN);
-  return bRet;
-#else
-  return false;
-#endif
-}
-
 IFGAS_StreamImp::IFGAS_StreamImp() : m_dwAccess(0) {}
-
-CFGAS_FileStreamImp::CFGAS_FileStreamImp() : m_hFile(nullptr), m_iLength(0) {}
-
-CFGAS_FileStreamImp::~CFGAS_FileStreamImp() {
-  if (m_hFile)
-    fclose(m_hFile);
-}
-
-bool CFGAS_FileStreamImp::LoadFile(const wchar_t* pszSrcFileName,
-                                   uint32_t dwAccess) {
-  ASSERT(!m_hFile);
-  ASSERT(pszSrcFileName && FXSYS_wcslen(pszSrcFileName) > 0);
-#if _FX_OS_ == _FX_WIN32_DESKTOP_ || _FX_OS_ == _FX_WIN32_MOBILE_ || \
-    _FX_OS_ == _FX_WIN64_
-  const wchar_t* wsMode;
-  if (dwAccess & FX_STREAMACCESS_Write) {
-    if (dwAccess & FX_STREAMACCESS_Append) {
-      wsMode = L"a+b";
-    } else if (dwAccess & FX_STREAMACCESS_Truncate) {
-      wsMode = L"w+b";
-    } else {
-      wsMode = L"r+b";
-    }
-  } else {
-    wsMode = L"rb";
-  }
-  m_hFile = FXSYS_wfopen(pszSrcFileName, wsMode);
-
-  if (!m_hFile) {
-    if (dwAccess & FX_STREAMACCESS_Write) {
-      if (dwAccess & FX_STREAMACCESS_Create)
-        m_hFile = FXSYS_wfopen(pszSrcFileName, L"w+b");
-
-      if (!m_hFile) {
-        m_hFile = FXSYS_wfopen(pszSrcFileName, L"r+b");
-        if (!m_hFile)
-          return false;
-
-        if (dwAccess & FX_STREAMACCESS_Truncate)
-          FileSetSize(m_hFile, 0);
-      }
-    } else {
-      return false;
-    }
-  }
-#else
-  const char* wsMode = "rb";
-  if (dwAccess & FX_STREAMACCESS_Write) {
-    if (dwAccess & FX_STREAMACCESS_Append) {
-      wsMode = "a+b";
-    } else if (dwAccess & FX_STREAMACCESS_Truncate) {
-      wsMode = "w+b";
-    } else {
-      wsMode = "r+b";
-    }
-  }
-  CFX_ByteString szFileName = CFX_ByteString::FromUnicode(pszSrcFileName);
-  m_hFile = fopen(szFileName.c_str(), wsMode);
-  if (!m_hFile) {
-    if (dwAccess & FX_STREAMACCESS_Write) {
-      if (dwAccess & FX_STREAMACCESS_Create) {
-        m_hFile = fopen(szFileName.c_str(), "w+b");
-      }
-      if (!m_hFile) {
-        m_hFile = fopen(szFileName.c_str(), "r+b");
-        if (!m_hFile) {
-          return false;
-        }
-        if (dwAccess & FX_STREAMACCESS_Truncate) {
-          FileSetSize(m_hFile, 0);
-        }
-      }
-    } else {
-      return false;
-    }
-  }
-#endif
-  SetAccessModes(dwAccess);
-  if ((dwAccess & (FX_STREAMACCESS_Write | FX_STREAMACCESS_Truncate)) ==
-      (FX_STREAMACCESS_Write | FX_STREAMACCESS_Truncate)) {
-    m_iLength = 0;
-  } else {
-    m_iLength = FileLength(m_hFile);
-  }
-  return true;
-}
-int32_t CFGAS_FileStreamImp::GetLength() const {
-  ASSERT(m_hFile);
-  return m_iLength;
-}
-int32_t CFGAS_FileStreamImp::Seek(FX_STREAMSEEK eSeek, int32_t iOffset) {
-  ASSERT(m_hFile);
-  fseek(m_hFile, iOffset, eSeek);
-  return ftell(m_hFile);
-}
-int32_t CFGAS_FileStreamImp::GetPosition() {
-  ASSERT(m_hFile);
-  return ftell(m_hFile);
-}
-bool CFGAS_FileStreamImp::IsEOF() const {
-  ASSERT(m_hFile);
-  return ftell(m_hFile) >= m_iLength;
-}
-int32_t CFGAS_FileStreamImp::ReadData(uint8_t* pBuffer, int32_t iBufferSize) {
-  ASSERT(m_hFile);
-  ASSERT(pBuffer && iBufferSize > 0);
-  return fread(pBuffer, 1, iBufferSize, m_hFile);
-}
-int32_t CFGAS_FileStreamImp::ReadString(wchar_t* pStr,
-                                        int32_t iMaxLength,
-                                        bool& bEOS) {
-  ASSERT(m_hFile);
-  ASSERT(pStr && iMaxLength > 0);
-  if (m_iLength <= 0) {
-    return 0;
-  }
-  int32_t iPosition = ftell(m_hFile);
-  int32_t iLen = std::min((m_iLength - iPosition) / 2, iMaxLength);
-  if (iLen <= 0) {
-    return 0;
-  }
-  iLen = fread(pStr, 2, iLen, m_hFile);
-  int32_t iCount = 0;
-  while (*pStr != L'\0' && iCount < iLen) {
-    pStr++, iCount++;
-  }
-  iPosition += iCount * 2;
-  if (ftell(m_hFile) != iPosition) {
-    fseek(m_hFile, iPosition, 0);
-  }
-  bEOS = (iPosition >= m_iLength);
-  return iCount;
-}
-int32_t CFGAS_FileStreamImp::WriteData(const uint8_t* pBuffer,
-                                       int32_t iBufferSize) {
-  ASSERT(m_hFile && (GetAccessModes() & FX_STREAMACCESS_Write) != 0);
-  ASSERT(pBuffer && iBufferSize > 0);
-  int32_t iRet = fwrite(pBuffer, 1, iBufferSize, m_hFile);
-  if (iRet != 0) {
-    int32_t iPos = ftell(m_hFile);
-    if (iPos > m_iLength) {
-      m_iLength = iPos;
-    }
-  }
-  return iRet;
-}
-int32_t CFGAS_FileStreamImp::WriteString(const wchar_t* pStr, int32_t iLength) {
-  ASSERT(m_hFile && (GetAccessModes() & FX_STREAMACCESS_Write) != 0);
-  ASSERT(pStr && iLength > 0);
-  int32_t iRet = fwrite(pStr, 2, iLength, m_hFile);
-  if (iRet != 0) {
-    int32_t iPos = ftell(m_hFile);
-    if (iPos > m_iLength) {
-      m_iLength = iPos;
-    }
-  }
-  return iRet;
-}
-void CFGAS_FileStreamImp::Flush() {
-  ASSERT(m_hFile && (GetAccessModes() & FX_STREAMACCESS_Write) != 0);
-  fflush(m_hFile);
-}
-bool CFGAS_FileStreamImp::SetLength(int32_t iLength) {
-  ASSERT(m_hFile && (GetAccessModes() & FX_STREAMACCESS_Write) != 0);
-  bool bRet = FileSetSize(m_hFile, iLength);
-  m_iLength = FileLength(m_hFile);
-  return bRet;
-}
 
 CFGAS_FileReadStreamImp::CFGAS_FileReadStreamImp()
     : m_pFileRead(nullptr), m_iPosition(0), m_iLength(0) {}
@@ -555,130 +296,6 @@ int32_t CFGAS_FileReadStreamImp::ReadString(wchar_t* pStr,
   return i;
 }
 
-CFGAS_BufferReadStreamImp::CFGAS_BufferReadStreamImp()
-    : m_iPosition(0), m_iBufferSize(0) {}
-
-CFGAS_BufferReadStreamImp::~CFGAS_BufferReadStreamImp() {}
-
-bool CFGAS_BufferReadStreamImp::LoadBufferRead(
-    const CFX_RetainPtr<IFX_BufferedReadStream>& pBufferRead,
-    int32_t iFileSize,
-    uint32_t dwAccess) {
-  ASSERT(!m_pBufferRead && pBufferRead);
-  if (dwAccess & FX_STREAMACCESS_Write)
-    return false;
-
-  m_pBufferRead = pBufferRead;
-  m_iBufferSize = iFileSize;
-  if (m_iBufferSize >= 0)
-    return true;
-
-  if (!m_pBufferRead->ReadNextBlock(true))
-    return false;
-
-  m_iBufferSize = m_pBufferRead->GetBlockSize();
-  while (!m_pBufferRead->IsEOF()) {
-    m_pBufferRead->ReadNextBlock(false);
-    m_iBufferSize += m_pBufferRead->GetBlockSize();
-  }
-  return true;
-}
-int32_t CFGAS_BufferReadStreamImp::GetLength() const {
-  return m_iBufferSize;
-}
-int32_t CFGAS_BufferReadStreamImp::Seek(FX_STREAMSEEK eSeek, int32_t iOffset) {
-  int32_t iLength = GetLength();
-  switch (eSeek) {
-    case FX_STREAMSEEK_Begin:
-      m_iPosition = iOffset;
-      break;
-    case FX_STREAMSEEK_Current:
-      m_iPosition += iOffset;
-      break;
-    case FX_STREAMSEEK_End:
-      m_iPosition = iLength + iOffset;
-      break;
-  }
-  if (m_iPosition < 0) {
-    m_iPosition = 0;
-  } else if (m_iPosition >= iLength) {
-    m_iPosition = iLength;
-  }
-  return m_iPosition;
-}
-bool CFGAS_BufferReadStreamImp::IsEOF() const {
-  return m_pBufferRead ? m_pBufferRead->IsEOF() : true;
-}
-int32_t CFGAS_BufferReadStreamImp::ReadData(uint8_t* pBuffer,
-                                            int32_t iBufferSize) {
-  ASSERT(m_pBufferRead);
-  ASSERT(pBuffer && iBufferSize > 0);
-  int32_t iLength = GetLength();
-  if (m_iPosition >= iLength) {
-    return 0;
-  }
-  if (iBufferSize > iLength - m_iPosition) {
-    iBufferSize = iLength - m_iPosition;
-  }
-  uint32_t dwBlockOffset = m_pBufferRead->GetBlockOffset();
-  uint32_t dwBlockSize = m_pBufferRead->GetBlockSize();
-  if (m_iPosition < (int32_t)dwBlockOffset) {
-    if (!m_pBufferRead->ReadNextBlock(true)) {
-      return 0;
-    }
-    dwBlockOffset = m_pBufferRead->GetBlockOffset();
-    dwBlockSize = m_pBufferRead->GetBlockSize();
-  }
-  while (m_iPosition < (int32_t)dwBlockOffset ||
-         m_iPosition >= (int32_t)(dwBlockOffset + dwBlockSize)) {
-    if (m_pBufferRead->IsEOF() || !m_pBufferRead->ReadNextBlock(false)) {
-      break;
-    }
-    dwBlockOffset = m_pBufferRead->GetBlockOffset();
-    dwBlockSize = m_pBufferRead->GetBlockSize();
-  }
-  if (m_iPosition < (int32_t)dwBlockOffset ||
-      m_iPosition >= (int32_t)(dwBlockOffset + dwBlockSize)) {
-    return 0;
-  }
-  const uint8_t* pBufferTmp = m_pBufferRead->GetBlockBuffer();
-  uint32_t dwOffsetTmp = m_iPosition - dwBlockOffset;
-  uint32_t dwCopySize =
-      std::min(iBufferSize, (int32_t)(dwBlockSize - dwOffsetTmp));
-  memcpy(pBuffer, pBufferTmp + dwOffsetTmp, dwCopySize);
-  dwOffsetTmp = dwCopySize;
-  iBufferSize -= dwCopySize;
-  while (iBufferSize > 0) {
-    if (!m_pBufferRead->ReadNextBlock(false)) {
-      break;
-    }
-    dwBlockOffset = m_pBufferRead->GetBlockOffset();
-    dwBlockSize = m_pBufferRead->GetBlockSize();
-    pBufferTmp = m_pBufferRead->GetBlockBuffer();
-    dwCopySize = std::min((uint32_t)iBufferSize, dwBlockSize);
-    memcpy(pBuffer + dwOffsetTmp, pBufferTmp, dwCopySize);
-    dwOffsetTmp += dwCopySize;
-    iBufferSize -= dwCopySize;
-  }
-  m_iPosition += dwOffsetTmp;
-  return dwOffsetTmp;
-}
-int32_t CFGAS_BufferReadStreamImp::ReadString(wchar_t* pStr,
-                                              int32_t iMaxLength,
-                                              bool& bEOS) {
-  ASSERT(m_pBufferRead);
-  ASSERT(pStr && iMaxLength > 0);
-  iMaxLength = ReadData((uint8_t*)pStr, iMaxLength * 2) / 2;
-  if (iMaxLength <= 0) {
-    return 0;
-  }
-  int32_t i = 0;
-  while (i < iMaxLength && pStr[i] != L'\0') {
-    ++i;
-  }
-  bEOS = (m_iPosition >= GetLength()) || pStr[i] == L'\0';
-  return i;
-}
 CFGAS_FileWriteStreamImp::CFGAS_FileWriteStreamImp()
     : m_pFileWrite(nullptr), m_iPosition(0) {}
 
@@ -1054,24 +671,6 @@ CFGAS_Stream::~CFGAS_Stream() {
     delete m_pStreamImp;
 }
 
-bool CFGAS_Stream::LoadFile(const wchar_t* pszSrcFileName, uint32_t dwAccess) {
-  if (m_eStreamType != FX_SREAMTYPE_Unknown || m_pStreamImp)
-    return false;
-
-  if (!pszSrcFileName || FXSYS_wcslen(pszSrcFileName) < 1)
-    return false;
-
-  auto pImp = pdfium::MakeUnique<CFGAS_FileStreamImp>();
-  if (!pImp->LoadFile(pszSrcFileName, dwAccess))
-    return false;
-
-  m_pStreamImp = pImp.release();
-  m_eStreamType = FX_STREAMTYPE_File;
-  m_dwAccess = dwAccess;
-  m_iLength = m_pStreamImp->GetLength();
-  return true;
-}
-
 bool CFGAS_Stream::LoadFileRead(
     const CFX_RetainPtr<IFX_SeekableReadStream>& pFileRead,
     uint32_t dwAccess) {
@@ -1127,27 +726,6 @@ bool CFGAS_Stream::LoadBuffer(uint8_t* pData,
 
   m_pStreamImp = pImp.release();
   m_eStreamType = FX_STREAMTYPE_Buffer;
-  m_dwAccess = dwAccess;
-  m_iLength = m_pStreamImp->GetLength();
-  return true;
-}
-
-bool CFGAS_Stream::LoadBufferRead(
-    const CFX_RetainPtr<IFX_BufferedReadStream>& pBufferRead,
-    int32_t iFileSize,
-    uint32_t dwAccess) {
-  if (m_eStreamType != FX_SREAMTYPE_Unknown || m_pStreamImp)
-    return false;
-
-  if (!pBufferRead)
-    return false;
-
-  auto pImp = pdfium::MakeUnique<CFGAS_BufferReadStreamImp>();
-  if (!pImp->LoadBufferRead(pBufferRead, iFileSize, dwAccess))
-    return false;
-
-  m_pStreamImp = pImp.release();
-  m_eStreamType = FX_STREAMTYPE_BufferRead;
   m_dwAccess = dwAccess;
   m_iLength = m_pStreamImp->GetLength();
   return true;
@@ -1343,11 +921,6 @@ uint16_t CFGAS_Stream::SetCodePage(uint16_t wCodePage) {
 #endif
 }
 
-CFX_RetainPtr<CFGAS_FileRead> CFGAS_FileRead::Create(
-    const CFX_RetainPtr<IFGAS_Stream>& pStream) {
-  return pdfium::MakeRetain<CFGAS_FileRead>(pStream);
-}
-
 CFGAS_FileRead::CFGAS_FileRead(const CFX_RetainPtr<IFGAS_Stream>& pStream)
     : m_pStream(pStream) {
   ASSERT(m_pStream);
@@ -1395,7 +968,6 @@ CFX_RetainPtr<IFGAS_Stream> IFGAS_Stream::CreateStream(uint8_t* pData,
   return pSR;
 }
 
-// static
 CFX_RetainPtr<IFX_SeekableReadStream> IFGAS_Stream::MakeSeekableReadStream() {
-  return CFGAS_FileRead::Create(CFX_RetainPtr<IFGAS_Stream>(this));
+  return pdfium::MakeRetain<CFGAS_FileRead>(CFX_RetainPtr<IFGAS_Stream>(this));
 }
