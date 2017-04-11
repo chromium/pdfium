@@ -188,15 +188,6 @@ template("test") {
         deps += [ ":$_apk_target" ]
       }
     }
-
-    # TODO(GYP_GONE): Delete this after we've converted everything to GN.
-    # The _run targets exist only for compatibility w/ GYP.
-    group("${target_name}_apk_run") {
-      testonly = true
-      deps = [
-        ":${invoker.target_name}",
-      ]
-    }
   } else if (is_ios) {
     import("//build/config/ios/rules.gni")
 
@@ -263,15 +254,6 @@ template("test") {
 
         # Give tests the default manifest on Windows (a no-op elsewhere).
         "//build/win:default_exe_manifest",
-      ]
-    }
-
-    # TODO(GYP_GONE): Delete this after we've converted everything to GN.
-    # The _run targets exist only for compatibility with GYP.
-    group("${target_name}_run") {
-      testonly = true
-      deps = [
-        ":${invoker.target_name}",
       ]
     }
 
