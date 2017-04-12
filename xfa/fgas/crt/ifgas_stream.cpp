@@ -131,7 +131,6 @@ class CFGAS_Stream : public IFGAS_Stream {
   uint32_t m_dwAccess;
   int32_t m_iTotalSize;
   int32_t m_iPosition;
-  int32_t m_iStart;
   int32_t m_iLength;
   int32_t m_iRefCount;
 };
@@ -530,7 +529,6 @@ CFGAS_Stream::CFGAS_Stream(std::unique_ptr<IFGAS_StreamImp> imp,
       m_dwAccess(dwAccess),
       m_iTotalSize(0),
       m_iPosition(0),
-      m_iStart(0),
       m_iLength(m_pStreamImp->GetLength()),
       m_iRefCount(1) {}
 
@@ -564,110 +562,94 @@ bool CFGAS_Stream::IsEOF() const {
 
 int32_t CFGAS_Stream::ReadData(uint8_t* pBuffer, int32_t iBufferSize) {
   ASSERT(pBuffer && iBufferSize > 0);
-  if (!m_pStreamImp) {
+  if (!m_pStreamImp)
     return -1;
-  }
-  int32_t iLen = std::min(m_iStart + m_iLength - m_iPosition, iBufferSize);
-  if (iLen <= 0) {
+
+  int32_t iLen = std::min(m_iLength - m_iPosition, iBufferSize);
+  if (iLen <= 0)
     return 0;
-  }
-  if (m_pStreamImp->GetPosition() != m_iPosition) {
+  if (m_pStreamImp->GetPosition() != m_iPosition)
     m_pStreamImp->Seek(FX_STREAMSEEK_Begin, m_iPosition);
-  }
+
   iLen = m_pStreamImp->ReadData(pBuffer, iLen);
   m_iPosition = m_pStreamImp->GetPosition();
   return iLen;
 }
+
 int32_t CFGAS_Stream::ReadString(wchar_t* pStr,
                                  int32_t iMaxLength,
                                  bool& bEOS) {
   ASSERT(pStr && iMaxLength > 0);
-  if (!m_pStreamImp) {
+  if (!m_pStreamImp)
     return -1;
-  }
-  int32_t iEnd = m_iStart + m_iLength;
-  int32_t iLen = iEnd - m_iPosition;
-  iLen = std::min(iEnd / 2, iMaxLength);
-  if (iLen <= 0) {
+
+  int32_t iLen = std::min((m_iLength - m_iPosition) / 2, iMaxLength);
+  if (iLen <= 0)
     return 0;
-  }
-  if (m_pStreamImp->GetPosition() != m_iPosition) {
+  if (m_pStreamImp->GetPosition() != m_iPosition)
     m_pStreamImp->Seek(FX_STREAMSEEK_Begin, m_iPosition);
-  }
+
   iLen = m_pStreamImp->ReadString(pStr, iLen, bEOS);
   m_iPosition = m_pStreamImp->GetPosition();
-  if (iLen > 0 && m_iPosition >= iEnd) {
+  if (iLen > 0 && m_iPosition >= m_iLength)
     bEOS = true;
-  }
+
   return iLen;
 }
 
 int32_t CFGAS_Stream::WriteData(const uint8_t* pBuffer, int32_t iBufferSize) {
   ASSERT(pBuffer && iBufferSize > 0);
-  if (!m_pStreamImp) {
+  if (!m_pStreamImp)
     return -1;
-  }
-  if ((m_dwAccess & FX_STREAMACCESS_Write) == 0) {
+  if ((m_dwAccess & FX_STREAMACCESS_Write) == 0)
     return -1;
-  }
-  int32_t iLen = iBufferSize;
-
-  int32_t iEnd = m_iStart + m_iLength;
-  if (m_pStreamImp->GetPosition() != m_iPosition) {
+  if (m_pStreamImp->GetPosition() != m_iPosition)
     m_pStreamImp->Seek(FX_STREAMSEEK_Begin, m_iPosition);
-  }
-  iLen = m_pStreamImp->WriteData(pBuffer, iLen);
+
+  int32_t iLen = m_pStreamImp->WriteData(pBuffer, iBufferSize);
   m_iPosition = m_pStreamImp->GetPosition();
-  if (m_iPosition > iEnd) {
-    m_iLength = m_iPosition - m_iStart;
-  }
+  m_iLength = std::max(m_iLength, m_iPosition);
+
   return iLen;
 }
+
 int32_t CFGAS_Stream::WriteString(const wchar_t* pStr, int32_t iLength) {
   ASSERT(pStr && iLength > 0);
-  if (!m_pStreamImp) {
+  if (!m_pStreamImp)
     return -1;
-  }
-  if ((m_dwAccess & FX_STREAMACCESS_Write) == 0) {
+  if ((m_dwAccess & FX_STREAMACCESS_Write) == 0)
     return -1;
-  }
-  int32_t iLen = iLength;
-
-  int32_t iEnd = m_iStart + m_iLength;
-  if (m_pStreamImp->GetPosition() != m_iPosition) {
+  if (m_pStreamImp->GetPosition() != m_iPosition)
     m_pStreamImp->Seek(FX_STREAMSEEK_Begin, m_iPosition);
-  }
-  iLen = m_pStreamImp->WriteString(pStr, iLen);
+
+  int32_t iLen = m_pStreamImp->WriteString(pStr, iLength);
   m_iPosition = m_pStreamImp->GetPosition();
-  if (m_iPosition > iEnd) {
-    m_iLength = m_iPosition - m_iStart;
-  }
+  m_iLength = std::max(m_iLength, m_iPosition);
   return iLen;
 }
+
 void CFGAS_Stream::Flush() {
-  if (!m_pStreamImp) {
+  if (!m_pStreamImp)
     return;
-  }
-  if ((m_dwAccess & FX_STREAMACCESS_Write) == 0) {
+  if ((m_dwAccess & FX_STREAMACCESS_Write) == 0)
     return;
-  }
   m_pStreamImp->Flush();
 }
+
 bool CFGAS_Stream::SetLength(int32_t iLength) {
-  if (!m_pStreamImp) {
+  if (!m_pStreamImp)
     return false;
-  }
-  if ((m_dwAccess & FX_STREAMACCESS_Write) == 0) {
+  if ((m_dwAccess & FX_STREAMACCESS_Write) == 0)
     return false;
-  }
   return m_pStreamImp->SetLength(iLength);
 }
+
 int32_t CFGAS_Stream::GetBOM(uint8_t bom[4]) const {
-  if (!m_pStreamImp) {
+  if (!m_pStreamImp)
     return -1;
-  }
   return 0;
 }
+
 uint16_t CFGAS_Stream::GetCodePage() const {
 #if _FX_ENDIAN_ == _FX_LITTLE_ENDIAN_
   return FX_CODEPAGE_UTF16LE;
