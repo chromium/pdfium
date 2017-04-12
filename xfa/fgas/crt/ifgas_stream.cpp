@@ -14,6 +14,7 @@
 #include <algorithm>
 #include <memory>
 #include <utility>
+#include <vector>
 
 #include "core/fxcrt/fx_ext.h"
 #include "third_party/base/ptr_util.h"
@@ -165,8 +166,6 @@ class CFGAS_TextStream : public IFGAS_Stream {
   uint16_t m_wCodePage;
   int32_t m_wBOMLength;
   uint32_t m_dwBOM;
-  uint8_t* m_pBuf;
-  int32_t m_iBufSize;
   CFX_RetainPtr<IFGAS_Stream> m_pStreamImp;
 };
 
@@ -336,17 +335,12 @@ CFGAS_TextStream::CFGAS_TextStream(const CFX_RetainPtr<IFGAS_Stream>& pStream)
     : m_wCodePage(FX_CODEPAGE_DefANSI),
       m_wBOMLength(0),
       m_dwBOM(0),
-      m_pBuf(nullptr),
-      m_iBufSize(0),
       m_pStreamImp(pStream) {
   ASSERT(m_pStreamImp);
   InitStream();
 }
 
-CFGAS_TextStream::~CFGAS_TextStream() {
-  if (m_pBuf)
-    FX_Free(m_pBuf);
-}
+CFGAS_TextStream::~CFGAS_TextStream() {}
 
 void CFGAS_TextStream::InitStream() {
   int32_t iPosition = m_pStreamImp->GetPosition();
@@ -456,47 +450,39 @@ int32_t CFGAS_TextStream::ReadString(wchar_t* pStr,
                                      int32_t iMaxLength,
                                      bool& bEOS) {
   ASSERT(pStr && iMaxLength > 0);
-  if (!m_pStreamImp) {
+  if (!m_pStreamImp)
     return -1;
-  }
-  int32_t iLen;
+
   if (m_wCodePage == FX_CODEPAGE_UTF16LE ||
       m_wCodePage == FX_CODEPAGE_UTF16BE) {
     int32_t iBytes = iMaxLength * 2;
-    iLen = m_pStreamImp->ReadData((uint8_t*)pStr, iBytes);
+    int32_t iLen = m_pStreamImp->ReadData((uint8_t*)pStr, iBytes);
     iMaxLength = iLen / 2;
-    if (sizeof(wchar_t) > 2) {
+    if (sizeof(wchar_t) > 2)
       FX_UTF16ToWChar(pStr, iMaxLength);
-    }
+
 #if _FX_ENDIAN_ == _FX_BIG_ENDIAN_
-    if (m_wCodePage == FX_CODEPAGE_UTF16LE) {
+    if (m_wCodePage == FX_CODEPAGE_UTF16LE)
       FX_SwapByteOrder(pStr, iMaxLength);
-    }
 #else
-    if (m_wCodePage == FX_CODEPAGE_UTF16BE) {
+    if (m_wCodePage == FX_CODEPAGE_UTF16BE)
       FX_SwapByteOrder(pStr, iMaxLength);
-    }
 #endif
+
   } else {
     int32_t pos = m_pStreamImp->GetPosition();
-    int32_t iBytes = iMaxLength;
-    iBytes = std::min(iBytes, m_pStreamImp->GetLength() - pos);
+    int32_t iBytes = std::min(iMaxLength, m_pStreamImp->GetLength() - pos);
     if (iBytes > 0) {
-      if (!m_pBuf) {
-        m_pBuf = FX_Alloc(uint8_t, iBytes);
-        m_iBufSize = iBytes;
-      } else if (iBytes > m_iBufSize) {
-        m_pBuf = FX_Realloc(uint8_t, m_pBuf, iBytes);
-        m_iBufSize = iBytes;
-      }
-      iLen = m_pStreamImp->ReadData(m_pBuf, iBytes);
+      std::vector<uint8_t> buf(iBytes);
+
+      int32_t iLen = m_pStreamImp->ReadData(buf.data(), iBytes);
       int32_t iSrc = iLen;
-      int32_t iDecode = FX_DecodeString(m_wCodePage, (const char*)m_pBuf, &iSrc,
-                                        pStr, &iMaxLength, true);
+      int32_t iDecode = FX_DecodeString(
+          m_wCodePage, reinterpret_cast<const char*>(buf.data()), &iSrc, pStr,
+          &iMaxLength, true);
       m_pStreamImp->Seek(FX_STREAMSEEK_Current, iSrc - iLen);
-      if (iDecode < 1) {
+      if (iDecode < 1)
         return -1;
-      }
     } else {
       iMaxLength = 0;
     }
