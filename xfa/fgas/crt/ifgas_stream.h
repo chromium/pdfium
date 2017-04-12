@@ -11,10 +11,6 @@
 #include "core/fxcrt/fx_stream.h"
 #include "core/fxcrt/fx_system.h"
 
-enum FX_STREAMACCESS {
-  FX_STREAMACCESS_Write = 0x04,
-};
-
 enum FX_STREAMSEEK {
   FX_STREAMSEEK_Begin = 0,
   FX_STREAMSEEK_Current,
@@ -30,7 +26,6 @@ class IFGAS_Stream : public CFX_Retainable {
   static CFX_RetainPtr<IFGAS_Stream> CreateWideStringReadStream(
       const CFX_WideString& buffer);
 
-  virtual uint32_t GetAccessModes() const = 0;
   virtual int32_t GetLength() const = 0;
   virtual int32_t Seek(FX_STREAMSEEK eSeek, int32_t iOffset) = 0;
   virtual int32_t GetPosition() = 0;
@@ -41,7 +36,7 @@ class IFGAS_Stream : public CFX_Retainable {
   virtual int32_t WriteString(const wchar_t* pStr, int32_t iLength) = 0;
   virtual void Flush() = 0;
   virtual bool SetLength(int32_t iLength) = 0;
-  virtual int32_t GetBOM(uint8_t bom[4]) const = 0;
+  virtual int32_t GetBOMLength() const = 0;
   virtual uint16_t GetCodePage() const = 0;
   virtual uint16_t SetCodePage(uint16_t wCodePage) = 0;
 };

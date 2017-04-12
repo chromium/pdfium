@@ -117,8 +117,7 @@ void CFDE_TxtEdtEngine::SetTextByStream(
     }
     bool bPreIsCR = false;
     if (bValid) {
-      uint8_t bom[4];
-      int32_t nPos = pStream->GetBOM(bom);
+      int32_t nPos = pStream->GetBOMLength();
       pStream->Seek(FX_STREAMSEEK_Begin, nPos);
       int32_t nPlateSize = std::min(nStreamLength, m_pTxtBuf->GetChunkSize());
       wchar_t* lpwstr = FX_Alloc(wchar_t, nPlateSize);

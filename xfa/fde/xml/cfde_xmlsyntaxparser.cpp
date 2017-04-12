@@ -106,9 +106,7 @@ CFDE_XMLSyntaxParser::CFDE_XMLSyntaxParser(
   m_CurNode.eNodeType = FDE_XMLNODE_Unknown;
 
   m_iXMLPlaneSize = std::min(m_iXMLPlaneSize, m_pStream->GetLength());
-
-  uint8_t bom[4];
-  m_iCurrentPos = m_pStream->GetBOM(bom);
+  m_iCurrentPos = m_pStream->GetBOMLength();
 
   FX_SAFE_INT32 alloc_size_safe = m_iXMLPlaneSize;
   alloc_size_safe += 1;  // For NUL.
