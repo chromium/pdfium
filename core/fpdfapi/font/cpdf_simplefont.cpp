@@ -29,8 +29,11 @@ int CPDF_SimpleFont::GlyphFromCharCode(uint32_t charcode, bool* pVertGlyph) {
   if (charcode > 0xff)
     return -1;
 
-  int index = m_GlyphIndex[(uint8_t)charcode];
-  return index != 0xffff ? index : -1;
+  int index = m_GlyphIndex[charcode];
+  if (index == 0xffff || (index == 0 && IsTrueTypeFont()))
+    return -1;
+
+  return index;
 }
 
 void CPDF_SimpleFont::LoadCharMetrics(int charcode) {

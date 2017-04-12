@@ -73,13 +73,11 @@ void CPDF_TrueTypeFont::LoadGlyphMap() {
         return;
 
       int charcode = 0;
-      for (; charcode < nStartChar; charcode++) {
+      for (; charcode < nStartChar; charcode++)
         m_GlyphIndex[charcode] = 0;
-      }
       uint16_t nGlyph = charcode - nStartChar + 3;
-      for (; charcode < 256; charcode++, nGlyph++) {
+      for (; charcode < 256; charcode++, nGlyph++)
         m_GlyphIndex[charcode] = nGlyph;
-      }
       return;
     }
     bool bMSUnicode = FT_UseTTCharmap(m_Font.GetFace(), 3, 1);
@@ -108,9 +106,8 @@ void CPDF_TrueTypeFont::LoadGlyphMap() {
           uint16_t unicode = kPrefix[j] * 256 + charcode;
           m_GlyphIndex[charcode] =
               FXFT_Get_Char_Index(m_Font.GetFace(), unicode);
-          if (m_GlyphIndex[charcode]) {
+          if (m_GlyphIndex[charcode])
             break;
-          }
         }
       } else if (m_Encoding.m_Unicodes[charcode]) {
         if (bMSUnicode) {
