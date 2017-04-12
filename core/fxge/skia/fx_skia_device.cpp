@@ -658,7 +658,7 @@ class SkiaState {
   // mark all cached state as uninitialized
   explicit SkiaState(CFX_SkiaDeviceDriver* pDriver)
       : m_pDriver(pDriver),
-        m_pFont(nullptr),
+        m_pTypeFace(nullptr),
         m_fontSize(0),
         m_fillColor(0),
         m_strokeColor(0),
@@ -786,7 +786,7 @@ class SkiaState {
     if (Accumulator::kText != m_type) {
       m_positions.setCount(0);
       m_glyphs.setCount(0);
-      m_pFont = pFont;
+      m_pTypeFace = pFont->GetFace() ? pFont->GetDeviceCache() : nullptr;
       m_fontSize = font_size;
       m_fillColor = color;
       m_drawMatrix = *pMatrix;
@@ -819,8 +819,8 @@ class SkiaState {
     SkPaint skPaint;
     skPaint.setAntiAlias(true);
     skPaint.setColor(m_fillColor);
-    if (m_pFont->GetFace()) {  // exclude placeholder test fonts
-      sk_sp<SkTypeface> typeface(SkSafeRef(m_pFont->GetDeviceCache()));
+    if (m_pTypeFace) {  // exclude placeholder test fonts
+      sk_sp<SkTypeface> typeface(SkSafeRef(m_pTypeFace));
       skPaint.setTypeface(typeface);
     }
     skPaint.setTextEncoding(SkPaint::kGlyphID_TextEncoding);
@@ -978,7 +978,9 @@ class SkiaState {
                    const CFX_Matrix* pMatrix,
                    float font_size,
                    uint32_t color) const {
-    return pFont != m_pFont || MatrixChanged(pMatrix, m_drawMatrix) ||
+    CFX_TypeFace* typeface =
+        pFont->GetFace() ? pFont->GetDeviceCache() : nullptr;
+    return typeface != m_pTypeFace || MatrixChanged(pMatrix, m_drawMatrix) ||
            font_size != m_fontSize || color != m_fillColor;
   }
 
@@ -1263,7 +1265,7 @@ class SkiaState {
   CFX_GraphStateData m_drawState;
   CFX_Matrix m_clipMatrix;
   CFX_SkiaDeviceDriver* m_pDriver;
-  CFX_Font* m_pFont;
+  CFX_TypeFace* m_pTypeFace;
   float m_fontSize;
   uint32_t m_fillColor;
   uint32_t m_strokeColor;
