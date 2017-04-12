@@ -27,6 +27,8 @@ class IFGAS_Stream : public CFX_Retainable {
       const CFX_RetainPtr<IFX_SeekableReadStream>& pFileRead);
   static CFX_RetainPtr<IFGAS_Stream> CreateWriteStream(
       const CFX_RetainPtr<IFX_SeekableWriteStream>& pFileWrite);
+  static CFX_RetainPtr<IFGAS_Stream> CreateWideStringReadStream(
+      const CFX_WideString& buffer);
 
   virtual uint32_t GetAccessModes() const = 0;
   virtual int32_t GetLength() const = 0;

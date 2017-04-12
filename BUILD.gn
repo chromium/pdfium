@@ -1790,8 +1790,6 @@ if (pdf_enable_xfa) {
       "xfa/fxfa/parser/cxfa_value.h",
       "xfa/fxfa/parser/cxfa_valuearray.cpp",
       "xfa/fxfa/parser/cxfa_valuearray.h",
-      "xfa/fxfa/parser/cxfa_widetextread.cpp",
-      "xfa/fxfa/parser/cxfa_widetextread.h",
       "xfa/fxfa/parser/cxfa_widgetdata.cpp",
       "xfa/fxfa/parser/cxfa_widgetdata.h",
       "xfa/fxfa/parser/cxfa_xmllocale.cpp",

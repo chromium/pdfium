@@ -13,7 +13,7 @@
 #include "xfa/fde/xml/cfde_xmldoc.h"
 #include "xfa/fde/xml/cfde_xmlnode.h"
 #include "xfa/fde/xml/cfde_xmlparser.h"
-#include "xfa/fxfa/parser/cxfa_widetextread.h"
+#include "xfa/fgas/crt/ifgas_stream.h"
 
 namespace {
 
@@ -53,7 +53,8 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
 
   CFX_WideString input =
       CFX_WideString::FromUTF8(CFX_ByteStringC(data, safe_size.ValueOrDie()));
-  auto stream = pdfium::MakeRetain<CXFA_WideTextRead>(input);
+  CFX_RetainPtr<IFGAS_Stream> stream =
+      IFGAS_Stream::CreateWideStringReadStream(input);
   if (!stream)
     return 0;
 

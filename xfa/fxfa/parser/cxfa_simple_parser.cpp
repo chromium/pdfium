@@ -20,10 +20,10 @@
 #include "xfa/fde/xml/cfde_xmlparser.h"
 #include "xfa/fde/xml/cfde_xmltext.h"
 #include "xfa/fgas/crt/fgas_codepage.h"
+#include "xfa/fgas/crt/ifgas_stream.h"
 #include "xfa/fxfa/fxfa.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
-#include "xfa/fxfa/parser/cxfa_widetextread.h"
 #include "xfa/fxfa/parser/xfa_basic_data.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
 
@@ -323,7 +323,8 @@ int32_t CXFA_SimpleParser::ParseXMLData(const CFX_WideString& wsXML,
   CloseParser();
   pXMLNode = nullptr;
   m_pXMLDoc = pdfium::MakeUnique<CFDE_XMLDoc>();
-  auto pStream = pdfium::MakeRetain<CXFA_WideTextRead>(wsXML);
+  CFX_RetainPtr<IFGAS_Stream> pStream =
+      IFGAS_Stream::CreateWideStringReadStream(wsXML);
   auto pParser =
       pdfium::MakeUnique<CFDE_XMLParser>(m_pXMLDoc->GetRoot(), pStream);
   pParser->m_dwCheckStatus = 0x03;
