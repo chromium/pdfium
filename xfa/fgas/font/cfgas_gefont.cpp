@@ -54,29 +54,6 @@ CFX_RetainPtr<CFGAS_GEFont> CFGAS_GEFont::LoadFont(
   return pFont;
 }
 
-#if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
-// static
-CFX_RetainPtr<CFGAS_GEFont> CFGAS_GEFont::LoadFont(const uint8_t* pBuffer,
-                                                   int32_t iLength,
-                                                   CFGAS_FontMgr* pFontMgr) {
-  auto pFont = pdfium::MakeRetain<CFGAS_GEFont>(pFontMgr);
-  if (pFont->LoadFontInternal(pBuffer, iLength))
-    return nullptr;
-  return pFont;
-}
-
-// static
-CFX_RetainPtr<CFGAS_GEFont> CFGAS_GEFont::LoadFont(
-    const CFX_RetainPtr<IFGAS_Stream>& pFontStream,
-    CFGAS_FontMgr* pFontMgr,
-    bool bSaveStream) {
-  auto pFont = pdfium::MakeRetain<CFGAS_GEFont>(pFontMgr);
-  if (!pFont->LoadFontInternal(pFontStream, bSaveStream))
-    return nullptr;
-  return pFont;
-}
-#endif  // _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
-
 CFGAS_GEFont::CFGAS_GEFont(CFGAS_FontMgr* pFontMgr)
     :
 #if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
@@ -157,33 +134,6 @@ bool CFGAS_GEFont::LoadFontInternal(const wchar_t* pszFontFamily,
   m_pFont->LoadSubst(csFontFamily, true, dwFlags, iWeight, 0, wCodePage, false);
   if (!m_pFont->GetFace())
     return false;
-  return InitFont();
-}
-
-bool CFGAS_GEFont::LoadFontInternal(const uint8_t* pBuffer, int32_t length) {
-  if (m_pFont)
-    return false;
-
-  m_pFont = new CFX_Font;
-  if (!m_pFont->LoadEmbedded(pBuffer, length))
-    return false;
-  return InitFont();
-}
-
-bool CFGAS_GEFont::LoadFontInternal(
-    const CFX_RetainPtr<IFGAS_Stream>& pFontStream,
-    bool bSaveStream) {
-  if (m_pFont || m_pFileRead || !pFontStream || pFontStream->GetLength() < 1)
-    return false;
-  if (bSaveStream)
-    m_pStream = pFontStream;
-
-  m_pFileRead = pFontStream->MakeSeekableReadStream();
-  m_pFont = new CFX_Font;
-  if (!m_pFont->LoadFile(m_pFileRead)) {
-    m_pFileRead.Reset();
-    return false;
-  }
   return InitFont();
 }
 #endif  // _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_

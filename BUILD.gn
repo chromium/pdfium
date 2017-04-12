@@ -1641,6 +1641,8 @@ if (pdf_enable_xfa) {
       "xfa/fxfa/cxfa_ffwidget.h",
       "xfa/fxfa/cxfa_ffwidgethandler.cpp",
       "xfa/fxfa/cxfa_ffwidgethandler.h",
+      "xfa/fxfa/cxfa_fileread.cpp",
+      "xfa/fxfa/cxfa_fileread.h",
       "xfa/fxfa/cxfa_fontmgr.cpp",
       "xfa/fxfa/cxfa_fontmgr.h",
       "xfa/fxfa/cxfa_pdffontmgr.cpp",

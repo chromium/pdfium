@@ -169,19 +169,6 @@ class CFGAS_TextStream : public IFGAS_Stream {
   CFX_RetainPtr<IFGAS_Stream> m_pStreamImp;
 };
 
-class CFGAS_FileRead : public IFX_SeekableReadStream {
- public:
-  explicit CFGAS_FileRead(const CFX_RetainPtr<IFGAS_Stream>& pStream);
-  ~CFGAS_FileRead() override;
-
-  // IFX_SeekableReadStream
-  FX_FILESIZE GetSize() override;
-  bool ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) override;
-
- protected:
-  CFX_RetainPtr<IFGAS_Stream> m_pStream;
-};
-
 IFGAS_StreamImp::IFGAS_StreamImp() : m_dwAccess(0) {}
 
 CFGAS_FileReadStreamImp::CFGAS_FileReadStreamImp()
@@ -663,23 +650,6 @@ uint16_t CFGAS_Stream::SetCodePage(uint16_t wCodePage) {
 #endif
 }
 
-CFGAS_FileRead::CFGAS_FileRead(const CFX_RetainPtr<IFGAS_Stream>& pStream)
-    : m_pStream(pStream) {
-  ASSERT(m_pStream);
-}
-
-CFGAS_FileRead::~CFGAS_FileRead() {}
-
-FX_FILESIZE CFGAS_FileRead::GetSize() {
-  return (FX_FILESIZE)m_pStream->GetLength();
-}
-
-bool CFGAS_FileRead::ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) {
-  m_pStream->Seek(FX_STREAMSEEK_Begin, (int32_t)offset);
-  int32_t iLen = m_pStream->ReadData((uint8_t*)buffer, (int32_t)size);
-  return iLen == (int32_t)size;
-}
-
 }  // namespace
 
 // static
@@ -713,8 +683,4 @@ CFX_RetainPtr<IFGAS_Stream> IFGAS_Stream::CreateWriteStream(
 
   return pdfium::MakeRetain<CFGAS_TextStream>(
       pdfium::MakeRetain<CFGAS_Stream>(std::move(pImp), FX_STREAMACCESS_Write));
-}
-
-CFX_RetainPtr<IFX_SeekableReadStream> IFGAS_Stream::MakeSeekableReadStream() {
-  return pdfium::MakeRetain<CFGAS_FileRead>(CFX_RetainPtr<IFGAS_Stream>(this));
 }

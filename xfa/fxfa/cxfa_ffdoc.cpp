@@ -25,6 +25,7 @@
 #include "xfa/fxfa/cxfa_ffapp.h"
 #include "xfa/fxfa/cxfa_ffdocview.h"
 #include "xfa/fxfa/cxfa_ffwidget.h"
+#include "xfa/fxfa/cxfa_fileread.h"
 #include "xfa/fxfa/cxfa_fontmgr.h"
 #include "xfa/fxfa/parser/cxfa_dataexporter.h"
 #include "xfa/fxfa/parser/cxfa_dataimporter.h"
@@ -315,7 +316,7 @@ bool CXFA_FFDoc::OpenDoc(CPDF_Document* pPDFDoc) {
     return false;
 
   m_pPDFDoc = pPDFDoc;
-  m_pStream = MakeSeekableReadStream(xfaStreams);
+  m_pStream = pdfium::MakeRetain<CXFA_FileRead>(xfaStreams);
   return true;
 }
 

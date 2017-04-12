@@ -42,8 +42,6 @@ class IFGAS_Stream : public CFX_Retainable {
   virtual int32_t GetBOM(uint8_t bom[4]) const = 0;
   virtual uint16_t GetCodePage() const = 0;
   virtual uint16_t SetCodePage(uint16_t wCodePage) = 0;
-
-  CFX_RetainPtr<IFX_SeekableReadStream> MakeSeekableReadStream();
 };
 
 #endif  // XFA_FGAS_CRT_IFGAS_STREAM_H_

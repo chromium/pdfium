@@ -25,11 +25,6 @@ class CXFA_FontMgr;
 class IFWL_AdapterTimerMgr;
 class CFWL_WidgetMgrDelegate;
 
-// Layering prevents fxcrt from knowing about CPDF_Streams; this could go
-// in fpdfsdk, but it is XFA-Only.
-CFX_RetainPtr<IFX_SeekableReadStream> MakeSeekableReadStream(
-    const std::vector<CPDF_Stream*>& streams);
-
 class CXFA_FFApp {
  public:
   explicit CXFA_FFApp(IXFA_AppProvider* pProvider);

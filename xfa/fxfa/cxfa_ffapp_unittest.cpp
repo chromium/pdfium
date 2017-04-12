@@ -13,13 +13,13 @@
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/test_support.h"
 #include "third_party/base/ptr_util.h"
+#include "xfa/fxfa/cxfa_fileread.h"
 
 class CXFAFileReadTest : public pdfium::FPDF_Test {};
 
 TEST_F(CXFAFileReadTest, NoStreams) {
   std::vector<CPDF_Stream*> streams;
-  CFX_RetainPtr<IFX_SeekableReadStream> fileread =
-      MakeSeekableReadStream(streams);
+  auto fileread = pdfium::MakeRetain<CXFA_FileRead>(streams);
 
   uint8_t output_buffer[16];
   memset(output_buffer, 0xbd, sizeof(output_buffer));
@@ -31,8 +31,7 @@ TEST_F(CXFAFileReadTest, EmptyStreams) {
   std::vector<CPDF_Stream*> streams;
   auto stream1 = pdfium::MakeUnique<CPDF_Stream>();
   streams.push_back(stream1.get());
-  CFX_RetainPtr<IFX_SeekableReadStream> fileread =
-      MakeSeekableReadStream(streams);
+  auto fileread = pdfium::MakeRetain<CXFA_FileRead>(streams);
 
   uint8_t output_buffer[16];
   memset(output_buffer, 0xbd, sizeof(output_buffer));
@@ -57,8 +56,7 @@ TEST_F(CXFAFileReadTest, NormalStreams) {
   streams.push_back(stream1.get());
   streams.push_back(stream2.get());
   streams.push_back(stream3.get());
-  CFX_RetainPtr<IFX_SeekableReadStream> fileread =
-      MakeSeekableReadStream(streams);
+  auto fileread = pdfium::MakeRetain<CXFA_FileRead>(streams);
 
   uint8_t output_buffer[16];
   memset(output_buffer, 0xbd, sizeof(output_buffer));

@@ -37,15 +37,6 @@ class CFGAS_GEFont : public CFX_Retainable {
   static CFX_RetainPtr<CFGAS_GEFont> LoadFont(
       std::unique_ptr<CFX_Font> pInternalFont,
       CFGAS_FontMgr* pFontMgr);
-#if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
-  static CFX_RetainPtr<CFGAS_GEFont> LoadFont(const uint8_t* pBuffer,
-                                              int32_t iLength,
-                                              CFGAS_FontMgr* pFontMgr);
-  static CFX_RetainPtr<CFGAS_GEFont> LoadFont(
-      const CFX_RetainPtr<IFGAS_Stream>& pFontStream,
-      CFGAS_FontMgr* pFontMgr,
-      bool bSaveStream);
-#endif
 
   CFX_RetainPtr<CFGAS_GEFont> Derive(uint32_t dwFontStyles,
                                      uint16_t wCodePage = 0);
