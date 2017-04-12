@@ -36,7 +36,7 @@ authentication instructions. **Note that you must authenticate with your
 @google.com credentials**. Enter "0" if asked for a project-id.
 
 Once you've done this, the toolchain will be installed automatically for
-you in [the step](#GenBuild) below.
+you in the [Generate the build files](#GenBuild) step below.
 
 The toolchain will be in `depot_tools\win_toolchain\vs_files\<hash>`, and windbg
 can be found in `depot_tools\win_toolchain\vs_files\<hash>\win_sdk\Debuggers`.
