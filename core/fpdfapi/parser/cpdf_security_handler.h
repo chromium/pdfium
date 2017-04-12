@@ -7,6 +7,7 @@
 #ifndef CORE_FPDFAPI_PARSER_CPDF_SECURITY_HANDLER_H_
 #define CORE_FPDFAPI_PARSER_CPDF_SECURITY_HANDLER_H_
 
+#include "core/fpdfapi/parser/cpdf_crypto_handler.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
 
@@ -18,7 +19,6 @@
 #define PDF_ENCRYPT_CONTENT 0
 
 class CPDF_Array;
-class CPDF_CryptoHandler;
 class CPDF_Dictionary;
 class CPDF_Parser;
 
@@ -31,7 +31,6 @@ class CPDF_SecurityHandler {
   uint32_t GetPermissions();
   bool GetCryptInfo(int& cipher, const uint8_t*& buffer, int& keylen);
   bool IsMetadataEncrypted() const;
-  CPDF_CryptoHandler* CreateCryptoHandler();
 
   void OnCreate(CPDF_Dictionary* pEncryptDict,
                 CPDF_Array* pIdArray,

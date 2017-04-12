@@ -84,10 +84,6 @@ CPDF_SecurityHandler::CPDF_SecurityHandler()
 
 CPDF_SecurityHandler::~CPDF_SecurityHandler() {}
 
-CPDF_CryptoHandler* CPDF_SecurityHandler::CreateCryptoHandler() {
-  return new CPDF_CryptoHandler;
-}
-
 bool CPDF_SecurityHandler::OnInit(CPDF_Parser* pParser,
                                   CPDF_Dictionary* pEncryptDict) {
   m_pParser = pParser;

@@ -100,8 +100,8 @@ void CPDF_Parser::SetEncryptDictionary(CPDF_Dictionary* pDict) {
   m_pEncryptDict = pDict;
 }
 
-CPDF_CryptoHandler* CPDF_Parser::GetCryptoHandler() {
-  return m_pSyntax->m_pCryptoHandler.get();
+CFX_RetainPtr<CPDF_CryptoHandler> CPDF_Parser::GetCryptoHandler() const {
+  return m_pSyntax->m_pCryptoHandler;
 }
 
 CFX_RetainPtr<IFX_SeekableReadStream> CPDF_Parser::GetFileAccess() const {
@@ -249,17 +249,16 @@ CPDF_Parser::Error CPDF_Parser::SetEncryptHandler() {
       return PASSWORD_ERROR;
 
     m_pSecurityHandler = std::move(pSecurityHandler);
-    std::unique_ptr<CPDF_CryptoHandler> pCryptoHandler(
-        m_pSecurityHandler->CreateCryptoHandler());
+    auto pCryptoHandler = pdfium::MakeRetain<CPDF_CryptoHandler>();
     if (!pCryptoHandler->Init(m_pEncryptDict, m_pSecurityHandler.get()))
       return HANDLER_ERROR;
-    m_pSyntax->SetEncrypt(std::move(pCryptoHandler));
+    m_pSyntax->SetEncrypt(pCryptoHandler);
   }
   return SUCCESS;
 }
 
 void CPDF_Parser::ReleaseEncryptHandler() {
-  m_pSyntax->m_pCryptoHandler.reset();
+  m_pSyntax->m_pCryptoHandler.Reset();
   m_pSecurityHandler.reset();
 }
 

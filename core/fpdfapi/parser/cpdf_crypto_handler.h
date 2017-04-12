@@ -7,6 +7,7 @@
 #ifndef CORE_FPDFAPI_PARSER_CPDF_CRYPTO_HANDLER_H_
 #define CORE_FPDFAPI_PARSER_CPDF_CRYPTO_HANDLER_H_
 
+#include "core/fxcrt/cfx_retain_ptr.h"
 #include "core/fxcrt/fx_basic.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
@@ -14,10 +15,10 @@
 class CPDF_Dictionary;
 class CPDF_SecurityHandler;
 
-class CPDF_CryptoHandler {
+class CPDF_CryptoHandler : public CFX_Retainable {
  public:
-  CPDF_CryptoHandler();
-  ~CPDF_CryptoHandler();
+  template <typename T, typename... Args>
+  friend CFX_RetainPtr<T> pdfium::MakeRetain(Args&&... args);
 
   bool Init(CPDF_Dictionary* pEncryptDict,
             CPDF_SecurityHandler* pSecurityHandler);
@@ -44,7 +45,11 @@ class CPDF_CryptoHandler {
 
   bool Init(int cipher, const uint8_t* key, int keylen);
 
- protected:
+ private:
+  CPDF_CryptoHandler();
+  ~CPDF_CryptoHandler() override;
+
+  void PopulateKey(uint32_t objnum, uint32_t gennum, uint8_t* key);
   void CryptBlock(bool bEncrypt,
                   uint32_t objnum,
                   uint32_t gennum,
@@ -64,9 +69,6 @@ class CPDF_CryptoHandler {
   int m_KeyLen;
   int m_Cipher;
   uint8_t* m_pAESContext;
-
- private:
-  void PopulateKey(uint32_t objnum, uint32_t gennum, uint8_t* key);
 };
 
 #endif  // CORE_FPDFAPI_PARSER_CPDF_CRYPTO_HANDLER_H_

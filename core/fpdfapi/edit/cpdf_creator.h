@@ -44,7 +44,6 @@ class CPDF_Creator {
   friend class CPDF_XRefStream;
 
   bool Create(uint32_t flags);
-  void ResetStandardSecurity();
   void Clear();
 
   void InitOldObjNumOffsets();
@@ -80,10 +79,7 @@ class CPDF_Creator {
   bool m_bSecurityChanged;
   CPDF_Dictionary* m_pEncryptDict;
   uint32_t m_dwEncryptObjNum;
-  bool m_bEncryptCloned;
-  CPDF_CryptoHandler* m_pCryptoHandler;
-  // Whether this owns the crypto handler |m_pCryptoHandler|.
-  bool m_bLocalCryptoHandler;
+  CFX_RetainPtr<CPDF_CryptoHandler> m_pCryptoHandler;
   CPDF_Object* m_pMetadata;
   std::unique_ptr<CPDF_XRefStream> m_pXRefStream;
   int32_t m_ObjectStreamSize;

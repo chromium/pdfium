@@ -635,7 +635,7 @@ std::unique_ptr<CPDF_Stream> CPDF_SyntaxParser::ReadStream(
   const CFX_ByteStringC kEndObjStr("endobj");
 
   CPDF_CryptoHandler* pCryptoHandler =
-      objnum == m_MetadataObjnum ? nullptr : m_pCryptoHandler.get();
+      objnum == m_MetadataObjnum ? nullptr : m_pCryptoHandler.Get();
   if (!pCryptoHandler) {
     bool bSearchForKeyword = true;
     if (len >= 0) {
@@ -911,6 +911,6 @@ FX_FILESIZE CPDF_SyntaxParser::FindTag(const CFX_ByteStringC& tag,
 }
 
 void CPDF_SyntaxParser::SetEncrypt(
-    std::unique_ptr<CPDF_CryptoHandler> pCryptoHandler) {
-  m_pCryptoHandler = std::move(pCryptoHandler);
+    const CFX_RetainPtr<CPDF_CryptoHandler>& pCryptoHandler) {
+  m_pCryptoHandler = pCryptoHandler;
 }

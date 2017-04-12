@@ -577,7 +577,7 @@ FX_FILESIZE CPDF_ObjectStream::End(CPDF_Creator* pCreator) {
   tempBuffer << m_Buffer;
   CPDF_FlateEncoder encoder(tempBuffer.GetBuffer(), tempBuffer.GetLength(),
                             true, false);
-  CPDF_Encryptor encryptor(pCreator->m_pCryptoHandler, m_dwObjNum,
+  CPDF_Encryptor encryptor(pCreator->m_pCryptoHandler.Get(), m_dwObjNum,
                            encoder.m_pData.Get(), encoder.m_dwSize);
   if ((len = pFile->AppendDWord(encryptor.m_dwSize)) < 0) {
     return -1;
@@ -880,9 +880,7 @@ CPDF_Creator::CPDF_Creator(CPDF_Document* pDoc)
       m_bSecurityChanged(false),
       m_pEncryptDict(m_pParser ? m_pParser->GetEncryptDict() : nullptr),
       m_dwEncryptObjNum(0),
-      m_bEncryptCloned(false),
       m_pCryptoHandler(m_pParser ? m_pParser->GetCryptoHandler() : nullptr),
-      m_bLocalCryptoHandler(false),
       m_pMetadata(nullptr),
       m_ObjectStreamSize(200),
       m_dwLastObjNum(m_pDocument->GetLastObjNum()),
@@ -896,11 +894,6 @@ CPDF_Creator::CPDF_Creator(CPDF_Document* pDoc)
       m_FileVersion(0) {}
 
 CPDF_Creator::~CPDF_Creator() {
-  ResetStandardSecurity();
-  if (m_bEncryptCloned) {
-    delete m_pEncryptDict;
-    m_pEncryptDict = nullptr;
-  }
   Clear();
 }
 
@@ -1025,7 +1018,7 @@ int32_t CPDF_Creator::WriteIndirectObj(uint32_t objnum,
   m_Offset += len;
   if (pObj->IsStream()) {
     CPDF_CryptoHandler* pHandler =
-        pObj != m_pMetadata ? m_pCryptoHandler : nullptr;
+        pObj != m_pMetadata ? m_pCryptoHandler.Get() : nullptr;
     if (WriteStream(pObj, objnum, pHandler) < 0)
       return -1;
   } else {
@@ -1086,8 +1079,8 @@ int32_t CPDF_Creator::WriteDirectObj(uint32_t objnum,
         m_Offset += len;
         break;
       }
-      CPDF_Encryptor encryptor(m_pCryptoHandler, objnum, (uint8_t*)str.c_str(),
-                               str.GetLength());
+      CPDF_Encryptor encryptor(m_pCryptoHandler.Get(), objnum,
+                               (uint8_t*)str.c_str(), str.GetLength());
       CFX_ByteString content = PDF_EncodeString(
           CFX_ByteString((const char*)encryptor.m_pData, encryptor.m_dwSize),
           bHex);
@@ -1100,8 +1093,8 @@ int32_t CPDF_Creator::WriteDirectObj(uint32_t objnum,
     case CPDF_Object::STREAM: {
       CPDF_FlateEncoder encoder(const_cast<CPDF_Stream*>(pObj->AsStream()),
                                 true);
-      CPDF_Encryptor encryptor(m_pCryptoHandler, objnum, encoder.m_pData.Get(),
-                               encoder.m_dwSize);
+      CPDF_Encryptor encryptor(m_pCryptoHandler.Get(), objnum,
+                               encoder.m_pData.Get(), encoder.m_dwSize);
       if (static_cast<uint32_t>(encoder.m_pDict->GetIntegerFor("Length")) !=
           encryptor.m_dwSize) {
         encoder.CloneDict();
@@ -1860,11 +1853,8 @@ void CPDF_Creator::InitID(bool bDefault) {
       CPDF_SecurityHandler handler;
       handler.OnCreate(m_pEncryptDict, m_pIDArray.get(), user_pass.raw_str(),
                        user_pass.GetLength(), flag);
-      if (m_bLocalCryptoHandler)
-        delete m_pCryptoHandler;
-      m_pCryptoHandler = new CPDF_CryptoHandler;
+      m_pCryptoHandler = pdfium::MakeRetain<CPDF_CryptoHandler>();
       m_pCryptoHandler->Init(m_pEncryptDict, &handler);
-      m_bLocalCryptoHandler = true;
       m_bSecurityChanged = true;
     }
   }
@@ -1902,17 +1892,9 @@ bool CPDF_Creator::SetFileVersion(int32_t fileVersion) {
   m_FileVersion = fileVersion;
   return true;
 }
+
 void CPDF_Creator::RemoveSecurity() {
-  ResetStandardSecurity();
+  m_pCryptoHandler.Reset();
   m_bSecurityChanged = true;
   m_pEncryptDict = nullptr;
-  m_pCryptoHandler = nullptr;
-}
-void CPDF_Creator::ResetStandardSecurity() {
-  if (!m_bLocalCryptoHandler)
-    return;
-
-  delete m_pCryptoHandler;
-  m_pCryptoHandler = nullptr;
-  m_bLocalCryptoHandler = false;
 }

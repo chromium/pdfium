@@ -51,7 +51,7 @@ class CPDF_SyntaxParser {
                   FX_FILESIZE limit);
 
   FX_FILESIZE FindTag(const CFX_ByteStringC& tag, FX_FILESIZE limit);
-  void SetEncrypt(std::unique_ptr<CPDF_CryptoHandler> pCryptoHandler);
+  void SetEncrypt(const CFX_RetainPtr<CPDF_CryptoHandler>& pCryptoHandler);
   bool ReadBlock(uint8_t* pBuf, uint32_t size);
   bool GetCharAt(FX_FILESIZE pos, uint8_t& ch);
   CFX_ByteString GetNextWord(bool* bIsNumber);
@@ -95,7 +95,7 @@ class CPDF_SyntaxParser {
   uint8_t* m_pFileBuf;
   uint32_t m_BufSize;
   FX_FILESIZE m_BufOffset;
-  std::unique_ptr<CPDF_CryptoHandler> m_pCryptoHandler;
+  CFX_RetainPtr<CPDF_CryptoHandler> m_pCryptoHandler;
   uint8_t m_WordBuffer[257];
   uint32_t m_WordSize;
   CFX_WeakPtr<CFX_ByteStringPool> m_pPool;
