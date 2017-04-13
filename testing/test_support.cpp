@@ -212,6 +212,23 @@ int TestSaver::WriteBlockCallback(FPDF_FILEWRITE* pFileWrite,
   return 1;
 }
 
+// static
+int TestSaver::GetBlockFromString(void* param,
+                                  unsigned long pos,
+                                  unsigned char* buf,
+                                  unsigned long size) {
+  std::string* new_file = static_cast<std::string*>(param);
+  if (!new_file || pos + size < pos)
+    return 0;
+
+  unsigned long file_size = new_file->size();
+  if (pos + size > file_size)
+    return 0;
+
+  memcpy(buf, new_file->data() + pos, size);
+  return 1;
+}
+
 namespace pdfium {
 
 void FPDF_Test::SetUp() {

@@ -115,6 +115,12 @@ class TestSaver : public FPDF_FILEWRITE {
   void ClearString();
   const std::string& GetString() const { return m_String; }
 
+ protected:
+  static int GetBlockFromString(void* param,
+                                unsigned long pos,
+                                unsigned char* buf,
+                                unsigned long size);
+
  private:
   static int WriteBlockCallback(FPDF_FILEWRITE* pFileWrite,
                                 const void* data,
