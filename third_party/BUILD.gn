@@ -288,6 +288,8 @@ if (!build_with_chromium) {
     # Uses libjpeg_turbo as the jpeg implementation. Has no effect if
     # use_system_libjpeg is set.
     use_libjpeg_turbo = true
+
+    use_system_zlib = false
   }
 
   config("system_libjpeg_config") {
@@ -313,6 +315,21 @@ if (!build_with_chromium) {
     } else {
       public_deps = [
         "//third_party/libjpeg:libjpeg",
+      ]
+    }
+  }
+
+  config("system_zlib_config") {
+    libs = [ "z" ]
+    defines = [ "USE_SYSTEM_ZLIB" ]
+  }
+
+  group("zlib") {
+    if (use_system_zlib) {
+      public_configs = [ ":system_zlib_config" ]
+    } else {
+      public_deps = [
+        "//third_party/zlib",
       ]
     }
   }
@@ -395,7 +412,7 @@ static_library("fx_lpng") {
   defines = []
   cflags = []
   deps = [
-    "//third_party/zlib",
+    "//third_party:zlib",
   ]
 
   if (current_cpu == "x86" || current_cpu == "x64") {
@@ -435,7 +452,7 @@ if (pdf_enable_xfa) {
     }
     deps = [
       "//third_party:jpeg",
-      "//third_party/zlib",
+      "//third_party:zlib",
     ]
     sources = [
       "libtiff/tif_aux.c",

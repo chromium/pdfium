@@ -703,7 +703,7 @@ static_library("fxcodec") {
     "third_party:fx_lcms2",
     "third_party:fx_libopenjpeg",
     "//third_party:jpeg",
-    "//third_party/zlib:zlib",
+    "//third_party:zlib",
   ]
 
   if (pdf_enable_xfa) {
