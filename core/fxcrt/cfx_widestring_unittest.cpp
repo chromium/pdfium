@@ -4,6 +4,8 @@
 
 #include "core/fxcrt/cfx_widestring.h"
 
+#include <vector>
+
 #include "testing/fx_string_testhelpers.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
@@ -687,6 +689,18 @@ TEST(fxcrt, WideStringUTF16LE_Encode) {
               utf16le_encode_cases[i].ws.UTF16LE_Encode())
         << " for case number " << i;
   }
+}
+
+TEST(fxcrt, WideStringCFromVector) {
+  std::vector<CFX_WideStringC::UnsignedType> null_vec;
+  CFX_WideStringC null_string(null_vec);
+  EXPECT_EQ(0, null_string.GetLength());
+
+  std::vector<CFX_WideStringC::UnsignedType> lower_a_vec(
+      10, static_cast<CFX_WideStringC::UnsignedType>(L'a'));
+  CFX_WideStringC lower_a_string(lower_a_vec);
+  EXPECT_EQ(10, lower_a_string.GetLength());
+  EXPECT_EQ(L"aaaaaaaaaa", lower_a_string);
 }
 
 TEST(fxcrt, WideStringCOperatorSubscript) {

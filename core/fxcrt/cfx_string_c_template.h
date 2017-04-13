@@ -9,8 +9,10 @@
 
 #include <algorithm>
 #include <type_traits>
+#include <vector>
 
 #include "core/fxcrt/fx_system.h"
+#include "third_party/base/stl_util.h"
 
 // An immutable string with caller-provided storage which must outlive the
 // string itself. These are not necessarily nul-terminated, so that substring
@@ -51,6 +53,12 @@ class CFX_StringCTemplate {
   CFX_StringCTemplate(const CFX_StringCTemplate& src) {
     m_Ptr = src.m_Ptr;
     m_Length = src.m_Length;
+  }
+
+  // Any changes to |vec| invalidate the string.
+  explicit CFX_StringCTemplate(const std::vector<UnsignedType>& vec) {
+    m_Ptr = vec.data();
+    m_Length = pdfium::CollectionSize<FX_STRSIZE>(vec);
   }
 
   CFX_StringCTemplate& operator=(const CharType* src) {

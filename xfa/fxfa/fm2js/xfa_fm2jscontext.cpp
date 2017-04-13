@@ -4642,9 +4642,9 @@ void CXFA_FM2JSContext::Get(CFXJSE_Value* pThis,
     return;
 
   int32_t size = pFile->GetSize();
-  std::vector<uint8_t> pData(size);
-  pFile->ReadBlock(pData.data(), size);
-  args.GetReturnValue()->SetString(CFX_ByteStringC(pData.data(), size));
+  std::vector<uint8_t> dataBuf(size);
+  pFile->ReadBlock(dataBuf.data(), size);
+  args.GetReturnValue()->SetString(CFX_ByteStringC(dataBuf));
 }
 
 // static

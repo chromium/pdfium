@@ -4,6 +4,8 @@
 
 #include "core/fxcrt/cfx_bytestring.h"
 
+#include <vector>
+
 #include "testing/fx_string_testhelpers.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
@@ -771,6 +773,17 @@ TEST(fxcrt, ByteStringCFromChar) {
 
   CFX_ByteStringC longer_string("ab");
   EXPECT_NE(longer_string, lower_a_string_from_char);
+}
+
+TEST(fxcrt, ByteStringCFromVector) {
+  std::vector<uint8_t> null_vec;
+  CFX_ByteStringC null_string(null_vec);
+  EXPECT_EQ(0, null_string.GetLength());
+
+  std::vector<uint8_t> lower_a_vec(10, static_cast<uint8_t>('a'));
+  CFX_ByteStringC lower_a_string(lower_a_vec);
+  EXPECT_EQ(10, lower_a_string.GetLength());
+  EXPECT_EQ("aaaaaaaaaa", lower_a_string);
 }
 
 TEST(fxcrt, ByteStringCGetID) {
