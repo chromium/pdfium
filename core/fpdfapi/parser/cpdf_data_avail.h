@@ -235,8 +235,7 @@ class CPDF_DataAvail final {
   bool m_bHaveAcroForm;
   uint32_t m_dwAcroFormObjNum;
   bool m_bAcroFormLoad;
-  CPDF_Object* m_pAcroForm;
-  std::vector<CPDF_Object*> m_arrayAcroforms;
+  std::vector<std::unique_ptr<CPDF_Object>> m_Acroforms;
   CPDF_Dictionary* m_pPageDict;
   CPDF_Object* m_pPageResource;
   bool m_bNeedDownLoadResource;

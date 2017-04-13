@@ -71,7 +71,6 @@ CPDF_DataAvail::CPDF_DataAvail(
   m_bLinearizedFormParamLoad = false;
   m_pTrailer = nullptr;
   m_pCurrentParser = nullptr;
-  m_pAcroForm = nullptr;
   m_pPageDict = nullptr;
   m_pPageResource = nullptr;
   m_docStatus = PDF_DATAAVAIL_HEADER;
@@ -83,8 +82,6 @@ CPDF_DataAvail::CPDF_DataAvail(
 
 CPDF_DataAvail::~CPDF_DataAvail() {
   m_pHintTables.reset();
-  for (CPDF_Object* pObject : m_arrayAcroforms)
-    delete pObject;
 }
 
 void CPDF_DataAvail::SetDocument(CPDF_Document* pDoc) {
@@ -206,8 +203,12 @@ CPDF_DataAvail::DocAvailStatus CPDF_DataAvail::IsDocAvail(
 
 bool CPDF_DataAvail::CheckAcroFormSubObject(DownloadHints* pHints) {
   if (m_objs_array.empty()) {
+    std::vector<CPDF_Object*> obj_array(m_Acroforms.size());
+    std::transform(
+        m_Acroforms.begin(), m_Acroforms.end(), obj_array.begin(),
+        [](const std::unique_ptr<CPDF_Object>& pObj) { return pObj.get(); });
+
     m_ObjectSet.clear();
-    std::vector<CPDF_Object*> obj_array = m_arrayAcroforms;
     if (!AreObjectsAvailable(obj_array, false, pHints, m_objs_array))
       return false;
 
@@ -221,30 +222,28 @@ bool CPDF_DataAvail::CheckAcroFormSubObject(DownloadHints* pHints) {
     return false;
   }
 
-  for (CPDF_Object* pObject : m_arrayAcroforms)
-    delete pObject;
-
-  m_arrayAcroforms.clear();
+  m_Acroforms.clear();
   return true;
 }
 
 bool CPDF_DataAvail::CheckAcroForm(DownloadHints* pHints) {
   bool bExist = false;
-  m_pAcroForm = GetObject(m_dwAcroFormObjNum, pHints, &bExist).release();
+  std::unique_ptr<CPDF_Object> pAcroForm =
+      GetObject(m_dwAcroFormObjNum, pHints, &bExist);
   if (!bExist) {
     m_docStatus = PDF_DATAAVAIL_PAGETREE;
     return true;
   }
 
-  if (!m_pAcroForm) {
-    if (m_docStatus == PDF_DATAAVAIL_ERROR) {
-      m_docStatus = PDF_DATAAVAIL_LOADALLFILE;
-      return true;
-    }
-    return false;
+  if (!pAcroForm) {
+    if (m_docStatus != PDF_DATAAVAIL_ERROR)
+      return false;
+
+    m_docStatus = PDF_DATAAVAIL_LOADALLFILE;
+    return true;
   }
 
-  m_arrayAcroforms.push_back(m_pAcroForm);
+  m_Acroforms.push_back(std::move(pAcroForm));
   m_docStatus = PDF_DATAAVAIL_PAGETREE;
   return true;
 }
