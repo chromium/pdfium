@@ -123,7 +123,7 @@ void CFDE_TxtEdtEngine::SetTextByStream(
       wchar_t* lpwstr = FX_Alloc(wchar_t, nPlateSize);
       bool bEos = false;
       while (!bEos) {
-        int32_t nRead = pStream->ReadString(lpwstr, nPlateSize, bEos);
+        int32_t nRead = pStream->ReadString(lpwstr, nPlateSize, &bEos);
         bPreIsCR = ReplaceParagEnd(lpwstr, nRead, bPreIsCR);
         m_pTxtBuf->Insert(nIndex, lpwstr, nRead);
         nIndex += nRead;

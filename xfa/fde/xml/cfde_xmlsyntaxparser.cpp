@@ -105,10 +105,12 @@ CFDE_XMLSyntaxParser::CFDE_XMLSyntaxParser(
   m_CurNode.iNodeNum = -1;
   m_CurNode.eNodeType = FDE_XMLNODE_Unknown;
 
-  m_iXMLPlaneSize = std::min(m_iXMLPlaneSize, m_pStream->GetLength());
+  m_iXMLPlaneSize =
+      std::min(m_iXMLPlaneSize,
+               pdfium::base::checked_cast<FX_STRSIZE>(m_pStream->GetLength()));
   m_iCurrentPos = m_pStream->GetBOMLength();
 
-  FX_SAFE_INT32 alloc_size_safe = m_iXMLPlaneSize;
+  FX_SAFE_STRSIZE alloc_size_safe = m_iXMLPlaneSize;
   alloc_size_safe += 1;  // For NUL.
   if (!alloc_size_safe.IsValid() || alloc_size_safe.ValueOrDie() <= 0) {
     m_syntaxParserResult = FDE_XmlSyntaxResult::Error;
@@ -146,7 +148,7 @@ FDE_XmlSyntaxResult CFDE_XMLSyntaxParser::DoSyntaxParse() {
         m_pStream->Seek(FX_STREAMSEEK_Begin, m_iCurrentPos);
       }
       m_iBufferChars =
-          m_pStream->ReadString(m_Buffer.data(), m_iXMLPlaneSize, m_bEOS);
+          m_pStream->ReadString(m_Buffer.data(), m_iXMLPlaneSize, &m_bEOS);
       iPos = m_pStream->GetPosition();
       if (m_iBufferChars < 1) {
         m_iCurrentPos = iStreamLength;

@@ -98,7 +98,7 @@ class CFDE_XMLSyntaxParser {
   void ParseTextChar(wchar_t ch);
 
   CFX_RetainPtr<IFGAS_Stream> m_pStream;
-  int32_t m_iXMLPlaneSize;
+  FX_STRSIZE m_iXMLPlaneSize;
   int32_t m_iCurrentPos;
   int32_t m_iCurrentNodeNum;
   int32_t m_iLastNodeNum;

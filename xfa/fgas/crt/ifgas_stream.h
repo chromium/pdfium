@@ -14,7 +14,6 @@
 enum FX_STREAMSEEK {
   FX_STREAMSEEK_Begin = 0,
   FX_STREAMSEEK_Current,
-  FX_STREAMSEEK_End,
 };
 
 class IFGAS_Stream : public CFX_Retainable {
@@ -26,19 +25,24 @@ class IFGAS_Stream : public CFX_Retainable {
   static CFX_RetainPtr<IFGAS_Stream> CreateWideStringReadStream(
       const CFX_WideString& buffer);
 
-  virtual int32_t GetLength() const = 0;
-  virtual int32_t Seek(FX_STREAMSEEK eSeek, int32_t iOffset) = 0;
-  virtual int32_t GetPosition() = 0;
-  virtual bool IsEOF() const = 0;
-  virtual int32_t ReadData(uint8_t* pBuffer, int32_t iBufferSize) = 0;
-  virtual int32_t ReadString(wchar_t* pStr, int32_t iMaxLength, bool& bEOS) = 0;
-  virtual int32_t WriteData(const uint8_t* pBuffer, int32_t iBufferSize) = 0;
-  virtual int32_t WriteString(const wchar_t* pStr, int32_t iLength) = 0;
-  virtual void Flush() = 0;
-  virtual bool SetLength(int32_t iLength) = 0;
-  virtual int32_t GetBOMLength() const = 0;
+  virtual FX_FILESIZE GetLength() const = 0;
+  virtual FX_FILESIZE GetPosition() = 0;
+  virtual FX_STRSIZE GetBOMLength() const = 0;
+
+  virtual void Seek(FX_STREAMSEEK eSeek, FX_FILESIZE iOffset) = 0;
+
+  virtual FX_STRSIZE ReadString(wchar_t* pStr,
+                                FX_STRSIZE iMaxLength,
+                                bool* bEOS) = 0;
+  virtual void WriteData(const uint8_t* pBuffer, FX_STRSIZE iBufferSize) = 0;
+  virtual void WriteString(const wchar_t* pStr, FX_STRSIZE iLength) = 0;
+
   virtual uint16_t GetCodePage() const = 0;
-  virtual uint16_t SetCodePage(uint16_t wCodePage) = 0;
+  virtual void SetCodePage(uint16_t wCodePage) = 0;
+
+ protected:
+  virtual bool IsEOF() const = 0;
+  virtual FX_STRSIZE ReadData(uint8_t* pBuffer, FX_STRSIZE iBufferSize) = 0;
 };
 
 #endif  // XFA_FGAS_CRT_IFGAS_STREAM_H_

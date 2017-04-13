@@ -55,7 +55,7 @@ int32_t CFDE_CSSTextBuf::LoadFromStream(
   if (pTxtStream->GetPosition() != iStreamOffset)
     pTxtStream->Seek(FX_STREAMSEEK_Begin, iStreamOffset);
 
-  m_iDatLen = pTxtStream->ReadString(m_pBuffer, iMaxChars, bEOS);
+  m_iDatLen = pTxtStream->ReadString(m_pBuffer, iMaxChars, &bEOS);
   return m_iDatLen;
 }
 
