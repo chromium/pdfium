@@ -27,8 +27,6 @@ class CPDF_XRefStream;
 #define FPDFCREATE_PROGRESSIVE 4
 #define FPDFCREATE_OBJECTSTREAM 8
 
-CFX_ByteTextBuf& operator<<(CFX_ByteTextBuf& buf, const CPDF_Object* pObj);
-
 class CPDF_Creator {
  public:
   explicit CPDF_Creator(CPDF_Document* pDoc);

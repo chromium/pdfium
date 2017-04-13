@@ -8,11 +8,11 @@
 #define CORE_FPDFAPI_PARSER_FPDF_PARSER_UTILITY_H_
 
 #include "core/fxcrt/cfx_retain_ptr.h"
-#include "core/fxcrt/fx_string.h"
-#include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/fx_basic.h"
 
 class IFX_SeekableReadStream;
 class CPDF_Dictionary;
+class CPDF_Object;
 
 // Use the accessors below instead of directly accessing PDF_CharType.
 extern const char PDF_CharType[256];
@@ -36,5 +36,7 @@ inline bool PDFCharIsLineEnding(uint8_t c) {
 
 int32_t GetHeaderOffset(const CFX_RetainPtr<IFX_SeekableReadStream>& pFile);
 int32_t GetDirectInteger(CPDF_Dictionary* pDict, const CFX_ByteString& key);
+
+CFX_ByteTextBuf& operator<<(CFX_ByteTextBuf& buf, const CPDF_Object* pObj);
 
 #endif  // CORE_FPDFAPI_PARSER_FPDF_PARSER_UTILITY_H_

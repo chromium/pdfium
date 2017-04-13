@@ -12,6 +12,7 @@
 #include "core/fpdfapi/edit/cpdf_creator.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_syntax_parser.h"
+#include "core/fpdfapi/parser/fpdf_parser_utility.h"
 #include "third_party/base/ptr_util.h"
 
 CFDF_Document::CFDF_Document()

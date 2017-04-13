@@ -23,6 +23,7 @@
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "core/fpdfapi/parser/cpdf_string.h"
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
+#include "core/fpdfapi/parser/fpdf_parser_utility.h"
 #include "core/fxcrt/cfx_maybe_owned.h"
 #include "core/fxcrt/fx_ext.h"
 #include "third_party/base/ptr_util.h"
