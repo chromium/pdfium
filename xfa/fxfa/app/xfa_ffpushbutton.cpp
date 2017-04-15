@@ -6,6 +6,9 @@
 
 #include "xfa/fxfa/app/xfa_ffpushbutton.h"
 
+#include <utility>
+
+#include "third_party/base/ptr_util.h"
 #include "xfa/fwl/cfwl_notedriver.h"
 #include "xfa/fwl/cfwl_pushbutton.h"
 #include "xfa/fwl/cfwl_widgetmgr.h"
@@ -41,27 +44,30 @@ void CXFA_FFPushButton::RenderWidget(CFX_Graphics* pGS,
   CFX_RectF rtWidget = GetRectWithoutRotate();
   CFX_Matrix mt(1, 0, 0, 1, rtWidget.left, rtWidget.top);
   mt.Concat(mtRotate);
-  GetApp()->GetWidgetMgrDelegate()->OnDrawWidget(m_pNormalWidget, pGS, &mt);
+  GetApp()->GetWidgetMgrDelegate()->OnDrawWidget(m_pNormalWidget.get(), pGS,
+                                                 &mt);
 }
 
 bool CXFA_FFPushButton::LoadWidget() {
   ASSERT(!m_pNormalWidget);
-  CFWL_PushButton* pPushButton = new CFWL_PushButton(GetFWLApp());
+  auto pNew = pdfium::MakeUnique<CFWL_PushButton>(GetFWLApp());
+  CFWL_PushButton* pPushButton = pNew.get();
   m_pOldDelegate = pPushButton->GetDelegate();
   pPushButton->SetDelegate(this);
-
-  m_pNormalWidget = pPushButton;
+  m_pNormalWidget = std::move(pNew);
   m_pNormalWidget->SetLayoutItem(this);
 
   CFWL_NoteDriver* pNoteDriver =
       m_pNormalWidget->GetOwnerApp()->GetNoteDriver();
-  pNoteDriver->RegisterEventTarget(m_pNormalWidget, m_pNormalWidget);
+  pNoteDriver->RegisterEventTarget(m_pNormalWidget.get(),
+                                   m_pNormalWidget.get());
   m_pNormalWidget->LockUpdate();
   UpdateWidgetProperty();
   LoadHighlightCaption();
   m_pNormalWidget->UnlockUpdate();
   return CXFA_FFField::LoadWidget();
 }
+
 void CXFA_FFPushButton::UpdateWidgetProperty() {
   uint32_t dwStyleEx = 0;
   switch (m_pDataAcc->GetButtonHighlight()) {

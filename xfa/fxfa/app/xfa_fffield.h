@@ -7,6 +7,8 @@
 #ifndef XFA_FXFA_APP_XFA_FFFIELD_H_
 #define XFA_FXFA_APP_XFA_FFFIELD_H_
 
+#include <memory>
+
 #include "xfa/fwl/cfwl_widget.h"
 #include "xfa/fwl/ifwl_widgetdelegate.h"
 #include "xfa/fxfa/cxfa_ffpageview.h"
@@ -64,7 +66,7 @@ class CXFA_FFField : public CXFA_FFWidget, public IFWL_WidgetDelegate {
 
   virtual void SetFWLRect();
   void SetFWLThemeProvider();
-  CFWL_Widget* GetNormalWidget() { return m_pNormalWidget; }
+  CFWL_Widget* GetNormalWidget() { return m_pNormalWidget.get(); }
   CFX_PointF FWLToClient(const CFX_PointF& point);
   void LayoutCaption();
   void RenderCaption(CFX_Graphics* pGS, CFX_Matrix* pMatrix = nullptr);
@@ -89,7 +91,7 @@ class CXFA_FFField : public CXFA_FFWidget, public IFWL_WidgetDelegate {
                              int32_t iCapPlacement);
   void SetEditScrollOffset();
 
-  CFWL_Widget* m_pNormalWidget;
+  std::unique_ptr<CFWL_Widget> m_pNormalWidget;
   CFX_RectF m_rtUI;
   CFX_RectF m_rtCaption;
 };

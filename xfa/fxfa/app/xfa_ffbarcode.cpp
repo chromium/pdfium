@@ -6,7 +6,10 @@
 
 #include "xfa/fxfa/app/xfa_ffbarcode.h"
 
+#include <utility>
+
 #include "core/fxcrt/fx_ext.h"
+#include "third_party/base/ptr_util.h"
 #include "xfa/fwl/cfwl_app.h"
 #include "xfa/fwl/cfwl_barcode.h"
 #include "xfa/fwl/cfwl_notedriver.h"
@@ -122,14 +125,15 @@ CXFA_FFBarcode::CXFA_FFBarcode(CXFA_WidgetAcc* pDataAcc)
 CXFA_FFBarcode::~CXFA_FFBarcode() {}
 
 bool CXFA_FFBarcode::LoadWidget() {
-  CFWL_Barcode* pFWLBarcode = new CFWL_Barcode(GetFWLApp());
-
-  m_pNormalWidget = pFWLBarcode;
+  auto pNew = pdfium::MakeUnique<CFWL_Barcode>(GetFWLApp());
+  CFWL_Barcode* pFWLBarcode = pNew.get();
+  m_pNormalWidget = std::move(pNew);
   m_pNormalWidget->SetLayoutItem(this);
+
   CFWL_NoteDriver* pNoteDriver =
       m_pNormalWidget->GetOwnerApp()->GetNoteDriver();
-  pNoteDriver->RegisterEventTarget(m_pNormalWidget, m_pNormalWidget);
-
+  pNoteDriver->RegisterEventTarget(m_pNormalWidget.get(),
+                                   m_pNormalWidget.get());
   m_pOldDelegate = m_pNormalWidget->GetDelegate();
   m_pNormalWidget->SetDelegate(this);
   m_pNormalWidget->LockUpdate();
@@ -141,6 +145,7 @@ bool CXFA_FFBarcode::LoadWidget() {
   m_pNormalWidget->UnlockUpdate();
   return CXFA_FFField::LoadWidget();
 }
+
 void CXFA_FFBarcode::RenderWidget(CFX_Graphics* pGS,
                                   CFX_Matrix* pMatrix,
                                   uint32_t dwStatus) {
@@ -164,7 +169,7 @@ void CXFA_FFBarcode::RenderWidget(CFX_Graphics* pGS,
 
 void CXFA_FFBarcode::UpdateWidgetProperty() {
   CXFA_FFTextEdit::UpdateWidgetProperty();
-  CFWL_Barcode* pBarCodeWidget = (CFWL_Barcode*)m_pNormalWidget;
+  auto* pBarCodeWidget = static_cast<CFWL_Barcode*>(m_pNormalWidget.get());
   CFX_WideString wsType = GetDataAcc()->GetBarcodeType();
   const XFA_BARCODETYPEENUMINFO* pBarcodeTypeInfo =
       XFA_GetBarcodeTypeByName(wsType.AsStringC());
@@ -222,7 +227,7 @@ void CXFA_FFBarcode::UpdateWidgetProperty() {
 }
 
 bool CXFA_FFBarcode::OnLButtonDown(uint32_t dwFlags, const CFX_PointF& point) {
-  CFWL_Barcode* pBarCodeWidget = (CFWL_Barcode*)m_pNormalWidget;
+  auto* pBarCodeWidget = static_cast<CFWL_Barcode*>(m_pNormalWidget.get());
   if (!pBarCodeWidget || pBarCodeWidget->IsProtectedType())
     return false;
   if (m_pDataAcc->GetAccess() != XFA_ATTRIBUTEENUM_Open)
@@ -231,7 +236,7 @@ bool CXFA_FFBarcode::OnLButtonDown(uint32_t dwFlags, const CFX_PointF& point) {
 }
 
 bool CXFA_FFBarcode::OnRButtonDown(uint32_t dwFlags, const CFX_PointF& point) {
-  CFWL_Barcode* pBarCodeWidget = (CFWL_Barcode*)m_pNormalWidget;
+  auto* pBarCodeWidget = static_cast<CFWL_Barcode*>(m_pNormalWidget.get());
   if (!pBarCodeWidget || pBarCodeWidget->IsProtectedType())
     return false;
   return CXFA_FFTextEdit::OnRButtonDown(dwFlags, point);

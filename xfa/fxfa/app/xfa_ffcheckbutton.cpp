@@ -6,6 +6,8 @@
 
 #include "xfa/fxfa/app/xfa_ffcheckbutton.h"
 
+#include <utility>
+#include "third_party/base/ptr_util.h"
 #include "xfa/fwl/cfwl_checkbox.h"
 #include "xfa/fwl/cfwl_messagemouse.h"
 #include "xfa/fwl/cfwl_notedriver.h"
@@ -24,17 +26,17 @@ CXFA_FFCheckButton::CXFA_FFCheckButton(CXFA_WidgetAcc* pDataAcc)
 CXFA_FFCheckButton::~CXFA_FFCheckButton() {}
 
 bool CXFA_FFCheckButton::LoadWidget() {
-  CFWL_CheckBox* pCheckBox = new CFWL_CheckBox(GetFWLApp());
-  m_pNormalWidget = pCheckBox;
+  auto pNew = pdfium::MakeUnique<CFWL_CheckBox>(GetFWLApp());
+  CFWL_CheckBox* pCheckBox = pNew.get();
+  m_pNormalWidget = std::move(pNew);
   m_pNormalWidget->SetLayoutItem(this);
 
   CFWL_NoteDriver* pNoteDriver =
       m_pNormalWidget->GetOwnerApp()->GetNoteDriver();
-  pNoteDriver->RegisterEventTarget(m_pNormalWidget, m_pNormalWidget);
-
+  pNoteDriver->RegisterEventTarget(m_pNormalWidget.get(),
+                                   m_pNormalWidget.get());
   m_pOldDelegate = m_pNormalWidget->GetDelegate();
   m_pNormalWidget->SetDelegate(this);
-
   if (m_pDataAcc->IsRadioButton())
     pCheckBox->ModifyStylesEx(FWL_STYLEEXT_CKB_RadioButton, 0xFFFFFFFF);
 
@@ -44,13 +46,13 @@ bool CXFA_FFCheckButton::LoadWidget() {
   m_pNormalWidget->UnlockUpdate();
   return CXFA_FFField::LoadWidget();
 }
+
 void CXFA_FFCheckButton::UpdateWidgetProperty() {
-  CFWL_CheckBox* pCheckBox = (CFWL_CheckBox*)m_pNormalWidget;
-  if (!m_pNormalWidget) {
+  auto* pCheckBox = static_cast<CFWL_CheckBox*>(m_pNormalWidget.get());
+  if (!pCheckBox)
     return;
-  }
-  float fSize = m_pDataAcc->GetCheckButtonSize();
-  pCheckBox->SetBoxSize(fSize);
+
+  pCheckBox->SetBoxSize(m_pDataAcc->GetCheckButtonSize());
   uint32_t dwStyleEx = FWL_STYLEEXT_CKB_SignShapeCross;
   int32_t iCheckMark = m_pDataAcc->GetCheckButtonMark();
   switch (iCheckMark) {
@@ -229,15 +231,17 @@ void CXFA_FFCheckButton::RenderWidget(CFX_Graphics* pGS,
                 m_pDataAcc->GetCheckButtonShape() == XFA_ATTRIBUTEENUM_Round);
   CFX_Matrix mt(1, 0, 0, 1, m_rtCheckBox.left, m_rtCheckBox.top);
   mt.Concat(mtRotate);
-  GetApp()->GetWidgetMgrDelegate()->OnDrawWidget(m_pNormalWidget, pGS, &mt);
+  GetApp()->GetWidgetMgrDelegate()->OnDrawWidget(m_pNormalWidget.get(), pGS,
+                                                 &mt);
 }
+
 bool CXFA_FFCheckButton::OnLButtonUp(uint32_t dwFlags,
                                      const CFX_PointF& point) {
   if (!m_pNormalWidget || !IsButtonDown())
     return false;
 
   SetButtonDown(false);
-  CFWL_MessageMouse ms(nullptr, m_pNormalWidget);
+  CFWL_MessageMouse ms(nullptr, m_pNormalWidget.get());
   ms.m_dwCmd = FWL_MouseCommand::LeftButtonUp;
   ms.m_dwFlags = dwFlags;
   ms.m_pos = FWLToClient(point);

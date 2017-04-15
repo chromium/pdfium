@@ -6,6 +6,9 @@
 
 #include "xfa/fxfa/app/xfa_ffimageedit.h"
 
+#include <utility>
+
+#include "third_party/base/ptr_util.h"
 #include "xfa/fwl/cfwl_app.h"
 #include "xfa/fwl/cfwl_messagemouse.h"
 #include "xfa/fwl/cfwl_notedriver.h"
@@ -24,28 +27,30 @@ CXFA_FFImageEdit::~CXFA_FFImageEdit() {
 }
 
 bool CXFA_FFImageEdit::LoadWidget() {
-  CFWL_PictureBox* pPictureBox = new CFWL_PictureBox(GetFWLApp());
-  m_pNormalWidget = pPictureBox;
+  auto pNew = pdfium::MakeUnique<CFWL_PictureBox>(GetFWLApp());
+  CFWL_PictureBox* pPictureBox = pNew.get();
+  m_pNormalWidget = std::move(pNew);
   m_pNormalWidget->SetLayoutItem(this);
 
   CFWL_NoteDriver* pNoteDriver =
       m_pNormalWidget->GetOwnerApp()->GetNoteDriver();
-  pNoteDriver->RegisterEventTarget(m_pNormalWidget, m_pNormalWidget);
-
+  pNoteDriver->RegisterEventTarget(m_pNormalWidget.get(),
+                                   m_pNormalWidget.get());
   m_pOldDelegate = pPictureBox->GetDelegate();
   pPictureBox->SetDelegate(this);
 
   CXFA_FFField::LoadWidget();
-  if (m_pDataAcc->GetImageEditImage()) {
-    return true;
-  }
-  UpdateFWLData();
+  if (!m_pDataAcc->GetImageEditImage())
+    UpdateFWLData();
+
   return true;
 }
+
 void CXFA_FFImageEdit::UnloadWidget() {
   m_pDataAcc->SetImageEditImage(nullptr);
   CXFA_FFField::UnloadWidget();
 }
+
 void CXFA_FFImageEdit::RenderWidget(CFX_Graphics* pGS,
                                     CFX_Matrix* pMatrix,
                                     uint32_t dwStatus) {
@@ -94,7 +99,7 @@ bool CXFA_FFImageEdit::OnLButtonDown(uint32_t dwFlags,
 
   SetButtonDown(true);
 
-  CFWL_MessageMouse ms(nullptr, m_pNormalWidget);
+  CFWL_MessageMouse ms(nullptr, m_pNormalWidget.get());
   ms.m_dwCmd = FWL_MouseCommand::LeftButtonDown;
   ms.m_dwFlags = dwFlags;
   ms.m_pos = FWLToClient(point);
@@ -103,9 +108,9 @@ bool CXFA_FFImageEdit::OnLButtonDown(uint32_t dwFlags,
 }
 
 void CXFA_FFImageEdit::SetFWLRect() {
-  if (!m_pNormalWidget) {
+  if (!m_pNormalWidget)
     return;
-  }
+
   CFX_RectF rtUIMargin = m_pDataAcc->GetUIMargin();
   CFX_RectF rtImage(m_rtUI);
   rtImage.Deflate(rtUIMargin.left, rtUIMargin.top, rtUIMargin.width,
