@@ -223,38 +223,13 @@ void CBC_OneDimWriter::ShowDeviceChars(CFX_RenderDevice* device,
                          m_fontColor, FXTEXT_CLEARTYPE);
 }
 
-void CBC_OneDimWriter::ShowBitmapChars(
-    const CFX_RetainPtr<CFX_DIBitmap>& pOutBitmap,
-    const CFX_ByteString str,
-    float geWidth,
-    FXTEXT_CHARPOS* pCharPos,
-    float locX,
-    float locY,
-    int32_t barWidth) {
-  int32_t iFontSize = (int32_t)fabs(m_fFontSize);
-  int32_t iTextHeight = iFontSize + 1;
-  CFX_FxgeDevice ge;
-  ge.Create((int)geWidth, iTextHeight, m_colorSpace, nullptr);
-  FX_RECT geRect(0, 0, (int)geWidth, iTextHeight);
-  ge.FillRect(&geRect, m_backgroundColor);
-  CFX_Matrix affine_matrix(1.0, 0.0, 0.0, -1.0, 0.0,
-                           static_cast<float>(iFontSize));
-  ge.DrawNormalText(str.GetLength(), pCharPos, m_pFont,
-                    static_cast<float>(iFontSize), &affine_matrix, m_fontColor,
-                    FXTEXT_CLEARTYPE);
-  CFX_FxgeDevice geBitmap;
-  geBitmap.Attach(pOutBitmap, false, nullptr, false);
-  geBitmap.SetDIBits(ge.GetBitmap(), (int)locX, (int)locY);
-}
-
 void CBC_OneDimWriter::ShowChars(const CFX_WideStringC& contents,
-                                 const CFX_RetainPtr<CFX_DIBitmap>& pOutBitmap,
                                  CFX_RenderDevice* device,
                                  const CFX_Matrix* matrix,
                                  int32_t barWidth,
                                  int32_t multiple,
                                  int32_t& e) {
-  if (!device && !pOutBitmap) {
+  if (!device) {
     e = BCExceptionIllegalArgument;
     return;
   }
@@ -306,49 +281,9 @@ void CBC_OneDimWriter::ShowChars(const CFX_WideStringC& contents,
       geWidth = (float)barWidth;
       break;
   }
-  if (device) {
-    ShowDeviceChars(device, matrix, str, geWidth, pCharPos, (float)locX,
-                    (float)locY, barWidth);
-  } else {
-    ShowBitmapChars(pOutBitmap, str, geWidth, pCharPos, (float)locX,
-                    (float)locY, barWidth);
-  }
+  ShowDeviceChars(device, matrix, str, geWidth, pCharPos, (float)locX,
+                  (float)locY, barWidth);
   FX_Free(pCharPos);
-}
-
-void CBC_OneDimWriter::RenderBitmapResult(
-    CFX_RetainPtr<CFX_DIBitmap>& pOutBitmap,
-    const CFX_WideStringC& contents,
-    int32_t& e) {
-  if (!m_output)
-    if (e != BCExceptionNO)
-      return;
-
-  pOutBitmap = CreateDIBitmap(m_output->GetWidth(), m_output->GetHeight());
-  pOutBitmap->Clear(m_backgroundColor);
-  if (!pOutBitmap) {
-    e = BCExceptionFailToCreateBitmap;
-    return;
-  }
-  for (int32_t x = 0; x < m_output->GetWidth(); x++) {
-    for (int32_t y = 0; y < m_output->GetHeight(); y++) {
-      if (m_output->Get(x, y)) {
-        pOutBitmap->SetPixel(x, y, m_barColor);
-      }
-    }
-  }
-  int32_t i = 0;
-  for (; i < contents.GetLength(); i++) {
-    if (contents.GetAt(i) != ' ')
-      break;
-  }
-  if (m_locTextLoc != BC_TEXT_LOC_NONE && i < contents.GetLength()) {
-    ShowChars(contents, pOutBitmap, nullptr, nullptr, m_barWidth, m_multiple,
-              e);
-    if (e != BCExceptionNO)
-      return;
-  }
-  pOutBitmap = pOutBitmap->StretchTo(m_Width, m_Height);
 }
 
 void CBC_OneDimWriter::RenderDeviceResult(CFX_RenderDevice* device,
@@ -382,7 +317,7 @@ void CBC_OneDimWriter::RenderDeviceResult(CFX_RenderDevice* device,
       break;
     }
   if (m_locTextLoc != BC_TEXT_LOC_NONE && i < contents.GetLength()) {
-    ShowChars(contents, nullptr, device, matrix, m_barWidth, m_multiple, e);
+    ShowChars(contents, device, matrix, m_barWidth, m_multiple, e);
     if (e != BCExceptionNO)
       return;
   }

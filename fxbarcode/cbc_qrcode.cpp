@@ -57,12 +57,6 @@ bool CBC_QRCode::RenderDevice(CFX_RenderDevice* device,
   return true;
 }
 
-bool CBC_QRCode::RenderBitmap(CFX_RetainPtr<CFX_DIBitmap>& pOutBitmap,
-                              int32_t& e) {
-  writer()->RenderBitmapResult(pOutBitmap, e);
-  return e == BCExceptionNO;
-}
-
 BC_TYPE CBC_QRCode::GetType() {
   return BC_QR_CODE;
 }

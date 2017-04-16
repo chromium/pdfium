@@ -78,13 +78,6 @@ bool CBC_Code128::RenderDevice(CFX_RenderDevice* device,
   return true;
 }
 
-bool CBC_Code128::RenderBitmap(CFX_RetainPtr<CFX_DIBitmap>& pOutBitmap,
-                               int32_t& e) {
-  static_cast<CBC_OneDimWriter*>(m_pBCWriter.get())
-      ->RenderBitmapResult(pOutBitmap, m_renderContents.AsStringC(), e);
-  return e == BCExceptionNO;
-}
-
 BC_TYPE CBC_Code128::GetType() {
   return BC_CODE128;
 }

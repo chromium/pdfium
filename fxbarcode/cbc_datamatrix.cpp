@@ -53,13 +53,6 @@ bool CBC_DataMatrix::RenderDevice(CFX_RenderDevice* device,
   return true;
 }
 
-bool CBC_DataMatrix::RenderBitmap(CFX_RetainPtr<CFX_DIBitmap>& pOutBitmap,
-                                  int32_t& e) {
-  static_cast<CBC_TwoDimWriter*>(m_pBCWriter.get())
-      ->RenderBitmapResult(pOutBitmap, e);
-  return e == BCExceptionNO;
-}
-
 BC_TYPE CBC_DataMatrix::GetType() {
   return BC_DATAMATRIX;
 }
