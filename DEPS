@@ -144,7 +144,6 @@ specific_include_rules = {
 }
 
 hooks = [
-  # Pull GN binaries. This needs to be before running GYP below.
   {
     'name': 'gn_win',
     'action': [ 'download_from_google_storage',

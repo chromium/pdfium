@@ -12,8 +12,8 @@ You will need the PDFium library on your computer. You can see the
 
 *** note
 You must compile PDFium without both V8 and XFA support for the examples
-here to work. V8 can be compiled out by providing
-`GYP_DEFINES="pdf_enable_v8=0 pdf_enable_xfa=0" build/gyp_pdfium`.
+here to work. V8 can be disabled by setting `pdf_enable_v8 = false` in the
+GN args.
 
 See the [V8 Getting Started][pdfium-v8] guide for how to
 initialize PDFium when V8 is compiled into the binary.

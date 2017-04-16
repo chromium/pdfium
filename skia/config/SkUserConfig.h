@@ -235,7 +235,7 @@ SK_API void SkDebugf_FileLine(const char* file,
 #define SK_SUPPORT_LEGACY_EVAL_CUBIC
 #endif
 
-///////////////////////// Imported from BUILD.gn and skia_common.gypi
+///////////////////////// Imported from BUILD.gn
 
 /* In some places Skia can use static initializers for global initialization,
  *  or fall back to lazy runtime initialization. Chrome always wants the latter.

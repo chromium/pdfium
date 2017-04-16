@@ -183,7 +183,7 @@ component("skia") {
     "ext/google_logging.cc",
   ]
 
-  # The skia gypi values are relative to the skia_dir, so we need to rebase.
+  # The skia sources values are relative to the skia_dir, so we need to rebase.
   sources += skia_core_sources
   sources += skia_effects_sources
   sources += skia_sksl_sources
@@ -235,7 +235,7 @@ component("skia") {
     sources += skia_null_gpu_sources
   }
 
-  # Remove unused util files include in utils.gypi
+  # Remove unused util files include in utils.gni
   sources -= [
     "//third_party/skia/src/utils/SkCamera.cpp",
     "//third_party/skia/src/utils/SkDumpCanvas.cpp",
@@ -497,7 +497,7 @@ source_set("skia_opts") {
     cflags += [ "-fomit-frame-pointer" ]
     sources = skia_opts.none_sources
   } else {
-    assert(false, "Need to port cpu specific stuff from skia_library_opts.gyp")
+    assert(false, "Need to port cpu specific stuff from gn/BUILDCONFIG.gn")
   }
 
   if (is_android && !is_debug) {
