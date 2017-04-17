@@ -52,8 +52,8 @@ CFX_BidiString::CFX_BidiString(const CFX_WideString& str)
     : m_Str(str),
       m_pBidiChar(new CFX_BidiChar),
       m_eOverallDirection(CFX_BidiChar::LEFT) {
-  for (int i = 0; i < m_Str.GetLength(); ++i) {
-    if (m_pBidiChar->AppendChar(m_Str.GetAt(i)))
+  for (const auto& c : m_Str) {
+    if (m_pBidiChar->AppendChar(c))
       m_Order.push_back(m_pBidiChar->GetSegmentInfo());
   }
   if (m_pBidiChar->EndChar())

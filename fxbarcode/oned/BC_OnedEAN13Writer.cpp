@@ -48,17 +48,13 @@ CBC_OnedEAN13Writer::CBC_OnedEAN13Writer() {
   m_codeWidth = 3 + (7 * 6) + 5 + (7 * 6) + 3;
 }
 CBC_OnedEAN13Writer::~CBC_OnedEAN13Writer() {}
+
 bool CBC_OnedEAN13Writer::CheckContentValidity(
     const CFX_WideStringC& contents) {
-  for (int32_t i = 0; i < contents.GetLength(); i++) {
-    if (contents.GetAt(i) >= '0' && contents.GetAt(i) <= '9') {
-      continue;
-    } else {
-      return false;
-    }
-  }
-  return true;
+  return std::all_of(contents.begin(), contents.end(),
+                     [](const wchar_t& w) { return w >= L'0' && w <= L'9'; });
 }
+
 CFX_WideString CBC_OnedEAN13Writer::FilterContents(
     const CFX_WideStringC& contents) {
   CFX_WideString filtercontents;

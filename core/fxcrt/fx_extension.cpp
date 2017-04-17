@@ -509,11 +509,11 @@ int32_t FXSYS_strnicmp(const char* s1, const char* s2, size_t count) {
 uint32_t FX_HashCode_GetA(const CFX_ByteStringC& str, bool bIgnoreCase) {
   uint32_t dwHashCode = 0;
   if (bIgnoreCase) {
-    for (FX_STRSIZE i = 0; i < str.GetLength(); ++i)
-      dwHashCode = 31 * dwHashCode + FXSYS_tolower(str.CharAt(i));
+    for (const auto& c : str)
+      dwHashCode = 31 * dwHashCode + FXSYS_tolower(c);
   } else {
-    for (FX_STRSIZE i = 0; i < str.GetLength(); ++i)
-      dwHashCode = 31 * dwHashCode + str.CharAt(i);
+    for (const auto& c : str)
+      dwHashCode = 31 * dwHashCode + c;
   }
   return dwHashCode;
 }
@@ -521,11 +521,11 @@ uint32_t FX_HashCode_GetA(const CFX_ByteStringC& str, bool bIgnoreCase) {
 uint32_t FX_HashCode_GetW(const CFX_WideStringC& str, bool bIgnoreCase) {
   uint32_t dwHashCode = 0;
   if (bIgnoreCase) {
-    for (FX_STRSIZE i = 0; i < str.GetLength(); ++i)
-      dwHashCode = 1313 * dwHashCode + FXSYS_tolower(str.CharAt(i));
+    for (const auto& c : str)
+      dwHashCode = 1313 * dwHashCode + FXSYS_tolower(c);
   } else {
-    for (FX_STRSIZE i = 0; i < str.GetLength(); ++i)
-      dwHashCode = 1313 * dwHashCode + str.CharAt(i);
+    for (const auto& c : str)
+      dwHashCode = 1313 * dwHashCode + c;
   }
   return dwHashCode;
 }

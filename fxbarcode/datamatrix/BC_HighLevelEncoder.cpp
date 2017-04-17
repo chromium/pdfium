@@ -63,8 +63,7 @@ std::vector<uint8_t>& CBC_HighLevelEncoder::getBytesForMessage(
     CFX_WideString msg) {
   CFX_ByteString bytestr;
   CBC_UtilCodingConvert::UnicodeToUTF8(msg, bytestr);
-  for (int32_t i = 0; i < bytestr.GetLength(); i++)
-    m_bytearray.push_back(bytestr.GetAt(i));
+  m_bytearray.insert(m_bytearray.end(), bytestr.begin(), bytestr.end());
   return m_bytearray;
 }
 CFX_WideString CBC_HighLevelEncoder::encodeHighLevel(CFX_WideString msg,

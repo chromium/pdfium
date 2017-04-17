@@ -71,10 +71,7 @@ CFX_WideString CBC_PDF417HighLevelEncoder::encodeHighLevel(
     }
     msg += ch;
   }
-  std::vector<uint8_t> byteArr;
-  for (int32_t k = 0; k < bytes.GetLength(); k++) {
-    byteArr.push_back(bytes.GetAt(k));
-  }
+  std::vector<uint8_t> byteArr(bytes.begin(), bytes.end());
   CFX_WideString sb;
   len = msg.GetLength();
   int32_t p = 0;

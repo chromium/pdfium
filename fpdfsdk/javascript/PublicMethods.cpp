@@ -1141,8 +1141,7 @@ bool CJS_PublicMethods::AFDate_FormatEx(CJS_Runtime* pRuntime,
 double CJS_PublicMethods::MakeInterDate(const CFX_WideString& strValue) {
   std::vector<CFX_WideString> wsArray;
   CFX_WideString sTemp = L"";
-  for (int i = 0; i < strValue.GetLength(); ++i) {
-    wchar_t c = strValue.GetAt(i);
+  for (const auto& c : strValue) {
     if (c == L' ' || c == L':') {
       wsArray.push_back(sTemp);
       sTemp = L"";
@@ -1775,22 +1774,17 @@ bool CJS_PublicMethods::AFExtractNums(CJS_Runtime* pRuntime,
   CFX_WideString sPart;
   CJS_Array nums;
   int nIndex = 0;
-  for (int i = 0, sz = str.GetLength(); i < sz; i++) {
-    wchar_t wc = str.GetAt(i);
+  for (const auto& wc : str) {
     if (FXSYS_iswdigit(wc)) {
       sPart += wc;
-    } else {
-      if (sPart.GetLength() > 0) {
-        nums.SetElement(pRuntime, nIndex, CJS_Value(pRuntime, sPart.c_str()));
-        sPart = L"";
-        nIndex++;
-      }
+    } else if (sPart.GetLength() > 0) {
+      nums.SetElement(pRuntime, nIndex, CJS_Value(pRuntime, sPart.c_str()));
+      sPart = L"";
+      nIndex++;
     }
   }
-
-  if (sPart.GetLength() > 0) {
+  if (sPart.GetLength() > 0)
     nums.SetElement(pRuntime, nIndex, CJS_Value(pRuntime, sPart.c_str()));
-  }
 
   if (nums.GetLength(pRuntime) > 0)
     vRet = CJS_Value(pRuntime, nums);

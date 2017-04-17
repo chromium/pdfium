@@ -696,19 +696,10 @@ bool app::browseForDoc(CJS_Runtime* pRuntime,
 
 CFX_WideString app::SysPathToPDFPath(const CFX_WideString& sOldPath) {
   CFX_WideString sRet = L"/";
-
-  for (int i = 0, sz = sOldPath.GetLength(); i < sz; i++) {
-    wchar_t c = sOldPath.GetAt(i);
-    if (c == L':') {
-    } else {
-      if (c == L'\\') {
-        sRet += L"/";
-      } else {
-        sRet += c;
-      }
-    }
+  for (const wchar_t& c : sOldPath) {
+    if (c != L':')
+      sRet += (c == L'\\') ? L'/' : c;
   }
-
   return sRet;
 }
 

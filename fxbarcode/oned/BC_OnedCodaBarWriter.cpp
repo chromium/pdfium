@@ -108,18 +108,11 @@ bool CBC_OnedCodaBarWriter::FindChar(wchar_t ch, bool isContent) {
 }
 bool CBC_OnedCodaBarWriter::CheckContentValidity(
     const CFX_WideStringC& contents) {
-  wchar_t ch;
-  int32_t index = 0;
-  for (index = 0; index < contents.GetLength(); index++) {
-    ch = contents.GetAt(index);
-    if (FindChar(ch, false)) {
-      continue;
-    } else {
-      return false;
-    }
-  }
-  return true;
+  return std::all_of(
+      contents.begin(), contents.end(),
+      [this](const wchar_t& ch) { return this->FindChar(ch, false); });
 }
+
 CFX_WideString CBC_OnedCodaBarWriter::FilterContents(
     const CFX_WideStringC& contents) {
   CFX_WideString filtercontents;

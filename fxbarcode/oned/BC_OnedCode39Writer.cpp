@@ -163,11 +163,11 @@ char CBC_OnedCode39Writer::CalcCheckSum(const CFX_ByteString& contents,
   }
   int32_t checksum = 0;
   int32_t len = (int32_t)strlen(ALPHABET_STRING);
-  for (int32_t i = 0; i < contents.GetLength(); i++) {
+  for (const auto& c : contents) {
     int32_t j = 0;
     for (; j < len; j++) {
-      if (ALPHABET_STRING[j] == contents[i]) {
-        if (contents[i] != '*')
+      if (ALPHABET_STRING[j] == c) {
+        if (c != '*')
           checksum += j;
         break;
       }

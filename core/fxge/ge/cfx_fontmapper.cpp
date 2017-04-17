@@ -6,6 +6,7 @@
 
 #include "core/fxge/cfx_fontmapper.h"
 
+#include <algorithm>
 #include <memory>
 #include <utility>
 #include <vector>
@@ -326,14 +327,9 @@ void CFX_FontMapper::AddInstalledFont(const CFX_ByteString& name, int charset) {
   if (name == m_LastFamily)
     return;
 
-  const uint8_t* ptr = name.raw_str();
-  bool bLocalized = false;
-  for (int i = 0; i < name.GetLength(); i++) {
-    if (ptr[i] > 0x80) {
-      bLocalized = true;
-      break;
-    }
-  }
+  bool bLocalized = std::any_of(name.begin(), name.end(), [](const char& c) {
+    return static_cast<uint8_t>(c) > 0x80;
+  });
 
   if (bLocalized) {
     void* hFont = m_pFontInfo->GetFont(name.c_str());

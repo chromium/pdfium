@@ -3472,8 +3472,7 @@ void CXFA_FM2JSContext::EncodeURL(const CFX_ByteStringC& szURLString,
   wchar_t strReserved[] = {';', '/', '?', ':', '@', '=', '&'};
   wchar_t strSpecial[] = {'$', '-', '+', '!', '*', '\'', '(', ')', ','};
   const wchar_t* strCode = L"0123456789abcdef";
-  for (int32_t u = 0; u < wsURLString.GetLength(); ++u) {
-    wchar_t ch = wsURLString.GetAt(u);
+  for (auto ch : wsURLString) {
     int32_t i = 0;
     int32_t iCount = FX_ArraySize(strUnsafe);
     while (i < iCount) {
@@ -3624,9 +3623,7 @@ void CXFA_FM2JSContext::EncodeXML(const CFX_ByteStringC& szXMLString,
   strEncode[7] = ';';
   strEncode[8] = 0;
   const wchar_t* strCode = L"0123456789abcdef";
-  const wchar_t* pData = wsXMLString.c_str();
-  for (int32_t u = 0; u < wsXMLString.GetLength(); ++u) {
-    wchar_t ch = pData[u];
+  for (const auto& ch : wsXMLString) {
     switch (ch) {
       case '"':
         wsResultBuf.AppendChar('&');

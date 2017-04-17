@@ -249,10 +249,10 @@ bool CPDFSDK_Widget::OnXFAAAction(PDFSDK_XFAAActionType eXFAAAT,
   if (data.nSelEnd > data.nSelStart)
     param.m_wsNewText.Delete(data.nSelStart, data.nSelEnd - data.nSelStart);
 
-  for (int i = 0; i < data.sChange.GetLength(); i++)
-    param.m_wsNewText.Insert(data.nSelStart, data.sChange[i]);
-  param.m_wsPrevText = data.sValue;
+  for (const auto& c : data.sChange)
+    param.m_wsNewText.Insert(data.nSelStart, c);
 
+  param.m_wsPrevText = data.sValue;
   if ((eEventType == XFA_EVENT_Click || eEventType == XFA_EVENT_Change) &&
       GetFieldType() == FIELDTYPE_RADIOBUTTON) {
     if (CXFA_FFWidget* hGroupWidget = GetGroupMixXFAWidget()) {

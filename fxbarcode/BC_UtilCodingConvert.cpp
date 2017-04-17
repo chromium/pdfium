@@ -25,9 +25,7 @@ void CBC_UtilCodingConvert::LocaleToUtf8(const CFX_ByteString& src,
                                          std::vector<uint8_t>& dst) {
   CFX_WideString unicode = CFX_WideString::FromLocal(src.AsStringC());
   CFX_ByteString utf8 = unicode.UTF8Encode();
-  for (int32_t i = 0; i < utf8.GetLength(); i++) {
-    dst.push_back(utf8[i]);
-  }
+  dst = std::vector<uint8_t>(utf8.begin(), utf8.end());
 }
 
 void CBC_UtilCodingConvert::Utf8ToLocale(const std::vector<uint8_t>& src,

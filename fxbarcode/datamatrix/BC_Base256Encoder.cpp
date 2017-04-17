@@ -70,9 +70,8 @@ void CBC_Base256Encoder::Encode(CBC_EncoderContext& context, int32_t& e) {
       return;
     }
   }
-  for (int32_t i = 0, c = buffer.GetLength(); i < c; i++) {
-    context.writeCodeword(
-        randomize255State(buffer.GetAt(i), context.getCodewordCount() + 1));
+  for (const auto& c : buffer) {
+    context.writeCodeword(randomize255State(c, context.getCodewordCount() + 1));
   }
 }
 wchar_t CBC_Base256Encoder::randomize255State(wchar_t ch,

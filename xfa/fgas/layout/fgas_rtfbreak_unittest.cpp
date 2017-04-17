@@ -53,8 +53,8 @@ TEST_F(RTFBreakTest, AddChars) {
   auto b = CreateBreak(FX_LAYOUTSTYLE_ExpandTab);
 
   CFX_WideString str(L"Input String.");
-  for (int32_t i = 0; i < str.GetLength(); i++)
-    EXPECT_EQ(CFX_BreakType::None, b->AppendChar(str.GetAt(i)));
+  for (const auto& c : str)
+    EXPECT_EQ(CFX_BreakType::None, b->AppendChar(c));
 
   EXPECT_EQ(CFX_BreakType::Paragraph, b->AppendChar(L'\n'));
   ASSERT_EQ(1, b->CountBreakPieces());
@@ -65,8 +65,8 @@ TEST_F(RTFBreakTest, AddChars) {
   EXPECT_EQ(0, b->GetCurrentLineForTesting()->GetLineEnd());
 
   str = L"Second str.";
-  for (int32_t i = 0; i < str.GetLength(); i++)
-    EXPECT_EQ(CFX_BreakType::None, b->AppendChar(str.GetAt(i)));
+  for (const auto& c : str)
+    EXPECT_EQ(CFX_BreakType::None, b->AppendChar(c));
 
   // Force the end of the break at the end of the string.
   b->EndBreak(CFX_BreakType::Paragraph);

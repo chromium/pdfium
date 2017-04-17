@@ -113,22 +113,14 @@ CFX_WideString CBC_OnedCode128Writer::FilterContents(
   }
   CFX_WideString filtercontents;
   if (m_codeFormat == BC_CODE128_B) {
-    for (int32_t i = 0; i < filterChineseChar.GetLength(); i++) {
-      ch = filterChineseChar.GetAt(i);
-      if (ch >= 32 && ch <= 126) {
+    for (const auto& ch : filterChineseChar) {
+      if (ch >= 32 && ch <= 126)
         filtercontents += ch;
-      } else {
-        continue;
-      }
     }
   } else if (m_codeFormat == BC_CODE128_C) {
-    for (int32_t i = 0; i < filterChineseChar.GetLength(); i++) {
-      ch = filterChineseChar.GetAt(i);
-      if (ch >= 32 && ch <= 106) {
+    for (const auto& ch : filterChineseChar) {
+      if (ch >= 32 && ch <= 106)
         filtercontents += ch;
-      } else {
-        continue;
-      }
     }
   } else {
     filtercontents = contents;
