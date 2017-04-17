@@ -22,6 +22,7 @@ class CFX_StringCTemplate {
  public:
   using CharType = T;
   using UnsignedType = typename std::make_unsigned<CharType>::type;
+  using const_iterator = const CharType*;
 
   CFX_StringCTemplate() : m_Ptr(nullptr), m_Length(0) {}
 
@@ -71,6 +72,14 @@ class CFX_StringCTemplate {
     m_Ptr = src.m_Ptr;
     m_Length = src.m_Length;
     return *this;
+  }
+
+  const_iterator begin() const {
+    return reinterpret_cast<const CharType*>(m_Ptr);
+  }
+  const_iterator end() const {
+    return m_Ptr ? reinterpret_cast<const CharType*>(m_Ptr) + m_Length
+                 : nullptr;
   }
 
   bool operator==(const CharType* ptr) const {

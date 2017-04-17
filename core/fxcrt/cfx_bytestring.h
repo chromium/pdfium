@@ -23,6 +23,7 @@ class CFX_WideString;
 class CFX_ByteString {
  public:
   using CharType = char;
+  using const_iterator = const CharType*;
 
   CFX_ByteString();
   CFX_ByteString(const CFX_ByteString& other);
@@ -63,6 +64,12 @@ class CFX_ByteString {
   // Note: Any subsequent modification of |this| will invalidate the result.
   CFX_ByteStringC AsStringC() const {
     return CFX_ByteStringC(raw_str(), GetLength());
+  }
+
+  // Note: Any subsequent modification of |this| will invalidate iterators.
+  const_iterator begin() const { return m_pData ? m_pData->m_String : nullptr; }
+  const_iterator end() const {
+    return m_pData ? m_pData->m_String + m_pData->m_nDataLength : nullptr;
   }
 
   FX_STRSIZE GetLength() const { return m_pData ? m_pData->m_nDataLength : 0; }

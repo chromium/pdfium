@@ -4,10 +4,12 @@
 
 #include "core/fxcrt/cfx_bytestring.h"
 
+#include <algorithm>
 #include <vector>
 
 #include "testing/fx_string_testhelpers.h"
 #include "testing/gtest/include/gtest/gtest.h"
+#include "third_party/base/stl_util.h"
 
 TEST(fxcrt, ByteStringOperatorSubscript) {
   // CFX_ByteString includes the NUL terminator for non-empty strings.
@@ -1031,6 +1033,70 @@ TEST(fxcrt, ByteStringCOperatorNE) {
   EXPECT_TRUE(c_string3 != byte_string_c);
 }
 
+TEST(fxcrt, ByteStringCNullIterator) {
+  CFX_ByteStringC null_str;
+  int32_t sum = 0;
+  bool any_present = false;
+  for (const auto& c : null_str) {
+    sum += c;  // Avoid unused arg warnings.
+    any_present = true;
+  }
+  EXPECT_FALSE(any_present);
+  EXPECT_EQ(0, sum);
+}
+
+TEST(fxcrt, ByteStringCEmptyIterator) {
+  CFX_ByteStringC empty_str("");
+  int32_t sum = 0;
+  bool any_present = false;
+  for (const auto& c : empty_str) {
+    any_present = true;
+    sum += c;  // Avoid unused arg warnings.
+  }
+  EXPECT_FALSE(any_present);
+  EXPECT_EQ(0, sum);
+}
+
+TEST(fxcrt, ByteStringCOneCharIterator) {
+  CFX_ByteStringC one_str("a");
+  int32_t sum = 0;
+  bool any_present = false;
+  for (const auto& c : one_str) {
+    any_present = true;
+    sum += c;  // Avoid unused arg warnings.
+  }
+  EXPECT_TRUE(any_present);
+  EXPECT_EQ('a', sum);
+}
+
+TEST(fxcrt, ByteStringCMultiCharIterator) {
+  CFX_ByteStringC one_str("abc");
+  int32_t sum = 0;
+  bool any_present = false;
+  for (const auto& c : one_str) {
+    any_present = true;
+    sum += c;  // Avoid unused arg warnings.
+  }
+  EXPECT_TRUE(any_present);
+  EXPECT_EQ('a' + 'b' + 'c', sum);
+}
+
+TEST(fxcrt, ByteStringCAnyAllNoneOf) {
+  CFX_ByteStringC str("aaaaaaaaaaaaaaaaab");
+  EXPECT_FALSE(std::all_of(str.begin(), str.end(),
+                           [](const char& c) { return c == 'a'; }));
+
+  EXPECT_FALSE(std::none_of(str.begin(), str.end(),
+                            [](const char& c) { return c == 'a'; }));
+
+  EXPECT_TRUE(std::any_of(str.begin(), str.end(),
+                          [](const char& c) { return c == 'a'; }));
+
+  EXPECT_TRUE(pdfium::ContainsValue(str, 'a'));
+  EXPECT_TRUE(pdfium::ContainsValue(str, 'b'));
+  EXPECT_FALSE(pdfium::ContainsValue(str, 'z'));
+}
+
 TEST(fxcrt, ByteStringFormatWidth) {
   {
     CFX_ByteString str;
@@ -1108,4 +1174,68 @@ TEST(fxcrt, ByteStringInitializerList) {
   EXPECT_EQ("clams and oysters", many_str);
   many_str = {"fish", " and ", "chips", " and ", "soda"};
   EXPECT_EQ("fish and chips and soda", many_str);
+}
+
+TEST(fxcrt, ByteStringNullIterator) {
+  CFX_ByteString null_str;
+  int32_t sum = 0;
+  bool any_present = false;
+  for (const auto& c : null_str) {
+    sum += c;  // Avoid unused arg warnings.
+    any_present = true;
+  }
+  EXPECT_FALSE(any_present);
+  EXPECT_EQ(0, sum);
+}
+
+TEST(fxcrt, ByteStringEmptyIterator) {
+  CFX_ByteString empty_str("");
+  int32_t sum = 0;
+  bool any_present = false;
+  for (const auto& c : empty_str) {
+    any_present = true;
+    sum += c;  // Avoid unused arg warnings.
+  }
+  EXPECT_FALSE(any_present);
+  EXPECT_EQ(0, sum);
+}
+
+TEST(fxcrt, ByteStringOneCharIterator) {
+  CFX_ByteString one_str("a");
+  int32_t sum = 0;
+  bool any_present = false;
+  for (const auto& c : one_str) {
+    any_present = true;
+    sum += c;  // Avoid unused arg warnings.
+  }
+  EXPECT_TRUE(any_present);
+  EXPECT_EQ('a', sum);
+}
+
+TEST(fxcrt, ByteStringMultiCharIterator) {
+  CFX_ByteString one_str("abc");
+  int32_t sum = 0;
+  bool any_present = false;
+  for (const auto& c : one_str) {
+    any_present = true;
+    sum += c;  // Avoid unused arg warnings.
+  }
+  EXPECT_TRUE(any_present);
+  EXPECT_EQ('a' + 'b' + 'c', sum);
+}
+
+TEST(fxcrt, ByteStringAnyAllNoneOf) {
+  CFX_ByteString str("aaaaaaaaaaaaaaaaab");
+  EXPECT_FALSE(std::all_of(str.begin(), str.end(),
+                           [](const char& c) { return c == 'a'; }));
+
+  EXPECT_FALSE(std::none_of(str.begin(), str.end(),
+                            [](const char& c) { return c == 'a'; }));
+
+  EXPECT_TRUE(std::any_of(str.begin(), str.end(),
+                          [](const char& c) { return c == 'a'; }));
+
+  EXPECT_TRUE(pdfium::ContainsValue(str, 'a'));
+  EXPECT_TRUE(pdfium::ContainsValue(str, 'b'));
+  EXPECT_FALSE(pdfium::ContainsValue(str, 'z'));
 }
