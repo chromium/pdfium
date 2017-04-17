@@ -28,7 +28,6 @@ enum class CFX_SaxMode {
   TagClose,
   TagEnd,
   TargetData,
-  MAX
 };
 
 class CFX_SAXCommentContext {
@@ -41,25 +40,6 @@ class CFX_SAXCommentContext {
 namespace {
 
 const uint32_t kSaxFileBufSize = 32768;
-
-typedef void (CFX_SAXReader::*FX_SAXReader_LPFParse)();
-static const FX_SAXReader_LPFParse
-    g_FX_SAXReader_LPFParse[static_cast<int>(CFX_SaxMode::MAX)] = {
-        &CFX_SAXReader::ParseText,
-        &CFX_SAXReader::ParseNodeStart,
-        &CFX_SAXReader::ParseDeclOrComment,
-        &CFX_SAXReader::ParseDeclNode,
-        &CFX_SAXReader::ParseComment,
-        &CFX_SAXReader::ParseCommentContent,
-        &CFX_SAXReader::ParseTagName,
-        &CFX_SAXReader::ParseTagAttributeName,
-        &CFX_SAXReader::ParseTagAttributeEqual,
-        &CFX_SAXReader::ParseTagAttributeValue,
-        &CFX_SAXReader::ParseMaybeClose,
-        &CFX_SAXReader::ParseTagClose,
-        &CFX_SAXReader::ParseTagEnd,
-        &CFX_SAXReader::ParseTargetData,
-};
 
 }  // namespace
 
@@ -244,7 +224,7 @@ int32_t CFX_SAXReader::ContinueParse(IFX_Pause* pPause) {
     const uint8_t* pBuf = m_File.m_pBuf;
     while (index < size) {
       m_CurByte = pBuf[index];
-      (this->*g_FX_SAXReader_LPFParse[static_cast<int>(m_eMode)])();
+      ParseInternal();
       index++;
     }
     m_File.m_dwCur += index;
@@ -264,6 +244,54 @@ int32_t CFX_SAXReader::ContinueParse(IFX_Pause* pPause) {
   }
   return m_iState;
 }
+
+void CFX_SAXReader::ParseInternal() {
+  switch (m_eMode) {
+    case CFX_SaxMode::Text:
+      ParseText();
+      break;
+    case CFX_SaxMode::NodeStart:
+      ParseNodeStart();
+      break;
+    case CFX_SaxMode::DeclOrComment:
+      ParseDeclOrComment();
+      break;
+    case CFX_SaxMode::DeclNode:
+      ParseDeclNode();
+      break;
+    case CFX_SaxMode::Comment:
+      ParseComment();
+      break;
+    case CFX_SaxMode::CommentContent:
+      ParseCommentContent();
+      break;
+    case CFX_SaxMode::TagName:
+      ParseTagName();
+      break;
+    case CFX_SaxMode::TagAttributeName:
+      ParseTagAttributeName();
+      break;
+    case CFX_SaxMode::TagAttributeEqual:
+      ParseTagAttributeEqual();
+      break;
+    case CFX_SaxMode::TagAttributeValue:
+      ParseTagAttributeValue();
+      break;
+    case CFX_SaxMode::TagMaybeClose:
+      ParseMaybeClose();
+      break;
+    case CFX_SaxMode::TagClose:
+      ParseTagClose();
+      break;
+    case CFX_SaxMode::TagEnd:
+      ParseTagEnd();
+      break;
+    case CFX_SaxMode::TargetData:
+      ParseTargetData();
+      break;
+  }
+}
+
 void CFX_SAXReader::ParseChar(uint8_t ch) {
   ReallocDataBuffer();
   m_pszData[m_iDataPos] = ch;

@@ -101,8 +101,11 @@ class CFX_SAXReader {
                      uint32_t dwLen = -1,
                      uint32_t dwParseMode = 0);
   int32_t ContinueParse(IFX_Pause* pPause = nullptr);
-  void SkipCurrentNode();
   void SetHandler(HandlerIface* pHandler) { m_pHandler = pHandler; }
+
+ private:
+  void ParseInternal();
+  void SkipCurrentNode();
   void AppendData(uint8_t ch);
   void AppendName(uint8_t ch);
   void ParseText();
@@ -120,8 +123,6 @@ class CFX_SAXReader {
   void ParseTagClose();
   void ParseTagEnd();
   void ParseTargetData();
-
- private:
   void Reset();
   void Push();
   void Pop();
