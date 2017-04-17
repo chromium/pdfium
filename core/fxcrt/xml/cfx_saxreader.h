@@ -14,7 +14,6 @@
 
 class CFX_SAXCommentContext;
 class CFX_SAXContext;
-class CFX_SAXReaderHandler;
 enum class CFX_SaxMode;
 
 class CFX_SAXItem {
@@ -70,6 +69,30 @@ enum CFX_SaxParseMode {
 
 class CFX_SAXReader {
  public:
+  class HandlerIface {
+   public:
+    virtual ~HandlerIface() {}
+    virtual CFX_SAXContext* OnTagEnter(const CFX_ByteStringC& bsTagName,
+                                       CFX_SAXItem::Type eType,
+                                       uint32_t dwStartPos) = 0;
+    virtual void OnTagAttribute(CFX_SAXContext* pTag,
+                                const CFX_ByteStringC& bsAttri,
+                                const CFX_ByteStringC& bsValue) = 0;
+    virtual void OnTagBreak(CFX_SAXContext* pTag) = 0;
+    virtual void OnTagData(CFX_SAXContext* pTag,
+                           CFX_SAXItem::Type eType,
+                           const CFX_ByteStringC& bsData,
+                           uint32_t dwStartPos) = 0;
+    virtual void OnTagClose(CFX_SAXContext* pTag, uint32_t dwEndPos) = 0;
+    virtual void OnTagEnd(CFX_SAXContext* pTag,
+                          const CFX_ByteStringC& bsTagName,
+                          uint32_t dwEndPos) = 0;
+    virtual void OnTargetData(CFX_SAXContext* pTag,
+                              CFX_SAXItem::Type eType,
+                              const CFX_ByteStringC& bsData,
+                              uint32_t dwStartPos) = 0;
+  };
+
   CFX_SAXReader();
   ~CFX_SAXReader();
 
@@ -79,7 +102,7 @@ class CFX_SAXReader {
                      uint32_t dwParseMode = 0);
   int32_t ContinueParse(IFX_Pause* pPause = nullptr);
   void SkipCurrentNode();
-  void SetHandler(CFX_SAXReaderHandler* pHandler) { m_pHandler = pHandler; }
+  void SetHandler(HandlerIface* pHandler) { m_pHandler = pHandler; }
   void AppendData(uint8_t ch);
   void AppendName(uint8_t ch);
   void ParseText();
@@ -117,7 +140,7 @@ class CFX_SAXReader {
   void ParseChar(uint8_t ch);
 
   CFX_SAXFile m_File;
-  CFX_SAXReaderHandler* m_pHandler;
+  HandlerIface* m_pHandler;
   int32_t m_iState;
   std::stack<std::unique_ptr<CFX_SAXItem>> m_Stack;
   uint32_t m_dwItemID;

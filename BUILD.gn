@@ -1878,12 +1878,14 @@ test("pdfium_unittests") {
   deps = [
     ":pdfium",
     ":test_support",
+    "//testing/gmock",
     "//testing/gtest",
     "//testing/gtest:gtest_main",
   ]
   include_dirs = []
   if (pdf_enable_xfa) {
     sources += [
+      "core/fxcrt/xml/cfx_saxreader_unittest.cpp",
       "fxbarcode/pdf417/BC_PDF417HighLevelEncoder_unittest.cpp",
       "xfa/fde/cfde_txtedtbuf_unittest.cpp",
       "xfa/fde/css/cfde_cssdeclaration_unittest.cpp",
