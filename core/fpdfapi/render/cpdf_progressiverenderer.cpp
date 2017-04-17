@@ -6,6 +6,8 @@
 
 #include "core/fpdfapi/render/cpdf_progressiverenderer.h"
 
+#include "core/fpdfapi/page/cpdf_image.h"
+#include "core/fpdfapi/page/cpdf_imageobject.h"
 #include "core/fpdfapi/page/cpdf_pageobject.h"
 #include "core/fpdfapi/page/cpdf_pageobjectholder.h"
 #include "core/fpdfapi/render/cpdf_pagerendercache.h"
@@ -94,6 +96,10 @@ void CPDF_ProgressiveRenderer::Continue(IFX_Pause* pPause) {
         if (pPause && pPause->NeedToPauseNow())
           return;
         nObjsToGo = kStepLimit;
+      }
+      if (pCurObj->IsImage() && pCurObj->AsImage()->GetImage()->IsMask() &&
+          (m_pOptions->m_Flags & RENDER_BREAKFORMASKS)) {
+        return;
       }
       ++iter;
     }

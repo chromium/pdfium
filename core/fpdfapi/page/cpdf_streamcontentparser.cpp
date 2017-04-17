@@ -735,7 +735,11 @@ void CPDF_StreamContentParser::Handle_ExecuteXObject() {
   CFX_ByteString name = GetString(0);
   if (name == m_LastImageName && m_pLastImage && m_pLastImage->GetStream() &&
       m_pLastImage->GetStream()->GetObjNum()) {
-    AddImage(m_pLastImage);
+    CPDF_ImageObject* pObj = AddImage(m_pLastImage);
+    // Record the bounding box of this image, so rendering code can draw it
+    // properly.
+    if (pObj->GetImage()->IsMask())
+      m_pObjectHolder->AddImageMaskBoundingBox(pObj->GetRect());
     return;
   }
 
@@ -757,8 +761,8 @@ void CPDF_StreamContentParser::Handle_ExecuteXObject() {
 
     m_LastImageName = name;
     m_pLastImage = pObj->GetImage();
-    if (!m_pObjectHolder->HasImageMask())
-      m_pObjectHolder->SetHasImageMask(m_pLastImage->IsMask());
+    if (m_pLastImage->IsMask())
+      m_pObjectHolder->AddImageMaskBoundingBox(pObj->GetRect());
   } else if (type == "Form") {
     AddForm(pXObject);
   }
