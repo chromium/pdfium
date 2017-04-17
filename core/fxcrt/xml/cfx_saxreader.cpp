@@ -107,36 +107,25 @@ CFX_SAXReader::CFX_SAXReader()
       m_pHandler(nullptr),
       m_iState(-1),
       m_dwItemID(0),
-      m_iDataSize(256),
-      m_iNameSize(256),
-      m_dwParseMode(0),
-      m_pCommentContext(nullptr) {
-  m_pszData = FX_Alloc(uint8_t, m_iDataSize);
-  m_pszName = FX_Alloc(uint8_t, m_iNameSize);
+      m_dwParseMode(0) {
+  m_Data.reserve(256);
+  m_Name.reserve(256);
 }
+
 CFX_SAXReader::~CFX_SAXReader() {
   Reset();
-  if (m_pszData) {
-    FX_Free(m_pszData);
-    m_pszData = nullptr;
-  }
-  if (m_pszName) {
-    FX_Free(m_pszName);
-    m_pszName = nullptr;
-  }
 }
 
 void CFX_SAXReader::Reset() {
   m_File.Reset();
+  m_iState = -1;
   m_Stack = std::stack<std::unique_ptr<CFX_SAXItem>>();
   m_dwItemID = 0;
   m_SkipStack = std::stack<char>();
   m_SkipChar = 0;
-  m_iDataLength = 0;
-  m_iEntityStart = -1;
-  m_iNameLength = 0;
-  m_iDataPos = 0;
   m_pCommentContext.reset();
+  ClearData();
+  ClearName();
 }
 
 void CFX_SAXReader::Push() {
@@ -156,38 +145,39 @@ CFX_SAXItem* CFX_SAXReader::GetCurrentItem() const {
   return m_Stack.empty() ? nullptr : m_Stack.top().get();
 }
 
-void CFX_SAXReader::AppendData(uint8_t ch) {
-  ReallocDataBuffer();
-  m_pszData[m_iDataPos++] = ch;
+void CFX_SAXReader::ClearData() {
+  m_Data.clear();
+  m_iEntityStart = -1;
 }
 
-void CFX_SAXReader::AppendName(uint8_t ch) {
-  ReallocNameBuffer();
-  m_pszName[m_iDataPos++] = ch;
+void CFX_SAXReader::ClearName() {
+  m_Name.clear();
 }
 
-void CFX_SAXReader::ReallocDataBuffer() {
-  if (m_iDataPos < m_iDataSize) {
-    return;
-  }
-  if (m_iDataSize <= 1024 * 1024) {
-    m_iDataSize *= 2;
-  } else {
-    m_iDataSize += 1024 * 1024;
-  }
-  m_pszData = (uint8_t*)FX_Realloc(uint8_t, m_pszData, m_iDataSize);
+void CFX_SAXReader::AppendToData(uint8_t ch) {
+  m_Data.push_back(ch);
 }
 
-void CFX_SAXReader::ReallocNameBuffer() {
-  if (m_iDataPos < m_iNameSize) {
-    return;
-  }
-  if (m_iNameSize <= 1024 * 1024) {
-    m_iNameSize *= 2;
-  } else {
-    m_iNameSize += 1024 * 1024;
-  }
-  m_pszName = (uint8_t*)FX_Realloc(uint8_t, m_pszName, m_iNameSize);
+void CFX_SAXReader::AppendToName(uint8_t ch) {
+  m_Name.push_back(ch);
+}
+
+void CFX_SAXReader::BackUpAndReplaceDataAt(int32_t index, uint8_t ch) {
+  ASSERT(index > -1);
+  m_Data.erase(m_Data.begin() + index, m_Data.end());
+  AppendToData(ch);
+}
+
+int32_t CFX_SAXReader::CurrentDataIndex() const {
+  return pdfium::CollectionSize<int32_t>(m_Data) - 1;
+}
+
+bool CFX_SAXReader::IsEntityStart(uint8_t ch) const {
+  return m_iEntityStart == -1 && ch == '&';
+}
+
+bool CFX_SAXReader::IsEntityEnd(uint8_t ch) const {
+  return m_iEntityStart != -1 && ch == ';';
 }
 
 bool CFX_SAXReader::SkipSpace(uint8_t ch) {
@@ -199,7 +189,6 @@ int32_t CFX_SAXReader::StartParse(
     uint32_t dwStart,
     uint32_t dwLen,
     uint32_t dwParseMode) {
-  m_iState = -1;
   Reset();
   if (!m_File.StartFile(pFile, dwStart, dwLen))
     return -1;
@@ -293,100 +282,96 @@ void CFX_SAXReader::ParseInternal() {
 }
 
 void CFX_SAXReader::ParseChar(uint8_t ch) {
-  ReallocDataBuffer();
-  m_pszData[m_iDataPos] = ch;
-  if (m_iEntityStart > -1 && ch == ';') {
-    int32_t iSaveEntityStart = m_iEntityStart;
-    CFX_ByteString csEntity(m_pszData + m_iEntityStart + 1,
-                            m_iDataPos - m_iEntityStart - 1);
-    int32_t iLen = csEntity.GetLength();
-    if (iLen > 0) {
-      if (csEntity[0] == '#') {
-        if ((m_dwParseMode & CFX_SaxParseMode_NotConvert_sharp) == 0) {
-          ch = 0;
-          uint8_t w;
-          if (iLen > 1 && csEntity[1] == 'x') {
-            for (int32_t i = 2; i < iLen; i++) {
-              w = csEntity[i];
-              if (w >= '0' && w <= '9') {
-                ch = (ch << 4) + w - '0';
-              } else if (w >= 'A' && w <= 'F') {
-                ch = (ch << 4) + w - 55;
-              } else if (w >= 'a' && w <= 'f') {
-                ch = (ch << 4) + w - 87;
-              } else {
-                break;
-              }
-            }
-          } else {
-            for (int32_t i = 1; i < iLen; i++) {
-              w = csEntity[i];
-              if (w < '0' || w > '9') {
-                break;
-              }
-              ch = ch * 10 + w - '0';
-            }
-          }
-          if (ch != 0) {
-            m_pszData[m_iEntityStart++] = ch;
-          }
+  AppendToData(ch);
+  if (IsEntityStart(ch)) {
+    m_iEntityStart = CurrentDataIndex();
+    return;
+  }
+  if (!IsEntityEnd(ch))
+    return;
+
+  // No matter what, we're no longer in an entity.
+  ASSERT(m_iEntityStart > -1);
+  int32_t iSaveStart = m_iEntityStart;
+  m_iEntityStart = -1;
+
+  // NOTE: Relies on negative lengths being treated as empty strings.
+  CFX_ByteString csEntity(m_Data.data() + iSaveStart + 1,
+                          CurrentDataIndex() - iSaveStart - 1);
+  int32_t iLen = csEntity.GetLength();
+  if (iLen == 0)
+    return;
+
+  if (csEntity[0] == '#') {
+    if ((m_dwParseMode & CFX_SaxParseMode_NotConvert_sharp) == 0) {
+      ch = 0;
+      uint8_t w;
+      if (iLen > 1 && csEntity[1] == 'x') {
+        for (int32_t i = 2; i < iLen; i++) {
+          w = csEntity[i];
+          if (w >= '0' && w <= '9')
+            ch = (ch << 4) + w - '0';
+          else if (w >= 'A' && w <= 'F')
+            ch = (ch << 4) + w - 55;
+          else if (w >= 'a' && w <= 'f')
+            ch = (ch << 4) + w - 87;
+          else
+            break;
         }
       } else {
-        if (csEntity.Compare("amp") == 0) {
-          if ((m_dwParseMode & CFX_SaxParseMode_NotConvert_amp) == 0) {
-            m_pszData[m_iEntityStart++] = '&';
-          }
-        } else if (csEntity.Compare("lt") == 0) {
-          if ((m_dwParseMode & CFX_SaxParseMode_NotConvert_lt) == 0) {
-            m_pszData[m_iEntityStart++] = '<';
-          }
-        } else if (csEntity.Compare("gt") == 0) {
-          if ((m_dwParseMode & CFX_SaxParseMode_NotConvert_gt) == 0) {
-            m_pszData[m_iEntityStart++] = '>';
-          }
-        } else if (csEntity.Compare("apos") == 0) {
-          if ((m_dwParseMode & CFX_SaxParseMode_NotConvert_apos) == 0) {
-            m_pszData[m_iEntityStart++] = '\'';
-          }
-        } else if (csEntity.Compare("quot") == 0) {
-          if ((m_dwParseMode & CFX_SaxParseMode_NotConvert_quot) == 0) {
-            m_pszData[m_iEntityStart++] = '\"';
-          }
+        for (int32_t i = 1; i < iLen; i++) {
+          w = csEntity[i];
+          if (w < '0' || w > '9')
+            break;
+          ch = ch * 10 + w - '0';
         }
       }
+      if (ch != 0)
+        BackUpAndReplaceDataAt(iSaveStart, ch);
     }
-    if (iSaveEntityStart != m_iEntityStart) {
-      m_iDataPos = m_iEntityStart;
-      m_iEntityStart = -1;
-    } else {
-      m_iDataPos++;
-      m_iEntityStart = -1;
-    }
-  } else {
-    if (m_iEntityStart < 0 && ch == '&') {
-      m_iEntityStart = m_iDataPos;
-    }
-    m_iDataPos++;
+    return;
+  }
+  if (csEntity == "amp") {
+    if ((m_dwParseMode & CFX_SaxParseMode_NotConvert_amp) == 0)
+      BackUpAndReplaceDataAt(iSaveStart, '&');
+    return;
+  }
+  if (csEntity == "lt") {
+    if ((m_dwParseMode & CFX_SaxParseMode_NotConvert_lt) == 0)
+      BackUpAndReplaceDataAt(iSaveStart, '<');
+    return;
+  }
+  if (csEntity == "gt") {
+    if ((m_dwParseMode & CFX_SaxParseMode_NotConvert_gt) == 0)
+      BackUpAndReplaceDataAt(iSaveStart, '>');
+    return;
+  }
+  if (csEntity == "apos") {
+    if ((m_dwParseMode & CFX_SaxParseMode_NotConvert_apos) == 0)
+      BackUpAndReplaceDataAt(iSaveStart, '\'');
+    return;
+  }
+  if (csEntity == "quot") {
+    if ((m_dwParseMode & CFX_SaxParseMode_NotConvert_quot) == 0)
+      BackUpAndReplaceDataAt(iSaveStart, '\"');
+    return;
   }
 }
 
 void CFX_SAXReader::ParseText() {
   if (m_CurByte == '<') {
-    if (m_iDataPos > 0) {
-      m_iDataLength = m_iDataPos;
-      m_iDataPos = 0;
-      if (m_pHandler) {
-        NotifyData();
-      }
+    if (!m_Data.empty()) {
+      NotifyData();
+      ClearData();
     }
     Push();
     m_dwNodePos = m_File.m_dwCur + m_File.m_dwBufIndex;
     m_eMode = CFX_SaxMode::NodeStart;
     return;
   }
-  if (m_iDataPos < 1 && SkipSpace(m_CurByte)) {
+  if (m_Data.empty() && SkipSpace(m_CurByte))
     return;
-  }
+
   ParseChar(m_CurByte);
 }
 
@@ -413,7 +398,7 @@ void CFX_SAXReader::ParseNodeStart() {
     m_dwDataOffset = m_File.m_dwBufIndex;
     GetCurrentItem()->m_eNode = CFX_SAXItem::Type::Tag;
     m_eMode = CFX_SaxMode::TagName;
-    AppendData(m_CurByte);
+    AppendToData(m_CurByte);
   }
 }
 
@@ -443,58 +428,55 @@ void CFX_SAXReader::ParseComment() {
 void CFX_SAXReader::ParseCommentContent() {
   if (m_CurByte == '-') {
     m_pCommentContext->m_iTailCount++;
-  } else if (m_CurByte == '>' && m_pCommentContext->m_iTailCount == 2) {
-    m_iDataLength = m_iDataPos;
-    m_iDataPos = 0;
-    if (m_pHandler) {
-      NotifyTargetData();
-    }
+    return;
+  }
+  if (m_CurByte == '>' && m_pCommentContext->m_iTailCount == 2) {
+    NotifyTargetData();
+    ClearData();
     Pop();
     m_eMode = CFX_SaxMode::Text;
-  } else {
-    while (m_pCommentContext->m_iTailCount > 0) {
-      AppendData('-');
-      m_pCommentContext->m_iTailCount--;
-    }
-    AppendData(m_CurByte);
+    return;
   }
+  while (m_pCommentContext->m_iTailCount > 0) {
+    AppendToData('-');
+    m_pCommentContext->m_iTailCount--;
+  }
+  AppendToData(m_CurByte);
 }
+
 void CFX_SAXReader::ParseDeclNode() {
   SkipNode();
 }
+
 void CFX_SAXReader::ParseTagName() {
   if (m_CurByte < 0x21 || m_CurByte == '/' || m_CurByte == '>' ||
       m_CurByte == '?') {
-    m_iDataLength = m_iDataPos;
-    m_iDataPos = 0;
-    if (m_pHandler) {
-      NotifyEnter();
-    }
+    NotifyEnter();
+    ClearData();
     if (m_CurByte < 0x21) {
+      ClearName();
       m_eMode = CFX_SaxMode::TagAttributeName;
     } else if (m_CurByte == '/' || m_CurByte == '?') {
       m_ePrevMode = m_eMode;
       m_eMode = CFX_SaxMode::TagMaybeClose;
     } else {
-      if (m_pHandler) {
-        NotifyBreak();
-      }
+      NotifyBreak();
       m_eMode = CFX_SaxMode::Text;
     }
   } else {
-    AppendData(m_CurByte);
+    AppendToData(m_CurByte);
   }
 }
+
 void CFX_SAXReader::ParseTagAttributeName() {
   if (m_CurByte < 0x21 || m_CurByte == '=') {
-    if (m_iDataPos < 1 && m_CurByte < 0x21) {
+    if (m_Name.empty() && m_CurByte < 0x21)
       return;
-    }
-    m_iNameLength = m_iDataPos;
-    m_iDataPos = 0;
+
     m_SkipChar = 0;
     m_eMode = m_CurByte == '=' ? CFX_SaxMode::TagAttributeValue
                                : CFX_SaxMode::TagAttributeEqual;
+    ClearData();
     return;
   }
   if (m_CurByte == '/' || m_CurByte == '>' || m_CurByte == '?') {
@@ -502,17 +484,14 @@ void CFX_SAXReader::ParseTagAttributeName() {
       m_ePrevMode = m_eMode;
       m_eMode = CFX_SaxMode::TagMaybeClose;
     } else {
-      if (m_pHandler) {
-        NotifyBreak();
-      }
+      NotifyBreak();
       m_eMode = CFX_SaxMode::Text;
     }
     return;
   }
-  if (m_iDataPos < 1) {
+  if (m_Name.empty())
     m_dwDataOffset = m_File.m_dwBufIndex;
-  }
-  AppendName(m_CurByte);
+  AppendToName(m_CurByte);
 }
 
 void CFX_SAXReader::ParseTagAttributeEqual() {
@@ -522,8 +501,7 @@ void CFX_SAXReader::ParseTagAttributeEqual() {
     return;
   }
   if (GetCurrentItem()->m_eNode == CFX_SAXItem::Type::Instruction) {
-    m_iDataPos = m_iNameLength;
-    AppendName(0x20);
+    AppendToName(0x20);
     m_eMode = CFX_SaxMode::TargetData;
     ParseTargetData();
   }
@@ -532,13 +510,9 @@ void CFX_SAXReader::ParseTagAttributeEqual() {
 void CFX_SAXReader::ParseTagAttributeValue() {
   if (m_SkipChar) {
     if (m_SkipChar == m_CurByte) {
-      {
-        m_iDataLength = m_iDataPos;
-        m_iDataPos = 0;
-        if (m_pHandler) {
-          NotifyAttribute();
-        }
-      }
+      NotifyAttribute();
+      ClearData();
+      ClearName();
       m_SkipChar = 0;
       m_eMode = CFX_SaxMode::TagAttributeName;
       return;
@@ -549,36 +523,33 @@ void CFX_SAXReader::ParseTagAttributeValue() {
   if (m_CurByte < 0x21) {
     return;
   }
-  if (m_iDataPos < 1) {
-    if (m_CurByte == '\'' || m_CurByte == '\"') {
+  if (m_Data.empty()) {
+    if (m_CurByte == '\'' || m_CurByte == '\"')
       m_SkipChar = m_CurByte;
-    }
   }
 }
 
 void CFX_SAXReader::ParseMaybeClose() {
   if (m_CurByte == '>') {
     if (GetCurrentItem()->m_eNode == CFX_SAXItem::Type::Instruction) {
-      m_iNameLength = m_iDataPos;
-      m_iDataPos = 0;
-      if (m_pHandler) {
-        NotifyTargetData();
-      }
+      NotifyTargetData();
+      ClearData();
+      ClearName();
     }
     ParseTagClose();
     m_eMode = CFX_SaxMode::Text;
   } else if (m_ePrevMode == CFX_SaxMode::TagName) {
-    AppendData('/');
+    AppendToData('/');
     m_eMode = CFX_SaxMode::TagName;
     m_ePrevMode = CFX_SaxMode::Text;
     ParseTagName();
   } else if (m_ePrevMode == CFX_SaxMode::TagAttributeName) {
-    AppendName('/');
+    AppendToName('/');
     m_eMode = CFX_SaxMode::TagAttributeName;
     m_ePrevMode = CFX_SaxMode::Text;
     ParseTagAttributeName();
   } else if (m_ePrevMode == CFX_SaxMode::TargetData) {
-    AppendName('?');
+    AppendToName('?');
     m_eMode = CFX_SaxMode::TargetData;
     m_ePrevMode = CFX_SaxMode::Text;
     ParseTargetData();
@@ -586,9 +557,7 @@ void CFX_SAXReader::ParseMaybeClose() {
 }
 void CFX_SAXReader::ParseTagClose() {
   m_dwNodePos = m_File.m_dwCur + m_File.m_dwBufIndex;
-  if (m_pHandler) {
-    NotifyClose();
-  }
+  NotifyClose();
   Pop();
 }
 void CFX_SAXReader::ParseTagEnd() {
@@ -598,11 +567,8 @@ void CFX_SAXReader::ParseTagEnd() {
   if (m_CurByte == '>') {
     Pop();
     m_dwNodePos = m_File.m_dwCur + m_File.m_dwBufIndex;
-    m_iDataLength = m_iDataPos;
-    m_iDataPos = 0;
-    if (m_pHandler) {
-      NotifyEnd();
-    }
+    NotifyEnd();
+    ClearData();
     Pop();
     m_eMode = CFX_SaxMode::Text;
   } else {
@@ -614,7 +580,7 @@ void CFX_SAXReader::ParseTargetData() {
     m_ePrevMode = m_eMode;
     m_eMode = CFX_SaxMode::TagMaybeClose;
   } else {
-    AppendName(m_CurByte);
+    AppendToName(m_CurByte);
   }
 }
 void CFX_SAXReader::SkipNode() {
@@ -653,24 +619,18 @@ void CFX_SAXReader::SkipNode() {
         m_SkipStack.pop();
         m_SkipChar = !m_SkipStack.empty() ? m_SkipStack.top() : 0;
         if (m_SkipStack.empty() && m_CurByte == '>') {
-          m_iDataLength = m_iDataPos;
-          m_iDataPos = 0;
-          if (m_iDataLength >= 9 &&
-              memcmp(m_pszData, "[CDATA[", 7 * sizeof(uint8_t)) == 0 &&
-              memcmp(m_pszData + m_iDataLength - 2, "]]",
-                     2 * sizeof(uint8_t)) == 0) {
+          if (m_Data.size() >= 9 && memcmp(m_Data.data(), "[CDATA[", 7) == 0 &&
+              memcmp(m_Data.data() + m_Data.size() - 2, "]]", 2) == 0) {
             Pop();
-            m_iDataLength -= 9;
-            m_dwDataOffset += 7;
-            memmove(m_pszData, m_pszData + 7, m_iDataLength * sizeof(uint8_t));
+            m_Data.erase(m_Data.begin(), m_Data.begin() + 7);
+            m_Data.erase(m_Data.end() - 2, m_Data.end());
             m_bCharData = true;
-            if (m_pHandler) {
-              NotifyData();
-            }
+            NotifyData();
             m_bCharData = false;
           } else {
             Pop();
           }
+          ClearData();
           m_eMode = CFX_SaxMode::Text;
         }
       }
@@ -681,6 +641,9 @@ void CFX_SAXReader::SkipNode() {
 }
 
 void CFX_SAXReader::NotifyData() {
+  if (!m_pHandler)
+    return;
+
   CFX_SAXItem* pItem = GetCurrentItem();
   if (!pItem)
     return;
@@ -689,37 +652,59 @@ void CFX_SAXReader::NotifyData() {
     m_pHandler->OnTagData(
         pItem->m_pNode,
         m_bCharData ? CFX_SAXItem::Type::CharData : CFX_SAXItem::Type::Text,
-        CFX_ByteStringC(m_pszData, m_iDataLength),
-        m_File.m_dwCur + m_dwDataOffset);
+        CFX_ByteStringC(m_Data), m_File.m_dwCur + m_dwDataOffset);
 }
 
 void CFX_SAXReader::NotifyEnter() {
+  if (!m_pHandler)
+    return;
+
   CFX_SAXItem* pItem = GetCurrentItem();
+  if (!pItem)
+    return;
+
   if (pItem->m_eNode == CFX_SAXItem::Type::Tag ||
       pItem->m_eNode == CFX_SAXItem::Type::Instruction) {
-    pItem->m_pNode = m_pHandler->OnTagEnter(
-        CFX_ByteStringC(m_pszData, m_iDataLength), pItem->m_eNode, m_dwNodePos);
+    pItem->m_pNode = m_pHandler->OnTagEnter(CFX_ByteStringC(m_Data),
+                                            pItem->m_eNode, m_dwNodePos);
   }
 }
 
 void CFX_SAXReader::NotifyAttribute() {
+  if (!m_pHandler)
+    return;
+
   CFX_SAXItem* pItem = GetCurrentItem();
+  if (!pItem)
+    return;
+
   if (pItem->m_eNode == CFX_SAXItem::Type::Tag ||
       pItem->m_eNode == CFX_SAXItem::Type::Instruction) {
-    m_pHandler->OnTagAttribute(pItem->m_pNode,
-                               CFX_ByteStringC(m_pszName, m_iNameLength),
-                               CFX_ByteStringC(m_pszData, m_iDataLength));
+    m_pHandler->OnTagAttribute(pItem->m_pNode, CFX_ByteStringC(m_Name),
+                               CFX_ByteStringC(m_Data));
   }
 }
 
 void CFX_SAXReader::NotifyBreak() {
+  if (!m_pHandler)
+    return;
+
   CFX_SAXItem* pItem = GetCurrentItem();
+  if (!pItem)
+    return;
+
   if (pItem->m_eNode == CFX_SAXItem::Type::Tag)
     m_pHandler->OnTagBreak(pItem->m_pNode);
 }
 
 void CFX_SAXReader::NotifyClose() {
+  if (!m_pHandler)
+    return;
+
   CFX_SAXItem* pItem = GetCurrentItem();
+  if (!pItem)
+    return;
+
   if (pItem->m_eNode == CFX_SAXItem::Type::Tag ||
       pItem->m_eNode == CFX_SAXItem::Type::Instruction) {
     m_pHandler->OnTagClose(pItem->m_pNode, m_dwNodePos);
@@ -727,31 +712,36 @@ void CFX_SAXReader::NotifyClose() {
 }
 
 void CFX_SAXReader::NotifyEnd() {
-  CFX_SAXItem* pItem = GetCurrentItem();
-  if (!pItem || pItem->m_eNode != CFX_SAXItem::Type::Tag)
+  if (!m_pHandler)
     return;
 
-  m_pHandler->OnTagEnd(pItem->m_pNode,
-                       CFX_ByteStringC(m_pszData, m_iDataLength), m_dwNodePos);
+  CFX_SAXItem* pItem = GetCurrentItem();
+  if (!pItem)
+    return;
+
+  if (pItem->m_eNode == CFX_SAXItem::Type::Tag)
+    m_pHandler->OnTagEnd(pItem->m_pNode, CFX_ByteStringC(m_Data), m_dwNodePos);
 }
 
 void CFX_SAXReader::NotifyTargetData() {
+  if (!m_pHandler)
+    return;
+
   CFX_SAXItem* pItem = GetCurrentItem();
+  if (!pItem)
+    return;
+
   if (pItem->m_eNode == CFX_SAXItem::Type::Instruction) {
     m_pHandler->OnTargetData(pItem->m_pNode, pItem->m_eNode,
-                             CFX_ByteStringC(m_pszName, m_iNameLength),
-                             m_dwNodePos);
+                             CFX_ByteStringC(m_Name), m_dwNodePos);
   } else if (pItem->m_eNode == CFX_SAXItem::Type::Comment) {
     m_pHandler->OnTargetData(pItem->m_pNode, pItem->m_eNode,
-                             CFX_ByteStringC(m_pszData, m_iDataLength),
-                             m_dwNodePos);
+                             CFX_ByteStringC(m_Data), m_dwNodePos);
   }
 }
 
 void CFX_SAXReader::SkipCurrentNode() {
   CFX_SAXItem* pItem = GetCurrentItem();
-  if (!pItem)
-    return;
-
-  pItem->m_bSkip = true;
+  if (pItem)
+    pItem->m_bSkip = true;
 }
