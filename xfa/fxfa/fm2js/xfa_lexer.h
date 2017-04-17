@@ -8,6 +8,7 @@
 #define XFA_FXFA_FM2JS_XFA_LEXER_H_
 
 #include <memory>
+#include <utility>
 
 #include "core/fxcrt/fx_string.h"
 #include "xfa/fxfa/fm2js/xfa_error.h"
@@ -113,9 +114,8 @@ class CXFA_FMLexer {
   void Comment(const wchar_t* p, const wchar_t*& pEnd);
   XFA_FM_TOKEN IsKeyword(const CFX_WideStringC& p);
   void SetCurrentLine(uint32_t line) { m_uCurrentLine = line; }
-  void SetToken(CXFA_FMToken* pToken) {
-    if (m_pToken.get() != pToken)
-      m_pToken.reset(pToken);
+  void SetToken(std::unique_ptr<CXFA_FMToken> pToken) {
+    m_pToken = std::move(pToken);
   }
   const wchar_t* SavePos() { return m_ptr; }
   void RestorePos(const wchar_t* pPos) { m_ptr = pPos; }

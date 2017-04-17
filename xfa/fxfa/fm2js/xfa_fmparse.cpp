@@ -857,10 +857,11 @@ std::unique_ptr<CXFA_FMExpression> CXFA_FMParse::ParseIfExpression() {
   Check(TOKrparen);
   if (m_pToken->m_type != TOKthen) {
     m_lexer->SetCurrentLine(line);
-    m_pToken = new CXFA_FMToken(line);
+    auto pNewToken = pdfium::MakeUnique<CXFA_FMToken>(line);
+    m_pToken = pNewToken.get();
     m_pToken->m_type = TOKidentifier;
     m_pToken->m_wstring = L"if";
-    m_lexer->SetToken(m_pToken);
+    m_lexer->SetToken(std::move(pNewToken));
     m_lexer->RestorePos(pStartPos);
     return ParseExpExpression();
   }
