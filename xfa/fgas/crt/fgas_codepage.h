@@ -97,6 +97,7 @@
 #define FX_CODEPAGE_ISCII_Punjabi 57011
 #define FX_CODEPAGE_UTF7 65000
 #define FX_CODEPAGE_UTF8 65001
+
 #define FX_CHARSET_ANSI 0
 #define FX_CHARSET_Default 1
 #define FX_CHARSET_Symbol 2
@@ -132,7 +133,5 @@
 #define FX_CHARSET_MSWin_EasterEuropean 238
 #define FX_CHARSET_US 254
 #define FX_CHARSET_OEM 255
-
-uint16_t FX_GetCodePageFromCharset(uint8_t charset);
 
 #endif  // XFA_FGAS_CRT_FGAS_CODEPAGE_H_
