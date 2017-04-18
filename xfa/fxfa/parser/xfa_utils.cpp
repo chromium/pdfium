@@ -455,19 +455,12 @@ const XFA_ATTRIBUTEENUMINFO* XFA_GetAttributeEnumByName(
   if (wsName.IsEmpty())
     return nullptr;
 
-  uint32_t uHash = FX_HashCode_GetW(wsName, false);
-  int32_t iStart = 0;
-  int32_t iEnd = g_iXFAEnumCount - 1;
-  do {
-    int32_t iMid = (iStart + iEnd) / 2;
-    const XFA_ATTRIBUTEENUMINFO* pInfo = g_XFAEnumData + iMid;
-    if (uHash == pInfo->uHash)
-      return pInfo;
-    if (uHash < pInfo->uHash)
-      iEnd = iMid - 1;
-    else
-      iStart = iMid + 1;
-  } while (iStart <= iEnd);
+  auto* it = std::lower_bound(g_XFAEnumData, g_XFAEnumData + g_iXFAEnumCount,
+                              FX_HashCode_GetW(wsName, false),
+                              [](const XFA_ATTRIBUTEENUMINFO& arg,
+                                 uint32_t hash) { return arg.uHash < hash; });
+  if (it != g_XFAEnumData + g_iXFAEnumCount && wsName == it->pName)
+    return it;
   return nullptr;
 }
 

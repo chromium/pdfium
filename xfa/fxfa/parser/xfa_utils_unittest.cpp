@@ -276,9 +276,20 @@ TEST_F(XFANodeIteratorTest, ChildAsRootNext) {
 
 TEST(XFAUtilsTest, GetAttributeByName) {
   EXPECT_EQ(nullptr, XFA_GetAttributeByName(L""));
-  EXPECT_EQ(nullptr, XFA_GetAttributeByName(L"clams"));
+  EXPECT_EQ(nullptr, XFA_GetAttributeByName(L"nonesuch"));
   EXPECT_EQ(XFA_ATTRIBUTE_H, XFA_GetAttributeByName(L"h")->eName);
   EXPECT_EQ(XFA_ATTRIBUTE_Short, XFA_GetAttributeByName(L"short")->eName);
   EXPECT_EQ(XFA_ATTRIBUTE_DecipherOnly,
             XFA_GetAttributeByName(L"decipherOnly")->eName);
+}
+
+TEST(XFAUtilsTest, GetAttributeEnumByName) {
+  EXPECT_EQ(nullptr, XFA_GetAttributeEnumByName(L""));
+  EXPECT_EQ(nullptr, XFA_GetAttributeEnumByName(L"nonesuch"));
+  EXPECT_EQ(XFA_ATTRIBUTEENUM_Asterisk,
+            XFA_GetAttributeEnumByName(L"*")->eName);
+  EXPECT_EQ(XFA_ATTRIBUTEENUM_Visible,
+            XFA_GetAttributeEnumByName(L"visible")->eName);
+  EXPECT_EQ(XFA_ATTRIBUTEENUM_Lowered,
+            XFA_GetAttributeEnumByName(L"lowered")->eName);
 }
