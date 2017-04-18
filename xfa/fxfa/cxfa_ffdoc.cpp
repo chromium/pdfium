@@ -281,7 +281,7 @@ CXFA_FFDocView* CXFA_FFDoc::GetDocView() {
   return m_DocView.get();
 }
 
-bool CXFA_FFDoc::OpenDoc(const CFX_RetainPtr<IFX_SeekableReadStream>& pStream) {
+bool CXFA_FFDoc::OpenDoc(const CFX_RetainPtr<IFX_SeekableStream>& pStream) {
   m_pStream = pStream;
   return true;
 }
@@ -389,9 +389,8 @@ CFX_RetainPtr<CFX_DIBitmap> CXFA_FFDoc::GetPDFNamedImage(
   auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pStream);
   pAcc->LoadAllData();
 
-  CFX_RetainPtr<IFX_SeekableReadStream> pImageFileRead =
-      IFX_MemoryStream::Create(const_cast<uint8_t*>(pAcc->GetData()),
-                               pAcc->GetSize());
+  CFX_RetainPtr<IFX_SeekableStream> pImageFileRead = IFX_MemoryStream::Create(
+      const_cast<uint8_t*>(pAcc->GetData()), pAcc->GetSize());
 
   CFX_RetainPtr<CFX_DIBitmap> pDibSource = XFA_LoadImageFromBuffer(
       pImageFileRead, FXCODEC_IMAGE_UNKNOWN, iImageXDpi, iImageYDpi);
@@ -399,10 +398,9 @@ CFX_RetainPtr<CFX_DIBitmap> CXFA_FFDoc::GetPDFNamedImage(
   return pDibSource;
 }
 
-bool CXFA_FFDoc::SavePackage(
-    XFA_HashCode code,
-    const CFX_RetainPtr<IFX_SeekableWriteStream>& pFile,
-    CFX_ChecksumContext* pCSContext) {
+bool CXFA_FFDoc::SavePackage(XFA_HashCode code,
+                             const CFX_RetainPtr<IFX_SeekableStream>& pFile,
+                             CFX_ChecksumContext* pCSContext) {
   CXFA_Document* doc = m_pDocumentParser->GetDocument();
   auto pExport = pdfium::MakeUnique<CXFA_DataExporter>(doc);
   CXFA_Node* pNode = code == XFA_HASHCODE_Xfa ? doc->GetRoot()
@@ -418,9 +416,8 @@ bool CXFA_FFDoc::SavePackage(
       pFile, pNode, 0, bsChecksum.GetLength() ? bsChecksum.c_str() : nullptr);
 }
 
-bool CXFA_FFDoc::ImportData(
-    const CFX_RetainPtr<IFX_SeekableReadStream>& pStream,
-    bool bXDP) {
+bool CXFA_FFDoc::ImportData(const CFX_RetainPtr<IFX_SeekableStream>& pStream,
+                            bool bXDP) {
   auto importer =
       pdfium::MakeUnique<CXFA_DataImporter>(m_pDocumentParser->GetDocument());
   return importer->ImportData(pStream);

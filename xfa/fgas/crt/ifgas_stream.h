@@ -19,9 +19,9 @@ enum FX_STREAMSEEK {
 class IFGAS_Stream : public CFX_Retainable {
  public:
   static CFX_RetainPtr<IFGAS_Stream> CreateReadStream(
-      const CFX_RetainPtr<IFX_SeekableReadStream>& pFileRead);
+      const CFX_RetainPtr<IFX_SeekableStream>& pFileRead);
   static CFX_RetainPtr<IFGAS_Stream> CreateWriteStream(
-      const CFX_RetainPtr<IFX_SeekableWriteStream>& pFileWrite);
+      const CFX_RetainPtr<IFX_SeekableStream>& pFileWrite);
   static CFX_RetainPtr<IFGAS_Stream> CreateWideStringReadStream(
       const CFX_WideString& buffer);
 

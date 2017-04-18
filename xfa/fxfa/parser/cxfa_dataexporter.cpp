@@ -474,15 +474,14 @@ CXFA_DataExporter::CXFA_DataExporter(CXFA_Document* pDocument)
 }
 
 bool CXFA_DataExporter::Export(
-    const CFX_RetainPtr<IFX_SeekableWriteStream>& pWrite) {
+    const CFX_RetainPtr<IFX_SeekableStream>& pWrite) {
   return Export(pWrite, m_pDocument->GetRoot(), 0, nullptr);
 }
 
-bool CXFA_DataExporter::Export(
-    const CFX_RetainPtr<IFX_SeekableWriteStream>& pWrite,
-    CXFA_Node* pNode,
-    uint32_t dwFlag,
-    const char* pChecksum) {
+bool CXFA_DataExporter::Export(const CFX_RetainPtr<IFX_SeekableStream>& pWrite,
+                               CXFA_Node* pNode,
+                               uint32_t dwFlag,
+                               const char* pChecksum) {
   ASSERT(pWrite);
   if (!pWrite)
     return false;

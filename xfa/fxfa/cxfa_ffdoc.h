@@ -58,7 +58,7 @@ class CXFA_FFDoc {
 
   CXFA_FFDocView* CreateDocView();
 
-  bool OpenDoc(const CFX_RetainPtr<IFX_SeekableReadStream>& pStream);
+  bool OpenDoc(const CFX_RetainPtr<IFX_SeekableStream>& pStream);
   bool OpenDoc(CPDF_Document* pPDFDoc);
   bool CloseDoc();
 
@@ -72,15 +72,15 @@ class CXFA_FFDoc {
                                                int32_t& iImageYDpi);
 
   bool SavePackage(XFA_HashCode code,
-                   const CFX_RetainPtr<IFX_SeekableWriteStream>& pFile,
+                   const CFX_RetainPtr<IFX_SeekableStream>& pFile,
                    CFX_ChecksumContext* pCSContext);
-  bool ImportData(const CFX_RetainPtr<IFX_SeekableReadStream>& pStream,
+  bool ImportData(const CFX_RetainPtr<IFX_SeekableStream>& pStream,
                   bool bXDP = true);
 
  private:
   IXFA_DocEnvironment* const m_pDocEnvironment;
   std::unique_ptr<CXFA_DocumentParser> m_pDocumentParser;
-  CFX_RetainPtr<IFX_SeekableReadStream> m_pStream;
+  CFX_RetainPtr<IFX_SeekableStream> m_pStream;
   CXFA_FFApp* m_pApp;
   std::unique_ptr<CXFA_FFNotify> m_pNotify;
   CPDF_Document* m_pPDFDoc;

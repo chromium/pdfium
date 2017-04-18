@@ -12,15 +12,15 @@
 
 class CXFA_Document;
 class CXFA_Node;
-class IFX_SeekableWriteStream;
+class IFX_SeekableStream;
 class IFGAS_Stream;
 
 class CXFA_DataExporter {
  public:
   explicit CXFA_DataExporter(CXFA_Document* pDocument);
 
-  bool Export(const CFX_RetainPtr<IFX_SeekableWriteStream>& pWrite);
-  bool Export(const CFX_RetainPtr<IFX_SeekableWriteStream>& pWrite,
+  bool Export(const CFX_RetainPtr<IFX_SeekableStream>& pWrite);
+  bool Export(const CFX_RetainPtr<IFX_SeekableStream>& pWrite,
               CXFA_Node* pNode,
               uint32_t dwFlag,
               const char* pChecksum);

@@ -15,7 +15,7 @@ class CFDE_XMLDoc;
 class CXFA_Document;
 class CXFA_FFNotify;
 class CXFA_Notify;
-class IFX_SeekableReadStream;
+class IFX_SeekableStream;
 class IFX_Pause;
 
 class CXFA_DocumentParser {
@@ -23,7 +23,7 @@ class CXFA_DocumentParser {
   explicit CXFA_DocumentParser(CXFA_FFNotify* pNotify);
   ~CXFA_DocumentParser();
 
-  int32_t StartParse(const CFX_RetainPtr<IFX_SeekableReadStream>& pStream,
+  int32_t StartParse(const CFX_RetainPtr<IFX_SeekableStream>& pStream,
                      XFA_XDPPACKET ePacketID);
   int32_t DoParse(IFX_Pause* pPause);
 

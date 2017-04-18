@@ -54,3 +54,28 @@ bool CXFA_FileRead::ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) {
   }
   return false;
 }
+
+size_t CXFA_FileRead::ReadBlock(void* buffer, size_t size) {
+  ASSERT(false);
+  return 0;
+}
+
+FX_FILESIZE CXFA_FileRead::GetPosition() {
+  return 0;
+}
+
+bool CXFA_FileRead::IsEOF() {
+  return false;
+}
+
+bool CXFA_FileRead::Flush() {
+  ASSERT(false);
+  return false;
+}
+
+bool CXFA_FileRead::WriteBlock(const void* pData,
+                               FX_FILESIZE offset,
+                               size_t size) {
+  ASSERT(false);
+  return false;
+}

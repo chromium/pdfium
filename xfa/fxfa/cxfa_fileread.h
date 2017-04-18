@@ -15,14 +15,19 @@
 class CPDF_Stream;
 class CPDF_StreamAcc;
 
-class CXFA_FileRead : public IFX_SeekableReadStream {
+class CXFA_FileRead : public IFX_SeekableStream {
  public:
   explicit CXFA_FileRead(const std::vector<CPDF_Stream*>& streams);
   ~CXFA_FileRead() override;
 
   // IFX_SeekableReadStream
+  FX_FILESIZE GetPosition() override;
   FX_FILESIZE GetSize() override;
   bool ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) override;
+  size_t ReadBlock(void* buffer, size_t size) override;
+  bool IsEOF() override;
+  bool Flush() override;
+  bool WriteBlock(const void* pData, FX_FILESIZE offset, size_t size) override;
 
  private:
   std::vector<CFX_RetainPtr<CPDF_StreamAcc>> m_Data;
