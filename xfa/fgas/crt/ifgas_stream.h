@@ -34,15 +34,13 @@ class IFGAS_Stream : public CFX_Retainable {
   virtual FX_STRSIZE ReadString(wchar_t* pStr,
                                 FX_STRSIZE iMaxLength,
                                 bool* bEOS) = 0;
-  virtual void WriteData(const uint8_t* pBuffer, FX_STRSIZE iBufferSize) = 0;
-  virtual void WriteString(const wchar_t* pStr, FX_STRSIZE iLength) = 0;
+  virtual void WriteString(const CFX_WideStringC& str) = 0;
 
   virtual uint16_t GetCodePage() const = 0;
   virtual void SetCodePage(uint16_t wCodePage) = 0;
 
  protected:
   virtual bool IsEOF() const = 0;
-  virtual FX_STRSIZE ReadData(uint8_t* pBuffer, FX_STRSIZE iBufferSize) = 0;
 };
 
 #endif  // XFA_FGAS_CRT_IFGAS_STREAM_H_

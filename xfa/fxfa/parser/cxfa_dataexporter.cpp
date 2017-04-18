@@ -352,15 +352,17 @@ void RegenerateFormFile_Container(CXFA_Node* pNode,
     RegenerateFormFile_Changed(pNode, buf, bSaveXML);
     FX_STRSIZE nLen = buf.GetLength();
     if (nLen > 0)
-      pStream->WriteString((const wchar_t*)buf.GetBuffer(), nLen);
+      pStream->WriteString(buf.AsStringC());
     return;
   }
 
-  CFX_WideStringC wsElement = pNode->GetClassName();
-  pStream->WriteString(L"<", 1);
-  pStream->WriteString(wsElement.c_str(), wsElement.GetLength());
+  CFX_WideStringC wsElement(pNode->GetClassName());
+  pStream->WriteString(L"<");
+  pStream->WriteString(wsElement);
+
   CFX_WideString wsOutput;
   SaveAttribute(pNode, XFA_ATTRIBUTE_Name, L"name", true, wsOutput);
+
   CFX_WideString wsAttrs;
   int32_t iAttrs = 0;
   const uint8_t* pAttrs =
@@ -377,20 +379,20 @@ void RegenerateFormFile_Container(CXFA_Node* pNode,
   }
 
   if (!wsOutput.IsEmpty())
-    pStream->WriteString(wsOutput.c_str(), wsOutput.GetLength());
+    pStream->WriteString(wsOutput.AsStringC());
 
   CXFA_Node* pChildNode = pNode->GetNodeItem(XFA_NODEITEM_FirstChild);
   if (pChildNode) {
-    pStream->WriteString(L"\n>", 2);
+    pStream->WriteString(L"\n>");
     while (pChildNode) {
       RegenerateFormFile_Container(pChildNode, pStream, bSaveXML);
       pChildNode = pChildNode->GetNodeItem(XFA_NODEITEM_NextSibling);
     }
-    pStream->WriteString(L"</", 2);
-    pStream->WriteString(wsElement.c_str(), wsElement.GetLength());
-    pStream->WriteString(L"\n>", 2);
+    pStream->WriteString(L"</");
+    pStream->WriteString(wsElement);
+    pStream->WriteString(L"\n>");
   } else {
-    pStream->WriteString(L"\n/>", 3);
+    pStream->WriteString(L"\n/>");
   }
 }
 
@@ -402,19 +404,18 @@ void XFA_DataExporter_RegenerateFormFile(
     const char* pChecksum,
     bool bSaveXML) {
   if (pNode->IsModelNode()) {
-    static const wchar_t s_pwsTagName[] = L"<form";
-    static const wchar_t s_pwsClose[] = L"</form\n>";
-    pStream->WriteString(s_pwsTagName, FXSYS_wcslen(s_pwsTagName));
+    pStream->WriteString(L"<form");
     if (pChecksum) {
-      static const wchar_t s_pwChecksum[] = L" checksum=\"";
       CFX_WideString wsChecksum = CFX_WideString::FromUTF8(pChecksum);
-      pStream->WriteString(s_pwChecksum, FXSYS_wcslen(s_pwChecksum));
-      pStream->WriteString(wsChecksum.c_str(), wsChecksum.GetLength());
-      pStream->WriteString(L"\"", 1);
+      pStream->WriteString(L" checksum=\"");
+      pStream->WriteString(wsChecksum.AsStringC());
+      pStream->WriteString(L"\"");
     }
-    pStream->WriteString(L" xmlns=\"", FXSYS_wcslen(L" xmlns=\""));
+    pStream->WriteString(L" xmlns=\"");
+
     const wchar_t* pURI = XFA_GetPacketByIndex(XFA_PACKET_Form)->pURI;
-    pStream->WriteString(pURI, FXSYS_wcslen(pURI));
+    pStream->WriteString(CFX_WideStringC(pURI, FXSYS_wcslen(pURI)));
+
     CFX_WideString wsVersionNumber;
     RecognizeXFAVersionNumber(
         ToNode(pNode->GetDocument()->GetXFAObject(XFA_HASHCODE_Template)),
@@ -423,13 +424,14 @@ void XFA_DataExporter_RegenerateFormFile(
       wsVersionNumber = L"2.8";
 
     wsVersionNumber += L"/\"\n>";
-    pStream->WriteString(wsVersionNumber.c_str(), wsVersionNumber.GetLength());
+    pStream->WriteString(wsVersionNumber.AsStringC());
+
     CXFA_Node* pChildNode = pNode->GetNodeItem(XFA_NODEITEM_FirstChild);
     while (pChildNode) {
       RegenerateFormFile_Container(pChildNode, pStream);
       pChildNode = pChildNode->GetNodeItem(XFA_NODEITEM_NextSibling);
     }
-    pStream->WriteString(s_pwsClose, FXSYS_wcslen(s_pwsClose));
+    pStream->WriteString(L"</form\n>");
   } else {
     RegenerateFormFile_Container(pNode, pStream, bSaveXML);
   }
@@ -501,15 +503,13 @@ bool CXFA_DataExporter::Export(const CFX_RetainPtr<IFGAS_Stream>& pStream,
   if (pNode->IsModelNode()) {
     switch (pNode->GetPacketID()) {
       case XFA_XDPPACKET_XDP: {
-        static const wchar_t s_pwsPreamble[] =
-            L"<xdp:xdp xmlns:xdp=\"http://ns.adobe.com/xdp/\">";
-        pStream->WriteString(s_pwsPreamble, FXSYS_wcslen(s_pwsPreamble));
+        pStream->WriteString(
+            L"<xdp:xdp xmlns:xdp=\"http://ns.adobe.com/xdp/\">");
         for (CXFA_Node* pChild = pNode->GetNodeItem(XFA_NODEITEM_FirstChild);
              pChild; pChild = pChild->GetNodeItem(XFA_NODEITEM_NextSibling)) {
           Export(pStream, pChild, dwFlag, pChecksum);
         }
-        static const wchar_t s_pwsPostamble[] = L"</xdp:xdp\n>";
-        pStream->WriteString(s_pwsPostamble, FXSYS_wcslen(s_pwsPostamble));
+        pStream->WriteString(L"</xdp:xdp\n>");
         break;
       }
       case XFA_XDPPACKET_Datasets: {

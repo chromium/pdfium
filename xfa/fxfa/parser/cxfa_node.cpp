@@ -1397,14 +1397,15 @@ void CXFA_Node::Script_NodeClass_SaveXML(CFXJSE_Arguments* pArguments) {
     }
     bPrettyMode = true;
   }
-  CFX_ByteStringC bsXMLHeader = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
+  CFX_WideString bsXMLHeader = L"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
   if (GetPacketID() == XFA_XDPPACKET_Form ||
       GetPacketID() == XFA_XDPPACKET_Datasets) {
     CFDE_XMLNode* pElement = nullptr;
     if (GetPacketID() == XFA_XDPPACKET_Datasets) {
       pElement = GetXMLMappingNode();
       if (!pElement || pElement->GetType() != FDE_XMLNODE_Element) {
-        pArguments->GetReturnValue()->SetString(bsXMLHeader);
+        pArguments->GetReturnValue()->SetString(
+            bsXMLHeader.UTF8Encode().AsStringC());
         return;
       }
       XFA_DataExporter_DealWithDataGroupNode(this);
@@ -1415,11 +1416,13 @@ void CXFA_Node::Script_NodeClass_SaveXML(CFXJSE_Arguments* pArguments) {
         IFGAS_Stream::CreateWriteStream(pMemoryStream);
 
     if (!pStream) {
-      pArguments->GetReturnValue()->SetString(bsXMLHeader);
+      pArguments->GetReturnValue()->SetString(
+          bsXMLHeader.UTF8Encode().AsStringC());
       return;
     }
     pStream->SetCodePage(FX_CODEPAGE_UTF8);
-    pStream->WriteData(bsXMLHeader.raw_str(), bsXMLHeader.GetLength());
+    pStream->WriteString(bsXMLHeader.AsStringC());
+
     if (GetPacketID() == XFA_XDPPACKET_Form)
       XFA_DataExporter_RegenerateFormFile(this, pStream, nullptr, true);
     else
