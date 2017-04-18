@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fgas/layout/fgas_rtfbreak.h"
+#include "xfa/fgas/layout/cfx_rtfbreak.h"
 
 #include <memory>
 
@@ -14,7 +14,7 @@
 #include "xfa/fgas/font/cfgas_fontmgr.h"
 #include "xfa/fgas/font/cfgas_gefont.h"
 
-class RTFBreakTest : public testing::Test {
+class CFX_RTFBreakTest : public testing::Test {
  public:
   void SetUp() override {
     CFX_GEModule::Get()->GetFontMgr()->SetSystemFontInfo(
@@ -49,7 +49,7 @@ class RTFBreakTest : public testing::Test {
 // As soon as you get one of the control characters the break is complete
 // and must be consumed before you get any more characters ....
 
-TEST_F(RTFBreakTest, AddChars) {
+TEST_F(CFX_RTFBreakTest, AddChars) {
   auto b = CreateBreak(FX_LAYOUTSTYLE_ExpandTab);
 
   CFX_WideString str(L"Input String.");
@@ -74,7 +74,7 @@ TEST_F(RTFBreakTest, AddChars) {
   EXPECT_EQ(str, b->GetBreakPieceUnstable(0)->GetString());
 }
 
-TEST_F(RTFBreakTest, ControlCharacters) {
+TEST_F(CFX_RTFBreakTest, ControlCharacters) {
   auto b = CreateBreak(FX_LAYOUTSTYLE_ExpandTab);
   EXPECT_EQ(CFX_BreakType::Line, b->AppendChar(L'\v'));
   EXPECT_EQ(CFX_BreakType::Page, b->AppendChar(L'\f'));

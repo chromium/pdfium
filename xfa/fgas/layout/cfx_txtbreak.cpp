@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fgas/layout/fgas_textbreak.h"
+#include "xfa/fgas/layout/cfx_txtbreak.h"
 
 #include <algorithm>
 
@@ -12,7 +12,7 @@
 #include "core/fxcrt/fx_memory.h"
 #include "third_party/base/ptr_util.h"
 #include "xfa/fgas/font/cfgas_gefont.h"
-#include "xfa/fgas/layout/fgas_linebreak.h"
+#include "xfa/fgas/layout/cfx_linebreak.h"
 
 namespace {
 
@@ -34,7 +34,6 @@ void CFX_TxtBreak::SetLineWidth(float fLineWidth) {
   m_iLineWidth = FXSYS_round(fLineWidth * 20000.0f);
   ASSERT(m_iLineWidth >= 20000);
 }
-
 
 void CFX_TxtBreak::SetAlignment(int32_t iAlignment) {
   ASSERT(iAlignment >= CFX_TxtLineAlignment_Left &&

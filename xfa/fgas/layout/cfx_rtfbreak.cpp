@@ -4,14 +4,14 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fgas/layout/fgas_rtfbreak.h"
+#include "xfa/fgas/layout/cfx_rtfbreak.h"
 
 #include <algorithm>
 
 #include "core/fxcrt/fx_arabic.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fgas/font/cfgas_gefont.h"
-#include "xfa/fgas/layout/fgas_linebreak.h"
+#include "xfa/fgas/layout/cfx_linebreak.h"
 
 CFX_RTFBreak::CFX_RTFBreak(uint32_t dwLayoutStyles)
     : CFX_Break(dwLayoutStyles),

@@ -14,7 +14,7 @@
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_string.h"
 #include "xfa/fde/css/fde_css.h"
-#include "xfa/fgas/layout/fgas_rtfbreak.h"
+#include "xfa/fgas/layout/cfx_rtfbreak.h"
 #include "xfa/fxfa/app/cxfa_textparser.h"
 
 class CFDE_Brush;

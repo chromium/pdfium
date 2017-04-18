@@ -17,7 +17,7 @@
 #include "xfa/fde/cfde_txtedtdorecord_insert.h"
 #include "xfa/fde/cfde_txtedtpage.h"
 #include "xfa/fde/cfde_txtedtparag.h"
-#include "xfa/fgas/layout/fgas_textbreak.h"
+#include "xfa/fgas/layout/cfx_txtbreak.h"
 #include "xfa/fwl/cfwl_edit.h"
 
 namespace {

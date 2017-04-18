@@ -16,7 +16,7 @@
 #include "xfa/fde/cfde_txtedtparag.h"
 #include "xfa/fde/cfde_txtedttextset.h"
 #include "xfa/fde/ifde_txtedtengine.h"
-#include "xfa/fgas/layout/fgas_textbreak.h"
+#include "xfa/fgas/layout/cfx_txtbreak.h"
 
 namespace {
 

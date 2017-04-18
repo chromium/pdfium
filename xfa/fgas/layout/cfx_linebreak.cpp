@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fgas/layout/fgas_linebreak.h"
+#include "xfa/fgas/layout/cfx_linebreak.h"
 
 #include "core/fxcrt/fx_ucd.h"
 

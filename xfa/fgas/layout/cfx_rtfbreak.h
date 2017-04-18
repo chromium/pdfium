@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FGAS_LAYOUT_FGAS_RTFBREAK_H_
-#define XFA_FGAS_LAYOUT_FGAS_RTFBREAK_H_
+#ifndef XFA_FGAS_LAYOUT_CFX_RTFBREAK_H_
+#define XFA_FGAS_LAYOUT_CFX_RTFBREAK_H_
 
 #include <deque>
 #include <vector>
@@ -95,4 +95,4 @@ class CFX_RTFBreak : public CFX_Break {
   CFX_RetainPtr<CFX_Retainable> m_pUserData;
 };
 
-#endif  // XFA_FGAS_LAYOUT_FGAS_RTFBREAK_H_
+#endif  // XFA_FGAS_LAYOUT_CFX_RTFBREAK_H_

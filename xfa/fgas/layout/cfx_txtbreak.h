@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FGAS_LAYOUT_FGAS_TEXTBREAK_H_
-#define XFA_FGAS_LAYOUT_FGAS_TEXTBREAK_H_
+#ifndef XFA_FGAS_LAYOUT_CFX_TXTBREAK_H_
+#define XFA_FGAS_LAYOUT_CFX_TXTBREAK_H_
 
 #include <deque>
 #include <memory>
@@ -99,4 +99,4 @@ class CFX_TxtBreak : public CFX_Break {
   int32_t m_iCombWidth;
 };
 
-#endif  // XFA_FGAS_LAYOUT_FGAS_TEXTBREAK_H_
+#endif  // XFA_FGAS_LAYOUT_CFX_TXTBREAK_H_

@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FGAS_LAYOUT_FGAS_LINEBREAK_H_
-#define XFA_FGAS_LAYOUT_FGAS_LINEBREAK_H_
+#ifndef XFA_FGAS_LAYOUT_CFX_LINEBREAK_H_
+#define XFA_FGAS_LAYOUT_CFX_LINEBREAK_H_
 
 #include "core/fxcrt/fx_system.h"
 
@@ -29,4 +29,4 @@ enum FX_LINEBREAKTYPE : uint8_t {
 
 extern const FX_LINEBREAKTYPE gs_FX_LineBreak_PairTable[64][32];
 
-#endif  // XFA_FGAS_LAYOUT_FGAS_LINEBREAK_H_
+#endif  // XFA_FGAS_LAYOUT_CFX_LINEBREAK_H_
