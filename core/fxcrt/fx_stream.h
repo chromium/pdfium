@@ -165,12 +165,6 @@ class CFindFileDataA : public CFindFileData {
   ~CFindFileDataA() override {}
   WIN32_FIND_DATAA m_FindData;
 };
-
-class CFindFileDataW : public CFindFileData {
- public:
-  ~CFindFileDataW() override {}
-  WIN32_FIND_DATAW m_FindData;
-};
 #endif
 
 #endif  // CORE_FXCRT_FX_STREAM_H_
