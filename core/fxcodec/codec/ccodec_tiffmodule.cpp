@@ -62,6 +62,10 @@ class CCodec_TiffContext {
   TIFF* m_tif_ctx;
 };
 
+void* _TIFFcalloc(tmsize_t nmemb, tmsize_t siz) {
+  return FXMEM_DefaultCalloc(nmemb, siz);
+}
+
 void* _TIFFmalloc(tmsize_t size) {
   return FXMEM_DefaultAlloc(size, 0);
 }

@@ -15,6 +15,7 @@ extern "C" {
 
 // For external C libraries to malloc through PDFium. These may return nullptr.
 void* FXMEM_DefaultAlloc(size_t byte_size, int flags);
+void* FXMEM_DefaultCalloc(size_t num_elems, size_t byte_size);
 void* FXMEM_DefaultRealloc(void* pointer, size_t new_size, int flags);
 void FXMEM_DefaultFree(void* pointer, int flags);
 

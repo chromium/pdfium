@@ -293,6 +293,7 @@ extern TIFFCodec* TIFFGetConfiguredCODECs(void);
  */
 
 extern void* _TIFFmalloc(tmsize_t s);
+extern void* _TIFFcalloc(tmsize_t nmemb, tmsize_t siz);
 extern void* _TIFFrealloc(void* p, tmsize_t s);
 extern void _TIFFmemset(void* p, int v, tmsize_t c);
 extern void _TIFFmemcpy(void* d, const void* s, tmsize_t c);

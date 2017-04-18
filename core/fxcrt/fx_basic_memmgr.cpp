@@ -24,9 +24,15 @@ void FXMEM_InitalizePartitionAlloc() {
 void* FXMEM_DefaultAlloc(size_t byte_size, int flags) {
   return (void*)malloc(byte_size);
 }
+
+void* FXMEM_DefaultCalloc(size_t num_elems, size_t byte_size) {
+  return calloc(num_elems, byte_size);
+}
+
 void* FXMEM_DefaultRealloc(void* pointer, size_t new_size, int flags) {
   return realloc(pointer, new_size);
 }
+
 void FXMEM_DefaultFree(void* pointer, int flags) {
   free(pointer);
 }

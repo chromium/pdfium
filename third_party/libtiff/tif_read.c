@@ -983,9 +983,9 @@ TIFFReadBufferSetup(TIFF* tif, void* bp, tmsize_t size)
 				 "Invalid buffer size");
 		    return (0);
 		}
-		tif->tif_rawdata = (uint8*) _TIFFmalloc(tif->tif_rawdatasize);
-		if (tif->tif_rawdata)
-			memset(tif->tif_rawdata, 0, tif->tif_rawdatasize);
+		/* Initialize to zero to avoid uninitialized buffers in case of */
+                /* short reads (http://bugzilla.maptools.org/show_bug.cgi?id=2651) */
+		tif->tif_rawdata = (uint8*) _TIFFcalloc(1, tif->tif_rawdatasize);
 
 		tif->tif_flags |= TIFF_MYBUFFER;
 	}
