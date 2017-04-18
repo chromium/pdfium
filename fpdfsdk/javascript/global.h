@@ -8,6 +8,7 @@
 #define FPDFSDK_JAVASCRIPT_GLOBAL_H_
 
 #include <map>
+#include <memory>
 #include <vector>
 
 #include "fpdfsdk/javascript/JS_Define.h"
@@ -65,7 +66,7 @@ class JSGlobalAlternate : public CJS_EmbedObj {
                      CJS_GlobalVariableArray& array);
   void PutObjectProperty(v8::Local<v8::Object> obj, CJS_KeyValue* pData);
 
-  std::map<CFX_ByteString, JSGlobalData*> m_mapGlobal;
+  std::map<CFX_ByteString, std::unique_ptr<JSGlobalData>> m_MapGlobal;
   CFX_WideString m_sFilePath;
   CJS_GlobalData* m_pGlobalData;
   CPDFSDK_FormFillEnvironment::ObservedPtr m_pFormFillEnv;

@@ -6,6 +6,7 @@
 
 #include "fpdfsdk/javascript/global.h"
 
+#include <utility>
 #include <vector>
 
 #include "core/fxcrt/fx_ext.h"
@@ -67,8 +68,8 @@ bool JSGlobalAlternate::QueryProperty(const wchar_t* propname) {
 bool JSGlobalAlternate::DelProperty(CJS_Runtime* pRuntime,
                                     const wchar_t* propname,
                                     CFX_WideString& sError) {
-  auto it = m_mapGlobal.find(CFX_ByteString::FromUnicode(propname));
-  if (it == m_mapGlobal.end())
+  auto it = m_MapGlobal.find(CFX_ByteString::FromUnicode(propname));
+  if (it == m_MapGlobal.end())
     return false;
 
   it->second->bDeleted = true;
@@ -118,12 +119,12 @@ bool JSGlobalAlternate::DoProperty(CJS_Runtime* pRuntime,
         break;
     }
   } else {
-    auto it = m_mapGlobal.find(CFX_ByteString::FromUnicode(propname));
-    if (it == m_mapGlobal.end()) {
+    auto it = m_MapGlobal.find(CFX_ByteString::FromUnicode(propname));
+    if (it == m_MapGlobal.end()) {
       vp.GetJSValue()->SetNull(pRuntime);
       return true;
     }
-    JSGlobalData* pData = it->second;
+    JSGlobalData* pData = it->second.get();
     if (pData->bDeleted) {
       vp.GetJSValue()->SetNull(pRuntime);
       return true;
@@ -162,18 +163,13 @@ bool JSGlobalAlternate::setPersistent(CJS_Runtime* pRuntime,
     sError = JSGetStringFromID(IDS_STRING_JSPARAMERROR);
     return false;
   }
-
-  auto it = m_mapGlobal.find(params[0].ToCFXByteString(pRuntime));
-  if (it != m_mapGlobal.end()) {
-    JSGlobalData* pData = it->second;
-    if (!pData->bDeleted) {
-      pData->bPersistent = params[1].ToBool(pRuntime);
-      return true;
-    }
+  auto it = m_MapGlobal.find(params[0].ToCFXByteString(pRuntime));
+  if (it == m_MapGlobal.end() || it->second->bDeleted) {
+    sError = JSGetStringFromID(IDS_STRING_JSNOGLOBAL);
+    return false;
   }
-
-  sError = JSGetStringFromID(IDS_STRING_JSNOGLOBAL);
-  return false;
+  it->second->bPersistent = params[1].ToBool(pRuntime);
+  return true;
 }
 
 void JSGlobalAlternate::UpdateGlobalPersistentVariables() {
@@ -230,38 +226,38 @@ void JSGlobalAlternate::UpdateGlobalPersistentVariables() {
 
 void JSGlobalAlternate::CommitGlobalPersisitentVariables(
     CJS_Runtime* pRuntime) {
-  for (auto it = m_mapGlobal.begin(); it != m_mapGlobal.end(); ++it) {
-    CFX_ByteString name = it->first;
-    JSGlobalData* pData = it->second;
+  for (const auto& iter : m_MapGlobal) {
+    CFX_ByteString name = iter.first;
+    JSGlobalData* pData = iter.second.get();
     if (pData->bDeleted) {
       m_pGlobalData->DeleteGlobalVariable(name);
-    } else {
-      switch (pData->nType) {
-        case JS_GlobalDataType::NUMBER:
-          m_pGlobalData->SetGlobalVariableNumber(name, pData->dData);
-          m_pGlobalData->SetGlobalVariablePersistent(name, pData->bPersistent);
-          break;
-        case JS_GlobalDataType::BOOLEAN:
-          m_pGlobalData->SetGlobalVariableBoolean(name, pData->bData);
-          m_pGlobalData->SetGlobalVariablePersistent(name, pData->bPersistent);
-          break;
-        case JS_GlobalDataType::STRING:
-          m_pGlobalData->SetGlobalVariableString(name, pData->sData);
-          m_pGlobalData->SetGlobalVariablePersistent(name, pData->bPersistent);
-          break;
-        case JS_GlobalDataType::OBJECT: {
-          CJS_GlobalVariableArray array;
-          v8::Local<v8::Object> obj = v8::Local<v8::Object>::New(
-              GetJSObject()->GetIsolate(), pData->pData);
-          ObjectToArray(pRuntime, obj, array);
-          m_pGlobalData->SetGlobalVariableObject(name, array);
-          m_pGlobalData->SetGlobalVariablePersistent(name, pData->bPersistent);
-        } break;
-        case JS_GlobalDataType::NULLOBJ:
-          m_pGlobalData->SetGlobalVariableNull(name);
-          m_pGlobalData->SetGlobalVariablePersistent(name, pData->bPersistent);
-          break;
-      }
+      continue;
+    }
+    switch (pData->nType) {
+      case JS_GlobalDataType::NUMBER:
+        m_pGlobalData->SetGlobalVariableNumber(name, pData->dData);
+        m_pGlobalData->SetGlobalVariablePersistent(name, pData->bPersistent);
+        break;
+      case JS_GlobalDataType::BOOLEAN:
+        m_pGlobalData->SetGlobalVariableBoolean(name, pData->bData);
+        m_pGlobalData->SetGlobalVariablePersistent(name, pData->bPersistent);
+        break;
+      case JS_GlobalDataType::STRING:
+        m_pGlobalData->SetGlobalVariableString(name, pData->sData);
+        m_pGlobalData->SetGlobalVariablePersistent(name, pData->bPersistent);
+        break;
+      case JS_GlobalDataType::OBJECT: {
+        CJS_GlobalVariableArray array;
+        v8::Local<v8::Object> obj = v8::Local<v8::Object>::New(
+            GetJSObject()->GetIsolate(), pData->pData);
+        ObjectToArray(pRuntime, obj, array);
+        m_pGlobalData->SetGlobalVariableObject(name, array);
+        m_pGlobalData->SetGlobalVariablePersistent(name, pData->bPersistent);
+      } break;
+      case JS_GlobalDataType::NULLOBJ:
+        m_pGlobalData->SetGlobalVariableNull(name);
+        m_pGlobalData->SetGlobalVariablePersistent(name, pData->bPersistent);
+        break;
     }
   }
 }
@@ -351,10 +347,7 @@ void JSGlobalAlternate::PutObjectProperty(v8::Local<v8::Object> pObj,
 }
 
 void JSGlobalAlternate::DestroyGlobalPersisitentVariables() {
-  for (const auto& pair : m_mapGlobal) {
-    delete pair.second;
-  }
-  m_mapGlobal.clear();
+  m_MapGlobal.clear();
 }
 
 bool JSGlobalAlternate::SetGlobalVariables(const CFX_ByteString& propname,
@@ -367,30 +360,29 @@ bool JSGlobalAlternate::SetGlobalVariables(const CFX_ByteString& propname,
   if (propname.IsEmpty())
     return false;
 
-  auto it = m_mapGlobal.find(propname);
-  if (it != m_mapGlobal.end()) {
-    JSGlobalData* pTemp = it->second;
+  auto it = m_MapGlobal.find(propname);
+  if (it != m_MapGlobal.end()) {
+    JSGlobalData* pTemp = it->second.get();
     if (pTemp->bDeleted || pTemp->nType != nType) {
       pTemp->dData = 0;
       pTemp->bData = 0;
       pTemp->sData = "";
       pTemp->nType = nType;
     }
-
     pTemp->bDeleted = false;
     switch (nType) {
-      case JS_GlobalDataType::NUMBER: {
+      case JS_GlobalDataType::NUMBER:
         pTemp->dData = dData;
-      } break;
-      case JS_GlobalDataType::BOOLEAN: {
+        break;
+      case JS_GlobalDataType::BOOLEAN:
         pTemp->bData = bData;
-      } break;
-      case JS_GlobalDataType::STRING: {
+        break;
+      case JS_GlobalDataType::STRING:
         pTemp->sData = sData;
-      } break;
-      case JS_GlobalDataType::OBJECT: {
+        break;
+      case JS_GlobalDataType::OBJECT:
         pTemp->pData.Reset(pData->GetIsolate(), pData);
-      } break;
+        break;
       case JS_GlobalDataType::NULLOBJ:
         break;
       default:
@@ -399,42 +391,35 @@ bool JSGlobalAlternate::SetGlobalVariables(const CFX_ByteString& propname,
     return true;
   }
 
-  JSGlobalData* pNewData = nullptr;
-
+  auto pNewData = pdfium::MakeUnique<JSGlobalData>();
   switch (nType) {
-    case JS_GlobalDataType::NUMBER: {
-      pNewData = new JSGlobalData;
+    case JS_GlobalDataType::NUMBER:
       pNewData->nType = JS_GlobalDataType::NUMBER;
       pNewData->dData = dData;
       pNewData->bPersistent = bDefaultPersistent;
-    } break;
-    case JS_GlobalDataType::BOOLEAN: {
-      pNewData = new JSGlobalData;
+      break;
+    case JS_GlobalDataType::BOOLEAN:
       pNewData->nType = JS_GlobalDataType::BOOLEAN;
       pNewData->bData = bData;
       pNewData->bPersistent = bDefaultPersistent;
-    } break;
-    case JS_GlobalDataType::STRING: {
-      pNewData = new JSGlobalData;
+      break;
+    case JS_GlobalDataType::STRING:
       pNewData->nType = JS_GlobalDataType::STRING;
       pNewData->sData = sData;
       pNewData->bPersistent = bDefaultPersistent;
-    } break;
-    case JS_GlobalDataType::OBJECT: {
-      pNewData = new JSGlobalData;
+      break;
+    case JS_GlobalDataType::OBJECT:
       pNewData->nType = JS_GlobalDataType::OBJECT;
       pNewData->pData.Reset(pData->GetIsolate(), pData);
       pNewData->bPersistent = bDefaultPersistent;
-    } break;
-    case JS_GlobalDataType::NULLOBJ: {
-      pNewData = new JSGlobalData;
+      break;
+    case JS_GlobalDataType::NULLOBJ:
       pNewData->nType = JS_GlobalDataType::NULLOBJ;
       pNewData->bPersistent = bDefaultPersistent;
-    } break;
+      break;
     default:
       return false;
   }
-
-  m_mapGlobal[propname] = pNewData;
+  m_MapGlobal[propname] = std::move(pNewData);
   return true;
 }
