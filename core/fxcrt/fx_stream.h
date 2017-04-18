@@ -127,19 +127,6 @@ class IFX_MemoryStream : public IFX_SeekableStream {
   virtual void DetachBuffer() = 0;
 };
 
-class IFX_BufferedReadStream : public IFX_ReadStream {
- public:
-  // IFX_ReadStream:
-  bool IsEOF() override = 0;
-  FX_FILESIZE GetPosition() override = 0;
-  size_t ReadBlock(void* buffer, size_t size) override = 0;
-
-  virtual bool ReadNextBlock(bool bRestart = false) = 0;
-  virtual const uint8_t* GetBlockBuffer() = 0;
-  virtual size_t GetBlockSize() = 0;
-  virtual FX_FILESIZE GetBlockOffset() = 0;
-};
-
 #ifdef PDF_ENABLE_XFA
 class IFX_FileAccess : public CFX_Retainable {
  public:

@@ -11,6 +11,7 @@
 #include <memory>
 
 #include "core/fxcrt/fx_stream.h"
+#include "core/fxcrt/xml/cxml_databufacc.h"
 
 class CFX_UTF8Decoder;
 class CXML_Element;
@@ -40,7 +41,8 @@ class CXML_Parser {
                             CXML_Element* pElement);
   void InsertCDATASegment(CFX_UTF8Decoder& decoder, CXML_Element* pElement);
 
-  CFX_RetainPtr<IFX_BufferedReadStream> m_pDataAcc;
+ private:
+  std::unique_ptr<CXML_DataBufAcc> m_pDataAcc;
   FX_FILESIZE m_nOffset;
   const uint8_t* m_pBuffer;
   size_t m_dwBufferSize;

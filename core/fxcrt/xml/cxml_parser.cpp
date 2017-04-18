@@ -69,147 +69,6 @@ bool g_FXCRT_XML_IsNameChar(uint8_t ch) {
   return !!(g_FXCRT_XML_ByteTypes[ch] & FXCRTM_XML_CHARTYPE_NameChar);
 }
 
-class CXML_DataBufAcc : public IFX_BufferedReadStream {
- public:
-  template <typename T, typename... Args>
-  friend CFX_RetainPtr<T> pdfium::MakeRetain(Args&&... args);
-
-  // IFX_BufferedReadStream
-  bool IsEOF() override;
-  FX_FILESIZE GetPosition() override;
-  size_t ReadBlock(void* buffer, size_t size) override;
-  bool ReadNextBlock(bool bRestart) override;
-  const uint8_t* GetBlockBuffer() override;
-  size_t GetBlockSize() override;
-  FX_FILESIZE GetBlockOffset() override;
-
- private:
-  CXML_DataBufAcc(const uint8_t* pBuffer, size_t size);
-  ~CXML_DataBufAcc() override;
-
-  const uint8_t* m_pBuffer;
-  size_t m_dwSize;
-  size_t m_dwCurPos;
-};
-
-CXML_DataBufAcc::CXML_DataBufAcc(const uint8_t* pBuffer, size_t size)
-    : m_pBuffer(pBuffer), m_dwSize(size), m_dwCurPos(0) {}
-
-CXML_DataBufAcc::~CXML_DataBufAcc() {}
-
-bool CXML_DataBufAcc::IsEOF() {
-  return m_dwCurPos >= m_dwSize;
-}
-
-FX_FILESIZE CXML_DataBufAcc::GetPosition() {
-  return static_cast<FX_FILESIZE>(m_dwCurPos);
-}
-
-size_t CXML_DataBufAcc::ReadBlock(void* buffer, size_t size) {
-  return 0;
-}
-
-bool CXML_DataBufAcc::ReadNextBlock(bool bRestart) {
-  if (bRestart)
-    m_dwCurPos = 0;
-
-  if (m_dwCurPos < m_dwSize) {
-    m_dwCurPos = m_dwSize;
-    return true;
-  }
-  return false;
-}
-
-const uint8_t* CXML_DataBufAcc::GetBlockBuffer() {
-  return m_pBuffer;
-}
-
-size_t CXML_DataBufAcc::GetBlockSize() {
-  return m_dwSize;
-}
-
-FX_FILESIZE CXML_DataBufAcc::GetBlockOffset() {
-  return 0;
-}
-
-class CXML_DataStmAcc : public IFX_BufferedReadStream {
- public:
-  template <typename T, typename... Args>
-  friend CFX_RetainPtr<T> pdfium::MakeRetain(Args&&... args);
-
-  // IFX_BufferedReadStream
-  bool IsEOF() override;
-  FX_FILESIZE GetPosition() override;
-  size_t ReadBlock(void* buffer, size_t size) override;
-  bool ReadNextBlock(bool bRestart) override;
-  const uint8_t* GetBlockBuffer() override;
-  size_t GetBlockSize() override;
-  FX_FILESIZE GetBlockOffset() override;
-
- private:
-  explicit CXML_DataStmAcc(
-      const CFX_RetainPtr<IFX_SeekableReadStream>& pFileRead);
-  ~CXML_DataStmAcc() override;
-
-  CFX_RetainPtr<IFX_SeekableReadStream> m_pFileRead;
-  uint8_t* m_pBuffer;
-  FX_FILESIZE m_nStart;
-  size_t m_dwSize;
-};
-
-CXML_DataStmAcc::CXML_DataStmAcc(
-    const CFX_RetainPtr<IFX_SeekableReadStream>& pFileRead)
-    : m_pFileRead(pFileRead), m_pBuffer(nullptr), m_nStart(0), m_dwSize(0) {
-  ASSERT(m_pFileRead);
-}
-
-CXML_DataStmAcc::~CXML_DataStmAcc() {
-  FX_Free(m_pBuffer);
-}
-
-bool CXML_DataStmAcc::IsEOF() {
-  return m_nStart + static_cast<FX_FILESIZE>(m_dwSize) >=
-         m_pFileRead->GetSize();
-}
-
-FX_FILESIZE CXML_DataStmAcc::GetPosition() {
-  return m_nStart + static_cast<FX_FILESIZE>(m_dwSize);
-}
-
-size_t CXML_DataStmAcc::ReadBlock(void* buffer, size_t size) {
-  return 0;
-}
-
-bool CXML_DataStmAcc::ReadNextBlock(bool bRestart) {
-  if (bRestart)
-    m_nStart = 0;
-
-  FX_FILESIZE nLength = m_pFileRead->GetSize();
-  m_nStart += static_cast<FX_FILESIZE>(m_dwSize);
-  if (m_nStart >= nLength)
-    return false;
-
-  static const FX_FILESIZE FX_XMLDATASTREAM_BufferSize = 32 * 1024;
-  m_dwSize = static_cast<size_t>(
-      std::min(FX_XMLDATASTREAM_BufferSize, nLength - m_nStart));
-  if (!m_pBuffer)
-    m_pBuffer = FX_Alloc(uint8_t, m_dwSize);
-
-  return m_pFileRead->ReadBlock(m_pBuffer, m_nStart, m_dwSize);
-}
-
-const uint8_t* CXML_DataStmAcc::GetBlockBuffer() {
-  return (const uint8_t*)m_pBuffer;
-}
-
-size_t CXML_DataStmAcc::GetBlockSize() {
-  return m_dwSize;
-}
-
-FX_FILESIZE CXML_DataStmAcc::GetBlockOffset() {
-  return m_nStart;
-}
-
 }  // namespace
 
 void FX_XML_SplitQualifiedName(const CFX_ByteStringC& bsFullName,
@@ -237,7 +96,7 @@ CXML_Parser::CXML_Parser()
 CXML_Parser::~CXML_Parser() {}
 
 bool CXML_Parser::Init(const uint8_t* pBuffer, size_t size) {
-  m_pDataAcc = pdfium::MakeRetain<CXML_DataBufAcc>(pBuffer, size);
+  m_pDataAcc = pdfium::MakeUnique<CXML_DataBufAcc>(pBuffer, size);
   m_nOffset = 0;
   return ReadNextBlock();
 }
@@ -248,7 +107,7 @@ bool CXML_Parser::ReadNextBlock() {
 
   m_pBuffer = m_pDataAcc->GetBlockBuffer();
   m_dwBufferSize = m_pDataAcc->GetBlockSize();
-  m_nBufferOffset = m_pDataAcc->GetBlockOffset();
+  m_nBufferOffset = 0;
   m_dwIndex = 0;
   return m_dwBufferSize > 0;
 }
