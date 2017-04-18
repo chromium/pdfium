@@ -30,7 +30,7 @@ class CFWL_NoteDriver {
 
   void RegisterEventTarget(CFWL_Widget* pListener, CFWL_Widget* pEventSource);
   void UnregisterEventTarget(CFWL_Widget* pListener);
-  void ClearEventTargets(bool bRemoveAll);
+  void ClearEventTargets();
 
   CFWL_NoteLoop* GetTopLoop() const;
   void PushNoteLoop(CFWL_NoteLoop* pNoteLoop);
@@ -69,7 +69,8 @@ class CFWL_NoteDriver {
   std::vector<CFWL_Widget*> m_Forms;
   std::deque<std::unique_ptr<CFWL_Message>> m_NoteQueue;
   std::vector<CFWL_NoteLoop*> m_NoteLoopQueue;
-  std::unordered_map<uint32_t, CFWL_EventTarget*> m_eventTargets;
+  std::unordered_map<uint32_t, std::unique_ptr<CFWL_EventTarget>>
+      m_eventTargets;
   CFWL_Widget* m_pHover;
   CFWL_Widget* m_pFocus;
   CFWL_Widget* m_pGrab;

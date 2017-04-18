@@ -10,7 +10,7 @@
 #include "xfa/fwl/ifwl_widgetdelegate.h"
 
 CFWL_EventTarget::CFWL_EventTarget(CFWL_Widget* pListener)
-    : m_pListener(pListener), m_bInvalid(false) {}
+    : m_pListener(pListener), m_bValid(true) {}
 
 CFWL_EventTarget::~CFWL_EventTarget() {}
 

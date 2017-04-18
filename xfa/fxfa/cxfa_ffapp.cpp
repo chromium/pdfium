@@ -92,5 +92,5 @@ IFWL_AdapterTimerMgr* CXFA_FFApp::GetTimerMgr() const {
 }
 
 void CXFA_FFApp::ClearEventTargets() {
-  m_pFWLApp->GetNoteDriver()->ClearEventTargets(false);
+  m_pFWLApp->GetNoteDriver()->ClearEventTargets();
 }
