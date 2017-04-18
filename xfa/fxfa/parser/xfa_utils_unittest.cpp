@@ -273,3 +273,12 @@ TEST_F(XFANodeIteratorTest, ChildAsRootNext) {
   EXPECT_EQ(child6(), iter.MoveToNext());
   EXPECT_EQ(nullptr, iter.MoveToNext());
 }
+
+TEST(XFAUtilsTest, GetAttributeByName) {
+  EXPECT_EQ(nullptr, XFA_GetAttributeByName(L""));
+  EXPECT_EQ(nullptr, XFA_GetAttributeByName(L"clams"));
+  EXPECT_EQ(XFA_ATTRIBUTE_H, XFA_GetAttributeByName(L"h")->eName);
+  EXPECT_EQ(XFA_ATTRIBUTE_Short, XFA_GetAttributeByName(L"short")->eName);
+  EXPECT_EQ(XFA_ATTRIBUTE_DecipherOnly,
+            XFA_GetAttributeByName(L"decipherOnly")->eName);
+}

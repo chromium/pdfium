@@ -6,6 +6,8 @@
 
 #include "xfa/fxfa/parser/xfa_utils.h"
 
+#include <algorithm>
+
 #include "core/fxcrt/fx_ext.h"
 #include "xfa/fde/xml/cfde_xmlchardata.h"
 #include "xfa/fde/xml/cfde_xmlelement.h"
@@ -432,19 +434,14 @@ const XFA_ATTRIBUTEINFO* XFA_GetAttributeByName(const CFX_WideStringC& wsName) {
   if (wsName.IsEmpty())
     return nullptr;
 
-  uint32_t uHash = FX_HashCode_GetW(wsName, false);
-  int32_t iStart = 0;
-  int32_t iEnd = g_iXFAAttributeCount - 1;
-  do {
-    int32_t iMid = (iStart + iEnd) / 2;
-    const XFA_ATTRIBUTEINFO* pInfo = g_XFAAttributeData + iMid;
-    if (uHash == pInfo->uHash)
-      return pInfo;
-    if (uHash < pInfo->uHash)
-      iEnd = iMid - 1;
-    else
-      iStart = iMid + 1;
-  } while (iStart <= iEnd);
+  auto* it = std::lower_bound(g_XFAAttributeData,
+                              g_XFAAttributeData + g_iXFAAttributeCount,
+                              FX_HashCode_GetW(wsName, false),
+                              [](const XFA_ATTRIBUTEINFO& arg, uint32_t hash) {
+                                return arg.uHash < hash;
+                              });
+  if (it != g_XFAAttributeData + g_iXFAAttributeCount && wsName == it->pName)
+    return it;
   return nullptr;
 }
 
