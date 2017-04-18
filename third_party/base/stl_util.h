@@ -6,6 +6,7 @@
 #define PDFIUM_THIRD_PARTY_BASE_STL_UTIL_H_
 
 #include <algorithm>
+#include <iterator>
 #include <memory>
 #include <set>
 
@@ -25,8 +26,8 @@ bool ContainsKey(const Collection& collection, const Key& key) {
 // Returns true if the value is in the collection.
 template <typename Collection, typename Value>
 bool ContainsValue(const Collection& collection, const Value& value) {
-  return std::find(collection.begin(), collection.end(), value) !=
-         collection.end();
+  return std::find(std::begin(collection), std::end(collection), value) !=
+         std::end(collection);
 }
 
 // Means of generating a key for searching STL collections of std::unique_ptr
