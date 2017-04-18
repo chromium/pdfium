@@ -67,7 +67,7 @@ class CFGAS_GEFont : public CFX_Retainable {
                         uint32_t dwFontStyles,
                         uint16_t wCodePage);
   bool LoadFontInternal(const uint8_t* pBuffer, int32_t length);
-  bool LoadFontInternal(const CFX_RetainPtr<IFGAS_Stream>& pFontStream,
+  bool LoadFontInternal(const CFX_RetainPtr<CFGAS_Stream>& pFontStream,
                         bool bSaveStream);
 #endif
   bool LoadFontInternal(CFX_Font* pExternalFont);
@@ -95,7 +95,7 @@ class CFGAS_GEFont : public CFX_Retainable {
   CFX_RetainPtr<CFGAS_GEFont> m_pSrcFont;  // Only set by ctor, so no cycles.
   CFGAS_FontMgr* const m_pFontMgr;
   bool m_bExternalFont;
-  CFX_RetainPtr<IFGAS_Stream> m_pStream;
+  CFX_RetainPtr<CFGAS_Stream> m_pStream;
   CFX_RetainPtr<IFX_SeekableReadStream> m_pFileRead;
   std::unique_ptr<CFX_UnicodeEncoding> m_pFontEncoding;
   std::map<wchar_t, int32_t> m_CharWidthMap;

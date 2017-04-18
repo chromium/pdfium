@@ -329,7 +329,7 @@ std::unique_ptr<CFDE_XMLNode> CFDE_XMLNode::Clone() {
   return nullptr;
 }
 
-void CFDE_XMLNode::SaveXMLNode(const CFX_RetainPtr<IFGAS_Stream>& pXMLStream) {
+void CFDE_XMLNode::SaveXMLNode(const CFX_RetainPtr<CFGAS_Stream>& pXMLStream) {
   CFDE_XMLNode* pNode = (CFDE_XMLNode*)this;
   switch (pNode->GetType()) {
     case FDE_XMLNODE_Instruction: {

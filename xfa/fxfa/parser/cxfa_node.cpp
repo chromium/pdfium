@@ -1408,14 +1408,7 @@ void CXFA_Node::Script_NodeClass_SaveXML(CFXJSE_Arguments* pArguments) {
     }
     CFX_RetainPtr<IFX_MemoryStream> pMemoryStream =
         IFX_MemoryStream::Create(true);
-    CFX_RetainPtr<IFGAS_Stream> pStream =
-        IFGAS_Stream::CreateWriteStream(pMemoryStream);
-
-    if (!pStream) {
-      pArguments->GetReturnValue()->SetString(
-          bsXMLHeader.UTF8Encode().AsStringC());
-      return;
-    }
+    auto pStream = pdfium::MakeRetain<CFGAS_Stream>(pMemoryStream, true);
     pStream->SetCodePage(FX_CODEPAGE_UTF8);
     pStream->WriteString(bsXMLHeader.AsStringC());
 

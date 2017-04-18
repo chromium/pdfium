@@ -10,7 +10,7 @@
 #include "core/fxcrt/cfx_retain_ptr.h"
 #include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_system.h"
-#include "xfa/fgas/crt/ifgas_stream.h"
+#include "xfa/fgas/crt/cfgas_stream.h"
 
 class CFDE_CSSTextBuf {
  public:
@@ -19,10 +19,6 @@ class CFDE_CSSTextBuf {
 
   bool AttachBuffer(const wchar_t* pBuffer, int32_t iBufLen);
   bool EstimateSize(int32_t iAllocSize);
-  int32_t LoadFromStream(const CFX_RetainPtr<IFGAS_Stream>& pTxtStream,
-                         int32_t iStreamOffset,
-                         int32_t iMaxChars,
-                         bool& bEOS);
   bool AppendChar(wchar_t wch) {
     if (m_iDatLen >= m_iBufLen && !ExpandBuf(m_iBufLen * 2))
       return false;

@@ -15,7 +15,7 @@
 #include "xfa/fde/xml/cfde_xmltext.h"
 
 CFDE_XMLParser::CFDE_XMLParser(CFDE_XMLNode* pParent,
-                               const CFX_RetainPtr<IFGAS_Stream>& pStream)
+                               const CFX_RetainPtr<CFGAS_Stream>& pStream)
     : m_nElementStart(0),
       m_dwCheckStatus(0),
       m_dwCurrentCheckStatus(0),

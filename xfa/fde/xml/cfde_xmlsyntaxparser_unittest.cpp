@@ -8,8 +8,8 @@
 
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/test_support.h"
+#include "xfa/fgas/crt/cfgas_stream.h"
 #include "xfa/fgas/crt/fgas_codepage.h"
-#include "xfa/fgas/crt/ifgas_stream.h"
 
 class CFDE_XMLSyntaxParserTest : public pdfium::FPDF_Test {};
 
@@ -28,9 +28,8 @@ TEST_F(CFDE_XMLSyntaxParserTest, CData) {
       L"      app.alert(\"Tclams\");\n"
       L"  ";
 
-  CFX_RetainPtr<IFGAS_Stream> stream =
-      IFGAS_Stream::CreateReadStream(IFX_MemoryStream::Create(
-          reinterpret_cast<uint8_t*>(const_cast<char*>(input)), strlen(input)));
+  CFX_RetainPtr<CFGAS_Stream> stream = pdfium::MakeRetain<CFGAS_Stream>(
+      reinterpret_cast<uint8_t*>(const_cast<char*>(input)), strlen(input));
   stream->SetCodePage(FX_CODEPAGE_UTF8);
 
   CFDE_XMLSyntaxParser parser(stream);
@@ -76,9 +75,8 @@ TEST_F(CFDE_XMLSyntaxParserTest, CDataWithInnerScript) {
       L"    </script>\n"
       L"  ";
 
-  CFX_RetainPtr<IFGAS_Stream> stream =
-      IFGAS_Stream::CreateReadStream(IFX_MemoryStream::Create(
-          reinterpret_cast<uint8_t*>(const_cast<char*>(input)), strlen(input)));
+  CFX_RetainPtr<CFGAS_Stream> stream = pdfium::MakeRetain<CFGAS_Stream>(
+      reinterpret_cast<uint8_t*>(const_cast<char*>(input)), strlen(input));
   stream->SetCodePage(FX_CODEPAGE_UTF8);
 
   CFDE_XMLSyntaxParser parser(stream);
@@ -113,9 +111,8 @@ TEST_F(CFDE_XMLSyntaxParserTest, ArrowBangArrow) {
       "  <!>\n"
       "</script>";
 
-  CFX_RetainPtr<IFGAS_Stream> stream =
-      IFGAS_Stream::CreateReadStream(IFX_MemoryStream::Create(
-          reinterpret_cast<uint8_t*>(const_cast<char*>(input)), strlen(input)));
+  CFX_RetainPtr<CFGAS_Stream> stream = pdfium::MakeRetain<CFGAS_Stream>(
+      reinterpret_cast<uint8_t*>(const_cast<char*>(input)), strlen(input));
   stream->SetCodePage(FX_CODEPAGE_UTF8);
 
   CFDE_XMLSyntaxParser parser(stream);
@@ -148,9 +145,8 @@ TEST_F(CFDE_XMLSyntaxParserTest, ArrowBangBracketArrow) {
       "  <![>\n"
       "</script>";
 
-  CFX_RetainPtr<IFGAS_Stream> stream =
-      IFGAS_Stream::CreateReadStream(IFX_MemoryStream::Create(
-          reinterpret_cast<uint8_t*>(const_cast<char*>(input)), strlen(input)));
+  CFX_RetainPtr<CFGAS_Stream> stream = pdfium::MakeRetain<CFGAS_Stream>(
+      reinterpret_cast<uint8_t*>(const_cast<char*>(input)), strlen(input));
   stream->SetCodePage(FX_CODEPAGE_UTF8);
 
   CFDE_XMLSyntaxParser parser(stream);
@@ -178,9 +174,8 @@ TEST_F(CFDE_XMLSyntaxParserTest, IncompleteCData) {
       "  <![CDATA>\n"
       "</script>";
 
-  CFX_RetainPtr<IFGAS_Stream> stream =
-      IFGAS_Stream::CreateReadStream(IFX_MemoryStream::Create(
-          reinterpret_cast<uint8_t*>(const_cast<char*>(input)), strlen(input)));
+  CFX_RetainPtr<CFGAS_Stream> stream = pdfium::MakeRetain<CFGAS_Stream>(
+      reinterpret_cast<uint8_t*>(const_cast<char*>(input)), strlen(input));
   stream->SetCodePage(FX_CODEPAGE_UTF8);
 
   CFDE_XMLSyntaxParser parser(stream);
@@ -208,9 +203,8 @@ TEST_F(CFDE_XMLSyntaxParserTest, UnClosedCData) {
       "  <![CDATA[\n"
       "</script>";
 
-  CFX_RetainPtr<IFGAS_Stream> stream =
-      IFGAS_Stream::CreateReadStream(IFX_MemoryStream::Create(
-          reinterpret_cast<uint8_t*>(const_cast<char*>(input)), strlen(input)));
+  CFX_RetainPtr<CFGAS_Stream> stream = pdfium::MakeRetain<CFGAS_Stream>(
+      reinterpret_cast<uint8_t*>(const_cast<char*>(input)), strlen(input));
   stream->SetCodePage(FX_CODEPAGE_UTF8);
 
   CFDE_XMLSyntaxParser parser(stream);
@@ -238,9 +232,8 @@ TEST_F(CFDE_XMLSyntaxParserTest, EmptyCData) {
       "  <![CDATA[]]>\n"
       "</script>";
 
-  CFX_RetainPtr<IFGAS_Stream> stream =
-      IFGAS_Stream::CreateReadStream(IFX_MemoryStream::Create(
-          reinterpret_cast<uint8_t*>(const_cast<char*>(input)), strlen(input)));
+  CFX_RetainPtr<CFGAS_Stream> stream = pdfium::MakeRetain<CFGAS_Stream>(
+      reinterpret_cast<uint8_t*>(const_cast<char*>(input)), strlen(input));
   stream->SetCodePage(FX_CODEPAGE_UTF8);
 
   CFDE_XMLSyntaxParser parser(stream);
@@ -275,9 +268,8 @@ TEST_F(CFDE_XMLSyntaxParserTest, Comment) {
       "  <!-- A Comment -->\n"
       "</script>";
 
-  CFX_RetainPtr<IFGAS_Stream> stream =
-      IFGAS_Stream::CreateReadStream(IFX_MemoryStream::Create(
-          reinterpret_cast<uint8_t*>(const_cast<char*>(input)), strlen(input)));
+  CFX_RetainPtr<CFGAS_Stream> stream = pdfium::MakeRetain<CFGAS_Stream>(
+      reinterpret_cast<uint8_t*>(const_cast<char*>(input)), strlen(input));
   stream->SetCodePage(FX_CODEPAGE_UTF8);
 
   CFDE_XMLSyntaxParser parser(stream);
@@ -309,9 +301,8 @@ TEST_F(CFDE_XMLSyntaxParserTest, IncorrectCommentStart) {
       "  <!- A Comment -->\n"
       "</script>";
 
-  CFX_RetainPtr<IFGAS_Stream> stream =
-      IFGAS_Stream::CreateReadStream(IFX_MemoryStream::Create(
-          reinterpret_cast<uint8_t*>(const_cast<char*>(input)), strlen(input)));
+  CFX_RetainPtr<CFGAS_Stream> stream = pdfium::MakeRetain<CFGAS_Stream>(
+      reinterpret_cast<uint8_t*>(const_cast<char*>(input)), strlen(input));
   stream->SetCodePage(FX_CODEPAGE_UTF8);
 
   CFDE_XMLSyntaxParser parser(stream);
@@ -343,9 +334,8 @@ TEST_F(CFDE_XMLSyntaxParserTest, CommentEmpty) {
       "  <!---->\n"
       "</script>";
 
-  CFX_RetainPtr<IFGAS_Stream> stream =
-      IFGAS_Stream::CreateReadStream(IFX_MemoryStream::Create(
-          reinterpret_cast<uint8_t*>(const_cast<char*>(input)), strlen(input)));
+  CFX_RetainPtr<CFGAS_Stream> stream = pdfium::MakeRetain<CFGAS_Stream>(
+      reinterpret_cast<uint8_t*>(const_cast<char*>(input)), strlen(input));
   stream->SetCodePage(FX_CODEPAGE_UTF8);
 
   CFDE_XMLSyntaxParser parser(stream);
@@ -377,9 +367,8 @@ TEST_F(CFDE_XMLSyntaxParserTest, CommentThreeDash) {
       "  <!--->\n"
       "</script>";
 
-  CFX_RetainPtr<IFGAS_Stream> stream =
-      IFGAS_Stream::CreateReadStream(IFX_MemoryStream::Create(
-          reinterpret_cast<uint8_t*>(const_cast<char*>(input)), strlen(input)));
+  CFX_RetainPtr<CFGAS_Stream> stream = pdfium::MakeRetain<CFGAS_Stream>(
+      reinterpret_cast<uint8_t*>(const_cast<char*>(input)), strlen(input));
   stream->SetCodePage(FX_CODEPAGE_UTF8);
 
   CFDE_XMLSyntaxParser parser(stream);
@@ -405,9 +394,8 @@ TEST_F(CFDE_XMLSyntaxParserTest, CommentTwoDash) {
       "  <!-->\n"
       "</script>";
 
-  CFX_RetainPtr<IFGAS_Stream> stream =
-      IFGAS_Stream::CreateReadStream(IFX_MemoryStream::Create(
-          reinterpret_cast<uint8_t*>(const_cast<char*>(input)), strlen(input)));
+  CFX_RetainPtr<CFGAS_Stream> stream = pdfium::MakeRetain<CFGAS_Stream>(
+      reinterpret_cast<uint8_t*>(const_cast<char*>(input)), strlen(input));
   stream->SetCodePage(FX_CODEPAGE_UTF8);
 
   CFDE_XMLSyntaxParser parser(stream);
@@ -437,9 +425,8 @@ TEST_F(CFDE_XMLSyntaxParserTest, Entities) {
       "&#x0000000000000000000;"
       "</script>";
 
-  CFX_RetainPtr<IFGAS_Stream> stream =
-      IFGAS_Stream::CreateReadStream(IFX_MemoryStream::Create(
-          reinterpret_cast<uint8_t*>(const_cast<char*>(input)), strlen(input)));
+  CFX_RetainPtr<CFGAS_Stream> stream = pdfium::MakeRetain<CFGAS_Stream>(
+      reinterpret_cast<uint8_t*>(const_cast<char*>(input)), strlen(input));
   stream->SetCodePage(FX_CODEPAGE_UTF8);
 
   CFDE_XMLSyntaxParser parser(stream);
@@ -469,9 +456,8 @@ TEST_F(CFDE_XMLSyntaxParserTest, EntityOverflowHex) {
       "&#xafffffffffffffffffffffffffffffffff;"
       "</script>";
 
-  CFX_RetainPtr<IFGAS_Stream> stream =
-      IFGAS_Stream::CreateReadStream(IFX_MemoryStream::Create(
-          reinterpret_cast<uint8_t*>(const_cast<char*>(input)), strlen(input)));
+  CFX_RetainPtr<CFGAS_Stream> stream = pdfium::MakeRetain<CFGAS_Stream>(
+      reinterpret_cast<uint8_t*>(const_cast<char*>(input)), strlen(input));
   stream->SetCodePage(FX_CODEPAGE_UTF8);
 
   CFDE_XMLSyntaxParser parser(stream);
@@ -501,9 +487,8 @@ TEST_F(CFDE_XMLSyntaxParserTest, EntityOverflowDecimal) {
       "&#29149102052342342134521341234512351234213452315;"
       "</script>";
 
-  CFX_RetainPtr<IFGAS_Stream> stream =
-      IFGAS_Stream::CreateReadStream(IFX_MemoryStream::Create(
-          reinterpret_cast<uint8_t*>(const_cast<char*>(input)), strlen(input)));
+  CFX_RetainPtr<CFGAS_Stream> stream = pdfium::MakeRetain<CFGAS_Stream>(
+      reinterpret_cast<uint8_t*>(const_cast<char*>(input)), strlen(input));
   stream->SetCodePage(FX_CODEPAGE_UTF8);
 
   CFDE_XMLSyntaxParser parser(stream);

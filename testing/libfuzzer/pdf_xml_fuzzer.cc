@@ -13,7 +13,7 @@
 #include "xfa/fde/xml/cfde_xmldoc.h"
 #include "xfa/fde/xml/cfde_xmlnode.h"
 #include "xfa/fde/xml/cfde_xmlparser.h"
-#include "xfa/fgas/crt/ifgas_stream.h"
+#include "xfa/fgas/crt/cfgas_stream.h"
 
 namespace {
 
@@ -51,11 +51,8 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   if (!safe_size.IsValid())
     return 0;
 
-  CFX_RetainPtr<IFGAS_Stream> stream = IFGAS_Stream::CreateReadStream(
-      IFX_MemoryStream::Create(const_cast<uint8_t*>(data), size));
-  if (!stream)
-    return 0;
-
+  CFX_RetainPtr<CFGAS_Stream> stream =
+      pdfium::MakeRetain<CFGAS_Stream>(const_cast<uint8_t*>(data), size);
   auto doc = pdfium::MakeUnique<CFDE_XMLDoc>();
   if (!doc->LoadXML(pdfium::MakeUnique<CFDE_XMLParser>(doc->GetRoot(), stream)))
     return 0;

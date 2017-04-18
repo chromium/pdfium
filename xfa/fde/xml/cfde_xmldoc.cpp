@@ -47,7 +47,7 @@ void CFDE_XMLDoc::CloseXML() {
   m_pXMLParser.reset();
 }
 
-void CFDE_XMLDoc::SaveXMLNode(const CFX_RetainPtr<IFGAS_Stream>& pXMLStream,
+void CFDE_XMLDoc::SaveXMLNode(const CFX_RetainPtr<CFGAS_Stream>& pXMLStream,
                               CFDE_XMLNode* pINode) {
   CFDE_XMLNode* pNode = (CFDE_XMLNode*)pINode;
   switch (pNode->GetType()) {

@@ -226,8 +226,7 @@ void RegenerateFormFile_Changed(CXFA_Node* pNode,
 
         CFX_RetainPtr<IFX_MemoryStream> pMemStream =
             IFX_MemoryStream::Create(true);
-        CFX_RetainPtr<IFGAS_Stream> pTempStream =
-            IFGAS_Stream::CreateWriteStream(pMemStream);
+        auto pTempStream = pdfium::MakeRetain<CFGAS_Stream>(pMemStream, true);
 
         pTempStream->SetCodePage(FX_CODEPAGE_UTF8);
         pRichTextXML->SaveXMLNode(pTempStream);
@@ -343,8 +342,8 @@ void RegenerateFormFile_Changed(CXFA_Node* pNode,
 }
 
 void RegenerateFormFile_Container(CXFA_Node* pNode,
-                                  const CFX_RetainPtr<IFGAS_Stream>& pStream,
-                                  bool bSaveXML = false) {
+                                  const CFX_RetainPtr<CFGAS_Stream>& pStream,
+                                  bool bSaveXML) {
   XFA_Element eType = pNode->GetElementType();
   if (eType == XFA_Element::Field || eType == XFA_Element::Draw ||
       !pNode->IsContainerNode()) {
@@ -400,7 +399,7 @@ void RegenerateFormFile_Container(CXFA_Node* pNode,
 
 void XFA_DataExporter_RegenerateFormFile(
     CXFA_Node* pNode,
-    const CFX_RetainPtr<IFGAS_Stream>& pStream,
+    const CFX_RetainPtr<CFGAS_Stream>& pStream,
     const char* pChecksum,
     bool bSaveXML) {
   if (pNode->IsModelNode()) {
@@ -428,7 +427,7 @@ void XFA_DataExporter_RegenerateFormFile(
 
     CXFA_Node* pChildNode = pNode->GetNodeItem(XFA_NODEITEM_FirstChild);
     while (pChildNode) {
-      RegenerateFormFile_Container(pChildNode, pStream);
+      RegenerateFormFile_Container(pChildNode, pStream, false);
       pChildNode = pChildNode->GetNodeItem(XFA_NODEITEM_NextSibling);
     }
     pStream->WriteString(L"</form\n>");
@@ -486,15 +485,12 @@ bool CXFA_DataExporter::Export(const CFX_RetainPtr<IFX_SeekableStream>& pWrite,
   if (!pWrite)
     return false;
 
-  CFX_RetainPtr<IFGAS_Stream> pStream = IFGAS_Stream::CreateWriteStream(pWrite);
-  if (!pStream)
-    return false;
-
+  auto pStream = pdfium::MakeRetain<CFGAS_Stream>(pWrite, true);
   pStream->SetCodePage(FX_CODEPAGE_UTF8);
   return Export(pStream, pNode, dwFlag, pChecksum);
 }
 
-bool CXFA_DataExporter::Export(const CFX_RetainPtr<IFGAS_Stream>& pStream,
+bool CXFA_DataExporter::Export(const CFX_RetainPtr<CFGAS_Stream>& pStream,
                                CXFA_Node* pNode,
                                uint32_t dwFlag,
                                const char* pChecksum) {
