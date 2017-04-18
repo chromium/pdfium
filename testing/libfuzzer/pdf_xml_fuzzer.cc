@@ -51,10 +51,8 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   if (!safe_size.IsValid())
     return 0;
 
-  CFX_WideString input =
-      CFX_WideString::FromUTF8(CFX_ByteStringC(data, safe_size.ValueOrDie()));
-  CFX_RetainPtr<IFGAS_Stream> stream =
-      IFGAS_Stream::CreateWideStringReadStream(input);
+  CFX_RetainPtr<IFGAS_Stream> stream = IFGAS_Stream::CreateReadStream(
+      IFX_MemoryStream::Create(const_cast<uint8_t*>(data), size));
   if (!stream)
     return 0;
 

@@ -996,8 +996,8 @@ void CXFA_Node::Script_TreeClass_ResolveNode(CFXJSE_Arguments* pArguments) {
     const XFA_SCRIPTATTRIBUTEINFO* lpAttributeInfo =
         resoveNodeRS.pScriptAttribute;
     if (lpAttributeInfo && lpAttributeInfo->eValueType == XFA_SCRIPT_Object) {
-      std::unique_ptr<CFXJSE_Value> pValue(
-          new CFXJSE_Value(pScriptContext->GetRuntime()));
+      auto pValue =
+          pdfium::MakeUnique<CFXJSE_Value>(pScriptContext->GetRuntime());
       (resoveNodeRS.objects.front()->*(lpAttributeInfo->lpfnCallback))(
           pValue.get(), false, (XFA_ATTRIBUTE)lpAttributeInfo->eAttribute);
       pArguments->GetReturnValue()->Assign(pValue.get());
@@ -1271,25 +1271,21 @@ void CXFA_Node::Script_NodeClass_LoadXML(CFXJSE_Arguments* pArguments) {
     ThrowParamCountMismatchException(L"loadXML");
     return;
   }
-  CFX_WideString wsExpression;
+
   bool bIgnoreRoot = true;
   bool bOverwrite = 0;
-  wsExpression =
-      CFX_WideString::FromUTF8(pArguments->GetUTF8String(0).AsStringC());
+  CFX_ByteString wsExpression = pArguments->GetUTF8String(0);
   if (wsExpression.IsEmpty())
     return;
   if (iLength >= 2)
     bIgnoreRoot = !!pArguments->GetInt32(1);
   if (iLength >= 3)
     bOverwrite = !!pArguments->GetInt32(2);
-  std::unique_ptr<CXFA_SimpleParser> pParser(
-      new CXFA_SimpleParser(m_pDocument, false));
+  auto pParser = pdfium::MakeUnique<CXFA_SimpleParser>(m_pDocument, false);
   if (!pParser)
     return;
-  CFDE_XMLNode* pXMLNode = nullptr;
-  int32_t iParserStatus =
-      pParser->ParseXMLData(wsExpression, pXMLNode, nullptr);
-  if (iParserStatus != XFA_PARSESTATUS_Done || !pXMLNode)
+  CFDE_XMLNode* pXMLNode = pParser->ParseXMLData(wsExpression, nullptr);
+  if (!pXMLNode)
     return;
   if (bIgnoreRoot &&
       (pXMLNode->GetType() != FDE_XMLNODE_Element ||

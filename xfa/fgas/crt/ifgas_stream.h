@@ -22,8 +22,6 @@ class IFGAS_Stream : public CFX_Retainable {
       const CFX_RetainPtr<IFX_SeekableStream>& pFileRead);
   static CFX_RetainPtr<IFGAS_Stream> CreateWriteStream(
       const CFX_RetainPtr<IFX_SeekableStream>& pFileWrite);
-  static CFX_RetainPtr<IFGAS_Stream> CreateWideStringReadStream(
-      const CFX_WideString& buffer);
 
   virtual FX_FILESIZE GetLength() const = 0;
   virtual FX_FILESIZE GetPosition() = 0;

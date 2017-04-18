@@ -317,30 +317,24 @@ int32_t CXFA_SimpleParser::DoParse(IFX_Pause* pPause) {
   return XFA_PARSESTATUS_Done;
 }
 
-int32_t CXFA_SimpleParser::ParseXMLData(const CFX_WideString& wsXML,
-                                        CFDE_XMLNode*& pXMLNode,
-                                        IFX_Pause* pPause) {
+CFDE_XMLNode* CXFA_SimpleParser::ParseXMLData(const CFX_ByteString& wsXML,
+                                              IFX_Pause* pPause) {
   CloseParser();
-  pXMLNode = nullptr;
   m_pXMLDoc = pdfium::MakeUnique<CFDE_XMLDoc>();
+
   CFX_RetainPtr<IFGAS_Stream> pStream =
-      IFGAS_Stream::CreateWideStringReadStream(wsXML);
+      IFGAS_Stream::CreateReadStream(IFX_MemoryStream::Create(
+          const_cast<uint8_t*>(wsXML.raw_str()), wsXML.GetLength()));
   auto pParser =
       pdfium::MakeUnique<CFDE_XMLParser>(m_pXMLDoc->GetRoot(), pStream);
   pParser->m_dwCheckStatus = 0x03;
   if (!m_pXMLDoc->LoadXML(std::move(pParser)))
-    return XFA_PARSESTATUS_StatusErr;
+    return nullptr;
 
   int32_t iRet = m_pXMLDoc->DoLoad(pPause);
   if (iRet < 0 || iRet >= 100)
     m_pXMLDoc->CloseXML();
-  if (iRet < 0)
-    return XFA_PARSESTATUS_SyntaxErr;
-  if (iRet < 100)
-    return iRet / 2;
-
-  pXMLNode = GetDocumentNode(m_pXMLDoc.get());
-  return XFA_PARSESTATUS_Done;
+  return iRet < 100 ? nullptr : GetDocumentNode(m_pXMLDoc.get());
 }
 
 void CXFA_SimpleParser::ConstructXFANode(CXFA_Node* pXFANode,
