@@ -49,7 +49,7 @@ class CPDF_FormControl {
   CPDF_FormControl(CPDF_FormField* pField, CPDF_Dictionary* pWidgetDict);
 
   CPDF_FormField::Type GetType() const { return m_pField->GetType(); }
-  CPDF_InterForm* GetInterForm() const { return m_pForm; }
+  const CPDF_InterForm* GetInterForm() const { return m_pForm; }
   CPDF_FormField* GetField() const { return m_pField; }
   CPDF_Dictionary* GetWidget() const { return m_pWidgetDict; }
   CFX_FloatRect GetRect() const { return m_pWidgetDict->GetRectFor("Rect"); }
@@ -128,7 +128,7 @@ class CPDF_FormControl {
 
   CPDF_FormField* const m_pField;
   CPDF_Dictionary* const m_pWidgetDict;
-  CPDF_InterForm* const m_pForm;
+  const CPDF_InterForm* const m_pForm;
 };
 
 #endif  // CORE_FPDFDOC_CPDF_FORMCONTROL_H_

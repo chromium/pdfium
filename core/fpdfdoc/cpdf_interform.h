@@ -64,7 +64,7 @@ class CPDF_InterForm {
   CPDF_FormField* GetFieldInCalculationOrder(int index);
   int FindFieldInCalculationOrder(const CPDF_FormField* pField);
 
-  CPDF_Font* GetFormFont(CFX_ByteString csNameTag);
+  CPDF_Font* GetFormFont(CFX_ByteString csNameTag) const;
   CPDF_DefaultAppearance GetDefaultAppearance() const;
   int GetFormAlignment() const;
 

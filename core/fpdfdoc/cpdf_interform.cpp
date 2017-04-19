@@ -948,13 +948,13 @@ int CPDF_InterForm::FindFieldInCalculationOrder(const CPDF_FormField* pField) {
 
   for (size_t i = 0; i < pArray->GetCount(); i++) {
     CPDF_Object* pElement = pArray->GetDirectObjectAt(i);
-    if (pElement == pField->m_pDict)
+    if (pElement == pField->GetDict())
       return i;
   }
   return -1;
 }
 
-CPDF_Font* CPDF_InterForm::GetFormFont(CFX_ByteString csNameTag) {
+CPDF_Font* CPDF_InterForm::GetFormFont(CFX_ByteString csNameTag) const {
   return GetFont(m_pFormDict, m_pDocument, csNameTag);
 }
 
@@ -1133,7 +1133,7 @@ CPDF_FormControl* CPDF_InterForm::AddControl(CPDF_FormField* pField,
   auto pNew = pdfium::MakeUnique<CPDF_FormControl>(pField, pWidgetDict);
   CPDF_FormControl* pControl = pNew.get();
   m_ControlMap[pWidgetDict] = std::move(pNew);
-  pField->m_ControlList.push_back(pControl);
+  pField->AddFormControl(pControl);
   return pControl;
 }
 
@@ -1160,7 +1160,7 @@ bool CPDF_InterForm::CheckRequiredFields(
     if (fields)
       bFind = pdfium::ContainsValue(*fields, pField);
     if (bIncludeOrExclude == bFind) {
-      CPDF_Dictionary* pFieldDict = pField->m_pDict;
+      const CPDF_Dictionary* pFieldDict = pField->GetDict();
       if ((dwFlags & FORMFLAG_REQUIRED) != 0 &&
           pFieldDict->GetStringFor("V").IsEmpty()) {
         return false;
@@ -1216,8 +1216,10 @@ std::unique_ptr<CFDF_Document> CPDF_InterForm::ExportToFDF(
       continue;
 
     if (bIncludeOrExclude == pdfium::ContainsValue(fields, pField)) {
-      if ((dwFlags & 0x02) != 0 && pField->m_pDict->GetStringFor("V").IsEmpty())
+      if ((dwFlags & 0x02) != 0 &&
+          pField->GetDict()->GetStringFor("V").IsEmpty()) {
         continue;
+      }
 
       CFX_WideString fullname = FPDF_GetFullName(pField->GetFieldDict());
       auto pFieldDict =
@@ -1227,13 +1229,13 @@ std::unique_ptr<CFDF_Document> CPDF_InterForm::ExportToFDF(
           pField->GetType() == CPDF_FormField::RadioButton) {
         CFX_WideString csExport = pField->GetCheckValue(false);
         CFX_ByteString csBExport = PDF_EncodeText(csExport);
-        CPDF_Object* pOpt = FPDF_GetFieldAttr(pField->m_pDict, "Opt");
+        CPDF_Object* pOpt = FPDF_GetFieldAttr(pField->GetDict(), "Opt");
         if (pOpt)
           pFieldDict->SetNewFor<CPDF_String>("V", csBExport, false);
         else
           pFieldDict->SetNewFor<CPDF_Name>("V", csBExport);
       } else {
-        CPDF_Object* pV = FPDF_GetFieldAttr(pField->m_pDict, "V");
+        CPDF_Object* pV = FPDF_GetFieldAttr(pField->GetDict(), "V");
         if (pV)
           pFieldDict->SetFor("V", pV->CloneDirectObject());
       }
@@ -1285,8 +1287,7 @@ void CPDF_InterForm::FDF_ImportField(CPDF_Dictionary* pFieldDict,
   CPDF_FormField::Type eType = pField->GetType();
   if ((eType == CPDF_FormField::ListBox || eType == CPDF_FormField::ComboBox) &&
       pFieldDict->KeyExist("Opt")) {
-    pField->m_pDict->SetFor(
-        "Opt", pFieldDict->GetDirectObjectFor("Opt")->CloneDirectObject());
+    pField->SetOpt(pFieldDict->GetDirectObjectFor("Opt")->CloneDirectObject());
   }
 
   if (bNotify && m_pFormNotify) {

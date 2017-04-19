@@ -7,6 +7,8 @@
 #ifndef CORE_FPDFDOC_CPDF_FORMFIELD_H_
 #define CORE_FPDFDOC_CPDF_FORMFIELD_H_
 
+#include <memory>
+#include <utility>
 #include <vector>
 
 #include "core/fpdfdoc/cpdf_aaction.h"
@@ -35,7 +37,7 @@ class CPDF_FormControl;
 class CPDF_InterForm;
 class CPDF_String;
 
-CPDF_Object* FPDF_GetFieldAttr(CPDF_Dictionary* pFieldDict,
+CPDF_Object* FPDF_GetFieldAttr(const CPDF_Dictionary* pFieldDict,
                                const char* name,
                                int nLevel = 0);
 CFX_WideString FPDF_GetFullName(CPDF_Dictionary* pFieldDict);
@@ -131,10 +133,20 @@ class CPDF_FormField {
   float GetFontSize() const { return m_FontSize; }
   CPDF_Font* GetFont() const { return m_pFont; }
 
- private:
-  friend class CPDF_InterForm;
-  friend class CPDF_FormControl;
+  const CPDF_Dictionary* GetDict() const { return m_pDict; }
+  const CPDF_InterForm* GetForm() const { return m_pForm; }
 
+  CFX_WideString GetCheckValue(bool bDefault) const;
+
+  void AddFormControl(CPDF_FormControl* pFormControl) {
+    m_ControlList.push_back(pFormControl);
+  }
+
+  void SetOpt(std::unique_ptr<CPDF_Object> pOpt) {
+    m_pDict->SetFor("Opt", std::move(pOpt));
+  }
+
+ private:
   CFX_WideString GetValue(bool bDefault) const;
   bool SetValue(const CFX_WideString& value, bool bDefault, bool bNotify);
 
@@ -143,7 +155,6 @@ class CPDF_FormField {
   CFX_WideString GetOptionText(int index, int sub_index) const;
 
   void LoadDA();
-  CFX_WideString GetCheckValue(bool bDefault) const;
   bool SetCheckValue(const CFX_WideString& value, bool bDefault, bool bNotify);
 
   bool NotifyBeforeSelectionChange(const CFX_WideString& value);
