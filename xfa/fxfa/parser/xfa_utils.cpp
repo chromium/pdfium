@@ -9,10 +9,10 @@
 #include <algorithm>
 
 #include "core/fxcrt/fx_ext.h"
-#include "xfa/fde/xml/cfde_xmlchardata.h"
-#include "xfa/fde/xml/cfde_xmlelement.h"
-#include "xfa/fde/xml/cfde_xmlnode.h"
-#include "xfa/fde/xml/cfde_xmltext.h"
+#include "core/fxcrt/xml/cfx_xmlchardata.h"
+#include "core/fxcrt/xml/cfx_xmlelement.h"
+#include "core/fxcrt/xml/cfx_xmlnode.h"
+#include "core/fxcrt/xml/cfx_xmltext.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_localemgr.h"
 #include "xfa/fxfa/parser/cxfa_localevalue.h"
@@ -171,14 +171,14 @@ CXFA_LocaleValue XFA_GetLocaleValue(CXFA_WidgetData* pWidgetData) {
   return CXFA_LocaleValue(iVTType, pWidgetData->GetRawValue(),
                           pWidgetData->GetNode()->GetDocument()->GetLocalMgr());
 }
-void XFA_GetPlainTextFromRichText(CFDE_XMLNode* pXMLNode,
+void XFA_GetPlainTextFromRichText(CFX_XMLNode* pXMLNode,
                                   CFX_WideString& wsPlainText) {
   if (!pXMLNode) {
     return;
   }
   switch (pXMLNode->GetType()) {
-    case FDE_XMLNODE_Element: {
-      CFDE_XMLElement* pXMLElement = static_cast<CFDE_XMLElement*>(pXMLNode);
+    case FX_XMLNODE_Element: {
+      CFX_XMLElement* pXMLElement = static_cast<CFX_XMLElement*>(pXMLNode);
       CFX_WideString wsTag = pXMLElement->GetLocalTagName();
       uint32_t uTag = FX_HashCode_GetW(wsTag.AsStringC(), true);
       if (uTag == 0x0001f714) {
@@ -195,20 +195,18 @@ void XFA_GetPlainTextFromRichText(CFDE_XMLNode* pXMLNode,
       }
       break;
     }
-    case FDE_XMLNODE_Text:
-    case FDE_XMLNODE_CharData: {
-      CFX_WideString wsContent =
-          static_cast<CFDE_XMLText*>(pXMLNode)->GetText();
+    case FX_XMLNODE_Text:
+    case FX_XMLNODE_CharData: {
+      CFX_WideString wsContent = static_cast<CFX_XMLText*>(pXMLNode)->GetText();
       wsPlainText += wsContent;
       break;
     }
     default:
       break;
   }
-  for (CFDE_XMLNode* pChildXML =
-           pXMLNode->GetNodeItem(CFDE_XMLNode::FirstChild);
+  for (CFX_XMLNode* pChildXML = pXMLNode->GetNodeItem(CFX_XMLNode::FirstChild);
        pChildXML;
-       pChildXML = pChildXML->GetNodeItem(CFDE_XMLNode::NextSibling)) {
+       pChildXML = pChildXML->GetNodeItem(CFX_XMLNode::NextSibling)) {
     XFA_GetPlainTextFromRichText(pChildXML, wsPlainText);
   }
 }

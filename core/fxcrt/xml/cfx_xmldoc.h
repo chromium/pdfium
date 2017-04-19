@@ -4,34 +4,34 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FDE_XML_CFDE_XMLDOC_H_
-#define XFA_FDE_XML_CFDE_XMLDOC_H_
+#ifndef CORE_FXCRT_XML_CFX_XMLDOC_H_
+#define CORE_FXCRT_XML_CFX_XMLDOC_H_
 
 #include <memory>
 
 #include "core/fxcrt/cfx_retain_ptr.h"
 #include "core/fxcrt/cfx_seekablestreamproxy.h"
-#include "xfa/fde/xml/cfde_xmlnode.h"
-#include "xfa/fde/xml/cfde_xmlparser.h"
+#include "core/fxcrt/xml/cfx_xmlnode.h"
+#include "core/fxcrt/xml/cfx_xmlparser.h"
 
-class CFDE_XMLDoc {
+class CFX_XMLDoc {
  public:
-  CFDE_XMLDoc();
-  ~CFDE_XMLDoc();
+  CFX_XMLDoc();
+  ~CFX_XMLDoc();
 
-  bool LoadXML(std::unique_ptr<CFDE_XMLParser> pXMLParser);
+  bool LoadXML(std::unique_ptr<CFX_XMLParser> pXMLParser);
   int32_t DoLoad(IFX_Pause* pPause);
   void CloseXML();
 
-  CFDE_XMLNode* GetRoot() const { return m_pRoot.get(); }
+  CFX_XMLNode* GetRoot() const { return m_pRoot.get(); }
   void SaveXMLNode(const CFX_RetainPtr<CFX_SeekableStreamProxy>& pXMLStream,
-                   CFDE_XMLNode* pNode);
+                   CFX_XMLNode* pNode);
 
  private:
   int32_t m_iStatus;
-  std::unique_ptr<CFDE_XMLNode> m_pRoot;
-  std::unique_ptr<CFDE_XMLParser> m_pXMLParser;
+  std::unique_ptr<CFX_XMLNode> m_pRoot;
+  std::unique_ptr<CFX_XMLParser> m_pXMLParser;
   CFX_RetainPtr<CFX_SeekableStreamProxy> m_pStream;
 };
 
-#endif  // XFA_FDE_XML_CFDE_XMLDOC_H_
+#endif  // CORE_FXCRT_XML_CFX_XMLDOC_H_

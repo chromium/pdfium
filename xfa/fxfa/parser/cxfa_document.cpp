@@ -127,7 +127,7 @@ void CXFA_Document::SetRoot(CXFA_Node* pNewRoot) {
   RemovePurgeNode(pNewRoot);
 }
 
-CFDE_XMLDoc* CXFA_Document::GetXMLDoc() const {
+CFX_XMLDoc* CXFA_Document::GetXMLDoc() const {
   return m_pParser->GetXMLDoc();
 }
 

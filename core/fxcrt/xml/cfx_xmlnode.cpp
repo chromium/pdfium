@@ -4,44 +4,44 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fde/xml/cfde_xmlnode.h"
+#include "core/fxcrt/xml/cfx_xmlnode.h"
 
 #include <vector>
 
 #include "core/fxcrt/fx_codepage.h"
+#include "core/fxcrt/xml/cfx_xmlchardata.h"
+#include "core/fxcrt/xml/cfx_xmlelement.h"
+#include "core/fxcrt/xml/cfx_xmlinstruction.h"
+#include "core/fxcrt/xml/cfx_xmltext.h"
 #include "third_party/base/stl_util.h"
-#include "xfa/fde/xml/cfde_xmlchardata.h"
-#include "xfa/fde/xml/cfde_xmlelement.h"
-#include "xfa/fde/xml/cfde_xmlinstruction.h"
-#include "xfa/fde/xml/cfde_xmltext.h"
 
-CFDE_XMLNode::CFDE_XMLNode()
+CFX_XMLNode::CFX_XMLNode()
     : m_pParent(nullptr),
       m_pChild(nullptr),
       m_pPrior(nullptr),
       m_pNext(nullptr) {}
 
-FDE_XMLNODETYPE CFDE_XMLNode::GetType() const {
-  return FDE_XMLNODE_Unknown;
+FX_XMLNODETYPE CFX_XMLNode::GetType() const {
+  return FX_XMLNODE_Unknown;
 }
 
-CFDE_XMLNode::~CFDE_XMLNode() {
+CFX_XMLNode::~CFX_XMLNode() {
   DeleteChildren();
 }
 
-void CFDE_XMLNode::DeleteChildren() {
-  CFDE_XMLNode* pChild = m_pChild;
+void CFX_XMLNode::DeleteChildren() {
+  CFX_XMLNode* pChild = m_pChild;
   while (pChild) {
-    CFDE_XMLNode* pNext = pChild->m_pNext;
+    CFX_XMLNode* pNext = pChild->m_pNext;
     delete pChild;
     pChild = pNext;
   }
   m_pChild = nullptr;
 }
 
-int32_t CFDE_XMLNode::CountChildNodes() const {
+int32_t CFX_XMLNode::CountChildNodes() const {
   int32_t iCount = 0;
-  CFDE_XMLNode* pChild = m_pChild;
+  CFX_XMLNode* pChild = m_pChild;
   while (pChild) {
     iCount++;
     pChild = pChild->m_pNext;
@@ -49,8 +49,8 @@ int32_t CFDE_XMLNode::CountChildNodes() const {
   return iCount;
 }
 
-CFDE_XMLNode* CFDE_XMLNode::GetChildNode(int32_t index) const {
-  CFDE_XMLNode* pChild = m_pChild;
+CFX_XMLNode* CFX_XMLNode::GetChildNode(int32_t index) const {
+  CFX_XMLNode* pChild = m_pChild;
   while (pChild) {
     if (index == 0) {
       return pChild;
@@ -61,9 +61,9 @@ CFDE_XMLNode* CFDE_XMLNode::GetChildNode(int32_t index) const {
   return nullptr;
 }
 
-int32_t CFDE_XMLNode::GetChildNodeIndex(CFDE_XMLNode* pNode) const {
+int32_t CFX_XMLNode::GetChildNodeIndex(CFX_XMLNode* pNode) const {
   int32_t index = 0;
-  CFDE_XMLNode* pChild = m_pChild;
+  CFX_XMLNode* pChild = m_pChild;
   while (pChild) {
     if (pChild == pNode) {
       return index;
@@ -74,9 +74,9 @@ int32_t CFDE_XMLNode::GetChildNodeIndex(CFDE_XMLNode* pNode) const {
   return -1;
 }
 
-CFDE_XMLNode* CFDE_XMLNode::GetPath(const wchar_t* pPath,
-                                    int32_t iLength,
-                                    bool bQualifiedName) const {
+CFX_XMLNode* CFX_XMLNode::GetPath(const wchar_t* pPath,
+                                  int32_t iLength,
+                                  bool bQualifiedName) const {
   ASSERT(pPath);
   if (iLength < 0) {
     iLength = FXSYS_wcslen(pPath);
@@ -97,22 +97,22 @@ CFDE_XMLNode* CFDE_XMLNode::GetPath(const wchar_t* pPath,
     }
   }
   iLength -= pStart - pPath;
-  CFDE_XMLNode* pFind = nullptr;
+  CFX_XMLNode* pFind = nullptr;
   if (csPath.GetLength() < 1) {
-    pFind = GetNodeItem(CFDE_XMLNode::Root);
+    pFind = GetNodeItem(CFX_XMLNode::Root);
   } else if (csPath.Compare(L"..") == 0) {
     pFind = m_pParent;
   } else if (csPath.Compare(L".") == 0) {
-    pFind = (CFDE_XMLNode*)this;
+    pFind = (CFX_XMLNode*)this;
   } else {
     CFX_WideString wsTag;
-    CFDE_XMLNode* pNode = m_pChild;
+    CFX_XMLNode* pNode = m_pChild;
     while (pNode) {
-      if (pNode->GetType() == FDE_XMLNODE_Element) {
+      if (pNode->GetType() == FX_XMLNODE_Element) {
         if (bQualifiedName)
-          wsTag = static_cast<CFDE_XMLElement*>(pNode)->GetName();
+          wsTag = static_cast<CFX_XMLElement*>(pNode)->GetName();
         else
-          wsTag = static_cast<CFDE_XMLElement*>(pNode)->GetLocalTagName();
+          wsTag = static_cast<CFX_XMLElement*>(pNode)->GetLocalTagName();
 
         if (wsTag.Compare(csPath) == 0) {
           if (iLength < 1)
@@ -132,7 +132,7 @@ CFDE_XMLNode* CFDE_XMLNode::GetPath(const wchar_t* pPath,
   return pFind->GetPath(pStart, iLength, bQualifiedName);
 }
 
-int32_t CFDE_XMLNode::InsertChildNode(CFDE_XMLNode* pNode, int32_t index) {
+int32_t CFX_XMLNode::InsertChildNode(CFX_XMLNode* pNode, int32_t index) {
   pNode->m_pParent = this;
   if (!m_pChild) {
     m_pChild = pNode;
@@ -148,7 +148,7 @@ int32_t CFDE_XMLNode::InsertChildNode(CFDE_XMLNode* pNode, int32_t index) {
     return 0;
   }
   int32_t iCount = 0;
-  CFDE_XMLNode* pFind = m_pChild;
+  CFX_XMLNode* pFind = m_pChild;
   while (++iCount != index && pFind->m_pNext) {
     pFind = pFind->m_pNext;
   }
@@ -160,7 +160,7 @@ int32_t CFDE_XMLNode::InsertChildNode(CFDE_XMLNode* pNode, int32_t index) {
   return iCount;
 }
 
-void CFDE_XMLNode::RemoveChildNode(CFDE_XMLNode* pNode) {
+void CFX_XMLNode::RemoveChildNode(CFX_XMLNode* pNode) {
   ASSERT(m_pChild && pNode);
   if (m_pChild == pNode) {
     m_pChild = pNode->m_pNext;
@@ -174,45 +174,45 @@ void CFDE_XMLNode::RemoveChildNode(CFDE_XMLNode* pNode) {
   pNode->m_pPrior = nullptr;
 }
 
-CFDE_XMLNode* CFDE_XMLNode::GetNodeItem(CFDE_XMLNode::NodeItem eItem) const {
+CFX_XMLNode* CFX_XMLNode::GetNodeItem(CFX_XMLNode::NodeItem eItem) const {
   switch (eItem) {
-    case CFDE_XMLNode::Root: {
-      CFDE_XMLNode* pParent = (CFDE_XMLNode*)this;
+    case CFX_XMLNode::Root: {
+      CFX_XMLNode* pParent = (CFX_XMLNode*)this;
       while (pParent->m_pParent) {
         pParent = pParent->m_pParent;
       }
       return pParent;
     }
-    case CFDE_XMLNode::Parent:
+    case CFX_XMLNode::Parent:
       return m_pParent;
-    case CFDE_XMLNode::FirstSibling: {
-      CFDE_XMLNode* pItem = (CFDE_XMLNode*)this;
+    case CFX_XMLNode::FirstSibling: {
+      CFX_XMLNode* pItem = (CFX_XMLNode*)this;
       while (pItem->m_pPrior) {
         pItem = pItem->m_pPrior;
       }
-      return pItem == (CFDE_XMLNode*)this ? nullptr : pItem;
+      return pItem == (CFX_XMLNode*)this ? nullptr : pItem;
     }
-    case CFDE_XMLNode::PriorSibling:
+    case CFX_XMLNode::PriorSibling:
       return m_pPrior;
-    case CFDE_XMLNode::NextSibling:
+    case CFX_XMLNode::NextSibling:
       return m_pNext;
-    case CFDE_XMLNode::LastSibling: {
-      CFDE_XMLNode* pItem = (CFDE_XMLNode*)this;
+    case CFX_XMLNode::LastSibling: {
+      CFX_XMLNode* pItem = (CFX_XMLNode*)this;
       while (pItem->m_pNext)
         pItem = pItem->m_pNext;
-      return pItem == (CFDE_XMLNode*)this ? nullptr : pItem;
+      return pItem == (CFX_XMLNode*)this ? nullptr : pItem;
     }
-    case CFDE_XMLNode::FirstNeighbor: {
-      CFDE_XMLNode* pParent = (CFDE_XMLNode*)this;
+    case CFX_XMLNode::FirstNeighbor: {
+      CFX_XMLNode* pParent = (CFX_XMLNode*)this;
       while (pParent->m_pParent)
         pParent = pParent->m_pParent;
-      return pParent == (CFDE_XMLNode*)this ? nullptr : pParent;
+      return pParent == (CFX_XMLNode*)this ? nullptr : pParent;
     }
-    case CFDE_XMLNode::PriorNeighbor: {
+    case CFX_XMLNode::PriorNeighbor: {
       if (!m_pPrior)
         return m_pParent;
 
-      CFDE_XMLNode* pItem = m_pPrior;
+      CFX_XMLNode* pItem = m_pPrior;
       while (pItem->m_pChild) {
         pItem = pItem->m_pChild;
         while (pItem->m_pNext)
@@ -220,12 +220,12 @@ CFDE_XMLNode* CFDE_XMLNode::GetNodeItem(CFDE_XMLNode::NodeItem eItem) const {
       }
       return pItem;
     }
-    case CFDE_XMLNode::NextNeighbor: {
+    case CFX_XMLNode::NextNeighbor: {
       if (m_pChild)
         return m_pChild;
       if (m_pNext)
         return m_pNext;
-      CFDE_XMLNode* pItem = m_pParent;
+      CFX_XMLNode* pItem = m_pParent;
       while (pItem) {
         if (pItem->m_pNext)
           return pItem->m_pNext;
@@ -233,8 +233,8 @@ CFDE_XMLNode* CFDE_XMLNode::GetNodeItem(CFDE_XMLNode::NodeItem eItem) const {
       }
       return nullptr;
     }
-    case CFDE_XMLNode::LastNeighbor: {
-      CFDE_XMLNode* pItem = (CFDE_XMLNode*)this;
+    case CFX_XMLNode::LastNeighbor: {
+      CFX_XMLNode* pItem = (CFX_XMLNode*)this;
       while (pItem->m_pParent) {
         pItem = pItem->m_pParent;
       }
@@ -245,15 +245,15 @@ CFDE_XMLNode* CFDE_XMLNode::GetNodeItem(CFDE_XMLNode::NodeItem eItem) const {
           break;
         pItem = pItem->m_pChild;
       }
-      return pItem == (CFDE_XMLNode*)this ? nullptr : pItem;
+      return pItem == (CFX_XMLNode*)this ? nullptr : pItem;
     }
-    case CFDE_XMLNode::FirstChild:
+    case CFX_XMLNode::FirstChild:
       return m_pChild;
-    case CFDE_XMLNode::LastChild: {
+    case CFX_XMLNode::LastChild: {
       if (!m_pChild)
         return nullptr;
 
-      CFDE_XMLNode* pChild = m_pChild;
+      CFX_XMLNode* pChild = m_pChild;
       while (pChild->m_pNext)
         pChild = pChild->m_pNext;
       return pChild;
@@ -264,9 +264,9 @@ CFDE_XMLNode* CFDE_XMLNode::GetNodeItem(CFDE_XMLNode::NodeItem eItem) const {
   return nullptr;
 }
 
-int32_t CFDE_XMLNode::GetNodeLevel() const {
+int32_t CFX_XMLNode::GetNodeLevel() const {
   int32_t iLevel = 0;
-  const CFDE_XMLNode* pItem = m_pParent;
+  const CFX_XMLNode* pItem = m_pParent;
   while (pItem) {
     iLevel++;
     pItem = pItem->m_pParent;
@@ -274,10 +274,10 @@ int32_t CFDE_XMLNode::GetNodeLevel() const {
   return iLevel;
 }
 
-bool CFDE_XMLNode::InsertNodeItem(CFDE_XMLNode::NodeItem eItem,
-                                  CFDE_XMLNode* pNode) {
+bool CFX_XMLNode::InsertNodeItem(CFX_XMLNode::NodeItem eItem,
+                                 CFX_XMLNode* pNode) {
   switch (eItem) {
-    case CFDE_XMLNode::NextSibling: {
+    case CFX_XMLNode::NextSibling: {
       pNode->m_pParent = m_pParent;
       pNode->m_pNext = m_pNext;
       pNode->m_pPrior = this;
@@ -287,7 +287,7 @@ bool CFDE_XMLNode::InsertNodeItem(CFDE_XMLNode::NodeItem eItem,
       m_pNext = pNode;
       return true;
     }
-    case CFDE_XMLNode::PriorSibling: {
+    case CFX_XMLNode::PriorSibling: {
       pNode->m_pParent = m_pParent;
       pNode->m_pNext = this;
       pNode->m_pPrior = m_pPrior;
@@ -304,10 +304,10 @@ bool CFDE_XMLNode::InsertNodeItem(CFDE_XMLNode::NodeItem eItem,
   }
 }
 
-CFDE_XMLNode* CFDE_XMLNode::RemoveNodeItem(CFDE_XMLNode::NodeItem eItem) {
-  CFDE_XMLNode* pNode = nullptr;
+CFX_XMLNode* CFX_XMLNode::RemoveNodeItem(CFX_XMLNode::NodeItem eItem) {
+  CFX_XMLNode* pNode = nullptr;
   switch (eItem) {
-    case CFDE_XMLNode::NextSibling:
+    case CFX_XMLNode::NextSibling:
       if (m_pNext) {
         pNode = m_pNext;
         m_pNext = pNode->m_pNext;
@@ -325,17 +325,17 @@ CFDE_XMLNode* CFDE_XMLNode::RemoveNodeItem(CFDE_XMLNode::NodeItem eItem) {
   return pNode;
 }
 
-std::unique_ptr<CFDE_XMLNode> CFDE_XMLNode::Clone() {
+std::unique_ptr<CFX_XMLNode> CFX_XMLNode::Clone() {
   return nullptr;
 }
 
-void CFDE_XMLNode::SaveXMLNode(
+void CFX_XMLNode::SaveXMLNode(
     const CFX_RetainPtr<CFX_SeekableStreamProxy>& pXMLStream) {
-  CFDE_XMLNode* pNode = (CFDE_XMLNode*)this;
+  CFX_XMLNode* pNode = (CFX_XMLNode*)this;
   switch (pNode->GetType()) {
-    case FDE_XMLNODE_Instruction: {
+    case FX_XMLNODE_Instruction: {
       CFX_WideString ws;
-      CFDE_XMLInstruction* pInstruction = (CFDE_XMLInstruction*)pNode;
+      CFX_XMLInstruction* pInstruction = (CFX_XMLInstruction*)pNode;
       if (pInstruction->GetName().CompareNoCase(L"xml") == 0) {
         ws = L"<?xml version=\"1.0\" encoding=\"";
         uint16_t wCodePage = pXMLStream->GetCodePage();
@@ -379,13 +379,13 @@ void CFDE_XMLNode::SaveXMLNode(
       }
       break;
     }
-    case FDE_XMLNODE_Element: {
+    case FX_XMLNODE_Element: {
       CFX_WideString ws;
       ws = L"<";
-      ws += static_cast<CFDE_XMLElement*>(pNode)->GetName();
+      ws += static_cast<CFX_XMLElement*>(pNode)->GetName();
       pXMLStream->WriteString(ws.AsStringC());
 
-      for (auto it : static_cast<CFDE_XMLElement*>(pNode)->GetAttributes()) {
+      for (auto it : static_cast<CFX_XMLElement*>(pNode)->GetAttributes()) {
         CFX_WideString wsValue = it.second;
         wsValue.Replace(L"&", L"&amp;");
         wsValue.Replace(L"<", L"&lt;");
@@ -403,13 +403,13 @@ void CFDE_XMLNode::SaveXMLNode(
       if (pNode->m_pChild) {
         ws = L"\n>";
         pXMLStream->WriteString(ws.AsStringC());
-        CFDE_XMLNode* pChild = pNode->m_pChild;
+        CFX_XMLNode* pChild = pNode->m_pChild;
         while (pChild) {
           pChild->SaveXMLNode(pXMLStream);
           pChild = pChild->m_pNext;
         }
         ws = L"</";
-        ws += static_cast<CFDE_XMLElement*>(pNode)->GetName();
+        ws += static_cast<CFX_XMLElement*>(pNode)->GetName();
         ws += L"\n>";
       } else {
         ws = L"\n/>";
@@ -417,8 +417,8 @@ void CFDE_XMLNode::SaveXMLNode(
       pXMLStream->WriteString(ws.AsStringC());
       break;
     }
-    case FDE_XMLNODE_Text: {
-      CFX_WideString ws = static_cast<CFDE_XMLText*>(pNode)->GetText();
+    case FX_XMLNODE_Text: {
+      CFX_WideString ws = static_cast<CFX_XMLText*>(pNode)->GetText();
       ws.Replace(L"&", L"&amp;");
       ws.Replace(L"<", L"&lt;");
       ws.Replace(L">", L"&gt;");
@@ -427,14 +427,14 @@ void CFDE_XMLNode::SaveXMLNode(
       pXMLStream->WriteString(ws.AsStringC());
       break;
     }
-    case FDE_XMLNODE_CharData: {
+    case FX_XMLNODE_CharData: {
       CFX_WideString ws = L"<![CDATA[";
-      ws += static_cast<CFDE_XMLCharData*>(pNode)->GetText();
+      ws += static_cast<CFX_XMLCharData*>(pNode)->GetText();
       ws += L"]]>";
       pXMLStream->WriteString(ws.AsStringC());
       break;
     }
-    case FDE_XMLNODE_Unknown:
+    case FX_XMLNODE_Unknown:
     default:
       break;
   }

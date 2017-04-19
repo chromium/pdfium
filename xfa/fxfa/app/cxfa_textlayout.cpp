@@ -9,6 +9,9 @@
 #include <algorithm>
 #include <utility>
 
+#include "core/fxcrt/xml/cfx_xmlelement.h"
+#include "core/fxcrt/xml/cfx_xmlnode.h"
+#include "core/fxcrt/xml/cfx_xmltext.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fde/cfde_brush.h"
@@ -17,9 +20,6 @@
 #include "xfa/fde/cfde_renderdevice.h"
 #include "xfa/fde/css/cfde_csscomputedstyle.h"
 #include "xfa/fde/css/cfde_cssstyleselector.h"
-#include "xfa/fde/xml/cfde_xmlelement.h"
-#include "xfa/fde/xml/cfde_xmlnode.h"
-#include "xfa/fde/xml/cfde_xmltext.h"
 #include "xfa/fxfa/app/cxfa_linkuserdata.h"
 #include "xfa/fxfa/app/cxfa_loadercontext.h"
 #include "xfa/fxfa/app/cxfa_pieceline.h"
@@ -66,21 +66,20 @@ void CXFA_TextLayout::GetTextDataNode() {
   m_pTextDataNode = pNode;
 }
 
-CFDE_XMLNode* CXFA_TextLayout::GetXMLContainerNode() {
+CFX_XMLNode* CXFA_TextLayout::GetXMLContainerNode() {
   if (!m_bRichText)
     return nullptr;
 
-  CFDE_XMLNode* pXMLRoot = m_pTextDataNode->GetXMLMappingNode();
+  CFX_XMLNode* pXMLRoot = m_pTextDataNode->GetXMLMappingNode();
   if (!pXMLRoot)
     return nullptr;
 
-  CFDE_XMLNode* pXMLContainer = nullptr;
-  for (CFDE_XMLNode* pXMLChild =
-           pXMLRoot->GetNodeItem(CFDE_XMLNode::FirstChild);
+  CFX_XMLNode* pXMLContainer = nullptr;
+  for (CFX_XMLNode* pXMLChild = pXMLRoot->GetNodeItem(CFX_XMLNode::FirstChild);
        pXMLChild;
-       pXMLChild = pXMLChild->GetNodeItem(CFDE_XMLNode::NextSibling)) {
-    if (pXMLChild->GetType() == FDE_XMLNODE_Element) {
-      CFDE_XMLElement* pXMLElement = static_cast<CFDE_XMLElement*>(pXMLChild);
+       pXMLChild = pXMLChild->GetNodeItem(CFX_XMLNode::NextSibling)) {
+    if (pXMLChild->GetType() == FX_XMLNODE_Element) {
+      CFX_XMLElement* pXMLElement = static_cast<CFX_XMLElement*>(pXMLChild);
       CFX_WideString wsTag = pXMLElement->GetLocalTagName();
       if (wsTag == L"body" || wsTag == L"html") {
         pXMLContainer = pXMLChild;
@@ -159,7 +158,7 @@ void CXFA_TextLayout::InitBreak(float fLineWidth) {
 void CXFA_TextLayout::InitBreak(CFDE_CSSComputedStyle* pStyle,
                                 FDE_CSSDisplay eDisplay,
                                 float fLineWidth,
-                                CFDE_XMLNode* pXMLNode,
+                                CFX_XMLNode* pXMLNode,
                                 CFDE_CSSComputedStyle* pParentStyle) {
   if (!pStyle) {
     InitBreak(fLineWidth);
@@ -460,24 +459,24 @@ bool CXFA_TextLayout::Layout(int32_t iBlock) {
 
     m_pBreak->Reset();
     if (m_bRichText) {
-      CFDE_XMLNode* pContainerNode = GetXMLContainerNode();
+      CFX_XMLNode* pContainerNode = GetXMLContainerNode();
       if (!pContainerNode)
         return true;
 
-      CFDE_XMLNode* pXMLNode = m_pLoader->m_pXMLNode;
+      CFX_XMLNode* pXMLNode = m_pLoader->m_pXMLNode;
       if (!pXMLNode)
         return true;
 
-      CFDE_XMLNode* pSaveXMLNode = m_pLoader->m_pXMLNode;
+      CFX_XMLNode* pSaveXMLNode = m_pLoader->m_pXMLNode;
       for (; pXMLNode;
-           pXMLNode = pXMLNode->GetNodeItem(CFDE_XMLNode::NextSibling)) {
+           pXMLNode = pXMLNode->GetNodeItem(CFX_XMLNode::NextSibling)) {
         if (!LoadRichText(pXMLNode, szText, fLinePos, m_pLoader->m_pParentStyle,
                           true, nullptr)) {
           break;
         }
       }
       while (!pXMLNode) {
-        pXMLNode = pSaveXMLNode->GetNodeItem(CFDE_XMLNode::Parent);
+        pXMLNode = pSaveXMLNode->GetNodeItem(CFX_XMLNode::Parent);
         if (pXMLNode == pContainerNode)
           break;
         if (!LoadRichText(pXMLNode, szText, fLinePos, m_pLoader->m_pParentStyle,
@@ -485,11 +484,11 @@ bool CXFA_TextLayout::Layout(int32_t iBlock) {
           break;
         }
         pSaveXMLNode = pXMLNode;
-        pXMLNode = pXMLNode->GetNodeItem(CFDE_XMLNode::NextSibling);
+        pXMLNode = pXMLNode->GetNodeItem(CFX_XMLNode::NextSibling);
         if (!pXMLNode)
           continue;
         for (; pXMLNode;
-             pXMLNode = pXMLNode->GetNodeItem(CFDE_XMLNode::NextSibling)) {
+             pXMLNode = pXMLNode->GetNodeItem(CFX_XMLNode::NextSibling)) {
           if (!LoadRichText(pXMLNode, szText, fLinePos,
                             m_pLoader->m_pParentStyle, true, nullptr)) {
             break;
@@ -645,7 +644,7 @@ bool CXFA_TextLayout::Loader(const CFX_SizeF& szText,
     return true;
 
   if (m_bRichText) {
-    CFDE_XMLNode* pXMLContainer = GetXMLContainerNode();
+    CFX_XMLNode* pXMLContainer = GetXMLContainerNode();
     if (pXMLContainer) {
       if (!m_textParser.IsParsed())
         m_textParser.DoParse(pXMLContainer, m_pTextProvider);
@@ -694,7 +693,7 @@ void CXFA_TextLayout::LoadText(CXFA_Node* pNode,
 }
 
 bool CXFA_TextLayout::LoadRichText(
-    CFDE_XMLNode* pXMLNode,
+    CFX_XMLNode* pXMLNode,
     const CFX_SizeF& szText,
     float& fLinePos,
     const CFX_RetainPtr<CFDE_CSSComputedStyle>& pParentStyle,
@@ -716,16 +715,16 @@ bool CXFA_TextLayout::LoadRichText(
   if (bEndBreak) {
     bool bCurOl = false;
     bool bCurLi = false;
-    CFDE_XMLElement* pElement = nullptr;
+    CFX_XMLElement* pElement = nullptr;
     if (pContext) {
       if (m_bBlockContinue ||
           (m_pLoader && pXMLNode == m_pLoader->m_pXMLNode)) {
         m_bBlockContinue = true;
       }
-      if (pXMLNode->GetType() == FDE_XMLNODE_Text) {
+      if (pXMLNode->GetType() == FX_XMLNODE_Text) {
         bContentNode = true;
-      } else if (pXMLNode->GetType() == FDE_XMLNODE_Element) {
-        pElement = static_cast<CFDE_XMLElement*>(pXMLNode);
+      } else if (pXMLNode->GetType() == FX_XMLNODE_Element) {
+        pElement = static_cast<CFX_XMLElement*>(pXMLNode);
         wsName = pElement->GetLocalTagName();
       }
       if (wsName == L"ol") {
@@ -771,7 +770,7 @@ bool CXFA_TextLayout::LoadRichText(
             bContentNode ? pParentStyle.Get() : pStyle.Get());
         CFX_WideString wsText;
         if (bContentNode && iTabCount == 0) {
-          wsText = static_cast<CFDE_XMLText*>(pXMLNode)->GetText();
+          wsText = static_cast<CFX_XMLText*>(pXMLNode)->GetText();
         } else if (wsName == L"br") {
           wsText = L'\n';
         } else if (wsName == L"li") {
@@ -834,10 +833,10 @@ bool CXFA_TextLayout::LoadRichText(
       }
     }
 
-    for (CFDE_XMLNode* pChildNode =
-             pXMLNode->GetNodeItem(CFDE_XMLNode::FirstChild);
+    for (CFX_XMLNode* pChildNode =
+             pXMLNode->GetNodeItem(CFX_XMLNode::FirstChild);
          pChildNode;
-         pChildNode = pChildNode->GetNodeItem(CFDE_XMLNode::NextSibling)) {
+         pChildNode = pChildNode->GetNodeItem(CFX_XMLNode::NextSibling)) {
       if (bCurOl)
         iLiCount++;
 
@@ -872,7 +871,7 @@ bool CXFA_TextLayout::LoadRichText(
       if (IsEnd(bSavePieces)) {
         if (m_pLoader && m_pLoader->m_iTotalLines > -1) {
           m_pLoader->m_pXMLNode =
-              pXMLNode->GetNodeItem(CFDE_XMLNode::NextSibling);
+              pXMLNode->GetNodeItem(CFX_XMLNode::NextSibling);
           m_pLoader->m_pParentStyle = pParentStyle;
         }
         return false;

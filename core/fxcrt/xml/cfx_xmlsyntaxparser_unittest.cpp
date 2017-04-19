@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "xfa/fde/xml/cfde_xmlsyntaxparser.h"
+#include "core/fxcrt/xml/cfx_xmlsyntaxparser.h"
 
 #include <memory>
 
@@ -11,9 +11,9 @@
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/test_support.h"
 
-class CFDE_XMLSyntaxParserTest : public pdfium::FPDF_Test {};
+class CFX_XMLSyntaxParserTest : public pdfium::FPDF_Test {};
 
-TEST_F(CFDE_XMLSyntaxParserTest, CData) {
+TEST_F(CFX_XMLSyntaxParserTest, CData) {
   const char* input =
       "<script contentType=\"application/x-javascript\">\n"
       "  <![CDATA[\n"
@@ -33,33 +33,33 @@ TEST_F(CFDE_XMLSyntaxParserTest, CData) {
           reinterpret_cast<uint8_t*>(const_cast<char*>(input)), strlen(input));
   stream->SetCodePage(FX_CODEPAGE_UTF8);
 
-  CFDE_XMLSyntaxParser parser(stream);
-  ASSERT_EQ(FDE_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
-  ASSERT_EQ(FDE_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
+  CFX_XMLSyntaxParser parser(stream);
+  ASSERT_EQ(FX_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
   ASSERT_EQ(L"script", parser.GetTagName());
 
-  ASSERT_EQ(FDE_XmlSyntaxResult::AttriName, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::AttriName, parser.DoSyntaxParse());
   ASSERT_EQ(L"contentType", parser.GetAttributeName());
-  ASSERT_EQ(FDE_XmlSyntaxResult::AttriValue, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::AttriValue, parser.DoSyntaxParse());
   ASSERT_EQ(L"application/x-javascript", parser.GetAttributeValue());
 
-  ASSERT_EQ(FDE_XmlSyntaxResult::ElementBreak, parser.DoSyntaxParse());
-  ASSERT_EQ(FDE_XmlSyntaxResult::Text, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::ElementBreak, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::Text, parser.DoSyntaxParse());
   ASSERT_EQ(L"\n  ", parser.GetTextData());
 
-  ASSERT_EQ(FDE_XmlSyntaxResult::CData, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::CData, parser.DoSyntaxParse());
   ASSERT_EQ(cdata, parser.GetTextData());
 
-  ASSERT_EQ(FDE_XmlSyntaxResult::Text, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::Text, parser.DoSyntaxParse());
   ASSERT_EQ(L"\n", parser.GetTextData());
 
-  ASSERT_EQ(FDE_XmlSyntaxResult::ElementClose, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::ElementClose, parser.DoSyntaxParse());
   ASSERT_EQ(L"script", parser.GetTagName());
 
-  ASSERT_EQ(FDE_XmlSyntaxResult::EndOfString, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::EndOfString, parser.DoSyntaxParse());
 }
 
-TEST_F(CFDE_XMLSyntaxParserTest, CDataWithInnerScript) {
+TEST_F(CFX_XMLSyntaxParserTest, CDataWithInnerScript) {
   const char* input =
       "<script contentType=\"application/x-javascript\">\n"
       "  <![CDATA[\n"
@@ -81,33 +81,33 @@ TEST_F(CFDE_XMLSyntaxParserTest, CDataWithInnerScript) {
           reinterpret_cast<uint8_t*>(const_cast<char*>(input)), strlen(input));
   stream->SetCodePage(FX_CODEPAGE_UTF8);
 
-  CFDE_XMLSyntaxParser parser(stream);
-  ASSERT_EQ(FDE_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
-  ASSERT_EQ(FDE_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
+  CFX_XMLSyntaxParser parser(stream);
+  ASSERT_EQ(FX_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
   ASSERT_EQ(L"script", parser.GetTagName());
 
-  ASSERT_EQ(FDE_XmlSyntaxResult::AttriName, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::AttriName, parser.DoSyntaxParse());
   ASSERT_EQ(L"contentType", parser.GetAttributeName());
-  ASSERT_EQ(FDE_XmlSyntaxResult::AttriValue, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::AttriValue, parser.DoSyntaxParse());
   ASSERT_EQ(L"application/x-javascript", parser.GetAttributeValue());
 
-  ASSERT_EQ(FDE_XmlSyntaxResult::ElementBreak, parser.DoSyntaxParse());
-  ASSERT_EQ(FDE_XmlSyntaxResult::Text, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::ElementBreak, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::Text, parser.DoSyntaxParse());
   ASSERT_EQ(L"\n  ", parser.GetTextData());
 
-  ASSERT_EQ(FDE_XmlSyntaxResult::CData, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::CData, parser.DoSyntaxParse());
   ASSERT_EQ(cdata, parser.GetTextData());
 
-  ASSERT_EQ(FDE_XmlSyntaxResult::Text, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::Text, parser.DoSyntaxParse());
   ASSERT_EQ(L"\n", parser.GetTextData());
 
-  ASSERT_EQ(FDE_XmlSyntaxResult::ElementClose, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::ElementClose, parser.DoSyntaxParse());
   ASSERT_EQ(L"script", parser.GetTagName());
 
-  ASSERT_EQ(FDE_XmlSyntaxResult::EndOfString, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::EndOfString, parser.DoSyntaxParse());
 }
 
-TEST_F(CFDE_XMLSyntaxParserTest, ArrowBangArrow) {
+TEST_F(CFX_XMLSyntaxParserTest, ArrowBangArrow) {
   const char* input =
       "<script contentType=\"application/x-javascript\">\n"
       "  <!>\n"
@@ -118,31 +118,31 @@ TEST_F(CFDE_XMLSyntaxParserTest, ArrowBangArrow) {
           reinterpret_cast<uint8_t*>(const_cast<char*>(input)), strlen(input));
   stream->SetCodePage(FX_CODEPAGE_UTF8);
 
-  CFDE_XMLSyntaxParser parser(stream);
-  ASSERT_EQ(FDE_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
-  ASSERT_EQ(FDE_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
+  CFX_XMLSyntaxParser parser(stream);
+  ASSERT_EQ(FX_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
 
   ASSERT_EQ(L"script", parser.GetTagName());
 
-  ASSERT_EQ(FDE_XmlSyntaxResult::AttriName, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::AttriName, parser.DoSyntaxParse());
   ASSERT_EQ(L"contentType", parser.GetAttributeName());
-  ASSERT_EQ(FDE_XmlSyntaxResult::AttriValue, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::AttriValue, parser.DoSyntaxParse());
   ASSERT_EQ(L"application/x-javascript", parser.GetAttributeValue());
 
-  ASSERT_EQ(FDE_XmlSyntaxResult::ElementBreak, parser.DoSyntaxParse());
-  ASSERT_EQ(FDE_XmlSyntaxResult::Text, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::ElementBreak, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::Text, parser.DoSyntaxParse());
   ASSERT_EQ(L"\n  ", parser.GetTextData());
 
-  ASSERT_EQ(FDE_XmlSyntaxResult::Text, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::Text, parser.DoSyntaxParse());
   ASSERT_EQ(L"\n", parser.GetTextData());
 
-  ASSERT_EQ(FDE_XmlSyntaxResult::ElementClose, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::ElementClose, parser.DoSyntaxParse());
   ASSERT_EQ(L"script", parser.GetTagName());
 
-  ASSERT_EQ(FDE_XmlSyntaxResult::EndOfString, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::EndOfString, parser.DoSyntaxParse());
 }
 
-TEST_F(CFDE_XMLSyntaxParserTest, ArrowBangBracketArrow) {
+TEST_F(CFX_XMLSyntaxParserTest, ArrowBangBracketArrow) {
   const char* input =
       "<script contentType=\"application/x-javascript\">\n"
       "  <![>\n"
@@ -153,26 +153,26 @@ TEST_F(CFDE_XMLSyntaxParserTest, ArrowBangBracketArrow) {
           reinterpret_cast<uint8_t*>(const_cast<char*>(input)), strlen(input));
   stream->SetCodePage(FX_CODEPAGE_UTF8);
 
-  CFDE_XMLSyntaxParser parser(stream);
-  ASSERT_EQ(FDE_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
-  ASSERT_EQ(FDE_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
+  CFX_XMLSyntaxParser parser(stream);
+  ASSERT_EQ(FX_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
   ASSERT_EQ(L"script", parser.GetTagName());
 
-  ASSERT_EQ(FDE_XmlSyntaxResult::AttriName, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::AttriName, parser.DoSyntaxParse());
   ASSERT_EQ(L"contentType", parser.GetAttributeName());
-  ASSERT_EQ(FDE_XmlSyntaxResult::AttriValue, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::AttriValue, parser.DoSyntaxParse());
   ASSERT_EQ(L"application/x-javascript", parser.GetAttributeValue());
 
-  ASSERT_EQ(FDE_XmlSyntaxResult::ElementBreak, parser.DoSyntaxParse());
-  ASSERT_EQ(FDE_XmlSyntaxResult::Text, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::ElementBreak, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::Text, parser.DoSyntaxParse());
   ASSERT_EQ(L"\n  ", parser.GetTextData());
 
   // Parser walks to end of input.
 
-  ASSERT_EQ(FDE_XmlSyntaxResult::EndOfString, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::EndOfString, parser.DoSyntaxParse());
 }
 
-TEST_F(CFDE_XMLSyntaxParserTest, IncompleteCData) {
+TEST_F(CFX_XMLSyntaxParserTest, IncompleteCData) {
   const char* input =
       "<script contentType=\"application/x-javascript\">\n"
       "  <![CDATA>\n"
@@ -183,26 +183,26 @@ TEST_F(CFDE_XMLSyntaxParserTest, IncompleteCData) {
           reinterpret_cast<uint8_t*>(const_cast<char*>(input)), strlen(input));
   stream->SetCodePage(FX_CODEPAGE_UTF8);
 
-  CFDE_XMLSyntaxParser parser(stream);
-  ASSERT_EQ(FDE_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
-  ASSERT_EQ(FDE_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
+  CFX_XMLSyntaxParser parser(stream);
+  ASSERT_EQ(FX_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
   ASSERT_EQ(L"script", parser.GetTagName());
 
-  ASSERT_EQ(FDE_XmlSyntaxResult::AttriName, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::AttriName, parser.DoSyntaxParse());
   ASSERT_EQ(L"contentType", parser.GetAttributeName());
-  ASSERT_EQ(FDE_XmlSyntaxResult::AttriValue, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::AttriValue, parser.DoSyntaxParse());
   ASSERT_EQ(L"application/x-javascript", parser.GetAttributeValue());
 
-  ASSERT_EQ(FDE_XmlSyntaxResult::ElementBreak, parser.DoSyntaxParse());
-  ASSERT_EQ(FDE_XmlSyntaxResult::Text, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::ElementBreak, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::Text, parser.DoSyntaxParse());
   ASSERT_EQ(L"\n  ", parser.GetTextData());
 
   // Parser walks to end of input.
 
-  ASSERT_EQ(FDE_XmlSyntaxResult::EndOfString, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::EndOfString, parser.DoSyntaxParse());
 }
 
-TEST_F(CFDE_XMLSyntaxParserTest, UnClosedCData) {
+TEST_F(CFX_XMLSyntaxParserTest, UnClosedCData) {
   const char* input =
       "<script contentType=\"application/x-javascript\">\n"
       "  <![CDATA[\n"
@@ -213,26 +213,26 @@ TEST_F(CFDE_XMLSyntaxParserTest, UnClosedCData) {
           reinterpret_cast<uint8_t*>(const_cast<char*>(input)), strlen(input));
   stream->SetCodePage(FX_CODEPAGE_UTF8);
 
-  CFDE_XMLSyntaxParser parser(stream);
-  ASSERT_EQ(FDE_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
-  ASSERT_EQ(FDE_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
+  CFX_XMLSyntaxParser parser(stream);
+  ASSERT_EQ(FX_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
   ASSERT_EQ(L"script", parser.GetTagName());
 
-  ASSERT_EQ(FDE_XmlSyntaxResult::AttriName, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::AttriName, parser.DoSyntaxParse());
   ASSERT_EQ(L"contentType", parser.GetAttributeName());
-  ASSERT_EQ(FDE_XmlSyntaxResult::AttriValue, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::AttriValue, parser.DoSyntaxParse());
   ASSERT_EQ(L"application/x-javascript", parser.GetAttributeValue());
 
-  ASSERT_EQ(FDE_XmlSyntaxResult::ElementBreak, parser.DoSyntaxParse());
-  ASSERT_EQ(FDE_XmlSyntaxResult::Text, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::ElementBreak, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::Text, parser.DoSyntaxParse());
   ASSERT_EQ(L"\n  ", parser.GetTextData());
 
   // Parser walks to end of input.
 
-  ASSERT_EQ(FDE_XmlSyntaxResult::EndOfString, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::EndOfString, parser.DoSyntaxParse());
 }
 
-TEST_F(CFDE_XMLSyntaxParserTest, EmptyCData) {
+TEST_F(CFX_XMLSyntaxParserTest, EmptyCData) {
   const char* input =
       "<script contentType=\"application/x-javascript\">\n"
       "  <![CDATA[]]>\n"
@@ -243,33 +243,33 @@ TEST_F(CFDE_XMLSyntaxParserTest, EmptyCData) {
           reinterpret_cast<uint8_t*>(const_cast<char*>(input)), strlen(input));
   stream->SetCodePage(FX_CODEPAGE_UTF8);
 
-  CFDE_XMLSyntaxParser parser(stream);
-  ASSERT_EQ(FDE_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
-  ASSERT_EQ(FDE_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
+  CFX_XMLSyntaxParser parser(stream);
+  ASSERT_EQ(FX_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
   ASSERT_EQ(L"script", parser.GetTagName());
 
-  ASSERT_EQ(FDE_XmlSyntaxResult::AttriName, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::AttriName, parser.DoSyntaxParse());
   ASSERT_EQ(L"contentType", parser.GetAttributeName());
-  ASSERT_EQ(FDE_XmlSyntaxResult::AttriValue, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::AttriValue, parser.DoSyntaxParse());
   ASSERT_EQ(L"application/x-javascript", parser.GetAttributeValue());
 
-  ASSERT_EQ(FDE_XmlSyntaxResult::ElementBreak, parser.DoSyntaxParse());
-  ASSERT_EQ(FDE_XmlSyntaxResult::Text, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::ElementBreak, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::Text, parser.DoSyntaxParse());
   ASSERT_EQ(L"\n  ", parser.GetTextData());
 
-  ASSERT_EQ(FDE_XmlSyntaxResult::CData, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::CData, parser.DoSyntaxParse());
   ASSERT_EQ(L"", parser.GetTextData());
 
-  ASSERT_EQ(FDE_XmlSyntaxResult::Text, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::Text, parser.DoSyntaxParse());
   ASSERT_EQ(L"\n", parser.GetTextData());
 
-  ASSERT_EQ(FDE_XmlSyntaxResult::ElementClose, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::ElementClose, parser.DoSyntaxParse());
   ASSERT_EQ(L"script", parser.GetTagName());
 
-  ASSERT_EQ(FDE_XmlSyntaxResult::EndOfString, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::EndOfString, parser.DoSyntaxParse());
 }
 
-TEST_F(CFDE_XMLSyntaxParserTest, Comment) {
+TEST_F(CFX_XMLSyntaxParserTest, Comment) {
   const char* input =
       "<script contentType=\"application/x-javascript\">\n"
       "  <!-- A Comment -->\n"
@@ -280,30 +280,30 @@ TEST_F(CFDE_XMLSyntaxParserTest, Comment) {
           reinterpret_cast<uint8_t*>(const_cast<char*>(input)), strlen(input));
   stream->SetCodePage(FX_CODEPAGE_UTF8);
 
-  CFDE_XMLSyntaxParser parser(stream);
-  ASSERT_EQ(FDE_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
-  ASSERT_EQ(FDE_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
+  CFX_XMLSyntaxParser parser(stream);
+  ASSERT_EQ(FX_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
   ASSERT_EQ(L"script", parser.GetTagName());
 
-  ASSERT_EQ(FDE_XmlSyntaxResult::AttriName, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::AttriName, parser.DoSyntaxParse());
   ASSERT_EQ(L"contentType", parser.GetAttributeName());
-  ASSERT_EQ(FDE_XmlSyntaxResult::AttriValue, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::AttriValue, parser.DoSyntaxParse());
   ASSERT_EQ(L"application/x-javascript", parser.GetAttributeValue());
 
-  ASSERT_EQ(FDE_XmlSyntaxResult::ElementBreak, parser.DoSyntaxParse());
-  ASSERT_EQ(FDE_XmlSyntaxResult::Text, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::ElementBreak, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::Text, parser.DoSyntaxParse());
   ASSERT_EQ(L"\n  ", parser.GetTextData());
 
-  ASSERT_EQ(FDE_XmlSyntaxResult::Text, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::Text, parser.DoSyntaxParse());
   ASSERT_EQ(L"\n", parser.GetTextData());
 
-  ASSERT_EQ(FDE_XmlSyntaxResult::ElementClose, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::ElementClose, parser.DoSyntaxParse());
   ASSERT_EQ(L"script", parser.GetTagName());
 
-  ASSERT_EQ(FDE_XmlSyntaxResult::EndOfString, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::EndOfString, parser.DoSyntaxParse());
 }
 
-TEST_F(CFDE_XMLSyntaxParserTest, IncorrectCommentStart) {
+TEST_F(CFX_XMLSyntaxParserTest, IncorrectCommentStart) {
   const char* input =
       "<script contentType=\"application/x-javascript\">\n"
       "  <!- A Comment -->\n"
@@ -314,30 +314,30 @@ TEST_F(CFDE_XMLSyntaxParserTest, IncorrectCommentStart) {
           reinterpret_cast<uint8_t*>(const_cast<char*>(input)), strlen(input));
   stream->SetCodePage(FX_CODEPAGE_UTF8);
 
-  CFDE_XMLSyntaxParser parser(stream);
-  ASSERT_EQ(FDE_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
-  ASSERT_EQ(FDE_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
+  CFX_XMLSyntaxParser parser(stream);
+  ASSERT_EQ(FX_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
   ASSERT_EQ(L"script", parser.GetTagName());
 
-  ASSERT_EQ(FDE_XmlSyntaxResult::AttriName, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::AttriName, parser.DoSyntaxParse());
   ASSERT_EQ(L"contentType", parser.GetAttributeName());
-  ASSERT_EQ(FDE_XmlSyntaxResult::AttriValue, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::AttriValue, parser.DoSyntaxParse());
   ASSERT_EQ(L"application/x-javascript", parser.GetAttributeValue());
 
-  ASSERT_EQ(FDE_XmlSyntaxResult::ElementBreak, parser.DoSyntaxParse());
-  ASSERT_EQ(FDE_XmlSyntaxResult::Text, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::ElementBreak, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::Text, parser.DoSyntaxParse());
   ASSERT_EQ(L"\n  ", parser.GetTextData());
 
-  ASSERT_EQ(FDE_XmlSyntaxResult::Text, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::Text, parser.DoSyntaxParse());
   ASSERT_EQ(L"\n", parser.GetTextData());
 
-  ASSERT_EQ(FDE_XmlSyntaxResult::ElementClose, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::ElementClose, parser.DoSyntaxParse());
   ASSERT_EQ(L"script", parser.GetTagName());
 
-  ASSERT_EQ(FDE_XmlSyntaxResult::EndOfString, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::EndOfString, parser.DoSyntaxParse());
 }
 
-TEST_F(CFDE_XMLSyntaxParserTest, CommentEmpty) {
+TEST_F(CFX_XMLSyntaxParserTest, CommentEmpty) {
   const char* input =
       "<script contentType=\"application/x-javascript\">\n"
       "  <!---->\n"
@@ -348,30 +348,30 @@ TEST_F(CFDE_XMLSyntaxParserTest, CommentEmpty) {
           reinterpret_cast<uint8_t*>(const_cast<char*>(input)), strlen(input));
   stream->SetCodePage(FX_CODEPAGE_UTF8);
 
-  CFDE_XMLSyntaxParser parser(stream);
-  ASSERT_EQ(FDE_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
-  ASSERT_EQ(FDE_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
+  CFX_XMLSyntaxParser parser(stream);
+  ASSERT_EQ(FX_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
   ASSERT_EQ(L"script", parser.GetTagName());
 
-  ASSERT_EQ(FDE_XmlSyntaxResult::AttriName, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::AttriName, parser.DoSyntaxParse());
   ASSERT_EQ(L"contentType", parser.GetAttributeName());
-  ASSERT_EQ(FDE_XmlSyntaxResult::AttriValue, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::AttriValue, parser.DoSyntaxParse());
   ASSERT_EQ(L"application/x-javascript", parser.GetAttributeValue());
 
-  ASSERT_EQ(FDE_XmlSyntaxResult::ElementBreak, parser.DoSyntaxParse());
-  ASSERT_EQ(FDE_XmlSyntaxResult::Text, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::ElementBreak, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::Text, parser.DoSyntaxParse());
   ASSERT_EQ(L"\n  ", parser.GetTextData());
 
-  ASSERT_EQ(FDE_XmlSyntaxResult::Text, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::Text, parser.DoSyntaxParse());
   ASSERT_EQ(L"\n", parser.GetTextData());
 
-  ASSERT_EQ(FDE_XmlSyntaxResult::ElementClose, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::ElementClose, parser.DoSyntaxParse());
   ASSERT_EQ(L"script", parser.GetTagName());
 
-  ASSERT_EQ(FDE_XmlSyntaxResult::EndOfString, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::EndOfString, parser.DoSyntaxParse());
 }
 
-TEST_F(CFDE_XMLSyntaxParserTest, CommentThreeDash) {
+TEST_F(CFX_XMLSyntaxParserTest, CommentThreeDash) {
   const char* input =
       "<script contentType=\"application/x-javascript\">\n"
       "  <!--->\n"
@@ -382,24 +382,24 @@ TEST_F(CFDE_XMLSyntaxParserTest, CommentThreeDash) {
           reinterpret_cast<uint8_t*>(const_cast<char*>(input)), strlen(input));
   stream->SetCodePage(FX_CODEPAGE_UTF8);
 
-  CFDE_XMLSyntaxParser parser(stream);
-  ASSERT_EQ(FDE_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
-  ASSERT_EQ(FDE_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
+  CFX_XMLSyntaxParser parser(stream);
+  ASSERT_EQ(FX_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
   ASSERT_EQ(L"script", parser.GetTagName());
 
-  ASSERT_EQ(FDE_XmlSyntaxResult::AttriName, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::AttriName, parser.DoSyntaxParse());
   ASSERT_EQ(L"contentType", parser.GetAttributeName());
-  ASSERT_EQ(FDE_XmlSyntaxResult::AttriValue, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::AttriValue, parser.DoSyntaxParse());
   ASSERT_EQ(L"application/x-javascript", parser.GetAttributeValue());
 
-  ASSERT_EQ(FDE_XmlSyntaxResult::ElementBreak, parser.DoSyntaxParse());
-  ASSERT_EQ(FDE_XmlSyntaxResult::Text, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::ElementBreak, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::Text, parser.DoSyntaxParse());
   ASSERT_EQ(L"\n  ", parser.GetTextData());
 
-  ASSERT_EQ(FDE_XmlSyntaxResult::EndOfString, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::EndOfString, parser.DoSyntaxParse());
 }
 
-TEST_F(CFDE_XMLSyntaxParserTest, CommentTwoDash) {
+TEST_F(CFX_XMLSyntaxParserTest, CommentTwoDash) {
   const char* input =
       "<script contentType=\"application/x-javascript\">\n"
       "  <!-->\n"
@@ -410,24 +410,24 @@ TEST_F(CFDE_XMLSyntaxParserTest, CommentTwoDash) {
           reinterpret_cast<uint8_t*>(const_cast<char*>(input)), strlen(input));
   stream->SetCodePage(FX_CODEPAGE_UTF8);
 
-  CFDE_XMLSyntaxParser parser(stream);
-  ASSERT_EQ(FDE_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
-  ASSERT_EQ(FDE_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
+  CFX_XMLSyntaxParser parser(stream);
+  ASSERT_EQ(FX_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
   ASSERT_EQ(L"script", parser.GetTagName());
 
-  ASSERT_EQ(FDE_XmlSyntaxResult::AttriName, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::AttriName, parser.DoSyntaxParse());
   ASSERT_EQ(L"contentType", parser.GetAttributeName());
-  ASSERT_EQ(FDE_XmlSyntaxResult::AttriValue, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::AttriValue, parser.DoSyntaxParse());
   ASSERT_EQ(L"application/x-javascript", parser.GetAttributeValue());
 
-  ASSERT_EQ(FDE_XmlSyntaxResult::ElementBreak, parser.DoSyntaxParse());
-  ASSERT_EQ(FDE_XmlSyntaxResult::Text, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::ElementBreak, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::Text, parser.DoSyntaxParse());
   ASSERT_EQ(L"\n  ", parser.GetTextData());
 
-  ASSERT_EQ(FDE_XmlSyntaxResult::EndOfString, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::EndOfString, parser.DoSyntaxParse());
 }
 
-TEST_F(CFDE_XMLSyntaxParserTest, Entities) {
+TEST_F(CFX_XMLSyntaxParserTest, Entities) {
   const char* input =
       "<script contentType=\"application/x-javascript\">"
       "&#66;"
@@ -442,27 +442,27 @@ TEST_F(CFDE_XMLSyntaxParserTest, Entities) {
           reinterpret_cast<uint8_t*>(const_cast<char*>(input)), strlen(input));
   stream->SetCodePage(FX_CODEPAGE_UTF8);
 
-  CFDE_XMLSyntaxParser parser(stream);
-  ASSERT_EQ(FDE_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
-  ASSERT_EQ(FDE_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
+  CFX_XMLSyntaxParser parser(stream);
+  ASSERT_EQ(FX_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
   ASSERT_EQ(L"script", parser.GetTagName());
 
-  ASSERT_EQ(FDE_XmlSyntaxResult::AttriName, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::AttriName, parser.DoSyntaxParse());
   ASSERT_EQ(L"contentType", parser.GetAttributeName());
-  ASSERT_EQ(FDE_XmlSyntaxResult::AttriValue, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::AttriValue, parser.DoSyntaxParse());
   ASSERT_EQ(L"application/x-javascript", parser.GetAttributeValue());
 
-  ASSERT_EQ(FDE_XmlSyntaxResult::ElementBreak, parser.DoSyntaxParse());
-  ASSERT_EQ(FDE_XmlSyntaxResult::Text, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::ElementBreak, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::Text, parser.DoSyntaxParse());
   ASSERT_EQ(L"BTH\xab48", parser.GetTextData());
 
-  ASSERT_EQ(FDE_XmlSyntaxResult::ElementClose, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::ElementClose, parser.DoSyntaxParse());
   ASSERT_EQ(L"script", parser.GetTagName());
 
-  ASSERT_EQ(FDE_XmlSyntaxResult::EndOfString, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::EndOfString, parser.DoSyntaxParse());
 }
 
-TEST_F(CFDE_XMLSyntaxParserTest, EntityOverflowHex) {
+TEST_F(CFX_XMLSyntaxParserTest, EntityOverflowHex) {
   const char* input =
       "<script contentType=\"application/x-javascript\">"
       "&#xaDBDFFFFF;"
@@ -474,27 +474,27 @@ TEST_F(CFDE_XMLSyntaxParserTest, EntityOverflowHex) {
           reinterpret_cast<uint8_t*>(const_cast<char*>(input)), strlen(input));
   stream->SetCodePage(FX_CODEPAGE_UTF8);
 
-  CFDE_XMLSyntaxParser parser(stream);
-  ASSERT_EQ(FDE_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
-  ASSERT_EQ(FDE_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
+  CFX_XMLSyntaxParser parser(stream);
+  ASSERT_EQ(FX_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
   ASSERT_EQ(L"script", parser.GetTagName());
 
-  ASSERT_EQ(FDE_XmlSyntaxResult::AttriName, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::AttriName, parser.DoSyntaxParse());
   ASSERT_EQ(L"contentType", parser.GetAttributeName());
-  ASSERT_EQ(FDE_XmlSyntaxResult::AttriValue, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::AttriValue, parser.DoSyntaxParse());
   ASSERT_EQ(L"application/x-javascript", parser.GetAttributeValue());
 
-  ASSERT_EQ(FDE_XmlSyntaxResult::ElementBreak, parser.DoSyntaxParse());
-  ASSERT_EQ(FDE_XmlSyntaxResult::Text, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::ElementBreak, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::Text, parser.DoSyntaxParse());
   ASSERT_EQ(L"  ", parser.GetTextData());
 
-  ASSERT_EQ(FDE_XmlSyntaxResult::ElementClose, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::ElementClose, parser.DoSyntaxParse());
   ASSERT_EQ(L"script", parser.GetTagName());
 
-  ASSERT_EQ(FDE_XmlSyntaxResult::EndOfString, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::EndOfString, parser.DoSyntaxParse());
 }
 
-TEST_F(CFDE_XMLSyntaxParserTest, EntityOverflowDecimal) {
+TEST_F(CFX_XMLSyntaxParserTest, EntityOverflowDecimal) {
   const char* input =
       "<script contentType=\"application/x-javascript\">"
       "&#2914910205;"
@@ -506,22 +506,22 @@ TEST_F(CFDE_XMLSyntaxParserTest, EntityOverflowDecimal) {
           reinterpret_cast<uint8_t*>(const_cast<char*>(input)), strlen(input));
   stream->SetCodePage(FX_CODEPAGE_UTF8);
 
-  CFDE_XMLSyntaxParser parser(stream);
-  ASSERT_EQ(FDE_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
-  ASSERT_EQ(FDE_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
+  CFX_XMLSyntaxParser parser(stream);
+  ASSERT_EQ(FX_XmlSyntaxResult::ElementOpen, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::TagName, parser.DoSyntaxParse());
   ASSERT_EQ(L"script", parser.GetTagName());
 
-  ASSERT_EQ(FDE_XmlSyntaxResult::AttriName, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::AttriName, parser.DoSyntaxParse());
   ASSERT_EQ(L"contentType", parser.GetAttributeName());
-  ASSERT_EQ(FDE_XmlSyntaxResult::AttriValue, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::AttriValue, parser.DoSyntaxParse());
   ASSERT_EQ(L"application/x-javascript", parser.GetAttributeValue());
 
-  ASSERT_EQ(FDE_XmlSyntaxResult::ElementBreak, parser.DoSyntaxParse());
-  ASSERT_EQ(FDE_XmlSyntaxResult::Text, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::ElementBreak, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::Text, parser.DoSyntaxParse());
   ASSERT_EQ(L"  ", parser.GetTextData());
 
-  ASSERT_EQ(FDE_XmlSyntaxResult::ElementClose, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::ElementClose, parser.DoSyntaxParse());
   ASSERT_EQ(L"script", parser.GetTagName());
 
-  ASSERT_EQ(FDE_XmlSyntaxResult::EndOfString, parser.DoSyntaxParse());
+  ASSERT_EQ(FX_XmlSyntaxResult::EndOfString, parser.DoSyntaxParse());
 }

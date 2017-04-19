@@ -17,9 +17,9 @@
 #include "core/fxcrt/cfx_checksumcontext.h"
 #include "core/fxcrt/fx_ext.h"
 #include "core/fxcrt/fx_memory.h"
+#include "core/fxcrt/xml/cfx_xmlelement.h"
+#include "core/fxcrt/xml/cfx_xmlnode.h"
 #include "third_party/base/ptr_util.h"
-#include "xfa/fde/xml/cfde_xmlelement.h"
-#include "xfa/fde/xml/cfde_xmlnode.h"
 #include "xfa/fwl/cfwl_notedriver.h"
 #include "xfa/fxfa/app/xfa_ffnotify.h"
 #include "xfa/fxfa/cxfa_ffapp.h"
@@ -171,15 +171,15 @@ int32_t CXFA_FFDoc::StartLoad() {
   return m_pDocumentParser->StartParse(m_pStream, XFA_XDPPACKET_XDP);
 }
 
-bool XFA_GetPDFContentsFromPDFXML(CFDE_XMLNode* pPDFElement,
+bool XFA_GetPDFContentsFromPDFXML(CFX_XMLNode* pPDFElement,
                                   uint8_t*& pByteBuffer,
                                   int32_t& iBufferSize) {
-  CFDE_XMLElement* pDocumentElement = nullptr;
-  for (CFDE_XMLNode* pXMLNode =
-           pPDFElement->GetNodeItem(CFDE_XMLNode::FirstChild);
-       pXMLNode; pXMLNode = pXMLNode->GetNodeItem(CFDE_XMLNode::NextSibling)) {
-    if (pXMLNode->GetType() == FDE_XMLNODE_Element) {
-      CFDE_XMLElement* pXMLElement = static_cast<CFDE_XMLElement*>(pXMLNode);
+  CFX_XMLElement* pDocumentElement = nullptr;
+  for (CFX_XMLNode* pXMLNode =
+           pPDFElement->GetNodeItem(CFX_XMLNode::FirstChild);
+       pXMLNode; pXMLNode = pXMLNode->GetNodeItem(CFX_XMLNode::NextSibling)) {
+    if (pXMLNode->GetType() == FX_XMLNODE_Element) {
+      CFX_XMLElement* pXMLElement = static_cast<CFX_XMLElement*>(pXMLNode);
       CFX_WideString wsTagName = pXMLElement->GetName();
       if (wsTagName == L"document") {
         pDocumentElement = pXMLElement;
@@ -190,12 +190,12 @@ bool XFA_GetPDFContentsFromPDFXML(CFDE_XMLNode* pPDFElement,
   if (!pDocumentElement) {
     return false;
   }
-  CFDE_XMLElement* pChunkElement = nullptr;
-  for (CFDE_XMLNode* pXMLNode =
-           pDocumentElement->GetNodeItem(CFDE_XMLNode::FirstChild);
-       pXMLNode; pXMLNode = pXMLNode->GetNodeItem(CFDE_XMLNode::NextSibling)) {
-    if (pXMLNode->GetType() == FDE_XMLNODE_Element) {
-      CFDE_XMLElement* pXMLElement = static_cast<CFDE_XMLElement*>(pXMLNode);
+  CFX_XMLElement* pChunkElement = nullptr;
+  for (CFX_XMLNode* pXMLNode =
+           pDocumentElement->GetNodeItem(CFX_XMLNode::FirstChild);
+       pXMLNode; pXMLNode = pXMLNode->GetNodeItem(CFX_XMLNode::NextSibling)) {
+    if (pXMLNode->GetType() == FX_XMLNODE_Element) {
+      CFX_XMLElement* pXMLElement = static_cast<CFX_XMLElement*>(pXMLNode);
       CFX_WideString wsTagName = pXMLElement->GetName();
       if (wsTagName == L"chunk") {
         pChunkElement = pXMLElement;

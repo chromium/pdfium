@@ -11,13 +11,13 @@
 #include <vector>
 
 #include "core/fxcrt/fx_codepage.h"
+#include "core/fxcrt/xml/cfx_xmlelement.h"
+#include "core/fxcrt/xml/cfx_xmlnode.h"
 #include "third_party/base/ptr_util.h"
 #include "xfa/fde/css/cfde_csscomputedstyle.h"
 #include "xfa/fde/css/cfde_cssstyleselector.h"
 #include "xfa/fde/css/cfde_cssstylesheet.h"
 #include "xfa/fde/css/fde_css.h"
-#include "xfa/fde/xml/cfde_xmlelement.h"
-#include "xfa/fde/xml/cfde_xmlnode.h"
 #include "xfa/fgas/font/cfgas_fontmgr.h"
 #include "xfa/fxfa/app/cxfa_csstagprovider.h"
 #include "xfa/fxfa/app/cxfa_textparsecontext.h"
@@ -175,7 +175,7 @@ CFX_RetainPtr<CFDE_CSSComputedStyle> CXFA_TextParser::CreateStyle(
 }
 
 CFX_RetainPtr<CFDE_CSSComputedStyle> CXFA_TextParser::ComputeStyle(
-    CFDE_XMLNode* pXMLNode,
+    CFX_XMLNode* pXMLNode,
     CFDE_CSSComputedStyle* pParentStyle) {
   auto it = m_mapXMLNodeToParseContext.find(pXMLNode);
   if (it == m_mapXMLNodeToParseContext.end())
@@ -198,7 +198,7 @@ CFX_RetainPtr<CFDE_CSSComputedStyle> CXFA_TextParser::ComputeStyle(
   return pStyle;
 }
 
-void CXFA_TextParser::DoParse(CFDE_XMLNode* pXMLContainer,
+void CXFA_TextParser::DoParse(CFX_XMLNode* pXMLContainer,
                               CXFA_TextProvider* pTextProvider) {
   if (!pXMLContainer || !pTextProvider || m_bParsed)
     return;
@@ -209,7 +209,7 @@ void CXFA_TextParser::DoParse(CFDE_XMLNode* pXMLContainer,
   ParseRichText(pXMLContainer, pRootStyle.Get());
 }
 
-void CXFA_TextParser::ParseRichText(CFDE_XMLNode* pXMLNode,
+void CXFA_TextParser::ParseRichText(CFX_XMLNode* pXMLNode,
                                     CFDE_CSSComputedStyle* pParentStyle) {
   if (!pXMLNode)
     return;
@@ -240,10 +240,9 @@ void CXFA_TextParser::ParseRichText(CFDE_XMLNode* pXMLNode,
     m_mapXMLNodeToParseContext[pXMLNode] = std::move(pTextContext);
   }
 
-  for (CFDE_XMLNode* pXMLChild =
-           pXMLNode->GetNodeItem(CFDE_XMLNode::FirstChild);
+  for (CFX_XMLNode* pXMLChild = pXMLNode->GetNodeItem(CFX_XMLNode::FirstChild);
        pXMLChild;
-       pXMLChild = pXMLChild->GetNodeItem(CFDE_XMLNode::NextSibling)) {
+       pXMLChild = pXMLChild->GetNodeItem(CFX_XMLNode::NextSibling)) {
     ParseRichText(pXMLChild, pNewStyle.Get());
   }
 }
@@ -271,12 +270,12 @@ bool CXFA_TextParser::TagValidate(const CFX_WideString& wsName) const {
 }
 
 std::unique_ptr<CXFA_CSSTagProvider> CXFA_TextParser::ParseTagInfo(
-    CFDE_XMLNode* pXMLNode) {
+    CFX_XMLNode* pXMLNode) {
   auto tagProvider = pdfium::MakeUnique<CXFA_CSSTagProvider>();
 
   CFX_WideString wsName;
-  if (pXMLNode->GetType() == FDE_XMLNODE_Element) {
-    CFDE_XMLElement* pXMLElement = static_cast<CFDE_XMLElement*>(pXMLNode);
+  if (pXMLNode->GetType() == FX_XMLNODE_Element) {
+    CFX_XMLElement* pXMLElement = static_cast<CFX_XMLElement*>(pXMLNode);
     wsName = pXMLElement->GetLocalTagName();
     tagProvider->SetTagName(wsName);
     tagProvider->m_bTagAvailable = TagValidate(wsName);
@@ -284,7 +283,7 @@ std::unique_ptr<CXFA_CSSTagProvider> CXFA_TextParser::ParseTagInfo(
     CFX_WideString wsValue = pXMLElement->GetString(L"style");
     if (!wsValue.IsEmpty())
       tagProvider->SetAttribute(L"style", wsValue);
-  } else if (pXMLNode->GetType() == FDE_XMLNODE_Text) {
+  } else if (pXMLNode->GetType() == FX_XMLNODE_Text) {
     tagProvider->m_bTagAvailable = true;
     tagProvider->m_bContent = true;
   }
@@ -363,7 +362,7 @@ float CXFA_TextParser::GetFontSize(CXFA_TextProvider* pTextProvider,
 
 int32_t CXFA_TextParser::GetHorScale(CXFA_TextProvider* pTextProvider,
                                      CFDE_CSSComputedStyle* pStyle,
-                                     CFDE_XMLNode* pXMLNode) const {
+                                     CFX_XMLNode* pXMLNode) const {
   if (pStyle) {
     CFX_WideString wsValue;
     if (pStyle->GetCustomStyle(L"xfa-font-horizontal-scale", wsValue))
@@ -379,7 +378,7 @@ int32_t CXFA_TextParser::GetHorScale(CXFA_TextProvider* pTextProvider,
           return wsValue.GetInteger();
         }
       }
-      pXMLNode = pXMLNode->GetNodeItem(CFDE_XMLNode::Parent);
+      pXMLNode = pXMLNode->GetNodeItem(CFX_XMLNode::Parent);
     }
   }
 
@@ -490,15 +489,15 @@ float CXFA_TextParser::GetLineHeight(CXFA_TextProvider* pTextProvider,
 }
 
 bool CXFA_TextParser::GetEmbbedObj(CXFA_TextProvider* pTextProvider,
-                                   CFDE_XMLNode* pXMLNode,
+                                   CFX_XMLNode* pXMLNode,
                                    CFX_WideString& wsValue) {
   wsValue.clear();
   if (!pXMLNode)
     return false;
 
   bool bRet = false;
-  if (pXMLNode->GetType() == FDE_XMLNODE_Element) {
-    CFDE_XMLElement* pElement = static_cast<CFDE_XMLElement*>(pXMLNode);
+  if (pXMLNode->GetType() == FX_XMLNODE_Element) {
+    CFX_XMLElement* pElement = static_cast<CFX_XMLElement*>(pXMLNode);
     CFX_WideString wsAttr = pElement->GetString(L"xfa:embed");
     if (wsAttr.IsEmpty())
       return false;
@@ -531,7 +530,7 @@ bool CXFA_TextParser::GetEmbbedObj(CXFA_TextProvider* pTextProvider,
 }
 
 CXFA_TextParseContext* CXFA_TextParser::GetParseContextFromMap(
-    CFDE_XMLNode* pXMLNode) {
+    CFX_XMLNode* pXMLNode) {
   auto it = m_mapXMLNodeToParseContext.find(pXMLNode);
   return it != m_mapXMLNodeToParseContext.end() ? it->second.get() : nullptr;
 }

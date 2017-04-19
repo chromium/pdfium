@@ -13,7 +13,7 @@
 #include "core/fxcrt/fx_system.h"
 #include "xfa/fde/css/cfde_csscomputedstyle.h"
 
-class CFDE_XMLNode;
+class CFX_XMLNode;
 class CXFA_Node;
 
 class CXFA_LoaderContext {
@@ -30,7 +30,7 @@ class CXFA_LoaderContext {
   int32_t m_iLines;
   int32_t m_iTotalLines;
   uint32_t m_dwFlags;
-  CFDE_XMLNode* m_pXMLNode;
+  CFX_XMLNode* m_pXMLNode;
   CXFA_Node* m_pNode;
   CFX_RetainPtr<CFDE_CSSComputedStyle> m_pParentStyle;
   std::vector<float> m_lineHeights;

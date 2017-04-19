@@ -4,28 +4,28 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fde/xml/cfde_xmldoc.h"
+#include "core/fxcrt/xml/cfx_xmldoc.h"
 
 #include <utility>
 #include <vector>
 
 #include "core/fxcrt/fx_codepage.h"
+#include "core/fxcrt/xml/cfx_xmlchardata.h"
+#include "core/fxcrt/xml/cfx_xmlelement.h"
+#include "core/fxcrt/xml/cfx_xmlinstruction.h"
+#include "core/fxcrt/xml/cfx_xmlnode.h"
+#include "core/fxcrt/xml/cfx_xmltext.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
-#include "xfa/fde/xml/cfde_xmlchardata.h"
-#include "xfa/fde/xml/cfde_xmlelement.h"
-#include "xfa/fde/xml/cfde_xmlinstruction.h"
-#include "xfa/fde/xml/cfde_xmlnode.h"
-#include "xfa/fde/xml/cfde_xmltext.h"
 
-CFDE_XMLDoc::CFDE_XMLDoc()
-    : m_iStatus(0), m_pRoot(pdfium::MakeUnique<CFDE_XMLNode>()) {
-  m_pRoot->InsertChildNode(new CFDE_XMLInstruction(L"xml"));
+CFX_XMLDoc::CFX_XMLDoc()
+    : m_iStatus(0), m_pRoot(pdfium::MakeUnique<CFX_XMLNode>()) {
+  m_pRoot->InsertChildNode(new CFX_XMLInstruction(L"xml"));
 }
 
-CFDE_XMLDoc::~CFDE_XMLDoc() {}
+CFX_XMLDoc::~CFX_XMLDoc() {}
 
-bool CFDE_XMLDoc::LoadXML(std::unique_ptr<CFDE_XMLParser> pXMLParser) {
+bool CFX_XMLDoc::LoadXML(std::unique_ptr<CFX_XMLParser> pXMLParser) {
   if (!pXMLParser)
     return false;
 
@@ -36,25 +36,25 @@ bool CFDE_XMLDoc::LoadXML(std::unique_ptr<CFDE_XMLParser> pXMLParser) {
   return true;
 }
 
-int32_t CFDE_XMLDoc::DoLoad(IFX_Pause* pPause) {
+int32_t CFX_XMLDoc::DoLoad(IFX_Pause* pPause) {
   if (m_iStatus < 100)
     m_iStatus = m_pXMLParser->DoParser(pPause);
 
   return m_iStatus;
 }
 
-void CFDE_XMLDoc::CloseXML() {
+void CFX_XMLDoc::CloseXML() {
   m_pXMLParser.reset();
 }
 
-void CFDE_XMLDoc::SaveXMLNode(
+void CFX_XMLDoc::SaveXMLNode(
     const CFX_RetainPtr<CFX_SeekableStreamProxy>& pXMLStream,
-    CFDE_XMLNode* pINode) {
-  CFDE_XMLNode* pNode = (CFDE_XMLNode*)pINode;
+    CFX_XMLNode* pINode) {
+  CFX_XMLNode* pNode = (CFX_XMLNode*)pINode;
   switch (pNode->GetType()) {
-    case FDE_XMLNODE_Instruction: {
+    case FX_XMLNODE_Instruction: {
       CFX_WideString ws;
-      CFDE_XMLInstruction* pInstruction = (CFDE_XMLInstruction*)pNode;
+      CFX_XMLInstruction* pInstruction = (CFX_XMLInstruction*)pNode;
       if (pInstruction->GetName().CompareNoCase(L"xml") == 0) {
         ws = L"<?xml version=\"1.0\" encoding=\"";
         uint16_t wCodePage = pXMLStream->GetCodePage();
@@ -98,13 +98,13 @@ void CFDE_XMLDoc::SaveXMLNode(
       }
       break;
     }
-    case FDE_XMLNODE_Element: {
+    case FX_XMLNODE_Element: {
       CFX_WideString ws;
       ws = L"<";
-      ws += static_cast<CFDE_XMLElement*>(pNode)->GetName();
+      ws += static_cast<CFX_XMLElement*>(pNode)->GetName();
       pXMLStream->WriteString(ws.AsStringC());
 
-      for (auto it : static_cast<CFDE_XMLElement*>(pNode)->GetAttributes()) {
+      for (auto it : static_cast<CFX_XMLElement*>(pNode)->GetAttributes()) {
         CFX_WideString wsValue = it.second;
         wsValue.Replace(L"&", L"&amp;");
         wsValue.Replace(L"<", L"&lt;");
@@ -122,13 +122,13 @@ void CFDE_XMLDoc::SaveXMLNode(
       if (pNode->m_pChild) {
         ws = L"\n>";
         pXMLStream->WriteString(ws.AsStringC());
-        CFDE_XMLNode* pChild = pNode->m_pChild;
+        CFX_XMLNode* pChild = pNode->m_pChild;
         while (pChild) {
-          SaveXMLNode(pXMLStream, static_cast<CFDE_XMLNode*>(pChild));
+          SaveXMLNode(pXMLStream, static_cast<CFX_XMLNode*>(pChild));
           pChild = pChild->m_pNext;
         }
         ws = L"</";
-        ws += static_cast<CFDE_XMLElement*>(pNode)->GetName();
+        ws += static_cast<CFX_XMLElement*>(pNode)->GetName();
         ws += L"\n>";
       } else {
         ws = L"\n/>";
@@ -136,8 +136,8 @@ void CFDE_XMLDoc::SaveXMLNode(
       pXMLStream->WriteString(ws.AsStringC());
       break;
     }
-    case FDE_XMLNODE_Text: {
-      CFX_WideString ws = static_cast<CFDE_XMLText*>(pNode)->GetText();
+    case FX_XMLNODE_Text: {
+      CFX_WideString ws = static_cast<CFX_XMLText*>(pNode)->GetText();
       ws.Replace(L"&", L"&amp;");
       ws.Replace(L"<", L"&lt;");
       ws.Replace(L">", L"&gt;");
@@ -146,14 +146,14 @@ void CFDE_XMLDoc::SaveXMLNode(
       pXMLStream->WriteString(ws.AsStringC());
       break;
     }
-    case FDE_XMLNODE_CharData: {
+    case FX_XMLNODE_CharData: {
       CFX_WideString ws = L"<![CDATA[";
-      ws += static_cast<CFDE_XMLCharData*>(pNode)->GetText();
+      ws += static_cast<CFX_XMLCharData*>(pNode)->GetText();
       ws += L"]]>";
       pXMLStream->WriteString(ws.AsStringC());
       break;
     }
-    case FDE_XMLNODE_Unknown:
+    case FX_XMLNODE_Unknown:
     default:
       break;
   }

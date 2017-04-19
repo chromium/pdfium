@@ -40,7 +40,7 @@ enum XFA_DocFlag {
   XFA_DOCFLAG_Scripting = 0x0008
 };
 
-class CFDE_XMLDoc;
+class CFX_XMLDoc;
 class CScript_DataWindow;
 class CScript_EventPseudoModel;
 class CScript_HostPseudoModel;
@@ -66,7 +66,7 @@ class CXFA_Document {
 
   CXFA_Node* GetRoot() const { return m_pRootNode; }
 
-  CFDE_XMLDoc* GetXMLDoc() const;
+  CFX_XMLDoc* GetXMLDoc() const;
   CXFA_FFNotify* GetNotify() const;
   CXFA_LocaleMgr* GetLocalMgr();
   CXFA_Object* GetXFAObject(XFA_HashCode wsNodeNameHash);

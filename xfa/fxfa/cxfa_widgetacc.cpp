@@ -9,10 +9,10 @@
 #include <algorithm>
 #include <vector>
 
+#include "core/fxcrt/xml/cfx_xmlelement.h"
+#include "core/fxcrt/xml/cfx_xmlnode.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fde/cfde_textout.h"
-#include "xfa/fde/xml/cfde_xmlelement.h"
-#include "xfa/fde/xml/cfde_xmlnode.h"
 #include "xfa/fxfa/app/cxfa_textlayout.h"
 #include "xfa/fxfa/app/xfa_ffwidgetacc.h"
 #include "xfa/fxfa/cxfa_ffapp.h"
@@ -265,9 +265,9 @@ void CXFA_WidgetAcc::SetImageEdit(const CFX_WideString& wsContentType,
   if (pHrefNode) {
     pHrefNode->SetCData(XFA_ATTRIBUTE_Value, wsHref);
   } else {
-    CFDE_XMLNode* pXMLNode = pBind->GetXMLMappingNode();
-    ASSERT(pXMLNode && pXMLNode->GetType() == FDE_XMLNODE_Element);
-    static_cast<CFDE_XMLElement*>(pXMLNode)->SetString(L"href", wsHref);
+    CFX_XMLNode* pXMLNode = pBind->GetXMLMappingNode();
+    ASSERT(pXMLNode && pXMLNode->GetType() == FX_XMLNODE_Element);
+    static_cast<CFX_XMLElement*>(pXMLNode)->SetString(L"href", wsHref);
   }
 }
 

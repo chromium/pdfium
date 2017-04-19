@@ -4,23 +4,23 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FDE_XML_CFDE_XMLINSTRUCTION_H_
-#define XFA_FDE_XML_CFDE_XMLINSTRUCTION_H_
+#ifndef CORE_FXCRT_XML_CFX_XMLINSTRUCTION_H_
+#define CORE_FXCRT_XML_CFX_XMLINSTRUCTION_H_
 
 #include <memory>
 #include <vector>
 
 #include "core/fxcrt/fx_string.h"
-#include "xfa/fde/xml/cfde_xmlattributenode.h"
+#include "core/fxcrt/xml/cfx_xmlattributenode.h"
 
-class CFDE_XMLInstruction : public CFDE_XMLAttributeNode {
+class CFX_XMLInstruction : public CFX_XMLAttributeNode {
  public:
-  explicit CFDE_XMLInstruction(const CFX_WideString& wsTarget);
-  ~CFDE_XMLInstruction() override;
+  explicit CFX_XMLInstruction(const CFX_WideString& wsTarget);
+  ~CFX_XMLInstruction() override;
 
-  // CFDE_XMLNode
-  FDE_XMLNODETYPE GetType() const override;
-  std::unique_ptr<CFDE_XMLNode> Clone() override;
+  // CFX_XMLNode
+  FX_XMLNODETYPE GetType() const override;
+  std::unique_ptr<CFX_XMLNode> Clone() override;
 
   const std::vector<CFX_WideString>& GetTargetData() const {
     return m_TargetData;
@@ -32,4 +32,4 @@ class CFDE_XMLInstruction : public CFDE_XMLAttributeNode {
   std::vector<CFX_WideString> m_TargetData;
 };
 
-#endif  // XFA_FDE_XML_CFDE_XMLINSTRUCTION_H_
+#endif  // CORE_FXCRT_XML_CFX_XMLINSTRUCTION_H_

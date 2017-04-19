@@ -13,7 +13,7 @@
 #include "core/fxcrt/fx_string.h"
 #include "xfa/fxfa/parser/cxfa_object.h"
 
-class CFDE_XMLNode;
+class CFX_XMLNode;
 class CFXJSE_Argument;
 class CXFA_WidgetData;
 
@@ -95,9 +95,9 @@ class CXFA_Node : public CXFA_Object {
   bool IsFormContainer() const {
     return m_ePacket == XFA_XDPPACKET_Form && IsContainerNode();
   }
-  void SetXMLMappingNode(CFDE_XMLNode* pXMLNode) { m_pXMLNode = pXMLNode; }
-  CFDE_XMLNode* GetXMLMappingNode() const { return m_pXMLNode; }
-  CFDE_XMLNode* CreateXMLMappingNode();
+  void SetXMLMappingNode(CFX_XMLNode* pXMLNode) { m_pXMLNode = pXMLNode; }
+  CFX_XMLNode* GetXMLMappingNode() const { return m_pXMLNode; }
+  CFX_XMLNode* CreateXMLMappingNode();
   bool IsNeedSavingXMLNode();
   uint32_t GetNameHash() const { return m_dwNameHash; }
   bool IsUnnamed() const { return m_dwNameHash == 0; }
@@ -592,7 +592,7 @@ class CXFA_Node : public CXFA_Object {
   CXFA_Node* m_pChild;
   CXFA_Node* m_pLastChild;
   CXFA_Node* m_pParent;
-  CFDE_XMLNode* m_pXMLNode;
+  CFX_XMLNode* m_pXMLNode;
   uint16_t m_ePacket;
   uint16_t m_uNodeFlags;
   uint32_t m_dwNameHash;

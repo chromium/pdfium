@@ -6,8 +6,8 @@
 
 #include "xfa/fxfa/parser/cxfa_document_parser.h"
 
+#include "core/fxcrt/xml/cfx_xmldoc.h"
 #include "third_party/base/ptr_util.h"
-#include "xfa/fde/xml/cfde_xmldoc.h"
 #include "xfa/fxfa/fxfa.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 
@@ -40,7 +40,7 @@ int32_t CXFA_DocumentParser::DoParse(IFX_Pause* pPause) {
   return nRetStatus;
 }
 
-CFDE_XMLDoc* CXFA_DocumentParser::GetXMLDoc() const {
+CFX_XMLDoc* CXFA_DocumentParser::GetXMLDoc() const {
   return m_nodeParser.GetXMLDoc();
 }
 

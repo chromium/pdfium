@@ -9,8 +9,8 @@
 #include <memory>
 
 #include "core/fxcrt/fx_stream.h"
+#include "core/fxcrt/xml/cfx_xmlnode.h"
 #include "third_party/base/ptr_util.h"
-#include "xfa/fde/xml/cfde_xmlnode.h"
 #include "xfa/fxfa/fxfa.h"
 #include "xfa/fxfa/fxfa_basic.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
@@ -53,8 +53,8 @@ bool CXFA_DataImporter::ImportData(
       pDataModel->InsertChild(pChildNode);
     }
   } else {
-    CFDE_XMLNode* pXMLNode = pImportDataRoot->GetXMLMappingNode();
-    CFDE_XMLNode* pParentXMLNode = pXMLNode->GetNodeItem(CFDE_XMLNode::Parent);
+    CFX_XMLNode* pXMLNode = pImportDataRoot->GetXMLMappingNode();
+    CFX_XMLNode* pParentXMLNode = pXMLNode->GetNodeItem(CFX_XMLNode::Parent);
     if (pParentXMLNode)
       pParentXMLNode->RemoveChildNode(pXMLNode);
     pDataModel->InsertChild(pImportDataRoot);

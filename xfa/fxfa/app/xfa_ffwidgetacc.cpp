@@ -10,12 +10,12 @@
 #include <memory>
 #include <vector>
 
+#include "core/fxcrt/xml/cfx_xmlelement.h"
+#include "core/fxcrt/xml/cfx_xmlnode.h"
 #include "fxjs/cfxjse_value.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fde/cfde_textout.h"
-#include "xfa/fde/xml/cfde_xmlelement.h"
-#include "xfa/fde/xml/cfde_xmlnode.h"
 #include "xfa/fxfa/app/xfa_ffcheckbutton.h"
 #include "xfa/fxfa/app/xfa_ffchoicelist.h"
 #include "xfa/fxfa/app/xfa_fffield.h"
@@ -63,14 +63,14 @@ CXFA_Node* CXFA_TextProvider::GetTextNode(bool& bRichText) {
     return pChildNode;
   } else if (m_eType == XFA_TEXTPROVIDERTYPE_Datasets) {
     CXFA_Node* pBind = m_pWidgetAcc->GetDatasets();
-    CFDE_XMLNode* pXMLNode = pBind->GetXMLMappingNode();
+    CFX_XMLNode* pXMLNode = pBind->GetXMLMappingNode();
     ASSERT(pXMLNode);
-    for (CFDE_XMLNode* pXMLChild =
-             pXMLNode->GetNodeItem(CFDE_XMLNode::FirstChild);
+    for (CFX_XMLNode* pXMLChild =
+             pXMLNode->GetNodeItem(CFX_XMLNode::FirstChild);
          pXMLChild;
-         pXMLChild = pXMLChild->GetNodeItem(CFDE_XMLNode::NextSibling)) {
-      if (pXMLChild->GetType() == FDE_XMLNODE_Element) {
-        CFDE_XMLElement* pElement = static_cast<CFDE_XMLElement*>(pXMLChild);
+         pXMLChild = pXMLChild->GetNodeItem(CFX_XMLNode::NextSibling)) {
+      if (pXMLChild->GetType() == FX_XMLNODE_Element) {
+        CFX_XMLElement* pElement = static_cast<CFX_XMLElement*>(pXMLChild);
         if (XFA_RecognizeRichText(pElement)) {
           bRichText = true;
         }

@@ -4,33 +4,33 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fde/xml/cfde_xmlelement.h"
+#include "core/fxcrt/xml/cfx_xmlelement.h"
 
 #include "core/fxcrt/fx_ext.h"
+#include "core/fxcrt/xml/cfx_xmlchardata.h"
+#include "core/fxcrt/xml/cfx_xmltext.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
-#include "xfa/fde/xml/cfde_xmlchardata.h"
-#include "xfa/fde/xml/cfde_xmltext.h"
 
-CFDE_XMLElement::CFDE_XMLElement(const CFX_WideString& wsTag)
-    : CFDE_XMLAttributeNode(wsTag) {}
+CFX_XMLElement::CFX_XMLElement(const CFX_WideString& wsTag)
+    : CFX_XMLAttributeNode(wsTag) {}
 
-CFDE_XMLElement::~CFDE_XMLElement() {}
+CFX_XMLElement::~CFX_XMLElement() {}
 
-FDE_XMLNODETYPE CFDE_XMLElement::GetType() const {
-  return FDE_XMLNODE_Element;
+FX_XMLNODETYPE CFX_XMLElement::GetType() const {
+  return FX_XMLNODE_Element;
 }
 
-std::unique_ptr<CFDE_XMLNode> CFDE_XMLElement::Clone() {
-  auto pClone = pdfium::MakeUnique<CFDE_XMLElement>(GetName());
+std::unique_ptr<CFX_XMLNode> CFX_XMLElement::Clone() {
+  auto pClone = pdfium::MakeUnique<CFX_XMLElement>(GetName());
   pClone->SetAttributes(GetAttributes());
 
   CFX_WideString wsText;
-  CFDE_XMLNode* pChild = m_pChild;
+  CFX_XMLNode* pChild = m_pChild;
   while (pChild) {
     switch (pChild->GetType()) {
-      case FDE_XMLNODE_Text:
-        wsText += static_cast<CFDE_XMLText*>(pChild)->GetText();
+      case FX_XMLNODE_Text:
+        wsText += static_cast<CFX_XMLText*>(pChild)->GetText();
         break;
       default:
         break;
@@ -41,21 +41,21 @@ std::unique_ptr<CFDE_XMLNode> CFDE_XMLElement::Clone() {
   return pClone;
 }
 
-CFX_WideString CFDE_XMLElement::GetLocalTagName() const {
+CFX_WideString CFX_XMLElement::GetLocalTagName() const {
   FX_STRSIZE iFind = GetName().Find(L':', 0);
   if (iFind < 0)
     return GetName();
   return GetName().Right(GetName().GetLength() - iFind - 1);
 }
 
-CFX_WideString CFDE_XMLElement::GetNamespacePrefix() const {
+CFX_WideString CFX_XMLElement::GetNamespacePrefix() const {
   FX_STRSIZE iFind = GetName().Find(L':', 0);
   if (iFind < 0)
     return CFX_WideString();
   return GetName().Left(iFind);
 }
 
-CFX_WideString CFDE_XMLElement::GetNamespaceURI() const {
+CFX_WideString CFX_XMLElement::GetNamespaceURI() const {
   CFX_WideString wsAttri(L"xmlns");
   CFX_WideString wsPrefix = GetNamespacePrefix();
   if (wsPrefix.GetLength() > 0) {
@@ -63,14 +63,14 @@ CFX_WideString CFDE_XMLElement::GetNamespaceURI() const {
     wsAttri += wsPrefix;
   }
 
-  auto* pNode = static_cast<const CFDE_XMLNode*>(this);
+  auto* pNode = static_cast<const CFX_XMLNode*>(this);
   while (pNode) {
-    if (pNode->GetType() != FDE_XMLNODE_Element)
+    if (pNode->GetType() != FX_XMLNODE_Element)
       break;
 
-    auto* pElement = static_cast<const CFDE_XMLElement*>(pNode);
+    auto* pElement = static_cast<const CFX_XMLElement*>(pNode);
     if (!pElement->HasAttribute(wsAttri)) {
-      pNode = pNode->GetNodeItem(CFDE_XMLNode::Parent);
+      pNode = pNode->GetNodeItem(CFX_XMLNode::Parent);
       continue;
     }
     return pElement->GetString(wsAttri);
@@ -78,14 +78,14 @@ CFX_WideString CFDE_XMLElement::GetNamespaceURI() const {
   return CFX_WideString();
 }
 
-CFX_WideString CFDE_XMLElement::GetTextData() const {
+CFX_WideString CFX_XMLElement::GetTextData() const {
   CFX_WideTextBuf buffer;
-  CFDE_XMLNode* pChild = m_pChild;
+  CFX_XMLNode* pChild = m_pChild;
   while (pChild) {
     switch (pChild->GetType()) {
-      case FDE_XMLNODE_Text:
-      case FDE_XMLNODE_CharData:
-        buffer << static_cast<CFDE_XMLText*>(pChild)->GetText();
+      case FX_XMLNODE_Text:
+      case FX_XMLNODE_CharData:
+        buffer << static_cast<CFX_XMLText*>(pChild)->GetText();
         break;
       default:
         break;
@@ -95,8 +95,8 @@ CFX_WideString CFDE_XMLElement::GetTextData() const {
   return buffer.MakeString();
 }
 
-void CFDE_XMLElement::SetTextData(const CFX_WideString& wsText) {
+void CFX_XMLElement::SetTextData(const CFX_WideString& wsText) {
   if (wsText.GetLength() < 1)
     return;
-  InsertChildNode(new CFDE_XMLText(wsText));
+  InsertChildNode(new CFX_XMLText(wsText));
 }

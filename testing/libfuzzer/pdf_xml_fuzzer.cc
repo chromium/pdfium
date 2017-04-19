@@ -10,30 +10,30 @@
 #include "core/fxcrt/fx_basic.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/xml/cfx_xmldoc.h"
+#include "core/fxcrt/xml/cfx_xmlnode.h"
+#include "core/fxcrt/xml/cfx_xmlparser.h"
 #include "third_party/base/ptr_util.h"
-#include "xfa/fde/xml/cfde_xmldoc.h"
-#include "xfa/fde/xml/cfde_xmlnode.h"
-#include "xfa/fde/xml/cfde_xmlparser.h"
 
 namespace {
 
-CFDE_XMLNode* XFA_FDEExtension_GetDocumentNode(
-    CFDE_XMLDoc* pXMLDoc,
+CFX_XMLNode* XFA_FDEExtension_GetDocumentNode(
+    CFX_XMLDoc* pXMLDoc,
     bool bVerifyWellFormness = false) {
   if (!pXMLDoc) {
     return nullptr;
   }
-  CFDE_XMLNode* pXMLFakeRoot = pXMLDoc->GetRoot();
-  for (CFDE_XMLNode* pXMLNode =
-           pXMLFakeRoot->GetNodeItem(CFDE_XMLNode::FirstChild);
-       pXMLNode; pXMLNode = pXMLNode->GetNodeItem(CFDE_XMLNode::NextSibling)) {
-    if (pXMLNode->GetType() == FDE_XMLNODE_Element) {
+  CFX_XMLNode* pXMLFakeRoot = pXMLDoc->GetRoot();
+  for (CFX_XMLNode* pXMLNode =
+           pXMLFakeRoot->GetNodeItem(CFX_XMLNode::FirstChild);
+       pXMLNode; pXMLNode = pXMLNode->GetNodeItem(CFX_XMLNode::NextSibling)) {
+    if (pXMLNode->GetType() == FX_XMLNODE_Element) {
       if (bVerifyWellFormness) {
-        for (CFDE_XMLNode* pNextNode =
-                 pXMLNode->GetNodeItem(CFDE_XMLNode::NextSibling);
+        for (CFX_XMLNode* pNextNode =
+                 pXMLNode->GetNodeItem(CFX_XMLNode::NextSibling);
              pNextNode;
-             pNextNode = pNextNode->GetNodeItem(CFDE_XMLNode::NextSibling)) {
-          if (pNextNode->GetType() == FDE_XMLNODE_Element) {
+             pNextNode = pNextNode->GetNodeItem(CFX_XMLNode::NextSibling)) {
+          if (pNextNode->GetType() == FX_XMLNODE_Element) {
             return nullptr;
           }
         }
@@ -54,8 +54,8 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   CFX_RetainPtr<CFX_SeekableStreamProxy> stream =
       pdfium::MakeRetain<CFX_SeekableStreamProxy>(const_cast<uint8_t*>(data),
                                                   size);
-  auto doc = pdfium::MakeUnique<CFDE_XMLDoc>();
-  if (!doc->LoadXML(pdfium::MakeUnique<CFDE_XMLParser>(doc->GetRoot(), stream)))
+  auto doc = pdfium::MakeUnique<CFX_XMLDoc>();
+  if (!doc->LoadXML(pdfium::MakeUnique<CFX_XMLParser>(doc->GetRoot(), stream)))
     return 0;
 
   if (doc->DoLoad(nullptr) < 100)

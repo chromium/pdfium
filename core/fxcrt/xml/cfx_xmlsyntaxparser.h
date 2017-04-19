@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FDE_XML_CFDE_XMLSYNTAXPARSER_H_
-#define XFA_FDE_XML_CFDE_XMLSYNTAXPARSER_H_
+#ifndef CORE_FXCRT_XML_CFX_XMLSYNTAXPARSER_H_
+#define CORE_FXCRT_XML_CFX_XMLSYNTAXPARSER_H_
 
 #include <stack>
 #include <vector>
@@ -14,9 +14,9 @@
 #include "core/fxcrt/cfx_retain_ptr.h"
 #include "core/fxcrt/cfx_seekablestreamproxy.h"
 #include "core/fxcrt/fx_string.h"
-#include "xfa/fde/xml/cfde_xmlnode.h"
+#include "core/fxcrt/xml/cfx_xmlnode.h"
 
-enum class FDE_XmlSyntaxResult {
+enum class FX_XmlSyntaxResult {
   None,
   InstructionOpen,
   InstructionClose,
@@ -34,13 +34,13 @@ enum class FDE_XmlSyntaxResult {
   EndOfString
 };
 
-class CFDE_XMLSyntaxParser {
+class CFX_XMLSyntaxParser {
  public:
-  explicit CFDE_XMLSyntaxParser(
+  explicit CFX_XMLSyntaxParser(
       const CFX_RetainPtr<CFX_SeekableStreamProxy>& pStream);
-  ~CFDE_XMLSyntaxParser();
+  ~CFX_XMLSyntaxParser();
 
-  FDE_XmlSyntaxResult DoSyntaxParse();
+  FX_XmlSyntaxResult DoSyntaxParse();
 
   int32_t GetStatus() const;
   FX_FILESIZE GetCurrentPos() const { return m_ParsedChars + m_Start; }
@@ -110,14 +110,14 @@ class CFDE_XMLSyntaxParser {
   bool m_bEOS;
   FX_FILESIZE m_Start;  // Start position in m_Buffer
   FX_FILESIZE m_End;    // End position in m_Buffer
-  FDE_XMLNODE m_CurNode;
-  std::stack<FDE_XMLNODE> m_XMLNodeStack;
+  FX_XMLNODE m_CurNode;
+  std::stack<FX_XMLNODE> m_XMLNodeStack;
   CFX_BlockBuffer m_BlockBuffer;
   int32_t m_iAllocStep;
   wchar_t* m_pCurrentBlock;  // Pointer into CFX_BlockBuffer
   int32_t m_iIndexInBlock;
   int32_t m_iTextDataLength;
-  FDE_XmlSyntaxResult m_syntaxParserResult;
+  FX_XmlSyntaxResult m_syntaxParserResult;
   FDE_XmlSyntaxState m_syntaxParserState;
   wchar_t m_wQuotationMark;
   int32_t m_iEntityStart;
@@ -125,4 +125,4 @@ class CFDE_XMLSyntaxParser {
   wchar_t m_SkipChar;
 };
 
-#endif  // XFA_FDE_XML_CFDE_XMLSYNTAXPARSER_H_
+#endif  // CORE_FXCRT_XML_CFX_XMLSYNTAXPARSER_H_

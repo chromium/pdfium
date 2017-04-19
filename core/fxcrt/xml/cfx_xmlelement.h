@@ -4,23 +4,23 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FDE_XML_CFDE_XMLELEMENT_H_
-#define XFA_FDE_XML_CFDE_XMLELEMENT_H_
+#ifndef CORE_FXCRT_XML_CFX_XMLELEMENT_H_
+#define CORE_FXCRT_XML_CFX_XMLELEMENT_H_
 
 #include <memory>
 #include <vector>
 
 #include "core/fxcrt/fx_string.h"
-#include "xfa/fde/xml/cfde_xmlattributenode.h"
+#include "core/fxcrt/xml/cfx_xmlattributenode.h"
 
-class CFDE_XMLElement : public CFDE_XMLAttributeNode {
+class CFX_XMLElement : public CFX_XMLAttributeNode {
  public:
-  explicit CFDE_XMLElement(const CFX_WideString& wsTag);
-  ~CFDE_XMLElement() override;
+  explicit CFX_XMLElement(const CFX_WideString& wsTag);
+  ~CFX_XMLElement() override;
 
-  // CFDE_XMLNode
-  FDE_XMLNODETYPE GetType() const override;
-  std::unique_ptr<CFDE_XMLNode> Clone() override;
+  // CFX_XMLNode
+  FX_XMLNODETYPE GetType() const override;
+  std::unique_ptr<CFX_XMLNode> Clone() override;
 
   CFX_WideString GetLocalTagName() const;
   CFX_WideString GetNamespacePrefix() const;
@@ -30,4 +30,4 @@ class CFDE_XMLElement : public CFDE_XMLAttributeNode {
   void SetTextData(const CFX_WideString& wsText);
 };
 
-#endif  // XFA_FDE_XML_CFDE_XMLELEMENT_H_
+#endif  // CORE_FXCRT_XML_CFX_XMLELEMENT_H_

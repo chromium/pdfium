@@ -10,9 +10,9 @@
 #include <vector>
 
 #include "core/fxcrt/fx_ext.h"
+#include "core/fxcrt/xml/cfx_xmlelement.h"
+#include "core/fxcrt/xml/cfx_xmlnode.h"
 #include "third_party/base/stl_util.h"
-#include "xfa/fde/xml/cfde_xmlelement.h"
-#include "xfa/fde/xml/cfde_xmlnode.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_layoutprocessor.h"
 #include "xfa/fxfa/parser/cxfa_localemgr.h"
@@ -142,8 +142,8 @@ void CreateDataBinding(CXFA_Node* pFormNode,
           image.GetContentType(wsContentType);
           image.GetHref(wsHref);
         }
-        CFDE_XMLElement* pXMLDataElement =
-            static_cast<CFDE_XMLElement*>(pDataNode->GetXMLMappingNode());
+        CFX_XMLElement* pXMLDataElement =
+            static_cast<CFX_XMLElement*>(pDataNode->GetXMLMappingNode());
         ASSERT(pXMLDataElement);
         pWidgetData->GetFormatDataValue(wsValue, wsFormattedValue);
         pDataNode->SetAttributeValue(wsValue, wsFormattedValue);
@@ -168,10 +168,10 @@ void CreateDataBinding(CXFA_Node* pFormNode,
               pValue->SetCData(XFA_ATTRIBUTE_Value, text);
             }
           } else {
-            CFDE_XMLNode* pXMLNode = pDataNode->GetXMLMappingNode();
-            ASSERT(pXMLNode->GetType() == FDE_XMLNODE_Element);
-            static_cast<CFDE_XMLElement*>(pXMLNode)->SetString(L"xfa:dataNode",
-                                                               L"dataGroup");
+            CFX_XMLNode* pXMLNode = pDataNode->GetXMLMappingNode();
+            ASSERT(pXMLNode->GetType() == FX_XMLNODE_Element);
+            static_cast<CFX_XMLElement*>(pXMLNode)->SetString(L"xfa:dataNode",
+                                                              L"dataGroup");
           }
         } else if (!wsValue.IsEmpty()) {
           pWidgetData->GetFormatDataValue(wsValue, wsFormattedValue);
@@ -281,8 +281,8 @@ void CreateDataBinding(CXFA_Node* pFormNode,
                                     XFA_Element::Image);
       CXFA_Image image = defValue.GetImage();
       if (image) {
-        CFDE_XMLElement* pXMLDataElement =
-            static_cast<CFDE_XMLElement*>(pDataNode->GetXMLMappingNode());
+        CFX_XMLElement* pXMLDataElement =
+            static_cast<CFX_XMLElement*>(pDataNode->GetXMLMappingNode());
         ASSERT(pXMLDataElement);
 
         CFX_WideString wsContentType =
@@ -1356,7 +1356,7 @@ CXFA_Node* CXFA_Document::GetNotBindNode(
 void CXFA_Document::DoDataMerge() {
   CXFA_Node* pDatasetsRoot = ToNode(GetXFAObject(XFA_HASHCODE_Datasets));
   if (!pDatasetsRoot) {
-    CFDE_XMLElement* pDatasetsXMLNode = new CFDE_XMLElement(L"xfa:datasets");
+    CFX_XMLElement* pDatasetsXMLNode = new CFX_XMLElement(L"xfa:datasets");
     pDatasetsXMLNode->SetString(L"xmlns:xfa",
                                 L"http://www.xfa.org/schema/xfa-data/1.0/");
     pDatasetsRoot = CreateNode(XFA_XDPPACKET_Datasets, XFA_Element::DataModel);
@@ -1392,7 +1392,7 @@ void CXFA_Document::DoDataMerge() {
   }
 
   if (!pDataRoot) {
-    CFDE_XMLElement* pDataRootXMLNode = new CFDE_XMLElement(L"xfa:data");
+    CFX_XMLElement* pDataRootXMLNode = new CFX_XMLElement(L"xfa:data");
     pDataRoot = CreateNode(XFA_XDPPACKET_Datasets, XFA_Element::DataGroup);
     pDataRoot->SetCData(XFA_ATTRIBUTE_Name, L"data");
     pDataRoot->SetXMLMappingNode(pDataRootXMLNode);
@@ -1441,8 +1441,8 @@ void CXFA_Document::DoDataMerge() {
     CFX_WideStringC wsFormName = pSubformSetNode->GetCData(XFA_ATTRIBUTE_Name);
     CFX_WideString wsDataTopLevelName(wsFormName.IsEmpty() ? L"form"
                                                            : wsFormName);
-    CFDE_XMLElement* pDataTopLevelXMLNode =
-        new CFDE_XMLElement(wsDataTopLevelName);
+    CFX_XMLElement* pDataTopLevelXMLNode =
+        new CFX_XMLElement(wsDataTopLevelName);
 
     pDataTopLevel = CreateNode(XFA_XDPPACKET_Datasets, XFA_Element::DataGroup);
     pDataTopLevel->SetCData(XFA_ATTRIBUTE_Name, wsDataTopLevelName);

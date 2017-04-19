@@ -11,7 +11,7 @@
 
 #include "xfa/fxfa/parser/cxfa_simple_parser.h"
 
-class CFDE_XMLDoc;
+class CFX_XMLDoc;
 class CXFA_Document;
 class CXFA_FFNotify;
 class CXFA_Notify;
@@ -27,7 +27,7 @@ class CXFA_DocumentParser {
                      XFA_XDPPACKET ePacketID);
   int32_t DoParse(IFX_Pause* pPause);
 
-  CFDE_XMLDoc* GetXMLDoc() const;
+  CFX_XMLDoc* GetXMLDoc() const;
   CXFA_FFNotify* GetNotify() const;
   CXFA_Document* GetDocument() const;
 

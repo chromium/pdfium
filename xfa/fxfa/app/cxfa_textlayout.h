@@ -21,7 +21,7 @@ class CFDE_Brush;
 class CFDE_CSSComputedStyle;
 class CFDE_Pen;
 class CFDE_RenderDevice;
-class CFDE_XMLNode;
+class CFX_XMLNode;
 class CFX_RTFBreak;
 class CXFA_LoaderContext;
 class CXFA_LinkUserData;
@@ -64,13 +64,13 @@ class CXFA_TextLayout {
 
  private:
   void GetTextDataNode();
-  CFDE_XMLNode* GetXMLContainerNode();
+  CFX_XMLNode* GetXMLContainerNode();
   std::unique_ptr<CFX_RTFBreak> CreateBreak(bool bDefault);
   void InitBreak(float fLineWidth);
   void InitBreak(CFDE_CSSComputedStyle* pStyle,
                  FDE_CSSDisplay eDisplay,
                  float fLineWidth,
-                 CFDE_XMLNode* pXMLNode,
+                 CFX_XMLNode* pXMLNode,
                  CFDE_CSSComputedStyle* pParentStyle = nullptr);
   bool Loader(const CFX_SizeF& szText,
               float& fLinePos,
@@ -79,7 +79,7 @@ class CXFA_TextLayout {
                 const CFX_SizeF& szText,
                 float& fLinePos,
                 bool bSavePieces);
-  bool LoadRichText(CFDE_XMLNode* pXMLNode,
+  bool LoadRichText(CFX_XMLNode* pXMLNode,
                     const CFX_SizeF& szText,
                     float& fLinePos,
                     const CFX_RetainPtr<CFDE_CSSComputedStyle>& pParentStyle,
