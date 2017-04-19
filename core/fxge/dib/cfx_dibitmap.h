@@ -115,6 +115,10 @@ class CFX_DIBitmap : public CFX_DIBSource {
 #if defined _SKIA_SUPPORT_PATHS_
   Format m_nFormat;
 #endif
+
+ private:
+  void ConvertRGBColorScale(uint32_t forecolor, uint32_t backcolor);
+  void ConvertCMYKColorScale(uint32_t forecolor, uint32_t backcolor);
 };
 
 #endif  // CORE_FXGE_DIB_CFX_DIBITMAP_H_

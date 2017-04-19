@@ -686,104 +686,35 @@ void CFX_DIBitmap::DownSampleScanline(int line,
   }
 }
 
-// TODO(weili): Split this function into two for handling CMYK and RGB
-// colors separately.
-bool CFX_DIBitmap::ConvertColorScale(uint32_t forecolor, uint32_t backcolor) {
-  ASSERT(!IsAlphaMask());
-  if (!m_pBuffer || IsAlphaMask())
-    return false;
-
-  // Values used for CMYK colors.
-  int fc = 0;
-  int fm = 0;
-  int fy = 0;
-  int fk = 0;
-  int bc = 0;
-  int bm = 0;
-  int by = 0;
-  int bk = 0;
-  // Values used for RGB colors.
-  int fr = 0;
-  int fg = 0;
-  int fb = 0;
-  int br = 0;
-  int bg = 0;
-  int bb = 0;
-  bool isCmykImage = IsCmykImage();
-  if (isCmykImage) {
-    fc = FXSYS_GetCValue(forecolor);
-    fm = FXSYS_GetMValue(forecolor);
-    fy = FXSYS_GetYValue(forecolor);
-    fk = FXSYS_GetKValue(forecolor);
-    bc = FXSYS_GetCValue(backcolor);
-    bm = FXSYS_GetMValue(backcolor);
-    by = FXSYS_GetYValue(backcolor);
-    bk = FXSYS_GetKValue(backcolor);
-  } else {
-    fr = FXSYS_GetRValue(forecolor);
-    fg = FXSYS_GetGValue(forecolor);
-    fb = FXSYS_GetBValue(forecolor);
-    br = FXSYS_GetRValue(backcolor);
-    bg = FXSYS_GetGValue(backcolor);
-    bb = FXSYS_GetBValue(backcolor);
-  }
+void CFX_DIBitmap::ConvertRGBColorScale(uint32_t forecolor,
+                                        uint32_t backcolor) {
+  int fr = FXSYS_GetRValue(forecolor);
+  int fg = FXSYS_GetGValue(forecolor);
+  int fb = FXSYS_GetBValue(forecolor);
+  int br = FXSYS_GetRValue(backcolor);
+  int bg = FXSYS_GetGValue(backcolor);
+  int bb = FXSYS_GetBValue(backcolor);
   if (m_bpp <= 8) {
-    if (isCmykImage) {
-      if (forecolor == 0xff && backcolor == 0 && !m_pPalette) {
-        return true;
-      }
-    } else if (forecolor == 0 && backcolor == 0xffffff && !m_pPalette) {
-      return true;
-    }
-    if (!m_pPalette) {
+    if (forecolor == 0 && backcolor == 0xffffff && !m_pPalette)
+      return;
+    if (!m_pPalette)
       BuildPalette();
-    }
     int size = 1 << m_bpp;
-    if (isCmykImage) {
-      for (int i = 0; i < size; i++) {
-        uint8_t b, g, r;
-        AdobeCMYK_to_sRGB1(FXSYS_GetCValue(m_pPalette.get()[i]),
-                           FXSYS_GetMValue(m_pPalette.get()[i]),
-                           FXSYS_GetYValue(m_pPalette.get()[i]),
-                           FXSYS_GetKValue(m_pPalette.get()[i]), r, g, b);
-        int gray = 255 - FXRGB2GRAY(r, g, b);
-        m_pPalette.get()[i] = CmykEncode(
-            bc + (fc - bc) * gray / 255, bm + (fm - bm) * gray / 255,
-            by + (fy - by) * gray / 255, bk + (fk - bk) * gray / 255);
-      }
-    } else {
-      for (int i = 0; i < size; i++) {
-        int gray = FXRGB2GRAY(FXARGB_R(m_pPalette.get()[i]),
-                              FXARGB_G(m_pPalette.get()[i]),
-                              FXARGB_B(m_pPalette.get()[i]));
-        m_pPalette.get()[i] = FXARGB_MAKE(0xff, br + (fr - br) * gray / 255,
-                                          bg + (fg - bg) * gray / 255,
-                                          bb + (fb - bb) * gray / 255);
-      }
+    for (int i = 0; i < size; ++i) {
+      int gray = FXRGB2GRAY(FXARGB_R(m_pPalette.get()[i]),
+                            FXARGB_G(m_pPalette.get()[i]),
+                            FXARGB_B(m_pPalette.get()[i]));
+      m_pPalette.get()[i] =
+          FXARGB_MAKE(0xff, br + (fr - br) * gray / 255,
+                      bg + (fg - bg) * gray / 255, bb + (fb - bb) * gray / 255);
     }
-    return true;
+    return;
   }
-  if (isCmykImage) {
-    if (forecolor == 0xff && backcolor == 0x00) {
-      for (int row = 0; row < m_Height; row++) {
-        uint8_t* scanline = m_pBuffer.Get() + row * m_Pitch;
-        for (int col = 0; col < m_Width; col++) {
-          uint8_t b, g, r;
-          AdobeCMYK_to_sRGB1(scanline[0], scanline[1], scanline[2], scanline[3],
-                             r, g, b);
-          *scanline++ = 0;
-          *scanline++ = 0;
-          *scanline++ = 0;
-          *scanline++ = 255 - FXRGB2GRAY(r, g, b);
-        }
-      }
-      return true;
-    }
-  } else if (forecolor == 0 && backcolor == 0xffffff) {
-    for (int row = 0; row < m_Height; row++) {
+  if (forecolor == 0 && backcolor == 0xffffff) {
+    for (int row = 0; row < m_Height; ++row) {
       uint8_t* scanline = m_pBuffer.Get() + row * m_Pitch;
       int gap = m_bpp / 8 - 2;
-      for (int col = 0; col < m_Width; col++) {
+      for (int col = 0; col < m_Width; ++col) {
         int gray = FXRGB2GRAY(scanline[2], scanline[1], scanline[0]);
         *scanline++ = gray;
         *scanline++ = gray;
@@ -791,35 +722,95 @@ bool CFX_DIBitmap::ConvertColorScale(uint32_t forecolor, uint32_t backcolor) {
         scanline += gap;
       }
     }
-    return true;
+    return;
   }
-  if (isCmykImage) {
-    for (int row = 0; row < m_Height; row++) {
+  for (int row = 0; row < m_Height; ++row) {
+    uint8_t* scanline = m_pBuffer.Get() + row * m_Pitch;
+    int gap = m_bpp / 8 - 2;
+    for (int col = 0; col < m_Width; ++col) {
+      int gray = FXRGB2GRAY(scanline[2], scanline[1], scanline[0]);
+      *scanline++ = bb + (fb - bb) * gray / 255;
+      *scanline++ = bg + (fg - bg) * gray / 255;
+      *scanline = br + (fr - br) * gray / 255;
+      scanline += gap;
+    }
+  }
+}
+
+void CFX_DIBitmap::ConvertCMYKColorScale(uint32_t forecolor,
+                                         uint32_t backcolor) {
+  int fc = FXSYS_GetCValue(forecolor);
+  int fm = FXSYS_GetMValue(forecolor);
+  int fy = FXSYS_GetYValue(forecolor);
+  int fk = FXSYS_GetKValue(forecolor);
+  int bc = FXSYS_GetCValue(backcolor);
+  int bm = FXSYS_GetMValue(backcolor);
+  int by = FXSYS_GetYValue(backcolor);
+  int bk = FXSYS_GetKValue(backcolor);
+  if (m_bpp <= 8) {
+    if (forecolor == 0xff && backcolor == 0 && !m_pPalette)
+      return;
+    if (!m_pPalette)
+      BuildPalette();
+    int size = 1 << m_bpp;
+    for (int i = 0; i < size; ++i) {
+      uint8_t r;
+      uint8_t g;
+      uint8_t b;
+      AdobeCMYK_to_sRGB1(FXSYS_GetCValue(m_pPalette.get()[i]),
+                         FXSYS_GetMValue(m_pPalette.get()[i]),
+                         FXSYS_GetYValue(m_pPalette.get()[i]),
+                         FXSYS_GetKValue(m_pPalette.get()[i]), r, g, b);
+      int gray = 255 - FXRGB2GRAY(r, g, b);
+      m_pPalette.get()[i] =
+          CmykEncode(bc + (fc - bc) * gray / 255, bm + (fm - bm) * gray / 255,
+                     by + (fy - by) * gray / 255, bk + (fk - bk) * gray / 255);
+    }
+    return;
+  }
+  if (forecolor == 0xff && backcolor == 0x00) {
+    for (int row = 0; row < m_Height; ++row) {
       uint8_t* scanline = m_pBuffer.Get() + row * m_Pitch;
-      for (int col = 0; col < m_Width; col++) {
-        uint8_t b, g, r;
+      for (int col = 0; col < m_Width; ++col) {
+        uint8_t r;
+        uint8_t g;
+        uint8_t b;
         AdobeCMYK_to_sRGB1(scanline[0], scanline[1], scanline[2], scanline[3],
                            r, g, b);
-        int gray = 255 - FXRGB2GRAY(r, g, b);
-        *scanline++ = bc + (fc - bc) * gray / 255;
-        *scanline++ = bm + (fm - bm) * gray / 255;
-        *scanline++ = by + (fy - by) * gray / 255;
-        *scanline++ = bk + (fk - bk) * gray / 255;
+        *scanline++ = 0;
+        *scanline++ = 0;
+        *scanline++ = 0;
+        *scanline++ = 255 - FXRGB2GRAY(r, g, b);
       }
     }
-  } else {
-    for (int row = 0; row < m_Height; row++) {
-      uint8_t* scanline = m_pBuffer.Get() + row * m_Pitch;
-      int gap = m_bpp / 8 - 2;
-      for (int col = 0; col < m_Width; col++) {
-        int gray = FXRGB2GRAY(scanline[2], scanline[1], scanline[0]);
-        *scanline++ = bb + (fb - bb) * gray / 255;
-        *scanline++ = bg + (fg - bg) * gray / 255;
-        *scanline = br + (fr - br) * gray / 255;
-        scanline += gap;
-      }
+    return;
+  }
+  for (int row = 0; row < m_Height; ++row) {
+    uint8_t* scanline = m_pBuffer.Get() + row * m_Pitch;
+    for (int col = 0; col < m_Width; ++col) {
+      uint8_t r;
+      uint8_t g;
+      uint8_t b;
+      AdobeCMYK_to_sRGB1(scanline[0], scanline[1], scanline[2], scanline[3], r,
+                         g, b);
+      int gray = 255 - FXRGB2GRAY(r, g, b);
+      *scanline++ = bc + (fc - bc) * gray / 255;
+      *scanline++ = bm + (fm - bm) * gray / 255;
+      *scanline++ = by + (fy - by) * gray / 255;
+      *scanline++ = bk + (fk - bk) * gray / 255;
     }
   }
+}
+
+bool CFX_DIBitmap::ConvertColorScale(uint32_t forecolor, uint32_t backcolor) {
+  ASSERT(!IsAlphaMask());
+  if (!m_pBuffer || IsAlphaMask())
+    return false;
+
+  if (IsCmykImage())
+    ConvertCMYKColorScale(forecolor, backcolor);
+  else
+    ConvertRGBColorScale(forecolor, backcolor);
   return true;
 }
 
