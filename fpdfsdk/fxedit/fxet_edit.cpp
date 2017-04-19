@@ -21,6 +21,7 @@
 #include "core/fpdfdoc/cpvt_section.h"
 #include "core/fpdfdoc/cpvt_word.h"
 #include "core/fpdfdoc/ipvt_fontmap.h"
+#include "core/fxcrt/fx_codepage.h"
 #include "core/fxge/cfx_graphstatedata.h"
 #include "core/fxge/cfx_pathdata.h"
 #include "core/fxge/cfx_renderdevice.h"
@@ -476,7 +477,7 @@ void CFXEU_Clear::Undo() {
   if (m_pEdit) {
     m_pEdit->SelectNone();
     m_pEdit->SetCaret(m_wrSel.BeginPos);
-    m_pEdit->InsertText(m_swText, FXFONT_DEFAULT_CHARSET, false, true);
+    m_pEdit->InsertText(m_swText, FX_CHARSET_Default, false, true);
     m_pEdit->SetSel(m_wrSel.BeginPos, m_wrSel.EndPos);
   }
 }
@@ -1027,7 +1028,7 @@ CPVT_WordRange CFX_Edit::GetSelectWordRange() const {
 
 void CFX_Edit::SetText(const CFX_WideString& sText) {
   Empty();
-  DoInsertText(CPVT_WordPlace(0, 0, -1), sText, FXFONT_DEFAULT_CHARSET);
+  DoInsertText(CPVT_WordPlace(0, 0, -1), sText, FX_CHARSET_Default);
   Paint();
 }
 

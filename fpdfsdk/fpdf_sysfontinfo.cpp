@@ -8,12 +8,26 @@
 
 #include <memory>
 
+#include "core/fxcrt/fx_codepage.h"
 #include "core/fxge/cfx_fontmapper.h"
 #include "core/fxge/cfx_gemodule.h"
 #include "core/fxge/fx_font.h"
 #include "core/fxge/ifx_systemfontinfo.h"
 #include "fpdfsdk/fsdk_define.h"
 #include "fpdfsdk/pdfwindow/PWL_FontMap.h"
+
+static_assert(FXFONT_ANSI_CHARSET == FX_CHARSET_ANSI, "Charset must match");
+static_assert(FXFONT_DEFAULT_CHARSET == FX_CHARSET_Default,
+              "Charset must match");
+static_assert(FXFONT_SYMBOL_CHARSET == FX_CHARSET_Symbol, "Charset must match");
+static_assert(FXFONT_SHIFTJIS_CHARSET == FX_CHARSET_ShiftJIS,
+              "Charset must match");
+static_assert(FXFONT_HANGEUL_CHARSET == FX_CHARSET_Hangul,
+              "Charset must match");
+static_assert(FXFONT_GB2312_CHARSET == FX_CHARSET_ChineseSimplified,
+              "Charset must match");
+static_assert(FXFONT_CHINESEBIG5_CHARSET == FX_CHARSET_ChineseTraditional,
+              "Charset must match");
 
 class CFX_ExternalFontInfo final : public IFX_SystemFontInfo {
  public:

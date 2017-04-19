@@ -20,6 +20,7 @@
 #include "core/fpdfapi/parser/cpdf_string.h"
 #include "core/fpdfdoc/cpdf_filespec.h"
 #include "core/fpdfdoc/cpdf_formcontrol.h"
+#include "core/fxcrt/fx_codepage.h"
 #include "core/fxge/cfx_substfont.h"
 #include "core/fxge/fx_font.h"
 #include "third_party/base/stl_util.h"
@@ -75,7 +76,7 @@ void InitDict(CPDF_Dictionary*& pFormDict, CPDF_Document* pDocument) {
     if (pFont)
       AddFont(pFormDict, pDocument, pFont, &csBaseName);
 
-    if (charSet != FXFONT_ANSI_CHARSET) {
+    if (charSet != FX_CHARSET_ANSI) {
       CFX_ByteString csFontName =
           CPDF_InterForm::GetNativeFont(charSet, nullptr);
       if (!pFont || csFontName != "Helvetica") {
@@ -571,56 +572,56 @@ CPDF_Font* AddNativeInterFormFont(CPDF_Dictionary*& pFormDict,
 // static
 uint8_t CPDF_InterForm::GetNativeCharSet() {
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
-  uint8_t charSet = FXFONT_ANSI_CHARSET;
+  uint8_t charSet = FX_CHARSET_ANSI;
   UINT iCodePage = ::GetACP();
   switch (iCodePage) {
-    case 932:
-      charSet = FXFONT_SHIFTJIS_CHARSET;
+    case FX_CODEPAGE_ShiftJIS:
+      charSet = FX_CHARSET_ShiftJIS;
       break;
-    case 936:
-      charSet = FXFONT_GB2312_CHARSET;
+    case FX_CODEPAGE_ChineseSimplified:
+      charSet = FX_CHARSET_ChineseSimplified;
       break;
-    case 950:
-      charSet = FXFONT_CHINESEBIG5_CHARSET;
+    case FX_CODEPAGE_ChineseTraditional:
+      charSet = FX_CHARSET_ChineseTraditional;
       break;
-    case 1252:
-      charSet = FXFONT_ANSI_CHARSET;
+    case FX_CODEPAGE_MSWin_WesternEuropean:
+      charSet = FX_CHARSET_ANSI;
       break;
-    case 874:
-      charSet = FXFONT_THAI_CHARSET;
+    case FX_CODEPAGE_MSDOS_Thai:
+      charSet = FX_CHARSET_Thai;
       break;
-    case 949:
-      charSet = FXFONT_HANGUL_CHARSET;
+    case FX_CODEPAGE_Hangul:
+      charSet = FX_CHARSET_Hangul;
       break;
-    case 1200:
-      charSet = FXFONT_ANSI_CHARSET;
+    case FX_CODEPAGE_UTF16LE:
+      charSet = FX_CHARSET_ANSI;
       break;
-    case 1250:
-      charSet = FXFONT_EASTEUROPE_CHARSET;
+    case FX_CODEPAGE_MSWin_EasternEuropean:
+      charSet = FX_CHARSET_MSWin_EasternEuropean;
       break;
-    case 1251:
-      charSet = FXFONT_RUSSIAN_CHARSET;
+    case FX_CODEPAGE_MSWin_Cyrillic:
+      charSet = FX_CHARSET_MSWin_Cyrillic;
       break;
-    case 1253:
-      charSet = FXFONT_GREEK_CHARSET;
+    case FX_CODEPAGE_MSWin_Greek:
+      charSet = FX_CHARSET_MSWin_Greek;
       break;
-    case 1254:
-      charSet = FXFONT_TURKISH_CHARSET;
+    case FX_CODEPAGE_MSWin_Turkish:
+      charSet = FX_CHARSET_MSWin_Turkish;
       break;
-    case 1255:
-      charSet = FXFONT_HEBREW_CHARSET;
+    case FX_CODEPAGE_MSWin_Hebrew:
+      charSet = FX_CHARSET_MSWin_Hebrew;
       break;
-    case 1256:
-      charSet = FXFONT_ARABIC_CHARSET;
+    case FX_CODEPAGE_MSWin_Arabic:
+      charSet = FX_CHARSET_MSWin_Arabic;
       break;
-    case 1257:
-      charSet = FXFONT_BALTIC_CHARSET;
+    case FX_CODEPAGE_MSWin_Baltic:
+      charSet = FX_CHARSET_MSWin_Baltic;
       break;
-    case 1258:
-      charSet = FXFONT_VIETNAMESE_CHARSET;
+    case FX_CODEPAGE_MSWin_Vietnamese:
+      charSet = FX_CHARSET_MSWin_Vietnamese;
       break;
-    case 1361:
-      charSet = FXFONT_JOHAB_CHARSET;
+    case FX_CODEPAGE_Johab:
+      charSet = FX_CHARSET_Johab;
       break;
   }
   return charSet;
@@ -734,18 +735,18 @@ CFX_ByteString CPDF_InterForm::GetNativeFont(uint8_t charSet, void* pLogFont) {
   CFX_ByteString csFontName;
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
   LOGFONTA lf = {};
-  if (charSet == FXFONT_ANSI_CHARSET) {
+  if (charSet == FX_CHARSET_ANSI) {
     csFontName = "Helvetica";
     return csFontName;
   }
   bool bRet = false;
-  if (charSet == FXFONT_SHIFTJIS_CHARSET) {
+  if (charSet == FX_CHARSET_ShiftJIS) {
     bRet = RetrieveSpecificFont(charSet, DEFAULT_PITCH | FF_DONTCARE,
                                 "MS Mincho", lf);
-  } else if (charSet == FXFONT_GB2312_CHARSET) {
+  } else if (charSet == FX_CHARSET_ChineseSimplified) {
     bRet = RetrieveSpecificFont(charSet, DEFAULT_PITCH | FF_DONTCARE, "SimSun",
                                 lf);
-  } else if (charSet == FXFONT_CHINESEBIG5_CHARSET) {
+  } else if (charSet == FX_CHARSET_ChineseTraditional) {
     bRet = RetrieveSpecificFont(charSet, DEFAULT_PITCH | FF_DONTCARE, "MingLiU",
                                 lf);
   }

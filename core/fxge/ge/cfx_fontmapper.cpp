@@ -11,6 +11,7 @@
 #include <utility>
 #include <vector>
 
+#include "core/fxcrt/fx_codepage.h"
 #include "core/fxge/cfx_substfont.h"
 #include "core/fxge/fx_font.h"
 #include "core/fxge/ifx_systemfontinfo.h"
@@ -202,7 +203,7 @@ uint8_t GetCharsetFromCodePage(uint16_t codepage) {
                        });
   if (pCharmap < pEnd && codepage == pCharmap->codepage)
     return pCharmap->charset;
-  return FXFONT_DEFAULT_CHARSET;
+  return FX_CHARSET_Default;
 }
 
 CFX_ByteString GetFontFamily(CFX_ByteString fontName, int nStyle) {
@@ -335,8 +336,8 @@ void CFX_FontMapper::AddInstalledFont(const CFX_ByteString& name, int charset) {
     void* hFont = m_pFontInfo->GetFont(name.c_str());
     if (!hFont) {
       int iExact;
-      hFont = m_pFontInfo->MapFont(0, 0, FXFONT_DEFAULT_CHARSET, 0,
-                                   name.c_str(), iExact);
+      hFont = m_pFontInfo->MapFont(0, 0, FX_CHARSET_Default, 0, name.c_str(),
+                                   iExact);
       if (!hFont)
         return;
     }
@@ -434,12 +435,12 @@ FXFT_Face CFX_FontMapper::FindSubstFont(const CFX_ByteString& name,
   PDF_GetStandardFontName(&SubstName);
   if (SubstName == "Symbol" && !bTrueType) {
     pSubstFont->m_Family = "Chrome Symbol";
-    pSubstFont->m_Charset = FXFONT_SYMBOL_CHARSET;
+    pSubstFont->m_Charset = FX_CHARSET_Symbol;
     return UseInternalSubst(pSubstFont, 12, italic_angle, weight, 0);
   }
   if (SubstName == "ZapfDingbats") {
     pSubstFont->m_Family = "Chrome Dingbats";
-    pSubstFont->m_Charset = FXFONT_SYMBOL_CHARSET;
+    pSubstFont->m_Charset = FX_CHARSET_Symbol;
     return UseInternalSubst(pSubstFont, 13, italic_angle, weight, 0);
   }
   int iBaseFont = 0;
@@ -552,15 +553,15 @@ FXFT_Face CFX_FontMapper::FindSubstFont(const CFX_ByteString& name,
   if (nStyle & FX_FONT_STYLE_Italic)
     bItalic = true;
   int iExact = 0;
-  int Charset = FXFONT_ANSI_CHARSET;
+  int Charset = FX_CHARSET_ANSI;
   if (WindowCP)
     Charset = GetCharsetFromCodePage(WindowCP);
   else if (iBaseFont == kNumStandardFonts && (flags & FXFONT_SYMBOLIC))
-    Charset = FXFONT_SYMBOL_CHARSET;
-  bool bCJK =
-      (Charset == FXFONT_SHIFTJIS_CHARSET || Charset == FXFONT_GB2312_CHARSET ||
-       Charset == FXFONT_HANGUL_CHARSET ||
-       Charset == FXFONT_CHINESEBIG5_CHARSET);
+    Charset = FX_CHARSET_Symbol;
+  bool bCJK = (Charset == FX_CHARSET_ShiftJIS ||
+               Charset == FX_CHARSET_ChineseSimplified ||
+               Charset == FX_CHARSET_Hangul ||
+               Charset == FX_CHARSET_ChineseTraditional);
   if (!m_pFontInfo) {
     return UseInternalSubst(pSubstFont, iBaseFont, italic_angle, old_weight,
                             PitchFamily);
@@ -640,12 +641,12 @@ FXFT_Face CFX_FontMapper::FindSubstFont(const CFX_ByteString& name,
                                 PitchFamily);
       }
     } else {
-      if (Charset == FXFONT_SYMBOL_CHARSET) {
+      if (Charset == FX_CHARSET_Symbol) {
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_ || \
     _FXM_PLATFORM_ == _FXM_PLATFORM_ANDROID_
         if (SubstName == "Symbol") {
           pSubstFont->m_Family = "Chrome Symbol";
-          pSubstFont->m_Charset = FXFONT_SYMBOL_CHARSET;
+          pSubstFont->m_Charset = FX_CHARSET_Symbol;
           return UseInternalSubst(pSubstFont, 12, italic_angle, old_weight,
                                   PitchFamily);
         }
@@ -653,7 +654,7 @@ FXFT_Face CFX_FontMapper::FindSubstFont(const CFX_ByteString& name,
         return FindSubstFont(family, bTrueType, flags & ~FXFONT_SYMBOLIC,
                              weight, italic_angle, 0, pSubstFont);
       }
-      if (Charset == FXFONT_ANSI_CHARSET) {
+      if (Charset == FX_CHARSET_ANSI) {
         return UseInternalSubst(pSubstFont, iBaseFont, italic_angle, old_weight,
                                 PitchFamily);
       }
@@ -674,7 +675,7 @@ FXFT_Face CFX_FontMapper::FindSubstFont(const CFX_ByteString& name,
     return nullptr;
 
   m_pFontInfo->GetFaceName(hFont, &SubstName);
-  if (Charset == FXFONT_DEFAULT_CHARSET)
+  if (Charset == FX_CHARSET_Default)
     m_pFontInfo->GetFontCharset(hFont, &Charset);
   uint32_t ttc_size = m_pFontInfo->GetFontData(hFont, kTableTTCF, nullptr, 0);
   uint32_t font_size = m_pFontInfo->GetFontData(hFont, 0, nullptr, 0);

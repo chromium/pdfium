@@ -6,6 +6,7 @@
 
 #include <memory>
 
+#include "core/fxcrt/fx_codepage.h"
 #include "core/fxge/cfx_gemodule.h"
 #include "core/fxge/ge/cfx_folderfontinfo.h"
 #include "core/fxge/ifx_systemfontinfo.h"
@@ -90,7 +91,7 @@ void* CFX_LinuxFontInfo::MapFont(int weight,
   }
   bool bCJK = true;
   switch (charset) {
-    case FXFONT_SHIFTJIS_CHARSET: {
+    case FX_CHARSET_ShiftJIS: {
       size_t index = GetJapanesePreference(cstr_face, weight, pitch_family);
       ASSERT(index < FX_ArraySize(g_LinuxGpFontList));
       for (size_t i = 0; i < kLinuxGpNameSize; i++) {
@@ -100,7 +101,7 @@ void* CFX_LinuxFontInfo::MapFont(int weight,
       }
       break;
     }
-    case FXFONT_GB2312_CHARSET: {
+    case FX_CHARSET_ChineseSimplified: {
       for (size_t i = 0; i < FX_ArraySize(g_LinuxGbFontList); ++i) {
         auto it = m_FontList.find(g_LinuxGbFontList[i]);
         if (it != m_FontList.end())
@@ -108,7 +109,7 @@ void* CFX_LinuxFontInfo::MapFont(int weight,
       }
       break;
     }
-    case FXFONT_CHINESEBIG5_CHARSET: {
+    case FX_CHARSET_ChineseTraditional: {
       for (size_t i = 0; i < FX_ArraySize(g_LinuxB5FontList); ++i) {
         auto it = m_FontList.find(g_LinuxB5FontList[i]);
         if (it != m_FontList.end())
@@ -116,7 +117,7 @@ void* CFX_LinuxFontInfo::MapFont(int weight,
       }
       break;
     }
-    case FXFONT_HANGUL_CHARSET: {
+    case FX_CHARSET_Hangul: {
       for (size_t i = 0; i < FX_ArraySize(g_LinuxHGFontList); ++i) {
         auto it = m_FontList.find(g_LinuxHGFontList[i]);
         if (it != m_FontList.end())

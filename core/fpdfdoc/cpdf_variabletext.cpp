@@ -16,6 +16,7 @@
 #include "core/fpdfdoc/cpvt_wordinfo.h"
 #include "core/fpdfdoc/csection.h"
 #include "core/fpdfdoc/ipvt_fontmap.h"
+#include "core/fxcrt/fx_codepage.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 
@@ -378,7 +379,7 @@ CPVT_WordPlace CPDF_VariableText::InsertText(const CPVT_WordPlace& place,
       case 0x09:
         word = 0x20;
       default:
-        wp = InsertWord(wp, word, FXFONT_DEFAULT_CHARSET, nullptr);
+        wp = InsertWord(wp, word, FX_CHARSET_Default, nullptr);
         break;
     }
     if (wp == oldwp)
@@ -448,7 +449,7 @@ void CPDF_VariableText::SetText(const CFX_WideString& swText) {
       case 0x09:
         word = 0x20;
       default:
-        wp = InsertWord(wp, word, FXFONT_DEFAULT_CHARSET, nullptr);
+        wp = InsertWord(wp, word, FX_CHARSET_Default, nullptr);
         break;
     }
     nCharCount++;

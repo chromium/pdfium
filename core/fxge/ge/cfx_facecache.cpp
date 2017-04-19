@@ -10,6 +10,7 @@
 #include <limits>
 #include <memory>
 
+#include "core/fxcrt/fx_codepage.h"
 #include "core/fxge/cfx_fontmgr.h"
 #include "core/fxge/cfx_gemodule.h"
 #include "core/fxge/cfx_pathdata.h"
@@ -165,7 +166,7 @@ CFX_GlyphBitmap* CFX_FaceCache::RenderGlyph(const CFX_Font* pFont,
     if (index >= CFX_Font::kWeightPowArraySize)
       return nullptr;
     pdfium::base::CheckedNumeric<signed long> level = 0;
-    if (pSubstFont->m_Charset == FXFONT_SHIFTJIS_CHARSET)
+    if (pSubstFont->m_Charset == FX_CHARSET_ShiftJIS)
       level = CFX_Font::s_WeightPow_SHIFTJIS[index] * 2;
     else
       level = CFX_Font::s_WeightPow_11[index];

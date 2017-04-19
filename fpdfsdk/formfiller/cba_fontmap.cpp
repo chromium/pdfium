@@ -42,7 +42,7 @@ void CBA_FontMap::Reset() {
 }
 
 void CBA_FontMap::Initialize() {
-  int32_t nCharset = FXFONT_DEFAULT_CHARSET;
+  int32_t nCharset = FX_CHARSET_Default;
 
   if (!m_pDefaultFont) {
     m_pDefaultFont = GetAnnotDefaultFont(&m_sDefaultFontName);
@@ -54,16 +54,16 @@ void CBA_FontMap::Initialize() {
             m_sDefaultFontName == "Wingdings2" ||
             m_sDefaultFontName == "Wingdings3" ||
             m_sDefaultFontName == "Webdings")
-          nCharset = FXFONT_SYMBOL_CHARSET;
+          nCharset = FX_CHARSET_Symbol;
         else
-          nCharset = FXFONT_ANSI_CHARSET;
+          nCharset = FX_CHARSET_ANSI;
       }
       AddFontData(m_pDefaultFont, m_sDefaultFontName, nCharset);
       AddFontToAnnotDict(m_pDefaultFont, m_sDefaultFontName);
     }
   }
 
-  if (nCharset != FXFONT_ANSI_CHARSET)
+  if (nCharset != FX_CHARSET_ANSI)
     CPWL_FontMap::Initialize();
 }
 
@@ -77,7 +77,7 @@ void CBA_FontMap::SetDefaultFont(CPDF_Font* pFont,
   m_pDefaultFont = pFont;
   m_sDefaultFontName = sFontName;
 
-  int32_t nCharset = FXFONT_DEFAULT_CHARSET;
+  int32_t nCharset = FX_CHARSET_Default;
   if (const CFX_SubstFont* pSubstFont = m_pDefaultFont->GetSubstFont())
     nCharset = pSubstFont->m_Charset;
   AddFontData(m_pDefaultFont, m_sDefaultFontName, nCharset);

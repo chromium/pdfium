@@ -8,6 +8,7 @@
 
 #include <limits>
 
+#include "core/fxcrt/fx_codepage.h"
 #include "core/fxge/cfx_fontmapper.h"
 #include "core/fxge/fx_font.h"
 
@@ -59,17 +60,17 @@ CFX_ByteString FPDF_LoadTableFromTT(FILE* pFile,
 
 uint32_t GetCharset(int charset) {
   switch (charset) {
-    case FXFONT_SHIFTJIS_CHARSET:
+    case FX_CHARSET_ShiftJIS:
       return CHARSET_FLAG_SHIFTJIS;
-    case FXFONT_GB2312_CHARSET:
+    case FX_CHARSET_ChineseSimplified:
       return CHARSET_FLAG_GB;
-    case FXFONT_CHINESEBIG5_CHARSET:
+    case FX_CHARSET_ChineseTraditional:
       return CHARSET_FLAG_BIG5;
-    case FXFONT_HANGUL_CHARSET:
+    case FX_CHARSET_Hangul:
       return CHARSET_FLAG_KOREAN;
-    case FXFONT_SYMBOL_CHARSET:
+    case FX_CHARSET_Symbol:
       return CHARSET_FLAG_SYMBOL;
-    case FXFONT_ANSI_CHARSET:
+    case FX_CHARSET_ANSI:
       return CHARSET_FLAG_ANSI;
     default:
       break;
@@ -229,27 +230,27 @@ void CFX_FolderFontInfo::ReportFace(const CFX_ByteString& path,
     const uint8_t* p = os2.raw_str() + 78;
     uint32_t codepages = GET_TT_LONG(p);
     if (codepages & (1 << 17)) {
-      m_pMapper->AddInstalledFont(facename, FXFONT_SHIFTJIS_CHARSET);
+      m_pMapper->AddInstalledFont(facename, FX_CHARSET_ShiftJIS);
       pInfo->m_Charsets |= CHARSET_FLAG_SHIFTJIS;
     }
     if (codepages & (1 << 18)) {
-      m_pMapper->AddInstalledFont(facename, FXFONT_GB2312_CHARSET);
+      m_pMapper->AddInstalledFont(facename, FX_CHARSET_ChineseSimplified);
       pInfo->m_Charsets |= CHARSET_FLAG_GB;
     }
     if (codepages & (1 << 20)) {
-      m_pMapper->AddInstalledFont(facename, FXFONT_CHINESEBIG5_CHARSET);
+      m_pMapper->AddInstalledFont(facename, FX_CHARSET_ChineseTraditional);
       pInfo->m_Charsets |= CHARSET_FLAG_BIG5;
     }
     if ((codepages & (1 << 19)) || (codepages & (1 << 21))) {
-      m_pMapper->AddInstalledFont(facename, FXFONT_HANGUL_CHARSET);
+      m_pMapper->AddInstalledFont(facename, FX_CHARSET_Hangul);
       pInfo->m_Charsets |= CHARSET_FLAG_KOREAN;
     }
     if (codepages & (1 << 31)) {
-      m_pMapper->AddInstalledFont(facename, FXFONT_SYMBOL_CHARSET);
+      m_pMapper->AddInstalledFont(facename, FX_CHARSET_Symbol);
       pInfo->m_Charsets |= CHARSET_FLAG_SYMBOL;
     }
   }
-  m_pMapper->AddInstalledFont(facename, FXFONT_ANSI_CHARSET);
+  m_pMapper->AddInstalledFont(facename, FX_CHARSET_ANSI);
   pInfo->m_Charsets |= CHARSET_FLAG_ANSI;
   pInfo->m_Styles = 0;
   if (style.Find("Bold") > -1)
@@ -278,17 +279,16 @@ void* CFX_FolderFontInfo::FindFont(int weight,
                                    const char* family,
                                    bool bMatchName) {
   CFX_FontFaceInfo* pFind = nullptr;
-  if (charset == FXFONT_ANSI_CHARSET && (pitch_family & FXFONT_FF_FIXEDPITCH))
+  if (charset == FX_CHARSET_ANSI && (pitch_family & FXFONT_FF_FIXEDPITCH))
     return GetFont("Courier New");
   uint32_t charset_flag = GetCharset(charset);
   int32_t iBestSimilar = 0;
   for (const auto& it : m_FontList) {
     const CFX_ByteString& bsName = it.first;
     CFX_FontFaceInfo* pFont = it.second;
-    if (!(pFont->m_Charsets & charset_flag) &&
-        charset != FXFONT_DEFAULT_CHARSET) {
+    if (!(pFont->m_Charsets & charset_flag) && charset != FX_CHARSET_Default)
       continue;
-    }
+
     int32_t index = bsName.Find(family);
     if (bMatchName && index < 0)
       continue;

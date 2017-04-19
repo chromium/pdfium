@@ -21,7 +21,7 @@ CPWL_EditCtrl::CPWL_EditCtrl()
     : m_pEdit(new CFX_Edit),
       m_pEditCaret(nullptr),
       m_bMouseDown(false),
-      m_nCharSet(FXFONT_DEFAULT_CHARSET) {}
+      m_nCharSet(FX_CHARSET_Default) {}
 
 CPWL_EditCtrl::~CPWL_EditCtrl() {}
 
@@ -472,7 +472,7 @@ void CPWL_EditCtrl::IOnInvalidateRect(CFX_FloatRect* pRect) {
 }
 
 int32_t CPWL_EditCtrl::GetCharSet() const {
-  return m_nCharSet < 0 ? FXFONT_DEFAULT_CHARSET : m_nCharSet;
+  return m_nCharSet < 0 ? FX_CHARSET_Default : m_nCharSet;
 }
 
 void CPWL_EditCtrl::SetReadyToInput() {

@@ -28,6 +28,7 @@
 #include "core/fpdfapi/render/cpdf_dibsource.h"
 #include "core/fpdfapi/render/cpdf_docrenderdata.h"
 #include "core/fxcodec/JBig2_DocumentContext.h"
+#include "core/fxcrt/fx_codepage.h"
 #include "core/fxge/cfx_unicodeencoding.h"
 #include "core/fxge/fx_font.h"
 #include "third_party/base/ptr_util.h"
@@ -180,14 +181,14 @@ struct FX_CharsetUnicodes {
 };
 
 const FX_CharsetUnicodes g_FX_CharsetUnicodes[] = {
-    {FXFONT_THAI_CHARSET, g_FX_CP874Unicodes},
-    {FXFONT_EASTEUROPE_CHARSET, g_FX_CP1250Unicodes},
-    {FXFONT_RUSSIAN_CHARSET, g_FX_CP1251Unicodes},
-    {FXFONT_GREEK_CHARSET, g_FX_CP1253Unicodes},
-    {FXFONT_TURKISH_CHARSET, g_FX_CP1254Unicodes},
-    {FXFONT_HEBREW_CHARSET, g_FX_CP1255Unicodes},
-    {FXFONT_ARABIC_CHARSET, g_FX_CP1256Unicodes},
-    {FXFONT_BALTIC_CHARSET, g_FX_CP1257Unicodes},
+    {FX_CHARSET_Thai, g_FX_CP874Unicodes},
+    {FX_CHARSET_MSWin_EasternEuropean, g_FX_CP1250Unicodes},
+    {FX_CHARSET_MSWin_Cyrillic, g_FX_CP1251Unicodes},
+    {FX_CHARSET_MSWin_Greek, g_FX_CP1253Unicodes},
+    {FX_CHARSET_MSWin_Turkish, g_FX_CP1254Unicodes},
+    {FX_CHARSET_MSWin_Hebrew, g_FX_CP1255Unicodes},
+    {FX_CHARSET_MSWin_Arabic, g_FX_CP1256Unicodes},
+    {FX_CHARSET_MSWin_Baltic, g_FX_CP1257Unicodes},
 };
 
 void InsertWidthArrayImpl(int* widths, int size, CPDF_Array* pWidthArray) {
@@ -817,14 +818,14 @@ CPDF_Dictionary* CPDF_Document::ProcessbCJK(
   int supplement = 0;
   CPDF_Array* pWidthArray = pFontDict->SetNewFor<CPDF_Array>("W");
   switch (charset) {
-    case FXFONT_CHINESEBIG5_CHARSET:
+    case FX_CHARSET_ChineseTraditional:
       cmap = bVert ? "ETenms-B5-V" : "ETenms-B5-H";
       ordering = "CNS1";
       supplement = 4;
       pWidthArray->AddNew<CPDF_Number>(1);
       Insert(0x20, 0x7e, pWidthArray);
       break;
-    case FXFONT_GB2312_CHARSET:
+    case FX_CHARSET_ChineseSimplified:
       cmap = bVert ? "GBK-EUC-V" : "GBK-EUC-H";
       ordering = "GB1";
       supplement = 2;
@@ -833,14 +834,14 @@ CPDF_Dictionary* CPDF_Document::ProcessbCJK(
       pWidthArray->AddNew<CPDF_Number>(814);
       Insert(0x21, 0x7e, pWidthArray);
       break;
-    case FXFONT_HANGUL_CHARSET:
+    case FX_CHARSET_Hangul:
       cmap = bVert ? "KSCms-UHC-V" : "KSCms-UHC-H";
       ordering = "Korea1";
       supplement = 2;
       pWidthArray->AddNew<CPDF_Number>(1);
       Insert(0x20, 0x7e, pWidthArray);
       break;
-    case FXFONT_SHIFTJIS_CHARSET:
+    case FX_CHARSET_ShiftJIS:
       cmap = bVert ? "90ms-RKSJ-V" : "90ms-RKSJ-H";
       ordering = "Japan1";
       supplement = 5;
@@ -876,15 +877,14 @@ CPDF_Font* CPDF_Document::AddFont(CFX_Font* pFont, int charset, bool bVert) {
   if (!pFont)
     return nullptr;
 
-  bool bCJK = charset == FXFONT_CHINESEBIG5_CHARSET ||
-              charset == FXFONT_GB2312_CHARSET ||
-              charset == FXFONT_HANGUL_CHARSET ||
-              charset == FXFONT_SHIFTJIS_CHARSET;
+  bool bCJK = charset == FX_CHARSET_ChineseTraditional ||
+              charset == FX_CHARSET_ChineseSimplified ||
+              charset == FX_CHARSET_Hangul || charset == FX_CHARSET_ShiftJIS;
   CFX_ByteString basefont = pFont->GetFamilyName();
   basefont.Replace(" ", "");
   int flags =
       CalculateFlags(pFont->IsBold(), pFont->IsItalic(), pFont->IsFixedWidth(),
-                     false, false, charset == FXFONT_SYMBOL_CHARSET);
+                     false, false, charset == FX_CHARSET_Symbol);
 
   CPDF_Dictionary* pBaseDict = NewIndirect<CPDF_Dictionary>();
   pBaseDict->SetNewFor<CPDF_Name>("Type", "Font");
@@ -898,8 +898,8 @@ CPDF_Font* CPDF_Document::AddFont(CFX_Font* pFont, int charset, bool bVert) {
       int char_width = pFont->GetGlyphWidth(glyph_index);
       pWidths->AddNew<CPDF_Number>(char_width);
     }
-    if (charset == FXFONT_ANSI_CHARSET || charset == FXFONT_DEFAULT_CHARSET ||
-        charset == FXFONT_SYMBOL_CHARSET) {
+    if (charset == FX_CHARSET_ANSI || charset == FX_CHARSET_Default ||
+        charset == FX_CHARSET_Symbol) {
       pBaseDict->SetNewFor<CPDF_Name>("Encoding", "WinAnsiEncoding");
       for (int charcode = 128; charcode <= 255; charcode++) {
         int glyph_index = pEncoding->GlyphFromCharCode(charcode);
@@ -996,12 +996,12 @@ CPDF_Font* CPDF_Document::AddWindowsFont(LOGFONTA* pLogFont,
                              (pLogFont->lfPitchAndFamily & 3) == FIXED_PITCH,
                              (pLogFont->lfPitchAndFamily & 0xf8) == FF_ROMAN,
                              (pLogFont->lfPitchAndFamily & 0xf8) == FF_SCRIPT,
-                             pLogFont->lfCharSet == FXFONT_SYMBOL_CHARSET);
+                             pLogFont->lfCharSet == FX_CHARSET_Symbol);
 
-  bool bCJK = pLogFont->lfCharSet == FXFONT_CHINESEBIG5_CHARSET ||
-              pLogFont->lfCharSet == FXFONT_GB2312_CHARSET ||
-              pLogFont->lfCharSet == FXFONT_HANGUL_CHARSET ||
-              pLogFont->lfCharSet == FXFONT_SHIFTJIS_CHARSET;
+  bool bCJK = pLogFont->lfCharSet == FX_CHARSET_ChineseTraditional ||
+              pLogFont->lfCharSet == FX_CHARSET_ChineseSimplified ||
+              pLogFont->lfCharSet == FX_CHARSET_Hangul ||
+              pLogFont->lfCharSet == FX_CHARSET_ShiftJIS;
   CFX_ByteString basefont;
   if (bTranslateName && bCJK)
     basefont = FPDF_GetPSNameFromTT(hDC);
@@ -1021,9 +1021,9 @@ CPDF_Font* CPDF_Document::AddWindowsFont(LOGFONTA* pLogFont,
   pBaseDict->SetNewFor<CPDF_Name>("Type", "Font");
   CPDF_Dictionary* pFontDict = pBaseDict;
   if (!bCJK) {
-    if (pLogFont->lfCharSet == FXFONT_ANSI_CHARSET ||
-        pLogFont->lfCharSet == FXFONT_DEFAULT_CHARSET ||
-        pLogFont->lfCharSet == FXFONT_SYMBOL_CHARSET) {
+    if (pLogFont->lfCharSet == FX_CHARSET_ANSI ||
+        pLogFont->lfCharSet == FX_CHARSET_Default ||
+        pLogFont->lfCharSet == FX_CHARSET_Symbol) {
       pBaseDict->SetNewFor<CPDF_Name>("Encoding", "WinAnsiEncoding");
     } else {
       CalculateEncodingDict(pLogFont->lfCharSet, pBaseDict);

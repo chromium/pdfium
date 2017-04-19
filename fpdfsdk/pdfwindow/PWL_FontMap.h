@@ -11,6 +11,7 @@
 #include <vector>
 
 #include "core/fpdfdoc/ipvt_fontmap.h"
+#include "core/fxcrt/fx_codepage.h"
 #include "core/fxge/fx_font.h"
 #include "fpdfsdk/fxedit/fx_edit.h"
 #include "public/fpdf_sysfontinfo.h"
@@ -65,7 +66,7 @@ class CPWL_FontMap : public IPVT_FontMap {
                        bool bFind);
   int32_t AddFontData(CPDF_Font* pFont,
                       const CFX_ByteString& sFontAlias,
-                      int32_t nCharset = FXFONT_DEFAULT_CHARSET);
+                      int32_t nCharset = FX_CHARSET_Default);
 
   CFX_ByteString EncodeFontAlias(const CFX_ByteString& sFontName,
                                  int32_t nCharset);
@@ -76,7 +77,7 @@ class CPWL_FontMap : public IPVT_FontMap {
 
  private:
   int32_t FindFont(const CFX_ByteString& sFontName,
-                   int32_t nCharset = FXFONT_DEFAULT_CHARSET);
+                   int32_t nCharset = FX_CHARSET_Default);
 
   CFX_ByteString GetNativeFont(int32_t nCharset);
   CPDF_Font* AddFontToDocument(CPDF_Document* pDoc,

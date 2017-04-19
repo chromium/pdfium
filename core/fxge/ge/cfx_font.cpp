@@ -13,6 +13,7 @@
 #include <vector>
 
 #include "core/fpdfapi/font/cpdf_font.h"
+#include "core/fxcrt/fx_codepage.h"
 #include "core/fxge/cfx_facecache.h"
 #include "core/fxge/cfx_fontcache.h"
 #include "core/fxge/cfx_fontmgr.h"
@@ -644,7 +645,7 @@ CFX_PathData* CFX_Font::LoadGlyphPathImpl(uint32_t glyph_index,
     uint32_t index = (m_pSubstFont->m_Weight - 400) / 10;
     index = std::min(index, static_cast<uint32_t>(kWeightPowArraySize - 1));
     int level = 0;
-    if (m_pSubstFont->m_Charset == FXFONT_SHIFTJIS_CHARSET)
+    if (m_pSubstFont->m_Charset == FX_CHARSET_ShiftJIS)
       level = s_WeightPow_SHIFTJIS[index] * 2 * 65536 / 36655;
     else
       level = s_WeightPow[index] * 2;

@@ -460,7 +460,7 @@ void CPWL_Edit::OnKillFocus() {
   ShowVScrollBar(false);
   m_pEdit->SelectNone();
   SetCaret(false, CFX_PointF(), CFX_PointF());
-  SetCharSet(FXFONT_ANSI_CHARSET);
+  SetCharSet(FX_CHARSET_ANSI);
   m_bFocus = false;
 }
 
@@ -569,7 +569,7 @@ void CPWL_Edit::SetLimitChar(int32_t nLimitChar) {
 
 void CPWL_Edit::ReplaceSel(const CFX_WideString& wsText) {
   m_pEdit->Clear();
-  m_pEdit->InsertText(wsText, FXFONT_DEFAULT_CHARSET);
+  m_pEdit->InsertText(wsText, FX_CHARSET_Default);
 }
 
 CFX_FloatRect CPWL_Edit::GetFocusRect() const {
@@ -714,7 +714,7 @@ bool CPWL_Edit::OnChar(uint16_t nChar, uint32_t nFlag) {
   if (IPVT_FontMap* pFontMap = GetFontMap()) {
     int32_t nOldCharSet = GetCharSet();
     int32_t nNewCharSet =
-        pFontMap->CharSetFromUnicode(nChar, FXFONT_DEFAULT_CHARSET);
+        pFontMap->CharSetFromUnicode(nChar, FX_CHARSET_Default);
     if (nOldCharSet != nNewCharSet) {
       SetCharSet(nNewCharSet);
     }

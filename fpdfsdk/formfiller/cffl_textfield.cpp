@@ -275,7 +275,7 @@ void CFFL_TextField::OnSetFocus(CPWL_Wnd* pWnd) {
     return;
 
   CPWL_Edit* pEdit = (CPWL_Edit*)pWnd;
-  pEdit->SetCharSet(FXFONT_GB2312_CHARSET);
+  pEdit->SetCharSet(FX_CHARSET_ChineseSimplified);
   pEdit->SetReadyToInput();
 
   CFX_WideString wsText = pEdit->GetText();

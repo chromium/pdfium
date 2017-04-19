@@ -11,6 +11,7 @@
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfapi/parser/cpdf_reference.h"
 #include "core/fpdfdoc/cpdf_interform.h"
+#include "core/fxcrt/fx_codepage.h"
 
 CPVT_FontMap::CPVT_FontMap(CPDF_Document* pDoc,
                            CPDF_Dictionary* pResDict,
@@ -88,5 +89,5 @@ int32_t CPVT_FontMap::CharCodeFromUnicode(int32_t nFontIndex, uint16_t word) {
 
 int32_t CPVT_FontMap::CharSetFromUnicode(uint16_t word, int32_t nOldCharset) {
   ASSERT(false);
-  return FXFONT_ANSI_CHARSET;
+  return FX_CHARSET_ANSI;
 }

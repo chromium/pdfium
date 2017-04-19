@@ -38,7 +38,7 @@ const FX_CHARSET_MAP g_FXCharset2CodePageTable[] = {
     {FX_CHARSET_MAC_ShiftJIS, FX_CODEPAGE_MAC_ShiftJIS},
     {FX_CHARSET_MAC_Korean, FX_CODEPAGE_MAC_Korean},
     {FX_CHARSET_MAC_ChineseSimplified, FX_CODEPAGE_MAC_ChineseSimplified},
-    {FX_CHARSET_MAC_ChineseTriditional, FX_CODEPAGE_MAC_ChineseTraditional},
+    {FX_CHARSET_MAC_ChineseTraditional, FX_CODEPAGE_MAC_ChineseTraditional},
     {FX_CHARSET_MAC_Hebrew, FX_CODEPAGE_MAC_Hebrew},
     {FX_CHARSET_MAC_Arabic, FX_CODEPAGE_MAC_Arabic},
     {FX_CHARSET_MAC_Greek, FX_CODEPAGE_MAC_Greek},
@@ -47,10 +47,10 @@ const FX_CHARSET_MAP g_FXCharset2CodePageTable[] = {
     {FX_CHARSET_MAC_EasternEuropean, FX_CODEPAGE_MAC_EasternEuropean},
     {FX_CHARSET_MAC_Cyrillic, FX_CODEPAGE_MAC_Cyrillic},
     {FX_CHARSET_ShiftJIS, FX_CODEPAGE_ShiftJIS},
-    {FX_CHARSET_Korean, FX_CODEPAGE_Korean},
+    {FX_CHARSET_Hangul, FX_CODEPAGE_Hangul},
     {FX_CHARSET_Johab, FX_CODEPAGE_Johab},
     {FX_CHARSET_ChineseSimplified, FX_CODEPAGE_ChineseSimplified},
-    {FX_CHARSET_ChineseTriditional, FX_CODEPAGE_ChineseTraditional},
+    {FX_CHARSET_ChineseTraditional, FX_CODEPAGE_ChineseTraditional},
     {FX_CHARSET_MSWin_Greek, FX_CODEPAGE_MSWin_Greek},
     {FX_CHARSET_MSWin_Turkish, FX_CODEPAGE_MSWin_Turkish},
     {FX_CHARSET_MSWin_Vietnamese, FX_CODEPAGE_MSWin_Vietnamese},
@@ -59,7 +59,7 @@ const FX_CHARSET_MAP g_FXCharset2CodePageTable[] = {
     {FX_CHARSET_MSWin_Baltic, FX_CODEPAGE_MSWin_Baltic},
     {FX_CHARSET_MSWin_Cyrillic, FX_CODEPAGE_MSWin_Cyrillic},
     {FX_CHARSET_Thai, FX_CODEPAGE_MSDOS_Thai},
-    {FX_CHARSET_MSWin_EasterEuropean, FX_CODEPAGE_MSWin_EasternEuropean},
+    {FX_CHARSET_MSWin_EasternEuropean, FX_CODEPAGE_MSWin_EasternEuropean},
     {FX_CHARSET_US, FX_CODEPAGE_MSDOS_US},
     {FX_CHARSET_OEM, FX_CODEPAGE_MSDOS_WesternEuropean},
 };
@@ -473,7 +473,7 @@ const uint16_t g_CodePages[] = {FX_CODEPAGE_MSWin_WesternEuropean,
                                 FX_CODEPAGE_MSDOS_Thai,
                                 FX_CODEPAGE_ShiftJIS,
                                 FX_CODEPAGE_ChineseSimplified,
-                                FX_CODEPAGE_Korean,
+                                FX_CODEPAGE_Hangul,
                                 FX_CODEPAGE_ChineseTraditional,
                                 FX_CODEPAGE_Johab,
                                 FX_CODEPAGE_DefANSI,
@@ -547,7 +547,7 @@ struct FX_BIT2CHARSET {
 
 const FX_BIT2CHARSET g_FX_Bit2Charset[4][16] = {
     {{1 << 0, FX_CHARSET_ANSI},
-     {1 << 1, FX_CHARSET_MSWin_EasterEuropean},
+     {1 << 1, FX_CHARSET_MSWin_EasternEuropean},
      {1 << 2, FX_CHARSET_MSWin_Cyrillic},
      {1 << 3, FX_CHARSET_MSWin_Greek},
      {1 << 4, FX_CHARSET_MSWin_Turkish},
@@ -565,8 +565,8 @@ const FX_BIT2CHARSET g_FX_Bit2Charset[4][16] = {
     {{1 << 0, FX_CHARSET_Thai},
      {1 << 1, FX_CHARSET_ShiftJIS},
      {1 << 2, FX_CHARSET_ChineseSimplified},
-     {1 << 3, FX_CHARSET_Korean},
-     {1 << 4, FX_CHARSET_ChineseTriditional},
+     {1 << 3, FX_CHARSET_Hangul},
+     {1 << 4, FX_CHARSET_ChineseTraditional},
      {1 << 5, FX_CHARSET_Johab},
      {1 << 6, FX_CHARSET_Default},
      {1 << 7, FX_CHARSET_Default},
@@ -970,7 +970,7 @@ CFX_RetainPtr<IFX_SeekableReadStream> CFGAS_FontMgr::CreateFontStream(
     uint32_t index) {
   int iExact = 0;
   void* hFont =
-      pSystemFontInfo->MapFont(0, 0, FXFONT_DEFAULT_CHARSET, 0,
+      pSystemFontInfo->MapFont(0, 0, FX_CHARSET_Default, 0,
                                pFontMapper->GetFaceName(index).c_str(), iExact);
   if (!hFont)
     return nullptr;

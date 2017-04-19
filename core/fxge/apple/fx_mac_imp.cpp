@@ -6,6 +6,7 @@
 
 #include <memory>
 
+#include "core/fxcrt/fx_codepage.h"
 #include "core/fxge/apple/apple_int.h"
 #include "core/fxge/cfx_gemodule.h"
 #include "core/fxge/ge/cfx_folderfontinfo.h"
@@ -94,23 +95,23 @@ void* CFX_MacFontInfo::MapFont(int weight,
   if (it != m_FontList.end())
     return it->second;
 
-  if (charset == FXFONT_ANSI_CHARSET && (pitch_family & FXFONT_FF_FIXEDPITCH))
+  if (charset == FX_CHARSET_ANSI && (pitch_family & FXFONT_FF_FIXEDPITCH))
     return GetFont("Courier New");
 
-  if (charset == FXFONT_ANSI_CHARSET || charset == FXFONT_SYMBOL_CHARSET)
+  if (charset == FX_CHARSET_ANSI || charset == FX_CHARSET_Symbol)
     return nullptr;
 
   switch (charset) {
-    case FXFONT_SHIFTJIS_CHARSET:
+    case FX_CHARSET_ShiftJIS:
       GetJapanesePreference(&face, weight, pitch_family);
       break;
-    case FXFONT_GB2312_CHARSET:
+    case FX_CHARSET_ChineseSimplified:
       face = "STSong";
       break;
-    case FXFONT_HANGUL_CHARSET:
+    case FX_CHARSET_Hangul:
       face = "AppleMyungjo";
       break;
-    case FXFONT_CHINESEBIG5_CHARSET:
+    case FX_CHARSET_ChineseTraditional:
       face = "LiSong Pro Light";
   }
   it = m_FontList.find(face);

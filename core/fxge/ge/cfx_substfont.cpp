@@ -6,10 +6,11 @@
 
 #include "core/fxge/cfx_substfont.h"
 
+#include "core/fxcrt/fx_codepage.h"
 #include "core/fxge/fx_font.h"
 
 CFX_SubstFont::CFX_SubstFont()
-    : m_Charset(FXFONT_ANSI_CHARSET),
+    : m_Charset(FX_CHARSET_ANSI),
       m_SubstFlags(0),
       m_Weight(0),
       m_ItalicAngle(0),
