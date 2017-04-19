@@ -17,22 +17,6 @@
 class CXFA_Node;
 class IFX_Locale;
 
-#define XFA_LANGID_zh_CN 0x0804
-#define XFA_LANGID_zh_TW 0x0404
-#define XFA_LANGID_zh_HK 0x0c04
-#define XFA_LANGID_ja_JP 0x0411
-#define XFA_LANGID_ko_KR 0x0412
-#define XFA_LANGID_en_US 0x0409
-#define XFA_LANGID_en_GB 0x0809
-#define XFA_LANGID_es_ES 0x0c0a
-#define XFA_LANGID_es_LA 0x080a
-#define XFA_LANGID_de_DE 0x0407
-#define XFA_LANGID_fr_FR 0x040c
-#define XFA_LANGID_it_IT 0x0410
-#define XFA_LANGID_pt_BR 0x0416
-#define XFA_LANGID_nl_NL 0x0413
-#define XFA_LANGID_ru_RU 0x0419
-
 class CXFA_LocaleMgr {
  public:
   CXFA_LocaleMgr(CXFA_Node* pLocaleSet, CFX_WideString wsDeflcid);

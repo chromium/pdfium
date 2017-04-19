@@ -1430,7 +1430,6 @@ if (pdf_enable_xfa) {
       "xfa/fde/ifde_txtedtpage.h",
       "xfa/fgas/crt/cfgas_formatstring.cpp",
       "xfa/fgas/crt/cfgas_formatstring.h",
-      "xfa/fgas/crt/fgas_language.h",
       "xfa/fgas/font/cfgas_fontmgr.cpp",
       "xfa/fgas/font/cfgas_fontmgr.h",
       "xfa/fgas/font/cfgas_gefont.cpp",

@@ -19,6 +19,22 @@
 #include "xfa/fxfa/parser/cxfa_xmllocale.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
 
+#define FX_LANG_zh_HK 0x0c04
+#define FX_LANG_zh_CN 0x0804
+#define FX_LANG_zh_TW 0x0404
+#define FX_LANG_nl_NL 0x0413
+#define FX_LANG_en_GB 0x0809
+#define FX_LANG_en_US 0x0409
+#define FX_LANG_fr_FR 0x040c
+#define FX_LANG_de_DE 0x0407
+#define FX_LANG_it_IT 0x0410
+#define FX_LANG_ja_JP 0x0411
+#define FX_LANG_ko_KR 0x0412
+#define FX_LANG_pt_BR 0x0416
+#define FX_LANG_ru_RU 0x0419
+#define FX_LANG_es_LA 0x080a
+#define FX_LANG_es_ES 0x0c0a
+
 const uint8_t g_enUS_Locale[] = {
     0x78, 0x9C, 0x95, 0x56, 0xD1, 0x6E, 0x9B, 0x30, 0x14, 0x7D, 0x9F, 0xB4,
     0x7F, 0x40, 0xD6, 0x2A, 0xB5, 0x52, 0x56, 0x6F, 0x8F, 0xA9, 0x88, 0xA5,
@@ -1062,65 +1078,47 @@ static std::unique_ptr<IFX_Locale> XFA_GetLocaleFromBuffer(const uint8_t* pBuf,
 }
 
 static uint16_t XFA_GetLanguage(CFX_WideString wsLanguage) {
-  uint16_t dwLangueID = XFA_LANGID_en_US;
-  if (wsLanguage.GetLength() < 2) {
-    return dwLangueID;
-  }
+  if (wsLanguage.GetLength() < 2)
+    return FX_LANG_en_US;
+
   wsLanguage.MakeLower();
   uint32_t dwIDFirst = wsLanguage.GetAt(0) << 8 | wsLanguage.GetAt(1);
   uint32_t dwIDSecond = wsLanguage.GetLength() >= 5
                             ? wsLanguage.GetAt(3) << 8 | wsLanguage.GetAt(4)
                             : 0;
   switch (dwIDFirst) {
-    case FXBSTR_ID(0, 0, 'z', 'h'): {
-      if (dwIDSecond == FXBSTR_ID(0, 0, 'c', 'n')) {
-        dwLangueID = XFA_LANGID_zh_CN;
-      } else if (dwIDSecond == FXBSTR_ID(0, 0, 't', 'w')) {
-        dwLangueID = XFA_LANGID_zh_TW;
-      } else if (dwIDSecond == FXBSTR_ID(0, 0, 'h', 'k')) {
-        dwLangueID = XFA_LANGID_zh_HK;
-      }
-    } break;
+    case FXBSTR_ID(0, 0, 'z', 'h'):
+      if (dwIDSecond == FXBSTR_ID(0, 0, 'c', 'n'))
+        return FX_LANG_zh_CN;
+      if (dwIDSecond == FXBSTR_ID(0, 0, 't', 'w'))
+        return FX_LANG_zh_TW;
+      if (dwIDSecond == FXBSTR_ID(0, 0, 'h', 'k'))
+        return FX_LANG_zh_HK;
+      break;
     case FXBSTR_ID(0, 0, 'j', 'a'):
-      dwLangueID = XFA_LANGID_ja_JP;
-      break;
+      return FX_LANG_ja_JP;
     case FXBSTR_ID(0, 0, 'k', 'o'):
-      dwLangueID = XFA_LANGID_ko_KR;
-      break;
-    case FXBSTR_ID(0, 0, 'e', 'n'): {
-      if (dwIDSecond == FXBSTR_ID(0, 0, 'g', 'b')) {
-        dwLangueID = XFA_LANGID_en_GB;
-      } else {
-        dwLangueID = XFA_LANGID_en_US;
-      }
-    } break;
+      return FX_LANG_ko_KR;
+    case FXBSTR_ID(0, 0, 'e', 'n'):
+      return dwIDSecond == FXBSTR_ID(0, 0, 'g', 'b') ? FX_LANG_en_GB
+                                                     : FX_LANG_en_US;
     case FXBSTR_ID(0, 0, 'd', 'e'):
-      dwLangueID = XFA_LANGID_de_DE;
-      break;
+      return FX_LANG_de_DE;
     case FXBSTR_ID(0, 0, 'f', 'r'):
-      dwLangueID = XFA_LANGID_fr_FR;
-      break;
-    case FXBSTR_ID(0, 0, 'e', 's'): {
-      if (dwIDSecond == FXBSTR_ID(0, 0, 'e', 's')) {
-        dwLangueID = XFA_LANGID_es_ES;
-      } else {
-        dwLangueID = XFA_LANGID_es_LA;
-      }
-    } break;
+      return FX_LANG_fr_FR;
+    case FXBSTR_ID(0, 0, 'e', 's'):
+      return dwIDSecond == FXBSTR_ID(0, 0, 'e', 's') ? FX_LANG_es_ES
+                                                     : FX_LANG_es_LA;
     case FXBSTR_ID(0, 0, 'i', 't'):
-      dwLangueID = XFA_LANGID_it_IT;
-      break;
+      return FX_LANG_it_IT;
     case FXBSTR_ID(0, 0, 'p', 't'):
-      dwLangueID = XFA_LANGID_pt_BR;
-      break;
+      return FX_LANG_pt_BR;
     case FXBSTR_ID(0, 0, 'n', 'l'):
-      dwLangueID = XFA_LANGID_nl_NL;
-      break;
+      return FX_LANG_nl_NL;
     case FXBSTR_ID(0, 0, 'r', 'u'):
-      dwLangueID = XFA_LANGID_ru_RU;
-      break;
+      return FX_LANG_ru_RU;
   }
-  return dwLangueID;
+  return FX_LANG_en_US;
 }
 
 CXFA_LocaleMgr::CXFA_LocaleMgr(CXFA_Node* pLocaleSet, CFX_WideString wsDeflcid)
@@ -1162,35 +1160,35 @@ IFX_Locale* CXFA_LocaleMgr::GetDefLocale() {
 
 std::unique_ptr<IFX_Locale> CXFA_LocaleMgr::GetLocale(uint16_t lcid) {
   switch (lcid) {
-    case XFA_LANGID_zh_CN:
+    case FX_LANG_zh_CN:
       return XFA_GetLocaleFromBuffer(g_zhCN_Locale, sizeof(g_zhCN_Locale));
-    case XFA_LANGID_zh_TW:
+    case FX_LANG_zh_TW:
       return XFA_GetLocaleFromBuffer(g_zhTW_Locale, sizeof(g_zhTW_Locale));
-    case XFA_LANGID_zh_HK:
+    case FX_LANG_zh_HK:
       return XFA_GetLocaleFromBuffer(g_zhHK_Locale, sizeof(g_zhHK_Locale));
-    case XFA_LANGID_ja_JP:
+    case FX_LANG_ja_JP:
       return XFA_GetLocaleFromBuffer(g_jaJP_Locale, sizeof(g_jaJP_Locale));
-    case XFA_LANGID_ko_KR:
+    case FX_LANG_ko_KR:
       return XFA_GetLocaleFromBuffer(g_koKR_Locale, sizeof(g_koKR_Locale));
-    case XFA_LANGID_en_GB:
+    case FX_LANG_en_GB:
       return XFA_GetLocaleFromBuffer(g_enGB_Locale, sizeof(g_enGB_Locale));
-    case XFA_LANGID_es_LA:
+    case FX_LANG_es_LA:
       return XFA_GetLocaleFromBuffer(g_esLA_Locale, sizeof(g_esLA_Locale));
-    case XFA_LANGID_es_ES:
+    case FX_LANG_es_ES:
       return XFA_GetLocaleFromBuffer(g_esES_Locale, sizeof(g_esES_Locale));
-    case XFA_LANGID_de_DE:
+    case FX_LANG_de_DE:
       return XFA_GetLocaleFromBuffer(g_deDE_Loacale, sizeof(g_deDE_Loacale));
-    case XFA_LANGID_fr_FR:
+    case FX_LANG_fr_FR:
       return XFA_GetLocaleFromBuffer(g_frFR_Locale, sizeof(g_frFR_Locale));
-    case XFA_LANGID_it_IT:
+    case FX_LANG_it_IT:
       return XFA_GetLocaleFromBuffer(g_itIT_Locale, sizeof(g_itIT_Locale));
-    case XFA_LANGID_pt_BR:
+    case FX_LANG_pt_BR:
       return XFA_GetLocaleFromBuffer(g_ptBR_Locale, sizeof(g_ptBR_Locale));
-    case XFA_LANGID_nl_NL:
+    case FX_LANG_nl_NL:
       return XFA_GetLocaleFromBuffer(g_nlNL_Locale, sizeof(g_nlNL_Locale));
-    case XFA_LANGID_ru_RU:
+    case FX_LANG_ru_RU:
       return XFA_GetLocaleFromBuffer(g_ruRU_Locale, sizeof(g_ruRU_Locale));
-    case XFA_LANGID_en_US:
+    case FX_LANG_en_US:
     default:
       return XFA_GetLocaleFromBuffer(g_enUS_Locale, sizeof(g_enUS_Locale));
   }
@@ -1210,8 +1208,8 @@ IFX_Locale* CXFA_LocaleMgr::GetLocaleByName(
     if (pLocale->GetName() == wsLocaleName)
       return pLocale;
   }
-  uint16_t dwLangueID = XFA_GetLanguage(wsLocaleName);
-  std::unique_ptr<IFX_Locale> pLocale(GetLocale(dwLangueID));
+
+  std::unique_ptr<IFX_Locale> pLocale(GetLocale(XFA_GetLanguage(wsLocaleName)));
   IFX_Locale* pRetLocale = pLocale.get();
   if (pLocale)
     m_XMLLocaleArray.push_back(std::move(pLocale));
