@@ -16,13 +16,13 @@
 
 class CFDE_XMLElement;
 class CFDE_XMLNode;
-class CFGAS_Stream;
+class CFX_SeekableStreamProxy;
 class IFX_Pause;
 
 class CFDE_XMLParser {
  public:
   CFDE_XMLParser(CFDE_XMLNode* pParent,
-                 const CFX_RetainPtr<CFGAS_Stream>& pStream);
+                 const CFX_RetainPtr<CFX_SeekableStreamProxy>& pStream);
   ~CFDE_XMLParser();
 
   int32_t DoParser(IFX_Pause* pPause);
@@ -34,7 +34,7 @@ class CFDE_XMLParser {
   uint16_t m_dwCurrentCheckStatus;
 
  private:
-  CFX_RetainPtr<CFGAS_Stream> m_pStream;
+  CFX_RetainPtr<CFX_SeekableStreamProxy> m_pStream;
   std::unique_ptr<CFDE_XMLSyntaxParser> m_pParser;
   CFDE_XMLNode* m_pParent;
   CFDE_XMLNode* m_pChild;

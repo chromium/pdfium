@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FGAS_CRT_FGAS_CODEPAGE_H_
-#define XFA_FGAS_CRT_FGAS_CODEPAGE_H_
+#ifndef CORE_FXCRT_FX_CODEPAGE_H_
+#define CORE_FXCRT_FX_CODEPAGE_H_
 
 #include "core/fxcrt/fx_basic.h"
 
@@ -134,4 +134,4 @@
 #define FX_CHARSET_US 254
 #define FX_CHARSET_OEM 255
 
-#endif  // XFA_FGAS_CRT_FGAS_CODEPAGE_H_
+#endif  // CORE_FXCRT_FX_CODEPAGE_H_

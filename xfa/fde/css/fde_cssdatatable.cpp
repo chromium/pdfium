@@ -8,10 +8,10 @@
 
 #include <utility>
 
+#include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/fx_ext.h"
 #include "xfa/fde/css/cfde_cssstyleselector.h"
 #include "xfa/fde/css/cfde_cssvaluelistparser.h"
-#include "xfa/fgas/crt/fgas_codepage.h"
 
 static const FDE_CSSPropertyTable g_FDE_CSSProperties[] = {
     {FDE_CSSProperty::BorderLeft, L"border-left", 0x04080036,

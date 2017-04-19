@@ -8,12 +8,12 @@
 
 #include <vector>
 
+#include "core/fxcrt/fx_codepage.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fde/xml/cfde_xmlchardata.h"
 #include "xfa/fde/xml/cfde_xmlelement.h"
 #include "xfa/fde/xml/cfde_xmlinstruction.h"
 #include "xfa/fde/xml/cfde_xmltext.h"
-#include "xfa/fgas/crt/fgas_codepage.h"
 
 CFDE_XMLNode::CFDE_XMLNode()
     : m_pParent(nullptr),
@@ -329,7 +329,8 @@ std::unique_ptr<CFDE_XMLNode> CFDE_XMLNode::Clone() {
   return nullptr;
 }
 
-void CFDE_XMLNode::SaveXMLNode(const CFX_RetainPtr<CFGAS_Stream>& pXMLStream) {
+void CFDE_XMLNode::SaveXMLNode(
+    const CFX_RetainPtr<CFX_SeekableStreamProxy>& pXMLStream) {
   CFDE_XMLNode* pNode = (CFDE_XMLNode*)this;
   switch (pNode->GetType()) {
     case FDE_XMLNODE_Instruction: {

@@ -9,6 +9,7 @@
 #include <utility>
 #include <vector>
 
+#include "core/fxcrt/fx_codepage.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fde/xml/cfde_xmlchardata.h"
@@ -16,7 +17,6 @@
 #include "xfa/fde/xml/cfde_xmlinstruction.h"
 #include "xfa/fde/xml/cfde_xmlnode.h"
 #include "xfa/fde/xml/cfde_xmltext.h"
-#include "xfa/fgas/crt/fgas_codepage.h"
 
 CFDE_XMLDoc::CFDE_XMLDoc()
     : m_iStatus(0), m_pRoot(pdfium::MakeUnique<CFDE_XMLNode>()) {
@@ -47,8 +47,9 @@ void CFDE_XMLDoc::CloseXML() {
   m_pXMLParser.reset();
 }
 
-void CFDE_XMLDoc::SaveXMLNode(const CFX_RetainPtr<CFGAS_Stream>& pXMLStream,
-                              CFDE_XMLNode* pINode) {
+void CFDE_XMLDoc::SaveXMLNode(
+    const CFX_RetainPtr<CFX_SeekableStreamProxy>& pXMLStream,
+    CFDE_XMLNode* pINode) {
   CFDE_XMLNode* pNode = (CFDE_XMLNode*)pINode;
   switch (pNode->GetType()) {
     case FDE_XMLNODE_Instruction: {

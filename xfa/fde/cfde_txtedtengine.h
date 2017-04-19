@@ -31,7 +31,7 @@ class CFDE_TxtEdtEngine {
   int32_t CountPages() const;
   CFDE_TxtEdtPage* GetPage(int32_t nIndex);
 
-  void SetTextByStream(const CFX_RetainPtr<CFGAS_Stream>& pStream);
+  void SetTextByStream(const CFX_RetainPtr<CFX_SeekableStreamProxy>& pStream);
   void SetText(const CFX_WideString& wsText);
   int32_t GetTextLength() const;
   CFX_WideString GetText(int32_t nStart, int32_t nCount) const;

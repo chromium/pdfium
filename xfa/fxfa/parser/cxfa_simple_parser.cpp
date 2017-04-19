@@ -10,6 +10,8 @@
 #include <vector>
 
 #include "core/fxcrt/cfx_checksumcontext.h"
+#include "core/fxcrt/cfx_seekablestreamproxy.h"
+#include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/fx_ext.h"
 #include "third_party/base/ptr_util.h"
 #include "xfa/fde/xml/cfde_xmlchardata.h"
@@ -19,8 +21,6 @@
 #include "xfa/fde/xml/cfde_xmlnode.h"
 #include "xfa/fde/xml/cfde_xmlparser.h"
 #include "xfa/fde/xml/cfde_xmltext.h"
-#include "xfa/fgas/crt/cfgas_stream.h"
-#include "xfa/fgas/crt/fgas_codepage.h"
 #include "xfa/fxfa/fxfa.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
@@ -277,7 +277,7 @@ int32_t CXFA_SimpleParser::StartParse(
     XFA_XDPPACKET ePacketID) {
   CloseParser();
   m_pFileRead = pStream;
-  m_pStream = pdfium::MakeRetain<CFGAS_Stream>(pStream, false);
+  m_pStream = pdfium::MakeRetain<CFX_SeekableStreamProxy>(pStream, false);
   uint16_t wCodePage = m_pStream->GetCodePage();
   if (wCodePage != FX_CODEPAGE_UTF16LE && wCodePage != FX_CODEPAGE_UTF16BE &&
       wCodePage != FX_CODEPAGE_UTF8) {
@@ -319,7 +319,7 @@ CFDE_XMLNode* CXFA_SimpleParser::ParseXMLData(const CFX_ByteString& wsXML,
   CloseParser();
   m_pXMLDoc = pdfium::MakeUnique<CFDE_XMLDoc>();
 
-  auto pStream = pdfium::MakeRetain<CFGAS_Stream>(
+  auto pStream = pdfium::MakeRetain<CFX_SeekableStreamProxy>(
       const_cast<uint8_t*>(wsXML.raw_str()), wsXML.GetLength());
   auto pParser =
       pdfium::MakeUnique<CFDE_XMLParser>(m_pXMLDoc->GetRoot(), pStream);

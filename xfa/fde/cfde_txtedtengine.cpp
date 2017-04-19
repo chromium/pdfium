@@ -106,7 +106,7 @@ CFDE_TxtEdtPage* CFDE_TxtEdtEngine::GetPage(int32_t nIndex) {
 }
 
 void CFDE_TxtEdtEngine::SetTextByStream(
-    const CFX_RetainPtr<CFGAS_Stream>& pStream) {
+    const CFX_RetainPtr<CFX_SeekableStreamProxy>& pStream) {
   ResetEngine();
   int32_t nIndex = 0;
   if (pStream && pStream->GetLength()) {
@@ -118,7 +118,7 @@ void CFDE_TxtEdtEngine::SetTextByStream(
     bool bPreIsCR = false;
     if (bValid) {
       int32_t nPos = pStream->GetBOMLength();
-      pStream->Seek(CFGAS_Stream::Pos::Begin, nPos);
+      pStream->Seek(CFX_SeekableStreamProxy::Pos::Begin, nPos);
       int32_t nPlateSize = std::min(nStreamLength, m_pTxtBuf->GetChunkSize());
       wchar_t* lpwstr = FX_Alloc(wchar_t, nPlateSize);
       bool bEos = false;

@@ -8,9 +8,9 @@
 
 #include <algorithm>
 
+#include "core/fxcrt/fx_codepage.h"
 #include "xfa/fde/css/cfde_cssdeclaration.h"
 #include "xfa/fde/css/fde_cssdatatable.h"
-#include "xfa/fgas/crt/fgas_codepage.h"
 
 namespace {
 

@@ -80,7 +80,7 @@ int32_t GetUTF8EncodeLength(const std::vector<wchar_t>& src,
 }  // namespace
 
 CFDE_XMLSyntaxParser::CFDE_XMLSyntaxParser(
-    const CFX_RetainPtr<CFGAS_Stream>& pStream)
+    const CFX_RetainPtr<CFX_SeekableStreamProxy>& pStream)
     : m_pStream(pStream),
       m_iXMLPlaneSize(32 * 1024),
       m_iCurrentPos(0),
@@ -145,7 +145,7 @@ FDE_XmlSyntaxResult CFDE_XMLSyntaxParser::DoSyntaxParse() {
       m_ParsedChars += m_End;
       m_iParsedBytes = m_iCurrentPos;
       if (m_pStream->GetPosition() != m_iCurrentPos)
-        m_pStream->Seek(CFGAS_Stream::Pos::Begin, m_iCurrentPos);
+        m_pStream->Seek(CFX_SeekableStreamProxy::Pos::Begin, m_iCurrentPos);
 
       m_iBufferChars =
           m_pStream->ReadString(m_Buffer.data(), m_iXMLPlaneSize, &m_bEOS);

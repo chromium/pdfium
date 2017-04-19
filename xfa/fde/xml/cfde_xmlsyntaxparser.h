@@ -12,9 +12,9 @@
 
 #include "core/fxcrt/cfx_blockbuffer.h"
 #include "core/fxcrt/cfx_retain_ptr.h"
+#include "core/fxcrt/cfx_seekablestreamproxy.h"
 #include "core/fxcrt/fx_string.h"
 #include "xfa/fde/xml/cfde_xmlnode.h"
-#include "xfa/fgas/crt/cfgas_stream.h"
 
 enum class FDE_XmlSyntaxResult {
   None,
@@ -36,7 +36,8 @@ enum class FDE_XmlSyntaxResult {
 
 class CFDE_XMLSyntaxParser {
  public:
-  explicit CFDE_XMLSyntaxParser(const CFX_RetainPtr<CFGAS_Stream>& pStream);
+  explicit CFDE_XMLSyntaxParser(
+      const CFX_RetainPtr<CFX_SeekableStreamProxy>& pStream);
   ~CFDE_XMLSyntaxParser();
 
   FDE_XmlSyntaxResult DoSyntaxParse();
@@ -97,7 +98,7 @@ class CFDE_XMLSyntaxParser {
 
   void ParseTextChar(wchar_t ch);
 
-  CFX_RetainPtr<CFGAS_Stream> m_pStream;
+  CFX_RetainPtr<CFX_SeekableStreamProxy> m_pStream;
   FX_STRSIZE m_iXMLPlaneSize;
   int32_t m_iCurrentPos;
   int32_t m_iCurrentNodeNum;

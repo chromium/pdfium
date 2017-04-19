@@ -6,8 +6,8 @@
 
 #include "xfa/fxfa/app/xfa_fwltheme.h"
 
+#include "core/fxcrt/fx_codepage.h"
 #include "xfa/fde/cfde_textout.h"
-#include "xfa/fgas/crt/fgas_codepage.h"
 #include "xfa/fgas/font/cfgas_gefont.h"
 #include "xfa/fwl/cfwl_barcode.h"
 #include "xfa/fwl/cfwl_caret.h"

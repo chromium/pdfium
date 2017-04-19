@@ -5,8 +5,8 @@
 #include <memory>
 
 #include "core/fxcrt/cfx_retain_ptr.h"
+#include "core/fxcrt/cfx_seekablestreamproxy.h"
 #include "core/fxcrt/xml/cfx_saxreader.h"
-#include "xfa/fgas/crt/cfgas_stream.h"
 
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   CFX_SAXReader reader;

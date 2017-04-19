@@ -14,11 +14,11 @@
 #include <vector>
 
 #include "core/fxcrt/cfx_retain_ptr.h"
+#include "core/fxcrt/cfx_seekablestreamproxy.h"
 #include "core/fxcrt/fx_ext.h"
 #include "core/fxge/cfx_fontmapper.h"
 #include "core/fxge/fx_freetype.h"
 #include "core/fxge/ifx_systemfontinfo.h"
-#include "xfa/fgas/crt/cfgas_stream.h"
 
 #define FX_FONTSTYLE_Normal 0x00
 #define FX_FONTSTYLE_FixedPitch 0x01

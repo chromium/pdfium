@@ -9,11 +9,11 @@
 #include <vector>
 
 #include "core/fxcrt/fx_basic.h"
+#include "core/fxcrt/fx_codepage.h"
 #include "third_party/base/stl_util.h"
 #include "xfa/fde/xml/cfde_xmldoc.h"
 #include "xfa/fde/xml/cfde_xmlelement.h"
 #include "xfa/fde/xml/cfde_xmlnode.h"
-#include "xfa/fgas/crt/fgas_codepage.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
 #include "xfa/fxfa/parser/cxfa_widgetdata.h"
@@ -226,7 +226,8 @@ void RegenerateFormFile_Changed(CXFA_Node* pNode,
 
         CFX_RetainPtr<IFX_MemoryStream> pMemStream =
             IFX_MemoryStream::Create(true);
-        auto pTempStream = pdfium::MakeRetain<CFGAS_Stream>(pMemStream, true);
+        auto pTempStream =
+            pdfium::MakeRetain<CFX_SeekableStreamProxy>(pMemStream, true);
 
         pTempStream->SetCodePage(FX_CODEPAGE_UTF8);
         pRichTextXML->SaveXMLNode(pTempStream);
@@ -341,9 +342,10 @@ void RegenerateFormFile_Changed(CXFA_Node* pNode,
   }
 }
 
-void RegenerateFormFile_Container(CXFA_Node* pNode,
-                                  const CFX_RetainPtr<CFGAS_Stream>& pStream,
-                                  bool bSaveXML) {
+void RegenerateFormFile_Container(
+    CXFA_Node* pNode,
+    const CFX_RetainPtr<CFX_SeekableStreamProxy>& pStream,
+    bool bSaveXML) {
   XFA_Element eType = pNode->GetElementType();
   if (eType == XFA_Element::Field || eType == XFA_Element::Draw ||
       !pNode->IsContainerNode()) {
@@ -399,7 +401,7 @@ void RegenerateFormFile_Container(CXFA_Node* pNode,
 
 void XFA_DataExporter_RegenerateFormFile(
     CXFA_Node* pNode,
-    const CFX_RetainPtr<CFGAS_Stream>& pStream,
+    const CFX_RetainPtr<CFX_SeekableStreamProxy>& pStream,
     const char* pChecksum,
     bool bSaveXML) {
   if (pNode->IsModelNode()) {
@@ -485,15 +487,16 @@ bool CXFA_DataExporter::Export(const CFX_RetainPtr<IFX_SeekableStream>& pWrite,
   if (!pWrite)
     return false;
 
-  auto pStream = pdfium::MakeRetain<CFGAS_Stream>(pWrite, true);
+  auto pStream = pdfium::MakeRetain<CFX_SeekableStreamProxy>(pWrite, true);
   pStream->SetCodePage(FX_CODEPAGE_UTF8);
   return Export(pStream, pNode, dwFlag, pChecksum);
 }
 
-bool CXFA_DataExporter::Export(const CFX_RetainPtr<CFGAS_Stream>& pStream,
-                               CXFA_Node* pNode,
-                               uint32_t dwFlag,
-                               const char* pChecksum) {
+bool CXFA_DataExporter::Export(
+    const CFX_RetainPtr<CFX_SeekableStreamProxy>& pStream,
+    CXFA_Node* pNode,
+    uint32_t dwFlag,
+    const char* pChecksum) {
   CFDE_XMLDoc* pXMLDoc = m_pDocument->GetXMLDoc();
   if (pNode->IsModelNode()) {
     switch (pNode->GetPacketID()) {

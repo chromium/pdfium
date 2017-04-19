@@ -13,6 +13,7 @@
 #include <vector>
 
 #include "core/fxcrt/cfx_decimal.h"
+#include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/fx_ext.h"
 #include "fxjs/cfxjse_value.h"
 #include "third_party/base/ptr_util.h"
@@ -20,7 +21,6 @@
 #include "xfa/fde/xml/cfde_xmlelement.h"
 #include "xfa/fde/xml/cfde_xmlnode.h"
 #include "xfa/fde/xml/cfde_xmltext.h"
-#include "xfa/fgas/crt/fgas_codepage.h"
 #include "xfa/fxfa/app/xfa_ffnotify.h"
 #include "xfa/fxfa/cxfa_eventparam.h"
 #include "xfa/fxfa/cxfa_ffwidget.h"
@@ -1408,7 +1408,8 @@ void CXFA_Node::Script_NodeClass_SaveXML(CFXJSE_Arguments* pArguments) {
     }
     CFX_RetainPtr<IFX_MemoryStream> pMemoryStream =
         IFX_MemoryStream::Create(true);
-    auto pStream = pdfium::MakeRetain<CFGAS_Stream>(pMemoryStream, true);
+    auto pStream =
+        pdfium::MakeRetain<CFX_SeekableStreamProxy>(pMemoryStream, true);
     pStream->SetCodePage(FX_CODEPAGE_UTF8);
     pStream->WriteString(bsXMLHeader.AsStringC());
 

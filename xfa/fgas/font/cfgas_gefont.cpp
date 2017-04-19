@@ -9,11 +9,11 @@
 #include <memory>
 #include <utility>
 
+#include "core/fxcrt/fx_codepage.h"
 #include "core/fxge/cfx_substfont.h"
 #include "core/fxge/cfx_unicodeencoding.h"
 #include "core/fxge/cfx_unicodeencodingex.h"
 #include "third_party/base/ptr_util.h"
-#include "xfa/fgas/crt/fgas_codepage.h"
 #include "xfa/fgas/font/fgas_fontutils.h"
 #include "xfa/fxfa/cxfa_fontmgr.h"
 

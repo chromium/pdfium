@@ -6,6 +6,7 @@
 #include <cstdint>
 #include <memory>
 
+#include "core/fxcrt/cfx_seekablestreamproxy.h"
 #include "core/fxcrt/fx_basic.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/fx_system.h"
@@ -13,7 +14,6 @@
 #include "xfa/fde/xml/cfde_xmldoc.h"
 #include "xfa/fde/xml/cfde_xmlnode.h"
 #include "xfa/fde/xml/cfde_xmlparser.h"
-#include "xfa/fgas/crt/cfgas_stream.h"
 
 namespace {
 
@@ -51,8 +51,9 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   if (!safe_size.IsValid())
     return 0;
 
-  CFX_RetainPtr<CFGAS_Stream> stream =
-      pdfium::MakeRetain<CFGAS_Stream>(const_cast<uint8_t*>(data), size);
+  CFX_RetainPtr<CFX_SeekableStreamProxy> stream =
+      pdfium::MakeRetain<CFX_SeekableStreamProxy>(const_cast<uint8_t*>(data),
+                                                  size);
   auto doc = pdfium::MakeUnique<CFDE_XMLDoc>();
   if (!doc->LoadXML(pdfium::MakeUnique<CFDE_XMLParser>(doc->GetRoot(), stream)))
     return 0;
