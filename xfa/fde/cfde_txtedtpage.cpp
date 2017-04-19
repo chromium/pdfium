@@ -279,7 +279,7 @@ int32_t CFDE_TxtEdtPage::LoadPage(const CFX_RectF* pClipBox,
   m_nCharCount = nPageEnd - nPageStart + 1;
   bool bReload = false;
   float fDefCharWidth = 0;
-  std::unique_ptr<IFX_CharIter> pIter(m_pIter->Clone());
+  std::unique_ptr<IFX_CharIter> pIter = m_pIter->Clone();
   pIter->SetAt(nPageStart);
   m_pIter->SetAt(nPageStart);
   bool bFirstPiece = true;

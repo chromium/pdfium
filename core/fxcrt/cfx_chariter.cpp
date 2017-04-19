@@ -6,6 +6,8 @@
 
 #include "core/fxcrt/cfx_chariter.h"
 
+#include "third_party/base/ptr_util.h"
+
 CFX_CharIter::CFX_CharIter(const CFX_WideString& wsText)
     : m_wsText(wsText), m_nIndex(0) {
   ASSERT(!wsText.IsEmpty());
@@ -44,8 +46,8 @@ bool CFX_CharIter::IsEOF(bool bTail) const {
   return bTail ? (m_nIndex + 1 == m_wsText.GetLength()) : (m_nIndex == 0);
 }
 
-IFX_CharIter* CFX_CharIter::Clone() {
-  CFX_CharIter* pIter = new CFX_CharIter(m_wsText);
+std::unique_ptr<IFX_CharIter> CFX_CharIter::Clone() {
+  auto pIter = pdfium::MakeUnique<CFX_CharIter>(m_wsText);
   pIter->m_nIndex = m_nIndex;
   return pIter;
 }

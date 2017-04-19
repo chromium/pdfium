@@ -7,6 +7,8 @@
 #ifndef CORE_FXCRT_IFX_CHARITER_H_
 #define CORE_FXCRT_IFX_CHARITER_H_
 
+#include <memory>
+
 #include "core/fxcrt/fx_system.h"
 
 class IFX_CharIter {
@@ -18,7 +20,7 @@ class IFX_CharIter {
   virtual void SetAt(int32_t nIndex) = 0;
   virtual int32_t GetAt() const = 0;
   virtual bool IsEOF(bool bTail = true) const = 0;
-  virtual IFX_CharIter* Clone() = 0;
+  virtual std::unique_ptr<IFX_CharIter> Clone() = 0;
 };
 
 #endif  // CORE_FXCRT_IFX_CHARITER_H_

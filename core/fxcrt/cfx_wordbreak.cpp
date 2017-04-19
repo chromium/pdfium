@@ -2793,8 +2793,8 @@ void CFX_WordBreak::Attach(const CFX_WideString& wsText) {
 }
 
 bool CFX_WordBreak::Next(bool bPrev) {
-  std::unique_ptr<IFX_CharIter> pIter(
-      (bPrev ? m_pPreIter : m_pCurIter)->Clone());
+  std::unique_ptr<IFX_CharIter> pIter =
+      (bPrev ? m_pPreIter : m_pCurIter)->Clone();
   if (pIter->IsEOF(!bPrev))
     return false;
 
@@ -2819,7 +2819,7 @@ void CFX_WordBreak::SetAt(int32_t nIndex) {
   m_pCurIter->SetAt(nIndex);
   FindNextBreakPos(m_pCurIter.get(), true, false);
   m_pPreIter = std::move(m_pCurIter);
-  m_pCurIter.reset(m_pPreIter->Clone());
+  m_pCurIter = m_pPreIter->Clone();
   FindNextBreakPos(m_pCurIter.get(), false, false);
 }
 
@@ -2837,7 +2837,7 @@ void CFX_WordBreak::GetWord(CFX_WideString& wsWord) const {
     return;
   }
   wchar_t* lpBuf = wsWord.GetBuffer(nWordLength);
-  std::unique_ptr<IFX_CharIter> pTempIter(m_pPreIter->Clone());
+  std::unique_ptr<IFX_CharIter> pTempIter = m_pPreIter->Clone();
   int32_t i = 0;
   while (pTempIter->GetAt() <= m_pCurIter->GetAt()) {
     lpBuf[i++] = pTempIter->GetChar();

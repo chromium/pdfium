@@ -7,6 +7,8 @@
 #ifndef CORE_FXCRT_CFX_CHARITER_H_
 #define CORE_FXCRT_CFX_CHARITER_H_
 
+#include <memory>
+
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/ifx_chariter.h"
@@ -21,7 +23,7 @@ class CFX_CharIter : public IFX_CharIter {
   void SetAt(int32_t nIndex) override;
   int32_t GetAt() const override;
   bool IsEOF(bool bTail = true) const override;
-  IFX_CharIter* Clone() override;
+  std::unique_ptr<IFX_CharIter> Clone() override;
 
  private:
   const CFX_WideString& m_wsText;

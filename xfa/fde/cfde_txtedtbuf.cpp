@@ -343,8 +343,8 @@ bool CFDE_TxtEdtBuf::Iterator::IsEOF(bool bTail) const {
   return bTail ? m_nIndex == (m_pBuf->GetTextLength() - 2) : m_nIndex == 0;
 }
 
-IFX_CharIter* CFDE_TxtEdtBuf::Iterator::Clone() {
-  CFDE_TxtEdtBuf::Iterator* pIter = new CFDE_TxtEdtBuf::Iterator(m_pBuf);
+std::unique_ptr<IFX_CharIter> CFDE_TxtEdtBuf::Iterator::Clone() {
+  auto pIter = pdfium::MakeUnique<CFDE_TxtEdtBuf::Iterator>(m_pBuf);
   pIter->m_nCurChunk = m_nCurChunk;
   pIter->m_nCurIndex = m_nCurIndex;
   pIter->m_nIndex = m_nIndex;

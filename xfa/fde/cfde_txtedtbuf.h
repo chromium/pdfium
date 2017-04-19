@@ -31,7 +31,7 @@ class CFDE_TxtEdtBuf {
     int32_t GetAt() const override;
 
     bool IsEOF(bool bTail = true) const override;
-    IFX_CharIter* Clone() override;
+    std::unique_ptr<IFX_CharIter> Clone() override;
 
    private:
     CFDE_TxtEdtBuf* m_pBuf;
