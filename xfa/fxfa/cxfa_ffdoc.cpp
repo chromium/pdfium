@@ -15,6 +15,7 @@
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
 #include "core/fpdfdoc/cpdf_nametree.h"
 #include "core/fxcrt/cfx_checksumcontext.h"
+#include "core/fxcrt/cfx_memorystream.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/xml/cfx_xmlelement.h"
@@ -389,8 +390,9 @@ CFX_RetainPtr<CFX_DIBitmap> CXFA_FFDoc::GetPDFNamedImage(
   auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pStream);
   pAcc->LoadAllData();
 
-  CFX_RetainPtr<IFX_SeekableStream> pImageFileRead = IFX_MemoryStream::Create(
-      const_cast<uint8_t*>(pAcc->GetData()), pAcc->GetSize());
+  CFX_RetainPtr<IFX_SeekableStream> pImageFileRead =
+      pdfium::MakeRetain<CFX_MemoryStream>(
+          const_cast<uint8_t*>(pAcc->GetData()), pAcc->GetSize(), false);
 
   CFX_RetainPtr<CFX_DIBitmap> pDibSource = XFA_LoadImageFromBuffer(
       pImageFileRead, FXCODEC_IMAGE_UNKNOWN, iImageXDpi, iImageYDpi);

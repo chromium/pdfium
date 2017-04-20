@@ -111,22 +111,6 @@ class IFX_SeekableStream : public IFX_SeekableReadStream,
   bool Flush() override = 0;
 };
 
-class IFX_MemoryStream : public IFX_SeekableStream {
- public:
-  static CFX_RetainPtr<IFX_MemoryStream> Create(uint8_t* pBuffer,
-                                                size_t nSize,
-                                                bool bTakeOver = false);
-  static CFX_RetainPtr<IFX_MemoryStream> Create(bool bConsecutive = false);
-
-  virtual bool IsConsecutive() const = 0;
-  virtual void EstimateSize(size_t nInitSize, size_t nGrowSize) = 0;
-  virtual uint8_t* GetBuffer() const = 0;
-  virtual void AttachBuffer(uint8_t* pBuffer,
-                            size_t nSize,
-                            bool bTakeOver = false) = 0;
-  virtual void DetachBuffer() = 0;
-};
-
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
 class CFindFileData {
  public:

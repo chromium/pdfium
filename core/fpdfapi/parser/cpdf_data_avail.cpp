@@ -21,6 +21,7 @@
 #include "core/fpdfapi/parser/cpdf_reference.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/fpdf_parser_utility.h"
+#include "core/fxcrt/cfx_memorystream.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "third_party/base/numerics/safe_conversions.h"
@@ -716,8 +717,8 @@ bool CPDF_DataAvail::IsLinearizedFile(uint8_t* pData, uint32_t dwLen) {
   if (m_pLinearized)
     return true;
 
-  CFX_RetainPtr<IFX_MemoryStream> file =
-      IFX_MemoryStream::Create(pData, (size_t)dwLen, false);
+  auto file = pdfium::MakeRetain<CFX_MemoryStream>(
+      pData, static_cast<size_t>(dwLen), false);
   int32_t offset = GetHeaderOffset(file);
   if (offset == -1) {
     m_docStatus = PDF_DATAAVAIL_ERROR;
@@ -756,8 +757,8 @@ bool CPDF_DataAvail::CheckEnd(DownloadHints* pHints) {
   uint8_t buffer[1024];
   m_pFileRead->ReadBlock(buffer, req_pos, dwSize);
 
-  CFX_RetainPtr<IFX_MemoryStream> file =
-      IFX_MemoryStream::Create(buffer, (size_t)dwSize, false);
+  auto file = pdfium::MakeRetain<CFX_MemoryStream>(
+      buffer, static_cast<size_t>(dwSize), false);
   m_syntaxParser.InitParser(file, 0);
   m_syntaxParser.RestorePos(dwSize - 1);
 
@@ -804,8 +805,8 @@ int32_t CPDF_DataAvail::CheckCrossRefStream(DownloadHints* pHints,
 
   m_pFileRead->ReadBlock(pBuf, m_dwCurrentXRefSteam, iSize);
 
-  CFX_RetainPtr<IFX_MemoryStream> file =
-      IFX_MemoryStream::Create(pBuf, (size_t)iSize, false);
+  auto file = pdfium::MakeRetain<CFX_MemoryStream>(
+      pBuf, static_cast<size_t>(iSize), false);
   m_parser.m_pSyntax->InitParser(file, 0);
 
   bool bNumber;
@@ -1049,8 +1050,8 @@ bool CPDF_DataAvail::CheckTrailer(DownloadHints* pHints) {
   if (!m_pFileRead->ReadBlock(pBuf, m_dwTrailerOffset, iSize))
     return false;
 
-  CFX_RetainPtr<IFX_MemoryStream> file =
-      IFX_MemoryStream::Create(pBuf, (size_t)iSize, false);
+  auto file = pdfium::MakeRetain<CFX_MemoryStream>(
+      pBuf, static_cast<size_t>(iSize), false);
   m_syntaxParser.InitParser(file, 0);
 
   std::unique_ptr<CPDF_Object> pTrailer(

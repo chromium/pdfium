@@ -4,15 +4,16 @@
 
 #include <memory>
 
+#include "core/fxcrt/cfx_memorystream.h"
 #include "core/fxcrt/cfx_retain_ptr.h"
 #include "core/fxcrt/cfx_seekablestreamproxy.h"
 #include "core/fxcrt/xml/cfx_saxreader.h"
 
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   CFX_SAXReader reader;
-  if (reader.StartParse(
-          IFX_MemoryStream::Create(const_cast<uint8_t*>(data), size), 0, -1,
-          CFX_SaxParseMode_NotSkipSpace) < 0) {
+  if (reader.StartParse(pdfium::MakeRetain<CFX_MemoryStream>(
+                            const_cast<uint8_t*>(data), size, false),
+                        0, -1, CFX_SaxParseMode_NotSkipSpace) < 0) {
     return 0;
   }
 

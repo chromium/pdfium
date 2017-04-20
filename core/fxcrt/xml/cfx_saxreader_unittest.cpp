@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 #include "core/fxcrt/xml/cfx_saxreader.h"
+#include "core/fxcrt/cfx_memorystream.h"
 #include "testing/gmock/include/gmock/gmock.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/test_support.h"
@@ -50,10 +51,11 @@ class CFX_SAXReaderTest : public pdfium::FPDF_Test {
   }
 
   bool StartParse(char* str) {
-    return reader_.StartParse(IFX_MemoryStream::Create(
-                                  reinterpret_cast<uint8_t*>(str), strlen(str)),
-                              0, static_cast<uint32_t>(-1),
-                              CFX_SaxParseMode_NotSkipSpace) >= 0;
+    return reader_.StartParse(
+               pdfium::MakeRetain<CFX_MemoryStream>(
+                   reinterpret_cast<uint8_t*>(str), strlen(str), false),
+               0, static_cast<uint32_t>(-1),
+               CFX_SaxParseMode_NotSkipSpace) >= 0;
   }
 
   int32_t ContinueParse() {

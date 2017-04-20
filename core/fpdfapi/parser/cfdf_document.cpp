@@ -13,6 +13,7 @@
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_syntax_parser.h"
 #include "core/fpdfapi/parser/fpdf_parser_utility.h"
+#include "core/fxcrt/cfx_memorystream.h"
 #include "third_party/base/ptr_util.h"
 
 CFDF_Document::CFDF_Document()
@@ -39,7 +40,8 @@ std::unique_ptr<CFDF_Document> CFDF_Document::ParseFile(
 
 std::unique_ptr<CFDF_Document> CFDF_Document::ParseMemory(uint8_t* pData,
                                                           uint32_t size) {
-  return CFDF_Document::ParseFile(IFX_MemoryStream::Create(pData, size));
+  return CFDF_Document::ParseFile(
+      pdfium::MakeRetain<CFX_MemoryStream>(pData, size, false));
 }
 
 void CFDF_Document::ParseStream(

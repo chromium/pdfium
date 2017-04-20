@@ -22,6 +22,7 @@
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "core/fpdfapi/parser/cpdf_syntax_parser.h"
 #include "core/fpdfapi/parser/fpdf_parser_utility.h"
+#include "core/fxcrt/cfx_memorystream.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "third_party/base/ptr_util.h"
@@ -1114,8 +1115,9 @@ std::unique_ptr<CPDF_Object> CPDF_Parser::ParseIndirectObject(
   if (!pObjStream)
     return nullptr;
 
-  CFX_RetainPtr<IFX_MemoryStream> file = IFX_MemoryStream::Create(
-      (uint8_t*)pObjStream->GetData(), (size_t)pObjStream->GetSize(), false);
+  auto file = pdfium::MakeRetain<CFX_MemoryStream>(
+      const_cast<uint8_t*>(pObjStream->GetData()),
+      static_cast<size_t>(pObjStream->GetSize()), false);
   CPDF_SyntaxParser syntax;
   syntax.InitParser(file, 0);
   const int32_t offset = GetStreamFirst(pObjStream);
@@ -1194,8 +1196,8 @@ void CPDF_Parser::GetIndirectBinary(uint32_t objnum,
     int32_t offset = GetStreamFirst(pObjStream);
     const uint8_t* pData = pObjStream->GetData();
     uint32_t totalsize = pObjStream->GetSize();
-    CFX_RetainPtr<IFX_MemoryStream> file =
-        IFX_MemoryStream::Create((uint8_t*)pData, (size_t)totalsize, false);
+    auto file = pdfium::MakeRetain<CFX_MemoryStream>(
+        const_cast<uint8_t*>(pData), static_cast<size_t>(totalsize), false);
     CPDF_SyntaxParser syntax;
     syntax.InitParser(file, 0);
 

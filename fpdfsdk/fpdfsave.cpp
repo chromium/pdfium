@@ -16,6 +16,7 @@
 #include "core/fpdfapi/parser/cpdf_reference.h"
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "core/fpdfapi/parser/cpdf_string.h"
+#include "core/fxcrt/cfx_memorystream.h"
 #include "core/fxcrt/fx_extension.h"
 #include "fpdfsdk/fsdk_define.h"
 #include "public/fpdf_edit.h"
@@ -139,8 +140,9 @@ bool SaveXFADocumentData(
     CPDF_Stream* pTemplateStream = pArray->GetStreamAt(iTemplate);
     auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pTemplateStream);
     pAcc->LoadAllData();
-    CFX_RetainPtr<IFX_SeekableStream> pTemplate = IFX_MemoryStream::Create(
-        const_cast<uint8_t*>(pAcc->GetData()), pAcc->GetSize());
+    CFX_RetainPtr<IFX_SeekableStream> pTemplate =
+        pdfium::MakeRetain<CFX_MemoryStream>(
+            const_cast<uint8_t*>(pAcc->GetData()), pAcc->GetSize(), false);
     pChecksum->UpdateChecksum(pTemplate);
   }
   CPDF_Stream* pFormStream = nullptr;
@@ -173,7 +175,8 @@ bool SaveXFADocumentData(
   }
   // L"datasets"
   {
-    CFX_RetainPtr<IFX_SeekableStream> pDsfileWrite = IFX_MemoryStream::Create();
+    CFX_RetainPtr<IFX_SeekableStream> pDsfileWrite =
+        pdfium::MakeRetain<CFX_MemoryStream>(false);
     if (pXFADocView->GetDoc()->SavePackage(XFA_HASHCODE_Datasets, pDsfileWrite,
                                            nullptr) &&
         pDsfileWrite->GetSize() > 0) {
@@ -200,7 +203,8 @@ bool SaveXFADocumentData(
   }
   // L"form"
   {
-    CFX_RetainPtr<IFX_SeekableStream> pfileWrite = IFX_MemoryStream::Create();
+    CFX_RetainPtr<IFX_SeekableStream> pfileWrite =
+        pdfium::MakeRetain<CFX_MemoryStream>(false);
     if (pXFADocView->GetDoc()->SavePackage(XFA_HASHCODE_Form, pfileWrite,
                                            pChecksum.get()) &&
         pfileWrite->GetSize() > 0) {

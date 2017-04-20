@@ -8,6 +8,7 @@
 
 #include <vector>
 
+#include "core/fxcrt/cfx_memorystream.h"
 #include "core/fxcrt/fx_basic.h"
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/xml/cfx_xmldoc.h"
@@ -224,8 +225,7 @@ void RegenerateFormFile_Changed(CXFA_Node* pNode,
         if (!pRichTextXML)
           break;
 
-        CFX_RetainPtr<IFX_MemoryStream> pMemStream =
-            IFX_MemoryStream::Create(true);
+        auto pMemStream = pdfium::MakeRetain<CFX_MemoryStream>(true);
         auto pTempStream =
             pdfium::MakeRetain<CFX_SeekableStreamProxy>(pMemStream, true);
 

@@ -10,8 +10,8 @@
 #include <memory>
 #include <utility>
 
+#include "core/fxcrt/cfx_memorystream.h"
 #include "core/fxcrt/fx_codepage.h"
-#include "core/fxcrt/fx_stream.h"
 #include "core/fxge/cfx_fontmapper.h"
 #include "core/fxge/cfx_fontmgr.h"
 #include "core/fxge/cfx_gemodule.h"
@@ -982,7 +982,7 @@ CFX_RetainPtr<IFX_SeekableReadStream> CFGAS_FontMgr::CreateFontStream(
   uint8_t* pBuffer = FX_Alloc(uint8_t, dwFileSize + 1);
   dwFileSize = pSystemFontInfo->GetFontData(hFont, 0, pBuffer, dwFileSize);
 
-  return IFX_MemoryStream::Create(pBuffer, dwFileSize, true);
+  return pdfium::MakeRetain<CFX_MemoryStream>(pBuffer, dwFileSize, true);
 }
 
 CFX_RetainPtr<IFX_SeekableReadStream> CFGAS_FontMgr::CreateFontStream(
