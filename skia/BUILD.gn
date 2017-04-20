@@ -317,7 +317,7 @@ component("skia") {
   deps = [
     ":skia_opts",
     "//:freetype_common",
-    "//third_party:zlib",
+    "//third_party/zlib:zlib",
   ]
 
   if (is_linux) {
