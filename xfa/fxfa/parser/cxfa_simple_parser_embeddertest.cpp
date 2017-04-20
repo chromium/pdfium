@@ -13,3 +13,10 @@ TEST_F(CXFASimpleParserEmbeddertest, Bug_216) {
   EXPECT_NE(nullptr, page);
   UnloadPage(page);
 }
+
+TEST_F(CXFASimpleParserEmbeddertest, Bug_709793) {
+  EXPECT_TRUE(OpenDocument("bug_709793.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  EXPECT_NE(nullptr, page);
+  UnloadPage(page);
+}

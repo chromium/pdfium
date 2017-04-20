@@ -485,7 +485,8 @@ CXFA_Node* CXFA_SimpleParser::ParseAsXDPPacket_XDP(
     pXMLConfigDOMRoot = pChildItem;
     pXFAConfigDOMRoot =
         ParseAsXDPPacket_Config(pXMLConfigDOMRoot, XFA_XDPPACKET_Config);
-    pXFARootNode->InsertChild(pXFAConfigDOMRoot, nullptr);
+    if (pXFAConfigDOMRoot)
+      pXFARootNode->InsertChild(pXFAConfigDOMRoot, nullptr);
   }
 
   CFX_XMLNode* pXMLDatasetsDOMRoot = nullptr;
