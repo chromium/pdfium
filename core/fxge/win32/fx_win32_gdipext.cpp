@@ -575,8 +575,11 @@ static void OutputImageMask(GpGraphics* pGraphics,
                                         (image_clip.Width() + 3) / 4 * 4,
                                         PixelFormat8bppIndexed,
                                         pStretched->GetBuffer(), &bitmap);
-    int a, r, g, b;
-    ArgbDecode(argb, a, r, g, b);
+    int a;
+    int r;
+    int g;
+    int b;
+    std::tie(a, r, g, b) = ArgbDecode(argb);
     UINT pal[258];
     pal[0] = 0;
     pal[1] = 256;

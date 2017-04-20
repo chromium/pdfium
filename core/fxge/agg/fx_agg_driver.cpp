@@ -923,7 +923,7 @@ bool CFX_Renderer::Init(const CFX_RetainPtr<CFX_DIBitmap>& pDevice,
     m_Color = FXARGB_TOBGRORDERDIB(color);
   else
     m_Color = FXARGB_TODIB(color);
-  ArgbDecode(color, m_Alpha, m_Red, m_Green, m_Blue);
+  std::tie(m_Alpha, m_Red, m_Green, m_Blue) = ArgbDecode(color);
   if (m_pDevice->GetBPP() == 1)
     composite_span = &CFX_Renderer::CompositeSpan1bpp;
   return true;

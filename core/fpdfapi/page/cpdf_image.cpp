@@ -183,9 +183,10 @@ void CPDF_Image::SetImage(const CFX_RetainPtr<CFX_DIBitmap>& pBitmap) {
     int32_t set_g = 0;
     int32_t set_b = 0;
     if (!pBitmap->IsAlphaMask()) {
-      ArgbDecode(pBitmap->GetPaletteArgb(0), reset_a, reset_r, reset_g,
-                 reset_b);
-      ArgbDecode(pBitmap->GetPaletteArgb(1), set_a, set_r, set_g, set_b);
+      std::tie(reset_a, reset_r, reset_g, reset_b) =
+          ArgbDecode(pBitmap->GetPaletteArgb(0));
+      std::tie(set_a, set_r, set_g, set_b) =
+          ArgbDecode(pBitmap->GetPaletteArgb(1));
     }
     if (set_a == 0 || reset_a == 0) {
       pDict->SetNewFor<CPDF_Boolean>("ImageMask", true);

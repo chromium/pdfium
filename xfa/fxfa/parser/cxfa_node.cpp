@@ -2054,8 +2054,11 @@ void CXFA_Node::Script_Som_BorderColor(CFXJSE_Value* pValue,
   } else {
     CXFA_Edge edge = border.GetEdge(0);
     FX_ARGB color = edge.GetColor();
-    int32_t a, r, g, b;
-    ArgbDecode(color, a, r, g, b);
+    int32_t a;
+    int32_t r;
+    int32_t g;
+    int32_t b;
+    std::tie(a, r, g, b) = ArgbDecode(color);
     CFX_WideString strColor;
     strColor.Format(L"%d,%d,%d", r, g, b);
     pValue->SetString(strColor.UTF8Encode().AsStringC());
@@ -2113,7 +2116,7 @@ void CXFA_Node::Script_Som_FillColor(CFXJSE_Value* pValue,
     int32_t r;
     int32_t g;
     int32_t b;
-    ArgbDecode(color, a, r, g, b);
+    std::tie(a, r, g, b) = ArgbDecode(color);
     CFX_WideString wsColor;
     wsColor.Format(L"%d,%d,%d", r, g, b);
     pValue->SetString(wsColor.UTF8Encode().AsStringC());
@@ -2265,7 +2268,7 @@ void CXFA_Node::Script_Som_FontColor(CFXJSE_Value* pValue,
     int32_t r;
     int32_t g;
     int32_t b;
-    ArgbDecode(color, a, r, g, b);
+    std::tie(a, r, g, b) = ArgbDecode(color);
     CFX_WideString wsColor;
     wsColor.Format(L"%d,%d,%d", r, g, b);
     pValue->SetString(wsColor.UTF8Encode().AsStringC());

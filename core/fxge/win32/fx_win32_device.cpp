@@ -137,7 +137,7 @@ HPEN CreatePen(const CFX_GraphStateData* pGraphState,
   }
   int a;
   FX_COLORREF rgb;
-  ArgbDecode(argb, a, rgb);
+  std::tie(a, rgb) = ArgbToColorRef(argb);
   LOGBRUSH lb;
   lb.lbColor = rgb;
   lb.lbStyle = BS_SOLID;
@@ -160,7 +160,7 @@ HPEN CreatePen(const CFX_GraphStateData* pGraphState,
 HBRUSH CreateBrush(uint32_t argb) {
   int a;
   FX_COLORREF rgb;
-  ArgbDecode(argb, a, rgb);
+  std::tie(a, rgb) = ArgbToColorRef(argb);
   return CreateSolidBrush(rgb);
 }
 
@@ -1090,7 +1090,7 @@ bool CGdiDeviceDriver::FillRectWithBlend(const FX_RECT* pRect,
 
   int alpha;
   FX_COLORREF rgb;
-  ArgbDecode(fill_color, alpha, rgb);
+  std::tie(alpha, rgb) = ArgbToColorRef(fill_color);
   if (alpha == 0)
     return true;
 
@@ -1146,7 +1146,7 @@ bool CGdiDeviceDriver::DrawCosmeticLine(float x1,
 
   int a;
   FX_COLORREF rgb;
-  ArgbDecode(color, a, rgb);
+  std::tie(a, rgb) = ArgbToColorRef(color);
   if (a == 0)
     return true;
 

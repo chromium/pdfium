@@ -67,7 +67,7 @@ void CXFA_Stroke::SetColor(FX_ARGB argb) {
   int r;
   int g;
   int b;
-  ArgbDecode(argb, a, r, g, b);
+  std::tie(a, r, g, b) = ArgbDecode(argb);
   wsColor.Format(L"%d,%d,%d", r, g, b);
   pNode->SetCData(XFA_ATTRIBUTE_Value, wsColor);
 }

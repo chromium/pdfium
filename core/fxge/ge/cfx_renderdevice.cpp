@@ -1018,7 +1018,7 @@ bool CFX_RenderDevice::DrawNormalText(int nChars,
   int g = 0;
   int b = 0;
   if (anti_alias == FXFT_RENDER_MODE_LCD)
-    ArgbDecode(fill_color, a, r, g, b);
+    std::tie(a, r, g, b) = ArgbDecode(fill_color);
 
   for (const FXTEXT_GLYPHPOS& glyph : glyphs) {
     if (!glyph.m_pGlyph)

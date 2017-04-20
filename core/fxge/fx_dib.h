@@ -7,6 +7,9 @@
 #ifndef CORE_FXGE_FX_DIB_H_
 #define CORE_FXGE_FX_DIB_H_
 
+#include <tuple>
+#include <utility>
+
 #include "core/fxcrt/fx_coordinates.h"
 
 enum FXDIB_Format {
@@ -80,8 +83,10 @@ inline FX_CMYK CmykEncode(int c, int m, int y, int k) {
   return (c << 24) | (m << 16) | (y << 8) | k;
 }
 
-void ArgbDecode(FX_ARGB argb, int& a, int& r, int& g, int& b);
-void ArgbDecode(FX_ARGB argb, int& a, FX_COLORREF& rgb);
+// Returns tuple a, r, g, b
+std::tuple<int, int, int, int> ArgbDecode(FX_ARGB argb);
+// Returns pair a, rgb
+std::pair<int, FX_COLORREF> ArgbToColorRef(FX_ARGB argb);
 inline FX_ARGB ArgbEncode(int a, int r, int g, int b) {
   return (a << 24) | (r << 16) | (g << 8) | b;
 }

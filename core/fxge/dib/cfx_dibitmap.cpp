@@ -147,8 +147,11 @@ void CFX_DIBitmap::Clear(uint32_t color) {
     }
     case FXDIB_Rgb:
     case FXDIB_Rgba: {
-      int a, r, g, b;
-      ArgbDecode(color, a, r, g, b);
+      int a;
+      int r;
+      int g;
+      int b;
+      std::tie(a, r, g, b) = ArgbDecode(color);
       if (r == g && g == b) {
         memset(pBuffer, r, m_Pitch * m_Height);
       } else {

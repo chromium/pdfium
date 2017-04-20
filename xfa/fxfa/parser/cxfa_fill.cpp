@@ -19,8 +19,11 @@ int32_t CXFA_Fill::GetPresence() {
 void CXFA_Fill::SetColor(FX_ARGB color) {
   CXFA_Node* pNode = m_pNode->GetProperty(0, XFA_Element::Color);
   CFX_WideString wsColor;
-  int a, r, g, b;
-  ArgbDecode(color, a, r, g, b);
+  int a;
+  int r;
+  int g;
+  int b;
+  std::tie(a, r, g, b) = ArgbDecode(color);
   wsColor.Format(L"%d,%d,%d", r, g, b);
   pNode->SetCData(XFA_ATTRIBUTE_Value, wsColor);
 }

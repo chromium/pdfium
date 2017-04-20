@@ -51,15 +51,15 @@ void CFX_Shading::InitArgbArray() {
   int32_t r1;
   int32_t g1;
   int32_t b1;
-  ArgbDecode(m_beginArgb, a1, r1, g1, b1);
+  std::tie(a1, r1, g1, b1) = ArgbDecode(m_beginArgb);
 
   int32_t a2;
   int32_t r2;
   int32_t g2;
   int32_t b2;
-  ArgbDecode(m_endArgb, a2, r2, g2, b2);
+  std::tie(a2, r2, g2, b2) = ArgbDecode(m_endArgb);
 
-  float f = (float)(FX_SHADING_Steps - 1);
+  float f = static_cast<float>(FX_SHADING_Steps - 1);
   float aScale = 1.0 * (a2 - a1) / f;
   float rScale = 1.0 * (r2 - r1) / f;
   float gScale = 1.0 * (g2 - g1) / f;

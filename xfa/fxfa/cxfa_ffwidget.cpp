@@ -1660,12 +1660,11 @@ static void XFA_BOX_Fill(CXFA_Box box,
       FX_ARGB cr;
       if (eType == XFA_Element::Stipple) {
         int32_t iRate = fill.GetStipple(cr);
-        if (iRate == 0) {
+        if (iRate == 0)
           iRate = 100;
-        }
-        int32_t a = 0;
+        int32_t a;
         FX_COLORREF rgb;
-        ArgbDecode(cr, a, rgb);
+        std::tie(a, rgb) = ArgbToColorRef(cr);
         cr = ArgbEncode(iRate * a / 100, rgb);
       } else {
         cr = fill.GetColor();

@@ -7,6 +7,7 @@
 #include "core/fxge/dib/cfx_imagestretcher.h"
 
 #include <climits>
+#include <tuple>
 
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/dib/cfx_dibsource.h"
@@ -16,8 +17,9 @@
 
 namespace {
 
+const int kMaxProgressiveStretchPixels = 1000000;
+
 bool SourceSizeWithinLimit(int width, int height) {
-  const int kMaxProgressiveStretchPixels = 1000000;
   return !height || width < kMaxProgressiveStretchPixels / height;
 }
 
@@ -32,11 +34,10 @@ FXDIB_Format GetStretchedFormat(const CFX_DIBSource& src) {
   return format;
 }
 
-void CmykDecode(uint32_t cmyk, int& c, int& m, int& y, int& k) {
-  c = FXSYS_GetCValue(cmyk);
-  m = FXSYS_GetMValue(cmyk);
-  y = FXSYS_GetYValue(cmyk);
-  k = FXSYS_GetKValue(cmyk);
+// Returns tuple c, m, y, k
+std::tuple<int, int, int, int> CmykDecode(const uint32_t cmyk) {
+  return std::make_tuple(FXSYS_GetCValue(cmyk), FXSYS_GetMValue(cmyk),
+                         FXSYS_GetYValue(cmyk), FXSYS_GetKValue(cmyk));
 }
 
 }  // namespace
@@ -68,10 +69,17 @@ bool CFX_ImageStretcher::Start() {
 
   if (m_pSource->GetFormat() == FXDIB_1bppRgb && m_pSource->GetPalette()) {
     FX_ARGB pal[256];
-    int a0, r0, g0, b0, a1, r1, g1, b1;
-    ArgbDecode(m_pSource->GetPaletteEntry(0), a0, r0, g0, b0);
-    ArgbDecode(m_pSource->GetPaletteEntry(1), a1, r1, g1, b1);
-    for (int i = 0; i < 256; i++) {
+    int a0;
+    int r0;
+    int g0;
+    int b0;
+    std::tie(a0, r0, g0, b0) = ArgbDecode(m_pSource->GetPaletteEntry(0));
+    int a1;
+    int r1;
+    int g1;
+    int b1;
+    std::tie(a1, r1, g1, b1) = ArgbDecode(m_pSource->GetPaletteEntry(1));
+    for (int i = 0; i < 256; ++i) {
       int a = a0 + (a1 - a0) * i / 255;
       int r = r0 + (r1 - r0) * i / 255;
       int g = g0 + (g1 - g0) * i / 255;
@@ -85,10 +93,17 @@ bool CFX_ImageStretcher::Start() {
   } else if (m_pSource->GetFormat() == FXDIB_1bppCmyk &&
              m_pSource->GetPalette()) {
     FX_CMYK pal[256];
-    int c0, m0, y0, k0, c1, m1, y1, k1;
-    CmykDecode(m_pSource->GetPaletteEntry(0), c0, m0, y0, k0);
-    CmykDecode(m_pSource->GetPaletteEntry(1), c1, m1, y1, k1);
-    for (int i = 0; i < 256; i++) {
+    int c0;
+    int m0;
+    int y0;
+    int k0;
+    std::tie(c0, m0, y0, k0) = CmykDecode(m_pSource->GetPaletteEntry(0));
+    int c1;
+    int m1;
+    int y1;
+    int k1;
+    std::tie(c1, m1, y1, k1) = CmykDecode(m_pSource->GetPaletteEntry(1));
+    for (int i = 0; i < 256; ++i) {
       int c = c0 + (c1 - c0) * i / 255;
       int m = m0 + (m1 - m0) * i / 255;
       int y = y0 + (y1 - y0) * i / 255;
@@ -106,12 +121,14 @@ bool CFX_ImageStretcher::Start() {
 
   if (m_Flags & FXDIB_DOWNSAMPLE)
     return StartQuickStretch();
+
   return StartStretch();
 }
 
 bool CFX_ImageStretcher::Continue(IFX_Pause* pPause) {
   if (m_Flags & FXDIB_DOWNSAMPLE)
     return ContinueQuickStretch(pPause);
+
   return ContinueStretch(pPause);
 }
 
@@ -163,7 +180,7 @@ bool CFX_ImageStretcher::ContinueQuickStretch(IFX_Pause* pPause) {
   int result_width = m_ClipRect.Width();
   int result_height = m_ClipRect.Height();
   int src_height = m_pSource->GetHeight();
-  for (; m_LineIndex < result_height; m_LineIndex++) {
+  for (; m_LineIndex < result_height; ++m_LineIndex) {
     int dest_y;
     int src_y;
     if (m_bFlipY) {

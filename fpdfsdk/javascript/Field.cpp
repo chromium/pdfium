@@ -2381,7 +2381,7 @@ bool Field::textColor(CJS_Runtime* pRuntime,
   int32_t r;
   int32_t g;
   int32_t b;
-  ArgbDecode(color, a, r, g, b);
+  std::tie(a, r, g, b) = ArgbDecode(color);
 
   CPWL_Color crRet =
       CPWL_Color(COLORTYPE_RGB, r / 255.0f, g / 255.0f, b / 255.0f);
