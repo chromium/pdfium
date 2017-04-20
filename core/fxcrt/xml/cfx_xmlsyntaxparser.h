@@ -36,6 +36,8 @@ enum class FX_XmlSyntaxResult {
 
 class CFX_XMLSyntaxParser {
  public:
+  static bool IsXMLNameChar(wchar_t ch, bool bFirstChar);
+
   explicit CFX_XMLSyntaxParser(
       const CFX_RetainPtr<CFX_SeekableStreamProxy>& pStream);
   ~CFX_XMLSyntaxParser();

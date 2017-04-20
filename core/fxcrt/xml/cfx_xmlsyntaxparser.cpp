@@ -7,6 +7,7 @@
 #include "core/fxcrt/xml/cfx_xmlsyntaxparser.h"
 
 #include <algorithm>
+#include <iterator>
 
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_safe_types.h"
@@ -35,21 +36,6 @@ const FX_XMLNAMECHAR g_XMLNameChars[] = {
     {0xF900, 0xFDCF, true}, {0xFDF0, 0xFFFD, true},
 };
 
-bool IsXMLNameChar(wchar_t ch, bool bFirstChar) {
-  int32_t iStart = 0;
-  int32_t iEnd = FX_ArraySize(g_XMLNameChars) - 1;
-  while (iStart <= iEnd) {
-    int32_t iMid = (iStart + iEnd) / 2;
-    if (ch < g_XMLNameChars[iMid].wStart) {
-      iEnd = iMid - 1;
-    } else if (ch > g_XMLNameChars[iMid].wEnd) {
-      iStart = iMid + 1;
-    } else {
-      return bFirstChar ? g_XMLNameChars[iMid].bStartChar : true;
-    }
-  }
-  return false;
-}
 
 int32_t GetUTF8EncodeLength(const std::vector<wchar_t>& src,
                             FX_FILESIZE iSrcLen) {
@@ -78,6 +64,15 @@ int32_t GetUTF8EncodeLength(const std::vector<wchar_t>& src,
 }
 
 }  // namespace
+
+// static
+bool CFX_XMLSyntaxParser::IsXMLNameChar(wchar_t ch, bool bFirstChar) {
+  auto* it = std::lower_bound(
+      std::begin(g_XMLNameChars), std::end(g_XMLNameChars), ch,
+      [](const FX_XMLNAMECHAR& arg, wchar_t ch) { return arg.wEnd < ch; });
+  return it != std::end(g_XMLNameChars) && ch >= it->wStart &&
+         (!bFirstChar || it->bStartChar);
+}
 
 CFX_XMLSyntaxParser::CFX_XMLSyntaxParser(
     const CFX_RetainPtr<CFX_SeekableStreamProxy>& pStream)

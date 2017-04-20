@@ -525,3 +525,20 @@ TEST_F(CFX_XMLSyntaxParserTest, EntityOverflowDecimal) {
 
   ASSERT_EQ(FX_XmlSyntaxResult::EndOfString, parser.DoSyntaxParse());
 }
+
+TEST_F(CFX_XMLSyntaxParserTest, IsXMLNameChar) {
+  EXPECT_FALSE(CFX_XMLSyntaxParser::IsXMLNameChar(L'-', true));
+  EXPECT_TRUE(CFX_XMLSyntaxParser::IsXMLNameChar(L'-', false));
+
+  EXPECT_FALSE(CFX_XMLSyntaxParser::IsXMLNameChar(0x2069, true));
+  EXPECT_TRUE(CFX_XMLSyntaxParser::IsXMLNameChar(0x2070, true));
+  EXPECT_TRUE(CFX_XMLSyntaxParser::IsXMLNameChar(0x2073, true));
+  EXPECT_TRUE(CFX_XMLSyntaxParser::IsXMLNameChar(0x218F, true));
+  EXPECT_FALSE(CFX_XMLSyntaxParser::IsXMLNameChar(0x2190, true));
+
+  EXPECT_FALSE(CFX_XMLSyntaxParser::IsXMLNameChar(0xFDEF, true));
+  EXPECT_TRUE(CFX_XMLSyntaxParser::IsXMLNameChar(0xFDF0, true));
+  EXPECT_TRUE(CFX_XMLSyntaxParser::IsXMLNameChar(0xFDF1, true));
+  EXPECT_TRUE(CFX_XMLSyntaxParser::IsXMLNameChar(0xFFFD, true));
+  EXPECT_FALSE(CFX_XMLSyntaxParser::IsXMLNameChar(0xFFFE, true));
+}
