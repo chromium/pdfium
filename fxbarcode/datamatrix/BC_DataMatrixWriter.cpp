@@ -20,6 +20,10 @@
  * limitations under the License.
  */
 
+#include "fxbarcode/datamatrix/BC_DataMatrixWriter.h"
+
+#include <memory>
+
 #include "fxbarcode/BC_Dimension.h"
 #include "fxbarcode/BC_TwoDimWriter.h"
 #include "fxbarcode/BC_UtilCodingConvert.h"
@@ -30,7 +34,6 @@
 #include "fxbarcode/datamatrix/BC_Base256Encoder.h"
 #include "fxbarcode/datamatrix/BC_C40Encoder.h"
 #include "fxbarcode/datamatrix/BC_DataMatrixSymbolInfo144.h"
-#include "fxbarcode/datamatrix/BC_DataMatrixWriter.h"
 #include "fxbarcode/datamatrix/BC_DefaultPlacement.h"
 #include "fxbarcode/datamatrix/BC_EdifactEncoder.h"
 #include "fxbarcode/datamatrix/BC_Encoder.h"
@@ -41,69 +44,28 @@
 #include "fxbarcode/datamatrix/BC_SymbolShapeHint.h"
 #include "fxbarcode/datamatrix/BC_TextEncoder.h"
 #include "fxbarcode/datamatrix/BC_X12Encoder.h"
+#include "third_party/base/ptr_util.h"
 
-CBC_DataMatrixWriter::CBC_DataMatrixWriter() {}
-CBC_DataMatrixWriter::~CBC_DataMatrixWriter() {}
-bool CBC_DataMatrixWriter::SetErrorCorrectionLevel(int32_t level) {
-  m_iCorrectLevel = level;
-  return true;
-}
-uint8_t* CBC_DataMatrixWriter::Encode(const CFX_WideString& contents,
-                                      int32_t& outWidth,
-                                      int32_t& outHeight,
-                                      int32_t& e) {
-  if (outWidth < 0 || outHeight < 0) {
-    e = BCExceptionHeightAndWidthMustBeAtLeast1;
-    return nullptr;
-  }
-  CBC_SymbolShapeHint::SymbolShapeHint shape =
-      CBC_SymbolShapeHint::FORCE_SQUARE;
-  CBC_Dimension* minSize = nullptr;
-  CBC_Dimension* maxSize = nullptr;
-  CFX_WideString ecLevel;
-  CFX_WideString encoded = CBC_HighLevelEncoder::encodeHighLevel(
-      contents, ecLevel, shape, minSize, maxSize, e);
-  if (e != BCExceptionNO)
-    return nullptr;
-  CBC_SymbolInfo* symbolInfo = CBC_SymbolInfo::lookup(
-      encoded.GetLength(), shape, minSize, maxSize, true, e);
-  if (e != BCExceptionNO)
-    return nullptr;
-  CFX_WideString codewords =
-      CBC_ErrorCorrection::encodeECC200(encoded, symbolInfo, e);
-  if (e != BCExceptionNO)
-    return nullptr;
-  CBC_DefaultPlacement* placement =
-      new CBC_DefaultPlacement(codewords, symbolInfo->getSymbolDataWidth(e),
-                               symbolInfo->getSymbolDataHeight(e));
-  if (e != BCExceptionNO)
-    return nullptr;
-  placement->place();
-  CBC_CommonByteMatrix* bytematrix = encodeLowLevel(placement, symbolInfo, e);
-  if (e != BCExceptionNO)
-    return nullptr;
-  outWidth = bytematrix->GetWidth();
-  outHeight = bytematrix->GetHeight();
-  uint8_t* result = FX_Alloc2D(uint8_t, outWidth, outHeight);
-  memcpy(result, bytematrix->GetArray(), outWidth * outHeight);
-  delete bytematrix;
-  delete placement;
-  return result;
-}
-CBC_CommonByteMatrix* CBC_DataMatrixWriter::encodeLowLevel(
+namespace {
+
+std::unique_ptr<CBC_CommonByteMatrix> encodeLowLevel(
     CBC_DefaultPlacement* placement,
-    CBC_SymbolInfo* symbolInfo,
-    int32_t& e) {
+    CBC_SymbolInfo* symbolInfo) {
+  int32_t e = BCExceptionNO;
   int32_t symbolWidth = symbolInfo->getSymbolDataWidth(e);
   if (e != BCExceptionNO)
     return nullptr;
   int32_t symbolHeight = symbolInfo->getSymbolDataHeight(e);
   if (e != BCExceptionNO)
     return nullptr;
-  CBC_CommonByteMatrix* matrix = new CBC_CommonByteMatrix(
-      symbolInfo->getSymbolWidth(e), symbolInfo->getSymbolHeight(e));
+  int32_t width = symbolInfo->getSymbolWidth(e);
   if (e != BCExceptionNO)
     return nullptr;
+  int32_t height = symbolInfo->getSymbolHeight(e);
+  if (e != BCExceptionNO)
+    return nullptr;
+
+  auto matrix = pdfium::MakeUnique<CBC_CommonByteMatrix>(width, height);
   matrix->Init();
   int32_t matrixY = 0;
   for (int32_t y = 0; y < symbolHeight; y++) {
@@ -140,4 +102,60 @@ CBC_CommonByteMatrix* CBC_DataMatrixWriter::encodeLowLevel(
     }
   }
   return matrix;
+}
+
+}  // namespace
+
+CBC_DataMatrixWriter::CBC_DataMatrixWriter() {}
+CBC_DataMatrixWriter::~CBC_DataMatrixWriter() {}
+bool CBC_DataMatrixWriter::SetErrorCorrectionLevel(int32_t level) {
+  m_iCorrectLevel = level;
+  return true;
+}
+
+uint8_t* CBC_DataMatrixWriter::Encode(const CFX_WideString& contents,
+                                      int32_t& outWidth,
+                                      int32_t& outHeight) {
+  if (outWidth < 0 || outHeight < 0)
+    return nullptr;
+
+  CBC_SymbolShapeHint::SymbolShapeHint shape =
+      CBC_SymbolShapeHint::FORCE_SQUARE;
+  CBC_Dimension* minSize = nullptr;
+  CBC_Dimension* maxSize = nullptr;
+  CFX_WideString ecLevel;
+  int32_t e = BCExceptionNO;
+  CFX_WideString encoded = CBC_HighLevelEncoder::encodeHighLevel(
+      contents, ecLevel, shape, minSize, maxSize, e);
+  if (e != BCExceptionNO)
+    return nullptr;
+  CBC_SymbolInfo* symbolInfo = CBC_SymbolInfo::lookup(
+      encoded.GetLength(), shape, minSize, maxSize, true, e);
+  if (e != BCExceptionNO)
+    return nullptr;
+  CFX_WideString codewords =
+      CBC_ErrorCorrection::encodeECC200(encoded, symbolInfo, e);
+  if (e != BCExceptionNO)
+    return nullptr;
+
+  int32_t width = symbolInfo->getSymbolDataWidth(e);
+  if (e != BCExceptionNO)
+    return nullptr;
+
+  int32_t height = symbolInfo->getSymbolDataHeight(e);
+  if (e != BCExceptionNO)
+    return nullptr;
+
+  auto placement =
+      pdfium::MakeUnique<CBC_DefaultPlacement>(codewords, width, height);
+  placement->place();
+  auto bytematrix = encodeLowLevel(placement.get(), symbolInfo);
+  if (!bytematrix)
+    return nullptr;
+
+  outWidth = bytematrix->GetWidth();
+  outHeight = bytematrix->GetHeight();
+  uint8_t* result = FX_Alloc2D(uint8_t, outWidth, outHeight);
+  memcpy(result, bytematrix->GetArray(), outWidth * outHeight);
+  return result;
 }

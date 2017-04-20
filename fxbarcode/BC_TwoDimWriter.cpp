@@ -57,10 +57,9 @@ int32_t CBC_TwoDimWriter::GetErrorCorrectionLevel() const {
   return m_iCorrectLevel;
 }
 
-void CBC_TwoDimWriter::RenderResult(uint8_t* code,
+bool CBC_TwoDimWriter::RenderResult(uint8_t* code,
                                     int32_t codeWidth,
-                                    int32_t codeHeight,
-                                    int32_t& e) {
+                                    int32_t codeHeight) {
   int32_t inputWidth = codeWidth;
   int32_t inputHeight = codeHeight;
   int32_t tempWidth = inputWidth + 2;
@@ -77,8 +76,7 @@ void CBC_TwoDimWriter::RenderResult(uint8_t* code,
   int32_t outputHeight = scaledHeight.ValueOrDie();
   if (m_bFixedSize) {
     if (m_Width < outputWidth || m_Height < outputHeight) {
-      e = BCExceptionBitmapSizeError;
-      return;
+      return false;
     }
   } else {
     if (m_Width > outputWidth || m_Height > outputHeight) {
@@ -104,12 +102,11 @@ void CBC_TwoDimWriter::RenderResult(uint8_t* code,
     for (int32_t inputX = 0, outputX = leftPadding;
          (inputX < inputWidth) && (outputX < outputWidth - multiX);
          inputX++, outputX += multiX) {
-      if (code[inputX + inputY * inputWidth] == 1) {
-        if (!m_output->SetRegion(outputX, outputY, multiX, multiY)) {
-          e = BCExceptionGeneric;
-          return;
-        }
+      if (code[inputX + inputY * inputWidth] == 1 &&
+          !m_output->SetRegion(outputX, outputY, multiX, multiY)) {
+        return false;
       }
     }
   }
+  return true;
 }

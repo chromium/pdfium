@@ -11,9 +11,8 @@
 #include "core/fxcrt/fx_system.h"
 #include "fxbarcode/cbc_codebase.h"
 
-class CFX_DIBitmap;
+class CBC_OneDimWriter;
 class CFX_Font;
-class CFX_RenderDevice;
 
 class CBC_OneCode : public CBC_CodeBase {
  public:
@@ -30,6 +29,9 @@ class CBC_OneCode : public CBC_CodeBase {
   virtual void SetFontSize(float size);
   virtual void SetFontStyle(int32_t style);
   virtual void SetFontColor(FX_ARGB color);
+
+ private:
+  CBC_OneDimWriter* GetOneDimWriter();
 };
 
 #endif  // FXBARCODE_CBC_ONECODE_H_

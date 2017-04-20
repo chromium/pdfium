@@ -21,53 +21,41 @@
 
 #include "fxbarcode/cbc_code39.h"
 
+#include <memory>
+
 #include "fxbarcode/oned/BC_OnedCode39Writer.h"
 
 CBC_Code39::CBC_Code39() : CBC_OneCode(new CBC_OnedCode39Writer) {}
 
 CBC_Code39::~CBC_Code39() {}
 
-bool CBC_Code39::Encode(const CFX_WideStringC& contents,
-                        bool isDevice,
-                        int32_t& e) {
-  if (contents.IsEmpty()) {
-    e = BCExceptionNoContents;
+bool CBC_Code39::Encode(const CFX_WideStringC& contents, bool isDevice) {
+  if (contents.IsEmpty())
     return false;
-  }
+
   BCFORMAT format = BCFORMAT_CODE_39;
   int32_t outWidth = 0;
   int32_t outHeight = 0;
-  CFX_WideString filtercontents =
-      static_cast<CBC_OnedCode39Writer*>(m_pBCWriter.get())
-          ->FilterContents(contents);
-  CFX_WideString renderContents =
-      static_cast<CBC_OnedCode39Writer*>(m_pBCWriter.get())
-          ->RenderTextContents(contents);
+  auto* pWriter = GetOnedCode39Writer();
+  CFX_WideString filtercontents = pWriter->FilterContents(contents);
+  CFX_WideString renderContents = pWriter->RenderTextContents(contents);
   m_renderContents = renderContents;
   CFX_ByteString byteString = filtercontents.UTF8Encode();
-  uint8_t* data = static_cast<CBC_OnedCode39Writer*>(m_pBCWriter.get())
-                      ->Encode(byteString, format, outWidth, outHeight, e);
-  if (e != BCExceptionNO)
+  std::unique_ptr<uint8_t, FxFreeDeleter> data(
+      pWriter->Encode(byteString, format, outWidth, outHeight));
+  if (!data)
     return false;
-  static_cast<CBC_OneDimWriter*>(m_pBCWriter.get())
-      ->RenderResult(renderContents.AsStringC(), data, outWidth, isDevice, e);
-  FX_Free(data);
-  if (e != BCExceptionNO)
-    return false;
-  return true;
+  return pWriter->RenderResult(renderContents.AsStringC(), data.get(), outWidth,
+                               isDevice);
 }
 
 bool CBC_Code39::RenderDevice(CFX_RenderDevice* device,
-                              const CFX_Matrix* matrix,
-                              int32_t& e) {
-  CFX_WideString renderCon =
-      static_cast<CBC_OnedCode39Writer*>(m_pBCWriter.get())
-          ->encodedContents(m_renderContents.AsStringC(), e);
-  static_cast<CBC_OneDimWriter*>(m_pBCWriter.get())
-      ->RenderDeviceResult(device, matrix, renderCon.AsStringC(), e);
-  if (e != BCExceptionNO)
+                              const CFX_Matrix* matrix) {
+  auto* pWriter = GetOnedCode39Writer();
+  CFX_WideString renderCon;
+  if (!pWriter->encodedContents(m_renderContents.AsStringC(), &renderCon))
     return false;
-  return true;
+  return pWriter->RenderDeviceResult(device, matrix, renderCon.AsStringC());
 }
 
 BC_TYPE CBC_Code39::GetType() {
@@ -75,15 +63,13 @@ BC_TYPE CBC_Code39::GetType() {
 }
 
 bool CBC_Code39::SetTextLocation(BC_TEXT_LOC location) {
-  if (m_pBCWriter)
-    return static_cast<CBC_OnedCode39Writer*>(m_pBCWriter.get())
-        ->SetTextLocation(location);
-  return false;
+  return GetOnedCode39Writer()->SetTextLocation(location);
 }
 
-bool CBC_Code39::SetWideNarrowRatio(int32_t ratio) {
-  if (m_pBCWriter)
-    return static_cast<CBC_OnedCode39Writer*>(m_pBCWriter.get())
-        ->SetWideNarrowRatio(ratio);
-  return false;
+bool CBC_Code39::SetWideNarrowRatio(int8_t ratio) {
+  return GetOnedCode39Writer()->SetWideNarrowRatio(ratio);
+}
+
+CBC_OnedCode39Writer* CBC_Code39::GetOnedCode39Writer() {
+  return static_cast<CBC_OnedCode39Writer*>(m_pBCWriter.get());
 }

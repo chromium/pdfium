@@ -21,6 +21,8 @@
 
 #include "fxbarcode/cbc_pdf417i.h"
 
+#include <memory>
+
 #include "fxbarcode/pdf417/BC_PDF417Writer.h"
 
 CBC_PDF417I::CBC_PDF417I() : CBC_CodeBase(new CBC_PDF417Writer) {}
@@ -28,41 +30,35 @@ CBC_PDF417I::CBC_PDF417I() : CBC_CodeBase(new CBC_PDF417Writer) {}
 CBC_PDF417I::~CBC_PDF417I() {}
 
 bool CBC_PDF417I::SetErrorCorrectionLevel(int32_t level) {
-  static_cast<CBC_PDF417Writer*>(m_pBCWriter.get())
-      ->SetErrorCorrectionLevel(level);
+  GetPDF417Writer()->SetErrorCorrectionLevel(level);
   return true;
 }
 
 void CBC_PDF417I::SetTruncated(bool truncated) {
-  static_cast<CBC_PDF417Writer*>(m_pBCWriter.get())->SetTruncated(truncated);
+  GetPDF417Writer()->SetTruncated(truncated);
 }
 
-bool CBC_PDF417I::Encode(const CFX_WideStringC& contents,
-                         bool isDevice,
-                         int32_t& e) {
+bool CBC_PDF417I::Encode(const CFX_WideStringC& contents, bool isDevice) {
   int32_t outWidth = 0;
   int32_t outHeight = 0;
-  uint8_t* data =
-      static_cast<CBC_PDF417Writer*>(m_pBCWriter.get())
-          ->Encode(CFX_WideString(contents), outWidth, outHeight, e);
-  if (e != BCExceptionNO)
+  auto* pWriter = GetPDF417Writer();
+  std::unique_ptr<uint8_t, FxFreeDeleter> data(
+      pWriter->Encode(CFX_WideString(contents), outWidth, outHeight));
+  if (!data)
     return false;
-  static_cast<CBC_TwoDimWriter*>(m_pBCWriter.get())
-      ->RenderResult(data, outWidth, outHeight, e);
-  FX_Free(data);
-  if (e != BCExceptionNO)
-    return false;
-  return true;
+  return pWriter->RenderResult(data.get(), outWidth, outHeight);
 }
 
 bool CBC_PDF417I::RenderDevice(CFX_RenderDevice* device,
-                               const CFX_Matrix* matrix,
-                               int32_t& e) {
-  static_cast<CBC_TwoDimWriter*>(m_pBCWriter.get())
-      ->RenderDeviceResult(device, matrix);
+                               const CFX_Matrix* matrix) {
+  GetPDF417Writer()->RenderDeviceResult(device, matrix);
   return true;
 }
 
 BC_TYPE CBC_PDF417I::GetType() {
   return BC_PDF417;
+}
+
+CBC_PDF417Writer* CBC_PDF417I::GetPDF417Writer() {
+  return static_cast<CBC_PDF417Writer*>(m_pBCWriter.get());
 }

@@ -21,10 +21,9 @@ class CBC_QRCoderEncoder {
   CBC_QRCoderEncoder();
   ~CBC_QRCoderEncoder();
 
-  static void Encode(const CFX_WideString& content,
+  static bool Encode(const CFX_WideString& content,
                      const CBC_QRCoderErrorCorrectionLevel* ecLevel,
-                     CBC_QRCoder* qrCode,
-                     int32_t& e);
+                     CBC_QRCoder* qrCode);
 };
 
 #endif  // FXBARCODE_QRCODE_BC_QRCODERENCODER_H_

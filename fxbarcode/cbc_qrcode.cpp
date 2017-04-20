@@ -32,28 +32,24 @@ CBC_QRCode::~CBC_QRCode() {}
 bool CBC_QRCode::SetErrorCorrectionLevel(int32_t level) {
   if (level < 0 || level > 3)
     return false;
-  return m_pBCWriter && writer()->SetErrorCorrectionLevel(level);
+  return GetQRCodeWriter()->SetErrorCorrectionLevel(level);
 }
 
-bool CBC_QRCode::Encode(const CFX_WideStringC& contents,
-                        bool isDevice,
-                        int32_t& e) {
+bool CBC_QRCode::Encode(const CFX_WideStringC& contents, bool isDevice) {
   int32_t outWidth = 0;
   int32_t outHeight = 0;
-  CBC_QRCodeWriter* pWriter = writer();
-  std::unique_ptr<uint8_t, FxFreeDeleter> data(pWriter->Encode(
-      CFX_WideString(contents), pWriter->GetErrorCorrectionLevel(), outWidth,
-      outHeight, e));
-  if (e != BCExceptionNO)
+  CBC_QRCodeWriter* pWriter = GetQRCodeWriter();
+  std::unique_ptr<uint8_t, FxFreeDeleter> data(
+      pWriter->Encode(CFX_WideString(contents),
+                      pWriter->GetErrorCorrectionLevel(), outWidth, outHeight));
+  if (!data)
     return false;
-  pWriter->RenderResult(data.get(), outWidth, outHeight, e);
-  return e == BCExceptionNO;
+  return pWriter->RenderResult(data.get(), outWidth, outHeight);
 }
 
 bool CBC_QRCode::RenderDevice(CFX_RenderDevice* device,
-                              const CFX_Matrix* matrix,
-                              int32_t& e) {
-  writer()->RenderDeviceResult(device, matrix);
+                              const CFX_Matrix* matrix) {
+  GetQRCodeWriter()->RenderDeviceResult(device, matrix);
   return true;
 }
 
@@ -61,6 +57,6 @@ BC_TYPE CBC_QRCode::GetType() {
   return BC_QR_CODE;
 }
 
-CBC_QRCodeWriter* CBC_QRCode::writer() {
+CBC_QRCodeWriter* CBC_QRCode::GetQRCodeWriter() {
   return static_cast<CBC_QRCodeWriter*>(m_pBCWriter.get());
 }

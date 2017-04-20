@@ -58,8 +58,7 @@ bool CBC_QRCodeWriter::SetErrorCorrectionLevel(int32_t level) {
 uint8_t* CBC_QRCodeWriter::Encode(const CFX_WideString& contents,
                                   int32_t ecLevel,
                                   int32_t& outWidth,
-                                  int32_t& outHeight,
-                                  int32_t& e) {
+                                  int32_t& outHeight) {
   CBC_QRCoderErrorCorrectionLevel* ec = nullptr;
   switch (ecLevel) {
     case 0:
@@ -74,14 +73,11 @@ uint8_t* CBC_QRCodeWriter::Encode(const CFX_WideString& contents,
     case 3:
       ec = CBC_QRCoderErrorCorrectionLevel::H;
       break;
-    default: {
-      e = BCExceptionUnSupportEclevel;
+    default:
       return nullptr;
-    }
   }
   CBC_QRCoder qr;
-  CBC_QRCoderEncoder::Encode(contents, ec, &qr, e);
-  if (e != BCExceptionNO)
+  if (!CBC_QRCoderEncoder::Encode(contents, ec, &qr))
     return nullptr;
 
   outWidth = qr.GetMatrixWidth();

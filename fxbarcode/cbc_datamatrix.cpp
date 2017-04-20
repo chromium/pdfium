@@ -21,38 +21,35 @@
 
 #include "fxbarcode/cbc_datamatrix.h"
 
+#include <memory>
+
 #include "fxbarcode/datamatrix/BC_DataMatrixWriter.h"
 
 CBC_DataMatrix::CBC_DataMatrix() : CBC_CodeBase(new CBC_DataMatrixWriter) {}
 
 CBC_DataMatrix::~CBC_DataMatrix() {}
 
-bool CBC_DataMatrix::Encode(const CFX_WideStringC& contents,
-                            bool isDevice,
-                            int32_t& e) {
+bool CBC_DataMatrix::Encode(const CFX_WideStringC& contents, bool isDevice) {
   int32_t outWidth = 0;
   int32_t outHeight = 0;
-  uint8_t* data =
-      static_cast<CBC_DataMatrixWriter*>(m_pBCWriter.get())
-          ->Encode(CFX_WideString(contents), outWidth, outHeight, e);
-  if (e != BCExceptionNO)
+  auto* pWriter = GetDataMatrixWriter();
+  std::unique_ptr<uint8_t, FxFreeDeleter> data(
+      pWriter->Encode(CFX_WideString(contents), outWidth, outHeight));
+  if (!data)
     return false;
-  static_cast<CBC_TwoDimWriter*>(m_pBCWriter.get())
-      ->RenderResult(data, outWidth, outHeight, e);
-  FX_Free(data);
-  if (e != BCExceptionNO)
-    return false;
-  return true;
+  return pWriter->RenderResult(data.get(), outWidth, outHeight);
 }
 
 bool CBC_DataMatrix::RenderDevice(CFX_RenderDevice* device,
-                                  const CFX_Matrix* matrix,
-                                  int32_t& e) {
-  static_cast<CBC_TwoDimWriter*>(m_pBCWriter.get())
-      ->RenderDeviceResult(device, matrix);
+                                  const CFX_Matrix* matrix) {
+  GetDataMatrixWriter()->RenderDeviceResult(device, matrix);
   return true;
 }
 
 BC_TYPE CBC_DataMatrix::GetType() {
   return BC_DATAMATRIX;
+}
+
+CBC_DataMatrixWriter* CBC_DataMatrix::GetDataMatrixWriter() {
+  return static_cast<CBC_DataMatrixWriter*>(m_pBCWriter.get());
 }

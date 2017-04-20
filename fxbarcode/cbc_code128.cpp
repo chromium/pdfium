@@ -21,6 +21,8 @@
 
 #include "fxbarcode/cbc_code128.h"
 
+#include <memory>
+
 #include "fxbarcode/oned/BC_OnedCode128Writer.h"
 
 CBC_Code128::CBC_Code128(BC_TYPE type)
@@ -29,55 +31,42 @@ CBC_Code128::CBC_Code128(BC_TYPE type)
 CBC_Code128::~CBC_Code128() {}
 
 bool CBC_Code128::SetTextLocation(BC_TEXT_LOC location) {
-  if (m_pBCWriter)
-    return static_cast<CBC_OnedCode128Writer*>(m_pBCWriter.get())
-        ->SetTextLocation(location);
-  return false;
+  return GetOnedCode128Writer()->SetTextLocation(location);
 }
 
-bool CBC_Code128::Encode(const CFX_WideStringC& contents,
-                         bool isDevice,
-                         int32_t& e) {
-  if (contents.IsEmpty()) {
-    e = BCExceptionNoContents;
+bool CBC_Code128::Encode(const CFX_WideStringC& contents, bool isDevice) {
+  if (contents.IsEmpty())
     return false;
-  }
+
   BCFORMAT format = BCFORMAT_CODE_128;
   int32_t outWidth = 0;
   int32_t outHeight = 0;
+  auto* pWriter = GetOnedCode128Writer();
   CFX_WideString content(contents);
-  if (contents.GetLength() % 2 &&
-      static_cast<CBC_OnedCode128Writer*>(m_pBCWriter.get())->GetType() ==
-          BC_CODE128_C) {
+  if (contents.GetLength() % 2 && pWriter->GetType() == BC_CODE128_C)
     content += '0';
-  }
-  CFX_WideString encodeContents =
-      static_cast<CBC_OnedCode128Writer*>(m_pBCWriter.get())
-          ->FilterContents(content.AsStringC());
+
+  CFX_WideString encodeContents = pWriter->FilterContents(content.AsStringC());
   m_renderContents = encodeContents;
   CFX_ByteString byteString = encodeContents.UTF8Encode();
-  uint8_t* data = static_cast<CBC_OnedCode128Writer*>(m_pBCWriter.get())
-                      ->Encode(byteString, format, outWidth, outHeight, e);
-  if (e != BCExceptionNO)
+  std::unique_ptr<uint8_t, FxFreeDeleter> data(
+      pWriter->Encode(byteString, format, outWidth, outHeight));
+  if (!data)
     return false;
-  static_cast<CBC_OneDimWriter*>(m_pBCWriter.get())
-      ->RenderResult(encodeContents.AsStringC(), data, outWidth, isDevice, e);
-  FX_Free(data);
-  if (e != BCExceptionNO)
-    return false;
-  return true;
+  return pWriter->RenderResult(encodeContents.AsStringC(), data.get(), outWidth,
+                               isDevice);
 }
 
 bool CBC_Code128::RenderDevice(CFX_RenderDevice* device,
-                               const CFX_Matrix* matrix,
-                               int32_t& e) {
-  static_cast<CBC_OneDimWriter*>(m_pBCWriter.get())
-      ->RenderDeviceResult(device, matrix, m_renderContents.AsStringC(), e);
-  if (e != BCExceptionNO)
-    return false;
-  return true;
+                               const CFX_Matrix* matrix) {
+  return GetOnedCode128Writer()->RenderDeviceResult(
+      device, matrix, m_renderContents.AsStringC());
 }
 
 BC_TYPE CBC_Code128::GetType() {
   return BC_CODE128;
+}
+
+CBC_OnedCode128Writer* CBC_Code128::GetOnedCode128Writer() {
+  return static_cast<CBC_OnedCode128Writer*>(m_pBCWriter.get());
 }

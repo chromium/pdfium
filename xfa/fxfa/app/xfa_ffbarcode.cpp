@@ -216,7 +216,7 @@ void CXFA_FFBarcode::UpdateWidgetProperty() {
     pBarCodeWidget->SetTruncated(boolVal);
   }
   if (pAcc->GetBarcodeAttribute_WideNarrowRatio(floatVal)) {
-    pBarCodeWidget->SetWideNarrowRatio((int32_t)floatVal);
+    pBarCodeWidget->SetWideNarrowRatio(static_cast<int8_t>(floatVal));
   }
   if (pBarcodeTypeInfo->eName == XFA_BARCODETYPE_code3Of9 ||
       pBarcodeTypeInfo->eName == XFA_BARCODETYPE_ean8 ||

@@ -28,31 +28,29 @@ CBC_CodeBase::CBC_CodeBase(CBC_Writer* pWriter) : m_pBCWriter(pWriter) {}
 CBC_CodeBase::~CBC_CodeBase() {}
 
 bool CBC_CodeBase::SetCharEncoding(int32_t encoding) {
-  return m_pBCWriter && m_pBCWriter->SetCharEncoding(encoding);
+  return m_pBCWriter->SetCharEncoding(encoding);
 }
 
 bool CBC_CodeBase::SetModuleHeight(int32_t moduleHeight) {
-  return m_pBCWriter && m_pBCWriter->SetModuleHeight(moduleHeight);
+  return m_pBCWriter->SetModuleHeight(moduleHeight);
 }
 
 bool CBC_CodeBase::SetModuleWidth(int32_t moduleWidth) {
-  return m_pBCWriter && m_pBCWriter->SetModuleWidth(moduleWidth);
+  return m_pBCWriter->SetModuleWidth(moduleWidth);
 }
 
 bool CBC_CodeBase::SetHeight(int32_t height) {
-  return m_pBCWriter && m_pBCWriter->SetHeight(height);
+  return m_pBCWriter->SetHeight(height);
 }
 
 bool CBC_CodeBase::SetWidth(int32_t width) {
-  return m_pBCWriter && m_pBCWriter->SetWidth(width);
+  return m_pBCWriter->SetWidth(width);
 }
 
 void CBC_CodeBase::SetBackgroundColor(FX_ARGB backgroundColor) {
-  if (m_pBCWriter)
-    m_pBCWriter->SetBackgroundColor(backgroundColor);
+  m_pBCWriter->SetBackgroundColor(backgroundColor);
 }
 
 void CBC_CodeBase::SetBarcodeColor(FX_ARGB foregroundColor) {
-  if (m_pBCWriter)
-    m_pBCWriter->SetBarcodeColor(foregroundColor);
+  m_pBCWriter->SetBarcodeColor(foregroundColor);
 }

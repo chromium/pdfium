@@ -27,11 +27,9 @@ class CFX_Barcode {
 
   bool Create(BC_TYPE type);
   BC_TYPE GetType();
-  bool Encode(const CFX_WideStringC& contents, bool isDevice, int32_t& e);
+  bool Encode(const CFX_WideStringC& contents, bool isDevice);
 
-  bool RenderDevice(CFX_RenderDevice* device,
-                    const CFX_Matrix* matrix,
-                    int32_t& e);
+  bool RenderDevice(CFX_RenderDevice* device, const CFX_Matrix* matrix);
 
   bool SetCharEncoding(BC_CHAR_ENCODING encoding);
 
@@ -51,7 +49,7 @@ class CFX_Barcode {
 
   bool SetTextLocation(BC_TEXT_LOC location);
 
-  bool SetWideNarrowRatio(int32_t ratio);
+  bool SetWideNarrowRatio(int8_t ratio);
   bool SetStartChar(char start);
   bool SetEndChar(char end);
   bool SetErrorCorrectionLevel(int32_t level);

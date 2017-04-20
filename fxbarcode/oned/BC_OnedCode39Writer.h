@@ -16,39 +16,31 @@ class CBC_OnedCode39Writer : public CBC_OneDimWriter {
   ~CBC_OnedCode39Writer() override;
 
   // CBC_OneDimWriter
-  uint8_t* Encode(const CFX_ByteString& contents,
-                  BCFORMAT format,
-                  int32_t& outWidth,
-                  int32_t& outHeight,
-                  int32_t& e) override;
-  uint8_t* Encode(const CFX_ByteString& contents,
-                  BCFORMAT format,
-                  int32_t& outWidth,
-                  int32_t& outHeight,
-                  int32_t hints,
-                  int32_t& e) override;
-  uint8_t* Encode(const CFX_ByteString& contents,
-                  int32_t& outLength,
-                  int32_t& e) override;
-  void RenderResult(const CFX_WideStringC& contents,
+  uint8_t* EncodeWithHint(const CFX_ByteString& contents,
+                          BCFORMAT format,
+                          int32_t& outWidth,
+                          int32_t& outHeight,
+                          int32_t hints) override;
+  uint8_t* EncodeImpl(const CFX_ByteString& contents,
+                      int32_t& outLength) override;
+  bool RenderResult(const CFX_WideStringC& contents,
                     uint8_t* code,
                     int32_t codeLength,
-                    bool isDevice,
-                    int32_t& e) override;
+                    bool isDevice) override;
   bool CheckContentValidity(const CFX_WideStringC& contents) override;
   CFX_WideString FilterContents(const CFX_WideStringC& contents) override;
   CFX_WideString RenderTextContents(const CFX_WideStringC& contents) override;
 
-  virtual CFX_WideString encodedContents(const CFX_WideStringC& contents,
-                                         int32_t& e);
   virtual bool SetTextLocation(BC_TEXT_LOC loction);
-  virtual bool SetWideNarrowRatio(int32_t ratio);
+  virtual bool SetWideNarrowRatio(int8_t ratio);
+
+  bool encodedContents(const CFX_WideStringC& contents, CFX_WideString* result);
 
  private:
-  void ToIntArray(int32_t a, int32_t* toReturn);
-  char CalcCheckSum(const CFX_ByteString& contents, int32_t& e);
+  void ToIntArray(int32_t a, int8_t* toReturn);
+  char CalcCheckSum(const CFX_ByteString& contents);
 
-  int32_t m_iWideNarrRatio;
+  int8_t m_iWideNarrRatio;
 };
 
 #endif  // FXBARCODE_ONED_BC_ONEDCODE39WRITER_H_

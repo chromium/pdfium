@@ -77,13 +77,15 @@ bool CBC_OnedCodaBarWriter::SetTextLocation(BC_TEXT_LOC location) {
   m_locTextLoc = location;
   return true;
 }
-bool CBC_OnedCodaBarWriter::SetWideNarrowRatio(int32_t ratio) {
-  if (ratio < 2 || ratio > 3) {
+
+bool CBC_OnedCodaBarWriter::SetWideNarrowRatio(int8_t ratio) {
+  if (ratio < 2 || ratio > 3)
     return false;
-  }
+
   m_iWideNarrRatio = ratio;
   return true;
 }
+
 bool CBC_OnedCodaBarWriter::FindChar(wchar_t ch, bool isContent) {
   if (isContent) {
     for (size_t i = 0; i < FX_ArraySize(CONTENT_CHARS); ++i) {
@@ -123,43 +125,26 @@ CFX_WideString CBC_OnedCodaBarWriter::FilterContents(
       index++;
       continue;
     }
-    if (FindChar(ch, true)) {
-      filtercontents += ch;
-    } else {
+    if (!FindChar(ch, true))
       continue;
-    }
+    filtercontents += ch;
   }
   return filtercontents;
 }
-uint8_t* CBC_OnedCodaBarWriter::Encode(const CFX_ByteString& contents,
-                                       BCFORMAT format,
-                                       int32_t& outWidth,
-                                       int32_t& outHeight,
-                                       int32_t& e) {
-  uint8_t* ret = Encode(contents, format, outWidth, outHeight, 0, e);
-  if (e != BCExceptionNO)
+
+uint8_t* CBC_OnedCodaBarWriter::EncodeWithHint(const CFX_ByteString& contents,
+                                               BCFORMAT format,
+                                               int32_t& outWidth,
+                                               int32_t& outHeight,
+                                               int32_t hints) {
+  if (format != BCFORMAT_CODABAR)
     return nullptr;
-  return ret;
+  return CBC_OneDimWriter::EncodeWithHint(contents, format, outWidth, outHeight,
+                                          hints);
 }
-uint8_t* CBC_OnedCodaBarWriter::Encode(const CFX_ByteString& contents,
-                                       BCFORMAT format,
-                                       int32_t& outWidth,
-                                       int32_t& outHeight,
-                                       int32_t hints,
-                                       int32_t& e) {
-  if (format != BCFORMAT_CODABAR) {
-    e = BCExceptionOnlyEncodeCODEBAR;
-    return nullptr;
-  }
-  uint8_t* ret =
-      CBC_OneDimWriter::Encode(contents, format, outWidth, outHeight, hints, e);
-  if (e != BCExceptionNO)
-    return nullptr;
-  return ret;
-}
-uint8_t* CBC_OnedCodaBarWriter::Encode(const CFX_ByteString& contents,
-                                       int32_t& outLength,
-                                       int32_t& e) {
+
+uint8_t* CBC_OnedCodaBarWriter::EncodeImpl(const CFX_ByteString& contents,
+                                           int32_t& outLength) {
   CFX_ByteString data = m_chStart + contents + m_chEnd;
   m_iContentLen = data.GetLength();
   uint8_t* result = FX_Alloc2D(uint8_t, m_iWideNarrRatio * 7, data.GetLength());
@@ -187,8 +172,8 @@ uint8_t* CBC_OnedCodaBarWriter::Encode(const CFX_ByteString& contents,
         break;
     }
     int32_t code = 0;
-    int32_t len = (int32_t)strlen(ALPHABET_STRING);
-    for (int32_t i = 0; i < len; i++) {
+    size_t len = strlen(ALPHABET_STRING);
+    for (size_t i = 0; i < len; i++) {
       if (ch == ALPHABET_STRING[i]) {
         code = CHARACTER_ENCODINGS[i];
         break;
@@ -216,17 +201,18 @@ uint8_t* CBC_OnedCodaBarWriter::Encode(const CFX_ByteString& contents,
   outLength = position;
   return result;
 }
+
 CFX_WideString CBC_OnedCodaBarWriter::encodedContents(
     const CFX_WideStringC& contents) {
   CFX_WideString strStart(m_chStart);
   CFX_WideString strEnd(m_chEnd);
   return strStart + contents + strEnd;
 }
-void CBC_OnedCodaBarWriter::RenderResult(const CFX_WideStringC& contents,
+
+bool CBC_OnedCodaBarWriter::RenderResult(const CFX_WideStringC& contents,
                                          uint8_t* code,
                                          int32_t codeLength,
-                                         bool isDevice,
-                                         int32_t& e) {
-  CBC_OneDimWriter::RenderResult(encodedContents(contents).AsStringC(), code,
-                                 codeLength, isDevice, e);
+                                         bool isDevice) {
+  return CBC_OneDimWriter::RenderResult(encodedContents(contents).AsStringC(),
+                                        code, codeLength, isDevice);
 }

@@ -28,51 +28,41 @@ CBC_OneCode::CBC_OneCode(CBC_Writer* pWriter) : CBC_CodeBase(pWriter) {}
 CBC_OneCode::~CBC_OneCode() {}
 
 bool CBC_OneCode::CheckContentValidity(const CFX_WideStringC& contents) {
-  return m_pBCWriter &&
-         static_cast<CBC_OneDimWriter*>(m_pBCWriter.get())
-             ->CheckContentValidity(contents);
+  return GetOneDimWriter()->CheckContentValidity(contents);
 }
 
 CFX_WideString CBC_OneCode::FilterContents(const CFX_WideStringC& contents) {
-  if (!m_pBCWriter)
-    return CFX_WideString();
-  return static_cast<CBC_OneDimWriter*>(m_pBCWriter.get())
-      ->FilterContents(contents);
+  return GetOneDimWriter()->FilterContents(contents);
 }
 
 void CBC_OneCode::SetPrintChecksum(bool checksum) {
-  if (m_pBCWriter)
-    static_cast<CBC_OneDimWriter*>(m_pBCWriter.get())
-        ->SetPrintChecksum(checksum);
+  GetOneDimWriter()->SetPrintChecksum(checksum);
 }
 
 void CBC_OneCode::SetDataLength(int32_t length) {
-  if (m_pBCWriter)
-    static_cast<CBC_OneDimWriter*>(m_pBCWriter.get())->SetDataLength(length);
+  GetOneDimWriter()->SetDataLength(length);
 }
 
 void CBC_OneCode::SetCalChecksum(bool calc) {
-  if (m_pBCWriter)
-    static_cast<CBC_OneDimWriter*>(m_pBCWriter.get())->SetCalcChecksum(calc);
+  GetOneDimWriter()->SetCalcChecksum(calc);
 }
 
 bool CBC_OneCode::SetFont(CFX_Font* cFont) {
-  if (m_pBCWriter)
-    return static_cast<CBC_OneDimWriter*>(m_pBCWriter.get())->SetFont(cFont);
-  return false;
+  return GetOneDimWriter()->SetFont(cFont);
 }
 
 void CBC_OneCode::SetFontSize(float size) {
-  if (m_pBCWriter)
-    static_cast<CBC_OneDimWriter*>(m_pBCWriter.get())->SetFontSize(size);
+  GetOneDimWriter()->SetFontSize(size);
 }
 
 void CBC_OneCode::SetFontStyle(int32_t style) {
-  if (m_pBCWriter)
-    static_cast<CBC_OneDimWriter*>(m_pBCWriter.get())->SetFontStyle(style);
+  GetOneDimWriter()->SetFontStyle(style);
 }
 
 void CBC_OneCode::SetFontColor(FX_ARGB color) {
-  if (m_pBCWriter)
-    static_cast<CBC_OneDimWriter*>(m_pBCWriter.get())->SetFontColor(color);
+  GetOneDimWriter()->SetFontColor(color);
+}
+
+CBC_OneDimWriter* CBC_OneCode::GetOneDimWriter() {
+  return static_cast<CBC_OneDimWriter*>(m_pBCWriter.get());
 }

@@ -20,10 +20,13 @@
  * limitations under the License.
  */
 
+#include "fxbarcode/oned/BC_OnedCode39Writer.h"
+
+#include <memory>
+
 #include "fxbarcode/BC_Writer.h"
 #include "fxbarcode/common/BC_CommonBitMatrix.h"
 #include "fxbarcode/oned/BC_OneDimWriter.h"
-#include "fxbarcode/oned/BC_OnedCode39Writer.h"
 
 namespace {
 
@@ -40,10 +43,10 @@ const int32_t CHARACTER_ENCODINGS[44] = {
 
 }  // namespace
 
-CBC_OnedCode39Writer::CBC_OnedCode39Writer() {
-  m_iWideNarrRatio = 3;
-}
+CBC_OnedCode39Writer::CBC_OnedCode39Writer() : m_iWideNarrRatio(3) {}
+
 CBC_OnedCode39Writer::~CBC_OnedCode39Writer() {}
+
 bool CBC_OnedCode39Writer::CheckContentValidity(
     const CFX_WideStringC& contents) {
   for (int32_t i = 0; i < contents.GetLength(); i++) {
@@ -116,55 +119,40 @@ bool CBC_OnedCode39Writer::SetTextLocation(BC_TEXT_LOC location) {
   m_locTextLoc = location;
   return true;
 }
-bool CBC_OnedCode39Writer::SetWideNarrowRatio(int32_t ratio) {
-  if (ratio < 2 || ratio > 3) {
+bool CBC_OnedCode39Writer::SetWideNarrowRatio(int8_t ratio) {
+  if (ratio < 2 || ratio > 3)
     return false;
-  }
+
   m_iWideNarrRatio = ratio;
   return true;
 }
-uint8_t* CBC_OnedCode39Writer::Encode(const CFX_ByteString& contents,
-                                      BCFORMAT format,
-                                      int32_t& outWidth,
-                                      int32_t& outHeight,
-                                      int32_t& e) {
-  uint8_t* ret = Encode(contents, format, outWidth, outHeight, 0, e);
-  if (e != BCExceptionNO)
+
+uint8_t* CBC_OnedCode39Writer::EncodeWithHint(const CFX_ByteString& contents,
+                                              BCFORMAT format,
+                                              int32_t& outWidth,
+                                              int32_t& outHeight,
+                                              int32_t hints) {
+  if (format != BCFORMAT_CODE_39)
     return nullptr;
-  return ret;
+  return CBC_OneDimWriter::EncodeWithHint(contents, format, outWidth, outHeight,
+                                          hints);
 }
-uint8_t* CBC_OnedCode39Writer::Encode(const CFX_ByteString& contents,
-                                      BCFORMAT format,
-                                      int32_t& outWidth,
-                                      int32_t& outHeight,
-                                      int32_t hints,
-                                      int32_t& e) {
-  if (format != BCFORMAT_CODE_39) {
-    e = BCExceptionOnlyEncodeCODE_39;
-    return nullptr;
-  }
-  uint8_t* ret =
-      CBC_OneDimWriter::Encode(contents, format, outWidth, outHeight, hints, e);
-  if (e != BCExceptionNO)
-    return nullptr;
-  return ret;
-}
-void CBC_OnedCode39Writer::ToIntArray(int32_t a, int32_t* toReturn) {
+
+void CBC_OnedCode39Writer::ToIntArray(int32_t a, int8_t* toReturn) {
   for (int32_t i = 0; i < 9; i++) {
     toReturn[i] = (a & (1 << i)) == 0 ? 1 : m_iWideNarrRatio;
   }
 }
-char CBC_OnedCode39Writer::CalcCheckSum(const CFX_ByteString& contents,
-                                        int32_t& e) {
+
+char CBC_OnedCode39Writer::CalcCheckSum(const CFX_ByteString& contents) {
   int32_t length = contents.GetLength();
-  if (length > 80) {
-    e = BCExceptionGeneric;
+  if (length > 80)
     return '*';
-  }
+
   int32_t checksum = 0;
-  int32_t len = (int32_t)strlen(ALPHABET_STRING);
+  size_t len = strlen(ALPHABET_STRING);
   for (const auto& c : contents) {
-    int32_t j = 0;
+    size_t j = 0;
     for (; j < len; j++) {
       if (ALPHABET_STRING[j] == c) {
         if (c != '*')
@@ -172,110 +160,103 @@ char CBC_OnedCode39Writer::CalcCheckSum(const CFX_ByteString& contents,
         break;
       }
     }
-    if (j >= len) {
-      e = BCExceptionGeneric;
+    if (j >= len)
       return '*';
-    }
   }
   checksum = checksum % 43;
   return CHECKSUM_STRING[checksum];
 }
-uint8_t* CBC_OnedCode39Writer::Encode(const CFX_ByteString& contents,
-                                      int32_t& outlength,
-                                      int32_t& e) {
-  char checksum = CalcCheckSum(contents, e);
-  if (checksum == '*') {
+
+uint8_t* CBC_OnedCode39Writer::EncodeImpl(const CFX_ByteString& contents,
+                                          int32_t& outlength) {
+  char checksum = CalcCheckSum(contents);
+  if (checksum == '*')
     return nullptr;
-  }
-  int32_t widths[9] = {0};
+
+  int8_t widths[9] = {0};
   int32_t wideStrideNum = 3;
   int32_t narrStrideNum = 9 - wideStrideNum;
   CFX_ByteString encodedContents = contents;
-  if (m_bCalcChecksum) {
+  if (m_bCalcChecksum)
     encodedContents += checksum;
-  }
   m_iContentLen = encodedContents.GetLength();
   int32_t codeWidth = (wideStrideNum * m_iWideNarrRatio + narrStrideNum) * 2 +
                       1 + m_iContentLen;
-  int32_t len = (int32_t)strlen(ALPHABET_STRING);
+  size_t len = strlen(ALPHABET_STRING);
   for (int32_t j = 0; j < m_iContentLen; j++) {
-    for (int32_t i = 0; i < len; i++) {
-      if (ALPHABET_STRING[i] == encodedContents[j]) {
-        ToIntArray(CHARACTER_ENCODINGS[i], widths);
-        for (int32_t k = 0; k < 9; k++) {
-          codeWidth += widths[k];
-        }
-      }
+    for (size_t i = 0; i < len; i++) {
+      if (ALPHABET_STRING[i] != encodedContents[j])
+        continue;
+
+      ToIntArray(CHARACTER_ENCODINGS[i], widths);
+      for (size_t k = 0; k < 9; k++)
+        codeWidth += widths[k];
     }
   }
   outlength = codeWidth;
-  uint8_t* result = FX_Alloc(uint8_t, codeWidth);
+  std::unique_ptr<uint8_t, FxFreeDeleter> result(FX_Alloc(uint8_t, codeWidth));
   ToIntArray(CHARACTER_ENCODINGS[39], widths);
-  int32_t pos = AppendPattern(result, 0, widths, 9, 1, e);
-  if (e != BCExceptionNO) {
-    FX_Free(result);
+  int32_t e = BCExceptionNO;
+  int32_t pos = AppendPattern(result.get(), 0, widths, 9, 1, e);
+  if (e != BCExceptionNO)
     return nullptr;
-  }
-  int32_t narrowWhite[] = {1};
-  pos += AppendPattern(result, pos, narrowWhite, 1, 0, e);
-  if (e != BCExceptionNO) {
-    FX_Free(result);
+
+  int8_t narrowWhite[] = {1};
+  pos += AppendPattern(result.get(), pos, narrowWhite, 1, 0, e);
+  if (e != BCExceptionNO)
     return nullptr;
-  }
+
   for (int32_t l = m_iContentLen - 1; l >= 0; l--) {
-    for (int32_t i = 0; i < len; i++) {
-      if (ALPHABET_STRING[i] == encodedContents[l]) {
-        ToIntArray(CHARACTER_ENCODINGS[i], widths);
-        pos += AppendPattern(result, pos, widths, 9, 1, e);
-        if (e != BCExceptionNO) {
-          FX_Free(result);
-          return nullptr;
-        }
-      }
+    for (size_t i = 0; i < len; i++) {
+      if (ALPHABET_STRING[i] != encodedContents[l])
+        continue;
+
+      ToIntArray(CHARACTER_ENCODINGS[i], widths);
+      pos += AppendPattern(result.get(), pos, widths, 9, 1, e);
+      if (e != BCExceptionNO)
+        return nullptr;
     }
-    pos += AppendPattern(result, pos, narrowWhite, 1, 0, e);
-    if (e != BCExceptionNO) {
-      FX_Free(result);
+    pos += AppendPattern(result.get(), pos, narrowWhite, 1, 0, e);
+    if (e != BCExceptionNO)
       return nullptr;
-    }
   }
   ToIntArray(CHARACTER_ENCODINGS[39], widths);
-  pos += AppendPattern(result, pos, widths, 9, 1, e);
-  if (e != BCExceptionNO) {
-    FX_Free(result);
+  pos += AppendPattern(result.get(), pos, widths, 9, 1, e);
+  if (e != BCExceptionNO)
     return nullptr;
-  }
+
+  auto* result_ptr = result.get();
   for (int32_t i = 0; i < codeWidth / 2; i++) {
-    result[i] ^= result[codeWidth - 1 - i];
-    result[codeWidth - 1 - i] ^= result[i];
-    result[i] ^= result[codeWidth - 1 - i];
+    result_ptr[i] ^= result_ptr[codeWidth - 1 - i];
+    result_ptr[codeWidth - 1 - i] ^= result_ptr[i];
+    result_ptr[i] ^= result_ptr[codeWidth - 1 - i];
   }
-  return result;
+  return result.release();
 }
-CFX_WideString CBC_OnedCode39Writer::encodedContents(
-    const CFX_WideStringC& contents,
-    int32_t& e) {
-  CFX_WideString encodedContents(contents);
+
+bool CBC_OnedCode39Writer::encodedContents(const CFX_WideStringC& contents,
+                                           CFX_WideString* result) {
+  *result = CFX_WideString(contents);
   if (m_bCalcChecksum && m_bPrintChecksum) {
     CFX_WideString checksumContent = FilterContents(contents);
     CFX_ByteString str = checksumContent.UTF8Encode();
     char checksum;
-    checksum = CalcCheckSum(str, e);
-    if (e != BCExceptionNO)
-      return CFX_WideString();
+    checksum = CalcCheckSum(str);
+    if (checksum == '*')
+      return false;
     str += checksum;
-    encodedContents += checksum;
+    *result += checksum;
   }
-  return encodedContents;
+  return true;
 }
-void CBC_OnedCode39Writer::RenderResult(const CFX_WideStringC& contents,
+
+bool CBC_OnedCode39Writer::RenderResult(const CFX_WideStringC& contents,
                                         uint8_t* code,
                                         int32_t codeLength,
-                                        bool isDevice,
-                                        int32_t& e) {
-  CFX_WideString encodedCon = encodedContents(contents, e);
-  if (e != BCExceptionNO)
-    return;
-  CBC_OneDimWriter::RenderResult(encodedCon.AsStringC(), code, codeLength,
-                                 isDevice, e);
+                                        bool isDevice) {
+  CFX_WideString encodedCon;
+  if (!encodedContents(contents, &encodedCon))
+    return false;
+  return CBC_OneDimWriter::RenderResult(encodedCon.AsStringC(), code,
+                                        codeLength, isDevice);
 }

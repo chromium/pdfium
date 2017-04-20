@@ -52,9 +52,7 @@ void CFWL_Barcode::DrawWidget(CFX_Graphics* pGraphics,
     if (pMatrix)
       mt.Concat(*pMatrix);
 
-    int32_t errorCode = 0;
-    m_pBarcodeEngine->RenderDevice(pGraphics->GetRenderDevice(), pMatrix,
-                                   errorCode);
+    m_pBarcodeEngine->RenderDevice(pGraphics->GetRenderDevice(), pMatrix);
     return;
   }
   CFWL_Edit::DrawWidget(pGraphics, pMatrix);
@@ -131,7 +129,7 @@ void CFWL_Barcode::SetTextLocation(BC_TEXT_LOC location) {
   m_eTextLocation = location;
 }
 
-void CFWL_Barcode::SetWideNarrowRatio(int32_t ratio) {
+void CFWL_Barcode::SetWideNarrowRatio(int8_t ratio) {
   m_dwAttributeMask |= FWL_BCDATTRIBUTE_WIDENARROWRATIO;
   m_nWideNarrowRatio = ratio;
 }
@@ -206,8 +204,7 @@ void CFWL_Barcode::GenerateBarcodeImageCache() {
   if (m_dwAttributeMask & FWL_BCDATTRIBUTE_TRUNCATED)
     m_pBarcodeEngine->SetTruncated(m_bTruncated);
 
-  int32_t errorCode = 0;
-  m_dwStatus = m_pBarcodeEngine->Encode(GetText().AsStringC(), true, errorCode)
+  m_dwStatus = m_pBarcodeEngine->Encode(GetText().AsStringC(), true)
                    ? XFA_BCS_EncodeSuccess
                    : 0;
 }

@@ -13,22 +13,23 @@
 #include "core/fxge/fx_dib.h"
 #include "fxbarcode/cbc_onecode.h"
 
+class CBC_OnedEAN13Writer;
+
 class CBC_EAN13 : public CBC_OneCode {
  public:
   CBC_EAN13();
   ~CBC_EAN13() override;
 
   // CBC_OneCode:
-  bool Encode(const CFX_WideStringC& contents,
-              bool isDevice,
-              int32_t& e) override;
+  bool Encode(const CFX_WideStringC& contents, bool isDevice) override;
   bool RenderDevice(CFX_RenderDevice* device,
-                    const CFX_Matrix* matrix,
-                    int32_t& e) override;
+                    const CFX_Matrix* matrix) override;
   BC_TYPE GetType() override;
 
  private:
+  CBC_OnedEAN13Writer* GetOnedEAN13Writer();
   CFX_WideString Preprocess(const CFX_WideStringC& contents);
+
   CFX_WideString m_renderContents;
 };
 

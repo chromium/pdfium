@@ -20,10 +20,9 @@ class CBC_TwoDimWriter : public CBC_Writer {
   CBC_TwoDimWriter();
   ~CBC_TwoDimWriter() override;
 
-  virtual void RenderResult(uint8_t* code,
+  virtual bool RenderResult(uint8_t* code,
                             int32_t codeWidth,
-                            int32_t codeHeight,
-                            int32_t& e);
+                            int32_t codeHeight);
   virtual void RenderDeviceResult(CFX_RenderDevice* device,
                                   const CFX_Matrix* matrix);
   virtual bool SetErrorCorrectionLevel(int32_t level) = 0;

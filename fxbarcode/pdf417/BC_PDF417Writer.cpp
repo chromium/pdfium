@@ -20,13 +20,16 @@
  * limitations under the License.
  */
 
+#include "fxbarcode/pdf417/BC_PDF417Writer.h"
+
+#include <algorithm>
+
 #include "fxbarcode/BC_TwoDimWriter.h"
 #include "fxbarcode/common/BC_CommonBitArray.h"
 #include "fxbarcode/common/BC_CommonBitMatrix.h"
 #include "fxbarcode/pdf417/BC_PDF417.h"
 #include "fxbarcode/pdf417/BC_PDF417BarcodeMatrix.h"
 #include "fxbarcode/pdf417/BC_PDF417Compaction.h"
-#include "fxbarcode/pdf417/BC_PDF417Writer.h"
 
 CBC_PDF417Writer::CBC_PDF417Writer() {
   m_bFixedSize = false;
@@ -44,23 +47,24 @@ bool CBC_PDF417Writer::SetErrorCorrectionLevel(int32_t level) {
 void CBC_PDF417Writer::SetTruncated(bool truncated) {
   m_bTruncated = truncated;
 }
+
 uint8_t* CBC_PDF417Writer::Encode(const CFX_WideString& contents,
                                   int32_t& outWidth,
-                                  int32_t& outHeight,
-                                  int32_t& e) {
+                                  int32_t& outHeight) {
   CBC_PDF417 encoder;
   int32_t col = (m_Width / m_ModuleWidth - 69) / 17;
   int32_t row = m_Height / (m_ModuleWidth * 20);
-  if (row >= 3 && row <= 90 && col >= 1 && col <= 30) {
+  if (row >= 3 && row <= 90 && col >= 1 && col <= 30)
     encoder.setDimensions(col, col, row, row);
-  } else if (col >= 1 && col <= 30) {
+  else if (col >= 1 && col <= 30)
     encoder.setDimensions(col, col, 90, 3);
-  } else if (row >= 3 && row <= 90) {
+  else if (row >= 3 && row <= 90)
     encoder.setDimensions(30, 1, row, row);
-  }
+  int32_t e = BCExceptionNO;
   encoder.generateBarcodeLogic(contents, m_iCorrectLevel, e);
   if (e != BCExceptionNO)
     return nullptr;
+
   int32_t lineThickness = 2;
   int32_t aspectRatio = 4;
   CBC_BarcodeMatrix* barcodeMatrix = encoder.getBarcodeMatrix();
@@ -80,12 +84,7 @@ uint8_t* CBC_PDF417Writer::Encode(const CFX_WideString& contents,
   }
   int32_t scaleX = width / outWidth;
   int32_t scaleY = height / outHeight;
-  int32_t scale;
-  if (scaleX < scaleY) {
-    scale = scaleX;
-  } else {
-    scale = scaleY;
-  }
+  int32_t scale = std::min(scaleX, scaleY);
   if (scale > 1) {
     originalScale = barcodeMatrix->getScaledMatrix(
         scale * lineThickness, scale * aspectRatio * lineThickness);
@@ -100,6 +99,7 @@ uint8_t* CBC_PDF417Writer::Encode(const CFX_WideString& contents,
   memcpy(result, originalScale.data(), outHeight * outWidth);
   return result;
 }
+
 void CBC_PDF417Writer::rotateArray(std::vector<uint8_t>& bitarray,
                                    int32_t height,
                                    int32_t width) {

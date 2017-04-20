@@ -21,6 +21,8 @@
 
 #include "fxbarcode/cbc_upca.h"
 
+#include <memory>
+
 #include "fxbarcode/oned/BC_OnedUPCAWriter.h"
 
 CBC_UPCA::CBC_UPCA() : CBC_OneCode(new CBC_OnedUPCAWriter) {}
@@ -28,8 +30,7 @@ CBC_UPCA::CBC_UPCA() : CBC_OneCode(new CBC_OnedUPCAWriter) {}
 CBC_UPCA::~CBC_UPCA() {}
 
 CFX_WideString CBC_UPCA::Preprocess(const CFX_WideStringC& contents) {
-  CBC_OnedUPCAWriter* pWriter =
-      static_cast<CBC_OnedUPCAWriter*>(m_pBCWriter.get());
+  CBC_OnedUPCAWriter* pWriter = GetOnedUPCAWriter();
   CFX_WideString encodeContents = pWriter->FilterContents(contents);
   int32_t length = encodeContents.GetLength();
   if (length <= 11) {
@@ -47,13 +48,10 @@ CFX_WideString CBC_UPCA::Preprocess(const CFX_WideStringC& contents) {
   return encodeContents;
 }
 
-bool CBC_UPCA::Encode(const CFX_WideStringC& contents,
-                      bool isDevice,
-                      int32_t& e) {
-  if (contents.IsEmpty()) {
-    e = BCExceptionNoContents;
+bool CBC_UPCA::Encode(const CFX_WideStringC& contents, bool isDevice) {
+  if (contents.IsEmpty())
     return false;
-  }
+
   BCFORMAT format = BCFORMAT_UPC_A;
   int32_t outWidth = 0;
   int32_t outHeight = 0;
@@ -61,31 +59,26 @@ bool CBC_UPCA::Encode(const CFX_WideStringC& contents,
   CFX_ByteString byteString = encodeContents.UTF8Encode();
   m_renderContents = encodeContents;
 
-  CBC_OnedUPCAWriter* pWriter =
-      static_cast<CBC_OnedUPCAWriter*>(m_pBCWriter.get());
-
+  CBC_OnedUPCAWriter* pWriter = GetOnedUPCAWriter();
   pWriter->Init();
-  uint8_t* data = pWriter->Encode(byteString, format, outWidth, outHeight, e);
-  if (e != BCExceptionNO)
+  std::unique_ptr<uint8_t, FxFreeDeleter> data(
+      pWriter->Encode(byteString, format, outWidth, outHeight));
+  if (!data)
     return false;
-  pWriter->RenderResult(encodeContents.AsStringC(), data, outWidth, isDevice,
-                        e);
-  FX_Free(data);
-  if (e != BCExceptionNO)
-    return false;
-  return true;
+  return pWriter->RenderResult(encodeContents.AsStringC(), data.get(), outWidth,
+                               isDevice);
 }
 
 bool CBC_UPCA::RenderDevice(CFX_RenderDevice* device,
-                            const CFX_Matrix* matrix,
-                            int32_t& e) {
-  static_cast<CBC_OneDimWriter*>(m_pBCWriter.get())
-      ->RenderDeviceResult(device, matrix, m_renderContents.AsStringC(), e);
-  if (e != BCExceptionNO)
-    return false;
-  return true;
+                            const CFX_Matrix* matrix) {
+  return GetOnedUPCAWriter()->RenderDeviceResult(device, matrix,
+                                                 m_renderContents.AsStringC());
 }
 
 BC_TYPE CBC_UPCA::GetType() {
   return BC_UPCA;
+}
+
+CBC_OnedUPCAWriter* CBC_UPCA::GetOnedUPCAWriter() {
+  return static_cast<CBC_OnedUPCAWriter*>(m_pBCWriter.get());
 }

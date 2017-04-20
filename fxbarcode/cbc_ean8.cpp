@@ -21,6 +21,8 @@
 
 #include "fxbarcode/cbc_ean8.h"
 
+#include <memory>
+
 #include "fxbarcode/oned/BC_OnedEAN8Writer.h"
 
 CBC_EAN8::CBC_EAN8() : CBC_OneCode(new CBC_OnedEAN8Writer) {}
@@ -28,17 +30,15 @@ CBC_EAN8::CBC_EAN8() : CBC_OneCode(new CBC_OnedEAN8Writer) {}
 CBC_EAN8::~CBC_EAN8() {}
 
 CFX_WideString CBC_EAN8::Preprocess(const CFX_WideStringC& contents) {
-  CFX_WideString encodeContents =
-      static_cast<CBC_OnedEAN8Writer*>(m_pBCWriter.get())
-          ->FilterContents(contents);
+  auto* pWriter = GetOnedEAN8Writer();
+  CFX_WideString encodeContents = pWriter->FilterContents(contents);
   int32_t length = encodeContents.GetLength();
   if (length <= 7) {
     for (int32_t i = 0; i < 7 - length; i++)
       encodeContents = wchar_t('0') + encodeContents;
 
     CFX_ByteString byteString = encodeContents.UTF8Encode();
-    int32_t checksum = static_cast<CBC_OnedEAN8Writer*>(m_pBCWriter.get())
-                           ->CalcChecksum(byteString);
+    int32_t checksum = pWriter->CalcChecksum(byteString);
     encodeContents += wchar_t(checksum - 0 + '0');
   }
   if (length > 8)
@@ -47,41 +47,35 @@ CFX_WideString CBC_EAN8::Preprocess(const CFX_WideStringC& contents) {
   return encodeContents;
 }
 
-bool CBC_EAN8::Encode(const CFX_WideStringC& contents,
-                      bool isDevice,
-                      int32_t& e) {
-  if (contents.IsEmpty()) {
-    e = BCExceptionNoContents;
+bool CBC_EAN8::Encode(const CFX_WideStringC& contents, bool isDevice) {
+  if (contents.IsEmpty())
     return false;
-  }
+
   BCFORMAT format = BCFORMAT_EAN_8;
   int32_t outWidth = 0;
   int32_t outHeight = 0;
   CFX_WideString encodeContents = Preprocess(contents);
   CFX_ByteString byteString = encodeContents.UTF8Encode();
   m_renderContents = encodeContents;
-  uint8_t* data = static_cast<CBC_OnedEAN8Writer*>(m_pBCWriter.get())
-                      ->Encode(byteString, format, outWidth, outHeight, e);
-  if (e != BCExceptionNO)
+  auto* pWriter = GetOnedEAN8Writer();
+  std::unique_ptr<uint8_t, FxFreeDeleter> data(
+      pWriter->Encode(byteString, format, outWidth, outHeight));
+  if (!data)
     return false;
-  static_cast<CBC_OneDimWriter*>(m_pBCWriter.get())
-      ->RenderResult(encodeContents.AsStringC(), data, outWidth, isDevice, e);
-  FX_Free(data);
-  if (e != BCExceptionNO)
-    return false;
-  return true;
+  return pWriter->RenderResult(encodeContents.AsStringC(), data.get(), outWidth,
+                               isDevice);
 }
 
 bool CBC_EAN8::RenderDevice(CFX_RenderDevice* device,
-                            const CFX_Matrix* matrix,
-                            int32_t& e) {
-  static_cast<CBC_OneDimWriter*>(m_pBCWriter.get())
-      ->RenderDeviceResult(device, matrix, m_renderContents.AsStringC(), e);
-  if (e != BCExceptionNO)
-    return false;
-  return true;
+                            const CFX_Matrix* matrix) {
+  return GetOnedEAN8Writer()->RenderDeviceResult(device, matrix,
+                                                 m_renderContents.AsStringC());
 }
 
 BC_TYPE CBC_EAN8::GetType() {
   return BC_EAN8;
+}
+
+CBC_OnedEAN8Writer* CBC_EAN8::GetOnedEAN8Writer() {
+  return static_cast<CBC_OnedEAN8Writer*>(m_pBCWriter.get());
 }

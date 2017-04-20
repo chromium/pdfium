@@ -20,18 +20,15 @@ class CBC_QRCode : public CBC_CodeBase {
   ~CBC_QRCode() override;
 
   // CBC_CodeBase:
-  bool Encode(const CFX_WideStringC& contents,
-              bool isDevice,
-              int32_t& e) override;
+  bool Encode(const CFX_WideStringC& contents, bool isDevice) override;
   bool RenderDevice(CFX_RenderDevice* device,
-                    const CFX_Matrix* matrix,
-                    int32_t& e) override;
+                    const CFX_Matrix* matrix) override;
   BC_TYPE GetType() override;
 
   bool SetErrorCorrectionLevel(int32_t level);
 
  private:
-  CBC_QRCodeWriter* writer();
+  CBC_QRCodeWriter* GetQRCodeWriter();
 };
 
 #endif  // FXBARCODE_CBC_QRCODE_H_

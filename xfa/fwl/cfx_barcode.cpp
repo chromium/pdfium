@@ -219,8 +219,8 @@ bool CFX_Barcode::SetTextLocation(BC_TEXT_LOC location) {
   return m_pBCEngine && memptr ? (m_pBCEngine.get()->*memptr)(location) : false;
 }
 
-bool CFX_Barcode::SetWideNarrowRatio(int32_t ratio) {
-  typedef bool (CBC_CodeBase::*memptrtype)(int32_t);
+bool CFX_Barcode::SetWideNarrowRatio(int8_t ratio) {
+  typedef bool (CBC_CodeBase::*memptrtype)(int8_t);
   memptrtype memptr = nullptr;
   switch (GetType()) {
     case BC_CODE39:
@@ -276,6 +276,7 @@ bool CFX_Barcode::SetErrorCorrectionLevel(int32_t level) {
   }
   return m_pBCEngine && memptr ? (m_pBCEngine.get()->*memptr)(level) : false;
 }
+
 bool CFX_Barcode::SetTruncated(bool truncated) {
   typedef void (CBC_CodeBase::*memptrtype)(bool);
   memptrtype memptr = nullptr;
@@ -290,14 +291,11 @@ bool CFX_Barcode::SetTruncated(bool truncated) {
                                : false;
 }
 
-bool CFX_Barcode::Encode(const CFX_WideStringC& contents,
-                         bool isDevice,
-                         int32_t& e) {
-  return m_pBCEngine && m_pBCEngine->Encode(contents, isDevice, e);
+bool CFX_Barcode::Encode(const CFX_WideStringC& contents, bool isDevice) {
+  return m_pBCEngine && m_pBCEngine->Encode(contents, isDevice);
 }
 
 bool CFX_Barcode::RenderDevice(CFX_RenderDevice* device,
-                               const CFX_Matrix* matrix,
-                               int32_t& e) {
-  return m_pBCEngine && m_pBCEngine->RenderDevice(device, matrix, e);
+                               const CFX_Matrix* matrix) {
+  return m_pBCEngine && m_pBCEngine->RenderDevice(device, matrix);
 }

@@ -61,7 +61,7 @@ class CFWL_Barcode : public CFWL_Edit {
   void SetCalChecksum(bool calChecksum);
   void SetPrintChecksum(bool printChecksum);
   void SetTextLocation(BC_TEXT_LOC location);
-  void SetWideNarrowRatio(int32_t ratio);
+  void SetWideNarrowRatio(int8_t ratio);
   void SetStartChar(char startChar);
   void SetEndChar(char endChar);
   void SetErrorCorrectionLevel(int32_t ecLevel);
@@ -81,7 +81,7 @@ class CFWL_Barcode : public CFWL_Edit {
   bool m_bCalChecksum;
   bool m_bPrintChecksum;
   BC_TEXT_LOC m_eTextLocation;
-  int32_t m_nWideNarrowRatio;
+  int8_t m_nWideNarrowRatio;
   char m_cStartChar;
   char m_cEndChar;
   int32_t m_nECLevel;

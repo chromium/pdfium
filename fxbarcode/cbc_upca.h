@@ -12,21 +12,21 @@
 #include "core/fxge/fx_dib.h"
 #include "fxbarcode/cbc_onecode.h"
 
+class CBC_OnedUPCAWriter;
+
 class CBC_UPCA : public CBC_OneCode {
  public:
   CBC_UPCA();
   ~CBC_UPCA() override;
 
-  // CBC_CodeBase
-  bool Encode(const CFX_WideStringC& contents,
-              bool isDevice,
-              int32_t& e) override;
+  // CBC_CodeBase:
+  bool Encode(const CFX_WideStringC& contents, bool isDevice) override;
   bool RenderDevice(CFX_RenderDevice* device,
-                    const CFX_Matrix* matrix,
-                    int32_t& e) override;
+                    const CFX_Matrix* matrix) override;
   BC_TYPE GetType() override;
 
  private:
+  CBC_OnedUPCAWriter* GetOnedUPCAWriter();
   CFX_WideString Preprocess(const CFX_WideStringC& contents);
   CFX_WideString m_renderContents;
 };

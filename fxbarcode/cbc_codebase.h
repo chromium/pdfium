@@ -9,14 +9,14 @@
 
 #include <memory>
 
-#include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxge/fx_dib.h"
 #include "fxbarcode/BC_Library.h"
 
-class CBC_Writer;
 class CBC_Reader;
+class CBC_Writer;
 class CFX_DIBitmap;
+class CFX_Matrix;
 class CFX_RenderDevice;
 
 class CBC_CodeBase {
@@ -25,12 +25,9 @@ class CBC_CodeBase {
   virtual ~CBC_CodeBase();
 
   virtual BC_TYPE GetType() = 0;
-  virtual bool Encode(const CFX_WideStringC& contents,
-                      bool isDevice,
-                      int32_t& e) = 0;
+  virtual bool Encode(const CFX_WideStringC& contents, bool isDevice) = 0;
   virtual bool RenderDevice(CFX_RenderDevice* device,
-                            const CFX_Matrix* matrix,
-                            int32_t& e) = 0;
+                            const CFX_Matrix* matrix) = 0;
 
   bool SetCharEncoding(int32_t encoding);
   bool SetModuleHeight(int32_t moduleHeight);
