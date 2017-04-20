@@ -25,10 +25,9 @@ class CXFA_FFListBox : public CXFA_FFField {
   void OnDrawWidget(CFX_Graphics* pGraphics,
                     const CFX_Matrix* pMatrix = nullptr) override;
 
-  void OnSelectChanged(CFWL_Widget* pWidget,
-                       const std::vector<int32_t>& arrSels);
+  void OnSelectChanged(CFWL_Widget* pWidget);
   void SetItemState(int32_t nIndex, bool bSelected);
-  void InsertItem(const CFX_WideStringC& wsLabel, int32_t nIndex = -1);
+  void InsertItem(const CFX_WideStringC& wsLabel, int32_t nIndex);
   void DeleteItem(int32_t nIndex);
 
  private:
@@ -81,7 +80,7 @@ class CXFA_FFComboBox : public CXFA_FFField {
   void OnPreOpen(CFWL_Widget* pWidget);
   void OnPostOpen(CFWL_Widget* pWidget);
   void SetItemState(int32_t nIndex, bool bSelected);
-  void InsertItem(const CFX_WideStringC& wsLabel, int32_t nIndex = -1);
+  void InsertItem(const CFX_WideStringC& wsLabel, int32_t nIndex);
   void DeleteItem(int32_t nIndex);
 
  private:

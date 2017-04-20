@@ -26,6 +26,14 @@
 #include "xfa/fxgraphics/cfx_color.h"
 #include "xfa/fxgraphics/cfx_path.h"
 
+namespace {
+
+CXFA_FFField* ToField(CXFA_LayoutItem* widget) {
+  return static_cast<CXFA_FFField*>(widget);
+}
+
+}  // namespace
+
 CXFA_FFField::CXFA_FFField(CXFA_WidgetAcc* pDataAcc)
     : CXFA_FFWidget(pDataAcc), m_pNormalWidget(nullptr) {}
 
@@ -71,47 +79,56 @@ void CXFA_FFField::RenderWidget(CFX_Graphics* pGS,
   GetApp()->GetWidgetMgrDelegate()->OnDrawWidget(m_pNormalWidget.get(), pGS,
                                                  &mt);
 }
+
 void CXFA_FFField::DrawHighlight(CFX_Graphics* pGS,
                                  CFX_Matrix* pMatrix,
                                  uint32_t dwStatus,
                                  bool bEllipse) {
-  if (m_rtUI.IsEmpty() || !m_pDataAcc->GetDoc()->GetXFADoc()->IsInteractive()) {
+  if (m_rtUI.IsEmpty() || !m_pDataAcc->GetDoc()->GetXFADoc()->IsInteractive())
+    return;
+
+  if (!(dwStatus & XFA_WidgetStatus_Highlight) ||
+      m_pDataAcc->GetAccess() != XFA_ATTRIBUTEENUM_Open) {
     return;
   }
-  if ((dwStatus & XFA_WidgetStatus_Highlight) &&
-      m_pDataAcc->GetAccess() == XFA_ATTRIBUTEENUM_Open) {
-    CXFA_FFDoc* pDoc = GetDoc();
-    CFX_Color crHighlight(pDoc->GetDocEnvironment()->GetHighlightColor(pDoc));
-    pGS->SetFillColor(&crHighlight);
-    CFX_Path path;
-    if (bEllipse)
-      path.AddEllipse(m_rtUI);
-    else
-      path.AddRectangle(m_rtUI.left, m_rtUI.top, m_rtUI.width, m_rtUI.height);
 
-    pGS->FillPath(&path, FXFILL_WINDING, pMatrix);
-  }
-}
-void CXFA_FFField::DrawFocus(CFX_Graphics* pGS, CFX_Matrix* pMatrix) {
-  if (m_dwStatus & XFA_WidgetStatus_Focused) {
-    CFX_Color cr(0xFF000000);
-    pGS->SetStrokeColor(&cr);
-    float DashPattern[2] = {1, 1};
-    pGS->SetLineDash(0.0f, DashPattern, 2);
-    pGS->SetLineWidth(0, false);
-
-    CFX_Path path;
+  CXFA_FFDoc* pDoc = GetDoc();
+  CFX_Color crHighlight(pDoc->GetDocEnvironment()->GetHighlightColor(pDoc));
+  pGS->SetFillColor(&crHighlight);
+  CFX_Path path;
+  if (bEllipse)
+    path.AddEllipse(m_rtUI);
+  else
     path.AddRectangle(m_rtUI.left, m_rtUI.top, m_rtUI.width, m_rtUI.height);
-    pGS->StrokePath(&path, pMatrix);
-  }
+
+  pGS->FillPath(&path, FXFILL_WINDING, pMatrix);
 }
+
+void CXFA_FFField::DrawFocus(CFX_Graphics* pGS, CFX_Matrix* pMatrix) {
+  if (!(m_dwStatus & XFA_WidgetStatus_Focused))
+    return;
+
+  CFX_Color cr(0xFF000000);
+  pGS->SetStrokeColor(&cr);
+
+  float DashPattern[2] = {1, 1};
+  pGS->SetLineDash(0.0f, DashPattern, 2);
+  pGS->SetLineWidth(0, false);
+
+  CFX_Path path;
+  path.AddRectangle(m_rtUI.left, m_rtUI.top, m_rtUI.width, m_rtUI.height);
+  pGS->StrokePath(&path, pMatrix);
+}
+
 void CXFA_FFField::SetFWLThemeProvider() {
   if (m_pNormalWidget)
     m_pNormalWidget->SetThemeProvider(GetApp()->GetFWLTheme());
 }
+
 bool CXFA_FFField::IsLoaded() {
   return m_pNormalWidget && CXFA_FFWidget::IsLoaded();
 }
+
 bool CXFA_FFField::LoadWidget() {
   SetFWLThemeProvider();
   m_pDataAcc->LoadCaption();
@@ -125,21 +142,24 @@ void CXFA_FFField::UnloadWidget() {
 
 void CXFA_FFField::SetEditScrollOffset() {
   XFA_Element eType = m_pDataAcc->GetUIType();
-  if (eType == XFA_Element::TextEdit || eType == XFA_Element::NumericEdit ||
-      eType == XFA_Element::PasswordEdit) {
-    float fScrollOffset = 0;
-    CXFA_FFField* pPrev = static_cast<CXFA_FFField*>(GetPrev());
-    if (pPrev) {
-      CFX_RectF rtMargin = m_pDataAcc->GetUIMargin();
-      fScrollOffset = -rtMargin.top;
-    }
-    while (pPrev) {
-      fScrollOffset += pPrev->m_rtUI.height;
-      pPrev = static_cast<CXFA_FFField*>(pPrev->GetPrev());
-    }
-    static_cast<CFWL_Edit*>(m_pNormalWidget.get())
-        ->SetScrollOffset(fScrollOffset);
+  if (eType != XFA_Element::TextEdit && eType != XFA_Element::NumericEdit &&
+      eType != XFA_Element::PasswordEdit) {
+    return;
   }
+
+  float fScrollOffset = 0;
+  CXFA_FFField* pPrev = ToField(GetPrev());
+  if (pPrev) {
+    CFX_RectF rtMargin = m_pDataAcc->GetUIMargin();
+    fScrollOffset = -rtMargin.top;
+  }
+
+  while (pPrev) {
+    fScrollOffset += pPrev->m_rtUI.height;
+    pPrev = ToField(pPrev->GetPrev());
+  }
+  static_cast<CFWL_Edit*>(m_pNormalWidget.get())
+      ->SetScrollOffset(fScrollOffset);
 }
 
 bool CXFA_FFField::PerformLayout() {
@@ -199,6 +219,7 @@ void CXFA_FFField::CapPlacement() {
         }
         XFA_RectWidthoutMargin(m_rtCaption, mgWidget);
       }
+
       CXFA_TextLayout* pCapTextLayout = m_pDataAcc->GetCaptionTextLayout();
       if (fCapReserve <= 0 && pCapTextLayout) {
         CFX_SizeF size;
@@ -214,6 +235,7 @@ void CXFA_FFField::CapPlacement() {
       }
     }
   }
+
   m_rtUI = rtWidget;
   switch (iCapPlacement) {
     case XFA_ATTRIBUTEENUM_Left: {
@@ -221,39 +243,44 @@ void CXFA_FFField::CapPlacement() {
       CapLeftRightPlacement(caption, rtWidget, iCapPlacement);
       m_rtUI.width -= fCapReserve;
       m_rtUI.left += fCapReserve;
-    } break;
+      break;
+    }
     case XFA_ATTRIBUTEENUM_Top: {
       m_rtCaption.height = fCapReserve;
       CapTopBottomPlacement(caption, rtWidget, iCapPlacement);
       m_rtUI.top += fCapReserve;
       m_rtUI.height -= fCapReserve;
-    } break;
+      break;
+    }
     case XFA_ATTRIBUTEENUM_Right: {
       m_rtCaption.left = m_rtCaption.right() - fCapReserve;
       m_rtCaption.width = fCapReserve;
       CapLeftRightPlacement(caption, rtWidget, iCapPlacement);
       m_rtUI.width -= fCapReserve;
-    } break;
+      break;
+    }
     case XFA_ATTRIBUTEENUM_Bottom: {
       m_rtCaption.top = m_rtCaption.bottom() - fCapReserve;
       m_rtCaption.height = fCapReserve;
       CapTopBottomPlacement(caption, rtWidget, iCapPlacement);
       m_rtUI.height -= fCapReserve;
-    } break;
+      break;
+    }
     case XFA_ATTRIBUTEENUM_Inline:
       break;
     default:
       break;
   }
+
   CXFA_Border borderUI = m_pDataAcc->GetUIBorder();
   if (borderUI) {
     CXFA_Margin margin = borderUI.GetMargin();
-    if (margin) {
+    if (margin)
       XFA_RectWidthoutMargin(m_rtUI, margin);
-    }
   }
   m_rtUI.Normalize();
 }
+
 void CXFA_FFField::CapTopBottomPlacement(CXFA_Caption caption,
                                          const CFX_RectF& rtWidget,
                                          int32_t iCapPlacement) {
@@ -261,25 +288,25 @@ void CXFA_FFField::CapTopBottomPlacement(CXFA_Caption caption,
   m_rtCaption.left += rtUIMargin.left;
   if (CXFA_Margin mgCap = caption.GetMargin()) {
     XFA_RectWidthoutMargin(m_rtCaption, mgCap);
-    if (m_rtCaption.height < 0) {
+    if (m_rtCaption.height < 0)
       m_rtCaption.top += m_rtCaption.height;
-    }
   }
+
   float fWidth = rtUIMargin.left + rtUIMargin.width;
   float fHeight = m_rtCaption.height + rtUIMargin.top + rtUIMargin.height;
-  if (fWidth > rtWidget.width) {
+  if (fWidth > rtWidget.width)
     m_rtUI.width += fWidth - rtWidget.width;
-  }
+
   if (fHeight == XFA_DEFAULTUI_HEIGHT && m_rtUI.height < XFA_MINUI_HEIGHT) {
     m_rtUI.height = XFA_MINUI_HEIGHT;
     m_rtCaption.top += rtUIMargin.top + rtUIMargin.height;
   } else if (fHeight > rtWidget.height) {
     m_rtUI.height += fHeight - rtWidget.height;
-    if (iCapPlacement == XFA_ATTRIBUTEENUM_Bottom) {
+    if (iCapPlacement == XFA_ATTRIBUTEENUM_Bottom)
       m_rtCaption.top += fHeight - rtWidget.height;
-    }
   }
 }
+
 void CXFA_FFField::CapLeftRightPlacement(CXFA_Caption caption,
                                          const CFX_RectF& rtWidget,
                                          int32_t iCapPlacement) {
@@ -288,18 +315,18 @@ void CXFA_FFField::CapLeftRightPlacement(CXFA_Caption caption,
   m_rtCaption.height -= rtUIMargin.top;
   if (CXFA_Margin mgCap = caption.GetMargin()) {
     XFA_RectWidthoutMargin(m_rtCaption, mgCap);
-    if (m_rtCaption.height < 0) {
+    if (m_rtCaption.height < 0)
       m_rtCaption.top += m_rtCaption.height;
-    }
   }
+
   float fWidth = m_rtCaption.width + rtUIMargin.left + rtUIMargin.width;
   float fHeight = rtUIMargin.top + rtUIMargin.height;
   if (fWidth > rtWidget.width) {
     m_rtUI.width += fWidth - rtWidget.width;
-    if (iCapPlacement == XFA_ATTRIBUTEENUM_Right) {
+    if (iCapPlacement == XFA_ATTRIBUTEENUM_Right)
       m_rtCaption.left += fWidth - rtWidget.width;
-    }
   }
+
   if (fHeight == XFA_DEFAULTUI_HEIGHT && m_rtUI.height < XFA_MINUI_HEIGHT) {
     m_rtUI.height = XFA_MINUI_HEIGHT;
     m_rtCaption.top += rtUIMargin.top + rtUIMargin.height;
@@ -315,11 +342,9 @@ void CXFA_FFField::UpdateFWL() {
 
 uint32_t CXFA_FFField::UpdateUIProperty() {
   CXFA_Node* pUiNode = m_pDataAcc->GetUIChild();
-  uint32_t dwStyle = 0;
   if (pUiNode && pUiNode->GetElementType() == XFA_Element::DefaultUi)
-    dwStyle = FWL_STYLEEXT_EDT_ReadOnly;
-
-  return dwStyle;
+    return FWL_STYLEEXT_EDT_ReadOnly;
+  return 0;
 }
 
 void CXFA_FFField::SetFWLRect() {
@@ -620,100 +645,101 @@ bool CXFA_FFField::ProcessCommittedData() {
 
 int32_t CXFA_FFField::CalculateOverride() {
   CXFA_WidgetAcc* pAcc = m_pDataAcc->GetExclGroup();
-  if (!pAcc) {
+  if (!pAcc)
     return CalculateWidgetAcc(m_pDataAcc);
-  }
-  if (CalculateWidgetAcc(pAcc) == 0) {
+  if (CalculateWidgetAcc(pAcc) == 0)
     return 0;
-  }
+
   CXFA_Node* pNode = pAcc->GetExclGroupFirstMember();
-  if (!pNode) {
+  if (!pNode)
     return 1;
-  }
+
   CXFA_WidgetAcc* pWidgetAcc = nullptr;
   while (pNode) {
     pWidgetAcc = static_cast<CXFA_WidgetAcc*>(pNode->GetWidgetData());
-    if (!pWidgetAcc) {
+    if (!pWidgetAcc)
       return 1;
-    }
-    if (CalculateWidgetAcc(pWidgetAcc) == 0) {
+    if (CalculateWidgetAcc(pWidgetAcc) == 0)
       return 0;
-    }
+
     pNode = pWidgetAcc->GetExclGroupNextMember(pNode);
   }
   return 1;
 }
+
 int32_t CXFA_FFField::CalculateWidgetAcc(CXFA_WidgetAcc* pAcc) {
   CXFA_Calculate calc = pAcc->GetCalculate();
-  if (!calc) {
+  if (!calc)
     return 1;
-  }
+
   XFA_VERSION version = pAcc->GetDoc()->GetXFADoc()->GetCurVersionMode();
-  if (calc) {
-    int32_t iOverride = calc.GetOverride();
-    switch (iOverride) {
-      case XFA_ATTRIBUTEENUM_Error: {
-        if (version <= XFA_VERSION_204) {
-          return 1;
-        }
-        IXFA_AppProvider* pAppProvider = GetApp()->GetAppProvider();
-        if (pAppProvider) {
-          pAppProvider->MsgBox(L"You are not allowed to modify this field.",
-                               L"Calculate Override", XFA_MBICON_Warning,
-                               XFA_MB_OK);
-        }
+  switch (calc.GetOverride()) {
+    case XFA_ATTRIBUTEENUM_Error: {
+      if (version <= XFA_VERSION_204)
+        return 1;
+
+      IXFA_AppProvider* pAppProvider = GetApp()->GetAppProvider();
+      if (pAppProvider) {
+        pAppProvider->MsgBox(L"You are not allowed to modify this field.",
+                             L"Calculate Override", XFA_MBICON_Warning,
+                             XFA_MB_OK);
       }
-        return 0;
-      case XFA_ATTRIBUTEENUM_Warning: {
-        if (version <= XFA_VERSION_204) {
-          CXFA_Script script = calc.GetScript();
-          if (!script) {
-            return 1;
-          }
-          CFX_WideString wsExpression;
-          script.GetExpression(wsExpression);
-          if (wsExpression.IsEmpty()) {
-            return 1;
-          }
-        }
-        if (pAcc->GetNode()->IsUserInteractive())
+      return 0;
+    }
+    case XFA_ATTRIBUTEENUM_Warning: {
+      if (version <= XFA_VERSION_204) {
+        CXFA_Script script = calc.GetScript();
+        if (!script)
           return 1;
 
-        IXFA_AppProvider* pAppProvider = GetApp()->GetAppProvider();
-        if (pAppProvider) {
-          CFX_WideString wsMessage;
-          calc.GetMessageText(wsMessage);
-          if (!wsMessage.IsEmpty())
-            wsMessage += L"\r\n";
-          wsMessage += L"Are you sure you want to modify this field?";
-          if (pAppProvider->MsgBox(wsMessage, L"Calculate Override",
-                                   XFA_MBICON_Warning,
-                                   XFA_MB_YesNo) == XFA_IDYes) {
-            pAcc->GetNode()->SetFlag(XFA_NodeFlag_UserInteractive, false);
-            return 1;
-          }
-        }
-        return 0;
+        CFX_WideString wsExpression;
+        script.GetExpression(wsExpression);
+        if (wsExpression.IsEmpty())
+          return 1;
       }
-      case XFA_ATTRIBUTEENUM_Ignore:
-        return 0;
-      case XFA_ATTRIBUTEENUM_Disabled:
-        pAcc->GetNode()->SetFlag(XFA_NodeFlag_UserInteractive, false);
-      default:
+
+      if (pAcc->GetNode()->IsUserInteractive())
         return 1;
+
+      IXFA_AppProvider* pAppProvider = GetApp()->GetAppProvider();
+      if (!pAppProvider)
+        return 0;
+
+      CFX_WideString wsMessage;
+      calc.GetMessageText(wsMessage);
+      if (!wsMessage.IsEmpty())
+        wsMessage += L"\r\n";
+
+      wsMessage += L"Are you sure you want to modify this field?";
+      if (pAppProvider->MsgBox(wsMessage, L"Calculate Override",
+                               XFA_MBICON_Warning, XFA_MB_YesNo) == XFA_IDYes) {
+        pAcc->GetNode()->SetFlag(XFA_NodeFlag_UserInteractive, false);
+        return 1;
+      }
+      return 0;
     }
+    case XFA_ATTRIBUTEENUM_Ignore:
+      return 0;
+    case XFA_ATTRIBUTEENUM_Disabled:
+      pAcc->GetNode()->SetFlag(XFA_NodeFlag_UserInteractive, false);
+      return 1;
+    default:
+      return 1;
   }
-  return 1;
 }
+
 bool CXFA_FFField::CommitData() {
   return false;
 }
+
 bool CXFA_FFField::IsDataChanged() {
   return false;
 }
+
 void CXFA_FFField::TranslateFWLMessage(CFWL_Message* pMessage) {
   GetApp()->GetWidgetMgrDelegate()->OnProcessMessageToForm(pMessage);
 }
+
 void CXFA_FFField::OnProcessMessage(CFWL_Message* pMessage) {}
 
 void CXFA_FFField::OnProcessEvent(CFWL_Event* pEvent) {

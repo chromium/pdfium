@@ -69,7 +69,7 @@ class CXFA_FFField : public CXFA_FFWidget, public IFWL_WidgetDelegate {
   CFWL_Widget* GetNormalWidget() { return m_pNormalWidget.get(); }
   CFX_PointF FWLToClient(const CFX_PointF& point);
   void LayoutCaption();
-  void RenderCaption(CFX_Graphics* pGS, CFX_Matrix* pMatrix = nullptr);
+  void RenderCaption(CFX_Graphics* pGS, CFX_Matrix* pMatrix);
 
   int32_t CalculateOverride();
   int32_t CalculateWidgetAcc(CXFA_WidgetAcc* pAcc);
@@ -79,7 +79,7 @@ class CXFA_FFField : public CXFA_FFWidget, public IFWL_WidgetDelegate {
   void DrawHighlight(CFX_Graphics* pGS,
                      CFX_Matrix* pMatrix,
                      uint32_t dwStatus,
-                     bool bEllipse = false);
+                     bool bEllipse);
   void DrawFocus(CFX_Graphics* pGS, CFX_Matrix* pMatrix);
   void TranslateFWLMessage(CFWL_Message* pMessage);
   void CapPlacement();
