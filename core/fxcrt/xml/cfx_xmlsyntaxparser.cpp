@@ -8,7 +8,7 @@
 
 #include <algorithm>
 
-#include "core/fxcrt/fx_ext.h"
+#include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_safe_types.h"
 
 namespace {

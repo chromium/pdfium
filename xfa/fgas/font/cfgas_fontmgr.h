@@ -13,9 +13,10 @@
 #include <set>
 #include <vector>
 
+#include "core/fxcrt/cfx_crtfileaccess.h"
 #include "core/fxcrt/cfx_retain_ptr.h"
 #include "core/fxcrt/cfx_seekablestreamproxy.h"
-#include "core/fxcrt/fx_ext.h"
+#include "core/fxcrt/fx_extension.h"
 #include "core/fxge/cfx_fontmapper.h"
 #include "core/fxge/fx_freetype.h"
 #include "core/fxge/ifx_systemfontinfo.h"
@@ -169,7 +170,7 @@ class CFX_FontSourceEnum_File {
   ~CFX_FontSourceEnum_File();
 
   bool HasStartPosition();
-  CFX_RetainPtr<IFX_FileAccess> GetNext();
+  CFX_RetainPtr<CFX_CRTFileAccess> GetNext();
 
  private:
   CFX_ByteString GetNextFile();

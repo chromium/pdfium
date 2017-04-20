@@ -10,7 +10,7 @@
 #include <vector>
 
 #include "core/fxcrt/cfx_decimal.h"
-#include "core/fxcrt/fx_ext.h"
+#include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/xml/cxml_element.h"
 
 #define FX_LOCALECATEGORY_DateHash 0xbde9abde

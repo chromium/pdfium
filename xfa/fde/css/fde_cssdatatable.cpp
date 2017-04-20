@@ -9,7 +9,7 @@
 #include <utility>
 
 #include "core/fxcrt/fx_codepage.h"
-#include "core/fxcrt/fx_ext.h"
+#include "core/fxcrt/fx_extension.h"
 #include "xfa/fde/css/cfde_cssstyleselector.h"
 #include "xfa/fde/css/cfde_cssvaluelistparser.h"
 

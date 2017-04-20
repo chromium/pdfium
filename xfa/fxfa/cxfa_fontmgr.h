@@ -12,7 +12,7 @@
 #include <vector>
 
 #include "core/fxcrt/cfx_retain_ptr.h"
-#include "core/fxcrt/fx_ext.h"
+#include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_system.h"
 #include "xfa/fgas/font/cfgas_fontmgr.h"
 #include "xfa/fxfa/cxfa_deffontmgr.h"

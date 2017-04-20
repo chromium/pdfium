@@ -11,7 +11,7 @@
 #include <algorithm>
 
 #include "core/fxcrt/cfx_decimal.h"
-#include "core/fxcrt/fx_ext.h"
+#include "core/fxcrt/fx_extension.h"
 #include "fxjs/cfxjse_arguments.h"
 #include "fxjs/cfxjse_class.h"
 #include "fxjs/cfxjse_value.h"

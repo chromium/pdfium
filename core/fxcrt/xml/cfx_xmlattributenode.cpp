@@ -6,7 +6,7 @@
 
 #include "core/fxcrt/xml/cfx_xmlattributenode.h"
 
-#include "core/fxcrt/fx_ext.h"
+#include "core/fxcrt/fx_extension.h"
 
 CFX_XMLAttributeNode::CFX_XMLAttributeNode(const CFX_WideString& name)
     : CFX_XMLNode(), name_(name) {

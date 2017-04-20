@@ -678,12 +678,11 @@ bool CFX_FontSourceEnum_File::HasStartPosition() {
   return m_wsNext.GetLength() != 0;
 }
 
-CFX_RetainPtr<IFX_FileAccess> CFX_FontSourceEnum_File::GetNext() {
+CFX_RetainPtr<CFX_CRTFileAccess> CFX_FontSourceEnum_File::GetNext() {
   if (m_wsNext.GetLength() == 0)
     return nullptr;
 
-  CFX_RetainPtr<IFX_FileAccess> pAccess =
-      IFX_FileAccess::CreateDefault(m_wsNext.AsStringC());
+  auto pAccess = pdfium::MakeRetain<CFX_CRTFileAccess>(m_wsNext.AsStringC());
   m_wsNext = GetNextFile().UTF8Decode();
   return pAccess;
 }
@@ -733,7 +732,8 @@ bool CFGAS_FontMgr::EnumFontsFromFiles() {
   if (!m_pFontSource->HasStartPosition())
     return !m_InstalledFonts.empty();
 
-  while (CFX_RetainPtr<IFX_FileAccess> pFontSource = m_pFontSource->GetNext()) {
+  while (CFX_RetainPtr<CFX_CRTFileAccess> pFontSource =
+             m_pFontSource->GetNext()) {
     CFX_RetainPtr<IFX_SeekableReadStream> pFontStream =
         pFontSource->CreateFileStream(FX_FILEMODE_ReadOnly);
     if (pFontStream)

@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXCRT_EXTENSION_H_
-#define CORE_FXCRT_EXTENSION_H_
+#ifndef CORE_FXCRT_IFXCRT_FILEACCESS_H_
+#define CORE_FXCRT_IFXCRT_FILEACCESS_H_
 
 #include <algorithm>
 #include <memory>
@@ -34,28 +34,4 @@ class IFXCRT_FileAccess {
   virtual bool Truncate(FX_FILESIZE szFile) = 0;
 };
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-#define MT_N 848
-#define MT_M 456
-#define MT_Matrix_A 0x9908b0df
-#define MT_Upper_Mask 0x80000000
-#define MT_Lower_Mask 0x7fffffff
-struct FX_MTRANDOMCONTEXT {
-  FX_MTRANDOMCONTEXT() {
-    mti = MT_N + 1;
-    bHaveSeed = false;
-  }
-  uint32_t mti;
-  bool bHaveSeed;
-  uint32_t mt[MT_N];
-};
-#if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
-bool FX_GenerateCryptoRandom(uint32_t* pBuffer, int32_t iCount);
-#endif
-#ifdef __cplusplus
-}
-#endif
-
-#endif  // CORE_FXCRT_EXTENSION_H_
+#endif  // CORE_FXCRT_IFXCRT_FILEACCESS_H_

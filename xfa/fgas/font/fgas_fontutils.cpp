@@ -7,7 +7,7 @@
 #include "xfa/fgas/font/fgas_fontutils.h"
 
 #include "core/fxcrt/fx_codepage.h"
-#include "core/fxcrt/fx_ext.h"
+#include "core/fxcrt/fx_extension.h"
 #include "xfa/fgas/font/cfgas_fontmgr.h"
 
 namespace {

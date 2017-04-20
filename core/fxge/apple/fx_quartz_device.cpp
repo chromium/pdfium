@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fxcrt/fx_ext.h"
+#include "core/fxcrt/fx_extension.h"
 
 #if !defined _SKIA_SUPPORT_ && !defined _SKIA_SUPPORT_PATHS_
 #include "core/fxge/agg/fx_agg_driver.h"

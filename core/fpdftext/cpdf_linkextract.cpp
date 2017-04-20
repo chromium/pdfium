@@ -9,7 +9,7 @@
 #include <vector>
 
 #include "core/fpdftext/cpdf_textpage.h"
-#include "core/fxcrt/fx_ext.h"
+#include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
 

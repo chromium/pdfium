@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXCRT_FX_EXT_H_
-#define CORE_FXCRT_FX_EXT_H_
+#ifndef CORE_FXCRT_FX_EXTENSION_H_
+#define CORE_FXCRT_FX_EXTENSION_H_
 
 #include <cctype>
 #include <cwctype>
@@ -15,15 +15,11 @@
 
 #define FX_INVALID_OFFSET static_cast<uint32_t>(-1)
 
-float FXSYS_strtof(const char* pcsStr,
-                   int32_t iLength = -1,
-                   int32_t* pUsedLen = nullptr);
 float FXSYS_wcstof(const wchar_t* pwsStr,
                    int32_t iLength = -1,
                    int32_t* pUsedLen = nullptr);
 wchar_t* FXSYS_wcsncpy(wchar_t* dstStr, const wchar_t* srcStr, size_t count);
 int32_t FXSYS_wcsnicmp(const wchar_t* s1, const wchar_t* s2, size_t count);
-int32_t FXSYS_strnicmp(const char* s1, const char* s2, size_t count);
 
 inline bool FXSYS_islower(int32_t ch) {
   return ch >= 'a' && ch <= 'z';
@@ -92,7 +88,6 @@ void FX_Random_MT_Close(void* pContext);
 uint32_t FX_Random_MT_Generate(void* pContext);
 void FX_Random_GenerateBase(uint32_t* pBuffer, int32_t iCount);
 void FX_Random_GenerateMT(uint32_t* pBuffer, int32_t iCount);
-void FX_Random_GenerateCrypto(uint32_t* pBuffer, int32_t iCount);
 
 #ifdef PDF_ENABLE_XFA
 struct FX_GUID {
@@ -105,4 +100,4 @@ void FX_GUID_CreateV4(FX_GUID* pGUID);
 CFX_ByteString FX_GUID_ToString(const FX_GUID* pGUID, bool bSeparator = true);
 #endif  // PDF_ENABLE_XFA
 
-#endif  // CORE_FXCRT_FX_EXT_H_
+#endif  // CORE_FXCRT_FX_EXTENSION_H_

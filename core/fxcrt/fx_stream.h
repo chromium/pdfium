@@ -127,18 +127,6 @@ class IFX_MemoryStream : public IFX_SeekableStream {
   virtual void DetachBuffer() = 0;
 };
 
-#ifdef PDF_ENABLE_XFA
-class IFX_FileAccess : public CFX_Retainable {
- public:
-  static CFX_RetainPtr<IFX_FileAccess> CreateDefault(
-      const CFX_WideStringC& wsPath);
-
-  virtual void GetPath(CFX_WideString& wsPath) = 0;
-  virtual CFX_RetainPtr<IFX_SeekableStream> CreateFileStream(
-      uint32_t dwModes) = 0;
-};
-#endif  // PDF_ENABLE_XFA
-
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
 class CFindFileData {
  public:

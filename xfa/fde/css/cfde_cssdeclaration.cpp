@@ -6,7 +6,7 @@
 
 #include "xfa/fde/css/cfde_cssdeclaration.h"
 
-#include "core/fxcrt/fx_ext.h"
+#include "core/fxcrt/fx_extension.h"
 #include "third_party/base/ptr_util.h"
 #include "xfa/fde/css/cfde_csscolorvalue.h"
 #include "xfa/fde/css/cfde_csscustomproperty.h"
