@@ -305,3 +305,23 @@ CFX_RetainPtr<IFX_MemoryStream> IFX_MemoryStream::Create(uint8_t* pBuffer,
 CFX_RetainPtr<IFX_MemoryStream> IFX_MemoryStream::Create(bool bConsecutive) {
   return pdfium::MakeRetain<CFX_MemoryStream>(bConsecutive);
 }
+
+bool IFX_SeekableWriteStream::WriteBlock(const void* pData, size_t size) {
+  return WriteBlock(pData, GetSize(), size);
+}
+
+bool IFX_SeekableReadStream::IsEOF() {
+  return false;
+}
+
+FX_FILESIZE IFX_SeekableReadStream::GetPosition() {
+  return 0;
+}
+
+size_t IFX_SeekableReadStream::ReadBlock(void* buffer, size_t size) {
+  return 0;
+}
+
+bool IFX_SeekableStream::WriteBlock(const void* buffer, size_t size) {
+  return WriteBlock(buffer, GetSize(), size);
+}

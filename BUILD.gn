@@ -786,7 +786,6 @@ static_library("fxcrt") {
     "core/fxcrt/fx_unicode.cpp",
     "core/fxcrt/fxcrt_posix.cpp",
     "core/fxcrt/fxcrt_posix.h",
-    "core/fxcrt/fxcrt_stream.cpp",
     "core/fxcrt/fxcrt_windows.cpp",
     "core/fxcrt/fxcrt_windows.h",
     "core/fxcrt/ifxcrt_fileaccess.h",
