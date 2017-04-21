@@ -7,11 +7,12 @@
 #include "core/fxge/ge/cfx_folderfontinfo.h"
 
 #include <limits>
+#include <utility>
 
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxge/cfx_fontmapper.h"
 #include "core/fxge/fx_font.h"
-
+#include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 
 namespace {
@@ -102,13 +103,10 @@ int32_t GetSimilarValue(int weight,
 
 CFX_FolderFontInfo::CFX_FolderFontInfo() {}
 
-CFX_FolderFontInfo::~CFX_FolderFontInfo() {
-  for (const auto& pair : m_FontList)
-    delete pair.second;
-}
+CFX_FolderFontInfo::~CFX_FolderFontInfo() {}
 
-void CFX_FolderFontInfo::AddPath(const CFX_ByteStringC& path) {
-  m_PathList.push_back(CFX_ByteString(path));
+void CFX_FolderFontInfo::AddPath(const CFX_ByteString& path) {
+  m_PathList.push_back(path);
 }
 
 bool CFX_FolderFontInfo::EnumFontList(CFX_FontMapper* pMapper) {
@@ -222,8 +220,8 @@ void CFX_FolderFontInfo::ReportFace(const CFX_ByteString& path,
   if (pdfium::ContainsKey(m_FontList, facename))
     return;
 
-  CFX_FontFaceInfo* pInfo =
-      new CFX_FontFaceInfo(path, facename, tables, offset, filesize);
+  auto pInfo = pdfium::MakeUnique<CFX_FontFaceInfo>(path, facename, tables,
+                                                    offset, filesize);
   CFX_ByteString os2 =
       FPDF_LoadTableFromTT(pFile, tables.raw_str(), nTables, 0x4f532f32);
   if (os2.GetLength() >= 86) {
@@ -260,7 +258,7 @@ void CFX_FolderFontInfo::ReportFace(const CFX_ByteString& path,
   if (facename.Find("Serif") > -1)
     pInfo->m_Styles |= FXFONT_SERIF;
 
-  m_FontList[facename] = pInfo;
+  m_FontList[facename] = std::move(pInfo);
 }
 
 void* CFX_FolderFontInfo::GetSubstFont(const CFX_ByteString& face) {
@@ -281,17 +279,19 @@ void* CFX_FolderFontInfo::FindFont(int weight,
   CFX_FontFaceInfo* pFind = nullptr;
   if (charset == FX_CHARSET_ANSI && (pitch_family & FXFONT_FF_FIXEDPITCH))
     return GetFont("Courier New");
+
   uint32_t charset_flag = GetCharset(charset);
   int32_t iBestSimilar = 0;
   for (const auto& it : m_FontList) {
     const CFX_ByteString& bsName = it.first;
-    CFX_FontFaceInfo* pFont = it.second;
+    CFX_FontFaceInfo* pFont = it.second.get();
     if (!(pFont->m_Charsets & charset_flag) && charset != FX_CHARSET_Default)
       continue;
 
     int32_t index = bsName.Find(family);
     if (bMatchName && index < 0)
       continue;
+
     int32_t iSimilarValue =
         GetSimilarValue(weight, bItalic, pitch_family, pFont->m_Styles);
     if (iSimilarValue > iBestSimilar) {
@@ -322,7 +322,7 @@ void* CFX_FolderFontInfo::MapFontByUnicode(uint32_t dwUnicode,
 
 void* CFX_FolderFontInfo::GetFont(const char* face) {
   auto it = m_FontList.find(face);
-  return it != m_FontList.end() ? it->second : nullptr;
+  return it != m_FontList.end() ? it->second.get() : nullptr;
 }
 
 uint32_t CFX_FolderFontInfo::GetFontData(void* hFont,

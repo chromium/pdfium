@@ -8,6 +8,7 @@
 #define CORE_FXGE_GE_CFX_FOLDERFONTINFO_H_
 
 #include <map>
+#include <memory>
 #include <vector>
 
 #include "core/fxge/cfx_fontmapper.h"
@@ -19,7 +20,7 @@ class CFX_FolderFontInfo : public IFX_SystemFontInfo {
   CFX_FolderFontInfo();
   ~CFX_FolderFontInfo() override;
 
-  void AddPath(const CFX_ByteStringC& path);
+  void AddPath(const CFX_ByteString& path);
 
   // IFX_SytemFontInfo:
   bool EnumFontList(CFX_FontMapper* pMapper) override;
@@ -59,7 +60,7 @@ class CFX_FolderFontInfo : public IFX_SystemFontInfo {
                  const char* family,
                  bool bMatchName);
 
-  std::map<CFX_ByteString, CFX_FontFaceInfo*> m_FontList;
+  std::map<CFX_ByteString, std::unique_ptr<CFX_FontFaceInfo>> m_FontList;
   std::vector<CFX_ByteString> m_PathList;
   CFX_FontMapper* m_pMapper;
 };

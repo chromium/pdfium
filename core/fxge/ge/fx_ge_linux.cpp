@@ -97,7 +97,7 @@ void* CFX_LinuxFontInfo::MapFont(int weight,
       for (size_t i = 0; i < kLinuxGpNameSize; i++) {
         auto it = m_FontList.find(g_LinuxGpFontList[index][i]);
         if (it != m_FontList.end())
-          return it->second;
+          return it->second.get();
       }
       break;
     }
@@ -105,7 +105,7 @@ void* CFX_LinuxFontInfo::MapFont(int weight,
       for (size_t i = 0; i < FX_ArraySize(g_LinuxGbFontList); ++i) {
         auto it = m_FontList.find(g_LinuxGbFontList[i]);
         if (it != m_FontList.end())
-          return it->second;
+          return it->second.get();
       }
       break;
     }
@@ -113,7 +113,7 @@ void* CFX_LinuxFontInfo::MapFont(int weight,
       for (size_t i = 0; i < FX_ArraySize(g_LinuxB5FontList); ++i) {
         auto it = m_FontList.find(g_LinuxB5FontList[i]);
         if (it != m_FontList.end())
-          return it->second;
+          return it->second.get();
       }
       break;
     }
@@ -121,7 +121,7 @@ void* CFX_LinuxFontInfo::MapFont(int weight,
       for (size_t i = 0; i < FX_ArraySize(g_LinuxHGFontList); ++i) {
         auto it = m_FontList.find(g_LinuxHGFontList[i]);
         if (it != m_FontList.end())
-          return it->second;
+          return it->second.get();
       }
       break;
     }

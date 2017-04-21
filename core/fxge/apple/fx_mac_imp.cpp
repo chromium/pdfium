@@ -88,12 +88,12 @@ void* CFX_MacFontInfo::MapFont(int weight,
       new_face += " Italic";
     auto it = m_FontList.find(new_face);
     if (it != m_FontList.end())
-      return it->second;
+      return it->second.get();
   }
 
   auto it = m_FontList.find(face);
   if (it != m_FontList.end())
-    return it->second;
+    return it->second.get();
 
   if (charset == FX_CHARSET_ANSI && (pitch_family & FXFONT_FF_FIXEDPITCH))
     return GetFont("Courier New");
@@ -115,7 +115,7 @@ void* CFX_MacFontInfo::MapFont(int weight,
       face = "LiSong Pro Light";
   }
   it = m_FontList.find(face);
-  return it != m_FontList.end() ? it->second : nullptr;
+  return it != m_FontList.end() ? it->second.get() : nullptr;
 }
 
 }  // namespace
