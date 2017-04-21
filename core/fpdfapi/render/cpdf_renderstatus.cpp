@@ -1664,13 +1664,13 @@ CFX_RetainPtr<CFX_DIBitmap> CPDF_RenderStatus::GetBackdrop(
   return pBackdrop;
 }
 
-CPDF_GraphicStates* CPDF_RenderStatus::CloneObjStates(
+std::unique_ptr<CPDF_GraphicStates> CPDF_RenderStatus::CloneObjStates(
     const CPDF_GraphicStates* pSrcStates,
     bool bStroke) {
   if (!pSrcStates)
     return nullptr;
 
-  CPDF_GraphicStates* pStates = new CPDF_GraphicStates;
+  auto pStates = pdfium::MakeUnique<CPDF_GraphicStates>();
   pStates->CopyStates(*pSrcStates);
   const CPDF_Color* pObjColor = bStroke
                                     ? pSrcStates->m_ColorState.GetStrokeColor()
@@ -1858,7 +1858,8 @@ bool CPDF_RenderStatus::ProcessType3Text(CPDF_TextObject* textobj,
         }
         glyphs.clear();
       }
-      CPDF_GraphicStates* pStates = CloneObjStates(textobj, false);
+      std::unique_ptr<CPDF_GraphicStates> pStates =
+          CloneObjStates(textobj, false);
       CPDF_RenderOptions Options = m_Options;
       Options.m_Flags |= RENDER_FORCE_HALFTONE | RENDER_RECT_AA;
       Options.m_Flags &= ~RENDER_FORCE_DOWNSAMPLE;
@@ -1870,7 +1871,7 @@ bool CPDF_RenderStatus::ProcessType3Text(CPDF_TextObject* textobj,
       if (fill_alpha == 255) {
         CPDF_RenderStatus status;
         status.Initialize(m_pContext, m_pDevice, nullptr, nullptr, this,
-                          pStates, &Options,
+                          pStates.get(), &Options,
                           pType3Char->m_pForm->m_Transparency, m_bDropObjects,
                           pFormResource, false, pType3Char, fill_argb);
         status.m_Type3FontCache = m_Type3FontCache;
@@ -1892,7 +1893,7 @@ bool CPDF_RenderStatus::ProcessType3Text(CPDF_TextObject* textobj,
         bitmap_device.GetBitmap()->Clear(0);
         CPDF_RenderStatus status;
         status.Initialize(m_pContext, &bitmap_device, nullptr, nullptr, this,
-                          pStates, &Options,
+                          pStates.get(), &Options,
                           pType3Char->m_pForm->m_Transparency, m_bDropObjects,
                           pFormResource, false, pType3Char, fill_argb);
         status.m_Type3FontCache = m_Type3FontCache;
@@ -1902,7 +1903,6 @@ bool CPDF_RenderStatus::ProcessType3Text(CPDF_TextObject* textobj,
         status.RenderObjectList(pType3Char->m_pForm.get(), &matrix);
         m_pDevice->SetDIBits(bitmap_device.GetBitmap(), rect.left, rect.top);
       }
-      delete pStates;
     } else if (pType3Char->m_pBitmap) {
       if (device_class == FXDC_DISPLAY) {
         CFX_RetainPtr<CPDF_Type3Cache> pCache = GetCachedType3(pType3Font);
@@ -2177,9 +2177,9 @@ void CPDF_RenderStatus::DrawTilingPattern(CPDF_TilingPattern* pPattern,
                                           CPDF_PageObject* pPageObj,
                                           const CFX_Matrix* pObj2Device,
                                           bool bStroke) {
-  if (!pPattern->Load()) {
+  if (!pPattern->Load())
     return;
-  }
+
   m_pDevice->SaveState();
   if (pPageObj->IsPath()) {
     if (!SelectClipPath(pPageObj->AsPath(), pObj2Device, bStroke)) {
@@ -2201,45 +2201,45 @@ void CPDF_RenderStatus::DrawTilingPattern(CPDF_TilingPattern* pPattern,
   float sd = fabs(dCTM.d);
   clip_box.right = clip_box.left + (int32_t)ceil(clip_box.Width() * sa);
   clip_box.bottom = clip_box.top + (int32_t)ceil(clip_box.Height() * sd);
+
   CFX_Matrix mtPattern2Device = *pPattern->pattern_to_form();
   mtPattern2Device.Concat(*pObj2Device);
   GetScaledMatrix(mtPattern2Device);
-  bool bAligned = false;
-  if (pPattern->bbox().left == 0 && pPattern->bbox().bottom == 0 &&
+
+  bool bAligned =
+      pPattern->bbox().left == 0 && pPattern->bbox().bottom == 0 &&
       pPattern->bbox().right == pPattern->x_step() &&
       pPattern->bbox().top == pPattern->y_step() &&
-      (mtPattern2Device.IsScaled() || mtPattern2Device.Is90Rotated())) {
-    bAligned = true;
-  }
+      (mtPattern2Device.IsScaled() || mtPattern2Device.Is90Rotated());
+
   CFX_FloatRect cell_bbox = pPattern->bbox();
   mtPattern2Device.TransformRect(cell_bbox);
-  int width = (int)ceil(cell_bbox.Width());
-  int height = (int)ceil(cell_bbox.Height());
-  if (width == 0) {
+
+  int width = static_cast<int>(ceil(cell_bbox.Width()));
+  int height = static_cast<int>(ceil(cell_bbox.Height()));
+  if (width == 0)
     width = 1;
-  }
-  if (height == 0) {
+  if (height == 0)
     height = 1;
-  }
-  int min_col, max_col, min_row, max_row;
+
   CFX_Matrix mtDevice2Pattern;
   mtDevice2Pattern.SetReverse(mtPattern2Device);
 
   CFX_FloatRect clip_box_p(clip_box);
   mtDevice2Pattern.TransformRect(clip_box_p);
 
-  min_col = (int)ceil((clip_box_p.left - pPattern->bbox().right) /
-                      pPattern->x_step());
-  max_col = (int)floor((clip_box_p.right - pPattern->bbox().left) /
-                       pPattern->x_step());
-  min_row = (int)ceil((clip_box_p.bottom - pPattern->bbox().top) /
-                      pPattern->y_step());
-  max_row = (int)floor((clip_box_p.top - pPattern->bbox().bottom) /
-                       pPattern->y_step());
+  int min_col = (int)ceil((clip_box_p.left - pPattern->bbox().right) /
+                          pPattern->x_step());
+  int max_col = (int)floor((clip_box_p.right - pPattern->bbox().left) /
+                           pPattern->x_step());
+  int min_row = (int)ceil((clip_box_p.bottom - pPattern->bbox().top) /
+                          pPattern->y_step());
+  int max_row = (int)floor((clip_box_p.top - pPattern->bbox().bottom) /
+                           pPattern->y_step());
 
   if (width > clip_box.Width() || height > clip_box.Height() ||
       width * height > clip_box.Width() * clip_box.Height()) {
-    CPDF_GraphicStates* pStates = nullptr;
+    std::unique_ptr<CPDF_GraphicStates> pStates;
     if (!pPattern->colored())
       pStates = CloneObjStates(pPageObj, bStroke);
 
@@ -2247,7 +2247,7 @@ void CPDF_RenderStatus::DrawTilingPattern(CPDF_TilingPattern* pPattern,
     if (pPattern->form()->m_pFormDict)
       pFormResource = pPattern->form()->m_pFormDict->GetDictFor("Resources");
 
-    for (int col = min_col; col <= max_col; col++)
+    for (int col = min_col; col <= max_col; col++) {
       for (int row = min_row; row <= max_row; row++) {
         CFX_PointF original = mtPattern2Device.Transform(
             CFX_PointF(col * pPattern->x_step(), row * pPattern->y_step()));
@@ -2257,34 +2257,34 @@ void CPDF_RenderStatus::DrawTilingPattern(CPDF_TilingPattern* pPattern,
         m_pDevice->SaveState();
         CPDF_RenderStatus status;
         status.Initialize(m_pContext, m_pDevice, nullptr, nullptr, this,
-                          pStates, &m_Options, pPattern->form()->m_Transparency,
-                          m_bDropObjects, pFormResource);
+                          pStates.get(), &m_Options,
+                          pPattern->form()->m_Transparency, m_bDropObjects,
+                          pFormResource);
         status.RenderObjectList(pPattern->form(), &matrix);
         m_pDevice->RestoreState(false);
       }
+    }
     m_pDevice->RestoreState(false);
-    delete pStates;
     return;
   }
   if (bAligned) {
     int orig_x = FXSYS_round(mtPattern2Device.e);
     int orig_y = FXSYS_round(mtPattern2Device.f);
     min_col = (clip_box.left - orig_x) / width;
-    if (clip_box.left < orig_x) {
+    if (clip_box.left < orig_x)
       min_col--;
-    }
+
     max_col = (clip_box.right - orig_x) / width;
-    if (clip_box.right <= orig_x) {
+    if (clip_box.right <= orig_x)
       max_col--;
-    }
+
     min_row = (clip_box.top - orig_y) / height;
-    if (clip_box.top < orig_y) {
+    if (clip_box.top < orig_y)
       min_row--;
-    }
+
     max_row = (clip_box.bottom - orig_y) / height;
-    if (clip_box.bottom <= orig_y) {
+    if (clip_box.bottom <= orig_y)
       max_row--;
-    }
   }
   float left_offset = cell_bbox.left - mtPattern2Device.e;
   float top_offset = cell_bbox.bottom - mtPattern2Device.f;
