@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <limits>
 #include <memory>
+#include <utility>
 
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxge/cfx_fontmgr.h"
@@ -18,6 +19,7 @@
 #include "core/fxge/fx_freetype.h"
 #include "core/fxge/ge/fx_text_int.h"
 #include "third_party/base/numerics/safe_math.h"
+#include "third_party/base/ptr_util.h"
 
 #if defined _SKIA_SUPPORT_ || _SKIA_SUPPORT_PATHS_
 #include "third_party/skia/include/core/SkStream.h"
@@ -97,12 +99,13 @@ CFX_FaceCache::~CFX_FaceCache() {
 #endif
 }
 
-CFX_GlyphBitmap* CFX_FaceCache::RenderGlyph(const CFX_Font* pFont,
-                                            uint32_t glyph_index,
-                                            bool bFontStyle,
-                                            const CFX_Matrix* pMatrix,
-                                            int dest_width,
-                                            int anti_alias) {
+std::unique_ptr<CFX_GlyphBitmap> CFX_FaceCache::RenderGlyph(
+    const CFX_Font* pFont,
+    uint32_t glyph_index,
+    bool bFontStyle,
+    const CFX_Matrix* pMatrix,
+    int dest_width,
+    int anti_alias) {
   if (!m_Face)
     return nullptr;
 
@@ -188,7 +191,7 @@ CFX_GlyphBitmap* CFX_FaceCache::RenderGlyph(const CFX_Font* pFont,
   if (bmwidth > 2048 || bmheight > 2048)
     return nullptr;
   int dib_width = bmwidth;
-  CFX_GlyphBitmap* pGlyphBitmap = new CFX_GlyphBitmap;
+  auto pGlyphBitmap = pdfium::MakeUnique<CFX_GlyphBitmap>();
   pGlyphBitmap->m_pBitmap->Create(
       dib_width, bmheight,
       anti_alias == FXFT_RENDER_MODE_MONO ? FXDIB_1bppMask : FXDIB_8bppMask);
@@ -270,7 +273,7 @@ const CFX_GlyphBitmap* CFX_FaceCache::LoadGlyphBitmap(const CFX_Font* pFont,
   if (glyph_index == kInvalidGlyphIndex)
     return nullptr;
 
-  _CFX_UniqueKeyGen keygen;
+  CFX_UniqueKeyGen keygen;
   int nMatrixA = static_cast<int>(pMatrix->a * 10000);
   int nMatrixB = static_cast<int>(pMatrix->b * 10000);
   int nMatrixC = static_cast<int>(pMatrix->c * 10000);
@@ -317,29 +320,31 @@ const CFX_GlyphBitmap* CFX_FaceCache::LoadGlyphBitmap(const CFX_Font* pFont,
     return LookUpGlyphBitmap(pFont, pMatrix, FaceGlyphsKey, glyph_index,
                              bFontStyle, dest_width, anti_alias);
   }
-  CFX_GlyphBitmap* pGlyphBitmap;
+  std::unique_ptr<CFX_GlyphBitmap> pGlyphBitmap;
   auto it = m_SizeMap.find(FaceGlyphsKey);
   if (it != m_SizeMap.end()) {
     CFX_SizeGlyphCache* pSizeCache = it->second.get();
     auto it2 = pSizeCache->m_GlyphMap.find(glyph_index);
     if (it2 != pSizeCache->m_GlyphMap.end())
-      return it2->second;
+      return it2->second.get();
 
     pGlyphBitmap = RenderGlyph_Nativetext(pFont, glyph_index, pMatrix,
                                           dest_width, anti_alias);
     if (pGlyphBitmap) {
-      pSizeCache->m_GlyphMap[glyph_index] = pGlyphBitmap;
-      return pGlyphBitmap;
+      CFX_GlyphBitmap* pResult = pGlyphBitmap.get();
+      pSizeCache->m_GlyphMap[glyph_index] = std::move(pGlyphBitmap);
+      return pResult;
     }
   } else {
     pGlyphBitmap = RenderGlyph_Nativetext(pFont, glyph_index, pMatrix,
                                           dest_width, anti_alias);
     if (pGlyphBitmap) {
-      CFX_SizeGlyphCache* pSizeCache = new CFX_SizeGlyphCache;
-      m_SizeMap[FaceGlyphsKey] =
-          std::unique_ptr<CFX_SizeGlyphCache>(pSizeCache);
-      pSizeCache->m_GlyphMap[glyph_index] = pGlyphBitmap;
-      return pGlyphBitmap;
+      auto pNewCache = pdfium::MakeUnique<CFX_SizeGlyphCache>();
+      CFX_SizeGlyphCache* pSizeCache = pNewCache.get();
+      m_SizeMap[FaceGlyphsKey] = std::move(pNewCache);
+      CFX_GlyphBitmap* pResult = pGlyphBitmap.get();
+      pSizeCache->m_GlyphMap[glyph_index] = std::move(pGlyphBitmap);
+      return pResult;
     }
   }
   if (pFont->GetSubstFont()) {
@@ -398,10 +403,11 @@ CFX_GlyphBitmap* CFX_FaceCache::LookUpGlyphBitmap(
   }
   auto it2 = pSizeCache->m_GlyphMap.find(glyph_index);
   if (it2 != pSizeCache->m_GlyphMap.end())
-    return it2->second;
+    return it2->second.get();
 
-  CFX_GlyphBitmap* pGlyphBitmap = RenderGlyph(pFont, glyph_index, bFontStyle,
-                                              pMatrix, dest_width, anti_alias);
-  pSizeCache->m_GlyphMap[glyph_index] = pGlyphBitmap;
-  return pGlyphBitmap;
+  std::unique_ptr<CFX_GlyphBitmap> pGlyphBitmap = RenderGlyph(
+      pFont, glyph_index, bFontStyle, pMatrix, dest_width, anti_alias);
+  CFX_GlyphBitmap* pResult = pGlyphBitmap.get();
+  pSizeCache->m_GlyphMap[glyph_index] = std::move(pGlyphBitmap);
+  return pResult;
 }

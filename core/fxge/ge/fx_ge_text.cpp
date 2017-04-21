@@ -107,14 +107,9 @@ FX_RECT FXGE_GetGlyphsBBox(const std::vector<FXTEXT_GLYPHPOS>& glyphs,
 
 CFX_SizeGlyphCache::CFX_SizeGlyphCache() {}
 
-CFX_SizeGlyphCache::~CFX_SizeGlyphCache() {
-  for (const auto& pair : m_GlyphMap) {
-    delete pair.second;
-  }
-  m_GlyphMap.clear();
-}
+CFX_SizeGlyphCache::~CFX_SizeGlyphCache() {}
 
-void _CFX_UniqueKeyGen::Generate(int count, ...) {
+void CFX_UniqueKeyGen::Generate(int count, ...) {
   va_list argList;
   va_start(argList, count);
   for (int i = 0; i < count; i++) {

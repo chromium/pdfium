@@ -4,6 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include <memory>
+
 #include "core/fxcrt/fx_system.h"
 
 #ifndef _SKIA_SUPPORT_
@@ -162,7 +164,7 @@ void CFX_FaceCache::InitPlatform() {}
 
 void CFX_FaceCache::DestroyPlatform() {}
 
-CFX_GlyphBitmap* CFX_FaceCache::RenderGlyph_Nativetext(
+std::unique_ptr<CFX_GlyphBitmap> CFX_FaceCache::RenderGlyph_Nativetext(
     const CFX_Font* pFont,
     uint32_t glyph_index,
     const CFX_Matrix* pMatrix,
