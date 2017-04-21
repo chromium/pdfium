@@ -64,8 +64,11 @@ if (pdf_bundle_freetype) {
       "//third_party/freetype/src/include",
     ]
     defines = [
-      "FT_CONFIG_MODULES_H=<freetype-custom-config/ftmodule.h>",
-      "FT_CONFIG_OPTIONS_H=<freetype-custom-config/ftoption.h>",
+      # GN currently does not escape '<' and '>' when generating xml based
+      # Visual Studio project files. As a result, use quotes instead of pointy
+      # brackets in these defines.
+      "FT_CONFIG_MODULES_H=\"freetype-custom-config/ftmodule.h\"",
+      "FT_CONFIG_OPTIONS_H=\"freetype-custom-config/ftoption.h\"",
     ]
   }
 
