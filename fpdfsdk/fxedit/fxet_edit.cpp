@@ -681,7 +681,7 @@ void CFX_Edit::DrawEdit(CFX_RenderDevice* pDevice,
   CFX_ByteTextBuf sTextBuf;
   int32_t nFontIndex = -1;
   CFX_PointF ptBT;
-  pDevice->SaveState();
+  CFX_RenderDevice::StateRestorer restorer(pDevice);
   if (!rcClip.IsEmpty()) {
     CFX_FloatRect rcTemp = rcClip;
     pUser2Device->TransformRect(rcTemp);
@@ -770,8 +770,6 @@ void CFX_Edit::DrawEdit(CFX_RenderDevice* pDevice,
                      sTextBuf.MakeString(), crOldFill, nHorzScale);
     }
   }
-
-  pDevice->RestoreState(false);
 }
 
 CFX_Edit::CFX_Edit()

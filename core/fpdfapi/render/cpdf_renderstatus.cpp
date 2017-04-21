@@ -1252,10 +1252,11 @@ bool CPDF_RenderStatus::ProcessForm(const CPDF_FormObject* pFormObj,
                     &m_Options, m_Transparency, m_bDropObjects, pResources,
                     false);
   status.m_curBlend = m_curBlend;
-  m_pDevice->SaveState();
-  status.RenderObjectList(pFormObj->m_pForm.get(), &matrix);
-  m_bStopped = status.m_bStopped;
-  m_pDevice->RestoreState(false);
+  {
+    CFX_RenderDevice::StateRestorer restorer(m_pDevice);
+    status.RenderObjectList(pFormObj->m_pForm.get(), &matrix);
+    m_bStopped = status.m_bStopped;
+  }
 #if defined _SKIA_SUPPORT_
   DebugVerifyDeviceIsPreMultiplied();
 #endif
@@ -1876,9 +1877,9 @@ bool CPDF_RenderStatus::ProcessType3Text(CPDF_TextObject* textobj,
                           pFormResource, false, pType3Char, fill_argb);
         status.m_Type3FontCache = m_Type3FontCache;
         status.m_Type3FontCache.push_back(pType3Font);
-        m_pDevice->SaveState();
+
+        CFX_RenderDevice::StateRestorer restorer(m_pDevice);
         status.RenderObjectList(pType3Char->m_pForm.get(), &matrix);
-        m_pDevice->RestoreState(false);
       } else {
         CFX_FloatRect rect_f = pType3Char->m_pForm->CalcBoundingBox();
         matrix.TransformRect(rect_f);
@@ -2131,22 +2132,19 @@ void CPDF_RenderStatus::DrawShadingPattern(CPDF_ShadingPattern* pattern,
   if (!pattern->Load())
     return;
 
-  m_pDevice->SaveState();
+  CFX_RenderDevice::StateRestorer restorer(m_pDevice);
   if (pPageObj->IsPath()) {
-    if (!SelectClipPath(pPageObj->AsPath(), pObj2Device, bStroke)) {
-      m_pDevice->RestoreState(false);
+    if (!SelectClipPath(pPageObj->AsPath(), pObj2Device, bStroke))
       return;
-    }
   } else if (pPageObj->IsImage()) {
     m_pDevice->SetClip_Rect(pPageObj->GetBBox(pObj2Device));
   } else {
     return;
   }
   FX_RECT rect;
-  if (GetObjectClippedRect(pPageObj, pObj2Device, false, rect)) {
-    m_pDevice->RestoreState(false);
+  if (GetObjectClippedRect(pPageObj, pObj2Device, false, rect))
     return;
-  }
+
   CFX_Matrix matrix = *pattern->pattern_to_form();
   matrix.Concat(*pObj2Device);
   GetScaledMatrix(matrix);
@@ -2155,7 +2153,6 @@ void CPDF_RenderStatus::DrawShadingPattern(CPDF_ShadingPattern* pattern,
                                  : pPageObj->m_GeneralState.GetFillAlpha()));
   DrawShading(pattern, &matrix, rect, alpha,
               m_Options.m_ColorMode == RENDER_COLOR_ALPHA);
-  m_pDevice->RestoreState(false);
 }
 
 void CPDF_RenderStatus::ProcessShading(const CPDF_ShadingObject* pShadingObj,
@@ -2180,22 +2177,20 @@ void CPDF_RenderStatus::DrawTilingPattern(CPDF_TilingPattern* pPattern,
   if (!pPattern->Load())
     return;
 
-  m_pDevice->SaveState();
+  CFX_RenderDevice::StateRestorer restorer(m_pDevice);
   if (pPageObj->IsPath()) {
-    if (!SelectClipPath(pPageObj->AsPath(), pObj2Device, bStroke)) {
-      m_pDevice->RestoreState(false);
+    if (!SelectClipPath(pPageObj->AsPath(), pObj2Device, bStroke))
       return;
-    }
   } else if (pPageObj->IsImage()) {
     m_pDevice->SetClip_Rect(pPageObj->GetBBox(pObj2Device));
   } else {
     return;
   }
+
   FX_RECT clip_box = m_pDevice->GetClipBox();
-  if (clip_box.IsEmpty()) {
-    m_pDevice->RestoreState(false);
+  if (clip_box.IsEmpty())
     return;
-  }
+
   CFX_Matrix dCTM = m_pDevice->GetCTM();
   float sa = fabs(dCTM.a);
   float sd = fabs(dCTM.d);
@@ -2254,17 +2249,15 @@ void CPDF_RenderStatus::DrawTilingPattern(CPDF_TilingPattern* pPattern,
         CFX_Matrix matrix = *pObj2Device;
         matrix.Translate(original.x - mtPattern2Device.e,
                          original.y - mtPattern2Device.f);
-        m_pDevice->SaveState();
+        CFX_RenderDevice::StateRestorer restorer2(m_pDevice);
         CPDF_RenderStatus status;
         status.Initialize(m_pContext, m_pDevice, nullptr, nullptr, this,
                           pStates.get(), &m_Options,
                           pPattern->form()->m_Transparency, m_bDropObjects,
                           pFormResource);
         status.RenderObjectList(pPattern->form(), &matrix);
-        m_pDevice->RestoreState(false);
       }
     }
-    m_pDevice->RestoreState(false);
     return;
   }
   if (bAligned) {
@@ -2299,10 +2292,9 @@ void CPDF_RenderStatus::DrawTilingPattern(CPDF_TilingPattern* pPattern,
         m_pContext->GetDocument(), m_pContext->GetPageCache(), pPattern,
         pObj2Device, width, height, m_Options.m_Flags);
   }
-  if (!pPatternBitmap) {
-    m_pDevice->RestoreState(false);
+  if (!pPatternBitmap)
     return;
-  }
+
   if (m_Options.m_ColorMode == RENDER_COLOR_GRAY) {
     pPatternBitmap->ConvertColorScale(m_Options.m_ForeColor,
                                       m_Options.m_BackColor);
@@ -2364,7 +2356,6 @@ void CPDF_RenderStatus::DrawTilingPattern(CPDF_TilingPattern* pPattern,
   }
   CompositeDIBitmap(pScreen, clip_box.left, clip_box.top, 0, 255,
                     FXDIB_BLEND_NORMAL, false);
-  m_pDevice->RestoreState(false);
 }
 
 void CPDF_RenderStatus::DrawPathWithPattern(CPDF_PathObject* pPathObj,

@@ -375,11 +375,9 @@ void CFX_Graphics::FillPathWithPattern(CFX_Path* path,
                         m_info.fillColor->m_info.pattern->m_foreArgb);
     }
   }
-
-  m_renderDevice->SaveState();
+  CFX_RenderDevice::StateRestorer restorer(m_renderDevice);
   m_renderDevice->SetClip_PathFill(path->GetPathData(), matrix, fillMode);
   SetDIBitsWithMatrix(bmp, &pattern->m_matrix);
-  m_renderDevice->RestoreState(false);
 }
 
 void CFX_Graphics::FillPathWithShading(CFX_Path* path,
@@ -494,10 +492,9 @@ void CFX_Graphics::FillPathWithShading(CFX_Path* path,
     }
   }
   if (result) {
-    m_renderDevice->SaveState();
+    CFX_RenderDevice::StateRestorer restorer(m_renderDevice);
     m_renderDevice->SetClip_PathFill(path->GetPathData(), matrix, fillMode);
     SetDIBitsWithMatrix(bmp, matrix);
-    m_renderDevice->RestoreState(false);
   }
 }
 

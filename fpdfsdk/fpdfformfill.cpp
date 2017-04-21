@@ -115,37 +115,37 @@ void FFLCommon(FPDF_FORMHANDLE hHandle,
 #endif
   CFX_RetainPtr<CFX_DIBitmap> holder(CFXBitmapFromFPDFBitmap(bitmap));
   pDevice->Attach(holder, false, nullptr, false);
-  pDevice->SaveState();
-  pDevice->SetClip_Rect(clip);
+  {
+    CFX_RenderDevice::StateRestorer restorer(pDevice.get());
+    pDevice->SetClip_Rect(clip);
 
-  CPDF_RenderOptions options;
-  if (flags & FPDF_LCD_TEXT)
-    options.m_Flags |= RENDER_CLEARTYPE;
-  else
-    options.m_Flags &= ~RENDER_CLEARTYPE;
+    CPDF_RenderOptions options;
+    if (flags & FPDF_LCD_TEXT)
+      options.m_Flags |= RENDER_CLEARTYPE;
+    else
+      options.m_Flags &= ~RENDER_CLEARTYPE;
 
-  // Grayscale output
-  if (flags & FPDF_GRAYSCALE) {
-    options.m_ColorMode = RENDER_COLOR_GRAY;
-    options.m_ForeColor = 0;
-    options.m_BackColor = 0xffffff;
-  }
-  options.m_AddFlags = flags >> 8;
-  options.m_bDrawAnnots = flags & FPDF_ANNOT;
+    // Grayscale output
+    if (flags & FPDF_GRAYSCALE) {
+      options.m_ColorMode = RENDER_COLOR_GRAY;
+      options.m_ForeColor = 0;
+      options.m_BackColor = 0xffffff;
+    }
+    options.m_AddFlags = flags >> 8;
+    options.m_bDrawAnnots = flags & FPDF_ANNOT;
 
 #ifdef PDF_ENABLE_XFA
-  options.m_pOCContext =
-      pdfium::MakeRetain<CPDF_OCContext>(pPDFDoc, CPDF_OCContext::View);
-  if (CPDFSDK_PageView* pPageView = pFormFillEnv->GetPageView(pPage, true))
-    pPageView->PageView_OnDraw(pDevice.get(), &matrix, &options, clip);
+    options.m_pOCContext =
+        pdfium::MakeRetain<CPDF_OCContext>(pPDFDoc, CPDF_OCContext::View);
+    if (CPDFSDK_PageView* pPageView = pFormFillEnv->GetPageView(pPage, true))
+      pPageView->PageView_OnDraw(pDevice.get(), &matrix, &options, clip);
 #else   // PDF_ENABLE_XFA
-  options.m_pOCContext = pdfium::MakeRetain<CPDF_OCContext>(
-      pPage->m_pDocument, CPDF_OCContext::View);
-  if (CPDFSDK_PageView* pPageView = FormHandleToPageView(hHandle, pPage))
-    pPageView->PageView_OnDraw(pDevice.get(), &matrix, &options);
+    options.m_pOCContext = pdfium::MakeRetain<CPDF_OCContext>(
+        pPage->m_pDocument, CPDF_OCContext::View);
+    if (CPDFSDK_PageView* pPageView = FormHandleToPageView(hHandle, pPage))
+      pPageView->PageView_OnDraw(pDevice.get(), &matrix, &options);
 #endif  // PDF_ENABLE_XFA
-
-  pDevice->RestoreState(false);
+  }
 #ifdef _SKIA_SUPPORT_PATHS_
   pDevice->Flush();
   holder->UnPreMultiply();

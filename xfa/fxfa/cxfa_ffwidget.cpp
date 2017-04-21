@@ -886,8 +886,7 @@ void XFA_DrawImage(CFX_Graphics* pGS,
     rtFit.top = rtImage.bottom() - rtImage.height;
   }
   CFX_RenderDevice* pRenderDevice = pGS->GetRenderDevice();
-  pRenderDevice->SaveState();
-
+  CFX_RenderDevice::StateRestorer restorer(pRenderDevice);
   CFX_PathData path;
   path.AppendRect(rtImage.left, rtImage.bottom(), rtImage.right(), rtImage.top);
   pRenderDevice->SetClip_PathFill(&path, pMatrix, FXFILL_WINDING);
@@ -898,12 +897,12 @@ void XFA_DrawImage(CFX_Graphics* pGS,
   mtImage.Concat(*pMatrix);
 
   CXFA_ImageRenderer imageRender;
-  bool bRet = imageRender.Start(pRenderDevice, pDIBitmap, 0, 255, &mtImage,
-                                FXDIB_INTERPOL);
-  while (bRet)
-    bRet = imageRender.Continue(nullptr);
-
-  pRenderDevice->RestoreState(false);
+  if (!imageRender.Start(pRenderDevice, pDIBitmap, 0, 255, &mtImage,
+                         FXDIB_INTERPOL)) {
+    return;
+  }
+  while (imageRender.Continue(nullptr))
+    continue;
 }
 
 static const uint8_t g_inv_base64[128] = {
