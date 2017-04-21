@@ -8,6 +8,7 @@
 #define CORE_FPDFAPI_RENDER_CPDF_TYPE3GLYPHS_H_
 
 #include <map>
+#include <memory>
 
 #include "core/fxcrt/fx_system.h"
 
@@ -22,7 +23,7 @@ class CPDF_Type3Glyphs {
 
   void AdjustBlue(float top, float bottom, int& top_line, int& bottom_line);
 
-  std::map<uint32_t, CFX_GlyphBitmap*> m_GlyphMap;
+  std::map<uint32_t, std::unique_ptr<CFX_GlyphBitmap>> m_GlyphMap;
   int m_TopBlue[TYPE3_MAX_BLUES];
   int m_BottomBlue[TYPE3_MAX_BLUES];
   int m_TopBlueCount;

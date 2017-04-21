@@ -13,10 +13,7 @@
 CPDF_Type3Glyphs::CPDF_Type3Glyphs()
     : m_TopBlueCount(0), m_BottomBlueCount(0) {}
 
-CPDF_Type3Glyphs::~CPDF_Type3Glyphs() {
-  for (const auto& pair : m_GlyphMap)
-    delete pair.second;
-}
+CPDF_Type3Glyphs::~CPDF_Type3Glyphs() {}
 
 static int _AdjustBlue(float pos, int& count, int blues[]) {
   float min_distance = 1000000.0f;

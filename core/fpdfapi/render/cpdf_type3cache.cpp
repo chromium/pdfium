@@ -104,19 +104,21 @@ CFX_GlyphBitmap* CPDF_Type3Cache::LoadGlyph(uint32_t charcode,
   }
   auto it2 = pSizeCache->m_GlyphMap.find(charcode);
   if (it2 != pSizeCache->m_GlyphMap.end())
-    return it2->second;
+    return it2->second.get();
 
-  CFX_GlyphBitmap* pGlyphBitmap =
+  std::unique_ptr<CFX_GlyphBitmap> pNewBitmap =
       RenderGlyph(pSizeCache, charcode, pMatrix, retinaScaleX, retinaScaleY);
-  pSizeCache->m_GlyphMap[charcode] = pGlyphBitmap;
+  CFX_GlyphBitmap* pGlyphBitmap = pNewBitmap.get();
+  pSizeCache->m_GlyphMap[charcode] = std::move(pNewBitmap);
   return pGlyphBitmap;
 }
 
-CFX_GlyphBitmap* CPDF_Type3Cache::RenderGlyph(CPDF_Type3Glyphs* pSize,
-                                              uint32_t charcode,
-                                              const CFX_Matrix* pMatrix,
-                                              float retinaScaleX,
-                                              float retinaScaleY) {
+std::unique_ptr<CFX_GlyphBitmap> CPDF_Type3Cache::RenderGlyph(
+    CPDF_Type3Glyphs* pSize,
+    uint32_t charcode,
+    const CFX_Matrix* pMatrix,
+    float retinaScaleX,
+    float retinaScaleY) {
   const CPDF_Type3Char* pChar = m_pFont->LoadChar(charcode);
   if (!pChar || !pChar->m_pBitmap)
     return nullptr;
@@ -163,7 +165,7 @@ CFX_GlyphBitmap* CPDF_Type3Cache::RenderGlyph(CPDF_Type3Glyphs* pSize,
   if (!pResBitmap)
     return nullptr;
 
-  CFX_GlyphBitmap* pGlyph = new CFX_GlyphBitmap;
+  auto pGlyph = pdfium::MakeUnique<CFX_GlyphBitmap>();
   pGlyph->m_Left = left;
   pGlyph->m_Top = -top;
   pGlyph->m_pBitmap->TakeOver(std::move(pResBitmap));

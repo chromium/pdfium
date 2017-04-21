@@ -32,11 +32,11 @@ class CPDF_Type3Cache : public CFX_Retainable {
   explicit CPDF_Type3Cache(CPDF_Type3Font* pFont);
   ~CPDF_Type3Cache() override;
 
-  CFX_GlyphBitmap* RenderGlyph(CPDF_Type3Glyphs* pSize,
-                               uint32_t charcode,
-                               const CFX_Matrix* pMatrix,
-                               float retinaScaleX,
-                               float retinaScaleY);
+  std::unique_ptr<CFX_GlyphBitmap> RenderGlyph(CPDF_Type3Glyphs* pSize,
+                                               uint32_t charcode,
+                                               const CFX_Matrix* pMatrix,
+                                               float retinaScaleX,
+                                               float retinaScaleY);
 
   CPDF_Type3Font* const m_pFont;
   std::map<CFX_ByteString, std::unique_ptr<CPDF_Type3Glyphs>> m_SizeMap;
