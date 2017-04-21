@@ -616,7 +616,7 @@ int32_t GetNumTrailingLimit(const CFX_WideString& wsFormat,
     wchar_t wc = wsFormat[iDotPos];
     if (wc == L'z' || wc == L'9' || wc == 'Z') {
       iTreading++;
-      bTrimTailZeros = (wc == L'9' ? false : true);
+      bTrimTailZeros = wc != L'9';
     }
   }
   return iTreading;

@@ -10,6 +10,7 @@
 
 #include <algorithm>
 #include <cctype>
+#include <cwctype>
 
 #include "core/fxcrt/cfx_string_pool_template.h"
 #include "core/fxcrt/fx_basic.h"

@@ -7,6 +7,7 @@
 #include "core/fxcrt/xml/cfx_xmlsyntaxparser.h"
 
 #include <algorithm>
+#include <cwctype>
 #include <iterator>
 
 #include "core/fxcrt/fx_extension.h"
@@ -633,20 +634,19 @@ void CFX_XMLSyntaxParser::ParseTextChar(wchar_t character) {
         if (iLen > 1 && csEntity[1] == L'x') {
           for (int32_t i = 2; i < iLen; i++) {
             w = csEntity[i];
-            if (w >= L'0' && w <= L'9') {
+            if (std::iswdigit(w))
               ch = (ch << 4) + w - L'0';
-            } else if (w >= L'A' && w <= L'F') {
+            else if (w >= L'A' && w <= L'F')
               ch = (ch << 4) + w - 55;
-            } else if (w >= L'a' && w <= L'f') {
+            else if (w >= L'a' && w <= L'f')
               ch = (ch << 4) + w - 87;
-            } else {
+            else
               break;
-            }
           }
         } else {
           for (int32_t i = 1; i < iLen; i++) {
             w = csEntity[i];
-            if (w < L'0' || w > L'9')
+            if (!std::iswdigit(w))
               break;
             ch = ch * 10 + w - L'0';
           }

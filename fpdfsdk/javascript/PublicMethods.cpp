@@ -7,6 +7,7 @@
 #include "fpdfsdk/javascript/PublicMethods.h"
 
 #include <algorithm>
+#include <cwctype>
 #include <iomanip>
 #include <limits>
 #include <sstream>
@@ -135,12 +136,10 @@ bool CJS_PublicMethods::IsNumber(const CFX_WideString& str) {
 
       p++;
       c = *p;
-      if (c == L'+' || c == L'-') {
-        bKXJS = true;
-      } else {
+      if (c != L'+' && c != L'-')
         return false;
-      }
-    } else if (!FXSYS_iswdigit(c)) {
+      bKXJS = true;
+    } else if (!std::iswdigit(c)) {
       return false;
     }
     p++;
@@ -152,7 +151,7 @@ bool CJS_PublicMethods::IsNumber(const CFX_WideString& str) {
 bool CJS_PublicMethods::maskSatisfied(wchar_t c_Change, wchar_t c_Mask) {
   switch (c_Mask) {
     case L'9':
-      return FXSYS_iswdigit(c_Change);
+      return !!std::iswdigit(c_Change);
     case L'A':
       return FXSYS_iswalpha(c_Change);
     case L'O':
@@ -236,7 +235,7 @@ int CJS_PublicMethods::ParseStringInteger(const CFX_WideString& str,
       break;
 
     wchar_t c = str.GetAt(i);
-    if (!FXSYS_iswdigit(c))
+    if (!std::iswdigit(c))
       break;
 
     nRet = nRet * 10 + FXSYS_toDecimalDigit(c);
@@ -255,7 +254,7 @@ CFX_WideString CJS_PublicMethods::ParseStringString(const CFX_WideString& str,
   nSkip = 0;
   for (int i = nStart, sz = str.GetLength(); i < sz; i++) {
     wchar_t c = str.GetAt(i);
-    if (!FXSYS_iswdigit(c))
+    if (!std::iswdigit(c))
       break;
 
     swRet += c;
@@ -287,7 +286,7 @@ double CJS_PublicMethods::ParseNormalDate(const CFX_WideString& value,
       break;
 
     wchar_t c = value.GetAt(i);
-    if (FXSYS_iswdigit(c)) {
+    if (std::iswdigit(c)) {
       number[nIndex++] = ParseStringInteger(value, i, nSkip, 4);
       i += nSkip;
     } else {
@@ -937,8 +936,7 @@ bool CJS_PublicMethods::AFNumber_Keystroke(CJS_Runtime* pRuntime,
   if (bHasSign) {
     // can't insert "change" in front to sign postion.
     if (pEvent->SelStart() == 0) {
-      bool& bRc = pEvent->Rc();
-      bRc = false;
+      pEvent->Rc() = false;
       return true;
     }
   }
@@ -952,8 +950,7 @@ bool CJS_PublicMethods::AFNumber_Keystroke(CJS_Runtime* pRuntime,
   for (FX_STRSIZE i = 0; i < wstrChange.GetLength(); ++i) {
     if (wstrChange[i] == cSep) {
       if (bHasSep) {
-        bool& bRc = pEvent->Rc();
-        bRc = false;
+        pEvent->Rc() = false;
         return true;
       }
       bHasSep = true;
@@ -961,28 +958,24 @@ bool CJS_PublicMethods::AFNumber_Keystroke(CJS_Runtime* pRuntime,
     }
     if (wstrChange[i] == L'-') {
       if (bHasSign) {
-        bool& bRc = pEvent->Rc();
-        bRc = false;
+        pEvent->Rc() = false;
         return true;
       }
       // sign's position is not correct
       if (i != 0) {
-        bool& bRc = pEvent->Rc();
-        bRc = false;
+        pEvent->Rc() = false;
         return true;
       }
       if (pEvent->SelStart() != 0) {
-        bool& bRc = pEvent->Rc();
-        bRc = false;
+        pEvent->Rc() = false;
         return true;
       }
       bHasSign = true;
       continue;
     }
 
-    if (!FXSYS_iswdigit(wstrChange[i])) {
-      bool& bRc = pEvent->Rc();
-      bRc = false;
+    if (!std::iswdigit(wstrChange[i])) {
+      pEvent->Rc() = false;
       return true;
     }
   }
@@ -1775,7 +1768,7 @@ bool CJS_PublicMethods::AFExtractNums(CJS_Runtime* pRuntime,
   CJS_Array nums;
   int nIndex = 0;
   for (const auto& wc : str) {
-    if (FXSYS_iswdigit(wc)) {
+    if (std::iswdigit(wc)) {
       sPart += wc;
     } else if (sPart.GetLength() > 0) {
       nums.SetElement(pRuntime, nIndex, CJS_Value(pRuntime, sPart.c_str()));

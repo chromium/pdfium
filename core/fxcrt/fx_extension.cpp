@@ -6,6 +6,8 @@
 
 #include "core/fxcrt/fx_extension.h"
 
+#include <cwctype>
+
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
 #include <wincrypt.h>
 #else
@@ -67,11 +69,10 @@ float FXSYS_wcstof(const wchar_t* pwsStr, int32_t iLength, int32_t* pUsedLen) {
   float fValue = 0.0f;
   while (iUsedLen < iLength) {
     wchar_t wch = pwsStr[iUsedLen];
-    if (wch >= L'0' && wch <= L'9')
-      fValue = fValue * 10.0f + (wch - L'0');
-    else
+    if (!std::iswdigit(wch))
       break;
 
+    fValue = fValue * 10.0f + (wch - L'0');
     iUsedLen++;
   }
 
@@ -79,12 +80,11 @@ float FXSYS_wcstof(const wchar_t* pwsStr, int32_t iLength, int32_t* pUsedLen) {
     float fPrecise = 0.1f;
     while (++iUsedLen < iLength) {
       wchar_t wch = pwsStr[iUsedLen];
-      if (wch >= L'0' && wch <= L'9') {
-        fValue += (wch - L'0') * fPrecise;
-        fPrecise *= 0.1f;
-      } else {
+      if (!std::iswdigit(wch))
         break;
-      }
+
+      fValue += (wch - L'0') * fPrecise;
+      fPrecise *= 0.1f;
     }
   }
   if (pUsedLen)

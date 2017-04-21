@@ -9,6 +9,7 @@
 #include <time.h>
 
 #include <algorithm>
+#include <cwctype>
 #include <string>
 #include <vector>
 
@@ -93,7 +94,7 @@ int ParseDataType(std::wstring* sFormat) {
         return UTIL_STRING;
       }
       if (c == L'.' || c == L'+' || c == L'-' || c == L'#' || c == L' ' ||
-          FXSYS_iswdigit(c)) {
+          std::iswdigit(c)) {
         continue;
       }
       break;

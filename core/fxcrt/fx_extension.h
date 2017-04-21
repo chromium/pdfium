@@ -41,12 +41,8 @@ inline bool FXSYS_iswalpha(wchar_t wch) {
   return (wch >= L'A' && wch <= L'Z') || (wch >= L'a' && wch <= L'z');
 }
 
-inline bool FXSYS_iswdigit(wchar_t wch) {
-  return wch >= L'0' && wch <= L'9';
-}
-
 inline bool FXSYS_iswalnum(wchar_t wch) {
-  return FXSYS_iswalpha(wch) || FXSYS_iswdigit(wch);
+  return FXSYS_iswalpha(wch) || std::iswdigit(wch);
 }
 
 inline bool FXSYS_iswspace(wchar_t c) {
