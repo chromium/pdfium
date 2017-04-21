@@ -34,9 +34,5 @@ int CTTFontDesc::ReleaseFace(FXFT_Face face) {
     if (i == 16)
       return -1;
   }
-  m_RefCount--;
-  if (m_RefCount)
-    return m_RefCount;
-  delete this;
-  return 0;
+  return --m_RefCount;
 }

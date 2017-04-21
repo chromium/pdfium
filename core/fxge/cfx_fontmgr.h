@@ -61,7 +61,7 @@ class CFX_FontMgr {
 
  private:
   std::unique_ptr<CFX_FontMapper> m_pBuiltinMapper;
-  std::map<CFX_ByteString, CTTFontDesc*> m_FaceMap;
+  std::map<CFX_ByteString, std::unique_ptr<CTTFontDesc>> m_FaceMap;
   FXFT_Library m_FTLibrary;
   bool m_FTLibrarySupportsHinting;
 };
