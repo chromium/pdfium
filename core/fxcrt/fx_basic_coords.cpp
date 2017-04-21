@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include <limits.h>
+
 #include <algorithm>
-#include <limits>
 
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_extension.h"
@@ -230,7 +231,7 @@ CFX_FloatRect CFX_FloatRect::GetBBox(const CFX_PointF* pPoints, int nPoints) {
 
 void CFX_Matrix::SetReverse(const CFX_Matrix& m) {
   float i = m.a * m.d - m.b * m.c;
-  if (fabs(i) <= std::numeric_limits<float>::epsilon())
+  if (fabs(i) == 0)
     return;
 
   float j = -i;
