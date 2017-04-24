@@ -321,9 +321,9 @@ bool util::printx(CJS_Runtime* pRuntime,
 enum CaseMode { kPreserveCase, kUpperCase, kLowerCase };
 
 static wchar_t TranslateCase(wchar_t input, CaseMode eMode) {
-  if (eMode == kLowerCase && input >= 'A' && input <= 'Z')
+  if (eMode == kLowerCase && FXSYS_isupper(input))
     return input | 0x20;
-  if (eMode == kUpperCase && input >= 'a' && input <= 'z')
+  if (eMode == kUpperCase && FXSYS_islower(input))
     return input & ~0x20;
   return input;
 }
@@ -368,9 +368,7 @@ CFX_WideString util::printx(const CFX_WideString& wsFormat,
       } break;
       case 'X': {
         if (iSourceIdx < wsSource.GetLength()) {
-          if ((wsSource[iSourceIdx] >= '0' && wsSource[iSourceIdx] <= '9') ||
-              (wsSource[iSourceIdx] >= 'a' && wsSource[iSourceIdx] <= 'z') ||
-              (wsSource[iSourceIdx] >= 'A' && wsSource[iSourceIdx] <= 'Z')) {
+          if (FXSYS_iswalnum(wsSource[iSourceIdx])) {
             wsResult += TranslateCase(wsSource[iSourceIdx], eCaseMode);
             ++iFormatIdx;
           }
@@ -381,8 +379,7 @@ CFX_WideString util::printx(const CFX_WideString& wsFormat,
       } break;
       case 'A': {
         if (iSourceIdx < wsSource.GetLength()) {
-          if ((wsSource[iSourceIdx] >= 'a' && wsSource[iSourceIdx] <= 'z') ||
-              (wsSource[iSourceIdx] >= 'A' && wsSource[iSourceIdx] <= 'Z')) {
+          if (FXSYS_iswalpha(wsSource[iSourceIdx])) {
             wsResult += TranslateCase(wsSource[iSourceIdx], eCaseMode);
             ++iFormatIdx;
           }
@@ -393,7 +390,7 @@ CFX_WideString util::printx(const CFX_WideString& wsFormat,
       } break;
       case '9': {
         if (iSourceIdx < wsSource.GetLength()) {
-          if (wsSource[iSourceIdx] >= '0' && wsSource[iSourceIdx] <= '9') {
+          if (std::iswdigit(wsSource[iSourceIdx])) {
             wsResult += wsSource[iSourceIdx];
             ++iFormatIdx;
           }

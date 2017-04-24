@@ -13,6 +13,7 @@
 
 #include "core/fxcrt/cfx_string_pool_template.h"
 #include "core/fxcrt/fx_basic.h"
+#include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "third_party/base/numerics/safe_math.h"
 #include "third_party/base/stl_util.h"
@@ -266,14 +267,8 @@ bool CFX_ByteString::EqualNoCase(const CFX_ByteStringC& str) const {
   const uint8_t* pThat = str.raw_str();
   for (FX_STRSIZE i = 0; i < len; i++) {
     if ((*pThis) != (*pThat)) {
-      uint8_t bThis = *pThis;
-      if (bThis >= 'A' && bThis <= 'Z')
-        bThis += 'a' - 'A';
-
-      uint8_t bThat = *pThat;
-      if (bThat >= 'A' && bThat <= 'Z')
-        bThat += 'a' - 'A';
-
+      uint8_t bThis = FXSYS_tolower(*pThis);
+      uint8_t bThat = FXSYS_tolower(*pThat);
       if (bThis != bThat)
         return false;
     }

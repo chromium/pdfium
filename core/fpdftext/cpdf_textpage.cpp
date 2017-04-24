@@ -1226,12 +1226,8 @@ bool CPDF_TextPage::IsHyphen(wchar_t curChar) {
   if (0x2D == wcTmp || 0xAD == wcTmp) {
     if (--nIndex > 0) {
       wchar_t preChar = strCurText.GetAt((nIndex));
-      if (((preChar >= L'A' && preChar <= L'Z') ||
-           (preChar >= L'a' && preChar <= L'z')) &&
-          ((curChar >= L'A' && curChar <= L'Z') ||
-           (curChar >= L'a' && curChar <= L'z'))) {
+      if (FXSYS_iswalpha(preChar) && FXSYS_iswalpha(curChar))
         return true;
-      }
     }
     const PAGECHAR_INFO* preInfo;
     if (!m_TempCharList.empty())

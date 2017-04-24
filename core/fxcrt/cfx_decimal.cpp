@@ -9,6 +9,8 @@
 #include <algorithm>
 #include <utility>
 
+#include "core/fxcrt/fx_extension.h"
+
 #define FXMATH_DECIMAL_SCALELIMIT 0x1c
 #define FXMATH_DECIMAL_NEGMASK (0x80000000L)
 #define FXMATH_DECIMAL_FORCEBOOL(x) (!!(x))
@@ -310,7 +312,7 @@ CFX_Decimal::CFX_Decimal(const CFX_WideStringC& strObj) {
     str++;
   }
 
-  while (str != strBound && ((*str >= '0' && *str <= '9') || *str == '.') &&
+  while (str != strBound && (std::iswdigit(*str) || *str == '.') &&
          scale < FXMATH_DECIMAL_SCALELIMIT) {
     if (*str == '.') {
       if (!pointmet)

@@ -10,6 +10,7 @@
 #include <utility>
 
 #include "core/fpdfdoc/cpvt_word.h"
+#include "core/fxcrt/fx_extension.h"
 #include "fpdfsdk/fxedit/fxet_edit.h"
 #include "fpdfsdk/pdfwindow/PWL_ListBox.h"
 #include "third_party/base/stl_util.h"
@@ -638,12 +639,6 @@ int32_t CFX_ListCtrl::GetLastSelected() const {
   return -1;
 }
 
-wchar_t CFX_ListCtrl::Toupper(wchar_t c) const {
-  if ((c >= 'a') && (c <= 'z'))
-    c = c - ('a' - 'A');
-  return c;
-}
-
 int32_t CFX_ListCtrl::FindNext(int32_t nIndex, wchar_t nChar) const {
   int32_t nCircleIndex = nIndex;
   int32_t sz = pdfium::CollectionSize<int32_t>(m_ListItems);
@@ -653,7 +648,7 @@ int32_t CFX_ListCtrl::FindNext(int32_t nIndex, wchar_t nChar) const {
       nCircleIndex = 0;
 
     if (CFX_ListItem* pListItem = m_ListItems[nCircleIndex].get()) {
-      if (Toupper(pListItem->GetFirstChar()) == Toupper(nChar))
+      if (FXSYS_toupper(pListItem->GetFirstChar()) == FXSYS_toupper(nChar))
         return nCircleIndex;
     }
   }

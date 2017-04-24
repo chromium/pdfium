@@ -183,30 +183,31 @@ wchar_t* FXSYS_wcsupr(wchar_t* str) {
   }
   return s;
 }
+
 int FXSYS_stricmp(const char* dst, const char* src) {
-  int f, l;
+  int f;
+  int l;
   do {
-    if (((f = (unsigned char)(*(dst++))) >= 'A') && (f <= 'Z')) {
-      f -= ('A' - 'a');
-    }
-    if (((l = (unsigned char)(*(src++))) >= 'A') && (l <= 'Z')) {
-      l -= ('A' - 'a');
-    }
-  } while (f && (f == l));
-  return (f - l);
+    f = FXSYS_toupper(*dst);
+    l = FXSYS_toupper(*src);
+    ++dst;
+    ++src;
+  } while (f && f == l);
+  return f - l;
 }
+
 int FXSYS_wcsicmp(const wchar_t* dst, const wchar_t* src) {
-  wchar_t f, l;
+  wchar_t f;
+  wchar_t l;
   do {
-    if (((f = (wchar_t)(*(dst++))) >= 'A') && (f <= 'Z')) {
-      f -= ('A' - 'a');
-    }
-    if (((l = (wchar_t)(*(src++))) >= 'A') && (l <= 'Z')) {
-      l -= ('A' - 'a');
-    }
-  } while (f && (f == l));
-  return (f - l);
+    f = FXSYS_toupper(*dst);
+    l = FXSYS_toupper(*src);
+    ++dst;
+    ++src;
+  } while (f && f == l);
+  return f - l;
 }
+
 char* FXSYS_itoa(int value, char* str, int radix) {
   return FXSYS_IntToStr<int32_t, uint32_t, char*>(value, str, radix);
 }

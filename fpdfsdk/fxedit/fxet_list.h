@@ -262,7 +262,6 @@ class CFX_ListCtrl : protected CFX_ListContainer {
   CFX_WideString GetItemText(int32_t nIndex) const;
   void SetItemSelect(int32_t nItemIndex, bool bSelected);
   int32_t GetLastSelected() const;
-  wchar_t Toupper(wchar_t c) const;
 
   CPWL_List_Notify* m_pNotify;
   bool m_bNotifyFlag;

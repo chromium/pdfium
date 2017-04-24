@@ -1239,3 +1239,16 @@ TEST(fxcrt, ByteStringAnyAllNoneOf) {
   EXPECT_TRUE(pdfium::ContainsValue(str, 'b'));
   EXPECT_FALSE(pdfium::ContainsValue(str, 'z'));
 }
+
+TEST(fxcrt, EqualNoCase) {
+  CFX_ByteString str("aaa");
+  EXPECT_TRUE(str.EqualNoCase("aaa"));
+  EXPECT_TRUE(str.EqualNoCase("AAA"));
+  EXPECT_TRUE(str.EqualNoCase("aaA"));
+  EXPECT_TRUE(str.EqualNoCase("Aaa"));
+  EXPECT_FALSE(str.EqualNoCase("aab"));
+  EXPECT_FALSE(str.EqualNoCase("aaaa"));
+  EXPECT_FALSE(str.EqualNoCase("BBBB"));
+  EXPECT_FALSE(str.EqualNoCase("a"));
+  EXPECT_FALSE(str.EqualNoCase(""));
+}

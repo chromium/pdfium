@@ -38,7 +38,7 @@ inline int32_t FXSYS_toupper(int32_t ch) {
 }
 
 inline bool FXSYS_iswalpha(wchar_t wch) {
-  return (wch >= L'A' && wch <= L'Z') || (wch >= L'a' && wch <= L'z');
+  return FXSYS_isupper(wch) || FXSYS_islower(wch);
 }
 
 inline bool FXSYS_iswalnum(wchar_t wch) {
