@@ -11,9 +11,7 @@
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/test_support.h"
 
-class CFX_XMLSyntaxParserTest : public pdfium::FPDF_Test {};
-
-TEST_F(CFX_XMLSyntaxParserTest, CData) {
+TEST(CFX_XMLSyntaxParserTest, CData) {
   const char* input =
       "<script contentType=\"application/x-javascript\">\n"
       "  <![CDATA[\n"
@@ -59,7 +57,7 @@ TEST_F(CFX_XMLSyntaxParserTest, CData) {
   ASSERT_EQ(FX_XmlSyntaxResult::EndOfString, parser.DoSyntaxParse());
 }
 
-TEST_F(CFX_XMLSyntaxParserTest, CDataWithInnerScript) {
+TEST(CFX_XMLSyntaxParserTest, CDataWithInnerScript) {
   const char* input =
       "<script contentType=\"application/x-javascript\">\n"
       "  <![CDATA[\n"
@@ -107,7 +105,7 @@ TEST_F(CFX_XMLSyntaxParserTest, CDataWithInnerScript) {
   ASSERT_EQ(FX_XmlSyntaxResult::EndOfString, parser.DoSyntaxParse());
 }
 
-TEST_F(CFX_XMLSyntaxParserTest, ArrowBangArrow) {
+TEST(CFX_XMLSyntaxParserTest, ArrowBangArrow) {
   const char* input =
       "<script contentType=\"application/x-javascript\">\n"
       "  <!>\n"
@@ -142,7 +140,7 @@ TEST_F(CFX_XMLSyntaxParserTest, ArrowBangArrow) {
   ASSERT_EQ(FX_XmlSyntaxResult::EndOfString, parser.DoSyntaxParse());
 }
 
-TEST_F(CFX_XMLSyntaxParserTest, ArrowBangBracketArrow) {
+TEST(CFX_XMLSyntaxParserTest, ArrowBangBracketArrow) {
   const char* input =
       "<script contentType=\"application/x-javascript\">\n"
       "  <![>\n"
@@ -172,7 +170,7 @@ TEST_F(CFX_XMLSyntaxParserTest, ArrowBangBracketArrow) {
   ASSERT_EQ(FX_XmlSyntaxResult::EndOfString, parser.DoSyntaxParse());
 }
 
-TEST_F(CFX_XMLSyntaxParserTest, IncompleteCData) {
+TEST(CFX_XMLSyntaxParserTest, IncompleteCData) {
   const char* input =
       "<script contentType=\"application/x-javascript\">\n"
       "  <![CDATA>\n"
@@ -202,7 +200,7 @@ TEST_F(CFX_XMLSyntaxParserTest, IncompleteCData) {
   ASSERT_EQ(FX_XmlSyntaxResult::EndOfString, parser.DoSyntaxParse());
 }
 
-TEST_F(CFX_XMLSyntaxParserTest, UnClosedCData) {
+TEST(CFX_XMLSyntaxParserTest, UnClosedCData) {
   const char* input =
       "<script contentType=\"application/x-javascript\">\n"
       "  <![CDATA[\n"
@@ -232,7 +230,7 @@ TEST_F(CFX_XMLSyntaxParserTest, UnClosedCData) {
   ASSERT_EQ(FX_XmlSyntaxResult::EndOfString, parser.DoSyntaxParse());
 }
 
-TEST_F(CFX_XMLSyntaxParserTest, EmptyCData) {
+TEST(CFX_XMLSyntaxParserTest, EmptyCData) {
   const char* input =
       "<script contentType=\"application/x-javascript\">\n"
       "  <![CDATA[]]>\n"
@@ -269,7 +267,7 @@ TEST_F(CFX_XMLSyntaxParserTest, EmptyCData) {
   ASSERT_EQ(FX_XmlSyntaxResult::EndOfString, parser.DoSyntaxParse());
 }
 
-TEST_F(CFX_XMLSyntaxParserTest, Comment) {
+TEST(CFX_XMLSyntaxParserTest, Comment) {
   const char* input =
       "<script contentType=\"application/x-javascript\">\n"
       "  <!-- A Comment -->\n"
@@ -303,7 +301,7 @@ TEST_F(CFX_XMLSyntaxParserTest, Comment) {
   ASSERT_EQ(FX_XmlSyntaxResult::EndOfString, parser.DoSyntaxParse());
 }
 
-TEST_F(CFX_XMLSyntaxParserTest, IncorrectCommentStart) {
+TEST(CFX_XMLSyntaxParserTest, IncorrectCommentStart) {
   const char* input =
       "<script contentType=\"application/x-javascript\">\n"
       "  <!- A Comment -->\n"
@@ -337,7 +335,7 @@ TEST_F(CFX_XMLSyntaxParserTest, IncorrectCommentStart) {
   ASSERT_EQ(FX_XmlSyntaxResult::EndOfString, parser.DoSyntaxParse());
 }
 
-TEST_F(CFX_XMLSyntaxParserTest, CommentEmpty) {
+TEST(CFX_XMLSyntaxParserTest, CommentEmpty) {
   const char* input =
       "<script contentType=\"application/x-javascript\">\n"
       "  <!---->\n"
@@ -371,7 +369,7 @@ TEST_F(CFX_XMLSyntaxParserTest, CommentEmpty) {
   ASSERT_EQ(FX_XmlSyntaxResult::EndOfString, parser.DoSyntaxParse());
 }
 
-TEST_F(CFX_XMLSyntaxParserTest, CommentThreeDash) {
+TEST(CFX_XMLSyntaxParserTest, CommentThreeDash) {
   const char* input =
       "<script contentType=\"application/x-javascript\">\n"
       "  <!--->\n"
@@ -399,7 +397,7 @@ TEST_F(CFX_XMLSyntaxParserTest, CommentThreeDash) {
   ASSERT_EQ(FX_XmlSyntaxResult::EndOfString, parser.DoSyntaxParse());
 }
 
-TEST_F(CFX_XMLSyntaxParserTest, CommentTwoDash) {
+TEST(CFX_XMLSyntaxParserTest, CommentTwoDash) {
   const char* input =
       "<script contentType=\"application/x-javascript\">\n"
       "  <!-->\n"
@@ -427,7 +425,7 @@ TEST_F(CFX_XMLSyntaxParserTest, CommentTwoDash) {
   ASSERT_EQ(FX_XmlSyntaxResult::EndOfString, parser.DoSyntaxParse());
 }
 
-TEST_F(CFX_XMLSyntaxParserTest, Entities) {
+TEST(CFX_XMLSyntaxParserTest, Entities) {
   const char* input =
       "<script contentType=\"application/x-javascript\">"
       "&#66;"
@@ -462,7 +460,7 @@ TEST_F(CFX_XMLSyntaxParserTest, Entities) {
   ASSERT_EQ(FX_XmlSyntaxResult::EndOfString, parser.DoSyntaxParse());
 }
 
-TEST_F(CFX_XMLSyntaxParserTest, EntityOverflowHex) {
+TEST(CFX_XMLSyntaxParserTest, EntityOverflowHex) {
   const char* input =
       "<script contentType=\"application/x-javascript\">"
       "&#xaDBDFFFFF;"
@@ -494,7 +492,7 @@ TEST_F(CFX_XMLSyntaxParserTest, EntityOverflowHex) {
   ASSERT_EQ(FX_XmlSyntaxResult::EndOfString, parser.DoSyntaxParse());
 }
 
-TEST_F(CFX_XMLSyntaxParserTest, EntityOverflowDecimal) {
+TEST(CFX_XMLSyntaxParserTest, EntityOverflowDecimal) {
   const char* input =
       "<script contentType=\"application/x-javascript\">"
       "&#2914910205;"
@@ -526,7 +524,7 @@ TEST_F(CFX_XMLSyntaxParserTest, EntityOverflowDecimal) {
   ASSERT_EQ(FX_XmlSyntaxResult::EndOfString, parser.DoSyntaxParse());
 }
 
-TEST_F(CFX_XMLSyntaxParserTest, IsXMLNameChar) {
+TEST(CFX_XMLSyntaxParserTest, IsXMLNameChar) {
   EXPECT_FALSE(CFX_XMLSyntaxParser::IsXMLNameChar(L'-', true));
   EXPECT_TRUE(CFX_XMLSyntaxParser::IsXMLNameChar(L'-', false));
 

@@ -7,9 +7,7 @@
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/test_support.h"
 
-class CFDE_CSSDecalrationTest : public pdfium::FPDF_Test {};
-
-TEST_F(CFDE_CSSDecalrationTest, HexEncodingParsing) {
+TEST(CFDE_CSSDecalrationTest, HexEncodingParsing) {
   FX_ARGB color;
 
   // Length value invalid.
@@ -45,7 +43,7 @@ TEST_F(CFDE_CSSDecalrationTest, HexEncodingParsing) {
   EXPECT_EQ(60, FXARGB_B(color));
 }
 
-TEST_F(CFDE_CSSDecalrationTest, RGBEncodingParsing) {
+TEST(CFDE_CSSDecalrationTest, RGBEncodingParsing) {
   FX_ARGB color;
 
   // Invalid input for rgb() syntax.

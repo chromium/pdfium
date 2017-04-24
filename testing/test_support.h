@@ -59,12 +59,6 @@ struct FreeDeleter {
   inline void operator()(void* ptr) const { free(ptr); }
 };
 
-class FPDF_Test : public ::testing::Test {
- public:
-  void SetUp() override;
-  void TearDown() override;
-};
-
 }  // namespace pdfium
 
 // Reads the entire contents of a file into a newly alloc'd buffer.

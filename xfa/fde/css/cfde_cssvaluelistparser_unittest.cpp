@@ -10,9 +10,7 @@
 #include "testing/test_support.h"
 #include "third_party/base/ptr_util.h"
 
-class CFDE_CSSValueListParserTest : public pdfium::FPDF_Test {};
-
-TEST_F(CFDE_CSSValueListParserTest, rgb_short) {
+TEST(CFDE_CSSValueListParserTest, rgb_short) {
   FDE_CSSPrimitiveType type;
   const wchar_t* start;
   int32_t len;
@@ -43,7 +41,7 @@ TEST_F(CFDE_CSSValueListParserTest, rgb_short) {
   EXPECT_FALSE(parser->NextValue(type, start, len));
 }
 
-TEST_F(CFDE_CSSValueListParserTest, number_parsing) {
+TEST(CFDE_CSSValueListParserTest, number_parsing) {
   FDE_CSSPrimitiveType type;
   const wchar_t* start;
   int32_t len;
@@ -85,7 +83,7 @@ TEST_F(CFDE_CSSValueListParserTest, number_parsing) {
   EXPECT_EQ(L"43a1.12.34", CFX_WideString(start, len));
 }
 
-TEST_F(CFDE_CSSValueListParserTest, string_parsing) {
+TEST(CFDE_CSSValueListParserTest, string_parsing) {
   FDE_CSSPrimitiveType type;
   const wchar_t* start;
   int32_t len;
@@ -108,7 +106,7 @@ TEST_F(CFDE_CSSValueListParserTest, string_parsing) {
   EXPECT_EQ(L"standalone", CFX_WideString(start, len));
 }
 
-TEST_F(CFDE_CSSValueListParserTest, multiparsing) {
+TEST(CFDE_CSSValueListParserTest, multiparsing) {
   FDE_CSSPrimitiveType type;
   const wchar_t* start;
   int32_t len;

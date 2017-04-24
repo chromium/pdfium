@@ -8,10 +8,9 @@
 #include "testing/test_support.h"
 #include "third_party/base/ptr_util.h"
 
-class CFDE_TxtEdtBufTest : public pdfium::FPDF_Test {
+class CFDE_TxtEdtBufTest : public testing::Test {
  public:
   void SetUp() override {
-    FPDF_Test::SetUp();
     buf_ = pdfium::MakeUnique<CFDE_TxtEdtBuf>();
     buf_->SetChunkSizeForTesting(5);
   }

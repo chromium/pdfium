@@ -11,9 +11,7 @@
 #include "testing/test_support.h"
 #include "third_party/base/ptr_util.h"
 
-class XfaUtilsImpTest : public pdfium::FPDF_Test {};
-
-TEST_F(XfaUtilsImpTest, XFA_MapRotation) {
+TEST(XfaUtilsImpTest, XFA_MapRotation) {
   struct TestCase {
     int input;
     int expected_output;
@@ -29,7 +27,7 @@ TEST_F(XfaUtilsImpTest, XFA_MapRotation) {
   }
 }
 
-class XFANodeIteratorTest : public pdfium::FPDF_Test {
+class XFANodeIteratorTest : public testing::Test {
  public:
   class Node {
    public:

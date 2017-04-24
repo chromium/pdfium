@@ -15,9 +15,7 @@
 #include "third_party/base/ptr_util.h"
 #include "xfa/fxfa/cxfa_fileread.h"
 
-class CXFAFileReadTest : public pdfium::FPDF_Test {};
-
-TEST_F(CXFAFileReadTest, NoStreams) {
+TEST(CXFAFileReadTest, NoStreams) {
   std::vector<CPDF_Stream*> streams;
   auto fileread = pdfium::MakeRetain<CXFA_FileRead>(streams);
 
@@ -27,7 +25,7 @@ TEST_F(CXFAFileReadTest, NoStreams) {
   EXPECT_EQ(0xbd, output_buffer[0]);
 }
 
-TEST_F(CXFAFileReadTest, EmptyStreams) {
+TEST(CXFAFileReadTest, EmptyStreams) {
   std::vector<CPDF_Stream*> streams;
   auto stream1 = pdfium::MakeUnique<CPDF_Stream>();
   streams.push_back(stream1.get());
@@ -39,7 +37,7 @@ TEST_F(CXFAFileReadTest, EmptyStreams) {
   EXPECT_EQ(0xbd, output_buffer[0]);
 }
 
-TEST_F(CXFAFileReadTest, NormalStreams) {
+TEST(CXFAFileReadTest, NormalStreams) {
   std::vector<CPDF_Stream*> streams;
   auto stream1 = pdfium::MakeUnique<CPDF_Stream>();
   auto stream2 = pdfium::MakeUnique<CPDF_Stream>();

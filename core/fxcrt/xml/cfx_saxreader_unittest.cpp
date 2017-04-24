@@ -44,7 +44,7 @@ class MockHandler : public CFX_SAXReader::HandlerIface {
 
 }  // namespace
 
-class CFX_SAXReaderTest : public pdfium::FPDF_Test {
+class CFX_SAXReaderTest : public testing::Test {
  public:
   void SetHandler(CFX_SAXReader::HandlerIface* handler) {
     reader_.SetHandler(handler);

@@ -1878,13 +1878,13 @@ test("pdfium_unittests") {
     "fpdfsdk/fpdfdoc_unittest.cpp",
     "fpdfsdk/fpdfeditimg_unittest.cpp",
     "fpdfsdk/fpdfview_unittest.cpp",
+    "testing/unit_test_main.cpp",
   ]
   deps = [
     ":pdfium",
     ":test_support",
     "//testing/gmock",
     "//testing/gtest",
-    "//testing/gtest:gtest_main",
   ]
   include_dirs = []
   if (pdf_enable_xfa) {

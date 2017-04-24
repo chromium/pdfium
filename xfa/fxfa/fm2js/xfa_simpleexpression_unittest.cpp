@@ -12,9 +12,7 @@
 #include "third_party/base/ptr_util.h"
 #include "xfa/fxfa/fm2js/xfa_lexer.h"
 
-class FMCallExpressionTest : public pdfium::FPDF_Test {};
-
-TEST_F(FMCallExpressionTest, more_than_32_arguments) {
+TEST(FMCallExpressionTest, more_than_32_arguments) {
   // Use sign as it has 3 object parameters at positions 0, 5, and 6.
   auto exp = pdfium::MakeUnique<CXFA_FMIdentifierExpression>(0, L"sign");
 

@@ -228,14 +228,3 @@ int TestSaver::GetBlockFromString(void* param,
   memcpy(buf, new_file->data() + pos, size);
   return 1;
 }
-
-namespace pdfium {
-
-void FPDF_Test::SetUp() {
-  FXMEM_InitalizePartitionAlloc();
-}
-
-void FPDF_Test::TearDown() {
-}
-
-}  // namespace pdfium
