@@ -51,24 +51,12 @@ bool SplitDateTime(const CFX_WideString& wsDateTime,
 
   wsDate = wsDateTime.Left(nSplitIndex);
   if (!wsDate.IsEmpty()) {
-    int32_t iCount = wsDate.GetLength();
-    int32_t i = 0;
-    for (i = 0; i < iCount; i++) {
-      if (wsDate[i] >= '0' && wsDate[i] <= '9')
-        break;
-    }
-    if (i == iCount)
+    if (!std::any_of(wsDate.begin(), wsDate.end(), std::iswdigit))
       return false;
   }
   wsTime = wsDateTime.Right(wsDateTime.GetLength() - nSplitIndex - 1);
   if (!wsTime.IsEmpty()) {
-    int32_t iCount = wsTime.GetLength();
-    int32_t i = 0;
-    for (i = 0; i < iCount; i++) {
-      if (wsTime[i] >= '0' && wsTime[i] <= '9')
-        break;
-    }
-    if (i == iCount)
+    if (!std::any_of(wsTime.begin(), wsTime.end(), std::iswdigit))
       return false;
   }
   return true;

@@ -9,14 +9,14 @@
 #include <algorithm>
 
 #include "core/fxcrt/fx_codepage.h"
+#include "core/fxcrt/fx_extension.h"
 #include "xfa/fde/css/cfde_cssdeclaration.h"
 #include "xfa/fde/css/fde_cssdatatable.h"
 
 namespace {
 
 bool IsSelectorStart(wchar_t wch) {
-  return wch == '.' || wch == '#' || wch == '*' || (wch >= 'a' && wch <= 'z') ||
-         (wch >= 'A' && wch <= 'Z');
+  return wch == '.' || wch == '#' || wch == '*' || FXSYS_iswalpha(wch);
 }
 
 }  // namespace

@@ -89,6 +89,16 @@ int32_t ParseTimeZone(const wchar_t* pStr, int32_t iLen, FX_TIMEZONE* tz) {
   return iStart;
 }
 
+int32_t ConvertHex(int32_t iKeyValue, wchar_t ch) {
+  if (std::iswdigit(ch))
+    return iKeyValue * 16 + ch - '0';
+  if (FXSYS_islower(ch))
+    return iKeyValue * 16 + ch - 'a' + 10;
+  if (FXSYS_isupper(ch))
+    return iKeyValue * 16 + ch - 'A' + 10;
+  return iKeyValue;
+}
+
 CFX_WideString GetLiteralText(const wchar_t* pStrPattern,
                               int32_t& iPattern,
                               int32_t iLenPattern) {
@@ -104,9 +114,8 @@ CFX_WideString GetLiteralText(const wchar_t* pStrPattern,
       if ((iPattern + 1 >= iLenPattern) ||
           ((pStrPattern[iPattern + 1] != '\'') && (iQuote % 2 == 0))) {
         break;
-      } else {
-        iQuote++;
       }
+      iQuote++;
       iPattern++;
     } else if (pStrPattern[iPattern] == '\\' && (iPattern + 1 < iLenPattern) &&
                pStrPattern[iPattern + 1] == 'u') {
@@ -115,13 +124,7 @@ CFX_WideString GetLiteralText(const wchar_t* pStrPattern,
       int32_t i = 0;
       while (iPattern < iLenPattern && i++ < 4) {
         wchar_t ch = pStrPattern[iPattern++];
-        if ((ch >= '0' && ch <= '9')) {
-          iKeyValue = iKeyValue * 16 + ch - '0';
-        } else if ((ch >= 'a' && ch <= 'f')) {
-          iKeyValue = iKeyValue * 16 + ch - 'a' + 10;
-        } else if ((ch >= 'A' && ch <= 'F')) {
-          iKeyValue = iKeyValue * 16 + ch - 'A' + 10;
-        }
+        iKeyValue = ConvertHex(iKeyValue, ch);
       }
       if (iKeyValue != 0) {
         wsOutput += (wchar_t)(iKeyValue & 0x0000FFFF);
@@ -158,13 +161,7 @@ CFX_WideString GetLiteralTextReverse(const wchar_t* pStrPattern,
       int32_t i = 1;
       for (; i < iLen && i < 5; i++) {
         wchar_t ch = wsOutput[i];
-        if ((ch >= '0' && ch <= '9')) {
-          iKeyValue = iKeyValue * 16 + ch - '0';
-        } else if ((ch >= 'a' && ch <= 'f')) {
-          iKeyValue = iKeyValue * 16 + ch - 'a' + 10;
-        } else if ((ch >= 'A' && ch <= 'F')) {
-          iKeyValue = iKeyValue * 16 + ch - 'A' + 10;
-        }
+        iKeyValue = ConvertHex(iKeyValue, ch);
       }
       if (iKeyValue != 0) {
         wsOutput.Delete(0, i);

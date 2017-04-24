@@ -543,6 +543,14 @@ FX_LOCALEDATETIMESUBCATEGORY SubCategoryFromInt(int32_t iStyle) {
   }
 }
 
+bool IsPartOfNumber(char ch) {
+  return std::isdigit(ch) || ch == '-' || ch == '.';
+}
+
+bool IsPartOfNumberW(wchar_t ch) {
+  return std::iswdigit(ch) || ch == L'-' || ch == L'.';
+}
+
 }  // namespace
 
 // static
@@ -1674,7 +1682,7 @@ bool CXFA_FM2JSContext::IsIsoDateFormat(const char* pData,
   char strYear[5];
   strYear[4] = '\0';
   for (int32_t i = 0; i < 4; ++i) {
-    if (pData[i] > '9' || pData[i] < '0')
+    if (!std::isdigit(pData[i]))
       return false;
 
     strYear[i] = pData[i];
@@ -1689,8 +1697,7 @@ bool CXFA_FM2JSContext::IsIsoDateFormat(const char* pData,
   char strTemp[3];
   strTemp[2] = '\0';
   int32_t iPosOff = iStyle == 0 ? 4 : 5;
-  if ((pData[iPosOff] > '9' || pData[iPosOff] < '0') ||
-      (pData[iPosOff + 1] > '9' || pData[iPosOff + 1] < '0'))
+  if (!std::isdigit(pData[iPosOff]) || !std::isdigit(pData[iPosOff + 1]))
     return false;
 
   strTemp[0] = pData[iPosOff];
@@ -1708,8 +1715,7 @@ bool CXFA_FM2JSContext::IsIsoDateFormat(const char* pData,
     if (iLength == 7)
       return true;
   }
-  if ((pData[iPosOff] > '9' || pData[iPosOff] < '0') ||
-      (pData[iPosOff + 1] > '9' || pData[iPosOff + 1] < '0'))
+  if (!std::isdigit(pData[iPosOff]) || !std::isdigit(pData[iPosOff + 1]))
     return false;
 
   strTemp[0] = pData[iPosOff];
@@ -1759,7 +1765,7 @@ bool CXFA_FM2JSContext::IsIsoTimeFormat(const char* pData,
   int32_t iZone = 0;
   int32_t i = 0;
   while (i < iLength) {
-    if ((pData[i] > '9' || pData[i] < '0') && pData[i] != ':') {
+    if (!std::isdigit(pData[i]) && pData[i] != ':') {
       iZone = i;
       break;
     }
@@ -1774,11 +1780,11 @@ bool CXFA_FM2JSContext::IsIsoTimeFormat(const char* pData,
     if (iIndex >= iZone)
       break;
 
-    if (pData[iIndex] > '9' || pData[iIndex] < '0')
+    if (!std::isdigit(pData[iIndex]))
       return false;
 
     strTemp[0] = pData[iIndex];
-    if (pData[iIndex + 1] > '9' || pData[iIndex + 1] < '0')
+    if (!std::isdigit(pData[iIndex + 1]))
       return false;
 
     strTemp[1] = pData[iIndex + 1];
@@ -1814,15 +1820,15 @@ bool CXFA_FM2JSContext::IsIsoTimeFormat(const char* pData,
     ++iIndex;
     char strSec[4];
     strSec[3] = '\0';
-    if (pData[iIndex] > '9' || pData[iIndex] < '0')
+    if (!std::isdigit(pData[iIndex]))
       return false;
 
     strSec[0] = pData[iIndex];
-    if (pData[iIndex + 1] > '9' || pData[iIndex + 1] < '0')
+    if (!std::isdigit(pData[iIndex + 1]))
       return false;
 
     strSec[1] = pData[iIndex + 1];
-    if (pData[iIndex + 2] > '9' || pData[iIndex + 2] < '0')
+    if (!std::isdigit(pData[iIndex + 2]))
       return false;
 
     strSec[2] = pData[iIndex + 2];
@@ -1847,11 +1853,11 @@ bool CXFA_FM2JSContext::IsIsoTimeFormat(const char* pData,
   while (iIndex < iLength) {
     if (iIndex >= iLength)
       return false;
-    if (pData[iIndex] > '9' || pData[iIndex] < '0')
+    if (!std::isdigit(pData[iIndex]))
       return false;
 
     strTemp[0] = pData[iIndex];
-    if (pData[iIndex + 1] > '9' || pData[iIndex + 1] < '0')
+    if (!std::isdigit(pData[iIndex + 1]))
       return false;
 
     strTemp[1] = pData[iIndex + 1];
@@ -2898,8 +2904,7 @@ void CXFA_FM2JSContext::UnitType(CFXJSE_Value* pThis,
         break;
       }
       eParserStatus = VALUETYPE_HAVEDIGITWHITE;
-    } else if ((typeChar >= '0' && typeChar <= '9') || typeChar == '-' ||
-               typeChar == '.') {
+    } else if (IsPartOfNumberW(typeChar)) {
       if (eParserStatus == VALUETYPE_HAVEDIGITWHITE) {
         eParserStatus = VALUETYPE_ISIN;
         break;
@@ -2910,8 +2915,7 @@ void CXFA_FM2JSContext::UnitType(CFXJSE_Value* pThis,
       if ((eParserStatus == VALUETYPE_START ||
            eParserStatus == VALUETYPE_HAVEDIGIT ||
            eParserStatus == VALUETYPE_HAVEDIGITWHITE) &&
-          (nextChar > '9' || nextChar < '0') && nextChar != '.' &&
-          nextChar != '-') {
+          !IsPartOfNumberW(nextChar)) {
         eParserStatus = (typeChar == 'c') ? VALUETYPE_ISCM : VALUETYPE_ISPT;
         break;
       }
@@ -2921,8 +2925,7 @@ void CXFA_FM2JSContext::UnitType(CFXJSE_Value* pThis,
       if ((eParserStatus == VALUETYPE_START ||
            eParserStatus == VALUETYPE_HAVEDIGIT ||
            eParserStatus == VALUETYPE_HAVEDIGITWHITE) &&
-          (nextChar > '9' || nextChar < '0') && nextChar != '.' &&
-          nextChar != '-') {
+          !IsPartOfNumberW(nextChar)) {
         eParserStatus = VALUETYPE_ISMM;
         if (nextChar == 'p' || ((u + 5 < uLen) && pData[u + 1] == 'i' &&
                                 pData[u + 2] == 'l' && pData[u + 3] == 'l' &&
@@ -2983,10 +2986,8 @@ void CXFA_FM2JSContext::UnitValue(CFXJSE_Value* pThis,
     ++u;
 
   while (u < unitspanString.GetLength()) {
-    if ((pData[u] > '9' || pData[u] < '0') && pData[u] != '.' &&
-        pData[u] != '-') {
+    if (!IsPartOfNumber(pData[u]))
       break;
-    }
     ++u;
   }
 
@@ -3016,9 +3017,8 @@ void CXFA_FM2JSContext::UnitValue(CFXJSE_Value* pThis,
       ++uVal;
 
     while (uVal < unitTempString.GetLength()) {
-      if ((pChar[uVal] > '9' || pChar[uVal] < '0') && pChar[uVal] != '.') {
+      if (!std::isdigit(pChar[uVal]) && pChar[uVal] != '.')
         break;
-      }
       ++uVal;
     }
     while (IsWhitespace(pChar[uVal]))
