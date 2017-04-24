@@ -41,6 +41,8 @@ const char szCompatibleModeScript[] =
     "  }\n"
     "}(this, {String: ['substr', 'toUpperCase']}));";
 
+wchar_t g_FXJSETagString[] = L"FXJSE_HostObject";
+
 }  // namespace
 
 // Note, not in the anonymous namespace due to the friend call
@@ -79,9 +81,9 @@ v8::Local<v8::Object> FXJSE_GetGlobalObjectFromContext(
 void FXJSE_UpdateObjectBinding(v8::Local<v8::Object>& hObject,
                                CFXJSE_HostObject* lpNewBinding) {
   ASSERT(!hObject.IsEmpty());
-  ASSERT(hObject->InternalFieldCount() > 0);
-  hObject->SetAlignedPointerInInternalField(0,
-                                            static_cast<void*>(lpNewBinding));
+  ASSERT(hObject->InternalFieldCount() == 2);
+  hObject->SetAlignedPointerInInternalField(0, g_FXJSETagString);
+  hObject->SetAlignedPointerInInternalField(1, lpNewBinding);
 }
 
 CFXJSE_HostObject* FXJSE_RetrieveObjectBinding(
@@ -92,15 +94,17 @@ CFXJSE_HostObject* FXJSE_RetrieveObjectBinding(
     return nullptr;
 
   v8::Local<v8::Object> hObject = hJSObject;
-  if (hObject->InternalFieldCount() == 0) {
+  if (hObject->InternalFieldCount() != 2) {
     v8::Local<v8::Value> hProtoObject = hObject->GetPrototype();
     if (hProtoObject.IsEmpty() || !hProtoObject->IsObject())
       return nullptr;
 
     hObject = hProtoObject.As<v8::Object>();
-    if (hObject->InternalFieldCount() == 0)
+    if (hObject->InternalFieldCount() != 2)
       return nullptr;
   }
+  if (hObject->GetAlignedPointerFromInternalField(0) != g_FXJSETagString)
+    return nullptr;
   if (lpClass) {
     v8::Local<v8::FunctionTemplate> hClass =
         v8::Local<v8::FunctionTemplate>::New(
@@ -109,7 +113,7 @@ CFXJSE_HostObject* FXJSE_RetrieveObjectBinding(
       return nullptr;
   }
   return static_cast<CFXJSE_HostObject*>(
-      hObject->GetAlignedPointerFromInternalField(0));
+      hObject->GetAlignedPointerFromInternalField(1));
 }
 
 v8::Local<v8::Object> FXJSE_CreateReturnValue(v8::Isolate* pIsolate,
@@ -167,7 +171,7 @@ std::unique_ptr<CFXJSE_Context> CFXJSE_Context::Create(
     hObjectTemplate = hFunctionTemplate->InstanceTemplate();
   } else {
     hObjectTemplate = v8::ObjectTemplate::New(pIsolate);
-    hObjectTemplate->SetInternalFieldCount(1);
+    hObjectTemplate->SetInternalFieldCount(2);
   }
   hObjectTemplate->Set(
       v8::Symbol::GetToStringTag(pIsolate),

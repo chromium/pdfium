@@ -329,7 +329,7 @@ CFXJSE_Class* CFXJSE_Class::Create(
           pIsolate, const_cast<FXJSE_CLASS_DESCRIPTOR*>(lpClassDefinition)));
   hFunctionTemplate->SetClassName(
       v8::String::NewFromUtf8(pIsolate, lpClassDefinition->name));
-  hFunctionTemplate->InstanceTemplate()->SetInternalFieldCount(1);
+  hFunctionTemplate->InstanceTemplate()->SetInternalFieldCount(2);
   v8::Local<v8::ObjectTemplate> hObjectTemplate =
       hFunctionTemplate->InstanceTemplate();
   SetUpNamedPropHandler(pIsolate, hObjectTemplate, lpClassDefinition);
