@@ -160,3 +160,40 @@ TEST(fxcrt, FXSYS_i64toa) {
 }
 
 #endif  // _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
+
+TEST(fxcrt, FXSYS_wcsftime) {
+  struct tm good_time = {};
+  good_time.tm_year = 74;  // 1900-based.
+  good_time.tm_mon = 7;    // 0-based.
+  good_time.tm_mday = 9;   // 1-based.
+  good_time.tm_hour = 11;
+  good_time.tm_min = 59;
+  good_time.tm_sec = 59;
+
+  wchar_t buf[100] = {};
+  EXPECT_EQ(19u, FXSYS_wcsftime(buf, FX_ArraySize(buf), L"%Y-%m-%dT%H:%M:%S",
+                                &good_time));
+  EXPECT_EQ(std::wstring(L"1974-08-09T11:59:59"), buf);
+
+  // Ensure wcsftime handles bad years, etc. without crashing.
+  struct tm bad_time = {};
+  bad_time.tm_year = -1;
+  bad_time.tm_mon = -1;
+  bad_time.tm_mday = -1;
+  bad_time.tm_hour = -1;
+  bad_time.tm_min = -1;
+  bad_time.tm_sec = -1;
+
+  FXSYS_wcsftime(buf, FX_ArraySize(buf), L"%y-%m-%dT%H:%M:%S", &bad_time);
+
+  // Ensure wcsftime handles bad-ish day without crashing (Feb 30).
+  struct tm feb_time = {};
+  feb_time.tm_year = 115;  // 1900-based.
+  feb_time.tm_mon = 1;     // 0-based.
+  feb_time.tm_mday = 30;   // 1-based.
+  feb_time.tm_hour = 12;
+  feb_time.tm_min = 00;
+  feb_time.tm_sec = 00;
+
+  FXSYS_wcsftime(buf, FX_ArraySize(buf), L"%y-%m-%dT%H:%M:%S", &feb_time);
+}

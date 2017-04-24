@@ -114,7 +114,7 @@ void FXSYS_snprintf(char* str,
                     _Printf_format_string_ const char* fmt,
                     ...);
 void FXSYS_vsnprintf(char* str, size_t size, const char* fmt, va_list ap);
-#else
+#else  // _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_ && _MSC_VER < 1900
 #define FXSYS_snprintf (void)snprintf
 #define FXSYS_vsnprintf (void)vsnprintf
 #endif  // _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_ && _MSC_VER < 1900
@@ -180,7 +180,10 @@ extern "C" {
 #define FXSYS_pow(a, b) (float)powf(a, b)
 #define FXSYS_GetFullPathName GetFullPathName
 #define FXSYS_GetModuleFileName GetModuleFileName
-
+size_t FXSYS_wcsftime(wchar_t* strDest,
+                      size_t maxsize,
+                      const wchar_t* format,
+                      const struct tm* timeptr);
 #ifdef _NATIVE_WCHAR_T_DEFINED
 #define FXSYS_wcsicmp(str1, str2) _wcsicmp((wchar_t*)(str1), (wchar_t*)(str2))
 #define FXSYS_WideCharToMultiByte(p1, p2, p3, p4, p5, p6, p7, p8) \
@@ -189,14 +192,14 @@ extern "C" {
   MultiByteToWideChar(p1, p2, p3, p4, (wchar_t*)(p5), p6)
 #define FXSYS_wcslwr(str) _wcslwr((wchar_t*)(str))
 #define FXSYS_wcsupr(str) _wcsupr((wchar_t*)(str))
-#else
+#else  // _NATIVE_WCHAR_T_DEFINED
 #define FXSYS_wcsicmp _wcsicmp
 #define FXSYS_WideCharToMultiByte WideCharToMultiByte
 #define FXSYS_MultiByteToWideChar MultiByteToWideChar
 #define FXSYS_wcslwr _wcslwr
 #define FXSYS_wcsupr _wcsupr
 #endif  // _NATIVE_WCHAR_T_DEFINED
-#else
+#else   // _FXM_PLATFORM == _FXM_PLATFORM_WINDOWS_
 int FXSYS_GetACP();
 char* FXSYS_itoa(int value, char* str, int radix);
 int FXSYS_WideCharToMultiByte(uint32_t codepage,
@@ -225,6 +228,7 @@ int FXSYS_wcsicmp(const wchar_t* str1, const wchar_t* str2);
 wchar_t* FXSYS_wcslwr(wchar_t* str);
 wchar_t* FXSYS_wcsupr(wchar_t* str);
 #define FXSYS_pow(a, b) (float)pow(a, b)
+#define FXSYS_wcsftime wcsftime
 #endif  // _FXM_PLATFORM == _FXM_PLATFORM_WINDOWS_
 
 #define FXDWORD_GET_LSBFIRST(p)                                                \
@@ -249,7 +253,6 @@ int FXSYS_round(float f);
 //   size_t size;
 //   printf("xyz: %" PRIuS, size);
 // The "u" in the macro corresponds to %u, and S is for "size".
-
 #if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
 
 #if (defined(_INTTYPES_H) || defined(_INTTYPES_H_)) && !defined(PRId64)

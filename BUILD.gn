@@ -782,6 +782,7 @@ static_library("fxcrt") {
     "core/fxcrt/fx_stream.cpp",
     "core/fxcrt/fx_stream.h",
     "core/fxcrt/fx_string.h",
+    "core/fxcrt/fx_system.cpp",
     "core/fxcrt/fx_system.h",
     "core/fxcrt/fx_ucd.h",
     "core/fxcrt/fx_ucddata.cpp",
