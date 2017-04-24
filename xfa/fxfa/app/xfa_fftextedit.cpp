@@ -269,7 +269,7 @@ bool CXFA_FFTextEdit::UpdateFWLData() {
   if (m_pDataAcc->GetUIType() == XFA_Element::Barcode) {
     int32_t nDataLen = 0;
     if (eType == XFA_VALUEPICTURE_Edit)
-      m_pDataAcc->GetBarcodeAttribute_DataLength(nDataLen);
+      m_pDataAcc->GetBarcodeAttribute_DataLength(&nDataLen);
     static_cast<CFWL_Edit*>(m_pNormalWidget.get())->SetLimit(nDataLen);
     bUpdate = true;
   }

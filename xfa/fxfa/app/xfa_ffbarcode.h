@@ -11,8 +11,82 @@
 #include "xfa/fxfa/app/xfa_fftextedit.h"
 #include "xfa/fxfa/cxfa_ffpageview.h"
 
+enum class BarcodeType {
+  aztec,
+  codabar,
+  code11,
+  code128,
+  code128A,
+  code128B,
+  code128C,
+  code128SSCC,
+  code2Of5Industrial,
+  code2Of5Interleaved,
+  code2Of5Matrix,
+  code2Of5Standard,
+  code3Of9,
+  code3Of9extended,
+  code49,
+  code93,
+  dataMatrix,
+  ean13,
+  ean13add2,
+  ean13add5,
+  ean13pwcd,
+  ean8,
+  ean8add2,
+  ean8add5,
+  fim,
+  logmars,
+  maxicode,
+  msi,
+  pdf417,
+  pdf417macro,
+  plessey,
+  postAUSCust2,
+  postAUSCust3,
+  postAUSReplyPaid,
+  postAUSStandard,
+  postUKRM4SCC,
+  postUS5Zip,
+  postUSDPBC,
+  postUSIMB,
+  postUSStandard,
+  QRCode,
+  rfid,
+  rss14,
+  rss14Expanded,
+  rss14Limited,
+  rss14Stacked,
+  rss14StackedOmni,
+  rss14Truncated,
+  telepen,
+  ucc128,
+  ucc128random,
+  ucc128sscc,
+  upcA,
+  upcAadd2,
+  upcAadd5,
+  upcApwcd,
+  upcE,
+  upcEadd2,
+  upcEadd5,
+  upcean2,
+  upcean5,
+  upsMaxicode
+};
+
+struct BarCodeInfo {
+  uint32_t uHash;
+  const wchar_t* pName;
+  BarcodeType eName;
+  BC_TYPE eBCType;
+};
+
 class CXFA_FFBarcode : public CXFA_FFTextEdit {
  public:
+  static const BarCodeInfo* GetBarcodeTypeByName(const CFX_WideStringC& wsName);
+
   explicit CXFA_FFBarcode(CXFA_WidgetAcc* pDataAcc);
   ~CXFA_FFBarcode() override;
 
@@ -24,78 +98,6 @@ class CXFA_FFBarcode : public CXFA_FFTextEdit {
   void UpdateWidgetProperty() override;
   bool OnLButtonDown(uint32_t dwFlags, const CFX_PointF& point) override;
   bool OnRButtonDown(uint32_t dwFlags, const CFX_PointF& point) override;
-};
-
-enum XFA_BARCODETYPEENUM {
-  XFA_BARCODETYPE_aztec,
-  XFA_BARCODETYPE_codabar,
-  XFA_BARCODETYPE_code11,
-  XFA_BARCODETYPE_code128,
-  XFA_BARCODETYPE_code128A,
-  XFA_BARCODETYPE_code128B,
-  XFA_BARCODETYPE_code128C,
-  XFA_BARCODETYPE_code128SSCC,
-  XFA_BARCODETYPE_code2Of5Industrial,
-  XFA_BARCODETYPE_code2Of5Interleaved,
-  XFA_BARCODETYPE_code2Of5Matrix,
-  XFA_BARCODETYPE_code2Of5Standard,
-  XFA_BARCODETYPE_code3Of9,
-  XFA_BARCODETYPE_code3Of9extended,
-  XFA_BARCODETYPE_code49,
-  XFA_BARCODETYPE_code93,
-  XFA_BARCODETYPE_dataMatrix,
-  XFA_BARCODETYPE_ean13,
-  XFA_BARCODETYPE_ean13add2,
-  XFA_BARCODETYPE_ean13add5,
-  XFA_BARCODETYPE_ean13pwcd,
-  XFA_BARCODETYPE_ean8,
-  XFA_BARCODETYPE_ean8add2,
-  XFA_BARCODETYPE_ean8add5,
-  XFA_BARCODETYPE_fim,
-  XFA_BARCODETYPE_logmars,
-  XFA_BARCODETYPE_maxicode,
-  XFA_BARCODETYPE_msi,
-  XFA_BARCODETYPE_pdf417,
-  XFA_BARCODETYPE_pdf417macro,
-  XFA_BARCODETYPE_plessey,
-  XFA_BARCODETYPE_postAUSCust2,
-  XFA_BARCODETYPE_postAUSCust3,
-  XFA_BARCODETYPE_postAUSReplyPaid,
-  XFA_BARCODETYPE_postAUSStandard,
-  XFA_BARCODETYPE_postUKRM4SCC,
-  XFA_BARCODETYPE_postUS5Zip,
-  XFA_BARCODETYPE_postUSDPBC,
-  XFA_BARCODETYPE_postUSIMB,
-  XFA_BARCODETYPE_postUSStandard,
-  XFA_BARCODETYPE_QRCode,
-  XFA_BARCODETYPE_rfid,
-  XFA_BARCODETYPE_rss14,
-  XFA_BARCODETYPE_rss14Expanded,
-  XFA_BARCODETYPE_rss14Limited,
-  XFA_BARCODETYPE_rss14Stacked,
-  XFA_BARCODETYPE_rss14StackedOmni,
-  XFA_BARCODETYPE_rss14Truncated,
-  XFA_BARCODETYPE_telepen,
-  XFA_BARCODETYPE_ucc128,
-  XFA_BARCODETYPE_ucc128random,
-  XFA_BARCODETYPE_ucc128sscc,
-  XFA_BARCODETYPE_upcA,
-  XFA_BARCODETYPE_upcAadd2,
-  XFA_BARCODETYPE_upcAadd5,
-  XFA_BARCODETYPE_upcApwcd,
-  XFA_BARCODETYPE_upcE,
-  XFA_BARCODETYPE_upcEadd2,
-  XFA_BARCODETYPE_upcEadd5,
-  XFA_BARCODETYPE_upcean2,
-  XFA_BARCODETYPE_upcean5,
-  XFA_BARCODETYPE_upsMaxicode
-};
-
-struct XFA_BARCODETYPEENUMINFO {
-  uint32_t uHash;
-  const wchar_t* pName;
-  XFA_BARCODETYPEENUM eName;
-  BC_TYPE eBCType;
 };
 
 #endif  // XFA_FXFA_APP_XFA_FFBARCODE_H_

@@ -1898,6 +1898,7 @@ test("pdfium_unittests") {
       "xfa/fde/css/cfde_cssvaluelistparser_unittest.cpp",
       "xfa/fgas/layout/cfx_rtfbreak_unittest.cpp",
       "xfa/fxfa/app/cxfa_textparser_unittest.cpp",
+      "xfa/fxfa/app/xfa_ffbarcode_unittest.cpp",
       "xfa/fxfa/cxfa_ffapp_unittest.cpp",
       "xfa/fxfa/fm2js/xfa_simpleexpression_unittest.cpp",
       "xfa/fxfa/parser/xfa_utils_unittest.cpp",
