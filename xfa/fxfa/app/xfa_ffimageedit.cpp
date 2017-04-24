@@ -117,9 +117,11 @@ void CXFA_FFImageEdit::SetFWLRect() {
                   rtUIMargin.height);
   m_pNormalWidget->SetWidgetRect(rtImage);
 }
+
 bool CXFA_FFImageEdit::CommitData() {
   return true;
 }
+
 bool CXFA_FFImageEdit::UpdateFWLData() {
   m_pDataAcc->SetImageEditImage(nullptr);
   m_pDataAcc->LoadImageEditImage();

@@ -26,10 +26,8 @@ enum XFA_TEXTPROVIDERTYPE {
 
 class CXFA_TextProvider {
  public:
-  CXFA_TextProvider(CXFA_WidgetAcc* pWidgetAcc,
-                    XFA_TEXTPROVIDERTYPE eType,
-                    CXFA_Node* pTextNode = nullptr)
-      : m_pWidgetAcc(pWidgetAcc), m_eType(eType), m_pTextNode(pTextNode) {
+  CXFA_TextProvider(CXFA_WidgetAcc* pWidgetAcc, XFA_TEXTPROVIDERTYPE eType)
+      : m_pWidgetAcc(pWidgetAcc), m_eType(eType) {
     ASSERT(m_pWidgetAcc);
   }
   ~CXFA_TextProvider() {}
@@ -47,7 +45,6 @@ class CXFA_TextProvider {
  private:
   CXFA_WidgetAcc* m_pWidgetAcc;
   XFA_TEXTPROVIDERTYPE m_eType;
-  CXFA_Node* m_pTextNode;
 };
 
 #endif  // XFA_FXFA_APP_XFA_FFWIDGETACC_H_

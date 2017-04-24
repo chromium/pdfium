@@ -160,13 +160,12 @@ void CXFA_FFPushButton::LoadHighlightCaption() {
 void CXFA_FFPushButton::LayoutHighlightCaption() {
   CFX_SizeF sz(m_rtCaption.width, m_rtCaption.height);
   LayoutCaption();
-  if (m_pRolloverTextLayout) {
+  if (m_pRolloverTextLayout)
     m_pRolloverTextLayout->Layout(sz);
-  }
-  if (m_pDownTextLayout) {
+  if (m_pDownTextLayout)
     m_pDownTextLayout->Layout(sz);
-  }
 }
+
 void CXFA_FFPushButton::RenderHighlightCaption(CFX_Graphics* pGS,
                                                CFX_Matrix* pMatrix) {
   CXFA_TextLayout* pCapTextLayout = m_pDataAcc->GetCaptionTextLayout();
@@ -221,8 +220,10 @@ void CXFA_FFPushButton::OnDrawWidget(CFX_Graphics* pGraphics,
       path.AddRectangle(rtFill.left, rtFill.top, rtFill.width, rtFill.height);
       pGraphics->FillPath(&path, FXFILL_WINDING, (CFX_Matrix*)pMatrix);
     }
-  } else if (m_pNormalWidget->GetStylesEx() &
-             XFA_FWL_PSBSTYLEEXT_HiliteOutLine) {
+    return;
+  }
+
+  if (m_pNormalWidget->GetStylesEx() & XFA_FWL_PSBSTYLEEXT_HiliteOutLine) {
     if ((m_pNormalWidget->GetStates() & FWL_STATE_PSB_Pressed) &&
         (m_pNormalWidget->GetStates() & FWL_STATE_PSB_Hovered)) {
       float fLineWidth = GetLineWidth();

@@ -72,20 +72,20 @@ bool CXFA_FFText::IsLoaded() {
   CXFA_TextLayout* pTextLayout = m_pDataAcc->GetTextLayout();
   return pTextLayout && !pTextLayout->m_bHasBlock;
 }
+
 bool CXFA_FFText::PerformLayout() {
   CXFA_FFDraw::PerformLayout();
   CXFA_TextLayout* pTextLayout = m_pDataAcc->GetTextLayout();
   if (!pTextLayout)
     return false;
-
   if (!pTextLayout->m_bHasBlock)
     return true;
 
   pTextLayout->m_Blocks.clear();
   CXFA_LayoutItem* pItem = this;
-  if (!pItem->GetPrev() && !pItem->GetNext()) {
+  if (!pItem->GetPrev() && !pItem->GetNext())
     return true;
-  }
+
   pItem = pItem->GetFirst();
   while (pItem) {
     CFX_RectF rtText = pItem->GetRect(false);

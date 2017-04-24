@@ -21,16 +21,19 @@ CXFA_FFImage::~CXFA_FFImage() {
 bool CXFA_FFImage::IsLoaded() {
   return !!GetDataAcc()->GetImageImage();
 }
+
 bool CXFA_FFImage::LoadWidget() {
-  if (GetDataAcc()->GetImageImage()) {
+  if (GetDataAcc()->GetImageImage())
     return true;
-  }
+
   GetDataAcc()->LoadImageImage();
   return CXFA_FFDraw::LoadWidget();
 }
+
 void CXFA_FFImage::UnloadWidget() {
   GetDataAcc()->SetImageImage(nullptr);
 }
+
 void CXFA_FFImage::RenderWidget(CFX_Graphics* pGS,
                                 CFX_Matrix* pMatrix,
                                 uint32_t dwStatus) {
