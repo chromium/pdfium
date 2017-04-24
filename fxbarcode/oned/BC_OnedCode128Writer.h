@@ -15,9 +15,14 @@
 
 class CBC_OnedCode128Writer : public CBC_OneDimWriter {
  public:
-  CBC_OnedCode128Writer();
   explicit CBC_OnedCode128Writer(BC_TYPE type);
   ~CBC_OnedCode128Writer() override;
+
+  // Exposed for testing.
+  static int32_t Encode128B(const CFX_ByteString& contents,
+                            std::vector<int32_t>* patterns);
+  static int32_t Encode128C(const CFX_ByteString& contents,
+                            std::vector<int32_t>* patterns);
 
   // CBC_OneDimWriter
   uint8_t* EncodeWithHint(const CFX_ByteString& contents,
@@ -32,15 +37,9 @@ class CBC_OnedCode128Writer : public CBC_OneDimWriter {
 
   bool SetTextLocation(BC_TEXT_LOC location);
 
-  BC_TYPE GetType();
+  BC_TYPE GetType() const { return m_codeFormat; }
 
  private:
-  bool IsDigits(const CFX_ByteString& contents, int32_t start, int32_t length);
-  int32_t Encode128B(const CFX_ByteString& contents,
-                     std::vector<const int8_t*>* patterns);
-  int32_t Encode128C(const CFX_ByteString& contents,
-                     std::vector<const int8_t*>* patterns);
-
   BC_TYPE m_codeFormat;
 };
 

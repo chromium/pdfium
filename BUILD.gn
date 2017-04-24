@@ -1892,6 +1892,7 @@ test("pdfium_unittests") {
     sources += [
       "core/fxcrt/xml/cfx_saxreader_unittest.cpp",
       "core/fxcrt/xml/cfx_xmlsyntaxparser_unittest.cpp",
+      "fxbarcode/oned/BC_OnedCode128Writer_unittest.cpp",
       "fxbarcode/pdf417/BC_PDF417HighLevelEncoder_unittest.cpp",
       "xfa/fde/cfde_txtedtbuf_unittest.cpp",
       "xfa/fde/css/cfde_cssdeclaration_unittest.cpp",

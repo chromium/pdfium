@@ -29,7 +29,9 @@
 
 namespace {
 
-const int8_t CODE_PATTERNS[107][7] = {
+constexpr size_t kPatternSize = 7;
+
+const int8_t CODE_PATTERNS[107][kPatternSize] = {
     {2, 1, 2, 2, 2, 2, 0}, {2, 2, 2, 1, 2, 2, 0}, {2, 2, 2, 2, 2, 1, 0},
     {1, 2, 1, 2, 2, 3, 0}, {1, 2, 1, 3, 2, 2, 0}, {1, 3, 1, 2, 2, 2, 0},
     {1, 2, 2, 2, 1, 3, 0}, {1, 2, 2, 3, 1, 2, 0}, {1, 3, 2, 2, 1, 2, 0},
@@ -73,16 +75,12 @@ const int32_t CODE_STOP = 106;
 
 }  // namespace
 
-CBC_OnedCode128Writer::CBC_OnedCode128Writer() {
-  m_codeFormat = BC_CODE128_B;
-}
 CBC_OnedCode128Writer::CBC_OnedCode128Writer(BC_TYPE type) {
   m_codeFormat = type;
 }
+
 CBC_OnedCode128Writer::~CBC_OnedCode128Writer() {}
-BC_TYPE CBC_OnedCode128Writer::GetType() {
-  return m_codeFormat;
-}
+
 bool CBC_OnedCode128Writer::CheckContentValidity(
     const CFX_WideStringC& contents) {
   if (m_codeFormat != BC_CODE128_B && m_codeFormat != BC_CODE128_C)
@@ -146,24 +144,12 @@ uint8_t* CBC_OnedCode128Writer::EncodeWithHint(const CFX_ByteString& contents,
                                           hints);
 }
 
-bool CBC_OnedCode128Writer::IsDigits(const CFX_ByteString& contents,
-                                     int32_t start,
-                                     int32_t length) {
-  int32_t end = start + length;
-  for (int32_t i = start; i < end; i++) {
-    if (contents[i] < '0' || contents[i] > '9') {
-      return false;
-    }
-  }
-  return true;
-}
-
 uint8_t* CBC_OnedCode128Writer::EncodeImpl(const CFX_ByteString& contents,
                                            int32_t& outLength) {
   if (contents.GetLength() < 1 || contents.GetLength() > 80)
     return nullptr;
 
-  std::vector<const int8_t*> patterns;
+  std::vector<int32_t> patterns;
   int32_t checkSum = 0;
   if (m_codeFormat == BC_CODE128_B) {
     checkSum = Encode128B(contents, &patterns);
@@ -173,42 +159,41 @@ uint8_t* CBC_OnedCode128Writer::EncodeImpl(const CFX_ByteString& contents,
     return nullptr;
   }
   checkSum %= 103;
-  patterns.push_back(CODE_PATTERNS[checkSum]);
-  patterns.push_back(CODE_PATTERNS[CODE_STOP]);
+  patterns.push_back(checkSum);
+  patterns.push_back(CODE_STOP);
   m_iContentLen = contents.GetLength() + 3;
   int32_t codeWidth = 0;
-  for (size_t k = 0; k < patterns.size(); k++) {
-    const int8_t* pattern = patterns[k];
-    for (size_t j = 0; j < 7; j++) {
-      codeWidth += pattern[j];
-    }
+  for (const auto& patternIndex : patterns) {
+    const int8_t* pattern = CODE_PATTERNS[patternIndex];
+    for (size_t i = 0; i < kPatternSize; ++i)
+      codeWidth += pattern[i];
   }
   outLength = codeWidth;
   std::unique_ptr<uint8_t, FxFreeDeleter> result(FX_Alloc(uint8_t, outLength));
   int32_t pos = 0;
-  for (size_t j = 0; j < patterns.size(); j++) {
-    const int8_t* pattern = patterns[j];
+  for (size_t i = 0; i < patterns.size(); ++i) {
+    const int8_t* pattern = CODE_PATTERNS[patterns[i]];
     int32_t e = BCExceptionNO;
-    pos += AppendPattern(result.get(), pos, pattern, 7, 1, e);
+    pos += AppendPattern(result.get(), pos, pattern, kPatternSize, 1, e);
     if (e != BCExceptionNO)
       return nullptr;
   }
   return result.release();
 }
 
-int32_t CBC_OnedCode128Writer::Encode128B(
-    const CFX_ByteString& contents,
-    std::vector<const int8_t*>* patterns) {
+// static
+int32_t CBC_OnedCode128Writer::Encode128B(const CFX_ByteString& contents,
+                                          std::vector<int32_t>* patterns) {
   int32_t checkSum = 0;
   int32_t checkWeight = 1;
   int32_t position = 0;
-  patterns->push_back(CODE_PATTERNS[CODE_START_B]);
+  patterns->push_back(CODE_START_B);
   checkSum += CODE_START_B * checkWeight;
   while (position < contents.GetLength()) {
     int32_t patternIndex = 0;
     patternIndex = contents[position] - ' ';
     position += 1;
-    patterns->push_back(CODE_PATTERNS[patternIndex]);
+    patterns->push_back(patternIndex);
     checkSum += patternIndex * checkWeight;
     if (position != 0) {
       checkWeight++;
@@ -217,13 +202,13 @@ int32_t CBC_OnedCode128Writer::Encode128B(
   return checkSum;
 }
 
-int32_t CBC_OnedCode128Writer::Encode128C(
-    const CFX_ByteString& contents,
-    std::vector<const int8_t*>* patterns) {
+// static
+int32_t CBC_OnedCode128Writer::Encode128C(const CFX_ByteString& contents,
+                                          std::vector<int32_t>* patterns) {
   int32_t checkSum = 0;
   int32_t checkWeight = 1;
   int32_t position = 0;
-  patterns->push_back(CODE_PATTERNS[CODE_START_C]);
+  patterns->push_back(CODE_START_C);
   checkSum += CODE_START_C * checkWeight;
   while (position < contents.GetLength()) {
     int32_t patternIndex = 0;
@@ -240,7 +225,7 @@ int32_t CBC_OnedCode128Writer::Encode128C(
         position += 2;
       }
     }
-    patterns->push_back(CODE_PATTERNS[patternIndex]);
+    patterns->push_back(patternIndex);
     checkSum += patternIndex * checkWeight;
     if (position != 0) {
       checkWeight++;
