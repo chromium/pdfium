@@ -4,9 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include <stdlib.h>  // For abort().
-
 #include "core/fxcrt/fx_memory.h"
+
+#include <stdlib.h>  // For abort().
 
 pdfium::base::PartitionAllocatorGeneric gArrayBufferPartitionAllocator;
 pdfium::base::PartitionAllocatorGeneric gStringPartitionAllocator;
