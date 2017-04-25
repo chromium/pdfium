@@ -61,7 +61,7 @@ void CPDF_ImageObject::MaybePurgeCache() {
     return;
 
   CPDF_DocPageData* pPageData = pDocument->GetPageData();
-  if (pPageData)
+  if (!pPageData)
     return;
 
   CPDF_Stream* pStream = m_pImage->GetStream();
