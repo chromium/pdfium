@@ -22,6 +22,7 @@
 
 #include "fxbarcode/oned/BC_OnedCode128Writer.h"
 
+#include <cctype>
 #include <memory>
 
 #include "fxbarcode/BC_Writer.h"
@@ -75,56 +76,43 @@ const int32_t CODE_STOP = 106;
 
 }  // namespace
 
-CBC_OnedCode128Writer::CBC_OnedCode128Writer(BC_TYPE type) {
-  m_codeFormat = type;
+CBC_OnedCode128Writer::CBC_OnedCode128Writer(BC_TYPE type)
+    : m_codeFormat(type) {
+  assert(m_codeFormat == BC_CODE128_B || m_codeFormat == BC_CODE128_C);
 }
 
 CBC_OnedCode128Writer::~CBC_OnedCode128Writer() {}
 
 bool CBC_OnedCode128Writer::CheckContentValidity(
     const CFX_WideStringC& contents) {
-  if (m_codeFormat != BC_CODE128_B && m_codeFormat != BC_CODE128_C)
-    return false;
-
-  int32_t position = 0;
-  int32_t patternIndex = -1;
-  while (position < contents.GetLength()) {
-    patternIndex = (int32_t)contents.GetAt(position);
-    if (patternIndex < 32 || patternIndex > 126 || patternIndex == 34) {
+  for (const auto& ch : contents) {
+    int32_t patternIndex = static_cast<int32_t>(ch);
+    if (patternIndex < 32 || patternIndex > 126 || patternIndex == 34)
       return false;
-    }
-    position++;
   }
   return true;
 }
+
 CFX_WideString CBC_OnedCode128Writer::FilterContents(
     const CFX_WideStringC& contents) {
   CFX_WideString filterChineseChar;
-  wchar_t ch;
   for (int32_t i = 0; i < contents.GetLength(); i++) {
-    ch = contents.GetAt(i);
+    wchar_t ch = contents[i];
     if (ch > 175) {
       i++;
       continue;
     }
     filterChineseChar += ch;
   }
+  const wchar_t limit = m_codeFormat == BC_CODE128_B ? 126 : 106;
   CFX_WideString filtercontents;
-  if (m_codeFormat == BC_CODE128_B) {
-    for (const auto& ch : filterChineseChar) {
-      if (ch >= 32 && ch <= 126)
-        filtercontents += ch;
-    }
-  } else if (m_codeFormat == BC_CODE128_C) {
-    for (const auto& ch : filterChineseChar) {
-      if (ch >= 32 && ch <= 106)
-        filtercontents += ch;
-    }
-  } else {
-    filtercontents = contents;
+  for (const auto& ch : filterChineseChar) {
+    if (ch >= 32 && ch <= limit)
+      filtercontents += ch;
   }
   return filtercontents;
 }
+
 bool CBC_OnedCode128Writer::SetTextLocation(BC_TEXT_LOC location) {
   if (location < BC_TEXT_LOC_NONE || location > BC_TEXT_LOC_BELOWEMBED) {
     return false;
@@ -151,13 +139,11 @@ uint8_t* CBC_OnedCode128Writer::EncodeImpl(const CFX_ByteString& contents,
 
   std::vector<int32_t> patterns;
   int32_t checkSum = 0;
-  if (m_codeFormat == BC_CODE128_B) {
+  if (m_codeFormat == BC_CODE128_B)
     checkSum = Encode128B(contents, &patterns);
-  } else if (m_codeFormat == BC_CODE128_C) {
+  else
     checkSum = Encode128C(contents, &patterns);
-  } else {
-    return nullptr;
-  }
+
   checkSum %= 103;
   patterns.push_back(checkSum);
   patterns.push_back(CODE_STOP);
@@ -184,20 +170,14 @@ uint8_t* CBC_OnedCode128Writer::EncodeImpl(const CFX_ByteString& contents,
 // static
 int32_t CBC_OnedCode128Writer::Encode128B(const CFX_ByteString& contents,
                                           std::vector<int32_t>* patterns) {
-  int32_t checkSum = 0;
   int32_t checkWeight = 1;
-  int32_t position = 0;
   patterns->push_back(CODE_START_B);
-  checkSum += CODE_START_B * checkWeight;
+  int32_t checkSum = CODE_START_B * checkWeight;
+  int32_t position = 0;
   while (position < contents.GetLength()) {
-    int32_t patternIndex = 0;
-    patternIndex = contents[position] - ' ';
-    position += 1;
+    int32_t patternIndex = contents[position++] - ' ';
     patterns->push_back(patternIndex);
-    checkSum += patternIndex * checkWeight;
-    if (position != 0) {
-      checkWeight++;
-    }
+    checkSum += patternIndex * checkWeight++;
   }
   return checkSum;
 }
@@ -205,31 +185,24 @@ int32_t CBC_OnedCode128Writer::Encode128B(const CFX_ByteString& contents,
 // static
 int32_t CBC_OnedCode128Writer::Encode128C(const CFX_ByteString& contents,
                                           std::vector<int32_t>* patterns) {
-  int32_t checkSum = 0;
   int32_t checkWeight = 1;
-  int32_t position = 0;
   patterns->push_back(CODE_START_C);
-  checkSum += CODE_START_C * checkWeight;
+  int32_t checkSum = CODE_START_C * checkWeight;
+  int32_t position = 0;
   while (position < contents.GetLength()) {
-    int32_t patternIndex = 0;
-    char ch = contents.GetAt(position);
-    if (ch < '0' || ch > '9') {
-      patternIndex = (int32_t)ch;
-      position++;
-    } else {
+    int32_t patternIndex;
+    char ch = contents[position];
+    if (std::isdigit(ch)) {
       patternIndex = FXSYS_atoi(contents.Mid(position, 2).c_str());
-      if (contents.GetAt(position + 1) < '0' ||
-          contents.GetAt(position + 1) > '9') {
-        position += 1;
-      } else {
-        position += 2;
-      }
+      ++position;
+      if (std::isdigit(contents[position]))
+        ++position;
+    } else {
+      patternIndex = static_cast<int32_t>(ch);
+      ++position;
     }
     patterns->push_back(patternIndex);
-    checkSum += patternIndex * checkWeight;
-    if (position != 0) {
-      checkWeight++;
-    }
+    checkSum += patternIndex * checkWeight++;
   }
   return checkSum;
 }

@@ -40,7 +40,7 @@ class CBC_OnedCode128Writer : public CBC_OneDimWriter {
   BC_TYPE GetType() const { return m_codeFormat; }
 
  private:
-  BC_TYPE m_codeFormat;
+  const BC_TYPE m_codeFormat;
 };
 
 #endif  // FXBARCODE_ONED_BC_ONEDCODE128WRITER_H_
