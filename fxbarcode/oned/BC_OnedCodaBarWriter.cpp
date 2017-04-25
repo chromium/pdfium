@@ -20,11 +20,13 @@
  * limitations under the License.
  */
 
+#include "fxbarcode/oned/BC_OnedCodaBarWriter.h"
+
 #include "fxbarcode/BC_Writer.h"
 #include "fxbarcode/common/BC_CommonBitArray.h"
 #include "fxbarcode/common/BC_CommonBitMatrix.h"
 #include "fxbarcode/oned/BC_OneDimWriter.h"
-#include "fxbarcode/oned/BC_OnedCodaBarWriter.h"
+#include "third_party/base/stl_util.h"
 
 namespace {
 
@@ -42,34 +44,31 @@ const char CONTENT_CHARS[] = {'0', '1', '2', '3', '4', '5', '6', '7',
 
 }  // namespace
 
-CBC_OnedCodaBarWriter::CBC_OnedCodaBarWriter() {
-  m_chStart = 'A';
-  m_chEnd = 'B';
-  m_iWideNarrRatio = 2;
-}
+CBC_OnedCodaBarWriter::CBC_OnedCodaBarWriter()
+    : m_chStart('A'), m_chEnd('B'), m_iWideNarrRatio(2) {}
+
 CBC_OnedCodaBarWriter::~CBC_OnedCodaBarWriter() {}
+
 bool CBC_OnedCodaBarWriter::SetStartChar(char start) {
-  for (size_t i = 0; i < FX_ArraySize(START_END_CHARS); ++i) {
-    if (START_END_CHARS[i] == start) {
-      m_chStart = start;
-      return true;
-    }
-  }
-  return false;
+  if (!pdfium::ContainsValue(START_END_CHARS, start))
+    return false;
+
+  m_chStart = start;
+  return true;
 }
 
 bool CBC_OnedCodaBarWriter::SetEndChar(char end) {
-  for (size_t i = 0; i < FX_ArraySize(START_END_CHARS); ++i) {
-    if (START_END_CHARS[i] == end) {
-      m_chEnd = end;
-      return true;
-    }
-  }
-  return false;
+  if (!pdfium::ContainsValue(START_END_CHARS, end))
+    return false;
+
+  m_chEnd = end;
+  return true;
 }
+
 void CBC_OnedCodaBarWriter::SetDataLength(int32_t length) {
   m_iDataLenth = length + 2;
 }
+
 bool CBC_OnedCodaBarWriter::SetTextLocation(BC_TEXT_LOC location) {
   if (location < BC_TEXT_LOC_NONE || location > BC_TEXT_LOC_BELOWEMBED) {
     return false;
@@ -87,27 +86,14 @@ bool CBC_OnedCodaBarWriter::SetWideNarrowRatio(int8_t ratio) {
 }
 
 bool CBC_OnedCodaBarWriter::FindChar(wchar_t ch, bool isContent) {
-  if (isContent) {
-    for (size_t i = 0; i < FX_ArraySize(CONTENT_CHARS); ++i) {
-      if (ch == (wchar_t)CONTENT_CHARS[i]) {
-        return true;
-      }
-    }
-    for (size_t j = 0; j < FX_ArraySize(START_END_CHARS); ++j) {
-      if (ch == (wchar_t)START_END_CHARS[j]) {
-        return true;
-      }
-    }
+  if (ch > 0x7F)
     return false;
-  } else {
-    for (size_t i = 0; i < FX_ArraySize(CONTENT_CHARS); ++i) {
-      if (ch == (wchar_t)CONTENT_CHARS[i]) {
-        return true;
-      }
-    }
-    return false;
-  }
+
+  char narrow_ch = static_cast<char>(ch);
+  return pdfium::ContainsValue(CONTENT_CHARS, narrow_ch) ||
+         (isContent && pdfium::ContainsValue(START_END_CHARS, narrow_ch));
 }
+
 bool CBC_OnedCodaBarWriter::CheckContentValidity(
     const CFX_WideStringC& contents) {
   return std::all_of(
@@ -204,8 +190,8 @@ uint8_t* CBC_OnedCodaBarWriter::EncodeImpl(const CFX_ByteString& contents,
 
 CFX_WideString CBC_OnedCodaBarWriter::encodedContents(
     const CFX_WideStringC& contents) {
-  CFX_WideString strStart(m_chStart);
-  CFX_WideString strEnd(m_chEnd);
+  CFX_WideString strStart(static_cast<wchar_t>(m_chStart));
+  CFX_WideString strEnd(static_cast<wchar_t>(m_chEnd));
   return strStart + contents + strEnd;
 }
 

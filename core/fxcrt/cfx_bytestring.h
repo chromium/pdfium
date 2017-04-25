@@ -35,6 +35,10 @@ class CFX_ByteString {
   // NOLINTNEXTLINE(runtime/explicit)
   CFX_ByteString(const char* ptr);
 
+  // No implicit conversions from wide strings.
+  // NOLINTNEXTLINE(runtime/explicit)
+  CFX_ByteString(wchar_t) = delete;
+
   CFX_ByteString(const char* ptr, FX_STRSIZE len);
   CFX_ByteString(const uint8_t* ptr, FX_STRSIZE len);
 

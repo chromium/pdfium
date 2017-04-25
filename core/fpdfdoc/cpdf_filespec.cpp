@@ -22,9 +22,9 @@ CFX_WideString ChangeSlashToPlatform(const wchar_t* str) {
   while (*str) {
     if (*str == '/') {
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
-      result += ':';
+      result += L':';
 #else
-      result += '\\';
+      result += L'\\';
 #endif
     } else {
       result += *str;
@@ -38,7 +38,7 @@ CFX_WideString ChangeSlashToPDF(const wchar_t* str) {
   CFX_WideString result;
   while (*str) {
     if (*str == '\\' || *str == ':')
-      result += '/';
+      result += L'/';
     else
       result += *str;
 
@@ -60,19 +60,19 @@ CFX_WideString CPDF_FileSpec::DecodeFileName(const CFX_WideStringC& filepath) {
   return ChangeSlashToPlatform(filepath.c_str());
 #elif _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
 
-  if (filepath.GetAt(0) != '/')
+  if (filepath.GetAt(0) != L'/')
     return ChangeSlashToPlatform(filepath.c_str());
-  if (filepath.GetAt(1) == '/')
+  if (filepath.GetAt(1) == L'/')
     return ChangeSlashToPlatform(filepath.c_str() + 1);
-  if (filepath.GetAt(2) == '/') {
+  if (filepath.GetAt(2) == L'/') {
     CFX_WideString result;
     result += filepath.GetAt(1);
-    result += ':';
+    result += L':';
     result += ChangeSlashToPlatform(filepath.c_str() + 2);
     return result;
   }
   CFX_WideString result;
-  result += '\\';
+  result += L'\\';
   result += ChangeSlashToPlatform(filepath.c_str());
   return result;
 #else
@@ -122,33 +122,24 @@ CFX_WideString CPDF_FileSpec::EncodeFileName(const CFX_WideStringC& filepath) {
     return CFX_WideString();
 
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
-  if (filepath.GetAt(1) == ':') {
-    CFX_WideString result;
-    result = '/';
+  if (filepath.GetAt(1) == L':') {
+    CFX_WideString result(L'/');
     result += filepath.GetAt(0);
-    if (filepath.GetAt(2) != '\\')
-      result += '/';
+    if (filepath.GetAt(2) != L'\\')
+      result += L'/';
 
     result += ChangeSlashToPDF(filepath.c_str() + 2);
     return result;
   }
-  if (filepath.GetAt(0) == '\\' && filepath.GetAt(1) == '\\')
+  if (filepath.GetAt(0) == L'\\' && filepath.GetAt(1) == L'\\')
     return ChangeSlashToPDF(filepath.c_str() + 1);
 
-  if (filepath.GetAt(0) == '\\') {
-    CFX_WideString result;
-    result = '/';
-    result += ChangeSlashToPDF(filepath.c_str());
-    return result;
-  }
+  if (filepath.GetAt(0) == L'\\')
+    return L'/' + ChangeSlashToPDF(filepath.c_str());
   return ChangeSlashToPDF(filepath.c_str());
 #elif _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
-  if (filepath.Left(sizeof("Mac") - 1) == L"Mac") {
-    CFX_WideString result;
-    result = '/';
-    result += ChangeSlashToPDF(filepath.c_str());
-    return result;
-  }
+  if (filepath.Left(sizeof("Mac") - 1) == L"Mac")
+    return L'/' + ChangeSlashToPDF(filepath.c_str());
   return ChangeSlashToPDF(filepath.c_str());
 #else
   return CFX_WideString(filepath);
