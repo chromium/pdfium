@@ -6,6 +6,16 @@
 
 #include "core/fxcrt/fx_system.h"
 
+#include <limits>
+
+extern "C" int FXSYS_round(float d) {
+  if (d < static_cast<float>(std::numeric_limits<int>::min()))
+    return std::numeric_limits<int>::min();
+  if (d > static_cast<float>(std::numeric_limits<int>::max()))
+    return std::numeric_limits<int>::max();
+  return static_cast<int>(round(d));
+}
+
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
 
 size_t FXSYS_wcsftime(wchar_t* strDest,

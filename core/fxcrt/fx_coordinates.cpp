@@ -4,11 +4,10 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include <limits.h>
+#include "core/fxcrt/fx_coordinates.h"
 
 #include <algorithm>
 
-#include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_extension.h"
 
 namespace {
@@ -38,6 +37,7 @@ void FX_RECT::Normalize() {
     bottom = temp;
   }
 }
+
 void FX_RECT::Intersect(const FX_RECT& src) {
   FX_RECT src_n = src;
   src_n.Normalize();
@@ -51,29 +51,6 @@ void FX_RECT::Intersect(const FX_RECT& src) {
   }
 }
 
-bool GetIntersection(float low1,
-                     float high1,
-                     float low2,
-                     float high2,
-                     float& interlow,
-                     float& interhigh) {
-  if (low1 >= high2 || low2 >= high1) {
-    return false;
-  }
-  interlow = low1 > low2 ? low1 : low2;
-  interhigh = high1 > high2 ? high2 : high1;
-  return true;
-}
-extern "C" int FXSYS_round(float d) {
-  if (d < (float)INT_MIN) {
-    return INT_MIN;
-  }
-  if (d > (float)INT_MAX) {
-    return INT_MAX;
-  }
-
-  return (int)round(d);
-}
 CFX_FloatRect::CFX_FloatRect(const FX_RECT& rect) {
   left = (float)(rect.left);
   right = (float)(rect.right);
