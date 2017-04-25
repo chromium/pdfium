@@ -40,7 +40,7 @@ class CFX_GEModule {
   void DestroyPlatform();
 
   uint8_t m_GammaValue[256];
-  CFX_FontCache* m_pFontCache;
+  std::unique_ptr<CFX_FontCache> m_pFontCache;
   std::unique_ptr<CFX_FontMgr> m_pFontMgr;
   CCodec_ModuleMgr* m_pCodecModule;
   void* m_pPlatformData;
