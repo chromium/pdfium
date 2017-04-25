@@ -572,7 +572,7 @@ void CCodec_ProgressiveDecoder::PngFillScanlineBufCompleted(int pass,
   }
 }
 
-bool CCodec_ProgressiveDecoder::GifReadMoreData(ICodec_GifModule* pGifModule,
+bool CCodec_ProgressiveDecoder::GifReadMoreData(CCodec_GifModule* pGifModule,
                                                 FXCODEC_STATUS& err_status) {
   uint32_t dwSize = (uint32_t)m_pFile->GetSize();
   if (dwSize <= m_offSet) {
@@ -851,7 +851,7 @@ void CCodec_ProgressiveDecoder::GifDoubleLineResampleVert(
   }
 }
 
-bool CCodec_ProgressiveDecoder::BmpReadMoreData(ICodec_BmpModule* pBmpModule,
+bool CCodec_ProgressiveDecoder::BmpReadMoreData(CCodec_BmpModule* pBmpModule,
                                                 FXCODEC_STATUS& err_status) {
   uint32_t dwSize = (uint32_t)m_pFile->GetSize();
   if (dwSize <= m_offSet)
@@ -1022,7 +1022,7 @@ bool CCodec_ProgressiveDecoder::DetectImageType(FXCODEC_IMAGE_TYPE imageType,
   m_SrcSize = size;
   switch (imageType) {
     case FXCODEC_IMAGE_BMP: {
-      ICodec_BmpModule* pBmpModule = m_pCodecMgr->GetBmpModule();
+      CCodec_BmpModule* pBmpModule = m_pCodecMgr->GetBmpModule();
       if (!pBmpModule) {
         m_status = FXCODEC_STATUS_ERR_MEMORY;
         return false;
@@ -1118,7 +1118,7 @@ bool CCodec_ProgressiveDecoder::DetectImageType(FXCODEC_IMAGE_TYPE imageType,
       return false;
     }
     case FXCODEC_IMAGE_PNG: {
-      ICodec_PngModule* pPngModule = m_pCodecMgr->GetPngModule();
+      CCodec_PngModule* pPngModule = m_pCodecMgr->GetPngModule();
       if (!pPngModule) {
         m_status = FXCODEC_STATUS_ERR_MEMORY;
         return false;
@@ -1175,7 +1175,7 @@ bool CCodec_ProgressiveDecoder::DetectImageType(FXCODEC_IMAGE_TYPE imageType,
       return true;
     }
     case FXCODEC_IMAGE_GIF: {
-      ICodec_GifModule* pGifModule = m_pCodecMgr->GetGifModule();
+      CCodec_GifModule* pGifModule = m_pCodecMgr->GetGifModule();
       if (!pGifModule) {
         m_status = FXCODEC_STATUS_ERR_MEMORY;
         return false;
@@ -1220,7 +1220,7 @@ bool CCodec_ProgressiveDecoder::DetectImageType(FXCODEC_IMAGE_TYPE imageType,
       return false;
     }
     case FXCODEC_IMAGE_TIF: {
-      ICodec_TiffModule* pTiffModule = m_pCodecMgr->GetTiffModule();
+      CCodec_TiffModule* pTiffModule = m_pCodecMgr->GetTiffModule();
       if (!pTiffModule) {
         m_status = FXCODEC_STATUS_ERR_FORMAT;
         return false;
@@ -1799,7 +1799,7 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::GetFrames(int32_t& frames,
       m_status = FXCODEC_STATUS_DECODE_READY;
       return m_status;
     case FXCODEC_IMAGE_GIF: {
-      ICodec_GifModule* pGifModule = m_pCodecMgr->GetGifModule();
+      CCodec_GifModule* pGifModule = m_pCodecMgr->GetGifModule();
       if (!pGifModule) {
         m_status = FXCODEC_STATUS_ERR_MEMORY;
         return m_status;
@@ -1933,7 +1933,7 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::StartDecode(
       return m_status;
     }
     case FXCODEC_IMAGE_PNG: {
-      ICodec_PngModule* pPngModule = m_pCodecMgr->GetPngModule();
+      CCodec_PngModule* pPngModule = m_pCodecMgr->GetPngModule();
       if (!pPngModule) {
         m_pDeviceBitmap = nullptr;
         m_pFile = nullptr;
@@ -1985,7 +1985,7 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::StartDecode(
       return m_status;
     }
     case FXCODEC_IMAGE_GIF: {
-      ICodec_GifModule* pGifModule = m_pCodecMgr->GetGifModule();
+      CCodec_GifModule* pGifModule = m_pCodecMgr->GetGifModule();
       if (!pGifModule) {
         m_pDeviceBitmap = nullptr;
         m_pFile = nullptr;
@@ -2006,7 +2006,7 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::StartDecode(
       return m_status;
     }
     case FXCODEC_IMAGE_BMP: {
-      ICodec_BmpModule* pBmpModule = m_pCodecMgr->GetBmpModule();
+      CCodec_BmpModule* pBmpModule = m_pCodecMgr->GetBmpModule();
       if (!pBmpModule) {
         m_pDeviceBitmap = nullptr;
         m_pFile = nullptr;
@@ -2081,7 +2081,7 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::ContinueDecode(IFX_Pause* pPause) {
       }
     }
     case FXCODEC_IMAGE_PNG: {
-      ICodec_PngModule* pPngModule = m_pCodecMgr->GetPngModule();
+      CCodec_PngModule* pPngModule = m_pCodecMgr->GetPngModule();
       if (!pPngModule) {
         m_status = FXCODEC_STATUS_ERR_MEMORY;
         return m_status;
@@ -2129,7 +2129,7 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::ContinueDecode(IFX_Pause* pPause) {
       }
     }
     case FXCODEC_IMAGE_GIF: {
-      ICodec_GifModule* pGifModule = m_pCodecMgr->GetGifModule();
+      CCodec_GifModule* pGifModule = m_pCodecMgr->GetGifModule();
       if (!pGifModule) {
         m_status = FXCODEC_STATUS_ERR_MEMORY;
         return m_status;
@@ -2164,7 +2164,7 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::ContinueDecode(IFX_Pause* pPause) {
       }
     }
     case FXCODEC_IMAGE_BMP: {
-      ICodec_BmpModule* pBmpModule = m_pCodecMgr->GetBmpModule();
+      CCodec_BmpModule* pBmpModule = m_pCodecMgr->GetBmpModule();
       if (!pBmpModule) {
         m_status = FXCODEC_STATUS_ERR_MEMORY;
         return m_status;
@@ -2198,7 +2198,7 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::ContinueDecode(IFX_Pause* pPause) {
       }
     }
     case FXCODEC_IMAGE_TIF: {
-      ICodec_TiffModule* pTiffModule = m_pCodecMgr->GetTiffModule();
+      CCodec_TiffModule* pTiffModule = m_pCodecMgr->GetTiffModule();
       if (!pTiffModule) {
         m_status = FXCODEC_STATUS_ERR_MEMORY;
         return m_status;

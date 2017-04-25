@@ -7,23 +7,42 @@
 #ifndef CORE_FXCODEC_CODEC_CCODEC_GIFMODULE_H_
 #define CORE_FXCODEC_CODEC_CCODEC_GIFMODULE_H_
 
-#include "core/fxcodec/codec/icodec_gifmodule.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_system.h"
 
-class CCodec_GifModule : public ICodec_GifModule {
- public:
-  CCodec_GifModule();
-  ~CCodec_GifModule() override;
+class CFX_DIBAttribute;
+struct FXGIF_Context;
 
-  FXGIF_Context* Start() override;
-  void Finish(FXGIF_Context* pContext) override;
+class CCodec_GifModule {
+ public:
+  class Delegate {
+   public:
+    virtual void GifRecordCurrentPosition(uint32_t& cur_pos) = 0;
+    virtual uint8_t* GifAskLocalPaletteBuf(int32_t frame_num,
+                                           int32_t pal_size) = 0;
+    virtual bool GifInputRecordPositionBuf(uint32_t rcd_pos,
+                                           const FX_RECT& img_rc,
+                                           int32_t pal_num,
+                                           void* pal_ptr,
+                                           int32_t delay_time,
+                                           bool user_input,
+                                           int32_t trans_index,
+                                           int32_t disposal_method,
+                                           bool interlace) = 0;
+    virtual void GifReadScanline(int32_t row_num, uint8_t* row_buf) = 0;
+  };
+
+  CCodec_GifModule();
+  ~CCodec_GifModule();
+
+  FXGIF_Context* Start();
+  void Finish(FXGIF_Context* pContext);
   uint32_t GetAvailInput(FXGIF_Context* pContext,
-                         uint8_t** avail_buf_ptr = nullptr) override;
+                         uint8_t** avail_buf_ptr = nullptr);
 
   void Input(FXGIF_Context* pContext,
              const uint8_t* src_buf,
-             uint32_t src_size) override;
+             uint32_t src_size);
 
   int32_t ReadHeader(FXGIF_Context* pContext,
                      int* width,
@@ -31,14 +50,18 @@ class CCodec_GifModule : public ICodec_GifModule {
                      int* pal_num,
                      void** pal_pp,
                      int* bg_index,
-                     CFX_DIBAttribute* pAttribute) override;
+                     CFX_DIBAttribute* pAttribute);
 
-  int32_t LoadFrameInfo(FXGIF_Context* pContext, int* frame_num) override;
+  int32_t LoadFrameInfo(FXGIF_Context* pContext, int* frame_num);
   int32_t LoadFrame(FXGIF_Context* pContext,
                     int frame_num,
-                    CFX_DIBAttribute* pAttribute) override;
+                    CFX_DIBAttribute* pAttribute);
+
+  Delegate* GetDelegate() const { return m_pDelegate; }
+  void SetDelegate(Delegate* pDelegate) { m_pDelegate = pDelegate; }
 
  protected:
+  Delegate* m_pDelegate;
   char m_szLastError[256];
 };
 
