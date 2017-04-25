@@ -61,8 +61,11 @@ CPDF_Font::CPDF_Font()
 
 CPDF_Font::~CPDF_Font() {
   if (m_pFontFile) {
-    m_pDocument->GetPageData()->MaybePurgeFontFileStreamAcc(
-        m_pFontFile->GetStream()->AsStream());
+    auto* pPageData = m_pDocument->GetPageData();
+    if (pPageData) {
+      pPageData->MaybePurgeFontFileStreamAcc(
+          m_pFontFile->GetStream()->AsStream());
+    }
   }
 }
 

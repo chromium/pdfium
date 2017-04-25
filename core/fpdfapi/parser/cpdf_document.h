@@ -58,7 +58,7 @@ class CPDF_Document : public CPDF_IndirectObjectHolder {
   CPDF_Dictionary* GetPage(int iPage);
   int GetPageIndex(uint32_t objnum);
   uint32_t GetUserPermissions() const;
-  CPDF_DocPageData* GetPageData() const { return m_pDocPage; }
+  CPDF_DocPageData* GetPageData() const { return m_pDocPage.get(); }
 
   void SetPageObjNum(int iPage, uint32_t objNum);
 
@@ -142,8 +142,7 @@ class CPDF_Document : public CPDF_IndirectObjectHolder {
   bool m_bLinearized;
   int m_iFirstPageNo;
   uint32_t m_dwFirstPageObjNum;
-  // TODO(thestig): Figure out why this cannot be a std::unique_ptr.
-  CPDF_DocPageData* m_pDocPage;
+  std::unique_ptr<CPDF_DocPageData> m_pDocPage;
   std::unique_ptr<CPDF_DocRenderData> m_pDocRender;
   std::unique_ptr<JBig2_DocumentContext> m_pCodecContext;
   std::unique_ptr<CPDF_LinkList> m_pLinksContext;

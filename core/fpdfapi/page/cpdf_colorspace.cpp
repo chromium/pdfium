@@ -852,7 +852,9 @@ CPDF_ICCBasedCS::~CPDF_ICCBasedCS() {
   if (m_pProfile && m_pDocument) {
     CPDF_Stream* pStream = m_pProfile->GetStream();
     m_pProfile.Reset();  // Give up our reference first.
-    m_pDocument->GetPageData()->MaybePurgeIccProfile(pStream);
+    auto* pPageData = m_pDocument->GetPageData();
+    if (pPageData)
+      pPageData->MaybePurgeIccProfile(pStream);
   }
 }
 
@@ -1049,7 +1051,9 @@ CPDF_IndexedCS::~CPDF_IndexedCS() {
   FX_Free(m_pCompMinMax);
   CPDF_ColorSpace* pCS = m_pCountedBaseCS ? m_pCountedBaseCS->get() : nullptr;
   if (pCS && m_pDocument) {
-    m_pDocument->GetPageData()->ReleaseColorSpace(pCS->GetArray());
+    auto* pPageData = m_pDocument->GetPageData();
+    if (pPageData)
+      pPageData->ReleaseColorSpace(pCS->GetArray());
   }
 }
 
@@ -1132,7 +1136,9 @@ CPDF_PatternCS::CPDF_PatternCS(CPDF_Document* pDoc)
 CPDF_PatternCS::~CPDF_PatternCS() {
   CPDF_ColorSpace* pCS = m_pCountedBaseCS ? m_pCountedBaseCS->get() : nullptr;
   if (pCS && m_pDocument) {
-    m_pDocument->GetPageData()->ReleaseColorSpace(pCS->GetArray());
+    auto* pPageData = m_pDocument->GetPageData();
+    if (pPageData)
+      pPageData->ReleaseColorSpace(pCS->GetArray());
   }
 }
 

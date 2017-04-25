@@ -50,8 +50,11 @@ CPDF_ShadingPattern::CPDF_ShadingPattern(CPDF_Document* pDoc,
 
 CPDF_ShadingPattern::~CPDF_ShadingPattern() {
   CPDF_ColorSpace* pCS = m_pCountedCS ? m_pCountedCS->get() : nullptr;
-  if (pCS && m_pDocument)
-    m_pDocument->GetPageData()->ReleaseColorSpace(pCS->GetArray());
+  if (pCS && m_pDocument) {
+    auto* pPageData = m_pDocument->GetPageData();
+    if (pPageData)
+      pPageData->ReleaseColorSpace(pCS->GetArray());
+  }
 }
 
 CPDF_TilingPattern* CPDF_ShadingPattern::AsTilingPattern() {
