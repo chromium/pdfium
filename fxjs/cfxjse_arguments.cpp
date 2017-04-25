@@ -8,20 +8,16 @@
 
 #include "fxjs/cfxjse_context.h"
 #include "fxjs/cfxjse_value.h"
-
-v8::Isolate* CFXJSE_Arguments::GetRuntime() const {
-  return m_pRetValue->GetIsolate();
-}
+#include "third_party/base/ptr_util.h"
 
 int32_t CFXJSE_Arguments::GetLength() const {
   return m_pInfo->Length();
 }
 
 std::unique_ptr<CFXJSE_Value> CFXJSE_Arguments::GetValue(int32_t index) const {
-  std::unique_ptr<CFXJSE_Value> lpArgValue(
-      new CFXJSE_Value(v8::Isolate::GetCurrent()));
-  lpArgValue->ForceSetValue((*m_pInfo)[index]);
-  return lpArgValue;
+  auto pArgValue = pdfium::MakeUnique<CFXJSE_Value>(v8::Isolate::GetCurrent());
+  pArgValue->ForceSetValue((*m_pInfo)[index]);
+  return pArgValue;
 }
 
 bool CFXJSE_Arguments::GetBoolean(int32_t index) const {

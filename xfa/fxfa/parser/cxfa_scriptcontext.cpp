@@ -129,12 +129,8 @@ CXFA_ScriptContext::CXFA_ScriptContext(CXFA_Document* pDocument)
       m_eRunAtType(XFA_ATTRIBUTEENUM_Client) {}
 
 CXFA_ScriptContext::~CXFA_ScriptContext() {
-  for (const auto& pair : m_mapVariableToContext) {
-    CFXJSE_Context* pVariableContext = pair.second;
-    delete ToThisProxy(pVariableContext->GetGlobalObject().get(), nullptr);
-    delete pVariableContext;
-  }
-  m_mapVariableToContext.clear();
+  for (const auto& pair : m_mapVariableToContext)
+    delete ToThisProxy(pair.second->GetGlobalObject().get(), nullptr);
 }
 
 void CXFA_ScriptContext::Initialize(v8::Isolate* pIsolate) {
@@ -440,25 +436,28 @@ XFA_SCRIPTLANGTYPE CXFA_ScriptContext::GetType() {
   return m_eScriptType;
 }
 void CXFA_ScriptContext::DefineJsContext() {
-  m_JsContext.reset(CFXJSE_Context::Create(m_pIsolate, &GlobalClassDescriptor,
-                                           m_pDocument->GetRoot()));
+  m_JsContext = CFXJSE_Context::Create(m_pIsolate, &GlobalClassDescriptor,
+                                       m_pDocument->GetRoot());
   RemoveBuiltInObjs(m_JsContext.get());
   m_JsContext->EnableCompatibleMode();
 }
+
 CFXJSE_Context* CXFA_ScriptContext::CreateVariablesContext(
     CXFA_Node* pScriptNode,
     CXFA_Node* pSubform) {
   if (!pScriptNode || !pSubform)
     return nullptr;
 
-  CFXJSE_Context* pVariablesContext =
+  auto pNewContext =
       CFXJSE_Context::Create(m_pIsolate, &VariablesClassDescriptor,
                              new CXFA_ThisProxy(pSubform, pScriptNode));
-  RemoveBuiltInObjs(pVariablesContext);
-  pVariablesContext->EnableCompatibleMode();
-  m_mapVariableToContext[pScriptNode] = pVariablesContext;
-  return pVariablesContext;
+  RemoveBuiltInObjs(pNewContext.get());
+  pNewContext->EnableCompatibleMode();
+  CFXJSE_Context* pResult = pNewContext.get();
+  m_mapVariableToContext[pScriptNode] = std::move(pNewContext);
+  return pResult;
 }
+
 CXFA_Object* CXFA_ScriptContext::GetVariablesThis(CXFA_Object* pObject,
                                                   bool bScriptNode) {
   if (!pObject->IsVariablesThis())
@@ -517,15 +516,14 @@ bool CXFA_ScriptContext::QueryVariableValue(CXFA_Node* pScriptNode,
   if (it == m_mapVariableToContext.end() || !it->second)
     return false;
 
-  void* lpVariables = it->second;
-  bool bRes = false;
-  CFXJSE_Context* pVariableContext = static_cast<CFXJSE_Context*>(lpVariables);
+  CFXJSE_Context* pVariableContext = it->second.get();
   std::unique_ptr<CFXJSE_Value> pObject = pVariableContext->GetGlobalObject();
   auto hVariableValue = pdfium::MakeUnique<CFXJSE_Value>(m_pIsolate);
   if (!bGetter) {
     pObject->SetObjectOwnProperty(szPropName, pValue);
-    bRes = true;
-  } else if (pObject->HasObjectOwnProperty(szPropName, false)) {
+    return true;
+  }
+  if (pObject->HasObjectOwnProperty(szPropName, false)) {
     pObject->GetObjectProperty(szPropName, hVariableValue.get());
     if (hVariableValue->IsFunction())
       pValue->SetFunctionBind(hVariableValue.get(), pObject.get());
@@ -533,13 +531,14 @@ bool CXFA_ScriptContext::QueryVariableValue(CXFA_Node* pScriptNode,
       pValue->Assign(hVariableValue.get());
     else
       hVariableValue.get()->Assign(pValue);
-    bRes = true;
+    return true;
   }
-  return bRes;
+  return false;
 }
 
 void CXFA_ScriptContext::DefineJsClass() {
-  m_pJsClass = CFXJSE_Class::Create(m_JsContext.get(), &NormalClassDescriptor);
+  m_pJsClass =
+      CFXJSE_Class::Create(m_JsContext.get(), &NormalClassDescriptor, false);
 }
 
 void CXFA_ScriptContext::RemoveBuiltInObjs(CFXJSE_Context* pContext) const {

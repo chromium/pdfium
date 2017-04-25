@@ -6,6 +6,8 @@
 
 #include "fxjs/cfxjse_context.h"
 
+#include <utility>
+
 #include "fxjs/cfxjse_class.h"
 #include "fxjs/cfxjse_value.h"
 #include "third_party/base/ptr_util.h"
@@ -102,7 +104,7 @@ CFXJSE_HostObject* FXJSE_RetrieveObjectBinding(
   if (lpClass) {
     v8::Local<v8::FunctionTemplate> hClass =
         v8::Local<v8::FunctionTemplate>::New(
-            lpClass->GetContext()->GetRuntime(), lpClass->GetTemplate());
+            lpClass->GetContext()->GetIsolate(), lpClass->GetTemplate());
     if (!hClass->HasInstance(hObject))
       return nullptr;
   }
@@ -148,20 +150,20 @@ v8::Local<v8::Object> FXJSE_CreateReturnValue(v8::Isolate* pIsolate,
 }
 
 // static
-CFXJSE_Context* CFXJSE_Context::Create(
+std::unique_ptr<CFXJSE_Context> CFXJSE_Context::Create(
     v8::Isolate* pIsolate,
-    const FXJSE_CLASS_DESCRIPTOR* lpGlobalClass,
-    CFXJSE_HostObject* lpGlobalObject) {
+    const FXJSE_CLASS_DESCRIPTOR* pGlobalClass,
+    CFXJSE_HostObject* pGlobalObject) {
   CFXJSE_ScopeUtil_IsolateHandle scope(pIsolate);
-  CFXJSE_Context* pContext = new CFXJSE_Context(pIsolate);
-  CFXJSE_Class* lpGlobalClassObj = nullptr;
+  auto pContext = pdfium::MakeUnique<CFXJSE_Context>(pIsolate);
+  CFXJSE_Class* pGlobalClassObj = nullptr;
   v8::Local<v8::ObjectTemplate> hObjectTemplate;
-  if (lpGlobalClass) {
-    lpGlobalClassObj = CFXJSE_Class::Create(pContext, lpGlobalClass, true);
-    ASSERT(lpGlobalClassObj);
+  if (pGlobalClass) {
+    pGlobalClassObj = CFXJSE_Class::Create(pContext.get(), pGlobalClass, true);
+    ASSERT(pGlobalClassObj);
     v8::Local<v8::FunctionTemplate> hFunctionTemplate =
         v8::Local<v8::FunctionTemplate>::New(pIsolate,
-                                             lpGlobalClassObj->m_hTemplate);
+                                             pGlobalClassObj->m_hTemplate);
     hObjectTemplate = hFunctionTemplate->InstanceTemplate();
   } else {
     hObjectTemplate = v8::ObjectTemplate::New(pIsolate);
@@ -178,7 +180,7 @@ CFXJSE_Context* CFXJSE_Context::Create(
   hNewContext->SetSecurityToken(hRootContext->GetSecurityToken());
   v8::Local<v8::Object> hGlobalObject =
       FXJSE_GetGlobalObjectFromContext(hNewContext);
-  FXJSE_UpdateObjectBinding(hGlobalObject, lpGlobalObject);
+  FXJSE_UpdateObjectBinding(hGlobalObject, pGlobalObject);
   pContext->m_hContext.Reset(pIsolate, hNewContext);
   return pContext;
 }
@@ -189,14 +191,30 @@ CFXJSE_Context::~CFXJSE_Context() {}
 
 std::unique_ptr<CFXJSE_Value> CFXJSE_Context::GetGlobalObject() {
   auto pValue = pdfium::MakeUnique<CFXJSE_Value>(m_pIsolate);
-
   CFXJSE_ScopeUtil_IsolateHandleContext scope(this);
   v8::Local<v8::Context> hContext =
       v8::Local<v8::Context>::New(m_pIsolate, m_hContext);
   v8::Local<v8::Object> hGlobalObject = hContext->Global();
   pValue->ForceSetValue(hGlobalObject);
-
   return pValue;
+}
+
+v8::Local<v8::Context> CFXJSE_Context::GetContext() {
+  return v8::Local<v8::Context>::New(m_pIsolate, m_hContext);
+}
+
+void CFXJSE_Context::AddClass(std::unique_ptr<CFXJSE_Class> pClass) {
+  m_rgClasses.push_back(std::move(pClass));
+}
+
+CFXJSE_Class* CFXJSE_Context::GetClassByName(
+    const CFX_ByteStringC& szName) const {
+  auto pClass =
+      std::find_if(m_rgClasses.begin(), m_rgClasses.end(),
+                   [szName](const std::unique_ptr<CFXJSE_Class>& item) {
+                     return szName == item->m_szClassName;
+                   });
+  return pClass != m_rgClasses.end() ? pClass->get() : nullptr;
 }
 
 void CFXJSE_Context::EnableCompatibleMode() {

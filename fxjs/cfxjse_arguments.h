@@ -9,9 +9,8 @@
 
 #include <memory>
 
+#include "fxjs/cfxjse_class.h"
 #include "fxjs/fxjse.h"
-
-class CFXJSE_Class;
 
 class CFXJSE_Arguments {
  public:
@@ -19,7 +18,6 @@ class CFXJSE_Arguments {
                    CFXJSE_Value* pRetValue)
       : m_pInfo(pInfo), m_pRetValue(pRetValue) {}
 
-  v8::Isolate* GetRuntime() const;
   int32_t GetLength() const;
   std::unique_ptr<CFXJSE_Value> GetValue(int32_t index) const;
   bool GetBoolean(int32_t index) const;

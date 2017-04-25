@@ -6133,8 +6133,9 @@ CXFA_FM2JSContext::CXFA_FM2JSContext(v8::Isolate* pScriptIsolate,
                                      CFXJSE_Context* pScriptContext,
                                      CXFA_Document* pDoc)
     : m_pIsolate(pScriptIsolate),
-      m_pFMClass(
-          CFXJSE_Class::Create(pScriptContext, &formcalc_fm2js_descriptor)),
+      m_pFMClass(CFXJSE_Class::Create(pScriptContext,
+                                      &formcalc_fm2js_descriptor,
+                                      false)),
       m_pValue(pdfium::MakeUnique<CFXJSE_Value>(pScriptIsolate)),
       m_pDocument(pDoc) {
   m_pValue.get()->SetNull();

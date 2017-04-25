@@ -7,7 +7,9 @@
 #include "fxjs/cfxjse_class.h"
 
 #include <memory>
+#include <utility>
 
+#include "fxjs/cfxjse_arguments.h"
 #include "fxjs/cfxjse_context.h"
 #include "fxjs/cfxjse_value.h"
 #include "third_party/base/ptr_util.h"
@@ -311,13 +313,13 @@ CFXJSE_Class* CFXJSE_Class::Create(
   if (!lpContext || !lpClassDefinition)
     return nullptr;
 
-  CFXJSE_Class* pClass =
-      GetClassFromContext(lpContext, lpClassDefinition->name);
-  if (pClass)
-    return pClass;
+  CFXJSE_Class* pExistingClass =
+      lpContext->GetClassByName(lpClassDefinition->name);
+  if (pExistingClass)
+    return pExistingClass;
 
-  v8::Isolate* pIsolate = lpContext->m_pIsolate;
-  pClass = new CFXJSE_Class(lpContext);
+  v8::Isolate* pIsolate = lpContext->GetIsolate();
+  auto pClass = pdfium::MakeUnique<CFXJSE_Class>(lpContext);
   pClass->m_szClassName = lpClassDefinition->name;
   pClass->m_lpClassDefinition = lpClassDefinition;
   CFXJSE_ScopeUtil_IsolateHandleRootContext scope(pIsolate);
@@ -369,8 +371,7 @@ CFXJSE_Class* CFXJSE_Class::Create(
                                               lpClassDefinition))),
           static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete));
     } else {
-      v8::Local<v8::Context> hLocalContext =
-          v8::Local<v8::Context>::New(pIsolate, lpContext->m_hContext);
+      v8::Local<v8::Context> hLocalContext = lpContext->GetContext();
       FXJSE_GetGlobalObjectFromContext(hLocalContext)
           ->Set(v8::String::NewFromUtf8(pIsolate, lpClassDefinition->name),
                 v8::Function::New(
@@ -388,19 +389,10 @@ CFXJSE_Class* CFXJSE_Class::Create(
     fun->RemovePrototype();
     hObjectTemplate->Set(v8::String::NewFromUtf8(pIsolate, "toString"), fun);
   }
-  pClass->m_hTemplate.Reset(lpContext->m_pIsolate, hFunctionTemplate);
-  lpContext->m_rgClasses.push_back(std::unique_ptr<CFXJSE_Class>(pClass));
-  return pClass;
-}
-
-// static
-CFXJSE_Class* CFXJSE_Class::GetClassFromContext(CFXJSE_Context* pContext,
-                                                const CFX_ByteStringC& szName) {
-  for (const auto& pClass : pContext->m_rgClasses) {
-    if (pClass->m_szClassName == szName)
-      return pClass.get();
-  }
-  return nullptr;
+  pClass->m_hTemplate.Reset(lpContext->GetIsolate(), hFunctionTemplate);
+  CFXJSE_Class* pResult = pClass.get();
+  lpContext->AddClass(std::move(pClass));
+  return pResult;
 }
 
 // static

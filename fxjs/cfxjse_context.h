@@ -20,28 +20,29 @@ struct FXJSE_CLASS_DESCRIPTOR;
 
 class CFXJSE_Context {
  public:
-  static CFXJSE_Context* Create(
+  static std::unique_ptr<CFXJSE_Context> Create(
       v8::Isolate* pIsolate,
-      const FXJSE_CLASS_DESCRIPTOR* lpGlobalClass = nullptr,
-      CFXJSE_HostObject* lpGlobalObject = nullptr);
+      const FXJSE_CLASS_DESCRIPTOR* pGlobalClass,
+      CFXJSE_HostObject* pGlobalObject);
 
+  explicit CFXJSE_Context(v8::Isolate* pIsolate);
   ~CFXJSE_Context();
 
-  v8::Isolate* GetRuntime() { return m_pIsolate; }
+  v8::Isolate* GetIsolate() const { return m_pIsolate; }
+  v8::Local<v8::Context> GetContext();
   std::unique_ptr<CFXJSE_Value> GetGlobalObject();
+  void AddClass(std::unique_ptr<CFXJSE_Class> pClass);
+  CFXJSE_Class* GetClassByName(const CFX_ByteStringC& szName) const;
   void EnableCompatibleMode();
   bool ExecuteScript(const char* szScript,
                      CFXJSE_Value* lpRetValue,
                      CFXJSE_Value* lpNewThisObject = nullptr);
 
  protected:
-  friend class CFXJSE_Class;
   friend class CFXJSE_ScopeUtil_IsolateHandleContext;
 
   CFXJSE_Context();
   CFXJSE_Context(const CFXJSE_Context&);
-  explicit CFXJSE_Context(v8::Isolate* pIsolate);
-
   CFXJSE_Context& operator=(const CFXJSE_Context&);
 
   v8::Global<v8::Context> m_hContext;
