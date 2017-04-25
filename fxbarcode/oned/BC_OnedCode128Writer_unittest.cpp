@@ -81,4 +81,48 @@ TEST(OnedCode128WriterTest, Encode128C) {
   }
 }
 
+TEST(OnedCode128WriterTest, CheckContentValidity) {
+  {
+    CBC_OnedCode128Writer writer(BC_CODE128_B);
+    EXPECT_TRUE(writer.CheckContentValidity(L""));
+    EXPECT_TRUE(writer.CheckContentValidity(L"foo"));
+    EXPECT_TRUE(writer.CheckContentValidity(L"xyz"));
+    EXPECT_FALSE(writer.CheckContentValidity(L"\""));
+    EXPECT_FALSE(writer.CheckContentValidity(L"f\x10oo"));
+    EXPECT_FALSE(writer.CheckContentValidity(L"bar\x7F"));
+    EXPECT_FALSE(writer.CheckContentValidity(L"qux\x88"));
+  }
+  {
+    CBC_OnedCode128Writer writer(BC_CODE128_C);
+    EXPECT_TRUE(writer.CheckContentValidity(L""));
+    EXPECT_TRUE(writer.CheckContentValidity(L"foo"));
+    EXPECT_TRUE(writer.CheckContentValidity(L"xyz"));
+    EXPECT_FALSE(writer.CheckContentValidity(L"\""));
+    EXPECT_FALSE(writer.CheckContentValidity(L"f\x10oo"));
+    EXPECT_FALSE(writer.CheckContentValidity(L"bar\x7F"));
+    EXPECT_FALSE(writer.CheckContentValidity(L"qux\x88"));
+  }
+}
+
+TEST(OnedCode128WriterTest, FilterContents) {
+  {
+    CBC_OnedCode128Writer writer(BC_CODE128_B);
+    EXPECT_STREQ(L"", writer.FilterContents(L"").c_str());
+    EXPECT_STREQ(L"foo", writer.FilterContents(L"foo\x10").c_str());
+    EXPECT_STREQ(L"fool", writer.FilterContents(L"foo\x10l").c_str());
+    EXPECT_STREQ(L"foo", writer.FilterContents(L"foo\x10\x7F").c_str());
+    EXPECT_STREQ(L"foo", writer.FilterContents(L"foo\x10\x7F\x88").c_str());
+    EXPECT_STREQ(L"bar", writer.FilterContents(L"bar\x10\x7F\x88").c_str());
+  }
+  {
+    CBC_OnedCode128Writer writer(BC_CODE128_C);
+    EXPECT_STREQ(L"", writer.FilterContents(L"").c_str());
+    EXPECT_STREQ(L"f", writer.FilterContents(L"foo\x10").c_str());
+    EXPECT_STREQ(L"f", writer.FilterContents(L"foo\x10l").c_str());
+    EXPECT_STREQ(L"f", writer.FilterContents(L"foo\x10\x7F").c_str());
+    EXPECT_STREQ(L"f", writer.FilterContents(L"foo\x10\x7F\x88").c_str());
+    EXPECT_STREQ(L"ba", writer.FilterContents(L"bar\x10\x7F\x88").c_str());
+  }
+}
+
 }  // namespace
