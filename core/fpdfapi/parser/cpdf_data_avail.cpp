@@ -645,10 +645,10 @@ bool CPDF_DataAvail::CheckHintTables(DownloadHints* pHints) {
 
   m_syntaxParser.InitParser(m_pFileRead, m_dwHeaderOffset);
 
-  std::unique_ptr<CPDF_HintTables> pHintTables(
-      new CPDF_HintTables(this, m_pLinearized.get()));
-  std::unique_ptr<CPDF_Object> pHintStream(
-      ParseIndirectObjectAt(szHintStart, 0));
+  auto pHintTables =
+      pdfium::MakeUnique<CPDF_HintTables>(this, m_pLinearized.get());
+  std::unique_ptr<CPDF_Object> pHintStream =
+      ParseIndirectObjectAt(szHintStart, 0);
   CPDF_Stream* pStream = ToStream(pHintStream.get());
   if (pStream && pHintTables->LoadHintStream(pStream))
     m_pHintTables = std::move(pHintTables);

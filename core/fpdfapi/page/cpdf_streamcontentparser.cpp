@@ -1319,31 +1319,27 @@ void CPDF_StreamContentParser::Handle_ShowText_Positioning() {
     }
     return;
   }
-  CFX_ByteString* pStrs = new CFX_ByteString[nsegs];
-  float* pKerning = FX_Alloc(float, nsegs);
+  std::vector<CFX_ByteString> strs(nsegs);
+  std::vector<float> kernings(nsegs);
   size_t iSegment = 0;
   float fInitKerning = 0;
   for (size_t i = 0; i < n; i++) {
     CPDF_Object* pObj = pArray->GetDirectObjectAt(i);
     if (pObj->IsString()) {
       CFX_ByteString str = pObj->GetString();
-      if (str.IsEmpty()) {
+      if (str.IsEmpty())
         continue;
-      }
-      pStrs[iSegment] = str;
-      pKerning[iSegment++] = 0;
+      strs[iSegment] = str;
+      kernings[iSegment++] = 0;
     } else {
-      float num = pObj ? pObj->GetNumber() : 0;
-      if (iSegment == 0) {
+      float num = pObj->GetNumber();
+      if (iSegment == 0)
         fInitKerning += num;
-      } else {
-        pKerning[iSegment - 1] += num;
-      }
+      else
+        kernings[iSegment - 1] += num;
     }
   }
-  AddTextObject(pStrs, fInitKerning, pKerning, iSegment);
-  delete[] pStrs;
-  FX_Free(pKerning);
+  AddTextObject(strs.data(), fInitKerning, kernings.data(), iSegment);
 }
 
 void CPDF_StreamContentParser::Handle_SetTextLeading() {

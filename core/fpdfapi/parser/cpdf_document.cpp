@@ -887,8 +887,7 @@ CPDF_Font* CPDF_Document::AddFont(CFX_Font* pFont, int charset, bool bVert) {
 
   CPDF_Dictionary* pBaseDict = NewIndirect<CPDF_Dictionary>();
   pBaseDict->SetNewFor<CPDF_Name>("Type", "Font");
-  std::unique_ptr<CFX_UnicodeEncoding> pEncoding(
-      new CFX_UnicodeEncoding(pFont));
+  auto pEncoding = pdfium::MakeUnique<CFX_UnicodeEncoding>(pFont);
   CPDF_Dictionary* pFontDict = pBaseDict;
   if (!bCJK) {
     auto pWidths = pdfium::MakeUnique<CPDF_Array>();

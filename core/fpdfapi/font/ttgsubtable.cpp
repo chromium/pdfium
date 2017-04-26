@@ -6,6 +6,8 @@
 
 #include "core/fpdfapi/font/ttgsubtable.h"
 
+#include <utility>
+
 #include "core/fxge/fx_freetype.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
@@ -298,19 +300,21 @@ void CFX_CTTGSUBTable::ParseLookup(FT_Bytes raw, TLookup* rec) {
     ParseSingleSubst(&raw[GetUInt16(sp)], &subTable);
 }
 
-CFX_CTTGSUBTable::TCoverageFormatBase* CFX_CTTGSUBTable::ParseCoverage(
-    FT_Bytes raw) {
+std::unique_ptr<CFX_CTTGSUBTable::TCoverageFormatBase>
+CFX_CTTGSUBTable::ParseCoverage(FT_Bytes raw) {
   FT_Bytes sp = raw;
   uint16_t format = GetUInt16(sp);
-  TCoverageFormatBase* rec = nullptr;
   if (format == 1) {
-    rec = new TCoverageFormat1();
-    ParseCoverageFormat1(raw, static_cast<TCoverageFormat1*>(rec));
-  } else if (format == 2) {
-    rec = new TCoverageFormat2();
-    ParseCoverageFormat2(raw, static_cast<TCoverageFormat2*>(rec));
+    auto rec = pdfium::MakeUnique<TCoverageFormat1>();
+    ParseCoverageFormat1(raw, rec.get());
+    return std::move(rec);
   }
-  return rec;
+  if (format == 2) {
+    auto rec = pdfium::MakeUnique<TCoverageFormat2>();
+    ParseCoverageFormat2(raw, rec.get());
+    return std::move(rec);
+  }
+  return nullptr;
 }
 
 void CFX_CTTGSUBTable::ParseCoverageFormat1(FT_Bytes raw,
@@ -357,7 +361,7 @@ void CFX_CTTGSUBTable::ParseSingleSubstFormat1(FT_Bytes raw,
   FT_Bytes sp = raw;
   GetUInt16(sp);
   uint16_t offset = GetUInt16(sp);
-  rec->Coverage.reset(ParseCoverage(&raw[offset]));
+  rec->Coverage = ParseCoverage(&raw[offset]);
   rec->DeltaGlyphID = GetInt16(sp);
 }
 
@@ -366,7 +370,7 @@ void CFX_CTTGSUBTable::ParseSingleSubstFormat2(FT_Bytes raw,
   FT_Bytes sp = raw;
   (void)GetUInt16(sp);
   uint16_t offset = GetUInt16(sp);
-  rec->Coverage.reset(ParseCoverage(&raw[offset]));
+  rec->Coverage = ParseCoverage(&raw[offset]);
   rec->Substitutes = std::vector<uint16_t>(GetUInt16(sp));
   for (auto& substitute : rec->Substitutes)
     substitute = GetUInt16(sp);

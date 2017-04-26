@@ -26,7 +26,7 @@ class CPDF_ContentParser;
 
 class CPDF_PageObjectHolder {
  public:
-  CPDF_PageObjectHolder();
+  CPDF_PageObjectHolder(CPDF_Document* pDoc, CPDF_Dictionary* pFormDict);
   virtual ~CPDF_PageObjectHolder();
 
   void ContinueParse(IFX_Pause* pPause);

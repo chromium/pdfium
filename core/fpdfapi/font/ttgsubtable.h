@@ -278,7 +278,7 @@ class CFX_CTTGSUBTable {
   void ParseFeature(FT_Bytes raw, TFeature* rec);
   void ParseLookupList(FT_Bytes raw, TLookupList* rec);
   void ParseLookup(FT_Bytes raw, TLookup* rec);
-  TCoverageFormatBase* ParseCoverage(FT_Bytes raw);
+  std::unique_ptr<TCoverageFormatBase> ParseCoverage(FT_Bytes raw);
   void ParseCoverageFormat1(FT_Bytes raw, TCoverageFormat1* rec);
   void ParseCoverageFormat2(FT_Bytes raw, TCoverageFormat2* rec);
   void ParseSingleSubst(FT_Bytes raw, std::unique_ptr<TSubTableBase>* rec);
