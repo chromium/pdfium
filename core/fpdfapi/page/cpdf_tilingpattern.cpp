@@ -15,11 +15,10 @@
 CPDF_TilingPattern::CPDF_TilingPattern(CPDF_Document* pDoc,
                                        CPDF_Object* pPatternObj,
                                        const CFX_Matrix& parentMatrix)
-    : CPDF_Pattern(TILING, pDoc, pPatternObj, parentMatrix) {
-  CPDF_Dictionary* pDict = m_pPatternObj->GetDict();
-  m_Pattern2Form = pDict->GetMatrixFor("Matrix");
-  m_bColored = pDict->GetIntegerFor("PaintType") == 1;
-  m_Pattern2Form.Concat(parentMatrix);
+    : CPDF_Pattern(pDoc, pPatternObj, parentMatrix) {
+  assert(document());
+  m_bColored = pattern_obj()->GetDict()->GetIntegerFor("PaintType") == 1;
+  SetPatternToFormMatrix();
 }
 
 CPDF_TilingPattern::~CPDF_TilingPattern() {}
@@ -36,20 +35,21 @@ bool CPDF_TilingPattern::Load() {
   if (m_pForm)
     return true;
 
-  CPDF_Dictionary* pDict = m_pPatternObj->GetDict();
+  CPDF_Dictionary* pDict = pattern_obj()->GetDict();
   if (!pDict)
     return false;
 
   m_bColored = pDict->GetIntegerFor("PaintType") == 1;
-  m_XStep = (float)fabs(pDict->GetNumberFor("XStep"));
-  m_YStep = (float)fabs(pDict->GetNumberFor("YStep"));
+  m_XStep = static_cast<float>(fabs(pDict->GetNumberFor("XStep")));
+  m_YStep = static_cast<float>(fabs(pDict->GetNumberFor("YStep")));
 
-  CPDF_Stream* pStream = m_pPatternObj->AsStream();
+  CPDF_Stream* pStream = pattern_obj()->AsStream();
   if (!pStream)
     return false;
 
-  m_pForm = pdfium::MakeUnique<CPDF_Form>(m_pDocument, nullptr, pStream);
-  m_pForm->ParseContent(nullptr, &m_ParentMatrix, nullptr);
+  const CFX_Matrix& matrix = parent_matrix();
+  m_pForm = pdfium::MakeUnique<CPDF_Form>(document(), nullptr, pStream);
+  m_pForm->ParseContent(nullptr, &matrix, nullptr);
   m_BBox = pDict->GetRectFor("BBox");
   return true;
 }

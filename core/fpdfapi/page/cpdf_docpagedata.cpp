@@ -28,7 +28,9 @@
 #include "third_party/base/stl_util.h"
 
 CPDF_DocPageData::CPDF_DocPageData(CPDF_Document* pPDFDoc)
-    : m_pPDFDoc(pPDFDoc), m_bForceClear(false) {}
+    : m_pPDFDoc(pPDFDoc), m_bForceClear(false) {
+  assert(m_pPDFDoc);
+}
 
 CPDF_DocPageData::~CPDF_DocPageData() {
   Clear(false);
@@ -330,7 +332,7 @@ CPDF_Pattern* CPDF_DocPageData::GetPattern(CPDF_Object* pPatternObj,
     pPattern = pdfium::MakeUnique<CPDF_ShadingPattern>(m_pPDFDoc, pPatternObj,
                                                        true, matrix);
   } else {
-    CPDF_Dictionary* pDict = pPatternObj ? pPatternObj->GetDict() : nullptr;
+    CPDF_Dictionary* pDict = pPatternObj->GetDict();
     if (pDict) {
       int type = pDict->GetIntegerFor("PatternType");
       if (type == CPDF_Pattern::TILING) {

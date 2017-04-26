@@ -24,18 +24,20 @@ class CPDF_Pattern {
   virtual CPDF_TilingPattern* AsTilingPattern() = 0;
   virtual CPDF_ShadingPattern* AsShadingPattern() = 0;
 
+  // All the getters that return pointers return non-NULL pointers.
   CPDF_Document* document() { return m_pDocument; }
   CPDF_Object* pattern_obj() { return m_pPatternObj; }
   CFX_Matrix* pattern_to_form() { return &m_Pattern2Form; }
   const CFX_Matrix& parent_matrix() const { return m_ParentMatrix; }
 
  protected:
-  CPDF_Pattern(PatternType type,
-               CPDF_Document* pDoc,
+  CPDF_Pattern(CPDF_Document* pDoc,
                CPDF_Object* pObj,
                const CFX_Matrix& parentMatrix);
 
-  const PatternType m_PatternType;
+  void SetPatternToFormMatrix();
+
+ private:
   CPDF_Document* const m_pDocument;
   CPDF_Object* const m_pPatternObj;
   CFX_Matrix m_Pattern2Form;
