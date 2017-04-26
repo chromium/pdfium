@@ -9,7 +9,7 @@
 
 #include <map>
 #include <memory>
-#include <unordered_set>
+#include <set>
 #include <vector>
 
 #include "xfa/fxfa/fxfa.h"
@@ -120,7 +120,7 @@ class CXFA_Document {
   std::unique_ptr<CScript_LogPseudoModel> m_pScriptLog;
   std::unique_ptr<CScript_LayoutPseudoModel> m_pScriptLayout;
   std::unique_ptr<CScript_SignaturePseudoModel> m_pScriptSignature;
-  std::unordered_set<CXFA_Node*> m_PurgeNodes;
+  std::set<CXFA_Node*> m_PurgeNodes;
   XFA_VERSION m_eCurVersionMode;
   uint32_t m_dwDocFlags;
 };

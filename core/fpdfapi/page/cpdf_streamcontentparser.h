@@ -7,8 +7,8 @@
 #ifndef CORE_FPDFAPI_PAGE_CPDF_STREAMCONTENTPARSER_H_
 #define CORE_FPDFAPI_PAGE_CPDF_STREAMCONTENTPARSER_H_
 
+#include <map>
 #include <memory>
-#include <unordered_map>
 #include <vector>
 
 #include "core/fpdfapi/page/cpdf_contentmark.h"
@@ -73,8 +73,7 @@ class CPDF_StreamContentParser {
 
   static const int kParamBufSize = 16;
 
-  using OpCodes =
-      std::unordered_map<uint32_t, void (CPDF_StreamContentParser::*)()>;
+  using OpCodes = std::map<uint32_t, void (CPDF_StreamContentParser::*)()>;
   static OpCodes InitializeOpCodes();
 
   void AddNameParam(const CFX_ByteStringC& str);

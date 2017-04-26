@@ -166,9 +166,6 @@ float PercentageDifferent(const Image& baseline, const Image& actual) {
   return CalculateDifferencePercentage(actual, pixels_different);
 }
 
-// FIXME: Replace with unordered_map when available.
-typedef std::map<uint32_t, int32_t> RgbaToCountMap;
-
 float HistogramPercentageDifferent(const Image& baseline, const Image& actual) {
   // TODO(johnme): Consider using a joint histogram instead, as described in
   // "Comparing Images Using Joint Histograms" by Pass & Zabih
@@ -178,7 +175,7 @@ float HistogramPercentageDifferent(const Image& baseline, const Image& actual) {
   int h = std::min(baseline.h(), actual.h());
 
   // Count occurences of each RGBA pixel value of baseline in the overlap.
-  RgbaToCountMap baseline_histogram;
+  std::map<uint32_t, int32_t> baseline_histogram;
   for (int y = 0; y < h; ++y) {
     for (int x = 0; x < w; ++x) {
       // hash_map operator[] inserts a 0 (default constructor) if key not found.
@@ -191,7 +188,7 @@ float HistogramPercentageDifferent(const Image& baseline, const Image& actual) {
   for (int y = 0; y < h; ++y) {
     for (int x = 0; x < w; ++x) {
       uint32_t actual_rgba = actual.pixel_at(x, y);
-      RgbaToCountMap::iterator it = baseline_histogram.find(actual_rgba);
+      auto it = baseline_histogram.find(actual_rgba);
       if (it != baseline_histogram.end() && it->second > 0)
         --it->second;
       else

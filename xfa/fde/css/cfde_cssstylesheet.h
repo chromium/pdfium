@@ -7,8 +7,8 @@
 #ifndef XFA_FDE_CSS_CFDE_CSSSTYLESHEET_H_
 #define XFA_FDE_CSS_CFDE_CSSSTYLESHEET_H_
 
+#include <map>
 #include <memory>
-#include <unordered_map>
 #include <vector>
 
 #include "core/fxcrt/fx_string.h"
@@ -34,7 +34,7 @@ class CFDE_CSSStyleSheet {
   void SkipRuleSet(CFDE_CSSSyntaxParser* pSyntax);
 
   std::vector<std::unique_ptr<CFDE_CSSStyleRule>> m_RuleArray;
-  std::unordered_map<uint32_t, wchar_t*> m_StringCache;
+  std::map<uint32_t, wchar_t*> m_StringCache;
 };
 
 #endif  // XFA_FDE_CSS_CFDE_CSSSTYLESHEET_H_

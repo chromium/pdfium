@@ -8,7 +8,7 @@
 #define FPDFSDK_JAVASCRIPT_APP_H_
 
 #include <memory>
-#include <unordered_set>
+#include <set>
 #include <vector>
 
 #include "fpdfsdk/javascript/JS_Define.h"
@@ -172,7 +172,7 @@ class app : public CJS_EmbedObj {
 
   bool m_bCalculate;
   bool m_bRuntimeHighLight;
-  std::unordered_set<std::unique_ptr<GlobalTimer>> m_Timers;
+  std::set<std::unique_ptr<GlobalTimer>> m_Timers;
 };
 
 class CJS_App : public CJS_Object {

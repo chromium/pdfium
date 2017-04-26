@@ -8,7 +8,7 @@
 
 #include <map>
 #include <memory>
-#include <unordered_set>
+#include <set>
 #include <utility>
 #include <vector>
 
@@ -90,7 +90,7 @@ int32_t GetCount(CXFA_Node* pInstMgrNode) {
 }
 
 std::vector<CXFA_Node*> NodesSortedByDocumentIdx(
-    const std::unordered_set<CXFA_Node*>& rgNodeSet) {
+    const std::set<CXFA_Node*>& rgNodeSet) {
   if (rgNodeSet.empty())
     return std::vector<CXFA_Node*>();
 
@@ -105,8 +105,7 @@ std::vector<CXFA_Node*> NodesSortedByDocumentIdx(
   return rgNodeArray;
 }
 
-using CXFA_NodeSetPair =
-    std::pair<std::unordered_set<CXFA_Node*>, std::unordered_set<CXFA_Node*>>;
+using CXFA_NodeSetPair = std::pair<std::set<CXFA_Node*>, std::set<CXFA_Node*>>;
 using CXFA_NodeSetPairMap =
     std::map<uint32_t, std::unique_ptr<CXFA_NodeSetPair>>;
 using CXFA_NodeSetPairMapMap =
@@ -129,8 +128,8 @@ CXFA_NodeSetPair* NodeSetPairForNode(CXFA_Node* pNode,
   return (*pNodeSetPairMap)[dwNameHash].get();
 }
 
-void ReorderDataNodes(const std::unordered_set<CXFA_Node*>& sSet1,
-                      const std::unordered_set<CXFA_Node*>& sSet2,
+void ReorderDataNodes(const std::set<CXFA_Node*>& sSet1,
+                      const std::set<CXFA_Node*>& sSet2,
                       bool bInsertBefore) {
   CXFA_NodeSetPairMapMap rgMap;
   for (CXFA_Node* pNode : sSet1) {
@@ -231,8 +230,8 @@ void InsertItem(CXFA_Node* pInstMgrNode,
     pInstMgrNode->GetNodeItem(XFA_NODEITEM_Parent)
         ->InsertChild(pNewInstance, pNextSibling);
     if (bMoveDataBindingNodes) {
-      std::unordered_set<CXFA_Node*> sNew;
-      std::unordered_set<CXFA_Node*> sAfter;
+      std::set<CXFA_Node*> sNew;
+      std::set<CXFA_Node*> sAfter;
       CXFA_NodeIteratorTemplate<CXFA_Node,
                                 CXFA_TraverseStrategy_XFAContainerNode>
           sIteratorNew(pNewInstance);
@@ -262,8 +261,8 @@ void InsertItem(CXFA_Node* pInstMgrNode,
     pInstMgrNode->GetNodeItem(XFA_NODEITEM_Parent)
         ->InsertChild(pNewInstance, pBeforeInstance);
     if (bMoveDataBindingNodes) {
-      std::unordered_set<CXFA_Node*> sNew;
-      std::unordered_set<CXFA_Node*> sBefore;
+      std::set<CXFA_Node*> sNew;
+      std::set<CXFA_Node*> sBefore;
       CXFA_NodeIteratorTemplate<CXFA_Node,
                                 CXFA_TraverseStrategy_XFAContainerNode>
           sIteratorNew(pNewInstance);
