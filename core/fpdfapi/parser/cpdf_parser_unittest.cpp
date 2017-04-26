@@ -16,12 +16,8 @@
 // Provide a way to read test data from a buffer instead of a file.
 class CFX_TestBufferRead : public IFX_SeekableReadStream {
  public:
-  static CFX_RetainPtr<CFX_TestBufferRead> Create(
-      const unsigned char* buffer_in,
-      size_t buf_size) {
-    return CFX_RetainPtr<CFX_TestBufferRead>(
-        new CFX_TestBufferRead(buffer_in, buf_size));
-  }
+  template <typename T, typename... Args>
+  friend CFX_RetainPtr<T> pdfium::MakeRetain(Args&&... args);
 
   // IFX_SeekableReadStream:
   bool ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) override {
@@ -62,11 +58,9 @@ class CPDF_TestParser : public CPDF_Parser {
 
   // Setup reading from a buffer and initial states.
   bool InitTestFromBuffer(const unsigned char* buffer, size_t len) {
-    CFX_RetainPtr<CFX_TestBufferRead> buffer_reader =
-        CFX_TestBufferRead::Create(buffer, len);
-
     // For the test file, the header is set at the beginning.
-    m_pSyntax->InitParser(buffer_reader, 0);
+    m_pSyntax->InitParser(pdfium::MakeRetain<CFX_TestBufferRead>(buffer, len),
+                          0);
     return true;
   }
 

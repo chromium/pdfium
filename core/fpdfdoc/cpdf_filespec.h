@@ -15,8 +15,8 @@ class CPDF_Object;
 
 class CPDF_FileSpec {
  public:
-  explicit CPDF_FileSpec(const CFX_WeakPtr<CFX_ByteStringPool>& pPool);
-  explicit CPDF_FileSpec(CPDF_Object* pObj) : m_pObj(pObj) {}
+  explicit CPDF_FileSpec(CPDF_Object* pObj);
+  ~CPDF_FileSpec();
 
   // Convert a platform dependent file name into pdf format.
   static CFX_WideString EncodeFileName(const CFX_WideStringC& filepath);
@@ -31,7 +31,7 @@ class CPDF_FileSpec {
   void SetFileName(const CFX_WideStringC& wsFileName);
 
  private:
-  CPDF_Object* m_pObj;
+  CPDF_Object* const m_pObj;  // not owned.
 };
 
 #endif  // CORE_FPDFDOC_CPDF_FILESPEC_H_

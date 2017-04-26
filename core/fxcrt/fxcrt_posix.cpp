@@ -6,15 +6,18 @@
 
 #include "core/fxcrt/fxcrt_posix.h"
 
+#include <memory>
+
 #include "core/fxcrt/fx_basic.h"
+#include "third_party/base/ptr_util.h"
 
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_LINUX_ || \
     _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_ || \
     _FXM_PLATFORM_ == _FXM_PLATFORM_ANDROID_
 
 // static
-IFXCRT_FileAccess* IFXCRT_FileAccess::Create() {
-  return new CFXCRT_FileAccess_Posix;
+std::unique_ptr<IFXCRT_FileAccess> IFXCRT_FileAccess::Create() {
+  return pdfium::MakeUnique<CFXCRT_FileAccess_Posix>();
 }
 
 void FXCRT_Posix_GetFileMode(uint32_t dwModes,

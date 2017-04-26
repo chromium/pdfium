@@ -112,10 +112,9 @@ bool CPDF_FileSpec::GetFileName(CFX_WideString* csFileName) const {
   return true;
 }
 
-CPDF_FileSpec::CPDF_FileSpec(const CFX_WeakPtr<CFX_ByteStringPool>& pPool) {
-  m_pObj = new CPDF_Dictionary(pPool);
-  m_pObj->AsDictionary()->SetNewFor<CPDF_Name>("Type", "Filespec");
-}
+CPDF_FileSpec::CPDF_FileSpec(CPDF_Object* pObj) : m_pObj(pObj) {}
+
+CPDF_FileSpec::~CPDF_FileSpec() {}
 
 CFX_WideString CPDF_FileSpec::EncodeFileName(const CFX_WideStringC& filepath) {
   if (filepath.GetLength() <= 1)

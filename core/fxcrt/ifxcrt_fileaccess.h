@@ -15,7 +15,7 @@
 
 class IFXCRT_FileAccess {
  public:
-  static IFXCRT_FileAccess* Create();
+  static std::unique_ptr<IFXCRT_FileAccess> Create();
   virtual ~IFXCRT_FileAccess() {}
 
   virtual bool Open(const CFX_ByteStringC& fileName, uint32_t dwMode) = 0;

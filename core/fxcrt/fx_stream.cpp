@@ -52,7 +52,7 @@ class CFX_CRTFileStream final : public IFX_SeekableStream {
 CFX_RetainPtr<IFX_SeekableStream> IFX_SeekableStream::CreateFromFilename(
     const char* filename,
     uint32_t dwModes) {
-  std::unique_ptr<IFXCRT_FileAccess> pFA(IFXCRT_FileAccess::Create());
+  std::unique_ptr<IFXCRT_FileAccess> pFA = IFXCRT_FileAccess::Create();
   if (!pFA->Open(filename, dwModes))
     return nullptr;
   return pdfium::MakeRetain<CFX_CRTFileStream>(std::move(pFA));
@@ -62,7 +62,7 @@ CFX_RetainPtr<IFX_SeekableStream> IFX_SeekableStream::CreateFromFilename(
 CFX_RetainPtr<IFX_SeekableStream> IFX_SeekableStream::CreateFromFilename(
     const wchar_t* filename,
     uint32_t dwModes) {
-  std::unique_ptr<IFXCRT_FileAccess> pFA(IFXCRT_FileAccess::Create());
+  std::unique_ptr<IFXCRT_FileAccess> pFA = IFXCRT_FileAccess::Create();
   if (!pFA->Open(filename, dwModes))
     return nullptr;
   return pdfium::MakeRetain<CFX_CRTFileStream>(std::move(pFA));

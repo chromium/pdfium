@@ -23,6 +23,7 @@
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxge/cfx_substfont.h"
 #include "core/fxge/fx_font.h"
+#include "third_party/base/ptr_util.h"
 #include "third_party/base/stl_util.h"
 
 namespace {
@@ -633,7 +634,7 @@ uint8_t CPDF_InterForm::GetNativeCharSet() {
 CPDF_InterForm::CPDF_InterForm(CPDF_Document* pDocument)
     : m_pDocument(pDocument),
       m_pFormDict(nullptr),
-      m_pFieldTree(new CFieldTree),
+      m_pFieldTree(pdfium::MakeUnique<CFieldTree>()),
       m_pFormNotify(nullptr) {
   CPDF_Dictionary* pRoot = m_pDocument->GetRoot();
   if (!pRoot)
@@ -1198,9 +1199,12 @@ std::unique_ptr<CFDF_Document> CPDF_InterForm::ExportToFDF(
       pMainDict->SetNewFor<CPDF_String>("UF", PDF_EncodeText(wsFilePath),
                                         false);
     } else {
-      CPDF_FileSpec filespec(pDoc->GetByteStringPool());
+      auto pNewDict =
+          pdfium::MakeUnique<CPDF_Dictionary>(pDoc->GetByteStringPool());
+      pNewDict->SetNewFor<CPDF_Name>("Type", "Filespec");
+      CPDF_FileSpec filespec(pNewDict.get());
       filespec.SetFileName(pdf_path);
-      pMainDict->SetFor("F", pdfium::WrapUnique(filespec.GetObj()));
+      pMainDict->SetFor("F", std::move(pNewDict));
     }
   }
 

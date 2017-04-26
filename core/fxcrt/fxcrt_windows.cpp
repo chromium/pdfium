@@ -6,13 +6,16 @@
 
 #include "core/fxcrt/fxcrt_windows.h"
 
+#include <memory>
+
 #include "core/fxcrt/fx_string.h"
+#include "third_party/base/ptr_util.h"
 
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
 
 // static
-IFXCRT_FileAccess* IFXCRT_FileAccess::Create() {
-  return new CFXCRT_FileAccess_Win64;
+std::unique_ptr<IFXCRT_FileAccess> IFXCRT_FileAccess::Create() {
+  return pdfium::MakeUnique<CFXCRT_FileAccess_Win64>();
 }
 
 void FXCRT_Windows_GetFileMode(uint32_t dwMode,

@@ -18,14 +18,13 @@
 #include "third_party/base/ptr_util.h"
 
 CCodec_ModuleMgr::CCodec_ModuleMgr()
-    : m_pBasicModule(new CCodec_BasicModule),
-      m_pFaxModule(new CCodec_FaxModule),
-      m_pJpegModule(new CCodec_JpegModule),
-      m_pJpxModule(new CCodec_JpxModule),
-      m_pJbig2Module(new CCodec_Jbig2Module),
-      m_pIccModule(new CCodec_IccModule),
-      m_pFlateModule(new CCodec_FlateModule) {
-}
+    : m_pBasicModule(pdfium::MakeUnique<CCodec_BasicModule>()),
+      m_pFaxModule(pdfium::MakeUnique<CCodec_FaxModule>()),
+      m_pJpegModule(pdfium::MakeUnique<CCodec_JpegModule>()),
+      m_pJpxModule(pdfium::MakeUnique<CCodec_JpxModule>()),
+      m_pJbig2Module(pdfium::MakeUnique<CCodec_Jbig2Module>()),
+      m_pIccModule(pdfium::MakeUnique<CCodec_IccModule>()),
+      m_pFlateModule(pdfium::MakeUnique<CCodec_FlateModule>()) {}
 
 CCodec_ModuleMgr::~CCodec_ModuleMgr() {}
 
