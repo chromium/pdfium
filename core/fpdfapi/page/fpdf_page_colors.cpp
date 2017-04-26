@@ -72,8 +72,8 @@ void ReverseRGB(uint8_t* pDestBuf, const uint8_t* pSrcBuf, int pixels) {
   }
 }
 
-CPDF_DeviceCS::CPDF_DeviceCS(CPDF_Document* pDoc, int family)
-    : CPDF_ColorSpace(pDoc, family, ComponentsForFamily(family)) {
+CPDF_DeviceCS::CPDF_DeviceCS(int family)
+    : CPDF_ColorSpace(nullptr, family, ComponentsForFamily(family)) {
   ASSERT(family == PDFCS_DEVICEGRAY || family == PDFCS_DEVICERGB ||
          family == PDFCS_DEVICECMYK);
 }

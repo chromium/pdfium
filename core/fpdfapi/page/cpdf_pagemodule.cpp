@@ -7,9 +7,9 @@
 #include "core/fpdfapi/page/cpdf_pagemodule.h"
 
 CPDF_PageModule::CPDF_PageModule()
-    : m_StockGrayCS(nullptr, PDFCS_DEVICEGRAY),
-      m_StockRGBCS(nullptr, PDFCS_DEVICERGB),
-      m_StockCMYKCS(nullptr, PDFCS_DEVICECMYK),
+    : m_StockGrayCS(PDFCS_DEVICEGRAY),
+      m_StockRGBCS(PDFCS_DEVICERGB),
+      m_StockCMYKCS(PDFCS_DEVICECMYK),
       m_StockPatternCS(nullptr) {}
 
 CPDF_PageModule::~CPDF_PageModule() {}

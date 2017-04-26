@@ -159,7 +159,7 @@ class CPDF_IccProfile : public CFX_Retainable {
 
 class CPDF_DeviceCS : public CPDF_ColorSpace {
  public:
-  CPDF_DeviceCS(CPDF_Document* pDoc, int family);
+  explicit CPDF_DeviceCS(int family);
   ~CPDF_DeviceCS() override;
 
   // CPDF_ColorSpace:
