@@ -204,9 +204,9 @@ std::tuple<float, float, float> CPDF_MeshStream::ReadColor() {
                          (m_ColorMax[i] - m_ColorMin[i]) / m_ComponentMax;
   }
 
-  float r;
-  float g;
-  float b;
+  float r = 0.0;
+  float g = 0.0;
+  float b = 0.0;
   if (m_funcs.empty()) {
     m_pCS->GetRGB(color_value, &r, &g, &b);
     return std::tuple<float, float, float>(r, g, b);
