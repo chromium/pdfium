@@ -25,7 +25,8 @@ void BC_Library_Init() {
   CBC_ErrorCorrection::Initialize();
   CBC_PDF417HighLevelEncoder::Initialize();
 }
-void BC_Library_Destory() {
+
+void BC_Library_Destroy() {
   CBC_QRCoderErrorCorrectionLevel::Finalize();
   CBC_QRCoderMode::Finalize();
   CBC_QRCoderVersion::Finalize();

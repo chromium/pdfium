@@ -419,7 +419,7 @@ DLLEXPORT void STDCALL FPDF_DestroyLibrary() {
     return;
 
 #ifdef PDF_ENABLE_XFA
-  BC_Library_Destory();
+  BC_Library_Destroy();
   FXJSE_Finalize();
 #endif  // PDF_ENABLE_XFA
 

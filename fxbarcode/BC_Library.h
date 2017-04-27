@@ -33,6 +33,6 @@ enum BC_TYPE {
 };
 
 void BC_Library_Init();
-void BC_Library_Destory();
+void BC_Library_Destroy();
 
 #endif  // FXBARCODE_BC_LIBRARY_H_
