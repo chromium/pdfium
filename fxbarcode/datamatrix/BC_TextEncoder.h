@@ -7,7 +7,7 @@
 #ifndef FXBARCODE_DATAMATRIX_BC_TEXTENCODER_H_
 #define FXBARCODE_DATAMATRIX_BC_TEXTENCODER_H_
 
-class CBC_TextEncoder;
+#include "fxbarcode/datamatrix/BC_C40Encoder.h"
 
 class CBC_TextEncoder : public CBC_C40Encoder {
  public:

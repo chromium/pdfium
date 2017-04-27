@@ -7,8 +7,8 @@
 #ifndef FXBARCODE_DATAMATRIX_BC_X12ENCODER_H_
 #define FXBARCODE_DATAMATRIX_BC_X12ENCODER_H_
 
-class CBC_C40Encoder;
-class CBC_X12Encoder;
+#include "fxbarcode/datamatrix/BC_C40Encoder.h"
+
 class CBC_X12Encoder : public CBC_C40Encoder {
  public:
   CBC_X12Encoder();

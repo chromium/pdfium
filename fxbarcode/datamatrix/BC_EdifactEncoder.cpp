@@ -20,9 +20,10 @@
  * limitations under the License.
  */
 
+#include "fxbarcode/datamatrix/BC_EdifactEncoder.h"
+
 #include "fxbarcode/BC_Dimension.h"
 #include "fxbarcode/common/BC_CommonBitMatrix.h"
-#include "fxbarcode/datamatrix/BC_EdifactEncoder.h"
 #include "fxbarcode/datamatrix/BC_Encoder.h"
 #include "fxbarcode/datamatrix/BC_EncoderContext.h"
 #include "fxbarcode/datamatrix/BC_HighLevelEncoder.h"
@@ -115,15 +116,17 @@ void CBC_EdifactEncoder::handleEOD(CBC_EncoderContext& context,
   }
   context.signalEncoderChange(ASCII_ENCODATION);
 }
+
 void CBC_EdifactEncoder::encodeChar(wchar_t c, CFX_WideString& sb, int32_t& e) {
   if (c >= ' ' && c <= '?') {
     sb += c;
   } else if (c >= '@' && c <= '^') {
     sb += (wchar_t)(c - 64);
   } else {
-    CBC_HighLevelEncoder::illegalCharacter(c, e);
+    e = BCExceptionIllegalArgument;
   }
 }
+
 CFX_WideString CBC_EdifactEncoder::encodeToCodewords(CFX_WideString sb,
                                                      int32_t startPos,
                                                      int32_t& e) {

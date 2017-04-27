@@ -302,9 +302,7 @@ int32_t CBC_HighLevelEncoder::determineConsecutiveDigitCount(CFX_WideString msg,
   }
   return count;
 }
-void CBC_HighLevelEncoder::illegalCharacter(wchar_t c, int32_t& e) {
-  e = BCExceptionIllegalArgument;
-}
+
 wchar_t CBC_HighLevelEncoder::randomize253State(wchar_t ch,
                                                 int32_t codewordPosition) {
   int32_t pseudoRandom = ((149 * codewordPosition) % 253) + 1;

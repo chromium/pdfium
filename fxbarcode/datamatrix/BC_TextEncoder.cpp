@@ -20,6 +20,8 @@
  * limitations under the License.
  */
 
+#include "fxbarcode/datamatrix/BC_TextEncoder.h"
+
 #include "fxbarcode/BC_Dimension.h"
 #include "fxbarcode/common/BC_CommonBitMatrix.h"
 #include "fxbarcode/datamatrix/BC_C40Encoder.h"
@@ -28,7 +30,6 @@
 #include "fxbarcode/datamatrix/BC_HighLevelEncoder.h"
 #include "fxbarcode/datamatrix/BC_SymbolInfo.h"
 #include "fxbarcode/datamatrix/BC_SymbolShapeHint.h"
-#include "fxbarcode/datamatrix/BC_TextEncoder.h"
 
 CBC_TextEncoder::CBC_TextEncoder() {}
 CBC_TextEncoder::~CBC_TextEncoder() {}
@@ -92,6 +93,6 @@ int32_t CBC_TextEncoder::encodeChar(wchar_t c, CFX_WideString& sb, int32_t& e) {
       return -1;
     return len;
   }
-  CBC_HighLevelEncoder::illegalCharacter(c, e);
+  e = BCExceptionIllegalArgument;
   return -1;
 }

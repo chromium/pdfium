@@ -40,7 +40,6 @@ class CBC_HighLevelEncoder : public CBC_SymbolShapeHint {
   static bool isExtendedASCII(wchar_t ch);
   static int32_t determineConsecutiveDigitCount(CFX_WideString msg,
                                                 int32_t startpos);
-  static void illegalCharacter(wchar_t c, int32_t& e);
 
  public:
   static wchar_t LATCH_TO_C40;
