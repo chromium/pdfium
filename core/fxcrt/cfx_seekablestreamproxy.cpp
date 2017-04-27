@@ -164,7 +164,7 @@ CFX_SeekableStreamProxy::CFX_SeekableStreamProxy(
   FX_FILESIZE iPosition = GetPosition();
   Seek(CFX_SeekableStreamProxy::Pos::Begin, 0);
 
-  uint32_t bom;
+  uint32_t bom = 0;
   ReadData(reinterpret_cast<uint8_t*>(&bom), 3);
 
   bom &= BOM_MASK;
