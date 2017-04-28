@@ -393,8 +393,9 @@ class CFieldTree {
  public:
   class Node {
    public:
-    Node() : m_pField(nullptr) {}
-    explicit Node(const CFX_WideString& short_name) : m_ShortName(short_name) {}
+    Node() : m_pField(nullptr), m_level(0) {}
+    Node(const CFX_WideString& short_name, int level)
+        : m_ShortName(short_name), m_level(level) {}
     ~Node() {}
 
     void AddChildNode(std::unique_ptr<Node> pNode) {
@@ -408,10 +409,10 @@ class CFieldTree {
 
     CPDF_FormField* GetFieldAtIndex(size_t index) {
       size_t nFieldsToGo = index;
-      return GetFieldInternal(&nFieldsToGo, 0);
+      return GetFieldInternal(&nFieldsToGo);
     }
 
-    size_t CountFields() const { return CountFieldsInternal(0); }
+    size_t CountFields() const { return CountFieldsInternal(); }
 
     void SetField(std::unique_ptr<CPDF_FormField> pField) {
       m_pField = std::move(pField);
@@ -421,11 +422,10 @@ class CFieldTree {
 
     const CFX_WideString& GetShortName() const { return m_ShortName; }
 
-   private:
-    CPDF_FormField* GetFieldInternal(size_t* pFieldsToGo, int nLevel) {
-      if (nLevel > nMaxRecursion)
-        return nullptr;
+    int GetLevel() const { return m_level; }
 
+   private:
+    CPDF_FormField* GetFieldInternal(size_t* pFieldsToGo) {
       if (m_pField) {
         if (*pFieldsToGo == 0)
           return m_pField.get();
@@ -433,30 +433,27 @@ class CFieldTree {
         --*pFieldsToGo;
       }
       for (size_t i = 0; i < GetChildrenCount(); ++i) {
-        CPDF_FormField* pField =
-            GetChildAt(i)->GetFieldInternal(pFieldsToGo, nLevel + 1);
+        CPDF_FormField* pField = GetChildAt(i)->GetFieldInternal(pFieldsToGo);
         if (pField)
           return pField;
       }
       return nullptr;
     }
 
-    size_t CountFieldsInternal(int nLevel) const {
-      if (nLevel > nMaxRecursion)
-        return 0;
-
+    size_t CountFieldsInternal() const {
       size_t count = 0;
       if (m_pField)
         ++count;
 
       for (size_t i = 0; i < GetChildrenCount(); ++i)
-        count += GetChildAt(i)->CountFieldsInternal(nLevel + 1);
+        count += GetChildAt(i)->CountFieldsInternal();
       return count;
     }
 
     std::vector<std::unique_ptr<Node>> m_Children;
     CFX_WideString m_ShortName;
     std::unique_ptr<CPDF_FormField> m_pField;
+    const int m_level;
   };
 
   CFieldTree();
@@ -483,7 +480,11 @@ CFieldTree::Node* CFieldTree::AddChild(Node* pParent,
   if (!pParent)
     return nullptr;
 
-  auto pNew = pdfium::MakeUnique<Node>(short_name);
+  int level = pParent->GetLevel() + 1;
+  if (level > nMaxRecursion)
+    return nullptr;
+
+  auto pNew = pdfium::MakeUnique<Node>(short_name, pParent->GetLevel() + 1);
   Node* pChild = pNew.get();
   pParent->AddChildNode(std::move(pNew));
   return pChild;
@@ -519,6 +520,8 @@ bool CFieldTree::SetField(const CFX_WideString& full_name,
     pNode = Lookup(pLast, name);
     if (!pNode)
       pNode = AddChild(pLast, name);
+    if (!pNode)
+      return false;
 
     name_extractor.GetNext(pName, nLength);
   }
