@@ -694,3 +694,13 @@ TEST_F(FPDFEditEmbeddertest, LoadCIDType2Font) {
   ASSERT_TRUE(widths_array);
   CheckCompositeFontWidths(widths_array, typed_font);
 }
+
+TEST_F(FPDFEditEmbeddertest, NormalizeNegativeRotation) {
+  // Load document with a -90 degree rotation
+  EXPECT_TRUE(OpenDocument("bug_713197.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  EXPECT_NE(nullptr, page);
+
+  EXPECT_EQ(3, FPDFPage_GetRotation(page));
+  UnloadPage(page);
+}

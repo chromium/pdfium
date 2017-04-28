@@ -740,19 +740,7 @@ FX_RECT GetMaskDimensionsAndOffsets(CPDF_Page* pPage,
                   static_cast<int>(mask_box.bottom * scale_y);
 
   // Get page rotation
-  int page_rotation = 0;
-  CPDF_Dictionary* pDict = pPage->m_pFormDict;
-  while (pDict) {
-    if (pDict->KeyExist("Rotate")) {
-      CPDF_Object* pRotateObj = pDict->GetObjectFor("Rotate")->GetDirect();
-      page_rotation = pRotateObj ? pRotateObj->GetInteger() / 90 : 0;
-      break;
-    }
-    if (!pDict->KeyExist("Parent"))
-      break;
-
-    pDict = ToDictionary(pDict->GetObjectFor("Parent")->GetDirect());
-  }
+  int page_rotation = pPage->GetPageRotation();
 
   // Compute offsets
   int offset_x = 0;

@@ -35,10 +35,7 @@ CPDF_Page::CPDF_Page(CPDF_Document* pDocument,
   CPDF_Object* pageAttr = GetPageAttr("Resources");
   m_pResources = pageAttr ? pageAttr->GetDict() : nullptr;
   m_pPageResources = m_pResources;
-  CPDF_Object* pRotate = GetPageAttr("Rotate");
-  int rotate = pRotate ? pRotate->GetInteger() / 90 % 4 : 0;
-  if (rotate < 0)
-    rotate += 4;
+  int rotate = GetPageRotation();
 
   CPDF_Array* pMediaBox = ToArray(GetPageAttr("MediaBox"));
   CFX_FloatRect mediabox;
@@ -174,6 +171,12 @@ CFX_Matrix CPDF_Page::GetDisplayMatrix(int xPos,
                            (x1 - x0) / m_PageHeight, (y1 - y0) / m_PageHeight,
                            x0, y0));
   return matrix;
+}
+
+int CPDF_Page::GetPageRotation() const {
+  CPDF_Object* pRotate = GetPageAttr("Rotate");
+  int rotate = pRotate ? (pRotate->GetInteger() / 90) % 4 : 0;
+  return (rotate < 0) ? (rotate + 4) : rotate;
 }
 
 bool GraphicsData::operator<(const GraphicsData& other) const {

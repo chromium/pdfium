@@ -133,20 +133,7 @@ DLLEXPORT int STDCALL FPDFPage_GetRotation(FPDF_PAGE page) {
   CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
   if (!IsPageObject(pPage))
     return -1;
-
-  CPDF_Dictionary* pDict = pPage->m_pFormDict;
-  while (pDict) {
-    if (pDict->KeyExist("Rotate")) {
-      CPDF_Object* pRotateObj = pDict->GetObjectFor("Rotate")->GetDirect();
-      return pRotateObj ? pRotateObj->GetInteger() / 90 : 0;
-    }
-    if (!pDict->KeyExist("Parent"))
-      break;
-
-    pDict = ToDictionary(pDict->GetObjectFor("Parent")->GetDirect());
-  }
-
-  return 0;
+  return pPage->GetPageRotation();
 }
 
 DLLEXPORT void STDCALL FPDFPage_InsertObject(FPDF_PAGE page,
