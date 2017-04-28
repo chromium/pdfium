@@ -551,16 +551,9 @@ CXFA_Node* FindMatchingDataNode(
     bool& bSelfMatch,
     XFA_ATTRIBUTEENUM& eBindMatch,
     bool bUpLevel) {
-  bool bOwnIterator = false;
-  if (!pIterator) {
-    bOwnIterator = true;
-    pIterator = new CXFA_NodeIteratorTemplate<
-        CXFA_Node, CXFA_TraverseStrategy_XFAContainerNode>(pTemplateNode);
-  }
-
   CXFA_Node* pResult = nullptr;
-  for (CXFA_Node* pCurTemplateNode = pIterator->GetCurrent();
-       pCurTemplateNode;) {
+  CXFA_Node* pCurTemplateNode = pIterator->GetCurrent();
+  while (pCurTemplateNode) {
     XFA_Element eMatchNodeType;
     switch (pCurTemplateNode->GetElementType()) {
       case XFA_Element::Subform:
@@ -650,8 +643,6 @@ CXFA_Node* FindMatchingDataNode(
       bSelfMatch = true;
     break;
   }
-  if (bOwnIterator)
-    delete pIterator;
   return pResult;
 }
 
@@ -823,9 +814,12 @@ CXFA_Node* CopyContainer_SubformSet(CXFA_Document* pDocument,
             bSelfMatch = false;
             eBindMatch = XFA_ATTRIBUTEENUM_None;
             if (eRelation != XFA_ATTRIBUTEENUM_Ordered) {
+              CXFA_NodeIteratorTemplate<CXFA_Node,
+                                        CXFA_TraverseStrategy_XFAContainerNode>
+                  sChildIter(pTemplateChild);
               CXFA_Node* pDataMatch = FindMatchingDataNode(
                   pDocument, pTemplateChild, pDataScope, bAccessedDataDOM,
-                  false, nullptr, bSelfMatch, eBindMatch, true);
+                  false, &sChildIter, bSelfMatch, eBindMatch, true);
               if (pDataMatch) {
                 RecurseRecord sNewRecord = {pTemplateChild, pDataMatch};
                 if (bSelfMatch)
@@ -989,9 +983,11 @@ CXFA_Node* CopyContainer_Field(CXFA_Document* pDocument,
     bool bAccessedDataDOM = false;
     bool bSelfMatch = false;
     XFA_ATTRIBUTEENUM eBindMatch;
+    CXFA_NodeIteratorTemplate<CXFA_Node, CXFA_TraverseStrategy_XFAContainerNode>
+        sNodeIter(pTemplateNode);
     CXFA_Node* pDataNode = FindMatchingDataNode(
-        pDocument, pTemplateNode, pDataScope, bAccessedDataDOM, true, nullptr,
-        bSelfMatch, eBindMatch, bUpLevel);
+        pDocument, pTemplateNode, pDataScope, bAccessedDataDOM, true,
+        &sNodeIter, bSelfMatch, eBindMatch, bUpLevel);
     if (pDataNode)
       CreateDataBinding(pFieldNode, pDataNode, true);
   } else {
