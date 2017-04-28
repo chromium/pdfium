@@ -20,11 +20,12 @@
  * limitations under the License.
  */
 
+#include "fxbarcode/datamatrix/BC_HighLevelEncoder.h"
+
 #include <limits>
 #include <memory>
 #include <vector>
 
-#include "fxbarcode/BC_Dimension.h"
 #include "fxbarcode/BC_UtilCodingConvert.h"
 #include "fxbarcode/common/BC_CommonBitMatrix.h"
 #include "fxbarcode/datamatrix/BC_ASCIIEncoder.h"
@@ -33,7 +34,6 @@
 #include "fxbarcode/datamatrix/BC_EdifactEncoder.h"
 #include "fxbarcode/datamatrix/BC_Encoder.h"
 #include "fxbarcode/datamatrix/BC_EncoderContext.h"
-#include "fxbarcode/datamatrix/BC_HighLevelEncoder.h"
 #include "fxbarcode/datamatrix/BC_SymbolInfo.h"
 #include "fxbarcode/datamatrix/BC_SymbolShapeHint.h"
 #include "fxbarcode/datamatrix/BC_TextEncoder.h"
@@ -69,19 +69,16 @@ std::vector<uint8_t>& CBC_HighLevelEncoder::getBytesForMessage(
 CFX_WideString CBC_HighLevelEncoder::encodeHighLevel(CFX_WideString msg,
                                                      CFX_WideString ecLevel,
                                                      int32_t& e) {
-  return encodeHighLevel(msg, ecLevel, FORCE_NONE, nullptr, nullptr, e);
+  return encodeHighLevel(msg, ecLevel, FORCE_NONE, e);
 }
 CFX_WideString CBC_HighLevelEncoder::encodeHighLevel(CFX_WideString msg,
                                                      CFX_WideString ecLevel,
                                                      SymbolShapeHint shape,
-                                                     CBC_Dimension* minSize,
-                                                     CBC_Dimension* maxSize,
                                                      int32_t& e) {
   CBC_EncoderContext context(msg, ecLevel, e);
   if (e != BCExceptionNO)
     return CFX_WideString();
   context.setSymbolShape(shape);
-  context.setSizeConstraints(minSize, maxSize);
   if ((msg.Mid(0, 6) == MACRO_05_HEADER) &&
       (msg.Mid(msg.GetLength() - 1, 1) == MACRO_TRAILER)) {
     context.writeCodeword(MACRO_05);

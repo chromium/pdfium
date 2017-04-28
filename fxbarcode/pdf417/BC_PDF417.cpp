@@ -399,48 +399,49 @@ CBC_BarcodeMatrix* CBC_PDF417::getBarcodeMatrix() {
   return m_barcodeMatrix.get();
 }
 
-void CBC_PDF417::generateBarcodeLogic(CFX_WideString msg,
-                                      int32_t errorCorrectionLevel,
-                                      int32_t& e) {
+bool CBC_PDF417::generateBarcodeLogic(CFX_WideString msg,
+                                      int32_t errorCorrectionLevel) {
   int32_t errorCorrectionCodeWords =
       CBC_PDF417ErrorCorrection::getErrorCorrectionCodewordCount(
-          errorCorrectionLevel, e);
-  if (e != BCExceptionNO)
-    return;
+          errorCorrectionLevel);
+  if (errorCorrectionCodeWords < 0)
+    return false;
+
+  int32_t e = BCExceptionNO;
   CFX_WideString highLevel =
       CBC_PDF417HighLevelEncoder::encodeHighLevel(msg, m_compaction, e);
   if (e != BCExceptionNO)
-    return;
+    return false;
   int32_t sourceCodeWords = highLevel.GetLength();
-  std::vector<int32_t>* dimension =
-      determineDimensions(sourceCodeWords, errorCorrectionCodeWords, e);
-  if (e != BCExceptionNO)
-    return;
-  int32_t cols = (*dimension)[0];
-  int32_t rows = (*dimension)[1];
-  delete dimension;
+  std::vector<int32_t> dimensions =
+      determineDimensions(sourceCodeWords, errorCorrectionCodeWords);
+  if (dimensions.size() != 2)
+    return false;
+  int32_t cols = dimensions[0];
+  int32_t rows = dimensions[1];
   int32_t pad = getNumberOfPadCodewords(sourceCodeWords,
                                         errorCorrectionCodeWords, cols, rows);
-  if (sourceCodeWords + errorCorrectionCodeWords + 1 > 929) {
-    e = BCExceptionEncodedMessageContainsTooManyCodeWords;
-    return;
-  }
+  if (sourceCodeWords + errorCorrectionCodeWords + 1 > 929)
+    return false;
+
   int32_t n = sourceCodeWords + pad + 1;
   CFX_WideString sb;
   sb += (wchar_t)n;
   sb += highLevel;
-  for (int32_t i = 0; i < pad; i++) {
+  for (int32_t i = 0; i < pad; i++)
     sb += (wchar_t)900;
-  }
+
   CFX_WideString dataCodewords(sb);
-  CFX_WideString ec = CBC_PDF417ErrorCorrection::generateErrorCorrection(
-      dataCodewords, errorCorrectionLevel, e);
-  if (e != BCExceptionNO)
-    return;
+  CFX_WideString ec;
+  if (!CBC_PDF417ErrorCorrection::generateErrorCorrection(
+          dataCodewords, errorCorrectionLevel, &ec)) {
+    return false;
+  }
   CFX_WideString fullCodewords = dataCodewords + ec;
   m_barcodeMatrix = pdfium::MakeUnique<CBC_BarcodeMatrix>(rows, cols);
   encodeLowLevel(fullCodewords, cols, rows, errorCorrectionLevel,
                  m_barcodeMatrix.get());
+  return true;
 }
 
 void CBC_PDF417::setDimensions(int32_t maxCols,
@@ -536,49 +537,41 @@ void CBC_PDF417::encodeLowLevel(CFX_WideString fullCodewords,
   }
 }
 
-std::vector<int32_t>* CBC_PDF417::determineDimensions(
+std::vector<int32_t> CBC_PDF417::determineDimensions(
     int32_t sourceCodeWords,
-    int32_t errorCorrectionCodeWords,
-    int32_t& e) {
+    int32_t errorCorrectionCodeWords) const {
+  std::vector<int32_t> dimensions;
   float ratio = 0.0f;
-  std::vector<int32_t>* dimension = nullptr;
   for (int32_t cols = m_minCols; cols <= m_maxCols; cols++) {
     int32_t rows =
         calculateNumberOfRows(sourceCodeWords, errorCorrectionCodeWords, cols);
-    if (rows < m_minRows) {
+    if (rows < m_minRows)
       break;
-    }
-    if (rows > m_maxRows) {
+    if (rows > m_maxRows)
       continue;
-    }
     float newRatio =
         ((17 * cols + 69) * DEFAULT_MODULE_WIDTH) / (rows * HEIGHT);
-    if (dimension &&
+    if (!dimensions.empty() &&
         fabsf(newRatio - PREFERRED_RATIO) > fabsf(ratio - PREFERRED_RATIO)) {
       continue;
     }
     ratio = newRatio;
-    delete dimension;
-    dimension = new std::vector<int32_t>;
-    dimension->push_back(cols);
-    dimension->push_back(rows);
+    dimensions.resize(2);
+    dimensions[0] = cols;
+    dimensions[1] = rows;
   }
-  if (!dimension) {
+  if (dimensions.empty()) {
     int32_t rows = calculateNumberOfRows(sourceCodeWords,
                                          errorCorrectionCodeWords, m_minCols);
     if (rows < m_minRows) {
-      dimension = new std::vector<int32_t>;
-      dimension->push_back(m_minCols);
-      dimension->push_back(m_minRows);
+      dimensions.resize(2);
+      dimensions[0] = m_minCols;
+      dimensions[1] = m_minRows;
     } else if (rows >= 3 && rows <= 90) {
-      dimension = new std::vector<int32_t>;
-      dimension->push_back(m_minCols);
-      dimension->push_back(rows);
+      dimensions.resize(2);
+      dimensions[0] = m_minCols;
+      dimensions[1] = rows;
     }
   }
-  if (!dimension) {
-    e = BCExceptionUnableToFitMessageInColumns;
-    return nullptr;
-  }
-  return dimension;
+  return dimensions;
 }

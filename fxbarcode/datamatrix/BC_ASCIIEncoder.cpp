@@ -20,13 +20,14 @@
  * limitations under the License.
  */
 
-#include "fxbarcode/BC_Dimension.h"
 #include "fxbarcode/datamatrix/BC_ASCIIEncoder.h"
+
 #include "fxbarcode/datamatrix/BC_Encoder.h"
 #include "fxbarcode/datamatrix/BC_EncoderContext.h"
 #include "fxbarcode/datamatrix/BC_HighLevelEncoder.h"
 #include "fxbarcode/datamatrix/BC_SymbolInfo.h"
 #include "fxbarcode/datamatrix/BC_SymbolShapeHint.h"
+#include "fxbarcode/utils.h"
 
 CBC_ASCIIEncoder::CBC_ASCIIEncoder() {}
 CBC_ASCIIEncoder::~CBC_ASCIIEncoder() {}

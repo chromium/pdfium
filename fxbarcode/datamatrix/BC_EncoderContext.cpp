@@ -20,16 +20,17 @@
  * limitations under the License.
  */
 
-#include "fxbarcode/BC_Dimension.h"
+#include "fxbarcode/datamatrix/BC_EncoderContext.h"
+
 #include "fxbarcode/BC_UtilCodingConvert.h"
 #include "fxbarcode/common/BC_CommonBitMatrix.h"
 #include "fxbarcode/datamatrix/BC_Encoder.h"
-#include "fxbarcode/datamatrix/BC_EncoderContext.h"
 #include "fxbarcode/datamatrix/BC_SymbolInfo.h"
 #include "fxbarcode/datamatrix/BC_SymbolShapeHint.h"
+#include "fxbarcode/utils.h"
 
-CBC_EncoderContext::CBC_EncoderContext(const CFX_WideString msg,
-                                       CFX_WideString ecLevel,
+CBC_EncoderContext::CBC_EncoderContext(const CFX_WideString& msg,
+                                       const CFX_WideString& ecLevel,
                                        int32_t& e) {
   CFX_ByteString dststr;
   CBC_UtilCodingConvert::UnicodeToUTF8(msg, dststr);
@@ -48,20 +49,10 @@ CBC_EncoderContext::CBC_EncoderContext(const CFX_WideString msg,
   m_pos = 0;
   m_symbolInfo = nullptr;
   m_skipAtEnd = 0;
-  m_maxSize = nullptr;
-  m_minSize = nullptr;
 }
 CBC_EncoderContext::~CBC_EncoderContext() {}
 void CBC_EncoderContext::setSymbolShape(SymbolShapeHint shape) {
   m_shape = shape;
-}
-void CBC_EncoderContext::setSizeConstraints(CBC_Dimension* minSize,
-                                            CBC_Dimension* maxSize) {
-  m_maxSize = maxSize;
-  m_minSize = minSize;
-}
-CFX_WideString CBC_EncoderContext::getMessage() {
-  return m_msg;
 }
 void CBC_EncoderContext::setSkipAtEnd(int32_t count) {
   m_skipAtEnd = count;
@@ -72,9 +63,11 @@ wchar_t CBC_EncoderContext::getCurrentChar() {
 wchar_t CBC_EncoderContext::getCurrent() {
   return m_msg.GetAt(m_pos);
 }
-void CBC_EncoderContext::writeCodewords(CFX_WideString codewords) {
+
+void CBC_EncoderContext::writeCodewords(const CFX_WideString& codewords) {
   m_codewords += codewords;
 }
+
 void CBC_EncoderContext::writeCodeword(wchar_t codeword) {
   m_codewords += codeword;
 }
@@ -98,8 +91,7 @@ void CBC_EncoderContext::updateSymbolInfo(int32_t& e) {
 }
 void CBC_EncoderContext::updateSymbolInfo(int32_t len, int32_t& e) {
   if (!m_symbolInfo || len > m_symbolInfo->m_dataCapacity) {
-    m_symbolInfo =
-        CBC_SymbolInfo::lookup(len, m_shape, m_minSize, m_maxSize, true, e);
+    m_symbolInfo = CBC_SymbolInfo::lookup(len, m_shape, true, e);
     if (e != BCExceptionNO)
       return;
   }

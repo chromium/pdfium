@@ -7,7 +7,7 @@
 #ifndef FXBARCODE_DATAMATRIX_BC_ENCODER_H_
 #define FXBARCODE_DATAMATRIX_BC_ENCODER_H_
 
-#include "fxbarcode/utils.h"
+#include <stdint.h>
 
 class CBC_EncoderContext;
 

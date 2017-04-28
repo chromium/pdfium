@@ -11,8 +11,6 @@
 #include "core/fxcrt/fx_system.h"
 #include "fxbarcode/datamatrix/BC_SymbolShapeHint.h"
 
-class CBC_Dimension;
-
 class CBC_SymbolInfo : public CBC_SymbolShapeHint {
  public:
   CBC_SymbolInfo(bool rectangular,
@@ -36,12 +34,6 @@ class CBC_SymbolInfo : public CBC_SymbolShapeHint {
                                 int32_t& e);
   static CBC_SymbolInfo* lookup(int32_t dataCodewords,
                                 SymbolShapeHint shape,
-                                bool fail,
-                                int32_t& e);
-  static CBC_SymbolInfo* lookup(int32_t dataCodewords,
-                                SymbolShapeHint shape,
-                                CBC_Dimension* minSize,
-                                CBC_Dimension* maxSize,
                                 bool fail,
                                 int32_t& e);
   int32_t getHorizontalDataRegions(int32_t& e);

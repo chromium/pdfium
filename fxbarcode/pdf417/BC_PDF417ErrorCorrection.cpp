@@ -21,7 +21,8 @@
  */
 
 #include "fxbarcode/pdf417/BC_PDF417ErrorCorrection.h"
-#include "fxbarcode/utils.h"
+
+#include <vector>
 
 namespace {
 
@@ -124,47 +125,24 @@ const uint16_t* const EC_COEFFICIENTS[9] = {
 CBC_PDF417ErrorCorrection::CBC_PDF417ErrorCorrection() {}
 CBC_PDF417ErrorCorrection::~CBC_PDF417ErrorCorrection() {}
 int32_t CBC_PDF417ErrorCorrection::getErrorCorrectionCodewordCount(
-    int32_t errorCorrectionLevel,
-    int32_t& e) {
-  if (errorCorrectionLevel < 0 || errorCorrectionLevel > 8) {
-    e = BCExceptionErrorCorrectionLevelMustBeBetween0And8;
+    int32_t errorCorrectionLevel) {
+  if (errorCorrectionLevel < 0 || errorCorrectionLevel > 8)
     return -1;
-  }
   return 1 << (errorCorrectionLevel + 1);
 }
 
-int32_t CBC_PDF417ErrorCorrection::getRecommendedMinimumErrorCorrectionLevel(
-    int32_t n,
-    int32_t& e) {
-  if (n <= 0) {
-    e = BCExceptionIllegalArgumentnMustBeAbove0;
-    return -1;
-  }
-  if (n <= 40) {
-    return 2;
-  }
-  if (n <= 160) {
-    return 3;
-  }
-  if (n <= 320) {
-    return 4;
-  }
-  if (n <= 863) {
-    return 5;
-  }
-  e = BCExceptionNoRecommendationPossible;
-  return -1;
-}
-
-CFX_WideString CBC_PDF417ErrorCorrection::generateErrorCorrection(
-    CFX_WideString dataCodewords,
+bool CBC_PDF417ErrorCorrection::generateErrorCorrection(
+    const CFX_WideString& dataCodewords,
     int32_t errorCorrectionLevel,
-    int32_t& e) {
-  int32_t k = getErrorCorrectionCodewordCount(errorCorrectionLevel, e);
-  if (e != BCExceptionNO)
-    return L" ";
-  wchar_t* ech = FX_Alloc(wchar_t, k);
-  memset(ech, 0, k * sizeof(wchar_t));
+    CFX_WideString* result) {
+  assert(result);
+  assert(result->IsEmpty());
+
+  int32_t k = getErrorCorrectionCodewordCount(errorCorrectionLevel);
+  if (k < 0)
+    return false;
+
+  std::vector<wchar_t> ech(k);
   int32_t sld = dataCodewords.GetLength();
   for (int32_t i = 0; i < sld; i++) {
     int32_t t1 = (dataCodewords.GetAt(i) + ech[k - 1]) % 929;
@@ -179,13 +157,11 @@ CFX_WideString CBC_PDF417ErrorCorrection::generateErrorCorrection(
     t3 = 929 - t2;
     ech[0] = (wchar_t)(t3 % 929);
   }
-  CFX_WideString sb;
+  result->Reserve(k);
   for (int32_t j = k - 1; j >= 0; j--) {
-    if (ech[j] != 0) {
-      ech[j] = (wchar_t)(929 - ech[j]);
-    }
-    sb += (wchar_t)ech[j];
+    if (ech[j] != 0)
+      ech[j] = static_cast<wchar_t>(929) - ech[j];
+    *result += ech[j];
   }
-  FX_Free(ech);
-  return sb;
+  return true;
 }

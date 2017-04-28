@@ -9,6 +9,7 @@
 
 #include <vector>
 
+#include "core/fxcrt/cfx_widestring.h"
 #include "fxbarcode/datamatrix/BC_SymbolShapeHint.h"
 
 #define ASCII_ENCODATION 0
@@ -30,8 +31,6 @@ class CBC_HighLevelEncoder : public CBC_SymbolShapeHint {
   static CFX_WideString encodeHighLevel(CFX_WideString msg,
                                         CFX_WideString ecLevel,
                                         SymbolShapeHint shape,
-                                        CBC_Dimension* minSize,
-                                        CBC_Dimension* maxSize,
                                         int32_t& e);
   static int32_t lookAheadTest(CFX_WideString msg,
                                int32_t startpos,

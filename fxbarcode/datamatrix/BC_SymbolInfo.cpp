@@ -22,11 +22,11 @@
 
 #include "fxbarcode/datamatrix/BC_SymbolInfo.h"
 
-#include "fxbarcode/BC_Dimension.h"
 #include "fxbarcode/common/BC_CommonBitMatrix.h"
 #include "fxbarcode/datamatrix/BC_DataMatrixSymbolInfo144.h"
 #include "fxbarcode/datamatrix/BC_Encoder.h"
 #include "fxbarcode/datamatrix/BC_SymbolShapeHint.h"
+#include "fxbarcode/utils.h"
 
 namespace {
 
@@ -133,37 +133,14 @@ CBC_SymbolInfo* CBC_SymbolInfo::lookup(int32_t dataCodewords,
                                        SymbolShapeHint shape,
                                        bool fail,
                                        int32_t& e) {
-  return lookup(dataCodewords, shape, nullptr, nullptr, fail, e);
-}
-CBC_SymbolInfo* CBC_SymbolInfo::lookup(int32_t dataCodewords,
-                                       SymbolShapeHint shape,
-                                       CBC_Dimension* minSize,
-                                       CBC_Dimension* maxSize,
-                                       bool fail,
-                                       int32_t& e) {
   for (size_t i = 0; i < kSymbolsCount; i++) {
     CBC_SymbolInfo* symbol = g_symbols[i];
-    if (shape == FORCE_SQUARE && symbol->m_rectangular) {
+    if ((shape == FORCE_SQUARE && symbol->m_rectangular) ||
+        (shape == FORCE_RECTANGLE && !symbol->m_rectangular)) {
       continue;
     }
-    if (shape == FORCE_RECTANGLE && !symbol->m_rectangular) {
-      continue;
-    }
-    if (minSize && (symbol->getSymbolWidth(e) < minSize->getWidth() ||
-                    symbol->getSymbolHeight(e) < minSize->getHeight())) {
-      if (e != BCExceptionNO)
-        return nullptr;
-      continue;
-    }
-    if (maxSize && (symbol->getSymbolWidth(e) > maxSize->getWidth() ||
-                    symbol->getSymbolHeight(e) > maxSize->getHeight())) {
-      if (e != BCExceptionNO)
-        return nullptr;
-      continue;
-    }
-    if (dataCodewords <= symbol->m_dataCapacity) {
+    if (dataCodewords <= symbol->m_dataCapacity)
       return symbol;
-    }
   }
   if (fail)
     e = BCExceptionIllegalDataCodewords;

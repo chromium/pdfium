@@ -7,25 +7,23 @@
 #ifndef FXBARCODE_DATAMATRIX_BC_ENCODERCONTEXT_H_
 #define FXBARCODE_DATAMATRIX_BC_ENCODERCONTEXT_H_
 
+#include "core/fxcrt/cfx_widestring.h"
 #include "fxbarcode/datamatrix/BC_SymbolShapeHint.h"
 
 class CBC_SymbolInfo;
-class CBC_Dimension;
 
 class CBC_EncoderContext : public CBC_SymbolShapeHint {
  public:
-  CBC_EncoderContext(const CFX_WideString msg,
-                     CFX_WideString ecLevel,
+  CBC_EncoderContext(const CFX_WideString& msg,
+                     const CFX_WideString& ecLevel,
                      int32_t& e);
   ~CBC_EncoderContext() override;
 
   void setSymbolShape(SymbolShapeHint shape);
-  void setSizeConstraints(CBC_Dimension* minSize, CBC_Dimension* maxSize);
-  CFX_WideString getMessage();
   void setSkipAtEnd(int32_t count);
   wchar_t getCurrentChar();
   wchar_t getCurrent();
-  void writeCodewords(CFX_WideString codewords);
+  void writeCodewords(const CFX_WideString& codewords);
   void writeCodeword(wchar_t codeword);
   int32_t getCodewordCount();
   void signalEncoderChange(int32_t encoding);
@@ -48,8 +46,6 @@ class CBC_EncoderContext : public CBC_SymbolShapeHint {
 
  private:
   SymbolShapeHint m_shape;
-  CBC_Dimension* m_minSize;
-  CBC_Dimension* m_maxSize;
   int32_t m_skipAtEnd;
 };
 

@@ -20,14 +20,30 @@
  * limitations under the License.
  */
 
-#include "fxbarcode/BC_Dimension.h"
-#include "fxbarcode/common/BC_CommonBitMatrix.h"
 #include "fxbarcode/datamatrix/BC_C40Encoder.h"
+
+#include "fxbarcode/common/BC_CommonBitMatrix.h"
 #include "fxbarcode/datamatrix/BC_Encoder.h"
 #include "fxbarcode/datamatrix/BC_EncoderContext.h"
 #include "fxbarcode/datamatrix/BC_HighLevelEncoder.h"
 #include "fxbarcode/datamatrix/BC_SymbolInfo.h"
 #include "fxbarcode/datamatrix/BC_SymbolShapeHint.h"
+#include "fxbarcode/utils.h"
+
+namespace {
+
+CFX_WideString EncodeToCodewords(const CFX_WideString& sb, int32_t startPos) {
+  wchar_t c1 = sb.GetAt(startPos);
+  wchar_t c2 = sb.GetAt(startPos + 1);
+  wchar_t c3 = sb.GetAt(startPos + 2);
+  int32_t v = (1600 * c1) + (40 * c2) + c3 + 1;
+  wchar_t cw[2];
+  cw[0] = static_cast<wchar_t>(v / 256);
+  cw[1] = static_cast<wchar_t>(v % 256);
+  return CFX_WideString(cw);
+}
+
+}  // namespace
 
 CBC_C40Encoder::CBC_C40Encoder() {}
 CBC_C40Encoder::~CBC_C40Encoder() {}
@@ -85,7 +101,7 @@ void CBC_C40Encoder::Encode(CBC_EncoderContext& context, int32_t& e) {
 }
 void CBC_C40Encoder::writeNextTriplet(CBC_EncoderContext& context,
                                       CFX_WideString& buffer) {
-  context.writeCodewords(encodeToCodewords(buffer, 0));
+  context.writeCodewords(EncodeToCodewords(buffer, 0));
   buffer.Delete(0, 3);
 }
 void CBC_C40Encoder::handleEOD(CBC_EncoderContext& context,
@@ -185,16 +201,4 @@ int32_t CBC_C40Encoder::backtrackOneCharacter(CBC_EncoderContext& context,
     return -1;
   context.resetSymbolInfo();
   return lastCharSize;
-}
-CFX_WideString CBC_C40Encoder::encodeToCodewords(CFX_WideString sb,
-                                                 int32_t startPos) {
-  wchar_t c1 = sb.GetAt(startPos);
-  wchar_t c2 = sb.GetAt(startPos + 1);
-  wchar_t c3 = sb.GetAt(startPos + 2);
-  int32_t v = (1600 * c1) + (40 * c2) + c3 + 1;
-  wchar_t cw1 = (wchar_t)(v / 256);
-  wchar_t cw2 = (wchar_t)(v % 256);
-  CFX_WideString b1(cw1);
-  CFX_WideString b2(cw2);
-  return b1 + b2;
 }

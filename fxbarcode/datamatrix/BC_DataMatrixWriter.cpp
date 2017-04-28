@@ -24,7 +24,6 @@
 
 #include <memory>
 
-#include "fxbarcode/BC_Dimension.h"
 #include "fxbarcode/BC_TwoDimWriter.h"
 #include "fxbarcode/BC_UtilCodingConvert.h"
 #include "fxbarcode/BC_Writer.h"
@@ -121,16 +120,14 @@ uint8_t* CBC_DataMatrixWriter::Encode(const CFX_WideString& contents,
 
   CBC_SymbolShapeHint::SymbolShapeHint shape =
       CBC_SymbolShapeHint::FORCE_SQUARE;
-  CBC_Dimension* minSize = nullptr;
-  CBC_Dimension* maxSize = nullptr;
   CFX_WideString ecLevel;
   int32_t e = BCExceptionNO;
-  CFX_WideString encoded = CBC_HighLevelEncoder::encodeHighLevel(
-      contents, ecLevel, shape, minSize, maxSize, e);
+  CFX_WideString encoded =
+      CBC_HighLevelEncoder::encodeHighLevel(contents, ecLevel, shape, e);
   if (e != BCExceptionNO)
     return nullptr;
-  CBC_SymbolInfo* symbolInfo = CBC_SymbolInfo::lookup(
-      encoded.GetLength(), shape, minSize, maxSize, true, e);
+  CBC_SymbolInfo* symbolInfo =
+      CBC_SymbolInfo::lookup(encoded.GetLength(), shape, true, e);
   if (e != BCExceptionNO)
     return nullptr;
   CFX_WideString codewords =

@@ -9,6 +9,8 @@
 
 #include "fxbarcode/datamatrix/BC_Encoder.h"
 
+class CFX_WideString;
+
 class CBC_C40Encoder : public CBC_Encoder {
  public:
   CBC_C40Encoder();
@@ -32,7 +34,6 @@ class CBC_C40Encoder : public CBC_Encoder {
                                 CFX_WideString& removed,
                                 int32_t lastCharSize,
                                 int32_t& e);
-  static CFX_WideString encodeToCodewords(CFX_WideString sb, int32_t startPos);
 };
 
 #endif  // FXBARCODE_DATAMATRIX_BC_C40ENCODER_H_

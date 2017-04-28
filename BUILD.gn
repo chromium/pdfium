@@ -1224,8 +1224,6 @@ if (pdf_enable_xfa) {
 
   static_library("fxbarcode") {
     sources = [
-      "fxbarcode/BC_Dimension.cpp",
-      "fxbarcode/BC_Dimension.h",
       "fxbarcode/BC_Library.cpp",
       "fxbarcode/BC_Library.h",
       "fxbarcode/BC_TwoDimWriter.cpp",

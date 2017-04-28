@@ -7,6 +7,8 @@
 #ifndef FXBARCODE_DATAMATRIX_BC_ERRORCORRECTION_H_
 #define FXBARCODE_DATAMATRIX_BC_ERRORCORRECTION_H_
 
+#include "core/fxcrt/cfx_widestring.h"
+
 class CBC_SymbolInfo;
 
 class CBC_ErrorCorrection {

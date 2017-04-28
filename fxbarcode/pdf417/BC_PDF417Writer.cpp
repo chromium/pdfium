@@ -60,9 +60,7 @@ uint8_t* CBC_PDF417Writer::Encode(const CFX_WideString& contents,
     encoder.setDimensions(col, col, 90, 3);
   else if (row >= 3 && row <= 90)
     encoder.setDimensions(30, 1, row, row);
-  int32_t e = BCExceptionNO;
-  encoder.generateBarcodeLogic(contents, m_iCorrectLevel, e);
-  if (e != BCExceptionNO)
+  if (!encoder.generateBarcodeLogic(contents, m_iCorrectLevel))
     return nullptr;
 
   int32_t lineThickness = 2;

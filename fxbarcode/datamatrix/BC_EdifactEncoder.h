@@ -17,15 +17,6 @@ class CBC_EdifactEncoder : public CBC_Encoder {
   // CBC_Encoder
   int32_t getEncodingMode() override;
   void Encode(CBC_EncoderContext& context, int32_t& e) override;
-
- private:
-  static void handleEOD(CBC_EncoderContext& context,
-                        CFX_WideString buffer,
-                        int32_t& e);
-  static void encodeChar(wchar_t c, CFX_WideString& sb, int32_t& e);
-  static CFX_WideString encodeToCodewords(CFX_WideString sb,
-                                          int32_t startPos,
-                                          int32_t& e);
 };
 
 #endif  // FXBARCODE_DATAMATRIX_BC_EDIFACTENCODER_H_
