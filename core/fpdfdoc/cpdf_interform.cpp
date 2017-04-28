@@ -408,7 +408,7 @@ class CFieldTree {
 
     CPDF_FormField* GetFieldAtIndex(size_t index) {
       size_t nFieldsToGo = index;
-      return GetFieldInternal(&nFieldsToGo);
+      return GetFieldInternal(&nFieldsToGo, 0);
     }
 
     size_t CountFields() const { return CountFieldsInternal(0); }
@@ -422,7 +422,10 @@ class CFieldTree {
     const CFX_WideString& GetShortName() const { return m_ShortName; }
 
    private:
-    CPDF_FormField* GetFieldInternal(size_t* pFieldsToGo) {
+    CPDF_FormField* GetFieldInternal(size_t* pFieldsToGo, int nLevel) {
+      if (nLevel > nMaxRecursion)
+        return nullptr;
+
       if (m_pField) {
         if (*pFieldsToGo == 0)
           return m_pField.get();
@@ -430,7 +433,8 @@ class CFieldTree {
         --*pFieldsToGo;
       }
       for (size_t i = 0; i < GetChildrenCount(); ++i) {
-        CPDF_FormField* pField = GetChildAt(i)->GetFieldInternal(pFieldsToGo);
+        CPDF_FormField* pField =
+            GetChildAt(i)->GetFieldInternal(pFieldsToGo, nLevel + 1);
         if (pField)
           return pField;
       }
