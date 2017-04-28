@@ -8,12 +8,14 @@
 
 #include <algorithm>
 #include <memory>
+#include <utility>
 
 #include "core/fxge/cfx_gemodule.h"
 #include "core/fxge/cfx_graphstatedata.h"
 #include "core/fxge/cfx_renderdevice.h"
 #include "core/fxge/cfx_substfont.h"
 #include "core/fxge/dib/cfx_imagerenderer.h"
+#include "third_party/base/ptr_util.h"
 #include "xfa/fde/cfde_brush.h"
 #include "xfa/fde/cfde_path.h"
 #include "xfa/fde/cfde_pen.h"
@@ -150,12 +152,12 @@ bool CFDE_RenderDevice::DrawString(CFDE_Brush* pBrush,
 #if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
   uint32_t dwFontStyle = pFont->GetFontStyles();
   CFX_Font FxFont;
-  CFX_SubstFont* SubstFxFont = new CFX_SubstFont();
-  FxFont.SetSubstFont(std::unique_ptr<CFX_SubstFont>(SubstFxFont));
+  auto SubstFxFont = pdfium::MakeUnique<CFX_SubstFont>();
   SubstFxFont->m_Weight = dwFontStyle & FX_FONTSTYLE_Bold ? 700 : 400;
   SubstFxFont->m_ItalicAngle = dwFontStyle & FX_FONTSTYLE_Italic ? -12 : 0;
   SubstFxFont->m_WeightCJK = SubstFxFont->m_Weight;
   SubstFxFont->m_bItalicCJK = !!(dwFontStyle & FX_FONTSTYLE_Italic);
+  FxFont.SetSubstFont(std::move(SubstFxFont));
 #endif  // _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
 
   for (int32_t i = 0; i < iCount; ++i) {

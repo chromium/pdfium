@@ -108,8 +108,8 @@ class CXFA_FieldLayoutData : public CXFA_WidgetLayoutData {
     CXFA_Caption caption = pAcc->GetCaption();
     if (!caption || caption.GetPresence() == XFA_ATTRIBUTEENUM_Hidden)
       return false;
-    m_pCapTextProvider.reset(
-        new CXFA_TextProvider(pAcc, XFA_TEXTPROVIDERTYPE_Caption));
+    m_pCapTextProvider = pdfium::MakeUnique<CXFA_TextProvider>(
+        pAcc, XFA_TEXTPROVIDERTYPE_Caption);
     m_pCapTextLayout =
         pdfium::MakeUnique<CXFA_TextLayout>(m_pCapTextProvider.get());
     return true;

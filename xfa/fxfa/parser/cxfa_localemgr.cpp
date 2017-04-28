@@ -14,6 +14,7 @@
 #include "core/fxcodec/fx_codec.h"
 #include "core/fxcrt/xml/cxml_element.h"
 #include "core/fxge/cfx_gemodule.h"
+#include "third_party/base/ptr_util.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
 #include "xfa/fxfa/parser/cxfa_nodelocale.h"
 #include "xfa/fxfa/parser/cxfa_xmllocale.h"
@@ -1072,8 +1073,7 @@ static std::unique_ptr<IFX_Locale> XFA_GetLocaleFromBuffer(const uint8_t* pBuf,
     pLocale = CXML_Element::Parse(pOut, dwSize);
     FX_Free(pOut);
   }
-  return pLocale ? std::unique_ptr<IFX_Locale>(
-                       new CXFA_XMLLocale(std::move(pLocale)))
+  return pLocale ? pdfium::MakeUnique<CXFA_XMLLocale>(std::move(pLocale))
                  : nullptr;
 }
 
@@ -1127,7 +1127,7 @@ CXFA_LocaleMgr::CXFA_LocaleMgr(CXFA_Node* pLocaleSet, CFX_WideString wsDeflcid)
   if (pLocaleSet) {
     CXFA_Node* pNodeLocale = pLocaleSet->GetNodeItem(XFA_NODEITEM_FirstChild);
     while (pNodeLocale) {
-      m_LocaleArray.emplace_back(new CXFA_NodeLocale(pNodeLocale));
+      m_LocaleArray.push_back(pdfium::MakeUnique<CXFA_NodeLocale>(pNodeLocale));
       pNodeLocale = pNodeLocale->GetNodeItem(XFA_NODEITEM_NextSibling);
     }
   }
